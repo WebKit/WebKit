@@ -103,13 +103,15 @@ public:
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
     struct UnifiedTextReplacementData {
-        enum class ApplyIndicator: bool {
-            No, Yes
+        enum class State: uint8_t {
+            Pending,
+            Committed,
+            Reverted
         };
 
         String originalText;
         WTF::UUID uuid;
-        ApplyIndicator applyIndicator { ApplyIndicator::No };
+        State state { State::Pending };
     };
 #endif
 
@@ -202,8 +204,8 @@ inline String DocumentMarker::description() const
         return *description;
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-    if (auto* description = std::get_if<DocumentMarker::UnifiedTextReplacementData>(&m_data))
-        return makeString("('", description->originalText, "', indicator: ", description->applyIndicator == DocumentMarker::UnifiedTextReplacementData::ApplyIndicator::Yes, ")");
+    if (auto* data = std::get_if<DocumentMarker::UnifiedTextReplacementData>(&m_data))
+        return makeString("('", data->originalText, "', state: ", enumToUnderlyingType(data->state), ")");
 #endif
 
     return emptyString();

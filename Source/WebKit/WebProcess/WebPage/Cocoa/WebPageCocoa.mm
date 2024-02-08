@@ -852,7 +852,7 @@ void WebPage::willBeginTextReplacementSession(const WTF::UUID& uuid, CompletionH
     m_unifiedTextReplacementController->willBeginTextReplacementSession(uuid, WTFMove(completionHandler));
 }
 
-void WebPage::didBeginTextReplacementSession(const WTF::UUID& uuid, const Vector<WebKit::WebUnifiedTextReplacementContextData>& contexts)
+void WebPage::didBeginTextReplacementSession(const WTF::UUID& uuid, const Vector<WebUnifiedTextReplacementContextData>& contexts)
 {
     m_unifiedTextReplacementController->didBeginTextReplacementSession(uuid, contexts);
 }
@@ -861,6 +861,17 @@ void WebPage::textReplacementSessionDidReceiveReplacements(const WTF::UUID& uuid
 {
     m_unifiedTextReplacementController->textReplacementSessionDidReceiveReplacements(uuid, replacements, context, finished);
 }
+
+void WebPage::textReplacementSessionDidUpdateStateForReplacement(const WTF::UUID& uuid, WebTextReplacementData::State state, const WebTextReplacementData& replacement, const WebUnifiedTextReplacementContextData& context)
+{
+    m_unifiedTextReplacementController->textReplacementSessionDidUpdateStateForReplacement(uuid, state, replacement, context);
+}
+
+void WebPage::didEndTextReplacementSession(const WTF::UUID& uuid, bool accepted)
+{
+    m_unifiedTextReplacementController->didEndTextReplacementSession(uuid, accepted);
+}
+
 #endif
 
 std::optional<SimpleRange> WebPage::autocorrectionContextRange()

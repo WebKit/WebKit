@@ -21,7 +21,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-[Nested] enum class WebKit::WebTextReplacementData::State : uint8_t {
+header: "WebTextReplacementData.h"
+[CustomHeader] enum class WebKit::WebTextReplacementDataState : uint8_t {
     Pending,
     Active,
     Committed,
@@ -29,7 +30,8 @@
     Invalid
 };
 
-struct WebKit::WebTextReplacementData {
+header: "WebTextReplacementData.h"
+[CustomHeader] struct WebKit::WebTextReplacementData {
     WTF::UUID uuid;
     WebCore::CharacterRange originalRange;
     WTF::String replacement;

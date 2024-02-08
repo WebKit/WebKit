@@ -56,6 +56,7 @@ public:
 
     WEBCORE_EXPORT void addMarker(const SimpleRange&, DocumentMarker::Type, const DocumentMarker::Data& = { });
     void addMarker(Text&, unsigned startOffset, unsigned length, DocumentMarker::Type, DocumentMarker::Data&& = { });
+    WEBCORE_EXPORT void addMarker(Node&, DocumentMarker&&);
     void addDraggedContentMarker(const SimpleRange&);
 
     void copyMarkers(Node& source, OffsetRange, Node& destination);
@@ -66,7 +67,7 @@ public:
     // remove the marker. If the argument is false, we will adjust the span of the marker so that it retains
     // the portion that is outside of the range.
     WEBCORE_EXPORT void removeMarkers(const SimpleRange&, OptionSet<DocumentMarker::Type> = DocumentMarker::allMarkers(), RemovePartiallyOverlappingMarker = RemovePartiallyOverlappingMarker::No);
-    void removeMarkers(Node&, OffsetRange, OptionSet<DocumentMarker::Type> = DocumentMarker::allMarkers(), const Function<FilterMarkerResult(const DocumentMarker&)>& filterFunction = nullptr, RemovePartiallyOverlappingMarker = RemovePartiallyOverlappingMarker::No);
+    WEBCORE_EXPORT void removeMarkers(Node&, OffsetRange, OptionSet<DocumentMarker::Type> = DocumentMarker::allMarkers(), const Function<FilterMarkerResult(const DocumentMarker&)>& filterFunction = nullptr, RemovePartiallyOverlappingMarker = RemovePartiallyOverlappingMarker::No);
 
     WEBCORE_EXPORT void filterMarkers(const SimpleRange&, const Function<FilterMarkerResult(const DocumentMarker&)>& filterFunction, OptionSet<DocumentMarker::Type> = DocumentMarker::allMarkers(), RemovePartiallyOverlappingMarker = RemovePartiallyOverlappingMarker::No);
 
@@ -90,13 +91,13 @@ public:
     WeakPtr<DocumentMarker> markerContainingPoint(const LayoutPoint&, DocumentMarker::Type);
     WEBCORE_EXPORT Vector<FloatRect> renderedRectsForMarkers(DocumentMarker::Type);
 
+    WEBCORE_EXPORT void forEachOfTypes(OptionSet<DocumentMarker::Type>, const Function<bool(Node&, RenderedDocumentMarker&)>);
+
 #if ENABLE(TREE_DEBUGGING)
     void showMarkers() const;
 #endif
 
 private:
-    void addMarker(Node&, DocumentMarker&&);
-
     struct TextRange {
         Ref<Node> node;
         OffsetRange range;
@@ -104,7 +105,6 @@ private:
     Vector<TextRange> collectTextRanges(const SimpleRange&);
 
     void forEach(const SimpleRange&, OptionSet<DocumentMarker::Type>, const Function<bool(Node&, RenderedDocumentMarker&)>);
-    void forEachOfTypes(OptionSet<DocumentMarker::Type>, const Function<bool(Node&, RenderedDocumentMarker&)>);
 
     using MarkerMap = HashMap<Ref<Node>, std::unique_ptr<Vector<RenderedDocumentMarker>>>;
 

@@ -34,14 +34,16 @@
 
 namespace WebKit {
 
+enum class WebTextReplacementDataState : uint8_t {
+    Pending,
+    Active,
+    Committed,
+    Reverted,
+    Invalid,
+};
+
 struct WebTextReplacementData {
-    enum class State : uint8_t {
-        Pending,
-        Active,
-        Committed,
-        Reverted,
-        Invalid,
-    };
+    using State = WebTextReplacementDataState;
 
     WTF::UUID uuid;
     WebCore::CharacterRange originalRange;

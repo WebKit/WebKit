@@ -291,6 +291,10 @@ Vector<MarkedText> MarkedText::collectForDocumentMarkers(const RenderText& rende
         case DocumentMarker::Type::CorrectionIndicator:
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
         case DocumentMarker::Type::UnifiedTextReplacement:
+            if (marker->type() == DocumentMarker::Type::UnifiedTextReplacement && std::get<DocumentMarker::UnifiedTextReplacementData>(marker->data()).state != DocumentMarker::UnifiedTextReplacementData::State::Pending)
+                break;
+
+            BFALLTHROUGH;
 #endif
         case DocumentMarker::Type::DictationAlternatives:
         case DocumentMarker::Type::Grammar:
@@ -302,11 +306,6 @@ Vector<MarkedText> MarkedText::collectForDocumentMarkers(const RenderText& rende
             auto [clampedStart, clampedEnd] = selectableRange.clamp(marker->startOffset(), marker->endOffset());
 
             auto markedTextType = markedTextTypeForMarkerType(marker->type());
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-            if (marker->type() == DocumentMarker::Type::UnifiedTextReplacement && std::get<DocumentMarker::UnifiedTextReplacementData>(marker->data()).applyIndicator == DocumentMarker::UnifiedTextReplacementData::ApplyIndicator::No)
-                markedTextType = MarkedText::Type::Unmarked;
-#endif
-
             markedTexts.append({ clampedStart, clampedEnd, markedTextType, marker.get() });
             break;
         }

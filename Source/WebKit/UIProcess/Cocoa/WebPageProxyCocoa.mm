@@ -1111,6 +1111,16 @@ void WebPageProxy::textReplacementSessionDidReceiveReplacements(const WTF::UUID&
     send(Messages::WebPage::TextReplacementSessionDidReceiveReplacements(uuid, replacements, context, finished));
 }
 
+void WebPageProxy::textReplacementSessionDidUpdateStateForReplacement(const WTF::UUID& uuid, WebTextReplacementData::State state, const WebTextReplacementData& replacement, const WebUnifiedTextReplacementContextData& context)
+{
+    send(Messages::WebPage::TextReplacementSessionDidUpdateStateForReplacement(uuid, state, replacement, context));
+}
+
+void WebPageProxy::didEndTextReplacementSession(const WTF::UUID& uuid, bool accepted)
+{
+    send(Messages::WebPage::DidEndTextReplacementSession(uuid, accepted));
+}
+
 #endif
 
 } // namespace WebKit
