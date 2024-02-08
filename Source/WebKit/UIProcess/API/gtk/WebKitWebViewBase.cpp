@@ -417,7 +417,9 @@ static GtkAccessible* webkitWebViewBaseAccessibleGetFirstAccessibleChild(GtkAcce
 static void
 webkitWebViewBaseAccessibleInterfaceInit(GtkAccessibleInterface* iface)
 {
+#ifdef GTK_ACCESSIBILITY_ATSPI
     iface->get_first_accessible_child = webkitWebViewBaseAccessibleGetFirstAccessibleChild;
+#endif
 }
 #endif
 
