@@ -352,6 +352,8 @@ NSType typeFromObject(id object)
         return NSType::NSValue;
     if ([object isKindOfClass:[NSPersonNameComponents class]])
         return NSType::PersonNameComponents;
+    if ([object isKindOfClass:[NSPresentationIntent class]])
+        return NSType::PresentationIntent;
     if ([object isKindOfClass:[NSString class]])
         return NSType::String;
     if ([object isKindOfClass:[NSURL class]])
@@ -552,10 +554,6 @@ static constexpr bool haveSecureActionContext = false;
 #endif
     if (allowedClasses.contains(NSParagraphStyle.class))
         return haveStrictDecodableNSTextTable;
-
-    // rdar://109121874
-    if (allowedClasses.contains(NSPresentationIntent.class))
-        return true;
 
     // rdar://107553194, Don't reintroduce rdar://108339450
     if (allowedClasses.contains(NSMutableURLRequest.class))

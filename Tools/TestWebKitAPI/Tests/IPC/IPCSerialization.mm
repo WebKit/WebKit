@@ -366,6 +366,7 @@ struct ObjCHolderForTesting {
         RetainPtr<AVOutputContext>,
 #endif
         RetainPtr<NSPersonNameComponents>,
+        RetainPtr<NSPresentationIntent>,
 #if USE(PASSKIT) && !PLATFORM(WATCHOS)
         RetainPtr<CNPhoneNumber>,
         RetainPtr<CNPostalAddress>,
@@ -953,6 +954,44 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         NSNull.null : NSData.data,
         url : (id)trust.get()
     } });
+
+    // NSPresentationIntent
+    NSInteger intentID = 1;
+    NSPresentationIntent *paragraphIntent = [NSPresentationIntent paragraphIntentWithIdentity:intentID++ nestedInsideIntent:nil];
+    runTestNS({ paragraphIntent });
+
+    NSPresentationIntent *headingIntent = [NSPresentationIntent headerIntentWithIdentity:intentID++ level:1 nestedInsideIntent:nil];
+    runTestNS({ headingIntent });
+
+    NSPresentationIntent *codeBlockIntent = [NSPresentationIntent codeBlockIntentWithIdentity:intentID++ languageHint:@"Swift" nestedInsideIntent:paragraphIntent];
+    runTestNS({ codeBlockIntent });
+
+    NSPresentationIntent *thematicBreakIntent = [NSPresentationIntent thematicBreakIntentWithIdentity:intentID++ nestedInsideIntent:nil];
+    runTestNS({ thematicBreakIntent });
+
+    NSPresentationIntent *orderedListIntent = [NSPresentationIntent orderedListIntentWithIdentity:intentID++ nestedInsideIntent:paragraphIntent];
+    runTestNS({ orderedListIntent });
+
+    NSPresentationIntent *unorderedListIntent = [NSPresentationIntent unorderedListIntentWithIdentity:intentID++ nestedInsideIntent:paragraphIntent];
+    runTestNS({ unorderedListIntent });
+
+    NSPresentationIntent *listItemIntent = [NSPresentationIntent listItemIntentWithIdentity:intentID++ ordinal:1 nestedInsideIntent:orderedListIntent];
+    runTestNS({ listItemIntent });
+
+    NSPresentationIntent *blockQuoteIntent = [NSPresentationIntent blockQuoteIntentWithIdentity:intentID++ nestedInsideIntent:paragraphIntent];
+    runTestNS({ blockQuoteIntent });
+
+    NSPresentationIntent *tableIntent = [NSPresentationIntent tableIntentWithIdentity:intentID++ columnCount:2 alignments:@[@(NSPresentationIntentTableColumnAlignmentLeft), @(NSPresentationIntentTableColumnAlignmentRight)] nestedInsideIntent:unorderedListIntent];
+    runTestNS({ tableIntent });
+
+    NSPresentationIntent *tableHeaderRowIntent = [NSPresentationIntent tableHeaderRowIntentWithIdentity:intentID++ nestedInsideIntent:tableIntent];
+    runTestNS({ tableHeaderRowIntent });
+
+    NSPresentationIntent *tableRowIntent = [NSPresentationIntent tableRowIntentWithIdentity:intentID++ row:1 nestedInsideIntent:tableIntent];
+    runTestNS({ tableRowIntent });
+
+    NSPresentationIntent *tableCellIntent = [NSPresentationIntent tableCellIntentWithIdentity:intentID++ column:1 nestedInsideIntent:tableRowIntent];
+    runTestNS({ tableCellIntent });
 }
 
 #if PLATFORM(MAC)

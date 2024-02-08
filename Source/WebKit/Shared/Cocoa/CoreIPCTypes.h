@@ -39,6 +39,7 @@
 #import "CoreIPCNumber.h"
 #import "CoreIPCPassKit.h"
 #import "CoreIPCPersonNameComponents.h"
+#import "CoreIPCPresentationIntent.h"
 #import "CoreIPCSecureCoding.h"
 #import "CoreIPCString.h"
 #import "CoreIPCURL.h"

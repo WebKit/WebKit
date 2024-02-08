@@ -87,6 +87,7 @@ enum class NSType : uint8_t {
     Locale,
     Number,
     PersonNameComponents,
+    PresentationIntent,
     SecureCoding,
     String,
     URL,

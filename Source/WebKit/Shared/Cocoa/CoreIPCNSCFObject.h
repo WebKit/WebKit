@@ -85,6 +85,7 @@ using ObjectValue = std::variant<
     CoreIPCNSValue,
     CoreIPCNumber,
     CoreIPCPersonNameComponents,
+    CoreIPCPresentationIntent,
     CoreIPCSecureCoding,
     CoreIPCString,
     CoreIPCURL
