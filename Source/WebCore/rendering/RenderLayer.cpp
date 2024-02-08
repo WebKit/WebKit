@@ -4019,6 +4019,8 @@ bool RenderLayer::establishesTopLayer() const
 
 void RenderLayer::establishesTopLayerWillChange()
 {
+    compositor().establishesTopLayerWillChangeForLayer(*this);
+
     if (auto* parentLayer = parent())
         parentLayer->removeChild(*this);
 }
@@ -5299,7 +5301,7 @@ void RenderLayer::repaintIncludingDescendants()
 
 bool RenderLayer::canUseOffsetFromAncestor(const RenderLayer& ancestor) const
 {
-    for (auto* layer = this; layer != &ancestor; layer = layer->parent()) {
+    for (auto* layer = this; layer && layer != &ancestor; layer = layer->parent()) {
         if (!layer->canUseOffsetFromAncestor())
             return false;
     }
@@ -5975,7 +5977,7 @@ void showLayerTree(const WebCore::RenderObject* renderer)
 static void outputPaintOrderTreeLegend(TextStream& stream)
 {
     stream.nextLine();
-    stream << "(S)tacking Context/(F)orced SC/O(P)portunistic SC, (N)ormal flow only, (O)verflow clip, (A)lpha (opacity or mask), has (B)lend mode, (I)solates blending, (T)ransform-ish, (F)ilter, Fi(X)ed position, Behaves as fi(x)ed, (C)omposited, (P)rovides backing/uses (p)rovided backing/paints to (a)ncestor, (c)omposited descendant, (s)scrolling ancestor, (t)transformed ancestor\n"
+    stream << "(T)op layer, (S)tacking Context/(F)orced SC/O(P)portunistic SC, (N)ormal flow only, (O)verflow clip, (A)lpha (opacity or mask), has (B)lend mode, (I)solates blending, (T)ransform-ish, (F)ilter, Fi(X)ed position, Behaves as fi(x)ed, (C)omposited, (P)rovides backing/uses (p)rovided backing/paints to (a)ncestor, (c)omposited descendant, (s)scrolling ancestor, (t)transformed ancestor\n"
         "Dirty (z)-lists, Dirty (n)ormal flow lists\n"
         "Traversal needs: requirements (t)raversal on descendants, (b)acking or hierarchy traversal on descendants, (r)equirements traversal on all descendants, requirements traversal on all (s)ubsequent layers, (h)ierarchy traversal on all descendants, update of paint (o)rder children\n"
         "Update needs:    post-(l)ayout requirements, (g)eometry, (k)ids geometry, (c)onfig, layer conne(x)ion, (s)crolling tree\n"
@@ -5992,6 +5994,7 @@ static void outputIdent(TextStream& stream, unsigned depth)
 
 static void outputPaintOrderTreeRecursive(TextStream& stream, const WebCore::RenderLayer& layer, const char* prefix, unsigned depth = 0)
 {
+    stream << (layer.establishesTopLayer() ? "T" : "-");
     stream << (layer.isCSSStackingContext() ? "S" : (layer.isForcedStackingContext() ? "F" : (layer.isOpportunisticStackingContext() ? "P" : "-")));
     stream << (layer.isNormalFlowOnly() ? "N" : "-");
     stream << (layer.renderer().hasNonVisibleOverflow() ? "O" : "-");

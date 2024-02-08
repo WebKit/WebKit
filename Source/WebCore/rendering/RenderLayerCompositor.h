@@ -244,6 +244,8 @@ public:
 
     void layerStyleChanged(StyleDifference, RenderLayer&, const RenderStyle* oldStyle);
 
+    void establishesTopLayerWillChangeForLayer(RenderLayer&);
+
     // Get the nearest ancestor layer that has overflow or clip, but is not a stacking context
     RenderLayer* enclosingNonStackingClippingLayer(const RenderLayer&) const;
 
@@ -434,6 +436,8 @@ private:
 
     void updateBackingSharingBeforeDescendantTraversal(BackingSharingState&, unsigned depth, const LayerOverlapMap&, RenderLayer&, OverlapExtent&, bool willBeComposited, RenderLayer* stackingContextAncestor);
     void updateBackingSharingAfterDescendantTraversal(BackingSharingState&, unsigned depth, const LayerOverlapMap&, RenderLayer&, OverlapExtent&, const RenderLayer* preDescendantProviderStartLayer, RenderLayer* stackingContextAncestor);
+
+    void clearBackingProviderSequencesInStackingContextOfLayer(RenderLayer&);
 
     void updateCompositingLayersTimerFired();
 
