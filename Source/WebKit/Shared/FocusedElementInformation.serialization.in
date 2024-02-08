@@ -74,6 +74,7 @@ enum class WebKit::InputType : uint8_t {
     bool allowsUserScaling;
     bool allowsUserScalingIgnoringAlwaysScalable;
     bool insideFixedPosition;
+    bool hasPlainText;
     WebCore::AutocapitalizeType autocapitalizeType;
     WebKit::InputType elementType;
     WebCore::InputMode inputMode;
