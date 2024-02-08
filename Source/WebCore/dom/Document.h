@@ -667,7 +667,8 @@ public:
     CheckedRef<const Style::Scope> checkedStyleScope() const;
 
     ExtensionStyleSheets* extensionStyleSheetsIfExists() { return m_extensionStyleSheets.get(); }
-    inline ExtensionStyleSheets& extensionStyleSheets();
+    inline ExtensionStyleSheets& extensionStyleSheets(); // Defined in DocumentInlines.h.
+    inline CheckedRef<ExtensionStyleSheets> checkedExtensionStyleSheets(); // Defined in DocumentInlines.h.
 
     const Style::CustomPropertyRegistry& customPropertyRegistry() const;
     const CSSCounterStyleRegistry& counterStyleRegistry() const;

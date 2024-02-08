@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/CheckedPtr.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
@@ -36,7 +37,7 @@ class BackForwardClient;
 class HistoryItem;
 class Page;
 
-class BackForwardController {
+class BackForwardController : public CanMakeCheckedPtr {
     WTF_MAKE_NONCOPYABLE(BackForwardController); WTF_MAKE_FAST_ALLOCATED;
 public:
     BackForwardController(Page&, Ref<BackForwardClient>&&);

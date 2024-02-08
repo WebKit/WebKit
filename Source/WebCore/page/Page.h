@@ -316,6 +316,7 @@ public:
     void clearPluginData();
 
     OpportunisticTaskScheduler& opportunisticTaskScheduler() const { return m_opportunisticTaskScheduler.get(); }
+    Ref<OpportunisticTaskScheduler> protectedOpportunisticTaskScheduler() const;
 
     WEBCORE_EXPORT void setCanStartMedia(bool);
     bool canStartMedia() const { return m_canStartMedia; }
@@ -339,7 +340,7 @@ public:
     WEBCORE_EXPORT void setGroupName(const String&);
     WEBCORE_EXPORT const String& groupName() const;
 
-    PageGroup& group();
+    WEBCORE_EXPORT PageGroup& group();
 
     BroadcastChannelRegistry& broadcastChannelRegistry() { return m_broadcastChannelRegistry; }
     WEBCORE_EXPORT Ref<BroadcastChannelRegistry> protectedBroadcastChannelRegistry() const;
@@ -372,6 +373,7 @@ public:
     const DragController& dragController() const { return m_dragController.get(); }
 #endif
     FocusController& focusController() const { return *m_focusController; }
+    CheckedRef<FocusController> checkedFocusController() const;
 #if ENABLE(CONTEXT_MENUS)
     ContextMenuController& contextMenuController() { return m_contextMenuController.get(); }
     const ContextMenuController& contextMenuController() const { return m_contextMenuController.get(); }
@@ -418,6 +420,7 @@ public:
     void progressEstimateChanged(LocalFrame&) const;
     void progressFinished(LocalFrame&) const;
     BackForwardController& backForward() { return m_backForwardController.get(); }
+    CheckedRef<BackForwardController> checkedBackForward();
 
     Seconds domTimerAlignmentInterval() const { return m_domTimerAlignmentInterval; }
 
@@ -843,8 +846,10 @@ public:
     Ref<CookieJar> protectedCookieJar() const;
 
     StorageNamespaceProvider& storageNamespaceProvider() { return m_storageNamespaceProvider.get(); }
+    Ref<StorageNamespaceProvider> protectedStorageNamespaceProvider() const;
 
     PluginInfoProvider& pluginInfoProvider();
+    Ref<PluginInfoProvider> protectedPluginInfoProvider() const;
 
     WEBCORE_EXPORT UserContentProvider& userContentProvider();
     WEBCORE_EXPORT Ref<UserContentProvider> protectedUserContentProvider();
@@ -853,6 +858,7 @@ public:
     ScreenOrientationManager* screenOrientationManager() const;
 
     VisitedLinkStore& visitedLinkStore();
+    Ref<VisitedLinkStore> protectedVisitedLinkStore();
     WEBCORE_EXPORT void setVisitedLinkStore(Ref<VisitedLinkStore>&&);
 
     std::optional<uint64_t> noiseInjectionHashSaltForDomain(const RegistrableDomain&);
@@ -1041,8 +1047,8 @@ public:
 #endif
     WEBCORE_EXPORT std::optional<AXTreeData> accessibilityTreeData() const;
 #if USE(ATSPI)
-    AccessibilityRootAtspi* accessibilityRootObject() const { return m_accessibilityRootObject; }
-    void setAccessibilityRootObject(AccessibilityRootAtspi* rootObject) { m_accessibilityRootObject = rootObject; }
+    AccessibilityRootAtspi* accessibilityRootObject() const;
+    void setAccessibilityRootObject(AccessibilityRootAtspi*);
 #endif
 
     void timelineControllerMaximumAnimationFrameRateDidChange(DocumentTimelinesController&);
@@ -1237,9 +1243,9 @@ private:
     String m_captionUserPreferencesStyleSheet;
 
     std::unique_ptr<PageGroup> m_singlePageGroup;
-    PageGroup* m_group { nullptr };
+    WeakPtr<PageGroup> m_group;
 
-    JSC::Debugger* m_debugger { nullptr };
+    JSC::Debugger* m_debugger { nullptr }; // FIXME: Use a smart pointer.
 
     bool m_canStartMedia { true };
     bool m_imageAnimationEnabled { true };
@@ -1442,7 +1448,7 @@ private:
 #endif
 
 #if USE(ATSPI)
-    AccessibilityRootAtspi* m_accessibilityRootObject { nullptr };
+    WeakPtr<AccessibilityRootAtspi> m_accessibilityRootObject;
 #endif
 
     ContentSecurityPolicyModeForExtension m_contentSecurityPolicyModeForExtension { ContentSecurityPolicyModeForExtension::None };
@@ -1460,13 +1466,6 @@ private:
     bool m_appUsesCustomAccentColor { false };
 #endif
 };
-
-inline PageGroup& Page::group()
-{
-    if (!m_group)
-        initGroup();
-    return *m_group;
-}
 
 inline Page* Frame::page() const
 {

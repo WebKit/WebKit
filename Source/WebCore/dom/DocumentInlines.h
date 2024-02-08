@@ -31,6 +31,7 @@
 #include "DocumentMarkerController.h"
 #include "DocumentParser.h"
 #include "Element.h"
+#include "ExtensionStyleSheets.h"
 #include "FocusOptions.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FullscreenManager.h"
@@ -73,6 +74,11 @@ inline ExtensionStyleSheets& Document::extensionStyleSheets()
     if (!m_extensionStyleSheets)
         return ensureExtensionStyleSheets();
     return *m_extensionStyleSheets;
+}
+
+inline CheckedRef<ExtensionStyleSheets> Document::checkedExtensionStyleSheets()
+{
+    return extensionStyleSheets();
 }
 
 inline VisitedLinkState& Document::visitedLinkState() const

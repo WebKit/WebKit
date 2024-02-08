@@ -5751,6 +5751,11 @@ RenderView* LocalFrameView::renderView() const
     return m_frame->contentRenderer();
 }
 
+CheckedPtr<RenderView> LocalFrameView::checkedRenderView() const
+{
+    return renderView();
+}
+
 int LocalFrameView::mapFromLayoutToCSSUnits(LayoutUnit value) const
 {
     return value / (m_frame->pageZoomFactor() * m_frame->frameScaleFactor());
