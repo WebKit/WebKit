@@ -3,7 +3,7 @@ From: Philippe Normand <philn@igalia.com>
 Date: Thu, 21 Dec 2023 10:19:01 +0000
 Subject: [PATCH] libsoup: Vendor patch needed for test bots
 
-I suppose that will ship in libsoup 3.4.5.
+I suppose that will ship in libsoup 3.5.0.
 ---
  elements/components/libsoup.bst               |  2 +
  ...ef-of-the-item-when-calling-soup_mes.patch | 54 +++++++++++++++++++
