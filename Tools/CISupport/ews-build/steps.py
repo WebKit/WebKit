@@ -3138,7 +3138,7 @@ class CompileWebKit(shell.Compile, AddToLogMixin, ShellMixin):
     def __init__(self, skipUpload=False, **kwargs):
         self.skipUpload = skipUpload
         self.cancelled_due_to_huge_logs = False
-        super().__init__(logEnviron=False, **kwargs)
+        super().__init__(timeout=60 * 60, logEnviron=False, **kwargs)
 
     def doStepIf(self, step):
         return not (self.getProperty('fast_commit_queue') and self.getProperty('buildername', '').lower() == 'commit-queue')

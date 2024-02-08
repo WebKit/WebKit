@@ -1237,7 +1237,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('configuration', 'release')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        timeout=1200,
+                        timeout=3600,
                         logEnviron=False,
                         command=['/bin/sh', '-c', 'perl Tools/Scripts/build-webkit --release -hideShellScriptEnvironment WK_VALIDATE_DEPENDENCIES=YES --ios-simulator 2>&1 | perl Tools/Scripts/filter-build-webkit -logfile WebKitBuild/build-log.txt'],
                         )
@@ -1254,7 +1254,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('architecture', 'x86_64 arm64')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        timeout=1200,
+                        timeout=3600,
                         logEnviron=False,
                         command=['/bin/sh', '-c', 'perl Tools/Scripts/build-webkit --release --architecture "x86_64 arm64" -hideShellScriptEnvironment WK_VALIDATE_DEPENDENCIES=YES 2>&1 | perl Tools/Scripts/filter-build-webkit -logfile WebKitBuild/build-log.txt'],
                         )
@@ -1270,7 +1270,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('configuration', 'release')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        timeout=1200,
+                        timeout=3600,
                         logEnviron=False,
                         command=['perl', 'Tools/Scripts/build-webkit', '--release', '--prefix=/app/webkit/WebKitBuild/release/install', '--gtk'],
                         )
@@ -1286,7 +1286,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('configuration', 'release')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        timeout=1200,
+                        timeout=3600,
                         logEnviron=False,
                         command=['perl', 'Tools/Scripts/build-webkit', '--release', '--wpe'],
                         )
@@ -1302,7 +1302,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('configuration', 'debug')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        timeout=1200,
+                        timeout=3600,
                         logEnviron=False,
                         command=['/bin/sh', '-c', 'perl Tools/Scripts/build-webkit --debug -hideShellScriptEnvironment WK_VALIDATE_DEPENDENCIES=YES 2>&1 | perl Tools/Scripts/filter-build-webkit -logfile WebKitBuild/build-log.txt'],
                         )
@@ -1336,7 +1336,7 @@ class TestCompileWebKitWithoutChange(BuildStepMixinAdditions, unittest.TestCase)
         self.setProperty('configuration', 'release')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        timeout=1200,
+                        timeout=3600,
                         logEnviron=False,
                         command=['/bin/sh', '-c', 'perl Tools/Scripts/build-webkit --release -hideShellScriptEnvironment WK_VALIDATE_DEPENDENCIES=YES --ios-simulator 2>&1 | perl Tools/Scripts/filter-build-webkit -logfile WebKitBuild/build-log.txt'],
                         )
@@ -1352,7 +1352,7 @@ class TestCompileWebKitWithoutChange(BuildStepMixinAdditions, unittest.TestCase)
         self.setProperty('configuration', 'debug')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        timeout=1200,
+                        timeout=3600,
                         logEnviron=False,
                         command=['/bin/sh', '-c', 'perl Tools/Scripts/build-webkit --debug -hideShellScriptEnvironment WK_VALIDATE_DEPENDENCIES=YES 2>&1 | perl Tools/Scripts/filter-build-webkit -logfile WebKitBuild/build-log.txt'],
                         )
@@ -1477,7 +1477,7 @@ class TestCompileJSC(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('configuration', 'release')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        timeout=1200,
+                        timeout=3600,
                         logEnviron=False,
                         command=['/bin/sh', '-c', 'perl Tools/Scripts/build-jsc --release WK_VALIDATE_DEPENDENCIES=YES 2>&1 | perl Tools/Scripts/filter-build-webkit -logfile WebKitBuild/build-log.txt'],
                         )
@@ -1493,7 +1493,7 @@ class TestCompileJSC(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('configuration', 'debug')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        timeout=1200,
+                        timeout=3600,
                         logEnviron=False,
                         command=['/bin/sh', '-c', 'perl Tools/Scripts/build-jsc --debug WK_VALIDATE_DEPENDENCIES=YES 2>&1 | perl Tools/Scripts/filter-build-webkit -logfile WebKitBuild/build-log.txt'],
                         )
@@ -1518,7 +1518,7 @@ class TestCompileJSCWithoutChange(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('configuration', 'release')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        timeout=1200,
+                        timeout=3600,
                         logEnviron=False,
                         command=['perl', 'Tools/Scripts/build-jsc', '--release'],
                         )
@@ -1533,7 +1533,7 @@ class TestCompileJSCWithoutChange(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('configuration', 'debug')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        timeout=1200,
+                        timeout=3600,
                         logEnviron=False,
                         command=['perl', 'Tools/Scripts/build-jsc', '--debug'],
                         )
