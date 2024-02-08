@@ -38,37 +38,10 @@ WebsitePolicies::WebsitePolicies() = default;
 Ref<WebsitePolicies> WebsitePolicies::copy() const
 {
     auto policies = WebsitePolicies::create();
-    policies->m_contentExtensionEnablement = m_contentExtensionEnablement;
-    policies->m_activeContentRuleListActionPatterns = m_activeContentRuleListActionPatterns;
-    policies->setAllowedAutoplayQuirks(m_allowedAutoplayQuirks);
-    policies->setAutoplayPolicy(m_autoplayPolicy);
-#if ENABLE(DEVICE_ORIENTATION)
-    policies->setDeviceOrientationAndMotionAccessState(m_deviceOrientationAndMotionAccessState);
-#endif
-    policies->setPopUpPolicy(m_popUpPolicy);
-    policies->setWebsiteDataStore(m_websiteDataStore.get());
-    policies->setCustomUserAgent(m_customUserAgent);
-    policies->setCustomUserAgentAsSiteSpecificQuirks(m_customUserAgentAsSiteSpecificQuirks);
-    policies->setCustomNavigatorPlatform(m_customNavigatorPlatform);
-    policies->setPreferredContentMode(m_preferredContentMode);
-    policies->setMetaViewportPolicy(m_metaViewportPolicy);
-    policies->setMediaSourcePolicy(m_mediaSourcePolicy);
-    policies->setSimulatedMouseEventsDispatchPolicy(m_simulatedMouseEventsDispatchPolicy);
-    policies->setLegacyOverflowScrollingTouchPolicy(m_legacyOverflowScrollingTouchPolicy);
-    policies->setAllowContentChangeObserverQuirk(m_allowContentChangeObserverQuirk);
+    policies->m_data = m_data;
     policies->setWebsiteDataStore(m_websiteDataStore.get());
     policies->setUserContentController(m_userContentController.get());
-    policies->setAdvancedPrivacyProtections(m_advancedPrivacyProtections);
-    policies->setIdempotentModeAutosizingOnlyHonorsPercentages(m_idempotentModeAutosizingOnlyHonorsPercentages);
-    policies->setCustomHeaderFields(Vector<WebCore::CustomHeaderFields> { m_customHeaderFields });
-    policies->setAllowSiteSpecificQuirksToOverrideContentMode(m_allowSiteSpecificQuirksToOverrideContentMode);
-    policies->setApplicationNameForDesktopUserAgent(m_applicationNameForDesktopUserAgent);
-    policies->setAllowsContentJavaScript(m_allowsContentJavaScript);
     policies->setLockdownModeEnabled(m_lockdownModeEnabled);
-    policies->setMouseEventPolicy(m_mouseEventPolicy);
-    policies->setModalContainerObservationPolicy(m_modalContainerObservationPolicy);
-    policies->setColorSchemePreference(m_colorSchemePreference);
-    policies->setAllowPrivacyProxy(m_allowPrivacyProxy);
     return policies;
 }
 
@@ -86,36 +59,7 @@ void WebsitePolicies::setUserContentController(RefPtr<WebKit::WebUserContentCont
 
 WebKit::WebsitePoliciesData WebsitePolicies::data()
 {
-    Vector<WebCore::CustomHeaderFields> customHeaderFields;
-    customHeaderFields.reserveInitialCapacity(this->customHeaderFields().size());
-    customHeaderFields.appendVector(this->customHeaderFields());
-
-    return {
-        m_contentExtensionEnablement,
-        activeContentRuleListActionPatterns(),
-        allowedAutoplayQuirks(),
-        autoplayPolicy(),
-#if ENABLE(DEVICE_ORIENTATION)
-        deviceOrientationAndMotionAccessState(),
-#endif
-        WTFMove(customHeaderFields),
-        popUpPolicy(),
-        m_customUserAgent,
-        m_customUserAgentAsSiteSpecificQuirks,
-        m_customNavigatorPlatform,
-        m_metaViewportPolicy,
-        m_mediaSourcePolicy,
-        m_simulatedMouseEventsDispatchPolicy,
-        m_legacyOverflowScrollingTouchPolicy,
-        m_allowContentChangeObserverQuirk,
-        m_allowsContentJavaScript,
-        m_mouseEventPolicy,
-        m_modalContainerObservationPolicy,
-        m_colorSchemePreference,
-        m_advancedPrivacyProtections,
-        m_idempotentModeAutosizingOnlyHonorsPercentages,
-        m_allowPrivacyProxy
-    };
+    return m_data;
 }
 
 bool WebsitePolicies::lockdownModeEnabled() const

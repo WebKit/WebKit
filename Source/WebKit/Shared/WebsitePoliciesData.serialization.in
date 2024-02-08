@@ -44,29 +44,38 @@ enum class WebKit::WebsiteLegacyOverflowScrollingTouchPolicy : uint8_t {
     Enable
 };
 
+enum class WebKit::WebContentMode : uint8_t {
+    Recommended,
+    Mobile,
+    Desktop
+};
+
 struct WebKit::WebsitePoliciesData {
-    WebCore::ContentExtensionEnablement contentExtensionEnablement;
     HashMap<WTF::String, Vector<WTF::String>> activeContentRuleListActionPatterns;
-    OptionSet<WebKit::WebsiteAutoplayQuirk> allowedAutoplayQuirks;
-    WebKit::WebsiteAutoplayPolicy autoplayPolicy;
-#if ENABLE(DEVICE_ORIENTATION)
-    WebCore::DeviceOrientationOrMotionPermissionState deviceOrientationAndMotionAccessState;
-#endif
     Vector<WebCore::CustomHeaderFields> customHeaderFields;
+    WTF::String customUserAgent;
+    WTF::String customUserAgentAsSiteSpecificQuirks;
+    WTF::String customNavigatorPlatform;
+    WTF::String applicationNameForDesktopUserAgent;
+    OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections;
+    OptionSet<WebKit::WebsiteAutoplayQuirk> allowedAutoplayQuirks;
+    WebCore::ContentExtensionEnablement contentExtensionEnablement;
+    WebKit::WebsiteAutoplayPolicy autoplayPolicy;
     WebKit::WebsitePopUpPolicy popUpPolicy;
-    String customUserAgent;
-    String customUserAgentAsSiteSpecificQuirks;
-    String customNavigatorPlatform;
     WebKit::WebsiteMetaViewportPolicy metaViewportPolicy;
     WebKit::WebsiteMediaSourcePolicy mediaSourcePolicy;
     WebKit::WebsiteSimulatedMouseEventsDispatchPolicy simulatedMouseEventsDispatchPolicy;
     WebKit::WebsiteLegacyOverflowScrollingTouchPolicy legacyOverflowScrollingTouchPolicy;
-    bool allowContentChangeObserverQuirk;
     WebCore::AllowsContentJavaScript allowsContentJavaScript;
     WebCore::MouseEventPolicy mouseEventPolicy;
     WebCore::ModalContainerObservationPolicy modalContainerObservationPolicy;
     WebCore::ColorSchemePreference colorSchemePreference;
-    OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections;
+    WebKit::WebContentMode preferredContentMode;
+#if ENABLE(DEVICE_ORIENTATION)
+    WebCore::DeviceOrientationOrMotionPermissionState deviceOrientationAndMotionAccessState;
+#endif
+    bool allowContentChangeObserverQuirk;
     bool idempotentModeAutosizingOnlyHonorsPercentages;
     bool allowPrivacyProxy;
+    bool allowSiteSpecificQuirksToOverrideContentMode;
 };
