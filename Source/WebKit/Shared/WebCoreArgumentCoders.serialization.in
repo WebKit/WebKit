@@ -5031,7 +5031,6 @@ class WebCore::SecurityOriginData {
 #if ENABLE(MEDIA_STREAM)
 
 [Nested] enum class WebCore::MediaConstraint::DataType : uint8_t {
-    None,
     Integer,
     Double,
     Boolean,
@@ -5060,7 +5059,6 @@ enum class WebCore::MediaConstraintType : uint8_t {
 
 header: <WebCore/MediaConstraints.h>
 [CustomHeader] class WebCore::MediaConstraint {
-    WebCore::MediaConstraintType constraintType();
     WebCore::MediaConstraint::DataType dataType();
 };
 

@@ -238,7 +238,7 @@ public:
     WEBCORE_EXPORT VideoFrameSizeConstraints extractVideoFrameSizeConstraints(const MediaConstraints&);
 
     std::optional<MediaConstraintType> hasAnyInvalidConstraint(const MediaConstraints&);
-    bool supportsConstraint(const MediaConstraint&);
+    bool supportsConstraint(MediaConstraintType);
 
     virtual bool isMockSource() const { return false; }
     virtual bool isCaptureSource() const { return false; }
@@ -289,8 +289,14 @@ protected:
     virtual void endApplyingConstraints() { }
 
     std::optional<MediaConstraintType> selectSettings(const MediaConstraints&, MediaTrackConstraintSetMap&);
-    double fitnessDistance(const MediaConstraint&);
-    void applyConstraint(const MediaConstraint&);
+
+    double fitnessDistance(MediaConstraintType, const IntConstraint&);
+    double fitnessDistance(MediaConstraintType, const DoubleConstraint&);
+    double fitnessDistance(MediaConstraintType, const StringConstraint&);
+    double fitnessDistance(MediaConstraintType, const BooleanConstraint&);
+    double fitnessDistance(MediaConstraintType, const MediaConstraint&);
+
+    void applyConstraint(MediaConstraintType, const MediaConstraint&);
     void applyConstraints(const MediaTrackConstraintSetMap&);
     VideoFrameSizeConstraints extractVideoFrameSizeConstraints(const MediaTrackConstraintSetMap&);
     std::optional<MediaConstraintType> hasInvalidSizeFrameRateAndZoomConstraints(std::optional<IntConstraint> width, std::optional<IntConstraint> height, std::optional<DoubleConstraint>, std::optional<DoubleConstraint>, double& fitnessDistance);

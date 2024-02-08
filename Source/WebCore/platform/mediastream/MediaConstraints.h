@@ -44,7 +44,7 @@ namespace WebCore {
     
 class MediaConstraint {
 public:
-    enum class DataType : uint8_t { None, Integer, Double, Boolean, String };
+    enum class DataType : uint8_t { Integer, Double, Boolean, String };
 
     bool isInt() const { return m_dataType == DataType::Integer; }
     bool isDouble() const { return m_dataType == DataType::Double; }
@@ -52,22 +52,16 @@ public:
     bool isString() const { return m_dataType == DataType::String; }
 
     DataType dataType() const { return m_dataType; }
-    MediaConstraintType constraintType() const { return m_constraintType; }
 
-    void log() const;
+    void log(MediaConstraintType) const;
 
-    MediaConstraint(MediaConstraintType constraintType, DataType dataType)
-        : m_constraintType(constraintType)
-        , m_dataType(dataType)
+    explicit MediaConstraint(DataType dataType)
+        : m_dataType(dataType)
     {
     }
 
-protected:
-    MediaConstraint() = default;
-
 private:
-    MediaConstraintType m_constraintType { MediaConstraintType::Unknown };
-    DataType m_dataType { DataType::None };
+    DataType m_dataType { DataType::Integer };
 };
 
 template<class ValueType>
@@ -325,8 +319,8 @@ public:
     bool isMandatory() const { return m_min || m_max || m_exact; }
 
 protected:
-    NumericConstraint(MediaConstraintType type, DataType dataType)
-        : MediaConstraint(type, dataType)
+    NumericConstraint(DataType dataType)
+        : MediaConstraint(dataType)
     {
     }
     
@@ -375,20 +369,17 @@ protected:
 
 class IntConstraint final : public NumericConstraint<int> {
 public:
-    explicit IntConstraint(MediaConstraintType type)
-        : NumericConstraint<int>(type, DataType::Integer)
+    IntConstraint()
+        : NumericConstraint<int>(DataType::Integer)
     {
     }
 
-    IntConstraint() = default;
-
-    void merge(const MediaConstraint& other)
+    void merge(const IntConstraint& other)
     {
-        ASSERT(other.isInt());
-        NumericConstraint::innerMerge(downcast<const IntConstraint>(other));
+        NumericConstraint::innerMerge(other);
     }
 
-    void logAsInt() const;
+    void logAsInt(MediaConstraintType) const;
     
 private:
     friend struct IPC::ArgumentCoder<IntConstraint, void>;
@@ -401,20 +392,17 @@ private:
 
 class DoubleConstraint final : public NumericConstraint<double> {
 public:
-    explicit DoubleConstraint(MediaConstraintType type)
-        : NumericConstraint<double>(type, DataType::Double)
+    DoubleConstraint()
+        : NumericConstraint<double>(DataType::Double)
     {
     }
 
-    DoubleConstraint() = default;
-
-    void merge(const MediaConstraint& other)
+    void merge(const DoubleConstraint& other)
     {
-        ASSERT(other.isDouble());
-        NumericConstraint::innerMerge(downcast<DoubleConstraint>(other));
+        NumericConstraint::innerMerge(other);
     }
 
-    void logAsDouble() const;
+    void logAsDouble(MediaConstraintType) const;
     
 private:
     friend struct IPC::ArgumentCoder<DoubleConstraint, void>;
@@ -427,12 +415,10 @@ private:
 
 class BooleanConstraint final : public MediaConstraint {
 public:
-    explicit BooleanConstraint(MediaConstraintType type)
-        : MediaConstraint(type, DataType::Boolean)
+    BooleanConstraint()
+        : MediaConstraint(DataType::Boolean)
     {
     }
-
-    BooleanConstraint() = default;
 
     void setExact(bool value) { m_exact = value; }
     void setIdeal(bool value) { m_ideal = value; }
@@ -478,19 +464,16 @@ public:
         return 1;
     }
 
-    void merge(const MediaConstraint& other)
+    void merge(const BooleanConstraint& other)
     {
-        ASSERT(other.isBoolean());
-        const BooleanConstraint& typedOther = downcast<BooleanConstraint>(other);
-
-        if (typedOther.isEmpty())
+        if (other.isEmpty())
             return;
 
         bool value;
-        if (typedOther.getExact(value))
+        if (other.getExact(value))
             m_exact = value;
 
-        if (typedOther.getIdeal(value)) {
+        if (other.getIdeal(value)) {
             if (!m_ideal || (value && !m_ideal.value()))
                 m_ideal = value;
         }
@@ -499,7 +482,7 @@ public:
     bool isEmpty() const { return !m_exact && !m_ideal; };
     bool isMandatory() const { return bool(m_exact); }
 
-    void logAsBoolean() const;
+    void logAsBoolean(MediaConstraintType) const;
 
 private:
     friend struct IPC::ArgumentCoder<BooleanConstraint, void>;
@@ -517,12 +500,10 @@ private:
 
 class StringConstraint : public MediaConstraint {
 public:
-    explicit StringConstraint(MediaConstraintType type)
-        : MediaConstraint(type, DataType::String)
+    StringConstraint()
+        : MediaConstraint(DataType::String)
     {
     }
-
-    StringConstraint() = default;
 
     void setExact(const String& value)
     {
@@ -571,7 +552,7 @@ public:
 
     bool isEmpty() const { return m_exact.isEmpty() && m_ideal.isEmpty(); }
     bool isMandatory() const { return !m_exact.isEmpty(); }
-    WEBCORE_EXPORT void merge(const MediaConstraint&);
+    WEBCORE_EXPORT void merge(const StringConstraint&);
 
     void removeEmptyStringConstraint()
     {
@@ -599,19 +580,6 @@ private:
     Vector<String> m_ideal;
 };
 
-class UnknownConstraint final : public MediaConstraint {
-public:
-    UnknownConstraint(MediaConstraintType type)
-        : MediaConstraint(type, DataType::None)
-    {
-    }
-
-private:
-    bool isEmpty() const { return true; }
-    bool isMandatory() const { return false; }
-    void merge(const MediaConstraint&) { }
-};
-
 class MediaTrackConstraintSetMap {
 public:
     MediaTrackConstraintSetMap() = default;
@@ -635,8 +603,8 @@ public:
     {
     }
 
-    WEBCORE_EXPORT void forEach(Function<void(const MediaConstraint&)>&&) const;
-    void filter(const Function<bool(const MediaConstraint&)>&) const;
+    WEBCORE_EXPORT void forEach(Function<void(MediaConstraintType, const MediaConstraint&)>&&) const;
+    void filter(const Function<bool(MediaConstraintType, const MediaConstraint&)>&) const;
     bool isEmpty() const;
     WEBCORE_EXPORT size_t size() const;
 
@@ -646,7 +614,11 @@ public:
     WEBCORE_EXPORT void set(MediaConstraintType, std::optional<StringConstraint>&&);
     void set(MediaConstraintType, const MediaConstraint&);
 
-    void merge(const MediaConstraint&);
+    void merge(MediaConstraintType, const IntConstraint&);
+    void merge(MediaConstraintType, const DoubleConstraint&);
+    void merge(MediaConstraintType, const BooleanConstraint&);
+    void merge(MediaConstraintType, const StringConstraint&);
+    void merge(MediaConstraintType, const MediaConstraint&);
 
     const std::optional<IntConstraint>& width() const { return m_width; }
     const std::optional<IntConstraint>& height() const { return m_height; }

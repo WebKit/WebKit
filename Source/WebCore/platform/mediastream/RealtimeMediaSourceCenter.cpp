@@ -346,7 +346,7 @@ void RealtimeMediaSourceCenter::validateRequestConstraintsAfterEnumeration(Valid
 
     if (request.audioConstraints.isValid && audioDeviceInfo.isEmpty()) {
         WTFLogAlways("Audio capture was requested but no device was found amongst %zu devices", audioCaptureFactory().audioCaptureDeviceManager().captureDevices().size());
-        request.audioConstraints.mandatoryConstraints.forEach([](auto& constraint) { constraint.log(); });
+        request.audioConstraints.mandatoryConstraints.forEach([](auto constraintType, auto& constraint) { constraint.log(constraintType); });
 
         invalidHandler(firstInvalidConstraint);
         return;
@@ -354,7 +354,7 @@ void RealtimeMediaSourceCenter::validateRequestConstraintsAfterEnumeration(Valid
 
     if (request.videoConstraints.isValid && videoDeviceInfo.isEmpty()) {
         WTFLogAlways("Video capture was requested but no device was found amongst %zu devices", videoCaptureFactory().videoCaptureDeviceManager().captureDevices().size());
-        request.videoConstraints.mandatoryConstraints.forEach([](auto& constraint) { constraint.log(); });
+        request.videoConstraints.mandatoryConstraints.forEach([](auto constraintType, auto& constraint) { constraint.log(constraintType); });
 
         invalidHandler(firstInvalidConstraint);
         return;

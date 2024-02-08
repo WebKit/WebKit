@@ -35,7 +35,7 @@ enum class ConstraintSetType { Mandatory, Advanced };
 
 static void set(MediaTrackConstraintSetMap& map, ConstraintSetType setType, MediaConstraintType type, const ConstrainLong& value)
 {
-    IntConstraint constraint(type);
+    IntConstraint constraint;
     WTF::switchOn(value,
         [&] (int integer) {
             if (setType == ConstraintSetType::Mandatory)
@@ -59,7 +59,7 @@ static void set(MediaTrackConstraintSetMap& map, ConstraintSetType setType, Medi
 
 static void set(MediaTrackConstraintSetMap& map, ConstraintSetType setType, MediaConstraintType type, const ConstrainDouble& value)
 {
-    DoubleConstraint constraint(type);
+    DoubleConstraint constraint;
     WTF::switchOn(value,
         [&] (double number) {
             if (setType == ConstraintSetType::Mandatory)
@@ -83,7 +83,7 @@ static void set(MediaTrackConstraintSetMap& map, ConstraintSetType setType, Medi
 
 static void set(MediaTrackConstraintSetMap& map, ConstraintSetType setType, MediaConstraintType type, const ConstrainBoolean& value)
 {
-    BooleanConstraint constraint(type);
+    BooleanConstraint constraint;
     WTF::switchOn(value,
         [&] (bool boolean) {
             if (setType == ConstraintSetType::Mandatory)
@@ -103,7 +103,7 @@ static void set(MediaTrackConstraintSetMap& map, ConstraintSetType setType, Medi
 
 static void set(MediaTrackConstraintSetMap& map, ConstraintSetType setType, MediaConstraintType type, const ConstrainDOMString& value)
 {
-    StringConstraint constraint(type);
+    StringConstraint constraint;
     WTF::switchOn(value,
         [&] (const String& string) {
             if (setType == ConstraintSetType::Mandatory)

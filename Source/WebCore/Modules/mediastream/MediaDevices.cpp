@@ -188,8 +188,8 @@ static bool hasInvalidGetDisplayMediaConstraint(const MediaConstraints& constrai
         return true;
 
     bool invalid = false;
-    constraints.mandatoryConstraints.filter([&invalid] (const MediaConstraint& constraint) mutable {
-        switch (constraint.constraintType()) {
+    constraints.mandatoryConstraints.filter([&invalid] (auto constraintType, const MediaConstraint& constraint) mutable {
+        switch (constraintType) {
         case MediaConstraintType::Width:
         case MediaConstraintType::Height: {
             auto& intConstraint = downcast<IntConstraint>(constraint);
