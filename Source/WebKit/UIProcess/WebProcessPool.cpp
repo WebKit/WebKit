@@ -243,11 +243,6 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     , m_audibleActivityTimer(RunLoop::main(), this, &WebProcessPool::clearAudibleActivity)
     , m_webProcessWithMediaStreamingCounter([this](RefCounterEvent) { updateMediaStreamingActivity(); })
 {
-#if USE(EXTENSIONKIT)
-    bool manageProcessesAsExtensions = !CFPreferencesGetAppBooleanValue(CFSTR("disableProcessesAsExtensions"), kCFPreferencesCurrentApplication, nullptr);
-    AuxiliaryProcessProxy::setManageProcessesAsExtensions(manageProcessesAsExtensions);
-#endif
-
     static auto s_needsGlobalStaticInitialization = NeedsGlobalStaticInitialization::Yes;
     auto needsGlobalStaticInitialization = std::exchange(s_needsGlobalStaticInitialization, NeedsGlobalStaticInitialization::No);
     if (needsGlobalStaticInitialization == NeedsGlobalStaticInitialization::Yes) {

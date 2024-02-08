@@ -296,12 +296,9 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
         return;
 
 #if USE(EXTENSIONKIT)
-    if (WebKit::AuxiliaryProcessProxy::manageProcessesAsExtensions()) {
-        for (WKVisibilityPropagationView *visibilityPropagationView in _visibilityPropagationViews.get())
-            [visibilityPropagationView propagateVisibilityToProcess:_page->process()];
-        return;
-    }
-#endif
+    for (WKVisibilityPropagationView *visibilityPropagationView in _visibilityPropagationViews.get())
+        [visibilityPropagationView propagateVisibilityToProcess:_page->process()];
+#else
 
     auto processID = _page->process().processID();
     auto contextID = _page->contextIDForVisibilityPropagationInWebProcess();
@@ -322,6 +319,7 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
 #endif
     RELEASE_LOG(Process, "Created visibility propagation view %p (contextID=%u) for WebContent process with PID=%d", _visibilityPropagationViewForWebProcess.get(), contextID, processID);
     [self addSubview:_visibilityPropagationViewForWebProcess.get()];
+#endif // USE(EXTENSIONKIT)
 }
 
 #if ENABLE(GPU_PROCESS)
@@ -332,13 +330,9 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
         return;
 
 #if USE(EXTENSIONKIT)
-    if (WebKit::AuxiliaryProcessProxy::manageProcessesAsExtensions()) {
-        for (WKVisibilityPropagationView *visibilityPropagationView in _visibilityPropagationViews.get())
-            [visibilityPropagationView propagateVisibilityToProcess:*gpuProcess];
-        return;
-    }
-#endif
-
+    for (WKVisibilityPropagationView *visibilityPropagationView in _visibilityPropagationViews.get())
+        [visibilityPropagationView propagateVisibilityToProcess:*gpuProcess];
+#else
     auto processID = gpuProcess->processID();
     auto contextID = _page->contextIDForVisibilityPropagationInGPUProcess();
     if (!processID || !contextID)
@@ -351,6 +345,7 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
     _visibilityPropagationViewForGPUProcess = adoptNS([[_UILayerHostView alloc] initWithFrame:CGRectZero pid:processID contextID:contextID]);
     RELEASE_LOG(Process, "Created visibility propagation view %p (contextID=%u) for GPU process with PID=%d", _visibilityPropagationViewForGPUProcess.get(), contextID, processID);
     [self addSubview:_visibilityPropagationViewForGPUProcess.get()];
+#endif // USE(EXTENSIONKIT)
 }
 #endif // ENABLE(GPU_PROCESS)
 
@@ -898,9 +893,6 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 #if USE(EXTENSIONKIT)
 - (WKVisibilityPropagationView *)_createVisibilityPropagationView
 {
-    if (!WebKit::AuxiliaryProcessProxy::manageProcessesAsExtensions())
-        return nil;
-
     if (!_visibilityPropagationViews)
         _visibilityPropagationViews = [NSHashTable weakObjectsHashTable];
 

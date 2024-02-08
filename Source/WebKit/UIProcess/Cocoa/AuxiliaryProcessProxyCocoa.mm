@@ -83,13 +83,4 @@ RetainPtr<_SEExtensionProcess> AuxiliaryProcessProxy::extensionProcess() const
 }
 #endif
 
-void AuxiliaryProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
-{
-#if USE(EXTENSIONKIT)
-    launchOptions.launchAsExtensions = s_manageProcessesAsExtensions;
-#else
-    UNUSED_PARAM(launchOptions);
-#endif
-}
-
 } // namespace WebKit

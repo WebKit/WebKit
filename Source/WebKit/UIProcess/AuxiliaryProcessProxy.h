@@ -193,8 +193,6 @@ public:
 
 #if USE(EXTENSIONKIT)
     RetainPtr<_SEExtensionProcess> extensionProcess() const;
-    static void setManageProcessesAsExtensions(bool manageProcessesAsExtensions) { s_manageProcessesAsExtensions = manageProcessesAsExtensions; }
-    static bool manageProcessesAsExtensions() { return s_manageProcessesAsExtensions; }
 #endif
 
 #if ENABLE(EXTENSION_CAPABILITIES)
@@ -212,7 +210,7 @@ protected:
     virtual ASCIILiteral processName() const = 0;
 
     virtual void getLaunchOptions(ProcessLauncher::LaunchOptions&);
-    virtual void platformGetLaunchOptions(ProcessLauncher::LaunchOptions&);
+    virtual void platformGetLaunchOptions(ProcessLauncher::LaunchOptions&) { }
 
     struct PendingMessage {
         UniqueRef<IPC::Encoder> encoder;
@@ -263,9 +261,6 @@ private:
 #endif
 #if ENABLE(EXTENSION_CAPABILITIES)
     ExtensionCapabilityGrantMap m_extensionCapabilityGrants;
-#endif
-#if USE(EXTENSIONKIT)
-    static bool s_manageProcessesAsExtensions;
 #endif
 };
 

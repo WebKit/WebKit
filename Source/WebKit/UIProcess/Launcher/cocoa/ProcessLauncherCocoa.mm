@@ -117,6 +117,7 @@ static void launchWithExtensionKit(ProcessLauncher& processLauncher, ProcessLaun
 }
 #endif // USE(EXTENSIONKIT)
 
+#if !USE(EXTENSIONKIT) || !PLATFORM(IOS)
 static const char* webContentServiceName(const ProcessLauncher::LaunchOptions& launchOptions, ProcessLauncher::Client* client)
 {
     if (client && client->shouldEnableLockdownMode())
@@ -142,6 +143,7 @@ static const char* serviceName(const ProcessLauncher::LaunchOptions& launchOptio
 #endif
     }
 }
+#endif // !USE(EXTENSIONKIT) || !PLATFORM(IOS)
 
 void ProcessLauncher::platformDestroy()
 {
@@ -210,14 +212,12 @@ void ProcessLauncher::launchProcess()
         });
     };
 
-    if (m_launchOptions.launchAsExtensions) {
-        launchWithExtensionKit(*this, m_launchOptions.processType, m_client, handler);
-        return;
-    }
-#endif
+    launchWithExtensionKit(*this, m_launchOptions.processType, m_client, handler);
+#else
     const char* name = serviceName(m_launchOptions, m_client);
     m_xpcConnection = adoptOSObject(xpc_connection_create(name, nullptr));
     finishLaunchingProcess(name);
+#endif
 }
 
 void ProcessLauncher::finishLaunchingProcess(const char* name)
