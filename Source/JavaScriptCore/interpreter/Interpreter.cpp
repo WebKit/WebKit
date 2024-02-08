@@ -130,7 +130,7 @@ JSValue eval(CallFrame* callFrame, JSValue thisValue, JSScope* callerScopeChain,
     if (!globalObject->evalEnabled()) {
         globalObject->globalObjectMethodTable()->reportViolationForUnsafeEval(globalObject, programString);
         throwException(globalObject, scope, createEvalError(globalObject, globalObject->evalDisabledErrorMessage()));
-        return jsUndefined();
+        return { };
     }
     String programSource = programString->value(globalObject);
     RETURN_IF_EXCEPTION(scope, JSValue());
@@ -179,7 +179,7 @@ JSValue eval(CallFrame* callFrame, JSValue thisValue, JSScope* callerScopeChain,
         eval = DirectEvalExecutable::create(globalObject, makeSource(programSource, callerBaselineCodeBlock->source().provider()->sourceOrigin(), sourceTaintedOrigin), derivedContextType, callerUnlinkedCodeBlock->needsClassFieldInitializer(), callerUnlinkedCodeBlock->privateBrandRequirement(), isArrowFunctionContext, callerBaselineCodeBlock->ownerExecutable()->isInsideOrdinaryFunction(), evalContextType, &variablesUnderTDZ, &privateNameEnvironment, ecmaMode);
         EXCEPTION_ASSERT(!!scope.exception() == !eval);
         if (!eval)
-            return jsUndefined();
+            return { };
 
         // Skip the eval cache if tainted since another eval call could have a different taintedness.
         if (sourceTaintedOrigin == SourceTaintedOrigin::Untainted)
