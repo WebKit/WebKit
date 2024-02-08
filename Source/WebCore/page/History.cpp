@@ -59,11 +59,21 @@ History::History(LocalDOMWindow& window)
 {
 }
 
-unsigned History::length() const
+static bool isDocumentFullyActive(LocalFrame* frame)
+{
+    return frame && frame->document()->isFullyActive();
+}
+
+static Exception documentNotFullyActive()
+{
+    return Exception { ExceptionCode::SecurityError, "Attempt to use History API from a document that isn't fully active"_s };
+}
+
+ExceptionOr<unsigned> History::length() const
 {
     auto* frame = this->frame();
-    if (!frame)
-        return 0;
+    if (!isDocumentFullyActive(frame))
+        return documentNotFullyActive();
     auto* page = frame->page();
     if (!page)
         return 0;
@@ -73,8 +83,8 @@ unsigned History::length() const
 ExceptionOr<History::ScrollRestoration> History::scrollRestoration() const
 {
     auto* frame = this->frame();
-    if (!frame)
-        return Exception { ExceptionCode::SecurityError };
+    if (!isDocumentFullyActive(frame))
+        return documentNotFullyActive();
 
     auto* historyItem = frame->loader().history().currentItem();
     if (!historyItem)
@@ -86,8 +96,8 @@ ExceptionOr<History::ScrollRestoration> History::scrollRestoration() const
 ExceptionOr<void> History::setScrollRestoration(ScrollRestoration scrollRestoration)
 {
     auto* frame = this->frame();
-    if (!frame)
-        return Exception { ExceptionCode::SecurityError };
+    if (!isDocumentFullyActive(frame))
+        return documentNotFullyActive();
 
     auto* historyItem = frame->loader().history().currentItem();
     if (historyItem)
@@ -96,8 +106,11 @@ ExceptionOr<void> History::setScrollRestoration(ScrollRestoration scrollRestorat
     return { };
 }
 
-SerializedScriptValue* History::state()
+ExceptionOr<SerializedScriptValue*> History::state()
 {
+    auto* frame = this->frame();
+    if (!isDocumentFullyActive(frame))
+        return documentNotFullyActive();
     m_lastStateObjectRequested = stateInternal();
     return m_lastStateObjectRequested.get();
 }
@@ -130,51 +143,53 @@ bool History::isSameAsCurrentState(SerializedScriptValue* state) const
     return state == stateInternal();
 }
 
-void History::back()
+ExceptionOr<void> History::back()
 {
-    go(-1);
+    return go(-1);
 }
 
-void History::back(Document& document)
+ExceptionOr<void> History::back(Document& document)
 {
-    go(document, -1);
+    return go(document, -1);
 }
 
-void History::forward()
+ExceptionOr<void> History::forward()
 {
-    go(1);
+    return go(1);
 }
 
-void History::forward(Document& document)
+ExceptionOr<void> History::forward(Document& document)
 {
-    go(document, 1);
+    return go(document, 1);
 }
 
-void History::go(int distance)
+ExceptionOr<void> History::go(int distance)
 {
     auto* frame = this->frame();
     LOG(History, "History %p go(%d) frame %p (main frame %d)", this, distance, frame, frame ? frame->isMainFrame() : false);
 
-    if (!frame)
-        return;
+    if (!isDocumentFullyActive(frame))
+        return documentNotFullyActive();
 
     frame->navigationScheduler().scheduleHistoryNavigation(distance);
+    return { };
 }
 
-void History::go(Document& document, int distance)
+ExceptionOr<void> History::go(Document& document, int distance)
 {
     auto* frame = this->frame();
     LOG(History, "History %p go(%d) in document %p frame %p (main frame %d)", this, distance, &document, frame, frame ? frame->isMainFrame() : false);
 
-    if (!frame)
-        return;
+    if (!isDocumentFullyActive(frame))
+        return documentNotFullyActive();
 
     ASSERT(isMainThread());
 
     if (!document.canNavigate(frame))
-        return;
+        return { };
 
     frame->navigationScheduler().scheduleHistoryNavigation(distance);
+    return { };
 }
 
 URL History::urlForState(const String& urlString)
@@ -195,7 +210,9 @@ ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data
     static unsigned perStateObjectTimeSpanLimit = 100;
 
     auto* frame = this->frame();
-    if (!frame || !frame->page())
+    if (!isDocumentFullyActive(frame))
+        return documentNotFullyActive();
+    if (!frame->page())
         return { };
 
     URL fullURL = urlForState(urlString);
