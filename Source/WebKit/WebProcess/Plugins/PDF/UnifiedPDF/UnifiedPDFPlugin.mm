@@ -1181,6 +1181,39 @@ bool UnifiedPDFPlugin::handleMouseLeaveEvent(const WebMouseEvent&)
     return false;
 }
 
+bool UnifiedPDFPlugin::handleContextMenuEvent(const WebMouseEvent& event)
+{
+#if PLATFORM(MAC)
+    if (!m_frame || !m_frame->coreLocalFrame())
+        return false;
+    RefPtr webPage = m_frame->page();
+    if (!webPage)
+        return false;
+    RefPtr frameView = m_frame->coreLocalFrame()->view();
+    if (!frameView)
+        return false;
+
+    auto contextMenu = createContextMenu(frameView->contentsToScreen(IntRect(frameView->windowToContents(event.position()), IntSize())).location());
+
+    webPage->sendWithAsyncReply(Messages::WebPageProxy::ShowPDFContextMenu { contextMenu, m_identifier }, [this, weakThis = WeakPtr { *this }](std::optional<int32_t>&& selectedItemTag) {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+        if (selectedItemTag)
+            performContextMenuAction(toContextMenuItemTag(selectedItemTag.value()));
+    });
+
+    return true;
+#else
+    return false;
+#endif // PLATFORM(MAC)
+}
+
+bool UnifiedPDFPlugin::handleKeyboardEvent(const WebKeyboardEvent&)
+{
+    return false;
+}
+
 void UnifiedPDFPlugin::didClickLinkAnnotation(const PDFAnnotation *annotation)
 {
     // FIXME: Handle links with in-document destinations.
@@ -1188,6 +1221,8 @@ void UnifiedPDFPlugin::didClickLinkAnnotation(const PDFAnnotation *annotation)
     if (NSURL *url = [annotation URL])
         navigateToURL(url);
 }
+
+#pragma mark Context Menu
 
 #if PLATFORM(MAC)
 UnifiedPDFPlugin::ContextMenuItemTag UnifiedPDFPlugin::contextMenuItemTagFromDisplayMode(const PDFDocumentLayout::DisplayMode& displayMode) const
@@ -1213,12 +1248,30 @@ PDFDocumentLayout::DisplayMode UnifiedPDFPlugin::displayModeFromContextMenuItemT
     }
 }
 
+auto UnifiedPDFPlugin::toContextMenuItemTag(int tagValue) const -> ContextMenuItemTag
+{
+    static constexpr std::array regularContextMenuItemTags {
+        ContextMenuItemTag::OpenWithPreview,
+        ContextMenuItemTag::SinglePage,
+        ContextMenuItemTag::SinglePageContinuous,
+        ContextMenuItemTag::TwoPages,
+        ContextMenuItemTag::TwoPagesContinuous,
+        ContextMenuItemTag::ZoomIn,
+        ContextMenuItemTag::ZoomOut,
+        ContextMenuItemTag::ActualSize,
+    };
+    const auto isKnownContextMenuItemTag = WTF::anyOf(regularContextMenuItemTags, [tagValue](ContextMenuItemTag tag) {
+        return tagValue == enumToUnderlyingType(tag);
+    });
+    return isKnownContextMenuItemTag ? static_cast<ContextMenuItemTag>(tagValue) : ContextMenuItemTag::Unknown;
+}
+
 PDFContextMenu UnifiedPDFPlugin::createContextMenu(const IntPoint& contextMenuPoint) const
 {
     Vector<PDFContextMenuItem> menuItems;
 
     auto addSeparator = [&] {
-        menuItems.append({ String(), 0, invalidContextMenuItemTag, ContextMenuItemEnablement::Disabled, ContextMenuItemHasAction::No, ContextMenuItemIsSeparator::Yes });
+        menuItems.append({ String(), 0, enumToUnderlyingType(ContextMenuItemTag::Invalid), ContextMenuItemEnablement::Disabled, ContextMenuItemHasAction::No, ContextMenuItemIsSeparator::Yes });
     };
 
     menuItems.append({ WebCore::contextMenuItemPDFOpenWithPreview(), 0,
@@ -1268,39 +1321,11 @@ void UnifiedPDFPlugin::performContextMenuAction(ContextMenuItemTag tag)
     case ContextMenuItemTag::ActualSize:
         m_view->setPageScaleFactor(scaleForActualSize(), std::nullopt);
         break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
     }
 }
 #endif // PLATFORM(MAC)
-
-bool UnifiedPDFPlugin::handleContextMenuEvent(const WebMouseEvent& event)
-{
-#if PLATFORM(MAC)
-    if (!m_frame || !m_frame->coreLocalFrame())
-        return false;
-    RefPtr webPage = m_frame->page();
-    if (!webPage)
-        return false;
-    RefPtr frameView = m_frame->coreLocalFrame()->view();
-    if (!frameView)
-        return false;
-
-    auto contextMenu = createContextMenu(frameView->contentsToScreen(IntRect(frameView->windowToContents(event.position()), IntSize())).location());
-
-    auto sendResult = webPage->sendSync(Messages::WebPageProxy::ShowPDFContextMenu(contextMenu, m_identifier));
-    auto [selectedItemTag] = sendResult.takeReplyOr(-1);
-
-    if (selectedItemTag >= 0)
-        performContextMenuAction(static_cast<ContextMenuItemTag>(selectedItemTag.value()));
-    return true;
-#else
-    return false;
-#endif // PLATFORM(MAC)
-}
-
-bool UnifiedPDFPlugin::handleKeyboardEvent(const WebKeyboardEvent&)
-{
-    return false;
-}
 
 #pragma mark Editing Commands
 

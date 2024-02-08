@@ -160,7 +160,9 @@ private:
     bool forwardEditingCommandToEditor(const String& commandName, const String& argument) const;
     void selectAll();
 
-    enum class ContextMenuItemTag : uint8_t {
+    // Context Menu
+    enum class ContextMenuItemTag : int8_t {
+        Invalid = -1,
         OpenWithPreview,
         SinglePage,
         SinglePageContinuous,
@@ -169,15 +171,16 @@ private:
         ZoomIn,
         ZoomOut,
         ActualSize,
+        Unknown,
     };
 
 #if PLATFORM(MAC)
     PDFContextMenu createContextMenu(const WebCore::IntPoint& contextMenuPoint) const;
+    ContextMenuItemTag toContextMenuItemTag(int tagValue) const;
     void performContextMenuAction(ContextMenuItemTag);
 
     ContextMenuItemTag contextMenuItemTagFromDisplayMode(const PDFDocumentLayout::DisplayMode&) const;
     PDFDocumentLayout::DisplayMode displayModeFromContextMenuItemTag(const ContextMenuItemTag&) const;
-    static constexpr int invalidContextMenuItemTag { -1 };
 #endif
 
     // Selections

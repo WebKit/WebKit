@@ -530,7 +530,7 @@ messages -> WebPageProxy {
 #endif
 
 #if ENABLE(PDF_PLUGIN) && PLATFORM(MAC)
-    ShowPDFContextMenu(struct WebKit::PDFContextMenu contextMenu, WebKit::PDFPluginIdentifier identifier) -> (std::optional<int32_t> selectedItem) Synchronous
+    ShowPDFContextMenu(struct WebKit::PDFContextMenu contextMenu, WebKit::PDFPluginIdentifier identifier) -> (std::optional<int32_t> selectedItem)
 #endif
 
 #if ENABLE(PDF_HUD)

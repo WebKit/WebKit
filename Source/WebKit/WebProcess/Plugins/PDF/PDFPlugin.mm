@@ -1092,7 +1092,7 @@ bool PDFPlugin::handleContextMenuEvent(const WebMouseEvent& event)
     IntPoint point = frameView->contentsToScreen(IntRect(frameView->windowToContents(event.position()), IntSize())).location();
 
     NSUserInterfaceLayoutDirection uiLayoutDirection = webPage->userInterfaceLayoutDirection() == UserInterfaceLayoutDirection::LTR ? NSUserInterfaceLayoutDirectionLeftToRight : NSUserInterfaceLayoutDirectionRightToLeft;
-    NSMenu *nsMenu = [m_pdfLayerController menuForEvent:nsEventForWebMouseEvent(event) withUserInterfaceLayoutDirection:uiLayoutDirection];
+    RetainPtr nsMenu = [m_pdfLayerController menuForEvent:nsEventForWebMouseEvent(event) withUserInterfaceLayoutDirection:uiLayoutDirection];
 
     if (!nsMenu)
         return false;
@@ -1115,11 +1115,12 @@ bool PDFPlugin::handleContextMenuEvent(const WebMouseEvent& event)
     }
     PDFContextMenu contextMenu { point, WTFMove(items), WTFMove(openInPreviewTag) };
 
-    auto sendResult = webPage->sendSync(Messages::WebPageProxy::ShowPDFContextMenu(contextMenu, m_identifier));
-    auto [selectedIndex] = sendResult.takeReplyOr(-1);
-
-    if (selectedIndex && *selectedIndex >= 0 && *selectedIndex < itemCount)
-        [nsMenu performActionForItemAtIndex:*selectedIndex];
+    webPage->sendWithAsyncReply(Messages::WebPageProxy::ShowPDFContextMenu { contextMenu, m_identifier }, [itemCount, nsMenu = WTFMove(nsMenu), weakThis = WeakPtr { *this }](std::optional<int32_t>&& selectedIndex) {
+        if (RefPtr protectedThis = weakThis.get()) {
+            if (selectedIndex && selectedIndex.value() >= 0 && selectedIndex.value() < itemCount)
+                [nsMenu performActionForItemAtIndex:*selectedIndex];
+        }
+    });
 
     return true;
 }
