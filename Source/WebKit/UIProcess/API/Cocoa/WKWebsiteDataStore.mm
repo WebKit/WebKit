@@ -32,6 +32,7 @@
 #import "BackgroundFetchState.h"
 #import "CompletionHandlerCallChecker.h"
 #import "NetworkProcessProxy.h"
+#import "RestrictedOpenerType.h"
 #import "ShouldGrandfatherStatistics.h"
 #import "WKError.h"
 #import "WKHTTPCookieStoreInternal.h"
@@ -1218,6 +1219,11 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 
         return completionHandlerCopy(nil);
     });
+}
+
+- (void)_setRestrictedOpenerTypeForTesting:(_WKRestrictedOpenerType)openerType forDomain:(NSString *)domain
+{
+    _websiteDataStore->setRestrictedOpenerTypeForDomainForTesting(WebCore::RegistrableDomain::fromRawString(domain), static_cast<WebKit::RestrictedOpenerType>(openerType));
 }
 
 @end

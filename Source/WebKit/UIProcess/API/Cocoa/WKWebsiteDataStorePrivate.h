@@ -39,6 +39,12 @@ typedef NS_OPTIONS(NSUInteger, _WKWebsiteDataStoreFetchOptions) {
     _WKWebsiteDataStoreFetchOptionComputeSizes = 1 << 0,
 } WK_API_AVAILABLE(macos(10.12), ios(10.0));
 
+typedef NS_ENUM(uint8_t, _WKRestrictedOpenerType) {
+    _WKRestrictedOpenerTypeUnrestricted,
+    _WKRestrictedOpenerTypeNoOpener,
+    _WKRestrictedOpenerTypePostMessageAndClosed,
+} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 @interface WKWebsiteDataStore (WKPrivate)
 
 + (NSSet<NSString *> *)_allWebsiteDataTypesIncludingPrivate;
@@ -133,6 +139,8 @@ typedef NS_OPTIONS(NSUInteger, _WKWebsiteDataStoreFetchOptions) {
 -(void)_clickBackgroundFetch:(NSString *)identifier completionHandler:(void(^_Nullable)(void))completionHandler WK_API_AVAILABLE(macos(14.0), ios(17.0));
 -(void)_storeServiceWorkerRegistrations:(void(^)(void))completionHandler WK_API_AVAILABLE(macos(14.0), ios(17.0));
 -(void)_setCompletionHandlerForRemovalFromNetworkProcess:(void(^)(NSError* error))completionHandler WK_API_AVAILABLE(macos(14.0), ios(17.0));
+
+- (void)_setRestrictedOpenerTypeForTesting:(_WKRestrictedOpenerType)type forDomain:(NSString *)domain WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @property (nonatomic, readonly) NSUUID *_identifier;
 @property (nonatomic, readonly) NSString *_webPushPartition;

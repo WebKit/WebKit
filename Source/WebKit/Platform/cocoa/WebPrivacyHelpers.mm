@@ -486,7 +486,7 @@ void RestrictedOpenerDomainsController::update()
         restrictedOpenerTypes.reserveInitialCapacity(domains.count);
 
         for (WPRestrictedOpenerDomain *domainInfo in domains) {
-            auto registrableDomain = WebCore::RegistrableDomain::fromRawString(makeString("https://", String { domainInfo.domain }));
+            auto registrableDomain = WebCore::RegistrableDomain::fromRawString(domainInfo.domain);
             if (registrableDomain.isEmpty())
                 continue;
             restrictedOpenerTypes.add(registrableDomain, restrictedOpenerType(domainInfo.openerType));
