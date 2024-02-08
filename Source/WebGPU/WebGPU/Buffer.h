@@ -116,8 +116,8 @@ private:
 
     const Ref<Device> m_device;
     mutable WeakPtr<CommandEncoder> m_commandEncoder;
-    mutable uint16_t m_max16BitIndex { USHRT_MAX };
-    mutable uint32_t m_max32BitIndex { UINT32_MAX };
+    mutable uint16_t m_max16BitIndex { 0 };
+    mutable uint32_t m_max32BitIndex { 0 };
 };
 
 } // namespace WebGPU

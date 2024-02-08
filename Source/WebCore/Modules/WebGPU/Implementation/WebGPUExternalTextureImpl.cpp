@@ -49,6 +49,16 @@ void ExternalTextureImpl::setLabelInternal(const String&)
     // FIXME: Implement this.
 }
 
+void ExternalTextureImpl::destroy()
+{
+    wgpuExternalTextureDestroy(m_backing.get());
+}
+
+void ExternalTextureImpl::undestroy()
+{
+    wgpuExternalTextureUndestroy(m_backing.get());
+}
+
 } // namespace WebCore::WebGPU
 
 #endif // HAVE(WEBGPU_IMPLEMENTATION)

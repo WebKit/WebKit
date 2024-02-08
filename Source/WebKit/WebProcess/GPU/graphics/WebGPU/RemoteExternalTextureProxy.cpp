@@ -52,6 +52,18 @@ void RemoteExternalTextureProxy::setLabelInternal(const String& label)
     UNUSED_VARIABLE(sendResult);
 }
 
+void RemoteExternalTextureProxy::destroy()
+{
+    auto sendResult = send(Messages::RemoteExternalTexture::Destroy());
+    UNUSED_VARIABLE(sendResult);
+}
+
+void RemoteExternalTextureProxy::undestroy()
+{
+    auto sendResult = send(Messages::RemoteExternalTexture::Undestroy());
+    UNUSED_VARIABLE(sendResult);
+}
+
 } // namespace WebKit::WebGPU
 
 #endif // ENABLE(GPU_PROCESS)

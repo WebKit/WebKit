@@ -233,7 +233,7 @@ void Queue::submit(Vector<std::reference_wrapper<CommandBuffer>>&& commands)
         if (id<MTLCommandBuffer> mtlBuffer = command.commandBuffer())
             [commandBuffersToSubmit addObject:mtlBuffer];
         else {
-            device->generateAValidationError("Command buffer appears twice."_s);
+            device->generateAValidationError(command.lastError() ?: @"Command buffer appears twice.");
             return;
         }
         command.makeInvalid(@"command buffer was submitted");

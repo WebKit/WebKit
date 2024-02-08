@@ -154,18 +154,12 @@ Buffer::~Buffer() = default;
 
 void Buffer::setCommandEncoder(CommandEncoder& commandEncoder, bool mayModifyBuffer) const
 {
+    UNUSED_PARAM(mayModifyBuffer);
     m_commandEncoder = commandEncoder;
     if (m_state == State::Mapped || m_state == State::MappedAtCreation)
         commandEncoder.incrementBufferMapCount();
     if (isDestroyed())
         commandEncoder.makeSubmitInvalid();
-    else if (mayModifyBuffer) {
-        m_device->getQueue().onSubmittedWorkDone([protectedThis = Ref { *this }](WGPUQueueWorkDoneStatus status) {
-            if (status != WGPUQueueWorkDoneStatus_Success)
-                return;
-            protectedThis->recomputeMaxIndexValues();
-        });
-    }
 }
 
 void Buffer::destroy()
@@ -356,7 +350,6 @@ void Buffer::unmap()
 
     m_state = State::Unmapped;
     m_mappedRanges = MappedRanges();
-    recomputeMaxIndexValues();
 }
 
 void Buffer::setLabel(String&& label)

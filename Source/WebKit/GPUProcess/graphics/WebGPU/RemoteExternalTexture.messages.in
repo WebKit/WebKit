@@ -26,6 +26,8 @@
 messages -> RemoteExternalTexture NotRefCounted Stream {
     void Destruct()
     void SetLabel(String label)
+    void Destroy()
+    void Undestroy()
 }
 
 #endif

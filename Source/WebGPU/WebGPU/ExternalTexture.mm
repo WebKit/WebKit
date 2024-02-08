@@ -56,6 +56,32 @@ ExternalTexture::ExternalTexture(Device& device)
 
 ExternalTexture::~ExternalTexture() = default;
 
+void ExternalTexture::destroy()
+{
+    m_destroyed = true;
+    if (m_commandEncoder)
+        m_commandEncoder.get()->makeSubmitInvalid();
+    m_commandEncoder = nullptr;
+}
+
+void ExternalTexture::undestroy()
+{
+    m_commandEncoder = nullptr;
+    m_destroyed = false;
+}
+
+void ExternalTexture::setCommandEncoder(CommandEncoder& commandEncoder) const
+{
+    m_commandEncoder = commandEncoder;
+    if (isDestroyed())
+        commandEncoder.makeSubmitInvalid();
+}
+
+bool ExternalTexture::isDestroyed() const
+{
+    return m_destroyed;
+}
+
 } // namespace WebGPU
 
 #pragma mark WGPU Stubs
@@ -68,4 +94,14 @@ void wgpuExternalTextureReference(WGPUExternalTexture externalTexture)
 void wgpuExternalTextureRelease(WGPUExternalTexture externalTexture)
 {
     WebGPU::fromAPI(externalTexture).deref();
+}
+
+void wgpuExternalTextureDestroy(WGPUExternalTexture externalTexture)
+{
+    WebGPU::fromAPI(externalTexture).destroy();
+}
+
+void wgpuExternalTextureUndestroy(WGPUExternalTexture externalTexture)
+{
+    WebGPU::fromAPI(externalTexture).undestroy();
 }

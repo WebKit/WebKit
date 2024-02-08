@@ -33,12 +33,15 @@
 #include "GPUErrorFilter.h"
 #include "GPURenderPipeline.h"
 #include "GPUQueue.h"
+#include "HTMLVideoElement.h"
 #include "JSDOMPromiseDeferredForward.h"
 #include "ScriptExecutionContext.h"
 #include "WebGPUDevice.h"
 #include <optional>
 #include <wtf/IsoMalloc.h>
 #include <wtf/Ref.h>
+#include <wtf/WeakHashMap.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -153,6 +156,9 @@ private:
     Ref<GPUQueue> m_queue;
     Ref<GPUPipelineLayout> m_autoPipelineLayout;
     HashSet<GPUBuffer*> m_buffersToUnmap;
+    GPUExternalTexture* externalTextureForDescriptor(const GPUExternalTextureDescriptor&);
+
+    WeakHashMap<HTMLVideoElement, WeakPtr<GPUExternalTexture>, WeakPtrImplWithEventTargetData> m_videoElementToExternalTextureMap;
     bool m_waitingForDeviceLostPromise { false };
 };
 

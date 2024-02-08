@@ -42,6 +42,8 @@ public:
         m_label = WTFMove(label);
         setLabelInternal(m_label);
     }
+    virtual void destroy() = 0;
+    virtual void undestroy() = 0;
 
 protected:
     ExternalTexture() = default;

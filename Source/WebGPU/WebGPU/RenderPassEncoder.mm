@@ -603,7 +603,9 @@ void RenderPassEncoder::setCommandEncoder(const BindGroupEntryUsageData::Resourc
         }, [&](const WeakPtr<const TextureView>& textureView) {
             if (textureView)
                 textureView->setCommandEncoder(m_parentEncoder);
-        }, [](const WeakPtr<const ExternalTexture>&) {
+        }, [&](const WeakPtr<const ExternalTexture>& externalTexture) {
+            if (externalTexture)
+                externalTexture->setCommandEncoder(m_parentEncoder);
     });
 }
 

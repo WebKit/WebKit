@@ -90,7 +90,7 @@ private:
 
     const Ref<Device> m_device;
     Vector<BindableResources> m_resources;
-    WeakPtr<const BindGroupLayout> m_bindGroupLayout;
+    RefPtr<const BindGroupLayout> m_bindGroupLayout;
     DynamicBuffersContainer m_dynamicBuffers;
 };
 

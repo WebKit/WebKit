@@ -38,4 +38,14 @@ void GPUExternalTexture::setLabel(String&& label)
     m_backing->setLabel(WTFMove(label));
 }
 
+void GPUExternalTexture::destroy()
+{
+    m_backing->destroy();
+}
+
+void GPUExternalTexture::undestroy()
+{
+    m_backing->undestroy();
+}
+
 }

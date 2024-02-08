@@ -1189,7 +1189,6 @@ void CommandEncoder::makeInvalid(NSString* errorString)
 
 void CommandEncoder::makeSubmitInvalid(NSString* errorString)
 {
-    // endEncoding(m_existingCommandEncoder);
     m_makeSubmitInvalid = true;
     if (m_cachedCommandBuffer)
         m_cachedCommandBuffer->makeInvalid(errorString ?: m_lastErrorString);

@@ -73,6 +73,8 @@ private:
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
     void setLabel(String&&);
+    void destroy();
+    void undestroy();
     void destruct();
 
     Ref<WebCore::WebGPU::ExternalTexture> m_backing;

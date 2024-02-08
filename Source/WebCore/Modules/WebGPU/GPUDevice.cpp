@@ -68,6 +68,7 @@
 #include "JSGPURenderPipeline.h"
 #include "JSGPUUncapturedErrorEvent.h"
 #include "JSGPUValidationError.h"
+#include "RequestAnimationFrameCallback.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -189,9 +190,87 @@ Ref<GPUSampler> GPUDevice::createSampler(const std::optional<GPUSamplerDescripto
     return GPUSampler::create(m_backing->createSampler(convertToBacking(samplerDescriptor)));
 }
 
+GPUExternalTexture* GPUDevice::externalTextureForDescriptor(const GPUExternalTextureDescriptor& descriptor)
+{
+    m_videoElementToExternalTextureMap.removeNullReferences();
+#if ENABLE(WEB_CODECS)
+    if (auto* videoElement = std::get_if<RefPtr<HTMLVideoElement>>(&descriptor.source)) {
+#else
+    if (auto* videoElement = &descriptor.source) {
+#endif
+        if (!videoElement->get())
+            return nullptr;
+        HTMLVideoElement& v = *videoElement->get();
+        auto it = m_videoElementToExternalTextureMap.find(v);
+        if (it != m_videoElementToExternalTextureMap.end())
+            return it->value.get();
+    }
+    return nullptr;
+}
+
+class GPUDeviceVideoFrameRequestCallback final : public VideoFrameRequestCallback {
+public:
+    CallbackResult<void> handleEvent(double, const VideoFrameMetadata&) override
+    {
+        auto it = m_weakMap.find(m_videoElement);
+        if (it != m_weakMap.end() && m_externalTexture.ptr() == it->value.get())
+            m_externalTexture->destroy();
+
+        m_weakMap.remove(m_videoElement);
+        return CallbackResult<void>();
+    }
+    static Ref<GPUDeviceVideoFrameRequestCallback> create(GPUExternalTexture& externalTexture, HTMLVideoElement& videoElement, WeakHashMap<HTMLVideoElement, WeakPtr<GPUExternalTexture>, WeakPtrImplWithEventTargetData>& weakMap, ScriptExecutionContext* scriptExecutionContext)
+    {
+        return adoptRef(*new GPUDeviceVideoFrameRequestCallback(externalTexture, videoElement, weakMap, scriptExecutionContext));
+    }
+
+    ~GPUDeviceVideoFrameRequestCallback() final { }
+private:
+    GPUDeviceVideoFrameRequestCallback(GPUExternalTexture& externalTexture, HTMLVideoElement& videoElement, WeakHashMap<HTMLVideoElement, WeakPtr<GPUExternalTexture>, WeakPtrImplWithEventTargetData>& weakMap, ScriptExecutionContext* scriptExecutionContext)
+        : VideoFrameRequestCallback(scriptExecutionContext)
+        , m_externalTexture(externalTexture)
+        , m_videoElement(videoElement)
+        , m_weakMap(weakMap)
+    {
+    }
+
+    Ref<GPUExternalTexture> m_externalTexture;
+    HTMLVideoElement& m_videoElement;
+    WeakHashMap<HTMLVideoElement, WeakPtr<GPUExternalTexture>, WeakPtrImplWithEventTargetData> &m_weakMap;
+};
+
 Ref<GPUExternalTexture> GPUDevice::importExternalTexture(const GPUExternalTextureDescriptor& externalTextureDescriptor)
 {
-    return GPUExternalTexture::create(m_backing->importExternalTexture(externalTextureDescriptor.convertToBacking()));
+    if (auto* externalTexture = externalTextureForDescriptor(externalTextureDescriptor)) {
+        externalTexture->undestroy();
+#if ENABLE(WEB_CODECS)
+        auto& videoElement = std::get<RefPtr<HTMLVideoElement>>(externalTextureDescriptor.source);
+#else
+        auto& videoElement = externalTextureDescriptor.source;
+#endif
+        m_videoElementToExternalTextureMap.remove(*videoElement.get());
+        return *externalTexture;
+    }
+    auto externalTexture = GPUExternalTexture::create(m_backing->importExternalTexture(externalTextureDescriptor.convertToBacking()));
+#if ENABLE(VIDEO)
+#if ENABLE(WEB_CODECS)
+    if (auto* videoElement = std::get_if<RefPtr<HTMLVideoElement>>(&externalTextureDescriptor.source); videoElement && videoElement->get()) {
+#else
+    if (auto* videoElement = &externalTextureDescriptor.source; videoElement && videoElement->get()) {
+#endif
+        HTMLVideoElement* videoElementPtr = videoElement->get();
+        m_videoElementToExternalTextureMap.set(*videoElementPtr, externalTexture.get());
+        videoElementPtr->requestVideoFrameCallback(GPUDeviceVideoFrameRequestCallback::create(externalTexture.get(), *videoElementPtr, m_videoElementToExternalTextureMap, scriptExecutionContext()));
+        queueTaskKeepingObjectAlive(*this, TaskSource::WebGPU, [protecedThis = Ref { *this }, videoElementPtr, externalTextureRef = externalTexture]() {
+            auto it = protecedThis->m_videoElementToExternalTextureMap.find(*videoElementPtr);
+            if (it == protecedThis->m_videoElementToExternalTextureMap.end() || externalTextureRef.ptr() != it->value.get())
+                return;
+
+            externalTextureRef->destroy();
+        });
+    }
+#endif
+    return externalTexture;
 }
 
 Ref<GPUBindGroupLayout> GPUDevice::createBindGroupLayout(const GPUBindGroupLayoutDescriptor& bindGroupLayoutDescriptor)
