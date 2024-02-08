@@ -105,7 +105,7 @@ private:
 
 } // namespace WebKit
 
-@interface WKScrollingNodeScrollViewDelegate : NSObject <WKBEScrollViewDelegate> {
+@interface WKScrollingNodeScrollViewDelegate : NSObject <WKSEScrollViewDelegate> {
     WeakPtr<WebKit::ScrollingTreeScrollingNodeDelegateIOS> _scrollingTreeNodeDelegate;
 }
 
