@@ -167,30 +167,26 @@ void AuthenticatorCoordinator::create(const Document& document, CredentialCreati
 
     options.extensions = extensionInputs;
 
-    // Step 14-16.
-    auto clientDataJson = buildClientDataJson(ClientDataType::Create, options.challenge, callerOrigin, scope);
-    auto clientDataJsonHash = buildClientDataJsonHash(clientDataJson);
-
     // Step 4, 18-22.
     if (!m_client) {
         promise.reject(Exception { ExceptionCode::UnknownError, "Unknown internal error."_s });
         return;
     }
 
-    auto callback = [weakThis = WeakPtr { *this }, clientDataJson = WTFMove(clientDataJson), promise = WTFMove(promise), abortSignal = WTFMove(abortSignal)] (AuthenticatorResponseData&& data, AuthenticatorAttachment attachment, ExceptionData&& exception) mutable {
+    auto callback = [weakThis = WeakPtr { *this }, promise = WTFMove(promise), abortSignal = WTFMove(abortSignal)] (AuthenticatorResponseData&& data, AuthenticatorAttachment attachment, ExceptionData&& exception) mutable {
         if (abortSignal && abortSignal->aborted()) {
             promise.reject(Exception { ExceptionCode::AbortError, "Aborted by AbortSignal."_s });
             return;
         }
 
         if (auto response = AuthenticatorResponse::tryCreate(WTFMove(data), attachment)) {
-            response->setClientDataJSON(WTFMove(clientDataJson));
             promise.resolve(PublicKeyCredential::create(response.releaseNonNull()).ptr());
             return;
         }
         ASSERT(!exception.message.isNull());
         promise.reject(exception.toException());
     };
+
     // Async operations are dispatched and handled in the messenger.
     m_client->makeCredential(*frame, options, createOptions.mediation, WTFMove(callback));
 }

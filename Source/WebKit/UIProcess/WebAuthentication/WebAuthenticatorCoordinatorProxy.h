@@ -104,9 +104,9 @@ private:
     bool isASCAvailable();
 
 #if HAVE(WEB_AUTHN_AS_MODERN)
-    RetainPtr<ASAuthorizationController> constructASController(WebAuthenticationRequestData&&);
+    RetainPtr<ASAuthorizationController> constructASController(const WebAuthenticationRequestData&);
     RetainPtr<NSArray> requestsForRegisteration(const WebCore::PublicKeyCredentialCreationOptions&, const WebCore::SecurityOriginData& callerOrigin);
-    RetainPtr<NSArray> requestsForAssertion(const WebCore::PublicKeyCredentialRequestOptions&, const WebCore::SecurityOriginData& callerOrigin, std::optional<WebCore::SecurityOriginData>& parentOrigin);
+    RetainPtr<NSArray> requestsForAssertion(const WebCore::PublicKeyCredentialRequestOptions&, const WebCore::SecurityOriginData& callerOrigin, const std::optional<WebCore::SecurityOriginData>& parentOrigin);
 #endif
 
     void performRequest(WebAuthenticationRequestData&&, RequestCompletionHandler&&);
