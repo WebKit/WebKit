@@ -654,7 +654,7 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
             return RenderPassEncoder::createInvalid(*this, m_device, @"querySet for occlusion query was not of type occlusion");
         mtlDescriptor.visibilityResultBuffer = occlusionQuery.visibilityBuffer();
         visibilityResultBuffer = mtlDescriptor.visibilityResultBuffer;
-        visibilityResultBufferSize = occlusionQuery.visibilityBuffer().length;
+        visibilityResultBufferSize = occlusionQuery.isDestroyed() ? WGPU_LIMIT_U64_UNDEFINED : occlusionQuery.visibilityBuffer().length;
     }
 
     if (m_device->baseCapabilities().counterSamplingAPI == HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::StageBoundary

@@ -155,19 +155,33 @@ RenderPassEncoder::~RenderPassEncoder()
     m_renderCommandEncoder = nil;
 }
 
+bool RenderPassEncoder::occlusionQueryIsDestroyed() const
+{
+    return m_visibilityResultBufferSize == WGPU_LIMIT_U64_UNDEFINED;
+}
+
 void RenderPassEncoder::beginOcclusionQuery(uint32_t queryIndex)
 {
     RETURN_IF_FINISHED();
 
     queryIndex *= sizeof(uint64_t);
-    if (m_occlusionQueryActive || m_queryBufferIndicesToClear.contains(queryIndex) || !m_visibilityResultBufferSize || queryIndex >= m_visibilityResultBufferSize) {
+    if (m_occlusionQueryActive || m_queryBufferIndicesToClear.contains(queryIndex)) {
         makeInvalid(@"beginOcclusionQuery validation failure");
         return;
     }
     m_occlusionQueryActive = true;
     m_visibilityResultBufferOffset = queryIndex;
-    [m_renderCommandEncoder setVisibilityResultMode:MTLVisibilityResultModeCounting offset:queryIndex];
     m_queryBufferIndicesToClear.add(m_visibilityResultBufferOffset);
+
+
+    if (occlusionQueryIsDestroyed())
+        return;
+    if (!m_visibilityResultBufferSize || queryIndex >= m_visibilityResultBufferSize) {
+        makeInvalid(@"beginOcclusionQuery validation failure");
+        return;
+    }
+
+    [m_renderCommandEncoder setVisibilityResultMode:MTLVisibilityResultModeCounting offset:queryIndex];
 }
 
 void RenderPassEncoder::endOcclusionQuery()
@@ -178,6 +192,9 @@ void RenderPassEncoder::endOcclusionQuery()
         return;
     }
     m_occlusionQueryActive = false;
+
+    if (occlusionQueryIsDestroyed())
+        return;
     [m_renderCommandEncoder setVisibilityResultMode:MTLVisibilityResultModeDisabled offset:m_visibilityResultBufferOffset];
 }
 
@@ -581,7 +598,7 @@ void RenderPassEncoder::endPass()
     m_renderCommandEncoder = nil;
     m_parentEncoder->lock(false);
 
-    if (m_queryBufferIndicesToClear.size()) {
+    if (m_queryBufferIndicesToClear.size() && !occlusionQueryIsDestroyed()) {
         id<MTLBlitCommandEncoder> blitCommandEncoder = m_parentEncoder->ensureBlitCommandEncoder();
         for (auto& offset : m_queryBufferIndicesToClear)
             [blitCommandEncoder fillBuffer:m_visibilityResultBuffer range:NSMakeRange(static_cast<NSUInteger>(offset), sizeof(uint64_t)) value:0];
