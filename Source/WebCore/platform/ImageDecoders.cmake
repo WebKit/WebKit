@@ -41,7 +41,7 @@ list(APPEND WebCore_LIBRARIES
     WebP::libwebp
 )
 
-if (JPEGXL_FOUND)
+if (USE_JPEGXL)
     list(APPEND WebCore_LIBRARIES JPEGXL::jxl)
 endif ()
 

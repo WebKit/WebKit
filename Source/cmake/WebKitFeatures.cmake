@@ -257,7 +257,7 @@ macro(WEBKIT_OPTION_BEGIN)
     WEBKIT_OPTION_DEFINE(USE_AVIF "Whether to enable support for AVIF images." PRIVATE ON)
     WEBKIT_OPTION_DEFINE(USE_LCMS "Toggle support for image color management using libcms2" PRIVATE ON)
     WEBKIT_OPTION_DEFINE(USE_ISO_MALLOC "Toggle IsoMalloc support" PRIVATE ON)
-    WEBKIT_OPTION_DEFINE(USE_JPEGXL "Whether to enable support for JPEG XL images." PRIVATE ON)
+    WEBKIT_OPTION_DEFINE(USE_JPEGXL "Toggle support for JPEG XL images" PRIVATE ON)
     WEBKIT_OPTION_DEFINE(USE_SYSTEM_MALLOC "Toggle system allocator instead of WebKit's custom allocator" PRIVATE ${USE_SYSTEM_MALLOC_DEFAULT})
 
     WEBKIT_OPTION_CONFLICT(ENABLE_JIT ENABLE_C_LOOP)

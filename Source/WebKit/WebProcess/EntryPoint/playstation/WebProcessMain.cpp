@@ -61,6 +61,9 @@ int main(int argc, char** argv)
 #if defined(Brotli_LOAD_AT)
     loadLibraryOrExit(Brotli_LOAD_AT);
 #endif
+#if defined(JPEGXL_LOAD_AT)
+    loadLibraryOrExit(JPEGXL_LOAD_AT);
+#endif
     loadLibraryOrExit(Freetype_LOAD_AT);
     loadLibraryOrExit(Fontconfig_LOAD_AT);
     loadLibraryOrExit(HarfBuzz_LOAD_AT);

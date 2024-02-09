@@ -97,6 +97,7 @@ my (
     $iosGestureEventsSupport,
     $iosTouchEventsSupport,
     $jitSupport,
+    $jpegXLSupport,
     $layerBasedSVGEngineSupport,
     $llvmProfileGenerationSupport,
     $legacyCustomProtocolManagerSupport,
@@ -485,6 +486,9 @@ my @features = (
 
     { option => "iso-malloc", desc => "Toggle IsoMalloc support",
       define => "USE_ISO_MALLOC", value => \$isoMallocSupport },
+
+    { option => "jpegxl", desc => "Toggle support for JPEG XL images",
+      define => "USE_JPEGXL", value => \$jpegXLSupport },
 
     { option => "lcms", desc => "Toggle support for image color management using libcms2",
       define => "USE_LCMS", value => \$lcmsSupport },

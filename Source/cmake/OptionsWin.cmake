@@ -205,7 +205,10 @@ if (USE_LCMS)
 endif ()
 
 if (USE_JPEGXL)
-    find_package(JPEGXL REQUIRED)
+    find_package(JPEGXL 0.7.0)
+    if (NOT JPEGXL_FOUND)
+        message(FATAL_ERROR "libjxl is required for USE_JPEGXL")
+    endif ()
 endif ()
 
 set(bmalloc_LIBRARY_TYPE OBJECT)

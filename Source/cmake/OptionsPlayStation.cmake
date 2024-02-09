@@ -279,6 +279,15 @@ if (ENABLE_WEBCORE)
        list(APPEND PlayStationModule_TARGETS LCMS2::LCMS2)
     endif ()
 
+    if (USE_JPEGXL)
+        set(JPEGXL_NAMES SceVshJxl)
+        find_package(JPEGXL 0.7.0)
+        if (NOT JPEGXL_FOUND)
+            message(FATAL_ERROR "libjxl is required for USE_JPEGXL")
+        endif ()
+        list(APPEND PlayStationModule_TARGETS JPEGXL::jxl)
+    endif ()
+
     # See if OpenSSL implementation is BoringSSL
     cmake_push_check_state()
     set(CMAKE_REQUIRED_INCLUDES "${OPENSSL_INCLUDE_DIR}")
