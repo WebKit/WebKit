@@ -170,9 +170,9 @@ private:
     int m_statusCode;
 };
 
-Ref<Protocol::Network::WebSocketFrame> buildWebSocketMessage(const WebSocketFrame& frame)
+Ref<Inspector::Protocol::Network::WebSocketFrame> buildWebSocketMessage(const WebSocketFrame& frame)
 {
-    return Protocol::Network::WebSocketFrame::create()
+    return Inspector::Protocol::Network::WebSocketFrame::create()
         .setOpcode(frame.opCode)
         .setMask(frame.masked)
         .setPayloadData(frame.opCode == 1 ? String::fromUTF8WithLatin1Fallback(frame.payload, frame.payloadLength) : base64EncodeToString(frame.payload, frame.payloadLength))
@@ -202,9 +202,9 @@ void InspectorNetworkAgent::willDestroyFrontendAndBackend(Inspector::DisconnectR
     disable();
 }
 
-static Ref<Protocol::Network::Headers> buildObjectForHeaders(const HTTPHeaderMap& headers)
+static Ref<Inspector::Protocol::Network::Headers> buildObjectForHeaders(const HTTPHeaderMap& headers)
 {
-    auto headersValue = Protocol::Network::Headers::create().release();
+    auto headersValue = Inspector::Protocol::Network::Headers::create().release();
 
     auto headersObject = headersValue->asObject();
     for (const auto& header : headers)
@@ -213,7 +213,7 @@ static Ref<Protocol::Network::Headers> buildObjectForHeaders(const HTTPHeaderMap
     return headersValue;
 }
 
-Ref<Protocol::Network::ResourceTiming> InspectorNetworkAgent::buildObjectForTiming(const NetworkLoadMetrics& timing, ResourceLoader& resourceLoader)
+Ref<Inspector::Protocol::Network::ResourceTiming> InspectorNetworkAgent::buildObjectForTiming(const NetworkLoadMetrics& timing, ResourceLoader& resourceLoader)
 {
     auto elapsedTimeSince = [&] (const MonotonicTime& time) {
         return m_environment.executionStopwatch().elapsedTimeSince(time).seconds();
@@ -224,7 +224,7 @@ Ref<Protocol::Network::ResourceTiming> InspectorNetworkAgent::buildObjectForTimi
         return (time - timing.fetchStart).milliseconds();
     };
 
-    return Protocol::Network::ResourceTiming::create()
+    return Inspector::Protocol::Network::ResourceTiming::create()
         .setStartTime(elapsedTimeSince(resourceLoader.loadTiming().startTime()))
         .setRedirectStart(elapsedTimeSince(timing.redirectStart))
         .setRedirectEnd(elapsedTimeSince(timing.fetchStart))
@@ -240,26 +240,26 @@ Ref<Protocol::Network::ResourceTiming> InspectorNetworkAgent::buildObjectForTimi
         .release();
 }
 
-static Protocol::Network::Metrics::Priority toProtocol(NetworkLoadPriority priority)
+static Inspector::Protocol::Network::Metrics::Priority toProtocol(NetworkLoadPriority priority)
 {
     switch (priority) {
     case NetworkLoadPriority::Low:
-        return Protocol::Network::Metrics::Priority::Low;
+        return Inspector::Protocol::Network::Metrics::Priority::Low;
     case NetworkLoadPriority::Medium:
-        return Protocol::Network::Metrics::Priority::Medium;
+        return Inspector::Protocol::Network::Metrics::Priority::Medium;
     case NetworkLoadPriority::High:
-        return Protocol::Network::Metrics::Priority::High;
+        return Inspector::Protocol::Network::Metrics::Priority::High;
     case NetworkLoadPriority::Unknown:
         break;
     }
 
     ASSERT_NOT_REACHED();
-    return Protocol::Network::Metrics::Priority::Medium;
+    return Inspector::Protocol::Network::Metrics::Priority::Medium;
 }
 
-Ref<Protocol::Network::Metrics> InspectorNetworkAgent::buildObjectForMetrics(const NetworkLoadMetrics& networkLoadMetrics)
+Ref<Inspector::Protocol::Network::Metrics> InspectorNetworkAgent::buildObjectForMetrics(const NetworkLoadMetrics& networkLoadMetrics)
 {
-    auto metrics = Protocol::Network::Metrics::create().release();
+    auto metrics = Inspector::Protocol::Network::Metrics::create().release();
 
     if (!networkLoadMetrics.protocol.isNull())
         metrics->setProtocol(networkLoadMetrics.protocol);
@@ -286,7 +286,7 @@ Ref<Protocol::Network::Metrics> InspectorNetworkAgent::buildObjectForMetrics(con
     if (networkLoadMetrics.responseBodyDecodedSize != std::numeric_limits<uint64_t>::max())
         metrics->setResponseBodyDecodedSize(networkLoadMetrics.responseBodyDecodedSize);
 
-    auto connectionPayload = Protocol::Security::Connection::create()
+    auto connectionPayload = Inspector::Protocol::Security::Connection::create()
         .release();
 
     if (auto* additionalMetrics = networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector.get()) {
@@ -301,36 +301,36 @@ Ref<Protocol::Network::Metrics> InspectorNetworkAgent::buildObjectForMetrics(con
     return metrics;
 }
 
-static Protocol::Network::ReferrerPolicy toProtocol(ReferrerPolicy referrerPolicy)
+static Inspector::Protocol::Network::ReferrerPolicy toProtocol(ReferrerPolicy referrerPolicy)
 {
     switch (referrerPolicy) {
     case ReferrerPolicy::EmptyString:
-        return Protocol::Network::ReferrerPolicy::EmptyString;
+        return Inspector::Protocol::Network::ReferrerPolicy::EmptyString;
     case ReferrerPolicy::NoReferrer:
-        return Protocol::Network::ReferrerPolicy::NoReferrer;
+        return Inspector::Protocol::Network::ReferrerPolicy::NoReferrer;
     case ReferrerPolicy::NoReferrerWhenDowngrade:
-        return Protocol::Network::ReferrerPolicy::NoReferrerWhenDowngrade;
+        return Inspector::Protocol::Network::ReferrerPolicy::NoReferrerWhenDowngrade;
     case ReferrerPolicy::SameOrigin:
-        return Protocol::Network::ReferrerPolicy::SameOrigin;
+        return Inspector::Protocol::Network::ReferrerPolicy::SameOrigin;
     case ReferrerPolicy::Origin:
-        return Protocol::Network::ReferrerPolicy::Origin;
+        return Inspector::Protocol::Network::ReferrerPolicy::Origin;
     case ReferrerPolicy::StrictOrigin:
-        return Protocol::Network::ReferrerPolicy::StrictOrigin;
+        return Inspector::Protocol::Network::ReferrerPolicy::StrictOrigin;
     case ReferrerPolicy::OriginWhenCrossOrigin:
-        return Protocol::Network::ReferrerPolicy::OriginWhenCrossOrigin;
+        return Inspector::Protocol::Network::ReferrerPolicy::OriginWhenCrossOrigin;
     case ReferrerPolicy::StrictOriginWhenCrossOrigin:
-        return Protocol::Network::ReferrerPolicy::StrictOriginWhenCrossOrigin;
+        return Inspector::Protocol::Network::ReferrerPolicy::StrictOriginWhenCrossOrigin;
     case ReferrerPolicy::UnsafeUrl:
-        return Protocol::Network::ReferrerPolicy::UnsafeUrl;
+        return Inspector::Protocol::Network::ReferrerPolicy::UnsafeUrl;
     }
 
     ASSERT_NOT_REACHED();
-    return Protocol::Network::ReferrerPolicy::EmptyString;
+    return Inspector::Protocol::Network::ReferrerPolicy::EmptyString;
 }
 
-static Ref<Protocol::Network::Request> buildObjectForResourceRequest(const ResourceRequest& request, ResourceLoader* resourceLoader)
+static Ref<Inspector::Protocol::Network::Request> buildObjectForResourceRequest(const ResourceRequest& request, ResourceLoader* resourceLoader)
 {
-    auto requestObject = Protocol::Network::Request::create()
+    auto requestObject = Inspector::Protocol::Network::Request::create()
         .setUrl(request.url().string())
         .setMethod(request.httpMethod())
         .setHeaders(buildObjectForHeaders(request.httpHeaderFields()))
@@ -351,38 +351,38 @@ static Ref<Protocol::Network::Request> buildObjectForResourceRequest(const Resou
     return requestObject;
 }
 
-static Protocol::Network::Response::Source responseSource(ResourceResponse::Source source)
+static Inspector::Protocol::Network::Response::Source responseSource(ResourceResponse::Source source)
 {
     switch (source) {
     case ResourceResponse::Source::DOMCache:
     case ResourceResponse::Source::ApplicationCache:
         // FIXME: Add support for ApplicationCache in inspector.
     case ResourceResponse::Source::Unknown:
-        return Protocol::Network::Response::Source::Unknown;
+        return Inspector::Protocol::Network::Response::Source::Unknown;
     case ResourceResponse::Source::Network:
-        return Protocol::Network::Response::Source::Network;
+        return Inspector::Protocol::Network::Response::Source::Network;
     case ResourceResponse::Source::MemoryCache:
     case ResourceResponse::Source::MemoryCacheAfterValidation:
-        return Protocol::Network::Response::Source::MemoryCache;
+        return Inspector::Protocol::Network::Response::Source::MemoryCache;
     case ResourceResponse::Source::DiskCache:
     case ResourceResponse::Source::DiskCacheAfterValidation:
-        return Protocol::Network::Response::Source::DiskCache;
+        return Inspector::Protocol::Network::Response::Source::DiskCache;
     case ResourceResponse::Source::ServiceWorker:
-        return Protocol::Network::Response::Source::ServiceWorker;
+        return Inspector::Protocol::Network::Response::Source::ServiceWorker;
     case ResourceResponse::Source::InspectorOverride:
-        return Protocol::Network::Response::Source::InspectorOverride;
+        return Inspector::Protocol::Network::Response::Source::InspectorOverride;
     }
 
     ASSERT_NOT_REACHED();
-    return Protocol::Network::Response::Source::Unknown;
+    return Inspector::Protocol::Network::Response::Source::Unknown;
 }
 
-RefPtr<Protocol::Network::Response> InspectorNetworkAgent::buildObjectForResourceResponse(const ResourceResponse& response, ResourceLoader* resourceLoader)
+RefPtr<Inspector::Protocol::Network::Response> InspectorNetworkAgent::buildObjectForResourceResponse(const ResourceResponse& response, ResourceLoader* resourceLoader)
 {
     if (response.isNull())
         return nullptr;
 
-    auto responseObject = Protocol::Network::Response::create()
+    auto responseObject = Inspector::Protocol::Network::Response::create()
         .setUrl(response.url().string())
         .setStatus(response.httpStatusCode())
         .setStatusText(response.httpStatusText())
@@ -397,11 +397,11 @@ RefPtr<Protocol::Network::Response> InspectorNetworkAgent::buildObjectForResourc
     }
 
     if (auto& certificateInfo = response.certificateInfo()) {
-        auto securityPayload = Protocol::Security::Security::create()
+        auto securityPayload = Inspector::Protocol::Security::Security::create()
             .release();
 
         if (auto certificateSummaryInfo = certificateInfo.value().summary()) {
-            auto certificatePayload = Protocol::Security::Certificate::create()
+            auto certificatePayload = Inspector::Protocol::Security::Certificate::create()
                 .release();
 
             certificatePayload->setSubject(certificateSummaryInfo.value().subject);
@@ -433,9 +433,9 @@ RefPtr<Protocol::Network::Response> InspectorNetworkAgent::buildObjectForResourc
     return responseObject;
 }
 
-Ref<Protocol::Network::CachedResource> InspectorNetworkAgent::buildObjectForCachedResource(CachedResource* cachedResource)
+Ref<Inspector::Protocol::Network::CachedResource> InspectorNetworkAgent::buildObjectForCachedResource(CachedResource* cachedResource)
 {
-    auto resourceObject = Protocol::Network::CachedResource::create()
+    auto resourceObject = Inspector::Protocol::Network::CachedResource::create()
         .setUrl(cachedResource->url().string())
         .setType(InspectorPageAgent::cachedResourceTypeJSON(*cachedResource))
         .setBodySize(cachedResource->encodedSize())
@@ -483,7 +483,7 @@ void InspectorNetworkAgent::willSendRequest(ResourceLoaderIdentifier identifier,
     auto initiatorObject = buildInitiatorObject(document, &request);
 
     String url = loader ? loader->url().string() : request.url().string();
-    std::optional<Protocol::Page::ResourceType> typePayload;
+    std::optional<Inspector::Protocol::Page::ResourceType> typePayload;
     if (type != InspectorPageAgent::OtherResource)
         typePayload = protocolResourceType;
     m_frontendDispatcher->requestWillBeSent(requestId, frameId, loaderId, url, buildObjectForResourceRequest(request, resourceLoader), sendTimestamp, walltime.secondsSinceEpoch().seconds(), WTFMove(initiatorObject), buildObjectForResourceResponse(redirectResponse, nullptr), WTFMove(typePayload), targetId);
@@ -571,7 +571,7 @@ void InspectorNetworkAgent::didReceiveResponse(ResourceLoaderIdentifier identifi
     if (cachedResource) {
         // Use mime type from cached resource in case the one in response is empty.
         if (resourceResponse && response.mimeType().isEmpty())
-            resourceResponse->setString(Protocol::Network::Response::mimeTypeKey, cachedResource->response().mimeType());
+            resourceResponse->setString(Inspector::Protocol::Network::Response::mimeTypeKey, cachedResource->response().mimeType());
         m_resourcesData->addCachedResource(requestId, cachedResource);
     }
 
@@ -594,17 +594,17 @@ void InspectorNetworkAgent::didReceiveResponse(ResourceLoaderIdentifier identifi
                 });
             }
             
-            resourceResponse->setString(Protocol::Network::Response::mimeTypeKey, previousResourceData->mimeType());
+            resourceResponse->setString(Inspector::Protocol::Network::Response::mimeTypeKey, previousResourceData->mimeType());
             
-            resourceResponse->setInteger(Protocol::Network::Response::statusKey, previousResourceData->httpStatusCode());
-            resourceResponse->setString(Protocol::Network::Response::statusTextKey, previousResourceData->httpStatusText());
+            resourceResponse->setInteger(Inspector::Protocol::Network::Response::statusKey, previousResourceData->httpStatusCode());
+            resourceResponse->setString(Inspector::Protocol::Network::Response::statusTextKey, previousResourceData->httpStatusText());
             
-            resourceResponse->setString(Protocol::Network::Response::sourceKey, Protocol::Helpers::getEnumConstantValue(Protocol::Network::Response::Source::DiskCache));
+            resourceResponse->setString(Inspector::Protocol::Network::Response::sourceKey, Inspector::Protocol::Helpers::getEnumConstantValue(Inspector::Protocol::Network::Response::Source::DiskCache));
         }
     }
 
-    Protocol::Network::FrameId frameId = frameIdentifier(loader);
-    Protocol::Network::LoaderId loaderId = loaderIdentifier(loader);
+    Inspector::Protocol::Network::FrameId frameId = frameIdentifier(loader);
+    Inspector::Protocol::Network::LoaderId loaderId = loaderIdentifier(loader);
 
     m_resourcesData->responseReceived(requestId, frameId, response, type, shouldForceBufferingNetworkResourceData());
 
@@ -696,8 +696,8 @@ void InspectorNetworkAgent::didLoadResourceFromMemoryCache(DocumentLoader* loade
 
     auto identifier = ResourceLoaderIdentifier::generate();
     String requestId = IdentifiersFactory::requestId(identifier.toUInt64());
-    Protocol::Network::LoaderId loaderId = loaderIdentifier(loader);
-    Protocol::Network::FrameId frameId = frameIdentifier(loader);
+    Inspector::Protocol::Network::LoaderId loaderId = loaderIdentifier(loader);
+    Inspector::Protocol::Network::FrameId frameId = frameIdentifier(loader);
 
     m_resourcesData->resourceCreated(requestId, loaderId, resource);
 
@@ -771,26 +771,26 @@ void InspectorNetworkAgent::didScheduleStyleRecalculation(Document& document)
         m_styleRecalculationInitiator = buildInitiatorObject(&document);
 }
 
-Ref<Protocol::Network::Initiator> InspectorNetworkAgent::buildInitiatorObject(Document* document, const ResourceRequest* resourceRequest)
+Ref<Inspector::Protocol::Network::Initiator> InspectorNetworkAgent::buildInitiatorObject(Document* document, const ResourceRequest* resourceRequest)
 {
     // FIXME: Worker support.
     if (!isMainThread()) {
-        return Protocol::Network::Initiator::create()
-            .setType(Protocol::Network::Initiator::Type::Other)
+        return Inspector::Protocol::Network::Initiator::create()
+            .setType(Inspector::Protocol::Network::Initiator::Type::Other)
             .release();
     }
 
-    RefPtr<Protocol::Network::Initiator> initiatorObject;
+    RefPtr<Inspector::Protocol::Network::Initiator> initiatorObject;
 
     Ref<ScriptCallStack> stackTrace = createScriptCallStack(JSExecState::currentState());
     if (stackTrace->size() > 0) {
-        initiatorObject = Protocol::Network::Initiator::create()
-            .setType(Protocol::Network::Initiator::Type::Script)
+        initiatorObject = Inspector::Protocol::Network::Initiator::create()
+            .setType(Inspector::Protocol::Network::Initiator::Type::Script)
             .release();
         initiatorObject->setStackTrace(stackTrace->buildInspectorObject());
     } else if (document && document->scriptableDocumentParser()) {
-        initiatorObject = Protocol::Network::Initiator::create()
-            .setType(Protocol::Network::Initiator::Type::Parser)
+        initiatorObject = Inspector::Protocol::Network::Initiator::create()
+            .setType(Inspector::Protocol::Network::Initiator::Type::Parser)
             .release();
         initiatorObject->setUrl(document->url().string());
         initiatorObject->setLineNumber(document->scriptableDocumentParser()->textPosition().m_line.oneBasedInt());
@@ -800,8 +800,8 @@ Ref<Protocol::Network::Initiator> InspectorNetworkAgent::buildInitiatorObject(Do
     if (domAgent && resourceRequest) {
         if (auto inspectorInitiatorNodeIdentifier = resourceRequest->inspectorInitiatorNodeIdentifier()) {
             if (!initiatorObject) {
-                initiatorObject = Protocol::Network::Initiator::create()
-                    .setType(Protocol::Network::Initiator::Type::Other)
+                initiatorObject = Inspector::Protocol::Network::Initiator::create()
+                    .setType(Inspector::Protocol::Network::Initiator::Type::Other)
                     .release();
             }
 
@@ -815,8 +815,8 @@ Ref<Protocol::Network::Initiator> InspectorNetworkAgent::buildInitiatorObject(Do
     if (m_isRecalculatingStyle && m_styleRecalculationInitiator)
         return *m_styleRecalculationInitiator;
 
-    return Protocol::Network::Initiator::create()
-        .setType(Protocol::Network::Initiator::Type::Other)
+    return Inspector::Protocol::Network::Initiator::create()
+        .setType(Inspector::Protocol::Network::Initiator::Type::Other)
         .release();
 }
 
@@ -827,7 +827,7 @@ void InspectorNetworkAgent::didCreateWebSocket(WebSocketChannelIdentifier identi
 
 void InspectorNetworkAgent::willSendWebSocketHandshakeRequest(WebSocketChannelIdentifier identifier, const ResourceRequest& request)
 {
-    auto requestObject = Protocol::Network::WebSocketRequest::create()
+    auto requestObject = Inspector::Protocol::Network::WebSocketRequest::create()
         .setHeaders(buildObjectForHeaders(request.httpHeaderFields()))
         .release();
     m_frontendDispatcher->webSocketWillSendHandshakeRequest(IdentifiersFactory::requestId(identifier.toUInt64()), timestamp(), WallTime::now().secondsSinceEpoch().seconds(), WTFMove(requestObject));
@@ -835,7 +835,7 @@ void InspectorNetworkAgent::willSendWebSocketHandshakeRequest(WebSocketChannelId
 
 void InspectorNetworkAgent::didReceiveWebSocketHandshakeResponse(WebSocketChannelIdentifier identifier, const ResourceResponse& response)
 {
-    auto responseObject = Protocol::Network::WebSocketResponse::create()
+    auto responseObject = Inspector::Protocol::Network::WebSocketResponse::create()
         .setStatus(response.httpStatusCode())
         .setStatusText(response.httpStatusText())
         .setHeaders(buildObjectForHeaders(response.httpHeaderFields()))
@@ -862,7 +862,7 @@ void InspectorNetworkAgent::didReceiveWebSocketFrameError(WebSocketChannelIdenti
     m_frontendDispatcher->webSocketFrameError(IdentifiersFactory::requestId(identifier.toUInt64()), timestamp(), errorMessage);
 }
 
-Protocol::ErrorStringOr<void> InspectorNetworkAgent::enable()
+Inspector::Protocol::ErrorStringOr<void> InspectorNetworkAgent::enable()
 {
     m_enabled = true;
     m_instrumentingAgents.setEnabledNetworkAgent(this);
@@ -898,7 +898,7 @@ Protocol::ErrorStringOr<void> InspectorNetworkAgent::enable()
     return { };
 }
 
-Protocol::ErrorStringOr<void> InspectorNetworkAgent::disable()
+Inspector::Protocol::ErrorStringOr<void> InspectorNetworkAgent::disable()
 {
     m_enabled = false;
     m_interceptionEnabled = false;
@@ -919,7 +919,7 @@ Protocol::ErrorStringOr<void> InspectorNetworkAgent::disable()
     return { };
 }
 
-bool InspectorNetworkAgent::shouldIntercept(URL url, Protocol::Network::NetworkStage networkStage)
+bool InspectorNetworkAgent::shouldIntercept(URL url, Inspector::Protocol::Network::NetworkStage networkStage)
 {
     url.removeFragmentIdentifier();
 
@@ -956,7 +956,7 @@ void InspectorNetworkAgent::continuePendingResponses()
     m_pendingInterceptResponses.clear();
 }
 
-Protocol::ErrorStringOr<void> InspectorNetworkAgent::setExtraHTTPHeaders(Ref<JSON::Object>&& headers)
+Inspector::Protocol::ErrorStringOr<void> InspectorNetworkAgent::setExtraHTTPHeaders(Ref<JSON::Object>&& headers)
 {
     for (auto& entry : headers.get()) {
         auto stringValue = entry.value->asString();
@@ -967,7 +967,7 @@ Protocol::ErrorStringOr<void> InspectorNetworkAgent::setExtraHTTPHeaders(Ref<JSO
     return { };
 }
 
-Protocol::ErrorStringOr<std::tuple<String, bool /* base64Encoded */>> InspectorNetworkAgent::getResponseBody(const Protocol::Network::RequestId& requestId)
+Inspector::Protocol::ErrorStringOr<std::tuple<String, bool /* base64Encoded */>> InspectorNetworkAgent::getResponseBody(const Inspector::Protocol::Network::RequestId& requestId)
 {
     NetworkResourcesData::ResourceData const* resourceData = m_resourcesData->data(requestId);
     if (!resourceData)
@@ -995,16 +995,16 @@ Protocol::ErrorStringOr<std::tuple<String, bool /* base64Encoded */>> InspectorN
     return makeUnexpected("Missing content of resource for given requestId"_s);
 }
 
-Protocol::ErrorStringOr<void> InspectorNetworkAgent::setResourceCachingDisabled(bool disabled)
+Inspector::Protocol::ErrorStringOr<void> InspectorNetworkAgent::setResourceCachingDisabled(bool disabled)
 {
     setResourceCachingDisabledInternal(disabled);
 
     return { };
 }
 
-void InspectorNetworkAgent::loadResource(const Protocol::Network::FrameId& frameId, const String& urlString, Ref<LoadResourceCallback>&& callback)
+void InspectorNetworkAgent::loadResource(const Inspector::Protocol::Network::FrameId& frameId, const String& urlString, Ref<LoadResourceCallback>&& callback)
 {
-    Protocol::ErrorString errorString;
+    Inspector::Protocol::ErrorString errorString;
     auto* context = scriptExecutionContext(errorString, frameId);
     if (!context) {
         callback->sendFailure(errorString);
@@ -1038,7 +1038,7 @@ void InspectorNetworkAgent::loadResource(const Protocol::Network::FrameId& frame
     inspectorThreadableLoaderClient->setLoader(WTFMove(loader));
 }
 
-Protocol::ErrorStringOr<String> InspectorNetworkAgent::getSerializedCertificate(const Protocol::Network::RequestId& requestId)
+Inspector::Protocol::ErrorStringOr<String> InspectorNetworkAgent::getSerializedCertificate(const Inspector::Protocol::Network::RequestId& requestId)
 {
     auto* resourceData = m_resourcesData->data(requestId);
     if (!resourceData)
@@ -1053,7 +1053,7 @@ Protocol::ErrorStringOr<String> InspectorNetworkAgent::getSerializedCertificate(
     return base64EncodeToString(encoder.buffer(), encoder.bufferSize());
 }
 
-WebSocket* InspectorNetworkAgent::webSocketForRequestId(const Protocol::Network::RequestId& requestId)
+WebSocket* InspectorNetworkAgent::webSocketForRequestId(const Inspector::Protocol::Network::RequestId& requestId)
 {
     Locker locker { WebSocket::allActiveWebSocketsLock() };
 
@@ -1071,7 +1071,7 @@ static JSC::JSValue webSocketAsScriptValue(JSC::JSGlobalObject& state, WebSocket
     return toJS(&state, deprecatedGlobalObjectForPrototype(&state), webSocket);
 }
 
-Protocol::ErrorStringOr<Ref<Protocol::Runtime::RemoteObject>> InspectorNetworkAgent::resolveWebSocket(const Protocol::Network::RequestId& requestId, const String& objectGroup)
+Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::Runtime::RemoteObject>> InspectorNetworkAgent::resolveWebSocket(const Inspector::Protocol::Network::RequestId& requestId, const String& objectGroup)
 {
     WebSocket* webSocket = webSocketForRequestId(requestId);
     if (!webSocket)
@@ -1097,7 +1097,7 @@ Protocol::ErrorStringOr<Ref<Protocol::Runtime::RemoteObject>> InspectorNetworkAg
     return object.releaseNonNull();
 }
 
-Protocol::ErrorStringOr<void> InspectorNetworkAgent::setInterceptionEnabled(bool enabled)
+Inspector::Protocol::ErrorStringOr<void> InspectorNetworkAgent::setInterceptionEnabled(bool enabled)
 {
     if (m_interceptionEnabled == enabled)
         return makeUnexpected(m_interceptionEnabled ? "Interception already enabled"_s : "Interception already disabled"_s);
@@ -1112,7 +1112,7 @@ Protocol::ErrorStringOr<void> InspectorNetworkAgent::setInterceptionEnabled(bool
     return { };
 }
 
-Protocol::ErrorStringOr<void> InspectorNetworkAgent::addInterception(const String& url, Protocol::Network::NetworkStage networkStage, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex)
+Inspector::Protocol::ErrorStringOr<void> InspectorNetworkAgent::addInterception(const String& url, Inspector::Protocol::Network::NetworkStage networkStage, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex)
 {
     Intercept intercept;
     intercept.url = url;
@@ -1128,7 +1128,7 @@ Protocol::ErrorStringOr<void> InspectorNetworkAgent::addInterception(const Strin
     return { };
 }
 
-Protocol::ErrorStringOr<void> InspectorNetworkAgent::removeInterception(const String& url, Protocol::Network::NetworkStage networkStage, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex)
+Inspector::Protocol::ErrorStringOr<void> InspectorNetworkAgent::removeInterception(const String& url, Inspector::Protocol::Network::NetworkStage networkStage, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex)
 {
     Intercept intercept;
     intercept.url = url;
@@ -1149,8 +1149,8 @@ bool InspectorNetworkAgent::willIntercept(const ResourceRequest& request)
     if (!m_interceptionEnabled)
         return false;
 
-    return shouldIntercept(request.url(), Protocol::Network::NetworkStage::Request)
-        || shouldIntercept(request.url(), Protocol::Network::NetworkStage::Response);
+    return shouldIntercept(request.url(), Inspector::Protocol::Network::NetworkStage::Request)
+        || shouldIntercept(request.url(), Inspector::Protocol::Network::NetworkStage::Response);
 }
 
 bool InspectorNetworkAgent::shouldInterceptRequest(const ResourceLoader& loader)
@@ -1161,7 +1161,7 @@ bool InspectorNetworkAgent::shouldInterceptRequest(const ResourceLoader& loader)
     if (loader.options().serviceWorkerRegistrationIdentifier)
         return false;
 
-    return shouldIntercept(loader.url(), Protocol::Network::NetworkStage::Request);
+    return shouldIntercept(loader.url(), Inspector::Protocol::Network::NetworkStage::Request);
 }
 
 bool InspectorNetworkAgent::shouldInterceptResponse(const ResourceResponse& response)
@@ -1169,7 +1169,7 @@ bool InspectorNetworkAgent::shouldInterceptResponse(const ResourceResponse& resp
     if (!m_interceptionEnabled)
         return false;
 
-    return shouldIntercept(response.url(), Protocol::Network::NetworkStage::Response);
+    return shouldIntercept(response.url(), Inspector::Protocol::Network::NetworkStage::Response);
 }
 
 void InspectorNetworkAgent::interceptRequest(ResourceLoader& loader, Function<void(const ResourceRequest&)>&& handler)
@@ -1207,17 +1207,17 @@ void InspectorNetworkAgent::interceptResponse(const ResourceResponse& response, 
     m_frontendDispatcher->responseIntercepted(requestId, resourceResponse.releaseNonNull());
 }
 
-Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptContinue(const Protocol::Network::RequestId& requestId, Protocol::Network::NetworkStage networkStage)
+Inspector::Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptContinue(const Inspector::Protocol::Network::RequestId& requestId, Inspector::Protocol::Network::NetworkStage networkStage)
 {
     switch (networkStage) {
-    case Protocol::Network::NetworkStage::Request:
+    case Inspector::Protocol::Network::NetworkStage::Request:
         if (auto pendingInterceptRequest = m_pendingInterceptRequests.take(requestId)) {
             pendingInterceptRequest->continueWithOriginalRequest();
             return { };
         }
         return makeUnexpected("Missing pending intercept request for given requestId"_s);
 
-    case Protocol::Network::NetworkStage::Response:
+    case Inspector::Protocol::Network::NetworkStage::Response:
         if (auto pendingInterceptResponse = m_pendingInterceptResponses.take(requestId)) {
             pendingInterceptResponse->respondWithOriginalResponse();
             return { };
@@ -1229,7 +1229,7 @@ Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptContinue(const Pro
     return { };
 }
 
-Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptWithRequest(const Protocol::Network::RequestId& requestId, const String& url, const String& method, RefPtr<JSON::Object>&& headers, const String& postData)
+Inspector::Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptWithRequest(const Inspector::Protocol::Network::RequestId& requestId, const String& url, const String& method, RefPtr<JSON::Object>&& headers, const String& postData)
 {
     auto pendingRequest = m_pendingInterceptRequests.take(requestId);
     if (!pendingRequest)
@@ -1263,7 +1263,7 @@ Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptWithRequest(const 
     return { };
 }
 
-Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptWithResponse(const Protocol::Network::RequestId& requestId, const String& content, bool base64Encoded, const String& mimeType, std::optional<int>&& status, const String& statusText, RefPtr<JSON::Object>&& headers)
+Inspector::Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptWithResponse(const Inspector::Protocol::Network::RequestId& requestId, const String& content, bool base64Encoded, const String& mimeType, std::optional<int>&& status, const String& statusText, RefPtr<JSON::Object>&& headers)
 {
     auto pendingInterceptResponse = m_pendingInterceptResponses.take(requestId);
     if (!pendingInterceptResponse)
@@ -1306,7 +1306,7 @@ Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptWithResponse(const
     return { };
 }
 
-Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptRequestWithResponse(const Protocol::Network::RequestId& requestId, const String& content, bool base64Encoded, const String& mimeType, int status, const String& statusText, Ref<JSON::Object>&& headers)
+Inspector::Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptRequestWithResponse(const Inspector::Protocol::Network::RequestId& requestId, const String& content, bool base64Encoded, const String& mimeType, int status, const String& statusText, Ref<JSON::Object>&& headers)
 {
     auto pendingRequest = m_pendingInterceptRequests.take(requestId);
     if (!pendingRequest)
@@ -1354,19 +1354,19 @@ Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptRequestWithRespons
     return { };
 }
 
-static ResourceError::Type toResourceErrorType(Protocol::Network::ResourceErrorType protocolResourceErrorType)
+static ResourceError::Type toResourceErrorType(Inspector::Protocol::Network::ResourceErrorType protocolResourceErrorType)
 {
     switch (protocolResourceErrorType) {
-    case Protocol::Network::ResourceErrorType::General:
+    case Inspector::Protocol::Network::ResourceErrorType::General:
         return ResourceError::Type::General;
 
-    case Protocol::Network::ResourceErrorType::AccessControl:
+    case Inspector::Protocol::Network::ResourceErrorType::AccessControl:
         return ResourceError::Type::AccessControl;
 
-    case Protocol::Network::ResourceErrorType::Cancellation:
+    case Inspector::Protocol::Network::ResourceErrorType::Cancellation:
         return ResourceError::Type::Cancellation;
 
-    case Protocol::Network::ResourceErrorType::Timeout:
+    case Inspector::Protocol::Network::ResourceErrorType::Timeout:
         return ResourceError::Type::Timeout;
     }
 
@@ -1374,7 +1374,7 @@ static ResourceError::Type toResourceErrorType(Protocol::Network::ResourceErrorT
     return ResourceError::Type::Null;
 }
 
-Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptRequestWithError(const Protocol::Network::RequestId& requestId, Protocol::Network::ResourceErrorType errorType)
+Inspector::Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptRequestWithError(const Inspector::Protocol::Network::RequestId& requestId, Inspector::Protocol::Network::ResourceErrorType errorType)
 {
     auto pendingRequest = m_pendingInterceptRequests.take(requestId);
     if (!pendingRequest)
@@ -1392,7 +1392,7 @@ Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptRequestWithError(c
 
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
 
-Protocol::ErrorStringOr<void> InspectorNetworkAgent::setEmulatedConditions(std::optional<int>&& bytesPerSecondLimit)
+Inspector::Protocol::ErrorStringOr<void> InspectorNetworkAgent::setEmulatedConditions(std::optional<int>&& bytesPerSecondLimit)
 {
     if (bytesPerSecondLimit && *bytesPerSecondLimit < 0)
         return makeUnexpected("bytesPerSecond cannot be negative"_s);
@@ -1485,9 +1485,9 @@ bool InspectorNetworkAgent::cachedResourceContent(CachedResource& resource, Stri
     }
 }
 
-static Ref<Protocol::Page::SearchResult> buildObjectForSearchResult(const Protocol::Network::RequestId& requestId, const Protocol::Network::FrameId& frameId, const String& url, int matchesCount)
+static Ref<Inspector::Protocol::Page::SearchResult> buildObjectForSearchResult(const Inspector::Protocol::Network::RequestId& requestId, const Inspector::Protocol::Network::FrameId& frameId, const String& url, int matchesCount)
 {
-    auto searchResult = Protocol::Page::SearchResult::create()
+    auto searchResult = Inspector::Protocol::Page::SearchResult::create()
         .setUrl(url)
         .setFrameId(frameId)
         .setMatchesCount(matchesCount)
@@ -1507,7 +1507,7 @@ static std::optional<String> textContentForResourceData(const NetworkResourcesDa
     return std::nullopt;
 }
 
-void InspectorNetworkAgent::searchOtherRequests(const JSC::Yarr::RegularExpression& regex, Ref<JSON::ArrayOf<Protocol::Page::SearchResult>>& result)
+void InspectorNetworkAgent::searchOtherRequests(const JSC::Yarr::RegularExpression& regex, Ref<JSON::ArrayOf<Inspector::Protocol::Page::SearchResult>>& result)
 {
     Vector<NetworkResourcesData::ResourceData*> resources = m_resourcesData->resources();
     for (auto* resourceData : resources) {
@@ -1519,7 +1519,7 @@ void InspectorNetworkAgent::searchOtherRequests(const JSC::Yarr::RegularExpressi
     }
 }
 
-void InspectorNetworkAgent::searchInRequest(Protocol::ErrorString& errorString, const Protocol::Network::RequestId& requestId, const String& query, bool caseSensitive, bool isRegex, RefPtr<JSON::ArrayOf<Protocol::GenericTypes::SearchMatch>>& results)
+void InspectorNetworkAgent::searchInRequest(Inspector::Protocol::ErrorString& errorString, const Inspector::Protocol::Network::RequestId& requestId, const String& query, bool caseSensitive, bool isRegex, RefPtr<JSON::ArrayOf<Inspector::Protocol::GenericTypes::SearchMatch>>& results)
 {
     NetworkResourcesData::ResourceData const* resourceData = m_resourcesData->data(requestId);
     if (!resourceData) {

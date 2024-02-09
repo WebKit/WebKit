@@ -59,7 +59,7 @@ void InspectorMemoryAgent::willDestroyFrontendAndBackend(DisconnectReason)
     m_instrumentingAgents.setPersistentMemoryAgent(nullptr);
 }
 
-Protocol::ErrorStringOr<void> InspectorMemoryAgent::enable()
+Inspector::Protocol::ErrorStringOr<void> InspectorMemoryAgent::enable()
 {
     if (m_instrumentingAgents.enabledMemoryAgent() == this)
         return makeUnexpected("Memory domain already enabled"_s);
@@ -69,7 +69,7 @@ Protocol::ErrorStringOr<void> InspectorMemoryAgent::enable()
     return { };
 }
 
-Protocol::ErrorStringOr<void> InspectorMemoryAgent::disable()
+Inspector::Protocol::ErrorStringOr<void> InspectorMemoryAgent::disable()
 {
     if (m_instrumentingAgents.enabledMemoryAgent() != this)
         return makeUnexpected("Memory domain already disabled"_s);
@@ -83,7 +83,7 @@ Protocol::ErrorStringOr<void> InspectorMemoryAgent::disable()
     return { };
 }
 
-Protocol::ErrorStringOr<void> InspectorMemoryAgent::startTracking()
+Inspector::Protocol::ErrorStringOr<void> InspectorMemoryAgent::startTracking()
 {
     if (m_tracking)
         return { };
@@ -99,7 +99,7 @@ Protocol::ErrorStringOr<void> InspectorMemoryAgent::startTracking()
     return { };
 }
 
-Protocol::ErrorStringOr<void> InspectorMemoryAgent::stopTracking()
+Inspector::Protocol::ErrorStringOr<void> InspectorMemoryAgent::stopTracking()
 {
     if (!m_tracking)
         return { };
@@ -116,42 +116,42 @@ Protocol::ErrorStringOr<void> InspectorMemoryAgent::stopTracking()
 void InspectorMemoryAgent::didHandleMemoryPressure(Critical critical)
 {
     MemoryFrontendDispatcher::Severity severity = critical == Critical::Yes ? MemoryFrontendDispatcher::Severity::Critical : MemoryFrontendDispatcher::Severity::NonCritical;
-    m_frontendDispatcher->memoryPressure(m_environment.executionStopwatch().elapsedTime().seconds(), Protocol::Helpers::getEnumConstantValue(severity));
+    m_frontendDispatcher->memoryPressure(m_environment.executionStopwatch().elapsedTime().seconds(), Inspector::Protocol::Helpers::getEnumConstantValue(severity));
 }
 
 void InspectorMemoryAgent::collectSample(const ResourceUsageData& data)
 {
-    auto javascriptCategory = Protocol::Memory::CategoryData::create()
-        .setType(Protocol::Memory::CategoryData::Type::JavaScript)
+    auto javascriptCategory = Inspector::Protocol::Memory::CategoryData::create()
+        .setType(Inspector::Protocol::Memory::CategoryData::Type::JavaScript)
         .setSize(data.categories[MemoryCategory::GCHeap].totalSize() + data.categories[MemoryCategory::GCOwned].totalSize())
         .release();
 
-    auto jitCategory = Protocol::Memory::CategoryData::create()
-        .setType(Protocol::Memory::CategoryData::Type::JIT)
+    auto jitCategory = Inspector::Protocol::Memory::CategoryData::create()
+        .setType(Inspector::Protocol::Memory::CategoryData::Type::JIT)
         .setSize(data.categories[MemoryCategory::JSJIT].totalSize())
         .release();
 
-    auto imagesCategory = Protocol::Memory::CategoryData::create()
-        .setType(Protocol::Memory::CategoryData::Type::Images)
+    auto imagesCategory = Inspector::Protocol::Memory::CategoryData::create()
+        .setType(Inspector::Protocol::Memory::CategoryData::Type::Images)
         .setSize(data.categories[MemoryCategory::Images].totalSize())
         .release();
 
-    auto layersCategory = Protocol::Memory::CategoryData::create()
-        .setType(Protocol::Memory::CategoryData::Type::Layers)
+    auto layersCategory = Inspector::Protocol::Memory::CategoryData::create()
+        .setType(Inspector::Protocol::Memory::CategoryData::Type::Layers)
         .setSize(data.categories[MemoryCategory::Layers].totalSize())
         .release();
 
-    auto pageCategory = Protocol::Memory::CategoryData::create()
-        .setType(Protocol::Memory::CategoryData::Type::Page)
+    auto pageCategory = Inspector::Protocol::Memory::CategoryData::create()
+        .setType(Inspector::Protocol::Memory::CategoryData::Type::Page)
         .setSize(data.categories[MemoryCategory::bmalloc].totalSize() + data.categories[MemoryCategory::LibcMalloc].totalSize())
         .release();
 
-    auto otherCategory = Protocol::Memory::CategoryData::create()
-        .setType(Protocol::Memory::CategoryData::Type::Other)
+    auto otherCategory = Inspector::Protocol::Memory::CategoryData::create()
+        .setType(Inspector::Protocol::Memory::CategoryData::Type::Other)
         .setSize(data.categories[MemoryCategory::Other].totalSize())
         .release();
 
-    auto categories = JSON::ArrayOf<Protocol::Memory::CategoryData>::create();
+    auto categories = JSON::ArrayOf<Inspector::Protocol::Memory::CategoryData>::create();
     categories->addItem(WTFMove(javascriptCategory));
     categories->addItem(WTFMove(jitCategory));
     categories->addItem(WTFMove(imagesCategory));
@@ -159,7 +159,7 @@ void InspectorMemoryAgent::collectSample(const ResourceUsageData& data)
     categories->addItem(WTFMove(pageCategory));
     categories->addItem(WTFMove(otherCategory));
 
-    auto event = Protocol::Memory::Event::create()
+    auto event = Inspector::Protocol::Memory::Event::create()
         .setTimestamp(m_environment.executionStopwatch().elapsedTimeSince(data.timestamp).seconds())
         .setCategories(WTFMove(categories))
         .release();

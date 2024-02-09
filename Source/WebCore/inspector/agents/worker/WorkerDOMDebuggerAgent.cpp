@@ -37,17 +37,17 @@ WorkerDOMDebuggerAgent::WorkerDOMDebuggerAgent(WorkerAgentContext& context, Insp
 
 WorkerDOMDebuggerAgent::~WorkerDOMDebuggerAgent() = default;
 
-Protocol::ErrorStringOr<void> WorkerDOMDebuggerAgent::setDOMBreakpoint(Protocol::DOM::NodeId, Protocol::DOMDebugger::DOMBreakpointType, RefPtr<JSON::Object>&& /* options */)
+Inspector::Protocol::ErrorStringOr<void> WorkerDOMDebuggerAgent::setDOMBreakpoint(Inspector::Protocol::DOM::NodeId, Inspector::Protocol::DOMDebugger::DOMBreakpointType, RefPtr<JSON::Object>&& /* options */)
 {
     return makeUnexpected("Not supported"_s);
 }
 
-Protocol::ErrorStringOr<void> WorkerDOMDebuggerAgent::removeDOMBreakpoint(Protocol::DOM::NodeId, Protocol::DOMDebugger::DOMBreakpointType)
+Inspector::Protocol::ErrorStringOr<void> WorkerDOMDebuggerAgent::removeDOMBreakpoint(Inspector::Protocol::DOM::NodeId, Inspector::Protocol::DOMDebugger::DOMBreakpointType)
 {
     return makeUnexpected("Not supported"_s);
 }
 
-bool WorkerDOMDebuggerAgent::setAnimationFrameBreakpoint(Protocol::ErrorString& errorString, RefPtr<JSC::Breakpoint>&&)
+bool WorkerDOMDebuggerAgent::setAnimationFrameBreakpoint(Inspector::Protocol::ErrorString& errorString, RefPtr<JSC::Breakpoint>&&)
 {
     errorString = "Not supported"_s;
     return false;

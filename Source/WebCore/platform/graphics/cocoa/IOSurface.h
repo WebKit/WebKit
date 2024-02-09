@@ -31,7 +31,6 @@
 #include "IntSize.h"
 #include "ProcessIdentity.h"
 #include <CoreGraphics/CoreGraphics.h>
-#include <objc/objc.h>
 #include <wtf/spi/cocoa/IOSurfaceSPI.h>
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)

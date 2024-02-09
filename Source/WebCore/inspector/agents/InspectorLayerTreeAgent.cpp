@@ -73,14 +73,14 @@ void InspectorLayerTreeAgent::reset()
     m_suppressLayerChangeEvents = false;
 }
 
-Protocol::ErrorStringOr<void> InspectorLayerTreeAgent::enable()
+Inspector::Protocol::ErrorStringOr<void> InspectorLayerTreeAgent::enable()
 {
     m_instrumentingAgents.setEnabledLayerTreeAgent(this);
 
     return { };
 }
 
-Protocol::ErrorStringOr<void> InspectorLayerTreeAgent::disable()
+Inspector::Protocol::ErrorStringOr<void> InspectorLayerTreeAgent::disable()
 {
     m_instrumentingAgents.setEnabledLayerTreeAgent(nullptr);
 
@@ -109,7 +109,7 @@ void InspectorLayerTreeAgent::pseudoElementDestroyed(PseudoElement& pseudoElemen
     unbindPseudoElement(&pseudoElement);
 }
 
-Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::LayerTree::Layer>>> InspectorLayerTreeAgent::layersForNode(Protocol::DOM::NodeId nodeId)
+Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::LayerTree::Layer>>> InspectorLayerTreeAgent::layersForNode(Inspector::Protocol::DOM::NodeId nodeId)
 {
     auto* node = m_instrumentingAgents.persistentDOMAgent()->nodeForId(nodeId);
     if (!node)
@@ -122,7 +122,7 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::LayerTree::Layer>>> Inspecto
     if (!is<RenderElement>(*renderer))
         return makeUnexpected("Missing renderer of element for given nodeId"_s);
 
-    auto layers = JSON::ArrayOf<Protocol::LayerTree::Layer>::create();
+    auto layers = JSON::ArrayOf<Inspector::Protocol::LayerTree::Layer>::create();
 
     gatherLayersUsingRenderObjectHierarchy(downcast<RenderElement>(*renderer), layers);
 
@@ -131,7 +131,7 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::LayerTree::Layer>>> Inspecto
     return layers;
 }
 
-void InspectorLayerTreeAgent::gatherLayersUsingRenderObjectHierarchy(RenderElement& renderer, JSON::ArrayOf<Protocol::LayerTree::Layer>& layers)
+void InspectorLayerTreeAgent::gatherLayersUsingRenderObjectHierarchy(RenderElement& renderer, JSON::ArrayOf<Inspector::Protocol::LayerTree::Layer>& layers)
 {
     if (renderer.hasLayer()) {
         gatherLayersUsingRenderLayerHierarchy(downcast<RenderLayerModelObject>(renderer).layer(), layers);
@@ -142,7 +142,7 @@ void InspectorLayerTreeAgent::gatherLayersUsingRenderObjectHierarchy(RenderEleme
         gatherLayersUsingRenderObjectHierarchy(child, layers);
 }
 
-void InspectorLayerTreeAgent::gatherLayersUsingRenderLayerHierarchy(RenderLayer* renderLayer, JSON::ArrayOf<Protocol::LayerTree::Layer>& layers)
+void InspectorLayerTreeAgent::gatherLayersUsingRenderLayerHierarchy(RenderLayer* renderLayer, JSON::ArrayOf<Inspector::Protocol::LayerTree::Layer>& layers)
 {
     if (renderLayer->isComposited())
         layers.addItem(buildObjectForLayer(renderLayer));
@@ -151,7 +151,7 @@ void InspectorLayerTreeAgent::gatherLayersUsingRenderLayerHierarchy(RenderLayer*
         gatherLayersUsingRenderLayerHierarchy(renderLayer, layers);
 }
 
-Ref<Protocol::LayerTree::Layer> InspectorLayerTreeAgent::buildObjectForLayer(RenderLayer* renderLayer)
+Ref<Inspector::Protocol::LayerTree::Layer> InspectorLayerTreeAgent::buildObjectForLayer(RenderLayer* renderLayer)
 {
     RenderObject* renderer = &renderLayer->renderer();
     RenderLayerBacking* backing = renderLayer->backing();
@@ -171,7 +171,7 @@ Ref<Protocol::LayerTree::Layer> InspectorLayerTreeAgent::buildObjectForLayer(Ren
         node = renderer->parent()->element();
 
     // Basic set of properties.
-    auto layerObject = Protocol::LayerTree::Layer::create()
+    auto layerObject = Inspector::Protocol::LayerTree::Layer::create()
         .setLayerId(bind(renderLayer))
         .setNodeId(idForNode(node))
         .setBounds(buildObjectForIntRect(renderer->absoluteBoundingBoxRect()))
@@ -210,7 +210,7 @@ Ref<Protocol::LayerTree::Layer> InspectorLayerTreeAgent::buildObjectForLayer(Ren
     return layerObject;
 }
 
-Protocol::DOM::NodeId InspectorLayerTreeAgent::idForNode(Node* node)
+Inspector::Protocol::DOM::NodeId InspectorLayerTreeAgent::idForNode(Node* node)
 {
     if (!node)
         return 0;
@@ -226,9 +226,9 @@ Protocol::DOM::NodeId InspectorLayerTreeAgent::idForNode(Node* node)
     return nodeId;
 }
 
-Ref<Protocol::LayerTree::IntRect> InspectorLayerTreeAgent::buildObjectForIntRect(const IntRect& rect)
+Ref<Inspector::Protocol::LayerTree::IntRect> InspectorLayerTreeAgent::buildObjectForIntRect(const IntRect& rect)
 {
-    return Protocol::LayerTree::IntRect::create()
+    return Inspector::Protocol::LayerTree::IntRect::create()
         .setX(rect.x())
         .setY(rect.y())
         .setWidth(rect.width())
@@ -236,7 +236,7 @@ Ref<Protocol::LayerTree::IntRect> InspectorLayerTreeAgent::buildObjectForIntRect
         .release();
 }
 
-Protocol::ErrorStringOr<Ref<Protocol::LayerTree::CompositingReasons>> InspectorLayerTreeAgent::reasonsForCompositingLayer(const Protocol::LayerTree::LayerId& layerId)
+Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::LayerTree::CompositingReasons>> InspectorLayerTreeAgent::reasonsForCompositingLayer(const Inspector::Protocol::LayerTree::LayerId& layerId)
 {
     const RenderLayer* renderLayer = m_idToLayer.get(layerId);
 
@@ -244,7 +244,7 @@ Protocol::ErrorStringOr<Ref<Protocol::LayerTree::CompositingReasons>> InspectorL
         return makeUnexpected("Missing render layer for given layerId"_s);
 
     OptionSet<CompositingReason> reasons = renderLayer->compositor().reasonsForCompositing(*renderLayer);
-    auto compositingReasons = Protocol::LayerTree::CompositingReasons::create().release();
+    auto compositingReasons = Inspector::Protocol::LayerTree::CompositingReasons::create().release();
 
     if (reasons.contains(CompositingReason::Transform3D))
         compositingReasons->setTransform3D(true);

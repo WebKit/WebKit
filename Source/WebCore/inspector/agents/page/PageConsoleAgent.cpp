@@ -54,71 +54,71 @@ PageConsoleAgent::PageConsoleAgent(PageAgentContext& context)
 
 PageConsoleAgent::~PageConsoleAgent() = default;
 
-Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::Console::Channel>>> PageConsoleAgent::getLoggingChannels()
+Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::Console::Channel>>> PageConsoleAgent::getLoggingChannels()
 {
-    auto channels = JSON::ArrayOf<Protocol::Console::Channel>::create();
+    auto channels = JSON::ArrayOf<Inspector::Protocol::Console::Channel>::create();
 
-    auto addLogChannel = [&] (Protocol::Console::ChannelSource source) {
-        auto* logChannel = getLogChannel(Protocol::Helpers::getEnumConstantValue(source));
+    auto addLogChannel = [&] (Inspector::Protocol::Console::ChannelSource source) {
+        auto* logChannel = getLogChannel(Inspector::Protocol::Helpers::getEnumConstantValue(source));
         if (!logChannel)
             return;
 
-        auto level = Protocol::Console::ChannelLevel::Off;
+        auto level = Inspector::Protocol::Console::ChannelLevel::Off;
         if (logChannel->state != WTFLogChannelState::Off) {
             switch (logChannel->level) {
             case WTFLogLevel::Always:
             case WTFLogLevel::Error:
             case WTFLogLevel::Warning:
             case WTFLogLevel::Info:
-                level = Protocol::Console::ChannelLevel::Basic;
+                level = Inspector::Protocol::Console::ChannelLevel::Basic;
                 break;
 
             case WTFLogLevel::Debug:
-                level = Protocol::Console::ChannelLevel::Verbose;
+                level = Inspector::Protocol::Console::ChannelLevel::Verbose;
                 break;
             }
         }
 
-        auto channel = Protocol::Console::Channel::create()
+        auto channel = Inspector::Protocol::Console::Channel::create()
             .setSource(source)
             .setLevel(level)
             .release();
         channels->addItem(WTFMove(channel));
     };
-    addLogChannel(Protocol::Console::ChannelSource::XML);
-    addLogChannel(Protocol::Console::ChannelSource::JavaScript);
-    addLogChannel(Protocol::Console::ChannelSource::Network);
-    addLogChannel(Protocol::Console::ChannelSource::ConsoleAPI);
-    addLogChannel(Protocol::Console::ChannelSource::Storage);
-    addLogChannel(Protocol::Console::ChannelSource::Appcache);
-    addLogChannel(Protocol::Console::ChannelSource::Rendering);
-    addLogChannel(Protocol::Console::ChannelSource::CSS);
-    addLogChannel(Protocol::Console::ChannelSource::Security);
-    addLogChannel(Protocol::Console::ChannelSource::ContentBlocker);
-    addLogChannel(Protocol::Console::ChannelSource::Media);
-    addLogChannel(Protocol::Console::ChannelSource::MediaSource);
-    addLogChannel(Protocol::Console::ChannelSource::WebRTC);
-    addLogChannel(Protocol::Console::ChannelSource::ITPDebug);
-    addLogChannel(Protocol::Console::ChannelSource::PrivateClickMeasurement);
-    addLogChannel(Protocol::Console::ChannelSource::PaymentRequest);
-    addLogChannel(Protocol::Console::ChannelSource::Other);
+    addLogChannel(Inspector::Protocol::Console::ChannelSource::XML);
+    addLogChannel(Inspector::Protocol::Console::ChannelSource::JavaScript);
+    addLogChannel(Inspector::Protocol::Console::ChannelSource::Network);
+    addLogChannel(Inspector::Protocol::Console::ChannelSource::ConsoleAPI);
+    addLogChannel(Inspector::Protocol::Console::ChannelSource::Storage);
+    addLogChannel(Inspector::Protocol::Console::ChannelSource::Appcache);
+    addLogChannel(Inspector::Protocol::Console::ChannelSource::Rendering);
+    addLogChannel(Inspector::Protocol::Console::ChannelSource::CSS);
+    addLogChannel(Inspector::Protocol::Console::ChannelSource::Security);
+    addLogChannel(Inspector::Protocol::Console::ChannelSource::ContentBlocker);
+    addLogChannel(Inspector::Protocol::Console::ChannelSource::Media);
+    addLogChannel(Inspector::Protocol::Console::ChannelSource::MediaSource);
+    addLogChannel(Inspector::Protocol::Console::ChannelSource::WebRTC);
+    addLogChannel(Inspector::Protocol::Console::ChannelSource::ITPDebug);
+    addLogChannel(Inspector::Protocol::Console::ChannelSource::PrivateClickMeasurement);
+    addLogChannel(Inspector::Protocol::Console::ChannelSource::PaymentRequest);
+    addLogChannel(Inspector::Protocol::Console::ChannelSource::Other);
 
     return channels;
 }
 
-Protocol::ErrorStringOr<void> PageConsoleAgent::setLoggingChannelLevel(Protocol::Console::ChannelSource source, Protocol::Console::ChannelLevel level)
+Inspector::Protocol::ErrorStringOr<void> PageConsoleAgent::setLoggingChannelLevel(Inspector::Protocol::Console::ChannelSource source, Inspector::Protocol::Console::ChannelLevel level)
 {
     switch (level) {
-    case Protocol::Console::ChannelLevel::Off:
-        m_inspectedPage.configureLoggingChannel(Protocol::Helpers::getEnumConstantValue(source), WTFLogChannelState::Off, WTFLogLevel::Error);
+    case Inspector::Protocol::Console::ChannelLevel::Off:
+        m_inspectedPage.configureLoggingChannel(Inspector::Protocol::Helpers::getEnumConstantValue(source), WTFLogChannelState::Off, WTFLogLevel::Error);
         return { };
 
-    case Protocol::Console::ChannelLevel::Basic:
-        m_inspectedPage.configureLoggingChannel(Protocol::Helpers::getEnumConstantValue(source), WTFLogChannelState::On, WTFLogLevel::Info);
+    case Inspector::Protocol::Console::ChannelLevel::Basic:
+        m_inspectedPage.configureLoggingChannel(Inspector::Protocol::Helpers::getEnumConstantValue(source), WTFLogChannelState::On, WTFLogLevel::Info);
         return { };
 
-    case Protocol::Console::ChannelLevel::Verbose:
-        m_inspectedPage.configureLoggingChannel(Protocol::Helpers::getEnumConstantValue(source), WTFLogChannelState::On, WTFLogLevel::Debug);
+    case Inspector::Protocol::Console::ChannelLevel::Verbose:
+        m_inspectedPage.configureLoggingChannel(Inspector::Protocol::Helpers::getEnumConstantValue(source), WTFLogChannelState::On, WTFLogLevel::Debug);
         return { };
     }
 

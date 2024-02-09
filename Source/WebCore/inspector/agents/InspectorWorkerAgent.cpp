@@ -58,7 +58,7 @@ void InspectorWorkerAgent::willDestroyFrontendAndBackend(DisconnectReason)
     disable();
 }
 
-Protocol::ErrorStringOr<void> InspectorWorkerAgent::enable()
+Inspector::Protocol::ErrorStringOr<void> InspectorWorkerAgent::enable()
 {
     if (m_enabled)
         return { };
@@ -70,7 +70,7 @@ Protocol::ErrorStringOr<void> InspectorWorkerAgent::enable()
     return { };
 }
 
-Protocol::ErrorStringOr<void> InspectorWorkerAgent::disable()
+Inspector::Protocol::ErrorStringOr<void> InspectorWorkerAgent::disable()
 {
     if (!m_enabled)
         return { };
@@ -82,7 +82,7 @@ Protocol::ErrorStringOr<void> InspectorWorkerAgent::disable()
     return { };
 }
 
-Protocol::ErrorStringOr<void> InspectorWorkerAgent::initialized(const String& workerId)
+Inspector::Protocol::ErrorStringOr<void> InspectorWorkerAgent::initialized(const String& workerId)
 {
     RefPtr proxy = m_connectedProxies.get(workerId).get();
     if (!proxy)
@@ -93,7 +93,7 @@ Protocol::ErrorStringOr<void> InspectorWorkerAgent::initialized(const String& wo
     return { };
 }
 
-Protocol::ErrorStringOr<void> InspectorWorkerAgent::sendMessageToWorker(const String& workerId, const String& message)
+Inspector::Protocol::ErrorStringOr<void> InspectorWorkerAgent::sendMessageToWorker(const String& workerId, const String& message)
 {
     if (!m_enabled)
         return makeUnexpected("Worker domain must be enabled"_s);

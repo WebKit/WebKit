@@ -130,16 +130,16 @@ void InspectorDOMDebuggerAgent::mainFrameNavigated()
         m_pauseOnAllTimeoutsBreakpoint->resetHitCount();
 }
 
-Protocol::ErrorStringOr<void> InspectorDOMDebuggerAgent::setEventBreakpoint(Protocol::DOMDebugger::EventBreakpointType breakpointType, const String& eventName, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, RefPtr<JSON::Object>&& options)
+Inspector::Protocol::ErrorStringOr<void> InspectorDOMDebuggerAgent::setEventBreakpoint(Inspector::Protocol::DOMDebugger::EventBreakpointType breakpointType, const String& eventName, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, RefPtr<JSON::Object>&& options)
 {
-    Protocol::ErrorString errorString;
+    Inspector::Protocol::ErrorString errorString;
 
     auto breakpoint = InspectorDebuggerAgent::debuggerBreakpointFromPayload(errorString, WTFMove(options));
     if (!breakpoint)
         return makeUnexpected(errorString);
 
     if (!eventName.isEmpty()) {
-        if (breakpointType == Protocol::DOMDebugger::EventBreakpointType::Listener) {
+        if (breakpointType == Inspector::Protocol::DOMDebugger::EventBreakpointType::Listener) {
             EventBreakpoint eventBreakpoint;
             eventBreakpoint.eventName = eventName;
             if (caseSensitive)
@@ -163,24 +163,24 @@ Protocol::ErrorStringOr<void> InspectorDOMDebuggerAgent::setEventBreakpoint(Prot
         return makeUnexpected("Unexpected isRegex"_s);
 
     switch (breakpointType) {
-    case Protocol::DOMDebugger::EventBreakpointType::AnimationFrame:
+    case Inspector::Protocol::DOMDebugger::EventBreakpointType::AnimationFrame:
         if (!setAnimationFrameBreakpoint(errorString, WTFMove(breakpoint)))
             return makeUnexpected(errorString);
         return { };
 
-    case Protocol::DOMDebugger::EventBreakpointType::Interval:
+    case Inspector::Protocol::DOMDebugger::EventBreakpointType::Interval:
         if (m_pauseOnAllIntervalsBreakpoint)
             return makeUnexpected("Breakpoint for Interval already exists"_s);
         m_pauseOnAllIntervalsBreakpoint = WTFMove(breakpoint);
         return { };
 
-    case Protocol::DOMDebugger::EventBreakpointType::Listener:
+    case Inspector::Protocol::DOMDebugger::EventBreakpointType::Listener:
         if (m_pauseOnAllListenersBreakpoint)
             return makeUnexpected("Breakpoint for Listener already exists"_s);
         m_pauseOnAllListenersBreakpoint = WTFMove(breakpoint);
         return { };
 
-    case Protocol::DOMDebugger::EventBreakpointType::Timeout:
+    case Inspector::Protocol::DOMDebugger::EventBreakpointType::Timeout:
         if (m_pauseOnAllTimeoutsBreakpoint)
             return makeUnexpected("Breakpoint for Timeout already exists"_s);
         m_pauseOnAllTimeoutsBreakpoint = WTFMove(breakpoint);
@@ -191,12 +191,12 @@ Protocol::ErrorStringOr<void> InspectorDOMDebuggerAgent::setEventBreakpoint(Prot
     return makeUnexpected("Not supported"_s);
 }
 
-Protocol::ErrorStringOr<void> InspectorDOMDebuggerAgent::removeEventBreakpoint(Protocol::DOMDebugger::EventBreakpointType breakpointType, const String& eventName, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex)
+Inspector::Protocol::ErrorStringOr<void> InspectorDOMDebuggerAgent::removeEventBreakpoint(Inspector::Protocol::DOMDebugger::EventBreakpointType breakpointType, const String& eventName, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex)
 {
-    Protocol::ErrorString errorString;
+    Inspector::Protocol::ErrorString errorString;
 
     if (!eventName.isEmpty()) {
-        if (breakpointType == Protocol::DOMDebugger::EventBreakpointType::Listener) {
+        if (breakpointType == Inspector::Protocol::DOMDebugger::EventBreakpointType::Listener) {
             EventBreakpoint eventBreakpoint;
             eventBreakpoint.eventName = eventName;
             if (caseSensitive)
@@ -219,24 +219,24 @@ Protocol::ErrorStringOr<void> InspectorDOMDebuggerAgent::removeEventBreakpoint(P
         return makeUnexpected("Unexpected isRegex"_s);
 
     switch (breakpointType) {
-    case Protocol::DOMDebugger::EventBreakpointType::AnimationFrame:
+    case Inspector::Protocol::DOMDebugger::EventBreakpointType::AnimationFrame:
         if (!setAnimationFrameBreakpoint(errorString, nullptr))
             return makeUnexpected(errorString);
         return { };
 
-    case Protocol::DOMDebugger::EventBreakpointType::Interval:
+    case Inspector::Protocol::DOMDebugger::EventBreakpointType::Interval:
         if (!m_pauseOnAllIntervalsBreakpoint)
             return makeUnexpected("Breakpoint for Intervals missing"_s);
         m_pauseOnAllIntervalsBreakpoint = nullptr;
         return { };
 
-    case Protocol::DOMDebugger::EventBreakpointType::Listener:
+    case Inspector::Protocol::DOMDebugger::EventBreakpointType::Listener:
         if (!m_pauseOnAllListenersBreakpoint)
             return makeUnexpected("Breakpoint for Listeners missing"_s);
         m_pauseOnAllListenersBreakpoint = nullptr;
         return { };
 
-    case Protocol::DOMDebugger::EventBreakpointType::Timeout:
+    case Inspector::Protocol::DOMDebugger::EventBreakpointType::Timeout:
         if (!m_pauseOnAllTimeoutsBreakpoint)
             return makeUnexpected("Breakpoint for Timeouts missing"_s);
         m_pauseOnAllTimeoutsBreakpoint = nullptr;
@@ -373,9 +373,9 @@ void InspectorDOMDebuggerAgent::willSendRequestOfType(ResourceRequest& request)
     willSendRequest(request);
 }
 
-Protocol::ErrorStringOr<void> InspectorDOMDebuggerAgent::setURLBreakpoint(const String& url, std::optional<bool>&& isRegex, RefPtr<JSON::Object>&& options)
+Inspector::Protocol::ErrorStringOr<void> InspectorDOMDebuggerAgent::setURLBreakpoint(const String& url, std::optional<bool>&& isRegex, RefPtr<JSON::Object>&& options)
 {
-    Protocol::ErrorString errorString;
+    Inspector::Protocol::ErrorString errorString;
 
     auto breakpoint = InspectorDebuggerAgent::debuggerBreakpointFromPayload(errorString, WTFMove(options));
     if (!breakpoint)
@@ -399,7 +399,7 @@ Protocol::ErrorStringOr<void> InspectorDOMDebuggerAgent::setURLBreakpoint(const 
     return { };
 }
 
-Protocol::ErrorStringOr<void> InspectorDOMDebuggerAgent::removeURLBreakpoint(const String& url, std::optional<bool>&& isRegex)
+Inspector::Protocol::ErrorStringOr<void> InspectorDOMDebuggerAgent::removeURLBreakpoint(const String& url, std::optional<bool>&& isRegex)
 {
     if (url.isEmpty()) {
         if (!m_pauseOnAllURLsBreakpoint)
