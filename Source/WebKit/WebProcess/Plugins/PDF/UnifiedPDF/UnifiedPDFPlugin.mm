@@ -44,6 +44,7 @@
 #include <WebCore/ChromeClient.h>
 #include <WebCore/ColorCocoa.h>
 #include <WebCore/Editor.h>
+#include <WebCore/FilterOperations.h>
 #include <WebCore/FloatPoint.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/HTMLNames.h>
@@ -221,18 +222,91 @@ void UnifiedPDFPlugin::ensureLayers()
         m_scrollContainerLayer->addChild(*m_scrolledContentsLayer);
     }
 
+    if (!m_pageBackgroundsContainerLayer) {
+        m_pageBackgroundsContainerLayer = createGraphicsLayer("Page backgrounds"_s, GraphicsLayer::Type::Normal);
+        m_pageBackgroundsContainerLayer->setAnchorPoint({ });
+        m_scrolledContentsLayer->addChild(*m_pageBackgroundsContainerLayer);
+    }
+
     if (!m_contentsLayer) {
-        m_contentsLayer = createGraphicsLayer("UnifiedPDFPlugin contents"_s, GraphicsLayer::Type::TiledBacking);
+        m_contentsLayer = createGraphicsLayer("PDF contents"_s, GraphicsLayer::Type::TiledBacking);
         m_contentsLayer->setAnchorPoint({ });
         m_contentsLayer->setDrawsContent(true);
         m_scrolledContentsLayer->addChild(*m_contentsLayer);
     }
 
     if (!m_overflowControlsContainer) {
-        m_overflowControlsContainer = createGraphicsLayer("UnifiedPDFPlugin overflow controls container"_s, GraphicsLayer::Type::Normal);
+        m_overflowControlsContainer = createGraphicsLayer("Overflow controls container"_s, GraphicsLayer::Type::Normal);
         m_overflowControlsContainer->setAnchorPoint({ });
         m_rootLayer->addChild(*m_overflowControlsContainer);
     }
+}
+
+void UnifiedPDFPlugin::updatePageBackgroundLayers()
+{
+    RefPtr page = this->page();
+    if (!page)
+        return;
+
+    Vector<Ref<GraphicsLayer>> pageContainerLayers = m_pageBackgroundsContainerLayer->children();
+
+    for (PDFDocumentLayout::PageIndex i = 0; i < m_documentLayout.pageCount(); ++i) {
+        auto destinationRect = m_documentLayout.boundsForPageAtIndex(i);
+        destinationRect.scale(m_documentLayout.scale());
+
+        auto addLayerShadow = [](GraphicsLayer& layer, IntPoint shadowOffset, const Color& shadowColor, int shadowStdDeviation) {
+            Vector<RefPtr<FilterOperation>> filterOperations;
+            filterOperations.append(DropShadowFilterOperation::create(shadowOffset, shadowStdDeviation, shadowColor));
+
+            FilterOperations filters;
+            filters.setOperations(WTFMove(filterOperations));
+            layer.setFilters(filters);
+        };
+
+        const auto containerShadowOffset = IntPoint { 0, 1 };
+        constexpr auto containerShadowColor = SRGBA<uint8_t> { 0, 0, 0, 46 };
+        constexpr int containerShadowStdDeviation = 2; // FIXME: Same as radius?
+
+        const auto shadowOffset = IntPoint { 0, 2 };
+        constexpr auto shadowColor = SRGBA<uint8_t> { 0, 0, 0, 38 };
+        constexpr int shadowStdDeviation = 6; // FIXME: Same as radius?
+
+
+        auto pageContainerLayer = [&](PDFDocumentLayout::PageIndex pageIndex) {
+            if (pageIndex < pageContainerLayers.size())
+                return pageContainerLayers[pageIndex];
+
+            auto pageContainerLayer = createGraphicsLayer(makeString("Page container "_s, pageIndex), GraphicsLayer::Type::Normal);
+            auto pageBackgroundLayer = createGraphicsLayer(makeString("Page background "_s, pageIndex), GraphicsLayer::Type::Normal);
+            // Can only be null if this->page() is null, which we checked above.
+            ASSERT(pageContainerLayer);
+            ASSERT(pageBackgroundLayer);
+
+            pageContainerLayer->addChild(*pageBackgroundLayer);
+
+            pageContainerLayer->setAnchorPoint({ });
+            addLayerShadow(*pageContainerLayer, containerShadowOffset, containerShadowColor, containerShadowStdDeviation);
+
+            pageBackgroundLayer->setAnchorPoint({ });
+            pageBackgroundLayer->setBackgroundColor(Color::white);
+            // FIXME: Need to add a 1px black border with alpha 0.0586.
+
+            addLayerShadow(*pageBackgroundLayer, shadowOffset, shadowColor, shadowStdDeviation);
+
+            auto containerLayer = pageContainerLayer.releaseNonNull();
+            pageContainerLayers.append(WTFMove(containerLayer));
+
+            return pageContainerLayers[pageIndex];
+        }(i);
+
+        pageContainerLayer->setPosition(destinationRect.location());
+        pageContainerLayer->setSize(destinationRect.size());
+
+        auto pageContentsLayer = pageContainerLayer->children()[0];
+        pageContentsLayer->setSize(destinationRect.size());
+    }
+
+    m_pageBackgroundsContainerLayer->setChildren(WTFMove(pageContainerLayers));
 }
 
 ScrollingNodeID UnifiedPDFPlugin::scrollingNodeID() const
@@ -288,6 +362,8 @@ void UnifiedPDFPlugin::updateLayerHierarchy()
     m_contentsLayer->setSize(documentSize());
     m_contentsLayer->setNeedsDisplay();
 
+    updatePageBackgroundLayers();
+
     didChangeSettings();
     didChangeIsInWindow();
 }
@@ -309,7 +385,14 @@ void UnifiedPDFPlugin::didChangeSettings()
     propagateSettingsToLayer(*m_rootLayer);
     propagateSettingsToLayer(*m_scrollContainerLayer);
     propagateSettingsToLayer(*m_scrolledContentsLayer);
+    propagateSettingsToLayer(*m_pageBackgroundsContainerLayer);
     propagateSettingsToLayer(*m_contentsLayer);
+
+    for (auto& pageLayer : m_pageBackgroundsContainerLayer->children()) {
+        propagateSettingsToLayer(pageLayer);
+        if (pageLayer->children().size())
+            propagateSettingsToLayer(pageLayer->children()[0]);
+    }
 
     if (m_layerForHorizontalScrollbar)
         propagateSettingsToLayer(*m_layerForHorizontalScrollbar);
@@ -331,7 +414,8 @@ void UnifiedPDFPlugin::didChangeIsInWindow()
     RefPtr page = this->page();
     if (!page || !m_contentsLayer)
         return;
-    m_contentsLayer->tiledBacking()->setIsInWindow(page->isInWindow());
+
+    m_contentsLayer->setIsInWindow(page->isInWindow());
 }
 
 void UnifiedPDFPlugin::windowActivityDidChange()
@@ -385,6 +469,7 @@ void UnifiedPDFPlugin::paintContents(const GraphicsLayer* layer, GraphicsContext
     if (layer != m_contentsLayer.get())
         return;
 
+    // FIXME: We could be smarter and only paint the relevant page.
     paintPDFContent(context, clipRect);
 }
 
@@ -412,13 +497,12 @@ void UnifiedPDFPlugin::paintPDFContent(WebCore::GraphicsContext& context, const 
 
         auto destinationRect = m_documentLayout.boundsForPageAtIndex(i);
 
-        // FIXME: If we draw page shadows we'll have to inflate destinationRect here.
         if (!destinationRect.intersects(drawingRectInPDFLayoutCoordinates))
             continue;
 
         auto pageStateSaver = GraphicsContextStateSaver(context);
         context.clip(destinationRect);
-        context.fillRect(destinationRect, Color::white);
+//        context.fillRect(destinationRect, Color::white);
 
         // Translate the context to the bottom of pageBounds and flip, so that PDFKit operates
         // from this page's drawing origin.
@@ -529,6 +613,9 @@ void UnifiedPDFPlugin::setPageScaleFactor(double scale, std::optional<WebCore::I
     transform.translate(sidePaddingWidth(), 0);
 
     m_contentsLayer->setTransform(transform);
+    m_pageBackgroundsContainerLayer->setTransform(transform);
+
+    updatePageBackgroundLayers();
 
     if (!origin)
         origin = IntRect({ }, size()).center();
@@ -693,6 +780,9 @@ bool UnifiedPDFPlugin::updateOverflowControlsLayers(bool needsHorizontalScrollba
 
         if (needLayer) {
             layer = createGraphicsLayer(layerName, GraphicsLayer::Type::Normal);
+            if (!layer)
+                return false;
+
             layer->setAllowsBackingStoreDetaching(false);
             layer->setAllowsTiling(false);
             layer->setDrawsContent(true);
@@ -1640,6 +1730,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         activeAnnotation->attach(m_annotationContainer.get());
     } else
         m_activeAnnotation = nullptr;
+
     updateLayerHierarchy();
 #endif
 }

@@ -225,7 +225,9 @@ private:
 
     void paintPDFContent(WebCore::GraphicsContext&, const WebCore::FloatRect& clipRect);
     void paintPDFOverlays(WebCore::GraphicsContext&);
+
     void ensureLayers();
+    void updatePageBackgroundLayers();
     void updateLayerHierarchy();
 
     void didChangeScrollOffset() override;
@@ -284,6 +286,7 @@ private:
     RefPtr<WebCore::GraphicsLayer> m_rootLayer;
     RefPtr<WebCore::GraphicsLayer> m_scrollContainerLayer;
     RefPtr<WebCore::GraphicsLayer> m_scrolledContentsLayer;
+    RefPtr<WebCore::GraphicsLayer> m_pageBackgroundsContainerLayer;
     RefPtr<WebCore::GraphicsLayer> m_contentsLayer;
 
     RefPtr<WebCore::GraphicsLayer> m_overflowControlsContainer;

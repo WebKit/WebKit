@@ -623,7 +623,7 @@ public:
 
     WEBCORE_EXPORT void noteDeviceOrPageScaleFactorChangedIncludingDescendants();
 
-    void setIsInWindow(bool);
+    WEBCORE_EXPORT void setIsInWindow(bool);
 
     // Some compositing systems may do internal batching to synchronize compositing updates
     // with updates drawn into the window. These methods flush internal batched state on this layer

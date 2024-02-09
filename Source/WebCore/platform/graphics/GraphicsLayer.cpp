@@ -504,7 +504,7 @@ void GraphicsLayer::noteDeviceOrPageScaleFactorChangedIncludingDescendants()
 
 void GraphicsLayer::setIsInWindow(bool inWindow)
 {
-    if (TiledBacking* tiledBacking = this->tiledBacking())
+    if (auto* tiledBacking = this->tiledBacking())
         tiledBacking->setIsInWindow(inWindow);
 }
 
