@@ -164,7 +164,7 @@ std::unique_ptr<PlatformDisplay> PlatformDisplay::createPlatformDisplay()
 #if PLATFORM(WPE)
     if (s_useDMABufForRendering) {
         if (GBMDevice::singleton().isInitialized()) {
-            if (auto* device = GBMDevice::singleton().device())
+            if (auto* device = GBMDevice::singleton().device(GBMDevice::Type::Render))
                 return PlatformDisplayGBM::create(device);
         }
         return PlatformDisplaySurfaceless::create();
@@ -549,7 +549,7 @@ struct gbm_device* PlatformDisplay::gbmDevice()
     if (!device.isInitialized())
         device.initialize(drmRenderNodeFile());
 
-    return device.device();
+    return device.device(GBMDevice::Type::Render);
 }
 
 const Vector<PlatformDisplay::DMABufFormat>& PlatformDisplay::dmabufFormats()

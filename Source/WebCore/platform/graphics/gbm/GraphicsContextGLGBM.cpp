@@ -110,7 +110,7 @@ void GraphicsContextGLGBM::prepareForDisplay()
 
 bool GraphicsContextGLGBM::platformInitializeContext()
 {
-    auto* device = GBMDevice::singleton().device();
+    auto* device = GBMDevice::singleton().device(GBMDevice::Type::Render);
     if (!device) {
         LOG(WebGL, "Warning: Unable to access the GBM device, we fallback to common GL images, they require a copy, that causes a performance penalty.");
         return false;

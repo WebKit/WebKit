@@ -132,7 +132,7 @@ std::unique_ptr<AcceleratedSurfaceDMABuf::RenderTarget> AcceleratedSurfaceDMABuf
         return nullptr;
     }
 
-    auto* device = WebCore::GBMDevice::singleton().device();
+    auto* device = WebCore::GBMDevice::singleton().device(dmabufFormat.usage == DMABufRendererBufferFormat::Usage::Scanout ? WebCore::GBMDevice::Type::Scanout : WebCore::GBMDevice::Type::Render);
     if (!device) {
         WTFLogAlways("Failed to create GBM buffer of size %dx%d: no GBM device found", size.width(), size.height());
         return nullptr;

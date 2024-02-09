@@ -157,7 +157,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
         if (m_dmaBufRendererBufferMode.contains(DMABufRendererBufferMode::Hardware)) {
             const char* disableGBM = getenv("WEBKIT_DMABUF_RENDERER_DISABLE_GBM");
             if (!disableGBM || !strcmp(disableGBM, "0")) {
-                if (auto* device = WebCore::GBMDevice::singleton().device())
+                if (auto* device = WebCore::GBMDevice::singleton().device(GBMDevice::Type::Render))
                     m_displayForCompositing = WebCore::PlatformDisplayGBM::create(device);
             }
         }
