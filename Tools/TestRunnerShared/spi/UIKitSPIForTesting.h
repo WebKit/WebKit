@@ -143,6 +143,7 @@ WTF_EXTERN_C_END
 
 @interface UITextSuggestion : NSObject
 @property (nonatomic, copy) NSString *displayText;
++ (instancetype)textSuggestionWithInputText:(NSString *)inputText;
 @end
 
 @protocol UITextInputTraits_Private <NSObject, UITextInputTraits>
@@ -622,8 +623,8 @@ typedef NS_ENUM(NSInteger, NSTextBlockLayer) {
 @end
 #endif
 
-#if HAVE(UI_ASYNC_TEXT_INTERACTION)
-@interface UIKeyEvent (Internal)
+#if USE(BROWSERENGINEKIT)
+@interface UIKeyEvent : NSObject
 - (instancetype)initWithWebEvent:(WebEvent *)webEvent;
 @property (nonatomic, readonly) WebEvent *webEvent;
 @end
