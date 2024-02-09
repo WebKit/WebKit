@@ -1383,8 +1383,6 @@ public:
     void setTextIndicatorAnimationProgress(float);
     void clearTextIndicator();
 
-    void didFailToFindString(const String&);
-
     void findTextRangesForStringMatches(const String&, OptionSet<FindOptions>, unsigned maxMatchCount, CompletionHandler<void(Vector<WebFoundTextRange>&&)>&&);
     void replaceFoundTextRangeWithString(const WebFoundTextRange&, const String&);
     void decorateTextRangeWithStyle(const WebFoundTextRange&, FindDecorationStyle);

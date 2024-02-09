@@ -5284,7 +5284,10 @@ void WebPageProxy::findStringMatches(const String& string, OptionSet<FindOptions
     }
 
     sendWithAsyncReply(Messages::WebPage::FindStringMatches(string, options, maxMatchCount), [this, protectedThis = Ref { *this }, string](Vector<Vector<WebCore::IntRect>> matches, int32_t firstIndexAfterSelection) {
-        m_findMatchesClient->didFindStringMatches(this, string, matches, firstIndexAfterSelection);
+        if (matches.isEmpty())
+            m_findClient->didFailToFindString(this, string);
+        else
+            m_findMatchesClient->didFindStringMatches(this, string, matches, firstIndexAfterSelection);
     });
 }
 
@@ -5314,7 +5317,12 @@ void WebPageProxy::findString(const String& string, OptionSet<FindOptions> optio
 
 void WebPageProxy::findRectsForStringMatches(const String& string, OptionSet<WebKit::FindOptions> options, unsigned maxMatchCount, CompletionHandler<void(Vector<WebCore::FloatRect>&&)>&& callbackFunction)
 {
-    sendWithAsyncReply(Messages::WebPage::FindRectsForStringMatches(string, options, maxMatchCount), WTFMove(callbackFunction));
+    auto completionHandler = [protectedThis = Ref { *this }, string, callbackFunction = WTFMove(callbackFunction)](Vector<WebCore::FloatRect>&& matchRects) mutable {
+        if (matchRects.isEmpty())
+            protectedThis->findClient().didFailToFindString(protectedThis.ptr(), string);
+        callbackFunction(WTFMove(matchRects));
+    };
+    sendWithAsyncReply(Messages::WebPage::FindRectsForStringMatches(string, options, maxMatchCount), WTFMove(completionHandler));
 }
 
 void WebPageProxy::findTextRangesForStringMatches(const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, CompletionHandler<void(Vector<WebFoundTextRange>&&)>&& callbackFunction)
@@ -8365,11 +8373,6 @@ void WebPageProxy::setTextIndicatorAnimationProgress(float progress)
 #else
     notImplemented();
 #endif
-}
-
-void WebPageProxy::didFailToFindString(const String& string)
-{
-    m_findClient->didFailToFindString(this, string);
 }
 
 bool WebPageProxy::sendMessage(UniqueRef<IPC::Encoder>&& encoder, OptionSet<IPC::SendOption> sendOptions)

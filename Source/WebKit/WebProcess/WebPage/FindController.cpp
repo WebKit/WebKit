@@ -136,7 +136,7 @@ static RefPtr<LocalFrame> frameWithSelection(Page* page)
     return nullptr;
 }
 
-void FindController::updateFindUIAfterPageScroll(bool found, const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, DidWrap didWrap, FindUIOriginator originator, std::optional<FrameIdentifier> idOfFrameContainingString, CompletionHandler<void(std::optional<WebCore::FrameIdentifier>, Vector<IntRect>&&, uint32_t, int32_t, bool)>&& completionHandler)
+void FindController::updateFindUIAfterPageScroll(bool found, const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, DidWrap didWrap, std::optional<FrameIdentifier> idOfFrameContainingString, CompletionHandler<void(std::optional<WebCore::FrameIdentifier>, Vector<IntRect>&&, uint32_t, int32_t, bool)>&& completionHandler)
 {
     RefPtr selectedFrame = frameWithSelection(m_webPage->corePage());
 
@@ -158,9 +158,6 @@ void FindController::updateFindUIAfterPageScroll(bool found, const String& strin
 
         hideFindIndicator();
         resetMatchIndex();
-        didFailToFindString();
-        if (originator != FindUIOriginator::FindString)
-            m_webPage->send(Messages::WebPageProxy::DidFailToFindString(string));
     } else {
         shouldShowOverlay = options.contains(FindOptions::ShowOverlay);
         bool shouldShowHighlight = options.contains(FindOptions::ShowHighlight);
@@ -310,7 +307,7 @@ void FindController::findString(const String& string, OptionSet<FindOptions> opt
 
     RefPtr<WebPage> protectedWebPage { m_webPage.get() };
     m_webPage->drawingArea()->dispatchAfterEnsuringUpdatedScrollPosition([protectedWebPage, found, string, options, maxMatchCount, didWrap, idOfFrameContainingString, completionHandler = WTFMove(completionHandler)]() mutable {
-        protectedWebPage->findController().updateFindUIAfterPageScroll(found, string, options, maxMatchCount, didWrap, FindUIOriginator::FindString, idOfFrameContainingString, WTFMove(completionHandler));
+        protectedWebPage->findController().updateFindUIAfterPageScroll(found, string, options, maxMatchCount, didWrap, idOfFrameContainingString, WTFMove(completionHandler));
     });
 }
 
@@ -329,7 +326,7 @@ void FindController::findStringMatches(const String& string, OptionSet<FindOptio
 
     bool found = !m_findMatches.isEmpty();
     m_webPage->drawingArea()->dispatchAfterEnsuringUpdatedScrollPosition([protectedWebPage = RefPtr { m_webPage.get() }, found, string, options, maxMatchCount]() {
-        protectedWebPage->findController().updateFindUIAfterPageScroll(found, string, options, maxMatchCount, DidWrap::No, FindUIOriginator::FindStringMatches, std::nullopt);
+        protectedWebPage->findController().updateFindUIAfterPageScroll(found, string, options, maxMatchCount, DidWrap::No, std::nullopt);
     });
 }
 
@@ -350,7 +347,7 @@ void FindController::findRectsForStringMatches(const String& string, OptionSet<F
 
     bool found = !m_findMatches.isEmpty();
     m_webPage->drawingArea()->dispatchAfterEnsuringUpdatedScrollPosition([protectedWebPage = RefPtr { m_webPage.get() }, found, string, options, maxMatchCount] () {
-        protectedWebPage->findController().updateFindUIAfterPageScroll(found, string, options, maxMatchCount, DidWrap::No, FindUIOriginator::FindStringMatches, std::nullopt);
+        protectedWebPage->findController().updateFindUIAfterPageScroll(found, string, options, maxMatchCount, DidWrap::No, std::nullopt);
     });
 }
 
@@ -473,10 +470,6 @@ void FindController::didFindString()
         return;
 
     selectedFrame->selection().revealSelection();
-}
-
-void FindController::didFailToFindString()
-{
 }
 
 void FindController::didHideFindIndicator()

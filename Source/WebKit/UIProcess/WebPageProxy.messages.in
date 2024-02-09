@@ -246,7 +246,6 @@ messages -> WebPageProxy {
     # Find messages
     SetTextIndicatorFromFrame(WebCore::FrameIdentifier frameID, struct WebCore::TextIndicatorData indicator, uint64_t lifetime)
     ClearTextIndicator()
-    DidFailToFindString(String string)
     DidGetImageForFindMatch(struct WebCore::ImageBufferParameters parameters, WebCore::ShareableBitmap::Handle contentImageHandle, uint32_t matchIndex)
 
     # PopupMenu messages
