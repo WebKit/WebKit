@@ -35,7 +35,7 @@ namespace JSC {
 class CustomGetterSetter : public JSCell {
 public:
     using Base = JSCell;
-    static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesPut | StructureIsImmortal;
 
     using CustomGetter = GetValueFunc;
     using CustomSetter = PutValueFunc;
@@ -59,6 +59,13 @@ public:
     inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
         
     DECLARE_EXPORT_INFO;
+
+    static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&) { RELEASE_ASSERT_NOT_REACHED(); return false; }
+    static bool put(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&) { RELEASE_ASSERT_NOT_REACHED(); return false; }
+    static bool putByIndex(JSCell*, JSGlobalObject*, unsigned, JSValue, bool) { RELEASE_ASSERT_NOT_REACHED(); return false; }
+    static bool setPrototype(JSObject*, JSGlobalObject*, JSValue, bool) { RELEASE_ASSERT_NOT_REACHED(); return false; }
+    static bool defineOwnProperty(JSObject*, JSGlobalObject*, PropertyName, const PropertyDescriptor&, bool) { RELEASE_ASSERT_NOT_REACHED(); return false; }
+    static bool deleteProperty(JSCell*, JSGlobalObject*, PropertyName, DeletePropertySlot&) { RELEASE_ASSERT_NOT_REACHED(); return false; }
 
 protected:
     CustomGetterSetter(VM& vm, Structure* structure, CustomGetter getter, CustomSetter setter)
