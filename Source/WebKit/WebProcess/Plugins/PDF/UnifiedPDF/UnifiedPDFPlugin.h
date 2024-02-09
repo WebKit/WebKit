@@ -61,6 +61,10 @@ private:
 
 enum class WebEventModifier : uint8_t;
 
+enum class AnnotationSearchDirection : bool {
+    Forward,
+    Backward
+};
 class UnifiedPDFPlugin final : public PDFPluginBase, public WebCore::GraphicsLayerClient {
 public:
     static Ref<UnifiedPDFPlugin> create(WebCore::HTMLPlugInElement&);
@@ -82,6 +86,9 @@ public:
     void setActiveAnnotation(RetainPtr<PDFAnnotation>&&) final;
     void focusNextAnnotation() final;
     void focusPreviousAnnotation() final;
+#if PLATFORM(MAC)
+    RetainPtr<PDFAnnotation> nextTextAnnotation(AnnotationSearchDirection) const;
+#endif
 
     void attemptToUnlockPDF(const String& password) final;
     void windowActivityDidChange() final;

@@ -1529,13 +1529,93 @@ CGRect UnifiedPDFPlugin::pluginBoundsForAnnotation(RetainPtr<PDFAnnotation>& ann
     return pageSpaceBounds;
 }
 
+#if PLATFORM(MAC)
+static RetainPtr<PDFAnnotation> findFirstTextAnnotationStartingAtIndex(const RetainPtr<NSArray>& annotations, unsigned startingIndex, AnnotationSearchDirection searchDirection)
+{
+    ASSERT(annotations);
+    if (!annotations || startingIndex >= [annotations count])
+        return nullptr;
+
+    auto indexRange = [&] {
+        if (searchDirection == AnnotationSearchDirection::Forward)
+            return [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(startingIndex, [annotations count] - startingIndex)];
+        return [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, startingIndex + 1)];
+    }();
+
+    auto searchResult = [annotations indexOfObjectAtIndexes:indexRange options:searchDirection == AnnotationSearchDirection::Forward ? 0 : NSEnumerationReverse passingTest:^BOOL(PDFAnnotation* annotation, NSUInteger, BOOL *) {
+        return [annotation isKindOfClass:getPDFAnnotationTextWidgetClass()] && ![annotation isReadOnly] && [annotation shouldDisplay];
+    }];
+
+    return searchResult != NSNotFound ? [annotations objectAtIndex:searchResult] : nullptr;
+}
+
+RetainPtr<PDFAnnotation> UnifiedPDFPlugin::nextTextAnnotation(AnnotationSearchDirection searchDirection) const
+{
+    ASSERT(m_activeAnnotation);
+    RetainPtr currentAnnotation = m_activeAnnotation->annotation();
+    RetainPtr currentPage = [currentAnnotation page];
+    if (!currentPage)
+        return nullptr;
+
+    RetainPtr annotationsForCurrentPage = [currentPage annotations];
+    auto indexOfCurrentAnnotation = [annotationsForCurrentPage indexOfObject:currentAnnotation.get()];
+    ASSERT(indexOfCurrentAnnotation != NSNotFound);
+    if (indexOfCurrentAnnotation == NSNotFound)
+        return nullptr;
+
+    bool isForwardSearchDirection = searchDirection == AnnotationSearchDirection::Forward;
+    if ((isForwardSearchDirection && indexOfCurrentAnnotation + 1 < [annotationsForCurrentPage count]) || (!isForwardSearchDirection && indexOfCurrentAnnotation)) {
+        auto startingIndexForSearch = isForwardSearchDirection ? indexOfCurrentAnnotation + 1 : indexOfCurrentAnnotation - 1;
+        if (RetainPtr nextTextAnnotationOnCurrentPage = findFirstTextAnnotationStartingAtIndex(annotationsForCurrentPage, startingIndexForSearch, searchDirection))
+            return nextTextAnnotationOnCurrentPage;
+    }
+
+    auto indexForCurrentPage = m_documentLayout.indexForPage(currentPage);
+    if (!indexForCurrentPage)
+        return nullptr;
+
+    RetainPtr<PDFAnnotation> nextAnnotation;
+    auto nextPageToSearchIndex = indexForCurrentPage.value();
+    while (!nextAnnotation) {
+        auto computeNextPageToSearchIndex = [this, isForwardSearchDirection](unsigned currentPageIndex) -> unsigned {
+            auto pageCount = m_documentLayout.pageCount();
+            if (!isForwardSearchDirection && !currentPageIndex)
+                return pageCount - 1;
+            return isForwardSearchDirection ? ((currentPageIndex + 1) % pageCount) : currentPageIndex - 1;
+        };
+        nextPageToSearchIndex = computeNextPageToSearchIndex(nextPageToSearchIndex);
+        RetainPtr nextPage = m_documentLayout.pageAtIndex(nextPageToSearchIndex);
+        if (!nextPage)
+            return nullptr;
+        if (RetainPtr nextPageAnnotations = [nextPage annotations]; nextPageAnnotations && [nextPageAnnotations count])
+            nextAnnotation = findFirstTextAnnotationStartingAtIndex(nextPageAnnotations, isForwardSearchDirection ? 0 : [nextPageAnnotations count] - 1, searchDirection);
+    }
+    return nextAnnotation;
+}
+#endif
 
 void UnifiedPDFPlugin::focusNextAnnotation()
 {
+#if PLATFORM(MAC)
+    if (!m_activeAnnotation)
+        return;
+    RetainPtr nextTextAnnotation = this->nextTextAnnotation(AnnotationSearchDirection::Forward);
+    if (!nextTextAnnotation || nextTextAnnotation == m_activeAnnotation->annotation())
+        return;
+    setActiveAnnotation(WTFMove(nextTextAnnotation));
+#endif
 }
 
 void UnifiedPDFPlugin::focusPreviousAnnotation()
 {
+#if PLATFORM(MAC)
+    if (!m_activeAnnotation)
+        return;
+    RetainPtr previousTextAnnotation = this->nextTextAnnotation(AnnotationSearchDirection::Backward);
+    if (!previousTextAnnotation || previousTextAnnotation == m_activeAnnotation->annotation())
+        return;
+    setActiveAnnotation(WTFMove(previousTextAnnotation));
+#endif
 }
 
 void UnifiedPDFPlugin::setActiveAnnotation(RetainPtr<PDFAnnotation>&& annotation)
