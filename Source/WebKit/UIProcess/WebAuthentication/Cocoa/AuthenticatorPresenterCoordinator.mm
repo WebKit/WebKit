@@ -119,6 +119,11 @@ void AuthenticatorPresenterCoordinator::updatePresenter(WebAuthenticationStatus 
         m_credentialRequestHandler(nil, error.get());
         break;
     }
+    case WebAuthenticationStatus::PinRequired: {
+        auto error = adoptNS([[NSError alloc] initWithDomain:ASCAuthorizationErrorDomain code:ASCAuthorizationErrorPINRequired userInfo:nil]);
+        m_credentialRequestHandler(nil, error.get());
+        break;
+    }
     case WebAuthenticationStatus::MultipleNFCTagsPresent: {
         auto error = adoptNS([[NSError alloc] initWithDomain:ASCAuthorizationErrorDomain code:ASCAuthorizationErrorMultipleNFCTagsPresent userInfo:nil]);
         [m_presenter updateInterfaceForUserVisibleError:error.get()];

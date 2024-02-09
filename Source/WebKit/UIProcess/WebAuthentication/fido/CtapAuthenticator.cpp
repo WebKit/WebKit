@@ -63,6 +63,8 @@ WebAuthenticationStatus toStatus(const CtapDeviceResponseCode& error)
         return WebAuthenticationStatus::PinAuthBlocked;
     case CtapDeviceResponseCode::kCtap2ErrPinBlocked:
         return WebAuthenticationStatus::PinBlocked;
+    case CtapDeviceResponseCode::kCtap2ErrPinRequired:
+        return WebAuthenticationStatus::PinRequired;
     default:
         ASSERT_NOT_REACHED();
         return WebAuthenticationStatus::PinInvalid;
