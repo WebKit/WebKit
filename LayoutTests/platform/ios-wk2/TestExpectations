@@ -2388,3 +2388,5 @@ webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video.html [ Pa
 webgl/1.0.3/conformance/textures/tex-image-with-format-and-type.html [ Pass Timeout ]
 webgl/1.0.3/conformance/textures/texture-size-cube-maps.html [ Pass Timeout ]
 webgl/1.0.3/conformance/textures/texture-transparent-pixels-initialized.html [ Pass Timeout ]
+
+webkit.org/b/269033 fast/events/ios/select-all-with-existing-selection.html [ Pass Failure ]
