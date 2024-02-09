@@ -1326,6 +1326,7 @@
 		522F792A28D50EC60069B45B /* HidConnection.mm in Sources */ = {isa = PBXBuildFile; fileRef = 57AC8F4F217FEED90055438C /* HidConnection.mm */; settings = {COMPILER_FLAGS = "-O0 -DRELEASE_WITHOUT_OPTIMIZATIONS"; }; };
 		522F792B28D5318A0069B45B /* CtapHidDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57597EC021818BE20037F924 /* CtapHidDriver.cpp */; settings = {COMPILER_FLAGS = "-O0 -DRELEASE_WITHOUT_OPTIMIZATIONS"; }; };
 		522F792C28D531970069B45B /* CtapAuthenticator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57597EBC2181848F0037F924 /* CtapAuthenticator.cpp */; settings = {COMPILER_FLAGS = "-O0 -DRELEASE_WITHOUT_OPTIMIZATIONS"; }; };
+		523475D52B6849D10029B9AE /* CoreIPCCFCharacterSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 523475D32B68470D0029B9AE /* CoreIPCCFCharacterSet.h */; };
 		523ADC8B2AFC2C3600B352C3 /* AuthenticationServicesSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 523ADC8A2AFC2C2000B352C3 /* AuthenticationServicesSoftLink.h */; };
 		523ADC8D2AFC2D2A00B352C3 /* AuthenticationServicesSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 523ADC8C2AFC2D0400B352C3 /* AuthenticationServicesSoftLink.mm */; };
 		5252A51927E048740094BEB9 /* VirtualHidConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 5252A51727E048740094BEB9 /* VirtualHidConnection.h */; };
@@ -5666,6 +5667,8 @@
 		51FB0902163A3B1C00EC324A /* NetworkProcessConnection.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; name = NetworkProcessConnection.messages.in; path = Network/NetworkProcessConnection.messages.in; sourceTree = "<group>"; };
 		51FD18B31651FBAD00DBE1CE /* NetworkResourceLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkResourceLoader.cpp; sourceTree = "<group>"; };
 		51FD18B41651FBAD00DBE1CE /* NetworkResourceLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkResourceLoader.h; sourceTree = "<group>"; };
+		523475D32B68470D0029B9AE /* CoreIPCCFCharacterSet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreIPCCFCharacterSet.h; sourceTree = "<group>"; };
+		523475D42B6849A70029B9AE /* CoreIPCCFCharacterSet.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = CoreIPCCFCharacterSet.serialization.in; sourceTree = "<group>"; };
 		523ADC8A2AFC2C2000B352C3 /* AuthenticationServicesSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AuthenticationServicesSoftLink.h; sourceTree = "<group>"; };
 		523ADC8C2AFC2D0400B352C3 /* AuthenticationServicesSoftLink.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AuthenticationServicesSoftLink.mm; sourceTree = "<group>"; };
 		5252A51727E048740094BEB9 /* VirtualHidConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VirtualHidConnection.h; sourceTree = "<group>"; };
@@ -11387,6 +11390,8 @@
 				FA39AE662B23972A008F93CD /* CoreIPCAuditToken.h */,
 				FA39AE672B23972A008F93CD /* CoreIPCAuditToken.serialization.in */,
 				51E8284B2B2036DD009119F9 /* CoreIPCAVOutputContext.serialization.in */,
+				523475D32B68470D0029B9AE /* CoreIPCCFCharacterSet.h */,
+				523475D42B6849A70029B9AE /* CoreIPCCFCharacterSet.serialization.in */,
 				5197FAE22AFD33B4009180C5 /* CoreIPCCFType.h */,
 				5197FAD62AFD33B1009180C5 /* CoreIPCCFType.serialization.in */,
 				519F6F7A2B2D77D900559CB3 /* CoreIPCCFURL.h */,
@@ -15771,6 +15776,7 @@
 				5106D7C418BDBE73000AB166 /* ContextMenuContextData.h in Headers */,
 				5197FAEB2AFD33CF009180C5 /* CoreIPCArray.h in Headers */,
 				FA39AE682B23972B008F93CD /* CoreIPCAuditToken.h in Headers */,
+				523475D52B6849D10029B9AE /* CoreIPCCFCharacterSet.h in Headers */,
 				5197FAE72AFD33CF009180C5 /* CoreIPCCFType.h in Headers */,
 				519F6F7C2B2D77E300559CB3 /* CoreIPCCFURL.h in Headers */,
 				5197FAE82AFD33CF009180C5 /* CoreIPCColor.h in Headers */,

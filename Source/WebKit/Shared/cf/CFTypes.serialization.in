@@ -70,6 +70,10 @@ additional_forward_declaration: typedef struct __SecTrust *SecTrustRef
 [WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createSecTrust()] SecTrustRef wrapped by WebKit::CoreIPCSecTrust {
 }
 
+additional_forward_declaration: typedef const struct CF_BRIDGED_TYPE(NSCharacterSet) __CFCharacterSet * CFCharacterSetRef
+[WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder] CFCharacterSetRef wrapped by WebKit::CoreIPCCFCharacterSet {
+}
+
 #endif // USE(CF)
 
 #if USE(CG)

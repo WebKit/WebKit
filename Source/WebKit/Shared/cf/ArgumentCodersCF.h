@@ -52,11 +52,4 @@ template<> struct ArgumentCoder<RetainPtr<CFTypeRef>> : CFRetainPtrArgumentCoder
     static std::optional<RetainPtr<CFTypeRef>> decode(Decoder&);
 };
 
-template<> struct ArgumentCoder<CFCharacterSetRef> {
-    template<typename Encoder> static void encode(Encoder&, CFCharacterSetRef);
-};
-template<> struct ArgumentCoder<RetainPtr<CFCharacterSetRef>> : CFRetainPtrArgumentCoder<CFCharacterSetRef> {
-    static std::optional<RetainPtr<CFCharacterSetRef>> decode(Decoder&);
-};
-
 } // namespace IPC
