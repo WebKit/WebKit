@@ -707,14 +707,6 @@ bool PluginView::performDictionaryLookupAtLocation(const WebCore::FloatPoint& po
     return m_plugin->performDictionaryLookupAtLocation(point);
 }
 
-bool PluginView::existingSelectionContainsPoint(const WebCore::FloatPoint& point) const
-{
-    if (!m_isInitialized)
-        return false;
-    
-    return m_plugin->existingSelectionContainsPoint(point);
-}
-
 void PluginView::notifyWidget(WidgetNotification notification)
 {
     switch (notification) {
