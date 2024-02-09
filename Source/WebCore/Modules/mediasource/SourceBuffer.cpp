@@ -600,6 +600,10 @@ void SourceBuffer::sourceBufferPrivateAppendComplete(MediaPromise::Result&& resu
 
 void SourceBuffer::sourceBufferPrivateDidReceiveRenderingError(int64_t error)
 {
+#if RELEASE_LOG_DISABLED
+    UNUSED_PARAM(error);
+#endif
+
     ERROR_LOG(LOGIDENTIFIER, error);
 
     ensureWeakOnDispatcher([this] {

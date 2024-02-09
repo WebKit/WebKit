@@ -107,7 +107,7 @@ public:
 
 protected:
     MediaSourcePrivate(MediaSourcePrivateClient&, RefCountedSerialFunctionDispatcher&);
-    WEBCORE_EXPORT void ensureOnDispatcher(Function<void()>&&) const;
+    void ensureOnDispatcher(Function<void()>&&) const;
 
     Vector<RefPtr<SourceBufferPrivate>> m_sourceBuffers;
     Vector<SourceBufferPrivate*> m_activeSourceBuffers;
