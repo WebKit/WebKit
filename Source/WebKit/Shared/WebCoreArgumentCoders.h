@@ -93,7 +93,6 @@ typedef struct __CVBuffer* CVPixelBufferRef;
 
 namespace WebCore {
 
-class AppKitControlSystemImage;
 class BlobPart;
 class Credential;
 class Cursor;
@@ -147,16 +146,6 @@ template<> struct ArgumentCoder<WebCore::FontCustomPlatformData> {
     static void encode(Encoder&, const WebCore::FontCustomPlatformData&);
     static std::optional<Ref<WebCore::FontCustomPlatformData>> decode(Decoder&);
 };
-#endif
-
-#if USE(APPKIT)
-
-template<> struct ArgumentCoder<WebCore::AppKitControlSystemImage> {
-    template<typename Encoder>
-    static void encode(Encoder&, const WebCore::AppKitControlSystemImage&);
-    static std::optional<Ref<WebCore::AppKitControlSystemImage>> decode(Decoder&);
-};
-
 #endif
 
 #if USE(SOUP)

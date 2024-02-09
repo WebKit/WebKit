@@ -35,11 +35,10 @@
 namespace WebCore {
 
 class WEBCORE_EXPORT ScrollbarTrackCornerSystemImageMac final : public AppKitControlSystemImage {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<ScrollbarTrackCornerSystemImageMac> create()
-    {
-        return adoptRef(*new ScrollbarTrackCornerSystemImageMac());
-    }
+    static Ref<ScrollbarTrackCornerSystemImageMac> create();
+    static Ref<ScrollbarTrackCornerSystemImageMac> create(WebCore::Color&& tintColor, bool useDarkAppearance);
 
     virtual ~ScrollbarTrackCornerSystemImageMac() = default;
 
@@ -47,7 +46,6 @@ public:
 
 private:
     ScrollbarTrackCornerSystemImageMac();
-
 };
 
 } // namespace WebCore

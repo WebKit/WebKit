@@ -36,6 +36,19 @@
 
 namespace WebCore {
 
+Ref<ScrollbarTrackCornerSystemImageMac> ScrollbarTrackCornerSystemImageMac::create()
+{
+    return adoptRef(*new ScrollbarTrackCornerSystemImageMac());
+}
+
+Ref<ScrollbarTrackCornerSystemImageMac> ScrollbarTrackCornerSystemImageMac::create(WebCore::Color&& tintColor, bool useDarkAppearance)
+{
+    auto result = create();
+    result->setTintColor(WTFMove(tintColor));
+    result->setUseDarkAppearance(useDarkAppearance);
+    return result;
+}
+
 ScrollbarTrackCornerSystemImageMac::ScrollbarTrackCornerSystemImageMac()
     : AppKitControlSystemImage(AppKitControlSystemImageType::ScrollbarTrackCorner)
 {

@@ -30,6 +30,7 @@
 #include "Color.h"
 #include "SystemImage.h"
 #include <optional>
+#include <wtf/ArgumentCoder.h>
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
 
@@ -42,6 +43,7 @@ enum class AppKitControlSystemImageType : uint8_t {
 };
 
 class WEBCORE_EXPORT AppKitControlSystemImage : public SystemImage {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~AppKitControlSystemImage() = default;
 
@@ -61,6 +63,7 @@ protected:
     AppKitControlSystemImage(AppKitControlSystemImageType);
 
 private:
+    friend struct IPC::ArgumentCoder<AppKitControlSystemImage, void>;
     AppKitControlSystemImageType m_controlType;
 
     Color m_tintColor;

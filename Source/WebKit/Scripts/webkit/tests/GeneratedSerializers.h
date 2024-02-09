@@ -88,6 +88,9 @@ class MoveOnlyBaseClass;
 class MoveOnlyDerivedClass;
 class ScrollingStateFrameHostingNode;
 class ScrollingStateFrameHostingNodeWithStuffAfterTuple;
+#if USE(APPKIT)
+class AppKitControlSystemImage;
+#endif
 struct Amazing;
 }
 
@@ -366,6 +369,14 @@ template<> struct ArgumentCoder<Namespace::OuterClass> {
 template<> struct ArgumentCoder<Namespace::OtherOuterClass> {
     static void encode(Encoder&, const Namespace::OtherOuterClass&);
     static std::optional<Namespace::OtherOuterClass> decode(Decoder&);
+};
+#endif
+
+#if USE(APPKIT)
+template<> struct ArgumentCoder<WebCore::AppKitControlSystemImage> {
+    static void encode(Encoder&, const WebCore::AppKitControlSystemImage&);
+    static void encode(StreamConnectionEncoder&, const WebCore::AppKitControlSystemImage&);
+    static std::optional<Ref<WebCore::AppKitControlSystemImage>> decode(Decoder&);
 };
 #endif
 

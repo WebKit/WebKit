@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright (C) 2022-2023 Apple Inc. All rights reserved.
+# Copyright (C) 2022-2024 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@ import sys
 #
 # AdditionalEncoder - generate serializers for StreamConnectionEncoder in addition to IPC::Encoder.
 # CreateUsing - use a custom function to call instead of the constructor or create.
+# ConstructSubclass - use a subclass to construct the object. Do not include namespace.
 # CustomHeader - don't include a header based on the struct/class name. Only needed for non-enum types.
 # DisableMissingMemberCheck - do not check for attributes that are missed during serialization.
 # Alias - this type is not a struct or class, but a typedef.
@@ -89,6 +90,7 @@ class SerializedType(object):
         self.condition = condition
         self.encoders = ['Encoder']
         self.return_ref = False
+        self.construct_subclass = None
         self.create_using = False
         self.populate_from_empty_constructor = False
         self.nested = False
@@ -104,6 +106,8 @@ class SerializedType(object):
                     key, value = attribute.split('=')
                     if key == 'AdditionalEncoder':
                         self.encoders.append(value)
+                    if key == 'ConstructSubclass':
+                        self.construct_subclass = value
                     if key == 'CreateUsing':
                         self.create_using = value
                     if key == 'Alias':
@@ -149,6 +153,16 @@ class SerializedType(object):
         if self.namespace is None:
             return self.name
         return self.namespace + '::' + self.cpp_struct_or_class_name()
+
+    def namespace_and_name_for_construction(self, specialization):
+        fulltype = None
+        if self.construct_subclass:
+            fulltype = self.namespace + '::' + self.construct_subclass
+        else:
+            fulltype = self.namespace_and_name()
+        if specialization:
+            fulltype = fulltype + '<' + specialization + '>'
+        return fulltype
 
     def cf_wrapper_type(self):
         return self.namespace + '::' + self.name
@@ -848,9 +862,7 @@ def indent(indentation):
 
 def construct_type(type, specialization, indentation):
     result = []
-    fulltype = type.namespace_and_name()
-    if specialization:
-        fulltype = fulltype + '<' + specialization + '>'
+    fulltype = type.namespace_and_name_for_construction(specialization)
     if type.create_using:
         result.append(indent(indentation) + fulltype + '::' + type.create_using + '(')
     elif type.return_ref:

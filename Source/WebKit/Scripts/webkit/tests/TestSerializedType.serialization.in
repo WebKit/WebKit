@@ -314,3 +314,12 @@ class Namespace::OtherOuterClass {
     int outerValue;
 };
 #endif
+
+#if USE(APPKIT)
+header: <WebCore/ScrollbarTrackCornerSystemImageMac.h>
+[AdditionalEncoder=StreamConnectionEncoder, RefCounted, ConstructSubclass=ScrollbarTrackCornerSystemImageMac] class WebCore::AppKitControlSystemImage {
+    [NotSerialized] WebCore::AppKitControlSystemImageType m_controlType;
+    WebCore::Color m_tintColor;
+    bool m_useDarkAppearance;
+}
+#endif // USE(APPKIT)

@@ -41,6 +41,7 @@ OBJC_CLASS CIContext;
 namespace WebCore {
 
 class WEBCORE_EXPORT ARKitBadgeSystemImage final : public SystemImage {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<ARKitBadgeSystemImage> create(Image& image)
     {

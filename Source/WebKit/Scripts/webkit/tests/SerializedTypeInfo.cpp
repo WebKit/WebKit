@@ -57,11 +57,17 @@
 #include <Namespace/OuterClass.h>
 #endif
 #include <Namespace/ReturnRefClass.h>
+#if USE(APPKIT)
+#include <WebCore/AppKitControlSystemImage.h>
+#endif
 #include <WebCore/FloatBoxExtent.h>
 #include <WebCore/InheritanceGrandchild.h>
 #include <WebCore/InheritsFrom.h>
 #include <WebCore/MoveOnlyBaseClass.h>
 #include <WebCore/MoveOnlyDerivedClass.h>
+#if USE(APPKIT)
+#include <WebCore/ScrollbarTrackCornerSystemImageMac.h>
+#endif
 #include <WebCore/ScrollingStateFrameHostingNode.h>
 #include <WebCore/ScrollingStateFrameHostingNodeWithStuffAfterTuple.h>
 #include <WebCore/TimingFunction.h>
@@ -477,6 +483,16 @@ Vector<SerializedTypeInfo> allSerializedTypes()
             {
                 "int"_s,
                 "outerValue"_s
+            },
+        } },
+        { "WebCore::AppKitControlSystemImage"_s, {
+            {
+                "WebCore::Color"_s,
+                "m_tintColor"_s
+            },
+            {
+                "bool"_s,
+                "m_useDarkAppearance"_s
             },
         } },
         { "WebCore::SharedStringHash"_s, {
