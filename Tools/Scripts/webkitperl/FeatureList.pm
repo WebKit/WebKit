@@ -59,6 +59,7 @@ my (
     $attachmentElementSupport,
     $autocapitalizeSupport,
     $avfCaptionsSupport,
+    $avifSupport,
     $bubblewrapSandboxSupport,
     $cachePartitioningSupport,
     $cloopSupport,
@@ -481,6 +482,9 @@ my @features = (
 
     { option => "xslt", desc => "Toggle XSLT support",
       define => "ENABLE_XSLT", value => \$xsltSupport },
+
+    { option => "avif", desc => "Toggle support for AVIF images",
+      define => "USE_AVIF", value => \$avifSupport },
 
     { option => "gstreamer-gl", desc => "Toggle GStreamer GL support",
       define => "USE_GSTREAMER_GL", value => \$gstreamerGLSupport },

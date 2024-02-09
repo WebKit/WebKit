@@ -86,10 +86,6 @@ find_package(ZLIB 1.2.11 REQUIRED)
 find_package(LibPSL 0.20.2 REQUIRED)
 find_package(WebP REQUIRED COMPONENTS demux)
 
-# Optional packages
-find_package(AVIF 0.9.0)
-SET_AND_EXPOSE_TO_BUILD(USE_AVIF ${AVIF_FOUND})
-
 WEBKIT_OPTION_BEGIN()
 
 # FIXME: Most of these options should not be public.
@@ -135,6 +131,7 @@ if (${WTF_CPU_X86})
     WEBKIT_OPTION_DEFAULT_PORT_VALUE(USE_JPEGXL PRIVATE OFF)
 endif ()
 
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(USE_AVIF PRIVATE OFF)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(USE_WOFF2 PRIVATE ON)
 
 # FIXME: Port bmalloc to Windows. https://bugs.webkit.org/show_bug.cgi?id=143310
@@ -191,6 +188,13 @@ cmake_pop_check_state()
 
 if (ENABLE_XSLT)
     find_package(LibXslt 1.1.32 REQUIRED)
+endif ()
+
+if (USE_AVIF)
+    find_package(AVIF 0.9.0)
+    if (NOT AVIF_FOUND)
+        message(FATAL_ERROR "libavif 0.9.0 is required for USE_AVIF.")
+    endif ()
 endif ()
 
 if (USE_LCMS)
