@@ -50,7 +50,7 @@ public:
     {
     }
 
-    void run();
+    std::optional<Error> run();
 
     void visit(AST::Function&) override;
     void visit(AST::Variable&) override;
@@ -96,13 +96,13 @@ private:
     void def(const AST::Identifier&, AST::Variable*);
 
     void collectGlobals();
-    void visitEntryPoint(const CallGraph::EntryPoint&);
+    std::optional<Error> visitEntryPoint(const CallGraph::EntryPoint&);
     void visitCallee(const CallGraph::Callee&);
     UsedGlobals determineUsedGlobals();
     void collectDynamicOffsetGlobals(const PipelineLayout&);
     void usesOverride(AST::Variable&);
     Vector<unsigned> insertStructs(const UsedResources&);
-    Vector<unsigned> insertStructs(const PipelineLayout&);
+    Result<Vector<unsigned>> insertStructs(const PipelineLayout&, const UsedResources&);
     AST::StructureMember& createArgumentBufferEntry(unsigned binding, AST::Variable&);
     AST::StructureMember& createArgumentBufferEntry(unsigned binding, const SourceSpan&, const String& name, AST::Expression& type);
     void finalizeArgumentBufferStruct(unsigned group, Vector<std::pair<unsigned, AST::StructureMember*>>&);
@@ -161,15 +161,19 @@ private:
     HashMap<std::pair<unsigned, unsigned>, unsigned> m_globalsUsingDynamicOffset;
 };
 
-void RewriteGlobalVariables::run()
+std::optional<Error> RewriteGlobalVariables::run()
 {
     dataLogLnIf(shouldLogGlobalVariableRewriting, "BEGIN: GlobalVariableRewriter");
 
     collectGlobals();
-    for (auto& entryPoint : m_callGraph.entrypoints())
-        visitEntryPoint(entryPoint);
+    for (auto& entryPoint : m_callGraph.entrypoints()) {
+        auto maybeError = visitEntryPoint(entryPoint);
+        if (maybeError.has_value())
+            return maybeError;
+    }
 
     dataLogLnIf(shouldLogGlobalVariableRewriting, "END: GlobalVariableRewriter");
+    return std::nullopt;
 }
 
 void RewriteGlobalVariables::visitCallee(const CallGraph::Callee& callee)
@@ -772,7 +776,7 @@ static size_t getRoundedSize(const AST::Variable& variable)
     return roundUpToMultipleOf(16, type ? type->size() : 0);
 }
 
-void RewriteGlobalVariables::visitEntryPoint(const CallGraph::EntryPoint& entryPoint)
+std::optional<Error> RewriteGlobalVariables::visitEntryPoint(const CallGraph::EntryPoint& entryPoint)
 {
     dataLogLnIf(shouldLogGlobalVariableRewriting, "> Visiting entrypoint: ", entryPoint.function.name());
 
@@ -797,15 +801,16 @@ void RewriteGlobalVariables::visitEntryPoint(const CallGraph::EntryPoint& entryP
 
     visit(entryPoint.function);
     if (m_reads.isEmpty())
-        return;
+        return std::nullopt;
 
     auto usedGlobals = determineUsedGlobals();
-    auto groups = m_generatedLayout
-        ? insertStructs(usedGlobals.resources)
-        : insertStructs(*it->value);
-    insertParameters(entryPoint.function, groups);
+    auto maybeGroups = m_generatedLayout ? Result<Vector<unsigned>>(insertStructs(usedGlobals.resources)) : insertStructs(*it->value, usedGlobals.resources);
+    if (!maybeGroups)
+        return maybeGroups.error();
+    insertParameters(entryPoint.function, *maybeGroups);
     insertMaterializations(entryPoint.function, usedGlobals.resources);
     insertLocalDefinitions(entryPoint.function, usedGlobals.privateGlobals);
+
     for (auto* global : usedGlobals.privateGlobals) {
         if (!global || !global->declaration)
             continue;
@@ -813,6 +818,7 @@ void RewriteGlobalVariables::visitEntryPoint(const CallGraph::EntryPoint& entryP
         if (variable->addressSpace() == AddressSpace::Workgroup)
             m_entryPointInformation->sizeForWorkgroupVariables += getRoundedSize(*variable);
     }
+    return std::nullopt;
 }
 
 void RewriteGlobalVariables::collectDynamicOffsetGlobals(const PipelineLayout& pipelineLayout)
@@ -1451,10 +1457,11 @@ static bool variableAndEntryMatch(const AST::Variable& variable, const BindGroup
     return true;
 }
 
-Vector<unsigned> RewriteGlobalVariables::insertStructs(const PipelineLayout& layout)
+Result<Vector<unsigned>> RewriteGlobalVariables::insertStructs(const PipelineLayout& layout, const UsedResources& usedResources)
 {
     Vector<unsigned> groups;
     unsigned group = 0;
+    HashSet<AST::Variable*> serializedVariables;
     for (const auto& bindGroupLayout : layout.bindGroupLayouts) {
         Vector<std::pair<unsigned, AST::StructureMember*>> entries;
         Vector<std::pair<unsigned, AST::Variable*>> bufferLengths;
@@ -1488,7 +1495,8 @@ Vector<unsigned> RewriteGlobalVariables::insertStructs(const PipelineLayout& lay
             if (it != m_globalsByBinding.end()) {
                 variable = it->value;
                 if (!variableAndEntryMatch(*variable, entry))
-                    return Vector<unsigned>();
+                    return makeUnexpected(Error("Shader is incompatible with layout pipeline"_s, SourceSpan::empty()));
+                serializedVariables.add(variable);
                 entries.append({ entry.binding, &createArgumentBufferEntry(*argumentBufferIndex, *variable) });
             } else {
                 auto& type = m_callGraph.ast().astBuilder().construct<AST::IdentifierExpression>(SourceSpan::empty(), AST::Identifier::make("u32"_s));
@@ -1530,7 +1538,19 @@ Vector<unsigned> RewriteGlobalVariables::insertStructs(const PipelineLayout& lay
         groups.append(group);
         finalizeArgumentBufferStruct(group++, entries);
     }
-    return groups;
+
+    for (auto& [_, bindingGlobalMap] : usedResources) {
+        for (auto [_, global] : bindingGlobalMap) {
+            auto* variable = global->declaration;
+            if (!m_reads.contains(variable->name()))
+                continue;
+
+            if (!serializedVariables.contains(variable))
+                return makeUnexpected(Error("Shader is incompatible with layout pipeline"_s, SourceSpan::empty()));
+        }
+    }
+
+    return { groups };
 }
 
 void RewriteGlobalVariables::insertParameters(AST::Function& function, const Vector<unsigned>& groups)
@@ -1975,9 +1995,9 @@ AST::Identifier RewriteGlobalVariables::dynamicOffsetVariableName()
     return AST::Identifier::make(makeString("__DynamicOffsets"));
 }
 
-void rewriteGlobalVariables(CallGraph& callGraph, const HashMap<String, std::optional<PipelineLayout>>& pipelineLayouts)
+std::optional<Error> rewriteGlobalVariables(CallGraph& callGraph, const HashMap<String, std::optional<PipelineLayout>>& pipelineLayouts)
 {
-    RewriteGlobalVariables(callGraph, pipelineLayouts).run();
+    return RewriteGlobalVariables(callGraph, pipelineLayouts).run();
 }
 
 } // namespace WGSL

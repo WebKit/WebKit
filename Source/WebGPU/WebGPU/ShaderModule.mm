@@ -107,12 +107,15 @@ static RefPtr<ShaderModule> earlyCompileShaderModule(Device& device, std::varian
     }
 
     auto prepareResult = WGSL::prepare(std::get<WGSL::SuccessfulCheck>(checkResult).ast, wgslHints);
+    if (std::holds_alternative<WGSL::Error>(prepareResult))
+        return nullptr;
+    auto& result = std::get<WGSL::PrepareResult>(prepareResult);
     HashMap<String, WGSL::ConstantValue> wgslConstantValues;
-    auto msl = WGSL::generate(prepareResult.callGraph, wgslConstantValues);
+    auto msl = WGSL::generate(result.callGraph, wgslConstantValues);
     auto library = ShaderModule::createLibrary(device.device(), msl, WTFMove(label));
     if (!library)
         return nullptr;
-    return ShaderModule::create(WTFMove(checkResult), WTFMove(hints), WTFMove(prepareResult.entryPoints), library, nil, { }, device);
+    return ShaderModule::create(WTFMove(checkResult), WTFMove(hints), WTFMove(result.entryPoints), library, nil, { }, device);
 }
 
 static const HashSet<String> buildFeatureSet(const Vector<WGPUFeatureName>& features)

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CompilationMessage.h"
 #include <wtf/text/WTFString.h>
 
 namespace WGSL {
@@ -32,6 +33,6 @@ namespace WGSL {
 class CallGraph;
 struct PipelineLayout;
 
-void rewriteGlobalVariables(CallGraph&, const HashMap<String, std::optional<PipelineLayout>>&);
+std::optional<Error> rewriteGlobalVariables(CallGraph&, const HashMap<String, std::optional<PipelineLayout>>&);
 
 } // namespace WGSL

@@ -41,8 +41,10 @@ inline Expected<String, WGSL::FailedCheck> translate(const String& wgsl, const S
         return makeUnexpected(*maybeError);
 
     auto prepareResult = WGSL::prepare(std::get<WGSL::SuccessfulCheck>(result).ast, entryPointName, { });
+    if (auto* maybeError = std::get_if<WGSL::Error>(&prepareResult))
+        return makeUnexpected(WGSL::FailedCheck { { *maybeError }, { } });
     HashMap<String, WGSL::ConstantValue> constantValues;
-    auto msl = WGSL::generate(prepareResult.callGraph, constantValues);
+    auto msl = WGSL::generate(std::get<WGSL::PrepareResult>(prepareResult).callGraph, constantValues);
     return { WTFMove(msl) };
 }
 

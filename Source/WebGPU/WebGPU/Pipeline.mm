@@ -56,9 +56,13 @@ std::optional<LibraryCreationResult> createLibrary(id<MTLDevice> device, const S
         wgslPipelineLayout = ShaderModule::convertPipelineLayout(*pipelineLayout);
 
     auto prepareResult = WGSL::prepare(*ast, entryPoint, wgslPipelineLayout);
+    // FIXME: return the actual error
+    if (std::holds_alternative<WGSL::Error>(prepareResult))
+        return std::nullopt;
 
-    auto iterator = prepareResult.entryPoints.find(entryPoint);
-    if (iterator == prepareResult.entryPoints.end())
+    auto& result = std::get<WGSL::PrepareResult>(prepareResult);
+    auto iterator = result.entryPoints.find(entryPoint);
+    if (iterator == result.entryPoints.end())
         return std::nullopt;
 
     const auto& entryPointInformation = iterator->value;
@@ -130,7 +134,7 @@ std::optional<LibraryCreationResult> createLibrary(id<MTLDevice> device, const S
         }
     }
 
-    auto msl = WGSL::generate(prepareResult.callGraph, wgslConstantValues);
+    auto msl = WGSL::generate(result.callGraph, wgslConstantValues);
     auto library = ShaderModule::createLibrary(device, msl, label);
 
     return { { library, entryPointInformation, wgslConstantValues } };

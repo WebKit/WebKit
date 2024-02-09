@@ -232,10 +232,8 @@ struct PrepareResult {
     CompilationScope compilationScope;
 };
 
-// These are not allowed to fail.
-// All failures must have already been caught in check().
-PrepareResult prepare(ShaderModule&, const HashMap<String, std::optional<PipelineLayout>>&);
-PrepareResult prepare(ShaderModule&, const String& entryPointName, const std::optional<PipelineLayout>&);
+std::variant<PrepareResult, Error> prepare(ShaderModule&, const HashMap<String, std::optional<PipelineLayout>>&);
+std::variant<PrepareResult, Error> prepare(ShaderModule&, const String& entryPointName, const std::optional<PipelineLayout>&);
 
 String generate(const CallGraph&, HashMap<String, ConstantValue>&);
 

@@ -42,24 +42,24 @@
 
 namespace WGSL {
 
-#define CHECK_PASS(pass) \
+#define CHECK_PASS(pass, ...) \
     dumpASTBetweenEachPassIfNeeded(shaderModule, "AST before " # pass); \
     auto maybe##pass##Failure = [&]() { \
         PhaseTimer phaseTimer(#pass, phaseTimes); \
-        return pass(shaderModule); \
+        return pass(__VA_ARGS__); \
     }(); \
     if (maybe##pass##Failure) \
-        return *maybe##pass##Failure;
+        return { *maybe##pass##Failure };
 
 #define RUN_PASS(pass, ...) \
     do { \
         PhaseTimer phaseTimer(#pass, phaseTimes); \
-        dumpASTBetweenEachPassIfNeeded(ast, "AST before " # pass); \
+        dumpASTBetweenEachPassIfNeeded(shaderModule, "AST before " # pass); \
         pass(__VA_ARGS__); \
     } while (0)
 
 #define RUN_PASS_WITH_RESULT(name, pass, ...) \
-    dumpASTBetweenEachPassIfNeeded(ast, "AST before " # pass); \
+    dumpASTBetweenEachPassIfNeeded(shaderModule, "AST before " # pass); \
     auto name = [&]() { \
         PhaseTimer phaseTimer(#pass, phaseTimes); \
         return pass(__VA_ARGS__); \
@@ -70,10 +70,10 @@ std::variant<SuccessfulCheck, FailedCheck> staticCheck(const String& wgsl, const
     PhaseTimes phaseTimes;
     auto shaderModule = makeUniqueRef<ShaderModule>(wgsl, configuration);
 
-    CHECK_PASS(parse);
-    CHECK_PASS(reorderGlobals);
-    CHECK_PASS(typeCheck);
-    CHECK_PASS(validateAttributes);
+    CHECK_PASS(parse, shaderModule);
+    CHECK_PASS(reorderGlobals, shaderModule);
+    CHECK_PASS(typeCheck, shaderModule);
+    CHECK_PASS(validateAttributes, shaderModule);
 
     Vector<Warning> warnings { };
     return std::variant<SuccessfulCheck, FailedCheck>(std::in_place_type<SuccessfulCheck>, WTFMove(warnings), WTFMove(shaderModule));
@@ -89,24 +89,24 @@ SuccessfulCheck::SuccessfulCheck(Vector<Warning>&& messages, UniqueRef<ShaderMod
 
 SuccessfulCheck::~SuccessfulCheck() = default;
 
-inline PrepareResult prepareImpl(ShaderModule& ast, const HashMap<String, std::optional<PipelineLayout>>& pipelineLayouts)
+inline std::variant<PrepareResult, Error> prepareImpl(ShaderModule& shaderModule, const HashMap<String, std::optional<PipelineLayout>>& pipelineLayouts)
 {
-    CompilationScope compilationScope(ast);
+    CompilationScope compilationScope(shaderModule);
 
     PhaseTimes phaseTimes;
-    auto result = [&]() -> PrepareResult {
+    auto result = [&]() -> std::variant<PrepareResult, Error> {
         PhaseTimer phaseTimer("prepare total", phaseTimes);
 
         HashMap<String, Reflection::EntryPointInformation> entryPoints;
-        RUN_PASS_WITH_RESULT(callGraph, buildCallGraph, ast, pipelineLayouts, entryPoints);
+        RUN_PASS_WITH_RESULT(callGraph, buildCallGraph, shaderModule, pipelineLayouts, entryPoints);
         RUN_PASS(mangleNames, callGraph, entryPoints);
         RUN_PASS(rewritePointers, callGraph);
         RUN_PASS(rewriteEntryPoints, callGraph);
-        RUN_PASS(rewriteGlobalVariables, callGraph, pipelineLayouts);
+        CHECK_PASS(rewriteGlobalVariables, callGraph, pipelineLayouts);
 
-        dumpASTAtEndIfNeeded(ast);
+        dumpASTAtEndIfNeeded(shaderModule);
 
-        return { WTFMove(callGraph), WTFMove(entryPoints), WTFMove(compilationScope) };
+        return { PrepareResult { WTFMove(callGraph), WTFMove(entryPoints), WTFMove(compilationScope) } };
     }();
 
     logPhaseTimes(phaseTimes);
@@ -126,12 +126,12 @@ String generate(const CallGraph& callGraph, HashMap<String, ConstantValue>& cons
     return result;
 }
 
-PrepareResult prepare(ShaderModule& ast, const HashMap<String, std::optional<PipelineLayout>>& pipelineLayouts)
+std::variant<PrepareResult, Error> prepare(ShaderModule& ast, const HashMap<String, std::optional<PipelineLayout>>& pipelineLayouts)
 {
     return prepareImpl(ast, pipelineLayouts);
 }
 
-PrepareResult prepare(ShaderModule& ast, const String& entryPointName, const std::optional<PipelineLayout>& pipelineLayout)
+std::variant<PrepareResult, Error> prepare(ShaderModule& ast, const String& entryPointName, const std::optional<PipelineLayout>& pipelineLayout)
 {
     HashMap<String, std::optional<PipelineLayout>> pipelineLayouts;
     pipelineLayouts.add(entryPointName, pipelineLayout);
