@@ -356,7 +356,27 @@ class GitHubEventHandlerNoEdits(GitHubEventHandler):
     _last_commit_classes_refresh = 0
     COMMIT_CLASSES_REFRESH = 60 * 60 * 24  # Refresh our commit-classes once a day
     COMMIT_CLASSES_URL = f'https://raw.githubusercontent.com/{PUBLIC_REPOS[0]}/main/metadata/commit_classes.json'
+    DUPE_DETECTOR = {}
 
+    # Because buildbot is single-threaded, we can just place event+hash strings in a process-global
+    # record. We create 60 second buckets so that retrying the same event on the same hash will work
+    # manually, but when GitHub duplicates events within a few seconds, we ignore the second event.
+    @classmethod
+    def is_duped(cls, value, bucket=60):
+        bucket = int(time.time() // bucket)
+        next_bucket = bucket + 1
+
+        for key in list(cls.DUPE_DETECTOR.keys()):
+            if key not in (bucket, next_bucket):
+                del cls.DUPE_DETECTOR[key]
+
+        for key in [bucket, next_bucket]:
+            if key not in cls.DUPE_DETECTOR:
+                cls.DUPE_DETECTOR[key] = set()
+            if value in cls.DUPE_DETECTOR[key]:
+                return True
+            cls.DUPE_DETECTOR[key].add(value)
+        return False
 
     @classmethod
     def file_with_status_sign(cls, info):
@@ -512,19 +532,25 @@ class GitHubEventHandlerNoEdits(GitHubEventHandler):
             log.msg(f"PR #{pr_number} ({head_sha}) was updated by '{sender}', ignoring it")
             return defer.returnValue(([], 'git'))
 
-        log.msg(f'Handling PR #{pr_number} with hash: {head_sha}')
         if action == 'labeled' and GitHub.UNSAFE_MERGE_QUEUE_LABEL in labels:
             log.msg(f'PR #{pr_number} ({head_sha}) was labeled for unsafe-merge-queue')
             # 'labeled' is usually an ignored action, override it to force build
             payload['action'] = 'synchronize'
-            yield task.deferLater(reactor, self.LABEL_PROCESS_DELAY, lambda: None)
             event = 'unsafe_merge_queue'
         elif action == 'labeled' and GitHub.MERGE_QUEUE_LABEL in labels:
             log.msg(f'PR #{pr_number} ({head_sha}) was labeled for merge-queue')
             # 'labeled' is usually an ignored action, override it to force build
-            yield task.deferLater(reactor, self.LABEL_PROCESS_DELAY, lambda: None)
             payload['action'] = 'synchronize'
             event = 'merge_queue'
+
+        # We received this exact event in the last 60 seconds, ignore it
+        if self.is_duped(f'{event}-{head_sha}'):
+            log.msg(f'Discarding duplicate for PR #{pr_number} with hash: {head_sha}')
+            return defer.returnValue(([], 'git'))
+
+        log.msg(f'Handling PR #{pr_number} with hash: {head_sha}')
+        if event in ('unsafe_merge_queue', 'merge_queue'):
+            yield task.deferLater(reactor, self.LABEL_PROCESS_DELAY, lambda: None)
 
         result = yield super().handle_pull_request(payload, event)
         changes = result[0]
