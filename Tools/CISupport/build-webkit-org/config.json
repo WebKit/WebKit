@@ -690,6 +690,7 @@
                   {
                     "name": "WPE-Linux-64-bit-Release-Skia-Build", "factory": "BuildFactory",
                     "platform": "wpe", "configuration": "release", "architectures": ["x86_64"],
+                    "additionalArguments": ["--cmakeargs=-DUSE_SKIA=ON"],
                     "workernames": ["wpe-linux-bot-35"]
                   }
                 ],
