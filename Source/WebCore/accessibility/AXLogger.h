@@ -51,7 +51,7 @@ enum class AXStreamOptions : uint8_t {
 
 #if !LOG_DISABLED
 
-class AXLogger {
+class AXLogger final {
 public:
     AXLogger() = default;
     AXLogger(const String& methodName);
