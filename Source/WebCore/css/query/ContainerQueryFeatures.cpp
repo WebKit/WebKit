@@ -166,10 +166,18 @@ struct StyleFeatureSchema : public FeatureSchema {
         : FeatureSchema("style"_s, FeatureSchema::Type::Discrete, FeatureSchema::ValueType::CustomProperty)
     { }
 
-    EvaluationResult evaluate(const MQ::Feature&, const FeatureEvaluationContext&) const override
+    EvaluationResult evaluate(const MQ::Feature& feature, const FeatureEvaluationContext& context) const override
     {
-        // FIXME: Implement.
-        return EvaluationResult::Unknown;
+        if (!context.conversionData.style())
+            return EvaluationResult::False;
+
+        auto& style = *context.conversionData.style();
+        auto* customProperty = style.customPropertyValue(feature.name);
+        if (!feature.rightComparison)
+            return toEvaluationResult(!!customProperty);
+
+        ASSERT(feature.rightComparison->op == ComparisonOperator::Equal);
+        return toEvaluationResult(customProperty && *customProperty == *feature.rightComparison->value);
     }
 };
 

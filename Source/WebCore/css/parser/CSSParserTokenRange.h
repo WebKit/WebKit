@@ -92,6 +92,7 @@ public:
     }
 
     CSSParserTokenRange consumeAll() { return { std::exchange(m_first, m_last), m_last }; }
+    CSSParserTokenRange consumeAllExcludingTrailingWhitespace();
 
     String serialize() const;
 

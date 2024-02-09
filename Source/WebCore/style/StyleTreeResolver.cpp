@@ -73,7 +73,7 @@ TreeResolver::TreeResolver(Document& document, std::unique_ptr<Update> update)
 
 TreeResolver::~TreeResolver() = default;
 
-TreeResolver::Scope::Scope(Document& document)
+TreeResolver::Scope::Scope(Document& document, Update& update)
     : resolver(document.styleScope().resolver())
     , sharingResolver(document, resolver->ruleSets(), selectorMatchingState)
 {
@@ -82,6 +82,8 @@ TreeResolver::Scope::Scope(Document& document)
     // Ensure all shadow tree resolvers exist so their construction doesn't depend on traversal.
     for (auto& shadowRoot : document.inDocumentShadowRoots())
         const_cast<ShadowRoot&>(shadowRoot).styleScope().resolver();
+
+    selectorMatchingState.containerQueryEvaluationState.styleUpdate = &update;
 }
 
 TreeResolver::Scope::Scope(ShadowRoot& shadowRoot, Scope& enclosingScope)
@@ -90,7 +92,7 @@ TreeResolver::Scope::Scope(ShadowRoot& shadowRoot, Scope& enclosingScope)
     , shadowRoot(&shadowRoot)
     , enclosingScope(&enclosingScope)
 {
-    selectorMatchingState.queryContainers = enclosingScope.selectorMatchingState.queryContainers;
+    selectorMatchingState.containerQueryEvaluationState = enclosingScope.selectorMatchingState.containerQueryEvaluationState;
 }
 
 TreeResolver::Scope::~Scope()
@@ -740,7 +742,7 @@ void TreeResolver::pushParent(Element& element, const RenderStyle& style, Change
 {
     scope().selectorMatchingState.selectorFilter.pushParent(&element);
     if (style.containerType() != ContainerType::Normal)
-        scope().selectorMatchingState.queryContainers.append(element);
+        scope().selectorMatchingState.containerQueryEvaluationState.sizeQueryContainers.append(element);
 
     Parent parent(element, style, change, descendantsToResolve);
 
@@ -770,7 +772,7 @@ void TreeResolver::popParent()
 
     scope().selectorMatchingState.selectorFilter.popParent();
 
-    auto& queryContainers = scope().selectorMatchingState.queryContainers;
+    auto& queryContainers = scope().selectorMatchingState.containerQueryEvaluationState.sizeQueryContainers;
     if (!queryContainers.isEmpty() && queryContainers.last().ptr() == &parentElement)
         queryContainers.removeLast();
 
@@ -1055,7 +1057,7 @@ std::unique_ptr<Update> TreeResolver::resolve()
 
     if (!m_update)
         m_update = makeUnique<Update>(m_document);
-    m_scopeStack.append(adoptRef(*new Scope(m_document)));
+    m_scopeStack.append(adoptRef(*new Scope(m_document, *m_update)));
     m_parentStack.append(Parent(m_document));
 
     resolveComposedTree();

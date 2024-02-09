@@ -29,6 +29,7 @@
 #include "CSSCustomPropertyValue.h"
 #include "CSSPropertyParserHelpers.h"
 #include "CSSValue.h"
+#include "CSSVariableParser.h"
 #include "MediaQueryParserContext.h"
 
 namespace WebCore {
@@ -54,12 +55,21 @@ std::optional<Feature> FeatureParser::consumeFeature(CSSParserTokenRange& range,
     return consumeRangeFeature(range, context);
 };
 
+static RefPtr<CSSValue> consumeCustomPropertyValue(AtomString propertyName, CSSParserTokenRange& range)
+{
+    auto propertyValueRange = range.consumeAllExcludingTrailingWhitespace();
+    range.consumeWhitespace();
+    return CSSCustomPropertyValue::createSyntaxAll(propertyName, CSSVariableData::create(propertyValueRange));
+}
+
 std::optional<Feature> FeatureParser::consumeBooleanOrPlainFeature(CSSParserTokenRange& range, const MediaQueryParserContext& context)
 {
     auto consumePlainFeatureName = [&]() -> std::pair<AtomString, ComparisonOperator> {
         auto name = consumeFeatureName(range);
         if (name.isEmpty())
             return { };
+        if (isCustomPropertyName(name))
+            return { name, ComparisonOperator::Equal };
         if (name.startsWith("min-"_s))
             return { StringView(name).substring(4).toAtomString(), ComparisonOperator::GreaterThanOrEqual };
         if (name.startsWith("max-"_s))
@@ -90,9 +100,7 @@ std::optional<Feature> FeatureParser::consumeBooleanOrPlainFeature(CSSParserToke
 
     range.consumeIncludingWhitespace();
 
-    RefPtr value = isCustomPropertyName(featureName)
-        ? CSSCustomPropertyValue::createSyntaxAll(featureName, CSSVariableData::create(range.consumeAll()))
-        : consumeValue(range, context);
+    RefPtr value = isCustomPropertyName(featureName) ? consumeCustomPropertyValue(featureName, range) : consumeValue(range, context);
 
     if (!value)
         return { };
@@ -283,7 +291,10 @@ bool FeatureParser::validateFeatureAgainstSchema(Feature& feature, const Feature
             if (feature.rightComparison && feature.rightComparison->op != ComparisonOperator::Equal)
                 return false;
         }
-
+        if (schema.valueType == FeatureSchema::ValueType::CustomProperty) {
+            if (!isCustomPropertyName(feature.name))
+                return false;
+        }
         if (feature.leftComparison) {
             if (!validateValue(feature.leftComparison->value))
                 return false;

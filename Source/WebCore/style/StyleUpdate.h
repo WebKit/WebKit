@@ -54,10 +54,11 @@ struct TextUpdate {
     std::optional<std::unique_ptr<RenderStyle>> inheritedDisplayContentsStyle;
 };
 
-class Update {
+class Update : public CanMakeCheckedPtr {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     Update(Document&);
+    ~Update();
 
     const ListHashSet<RefPtr<ContainerNode>>& roots() const { return m_roots; }
     ListHashSet<RefPtr<Element>> takeRebuildRoots() { return WTFMove(m_rebuildRoots); }
@@ -81,7 +82,7 @@ public:
     void addText(Text&, Element* parent, TextUpdate&&);
     void addText(Text&, TextUpdate&&);
     void addSVGRendererUpdate(SVGElement&);
-    void addInitialContainingBlockUpdate(std::unique_ptr<RenderStyle> style) { m_initialContainingBlockUpdate = WTFMove(style); }
+    void addInitialContainingBlockUpdate(std::unique_ptr<RenderStyle>);
 
 private:
     void addPossibleRoot(Element*);

@@ -1,16 +1,16 @@
 
-FAIL style(--inner: true) assert_equals: expected "true" but got ""
-FAIL style(--inner:true) assert_equals: expected "true" but got ""
-FAIL style(--inner:true ) assert_equals: expected "true" but got ""
-FAIL style(--inner: true ) assert_equals: expected "true" but got ""
-FAIL style(--inner-no-space: true) assert_equals: expected "true" but got ""
-FAIL style(--inner-no-space:true) assert_equals: expected "true" but got ""
-FAIL style(--inner-no-space:true ) assert_equals: expected "true" but got ""
-FAIL style(--inner-no-space: true ) assert_equals: expected "true" but got ""
-FAIL style(--inner-space-after: true) assert_equals: expected "true" but got ""
-FAIL style(--inner-space-after:true) assert_equals: expected "true" but got ""
-FAIL style(--inner-space-after:true ) assert_equals: expected "true" but got ""
-FAIL style(--inner-space-after: true ) assert_equals: expected "true" but got ""
+PASS style(--inner: true)
+PASS style(--inner:true)
+PASS style(--inner:true )
+PASS style(--inner: true )
+PASS style(--inner-no-space: true)
+PASS style(--inner-no-space:true)
+PASS style(--inner-no-space:true )
+PASS style(--inner-no-space: true )
+PASS style(--inner-space-after: true)
+PASS style(--inner-space-after:true)
+PASS style(--inner-space-after:true )
+PASS style(--inner-space-after: true )
 PASS style(--outer: true)
 PASS style(--outer:true)
 PASS style(--outer:true )
@@ -35,34 +35,34 @@ PASS outer style(--inner-space-after: true)
 PASS outer style(--inner-space-after:true)
 PASS outer style(--inner-space-after:true )
 PASS outer style(--inner-space-after: true )
-FAIL outer style(--outer: true) assert_equals: expected "true" but got ""
-FAIL outer style(--outer:true) assert_equals: expected "true" but got ""
-FAIL outer style(--outer:true ) assert_equals: expected "true" but got ""
-FAIL outer style(--outer: true ) assert_equals: expected "true" but got ""
-FAIL outer style(--outer-no-space: true) assert_equals: expected "true" but got ""
-FAIL outer style(--outer-no-space:true) assert_equals: expected "true" but got ""
-FAIL outer style(--outer-no-space:true ) assert_equals: expected "true" but got ""
-FAIL outer style(--outer-no-space: true ) assert_equals: expected "true" but got ""
-FAIL outer style(--outer-space-after: true) assert_equals: expected "true" but got ""
-FAIL outer style(--outer-space-after:true) assert_equals: expected "true" but got ""
-FAIL outer style(--outer-space-after:true ) assert_equals: expected "true" but got ""
-FAIL outer style(--outer-space-after: true ) assert_equals: expected "true" but got ""
+PASS outer style(--outer: true)
+PASS outer style(--outer:true)
+PASS outer style(--outer:true )
+PASS outer style(--outer: true )
+PASS outer style(--outer-no-space: true)
+PASS outer style(--outer-no-space:true)
+PASS outer style(--outer-no-space:true )
+PASS outer style(--outer-no-space: true )
+PASS outer style(--outer-space-after: true)
+PASS outer style(--outer-space-after:true)
+PASS outer style(--outer-space-after:true )
+PASS outer style(--outer-space-after: true )
 FAIL Query custom property with !important declaration assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
 FAIL Query custom property using var() assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
-FAIL Query custom property including unknown var() reference assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
-FAIL Query custom property including unknown var() reference with non-matching fallback assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+PASS Query custom property including unknown var() reference
+PASS Query custom property including unknown var() reference with non-matching fallback
 FAIL Query custom property including unknown var() reference with matching fallback assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
 FAIL Query custom property matching guaranteed-invalid values assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
 PASS Style query with revert keyword is false
 PASS Style query with revert-layer keyword is false
 FAIL Style query 'initial' matching assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
-FAIL Style query matching negated value-less query against initial value assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
-FAIL Style query 'initial' not matching assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
-FAIL Style query matching value-less query against non-initial value assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+PASS Style query matching negated value-less query against initial value
+PASS Style query 'initial' not matching
+PASS Style query matching value-less query against non-initial value
 FAIL Style query 'inherit' matching assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
-FAIL Style query 'inherit' not matching assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+PASS Style query 'inherit' not matching
 FAIL Style query 'unset' matching assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
-FAIL Style query 'unset' not matching assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+PASS Style query 'unset' not matching
 FAIL Match registered <length> custom property with px. assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
 FAIL Match registered <length> custom property with px via initial keyword. assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
 FAIL Match registered <length> custom property with em in query. assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
@@ -70,6 +70,6 @@ FAIL Match registered <length> custom property with em in computed value. assert
 FAIL Match registered <length> custom property with cqi unit. assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
 FAIL Match registered <length> custom property with initial value. assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
 FAIL Match registered <length> custom property with initial value via initial keyword. assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
-FAIL Should only match exact string for numbers in non-registered custom properties assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
-FAIL Spaces should not collapse in non-registered custom properties assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL Should only match exact string for numbers in non-registered custom properties assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+PASS Spaces should not collapse in non-registered custom properties
 

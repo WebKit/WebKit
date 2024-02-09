@@ -105,6 +105,16 @@ void CSSParserTokenRange::consumeComponentValue()
     } while (nestingLevel && m_first < m_last);
 }
 
+CSSParserTokenRange CSSParserTokenRange::consumeAllExcludingTrailingWhitespace()
+{
+    auto* last = m_last;
+    for (; last > m_first; --last) {
+        if ((last - 1)->type() != WhitespaceToken)
+            break;
+    }
+    return { std::exchange(m_first, last), last };
+}
+
 String CSSParserTokenRange::serialize() const
 {
     StringBuilder builder;

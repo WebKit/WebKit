@@ -42,6 +42,8 @@ Update::Update(Document& document)
 {
 }
 
+Update::~Update() = default;
+
 const ElementUpdate* Update::elementUpdate(const Element& element) const
 {
     auto it = m_elements.find(&element);
@@ -132,6 +134,11 @@ void Update::addSVGRendererUpdate(SVGElement& element)
     m_roots.remove(&element);
     addPossibleRoot(parent);
     element.setNeedsSVGRendererUpdate(true);
+}
+
+void Update::addInitialContainingBlockUpdate(std::unique_ptr<RenderStyle> style)
+{
+    m_initialContainingBlockUpdate = WTFMove(style);
 }
 
 void Update::addPossibleRoot(Element* element)

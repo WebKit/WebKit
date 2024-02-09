@@ -91,7 +91,7 @@ private:
         RefPtr<ShadowRoot> shadowRoot;
         RefPtr<Scope> enclosingScope;
 
-        Scope(Document&);
+        Scope(Document&, Update&);
         Scope(ShadowRoot&, Scope& enclosingScope);
         ~Scope();
     };

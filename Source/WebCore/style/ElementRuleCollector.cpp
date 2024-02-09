@@ -592,8 +592,10 @@ bool ElementRuleCollector::containerQueriesMatch(const RuleData& ruleData, const
         return ContainerQueryEvaluator::SelectionMode::Element;
     }();
 
+    auto* containerQueryEvaluationState = m_selectorMatchingState ? &m_selectorMatchingState->containerQueryEvaluationState : nullptr;
+
     // "Style rules defined on an element inside multiple nested container queries apply when all of the wrapping container queries are true for that element."
-    ContainerQueryEvaluator evaluator(element(), selectionMode, matchRequest.styleScopeOrdinal, m_selectorMatchingState);
+    ContainerQueryEvaluator evaluator(element(), selectionMode, matchRequest.styleScopeOrdinal, containerQueryEvaluationState);
     for (auto* query : queries) {
         if (!evaluator.evaluate(*query))
             return false;
