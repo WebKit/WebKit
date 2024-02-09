@@ -1368,6 +1368,8 @@ bool PDFPlugin::findString(const String& target, WebCore::FindOptions options, u
     // FIXME: How can always returning true without searching if passed a max of 0 be right?
     // Even if it is right, why not put that special case inside countFindMatches instead of here?
     bool foundMatch = !maxMatchCount || countFindMatches(target, options, maxMatchCount);
+    if (options.contains(WebCore::DoNotSetSelection))
+        return foundMatch && !target.isEmpty();
 
     if (target.isEmpty()) {
         auto searchSelection = [m_pdfLayerController searchSelection];
