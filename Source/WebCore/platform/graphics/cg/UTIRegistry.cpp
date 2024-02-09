@@ -54,11 +54,9 @@ const MemoryCompactLookupOnlyRobinHoodHashSet<String>& defaultSupportedImageType
             "public.png"_s,
             "public.tiff"_s,
             "public.mpo-image"_s,
-#if HAVE(WEBP)
             "public.webp"_s,
             "com.google.webp"_s,
             "org.webmproject.webp"_s,
-#endif
 #if HAVE(AVIF)
             "public.avif"_s,
             "public.avis"_s,

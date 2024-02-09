@@ -148,10 +148,8 @@ static CFDictionaryRef animationPropertiesFromProperties(CFDictionaryRef propert
 
     if (auto animationProperties = (CFDictionaryRef)CFDictionaryGetValue(properties, kCGImagePropertyGIFDictionary))
         return animationProperties;
-#if HAVE(WEBP)
     if (auto animationProperties = (CFDictionaryRef)CFDictionaryGetValue(properties, kCGImagePropertyWebPDictionary))
         return animationProperties;
-#endif
     if (auto animationProperties = (CFDictionaryRef)CFDictionaryGetValue(properties, kCGImagePropertyPNGDictionary))
         return animationProperties;
 

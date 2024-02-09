@@ -146,9 +146,7 @@ static String acceptHeaderValueForImageResource()
 {
     static MainThreadNeverDestroyed<String> staticPrefix = [] {
         StringBuilder builder;
-#if HAVE(WEBP) || USE(WEBP)
         builder.append("image/webp,"_s);
-#endif
 #if HAVE(AVIF) || USE(AVIF)
         builder.append("image/avif,"_s);
 #endif

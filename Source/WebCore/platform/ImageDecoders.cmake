@@ -37,14 +37,9 @@ list(APPEND WebCore_SOURCES
 list(APPEND WebCore_LIBRARIES
     JPEG::JPEG
     PNG::PNG
+    WebP::demux
+    WebP::libwebp
 )
-
-if (WebP_FOUND)
-    list(APPEND WebCore_LIBRARIES
-        WebP::demux
-        WebP::libwebp
-    )
-endif ()
 
 if (JPEGXL_FOUND)
     list(APPEND WebCore_LIBRARIES JPEGXL::jxl)

@@ -129,9 +129,7 @@ constexpr ComparableCaseFoldingASCIILiteral supportedImageMIMETypeArray[] = {
 #if PLATFORM(IOS_FAMILY)
     "image/vnd.switfview-jpeg",
 #endif
-#if HAVE(WEBP) || USE(WEBP)
     "image/webp",
-#endif
 #if PLATFORM(IOS_FAMILY)
     "image/x-bmp",
 #endif

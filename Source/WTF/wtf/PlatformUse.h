@@ -82,10 +82,6 @@
 #define USE_SOUP 1
 #endif
 
-#if PLATFORM(GTK) || PLATFORM(WPE)
-#define USE_WEBP 1
-#endif
-
 #if PLATFORM(COCOA)
 #define USE_CF 1
 #endif

@@ -30,8 +30,6 @@
 #include "WEBPImageDecoder.h"
 #include <wtf/UniqueArray.h>
 
-#if USE(WEBP)
-
 namespace WebCore {
 
 // Convenience function to improve code readability, as WebPDemuxGetFrame is +1 based.
@@ -359,5 +357,3 @@ void WEBPImageDecoder::clearFrameBufferCache(size_t clearBeforeFrame)
 }
 
 } // namespace WebCore
-
-#endif
