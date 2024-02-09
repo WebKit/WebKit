@@ -50,7 +50,7 @@ public:
     using Type = ContextMenuContextType;
 
     ContextMenuContext();
-    ContextMenuContext(Type, const HitTestResult&, Event*);
+    ContextMenuContext(Type, const HitTestResult&, RefPtr<Event>&&);
 
     ~ContextMenuContext();
 

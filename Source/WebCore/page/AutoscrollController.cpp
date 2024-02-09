@@ -88,7 +88,7 @@ void AutoscrollController::startAutoscrollForSelection(RenderObject* renderer)
 
 void AutoscrollController::stopAutoscrollTimer(bool rendererIsBeingDestroyed)
 {
-    auto scrollable = m_autoscrollRenderer;
+    CheckedPtr scrollable = m_autoscrollRenderer.get();
 
     m_autoscrollTimer.stop();
     m_autoscrollRenderer = nullptr;
@@ -96,10 +96,10 @@ void AutoscrollController::stopAutoscrollTimer(bool rendererIsBeingDestroyed)
     if (!scrollable)
         return;
 
-    auto* frame = scrollable->document().frame();
+    RefPtr frame = scrollable->document().frame();
     if (autoscrollInProgress() && frame && frame->eventHandler().mouseDownWasInSubframe()) {
-        if (auto subframe = dynamicDowncast<LocalFrame>(frame->eventHandler().subframeForTargetNode(frame->eventHandler().mousePressNode())))
-            subframe->eventHandler().stopAutoscrollTimer(rendererIsBeingDestroyed);
+        if (RefPtr subframe = dynamicDowncast<LocalFrame>(frame->checkedEventHandler()->subframeForTargetNode(frame->eventHandler().mousePressNode())))
+            subframe->checkedEventHandler()->stopAutoscrollTimer(rendererIsBeingDestroyed);
         return;
     }
 
@@ -108,9 +108,9 @@ void AutoscrollController::stopAutoscrollTimer(bool rendererIsBeingDestroyed)
 
 #if ENABLE(PAN_SCROLLING)
     if (panScrollInProgress()) {
-        auto& frameView = scrollable->view().frameView();
-        frameView.removePanScrollIcon();
-        frameView.setCursor(pointerCursor());
+        Ref frameView = scrollable->view().frameView();
+        frameView->removePanScrollIcon();
+        frameView->setCursor(pointerCursor());
     }
 #endif
 
@@ -118,8 +118,8 @@ void AutoscrollController::stopAutoscrollTimer(bool rendererIsBeingDestroyed)
 
 #if ENABLE(PAN_SCROLLING)
     // If we're not in the top frame we notify it that we are not doing a panScroll any more.
-    if (auto* localFrame = (frame && !frame->isMainFrame()) ? dynamicDowncast<LocalFrame>(frame->mainFrame()) : nullptr)
-        localFrame->eventHandler().didPanScrollStop();
+    if (RefPtr localFrame = (frame && !frame->isMainFrame()) ? dynamicDowncast<LocalFrame>(frame->mainFrame()) : nullptr)
+        localFrame->checkedEventHandler()->didPanScrollStop();
 #endif
 }
 
@@ -132,7 +132,7 @@ void AutoscrollController::updateAutoscrollRenderer()
 
 #if ENABLE(PAN_SCROLLING)
     constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AllowChildFrameContent };
-    HitTestResult hitTest = m_autoscrollRenderer->frame().eventHandler().hitTestResultAtPoint(m_panScrollStartPos, hitType);
+    HitTestResult hitTest = m_autoscrollRenderer->protectedFrame()->checkedEventHandler()->hitTestResultAtPoint(m_panScrollStartPos, hitType);
 
     if (auto* nodeAtPoint = hitTest.innerNode())
         renderer = nodeAtPoint->renderer();
@@ -156,12 +156,11 @@ void AutoscrollController::updateDragAndDrop(Node* dropTargetNode, const IntPoin
         if (!dropTargetNode)
             return nullptr;
 
-        auto* scrollable = RenderBox::findAutoscrollable(dropTargetNode->renderer());
+        CheckedPtr scrollable = RenderBox::findAutoscrollable(dropTargetNode->renderer());
         if (!scrollable)
             return nullptr;
 
-        auto& frame = scrollable->frame();
-        auto* page = frame.page();
+        RefPtr page = scrollable->frame().page();
         if (!page || !page->settings().autoscrollForDragAndDropEnabled())
             return nullptr;
 
@@ -169,10 +168,10 @@ void AutoscrollController::updateDragAndDrop(Node* dropTargetNode, const IntPoin
         if (offset.isZero())
             return nullptr;
 
-        return scrollable;
+        return scrollable.get();
     };
     
-    RenderBox* scrollable = findDragAndDropScroller();
+    CheckedPtr scrollable = findDragAndDropScroller();
     if (!scrollable) {
         stopAutoscrollTimer();
         return;
@@ -185,7 +184,7 @@ void AutoscrollController::updateDragAndDrop(Node* dropTargetNode, const IntPoin
         m_autoscrollRenderer = WeakPtr { *scrollable };
         m_dragAndDropAutoscrollStartTime = eventTime;
         startAutoscrollTimer();
-    } else if (m_autoscrollRenderer != scrollable) {
+    } else if (m_autoscrollRenderer != scrollable.get()) {
         m_dragAndDropAutoscrollStartTime = eventTime;
         m_autoscrollRenderer = WeakPtr { *scrollable };
     }
@@ -232,10 +231,10 @@ void AutoscrollController::startPanScrolling(RenderBox& scrollable, const IntPoi
     m_autoscrollRenderer = WeakPtr { scrollable };
     m_panScrollStartPos = lastKnownMousePosition;
 
-    if (auto* view = scrollable.frame().view())
+    if (RefPtr view = scrollable.frame().view())
         view->addPanScrollIcon(lastKnownMousePosition);
 
-    scrollable.frame().eventHandler().didPanScrollStart();
+    scrollable.protectedFrame()->checkedEventHandler()->didPanScrollStart();
     startAutoscrollTimer();
 }
 #else
@@ -252,21 +251,21 @@ void AutoscrollController::autoscrollTimerFired()
         return;
     }
 
-    LocalFrame& frame = m_autoscrollRenderer->frame();
+    Ref frame = m_autoscrollRenderer->frame();
     switch (m_autoscrollType) {
     case AutoscrollForDragAndDrop:
         if (WallTime::now() - m_dragAndDropAutoscrollStartTime > autoscrollDelay)
-            m_autoscrollRenderer->autoscroll(m_dragAndDropAutoscrollReferencePosition);
+            CheckedRef { *m_autoscrollRenderer }->autoscroll(m_dragAndDropAutoscrollReferencePosition);
         break;
     case AutoscrollForSelection: {
-        if (!frame.eventHandler().shouldUpdateAutoscroll()) {
+        if (!frame->checkedEventHandler()->shouldUpdateAutoscroll()) {
             stopAutoscrollTimer();
             return;
         }
 #if ENABLE(DRAG_SUPPORT)
-        frame.eventHandler().updateSelectionForMouseDrag();
+        frame->checkedEventHandler()->updateSelectionForMouseDrag();
 #endif
-        m_autoscrollRenderer->autoscroll(frame.eventHandler().targetPositionInWindowForSelectionAutoscroll());
+        CheckedRef { *m_autoscrollRenderer }->autoscroll(frame->checkedEventHandler()->targetPositionInWindowForSelectionAutoscroll());
         break;
     }
     case NoAutoscroll:
@@ -275,15 +274,15 @@ void AutoscrollController::autoscrollTimerFired()
     case AutoscrollForPanCanStop:
     case AutoscrollForPan:
         // we verify that the main frame hasn't received the order to stop the panScroll
-        if (auto* mainFrame = getMainFrame(&frame)) {
-            if (!mainFrame->eventHandler().panScrollInProgress()) {
+        if (RefPtr mainFrame = getMainFrame(frame.ptr())) {
+            if (!mainFrame->checkedEventHandler()->panScrollInProgress()) {
                 stopAutoscrollTimer();
                 return;
             }
         }
-        if (auto* view = frame.view())
-            updatePanScrollState(view, frame.eventHandler().lastKnownMousePosition());
-        m_autoscrollRenderer->panScroll(m_panScrollStartPos);
+        if (RefPtr view = frame.view())
+            updatePanScrollState(view, frame->checkedEventHandler()->lastKnownMousePosition());
+        CheckedRef { *m_autoscrollRenderer }->panScroll(m_panScrollStartPos);
         break;
 #endif
     }

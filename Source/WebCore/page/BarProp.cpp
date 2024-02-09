@@ -54,7 +54,7 @@ bool BarProp::visible() const
     auto* frame = this->frame();
     if (!frame)
         return false;
-    auto* page = frame->page();
+    RefPtr page = frame->page();
     if (!page)
         return false;
 

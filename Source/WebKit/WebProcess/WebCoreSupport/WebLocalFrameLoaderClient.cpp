@@ -876,15 +876,11 @@ LocalFrame* WebLocalFrameLoaderClient::dispatchCreatePage(const NavigationAction
     // Just call through to the chrome client.
     WindowFeatures windowFeatures;
     windowFeatures.noopener = newFrameOpenerPolicy == NewFrameOpenerPolicy::Suppress;
-    Page* newPage = webPage->corePage()->chrome().createWindow(*m_frame->coreLocalFrame(), windowFeatures, navigationAction);
+    RefPtr newPage = webPage->corePage()->chrome().createWindow(*m_frame->coreLocalFrame(), windowFeatures, navigationAction);
     if (!newPage)
         return nullptr;
     
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(newPage->mainFrame());
-    if (!localMainFrame)
-        return nullptr;
-
-    return localMainFrame;
+    return dynamicDowncast<LocalFrame>(newPage->mainFrame());
 }
 
 void WebLocalFrameLoaderClient::dispatchShow()

@@ -32,6 +32,7 @@
 #include "HitTestRequest.h"
 #include <wtf/OptionSet.h>
 #include <wtf/UniqueRef.h>
+#include <wtf/WeakRef.h>
 
 namespace WebCore {
 
@@ -47,7 +48,7 @@ public:
     ContextMenuController(Page&, UniqueRef<ContextMenuClient>&&);
     ~ContextMenuController();
 
-    Page& page() { return m_page; }
+    Page& page();
     ContextMenuClient& client() { return m_client.get(); }
 
     ContextMenu* contextMenu() const { return m_contextMenu.get(); }
@@ -97,7 +98,7 @@ private:
     void performPDFJSAction(LocalFrame&, const String& action);
 #endif
 
-    Page& m_page;
+    SingleThreadWeakRef<Page> m_page;
     UniqueRef<ContextMenuClient> m_client;
     std::unique_ptr<ContextMenu> m_contextMenu;
     RefPtr<ContextMenuProvider> m_menuProvider;

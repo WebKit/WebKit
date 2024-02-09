@@ -60,6 +60,10 @@ public:
     void releaseCapture();
     void removeSpinButtonOwner() { m_spinButtonOwner = nullptr; }
 
+    using HTMLDivElement::weakPtrFactory;
+    using HTMLDivElement::WeakValueType;
+    using HTMLDivElement::WeakPtrImplType;
+
     void step(int amount);
     
     bool willRespondToMouseMoveEvents() const override;
