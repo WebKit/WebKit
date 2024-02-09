@@ -1031,6 +1031,56 @@ TEST(WKWebExtensionAPIAction, HasUnreadBadgeText)
     EXPECT_FALSE(tabAction.hasUnreadBadgeText);
 }
 
+TEST(WKWebExtensionAPIAction, NavigationOpensInNewTab)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *localhostRequest = server.requestWithLocalhost();
+
+    auto *popupScript = Util::constructScript(@[
+        [NSString stringWithFormat:@"document.location.href = '%@'", localhostRequest.URL.absoluteString],
+    ]);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.yield('Open Popup')"
+    ]);
+
+    auto *resources = @{
+        @"background.js": backgroundScript,
+        @"popup.html": @"<script type='module' src='popup.js'></script>",
+        @"popup.js": popupScript
+    };
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto originalOpenNewTab = manager.get().internalDelegate.openNewTab;
+
+    manager.get().internalDelegate.presentPopupForAction = ^(_WKWebExtensionAction *action) {
+        EXPECT_NOT_NULL(action);
+    };
+
+    manager.get().internalDelegate.openNewTab = ^(_WKWebExtensionTabCreationOptions *options, _WKWebExtensionContext *context, void (^completionHandler)(id<_WKWebExtensionTab>, NSError *)) {
+        EXPECT_NS_EQUAL(options.desiredURL, localhostRequest.URL);
+        EXPECT_NS_EQUAL(options.desiredWindow, manager.get().defaultWindow);
+        EXPECT_EQ(options.desiredIndex, 1ul);
+        EXPECT_EQ(options.shouldActivate, YES);
+
+        originalOpenNewTab(options, context, completionHandler);
+
+        [manager done];
+    };
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Open Popup");
+
+    [manager.get().context performActionForTab:manager.get().defaultTab];
+
+    [manager run];
+}
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

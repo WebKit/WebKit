@@ -43,6 +43,7 @@
 #import "WebExtensionMenuItem.h"
 #import "WebExtensionMenuItemContextParameters.h"
 #import "WebExtensionMenuItemParameters.h"
+#import "WebExtensionTabParameters.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
 #import "_WKWebExtensionActionInternal.h"
@@ -77,10 +78,31 @@ constexpr NSTimeInterval popoverShowTimeout = 1;
 
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler
 {
-    NSURL *targetURL = navigationAction.request.URL;
+    if (!_webExtensionAction || !_webExtensionAction->extensionContext()) {
+        decisionHandler(WKNavigationActionPolicyCancel);
+        return;
+    }
 
-    if (!navigationAction.targetFrame) {
-        // FIXME: Handle new tab/window navigation.
+    NSURL *targetURL = navigationAction.request.URL;
+    bool isURLForThisExtension = _webExtensionAction->extensionContext()->isURLForThisExtension(targetURL);
+
+    // New window or main frame navigation to an external URL opens in a new tab.
+    if (!navigationAction.targetFrame || (navigationAction.targetFrame.isMainFrame && !isURLForThisExtension)) {
+        RefPtr currentWindow = _webExtensionAction->window();
+        RefPtr currentTab = _webExtensionAction->tab();
+        if (!currentWindow && currentTab)
+            currentWindow = currentTab->window();
+
+        WebKit::WebExtensionTabParameters tabParameters;
+        tabParameters.url = targetURL;
+        tabParameters.windowIdentifier = currentWindow ? currentWindow->identifier() : WebKit::WebExtensionWindowConstants::CurrentIdentifier;
+        tabParameters.index = currentTab ? std::optional(currentTab->index() + 1) : std::nullopt;
+        tabParameters.active = true;
+
+        _webExtensionAction->extensionContext()->openNewTab(tabParameters, [](RefPtr<WebKit::WebExtensionTab> newTab) {
+            ASSERT(newTab);
+        });
+
         decisionHandler(WKNavigationActionPolicyCancel);
         return;
     }
@@ -91,24 +113,26 @@ constexpr NSTimeInterval popoverShowTimeout = 1;
         return;
     }
 
-    ASSERT(navigationAction.targetFrame.mainFrame);
-
     // Require an extension URL for the main frame.
-    if (!_webExtensionAction->extensionContext()->isURLForThisExtension(targetURL)) {
-        decisionHandler(WKNavigationActionPolicyCancel);
-        return;
-    }
+    ASSERT(navigationAction.targetFrame.isMainFrame);
+    ASSERT(isURLForThisExtension);
 
     decisionHandler(WKNavigationActionPolicyAllow);
 }
 
 - (void)webViewWebContentProcessDidTerminate:(WKWebView *)webView
 {
+    if (!_webExtensionAction)
+        return;
+
     _webExtensionAction->popupDidClose();
 }
 
 - (void)webViewDidClose:(WKWebView *)webView
 {
+    if (!_webExtensionAction)
+        return;
+
     _webExtensionAction->popupDidClose();
 }
 
