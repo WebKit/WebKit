@@ -5,7 +5,7 @@ let endingDocumentCount;
 const testingCount = 20;
 
 async function doLeakTest(src, tolerance) {
-    const frame = document.createElement('frame');
+    const frame = document.createElement('iframe');
     document.body.appendChild(frame);
 
     function loadSourceIntoIframe(src) {
