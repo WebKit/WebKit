@@ -170,6 +170,8 @@ std::optional<Vector<Ref<SharedBuffer>>> CDMPrivateFairPlayStreaming::extractKey
 {
     Vector<Ref<SharedBuffer>> keyIDs;
     auto results = extractSchemeAndKeyIdFromSinf(buffer);
+    if (results.isEmpty())
+        return std::nullopt;
 
     for (auto& result : results) {
         if (validFairPlayStreamingSchemes().contains(result.first))
@@ -200,6 +202,60 @@ std::optional<Vector<Ref<SharedBuffer>>> CDMPrivateFairPlayStreaming::extractKey
     return Vector { buffer.makeContiguous() };
 }
 
+#if HAVE(FAIRPLAYSTREAMING_MTPS_INITDATA)
+const AtomString& CDMPrivateFairPlayStreaming::mptsName()
+{
+    static MainThreadNeverDestroyed<const AtomString> mpts { MAKE_STATIC_STRING_IMPL("mpts") };
+    return mpts;
+}
+
+std::optional<Vector<Ref<SharedBuffer>>> CDMPrivateFairPlayStreaming::extractKeyIDsMpts(const SharedBuffer& buffer)
+{
+    // JSON of the format: "{ "codc" : [integer],  "mtyp" : [integer],  "cont" : "mpts"} }"
+    if (buffer.size() > std::numeric_limits<unsigned>::max())
+        return { };
+    String json { buffer.makeContiguous()->data(), static_cast<unsigned>(buffer.size()) };
+
+    auto value = JSON::Value::parseJSON(json);
+    if (!value)
+        return { };
+
+    auto object = value->asObject();
+    if (!object)
+        return { };
+
+    auto contValue = object->getString("cont"_s);
+    if (contValue != "mpts"_s)
+        return { };
+
+    auto codcValue = object->getInteger("codc"_s);
+    if (!codcValue)
+        return { };
+
+    auto mtypValue = object->getInteger("mtyp"_s);
+    if (!mtypValue)
+        return { };
+
+    return mptsKeyIDs();
+}
+
+RefPtr<SharedBuffer> CDMPrivateFairPlayStreaming::sanitizeMpts(const SharedBuffer& buffer)
+{
+    UNUSED_PARAM(buffer);
+    notImplemented();
+    return buffer.makeContiguous();
+}
+
+const Vector<Ref<SharedBuffer>>& CDMPrivateFairPlayStreaming::mptsKeyIDs() {
+    static NeverDestroyed<Vector<Ref<SharedBuffer>>> mptsKeyID = [] {
+        Vector<uint8_t> keyData { std::initializer_list<uint8_t> { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1  } };
+        Ref<SharedBuffer> keyBuffer = SharedBuffer::create(WTFMove(keyData));
+        return Vector { 1, WTFMove(keyBuffer) };
+    }();
+    return mptsKeyID;
+}
+#endif
+
 static const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& validInitDataTypes()
 {
     static NeverDestroyed<MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>> validTypes(std::initializer_list<AtomString> {
@@ -207,6 +263,9 @@ static const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& validInitDataT
         CDMPrivateFairPlayStreaming::skdName(),
 #if HAVE(FAIRPLAYSTREAMING_CENC_INITDATA)
         InitDataRegistry::cencName(),
+#endif
+#if HAVE(FAIRPLAYSTREAMING_MTPS_INITDATA)
+        CDMPrivateFairPlayStreaming::mptsName(),
 #endif
     });
     return validTypes;
@@ -221,6 +280,9 @@ void CDMFactory::platformRegisterFactories(Vector<CDMFactory*>& factories)
     std::call_once(onceFlag, [] {
         InitDataRegistry::shared().registerInitDataType(CDMPrivateFairPlayStreaming::sinfName(), { CDMPrivateFairPlayStreaming::sanitizeSinf, CDMPrivateFairPlayStreaming::extractKeyIDsSinf });
         InitDataRegistry::shared().registerInitDataType(CDMPrivateFairPlayStreaming::skdName(), { CDMPrivateFairPlayStreaming::sanitizeSkd, CDMPrivateFairPlayStreaming::extractKeyIDsSkd });
+#if HAVE(FAIRPLAYSTREAMING_MTPS_INITDATA)
+        InitDataRegistry::shared().registerInitDataType(CDMPrivateFairPlayStreaming::mptsName(), { CDMPrivateFairPlayStreaming::sanitizeMpts, CDMPrivateFairPlayStreaming::extractKeyIDsMpts });
+#endif
     });
 }
 
@@ -414,6 +476,11 @@ bool CDMPrivateFairPlayStreaming::supportsInitData(const AtomString& initDataTyp
 
     if (initDataType == skdName())
         return true;
+
+#if HAVE(FAIRPLAYSTREAMING_MTPS_INITDATA)
+    if (initDataType == mptsName())
+        return true;
+#endif
 
     ASSERT_NOT_REACHED();
     return false;
