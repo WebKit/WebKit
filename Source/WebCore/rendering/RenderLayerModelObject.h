@@ -105,6 +105,8 @@ public:
     RenderSVGResourceMarker* svgMarkerMidResourceFromStyle() const;
     RenderSVGResourceMarker* svgMarkerEndResourceFromStyle() const;
 
+    bool pointInSVGClippingArea(const FloatPoint&) const;
+
     void paintSVGClippingMask(PaintInfo&, const FloatRect& objectBoundingBox) const;
     void paintSVGMask(PaintInfo&, const LayoutPoint& adjustedPaintOffset) const;
 #endif

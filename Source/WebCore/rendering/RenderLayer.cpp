@@ -2850,11 +2850,7 @@ void RenderLayer::paintSVGResourceLayer(GraphicsContext& context, const AffineTr
     if (!renderer().hasNonVisibleOverflow())
         flags.add(PaintLayerFlag::PaintingOverflowContents);
 
-    {
-        // FIXME: Rename SVGHitTestCycleDetectionScope -> SVGResourceCycleDetectionScope
-        SVGHitTestCycleDetectionScope paintingScope(renderer());
-        paintLayer(context, paintingInfo, flags);
-    }
+    paintLayer(context, paintingInfo, flags);
 
     m_isPaintingSVGResourceLayer = wasPaintingSVGResourceLayer;
 #else

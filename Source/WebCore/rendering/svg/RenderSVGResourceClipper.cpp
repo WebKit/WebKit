@@ -40,6 +40,7 @@
 #include "SVGElementTypeHelpers.h"
 #include "SVGRenderStyle.h"
 #include "SVGUseElement.h"
+#include "SVGVisitedRendererTracking.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/SetForScope.h>
 
@@ -129,8 +130,13 @@ void RenderSVGResourceClipper::applyMaskClipping(PaintInfo& paintInfo, const Ren
     ASSERT(layer()->isSelfPaintingLayer());
     ASSERT(targetRenderer.hasLayer());
 
-    if (SVGHitTestCycleDetectionScope::isVisiting(*this))
+    static NeverDestroyed<SVGVisitedRendererTracking::VisitedSet> s_visitedSet;
+
+    SVGVisitedRendererTracking recursionTracking(s_visitedSet);
+    if (recursionTracking.isVisiting(*this))
         return;
+
+    SVGVisitedRendererTracking::Scope recursionScope(recursionTracking, *this);
 
     ASSERT(currentClippingMode() == ClippingMode::NoClipping || currentClippingMode() == ClippingMode::MaskClipping);
     SetForScope<ClippingMode> switchClippingMode(currentClippingMode(), ClippingMode::MaskClipping);
@@ -138,11 +144,8 @@ void RenderSVGResourceClipper::applyMaskClipping(PaintInfo& paintInfo, const Ren
     auto& context = paintInfo.context();
     GraphicsContextStateSaver stateSaver(context);
 
-    if (auto* referencedClipperRenderer = svgClipperResourceFromStyle()) {
-        // FIXME: Rename SVGHitTestCycleDetectionScope -> SVGResourceCycleDetectionScope
-        SVGHitTestCycleDetectionScope clippingScope(*this);
+    if (auto* referencedClipperRenderer = svgClipperResourceFromStyle())
         referencedClipperRenderer->applyMaskClipping(paintInfo, targetRenderer, objectBoundingBox);
-    }
 
     AffineTransform contentTransform;
 
@@ -185,11 +188,17 @@ void RenderSVGResourceClipper::applyMaskClipping(PaintInfo& paintInfo, const Ren
 
 bool RenderSVGResourceClipper::hitTestClipContent(const FloatRect& objectBoundingBox, const LayoutPoint& nodeAtPoint)
 {
-    auto point = nodeAtPoint;
-    if (!SVGRenderSupport::pointInClippingArea(*this, point))
+    static NeverDestroyed<SVGVisitedRendererTracking::VisitedSet> s_visitedSet;
+
+    SVGVisitedRendererTracking recursionTracking(s_visitedSet);
+    if (recursionTracking.isVisiting(*this))
         return false;
 
-    SVGHitTestCycleDetectionScope hitTestScope(*this);
+    SVGVisitedRendererTracking::Scope recursionScope(recursionTracking, *this);
+
+    auto point = nodeAtPoint;
+    if (!pointInSVGClippingArea(point))
+        return false;
 
     if (clipPathUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
         AffineTransform applyTransform;
@@ -205,12 +214,14 @@ bool RenderSVGResourceClipper::hitTestClipContent(const FloatRect& objectBoundin
 
 FloatRect RenderSVGResourceClipper::resourceBoundingBox(const RenderObject& object, RepaintRectCalculation repaintRectCalculation)
 {
-    auto targetBoundingBox = object.objectBoundingBox();
+    static NeverDestroyed<SVGVisitedRendererTracking::VisitedSet> s_visitedSet;
 
-    if (SVGHitTestCycleDetectionScope::isVisiting(*this))
+    SVGVisitedRendererTracking recursionTracking(s_visitedSet);
+    auto targetBoundingBox = object.objectBoundingBox();
+    if (recursionTracking.isVisiting(*this))
         return targetBoundingBox;
 
-    SVGHitTestCycleDetectionScope queryScope(*this);
+    SVGVisitedRendererTracking::Scope recursionScope(recursionTracking, *this);
 
     auto clipContentRepaintRect = clipPathElement().calculateClipContentRepaintRect(repaintRectCalculation);
     if (clipPathUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {

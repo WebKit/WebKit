@@ -427,23 +427,13 @@ void SVGRenderSupport::clipContextToCSSClippingArea(GraphicsContext& context, co
 
 bool SVGRenderSupport::pointInClippingArea(const RenderElement& renderer, const FloatPoint& point)
 {
-    if (SVGHitTestCycleDetectionScope::isVisiting(renderer))
-        return false;
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    RELEASE_ASSERT(!renderer.document().settings().layerBasedSVGEngineEnabled());
+#endif
 
     PathOperation* clipPathOperation = renderer.style().clipPath();
     if (is<ShapePathOperation>(clipPathOperation) || is<BoxPathOperation>(clipPathOperation))
         return isPointInCSSClippingArea(renderer, point);
-
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-    if (renderer.document().settings().layerBasedSVGEngineEnabled()) {
-        if (auto* layerRenderer = dynamicDowncast<RenderLayerModelObject>(renderer)) {
-            if (auto* referencedClipperRenderer = layerRenderer->svgClipperResourceFromStyle())
-                return referencedClipperRenderer->hitTestClipContent(renderer.objectBoundingBox(), LayoutPoint(point));
-        }
-
-        return true;
-    }
-#endif
 
     // We just take clippers into account to determine if a point is on the node. The Specification may
     // change later and we also need to check maskers.
@@ -532,39 +522,6 @@ void SVGRenderSupport::updateMaskedAncestorShouldIsolateBlending(const RenderEle
             ancestor.setShouldIsolateBlending(renderer.style().hasBlendMode());
         return;
     }
-}
-
-SVGHitTestCycleDetectionScope::SVGHitTestCycleDetectionScope(const RenderElement& element, bool condition)
-{
-    if (condition) {
-        m_element = element;
-        auto result = visitedElements().add(*m_element);
-        ASSERT_UNUSED(result, result.isNewEntry);
-    }
-}
-
-SVGHitTestCycleDetectionScope::~SVGHitTestCycleDetectionScope()
-{
-    if (m_element) {
-        bool result = visitedElements().remove(*m_element);
-        ASSERT_UNUSED(result, result);
-    }
-}
-
-SingleThreadWeakHashSet<RenderElement>& SVGHitTestCycleDetectionScope::visitedElements()
-{
-    static NeverDestroyed<SingleThreadWeakHashSet<RenderElement>> s_visitedElements;
-    return s_visitedElements;
-}
-
-bool SVGHitTestCycleDetectionScope::isEmpty()
-{
-    return visitedElements().isEmptyIgnoringNullReferences();
-}
-
-bool SVGHitTestCycleDetectionScope::isVisiting(const RenderElement& element)
-{
-    return visitedElements().contains(element);
 }
 
 FloatRect SVGRenderSupport::calculateApproximateStrokeBoundingBox(const RenderElement& renderer)

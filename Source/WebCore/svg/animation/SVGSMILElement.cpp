@@ -47,6 +47,7 @@
 #include "SVGSVGElement.h"
 #include "SVGURIReference.h"
 #include "SVGUseElement.h"
+#include "SVGVisitedElementTracking.h"
 #include "XLinkNames.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/MathExtras.h>
@@ -1183,15 +1184,17 @@ bool SVGSMILElement::progress(SMILTime elapsed, SVGSMILElement& firstAnimation, 
 void SVGSMILElement::notifyDependentsIntervalChanged(NewOrExistingInterval newOrExisting)
 {
     ASSERT(m_intervalBegin.isFinite());
-    static NeverDestroyed<WeakHashSet<SVGSMILElement, WeakPtrImplWithEventTargetData>> loopBreaker;
-    if (loopBreaker->contains(*this))
+
+    static NeverDestroyed<SVGVisitedElementTracking::VisitedSet> s_visitedSet;
+
+    SVGVisitedElementTracking recursionTracking(s_visitedSet);
+    if (recursionTracking.isVisiting(*this))
         return;
-    loopBreaker->add(*this);
+
+    SVGVisitedElementTracking::Scope recursionScope(recursionTracking, *this);
 
     for (auto& dependent : m_timeDependents)
         dependent.createInstanceTimesFromSyncbase(this, newOrExisting);
-
-    loopBreaker->remove(*this);
 }
     
 void SVGSMILElement::createInstanceTimesFromSyncbase(SVGSMILElement* syncbase, NewOrExistingInterval)

@@ -29,6 +29,7 @@
 #include "SVGElementTypeHelpers.h"
 #include "SVGFitToViewBox.h"
 #include "SVGRenderStyle.h"
+#include "SVGVisitedRendererTracking.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -187,8 +188,13 @@ RefPtr<ImageBuffer> RenderSVGResourcePattern::createTileImage(const PatternAttri
     ASSERT(patternRenderer);
     ASSERT(patternRenderer->hasLayer());
 
-    if (SVGHitTestCycleDetectionScope::isVisiting(*patternRenderer))
+    static NeverDestroyed<SVGVisitedRendererTracking::VisitedSet> s_visitedSet;
+
+    SVGVisitedRendererTracking recursionTracking(s_visitedSet);
+    if (recursionTracking.isVisiting(*patternRenderer))
         return nullptr;
+
+    SVGVisitedRendererTracking::Scope recursionScope(recursionTracking, *patternRenderer);
 
     // FIXME: consider color space handling/'color-interpolation'.
     auto clampedAbsoluteTileBoundaries = ImageBuffer::clampedRect(absoluteTileBoundaries);
@@ -197,7 +203,6 @@ RefPtr<ImageBuffer> RenderSVGResourcePattern::createTileImage(const PatternAttri
         return nullptr;
 
     auto& tileImageContext = tileImage->context();
-
     GraphicsContextStateSaver stateSaver(tileImageContext);
 
     FloatSize unclampedSize = roundedIntSize(tileBoundaries.size());

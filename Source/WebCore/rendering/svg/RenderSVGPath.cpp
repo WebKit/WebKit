@@ -39,6 +39,7 @@
 #include "SVGMarkerElement.h"
 #include "SVGPathElement.h"
 #include "SVGSubpathData.h"
+#include "SVGVisitedRendererTracking.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -213,10 +214,13 @@ void RenderSVGPath::drawMarkers(PaintInfo& paintInfo)
     if (m_markerPositions.isEmpty())
         return;
 
-    if (SVGHitTestCycleDetectionScope::isVisiting(*this))
+    static NeverDestroyed<SVGVisitedRendererTracking::VisitedSet> s_visitedSet;
+
+    SVGVisitedRendererTracking recursionTracking(s_visitedSet);
+    if (recursionTracking.isVisiting(*this))
         return;
 
-    SVGHitTestCycleDetectionScope paintScope(*this);
+    SVGVisitedRendererTracking::Scope recursionScope(recursionTracking, *this);
 
     auto* markerStart = svgMarkerStartResourceFromStyle();
     auto* markerMid = svgMarkerMidResourceFromStyle();
@@ -241,10 +245,13 @@ FloatRect RenderSVGPath::computeMarkerBoundingBox(const SVGBoundingBoxComputatio
     if (m_markerPositions.isEmpty())
         return { };
 
-    if (SVGHitTestCycleDetectionScope::isVisiting(*this))
+    static NeverDestroyed<SVGVisitedRendererTracking::VisitedSet> s_visitedSet;
+
+    SVGVisitedRendererTracking recursionTracking(s_visitedSet);
+    if (recursionTracking.isVisiting(*this))
         return { };
 
-    SVGHitTestCycleDetectionScope queryScope(*this);
+    SVGVisitedRendererTracking::Scope recursionScope(recursionTracking, *this);
 
     auto* markerStart = svgMarkerStartResourceFromStyle();
     auto* markerMid = svgMarkerMidResourceFromStyle();

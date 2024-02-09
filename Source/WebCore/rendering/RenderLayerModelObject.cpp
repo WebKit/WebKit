@@ -579,6 +579,58 @@ RenderSVGResourcePaintServer* RenderLayerModelObject::svgStrokePaintServerResour
 
     return nullptr;
 }
+
+bool RenderLayerModelObject::pointInSVGClippingArea(const FloatPoint& point) const
+{
+    auto* clipPathOperation = style().clipPath();
+
+    auto clipPathReferenceBox = [&](CSSBoxType boxType) -> FloatRect {
+        FloatRect referenceBox;
+        switch (boxType) {
+        case CSSBoxType::BorderBox:
+        case CSSBoxType::MarginBox:
+        case CSSBoxType::StrokeBox:
+        case CSSBoxType::BoxMissing:
+            // FIXME: strokeBoundingBox() takes dasharray into account but shouldn't.
+            referenceBox = strokeBoundingBox();
+            break;
+        case CSSBoxType::ViewBox:
+            if (element()) {
+                // FIXME: [LBSE] This should not need to use SVGLengthContext, RenderSVGRoot holds that information.
+                auto viewportSize = SVGLengthContext(downcast<SVGElement>(element())).viewportSize();
+                if (viewportSize)
+                    referenceBox.setSize(*viewportSize);
+                break;
+            }
+            FALLTHROUGH;
+        case CSSBoxType::ContentBox:
+        case CSSBoxType::FillBox:
+        case CSSBoxType::PaddingBox:
+            referenceBox = objectBoundingBox();
+            break;
+        }
+        return referenceBox;
+    };
+
+    if (auto* clipPath = dynamicDowncast<ShapePathOperation>(clipPathOperation)) {
+        auto referenceBox = clipPathReferenceBox(clipPath->referenceBox());
+        if (!referenceBox.contains(point))
+            return false;
+        return clipPath->pathForReferenceRect(referenceBox).contains(point, clipPath->windRule());
+    }
+
+    if (auto* clipPath = dynamicDowncast<BoxPathOperation>(clipPathOperation)) {
+        auto referenceBox = clipPathReferenceBox(clipPath->referenceBox());
+        if (!referenceBox.contains(point))
+            return false;
+        return clipPath->pathForReferenceRect(FloatRoundedRect { referenceBox }).contains(point);
+    }
+
+    if (auto* referencedClipperRenderer = svgClipperResourceFromStyle())
+        return referencedClipperRenderer->hitTestClipContent(objectBoundingBox(), LayoutPoint(point));
+
+    return true;
+}
 #endif // ENABLE(LAYER_BASED_SVG_ENGINE)
 
 CheckedPtr<RenderLayer> RenderLayerModelObject::checkedLayer() const

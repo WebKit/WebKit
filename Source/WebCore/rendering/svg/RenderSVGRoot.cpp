@@ -435,8 +435,6 @@ bool RenderSVGRoot::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
 {
     auto adjustedLocation = accumulatedOffset + location();
 
-    ASSERT(SVGHitTestCycleDetectionScope::isEmpty());
-
     auto visualOverflowRect = this->visualOverflowRect();
     visualOverflowRect.moveBy(adjustedLocation);
 
@@ -446,7 +444,6 @@ bool RenderSVGRoot::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
         for (auto* child = lastChild(); child; child = child->previousSibling()) {
             if (!child->hasLayer() && child->nodeAtPoint(request, result, locationInContainer, adjustedLocation, hitTestAction)) {
                 updateHitTestResult(result, locationInContainer.point() - toLayoutSize(adjustedLocation));
-                ASSERT(SVGHitTestCycleDetectionScope::isEmpty());
                 return true;
             }
         }
@@ -461,8 +458,6 @@ bool RenderSVGRoot::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
                 return true;
         }
     }
-
-    ASSERT(SVGHitTestCycleDetectionScope::isEmpty());
 
     return false;
 }

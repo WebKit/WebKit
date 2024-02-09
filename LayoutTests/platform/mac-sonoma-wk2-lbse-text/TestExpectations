@@ -384,7 +384,6 @@ imported/w3c/web-platform-tests/svg/pservers/reftests/meshgradient-basic-004.svg
 imported/w3c/web-platform-tests/svg/pservers/reftests/meshgradient-basic-005.svg   [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/pservers/reftests/meshgradient-bicubic-001.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/pservers/reftests/meshgradient-complex-001.svg [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/pservers/reftests/meshgradient-basic-001.svg   [ ImageOnlyFailure ]
 
 # Marker problems
 imported/w3c/web-platform-tests/svg/import/imp-path-01-f-manual.svg  [ ImageOnlyFailure ]
@@ -531,7 +530,6 @@ svg/custom/circle-move-invalidation-small-viewBox.svg         [ Pass ]
 svg/custom/use-on-symbol-inside-pattern.svg                   [ Pass ]
 svg/repaint/text-repainting-after-modifying-transform.html    [ Pass ]
 svg/resource-invalidation/mask-resource-invalidation.html     [ Pass ]
-svg/transforms/animated-path-inside-transformed-html.xhtml    [ Pass ]
 svg/transforms/layout-tiny-elements-in-scaled-group.svg       [ Pass ]
 svg/transforms/rotation-origin-in-small-units.svg             [ Pass ]
 svg/transforms/rotation-tiny-element-in-group.svg             [ Pass ]

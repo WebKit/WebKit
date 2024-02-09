@@ -97,17 +97,4 @@ private:
     ~SVGRenderSupport();
 };
 
-class SVGHitTestCycleDetectionScope {
-    WTF_MAKE_NONCOPYABLE(SVGHitTestCycleDetectionScope);
-public:
-    explicit SVGHitTestCycleDetectionScope(const RenderElement&, bool condition = true);
-    ~SVGHitTestCycleDetectionScope();
-    static bool isEmpty();
-    static bool isVisiting(const RenderElement&);
-
-private:
-    static SingleThreadWeakHashSet<RenderElement>& visitedElements();
-    SingleThreadWeakPtr<RenderElement> m_element;
-};
-
 } // namespace WebCore

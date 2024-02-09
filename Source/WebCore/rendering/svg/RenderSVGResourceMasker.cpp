@@ -35,6 +35,7 @@
 #include "SVGContainerLayout.h"
 #include "SVGLengthContext.h"
 #include "SVGRenderStyle.h"
+#include "SVGVisitedRendererTracking.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -78,8 +79,13 @@ void RenderSVGResourceMasker::applyMask(PaintInfo& paintInfo, const RenderLayerM
     ASSERT(layer()->isSelfPaintingLayer());
     ASSERT(targetRenderer.hasLayer());
 
-    if (SVGHitTestCycleDetectionScope::isVisiting(*this))
+    static NeverDestroyed<SVGVisitedRendererTracking::VisitedSet> s_visitedSet;
+
+    SVGVisitedRendererTracking recursionTracking(s_visitedSet);
+    if (recursionTracking.isVisiting(*this))
         return;
+
+    SVGVisitedRendererTracking::Scope recursionScope(recursionTracking, *this);
 
     auto& context = paintInfo.context();
     GraphicsContextStateSaver stateSaver(context);
@@ -121,8 +127,7 @@ void RenderSVGResourceMasker::applyMask(PaintInfo& paintInfo, const RenderLayerM
     context.setCompositeOperation(CompositeOperator::DestinationIn);
     context.beginTransparencyLayer(1);
 
-    auto& maskImageContext = maskImage->context();
-    layer()->paintSVGResourceLayer(maskImageContext, contentTransform);
+    layer()->paintSVGResourceLayer(maskImage->context(), contentTransform);
 
 #if !USE(CG)
     maskImage->transformToColorSpace(drawColorSpace);
@@ -146,14 +151,15 @@ void RenderSVGResourceMasker::applyMask(PaintInfo& paintInfo, const RenderLayerM
 FloatRect RenderSVGResourceMasker::resourceBoundingBox(const RenderObject& object, RepaintRectCalculation repaintRectCalculation)
 {
     auto targetBoundingBox = object.objectBoundingBox();
+    static NeverDestroyed<SVGVisitedRendererTracking::VisitedSet> s_visitedSet;
 
-    if (SVGHitTestCycleDetectionScope::isVisiting(*this))
+    SVGVisitedRendererTracking recursionTracking(s_visitedSet);
+    if (recursionTracking.isVisiting(*this))
         return targetBoundingBox;
 
-    SVGHitTestCycleDetectionScope queryScope(*this);
+    SVGVisitedRendererTracking::Scope recursionScope(recursionTracking, *this);
 
     auto& maskElement = this->maskElement();
-
     auto maskRect = maskElement.calculateMaskContentRepaintRect(repaintRectCalculation);
     if (maskElement.maskContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
         AffineTransform contentTransform;

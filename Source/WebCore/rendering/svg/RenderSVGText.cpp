@@ -50,6 +50,7 @@
 #include "SVGRootInlineBox.h"
 #include "SVGTextElement.h"
 #include "SVGURIReference.h"
+#include "SVGVisitedRendererTracking.h"
 #include "TransformState.h"
 #include "VisiblePosition.h"
 #include <wtf/IsoMallocInlines.h>
@@ -445,12 +446,17 @@ bool RenderSVGText::nodeAtFloatPoint(const HitTestRequest& request, HitTestResul
     if (isVisible || !hitRules.requireVisible) {
         if ((hitRules.canHitStroke && (style().svgStyle().hasStroke() || !hitRules.requireStroke))
             || (hitRules.canHitFill && (style().svgStyle().hasFill() || !hitRules.requireFill))) {
-            FloatPoint localPoint = valueOrDefault(localToParentTransform().inverse()).mapPoint(pointInParent);
+            static NeverDestroyed<SVGVisitedRendererTracking::VisitedSet> s_visitedSet;
 
-            if (!SVGRenderSupport::pointInClippingArea(*this, localPoint))
+            SVGVisitedRendererTracking recursionTracking(s_visitedSet);
+            if (recursionTracking.isVisiting(*this))
                 return false;
 
-            SVGHitTestCycleDetectionScope hitTestScope(*this);
+            SVGVisitedRendererTracking::Scope recursionScope(recursionTracking, *this);
+
+            FloatPoint localPoint = valueOrDefault(localToParentTransform().inverse()).mapPoint(pointInParent);
+            if (!SVGRenderSupport::pointInClippingArea(*this, localPoint))
+                return false;
 
             HitTestLocation hitTestLocation(LayoutPoint(flooredIntPoint(localPoint)));
             return RenderBlock::nodeAtPoint(request, result, hitTestLocation, LayoutPoint(), hitTestAction);
@@ -473,14 +479,21 @@ bool RenderSVGText::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
     if (isVisible || !hitRules.requireVisible) {
         if ((hitRules.canHitStroke && (style().svgStyle().hasStroke() || !hitRules.requireStroke))
         || (hitRules.canHitFill && (style().svgStyle().hasFill() || !hitRules.requireFill))) {
+            static NeverDestroyed<SVGVisitedRendererTracking::VisitedSet> s_visitedSet;
+
+            SVGVisitedRendererTracking recursionTracking(s_visitedSet);
+            if (recursionTracking.isVisiting(*this))
+                return false;
+
+            SVGVisitedRendererTracking::Scope recursionScope(recursionTracking, *this);
+
             auto localPoint = locationInContainer.point();
             auto coordinateSystemOriginTranslation = nominalSVGLayoutLocation() - adjustedLocation;
             localPoint.move(coordinateSystemOriginTranslation);
 
-            if (!SVGRenderSupport::pointInClippingArea(*this, localPoint))
+            if (!pointInSVGClippingArea(localPoint))
                 return false;
 
-            SVGHitTestCycleDetectionScope hitTestScope(*this);
             return RenderBlock::nodeAtPoint(request, result, locationInContainer, accumulatedOffset, hitTestAction);
         }
     }
