@@ -77,7 +77,7 @@ struct VideoTrackPrivateRemoteConfiguration;
 
 class MediaPlayerPrivateRemote final
     : public WebCore::MediaPlayerPrivateInterface
-    , public RefCounted<MediaPlayerPrivateRemote>
+    , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MediaPlayerPrivateRemote, WTF::DestructionThread::Main>
     , public IPC::MessageReceiver
 #if !RELEASE_LOG_DISABLED
     , private LoggerHelper
@@ -92,8 +92,8 @@ public:
     MediaPlayerPrivateRemote(WebCore::MediaPlayer*, WebCore::MediaPlayerEnums::MediaEngineIdentifier, WebCore::MediaPlayerIdentifier, RemoteMediaPlayerManager&);
     ~MediaPlayerPrivateRemote();
 
-    void ref() final { RefCounted::ref(); }
-    void deref() final { RefCounted::deref(); }
+    void ref() final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
+    void deref() final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
@@ -103,11 +103,12 @@ public:
     Ref<IPC::Connection> protectedConnection() const { return m_manager.gpuProcessConnection().protectedConnection(); }
     RefPtr<WebCore::MediaPlayer> player() const { return m_player.get(); }
 
-    WebCore::MediaPlayer::ReadyState readyState() const final { return m_cachedState.readyState; }
+    WebCore::MediaPlayer::ReadyState readyState() const final { return m_readyState; }
     void setReadyState(WebCore::MediaPlayer::ReadyState);
 
+    void commitAllTransactions(CompletionHandler<void()>&&);
     void networkStateChanged(RemoteMediaPlayerState&&);
-    void readyStateChanged(RemoteMediaPlayerState&&);
+    void readyStateChanged(RemoteMediaPlayerState&&, WebCore::MediaPlayer::ReadyState);
     void volumeChanged(double);
     void muteChanged(bool);
     void seeked(const MediaTime&);
@@ -190,8 +191,8 @@ public:
     WebCore::FloatSize naturalSize() const final;
 
 #if !RELEASE_LOG_DISABLED
-    const void* mediaPlayerLogIdentifier() { return logIdentifier(); }
-    const Logger& mediaPlayerLogger() { return logger(); }
+    const void* mediaPlayerLogIdentifier() const { return logIdentifier(); }
+    const Logger& mediaPlayerLogger() const { return logger(); }
 #endif
 
     void requestHostingContextID(LayerHostingContextIDCallback&&) override;
@@ -479,10 +480,11 @@ private:
     RefPtr<MediaSourcePrivateRemote> m_mediaSourcePrivate;
 #endif
 
+    mutable Lock m_lock;
     HashMap<RemoteMediaResourceIdentifier, RefPtr<WebCore::PlatformMediaResource>> m_mediaResources;
-    StdUnorderedMap<WebCore::TrackID, Ref<AudioTrackPrivateRemote>> m_audioTracks;
-    StdUnorderedMap<WebCore::TrackID, Ref<VideoTrackPrivateRemote>> m_videoTracks;
-    StdUnorderedMap<WebCore::TrackID, Ref<TextTrackPrivateRemote>> m_textTracks;
+    StdUnorderedMap<WebCore::TrackID, Ref<AudioTrackPrivateRemote>> m_audioTracks WTF_GUARDED_BY_LOCK(m_lock);
+    StdUnorderedMap<WebCore::TrackID, Ref<VideoTrackPrivateRemote>> m_videoTracks WTF_GUARDED_BY_LOCK(m_lock);
+    StdUnorderedMap<WebCore::TrackID, Ref<TextTrackPrivateRemote>> m_textTracks WTF_GUARDED_BY_LOCK(m_lock);
 
     WebCore::SecurityOriginData m_documentSecurityOrigin;
     mutable HashMap<WebCore::SecurityOriginData, std::optional<bool>> m_isCrossOriginCache;
@@ -490,6 +492,7 @@ private:
     WebCore::MediaPlayer::VideoGravity m_videoFullscreenGravity { WebCore::MediaPlayer::VideoGravity::ResizeAspect };
     MonotonicTime m_lastPlaybackQualityMetricsQueryTime;
     Seconds m_videoPlaybackMetricsUpdateInterval;
+    WebCore::MediaPlayerEnums::ReadyState m_readyState { WebCore::MediaPlayerEnums::ReadyState::HaveNothing };
     double m_volume { 1 };
     double m_rate { 1 };
     long m_platformErrorCode { 0 };

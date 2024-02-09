@@ -90,11 +90,14 @@ SourceBuffer::SourceBuffer(Ref<SourceBufferPrivate>&& sourceBufferPrivate, Media
     , m_appendWindowEnd(MediaTime::positiveInfiniteTime())
     , m_appendState(WaitingForSegment)
     , m_buffered(TimeRanges::create())
+    , m_dispatcher(RunLoop::current())
 #if !RELEASE_LOG_DISABLED
     , m_logger(m_private->sourceBufferLogger())
     , m_logIdentifier(m_private->sourceBufferLogIdentifier())
 #endif
 {
+    ASSERT(isMainThread());
+
     ALWAYS_LOG(LOGIDENTIFIER);
 
     m_private->setClient(*this);
@@ -104,8 +107,6 @@ SourceBuffer::~SourceBuffer()
 {
     ASSERT(isRemoved());
     ALWAYS_LOG(LOGIDENTIFIER);
-
-    m_private->detach();
 
     if (m_appendBufferPromise)
         m_appendBufferPromise.disconnect();
@@ -330,6 +331,8 @@ ExceptionOr<void> SourceBuffer::remove(const MediaTime& start, const MediaTime& 
 
 void SourceBuffer::rangeRemoval(const MediaTime& start, const MediaTime& end)
 {
+    assertIsCurrent(m_dispatcher);
+
     // 3.5.7 Range Removal
     // https://rawgit.com/w3c/media-source/7bbe4aa33c61ec025bc7acbd80354110f6a000f9/media-source.html#sourcebuffer-range-removal
     // 1. Let start equal the starting presentation timestamp for the removal range.
@@ -341,12 +344,10 @@ void SourceBuffer::rangeRemoval(const MediaTime& start, const MediaTime& end)
     scheduleEvent(eventNames().updatestartEvent);
 
     // 5. Return control to the caller and run the rest of the steps asynchronously.
-    invokeAsync(RunLoop::current(), [protectedThis = Ref { *this }, this, start, end] {
-        if (isRemoved())
-            return MediaPromise::createAndReject(PlatformMediaError::BufferRemoved);
+    promisedWeakOnDispatcher([this, start, end] {
         // 6. Run the coded frame removal algorithm with start and end as the start and end of the removal range.
         return m_private->removeCodedFrames(start, end, m_source->currentTime());
-    })->whenSettled(RunLoop::current(), [this, protectedThis = Ref { *this }] {
+    }, true)->whenSettled(m_dispatcher, [this, protectedThis = Ref { *this }] {
         m_removeCodedFramesPromise.complete();
 
         if (isRemoved())
@@ -464,7 +465,6 @@ void SourceBuffer::removedFromMediaSource()
 
     m_private->clearTrackBuffers();
     m_private->removedFromMediaSource();
-    m_private->detach();
     m_source = nullptr;
     m_extraMemoryCost = 0;
 }
@@ -477,6 +477,8 @@ Ref<SourceBuffer::ComputeSeekPromise> SourceBuffer::computeSeekTime(const SeekTa
 
 void SourceBuffer::seekToTime(const MediaTime& time)
 {
+    assertIsCurrent(m_dispatcher);
+
     ALWAYS_LOG(LOGIDENTIFIER, time);
     m_private->seekToTime(time);
 }
@@ -544,12 +546,12 @@ ExceptionOr<void> SourceBuffer::appendBufferInternal(const unsigned char* data, 
     scheduleEvent(eventNames().updatestartEvent);
 
     // 6. Asynchronously run the buffer append algorithm.
-    invokeAsync(RunLoop::current(), [protectedThis = Ref { *this }, this]() mutable {
+    promisedWeakOnDispatcher([this] {
         // 1. Loop Top: If the input buffer is empty, then jump to the need more data step below.
         if (!m_pendingAppendData || m_pendingAppendData->isEmpty())
             return MediaPromise::createAndResolve();
         return m_private->append(m_pendingAppendData.releaseNonNull());
-    })->whenSettled(RunLoop::current(), *this, &SourceBuffer::sourceBufferPrivateAppendComplete)->track(m_appendBufferPromise);
+    }, true)->whenSettled(m_dispatcher, *this, &SourceBuffer::sourceBufferPrivateAppendComplete)->track(m_appendBufferPromise);
 
     return { };
 }
@@ -598,18 +600,17 @@ void SourceBuffer::sourceBufferPrivateAppendComplete(MediaPromise::Result&& resu
 
 void SourceBuffer::sourceBufferPrivateDidReceiveRenderingError(int64_t error)
 {
-#if RELEASE_LOG_DISABLED
-    UNUSED_PARAM(error);
-#endif
-
     ERROR_LOG(LOGIDENTIFIER, error);
 
-    if (!isRemoved())
+    ensureWeakOnDispatcher([this] {
         m_source->streamEndedWithError(MediaSource::EndOfStreamError::Decode);
+    });
 }
 
 uint64_t SourceBuffer::maximumBufferSize() const
 {
+    assertIsCurrent(m_dispatcher);
+
     if (isRemoved())
         return 0;
 
@@ -653,6 +654,8 @@ TextTrackList& SourceBuffer::textTracks()
 
 void SourceBuffer::setActive(bool active)
 {
+    assertIsCurrent(m_dispatcher);
+
     if (m_active == active)
         return;
 
@@ -664,257 +667,256 @@ void SourceBuffer::setActive(bool active)
 
 Ref<MediaPromise> SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegment&& segment)
 {
-    if (isRemoved())
-        return MediaPromise::createAndReject(PlatformMediaError::BufferRemoved);
+    return promisedWeakOnDispatcher([this, segment = WTFMove(segment)]() mutable {
+        ALWAYS_LOG(LOGIDENTIFIER);
 
-    ALWAYS_LOG(LOGIDENTIFIER);
+        // 3.5.8 Initialization Segment Received (ctd)
+        // https://rawgit.com/w3c/media-source/c3ad59c7a370d04430969ba73d18dc9bcde57a33/index.html#sourcebuffer-init-segment-received [Editor's Draft 09 January 2015]
 
-    // 3.5.8 Initialization Segment Received (ctd)
-    // https://rawgit.com/w3c/media-source/c3ad59c7a370d04430969ba73d18dc9bcde57a33/index.html#sourcebuffer-init-segment-received [Editor's Draft 09 January 2015]
+        // 1. Update the duration attribute if it currently equals NaN:
+        if (m_source->duration().isInvalid()) {
+            // ↳ If the initialization segment contains a duration:
+            //   Run the duration change algorithm with new duration set to the duration in the initialization segment.
+            // ↳ Otherwise:
+            //   Run the duration change algorithm with new duration set to positive Infinity.
+            if (segment.duration.isValid() && !segment.duration.isIndefinite())
+                m_source->setDurationInternal(segment.duration);
+            else
+                m_source->setDurationInternal(MediaTime::positiveInfiniteTime());
+        }
 
-    // 1. Update the duration attribute if it currently equals NaN:
-    if (m_source->duration().isInvalid()) {
-        // ↳ If the initialization segment contains a duration:
-        //   Run the duration change algorithm with new duration set to the duration in the initialization segment.
-        // ↳ Otherwise:
-        //   Run the duration change algorithm with new duration set to positive Infinity.
-        if (segment.duration.isValid() && !segment.duration.isIndefinite())
-            m_source->setDurationInternal(segment.duration);
-        else
-            m_source->setDurationInternal(MediaTime::positiveInfiniteTime());
-    }
-
-    // 2. If the initialization segment has no audio, video, or text tracks, then run the append error algorithm
-    // with the decode error parameter set to true and abort these steps.
-    if (segment.audioTracks.isEmpty() && segment.videoTracks.isEmpty() && segment.textTracks.isEmpty()) {
-        // appendError will be called once sourceBufferPrivateAppendComplete gets called once the completionHandler is run.
-        return MediaPromise::createAndReject(PlatformMediaError::AppendError);
-    }
-
-    // 3. If the first initialization segment flag is true, then run the following steps:
-    if (m_receivedFirstInitializationSegment) {
-        // 3.1. Verify the following properties. If any of the checks fail then run the append error algorithm
+        // 2. If the initialization segment has no audio, video, or text tracks, then run the append error algorithm
         // with the decode error parameter set to true and abort these steps.
-        if (!validateInitializationSegment(segment)) {
+        if (segment.audioTracks.isEmpty() && segment.videoTracks.isEmpty() && segment.textTracks.isEmpty()) {
             // appendError will be called once sourceBufferPrivateAppendComplete gets called once the completionHandler is run.
             return MediaPromise::createAndReject(PlatformMediaError::AppendError);
         }
 
-        Vector<std::pair<TrackID, TrackID>> trackIdPairs;
-
-        // 3.2 Add the appropriate track descriptions from this initialization segment to each of the track buffers.
-        ASSERT(segment.audioTracks.size() == audioTracks().length());
-        for (auto& audioTrackInfo : segment.audioTracks) {
-            if (audioTracks().length() == 1) {
-                RefPtr track = audioTracks().item(0);
-                auto oldId = track->trackId();
-                auto newId = audioTrackInfo.track->id();
-                track->setPrivate(*audioTrackInfo.track);
-                if (newId != oldId)
-                    trackIdPairs.append(std::make_pair(oldId, newId));
-                break;
+        // 3. If the first initialization segment flag is true, then run the following steps:
+        if (m_receivedFirstInitializationSegment) {
+            // 3.1. Verify the following properties. If any of the checks fail then run the append error algorithm
+            // with the decode error parameter set to true and abort these steps.
+            if (!validateInitializationSegment(segment)) {
+                // appendError will be called once sourceBufferPrivateAppendComplete gets called once the completionHandler is run.
+                return MediaPromise::createAndReject(PlatformMediaError::AppendError);
             }
 
-            auto audioTrack = audioTracks().getTrackById(audioTrackInfo.track->id());
-            ASSERT(audioTrack);
-            audioTrack->setPrivate(*audioTrackInfo.track);
-        }
+            Vector<std::pair<TrackID, TrackID>> trackIdPairs;
 
-        ASSERT(segment.videoTracks.size() == videoTracks().length());
-        for (auto& videoTrackInfo : segment.videoTracks) {
-            if (videoTracks().length() == 1) {
-                RefPtr track = videoTracks().item(0);
-                auto oldId = track->trackId();
-                auto newId = videoTrackInfo.track->id();
-                track->setPrivate(*videoTrackInfo.track);
-                if (newId != oldId)
-                    trackIdPairs.append(std::make_pair(oldId, newId));
-                break;
-            }
-
-            auto videoTrack = videoTracks().getTrackById(videoTrackInfo.track->id());
-            ASSERT(videoTrack);
-            videoTrack->setPrivate(*videoTrackInfo.track);
-        }
-
-        ASSERT(segment.textTracks.size() == textTracks().length());
-        for (auto& textTrackInfo : segment.textTracks) {
-            if (textTracks().length() == 1) {
-                RefPtr track = downcast<InbandTextTrack>(textTracks().item(0));
-                auto oldId = track->trackId();
-                auto newId = textTrackInfo.track->id();
-                track->setPrivate(*textTrackInfo.track);
-                if (newId != oldId)
-                    trackIdPairs.append(std::make_pair(oldId, newId));
-                break;
-            }
-
-            auto textTrack = textTracks().getTrackById(textTrackInfo.track->id());
-            ASSERT(textTrack);
-            downcast<InbandTextTrack>(*textTrack).setPrivate(*textTrackInfo.track);
-        }
-
-        if (!trackIdPairs.isEmpty())
-            m_private->updateTrackIds(WTFMove(trackIdPairs));
-
-        // 3.3 Set the need random access point flag on all track buffers to true.
-        m_private->setAllTrackBuffersNeedRandomAccess();
-    }
-
-    // 4. Let active track flag equal false.
-    bool activeTrackFlag = false;
-
-    // 5. If the first initialization segment flag is false, then run the following steps:
-    if (!m_receivedFirstInitializationSegment) {
-        // 5.1 If the initialization segment contains tracks with codecs the user agent does not support,
-        // then run the append error algorithm with the decode error parameter set to true and abort these steps.
-        // NOTE: This check is the responsibility of the SourceBufferPrivate.
-        // appendError will be called once sourceBufferPrivateAppendComplete gets called once the completionHandler is run.
-        if (auto& allowedMediaAudioCodecIDs = document().settings().allowedMediaAudioCodecIDs()) {
+            // 3.2 Add the appropriate track descriptions from this initialization segment to each of the track buffers.
+            ASSERT(segment.audioTracks.size() == audioTracks().length());
             for (auto& audioTrackInfo : segment.audioTracks) {
-                if (audioTrackInfo.description && allowedMediaAudioCodecIDs->contains(FourCC::fromString(audioTrackInfo.description->codec())))
-                    continue;
-                return MediaPromise::createAndReject(PlatformMediaError::AppendError);
-            }
-        }
+                if (audioTracks().length() == 1) {
+                    RefPtr track = audioTracks().item(0);
+                    auto oldId = track->trackId();
+                    auto newId = audioTrackInfo.track->id();
+                    track->setPrivate(*audioTrackInfo.track);
+                    if (newId != oldId)
+                        trackIdPairs.append(std::make_pair(oldId, newId));
+                    break;
+                }
 
-        if (auto& allowedMediaVideoCodecIDs = document().settings().allowedMediaVideoCodecIDs()) {
+                auto audioTrack = audioTracks().getTrackById(audioTrackInfo.track->id());
+                ASSERT(audioTrack);
+                audioTrack->setPrivate(*audioTrackInfo.track);
+            }
+
+            ASSERT(segment.videoTracks.size() == videoTracks().length());
             for (auto& videoTrackInfo : segment.videoTracks) {
-                if (videoTrackInfo.description && allowedMediaVideoCodecIDs->contains(FourCC::fromString(videoTrackInfo.description->codec())))
-                    continue;
-                return MediaPromise::createAndReject(PlatformMediaError::AppendError);
-            }
-        }
+                if (videoTracks().length() == 1) {
+                    RefPtr track = videoTracks().item(0);
+                    auto oldId = track->trackId();
+                    auto newId = videoTrackInfo.track->id();
+                    track->setPrivate(*videoTrackInfo.track);
+                    if (newId != oldId)
+                        trackIdPairs.append(std::make_pair(oldId, newId));
+                    break;
+                }
 
-        // 5.2 For each audio track in the initialization segment, run following steps:
-        for (auto& audioTrackInfo : segment.audioTracks) {
-            // FIXME: Implement steps 5.2.1-5.2.8.1 as per Editor's Draft 09 January 2015, and reorder this
-            // 5.2.1 Let new audio track be a new AudioTrack object.
-            // 5.2.2 Generate a unique ID and assign it to the id property on new video track.
-            auto newAudioTrack = AudioTrack::create(scriptExecutionContext(), *audioTrackInfo.track);
-            newAudioTrack->addClient(*this);
-            newAudioTrack->setSourceBuffer(this);
-
-            // 5.2.3 If audioTracks.length equals 0, then run the following steps:
-            if (!audioTracks().length()) {
-                // 5.2.3.1 Set the enabled property on new audio track to true.
-                newAudioTrack->setEnabled(true);
-
-                // 5.2.3.2 Set active track flag to true.
-                activeTrackFlag = true;
+                auto videoTrack = videoTracks().getTrackById(videoTrackInfo.track->id());
+                ASSERT(videoTrack);
+                videoTrack->setPrivate(*videoTrackInfo.track);
             }
 
-            // 5.2.4 Add new audio track to the audioTracks attribute on this SourceBuffer object.
-            // 5.2.5 Queue a task to fire a trusted event named addtrack, that does not bubble and is
-            // not cancelable, and that uses the TrackEvent interface, at the AudioTrackList object
-            // referenced by the audioTracks attribute on this SourceBuffer object.
-            audioTracks().append(newAudioTrack.copyRef());
+            ASSERT(segment.textTracks.size() == textTracks().length());
+            for (auto& textTrackInfo : segment.textTracks) {
+                if (textTracks().length() == 1) {
+                    RefPtr track = downcast<InbandTextTrack>(textTracks().item(0));
+                    auto oldId = track->trackId();
+                    auto newId = textTrackInfo.track->id();
+                    track->setPrivate(*textTrackInfo.track);
+                    if (newId != oldId)
+                        trackIdPairs.append(std::make_pair(oldId, newId));
+                    break;
+                }
 
-            // 5.2.6 Add new audio track to the audioTracks attribute on the HTMLMediaElement.
-            // 5.2.7 Queue a task to fire a trusted event named addtrack, that does not bubble and is
-            // not cancelable, and that uses the TrackEvent interface, at the AudioTrackList object
-            // referenced by the audioTracks attribute on the HTMLMediaElement.
-            m_source->mediaElement()->addAudioTrack(newAudioTrack.copyRef());
-
-            m_audioCodecs.append(audioTrackInfo.description->codec().toAtomString());
-
-            // 5.2.8 Create a new track buffer to store coded frames for this track.
-            m_private->addTrackBuffer(audioTrackInfo.track->id(), WTFMove(audioTrackInfo.description));
-        }
-
-        // 5.3 For each video track in the initialization segment, run following steps:
-        for (auto& videoTrackInfo : segment.videoTracks) {
-            // FIXME: Implement steps 5.3.1-5.3.8.1 as per Editor's Draft 09 January 2015, and reorder this
-            // 5.3.1 Let new video track be a new VideoTrack object.
-            // 5.3.2 Generate a unique ID and assign it to the id property on new video track.
-            auto newVideoTrack = VideoTrack::create(scriptExecutionContext(), *videoTrackInfo.track);
-            newVideoTrack->addClient(*this);
-            newVideoTrack->setSourceBuffer(this);
-
-            // 5.3.3 If videoTracks.length equals 0, then run the following steps:
-            if (!videoTracks().length()) {
-                // 5.3.3.1 Set the selected property on new video track to true.
-                newVideoTrack->setSelected(true);
-
-                // 5.3.3.2 Set active track flag to true.
-                activeTrackFlag = true;
+                auto textTrack = textTracks().getTrackById(textTrackInfo.track->id());
+                ASSERT(textTrack);
+                downcast<InbandTextTrack>(*textTrack).setPrivate(*textTrackInfo.track);
             }
 
-            // 5.3.4 Add new video track to the videoTracks attribute on this SourceBuffer object.
-            // 5.3.5 Queue a task to fire a trusted event named addtrack, that does not bubble and is
-            // not cancelable, and that uses the TrackEvent interface, at the VideoTrackList object
-            // referenced by the videoTracks attribute on this SourceBuffer object.
-            videoTracks().append(newVideoTrack.copyRef());
+            if (!trackIdPairs.isEmpty())
+                m_private->updateTrackIds(WTFMove(trackIdPairs));
 
-            // 5.3.6 Add new video track to the videoTracks attribute on the HTMLMediaElement.
-            // 5.3.7 Queue a task to fire a trusted event named addtrack, that does not bubble and is
-            // not cancelable, and that uses the TrackEvent interface, at the VideoTrackList object
-            // referenced by the videoTracks attribute on the HTMLMediaElement.
-            m_source->mediaElement()->addVideoTrack(newVideoTrack.copyRef());
-
-            m_videoCodecs.append(videoTrackInfo.description->codec().toAtomString());
-
-            // 5.3.8 Create a new track buffer to store coded frames for this track.
-            m_private->addTrackBuffer(videoTrackInfo.track->id(), WTFMove(videoTrackInfo.description));
+            // 3.3 Set the need random access point flag on all track buffers to true.
+            m_private->setAllTrackBuffersNeedRandomAccess();
         }
 
-        // 5.4 For each text track in the initialization segment, run following steps:
-        for (auto& textTrackInfo : segment.textTracks) {
-            auto& textTrackPrivate = *textTrackInfo.track;
+        // 4. Let active track flag equal false.
+        bool activeTrackFlag = false;
 
-            // FIXME: Implement steps 5.4.1-5.4.8.1 as per Editor's Draft 09 January 2015, and reorder this
-            // 5.4.1 Let new text track be a new TextTrack object with its properties populated with the
-            // appropriate information from the initialization segment.
-            auto newTextTrack = InbandTextTrack::create(document(), textTrackPrivate);
-            newTextTrack->addClient(*this);
+        // 5. If the first initialization segment flag is false, then run the following steps:
+        if (!m_receivedFirstInitializationSegment) {
+            // 5.1 If the initialization segment contains tracks with codecs the user agent does not support,
+            // then run the append error algorithm with the decode error parameter set to true and abort these steps.
+            // NOTE: This check is the responsibility of the SourceBufferPrivate.
+            // appendError will be called once sourceBufferPrivateAppendComplete gets called once the completionHandler is run.
+            if (auto& allowedMediaAudioCodecIDs = document().settings().allowedMediaAudioCodecIDs()) {
+                for (auto& audioTrackInfo : segment.audioTracks) {
+                    if (audioTrackInfo.description && allowedMediaAudioCodecIDs->contains(FourCC::fromString(audioTrackInfo.description->codec())))
+                        continue;
+                    return MediaPromise::createAndReject(PlatformMediaError::AppendError);
+                }
+            }
 
-            // 5.4.2 If the mode property on new text track equals "showing" or "hidden", then set active
-            // track flag to true.
-            if (textTrackPrivate.mode() != InbandTextTrackPrivate::Mode::Disabled)
-                activeTrackFlag = true;
+            if (auto& allowedMediaVideoCodecIDs = document().settings().allowedMediaVideoCodecIDs()) {
+                for (auto& videoTrackInfo : segment.videoTracks) {
+                    if (videoTrackInfo.description && allowedMediaVideoCodecIDs->contains(FourCC::fromString(videoTrackInfo.description->codec())))
+                        continue;
+                    return MediaPromise::createAndReject(PlatformMediaError::AppendError);
+                }
+            }
 
-            // 5.4.3 Add new text track to the textTracks attribute on this SourceBuffer object.
-            // 5.4.4 Queue a task to fire a trusted event named addtrack, that does not bubble and is
-            // not cancelable, and that uses the TrackEvent interface, at textTracks attribute on this
-            // SourceBuffer object.
-            textTracks().append(newTextTrack.get());
+            // 5.2 For each audio track in the initialization segment, run following steps:
+            for (auto& audioTrackInfo : segment.audioTracks) {
+                // FIXME: Implement steps 5.2.1-5.2.8.1 as per Editor's Draft 09 January 2015, and reorder this
+                // 5.2.1 Let new audio track be a new AudioTrack object.
+                // 5.2.2 Generate a unique ID and assign it to the id property on new video track.
+                auto newAudioTrack = AudioTrack::create(scriptExecutionContext(), *audioTrackInfo.track);
+                newAudioTrack->addClient(*this);
+                newAudioTrack->setSourceBuffer(this);
 
-            // 5.4.5 Add new text track to the textTracks attribute on the HTMLMediaElement.
-            // 5.4.6 Queue a task to fire a trusted event named addtrack, that does not bubble and is
-            // not cancelable, and that uses the TrackEvent interface, at the TextTrackList object
-            // referenced by the textTracks attribute on the HTMLMediaElement.
-            m_source->mediaElement()->addTextTrack(newTextTrack.copyRef());
+                // 5.2.3 If audioTracks.length equals 0, then run the following steps:
+                if (!audioTracks().length()) {
+                    // 5.2.3.1 Set the enabled property on new audio track to true.
+                    newAudioTrack->setEnabled(true);
 
-            m_textCodecs.append(textTrackInfo.description->codec().toAtomString());
+                    // 5.2.3.2 Set active track flag to true.
+                    activeTrackFlag = true;
+                }
 
-            // 5.4.7 Create a new track buffer to store coded frames for this track.
-            m_private->addTrackBuffer(textTrackPrivate.id(), WTFMove(textTrackInfo.description));
+                // 5.2.4 Add new audio track to the audioTracks attribute on this SourceBuffer object.
+                // 5.2.5 Queue a task to fire a trusted event named addtrack, that does not bubble and is
+                // not cancelable, and that uses the TrackEvent interface, at the AudioTrackList object
+                // referenced by the audioTracks attribute on this SourceBuffer object.
+                audioTracks().append(newAudioTrack.copyRef());
+
+                // 5.2.6 Add new audio track to the audioTracks attribute on the HTMLMediaElement.
+                // 5.2.7 Queue a task to fire a trusted event named addtrack, that does not bubble and is
+                // not cancelable, and that uses the TrackEvent interface, at the AudioTrackList object
+                // referenced by the audioTracks attribute on the HTMLMediaElement.
+                m_source->mediaElement()->addAudioTrack(newAudioTrack.copyRef());
+
+                m_audioCodecs.append(audioTrackInfo.description->codec().toAtomString());
+
+                // 5.2.8 Create a new track buffer to store coded frames for this track.
+                m_private->addTrackBuffer(audioTrackInfo.track->id(), WTFMove(audioTrackInfo.description));
+            }
+
+            // 5.3 For each video track in the initialization segment, run following steps:
+            for (auto& videoTrackInfo : segment.videoTracks) {
+                // FIXME: Implement steps 5.3.1-5.3.8.1 as per Editor's Draft 09 January 2015, and reorder this
+                // 5.3.1 Let new video track be a new VideoTrack object.
+                // 5.3.2 Generate a unique ID and assign it to the id property on new video track.
+                auto newVideoTrack = VideoTrack::create(scriptExecutionContext(), *videoTrackInfo.track);
+                newVideoTrack->addClient(*this);
+                newVideoTrack->setSourceBuffer(this);
+
+                // 5.3.3 If videoTracks.length equals 0, then run the following steps:
+                if (!videoTracks().length()) {
+                    // 5.3.3.1 Set the selected property on new video track to true.
+                    newVideoTrack->setSelected(true);
+
+                    // 5.3.3.2 Set active track flag to true.
+                    activeTrackFlag = true;
+                }
+
+                // 5.3.4 Add new video track to the videoTracks attribute on this SourceBuffer object.
+                // 5.3.5 Queue a task to fire a trusted event named addtrack, that does not bubble and is
+                // not cancelable, and that uses the TrackEvent interface, at the VideoTrackList object
+                // referenced by the videoTracks attribute on this SourceBuffer object.
+                videoTracks().append(newVideoTrack.copyRef());
+
+                // 5.3.6 Add new video track to the videoTracks attribute on the HTMLMediaElement.
+                // 5.3.7 Queue a task to fire a trusted event named addtrack, that does not bubble and is
+                // not cancelable, and that uses the TrackEvent interface, at the VideoTrackList object
+                // referenced by the videoTracks attribute on the HTMLMediaElement.
+                m_source->mediaElement()->addVideoTrack(newVideoTrack.copyRef());
+
+                m_videoCodecs.append(videoTrackInfo.description->codec().toAtomString());
+
+                // 5.3.8 Create a new track buffer to store coded frames for this track.
+                m_private->addTrackBuffer(videoTrackInfo.track->id(), WTFMove(videoTrackInfo.description));
+            }
+
+            // 5.4 For each text track in the initialization segment, run following steps:
+            for (auto& textTrackInfo : segment.textTracks) {
+                auto& textTrackPrivate = *textTrackInfo.track;
+
+                // FIXME: Implement steps 5.4.1-5.4.8.1 as per Editor's Draft 09 January 2015, and reorder this
+                // 5.4.1 Let new text track be a new TextTrack object with its properties populated with the
+                // appropriate information from the initialization segment.
+                auto newTextTrack = InbandTextTrack::create(document(), textTrackPrivate);
+                newTextTrack->addClient(*this);
+
+                // 5.4.2 If the mode property on new text track equals "showing" or "hidden", then set active
+                // track flag to true.
+                if (textTrackPrivate.mode() != InbandTextTrackPrivate::Mode::Disabled)
+                    activeTrackFlag = true;
+
+                // 5.4.3 Add new text track to the textTracks attribute on this SourceBuffer object.
+                // 5.4.4 Queue a task to fire a trusted event named addtrack, that does not bubble and is
+                // not cancelable, and that uses the TrackEvent interface, at textTracks attribute on this
+                // SourceBuffer object.
+                textTracks().append(newTextTrack.get());
+
+                // 5.4.5 Add new text track to the textTracks attribute on the HTMLMediaElement.
+                // 5.4.6 Queue a task to fire a trusted event named addtrack, that does not bubble and is
+                // not cancelable, and that uses the TrackEvent interface, at the TextTrackList object
+                // referenced by the textTracks attribute on the HTMLMediaElement.
+                m_source->mediaElement()->addTextTrack(newTextTrack.copyRef());
+
+                m_textCodecs.append(textTrackInfo.description->codec().toAtomString());
+
+                // 5.4.7 Create a new track buffer to store coded frames for this track.
+                m_private->addTrackBuffer(textTrackPrivate.id(), WTFMove(textTrackInfo.description));
+            }
+
+            // 5.5 If active track flag equals true, then run the following steps:
+            if (activeTrackFlag) {
+                // 5.5.1 Add this SourceBuffer to activeSourceBuffers.
+                // 5.5.2 Queue a task to fire a simple event named addsourcebuffer at activeSourceBuffers
+                setActive(true);
+            }
+
+            // 5.6 Set first initialization segment flag to true.
+            m_receivedFirstInitializationSegment = true;
         }
 
-        // 5.5 If active track flag equals true, then run the following steps:
-        if (activeTrackFlag) {
-            // 5.5.1 Add this SourceBuffer to activeSourceBuffers.
-            // 5.5.2 Queue a task to fire a simple event named addsourcebuffer at activeSourceBuffers
-            setActive(true);
-        }
+        // (Note: Issue #155 adds this step after step 5:)
+        // 6. Set  pending initialization segment for changeType flag  to false.
+        m_pendingInitializationSegmentForChangeType = false;
 
-        // 5.6 Set first initialization segment flag to true.
-        m_receivedFirstInitializationSegment = true;
-    }
+        // 6. If the HTMLMediaElement.readyState attribute is HAVE_NOTHING, then run the following steps:
+        m_source->sourceBufferReceivedFirstInitializationSegmentChanged();
 
-    // (Note: Issue #155 adds this step after step 5:)
-    // 6. Set  pending initialization segment for changeType flag  to false.
-    m_pendingInitializationSegmentForChangeType = false;
+        // 7. If the active track flag equals true and the HTMLMediaElement.readyState
+        // attribute is greater than HAVE_CURRENT_DATA, then set the HTMLMediaElement.readyState
+        // attribute to HAVE_METADATA.
+        m_source->sourceBufferActiveTrackFlagChanged(activeTrackFlag);
 
-    // 6. If the HTMLMediaElement.readyState attribute is HAVE_NOTHING, then run the following steps:
-    m_source->sourceBufferReceivedFirstInitializationSegmentChanged();
-
-    // 7. If the active track flag equals true and the HTMLMediaElement.readyState
-    // attribute is greater than HAVE_CURRENT_DATA, then set the HTMLMediaElement.readyState
-    // attribute to HAVE_METADATA.
-    m_source->sourceBufferActiveTrackFlagChanged(activeTrackFlag);
-
-    return MediaPromise::createAndResolve();
+        return MediaPromise::createAndResolve();
+    });
 }
 
 bool SourceBuffer::validateInitializationSegment(const InitializationSegment& segment)
@@ -1126,24 +1128,26 @@ void SourceBuffer::textTrackLanguageChanged(TextTrack& track)
 
 Ref<MediaPromise> SourceBuffer::sourceBufferPrivateDurationChanged(const MediaTime& duration)
 {
-    if (isRemoved())
-        return MediaPromise::createAndReject(PlatformMediaError::BufferRemoved);
-
-    m_source->setDurationInternal(duration);
-    if (m_textTracks)
-        m_textTracks->setDuration(duration);
-    return MediaPromise::createAndResolve();
+    return promisedWeakOnDispatcher([this, duration] {
+        m_source->setDurationInternal(duration);
+        if (m_textTracks)
+            m_textTracks->setDuration(duration);
+        return MediaPromise::createAndResolve();
+    });
 }
 
 void SourceBuffer::sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime& timestamp)
 {
-    m_highestPresentationTimestamp = timestamp;
+    ensureWeakOnDispatcher([this, timestamp] {
+        m_highestPresentationTimestamp = timestamp;
+    });
 }
 
 void SourceBuffer::sourceBufferPrivateDidDropSample()
 {
-    if (!isRemoved())
+    ensureWeakOnDispatcher([this] {
         m_source->mediaElement()->incrementDroppedFrameCount();
+    });
 }
 
 bool SourceBuffer::canPlayThroughRange(const PlatformTimeRanges& ranges)
@@ -1267,12 +1271,13 @@ void SourceBuffer::setShouldGenerateTimestamps(bool flag)
 
 Ref<MediaPromise> SourceBuffer::sourceBufferPrivateBufferedChanged(const Vector<PlatformTimeRanges>& trackBuffers, uint64_t extraMemory)
 {
-    reportExtraMemoryAllocated(extraMemory);
-    m_trackBuffers = trackBuffers;
+    return promisedWeakOnDispatcher([this, trackBuffers = trackBuffers, extraMemory]() mutable {
+        reportExtraMemoryAllocated(extraMemory);
+        m_trackBuffers = WTFMove(trackBuffers);
 
-    updateBuffered();
-
-    return MediaPromise::createAndResolve();
+        updateBuffered();
+        return MediaPromise::createAndResolve();
+    });
 }
 
 void SourceBuffer::updateBuffered()
@@ -1379,6 +1384,38 @@ void SourceBuffer::memoryPressure()
     if (!isManaged())
         return;
     m_private->memoryPressure(maximumBufferSize(), m_source->currentTime());
+}
+
+void SourceBuffer::ensureWeakOnDispatcher(Function<void()>&& function) const
+{
+    if (isRemoved())
+        return;
+    if (m_dispatcher->isCurrent()) {
+        function();
+        return;
+    }
+    auto weakWrapper = [function = WTFMove(function), weakThis = ThreadSafeWeakPtr(*this)] {
+        if (RefPtr protectedThis = weakThis.get(); protectedThis && !protectedThis->isRemoved())
+            function();
+    };
+    m_dispatcher->dispatch(WTFMove(weakWrapper));
+}
+
+Ref<MediaPromise> SourceBuffer::promisedWeakOnDispatcher(Function<Ref<MediaPromise>()>&& function, bool forceAsync) const
+{
+    if (!forceAsync) {
+        if (isRemoved())
+            return MediaPromise::createAndReject(PlatformMediaError::BufferRemoved);
+
+        if (m_dispatcher->isCurrent())
+            return function();
+    }
+    auto weakWrapper = [function = WTFMove(function), weakThis = ThreadSafeWeakPtr(*this)] {
+        if (RefPtr protectedThis = weakThis.get(); protectedThis && !protectedThis->isRemoved())
+            return function();
+        return MediaPromise::createAndReject(PlatformMediaError::BufferRemoved);
+    };
+    return invokeAsync(m_dispatcher, WTFMove(weakWrapper));
 }
 
 #if !RELEASE_LOG_DISABLED

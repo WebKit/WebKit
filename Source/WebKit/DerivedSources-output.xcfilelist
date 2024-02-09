@@ -124,8 +124,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/LibWebRTCRemoteCodecsMessageReceiver
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/LibWebRTCRemoteCodecsMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/MediaPlayerPrivateRemoteMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/MediaPlayerPrivateRemoteMessages.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/MediaSourcePrivateRemoteMessageReceiver.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/MediaSourcePrivateRemoteMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/MediaSourcePrivateRemoteMessageReceiverMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/MediaSourcePrivateRemoteMessageReceiverMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/MessageArgumentDescriptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/MessageNames.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/MessageNames.h
@@ -393,7 +393,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/ServiceWorkerFetchTaskMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/SmartMagnificationControllerMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/SmartMagnificationControllerMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/SourceBufferPrivateRemoteMessageReceiver.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/SourceBufferPrivateRemoteMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/SourceBufferPrivateRemoteMessageReceiverMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/SourceBufferPrivateRemoteMessageReceiverMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/SpeechRecognitionRealtimeMediaSourceManagerMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/SpeechRecognitionRealtimeMediaSourceManagerMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/SpeechRecognitionRemoteRealtimeMediaSourceManagerMessageReceiver.cpp

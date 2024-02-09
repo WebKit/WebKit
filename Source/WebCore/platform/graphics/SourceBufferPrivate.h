@@ -80,7 +80,7 @@ class SourceBufferPrivate
 #endif
 {
 public:
-    WEBCORE_EXPORT SourceBufferPrivate(MediaSourcePrivate&);
+    WEBCORE_EXPORT explicit SourceBufferPrivate(MediaSourcePrivate&);
     WEBCORE_EXPORT virtual ~SourceBufferPrivate();
 
     virtual constexpr MediaPlatformType platformType() const = 0;
@@ -122,7 +122,6 @@ public:
     WEBCORE_EXPORT virtual void updateTrackIds(Vector<std::pair<TrackID, TrackID>>&& trackIdPairs);
 
     WEBCORE_EXPORT void setClient(SourceBufferPrivateClient&);
-    WEBCORE_EXPORT void detach();
 
     void setMediaSourceDuration(const MediaTime& duration) { m_mediaSourceDuration = duration; }
 
@@ -134,7 +133,7 @@ public:
     bool hasVideo() const { return m_hasVideo; }
     bool hasReceivedFirstInitializationSegment() const { return m_receivedFirstInitializationSegment; }
 
-    MediaTime timestampOffset() const { return m_timestampOffset; }
+    virtual MediaTime timestampOffset() const { return m_timestampOffset; }
 
     virtual size_t platformMaximumBufferSize() const { return 0; }
 
@@ -163,8 +162,11 @@ public:
 #endif
 
 protected:
+    WEBCORE_EXPORT explicit SourceBufferPrivate(MediaSourcePrivate&, RefCountedSerialFunctionDispatcher&);
     MediaTime currentMediaTime() const;
     MediaTime mediaSourceDuration() const;
+
+    WEBCORE_EXPORT void ensureOnDispatcher(Function<void()>&&) const;
 
     using InitializationSegment = SourceBufferPrivateClient::InitializationSegment;
     WEBCORE_EXPORT void didReceiveInitializationSegment(InitializationSegment&&);
@@ -174,7 +176,7 @@ protected:
     virtual Ref<MediaPromise> appendInternal(Ref<SharedBuffer>&&) = 0;
     virtual void resetParserStateInternal() = 0;
     virtual MediaTime timeFudgeFactor() const { return PlatformTimeRanges::timeFudgeFactor(); }
-    bool isActive() const { return m_isActive; }
+    virtual bool isActive() const { return m_isActive; }
     virtual bool isSeeking() const { return false; }
     virtual void flush(TrackID) { }
     virtual void enqueueSample(Ref<MediaSample>&&, TrackID) { }
@@ -202,6 +204,7 @@ protected:
     WEBCORE_EXPORT RefPtr<SourceBufferPrivateClient> client() const;
 
     ThreadSafeWeakPtr<MediaSourcePrivate> m_mediaSource { nullptr };
+    const Ref<RefCountedSerialFunctionDispatcher> m_dispatcher; // SerialFunctionDispatcher the SourceBufferPrivate/MediaSourcePrivate
 
 private:
     MediaTime minimumBufferedTime() const;
