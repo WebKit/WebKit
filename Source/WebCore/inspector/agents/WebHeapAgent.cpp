@@ -28,6 +28,7 @@
 
 #include "InstrumentingAgents.h"
 #include "WebConsoleAgent.h"
+#include <JavaScriptCore/InspectorProtocolTypes.h>
 #include <wtf/Lock.h>
 #include <wtf/RunLoop.h>
 
