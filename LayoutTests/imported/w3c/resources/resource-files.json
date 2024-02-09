@@ -7002,6 +7002,7 @@
         "web-platform-tests/html/obsolete/requirements-for-implementations/the-marquee-element-0/crashtests/marquee-with-calc.html",
         "web-platform-tests/html/obsolete/requirements-for-implementations/the-marquee-element-0/crashtests/marquee-with-table.html",
         "web-platform-tests/html/obsolete/requirements-for-implementations/the-marquee-element-0/marquee-min-intrinsic-size-ref.html",
+        "web-platform-tests/html/rendering/bidi-rendering/slot-no-isolate-001-ref.html",
         "web-platform-tests/html/rendering/bindings/the-button-element/button-type-menu-historical-ref.html",
         "web-platform-tests/html/rendering/bindings/the-input-element-as-a-text-entry-widget/unrecognized-type-should-fallback-as-text-type-ref.html",
         "web-platform-tests/html/rendering/bindings/the-select-element-0/option-label-ref.html",
