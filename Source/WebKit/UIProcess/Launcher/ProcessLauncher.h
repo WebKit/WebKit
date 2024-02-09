@@ -46,6 +46,7 @@
 
 #if USE(EXTENSIONKIT)
 OBJC_CLASS _SEExtensionProcess;
+OBJC_PROTOCOL(_SEGrant);
 #endif
 
 namespace WebKit {
@@ -54,6 +55,19 @@ namespace WebKit {
 enum class SandboxPermission {
     ReadOnly,
     ReadWrite,
+};
+#endif
+
+#if USE(EXTENSIONKIT)
+class LaunchGrant : public ThreadSafeRefCounted<LaunchGrant> {
+public:
+    static Ref<LaunchGrant> create(_SEExtensionProcess *);
+    ~LaunchGrant();
+
+private:
+    explicit LaunchGrant(_SEExtensionProcess *);
+
+    RetainPtr<_SEGrant> m_grant;
 };
 #endif
 
@@ -124,6 +138,7 @@ public:
     RetainPtr<_SEExtensionProcess> extensionProcess() const { return m_process; }
     void setIsRetryingLaunch() { m_isRetryingLaunch = true; }
     bool isRetryingLaunch() const { return m_isRetryingLaunch; }
+    void releaseLaunchGrant() { m_launchGrant = nullptr; }
 #endif
 
 private:
@@ -148,6 +163,7 @@ private:
 
 #if USE(EXTENSIONKIT)
     RetainPtr<_SEExtensionProcess> m_process;
+    RefPtr<LaunchGrant> m_launchGrant;
     bool m_isRetryingLaunch { false };
 #endif
 

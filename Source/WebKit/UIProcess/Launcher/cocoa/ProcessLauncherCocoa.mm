@@ -62,6 +62,7 @@
 SOFT_LINK_FRAMEWORK_OPTIONAL(ServiceExtensions);
 SOFT_LINK_CLASS_OPTIONAL(ServiceExtensions, _SEServiceConfiguration);
 SOFT_LINK_CLASS_OPTIONAL(ServiceExtensions, _SEServiceManager);
+SOFT_LINK_CLASS_OPTIONAL(ServiceExtensions, _SECapability);
 #endif
 
 namespace WebKit {
@@ -145,6 +146,24 @@ static const char* serviceName(const ProcessLauncher::LaunchOptions& launchOptio
 }
 #endif // !USE(EXTENSIONKIT) || !PLATFORM(IOS)
 
+#if USE(EXTENSIONKIT)
+Ref<LaunchGrant> LaunchGrant::create(_SEExtensionProcess *process)
+{
+    return adoptRef(*new LaunchGrant(process));
+}
+
+LaunchGrant::LaunchGrant(_SEExtensionProcess *process)
+{
+    _SECapability* capability = [get_SECapabilityClass() assertionWithDomain:@"com.apple.webkit" name:@"Foreground"];
+    m_grant = [process grantCapability:capability error:nil];
+}
+
+LaunchGrant::~LaunchGrant()
+{
+    [m_grant invalidateWithError:nil];
+}
+#endif
+
 void ProcessLauncher::platformDestroy()
 {
 #if USE(EXTENSIONKIT)
@@ -159,7 +178,8 @@ void ProcessLauncher::launchProcess()
 #if USE(EXTENSIONKIT)
     auto handler = [](ThreadSafeWeakPtr<ProcessLauncher> weakProcessLauncher, _SEExtensionProcess* process, ASCIILiteral name, NSError* error)
     {
-        if (!weakProcessLauncher.get()) {
+        RefPtr launcher = weakProcessLauncher.get();
+        if (!launcher) {
             [process invalidate];
             return;
         }
@@ -190,8 +210,11 @@ void ProcessLauncher::launchProcess()
             [process invalidate];
             return;
         }
-        callOnMainRunLoop([weakProcessLauncher = weakProcessLauncher, name = name, process = RetainPtr<_SEExtensionProcess>(process)] {
-            auto launcher = weakProcessLauncher.get();
+
+        Ref launchGrant = LaunchGrant::create(process);
+
+        callOnMainRunLoop([weakProcessLauncher, name, process = retainPtr(process), launchGrant = WTFMove(launchGrant)] () mutable {
+            RefPtr launcher = weakProcessLauncher.get();
             if (!launcher) {
                 [process invalidate];
                 return;
@@ -208,6 +231,7 @@ void ProcessLauncher::launchProcess()
 
             launcher->m_xpcConnection = WTFMove(xpcConnection);
             launcher->m_process = WTFMove(process);
+            launcher->m_launchGrant = WTFMove(launchGrant);
             launcher->finishLaunchingProcess(name.characters());
         });
     };
@@ -458,6 +482,7 @@ void ProcessLauncher::terminateProcess()
 void ProcessLauncher::platformInvalidate()
 {
 #if USE(EXTENSIONKIT)
+    releaseLaunchGrant();
     [m_process invalidate];
 #endif
 

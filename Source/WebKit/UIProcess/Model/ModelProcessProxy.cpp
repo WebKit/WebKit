@@ -221,6 +221,10 @@ void ModelProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Conne
 
 #if USE(RUNNINGBOARD)
     m_throttler.didConnectToProcess(*this);
+#if USE(EXTENSIONKIT)
+    if (launcher)
+        launcher->releaseLaunchGrant();
+#endif
 #endif
 
 #if PLATFORM(COCOA)

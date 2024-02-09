@@ -594,6 +594,12 @@ void GPUProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
     
 #if USE(RUNNINGBOARD)
     m_throttler.didConnectToProcess(*this);
+#if USE(EXTENSIONKIT)
+    // FIXME: this should be moved to AuxiliaryProcessProxy::didFinishLaunching along with m_throttler.didConnectToProcess.
+    // This FIXME applies to all process proxy subclasses.
+    if (launcher)
+        launcher->releaseLaunchGrant();
+#endif
 #endif
 
 #if PLATFORM(COCOA)
