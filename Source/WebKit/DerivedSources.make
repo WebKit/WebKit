@@ -770,6 +770,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/XR/PlatformXR.serialization.in \
 	Shared/XR/XRSystem.serialization.in \
 	Shared/WebUserContentControllerDataTypes.serialization.in \
+	UIProcess/Extensions/WebExtension.serialization.in \
 	WebProcess/GPU/GPUProcessConnectionInfo.serialization.in \
 	WebProcess/GPU/graphics/BufferIdentifierSet.serialization.in \
 	WebProcess/GPU/graphics/PrepareBackingStoreBuffersData.serialization.in \

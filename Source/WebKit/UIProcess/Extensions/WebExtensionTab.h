@@ -248,23 +248,4 @@ private:
 
 } // namespace WebKit
 
-namespace WTF {
-
-template<> struct EnumTraits<WebKit::WebExtensionTab::ChangedProperties> {
-    using values = EnumValues<
-        WebKit::WebExtensionTab::ChangedProperties,
-        WebKit::WebExtensionTab::ChangedProperties::Audible,
-        WebKit::WebExtensionTab::ChangedProperties::Loading,
-        WebKit::WebExtensionTab::ChangedProperties::Muted,
-        WebKit::WebExtensionTab::ChangedProperties::Pinned,
-        WebKit::WebExtensionTab::ChangedProperties::ReaderMode,
-        WebKit::WebExtensionTab::ChangedProperties::Size,
-        WebKit::WebExtensionTab::ChangedProperties::Title,
-        WebKit::WebExtensionTab::ChangedProperties::URL,
-        WebKit::WebExtensionTab::ChangedProperties::ZoomFactor
-    >;
-};
-
-} // namespace WTF
-
 #endif // ENABLE(WK_WEB_EXTENSIONS)

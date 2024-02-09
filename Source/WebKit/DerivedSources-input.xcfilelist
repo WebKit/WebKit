@@ -467,6 +467,7 @@ $(PROJECT_DIR)/UIProcess/Cocoa/UserMediaCaptureManagerProxy.messages.in
 $(PROJECT_DIR)/UIProcess/Cocoa/VideoPresentationManagerProxy.messages.in
 $(PROJECT_DIR)/UIProcess/Downloads/DownloadProxy.messages.in
 $(PROJECT_DIR)/UIProcess/DrawingAreaProxy.messages.in
+$(PROJECT_DIR)/UIProcess/Extensions/WebExtension.serialization.in
 $(PROJECT_DIR)/UIProcess/Extensions/WebExtensionContext.messages.in
 $(PROJECT_DIR)/UIProcess/Extensions/WebExtensionController.messages.in
 $(PROJECT_DIR)/UIProcess/GPU/GPUProcessProxy.messages.in

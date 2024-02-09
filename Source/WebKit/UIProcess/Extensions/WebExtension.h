@@ -377,18 +377,4 @@ NSSet<_WKWebExtensionMatchPattern *> *toAPI(const WebExtension::MatchPatternSet&
 
 } // namespace WebKit
 
-namespace WTF {
-
-template<> struct EnumTraits<WebKit::WebExtension::ModifierFlags> {
-    using values = EnumValues<
-        WebKit::WebExtension::ModifierFlags,
-        WebKit::WebExtension::ModifierFlags::Shift,
-        WebKit::WebExtension::ModifierFlags::Control,
-        WebKit::WebExtension::ModifierFlags::Option,
-        WebKit::WebExtension::ModifierFlags::Command
-    >;
-};
-
-} // namespace WebKit
-
 #endif // ENABLE(WK_WEB_EXTENSIONS)

@@ -7744,6 +7744,7 @@
 		D952EC79289C4AD0006C240A /* WebPermissionControllerProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebPermissionControllerProxy.messages.in; sourceTree = "<group>"; };
 		D952EC7B289C9A4C006C240A /* WebPermissionControllerProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPermissionControllerProxyMessages.h; sourceTree = "<group>"; };
 		D952EC7D289C9A4C006C240A /* WebPermissionControllerProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPermissionControllerProxyMessageReceiver.cpp; sourceTree = "<group>"; };
+		DA97E4AC2B6BCCF20009E90B /* WebExtension.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; name = WebExtension.serialization.in; path = UIProcess/Extensions/WebExtension.serialization.in; sourceTree = "<group>"; };
 		DD284681291F7CEF0009A61D /* APIFeatureStatus.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = APIFeatureStatus.h; sourceTree = "<group>"; };
 		DD8CD35F296D03A300C04CA1 /* _WKFeature.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKFeature.mm; sourceTree = "<group>"; };
 		DD8CD360296D03A300C04CA1 /* _WKFeature.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKFeature.h; sourceTree = "<group>"; };
@@ -8467,6 +8468,7 @@
 		0867D691FE84028FC02AAC07 /* WebKit2 */ = {
 			isa = PBXGroup;
 			children = (
+				DA97E4AC2B6BCCF20009E90B /* WebExtension.serialization.in */,
 				1A4F9769100E7B6600637A18 /* Configurations */,
 				C0CE729D1247E71D00BC0EC4 /* Derived Sources */,
 				0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */,

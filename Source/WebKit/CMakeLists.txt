@@ -573,6 +573,8 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/XR/PlatformXR.serialization.in
     Shared/XR/XRSystem.serialization.in
 
+    UIProcess/Extensions/WebExtension.serialization.in
+
     WebProcess/GPU/GPUProcessConnectionInfo.serialization.in
 
     WebProcess/GPU/graphics/BufferIdentifierSet.serialization.in

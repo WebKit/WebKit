@@ -165,16 +165,4 @@ _WKWebExtensionWindowState toAPI(WebExtensionWindow::State);
 
 } // namespace WebKit
 
-namespace WTF {
-
-template<> struct EnumTraits<WebKit::WebExtensionWindowTypeFilter> {
-    using values = EnumValues<
-        WebKit::WebExtensionWindowTypeFilter,
-        WebKit::WebExtensionWindowTypeFilter::Normal,
-        WebKit::WebExtensionWindowTypeFilter::Popup
-    >;
-};
-
-} // namespace WTF
-
 #endif // ENABLE(WK_WEB_EXTENSIONS)
