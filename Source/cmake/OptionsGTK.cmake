@@ -59,7 +59,6 @@ WEBKIT_OPTION_DEFINE(USE_LIBDRM "Whether to enable usage of libdrm." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_LIBHYPHEN "Whether to enable the default automatic hyphenation implementation." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_LIBSECRET "Whether to enable the persistent credential storage using libsecret." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_SOUP2 "Whether to enable usage of Soup 2 instead of Soup 3." PUBLIC OFF)
-WEBKIT_OPTION_DEFINE(USE_WOFF2 "Whether to enable support for WOFF2 Web Fonts." PUBLIC ON)
 
 WEBKIT_OPTION_DEPEND(ENABLE_DOCUMENTATION ENABLE_INTROSPECTION)
 WEBKIT_OPTION_DEPEND(USE_GBM USE_LIBDRM)
@@ -101,6 +100,7 @@ WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEBDRIVER PUBLIC ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(USE_AVIF PUBLIC ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(USE_LCMS PUBLIC ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(USE_JPEGXL PUBLIC ON)
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(USE_WOFF2 PUBLIC ON)
 
 # Private options shared with other WebKit ports. Add options here when
 # we need a value different from the default defined in WebKitFeatures.cmake.
@@ -390,7 +390,7 @@ endif ()
 if (USE_WOFF2)
     find_package(WOFF2 1.0.2 COMPONENTS dec)
     if (NOT WOFF2_FOUND)
-       message(FATAL_ERROR "libwoff2dec is needed for USE_WOFF2.")
+       message(FATAL_ERROR "libwoff2dec is required for USE_WOFF2")
     endif ()
 endif ()
 

@@ -168,6 +168,7 @@ my (
     $webglSupport,
     $webXRSupport,
     $wirelessPlaybackTargetSupport,
+    $woff2Support,
     $xsltSupport,
 );
 
@@ -495,6 +496,9 @@ my @features = (
 
     { option => "system-malloc", desc => "Toggle system allocator instead of bmalloc",
       define => "USE_SYSTEM_MALLOC", value => \$systemMallocSupport },
+
+    { option => "woff2", desc => "Toggle support for WOFF2 Web Fonts through libwoff2",
+      define => "USE_WOFF2", value => \$woff2Support },
 );
 
 sub getFeatureOptionList()

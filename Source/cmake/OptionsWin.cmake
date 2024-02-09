@@ -90,12 +90,6 @@ find_package(WebP REQUIRED COMPONENTS demux)
 find_package(AVIF 0.9.0)
 SET_AND_EXPOSE_TO_BUILD(USE_AVIF ${AVIF_FOUND})
 
-find_package(WOFF2 1.0.2 COMPONENTS dec)
-if (WOFF2_FOUND)
-    find_package(Brotli REQUIRED COMPONENTS dec)
-    SET_AND_EXPOSE_TO_BUILD(USE_WOFF2 ON)
-endif ()
-
 WEBKIT_OPTION_BEGIN()
 
 # FIXME: Most of these options should not be public.
@@ -140,6 +134,8 @@ if (${WTF_CPU_X86})
     WEBKIT_OPTION_DEFAULT_PORT_VALUE(USE_LCMS PRIVATE OFF)
     WEBKIT_OPTION_DEFAULT_PORT_VALUE(USE_JPEGXL PRIVATE OFF)
 endif ()
+
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(USE_WOFF2 PRIVATE ON)
 
 # FIXME: Port bmalloc to Windows. https://bugs.webkit.org/show_bug.cgi?id=143310
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(USE_SYSTEM_MALLOC PRIVATE ON)
@@ -209,6 +205,14 @@ if (USE_JPEGXL)
     if (NOT JPEGXL_FOUND)
         message(FATAL_ERROR "libjxl is required for USE_JPEGXL")
     endif ()
+endif ()
+
+if (USE_WOFF2)
+    find_package(WOFF2 1.0.2 COMPONENTS dec)
+    if (NOT WOFF2_FOUND)
+        message(FATAL_ERROR "libwoff2dec is required for USE_WOFF2")
+    endif ()
+    find_package(Brotli REQUIRED COMPONENTS dec)
 endif ()
 
 set(bmalloc_LIBRARY_TYPE OBJECT)

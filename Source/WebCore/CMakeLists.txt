@@ -2227,7 +2227,7 @@ if (USE_LCMS)
 endif ()
 
 if (USE_WOFF2)
-  list(APPEND WebCore_LIBRARIES WOFF2::dec)
+    list(APPEND WebCore_LIBRARIES WOFF2::dec)
 endif ()
 
 if (USE_XDGMIME)

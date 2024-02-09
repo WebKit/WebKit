@@ -46,6 +46,7 @@ WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_XSLT PUBLIC ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(USE_AVIF PUBLIC ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(USE_LCMS PUBLIC ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(USE_JPEGXL PUBLIC ON)
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(USE_WOFF2 PUBLIC ON)
 
 # Private options shared with other WebKit ports. Add options here only if
 # we need a value different from the default defined in WebKitFeatures.cmake.
@@ -100,7 +101,6 @@ WEBKIT_OPTION_DEFINE(USE_GBM "Whether to enable usage of GBM." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_LIBBACKTRACE "Whether to enable usage of libbacktrace." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_LIBDRM "Whether to enable usage of libdrm." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_SOUP2 "Whether to enable usage of Soup 2 instead of Soup 3." PUBLIC OFF)
-WEBKIT_OPTION_DEFINE(USE_WOFF2 "Whether to enable support for WOFF2 Web Fonts." PUBLIC ON)
 
 # Private options specific to the WPE port.
 WEBKIT_OPTION_DEFINE(USE_GSTREAMER_HOLEPUNCH "Whether to enable GStreamer holepunch" PRIVATE OFF)
@@ -252,7 +252,7 @@ endif ()
 if (USE_WOFF2)
     find_package(WOFF2 1.0.2 COMPONENTS dec)
     if (NOT WOFF2_FOUND)
-        message(FATAL_ERROR "liwoff2dec is needed for USE_WOFF2.")
+        message(FATAL_ERROR "libwoff2dec is required for USE_WOFF2")
     endif ()
 endif ()
 
