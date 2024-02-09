@@ -57,7 +57,7 @@ ExceptionOr<RefPtr<SecurityOrigin>> DOMWindow::createTargetOriginForPostMessage(
     if (targetOrigin == "/"_s)
         targetSecurityOrigin = &sourceDocument.securityOrigin();
     else if (targetOrigin != "*"_s) {
-        targetSecurityOrigin = &SecurityOrigin::createFromString(targetOrigin).leakRef();
+        targetSecurityOrigin = SecurityOrigin::createFromString(targetOrigin);
         // It doesn't make sense target a postMessage at an opaque origin
         // because there's no way to represent an opaque origin in a string.
         if (targetSecurityOrigin->isOpaque())
