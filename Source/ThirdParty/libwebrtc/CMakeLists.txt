@@ -189,7 +189,6 @@ set(webrtc_SOURCES
     Source/third_party/boringssl/src/crypto/bio/bio.c
     Source/third_party/boringssl/src/crypto/bio/bio_mem.c
     Source/third_party/boringssl/src/crypto/bio/connect.c
-    Source/third_party/boringssl/src/crypto/bio/errno.c
     Source/third_party/boringssl/src/crypto/bio/fd.c
     Source/third_party/boringssl/src/crypto/bio/file.c
     Source/third_party/boringssl/src/crypto/bio/hexdump.c
@@ -338,7 +337,7 @@ set(webrtc_SOURCES
     Source/third_party/boringssl/src/crypto/fipsmodule/tls/kdf.c
     Source/third_party/boringssl/src/crypto/hpke/hpke.c
     Source/third_party/boringssl/src/crypto/hrss/hrss.c
-    Source/third_party/boringssl/src/crypto/keccak/keccak.c
+    Source/third_party/boringssl/src/crypto/kyber/keccak.c
     Source/third_party/boringssl/src/crypto/kyber/kyber.c
     Source/third_party/boringssl/src/crypto/lhash/lhash.c
     Source/third_party/boringssl/src/crypto/mem.c
@@ -367,7 +366,8 @@ set(webrtc_SOURCES
     Source/third_party/boringssl/src/crypto/rand_extra/rand_extra.c
     Source/third_party/boringssl/src/crypto/rand_extra/windows.c
     Source/third_party/boringssl/src/crypto/rc4/rc4.c
-    Source/third_party/boringssl/src/crypto/refcount.c
+    Source/third_party/boringssl/src/crypto/refcount_c11.c
+    Source/third_party/boringssl/src/crypto/refcount_lock.c
     Source/third_party/boringssl/src/crypto/rsa_extra/rsa_asn1.c
     Source/third_party/boringssl/src/crypto/rsa_extra/rsa_crypt.c
     Source/third_party/boringssl/src/crypto/rsa_extra/rsa_print.c
@@ -469,45 +469,6 @@ set(webrtc_SOURCES
     Source/third_party/boringssl/src/decrepit/ssl/ssl_decrepit.c
     Source/third_party/boringssl/src/decrepit/x509/x509_decrepit.c
     Source/third_party/boringssl/src/decrepit/xts/xts.c
-    Source/third_party/boringssl/src/pki/asn1_util.cc
-    Source/third_party/boringssl/src/pki/cert_error_id.cc
-    Source/third_party/boringssl/src/pki/cert_error_params.cc
-    Source/third_party/boringssl/src/pki/cert_errors.cc
-    Source/third_party/boringssl/src/pki/cert_issuer_source_static.cc
-    Source/third_party/boringssl/src/pki/certificate_policies.cc
-    Source/third_party/boringssl/src/pki/common_cert_errors.cc
-    Source/third_party/boringssl/src/pki/crl.cc
-    Source/third_party/boringssl/src/pki/encode_values.cc
-    Source/third_party/boringssl/src/pki/extended_key_usage.cc
-    Source/third_party/boringssl/src/pki/fillins/file_util.cc
-    Source/third_party/boringssl/src/pki/fillins/fillins_base64.cc
-    Source/third_party/boringssl/src/pki/fillins/fillins_string_util.cc
-    Source/third_party/boringssl/src/pki/fillins/openssl_util.cc
-    Source/third_party/boringssl/src/pki/fillins/path_service.cc
-    Source/third_party/boringssl/src/pki/general_names.cc
-    Source/third_party/boringssl/src/pki/input.cc
-    Source/third_party/boringssl/src/pki/ip_util.cc
-    Source/third_party/boringssl/src/pki/mock_signature_verify_cache.cc
-    Source/third_party/boringssl/src/pki/name_constraints.cc
-    Source/third_party/boringssl/src/pki/ocsp.cc
-    Source/third_party/boringssl/src/pki/ocsp_verify_result.cc
-    Source/third_party/boringssl/src/pki/parse_certificate.cc
-    Source/third_party/boringssl/src/pki/parse_name.cc
-    Source/third_party/boringssl/src/pki/parse_values.cc
-    Source/third_party/boringssl/src/pki/parsed_certificate.cc
-    Source/third_party/boringssl/src/pki/parser.cc
-    Source/third_party/boringssl/src/pki/pem.cc
-    Source/third_party/boringssl/src/pki/revocation_util.cc
-    Source/third_party/boringssl/src/pki/signature_algorithm.cc
-    Source/third_party/boringssl/src/pki/simple_path_builder_delegate.cc
-    Source/third_party/boringssl/src/pki/string_util.cc
-    Source/third_party/boringssl/src/pki/tag.cc
-    Source/third_party/boringssl/src/pki/trust_store.cc
-    Source/third_party/boringssl/src/pki/trust_store_collection.cc
-    Source/third_party/boringssl/src/pki/trust_store_in_memory.cc
-    Source/third_party/boringssl/src/pki/verify_certificate_chain.cc
-    Source/third_party/boringssl/src/pki/verify_name_match.cc
-    Source/third_party/boringssl/src/pki/verify_signed_data.cc
     Source/third_party/boringssl/src/rust/bssl-sys/rust_wrapper.c
     Source/third_party/boringssl/src/ssl/bio_ssl.cc
     Source/third_party/boringssl/src/ssl/d1_both.cc
