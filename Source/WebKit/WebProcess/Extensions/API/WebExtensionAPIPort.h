@@ -42,6 +42,7 @@ namespace WebKit {
 
 class WebExtensionAPIPort : public WebExtensionAPIObject, public JSWebExtensionWrappable, public CanMakeWeakPtr<WebExtensionAPIPort> {
     WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIPort, port);
+
 public:
 #if PLATFORM(COCOA)
     using PortSet = HashSet<Ref<WebExtensionAPIPort>>;
@@ -67,6 +68,10 @@ public:
 
     virtual ~WebExtensionAPIPort()
     {
+        // Don't fire the disconnect event, since this port is being finalized
+        // and we can't call into JavaScript during garbage collection.
+        m_disconnected = true;
+
         remove();
     }
 
