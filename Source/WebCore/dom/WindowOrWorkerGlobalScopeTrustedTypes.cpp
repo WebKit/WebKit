@@ -83,7 +83,7 @@ TrustedTypePolicyFactory* WindowOrWorkerGlobalScopeTrustedTypes::trustedTypes(Lo
 class WorkerGlobalScopeTrustedTypes : public Supplement<WorkerGlobalScope> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit WorkerGlobalScopeTrustedTypes(WorkerGlobalScope&);
+    explicit WorkerGlobalScopeTrustedTypes();
     virtual ~WorkerGlobalScopeTrustedTypes() = default;
 
     static WorkerGlobalScopeTrustedTypes* from(WorkerGlobalScope&);
@@ -92,12 +92,10 @@ public:
 private:
     static ASCIILiteral supplementName() { return "WorkerGlobalScopeTrustedTypes"_s; }
 
-    WorkerGlobalScope& m_scope;
     mutable RefPtr<TrustedTypePolicyFactory> m_trustedTypes;
 };
 
-WorkerGlobalScopeTrustedTypes::WorkerGlobalScopeTrustedTypes(WorkerGlobalScope& scope)
-    : m_scope(scope)
+WorkerGlobalScopeTrustedTypes::WorkerGlobalScopeTrustedTypes()
 {
 }
 
@@ -105,7 +103,7 @@ WorkerGlobalScopeTrustedTypes* WorkerGlobalScopeTrustedTypes::from(WorkerGlobalS
 {
     auto* supplement = static_cast<WorkerGlobalScopeTrustedTypes*>(Supplement<WorkerGlobalScope>::from(&scope, supplementName()));
     if (!supplement) {
-        auto newSupplement = makeUnique<WorkerGlobalScopeTrustedTypes>(scope);
+        auto newSupplement = makeUnique<WorkerGlobalScopeTrustedTypes>();
         supplement = newSupplement.get();
         provideTo(&scope, supplementName(), WTFMove(newSupplement));
     }
