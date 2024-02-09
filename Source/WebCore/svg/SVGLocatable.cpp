@@ -75,7 +75,7 @@ FloatRect SVGLocatable::getBBox(SVGElement* element, StyleUpdateStrategy styleUp
 {
     ASSERT(element);
     if (styleUpdateStrategy == AllowStyleUpdate)
-        element->document().updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, element);
+        element->protectedDocument()->updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, element);
 
     // FIXME: Eventually we should support getBBox for detached elements.
     if (!element->renderer())
@@ -90,25 +90,25 @@ AffineTransform SVGLocatable::computeCTM(SVGElement* element, CTMScope mode, Sty
     if (styleUpdateStrategy == AllowStyleUpdate)
         element->document().updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, element);
 
-    SVGElement* stopAtElement = mode == NearestViewportScope ? nearestViewportElement(element) : nullptr;
+    RefPtr stopAtElement = mode == NearestViewportScope ? nearestViewportElement(element) : nullptr;
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (element->document().settings().layerBasedSVGEngineEnabled()) {
         // Rudimentary support for operations on "detached" elements.
-        auto* renderer = dynamicDowncast<RenderLayerModelObject>(element->renderer());
+        CheckedPtr renderer = dynamicDowncast<RenderLayerModelObject>(element->renderer());
         if (!renderer)
             return element->localCoordinateSpaceTransform(mode);
 
         auto trackingMode { mode == SVGLocatable::ScreenScope ? TransformState::TrackSVGScreenCTMMatrix : TransformState::TrackSVGCTMMatrix };
-        auto* stopAtRenderer = dynamicDowncast<RenderLayerModelObject>(stopAtElement ? stopAtElement->renderer() : nullptr);
-        return SVGLayerTransformComputation(*renderer).computeAccumulatedTransform(stopAtRenderer, trackingMode);
+        CheckedPtr stopAtRenderer = dynamicDowncast<RenderLayerModelObject>(stopAtElement ? stopAtElement->renderer() : nullptr);
+        return SVGLayerTransformComputation(*renderer).computeAccumulatedTransform(stopAtRenderer.get(), trackingMode);
     }
 #endif
 
     AffineTransform ctm;
 
     for (Element* currentElement = element; currentElement; currentElement = currentElement->parentOrShadowHostElement()) {
-        auto* svgElement = dynamicDowncast<SVGElement>(*currentElement);
+        RefPtr svgElement = dynamicDowncast<SVGElement>(*currentElement);
         if (!svgElement)
             break;
 
@@ -126,7 +126,7 @@ ExceptionOr<Ref<SVGMatrix>> SVGLocatable::getTransformToElement(SVGElement* targ
 {
     AffineTransform ctm = getCTM(styleUpdateStrategy);
 
-    if (auto* graphicsElement = dynamicDowncast<SVGGraphicsElement>(target)) {
+    if (RefPtr graphicsElement = dynamicDowncast<SVGGraphicsElement>(target)) {
         AffineTransform targetCTM = graphicsElement->getCTM(styleUpdateStrategy);
         if (auto inverse = targetCTM.inverse())
             ctm = inverse.value() * ctm;

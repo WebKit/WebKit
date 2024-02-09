@@ -47,9 +47,11 @@ public:
     String fontFamily() const;
 
     SVGFontElement* associatedFontElement() const;
+    RefPtr<SVGFontElement> protectedFontElement() const;
     void rebuildFontFace();
     
     StyleRuleFontFace& fontFaceRule() { return m_fontFaceRule.get(); }
+    Ref<StyleRuleFontFace> protectedFontFaceRule() const;
 
 private:
     SVGFontFaceElement(const QualifiedName&, Document&);

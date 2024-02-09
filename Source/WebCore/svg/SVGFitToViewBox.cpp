@@ -48,13 +48,13 @@ SVGFitToViewBox::SVGFitToViewBox(SVGElement* contextElement, SVGPropertyAccess a
 
 void SVGFitToViewBox::setViewBox(const FloatRect& viewBox)
 {
-    m_viewBox->setBaseValInternal(viewBox);
+    Ref { m_viewBox }->setBaseValInternal(viewBox);
     m_isViewBoxValid = true;
 }
 
 void SVGFitToViewBox::resetViewBox()
 {
-    m_viewBox->setBaseValInternal({ });
+    Ref { m_viewBox }->setBaseValInternal({ });
     m_isViewBoxValid = false;
 }
 

@@ -21,11 +21,12 @@
 
 #include "FloatPoint.h"
 #include "SVGPathSeg.h"
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 
-class SVGPathSource {
+class SVGPathSource : public CanMakeSingleThreadWeakPtr<SVGPathSource> {
     WTF_MAKE_NONCOPYABLE(SVGPathSource); WTF_MAKE_FAST_ALLOCATED;
 public:
     SVGPathSource() = default;

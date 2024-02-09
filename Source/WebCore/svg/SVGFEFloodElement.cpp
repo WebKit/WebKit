@@ -45,9 +45,9 @@ Ref<SVGFEFloodElement> SVGFEFloodElement::create(const QualifiedName& tagName, D
 
 bool SVGFEFloodElement::setFilterEffectAttribute(FilterEffect& effect, const QualifiedName& attrName)
 {
-    RenderObject* renderer = this->renderer();
+    CheckedPtr renderer = this->renderer();
     ASSERT(renderer);
-    const RenderStyle& style = renderer->style();
+    auto& style = renderer->style();
 
     auto& feFlood = downcast<FEFlood>(effect);
     if (attrName == SVGNames::flood_colorAttr)
@@ -61,12 +61,12 @@ bool SVGFEFloodElement::setFilterEffectAttribute(FilterEffect& effect, const Qua
 
 RefPtr<FilterEffect> SVGFEFloodElement::createFilterEffect(const FilterEffectVector&, const GraphicsContext&) const
 {
-    RenderObject* renderer = this->renderer();
+    CheckedPtr renderer = this->renderer();
     if (!renderer)
         return nullptr;
 
     auto& style = renderer->style();
-    const SVGRenderStyle& svgStyle = style.svgStyle();
+    auto& svgStyle = style.svgStyle();
 
     auto color = style.colorWithColorFilter(svgStyle.floodColor());
     float opacity = svgStyle.floodOpacity();

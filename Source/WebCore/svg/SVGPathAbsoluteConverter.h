@@ -54,7 +54,7 @@ private:
     void curveToQuadraticSmooth(const FloatPoint& targetPoint, PathCoordinateMode) final;
     void arcTo(float r1, float r2, float angle, bool largeArcFlag, bool sweepFlag, const FloatPoint& targetPoint, PathCoordinateMode) final;
 
-    SVGPathConsumer& m_consumer;
+    SingleThreadWeakRef<SVGPathConsumer> m_consumer;
     FloatPoint m_currentPoint;
     FloatPoint m_subpathPoint;
 };

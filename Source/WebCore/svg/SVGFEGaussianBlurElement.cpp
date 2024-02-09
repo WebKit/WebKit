@@ -52,8 +52,8 @@ Ref<SVGFEGaussianBlurElement> SVGFEGaussianBlurElement::create(const QualifiedNa
 
 void SVGFEGaussianBlurElement::setStdDeviation(float x, float y)
 {
-    m_stdDeviationX->setBaseValInternal(x);
-    m_stdDeviationY->setBaseValInternal(y);
+    Ref { m_stdDeviationX }->setBaseValInternal(x);
+    Ref { m_stdDeviationY }->setBaseValInternal(y);
     updateSVGRendererForElementChange();
 }
 
@@ -62,17 +62,17 @@ void SVGFEGaussianBlurElement::attributeChanged(const QualifiedName& name, const
     switch (name.nodeName()) {
     case AttributeNames::stdDeviationAttr:
         if (auto result = parseNumberOptionalNumber(newValue)) {
-            m_stdDeviationX->setBaseValInternal(result->first);
-            m_stdDeviationY->setBaseValInternal(result->second);
+            Ref { m_stdDeviationX }->setBaseValInternal(result->first);
+            Ref { m_stdDeviationY }->setBaseValInternal(result->second);
         }
         break;
     case AttributeNames::inAttr:
-        m_in1->setBaseValInternal(newValue);
+        Ref { m_in1 }->setBaseValInternal(newValue);
         break;
     case AttributeNames::edgeModeAttr: {
         auto propertyValue = SVGPropertyTraits<EdgeModeType>::fromString(newValue);
         if (propertyValue != EdgeModeType::Unknown)
-            m_edgeMode->setBaseValInternal<EdgeModeType>(propertyValue);
+            Ref { m_edgeMode }->setBaseValInternal<EdgeModeType>(propertyValue);
         else
             protectedDocument()->checkedSVGExtensions()->reportWarning("feGaussianBlur: problem parsing edgeMode=\"" + newValue + "\". Filtered element will not be displayed.");
         break;

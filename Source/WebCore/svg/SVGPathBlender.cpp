@@ -352,16 +352,16 @@ bool SVGPathBlender::addAnimatedPath(unsigned repeatCount)
 bool SVGPathBlender::canBlendPaths()
 {
     float progress = 0.5;
-    bool fromSourceHadData = m_fromSource.hasMoreData();
-    while (m_toSource.hasMoreData()) {
+    bool fromSourceHadData = m_fromSource->hasMoreData();
+    while (m_toSource->hasMoreData()) {
         SVGPathSegType fromCommand;
         if (fromSourceHadData) {
-            auto parsedFromCommand = m_fromSource.parseSVGSegmentType();
+            auto parsedFromCommand = m_fromSource->parseSVGSegmentType();
             if (!parsedFromCommand)
                 return false;
             fromCommand = *parsedFromCommand;
         }
-        auto parsedtoCommand = m_toSource.parseSVGSegmentType();
+        auto parsedtoCommand = m_toSource->parseSVGSegmentType();
         if (!parsedtoCommand)
             return false;
         SVGPathSegType toCommand = *parsedtoCommand;
@@ -428,9 +428,9 @@ bool SVGPathBlender::canBlendPaths()
 
         if (!fromSourceHadData)
             continue;
-        if (m_fromSource.hasMoreData() != m_toSource.hasMoreData())
+        if (m_fromSource->hasMoreData() != m_toSource->hasMoreData())
             return false;
-        if (!m_fromSource.hasMoreData() || !m_toSource.hasMoreData())
+        if (!m_fromSource->hasMoreData() || !m_toSource->hasMoreData())
             return true;
     }
 
@@ -441,16 +441,16 @@ bool SVGPathBlender::blendAnimatedPath(float progress)
 {
     m_isInFirstHalfOfAnimation = progress < 0.5f;
 
-    bool fromSourceHadData = m_fromSource.hasMoreData();
-    while (m_toSource.hasMoreData()) {
+    bool fromSourceHadData = m_fromSource->hasMoreData();
+    while (m_toSource->hasMoreData()) {
         SVGPathSegType fromCommand;
         if (fromSourceHadData) {
-            auto parsedFromCommand = m_fromSource.parseSVGSegmentType();
+            auto parsedFromCommand = m_fromSource->parseSVGSegmentType();
             if (!parsedFromCommand)
                 return false;
             fromCommand = *parsedFromCommand;
         }
-        auto parsedToCommand = m_toSource.parseSVGSegmentType();
+        auto parsedToCommand = m_toSource->parseSVGSegmentType();
         if (!parsedToCommand)
             return false;
         SVGPathSegType toCommand = *parsedToCommand;
@@ -518,9 +518,9 @@ bool SVGPathBlender::blendAnimatedPath(float progress)
 
         if (!fromSourceHadData)
             continue;
-        if (m_fromSource.hasMoreData() != m_toSource.hasMoreData())
+        if (m_fromSource->hasMoreData() != m_toSource->hasMoreData())
             return false;
-        if (!m_fromSource.hasMoreData() || !m_toSource.hasMoreData())
+        if (!m_fromSource->hasMoreData() || !m_toSource->hasMoreData())
             return true;
     }
 

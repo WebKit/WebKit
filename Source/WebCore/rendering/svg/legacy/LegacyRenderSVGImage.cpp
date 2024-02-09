@@ -59,6 +59,11 @@ LegacyRenderSVGImage::LegacyRenderSVGImage(SVGImageElement& element, RenderStyle
 
 LegacyRenderSVGImage::~LegacyRenderSVGImage() = default;
 
+CheckedRef<RenderImageResource> LegacyRenderSVGImage::checkedImageResource() const
+{
+    return *m_imageResource;
+}
+
 void LegacyRenderSVGImage::willBeDestroyed()
 {
     imageResource().shutdown();

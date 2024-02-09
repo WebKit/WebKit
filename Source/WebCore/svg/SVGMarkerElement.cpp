@@ -69,26 +69,26 @@ void SVGMarkerElement::attributeChanged(const QualifiedName& name, const AtomStr
     case AttributeNames::markerUnitsAttr: {
         auto propertyValue = SVGPropertyTraits<SVGMarkerUnitsType>::fromString(newValue);
         if (propertyValue > 0)
-            m_markerUnits->setBaseValInternal<SVGMarkerUnitsType>(propertyValue);
+            Ref { m_markerUnits }->setBaseValInternal<SVGMarkerUnitsType>(propertyValue);
         return;
     }
     case AttributeNames::orientAttr: {
         auto pair = SVGPropertyTraits<std::pair<SVGAngleValue, SVGMarkerOrientType>>::fromString(newValue);
-        m_orientAngle->setBaseValInternal(pair.first);
-        m_orientType->setBaseValInternal(pair.second);
+        Ref { m_orientAngle }->setBaseValInternal(pair.first);
+        Ref { m_orientType }->setBaseValInternal(pair.second);
         return;
     }
     case AttributeNames::refXAttr:
-        m_refX->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError));
+        Ref { m_refX }->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError));
         break;
     case AttributeNames::refYAttr:
-        m_refY->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError));
+        Ref { m_refY }->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError));
         break;
     case AttributeNames::markerWidthAttr:
-        m_markerWidth->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError));
+        Ref { m_markerWidth }->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError));
         break;
     case AttributeNames::markerHeightAttr:
-        m_markerHeight->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError));
+        Ref { m_markerHeight }->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError));
         break;
     default:
         break;
@@ -103,7 +103,7 @@ void SVGMarkerElement::invalidateMarkerResource()
 {
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (document().settings().layerBasedSVGEngineEnabled()) {
-        if (auto* markerRenderer = dynamicDowncast<RenderSVGResourceMarker>(renderer()))
+        if (CheckedPtr markerRenderer = dynamicDowncast<RenderSVGResourceMarker>(renderer()))
             markerRenderer->invalidateMarker();
         return;
     }
@@ -156,13 +156,13 @@ void SVGMarkerElement::setOrient(const AtomString& orient)
 
 void SVGMarkerElement::setOrientToAuto()
 {
-    m_orientType->setBaseVal(SVGMarkerOrientAuto);
+    Ref { m_orientType }->setBaseVal(SVGMarkerOrientAuto);
     invalidateMarkerResource();
 }
 
 void SVGMarkerElement::setOrientToAngle(const SVGAngle& angle)
 {
-    m_orientAngle->baseVal()->newValueSpecifiedUnits(angle.unitType(), angle.valueInSpecifiedUnits());
+    Ref { m_orientAngle }->baseVal()->newValueSpecifiedUnits(angle.unitType(), angle.valueInSpecifiedUnits());
     invalidateMarkerResource();
 }
 

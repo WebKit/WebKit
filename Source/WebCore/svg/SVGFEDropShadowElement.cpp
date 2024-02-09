@@ -53,8 +53,8 @@ Ref<SVGFEDropShadowElement> SVGFEDropShadowElement::create(const QualifiedName& 
 
 void SVGFEDropShadowElement::setStdDeviation(float x, float y)
 {
-    m_stdDeviationX->setBaseValInternal(x);
-    m_stdDeviationY->setBaseValInternal(y);
+    Ref { m_stdDeviationX }->setBaseValInternal(x);
+    Ref { m_stdDeviationY }->setBaseValInternal(y);
     updateSVGRendererForElementChange();
 }
 
@@ -63,18 +63,18 @@ void SVGFEDropShadowElement::attributeChanged(const QualifiedName& name, const A
     switch (name.nodeName()) {
     case AttributeNames::stdDeviationAttr:
         if (auto result = parseNumberOptionalNumber(newValue)) {
-            m_stdDeviationX->setBaseValInternal(result->first);
-            m_stdDeviationY->setBaseValInternal(result->second);
+            Ref { m_stdDeviationX }->setBaseValInternal(result->first);
+            Ref { m_stdDeviationY }->setBaseValInternal(result->second);
         }
         break;
     case AttributeNames::inAttr:
-        m_in1->setBaseValInternal(newValue);
+        Ref { m_in1 }->setBaseValInternal(newValue);
         break;
     case AttributeNames::dxAttr:
-        m_dx->setBaseValInternal(newValue.toFloat());
+        Ref { m_dx }->setBaseValInternal(newValue.toFloat());
         break;
     case AttributeNames::dyAttr:
-        m_dy->setBaseValInternal(newValue.toFloat());
+        Ref { m_dy }->setBaseValInternal(newValue.toFloat());
         break;
     default:
         break;
@@ -148,7 +148,7 @@ IntOutsets SVGFEDropShadowElement::outsets(const FloatRect& targetBoundingBox, S
 
 RefPtr<FilterEffect> SVGFEDropShadowElement::createFilterEffect(const FilterEffectVector&, const GraphicsContext&) const
 {
-    RenderObject* renderer = this->renderer();
+    CheckedPtr renderer = this->renderer();
     if (!renderer)
         return nullptr;
 

@@ -24,6 +24,7 @@
 #include "SVGPathSeg.h"
 #include "SVGPathSource.h"
 #include <wtf/RefPtr.h>
+#include <wtf/WeakRef.h>
 
 namespace WebCore {
 
@@ -49,7 +50,7 @@ private:
     std::optional<CurveToQuadraticSmoothSegment> parseCurveToQuadraticSmoothSegment() final;
     std::optional<ArcToSegment> parseArcToSegment() final;
 
-    const SVGPathSegList& m_pathSegList;
+    SingleThreadWeakRef<const SVGPathSegList> m_pathSegList;
     RefPtr<SVGPathSeg> m_segment;
     size_t m_itemCurrent;
     size_t m_itemEnd;

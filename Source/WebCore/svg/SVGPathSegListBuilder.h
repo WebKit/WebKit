@@ -53,7 +53,7 @@ private:
     void curveToQuadraticSmooth(const FloatPoint&, PathCoordinateMode) final;
     void arcTo(float, float, float, bool largeArcFlag, bool sweepFlag, const FloatPoint&, PathCoordinateMode) final;
 
-    SVGPathSegList& m_pathSegList;
+    SingleThreadWeakRef<SVGPathSegList> m_pathSegList;
 };
 
 } // namespace WebCore

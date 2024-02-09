@@ -77,6 +77,11 @@ AffineTransform SVGGraphicsElement::getScreenCTM(StyleUpdateStrategy styleUpdate
     return SVGLocatable::computeCTM(this, SVGLocatable::ScreenScope, styleUpdateStrategy);
 }
 
+Ref<const SVGTransformList> SVGGraphicsElement::protectedTransform() const
+{
+    return m_transform->currentValue();
+}
+
 AffineTransform SVGGraphicsElement::animatedLocalTransform() const
 {
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
@@ -84,13 +89,14 @@ AffineTransform SVGGraphicsElement::animatedLocalTransform() const
     if (document().settings().layerBasedSVGEngineEnabled()) {
         if (m_supplementalTransform)
             return *m_supplementalTransform * transform().concatenate();
-        return transform().concatenate();
+        return protectedTransform()->concatenate();
     }
 #endif
 
     AffineTransform matrix;
 
-    auto* style = renderer() ? &renderer()->style() : nullptr;
+    CheckedPtr renderer = this->renderer();
+    auto* style = renderer ? &renderer->style() : nullptr;
     bool hasSpecifiedTransform = style && style->hasTransform();
 
     // Honor any of the transform-related CSS properties if set.
@@ -98,7 +104,7 @@ AffineTransform SVGGraphicsElement::animatedLocalTransform() const
         // Note: objectBoundingBox is an emptyRect for elements like pattern or clipPath.
         // See the "Object bounding box units" section of http://dev.w3.org/csswg/css3-transforms/
         TransformationMatrix transform;
-        style->applyTransform(transform, TransformOperationData(renderer()->transformReferenceBoxRect(), renderer()));
+        style->applyTransform(transform, TransformOperationData(renderer->transformReferenceBoxRect(), renderer.get()));
 
         // Flatten any 3D transform.
         matrix = transform.toAffineTransform();
@@ -113,7 +119,7 @@ AffineTransform SVGGraphicsElement::animatedLocalTransform() const
 
     // If we didn't have the CSS "transform" property set, we must account for the "transform" attribute.
     if (!hasSpecifiedTransform && style) {
-        auto t = style->computeTransformOrigin(renderer()->transformReferenceBoxRect()).xy();
+        auto t = style->computeTransformOrigin(renderer->transformReferenceBoxRect()).xy();
         matrix.translate(t);
         matrix *= transform().concatenate();
         matrix.translate(-t.x(), -t.y());
@@ -134,7 +140,7 @@ AffineTransform* SVGGraphicsElement::ensureSupplementalTransform()
 void SVGGraphicsElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == SVGNames::transformAttr)
-        m_transform->baseVal()->parse(newValue);
+        Ref { m_transform }->baseVal()->parse(newValue);
 
     SVGTests::parseAttribute(name, newValue);
     SVGElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
@@ -148,13 +154,13 @@ void SVGGraphicsElement::svgAttributeChanged(const QualifiedName& attrName)
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
         if (document().settings().layerBasedSVGEngineEnabled()) {
-            if (auto* layerRenderer = dynamicDowncast<RenderLayerModelObject>(renderer()))
+            if (CheckedPtr layerRenderer = dynamicDowncast<RenderLayerModelObject>(renderer()))
                 layerRenderer->repaintOrRelayoutAfterSVGTransformChange();
             return;
         }
 #endif
 
-        if (auto* renderer = this->renderer())
+        if (CheckedPtr renderer = this->renderer())
             renderer->setNeedsTransformUpdate();
         updateSVGRendererForElementChange();
         return;
@@ -197,8 +203,8 @@ void SVGGraphicsElement::didAttachRenderers()
 {
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (document().settings().layerBasedSVGEngineEnabled()) {
-        if (auto* svgRenderer = dynamicDowncast<RenderLayerModelObject>(renderer()); svgRenderer && lineageOfType<RenderSVGHiddenContainer>(*svgRenderer).first()) {
-            if (auto* layer = svgRenderer->layer())
+        if (CheckedPtr svgRenderer = dynamicDowncast<RenderLayerModelObject>(renderer()); svgRenderer && lineageOfType<RenderSVGHiddenContainer>(*svgRenderer).first()) {
+            if (CheckedPtr layer = svgRenderer->layer())
                 layer->dirtyVisibleContentStatus();
         }
     }

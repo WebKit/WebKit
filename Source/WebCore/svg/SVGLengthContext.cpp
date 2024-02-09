@@ -241,9 +241,14 @@ static inline const RenderStyle* renderStyleForLengthResolving(const SVGElement*
     return nullptr;
 }
 
+RefPtr<const SVGElement> SVGLengthContext::protectedContext() const
+{
+    return m_context.get();
+}
+
 ExceptionOr<float> SVGLengthContext::convertValueFromUserUnitsToEMS(float value) const
 {
-    auto* style = renderStyleForLengthResolving(m_context);
+    auto* style = renderStyleForLengthResolving(protectedContext().get());
     if (!style)
         return Exception { ExceptionCode::NotSupportedError };
 
@@ -256,7 +261,7 @@ ExceptionOr<float> SVGLengthContext::convertValueFromUserUnitsToEMS(float value)
 
 ExceptionOr<float> SVGLengthContext::convertValueFromEMSToUserUnits(float value) const
 {
-    auto* style = renderStyleForLengthResolving(m_context);
+    auto* style = renderStyleForLengthResolving(protectedContext().get());
     if (!style)
         return Exception { ExceptionCode::NotSupportedError };
 
@@ -265,7 +270,7 @@ ExceptionOr<float> SVGLengthContext::convertValueFromEMSToUserUnits(float value)
 
 ExceptionOr<float> SVGLengthContext::convertValueFromUserUnitsToEXS(float value) const
 {
-    auto* style = renderStyleForLengthResolving(m_context);
+    auto* style = renderStyleForLengthResolving(protectedContext().get());
     if (!style)
         return Exception { ExceptionCode::NotSupportedError };
 
@@ -280,7 +285,7 @@ ExceptionOr<float> SVGLengthContext::convertValueFromUserUnitsToEXS(float value)
 
 ExceptionOr<float> SVGLengthContext::convertValueFromEXSToUserUnits(float value) const
 {
-    auto* style = renderStyleForLengthResolving(m_context);
+    auto* style = renderStyleForLengthResolving(protectedContext().get());
     if (!style)
         return Exception { ExceptionCode::NotSupportedError };
 
@@ -316,7 +321,7 @@ std::optional<FloatSize> SVGLengthContext::computeViewportSize() const
     // applies zooming/panning for the whole SVG subtree as affine transform. Therefore
     // any length within the SVG subtree needs to exclude the 'zoom' information.
     if (m_context->isOutermostSVGSVGElement())
-        return downcast<SVGSVGElement>(*m_context).currentViewportSizeExcludingZoom();
+        return downcast<SVGSVGElement>(*protectedContext()).currentViewportSizeExcludingZoom();
 
     // Take size from nearest viewport element.
     RefPtr svg = dynamicDowncast<SVGSVGElement>(m_context->viewportElement());

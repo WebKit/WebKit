@@ -60,6 +60,11 @@ RenderSVGImage::RenderSVGImage(SVGImageElement& element, RenderStyle&& style)
 
 RenderSVGImage::~RenderSVGImage() = default;
 
+CheckedRef<RenderImageResource> RenderSVGImage::checkedImageResource() const
+{
+    return *m_imageResource;
+}
+
 void RenderSVGImage::willBeDestroyed()
 {
     imageResource().shutdown();

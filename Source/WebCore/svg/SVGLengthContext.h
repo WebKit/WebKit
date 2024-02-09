@@ -28,6 +28,7 @@
 namespace WebCore {
 
 class SVGElement;
+class WeakPtrImplWithEventTargetData;
 
 struct Length;
 
@@ -65,7 +66,9 @@ private:
 
     std::optional<FloatSize> computeViewportSize() const;
 
-    const SVGElement* m_context;
+    RefPtr<const SVGElement> protectedContext() const;
+
+    WeakPtr<const SVGElement, WeakPtrImplWithEventTargetData> m_context;
     FloatRect m_overriddenViewport; // Ideally this would be std::optional<FloatRect>, but some tests depend on the behavior of it being a zero rect.
     mutable std::optional<FloatSize> m_viewportSize;
 };

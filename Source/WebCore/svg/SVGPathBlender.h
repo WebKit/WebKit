@@ -61,9 +61,9 @@ private:
     float blendAnimatedDimensonalFloat(float from, float to, FloatBlendMode, float progress);
     FloatPoint blendAnimatedFloatPoint(const FloatPoint& from, const FloatPoint& to, float progress);
 
-    SVGPathSource& m_fromSource;
-    SVGPathSource& m_toSource;
-    SVGPathConsumer* m_consumer; // A null consumer indicates that we're just checking blendability.
+    SingleThreadWeakRef<SVGPathSource> m_fromSource;
+    SingleThreadWeakRef<SVGPathSource> m_toSource;
+    SingleThreadWeakPtr<SVGPathConsumer> m_consumer; // A null consumer indicates that we're just checking blendability.
 
     FloatPoint m_fromCurrentPoint;
     FloatPoint m_toCurrentPoint;
