@@ -143,6 +143,10 @@ set(WebCore_MODULES
     WebP
 )
 
+if (USE_LCMS)
+    list(APPEND WebCore_MODULES LCMS2)
+endif ()
+
 if (USE_WPE_BACKEND_PLAYSTATION)
     list(APPEND WebCore_MODULES WPE)
 endif ()

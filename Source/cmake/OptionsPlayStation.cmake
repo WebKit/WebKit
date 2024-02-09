@@ -211,6 +211,7 @@ endif ()
 #
 # Features that require additional implementation pieces
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(USE_AVIF PRIVATE OFF)
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(USE_LCMS PRIVATE OFF)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(USE_JPEGXL PRIVATE OFF)
 
 # Features that are temporarily turned off because an implementation is not
@@ -268,6 +269,15 @@ if (ENABLE_WEBCORE)
     SET_AND_EXPOSE_TO_BUILD(USE_HARFBUZZ ON)
     SET_AND_EXPOSE_TO_BUILD(USE_LIBWPE ON)
     SET_AND_EXPOSE_TO_BUILD(USE_OPENSSL ON)
+
+    if (USE_LCMS)
+        set(LCMS2_NAMES SceVshLCMS2)
+        find_package(LCMS2)
+        if (NOT LCMS2_FOUND)
+            message(FATAL_ERROR "libcms2 is required for USE_LCMS.")
+       endif ()
+       list(APPEND PlayStationModule_TARGETS LCMS2::LCMS2)
+    endif ()
 
     # See if OpenSSL implementation is BoringSSL
     cmake_push_check_state()

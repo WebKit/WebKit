@@ -110,6 +110,7 @@ my (
     $memorySamplerSupport,
     $meterElementSupport,
     $mhtmlSupport,
+    $lcmsSupport,
     $mouseCursorScaleSupport,
     $navigatorStandaloneSupport,
     $networkCacheSpeculativeRevalidationSupport,
@@ -484,6 +485,9 @@ my @features = (
 
     { option => "iso-malloc", desc => "Toggle IsoMalloc support",
       define => "USE_ISO_MALLOC", value => \$isoMallocSupport },
+
+    { option => "lcms", desc => "Toggle support for image color management using libcms2",
+      define => "USE_LCMS", value => \$lcmsSupport },
 
     { option => "system-malloc", desc => "Toggle system allocator instead of bmalloc",
       define => "USE_SYSTEM_MALLOC", value => \$systemMallocSupport },

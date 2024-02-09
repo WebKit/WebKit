@@ -90,11 +90,6 @@ find_package(WebP REQUIRED COMPONENTS demux)
 find_package(AVIF 0.9.0)
 SET_AND_EXPOSE_TO_BUILD(USE_AVIF ${AVIF_FOUND})
 
-find_package(LCMS2)
-if (LCMS2_FOUND)
-    SET_AND_EXPOSE_TO_BUILD(USE_LCMS ON)
-endif ()
-
 find_package(WOFF2 1.0.2 COMPONENTS dec)
 if (WOFF2_FOUND)
     find_package(Brotli REQUIRED COMPONENTS dec)
@@ -142,6 +137,7 @@ WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_SMOOTH_SCROLLING PRIVATE OFF)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEBGL PRIVATE OFF)
 
 if (${WTF_CPU_X86})
+    WEBKIT_OPTION_DEFAULT_PORT_VALUE(USE_LCMS PRIVATE OFF)
     WEBKIT_OPTION_DEFAULT_PORT_VALUE(USE_JPEGXL PRIVATE OFF)
 endif ()
 
@@ -199,6 +195,13 @@ cmake_pop_check_state()
 
 if (ENABLE_XSLT)
     find_package(LibXslt 1.1.32 REQUIRED)
+endif ()
+
+if (USE_LCMS)
+    find_package(LCMS2)
+    if (NOT LCMS2_FOUND)
+        message(FATAL_ERROR "libcms2 is required for USE_LCMS.")
+    endif ()
 endif ()
 
 if (USE_JPEGXL)
