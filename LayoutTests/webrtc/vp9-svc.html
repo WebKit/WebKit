@@ -65,12 +65,12 @@ async function testVP9Decoder(useVP9SVC)
     let counter = 0;
     while (video.videoWidth !== 1280 && ++counter < 100)
        await new Promise(resolve => setTimeout(resolve, 50));
+
+    if (window.internals && internals.isSupportingVP9HardwareDecoder())
+        assert_equals(await internals.isVP9HardwareDeccoderUsed(receivingConnection), !useVP9SVC, "isVP9HardwareDeccoderUsed");
+
     assert_equals(video.videoWidth, 1280);
     assert_equals(video.videoHeight, 720);
-
-    if (!window.internals || !window.internals.isSupportingVP9VTB())
-        return;
-    assert_equals(await internals.isVP9VTBDeccoderUsed(receivingConnection), !useVP9SVC);
 }
 
 promise_test(async () => {

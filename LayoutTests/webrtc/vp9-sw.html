@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>VP9 in WebRTC</title>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <video id="video" autoplay playsInline width="320" height="240"></video>
+        <canvas id="canvas1" width="320" height="240"></canvas>
+        <canvas id="canvas2" width="320" height="240"></canvas>
+        <canvas id="canvas3" width="320" height="240"></canvas>
+        <script src ="routines.js"></script>
+        <script>
+if (window.internals)
+    internals.disableWebRTCHardwareVP9();
+        </script>
+        <script src="vp9-tests.js"></script>
+        <script>
+promise_test(async t => {
+    const localStream = await navigator.mediaDevices.getUserMedia({video: {width: 320, height: 240, facingMode: "environment"}});
+    const track = localStream.getVideoTracks()[0];
+    let receivingConnection;
+    const remoteStream =  await new Promise((resolve, reject) => {
+        createConnections((firstConnection) => {
+            firstConnection.addTrack(track, localStream);
+        }, (secondConnection) => {
+            receivingConnection = secondConnection;
+            secondConnection.ontrack = (trackEvent) => {
+                remoteTrack = trackEvent.track;
+                resolve(trackEvent.streams[0]);
+            };
+        }, { observeOffer : (offer) => {
+            offer.sdp = setCodec(offer.sdp, "VP9");
+            return offer;
+        }
+        });
+        setTimeout(() => reject("Test timed out"), 5000);
+    });
+    video.srcObject = remoteStream;
+    await video.play();
+
+    if (window.internals)
+        assert_false(await internals.isVP9HardwareDeccoderUsed(receivingConnection));
+}, "Check decoder is libvpx");
+        </script>
+    </body>
+</html>

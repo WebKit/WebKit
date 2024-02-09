@@ -70,10 +70,10 @@ static webrtc::WebKitVideoDecoder createVideoDecoder(const webrtc::SdpVideoForma
         return { codecs.createDecoder(VideoCodecType::H265), false };
 
 #if ENABLE(VP9)
-    if (equalIgnoringASCIICase(codecString, "VP9"_s) && codecs.supportVP9VTB())
+    if (equalIgnoringASCIICase(codecString, "VP9"_s) && codecs.isSupportingVP9HardwareDecoder())
         return { codecs.createDecoder(VideoCodecType::VP9), false };
-
 #endif
+
 #if ENABLE(AV1)
     if (equalIgnoringASCIICase(codecString, "AV1"_s)) {
         if (codecs.hasAV1HardwareDecoder())
@@ -93,7 +93,7 @@ std::optional<VideoCodecType> LibWebRTCCodecs::videoCodecTypeFromWebCodec(const 
         return VideoCodecType::H264;
 
     if (codec.startsWith("vp09.0"_s)) {
-        if (!supportVP9VTB())
+        if (!isSupportingVP9HardwareDecoder())
             return { };
         return VideoCodecType::VP9;
     }

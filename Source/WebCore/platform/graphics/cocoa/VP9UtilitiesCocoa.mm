@@ -269,7 +269,7 @@ std::optional<MediaCapabilitiesInfo> validateVPParameters(const VPCodecConfigura
         if (*videoConfiguration.colorGamut == ColorGamut::Rec2020 && codecConfiguration.colorPrimaries != 9)
             return std::nullopt;
     }
-    return computeVPParameters(videoConfiguration);
+    return computeVPParameters(videoConfiguration, vp9HardwareDecoderAvailable());
 }
 
 bool isVPSoftwareDecoderSmooth(const VideoConfiguration& videoConfiguration)
@@ -283,11 +283,11 @@ bool isVPSoftwareDecoderSmooth(const VideoConfiguration& videoConfiguration)
     return true;
 }
 
-std::optional<MediaCapabilitiesInfo> computeVPParameters(const VideoConfiguration& videoConfiguration)
+std::optional<MediaCapabilitiesInfo> computeVPParameters(const VideoConfiguration& videoConfiguration, bool vp9HardwareDecoderAvailable)
 {
     MediaCapabilitiesInfo info;
 
-    if (vp9HardwareDecoderAvailable()) {
+    if (vp9HardwareDecoderAvailable) {
         // HW VP9 Decoder does not support alpha channel:
         if (videoConfiguration.alphaChannel && *videoConfiguration.alphaChannel)
             return std::nullopt;

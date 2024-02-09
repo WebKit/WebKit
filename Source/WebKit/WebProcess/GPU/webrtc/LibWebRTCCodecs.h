@@ -160,8 +160,9 @@ public:
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
-    void setVP9VTBSupport(bool supportVP9VTB) { m_supportVP9VTB = supportVP9VTB; }
-    bool supportVP9VTB() const { return m_supportVP9VTB; }
+    void setVP9HardwareSupportForTesting(std::optional<bool> value) { m_vp9HardwareSupportForTesting = value; }
+    void setVP9VTBSupport(bool isSupportingVP9HardwareDecoder) { m_isSupportingVP9HardwareDecoder = isSupportingVP9HardwareDecoder; }
+    bool isSupportingVP9HardwareDecoder() const { return m_vp9HardwareSupportForTesting.value_or(m_isSupportingVP9HardwareDecoder); }
     void setLoggingLevel(WTFLogLevel);
 
 #if ENABLE(AV1)
@@ -224,7 +225,8 @@ private:
     RetainPtr<CVPixelBufferPoolRef> m_pixelBufferPool;
     size_t m_pixelBufferPoolWidth { 0 };
     size_t m_pixelBufferPoolHeight { 0 };
-    bool m_supportVP9VTB { false };
+    std::optional<bool> m_vp9HardwareSupportForTesting;
+    bool m_isSupportingVP9HardwareDecoder { false };
     std::optional<WTFLogLevel> m_loggingLevel;
     bool m_useGPUProcess { false };
     bool m_useRemoteFrames { false };
