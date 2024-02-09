@@ -1,3 +1,3 @@
 
-FAIL currententrychange fires for link click null is not an object (evaluating 'navigation.currentEntry.index')
+FAIL currententrychange fires for link click assert_true: expected true got false
 

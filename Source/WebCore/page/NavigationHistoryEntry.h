@@ -28,6 +28,7 @@
 #include "ContextDestructionObserver.h"
 #include "EventHandler.h"
 #include "EventTarget.h"
+#include "HistoryItem.h"
 #include <wtf/RefCounted.h>
 #include <wtf/UUID.h>
 
@@ -37,12 +38,16 @@ class JSValue;
 
 namespace WebCore {
 
+class SerializedScriptValue;
+class HistoryItem;
+
 class NavigationHistoryEntry final : public RefCounted<NavigationHistoryEntry>, public EventTarget, public ContextDestructionObserver {
     WTF_MAKE_ISO_ALLOCATED(NavigationHistoryEntry);
 public:
     using RefCounted<NavigationHistoryEntry>::ref;
     using RefCounted<NavigationHistoryEntry>::deref;
 
+    static Ref<NavigationHistoryEntry> create(ScriptExecutionContext* context, Ref<HistoryItem>& historyItem) { return adoptRef(*new NavigationHistoryEntry(context, historyItem)); }
     static Ref<NavigationHistoryEntry> create(ScriptExecutionContext* context, const URL& url) { return adoptRef(*new NavigationHistoryEntry(context, url)); }
 
     const String& url() const { return m_url.string(); };
@@ -50,9 +55,12 @@ public:
     String id() const { return m_id.toString(); };
     uint64_t index() const { return m_index; };
     bool sameDocument() const { return m_sameDocument; };
-    const JSC::JSValue& getState() const { return m_state; };
+    JSC::JSValue getState(JSDOMGlobalObject&) const;
+
+    void setState(RefPtr<SerializedScriptValue>&&);
 
 private:
+    NavigationHistoryEntry(ScriptExecutionContext*, Ref<HistoryItem>&);
     NavigationHistoryEntry(ScriptExecutionContext*, const URL&);
 
     EventTargetInterface eventTargetInterface() const final;
@@ -64,7 +72,8 @@ private:
     const WTF::UUID m_key;
     const WTF::UUID m_id;
     uint64_t m_index;
-    JSC::JSValue m_state;
+    // TODO: Every entry is supposed to have an associated history item.
+    std::optional<Ref<HistoryItem>> m_associatedHistoryItem;
     bool m_sameDocument;
 };
 

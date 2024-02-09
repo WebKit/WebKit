@@ -26,13 +26,24 @@
 #include "config.h"
 #include "NavigationHistoryEntry.h"
 
+#include "JSDOMGlobalObject.h"
 #include "ScriptExecutionContext.h"
+#include "SerializedScriptValue.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(NavigationHistoryEntry);
+
+NavigationHistoryEntry::NavigationHistoryEntry(ScriptExecutionContext* context, Ref<HistoryItem>& historyItem)
+    : ContextDestructionObserver(context)
+    , m_url(historyItem->url())
+    , m_key(WTF::UUID::createVersion4())
+    , m_id(WTF::UUID::createVersion4())
+    , m_associatedHistoryItem(historyItem)
+{
+}
 
 NavigationHistoryEntry::NavigationHistoryEntry(ScriptExecutionContext* context, const URL& url)
     : ContextDestructionObserver(context)
@@ -50,6 +61,26 @@ ScriptExecutionContext* NavigationHistoryEntry::scriptExecutionContext() const
 EventTargetInterface NavigationHistoryEntry::eventTargetInterface() const
 {
     return NavigationHistoryEntryEventTargetInterfaceType;
+}
+
+JSC::JSValue NavigationHistoryEntry::getState(JSDOMGlobalObject& globalObject) const
+{
+    if (!m_associatedHistoryItem)
+        return JSC::jsUndefined();
+
+    auto stateObject = m_associatedHistoryItem->get().navigationAPIStateObject();
+    if (!stateObject)
+        return JSC::jsUndefined();
+
+    return stateObject->deserialize(globalObject, &globalObject, SerializationErrorMode::Throwing);
+}
+
+void NavigationHistoryEntry::setState(RefPtr<SerializedScriptValue>&& state)
+{
+    if (!m_associatedHistoryItem)
+        return;
+
+    m_associatedHistoryItem->get().setNavigationAPIStateObject(WTFMove(state));
 }
 
 } // namespace WebCore

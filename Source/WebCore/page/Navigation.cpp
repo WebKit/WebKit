@@ -26,8 +26,12 @@
 #include "config.h"
 #include "Navigation.h"
 
+#include "Exception.h"
 #include "HistoryItem.h"
 #include "JSNavigationHistoryEntry.h"
+#include "NavigationCurrentEntryChangeEvent.h"
+#include "SerializedScriptValue.h"
+#include <optional>
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -41,10 +45,10 @@ Navigation::Navigation(ScriptExecutionContext* context, LocalDOMWindow& window)
 }
 
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#initialize-the-navigation-api-entries-for-a-new-document
-void Navigation::initializeEntries(const Ref<HistoryItem>& currentItem, const Vector<Ref<HistoryItem>>& items)
+void Navigation::initializeEntries(const Ref<HistoryItem>& currentItem, Vector<Ref<HistoryItem>>& items)
 {
     for (Ref item : items)
-        m_entries.append(NavigationHistoryEntry::create(protectedScriptExecutionContext().get(), item->url()));
+        m_entries.append(NavigationHistoryEntry::create(protectedScriptExecutionContext().get(), item));
     m_currentEntryIndex = items.find(currentItem);
 }
 
@@ -130,8 +134,30 @@ Navigation::Result Navigation::forward(Options&&, Ref<DeferredPromise>&& committ
     return result;
 }
 
-void Navigation::updateCurrentEntry(UpdateCurrentEntryOptions&&)
+// https://html.spec.whatwg.org/multipage/nav-history-apis.html#dom-navigation-updatecurrententry
+ExceptionOr<void> Navigation::updateCurrentEntry(JSDOMGlobalObject& globalObject, UpdateCurrentEntryOptions&& options)
 {
+    if (!window()->frame() || !window()->frame()->document())
+        return Exception { ExceptionCode::InvalidStateError };
+
+    auto current = currentEntry();
+    if (!current)
+        return Exception { ExceptionCode::InvalidStateError };
+
+    auto serializedState = SerializedScriptValue::create(globalObject, options.state, SerializationForStorage::Yes, SerializationErrorMode::Throwing);
+    if (!serializedState)
+        return { };
+
+    current->setState(WTFMove(serializedState));
+
+    auto currentEntryChangeEvent = NavigationCurrentEntryChangeEvent::create({ "currententrychange"_s }, {
+        { false, false, false },
+        std::nullopt,
+        current
+    });
+    dispatchEvent(currentEntryChangeEvent);
+
+    return { };
 }
 
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#has-entries-and-events-disabled

@@ -8,7 +8,7 @@
   readonly attribute long long index;
   readonly attribute boolean sameDocument;
 
-  any getState();
+  [CallWith=CurrentGlobalObject] any getState();
 
   attribute EventHandler ondispose;
 };

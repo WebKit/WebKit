@@ -82,7 +82,7 @@ public:
     bool canGoBack() const { return m_canGoBack; };
     bool canGoForward() const { return m_canGoForward; };
 
-    void initializeEntries(const Ref<HistoryItem>& currentItem, const Vector<Ref<HistoryItem>> &items);
+    void initializeEntries(const Ref<HistoryItem>& currentItem, Vector<Ref<HistoryItem>> &items);
 
     Result navigate(const String& url, NavigateOptions&&, Ref<DeferredPromise>&&, Ref<DeferredPromise>&&);
 
@@ -92,7 +92,7 @@ public:
     Result back(Options&&, Ref<DeferredPromise>&&, Ref<DeferredPromise>&&);
     Result forward(Options&&, Ref<DeferredPromise>&&, Ref<DeferredPromise>&&);
 
-    void updateCurrentEntry(UpdateCurrentEntryOptions&&);
+    ExceptionOr<void> updateCurrentEntry(JSDOMGlobalObject&, UpdateCurrentEntryOptions&&);
 
 private:
     Navigation(ScriptExecutionContext*, LocalDOMWindow&);

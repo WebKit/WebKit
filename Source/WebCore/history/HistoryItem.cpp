@@ -109,6 +109,7 @@ void HistoryItem::reset()
     m_itemSequenceNumber = generateSequenceNumber();
 
     m_stateObject = nullptr;
+    m_navigationAPIStateObject = nullptr;
     m_documentSequenceNumber = generateSequenceNumber();
 
     m_formData = nullptr;
@@ -276,6 +277,12 @@ void HistoryItem::setStateObject(RefPtr<SerializedScriptValue>&& object)
 {
     m_stateObject = WTFMove(object);
     notifyChanged();
+}
+
+// https://html.spec.whatwg.org/multipage/browsing-the-web.html#she-navigation-api-state
+void HistoryItem::setNavigationAPIStateObject(RefPtr<SerializedScriptValue>&& object)
+{
+    m_navigationAPIStateObject = WTFMove(object);
 }
 
 void HistoryItem::addChildItem(Ref<HistoryItem>&& child)

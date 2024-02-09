@@ -1,5 +1,3 @@
 
-FAIL updateCurrentEntry() must throw if the document is not fully active assert_throws_dom: function "() => {
-      wNavigation.updateCurrentEntry({ state: 1 });
-    }" did not throw
+PASS updateCurrentEntry() must throw if the document is not fully active
 

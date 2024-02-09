@@ -6889,11 +6889,11 @@ imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-e
 
 # Navigation API is not yet fully implemented
 webkit.org/b/258384 imported/w3c/web-platform-tests/navigation-api [ Skip ]
+imported/w3c/web-platform-tests/navigation-api/updateCurrentEntry-method/ [ Pass ]
+imported/w3c/web-platform-tests/navigation-api/currententrychange-event/ [ Pass ]
+imported/w3c/web-platform-tests/navigation-api/currententrychange-event/navigation-back-forward-same-doc.html [ Skip ]
+imported/w3c/web-platform-tests/navigation-api/currententrychange-event/history-back-same-doc.html [ Skip ]
 imported/w3c/web-platform-tests/navigation-api/commit-behavior/after-transition-uncancelable.html [ Pass ]
-imported/w3c/web-platform-tests/navigation-api/currententrychange-event/navigate-from-initial-about-blank.html [ Pass ]
-imported/w3c/web-platform-tests/navigation-api/currententrychange-event/navigate-from-initial-about-blank-same-doc.html [ Pass ]
-imported/w3c/web-platform-tests/navigation-api/currententrychange-event/navigate-from-initial-about-blank-same-doc-popup.html [ Pass ]
-imported/w3c/web-platform-tests/navigation-api/currententrychange-event/not-on-load.html [ Pass ]
 imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-to-javascript.html [ Pass ]
 imported/w3c/web-platform-tests/navigation-api/navigate-event/navigatesuccess-cross-document.html [ Pass ]
 imported/w3c/web-platform-tests/navigation-api/navigate-event/replaceState-in-unload-then-remove-iframe.html [ Pass ]
@@ -6909,7 +6909,10 @@ imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/transitio
 imported/w3c/web-platform-tests/navigation-api/scroll-behavior/after-transition-intercept-handler-modifies.html [ Pass ]
 imported/w3c/web-platform-tests/navigation-api/scroll-behavior/scroll-on-synthetic-event.html [ Pass ]
 imported/w3c/web-platform-tests/navigation-api/scroll-behavior/scroll-without-intercept.html [ Pass ]
-imported/w3c/web-platform-tests/navigation-api/updateCurrentEntry-method/no-args.html [ Pass ]
+imported/w3c/web-platform-tests/navigation-api/updateCurrentEntry-method/same-document-away-and-back-location-api.html [ Skip ]
+imported/w3c/web-platform-tests/navigation-api/updateCurrentEntry-method/cross-document-away-and-back.html [ Skip ]
+imported/w3c/web-platform-tests/navigation-api/updateCurrentEntry-method/cross-document-location-api.html [ Skip ]
+imported/w3c/web-platform-tests/navigation-api/updateCurrentEntry-method/location-reload.html [ Skip ]
 
 # -- View Transitions -- #
 # Reftest failures:

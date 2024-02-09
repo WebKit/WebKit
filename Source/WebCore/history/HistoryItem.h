@@ -131,6 +131,9 @@ public:
     WEBCORE_EXPORT void setStateObject(RefPtr<SerializedScriptValue>&&);
     SerializedScriptValue* stateObject() const { return m_stateObject.get(); }
 
+    void setNavigationAPIStateObject(RefPtr<SerializedScriptValue>&&);
+    SerializedScriptValue* navigationAPIStateObject() const { return m_navigationAPIStateObject.get(); }
+
     void setItemSequenceNumber(long long number) { m_itemSequenceNumber = number; }
     long long itemSequenceNumber() const { return m_itemSequenceNumber; }
 
@@ -255,6 +258,9 @@ private:
     // Support for HTML5 History
     RefPtr<SerializedScriptValue> m_stateObject;
     
+    // Navigation API
+    RefPtr<SerializedScriptValue> m_navigationAPIStateObject;
+
     // info used to repost form data
     RefPtr<FormData> m_formData;
     String m_formContentType;
