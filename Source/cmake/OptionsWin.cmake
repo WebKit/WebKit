@@ -95,11 +95,6 @@ if (LCMS2_FOUND)
     SET_AND_EXPOSE_TO_BUILD(USE_LCMS ON)
 endif ()
 
-find_package(OpenJPEG 2.3.1)
-if (OpenJPEG_FOUND)
-    SET_AND_EXPOSE_TO_BUILD(USE_OPENJPEG ON)
-endif ()
-
 find_package(WOFF2 1.0.2 COMPONENTS dec)
 if (WOFF2_FOUND)
     find_package(Brotli REQUIRED COMPONENTS dec)
