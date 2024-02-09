@@ -43,7 +43,7 @@ static constexpr auto tier1LimitForBuffersAndTextures = 1;
 static constexpr auto tier2LimitForBuffersAndTextures = 4;
 static constexpr auto tier1LimitForSamplers = 1;
 static constexpr auto tier2LimitForSamplers = 2;
-static constexpr uint64_t defaultMaxBufferSize = 134217728;
+static constexpr uint64_t defaultMaxBufferSize = 268435456;
 
 static constexpr auto multipleOf4(auto input)
 {
@@ -683,7 +683,7 @@ WGPULimits defaultLimits()
         .maxInterStageShaderVariables = 16,
         .maxColorAttachments = 8,
         .maxColorAttachmentBytesPerSample = 32,
-        .maxComputeWorkgroupStorageSize =    16352,
+        .maxComputeWorkgroupStorageSize =    16384,
         .maxComputeInvocationsPerWorkgroup =    256,
         .maxComputeWorkgroupSizeX =    256,
         .maxComputeWorkgroupSizeY =    256,
@@ -711,3 +711,8 @@ bool isValid(const WGPULimits& limits)
 }
 
 } // namespace WebGPU
+
+WGPULimits wgpuDefaultLimits()
+{
+    return WebGPU::defaultLimits();
+}
