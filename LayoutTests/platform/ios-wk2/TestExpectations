@@ -2390,3 +2390,5 @@ webgl/1.0.3/conformance/textures/texture-size-cube-maps.html [ Pass Timeout ]
 webgl/1.0.3/conformance/textures/texture-transparent-pixels-initialized.html [ Pass Timeout ]
 
 webkit.org/b/269033 fast/events/ios/select-all-with-existing-selection.html [ Pass Failure ]
+
+webkit.org/b/269086 [ Release ] imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-allowed-for-all.https.sub.html [ Pass Failure ]
