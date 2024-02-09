@@ -70,7 +70,9 @@ public:
     void unregisterSVGFontFaceElement(SVGFontFaceElement&);
 
 private:
-    Document& m_document;
+    Ref<Document> protectedDocument() const;
+
+    WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
     WeakHashSet<SVGSVGElement, WeakPtrImplWithEventTargetData> m_timeContainers; // For SVG 1.2 support this will need to be made more general.
     WeakHashSet<SVGFontFaceElement, WeakPtrImplWithEventTargetData> m_svgFontFaceElements;
     std::unique_ptr<SVGResourcesCache> m_resourcesCache;

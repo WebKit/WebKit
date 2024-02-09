@@ -49,7 +49,7 @@ SVGAttributeAnimator* SVGAnimateElementBase::animator() const
     ASSERT(!hasInvalidCSSAttributeType());
 
     if (!m_animator)
-        m_animator = targetElement()->createAnimator(attributeName(), animationMode(), calcMode(), isAccumulated(), isAdditive());
+        m_animator = protectedTargetElement()->createAnimator(attributeName(), animationMode(), calcMode(), isAccumulated(), isAdditive());
 
     return m_animator.get();
 }
@@ -59,7 +59,7 @@ bool SVGAnimateElementBase::hasValidAttributeType() const
     if (!targetElement() || hasInvalidCSSAttributeType())
         return false;
 
-    return targetElement()->isAnimatedAttribute(attributeName());
+    return protectedTargetElement()->isAnimatedAttribute(attributeName());
 }
 
 bool SVGAnimateElementBase::hasInvalidCSSAttributeType() const
@@ -106,8 +106,8 @@ bool SVGAnimateElementBase::setFromAndToValues(const String& fromString, const S
     if (!targetElement())
         return false;
 
-    if (auto* animator = this->animator()) {
-        animator->setFromAndToValues(*targetElement(), animateRangeString(fromString), animateRangeString(toString));
+    if (RefPtr animator = this->animator()) {
+        animator->setFromAndToValues(*protectedTargetElement(), animateRangeString(fromString), animateRangeString(toString));
         return true;
     }
     return false;
@@ -124,8 +124,8 @@ bool SVGAnimateElementBase::setFromAndByValues(const String& fromString, const S
     if (animationMode() == AnimationMode::FromBy && isDiscreteAnimator())
         return false;
 
-    if (auto* animator = this->animator()) {
-        animator->setFromAndByValues(*targetElement(), animateRangeString(fromString), animateRangeString(byString));
+    if (RefPtr animator = this->animator()) {
+        animator->setFromAndByValues(*protectedTargetElement(), animateRangeString(fromString), animateRangeString(byString));
         return true;
     }
     return false;
@@ -139,7 +139,7 @@ bool SVGAnimateElementBase::setToAtEndOfDurationValue(const String& toAtEndOfDur
     if (isDiscreteAnimator())
         return true;
 
-    if (auto* animator = this->animator()) {
+    if (RefPtr animator = this->animator()) {
         animator->setToAtEndOfDurationValue(animateRangeString(toAtEndOfDurationString));
         return true;
     }
@@ -152,7 +152,7 @@ void SVGAnimateElementBase::startAnimation()
         return;
 
     if (RefPtr protectedAnimator = this->animator())
-        protectedAnimator->start(*targetElement());
+        protectedAnimator->start(*protectedTargetElement());
 }
 
 void SVGAnimateElementBase::calculateAnimatedValue(float progress, unsigned repeatCount)
@@ -167,8 +167,8 @@ void SVGAnimateElementBase::calculateAnimatedValue(float progress, unsigned repe
     if (calcMode() == CalcMode::Discrete)
         progress = progress < 0.5 ? 0 : 1;
 
-    if (RefPtr protectedAnimator = this->animator())
-        protectedAnimator->animate(*targetElement(), progress, repeatCount);
+    if (RefPtr animator = this->animator())
+        animator->animate(*protectedTargetElement(), progress, repeatCount);
 }
 
 void SVGAnimateElementBase::applyResultsToTarget()
@@ -176,7 +176,7 @@ void SVGAnimateElementBase::applyResultsToTarget()
     if (!targetElement())
         return;
 
-    if (auto* animator = this->animator())
+    if (RefPtr animator = this->animator())
         animator->apply(*targetElement());
 }
 
@@ -185,7 +185,7 @@ void SVGAnimateElementBase::stopAnimation(SVGElement* targetElement)
     if (!targetElement)
         return;
 
-    if (auto* animator = this->animatorIfExists())
+    if (RefPtr animator = this->animatorIfExists())
         animator->stop(*targetElement);
 }
 
@@ -195,7 +195,7 @@ std::optional<float> SVGAnimateElementBase::calculateDistance(const String& from
     if (!targetElement())
         return { };
 
-    if (auto* animator = this->animator())
+    if (RefPtr animator = this->animator())
         return animator->calculateDistance(*targetElement(), fromString, toString);
 
     return { };

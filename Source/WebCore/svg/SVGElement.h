@@ -225,7 +225,7 @@ public:
     InstanceInvalidationGuard(SVGElement&);
     ~InstanceInvalidationGuard();
 private:
-    SVGElement& m_element;
+    WeakRef<SVGElement, WeakPtrImplWithEventTargetData> m_element;
 };
 
 class SVGElement::InstanceUpdateBlocker {
@@ -233,7 +233,7 @@ public:
     InstanceUpdateBlocker(SVGElement&);
     ~InstanceUpdateBlocker();
 private:
-    SVGElement& m_element;
+    WeakRef<SVGElement, WeakPtrImplWithEventTargetData> m_element;
 };
 
 inline SVGElement::InstanceInvalidationGuard::InstanceInvalidationGuard(SVGElement& element)
@@ -243,18 +243,18 @@ inline SVGElement::InstanceInvalidationGuard::InstanceInvalidationGuard(SVGEleme
 
 inline SVGElement::InstanceInvalidationGuard::~InstanceInvalidationGuard()
 {
-    m_element.invalidateInstances();
+    m_element->invalidateInstances();
 }
 
 inline SVGElement::InstanceUpdateBlocker::InstanceUpdateBlocker(SVGElement& element)
     : m_element(element)
 {
-    m_element.setInstanceUpdatesBlocked(true);
+    m_element->setInstanceUpdatesBlocked(true);
 }
 
 inline SVGElement::InstanceUpdateBlocker::~InstanceUpdateBlocker()
 {
-    m_element.setInstanceUpdatesBlocked(false);
+    m_element->setInstanceUpdatesBlocked(false);
 }
 
 

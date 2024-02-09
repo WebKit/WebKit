@@ -38,7 +38,7 @@ public:
     SVGUnitTypes::SVGUnitType clipPathUnits() const { return m_clipPathUnits->currentValue<SVGUnitTypes::SVGUnitType>(); }
     SVGAnimatedEnumeration& clipPathUnitsAnimated() { return m_clipPathUnits; }
 
-    SVGGraphicsElement* shouldApplyPathClipping() const;
+    RefPtr<SVGGraphicsElement> shouldApplyPathClipping() const;
 
     FloatRect calculateClipContentRepaintRect(RepaintRectCalculation);
 

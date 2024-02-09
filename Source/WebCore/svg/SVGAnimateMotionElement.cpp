@@ -126,8 +126,7 @@ void SVGAnimateMotionElement::updateAnimationPath()
     bool foundMPath = false;
 
     for (auto& mPath : childrenOfType<SVGMPathElement>(*this)) {
-        auto pathElement = mPath.pathElement();
-        if (pathElement) {
+        if (RefPtr pathElement = mPath.pathElement()) {
             m_animationPath = pathFromGraphicsElement(*pathElement);
             foundMPath = true;
             break;
@@ -256,14 +255,14 @@ void SVGAnimateMotionElement::applyResultsToTarget()
     auto updateTargetElement = [](SVGElement& element) {
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
         if (element.document().settings().layerBasedSVGEngineEnabled()) {
-            if (auto* layerRenderer = dynamicDowncast<RenderLayerModelObject>(element.renderer()))
+            if (CheckedPtr layerRenderer = dynamicDowncast<RenderLayerModelObject>(element.renderer()))
                 layerRenderer->updateHasSVGTransformFlags();
             // TODO: [LBSE] Avoid relayout upon transform changes (not possible in legacy, but should be in LBSE).
             element.updateSVGRendererForElementChange();
             return;
         }
 #endif
-        if (auto* renderer = element.renderer())
+        if (CheckedPtr renderer = element.renderer())
             renderer->setNeedsTransformUpdate();
         element.updateSVGRendererForElementChange();
     };

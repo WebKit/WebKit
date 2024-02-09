@@ -81,7 +81,7 @@ String SVGAElement::title() const
 void SVGAElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == SVGNames::targetAttr) {
-        m_target->setBaseValInternal(newValue);
+        Ref { m_target }->setBaseValInternal(newValue);
         return;
     } else if (name == SVGNames::relAttr) {
         if (m_relList)
@@ -105,7 +105,7 @@ void SVGAElement::svgAttributeChanged(const QualifiedName& attrName)
 
 RenderPtr<RenderElement> SVGAElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    auto* svgParent = dynamicDowncast<SVGElement>(parentNode());
+    RefPtr svgParent = dynamicDowncast<SVGElement>(parentNode());
     if (svgParent && svgParent->isTextContent())
         return createRenderer<RenderSVGInline>(RenderObject::Type::SVGInline, *this, WTFMove(style));
 
@@ -141,10 +141,8 @@ void SVGAElement::defaultEventHandler(Event& event)
                 target = blankTargetFrameName();
             event.setDefaultHandled();
 
-            RefPtr frame = document().frame();
-            if (!frame)
-                return;
-            frame->loader().changeLocation(document().completeURL(url), target, &event, ReferrerPolicy::EmptyString, document().shouldOpenExternalURLsPolicyToPropagate());
+            if (RefPtr frame = document().frame())
+                frame->checkedLoader()->changeLocation(protectedDocument()->completeURL(url), target, &event, ReferrerPolicy::EmptyString, document().shouldOpenExternalURLsPolicyToPropagate());
             return;
         }
     }

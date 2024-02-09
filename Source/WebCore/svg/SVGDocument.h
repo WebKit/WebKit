@@ -46,7 +46,7 @@ private:
 
 inline Ref<SVGDocument> SVGDocument::create(LocalFrame* frame, const Settings& settings, const URL& url)
 {
-    auto document = adoptRef(*new SVGDocument(frame, settings, url));
+    Ref document = adoptRef(*new SVGDocument(frame, settings, url));
     document->addToContextsMap();
     return document;
 }

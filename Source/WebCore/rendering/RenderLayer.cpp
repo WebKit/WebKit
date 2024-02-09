@@ -3088,7 +3088,7 @@ void RenderLayer::setupClipPath(GraphicsContext& context, GraphicsContextStateSa
     if (RefPtr referenceClipPathOperation = dynamicDowncast<ReferencePathOperation>(style.clipPath())) {
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
         if (auto* svgClipper = renderer().svgClipperResourceFromStyle()) {
-            auto* graphicsElement = svgClipper->shouldApplyPathClipping();
+            RefPtr graphicsElement = svgClipper->shouldApplyPathClipping();
             if (!graphicsElement) {
                 paintFlags.add(PaintLayerFlag::PaintingSVGClippingMask);
                 return;

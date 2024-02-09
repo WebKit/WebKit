@@ -78,7 +78,7 @@ static Path& sharedClipAllPath()
     return clipAllPath.get();
 }
 
-SVGGraphicsElement* RenderSVGResourceClipper::shouldApplyPathClipping() const
+RefPtr<SVGGraphicsElement> RenderSVGResourceClipper::shouldApplyPathClipping() const
 {
     if (currentClippingMode() == ClippingMode::MaskClipping)
         return nullptr;

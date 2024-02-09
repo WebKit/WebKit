@@ -38,7 +38,7 @@ SVGDocument::SVGDocument(LocalFrame* frame, const Settings& settings, const URL&
 
 bool SVGDocument::zoomAndPanEnabled() const
 {
-    auto element = DocumentSVG::rootElement(*this);
+    RefPtr element = DocumentSVG::rootElement(*this);
     if (!element)
         return false;
     return (element->useCurrentView() ? element->currentView().zoomAndPan() : element->zoomAndPan()) == SVGZoomAndPanMagnify;
@@ -46,7 +46,7 @@ bool SVGDocument::zoomAndPanEnabled() const
 
 void SVGDocument::startPan(const FloatPoint& start)
 {
-    auto element = DocumentSVG::rootElement(*this);
+    RefPtr element = DocumentSVG::rootElement(*this);
     if (!element)
         return;
     m_panningOffset = start - element->currentTranslateValue();
@@ -54,7 +54,7 @@ void SVGDocument::startPan(const FloatPoint& start)
 
 void SVGDocument::updatePan(const FloatPoint& position) const
 {
-    auto element = DocumentSVG::rootElement(*this);
+    RefPtr element = DocumentSVG::rootElement(*this);
     if (!element)
         return;
     element->setCurrentTranslate(position - m_panningOffset);
@@ -62,7 +62,7 @@ void SVGDocument::updatePan(const FloatPoint& position) const
 
 Ref<Document> SVGDocument::cloneDocumentWithoutChildren() const
 {
-    return create(nullptr, settings(), url());
+    return create(nullptr, protectedSettings(), url());
 }
 
 }

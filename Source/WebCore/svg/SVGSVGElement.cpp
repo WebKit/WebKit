@@ -781,6 +781,11 @@ bool SVGSVGElement::scrollToFragment(StringView fragmentIdentifier)
     return false;
 }
 
+Ref<SMILTimeContainer> SVGSVGElement::protectedTimeContainer()
+{
+    return m_timeContainer;
+}
+
 void SVGSVGElement::resetScrollAnchor()
 {
     if (!m_useCurrentView && m_currentViewFragmentIdentifier.isEmpty())
