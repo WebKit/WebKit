@@ -543,6 +543,13 @@ class GitHubEventHandlerNoEdits(GitHubEventHandler):
             payload['action'] = 'synchronize'
             event = 'merge_queue'
 
+        result = yield super().handle_pull_request(payload, event)
+        changes = result[0]
+
+        # Ignore pull-request events that don't include changes (such as "assigning" a pull-request)
+        if not changes or 'properties' not in changes[0]:
+            return defer.returnValue(result)
+
         # We received this exact event in the last 60 seconds, ignore it
         if self.is_duped(f'{event}-{head_sha}'):
             log.msg(f'Discarding duplicate for PR #{pr_number} with hash: {head_sha}')
@@ -552,10 +559,6 @@ class GitHubEventHandlerNoEdits(GitHubEventHandler):
         if event in ('unsafe_merge_queue', 'merge_queue'):
             yield task.deferLater(reactor, self.LABEL_PROCESS_DELAY, lambda: None)
 
-        result = yield super().handle_pull_request(payload, event)
-        changes = result[0]
-        if not changes or 'properties' not in changes[0]:
-            return defer.returnValue(result)
         change = changes[0]
 
         repo_full_name = payload['repository']['full_name']
