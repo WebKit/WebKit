@@ -50,7 +50,7 @@ namespace WebKit {
 
 using namespace WebExtensionDynamicScripts;
 
-void WebExtensionContext::tabsCreate(WebPageProxyIdentifier webPageProxyIdentifier, const WebExtensionTabParameters& parameters, CompletionHandler<void(std::optional<WebExtensionTabParameters>, WebExtensionTab::Error)>&& completionHandler)
+void WebExtensionContext::tabsCreate(std::optional<WebPageProxyIdentifier> webPageProxyIdentifier, const WebExtensionTabParameters& parameters, CompletionHandler<void(std::optional<WebExtensionTabParameters>, WebExtensionTab::Error)>&& completionHandler)
 {
     ASSERT(!parameters.audible);
     ASSERT(!parameters.loading);
@@ -75,13 +75,13 @@ void WebExtensionContext::tabsCreate(WebPageProxyIdentifier webPageProxyIdentifi
     creationOptions.shouldShowReaderMode = parameters.showingReaderMode.value_or(false);
 
     RefPtr window = getWindow(parameters.windowIdentifier.value_or(WebExtensionWindowConstants::CurrentIdentifier), webPageProxyIdentifier);
-    if (!window) {
+    if (parameters.windowIdentifier && !window) {
         completionHandler(std::nullopt, toErrorString(apiName, nil, @"window not found"));
         return;
     }
 
-    creationOptions.desiredWindow = window->delegate();
-    creationOptions.desiredIndex = parameters.index.value_or(window->tabs().size());
+    creationOptions.desiredWindow = window ? window->delegate() : nil;
+    creationOptions.desiredIndex = parameters.index.value_or(window ? window->tabs().size() : 0);
 
     if (parameters.parentTabIdentifier) {
         RefPtr tab = getTab(parameters.parentTabIdentifier.value());
