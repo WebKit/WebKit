@@ -5302,7 +5302,8 @@ void WebPageProxy::findString(const String& string, OptionSet<FindOptions> optio
 
     sendFindStringMessage(Messages::WebPage::FindString(string, options | FindOptions::DoNotSetSelection, maxMatchCount), WTFMove(callbackFunction));
 #if ENABLE(IMAGE_ANALYSIS)
-    sendFindStringMessage(Messages::WebPage::FindStringIncludingImages(string, options | FindOptions::DoNotSetSelection, maxMatchCount), [](bool) { });
+    if (m_preferences->imageAnalysisDuringFindInPageEnabled())
+        sendFindStringMessage(Messages::WebPage::FindStringIncludingImages(string, options | FindOptions::DoNotSetSelection, maxMatchCount), [](bool) { });
 #endif
 }
 
