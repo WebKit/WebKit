@@ -1140,6 +1140,28 @@ static void addOverlayEventRegions(WebCore::PlatformLayerIdentifier layerID, con
         addOverlayEventRegions(childLayerID, changedLayerPropertiesMap, overlayRegionsIDs);
 }
 
+static CGRect snapRectToScrollViewEdges(CGRect rect, CGRect viewport)
+{
+    constexpr float edgeSnapThreshold = 4.0;
+
+    auto leftDelta = CGRectGetMinX(rect) - CGRectGetMinX(viewport);
+    auto rightDelta = CGRectGetMaxX(viewport) - CGRectGetMaxX(rect);
+    auto topDelta = CGRectGetMinY(rect) - CGRectGetMinY(viewport);
+    auto bottomDelta = CGRectGetMaxY(viewport) - CGRectGetMaxY(rect);
+
+    if (std::abs(leftDelta) <= edgeSnapThreshold && std::abs(rightDelta) > edgeSnapThreshold)
+        rect.origin.x -= leftDelta;
+    if (std::abs(rightDelta) <= edgeSnapThreshold && std::abs(leftDelta) > edgeSnapThreshold)
+        rect.origin.x += rightDelta;
+
+    if (std::abs(topDelta) <= edgeSnapThreshold && std::abs(bottomDelta) > edgeSnapThreshold)
+        rect.origin.y -= topDelta;
+    if (std::abs(bottomDelta) <= edgeSnapThreshold && std::abs(topDelta) > edgeSnapThreshold)
+        rect.origin.y += bottomDelta;
+
+    return CGRectIntersection(rect, viewport);
+}
+
 static void configureScrollViewWithOverlayRegionsIDs(WKBaseScrollView* scrollView, const WebKit::RemoteLayerTreeHost& host, const HashSet<WebCore::PlatformLayerIdentifier>& overlayRegionsIDs)
 {
     HashSet<WebCore::IntRect> overlayRegionRects;
@@ -1150,6 +1172,8 @@ static void configureScrollViewWithOverlayRegionsIDs(WKBaseScrollView* scrollVie
             continue;
         const auto* uiView = node->uiView();
         if (!uiView)
+            continue;
+        if (uiView == scrollView)
             continue;
 
         WKBaseScrollView* enclosingScrollView = nil;
@@ -1162,13 +1186,34 @@ static void configureScrollViewWithOverlayRegionsIDs(WKBaseScrollView* scrollVie
         if (!enclosingScrollView)
             continue;
 
-        if (enclosingScrollView != scrollView)
+        if (enclosingScrollView != scrollView) {
+            // Overlays on parent scrollViews should still be taken into account.
+            bool overlayFromAncestor = false;
+            for (UIView *view = [scrollView superview]; view; view = [view superview]) {
+                if (view == enclosingScrollView) {
+                    overlayFromAncestor = true;
+                    break;
+                }
+            }
+
+            if (!overlayFromAncestor)
+                continue;
+        }
+
+        // Overlay regions are positioned relative to the viewport of the scrollview,
+        // not the frame (external) nor the bounds (origin moves while scrolling).
+        CGRect rect = [uiView.superview convertRect:uiView.frame toView:scrollView.superview];
+        CGRect offsetRect = CGRectOffset(rect, -scrollView.frame.origin.x, -scrollView.frame.origin.y);
+        CGRect viewport = CGRectOffset(scrollView.frame, -scrollView.frame.origin.x, -scrollView.frame.origin.y);
+        CGRect snappedRect = snapRectToScrollViewEdges(offsetRect, viewport);
+
+        if (!snappedRect.size.width || !snappedRect.size.height)
+            continue;
+        // Filtering out solid background color layers and other larger overlays.
+        if (snappedRect.size.width * snappedRect.size.height >= scrollView.bounds.size.width * scrollView.bounds.size.height * 0.5)
             continue;
 
-        CGRect rect = [uiView convertRect:node->eventRegion().region().bounds() toView:[scrollView superview]];
-        // Filtering out solid background color layers.
-        if (!CGSizeEqualToSize(scrollView.contentSize, rect.size))
-            overlayRegionRects.add(WebCore::enclosingIntRect(rect));
+        overlayRegionRects.add(WebCore::enclosingIntRect(snappedRect));
     }
 
     [scrollView _updateOverlayRegionRects:overlayRegionRects];

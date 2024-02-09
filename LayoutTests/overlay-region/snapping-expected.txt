@@ -39,33 +39,35 @@
                                   (layer anchorPoint [x: 0 y: 0])
                                   (subviews
                                     (view [class: WKCompositingView]
-                                      (layer bounds [x: 0 y: 0 width: 800 height: 600])
-                                      (layer position [x: 400 y: 400])
+                                      (layer bounds [x: 0 y: 0 width: 728 height: 540])
+                                      (layer position [x: 436 y: 436])
                                       (subviews
                                         (view [class: <class not in allowed list of classes>]
                                           (scrolling behavior 2)
-                                          (overlay region [x: 0 y: 0 width: 800 height: 50])
-                                          (overlay region [x: 0 y: 50 width: 800 height: 50])
-                                          (overlay region [x: 0 y: 550 width: 800 height: 50])
-                                          (layer bounds [x: 0 y: 4100 width: 800 height: 600])
-                                          (layer position [x: 400 y: 400])
+                                          (overlay region [x: 0 y: 0 width: 50 height: 50])
+                                          (overlay region [x: 0 y: 490 width: 50 height: 50])
+                                          (overlay region [x: 0 y: 50 width: 728 height: 50])
+                                          (overlay region [x: 678 y: 0 width: 50 height: 50])
+                                          (overlay region [x: 678 y: 490 width: 50 height: 50])
+                                          (layer bounds [x: 0 y: 0 width: 728 height: 540])
+                                          (layer position [x: 364 y: 364])
                                           (subviews
                                             (view [class: WKCompositingView]
-                                              (layer bounds [x: 0 y: 0 width: 800 height: 7100])
+                                              (layer bounds [x: 0 y: 0 width: 728 height: 7100])
                                               (layer anchorPoint [x: 0 y: 0])
                                               (subviews
                                                 (view [class: WKCompositingView]
                                                   (layer bounds [x: 0 y: 0 width: 0 height: 0]))))
                                             (view [class: <class not in allowed list of classes>]
-                                              (layer bounds [x: 0 y: 0 width: 12 height: 600])
-                                              (layer position [x: 791 y: 791])
+                                              (layer bounds [x: 0 y: 0 width: 12 height: 540])
+                                              (layer position [x: 719 y: 719])
                                               (layer zPosition 1000)
                                               (subviews
                                                 (view [class: UIView]
                                                   (layer bounds [x: 0 y: 0 width: 32 height: 116])
                                                   (layer position [x: 6 y: 6]))
                                                 (view [class: <class not in allowed list of classes>]
-                                                  (layer bounds [x: 0 y: 0 width: 12 height: 600])
+                                                  (layer bounds [x: 0 y: 0 width: 12 height: 540])
                                                   (layer position [x: 6 y: 6])
                                                   (subviews
                                                     (view [class: <class not in allowed list of classes>]
@@ -79,20 +81,20 @@
                                                           (layer bounds [x: 0 y: 0 width: 6 height: 28])
                                                           (layer position [x: 6 y: 6]))))))))
                                             (view [class: <class not in allowed list of classes>]
-                                              (layer bounds [x: 0 y: 0 width: 800 height: 12])
-                                              (layer position [x: 400 y: 400])
+                                              (layer bounds [x: 0 y: 0 width: 728 height: 12])
+                                              (layer position [x: 364 y: 364])
                                               (layer zPosition 1000)
                                               (subviews
                                                 (view [class: UIView]
                                                   (layer bounds [x: 0 y: 0 width: 116 height: 32])
-                                                  (layer position [x: 400 y: 400]))
+                                                  (layer position [x: 364 y: 364]))
                                                 (view [class: <class not in allowed list of classes>]
-                                                  (layer bounds [x: 0 y: 0 width: 800 height: 12])
-                                                  (layer position [x: 400 y: 400])
+                                                  (layer bounds [x: 0 y: 0 width: 728 height: 12])
+                                                  (layer position [x: 364 y: 364])
                                                   (subviews
                                                     (view [class: <class not in allowed list of classes>]
                                                       (layer bounds [x: 0 y: 0 width: 96 height: 12])
-                                                      (layer position [x: 400 y: 400])
+                                                      (layer position [x: 364 y: 364])
                                                       (subviews
                                                         (view [class: <class not in allowed list of classes>]
                                                           (layer bounds [x: 0 y: 0 width: 5.999999999999995 height: 90])
@@ -101,46 +103,77 @@
                                                           (layer bounds [x: 0 y: 0 width: 90 height: 6])
                                                           (layer position [x: 48 y: 48]))))))))))))
                                     (view [class: WKCompositingView]
-                                      (layer bounds [x: 0 y: 0 width: 800 height: 600])
-                                      (layer position [x: 400 y: 400])
+                                      (layer bounds [x: 0 y: 0 width: 728 height: 540])
+                                      (layer position [x: 436 y: 436])
                                       (subviews
                                         (view [class: WKCompositingView]
-                                          (layer bounds [x: 0 y: 4100 width: 0 height: 0])
+                                          (layer bounds [x: 0 y: 0 width: 0 height: 0])
                                           (subviews
                                             (view [class: WKTransformView]
                                               (layer bounds [x: 0 y: 0 width: 0 height: 0])
                                               (layer position [x: 0 y: 0])
                                               (subviews
                                                 (view [class: WKCompositingView]
-                                                  (layer bounds [x: 0 y: 0 width: 800 height: 50])
-                                                  (layer position [x: 400 y: 400]))))))))
+                                                  (layer bounds [x: 0 y: 0 width: 728 height: 50])
+                                                  (layer position [x: 364 y: 364]))))))))
                                     (view [class: WKCompositingView]
-                                      (layer bounds [x: 0 y: 0 width: 800 height: 600])
-                                      (layer position [x: 400 y: 400])
+                                      (layer bounds [x: 0 y: 0 width: 728 height: 540])
+                                      (layer position [x: 436 y: 436])
                                       (subviews
                                         (view [class: WKCompositingView]
-                                          (layer bounds [x: 0 y: 4100 width: 0 height: 0])
+                                          (layer bounds [x: 0 y: 0 width: 0 height: 0])
                                           (subviews
                                             (view [class: WKTransformView]
                                               (layer bounds [x: 0 y: 0 width: 0 height: 0])
                                               (layer position [x: 0 y: 0])
                                               (subviews
                                                 (view [class: WKCompositingView]
-                                                  (layer bounds [x: 0 y: 0 width: 800 height: 50])
-                                                  (layer position [x: 400 y: 400]))))))))
+                                                  (layer bounds [x: 0 y: 0 width: 728 height: 50])
+                                                  (layer position [x: 364 y: 364]))))))))
                                     (view [class: WKTransformView]
                                       (layer bounds [x: 0 y: 0 width: 0 height: 0])
+                                      (layer position [x: 73 y: 73])
                                       (subviews
                                         (view [class: WKCompositingView]
-                                          (layer bounds [x: 0 y: 0 width: 800 height: 50])
-                                          (layer position [x: 400 y: 400]))))
+                                          (layer bounds [x: 0 y: 0 width: 50 height: 50])
+                                          (layer position [x: 25 y: 25])
+                                          (subviews
+                                            (view [class: WKCompositingView]
+                                              (layer bounds [x: 0 y: 0 width: 50 height: 50])
+                                              (layer anchorPoint [x: 0 y: 0]))))))
                                     (view [class: WKTransformView]
                                       (layer bounds [x: 0 y: 0 width: 0 height: 0])
-                                      (layer position [x: 0 y: 0])
+                                      (layer position [x: 751 y: 751])
                                       (subviews
                                         (view [class: WKCompositingView]
-                                          (layer bounds [x: 0 y: 0 width: 800 height: 50])
-                                          (layer position [x: 400 y: 400]))))))))))))))))
+                                          (layer bounds [x: 0 y: 0 width: 50 height: 50])
+                                          (layer position [x: 25 y: 25])
+                                          (subviews
+                                            (view [class: WKCompositingView]
+                                              (layer bounds [x: 0 y: 0 width: 50 height: 50])
+                                              (layer anchorPoint [x: 0 y: 0]))))))
+                                    (view [class: WKTransformView]
+                                      (layer bounds [x: 0 y: 0 width: 0 height: 0])
+                                      (layer position [x: 748 y: 748])
+                                      (subviews
+                                        (view [class: WKCompositingView]
+                                          (layer bounds [x: 0 y: 0 width: 50 height: 50])
+                                          (layer position [x: 25 y: 25])
+                                          (subviews
+                                            (view [class: WKCompositingView]
+                                              (layer bounds [x: 0 y: 0 width: 50 height: 50])
+                                              (layer anchorPoint [x: 0 y: 0]))))))
+                                    (view [class: WKTransformView]
+                                      (layer bounds [x: 0 y: 0 width: 0 height: 0])
+                                      (layer position [x: 71 y: 71])
+                                      (subviews
+                                        (view [class: WKCompositingView]
+                                          (layer bounds [x: 0 y: 0 width: 50 height: 50])
+                                          (layer position [x: 25 y: 25])
+                                          (subviews
+                                            (view [class: WKCompositingView]
+                                              (layer bounds [x: 0 y: 0 width: 50 height: 50])
+                                              (layer anchorPoint [x: 0 y: 0]))))))))))))))))))
             (view [class: _UILayerHostView]
               (layer bounds [x: 0 y: 0 width: 0 height: 0]))))
         (view [class: UIView]

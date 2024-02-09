@@ -42,12 +42,12 @@
                                       (layer bounds [x: 0 y: 0 width: 0 height: 0])
                                       (subviews
                                         (view [class: WKCompositingView]
-                                          (layer bounds [x: 0 y: 0 width: 644 height: 604])
+                                          (layer bounds [x: 0 y: 0 width: 644 height: 424])
                                           (layer position [x: 322 y: 322])
                                           (subviews
                                             (view [class: <class not in allowed list of classes>]
                                               (scrolling behavior 0)
-                                              (layer bounds [x: 0 y: 0 width: 640 height: 600])
+                                              (layer bounds [x: 0 y: 0 width: 640 height: 420])
                                               (layer position [x: 322 y: 322])
                                               (subviews
                                                 (view [class: WKCompositingView]
@@ -70,7 +70,7 @@
                                                           (layer bounds [x: 0 y: 0 width: 640 height: 50])
                                                           (layer position [x: 320 y: 320]))))))
                                                 (view [class: <class not in allowed list of classes>]
-                                                  (layer bounds [x: 0 y: 0 width: 12 height: 600])
+                                                  (layer bounds [x: 0 y: 0 width: 12 height: 420])
                                                   (layer position [x: 631 y: 631])
                                                   (layer zPosition 1000)
                                                   (subviews
@@ -78,7 +78,7 @@
                                                       (layer bounds [x: 0 y: 0 width: 32 height: 116])
                                                       (layer position [x: 6 y: 6]))
                                                     (view [class: <class not in allowed list of classes>]
-                                                      (layer bounds [x: 0 y: 0 width: 12 height: 600])
+                                                      (layer bounds [x: 0 y: 0 width: 12 height: 420])
                                                       (layer position [x: 6 y: 6])
                                                       (subviews
                                                         (view [class: <class not in allowed list of classes>]
@@ -118,12 +118,12 @@
                                       (layer position [x: 192 y: 192])
                                       (subviews
                                         (view [class: WKCompositingView]
-                                          (layer bounds [x: 0 y: 0 width: 644 height: 604])
+                                          (layer bounds [x: 0 y: 0 width: 644 height: 424])
                                           (layer position [x: 322 y: 322])
                                           (subviews
                                             (view [class: <class not in allowed list of classes>]
                                               (scrolling behavior 0)
-                                              (layer bounds [x: 0 y: 0 width: 640 height: 600])
+                                              (layer bounds [x: 0 y: 0 width: 640 height: 420])
                                               (layer position [x: 322 y: 322])
                                               (subviews
                                                 (view [class: WKCompositingView]
@@ -146,7 +146,7 @@
                                                           (layer bounds [x: 0 y: 0 width: 640 height: 50])
                                                           (layer position [x: 320 y: 320]))))))
                                                 (view [class: <class not in allowed list of classes>]
-                                                  (layer bounds [x: 0 y: 0 width: 12 height: 600])
+                                                  (layer bounds [x: 0 y: 0 width: 12 height: 420])
                                                   (layer position [x: 631 y: 631])
                                                   (layer zPosition 1000)
                                                   (subviews
@@ -154,7 +154,7 @@
                                                       (layer bounds [x: 0 y: 0 width: 32 height: 116])
                                                       (layer position [x: 6 y: 6]))
                                                     (view [class: <class not in allowed list of classes>]
-                                                      (layer bounds [x: 0 y: 0 width: 12 height: 600])
+                                                      (layer bounds [x: 0 y: 0 width: 12 height: 420])
                                                       (layer position [x: 6 y: 6])
                                                       (subviews
                                                         (view [class: <class not in allowed list of classes>]
@@ -197,14 +197,13 @@
                                       (layer position [x: 80 y: 80])
                                       (subviews
                                         (view [class: WKCompositingView]
-                                          (layer bounds [x: 0 y: 0 width: 660 height: 604])
+                                          (layer bounds [x: 0 y: 0 width: 660 height: 424])
                                           (layer position [x: 330 y: 330])
                                           (subviews
                                             (view [class: <class not in allowed list of classes>]
                                               (scrolling behavior 2)
-                                              (overlay region [x: 2 y: 2 width: 656 height: 50])
-                                              (overlay region [x: 2 y: 3052 width: 656 height: 50])
-                                              (layer bounds [x: 0 y: 0 width: 656 height: 600])
+                                              (overlay region [x: 0 y: 0 width: 656 height: 50])
+                                              (layer bounds [x: 0 y: 0 width: 656 height: 420])
                                               (layer position [x: 330 y: 330])
                                               (subviews
                                                 (view [class: WKCompositingView]
@@ -227,7 +226,7 @@
                                                           (layer bounds [x: 0 y: 0 width: 656 height: 50])
                                                           (layer position [x: 328 y: 328]))))))
                                                 (view [class: <class not in allowed list of classes>]
-                                                  (layer bounds [x: 0 y: 0 width: 12 height: 600])
+                                                  (layer bounds [x: 0 y: 0 width: 12 height: 420])
                                                   (layer position [x: 647 y: 647])
                                                   (layer zPosition 1000)
                                                   (subviews
@@ -235,7 +234,7 @@
                                                       (layer bounds [x: 0 y: 0 width: 32 height: 116])
                                                       (layer position [x: 6 y: 6]))
                                                     (view [class: <class not in allowed list of classes>]
-                                                      (layer bounds [x: 0 y: 0 width: 12 height: 600])
+                                                      (layer bounds [x: 0 y: 0 width: 12 height: 420])
                                                       (layer position [x: 6 y: 6])
                                                       (subviews
                                                         (view [class: <class not in allowed list of classes>]

@@ -44,6 +44,9 @@
                                       (subviews
                                         (view [class: <class not in allowed list of classes>]
                                           (scrolling behavior 2)
+                                          (overlay region [x: 0 y: 0 width: 800 height: 50])
+                                          (overlay region [x: 0 y: 50 width: 800 height: 50])
+                                          (overlay region [x: 0 y: 550 width: 800 height: 50])
                                           (layer bounds [x: 0 y: 0 width: 800 height: 600])
                                           (layer position [x: 400 y: 400])
                                           (subviews
