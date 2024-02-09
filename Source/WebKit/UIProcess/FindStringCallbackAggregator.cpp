@@ -26,6 +26,7 @@
 #include "config.h"
 #include "FindStringCallbackAggregator.h"
 
+#include "APIFindClient.h"
 #include "WebFrameProxy.h"
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
@@ -86,29 +87,28 @@ FindStringCallbackAggregator::~FindStringCallbackAggregator()
         return;
     }
 
-    RefPtr targetFrame = focusedFrame.get();
+    RefPtr frameContainingMatch = focusedFrame.get();
     do {
-        auto it = m_matches.find(targetFrame->frameID());
+        auto it = m_matches.find(frameContainingMatch->frameID());
         if (it != m_matches.end()) {
-            if (shouldTargetFrame(*targetFrame, *focusedFrame, it->value))
+            if (shouldTargetFrame(*frameContainingMatch, *focusedFrame, it->value))
                 break;
         }
-        targetFrame = incrementFrame(*targetFrame);
-    } while (targetFrame && targetFrame != focusedFrame);
+        frameContainingMatch = incrementFrame(*frameContainingMatch);
+    } while (frameContainingMatch && frameContainingMatch != focusedFrame);
 
     auto message = Messages::WebPage::FindString(m_string, m_options, m_maxMatchCount);
-    if (!targetFrame) {
-        focusedFrame->protectedProcess()->sendWithAsyncReply(WTFMove(message), [completionHandler = WTFMove(m_completionHandler)](std::optional<FrameIdentifier>, bool) mutable {
-            completionHandler(false);
-        }, protectedPage->webPageID());
-        return;
-    }
-
-    targetFrame->protectedProcess()->sendWithAsyncReply(WTFMove(message), [completionHandler = WTFMove(m_completionHandler)](std::optional<FrameIdentifier> frameID, bool) mutable {
+    auto completionHandler = [protectedPage = Ref { *protectedPage }, string = m_string, completionHandler = WTFMove(m_completionHandler)](std::optional<FrameIdentifier> frameID, Vector<IntRect>&& matchRects, uint32_t matchCount, int32_t matchIndex, bool didWrap) mutable {
+        if (!frameID)
+            protectedPage->findClient().didFailToFindString(protectedPage.ptr(), string);
+        else
+            protectedPage->findClient().didFindString(protectedPage.ptr(), string, matchRects, matchCount, matchIndex, didWrap);
         completionHandler(frameID.has_value());
-    }, protectedPage->webPageID());
+    };
 
-    if (focusedFrame && focusedFrame->process() != targetFrame->process())
+    Ref targetFrame = frameContainingMatch ? *frameContainingMatch : *focusedFrame;
+    targetFrame->protectedProcess()->sendWithAsyncReply(WTFMove(message), WTFMove(completionHandler), protectedPage->webPageID());
+    if (frameContainingMatch && focusedFrame && focusedFrame->process() != frameContainingMatch->process())
         protectedPage->clearSelection(focusedFrame->frameID());
 }
 

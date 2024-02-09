@@ -5290,12 +5290,20 @@ void WebPageProxy::findStringMatches(const String& string, OptionSet<FindOptions
 
 void WebPageProxy::findString(const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, CompletionHandler<void(bool)>&& callbackFunction)
 {
-    Ref callbackAggregator = FindStringCallbackAggregator::create(*this, string, options, maxMatchCount, WTFMove(callbackFunction));
-    forEachWebContentProcess([&](auto& webProcess, auto pageID) {
-        webProcess.sendWithAsyncReply(Messages::WebPage::FindString(string, options | FindOptions::DoNotSetSelection, maxMatchCount), [callbackAggregator] (std::optional<FrameIdentifier> frameID, bool didWrap) {
-            callbackAggregator->foundString(frameID, didWrap);
-        }, pageID);
-    });
+    auto sendFindStringMessage = [&]<typename M>(M&& message, auto&& completionHandler)
+    {
+        Ref callbackAggregator = FindStringCallbackAggregator::create(*this, string, options, maxMatchCount, std::forward<decltype(completionHandler)>(completionHandler));
+        forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+            webProcess.sendWithAsyncReply(std::forward<M>(message), [callbackAggregator](std::optional<FrameIdentifier> frameID, Vector<IntRect>&&, uint32_t, int32_t, bool didWrap) {
+                callbackAggregator->foundString(frameID, didWrap);
+            }, pageID);
+        });
+    };
+
+    sendFindStringMessage(Messages::WebPage::FindString(string, options | FindOptions::DoNotSetSelection, maxMatchCount), WTFMove(callbackFunction));
+#if ENABLE(IMAGE_ANALYSIS)
+    sendFindStringMessage(Messages::WebPage::FindStringIncludingImages(string, options | FindOptions::DoNotSetSelection, maxMatchCount), [](bool) { });
+#endif
 }
 
 void WebPageProxy::findString(const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount)
@@ -8356,11 +8364,6 @@ void WebPageProxy::setTextIndicatorAnimationProgress(float progress)
 #else
     notImplemented();
 #endif
-}
-
-void WebPageProxy::didFindString(const String& string, const Vector<WebCore::IntRect>& matchRects, uint32_t matchCount, int32_t matchIndex, bool didWrapAround)
-{
-    m_findClient->didFindString(this, string, matchRects, matchCount, matchIndex, didWrapAround);
 }
 
 void WebPageProxy::didFailToFindString(const String& string)
