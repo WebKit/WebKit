@@ -867,7 +867,7 @@ private:
     {
         parseAttributes(element);
         if (parsingFailed())
-            return element;
+            return WTFMove(element);
         parent.parserAppendChildIntoIsolatedTree(element);
         element->beginParsingChildren();
         element->finishParsingChildren();
