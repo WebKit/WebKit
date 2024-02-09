@@ -247,17 +247,16 @@ NS_ASSUME_NONNULL_END
 #endif
 
 #if HAVE(AVCONTENTKEYREQUEST_PENDING_PROTECTION_STATUS)
-#if !HAVE(BROWSER_ENGINE_SUPPORTING_API)
 typedef NS_ENUM(NSInteger, AVExternalContentProtectionStatus) {
     AVExternalContentProtectionStatusPending      = 0,
     AVExternalContentProtectionStatusSufficient   = 1,
     AVExternalContentProtectionStatusInsufficient = 2,
 };
-#endif
+
 @interface AVContentKeyRequest (AVContentKeyRequest_PendingProtectionStatus)
 - (AVExternalContentProtectionStatus)externalContentProtectionStatus;
 @end
-#endif // HAVE(AVCONTENTKEYREQUEST_PENDING_PROTECTION_STATUS)
+#endif
 
 #if HAVE(AVCONTENTKEYREQUEST_COMPATABILITIY_MODE)
 NS_ASSUME_NONNULL_BEGIN
@@ -384,14 +383,7 @@ NS_ASSUME_NONNULL_END
 
 #endif // __has_include(<AVFoundation/AVSampleBufferAudioRenderer.h>)
 
-#if HAVE(BROWSER_ENGINE_SUPPORTING_API)
-#import <AVFoundation/AVVideoPerformanceMetrics.h>
-@interface AVVideoPerformanceMetrics (AVVideoPerformanceMetricsDisplayCompositedVideoFrames)
-@property (nonatomic, readonly) unsigned long numberOfDisplayCompositedVideoFrames;
-@property (nonatomic, readonly) unsigned long numberOfNonDisplayCompositedVideoFrames;
-@property (nonatomic, readonly) double totalFrameDelay;
-@end
-#else
+#if !USE(APPLE_INTERNAL_SDK)
 @interface AVVideoPerformanceMetrics : NSObject
 @property (nonatomic, readonly) unsigned long totalNumberOfVideoFrames;
 @property (nonatomic, readonly) unsigned long numberOfDroppedVideoFrames;
@@ -400,7 +392,12 @@ NS_ASSUME_NONNULL_END
 @property (nonatomic, readonly) unsigned long numberOfNonDisplayCompositedVideoFrames;
 @property (nonatomic, readonly) double totalFrameDelay;
 @end
-#endif // HAVE(BROWSER_ENGINE_SUPPORTING_API)
+#else
+@interface AVVideoPerformanceMetrics (AVVideoPerformanceMetricsDisplayCompositedVideoFrames)
+@property (nonatomic, readonly) unsigned long numberOfDisplayCompositedVideoFrames;
+@property (nonatomic, readonly) unsigned long numberOfNonDisplayCompositedVideoFrames;
+@end
+#endif
 
 #if !USE(APPLE_INTERNAL_SDK) && HAVE(AVAUDIOSESSION) && !PLATFORM(MACCATALYST)
 #import <AVFoundation/AVAudioSession.h>
