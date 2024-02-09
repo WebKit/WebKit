@@ -39,6 +39,11 @@ class CoreIPCCFType;
 class CoreIPCCNPhoneNumber;
 class CoreIPCCNPostalAddress;
 class CoreIPCPKContact;
+class CoreIPCPKPayment;
+class CoreIPCPKPaymentToken;
+class CoreIPCPKShippingMethod;
+class CoreIPCPKDateComponentsRange;
+class CoreIPCPKPaymentMethod;
 #endif
 class CoreIPCColor;
 #if ENABLE(DATA_DETECTION)
@@ -68,6 +73,11 @@ using ObjectValue = std::variant<
     CoreIPCCNPostalAddress,
     CoreIPCPKContact,
     CoreIPCPKPaymentMerchantSession,
+    CoreIPCPKPayment,
+    CoreIPCPKPaymentToken,
+    CoreIPCPKShippingMethod,
+    CoreIPCPKDateComponentsRange,
+    CoreIPCPKPaymentMethod,
 #endif
     CoreIPCColor,
 #if ENABLE(DATA_DETECTION)

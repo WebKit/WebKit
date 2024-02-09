@@ -102,6 +102,8 @@ SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, PassKitCore, PKPaymentMerchantSessio
 SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, PassKitCore, PKPaymentMethod, PAL_EXPORT)
 SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, PassKitCore, PKPaymentRequest, PAL_EXPORT)
 SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, PassKitCore, PKPaymentSummaryItem, PAL_EXPORT)
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, PassKitCore, PKPaymentToken, PAL_EXPORT)
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, PassKitCore, PKSecureElementPass, PAL_EXPORT)
 SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, PassKitCore, PKShippingMethod, PAL_EXPORT)
 
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, PassKitCore, PKCanMakePaymentsWithMerchantIdentifierAndDomain, void, (NSString *identifier, NSString *domain, PKCanMakePaymentsCompletion completion), (identifier, domain, completion), PAL_EXPORT)

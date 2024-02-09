@@ -51,10 +51,16 @@ OBJC_CLASS AVOutputContext;
 #endif
 
 #if USE(PASSKIT)
+OBJC_CLASS CNContact;
 OBJC_CLASS CNPhoneNumber;
 OBJC_CLASS CNPostalAddress;
 OBJC_CLASS PKContact;
+OBJC_CLASS PKDateComponentsRange;
+OBJC_CLASS PKPayment;
 OBJC_CLASS PKPaymentMerchantSession;
+OBJC_CLASS PKPaymentMethod;
+OBJC_CLASS PKPaymentToken;
+OBJC_CLASS PKShippingMethod;
 #endif
 
 namespace IPC {
@@ -67,10 +73,18 @@ enum class NSType : uint8_t {
 #endif
     Array,
 #if USE(PASSKIT)
+    CNContact,
     CNPhoneNumber,
     CNPostalAddress,
+    NSDateComponents,
     PKContact,
     PKPaymentMerchantSession,
+    PKPayment,
+    PKPaymentToken,
+    PKSecureElementPass,
+    PKShippingMethod,
+    PKDateComponentsRange,
+    PKPaymentMethod,
 #endif
     Color,
 #if ENABLE(DATA_DETECTION)
@@ -134,10 +148,16 @@ template<> Class getClass<WKDDActionContext>();
 template<> Class getClass<AVOutputContext>();
 #endif
 #if USE(PASSKIT)
+template<> Class getClass<CNContact>();
 template<> Class getClass<CNPhoneNumber>();
 template<> Class getClass<CNPostalAddress>();
 template<> Class getClass<PKContact>();
 template<> Class getClass<PKPaymentMerchantSession>();
+template<> Class getClass<PKPayment>();
+template<> Class getClass<PKPaymentToken>();
+template<> Class getClass<PKShippingMethod>();
+template<> Class getClass<PKDateComponentsRange>();
+template<> Class getClass<PKPaymentMethod>();
 #endif
 
 void encodeObjectWithWrapper(Encoder&, id);

@@ -113,6 +113,36 @@
     return [m_dictionary objectForKey:key];
 }
 
+- (void)encodeBool:(BOOL)value forKey:(NSString *)key
+{
+    [self encodeObject:@(value) forKey:key];
+}
+
+- (BOOL)decodeBoolForKey:(NSString *)key
+{
+    return [[self decodeObjectOfClass:[NSNumber class] forKey:key] boolValue];
+}
+
+- (void)encodeInt64:(int64_t)value forKey:(NSString *)key
+{
+    [self encodeObject:@(value) forKey:key];
+}
+
+- (int64_t)decodeInt64ForKey:(NSString *)key
+{
+    return [[self decodeObjectOfClass:[NSNumber class] forKey:key] longLongValue];
+}
+
+- (void)encodeInteger:(NSInteger)value forKey:(NSString *)key
+{
+    [self encodeObject:@(value) forKey:key];
+}
+
+- (NSInteger)decodeIntegerForKey:(NSString *)key
+{
+    return [[self decodeObjectOfClass:[NSNumber class] forKey:key] integerValue];
+}
+
 - (NSDictionary *)accumulatedDictionary
 {
     return m_dictionary.get();

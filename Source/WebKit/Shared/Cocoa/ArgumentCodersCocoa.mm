@@ -285,6 +285,10 @@ template<> Class getClass<AVOutputContext>()
 }
 #endif
 #if USE(PASSKIT)
+template<> Class getClass<CNContact>()
+{
+    return PAL::getCNContactClass();
+}
 template<> Class getClass<CNPhoneNumber>()
 {
     return PAL::getCNPhoneNumberClass();
@@ -301,6 +305,26 @@ template<> Class getClass<PKPaymentMerchantSession>()
 {
     return PAL::getPKPaymentMerchantSessionClass();
 }
+template<> Class getClass<PKPayment>()
+{
+    return PAL::getPKPaymentClass();
+}
+template<> Class getClass<PKPaymentToken>()
+{
+    return PAL::getPKPaymentTokenClass();
+}
+template<> Class getClass<PKShippingMethod>()
+{
+    return PAL::getPKShippingMethodClass();
+}
+template<> Class getClass<PKDateComponentsRange>()
+{
+    return PAL::getPKDateComponentsRangeClass();
+}
+template<> Class getClass<PKPaymentMethod>()
+{
+    return PAL::getPKPaymentMethodClass();
+}
 #endif
 
 NSType typeFromObject(id object)
@@ -315,6 +339,10 @@ NSType typeFromObject(id object)
     if ([object isKindOfClass:[NSArray class]])
         return NSType::Array;
 #if USE(PASSKIT)
+    if ([object isKindOfClass:[NSDateComponents class]])
+        return NSType::NSDateComponents;
+    if (PAL::isContactsFrameworkAvailable() && [object isKindOfClass:PAL::getCNContactClass()])
+        return NSType::CNContact;
     if (PAL::isContactsFrameworkAvailable() && [object isKindOfClass:PAL::getCNPhoneNumberClass()])
         return NSType::CNPhoneNumber;
     if (PAL::isContactsFrameworkAvailable() && [object isKindOfClass:PAL::getCNPostalAddressClass()])
@@ -323,6 +351,18 @@ NSType typeFromObject(id object)
         return NSType::PKContact;
     if (PAL::isPassKitCoreFrameworkAvailable() && [object isKindOfClass:PAL::getPKPaymentMerchantSessionClass()])
         return NSType::PKPaymentMerchantSession;
+    if (PAL::isPassKitCoreFrameworkAvailable() && [object isKindOfClass:PAL::getPKPaymentClass()])
+        return NSType::PKPayment;
+    if (PAL::isPassKitCoreFrameworkAvailable() && [object isKindOfClass:PAL::getPKPaymentTokenClass()])
+        return NSType::PKPaymentToken;
+    if (PAL::isPassKitCoreFrameworkAvailable() && [object isKindOfClass:PAL::getPKSecureElementPassClass()])
+        return NSType::PKSecureElementPass;
+    if (PAL::isPassKitCoreFrameworkAvailable() && [object isKindOfClass:PAL::getPKShippingMethodClass()])
+        return NSType::PKShippingMethod;
+    if (PAL::isPassKitCoreFrameworkAvailable() && [object isKindOfClass:PAL::getPKDateComponentsRangeClass()])
+        return NSType::PKDateComponentsRange;
+    if (PAL::isPassKitCoreFrameworkAvailable() && [object isKindOfClass:PAL::getPKPaymentMethodClass()])
+        return NSType::PKPaymentMethod;
 #endif
     if ([object isKindOfClass:[WebCore::CocoaColor class]])
         return NSType::Color;
@@ -529,9 +569,23 @@ static constexpr bool haveSecureActionContext = false;
     static constexpr bool haveStrictDecodablePKPaymentPass = false;
 #endif
 
-    if (PAL::isPassKitCoreFrameworkAvailable()
-        && PAL::getPKPaymentMethodClass()
-        && allowedClasses.contains(PAL::getPKPaymentMethodClass()))
+    // FIXME: Remove these checks for CNContact, NSDateComponents, and PKSecureElementPass
+    // once we directly serialize them ourselves.
+    auto isDecodingPKPaymentRelatedType = [&] () {
+        if (!PAL::isPassKitCoreFrameworkAvailable())
+            return false;
+        if (PAL::getPKPaymentMethodClass() && allowedClasses.contains(PAL::getPKPaymentMethodClass()))
+            return true;
+        if (PAL::getPKSecureElementPassClass() && allowedClasses.contains(PAL::getPKSecureElementPassClass()))
+            return true;
+        if (PAL::isContactsFrameworkAvailable() && PAL::getCNContactClass() && allowedClasses.contains(PAL::getCNContactClass()))
+            return true;
+        if (allowedClasses.contains(NSDateComponents.class))
+            return true;
+        return false;
+    };
+
+    if (isDecodingPKPaymentRelatedType())
         return haveStrictDecodableCNContact && haveStrictDecodablePKPaymentPass;
 
     // Don't reintroduce rdar://108660074
@@ -611,6 +665,25 @@ template<> std::optional<RetainPtr<id>> decodeObjectDirectlyRequiringAllowedClas
 
     if (allowedClasses.contains(NSParagraphStyle.class))
         allowedClasses.add(NSMutableParagraphStyle.class);
+
+#if USE(PASSKIT)
+
+    // FIXME: Remove these exceptions for CNContact, NSDateComponents, and PKSecureElementPass
+    // once we directly serialize them ourselves.
+    if (PAL::isContactsFrameworkAvailable()) {
+        if (allowedClasses.contains(PAL::getPKPaymentClass()) || allowedClasses.contains(PAL::getPKPaymentMethodClass()) || allowedClasses.contains(PAL::getPKPaymentTokenClass())) {
+            allowedClasses.add(PAL::getCNContactClass());
+            allowedClasses.add(PAL::getPKSecureElementPassClass());
+        }
+
+        if (allowedClasses.contains(PAL::getPKShippingMethodClass()) || allowedClasses.contains(PAL::getPKDateComponentsRangeClass()) || allowedClasses.contains(PAL::getPKPaymentClass()))
+            allowedClasses.add([NSDateComponents class]);
+
+        if (allowedClasses.contains(PAL::getCNContactClass()))
+            allowedClasses.add(PAL::getCNMutableContactClass());
+    }
+
+#endif
 
     auto allowedClassSet = adoptNS([[NSMutableSet alloc] initWithCapacity:allowedClasses.size()]);
     for (auto allowedClass : allowedClasses)

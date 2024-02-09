@@ -370,11 +370,18 @@ struct ObjCHolderForTesting {
 #endif
         RetainPtr<NSPersonNameComponents>,
         RetainPtr<NSPresentationIntent>,
-#if USE(PASSKIT) && !PLATFORM(WATCHOS)
+#if USE(PASSKIT) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+        RetainPtr<CNContact>,
         RetainPtr<CNPhoneNumber>,
         RetainPtr<CNPostalAddress>,
+        RetainPtr<NSDateComponents>,
         RetainPtr<PKContact>,
+        RetainPtr<PKDateComponentsRange>,
         RetainPtr<PKPaymentMerchantSession>,
+        RetainPtr<PKPaymentMethod>,
+        RetainPtr<PKPaymentToken>,
+        RetainPtr<PKShippingMethod>,
+        RetainPtr<PKPayment>,
 #endif
         RetainPtr<NSValue>
     > ValueType;
@@ -400,7 +407,7 @@ std::optional<ObjCHolderForTesting> ObjCHolderForTesting::decode(IPC::Decoder& d
 }
 
 #if PLATFORM(MAC)
-inline bool isEqual(WKDDActionContext *a, WKDDActionContext* b)
+static BOOL wkDDActionContext_isEqual(WKDDActionContext *a, SEL, WKDDActionContext *b)
 {
     if (![a.authorNameComponents isEqual:b.authorNameComponents])
         return false;
@@ -420,19 +427,42 @@ inline bool isEqual(WKDDActionContext *a, WKDDActionContext* b)
 }
 #endif
 
+#if USE(PASSKIT) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+static BOOL wkSecureCoding_isEqual(id a, SEL, id b)
+{
+    RetainPtr<WKKeyedCoder> aCoder = adoptNS([WKKeyedCoder new]);
+    RetainPtr<WKKeyedCoder> bCoder = adoptNS([WKKeyedCoder new]);
+
+    [a encodeWithCoder:aCoder.get()];
+    [b encodeWithCoder:bCoder.get()];
+
+    return [[aCoder accumulatedDictionary] isEqual:[bCoder accumulatedDictionary]];
+}
+#endif // USE(PASSKIT) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+
 inline bool operator==(const ObjCHolderForTesting& a, const ObjCHolderForTesting& b)
 {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        // These classes do not have isEqual: methods useful for our unit testing, so we'll swap it in ourselves.
+
+#if USE(PASSKIT) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+        class_addMethod(PAL::getPKPaymentMethodClass(), @selector(isEqual:), (IMP)wkSecureCoding_isEqual, "v@:@");
+        class_addMethod(PAL::getPKPaymentTokenClass(), @selector(isEqual:), (IMP)wkSecureCoding_isEqual, "v@:@");
+        class_addMethod(PAL::getPKDateComponentsRangeClass(), @selector(isEqual:), (IMP)wkSecureCoding_isEqual, "v@:@");
+        class_addMethod(PAL::getPKShippingMethodClass(), @selector(isEqual:), (IMP)wkSecureCoding_isEqual, "v@:@");
+        class_addMethod(PAL::getPKPaymentClass(), @selector(isEqual:), (IMP)wkSecureCoding_isEqual, "v@:@");
+#endif
+#if ENABLE(DATA_DETECTION) && PLATFORM(MAC)
+        class_addMethod(PAL::getWKDDActionContextClass(), @selector(isEqual:), (IMP)wkDDActionContext_isEqual, "v@:@");
+#endif
+    });
+
     id aObject = a.valueAsID();
     id bObject = b.valueAsID();
 
     EXPECT_TRUE(aObject != nil);
     EXPECT_TRUE(bObject != nil);
-
-#if PLATFORM(MAC)
-    // DDActionContext doesn't have an isEqual: reliable for our unit testing, so do it ourselves.
-    if ([aObject isKindOfClass:PAL::getWKDDActionContextClass()] && [bObject isKindOfClass:PAL::getWKDDActionContextClass()])
-        return isEqual(aObject, bObject);
-#endif
 
     return [aObject isEqual:bObject];
 }
@@ -647,6 +677,38 @@ static void destroyTempKeychain(SecKeychainRef keychainRef)
 }
 #endif // HAVE(SEC_KEYCHAIN)
 
+#if USE(PASSKIT) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+static RetainPtr<CNMutablePostalAddress> postalAddressForTesting()
+{
+    RetainPtr<CNMutablePostalAddress> address = adoptNS([PAL::getCNMutablePostalAddressClass() new]);
+    address.get().street = @"1 Apple Park Way";
+    address.get().subLocality = @"Birdland";
+    address.get().city = @"Cupertino";
+    address.get().subAdministrativeArea = @"Santa Clara County";
+    address.get().state = @"California";
+    address.get().postalCode = @"95014";
+    address.get().country = @"United States of America";
+    address.get().ISOCountryCode = @"US";
+    address.get().formattedAddress = @"Hello world";
+    return address;
+}
+
+static RetainPtr<PKContact> pkContactForTesting()
+{
+    RetainPtr<PKContact> contact = adoptNS([PAL::getPKContactClass() new]);
+    contact.get().name = personNameComponentsForTesting().get();
+    contact.get().emailAddress = @"admin@webkit.org";
+    contact.get().phoneNumber = [PAL::getCNPhoneNumberClass() phoneNumberWithDigits:@"4085551234" countryCode:@"us"];
+    contact.get().postalAddress = postalAddressForTesting().get();
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    contact.get().supplementarySubLocality = @"City 17";
+ALLOW_DEPRECATED_DECLARATIONS_END
+
+    return contact;
+}
+#endif // USE(PASSKIT) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+
+
 TEST(IPCSerialization, Basic)
 {
     auto runTestNS = [](ObjCHolderForTesting&& holderArg) {
@@ -846,28 +908,11 @@ TEST(IPCSerialization, Basic)
     runTestNS({ phoneNumber.get() });
 
     // CNPostalAddress
-    RetainPtr<CNMutablePostalAddress> address = adoptNS([PAL::getCNMutablePostalAddressClass() new]);
-    address.get().street = @"1 Apple Park Way";
-    address.get().subLocality = @"Birdland";
-    address.get().city = @"Cupertino";
-    address.get().subAdministrativeArea = @"Santa Clara County";
-    address.get().state = @"California";
-    address.get().postalCode = @"95014";
-    address.get().country = @"United States of America";
-    address.get().ISOCountryCode = @"US";
-    address.get().formattedAddress = @"Hello world";
+    RetainPtr<CNMutablePostalAddress> address = postalAddressForTesting();
     runTestNS({ address.get() });
 
     // PKContact
-    RetainPtr<PKContact> contact = adoptNS([PAL::getPKContactClass() new]);
-    contact.get().name = components.get();
-    contact.get().emailAddress = @"admin@webkit.org";
-    contact.get().phoneNumber = phoneNumber.get();
-    contact.get().postalAddress = address.get();
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    contact.get().supplementarySubLocality = @"City 17";
-ALLOW_DEPRECATED_DECLARATIONS_END
-    runTestNS({ contact.get() });
+    runTestNS({ pkContactForTesting().get() });
 #endif // USE(PASSKIT) && !PLATFORM(WATCHOS)
 
 
@@ -1121,6 +1166,72 @@ TEST(IPCSerialization, SecureCoding)
         operationalAnalyticsIdentifier:@"WebKitOperations42"
         signature:[NSData new]]);
     runTestNS({ session.get() });
+
+    RetainPtr<CNPostalAddress> address = postalAddressForTesting();
+    RetainPtr<CNLabeledValue> labeledPostalAddress = adoptNS([[PAL::getCNLabeledValueClass() alloc] initWithLabel:@"Work" value:address.get()]);
+
+    RetainPtr<CNMutableContact> billingContact = adoptNS([PAL::getCNMutableContactClass() new]);
+    billingContact.get().contactType = CNContactTypePerson;
+    billingContact.get().namePrefix = @"Mrs";
+    billingContact.get().givenName = @"WebKit";
+    billingContact.get().middleName = @"von";
+    billingContact.get().familyName = @"WebKittington";
+    billingContact.get().nameSuffix = @"The Third";
+    billingContact.get().organizationName = @"WebKit";
+    billingContact.get().jobTitle = @"Web Kitten";
+    billingContact.get().note = @"The Coolest Kitten out there";
+    billingContact.get().postalAddresses = @[ labeledPostalAddress.get(), labeledPostalAddress.get() ];
+
+    runTestNS({ billingContact.get() });
+
+    RetainPtr<PKPaymentMethod> paymentMethod = adoptNS([PAL::getPKPaymentMethodClass() new]);
+    paymentMethod.get().displayName = @"WebKitPay";
+    paymentMethod.get().network = @"WebKitCard";
+    paymentMethod.get().type = PKPaymentMethodTypeCredit;
+    paymentMethod.get().billingAddress = billingContact.get();
+
+    runTestNS({ paymentMethod.get() });
+
+    RetainPtr<PKPaymentToken> paymentToken = adoptNS([PAL::getPKPaymentTokenClass() new]);
+    paymentToken.get().paymentMethod = paymentMethod.get();
+    paymentToken.get().transactionIdentifier = @"WebKitTXIdentifier";
+    paymentToken.get().paymentData = [NSData new];
+    paymentToken.get().redeemURL = [NSURL URLWithString:@"https://webkit.org/"];
+    paymentToken.get().retryNonce = @"ANonce";
+
+    runTestNS({ paymentToken.get() });
+
+    RetainPtr<NSDateComponents> startComponents = adoptNS([NSDateComponents new]);
+    startComponents.get().day = 1;
+    startComponents.get().month = 4;
+    startComponents.get().year = 1976;
+    startComponents.get().calendar = NSCalendar.currentCalendar;
+    RetainPtr<NSDateComponents> endComponents = adoptNS([NSDateComponents new]);
+    endComponents.get().day = 9;
+    endComponents.get().month = 1;
+    endComponents.get().year = 2007;
+    endComponents.get().calendar = NSCalendar.currentCalendar;
+
+    runTestNS({ endComponents.get() });
+
+    RetainPtr<PKDateComponentsRange> dateRange = adoptNS([[PAL::getPKDateComponentsRangeClass() alloc] initWithStartDateComponents:startComponents.get() endDateComponents:endComponents.get()]);
+
+    runTestNS({ dateRange.get() });
+
+    RetainPtr<PKShippingMethod> shippingMethod = adoptNS([PAL::getPKShippingMethodClass() new]);
+    shippingMethod.get().identifier = @"WebKitPostalService";
+    shippingMethod.get().detail = @"Ships in 1 to 2 bugzillas";
+    shippingMethod.get().dateComponentsRange = dateRange.get();
+
+    runTestNS({ shippingMethod.get() });
+
+    RetainPtr<PKPayment> payment = adoptNS([PAL::getPKPaymentClass() new]);
+    payment.get().token = paymentToken.get();
+    payment.get().billingContact = pkContactForTesting().get();
+    payment.get().shippingContact = pkContactForTesting().get();
+    payment.get().shippingMethod = shippingMethod.get();
+
+    runTestNS({ payment.get() });
 }
 
 #endif // PLATFORM(MAC)

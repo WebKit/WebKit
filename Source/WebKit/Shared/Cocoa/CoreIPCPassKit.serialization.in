@@ -50,4 +50,54 @@ secure_coding_header: <pal/cocoa/PassKitSoftLink.h>
     signedFields: Array<String>
 }
 
+[WebKitSecureCodingClass=PAL::getPKPaymentClass(), SupportWKKeyedCoder, WebKitPlatform] webkit_secure_coding PKPayment {
+    token: PKPaymentToken
+    shippingContact: PKContact
+    billingContact: PKContact
+    shippingMethod: PKShippingMethod
+    credential: Data
+    authKitAuthenticationResults: Dictionary
+    biometryAttempts: Number
+    installmentAuthorizationToken: String
+}
+
+[WebKitSecureCodingClass=PAL::getPKPaymentTokenClass(), SupportWKKeyedCoder, WebKitPlatform] webkit_secure_coding PKPaymentToken {
+    paymentInstrumentName: String?
+    paymentNetwork: String?
+    transactionIdentifier: String
+    paymentData: Data
+    paymentMethod: PKPaymentMethod
+    redeemURL: URL
+    retryNonce: String
+}
+
+[WebKitSecureCodingClass=PAL::getPKShippingMethodClass(), SupportWKKeyedCoder, WebKitPlatform] webkit_secure_coding PKShippingMethod {
+    label: String
+    amount: Number
+    type: Number
+    localizedTitle: String
+    localizedAmount: String
+    useDarkColor: Number
+    useLargeFont: Number
+    identifier: String
+    detail: String
+    dateComponentsRange: PKDateComponentsRange
+}
+
+[WebKitSecureCodingClass=PAL::getPKDateComponentsRangeClass(), SupportWKKeyedCoder, WebKitPlatform] webkit_secure_coding PKDateComponentsRange {
+    startDateComponents: NSDateComponents
+    endDateComponents: NSDateComponents
+}
+
+[WebKitSecureCodingClass=PAL::getPKPaymentMethodClass(), SupportWKKeyedCoder, WebKitPlatform] webkit_secure_coding PKPaymentMethod {
+    type: Number
+    displayName: String
+    network: String
+    paymentPass: PKSecureElementPass
+    peerPaymentQuoteIdentifier: String
+    billingAddress: CNContact
+    installmentBindToken: String
+    usePeerPaymentBalance: Number
+}
+
 #endif // USE(PASSKIT)

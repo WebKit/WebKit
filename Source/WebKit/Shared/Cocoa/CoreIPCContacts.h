@@ -31,6 +31,7 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
 
+OBJC_CLASS CNContact;
 OBJC_CLASS CNPhoneNumber;
 OBJC_CLASS CNPostalAddress;
 
