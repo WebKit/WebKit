@@ -1,0 +1,60 @@
+#! /bin/bash
+set -eu -o pipefail
+
+if [[ $# -lt 1 ]] ; then
+	echo "$0: Skia source tree path missing."
+	echo "Usage: $0 path/to/skia [gn-options...]"
+	exit 1
+fi 1>&2
+
+if [[ ! -r $1/BUILD.gn ]] ; then
+	echo "$0: Path '$1' does not seem to contain the Skia source tree."
+	echo "Usage: $0 path/to/skia [gn-options...]"
+	exit 2
+fi 1>&2
+
+cd "$1"
+shift
+
+declare -a gn_args=(
+	"cc=\"${CC:-gcc}\""
+	"cxx=\"${CXX:-g++}\""
+
+	is_debug=false
+	is_component_build=false
+	is_official_build=false
+	is_trivial_abi=false
+
+	skia_build_for_debugger=false
+	skia_build_fuzzers=false
+
+	skia_compile_modules=false
+	skia_compile_sksl_tests=false
+
+	skia_enable_ganesh=true
+	skia_enable_spirv_validation=false
+	skia_enable_pdf=false
+	skia_enable_tools=false
+
+	skia_use_egl=true
+	skia_use_expat=false
+	skia_use_icu=false
+	skia_use_jpeg_gainmaps=false
+	skia_use_libjpeg_turbo_decode=false
+	skia_use_libjpeg_turbo_encode=false
+	skia_use_libpng_decode=false
+	skia_use_libwebp_decode=false
+	skia_use_libwebp_encode=false
+	skia_use_no_jpeg_encode=true
+	skia_use_no_webp_encode=true
+	skia_use_perfetto=false
+	skia_use_system_libpng=true
+	skia_use_system_zlib=true
+	skia_use_vulkan=false
+	skia_use_wuffs=false
+	skia_use_zlib=false
+
+	"$@"
+)
+
+exec gn gen out/Static --args="${gn_args[*]}"
