@@ -48,8 +48,8 @@ enum class WebMouseEventButton : int8_t;
 
 class AnnotationTrackingState {
 public:
-    void startAnnotationTracking(RetainPtr<PDFAnnotation>&&, const WebEventType&, const WebMouseEventButton&);
-    void finishAnnotationTracking(const WebEventType&, const WebMouseEventButton&);
+    void startAnnotationTracking(RetainPtr<PDFAnnotation>&&, WebEventType, WebMouseEventButton);
+    void finishAnnotationTracking(WebEventType, WebMouseEventButton);
     const PDFAnnotation *trackedAnnotation() const { return m_trackedAnnotation.get(); }
     bool isBeingHovered() const;
 private:
@@ -196,11 +196,22 @@ private:
         Word,
         Line,
     };
+
+    enum class ActiveStateChangeReason : uint8_t {
+        HandledContextMenuEvent,
+        BeganTrackingSelection,
+        SetCurrentSelection,
+        WindowActivityChanged,
+    };
+
     SelectionGranularity selectionGranularityForMouseEvent(const WebMouseEvent&) const;
-    void beginTrackingSelection(PDFDocumentLayout::PageIndex, const WebCore::IntPoint& pagePoint, SelectionGranularity, OptionSet<WebEventModifier>);
+    void beginTrackingSelection(PDFDocumentLayout::PageIndex, const WebCore::IntPoint& pagePoint, const WebMouseEvent&);
     void extendCurrentSelectionIfNeeded();
+    void updateCurrentSelectionForContextMenuEventIfNeeded();
     void continueTrackingSelection(PDFDocumentLayout::PageIndex, const WebCore::IntPoint& pagePoint);
     void setCurrentSelection(RetainPtr<PDFSelection>&&);
+    void repaintOnSelectionActiveStateChangeIfNeeded(ActiveStateChangeReason);
+    bool isSelectionActiveAfterContextMenuInteraction() const;
 
     String getSelectionString() const override;
     bool existingSelectionContainsPoint(const WebCore::FloatPoint&) const override;
@@ -304,6 +315,7 @@ private:
     struct SelectionTrackingData {
         bool shouldExtendCurrentSelection { false };
         bool shouldMakeMarqueeSelection { false };
+        bool lastHandledEventWasContextMenuEvent { false };
         SelectionGranularity granularity { SelectionGranularity::Character };
         PDFDocumentLayout::PageIndex startPageIndex;
         WebCore::IntPoint startPagePoint;

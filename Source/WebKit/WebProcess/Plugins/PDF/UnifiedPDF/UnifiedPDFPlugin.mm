@@ -421,7 +421,7 @@ void UnifiedPDFPlugin::didChangeIsInWindow()
 void UnifiedPDFPlugin::windowActivityDidChange()
 {
     // FIXME: <https://webkit.org/b/268927> Selection painting requests should be optimized by specifying dirty rects.
-    m_contentsLayer->setNeedsDisplay();
+    repaintOnSelectionActiveStateChangeIfNeeded(ActiveStateChangeReason::WindowActivityChanged);
 }
 
 void UnifiedPDFPlugin::paint(WebCore::GraphicsContext& context, const WebCore::IntRect&)
@@ -511,9 +511,9 @@ void UnifiedPDFPlugin::paintPDFContent(WebCore::GraphicsContext& context, const 
 
         [page drawWithBox:kPDFDisplayBoxCropBox toContext:context.platformContext()];
 
-        bool isVisibleAndActive = true;
+        bool isVisibleAndActive = isSelectionActiveAfterContextMenuInteraction();
         if (RefPtr page = this->page())
-            isVisibleAndActive = page->isVisibleAndActive();
+            isVisibleAndActive = isVisibleAndActive && page->isVisibleAndActive();
         [m_currentSelection drawForPage:page.get() withBox:kCGPDFCropBox active:isVisibleAndActive inContext:context.platformContext()];
     }
     paintPDFOverlays(context);
@@ -1157,6 +1157,18 @@ auto UnifiedPDFPlugin::pdfElementTypesForPluginPoint(const WebCore::IntPoint& po
     return pdfElementTypes;
 }
 
+#pragma mark Events
+
+static bool isContextMenuEvent(const WebMouseEvent& event)
+{
+#if PLATFORM(MAC)
+    return event.menuTypeForEvent();
+#else
+    UNUSED_PARAM(event);
+    return false;
+#endif
+}
+
 bool UnifiedPDFPlugin::handleMouseEvent(const WebMouseEvent& event)
 {
     m_lastMouseEvent = event;
@@ -1168,10 +1180,18 @@ bool UnifiedPDFPlugin::handleMouseEvent(const WebMouseEvent& event)
 
     auto pointInPageSpace = convertFromDocumentToPage(pointInDocumentSpace, *pageIndex);
 
-    switch (auto mouseEventType = event.type()) {
+    auto mouseEventButton = event.button();
+    auto mouseEventType = event.type();
+    // Context menu events always call handleContextMenuEvent as well.
+    if (mouseEventType == WebEventType::MouseDown && isContextMenuEvent(event)) {
+        beginTrackingSelection(*pageIndex, pointInPageSpace, event);
+        return true;
+    }
+
+    switch (mouseEventType) {
     case WebEventType::MouseMove:
         mouseMovedInContentArea();
-        switch (auto mouseEventButton = event.button()) {
+        switch (mouseEventButton) {
         case WebMouseEventButton::None: {
             auto altKeyIsActive = event.altKey() ? AltKeyIsActive::Yes : AltKeyIsActive::No;
             auto pdfElementTypes = pdfElementTypesForPluginPoint(lastKnownMousePositionInView());
@@ -1206,7 +1226,7 @@ bool UnifiedPDFPlugin::handleMouseEvent(const WebMouseEvent& event)
             return false;
         }
     case WebEventType::MouseDown:
-        switch (auto mouseEventButton = event.button()) {
+        switch (mouseEventButton) {
         case WebMouseEventButton::Left: {
             if (RetainPtr<PDFAnnotation> annotation = annotationForRootViewPoint(event.position())) {
                 if (([annotation isKindOfClass:getPDFAnnotationButtonWidgetClass()] || [annotation isKindOfClass:getPDFAnnotationTextWidgetClass()] || [annotation isKindOfClass:getPDFAnnotationChoiceWidgetClass()]) && [annotation isReadOnly])
@@ -1231,7 +1251,7 @@ bool UnifiedPDFPlugin::handleMouseEvent(const WebMouseEvent& event)
                 return false;
             }
 
-            beginTrackingSelection(*pageIndex, pointInPageSpace, selectionGranularityForMouseEvent(event), event.modifiers());
+            beginTrackingSelection(*pageIndex, pointInPageSpace, event);
 
             return false;
         }
@@ -1241,7 +1261,7 @@ bool UnifiedPDFPlugin::handleMouseEvent(const WebMouseEvent& event)
     case WebEventType::MouseUp:
         m_selectionTrackingData.selectionToExtendWith = nullptr;
 
-        switch (auto mouseEventButton = event.button()) {
+        switch (mouseEventButton) {
         case WebMouseEventButton::Left:
             if (RetainPtr trackedAnnotation = m_annotationTrackingState.trackedAnnotation(); trackedAnnotation && ![trackedAnnotation isKindOfClass:getPDFAnnotationTextWidgetClass()]) {
                 m_annotationTrackingState.finishAnnotationTracking(mouseEventType, mouseEventButton);
@@ -1291,6 +1311,7 @@ bool UnifiedPDFPlugin::handleContextMenuEvent(const WebMouseEvent& event)
             return;
         if (selectedItemTag)
             performContextMenuAction(toContextMenuItemTag(selectedItemTag.value()));
+        repaintOnSelectionActiveStateChangeIfNeeded(ActiveStateChangeReason::HandledContextMenuEvent);
     });
 
     return true;
@@ -1473,24 +1494,40 @@ void UnifiedPDFPlugin::extendCurrentSelectionIfNeeded()
     auto oldStartPagePoint = std::exchange(m_selectionTrackingData.startPagePoint, IntPoint { [m_currentSelection firstCharCenter] });
     m_selectionTrackingData.selectionToExtendWith = WTFMove(m_currentSelection);
 
-    RetainPtr<PDFSelection> selection = [m_pdfDocument selectionFromPage:firstPageOfCurrentSelection atPoint:m_selectionTrackingData.startPagePoint toPage:m_documentLayout.pageAtIndex(oldStartPageIndex).get() atPoint:oldStartPagePoint];
+    RetainPtr selection = [m_pdfDocument selectionFromPage:firstPageOfCurrentSelection atPoint:m_selectionTrackingData.startPagePoint toPage:m_documentLayout.pageAtIndex(oldStartPageIndex).get() atPoint:oldStartPagePoint];
     [selection addSelection:m_selectionTrackingData.selectionToExtendWith.get()];
     setCurrentSelection(WTFMove(selection));
 }
 
-void UnifiedPDFPlugin::beginTrackingSelection(PDFDocumentLayout::PageIndex pageIndex, const WebCore::IntPoint& pagePoint, SelectionGranularity selectionGranularity, OptionSet<WebEventModifier> mouseEventModifiers)
+void UnifiedPDFPlugin::beginTrackingSelection(PDFDocumentLayout::PageIndex pageIndex, const WebCore::IntPoint& pagePoint, const WebMouseEvent& event)
 {
-    m_selectionTrackingData.granularity = selectionGranularity;
+    auto modifiers = event.modifiers();
+
+    m_selectionTrackingData.granularity = selectionGranularityForMouseEvent(event);
     m_selectionTrackingData.startPageIndex = pageIndex;
     m_selectionTrackingData.startPagePoint = pagePoint;
     m_selectionTrackingData.marqueeSelectionRect = { };
-    m_selectionTrackingData.shouldMakeMarqueeSelection = mouseEventModifiers.contains(WebEventModifier::AltKey);
-    m_selectionTrackingData.shouldExtendCurrentSelection = mouseEventModifiers.contains(WebEventModifier::ShiftKey);
+    m_selectionTrackingData.shouldMakeMarqueeSelection = modifiers.contains(WebEventModifier::AltKey);
+    m_selectionTrackingData.shouldExtendCurrentSelection = modifiers.contains(WebEventModifier::ShiftKey);
+    m_selectionTrackingData.selectionToExtendWith = nullptr;
+
+    repaintOnSelectionActiveStateChangeIfNeeded(ActiveStateChangeReason::BeganTrackingSelection);
+
+    // Context menu events can only generate a word selection under the event, so we bail out of the rest of our selection tracking logic.
+    if (isContextMenuEvent(event))
+        return updateCurrentSelectionForContextMenuEventIfNeeded();
 
     if (m_selectionTrackingData.shouldExtendCurrentSelection)
         extendCurrentSelectionIfNeeded();
 
     continueTrackingSelection(pageIndex, pagePoint);
+}
+
+void UnifiedPDFPlugin::updateCurrentSelectionForContextMenuEventIfNeeded()
+{
+    auto page = m_documentLayout.pageAtIndex(m_selectionTrackingData.startPageIndex);
+    if (!m_currentSelection || !(IntRect([m_currentSelection boundsForPage:page.get()]).contains(m_selectionTrackingData.startPagePoint)))
+        setCurrentSelection([page selectionForWordAtPoint:m_selectionTrackingData.startPagePoint]);
 }
 
 static IntRect computeMarqueeSelectionRect(const WebCore::IntPoint& point1, const WebCore::IntPoint& point2)
@@ -1528,11 +1565,37 @@ void UnifiedPDFPlugin::continueTrackingSelection(PDFDocumentLayout::PageIndex pa
     }
 }
 
+void UnifiedPDFPlugin::repaintOnSelectionActiveStateChangeIfNeeded(ActiveStateChangeReason reason)
+{
+    switch (reason) {
+    case ActiveStateChangeReason::HandledContextMenuEvent:
+        m_selectionTrackingData.lastHandledEventWasContextMenuEvent = true;
+        break;
+    case ActiveStateChangeReason::BeganTrackingSelection:
+        if (!std::exchange(m_selectionTrackingData.lastHandledEventWasContextMenuEvent, false))
+            return;
+        break;
+    case ActiveStateChangeReason::SetCurrentSelection:
+    case ActiveStateChangeReason::WindowActivityChanged:
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    m_contentsLayer->setNeedsDisplay();
+}
+
+bool UnifiedPDFPlugin::isSelectionActiveAfterContextMenuInteraction() const
+{
+    return !m_selectionTrackingData.lastHandledEventWasContextMenuEvent;
+}
+
 void UnifiedPDFPlugin::setCurrentSelection(RetainPtr<PDFSelection>&& selection)
 {
     m_currentSelection = WTFMove(selection);
+    // FIXME: <https://webkit.org/b/268980> Selection painting requests should be only be made if the current selection has changed.
     // FIXME: <https://webkit.org/b/268927> Selection painting requests should be optimized by specifying dirty rects.
-    m_contentsLayer->setNeedsDisplay();
+    repaintOnSelectionActiveStateChangeIfNeeded(ActiveStateChangeReason::SetCurrentSelection);
     notifySelectionChanged();
 }
 
@@ -1735,7 +1798,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 }
 
-void AnnotationTrackingState::startAnnotationTracking(RetainPtr<PDFAnnotation>&& annotation, const WebEventType& mouseEventType, const WebMouseEventButton& mouseEventButton)
+void AnnotationTrackingState::startAnnotationTracking(RetainPtr<PDFAnnotation>&& annotation, WebEventType mouseEventType, WebMouseEventButton mouseEventButton)
 {
     ASSERT(!m_trackedAnnotation);
     m_trackedAnnotation = WTFMove(annotation);
@@ -1746,7 +1809,7 @@ void AnnotationTrackingState::startAnnotationTracking(RetainPtr<PDFAnnotation>&&
         m_isBeingHovered = true;
 }
 
-void AnnotationTrackingState::finishAnnotationTracking(const WebEventType& mouseEventType, const WebMouseEventButton& mouseEventButton)
+void AnnotationTrackingState::finishAnnotationTracking(WebEventType mouseEventType, WebMouseEventButton mouseEventButton)
 {
     ASSERT(m_trackedAnnotation);
     if (mouseEventType == WebEventType::MouseUp && mouseEventButton == WebMouseEventButton::Left) {
