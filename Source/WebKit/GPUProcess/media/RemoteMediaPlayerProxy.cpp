@@ -804,21 +804,27 @@ void RemoteMediaPlayerProxy::setShouldPlayToPlaybackTarget(bool shouldPlay)
     m_player->setShouldPlayToPlaybackTarget(shouldPlay);
 }
 
+#if PLATFORM(MAC)
 void RemoteMediaPlayerProxy::setWirelessPlaybackTarget(MediaPlaybackTargetContext&& targetContext)
 {
     switch (targetContext.type()) {
     case MediaPlaybackTargetContext::Type::Mock:
-#if PLATFORM(MAC)
         m_player->setWirelessPlaybackTarget(MediaPlaybackTargetMock::create(targetContext.deviceName(), targetContext.mockState()));
         break;
-#endif
     case MediaPlaybackTargetContext::Type::AVOutputContext:
     case MediaPlaybackTargetContext::Type::None:
         ASSERT_NOT_REACHED();
         break;
     }
 }
-#endif
+#else
+NO_RETURN_DUE_TO_ASSERT void RemoteMediaPlayerProxy::setWirelessPlaybackTarget(MediaPlaybackTargetContext&&)
+{
+    ASSERT_NOT_REACHED();
+}
+#endif // PLATFORM(MAC)
+
+#endif // ENABLE(WIRELESS_PLAYBACK_TARGET)
 
 bool RemoteMediaPlayerProxy::mediaPlayerIsFullscreen() const
 {
