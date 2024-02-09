@@ -190,8 +190,11 @@ testing t: force
 analyze:
 	@$(call set_webkit_configuration,--debug)
 	@$(call invoke_xcode,analyze,$(ANALYZER_XCODE_SETTINGS)) || true
-	find $(ANALYZER_OUTPUT) -name 'report-*.html' -exec mv {} $(ANALYZER_OUTPUT)/ \;
-	$(PATH_TO_SCAN_BUILD) --generate-index-only $(ANALYZER_OUTPUT)
+	@for dir in $$(ls -d $(ANALYZER_OUTPUT)/StaticAnalyzer/*); do \
+		mkdir -p $$dir/StaticAnalyzerReports; \
+		find $$dir -name 'report-*.html' -exec mv {} $$dir/StaticAnalyzerReports/ \;; \
+		$(PATH_TO_SCAN_BUILD) --generate-index-only $$dir; \
+	done
 
 clean:
 ifndef XCODE_TARGET

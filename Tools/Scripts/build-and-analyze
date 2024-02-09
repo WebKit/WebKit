@@ -140,7 +140,7 @@ def main(args):
 
     commands = [
         make_command,
-        [generate_static_analysis_archive_path, '--count', '--output-root', output_dir],
+        [generate_static_analysis_archive_path, '--count', '--output-root', output_dir, '--id-string', 'WebKit Build'],
     ]
 
     # FIXME: Handle Ctrl-C interrupts gracefully so subprocess jobs actually stop.
