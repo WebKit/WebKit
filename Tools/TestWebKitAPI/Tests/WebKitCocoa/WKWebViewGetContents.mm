@@ -543,3 +543,22 @@ TEST(WKWebView, TextWithWebFontAsAttributedString)
     EXPECT_WK_STREQ(substringsAndFonts[0].second.fontName, substringsAndFonts[2].second.fontName);
     EXPECT_FALSE([substringsAndFonts[2].second.fontName containsString:@"LastResort"]);
 }
+
+TEST(WKWebView, AttributedStringAndCDATASection)
+{
+    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
+    [webView synchronouslyLoadHTMLString:@"<body>1<script>document.body.append('2', new Document().createCDATASection('3'));</script>4"];
+
+    __block bool finished = false;
+
+    [webView _getContentsAsAttributedStringWithCompletionHandler:^(NSAttributedString *attributedString, NSDictionary<NSAttributedStringDocumentAttributeKey, id> *documentAttributes, NSError *error) {
+        EXPECT_EQ([attributedString length], 4U);
+        auto expectedSubstring = [[attributedString string] rangeOfString:@"1234"];
+        EXPECT_EQ(expectedSubstring.location, 0U);
+        EXPECT_EQ(expectedSubstring.length, 4U);
+        finished = true;
+    }];
+
+    TestWebKitAPI::Util::run(&finished);
+}
