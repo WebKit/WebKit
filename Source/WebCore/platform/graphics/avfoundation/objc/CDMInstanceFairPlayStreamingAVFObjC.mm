@@ -742,6 +742,10 @@ static Keys keyIDsForRequest(AVContentKeyRequest* request)
     if (request.initializationData) {
         if (auto sinfKeyIDs = CDMPrivateFairPlayStreaming::extractKeyIDsSinf(SharedBuffer::create(request.initializationData)))
             return WTFMove(sinfKeyIDs.value());
+#if HAVE(FAIRPLAYSTREAMING_MTPS_INITDATA)
+        if (auto mptsKeyIDs = CDMPrivateFairPlayStreaming::extractKeyIDsMpts(SharedBuffer::create(request.initializationData)))
+            return WTFMove(mptsKeyIDs.value());
+#endif
     }
     return { };
 }
@@ -813,6 +817,10 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         auto psshString = base64EncodeToString(initData->makeContiguous()->data(), initData->size());
         initializationData = [NSJSONSerialization dataWithJSONObject:@{ @"pssh": (NSString*)psshString } options:NSJSONWritingPrettyPrinted error:nil];
     }
+#endif
+#if HAVE(FAIRPLAYSTREAMING_MTPS_INITDATA)
+    else if (initDataType == CDMPrivateFairPlayStreaming::mptsName())
+        initializationData = initData->makeContiguous()->createNSData();
 #endif
     else {
         ERROR_LOG(LOGIDENTIFIER, " false, initDataType not suppported");

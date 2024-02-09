@@ -2581,3 +2581,6 @@ webkit.org/b/267352 [ Monterey ] imported/w3c/web-platform-tests/mathml/relation
 webkit.org/b/267612 [ Ventura+ Release x86_64 ] fast/canvas/image-buffer-backend-variants.html [ Pass Failure ]
 
 webkit.org/b/268947 [ Ventura+ ] imported/w3c/web-platform-tests/mathml/relations/css-styling/floats/not-floating-001.html [ Failure ]
+
+# Enable after rdar://120859525 is available on bots
+http/tests/media/fairplay/fps-mse-unmuxed-mpts.html [ Skip ]
