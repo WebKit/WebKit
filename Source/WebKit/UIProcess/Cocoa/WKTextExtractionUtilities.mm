@@ -26,8 +26,8 @@
 #import "config.h"
 #import "WKTextExtractionUtilities.h"
 
+#import "WKTextExtractionItem.h"
 #import <WebCore/TextExtraction.h>
-#import <WebKitSwift/WKTextExtractionItem.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 #import "WebKitSwiftSoftLink.h"
