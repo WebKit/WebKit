@@ -72,6 +72,8 @@
 #include <WebCore/VideoFrameCV.h>
 #endif
 
+#include <wtf/NativePromise.h>
+
 namespace WebKit {
 
 using namespace WebCore;
@@ -128,6 +130,18 @@ void RemoteMediaPlayerProxy::invalidate()
 #if USE(AVFOUNDATION)
     m_videoFrameForCurrentTime = nullptr;
 #endif
+}
+
+Ref<MediaPromise> RemoteMediaPlayerProxy::commitAllTransactions()
+{
+    if (!m_manager || !m_manager->gpuConnectionToWebProcess())
+        return MediaPromise::createAndReject(PlatformMediaError::ClientDisconnected);
+
+    return m_webProcessConnection->sendWithPromisedReply(Messages::MediaPlayerPrivateRemote::CommitAllTransactions(), m_id)->whenSettled(RunLoop::current(), [](auto&& result) {
+        if (!result)
+            return MediaPromise::createAndReject(PlatformMediaError::IPCError);
+        return MediaPromise::createAndResolve();
+    });
 }
 
 void RemoteMediaPlayerProxy::getConfiguration(RemoteMediaPlayerConfiguration& configuration)
@@ -391,7 +405,6 @@ void RemoteMediaPlayerProxy::errorLog(CompletionHandler<void(String)>&& completi
 void RemoteMediaPlayerProxy::mediaPlayerNetworkStateChanged()
 {
     updateCachedState(true);
-    m_cachedState.readyState = m_player->readyState();
     m_cachedState.networkState = m_player->networkState();
     m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::NetworkStateChanged(m_cachedState), m_id);
 }
@@ -402,7 +415,6 @@ void RemoteMediaPlayerProxy::mediaPlayerReadyStateChanged()
     ALWAYS_LOG(LOGIDENTIFIER, newReadyState);
     updateCachedVideoMetrics();
     updateCachedState(true);
-    m_cachedState.readyState = newReadyState;
     m_cachedState.networkState = m_player->networkState();
     m_cachedState.duration = m_player->duration();
 
@@ -424,7 +436,7 @@ void RemoteMediaPlayerProxy::mediaPlayerReadyStateChanged()
     m_cachedState.didPassCORSAccessCheck = m_player->didPassCORSAccessCheck();
     m_cachedState.documentIsCrossOrigin = m_player->isCrossOrigin(m_configuration.documentSecurityOrigin.securityOrigin());
 
-    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::ReadyStateChanged(m_cachedState), m_id);
+    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::ReadyStateChanged(m_cachedState, newReadyState), m_id);
 }
 
 void RemoteMediaPlayerProxy::mediaPlayerVolumeChanged()

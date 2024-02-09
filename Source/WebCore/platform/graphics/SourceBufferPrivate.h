@@ -44,6 +44,7 @@
 #include <optional>
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
+#include <wtf/Lock.h>
 #include <wtf/Logger.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/NativePromise.h>
@@ -80,7 +81,7 @@ class SourceBufferPrivate
 #endif
 {
 public:
-    WEBCORE_EXPORT SourceBufferPrivate(MediaSourcePrivate&);
+    WEBCORE_EXPORT explicit SourceBufferPrivate(MediaSourcePrivate&);
     WEBCORE_EXPORT virtual ~SourceBufferPrivate();
 
     virtual constexpr MediaPlatformType platformType() const = 0;
@@ -112,7 +113,7 @@ public:
     WEBCORE_EXPORT virtual uint64_t totalTrackBufferSizeInBytes() const;
     WEBCORE_EXPORT virtual void resetTimestampOffsetInTrackBuffers();
     virtual void startChangingType() { m_pendingInitializationSegmentForChangeType = true; }
-    virtual void setTimestampOffset(const MediaTime& timestampOffset) { m_timestampOffset = timestampOffset; }
+    WEBCORE_EXPORT virtual void setTimestampOffset(const MediaTime&);
     virtual void setAppendWindowStart(const MediaTime& appendWindowStart) { m_appendWindowStart = appendWindowStart;}
     virtual void setAppendWindowEnd(const MediaTime& appendWindowEnd) { m_appendWindowEnd = appendWindowEnd; }
 
@@ -122,7 +123,6 @@ public:
     WEBCORE_EXPORT virtual void updateTrackIds(Vector<std::pair<TrackID, TrackID>>&& trackIdPairs);
 
     WEBCORE_EXPORT void setClient(SourceBufferPrivateClient&);
-    WEBCORE_EXPORT void detach();
 
     void setMediaSourceDuration(const MediaTime& duration) { m_mediaSourceDuration = duration; }
 
@@ -134,7 +134,7 @@ public:
     bool hasVideo() const { return m_hasVideo; }
     bool hasReceivedFirstInitializationSegment() const { return m_receivedFirstInitializationSegment; }
 
-    MediaTime timestampOffset() const { return m_timestampOffset; }
+    WEBCORE_EXPORT MediaTime timestampOffset() const;
 
     virtual size_t platformMaximumBufferSize() const { return 0; }
 
@@ -163,8 +163,11 @@ public:
 #endif
 
 protected:
+    WEBCORE_EXPORT explicit SourceBufferPrivate(MediaSourcePrivate&, RefCountedSerialFunctionDispatcher&);
     MediaTime currentMediaTime() const;
     MediaTime mediaSourceDuration() const;
+
+    WEBCORE_EXPORT void ensureOnDispatcher(Function<void()>&&) const;
 
     using InitializationSegment = SourceBufferPrivateClient::InitializationSegment;
     WEBCORE_EXPORT void didReceiveInitializationSegment(InitializationSegment&&);
@@ -202,6 +205,7 @@ protected:
     WEBCORE_EXPORT RefPtr<SourceBufferPrivateClient> client() const;
 
     ThreadSafeWeakPtr<MediaSourcePrivate> m_mediaSource { nullptr };
+    const Ref<RefCountedSerialFunctionDispatcher> m_dispatcher; // SerialFunctionDispatcher the SourceBufferPrivate/MediaSourcePrivate
 
 private:
     MediaTime minimumBufferedTime() const;
@@ -223,7 +227,7 @@ private:
 
     bool m_hasAudio { false };
     bool m_hasVideo { false };
-    bool m_isActive { false };
+    std::atomic<bool> m_isActive { false };
 
     ThreadSafeWeakPtr<SourceBufferPrivateClient> m_client;
 
@@ -239,13 +243,14 @@ private:
     size_t m_abortCount { 0 };
 
     void processPendingMediaSamples();
-    bool processMediaSample(SourceBufferPrivateClient&, Ref<MediaSample>&&);
+    bool processMediaSample(SourceBufferPrivateClient&, MediaTime& timestampOffset, Ref<MediaSample>&&);
 
     using SamplesVector = Vector<Ref<MediaSample>>;
     SamplesVector m_pendingSamples;
     Ref<MediaPromise> m_currentAppendProcessing { MediaPromise::createAndResolve() };
 
-    MediaTime m_timestampOffset;
+    mutable Lock m_lock;
+    MediaTime m_timestampOffset WTF_GUARDED_BY_LOCK(m_lock);
     MediaTime m_appendWindowStart { MediaTime::zeroTime() };
     MediaTime m_appendWindowEnd { MediaTime::positiveInfiniteTime() };
     MediaTime m_highestPresentationTimestamp;
@@ -254,7 +259,7 @@ private:
     MediaTime m_groupStartTimestamp { MediaTime::invalidTime() };
     MediaTime m_groupEndTimestamp { MediaTime::zeroTime() };
 
-    bool m_isMediaSourceEnded { false };
+    std::atomic<bool> m_isMediaSourceEnded { false };
 };
 
 } // namespace WebCore

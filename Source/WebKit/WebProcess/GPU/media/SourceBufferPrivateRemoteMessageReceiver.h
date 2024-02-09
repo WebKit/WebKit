@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,12 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if ENABLE(GPU_PROCESS) && ENABLE(MEDIA_SOURCE)
+#pragma once
 
-messages -> MediaSourcePrivateRemote NotRefCounted {
-    ProxyWaitForTarget(struct WebCore::SeekTarget target) -> (WebCore::MediaTimePromise::Result seekedTime);
-    ProxySeekToTime(MediaTime time) -> (WebCore::MediaPromise::Result result);
-    MediaSourcePrivateShuttingDown() -> ();
-}
+#include "SourceBufferPrivateRemote.h"
 
-#endif
+namespace WebKit {
+
+using SourceBufferPrivateRemoteMessageReceiver = SourceBufferPrivateRemote::MessageReceiver;
+
+} // namespace WebKit

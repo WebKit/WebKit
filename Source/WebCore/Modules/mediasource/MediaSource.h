@@ -150,14 +150,33 @@ protected:
 
     void scheduleEvent(const AtomString& eventName);
     void notifyElementUpdateMediaState() const;
-
+    void ensureWeakOnDispatcher(Function<void()>&&) const;
     RefPtr<MediaSourcePrivate> m_private;
+    const Ref<RefCountedSerialFunctionDispatcher> m_dispatcher;
+
+    virtual void elementDetached() { }
+
 private:
     // ActiveDOMObject.
     void stop() final;
     const char* activeDOMObjectName() const final;
     bool virtualHasPendingActivity() const final;
     static bool isTypeSupported(ScriptExecutionContext&, const String& type, Vector<ContentType>&& contentTypesRequiringHardwareSupport);
+
+    template<typename T>
+    Ref<T> promisedWeakOnDispatcher(Function<Ref<T>()>&& function) const
+    {
+        if (isClosed())
+            return T::createAndReject(PlatformMediaError::SourceRemoved);
+        if (m_dispatcher->isCurrent())
+            return function();
+        auto weakWrapper = [function = WTFMove(function), weakThis = ThreadSafeWeakPtr(*this)] {
+            if (RefPtr protectedThis = weakThis.get(); protectedThis && !protectedThis->isClosed())
+                return function();
+            return T::createAndReject(PlatformMediaError::SourceRemoved);
+        };
+        return invokeAsync(m_dispatcher, WTFMove(weakWrapper));
+    }
 
     void setPrivateAndOpen(Ref<MediaSourcePrivate>&&) final;
     Ref<MediaTimePromise> waitForTarget(const SeekTarget&) final;
@@ -192,6 +211,7 @@ private:
     ReadyState m_readyState { ReadyState::Closed };
     bool m_openDeferred { false };
     bool m_sourceopenPending { false };
+
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
     const void* m_logIdentifier { nullptr };

@@ -28,12 +28,13 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(MEDIA_SOURCE)
 
 #include "GPUProcessConnection.h"
-#include "MessageReceiver.h"
 #include "RemoteSourceBufferIdentifier.h"
+#include "WorkQueueMessageReceiver.h"
 #include <WebCore/ContentType.h>
 #include <WebCore/MediaSample.h>
 #include <WebCore/SourceBufferPrivate.h>
 #include <WebCore/SourceBufferPrivateClient.h>
+#include <atomic>
 #include <wtf/LoggerHelper.h>
 #include <wtf/MediaTime.h>
 #include <wtf/Ref.h>
@@ -57,8 +58,8 @@ class MediaSourcePrivateRemote;
 
 class SourceBufferPrivateRemote final
     : public WebCore::SourceBufferPrivate
-    , public IPC::MessageReceiver
 {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<SourceBufferPrivateRemote> create(GPUProcessConnection&, RemoteSourceBufferIdentifier, MediaSourcePrivateRemote&, const MediaPlayerPrivateRemote&);
     virtual ~SourceBufferPrivateRemote();
@@ -66,6 +67,29 @@ public:
     constexpr WebCore::MediaPlatformType platformType() const final { return WebCore::MediaPlatformType::Remote; }
 
     void disconnect() { m_disconnected = true; }
+
+    static WorkQueue& queue();
+
+    class MessageReceiver : public IPC::WorkQueueMessageReceiver {
+    public:
+        static Ref<MessageReceiver> create(SourceBufferPrivateRemote& parent)
+        {
+            return adoptRef(*new MessageReceiver(parent));
+        }
+
+    private:
+        MessageReceiver(SourceBufferPrivateRemote&);
+        void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+        void sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegmentInfo&&, CompletionHandler<void(WebCore::MediaPromise::Result&&)>&&);
+        void takeOwnershipOfMemory(WebCore::SharedMemory::Handle&&);
+        void sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime&);
+        void sourceBufferPrivateBufferedChanged(Vector<WebCore::PlatformTimeRanges>&&, uint64_t, CompletionHandler<void()>&&);
+        void sourceBufferPrivateDurationChanged(const MediaTime&, CompletionHandler<void()>&&);
+        void sourceBufferPrivateDidDropSample();
+        void sourceBufferPrivateDidReceiveRenderingError(int64_t errorCode);
+        RefPtr<WebCore::SourceBufferPrivateClient> client() const;
+        ThreadSafeWeakPtr<SourceBufferPrivateRemote> m_parent;
+    };
 
 private:
     SourceBufferPrivateRemote(GPUProcessConnection&, RemoteSourceBufferIdentifier, MediaSourcePrivateRemote&, const MediaPlayerPrivateRemote&);
@@ -108,25 +132,21 @@ private:
     // Internals Utility methods
     Ref<SamplesPromise> bufferedSamplesForTrackId(TrackID) final;
     Ref<SamplesPromise> enqueuedSamplesForTrackID(TrackID) final;
+    MediaTime minimumUpcomingPresentationTimeForTrackID(TrackID) final;
+    void setMaximumQueueDepthForTrackID(TrackID, uint64_t) final;
 
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
-    void sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegmentInfo&&, CompletionHandler<void(WebCore::MediaPromise::Result&&)>&&);
-    void takeOwnershipOfMemory(WebCore::SharedMemory::Handle&&);
-    void sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime&);
-    void sourceBufferPrivateBufferedChanged(Vector<WebCore::PlatformTimeRanges>&&, uint64_t, CompletionHandler<void()>&&);
-    void sourceBufferPrivateDurationChanged(const MediaTime&, CompletionHandler<void()>&&);
-    void sourceBufferPrivateDidDropSample();
-    void sourceBufferPrivateDidReceiveRenderingError(int64_t errorCode);
-    MediaTime minimumUpcomingPresentationTimeForTrackID(TrackID) override;
-    void setMaximumQueueDepthForTrackID(TrackID, uint64_t) override;
+    void ensureOnDispatcherSync(Function<void()>&&);
+    void ensureWeakOnDispatcher(Function<void()>&&);
 
+    friend class MessageReceiver;
     ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
+    Ref<MessageReceiver> m_receiver;
     RemoteSourceBufferIdentifier m_remoteSourceBufferIdentifier;
-    WeakPtr<MediaPlayerPrivateRemote> m_mediaPlayerPrivate;
+    ThreadSafeWeakPtr<MediaPlayerPrivateRemote> m_mediaPlayerPrivate;
 
-    uint64_t m_totalTrackBufferSizeInBytes = { 0 };
+    std::atomic<uint64_t> m_totalTrackBufferSizeInBytes = { 0 };
 
-    bool isGPURunning() const { return !m_disconnected && m_gpuProcessConnection.get(); }
+    bool isGPURunning() const { return !m_disconnected; }
     bool m_disconnected { false };
 
 #if !RELEASE_LOG_DISABLED

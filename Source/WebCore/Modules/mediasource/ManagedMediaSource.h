@@ -53,6 +53,7 @@ private:
     explicit ManagedMediaSource(ScriptExecutionContext&);
     void monitorSourceBuffers() final;
     bool isOpen() const final;
+    void elementDetached() final;
     bool isBuffered(const PlatformTimeRanges&) const;
     void setStreaming(bool);
     void streamingTimerFired();

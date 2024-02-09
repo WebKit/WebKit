@@ -25,14 +25,10 @@
 
 #if ENABLE(GPU_PROCESS) && ENABLE(MEDIA_SOURCE)
 
-messages -> SourceBufferPrivateRemote NotRefCounted {
-    SourceBufferPrivateDidReceiveInitializationSegment(struct WebKit::InitializationSegmentInfo segmentConfiguration) -> (WebCore::MediaPromise::Result result)
-    TakeOwnershipOfMemory(WebCore::SharedMemory::Handle remoteData)
-    SourceBufferPrivateHighestPresentationTimestampChanged(MediaTime timestamp)
-    SourceBufferPrivateBufferedChanged(Vector<WebCore::PlatformTimeRanges> trackBuffers, uint64_t extraMemory) -> ()
-    SourceBufferPrivateDurationChanged(MediaTime duration) -> ()
-    SourceBufferPrivateDidDropSample()
-    SourceBufferPrivateDidReceiveRenderingError(int64_t errorCode)
+messages -> MediaSourcePrivateRemoteMessageReceiver NotRefCounted {
+    ProxyWaitForTarget(struct WebCore::SeekTarget target) -> (WebCore::MediaTimePromise::Result seekedTime);
+    ProxySeekToTime(MediaTime time) -> (WebCore::MediaPromise::Result result);
+    MediaSourcePrivateShuttingDown() -> ();
 }
 
 #endif

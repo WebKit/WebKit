@@ -31,7 +31,6 @@ struct WebKit::RemoteMediaPlayerState {
     String wirelessPlaybackTargetName;
     std::optional<WebCore::PlatformTimeRanges> bufferedRanges;
     WebCore::MediaPlayerEnums::NetworkState networkState;
-    WebCore::MediaPlayerEnums::ReadyState readyState;
     WebCore::MediaPlayerEnums::MovieLoadType movieLoadType;
     WebCore::MediaPlayerEnums::WirelessPlaybackTargetType wirelessPlaybackTargetType;
     WebCore::FloatSize naturalSize;

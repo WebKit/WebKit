@@ -25,7 +25,7 @@
 
 messages -> MediaPlayerPrivateRemote NotRefCounted {
     NetworkStateChanged(struct WebKit::RemoteMediaPlayerState state)
-    ReadyStateChanged(struct WebKit::RemoteMediaPlayerState state)
+    ReadyStateChanged(struct WebKit::RemoteMediaPlayerState state, WebCore::MediaPlayer::ReadyState readyStat)
     FirstVideoFrameAvailable()
     VolumeChanged(double volume)
     MuteChanged(bool mute)
@@ -98,6 +98,8 @@ messages -> MediaPlayerPrivateRemote NotRefCounted {
     PushVideoFrameMetadata(struct WebCore::VideoFrameMetadata metadata, WebKit::RemoteVideoFrameProxy::Properties frameProperties);
     LayerHostingContextIdChanged(std::optional<WebKit::LayerHostingContextID> inlineLayerHostingContextId, WebCore::FloatSize presentationSize);
 #endif
+
+    CommitAllTransactions() -> ()
 }
 
 #endif

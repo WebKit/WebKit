@@ -66,7 +66,7 @@ public:
     using AddStatus = MediaSourcePrivateAddStatus;
     using EndOfStreamStatus = MediaSourcePrivateEndOfStreamStatus;
 
-    MediaSourcePrivate(MediaSourcePrivateClient&);
+    explicit MediaSourcePrivate(MediaSourcePrivateClient&);
     virtual ~MediaSourcePrivate();
 
     RefPtr<MediaSourcePrivateClient> client() const;
@@ -76,8 +76,8 @@ public:
     virtual void removeSourceBuffer(SourceBufferPrivate&);
     void sourceBufferPrivateDidChangeActiveState(SourceBufferPrivate&, bool active);
     virtual void notifyActiveSourceBuffersChanged() = 0;
-    virtual void durationChanged(const MediaTime&); // Base class method must be called in overrides.
-    virtual void bufferedChanged(const PlatformTimeRanges&); // Base class method must be called in overrides.
+    virtual void durationChanged(const MediaTime&); // Base class method must be called in overrides. Must be thread-safe
+    virtual void bufferedChanged(const PlatformTimeRanges&); // Base class method must be called in overrides. Must be thread-safe.
 
     virtual void markEndOfStream(EndOfStreamStatus) { m_isEnded = true; }
     virtual void unmarkEndOfStream() { m_isEnded = false; }
@@ -106,15 +106,20 @@ public:
 #endif
 
 protected:
+    MediaSourcePrivate(MediaSourcePrivateClient&, RefCountedSerialFunctionDispatcher&);
+    WEBCORE_EXPORT void ensureOnDispatcher(Function<void()>&&) const;
+
     Vector<RefPtr<SourceBufferPrivate>> m_sourceBuffers;
     Vector<SourceBufferPrivate*> m_activeSourceBuffers;
-    bool m_isEnded { false };
+    std::atomic<bool> m_isEnded { false }; // Set on MediaSource's dispatcher.
+    const Ref<RefCountedSerialFunctionDispatcher> m_dispatcher; // SerialFunctionDispatcher the SourceBufferPrivate/MediaSourcePrivate is running on.
 
 private:
-    MediaTime m_duration { MediaTime::invalidTime() };
-    PlatformTimeRanges m_buffered;
+    mutable Lock m_lock;
+    MediaTime m_duration WTF_GUARDED_BY_LOCK(m_lock) { MediaTime::invalidTime() };
+    PlatformTimeRanges m_buffered WTF_GUARDED_BY_LOCK(m_lock);
     MediaTime m_timeFudgeFactor;
-    ThreadSafeWeakPtr<MediaSourcePrivateClient> m_client;
+    const ThreadSafeWeakPtr<MediaSourcePrivateClient> m_client;
 };
 
 String convertEnumerationToString(MediaSourcePrivate::AddStatus);
