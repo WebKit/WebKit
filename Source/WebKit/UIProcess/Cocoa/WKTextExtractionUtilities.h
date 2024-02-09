@@ -23,6 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKitSwift/WKSLinearMediaPlayer.h>
-#import <WebKitSwift/WKSLinearMediaTypes.h>
-#import <WebKitSwift/WKTextExtractionItem.h>
+#pragma once
+
+#import <wtf/RetainPtr.h>
+
+@class WKTextExtractionItem;
+
+namespace WebCore {
+namespace TextExtraction {
+struct Item;
+}
+}
+
+namespace WebKit {
+
+RetainPtr<WKTextExtractionItem> createItem(const WebCore::TextExtraction::Item&);
+
+} // namespace WebKit

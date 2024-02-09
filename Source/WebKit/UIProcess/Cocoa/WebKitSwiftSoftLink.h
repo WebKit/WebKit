@@ -29,3 +29,9 @@
 
 SOFT_LINK_LIBRARY_FOR_HEADER(WebKit, WebKitSwift)
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKGroupSessionObserver)
+SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKTextExtractionContainerItem)
+SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKTextExtractionTextItem)
+SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKTextExtractionScrollableItem)
+SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKTextExtractionEditableItem)
+SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKTextExtractionInteractiveItem)
+SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKTextExtractionImageItem)

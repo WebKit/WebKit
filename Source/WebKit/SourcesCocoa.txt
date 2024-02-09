@@ -423,6 +423,7 @@ UIProcess/Cocoa/WKContactPicker.mm
 UIProcess/Cocoa/WKEditCommand.mm
 UIProcess/Cocoa/WKFullKeyboardAccessWatcher.mm
 UIProcess/Cocoa/WKReloadFrameErrorRecoveryAttempter.mm
+UIProcess/Cocoa/WKTextExtractionUtilities.mm
 UIProcess/Cocoa/WKWebViewContentProviderRegistry.mm
 UIProcess/Cocoa/XPCConnectionTerminationWatchdog.mm
 
