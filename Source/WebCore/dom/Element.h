@@ -776,7 +776,7 @@ protected:
     void removedFromAncestor(RemovalType, ContainerNode&) override;
     void childrenChanged(const ChildChange&) override;
     void removeAllEventListeners() override;
-    virtual void parserDidSetAttributes();
+    virtual void parserDidSetAttributes(std::span<const Attribute>);
 
     void setTabIndexExplicitly(std::optional<int>);
 
@@ -796,6 +796,8 @@ protected:
     void ensureFormAssociatedCustomElement();
 
     static AtomString makeTargetBlankIfHasDanglingMarkup(const AtomString& target);
+
+    void notifyAttributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason = AttributeModificationReason::Directly);
 
 private:
     LocalFrame* documentFrameWithNonNullView() const;
@@ -841,7 +843,6 @@ private:
 
     bool childTypeAllowed(NodeType) const final;
 
-    void notifyAttributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason = AttributeModificationReason::Directly);
     enum class InSynchronizationOfLazyAttribute : bool { No, Yes };
     void setAttributeInternal(unsigned index, const QualifiedName&, const AtomString& value, InSynchronizationOfLazyAttribute);
     void addAttributeInternal(const QualifiedName&, const AtomString& value, InSynchronizationOfLazyAttribute);

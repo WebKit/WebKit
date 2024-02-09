@@ -761,12 +761,16 @@ inline void HTMLInputElement::initializeInputType()
     auto& type = attributeWithoutSynchronization(typeAttr);
     if (type.isNull()) {
         m_inputType = TextInputType::create(*this);
+        ASSERT(m_inputType->storesValueSeparateFromAttribute());
+        m_valueIfDirty = sanitizeValue(attributeWithoutSynchronization(valueAttr));
         updateWillValidateAndValidity();
         return;
     }
 
     m_hasType = true;
     m_inputType = InputType::createIfDifferent(*this, type);
+    if (m_inputType->storesValueSeparateFromAttribute())
+        m_valueIfDirty = sanitizeValue(attributeWithoutSynchronization(valueAttr));
     updateWillValidateAndValidity();
     registerForSuspensionCallbackIfNeeded();
     runPostTypeUpdateTasks();
@@ -912,12 +916,16 @@ bool HTMLInputElement::supportsReadOnly() const
     return m_inputType->supportsReadOnly();
 }
 
-void HTMLInputElement::parserDidSetAttributes()
+void HTMLInputElement::parserDidSetAttributes(std::span<const Attribute> attributes)
 {
     DelayedUpdateValidityScope delayedUpdateValidityScope(*this);
 
     ASSERT(m_parsingInProgress);
     initializeInputType();
+
+    // Use attributes instead of m_elementData because attributeChanged might modify m_elementData.
+    for (const auto& attribute : attributes)
+        notifyAttributeChanged(attribute.name(), nullAtom(), attribute.value(), AttributeModificationReason::Directly);
 }
 
 void HTMLInputElement::finishParsingChildren()

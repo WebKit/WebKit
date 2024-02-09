@@ -2549,15 +2549,14 @@ void Element::parserSetAttributes(std::span<const Attribute> attributes)
 
     }
 
-    parserDidSetAttributes();
+    parserDidSetAttributes(attributes);
+}
 
+void Element::parserDidSetAttributes(std::span<const Attribute> attributes)
+{
     // Use attributes instead of m_elementData because attributeChanged might modify m_elementData.
     for (const auto& attribute : attributes)
         notifyAttributeChanged(attribute.name(), nullAtom(), attribute.value(), AttributeModificationReason::Directly);
-}
-
-void Element::parserDidSetAttributes()
-{
 }
 
 void Element::didMoveToNewDocument(Document& oldDocument, Document& newDocument)

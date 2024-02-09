@@ -389,7 +389,7 @@ private:
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason = AttributeModificationReason::Directly) final;
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const final;
     void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
-    void parserDidSetAttributes() final;
+    void parserDidSetAttributes(std::span<const Attribute>) final;
 
     void copyNonAttributePropertiesFromElement(const Element&) final;
 
