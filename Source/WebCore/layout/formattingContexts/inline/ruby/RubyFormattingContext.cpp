@@ -416,8 +416,16 @@ void RubyFormattingContext::adjustLayoutBoundsAndStretchAncestorRubyBase(LineBox
     } else {
         auto ascentWithAnnotation = ascent + over;
         auto descentWithAnnotation = descent + under;
-        // line-height may produce enough space for annotation.
-        if (layoutBounds.height() < ascentWithAnnotation + descentWithAnnotation) {
+        // FIXME: Normally we would check if there's space for both the ascent and the descent parts of the content
+        // but in order to keep ruby tight we let subsequent lines (potentially) overlap each other by
+        // only checking against total height (this affects the annotation box vertical placement by letting it overlap the previous line's descent)
+        // However we have to make sure there's enough space for the annotation box on the first line.
+        // This tight content arrangement is a legacy ruby behavior (see placeChildInlineBoxesInBlockDirection) and we may wanna reconsider it at some point.
+        if (isFirstFormattedLine) {
+            layoutBounds.ascent = std::max(ascentWithAnnotation, layoutBounds.ascent);
+            layoutBounds.descent = std::max(descentWithAnnotation, layoutBounds.descent);
+        } else if (layoutBounds.height() < ascentWithAnnotation + descentWithAnnotation) {
+            // In case line-height does not produce enough space for annotation.
             layoutBounds.ascent = std::max(ascentWithAnnotation, layoutBounds.ascent);
             layoutBounds.descent = std::max(descentWithAnnotation, layoutBounds.descent);
         }
