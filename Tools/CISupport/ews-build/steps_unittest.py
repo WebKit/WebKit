@@ -1239,7 +1239,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         timeout=3600,
                         logEnviron=False,
-                        command=['/bin/sh', '-c', 'perl Tools/Scripts/build-webkit --release -hideShellScriptEnvironment WK_VALIDATE_DEPENDENCIES=YES --ios-simulator 2>&1 | perl Tools/Scripts/filter-build-webkit -logfile WebKitBuild/build-log.txt'],
+                        command=['/bin/sh', '-c', 'perl Tools/Scripts/build-webkit --release -hideShellScriptEnvironment WK_VALIDATE_DEPENDENCIES=YES --ios-simulator 2>&1 | perl Tools/Scripts/filter-build-webkit -logfile build-log.txt'],
                         )
             + 0,
         )
@@ -1256,7 +1256,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         timeout=3600,
                         logEnviron=False,
-                        command=['/bin/sh', '-c', 'perl Tools/Scripts/build-webkit --release --architecture "x86_64 arm64" -hideShellScriptEnvironment WK_VALIDATE_DEPENDENCIES=YES 2>&1 | perl Tools/Scripts/filter-build-webkit -logfile WebKitBuild/build-log.txt'],
+                        command=['/bin/sh', '-c', 'perl Tools/Scripts/build-webkit --release --architecture "x86_64 arm64" -hideShellScriptEnvironment WK_VALIDATE_DEPENDENCIES=YES 2>&1 | perl Tools/Scripts/filter-build-webkit -logfile build-log.txt'],
                         )
             + 0,
         )
@@ -1304,7 +1304,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         timeout=3600,
                         logEnviron=False,
-                        command=['/bin/sh', '-c', 'perl Tools/Scripts/build-webkit --debug -hideShellScriptEnvironment WK_VALIDATE_DEPENDENCIES=YES 2>&1 | perl Tools/Scripts/filter-build-webkit -logfile WebKitBuild/build-log.txt'],
+                        command=['/bin/sh', '-c', 'perl Tools/Scripts/build-webkit --debug -hideShellScriptEnvironment WK_VALIDATE_DEPENDENCIES=YES 2>&1 | perl Tools/Scripts/filter-build-webkit -logfile build-log.txt'],
                         )
             + ExpectShell.log('stdio', stdout='1 error generated.')
             + 2,
@@ -1338,7 +1338,7 @@ class TestCompileWebKitWithoutChange(BuildStepMixinAdditions, unittest.TestCase)
             ExpectShell(workdir='wkdir',
                         timeout=3600,
                         logEnviron=False,
-                        command=['/bin/sh', '-c', 'perl Tools/Scripts/build-webkit --release -hideShellScriptEnvironment WK_VALIDATE_DEPENDENCIES=YES --ios-simulator 2>&1 | perl Tools/Scripts/filter-build-webkit -logfile WebKitBuild/build-log.txt'],
+                        command=['/bin/sh', '-c', 'perl Tools/Scripts/build-webkit --release -hideShellScriptEnvironment WK_VALIDATE_DEPENDENCIES=YES --ios-simulator 2>&1 | perl Tools/Scripts/filter-build-webkit -logfile build-log.txt'],
                         )
             + 0,
         )
@@ -1354,7 +1354,7 @@ class TestCompileWebKitWithoutChange(BuildStepMixinAdditions, unittest.TestCase)
             ExpectShell(workdir='wkdir',
                         timeout=3600,
                         logEnviron=False,
-                        command=['/bin/sh', '-c', 'perl Tools/Scripts/build-webkit --debug -hideShellScriptEnvironment WK_VALIDATE_DEPENDENCIES=YES 2>&1 | perl Tools/Scripts/filter-build-webkit -logfile WebKitBuild/build-log.txt'],
+                        command=['/bin/sh', '-c', 'perl Tools/Scripts/build-webkit --debug -hideShellScriptEnvironment WK_VALIDATE_DEPENDENCIES=YES 2>&1 | perl Tools/Scripts/filter-build-webkit -logfile build-log.txt'],
                         )
             + ExpectShell.log('stdio', stdout='1 error generated.')
             + 2,
@@ -1479,7 +1479,7 @@ class TestCompileJSC(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         timeout=3600,
                         logEnviron=False,
-                        command=['/bin/sh', '-c', 'perl Tools/Scripts/build-jsc --release WK_VALIDATE_DEPENDENCIES=YES 2>&1 | perl Tools/Scripts/filter-build-webkit -logfile WebKitBuild/build-log.txt'],
+                        command=['/bin/sh', '-c', 'perl Tools/Scripts/build-jsc --release WK_VALIDATE_DEPENDENCIES=YES 2>&1 | perl Tools/Scripts/filter-build-webkit -logfile build-log.txt'],
                         )
             + 0,
         )
@@ -1495,7 +1495,7 @@ class TestCompileJSC(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         timeout=3600,
                         logEnviron=False,
-                        command=['/bin/sh', '-c', 'perl Tools/Scripts/build-jsc --debug WK_VALIDATE_DEPENDENCIES=YES 2>&1 | perl Tools/Scripts/filter-build-webkit -logfile WebKitBuild/build-log.txt'],
+                        command=['/bin/sh', '-c', 'perl Tools/Scripts/build-jsc --debug WK_VALIDATE_DEPENDENCIES=YES 2>&1 | perl Tools/Scripts/filter-build-webkit -logfile build-log.txt'],
                         )
             + ExpectShell.log('stdio', stdout='1 error generated.')
             + 2,
@@ -4782,14 +4782,14 @@ class TestUploadFileToS3(BuildStepMixinAdditions, unittest.TestCase):
             return self.runStep()
 
     def test_success_content_type(self):
-        self.configureStep(file='WebKitBuild/build-log.txt', content_type='text/plain')
+        self.configureStep(file='build-log.txt', content_type='text/plain')
         self.assertEqual(UploadFileToS3.haltOnFailure, True)
         self.assertEqual(UploadFileToS3.flunkOnFailure, True)
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         env=dict(UPLOAD_URL='https://test-s3-url'),
                         logEnviron=False,
-                        command=['python3', 'Tools/Scripts/upload-file-to-url', '--filename', 'WebKitBuild/build-log.txt', '--content-type', 'text/plain'],
+                        command=['python3', 'Tools/Scripts/upload-file-to-url', '--filename', 'build-log.txt', '--content-type', 'text/plain'],
                         timeout=1860,
                         )
             + 0,

@@ -3131,7 +3131,7 @@ class CompileWebKit(shell.Compile, AddToLogMixin, ShellMixin):
     warningPattern = '.*arning: .*'
     haltOnFailure = False
     build_command = ['perl', 'Tools/Scripts/build-webkit', WithProperties('--%(configuration)s')]
-    filter_command = ['perl', 'Tools/Scripts/filter-build-webkit', '-logfile', 'WebKitBuild/build-log.txt']
+    filter_command = ['perl', 'Tools/Scripts/filter-build-webkit', '-logfile', 'build-log.txt']
     VALID_ADDITIONAL_ARGUMENTS_LIST = []  # If additionalArguments is added to config.json for CompileWebKit step, it should be added here as well.
     APPLE_PLATFORMS = ('mac', 'ios', 'tvos', 'watchos')
 
@@ -3208,7 +3208,7 @@ class CompileWebKit(shell.Compile, AddToLogMixin, ShellMixin):
                     extension='txt',
                     content_type='text/plain',
                 ), UploadFileToS3(
-                    'WebKitBuild/build-log.txt',
+                    'build-log.txt',
                     links={self.name: 'Full build log'},
                     content_type='text/plain',
                 )
