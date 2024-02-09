@@ -280,8 +280,8 @@ void AutoscrollController::autoscrollTimerFired()
                 return;
             }
         }
-        if (RefPtr view = frame.view())
-            updatePanScrollState(view, frame->checkedEventHandler()->lastKnownMousePosition());
+        if (RefPtr view = frame->view())
+            updatePanScrollState(view.get(), frame->checkedEventHandler()->lastKnownMousePosition());
         CheckedRef { *m_autoscrollRenderer }->panScroll(m_panScrollStartPos);
         break;
 #endif
