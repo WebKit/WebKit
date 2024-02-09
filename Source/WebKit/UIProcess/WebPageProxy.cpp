@@ -7106,15 +7106,15 @@ void WebPageProxy::decidePolicyForNewWindowAction(NavigationActionData&& navigat
         m_navigationClient->decidePolicyForNavigationAction(*this, navigationAction.get(), WTFMove(listener));
 }
 
-void WebPageProxy::decidePolicyForResponse(IPC::Connection& connection, FrameInfoData&& frameInfo, uint64_t navigationID, const ResourceResponse& response, const ResourceRequest& request, bool canShowMIMEType, const String& downloadAttribute, CompletionHandler<void(PolicyDecision&&)>&& completionHandler)
+void WebPageProxy::decidePolicyForResponse(IPC::Connection& connection, FrameInfoData&& frameInfo, uint64_t navigationID, const ResourceResponse& response, const ResourceRequest& request, bool canShowMIMEType, const String& downloadAttribute, bool isShowingInitialAboutBlank, WebCore::CrossOriginOpenerPolicyValue activeDocumentCOOPValue, CompletionHandler<void(PolicyDecision&&)>&& completionHandler)
 {
     RefPtr frame = WebFrameProxy::webFrame(frameInfo.frameID);
     MESSAGE_CHECK_BASE(frame, &connection);
     auto* provisionalFrame = frame->provisionalFrame();
-    decidePolicyForResponseShared(provisionalFrame ? provisionalFrame->protectedProcess() : frame->protectedProcess(), internals().webPageID, WTFMove(frameInfo), navigationID, response, request, canShowMIMEType, downloadAttribute, WTFMove(completionHandler));
+    decidePolicyForResponseShared(provisionalFrame ? provisionalFrame->protectedProcess() : frame->protectedProcess(), internals().webPageID, WTFMove(frameInfo), navigationID, response, request, canShowMIMEType, downloadAttribute, isShowingInitialAboutBlank, activeDocumentCOOPValue, WTFMove(completionHandler));
 }
 
-void WebPageProxy::decidePolicyForResponseShared(Ref<WebProcessProxy>&& process, PageIdentifier webPageID, FrameInfoData&& frameInfo, uint64_t navigationID, const ResourceResponse& response, const ResourceRequest& request, bool canShowMIMEType, const String& downloadAttribute, CompletionHandler<void(PolicyDecision&&)>&& completionHandler)
+void WebPageProxy::decidePolicyForResponseShared(Ref<WebProcessProxy>&& process, PageIdentifier webPageID, FrameInfoData&& frameInfo, uint64_t navigationID, const ResourceResponse& response, const ResourceRequest& request, bool canShowMIMEType, const String& downloadAttribute, bool isShowingInitialAboutBlank, WebCore::CrossOriginOpenerPolicyValue activeDocumentCOOPValue, CompletionHandler<void(PolicyDecision&&)>&& completionHandler)
 {
     Ref protectedPageClient { pageClient() };
 
@@ -7124,6 +7124,9 @@ void WebPageProxy::decidePolicyForResponseShared(Ref<WebProcessProxy>&& process,
     MESSAGE_CHECK_URL(process, response.url());
     RefPtr navigation = navigationID ? m_navigationState->navigation(navigationID) : nullptr;
     Ref navigationResponse = API::NavigationResponse::create(API::FrameInfo::create(WTFMove(frameInfo), this).get(), request, response, canShowMIMEType, downloadAttribute);
+
+    if (coopValuesRequireBrowsingContextGroupSwitch(isShowingInitialAboutBlank, activeDocumentCOOPValue, frameInfo.securityOrigin.securityOrigin().get(), obtainCrossOriginOpenerPolicy(response).value, SecurityOrigin::create(response.url()).get()))
+        m_openerFrame = nullptr;
 
     Ref listener = frame->setUpPolicyListenerProxy([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), navigation = WTFMove(navigation), process, navigationResponse, request] (PolicyAction policyAction, API::WebsitePolicies*, ProcessSwapRequestedByClient processSwapRequestedByClient, RefPtr<SafeBrowsingWarning>&& safeBrowsingWarning, std::optional<NavigatingToAppBoundDomain>, WasNavigationIntercepted) mutable {
         // FIXME: Assert the API::WebsitePolicies* is nullptr here once clients of WKFramePolicyListenerUseWithPolicies go away.
@@ -7321,7 +7324,17 @@ void WebPageProxy::createNewPage(WindowFeatures&& windowFeatures, NavigationActi
     if (RefPtr page = originatingFrameInfo->page())
         openerAppInitiatedState = page->lastNavigationWasAppInitiated();
 
-    auto completionHandler = [this, protectedThis = Ref { *this }, mainFrameURL, request, reply = WTFMove(reply), privateClickMeasurement = navigationActionData.privateClickMeasurement, openerAppInitiatedState = WTFMove(openerAppInitiatedState), openerFrameID = originatingFrameInfoData.frameID] (RefPtr<WebPageProxy> newPage) mutable {
+    auto completionHandler = [
+        this,
+        protectedThis = Ref { *this },
+        mainFrameURL,
+        request,
+        reply = WTFMove(reply),
+        privateClickMeasurement = navigationActionData.privateClickMeasurement,
+        openerAppInitiatedState = WTFMove(openerAppInitiatedState),
+        openerFrameID = originatingFrameInfoData.frameID,
+        hasOpener = navigationActionData.hasOpener
+    ] (RefPtr<WebPageProxy> newPage) mutable {
         if (!newPage) {
             reply(std::nullopt, std::nullopt);
             return;
@@ -7331,7 +7344,7 @@ void WebPageProxy::createNewPage(WindowFeatures&& windowFeatures, NavigationActi
 
         if (openerAppInitiatedState)
             newPage->m_lastNavigationWasAppInitiated = *openerAppInitiatedState;
-        if (RefPtr openerFrame = WebFrameProxy::webFrame(openerFrameID)) {
+        if (RefPtr openerFrame = WebFrameProxy::webFrame(openerFrameID); openerFrame && hasOpener) {
             newPage->m_openerFrame = openerFrame;
             if (RefPtr page = openerFrame->page())
                 page->addOpenedPage(*newPage);
@@ -9816,6 +9829,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
 
     parameters.processDisplayName = configuration().processDisplayName();
 
+    parameters.openerFrameIdentifier = m_openerFrame ? std::optional(m_openerFrame->frameID()) : std::nullopt;
     parameters.viewSize = protectedPageClient()->viewSize();
     parameters.activityState = internals().activityState;
     parameters.drawingAreaType = drawingArea.type();
@@ -13258,6 +13272,11 @@ WebProcessProxy* WebPageProxy::processForRegistrableDomain(const WebCore::Regist
 RemotePageProxy* WebPageProxy::remotePageProxyForRegistrableDomain(const WebCore::RegistrableDomain& domain) const
 {
     return internals().remotePageProxyState.domainToRemotePageProxyMap.get(domain).get();
+}
+
+WebPageProxy* WebPageProxy::openerPage() const
+{
+    return m_openerFrame ? m_openerFrame->page() : nullptr;
 }
 
 void WebPageProxy::setRemotePageProxyInOpenerProcess(Ref<RemotePageProxy>&& page)

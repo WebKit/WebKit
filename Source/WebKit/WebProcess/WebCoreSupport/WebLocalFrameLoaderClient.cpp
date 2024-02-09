@@ -922,7 +922,10 @@ void WebLocalFrameLoaderClient::dispatchDecidePolicyForResponse(const ResourceRe
     auto protectedFrame = m_frame.copyRef();
     uint64_t listenerID = protectedFrame->setUpPolicyListener(WTFMove(function), WebFrame::ForNavigationAction::No);
 
-    webPage->sendWithAsyncReply(Messages::WebPageProxy::DecidePolicyForResponse(protectedFrame->info(), navigationID, response, request, canShowResponse, downloadAttribute), [frame = protectedFrame, listenerID] (PolicyDecision&& policyDecision) {
+    bool isShowingInitialAboutBlank = coreFrame && coreFrame->loader().stateMachine().isDisplayingInitialEmptyDocument();
+    auto activeDocumentCOOPValue = coreFrame && coreFrame->document() ? coreFrame->document()->crossOriginOpenerPolicy().value : CrossOriginOpenerPolicyValue::SameOrigin;
+
+    webPage->sendWithAsyncReply(Messages::WebPageProxy::DecidePolicyForResponse(protectedFrame->info(), navigationID, response, request, canShowResponse, downloadAttribute, isShowingInitialAboutBlank, activeDocumentCOOPValue), [frame = protectedFrame, listenerID] (PolicyDecision&& policyDecision) {
         frame->didReceivePolicyDecision(listenerID, WTFMove(policyDecision));
     });
 }

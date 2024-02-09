@@ -503,6 +503,16 @@ static std::variant<UniqueRef<LocalFrameLoaderClient>, UniqueRef<RemoteFrameClie
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+static RefPtr<Frame> frameFromIdentifier(std::optional<FrameIdentifier> identifier)
+{
+    if (!identifier)
+        return nullptr;
+    RefPtr webFrame = WebProcess::singleton().webFrame(*identifier);
+    if (!webFrame)
+        return nullptr;
+    return webFrame->coreFrame();
+}
+
 WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     : m_identifier(pageID)
     , m_viewSize(parameters.viewSize)
@@ -638,9 +648,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 
     m_pageGroup = WebProcess::singleton().webPageGroup(parameters.pageGroupData);
 
-    auto frameType { Frame::FrameType::Local };
-    if (parameters.subframeProcessPageParameters && !parameters.openerFrameIdentifier)
-        frameType = Frame::FrameType::Remote;
+    auto frameType = parameters.subframeProcessPageParameters ? Frame::FrameType::Remote : Frame::FrameType::Local;
 
     PageConfiguration pageConfiguration(
         pageID,
@@ -655,6 +663,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         makeUniqueRef<WebProgressTrackerClient>(*this),
         clientForMainFrame(m_mainFrame.copyRef(), frameType),
         m_mainFrame->frameID(),
+        frameFromIdentifier(parameters.openerFrameIdentifier),
         makeUniqueRef<WebSpeechRecognitionProvider>(pageID),
         makeUniqueRef<MediaRecorderProvider>(*this),
         WebProcess::singleton().broadcastChannelRegistry(),
@@ -799,16 +808,6 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         for (auto& childParameters : subframeProcessPageParameters->frameTreeParameters.children)
             constructFrameTree(m_mainFrame.get(), childParameters);
         m_page->setMainFrameURL(subframeProcessPageParameters->initialMainDocumentURL);
-    }
-
-    if (parameters.isProcessSwap && parameters.openerFrameIdentifier) {
-        if (RefPtr openerFrame = WebProcess::singleton().webFrame(*parameters.openerFrameIdentifier)) {
-            if (RefPtr coreMainFrame = m_mainFrame->coreLocalFrame())
-                coreMainFrame->loader().setOpener(openerFrame->coreRemoteFrame());
-            else
-                ASSERT_NOT_REACHED();
-        } else
-            ASSERT_NOT_REACHED();
     }
 
     m_drawingArea->updatePreferences(parameters.store);

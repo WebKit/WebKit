@@ -155,7 +155,7 @@ static bool isRootFrame(const Frame& frame)
     return true;
 }
 
-LocalFrame::LocalFrame(Page& page, UniqueRef<LocalFrameLoaderClient>&& frameLoaderClient, FrameIdentifier identifier, HTMLFrameOwnerElement* ownerElement, Frame* parent)
+LocalFrame::LocalFrame(Page& page, UniqueRef<LocalFrameLoaderClient>&& frameLoaderClient, FrameIdentifier identifier, HTMLFrameOwnerElement* ownerElement, Frame* parent, Frame* opener)
     : Frame(page, identifier, FrameType::Local, ownerElement, parent)
     , m_loader(makeUniqueRef<FrameLoader>(*this, WTFMove(frameLoaderClient)))
     , m_script(makeUniqueRef<ScriptController>(*this))
@@ -180,6 +180,8 @@ LocalFrame::LocalFrame(Page& page, UniqueRef<LocalFrameLoaderClient>&& frameLoad
 
     if (isRootFrame())
         page.addRootFrame(*this);
+
+    setOpener(opener);
 }
 
 void LocalFrame::init()
@@ -187,19 +189,19 @@ void LocalFrame::init()
     checkedLoader()->init();
 }
 
-Ref<LocalFrame> LocalFrame::createMainFrame(Page& page, UniqueRef<LocalFrameLoaderClient>&& client, FrameIdentifier identifier)
+Ref<LocalFrame> LocalFrame::createMainFrame(Page& page, UniqueRef<LocalFrameLoaderClient>&& client, FrameIdentifier identifier, Frame* opener)
 {
-    return adoptRef(*new LocalFrame(page, WTFMove(client), identifier, nullptr, nullptr));
+    return adoptRef(*new LocalFrame(page, WTFMove(client), identifier, nullptr, nullptr, opener));
 }
 
 Ref<LocalFrame> LocalFrame::createSubframe(Page& page, UniqueRef<LocalFrameLoaderClient>&& client, FrameIdentifier identifier, HTMLFrameOwnerElement& ownerElement)
 {
-    return adoptRef(*new LocalFrame(page, WTFMove(client), identifier, &ownerElement, ownerElement.document().frame()));
+    return adoptRef(*new LocalFrame(page, WTFMove(client), identifier, &ownerElement, ownerElement.document().frame(), nullptr));
 }
 
 Ref<LocalFrame> LocalFrame::createSubframeHostedInAnotherProcess(Page& page, UniqueRef<LocalFrameLoaderClient>&& client, FrameIdentifier identifier, Frame& parent)
 {
-    return adoptRef(*new LocalFrame(page, WTFMove(client), identifier, nullptr, &parent));
+    return adoptRef(*new LocalFrame(page, WTFMove(client), identifier, nullptr, &parent, nullptr));
 }
 
 LocalFrame::~LocalFrame()

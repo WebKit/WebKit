@@ -82,6 +82,7 @@ PageConfiguration::PageConfiguration(
     UniqueRef<ProgressTrackerClient>&& progressTrackerClient,
     std::variant<UniqueRef<LocalFrameLoaderClient>, UniqueRef<RemoteFrameClient>>&& clientForMainFrame,
     FrameIdentifier mainFrameIdentifier,
+    RefPtr<Frame>&& mainFrameOpener,
     UniqueRef<SpeechRecognitionProvider>&& speechRecognitionProvider,
     UniqueRef<MediaRecorderProvider>&& mediaRecorderProvider,
     Ref<BroadcastChannelRegistry>&& broadcastChannelRegistry,
@@ -95,7 +96,8 @@ PageConfiguration::PageConfiguration(
 #if ENABLE(APPLE_PAY)
     UniqueRef<PaymentCoordinatorClient>&& paymentCoordinatorClient,
 #endif
-    UniqueRef<ChromeClient>&& chromeClient)
+    UniqueRef<ChromeClient>&& chromeClient
+)
     : identifier(identifier)
     , sessionID(sessionID)
     , chromeClient(WTFMove(chromeClient))
@@ -113,6 +115,7 @@ PageConfiguration::PageConfiguration(
     , cookieJar(WTFMove(cookieJar))
     , clientForMainFrame(WTFMove(clientForMainFrame))
     , mainFrameIdentifier(WTFMove(mainFrameIdentifier))
+    , mainFrameOpener(WTFMove(mainFrameOpener))
     , cacheStorageProvider(WTFMove(cacheStorageProvider))
     , userContentProvider(WTFMove(userContentProvider))
     , broadcastChannelRegistry(WTFMove(broadcastChannelRegistry))

@@ -387,6 +387,32 @@ TEST(SiteIsolation, NavigationAfterWindowOpen)
         Util::spinRunLoop();
 }
 
+TEST(SiteIsolation, ParentOpener)
+{
+    HTTPServer server({
+        { "/example"_s, { "<script>w = window.open('https://webkit.org/webkit')</script>"_s } },
+        { "/webkit"_s, { "<iframe src='https://apple.com/apple'></iframe>"_s } },
+        { "/apple"_s, { "hi"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [opener, opened] = openerAndOpenedViews(server);
+
+    __block RetainPtr<WKFrameInfo> childFrame;
+    [opened.webView _frames:^(_WKFrameTreeNode *mainFrame) {
+        childFrame = mainFrame.childFrames[0].info;
+    }];
+    while (!childFrame)
+        Util::spinRunLoop();
+
+    [opened.webView evaluateJavaScript:@"try { opener.postMessage('test1', '*'); alert('posted message 1') } catch(e) { alert(e) }" completionHandler:nil];
+    EXPECT_WK_STREQ([opened.uiDelegate waitForAlert], "posted message 1");
+
+    [opened.webView evaluateJavaScript:@"try { top.opener.postMessage('test2', '*'); alert('posted message 2') } catch(e) { alert(e) }" inFrame:childFrame.get() inContentWorld:WKContentWorld.pageWorld completionHandler:nil];
+    // FIXME: This should say "posted message 2" like it does without site isolation on.
+    // It currently does not because when we make a new process for an iframe, we don't inject the opener remote page into it.
+    EXPECT_WK_STREQ([opened.uiDelegate waitForAlert], "TypeError: null is not an object (evaluating 'top.opener.postMessage')");
+}
+
 TEST(SiteIsolation, WindowOpenRedirect)
 {
     HTTPServer server({
