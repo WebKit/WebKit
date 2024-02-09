@@ -5,7 +5,7 @@ Registrable domain: 127.0.0.1
     hadUserInteraction: No
     mostRecentUserInteraction: -1
     grandfathered: No
-    IsScheduledForAllButCookieDataRemoval: No
+    DataRemovalFrequency: Never
     isPrevalentResource: Yes
     isVeryPrevalentResource: No
     dataRecordsRemoved: 0

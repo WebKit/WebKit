@@ -50,6 +50,8 @@ struct ResourceLoadStatistics;
 
 namespace WebKit {
 
+enum class DidFilterKnownLinkDecoration : bool;
+
 class OperatingDate {
 public:
     OperatingDate() = default;
@@ -80,6 +82,7 @@ private:
 enum class OperatingDatesWindow : uint8_t { Long, Short, ForLiveOnTesting, ForReproTesting };
 enum class CookieAccess : uint8_t { CannotRequest, BasedOnCookiePolicy, OnlyIfGranted };
 enum class CanRequestStorageAccessWithoutUserInteraction : bool { No, Yes };
+enum class DataRemovalFrequency : uint8_t { Never, Short, Long };
 
 // This is always constructed / used / destroyed on the WebResourceLoadStatisticsStore's statistics queue.
 class ResourceLoadStatisticsStore final : public DatabaseUtilities, public CanMakeWeakPtr<ResourceLoadStatisticsStore> {
@@ -174,7 +177,7 @@ public:
     void grantStorageAccess(SubFrameDomain&&, TopFrameDomain&&, WebCore::FrameIdentifier, WebCore::PageIdentifier, WebCore::StorageAccessPromptWasShown, WebCore::StorageAccessScope, CompletionHandler<void(WebCore::StorageAccessWasGranted)>&&);
 
     void logFrameNavigation(const NavigatedToDomain&, const TopFrameDomain&, const NavigatedFromDomain&, bool isRedirect, bool isMainFrame, Seconds delayAfterMainFrameDocumentLoad, bool wasPotentiallyInitiatedByUser);
-    void logCrossSiteLoadWithLinkDecoration(const NavigatedFromDomain&, const NavigatedToDomain&);
+    void logCrossSiteLoadWithLinkDecoration(const NavigatedFromDomain&, const NavigatedToDomain&, DidFilterKnownLinkDecoration);
 
     void logUserInteraction(const TopFrameDomain&, CompletionHandler<void()>&&);
     void clearUserInteraction(const RegistrableDomain&, CompletionHandler<void()>&&);
@@ -194,6 +197,7 @@ public:
     const WebResourceLoadStatisticsStore& store() const { return m_store; }
 
     bool domainIDExistsInDatabase(int);
+    bool observedDomainNavigationWithLinkDecoration(int);
     std::optional<Vector<String>> checkForMissingTablesInSchema();
 
     void includeTodayAsOperatingDateIfNecessary();
@@ -260,7 +264,7 @@ private:
         WallTime mostRecentWebPushInteractionTime;
         bool hadUserInteraction;
         bool grandfathered;
-        bool isScheduledForAllButCookieDataRemoval;
+        DataRemovalFrequency dataRemovalFrequency;
         unsigned topFrameUniqueRedirectsToSinceSameSiteStrictEnforcement;
     };
     Vector<DomainData> domains() const;
@@ -280,7 +284,8 @@ private:
     };
     HashMap<unsigned, NotVeryPrevalentResources> findNotVeryPrevalentResources();
 
-    bool predicateValueForDomain(WebCore::SQLiteStatementAutoResetScope&, const RegistrableDomain&) const;
+    int predicateValueForDomain(WebCore::SQLiteStatementAutoResetScope&, const RegistrableDomain&) const;
+    bool predicateBoolValueForDomain(WebCore::SQLiteStatementAutoResetScope&, const RegistrableDomain&) const;
 
     CookieAccess cookieAccess(const SubResourceDomain&, const TopFrameDomain&, CanRequestStorageAccessWithoutUserInteraction);
     void updateCookieBlockingForDomains(RegistrableDomainsToBlockCookiesFor&&, CompletionHandler<void()>&&);
@@ -297,7 +302,8 @@ private:
     bool shouldRemoveAllWebsiteDataFor(const DomainData&, bool shouldCheckForGrandfathering);
     bool shouldRemoveAllButCookiesFor(const DomainData&, bool shouldCheckForGrandfathering);
     bool shouldEnforceSameSiteStrictFor(DomainData&, bool shouldCheckForGrandfathering);
-    void setIsScheduledForAllScriptWrittenStorageRemoval(const RegistrableDomain&, bool value);
+    void setIsScheduledForAllScriptWrittenStorageRemoval(const RegistrableDomain&, DataRemovalFrequency);
+    DataRemovalFrequency dataRemovalFrequency(const RegistrableDomain&) const;
     void clearTopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement(const NavigatedToDomain&, CompletionHandler<void()>&&);
     bool shouldEnforceSameSiteStrictForSpecificDomain(const RegistrableDomain&) const;
     RegistrableDomainsToDeleteOrRestrictWebsiteDataFor registrableDomainsToDeleteOrRestrictWebsiteDataFor();
@@ -371,6 +377,7 @@ private:
     std::unique_ptr<WebCore::SQLiteStatement> m_clearPrevalentResourceStatement;
     mutable std::unique_ptr<WebCore::SQLiteStatement> m_hadUserInteractionStatement;
     std::unique_ptr<WebCore::SQLiteStatement> m_updateGrandfatheredStatement;
+    mutable std::unique_ptr<WebCore::SQLiteStatement> m_isScheduledForAllButCookieDataRemovalStatement;
     mutable std::unique_ptr<WebCore::SQLiteStatement> m_updateIsScheduledForAllButCookieDataRemovalStatement;
     mutable std::unique_ptr<WebCore::SQLiteStatement> m_updateMostRecentWebPushInteractionTimeStatement;
     mutable std::unique_ptr<WebCore::SQLiteStatement> m_isGrandfatheredStatement;

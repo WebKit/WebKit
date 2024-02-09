@@ -254,7 +254,7 @@ public:
     bool hasStatisticsTestingCallback() const { return !!m_statisticsTestingCallback; }
     void setVeryPrevalentResource(const URL&, CompletionHandler<void()>&&);
     void setSubframeUnderTopFrameDomain(const URL& subframe, const URL& topFrame);
-    void setCrossSiteLoadWithLinkDecorationForTesting(const URL& fromURL, const URL& toURL, CompletionHandler<void()>&&);
+    void setCrossSiteLoadWithLinkDecorationForTesting(const URL& fromURL, const URL& toURL, bool wasFiltered, CompletionHandler<void()>&&);
     void resetCrossSiteLoadsWithLinkDecorationForTesting(CompletionHandler<void()>&&);
     void deleteCookiesForTesting(const URL&, bool includeHttpOnlyCookies, CompletionHandler<void()>&&);
     void hasLocalStorageForTesting(const URL&, CompletionHandler<void(bool)>&&) const;

@@ -526,6 +526,8 @@ typedef NS_OPTIONS(NSUInteger, WKDisplayCaptureSurfaces) {
 
 - (BOOL)_allowAnimationControls WK_API_AVAILABLE(macos(14.0), ios(17.0));
 
+- (void)_setStatisticsCrossSiteLoadWithLinkDecorationForTesting:(NSString *)fromHost withToHost:(NSString *)toHost withWasFiltered:(BOOL)wasFiltered withCompletionHandler:(void(^)(void))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 @end
 
 #if TARGET_OS_IPHONE

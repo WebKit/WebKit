@@ -1310,7 +1310,8 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         auto messageBodyDictionary = dictionaryValue(messageBody);
         auto fromHost = stringValue(messageBodyDictionary, "FromHost");
         auto toHost = stringValue(messageBodyDictionary, "ToHost");
-        TestController::singleton().setStatisticsCrossSiteLoadWithLinkDecoration(fromHost, toHost);
+        auto wasFiltered = booleanValue(messageBodyDictionary, "WasFiltered");
+        TestController::singleton().setStatisticsCrossSiteLoadWithLinkDecoration(fromHost, toHost, wasFiltered);
         return nullptr;
     }
 

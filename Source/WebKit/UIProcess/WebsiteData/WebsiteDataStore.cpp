@@ -1389,11 +1389,11 @@ void WebsiteDataStore::setGrandfathered(const URL& url, bool isGrandfathered, Co
     protectedNetworkProcess()->setGrandfathered(m_sessionID, WebCore::RegistrableDomain { url }, isGrandfathered, WTFMove(completionHandler));
 }
 
-void WebsiteDataStore::setCrossSiteLoadWithLinkDecorationForTesting(const URL& fromURL, const URL& toURL, CompletionHandler<void()>&& completionHandler)
+void WebsiteDataStore::setCrossSiteLoadWithLinkDecorationForTesting(const URL& fromURL, const URL& toURL, bool wasFiltered, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
     
-    protectedNetworkProcess()->setCrossSiteLoadWithLinkDecorationForTesting(m_sessionID, WebCore::RegistrableDomain { fromURL }, WebCore::RegistrableDomain { toURL }, WTFMove(completionHandler));
+    protectedNetworkProcess()->setCrossSiteLoadWithLinkDecorationForTesting(m_sessionID, WebCore::RegistrableDomain { fromURL }, WebCore::RegistrableDomain { toURL }, wasFiltered, WTFMove(completionHandler));
 }
 
 void WebsiteDataStore::resetCrossSiteLoadsWithLinkDecorationForTesting(CompletionHandler<void()>&& completionHandler)

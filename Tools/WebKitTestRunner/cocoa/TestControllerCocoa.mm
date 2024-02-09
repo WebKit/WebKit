@@ -463,6 +463,13 @@ void TestController::cocoaResetStateToConsistentValues(const TestOptions& option
     [globalWebsiteDataStoreDelegateClient() clearReportedWindowProxyAccessDomains];
 }
 
+void TestController::platformSetStatisticsCrossSiteLoadWithLinkDecoration(WKStringRef fromHost, WKStringRef toHost, bool wasFiltered, void* context, SetStatisticsCrossSiteLoadWithLinkDecorationCallBack callback)
+{
+    [m_mainWebView->platformView() _setStatisticsCrossSiteLoadWithLinkDecorationForTesting:toWTFString(fromHost) withToHost:toWTFString(toHost) withWasFiltered:wasFiltered withCompletionHandler:^{
+        callback(context);
+    }];
+}
+
 void TestController::platformWillRunTest(const TestInvocation& testInvocation)
 {
     setCrashReportApplicationSpecificInformationToURL(testInvocation.url());

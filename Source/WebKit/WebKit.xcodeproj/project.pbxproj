@@ -7732,6 +7732,7 @@
 		CEDA12DE152CCAE800D9E08D /* WebAlternativeTextClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebAlternativeTextClient.h; sourceTree = "<group>"; };
 		CEDA12DF152CCAE800D9E08D /* WebAlternativeTextClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebAlternativeTextClient.cpp; sourceTree = "<group>"; };
 		CEE4AE2A1A5DCF430002F49B /* UIKitSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIKitSPI.h; sourceTree = "<group>"; };
+		D22128312B224B8400DC4861 /* DidFilterKnownLinkDecoration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DidFilterKnownLinkDecoration.h; path = Classifier/DidFilterKnownLinkDecoration.h; sourceTree = "<group>"; };
 		D2E2FE6D29C8C30D00023E6B /* NetworkTaskCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetworkTaskCocoa.h; sourceTree = "<group>"; };
 		D2E2FE6F29C8C4F900023E6B /* NetworkTaskCocoa.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = NetworkTaskCocoa.mm; sourceTree = "<group>"; };
 		D3B9484211FF4B6500032B39 /* WebPopupMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPopupMenu.cpp; sourceTree = "<group>"; };
@@ -12711,6 +12712,7 @@
 		7A843A1D21E41FD900DEF663 /* Classifier */ = {
 			isa = PBXGroup;
 			children = (
+				D22128312B224B8400DC4861 /* DidFilterKnownLinkDecoration.h */,
 				46DBC2872AF96B9600E6B63A /* ITPThirdPartyData.cpp */,
 				46DBC28A2AF96B9700E6B63A /* ITPThirdPartyData.h */,
 				46DBC2882AF96B9600E6B63A /* ITPThirdPartyData.serialization.in */,

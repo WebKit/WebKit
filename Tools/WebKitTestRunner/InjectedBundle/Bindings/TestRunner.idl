@@ -345,7 +345,7 @@ interface TestRunner {
     undefined setStatisticsSubresourceUniqueRedirectFrom(DOMString hostName, DOMString hostNameRedirectedTo);
     undefined setStatisticsTopFrameUniqueRedirectTo(DOMString hostName, DOMString hostNameRedirectedTo);
     undefined setStatisticsTopFrameUniqueRedirectFrom(DOMString hostName, DOMString hostNameRedirectedTo);
-    undefined setStatisticsCrossSiteLoadWithLinkDecoration(DOMString fromHost, DOMString toHost);
+    undefined setStatisticsCrossSiteLoadWithLinkDecoration(DOMString fromHost, DOMString toHost, boolean wasFiltered);
     undefined setStatisticsTimeToLiveUserInteraction(double seconds);
     boolean statisticsNotifyObserver();
     undefined statisticsProcessStatisticsAndDataRecords();

@@ -65,6 +65,7 @@
 #include "AuthenticatorManager.h"
 #include "BrowsingContextGroup.h"
 #include "Connection.h"
+#include "DidFilterKnownLinkDecoration.h"
 #include "DownloadManager.h"
 #include "DownloadProxy.h"
 #include "DragControllerAction.h"
@@ -6135,7 +6136,7 @@ void WebPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameInfoData&
             RegistrableDomain currentDomain { currentRequest.url() };
             URL requesterURL { requesterOrigin.toString() };
             if (!currentDomain.matches(requesterURL))
-                m_websiteDataStore->protectedNetworkProcess()->didCommitCrossSiteLoadWithDataTransfer(m_websiteDataStore->sessionID(), RegistrableDomain { requesterURL }, currentDomain, navigationDataTransfer, internals().identifier, internals().webPageID);
+                m_websiteDataStore->protectedNetworkProcess()->didCommitCrossSiteLoadWithDataTransfer(m_websiteDataStore->sessionID(), RegistrableDomain { requesterURL }, currentDomain, navigationDataTransfer, internals().identifier, internals().webPageID, request.didFilterLinkDecoration() ? DidFilterKnownLinkDecoration::Yes : DidFilterKnownLinkDecoration::No);
         }
     }
 
@@ -6254,6 +6255,11 @@ void WebPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameInfoData&
     if (frame->isMainFrame())
         updateMediaCapability();
 #endif
+}
+
+void WebPageProxy::setCrossSiteLoadWithLinkDecorationForTesting(const URL& fromURL, const URL& toURL, bool wasFiltered, CompletionHandler<void()>&& completionHandler)
+{
+    m_websiteDataStore->protectedNetworkProcess()->setCrossSiteLoadWithLinkDecorationForTesting(sessionID(), WebCore::RegistrableDomain { fromURL }, WebCore::RegistrableDomain { toURL }, wasFiltered, WTFMove(completionHandler));
 }
 
 void WebPageProxy::didFinishDocumentLoadForFrame(FrameIdentifier frameID, uint64_t navigationID, const UserData& userData)

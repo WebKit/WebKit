@@ -2354,6 +2354,7 @@ public:
     const std::optional<MediaCapability>& mediaCapability() const;
     void updateMediaCapability();
 #endif
+    void setCrossSiteLoadWithLinkDecorationForTesting(const URL& fromURL, const URL& toURL, bool wasFiltered, CompletionHandler<void()>&&);
 
     void requestTextExtraction(std::optional<WebCore::FloatRect>&& collectionRectInRootView, CompletionHandler<void(WebCore::TextExtraction::Item&&)>&&);
 

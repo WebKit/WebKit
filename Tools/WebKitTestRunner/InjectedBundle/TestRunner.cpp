@@ -1573,11 +1573,12 @@ void TestRunner::setStatisticsTopFrameUniqueRedirectFrom(JSStringRef hostName, J
     }));
 }
 
-void TestRunner::setStatisticsCrossSiteLoadWithLinkDecoration(JSStringRef fromHost, JSStringRef toHost)
+void TestRunner::setStatisticsCrossSiteLoadWithLinkDecoration(JSStringRef fromHost, JSStringRef toHost, bool wasFiltered)
 {
     postSynchronousMessage("SetStatisticsCrossSiteLoadWithLinkDecoration", createWKDictionary({
         { "FromHost", toWK(fromHost) },
         { "ToHost", toWK(toHost) },
+        { "WasFiltered", adoptWK(WKBooleanCreate(wasFiltered)) },
     }));
 }
 

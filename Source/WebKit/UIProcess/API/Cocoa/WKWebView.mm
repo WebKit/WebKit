@@ -2617,6 +2617,11 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 }
 #endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 
+- (void)_setStatisticsCrossSiteLoadWithLinkDecorationForTesting:(NSString *)fromHost withToHost:(NSString *)toHost withWasFiltered:(BOOL)wasFiltered withCompletionHandler:(void(^)(void))completionHandler
+{
+    _page->setCrossSiteLoadWithLinkDecorationForTesting(URL { fromHost }, URL { toHost }, wasFiltered, makeBlockPtr(completionHandler));
+}
+
 - (_WKMediaMutedState)_mediaMutedState
 {
     return WebKit::toWKMediaMutedState(_page->mutedStateFlags());

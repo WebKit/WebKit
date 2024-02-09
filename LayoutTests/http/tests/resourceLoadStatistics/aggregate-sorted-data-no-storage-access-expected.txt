@@ -8,7 +8,7 @@ Registrable domain: subframe1
     hadUserInteraction: No
     mostRecentUserInteraction: -1
     grandfathered: No
-    IsScheduledForAllButCookieDataRemoval: No
+    DataRemovalFrequency: Never
     SubframeUnderTopFrameDomains:
         topframe1
     SubresourceUniqueRedirectsTo:
@@ -20,7 +20,7 @@ Registrable domain: subframe2
     hadUserInteraction: No
     mostRecentUserInteraction: -1
     grandfathered: No
-    IsScheduledForAllButCookieDataRemoval: No
+    DataRemovalFrequency: Never
     SubframeUnderTopFrameDomains:
         topframe1
     isPrevalentResource: Yes
@@ -30,7 +30,7 @@ Registrable domain: subframe3
     hadUserInteraction: No
     mostRecentUserInteraction: -1
     grandfathered: No
-    IsScheduledForAllButCookieDataRemoval: No
+    DataRemovalFrequency: Never
     SubframeUnderTopFrameDomains:
         topframe1
         topframe4
@@ -45,7 +45,7 @@ Registrable domain: topframe1
     hadUserInteraction: No
     mostRecentUserInteraction: -1
     grandfathered: No
-    IsScheduledForAllButCookieDataRemoval: No
+    DataRemovalFrequency: Never
     isPrevalentResource: No
     isVeryPrevalentResource: No
     dataRecordsRemoved: 0
@@ -53,7 +53,7 @@ Registrable domain: topframe2
     hadUserInteraction: No
     mostRecentUserInteraction: -1
     grandfathered: No
-    IsScheduledForAllButCookieDataRemoval: No
+    DataRemovalFrequency: Never
     isPrevalentResource: No
     isVeryPrevalentResource: No
     dataRecordsRemoved: 0
@@ -61,7 +61,7 @@ Registrable domain: topframe3
     hadUserInteraction: No
     mostRecentUserInteraction: -1
     grandfathered: No
-    IsScheduledForAllButCookieDataRemoval: No
+    DataRemovalFrequency: Never
     isPrevalentResource: No
     isVeryPrevalentResource: No
     dataRecordsRemoved: 0
@@ -69,7 +69,7 @@ Registrable domain: topframe4
     hadUserInteraction: No
     mostRecentUserInteraction: -1
     grandfathered: No
-    IsScheduledForAllButCookieDataRemoval: No
+    DataRemovalFrequency: Never
     isPrevalentResource: No
     isVeryPrevalentResource: No
     dataRecordsRemoved: 0

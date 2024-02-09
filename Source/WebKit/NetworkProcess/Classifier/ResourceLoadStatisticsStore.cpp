@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ResourceLoadStatisticsStore.h"
 
+#include "DidFilterKnownLinkDecoration.h"
 #include "ITPThirdPartyData.h"
 #include "Logging.h"
 #include "NetworkProcess.h"
@@ -121,6 +122,7 @@ constexpr auto isPrevalentResourceQuery = "SELECT isPrevalent FROM ObservedDomai
 constexpr auto isVeryPrevalentResourceQuery = "SELECT isVeryPrevalent FROM ObservedDomains WHERE registrableDomain = ?"_s;
 constexpr auto hadUserInteractionQuery = "SELECT hadUserInteraction, mostRecentUserInteractionTime FROM ObservedDomains WHERE registrableDomain = ?"_s;
 constexpr auto isGrandfatheredQuery = "SELECT grandfathered FROM ObservedDomains WHERE registrableDomain = ?"_s;
+constexpr auto isScheduledForAllButCookieDataRemovalQuery = "SELECT isScheduledForAllButCookieDataRemoval FROM ObservedDomains WHERE registrableDomain = ?"_s;
 constexpr auto getResourceDataByDomainNameQuery = "SELECT * FROM ObservedDomains WHERE registrableDomain = ?"_s;
 constexpr auto getMostRecentlyUpdatedTimestampQuery = "SELECT MAX(lastUpdated) FROM (SELECT lastUpdated FROM SubframeUnderTopFrameDomains WHERE subFrameDomainID = ? and topFrameDomainID = ?"_s
     "UNION ALL SELECT lastUpdated FROM TopFrameLinkDecorationsFrom WHERE toDomainID = ? and fromDomainID = ?"
@@ -259,6 +261,17 @@ static String domainsToString(const RegistrableDomainsToDeleteOrRestrictWebsiteD
     return builder.toString();
 }
 
+static String dataRemovalFrequencyToString(DataRemovalFrequency dataRemovalFrequency)
+{
+    switch (dataRemovalFrequency) {
+    case DataRemovalFrequency::Never: return "Never"_s;
+    case DataRemovalFrequency::Short: return "Short"_s;
+    case DataRemovalFrequency::Long: return "Long"_s;
+    }
+    ASSERT_NOT_REACHED();
+    return "Unknown"_s;
+}
+
 static bool needsNewCreateTableSchema(const String& schema)
 {
     return schema.contains("REFERENCES TopLevelDomains"_s);
@@ -297,6 +310,18 @@ bool OperatingDate::operator<(const OperatingDate& other) const
 bool OperatingDate::operator<=(const OperatingDate& other) const
 {
     return secondsSinceEpoch() <= other.secondsSinceEpoch();
+}
+
+static DataRemovalFrequency toDataRemovalFrequency(int value)
+{
+    switch (value) {
+    case 0: return DataRemovalFrequency::Never;
+    case 1: return DataRemovalFrequency::Short;
+    case 2: return DataRemovalFrequency::Long;
+    default:
+        ASSERT_NOT_REACHED();
+        return DataRemovalFrequency::Short;
+    };
 }
 
 template <typename ContainerType>
@@ -663,6 +688,9 @@ void ResourceLoadStatisticsStore::resetParametersToDefaultValues()
     m_parameters = { };
     m_appBoundDomains.clear();
     m_timeAdvanceForTesting = { };
+    m_operatingDatesSize = 0;
+    m_shortWindowOperatingDate = std::nullopt;
+    m_longWindowOperatingDate = std::nullopt;
 }
 
 void ResourceLoadStatisticsStore::logTestingEvent(String&& event)
@@ -1151,6 +1179,7 @@ void ResourceLoadStatisticsStore::destroyStatements()
     m_updatePrevalentResourceStatement = nullptr;
     m_isPrevalentResourceStatement = nullptr;
     m_updateVeryPrevalentResourceStatement = nullptr;
+    m_isScheduledForAllButCookieDataRemovalStatement = nullptr;
     m_isVeryPrevalentResourceStatement = nullptr;
     m_clearPrevalentResourceStatement = nullptr;
     m_hadUserInteractionStatement = nullptr;
@@ -1338,7 +1367,7 @@ void ResourceLoadStatisticsStore::merge(WebCore::SQLiteStatement* current, const
     if (other.dataRecordsRemoved > currentDataRecordsRemoved)
         updateDataRecordsRemoved(other.registrableDomain, other.dataRecordsRemoved);
     if (other.gotLinkDecorationFromPrevalentResource && !currentIsScheduledForAllButCookieDataRemoval)
-        setIsScheduledForAllScriptWrittenStorageRemoval(other.registrableDomain, true);
+        setIsScheduledForAllScriptWrittenStorageRemoval(other.registrableDomain, DataRemovalFrequency::Short);
 }
 
 void ResourceLoadStatisticsStore::mergeStatistic(const ResourceLoadStatistics& statistic)
@@ -1975,7 +2004,7 @@ void ResourceLoadStatisticsStore::logFrameNavigation(const RegistrableDomain& ta
         scheduleStatisticsProcessingRequestIfNecessary();
 }
 
-void ResourceLoadStatisticsStore::logCrossSiteLoadWithLinkDecoration(const NavigatedFromDomain& fromDomain, const NavigatedToDomain& toDomain)
+void ResourceLoadStatisticsStore::logCrossSiteLoadWithLinkDecoration(const NavigatedFromDomain& fromDomain, const NavigatedToDomain& toDomain, DidFilterKnownLinkDecoration didFilterKnownLinkDecoration)
 {
     ASSERT(!RunLoop::isMain());
     ASSERT(fromDomain != toDomain);
@@ -1989,8 +2018,16 @@ void ResourceLoadStatisticsStore::logCrossSiteLoadWithLinkDecoration(const Navig
     }
     insertDomainRelationshipList(topFrameLinkDecorationsFromQuery, HashSet<RegistrableDomain>({ fromDomain }), *toDomainResult.second);
 
+    auto currentDataRemovalFrequency = dataRemovalFrequency(toDomain);
+    if (currentDataRemovalFrequency == DataRemovalFrequency::Short)
+        return;
+
+    auto newDataRemovalFrequency = didFilterKnownLinkDecoration == DidFilterKnownLinkDecoration::Yes ? DataRemovalFrequency::Long : DataRemovalFrequency::Short;
+    if (currentDataRemovalFrequency == newDataRemovalFrequency)
+        return;
+
     if (isPrevalentResource(fromDomain))
-        setIsScheduledForAllScriptWrittenStorageRemoval(toDomain, true);
+        setIsScheduledForAllScriptWrittenStorageRemoval(toDomain, newDataRemovalFrequency);
 }
 
 void ResourceLoadStatisticsStore::clearTopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement(const RegistrableDomain& domain, CompletionHandler<void()>&& completionHandler)
@@ -2202,7 +2239,7 @@ void ResourceLoadStatisticsStore::dumpResourceLoadStatistics(CompletionHandler<v
     completionHandler(result.toString());
 }
 
-bool ResourceLoadStatisticsStore::predicateValueForDomain(SQLiteStatementAutoResetScope& predicateStatement, const RegistrableDomain& domain) const
+int ResourceLoadStatisticsStore::predicateValueForDomain(SQLiteStatementAutoResetScope& predicateStatement, const RegistrableDomain& domain) const
 {
     ASSERT(!RunLoop::isMain());
 
@@ -2212,7 +2249,7 @@ bool ResourceLoadStatisticsStore::predicateValueForDomain(SQLiteStatementAutoRes
         ITP_RELEASE_LOG_ERROR(m_sessionID, "%p - ResourceLoadStatisticsStore::predicateValueForDomain failed to bind, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
         return false;
     }
-    return !!predicateStatement->columnInt(0);
+    return predicateStatement->columnInt(0);
 }
 
 bool ResourceLoadStatisticsStore::isPrevalentResource(const RegistrableDomain& domain) const
@@ -2223,7 +2260,7 @@ bool ResourceLoadStatisticsStore::isPrevalentResource(const RegistrableDomain& d
         return false;
 
     auto scopedStatement = this->scopedStatement(m_isPrevalentResourceStatement, isPrevalentResourceQuery, "isPrevalentResource"_s);
-    return predicateValueForDomain(scopedStatement, domain);
+    return !!predicateValueForDomain(scopedStatement, domain);
 }
 
 bool ResourceLoadStatisticsStore::isVeryPrevalentResource(const RegistrableDomain& domain) const
@@ -2234,7 +2271,19 @@ bool ResourceLoadStatisticsStore::isVeryPrevalentResource(const RegistrableDomai
         return false;
 
     auto scopedStatement = this->scopedStatement(m_isVeryPrevalentResourceStatement, isVeryPrevalentResourceQuery, "isVeryPrevalentResource"_s);
-    return predicateValueForDomain(scopedStatement, domain);
+    return !!predicateValueForDomain(scopedStatement, domain);
+}
+
+DataRemovalFrequency ResourceLoadStatisticsStore::dataRemovalFrequency(const RegistrableDomain& domain) const
+{
+    ASSERT(!RunLoop::isMain());
+
+    if (shouldSkip(domain))
+        return DataRemovalFrequency::Never;
+
+    auto scopedStatement = this->scopedStatement(m_isScheduledForAllButCookieDataRemovalStatement, isScheduledForAllButCookieDataRemovalQuery, "isScheduledForAllButCookieDataRemoval"_s);
+
+    return toDataRemovalFrequency(predicateValueForDomain(scopedStatement, domain));
 }
 
 bool ResourceLoadStatisticsStore::isRegisteredAsSubresourceUnder(const SubResourceDomain& subresourceDomain, const TopFrameDomain& topFrameDomain) const
@@ -2304,7 +2353,7 @@ void ResourceLoadStatisticsStore::setGrandfathered(const RegistrableDomain& doma
     }
 }
 
-void ResourceLoadStatisticsStore::setIsScheduledForAllScriptWrittenStorageRemoval(const RegistrableDomain& domain, bool value)
+void ResourceLoadStatisticsStore::setIsScheduledForAllScriptWrittenStorageRemoval(const RegistrableDomain& domain, DataRemovalFrequency dataRemovalFrequency)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -2318,7 +2367,7 @@ void ResourceLoadStatisticsStore::setIsScheduledForAllScriptWrittenStorageRemova
 
     auto scopedStatement = this->scopedStatement(m_updateIsScheduledForAllButCookieDataRemovalStatement, updateIsScheduledForAllButCookieDataRemovalQuery, "setIsScheduledForAllScriptWrittenStorageRemoval"_s);
     if (!scopedStatement
-        || scopedStatement->bindInt(1, value) != SQLITE_OK
+        || scopedStatement->bindInt(1, static_cast<int>(dataRemovalFrequency)) != SQLITE_OK
         || scopedStatement->bindText(2, domain.string()) != SQLITE_OK
         || scopedStatement->step() != SQLITE_DONE) {
         ITP_RELEASE_LOG_ERROR(m_sessionID, "%p - ResourceLoadStatisticsStore::setIsScheduledForAllScriptWrittenStorageRemoval failed to bind, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
@@ -2382,7 +2431,7 @@ bool ResourceLoadStatisticsStore::isGrandfathered(const RegistrableDomain& domai
     ASSERT(!RunLoop::isMain());
 
     auto scopedStatement = this->scopedStatement(m_isGrandfatheredStatement, isGrandfatheredQuery, "isGrandfathered"_s);
-    return predicateValueForDomain(scopedStatement, domain);
+    return !!predicateValueForDomain(scopedStatement, domain);
 }
 
 void ResourceLoadStatisticsStore::setSubframeUnderTopFrameDomain(const SubFrameDomain& subFrameDomain, const TopFrameDomain& topFrameDomain)
@@ -2739,7 +2788,7 @@ Vector<ResourceLoadStatisticsStore::DomainData> ResourceLoadStatisticsStore::dom
             , WallTime::fromRawSeconds(statement->columnDouble(3))
             , statement->columnInt(4) ? true : false
             , statement->columnInt(5) ? true : false
-            , statement->columnInt(6) ? true : false
+            , toDataRemovalFrequency(statement->columnInt(6))
             , static_cast<unsigned>(statement->columnInt(7))
         });
     }
@@ -2790,7 +2839,7 @@ bool ResourceLoadStatisticsStore::shouldRemoveAllWebsiteDataFor(const DomainData
 
 bool ResourceLoadStatisticsStore::shouldRemoveAllButCookiesFor(const DomainData& resourceStatistic, bool shouldCheckForGrandfathering)
 {
-    bool isRemovalEnabled = firstPartyWebsiteDataRemovalMode() != FirstPartyWebsiteDataRemovalMode::None || resourceStatistic.isScheduledForAllButCookieDataRemoval;
+    bool isRemovalEnabled = firstPartyWebsiteDataRemovalMode() != FirstPartyWebsiteDataRemovalMode::None || resourceStatistic.dataRemovalFrequency != DataRemovalFrequency::Never;
     bool isResourceGrandfathered = shouldCheckForGrandfathering && resourceStatistic.grandfathered;
 
     OperatingDatesWindow window { };
@@ -2798,7 +2847,7 @@ bool ResourceLoadStatisticsStore::shouldRemoveAllButCookiesFor(const DomainData&
     case FirstPartyWebsiteDataRemovalMode::AllButCookies:
         FALLTHROUGH;
     case FirstPartyWebsiteDataRemovalMode::None:
-        window = OperatingDatesWindow::Short;
+        window = resourceStatistic.dataRemovalFrequency == DataRemovalFrequency::Short ? OperatingDatesWindow::Short : OperatingDatesWindow::Long;
         break;
     case FirstPartyWebsiteDataRemovalMode::AllButCookiesLiveOnTestingTimeout:
         window = OperatingDatesWindow::ForLiveOnTesting;
@@ -2868,7 +2917,7 @@ RegistrableDomainsToDeleteOrRestrictWebsiteDataFor ResourceLoadStatisticsStore::
         } else {
             if (shouldRemoveAllButCookiesFor(statistic, shouldCheckForGrandfathering)) {
                 toDeleteOrRestrictFor.domainsToDeleteAllScriptWrittenStorageFor.append(statistic.registrableDomain);
-                setIsScheduledForAllScriptWrittenStorageRemoval(statistic.registrableDomain, false);
+                setIsScheduledForAllScriptWrittenStorageRemoval(statistic.registrableDomain, DataRemovalFrequency::Never);
             }
             if (shouldEnforceSameSiteStrictFor(statistic, shouldCheckForGrandfathering)) {
                 toDeleteOrRestrictFor.domainsToEnforceSameSiteStrictFor.append(statistic.registrableDomain);
@@ -3157,8 +3206,8 @@ void ResourceLoadStatisticsStore::resourceToString(StringBuilder& builder, const
     appendSubStatisticList(builder, "TopFrameLinkDecorationsFrom"_s, domain);
     appendSubStatisticList(builder, "TopFrameLoadedThirdPartyScripts"_s, domain);
 
-    appendBoolean(builder, "IsScheduledForAllButCookieDataRemoval"_s, m_getResourceDataByDomainNameStatement->columnInt(IsScheduledForAllButCookieDataRemovalIndex));
-    builder.append('\n');
+    auto dataRemovalFrequencyValue = m_getResourceDataByDomainNameStatement->columnInt(IsScheduledForAllButCookieDataRemovalIndex);
+    builder.append("    DataRemovalFrequency: ", dataRemovalFrequencyToString(toDataRemovalFrequency(dataRemovalFrequencyValue)), '\n');
 
     // Subframe stats
     appendSubStatisticList(builder, "SubframeUnderTopFrameDomains"_s, domain);

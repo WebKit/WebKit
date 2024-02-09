@@ -117,6 +117,7 @@ class RTCDataChannelRemoteManagerProxy;
 class SandboxExtensionHandle;
 class WebPageNetworkParameters;
 enum class CallDownloadDidStart : bool;
+enum class DidFilterKnownLinkDecoration : bool;
 enum class LoadedWebArchive : bool;
 enum class RemoteWorkerType : uint8_t;
 enum class ShouldGrandfatherStatistics : bool;
@@ -268,8 +269,8 @@ public:
     void setTopFrameUniqueRedirectTo(PAL::SessionID, TopFrameDomain&&, RedirectedToDomain&&, CompletionHandler<void()>&&);
     void setTopFrameUniqueRedirectFrom(PAL::SessionID, TopFrameDomain&&, RedirectedFromDomain&&, CompletionHandler<void()>&&);
     void registrableDomainsWithWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType>, bool shouldNotifyPage, CompletionHandler<void(HashSet<RegistrableDomain>&&)>&&);
-    void didCommitCrossSiteLoadWithDataTransfer(PAL::SessionID, RegistrableDomain&& fromDomain, RegistrableDomain&& toDomain, OptionSet<WebCore::CrossSiteNavigationDataTransfer::Flag>, WebPageProxyIdentifier, WebCore::PageIdentifier);
-    void setCrossSiteLoadWithLinkDecorationForTesting(PAL::SessionID, RegistrableDomain&& fromDomain, RegistrableDomain&& toDomain, CompletionHandler<void()>&&);
+    void didCommitCrossSiteLoadWithDataTransfer(PAL::SessionID, RegistrableDomain&& fromDomain, RegistrableDomain&& toDomain, OptionSet<WebCore::CrossSiteNavigationDataTransfer::Flag>, WebPageProxyIdentifier, WebCore::PageIdentifier, DidFilterKnownLinkDecoration);
+    void setCrossSiteLoadWithLinkDecorationForTesting(PAL::SessionID, RegistrableDomain&& fromDomain, RegistrableDomain&& toDomain, DidFilterKnownLinkDecoration, CompletionHandler<void()>&&);
     void resetCrossSiteLoadsWithLinkDecorationForTesting(PAL::SessionID, CompletionHandler<void()>&&);
     void grantStorageAccessForTesting(PAL::SessionID, Vector<WebCore::RegistrableDomain>&& subFrameDomains, WebCore::RegistrableDomain&& topFrameDomain, CompletionHandler<void(void)>&&);
     void hasIsolatedSession(PAL::SessionID, const WebCore::RegistrableDomain&, CompletionHandler<void(bool)>&&) const;

@@ -8,7 +8,7 @@ Registrable domain: 127.0.0.1
     grandfathered: No
     TopFrameUniqueRedirectsTo:
         localhost
-    IsScheduledForAllButCookieDataRemoval: No
+    DataRemovalFrequency: Never
     isPrevalentResource: Yes
     isVeryPrevalentResource: No
     dataRecordsRemoved: 0
@@ -20,7 +20,7 @@ Registrable domain: localhost
         127.0.0.1
     TopFrameLinkDecorationsFrom:
         127.0.0.1
-    IsScheduledForAllButCookieDataRemoval: Yes
+    DataRemovalFrequency: Short
     isPrevalentResource: No
     isVeryPrevalentResource: No
     dataRecordsRemoved: 0

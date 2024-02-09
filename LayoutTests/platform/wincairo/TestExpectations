@@ -807,7 +807,6 @@ http/tests/resourceLoadStatistics/omit-document-referrer-third-party-iframe-ephe
 http/tests/resourceLoadStatistics/omit-referrer-for-navigation-ephemeral.html [ Failure ]
 http/tests/resourceLoadStatistics/switch-session-on-navigation-to-prevalent-with-interaction.py [ Failure ]
 
-http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration.html [ Failure ]
 http/tests/resourceLoadStatistics/website-data-removal-for-site-without-user-interaction.html [ Failure ]
 
 http/tests/security/XFrameOptions/x-frame-options-deny.html [ Skip ] # Failure

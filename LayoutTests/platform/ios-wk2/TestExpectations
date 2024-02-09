@@ -2119,7 +2119,6 @@ media/video-orientation-canvas.html [ Failure ]
 
 # Changed JS cookie behavior in iOS16
 http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js.html  [ Skip ]
-http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration.html [ Skip ]
 http/tests/resourceLoadStatistics/website-data-removal-for-site-without-user-interaction.html [ Skip ]
 
 # Trusted Types aren't implemented yet

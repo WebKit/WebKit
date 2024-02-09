@@ -35,6 +35,7 @@
 #include "AuthenticationChallengeProxy.h"
 #include "AuthenticationManager.h"
 #include "BackgroundFetchState.h"
+#include "DidFilterKnownLinkDecoration.h"
 #include "DownloadProxy.h"
 #include "DownloadProxyMap.h"
 #include "DownloadProxyMessages.h"
@@ -1211,12 +1212,12 @@ void NetworkProcessProxy::notifyWebsiteDataScanForRegistrableDomainsFinished()
     WebProcessProxy::notifyWebsiteDataScanForRegistrableDomainsFinished();
 }
 
-void NetworkProcessProxy::didCommitCrossSiteLoadWithDataTransfer(PAL::SessionID sessionID, const RegistrableDomain& fromDomain, const RegistrableDomain& toDomain, OptionSet<WebCore::CrossSiteNavigationDataTransfer::Flag> navigationDataTransfer, WebPageProxyIdentifier webPageProxyID, PageIdentifier webPageID)
+void NetworkProcessProxy::didCommitCrossSiteLoadWithDataTransfer(PAL::SessionID sessionID, const RegistrableDomain& fromDomain, const RegistrableDomain& toDomain, OptionSet<WebCore::CrossSiteNavigationDataTransfer::Flag> navigationDataTransfer, WebPageProxyIdentifier webPageProxyID, PageIdentifier webPageID, DidFilterKnownLinkDecoration didFilterKnownLinkDecoration)
 {
     if (!canSendMessage())
         return;
 
-    send(Messages::NetworkProcess::DidCommitCrossSiteLoadWithDataTransfer(sessionID, fromDomain, toDomain, navigationDataTransfer, webPageProxyID, webPageID), 0);
+    send(Messages::NetworkProcess::DidCommitCrossSiteLoadWithDataTransfer(sessionID, fromDomain, toDomain, navigationDataTransfer, webPageProxyID, webPageID, didFilterKnownLinkDecoration), 0);
 }
 
 void NetworkProcessProxy::didCommitCrossSiteLoadWithDataTransferFromPrevalentResource(WebPageProxyIdentifier pageID)
@@ -1231,14 +1232,14 @@ void NetworkProcessProxy::didCommitCrossSiteLoadWithDataTransferFromPrevalentRes
     page->didCommitCrossSiteLoadWithDataTransferFromPrevalentResource();
 }
 
-void NetworkProcessProxy::setCrossSiteLoadWithLinkDecorationForTesting(PAL::SessionID sessionID, const RegistrableDomain& fromDomain, const RegistrableDomain& toDomain, CompletionHandler<void()>&& completionHandler)
+void NetworkProcessProxy::setCrossSiteLoadWithLinkDecorationForTesting(PAL::SessionID sessionID, const RegistrableDomain& fromDomain, const RegistrableDomain& toDomain, bool wasFiltered, CompletionHandler<void()>&& completionHandler)
 {
     if (!canSendMessage()) {
         completionHandler();
         return;
     }
     
-    sendWithAsyncReply(Messages::NetworkProcess::SetCrossSiteLoadWithLinkDecorationForTesting(sessionID, fromDomain, toDomain), WTFMove(completionHandler));
+    sendWithAsyncReply(Messages::NetworkProcess::SetCrossSiteLoadWithLinkDecorationForTesting(sessionID, fromDomain, toDomain, wasFiltered ? DidFilterKnownLinkDecoration::Yes : DidFilterKnownLinkDecoration::No), WTFMove(completionHandler));
 }
 
 void NetworkProcessProxy::resetCrossSiteLoadsWithLinkDecorationForTesting(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
