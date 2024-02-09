@@ -103,7 +103,7 @@ Ref<ComputePipeline> Device::createComputePipeline(const WGPUComputePipelineDesc
     if (entryPointInformation.sizeForWorkgroupVariables > deviceLimits.maxComputeWorkgroupStorageSize)
         return returnInvalidComputePipeline(*this, isAsync);
 
-    if (size.width > deviceLimits.maxComputeWorkgroupSizeX || size.height > deviceLimits.maxComputeWorkgroupSizeY || size.depth > deviceLimits.maxComputeWorkgroupSizeZ || size.width * size.height * size.depth > deviceLimits.maxComputeInvocationsPerWorkgroup)
+    if (!size.width || size.width > deviceLimits.maxComputeWorkgroupSizeX || !size.height || size.height > deviceLimits.maxComputeWorkgroupSizeY || !size.depth || size.depth > deviceLimits.maxComputeWorkgroupSizeZ || size.width * size.height * size.depth > deviceLimits.maxComputeInvocationsPerWorkgroup)
         return returnInvalidComputePipeline(*this, isAsync);
 
     if (pipelineLayout.isAutoLayout() && entryPointInformation.defaultLayout) {
