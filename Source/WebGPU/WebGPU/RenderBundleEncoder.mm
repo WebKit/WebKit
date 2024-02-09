@@ -138,6 +138,8 @@ Ref<RenderBundleEncoder> Device::createRenderBundleEncoder(const WGPURenderBundl
     }
     for (size_t i = 0, colorFormatCount = descriptor.colorFormatCount; i < colorFormatCount; ++i) {
         auto textureFormat = descriptor.colorFormats[i];
+        if (textureFormat == WGPUTextureFormat_Undefined)
+            continue;
         if (!Texture::isColorRenderableFormat(textureFormat, *this)) {
             NSString* error = [NSString stringWithFormat:@"createRenderBundleEncoder - colorAttachment[%zu] with format %d is not renderable", i, textureFormat];
             generateAValidationError(error);
