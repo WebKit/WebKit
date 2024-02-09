@@ -1238,6 +1238,8 @@ static constexpr InitialValue initialValueForLonghand(CSSPropertyID longhand)
         return CSSValueNoAutospace;
     case CSSPropertyWhiteSpaceCollapse:
         return CSSValueCollapse;
+    case CSSPropertyFieldSizing:
+        return CSSValueFixed;
     default:
         RELEASE_ASSERT_NOT_REACHED();
     }

@@ -458,6 +458,15 @@ TextStream& operator<<(TextStream& ts, EventListenerRegionType listenerType)
     return ts;
 }
 
+TextStream& operator<<(TextStream& ts, FieldSizing sizing)
+{
+    switch (sizing) {
+    case FieldSizing::Fixed: ts << "fixed"; break;
+    case FieldSizing::Content: ts << "content"; break;
+    }
+    return ts;
+}
+
 TextStream& operator<<(TextStream& ts, FillAttachment attachment)
 {
     switch (attachment) {

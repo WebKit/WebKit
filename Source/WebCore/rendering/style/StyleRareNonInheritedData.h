@@ -232,6 +232,8 @@ public:
 
     bool hasClip : 1;
 
+    FieldSizing fieldSizing { FieldSizing::Fixed };
+
 private:
     StyleRareNonInheritedData();
     StyleRareNonInheritedData(const StyleRareNonInheritedData&);

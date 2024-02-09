@@ -190,6 +190,9 @@ PASS dominant-baseline: "ideographic" onto "alphabetic"
 PASS empty-cells (type: discrete) has testAccumulation function
 PASS empty-cells: "hide" onto "show"
 PASS empty-cells: "show" onto "hide"
+PASS field-sizing (type: discrete) has testAccumulation function
+PASS field-sizing: "content" onto "fixed"
+PASS field-sizing: "fixed" onto "content"
 PASS fill-opacity (type: opacity) has testAccumulation function
 PASS fill-opacity: [0, 1] number
 PASS fill-opacity: [0, 1] number (clamped)

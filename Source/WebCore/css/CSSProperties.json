@@ -452,6 +452,17 @@
                 "url": "https://www.w3.org/TR/css-display-3/#the-display-properties"
             }
         },
+        "field-sizing": {
+            "codegen-properties": {
+                "parser-grammar": "fixed | content",
+                "settings-flag": "cssFieldSizingEnabled"
+            },
+            "specification": {
+                "category": "css-ui",
+                "url": "https://drafts.csswg.org/css-ui/#field-sizing"
+            },
+            "status": "in development"
+        },
         "font-family": {
             "inherited": true,
             "values": [

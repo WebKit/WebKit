@@ -139,6 +139,7 @@ enum class CursorVisibility : bool;
 enum class DisplayType : uint8_t;
 enum class EmptyCell : bool;
 enum class EventListenerRegionType : uint8_t;
+enum class FieldSizing : bool;
 enum class FillAttachment : uint8_t;
 enum class FillBox : uint8_t;
 enum class FillSizeType : uint8_t;
@@ -527,6 +528,8 @@ public:
     Clear clear() const { return static_cast<Clear>(m_nonInheritedFlags.clear); }
     static UsedClear usedClear(const RenderObject&);
     TableLayoutType tableLayout() const { return static_cast<TableLayoutType>(m_nonInheritedFlags.tableLayout); }
+
+    FieldSizing fieldSizing() const;
 
     WEBCORE_EXPORT const FontCascade& fontCascade() const;
     WEBCORE_EXPORT const FontMetrics& metricsOfPrimaryFont() const;
@@ -1215,6 +1218,8 @@ public:
 
     void setClear(Clear v) { m_nonInheritedFlags.clear = static_cast<unsigned>(v); }
     void setTableLayout(TableLayoutType v) { m_nonInheritedFlags.tableLayout = static_cast<unsigned>(v); }
+
+    void setFieldSizing(FieldSizing);
 
     WEBCORE_EXPORT bool setFontDescription(FontCascadeDescription&&);
 
@@ -1990,6 +1995,8 @@ public:
     static WillChangeData* initialWillChange() { return nullptr; }
 
     static constexpr TouchAction initialTouchActions();
+
+    static FieldSizing initialFieldSizing();
 
     static inline Length initialScrollMargin();
     static inline Length initialScrollPadding();

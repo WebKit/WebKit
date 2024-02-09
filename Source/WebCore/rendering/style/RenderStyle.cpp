@@ -3471,6 +3471,21 @@ bool RenderStyle::customPropertiesEqual(const RenderStyle& other) const
         && m_rareInheritedData->customProperties == other.m_rareInheritedData->customProperties;
 }
 
+FieldSizing RenderStyle::fieldSizing() const
+{
+    return m_nonInheritedData->rareData->fieldSizing;
+}
+
+FieldSizing RenderStyle::initialFieldSizing()
+{
+    return FieldSizing::Fixed;
+}
+
+void RenderStyle::setFieldSizing(const FieldSizing sizing)
+{
+    SET_NESTED_VAR(m_nonInheritedData, rareData, fieldSizing, sizing);
+}
+
 const LengthBox& RenderStyle::scrollMargin() const
 {
     return m_nonInheritedData->rareData->scrollMargin;

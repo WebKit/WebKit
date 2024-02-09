@@ -411,6 +411,12 @@ DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef TYPE
 #undef FOR_EACH
 
+#define TYPE FieldSizing
+#define FOR_EACH(CASE) CASE(Fixed) CASE(Content)
+DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
+#undef TYPE
+#undef FOR_EACH
+
 constexpr CSSValueID toCSSValueID(FillAttachment e)
 {
     switch (e) {

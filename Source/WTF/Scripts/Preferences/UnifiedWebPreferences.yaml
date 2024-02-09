@@ -1042,6 +1042,20 @@ CSSCustomPropertiesAndValuesEnabled:
     WebCore:
       default: true
 
+CSSFieldSizingEnabled:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "CSS field-sizing property"
+  humanReadableDescription: "Enable field-sizing CSS property"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSFontFaceSizeAdjustEnabled:
   type: bool
   status: stable
