@@ -686,13 +686,13 @@ ExceptionOr<void> Range::insertNode(Ref<Node>&& node)
 
     if (startContainerNodeType == Node::COMMENT_NODE || startContainerNodeType == Node::PROCESSING_INSTRUCTION_NODE)
         return Exception { ExceptionCode::HierarchyRequestError };
-    bool startIsText = startContainerNodeType == Node::TEXT_NODE;
-    if (startIsText && !startContainer().parentNode())
+    RefPtr startContainerText = dynamicDowncast<Text>(startContainer());
+    if (startContainerText && !startContainer().parentNode())
         return Exception { ExceptionCode::HierarchyRequestError };
     if (node.ptr() == &startContainer())
         return Exception { ExceptionCode::HierarchyRequestError };
 
-    RefPtr<Node> referenceNode = startIsText ? &startContainer() : startContainer().traverseToChildAt(startOffset());
+    RefPtr referenceNode = startContainerText ? &startContainer() : startContainer().traverseToChildAt(startOffset());
     RefPtr parent = dynamicDowncast<ContainerNode>(referenceNode ? referenceNode->parentNode() : &startContainer());
     if (!parent)
         return Exception { ExceptionCode::HierarchyRequestError };
@@ -702,8 +702,8 @@ ExceptionOr<void> Range::insertNode(Ref<Node>&& node)
         return result.releaseException();
 
     EventQueueScope scope;
-    if (startIsText) {
-        auto result = downcast<Text>(protectedStartContainer().get()).splitText(startOffset());
+    if (startContainerText) {
+        auto result = startContainerText->splitText(startOffset());
         if (result.hasException())
             return result.releaseException();
         referenceNode = result.releaseReturnValue();
@@ -850,10 +850,10 @@ ExceptionOr<void> Range::surroundContents(Node& newParent)
 
     // Step 1: If a non-Text node is partially contained in the context object, then throw an InvalidStateError.
     RefPtr startNonTextContainer = &startContainer();
-    if (startNonTextContainer->nodeType() == Node::TEXT_NODE)
+    if (is<Text>(startNonTextContainer))
         startNonTextContainer = startNonTextContainer->parentNode();
     RefPtr endNonTextContainer = &endContainer();
-    if (endNonTextContainer->nodeType() == Node::TEXT_NODE)
+    if (is<Text>(endNonTextContainer))
         endNonTextContainer = endNonTextContainer->parentNode();
     if (startNonTextContainer != endNonTextContainer)
         return Exception { ExceptionCode::InvalidStateError };

@@ -91,10 +91,26 @@ PASS current doc[1][1][0][4][0]: #text node, current doc's range, type 3
 PASS current doc[1][1][0][4][0]: #text node, foreign doc's range, type 3
 PASS current doc[1][1][0][4][0]: #text node, XML doc's range, type 3
 PASS current doc[1][1][0][4][0]: #text node, detached range, type 3
-PASS current doc[1][1][0][5]: #comment node, current doc's range, type 8
-PASS current doc[1][1][0][5]: #comment node, foreign doc's range, type 8
-PASS current doc[1][1][0][5]: #comment node, XML doc's range, type 8
-PASS current doc[1][1][0][5]: #comment node, detached range, type 8
+PASS current doc[1][1][0][5]: p node, current doc's range, type 1
+PASS current doc[1][1][0][5]: p node, foreign doc's range, type 1
+PASS current doc[1][1][0][5]: p node, XML doc's range, type 1
+PASS current doc[1][1][0][5]: p node, detached range, type 1
+PASS current doc[1][1][0][5][0]: #cdata-section node, current doc's range, type 4
+PASS current doc[1][1][0][5][0]: #cdata-section node, foreign doc's range, type 4
+PASS current doc[1][1][0][5][0]: #cdata-section node, XML doc's range, type 4
+PASS current doc[1][1][0][5][0]: #cdata-section node, detached range, type 4
+PASS current doc[1][1][0][5][1]: #cdata-section node, current doc's range, type 4
+PASS current doc[1][1][0][5][1]: #cdata-section node, foreign doc's range, type 4
+PASS current doc[1][1][0][5][1]: #cdata-section node, XML doc's range, type 4
+PASS current doc[1][1][0][5][1]: #cdata-section node, detached range, type 4
+PASS current doc[1][1][0][5][2]: #text node, current doc's range, type 3
+PASS current doc[1][1][0][5][2]: #text node, foreign doc's range, type 3
+PASS current doc[1][1][0][5][2]: #text node, XML doc's range, type 3
+PASS current doc[1][1][0][5][2]: #text node, detached range, type 3
+PASS current doc[1][1][0][6]: #comment node, current doc's range, type 8
+PASS current doc[1][1][0][6]: #comment node, foreign doc's range, type 8
+PASS current doc[1][1][0][6]: #comment node, XML doc's range, type 8
+PASS current doc[1][1][0][6]: #comment node, detached range, type 8
 PASS current doc[1][1][2]: #text node, current doc's range, type 3
 PASS current doc[1][1][2]: #text node, foreign doc's range, type 3
 PASS current doc[1][1][2]: #text node, XML doc's range, type 3
