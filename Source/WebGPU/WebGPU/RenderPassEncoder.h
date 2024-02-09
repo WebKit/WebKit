@@ -114,7 +114,6 @@ private:
     uint32_t maxBindGroupIndex() const;
     bool issuedDrawCall() const;
     void incrementDrawCount(uint32_t = 1);
-    bool occlusionQueryIsDestroyed() const;
 
     id<MTLRenderCommandEncoder> m_renderCommandEncoder { nil };
 
