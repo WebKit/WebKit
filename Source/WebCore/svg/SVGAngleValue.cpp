@@ -24,6 +24,7 @@
 
 #include "SVGParserUtilities.h"
 #include <wtf/MathExtras.h>
+#include <wtf/text/FastCharacterComparison.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/StringParsingBuffer.h>
 
@@ -87,13 +88,13 @@ template<typename CharacterType> static inline SVGAngleValue::Type parseAngleTyp
     case 0:
         return SVGAngleValue::SVG_ANGLETYPE_UNSPECIFIED;
     case 3:
-        if (buffer[0] == 'd' && buffer[1] == 'e' && buffer[2] == 'g')
+        if (compareCharacters(buffer.position(), 'd', 'e', 'g'))
             return SVGAngleValue::SVG_ANGLETYPE_DEG;
-        if (buffer[0] == 'r' && buffer[1] == 'a' && buffer[2] == 'd')
+        if (compareCharacters(buffer.position(), 'r', 'a', 'd'))
             return SVGAngleValue::SVG_ANGLETYPE_RAD;
         break;
     case 4:
-        if (buffer[0] == 'g' && buffer[1] == 'r' && buffer[2] == 'a' && buffer[3] == 'd')
+        if (compareCharacters(buffer.position(), 'g', 'r', 'a', 'd'))
             return SVGAngleValue::SVG_ANGLETYPE_GRAD;
         break;
     }
