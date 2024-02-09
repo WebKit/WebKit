@@ -10,11 +10,12 @@ if ( ! class_exists('WP_Widget') ) return;
 
 class WebKitIconTileWidget extends WP_Widget {
 
-    function __construct() {
-        parent::WP_Widget(false,
-            __('Icon Tile'),
-            array('description' => __('Icon tile for the home page'))
-        );
+    function __construct($id_base = false, $name = null, $widget_options = null) {
+        if (is_null($name))
+            $name = __('Icon Tile');
+        if (is_null($widget_options))
+            $widget_options  = array('description' => __('Icon tile for the home page'));
+        parent::__construct($id_base, $name, $widget_options);
     }
 
     function widget($args, $options) {

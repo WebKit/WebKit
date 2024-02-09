@@ -7,7 +7,7 @@ Version: 1.0
 Author: Jonathan Davis
 */
 
-WebKitTableOfContents::init();
+(new WebKitTableOfContents)->init();
 
 class WebKitTableOfContents {
 
@@ -17,7 +17,7 @@ class WebKitTableOfContents {
     private static $attr_regex = '\{((?:[ ]*[#.][-_:a-zA-Z0-9]+){1,})[ ]*\}';
 
     public function init() {
-        add_filter( 'wp_insert_post_data', array( 'WebKitTableOfContents', 'wp_insert_post_data' ), 20, 2 );
+        add_filter( 'wp_insert_post_data', array( 'WebKitTableOfContents', 'wp_insert_post_data_static'), 20, 2 );
         add_action( 'wp_insert_post', array( 'WebKitTableOfContents', 'wp_insert_post' ) );
     }
     
@@ -82,6 +82,10 @@ class WebKitTableOfContents {
 
     public static function markup() {
         echo self::renderMarkup();
+    }
+
+    public static function wp_insert_post_data_static( $post_data, $record ) {
+        return (new self)->wp_insert_post_data( $post_data, $record );
     }
 
     public function wp_insert_post_data( $post_data, $record ) {

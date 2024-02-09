@@ -227,7 +227,7 @@ add_filter( 'get_the_excerpt', function( $excerpt ) {
     // if ( empty($sentences[1]) )
     //     $sentences[1] = '&hellip;';
 
-    return $sentences[0] . $sentences[1];
+    return $sentences[0] . ($sentences[1] ?? null);
 
 });
 

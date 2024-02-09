@@ -16,16 +16,19 @@ class WebKit_Survey {
     
     public static function init() {
         add_action('init', [__CLASS__, 'register_shortcodes']);
-        add_action('post_updated', [__CLASS__, 'process_survey'], 10, 3);
-        add_action('wp', [__CLASS__, 'process_vote']);
-        
-        add_action( 'add_meta_boxes', [__CLASS__, 'add_survey_boxes'] );
+        add_action('post_updated', [__CLASS__, 'process_survey_static'], 10, 3);
+        add_action('wp', [__CLASS__, 'process_vote_static']);
+        add_action('add_meta_boxes', [__CLASS__, 'add_survey_boxes_static']);
     }
 
     public static function register_shortcodes() {
         add_shortcode('survey', ['WebKit_Survey', 'survey_shortcode']);
     }
     
+    public static function process_survey_static($post_id, $post_after, $post_before) {
+        return (new self)->process_survey($post_id, $post_after, $post_before);
+    }
+
     public function process_survey($post_id, $post_after, $post_before) {
         self::$post_update = true;
         do_shortcode($post_after->post_content);
@@ -57,6 +60,10 @@ class WebKit_Survey {
         return ob_get_clean();
     }
 
+    public static function add_survey_boxes_static() {
+        return (new self)->add_survey_boxes();
+    }
+
     public function add_survey_boxes() {
         $post_id = get_the_ID();
         $settings = get_post_meta($post_id, 'webkit_survey_settings');
@@ -68,12 +75,16 @@ class WebKit_Survey {
             add_meta_box(
                 'webkit_survey',
                 'WebKit Survey',
-                [__CLASS__, 'admin_box'],
+                [__CLASS__, 'admin_box_static'],
                 $screen
             );
         }
     }
-    
+
+    public static function admin_box_static() {
+        return (new self)->admin_box();
+    }
+
     public function admin_box() {
         $post_id = get_the_ID();
         $settings = get_post_meta($post_id, 'webkit_survey_settings');
@@ -97,6 +108,8 @@ class WebKit_Survey {
 
         $post_id = get_the_ID();
         $settings = get_post_meta($post_id, 'webkit_survey_settings');
+        if (!$settings)
+            return;
         $Survey = $settings[0];
         $key = sha1(json_encode($Survey->survey));
 
@@ -145,6 +158,10 @@ class WebKit_Survey {
         
         // Redirect for reload POST protection
         header('Location: ' . get_permalink());
+    }
+
+    public static function process_vote_static() {
+        return (new self)->process_vote();
     }
     
     public static function calculate_results() {
