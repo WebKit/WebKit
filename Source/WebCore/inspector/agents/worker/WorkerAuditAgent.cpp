@@ -46,7 +46,7 @@ WorkerAuditAgent::WorkerAuditAgent(WorkerAgentContext& context)
 
 WorkerAuditAgent::~WorkerAuditAgent() = default;
 
-InjectedScript WorkerAuditAgent::injectedScriptForEval(Protocol::ErrorString& errorString, std::optional<Protocol::Runtime::ExecutionContextId>&& executionContextId)
+InjectedScript WorkerAuditAgent::injectedScriptForEval(Inspector::Protocol::ErrorString& errorString, std::optional<Inspector::Protocol::Runtime::ExecutionContextId>&& executionContextId)
 {
     if (executionContextId) {
         errorString = "executionContextId is not supported for workers as there is only one execution context"_s;

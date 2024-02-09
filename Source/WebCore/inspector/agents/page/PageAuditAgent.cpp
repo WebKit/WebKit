@@ -56,7 +56,7 @@ PageAuditAgent::PageAuditAgent(PageAgentContext& context)
 
 PageAuditAgent::~PageAuditAgent() = default;
 
-InjectedScript PageAuditAgent::injectedScriptForEval(std::optional<Protocol::Runtime::ExecutionContextId>&& executionContextId)
+InjectedScript PageAuditAgent::injectedScriptForEval(std::optional<Inspector::Protocol::Runtime::ExecutionContextId>&& executionContextId)
 {
     if (executionContextId)
         return injectedScriptManager().injectedScriptForId(*executionContextId);
@@ -65,7 +65,7 @@ InjectedScript PageAuditAgent::injectedScriptForEval(std::optional<Protocol::Run
     return InjectedScript();
 }
 
-InjectedScript PageAuditAgent::injectedScriptForEval(Protocol::ErrorString& errorString, std::optional<Protocol::Runtime::ExecutionContextId>&& executionContextId)
+InjectedScript PageAuditAgent::injectedScriptForEval(Inspector::Protocol::ErrorString& errorString, std::optional<Inspector::Protocol::Runtime::ExecutionContextId>&& executionContextId)
 {
     InjectedScript injectedScript = injectedScriptForEval(WTFMove(executionContextId));
     if (injectedScript.hasNoValue()) {

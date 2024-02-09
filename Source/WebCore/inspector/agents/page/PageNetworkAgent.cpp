@@ -55,7 +55,7 @@ PageNetworkAgent::PageNetworkAgent(PageAgentContext& context, InspectorClient* c
 
 PageNetworkAgent::~PageNetworkAgent() = default;
 
-Protocol::Network::LoaderId PageNetworkAgent::loaderIdentifier(DocumentLoader* loader)
+Inspector::Protocol::Network::LoaderId PageNetworkAgent::loaderIdentifier(DocumentLoader* loader)
 {
     if (loader) {
         if (auto* pageAgent = m_instrumentingAgents.enabledPageAgent())
@@ -64,7 +64,7 @@ Protocol::Network::LoaderId PageNetworkAgent::loaderIdentifier(DocumentLoader* l
     return { };
 }
 
-Protocol::Network::FrameId PageNetworkAgent::frameIdentifier(DocumentLoader* loader)
+Inspector::Protocol::Network::FrameId PageNetworkAgent::frameIdentifier(DocumentLoader* loader)
 {
     if (loader) {
         if (auto* pageAgent = m_instrumentingAgents.enabledPageAgent())
@@ -113,7 +113,7 @@ bool PageNetworkAgent::setEmulatedConditionsInternal(std::optional<int>&& bytesP
 
 #endif // ENABLE(INSPECTOR_NETWORK_THROTTLING)
 
-ScriptExecutionContext* PageNetworkAgent::scriptExecutionContext(Protocol::ErrorString& errorString, const Protocol::Network::FrameId& frameId)
+ScriptExecutionContext* PageNetworkAgent::scriptExecutionContext(Inspector::Protocol::ErrorString& errorString, const Inspector::Protocol::Network::FrameId& frameId)
 {
     auto* pageAgent = m_instrumentingAgents.enabledPageAgent();
     if (!pageAgent) {
