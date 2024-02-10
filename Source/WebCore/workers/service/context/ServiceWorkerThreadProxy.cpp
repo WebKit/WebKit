@@ -244,7 +244,7 @@ void ServiceWorkerThreadProxy::startFetch(SWServerConnectionIdentifier connectio
 
 void ServiceWorkerThreadProxy::cancelFetch(SWServerConnectionIdentifier connectionIdentifier, FetchIdentifier fetchIdentifier)
 {
-    RELEASE_LOG(ServiceWorker, "ServiceWorkerThreadProxy::cancelFetch %llu", fetchIdentifier.toUInt64());
+    RELEASE_LOG(ServiceWorker, "ServiceWorkerThreadProxy::cancelFetch %" PRIu64, fetchIdentifier.toUInt64());
 
     postTaskForModeToWorkerOrWorkletGlobalScope([this, protectedThis = Ref { *this }, connectionIdentifier, fetchIdentifier] (auto&) {
         auto client = m_ongoingFetchTasks.take({ connectionIdentifier, fetchIdentifier });
@@ -264,7 +264,7 @@ void ServiceWorkerThreadProxy::cancelFetch(SWServerConnectionIdentifier connecti
 
 void ServiceWorkerThreadProxy::convertFetchToDownload(SWServerConnectionIdentifier connectionIdentifier, FetchIdentifier fetchIdentifier)
 {
-    RELEASE_LOG(ServiceWorker, "ServiceWorkerThreadProxy::convertFetchToDownload %llu", fetchIdentifier.toUInt64());
+    RELEASE_LOG(ServiceWorker, "ServiceWorkerThreadProxy::convertFetchToDownload %" PRIu64, fetchIdentifier.toUInt64());
     ASSERT(!isMainThread());
 
     postTaskForModeToWorkerOrWorkletGlobalScope([this, protectedThis = Ref { *this }, connectionIdentifier, fetchIdentifier] (auto&) {
@@ -309,7 +309,7 @@ void ServiceWorkerThreadProxy::continueDidReceiveFetchResponse(SWServerConnectio
 
 void ServiceWorkerThreadProxy::removeFetch(SWServerConnectionIdentifier connectionIdentifier, FetchIdentifier fetchIdentifier)
 {
-    RELEASE_LOG(ServiceWorker, "ServiceWorkerThreadProxy::removeFetch %llu", fetchIdentifier.toUInt64());
+    RELEASE_LOG(ServiceWorker, "ServiceWorkerThreadProxy::removeFetch %" PRIu64, fetchIdentifier.toUInt64());
 
     postTaskForModeToWorkerOrWorkletGlobalScope([this, protectedThis = Ref { *this }, connectionIdentifier, fetchIdentifier] (auto&) {    m_ongoingFetchTasks.remove(std::make_pair(connectionIdentifier, fetchIdentifier));
 

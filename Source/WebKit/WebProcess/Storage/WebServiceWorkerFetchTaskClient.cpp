@@ -159,7 +159,7 @@ void WebServiceWorkerFetchTaskClient::didFail(const ResourceError& error)
         return;
 
     if (m_waitingForContinueDidReceiveResponseMessage) {
-        RELEASE_LOG(ServiceWorker, "ServiceWorkerFrameLoaderClient::didFail while waiting, fetch identifier %llu", m_fetchIdentifier.toUInt64());
+        RELEASE_LOG(ServiceWorker, "ServiceWorkerFrameLoaderClient::didFail while waiting, fetch identifier %" PRIu64, m_fetchIdentifier.toUInt64());
 
         m_responseData = makeUniqueRef<ResourceError>(error.isolatedCopy());
         return;
@@ -179,7 +179,7 @@ void WebServiceWorkerFetchTaskClient::didFinish(const NetworkLoadMetrics& metric
         return;
 
     if (m_waitingForContinueDidReceiveResponseMessage) {
-        RELEASE_LOG(ServiceWorker, "ServiceWorkerFrameLoaderClient::didFinish while waiting, fetch identifier %llu", m_fetchIdentifier.toUInt64());
+        RELEASE_LOG(ServiceWorker, "ServiceWorkerFrameLoaderClient::didFinish while waiting, fetch identifier %" PRIu64, m_fetchIdentifier.toUInt64());
 
         m_didFinish = true;
         m_networkLoadMetrics = metrics.isolatedCopy();
