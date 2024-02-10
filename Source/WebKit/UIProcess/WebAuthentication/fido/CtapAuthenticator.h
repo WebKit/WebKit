@@ -32,6 +32,12 @@
 
 namespace fido {
 namespace pin {
+
+enum class PinRequestType : uint8_t {
+    kSetPin = 1,
+    kGetPinToken = 2,
+};
+
 class TokenRequest;
 }
 }
@@ -54,18 +60,18 @@ public:
 private:
     explicit CtapAuthenticator(std::unique_ptr<CtapDriver>&&, fido::AuthenticatorGetInfoResponse&&);
 
-    void makeCredential() final;
+    void makeCredential(fido::pin::PinRequestType requestType) final;
     void continueMakeCredentialAfterResponseReceived(Vector<uint8_t>&&);
-    void getAssertion() final;
-    void continueGetAssertionAfterResponseReceived(Vector<uint8_t>&&);
-    void continueGetNextAssertionAfterResponseReceived(Vector<uint8_t>&&);
+    void getAssertion(fido::pin::PinRequestType requestType) final;
+    void continueGetAssertionAfterResponseReceived(Vector<uint8_t>&&, fido::pin::PinRequestType requestType);
+    void continueGetNextAssertionAfterResponseReceived(Vector<uint8_t>&&, fido::pin::PinRequestType requestType);
 
-    void getRetries();
-    void continueGetKeyAgreementAfterGetRetries(Vector<uint8_t>&&);
-    void continueRequestPinAfterGetKeyAgreement(Vector<uint8_t>&&, uint64_t retries);
+    void getRetries(fido::pin::PinRequestType);
+    void continueGetKeyAgreementAfterGetRetries(fido::pin::PinRequestType requestType, Vector<uint8_t>&&);
+    void continueRequestPinAfterGetKeyAgreement(fido::pin::PinRequestType requestType, Vector<uint8_t>&&, uint64_t retries);
     void continueGetPinTokenAfterRequestPin(const String& pin, const WebCore::CryptoKeyEC&);
     void continueRequestAfterGetPinToken(Vector<uint8_t>&&, const fido::pin::TokenRequest&);
-    bool tryRestartPin(const fido::CtapDeviceResponseCode&);
+    bool tryRestartPin(const fido::CtapDeviceResponseCode&, fido::pin::PinRequestType requestType);
 
     bool tryDowngrade();
 

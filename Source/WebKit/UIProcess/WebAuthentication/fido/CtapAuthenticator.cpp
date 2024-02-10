@@ -123,7 +123,7 @@ void CtapAuthenticator::makeCredential()
     });
 }
 
-void CtapAuthenticator::continueMakeCredentialAfterResponseReceived(Vector<uint8_t>&& data)
+void CtapAuthenticator::continueMakeCredentialAfterResponseReceived(Vector<uint8_t>&& data, fido::pin::PinRequestType requestType)
 {
     auto response = readCTAPMakeCredentialResponse(data, AuthenticatorAttachment::CrossPlatform, transports(), std::get<PublicKeyCredentialCreationOptions>(requestData().options).attestation);
     if (!response) {
@@ -153,7 +153,7 @@ void CtapAuthenticator::continueMakeCredentialAfterResponseReceived(Vector<uint8
         if (isPinError(error)) {
             if (!m_pinAuth.isEmpty() && observer()) // Skip the very first command that acts like wink.
                 observer()->authenticatorStatusUpdated(toStatus(error));
-            if (tryRestartPin(error))
+            if (tryRestartPin(error, requestType))
                 return;
         }
 
@@ -172,7 +172,7 @@ void CtapAuthenticator::continueMakeCredentialAfterResponseReceived(Vector<uint8
     receiveRespond(response.releaseNonNull());
 }
 
-void CtapAuthenticator::getAssertion()
+void CtapAuthenticator::getAssertion(fido::pin::PinRequestType requestType)
 {
     ASSERT(!m_isDowngraded);
     Vector<uint8_t> cborCmd;
@@ -190,18 +190,18 @@ void CtapAuthenticator::getAssertion()
         ASSERT(RunLoop::isMain());
         if (!weakThis)
             return;
-        weakThis->continueGetAssertionAfterResponseReceived(WTFMove(data));
+        weakThis->continueGetAssertionAfterResponseReceived(WTFMove(data), requestType);
     });
 }
 
-void CtapAuthenticator::continueGetAssertionAfterResponseReceived(Vector<uint8_t>&& data)
+void CtapAuthenticator::continueGetAssertionAfterResponseReceived(Vector<uint8_t>&& data, fido::pin::PinRequestType requestType)
 {
     auto response = readCTAPGetAssertionResponse(data, AuthenticatorAttachment::CrossPlatform);
     if (!response) {
         auto error = getResponseCode(data);
 
         if (error == CtapDeviceResponseCode::kCtap2ErrActionTimeout) {
-            getAssertion();
+            getAssertion(requestType);
             return;
         }
 
@@ -238,9 +238,9 @@ void CtapAuthenticator::continueGetAssertionAfterResponseReceived(Vector<uint8_t
     });
 }
 
-void CtapAuthenticator::continueGetNextAssertionAfterResponseReceived(Vector<uint8_t>&& data)
+void CtapAuthenticator::continueGetNextAssertionAfterResponseReceived(Vector<uint8_t>&& data, fido::pin::PinRequestType requestType)
 {
-    auto response = readCTAPGetAssertionResponse(data, AuthenticatorAttachment::CrossPlatform);
+    auto response = readCTAPGetAssertionResponse(data, AuthenticatorAttachment::CrossPlatform, requestType);
     if (!response) {
         auto error = getResponseCode(data);
         receiveRespond(ExceptionData { ExceptionCode::UnknownError, makeString("Unknown internal error. Error code: ", static_cast<uint8_t>(error)) });
@@ -274,18 +274,18 @@ void CtapAuthenticator::continueGetNextAssertionAfterResponseReceived(Vector<uin
     });
 }
 
-void CtapAuthenticator::getRetries()
+void CtapAuthenticator::getRetries(fido::pin::PinRequestType requestType)
 {
     auto cborCmd = encodeAsCBOR(pin::RetriesRequest { });
     driver().transact(WTFMove(cborCmd), [weakThis = WeakPtr { *this }](Vector<uint8_t>&& data) {
         ASSERT(RunLoop::isMain());
         if (!weakThis)
             return;
-        weakThis->continueGetKeyAgreementAfterGetRetries(WTFMove(data));
+        weakThis->continueGetKeyAgreementAfterGetRetries(requestType, WTFMove(data));
     });
 }
 
-void CtapAuthenticator::continueGetKeyAgreementAfterGetRetries(Vector<uint8_t>&& data)
+void CtapAuthenticator::continueGetKeyAgreementAfterGetRetries(fido::pin::PinRequestType requestType, Vector<uint8_t>&& data)
 {
     auto retries = pin::RetriesResponse::parse(data);
     if (!retries) {
@@ -299,11 +299,11 @@ void CtapAuthenticator::continueGetKeyAgreementAfterGetRetries(Vector<uint8_t>&&
         ASSERT(RunLoop::isMain());
         if (!weakThis)
             return;
-        weakThis->continueRequestPinAfterGetKeyAgreement(WTFMove(data), retries);
+        weakThis->continueRequestPinAfterGetKeyAgreement(requestType, WTFMove(data), retries);
     });
 }
 
-void CtapAuthenticator::continueRequestPinAfterGetKeyAgreement(Vector<uint8_t>&& data, uint64_t retries)
+void CtapAuthenticator::continueRequestPinAfterGetKeyAgreement(fido::pin::PinRequestType requestType, Vector<uint8_t>&& data, uint64_t retries)
 {
     auto keyAgreement = pin::KeyAgreementResponse::parse(data);
     if (!keyAgreement) {
@@ -313,14 +313,84 @@ void CtapAuthenticator::continueRequestPinAfterGetKeyAgreement(Vector<uint8_t>&&
     }
 
     if (auto* observer = this->observer()) {
-        observer->requestPin(retries, [weakThis = WeakPtr { *this }, keyAgreement = WTFMove(*keyAgreement)] (const String& pin) {
+        observer->requestPin(retries, [weakThis = WeakPtr { *this }, keyAgreement = WTFMove(*keyAgreement), requestType = requestType] (const String& pin) {
             RELEASE_ASSERT(RunLoop::isMain());
             if (!weakThis)
                 return;
-            weakThis->continueGetPinTokenAfterRequestPin(pin, keyAgreement.peerKey);
+            if (requestType == PinRequestType::kSetPin)
+                //TODO: insert setPin function here
+            else if (requestType == PinRequestType::kGetPinToken)
+                weakThis->continueGetPinTokenAfterRequestPin(pin, keyAgreement.peerKey);
+            else
+                ASSERT_NOT_REACHED();
         });
     }
 }
+
+void CtapAuthenticator::continueSetPinAfterRequestPin(const String& pin, const CryptoKeyEC& peerKey) {
+    if (pin.isNull()) {
+        receiveRespond(ExceptionData { ExceptionCode::UnknownError, "Pin is null."_s });
+        return;
+    }
+
+    auto pinUTF8 = pin::validateAndConvertToUTF8(pin); //TODO: can I eliminate this from SetPinRequest::tryCreate?
+    if (!pinUTF8) {
+        // Fake a pin invalid response from the authenticator such that clients could show some error to the user.
+        if (auto* observer = this->observer())
+            observer->authenticatorStatusUpdated(WebAuthenticationStatus::PinInvalid);
+        tryRestartPin(CtapDeviceResponseCode::kCtap2ErrPinInvalid);
+        return;
+    }
+    auto setPinRequest = pin::SetPinRequest::tryCreate(*pinUTF8, peerKey);
+
+    if (!setPinRequest) {
+        auto error = getResponseCode(data);
+
+        if (isPinError(error)) {
+            if (auto* observer = this->observer())
+                observer->authenticatorStatusUpdated(toStatus(error));
+            if (tryRestartPin(error))
+                return;
+        }
+
+        receiveRespond(ExceptionData { ExceptionCode::UnknownError, makeString("Unknown internal error. Error code: ", static_cast<uint8_t>(error)) });
+        return;
+    }
+    
+    auto cborCmd = encodeAsCBOR(*setPinRequest);
+    driver().transact(WTFMove(cborCmd), [weakThis = WeakPtr { *this }, setPinRequest = WTFMove(*setPinRequest)] (Vector<uint8_t>&& data) {
+        ASSERT(RunLoop::isMain());
+        if (!weakThis)
+            return;
+        weakThis->continueRequestAfterSetPin(WTFMove(data), tokenRequest);
+    });
+}
+
+void CtapAuthenticator::continueRequestAfterSetPin(Vector<uint8_t>&& data, const fido::pin::SetPinRequest& setPinRequest)
+{
+    auto decodedMap = decodeResponseMap(data);
+    if (!decodedMap)
+        return; //or ...?
+    const auto& responseMap = decodedMap->getMap();
+    
+    auto it = responseMap.find(CBORValue(static_cast<int64_t>(fido::pin::RequestKey::kNewPinEnc)));
+    if (it == responseMap.end() || !it->second.isByteString())
+        return; //or...?
+    const auto& newPinEnc = it->second.getByteString();
+
+   auto newPinResult = CryptoAlgorithmAESCBC::platformDecrypt({ }, sharedKey, newPinEnc, CryptoAlgorithmAESCBC::Padding::No);
+    
+    if (newPinResult.hasException())
+        return; //or...?
+    auto newPin = newPinResult.releaseReturnValue();
+
+    WTF::switchOn(requestData().options, [&](const PublicKeyCredentialCreationOptions& options) {
+        makeCredential();
+    }, [&](const PublicKeyCredentialRequestOptions& options) {
+        getAssertion(fido::pin::PinRequestType::kSetPin);
+    });
+}
+
 
 void CtapAuthenticator::continueGetPinTokenAfterRequestPin(const String& pin, const CryptoKeyEC& peerKey)
 {
@@ -361,7 +431,7 @@ void CtapAuthenticator::continueRequestAfterGetPinToken(Vector<uint8_t>&& data, 
         if (isPinError(error)) {
             if (auto* observer = this->observer())
                 observer->authenticatorStatusUpdated(toStatus(error));
-            if (tryRestartPin(error))
+            if (tryRestartPin(error, fido::pin::PinRequestType::kGetPinToken))
                 return;
         }
 
@@ -373,17 +443,17 @@ void CtapAuthenticator::continueRequestAfterGetPinToken(Vector<uint8_t>&& data, 
     WTF::switchOn(requestData().options, [&](const PublicKeyCredentialCreationOptions& options) {
         makeCredential();
     }, [&](const PublicKeyCredentialRequestOptions& options) {
-        getAssertion();
+        getAssertion(fido::pin::PinRequestType::kGetPinToken);
     });
 }
 
-bool CtapAuthenticator::tryRestartPin(const CtapDeviceResponseCode& error)
+bool CtapAuthenticator::tryRestartPin(const CtapDeviceResponseCode& error, fido::pin::PinRequestType requestType)
 {
     switch (error) {
     case CtapDeviceResponseCode::kCtap2ErrPinAuthInvalid:
     case CtapDeviceResponseCode::kCtap2ErrPinInvalid:
     case CtapDeviceResponseCode::kCtap2ErrPinRequired:
-        getRetries();
+        getRetries(requestType);
         return true;
     default:
         return false;
