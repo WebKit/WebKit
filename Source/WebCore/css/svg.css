@@ -1,7 +1,7 @@
 /*
  * The default style sheet used to render SVG.
  *
- * Copyright (C) 2005, 2006 Apple Inc.  All rights reserved.
+ * Copyright (C) 2005-2024 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,6 +24,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+
+/* https://svgwg.org/svg2-draft/styling.html#UAStyleSheet */
 
 @namespace "http://www.w3.org/2000/svg";
 
@@ -83,4 +85,8 @@ text, tspan, tref {
 *:not(foreignObject) > svg {
     transform-origin: 0 0;
     transform-box: view-box;
+}
+
+a:any-link {
+    cursor: pointer;
 }
