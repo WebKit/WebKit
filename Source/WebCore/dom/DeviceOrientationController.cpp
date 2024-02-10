@@ -48,7 +48,7 @@ void DeviceOrientationController::didChangeDeviceOrientation(DeviceOrientationDa
 
 DeviceOrientationClient& DeviceOrientationController::deviceOrientationClient()
 {
-    return static_cast<DeviceOrientationClient&>(m_client);
+    return static_cast<DeviceOrientationClient&>(m_client.get());
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -58,13 +58,13 @@ DeviceOrientationClient& DeviceOrientationController::deviceOrientationClient()
 
 void DeviceOrientationController::suspendUpdates()
 {
-    m_client.stopUpdating();
+    m_client->stopUpdating();
 }
 
 void DeviceOrientationController::resumeUpdates()
 {
     if (!m_listeners.isEmpty())
-        m_client.startUpdating();
+        m_client->startUpdating();
 }
 
 #else

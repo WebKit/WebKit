@@ -101,7 +101,7 @@ void DragController::cleanupAfterSystemDrag()
     // We don't want to do this for WebKit2, since the client call to start the drag
     // is asynchronous.
 
-    if (m_page.mainFrame().virtualView()->platformWidget())
+    if (m_page->mainFrame().virtualView()->platformWidget())
         dragEnded();
 #endif
 }

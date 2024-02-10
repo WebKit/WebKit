@@ -48,13 +48,13 @@ DeviceMotionController::DeviceMotionController(DeviceMotionClient& client)
 
 void DeviceMotionController::suspendUpdates()
 {
-    m_client.stopUpdating();
+    m_client->stopUpdating();
 }
 
 void DeviceMotionController::resumeUpdates()
 {
     if (!m_listeners.isEmpty())
-        m_client.startUpdating();
+        m_client->startUpdating();
 }
 
 #endif
@@ -66,7 +66,7 @@ void DeviceMotionController::didChangeDeviceMotion(DeviceMotionData* deviceMotio
 
 DeviceMotionClient& DeviceMotionController::deviceMotionClient()
 {
-    return static_cast<DeviceMotionClient&>(m_client);
+    return static_cast<DeviceMotionClient&>(m_client.get());
 }
 
 bool DeviceMotionController::hasLastData()

@@ -30,6 +30,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakHashMap.h>
 
 namespace WebCore {
 
@@ -65,10 +66,7 @@ private:
 
     void regionChanged(LocalFrame&, RegionType);
 
-    bool hasOverlaysForPage(Page& page) const
-    {
-        return m_pageRegionOverlays.contains(&page);
-    }
+    bool hasOverlaysForPage(Page&) const;
     
     void updateOverlayRegionVisibility(Page&, OptionSet<DebugOverlayRegions>);
 
@@ -77,7 +75,7 @@ private:
     RegionOverlay* regionOverlayForPage(Page&, RegionType) const;
     RegionOverlay& ensureRegionOverlayForPage(Page&, RegionType);
 
-    HashMap<Page*, Vector<RefPtr<RegionOverlay>>> m_pageRegionOverlays;
+    SingleThreadWeakHashMap<Page, Vector<RefPtr<RegionOverlay>>> m_pageRegionOverlays;
 
     static DebugPageOverlays* sharedDebugOverlays;
 };
