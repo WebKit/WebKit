@@ -469,7 +469,6 @@ void UnifiedPDFPlugin::paintContents(const GraphicsLayer* layer, GraphicsContext
     if (layer != m_contentsLayer.get())
         return;
 
-    // FIXME: We could be smarter and only paint the relevant page.
     paintPDFContent(context, clipRect);
 }
 
@@ -502,7 +501,7 @@ void UnifiedPDFPlugin::paintPDFContent(WebCore::GraphicsContext& context, const 
 
         auto pageStateSaver = GraphicsContextStateSaver(context);
         context.clip(destinationRect);
-//        context.fillRect(destinationRect, Color::white);
+        context.fillRect(destinationRect, Color::white);
 
         // Translate the context to the bottom of pageBounds and flip, so that PDFKit operates
         // from this page's drawing origin.
