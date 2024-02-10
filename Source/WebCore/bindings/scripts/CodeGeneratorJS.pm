@@ -7712,7 +7712,7 @@ sub GenerateHashTable
     # Generate size data for compact' size hash table
 
     local *generateHashTableHelper = sub {
-        my ($isMac) = @_;
+        my ($useWYHash) = @_;
         my @table = ();
         my @links = ();
 
@@ -7725,7 +7725,7 @@ sub GenerateHashTable
         my $i = 0;
         foreach (@{$keys}) {
             my $depth = 0;
-            my $h = Hasher::GenerateHashValue($_, $isMac) % $numEntries;
+            my $h = Hasher::GenerateHashValue($_, $useWYHash) % $numEntries;
 
             while (defined($table[$h])) {
                 if (defined($links[$h])) {
@@ -7773,11 +7773,11 @@ sub GenerateHashTable
         return $hashTableString
     };
 
-    my $hashTableForMacOS = generateHashTableHelper(1);
-    my $hashTableForIOS = generateHashTableHelper(0);
-    my $hashTableToWrite = $hashTableForMacOS;
-    if ($hashTableForMacOS ne $hashTableForIOS) {
-        $hashTableToWrite = "#if PLATFORM(MAC)\n" . $hashTableForMacOS . "#else\n" . $hashTableForIOS . "#endif\n";
+    my $hashTableForWYHash = generateHashTableHelper(1);
+    my $hashTableForSFHash = generateHashTableHelper(0);
+    my $hashTableToWrite = $hashTableForWYHash;
+    if ($hashTableForWYHash ne $hashTableForSFHash) {
+        $hashTableToWrite = "#if ENABLE(WYHASH_STRING_HASHER)\n" . $hashTableForWYHash . "#else\n" . $hashTableForSFHash . "#endif\n";
     }
     push(@implContent, $hashTableToWrite);
 }

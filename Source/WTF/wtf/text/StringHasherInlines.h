@@ -30,7 +30,7 @@ namespace WTF {
 template<typename T, typename Converter>
 unsigned StringHasher::computeHashAndMaskTop8Bits(const T* data, unsigned characterCount)
 {
-#if PLATFORM(MAC)
+#if ENABLE(WYHASH_STRING_HASHER)
     if (LIKELY(characterCount <= smallStringThreshold))
         return SuperFastHash::computeHashAndMaskTop8Bits<T, Converter>(data, characterCount);
     return WYHash::computeHashAndMaskTop8Bits<T, Converter>(data, characterCount);
@@ -43,7 +43,7 @@ template<typename T, unsigned characterCount>
 constexpr unsigned StringHasher::computeLiteralHashAndMaskTop8Bits(const T (&characters)[characterCount])
 {
     constexpr unsigned characterCountWithoutNull = characterCount - 1;
-#if PLATFORM(MAC)
+#if ENABLE(WYHASH_STRING_HASHER)
     if constexpr (LIKELY(characterCountWithoutNull <= smallStringThreshold))
         return SuperFastHash::computeHashAndMaskTop8Bits<T>(characters, characterCountWithoutNull);
     return WYHash::computeHashAndMaskTop8Bits<T>(characters, characterCountWithoutNull);
@@ -54,7 +54,7 @@ constexpr unsigned StringHasher::computeLiteralHashAndMaskTop8Bits(const T (&cha
 
 inline void StringHasher::addCharacter(UChar character)
 {
-#if PLATFORM(MAC)
+#if ENABLE(WYHASH_STRING_HASHER)
     if (m_bufferSize == smallStringThreshold) {
         // This algorithm must stay in sync with WYHash::hash function.
         if (!m_pendingHashValue) {
@@ -82,7 +82,7 @@ inline void StringHasher::addCharacter(UChar character)
 
 inline unsigned StringHasher::hashWithTop8BitsMasked()
 {
-#if PLATFORM(MAC)
+#if ENABLE(WYHASH_STRING_HASHER)
     unsigned hashValue;
     if (!m_pendingHashValue) {
         ASSERT(m_bufferSize <= smallStringThreshold);

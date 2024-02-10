@@ -251,7 +251,7 @@ static JSC_DECLARE_CUSTOM_GETTER(jsTestGlobalObject_TestTypedefsConstructor);
 using JSTestGlobalObjectDOMConstructor = JSDOMConstructorNotConstructable<JSTestGlobalObject>;
 
 /* Hash table */
-#if PLATFORM(MAC)
+#if ENABLE(WYHASH_STRING_HASHER)
 
 static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },

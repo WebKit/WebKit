@@ -108,7 +108,7 @@ private:
         return 0x80000000 >> flagCount;
     }
 
-#if PLATFORM(MAC)
+#if ENABLE(WYHASH_STRING_HASHER)
     bool m_pendingHashValue { false };
     unsigned m_numberOfProcessedCharacters { 0 };
     uint64_t m_seed { 0 };

@@ -603,6 +603,11 @@
 #endif
 #endif
 
+/* wyhash-based StringHasher */
+#if !defined(ENABLE_WYHASH_STRING_HASHER) && PLATFORM(MAC)
+#define ENABLE_WYHASH_STRING_HASHER 1
+#endif
+
 /* The JIT is enabled by default on all x86-64 & ARM64 platforms. */
 #if !defined(ENABLE_JIT) && (CPU(X86_64) || (CPU(ARM64) && CPU(ADDRESS64)))
 #define ENABLE_JIT 1

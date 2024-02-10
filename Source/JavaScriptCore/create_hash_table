@@ -145,7 +145,7 @@ sub ceilingToPowerOf2
 
 sub calcPerfectHashSize($)
 {
-    my ($isMac) = @_;
+    my ($useWYHash) = @_;
 tableSizeLoop:
     for ($perfectHashSize = ceilingToPowerOf2(scalar @keys); ; $perfectHashSize += $perfectHashSize) {
         if ($perfectHashSize > 2**15) {
@@ -153,7 +153,7 @@ tableSizeLoop:
         }
         my @table = ();
         foreach my $key (@keys) {
-            my $h = hashValue($key, $isMac) % $perfectHashSize;
+            my $h = hashValue($key, $useWYHash) % $perfectHashSize;
             next tableSizeLoop if $table[$h];
             $table[$h] = 1;
         }
@@ -168,7 +168,7 @@ sub leftShift($$) {
 
 sub calcCompactHashSize($)
 {
-    my ($isMac) = @_;
+    my ($useWYHash) = @_;
     my $compactHashSize = ceilingToPowerOf2(2 * @keys);
     $compactHashSizeMask = $compactHashSize - 1;
     $compactSize = $compactHashSize;
@@ -177,7 +177,7 @@ sub calcCompactHashSize($)
     my $i = 0;
     foreach my $key (@keys) {
         my $depth = 0;
-        my $h = hashValue($key, $isMac) % $compactHashSize;
+        my $h = hashValue($key, $useWYHash) % $compactHashSize;
         while (defined($table[$h])) {
             if ($compactSize > 1000) {
                 die "The hash size is far too big. This should not be reached.";
@@ -406,10 +406,10 @@ sub wyhash {
 }
 
 sub hashValue($$) {
-    my ($string, $isMac) = @_;
+    my ($string, $useWYHash) = @_;
     my @chars = split(/ */, $string);
     my $charCount = scalar @chars;
-    if ($isMac) {
+    if ($useWYHash) {
         if ($charCount <= 48) {
             return superFastHash(@chars);
         }
@@ -438,11 +438,11 @@ sub output() {
     print "\n";
 
     local *generateHashTableHelper = sub {
-        my ($isMac, $setToOldValues) = @_;
+        my ($useWYHash, $setToOldValues) = @_;
         my $oldCompactSize = $compactSize;
         my $oldCompactHashSizeMask = $compactHashSizeMask;
-        calcPerfectHashSize($isMac);
-        calcCompactHashSize($isMac);
+        calcPerfectHashSize($useWYHash);
+        calcCompactHashSize($useWYHash);
 
         my $hashTableString = "";
 
@@ -533,11 +533,11 @@ sub output() {
         return $hashTableString;
     };
 
-    my $hashTableForMacOS = generateHashTableHelper(1, 1);
-    my $hashTableForNonMacOSPlatforms = generateHashTableHelper(0, 0);
-    my $hashTableToWrite = $hashTableForMacOS;
-    if ($hashTableForMacOS ne $hashTableForNonMacOSPlatforms) {
-        $hashTableToWrite = "#if PLATFORM(MAC)\n" . $hashTableForMacOS . "#else\n" . $hashTableForNonMacOSPlatforms . "#endif\n";
+    my $hashTableForWYHash = generateHashTableHelper(1, 1);
+    my $hashTableForSFHash = generateHashTableHelper(0, 0);
+    my $hashTableToWrite = $hashTableForWYHash;
+    if ($hashTableForWYHash ne $hashTableForSFHash) {
+        $hashTableToWrite = "#if ENABLE(WYHASH_STRING_HASHER)\n" . $hashTableForWYHash . "#else\n" . $hashTableForSFHash . "#endif\n";
     }
     print $hashTableToWrite;
 
