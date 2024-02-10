@@ -70,8 +70,7 @@ static ObjectValue valueFromID(id object)
     case IPC::NSType::CNPostalAddress:
         return CoreIPCCNPostalAddress((CNPostalAddress *)object);
     case IPC::NSType::NSDateComponents:
-        // FIXME: Serialize NSDateComponents directly instead of relying on secure coding.
-        return CoreIPCSecureCoding(object);
+        return CoreIPCDateComponents((NSDateComponents *)object);
     case IPC::NSType::PKContact:
         return CoreIPCPKContact((PKContact *)object);
     case IPC::NSType::PKPaymentMerchantSession:

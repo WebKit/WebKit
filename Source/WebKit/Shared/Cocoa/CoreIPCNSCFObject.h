@@ -51,6 +51,7 @@ class CoreIPCDDScannerResult;
 #endif
 class CoreIPCData;
 class CoreIPCDate;
+class CoreIPCDateComponents;
 class CoreIPCDictionary;
 class CoreIPCError;
 class CoreIPCFont;
@@ -71,6 +72,7 @@ using ObjectValue = std::variant<
 #if USE(PASSKIT)
     CoreIPCCNPhoneNumber,
     CoreIPCCNPostalAddress,
+    CoreIPCDateComponents,
     CoreIPCPKContact,
     CoreIPCPKPaymentMerchantSession,
     CoreIPCPKPayment,

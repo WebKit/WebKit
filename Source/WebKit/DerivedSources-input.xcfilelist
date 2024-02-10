@@ -225,6 +225,7 @@ $(PROJECT_DIR)/Shared/Cocoa/CoreIPCDDActionContext.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCDDScannerResult.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCData.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCDate.serialization.in
+$(PROJECT_DIR)/Shared/Cocoa/CoreIPCDateComponents.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCDictionary.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCError.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCFont.serialization.in

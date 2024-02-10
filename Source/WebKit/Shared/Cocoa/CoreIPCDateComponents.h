@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,23 +25,28 @@
 
 #pragma once
 
-#import "CoreIPCArray.h"
-#import "CoreIPCCFType.h"
-#import "CoreIPCColor.h"
-#import "CoreIPCContacts.h"
-#import "CoreIPCData.h"
-#import "CoreIPCDate.h"
-#import "CoreIPCDateComponents.h"
-#import "CoreIPCDictionary.h"
-#import "CoreIPCError.h"
-#import "CoreIPCFont.h"
-#import "CoreIPCLocale.h"
-#import "CoreIPCNSValue.h"
-#import "CoreIPCNumber.h"
-#import "CoreIPCPassKit.h"
-#import "CoreIPCPersonNameComponents.h"
-#import "CoreIPCPresentationIntent.h"
-#import "CoreIPCSecureCoding.h"
-#import "CoreIPCString.h"
-#import "CoreIPCURL.h"
-#import "GeneratedWebKitSecureCoding.h"
+#include <wtf/ArgumentCoder.h>
+#include <wtf/RetainPtr.h>
+#include <wtf/text/WTFString.h>
+
+namespace WebKit {
+
+class CoreIPCDateComponents {
+public:
+    CoreIPCDateComponents(NSDateComponents *);
+    RetainPtr<id> toID() const;
+
+    static bool hasCorrectNumberOfComponentValues(const Vector<NSInteger>&);
+
+private:
+    friend struct IPC::ArgumentCoder<CoreIPCDateComponents, void>;
+    CoreIPCDateComponents()
+    {
+    };
+
+    String m_calendarIdentifier;
+    String m_timeZoneName;
+    Vector<NSInteger> m_componentValues;
+};
+
+} // namespace WebKit

@@ -406,6 +406,43 @@ std::optional<ObjCHolderForTesting> ObjCHolderForTesting::decode(IPC::Decoder& d
     } };
 }
 
+@interface NSDateComponents ()
+-(BOOL)oldIsEqual:(id)other;
+@end
+
+static BOOL nsDateComponentsTesting_isEqual(NSDateComponents *a, SEL, NSDateComponents *b)
+{
+    // Override the equality check of NSDateComponents objects to only look at the identifier string
+    // values for the NSCalendar and NSTimeZone objects.
+    // Instances of those objects can be configured "weirdly" at runtime and have undesirable isEqual: behaviors,
+    // but in practice for WebKit CoreIPC only the default values for each are important.
+
+    NSCalendar *aCalendar = a.calendar;
+    NSCalendar *bCalendar = b.calendar;
+    NSTimeZone *aTimeZone = a.timeZone;
+    NSTimeZone *bTimeZone = b.timeZone;
+
+    a.calendar = nil;
+    a.timeZone = nil;
+    b.calendar = nil;
+    b.timeZone = nil;
+
+    BOOL result = [a oldIsEqual:b];
+
+    if (aCalendar && result)
+        result = [aCalendar.calendarIdentifier isEqual:bCalendar.calendarIdentifier];
+
+    if (aTimeZone && result)
+        result = [aTimeZone.name isEqual:bTimeZone.name];
+
+    a.calendar = aCalendar;
+    a.timeZone = aTimeZone;
+    b.calendar = bCalendar;
+    b.timeZone = bTimeZone;
+
+    return result;
+}
+
 #if PLATFORM(MAC)
 static BOOL wkDDActionContext_isEqual(WKDDActionContext *a, SEL, WKDDActionContext *b)
 {
@@ -445,6 +482,10 @@ inline bool operator==(const ObjCHolderForTesting& a, const ObjCHolderForTesting
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         // These classes do not have isEqual: methods useful for our unit testing, so we'll swap it in ourselves.
+
+        auto oldIsEqual = class_getMethodImplementation([NSDateComponents class], @selector(isEqual:));
+        class_replaceMethod([NSDateComponents class], @selector(isEqual:), (IMP)nsDateComponentsTesting_isEqual, "v@:@");
+        class_addMethod([NSDateComponents class], @selector(oldIsEqual:), oldIsEqual, "v@:@");
 
 #if USE(PASSKIT) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
         class_addMethod(PAL::getPKPaymentMethodClass(), @selector(isEqual:), (IMP)wkSecureCoding_isEqual, "v@:@");
@@ -1202,10 +1243,32 @@ TEST(IPCSerialization, SecureCoding)
     runTestNS({ paymentToken.get() });
 
     RetainPtr<NSDateComponents> startComponents = adoptNS([NSDateComponents new]);
+    runTestNS({ startComponents.get() });
+
+    [startComponents setValue:1 forComponent:NSCalendarUnitEra];
+    [startComponents setValue:2 forComponent:NSCalendarUnitYear];
+    [startComponents setValue:3 forComponent:NSCalendarUnitYearForWeekOfYear];
+    [startComponents setValue:4 forComponent:NSCalendarUnitQuarter];
+    [startComponents setValue:5 forComponent:NSCalendarUnitMonth];
+    [startComponents setValue:6 forComponent:NSCalendarUnitHour];
+    [startComponents setValue:7 forComponent:NSCalendarUnitMinute];
+    [startComponents setValue:8 forComponent:NSCalendarUnitSecond];
+    [startComponents setValue:9 forComponent:NSCalendarUnitNanosecond];
+    [startComponents setValue:10 forComponent:NSCalendarUnitWeekOfYear];
+    [startComponents setValue:11 forComponent:NSCalendarUnitWeekOfMonth];
+    [startComponents setValue:12 forComponent:NSCalendarUnitWeekday];
+    [startComponents setValue:13 forComponent:NSCalendarUnitWeekdayOrdinal];
+    [startComponents setValue:14 forComponent:NSCalendarUnitDay];
+    startComponents.get().calendar = [NSCalendar calendarWithIdentifier:NSCalendarIdentifierBuddhist];
+    startComponents.get().timeZone = [NSTimeZone timeZoneWithName:@"Asia/Calcutta"];
+    runTestNS({ startComponents.get() });
+
+    startComponents = adoptNS([NSDateComponents new]);
     startComponents.get().day = 1;
     startComponents.get().month = 4;
     startComponents.get().year = 1976;
     startComponents.get().calendar = NSCalendar.currentCalendar;
+
     RetainPtr<NSDateComponents> endComponents = adoptNS([NSDateComponents new]);
     endComponents.get().day = 9;
     endComponents.get().month = 1;

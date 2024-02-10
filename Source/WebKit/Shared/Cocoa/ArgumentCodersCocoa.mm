@@ -569,7 +569,7 @@ static constexpr bool haveSecureActionContext = false;
     static constexpr bool haveStrictDecodablePKPaymentPass = false;
 #endif
 
-    // FIXME: Remove these checks for CNContact, NSDateComponents, and PKSecureElementPass
+    // FIXME: Remove these checks for CNContact, and PKSecureElementPass
     // once we directly serialize them ourselves.
     auto isDecodingPKPaymentRelatedType = [&] () {
         if (!PAL::isPassKitCoreFrameworkAvailable())
@@ -579,8 +579,6 @@ static constexpr bool haveSecureActionContext = false;
         if (PAL::getPKSecureElementPassClass() && allowedClasses.contains(PAL::getPKSecureElementPassClass()))
             return true;
         if (PAL::isContactsFrameworkAvailable() && PAL::getCNContactClass() && allowedClasses.contains(PAL::getCNContactClass()))
-            return true;
-        if (allowedClasses.contains(NSDateComponents.class))
             return true;
         return false;
     };
@@ -667,8 +665,7 @@ template<> std::optional<RetainPtr<id>> decodeObjectDirectlyRequiringAllowedClas
         allowedClasses.add(NSMutableParagraphStyle.class);
 
 #if USE(PASSKIT)
-
-    // FIXME: Remove these exceptions for CNContact, NSDateComponents, and PKSecureElementPass
+    // FIXME: Remove these exceptions for CNContact and PKSecureElementPass
     // once we directly serialize them ourselves.
     if (PAL::isContactsFrameworkAvailable()) {
         if (allowedClasses.contains(PAL::getPKPaymentClass()) || allowedClasses.contains(PAL::getPKPaymentMethodClass()) || allowedClasses.contains(PAL::getPKPaymentTokenClass())) {
@@ -676,13 +673,9 @@ template<> std::optional<RetainPtr<id>> decodeObjectDirectlyRequiringAllowedClas
             allowedClasses.add(PAL::getPKSecureElementPassClass());
         }
 
-        if (allowedClasses.contains(PAL::getPKShippingMethodClass()) || allowedClasses.contains(PAL::getPKDateComponentsRangeClass()) || allowedClasses.contains(PAL::getPKPaymentClass()))
-            allowedClasses.add([NSDateComponents class]);
-
         if (allowedClasses.contains(PAL::getCNContactClass()))
             allowedClasses.add(PAL::getCNMutableContactClass());
     }
-
 #endif
 
     auto allowedClassSet = adoptNS([[NSMutableSet alloc] initWithCapacity:allowedClasses.size()]);
