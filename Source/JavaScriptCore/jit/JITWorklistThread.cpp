@@ -109,6 +109,7 @@ auto JITWorklistThread::work() -> WorkResult
         Locker locker { *m_worklist.m_lock };
         if (m_plan->stage() == JITPlanStage::Canceled)
             return WorkResult::Continue;
+        m_state = State::Compiling;
         m_plan->notifyCompiling();
     }
 
@@ -130,6 +131,7 @@ auto JITWorklistThread::work() -> WorkResult
 
     {
         Locker locker { *m_worklist.m_lock };
+        m_state = State::NotCompiling;
         if (m_plan->stage() == JITPlanStage::Canceled)
             return WorkResult::Continue;
 
