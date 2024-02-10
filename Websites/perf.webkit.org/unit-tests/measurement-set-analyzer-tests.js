@@ -20,7 +20,7 @@ describe('MeasurementSetAnalyzer', () => {
 
         it('should generate a list of measurement set', () => {
             const configurations = MeasurementSetAnalyzer.measurementSetListForAnalysis({dashboards: {
-                "macOS": [["some metric", "plt-mean"], [['Some Platform'], [65, 2884], [65, 1158]]]
+                "macOS": [["Time", "plt-mean"], [['Some Platform'], [65, 2884], [65, 1158]]]
             }});
             assert.equal(configurations.length, 2);
             const [measurementSet0, measurementSet1] = configurations;
@@ -87,7 +87,7 @@ describe('MeasurementSetAnalyzer', () => {
                 'clusterCount': 4,
                 'status': 'OK'});
             await analysisPromise;
-            assert.deepEqual(logger.info_logs, ['==== "Some test : Some metric" on "Some platform" ====']);
+            assert.deepEqual(logger.info_logs, ['==== "Some test : Time" on "Some platform" ====']);
             assert.deepEqual(logger.error_logs, []);
         });
 
@@ -105,7 +105,7 @@ describe('MeasurementSetAnalyzer', () => {
             } catch (error) {
                 assert(false, 'Should not throw any exception here');
             }
-            assert.deepEqual(logger.info_logs, ['==== "Some test : Some metric" on "Some platform" ====']);
+            assert.deepEqual(logger.info_logs, ['==== "Some test : Time" on "Some platform" ====']);
             assert.deepEqual(logger.warn_logs, [`Skipping analysis for "${MockModels.someMetric.fullName()}" on "${MockModels.somePlatform.name()}" as time series does not exit.`]);
             assert.deepEqual(logger.error_logs, []);
         });
@@ -124,7 +124,7 @@ describe('MeasurementSetAnalyzer', () => {
             } catch (error) {
                 assert.equal(error, 'SomeError');
             }
-            assert.deepEqual(logger.info_logs, ['==== "Some test : Some metric" on "Some platform" ====']);
+            assert.deepEqual(logger.info_logs, ['==== "Some test : Time" on "Some platform" ====']);
             assert.deepEqual(logger.warn_logs, []);
             assert.deepEqual(logger.error_logs, []);
         });
@@ -147,7 +147,7 @@ describe('MeasurementSetAnalyzer', () => {
                 'clusterCount': 4,
                 'status': 'OK'});
             await analysisPromise;
-            assert.deepEqual(logger.info_logs, ['==== "Some test : Some metric" on "Some platform" ====']);
+            assert.deepEqual(logger.info_logs, ['==== "Some test : Time" on "Some platform" ====']);
             assert.deepEqual(logger.error_logs, []);
         });
 
@@ -181,7 +181,7 @@ describe('MeasurementSetAnalyzer', () => {
             });
 
             await analysisPromise;
-            assert.deepEqual(logger.info_logs, ['==== "Some test : Some metric" on "Some platform" ====',
+            assert.deepEqual(logger.info_logs, ['==== "Some test : Time" on "Some platform" ====',
                 'Nothing to analyze']);
             assert.deepEqual(logger.error_logs, []);
         });
@@ -243,7 +243,7 @@ describe('MeasurementSetAnalyzer', () => {
             requests[2].reject('TriggerableNotFoundForTask');
 
             assertThrows('TriggerableNotFoundForTask', async () => await analysisPromise);
-            assert.deepEqual(logger.info_logs, ['==== "Some test : Some metric" on "Some platform" ====']);
+            assert.deepEqual(logger.info_logs, ['==== "Some test : Time" on "Some platform" ====']);
             assert.deepEqual(logger.error_logs, []);
         });
 
@@ -336,7 +336,7 @@ describe('MeasurementSetAnalyzer', () => {
             });
 
             await analysisPromise;
-            assert.deepEqual(logger.info_logs, ['==== "Some test : Some metric" on "Some platform" ====',
+            assert.deepEqual(logger.info_logs, ['==== "Some test : Time" on "Some platform" ====',
                 'Created analysis task with id "5255" to confirm: "Potential 2.38% regression on Some platform between WebKit: r35-r44".']);
             assert.deepEqual(logger.error_logs, []);
         });
@@ -418,7 +418,7 @@ describe('MeasurementSetAnalyzer', () => {
             });
 
             await analysisPromise;
-            assert.deepEqual(logger.info_logs, ['==== "Some test : Some metric" on "Some platform" ====',
+            assert.deepEqual(logger.info_logs, ['==== "Some test : Time" on "Some platform" ====',
                 'Created analysis task with id "5255" to confirm: "Potential 2.38% regression on Some platform between WebKit: r35-r44".']);
             assert.deepEqual(logger.error_logs, []);
         });
@@ -476,7 +476,7 @@ describe('MeasurementSetAnalyzer', () => {
             });
 
             await analysisPromise;
-            assert.deepEqual(logger.info_logs, ['==== "Some test : Some metric" on "Some platform" ====',
+            assert.deepEqual(logger.info_logs, ['==== "Some test : Time" on "Some platform" ====',
                 'Nothing to analyze']);
             assert.deepEqual(logger.error_logs, []);
         });
@@ -570,7 +570,7 @@ describe('MeasurementSetAnalyzer', () => {
             });
 
             await analysisPromise;
-            assert.deepEqual(logger.info_logs, ['==== "Some test : Some metric" on "Some platform" ====',
+            assert.deepEqual(logger.info_logs, ['==== "Some test : Time" on "Some platform" ====',
                 'Created analysis task with id "5255" to confirm: "Potential 2.38% regression on Some platform between WebKit: r40-r49".']);
             assert.deepEqual(logger.error_logs, []);
         });
@@ -664,7 +664,7 @@ describe('MeasurementSetAnalyzer', () => {
             });
 
             await analysisPromise;
-            assert.deepEqual(logger.info_logs, ['==== "Some test : Some metric" on "Some platform" ====',
+            assert.deepEqual(logger.info_logs, ['==== "Some test : Time" on "Some platform" ====',
                 'Created analysis task with id "5255" to confirm: "Potential 9.15% progression on Some platform between WebKit: r3-r8".']);
             assert.deepEqual(logger.error_logs, []);
         });

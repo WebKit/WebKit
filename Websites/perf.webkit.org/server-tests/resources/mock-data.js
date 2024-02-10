@@ -62,7 +62,7 @@ MockData = {
             db.insert('platforms', {id: MockData.somePlatformId(), name: 'some platform'}),
             db.insert('platforms', {id: MockData.otherPlatformId(), name: 'other platform'}),
             db.insert('tests', {id: MockData.someTestId(), name: 'some test'}),
-            db.insert('test_metrics', {id: 300, test: 200, name: 'some metric'}),
+            db.insert('test_metrics', {id: 300, test: 200, name: 'Time'}),
             db.insert('test_configurations', {id: 301, metric: 300, platform: MockData.somePlatformId(), type: 'current'}),
             db.insert('test_configurations', {id: 302, metric: 300, platform: MockData.otherPlatformId(), type: 'current'}),
             db.insert('test_runs', {id: 801, config: 301, build: 901, mean_cache: 100}),
@@ -232,7 +232,7 @@ MockData = {
             db.insert('repositories', {id: this.gitWebkitRepositoryId(), name: 'Git-WebKit'}),
             db.insert('platforms', {id: MockData.somePlatformId(), name: 'some platform'}),
             db.insert('tests', {id: MockData.someTestId(), name: 'some test'}),
-            db.insert('test_metrics', {id: 5300, test: MockData.someTestId(), name: 'some metric'}),
+            db.insert('test_metrics', {id: 5300, test: MockData.someTestId(), name: 'Time'}),
             db.insert('test_configurations', {id: 5400, metric: 5300, platform: MockData.somePlatformId(), type: 'current'}),
         ]);
     },

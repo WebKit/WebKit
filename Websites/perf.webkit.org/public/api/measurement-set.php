@@ -60,6 +60,15 @@ define('YEAR', 365.24 * DAY);
 define('MONTH', 30 * DAY);
 
 class MeasurementSetFetcher {
+    private $db;
+    private $queries;
+    private $cluster_start;
+    private $next_cluster_start;
+    private $next_cluster_results;
+    private $cluster_size;
+    private $last_modified;
+    private $start_time;
+    private $config_rows;
     function __construct($db) {
         $this->db = $db;
         $this->queries = NULL;
@@ -187,7 +196,9 @@ class MeasurementSetFetcher {
     }
 
     private static function format_run(&$run, &$commit_time) {
-        $commit_time = intval($run['revision_time']);
+        # FIXME: Remove the rounding code once PostgreSQL 12 or newer is required.
+        # The fix should also include reverting the rounding operations from https://commits.webkit.org/206368@main.
+        $commit_time = array_key_exists('revision_time', $run) && $run['revision_time'] ? intval(round(floatval(trim($run['revision_time'], '"')), 2)) : null;
         $build_time = Database::to_js_time($run['build_time']);
         if (!$commit_time)
             $commit_time = $build_time;
@@ -218,11 +229,11 @@ class MeasurementSetFetcher {
             $commit_id = intval(trim($name_and_revision[0], '"'));
             $repository_id = intval(trim($name_and_revision[1], '"'));
             $revision = trim($name_and_revision[2], '"');
-            $trimmed_revsion_identifier = trim($name_and_revision[3], '"');
-            $revision_identifier = strlen($trimmed_revsion_identifier) ? $trimmed_revsion_identifier : NULL;
+            $trimmed_revision_identifier = trim($name_and_revision[3], '"');
+            $revision_identifier = strlen($trimmed_revision_identifier) ? $trimmed_revision_identifier : NULL;
             $trimmed_order = trim($name_and_revision[4], '"');
             $order = strlen($trimmed_order) ? intval($trimmed_order) : NULL;
-            $time = intval(trim($name_and_revision[5], '"'));
+            $time = intval(round(floatval(trim($name_and_revision[5], '"')), 2));
             array_push($revisions, array($commit_id, $repository_id, $revision, $revision_identifier, $order, $time));
         }
         return $revisions;
@@ -230,6 +241,9 @@ class MeasurementSetFetcher {
 }
 
 class AnalysisResultsFetcher {
+    private $db;
+    private $task_id;
+    private $build_to_commits;
 
     function __construct($db, $task_id) {
         $this->db = $db;

@@ -123,8 +123,10 @@ class NodeRemoteAPI extends CommonRemoteAPI {
             if (content instanceof Function)
                 content(request);
             else {
-                if (content)
+                if (content) {
+                    request.setHeader('Content-Length', Buffer.from(content).length);
                     request.write(content);
+                }
                 request.end();
             }
         });

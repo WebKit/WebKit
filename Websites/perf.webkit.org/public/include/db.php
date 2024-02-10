@@ -100,6 +100,8 @@ class Database
     }
 
     static function to_js_time($time_str) {
+        if (is_null($time_str))
+            return 0;
         $timestamp_in_ms = strtotime($time_str) * 1000;
         $dot_index = strrpos($time_str, '.');
         if ($dot_index !== FALSE) {

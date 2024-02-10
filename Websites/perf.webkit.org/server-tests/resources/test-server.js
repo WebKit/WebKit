@@ -131,6 +131,7 @@ class TestServer {
         } catch (error) { }
         this._executePgsqlCommand('createdb');
         this._executePgsqlCommand('psql', ['--command', `grant all privileges on database "${this._databaseName}" to "${this._databaseUser}";`]);
+        this._executePgsqlCommand('psql', ['--command', `grant all on schema public to "${this._databaseUser}";`]);
         this.initDatabase();
     }
 

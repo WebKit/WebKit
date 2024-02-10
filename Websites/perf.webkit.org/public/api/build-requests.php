@@ -62,8 +62,17 @@ function update_builds($db, $updates) {
                 $db->rollback_transaction();
                 exit_with_error('FailedToFindBuildRequest', array('buildRequest' => $id));
             }
-            if ($request_row['request_status'] == 'completed')
+            if ($request_row['request_status'] == 'completed') {
+                $filtered_fields_to_update = array();
+                foreach ($fields_to_update as $name => $value) {
+                    $row_key = 'request_' . $name;
+                    if ($value !== $request_row[$row_key])
+                        $filtered_fields_to_update[$name] = $value;
+                }
+                if (count($filtered_fields_to_update))
+                    $db->update_row('build_requests', 'request', array('id' => $id), $filtered_fields_to_update);
                 continue;
+            }
             $is_build = $request_row['request_order'] < 0;
             if ($is_build) {
                 $db->query_and_fetch_all('UPDATE build_requests SET request_status = \'failed\'

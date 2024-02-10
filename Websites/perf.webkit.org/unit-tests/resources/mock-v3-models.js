@@ -31,7 +31,7 @@ var MockModels = {
             MockModels.builder = new Builder(176, {name: 'WebKit Perf Builder', buildUrl: 'http://build.webkit.org/builders/$builderName/$buildTag'});
 
             MockModels.someTest = Test.ensureSingleton(1, {name: 'Some test'});
-            MockModels.someMetric = Metric.ensureSingleton(2884, {name: 'Some metric', test: MockModels.someTest});
+            MockModels.someMetric = Metric.ensureSingleton(2884, {name: 'Time', test: MockModels.someTest});
             MockModels.somePlatform = Platform.ensureSingleton(65, {name: 'Some platform', metrics: [MockModels.someMetric],
                 lastModifiedByMetric: {'2884': 5000, '1158': 5000}});
 
