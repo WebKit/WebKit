@@ -51,7 +51,6 @@
 #import "WebMouseEvent.h"
 #import "WebPage.h"
 #import "WebPageProxyMessages.h"
-#import "WebPasteboardProxyMessages.h"
 #import "WebProcess.h"
 #import "WebWheelEvent.h"
 #import <Quartz/Quartz.h>
@@ -1248,34 +1247,6 @@ void PDFPlugin::zoomIn()
 void PDFPlugin::zoomOut()
 {
     [m_pdfLayerController zoomOut:nil];
-}
-
-void PDFPlugin::writeItemsToPasteboard(NSString *pasteboardName, NSArray *items, NSArray *types)
-{
-    auto pasteboardTypes = makeVector<String>(types);
-    auto pageIdentifier = m_frame && m_frame->coreLocalFrame() ? m_frame->coreLocalFrame()->pageID() : std::nullopt;
-
-    auto& webProcess = WebProcess::singleton();
-    webProcess.parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::SetPasteboardTypes(pasteboardName, pasteboardTypes, pageIdentifier), 0);
-
-    for (NSUInteger i = 0, count = items.count; i < count; ++i) {
-        NSString *type = [types objectAtIndex:i];
-        NSData *data = [items objectAtIndex:i];
-
-        // We don't expect the data for any items to be empty, but aren't completely sure.
-        // Avoid crashing in the SharedMemory constructor in release builds if we're wrong.
-        ASSERT(data.length);
-        if (!data.length)
-            continue;
-
-        if ([type isEqualToString:legacyStringPasteboardType()] || [type isEqualToString:NSPasteboardTypeString]) {
-            auto plainTextString = adoptNS([[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
-            webProcess.parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::SetPasteboardStringForType(pasteboardName, type, plainTextString.get(), pageIdentifier), 0);
-        } else {
-            auto buffer = SharedBuffer::create(data);
-            webProcess.parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::SetPasteboardBufferForType(pasteboardName, type, WTFMove(buffer), pageIdentifier), 0);
-        }
-    }
 }
 
 void PDFPlugin::showDefinitionForAttributedString(NSAttributedString *string, CGPoint point)

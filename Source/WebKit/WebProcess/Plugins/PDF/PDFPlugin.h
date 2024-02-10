@@ -98,7 +98,6 @@ public:
 
     void clickedLink(NSURL *);
 
-    void writeItemsToPasteboard(NSString *pasteboardName, NSArray *items, NSArray *types);
     void showDefinitionForAttributedString(NSAttributedString *, CGPoint);
     void performWebSearch(NSString *);
     void performSpotlightSearch(NSString *);

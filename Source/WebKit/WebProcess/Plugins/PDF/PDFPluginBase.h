@@ -213,6 +213,10 @@ public:
 
     virtual void windowActivityDidChange() { }
 
+#if PLATFORM(MAC)
+    void writeItemsToPasteboard(NSString *pasteboardName, NSArray *items, NSArray *types);
+#endif
+
 private:
     bool documentFinishedLoading() const { return m_documentFinishedLoading; }
     uint64_t streamedBytes() const { return m_streamedBytes; }

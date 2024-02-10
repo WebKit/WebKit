@@ -44,6 +44,7 @@
 #include <WebCore/ChromeClient.h>
 #include <WebCore/ColorCocoa.h>
 #include <WebCore/Editor.h>
+#include <WebCore/EditorClient.h>
 #include <WebCore/FilterOperations.h>
 #include <WebCore/FloatPoint.h>
 #include <WebCore/GraphicsContext.h>
@@ -1481,6 +1482,10 @@ bool UnifiedPDFPlugin::handleEditingCommand(const String& commandName, const Str
         selectAll();
         return true;
     }
+
+    if (commandName == "takeFindStringFromSelection"_s)
+        return takeFindStringFromSelection();
+
     return false;
 }
 
@@ -1488,9 +1493,39 @@ bool UnifiedPDFPlugin::isEditingCommandEnabled(const String& commandName)
 {
     if (commandName == "ScrollPageBackward"_s || commandName == "ScrollPageForward"_s)
         return true;
+
     if (commandName == "selectAll"_s)
         return true;
+
+    if (commandName == "copy"_s || commandName == "takeFindStringFromSelection"_s)
+        return m_currentSelection;
+
     return false;
+}
+
+
+bool UnifiedPDFPlugin::takeFindStringFromSelection()
+{
+    if (!m_currentSelection)
+        return false;
+
+    String findString { m_currentSelection.get().string };
+    if (findString.isEmpty())
+        return false;
+
+#if PLATFORM(MAC)
+    writeItemsToPasteboard(NSPasteboardNameFind, @[ [nsStringNilIfEmpty(findString) dataUsingEncoding:NSUTF8StringEncoding] ], @[ NSPasteboardTypeString ]);
+#else
+    if (!m_frame || !m_frame->coreLocalFrame())
+        return false;
+
+    if (CheckedPtr client = m_frame->coreLocalFrame()->checkedEditor()->client())
+        client->updateStringForFind(findString);
+    else
+        return false;
+#endif
+
+    return true;
 }
 
 bool UnifiedPDFPlugin::forwardEditingCommandToEditor(const String& commandName, const String& argument) const

@@ -165,6 +165,7 @@ private:
     // Editing commands
     bool handleEditingCommand(const String& commandName, const String& argument) override;
     bool isEditingCommandEnabled(const String& commandName) override;
+    bool takeFindStringFromSelection();
     bool forwardEditingCommandToEditor(const String& commandName, const String& argument) const;
     void selectAll();
 
