@@ -196,6 +196,8 @@ void PDFPluginStreamLoaderClient::didReceiveResponse(NetscapePlugInStreamLoader*
     if (response.httpStatusCode() == httpStatus206PartialContent)
         return;
 
+    LOG_WITH_STREAM(IncrementalPDF, stream << "Range request " << request->identifier() << " response was not 206, it was " << response.httpStatusCode());
+
     // If the response wasn't a successful range response, we don't need this stream loader anymore.
     // This can happen, for example, if the server doesn't support range requests.
     // We'll still resolve the ByteRangeRequest later once enough of the full resource has loaded.
@@ -618,10 +620,8 @@ static void dataProviderReleaseInfoCallback(void* info)
 size_t PDFIncrementalLoader::dataProviderGetBytesAtPosition(void* buffer, off_t position, size_t count)
 {
     if (isMainRunLoop()) {
-#if !LOG_DISABLED
-        incrementalLoaderLog(makeString("Handling request for ", count, " bytes at position ", position, " synchronously on the main thread"));
-#endif
-        ASSERT(documentFinishedLoading());
+        LOG_WITH_STREAM(IncrementalPDF, stream << "Handling request for " << count << " bytes at position " << position << " synchronously on the main thread. Finished loading:" << documentFinishedLoading());
+        // FIXME: if documentFinishedLoading() is false, we may not be able to fulfill this request, but that should only happen if we trigger painting on the main thread.
         return getResourceBytesAtPositionAfterLoadingComplete(buffer, position, count);
     }
 

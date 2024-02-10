@@ -4,6 +4,7 @@
 # offline, it simulates a network error with a nonsense response.
 
 import os
+import re
 import sys
 import tempfile
 import time
@@ -12,12 +13,15 @@ from portabilityLayer import get_state, set_state
 from urllib.parse import parse_qs
 
 query = parse_qs(os.environ.get('QUERY_STRING', ''), keep_blank_values=True)
+
 test = query.get('test', [None])[0]
 command = query.get('command', [None])[0]
 initial_delay_arg = query.get('initialdelay', [None])[0]
 chunk_size_arg = query.get('chunksize', [None])[0]
 chunk_delay_arg = query.get('chunkdelay', [None])[0]
 
+first_byte = None
+last_byte = None
 initial_delay = None
 chunk_size = None
 chunk_delay = None
@@ -29,13 +33,6 @@ if test is None:
         'test parameter must be specified for a unique test name\n'
     )
     sys.exit(0)
-
-
-def temp_path_base():
-    return os.path.join(tempfile.gettempdir(), test)
-
-
-state_file = temp_path_base() + '-state'
 
 
 def generate_no_cache_http_header():
@@ -62,7 +59,7 @@ def content_type(path):
     }.get(path.split('.')[-1], 'text/plain')
 
 
-def generate_response(path):
+def generate_response(path, range_start=None, range_end=None):
     state = get_state(state_file)
     if state == 'Offline':
         # Simulate a network error by replying with a nonsense response.
@@ -87,19 +84,36 @@ def generate_response(path):
             time.sleep(initial_delay / 1000)
 
         if os.path.isfile(path):
-            sys.stdout.write(
-                'Last-Modified: {} GMT\r\n'
-                'Content-Type: {}\r\n\r\n'.format(datetime.utcfromtimestamp(os.stat(path).st_mtime).strftime('%a, %d %b %Y %H:%M:%S'), content_type(path))
-            )
+            sys.stdout.write('Last-Modified: {} GMT\r\n'.format(datetime.utcfromtimestamp(os.stat(path).st_mtime).strftime('%a, %d %b %Y %H:%M:%S')))
 
-            file_to_stdout(path)
+            file_len = os.path.getsize(path)
+            if range_start is not None or range_end is not None:
+                if range_end is None or range_end >= file_len:
+                    range_end = file_len - 1
+
+                response_length = range_end - range_start + 1
+
+                sys.stdout.write('status: 206\r\n')
+                sys.stdout.write('Content-Length: %s\r\n' % (response_length))
+                sys.stdout.write('Content-Range: bytes %s-%s/%s\r\n' % (range_start, range_end, file_len))
+            else:
+                sys.stdout.write('Content-Length: %s\r\n' % (file_len))
+
+            sys.stdout.write('Content-Type: {}\r\n'.format(content_type(path)))
+            sys.stdout.write('\r\n')
+
+            file_to_stdout(path, file_len, range_start, range_end)
         else:
             sys.stdout.write('status: 404\r\n\r\n')
 
 
-def file_to_stdout(path):
+def file_to_stdout(path, file_len, range_start=None, range_end=None):
     if chunk_size:
-        chunked_file_to_stdout(path, chunk_size, chunk_delay)
+        chunked_file_to_stdout(path, file_len, range_start, range_end, chunk_size, chunk_delay)
+        return
+
+    if range_start is not None or range_end is not None:
+        range_of_file_to_stdout(path, file_len, range_start, range_end)
         return
 
     with open(path, 'rb') as open_file:
@@ -107,16 +121,70 @@ def file_to_stdout(path):
         sys.stdout.buffer.write(open_file.read())
 
 
-def chunked_file_to_stdout(path, size, delay):
+def range_of_file_to_stdout(path, file_len, range_start=None, range_end=None):
     with open(path, 'rb') as open_file:
+        if range_start is not None:
+            open_file.seek(range_start)
+
         sys.stdout.flush()
+        remaining = (range_end - range_start + 1) if range_start is not None and range_end is not None else file_len
+
         while True:
-            chunk = open_file.read(size)
+            data = open_file.read(remaining)
+            if not data:
+                break
+
+            sys.stdout.buffer.write(data)
+            sys.stdout.flush()
+
+
+def chunked_file_to_stdout(path, file_len, range_start, range_end, chunk_size, chunk_delay):
+    with open(path, 'rb') as open_file:
+        if range_start is not None:
+            open_file.seek(range_start)
+
+        sys.stdout.flush()
+        remaining = (range_end - range_start + 1) if range_start is not None and range_end is not None else None
+
+        while True:
+            if remaining is not None and chunk_size > remaining:
+                chunk_size = remaining
+
+            chunk = open_file.read(chunk_size)
             if not chunk:
                 break
+
             sys.stdout.buffer.write(chunk)
-            if delay:
-                time.sleep(delay / 1000)
+            sys.stdout.flush()
+
+            if remaining is not None:
+                remaining -= len(chunk)
+                if remaining <= 0:
+                    break
+
+            if chunk_delay:
+                time.sleep(chunk_delay / 1000)
+
+
+BYTE_RANGE_RE = re.compile(r'bytes=(\d+)-(\d+)?$')
+
+
+def parse_byte_range(byte_range):
+    """Returns the two numbers in 'bytes=123-456' or throws ValueError.
+    The last number or both numbers may be None.
+    """
+    if byte_range.strip() == '':
+        return None, None
+
+    m = BYTE_RANGE_RE.match(byte_range)
+    if not m:
+        raise ValueError('Invalid byte range %s' % byte_range)
+
+    first, last = [x and int(x) for x in m.groups()]
+    if last and last < first:
+        raise ValueError('Invalid byte range %s' % byte_range)
+
+    return first, last
 
 
 def handle_increase_resource_count_command(path):
@@ -178,6 +246,12 @@ def handle_log_resource_request(path):
     sys.stdout.write('Content-Type: text/html\r\n\r\n')
 
 
+def temp_path_base():
+    return os.path.join(tempfile.gettempdir(), test)
+
+
+state_file = temp_path_base() + '-state'
+
 if initial_delay_arg is not None:
     initial_delay = int(initial_delay_arg)
 
@@ -215,5 +289,12 @@ if command is not None:
         )
         sys.exit(0)
 else:
+    range_request = os.environ.get('HTTP_RANGE')
+    if range_request:
+        try:
+            first_byte, last_byte = parse_byte_range(range_request)
+        except ValueError as e:
+            sys.stdout.write('status: 400\r\n\r\n')
+
     request_path = query.get('path', [''])[0]
-    generate_response(request_path)
+    generate_response(request_path, first_byte, last_byte)

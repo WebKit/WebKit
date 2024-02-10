@@ -232,7 +232,11 @@ bool PDFPluginBase::haveDataForRange(uint64_t offset, size_t count) const
 size_t PDFPluginBase::copyDataAtPosition(void* buffer, uint64_t sourcePosition, size_t count) const
 {
     ASSERT(isMainRunLoop());
-    ASSERT(documentFinishedLoading());
+
+    if (!documentFinishedLoading()) {
+        // FIXME: if documentFinishedLoading() is false, we may not be able to fulfill this request, but that should only happen if we trigger painting on the main thread.
+        LOG_WITH_STREAM(IncrementalPDF, stream << "PDFIncrementalLoader::copyDataAtPosition " << sourcePosition << " on main thread - document has not finished loading");
+    }
 
     if (!haveStreamedDataForRange(sourcePosition, count))
         return 0;
@@ -277,9 +281,7 @@ void PDFPluginBase::streamDidReceiveData(const SharedBuffer& buffer)
     memcpy(CFDataGetMutableBytePtr(m_data.get()) + m_streamedBytes, buffer.data(), buffer.size());
     m_streamedBytes += buffer.size();
 
-#if !LOG_DISABLED && HAVE(INCREMENTAL_PDF_APIS)
-    incrementalLoaderLog(makeString("PDFPluginBase::streamDidReceiveData() - received ", buffer.size(), " bytes, total streamed bytes ", m_streamedBytes));
-#endif
+    LOG_WITH_STREAM(IncrementalPDF, stream << "PDFPluginBase::streamDidReceiveData() - received " << buffer.size() << " bytes, total streamed bytes " << m_streamedBytes);
 
 #if HAVE(INCREMENTAL_PDF_APIS)
     if (m_incrementalLoader)
@@ -292,8 +294,9 @@ void PDFPluginBase::streamDidFinishLoading()
     if (m_hasBeenDestroyed)
         return;
 
-    addArchiveResource();
+    LOG_WITH_STREAM(IncrementalPDF, stream << "PDFPluginBase::streamDidFinishLoading()");
 
+    addArchiveResource();
     m_documentFinishedLoading = true;
 
     auto incrementalPDFStreamDidFinishLoading = [&]() {
