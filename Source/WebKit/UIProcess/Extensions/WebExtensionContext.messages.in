@@ -86,7 +86,7 @@ messages -> WebExtensionContext {
     PermissionsRemove(HashSet<String> permissions, HashSet<String> origins) -> (bool success);
 
     // Port APIs
-    PortPostMessage(WebKit::WebExtensionContentWorldType targetContentWorldType, WebKit::WebExtensionPortChannelIdentifier channelIdentifier, String messageJSON);
+    PortPostMessage(WebKit::WebExtensionContentWorldType targetContentWorldType, std::optional<WebKit::WebPageProxyIdentifier> sendingPageProxyIdentifier, WebKit::WebExtensionPortChannelIdentifier channelIdentifier, String messageJSON);
     PortDisconnect(WebKit::WebExtensionContentWorldType sourceContentWorldType, WebKit::WebExtensionContentWorldType targetContentWorldType, WebKit::WebExtensionPortChannelIdentifier channelIdentifier);
 
     // Runtime APIs

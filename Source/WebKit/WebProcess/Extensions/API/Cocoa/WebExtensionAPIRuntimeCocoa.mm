@@ -304,7 +304,7 @@ void WebExtensionAPIRuntime::sendMessage(WebFrame& frame, NSString *extensionID,
 
     // No options are supported currently.
 
-    WebExtensionMessageSenderParameters sender {
+    WebExtensionMessageSenderParameters senderParameters {
         extensionContext().uniqueIdentifier(),
         std::nullopt, // tabParameters
         toWebExtensionFrameIdentifier(frame),
@@ -313,7 +313,7 @@ void WebExtensionAPIRuntime::sendMessage(WebFrame& frame, NSString *extensionID,
         frame.url(),
     };
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::RuntimeSendMessage(extensionID, messageJSON, sender), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<String> replyJSON, std::optional<String> error) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::RuntimeSendMessage(extensionID, messageJSON, senderParameters), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<String> replyJSON, std::optional<String> error) {
         if (error) {
             callback->reportError(error.value());
             return;
@@ -338,7 +338,7 @@ RefPtr<WebExtensionAPIPort> WebExtensionAPIRuntime::connect(WebFrame& frame, JSC
 
     String resolvedName = name.value_or(nullString());
 
-    WebExtensionMessageSenderParameters sender {
+    WebExtensionMessageSenderParameters senderParameters {
         extensionContext().uniqueIdentifier(),
         std::nullopt, // tabParameters
         toWebExtensionFrameIdentifier(frame),
@@ -347,9 +347,9 @@ RefPtr<WebExtensionAPIPort> WebExtensionAPIRuntime::connect(WebFrame& frame, JSC
         frame.url(),
     };
 
-    auto port = WebExtensionAPIPort::create(forMainWorld(), runtime(), extensionContext(), WebExtensionContentWorldType::Main, resolvedName, sender);
+    auto port = WebExtensionAPIPort::create(forMainWorld(), runtime(), extensionContext(), *frame.page(), WebExtensionContentWorldType::Main, resolvedName);
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::RuntimeConnect(extensionID, port->channelIdentifier(), resolvedName, sender), [=, globalContext = JSRetainPtr { JSContextGetGlobalContext(context) }, protectedThis = Ref { *this }](WebExtensionTab::Error error) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::RuntimeConnect(extensionID, port->channelIdentifier(), resolvedName, senderParameters), [=, globalContext = JSRetainPtr { JSContextGetGlobalContext(context) }, protectedThis = Ref { *this }](WebExtensionTab::Error error) {
         if (!error)
             return;
 
@@ -383,7 +383,7 @@ RefPtr<WebExtensionAPIPort> WebExtensionAPIRuntime::connectNative(WebFrame& fram
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/connectNative
 
-    auto port = WebExtensionAPIPort::create(forMainWorld(), runtime(), extensionContext(), WebExtensionContentWorldType::Native, applicationID);
+    auto port = WebExtensionAPIPort::create(forMainWorld(), runtime(), extensionContext(), *frame.page(), WebExtensionContentWorldType::Native, applicationID);
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::RuntimeConnectNative(applicationID, port->channelIdentifier()), [=, globalContext = JSRetainPtr { JSContextGetGlobalContext(context) }, protectedThis = Ref { *this }](WebExtensionTab::Error error) {
         if (!error)
@@ -561,7 +561,7 @@ void WebExtensionContextProxy::internalDispatchRuntimeConnectEvent(WebCore::DOMW
 
         auto globalContext = frame.jsContextForWorld(world);
         for (auto& listener : onConnect.listeners()) {
-            auto port = WebExtensionAPIPort::create(namespaceObject.forMainWorld(), namespaceObject.runtime(), *this, targetContentWorldType, channelIdentifier, name, senderParameters);
+            auto port = WebExtensionAPIPort::create(namespaceObject.forMainWorld(), namespaceObject.runtime(), *this, *frame.page(), targetContentWorldType, channelIdentifier, name, senderParameters);
             listener->call(toJSValue(globalContext, toJS(globalContext, port.ptr())));
         }
     }, world);

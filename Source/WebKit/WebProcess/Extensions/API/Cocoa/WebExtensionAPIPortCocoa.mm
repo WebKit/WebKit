@@ -129,7 +129,7 @@ void WebExtensionAPIPort::postMessage(WebFrame& frame, NSString *message, NSStri
 
     RELEASE_LOG_DEBUG(Extensions, "Sent port message for channel %{public}llu from %{public}@ world", channelIdentifier().toUInt64(), (NSString *)toDebugString(contentWorldType()));
 
-    WebProcess::singleton().send(Messages::WebExtensionContext::PortPostMessage(targetContentWorldType(), channelIdentifier(), message), extensionContext().identifier());
+    WebProcess::singleton().send(Messages::WebExtensionContext::PortPostMessage(targetContentWorldType(), owningPageProxyIdentifier(), channelIdentifier(), message), extensionContext().identifier());
 }
 
 void WebExtensionAPIPort::disconnect()
@@ -205,7 +205,7 @@ WebExtensionAPIEvent& WebExtensionAPIPort::onDisconnect()
     return *m_onDisconnect;
 }
 
-void WebExtensionContextProxy::dispatchPortMessageEvent(WebExtensionPortChannelIdentifier channelIdentifier, const String& messageJSON)
+void WebExtensionContextProxy::dispatchPortMessageEvent(std::optional<WebPageProxyIdentifier> sendingPageProxyIdentifier, WebExtensionPortChannelIdentifier channelIdentifier, const String& messageJSON)
 {
     auto ports = WebExtensionAPIPort::get(channelIdentifier);
     if (ports.isEmpty())
@@ -213,8 +213,13 @@ void WebExtensionContextProxy::dispatchPortMessageEvent(WebExtensionPortChannelI
 
     id message = parseJSON(messageJSON, { JSONOptions::FragmentsAllowed });
 
-    for (auto& port : ports)
+    for (Ref port : ports) {
+        // Don't send the message to other ports in the same page as the sender.
+        if (sendingPageProxyIdentifier && sendingPageProxyIdentifier == port->owningPageProxyIdentifier())
+            continue;
+
         port->fireMessageEventIfNeeded(message);
+    }
 }
 
 void WebExtensionContextProxy::dispatchPortDisconnectEvent(WebExtensionPortChannelIdentifier channelIdentifier)
@@ -223,7 +228,7 @@ void WebExtensionContextProxy::dispatchPortDisconnectEvent(WebExtensionPortChann
     if (ports.isEmpty())
         return;
 
-    for (auto& port : ports)
+    for (Ref port : ports)
         port->fireDisconnectEventIfNeeded();
 }
 

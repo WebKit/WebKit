@@ -956,7 +956,7 @@ void WebExtensionAPITabs::sendMessage(WebFrame& frame, double tabID, NSString *m
     if (!parseSendMessageOptions(options, targetFrameIdentifier, @"options", outExceptionString))
         return;
 
-    WebExtensionMessageSenderParameters sender {
+    WebExtensionMessageSenderParameters senderParameters {
         extensionContext().uniqueIdentifier(),
         std::nullopt, // tabParameters
         toWebExtensionFrameIdentifier(frame),
@@ -965,7 +965,7 @@ void WebExtensionAPITabs::sendMessage(WebFrame& frame, double tabID, NSString *m
         frame.url(),
     };
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::TabsSendMessage(tabIdentifer.value(), messageJSON, targetFrameIdentifier, sender), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<String> replyJSON, WebExtensionTab::Error error) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::TabsSendMessage(tabIdentifer.value(), messageJSON, targetFrameIdentifier, senderParameters), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<String> replyJSON, WebExtensionTab::Error error) {
         if (error) {
             callback->reportError(error.value());
             return;
@@ -995,7 +995,7 @@ RefPtr<WebExtensionAPIPort> WebExtensionAPITabs::connect(WebFrame& frame, JSCont
 
     String resolvedName = name.value_or(nullString());
 
-    WebExtensionMessageSenderParameters sender {
+    WebExtensionMessageSenderParameters senderParameters {
         extensionContext().uniqueIdentifier(),
         std::nullopt, // tabParameters
         toWebExtensionFrameIdentifier(frame),
@@ -1004,9 +1004,9 @@ RefPtr<WebExtensionAPIPort> WebExtensionAPITabs::connect(WebFrame& frame, JSCont
         frame.url(),
     };
 
-    auto port = WebExtensionAPIPort::create(forMainWorld(), runtime(), extensionContext(), WebExtensionContentWorldType::ContentScript, resolvedName, sender);
+    auto port = WebExtensionAPIPort::create(forMainWorld(), runtime(), extensionContext(), *frame.page(), WebExtensionContentWorldType::ContentScript, resolvedName);
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::TabsConnect(tabIdentifer.value(), port->channelIdentifier(), resolvedName, targetFrameIdentifier, sender), [=, globalContext = JSRetainPtr { JSContextGetGlobalContext(context) }, protectedThis = Ref { *this }](WebExtensionTab::Error error) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::TabsConnect(tabIdentifer.value(), port->channelIdentifier(), resolvedName, targetFrameIdentifier, senderParameters), [=, globalContext = JSRetainPtr { JSContextGetGlobalContext(context) }, protectedThis = Ref { *this }](WebExtensionTab::Error error) {
         if (!error)
             return;
 

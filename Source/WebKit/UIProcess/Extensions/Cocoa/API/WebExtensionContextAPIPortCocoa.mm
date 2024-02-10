@@ -39,15 +39,18 @@
 
 namespace WebKit {
 
-void WebExtensionContext::portPostMessage(WebExtensionContentWorldType targetContentWorldType, WebExtensionPortChannelIdentifier channelIdentifier, const String& messageJSON)
+void WebExtensionContext::portPostMessage(WebExtensionContentWorldType targetContentWorldType, std::optional<WebPageProxyIdentifier> sendingPageProxyIdentifier, WebExtensionPortChannelIdentifier channelIdentifier, const String& messageJSON)
 {
     if (!m_ports.contains({ targetContentWorldType, channelIdentifier })) {
         // The port might not be open on the other end yet. Queue the message until it does open.
         RELEASE_LOG_DEBUG(Extensions, "Enqueued message for port channel %{public}llu in %{public}@ world", channelIdentifier.toUInt64(), (NSString *)toDebugString(targetContentWorldType));
+
         auto& messages = m_portQueuedMessages.ensure({ targetContentWorldType, channelIdentifier }, [] {
-            return Vector<String> { };
+            return Vector<MessagePageProxyIdentifierPair> { };
         }).iterator->value;
-        messages.append(messageJSON);
+
+        messages.append({ messageJSON, sendingPageProxyIdentifier });
+
         return;
     }
 
@@ -58,18 +61,17 @@ void WebExtensionContext::portPostMessage(WebExtensionContentWorldType targetCon
     switch (targetContentWorldType) {
     case WebExtensionContentWorldType::Main:
         wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [&] {
-            sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchPortMessageEvent(channelIdentifier, messageJSON));
+            sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchPortMessageEvent(sendingPageProxyIdentifier, channelIdentifier, messageJSON));
         });
-
         return;
 
     case WebExtensionContentWorldType::ContentScript:
-        sendToContentScriptProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchPortMessageEvent(channelIdentifier, messageJSON));
+        sendToContentScriptProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchPortMessageEvent(sendingPageProxyIdentifier, channelIdentifier, messageJSON));
         return;
 
     case WebExtensionContentWorldType::Native:
         if (auto nativePort = m_nativePortMap.get(channelIdentifier))
-            nativePort->receiveMessage(parseJSON(messageJSON, { JSONOptions::FragmentsAllowed }), std::nullopt);
+            nativePort->receiveMessage(parseJSON(messageJSON, JSONOptions::FragmentsAllowed), std::nullopt);
         return;
     }
 }
@@ -139,8 +141,12 @@ void WebExtensionContext::fireQueuedPortMessageEventsIfNeeded(WebProcessProxy& p
 
     RELEASE_LOG_DEBUG(Extensions, "Sending %{public}zu queued message(s) to port channel %{public}llu in %{public}@ world", messages.size(), channelIdentifier.toUInt64(), (NSString *)toDebugString(targetContentWorldType));
 
-    for (auto& messageJSON : messages)
-        process.send(Messages::WebExtensionContextProxy::DispatchPortMessageEvent(channelIdentifier, messageJSON), identifier());
+    for (auto& entry : messages) {
+        auto& sendingPageProxyIdentifier = std::get<std::optional<WebPageProxyIdentifier>>(entry);
+        auto& messageJSON = std::get<String>(entry);
+
+        process.send(Messages::WebExtensionContextProxy::DispatchPortMessageEvent(sendingPageProxyIdentifier, channelIdentifier, messageJSON), identifier());
+    }
 }
 
 void WebExtensionContext::sendQueuedNativePortMessagesIfNeeded(WebExtensionPortChannelIdentifier channelIdentifier)
@@ -156,8 +162,9 @@ void WebExtensionContext::sendQueuedNativePortMessagesIfNeeded(WebExtensionPortC
 
     RELEASE_LOG_DEBUG(Extensions, "Sending %{public}zu queued message(s) to port channel %{public}llu in native world", messages.size(), channelIdentifier.toUInt64());
 
-    for (auto& messageJSON : messages) {
-        id message = parseJSON(messageJSON, { JSONOptions::FragmentsAllowed });
+    for (auto& entry : messages) {
+        id message = parseJSON(std::get<String>(entry), JSONOptions::FragmentsAllowed);
+
         nativePort->sendMessage(message, [=](WebExtensionMessagePort::Error error) {
             if (error)
                 nativePort->disconnect(error);

@@ -1518,6 +1518,10 @@ TEST(WKWebExtensionAPITabs, Connect)
         @"  const tabId = tabs[0].id",
 
         @"  const port = browser.tabs.connect(tabId, { name: 'testPort' })",
+        @"  browser.test.assertEq(typeof port, 'object', 'Port should be an object')",
+        @"  browser.test.assertEq(port?.name, 'testPort', 'Port name should be testPort')",
+        @"  browser.test.assertEq(port?.sender, null, 'Port sender should be null')",
+
         @"  port.postMessage('Hello')",
 
         @"  port.onMessage.addListener((response) => {",
@@ -1576,6 +1580,10 @@ TEST(WKWebExtensionAPITabs, PortDisconnect)
         @"  const tabId = tabs[0].id",
 
         @"  const port = browser.tabs.connect(tabId)",
+        @"  browser.test.assertEq(typeof port, 'object', 'Port should be an object')",
+        @"  browser.test.assertEq(port?.name, '', 'Port name should be empty')",
+        @"  browser.test.assertEq(port?.sender, null, 'Port sender should be null')",
+
         @"  port.postMessage('Hello')",
 
         @"  port.onDisconnect.addListener(() => {",
@@ -1627,6 +1635,10 @@ TEST(WKWebExtensionAPITabs, ConnectWithMultipleListeners)
         @"  const tabId = tabs[0].id",
 
         @"  const port = browser.tabs.connect(tabId)",
+        @"  browser.test.assertEq(typeof port, 'object', 'Port should be an object')",
+        @"  browser.test.assertEq(port?.name, '', 'Port name should be empty')",
+        @"  browser.test.assertEq(port?.sender, null, 'Port sender should be null')",
+
         @"  port.postMessage('Hello')",
 
         @"  let receivedMessages = 0",
@@ -1692,6 +1704,10 @@ TEST(WKWebExtensionAPITabs, PortDisconnectWithMultipleListeners)
         @"  const tabId = tabs[0].id",
 
         @"  const port = browser.tabs.connect(tabId)",
+        @"  browser.test.assertEq(typeof port, 'object', 'Port should be an object')",
+        @"  browser.test.assertEq(port?.name, '', 'Port name should be empty')",
+        @"  browser.test.assertEq(port?.sender, null, 'Port sender should be null')",
+
         @"  port.postMessage('Hello')",
 
         @"  let receivedMessages = 0",
