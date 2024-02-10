@@ -3234,8 +3234,10 @@ void WebPage::updateFrameSize(WebCore::FrameIdentifier frameID, WebCore::IntSize
         return;
 
     frameView->resize(newSize);
+#if PLATFORM(IOS_FAMILY)
     // FIXME: This should be removed after rdar://122429810 is fixed.
     frameView->setExposedContentRect(frameView->frameRect());
+#endif
 
     if (m_drawingArea) {
         m_drawingArea->setNeedsDisplay();
