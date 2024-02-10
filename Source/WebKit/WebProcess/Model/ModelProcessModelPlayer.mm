@@ -44,6 +44,8 @@ ModelProcessModelPlayer::ModelProcessModelPlayer(WebPage& page, WebCore::ModelPl
     , m_client { client }
 {
     // FIXME: This should remotely-host a layer tree from the model process.
+
+    WebProcess::singleton().ensureModelProcessConnection();
 }
 
 ModelProcessModelPlayer::~ModelProcessModelPlayer()

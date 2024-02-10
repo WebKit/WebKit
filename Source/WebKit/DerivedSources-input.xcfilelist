@@ -163,6 +163,7 @@ $(PROJECT_DIR)/PluginProcess/PluginProcess.messages.in
 $(PROJECT_DIR)/PluginProcess/WebProcessConnection.messages.in
 $(PROJECT_DIR)/PluginProcess/mac/com.apple.WebKit.plugin-common.sb.in
 $(PROJECT_DIR)/Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb.in
+$(PROJECT_DIR)/Resources/SandboxProfiles/ios/com.apple.WebKit.Model.sb.in
 $(PROJECT_DIR)/Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb.in
 $(PROJECT_DIR)/Resources/SandboxProfiles/ios/com.apple.WebKit.WebAuthn.sb.in
 $(PROJECT_DIR)/Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in

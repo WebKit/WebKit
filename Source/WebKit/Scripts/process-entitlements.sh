@@ -440,6 +440,11 @@ fi
     plistbuddy add :com.apple.coreaudio.allow-vorbis-decode bool YES
 }
 
+function ios_family_process_model_entitlements()
+{
+    ios_family_process_webcontent_shared_entitlements
+}
+
 function ios_family_process_adattributiond_entitlements()
 {
     plistbuddy Add :com.apple.private.sandbox.profile string com.apple.WebKit.adattributiond
@@ -529,6 +534,7 @@ then
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.Networking ]]; then ios_family_process_network_entitlements
     elif [[ "${PRODUCT_NAME}" == NetworkingExtension ]]; then ios_family_process_network_entitlements
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.GPU ]]; then ios_family_process_gpu_entitlements
+    elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.Model ]]; then ios_family_process_model_entitlements
     elif [[ "${PRODUCT_NAME}" == GPUExtension ]]; then ios_family_process_gpu_entitlements
     elif [[ "${PRODUCT_NAME}" == adattributiond ]]; then
         ios_family_process_adattributiond_entitlements

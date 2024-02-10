@@ -565,6 +565,7 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebUserContentControllerProxyMessage
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebUserContentControllerProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/com.apple.WebKit.GPU.sb
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/com.apple.WebKit.GPUProcess.sb
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/com.apple.WebKit.Model.sb
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/com.apple.WebKit.NetworkProcess.sb
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/com.apple.WebKit.Networking.sb
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/com.apple.WebKit.WebAuthn.sb
