@@ -106,7 +106,11 @@ inline auto PaintWorkletGlobalScope::paintDefinitionMap() -> HashMap<String, std
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::PaintWorkletGlobalScope)
-static bool isType(const WebCore::ScriptExecutionContext& context) { return is<WebCore::WorkletGlobalScope>(context) && downcast<WebCore::WorkletGlobalScope>(context).isPaintWorkletGlobalScope(); }
+static bool isType(const WebCore::ScriptExecutionContext& context)
+{
+    auto* global = dynamicDowncast<WebCore::WorkletGlobalScope>(context);
+    return global && global->isPaintWorkletGlobalScope();
+}
 static bool isType(const WebCore::WorkletGlobalScope& context) { return context.isPaintWorkletGlobalScope(); }
 SPECIALIZE_TYPE_TRAITS_END()
 

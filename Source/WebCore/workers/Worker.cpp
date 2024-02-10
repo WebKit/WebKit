@@ -234,10 +234,8 @@ void Worker::dispatchEvent(Event& event)
         return;
 
     AbstractWorker::dispatchEvent(event);
-    if (is<ErrorEvent>(event) && !event.defaultPrevented() && event.isTrusted() && scriptExecutionContext()) {
-        auto& errorEvent = downcast<ErrorEvent>(event);
-        scriptExecutionContext()->reportException(errorEvent.message(), errorEvent.lineno(), errorEvent.colno(), errorEvent.filename(), nullptr, nullptr);
-    }
+    if (auto* errorEvent = dynamicDowncast<ErrorEvent>(event); errorEvent && !event.defaultPrevented() && event.isTrusted() && scriptExecutionContext())
+        protectedScriptExecutionContext()->reportException(errorEvent->message(), errorEvent->lineno(), errorEvent->colno(), errorEvent->filename(), nullptr, nullptr);
 }
 
 void Worker::reportError(const String& errorMessage)
