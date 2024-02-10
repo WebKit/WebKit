@@ -72,6 +72,10 @@
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/cocoa/NSURLExtras.h>
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/MultiRepresentationHEICAdditions.h>
+#endif
+
 namespace WebCore {
 
 static RefPtr<SharedBuffer> archivedDataForAttributedString(NSAttributedString *attributedString)
@@ -398,7 +402,7 @@ void Editor::insertMultiRepresentationHEIC(const std::span<const uint8_t>& data)
 {
     auto document = protectedDocument();
 
-    String primaryType = "image/heic"_s;
+    String primaryType = MULTI_REPRESENTATION_HEIC_MIME_TYPE_STRING;
     auto primaryBuffer = FragmentedSharedBuffer::create(data.data(), data.size());
 
     String fallbackType = "image/png"_s;
