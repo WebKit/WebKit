@@ -1333,7 +1333,7 @@ nobr {
 }
 
 /* Read-only text fields do not show a focus ring but do still receive focus */
-html:focus, body:focus, input[readonly]:focus, applet:focus, embed:focus, iframe:focus, object:focus {
+html:focus, body:focus, input[readonly]:focus, embed:focus, iframe:focus, object:focus {
     outline: none;
 }
 
@@ -1427,7 +1427,7 @@ slot {
 }
 
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
-applet, embed, object, img {
+embed, object, img {
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 :any-link img {
