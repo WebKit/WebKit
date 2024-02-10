@@ -32,6 +32,7 @@
 #include <WebCore/GraphicsLayer.h>
 #include <wtf/OptionSet.h>
 
+OBJC_CLASS PDFDestination;
 OBJC_CLASS WKPDFFormMutationObserver;
 
 namespace WebCore {
@@ -50,7 +51,7 @@ class AnnotationTrackingState {
 public:
     void startAnnotationTracking(RetainPtr<PDFAnnotation>&&, WebEventType, WebMouseEventButton);
     void finishAnnotationTracking(WebEventType, WebMouseEventButton);
-    const PDFAnnotation *trackedAnnotation() const { return m_trackedAnnotation.get(); }
+    PDFAnnotation *trackedAnnotation() const { return m_trackedAnnotation.get(); }
     bool isBeingHovered() const;
 private:
     void handleMouseDraggedOffTrackedAnnotation();
@@ -266,6 +267,9 @@ private:
     WebCore::ScrollingCoordinator* scrollingCoordinator();
     void createScrollingNodeIfNecessary();
 
+    void scrollToPDFDestination(PDFDestination *);
+    void scrollToPointInPDF(WebCore::IntPoint pointInPDFPageSpace, PDFDocumentLayout::PageIndex);
+
     // ScrollableArea
     bool requestScrollToPosition(const WebCore::ScrollPosition&, const WebCore::ScrollPositionChangeOptions& = WebCore::ScrollPositionChangeOptions::createProgrammatic()) override;
     bool requestStartKeyboardScrollAnimation(const WebCore::KeyboardScroll& scrollData) override;
@@ -279,7 +283,7 @@ private:
     void zoomOut() final;
 #endif
 
-    void didClickLinkAnnotation(const PDFAnnotation *);
+    void followLinkAnnotation(PDFAnnotation *);
 
     RefPtr<WebCore::GraphicsLayer> createGraphicsLayer(const String& name, WebCore::GraphicsLayer::Type);
 
@@ -289,6 +293,7 @@ private:
     RetainPtr<PDFAnnotation> annotationForRootViewPoint(const WebCore::IntPoint&) const;
     WebCore::IntPoint convertFromDocumentToPage(const WebCore::IntPoint&, PDFDocumentLayout::PageIndex) const;
     WebCore::IntPoint convertFromPageToDocument(const WebCore::IntPoint&, PDFDocumentLayout::PageIndex) const;
+    WebCore::IntPoint convertFromPageToContents(const WebCore::IntPoint&, PDFDocumentLayout::PageIndex) const;
     PDFElementTypes pdfElementTypesForPluginPoint(const WebCore::IntPoint&) const;
 
     bool isTaggedPDF() const;

@@ -1088,6 +1088,15 @@ WebCore::IntPoint UnifiedPDFPlugin::convertFromPageToDocument(const WebCore::Int
     return documentSpaceToPageSpaceTransform(pageRotation, pageBounds).inverse()->mapPoint(documentSpacePoint);
 }
 
+WebCore::IntPoint UnifiedPDFPlugin::convertFromPageToContents(const WebCore::IntPoint& pageSpacePoint, PDFDocumentLayout::PageIndex pageIndex) const
+{
+    FloatPoint transformedPoint = convertFromPageToDocument(pageSpacePoint, pageIndex);
+    transformedPoint.scale(m_documentLayout.scale());
+    transformedPoint.move(sidePaddingWidth(), 0);
+    transformedPoint.scale(m_scaleFactor);
+    return roundedIntPoint(transformedPoint);
+}
+
 #if !LOG_DISABLED
 static TextStream& operator<<(TextStream& ts, UnifiedPDFPlugin::PDFElementType elementType)
 {
@@ -1106,6 +1115,13 @@ static TextStream& operator<<(TextStream& ts, UnifiedPDFPlugin::PDFElementType e
 }
 #endif
 
+static BOOL annotationIsLinkWithDestination(PDFAnnotation *annotation)
+{
+    if (![annotation isKindOfClass:getPDFAnnotationLinkClass()])
+        return NO;
+    return [annotation URL] || [annotation destination];
+}
+
 auto UnifiedPDFPlugin::pdfElementTypesForPluginPoint(const WebCore::IntPoint& point) const -> PDFElementTypes
 {
     auto pointInDocumentSpace = convertFromPluginToDocument(point);
@@ -1122,7 +1138,7 @@ auto UnifiedPDFPlugin::pdfElementTypesForPluginPoint(const WebCore::IntPoint& po
     if (auto annotation = [page annotationAtPoint:pointInPDFPageSpace]) {
         pdfElementTypes.add(PDFElementType::Annotation);
 
-        if ([annotation isKindOfClass:getPDFAnnotationLinkClass()])
+        if (annotationIsLinkWithDestination(annotation))
             pdfElementTypes.add(PDFElementType::Link);
 
         if ([annotation isKindOfClass:getPDFAnnotationPopupClass()])
@@ -1242,12 +1258,10 @@ bool UnifiedPDFPlugin::handleMouseEvent(const WebMouseEvent& event)
                     return true;
                 }
 
-                if ([annotation isKindOfClass:getPDFAnnotationLinkClass()]) {
+                if (annotationIsLinkWithDestination(annotation.get())) {
                     m_annotationTrackingState.startAnnotationTracking(WTFMove(annotation), mouseEventType, mouseEventButton);
                     return true;
                 }
-
-                return false;
             }
 
             beginTrackingSelection(*pageIndex, pointInPageSpace, event);
@@ -1265,8 +1279,8 @@ bool UnifiedPDFPlugin::handleMouseEvent(const WebMouseEvent& event)
             if (RetainPtr trackedAnnotation = m_annotationTrackingState.trackedAnnotation(); trackedAnnotation && ![trackedAnnotation isKindOfClass:getPDFAnnotationTextWidgetClass()]) {
                 m_annotationTrackingState.finishAnnotationTracking(mouseEventType, mouseEventButton);
 
-                if ([trackedAnnotation isKindOfClass:getPDFAnnotationLinkClass()])
-                    didClickLinkAnnotation(trackedAnnotation.get());
+                if (annotationIsLinkWithDestination(trackedAnnotation.get()))
+                    followLinkAnnotation(trackedAnnotation.get());
 
                 updateLayerHierarchy();
             }
@@ -1324,12 +1338,31 @@ bool UnifiedPDFPlugin::handleKeyboardEvent(const WebKeyboardEvent&)
     return false;
 }
 
-void UnifiedPDFPlugin::didClickLinkAnnotation(const PDFAnnotation *annotation)
+void UnifiedPDFPlugin::followLinkAnnotation(PDFAnnotation *annotation)
 {
-    // FIXME: Handle links with in-document destinations.
-
+    ASSERT(annotationIsLinkWithDestination(annotation));
     if (NSURL *url = [annotation URL])
         navigateToURL(url);
+    else if (PDFDestination *destination = [annotation destination])
+        scrollToPDFDestination(destination);
+}
+
+void UnifiedPDFPlugin::scrollToPDFDestination(PDFDestination *destination)
+{
+    auto unspecifiedValue = get_PDFKit_kPDFDestinationUnspecifiedValue();
+    auto pointInPDFPageSpace = [destination point];
+    if (pointInPDFPageSpace.x == unspecifiedValue)
+        pointInPDFPageSpace.x = 0;
+    if (pointInPDFPageSpace.y == unspecifiedValue)
+        pointInPDFPageSpace.y = 0;
+
+    scrollToPointInPDF(roundedIntPoint(pointInPDFPageSpace), [m_pdfDocument indexForPage:[destination page]] - 1);
+}
+
+void UnifiedPDFPlugin::scrollToPointInPDF(IntPoint pointInPDFPageSpace, PDFDocumentLayout::PageIndex pageIndex)
+{
+    auto pointInDocumentSpace = convertFromPageToContents(pointInPDFPageSpace, pageIndex);
+    scrollToPositionWithoutAnimation(pointInDocumentSpace);
 }
 
 #pragma mark Context Menu
