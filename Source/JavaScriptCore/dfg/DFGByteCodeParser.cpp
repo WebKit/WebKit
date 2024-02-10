@@ -9269,6 +9269,16 @@ void ByteCodeParser::parseBlock(unsigned limit)
             }
 
             GetByStatus getByStatus = GetByStatus::computeFor(m_inlineStackTop->m_profiledBlock, m_inlineStackTop->m_baselineMap, m_icContextStack, currentCodeOrigin());
+            if (getByStatus.isMegamorphic()) {
+                SpeculatedType prediction = getPrediction();
+                addVarArgChild(base);
+                addVarArgChild(propertyName);
+                addVarArgChild(nullptr); // Leave room for property storage.
+                Node* getByVal = addToGraph(Node::VarArg, GetByValMegamorphic, OpInfo(arrayMode.asWord()), OpInfo(prediction));
+                m_exitOK = false; // GetByVal must be treated as if it clobbers exit state, since FixupPhase may make it generic.
+                set(bytecode.m_dst, getByVal);
+                NEXT_OPCODE(op_enumerator_get_by_val);
+            }
 
             // FIXME: Checking for a BadConstantValue causes us to always use the Generic variant if we switched from IndexedMode -> IndexedMode + OwnStructureMode even though that might be fine.
             if (!seenModes.containsAny({ JSPropertyNameEnumerator::GenericMode, JSPropertyNameEnumerator::HasSeenOwnStructureModeStructureMismatch })
@@ -9373,6 +9383,18 @@ void ByteCodeParser::parseBlock(unsigned limit)
             }
 
             // FIXME: Checking for a BadConstantValue causes us to always use the Generic variant if we switched from IndexedMode -> IndexedMode + OwnStructureMode even though that might be fine.
+            PutByStatus putByStatus = PutByStatus::computeFor(m_inlineStackTop->m_profiledBlock, m_inlineStackTop->m_baselineMap, m_icContextStack, currentCodeOrigin());
+            if (putByStatus.isMegamorphic()) {
+                addVarArgChild(base);
+                addVarArgChild(propertyName);
+                addVarArgChild(value);
+                addVarArgChild(nullptr); // Leave room for property storage.
+                addVarArgChild(nullptr); // Leave room for length.
+                addToGraph(Node::VarArg, PutByValMegamorphic, OpInfo(arrayMode.asWord()), OpInfo(bytecode.m_ecmaMode));
+                m_exitOK = false; // PutByVal and PutByValDirect must be treated as if they clobber exit state, since FixupPhase may make them generic.
+                NEXT_OPCODE(op_enumerator_put_by_val);
+            }
+
             if (!seenModes.containsAny({ JSPropertyNameEnumerator::GenericMode, JSPropertyNameEnumerator::HasSeenOwnStructureModeStructureMismatch })
                 && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadConstantValue)) {
                 Node* modeTest = addToGraph(SameValue, mode, jsConstant(jsNumber(static_cast<uint8_t>(JSPropertyNameEnumerator::GenericMode))));
