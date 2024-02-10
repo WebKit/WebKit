@@ -63,10 +63,6 @@
 #include "ImageDecoderGStreamer.h"
 #endif
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/MultiRepresentationHEICAdditions.h>
-#endif
-
 namespace WebCore {
 
 static String normalizedImageMIMEType(const String&);
@@ -147,9 +143,6 @@ constexpr ComparableCaseFoldingASCIILiteral supportedImageMIMETypeArray[] = {
 #endif
 #if PLATFORM(IOS_FAMILY) || !USE(CG)
     "image/x-xbitmap",
-#endif
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
-    MULTI_REPRESENTATION_HEIC_MIME_TYPE,
 #endif
 };
 
