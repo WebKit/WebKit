@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description('This tests that head appears before body in the result of (new DOMParser).parseFromString');
+doc = (new DOMParser).parseFromString('', 'text/html');
+shouldBe('doc.documentElement.children[0]', 'doc.head');
+shouldBe('doc.documentElement.children[1]', 'doc.body');
+</script>
+</body>
+</html>

@@ -1057,20 +1057,22 @@ ReportingScope& Document::ensureReportingScope()
 
 void Document::setMarkupUnsafe(const String& markup, OptionSet<ParserContentPolicy> parserContentPolicy)
 {
+    ASSERT(!hasChildNodes());
     auto policy = OptionSet<ParserContentPolicy> { ParserContentPolicy::AllowScriptingContent } | parserContentPolicy;
     setParserContentPolicy(policy);
     if (this->contentType() == textHTMLContentTypeAtom()) {
+        auto html = HTMLHtmlElement::create(*this);
+        appendChild(html);
         auto body = HTMLBodyElement::create(*this);
+        html->appendChild(body);
         body->beginParsingChildren();
         if (LIKELY(tryFastParsingHTMLFragment(StringView { markup }.substring(markup.find(isNotASCIIWhitespace<UChar>)), *this, body, body, policy))) {
             body->finishParsingChildren();
-            auto html = HTMLHtmlElement::create(*this);
             auto head = HTMLHeadElement::create(*this);
-            html->appendChild(head);
-            html->appendChild(body);
-            appendChild(html);
+            html->insertBefore(head, body.ptr());
             return;
         }
+        html->remove();
     }
     open();
     protectedParser()->appendSynchronously(markup.impl());
