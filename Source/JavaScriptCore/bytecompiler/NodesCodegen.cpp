@@ -4743,16 +4743,14 @@ void CaseBlockNode::emitBytecodeForBlock(BytecodeGenerator& generator, RegisterI
     } else {
         // Setup jumps
         for (ClauseListNode* list = m_list1; list; list = list->getNext()) {
-            RefPtr<RegisterID> clauseVal = generator.newTemporary();
-            generator.emitNode(clauseVal.get(), list->getClause()->expr());
+            RefPtr<RegisterID> clauseVal = generator.emitNode(list->getClause()->expr());
             Ref<Label> clauseLabel = generator.newLabel();
             labelVector.append(clauseLabel);
             generator.emitJumpIfTrue(generator.emitEqualityOp<OpStricteq>(generator.newTemporary(), clauseVal.get(), switchExpression), clauseLabel.get());
         }
         
         for (ClauseListNode* list = m_list2; list; list = list->getNext()) {
-            RefPtr<RegisterID> clauseVal = generator.newTemporary();
-            generator.emitNode(clauseVal.get(), list->getClause()->expr());
+            RefPtr<RegisterID> clauseVal = generator.emitNode(list->getClause()->expr());
             Ref<Label> clauseLabel = generator.newLabel();
             labelVector.append(clauseLabel);
             generator.emitJumpIfTrue(generator.emitEqualityOp<OpStricteq>(generator.newTemporary(), clauseVal.get(), switchExpression), clauseLabel.get());
