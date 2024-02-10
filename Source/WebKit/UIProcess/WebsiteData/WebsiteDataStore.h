@@ -609,6 +609,10 @@ private:
     FileSystem::Salt m_mediaKeysStorageSalt;
 
     bool m_isBlobRegistryPartitioningEnabled { false };
+
+#if HAVE(NW_PROXY_CONFIG)
+    std::optional<Vector<std::pair<Vector<uint8_t>, WTF::UUID>>> m_proxyConfigData;
+#endif
 };
 
 }
