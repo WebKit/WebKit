@@ -182,6 +182,9 @@ static NSString *addLeadingSpaceStripTrailingSpaces(NSString *string)
     auto webView = createWebViewAndOffscreenWindow();
     [webView setPreferences:[sender preferences]];
 
+    if (auto ports = gTestRunner->portsForUpgradingInsecureScheme())
+        [webView _setPortsForUpgradingInsecureSchemeForTesting:ports->first withSecurePort:ports->second];
+
     if (gTestRunner->newWindowsCopyBackForwardList())
         [webView _loadBackForwardListFromOtherView:sender];
     

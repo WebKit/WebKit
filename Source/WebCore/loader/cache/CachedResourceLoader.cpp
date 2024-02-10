@@ -239,8 +239,10 @@ ResourceErrorOr<CachedResourceHandle<CachedImage>> CachedResourceLoader::request
 {
     if (RefPtr frame = this->frame()) {
         if (frame->loader().pageDismissalEventBeingDispatched() != FrameLoader::PageDismissalType::None) {
-            if (RefPtr document = frame->document())
-                request.upgradeInsecureRequestIfNeeded(*document);
+            if (RefPtr document = frame->document()) {
+                bool shouldUpgradeIfNeeded = MixedContentChecker::shouldUpgradeInsecureContent(*frame, MixedContentChecker::IsUpgradable::Yes, request.resourceRequest().url(), request.options().mode, request.options().destination, request.options().initiator);
+                request.upgradeInsecureRequestIfNeeded(*document, shouldUpgradeIfNeeded ? ContentSecurityPolicy::AlwaysUpgradeRequest::Yes : ContentSecurityPolicy::AlwaysUpgradeRequest::No);
+            }
             URL requestURL = request.resourceRequest().url();
             if (requestURL.isValid() && canRequest(CachedResource::Type::ImageResource, requestURL, request.options(), ForPreload::No))
                 PingLoader::loadImage(*frame, requestURL);
@@ -433,10 +435,41 @@ static MixedContentChecker::ContentType contentTypeFromResourceType(CachedResour
     }
 }
 
+static MixedContentChecker::IsUpgradable isUpgradableTypeFromResourceType(CachedResource::Type type)
+{
+    // https://www.w3.org/TR/mixed-content/#category-upgradeable
+    // Editor’s Draft, 23 February 2023
+    // 3.1. Upgradeable Content
+    if (type == CachedResource::Type::ImageResource
+#if ENABLE(MODEL_ELEMENT)
+        || type == CachedResource::Type::ModelResource
+#endif
+        || type == CachedResource::Type::MediaResource)
+        return MixedContentChecker::IsUpgradable::Yes;
+
+    return MixedContentChecker::IsUpgradable::No;
+}
+
 bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const URL& url) const
 {
     if (!canRequestInContentDispositionAttachmentSandbox(type, url))
         return false;
+
+    if (m_document && !m_document->settings().upgradeMixedContentEnabled()) {
+        // These resource can inject script into the current document (Script,
+        // XSL) or exfiltrate the content of the current document (CSS).
+        // This block is a special-case for maintaining backwards compatibility.
+        if (type == CachedResource::Type::Script
+#if ENABLE(XSLT)
+            || type == CachedResource::Type::XSLStyleSheet
+#endif
+            || type == CachedResource::Type::SVGDocumentResource
+            || type == CachedResource::Type::CSSStyleSheet) {
+
+            if (RefPtr frame = this->frame())
+                return MixedContentChecker::frameAndAncestorsCanRunInsecureContent(*frame, m_document->securityOrigin(), url);
+        }
+    }
 
     switch (type) {
     case CachedResource::Type::Script:
@@ -445,13 +478,6 @@ bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const
 #endif
     case CachedResource::Type::SVGDocumentResource:
     case CachedResource::Type::CSSStyleSheet:
-        // These resource can inject script into the current document (Script,
-        // XSL) or exfiltrate the content of the current document (CSS).
-        if (RefPtr frame = this->frame()) {
-            if (m_document && !MixedContentChecker::frameAndAncestorsCanRunInsecureContent(*frame, m_document->protectedSecurityOrigin(), url))
-                return false;
-        }
-        break;
 #if ENABLE(VIDEO)
     case CachedResource::Type::TextTrackResource:
 #endif
@@ -463,17 +489,16 @@ bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const
     case CachedResource::Type::Icon:
     case CachedResource::Type::ImageResource:
     case CachedResource::Type::SVGFontResource:
+    case CachedResource::Type::Beacon:
+    case CachedResource::Type::Ping:
     case CachedResource::Type::FontResource: {
-        // These resources can corrupt only the frame's pixels.
         if (RefPtr frame = this->frame()) {
-            if (m_document && !MixedContentChecker::frameAndAncestorsCanDisplayInsecureContent(*frame, contentTypeFromResourceType(type), url))
+            if (MixedContentChecker::shouldBlockRequestForDisplayableContent(*frame, url, contentTypeFromResourceType(type)))
                 return false;
         }
         break;
     }
     case CachedResource::Type::MainResource:
-    case CachedResource::Type::Beacon:
-    case CachedResource::Type::Ping:
     case CachedResource::Type::LinkPrefetch:
         // Prefetch cannot affect the current document.
 #if ENABLE(APPLICATION_MANIFEST)
@@ -569,7 +594,7 @@ RefPtr<LocalFrame> CachedResourceLoader::protectedFrame() const
     return frame();
 }
 
-// Security checks defined in https://fetch.spec.whatwg.org/#main-fetch step 2 and 4.
+// Security checks defined in https://fetch.spec.whatwg.org/#main-fetch.
 bool CachedResourceLoader::canRequest(CachedResource::Type type, const URL& url, const ResourceLoaderOptions& options, ForPreload forPreload)
 {
     if (m_document) {
@@ -721,8 +746,10 @@ bool CachedResourceLoader::updateRequestAfterRedirection(CachedResource::Type ty
     if (!m_documentLoader)
         return true;
 
-    if (RefPtr document = m_documentLoader->cachedResourceLoader().document())
-        upgradeInsecureResourceRequestIfNeeded(request, *document);
+    if (RefPtr document = m_documentLoader->cachedResourceLoader().document()) {
+        bool alwaysUpgradeMixedContent = document->frame() ? MixedContentChecker::shouldUpgradeInsecureContent(*document->frame(), isUpgradableTypeFromResourceType(type), request.url(), options.mode, options.destination, options.initiator) : false;
+        upgradeInsecureResourceRequestIfNeeded(request, *document, alwaysUpgradeMixedContent ? ContentSecurityPolicy::AlwaysUpgradeRequest::Yes : ContentSecurityPolicy::AlwaysUpgradeRequest::No);
+    }
 
     // FIXME: We might want to align the checks done here with the ones done in CachedResourceLoader::requestResource, content extensions blocking in particular.
 
@@ -1015,7 +1042,8 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
     }
 
     if (RefPtr document = this->document()) {
-        request.upgradeInsecureRequestIfNeeded(*document);
+        bool shouldUpgradeMixedContent = MixedContentChecker::shouldUpgradeInsecureContent(frame, isUpgradableTypeFromResourceType(type), url, request.options().mode, request.options().destination, request.options().initiator);
+        request.upgradeInsecureRequestIfNeeded(*document, shouldUpgradeMixedContent ? ContentSecurityPolicy::AlwaysUpgradeRequest::Yes : ContentSecurityPolicy::AlwaysUpgradeRequest::No);
         url = request.resourceRequest().url();
     }
 

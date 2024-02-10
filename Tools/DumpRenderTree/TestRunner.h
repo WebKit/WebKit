@@ -66,6 +66,8 @@ public:
     void setLocalhostAliases(std::set<std::string> hosts) { m_localhostAliases = WTFMove(hosts); }
     void addURLToRedirect(std::string origin, std::string destination);
     const char* redirectionDestinationForURL(const char*);
+    void setPortsForUpgradingInsecureScheme(uint16_t insecurePort, uint16_t securePort) { m_portsForUpgradingInsecureScheme = { insecurePort, securePort }; }
+    std::optional<std::pair<uint16_t, uint16_t>> portsForUpgradingInsecureScheme() { return m_portsForUpgradingInsecureScheme; }
     void clearAllApplicationCaches();
     void clearAllDatabases();
     void clearNotificationPermissionState();
@@ -480,6 +482,7 @@ private:
     std::set<std::string> m_willSendRequestClearHeaders;
     std::set<std::string> m_allowedHosts;
     std::set<std::string> m_localhostAliases;
+    std::optional<std::pair<uint16_t, uint16_t>> m_portsForUpgradingInsecureScheme;
 
     std::vector<uint8_t> m_audioResult;
 

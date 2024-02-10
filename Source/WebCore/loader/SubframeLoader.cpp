@@ -143,7 +143,7 @@ bool FrameLoader::SubframeLoader::pluginIsLoadable(const URL& url)
             return false;
         }
 
-        if (!MixedContentChecker::frameAndAncestorsCanRunInsecureContent(protectedFrame(), securityOrigin, url))
+        if (MixedContentChecker::shouldBlockRequestForRunnableContent(protectedFrame(), securityOrigin, url))
             return false;
     }
 
