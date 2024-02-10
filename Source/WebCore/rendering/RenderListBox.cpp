@@ -260,6 +260,9 @@ void RenderListBox::computePreferredLogicalWidths()
 
 unsigned RenderListBox::size() const
 {
+    if (style().fieldSizing() == FieldSizing::Content)
+        return static_cast<unsigned>(numItems());
+
     unsigned specifiedSize = selectElement().size();
     if (specifiedSize >= 1)
         return specifiedSize;

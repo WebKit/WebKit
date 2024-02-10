@@ -1062,7 +1062,6 @@ imported/w3c/web-platform-tests/content-security-policy [ DumpJSConsoleLogInStdE
 # field-sizing is not supported
 imported/w3c/web-platform-tests/html/rendering/widgets/field-sizing-input-number.html [ Skip ]
 imported/w3c/web-platform-tests/html/rendering/widgets/field-sizing-input-text.html [ Skip ]
-imported/w3c/web-platform-tests/html/rendering/widgets/field-sizing-select.html [ Skip ]
 imported/w3c/web-platform-tests/html/rendering/widgets/field-sizing-textarea.html [ Skip ]
 
 # FIXME: Skip Content Security Policy tests that are dumping the render tree instead of text:

@@ -1,0 +1,8 @@
+
+
+FAIL dropdown: The width should depend on the selected OPTION assert_greater_than: expected a number greater than 114 but got 114
+FAIL dropdown: Change the field-sizing value dynamically assert_less_than: expected a number less than 139 but got 139
+PASS listbox: The size depend on the content
+PASS listbox: The size attribute value is ignored
+PASS listbox: Change the field-sizing value dynamically
+
