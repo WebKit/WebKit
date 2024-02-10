@@ -81,6 +81,7 @@ void LibWebRTCProvider::disableNonLocalhostConnections()
     WebProcess::singleton().libWebRTCNetwork().disableNonLocalhostConnections();
 }
 
+#if PLATFORM(COCOA) && USE(LIBWEBRTC)
 bool LibWebRTCProvider::isSupportingVP9HardwareDecoder() const
 {
     return WebProcess::singleton().libWebRTCCodecs().isSupportingVP9HardwareDecoder();
@@ -90,6 +91,7 @@ void LibWebRTCProvider::setVP9HardwareSupportForTesting(std::optional<bool> valu
 {
     WebProcess::singleton().libWebRTCCodecs().setVP9HardwareSupportForTesting(value);
 }
+#endif
 
 class RTCSocketFactory final : public LibWebRTCProvider::SuspendableSocketFactory {
     WTF_MAKE_FAST_ALLOCATED;
