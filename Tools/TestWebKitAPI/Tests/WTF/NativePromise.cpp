@@ -1678,6 +1678,20 @@ TEST(NativePromise, CreateSettledPromise)
     });
 }
 
+TEST(NativePromise, DisconnectNotOwnedInstance)
+{
+    GenericPromise::Producer producer;
+    auto request = makeUnique<NativePromiseRequest>();
+    WeakPtr weakRequest { *request };
+    producer->whenSettled(RunLoop::main(), [request = WTFMove(request)] (auto&& result) mutable {
+        request->complete();
+        EXPECT_TRUE(false);
+    })->track(*weakRequest);
+    weakRequest->disconnect();
+    EXPECT_FALSE(!!weakRequest);
+    producer.resolve();
+}
+
 // Example:
 // Consider a PhotoProducer class that can take a photo and returns an image and its mimetype.
 // The PhotoProducer uses some system framework that takes a completion handler which will receive the photo once taken.
