@@ -533,6 +533,7 @@ void MediaSessionManagerCocoa::updateNowPlayingInfo()
         m_lastUpdatedNowPlayingElapsedTime = currentTime;
 
     m_nowPlayingActive = nowPlayingInfo->allowsNowPlayingControlsVisibility;
+    m_nowPlayingInfo = nowPlayingInfo;
 
     END_BLOCK_OBJC_EXCEPTIONS
 }

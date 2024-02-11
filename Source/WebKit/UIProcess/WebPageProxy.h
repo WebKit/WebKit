@@ -259,6 +259,7 @@ struct MediaUsageInfo;
 struct MessageWithMessagePorts;
 struct MockWebAuthenticationConfiguration;
 struct NotificationData;
+struct NowPlayingInfo;
 struct OrganizationStorageAccessPromptQuirk;
 struct PageIdentifierType;
 struct PermissionDescriptor;
@@ -1759,7 +1760,7 @@ public:
     bool isPlayingVideoInEnhancedFullscreen() const;
 
 #if PLATFORM(COCOA)
-    void requestActiveNowPlayingSessionInfo(CompletionHandler<void(bool, bool, const String&, double, double, uint64_t)>&&);
+    void requestActiveNowPlayingSessionInfo(CompletionHandler<void(bool, WebCore::NowPlayingInfo&&)>&&);
 #endif
 
 #if PLATFORM(MAC)

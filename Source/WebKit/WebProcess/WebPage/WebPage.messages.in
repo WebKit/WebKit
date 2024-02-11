@@ -590,7 +590,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 #endif
 
 #if PLATFORM(COCOA)
-    RequestActiveNowPlayingSessionInfo() -> (bool active, bool registeredAsNowPlayingApplication, String title, double duration, double elapsedTime, uint64_t uniqueIdentifier)
+    RequestActiveNowPlayingSessionInfo() -> (bool registeredAsNowPlayingApplication, struct WebCore::NowPlayingInfo nowPlayingInfo)
 #endif
 
     SetShouldDispatchFakeMouseMoveEvents(bool shouldDispatchFakeMouseMoveEvents)

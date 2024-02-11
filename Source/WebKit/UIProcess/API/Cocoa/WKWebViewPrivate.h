@@ -375,6 +375,8 @@ for this property.
 - (void)_resumeAllMediaPlayback;
 - (void)_closeAllMediaPresentations;
 
+- (void)_nowPlayingMediaTitleAndArtist:(void (^)(NSString *, NSString *))completionHandler;
+
 - (void)_takePDFSnapshotWithConfiguration:(WKSnapshotConfiguration *)snapshotConfiguration completionHandler:(void (^)(NSData *pdfSnapshotData, NSError *error))completionHandler WK_API_AVAILABLE(macos(10.15.4), ios(13.4));
 - (void)_getPDFFirstPageSizeInFrame:(_WKFrameHandle *)frame completionHandler:(void(^)(CGSize))completionHandler WK_API_AVAILABLE(macos(12.0), ios(15.0));
 

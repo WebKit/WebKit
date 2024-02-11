@@ -2088,7 +2088,7 @@ private:
     void performHitTestForMouseEvent(const WebMouseEvent&, CompletionHandler<void(WebHitTestResultData&&, OptionSet<WebEventModifier>, UserData&&)>&&);
 
 #if PLATFORM(COCOA)
-    void requestActiveNowPlayingSessionInfo(CompletionHandler<void(bool, bool, const String&, double, double, uint64_t)>&&);
+    void requestActiveNowPlayingSessionInfo(CompletionHandler<void(bool, WebCore::NowPlayingInfo&&)>&&);
     RetainPtr<NSData> accessibilityRemoteTokenData() const;
     void accessibilityTransferRemoteToken(RetainPtr<NSData>);
 #endif

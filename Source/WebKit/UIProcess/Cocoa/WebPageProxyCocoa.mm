@@ -68,6 +68,7 @@
 #import <WebCore/LocalCurrentGraphicsContext.h>
 #import <WebCore/NetworkExtensionContentFilter.h>
 #import <WebCore/NotImplemented.h>
+#import <WebCore/NowPlayingInfo.h>
 #import <WebCore/RunLoopObserver.h>
 #import <WebCore/SearchPopupMenuCocoa.h>
 #import <WebCore/TextAlternativeWithRange.h>
@@ -839,7 +840,7 @@ void WebPageProxy::handleContextMenuTranslation(const TranslationContextMenuInfo
 #endif // HAVE(TRANSLATION_UI_SERVICES)
 #endif // ENABLE(CONTEXT_MENUS)
 
-void WebPageProxy::requestActiveNowPlayingSessionInfo(CompletionHandler<void(bool, bool, const String&, double, double, uint64_t)>&& callback)
+void WebPageProxy::requestActiveNowPlayingSessionInfo(CompletionHandler<void(bool, WebCore::NowPlayingInfo&&)>&& callback)
 {
     sendWithAsyncReply(Messages::WebPage::RequestActiveNowPlayingSessionInfo(), WTFMove(callback));
 }

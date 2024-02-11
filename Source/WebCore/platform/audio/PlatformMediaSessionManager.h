@@ -26,6 +26,7 @@
 #pragma once
 
 #include "MediaUniqueIdentifier.h"
+#include "NowPlayingInfo.h"
 #include "PlatformMediaSession.h"
 #include "RemoteCommandListener.h"
 #include "Timer.h"
@@ -89,6 +90,7 @@ public:
     bool activeAudioSessionRequired() const;
     bool canProduceAudio() const;
 
+    virtual std::optional<NowPlayingInfo> nowPlayingInfo() const { return { }; }
     virtual bool hasActiveNowPlayingSession() const { return false; }
     virtual String lastUpdatedNowPlayingTitle() const { return emptyString(); }
     virtual double lastUpdatedNowPlayingDuration() const { return NAN; }

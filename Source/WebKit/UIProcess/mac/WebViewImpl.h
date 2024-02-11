@@ -649,6 +649,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     AVTouchBarScrubber *mediaPlaybackControlsView() const;
 #endif
+    void nowPlayingMediaTitleAndArtist(void(^completionHandler)(NSString *, NSString *));
+
     NSTouchBar *textTouchBar() const;
     void dismissTextTouchBarPopoverItemWithIdentifier(NSString *);
 

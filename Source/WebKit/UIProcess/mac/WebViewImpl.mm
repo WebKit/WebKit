@@ -103,6 +103,7 @@
 #import <WebCore/LegacyNSPasteboardTypes.h>
 #import <WebCore/LoaderNSURLExtras.h>
 #import <WebCore/LocalizedStrings.h>
+#import <WebCore/NowPlayingInfo.h>
 #import <WebCore/Pasteboard.h>
 #import <WebCore/PlatformEventFactoryMac.h>
 #import <WebCore/PlatformPlaybackSessionInterface.h>
@@ -6031,6 +6032,22 @@ void WebViewImpl::updateMediaPlaybackControlsManager()
 }
 
 #endif // ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
+
+void WebViewImpl::nowPlayingMediaTitleAndArtist(void(^completionHandler)(NSString *, NSString *))
+{
+#if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
+    if (!m_page->hasActiveVideoForControlsManager()) {
+        completionHandler(nil, nil);
+        return;
+    }
+
+    m_page->requestActiveNowPlayingSessionInfo([completionHandler = makeBlockPtr(completionHandler)] (bool registeredAsNowPlayingApplication, WebCore::NowPlayingInfo&& nowPlayingInfo) {
+        completionHandler(nowPlayingInfo.title, nowPlayingInfo.artist);
+    });
+#else
+    completionHandler(nil, nil);
+#endif
+}
 
 void WebViewImpl::updateMediaTouchBar()
 {

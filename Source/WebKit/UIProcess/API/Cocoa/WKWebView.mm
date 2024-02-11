@@ -2556,6 +2556,16 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 #endif
 }
 
+- (void)_nowPlayingMediaTitleAndArtist:(void (^)(NSString *, NSString *))completionHandler
+{
+    THROW_IF_SUSPENDED;
+#if HAVE(TOUCH_BAR) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
+    _impl->nowPlayingMediaTitleAndArtist(completionHandler);
+#else
+    completionHandler(nil, nil);
+#endif
+}
+
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 - (void)_pauseAllAnimationsWithCompletionHandler:(void(^)(void))completionHandler
 {

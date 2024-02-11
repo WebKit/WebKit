@@ -66,6 +66,7 @@
 #import <WebCore/MutableStyleProperties.h>
 #import <WebCore/NetworkExtensionContentFilter.h>
 #import <WebCore/NodeRenderStyle.h>
+#import <WebCore/NowPlayingInfo.h>
 #import <WebCore/PaymentCoordinator.h>
 #import <WebCore/PlatformMediaSessionManager.h>
 #import <WebCore/Range.h>
@@ -149,24 +150,17 @@ void WebPage::platformDidReceiveLoadParameters(const LoadParameters& parameters)
     m_dataDetectionReferenceDate = parameters.dataDetectionReferenceDate;
 }
 
-void WebPage::requestActiveNowPlayingSessionInfo(CompletionHandler<void(bool, bool, const String&, double, double, uint64_t)>&& completionHandler)
+void WebPage::requestActiveNowPlayingSessionInfo(CompletionHandler<void(bool, WebCore::NowPlayingInfo&&)>&& completionHandler)
 {
-    bool hasActiveSession = false;
-    String title = emptyString();
-    double duration = NAN;
-    double elapsedTime = NAN;
-    uint64_t uniqueIdentifier = 0;
-    bool registeredAsNowPlayingApplication = false;
     if (auto* sharedManager = WebCore::PlatformMediaSessionManager::sharedManagerIfExists()) {
-        hasActiveSession = sharedManager->hasActiveNowPlayingSession();
-        title = sharedManager->lastUpdatedNowPlayingTitle();
-        duration = sharedManager->lastUpdatedNowPlayingDuration();
-        elapsedTime = sharedManager->lastUpdatedNowPlayingElapsedTime();
-        uniqueIdentifier = sharedManager->lastUpdatedNowPlayingInfoUniqueIdentifier().toUInt64();
-        registeredAsNowPlayingApplication = sharedManager->registeredAsNowPlayingApplication();
+        if (auto nowPlayingInfo = sharedManager->nowPlayingInfo()) {
+            bool registeredAsNowPlayingApplication = sharedManager->registeredAsNowPlayingApplication();
+            completionHandler(registeredAsNowPlayingApplication, WTFMove(*nowPlayingInfo));
+            return;
+        }
     }
 
-    completionHandler(hasActiveSession, registeredAsNowPlayingApplication, title, duration, elapsedTime, uniqueIdentifier);
+    completionHandler(false, { });
 }
 
 #if ENABLE(PDF_PLUGIN)

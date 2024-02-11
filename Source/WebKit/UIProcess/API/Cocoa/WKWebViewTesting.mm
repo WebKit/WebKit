@@ -46,6 +46,7 @@
 #import "WebsiteDataStore.h"
 #import "_WKFrameHandleInternal.h"
 #import "_WKInspectorInternal.h"
+#import <WebCore/NowPlayingInfo.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/ValidationBubble.h>
 #import <wtf/RetainPtr.h>
@@ -221,8 +222,8 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
         return;
     }
 
-    _page->requestActiveNowPlayingSessionInfo([handler = makeBlockPtr(callback)] (bool active, bool registeredAsNowPlayingApplication, String title, double duration, double elapsedTime, uint64_t uniqueIdentifier) {
-        handler(active, registeredAsNowPlayingApplication, title, duration, elapsedTime, uniqueIdentifier);
+    _page->requestActiveNowPlayingSessionInfo([handler = makeBlockPtr(callback)] (bool registeredAsNowPlayingApplication, WebCore::NowPlayingInfo&& nowPlayingInfo) {
+        handler(nowPlayingInfo.allowsNowPlayingControlsVisibility, registeredAsNowPlayingApplication, nowPlayingInfo.title, nowPlayingInfo.duration, nowPlayingInfo.currentTime, nowPlayingInfo.uniqueIdentifier.toUInt64());
     });
 }
 
