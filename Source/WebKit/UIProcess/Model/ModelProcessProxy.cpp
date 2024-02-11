@@ -198,6 +198,8 @@ void ModelProcessProxy::didClose(IPC::Connection&)
 
 void ModelProcessProxy::didReceiveInvalidMessage(IPC::Connection& connection, IPC::MessageName messageName)
 {
+    WTFLogAlways("ModelProcessProxy::didReceiveInvalidMessage");
+    WTFReportBacktrace();
     logInvalidMessage(connection, messageName);
 
     WebProcessPool::didReceiveInvalidMessage(messageName);

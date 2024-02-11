@@ -895,7 +895,7 @@ void Connection::processIncomingMessage(UniqueRef<Decoder> message)
     }
 
     if (!MessageReceiveQueueMap::isValidMessage(*message)) {
-        WTFLogAlways("Connection::processIncomingMessage: MessageReceiveQueueMap::isValidMessage");
+        WTFLogAlways("Connection::processIncomingMessage: !MessageReceiveQueueMap::isValidMessage");
         dispatchDidReceiveInvalidMessage(message->messageName());
         return;
     }
@@ -955,6 +955,10 @@ void Connection::processIncomingMessage(UniqueRef<Decoder> message)
     if (m_syncState->processIncomingMessage(*this, message))
         return;
 
+    if (!message->isValid()) {
+        WTFLogAlways("Connection::processIncomingMessage: message !isValidMessage");
+        WTFReportBacktrace();
+    }
     enqueueIncomingMessage(WTFMove(message));
 }
 
@@ -1272,6 +1276,7 @@ void Connection::dispatchMessage(UniqueRef<Decoder> message)
             if (m_ignoreInvalidMessageForTesting)
                 return;
 #endif
+            WTFLogAlways("Connection::dispatchMessage: shouldUseFullySynchronousModeForTesting");
             m_client->didReceiveInvalidMessage(*this, message->messageName());
             return;
         }
@@ -1309,8 +1314,10 @@ void Connection::dispatchMessage(UniqueRef<Decoder> message)
 #if ENABLE(IPC_TESTING_API)
         && !m_ignoreInvalidMessageForTesting
 #endif
-        && isValid())
+        && isValid()) {
+        WTFLogAlways("Connection::dispatchMessage: m_didReceiveInvalidMessage");
         m_client->didReceiveInvalidMessage(*this, message->messageName());
+    }
 
     m_didReceiveInvalidMessage = oldDidReceiveInvalidMessage;
 }

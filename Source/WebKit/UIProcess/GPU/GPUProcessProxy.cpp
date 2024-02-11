@@ -571,6 +571,8 @@ void GPUProcessProxy::didClose(IPC::Connection&)
 
 void GPUProcessProxy::didReceiveInvalidMessage(IPC::Connection& connection, IPC::MessageName messageName)
 {
+    WTFLogAlways("GPUProcessProxy::didReceiveInvalidMessage");
+    WTFReportBacktrace();
     logInvalidMessage(connection, messageName);
 
     WebProcessPool::didReceiveInvalidMessage(messageName);

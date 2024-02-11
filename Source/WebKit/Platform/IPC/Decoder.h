@@ -111,6 +111,7 @@ public:
     WARN_UNUSED_RETURN bool isValid() const { return !!m_buffer.data(); }
     void markInvalid()
     {
+        WTFReportBacktrace();
         auto buffer = std::exchange(m_buffer, { });
         if (m_bufferDeallocator && !buffer.empty())
             m_bufferDeallocator(WTFMove(buffer));

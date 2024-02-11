@@ -1206,6 +1206,8 @@ void WebProcessProxy::processDidTerminateOrFailedToLaunch(ProcessTerminationReas
 
 void WebProcessProxy::didReceiveInvalidMessage(IPC::Connection& connection, IPC::MessageName messageName)
 {
+    WTFLogAlways("WebProcessProxy::didReceiveInvalidMessage");
+    WTFReportBacktrace();
     logInvalidMessage(connection, messageName);
 
     WebProcessPool::didReceiveInvalidMessage(messageName);

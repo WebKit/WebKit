@@ -94,7 +94,7 @@ void AuxiliaryProcess::platformInitialize(const AuxiliaryProcessInitializationPa
 
 void AuxiliaryProcess::didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName messageName)
 {
-    WTFLogAlways("AuxiliaryProcess::didReceiveInvalidMessage");
+    WTFLogAlways("AuxiliaryProcess::didReceiveInvalidMessage (Cocoa): isInWebProcess: %d", WebCore::isInWebProcess());
     WTFReportBacktrace();
     auto errorMessage = makeString("Received invalid message: '", description(messageName), "' (", messageName, ')');
     logAndSetCrashLogMessage(errorMessage.utf8().data());
