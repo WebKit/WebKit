@@ -895,6 +895,7 @@ void Connection::processIncomingMessage(UniqueRef<Decoder> message)
     }
 
     if (!MessageReceiveQueueMap::isValidMessage(*message)) {
+        WTFLogAlways("Connection::processIncomingMessage: MessageReceiveQueueMap::isValidMessage");
         dispatchDidReceiveInvalidMessage(message->messageName());
         return;
     }
@@ -943,6 +944,7 @@ void Connection::processIncomingMessage(UniqueRef<Decoder> message)
     }
 
     if ((message->shouldDispatchMessageWhenWaitingForSyncReply() == ShouldDispatchWhenWaitingForSyncReply::YesDuringUnboundedIPC && !message->isAllowedWhenWaitingForUnboundedSyncReply()) || (message->shouldDispatchMessageWhenWaitingForSyncReply() == ShouldDispatchWhenWaitingForSyncReply::Yes && !message->isAllowedWhenWaitingForSyncReply())) {
+        WTFLogAlways("Connection::processIncomingMessage: shouldDispatchMessageWhenWaitingForSyncReply: %d, shouldDispatchMessageWhenWaitingForSyncReply: %d, isAllowedWhenWaitingForUnboundedSyncReply: %d", message->shouldDispatchMessageWhenWaitingForSyncReply() == ShouldDispatchWhenWaitingForSyncReply::YesDuringUnboundedIPC, message->shouldDispatchMessageWhenWaitingForSyncReply() == ShouldDispatchWhenWaitingForSyncReply::Yes, message->isAllowedWhenWaitingForUnboundedSyncReply());
         dispatchDidReceiveInvalidMessage(message->messageName());
         return;
     }
@@ -1133,6 +1135,7 @@ void Connection::dispatchSyncMessage(Decoder& decoder)
 
 void Connection::dispatchDidReceiveInvalidMessage(MessageName messageName)
 {
+    WTFReportBacktrace();
     dispatchToClient([protectedThis = Ref { *this }, messageName] {
         if (!protectedThis->isValid())
             return;

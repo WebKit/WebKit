@@ -84,6 +84,7 @@ struct LoadParameters {
     std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain;
     std::optional<NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume;
     bool isServiceWorkerLoad { false };
+    bool isRequestFromClientOrUserInput;
 
 #if PLATFORM(COCOA)
     std::optional<double> dataDetectionReferenceDate;

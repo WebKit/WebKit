@@ -48,6 +48,7 @@
     std::optional<WebKit::NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain;
     std::optional<WebKit::NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume;
     bool isServiceWorkerLoad;
+    bool isRequestFromClientOrUserInput;
 
 #if PLATFORM(COCOA)
     std::optional<double> dataDetectionReferenceDate;
