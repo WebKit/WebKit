@@ -142,6 +142,15 @@ bool PlatformMediaSessionManager::activeAudioSessionRequired() const
     });
 }
 
+bool PlatformMediaSessionManager::hasActiveAudioSession() const
+{
+#if USE(AUDIO_SESSION)
+    return m_becameActive;
+#else
+    return true;
+#endif
+}
+
 bool PlatformMediaSessionManager::canProduceAudio() const
 {
     return anyOfSessions([] (auto& session) {

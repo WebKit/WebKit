@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="media-file.js"></script>
+        <script src="video-test.js"></script>
+        <script>
+
+            window.addEventListener('load', async event => {
+                if (!window.internals) {
+                    failTest('This test must be run in DumpRenderTree or WebKitTestRunner.');
+                    return;
+                }
+    
+                findMediaElement();
+                run(`internals.setMediaElementRestrictions(video, 'NoRestrictions')`);
+                run('internals.beginMediaSessionInterruption("EnteringBackground")');
+                run('internals.beginMediaSessionInterruption("System")');
+
+                run('video.volume = 0.1');
+                run('video.src = findMediaFile("video", "content/audio-tracks")');
+
+                waitForEvent('playing', () => { testExpected('internals.mediaSessionState(video)', 'Interrupted', '!=') });
+                await waitFor(video, 'canplaythrough');
+                
+                await sleepFor(250);
+                testExpected('video.paused', true);
+                testExpected('internals.mediaSessionState(video)', 'Interrupted');
+            
+                run('internals.endMediaSessionInterruption("MayResumePlaying")');
+                
+                // Wait some time before ending the test to ensure the session interruption is cancelled.
+                endTestLater();
+            });
+            
+        </script>
+    </head>
+    <body>
+        <video autoplay controls></video>
+    </body>
+</html>

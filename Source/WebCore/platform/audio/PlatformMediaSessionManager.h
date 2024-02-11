@@ -88,6 +88,7 @@ public:
     bool has(PlatformMediaSession::MediaType) const;
     int count(PlatformMediaSession::MediaType) const;
     bool activeAudioSessionRequired() const;
+    bool hasActiveAudioSession() const;
     bool canProduceAudio() const;
 
     virtual std::optional<NowPlayingInfo> nowPlayingInfo() const { return { }; }
