@@ -382,31 +382,33 @@ static inline bool isAtSoftWrapOpportunity(const InlineItem& previous, const Inl
     ASSERT(previous.isText() || previous.isBox() || previous.layoutBox().isRubyInlineBox());
     ASSERT(next.isText() || next.isBox() || next.layoutBox().isRubyInlineBox());
     if (previous.isText() && next.isText()) {
-        auto& currentInlineTextItem = downcast<InlineTextItem>(previous);
+        auto& previousInlineTextItem = downcast<InlineTextItem>(previous);
         auto& nextInlineTextItem = downcast<InlineTextItem>(next);
-        if (currentInlineTextItem.isWhitespace() && nextInlineTextItem.isWhitespace()) {
-            // <span> </span><span> </span>. Depending on the styles, there may or may not be a soft wrap opportunity between these 2 whitespace content.
-            return TextUtil::isWrappingAllowed(currentInlineTextItem.style()) || TextUtil::isWrappingAllowed(nextInlineTextItem.style());
-        }
-        if (currentInlineTextItem.isWhitespace()) {
-            // " <span>text</span>" : after [whitespace] position is a soft wrap opportunity.
-            return TextUtil::isWrappingAllowed(currentInlineTextItem.style());
+
+        auto mayWrapPrevious = TextUtil::isWrappingAllowed(previousInlineTextItem.style());
+        auto mayWrapNext = TextUtil::isWrappingAllowed(nextInlineTextItem.style());
+        if (&previousInlineTextItem.layoutBox().parent() == &nextInlineTextItem.layoutBox().parent() && !mayWrapPrevious && !mayWrapNext)
+            return false;
+        if (previousInlineTextItem.isWhitespace()) {
+            // "<nowrap> </nowrap>after"
+            return mayWrapPrevious;
         }
         if (nextInlineTextItem.isWhitespace()) {
-            // "<span>text</span> "
+            // "<span>before</span><nowrap> </nowrap>"
+            if (!mayWrapNext)
+                return false;
             // 'white-space: break-spaces' and '-webkit-line-break: after-white-space': line breaking opportunity exists after every preserved white space character, but not before.
             auto& style = nextInlineTextItem.style();
-            return TextUtil::isWrappingAllowed(style) && style.whiteSpaceCollapse() != WhiteSpaceCollapse::BreakSpaces && style.lineBreak() != LineBreak::AfterWhiteSpace;
+            return style.whiteSpaceCollapse() != WhiteSpaceCollapse::BreakSpaces && style.lineBreak() != LineBreak::AfterWhiteSpace;
         }
         if (previous.style().lineBreak() == LineBreak::Anywhere || next.style().lineBreak() == LineBreak::Anywhere) {
-            // There is a soft wrap opportunity around every typographic character unit, including around any punctuation character
-            // or preserved white spaces, or in the middle of words.
+            // There is a soft wrap opportunity around every typographic character unit, including around any punctuation character or preserved white spaces, or in the middle of words.
             return true;
         }
         // Both previous and next items are non-whitespace text.
         // [text][text] : is a continuous content.
         // [text-][text] : after [hyphen] position is a soft wrap opportunity.
-        return endsWithSoftWrapOpportunity(currentInlineTextItem, nextInlineTextItem);
+        return endsWithSoftWrapOpportunity(previousInlineTextItem, nextInlineTextItem);
     }
     if (previous.layoutBox().isListMarkerBox()) {
         auto& listMarkerBox = downcast<ElementBox>(previous.layoutBox());
