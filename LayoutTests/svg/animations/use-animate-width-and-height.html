@@ -1,8 +1,8 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
-<script src="../dynamic-updates/resources/SVGTestCase.js"></script>
+<script src="../../resources/js-test.js"></script>
+<script src="resources/SVGTestCase.js"></script>
 <script src="resources/SVGAnimationTestCase.js"></script>
 </head>
 <body onload="runSMILTest()">
@@ -25,7 +25,6 @@ rect.setAttribute("y", "10");
 rect.setAttribute("width", "100%");
 rect.setAttribute("height", "100%");
 rect.setAttribute("fill", "green");
-rect.setAttribute("onclick", "executeTest()");
 symbol.appendChild(rect);
 rootSVGElement.appendChild(symbol);
 
@@ -36,6 +35,7 @@ use.setAttribute("x", "0");
 use.setAttribute("y", "0");
 use.setAttribute("width", "100");
 use.setAttribute("height", "100");
+rect.setAttribute("onclick", "executeTest()");
 rootSVGElement.appendChild(use);
 
 var animate = createSVGElement("animate");

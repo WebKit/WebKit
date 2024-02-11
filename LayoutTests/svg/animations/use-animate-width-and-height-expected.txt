@@ -44,6 +44,7 @@ FAIL use.getAttribute('height') should be 135. Was 100.
 PASS useElementTargetClone().width.animVal.value is 135
 PASS useElementTargetClone().height.animVal.value is 135
 PASS successfullyParsed is true
+Some tests failed.
 
 TEST COMPLETE
 
