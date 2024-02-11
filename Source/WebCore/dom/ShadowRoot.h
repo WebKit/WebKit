@@ -26,13 +26,9 @@
 
 #pragma once
 
-#include "Document.h"
 #include "DocumentFragment.h"
 #include "Element.h"
 #include "StyleScopeOrdinal.h"
-#if ENABLE(PICTURE_IN_PICTURE_API)
-#include "HTMLVideoElement.h"
-#endif
 #include "ShadowRootMode.h"
 #include "SlotAssignmentMode.h"
 #include <wtf/HashMap.h>
@@ -141,7 +137,7 @@ public:
     void invalidatePartMappings();
 
 #if ENABLE(PICTURE_IN_PICTURE_API)
-    HTMLVideoElement* pictureInPictureElement() const;
+    Element* pictureInPictureElement() const;
 #endif
 
     Vector<RefPtr<WebAnimation>> getAnimations();

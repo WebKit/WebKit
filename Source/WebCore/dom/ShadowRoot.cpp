@@ -409,7 +409,7 @@ Vector<Ref<ShadowRoot>> assignedShadowRootsIfSlotted(const Node& node)
 }
 
 #if ENABLE(PICTURE_IN_PICTURE_API)
-HTMLVideoElement* ShadowRoot::pictureInPictureElement() const
+Element* ShadowRoot::pictureInPictureElement() const
 {
     notImplemented();
     return nullptr;
