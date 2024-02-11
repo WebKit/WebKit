@@ -307,12 +307,7 @@ MediaStreamTrack::TrackCapabilities MediaStreamTrack::getCapabilities() const
 
 auto MediaStreamTrack::takePhoto(PhotoSettings&& settings) -> Ref<TakePhotoPromise>
 {
-    // https://w3c.github.io/mediacapture-image/#dom-imagecapture-takephoto
-    // If the readyState of track provided in the constructor is not live, return
-    // a promise rejected with a new DOMException whose name is InvalidStateError,
-    // and abort these steps.
-    if (m_ended)
-        return TakePhotoPromise::createAndReject(Exception { ExceptionCode::InvalidStateError, "Track has ended"_s });
+    ASSERT(!m_ended);
 
     return m_private->takePhoto(WTFMove(settings))->whenSettled(RunLoop::main(), [protectedThis = Ref { *this }] (auto&& result) mutable {
 
@@ -334,12 +329,7 @@ auto MediaStreamTrack::takePhoto(PhotoSettings&& settings) -> Ref<TakePhotoPromi
 
 auto MediaStreamTrack::getPhotoCapabilities() -> Ref<PhotoCapabilitiesPromise>
 {
-    // https://w3c.github.io/mediacapture-image/#dom-imagecapture-getphotocapabilities
-    // If the readyState of track provided in the constructor is not live, return
-    // a promise rejected with a new DOMException whose name is InvalidStateError,
-    // and abort these steps.
-    if (m_ended)
-        return PhotoCapabilitiesPromise::createAndReject(Exception { ExceptionCode::InvalidStateError, "Track has ended"_s });
+    ASSERT(!m_ended);
 
     return m_private->getPhotoCapabilities()->whenSettled(RunLoop::main(), [protectedThis = Ref { *this }] (auto&& result) mutable {
 
@@ -360,8 +350,7 @@ auto MediaStreamTrack::getPhotoCapabilities() -> Ref<PhotoCapabilitiesPromise>
 
 auto MediaStreamTrack::getPhotoSettings() -> Ref<PhotoSettingsPromise>
 {
-    if (m_ended)
-        return PhotoSettingsPromise::createAndReject(Exception { ExceptionCode::InvalidStateError, "Track has ended"_s });
+    ASSERT(!m_ended);
 
     return m_private->getPhotoSettings()->whenSettled(RunLoop::main(), [protectedThis = Ref { *this }] (auto&& result) mutable {
 
