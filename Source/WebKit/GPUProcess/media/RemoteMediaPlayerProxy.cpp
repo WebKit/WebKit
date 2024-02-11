@@ -109,8 +109,8 @@ RemoteMediaPlayerProxy::~RemoteMediaPlayerProxy()
     if (m_mediaSourceProxy)
         m_mediaSourceProxy->shutdown();
 #endif
-    if (m_performTaskAtMediaTimeCompletionHandler)
-        m_performTaskAtMediaTimeCompletionHandler(std::nullopt, std::nullopt);
+    if (m_performTaskAtTimeCompletionHandler)
+        m_performTaskAtTimeCompletionHandler(std::nullopt, std::nullopt);
     setShouldEnableAudioSourceProvider(false);
 
     for (auto& request : std::exchange(m_layerHostingContextIDRequests, { }))
@@ -1101,13 +1101,13 @@ void RemoteMediaPlayerProxy::tracksChanged()
     m_player->tracksChanged();
 }
 
-void RemoteMediaPlayerProxy::performTaskAtMediaTime(const MediaTime& taskTime, MonotonicTime messageTime, PerformTaskAtMediaTimeCompletionHandler&& completionHandler)
+void RemoteMediaPlayerProxy::performTaskAtTime(const MediaTime& taskTime, MonotonicTime messageTime, PerformTaskAtTimeCompletionHandler&& completionHandler)
 {
-    if (m_performTaskAtMediaTimeCompletionHandler) {
+    if (m_performTaskAtTimeCompletionHandler) {
         // A media player is only expected to track one pending task-at-time at once (e.g. see
         // MediaPlayerPrivateAVFoundationObjC::performTaskAtMediaTime), so cancel the existing
         // CompletionHandler.
-        auto handler = WTFMove(m_performTaskAtMediaTimeCompletionHandler);
+        auto handler = WTFMove(m_performTaskAtTimeCompletionHandler);
         handler(std::nullopt, std::nullopt);
     }
 
@@ -1120,12 +1120,12 @@ void RemoteMediaPlayerProxy::performTaskAtMediaTime(const MediaTime& taskTime, M
         return;
     }
 
-    m_performTaskAtMediaTimeCompletionHandler = WTFMove(completionHandler);
-    m_player->performTaskAtMediaTime([this, weakThis = WeakPtr { *this }]() mutable {
-        if (!weakThis || !m_performTaskAtMediaTimeCompletionHandler)
+    m_performTaskAtTimeCompletionHandler = WTFMove(completionHandler);
+    m_player->performTaskAtTime([this, weakThis = WeakPtr { *this }]() mutable {
+        if (!weakThis || !m_performTaskAtTimeCompletionHandler)
             return;
 
-        auto completionHandler = WTFMove(m_performTaskAtMediaTimeCompletionHandler);
+        auto completionHandler = WTFMove(m_performTaskAtTimeCompletionHandler);
         completionHandler(m_player->currentTime(), MonotonicTime::now());
     }, adjustedTaskTime);
 }

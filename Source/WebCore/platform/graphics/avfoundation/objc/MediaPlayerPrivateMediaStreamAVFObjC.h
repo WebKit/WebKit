@@ -135,8 +135,8 @@ private:
     void setVisibleForCanvas(bool) final;
     void setVisibleInViewport(bool) final;
 
-    MediaTime durationMediaTime() const override;
-    MediaTime currentMediaTime() const override;
+    MediaTime duration() const override;
+    MediaTime currentTime() const override;
 
     void seekToTarget(const SeekTarget&) final { };
     bool seeking() const final { return false; }

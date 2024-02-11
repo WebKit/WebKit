@@ -60,11 +60,11 @@ public:
     void updatePipelineState(GstState);
 
     void durationChanged() override;
-    MediaTime durationMediaTime() const override;
+    MediaTime duration() const override;
 
     const PlatformTimeRanges& buffered() const override;
-    MediaTime maxMediaTimeSeekable() const override;
-    bool currentMediaTimeMayProgress() const override;
+    MediaTime maxTimeSeekable() const override;
+    bool currentTimeMayProgress() const override;
     void notifyActiveSourceBuffersChanged() final;
 
     void sourceSetup(GstElement*) override;

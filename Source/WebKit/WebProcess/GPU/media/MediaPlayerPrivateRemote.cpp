@@ -129,7 +129,7 @@ MediaTime MediaPlayerPrivateRemote::TimeProgressEstimator::currentTimeWithLockHe
         return m_cachedMediaTime;
 
     auto calculatedCurrentTime = m_cachedMediaTime + MediaTime::createWithDouble(m_rate * (MonotonicTime::now() - m_cachedMediaTimeQueryTime).seconds());
-    return std::min(std::max(calculatedCurrentTime, MediaTime::zeroTime()), m_parent.durationMediaTime());
+    return std::min(std::max(calculatedCurrentTime, MediaTime::zeroTime()), m_parent.duration());
 }
 
 MediaTime MediaPlayerPrivateRemote::TimeProgressEstimator::cachedTime() const
@@ -328,7 +328,7 @@ void MediaPlayerPrivateRemote::setPrivateBrowsingMode(bool privateMode)
     connection().send(Messages::RemoteMediaPlayerProxy::SetPrivateBrowsingMode(privateMode), m_id);
 }
 
-MediaTime MediaPlayerPrivateRemote::durationMediaTime() const
+MediaTime MediaPlayerPrivateRemote::duration() const
 {
 #if ENABLE(MEDIA_SOURCE)
     if (m_mediaSourcePrivate)
@@ -339,7 +339,7 @@ MediaTime MediaPlayerPrivateRemote::durationMediaTime() const
     return m_cachedState.duration;
 }
 
-MediaTime MediaPlayerPrivateRemote::currentMediaTime() const
+MediaTime MediaPlayerPrivateRemote::currentTime() const
 {
     return m_currentTimeEstimator.currentTime();
 }
@@ -1121,12 +1121,12 @@ double MediaPlayerPrivateRemote::minFastReverseRate() const
     return m_cachedState.minFastReverseRate;
 }
 
-MediaTime MediaPlayerPrivateRemote::maxMediaTimeSeekable() const
+MediaTime MediaPlayerPrivateRemote::maxTimeSeekable() const
 {
     return m_cachedState.maxTimeSeekable;
 }
 
-MediaTime MediaPlayerPrivateRemote::minMediaTimeSeekable() const
+MediaTime MediaPlayerPrivateRemote::minTimeSeekable() const
 {
     return m_cachedState.minTimeSeekable;
 }
@@ -1541,7 +1541,7 @@ void MediaPlayerPrivateRemote::setPreferredDynamicRangeMode(WebCore::DynamicRang
     connection().send(Messages::RemoteMediaPlayerProxy::SetPreferredDynamicRangeMode(mode), m_id);
 }
 
-bool MediaPlayerPrivateRemote::performTaskAtMediaTime(WTF::Function<void()>&& completionHandler, const MediaTime& mediaTime)
+bool MediaPlayerPrivateRemote::performTaskAtTime(WTF::Function<void()>&& completionHandler, const MediaTime& mediaTime)
 {
     auto asyncReplyHandler = [weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)](std::optional<MediaTime> currentTime, std::optional<MonotonicTime> queryTime) mutable {
         if (RefPtr protectedThis = weakThis.get(); protectedThis && currentTime && queryTime)
@@ -1549,7 +1549,7 @@ bool MediaPlayerPrivateRemote::performTaskAtMediaTime(WTF::Function<void()>&& co
         completionHandler();
     };
 
-    connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::PerformTaskAtMediaTime(mediaTime, MonotonicTime::now()), WTFMove(asyncReplyHandler), m_id);
+    connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::PerformTaskAtTime(mediaTime, MonotonicTime::now()), WTFMove(asyncReplyHandler), m_id);
 
     return true;
 }

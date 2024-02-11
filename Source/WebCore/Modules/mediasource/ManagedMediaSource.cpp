@@ -147,7 +147,7 @@ void ManagedMediaSource::monitorSourceBuffers()
             setStreaming(true);
             return;
         }
-        auto currentTime = currentMediaTime();
+        auto currentTime = this->currentTime();
 
         ensurePrefsRead();
 

@@ -121,13 +121,11 @@ public:
     virtual void setVisibleForCanvas(bool visible) { setPageIsVisible(visible); }
     virtual void setVisibleInViewport(bool) { }
 
-    virtual float duration() const { return 0; }
-    virtual double durationDouble() const { return duration(); }
-    virtual MediaTime durationMediaTime() const { return MediaTime::createWithDouble(durationDouble()); }
+    virtual MediaTime duration() const { return MediaTime::zeroTime(); }
 
     WEBCORE_EXPORT virtual MediaTime currentOrPendingSeekTime() const;
-    virtual MediaTime currentMediaTime() const { return MediaTime::zeroTime(); }
-    virtual bool currentMediaTimeMayProgress() const { return readyState() >= MediaPlayer::ReadyState::HaveFutureData; }
+    virtual MediaTime currentTime() const { return MediaTime::zeroTime(); }
+    virtual bool currentTimeMayProgress() const { return readyState() >= MediaPlayer::ReadyState::HaveFutureData; }
 
     virtual bool setCurrentTimeDidChangeCallback(MediaPlayer::CurrentTimeDidChangeCallback&&) { return false; }
 
@@ -169,10 +167,8 @@ public:
     virtual MediaPlayer::ReadyState readyState() const = 0;
 
     WEBCORE_EXPORT virtual const PlatformTimeRanges& seekable() const;
-    virtual float maxTimeSeekable() const { return 0; }
-    virtual MediaTime maxMediaTimeSeekable() const { return MediaTime::createWithDouble(maxTimeSeekable()); }
-    virtual double minTimeSeekable() const { return 0; }
-    virtual MediaTime minMediaTimeSeekable() const { return MediaTime::createWithDouble(minTimeSeekable()); }
+    virtual MediaTime maxTimeSeekable() const { return MediaTime::zeroTime(); }
+    virtual MediaTime minTimeSeekable() const { return MediaTime::zeroTime(); }
     virtual const PlatformTimeRanges& buffered() const = 0;
     virtual double seekableTimeRangesLastModifiedTime() const { return 0; }
     virtual double liveUpdateInterval() const { return 0; }
@@ -296,7 +292,7 @@ public:
 
     virtual size_t extraMemoryCost() const
     {
-        MediaTime duration = this->durationMediaTime();
+        MediaTime duration = this->duration();
         if (!duration)
             return 0;
 
@@ -325,7 +321,7 @@ public:
     virtual AVPlayer *objCAVFoundationAVPlayer() const { return nullptr; }
 #endif
 
-    virtual bool performTaskAtMediaTime(Function<void()>&&, const MediaTime&) { return false; }
+    virtual bool performTaskAtTime(Function<void()>&&, const MediaTime&) { return false; }
 
     virtual bool shouldIgnoreIntrinsicSize() { return false; }
 

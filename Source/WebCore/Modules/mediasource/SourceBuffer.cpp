@@ -346,7 +346,7 @@ void SourceBuffer::rangeRemoval(const MediaTime& start, const MediaTime& end)
     // 5. Return control to the caller and run the rest of the steps asynchronously.
     promisedWeakOnDispatcher([this, start, end] {
         // 6. Run the coded frame removal algorithm with start and end as the start and end of the removal range.
-        return m_private->removeCodedFrames(start, end, m_source->currentMediaTime());
+        return m_private->removeCodedFrames(start, end, m_source->currentTime());
     }, true)->whenSettled(m_dispatcher, [this, protectedThis = Ref { *this }] {
         m_removeCodedFramesPromise.complete();
 
@@ -526,7 +526,7 @@ ExceptionOr<void> SourceBuffer::appendBufferInternal(const unsigned char* data, 
     m_source->openIfInEndedState();
 
     // 4. Run the coded frame eviction algorithm.
-    m_private->evictCodedFrames(size, maximumBufferSize(), m_source->currentMediaTime());
+    m_private->evictCodedFrames(size, maximumBufferSize(), m_source->currentTime());
 
     // 5. If the buffer full flag equals true, then throw a QuotaExceededError exception and abort these step.
     if (m_private->isBufferFullFor(size, maximumBufferSize())) {
@@ -593,7 +593,7 @@ void SourceBuffer::sourceBufferPrivateAppendComplete(MediaPromise::Result&& resu
     scheduleEvent(eventNames().updateendEvent);
 
     m_source->monitorSourceBuffers();
-    m_private->reenqueueMediaIfNeeded(m_source->currentMediaTime());
+    m_private->reenqueueMediaIfNeeded(m_source->currentTime());
 
     ALWAYS_LOG(LOGIDENTIFIER, "buffered = ", m_buffered->ranges(), ", totalBufferSize: ", m_private->totalTrackBufferSizeInBytes());
 }
@@ -1176,7 +1176,7 @@ bool SourceBuffer::canPlayThroughRange(const PlatformTimeRanges& ranges)
     if (!duration.isValid())
         return false;
 
-    MediaTime currentTime = m_source->currentMediaTime();
+    MediaTime currentTime = m_source->currentTime();
     if (duration <= currentTime)
         return true;
 
@@ -1411,7 +1411,7 @@ void SourceBuffer::memoryPressure()
 {
     if (!isManaged())
         return;
-    m_private->memoryPressure(maximumBufferSize(), m_source->currentMediaTime());
+    m_private->memoryPressure(maximumBufferSize(), m_source->currentTime());
 }
 
 void SourceBuffer::ensureWeakOnDispatcher(Function<void()>&& function) const

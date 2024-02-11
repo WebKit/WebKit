@@ -113,8 +113,8 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     void flushPendingSizeChanges();
     void characteristicsChanged();
 
-    MediaTime currentMediaTime() const override;
-    bool currentMediaTimeMayProgress() const override;
+    MediaTime currentTime() const override;
+    bool currentTimeMayProgress() const override;
     AVSampleBufferDisplayLayer* sampleBufferDisplayLayer() const { return m_sampleBufferDisplayLayer.get(); }
     WebCoreDecompressionSession* decompressionSession() const { return m_decompressionSession.get(); }
 
@@ -208,7 +208,7 @@ private:
 
     void setPageIsVisible(bool, String&& sceneIdentifier) final;
 
-    MediaTime durationMediaTime() const override;
+    MediaTime duration() const override;
     MediaTime startTime() const override;
     MediaTime initialTime() const override;
 
@@ -220,8 +220,8 @@ private:
 
     void setPreservesPitch(bool) override;
 
-    MediaTime maxMediaTimeSeekable() const override;
-    MediaTime minMediaTimeSeekable() const override;
+    MediaTime maxTimeSeekable() const override;
+    MediaTime minTimeSeekable() const override;
     const PlatformTimeRanges& buffered() const override;
 
     bool didLoadingProgress() const override;
@@ -271,7 +271,7 @@ private:
     bool wirelessVideoPlaybackDisabled() const override { return false; }
 #endif
 
-    bool performTaskAtMediaTime(Function<void()>&&, const MediaTime&) final;
+    bool performTaskAtTime(Function<void()>&&, const MediaTime&) final;
     void audioOutputDeviceChanged() final;
 
     void ensureLayer();
@@ -336,7 +336,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     MediaPlayer::NetworkState m_networkState;
     MediaPlayer::ReadyState m_readyState;
     bool m_readyStateIsWaitingForAvailableFrame { false };
-    MediaTime m_mediaTimeDuration { MediaTime::invalidTime() };
+    MediaTime m_duration { MediaTime::invalidTime() };
     MediaTime m_lastSeekTime;
     FloatSize m_naturalSize;
     double m_rate { 1 };

@@ -651,7 +651,7 @@ static void webKitMediaSrcStreamFlush(Stream* stream, bool isSeekingFlush)
         // by however running time we're starting after the flush.
         MediaPlayerPrivateGStreamerMSE* player = webKitMediaSrcPlayer(stream->source);
         if (player) {
-            MediaTime streamTime = player->currentMediaTime();
+            MediaTime streamTime = player->currentTime();
             GstClockTime pipelineStreamTime = toGstClockTime(streamTime);
             DataMutexLocker streamingMembers { stream->streamingMembersDataMutex };
             // We need to increase the base by the running time accumulated during the previous segment.

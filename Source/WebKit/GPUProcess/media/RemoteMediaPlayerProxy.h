@@ -217,8 +217,8 @@ public:
     void videoTrackSetSelected(WebCore::TrackID, bool);
     void textTrackSetMode(WebCore::TrackID, WebCore::InbandTextTrackPrivate::Mode);
 
-    using PerformTaskAtMediaTimeCompletionHandler = CompletionHandler<void(std::optional<MediaTime>, std::optional<MonotonicTime>)>;
-    void performTaskAtMediaTime(const MediaTime&, MonotonicTime, PerformTaskAtMediaTimeCompletionHandler&&);
+    using PerformTaskAtTimeCompletionHandler = CompletionHandler<void(std::optional<MediaTime>, std::optional<MonotonicTime>)>;
+    void performTaskAtTime(const MediaTime&, MonotonicTime, PerformTaskAtTimeCompletionHandler&&);
     void isCrossOrigin(WebCore::SecurityOriginData, CompletionHandler<void(std::optional<bool>)>&&);
 
     void setVideoPlaybackMetricsUpdateInterval(double);
@@ -395,7 +395,7 @@ private:
     RunLoop::Timer m_updateCachedStateMessageTimer;
     RemoteMediaPlayerState m_cachedState;
     RemoteMediaPlayerProxyConfiguration m_configuration;
-    PerformTaskAtMediaTimeCompletionHandler m_performTaskAtMediaTimeCompletionHandler;
+    PerformTaskAtTimeCompletionHandler m_performTaskAtTimeCompletionHandler;
 #if ENABLE(MEDIA_SOURCE)
     RefPtr<RemoteMediaSourceProxy> m_mediaSourceProxy;
 #endif

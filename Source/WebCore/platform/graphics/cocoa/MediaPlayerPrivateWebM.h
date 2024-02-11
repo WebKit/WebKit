@@ -119,8 +119,8 @@ private:
     void setPageIsVisible(bool, String&& sceneIdentifier) final;
 
     MediaTime timeFudgeFactor() const { return { 1, 10 }; }
-    MediaTime currentMediaTime() const final;
-    MediaTime durationMediaTime() const final { return m_duration; }
+    MediaTime currentTime() const final;
+    MediaTime duration() const final { return m_duration; }
     MediaTime startTime() const final { return MediaTime::zeroTime(); }
     MediaTime initialTime() const final { return MediaTime::zeroTime(); }
 
@@ -134,8 +134,8 @@ private:
     MediaPlayer::NetworkState networkState() const final { return m_networkState; }
     MediaPlayer::ReadyState readyState() const final { return m_readyState; }
 
-    MediaTime maxMediaTimeSeekable() const final { return durationMediaTime(); }
-    MediaTime minMediaTimeSeekable() const final { return startTime(); }
+    MediaTime maxTimeSeekable() const final { return duration(); }
+    MediaTime minTimeSeekable() const final { return startTime(); }
     const PlatformTimeRanges& buffered() const final;
 
     void setBufferedRanges(PlatformTimeRanges);

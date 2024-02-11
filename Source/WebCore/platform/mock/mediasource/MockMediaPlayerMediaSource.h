@@ -57,8 +57,8 @@ public:
     void deref() final { RefCounted::deref(); }
 
     void advanceCurrentTime();
-    MediaTime currentMediaTime() const override;
-    bool currentMediaTimeMayProgress() const override;
+    MediaTime currentTime() const override;
+    bool currentTimeMayProgress() const override;
     void notifyActiveSourceBuffersChanged() final;
     void updateDuration(const MediaTime&);
 
@@ -89,12 +89,12 @@ private:
     bool seeking() const final;
     bool paused() const override;
     MediaPlayer::NetworkState networkState() const override;
-    MediaTime maxMediaTimeSeekable() const override;
+    MediaTime maxTimeSeekable() const override;
     const PlatformTimeRanges& buffered() const override;
     bool didLoadingProgress() const override;
     void setPresentationSize(const IntSize&) override;
     void paint(GraphicsContext&, const FloatRect&) override;
-    MediaTime durationMediaTime() const override;
+    MediaTime duration() const override;
     std::optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics() override;
     DestinationColorSpace colorSpace() override;
 

@@ -170,7 +170,7 @@ MediaPlayer::ReadyState MockMediaPlayerMediaSource::readyState() const
     return m_readyState;
 }
 
-MediaTime MockMediaPlayerMediaSource::maxMediaTimeSeekable() const
+MediaTime MockMediaPlayerMediaSource::maxTimeSeekable() const
 {
     return m_duration;
 }
@@ -193,14 +193,14 @@ void MockMediaPlayerMediaSource::paint(GraphicsContext&, const FloatRect&)
 {
 }
 
-MediaTime MockMediaPlayerMediaSource::currentMediaTime() const
+MediaTime MockMediaPlayerMediaSource::currentTime() const
 {
     return m_lastSeekTarget ? m_lastSeekTarget->time : m_currentTime;
 }
 
-bool MockMediaPlayerMediaSource::currentMediaTimeMayProgress() const
+bool MockMediaPlayerMediaSource::currentTimeMayProgress() const
 {
-    return m_mediaSourcePrivate && m_mediaSourcePrivate->hasFutureTime(currentMediaTime());
+    return m_mediaSourcePrivate && m_mediaSourcePrivate->hasFutureTime(currentTime());
 }
 
 void MockMediaPlayerMediaSource::notifyActiveSourceBuffersChanged()
@@ -209,7 +209,7 @@ void MockMediaPlayerMediaSource::notifyActiveSourceBuffersChanged()
         player->activeSourceBuffersChanged();
 }
 
-MediaTime MockMediaPlayerMediaSource::durationMediaTime() const
+MediaTime MockMediaPlayerMediaSource::duration() const
 {
     return m_mediaSourcePrivate ? m_mediaSourcePrivate->duration() : MediaTime::zeroTime();
 }

@@ -87,9 +87,9 @@ public:
 
     void setRate(float) final;
 
-    MediaTime durationMediaTime() const final;
+    MediaTime duration() const final;
 
-    MediaTime currentMediaTime() const final;
+    MediaTime currentTime() const final;
 
     bool paused() const final;
 
@@ -100,7 +100,7 @@ public:
     MediaPlayer::NetworkState networkState() const final;
     MediaPlayer::ReadyState readyState() const final;
 
-    MediaTime maxMediaTimeSeekable() const final;
+    MediaTime maxTimeSeekable() const final;
 
     const PlatformTimeRanges& buffered() const final;
 

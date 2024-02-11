@@ -49,9 +49,9 @@ std::optional<VideoFrameMetadata> MediaPlayerPrivateInterface::videoFrameMetadat
 
 const PlatformTimeRanges& MediaPlayerPrivateInterface::seekable() const
 {
-    if (maxMediaTimeSeekable() == MediaTime::zeroTime())
+    if (maxTimeSeekable() == MediaTime::zeroTime())
         return PlatformTimeRanges::emptyRanges();
-    m_seekable = { minMediaTimeSeekable(), maxMediaTimeSeekable() };
+    m_seekable = { minTimeSeekable(), maxTimeSeekable() };
     return m_seekable;
 }
 
@@ -67,7 +67,7 @@ MediaTime MediaPlayerPrivateInterface::currentOrPendingSeekTime() const
     auto pendingSeekTime = this->pendingSeekTime();
     if (pendingSeekTime.isValid())
         return pendingSeekTime;
-    return currentMediaTime();
+    return currentTime();
 }
 
 }

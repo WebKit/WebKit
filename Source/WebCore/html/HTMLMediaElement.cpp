@@ -1846,7 +1846,7 @@ void HTMLMediaElement::updateActiveTextTrackCues(const MediaTime& movieTime)
     INFO_LOG(identifier, "nextInterestingTime:", nextInterestingTime);
 
     if (RefPtr player = m_player; nextInterestingTime.isValid() && player) {
-        player->performTaskAtMediaTime([this, weakThis = WeakPtr<HTMLMediaElement, WeakPtrImplWithEventTargetData> { *this }, identifier] {
+        player->performTaskAtTime([this, weakThis = WeakPtr<HTMLMediaElement, WeakPtrImplWithEventTargetData> { *this }, identifier] {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return;

@@ -189,7 +189,7 @@ void MediaSourcePrivate::ensureOnDispatcher(Function<void()>&& function) const
     m_dispatcher->dispatch(WTFMove(function));
 }
 
-MediaTime MediaSourcePrivate::currentMediaTime() const
+MediaTime MediaSourcePrivate::currentTime() const
 {
     if (RefPtr player = this->player())
         return player->currentOrPendingSeekTime();

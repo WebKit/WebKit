@@ -198,8 +198,8 @@ public:
     LayerHostingContextID hostingContextID()const override;
     void setLayerHostingContextID(LayerHostingContextID  inID);
 
-    MediaTime durationMediaTime() const final;
-    MediaTime currentMediaTime() const final;
+    MediaTime duration() const final;
+    MediaTime currentTime() const final;
     MediaTime currentOrPendingSeekTime() const final;
 
 private:
@@ -315,8 +315,8 @@ private:
 
     WebCore::MediaPlayer::NetworkState networkState() const final { return m_cachedState.networkState; }
 
-    MediaTime maxMediaTimeSeekable() const final;
-    MediaTime minMediaTimeSeekable() const final;
+    MediaTime maxTimeSeekable() const final;
+    MediaTime minTimeSeekable() const final;
     const WebCore::PlatformTimeRanges& buffered() const final;
     double seekableTimeRangesLastModifiedTime() const final;
     double liveUpdateInterval() const final;
@@ -438,7 +438,7 @@ private:
     AVPlayer *objCAVFoundationAVPlayer() const final { return nullptr; }
 #endif
 
-    bool performTaskAtMediaTime(Function<void()>&&, const MediaTime&) final;
+    bool performTaskAtTime(Function<void()>&&, const MediaTime&) final;
 
     bool supportsPlayAtHostTime() const final { return m_configuration.supportsPlayAtHostTime; }
     bool supportsPauseAtHostTime() const final { return m_configuration.supportsPauseAtHostTime; }

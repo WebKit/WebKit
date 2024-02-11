@@ -595,7 +595,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::pause()
     if (!metaDataAvailable() || !playing() || m_ended)
         return;
 
-    m_pausedTime = currentMediaTime();
+    m_pausedTime = currentTime();
     m_playbackState = PlaybackState::Paused;
 
     for (const auto& track : m_audioTrackMap.values())
@@ -664,12 +664,12 @@ void MediaPlayerPrivateMediaStreamAVFObjC::setVisibleInViewport(bool isVisible)
     m_isVisibleInViewPort = isVisible;
 }
 
-MediaTime MediaPlayerPrivateMediaStreamAVFObjC::durationMediaTime() const
+MediaTime MediaPlayerPrivateMediaStreamAVFObjC::duration() const
 {
     return MediaTime::positiveInfiniteTime();
 }
 
-MediaTime MediaPlayerPrivateMediaStreamAVFObjC::currentMediaTime() const
+MediaTime MediaPlayerPrivateMediaStreamAVFObjC::currentTime() const
 {
     if (paused())
         return m_pausedTime;

@@ -184,8 +184,8 @@ protected:
     bool hasVideo() const override { return m_cachedHasVideo; }
     bool hasAudio() const override { return m_cachedHasAudio; }
     void setPageIsVisible(bool, String&& sceneIdentifier) final;
-    MediaTime durationMediaTime() const override;
-    MediaTime currentMediaTime() const override = 0;
+    MediaTime duration() const override;
+    MediaTime currentTime() const override = 0;
     void seekToTarget(const SeekTarget&) final;
     bool seeking() const final;
     bool paused() const override;
@@ -193,8 +193,8 @@ protected:
     bool hasClosedCaptions() const override { return m_cachedHasCaptions; }
     MediaPlayer::NetworkState networkState() const override { return m_networkState; }
     MediaPlayer::ReadyState readyState() const override { return m_readyState; }
-    MediaTime maxMediaTimeSeekable() const override;
-    MediaTime minMediaTimeSeekable() const override;
+    MediaTime maxTimeSeekable() const override;
+    MediaTime minTimeSeekable() const override;
     const PlatformTimeRanges& buffered() const override;
     bool didLoadingProgress() const override;
     void paint(GraphicsContext&, const FloatRect&) override = 0;
@@ -288,7 +288,7 @@ protected:
     void setDelayCharacteristicsChangedNotification(bool);
     void setIgnoreLoadStateChanges(bool delay) { m_ignoreLoadStateChanges = delay; }
     void setNaturalSize(FloatSize);
-    bool isLiveStream() const { return std::isinf(duration()); }
+    bool isLiveStream() const { return duration().isPositiveInfinite(); }
     void setNetworkState(MediaPlayer::NetworkState);
     void setReadyState(MediaPlayer::ReadyState);
 

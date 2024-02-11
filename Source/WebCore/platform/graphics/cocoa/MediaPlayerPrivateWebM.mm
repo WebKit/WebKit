@@ -293,7 +293,7 @@ void MediaPlayerPrivateWebM::play()
 
     [m_synchronizer setRate:m_rate];
 
-    if (currentMediaTime() >= durationMediaTime())
+    if (currentTime() >= duration())
         seekToTarget(SeekTarget::zero());
 }
 
@@ -317,7 +317,7 @@ void MediaPlayerPrivateWebM::setPageIsVisible(bool visible, String&&)
     m_visible = visible;
 }
 
-MediaTime MediaPlayerPrivateWebM::currentMediaTime() const
+MediaTime MediaPlayerPrivateWebM::currentTime() const
 {
     MediaTime synchronizerTime = clampTimeToLastSeekTime(PAL::toMediaTime(PAL::CMTimebaseGetTime([m_synchronizer timebase])));
     if (synchronizerTime < MediaTime::zeroTime())
@@ -537,7 +537,7 @@ bool MediaPlayerPrivateWebM::updateLastPixelBuffer()
 #if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
     if (m_videoLayer && isCopyDisplayedPixelBufferAvailable()) {
         if (RetainPtr pixelBuffer = m_videoLayer->copyDisplayedPixelBuffer()) {
-            INFO_LOG(LOGIDENTIFIER, "displayed pixelbuffer copied for time ", currentMediaTime());
+            INFO_LOG(LOGIDENTIFIER, "displayed pixelbuffer copied for time ", currentTime());
             m_lastPixelBuffer = WTFMove(pixelBuffer);
             return true;
         }
@@ -548,7 +548,7 @@ bool MediaPlayerPrivateWebM::updateLastPixelBuffer()
         return false;
 
     auto flags = !m_lastPixelBuffer ? WebCoreDecompressionSession::AllowLater : WebCoreDecompressionSession::ExactTime;
-    auto newPixelBuffer = m_decompressionSession->imageForTime(currentMediaTime(), flags);
+    auto newPixelBuffer = m_decompressionSession->imageForTime(currentTime(), flags);
     if (!newPixelBuffer)
         return false;
 
@@ -631,7 +631,7 @@ RefPtr<VideoFrame> MediaPlayerPrivateWebM::videoFrameForCurrentTime()
     }
     if (!m_lastPixelBuffer)
         return nullptr;
-    return VideoFrameCV::create(currentMediaTime(), false, VideoFrame::Rotation::None, RetainPtr { m_lastPixelBuffer });
+    return VideoFrameCV::create(currentTime(), false, VideoFrame::Rotation::None, RetainPtr { m_lastPixelBuffer });
 }
 
 DestinationColorSpace MediaPlayerPrivateWebM::colorSpace()
@@ -714,7 +714,7 @@ void MediaPlayerPrivateWebM::setDuration(MediaTime duration)
         if (!protectedThis)
             return;
 
-        MediaTime now = currentMediaTime();
+        MediaTime now = currentTime();
         ALWAYS_LOG(logSiteIdentifier, "boundary time observer called, now = ", now);
 
         pause();
@@ -958,7 +958,7 @@ void MediaPlayerPrivateWebM::reenqueSamples(TrackID trackId)
         return;
     TrackBuffer& trackBuffer = it->second;
     trackBuffer.setNeedsReenqueueing(true);
-    reenqueueMediaForTime(trackBuffer, trackId, currentMediaTime());
+    reenqueueMediaForTime(trackBuffer, trackId, currentTime());
 }
 
 void MediaPlayerPrivateWebM::reenqueueMediaForTime(TrackBuffer& trackBuffer, TrackID trackId, const MediaTime& time)

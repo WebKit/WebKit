@@ -133,8 +133,6 @@ public:
 
     void setPageIsVisible(bool, String&&) final { }
 
-    double durationDouble() const final { return 0; }
-
     void seekToTarget(const SeekTarget&) final { }
     bool seeking() const final { return false; }
 
@@ -152,8 +150,6 @@ public:
     MediaPlayer::NetworkState networkState() const final { return MediaPlayer::NetworkState::Empty; }
     MediaPlayer::ReadyState readyState() const final { return MediaPlayer::ReadyState::HaveNothing; }
 
-    float maxTimeSeekable() const final { return 0; }
-    double minTimeSeekable() const final { return 0; }
     const PlatformTimeRanges& buffered() const final { return PlatformTimeRanges::emptyRanges(); }
 
     double seekableTimeRangesLastModifiedTime() const final { return 0; }
@@ -771,7 +767,7 @@ void MediaPlayer::setShouldContinueAfterKeyNeeded(bool should)
 
 MediaTime MediaPlayer::duration() const
 {
-    return m_private->durationMediaTime();
+    return m_private->duration();
 }
 
 MediaTime MediaPlayer::startTime() const
@@ -786,12 +782,12 @@ MediaTime MediaPlayer::initialTime() const
 
 MediaTime MediaPlayer::currentTime() const
 {
-    return m_private->currentMediaTime();
+    return m_private->currentTime();
 }
 
 bool MediaPlayer::currentTimeMayProgress() const
 {
-    return m_private->currentMediaTimeMayProgress();
+    return m_private->currentTimeMayProgress();
 }
 
 bool MediaPlayer::setCurrentTimeDidChangeCallback(CurrentTimeDidChangeCallback&& callback)
@@ -1066,12 +1062,12 @@ const PlatformTimeRanges& MediaPlayer::seekable() const
 
 MediaTime MediaPlayer::maxTimeSeekable() const
 {
-    return m_private->maxMediaTimeSeekable();
+    return m_private->maxTimeSeekable();
 }
 
 MediaTime MediaPlayer::minTimeSeekable() const
 {
-    return m_private->minMediaTimeSeekable();
+    return m_private->minTimeSeekable();
 }
 
 double MediaPlayer::seekableTimeRangesLastModifiedTime()
@@ -1817,9 +1813,9 @@ AVPlayer* MediaPlayer::objCAVFoundationAVPlayer() const
 
 #endif
 
-bool MediaPlayer::performTaskAtMediaTime(Function<void()>&& task, const MediaTime& time)
+bool MediaPlayer::performTaskAtTime(Function<void()>&& task, const MediaTime& time)
 {
-    return m_private->performTaskAtMediaTime(WTFMove(task), time);
+    return m_private->performTaskAtTime(WTFMove(task), time);
 }
 
 bool MediaPlayer::shouldIgnoreIntrinsicSize()

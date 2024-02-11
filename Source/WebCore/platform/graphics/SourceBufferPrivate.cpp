@@ -91,10 +91,10 @@ void SourceBufferPrivate::setClient(SourceBufferPrivateClient& client)
     m_client = client;
 }
 
-MediaTime SourceBufferPrivate::currentMediaTime() const
+MediaTime SourceBufferPrivate::currentTime() const
 {
     if (RefPtr mediaSource = m_mediaSource.get())
-        return mediaSource->currentMediaTime();
+        return mediaSource->currentTime();
     return { };
 }
 
@@ -161,7 +161,7 @@ void SourceBufferPrivate::reenqueSamples(TrackID trackID)
     if (trackBuffer == m_trackBufferMap.end())
         return;
     trackBuffer->second->setNeedsReenqueueing(true);
-    reenqueueMediaForTime(trackBuffer->second, trackID, currentMediaTime());
+    reenqueueMediaForTime(trackBuffer->second, trackID, currentTime());
 }
 
 Ref<SourceBufferPrivate::ComputeSeekPromise> SourceBufferPrivate::computeSeekTime(const SeekTarget& target)
@@ -1044,7 +1044,7 @@ bool SourceBufferPrivate::processMediaSample(SourceBufferPrivateClient& client, 
 
             // Only force the TrackBuffer to re-enqueue if the removed ranges overlap with enqueued and possibly
             // not yet displayed samples.
-            MediaTime currentTime = currentMediaTime();
+            MediaTime currentTime = this->currentTime();
             if (trackBuffer.highestEnqueuedPresentationTime().isValid() && currentTime < trackBuffer.highestEnqueuedPresentationTime()) {
                 PlatformTimeRanges possiblyEnqueuedRanges(currentTime, trackBuffer.highestEnqueuedPresentationTime());
                 possiblyEnqueuedRanges.intersectWith(erasedRanges);

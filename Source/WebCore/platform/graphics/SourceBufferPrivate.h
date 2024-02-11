@@ -163,7 +163,7 @@ public:
 
 protected:
     WEBCORE_EXPORT explicit SourceBufferPrivate(MediaSourcePrivate&, RefCountedSerialFunctionDispatcher&);
-    MediaTime currentMediaTime() const;
+    MediaTime currentTime() const;
     MediaTime mediaSourceDuration() const;
 
     WEBCORE_EXPORT void ensureOnDispatcher(Function<void()>&&) const;

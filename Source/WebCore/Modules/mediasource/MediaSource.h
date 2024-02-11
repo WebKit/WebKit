@@ -101,7 +101,7 @@ public:
 
     ExceptionOr<void> setDuration(double);
     ExceptionOr<void> setDurationInternal(const MediaTime&);
-    MediaTime currentMediaTime() const;
+    MediaTime currentTime() const;
 
     enum class ReadyState { Closed, Open, Ended };
     ReadyState readyState() const;

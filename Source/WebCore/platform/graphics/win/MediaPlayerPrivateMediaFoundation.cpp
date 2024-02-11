@@ -295,7 +295,7 @@ void MediaPlayerPrivateMediaFoundation::setRate(float rate)
     rateControl->SetRate(reduceSamplesInStream, rate);
 }
 
-MediaTime MediaPlayerPrivateMediaFoundation::durationMediaTime() const
+MediaTime MediaPlayerPrivateMediaFoundation::duration() const
 {
     if (!m_mediaSource)
         return MediaTime::zeroTime();
@@ -312,10 +312,10 @@ MediaTime MediaPlayerPrivateMediaFoundation::durationMediaTime() const
     return MediaTime(duration, tenMegahertz);
 }
 
-MediaTime MediaPlayerPrivateMediaFoundation::currentMediaTime() const
+MediaTime MediaPlayerPrivateMediaFoundation::currentTime() const
 {
     if (m_sessionEnded)
-        return durationMediaTime();
+        return duration();
     if (!m_mediaSession)
         return MediaTime::invalidTime();
     COMPtr<IMFClock> clock;
@@ -380,9 +380,9 @@ MediaPlayer::ReadyState MediaPlayerPrivateMediaFoundation::readyState() const
     return m_readyState;
 }
 
-MediaTime MediaPlayerPrivateMediaFoundation::maxMediaTimeSeekable() const
+MediaTime MediaPlayerPrivateMediaFoundation::maxTimeSeekable() const
 {
-    return durationMediaTime();
+    return duration();
 }
 
 const PlatformTimeRanges& MediaPlayerPrivateMediaFoundation::buffered() const

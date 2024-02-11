@@ -87,7 +87,7 @@ public:
     virtual MediaPlayer::ReadyState mediaPlayerReadyState() const = 0;
     virtual void setMediaPlayerReadyState(MediaPlayer::ReadyState) = 0;
 
-    MediaTime currentMediaTime() const;
+    MediaTime currentTime() const;
 
     Ref<MediaTimePromise> waitForTarget(const SeekTarget&);
     Ref<MediaPromise> seekToTime(const MediaTime&);

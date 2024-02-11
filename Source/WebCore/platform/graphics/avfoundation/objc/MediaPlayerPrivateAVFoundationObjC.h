@@ -128,7 +128,7 @@ public:
 
     void outputObscuredDueToInsufficientExternalProtectionChanged(bool);
 
-    MediaTime currentMediaTime() const final;
+    MediaTime currentTime() const final;
     void outputMediaDataWillChange();
     void processChapterTracks();
 
@@ -337,16 +337,16 @@ private:
 
     AVPlayer *objCAVFoundationAVPlayer() const final { return m_avPlayer.get(); }
 
-    bool performTaskAtMediaTime(Function<void()>&&, const MediaTime&) final;
+    bool performTaskAtTime(Function<void()>&&, const MediaTime&) final;
     void setShouldObserveTimeControlStatus(bool);
 
     void setPreferredDynamicRangeMode(DynamicRangeMode) final;
     void audioOutputDeviceChanged() final;
 
-    void currentMediaTimeDidChange(MediaTime&&) const;
+    void currentTimeDidChange(MediaTime&&) const;
     bool setCurrentTimeDidChangeCallback(MediaPlayer::CurrentTimeDidChangeCallback&&) final;
 
-    bool currentMediaTimeIsBuffered() const;
+    bool currentTimeIsBuffered() const;
 
     bool supportsPlayAtHostTime() const final { return true; }
     bool supportsPauseAtHostTime() const final { return true; }
@@ -441,7 +441,7 @@ private:
     RetainPtr<NSArray> m_currentMetaData;
     FloatSize m_cachedPresentationSize;
     mutable MediaPlayer::CurrentTimeDidChangeCallback m_currentTimeDidChangeCallback;
-    mutable MediaTime m_cachedCurrentMediaTime { -1, 1, 0 };
+    mutable MediaTime m_cachedCurrentTime { -1, 1, 0 };
     mutable MediaTime m_lastPeriodicObserverMediaTime;
     mutable Markable<WallTime> m_wallClockAtCachedCurrentTime;
     mutable int m_timeControlStatusAtCachedCurrentTime { 0 };
