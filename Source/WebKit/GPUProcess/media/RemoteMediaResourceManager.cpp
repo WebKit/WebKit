@@ -49,7 +49,6 @@ RemoteMediaResourceManager::RemoteMediaResourceManager()
 
 RemoteMediaResourceManager::~RemoteMediaResourceManager()
 {
-    assertIsMainThread();
     Locker locker { m_lock };
     // Shutdown any stale RemoteMediaResources. We must complete this step in a follow-up task to prevent re-entry in RemoteMediaResourceManager.
     callOnMainRunLoop([resources = WTFMove(m_remoteMediaResources)] {
