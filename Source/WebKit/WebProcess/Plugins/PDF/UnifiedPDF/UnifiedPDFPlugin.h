@@ -211,6 +211,7 @@ private:
     void extendCurrentSelectionIfNeeded();
     void updateCurrentSelectionForContextMenuEventIfNeeded();
     void continueTrackingSelection(PDFDocumentLayout::PageIndex, const WebCore::IntPoint& pagePoint);
+    void stopTrackingSelection();
     void setCurrentSelection(RetainPtr<PDFSelection>&&);
     void repaintOnSelectionActiveStateChangeIfNeeded(ActiveStateChangeReason);
     bool isSelectionActiveAfterContextMenuInteraction() const;
@@ -319,6 +320,7 @@ private:
     AnnotationTrackingState m_annotationTrackingState;
 
     struct SelectionTrackingData {
+        bool isActivelyTrackingSelection { false };
         bool shouldExtendCurrentSelection { false };
         bool shouldMakeMarqueeSelection { false };
         bool lastHandledEventWasContextMenuEvent { false };

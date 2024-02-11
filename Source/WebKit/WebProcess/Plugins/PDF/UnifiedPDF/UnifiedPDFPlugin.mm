@@ -1235,7 +1235,9 @@ bool UnifiedPDFPlugin::handleMouseEvent(const WebMouseEvent& event)
                 return true;
             }
 
-            continueTrackingSelection(*pageIndex, pointInPageSpace);
+            if (m_selectionTrackingData.isActivelyTrackingSelection)
+                continueTrackingSelection(*pageIndex, pointInPageSpace);
+
             return true;
         }
         default:
@@ -1273,7 +1275,7 @@ bool UnifiedPDFPlugin::handleMouseEvent(const WebMouseEvent& event)
             return false;
         }
     case WebEventType::MouseUp:
-        m_selectionTrackingData.selectionToExtendWith = nullptr;
+        stopTrackingSelection();
 
         switch (mouseEventButton) {
         case WebMouseEventButton::Left:
@@ -1325,6 +1327,7 @@ bool UnifiedPDFPlugin::handleContextMenuEvent(const WebMouseEvent& event)
             return;
         if (selectedItemTag)
             performContextMenuAction(toContextMenuItemTag(selectedItemTag.value()));
+        stopTrackingSelection();
         repaintOnSelectionActiveStateChangeIfNeeded(ActiveStateChangeReason::HandledContextMenuEvent);
     });
 
@@ -1570,6 +1573,7 @@ void UnifiedPDFPlugin::beginTrackingSelection(PDFDocumentLayout::PageIndex pageI
 {
     auto modifiers = event.modifiers();
 
+    m_selectionTrackingData.isActivelyTrackingSelection = true;
     m_selectionTrackingData.granularity = selectionGranularityForMouseEvent(event);
     m_selectionTrackingData.startPageIndex = pageIndex;
     m_selectionTrackingData.startPagePoint = pagePoint;
@@ -1630,6 +1634,12 @@ void UnifiedPDFPlugin::continueTrackingSelection(PDFDocumentLayout::PageIndex pa
     case SelectionGranularity::Line:
         notImplemented();
     }
+}
+
+void UnifiedPDFPlugin::stopTrackingSelection()
+{
+    m_selectionTrackingData.selectionToExtendWith = nullptr;
+    m_selectionTrackingData.isActivelyTrackingSelection = false;
 }
 
 void UnifiedPDFPlugin::repaintOnSelectionActiveStateChangeIfNeeded(ActiveStateChangeReason reason)
