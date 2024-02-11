@@ -257,6 +257,33 @@ void RenderFileUploadControl::paintControl(PaintInfo& paintInfo, const LayoutPoi
 
 void RenderFileUploadControl::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
+    // FIXME: Fix field-sizing: content with size containment
+    // https://bugs.webkit.org/show_bug.cgi?id=269169
+    if (style().fieldSizing() == FieldSizing::Content) {
+        const String label = fileTextValue();
+        const FontCascade& font = style().fontCascade();
+
+        float labelWidth = font.width(constructTextRun(label, style(), ExpansionBehavior::allowRightOnly()));
+        maxLogicalWidth = labelWidth;
+        if (HTMLInputElement* button = uploadButton()) {
+            if (RenderObject* buttonRenderer = button->renderer()) {
+                maxLogicalWidth += buttonRenderer->maxPreferredLogicalWidth();
+                maxLogicalWidth += afterButtonSpacing;
+                if (inputElement().icon()) {
+#if PLATFORM(COCOA)
+                    int iconLogicalWidth = nodeLogicalHeight(uploadButton());
+#endif
+                    maxLogicalWidth += iconLogicalWidth;
+                    maxLogicalWidth += iconFilenameSpacing;
+                }
+            }
+        }
+
+        if (!style().logicalWidth().isPercentOrCalculated())
+            minLogicalWidth = maxLogicalWidth;
+        return;
+    }
+
     if (shouldApplySizeOrInlineSizeContainment()) {
         if (auto logicalWidth = explicitIntrinsicInnerLogicalWidth()) {
             minLogicalWidth = logicalWidth.value();
@@ -286,6 +313,10 @@ void RenderFileUploadControl::computeIntrinsicLogicalWidths(LayoutUnit& minLogic
 void RenderFileUploadControl::computePreferredLogicalWidths()
 {
     ASSERT(preferredLogicalWidthsDirty());
+    if (style().fieldSizing() == FieldSizing::Content) {
+        RenderBlockFlow::computePreferredLogicalWidths();
+        return;
+    }
 
     m_minPreferredLogicalWidth = 0;
     m_maxPreferredLogicalWidth = 0;
@@ -324,13 +355,20 @@ String RenderFileUploadControl::fileTextValue() const
     auto& input = inputElement();
     if (!input.files())
         return { };
+    auto useContentSizing = style().fieldSizing() == FieldSizing::Content;
     if (input.files()->length() && !input.displayString().isEmpty()) {
+        if (useContentSizing)
+            return input.displayString();
+
         if (input.files()->length() == 1)
             return StringTruncator::centerTruncate(input.displayString(), maxFilenameLogicalWidth(), style().fontCascade());
 
         return StringTruncator::rightTruncate(input.displayString(), maxFilenameLogicalWidth(), style().fontCascade());
     }
-    return theme().fileListNameForWidth(input.files(), style().fontCascade(), maxFilenameLogicalWidth(), input.multiple());
+    return useContentSizing
+        ? theme().fileListName(input.files(), input.multiple())
+        : theme().fileListNameForWidth(input.files(), style().fontCascade(), maxFilenameLogicalWidth(), input.multiple());
+
 }
     
 } // namespace WebCore

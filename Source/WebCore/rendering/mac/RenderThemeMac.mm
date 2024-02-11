@@ -1203,6 +1203,16 @@ String RenderThemeMac::fileListNameForWidth(const FileList* fileList, const Font
     return StringTruncator::centerTruncate(strToTruncate, width, font);
 }
 
+String RenderThemeMac::fileListName(const FileList* fileList, bool multipleFilesAllowed) const
+{
+    if (fileList->isEmpty())
+        return fileListDefaultLabel(multipleFilesAllowed);
+    if (fileList->length() == 1)
+        return [[NSFileManager defaultManager] displayNameAtPath:(fileList->item(0)->path())];
+
+    return multipleFileUploadText(fileList->length());
+}
+
 #if ENABLE(SERVICE_CONTROLS)
 IntSize RenderThemeMac::imageControlsButtonSize() const
 {

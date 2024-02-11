@@ -137,6 +137,7 @@ private:
 
 private:
     String fileListNameForWidth(const FileList*, const FontCascade&, int width, bool multipleFilesAllowed) const final;
+    String fileListName(const FileList*, bool multipleFilesAllowed) const final;
 
     Color systemColor(CSSValueID, OptionSet<StyleColorOptions>) const final;
 

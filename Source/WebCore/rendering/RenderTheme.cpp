@@ -1970,6 +1970,16 @@ String RenderTheme::fileListNameForWidth(const FileList* fileList, const FontCas
     return StringTruncator::centerTruncate(string, width, font);
 }
 
+String RenderTheme::fileListName(const FileList* fileList, bool multipleFilesAllowed) const
+{
+    if (fileList->isEmpty())
+        return fileListDefaultLabel(multipleFilesAllowed);
+    if (fileList->length() == 1)
+        return fileList->item(0)->name();
+
+    return multipleFileUploadText(fileList->length());
+}
+
 #if USE(SYSTEM_PREVIEW)
 void RenderTheme::paintSystemPreviewBadge(Image& image, const PaintInfo& paintInfo, const FloatRect& rect)
 {
