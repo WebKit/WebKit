@@ -152,7 +152,7 @@ void MockMediaPlayerMediaSource::setPageIsVisible(bool, String&&)
 
 bool MockMediaPlayerMediaSource::seeking() const
 {
-    return !m_seekCompleted;
+    return !!m_lastSeekTarget;
 }
 
 bool MockMediaPlayerMediaSource::paused() const
@@ -195,7 +195,7 @@ void MockMediaPlayerMediaSource::paint(GraphicsContext&, const FloatRect&)
 
 MediaTime MockMediaPlayerMediaSource::currentMediaTime() const
 {
-    return m_currentTime;
+    return m_lastSeekTarget ? m_lastSeekTarget->time : m_currentTime;
 }
 
 bool MockMediaPlayerMediaSource::currentMediaTimeMayProgress() const
@@ -216,7 +216,7 @@ MediaTime MockMediaPlayerMediaSource::durationMediaTime() const
 
 void MockMediaPlayerMediaSource::seekToTarget(const SeekTarget& target)
 {
-    m_seekCompleted = false;
+    m_lastSeekTarget = target;
     m_mediaSourcePrivate->waitForTarget(target)->whenSettled(RunLoop::current(), [this, weakThis = WeakPtr { this }](auto&& result) {
         if (!weakThis || !result)
             return;
@@ -225,7 +225,7 @@ void MockMediaPlayerMediaSource::seekToTarget(const SeekTarget& target)
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return;
-            m_seekCompleted = true;
+            m_lastSeekTarget.reset();
             m_currentTime = seekTime;
 
             if (auto player = m_player.get()) {

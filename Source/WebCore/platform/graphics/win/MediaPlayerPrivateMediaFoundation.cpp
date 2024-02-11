@@ -51,7 +51,7 @@
 static const GUID MFSamplePresenterSampleCounter =
 { 0x869f1f7c, 0x3496, 0x48a9, { 0x88, 0xe3, 0x69, 0x85, 0x79, 0xd0, 0x8c, 0xb6 } };
 
-static const double tenMegahertz = 10000000;
+static constexpr uint32_t tenMegahertz = 10000000;
 
 namespace WebCore {
 
@@ -295,46 +295,46 @@ void MediaPlayerPrivateMediaFoundation::setRate(float rate)
     rateControl->SetRate(reduceSamplesInStream, rate);
 }
 
-float MediaPlayerPrivateMediaFoundation::duration() const
+MediaTime MediaPlayerPrivateMediaFoundation::durationMediaTime() const
 {
     if (!m_mediaSource)
-        return 0;
+        return MediaTime::zeroTime();
 
     IMFPresentationDescriptor* descriptor;
     if (!SUCCEEDED(m_mediaSource->CreatePresentationDescriptor(&descriptor)))
-        return 0;
+        return MediaTime::zeroTime();
     
     UINT64 duration;
     if (!SUCCEEDED(descriptor->GetUINT64(MF_PD_DURATION, &duration)))
         duration = 0;
     descriptor->Release();
     
-    return static_cast<float>(duration) / tenMegahertz;
+    return MediaTime(duration, tenMegahertz);
 }
 
-float MediaPlayerPrivateMediaFoundation::currentTime() const
+MediaTime MediaPlayerPrivateMediaFoundation::currentMediaTime() const
 {
     if (m_sessionEnded)
-        return duration();
+        return durationMediaTime();
     if (!m_mediaSession)
-        return 0;
+        return MediaTime::invalidTime();
     COMPtr<IMFClock> clock;
     HRESULT hr = m_mediaSession->GetClock(&clock);
     if (FAILED(hr))
-        return 0;
+        return MediaTime::invalidTime();
 
     LONGLONG clockTime;
     MFTIME systemTime;
     hr = clock->GetCorrelatedTime(0, &clockTime, &systemTime);
     if (FAILED(hr))
-        return 0;
+        return MediaTime::invalidTime();
 
     // clockTime is in 100 nanoseconds, we need to convert to seconds.
-    float currentTime = clockTime / tenMegahertz;
+    auto currentTime = MediaTime(clockTime, tenMegahertz);
 
-    if (m_buffered.length() && currentTime > m_buffered.maximumBufferedTime().toFloat()) {
+    if (m_buffered.length() && currentTime > m_buffered.maximumBufferedTime()) {
         PlatformTimeRanges ranges;
-        ranges.add(MediaTime::zeroTime(), MediaTime::createWithFloat(currentTime));
+        ranges.add(MediaTime::zeroTime(), currentTime);
         m_buffered = WTFMove(ranges);
     }
     return currentTime;
@@ -380,9 +380,9 @@ MediaPlayer::ReadyState MediaPlayerPrivateMediaFoundation::readyState() const
     return m_readyState;
 }
 
-float MediaPlayerPrivateMediaFoundation::maxTimeSeekable() const
+MediaTime MediaPlayerPrivateMediaFoundation::maxMediaTimeSeekable() const
 {
-    return durationDouble();
+    return durationMediaTime();
 }
 
 const PlatformTimeRanges& MediaPlayerPrivateMediaFoundation::buffered() const

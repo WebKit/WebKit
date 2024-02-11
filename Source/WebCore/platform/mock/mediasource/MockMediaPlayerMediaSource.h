@@ -103,10 +103,10 @@ private:
 
     MediaTime m_currentTime;
     MediaTime m_duration;
+    std::optional<SeekTarget> m_lastSeekTarget;
     MediaPlayer::ReadyState m_readyState { MediaPlayer::ReadyState::HaveNothing };
     MediaPlayer::NetworkState m_networkState { MediaPlayer::NetworkState::Empty };
     bool m_playing { false };
-    bool m_seekCompleted { false };
 };
 
 }

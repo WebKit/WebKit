@@ -125,15 +125,16 @@ public:
     virtual double durationDouble() const { return duration(); }
     virtual MediaTime durationMediaTime() const { return MediaTime::createWithDouble(durationDouble()); }
 
-    virtual float currentTime() const { return 0; }
-    virtual double currentTimeDouble() const { return currentTime(); }
-    virtual MediaTime currentMediaTime() const { return MediaTime::createWithDouble(currentTimeDouble()); }
+    WEBCORE_EXPORT virtual MediaTime currentOrPendingSeekTime() const;
+    virtual MediaTime currentMediaTime() const { return MediaTime::zeroTime(); }
     virtual bool currentMediaTimeMayProgress() const { return readyState() >= MediaPlayer::ReadyState::HaveFutureData; }
 
     virtual bool setCurrentTimeDidChangeCallback(MediaPlayer::CurrentTimeDidChangeCallback&&) { return false; }
 
     virtual MediaTime getStartDate() const { return MediaTime::createWithDouble(std::numeric_limits<double>::quiet_NaN()); }
 
+    virtual void willSeekToTarget(const MediaTime& time) { m_pendingSeekTime = time; }
+    virtual MediaTime pendingSeekTime() const { return m_pendingSeekTime; }
     virtual void seekToTarget(const SeekTarget&) = 0;
     virtual bool seeking() const = 0;
 
@@ -359,6 +360,7 @@ public:
 protected:
     mutable PlatformTimeRanges m_seekable;
     bool m_shouldCheckHardwareSupport { false };
+    MediaTime m_pendingSeekTime { MediaTime::invalidTime() };
 };
 
 }

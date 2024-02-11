@@ -50,11 +50,15 @@
 
 namespace WebCore {
 
+class AudioTrack;
 class ContentType;
+class Settings;
 class SourceBuffer;
 class SourceBufferList;
 class SourceBufferPrivate;
+class TextTrack;
 class TimeRanges;
+class VideoTrack;
 
 class MediaSource
     : public MediaSourcePrivateClient
@@ -77,7 +81,7 @@ public:
     void removedFromRegistry();
     void openIfInEndedState();
     void openIfDeferredOpen();
-    virtual bool isOpen() const;
+    bool isOpen() const;
     virtual void monitorSourceBuffers();
     bool isClosed() const;
     bool isEnded() const;
@@ -97,13 +101,11 @@ public:
 
     ExceptionOr<void> setDuration(double);
     ExceptionOr<void> setDurationInternal(const MediaTime&);
-    MediaTime currentTime() const;
+    MediaTime currentMediaTime() const;
 
     enum class ReadyState { Closed, Open, Ended };
     ReadyState readyState() const;
     ExceptionOr<void> endOfStream(std::optional<EndOfStreamError>);
-
-    HTMLMediaElement* mediaElement() const { return m_mediaElement.get(); }
 
     SourceBufferList* sourceBuffers() { return m_sourceBuffers.get(); }
     SourceBufferList* activeSourceBuffers() { return m_activeSourceBuffers.get(); }
@@ -140,6 +142,10 @@ public:
     void sourceBufferReceivedFirstInitializationSegmentChanged();
     void sourceBufferActiveTrackFlagChanged(bool);
     void setMediaPlayerReadyState(MediaPlayer::ReadyState);
+    void incrementDroppedFrameCount();
+    void addAudioTrackToElement(Ref<AudioTrack>&&);
+    void addTextTrackToElement(Ref<TextTrack>&&);
+    void addVideoTrackToElement(Ref<VideoTrack>&&);
 
 protected:
     explicit MediaSource(ScriptExecutionContext&);
@@ -150,11 +156,15 @@ protected:
 
     void scheduleEvent(const AtomString& eventName);
     void notifyElementUpdateMediaState() const;
-    void ensureWeakOnDispatcher(Function<void()>&&) const;
-    RefPtr<MediaSourcePrivate> m_private;
-    const Ref<RefCountedSerialFunctionDispatcher> m_dispatcher;
+    void ensureWeakOnDispatcher(Function<void()>&&, bool forceRun = false) const;
 
     virtual void elementDetached() { }
+
+    const Settings& settings() const;
+
+    RefPtr<MediaSourcePrivate> m_private;
+    const Ref<RefCountedSerialFunctionDispatcher> m_dispatcher;
+    WeakPtr<HTMLMediaElement, WeakPtrImplWithEventTargetData> m_mediaElement;
 
 private:
     // ActiveDOMObject.
@@ -205,7 +215,6 @@ private:
     RefPtr<SourceBufferList> m_sourceBuffers;
     RefPtr<SourceBufferList> m_activeSourceBuffers;
     PlatformTimeRanges m_liveSeekable;
-    WeakPtr<HTMLMediaElement, WeakPtrImplWithEventTargetData> m_mediaElement;
     std::optional<SeekTarget> m_pendingSeekTarget;
     std::optional<MediaTimePromise::Producer> m_seekTargetPromise;
     ReadyState m_readyState { ReadyState::Closed };

@@ -1312,8 +1312,8 @@ void SourceBufferPrivateAVFObjC::setDecompressionSession(WebCoreDecompressionSes
 
 RefPtr<MediaPlayerPrivateMediaSourceAVFObjC> SourceBufferPrivateAVFObjC::player() const
 {
-    if (RefPtr mediaSource = downcast<MediaSourcePrivateAVFObjC>(m_mediaSource.get()))
-        return mediaSource->player();
+    if (RefPtr mediaSource = m_mediaSource.get())
+        return static_cast<MediaPlayerPrivateMediaSourceAVFObjC*>(mediaSource->player().get());
     return nullptr;
 }
 

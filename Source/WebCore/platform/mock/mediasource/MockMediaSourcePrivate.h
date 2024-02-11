@@ -48,9 +48,7 @@ public:
 
     constexpr MediaPlatformType platformType() const final { return MediaPlatformType::Mock; }
 
-    WeakPtr<MockMediaPlayerMediaSource> player() const { return m_player; }
-
-    MediaTime currentMediaTime() const final;
+    RefPtr<MediaPlayerPrivateInterface> player() const final;
 
     std::optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics();
 

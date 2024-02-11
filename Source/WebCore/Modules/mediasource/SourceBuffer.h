@@ -120,7 +120,6 @@ public:
     using SourceBufferPrivateClient::ref;
     using SourceBufferPrivateClient::deref;
 
-    Document& document() const;
     enum class AppendMode { Segments, Sequence };
     AppendMode mode() const { return m_mode; }
     ExceptionOr<void> setMode(AppendMode);
@@ -151,6 +150,8 @@ public:
 
 protected:
     SourceBuffer(Ref<SourceBufferPrivate>&&, MediaSource&);
+    Document& document() const;
+    const Settings& settings() const;
 
 private:
     void refEventTarget() final { ref(); }

@@ -44,7 +44,6 @@
 #include <wtf/Lock.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/MediaTime.h>
-#include <wtf/RefCounted.h>
 #include <wtf/StdUnorderedMap.h>
 
 #if ENABLE(MEDIA_SOURCE)
@@ -198,6 +197,11 @@ public:
     void requestHostingContextID(LayerHostingContextIDCallback&&) override;
     LayerHostingContextID hostingContextID()const override;
     void setLayerHostingContextID(LayerHostingContextID  inID);
+
+    MediaTime durationMediaTime() const final;
+    MediaTime currentMediaTime() const final;
+    MediaTime currentOrPendingSeekTime() const final;
+
 private:
     class TimeProgressEstimator final {
     public:
@@ -208,7 +212,8 @@ private:
         void pause();
         void setTime(const MediaTime&, const MonotonicTime& wallTime, std::optional<bool> timeIsProgressing = std::nullopt);
         void setRate(double);
-
+        Lock& lock() const { return m_lock; };
+        MediaTime currentTimeWithLockHeld() const;
     private:
         mutable Lock m_lock;
         bool m_timeIsProgressing WTF_GUARDED_BY_LOCK(m_lock) { false };
@@ -286,11 +291,10 @@ private:
 
     void setPageIsVisible(bool, String&& sceneIdentifier) final;
 
-    MediaTime durationMediaTime() const final;
-    MediaTime currentMediaTime() const final;
-
     MediaTime getStartDate() const final;
 
+    void willSeekToTarget(const MediaTime&) final;
+    MediaTime pendingSeekTime() const final;
     void seekToTarget(const WebCore::SeekTarget&) final;
     bool seeking() const final;
 
@@ -497,7 +501,7 @@ private:
     double m_rate { 1 };
     long m_platformErrorCode { 0 };
     bool m_muted { false };
-    bool m_seeking { false };
+    std::atomic<bool> m_seeking { false };
     bool m_isCurrentPlaybackTargetWireless { false };
     bool m_waitingForKey { false };
     std::optional<bool> m_shouldMaintainAspectRatio;

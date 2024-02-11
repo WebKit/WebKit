@@ -62,6 +62,14 @@ auto MediaPlayerPrivateInterface::asyncVideoPlaybackQualityMetrics() -> Ref<Vide
     return VideoPlaybackQualityMetricsPromise::createAndReject(PlatformMediaError::NotSupportedError);
 }
 
+MediaTime MediaPlayerPrivateInterface::currentOrPendingSeekTime() const
+{
+    auto pendingSeekTime = this->pendingSeekTime();
+    if (pendingSeekTime.isValid())
+        return pendingSeekTime;
+    return currentMediaTime();
+}
+
 }
 
 #endif

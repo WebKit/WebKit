@@ -130,11 +130,12 @@ bool ManagedMediaSource::isBuffered(const PlatformTimeRanges& ranges) const
 
 void ManagedMediaSource::ensurePrefsRead()
 {
+    assertIsCurrent(m_dispatcher);
+
     if (m_lowThreshold && m_highThreshold)
         return;
-    ASSERT(mediaElement());
-    m_lowThreshold = mediaElement()->document().settings().managedMediaSourceLowThreshold();
-    m_highThreshold = mediaElement()->document().settings().managedMediaSourceHighThreshold();
+    m_lowThreshold = settings().managedMediaSourceLowThreshold();
+    m_highThreshold = settings().managedMediaSourceHighThreshold();
 }
 
 void ManagedMediaSource::monitorSourceBuffers()
@@ -146,7 +147,7 @@ void ManagedMediaSource::monitorSourceBuffers()
             setStreaming(true);
             return;
         }
-        auto currentTime = this->currentTime();
+        auto currentTime = currentMediaTime();
 
         ensurePrefsRead();
 
@@ -172,18 +173,6 @@ void ManagedMediaSource::streamingTimerFired()
     ALWAYS_LOG(LOGIDENTIFIER, "Disabling streaming due to policy ", *m_highThreshold);
     m_streamingAllowed = false;
     notifyElementUpdateMediaState();
-}
-
-bool ManagedMediaSource::isOpen() const
-{
-#if !ENABLE(WIRELESS_PLAYBACK_TARGET)
-    return MediaSource::isOpen();
-#else
-    return MediaSource::isOpen()
-        && (mediaElement() && (!mediaElement()->document().settings().managedMediaSourceNeedsAirPlay()
-            || mediaElement()->isWirelessPlaybackTargetDisabled()
-            || mediaElement()->hasWirelessPlaybackTargetAlternative()));
-#endif
 }
 
 } // namespace WebCore

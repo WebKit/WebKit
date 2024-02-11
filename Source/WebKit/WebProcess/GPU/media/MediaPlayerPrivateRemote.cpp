@@ -119,7 +119,12 @@ MediaPlayerPrivateRemote::TimeProgressEstimator::TimeProgressEstimator(const Med
 MediaTime MediaPlayerPrivateRemote::TimeProgressEstimator::currentTime() const
 {
     Locker locker { m_lock };
+    return currentTimeWithLockHeld();
+}
 
+MediaTime MediaPlayerPrivateRemote::TimeProgressEstimator::currentTimeWithLockHeld() const
+{
+    assertIsHeld(m_lock);
     if (!m_timeIsProgressing)
         return m_cachedMediaTime;
 
@@ -337,6 +342,28 @@ MediaTime MediaPlayerPrivateRemote::durationMediaTime() const
 MediaTime MediaPlayerPrivateRemote::currentMediaTime() const
 {
     return m_currentTimeEstimator.currentTime();
+}
+
+void MediaPlayerPrivateRemote::willSeekToTarget(const MediaTime& time)
+{
+    Locker locker { m_currentTimeEstimator.lock() };
+    MediaPlayerPrivateInterface::willSeekToTarget(time);
+}
+
+MediaTime MediaPlayerPrivateRemote::pendingSeekTime() const
+{
+    ASSERT_NOT_REACHED();
+    return MediaTime::invalidTime();
+}
+
+MediaTime MediaPlayerPrivateRemote::currentOrPendingSeekTime() const
+{
+    Locker locker { m_currentTimeEstimator.lock() };
+
+    auto pendingSeekTime = MediaPlayerPrivateInterface::pendingSeekTime();
+    if (pendingSeekTime.isValid())
+        return pendingSeekTime;
+    return m_currentTimeEstimator.currentTimeWithLockHeld();
 }
 
 void MediaPlayerPrivateRemote::seekToTarget(const WebCore::SeekTarget& target)

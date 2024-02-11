@@ -141,8 +141,6 @@ private:
     bool waitingForKey() const final { return m_waitingForKey; }
 #endif
 
-    float currentTime() const final;
-
     // engine support
     class Factory;
     static bool isAvailable();

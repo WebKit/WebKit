@@ -1555,11 +1555,6 @@ MediaTime MediaPlayerPrivateAVFoundationObjC::platformDuration() const
     return MediaTime::invalidTime();
 }
 
-float MediaPlayerPrivateAVFoundationObjC::currentTime() const
-{
-    return currentMediaTime().toFloat();
-}
-
 MediaTime MediaPlayerPrivateAVFoundationObjC::currentMediaTime() const
 {
     if (!metaDataAvailable() || !m_avPlayerItem)

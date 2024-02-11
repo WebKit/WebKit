@@ -466,6 +466,8 @@ MediaTime MediaPlayerPrivateMediaSourceAVFObjC::durationMediaTime() const
 
 MediaTime MediaPlayerPrivateMediaSourceAVFObjC::currentMediaTime() const
 {
+    if (seeking())
+        return m_pendingSeek ? m_pendingSeek->time : m_lastSeekTime;
     MediaTime synchronizerTime = clampTimeToLastSeekTime(PAL::toMediaTime(PAL::CMTimebaseGetTime([m_synchronizer timebase])));
     if (synchronizerTime < MediaTime::zeroTime())
         return MediaTime::zeroTime();

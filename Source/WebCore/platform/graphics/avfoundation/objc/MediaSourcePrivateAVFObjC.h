@@ -64,7 +64,7 @@ public:
 
     constexpr MediaPlatformType platformType() const final { return MediaPlatformType::AVFObjC; }
 
-    MediaPlayerPrivateMediaSourceAVFObjC* player() const { return m_player.get(); }
+    RefPtr<MediaPlayerPrivateInterface> player() const final;
 
     AddStatus addSourceBuffer(const ContentType&, bool webMParserEnabled, RefPtr<SourceBufferPrivate>&) final;
     void durationChanged(const MediaTime&) final;
@@ -75,7 +75,6 @@ public:
 
     bool hasSelectedVideo() const;
 
-    MediaTime currentMediaTime() const final;
     void willSeek();
 
     FloatSize naturalSize() const;
@@ -111,6 +110,7 @@ public:
 
 private:
     MediaSourcePrivateAVFObjC(MediaPlayerPrivateMediaSourceAVFObjC&, MediaSourcePrivateClient&);
+    MediaPlayerPrivateMediaSourceAVFObjC* platformPlayer() const { return m_player.get(); }
 
     void notifyActiveSourceBuffersChanged() final;
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)

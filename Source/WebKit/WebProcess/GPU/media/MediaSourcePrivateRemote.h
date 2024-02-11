@@ -62,6 +62,7 @@ public:
     virtual ~MediaSourcePrivateRemote();
 
     // MediaSourcePrivate overrides
+    RefPtr<WebCore::MediaPlayerPrivateInterface> player() const final;
     constexpr WebCore::MediaPlatformType platformType() const final { return WebCore::MediaPlatformType::Remote; }
     AddStatus addSourceBuffer(const WebCore::ContentType&, bool webMParserEnabled, RefPtr<WebCore::SourceBufferPrivate>&) final;
     void removeSourceBuffer(WebCore::SourceBufferPrivate&) final { }
@@ -73,12 +74,6 @@ public:
     void setMediaPlayerReadyState(WebCore::MediaPlayer::ReadyState) final;
 
     void setTimeFudgeFactor(const MediaTime&) final;
-
-    MediaTime currentMediaTime() const final
-    {
-        ASSERT_NOT_REACHED();
-        return { };
-    }
 
     static WorkQueue& queue();
 

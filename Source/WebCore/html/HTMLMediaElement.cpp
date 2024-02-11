@@ -140,6 +140,7 @@
 #include <wtf/Language.h>
 #include <wtf/MathExtras.h>
 #include <wtf/MemoryPressureHandler.h>
+#include <wtf/NativePromise.h>
 #include <wtf/Ref.h>
 #include <wtf/text/CString.h>
 
@@ -3467,6 +3468,8 @@ void HTMLMediaElement::seekWithTolerance(const SeekTarget& target, bool fromDOM)
             addPlayedRange(m_lastSeekTime, now);
     }
     m_lastSeekTime = target.time;
+    if (m_player)
+        m_player->willSeekToTarget(target.time);
 
     // 5 - If the seek was in response to a DOM method call or setting of an IDL attribute, then continue
     // the script. The remainder of these steps must be run asynchronously.
@@ -3583,6 +3586,8 @@ void HTMLMediaElement::seekTask()
 
 void HTMLMediaElement::clearSeeking()
 {
+    if (m_player)
+        m_player->willSeekToTarget(MediaTime::invalidTime());
     setSeeking(false);
     m_seekRequested = false;
     m_pendingSeekType = NoSeek;
@@ -4205,6 +4210,17 @@ void HTMLMediaElement::detachMediaSource()
     m_mediaSource->detachFromElement(*this);
     m_mediaSource->setAsSrcObject(false);
     m_mediaSource = nullptr;
+}
+
+bool HTMLMediaElement::deferredMediaSourceOpenCanProgress() const
+{
+#if !ENABLE(WIRELESS_PLAYBACK_TARGET)
+    return true;
+#else
+    return !document().settings().managedMediaSourceNeedsAirPlay()
+        || isWirelessPlaybackTargetDisabled()
+        || hasWirelessPlaybackTargetAlternative();
+#endif
 }
 
 #endif
@@ -8389,13 +8405,6 @@ bool HTMLMediaElement::isSuspended() const
 {
     return document().activeDOMObjectsAreSuspended() || document().activeDOMObjectsAreStopped();
 }
-
-#if ENABLE(MEDIA_SOURCE)
-size_t HTMLMediaElement::maximumSourceBufferSize(const SourceBuffer& buffer) const
-{
-    return mediaSession().maximumMediaSourceBufferSize(buffer);
-}
-#endif
 
 void HTMLMediaElement::suspendPlayback()
 {

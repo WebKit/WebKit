@@ -56,6 +56,8 @@ public:
     static Ref<MediaSourcePrivateGStreamer> open(MediaSourcePrivateClient&, MediaPlayerPrivateGStreamerMSE&);
     virtual ~MediaSourcePrivateGStreamer();
 
+    RefPtr<MediaPlayerPrivateInterface> player() const final;
+
     constexpr MediaPlatformType platformType() const final { return MediaPlatformType::GStreamer; }
 
     AddStatus addSourceBuffer(const ContentType&, bool, RefPtr<SourceBufferPrivate>&) override;
@@ -65,8 +67,6 @@ public:
 
     MediaPlayer::ReadyState mediaPlayerReadyState() const override;
     void setMediaPlayerReadyState(MediaPlayer::ReadyState) override;
-
-    MediaTime currentMediaTime() const final;
 
     void notifyActiveSourceBuffersChanged() final;
 

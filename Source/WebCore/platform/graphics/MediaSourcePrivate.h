@@ -70,6 +70,7 @@ public:
     virtual ~MediaSourcePrivate();
 
     RefPtr<MediaSourcePrivateClient> client() const;
+    virtual RefPtr<MediaPlayerPrivateInterface> player() const = 0;
 
     virtual constexpr MediaPlatformType platformType() const = 0;
     virtual AddStatus addSourceBuffer(const ContentType&, bool webMParserEnabled, RefPtr<SourceBufferPrivate>&) = 0;
@@ -86,7 +87,7 @@ public:
     virtual MediaPlayer::ReadyState mediaPlayerReadyState() const = 0;
     virtual void setMediaPlayerReadyState(MediaPlayer::ReadyState) = 0;
 
-    virtual MediaTime currentMediaTime() const = 0;
+    MediaTime currentMediaTime() const;
 
     Ref<MediaTimePromise> waitForTarget(const SeekTarget&);
     Ref<MediaPromise> seekToTime(const MediaTime&);

@@ -47,6 +47,7 @@
 #include "URLKeepingBlobAlive.h"
 #include "VideoTrackClient.h"
 #include "VisibilityChangeClient.h"
+#include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/Observer.h>
@@ -315,7 +316,7 @@ public:
 //  Media Source.
     void detachMediaSource();
     void incrementDroppedFrameCount() { ++m_droppedVideoFrames; }
-    size_t maximumSourceBufferSize(const SourceBuffer&) const;
+    bool deferredMediaSourceOpenCanProgress() const;
 #endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)

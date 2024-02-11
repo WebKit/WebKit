@@ -420,6 +420,7 @@ public:
     void queueTaskOnEventLoop(Function<void()>&&);
 
     bool paused() const;
+    void willSeekToTarget(const MediaTime&);
     void seekToTime(const MediaTime&);
     void seekWhenPossible(const MediaTime&);
     void seekToTarget(const SeekTarget&);

@@ -135,7 +135,6 @@ public:
 
     double durationDouble() const final { return 0; }
 
-    double currentTimeDouble() const final { return 0; }
     void seekToTarget(const SeekTarget&) final { }
     bool seeking() const final { return false; }
 
@@ -805,8 +804,14 @@ MediaTime MediaPlayer::getStartDate() const
     return m_private->getStartDate();
 }
 
+void MediaPlayer::willSeekToTarget(const MediaTime& time)
+{
+    m_private->willSeekToTarget(time);
+}
+
 void MediaPlayer::seekToTarget(const SeekTarget& target)
 {
+    m_private->willSeekToTarget(MediaTime::invalidTime());
     m_private->seekToTarget(target);
 }
 

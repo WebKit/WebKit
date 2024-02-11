@@ -138,6 +138,11 @@ MediaSourcePrivate::AddStatus MediaSourcePrivateRemote::addSourceBuffer(const Co
     return returnedStatus;
 }
 
+RefPtr<WebCore::MediaPlayerPrivateInterface> MediaSourcePrivateRemote::player() const
+{
+    return m_mediaPlayerPrivate.get();
+}
+
 void MediaSourcePrivateRemote::durationChanged(const MediaTime& duration)
 {
     // Called from the MediaSource's dispatcher.
