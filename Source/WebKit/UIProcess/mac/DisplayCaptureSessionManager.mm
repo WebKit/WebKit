@@ -250,6 +250,27 @@ void DisplayCaptureSessionManager::promptForGetDisplayMedia(UserMediaPermissionR
 #endif
 }
 
+void DisplayCaptureSessionManager::cancelGetDisplayMediaPrompt(WebPageProxy& page)
+{
+#if HAVE(SCREEN_CAPTURE_KIT)
+    ASSERT(isAvailable());
+
+    if (!isAvailable() || !WebCore::ScreenCaptureKitSharingSessionManager::isAvailable())
+        return;
+
+    if (!page.preferences().useGPUProcessForDisplayCapture()) {
+        WebCore::ScreenCaptureKitSharingSessionManager::singleton().cancelGetDisplayMediaPrompt();
+        return;
+    }
+
+    auto gpuProcess = page.process().processPool().gpuProcess();
+    if (!gpuProcess)
+        return;
+
+    gpuProcess->cancelGetDisplayMediaPrompt();
+#endif
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)

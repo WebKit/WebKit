@@ -231,6 +231,12 @@ ScreenCaptureKitSharingSessionManager::~ScreenCaptureKitSharingSessionManager()
     }
 }
 
+void ScreenCaptureKitSharingSessionManager::cancelGetDisplayMediaPrompt()
+{
+    if (promptingInProgress())
+        cancelPicking();
+}
+
 void ScreenCaptureKitSharingSessionManager::cancelPicking()
 {
     ASSERT(isMainThread());

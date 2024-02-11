@@ -460,6 +460,11 @@ void GPUProcessProxy::promptForGetDisplayMedia(WebCore::DisplayCapturePromptType
 {
     sendWithAsyncReply(Messages::GPUProcess::PromptForGetDisplayMedia { type }, WTFMove(completionHandler));
 }
+
+void GPUProcessProxy::cancelGetDisplayMediaPrompt()
+{
+    send(Messages::GPUProcess::CancelGetDisplayMediaPrompt { }, 0);
+}
 #endif
 
 void GPUProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)

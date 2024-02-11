@@ -36,8 +36,14 @@ public:
 
     UserMediaPermissionRequestProxyMac(UserMediaPermissionRequestManagerProxy&, WebCore::UserMediaRequestIdentifier, WebCore::FrameIdentifier mainFrameID, WebCore::FrameIdentifier, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, Vector<WebCore::CaptureDevice>&& audioDevices, Vector<WebCore::CaptureDevice>&& videoDevices, WebCore::MediaStreamRequest&&, CompletionHandler<void(bool)>&&);
 
+private:
     void promptForGetDisplayMedia(UserMediaDisplayCapturePromptType) final;
     bool canRequestDisplayCapturePermission() final;
+    void invalidate() final;
+
+#if ENABLE(MEDIA_STREAM)
+    bool m_hasPendingGetDispayMediaPrompt { false };
+#endif
 };
 
 

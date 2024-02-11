@@ -55,7 +55,7 @@ public:
     enum class UserMediaAccessDenialReason { NoConstraints, UserMediaDisabled, NoCaptureDevices, InvalidConstraint, HardwareError, PermissionDenied, OtherFailure };
     void deny(UserMediaAccessDenialReason = UserMediaAccessDenialReason::UserMediaDisabled);
 
-    void invalidate();
+    virtual void invalidate();
     bool isPending() const { return m_manager; }
 
     bool requiresAudioCapture() const { return m_eligibleAudioDevices.size(); }

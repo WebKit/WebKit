@@ -47,13 +47,27 @@ UserMediaPermissionRequestProxyMac::~UserMediaPermissionRequestProxyMac()
 {
 }
 
+void UserMediaPermissionRequestProxyMac::invalidate()
+{
+#if ENABLE(MEDIA_STREAM)
+    if (m_hasPendingGetDispayMediaPrompt) {
+        DisplayCaptureSessionManager::singleton().cancelGetDisplayMediaPrompt(Ref { manager()->page() });
+        m_hasPendingGetDispayMediaPrompt = false;
+    }
+#endif
+    UserMediaPermissionRequestProxy::invalidate();
+}
+
 void UserMediaPermissionRequestProxyMac::promptForGetDisplayMedia(UserMediaDisplayCapturePromptType promptType)
 {
 #if ENABLE(MEDIA_STREAM)
     if (!manager())
         return;
 
+    m_hasPendingGetDispayMediaPrompt = true;
     DisplayCaptureSessionManager::singleton().promptForGetDisplayMedia(promptType, Ref { manager()->page() }, topLevelDocumentSecurityOrigin().data(), [protectedThis = Ref { *this }](std::optional<CaptureDevice> device) mutable {
+
+        protectedThis->m_hasPendingGetDispayMediaPrompt = false;
 
         if (!device) {
             protectedThis->deny(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied);

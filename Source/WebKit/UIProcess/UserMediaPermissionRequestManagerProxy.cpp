@@ -331,6 +331,11 @@ void UserMediaPermissionRequestManagerProxy::resetAccess(std::optional<FrameIden
 {
     ALWAYS_LOG(LOGIDENTIFIER, frameID ? frameID->object().toUInt64() : 0);
 
+    if (m_currentUserMediaRequest && (!frameID || m_currentUserMediaRequest->frameID() == *frameID)) {
+        m_currentUserMediaRequest->invalidate();
+        m_currentUserMediaRequest = nullptr;
+    }
+
     if (frameID) {
         m_grantedRequests.removeAllMatching([frameID](const auto& grantedRequest) {
             return grantedRequest->mainFrameID() == frameID;

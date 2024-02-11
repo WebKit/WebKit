@@ -507,6 +507,12 @@ void GPUProcess::promptForGetDisplayMedia(WebCore::DisplayCapturePromptType type
 {
     WebCore::ScreenCaptureKitSharingSessionManager::singleton().promptForGetDisplayMedia(type, WTFMove(completionHandler));
 }
+
+void GPUProcess::cancelGetDisplayMediaPrompt()
+{
+    WebCore::ScreenCaptureKitSharingSessionManager::singleton().cancelGetDisplayMediaPrompt();
+}
+
 #endif // HAVE(SCREEN_CAPTURE_KIT)
 
 #if PLATFORM(MAC)
