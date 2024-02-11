@@ -268,7 +268,7 @@ void PageClientImpl::beganExitFullScreen(const WebCore::IntRect& initialFrame, c
 #endif
 
 // Custom representations.
-void PageClientImpl::didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, const IPC::DataReference&)
+void PageClientImpl::didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, std::span<const uint8_t>)
 {
 }
 

@@ -48,7 +48,7 @@ public:
     {
     }
 
-    CoreIPCSecKeychainItem(const IPC::DataReference& data)
+    CoreIPCSecKeychainItem(std::span<const uint8_t> data)
         : m_persistentRef(data.empty() ? nullptr : adoptCF(CFDataCreate(kCFAllocatorDefault, data.data(), data.size())))
     {
     }
@@ -72,7 +72,7 @@ public:
         return adoptCF(keychainItem);
     }
 
-    IPC::DataReference dataReference() const
+    std::span<const uint8_t> dataReference() const
     {
         if (!m_persistentRef)
             return { };

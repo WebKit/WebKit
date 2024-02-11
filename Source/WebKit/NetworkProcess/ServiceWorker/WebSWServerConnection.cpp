@@ -26,7 +26,6 @@
 #include "config.h"
 #include "WebSWServerConnection.h"
 
-#include "DataReference.h"
 #include "FormDataReference.h"
 #include "Logging.h"
 #include "MessageSenderInlines.h"

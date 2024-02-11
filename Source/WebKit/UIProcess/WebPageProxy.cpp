@@ -1881,12 +1881,12 @@ RefPtr<API::Navigation> WebPageProxy::loadFile(const String& fileURLString, cons
     return navigation;
 }
 
-RefPtr<API::Navigation> WebPageProxy::loadData(const IPC::DataReference& data, const String& MIMEType, const String& encoding, const String& baseURL, API::Object* userData, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy)
+RefPtr<API::Navigation> WebPageProxy::loadData(std::span<const uint8_t> data, const String& type, const String& encoding, const String& baseURL, API::Object* userData, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy)
 {
     WEBPAGEPROXY_RELEASE_LOG(Loading, "loadData:");
 
 #if ENABLE(APP_BOUND_DOMAINS)
-    if (MIMEType == "text/html"_s && !isFullWebBrowserOrRunningTest())
+    if (type == "text/html"_s && !isFullWebBrowserOrRunningTest())
         m_limitsNavigationsToAppBoundDomains = true;
 #endif
 
@@ -1898,21 +1898,21 @@ RefPtr<API::Navigation> WebPageProxy::loadData(const IPC::DataReference& data, c
     if (!hasRunningProcess())
         launchProcess({ }, ProcessLaunchReason::InitialProcess);
 
-    Ref navigation = m_navigationState->createLoadDataNavigation(process().coreProcessIdentifier(), makeUnique<API::SubstituteData>(Vector(data), MIMEType, encoding, baseURL, userData));
+    Ref navigation = m_navigationState->createLoadDataNavigation(process().coreProcessIdentifier(), makeUnique<API::SubstituteData>(Vector(data), type, encoding, baseURL, userData));
 
     if (shouldForceForegroundPriorityForClientNavigation())
         navigation->setClientNavigationActivity(process().throttler().foregroundActivity("Client navigation"_s));
 
-    loadDataWithNavigationShared(protectedProcess(), internals().webPageID, navigation, data, MIMEType, encoding, baseURL, userData, ShouldTreatAsContinuingLoad::No, isNavigatingToAppBoundDomain(), std::nullopt, shouldOpenExternalURLsPolicy, SubstituteData::SessionHistoryVisibility::Hidden);
+    loadDataWithNavigationShared(protectedProcess(), internals().webPageID, navigation, data, type, encoding, baseURL, userData, ShouldTreatAsContinuingLoad::No, isNavigatingToAppBoundDomain(), std::nullopt, shouldOpenExternalURLsPolicy, SubstituteData::SessionHistoryVisibility::Hidden);
     return navigation;
 }
 
-RefPtr<API::Navigation> WebPageProxy::loadData(const IPC::DataReference& data, const String& type, const String& encoding, const String& baseURL, API::Object* userData)
+RefPtr<API::Navigation> WebPageProxy::loadData(std::span<const uint8_t> data, const String& type, const String& encoding, const String& baseURL, API::Object* userData)
 {
     return loadData(data, type, encoding, baseURL, userData, ShouldOpenExternalURLsPolicy::ShouldNotAllow);
 }
 
-void WebPageProxy::loadDataWithNavigationShared(Ref<WebProcessProxy>&& process, WebCore::PageIdentifier webPageID, API::Navigation& navigation, const IPC::DataReference& data, const String& MIMEType, const String& encoding, const String& baseURL, API::Object* userData, ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, std::optional<WebsitePoliciesData>&& websitePolicies, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, SubstituteData::SessionHistoryVisibility sessionHistoryVisibility)
+void WebPageProxy::loadDataWithNavigationShared(Ref<WebProcessProxy>&& process, WebCore::PageIdentifier webPageID, API::Navigation& navigation, std::span<const uint8_t> data, const String& type, const String& encoding, const String& baseURL, API::Object* userData, ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, std::optional<WebsitePoliciesData>&& websitePolicies, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, SubstituteData::SessionHistoryVisibility sessionHistoryVisibility)
 {
     WEBPAGEPROXY_RELEASE_LOG(Loading, "loadDataWithNavigation");
 
@@ -1926,7 +1926,7 @@ void WebPageProxy::loadDataWithNavigationShared(Ref<WebProcessProxy>&& process, 
     loadParameters.sessionHistoryVisibility = sessionHistoryVisibility;
     loadParameters.navigationID = navigation.navigationID();
     loadParameters.data = data;
-    loadParameters.MIMEType = MIMEType;
+    loadParameters.MIMEType = type;
     loadParameters.encodingName = encoding;
     loadParameters.baseURLString = baseURL;
     loadParameters.shouldTreatAsContinuingLoad = shouldTreatAsContinuingLoad;
@@ -1943,7 +1943,7 @@ void WebPageProxy::loadDataWithNavigationShared(Ref<WebProcessProxy>&& process, 
     process->startResponsivenessTimer();
 }
 
-RefPtr<API::Navigation> WebPageProxy::loadSimulatedRequest(WebCore::ResourceRequest&& simulatedRequest, WebCore::ResourceResponse&& simulatedResponse, const IPC::DataReference& data)
+RefPtr<API::Navigation> WebPageProxy::loadSimulatedRequest(WebCore::ResourceRequest&& simulatedRequest, WebCore::ResourceResponse&& simulatedResponse, std::span<const uint8_t> data)
 {
     WEBPAGEPROXY_RELEASE_LOG(Loading, "loadSimulatedRequest:");
 
@@ -5436,7 +5436,7 @@ void WebPageProxy::runJavaScriptInFrameInScriptWorld(RunJavaScriptParameters&& p
         activity = m_process->throttler().foregroundActivity("WebPageProxy::runJavaScriptInFrameInScriptWorld"_s);
 #endif
 
-    auto completionHandler = [activity = WTFMove(activity), callbackFunction = WTFMove(callbackFunction)] (const IPC::DataReference& dataReference, std::optional<ExceptionDetails>&& details) mutable {
+    auto completionHandler = [activity = WTFMove(activity), callbackFunction = WTFMove(callbackFunction)] (std::span<const uint8_t> dataReference, std::optional<ExceptionDetails>&& details) mutable {
         if (details)
             return callbackFunction(makeUnexpected(WTFMove(*details)));
         if (dataReference.empty())
@@ -8742,7 +8742,7 @@ void WebPageProxy::didChooseFilesForOpenPanelWithDisplayStringAndIcon(const Vect
     if (auto handle = SandboxExtension::createHandleForMachLookup("com.apple.iconservices"_s, auditToken))
         iconServicesSandboxExtension = WTFMove(*handle);
 
-    send(Messages::WebPage::DidChooseFilesForOpenPanelWithDisplayStringAndIcon(fileURLs, displayString, iconData ? iconData->dataReference() : IPC::DataReference(), WTFMove(machBootstrapHandle), WTFMove(iconServicesSandboxExtension)));
+    send(Messages::WebPage::DidChooseFilesForOpenPanelWithDisplayStringAndIcon(fileURLs, displayString, iconData ? iconData->dataReference() : std::span<const uint8_t>(), WTFMove(machBootstrapHandle), WTFMove(iconServicesSandboxExtension)));
 
     RefPtr openPanelResultListener = std::exchange(m_openPanelResultListener, nullptr);
     openPanelResultListener->invalidate();
@@ -10760,7 +10760,7 @@ bool WebPageProxy::userScriptsNeedNotification() const
     return !m_userScriptsNotified;
 }
 
-void WebPageProxy::didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, const IPC::DataReference& dataReference)
+void WebPageProxy::didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, std::span<const uint8_t> dataReference)
 {
     protectedPageClient()->didFinishLoadingDataForCustomContentProvider(ResourceResponseBase::sanitizeSuggestedFilename(suggestedFilename), dataReference);
 }
@@ -10886,7 +10886,7 @@ void WebPageProxy::saveDataToFileInDownloadsFolder(String&& suggestedFilename, S
     m_uiClient->saveDataToFileInDownloadsFolder(this, ResourceResponseBase::sanitizeSuggestedFilename(suggestedFilename), mimeType, originatingURLString, data);
 }
 
-void WebPageProxy::savePDFToFileInDownloadsFolder(String&& suggestedFilename, URL&& originatingURL, const IPC::DataReference& dataReference)
+void WebPageProxy::savePDFToFileInDownloadsFolder(String&& suggestedFilename, URL&& originatingURL, std::span<const uint8_t> dataReference)
 {
     String sanitizedFilename = ResourceResponseBase::sanitizeSuggestedFilename(suggestedFilename);
     if (!sanitizedFilename.endsWithIgnoringASCIICase(".pdf"_s))

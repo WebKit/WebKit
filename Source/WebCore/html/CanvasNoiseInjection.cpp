@@ -49,7 +49,7 @@ static inline bool isIndexInBounds(int size, int index)
     return index < size;
 }
 
-static inline bool setTightnessBounds(const std::span<uint8_t>& bytes, std::array<int, 4>& tightestBoundingDiff, int index1, int index2, int index3)
+static inline bool setTightnessBounds(std::span<uint8_t> bytes, std::array<int, 4>& tightestBoundingDiff, int index1, int index2, int index3)
 {
     int boundingRedDiff = std::abs(static_cast<int>(bytes[index1]) - static_cast<int>(bytes[index3]));
     int boundingGreenDiff = std::abs(static_cast<int>(bytes[index1 + 1]) - static_cast<int>(bytes[index3 + 1]));
@@ -89,7 +89,7 @@ static inline bool setTightnessBounds(const std::span<uint8_t>& bytes, std::arra
     return updatedTightnessBounds;
 }
 
-static std::pair<std::array<int, 4>, std::array<int, 4>> boundingNeighbors(int index, const std::span<uint8_t>& bytes, const IntSize& size)
+static std::pair<std::array<int, 4>, std::array<int, 4>> boundingNeighbors(int index, std::span<uint8_t> bytes, const IntSize& size)
 {
     constexpr auto bytesPerPixel = 4U;
     auto bufferSize = bytes.size_bytes();

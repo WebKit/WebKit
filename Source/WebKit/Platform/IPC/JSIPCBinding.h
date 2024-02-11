@@ -130,7 +130,7 @@ JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, s
     return jsValueForDecodedArgumentValue(globalObject, std::forward<U>(*value));
 }
 
-bool putJSValueForDecodedArgumentAtIndexOrArrayBufferIfUndefined(JSC::JSGlobalObject*, JSC::JSArray*, unsigned index, JSC::JSValue, DataReference buffer);
+bool putJSValueForDecodedArgumentAtIndexOrArrayBufferIfUndefined(JSC::JSGlobalObject*, JSC::JSArray*, unsigned index, JSC::JSValue, std::span<const uint8_t> buffer);
 
 template<typename... Elements>
 std::optional<JSC::JSValue> putJSValueForDecodeArgumentInArray(JSC::JSGlobalObject*, IPC::Decoder&, JSC::JSArray*, size_t currentIndex, std::tuple<Elements...>*);

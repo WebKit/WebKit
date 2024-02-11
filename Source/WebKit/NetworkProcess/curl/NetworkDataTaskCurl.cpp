@@ -29,7 +29,6 @@
 #include "APIError.h"
 #include "AuthenticationChallengeDisposition.h"
 #include "AuthenticationManager.h"
-#include "DataReference.h"
 #include "Download.h"
 #include "NetworkProcess.h"
 #include "NetworkSessionCurl.h"
@@ -195,7 +194,7 @@ void NetworkDataTaskCurl::curlDidReceiveData(CurlRequest&, Ref<SharedBuffer>&& b
         uint64_t bytesWritten = 0;
         for (auto& segment : buffer.get()) {
             if (-1 == FileSystem::writeToFile(m_downloadDestinationFile, segment.segment->data(), segment.segment->size())) {
-                download->didFail(ResourceError(CURLE_WRITE_ERROR, m_response.url()), IPC::DataReference());
+                download->didFail(ResourceError(CURLE_WRITE_ERROR, m_response.url()), { });
                 invalidateAndCancel();
                 return;
             }
@@ -242,7 +241,7 @@ void NetworkDataTaskCurl::curlDidFailWithError(CurlRequest& request, ResourceErr
         deleteDownloadFile();
         auto* download = m_session->networkProcess().downloadManager().download(m_pendingDownloadID);
         RELEASE_ASSERT(download);
-        download->didFail(resourceError, IPC::DataReference());
+        download->didFail(resourceError, { });
         return;
     }
 

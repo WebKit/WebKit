@@ -31,6 +31,11 @@
 
 namespace WebKit {
 
+static std::span<const uint8_t> span(NSData *data)
+{
+    return { static_cast<const uint8_t*>(data.bytes), data.length };
+}
+
 RetainPtr<NSData> encodeSessionState(const SessionState& sessionState)
 {
     return wrapper(WebKit::encodeLegacySessionState(sessionState));
@@ -38,7 +43,7 @@ RetainPtr<NSData> encodeSessionState(const SessionState& sessionState)
 
 bool decodeSessionState(NSData *data, SessionState& state)
 {
-    return decodeLegacySessionState(static_cast<const uint8_t*>(data.bytes), data.length, state);
+    return decodeLegacySessionState(span(data), state);
 }
 
 }

@@ -22,7 +22,7 @@
 
 messages -> LegacyCustomProtocolManager NotRefCounted {
     DidFailWithError(WebKit::LegacyCustomProtocolID customProtocolID, WebCore::ResourceError error)
-    DidLoadData(WebKit::LegacyCustomProtocolID customProtocolID, IPC::DataReference data)
+    DidLoadData(WebKit::LegacyCustomProtocolID customProtocolID, std::span<const uint8_t> data)
     DidReceiveResponse(WebKit::LegacyCustomProtocolID customProtocolID, WebCore::ResourceResponse response, enum:uint8_t WebKit::CacheStoragePolicy cacheStoragePolicy)
     DidFinishLoading(WebKit::LegacyCustomProtocolID customProtocolID)
     WasRedirectedToRequest(WebKit::LegacyCustomProtocolID customProtocolID, WebCore::ResourceRequest request, WebCore::ResourceResponse redirectResponse);

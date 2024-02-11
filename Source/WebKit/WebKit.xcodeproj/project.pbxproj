@@ -334,7 +334,6 @@
 		1AC1415118AC47EE006C602C /* WKWebViewConfigurationPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC1415018AC47EE006C602C /* WKWebViewConfigurationPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AC4C82916B876A90069DCCD /* MessageFlags.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC4C82816B876A90069DCCD /* MessageFlags.h */; };
 		1AC7537C183A9FDB0072CB15 /* PageLoadState.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC7537A183A9FDB0072CB15 /* PageLoadState.h */; };
-		1AC75380183BE50F0072CB15 /* DataReference.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC7537E183BE50F0072CB15 /* DataReference.h */; };
 		1AC75A1B1B3368270056745B /* HangDetectionDisabler.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC75A1A1B3368270056745B /* HangDetectionDisabler.h */; };
 		1ACC50F21CBC381D003C7D03 /* WKOpenPanelParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACC50F01CBC381D003C7D03 /* WKOpenPanelParameters.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1ACC87BA1981C341003D1AF4 /* WKNavigationPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACC87B91981C341003D1AF4 /* WKNavigationPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1611,7 +1610,6 @@
 		7AFA6F712A9F590A0055322A /* WebDisplayRefreshMonitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AFA6F702A9F58FB0055322A /* WebDisplayRefreshMonitor.h */; };
 		7AFBD36321E50F39005DBACB /* WebResourceLoadStatisticsStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AFBD36221E50F39005DBACB /* WebResourceLoadStatisticsStore.h */; };
 		7AFBD36F21E546F8005DBACB /* PersistencyUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AFBD36D21E546E3005DBACB /* PersistencyUtils.h */; };
-		7B1DB26625668CE1000E26BC /* ArrayReference.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B1DB26525668CE0000E26BC /* ArrayReference.h */; };
 		7B483F1F25CDDA9C00120486 /* MessageReceiveQueueMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B483F1B25CDDA9B00120486 /* MessageReceiveQueueMap.h */; };
 		7B483F2025CDDA9C00120486 /* MessageReceiveQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B483F1C25CDDA9B00120486 /* MessageReceiveQueue.h */; };
 		7B483F2225CDDA9C00120486 /* MessageReceiveQueues.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B483F1E25CDDA9B00120486 /* MessageReceiveQueues.h */; };
@@ -3585,7 +3583,6 @@
 		1AC4C82816B876A90069DCCD /* MessageFlags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageFlags.h; sourceTree = "<group>"; };
 		1AC75379183A9FDA0072CB15 /* PageLoadState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageLoadState.cpp; sourceTree = "<group>"; };
 		1AC7537A183A9FDB0072CB15 /* PageLoadState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageLoadState.h; sourceTree = "<group>"; };
-		1AC7537E183BE50F0072CB15 /* DataReference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataReference.h; sourceTree = "<group>"; };
 		1AC75A1A1B3368270056745B /* HangDetectionDisabler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HangDetectionDisabler.h; sourceTree = "<group>"; };
 		1AC75A1C1B33695E0056745B /* HangDetectionDisablerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = HangDetectionDisablerMac.mm; sourceTree = "<group>"; };
 		1ACC50EF1CBC381D003C7D03 /* WKOpenPanelParameters.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKOpenPanelParameters.mm; sourceTree = "<group>"; };
@@ -6352,7 +6349,6 @@
 		7AFBD36D21E546E3005DBACB /* PersistencyUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PersistencyUtils.h; sourceTree = "<group>"; };
 		7AFBD36E21E546E3005DBACB /* PersistencyUtils.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PersistencyUtils.cpp; sourceTree = "<group>"; };
 		7B16191227198AA900C40EAC /* RemoteGraphicsContextGLProxyCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteGraphicsContextGLProxyCocoa.mm; sourceTree = "<group>"; };
-		7B1DB26525668CE0000E26BC /* ArrayReference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArrayReference.h; sourceTree = "<group>"; };
 		7B22007029B625020034C826 /* ImageBufferShareableMappedIOSurfaceBitmapBackend.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ImageBufferShareableMappedIOSurfaceBitmapBackend.cpp; sourceTree = "<group>"; };
 		7B22007129B625020034C826 /* ImageBufferShareableMappedIOSurfaceBitmapBackend.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageBufferShareableMappedIOSurfaceBitmapBackend.h; sourceTree = "<group>"; };
 		7B2DDD5E27CCD9710060ABAB /* IPCStreamTesterProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IPCStreamTesterProxy.h; sourceTree = "<group>"; };
@@ -9390,7 +9386,6 @@
 				7B73122C25CA67AE003B2796 /* darwin */,
 				1A3D610413A7F03A00F95D4E /* ArgumentCoders.cpp */,
 				1AEFD2F611D1807B008219D3 /* ArgumentCoders.h */,
-				7B1DB26525668CE0000E26BC /* ArrayReference.h */,
 				4955A6E528076D4C00BB91C4 /* ArrayReferenceTuple.h */,
 				BCEE966B112FAF57006BCC24 /* Attachment.h */,
 				BC032DA210F437D10058C15A /* Connection.cpp */,
@@ -9405,7 +9400,6 @@
 				5C1579EB27172A8B00ED5280 /* DaemonDecoder.h */,
 				5C1579E827172A8A00ED5280 /* DaemonEncoder.cpp */,
 				5C1579EA27172A8B00ED5280 /* DaemonEncoder.h */,
-				1AC7537E183BE50F0072CB15 /* DataReference.h */,
 				BC032D9D10F437D10058C15A /* Decoder.cpp */,
 				BC032D9E10F437D10058C15A /* Decoder.h */,
 				BC032D9F10F437D10058C15A /* Encoder.cpp */,
@@ -15793,7 +15787,6 @@
 				1AEFD2F711D1807B008219D3 /* ArgumentCoders.h in Headers */,
 				1AAF0C4A12B16334008E49E2 /* ArgumentCodersCF.h in Headers */,
 				A175C44A21AA3171000037D0 /* ArgumentCodersCocoa.h in Headers */,
-				7B1DB26625668CE1000E26BC /* ArrayReference.h in Headers */,
 				4955A6E628076D4D00BB91C4 /* ArrayReferenceTuple.h in Headers */,
 				A1D6156B2B06BBAC002D0E19 /* AssertionCapability.h in Headers */,
 				A1D6156B2B06BBAC002D0E19 /* AssertionCapability.h in Headers */,
@@ -15893,7 +15886,6 @@
 				5C1579EF27172A8B00ED5280 /* DaemonDecoder.h in Headers */,
 				5C1579EE27172A8B00ED5280 /* DaemonEncoder.h in Headers */,
 				C55F91711C59676E0029E92D /* DataDetectionResult.h in Headers */,
-				1AC75380183BE50F0072CB15 /* DataReference.h in Headers */,
 				99036AE923A970870000B06A /* DebuggableInfoData.h in Headers */,
 				BC032DA610F437D10058C15A /* Decoder.h in Headers */,
 				74C2F54129AC9C44006C5F97 /* DeferredPaymentRequest.h in Headers */,

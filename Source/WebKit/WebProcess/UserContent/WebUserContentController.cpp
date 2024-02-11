@@ -27,7 +27,6 @@
 #include "WebUserContentController.h"
 
 #include "ContentWorldShared.h"
-#include "DataReference.h"
 #include "FrameInfoData.h"
 #include "InjectUserScriptImmediately.h"
 #include "InjectedBundleScriptWorld.h"
@@ -292,7 +291,7 @@ private:
         if (!webPage)
             return;
 
-        auto messageReplyHandler = [completionHandler = WTFMove(completionHandler)](const IPC::DataReference& resultValue, const String& errorMessage) {
+        auto messageReplyHandler = [completionHandler = WTFMove(completionHandler)](std::span<const uint8_t> resultValue, const String& errorMessage) {
             if (!errorMessage.isNull()) {
                 completionHandler(nullptr, errorMessage);
                 return;
@@ -302,7 +301,7 @@ private:
             completionHandler(value.ptr(), { });
         };
 
-        WebProcess::singleton().parentProcessConnection()->sendWithAsyncReply(Messages::WebUserContentControllerProxy::DidPostMessage(webPage->webPageProxyIdentifier(), webFrame->info(), m_identifier, IPC::DataReference(value->wireBytes())), WTFMove(messageReplyHandler), m_controller->identifier());
+        WebProcess::singleton().parentProcessConnection()->sendWithAsyncReply(Messages::WebUserContentControllerProxy::DidPostMessage(webPage->webPageProxyIdentifier(), webFrame->info(), m_identifier, value->wireBytes()), WTFMove(messageReplyHandler), m_controller->identifier());
     }
 
     RefPtr<WebUserContentController> m_controller;

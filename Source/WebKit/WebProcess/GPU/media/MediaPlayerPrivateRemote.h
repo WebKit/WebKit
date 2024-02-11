@@ -144,10 +144,10 @@ public:
     void remoteTextTrackConfigurationChanged(WebCore::TrackID, TextTrackPrivateRemoteConfiguration&&);
 
     void parseWebVTTFileHeader(WebCore::TrackID, String&&);
-    void parseWebVTTCueData(WebCore::TrackID, IPC::DataReference&&);
+    void parseWebVTTCueData(WebCore::TrackID, std::span<const uint8_t>);
     void parseWebVTTCueDataStruct(WebCore::TrackID, WebCore::ISOWebVTTCue&&);
 
-    void addDataCue(WebCore::TrackID, MediaTime&& start, MediaTime&& end, IPC::DataReference&&);
+    void addDataCue(WebCore::TrackID, MediaTime&& start, MediaTime&& end, std::span<const uint8_t>);
 #if ENABLE(DATACUE_VALUE)
     void addDataCueWithType(WebCore::TrackID, MediaTime&& start, MediaTime&& end, WebCore::SerializedPlatformDataCueValue&&, String&&);
     void updateDataCue(WebCore::TrackID, MediaTime&& start, MediaTime&& end, WebCore::SerializedPlatformDataCueValue&&);
@@ -171,7 +171,7 @@ public:
 
 #if ENABLE(ENCRYPTED_MEDIA)
     void waitingForKeyChanged(bool);
-    void initializationDataEncountered(const String&, IPC::DataReference&&);
+    void initializationDataEncountered(const String&, std::span<const uint8_t>);
 #endif
 
 #if ENABLE(MEDIA_SOURCE)
@@ -388,7 +388,7 @@ private:
     void setCDM(WebCore::LegacyCDM*) final;
     void setCDMSession(WebCore::LegacyCDMSession*) final;
     void keyAdded() final;
-    void mediaPlayerKeyNeeded(IPC::DataReference&&);
+    void mediaPlayerKeyNeeded(std::span<const uint8_t>);
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)

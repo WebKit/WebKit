@@ -28,7 +28,6 @@
 
 #if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
-#include "DataReference.h"
 #include "GPUConnectionToWebProcess.h"
 #include "LayerHostingContext.h"
 #include "Logging.h"
@@ -777,16 +776,15 @@ RefPtr<ArrayBuffer> RemoteMediaPlayerProxy::mediaPlayerCachedKeyForKeyId(const S
 
 void RemoteMediaPlayerProxy::mediaPlayerKeyNeeded(const SharedBuffer& message)
 {
-    IPC::DataReference messageReference;
-    messageReference = { message.data(), message.size() };
-    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::MediaPlayerKeyNeeded(WTFMove(messageReference)), m_id);
+    std::span messageReference { message.data(), message.size() };
+    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::MediaPlayerKeyNeeded(messageReference), m_id);
 }
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
 void RemoteMediaPlayerProxy::mediaPlayerInitializationDataEncountered(const String& initDataType, RefPtr<ArrayBuffer>&& initData)
 {
-    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::InitializationDataEncountered(initDataType, IPC::DataReference(static_cast<uint8_t*>(initData->data()), initData->byteLength())), m_id);
+    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::InitializationDataEncountered(initDataType, std::span<const uint8_t>(static_cast<uint8_t*>(initData->data()), initData->byteLength())), m_id);
 }
 
 void RemoteMediaPlayerProxy::mediaPlayerWaitingForKeyChanged()

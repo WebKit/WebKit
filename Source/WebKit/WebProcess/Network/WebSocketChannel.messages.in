@@ -24,7 +24,7 @@ messages -> WebSocketChannel {
     DidConnect(String subprotocol, String extensions)
     DidClose(unsigned short code, String reason)
     DidReceiveText(String message)
-    DidReceiveBinaryData(IPC::DataReference data)
+    DidReceiveBinaryData(std::span<const uint8_t> data)
     DidReceiveMessageError(String errorMessage)
 
     DidSendHandshakeRequest(WebCore::ResourceRequest request)

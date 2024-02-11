@@ -25,15 +25,9 @@
 
 #pragma once
 
-#include "CSSNumericBaseType.h"
-#include "CSSNumericType.h"
 #include "CSSNumericValue.h"
 
-#include <wtf/RefCounted.h>
-
 namespace WebCore {
-
-template<typename> class ExceptionOr;
 
 class CSSNumericArray : public RefCounted<CSSNumericArray> {
     WTF_MAKE_ISO_ALLOCATED(CSSNumericArray);
@@ -49,7 +43,6 @@ public:
 private:
     Vector<Ref<CSSNumericValue>> m_array;
     CSSNumericArray(Vector<Ref<CSSNumericValue>>&&);
-    CSSNumericArray(FixedVector<Ref<CSSNumericValue>>&&);
 };
 
 } // namespace WebCore

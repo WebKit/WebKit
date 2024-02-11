@@ -269,7 +269,7 @@ void RemoteGraphicsContextGL::simulateEventForTesting(WebCore::GraphicsContextGL
     m_context->simulateEventForTesting(event);
 }
 
-void RemoteGraphicsContextGL::readPixelsInline(WebCore::IntRect rect, uint32_t format, uint32_t type, CompletionHandler<void(std::optional<WebCore::IntSize>, IPC::ArrayReference<uint8_t>)>&& completionHandler)
+void RemoteGraphicsContextGL::readPixelsInline(WebCore::IntRect rect, uint32_t format, uint32_t type, CompletionHandler<void(std::optional<WebCore::IntSize>, std::span<const uint8_t>)>&& completionHandler)
 {
     assertIsCurrent(workQueue());
     static constexpr size_t readPixelsInlineSizeLimit = 64 * KB; // NOTE: when changing, change the value in RemoteGraphicsContextGLProxy too.

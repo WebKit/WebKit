@@ -28,7 +28,6 @@
 #include "config.h"
 #include "Connection.h"
 
-#include "DataReference.h"
 #include "IPCUtilities.h"
 #include "UnixMessage.h"
 #include <WebCore/SharedMemory.h>

@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "ArrayReference.h"
 #include "ArrayReferenceTuple.h"
 #include "Decoder.h"
 #include "Encoder.h"
@@ -70,7 +69,7 @@ template<typename T> struct SimpleArgumentCoder {
 
 template<typename T, size_t Extent> struct ArgumentCoder<std::span<T, Extent>> {
     template<typename Encoder>
-    static void encode(Encoder& encoder, const std::span<T, Extent>& span)
+    static void encode(Encoder& encoder, std::span<T, Extent> span)
     {
         static_assert(Extent, "Can't encode a fixed size of 0");
 

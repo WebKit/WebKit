@@ -99,11 +99,11 @@ private:
     StreamClientConnection(Ref<Connection>, StreamClientConnectionBuffer&&);
 
     template<typename T, typename... AdditionalData>
-    bool trySendStream(std::span<uint8_t>&, T& message, AdditionalData&&...);
+    bool trySendStream(std::span<uint8_t>, T& message, AdditionalData&&...);
     template<typename T>
-    std::optional<SendSyncResult<T>> trySendSyncStream(T& message, Timeout, std::span<uint8_t>&);
+    std::optional<SendSyncResult<T>> trySendSyncStream(T& message, Timeout, std::span<uint8_t>);
     Error trySendDestinationIDIfNeeded(uint64_t destinationID, Timeout);
-    void sendProcessOutOfStreamMessage(std::span<uint8_t>&&);
+    void sendProcessOutOfStreamMessage(std::span<uint8_t>);
     using WakeUpServer = StreamClientConnectionBuffer::WakeUpServer;
     void wakeUpServerBatched(WakeUpServer);
     void wakeUpServer(WakeUpServer);
@@ -188,7 +188,7 @@ StreamClientConnection::AsyncReplyID StreamClientConnection::sendWithAsyncReply(
 }
 
 template<typename T, typename... AdditionalData>
-bool StreamClientConnection::trySendStream(std::span<uint8_t>& span, T& message, AdditionalData&&... args)
+bool StreamClientConnection::trySendStream(std::span<uint8_t> span, T& message, AdditionalData&&... args)
 {
     StreamConnectionEncoder messageEncoder { T::name(), span.data(), span.size() };
     if (((messageEncoder << message.arguments()) << ... << std::forward<decltype(args)>(args))) {
@@ -236,7 +236,7 @@ Error StreamClientConnection::waitForAsyncReplyAndDispatchImmediately(AsyncReply
 }
 
 template<typename T>
-std::optional<StreamClientConnection::SendSyncResult<T>> StreamClientConnection::trySendSyncStream(T& message, Timeout timeout, std::span<uint8_t>& span)
+std::optional<StreamClientConnection::SendSyncResult<T>> StreamClientConnection::trySendSyncStream(T& message, Timeout timeout, std::span<uint8_t> span)
 {
     // In this function, SendSyncResult<T> { } means error happened and caller should stop processing.
     // std::nullopt means we couldn't send through the stream, so try sending out of stream.
@@ -302,7 +302,7 @@ inline Error StreamClientConnection::trySendDestinationIDIfNeeded(uint64_t desti
     return Error::NoError;
 }
 
-inline void StreamClientConnection::sendProcessOutOfStreamMessage(std::span<uint8_t>&& span)
+inline void StreamClientConnection::sendProcessOutOfStreamMessage(std::span<uint8_t> span)
 {
     StreamConnectionEncoder encoder { MessageName::ProcessOutOfStreamMessage, span.data(), span.size() };
     // Not notifying on wake up since the out-of-stream message will do that.

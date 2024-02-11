@@ -26,7 +26,6 @@
 #pragma once
 
 #include "Connection.h"
-#include "DataReference.h"
 #include "MessageSender.h"
 #include "WebPageProxyIdentifier.h"
 #include "WebResourceInterceptController.h"

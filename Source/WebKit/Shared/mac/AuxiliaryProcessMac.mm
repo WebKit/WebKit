@@ -255,7 +255,7 @@ static std::optional<CString> setAndSerializeSandboxParameters(const SandboxInit
         auto contents = fileContents(profileOrProfilePath);
         if (!contents)
             return std::nullopt;
-        builder.appendCharacters(contents->data(), contents->size());
+        builder.append(*contents);
     } else
         builder.append(profileOrProfilePath);
     return builder.toString().ascii();

@@ -28,7 +28,6 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "DataReference.h"
 #include "GPUConnectionToWebProcessMessages.h"
 #include "GPUProcess.h"
 #include "GPUProcessConnectionInfo.h"

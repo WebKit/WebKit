@@ -44,7 +44,7 @@ public:
     {
     }
 
-    CoreIPCSecAccessControl(const IPC::DataReference& data)
+    CoreIPCSecAccessControl(std::span<const uint8_t> data)
         : m_accessControlData(adoptCF(CFDataCreate(kCFAllocatorDefault, data.data(), data.size())))
     {
     }
@@ -56,7 +56,7 @@ public:
         return accessControl;
     }
 
-    IPC::DataReference dataReference() const
+    std::span<const uint8_t> dataReference() const
     {
         if (!m_accessControlData)
             return { };

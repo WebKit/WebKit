@@ -482,7 +482,7 @@ void PageClientImpl::wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent&
     webkitWebViewBasePropagateWheelEvent(WEBKIT_WEB_VIEW_BASE(m_viewWidget), event.nativeEvent());
 }
 
-void PageClientImpl::didFinishLoadingDataForCustomContentProvider(const String&, const IPC::DataReference&)
+void PageClientImpl::didFinishLoadingDataForCustomContentProvider(const String&, std::span<const uint8_t>)
 {
 }
 

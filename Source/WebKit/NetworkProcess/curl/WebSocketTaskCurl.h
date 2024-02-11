@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "DataReference.h"
 #include "NetworkSessionCurl.h"
 #include "WebSocketTask.h"
 #include <WebCore/CurlStream.h>
@@ -53,8 +52,8 @@ public:
     WebSocketTask(NetworkSocketChannel&, WebPageProxyIdentifier, const WebCore::ResourceRequest&, const String& protocol, const WebCore::ClientOrigin&);
     virtual ~WebSocketTask();
 
-    void sendString(const IPC::DataReference&, CompletionHandler<void()>&&);
-    void sendData(const IPC::DataReference&, CompletionHandler<void()>&&);
+    void sendString(std::span<const uint8_t>, CompletionHandler<void()>&&);
+    void sendData(std::span<const uint8_t>, CompletionHandler<void()>&&);
     void close(int32_t code, const String& reason);
 
     void cancel();

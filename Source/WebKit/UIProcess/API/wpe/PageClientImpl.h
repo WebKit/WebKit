@@ -120,7 +120,7 @@ private:
     void exitAcceleratedCompositingMode() override;
     void updateAcceleratedCompositingMode(const LayerTreeContext&) override;
 
-    void didFinishLoadingDataForCustomContentProvider(const String&, const IPC::DataReference&) override;
+    void didFinishLoadingDataForCustomContentProvider(const String&, std::span<const uint8_t>) override;
 
     void navigationGestureDidBegin() override;
     void navigationGestureWillEnd(bool, WebBackForwardListItem&) override;

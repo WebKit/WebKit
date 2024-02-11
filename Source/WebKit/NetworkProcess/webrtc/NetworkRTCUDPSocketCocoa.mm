@@ -28,7 +28,6 @@
 
 #if USE(LIBWEBRTC) && PLATFORM(COCOA)
 
-#include "DataReference.h"
 #include "LibWebRTCNetworkMessages.h"
 #include "Logging.h"
 #include <WebCore/STUNMessageParsing.h>
@@ -365,7 +364,7 @@ void NetworkRTCUDPSocketCocoaConnections::setupNWConnection(nw_connection_t nwCo
     }).get());
 
     processUDPData(nwConnection, Ref  { connectionStateTracker }, 0, [identifier = m_identifier, connection = m_connection.copyRef(), ip = remoteAddress.ipaddr(), port = remoteAddress.port()](auto* message, auto size) mutable {
-        IPC::DataReference data(message, size);
+        std::span data(message, size);
         connection->send(Messages::LibWebRTCNetwork::SignalReadPacket { identifier, data, RTCNetwork::IPAddress(ip), port, rtc::TimeMillis() * 1000 }, 0);
     });
 

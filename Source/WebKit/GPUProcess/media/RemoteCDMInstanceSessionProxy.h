@@ -28,7 +28,6 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(ENCRYPTED_MEDIA)
 
 #include "Connection.h"
-#include "DataReference.h"
 #include "MessageReceiver.h"
 #include "RemoteCDMInstanceSessionIdentifier.h"
 #include "RemoteCDMProxy.h"

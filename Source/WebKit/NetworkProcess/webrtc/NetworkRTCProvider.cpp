@@ -28,7 +28,6 @@
 
 #if USE(LIBWEBRTC)
 
-#include "DataReference.h"
 #include "LibWebRTCNetworkMessages.h"
 #include "LibWebRTCSocketClient.h"
 #include "Logging.h"
@@ -227,7 +226,7 @@ void NetworkRTCProvider::wrapNewTCPConnection(LibWebRTCSocketIdentifier identifi
         addSocket(identifier, makeUnique<LibWebRTCSocketClient>(identifier, *this, WTFMove(socket), Socket::Type::ServerConnectionTCP, m_ipcConnection.copyRef()));
 }
 
-void NetworkRTCProvider::sendToSocket(LibWebRTCSocketIdentifier identifier, const IPC::DataReference& data, RTCNetwork::SocketAddress&& address, RTCPacketOptions&& options)
+void NetworkRTCProvider::sendToSocket(LibWebRTCSocketIdentifier identifier, std::span<const uint8_t> data, RTCNetwork::SocketAddress&& address, RTCPacketOptions&& options)
 {
     ASSERT(m_rtcNetworkThread.IsCurrent());
     auto iterator = m_sockets.find(identifier);

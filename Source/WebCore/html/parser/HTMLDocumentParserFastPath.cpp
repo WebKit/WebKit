@@ -901,7 +901,7 @@ static bool canUseFastPath(Element& contextElement, OptionSet<ParserContentPolic
 }
 
 template<typename CharacterType>
-static bool tryFastParsingHTMLFragmentImpl(const std::span<const CharacterType>& source, Document& document, ContainerNode& destinationParent, Element& contextElement)
+static bool tryFastParsingHTMLFragmentImpl(std::span<const CharacterType> source, Document& document, ContainerNode& destinationParent, Element& contextElement)
 {
     HTMLFastPathParser parser { source, document, destinationParent };
     return parser.parse(contextElement);

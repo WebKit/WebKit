@@ -35,7 +35,6 @@
 #import "APIData.h"
 #import "APIObject.h"
 #import "CocoaHelpers.h"
-#import "DataReference.h"
 #import "MessageSenderInlines.h"
 #import "WebExtensionConstants.h"
 #import "WebExtensionContextMessages.h"

@@ -192,13 +192,13 @@ void WebFrameProxy::loadURL(const URL& url, const String& referrer)
     m_page->send(Messages::WebPage::LoadURLInFrame(url, referrer, m_frameID));
 }
 
-void WebFrameProxy::loadData(const IPC::DataReference& data, const String& MIMEType, const String& encodingName, const URL& baseURL)
+void WebFrameProxy::loadData(std::span<const uint8_t> data, const String& type, const String& encodingName, const URL& baseURL)
 {
     ASSERT(!isMainFrame());
     if (!m_page)
         return;
 
-    m_page->send(Messages::WebPage::LoadDataInFrame(data, MIMEType, encodingName, baseURL, m_frameID));
+    m_page->send(Messages::WebPage::LoadDataInFrame(data, type, encodingName, baseURL, m_frameID));
 }
     
 bool WebFrameProxy::canProvideSource() const

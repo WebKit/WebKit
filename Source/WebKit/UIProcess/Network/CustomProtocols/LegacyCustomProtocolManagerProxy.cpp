@@ -75,7 +75,7 @@ void LegacyCustomProtocolManagerProxy::didReceiveResponse(LegacyCustomProtocolID
     protectedProcess()->send(Messages::LegacyCustomProtocolManager::DidReceiveResponse(customProtocolID, response, cacheStoragePolicy), 0);
 }
 
-void LegacyCustomProtocolManagerProxy::didLoadData(LegacyCustomProtocolID customProtocolID, const IPC::DataReference& data)
+void LegacyCustomProtocolManagerProxy::didLoadData(LegacyCustomProtocolID customProtocolID, std::span<const uint8_t> data)
 {
     protectedProcess()->send(Messages::LegacyCustomProtocolManager::DidLoadData(customProtocolID, data), 0);
 }

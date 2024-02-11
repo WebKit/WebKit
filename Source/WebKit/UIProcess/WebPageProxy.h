@@ -79,7 +79,6 @@ class Decoder;
 class FormDataReference;
 class SharedBufferReference;
 template<typename> struct ConnectionSendSyncResult;
-using DataReference = std::span<const uint8_t>;
 }
 
 namespace JSC {
@@ -783,9 +782,9 @@ public:
     RefPtr<API::Navigation> loadRequest(WebCore::ResourceRequest&&);
     RefPtr<API::Navigation> loadRequest(WebCore::ResourceRequest&&, WebCore::ShouldOpenExternalURLsPolicy, API::Object* userData = nullptr);
     RefPtr<API::Navigation> loadFile(const String& fileURL, const String& resourceDirectoryURL, bool isAppInitiated = true, API::Object* userData = nullptr);
-    RefPtr<API::Navigation> loadData(const IPC::DataReference&, const String& MIMEType, const String& encoding, const String& baseURL, API::Object* userData = nullptr);
-    RefPtr<API::Navigation> loadData(const IPC::DataReference&, const String& MIMEType, const String& encoding, const String& baseURL, API::Object* userData, WebCore::ShouldOpenExternalURLsPolicy);
-    RefPtr<API::Navigation> loadSimulatedRequest(WebCore::ResourceRequest&&, WebCore::ResourceResponse&&, const IPC::DataReference&);
+    RefPtr<API::Navigation> loadData(std::span<const uint8_t>, const String& MIMEType, const String& encoding, const String& baseURL, API::Object* userData = nullptr);
+    RefPtr<API::Navigation> loadData(std::span<const uint8_t>, const String& MIMEType, const String& encoding, const String& baseURL, API::Object* userData, WebCore::ShouldOpenExternalURLsPolicy);
+    RefPtr<API::Navigation> loadSimulatedRequest(WebCore::ResourceRequest&&, WebCore::ResourceResponse&&, std::span<const uint8_t>);
     void loadAlternateHTML(Ref<WebCore::DataSegment>&&, const String& encoding, const URL& baseURL, const URL& unreachableURL, API::Object* userData = nullptr);
     void navigateToPDFLinkWithSimulatedClick(const String& url, WebCore::IntPoint documentPoint, WebCore::IntPoint screenPoint);
 
@@ -1350,10 +1349,10 @@ public:
 
 #if PLATFORM(COCOA)
     // Called by the web process through a message.
-    void registerWebProcessAccessibilityToken(const IPC::DataReference&);
+    void registerWebProcessAccessibilityToken(std::span<const uint8_t>);
     // Called by the UI process when it is ready to send its tokens to the web process.
-    void registerUIProcessAccessibilityTokens(const IPC::DataReference& elemenToken, const IPC::DataReference& windowToken);
-    void replaceSelectionWithPasteboardData(const Vector<String>& types, const IPC::DataReference&);
+    void registerUIProcessAccessibilityTokens(std::span<const uint8_t> elementToken, std::span<const uint8_t> windowToken);
+    void replaceSelectionWithPasteboardData(const Vector<String>& types, std::span<const uint8_t>);
     bool readSelectionFromPasteboard(const String& pasteboardName);
     String stringSelectionForPasteboard();
     RefPtr<WebCore::SharedBuffer> dataSelectionForPasteboard(const String& pasteboardType);
@@ -1613,10 +1612,10 @@ public:
 #endif
 
     void saveDataToFileInDownloadsFolder(String&& suggestedFilename, String&& mimeType, URL&& originatingURL, API::Data&);
-    void savePDFToFileInDownloadsFolder(String&& suggestedFilename, URL&& originatingURL, const IPC::DataReference&);
+    void savePDFToFileInDownloadsFolder(String&& suggestedFilename, URL&& originatingURL, std::span<const uint8_t>);
 
 #if ENABLE(PDF_PLUGIN) && PLATFORM(MAC)
-    void savePDFToTemporaryFolderAndOpenWithNativeApplication(const String& suggestedFilename, FrameInfoData&&, const IPC::DataReference&, const String& pdfUUID);
+    void savePDFToTemporaryFolderAndOpenWithNativeApplication(const String& suggestedFilename, FrameInfoData&&, std::span<const uint8_t>, const String& pdfUUID);
     void showPDFContextMenu(const PDFContextMenu&, PDFPluginIdentifier, CompletionHandler<void(std::optional<int32_t>&&)>&&);
 #endif
 
@@ -1974,7 +1973,7 @@ public:
     void decidePolicyForNavigationActionAsyncShared(Ref<WebProcessProxy>&&, NavigationActionData&&, CompletionHandler<void(PolicyDecision&&)>&&);
     void decidePolicyForResponseShared(Ref<WebProcessProxy>&&, WebCore::PageIdentifier, FrameInfoData&&, uint64_t navigationID, const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, bool canShowMIMEType, const String& downloadAttribute, bool isShowingInitialAboutBlank, WebCore::CrossOriginOpenerPolicyValue activeDocumentCOOPValue, CompletionHandler<void(PolicyDecision&&)>&&);
     void startURLSchemeTaskShared(Ref<WebProcessProxy>&&, WebCore::PageIdentifier, URLSchemeTaskParameters&&);
-    void loadDataWithNavigationShared(Ref<WebProcessProxy>&&, WebCore::PageIdentifier, API::Navigation&, const IPC::DataReference&, const String& MIMEType, const String& encoding, const String& baseURL, API::Object* userData, WebCore::ShouldTreatAsContinuingLoad, std::optional<NavigatingToAppBoundDomain>, std::optional<WebsitePoliciesData>&&, WebCore::ShouldOpenExternalURLsPolicy, WebCore::SessionHistoryVisibility);
+    void loadDataWithNavigationShared(Ref<WebProcessProxy>&&, WebCore::PageIdentifier, API::Navigation&, std::span<const uint8_t>, const String& MIMEType, const String& encoding, const String& baseURL, API::Object* userData, WebCore::ShouldTreatAsContinuingLoad, std::optional<NavigatingToAppBoundDomain>, std::optional<WebsitePoliciesData>&&, WebCore::ShouldOpenExternalURLsPolicy, WebCore::SessionHistoryVisibility);
     void loadRequestWithNavigationShared(Ref<WebProcessProxy>&&, WebCore::PageIdentifier, API::Navigation&, WebCore::ResourceRequest&&, WebCore::ShouldOpenExternalURLsPolicy, API::Object* userData, WebCore::ShouldTreatAsContinuingLoad, std::optional<NavigatingToAppBoundDomain>, std::optional<WebsitePoliciesData>&&, std::optional<NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume);
     void backForwardAddItemShared(Ref<WebProcessProxy>&&, BackForwardListItemState&&);
     void backForwardGoToItemShared(const WebCore::BackForwardItemIdentifier&, CompletionHandler<void(const WebBackForwardListCounts&)>&&);
@@ -2279,7 +2278,7 @@ public:
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    void replaceImageForRemoveBackground(const WebCore::ElementContext&, const Vector<String>& types, const IPC::DataReference&);
+    void replaceImageForRemoveBackground(const WebCore::ElementContext&, const Vector<String>& types, std::span<const uint8_t>);
     void shouldAllowRemoveBackground(const WebCore::ElementContext&, CompletionHandler<void(bool)>&&);
 #endif
 
@@ -2499,7 +2498,7 @@ private:
     void accessibilityScreenToRootView(const WebCore::IntPoint& screenPoint, CompletionHandler<void(WebCore::IntPoint)>&&);
     void rootViewToAccessibilityScreen(const WebCore::IntRect& viewRect, CompletionHandler<void(WebCore::IntRect)>&&);
 #if PLATFORM(IOS_FAMILY)
-    void relayAccessibilityNotification(const String&, const IPC::DataReference&);
+    void relayAccessibilityNotification(const String&, std::span<const uint8_t>);
 #endif
     void runBeforeUnloadConfirmPanel(WebCore::FrameIdentifier, FrameInfoData&&, const String& message, CompletionHandler<void(bool)>&&);
     void didChangeViewportProperties(const WebCore::ViewportAttributes&);
@@ -2707,7 +2706,7 @@ private:
 
     void focusedFrameChanged(IPC::Connection&, const std::optional<WebCore::FrameIdentifier>&);
 
-    void didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, const IPC::DataReference&);
+    void didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, std::span<const uint8_t>);
 
 #if USE(AUTOMATIC_TEXT_REPLACEMENT)
     void toggleSmartInsertDelete();

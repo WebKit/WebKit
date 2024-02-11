@@ -27,7 +27,6 @@
 #include "APIDataTask.h"
 
 #include "APIDataTaskClient.h"
-#include "DataReference.h"
 #include "NetworkProcessProxy.h"
 #include "WebPageProxy.h"
 #include <WebCore/ResourceError.h>

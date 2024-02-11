@@ -69,8 +69,8 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     GarbageCollectJavaScriptObjects()
     SetJavaScriptGarbageCollectorTimerEnabled(bool enable)
 
-    SetInjectedBundleParameter(String parameter, IPC::DataReference value);
-    SetInjectedBundleParameters(IPC::DataReference parameters);
+    SetInjectedBundleParameter(String parameter, std::span<const uint8_t> value);
+    SetInjectedBundleParameters(std::span<const uint8_t> parameters);
     HandleInjectedBundleMessage(String messageName, WebKit::UserData messageBody);
 
     FetchWebsiteData(OptionSet<WebKit::WebsiteDataType> websiteDataTypes) -> (struct WebKit::WebsiteData websiteData)

@@ -846,22 +846,27 @@ bool PDFPluginBase::hudEnabled() const
     return false;
 }
 
-void PDFPluginBase::save(CompletionHandler<void(const String&, const URL&, const IPC::DataReference&)>&& completionHandler)
+static std::span<const uint8_t> span(NSData *data)
+{
+    return { static_cast<const uint8_t*>(data.bytes), data.length };
+}
+
+void PDFPluginBase::save(CompletionHandler<void(const String&, const URL&, std::span<const uint8_t>)>&& completionHandler)
 {
     NSData *data = liveData();
     URL url;
     if (m_frame)
         url = m_frame->url();
-    completionHandler(m_suggestedFilename, url, IPC:: DataReference(static_cast<const uint8_t*>(data.bytes), data.length));
+    completionHandler(m_suggestedFilename, url, span(data));
 }
 
-void PDFPluginBase::openWithPreview(CompletionHandler<void(const String&, FrameInfoData&&, const IPC::DataReference&, const String&)>&& completionHandler)
+void PDFPluginBase::openWithPreview(CompletionHandler<void(const String&, FrameInfoData&&, std::span<const uint8_t>, const String&)>&& completionHandler)
 {
     NSData *data = liveData();
     FrameInfoData frameInfo;
     if (m_frame)
         frameInfo = m_frame->info();
-    completionHandler(m_suggestedFilename, WTFMove(frameInfo), IPC:: DataReference { static_cast<const uint8_t*>(data.bytes), data.length }, createVersion4UUIDString());
+    completionHandler(m_suggestedFilename, WTFMove(frameInfo), span(data), createVersion4UUIDString());
 }
 
 #endif // ENABLE(PDF_HUD)

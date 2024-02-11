@@ -28,7 +28,6 @@
 
 #if ENABLE(MODEL_PROCESS)
 
-#include "DataReference.h"
 #include "LayerHostingContext.h"
 #include "Logging.h"
 #include "MessageSenderInlines.h"

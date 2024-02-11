@@ -48,7 +48,7 @@ class FragmentedSharedBuffer;
 class WEBCORE_EXPORT NetworkSendQueue : public ContextDestructionObserver {
 public:
     using WriteString = Function<void(const CString& utf8)>;
-    using WriteRawData = Function<void(const std::span<const uint8_t>&)>;
+    using WriteRawData = Function<void(std::span<const uint8_t>)>;
     enum class Continue : bool { No, Yes };
     using ProcessError = Function<Continue(ExceptionCode)>;
     NetworkSendQueue(ScriptExecutionContext&, WriteString&&, WriteRawData&&, ProcessError&&);

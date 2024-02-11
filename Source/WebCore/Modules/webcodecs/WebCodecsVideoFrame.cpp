@@ -503,7 +503,7 @@ void WebCodecsVideoFrame::copyTo(BufferSource&& source, CopyToOptions&& options,
         return;
     }
 
-    std::span<uint8_t> buffer { static_cast<uint8_t*>(source.mutableData()), source.length() };
+    std::span buffer { static_cast<uint8_t*>(source.mutableData()), source.length() };
     m_data.internalFrame->copyTo(buffer, *m_data.format, WTFMove(combinedLayout.computedLayouts), [source = WTFMove(source), promise = WTFMove(promise)](auto planeLayouts) mutable {
         if (!planeLayouts) {
             promise.reject(Exception { ExceptionCode::TypeError,  "Unable to copy data"_s });

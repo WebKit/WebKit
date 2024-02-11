@@ -21,12 +21,12 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> NetworkTransportSession NotRefCounted {
-    SendDatagram(IPC::DataReference datagram) -> ()
+    SendDatagram(std::span<const uint8_t> datagram) -> ()
     CreateOutgoingUnidirectionalStream() -> (std::optional<WebKit::WebTransportStreamIdentifier> identifier)
     CreateBidirectionalStream() -> (std::optional<WebKit::WebTransportStreamIdentifier> identifier)
     DestroyOutgoingUnidirectionalStream(WebKit::WebTransportStreamIdentifier identifier)
     DestroyBidirectionalStream(WebKit::WebTransportStreamIdentifier identifier)
-    SendStreamSendBytes(WebKit::WebTransportStreamIdentifier identifier, IPC::DataReference bytes, bool withFin) -> ()
-    StreamSendBytes(WebKit::WebTransportStreamIdentifier identifier, IPC::DataReference bytes, bool withFin) -> ()
+    SendStreamSendBytes(WebKit::WebTransportStreamIdentifier identifier, std::span<const uint8_t> bytes, bool withFin) -> ()
+    StreamSendBytes(WebKit::WebTransportStreamIdentifier identifier, std::span<const uint8_t> bytes, bool withFin) -> ()
     Terminate(uint32_t code, CString reason)
 }

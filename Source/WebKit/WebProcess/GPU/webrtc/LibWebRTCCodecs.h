@@ -28,7 +28,6 @@
 #if USE(LIBWEBRTC) && PLATFORM(COCOA) && ENABLE(GPU_PROCESS)
 
 #include "Connection.h"
-#include "DataReference.h"
 #include "GPUProcessConnection.h"
 #include "IPCSemaphore.h"
 #include "MessageReceiver.h"
@@ -115,7 +114,7 @@ public:
     void registerDecodedVideoFrameCallback(Decoder&, DecoderCallback&&);
 
     using DescriptionCallback = Function<void(WebCore::VideoEncoderActiveConfiguration&&)>;
-    using EncoderCallback = Function<void(std::span<const uint8_t>&&, bool isKeyFrame, int64_t timestamp, std::optional<uint64_t> duration, std::optional<unsigned> temporalIndex)>;
+    using EncoderCallback = Function<void(std::span<const uint8_t>, bool isKeyFrame, int64_t timestamp, std::optional<uint64_t> duration, std::optional<unsigned> temporalIndex)>;
     struct EncoderInitializationData {
         uint16_t width;
         uint16_t height;
@@ -185,9 +184,9 @@ private:
     void completedDecoding(VideoDecoderIdentifier, int64_t timeStamp, int64_t timeStampNs, RemoteVideoFrameProxy::Properties&&);
     // FIXME: Will be removed once RemoteVideoFrameProxy providers are the only ones sending data.
     void completedDecodingCV(VideoDecoderIdentifier, int64_t timeStamp, int64_t timeStampNs, RetainPtr<CVPixelBufferRef>&&);
-    void completedEncoding(VideoEncoderIdentifier, IPC::DataReference&&, const webrtc::WebKitEncodedFrameInfo&);
+    void completedEncoding(VideoEncoderIdentifier, std::span<const uint8_t>, const webrtc::WebKitEncodedFrameInfo&);
     void flushEncoderCompleted(VideoEncoderIdentifier);
-    void setEncodingConfiguration(WebKit::VideoEncoderIdentifier, IPC::DataReference&&, std::optional<WebCore::PlatformVideoColorSpace>);
+    void setEncodingConfiguration(WebKit::VideoEncoderIdentifier, std::span<const uint8_t>, std::optional<WebCore::PlatformVideoColorSpace>);
     RetainPtr<CVPixelBufferRef> convertToBGRA(CVPixelBufferRef);
 
     // GPUProcessConnection::Client

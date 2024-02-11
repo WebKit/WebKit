@@ -28,7 +28,6 @@
 
 #if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)
 
-#include "DataReference.h"
 #include "Decoder.h"
 #include "GPUConnectionToWebProcess.h"
 #include "GPUProcess.h"

@@ -125,7 +125,7 @@ Vector<uint8_t> FragmentedSharedBuffer::copyData() const
 {
     Vector<uint8_t> data;
     data.reserveInitialCapacity(size());
-    forEachSegment([&data](auto& span) {
+    forEachSegment([&data](auto span) {
         data.append(span);
     });
     return data;
@@ -186,9 +186,9 @@ const FragmentedSharedBuffer::DataSegmentVectorEntry* FragmentedSharedBuffer::ge
 String FragmentedSharedBuffer::toHexString() const
 {
     StringBuilder stringBuilder;
-    forEachSegment([&](auto& segment) {
-        for (unsigned i = 0; i < segment.size(); ++i)
-            stringBuilder.append(pad('0', 2, hex(segment[i])));
+    forEachSegment([&](auto segment) {
+        for (auto byte : segment)
+            stringBuilder.append(pad('0', 2, hex(byte)));
     });
     return stringBuilder.toString();
 }
@@ -261,14 +261,14 @@ Ref<FragmentedSharedBuffer> FragmentedSharedBuffer::copy() const
     return clone;
 }
 
-void FragmentedSharedBuffer::forEachSegment(const Function<void(const std::span<const uint8_t>&)>& apply) const
+void FragmentedSharedBuffer::forEachSegment(const Function<void(std::span<const uint8_t>)>& apply) const
 {
     auto segments = m_segments;
     for (auto& segment : segments)
         segment.segment->iterate(apply);
 }
 
-void DataSegment::iterate(const Function<void(const std::span<const uint8_t>&)>& apply) const
+void DataSegment::iterate(const Function<void(std::span<const uint8_t>)>& apply) const
 {
 #if USE(FOUNDATION)
     if (auto* data = std::get_if<RetainPtr<CFDataRef>>(&m_immutableData))
@@ -284,7 +284,7 @@ void FragmentedSharedBuffer::forEachSegmentAsSharedBuffer(const Function<void(Re
         apply(SharedBuffer::create(segment.segment.copyRef()));
 }
 
-bool FragmentedSharedBuffer::startsWith(const std::span<const uint8_t>& prefix) const
+bool FragmentedSharedBuffer::startsWith(std::span<const uint8_t> prefix) const
 {
     if (prefix.empty())
         return true;

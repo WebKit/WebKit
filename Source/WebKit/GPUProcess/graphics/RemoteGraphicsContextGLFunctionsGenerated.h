@@ -331,26 +331,26 @@
         returnValue = m_context->getString(name);
         completionHandler(WTFMove(returnValue));
     }
-    void getFloatv(uint32_t pname, size_t valueSize, CompletionHandler<void(IPC::ArrayReference<float>)>&& completionHandler)
+    void getFloatv(uint32_t pname, size_t valueSize, CompletionHandler<void(std::span<const float>)>&& completionHandler)
     {
         Vector<GCGLfloat, 16> value(valueSize, 0);
         assertIsCurrent(workQueue());
         m_context->getFloatv(pname, value);
-        completionHandler(IPC::ArrayReference<float>(reinterpret_cast<float*>(value.data()), value.size()));
+        completionHandler(std::span<const float>(reinterpret_cast<const float*>(value.data()), value.size()));
     }
-    void getIntegerv(uint32_t pname, size_t valueSize, CompletionHandler<void(IPC::ArrayReference<int32_t>)>&& completionHandler)
+    void getIntegerv(uint32_t pname, size_t valueSize, CompletionHandler<void(std::span<const int32_t>)>&& completionHandler)
     {
         Vector<GCGLint, 4> value(valueSize, 0);
         assertIsCurrent(workQueue());
         m_context->getIntegerv(pname, value);
-        completionHandler(IPC::ArrayReference<int32_t>(reinterpret_cast<int32_t*>(value.data()), value.size()));
+        completionHandler(std::span<const int32_t>(reinterpret_cast<const int32_t*>(value.data()), value.size()));
     }
-    void getIntegeri_v(uint32_t pname, uint32_t index, CompletionHandler<void(IPC::ArrayReference<int32_t, 4>)>&& completionHandler) // NOLINT
+    void getIntegeri_v(uint32_t pname, uint32_t index, CompletionHandler<void(std::span<const int32_t, 4>)>&& completionHandler) // NOLINT
     {
         std::array<GCGLint, 4> value { };
         assertIsCurrent(workQueue());
         m_context->getIntegeri_v(pname, index, value);
-        completionHandler(IPC::ArrayReference<int32_t, 4>(reinterpret_cast<int32_t*>(value.data()), value.size()));
+        completionHandler(std::span<const int32_t, 4>(reinterpret_cast<const int32_t*>(value.data()), value.size()));
     }
     void getInteger64(uint32_t pname, CompletionHandler<void(int64_t)>&& completionHandler)
     {
@@ -373,12 +373,12 @@
         returnValue = m_context->getProgrami(program, pname);
         completionHandler(returnValue);
     }
-    void getBooleanv(uint32_t pname, size_t valueSize, CompletionHandler<void(IPC::ArrayReference<bool>)>&& completionHandler)
+    void getBooleanv(uint32_t pname, size_t valueSize, CompletionHandler<void(std::span<const bool>)>&& completionHandler)
     {
         Vector<GCGLboolean, 4> value(valueSize, 0);
         assertIsCurrent(workQueue());
         m_context->getBooleanv(pname, value);
-        completionHandler(IPC::ArrayReference<bool>(reinterpret_cast<bool*>(value.data()), value.size()));
+        completionHandler(std::span<const bool>(reinterpret_cast<const bool*>(value.data()), value.size()));
     }
     void getFramebufferAttachmentParameteri(uint32_t target, uint32_t attachment, uint32_t pname, CompletionHandler<void(int32_t)>&& completionHandler)
     {
@@ -415,13 +415,13 @@
         returnValue = m_context->getShaderInfoLog(arg0);
         completionHandler(WTFMove(returnValue));
     }
-    void getShaderPrecisionFormat(uint32_t shaderType, uint32_t precisionType, CompletionHandler<void(IPC::ArrayReference<int32_t, 2>, int32_t)>&& completionHandler)
+    void getShaderPrecisionFormat(uint32_t shaderType, uint32_t precisionType, CompletionHandler<void(std::span<const int32_t, 2>, int32_t)>&& completionHandler)
     {
         std::array<GCGLint, 2> range { };
         GCGLint precision = { };
         assertIsCurrent(workQueue());
         m_context->getShaderPrecisionFormat(shaderType, precisionType, range, &precision);
-        completionHandler(IPC::ArrayReference<int32_t, 2>(reinterpret_cast<int32_t*>(range.data()), range.size()), precision);
+        completionHandler(std::span<const int32_t, 2>(reinterpret_cast<const int32_t*>(range.data()), range.size()), precision);
     }
     void getShaderSource(uint32_t arg0, CompletionHandler<void(String&&)>&& completionHandler)
     {
@@ -444,26 +444,26 @@
         returnValue = m_context->getTexParameteri(target, pname);
         completionHandler(returnValue);
     }
-    void getUniformfv(uint32_t program, int32_t location, size_t valueSize, CompletionHandler<void(IPC::ArrayReference<float>)>&& completionHandler)
+    void getUniformfv(uint32_t program, int32_t location, size_t valueSize, CompletionHandler<void(std::span<const float>)>&& completionHandler)
     {
         Vector<GCGLfloat, 16> value(valueSize, 0);
         assertIsCurrent(workQueue());
         m_context->getUniformfv(program, location, value);
-        completionHandler(IPC::ArrayReference<float>(reinterpret_cast<float*>(value.data()), value.size()));
+        completionHandler(std::span<const float>(reinterpret_cast<const float*>(value.data()), value.size()));
     }
-    void getUniformiv(uint32_t program, int32_t location, size_t valueSize, CompletionHandler<void(IPC::ArrayReference<int32_t>)>&& completionHandler)
+    void getUniformiv(uint32_t program, int32_t location, size_t valueSize, CompletionHandler<void(std::span<const int32_t>)>&& completionHandler)
     {
         Vector<GCGLint, 4> value(valueSize, 0);
         assertIsCurrent(workQueue());
         m_context->getUniformiv(program, location, value);
-        completionHandler(IPC::ArrayReference<int32_t>(reinterpret_cast<int32_t*>(value.data()), value.size()));
+        completionHandler(std::span<const int32_t>(reinterpret_cast<const int32_t*>(value.data()), value.size()));
     }
-    void getUniformuiv(uint32_t program, int32_t location, size_t valueSize, CompletionHandler<void(IPC::ArrayReference<uint32_t>)>&& completionHandler)
+    void getUniformuiv(uint32_t program, int32_t location, size_t valueSize, CompletionHandler<void(std::span<const uint32_t>)>&& completionHandler)
     {
         Vector<GCGLuint, 4> value(valueSize, 0);
         assertIsCurrent(workQueue());
         m_context->getUniformuiv(program, location, value);
-        completionHandler(IPC::ArrayReference<uint32_t>(reinterpret_cast<uint32_t*>(value.data()), value.size()));
+        completionHandler(std::span<const uint32_t>(reinterpret_cast<const uint32_t*>(value.data()), value.size()));
     }
     void getUniformLocation(uint32_t arg0, String&& name, CompletionHandler<void(int32_t)>&& completionHandler)
     {
@@ -618,7 +618,7 @@
         assertIsCurrent(workQueue());
         m_context->uniform1f(location, x);
     }
-    void uniform1fv(int32_t location, IPC::ArrayReference<float>&& v)
+    void uniform1fv(int32_t location, std::span<const float>&& v)
     {
         assertIsCurrent(workQueue());
         m_context->uniform1fv(location, std::span(reinterpret_cast<const GCGLfloat*>(v.data()), v.size()));
@@ -628,7 +628,7 @@
         assertIsCurrent(workQueue());
         m_context->uniform1i(location, x);
     }
-    void uniform1iv(int32_t location, IPC::ArrayReference<int32_t>&& v)
+    void uniform1iv(int32_t location, std::span<const int32_t>&& v)
     {
         assertIsCurrent(workQueue());
         m_context->uniform1iv(location, std::span(reinterpret_cast<const GCGLint*>(v.data()), v.size()));
@@ -638,7 +638,7 @@
         assertIsCurrent(workQueue());
         m_context->uniform2f(location, x, y);
     }
-    void uniform2fv(int32_t location, IPC::ArrayReference<float>&& v)
+    void uniform2fv(int32_t location, std::span<const float>&& v)
     {
         assertIsCurrent(workQueue());
         m_context->uniform2fv(location, std::span(reinterpret_cast<const GCGLfloat*>(v.data()), v.size()));
@@ -648,7 +648,7 @@
         assertIsCurrent(workQueue());
         m_context->uniform2i(location, x, y);
     }
-    void uniform2iv(int32_t location, IPC::ArrayReference<int32_t>&& v)
+    void uniform2iv(int32_t location, std::span<const int32_t>&& v)
     {
         assertIsCurrent(workQueue());
         m_context->uniform2iv(location, std::span(reinterpret_cast<const GCGLint*>(v.data()), v.size()));
@@ -658,7 +658,7 @@
         assertIsCurrent(workQueue());
         m_context->uniform3f(location, x, y, z);
     }
-    void uniform3fv(int32_t location, IPC::ArrayReference<float>&& v)
+    void uniform3fv(int32_t location, std::span<const float>&& v)
     {
         assertIsCurrent(workQueue());
         m_context->uniform3fv(location, std::span(reinterpret_cast<const GCGLfloat*>(v.data()), v.size()));
@@ -668,7 +668,7 @@
         assertIsCurrent(workQueue());
         m_context->uniform3i(location, x, y, z);
     }
-    void uniform3iv(int32_t location, IPC::ArrayReference<int32_t>&& v)
+    void uniform3iv(int32_t location, std::span<const int32_t>&& v)
     {
         assertIsCurrent(workQueue());
         m_context->uniform3iv(location, std::span(reinterpret_cast<const GCGLint*>(v.data()), v.size()));
@@ -678,7 +678,7 @@
         assertIsCurrent(workQueue());
         m_context->uniform4f(location, x, y, z, w);
     }
-    void uniform4fv(int32_t location, IPC::ArrayReference<float>&& v)
+    void uniform4fv(int32_t location, std::span<const float>&& v)
     {
         assertIsCurrent(workQueue());
         m_context->uniform4fv(location, std::span(reinterpret_cast<const GCGLfloat*>(v.data()), v.size()));
@@ -688,22 +688,22 @@
         assertIsCurrent(workQueue());
         m_context->uniform4i(location, x, y, z, w);
     }
-    void uniform4iv(int32_t location, IPC::ArrayReference<int32_t>&& v)
+    void uniform4iv(int32_t location, std::span<const int32_t>&& v)
     {
         assertIsCurrent(workQueue());
         m_context->uniform4iv(location, std::span(reinterpret_cast<const GCGLint*>(v.data()), v.size()));
     }
-    void uniformMatrix2fv(int32_t location, bool transpose, IPC::ArrayReference<float>&& value)
+    void uniformMatrix2fv(int32_t location, bool transpose, std::span<const float>&& value)
     {
         assertIsCurrent(workQueue());
         m_context->uniformMatrix2fv(location, static_cast<GCGLboolean>(transpose), std::span(reinterpret_cast<const GCGLfloat*>(value.data()), value.size()));
     }
-    void uniformMatrix3fv(int32_t location, bool transpose, IPC::ArrayReference<float>&& value)
+    void uniformMatrix3fv(int32_t location, bool transpose, std::span<const float>&& value)
     {
         assertIsCurrent(workQueue());
         m_context->uniformMatrix3fv(location, static_cast<GCGLboolean>(transpose), std::span(reinterpret_cast<const GCGLfloat*>(value.data()), value.size()));
     }
-    void uniformMatrix4fv(int32_t location, bool transpose, IPC::ArrayReference<float>&& value)
+    void uniformMatrix4fv(int32_t location, bool transpose, std::span<const float>&& value)
     {
         assertIsCurrent(workQueue());
         m_context->uniformMatrix4fv(location, static_cast<GCGLboolean>(transpose), std::span(reinterpret_cast<const GCGLfloat*>(value.data()), value.size()));
@@ -723,7 +723,7 @@
         assertIsCurrent(workQueue());
         m_context->vertexAttrib1f(index, x);
     }
-    void vertexAttrib1fv(uint32_t index, IPC::ArrayReference<float, 1>&& values)
+    void vertexAttrib1fv(uint32_t index, std::span<const float, 1>&& values)
     {
         assertIsCurrent(workQueue());
         m_context->vertexAttrib1fv(index, std::span<const GCGLfloat, 1> { reinterpret_cast<const GCGLfloat*>(values.data()), 1 });
@@ -733,7 +733,7 @@
         assertIsCurrent(workQueue());
         m_context->vertexAttrib2f(index, x, y);
     }
-    void vertexAttrib2fv(uint32_t index, IPC::ArrayReference<float, 2>&& values)
+    void vertexAttrib2fv(uint32_t index, std::span<const float, 2>&& values)
     {
         assertIsCurrent(workQueue());
         m_context->vertexAttrib2fv(index, std::span<const GCGLfloat, 2> { reinterpret_cast<const GCGLfloat*>(values.data()), 2 });
@@ -743,7 +743,7 @@
         assertIsCurrent(workQueue());
         m_context->vertexAttrib3f(index, x, y, z);
     }
-    void vertexAttrib3fv(uint32_t index, IPC::ArrayReference<float, 3>&& values)
+    void vertexAttrib3fv(uint32_t index, std::span<const float, 3>&& values)
     {
         assertIsCurrent(workQueue());
         m_context->vertexAttrib3fv(index, std::span<const GCGLfloat, 3> { reinterpret_cast<const GCGLfloat*>(values.data()), 3 });
@@ -753,7 +753,7 @@
         assertIsCurrent(workQueue());
         m_context->vertexAttrib4f(index, x, y, z, w);
     }
-    void vertexAttrib4fv(uint32_t index, IPC::ArrayReference<float, 4>&& values)
+    void vertexAttrib4fv(uint32_t index, std::span<const float, 4>&& values)
     {
         assertIsCurrent(workQueue());
         m_context->vertexAttrib4fv(index, std::span<const GCGLfloat, 4> { reinterpret_cast<const GCGLfloat*>(values.data()), 4 });
@@ -773,12 +773,12 @@
         assertIsCurrent(workQueue());
         m_context->bufferData(target, static_cast<GCGLsizeiptr>(arg1), usage);
     }
-    void bufferData1(uint32_t target, IPC::ArrayReference<uint8_t>&& data, uint32_t usage)
+    void bufferData1(uint32_t target, std::span<const uint8_t>&& data, uint32_t usage)
     {
         assertIsCurrent(workQueue());
         m_context->bufferData(target, std::span(reinterpret_cast<const uint8_t*>(data.data()), data.size()), usage);
     }
-    void bufferSubData(uint32_t target, uint64_t offset, IPC::ArrayReference<uint8_t>&& data)
+    void bufferSubData(uint32_t target, uint64_t offset, std::span<const uint8_t>&& data)
     {
         assertIsCurrent(workQueue());
         m_context->bufferSubData(target, static_cast<GCGLintptr>(offset), std::span(reinterpret_cast<const uint8_t*>(data.data()), data.size()));
@@ -788,7 +788,7 @@
         assertIsCurrent(workQueue());
         m_context->readPixelsBufferObject(arg0, format, type, static_cast<GCGLintptr>(offset), alignment, rowLength);
     }
-    void texImage2D0(uint32_t target, int32_t level, uint32_t internalformat, int32_t width, int32_t height, int32_t border, uint32_t format, uint32_t type, IPC::ArrayReference<uint8_t>&& pixels)
+    void texImage2D0(uint32_t target, int32_t level, uint32_t internalformat, int32_t width, int32_t height, int32_t border, uint32_t format, uint32_t type, std::span<const uint8_t>&& pixels)
     {
         assertIsCurrent(workQueue());
         m_context->texImage2D(target, level, internalformat, width, height, border, format, type, std::span(reinterpret_cast<const uint8_t*>(pixels.data()), pixels.size()));
@@ -798,7 +798,7 @@
         assertIsCurrent(workQueue());
         m_context->texImage2D(target, level, internalformat, width, height, border, format, type, static_cast<GCGLintptr>(offset));
     }
-    void texSubImage2D0(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t width, int32_t height, uint32_t format, uint32_t type, IPC::ArrayReference<uint8_t>&& pixels)
+    void texSubImage2D0(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t width, int32_t height, uint32_t format, uint32_t type, std::span<const uint8_t>&& pixels)
     {
         assertIsCurrent(workQueue());
         m_context->texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, std::span(reinterpret_cast<const uint8_t*>(pixels.data()), pixels.size()));
@@ -808,7 +808,7 @@
         assertIsCurrent(workQueue());
         m_context->texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, static_cast<GCGLintptr>(offset));
     }
-    void compressedTexImage2D0(uint32_t target, int32_t level, uint32_t internalformat, int32_t width, int32_t height, int32_t border, int32_t imageSize, IPC::ArrayReference<uint8_t>&& data)
+    void compressedTexImage2D0(uint32_t target, int32_t level, uint32_t internalformat, int32_t width, int32_t height, int32_t border, int32_t imageSize, std::span<const uint8_t>&& data)
     {
         assertIsCurrent(workQueue());
         m_context->compressedTexImage2D(target, level, internalformat, width, height, border, imageSize, std::span(reinterpret_cast<const uint8_t*>(data.data()), data.size()));
@@ -818,7 +818,7 @@
         assertIsCurrent(workQueue());
         m_context->compressedTexImage2D(target, level, internalformat, width, height, border, imageSize, static_cast<GCGLintptr>(offset));
     }
-    void compressedTexSubImage2D0(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t width, int32_t height, uint32_t format, int32_t imageSize, IPC::ArrayReference<uint8_t>&& data)
+    void compressedTexSubImage2D0(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t width, int32_t height, uint32_t format, int32_t imageSize, std::span<const uint8_t>&& data)
     {
         assertIsCurrent(workQueue());
         m_context->compressedTexSubImage2D(target, level, xoffset, yoffset, width, height, format, imageSize, std::span(reinterpret_cast<const uint8_t*>(data.data()), data.size()));
@@ -872,12 +872,12 @@
         assertIsCurrent(workQueue());
         m_context->copyBufferSubData(readTarget, writeTarget, static_cast<GCGLintptr>(readOffset), static_cast<GCGLintptr>(writeOffset), static_cast<GCGLsizeiptr>(arg4));
     }
-    void getBufferSubData(uint32_t target, uint64_t offset, size_t dataSize, CompletionHandler<void(IPC::ArrayReference<uint8_t>)>&& completionHandler)
+    void getBufferSubData(uint32_t target, uint64_t offset, size_t dataSize, CompletionHandler<void(std::span<const uint8_t>)>&& completionHandler)
     {
         Vector<uint8_t, 4> data(dataSize, 0);
         assertIsCurrent(workQueue());
         m_context->getBufferSubData(target, static_cast<GCGLintptr>(offset), data);
-        completionHandler(IPC::ArrayReference<uint8_t>(reinterpret_cast<uint8_t*>(data.data()), data.size()));
+        completionHandler(std::span<const uint8_t>(reinterpret_cast<const uint8_t*>(data.data()), data.size()));
     }
     void blitFramebuffer(int32_t srcX0, int32_t srcY0, int32_t srcX1, int32_t srcY1, int32_t dstX0, int32_t dstY0, int32_t dstX1, int32_t dstY1, uint32_t mask, uint32_t filter)
     {
@@ -889,12 +889,12 @@
         assertIsCurrent(workQueue());
         m_context->framebufferTextureLayer(target, attachment, texture, level, layer);
     }
-    void invalidateFramebuffer(uint32_t target, IPC::ArrayReference<uint32_t>&& attachments)
+    void invalidateFramebuffer(uint32_t target, std::span<const uint32_t>&& attachments)
     {
         assertIsCurrent(workQueue());
         m_context->invalidateFramebuffer(target, std::span(reinterpret_cast<const GCGLenum*>(attachments.data()), attachments.size()));
     }
-    void invalidateSubFramebuffer(uint32_t target, IPC::ArrayReference<uint32_t>&& attachments, int32_t x, int32_t y, int32_t width, int32_t height)
+    void invalidateSubFramebuffer(uint32_t target, std::span<const uint32_t>&& attachments, int32_t x, int32_t y, int32_t width, int32_t height)
     {
         assertIsCurrent(workQueue());
         m_context->invalidateSubFramebuffer(target, std::span(reinterpret_cast<const GCGLenum*>(attachments.data()), attachments.size()), x, y, width, height);
@@ -919,7 +919,7 @@
         assertIsCurrent(workQueue());
         m_context->texStorage3D(target, levels, internalformat, width, height, depth);
     }
-    void texImage3D0(uint32_t target, int32_t level, int32_t internalformat, int32_t width, int32_t height, int32_t depth, int32_t border, uint32_t format, uint32_t type, IPC::ArrayReference<uint8_t>&& pixels)
+    void texImage3D0(uint32_t target, int32_t level, int32_t internalformat, int32_t width, int32_t height, int32_t depth, int32_t border, uint32_t format, uint32_t type, std::span<const uint8_t>&& pixels)
     {
         assertIsCurrent(workQueue());
         m_context->texImage3D(target, level, internalformat, width, height, depth, border, format, type, std::span(reinterpret_cast<const uint8_t*>(pixels.data()), pixels.size()));
@@ -929,7 +929,7 @@
         assertIsCurrent(workQueue());
         m_context->texImage3D(target, level, internalformat, width, height, depth, border, format, type, static_cast<GCGLintptr>(offset));
     }
-    void texSubImage3D0(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t zoffset, int32_t width, int32_t height, int32_t depth, uint32_t format, uint32_t type, IPC::ArrayReference<uint8_t>&& pixels)
+    void texSubImage3D0(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t zoffset, int32_t width, int32_t height, int32_t depth, uint32_t format, uint32_t type, std::span<const uint8_t>&& pixels)
     {
         assertIsCurrent(workQueue());
         m_context->texSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, std::span(reinterpret_cast<const uint8_t*>(pixels.data()), pixels.size()));
@@ -944,7 +944,7 @@
         assertIsCurrent(workQueue());
         m_context->copyTexSubImage3D(target, level, xoffset, yoffset, zoffset, x, y, width, height);
     }
-    void compressedTexImage3D0(uint32_t target, int32_t level, uint32_t internalformat, int32_t width, int32_t height, int32_t depth, int32_t border, int32_t imageSize, IPC::ArrayReference<uint8_t>&& data)
+    void compressedTexImage3D0(uint32_t target, int32_t level, uint32_t internalformat, int32_t width, int32_t height, int32_t depth, int32_t border, int32_t imageSize, std::span<const uint8_t>&& data)
     {
         assertIsCurrent(workQueue());
         m_context->compressedTexImage3D(target, level, internalformat, width, height, depth, border, imageSize, std::span(reinterpret_cast<const uint8_t*>(data.data()), data.size()));
@@ -954,7 +954,7 @@
         assertIsCurrent(workQueue());
         m_context->compressedTexImage3D(target, level, internalformat, width, height, depth, border, imageSize, static_cast<GCGLintptr>(offset));
     }
-    void compressedTexSubImage3D0(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t zoffset, int32_t width, int32_t height, int32_t depth, uint32_t format, int32_t imageSize, IPC::ArrayReference<uint8_t>&& data)
+    void compressedTexSubImage3D0(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t zoffset, int32_t width, int32_t height, int32_t depth, uint32_t format, int32_t imageSize, std::span<const uint8_t>&& data)
     {
         assertIsCurrent(workQueue());
         m_context->compressedTexSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, std::span(reinterpret_cast<const uint8_t*>(data.data()), data.size()));
@@ -991,52 +991,52 @@
         assertIsCurrent(workQueue());
         m_context->uniform4ui(location, v0, v1, v2, v3);
     }
-    void uniform1uiv(int32_t location, IPC::ArrayReference<uint32_t>&& data)
+    void uniform1uiv(int32_t location, std::span<const uint32_t>&& data)
     {
         assertIsCurrent(workQueue());
         m_context->uniform1uiv(location, std::span(reinterpret_cast<const GCGLuint*>(data.data()), data.size()));
     }
-    void uniform2uiv(int32_t location, IPC::ArrayReference<uint32_t>&& data)
+    void uniform2uiv(int32_t location, std::span<const uint32_t>&& data)
     {
         assertIsCurrent(workQueue());
         m_context->uniform2uiv(location, std::span(reinterpret_cast<const GCGLuint*>(data.data()), data.size()));
     }
-    void uniform3uiv(int32_t location, IPC::ArrayReference<uint32_t>&& data)
+    void uniform3uiv(int32_t location, std::span<const uint32_t>&& data)
     {
         assertIsCurrent(workQueue());
         m_context->uniform3uiv(location, std::span(reinterpret_cast<const GCGLuint*>(data.data()), data.size()));
     }
-    void uniform4uiv(int32_t location, IPC::ArrayReference<uint32_t>&& data)
+    void uniform4uiv(int32_t location, std::span<const uint32_t>&& data)
     {
         assertIsCurrent(workQueue());
         m_context->uniform4uiv(location, std::span(reinterpret_cast<const GCGLuint*>(data.data()), data.size()));
     }
-    void uniformMatrix2x3fv(int32_t location, bool transpose, IPC::ArrayReference<float>&& data)
+    void uniformMatrix2x3fv(int32_t location, bool transpose, std::span<const float>&& data)
     {
         assertIsCurrent(workQueue());
         m_context->uniformMatrix2x3fv(location, static_cast<GCGLboolean>(transpose), std::span(reinterpret_cast<const GCGLfloat*>(data.data()), data.size()));
     }
-    void uniformMatrix3x2fv(int32_t location, bool transpose, IPC::ArrayReference<float>&& data)
+    void uniformMatrix3x2fv(int32_t location, bool transpose, std::span<const float>&& data)
     {
         assertIsCurrent(workQueue());
         m_context->uniformMatrix3x2fv(location, static_cast<GCGLboolean>(transpose), std::span(reinterpret_cast<const GCGLfloat*>(data.data()), data.size()));
     }
-    void uniformMatrix2x4fv(int32_t location, bool transpose, IPC::ArrayReference<float>&& data)
+    void uniformMatrix2x4fv(int32_t location, bool transpose, std::span<const float>&& data)
     {
         assertIsCurrent(workQueue());
         m_context->uniformMatrix2x4fv(location, static_cast<GCGLboolean>(transpose), std::span(reinterpret_cast<const GCGLfloat*>(data.data()), data.size()));
     }
-    void uniformMatrix4x2fv(int32_t location, bool transpose, IPC::ArrayReference<float>&& data)
+    void uniformMatrix4x2fv(int32_t location, bool transpose, std::span<const float>&& data)
     {
         assertIsCurrent(workQueue());
         m_context->uniformMatrix4x2fv(location, static_cast<GCGLboolean>(transpose), std::span(reinterpret_cast<const GCGLfloat*>(data.data()), data.size()));
     }
-    void uniformMatrix3x4fv(int32_t location, bool transpose, IPC::ArrayReference<float>&& data)
+    void uniformMatrix3x4fv(int32_t location, bool transpose, std::span<const float>&& data)
     {
         assertIsCurrent(workQueue());
         m_context->uniformMatrix3x4fv(location, static_cast<GCGLboolean>(transpose), std::span(reinterpret_cast<const GCGLfloat*>(data.data()), data.size()));
     }
-    void uniformMatrix4x3fv(int32_t location, bool transpose, IPC::ArrayReference<float>&& data)
+    void uniformMatrix4x3fv(int32_t location, bool transpose, std::span<const float>&& data)
     {
         assertIsCurrent(workQueue());
         m_context->uniformMatrix4x3fv(location, static_cast<GCGLboolean>(transpose), std::span(reinterpret_cast<const GCGLfloat*>(data.data()), data.size()));
@@ -1046,7 +1046,7 @@
         assertIsCurrent(workQueue());
         m_context->vertexAttribI4i(index, x, y, z, w);
     }
-    void vertexAttribI4iv(uint32_t index, IPC::ArrayReference<int32_t, 4>&& values)
+    void vertexAttribI4iv(uint32_t index, std::span<const int32_t, 4>&& values)
     {
         assertIsCurrent(workQueue());
         m_context->vertexAttribI4iv(index, std::span<const GCGLint, 4> { reinterpret_cast<const GCGLint*>(values.data()), 4 });
@@ -1056,7 +1056,7 @@
         assertIsCurrent(workQueue());
         m_context->vertexAttribI4ui(index, x, y, z, w);
     }
-    void vertexAttribI4uiv(uint32_t index, IPC::ArrayReference<uint32_t, 4>&& values)
+    void vertexAttribI4uiv(uint32_t index, std::span<const uint32_t, 4>&& values)
     {
         assertIsCurrent(workQueue());
         m_context->vertexAttribI4uiv(index, std::span<const GCGLuint, 4> { reinterpret_cast<const GCGLuint*>(values.data()), 4 });
@@ -1071,22 +1071,22 @@
         assertIsCurrent(workQueue());
         m_context->drawRangeElements(mode, start, end, count, type, static_cast<GCGLintptr>(offset));
     }
-    void drawBuffers(IPC::ArrayReference<uint32_t>&& bufs)
+    void drawBuffers(std::span<const uint32_t>&& bufs)
     {
         assertIsCurrent(workQueue());
         m_context->drawBuffers(std::span(reinterpret_cast<const GCGLenum*>(bufs.data()), bufs.size()));
     }
-    void clearBufferiv(uint32_t buffer, int32_t drawbuffer, IPC::ArrayReference<int32_t>&& values)
+    void clearBufferiv(uint32_t buffer, int32_t drawbuffer, std::span<const int32_t>&& values)
     {
         assertIsCurrent(workQueue());
         m_context->clearBufferiv(buffer, drawbuffer, std::span(reinterpret_cast<const GCGLint*>(values.data()), values.size()));
     }
-    void clearBufferuiv(uint32_t buffer, int32_t drawbuffer, IPC::ArrayReference<uint32_t>&& values)
+    void clearBufferuiv(uint32_t buffer, int32_t drawbuffer, std::span<const uint32_t>&& values)
     {
         assertIsCurrent(workQueue());
         m_context->clearBufferuiv(buffer, drawbuffer, std::span(reinterpret_cast<const GCGLuint*>(values.data()), values.size()));
     }
-    void clearBufferfv(uint32_t buffer, int32_t drawbuffer, IPC::ArrayReference<float>&& values)
+    void clearBufferfv(uint32_t buffer, int32_t drawbuffer, std::span<const float>&& values)
     {
         assertIsCurrent(workQueue());
         m_context->clearBufferfv(buffer, drawbuffer, std::span(reinterpret_cast<const GCGLfloat*>(values.data()), values.size()));
@@ -1324,12 +1324,12 @@
         assertIsCurrent(workQueue());
         m_context->uniformBlockBinding(program, uniformBlockIndex, uniformBlockBinding);
     }
-    void getActiveUniformBlockiv(uint32_t program, uint32_t uniformBlockIndex, uint32_t pname, size_t paramsSize, CompletionHandler<void(IPC::ArrayReference<int32_t>)>&& completionHandler)
+    void getActiveUniformBlockiv(uint32_t program, uint32_t uniformBlockIndex, uint32_t pname, size_t paramsSize, CompletionHandler<void(std::span<const int32_t>)>&& completionHandler)
     {
         Vector<GCGLint, 4> params(paramsSize, 0);
         assertIsCurrent(workQueue());
         m_context->getActiveUniformBlockiv(program, uniformBlockIndex, pname, params);
-        completionHandler(IPC::ArrayReference<int32_t>(reinterpret_cast<int32_t*>(params.data()), params.size()));
+        completionHandler(std::span<const int32_t>(reinterpret_cast<const int32_t*>(params.data()), params.size()));
     }
     void getTranslatedShaderSourceANGLE(uint32_t arg0, CompletionHandler<void(String&&)>&& completionHandler)
     {
@@ -1338,7 +1338,7 @@
         returnValue = m_context->getTranslatedShaderSourceANGLE(arg0);
         completionHandler(WTFMove(returnValue));
     }
-    void drawBuffersEXT(IPC::ArrayReference<uint32_t>&& bufs)
+    void drawBuffersEXT(std::span<const uint32_t>&& bufs)
     {
         assertIsCurrent(workQueue());
         m_context->drawBuffersEXT(std::span(reinterpret_cast<const GCGLenum*>(bufs.data()), bufs.size()));
@@ -1480,12 +1480,12 @@
         assertIsCurrent(workQueue());
         m_context->blitFramebufferANGLE(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);
     }
-    void getInternalformativ(uint32_t target, uint32_t internalformat, uint32_t pname, size_t paramsSize, CompletionHandler<void(IPC::ArrayReference<int32_t>)>&& completionHandler)
+    void getInternalformativ(uint32_t target, uint32_t internalformat, uint32_t pname, size_t paramsSize, CompletionHandler<void(std::span<const int32_t>)>&& completionHandler)
     {
         Vector<GCGLint, 4> params(paramsSize, 0);
         assertIsCurrent(workQueue());
         m_context->getInternalformativ(target, internalformat, pname, params);
-        completionHandler(IPC::ArrayReference<int32_t>(reinterpret_cast<int32_t*>(params.data()), params.size()));
+        completionHandler(std::span<const int32_t>(reinterpret_cast<const int32_t*>(params.data()), params.size()));
     }
     void setDrawingBufferColorSpace(WebCore::DestinationColorSpace&& arg0)
     {

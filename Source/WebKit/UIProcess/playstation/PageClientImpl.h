@@ -129,7 +129,7 @@ private:
 #endif
 
     // Custom representations.
-    void didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, const IPC::DataReference&) override;
+    void didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, std::span<const uint8_t>) override;
 
     void navigationGestureDidBegin() override;
     void navigationGestureWillEnd(bool willNavigate, WebBackForwardListItem&) override;

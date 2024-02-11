@@ -30,7 +30,6 @@
 #include "APIPageHandle.h"
 #include "APIUIClient.h"
 #include "AuthenticatorManager.h"
-#include "DataReference.h"
 #include "DownloadProxyMap.h"
 #include "GoToBackForwardItemParameters.h"
 #include "LoadParameters.h"

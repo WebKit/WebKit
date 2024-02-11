@@ -77,7 +77,7 @@ static std::pair<GstAudioFormat, GstAudioLayout> convertAudioSampleFormatToGStre
     return { GST_AUDIO_FORMAT_UNKNOWN, GST_AUDIO_LAYOUT_INTERLEAVED };
 }
 
-RefPtr<PlatformRawAudioData> PlatformRawAudioData::create(std::span<const uint8_t>&& sourceData, AudioSampleFormat format, float sampleRate, int64_t timestamp, size_t numberOfFrames, size_t numberOfChannels)
+RefPtr<PlatformRawAudioData> PlatformRawAudioData::create(std::span<const uint8_t> sourceData, AudioSampleFormat format, float sampleRate, int64_t timestamp, size_t numberOfFrames, size_t numberOfChannels)
 {
     ensureAudioDataDebugCategoryInitialized();
     auto [gstFormat, layout] = convertAudioSampleFormatToGStreamerFormat(format);

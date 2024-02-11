@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "DataReference.h"
 #include "IdentifierTypes.h"
 #include "LayerTreeContext.h"
 #include "PDFPluginIdentifier.h"
@@ -319,7 +318,7 @@ public:
     virtual void executeUndoRedo(UndoOrRedo) = 0;
     virtual void wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent&) = 0;
 #if PLATFORM(COCOA)
-    virtual void accessibilityWebProcessTokenReceived(const IPC::DataReference&) = 0;
+    virtual void accessibilityWebProcessTokenReceived(std::span<const uint8_t>) = 0;
     virtual bool executeSavedCommandBySelector(const String& selector) = 0;
     virtual void updateSecureInputState() = 0;
     virtual void resetSecureInputState() = 0;
@@ -565,7 +564,7 @@ public:
 #endif
 
     // Custom representations.
-    virtual void didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, const IPC::DataReference&) = 0;
+    virtual void didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, std::span<const uint8_t>) = 0;
 
     virtual void navigationGestureDidBegin() = 0;
     virtual void navigationGestureWillEnd(bool willNavigate, WebBackForwardListItem&) = 0;

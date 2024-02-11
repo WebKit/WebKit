@@ -28,7 +28,6 @@
 
 #if ENABLE(SANDBOX_EXTENSIONS)
 
-#import "DataReference.h"
 #import "Logging.h"
 #import "WebCoreArgumentCoders.h"
 #import <string.h>

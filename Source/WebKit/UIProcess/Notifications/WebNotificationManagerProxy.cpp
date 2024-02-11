@@ -257,7 +257,7 @@ void WebNotificationManagerProxy::providerDidCloseNotifications(API::Array* glob
             if (span.size() != 16)
                 continue;
 
-            coreNotificationID = WTF::UUID { std::span<const uint8_t, 16> { span.data(), 16 } };
+            coreNotificationID = WTF::UUID { std::span<const uint8_t, 16> { span } };
         }
 
         ASSERT(coreNotificationID);

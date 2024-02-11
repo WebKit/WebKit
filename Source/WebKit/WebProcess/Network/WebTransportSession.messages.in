@@ -21,8 +21,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> WebTransportSession {
-    ReceiveDatagram(IPC::DataReference datagram)
+    ReceiveDatagram(std::span<const uint8_t> datagram)
     ReceiveIncomingUnidirectionalStream(WebKit::WebTransportStreamIdentifier identifier)
     ReceiveBidirectionalStream(WebKit::WebTransportStreamIdentifier identifier)
-    StreamReceiveBytes(WebKit::WebTransportStreamIdentifier identifier, IPC::DataReference bytes, bool withFin)
+    StreamReceiveBytes(WebKit::WebTransportStreamIdentifier identifier, std::span<const uint8_t> bytes, bool withFin)
 }

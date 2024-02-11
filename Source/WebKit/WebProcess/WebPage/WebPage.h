@@ -28,7 +28,6 @@
 #include "APIObject.h"
 #include "CallbackID.h"
 #include "ContentWorldShared.h"
-#include "DataReference.h"
 #include "DownloadID.h"
 #include "DrawingAreaInfo.h"
 #include "EditingRange.h"
@@ -468,8 +467,8 @@ public:
 #if ENABLE(PDF_PLUGIN) && PLATFORM(MAC)
     void zoomPDFIn(PDFPluginIdentifier);
     void zoomPDFOut(PDFPluginIdentifier);
-    void savePDF(PDFPluginIdentifier, CompletionHandler<void(const String&, const URL&, const IPC::DataReference&)>&&);
-    void openPDFWithPreview(PDFPluginIdentifier, CompletionHandler<void(const String&, FrameInfoData&&, const IPC::DataReference&, const String&)>&&);
+    void savePDF(PDFPluginIdentifier, CompletionHandler<void(const String&, const URL&, std::span<const uint8_t>)>&&);
+    void openPDFWithPreview(PDFPluginIdentifier, CompletionHandler<void(const String&, FrameInfoData&&, std::span<const uint8_t>, const String&)>&&);
 #endif
 
 #if PLATFORM(COCOA)
@@ -1042,7 +1041,7 @@ public:
 
 #if PLATFORM(COCOA)
     void platformInitializeAccessibility();
-    void registerUIProcessAccessibilityTokens(const IPC::DataReference& elemenToken, const IPC::DataReference& windowToken);
+    void registerUIProcessAccessibilityTokens(std::span<const uint8_t> elementToken, std::span<const uint8_t> windowToken);
     WKAccessibilityWebPageObject* accessibilityRemoteObject();
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     void cacheAXPosition(const WebCore::FloatPoint&);
@@ -1069,7 +1068,7 @@ public:
     bool performNonEditingBehaviorForSelector(const String&, WebCore::KeyboardEvent*);
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
-    void insertMultiRepresentationHEIC(const IPC::DataReference&);
+    void insertMultiRepresentationHEIC(std::span<const uint8_t>);
 #endif
 
     void insertDictatedTextAsync(const String& text, const EditingRange& replacementRange, const Vector<WebCore::DictationAlternative>& dictationAlternativeLocations, InsertTextOptions&&);
@@ -1086,11 +1085,11 @@ public:
 #endif
 
 #if PLATFORM(COCOA)
-    void replaceSelectionWithPasteboardData(const Vector<String>& types, const IPC::DataReference&);
+    void replaceSelectionWithPasteboardData(const Vector<String>& types, std::span<const uint8_t>);
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    void replaceImageForRemoveBackground(const WebCore::ElementContext&, const Vector<String>& types, const IPC::DataReference&);
+    void replaceImageForRemoveBackground(const WebCore::ElementContext&, const Vector<String>& types, std::span<const uint8_t>);
 #endif
 
     void setCompositionForTesting(const String& compositionString, uint64_t from, uint64_t length, bool suppressUnderline, const Vector<WebCore::CompositionHighlight>&, const HashMap<String, Vector<WebCore::CharacterRange>>&);
@@ -1868,7 +1867,7 @@ private:
     static bool logicalScroll(WebCore::Page*, WebCore::ScrollLogicalDirection, WebCore::ScrollGranularity);
 
     void loadURLInFrame(URL&&, const String& referrer, WebCore::FrameIdentifier);
-    void loadDataInFrame(IPC::DataReference&&, String&& MIMEType, String&& encodingName, URL&& baseURL, WebCore::FrameIdentifier);
+    void loadDataInFrame(std::span<const uint8_t>, String&& MIMEType, String&& encodingName, URL&& baseURL, WebCore::FrameIdentifier);
 
     enum class WasRestoredByAPIRequest : bool { No, Yes };
     void restoreSessionInternal(const Vector<BackForwardListItemState>&, WasRestoredByAPIRequest, WebBackForwardListProxy::OverwriteExistingItem);
@@ -1908,8 +1907,8 @@ private:
     void getSourceForFrame(WebCore::FrameIdentifier, CompletionHandler<void(const String&)>&&);
     void getWebArchiveOfFrame(WebCore::FrameIdentifier, CompletionHandler<void(const std::optional<IPC::SharedBufferReference>&)>&&);
     void getWebArchiveOfFrameWithFileName(WebCore::FrameIdentifier, const Vector<WebCore::MarkupExclusionRule>&, const String& fileName, CompletionHandler<void(const std::optional<IPC::SharedBufferReference>&)>&&);
-    void runJavaScript(WebFrame*, WebCore::RunJavaScriptParameters&&, ContentWorldIdentifier, CompletionHandler<void(const IPC::DataReference&, const std::optional<WebCore::ExceptionDetails>&)>&&);
-    void runJavaScriptInFrameInScriptWorld(WebCore::RunJavaScriptParameters&&, std::optional<WebCore::FrameIdentifier>, const std::pair<ContentWorldIdentifier, String>& worldData, CompletionHandler<void(const IPC::DataReference&, const std::optional<WebCore::ExceptionDetails>&)>&&);
+    void runJavaScript(WebFrame*, WebCore::RunJavaScriptParameters&&, ContentWorldIdentifier, CompletionHandler<void(std::span<const uint8_t>, const std::optional<WebCore::ExceptionDetails>&)>&&);
+    void runJavaScriptInFrameInScriptWorld(WebCore::RunJavaScriptParameters&&, std::optional<WebCore::FrameIdentifier>, const std::pair<ContentWorldIdentifier, String>& worldData, CompletionHandler<void(std::span<const uint8_t>, const std::optional<WebCore::ExceptionDetails>&)>&&);
     void getAccessibilityTreeData(CompletionHandler<void(const std::optional<IPC::SharedBufferReference>&)>&&);
     void forceRepaint(CompletionHandler<void()>&&);
     void takeSnapshot(WebCore::IntRect snapshotRect, WebCore::IntSize bitmapSize, uint32_t options, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&&);
@@ -2014,7 +2013,7 @@ private:
     void didCancelForOpenPanel();
 
 #if PLATFORM(IOS_FAMILY)
-    void didChooseFilesForOpenPanelWithDisplayStringAndIcon(const Vector<String>&, const String& displayString, const IPC::DataReference& iconData, WebKit::SandboxExtension::Handle&&, WebKit::SandboxExtension::Handle&&);
+    void didChooseFilesForOpenPanelWithDisplayStringAndIcon(const Vector<String>&, const String& displayString, std::span<const uint8_t> iconData, WebKit::SandboxExtension::Handle&&, WebKit::SandboxExtension::Handle&&);
 #endif
 
 #if ENABLE(SANDBOX_EXTENSIONS)

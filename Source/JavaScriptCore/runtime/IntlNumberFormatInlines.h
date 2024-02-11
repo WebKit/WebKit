@@ -241,9 +241,7 @@ void appendNumberFormatDigitOptionsToSkeleton(IntlType* intlInstance, StringBuil
             skeletonBuilder.appendCharacters(string.data(), string.size());
         } else {
             unsigned nonFraction = string.size() - intlInstance->m_maximumFractionDigits;
-            skeletonBuilder.appendCharacters(string.data(), nonFraction);
-            skeletonBuilder.append('.');
-            skeletonBuilder.appendCharacters(string.data() + nonFraction, intlInstance->m_maximumFractionDigits);
+            skeletonBuilder.append(std::span(string.data(), nonFraction), '.', std::span(string.data() + nonFraction, intlInstance->m_maximumFractionDigits));
         }
     } else {
         switch (intlInstance->m_roundingType) {

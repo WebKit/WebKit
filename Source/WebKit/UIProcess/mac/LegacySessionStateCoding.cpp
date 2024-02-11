@@ -1139,11 +1139,13 @@ static WARN_UNUSED_RETURN bool decodeSessionHistory(CFDictionaryRef backForwardL
     return false;
 }
 
-bool decodeLegacySessionState(const uint8_t* bytes, size_t size, SessionState& sessionState)
+bool decodeLegacySessionState(std::span<const uint8_t> data, SessionState& sessionState)
 {
+    auto size = data.size();
     if (size < sizeof(uint32_t))
         return false;
 
+    auto* bytes = data.data();
     uint32_t versionNumber = (bytes[0] << 24) + (bytes[1] << 16) + (bytes[2] << 8) + bytes[3];
 
     if (versionNumber != sessionStateDataVersion)

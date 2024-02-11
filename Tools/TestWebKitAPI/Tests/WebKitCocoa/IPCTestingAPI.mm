@@ -531,7 +531,7 @@ static NSMutableSet<NSString *> *extractTypesFromContainers(NSSet<NSString *> *i
             @"HashMap",
             @"std::pair",
             @"IPC::ArrayReferenceTuple",
-            @"IPC::ArrayReference",
+            @"std::span",
             @"std::variant",
             @"std::unique_ptr",
             @"Vector",
@@ -547,7 +547,7 @@ static NSMutableSet<NSString *> *extractTypesFromContainers(NSSet<NSString *> *i
             if ([input hasPrefix:[container stringByAppendingString:@"<"]]
                 && [input hasSuffix:@">"]) {
                 NSString *containedTypes = [input substringWithRange:NSMakeRange(container.length + 1, input.length - container.length - 2)];
-                for (NSString *type : extractTypesFromContainers(splitTypeFromList(containedTypes, [container isEqualToString:@"IPC::ArrayReference"])))
+                for (NSString *type : extractTypesFromContainers(splitTypeFromList(containedTypes, [container isEqualToString:@"std::span"])))
                     [outputSet addObject:type];
                 foundContainer = YES;
             }

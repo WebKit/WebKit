@@ -737,8 +737,16 @@ public:
             VectorCopier<std::is_trivial<T>::value, U>::uninitializedCopy(data, data + dataSize, begin());
     }
 
+    // Include this non-template conversion from std::span to guide implicit conversion from arrays.
     Vector(std::span<const T> span)
-        : Vector(span.data(), span.size()) { }
+        : Vector(span.data(), span.size())
+    {
+    }
+
+    template<typename U, size_t Extent> Vector(std::span<U, Extent> span)
+        : Vector(span.data(), span.size())
+    {
+    }
 
     Vector(std::initializer_list<T> initializerList)
     {
@@ -863,8 +871,8 @@ public:
 
     void clear() { shrinkCapacity(0); }
 
-    ALWAYS_INLINE void append(ValueType&& value) { append<ValueType>(std::forward<ValueType>(value)); }
-    ALWAYS_INLINE bool tryAppend(ValueType&& value) { return tryAppend<ValueType>(std::forward<ValueType>(value)); }
+    ALWAYS_INLINE void append(value_type&& value) { append<value_type>(std::forward<value_type>(value)); }
+    ALWAYS_INLINE bool tryAppend(value_type&& value) { return tryAppend<value_type>(std::forward<value_type>(value)); }
     template<typename U> ALWAYS_INLINE void append(U&& u) { append<FailureAction::Crash, U>(std::forward<U>(u)); }
     template<typename U> ALWAYS_INLINE bool tryAppend(U&& u) { return append<FailureAction::Report, U>(std::forward<U>(u)); }
     template<typename... Args> ALWAYS_INLINE void constructAndAppend(Args&&... args) { constructAndAppend<FailureAction::Crash>(std::forward<Args>(args)...); }
@@ -872,7 +880,7 @@ public:
 
     template<typename U> ALWAYS_INLINE void append(const U* u, size_t size) { append<FailureAction::Crash>(u, size); }
     template<typename U> ALWAYS_INLINE bool tryAppend(const U* u, size_t size) { return append<FailureAction::Report>(u, size); }
-    template<typename U> ALWAYS_INLINE void append(std::span<const U> span) { append(span.data(), span.size()); }
+    template<typename U, size_t Extent> ALWAYS_INLINE void append(std::span<U, Extent> span) { append(span.data(), span.size()); }
     template<typename U> ALWAYS_INLINE void appendList(std::initializer_list<U> initializerList) { append(std::data(initializerList), initializerList.size()); }
     template<typename U, size_t otherCapacity, typename OtherOverflowHandler, size_t otherMinCapacity, typename OtherMalloc> void appendVector(const Vector<U, otherCapacity, OtherOverflowHandler, otherMinCapacity, OtherMalloc>&);
     template<typename U, size_t otherCapacity, typename OtherOverflowHandler, size_t otherMinCapacity, typename OtherMalloc> void appendVector(Vector<U, otherCapacity, OtherOverflowHandler, otherMinCapacity, OtherMalloc>&&);
@@ -880,7 +888,7 @@ public:
     template<typename Functor, typename = typename std::enable_if_t<std::is_invocable_v<Functor, size_t>>>
     void appendUsingFunctor(size_t, const Functor&);
 
-    void insert(size_t position, ValueType&& value) { insert<ValueType>(position, std::forward<ValueType>(value)); }
+    void insert(size_t position, value_type&& value) { insert<value_type>(position, std::forward<value_type>(value)); }
     template<typename U> void insert(size_t position, const U*, size_t);
     template<typename U> void insert(size_t position, U&&);
     template<typename U, size_t c, typename OH, size_t m, typename M> void insertVector(size_t position, const Vector<U, c, OH, m, M>&);
@@ -941,7 +949,7 @@ public:
     bool isHashTableDeletedValue() const { return m_size == std::numeric_limits<decltype(m_size)>::max(); }
 
 private:
-    void unsafeAppendWithoutCapacityCheck(ValueType&& value) { unsafeAppendWithoutCapacityCheck<ValueType>(std::forward<ValueType>(value)); }
+    void unsafeAppendWithoutCapacityCheck(value_type&& value) { unsafeAppendWithoutCapacityCheck<value_type>(std::forward<value_type>(value)); }
     template<typename U> void unsafeAppendWithoutCapacityCheck(U&&);
     template<typename U> bool unsafeAppendWithoutCapacityCheck(const U*, size_t);
 

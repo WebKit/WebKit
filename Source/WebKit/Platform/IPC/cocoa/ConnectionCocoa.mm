@@ -26,7 +26,6 @@
 #import "config.h"
 #import "Connection.h"
 
-#import "DataReference.h"
 #import "Encoder.h"
 #import "IPCUtilities.h"
 #import "ImportanceAssertion.h"
@@ -433,7 +432,7 @@ static std::unique_ptr<Decoder> createMessageDecoder(mach_msg_header_t* header, 
         size_t messageBodySize = descriptor->out_of_line.size;
         descriptor->out_of_line.deallocate = false; // We are taking ownership of the memory.
 
-        return Decoder::create({ messageBody, messageBodySize }, [](DataReference buffer) {
+        return Decoder::create({ messageBody, messageBodySize }, [](auto buffer) {
             // FIXME: <rdar://problem/62086358> bufferDeallocator block ignores mach_msg_ool_descriptor_t->deallocate
             vm_deallocate(mach_task_self(), reinterpret_cast<vm_address_t>(buffer.data()), buffer.size_bytes());
         }, WTFMove(attachments));

@@ -47,7 +47,7 @@ public:
     {
     }
 
-    CoreIPCSecTrust(const IPC::DataReference& data)
+    CoreIPCSecTrust(std::span<const uint8_t> data)
         : m_trustData(data.empty() ? nullptr : adoptCF(CFDataCreate(kCFAllocatorDefault, data.data(), data.size())))
     {
     }
@@ -60,7 +60,7 @@ public:
         return adoptCF(SecTrustDeserialize(m_trustData.get(), NULL));
     }
 
-    IPC::DataReference dataReference() const
+    std::span<const uint8_t> dataReference() const
     {
         if (!m_trustData)
             return { };

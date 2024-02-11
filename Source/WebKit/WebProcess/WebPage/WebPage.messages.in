@@ -187,7 +187,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     TryRestoreScrollPosition()
 
     LoadURLInFrame(URL url, String referrer, WebCore::FrameIdentifier frameID)
-    LoadDataInFrame(IPC::DataReference data, String MIMEType, String encodingName, URL baseURL, WebCore::FrameIdentifier frameID)
+    LoadDataInFrame(std::span<const uint8_t> data, String MIMEType, String encodingName, URL baseURL, WebCore::FrameIdentifier frameID)
     LoadRequest(struct WebKit::LoadParameters loadParameters)
     TransitionFrameToLocal(struct WebKit::LocalFrameCreationParameters creationParameters, WebCore::FrameIdentifier frameID)
     LoadRequestWaitingForProcessLaunch(struct WebKit::LoadParameters loadParameters, URL resourceDirectoryURL, WebKit::WebPageProxyIdentifier pageID, bool checkAssumedReadAccessToResourceURL)
@@ -239,7 +239,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     GetWebArchiveOfFrame(WebCore::FrameIdentifier frameID) -> (std::optional<IPC::SharedBufferReference> dataReference)
     GetWebArchiveOfFrameWithFileName(WebCore::FrameIdentifier frameID, Vector<WebCore::MarkupExclusionRule> markupExclusionRules, String fileName) -> (std::optional<IPC::SharedBufferReference> dataReference)
 
-    RunJavaScriptInFrameInScriptWorld(struct WebCore::RunJavaScriptParameters parameters, std::optional<WebCore::FrameIdentifier> frameID, std::pair<WebKit::ContentWorldIdentifier, String> world) -> (IPC::DataReference resultData, std::optional<WebCore::ExceptionDetails> details)
+    RunJavaScriptInFrameInScriptWorld(struct WebCore::RunJavaScriptParameters parameters, std::optional<WebCore::FrameIdentifier> frameID, std::pair<WebKit::ContentWorldIdentifier, String> world) -> (std::span<const uint8_t> resultData, std::optional<WebCore::ExceptionDetails> details)
 
     GetAccessibilityTreeData() -> (std::optional<IPC::SharedBufferReference> dataReference)
     ForceRepaint() -> ()
@@ -394,7 +394,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     # Open panel.
 #if PLATFORM(IOS_FAMILY)
-    DidChooseFilesForOpenPanelWithDisplayStringAndIcon(Vector<String> fileURLs, String displayString, IPC::DataReference iconData, WebKit::SandboxExtension::Handle machBootstrapHandle, WebKit::SandboxExtension::Handle iconServicesSandboxExtension)
+    DidChooseFilesForOpenPanelWithDisplayStringAndIcon(Vector<String> fileURLs, String displayString, std::span<const uint8_t> iconData, WebKit::SandboxExtension::Handle machBootstrapHandle, WebKit::SandboxExtension::Handle iconServicesSandboxExtension)
 #endif
     DidChooseFilesForOpenPanel(Vector<String> fileURLs, Vector<String> replacementURLs)
     DidCancelForOpenPanel()
@@ -491,14 +491,14 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 #if PLATFORM(COCOA)
     WindowAndViewFramesChanged(struct WebKit::ViewWindowCoordinates coordinates)
     SetMainFrameIsScrollable(bool isScrollable)
-    RegisterUIProcessAccessibilityTokens(IPC::DataReference elemenToken, IPC::DataReference windowToken)
+    RegisterUIProcessAccessibilityTokens(std::span<const uint8_t> elementToken, std::span<const uint8_t> windowToken)
     GetStringSelectionForPasteboard() -> (String stringValue) Synchronous
     GetDataSelectionForPasteboard(String pasteboardType) -> (RefPtr<WebCore::SharedBuffer> buffer) Synchronous
     ReadSelectionFromPasteboard(String pasteboardName) -> (bool result) Synchronous
-    ReplaceSelectionWithPasteboardData(Vector<String> types, IPC::DataReference data)
+    ReplaceSelectionWithPasteboardData(Vector<String> types, std::span<const uint8_t> data)
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
-    InsertMultiRepresentationHEIC(IPC::DataReference data)
+    InsertMultiRepresentationHEIC(std::span<const uint8_t> data)
 #endif
 
     ShouldDelayWindowOrderingEvent(WebKit::WebMouseEvent event) -> (bool result) Synchronous
@@ -527,7 +527,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    ReplaceImageForRemoveBackground(struct WebCore::ElementContext context, Vector<String> types, IPC::DataReference data)
+    ReplaceImageForRemoveBackground(struct WebCore::ElementContext context, Vector<String> types, std::span<const uint8_t> data)
     ShouldAllowRemoveBackground(struct WebCore::ElementContext context) -> (bool result)
 #endif
 
@@ -648,8 +648,8 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 #if ENABLE(PDF_PLUGIN) && PLATFORM(MAC)
     ZoomPDFIn(WebKit::PDFPluginIdentifier identifier)
     ZoomPDFOut(WebKit::PDFPluginIdentifier identifier)
-    SavePDF(WebKit::PDFPluginIdentifier identifier) -> (String filename, URL url, IPC::DataReference data)
-    OpenPDFWithPreview(WebKit::PDFPluginIdentifier identifier) -> (String filename, struct WebKit::FrameInfoData frameInfo, IPC::DataReference data, String uuid)
+    SavePDF(WebKit::PDFPluginIdentifier identifier) -> (String filename, URL url, std::span<const uint8_t> data)
+    OpenPDFWithPreview(WebKit::PDFPluginIdentifier identifier) -> (String filename, struct WebKit::FrameInfoData frameInfo, std::span<const uint8_t> data, String uuid)
 #endif
 
     UpdateCurrentModifierState(OptionSet<WebCore::PlatformEvent::Modifier> modifiers)

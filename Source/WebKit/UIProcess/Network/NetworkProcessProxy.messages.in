@@ -88,7 +88,7 @@ messages -> NetworkProcessProxy LegacyReceiver {
     DataTaskReceivedChallenge(WebKit::DataTaskIdentifier identifier, WebCore::AuthenticationChallenge challenge) -> (enum:uint8_t WebKit::AuthenticationChallengeDisposition disposition, WebCore::Credential credential)
     DataTaskWillPerformHTTPRedirection(WebKit::DataTaskIdentifier identifier, WebCore::ResourceResponse response, WebCore::ResourceRequest request) -> (bool allowed)
     DataTaskDidReceiveResponse(WebKit::DataTaskIdentifier identifier, WebCore::ResourceResponse response) -> (bool allowed)
-    DataTaskDidReceiveData(WebKit::DataTaskIdentifier identifier, IPC::DataReference data)
+    DataTaskDidReceiveData(WebKit::DataTaskIdentifier identifier, std::span<const uint8_t> data)
     DataTaskDidCompleteWithError(WebKit::DataTaskIdentifier identifier, WebCore::ResourceError error)
 
     OpenWindowFromServiceWorker(PAL::SessionID sessionID, String urlString, WebCore::SecurityOriginData serviceWorkerOrigin) -> (std::optional<WebCore::PageIdentifier> newPage)

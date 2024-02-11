@@ -54,7 +54,7 @@ messages -> WebPageProxy {
     AccessibilityScreenToRootView(WebCore::IntPoint screenPoint) -> (WebCore::IntPoint windowPoint) Synchronous
     RootViewToAccessibilityScreen(WebCore::IntRect rect) -> (WebCore::IntRect screenFrame) Synchronous
 #if PLATFORM(IOS_FAMILY)
-    RelayAccessibilityNotification(String notificationName, IPC::DataReference notificationData)
+    RelayAccessibilityNotification(String notificationName, std::span<const uint8_t> notificationData)
 #endif
 
 #if PLATFORM(COCOA) || PLATFORM(GTK)
@@ -159,7 +159,7 @@ messages -> WebPageProxy {
     DidUpdateHistoryTitle(String title, String url, WebCore::FrameIdentifier frameID)
 
     # Custom representations
-    DidFinishLoadingDataForCustomContentProvider(String suggestedFilename, IPC::DataReference data)
+    DidFinishLoadingDataForCustomContentProvider(String suggestedFilename, std::span<const uint8_t> data)
 
     # Forms messages
     WillSubmitForm(WebCore::FrameIdentifier frameID, WebCore::FrameIdentifier sourceFrameID, Vector<std::pair<String, String>> textFieldValues, WebKit::UserData userData) -> ()
@@ -320,7 +320,7 @@ messages -> WebPageProxy {
     ExecuteSavedCommandBySelector(String selector) -> (bool handled) Synchronous
 
     # Remote accessibility messages
-    RegisterWebProcessAccessibilityToken(IPC::DataReference data)
+    RegisterWebProcessAccessibilityToken(std::span<const uint8_t> data)
 
     # Speech messages
     GetIsSpeaking() -> (bool isSpeaking) Synchronous

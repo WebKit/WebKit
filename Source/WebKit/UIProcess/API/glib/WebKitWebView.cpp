@@ -26,7 +26,6 @@
 #include "APIData.h"
 #include "APINavigation.h"
 #include "APISerializedScriptValue.h"
-#include "DataReference.h"
 #include "ImageOptions.h"
 #include "NotificationService.h"
 #include "PageLoadState.h"

@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "DataReference.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
 #include "WebPageProxyIdentifier.h"
@@ -87,7 +86,7 @@ private:
     // Message receivers
     void didConnect(String&& subprotocol, String&& extensions);
     void didReceiveText(String&&);
-    void didReceiveBinaryData(IPC::DataReference&&);
+    void didReceiveBinaryData(std::span<const uint8_t>);
     void didClose(unsigned short code, String&&);
     void didReceiveMessageError(String&&);
     void didSendHandshakeRequest(WebCore::ResourceRequest&&);

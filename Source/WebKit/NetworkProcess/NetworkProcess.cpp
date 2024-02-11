@@ -32,7 +32,6 @@
 #include "AuthenticationManager.h"
 #include "AuxiliaryProcessMessages.h"
 #include "BackgroundFetchState.h"
-#include "DataReference.h"
 #include "DidFilterKnownLinkDecoration.h"
 #include "Download.h"
 #include "DownloadProxyMessages.h"
@@ -2110,12 +2109,12 @@ void NetworkProcess::downloadRequest(PAL::SessionID sessionID, DownloadID downlo
     downloadManager().startDownload(sessionID, downloadID, request, topOrigin, isNavigatingToAppBoundDomain, suggestedFilename);
 }
 
-void NetworkProcess::resumeDownload(PAL::SessionID sessionID, DownloadID downloadID, const IPC::DataReference& resumeData, const String& path, WebKit::SandboxExtension::Handle&& sandboxExtensionHandle, CallDownloadDidStart callDownloadDidStart)
+void NetworkProcess::resumeDownload(PAL::SessionID sessionID, DownloadID downloadID, std::span<const uint8_t> resumeData, const String& path, WebKit::SandboxExtension::Handle&& sandboxExtensionHandle, CallDownloadDidStart callDownloadDidStart)
 {
     downloadManager().resumeDownload(sessionID, downloadID, resumeData, path, WTFMove(sandboxExtensionHandle), callDownloadDidStart);
 }
 
-void NetworkProcess::cancelDownload(DownloadID downloadID, CompletionHandler<void(const IPC::DataReference&)>&& completionHandler)
+void NetworkProcess::cancelDownload(DownloadID downloadID, CompletionHandler<void(std::span<const uint8_t>)>&& completionHandler)
 {
     downloadManager().cancelDownload(downloadID, WTFMove(completionHandler));
 }

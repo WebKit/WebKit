@@ -381,7 +381,7 @@ void NetworkProcessProxy::dataTaskDidReceiveResponse(DataTaskIdentifier identifi
         completionHandler(false);
 }
 
-void NetworkProcessProxy::dataTaskDidReceiveData(DataTaskIdentifier identifier, const IPC::DataReference& data)
+void NetworkProcessProxy::dataTaskDidReceiveData(DataTaskIdentifier identifier, std::span<const uint8_t> data)
 {
     MESSAGE_CHECK(decltype(m_dataTasks)::isValidKey(identifier));
     if (auto task = m_dataTasks.get(identifier))

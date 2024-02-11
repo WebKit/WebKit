@@ -27,7 +27,6 @@
 
 #include "APIObject.h"
 #include "ContentWorldShared.h"
-#include "DataReference.h"
 #include "MessageReceiver.h"
 #include "UserContentControllerIdentifier.h"
 #include "WebPageProxyIdentifier.h"
@@ -122,7 +121,7 @@ private:
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
-    void didPostMessage(WebPageProxyIdentifier, FrameInfoData&&, uint64_t messageHandlerID, const IPC::DataReference&, CompletionHandler<void(IPC::DataReference&&, const String&)>&&);
+    void didPostMessage(WebPageProxyIdentifier, FrameInfoData&&, uint64_t messageHandlerID, std::span<const uint8_t>, CompletionHandler<void(std::span<const uint8_t>, const String&)>&&);
 
     void addContentWorld(API::ContentWorld&);
 

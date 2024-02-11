@@ -27,7 +27,6 @@
 
 #include "APIInjectedBundleBundleClient.h"
 #include "APIObject.h"
-#include "DataReference.h"
 #include "SandboxExtension.h"
 #include <JavaScriptCore/JavaScript.h>
 #include <WebCore/UserContentTypes.h>
@@ -83,8 +82,8 @@ public:
 
     bool initialize(const WebProcessCreationParameters&, RefPtr<API::Object>&& initializationUserData);
 
-    void setBundleParameter(const String&, const IPC::DataReference&);
-    void setBundleParameters(const IPC::DataReference&);
+    void setBundleParameter(const String&, std::span<const uint8_t>);
+    void setBundleParameters(std::span<const uint8_t>);
 
     // API
     void setClient(std::unique_ptr<API::InjectedBundle::Client>&&);

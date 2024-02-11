@@ -29,7 +29,6 @@
 #import "AppStoreDaemonSPI.h"
 #import "AuthenticationChallengeDisposition.h"
 #import "AuthenticationManager.h"
-#import "DataReference.h"
 #import "DefaultWebBrowserChecks.h"
 #import "Download.h"
 #import "LegacyCustomProtocolManager.h"
@@ -924,7 +923,7 @@ static NSDictionary<NSString *, id> *extractResolutionReport(NSError *error)
             }
         }
 
-        auto resumeDataReference = resumeData ? IPC::DataReference { static_cast<const uint8_t*>(resumeData.bytes), resumeData.length } : IPC::DataReference { };
+        auto resumeDataReference = resumeData ? std::span { static_cast<const uint8_t*>(resumeData.bytes), resumeData.length } : std::span<const uint8_t> { };
         download->didFail(error, resumeDataReference);
     }
 }
@@ -1997,7 +1996,7 @@ private:
     {
         if (!m_connection)
             return;
-        buffer.forEachSegment([&] (auto& segment) {
+        buffer.forEachSegment([&](auto segment) {
             m_connection->send(Messages::NetworkProcessProxy::DataTaskDidReceiveData(m_identifier, segment), 0);
         });
     }

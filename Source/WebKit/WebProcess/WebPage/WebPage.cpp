@@ -38,7 +38,6 @@
 #include "APIInjectedBundlePageUIClient.h"
 #include "Connection.h"
 #include "ContentAsStringIncludesChildFrames.h"
-#include "DataReference.h"
 #include "DragControllerAction.h"
 #include "DrawingArea.h"
 #include "DrawingAreaMessages.h"
@@ -1911,7 +1910,7 @@ void WebPage::loadURLInFrame(URL&& url, const String& referrer, FrameIdentifier 
     coreLocalFrame->loader().load(FrameLoadRequest(*coreLocalFrame, ResourceRequest(url, referrer)));
 }
 
-void WebPage::loadDataInFrame(IPC::DataReference&& data, String&& MIMEType, String&& encodingName, URL&& baseURL, FrameIdentifier frameID)
+void WebPage::loadDataInFrame(std::span<const uint8_t> data, String&& type, String&& encodingName, URL&& baseURL, FrameIdentifier frameID)
 {
     RefPtr frame = WebProcess::singleton().webFrame(frameID);
     if (!frame)
@@ -1919,7 +1918,7 @@ void WebPage::loadDataInFrame(IPC::DataReference&& data, String&& MIMEType, Stri
     ASSERT(&mainWebFrame() != frame);
 
     auto sharedBuffer = SharedBuffer::create(data.data(), data.size());
-    ResourceResponse response(baseURL, MIMEType, sharedBuffer->size(), encodingName);
+    ResourceResponse response(baseURL, type, sharedBuffer->size(), encodingName);
     SubstituteData substituteData(WTFMove(sharedBuffer), baseURL, WTFMove(response), SubstituteData::SessionHistoryVisibility::Hidden);
     frame->coreLocalFrame()->loader().load(FrameLoadRequest(*frame->coreLocalFrame(), ResourceRequest(baseURL), WTFMove(substituteData)));
 }
@@ -4154,7 +4153,7 @@ KeyboardUIMode WebPage::keyboardUIMode()
     return static_cast<KeyboardUIMode>((fullKeyboardAccessEnabled ? KeyboardAccessFull : KeyboardAccessDefault) | (m_tabToLinks ? KeyboardAccessTabsToLinks : 0));
 }
 
-void WebPage::runJavaScript(WebFrame* frame, RunJavaScriptParameters&& parameters, ContentWorldIdentifier worldIdentifier, CompletionHandler<void(const IPC::DataReference&, const std::optional<WebCore::ExceptionDetails>&)>&& completionHandler)
+void WebPage::runJavaScript(WebFrame* frame, RunJavaScriptParameters&& parameters, ContentWorldIdentifier worldIdentifier, CompletionHandler<void(std::span<const uint8_t>, const std::optional<WebCore::ExceptionDetails>&)>&& completionHandler)
 {
     // NOTE: We need to be careful when running scripts that the objects we depend on don't
     // disappear during script execution.
@@ -4204,7 +4203,7 @@ void WebPage::runJavaScript(WebFrame* frame, RunJavaScriptParameters&& parameter
                 toRef(coreFrame->script().globalObject(Ref { world->coreWorld() }), result.value()), nullptr);
         }
 
-        IPC::DataReference dataReference;
+        std::span<const uint8_t> dataReference;
         if (serializedResultValue)
             dataReference = serializedResultValue->wireBytes();
 
@@ -4218,7 +4217,7 @@ void WebPage::runJavaScript(WebFrame* frame, RunJavaScriptParameters&& parameter
     frame->coreLocalFrame()->script().executeAsynchronousUserAgentScriptInWorld(world->coreWorld(), WTFMove(parameters), WTFMove(resolveFunction));
 }
 
-void WebPage::runJavaScriptInFrameInScriptWorld(RunJavaScriptParameters&& parameters, std::optional<WebCore::FrameIdentifier> frameID, const std::pair<ContentWorldIdentifier, String>& worldData, CompletionHandler<void(const IPC::DataReference&, const std::optional<WebCore::ExceptionDetails>&)>&& completionHandler)
+void WebPage::runJavaScriptInFrameInScriptWorld(RunJavaScriptParameters&& parameters, std::optional<WebCore::FrameIdentifier> frameID, const std::pair<ContentWorldIdentifier, String>& worldData, CompletionHandler<void(std::span<const uint8_t>, const std::optional<WebCore::ExceptionDetails>&)>&& completionHandler)
 {
     WEBPAGE_RELEASE_LOG(Process, "runJavaScriptInFrameInScriptWorld: frameID=%" PRIu64, valueOrDefault(frameID).object().toUInt64());
     RefPtr webFrame = frameID ? WebProcess::singleton().webFrame(*frameID) : &mainWebFrame();
@@ -4231,7 +4230,7 @@ void WebPage::runJavaScriptInFrameInScriptWorld(RunJavaScriptParameters&& parame
         }
     }
 
-    runJavaScript(webFrame.get(), WTFMove(parameters), worldData.first, [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](const IPC::DataReference& result, const std::optional<WebCore::ExceptionDetails>& exception) mutable {
+    runJavaScript(webFrame.get(), WTFMove(parameters), worldData.first, [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](std::span<const uint8_t> result, const std::optional<WebCore::ExceptionDetails>& exception) mutable {
 #if RELEASE_LOG_DISABLED
         UNUSED_PARAM(this);
 #endif
@@ -5491,7 +5490,7 @@ void WebPage::changeSelectedIndex(int32_t index)
 }
 
 #if PLATFORM(IOS_FAMILY)
-void WebPage::didChooseFilesForOpenPanelWithDisplayStringAndIcon(const Vector<String>& files, const String& displayString, const IPC::DataReference& iconData, WebKit::SandboxExtension::Handle&& machBootstrapHandle, SandboxExtension::Handle&& iconServicesSandboxExtensionHandle)
+void WebPage::didChooseFilesForOpenPanelWithDisplayStringAndIcon(const Vector<String>& files, const String& displayString, std::span<const uint8_t> iconData, WebKit::SandboxExtension::Handle&& machBootstrapHandle, SandboxExtension::Handle&& iconServicesSandboxExtensionHandle)
 {
     if (!m_activeOpenPanelResultListener)
         return;

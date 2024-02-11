@@ -470,8 +470,8 @@ private:
     void clearDiskCache(WallTime modifiedSince, CompletionHandler<void()>&&);
 
     void downloadRequest(PAL::SessionID, DownloadID, const WebCore::ResourceRequest&, const std::optional<WebCore::SecurityOriginData>& topOrigin, std::optional<NavigatingToAppBoundDomain>, const String& suggestedFilename);
-    void resumeDownload(PAL::SessionID, DownloadID, const IPC::DataReference& resumeData, const String& path, SandboxExtensionHandle&&, CallDownloadDidStart);
-    void cancelDownload(DownloadID, CompletionHandler<void(const IPC::DataReference&)>&&);
+    void resumeDownload(PAL::SessionID, DownloadID, std::span<const uint8_t> resumeData, const String& path, SandboxExtensionHandle&&, CallDownloadDidStart);
+    void cancelDownload(DownloadID, CompletionHandler<void(std::span<const uint8_t>)>&&);
 #if PLATFORM(COCOA)
     void publishDownloadProgress(DownloadID, const URL&, SandboxExtensionHandle&&);
 #endif

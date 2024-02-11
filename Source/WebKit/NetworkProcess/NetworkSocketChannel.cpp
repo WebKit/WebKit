@@ -77,12 +77,12 @@ NetworkSocketChannel::~NetworkSocketChannel()
     }
 }
 
-void NetworkSocketChannel::sendString(const IPC::DataReference& message, CompletionHandler<void()>&& callback)
+void NetworkSocketChannel::sendString(std::span<const uint8_t> message, CompletionHandler<void()>&& callback)
 {
     m_socket->sendString(message, WTFMove(callback));
 }
 
-void NetworkSocketChannel::sendData(const IPC::DataReference& data, CompletionHandler<void()>&& callback)
+void NetworkSocketChannel::sendData(std::span<const uint8_t> data, CompletionHandler<void()>&& callback)
 {
     m_socket->sendData(data, WTFMove(callback));
 }

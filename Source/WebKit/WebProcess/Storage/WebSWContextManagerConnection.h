@@ -26,7 +26,6 @@
 #pragma once
 
 #include "Connection.h"
-#include "DataReference.h"
 #include "IdentifierTypes.h"
 #include "MessageReceiver.h"
 #include "NavigatingToAppBoundDomain.h"
@@ -108,7 +107,7 @@ private:
     void postMessageToServiceWorker(WebCore::ServiceWorkerIdentifier destinationIdentifier, WebCore::MessageWithMessagePorts&&, WebCore::ServiceWorkerOrClientData&& sourceData);
     void fireInstallEvent(WebCore::ServiceWorkerIdentifier);
     void fireActivateEvent(WebCore::ServiceWorkerIdentifier);
-    void firePushEvent(WebCore::ServiceWorkerIdentifier, const std::optional<IPC::DataReference>&, std::optional<WebCore::NotificationPayload>&&, CompletionHandler<void(bool, std::optional<WebCore::NotificationPayload>&&)>&&);
+    void firePushEvent(WebCore::ServiceWorkerIdentifier, std::optional<std::span<const uint8_t>>, std::optional<WebCore::NotificationPayload>&&, CompletionHandler<void(bool, std::optional<WebCore::NotificationPayload>&&)>&&);
     void fireNotificationEvent(WebCore::ServiceWorkerIdentifier, WebCore::NotificationData&&, WebCore::NotificationEventType, CompletionHandler<void(bool)>&&);
     void fireBackgroundFetchEvent(WebCore::ServiceWorkerIdentifier, WebCore::BackgroundFetchInformation&&, CompletionHandler<void(bool)>&&);
     void fireBackgroundFetchClickEvent(WebCore::ServiceWorkerIdentifier, WebCore::BackgroundFetchInformation&&, CompletionHandler<void(bool)>&&);

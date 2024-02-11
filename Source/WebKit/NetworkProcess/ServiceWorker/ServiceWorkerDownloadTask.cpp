@@ -263,7 +263,7 @@ void ServiceWorkerDownloadTask::didFailDownload(std::optional<ResourceError>&& e
 
         auto resourceError = error.value_or(cancelledError(firstRequest()));
         if (auto download = m_networkProcess->downloadManager().download(m_pendingDownloadID))
-            download->didFail(resourceError, IPC::DataReference());
+            download->didFail(resourceError, { });
 
         if (m_client)
             m_client->didCompleteWithError(resourceError);

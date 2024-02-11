@@ -138,7 +138,7 @@ private:
     void beganExitFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame) override;
 #endif
 
-    void didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, const IPC::DataReference&) override;
+    void didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, std::span<const uint8_t>) override;
 
     void navigationGestureDidBegin() override;
     void navigationGestureWillEnd(bool, WebBackForwardListItem&) override;

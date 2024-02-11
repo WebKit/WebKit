@@ -228,14 +228,14 @@ void LibWebRTCCodecsProxy::flushDecoder(VideoDecoderIdentifier identifier)
     });
 }
 
-void LibWebRTCCodecsProxy::setDecoderFormatDescription(VideoDecoderIdentifier identifier, const IPC::DataReference& data, uint16_t width, uint16_t height)
+void LibWebRTCCodecsProxy::setDecoderFormatDescription(VideoDecoderIdentifier identifier, std::span<const uint8_t> data, uint16_t width, uint16_t height)
 {
     doDecoderTask(identifier, [&](auto& decoder) {
         decoder.webrtcDecoder->setFormat(data.data(), data.size(), width, height);
     });
 }
 
-void LibWebRTCCodecsProxy::decodeFrame(VideoDecoderIdentifier identifier, int64_t timeStamp, const IPC::DataReference& data) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
+void LibWebRTCCodecsProxy::decodeFrame(VideoDecoderIdentifier identifier, int64_t timeStamp, std::span<const uint8_t> data) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
     doDecoderTask(identifier, [&](auto& decoder) {
         if (decoder.frameRateMonitor)
@@ -320,14 +320,14 @@ void LibWebRTCCodecsProxy::createEncoder(VideoEncoderIdentifier identifier, Vide
             protectedThis->notifyEncoderResult(identifier, result);
     });
     auto newFrameBlock = makeBlockPtr([weakThis = ThreadSafeWeakPtr { *this }, queue = m_queue, connection = m_connection, identifier](const uint8_t* buffer, size_t size, const webrtc::WebKitEncodedFrameInfo& info) {
-        connection->send(Messages::LibWebRTCCodecs::CompletedEncoding { identifier, IPC::DataReference { buffer, size }, info }, 0);
+        connection->send(Messages::LibWebRTCCodecs::CompletedEncoding { identifier, std::span { buffer, size }, info }, 0);
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->notifyEncoderResult(identifier, true);
     });
     auto newConfigurationBlock = makeBlockPtr([connection = m_connection, identifier](const uint8_t* buffer, size_t size) {
         // Current encoders are limited to this configuration. We might want in the future to let encoders notify which colorSpace they are selecting.
         PlatformVideoColorSpace colorSpace { PlatformVideoColorPrimaries::Bt709, PlatformVideoTransferCharacteristics::Iec6196621, PlatformVideoMatrixCoefficients::Bt709, true };
-        connection->send(Messages::LibWebRTCCodecs::SetEncodingConfiguration { identifier, IPC::DataReference { buffer, size }, colorSpace }, 0);
+        connection->send(Messages::LibWebRTCCodecs::SetEncodingConfiguration { identifier, std::span { buffer, size }, colorSpace }, 0);
     });
 
     webrtc::LocalEncoderScalabilityMode rtcScalabilityMode;

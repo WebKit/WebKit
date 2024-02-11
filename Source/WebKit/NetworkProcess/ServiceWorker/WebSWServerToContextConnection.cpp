@@ -140,9 +140,9 @@ void WebSWServerToContextConnection::firePushEvent(ServiceWorkerIdentifier servi
     if (!m_processingFunctionalEventCount++)
         m_connection->networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::StartServiceWorkerBackgroundProcessing { webProcessIdentifier() }, 0);
 
-    std::optional<IPC::DataReference> ipcData;
+    std::optional<std::span<const uint8_t>> ipcData;
     if (data)
-        ipcData = IPC::DataReference { data->data(), data->size() };
+        ipcData = std::span<const uint8_t> { data->data(), data->size() };
     sendWithAsyncReply(Messages::WebSWContextManagerConnection::FirePushEvent(serviceWorkerIdentifier, ipcData, WTFMove(proposedPayload)), [weakThis = WeakPtr { *this }, callback = WTFMove(callback)](bool wasProcessed, std::optional<NotificationPayload>&& resultPayload) mutable {
         if (CheckedPtr checkedThis = weakThis.get(); checkedThis && !--checkedThis->m_processingFunctionalEventCount)
             checkedThis->m_connection->networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::EndServiceWorkerBackgroundProcessing { checkedThis->webProcessIdentifier() }, 0);

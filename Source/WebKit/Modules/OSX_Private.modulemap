@@ -1509,11 +1509,6 @@ framework module WebKit_Private [system] {
     export *
   }
 
-  explicit module WebNSDataExtrasPrivate {
-    header "WebNSDataExtrasPrivate.h"
-    export *
-  }
-
   explicit module WebNSEventExtras {
     header "WebNSEventExtras.h"
     export *

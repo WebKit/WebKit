@@ -245,7 +245,7 @@ static RetainPtr<WKProcessPool>& sharedProcessPool()
         [_processPool->ensureBundleParameters() removeObjectForKey:parameter];
 
     auto data = keyedArchiver.get().encodedData;
-    _processPool->sendToAllProcesses(Messages::WebProcess::SetInjectedBundleParameter(parameter, IPC::DataReference(static_cast<const uint8_t*>([data bytes]), [data length])));
+    _processPool->sendToAllProcesses(Messages::WebProcess::SetInjectedBundleParameter(parameter, std::span(static_cast<const uint8_t*>([data bytes]), [data length])));
 }
 
 - (void)_setObjectsForBundleParametersWithDictionary:(NSDictionary *)dictionary
@@ -263,7 +263,7 @@ static RetainPtr<WKProcessPool>& sharedProcessPool()
     [_processPool->ensureBundleParameters() setValuesForKeysWithDictionary:copy.get()];
 
     auto data = keyedArchiver.get().encodedData;
-    _processPool->sendToAllProcesses(Messages::WebProcess::SetInjectedBundleParameters(IPC::DataReference(static_cast<const uint8_t*>([data bytes]), [data length])));
+    _processPool->sendToAllProcesses(Messages::WebProcess::SetInjectedBundleParameters(std::span(static_cast<const uint8_t*>([data bytes]), [data length])));
 }
 
 #if !TARGET_OS_IPHONE

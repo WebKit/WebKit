@@ -159,7 +159,7 @@ ResourceCryptographicDigest cryptographicDigestForSharedBuffer(ResourceCryptogra
 {
     auto cryptoDigest = PAL::CryptoDigest::create(toCryptoDigestAlgorithm(algorithm));
     if (buffer) {
-        buffer->forEachSegment([&](auto& segment) {
+        buffer->forEachSegment([&](auto segment) {
             cryptoDigest->addBytes(segment.data(), segment.size());
         });
     }

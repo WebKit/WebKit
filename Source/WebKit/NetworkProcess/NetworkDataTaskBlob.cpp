@@ -33,7 +33,6 @@
 #include "NetworkDataTaskBlob.h"
 
 #include "AuthenticationManager.h"
-#include "DataReference.h"
 #include "Download.h"
 #include "Logging.h"
 #include "NetworkProcess.h"
@@ -505,7 +504,7 @@ void NetworkDataTaskBlob::didFailDownload(const ResourceError& error)
     else {
         auto* download = m_networkProcess->downloadManager().download(m_pendingDownloadID);
         ASSERT(download);
-        download->didFail(error, IPC::DataReference());
+        download->didFail(error, { });
     }
 }
 

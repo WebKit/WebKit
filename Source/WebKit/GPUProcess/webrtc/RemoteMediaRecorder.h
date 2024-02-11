@@ -27,7 +27,6 @@
 
 #if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)
 
-#include "DataReference.h"
 #include "MediaRecorderIdentifier.h"
 #include "MessageReceiver.h"
 #include "RemoteVideoFrameIdentifier.h"
@@ -70,7 +69,7 @@ private:
     void audioSamplesStorageChanged(ConsumerSharedCARingBuffer::Handle&&, const WebCore::CAAudioStreamDescription&);
     void audioSamplesAvailable(MediaTime, uint64_t numberOfFrames);
     void videoFrameAvailable(SharedVideoFrame&&);
-    void fetchData(CompletionHandler<void(IPC::DataReference&&, double)>&&);
+    void fetchData(CompletionHandler<void(std::span<const uint8_t>, double)>&&);
     void stopRecording(CompletionHandler<void()>&&);
     void pause(CompletionHandler<void()>&&);
     void resume(CompletionHandler<void()>&&);

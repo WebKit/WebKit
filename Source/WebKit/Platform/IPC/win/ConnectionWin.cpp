@@ -26,7 +26,6 @@
 #include "config.h"
 #include "Connection.h"
 
-#include "DataReference.h"
 #include "Decoder.h"
 #include "Encoder.h"
 #include "IPCUtilities.h"

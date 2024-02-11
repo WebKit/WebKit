@@ -26,7 +26,6 @@
 #pragma once
 
 #include "Connection.h"
-#include "DataReference.h"
 #include "Download.h"
 #include "NetworkConnectionToWebProcess.h"
 #include "NetworkDataTask.h"

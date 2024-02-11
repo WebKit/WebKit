@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "DataReference.h"
 #include "DownloadID.h"
 #include <WebCore/FetchIdentifier.h>
 #include <WebCore/ResourceRequest.h>

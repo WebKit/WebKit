@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "DataReference.h"
 #include <WebCore/ResourceRequest.h>
 #include <libsoup/soup.h>
 #include <wtf/RunLoop.h>
@@ -41,8 +40,8 @@ public:
     WebSocketTask(NetworkSocketChannel&, const WebCore::ResourceRequest&, SoupSession*, SoupMessage*, const String& protocol);
     ~WebSocketTask();
 
-    void sendString(const IPC::DataReference&, CompletionHandler<void()>&&);
-    void sendData(const IPC::DataReference&, CompletionHandler<void()>&&);
+    void sendString(std::span<const uint8_t>, CompletionHandler<void()>&&);
+    void sendData(std::span<const uint8_t>, CompletionHandler<void()>&&);
     void close(int32_t code, const String& reason);
 
     void cancel();

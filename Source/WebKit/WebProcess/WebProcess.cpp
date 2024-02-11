@@ -1137,7 +1137,7 @@ void WebProcess::handleInjectedBundleMessage(const String& messageName, const Us
     injectedBundle->didReceiveMessage(messageName, transformHandlesToObjects(messageBody.object()));
 }
 
-void WebProcess::setInjectedBundleParameter(const String& key, const IPC::DataReference& value)
+void WebProcess::setInjectedBundleParameter(const String& key, std::span<const uint8_t> value)
 {
     RefPtr injectedBundle = WebProcess::singleton().injectedBundle();
     if (!injectedBundle)
@@ -1146,7 +1146,7 @@ void WebProcess::setInjectedBundleParameter(const String& key, const IPC::DataRe
     injectedBundle->setBundleParameter(key, value);
 }
 
-void WebProcess::setInjectedBundleParameters(const IPC::DataReference& value)
+void WebProcess::setInjectedBundleParameters(std::span<const uint8_t> value)
 {
     RefPtr injectedBundle = WebProcess::singleton().injectedBundle();
     if (!injectedBundle)

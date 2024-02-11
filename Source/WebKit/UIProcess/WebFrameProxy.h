@@ -49,7 +49,6 @@ class URL;
 namespace IPC {
 class Connection;
 class Decoder;
-using DataReference = std::span<const uint8_t>;
 }
 
 namespace WebKit {
@@ -100,7 +99,7 @@ public:
 
     void loadURL(const URL&, const String& referrer = String());
     // Sub frames only. For main frames, use WebPageProxy::loadData.
-    void loadData(const IPC::DataReference&, const String& MIMEType, const String& encodingName, const URL& baseURL);
+    void loadData(std::span<const uint8_t>, const String& MIMEType, const String& encodingName, const URL& baseURL);
 
     const URL& url() const { return m_frameLoadState.url(); }
     const URL& provisionalURL() const { return m_frameLoadState.provisionalURL(); }

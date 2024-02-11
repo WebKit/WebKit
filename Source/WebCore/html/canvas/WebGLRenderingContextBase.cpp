@@ -2531,28 +2531,28 @@ WebGLAny WebGLRenderingContextBase::getUniform(WebGLProgram& program, const WebG
     switch (baseType) {
     case GraphicsContextGL::FLOAT: {
         GCGLfloat value[16] = {0};
-        m_context->getUniformfv(program.object(), location, std::span<GCGLfloat> { value, length });
+        m_context->getUniformfv(program.object(), location, std::span { value, length });
         if (length == 1)
             return value[0];
         return Float32Array::tryCreate(value, length);
     }
     case GraphicsContextGL::INT: {
         GCGLint value[4] = {0};
-        m_context->getUniformiv(program.object(), location, std::span<GCGLint> { value, length });
+        m_context->getUniformiv(program.object(), location, std::span { value, length });
         if (length == 1)
             return value[0];
         return Int32Array::tryCreate(value, length);
     }
     case GraphicsContextGL::UNSIGNED_INT: {
         GCGLuint value[4] = {0};
-        m_context->getUniformuiv(program.object(), location, std::span<GCGLuint> { value, length });
+        m_context->getUniformuiv(program.object(), location, std::span { value, length });
         if (length == 1)
             return value[0];
         return Uint32Array::tryCreate(value, length);
     }
     case GraphicsContextGL::BOOL: {
         GCGLint value[4] = {0};
-        m_context->getUniformiv(program.object(), location, std::span<GCGLint> { value, length });
+        m_context->getUniformiv(program.object(), location, std::span { value, length });
         if (length > 1) {
             Vector<bool> vector(length);
             for (unsigned j = 0; j < length; j++)
@@ -2985,7 +2985,7 @@ void WebGLRenderingContextBase::readPixels(GCGLint x, GCGLint y, GCGLsizei width
         return;
     }
     clearIfComposited(CallerTypeOther);
-    std::span<uint8_t> data { static_cast<uint8_t*>(pixels.baseAddress()) + packSizes->initialSkipBytes, packSizes->imageBytes };
+    std::span data { static_cast<uint8_t*>(pixels.baseAddress()) + packSizes->initialSkipBytes, packSizes->imageBytes };
     m_context->readPixels(rect, format, type, data, m_packParameters.alignment, m_packParameters.rowLength);
 }
 
@@ -3274,7 +3274,7 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource(TexImageFunctionID f
     if (m_unpackFlipY)
         adjustedSourceImageRect.setY(source.height() - adjustedSourceImageRect.maxY());
 
-    std::span<const uint8_t> imageData { source.data().data(), source.data().byteLength() };
+    std::span imageData { source.data().data(), source.data().byteLength() };
     Vector<uint8_t> data;
 
     // The data from ImageData is always of format RGBA8.
@@ -3288,7 +3288,7 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource(TexImageFunctionID f
             synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "texImage2D", "bad image data");
             return { };
         }
-        imageData = std::span<const uint8_t> { data.data(), data.size() };
+        imageData = std::span { data.data(), data.size() };
     }
     ScopedTightUnpackParameters temporaryResetUnpack(*this);
     if (functionID == TexImageFunctionID::TexImage2D) {
@@ -3586,13 +3586,13 @@ void WebGLRenderingContextBase::texImageImpl(TexImageFunctionID functionID, GCGL
         return;
     }
 
-    std::span<const uint8_t> pixels { imagePixelData, imagePixelByteLength };
+    std::span pixels { imagePixelData, imagePixelByteLength };
     if (type != GraphicsContextGL::UNSIGNED_BYTE || sourceDataFormat != GraphicsContextGL::DataFormat::RGBA8 || format != GraphicsContextGL::RGBA || alphaOp != GraphicsContextGL::AlphaOp::DoNothing || flipY || selectingSubRectangle || depth != 1) {
         if (!m_context->packImageData(image, imagePixelData, format, type, flipY, alphaOp, sourceDataFormat, imageExtractor.imageWidth(), imageExtractor.imageHeight(), adjustedSourceImageRect, depth, imageExtractor.imageSourceUnpackAlignment(), unpackImageHeight, data)) {
             synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "packImage error");
             return;
         }
-        pixels = std::span<const uint8_t> { data.data(), data.size() };
+        pixels = std::span { data.data(), data.size() };
     }
 
     ScopedTightUnpackParameters temporaryResetUnpack(*this);
@@ -5130,7 +5130,7 @@ std::optional<std::span<const T>> WebGLRenderingContextBase::validateUniformMatr
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "invalid size");
         return { };
     }
-    return std::span<const T> { values.data() + srcOffset, static_cast<size_t>(actualSize) };
+    return std::span { values.data() + srcOffset, static_cast<size_t>(actualSize) };
 }
 
 template

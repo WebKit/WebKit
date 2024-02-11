@@ -3283,14 +3283,14 @@ std::optional<std::span<const T>> WebGL2RenderingContext::validateClearBuffer(co
             synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "invalid array size / srcOffset");
             return { };
         }
-        return std::span<const T> { values.data() + srcOffset, 4 };
+        return std::span { values.data() + srcOffset, 4 };
     case GraphicsContextGL::DEPTH:
     case GraphicsContextGL::STENCIL:
         if (checkedSize < 1) {
             synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "invalid array size / srcOffset");
             return { };
         }
-        return std::span<const T> { values.data() + srcOffset, 1 };
+        return std::span { values.data() + srcOffset, 1 };
 
     default:
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid buffer");

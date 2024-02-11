@@ -29,7 +29,6 @@
 #if ENABLE(CONTENT_EXTENSIONS)
 
 #include "ArgumentCoders.h"
-#include "DataReference.h"
 
 namespace WebKit {
 

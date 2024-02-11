@@ -44,7 +44,7 @@ public:
     {
     }
 
-    CoreIPCSecCertificate(const IPC::DataReference& data)
+    CoreIPCSecCertificate(std::span<const uint8_t> data)
         : m_certificateData(adoptCF(CFDataCreate(kCFAllocatorDefault, data.data(), data.size())))
     {
     }
@@ -56,7 +56,7 @@ public:
         return certificate;
     }
 
-    IPC::DataReference dataReference() const
+    std::span<const uint8_t> dataReference() const
     {
         RELEASE_ASSERT(m_certificateData);
         CFDataRef data = m_certificateData.get();

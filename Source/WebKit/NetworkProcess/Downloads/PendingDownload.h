@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "DataReference.h"
 #include "DownloadID.h"
 #include "MessageSender.h"
 #include "NetworkLoadClient.h"
@@ -52,7 +51,7 @@ public:
     PendingDownload(IPC::Connection*, NetworkLoadParameters&&, DownloadID, NetworkSession&, const String& suggestedName);
     PendingDownload(IPC::Connection*, std::unique_ptr<NetworkLoad>&&, ResponseCompletionHandler&&, DownloadID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 
-    void cancel(CompletionHandler<void(const IPC::DataReference&)>&&);
+    void cancel(CompletionHandler<void(std::span<const uint8_t>)>&&);
 
 #if PLATFORM(COCOA)
     void publishProgress(const URL&, SandboxExtension::Handle&&);

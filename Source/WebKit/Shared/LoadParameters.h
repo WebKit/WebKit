@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "DataReference.h"
 #include "NetworkResourceLoadIdentifier.h"
 #include "PolicyDecision.h"
 #include "SandboxExtension.h"
@@ -63,7 +62,7 @@ struct LoadParameters {
     WebCore::ResourceRequest request;
     SandboxExtension::Handle sandboxExtensionHandle;
 
-    IPC::DataReference data;
+    std::span<const uint8_t> data;
     String MIMEType;
     String encodingName;
 

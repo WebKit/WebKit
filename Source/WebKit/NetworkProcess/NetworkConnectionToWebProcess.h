@@ -221,7 +221,7 @@ public:
     void installMockContentFilter(WebCore::MockContentFilterSettings&&);
 #endif
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
-    void logOnBehalfOfWebContent(IPC::DataReference&& logChannel, IPC::DataReference&& logCategory, IPC::DataReference&& logString, uint8_t logType, int32_t pid);
+    void logOnBehalfOfWebContent(std::span<const uint8_t> logChannel, std::span<const uint8_t> logCategory, std::span<const uint8_t> logString, uint8_t logType, int32_t pid);
 #endif
 
     void addAllowedFirstPartyForCookies(const RegistrableDomain&);

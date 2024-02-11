@@ -363,7 +363,7 @@ void RemoteGraphicsContextGLProxy::readPixels(IntRect rect, GCGLenum format, GCG
         auto [readArea] = sendResult.takeReply();
         if (!readArea)
             return;
-        std::span<const uint8_t> replyData { reinterpret_cast<uint8_t*>(replyBuffer->data()), replyBuffer->size() };
+        std::span replyData { reinterpret_cast<uint8_t*>(replyBuffer->data()), replyBuffer->size() };
         copyToData(replyData, *readArea);
         return;
     }

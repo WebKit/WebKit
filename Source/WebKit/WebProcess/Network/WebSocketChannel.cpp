@@ -64,10 +64,10 @@ NetworkSendQueue WebSocketChannel::createMessageQueue(Document& document, WebSoc
 {
     return { document, [&channel](auto& utf8String) {
         channel.notifySendFrame(WebSocketFrame::OpCode::OpCodeText, utf8String.dataAsUInt8Ptr(), utf8String.length());
-        channel.sendMessage(Messages::NetworkSocketChannel::SendString { IPC::DataReference { utf8String.dataAsUInt8Ptr(), utf8String.length() } }, utf8String.length());
-    }, [&channel](auto& span) {
+        channel.sendMessage(Messages::NetworkSocketChannel::SendString { std::span { utf8String.dataAsUInt8Ptr(), utf8String.length() } }, utf8String.length());
+    }, [&channel](auto span) {
         channel.notifySendFrame(WebSocketFrame::OpCode::OpCodeBinary, span.data(), span.size());
-        channel.sendMessage(Messages::NetworkSocketChannel::SendData { IPC::DataReference { span.data(), span.size() } }, span.size());
+        channel.sendMessage(Messages::NetworkSocketChannel::SendData { span }, span.size());
     }, [&channel](ExceptionCode exceptionCode) {
         auto code = static_cast<int>(exceptionCode);
         channel.fail(makeString("Failed to load Blob: exception code = ", code));
@@ -305,7 +305,7 @@ void WebSocketChannel::didReceiveText(String&& message)
     m_client->didReceiveMessage(WTFMove(message));
 }
 
-void WebSocketChannel::didReceiveBinaryData(IPC::DataReference&& data)
+void WebSocketChannel::didReceiveBinaryData(std::span<const uint8_t> data)
 {
     if (m_isClosing)
         return;

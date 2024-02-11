@@ -91,7 +91,7 @@ private:
     void preferencesDidChange() override;
     void toolTipChanged(const String& oldToolTip, const String& newToolTip) override;
     void didCommitLoadForMainFrame(const String& mimeType, bool useCustomContentProvider) override;
-    void didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, const IPC::DataReference&) override;
+    void didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, std::span<const uint8_t>) override;
     void didChangeContentSize(const WebCore::IntSize&) override;
     void setCursor(const WebCore::Cursor&) override;
     void setCursorHiddenUntilMouseMoves(bool) override;
@@ -176,7 +176,7 @@ private:
     void gestureEventWasNotHandledByWebCore(const NativeWebGestureEvent&) override;
 #endif
 
-    void accessibilityWebProcessTokenReceived(const IPC::DataReference&) override;
+    void accessibilityWebProcessTokenReceived(std::span<const uint8_t>) override;
 
     void makeFirstResponder() override;
     void assistiveTechnologyMakeFirstResponder() override;

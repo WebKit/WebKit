@@ -28,7 +28,6 @@
 
 #if ENABLE(MODEL_PROCESS)
 
-#include "DataReference.h"
 #include "GPUConnectionToWebProcessMessages.h"
 #include "Logging.h"
 #include "ModelProcessConnectionInfo.h"

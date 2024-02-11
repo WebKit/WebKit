@@ -28,7 +28,6 @@
 
 #include "AuthenticationChallengeDisposition.h"
 #include "AuthenticationManager.h"
-#include "DataReference.h"
 #include "Download.h"
 #include "NetworkLoad.h"
 #include "NetworkProcess.h"
@@ -1476,7 +1475,7 @@ void NetworkDataTaskSoup::didFailDownload(const ResourceError& error)
     else {
         auto* download = m_session->networkProcess().downloadManager().download(m_pendingDownloadID);
         ASSERT(download);
-        download->didFail(error, IPC::DataReference());
+        download->didFail(error, { });
     }
 }
 

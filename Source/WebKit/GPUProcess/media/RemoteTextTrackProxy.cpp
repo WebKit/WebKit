@@ -30,7 +30,6 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
 #include "Connection.h"
-#include "DataReference.h"
 #include "GPUConnectionToWebProcess.h"
 #include "MediaPlayerPrivateRemoteMessages.h"
 #include "RemoteMediaPlayerProxy.h"
@@ -114,7 +113,7 @@ void RemoteTextTrackProxy::addDataCue(const MediaTime& start, const MediaTime& e
     if (!m_connectionToWebProcess)
         return;
 
-    m_connectionToWebProcess->connection().send(Messages::MediaPlayerPrivateRemote::AddDataCue(m_trackPrivate->id(), start, end, IPC::DataReference(static_cast<const uint8_t*>(data), length)), m_mediaPlayerIdentifier);
+    m_connectionToWebProcess->connection().send(Messages::MediaPlayerPrivateRemote::AddDataCue(m_trackPrivate->id(), start, end, std::span(static_cast<const uint8_t*>(data), length)), m_mediaPlayerIdentifier);
 }
 
 #if ENABLE(DATACUE_VALUE)
@@ -180,7 +179,7 @@ void RemoteTextTrackProxy::parseWebVTTCueData(const uint8_t* data, unsigned leng
     if (!m_connectionToWebProcess)
         return;
 
-    m_connectionToWebProcess->connection().send(Messages::MediaPlayerPrivateRemote::ParseWebVTTCueData(m_trackPrivate->id(), IPC::DataReference(data, length)), m_mediaPlayerIdentifier);
+    m_connectionToWebProcess->connection().send(Messages::MediaPlayerPrivateRemote::ParseWebVTTCueData(m_trackPrivate->id(), std::span(data, length)), m_mediaPlayerIdentifier);
 }
 
 void RemoteTextTrackProxy::parseWebVTTCueData(ISOWebVTTCue&& cueData)

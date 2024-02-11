@@ -28,7 +28,6 @@
 
 #if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
-#include "DataReference.h"
 #include "RemoteMediaResourceManagerMessages.h"
 #include "SharedBufferReference.h"
 #include "WebCoreArgumentCoders.h"

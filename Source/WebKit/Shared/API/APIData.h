@@ -26,7 +26,6 @@
 #pragma once
 
 #include "APIObject.h"
-#include "DataReference.h"
 #include <wtf/Vector.h>
 
 #if PLATFORM(COCOA)
@@ -43,7 +42,7 @@ public:
 
     static Ref<Data> createWithoutCopying(const unsigned char* bytes, size_t size, FreeDataFunction freeDataFunction, const void* context)
     {
-        return adoptRef(*new Data(bytes, size, freeDataFunction, context));
+        return adoptRef(*new Data({ bytes, size }, freeDataFunction, context));
     }
 
     static Ref<Data> create(const unsigned char* bytes, size_t size)
@@ -76,34 +75,30 @@ public:
         }, nullptr);
     }
 
-    static Ref<Data> create(const IPC::DataReference&);
-    
+    static Ref<Data> create(std::span<const uint8_t>);
+
 #if PLATFORM(COCOA)
     static Ref<Data> createWithoutCopying(RetainPtr<NSData>);
 #endif
 
     ~Data()
     {
-        m_freeDataFunction(const_cast<unsigned char*>(m_bytes), m_context);
+        m_freeDataFunction(const_cast<uint8_t*>(m_span.data()), m_context);
     }
 
-    const unsigned char* bytes() const { return m_bytes; }
-    size_t size() const { return m_size; }
-
-    IPC::DataReference dataReference() const { return IPC::DataReference(m_bytes, m_size); }
+    const unsigned char* bytes() const { return m_span.data(); }
+    size_t size() const { return m_span.size(); }
+    std::span<const uint8_t> dataReference() const { return m_span; }
 
 private:
-    Data(const unsigned char* bytes, size_t size, FreeDataFunction freeDataFunction, const void* context)
-        : m_bytes(bytes)
-        , m_size(size)
+    Data(std::span<const uint8_t> span, FreeDataFunction freeDataFunction, const void* context)
+        : m_span(span)
         , m_freeDataFunction(freeDataFunction)
         , m_context(context)
     {
     }
 
-    const unsigned char* m_bytes { nullptr };
-    size_t m_size { 0 };
-
+    std::span<const uint8_t> m_span;
     FreeDataFunction m_freeDataFunction { nullptr };
     const void* m_context { nullptr };
 };

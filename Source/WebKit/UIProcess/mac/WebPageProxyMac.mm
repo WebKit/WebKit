@@ -31,7 +31,6 @@
 #import "APIUIClient.h"
 #import "CocoaImage.h"
 #import "Connection.h"
-#import "DataReference.h"
 #import "FontInfo.h"
 #import "FrameInfoData.h"
 #import "ImageAnalysisUtilities.h"
@@ -307,7 +306,7 @@ void WebPageProxy::didPerformDictionaryLookup(const DictionaryPopupInfo& diction
     protectedPageClient()->didPerformDictionaryLookup(dictionaryPopupInfo);
 }
 
-void WebPageProxy::registerWebProcessAccessibilityToken(const IPC::DataReference& data)
+void WebPageProxy::registerWebProcessAccessibilityToken(std::span<const uint8_t> data)
 {
     if (!hasRunningProcess())
         return;
@@ -343,7 +342,7 @@ WebCore::DestinationColorSpace WebPageProxy::colorSpace()
     return protectedPageClient()->colorSpace();
 }
 
-void WebPageProxy::registerUIProcessAccessibilityTokens(const IPC::DataReference& elementToken, const IPC::DataReference& windowToken)
+void WebPageProxy::registerUIProcessAccessibilityTokens(std::span<const uint8_t> elementToken, std::span<const uint8_t> windowToken)
 {
     if (!hasRunningProcess())
         return;
@@ -470,7 +469,7 @@ static NSString *pathToPDFOnDisk(const String& suggestedFilename)
     return path;
 }
 
-void WebPageProxy::savePDFToTemporaryFolderAndOpenWithNativeApplication(const String& suggestedFilename, FrameInfoData&& frameInfo, const IPC::DataReference& data, const String& pdfUUID)
+void WebPageProxy::savePDFToTemporaryFolderAndOpenWithNativeApplication(const String& suggestedFilename, FrameInfoData&& frameInfo, std::span<const uint8_t> data, const String& pdfUUID)
 {
     if (data.empty()) {
         WTFLogAlways("Cannot save empty PDF file to the temporary directory.");
@@ -691,14 +690,14 @@ void WebPageProxy::pdfZoomOut(PDFPluginIdentifier identifier)
 
 void WebPageProxy::pdfSaveToPDF(PDFPluginIdentifier identifier)
 {
-    sendWithAsyncReply(Messages::WebPage::SavePDF(identifier), [this, protectedThis = Ref { *this }] (String&& suggestedFilename, URL&& originatingURL, const IPC::DataReference& dataReference) {
+    sendWithAsyncReply(Messages::WebPage::SavePDF(identifier), [this, protectedThis = Ref { *this }] (String&& suggestedFilename, URL&& originatingURL, std::span<const uint8_t> dataReference) {
         savePDFToFileInDownloadsFolder(WTFMove(suggestedFilename), WTFMove(originatingURL), dataReference);
     });
 }
 
 void WebPageProxy::pdfOpenWithPreview(PDFPluginIdentifier identifier)
 {
-    sendWithAsyncReply(Messages::WebPage::OpenPDFWithPreview(identifier), [this, protectedThis = Ref { *this }] (String&& suggestedFilename, FrameInfoData&& frameInfo, const IPC::DataReference& data, const String& pdfUUID) {
+    sendWithAsyncReply(Messages::WebPage::OpenPDFWithPreview(identifier), [this, protectedThis = Ref { *this }] (String&& suggestedFilename, FrameInfoData&& frameInfo, std::span<const uint8_t> data, const String& pdfUUID) {
         savePDFToTemporaryFolderAndOpenWithNativeApplication(WTFMove(suggestedFilename), WTFMove(frameInfo), data, pdfUUID);
     });
 }

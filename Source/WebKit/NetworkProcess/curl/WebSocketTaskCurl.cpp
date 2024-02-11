@@ -56,7 +56,7 @@ WebSocketTask::~WebSocketTask()
     destructStream();
 }
 
-void WebSocketTask::sendString(const IPC::DataReference& utf8, CompletionHandler<void()>&& callback)
+void WebSocketTask::sendString(std::span<const uint8_t> utf8, CompletionHandler<void()>&& callback)
 {
     if (m_state == State::Opened) {
         if (!sendFrame(WebCore::WebSocketFrame::OpCodeText, utf8.data(), utf8.size()))
@@ -65,7 +65,7 @@ void WebSocketTask::sendString(const IPC::DataReference& utf8, CompletionHandler
     callback();
 }
 
-void WebSocketTask::sendData(const IPC::DataReference& data, CompletionHandler<void()>&& callback)
+void WebSocketTask::sendData(std::span<const uint8_t> data, CompletionHandler<void()>&& callback)
 {
     if (m_state == State::Opened) {
         if (!sendFrame(WebCore::WebSocketFrame::OpCodeBinary, data.data(), data.size()))

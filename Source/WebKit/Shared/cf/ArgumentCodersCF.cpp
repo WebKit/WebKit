@@ -23,13 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// FIXME: This is a .cpp but has ObjC in it?
+// FIXME: This is a .cpp but has ObjC in it, so it should be renamed to .mm.
 
 #include "config.h"
 #include "ArgumentCodersCF.h"
 
 #include "ArgumentCodersCocoa.h"
-#include "DataReference.h"
 #include "Decoder.h"
 #include "Encoder.h"
 #include "StreamConnectionEncoder.h"

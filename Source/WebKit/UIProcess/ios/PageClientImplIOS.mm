@@ -30,7 +30,6 @@
 
 #import "APIData.h"
 #import "ApplicationStateTracker.h"
-#import "DataReference.h"
 #import "DrawingAreaProxy.h"
 #import "EndowmentStateTracker.h"
 #import "FrameInfoData.h"
@@ -390,7 +389,7 @@ void PageClientImpl::executeUndoRedo(UndoOrRedo undoOrRedo)
     return (undoOrRedo == UndoOrRedo::Undo) ? [[contentView() undoManager] undo] : [[contentView() undoManager] redo];
 }
 
-void PageClientImpl::accessibilityWebProcessTokenReceived(const IPC::DataReference& data)
+void PageClientImpl::accessibilityWebProcessTokenReceived(std::span<const uint8_t> data)
 {
     NSData *remoteToken = [NSData dataWithBytes:data.data() length:data.size()];
     [contentView() _setAccessibilityWebProcessToken:remoteToken];
@@ -829,7 +828,7 @@ void PageClientImpl::beganExitFullScreen(const IntRect& initialFrame, const IntR
 
 #endif // ENABLE(FULLSCREEN_API)
 
-void PageClientImpl::didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, const IPC::DataReference& dataReference)
+void PageClientImpl::didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, std::span<const uint8_t> dataReference)
 {
     RetainPtr<NSData> data = adoptNS([[NSData alloc] initWithBytes:dataReference.data() length:dataReference.size()]);
     [webView() _didFinishLoadingDataForCustomContentProviderWithSuggestedFilename:suggestedFilename data:data.get()];

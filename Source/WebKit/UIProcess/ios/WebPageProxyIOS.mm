@@ -33,7 +33,6 @@
 #import "APIUIClient.h"
 #import "APIWebsitePolicies.h"
 #import "Connection.h"
-#import "DataReference.h"
 #import "DocumentEditingContext.h"
 #import "DrawingAreaProxy.h"
 #import "EditingRange.h"
@@ -763,13 +762,13 @@ void WebPageProxy::setSmartInsertDeleteEnabled(bool)
     notImplemented();
 }
 
-void WebPageProxy::registerWebProcessAccessibilityToken(const IPC::DataReference& data)
+void WebPageProxy::registerWebProcessAccessibilityToken(std::span<const uint8_t> data)
 {
     protectedPageClient()->accessibilityWebProcessTokenReceived(data);
 }    
 
 
-void WebPageProxy::relayAccessibilityNotification(const String& notificationName, const IPC::DataReference& data)
+void WebPageProxy::relayAccessibilityNotification(const String& notificationName, std::span<const uint8_t> data)
 {
     NSData *notificationData = [NSData dataWithBytes:data.data() length:data.size()];
     protectedPageClient()->relayAccessibilityNotification(notificationName, notificationData);
@@ -785,7 +784,7 @@ void WebPageProxy::makeFirstResponder()
     notImplemented();
 }
 
-void WebPageProxy::registerUIProcessAccessibilityTokens(const IPC::DataReference& elementToken, const IPC::DataReference& windowToken)
+void WebPageProxy::registerUIProcessAccessibilityTokens(std::span<const uint8_t> elementToken, std::span<const uint8_t> windowToken)
 {
     if (!hasRunningProcess())
         return;

@@ -28,7 +28,6 @@
 
 #if USE(LIBWEBRTC) && PLATFORM(COCOA)
 
-#include "DataReference.h"
 #include "LibWebRTCNetworkMessages.h"
 #include "Logging.h"
 #include "NetworkRTCUtilitiesCocoa.h"
@@ -130,7 +129,7 @@ NetworkRTCTCPSocketCocoa::NetworkRTCTCPSocketCocoa(LibWebRTCSocketIdentifier ide
 
     processIncomingData(m_nwConnection.get(), [identifier = m_identifier, connection = m_connection.copyRef(), ip = remoteAddress.ipaddr(), port = remoteAddress.port(), isSTUN = m_isSTUN](Vector<uint8_t>&& buffer) mutable {
         return WebRTC::extractMessages(WTFMove(buffer), isSTUN ? WebRTC::MessageType::STUN : WebRTC::MessageType::Data, [&](auto* message, auto size) {
-            IPC::DataReference data(message, size);
+            std::span data(message, size);
             connection->send(Messages::LibWebRTCNetwork::SignalReadPacket { identifier, data, RTCNetwork::IPAddress(ip), port, rtc::TimeMillis() * 1000 }, 0);
         });
     });

@@ -29,7 +29,6 @@
 
 #if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
-#include "DataReference.h"
 #include "GPUProcessConnection.h"
 #include "MediaPlayerPrivateRemote.h"
 #include "RemoteMediaPlayerProxyMessages.h"
@@ -122,7 +121,7 @@ void TextTrackPrivateRemote::parseWebVTTFileHeader(String&& header)
         client->parseWebVTTFileHeader(WTFMove(header));
 }
 
-void TextTrackPrivateRemote::parseWebVTTCueData(const IPC::DataReference& data)
+void TextTrackPrivateRemote::parseWebVTTCueData(std::span<const uint8_t> data)
 {
     ASSERT(client());
     if (auto* client = this->client())
@@ -136,7 +135,7 @@ void TextTrackPrivateRemote::parseWebVTTCueDataStruct(ISOWebVTTCue&& cueData)
         client->parseWebVTTCueData(WTFMove(cueData));
 }
 
-void TextTrackPrivateRemote::addDataCue(MediaTime&& start, MediaTime&& end, IPC::DataReference&& data)
+void TextTrackPrivateRemote::addDataCue(MediaTime&& start, MediaTime&& end, std::span<const uint8_t> data)
 {
     ASSERT(client());
     if (auto* client = this->client())

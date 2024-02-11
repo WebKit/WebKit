@@ -31,10 +31,6 @@
 #define WEB_GUESS_MIME_TYPE_PEEK_LENGTH 1024U
 
 @interface NSData (WebNSDataExtras)
-
--(BOOL)_web_isCaseInsensitiveEqualToCString:(const char *)string;
--(NSMutableDictionary *)_webkit_parseRFC822HeaderFields;
-- (BOOL)_web_startsWithBlankLine;
-- (NSInteger)_web_locationAfterFirstBlankLine;
-
+- (BOOL)_web_isCaseInsensitiveEqualToCString:(const char *)string;
+- (NSString *)_webkit_guessedMIMEType;
 @end

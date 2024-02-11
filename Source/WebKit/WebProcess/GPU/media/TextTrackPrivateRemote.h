@@ -28,7 +28,6 @@
 
 #if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
-#include "DataReference.h"
 #include "TextTrackPrivateRemoteConfiguration.h"
 #include <WebCore/InbandTextTrackPrivate.h>
 #include <WebCore/MediaPlayerIdentifier.h>
@@ -52,7 +51,7 @@ public:
         return adoptRef(*new TextTrackPrivateRemote(gpuProcessConnection, playerIdentifier, WTFMove(configuration)));
     }
 
-    void addDataCue(MediaTime&& start, MediaTime&& end, IPC::DataReference&&);
+    void addDataCue(MediaTime&& start, MediaTime&& end, std::span<const uint8_t>);
 
 #if ENABLE(DATACUE_VALUE)
     using SerializedPlatformDataCueValue = WebCore::SerializedPlatformDataCueValue;
@@ -68,7 +67,7 @@ public:
 
     using ISOWebVTTCue = WebCore::ISOWebVTTCue;
     void parseWebVTTFileHeader(String&&);
-    void parseWebVTTCueData(const IPC::DataReference&);
+    void parseWebVTTCueData(std::span<const uint8_t>);
     void parseWebVTTCueDataStruct(ISOWebVTTCue&&);
 
     void updateConfiguration(TextTrackPrivateRemoteConfiguration&&);

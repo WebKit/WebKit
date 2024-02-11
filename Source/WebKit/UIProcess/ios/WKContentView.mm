@@ -791,7 +791,7 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
         [self _updateRemoteAccessibilityRegistration:YES];
         storeAccessibilityRemoteConnectionInformation(self, _page->process().processID(), uuid);
 
-        IPC::DataReference elementToken = IPC::DataReference(reinterpret_cast<const uint8_t*>([remoteElementToken bytes]), [remoteElementToken length]);
+        std::span<const uint8_t> elementToken(reinterpret_cast<const uint8_t*>([remoteElementToken bytes]), [remoteElementToken length]);
         _page->registerUIProcessAccessibilityTokens(elementToken, elementToken);
     }
 }

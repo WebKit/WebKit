@@ -247,7 +247,7 @@ void ProvisionalPageProxy::initializeWebPage(RefPtr<API::WebsitePolicies>&& webs
         m_page->inspectorController().didCreateProvisionalPage(*this);
 }
 
-void ProvisionalPageProxy::loadData(API::Navigation& navigation, const IPC::DataReference& data, const String& mimeType, const String& encoding, const String& baseURL, API::Object* userData, WebCore::ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, std::optional<WebsitePoliciesData>&& websitePolicies, SubstituteData::SessionHistoryVisibility sessionHistoryVisibility)
+void ProvisionalPageProxy::loadData(API::Navigation& navigation, std::span<const uint8_t> data, const String& mimeType, const String& encoding, const String& baseURL, API::Object* userData, WebCore::ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, std::optional<WebsitePoliciesData>&& websitePolicies, SubstituteData::SessionHistoryVisibility sessionHistoryVisibility)
 {
     PROVISIONALPAGEPROXY_RELEASE_LOG(ProcessSwapping, "loadData:");
     ASSERT(shouldTreatAsContinuingLoad != WebCore::ShouldTreatAsContinuingLoad::No);
@@ -543,7 +543,7 @@ void ProvisionalPageProxy::requestPasswordForQuickLookDocumentInMainFrame(const 
 #endif
 
 #if PLATFORM(COCOA)
-void ProvisionalPageProxy::registerWebProcessAccessibilityToken(const IPC::DataReference& data)
+void ProvisionalPageProxy::registerWebProcessAccessibilityToken(std::span<const uint8_t> data)
 {
     m_accessibilityToken = Vector(data);
 }

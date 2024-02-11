@@ -29,7 +29,6 @@
 #if PLATFORM(MAC)
 
 #import "ContextMenuContextData.h"
-#import "DataReference.h"
 #import "EditingRange.h"
 #import "EditorState.h"
 #import "FontInfo.h"
@@ -471,7 +470,7 @@ bool WebPage::performNonEditingBehaviorForSelector(const String& selector, Keybo
     return didPerformAction;
 }
 
-void WebPage::registerUIProcessAccessibilityTokens(const IPC::DataReference& elementToken, const IPC::DataReference& windowToken)
+void WebPage::registerUIProcessAccessibilityTokens(std::span<const uint8_t> elementToken, std::span<const uint8_t> windowToken)
 {
     NSData *elementTokenData = [NSData dataWithBytes:elementToken.data() length:elementToken.size()];
     NSData *windowTokenData = [NSData dataWithBytes:windowToken.data() length:windowToken.size()];
@@ -1133,7 +1132,7 @@ void WebPage::zoomPDFOut(PDFPluginIdentifier identifier)
     pdfPlugin->zoomOut();
 }
 
-void WebPage::savePDF(PDFPluginIdentifier identifier, CompletionHandler<void(const String&, const URL&, const IPC::DataReference&)>&& completionHandler)
+void WebPage::savePDF(PDFPluginIdentifier identifier, CompletionHandler<void(const String&, const URL&, std::span<const uint8_t>)>&& completionHandler)
 {
     auto pdfPlugin = m_pdfPlugInsWithHUD.get(identifier);
     if (!pdfPlugin)
@@ -1141,7 +1140,7 @@ void WebPage::savePDF(PDFPluginIdentifier identifier, CompletionHandler<void(con
     pdfPlugin->save(WTFMove(completionHandler));
 }
 
-void WebPage::openPDFWithPreview(PDFPluginIdentifier identifier, CompletionHandler<void(const String&, FrameInfoData&&, const IPC::DataReference&, const String&)>&& completionHandler)
+void WebPage::openPDFWithPreview(PDFPluginIdentifier identifier, CompletionHandler<void(const String&, FrameInfoData&&, std::span<const uint8_t>, const String&)>&& completionHandler)
 {
     auto pdfPlugin = m_pdfPlugInsWithHUD.get(identifier);
     if (!pdfPlugin)

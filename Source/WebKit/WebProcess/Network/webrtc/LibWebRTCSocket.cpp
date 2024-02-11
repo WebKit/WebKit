@@ -28,7 +28,6 @@
 
 #if USE(LIBWEBRTC)
 
-#include "DataReference.h"
 #include "LibWebRTCNetworkManager.h"
 #include "LibWebRTCSocketFactory.h"
 #include "NetworkProcessConnection.h"
@@ -116,7 +115,7 @@ int LibWebRTCSocket::SendTo(const void *value, size_t size, const rtc::SocketAdd
     if (m_isSuspended)
         return size;
 
-    IPC::DataReference data(static_cast<const uint8_t*>(value), size);
+    std::span data(static_cast<const uint8_t*>(value), size);
     connection->send(Messages::NetworkRTCProvider::SendToSocket { m_identifier, data, RTCNetwork::SocketAddress { address }, RTCPacketOptions { options } }, 0);
 
     return size;

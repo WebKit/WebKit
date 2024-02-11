@@ -117,7 +117,7 @@ void DownloadMonitor::timerFired()
     RELEASE_ASSERT(m_interval < std::size(throughputIntervals));
     if (measuredThroughputRate() < throughputIntervals[m_interval].bytesPerSecond) {
         DOWNLOAD_MONITOR_RELEASE_LOG("timerFired: cancelling download (id = %" PRIu64 ")", m_download.downloadID().toUInt64());
-        m_download.cancel([](auto&) { }, Download::IgnoreDidFailCallback::No);
+        m_download.cancel([](auto) { }, Download::IgnoreDidFailCallback::No);
     } else if (m_interval + 1 < std::size(throughputIntervals)) {
         DOWNLOAD_MONITOR_RELEASE_LOG("timerFired: sufficient throughput rate (id = %" PRIu64 ")", m_download.downloadID().toUInt64());
         m_timer.startOneShot(timeUntilNextInterval(m_interval++) / testSpeedMultiplier());

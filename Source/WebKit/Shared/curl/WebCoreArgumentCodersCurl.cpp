@@ -26,7 +26,6 @@
 #include "config.h"
 #include "WebCoreArgumentCoders.h"
 
-#include "DataReference.h"
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/CurlProxySettings.h>
 #include <WebCore/DictionaryPopupInfo.h>

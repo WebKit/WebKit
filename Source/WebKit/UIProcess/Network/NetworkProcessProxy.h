@@ -28,7 +28,6 @@
 #include "AppPrivacyReport.h"
 #include "AuxiliaryProcessProxy.h"
 #include "BackgroundFetchState.h"
-#include "DataReference.h"
 #include "DataTaskIdentifier.h"
 #include "IdentifierTypes.h"
 #include "NetworkResourceLoadIdentifier.h"
@@ -314,7 +313,7 @@ public:
     void dataTaskReceivedChallenge(DataTaskIdentifier, WebCore::AuthenticationChallenge&&, CompletionHandler<void(AuthenticationChallengeDisposition, WebCore::Credential&&)>&&);
     void dataTaskWillPerformHTTPRedirection(DataTaskIdentifier, WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, CompletionHandler<void(bool)>&&);
     void dataTaskDidReceiveResponse(DataTaskIdentifier, WebCore::ResourceResponse&&, CompletionHandler<void(bool)>&&);
-    void dataTaskDidReceiveData(DataTaskIdentifier, const IPC::DataReference&);
+    void dataTaskDidReceiveData(DataTaskIdentifier, std::span<const uint8_t>);
     void dataTaskDidCompleteWithError(DataTaskIdentifier, WebCore::ResourceError&&);
     void cancelDataTask(DataTaskIdentifier, PAL::SessionID);
 

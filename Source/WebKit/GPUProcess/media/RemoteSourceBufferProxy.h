@@ -27,7 +27,6 @@
 
 #if ENABLE(GPU_PROCESS) && ENABLE(MEDIA_SOURCE)
 
-#include "DataReference.h"
 #include "GPUConnectionToWebProcess.h"
 #include "MessageReceiver.h"
 #include "RemoteSourceBufferIdentifier.h"

@@ -70,8 +70,8 @@ String ScriptBuffer::toString() const
         return String();
 
     StringBuilder builder;
-    m_buffer.get()->forEachSegment([&](auto& segment) {
-        builder.append(String::fromUTF8(segment.data(), segment.size()));
+    m_buffer.get()->forEachSegment([&](auto segment) {
+        builder.append(FromUTF8({ reinterpret_cast<const char*>(segment.data()), segment.size() }));
     });
     return builder.toString();
 }

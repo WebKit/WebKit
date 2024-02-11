@@ -58,7 +58,6 @@
 #endif
 
 #if ENABLE(APPLE_PAY)
-#import "DataReference.h"
 #import <pal/cocoa/PassKitSoftLink.h>
 #endif
 

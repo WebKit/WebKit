@@ -29,7 +29,6 @@
 #if ENABLE(LEGACY_PDFKIT_PLUGIN)
 
 #import "ArgumentCoders.h"
-#import "DataReference.h"
 #import "FrameInfoData.h"
 #import "Logging.h"
 #import "MessageSenderInlines.h"

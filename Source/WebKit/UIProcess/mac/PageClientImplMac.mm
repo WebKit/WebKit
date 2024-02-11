@@ -30,7 +30,6 @@
 
 #import "APIHitTestResult.h"
 #import "AppKitSPI.h"
-#import "DataReference.h"
 #import "DrawingAreaProxy.h"
 #import "Logging.h"
 #import "NativeWebGestureEvent.h"
@@ -289,7 +288,7 @@ void PageClientImpl::didCommitLoadForMainFrame(const String&, bool)
     m_impl->pageDidScroll({0, 0});
 }
 
-void PageClientImpl::didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, const IPC::DataReference& dataReference)
+void PageClientImpl::didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, std::span<const uint8_t> dataReference)
 {
 }
 
@@ -582,7 +581,7 @@ void PageClientImpl::setTextIndicatorAnimationProgress(float progress)
     m_impl->setTextIndicatorAnimationProgress(progress);
 }
 
-void PageClientImpl::accessibilityWebProcessTokenReceived(const IPC::DataReference& data)
+void PageClientImpl::accessibilityWebProcessTokenReceived(std::span<const uint8_t> data)
 {
     m_impl->setAccessibilityWebProcessToken([NSData dataWithBytes:data.data() length:data.size()]);
 }

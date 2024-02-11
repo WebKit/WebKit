@@ -29,7 +29,6 @@
 #include "WebCoreArgumentCoders.h"
 
 #include "ArgumentCodersGLib.h"
-#include "DataReference.h"
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/Credential.h>
 #include <WebCore/DictionaryPopupInfo.h>

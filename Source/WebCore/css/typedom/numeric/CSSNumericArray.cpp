@@ -51,11 +51,6 @@ CSSNumericArray::CSSNumericArray(Vector<Ref<CSSNumericValue>>&& values)
 {
 }
 
-CSSNumericArray::CSSNumericArray(FixedVector<Ref<CSSNumericValue>>&& values)
-    : m_array(WTFMove(values))
-{
-}
-
 RefPtr<CSSNumericValue> CSSNumericArray::item(size_t index)
 {
     if (index >= m_array.size())

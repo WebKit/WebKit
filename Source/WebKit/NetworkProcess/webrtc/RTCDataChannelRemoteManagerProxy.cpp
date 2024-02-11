@@ -56,7 +56,7 @@ void RTCDataChannelRemoteManagerProxy::unregisterConnectionToWebProcess(NetworkC
     connectionToWebProcess.connection().removeWorkQueueMessageReceiver(Messages::RTCDataChannelRemoteManagerProxy::messageReceiverName());
 }
 
-void RTCDataChannelRemoteManagerProxy::sendData(WebCore::RTCDataChannelIdentifier identifier, bool isRaw, const IPC::DataReference& data)
+void RTCDataChannelRemoteManagerProxy::sendData(WebCore::RTCDataChannelIdentifier identifier, bool isRaw, std::span<const uint8_t> data)
 {
     if (auto connectionID = m_webProcessConnections.get(identifier.processIdentifier))
         IPC::Connection::send(connectionID, Messages::RTCDataChannelRemoteManager::SendData { identifier, isRaw, data }, 0);
@@ -74,7 +74,7 @@ void RTCDataChannelRemoteManagerProxy::changeReadyState(WebCore::RTCDataChannelI
         IPC::Connection::send(connectionID, Messages::RTCDataChannelRemoteManager::ChangeReadyState { identifier, state }, 0);
 }
 
-void RTCDataChannelRemoteManagerProxy::receiveData(WebCore::RTCDataChannelIdentifier identifier, bool isRaw, const IPC::DataReference& data)
+void RTCDataChannelRemoteManagerProxy::receiveData(WebCore::RTCDataChannelIdentifier identifier, bool isRaw, std::span<const uint8_t> data)
 {
     if (auto connectionID = m_webProcessConnections.get(identifier.processIdentifier))
         IPC::Connection::send(connectionID, Messages::RTCDataChannelRemoteManager::ReceiveData { identifier, isRaw, data }, 0);

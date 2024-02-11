@@ -4786,7 +4786,7 @@ class WebKitStyleTest(CppStyleTestBase):
             'foo.cpp')
         self.assert_multi_line_lint(
             'namespace IPC {\n'
-            'Decoder::Decoder(DataReference buffer, BufferDeallocator&& bufferDeallocator, Vector<Attachment>&& attachments)\n'
+            'Decoder::Decoder(std::span<const uint8_t> buffer, BufferDeallocator&& bufferDeallocator, Vector<Attachment>&& attachments)\n'
             '    : m_buffer { buffer }\n'
             '    , m_bufferPosition { m_buffer.begin() }\n'
             '    , m_bufferDeallocator { WTFMove(bufferDeallocator) }\n'

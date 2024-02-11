@@ -27,7 +27,6 @@
 #include "NetworkConnectionToWebProcess.h"
 
 #include "BlobDataFileReferenceWithSandboxExtension.h"
-#include "DataReference.h"
 #include "LogInitialization.h"
 #include "Logging.h"
 #include "NetworkBroadcastChannelRegistry.h"
@@ -1466,7 +1465,7 @@ void NetworkConnectionToWebProcess::installMockContentFilter(WebCore::MockConten
 #endif
 
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
-void NetworkConnectionToWebProcess::logOnBehalfOfWebContent(IPC::DataReference&& logSubsystem, IPC::DataReference&& logCategory, IPC::DataReference&& logString, uint8_t logType, int32_t pid)
+void NetworkConnectionToWebProcess::logOnBehalfOfWebContent(std::span<const uint8_t> logSubsystem, std::span<const uint8_t> logCategory, std::span<const uint8_t> logString, uint8_t logType, int32_t pid)
 {
     auto isNullTerminated = [](std::span<const uint8_t> view) {
         return view.data() && !view.empty() && view.back() == '\0';

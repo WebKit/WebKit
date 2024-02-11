@@ -29,5 +29,5 @@ messages -> DownloadProxy {
     DidReceiveData(uint64_t bytesWritten, uint64_t totalBytesWritten, uint64_t totalBytesExpectedToWrite)
     DidCreateDestination(String path)
     DidFinish()
-    DidFail(WebCore::ResourceError error, IPC::DataReference resumeData)
+    DidFail(WebCore::ResourceError error, std::span<const uint8_t> resumeData)
 }

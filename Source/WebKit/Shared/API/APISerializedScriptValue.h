@@ -27,7 +27,6 @@
 
 #include "APIObject.h"
 
-#include "DataReference.h"
 #include <WebCore/SerializedScriptValue.h>
 #include <wtf/RefPtr.h>
 
@@ -56,7 +55,7 @@ public:
         return adoptRef(*new SerializedScriptValue(serializedValue.releaseNonNull()));
     }
     
-    static Ref<SerializedScriptValue> createFromWireBytes(IPC::DataReference buffer)
+    static Ref<SerializedScriptValue> createFromWireBytes(std::span<const uint8_t> buffer)
     {
         return adoptRef(*new SerializedScriptValue(WebCore::SerializedScriptValue::createFromWireBytes(Vector<uint8_t>(buffer))));
     }
@@ -78,7 +77,7 @@ public:
     static RefPtr<SerializedScriptValue> createFromJSCValue(JSCValue*);
 #endif
 
-    IPC::DataReference dataReference() const { return m_serializedScriptValue->wireBytes(); }
+    std::span<const uint8_t> dataReference() const { return m_serializedScriptValue->wireBytes(); }
 
     WebCore::SerializedScriptValue& internalRepresentation() { return m_serializedScriptValue.get(); }
 

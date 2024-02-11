@@ -28,7 +28,6 @@
 
 #include "DaemonDecoder.h"
 #include "DaemonEncoder.h"
-#include "DataReference.h"
 #include "StreamConnectionEncoder.h"
 #include <wtf/text/AtomString.h>
 #include <wtf/text/CString.h>

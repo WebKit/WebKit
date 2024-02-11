@@ -102,9 +102,9 @@ public:
     WEBCORE_EXPORT bool containsMappedFileData() const;
 
 private:
-    void iterate(const Function<void(const std::span<const uint8_t>&)>& apply) const;
+    void iterate(const Function<void(std::span<const uint8_t>)>& apply) const;
 #if USE(FOUNDATION)
-    void iterate(CFDataRef, const Function<void(const std::span<const uint8_t>&)>& apply) const;
+    void iterate(CFDataRef, const Function<void(std::span<const uint8_t>)>& apply) const;
 #endif
 
     explicit DataSegment(Vector<uint8_t>&& data)
@@ -184,8 +184,8 @@ public:
     WEBCORE_EXPORT void copyTo(void* destination, size_t length) const;
     WEBCORE_EXPORT void copyTo(void* destination, size_t offset, size_t length) const;
 
-    WEBCORE_EXPORT void forEachSegment(const Function<void(const std::span<const uint8_t>&)>&) const;
-    WEBCORE_EXPORT bool startsWith(const std::span<const uint8_t>& prefix) const;
+    WEBCORE_EXPORT void forEachSegment(const Function<void(std::span<const uint8_t>)>&) const;
+    WEBCORE_EXPORT bool startsWith(std::span<const uint8_t> prefix) const;
     WEBCORE_EXPORT void forEachSegmentAsSharedBuffer(const Function<void(Ref<SharedBuffer>&&)>&) const;
 
     using DataSegment = WebCore::DataSegment; // To keep backward compatibility when using FragmentedSharedBuffer::DataSegment

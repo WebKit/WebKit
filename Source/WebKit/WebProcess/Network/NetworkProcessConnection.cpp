@@ -26,7 +26,6 @@
 #include "config.h"
 #include "NetworkProcessConnection.h"
 
-#include "DataReference.h"
 #include "LibWebRTCNetwork.h"
 #include "Logging.h"
 #include "NetworkConnectionToWebProcessMessages.h"

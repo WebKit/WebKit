@@ -167,7 +167,7 @@ void WebInspectorUIExtensionControllerProxy::evaluateScriptForExtension(const In
             return;
         }
 
-        weakThis->m_inspectorPage->sendWithAsyncReply(Messages::WebInspectorUIExtensionController::EvaluateScriptForExtension {extensionID, scriptSource, frameURL, contextSecurityOrigin, useContentScriptContext}, [completionHandler = WTFMove(completionHandler)](const IPC::DataReference& dataReference, const std::optional<WebCore::ExceptionDetails>& details, const std::optional<Inspector::ExtensionError> error) mutable {
+        weakThis->m_inspectorPage->sendWithAsyncReply(Messages::WebInspectorUIExtensionController::EvaluateScriptForExtension { extensionID, scriptSource, frameURL, contextSecurityOrigin, useContentScriptContext }, [completionHandler = WTFMove(completionHandler)](std::span<const uint8_t> dataReference, const std::optional<WebCore::ExceptionDetails>& details, const std::optional<Inspector::ExtensionError> error) mutable {
             if (error) {
                 completionHandler(makeUnexpected(error.value()));
                 return;
@@ -236,7 +236,7 @@ void WebInspectorUIExtensionControllerProxy::evaluateScriptInExtensionTab(const 
             return;
         }
 
-        weakThis->m_inspectorPage->sendWithAsyncReply(Messages::WebInspectorUIExtensionController::EvaluateScriptInExtensionTab {extensionTabID, scriptSource}, [completionHandler = WTFMove(completionHandler)](const IPC::DataReference& dataReference, const std::optional<WebCore::ExceptionDetails>& details, const std::optional<Inspector::ExtensionError>& error) mutable {
+        weakThis->m_inspectorPage->sendWithAsyncReply(Messages::WebInspectorUIExtensionController::EvaluateScriptInExtensionTab { extensionTabID, scriptSource }, [completionHandler = WTFMove(completionHandler)](std::span<const uint8_t> dataReference, const std::optional<WebCore::ExceptionDetails>& details, const std::optional<Inspector::ExtensionError>& error) mutable {
             if (error) {
                 completionHandler(makeUnexpected(error.value()));
                 return;

@@ -337,7 +337,7 @@ void DOMCache::addAll(Vector<RequestInfo>&& infos, DOMPromiseDeferred<void>&& pr
                 }
 
                 if (auto* chunk = result.returnValue())
-                    data.append(chunk->data(), chunk->size());
+                    data.append(*chunk);
                 else
                     taskHandler->addResponseBody(recordPosition, response, data.takeAsContiguous());
             });

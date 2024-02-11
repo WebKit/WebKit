@@ -23,5 +23,5 @@
 header: "APISerializedScriptValue.h"
 
 [RefCounted, CustomHeader, CreateUsing=createFromWireBytes] class API::SerializedScriptValue {
-    IPC::DataReference dataReference()
+    std::span<const uint8_t> dataReference()
 };

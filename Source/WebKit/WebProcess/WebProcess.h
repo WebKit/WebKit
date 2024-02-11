@@ -539,8 +539,8 @@ private:
 #endif
 
     void handleInjectedBundleMessage(const String& messageName, const UserData& messageBody);
-    void setInjectedBundleParameter(const String& key, const IPC::DataReference&);
-    void setInjectedBundleParameters(const IPC::DataReference&);
+    void setInjectedBundleParameter(const String& key, std::span<const uint8_t>);
+    void setInjectedBundleParameters(std::span<const uint8_t>);
 
     bool areAllPagesSuspended() const;
 

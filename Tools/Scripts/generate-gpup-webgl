@@ -115,7 +115,7 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {{
     void SetSharedVideoFrameMemory(WebKit::SharedMemory::Handle storageHandle) NotStreamEncodable
 #endif
     void SimulateEventForTesting(WebCore::GraphicsContextGL::SimulatedEventForTesting event)
-    void ReadPixelsInline(WebCore::IntRect rect, uint32_t format, uint32_t type) -> (std::optional<WebCore::IntSize> readArea, IPC::ArrayReference<uint8_t> data) Synchronous
+    void ReadPixelsInline(WebCore::IntRect rect, uint32_t format, uint32_t type) -> (std::optional<WebCore::IntSize> readArea, std::span<const uint8_t> data) Synchronous
     void ReadPixelsSharedMemory(WebCore::IntRect rect, uint32_t format, uint32_t type, WebKit::SharedMemory::Handle handle) -> (std::optional<WebCore::IntSize> readArea) Synchronous NotStreamEncodable
     void MultiDrawArraysANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t> firstsAndCounts)
     void MultiDrawArraysInstancedANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t> firstsCountsAandInstanceCounts)
@@ -364,7 +364,7 @@ def cpp_array_reinterpret_cast_conversion(expr: cpp_expr, type: cpp_type_contain
 
 def webkit_ipc_span_transfer_type_reinterpret_cast_conversion(expr: cpp_expr, type: cpp_type_container) -> cpp_expr:
     element_pointer_type = type.get_contained_type().get_pointer_type()
-    return cpp_expr(type, f"{str(type)}(reinterpret_cast<const {element_pointer_type}>({str(expr)}.data()), {str(expr)}.size())")
+    return cpp_expr(type, f"{str(type)}(reinterpret_cast<{element_pointer_type}>({str(expr)}.data()), {str(expr)}.size())")
 
 def cpp_move_expr(expr: cpp_expr) -> cpp_expr:
     return cpp_expr(expr.type.get_rvalue_type(), f"WTFMove({str(expr)})")
@@ -511,8 +511,8 @@ def webkit_ipc_get_span_transfer_type(type : cpp_type_container) -> cpp_type:
     arity = type.get_arity()
     webkit_ipc_element_type = webkit_ipc_types[element_type] if not element_type.is_void() else get_cpp_type('uint8_t')
     if arity is not None:
-        return get_cpp_type(f"IPC::ArrayReference<{str(webkit_ipc_element_type)}, {arity}>")
-    return get_cpp_type(f"IPC::ArrayReference<{str(webkit_ipc_element_type)}>")
+        return get_cpp_type(f"std::span<const {str(webkit_ipc_element_type)}, {arity}>")
+    return get_cpp_type(f"std::span<const {str(webkit_ipc_element_type)}>")
 
 
 

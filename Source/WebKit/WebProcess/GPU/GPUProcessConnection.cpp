@@ -29,7 +29,6 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "AudioMediaStreamTrackRendererInternalUnitManager.h"
-#include "DataReference.h"
 #include "GPUConnectionToWebProcessMessages.h"
 #include "GPUProcessConnectionInfo.h"
 #include "GPUProcessConnectionMessages.h"

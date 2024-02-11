@@ -28,7 +28,6 @@
 
 #if USE(LIBWEBRTC)
 
-#include "DataReference.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/LibWebRTCEnumTraits.h>
 

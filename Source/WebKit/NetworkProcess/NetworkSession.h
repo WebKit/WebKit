@@ -26,7 +26,6 @@
 #pragma once
 
 #include "AppPrivacyReport.h"
-#include "DataReference.h"
 #include "DataTaskIdentifier.h"
 #include "NavigatingToAppBoundDomain.h"
 #include "NetworkNotificationManager.h"

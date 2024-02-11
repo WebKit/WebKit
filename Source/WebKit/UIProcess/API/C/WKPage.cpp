@@ -259,7 +259,7 @@ static String encodingOf(const String& string)
     return "latin1"_s;
 }
 
-static IPC::DataReference dataFrom(const String& string)
+static std::span<const uint8_t> dataFrom(const String& string)
 {
     if (string.isNull() || !string.is8Bit())
         return { reinterpret_cast<const uint8_t*>(string.characters16()), string.length() * sizeof(UChar) };
@@ -584,7 +584,7 @@ static void restoreFromSessionState(WKPageRef pageRef, WKTypeRef sessionStateRef
 
     // FIXME: This is for backwards compatibility with Safari. Remove it once Safari no longer depends on it.
     if (toImpl(sessionStateRef)->type() == API::Object::Type::Data) {
-        if (!decodeLegacySessionState(toImpl(static_cast<WKDataRef>(sessionStateRef))->bytes(), toImpl(static_cast<WKDataRef>(sessionStateRef))->size(), sessionState))
+        if (!decodeLegacySessionState(toImpl(static_cast<WKDataRef>(sessionStateRef))->dataReference(), sessionState))
             return;
     } else {
         ASSERT(toImpl(sessionStateRef)->type() == API::Object::Type::SessionState);

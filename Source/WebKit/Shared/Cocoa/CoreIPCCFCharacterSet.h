@@ -46,7 +46,7 @@ public:
         ASSERT(m_cfCharacterSetData);
     }
 
-    CoreIPCCFCharacterSet(const IPC::DataReference& data)
+    CoreIPCCFCharacterSet(std::span<const uint8_t> data)
         : m_cfCharacterSetData(adoptCF(CFDataCreate(kCFAllocatorDefault, data.data(), data.size())))
     {
     }
@@ -56,7 +56,7 @@ public:
         return adoptCF(CFCharacterSetCreateWithBitmapRepresentation(nullptr, m_cfCharacterSetData.get()));
     }
 
-    IPC::DataReference dataReference() const
+    std::span<const uint8_t> dataReference() const
     {
         ASSERT(m_cfCharacterSetData);
         CFDataRef data = m_cfCharacterSetData.get();

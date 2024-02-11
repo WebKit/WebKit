@@ -766,7 +766,7 @@ void MediaPlayerPrivateRemote::parseWebVTTFileHeader(TrackID trackID, String&& h
         it->second->parseWebVTTFileHeader(WTFMove(header));
 }
 
-void MediaPlayerPrivateRemote::parseWebVTTCueData(TrackID trackID, IPC::DataReference&& data)
+void MediaPlayerPrivateRemote::parseWebVTTCueData(TrackID trackID, std::span<const uint8_t> data)
 {
     assertIsMainRunLoop();
     Locker locker { m_lock };
@@ -788,7 +788,7 @@ void MediaPlayerPrivateRemote::parseWebVTTCueDataStruct(TrackID trackID, ISOWebV
         it->second->parseWebVTTCueDataStruct(WTFMove(data));
 }
 
-void MediaPlayerPrivateRemote::addDataCue(TrackID trackID, MediaTime&& start, MediaTime&& end, IPC::DataReference&& data)
+void MediaPlayerPrivateRemote::addDataCue(TrackID trackID, MediaTime&& start, MediaTime&& end, std::span<const uint8_t> data)
 {
     assertIsMainRunLoop();
     Locker locker { m_lock };
@@ -1350,7 +1350,7 @@ void MediaPlayerPrivateRemote::keyAdded()
     connection().send(Messages::RemoteMediaPlayerProxy::KeyAdded(), m_id);
 }
 
-void MediaPlayerPrivateRemote::mediaPlayerKeyNeeded(IPC::DataReference&& message)
+void MediaPlayerPrivateRemote::mediaPlayerKeyNeeded(std::span<const uint8_t> message)
 {
     if (auto player = m_player.get())
         player->keyNeeded(SharedBuffer::create(message));
@@ -1383,7 +1383,7 @@ void MediaPlayerPrivateRemote::waitingForKeyChanged(bool waitingForKey)
         player->waitingForKeyChanged();
 }
 
-void MediaPlayerPrivateRemote::initializationDataEncountered(const String& initDataType, IPC::DataReference&& initData)
+void MediaPlayerPrivateRemote::initializationDataEncountered(const String& initDataType, std::span<const uint8_t> initData)
 {
     auto initDataBuffer = ArrayBuffer::create(initData.data(), initData.size());
     if (auto player = m_player.get())

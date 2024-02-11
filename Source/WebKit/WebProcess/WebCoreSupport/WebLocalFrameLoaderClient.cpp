@@ -30,7 +30,6 @@
 #include "APIInjectedBundlePageLoaderClient.h"
 #include "APIInjectedBundlePageResourceLoadClient.h"
 #include "AuthenticationManager.h"
-#include "DataReference.h"
 #include "DrawingArea.h"
 #include "FindController.h"
 #include "FormDataReference.h"
@@ -1162,7 +1161,7 @@ void WebLocalFrameLoaderClient::finishedLoading(DocumentLoader* loader)
         RefPtr<const FragmentedSharedBuffer> mainResourceData = loader->mainResourceData();
         if (mainResourceData)
             contiguousData = mainResourceData->makeContiguous();
-        IPC::DataReference dataReference(contiguousData ? contiguousData->data() : nullptr, contiguousData ? contiguousData->size() : 0);
+        std::span dataReference(contiguousData ? contiguousData->data() : nullptr, contiguousData ? contiguousData->size() : 0);
         webPage->send(Messages::WebPageProxy::DidFinishLoadingDataForCustomContentProvider(loader->response().suggestedFilename(), dataReference));
     }
 
