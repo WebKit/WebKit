@@ -186,6 +186,11 @@ void MediaKeys::unrequestedInitializationDataReceived(const String& initDataType
         cdmClient.cdmClientUnrequestedInitializationDataReceived(initDataType, initData.copyRef());
 }
 
+Ref<CDMInstance> MediaKeys::protectedCDMInstance() const
+{
+    return m_instance;
+}
+
 #if !RELEASE_LOG_DISABLED
 const void* MediaKeys::nextChildIdentifier() const
 {

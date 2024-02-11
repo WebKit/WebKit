@@ -192,7 +192,7 @@ bool ApplicationCacheHost::maybeLoadResource(ResourceLoader& loader, const Resou
     if (loader.options().serviceWorkerRegistrationIdentifier)
         return false;
 
-    ApplicationCacheResource* resource;
+    RefPtr<ApplicationCacheResource> resource;
     if (!shouldLoadResourceFromApplicationCache(request, resource))
         return false;
 
@@ -255,7 +255,7 @@ static inline RefPtr<SharedBuffer> bufferFromResource(ApplicationCacheResource& 
 
 bool ApplicationCacheHost::maybeLoadSynchronously(ResourceRequest& request, ResourceError& error, ResourceResponse& response, RefPtr<SharedBuffer>& data)
 {
-    ApplicationCacheResource* resource;
+    RefPtr<ApplicationCacheResource> resource;
     if (!shouldLoadResourceFromApplicationCache(request, resource))
         return false;
 
@@ -278,7 +278,7 @@ void ApplicationCacheHost::maybeLoadFallbackSynchronously(const ResourceRequest&
     if ((!error.isNull() && !error.isCancellation())
          || response.httpStatusCode() / 100 == 4 || response.httpStatusCode() / 100 == 5
          || !protocolHostAndPortAreEqual(request.url(), response.url())) {
-        ApplicationCacheResource* resource;
+        RefPtr<ApplicationCacheResource> resource;
         if (getApplicationCacheFallbackResource(request, resource)) {
             response = resource->response();
             data = resource->data().makeContiguous();
@@ -398,7 +398,7 @@ void ApplicationCacheHost::setApplicationCache(RefPtr<ApplicationCache>&& applic
     m_applicationCache = WTFMove(applicationCache);
 }
 
-bool ApplicationCacheHost::shouldLoadResourceFromApplicationCache(const ResourceRequest& originalRequest, ApplicationCacheResource*& resource)
+bool ApplicationCacheHost::shouldLoadResourceFromApplicationCache(const ResourceRequest& originalRequest, RefPtr<ApplicationCacheResource>& resource)
 {
     auto* cache = applicationCache();
     if (!cache || !cache->isComplete())
@@ -429,7 +429,7 @@ bool ApplicationCacheHost::shouldLoadResourceFromApplicationCache(const Resource
     return true;
 }
 
-bool ApplicationCacheHost::getApplicationCacheFallbackResource(const ResourceRequest& request, ApplicationCacheResource*& resource, ApplicationCache* cache)
+bool ApplicationCacheHost::getApplicationCacheFallbackResource(const ResourceRequest& request, RefPtr<ApplicationCacheResource>& resource, ApplicationCache* cache)
 {
     if (!cache) {
         cache = applicationCache();
@@ -465,7 +465,7 @@ bool ApplicationCacheHost::scheduleLoadFallbackResourceFromApplicationCache(Reso
     if (loader->options().serviceWorkerRegistrationIdentifier)
         return false;
 
-    ApplicationCacheResource* resource;
+    RefPtr<ApplicationCacheResource> resource;
     if (!getApplicationCacheFallbackResource(loader->request(), resource, cache))
         return false;
 

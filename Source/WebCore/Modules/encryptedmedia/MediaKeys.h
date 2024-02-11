@@ -75,6 +75,7 @@ public:
     bool hasOpenSessions() const;
     CDMInstance& cdmInstance() { return m_instance; }
     const CDMInstance& cdmInstance() const { return m_instance; }
+    Ref<CDMInstance> protectedCDMInstance() const;
 
 #if !RELEASE_LOG_DISABLED
     const void* nextChildIdentifier() const;

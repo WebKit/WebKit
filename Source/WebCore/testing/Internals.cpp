@@ -4262,7 +4262,7 @@ unsigned Internals::mediaElementCount()
         return 0;
 
     unsigned number = 0;
-    for (auto* mediaElement : HTMLMediaElement::allMediaElements()) {
+    for (auto& mediaElement : HTMLMediaElement::allMediaElements()) {
         if (&mediaElement->document() == document)
             ++number;
     }

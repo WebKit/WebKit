@@ -70,6 +70,7 @@ public:
     static ExceptionOr<Ref<TextTrackCue>> create(Document&, double start, double end, DocumentFragment&);
 
     TextTrack* track() const;
+    RefPtr<TextTrack> protectedTrack() const;
     void setTrack(TextTrack*);
 
     const AtomString& id() const { return m_id; }
@@ -161,7 +162,7 @@ private:
     MediaTime m_endTime;
     int m_processingCueChanges { 0 };
 
-    TextTrack* m_track { nullptr };
+    WeakPtr<TextTrack, WeakPtrImplWithEventTargetData> m_track;
 
     RefPtr<DocumentFragment> m_cueNode;
     RefPtr<TextTrackCueBox> m_displayTree;

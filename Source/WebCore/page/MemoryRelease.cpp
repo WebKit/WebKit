@@ -136,8 +136,8 @@ static void releaseCriticalMemory(Synchronous synchronous, MaintainBackForwardCa
         GCController::singleton().deleteAllCode(JSC::DeleteAllCodeIfNotCollecting);
 
 #if ENABLE(VIDEO)
-    for (auto* mediaElement : HTMLMediaElement::allMediaElements())
-        mediaElement->purgeBufferedDataIfPossible();
+    for (auto& mediaElement : HTMLMediaElement::allMediaElements())
+        Ref { mediaElement.get() }->purgeBufferedDataIfPossible();
 #endif
 
     if (synchronous == Synchronous::Yes) {

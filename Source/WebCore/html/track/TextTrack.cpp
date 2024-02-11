@@ -305,6 +305,11 @@ TextTrackCueList* TextTrack::cues()
     return &ensureTextTrackCueList();
 }
 
+RefPtr<TextTrackCueList> TextTrack::protectedCues()
+{
+    return cues();
+}
+
 void TextTrack::removeAllCues()
 {
     if (!m_cues)

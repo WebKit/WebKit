@@ -380,6 +380,11 @@ bool MediaStream::virtualHasPendingActivity() const
     return m_isActive;
 }
 
+Ref<MediaStreamPrivate> MediaStream::protectedPrivateStream()
+{
+    return m_private;
+}
+
 #if !RELEASE_LOG_DISABLED
 WTFLogChannel& MediaStream::logChannel() const
 {

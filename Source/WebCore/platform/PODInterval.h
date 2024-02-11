@@ -146,6 +146,13 @@ public:
         return Base::high() < other.Base::high();
     }
 
+    bool operator==(const PODInterval& other) const
+    {
+        return Base::low() == other.Base::low()
+            && Base::high() == other.Base::high()
+            && Base::data() == other.Base::data();
+    }
+
 private:
     using Base = PODIntervalBase<T, WeakPtr<U, WeakPtrImpl>>;
 };

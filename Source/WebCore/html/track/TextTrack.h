@@ -77,6 +77,7 @@ public:
     void setReadinessState(ReadinessState state) { m_readinessState = state; }
 
     TextTrackCueList* cues();
+    RefPtr<TextTrackCueList> protectedCues();
     TextTrackCueList* activeCues() const;
 
     TextTrackCueList* cuesInternal() const { return m_cues.get(); }

@@ -329,8 +329,8 @@ void InspectorDOMAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter*, 
     if (m_document)
         addEventListenersToNode(*m_document);
 
-    for (auto* mediaElement : HTMLMediaElement::allMediaElements())
-        addEventListenersToNode(*mediaElement);
+    for (auto& mediaElement : HTMLMediaElement::allMediaElements())
+        addEventListenersToNode(Ref { mediaElement.get() });
 #endif
 }
 
@@ -2964,16 +2964,17 @@ void InspectorDOMAgent::mediaMetricsTimerFired()
         return;
     }
 
-    for (auto* mediaElement : HTMLMediaElement::allMediaElements()) {
+    for (auto& weakMediaElement : HTMLMediaElement::allMediaElements()) {
+        Ref mediaElement = weakMediaElement.get();
         if (!is<HTMLVideoElement>(mediaElement) || !mediaElement->isPlaying())
             continue;
 
         auto videoPlaybackQuality = mediaElement->getVideoPlaybackQuality();
         unsigned displayCompositedVideoFrames = videoPlaybackQuality->displayCompositedVideoFrames();
 
-        auto iterator = m_mediaMetrics.find(*mediaElement);
+        auto iterator = m_mediaMetrics.find(mediaElement);
         if (iterator == m_mediaMetrics.end()) {
-            m_mediaMetrics.set(*mediaElement, MediaMetrics(displayCompositedVideoFrames));
+            m_mediaMetrics.set(mediaElement.get(), MediaMetrics(displayCompositedVideoFrames));
             continue;
         }
 
@@ -2981,7 +2982,7 @@ void InspectorDOMAgent::mediaMetricsTimerFired()
         if (iterator->value.isPowerEfficient != isPowerEfficient) {
             iterator->value.isPowerEfficient = isPowerEfficient;
 
-            if (auto nodeId = pushNodePathToFrontend(mediaElement)) {
+            if (auto nodeId = pushNodePathToFrontend(mediaElement.ptr())) {
                 auto timestamp = m_environment.executionStopwatch().elapsedTime().seconds();
                 m_frontendDispatcher->powerEfficientPlaybackStateChanged(nodeId, timestamp, iterator->value.isPowerEfficient);
             }
