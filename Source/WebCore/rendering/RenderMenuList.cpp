@@ -327,6 +327,11 @@ LayoutRect RenderMenuList::controlClipRect(const LayoutPoint& additionalOffset) 
 
 void RenderMenuList::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
+    // FIXME: Fix field-sizing: content with size containment
+    // https://bugs.webkit.org/show_bug.cgi?id=269169
+    if (style().fieldSizing() == FieldSizing::Content)
+        return RenderFlexibleBox::computeIntrinsicLogicalWidths(minLogicalWidth, maxLogicalWidth);
+
     maxLogicalWidth = shouldApplySizeContainment() ? theme().minimumMenuListSize(style()) : std::max(m_optionsWidth, theme().minimumMenuListSize(style()));
     maxLogicalWidth += m_innerBlock->paddingStart() + m_innerBlock->paddingEnd();
     if (shouldApplySizeOrInlineSizeContainment()) {
@@ -339,6 +344,11 @@ void RenderMenuList::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, 
 
 void RenderMenuList::computePreferredLogicalWidths()
 {
+    if (style().fieldSizing() == FieldSizing::Content) {
+        RenderFlexibleBox::computePreferredLogicalWidths();
+        return;
+    }
+
     m_minPreferredLogicalWidth = 0;
     m_maxPreferredLogicalWidth = 0;
     
