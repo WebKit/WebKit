@@ -179,18 +179,18 @@ JSValue JSWorkerGlobalScope::getConstructor(VM& vm, const JSGlobalObject* global
 
 JSC_DEFINE_CUSTOM_GETTER(jsWorkerGlobalScopeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    VM& vm = JSC::getVM(lexicalGlobalObject);
+    Ref vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSWorkerGlobalScopePrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSWorkerGlobalScope::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
+    return JSValue::encode(JSWorkerGlobalScope::getConstructor(vm, prototype->globalObject()));
 }
 
 static inline JSValue jsWorkerGlobalScope_ExposedToWorkerAndWindowConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSWorkerGlobalScope& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSExposedToWorkerAndWindow::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSExposedToWorkerAndWindow::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsWorkerGlobalScope_ExposedToWorkerAndWindowConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -201,7 +201,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsWorkerGlobalScope_ExposedToWorkerAndWindowConstructor
 static inline JSValue jsWorkerGlobalScope_TestDefaultToJSONFilteredByExposedConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSWorkerGlobalScope& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestDefaultToJSONFilteredByExposed::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestDefaultToJSONFilteredByExposed::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsWorkerGlobalScope_TestDefaultToJSONFilteredByExposedConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -212,7 +212,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsWorkerGlobalScope_TestDefaultToJSONFilteredByExposedC
 static inline JSValue jsWorkerGlobalScope_TestNodeConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSWorkerGlobalScope& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestNode::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestNode::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsWorkerGlobalScope_TestNodeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -223,7 +223,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsWorkerGlobalScope_TestNodeConstructor, (JSGlobalObjec
 static inline JSValue jsWorkerGlobalScope_TestObjectConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSWorkerGlobalScope& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestObj::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestObj::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsWorkerGlobalScope_TestObjectConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -234,7 +234,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsWorkerGlobalScope_TestObjectConstructor, (JSGlobalObj
 static inline JSValue jsWorkerGlobalScope_TestPromiseRejectionEventConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSWorkerGlobalScope& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestPromiseRejectionEvent::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestPromiseRejectionEvent::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsWorkerGlobalScope_TestPromiseRejectionEventConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -245,7 +245,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsWorkerGlobalScope_TestPromiseRejectionEventConstructo
 static inline JSValue jsWorkerGlobalScope_WorkerGlobalScopeConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSWorkerGlobalScope& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSWorkerGlobalScope::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSWorkerGlobalScope::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsWorkerGlobalScope_WorkerGlobalScopeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))

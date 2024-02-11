@@ -215,18 +215,18 @@ JSValue JSLocalDOMWindow::getConstructor(VM& vm, const JSGlobalObject* globalObj
 
 JSC_DEFINE_CUSTOM_GETTER(jsLocalDOMWindowConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    VM& vm = JSC::getVM(lexicalGlobalObject);
+    Ref vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSLocalDOMWindowPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSLocalDOMWindow::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
+    return JSValue::encode(JSLocalDOMWindow::getConstructor(vm, prototype->globalObject()));
 }
 
 static inline JSValue jsLocalDOMWindow_ExposedStarConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSLocalDOMWindow& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSExposedStar::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSExposedStar::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsLocalDOMWindow_ExposedStarConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -237,7 +237,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsLocalDOMWindow_ExposedStarConstructor, (JSGlobalObjec
 static inline JSValue jsLocalDOMWindow_ExposedToWorkerAndWindowConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSLocalDOMWindow& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSExposedToWorkerAndWindow::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSExposedToWorkerAndWindow::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsLocalDOMWindow_ExposedToWorkerAndWindowConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -248,7 +248,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsLocalDOMWindow_ExposedToWorkerAndWindowConstructor, (
 static inline JSValue jsLocalDOMWindow_LocalDOMWindowConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSLocalDOMWindow& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSLocalDOMWindow::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSLocalDOMWindow::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsLocalDOMWindow_LocalDOMWindowConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -259,7 +259,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsLocalDOMWindow_LocalDOMWindowConstructor, (JSGlobalOb
 static inline JSValue jsLocalDOMWindow_TestConditionalIncludesConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSLocalDOMWindow& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestConditionalIncludes::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestConditionalIncludes::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsLocalDOMWindow_TestConditionalIncludesConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -270,7 +270,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsLocalDOMWindow_TestConditionalIncludesConstructor, (J
 static inline JSValue jsLocalDOMWindow_TestConditionallyReadWriteConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSLocalDOMWindow& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestConditionallyReadWrite::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestConditionallyReadWrite::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsLocalDOMWindow_TestConditionallyReadWriteConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -281,7 +281,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsLocalDOMWindow_TestConditionallyReadWriteConstructor,
 static inline JSValue jsLocalDOMWindow_TestDefaultToJSONConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSLocalDOMWindow& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestDefaultToJSON::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestDefaultToJSON::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsLocalDOMWindow_TestDefaultToJSONConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -292,7 +292,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsLocalDOMWindow_TestDefaultToJSONConstructor, (JSGloba
 static inline JSValue jsLocalDOMWindow_TestDefaultToJSONFilteredByExposedConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSLocalDOMWindow& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestDefaultToJSONFilteredByExposed::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestDefaultToJSONFilteredByExposed::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsLocalDOMWindow_TestDefaultToJSONFilteredByExposedConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -303,7 +303,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsLocalDOMWindow_TestDefaultToJSONFilteredByExposedCons
 static inline JSValue jsLocalDOMWindow_TestEnabledBySettingConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSLocalDOMWindow& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestEnabledBySetting::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestEnabledBySetting::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsLocalDOMWindow_TestEnabledBySettingConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -314,7 +314,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsLocalDOMWindow_TestEnabledBySettingConstructor, (JSGl
 static inline JSValue jsLocalDOMWindow_TestEnabledForContextConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSLocalDOMWindow& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestEnabledForContext::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestEnabledForContext::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsLocalDOMWindow_TestEnabledForContextConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -326,7 +326,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsLocalDOMWindow_TestEnabledForContextConstructor, (JSG
 static inline JSValue jsLocalDOMWindow_TestInterfaceConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSLocalDOMWindow& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestInterface::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestInterface::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsLocalDOMWindow_TestInterfaceConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -339,7 +339,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsLocalDOMWindow_TestInterfaceConstructor, (JSGlobalObj
 static inline JSValue jsLocalDOMWindow_TestNodeConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSLocalDOMWindow& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestNode::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestNode::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsLocalDOMWindow_TestNodeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -350,7 +350,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsLocalDOMWindow_TestNodeConstructor, (JSGlobalObject* 
 static inline JSValue jsLocalDOMWindow_TestObjectConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSLocalDOMWindow& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestObj::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestObj::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsLocalDOMWindow_TestObjectConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -361,7 +361,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsLocalDOMWindow_TestObjectConstructor, (JSGlobalObject
 static inline JSValue jsLocalDOMWindow_TestPromiseRejectionEventConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSLocalDOMWindow& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestPromiseRejectionEvent::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestPromiseRejectionEvent::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsLocalDOMWindow_TestPromiseRejectionEventConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))

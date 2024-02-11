@@ -1104,17 +1104,17 @@ void JSTestGlobalObject::destroy(JSC::JSCell* cell)
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObjectConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    VM& vm = JSC::getVM(lexicalGlobalObject);
+    Ref vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestGlobalObjectPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSTestGlobalObject::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
+    return JSValue::encode(JSTestGlobalObject::getConstructor(vm, prototype->globalObject()));
 }
 
 static inline JSValue jsTestGlobalObject_regularAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    Ref vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.regularAttribute())));
@@ -1127,7 +1127,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_regularAttribute, (JSGlobalObject* l
 
 static inline bool setJSTestGlobalObject_regularAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject, JSValue value)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    Ref vm = JSC::getVM(&lexicalGlobalObject);
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
@@ -1146,7 +1146,7 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestGlobalObject_regularAttribute, (JSGlobalObject
 
 static inline JSValue jsTestGlobalObject_publicAndPrivateAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    Ref vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.publicAndPrivateAttribute())));
@@ -1159,7 +1159,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_publicAndPrivateAttribute, (JSGlobal
 
 static inline bool setJSTestGlobalObject_publicAndPrivateAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject, JSValue value)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    Ref vm = JSC::getVM(&lexicalGlobalObject);
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
@@ -1179,7 +1179,7 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestGlobalObject_publicAndPrivateAttribute, (JSGlo
 #if ENABLE(TEST_FEATURE)
 static inline JSValue jsTestGlobalObject_publicAndPrivateConditionalAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    Ref vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.publicAndPrivateConditionalAttribute())));
@@ -1195,7 +1195,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_publicAndPrivateConditionalAttribute
 #if ENABLE(TEST_FEATURE)
 static inline bool setJSTestGlobalObject_publicAndPrivateConditionalAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject, JSValue value)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    Ref vm = JSC::getVM(&lexicalGlobalObject);
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
@@ -1217,7 +1217,7 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestGlobalObject_publicAndPrivateConditionalAttrib
 #if ENABLE(TEST_FEATURE)
 static inline JSValue jsTestGlobalObject_enabledAtRuntimeAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    Ref vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.enabledAtRuntimeAttribute())));
@@ -1233,7 +1233,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_enabledAtRuntimeAttribute, (JSGlobal
 #if ENABLE(TEST_FEATURE)
 static inline bool setJSTestGlobalObject_enabledAtRuntimeAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject, JSValue value)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    Ref vm = JSC::getVM(&lexicalGlobalObject);
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
@@ -1255,7 +1255,7 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestGlobalObject_enabledAtRuntimeAttribute, (JSGlo
 static inline JSValue jsTestGlobalObject_TestAsyncIterableConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestAsyncIterable::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestAsyncIterable::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestAsyncIterableConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1266,7 +1266,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestAsyncIterableConstructor, (JSGlo
 static inline JSValue jsTestGlobalObject_TestAsyncKeyValueIterableConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestAsyncKeyValueIterable::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestAsyncKeyValueIterable::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestAsyncKeyValueIterableConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1277,7 +1277,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestAsyncKeyValueIterableConstructor
 static inline JSValue jsTestGlobalObject_TestCEReactionsConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestCEReactions::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestCEReactions::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestCEReactionsConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1288,7 +1288,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestCEReactionsConstructor, (JSGloba
 static inline JSValue jsTestGlobalObject_TestCEReactionsStringifierConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestCEReactionsStringifier::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestCEReactionsStringifier::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestCEReactionsStringifierConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1299,7 +1299,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestCEReactionsStringifierConstructo
 static inline JSValue jsTestGlobalObject_TestCallTracerConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestCallTracer::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestCallTracer::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestCallTracerConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1311,7 +1311,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestCallTracerConstructor, (JSGlobal
 static inline JSValue jsTestGlobalObject_TestCallbackInterfaceConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestCallbackInterface::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestCallbackInterface::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestCallbackInterfaceConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1324,7 +1324,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestCallbackInterfaceConstructor, (J
 static inline JSValue jsTestGlobalObject_TestClassWithJSBuiltinConstructorConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestClassWithJSBuiltinConstructor::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestClassWithJSBuiltinConstructor::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestClassWithJSBuiltinConstructorConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1335,7 +1335,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestClassWithJSBuiltinConstructorCon
 static inline JSValue jsTestGlobalObject_TestDOMJITConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestDOMJIT::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestDOMJIT::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestDOMJITConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1346,7 +1346,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestDOMJITConstructor, (JSGlobalObje
 static inline JSValue jsTestGlobalObject_TestDefaultToJSONIndirectInheritanceConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestDefaultToJSONIndirectInheritance::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestDefaultToJSONIndirectInheritance::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestDefaultToJSONIndirectInheritanceConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1357,7 +1357,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestDefaultToJSONIndirectInheritance
 static inline JSValue jsTestGlobalObject_TestDefaultToJSONInheritConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestDefaultToJSONInherit::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestDefaultToJSONInherit::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestDefaultToJSONInheritConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1368,7 +1368,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestDefaultToJSONInheritConstructor,
 static inline JSValue jsTestGlobalObject_TestDefaultToJSONInheritFinalConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestDefaultToJSONInheritFinal::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestDefaultToJSONInheritFinal::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestDefaultToJSONInheritFinalConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1379,7 +1379,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestDefaultToJSONInheritFinalConstru
 static inline JSValue jsTestGlobalObject_TestDelegateToSharedSyntheticAttributeConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestDelegateToSharedSyntheticAttribute::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestDelegateToSharedSyntheticAttribute::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestDelegateToSharedSyntheticAttributeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1390,7 +1390,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestDelegateToSharedSyntheticAttribu
 static inline JSValue jsTestGlobalObject_TestDomainSecurityConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestDomainSecurity::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestDomainSecurity::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestDomainSecurityConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1401,7 +1401,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestDomainSecurityConstructor, (JSGl
 static inline JSValue jsTestGlobalObject_TestEventConstructorConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestEventConstructor::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestEventConstructor::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestEventConstructorConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1412,7 +1412,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestEventConstructorConstructor, (JS
 static inline JSValue jsTestGlobalObject_TestEventTargetConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestEventTarget::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestEventTarget::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestEventTargetConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1423,7 +1423,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestEventTargetConstructor, (JSGloba
 static inline JSValue jsTestGlobalObject_TestExceptionConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestException::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestException::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestExceptionConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1434,7 +1434,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestExceptionConstructor, (JSGlobalO
 static inline JSValue jsTestGlobalObject_TestGenerateAddOpaqueRootConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestGenerateAddOpaqueRoot::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestGenerateAddOpaqueRoot::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestGenerateAddOpaqueRootConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1445,7 +1445,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestGenerateAddOpaqueRootConstructor
 static inline JSValue jsTestGlobalObject_TestGenerateIsReachableConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestGenerateIsReachable::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestGenerateIsReachable::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestGenerateIsReachableConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1456,7 +1456,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestGenerateIsReachableConstructor, 
 static inline JSValue jsTestGlobalObject_TestGlobalObjectConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestGlobalObject::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestGlobalObject::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestGlobalObjectConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1467,7 +1467,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestGlobalObjectConstructor, (JSGlob
 static inline JSValue jsTestGlobalObject_TestIndexedSetterNoIdentifierConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestIndexedSetterNoIdentifier::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestIndexedSetterNoIdentifier::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestIndexedSetterNoIdentifierConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1478,7 +1478,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestIndexedSetterNoIdentifierConstru
 static inline JSValue jsTestGlobalObject_TestIndexedSetterThrowingExceptionConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestIndexedSetterThrowingException::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestIndexedSetterThrowingException::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestIndexedSetterThrowingExceptionConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1489,7 +1489,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestIndexedSetterThrowingExceptionCo
 static inline JSValue jsTestGlobalObject_TestIndexedSetterWithIdentifierConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestIndexedSetterWithIdentifier::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestIndexedSetterWithIdentifier::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestIndexedSetterWithIdentifierConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1500,7 +1500,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestIndexedSetterWithIdentifierConst
 static inline JSValue jsTestGlobalObject_TestInterfaceLeadingUnderscoreConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestInterfaceLeadingUnderscore::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestInterfaceLeadingUnderscore::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestInterfaceLeadingUnderscoreConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1511,7 +1511,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestInterfaceLeadingUnderscoreConstr
 static inline JSValue jsTestGlobalObject_TestIterableConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestIterable::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestIterable::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestIterableConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1522,7 +1522,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestIterableConstructor, (JSGlobalOb
 static inline JSValue jsTestGlobalObject_TestJSBuiltinConstructorConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestJSBuiltinConstructor::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestJSBuiltinConstructor::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestJSBuiltinConstructorConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1533,7 +1533,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestJSBuiltinConstructorConstructor,
 static inline JSValue jsTestGlobalObject_TestLegacyFactoryFunctionConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTest::getLegacyFactoryFunction(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTest::getLegacyFactoryFunction(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestLegacyFactoryFunctionConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1544,7 +1544,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestLegacyFactoryFunctionConstructor
 static inline JSValue jsTestGlobalObject_AudioConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestLegacyFactoryFunction::getLegacyFactoryFunction(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestLegacyFactoryFunction::getLegacyFactoryFunction(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_AudioConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1555,7 +1555,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_AudioConstructor, (JSGlobalObject* l
 static inline JSValue jsTestGlobalObject_TestLegacyOverrideBuiltInsConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestLegacyOverrideBuiltIns::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestLegacyOverrideBuiltIns::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestLegacyOverrideBuiltInsConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1566,7 +1566,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestLegacyOverrideBuiltInsConstructo
 static inline JSValue jsTestGlobalObject_TestMapLikeConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestMapLike::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestMapLike::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestMapLikeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1577,7 +1577,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestMapLikeConstructor, (JSGlobalObj
 static inline JSValue jsTestGlobalObject_TestMapLikeWithOverriddenOperationsConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestMapLikeWithOverriddenOperations::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestMapLikeWithOverriddenOperations::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestMapLikeWithOverriddenOperationsConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1588,7 +1588,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestMapLikeWithOverriddenOperationsC
 static inline JSValue jsTestGlobalObject_TestNamedAndIndexedSetterNoIdentifierConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestNamedAndIndexedSetterNoIdentifier::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestNamedAndIndexedSetterNoIdentifier::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestNamedAndIndexedSetterNoIdentifierConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1599,7 +1599,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestNamedAndIndexedSetterNoIdentifie
 static inline JSValue jsTestGlobalObject_TestNamedAndIndexedSetterThrowingExceptionConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestNamedAndIndexedSetterThrowingException::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestNamedAndIndexedSetterThrowingException::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestNamedAndIndexedSetterThrowingExceptionConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1610,7 +1610,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestNamedAndIndexedSetterThrowingExc
 static inline JSValue jsTestGlobalObject_TestNamedAndIndexedSetterWithIdentifierConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestNamedAndIndexedSetterWithIdentifier::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestNamedAndIndexedSetterWithIdentifier::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestNamedAndIndexedSetterWithIdentifierConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1621,7 +1621,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestNamedAndIndexedSetterWithIdentif
 static inline JSValue jsTestGlobalObject_TestNamedDeleterNoIdentifierConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestNamedDeleterNoIdentifier::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestNamedDeleterNoIdentifier::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestNamedDeleterNoIdentifierConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1632,7 +1632,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestNamedDeleterNoIdentifierConstruc
 static inline JSValue jsTestGlobalObject_TestNamedDeleterThrowingExceptionConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestNamedDeleterThrowingException::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestNamedDeleterThrowingException::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestNamedDeleterThrowingExceptionConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1643,7 +1643,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestNamedDeleterThrowingExceptionCon
 static inline JSValue jsTestGlobalObject_TestNamedDeleterWithIdentifierConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestNamedDeleterWithIdentifier::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestNamedDeleterWithIdentifier::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestNamedDeleterWithIdentifierConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1654,7 +1654,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestNamedDeleterWithIdentifierConstr
 static inline JSValue jsTestGlobalObject_TestNamedDeleterWithIndexedGetterConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestNamedDeleterWithIndexedGetter::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestNamedDeleterWithIndexedGetter::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestNamedDeleterWithIndexedGetterConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1665,7 +1665,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestNamedDeleterWithIndexedGetterCon
 static inline JSValue jsTestGlobalObject_TestNamedGetterCallWithConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestNamedGetterCallWith::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestNamedGetterCallWith::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestNamedGetterCallWithConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1676,7 +1676,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestNamedGetterCallWithConstructor, 
 static inline JSValue jsTestGlobalObject_TestNamedGetterNoIdentifierConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestNamedGetterNoIdentifier::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestNamedGetterNoIdentifier::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestNamedGetterNoIdentifierConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1687,7 +1687,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestNamedGetterNoIdentifierConstruct
 static inline JSValue jsTestGlobalObject_TestNamedGetterWithIdentifierConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestNamedGetterWithIdentifier::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestNamedGetterWithIdentifier::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestNamedGetterWithIdentifierConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1698,7 +1698,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestNamedGetterWithIdentifierConstru
 static inline JSValue jsTestGlobalObject_TestNamedSetterNoIdentifierConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestNamedSetterNoIdentifier::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestNamedSetterNoIdentifier::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestNamedSetterNoIdentifierConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1709,7 +1709,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestNamedSetterNoIdentifierConstruct
 static inline JSValue jsTestGlobalObject_TestNamedSetterThrowingExceptionConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestNamedSetterThrowingException::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestNamedSetterThrowingException::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestNamedSetterThrowingExceptionConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1720,7 +1720,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestNamedSetterThrowingExceptionCons
 static inline JSValue jsTestGlobalObject_TestNamedSetterWithIdentifierConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestNamedSetterWithIdentifier::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestNamedSetterWithIdentifier::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestNamedSetterWithIdentifierConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1731,7 +1731,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestNamedSetterWithIdentifierConstru
 static inline JSValue jsTestGlobalObject_TestNamedSetterWithIndexedGetterConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestNamedSetterWithIndexedGetter::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestNamedSetterWithIndexedGetter::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestNamedSetterWithIndexedGetterConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1742,7 +1742,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestNamedSetterWithIndexedGetterCons
 static inline JSValue jsTestGlobalObject_TestNamedSetterWithIndexedGetterAndSetterConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestNamedSetterWithIndexedGetterAndSetter::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestNamedSetterWithIndexedGetterAndSetter::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestNamedSetterWithIndexedGetterAndSetterConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1753,7 +1753,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestNamedSetterWithIndexedGetterAndS
 static inline JSValue jsTestGlobalObject_TestNamedSetterWithLegacyOverrideBuiltInsConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestNamedSetterWithLegacyOverrideBuiltIns::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestNamedSetterWithLegacyOverrideBuiltIns::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestNamedSetterWithLegacyOverrideBuiltInsConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1764,7 +1764,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestNamedSetterWithLegacyOverrideBui
 static inline JSValue jsTestGlobalObject_TestNamedSetterWithLegacyUnforgeablePropertiesConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestNamedSetterWithLegacyUnforgeableProperties::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestNamedSetterWithLegacyUnforgeableProperties::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestNamedSetterWithLegacyUnforgeablePropertiesConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1775,7 +1775,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestNamedSetterWithLegacyUnforgeable
 static inline JSValue jsTestGlobalObject_TestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1786,7 +1786,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestNamedSetterWithLegacyUnforgeable
 static inline JSValue jsTestGlobalObject_TestNamespaceConstConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestNamespaceConst::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestNamespaceConst::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestNamespaceConstConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1797,7 +1797,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestNamespaceConstConstructor, (JSGl
 static inline JSValue jsTestGlobalObject_TestInterfaceNameConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestNamespaceObject::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestNamespaceObject::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestInterfaceNameConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1809,7 +1809,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestInterfaceNameConstructor, (JSGlo
 static inline JSValue jsTestGlobalObject_TestOperationConditionalConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestOperationConditional::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestOperationConditional::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestOperationConditionalConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1822,7 +1822,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestOperationConditionalConstructor,
 static inline JSValue jsTestGlobalObject_TestOverloadedConstructorsWithSequenceConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestOverloadedConstructorsWithSequence::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestOverloadedConstructorsWithSequence::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestOverloadedConstructorsWithSequenceConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1833,7 +1833,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestOverloadedConstructorsWithSequen
 static inline JSValue jsTestGlobalObject_TestPluginInterfaceConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestPluginInterface::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestPluginInterface::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestPluginInterfaceConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1844,7 +1844,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestPluginInterfaceConstructor, (JSG
 static inline JSValue jsTestGlobalObject_TestReadOnlyMapLikeConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestReadOnlyMapLike::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestReadOnlyMapLike::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestReadOnlyMapLikeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1855,7 +1855,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestReadOnlyMapLikeConstructor, (JSG
 static inline JSValue jsTestGlobalObject_TestReadOnlySetLikeConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestReadOnlySetLike::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestReadOnlySetLike::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestReadOnlySetLikeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1866,7 +1866,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestReadOnlySetLikeConstructor, (JSG
 static inline JSValue jsTestGlobalObject_TestReportExtraMemoryCostConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestReportExtraMemoryCost::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestReportExtraMemoryCost::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestReportExtraMemoryCostConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1878,7 +1878,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestReportExtraMemoryCostConstructor
 static inline JSValue jsTestGlobalObject_TestSerializedScriptValueInterfaceConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestSerializedScriptValueInterface::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestSerializedScriptValueInterface::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestSerializedScriptValueInterfaceConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1891,7 +1891,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestSerializedScriptValueInterfaceCo
 static inline JSValue jsTestGlobalObject_TestSetLikeConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestSetLike::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestSetLike::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestSetLikeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1902,7 +1902,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestSetLikeConstructor, (JSGlobalObj
 static inline JSValue jsTestGlobalObject_TestSetLikeWithOverriddenOperationsConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestSetLikeWithOverriddenOperations::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestSetLikeWithOverriddenOperations::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestSetLikeWithOverriddenOperationsConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1913,7 +1913,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestSetLikeWithOverriddenOperationsC
 static inline JSValue jsTestGlobalObject_TestStringifierConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestStringifier::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestStringifier::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestStringifierConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1924,7 +1924,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestStringifierConstructor, (JSGloba
 static inline JSValue jsTestGlobalObject_TestStringifierAnonymousOperationConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestStringifierAnonymousOperation::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestStringifierAnonymousOperation::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestStringifierAnonymousOperationConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1935,7 +1935,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestStringifierAnonymousOperationCon
 static inline JSValue jsTestGlobalObject_TestStringifierNamedOperationConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestStringifierNamedOperation::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestStringifierNamedOperation::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestStringifierNamedOperationConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1946,7 +1946,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestStringifierNamedOperationConstru
 static inline JSValue jsTestGlobalObject_TestStringifierOperationImplementedAsConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestStringifierOperationImplementedAs::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestStringifierOperationImplementedAs::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestStringifierOperationImplementedAsConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1957,7 +1957,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestStringifierOperationImplementedA
 static inline JSValue jsTestGlobalObject_TestStringifierOperationNamedToStringConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestStringifierOperationNamedToString::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestStringifierOperationNamedToString::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestStringifierOperationNamedToStringConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1968,7 +1968,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestStringifierOperationNamedToStrin
 static inline JSValue jsTestGlobalObject_TestStringifierReadOnlyAttributeConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestStringifierReadOnlyAttribute::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestStringifierReadOnlyAttribute::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestStringifierReadOnlyAttributeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1979,7 +1979,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestStringifierReadOnlyAttributeCons
 static inline JSValue jsTestGlobalObject_TestStringifierReadWriteAttributeConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestStringifierReadWriteAttribute::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestStringifierReadWriteAttribute::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestStringifierReadWriteAttributeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -1990,7 +1990,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestStringifierReadWriteAttributeCon
 static inline JSValue jsTestGlobalObject_TestTaggedWrapperConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestTaggedWrapper::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestTaggedWrapper::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestTaggedWrapperConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -2001,7 +2001,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestTaggedWrapperConstructor, (JSGlo
 static inline JSValue jsTestGlobalObject_TestTypedefsConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestTypedefs::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+    return JSTestTypedefs::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestTypedefsConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -2011,7 +2011,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestTypedefsConstructor, (JSGlobalOb
 
 static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunction_regularOperationBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestGlobalObject>::ClassParameter castedThis)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    Ref vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
@@ -2032,7 +2032,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestGlobalObjectInstanceFunction_regularOperation, (J
 #if ENABLE(TEST_FEATURE)
 static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunction_enabledAtRuntimeOperation1Body(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestGlobalObject>::ClassParameter castedThis)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    Ref vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
@@ -2048,7 +2048,7 @@ static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunction_enabledAtRu
 #if ENABLE(TEST_FEATURE)
 static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunction_enabledAtRuntimeOperation2Body(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestGlobalObject>::ClassParameter castedThis)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    Ref vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
@@ -2065,7 +2065,7 @@ static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunction_enabledAtRu
 
 static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunction_enabledAtRuntimeOperationOverloadDispatcher(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestGlobalObject>::ClassParameter castedThis)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    Ref vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
@@ -2093,7 +2093,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestGlobalObjectInstanceFunction_enabledAtRuntimeOper
 #if ENABLE(TEST_FEATURE)
 static inline JSC::EncodedJSValue jsTestGlobalObjectConstructorFunction_enabledAtRuntimeOperationStaticBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    Ref vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
@@ -2114,7 +2114,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestGlobalObjectConstructorFunction_enabledAtRuntimeO
 
 static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunction_enabledInSpecificWorldBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestGlobalObject>::ClassParameter castedThis)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    Ref vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
@@ -2134,7 +2134,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestGlobalObjectInstanceFunction_enabledInSpecificWor
 
 static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunction_enabledInSpecificWorldWhenRuntimeFeatureEnabledBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestGlobalObject>::ClassParameter castedThis)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    Ref vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
@@ -2154,7 +2154,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestGlobalObjectInstanceFunction_enabledInSpecificWor
 
 static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunction_enabledInSpecificWorldWhenRuntimeFeaturesEnabledBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestGlobalObject>::ClassParameter castedThis)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    Ref vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
@@ -2175,7 +2175,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestGlobalObjectInstanceFunction_enabledInSpecificWor
 #if ENABLE(TEST_FEATURE)
 static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunction_testPrivateFunctionBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestGlobalObject>::ClassParameter castedThis)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    Ref vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
@@ -2192,7 +2192,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestGlobalObjectInstanceFunction_testPrivateFunction,
 
 static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunction_calculateSecretResultBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperationReturningPromise<JSTestGlobalObject>::ClassParameter castedThis, Ref<DeferredPromise>&& promise)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    Ref vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
@@ -2207,7 +2207,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestGlobalObjectInstanceFunction_calculateSecretResul
 
 static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunction_getSecretBooleanBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestGlobalObject>::ClassParameter castedThis)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    Ref vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
@@ -2223,7 +2223,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestGlobalObjectInstanceFunction_getSecretBoolean, (J
 #if ENABLE(TEST_FEATURE)
 static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunction_testFeatureGetSecretBooleanBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestGlobalObject>::ClassParameter castedThis)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    Ref vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
