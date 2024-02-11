@@ -54,9 +54,9 @@ void SVGStopElement::attributeChanged(const QualifiedName& name, const AtomStrin
 {
     if (name == SVGNames::offsetAttr) {
         if (newValue.endsWith('%'))
-            m_offset->setBaseValInternal(newValue.string().left(newValue.length() - 1).toFloat() / 100.0f);
+            Ref { m_offset }->setBaseValInternal(newValue.string().left(newValue.length() - 1).toFloat() / 100.0f);
         else
-            m_offset->setBaseValInternal(newValue.toFloat());
+            Ref { m_offset }->setBaseValInternal(newValue.toFloat());
     }
 
     SVGElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);

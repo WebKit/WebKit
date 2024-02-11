@@ -58,7 +58,7 @@ AffineTransform SVGTransformList::concatenate() const
 {
     AffineTransform result;
     for (auto& transform : m_items)
-        result *= transform->matrix()->value();
+        result *= transform->matrix().value();
     return result;
 }
 

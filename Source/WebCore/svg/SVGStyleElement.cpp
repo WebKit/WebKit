@@ -96,8 +96,8 @@ void SVGStyleElement::attributeChanged(const QualifiedName& name, const AtomStri
 {
     switch (name.nodeName()) {
     case AttributeNames::titleAttr:
-        if (sheet() && !isInShadowTree())
-            sheet()->setTitle(newValue);
+        if (RefPtr sheet = this->sheet(); sheet && !isInShadowTree())
+            sheet->setTitle(newValue);
         break;
     case AttributeNames::typeAttr:
         m_styleSheetOwner.setContentType(newValue);

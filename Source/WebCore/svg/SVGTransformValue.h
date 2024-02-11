@@ -76,7 +76,7 @@ public:
 
     SVGTransformValue(const SVGTransformValue& other)
         : m_type(other.m_type)
-        , m_matrix(SVGMatrix::create(other.matrix()->value()))
+        , m_matrix(SVGMatrix::create(other.matrix().value()))
         , m_angle(other.m_angle)
         , m_rotationCenter(other.m_rotationCenter)
     {
@@ -108,7 +108,8 @@ public:
     }
 
     SVGTransformType type() const { return m_type; }
-    const Ref<SVGMatrix>& matrix() const { return m_matrix; }
+    SVGMatrix& matrix() const { return m_matrix; }
+    Ref<SVGMatrix> protectedMatrix() const { return m_matrix; }
     float angle() const { return m_angle; }
     FloatPoint rotationCenter() const { return m_rotationCenter; }
 
@@ -119,7 +120,7 @@ public:
         m_type = SVG_TRANSFORM_MATRIX;
         m_angle = 0;
         m_rotationCenter = { };
-        m_matrix->setValue(matrix);
+        protectedMatrix()->setValue(matrix);
     }
 
     void matrixDidChange()

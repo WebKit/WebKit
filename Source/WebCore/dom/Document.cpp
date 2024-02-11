@@ -10448,6 +10448,11 @@ RefPtr<LocalFrameView> Document::protectedView() const
     return view();
 }
 
+CheckedPtr<RenderView> Document::checkedRenderView() const
+{
+    return m_renderView.get();
+}
+
 } // namespace WebCore
 
 #undef DOCUMENT_RELEASE_LOG

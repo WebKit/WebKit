@@ -60,10 +60,10 @@ void SVGPolyElement::svgAttributeChanged(const QualifiedName& attrName)
         InstanceInvalidationGuard guard(*this);
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-        if (auto* path = dynamicDowncast<RenderSVGPath>(renderer()))
+        if (CheckedPtr path = dynamicDowncast<RenderSVGPath>(renderer()))
             path->setNeedsShapeUpdate();
 #endif
-        if (auto* path = dynamicDowncast<LegacyRenderSVGPath>(renderer()))
+        if (CheckedPtr path = dynamicDowncast<LegacyRenderSVGPath>(renderer()))
             path->setNeedsShapeUpdate();
 
         updateSVGRendererForElementChange();

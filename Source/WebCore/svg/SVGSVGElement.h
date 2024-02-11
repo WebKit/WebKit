@@ -92,7 +92,7 @@ public:
     using SVGGraphicsElement::deref;
 
     SMILTimeContainer& timeContainer() { return m_timeContainer.get(); }
-    Ref<SMILTimeContainer> protectedTimeContainer();
+    Ref<SMILTimeContainer> protectedTimeContainer() const;
 
     void setCurrentTranslate(const FloatPoint&); // Used to pan.
     void updateCurrentTranslate();

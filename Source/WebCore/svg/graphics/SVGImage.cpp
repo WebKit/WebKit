@@ -92,12 +92,12 @@ RefPtr<SVGSVGElement> SVGImage::rootElement() const
     if (!localMainFrame)
         return nullptr;
 
-    return DocumentSVG::rootElement(*localMainFrame->document());
+    return DocumentSVG::rootElement(*localMainFrame->protectedDocument());
 }
 
 bool SVGImage::renderingTaintsOrigin() const
 {
-    auto rootElement = this->rootElement();
+    RefPtr rootElement = this->rootElement();
     if (!rootElement)
         return false;
 
@@ -107,10 +107,10 @@ bool SVGImage::renderingTaintsOrigin() const
     for (auto& element : descendantsOfType<SVGElement>(*rootElement)) {
         if (is<SVGForeignObjectElement>(element))
             return true;
-        if (auto* svgImage = dynamicDowncast<SVGImageElement>(element)) {
+        if (RefPtr svgImage = dynamicDowncast<SVGImageElement>(element)) {
             if (svgImage->renderingTaintsOrigin())
                 return true;
-        } else if (auto* svgFEImage = dynamicDowncast<SVGFEImageElement>(element)) {
+        } else if (RefPtr svgFEImage = dynamicDowncast<SVGFEImageElement>(element)) {
             if (svgFEImage->renderingTaintsOrigin())
                 return true;
         }
@@ -126,20 +126,20 @@ void SVGImage::setContainerSize(const FloatSize& size)
     if (!usesContainerSize())
         return;
 
-    auto rootElement = this->rootElement();
+    RefPtr rootElement = this->rootElement();
     if (!rootElement || !rootElement->renderer() || !rootElement->renderer()->isRenderOrLegacyRenderSVGRoot())
         return;
 
     RefPtr view = frameView();
     view->resize(containerSize());
 
-    if (auto* renderer = dynamicDowncast<LegacyRenderSVGRoot>(rootElement->renderer())) {
+    if (CheckedPtr renderer = dynamicDowncast<LegacyRenderSVGRoot>(rootElement->renderer())) {
         renderer->setContainerSize(IntSize(size));
         return;
     }
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-    if (auto* renderer = dynamicDowncast<RenderSVGRoot>(rootElement->renderer())) {
+    if (CheckedPtr renderer = dynamicDowncast<RenderSVGRoot>(rootElement->renderer())) {
         renderer->setContainerSize(IntSize(size));
         return;
     }
@@ -148,17 +148,17 @@ void SVGImage::setContainerSize(const FloatSize& size)
 
 IntSize SVGImage::containerSize() const
 {
-    auto rootElement = this->rootElement();
+    RefPtr rootElement = this->rootElement();
     if (!rootElement || !rootElement->renderer() || !rootElement->renderer()->isRenderOrLegacyRenderSVGRoot())
         return { };
 
     // If a container size is available it has precedence.
     auto computeContainerSize = [&]() -> IntSize {
-        if (auto* renderer = dynamicDowncast<LegacyRenderSVGRoot>(rootElement->renderer()))
+        if (CheckedPtr renderer = dynamicDowncast<LegacyRenderSVGRoot>(rootElement->renderer()))
             return renderer->containerSize();
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-        if (auto* renderer = dynamicDowncast<RenderSVGRoot>(rootElement->renderer()))
+        if (CheckedPtr renderer = dynamicDowncast<RenderSVGRoot>(rootElement->renderer()))
             return renderer->containerSize();
 #endif
 
@@ -190,7 +190,7 @@ ImageDrawResult SVGImage::drawForContainer(GraphicsContext& context, const Float
     if (!m_page)
         return ImageDrawResult::DidNothing;
 
-    auto observer = imageObserver();
+    RefPtr observer = imageObserver();
     ASSERT(observer);
 
     // Temporarily reset image observer, we don't want to receive any changeInRect() calls due to this relayout.
@@ -207,7 +207,7 @@ ImageDrawResult SVGImage::drawForContainer(GraphicsContext& context, const Float
     adjustedSrcSize.scale(roundedContainerSize.width() / containerSize.width(), roundedContainerSize.height() / containerSize.height());
     scaledSrc.setSize(adjustedSrcSize);
 
-    frameView()->scrollToFragment(initialFragmentURL);
+    protectedFrameView()->scrollToFragment(initialFragmentURL);
 
     ImageDrawResult result = draw(context, dstRect, scaledSrc, options);
 
@@ -228,11 +228,11 @@ RefPtr<NativeImage> SVGImage::nativeImage(const DestinationColorSpace& colorSpac
     if (auto contentRenderer = embeddedContentBox())
         hostWindow = contentRenderer->hostWindow();
 
-    auto imageBuffer = ImageBuffer::create(size(), RenderingPurpose::DOM, 1, colorSpace, PixelFormat::BGRA8, bufferOptions, hostWindow);
+    RefPtr imageBuffer = ImageBuffer::create(size(), RenderingPurpose::DOM, 1, colorSpace, PixelFormat::BGRA8, bufferOptions, hostWindow);
     if (!imageBuffer)
         return nullptr;
 
-    auto observer = imageObserver();
+    RefPtr observer = imageObserver();
     setImageObserver(nullptr);
     setContainerSize(size());
 
@@ -257,14 +257,14 @@ void SVGImage::drawPatternForContainer(GraphicsContext& context, const FloatSize
     FloatRect imageBufferSize = zoomedContainerRect;
     imageBufferSize.scale(imageBufferScale.width(), imageBufferScale.height());
 
-    auto buffer = context.createImageBuffer(expandedIntSize(imageBufferSize.size()));
+    RefPtr buffer = context.createImageBuffer(expandedIntSize(imageBufferSize.size()));
     if (!buffer) // Failed to allocate buffer.
         return;
     drawForContainer(buffer->context(), containerSize, containerZoom, initialFragmentURL, imageBufferSize, zoomedContainerRect);
     if (context.drawLuminanceMask())
         buffer->convertToLuminanceMask();
 
-    auto image = ImageBuffer::sinkIntoNativeImage(WTFMove(buffer));
+    RefPtr image = ImageBuffer::sinkIntoNativeImage(WTFMove(buffer));
     if (!image)
         return;
 
@@ -327,7 +327,7 @@ ImageDrawResult SVGImage::draw(GraphicsContext& context, const FloatRect& dstRec
 
     stateSaver.restore();
 
-    if (auto observer = imageObserver())
+    if (RefPtr observer = imageObserver())
         observer->didDraw(*this);
 
     return ImageDrawResult::DidDraw;
@@ -335,7 +335,7 @@ ImageDrawResult SVGImage::draw(GraphicsContext& context, const FloatRect& dstRec
 
 RenderBox* SVGImage::embeddedContentBox() const
 {
-    auto rootElement = this->rootElement();
+    RefPtr rootElement = this->rootElement();
     if (!rootElement)
         return nullptr;
     return downcast<RenderBox>(rootElement->renderer());
@@ -353,9 +353,14 @@ LocalFrameView* SVGImage::frameView() const
     return localMainFrame->view();
 }
 
+RefPtr<LocalFrameView> SVGImage::protectedFrameView() const
+{
+    return frameView();
+}
+
 bool SVGImage::hasRelativeWidth() const
 {
-    auto rootElement = this->rootElement();
+    RefPtr rootElement = this->rootElement();
     if (!rootElement)
         return false;
     return rootElement->intrinsicWidth().isPercentOrCalculated();
@@ -363,7 +368,7 @@ bool SVGImage::hasRelativeWidth() const
 
 bool SVGImage::hasRelativeHeight() const
 {
-    auto rootElement = this->rootElement();
+    RefPtr rootElement = this->rootElement();
     if (!rootElement)
         return false;
     return rootElement->intrinsicHeight().isPercentOrCalculated();
@@ -371,7 +376,7 @@ bool SVGImage::hasRelativeHeight() const
 
 void SVGImage::computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio)
 {
-    auto rootElement = this->rootElement();
+    RefPtr rootElement = this->rootElement();
     if (!rootElement)
         return;
 
@@ -392,7 +397,7 @@ void SVGImage::startAnimationTimerFired()
 
 void SVGImage::scheduleStartAnimation()
 {
-    auto rootElement = this->rootElement();
+    RefPtr rootElement = this->rootElement();
     if (!rootElement || !rootElement->animationsPaused())
         return;
     m_startAnimationTimer.startOneShot(0_s);
@@ -400,7 +405,7 @@ void SVGImage::scheduleStartAnimation()
 
 void SVGImage::startAnimation()
 {
-    auto rootElement = this->rootElement();
+    RefPtr rootElement = this->rootElement();
     if (!rootElement || !rootElement->animationsPaused())
         return;
     rootElement->unpauseAnimations();
@@ -409,7 +414,7 @@ void SVGImage::startAnimation()
 
 void SVGImage::resumeAnimation()
 {
-    auto rootElement = this->rootElement();
+    RefPtr rootElement = this->rootElement();
     if (!rootElement || !rootElement->animationsPaused())
         return;
     rootElement->unpauseAnimations();
@@ -418,7 +423,7 @@ void SVGImage::resumeAnimation()
 void SVGImage::stopAnimation()
 {
     m_startAnimationTimer.stop();
-    auto rootElement = this->rootElement();
+    RefPtr rootElement = this->rootElement();
     if (!rootElement)
         return;
     rootElement->pauseAnimations();
@@ -431,7 +436,7 @@ void SVGImage::resetAnimation()
 
 bool SVGImage::isAnimating() const
 {
-    auto rootElement = this->rootElement();
+    RefPtr rootElement = this->rootElement();
     if (!rootElement)
         return false;
     return rootElement->hasActiveAnimation();
@@ -439,7 +444,7 @@ bool SVGImage::isAnimating() const
 
 void SVGImage::reportApproximateMemoryCost() const
 {
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
     if (!localMainFrame)
         return;
     RefPtr document = localMainFrame->document();
@@ -481,31 +486,32 @@ EncodedDataStatus SVGImage::dataChanged(bool allDataReceived)
         m_page->settings().setShouldAllowUserInstalledFonts(false);
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-        if (auto observer = imageObserver())
+        if (RefPtr observer = imageObserver())
             m_page->settings().setLayerBasedSVGEngineEnabled(observer->layerBasedSVGEngineEnabled());
 #endif
-        auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+        RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
         if (!localMainFrame)
             return EncodedDataStatus::Unknown;
 
-        LocalFrame& frame = *localMainFrame;
-        frame.setView(LocalFrameView::create(frame));
-        frame.init();
-        FrameLoader& loader = frame.loader();
-        loader.forceSandboxFlags(SandboxAll);
+        localMainFrame->setView(LocalFrameView::create(*localMainFrame));
+        localMainFrame->init();
+        CheckedRef loader = localMainFrame->loader();
+        loader->forceSandboxFlags(SandboxAll);
 
-        frame.view()->setCanHaveScrollbars(false); // SVG Images will always synthesize a viewBox, if it's not available, and thus never see scrollbars.
-        frame.view()->setTransparent(true); // SVG Images are transparent.
+        RefPtr frameView = localMainFrame->view();
+        frameView->setCanHaveScrollbars(false); // SVG Images will always synthesize a viewBox, if it's not available, and thus never see scrollbars.
+        frameView->setTransparent(true); // SVG Images are transparent.
 
-        ASSERT(loader.activeDocumentLoader()); // DocumentLoader should have been created by frame->init().
-        loader.activeDocumentLoader()->writer().setMIMEType("image/svg+xml"_s);
-        loader.activeDocumentLoader()->writer().begin(URL()); // create the empty document
+        RefPtr activeDocumentLoader = loader->activeDocumentLoader();
+        ASSERT(activeDocumentLoader); // DocumentLoader should have been created by frame->init().
+        activeDocumentLoader->writer().setMIMEType("image/svg+xml"_s);
+        activeDocumentLoader->writer().begin(URL()); // create the empty document
         data()->forEachSegmentAsSharedBuffer([&](auto&& buffer) {
-            loader.activeDocumentLoader()->writer().addData(buffer);
+            activeDocumentLoader->writer().addData(buffer);
         });
-        loader.activeDocumentLoader()->writer().end();
+        activeDocumentLoader->writer().end();
 
-        frame.document()->updateLayoutIgnorePendingStylesheets();
+        localMainFrame->protectedDocument()->updateLayoutIgnorePendingStylesheets();
 
         // Set the intrinsic size before a container size is available.
         m_intrinsicSize = containerSize();
@@ -524,7 +530,7 @@ bool isInSVGImage(const Element* element)
 {
     ASSERT(element);
 
-    Page* page = element->document().page();
+    RefPtr page = element->document().page();
     if (!page)
         return false;
 

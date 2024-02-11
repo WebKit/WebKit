@@ -45,7 +45,7 @@ SVGResourceImage::SVGResourceImage(LegacyRenderSVGResourceContainer& renderResou
 
 ImageDrawResult SVGResourceImage::draw(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions options)
 {
-    if (auto* masker = dynamicDowncast<LegacyRenderSVGResourceMasker>(m_renderResource.get())) {
+    if (CheckedPtr masker = dynamicDowncast<LegacyRenderSVGResourceMasker>(m_renderResource.get())) {
         if (masker->drawContentIntoContext(context, destinationRect, sourceRect, options))
             return ImageDrawResult::DidDraw;
     }
@@ -55,7 +55,7 @@ ImageDrawResult SVGResourceImage::draw(GraphicsContext& context, const FloatRect
 
 void SVGResourceImage::drawPattern(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& sourceRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options)
 {
-    auto imageBuffer = context.createImageBuffer(size());
+    RefPtr imageBuffer = context.createImageBuffer(size());
     if (!imageBuffer)
         return;
 

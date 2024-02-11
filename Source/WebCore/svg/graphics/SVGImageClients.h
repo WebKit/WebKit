@@ -64,7 +64,7 @@ private:
         if (!image || !image->internalPage())
             return;
 
-        auto imageObserver = image->imageObserver();
+        RefPtr imageObserver = image->imageObserver();
         if (!imageObserver)
             return;
 
@@ -76,7 +76,7 @@ private:
         RefPtr image { m_image.get() };
         if (!image)
             return true;
-        if (auto imageObserver = image->imageObserver())
+        if (RefPtr imageObserver = image->imageObserver())
             imageObserver->scheduleRenderingUpdate(*image);
         return true;
     }

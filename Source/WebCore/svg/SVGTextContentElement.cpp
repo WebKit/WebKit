@@ -56,14 +56,14 @@ SVGTextContentElement::SVGTextContentElement(const QualifiedName& tagName, Docum
 
 unsigned SVGTextContentElement::getNumberOfChars()
 {
-    document().updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
-    return SVGTextQuery(renderer()).numberOfCharacters();
+    protectedDocument()->updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
+    return SVGTextQuery(checkedRenderer().get()).numberOfCharacters();
 }
 
 float SVGTextContentElement::getComputedTextLength()
 {
-    document().updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
-    return SVGTextQuery(renderer()).textLength();
+    protectedDocument()->updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
+    return SVGTextQuery(checkedRenderer().get()).textLength();
 }
 
 ExceptionOr<float> SVGTextContentElement::getSubStringLength(unsigned charnum, unsigned nchars)
@@ -73,7 +73,7 @@ ExceptionOr<float> SVGTextContentElement::getSubStringLength(unsigned charnum, u
         return Exception { ExceptionCode::IndexSizeError };
 
     nchars = std::min(nchars, numberOfChars - charnum);
-    return SVGTextQuery(renderer()).subStringLength(charnum, nchars);
+    return SVGTextQuery(checkedRenderer().get()).subStringLength(charnum, nchars);
 }
 
 ExceptionOr<Ref<SVGPoint>> SVGTextContentElement::getStartPositionOfChar(unsigned charnum)
@@ -81,7 +81,7 @@ ExceptionOr<Ref<SVGPoint>> SVGTextContentElement::getStartPositionOfChar(unsigne
     if (charnum >= getNumberOfChars())
         return Exception { ExceptionCode::IndexSizeError };
 
-    return SVGPoint::create(SVGTextQuery(renderer()).startPositionOfCharacter(charnum));
+    return SVGPoint::create(SVGTextQuery(checkedRenderer().get()).startPositionOfCharacter(charnum));
 }
 
 ExceptionOr<Ref<SVGPoint>> SVGTextContentElement::getEndPositionOfChar(unsigned charnum)
@@ -89,7 +89,7 @@ ExceptionOr<Ref<SVGPoint>> SVGTextContentElement::getEndPositionOfChar(unsigned 
     if (charnum >= getNumberOfChars())
         return Exception { ExceptionCode::IndexSizeError };
 
-    return SVGPoint::create(SVGTextQuery(renderer()).endPositionOfCharacter(charnum));
+    return SVGPoint::create(SVGTextQuery(checkedRenderer().get()).endPositionOfCharacter(charnum));
 }
 
 ExceptionOr<Ref<SVGRect>> SVGTextContentElement::getExtentOfChar(unsigned charnum)
@@ -97,7 +97,7 @@ ExceptionOr<Ref<SVGRect>> SVGTextContentElement::getExtentOfChar(unsigned charnu
     if (charnum >= getNumberOfChars())
         return Exception { ExceptionCode::IndexSizeError };
 
-    return SVGRect::create(SVGTextQuery(renderer()).extentOfCharacter(charnum));
+    return SVGRect::create(SVGTextQuery(checkedRenderer().get()).extentOfCharacter(charnum));
 }
 
 ExceptionOr<float> SVGTextContentElement::getRotationOfChar(unsigned charnum)
@@ -105,14 +105,14 @@ ExceptionOr<float> SVGTextContentElement::getRotationOfChar(unsigned charnum)
     if (charnum >= getNumberOfChars())
         return Exception { ExceptionCode::IndexSizeError };
 
-    return SVGTextQuery(renderer()).rotationOfCharacter(charnum);
+    return SVGTextQuery(checkedRenderer().get()).rotationOfCharacter(charnum);
 }
 
 int SVGTextContentElement::getCharNumAtPosition(DOMPointInit&& pointInit)
 {
-    document().updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
+    protectedDocument()->updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
     FloatPoint transformPoint {static_cast<float>(pointInit.x), static_cast<float>(pointInit.y)};
-    return SVGTextQuery(renderer()).characterNumberAtPosition(transformPoint);
+    return SVGTextQuery(checkedRenderer().get()).characterNumberAtPosition(transformPoint);
 }
 
 ExceptionOr<void> SVGTextContentElement::selectSubString(unsigned charnum, unsigned nchars)
@@ -123,9 +123,9 @@ ExceptionOr<void> SVGTextContentElement::selectSubString(unsigned charnum, unsig
 
     nchars = std::min(nchars, numberOfChars - charnum);
 
-    ASSERT(document().frame());
-
-    FrameSelection& selection = document().frame()->selection();
+    RefPtr frame = document().frame();
+    ASSERT(frame);
+    CheckedRef selection = frame->selection();
 
     // Find selection start
     VisiblePosition start(firstPositionInNode(const_cast<SVGTextContentElement*>(this)));
@@ -137,7 +137,7 @@ ExceptionOr<void> SVGTextContentElement::selectSubString(unsigned charnum, unsig
     for (unsigned i = 0; i < nchars; ++i)
         end = end.next();
 
-    selection.setSelection(VisibleSelection(start, end));
+    selection->setSelection(VisibleSelection(start, end));
 
     return { };
 }

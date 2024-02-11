@@ -67,6 +67,7 @@ public:
     LayoutRect visualOverflowRectEquivalent() const { return SVGBoundingBoxComputation::computeVisualOverflowRect(*this); }
 
     RenderSVGViewportContainer* viewportContainer() const;
+    CheckedPtr<RenderSVGViewportContainer> checkedViewportContainer() const;
 
 private:
     void element() const = delete;

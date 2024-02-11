@@ -46,7 +46,7 @@ Node::InsertedIntoAncestorResult SVGTitleElement::insertedIntoAncestor(Insertion
 {
     auto result = SVGElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
     if (insertionType.connectedToDocument && parentNode() == document().documentElement())
-        document().titleElementAdded(*this);
+        protectedDocument()->titleElementAdded(*this);
     return result;
 }
 
@@ -62,15 +62,17 @@ static bool isTitleElementRemovedFromSVGSVGElement(SVGTitleElement& title, Conta
 void SVGTitleElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
     SVGElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
-    if (removalType.disconnectedFromDocument && isTitleElementRemovedFromSVGSVGElement(*this, oldParentOfRemovedTree))
-        document().titleElementRemoved(*this);
+    if (removalType.disconnectedFromDocument && isTitleElementRemovedFromSVGSVGElement(*this, oldParentOfRemovedTree)) {
+        RefAllowingPartiallyDestroyed<Document> document = this->document();
+        document->titleElementRemoved(*this);
+    }
 }
 
 void SVGTitleElement::childrenChanged(const ChildChange& change)
 {
     SVGElement::childrenChanged(change);
     if (isConnected() && parentNode() == document().documentElement())
-        document().titleElementTextChanged(*this);
+        protectedDocument()->titleElementTextChanged(*this);
 }
 
-}
+} // namespace WebCore
