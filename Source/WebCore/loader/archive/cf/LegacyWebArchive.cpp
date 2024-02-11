@@ -788,7 +788,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::createFromSelection(LocalFrame* frame
     builder.append(documentTypeString(*document));
 
     Vector<Ref<Node>> nodeList;
-    builder.append(serializePreservingVisualAppearance(frame->selection().selection(), ResolveURLs::No, SerializeComposedTree::Yes, IgnoreUserSelectNone::Yes, &nodeList));
+    builder.append(serializePreservingVisualAppearance(frame->selection().selection(), ResolveURLs::No, SerializeComposedTree::Yes, IgnoreUserSelectNone::Yes, PreserveBaseElement::Yes, &nodeList));
 
     auto archive = create(builder.toString(), *frame, WTFMove(nodeList), nullptr);
     if (!archive)
