@@ -381,14 +381,18 @@ static inline bool isAtSoftWrapOpportunity(const InlineItem& previous, const Inl
     // but an incoming text content would not necessarily.
     ASSERT(previous.isText() || previous.isBox() || previous.layoutBox().isRubyInlineBox());
     ASSERT(next.isText() || next.isBox() || next.layoutBox().isRubyInlineBox());
+
+    if (previous.layoutBox().isRubyInlineBox() || next.layoutBox().isRubyInlineBox())
+        return RubyFormattingContext::isAtSoftWrapOpportunity(previous, next);
+
+    auto mayWrapPrevious = TextUtil::isWrappingAllowed(previous.layoutBox().parent().style());
+    auto mayWrapNext = TextUtil::isWrappingAllowed(next.layoutBox().parent().style());
+    if (&previous.layoutBox().parent() == &next.layoutBox().parent() && !mayWrapPrevious && !mayWrapNext)
+        return false;
+
     if (previous.isText() && next.isText()) {
         auto& previousInlineTextItem = downcast<InlineTextItem>(previous);
         auto& nextInlineTextItem = downcast<InlineTextItem>(next);
-
-        auto mayWrapPrevious = TextUtil::isWrappingAllowed(previousInlineTextItem.style());
-        auto mayWrapNext = TextUtil::isWrappingAllowed(nextInlineTextItem.style());
-        if (&previousInlineTextItem.layoutBox().parent() == &nextInlineTextItem.layoutBox().parent() && !mayWrapPrevious && !mayWrapNext)
-            return false;
         if (previousInlineTextItem.isWhitespace()) {
             // "<nowrap> </nowrap>after"
             return mayWrapPrevious;
@@ -423,8 +427,6 @@ static inline bool isAtSoftWrapOpportunity(const InlineItem& previous, const Inl
         // The line breaking behavior of a replaced element or other atomic inline is equivalent to an ideographic character.
         return true;
     }
-    if (previous.layoutBox().isRubyInlineBox() || next.layoutBox().isRubyInlineBox())
-        return RubyFormattingContext::isAtSoftWrapOpportunity(previous, next);
 
     ASSERT_NOT_REACHED();
     return true;
