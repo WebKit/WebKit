@@ -37,7 +37,7 @@ namespace WebCore {
 
 template<typename CharacterType> static bool isMediaTypeCharacter(CharacterType c)
 {
-    return !isUnicodeCompatibleASCIIWhitespace(c) && c != '/';
+    return !isASCIIWhitespace(c) && c != '/';
 }
 
 ContentSecurityPolicyMediaListDirective::ContentSecurityPolicyMediaListDirective(const ContentSecurityPolicyDirectiveList& directiveList, const String& name, const String& value)
@@ -63,7 +63,7 @@ void ContentSecurityPolicyMediaListDirective::parse(const String& value)
         while (buffer.hasCharactersRemaining()) {
             // _____ OR _____mime1/mime1
             // ^        ^
-            skipWhile<isUnicodeCompatibleASCIIWhitespace>(buffer);
+            skipWhile<isASCIIWhitespace>(buffer);
             if (buffer.atEnd())
                 return;
 
@@ -103,7 +103,7 @@ void ContentSecurityPolicyMediaListDirective::parse(const String& value)
             }
             m_pluginTypes.add(String(begin, buffer.position() - begin));
 
-            ASSERT(buffer.atEnd() || isUnicodeCompatibleASCIIWhitespace(*buffer));
+            ASSERT(buffer.atEnd() || isASCIIWhitespace(*buffer));
         }
     });
 }
