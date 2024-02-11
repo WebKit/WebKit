@@ -313,9 +313,7 @@ public:
         ASSERT(m_callback);
         if (!m_callback)
             return;
-        m_callback->disconnect();
-        m_callback = nullptr;
-
+        std::exchange(m_callback, nullptr)->disconnect();
     }
 
 private:
