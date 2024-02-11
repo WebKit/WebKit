@@ -85,11 +85,16 @@ template<typename CharacterType> static bool isNotColonOrSlash(CharacterType c)
     return c != ':' && c != '/';
 }
 
+template<typename CharacterType> static bool isKeywordSource(StringParsingBuffer<CharacterType>& buffer, ASCIILiteral literal)
+{
+    return skipExactlyIgnoringASCIICase(buffer, literal) && (buffer.atEnd() || isUnicodeCompatibleASCIIWhitespace(*buffer));
+}
+
 template<typename CharacterType> static bool isSourceListNone(StringParsingBuffer<CharacterType> buffer)
 {
     skipWhile<isUnicodeCompatibleASCIIWhitespace>(buffer);
 
-    if (!skipExactlyIgnoringASCIICase(buffer, "'none'"_s))
+    if (!isKeywordSource(buffer, "'none'"_s))
         return false;
 
     skipWhile<isUnicodeCompatibleASCIIWhitespace>(buffer);
@@ -290,7 +295,7 @@ template<typename CharacterType> std::optional<ContentSecurityPolicySourceList::
     if (buffer.atEnd())
         return std::nullopt;
 
-    if (skipExactlyIgnoringASCIICase(buffer, "'none'"_s))
+    if (isKeywordSource(buffer, "'none'"_s))
         return std::nullopt;
 
     Source source;
@@ -300,7 +305,7 @@ template<typename CharacterType> std::optional<ContentSecurityPolicySourceList::
         return source;
     }
 
-    if (skipExactlyIgnoringASCIICase(buffer, "'strict-dynamic'"_s)
+    if (isKeywordSource(buffer, "'strict-dynamic'"_s)
         && extensionModeAllowsKeywordsForDirective(m_contentSecurityPolicyModeForExtension, m_directiveName)
         && (m_directiveName == ContentSecurityPolicyDirectiveNames::scriptSrc
             || m_directiveName == ContentSecurityPolicyDirectiveNames::scriptSrcElem || m_directiveName == ContentSecurityPolicyDirectiveNames::defaultSrc)) {
@@ -310,33 +315,33 @@ template<typename CharacterType> std::optional<ContentSecurityPolicySourceList::
         return source;
     }
 
-    if (skipExactlyIgnoringASCIICase(buffer, "'self'"_s)) {
+    if (isKeywordSource(buffer, "'self'"_s)) {
         m_allowSelf = !m_allowNonParserInsertedScripts;
-        return source;
+            return source;
     }
 
-    if (skipExactlyIgnoringASCIICase(buffer, "'unsafe-inline'"_s) && !isRestrictedDirectiveForMode(m_directiveName, m_contentSecurityPolicyModeForExtension)) {
+    if (isKeywordSource(buffer, "'unsafe-inline'"_s) && !isRestrictedDirectiveForMode(m_directiveName, m_contentSecurityPolicyModeForExtension)) {
         m_allowInline = !m_allowNonParserInsertedScripts;
         return source;
     }
 
-    if (skipExactlyIgnoringASCIICase(buffer, "'unsafe-eval'"_s) && extensionModeAllowsKeywordsForDirective(m_contentSecurityPolicyModeForExtension, m_directiveName)) {
+    if (isKeywordSource(buffer, "'unsafe-eval'"_s) && extensionModeAllowsKeywordsForDirective(m_contentSecurityPolicyModeForExtension, m_directiveName)) {
         m_allowEval = true;
         m_allowWasmEval = true;
         return source;
     }
 
-    if (skipExactlyIgnoringASCIICase(buffer, "'wasm-unsafe-eval'"_s) && extensionModeAllowsKeywordsForDirective(m_contentSecurityPolicyModeForExtension, m_directiveName)) {
+    if (isKeywordSource(buffer, "'wasm-unsafe-eval'"_s) && extensionModeAllowsKeywordsForDirective(m_contentSecurityPolicyModeForExtension, m_directiveName)) {
         m_allowWasmEval = true;
         return source;
     }
 
-    if (skipExactlyIgnoringASCIICase(buffer, "'unsafe-hashes'"_s) && extensionModeAllowsKeywordsForDirective(m_contentSecurityPolicyModeForExtension, m_directiveName)) {
+    if (isKeywordSource(buffer, "'unsafe-hashes'"_s) && extensionModeAllowsKeywordsForDirective(m_contentSecurityPolicyModeForExtension, m_directiveName)) {
         m_allowUnsafeHashes = true;
         return source;
     }
 
-    if (skipExactlyIgnoringASCIICase(buffer, "'report-sample'"_s) && extensionModeAllowsKeywordsForDirective(m_contentSecurityPolicyModeForExtension, m_directiveName)) {
+    if (isKeywordSource(buffer, "'report-sample'"_s) && extensionModeAllowsKeywordsForDirective(m_contentSecurityPolicyModeForExtension, m_directiveName)) {
         m_reportSample = true;
         return source;
     }
