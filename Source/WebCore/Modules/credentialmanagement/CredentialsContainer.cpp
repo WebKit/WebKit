@@ -144,17 +144,6 @@ void CredentialsContainer::preventSilentAccess(DOMPromiseDeferred<void>&& promis
     promise.resolve();
 }
 
-void CredentialsContainer::requestIdentity(DigitalCredentialRequestOptions&& options, DigitalIdentityPromise&& promise)
-{
-    if (options.signal && options.signal->aborted()) {
-        promise.reject(Exception { ExceptionCode::AbortError, "Aborted by AbortSignal."_s });
-        return;
-    }
-    std::span<uint8_t> emptySpan;
-    Ref<ArrayBuffer> emptyArrayBuffer = ArrayBuffer::create(emptySpan);
-    promise.resolve(DigitalIdentity::create(WTFMove(emptyArrayBuffer)));
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(WEB_AUTHN)

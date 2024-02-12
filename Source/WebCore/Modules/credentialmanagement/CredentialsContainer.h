@@ -58,8 +58,6 @@ public:
 
     void preventSilentAccess(DOMPromiseDeferred<void>&&) const;
 
-    void requestIdentity(DigitalCredentialRequestOptions&&, DigitalIdentityPromise&&);
-
 private:
     CredentialsContainer(WeakPtr<Document, WeakPtrImplWithEventTargetData>&&);
 
