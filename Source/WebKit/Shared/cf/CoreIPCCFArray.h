@@ -38,6 +38,7 @@ class CoreIPCCFArray {
 public:
     CoreIPCCFArray(CFArrayRef);
     CoreIPCCFArray(Vector<CoreIPCCFType>&&);
+    CoreIPCCFArray(CoreIPCCFArray&&);
     ~CoreIPCCFArray();
     RetainPtr<CFArrayRef> createCFArray() const;
     const Vector<CoreIPCCFType>& array() const { return m_array; }

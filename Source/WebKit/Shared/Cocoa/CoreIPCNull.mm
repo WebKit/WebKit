@@ -23,20 +23,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
+#import "CoreIPCNull.h"
 
-#include <wtf/RetainPtr.h>
+namespace WebKit {
 
-namespace IPC {
-
-template<typename T>
-class CoreIPCRetainPtr : public RetainPtr<T> {
-public:
-    CoreIPCRetainPtr() = default;
-    CoreIPCRetainPtr(T *object)
-        : RetainPtr<T>(object) { }
-    CoreIPCRetainPtr(RetainPtr<T>&& object)
-        : RetainPtr<T>(WTFMove(object)) { }
-};
-
+CoreIPCNull::CoreIPCNull(NSNull *n)
+{
+    ASSERT_UNUSED(n, n == NSNull.null);
 }
+
+CoreIPCNull::CoreIPCNull(CFNullRef n)
+{
+    ASSERT_UNUSED(n, n == kCFNull);
+}
+
+RetainPtr<NSNull> CoreIPCNull::toID() const
+{
+    return NSNull.null;
+}
+
+RetainPtr<CFNullRef> CoreIPCNull::toCFObject() const
+{
+    return kCFNull;
+}
+
+} // namespace WebKit

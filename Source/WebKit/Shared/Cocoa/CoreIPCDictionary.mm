@@ -51,6 +51,16 @@ CoreIPCDictionary::CoreIPCDictionary(NSDictionary *dictionary)
     }
 }
 
+CoreIPCDictionary::CoreIPCDictionary(const RetainPtr<NSDictionary>& dictionary)
+    : CoreIPCDictionary(dictionary.get()) { }
+
+CoreIPCDictionary::CoreIPCDictionary(CoreIPCDictionary&&) = default;
+
+CoreIPCDictionary::~CoreIPCDictionary() = default;
+
+CoreIPCDictionary::CoreIPCDictionary(ValueType&& keyValuePairs)
+    : m_keyValuePairs(WTFMove(keyValuePairs)) { }
+
 bool CoreIPCDictionary::keyHasValueOfType(const String& key, IPC::NSType type) const
 {
     createNSDictionaryIfNeeded();

@@ -42,6 +42,16 @@ CoreIPCArray::CoreIPCArray(NSArray *array)
     }
 }
 
+CoreIPCArray::CoreIPCArray(const RetainPtr<NSArray>& array)
+    : CoreIPCArray(array.get()) { }
+
+CoreIPCArray::CoreIPCArray(CoreIPCArray&&) = default;
+
+CoreIPCArray::~CoreIPCArray() = default;
+
+CoreIPCArray::CoreIPCArray(Vector<CoreIPCNSCFObject>&& array)
+    : m_array(WTFMove(array)) { }
+
 RetainPtr<id> CoreIPCArray::toID() const
 {
     auto result = adoptNS([[NSMutableArray alloc] initWithCapacity:m_array.size()]);

@@ -25,9 +25,6 @@
 #include "config.h"
 #include "TestWithCVPixelBuffer.h"
 
-#if USE(AVFOUNDATION)
-#include "ArgumentCodersCF.h" // NOLINT
-#endif
 #include "Decoder.h" // NOLINT
 #include "HandleMessage.h" // NOLINT
 #include "TestWithCVPixelBufferMessages.h" // NOLINT

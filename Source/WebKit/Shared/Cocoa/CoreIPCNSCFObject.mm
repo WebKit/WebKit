@@ -115,6 +115,8 @@ static ObjectValue valueFromID(id object)
         return CoreIPCNSValue((NSValue *)object);
     case IPC::NSType::Number:
         return CoreIPCNumber(bridge_cast((NSNumber *)object));
+    case IPC::NSType::Null:
+        return CoreIPCNull((NSNull *)object);
     case IPC::NSType::PersonNameComponents:
         return CoreIPCPersonNameComponents((NSPersonNameComponents *)object);
     case IPC::NSType::PresentationIntent:

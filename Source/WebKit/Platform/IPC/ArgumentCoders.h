@@ -790,6 +790,7 @@ template<> struct ArgumentCoder<StringView> {
 };
 
 template<> struct ArgumentCoder<std::nullptr_t> {
+    template<typename Encoder>
     static void encode(Encoder&, const std::nullptr_t&) { }
     static std::optional<std::nullptr_t> decode(Decoder&) { return nullptr; }
 };

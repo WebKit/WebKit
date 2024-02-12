@@ -161,10 +161,6 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringHash.h>
 
-#if PLATFORM(COCOA)
-#include "ArgumentCodersCF.h"
-#endif
-
 #if PLATFORM(IOS_FAMILY)
 #include <WebCore/SelectionGeometry.h>
 #endif // PLATFORM(IOS_FAMILY)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,31 +25,21 @@
 
 #pragma once
 
-#include <Security/SecCertificate.h>
-#include <Security/SecTrust.h>
-#include <wtf/ArgumentCoder.h>
 #include <wtf/RetainPtr.h>
 
-typedef struct CGColorSpace* CGColorSpaceRef;
+OBJC_CLASS NSNull;
+typedef const struct __CFNull * CFNullRef;
 
-namespace IPC {
+namespace WebKit {
 
-class Encoder;
-class Decoder;
+class CoreIPCNull {
+public:
+    CoreIPCNull() = default;
+    CoreIPCNull(NSNull *);
+    CoreIPCNull(CFNullRef);
 
-template<typename T>
-struct CFRetainPtrArgumentCoder {
-    template<typename Encoder> static void encode(Encoder& encoder, const RetainPtr<T>& retainPtr)
-    {
-        ArgumentCoder<T>::encode(encoder, retainPtr.get());
-    }
+    RetainPtr<NSNull> toID() const;
+    RetainPtr<CFNullRef> toCFObject() const;
 };
 
-template<> struct ArgumentCoder<CFTypeRef> {
-    template<typename Encoder> static void encode(Encoder&, CFTypeRef);
-};
-template<> struct ArgumentCoder<RetainPtr<CFTypeRef>> : CFRetainPtrArgumentCoder<CFTypeRef> {
-    static std::optional<RetainPtr<CFTypeRef>> decode(Decoder&);
-};
-
-} // namespace IPC
+}

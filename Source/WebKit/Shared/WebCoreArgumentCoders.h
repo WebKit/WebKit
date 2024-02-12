@@ -81,10 +81,6 @@
 #include <WebCore/MockContentFilterSettings.h>
 #endif
 
-#if PLATFORM(COCOA)
-#include "ArgumentCodersCF.h"
-#endif
-
 OBJC_CLASS VKCImageAnalysis;
 
 #if USE(AVFOUNDATION)

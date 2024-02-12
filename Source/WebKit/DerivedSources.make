@@ -558,6 +558,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/Cocoa/CoreIPCLocale.serialization.in \
 	Shared/Cocoa/CoreIPCNSCFObject.serialization.in \
 	Shared/Cocoa/CoreIPCNSValue.serialization.in \
+	Shared/Cocoa/CoreIPCNull.serialization.in \
 	Shared/Cocoa/CoreIPCPassKit.serialization.in \
 	Shared/Cocoa/CoreIPCPersonNameComponents.serialization.in \
 	Shared/Cocoa/CoreIPCPresentationIntent.serialization.in \

@@ -22,6 +22,9 @@
 
 #if USE(CF)
 
+[WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->toCFType()] CFTypeRef wrapped by WebKit::CoreIPCCFType {
+}
+
 [WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->data()] CFDataRef wrapped by WebKit::CoreIPCData {
 }
 
@@ -44,6 +47,9 @@
 }
 
 [WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createCFURL()] CFURLRef wrapped by WebKit::CoreIPCCFURL {
+}
+
+[WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->toCFObject()] CFNullRef wrapped by WebKit::CoreIPCNull {
 }
 
 #if HAVE(SEC_ACCESS_CONTROL)

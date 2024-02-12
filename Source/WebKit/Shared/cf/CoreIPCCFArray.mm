@@ -39,6 +39,8 @@ CoreIPCCFArray::CoreIPCCFArray(Vector<CoreIPCCFType>&& array)
 
 CoreIPCCFArray::~CoreIPCCFArray() = default;
 
+CoreIPCCFArray::CoreIPCCFArray(CoreIPCCFArray&&) = default;
+
 CoreIPCCFArray::CoreIPCCFArray(CFArrayRef array)
 {
     CFIndex count = array ? CFArrayGetCount(array) : 0;

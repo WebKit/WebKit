@@ -680,7 +680,7 @@ def class_template_headers(template_string):
         'IPC::ArrayReferenceTuple': {'headers': ['"ArrayReferenceTuple.h"'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
         'Ref': {'headers': ['<wtf/Ref.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
         'RefPtr': {'headers': ['<wtf/RefCounted.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
-        'RetainPtr': {'headers': ['<wtf/RetainPtr.h>'], 'argument_coder_headers': ['"ArgumentCodersCF.h"']},
+        'RetainPtr': {'headers': ['<wtf/RetainPtr.h>'], 'argument_coder_headers': []},
         'WebCore::ProcessQualified': {'headers': ['<WebCore/ProcessQualified.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
         'std::unique_ptr': {'headers': ['<memory>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
     }

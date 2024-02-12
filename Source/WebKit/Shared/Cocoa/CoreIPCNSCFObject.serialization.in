@@ -22,7 +22,7 @@
 
 #if USE(CF)
 
-webkit_platform_headers: "ArgumentCodersCocoa.h" "ArgumentCodersCF.h" "CoreIPCNSCFObject.h"
+webkit_platform_headers: "ArgumentCodersCocoa.h" "CoreIPCNSCFObject.h"
 
 [WebKitPlatform] class WebKit::CoreIPCNSCFObject {
     [Validator='WebKit::CoreIPCNSCFObject::valueIsAllowed(decoder, *value)'] UniqueRef<WebKit::ObjectValue> value();

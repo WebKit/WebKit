@@ -233,6 +233,7 @@ $(PROJECT_DIR)/Shared/Cocoa/CoreIPCFont.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCLocale.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCNSCFObject.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCNSValue.serialization.in
+$(PROJECT_DIR)/Shared/Cocoa/CoreIPCNull.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCPassKit.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCPersonNameComponents.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCPresentationIntent.serialization.in

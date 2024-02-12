@@ -25,7 +25,6 @@
 
 #import "config.h"
 
-#import "ArgumentCodersCF.h"
 #import "ArgumentCodersCocoa.h"
 #import "CoreIPCError.h"
 #import "Encoder.h"
@@ -81,20 +80,23 @@ struct CFHolderForTesting {
     CFTypeRef valueAsCFType() const
     {
         CFTypeRef result;
-        std::visit([&](auto&& arg) {
+        WTF::switchOn(value, [&] (std::nullptr_t) {
+            result = nullptr;
+        }, [&](auto&& arg) {
             result = arg.get();
-        }, value);
+        });
         return result;
     }
 
-    typedef std::variant<
+    using ValueType = std::variant<
+        std::nullptr_t,
         RetainPtr<CFArrayRef>,
         RetainPtr<CFBooleanRef>,
         RetainPtr<CFCharacterSetRef>,
         RetainPtr<CFDataRef>,
         RetainPtr<CFDateRef>,
         RetainPtr<CFDictionaryRef>,
-        // FIXME: Test CFNullRef. It can be serialized, but doesn't have a direct serializer.
+        RetainPtr<CFNullRef>,
         RetainPtr<CFNumberRef>,
         RetainPtr<CFStringRef>,
         RetainPtr<CFURLRef>,
@@ -111,7 +113,7 @@ struct CFHolderForTesting {
         RetainPtr<SecAccessControlRef>,
 #endif
         RetainPtr<SecTrustRef>
-    > ValueType;
+    >;
 
     ValueType value;
 };
@@ -213,7 +215,8 @@ static bool secTrustRefsEqual(SecTrustRef trust1, SecTrustRef trust2)
 
 CFHolderForTesting cfHolder(CFTypeRef type)
 {
-    EXPECT_NOT_NULL(type); // FIXME: Test null somehow if possible.
+    if (!type)
+        return { nullptr };
     CFTypeID typeID = CFGetTypeID(type);
     if (typeID == CFArrayGetTypeID())
         return { (CFArrayRef)type };
@@ -264,6 +267,9 @@ inline bool operator==(const CFHolderForTesting& a, const CFHolderForTesting& b)
 {
     auto aObject = a.valueAsCFType();
     auto bObject = b.valueAsCFType();
+
+    if (!aObject && !bObject)
+        return true;
 
     EXPECT_TRUE(aObject);
     EXPECT_TRUE(bObject);
@@ -342,13 +348,16 @@ struct ObjCHolderForTesting {
     id valueAsID() const
     {
         id result;
-        std::visit([&](auto&& arg) {
+        WTF::switchOn(value, [&] (std::nullptr_t) {
+            result = nil;
+        }, [&](auto&& arg) {
             result = arg.get();
-        }, value);
+        });
         return result;
     }
 
     typedef std::variant<
+        std::nullptr_t,
         RetainPtr<NSDate>,
         RetainPtr<NSString>,
         RetainPtr<NSURL>,
@@ -358,6 +367,7 @@ struct ObjCHolderForTesting {
         RetainPtr<NSDictionary>,
         RetainPtr<WebCore::CocoaFont>,
         RetainPtr<NSError>,
+        RetainPtr<NSNull>,
         RetainPtr<NSLocale>,
 #if ENABLE(DATA_DETECTION)
 #if PLATFORM(MAC)
@@ -501,6 +511,9 @@ inline bool operator==(const ObjCHolderForTesting& a, const ObjCHolderForTesting
 
     id aObject = a.valueAsID();
     id bObject = b.valueAsID();
+
+    if (!aObject && !bObject)
+        return true;
 
     EXPECT_TRUE(aObject != nil);
     EXPECT_TRUE(bObject != nil);
@@ -997,10 +1010,9 @@ TEST(IPCSerialization, Basic)
         (id)kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly : @(YES),
         (id)kSecAttrAccessibleWhenUnlocked: @(YES) };
     SecAccessControlCreateFlags flags = (kSecAccessControlDevicePasscode | kSecAccessControlBiometryAny | kSecAccessControlOr);
-    SecAccessControlRef accessControlRef = SecAccessControlCreateWithFlags(kCFAllocatorDefault, (CFTypeRef)protection, flags, NULL);
+    auto accessControlRef = adoptCF(SecAccessControlCreateWithFlags(kCFAllocatorDefault, (CFTypeRef)protection, flags, NULL));
     EXPECT_NOT_NULL(accessControlRef);
-    runTestCF({ accessControlRef });
-    CFRelease(accessControlRef);
+    runTestCF({ accessControlRef.get() });
 #endif // HAVE(SEC_ACCESS_CONTROL)
 
     // SecKeychainItem
@@ -1010,16 +1022,16 @@ TEST(IPCSerialization, Basic)
     SecKeychainRef tempKeychain = getTempKeychain();
     CFDataRef certData = NULL;
     EXPECT_TRUE(SecItemExport(cert.get(), kSecFormatX509Cert, kSecItemPemArmour, nil, &certData) == errSecSuccess);
-    CFArrayRef items = NULL;
-    EXPECT_TRUE(SecKeychainItemImport(certData, CFSTR(".pem"), NULL, NULL, 0, NULL, tempKeychain, &items) == errSecSuccess);
-    EXPECT_NOT_NULL(items);
-    EXPECT_GT(CFArrayGetCount(items), 0);
+    CFArrayRef itemsPtr = NULL;
+    EXPECT_TRUE(SecKeychainItemImport(certData, CFSTR(".pem"), NULL, NULL, 0, NULL, tempKeychain, &itemsPtr) == errSecSuccess);
+    EXPECT_NOT_NULL(itemsPtr);
+    auto items = adoptCF(itemsPtr);
+    EXPECT_GT(CFArrayGetCount(items.get()), 0);
 
-    SecKeychainItemRef keychainItemRef = (SecKeychainItemRef)CFArrayGetValueAtIndex(items, 0);
+    SecKeychainItemRef keychainItemRef = (SecKeychainItemRef)CFArrayGetValueAtIndex(items.get(), 0);
     EXPECT_NOT_NULL(keychainItemRef);
     runTestCF({ keychainItemRef });
 
-    CFRelease(items);
     CFRelease(certData);
 
     destroyTempKeychain(tempKeychain);
@@ -1030,9 +1042,23 @@ TEST(IPCSerialization, Basic)
         @YES,
         @(5.4),
         NSData.data,
-        // FIXME: Test the remainder of the CFTypeRef types in an array.
+        NSDate.now,
+        NSNull.null,
+        url,
+        (id)sRGBColorSpace.get(),
+        (id)cgColor.get(),
+        (id)trust.get(),
+        (id)cert.get(),
+        (id)characterSet.get(),
+#if HAVE(SEC_KEYCHAIN)
+        (id)keychainItemRef,
+#endif
+#if HAVE(SEC_ACCESS_CONTROL)
+        (id)accessControlRef.get(),
+#endif
         @{ @"key": NSNull.null }
     ];
+
     runTestCFWithExpectedResult({ (__bridge CFArrayRef)@[
         nestedArray,
         (id)trust.get(),
@@ -1098,6 +1124,11 @@ TEST(IPCSerialization, Basic)
 
     NSPresentationIntent *tableCellIntent = [NSPresentationIntent tableCellIntentWithIdentity:intentID++ column:1 nestedInsideIntent:tableRowIntent];
     runTestNS({ tableCellIntent });
+
+    runTestNS({ NSNull.null });
+    runTestCF({ kCFNull });
+    runTestNS({ nil });
+    runTestCF({ nullptr });
 }
 
 #if PLATFORM(MAC)

@@ -28,7 +28,6 @@
 
 #if PLATFORM(COCOA)
 
-#import "ArgumentCodersCF.h"
 #import "CoreIPCNSCFObject.h"
 #import "CoreIPCTypes.h"
 #import "CoreTextHelpers.h"
@@ -387,6 +386,8 @@ NSType typeFromObject(id object)
         return NSType::Locale;
     if ([object isKindOfClass:[NSNumber class]])
         return NSType::Number;
+    if ([object isKindOfClass:[NSNull class]])
+        return NSType::Null;
     if ([object isKindOfClass:[NSValue class]])
         return NSType::NSValue;
     if ([object isKindOfClass:[NSPersonNameComponents class]])

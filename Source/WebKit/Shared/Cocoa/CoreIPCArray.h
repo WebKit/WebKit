@@ -37,20 +37,16 @@ class CoreIPCNSCFObject;
 class CoreIPCArray {
 public:
     CoreIPCArray(NSArray *);
-    CoreIPCArray(const RetainPtr<NSArray>& array)
-        : CoreIPCArray(array.get())
-    {
-    }
+    CoreIPCArray(const RetainPtr<NSArray>&);
+    CoreIPCArray(CoreIPCArray&&);
+    ~CoreIPCArray();
 
     RetainPtr<id> toID() const;
 
 private:
     friend struct IPC::ArgumentCoder<CoreIPCArray, void>;
 
-    CoreIPCArray(Vector<CoreIPCNSCFObject>&& array)
-        : m_array(WTFMove(array))
-    {
-    }
+    CoreIPCArray(Vector<CoreIPCNSCFObject>&&);
 
     Vector<CoreIPCNSCFObject> m_array;
 };

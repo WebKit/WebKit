@@ -58,6 +58,7 @@ class CoreIPCFont;
 class CoreIPCLocale;
 class CoreIPCNSValue;
 class CoreIPCNumber;
+class CoreIPCNull;
 class CoreIPCSecureCoding;
 class CoreIPCString;
 class CoreIPCURL;
@@ -96,6 +97,7 @@ using ObjectValue = std::variant<
     CoreIPCLocale,
     CoreIPCNSValue,
     CoreIPCNumber,
+    CoreIPCNull,
     CoreIPCPersonNameComponents,
     CoreIPCPresentationIntent,
     CoreIPCSecureCoding,

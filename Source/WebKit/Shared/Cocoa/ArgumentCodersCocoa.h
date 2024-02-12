@@ -100,6 +100,7 @@ enum class NSType : uint8_t {
     Font,
     Locale,
     Number,
+    Null,
     PersonNameComponents,
     PresentationIntent,
     SecureCoding,

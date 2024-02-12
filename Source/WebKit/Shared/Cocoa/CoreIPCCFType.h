@@ -25,33 +25,86 @@
 
 #pragma once
 
-#if PLATFORM(COCOA)
-
 #include "CoreIPCRetainPtr.h"
 #include <wtf/ArgumentCoder.h>
+#include <wtf/UniqueRef.h>
+
+namespace WebCore {
+class Color;
+}
 
 namespace WebKit {
 
+class CoreIPCCFArray;
+class CoreIPCBoolean;
+class CoreIPCCFCharacterSet;
+class CoreIPCColor;
+class CoreIPCData;
+class CoreIPCDate;
+class CoreIPCCFDictionary;
+class CoreIPCNull;
+class CoreIPCNumber;
+class CoreIPCString;
+class CoreIPCCFURL;
+class CoreIPCCGColorSpace;
+class CoreIPCSecCertificate;
+class CoreIPCSecTrust;
+#if HAVE(SEC_KEYCHAIN)
+class CoreIPCSecKeychainItem;
+#endif
+#if HAVE(SEC_ACCESS_CONTROL)
+class CoreIPCSecAccessControl;
+#endif
+
+using CFObjectValue = std::variant<
+    std::nullptr_t,
+    CoreIPCCFArray,
+    CoreIPCBoolean,
+    CoreIPCCFCharacterSet,
+    CoreIPCData,
+    CoreIPCDate,
+    CoreIPCCFDictionary,
+    CoreIPCNull,
+    CoreIPCNumber,
+    CoreIPCString,
+    CoreIPCCFURL,
+    CoreIPCSecCertificate,
+    CoreIPCSecTrust,
+    CoreIPCCGColorSpace,
+    WebCore::Color
+#if HAVE(SEC_KEYCHAIN)
+    , CoreIPCSecKeychainItem
+#endif
+#if HAVE(SEC_ACCESS_CONTROL)
+    , CoreIPCSecAccessControl
+#endif
+>;
+
 class CoreIPCCFType {
 public:
-    CoreIPCCFType(CFTypeRef cfType)
-        : m_cfType(cfType)
-    {
-    }
+    CoreIPCCFType(CFTypeRef);
+    CoreIPCCFType(CoreIPCCFType&&);
+    CoreIPCCFType(UniqueRef<CFObjectValue>&&);
+    ~CoreIPCCFType();
 
-    CoreIPCCFType(RetainPtr<CFTypeRef>&& cfType)
-        : m_cfType(WTFMove(cfType))
-    {
-    }
-
-    RetainPtr<id> toID() const { return (__bridge id)(m_cfType.get()); }
+    const UniqueRef<CFObjectValue>& object() const { return m_object; }
+    RetainPtr<id> toID() const;
+    RetainPtr<CFTypeRef> toCFType() const;
 
 private:
-    friend struct IPC::ArgumentCoder<CoreIPCCFType, void>;
-
-    IPC::CoreIPCRetainPtr<CFTypeRef> m_cfType;
+    UniqueRef<CFObjectValue> m_object;
 };
 
 } // namespace WebKit
 
-#endif // PLATFORM(COCOA)
+namespace IPC {
+
+// This ArgumentCoders specialization for UniqueRef<CFObjectValue> is to allow us to use
+// makeUniqueRefWithoutFastMallocCheck<>, since we can't make the variant fast malloc'ed
+template<> struct ArgumentCoder<UniqueRef<WebKit::CFObjectValue>> {
+    template<typename Encoder>
+    static void encode(Encoder&, const UniqueRef<WebKit::CFObjectValue>&);
+    static std::optional<UniqueRef<WebKit::CFObjectValue>> decode(Decoder&);
+};
+
+} // namespace IPC
