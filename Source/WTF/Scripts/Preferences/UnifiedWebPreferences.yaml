@@ -1341,17 +1341,17 @@ CSSStartingStyleAtRuleEnabled:
 
 CSSStyleQueriesEnabled:
   type: bool
-  status: testable
+  status: stable
   category: css
   humanReadableName: "CSS style queries"
   humanReadableDescription: "Enable CSS style queries for custom properties"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 CSSTextBoxTrimEnabled:
   type: bool
