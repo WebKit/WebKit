@@ -313,6 +313,19 @@ bool ensureGStreamerInitialized()
             gst_mpegts_initialize();
 #endif
 
+#if PLATFORM(BCM_NEXUS)
+        {
+            auto registry = gst_registry_get();
+            GRefPtr<GstPluginFeature> brcmaudfilter = adoptGRef(gst_registry_lookup_feature(registry, "brcmaudfilter"));
+            GRefPtr<GstPluginFeature> mpegaudioparse = adoptGRef(gst_registry_lookup_feature(registry, "mpegaudioparse"));
+
+            if (brcmaudfilter && mpegaudioparse) {
+                GST_INFO("overriding mpegaudioparse rank with brcmaudfilter rank + 1");
+                gst_plugin_feature_set_rank(mpegaudioparse.get(), gst_plugin_feature_get_rank(brcmaudfilter.get()) + 1);
+            }
+        }
+#endif
+
         registerAppsinkWithWorkaroundsIfNeeded();
 #endif
     });
