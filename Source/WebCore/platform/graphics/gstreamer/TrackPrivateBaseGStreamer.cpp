@@ -55,6 +55,17 @@ char TrackPrivateBaseGStreamer::prefixForType(TrackType trackType)
         }
 }
 
+static AtomString trimStreamId(StringView streamId)
+{
+    StringView trimmedStreamId = streamId.trim([](auto c) {
+        return c == '0';
+    });
+
+    if (trimmedStreamId.isEmpty())
+        return AtomString::fromLatin1("0");
+    return AtomString(trimmedStreamId.toString());
+}
+
 AtomString TrackPrivateBaseGStreamer::generateUniquePlaybin2StreamID(TrackType trackType, unsigned index)
 {
     return makeAtomString(prefixForType(trackType), index);
@@ -93,7 +104,7 @@ TrackPrivateBaseGStreamer::TrackPrivateBaseGStreamer(TrackType type, TrackPrivat
 TrackPrivateBaseGStreamer::TrackPrivateBaseGStreamer(TrackType type, TrackPrivateBase* owner, unsigned index, GstStream* stream)
     : m_notifier(MainThreadNotifier<MainThreadNotification>::create())
     , m_index(index)
-    , m_stringId(AtomString::fromLatin1(gst_stream_get_stream_id(stream)))
+    , m_stringId(trimStreamId(StringView::fromLatin1(gst_stream_get_stream_id(stream))))
     , m_id(trackIdFromStringIdOrIndex(type, m_stringId, index))
     , m_stream(stream)
     , m_type(type)
@@ -291,7 +302,7 @@ void TrackPrivateBaseGStreamer::notifyTrackOfStreamChanged()
         return;
 
     GST_INFO("Track %d got stream start for stream %s.", m_index, streamId.get());
-    m_stringId = AtomString::fromLatin1(streamId.get());
+    m_stringId = trimStreamId(StringView::fromLatin1(streamId.get()));
 }
 
 void TrackPrivateBaseGStreamer::streamChanged()
@@ -361,7 +372,7 @@ String TrackPrivateBaseGStreamer::trackIdFromPadStreamStartOrUniqueID(TrackType 
     if (position == notFound || position + 1 == streamIdView.length())
         return generateUniquePlaybin2StreamID(type, index);
 
-    return streamIdView.substring(position + 1).toString();
+    return trimStreamId(streamIdView.substring(position + 1));
 }
 
 TrackID TrackPrivateBaseGStreamer::trackIdFromStringIdOrIndex(TrackType type, const AtomString& stringId, unsigned index)
