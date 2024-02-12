@@ -76,6 +76,11 @@
 #include "FontSetCache.h"
 #endif
 
+#if USE(SKIA)
+#include "SkiaHarfBuzzFontCache.h"
+#include <skia/core/SkFontMgr.h>
+#endif
+
 namespace WebCore {
 
 class Font;
@@ -192,6 +197,12 @@ public:
     static bool configurePatternForFontDescription(FcPattern*, const FontDescription&);
 #endif
 
+#if USE(SKIA)
+    static Vector<hb_feature_t> computeFeatures(const FontDescription&, const FontCreationContext&);
+    SkFontMgr* fontManager() const { return m_fontManager.get(); }
+    SkiaHarfBuzzFontCache& harfBuzzFontCache() { return m_harfBuzzFontCache; }
+#endif
+
     void invalidate();
 
 private:
@@ -256,6 +267,11 @@ private:
     FontSetCache m_fontSetCache;
 #endif
 
+#if USE(SKIA)
+    sk_sp<SkFontMgr> m_fontManager;
+    SkiaHarfBuzzFontCache m_harfBuzzFontCache;
+#endif
+
     friend class Font;
 };
 
@@ -264,7 +280,7 @@ inline std::unique_ptr<FontPlatformData> FontCache::createFontPlatformDataForTes
     return createFontPlatformData(fontDescription, family, { });
 }
 
-#if !PLATFORM(COCOA) && !USE(FREETYPE)
+#if !PLATFORM(COCOA) && !USE(FREETYPE) && !USE(SKIA)
 
 inline void FontCache::platformPurgeInactiveFontData()
 {

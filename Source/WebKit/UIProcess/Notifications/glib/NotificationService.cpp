@@ -29,8 +29,6 @@
 #include "WebNotification.h"
 #include <WebCore/Image.h>
 #include <WebCore/NotificationResources.h>
-#include <WebCore/RefPtrCairo.h>
-#include <cairo.h>
 #include <gio/gio.h>
 #include <glib/gi18n-lib.h>
 #include <mutex>
@@ -45,6 +43,11 @@
 #include <wtf/glib/RunLoopSourcePriority.h>
 #include <wtf/glib/Sandbox.h>
 #include <wtf/text/CString.h>
+
+#if USE(CAIRO)
+#include <WebCore/RefPtrCairo.h>
+#include <cairo.h>
+#endif
 
 #if PLATFORM(GTK)
 #include <WebCore/GtkVersioning.h>
@@ -82,7 +85,7 @@ public:
             if (!nativeImage)
                 return { };
 
-            auto surface = nativeImage->platformImage();
+            const auto& surface = nativeImage->platformImage();
             if (!surface)
                 return { };
 
@@ -94,6 +97,7 @@ public:
                 return { };
             }
 
+#if USE(CAIRO)
             auto status = cairo_surface_write_to_png_stream(surface.get(), [](void* userData, const unsigned char* data, unsigned length) -> cairo_status_t {
                 int fd = *static_cast<int*>(userData);
                 while (length) {
@@ -108,8 +112,11 @@ public:
             }, &fd);
 
             close(fd);
-
             return status == CAIRO_STATUS_SUCCESS ? filename.get() : CString();
+#elif USE(SKIA)
+            // FIXME: Add Skia implementation
+            return CString();
+#endif
         };
 
         auto addResult = m_iconCache.add(iconURL, std::pair<uint32_t, CString>({ 0, CString() }));
@@ -136,10 +143,11 @@ public:
             if (!nativeImage)
                 return nullptr;
 
-            auto surface = nativeImage->platformImage();
+            const auto& surface = nativeImage->platformImage();
             if (!surface)
                 return nullptr;
 
+#if USE(CAIRO)
             GRefPtr<GByteArray> buffer = adoptGRef(g_byte_array_new());
             auto status = cairo_surface_write_to_png_stream(surface.get(), [](void* userData, const unsigned char* data, unsigned length) -> cairo_status_t {
                 auto* buffer = static_cast<GByteArray*>(userData);
@@ -151,6 +159,10 @@ public:
                 return nullptr;
 
             return adoptGRef(g_byte_array_free_to_bytes(buffer.leakRef()));
+#elif USE(SKIA)
+            // FIXME: Add Skia implementation
+            return nullptr;
+#endif
         };
 
         auto addResult = m_iconCache.add(iconURL, std::pair<uint32_t, GRefPtr<GBytes>>({ 0, nullptr }));

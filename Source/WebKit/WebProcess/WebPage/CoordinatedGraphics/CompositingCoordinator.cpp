@@ -41,10 +41,13 @@
 #include <WebCore/NicosiaBackingStore.h>
 #include <WebCore/NicosiaContentLayer.h>
 #include <WebCore/NicosiaImageBacking.h>
-#include <WebCore/NicosiaPaintingEngine.h>
 #include <WebCore/Page.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/SetForScope.h>
+
+#if USE(CAIRO)
+#include <WebCore/NicosiaPaintingEngine.h>
+#endif
 
 #if USE(GLIB_EVENT_LOOP)
 #include <wtf/glib/RunLoopSourcePriority.h>
@@ -56,7 +59,9 @@ using namespace WebCore;
 CompositingCoordinator::CompositingCoordinator(WebPage& page, CompositingCoordinator::Client& client)
     : m_page(page)
     , m_client(client)
+#if USE(CAIRO)
     , m_paintingEngine(Nicosia::PaintingEngine::create())
+#endif
 {
     m_nicosia.scene = Nicosia::Scene::create();
     m_nicosia.sceneIntegration = Nicosia::SceneIntegration::create(*m_nicosia.scene, *this);
@@ -283,10 +288,12 @@ void CompositingCoordinator::purgeBackingStores()
         registeredLayer->purgeBackingStores();
 }
 
+#if USE(CAIRO)
 Nicosia::PaintingEngine& CompositingCoordinator::paintingEngine()
 {
     return *m_paintingEngine;
 }
+#endif
 
 RefPtr<Nicosia::ImageBackingStore> CompositingCoordinator::imageBackingStore(uint64_t nativeImageID, Function<RefPtr<Nicosia::Buffer>()> createBuffer)
 {

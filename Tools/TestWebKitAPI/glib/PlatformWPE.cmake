@@ -23,13 +23,11 @@ list(APPEND WebKitGLibAPITests_SYSTEM_INCLUDE_DIRECTORIES
 )
 
 list(APPEND WebKitGLibAPITestsCore_LIBRARIES
-    Cairo::Cairo
     WebKit::WPEToolingBackends
 )
 
 list(APPEND WebKitGLibAPITest_LIBRARIES
     ${WPEBACKEND_FDO_LIBRARIES}
-    Cairo::Cairo
     WPE::libwpe
     WebKit::WPEToolingBackends
 )

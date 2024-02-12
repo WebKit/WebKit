@@ -95,7 +95,9 @@ private:
     WebCore::FloatRect visibleContentsRect() const override;
     void detachLayer(WebCore::CoordinatedGraphicsLayer*) override;
     void attachLayer(WebCore::CoordinatedGraphicsLayer*) override;
+#if USE(CAIRO)
     Nicosia::PaintingEngine& paintingEngine() override;
+#endif
     RefPtr<Nicosia::ImageBackingStore> imageBackingStore(uint64_t, Function<RefPtr<Nicosia::Buffer>()>) override;
 
     // GraphicsLayerFactory
@@ -125,7 +127,9 @@ private:
 
     HashMap<Nicosia::PlatformLayer::LayerID, WebCore::CoordinatedGraphicsLayer*> m_registeredLayers;
 
+#if USE(CAIRO)
     std::unique_ptr<Nicosia::PaintingEngine> m_paintingEngine;
+#endif
     HashMap<uint64_t, Ref<Nicosia::ImageBackingStore>> m_imageBackingStores;
 
     // We don't send the messages related to releasing resources to renderer during purging, because renderer already had removed all resources.

@@ -48,6 +48,12 @@ using PlatformViewBackend = wpe_playstation_view_backend_exportable*;
 using PlatformImage = cairo_surface_t*;
 #endif
 
+#if defined(USE_SKIA) && USE_SKIA
+#include <skia/core/SkImage.h>
+
+using PlatformImage = SkImage*;
+#endif
+
 #if defined(USE_GLIB) && USE_GLIB
 #include <glib.h>
 #endif

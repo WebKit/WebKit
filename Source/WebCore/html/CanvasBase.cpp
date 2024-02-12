@@ -313,6 +313,9 @@ bool CanvasBase::shouldAccelerate(uint64_t area) const
     if (area < scriptExecutionContext()->settingsValues().minimumAccelerated2DContextArea)
         return false;
     return true;
+#elif USE(SKIA)
+    UNUSED_PARAM(area);
+    return true;
 #else
     UNUSED_PARAM(area);
     return false;

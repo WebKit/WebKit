@@ -86,7 +86,9 @@
 #include <gtk/gtk.h>
 #endif
 
+#if USE(CAIRO)
 #include <WebCore/CairoUtilities.h>
+#endif
 
 #define RELEASE_LOG_SESSION_ID (m_sessionID ? m_sessionID->toUInt64() : 0)
 #define WEBPROCESS_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [sessionID=%" PRIu64 "] WebProcess::" fmt, this, RELEASE_LOG_SESSION_ID, ##__VA_ARGS__)
@@ -193,8 +195,10 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     AccessibilityAtspi::singleton().connect(parameters.accessibilityBusAddress);
 #endif
 
+#if USE(CAIRO)
     if (parameters.disableFontHintingForTesting)
         disableCairoFontHintingForTesting();
+#endif
 
 #if PLATFORM(GTK)
     GtkSettingsManagerProxy::singleton().applySettings(WTFMove(parameters.gtkSettings));

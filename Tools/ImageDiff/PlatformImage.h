@@ -28,6 +28,8 @@
 
 #if defined(USE_CAIRO) && USE_CAIRO
 typedef struct _cairo_surface cairo_surface_t;
+#elif defined(USE_SKIA) && USE_SKIA
+class SkBitmap;
 #else
 typedef struct CGImage *CGImageRef;
 #endif
@@ -42,6 +44,8 @@ public:
 
 #if defined(USE_CAIRO) && USE_CAIRO
     PlatformImage(cairo_surface_t*);
+#elif defined(USE_SKIA) && USE_SKIA
+    PlatformImage(SkBitmap*);
 #else
     PlatformImage(CGImageRef, double scaleFactor = 1);
 #endif

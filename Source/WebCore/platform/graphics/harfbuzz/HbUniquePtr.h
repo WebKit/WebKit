@@ -59,6 +59,13 @@ template<> struct HbPtrDeleter<hb_face_t> {
     }
 };
 
+template<> struct HbPtrDeleter<hb_blob_t> {
+    void operator()(hb_blob_t* ptr) const
+    {
+        hb_blob_destroy(ptr);
+    }
+};
+
 } // namespace WebCore
 
 using WebCore::HbUniquePtr;

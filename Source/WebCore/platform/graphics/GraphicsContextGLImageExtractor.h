@@ -61,6 +61,9 @@ private:
 #elif USE(CG)
     RetainPtr<CFDataRef> m_pixelData;
     UniqueArray<uint8_t> m_formalizedRGBA8Data;
+#elif USE(SKIA)
+    sk_sp<SkData> m_pixelData;
+    sk_sp<SkImage> m_skImage;
 #endif
     Image* m_image;
     DOMSource m_imageHtmlDomSource;

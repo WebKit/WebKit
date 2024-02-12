@@ -75,6 +75,7 @@ public:
 #endif
         }
 
+#if PLATFORM(GTK)
         WindowProperties(cairo_rectangle_int_t* geometry, bool toolbarVisible, bool statusbarVisible, bool scrollbarsVisible, bool menubarVisible, bool locationbarVisible, bool resizable, bool fullscreen)
             : m_isNull(false)
             , m_toolbarVisible(toolbarVisible)
@@ -85,10 +86,21 @@ public:
             , m_resizable(resizable)
             , m_fullscreen(fullscreen)
         {
-#if PLATFORM(GTK)
             m_geometry = *geometry;
-#endif
         }
+#else
+        WindowProperties(bool toolbarVisible, bool statusbarVisible, bool scrollbarsVisible, bool menubarVisible, bool locationbarVisible, bool resizable, bool fullscreen)
+            : m_isNull(false)
+            , m_toolbarVisible(toolbarVisible)
+            , m_statusbarVisible(statusbarVisible)
+            , m_scrollbarsVisible(scrollbarsVisible)
+            , m_menubarVisible(menubarVisible)
+            , m_locationbarVisible(locationbarVisible)
+            , m_resizable(resizable)
+            , m_fullscreen(fullscreen)
+        {
+        }
+#endif
 
         bool isNull() const { return m_isNull; }
 
@@ -776,8 +788,12 @@ static void testWebViewJavaScriptDialogs(UIClientTest* test, gconstpointer)
 static void testWebViewWindowProperties(UIClientTest* test, gconstpointer)
 {
     static const char* windowPropertiesString = "left=100,top=150,width=400,height=400,location=no,menubar=no,status=no,toolbar=no,scrollbars=no";
+#if PLATFORM(GTK)
     cairo_rectangle_int_t geometry = { 100, 150, 400, 400 };
     test->setExpectedWindowProperties(UIClientTest::WindowProperties(&geometry, false, false, false, false, false, true, false));
+#else
+    test->setExpectedWindowProperties(UIClientTest::WindowProperties(false, false, false, false, false, true, false));
+#endif
 
     GUniquePtr<char> htmlString(g_strdup_printf("<html><body onLoad=\"window.open('', '', '%s').close();\"></body></html>", windowPropertiesString));
     test->loadHtml(htmlString.get(), nullptr);

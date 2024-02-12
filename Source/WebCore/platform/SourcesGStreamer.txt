@@ -60,6 +60,7 @@ platform/graphics/gstreamer/GStreamerVideoSinkCommon.cpp
 platform/graphics/gstreamer/GstAllocatorFastMalloc.cpp
 platform/graphics/gstreamer/ImageDecoderGStreamer.cpp
 platform/graphics/gstreamer/ImageGStreamerCairo.cpp
+platform/graphics/gstreamer/ImageGStreamerSkia.cpp
 platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.cpp
 platform/graphics/gstreamer/MediaEngineConfigurationFactoryGStreamer.cpp
 platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp

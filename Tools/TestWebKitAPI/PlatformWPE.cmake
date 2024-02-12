@@ -51,6 +51,11 @@ list(APPEND TestWebCore_SYSTEM_INCLUDE_DIRECTORIES
     ${LIBSOUP_INCLUDE_DIRS}
 )
 
+list(APPEND TestWebCore_LIBRARIES
+    HarfBuzz::HarfBuzz
+    HarfBuzz::ICU
+)
+
 # TestWebKit
 list(APPEND TestWebKit_SOURCES
     ${test_main_SOURCES}

@@ -11,6 +11,8 @@ list(APPEND WebKitTestRunner_SOURCES
     libwpe/PlatformWebViewClientLibWPE.cpp
     libwpe/PlatformWebViewLibWPE.cpp
 
+    skia/TestInvocationSkia.cpp
+
     wpe/EventSenderProxyClientWPE.cpp
     wpe/PlatformWebViewClientWPE.cpp
     wpe/TestControllerWPE.cpp
@@ -39,7 +41,6 @@ list(APPEND WebKitTestRunner_LIBRARIES
     ${GLIB_LIBRARIES}
     ${LIBXKBCOMMON_LIBRARIES}
     ${WPEBACKEND_FDO_LIBRARIES}
-    Cairo::Cairo
     WebKit::WPEToolingBackends
 )
 
@@ -51,7 +52,6 @@ endif ()
 
 list(APPEND TestRunnerInjectedBundle_LIBRARIES
     ${GLIB_LIBRARIES}
-    Cairo::Cairo
 )
 
 list(APPEND TestRunnerInjectedBundle_SOURCES

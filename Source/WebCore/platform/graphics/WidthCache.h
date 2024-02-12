@@ -206,7 +206,7 @@ inline bool operator==(const WidthCache::SmallStringKey& a, const WidthCache::Sm
 {
     if (a.length() != b.length())
         return false;
-    return equal(a.characters(), b.characters(), a.length());
+    return WTF::equal(a.characters(), b.characters(), a.length());
 }
 
 } // namespace WebCore

@@ -257,9 +257,9 @@ void TextureMapper::drawBorder(const Color& color, float width, const FloatRect&
 // FIXME: drawNumber() should save a number texture-atlas and re-use whenever possible.
 void TextureMapper::drawNumber(int number, const Color& color, const FloatPoint& targetPoint, const TransformationMatrix& modelViewMatrix)
 {
+#if USE(CAIRO)
     int pointSize = 8;
 
-#if USE(CAIRO)
     CString counterString = String::number(number).ascii();
     // cairo_text_extents() requires a cairo_t, so dimensions need to be guesstimated.
     int width = counterString.length() * pointSize * 1.2;
@@ -296,7 +296,7 @@ void TextureMapper::drawNumber(int number, const Color& color, const FloatPoint&
 
 #else
     UNUSED_PARAM(number);
-    UNUSED_PARAM(pointSize);
+    UNUSED_PARAM(color);
     UNUSED_PARAM(targetPoint);
     UNUSED_PARAM(modelViewMatrix);
 #endif

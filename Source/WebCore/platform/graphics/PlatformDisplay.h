@@ -61,6 +61,10 @@ typedef struct _GstGLDisplay GstGLDisplay;
 #include "LCMSUniquePtr.h"
 #endif
 
+#if USE(SKIA)
+#include <skia/gpu/GrDirectContext.h>
+#endif
+
 namespace WebCore {
 
 class GLContext;
@@ -142,6 +146,11 @@ public:
     GstGLDisplay* gstGLDisplay() const;
     GstGLContext* gstGLContext() const;
     void clearGStreamerGLState();
+#endif
+
+#if USE(SKIA)
+    GLContext* skiaGLContext();
+    GrDirectContext* skiaGrContext() { RELEASE_ASSERT(m_skiaGLContext); return m_skiaGrContext.get(); }
 #endif
 
 #if USE(LCMS)
@@ -227,6 +236,11 @@ private:
 #if ENABLE(VIDEO) && USE(GSTREAMER_GL)
     mutable GRefPtr<GstGLDisplay> m_gstGLDisplay;
     mutable GRefPtr<GstGLContext> m_gstGLContext;
+#endif
+
+#if USE(SKIA)
+    std::unique_ptr<GLContext> m_skiaGLContext;
+    sk_sp<GrDirectContext> m_skiaGrContext;
 #endif
 
 #if PLATFORM(WPE)

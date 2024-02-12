@@ -4197,6 +4197,7 @@ def check_identifier_name_in_declaration(filename, line_number, line, file_state
                 and not modified_identifier.startswith('Evas_')
                 and not modified_identifier.startswith('Ewk_')
                 and not modified_identifier.startswith('cti_')
+                and not modified_identifier.startswith('hb_')
                 and not modified_identifier.find('::_q_') >= 0
                 and not modified_identifier == "const_iterator"
                 and not modified_identifier == "vm_throw"

@@ -41,6 +41,9 @@ namespace WebCore {
 class GraphicsContextCairo;
 }
 using PlatformGraphicsContext = WebCore::GraphicsContextCairo;
+#elif USE(SKIA)
+class SkCanvas;
+using PlatformGraphicsContext = SkCanvas;
 #else
 using PlatformGraphicsContext = void;
 #endif

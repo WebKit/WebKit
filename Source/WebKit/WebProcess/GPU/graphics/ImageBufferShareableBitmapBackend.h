@@ -33,6 +33,8 @@
 #include <WebCore/ImageBufferCGBackend.h>
 #elif USE(CAIRO)
 #include <WebCore/ImageBufferCairoBackend.h>
+#elif USE(SKIA)
+#include <WebCore/ImageBufferSkiaBackend.h>
 #endif
 
 namespace WebCore {
@@ -46,6 +48,8 @@ namespace WebKit {
 using ImageBufferShareableBitmapBackendBase = WebCore::ImageBufferCGBackend;
 #elif USE(CAIRO)
 using ImageBufferShareableBitmapBackendBase = WebCore::ImageBufferCairoBackend;
+#elif USE(SKIA)
+using ImageBufferShareableBitmapBackendBase = WebCore::ImageBufferSkiaBackend;
 #endif
 
 class ImageBufferShareableBitmapBackend final : public ImageBufferShareableBitmapBackendBase, public ImageBufferBackendHandleSharing {

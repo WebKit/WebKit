@@ -47,6 +47,10 @@
 #if USE(CAIRO)
 #include "ImageBufferUtilitiesCairo.h"
 #endif
+#if USE(SKIA)
+#include "ImageBufferSkiaAcceleratedBackend.h"
+#include "ImageBufferUtilitiesSkia.h"
+#endif
 
 #if HAVE(IOSURFACE)
 #include "ImageBufferIOSurfaceBackend.h"
@@ -77,6 +81,18 @@ RefPtr<ImageBuffer> ImageBuffer::create(const FloatSize& size, RenderingPurpose 
             creationContext.displayID = graphicsClient->displayID();
         if (auto imageBuffer = ImageBuffer::create<ImageBufferIOSurfaceBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, creationContext))
             return imageBuffer;
+    }
+#endif
+
+#if USE(SKIA)
+    static const char* enableCPURendering = getenv("WEBKIT_SKIA_ENABLE_CPU_RENDERING");
+    if (!enableCPURendering || !strcmp(enableCPURendering, "0")) {
+        static const char* disableAccelerated2DCanvas = getenv("WEBKIT_DISABLE_ACCELERATED_2D_CANVAS");
+        if (!disableAccelerated2DCanvas || !strcmp(disableAccelerated2DCanvas, "0")) {
+            // FIXME: check options.contains(ImageBufferOptions::Accelerated) too.
+            if (auto imageBuffer = ImageBuffer::create<ImageBufferSkiaAcceleratedBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, { }))
+                return imageBuffer;
+        }
     }
 #endif
 

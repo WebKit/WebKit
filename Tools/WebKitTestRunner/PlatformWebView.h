@@ -61,6 +61,9 @@ using PlatformWindow = HWND;
 #if USE(CAIRO)
 #include <cairo.h>
 using PlatformImage = cairo_surface_t*;
+#elif USE(SKIA)
+#include <skia/core/SkImage.h>
+using PlatformImage = SkImage*;
 #endif
 
 namespace WTR {

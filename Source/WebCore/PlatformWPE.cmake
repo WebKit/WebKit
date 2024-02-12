@@ -1,6 +1,12 @@
 include(platform/Adwaita.cmake)
-include(platform/Cairo.cmake)
-include(platform/FreeType.cmake)
+
+if (USE_CAIRO)
+    include(platform/Cairo.cmake)
+    include(platform/FreeType.cmake)
+elseif (USE_SKIA)
+    include(platform/Skia.cmake)
+endif ()
+
 include(platform/GCrypt.cmake)
 include(platform/GStreamer.cmake)
 include(platform/ImageDecoders.cmake)

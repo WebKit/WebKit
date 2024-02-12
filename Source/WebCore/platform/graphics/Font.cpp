@@ -561,7 +561,7 @@ RefPtr<Font> Font::systemFallbackFontForCharacterCluster(StringView characterClu
     return SystemFallbackFontCache::forCurrentThread().systemFallbackFontForCharacterCluster(this, characterCluster, description, resolvedEmojiPolicy, isForPlatformFont);
 }
 
-#if !PLATFORM(COCOA) && !USE(FREETYPE)
+#if !PLATFORM(COCOA) && !USE(FREETYPE) && !USE(SKIA)
 bool Font::variantCapsSupportedForSynthesis(FontVariantCaps fontVariantCaps) const
 {
     switch (fontVariantCaps) {

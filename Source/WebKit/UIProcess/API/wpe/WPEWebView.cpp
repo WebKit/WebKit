@@ -44,10 +44,13 @@
 #if ENABLE(GAMEPAD)
 #include <WebCore/GamepadProviderLibWPE.h>
 #endif
-#include <WebCore/RefPtrCairo.h>
-#include <cairo.h>
 #include <wpe/wpe.h>
 #include <wtf/NeverDestroyed.h>
+
+#if USE(CAIRO)
+#include <WebCore/RefPtrCairo.h>
+#include <cairo.h>
+#endif
 
 #if ENABLE(WPE_PLATFORM)
 #include "ScreenManager.h"
@@ -929,6 +932,7 @@ void View::setCursor(const WebCore::Cursor& cursor)
         return;
     }
 
+#if USE(CAIRO)
     ASSERT(cursor.type() == WebCore::Cursor::Type::Custom);
     auto image = cursor.image();
     auto nativeImage = image->nativeImageForCurrentFrame();
@@ -946,6 +950,9 @@ void View::setCursor(const WebCore::Cursor& cursor)
 
     WebCore::IntPoint hotspot = WebCore::determineHotSpot(image.get(), cursor.hotSpot());
     wpe_view_set_cursor_from_bytes(m_wpeView.get(), bytes.get(), width, height, stride, hotspot.x(), hotspot.y());
+#elif USE(SKIA)
+    // FIXME: implement.
+#endif
 #else
     UNUSED_PARAM(cursor);
 #endif

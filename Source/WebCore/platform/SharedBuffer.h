@@ -57,6 +57,10 @@ OBJC_CLASS NSData;
 typedef struct OpaqueCMBlockBuffer* CMBlockBufferRef;
 #endif
 
+#if USE(SKIA)
+#include <skia/core/SkData.h>
+#endif
+
 namespace WTF {
 namespace Persistence {
 class Decoder;
@@ -85,6 +89,9 @@ public:
 #endif
 #if USE(GSTREAMER)
     WEBCORE_EXPORT static Ref<DataSegment> create(RefPtr<GstMappedOwnedBuffer>&&);
+#endif
+#if USE(SKIA)
+    WEBCORE_EXPORT static Ref<DataSegment> create(sk_sp<SkData>&&);
 #endif
     WEBCORE_EXPORT static Ref<DataSegment> create(FileSystem::MappedFileData&&);
 
@@ -121,6 +128,10 @@ private:
     explicit DataSegment(RefPtr<GstMappedOwnedBuffer>&& data)
         : m_immutableData(WTFMove(data)) { }
 #endif
+#if USE(SKIA)
+    explicit DataSegment(sk_sp<SkData>&& data)
+        : m_immutableData(WTFMove(data)) { }
+#endif
     explicit DataSegment(FileSystem::MappedFileData&& data)
         : m_immutableData(WTFMove(data)) { }
     explicit DataSegment(Provider&& provider)
@@ -135,6 +146,9 @@ private:
 #endif
 #if USE(GSTREAMER)
         RefPtr<GstMappedOwnedBuffer>,
+#endif
+#if USE(SKIA)
+        sk_sp<SkData>,
 #endif
         FileSystem::MappedFileData,
         Provider> m_immutableData;
@@ -167,6 +181,10 @@ public:
 
 #if USE(GSTREAMER)
     WEBCORE_EXPORT static Ref<FragmentedSharedBuffer> create(GstMappedOwnedBuffer&);
+#endif
+
+#if USE(SKIA)
+    WEBCORE_EXPORT static Ref<FragmentedSharedBuffer> create(SkData*);
 #endif
     WEBCORE_EXPORT Vector<uint8_t> copyData() const;
     WEBCORE_EXPORT Vector<uint8_t> read(size_t offset, size_t length) const;
@@ -232,6 +250,9 @@ protected:
 #endif
 #if USE(GSTREAMER)
     WEBCORE_EXPORT explicit FragmentedSharedBuffer(GstMappedOwnedBuffer&);
+#endif
+#if USE(SKIA)
+    WEBCORE_EXPORT explicit FragmentedSharedBuffer(SkData*);
 #endif
     size_t m_size { 0 };
 
@@ -299,6 +320,9 @@ public:
 #endif
 #if USE(GLIB)
     WEBCORE_EXPORT GRefPtr<GBytes> createGBytes() const;
+#endif
+#if USE(SKIA)
+    WEBCORE_EXPORT sk_sp<SkData> createSkData() const;
 #endif
 
     Ref<FragmentedSharedBuffer> asFragmentedSharedBuffer() const { return const_cast<SharedBuffer&>(*this); }

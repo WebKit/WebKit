@@ -39,6 +39,9 @@ typedef RetainPtr<CGPatternRef> PlatformPatternPtr;
 #elif USE(CAIRO)
 typedef struct _cairo_pattern cairo_pattern_t;
 typedef cairo_pattern_t* PlatformPatternPtr;
+#elif USE(SKIA)
+#include <skia/core/SkShader.h>
+typedef sk_sp<SkShader> PlatformPatternPtr;
 #endif
 
 namespace WebCore {

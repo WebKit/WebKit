@@ -418,16 +418,25 @@ list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
 
 list(APPEND WebKit_LIBRARIES
     ATK::Bridge
-    Cairo::Cairo
-    Freetype::Freetype
-    HarfBuzz::HarfBuzz
-    HarfBuzz::ICU
     WPE::libwpe
     ${ATK_LIBRARIES}
     ${GLIB_LIBRARIES}
     ${GLIB_GMODULE_LIBRARIES}
     ${LIBSOUP_LIBRARIES}
 )
+
+if (USE_CAIRO)
+    list(APPEND WebKit_LIBRARIES
+        Cairo::Cairo
+        Freetype::Freetype
+    )
+
+    list(APPEND WebKit_SOURCES
+        Shared/API/c/cairo/WKImageCairo.cpp
+
+        UIProcess/Automation/cairo/WebAutomationSessionCairo.cpp
+    )
+endif ()
 
 if (ENABLE_BUBBLEWRAP_SANDBOX)
     list(APPEND WebKit_LIBRARIES Libseccomp::Libseccomp)

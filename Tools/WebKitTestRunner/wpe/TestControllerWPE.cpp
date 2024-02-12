@@ -27,12 +27,15 @@
 #include "TestController.h"
 
 #include "PlatformWebView.h"
-#include <cairo.h>
 #include <glib.h>
 #include <wtf/RunLoop.h>
 #include <wtf/WTFProcess.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/Base64.h>
+
+#if USE(CAIRO)
+#include <cairo.h>
+#endif
 
 namespace WTR {
 
@@ -148,10 +151,14 @@ TestFeatures TestController::platformSpecificFeatureDefaultsForTest(const TestCo
 WKRetainPtr<WKStringRef> TestController::takeViewPortSnapshot()
 {
     Vector<unsigned char> output;
+#if USE(CAIRO)
     cairo_surface_write_to_png_stream(mainWebView()->windowSnapshotImage(), [](void* output, const unsigned char* data, unsigned length) -> cairo_status_t {
         reinterpret_cast<Vector<unsigned char>*>(output)->append(data, length);
         return CAIRO_STATUS_SUCCESS;
     }, &output);
+#elif USE(SKIA)
+    // FIXME: implement
+#endif
     auto uri = makeString("data:image/png;base64,", base64Encoded(output.data(), output.size()));
     return adoptWK(WKStringCreateWithUTF8CString(uri.utf8().data()));
 }

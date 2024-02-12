@@ -532,6 +532,13 @@ Ref<DataSegment> DataSegment::create(RefPtr<GstMappedOwnedBuffer>&& data)
 }
 #endif
 
+#if USE(SKIA)
+Ref<DataSegment> DataSegment::create(sk_sp<SkData>&& data)
+{
+    return adoptRef(*new DataSegment(WTFMove(data)));
+}
+#endif
+
 Ref<DataSegment> DataSegment::create(FileSystem::MappedFileData&& data)
 {
     return adoptRef(*new DataSegment(WTFMove(data)));
@@ -554,6 +561,9 @@ const uint8_t* DataSegment::data() const
 #endif
 #if USE(GSTREAMER)
         [](const RefPtr<GstMappedOwnedBuffer>& data) -> const uint8_t* { return data->data(); },
+#endif
+#if USE(SKIA)
+        [](const sk_sp<SkData>& data) -> const uint8_t* { return data->bytes(); },
 #endif
         [](const FileSystem::MappedFileData& data) -> const uint8_t* { return static_cast<const uint8_t*>(data.data()); },
         [](const Provider& provider) -> const uint8_t* { return provider.data(); }
@@ -578,6 +588,9 @@ size_t DataSegment::size() const
 #endif
 #if USE(GSTREAMER)
         [](const RefPtr<GstMappedOwnedBuffer>& data) -> size_t { return data->size(); },
+#endif
+#if USE(SKIA)
+        [](const sk_sp<SkData>& data) -> size_t { return data->size(); },
 #endif
         [](const FileSystem::MappedFileData& data) -> size_t { return data.size(); },
         [](const Provider& provider) -> size_t { return provider.size(); }

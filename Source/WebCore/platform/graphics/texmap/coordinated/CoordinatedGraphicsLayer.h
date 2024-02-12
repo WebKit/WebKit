@@ -37,6 +37,12 @@
 #include <wtf/RunLoop.h>
 #include <wtf/text/StringHash.h>
 
+#if USE(SKIA)
+namespace WebCore {
+class BitmapTexture;
+}
+#endif
+
 namespace Nicosia {
 class Animations;
 class ImageBackingStore;
@@ -52,7 +58,9 @@ public:
     virtual FloatRect visibleContentsRect() const = 0;
     virtual void detachLayer(CoordinatedGraphicsLayer*) = 0;
     virtual void attachLayer(CoordinatedGraphicsLayer*) = 0;
+#if USE(CAIRO)
     virtual Nicosia::PaintingEngine& paintingEngine() = 0;
+#endif
     virtual RefPtr<Nicosia::ImageBackingStore> imageBackingStore(uint64_t, Function<RefPtr<Nicosia::Buffer>()>) = 0;
 };
 
@@ -192,6 +200,9 @@ private:
     void computeTransformedVisibleRect();
     void updateContentBuffers();
 
+    Ref<Nicosia::Buffer> paintTile(const IntRect&, const IntRect& mappedTileRect, float contentsScale);
+    Ref<Nicosia::Buffer> paintImage(Image&);
+
     void notifyFlushRequired();
 
     bool shouldHaveBackingStore() const;
@@ -205,6 +216,10 @@ private:
     void requestPendingTileCreationTimerFired();
 
     bool filtersCanBeComposited(const FilterOperations&) const;
+
+#if USE(SKIA)
+    RefPtr<BitmapTexture> acquireTextureForAcceleratedBuffer(const IntSize&);
+#endif
 
     Nicosia::PlatformLayer::LayerID m_id;
     GraphicsLayerTransform m_layerTransform;

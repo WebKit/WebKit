@@ -29,14 +29,22 @@
 
 #include "WKSharedAPICast.h"
 #include "WebImage.h"
+
+#if USE(CAIRO)
 #include <WebCore/GraphicsContextCairo.h>
 #include <WebCore/ShareableBitmap.h>
 #include <cairo.h>
+#endif
 
 cairo_surface_t* WKImageCreateCairoSurface(WKImageRef imageRef)
 {
+#if USE(SKIA)
+    // FIXME
+    return nullptr;
+#else
     // We cannot pass a RefPtr through the API here, so we just leak the reference.
     return WebKit::toImpl(imageRef)->createCairoSurface().leakRef();
+#endif
 }
 
 WKImageRef WKImageCreateFromCairoSurface(cairo_surface_t* surface, WKImageOptions options)

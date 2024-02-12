@@ -1,0 +1,125 @@
+/*
+ * Copyright (C) 2024 Igalia S.L.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#if USE(SKIA)
+
+#include "GraphicsContext.h"
+#include <skia/core/SkCanvas.h>
+
+IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
+#include <skia/core/SkSurface.h>
+IGNORE_CLANG_WARNINGS_END
+
+namespace WebCore {
+
+class WEBCORE_EXPORT GraphicsContextSkia final : public GraphicsContext {
+public:
+    explicit GraphicsContextSkia(sk_sp<SkSurface>&&);
+    virtual ~GraphicsContextSkia();
+
+    bool hasPlatformContext() const final;
+    SkCanvas* platformContext() const final;
+
+    void didUpdateState(GraphicsContextState&);
+
+    void setLineCap(LineCap) final;
+    void setLineDash(const DashArray&, float) final;
+    void setLineJoin(LineJoin) final;
+    void setMiterLimit(float) final;
+
+    using GraphicsContext::fillRect;
+    void fillRect(const FloatRect&) final;
+    void fillRect(const FloatRect&, const Color&) final;
+    void fillRect(const FloatRect&, Gradient&, const AffineTransform&) final;
+    void fillRoundedRectImpl(const FloatRoundedRect&, const Color&) final;
+    void fillRectWithRoundedHole(const FloatRect&, const FloatRoundedRect&, const Color&) final;
+    void fillPath(const Path&) final;
+    void strokeRect(const FloatRect&, float) final;
+    void strokePath(const Path&) final;
+    void clearRect(const FloatRect&) final;
+
+    void drawNativeImageInternal(NativeImage&, const FloatRect&, const FloatRect&, ImagePaintingOptions) final;
+    void drawPattern(NativeImage&, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions) final;
+
+    void drawRect(const FloatRect&, float) final;
+    void drawLine(const FloatPoint&, const FloatPoint&) final;
+    void drawLinesForText(const FloatPoint&, float thickness, const DashArray&, bool, bool, StrokeStyle) final;
+    void drawDotsForDocumentMarker(const FloatRect&, DocumentMarkerLineStyle) final;
+    void drawEllipse(const FloatRect&) final;
+
+    void drawFocusRing(const Path&, float outlineWidth, const Color&) final;
+    void drawFocusRing(const Vector<FloatRect>&, float outlineOffset, float outlineWidth, const Color&) final;
+
+    void save(GraphicsContextState::Purpose = GraphicsContextState::Purpose::SaveRestore) final;
+    void restore(GraphicsContextState::Purpose = GraphicsContextState::Purpose::SaveRestore) final;
+
+    void translate(float, float) final;
+    void rotate(float) final;
+    using GraphicsContext::scale;
+    void scale(const FloatSize&) final;
+    void concatCTM(const AffineTransform&) final;
+    void setCTM(const AffineTransform&) final;
+    AffineTransform getCTM(GraphicsContext::IncludeDeviceScale) const final;
+
+    void beginTransparencyLayer(float) final;
+    void endTransparencyLayer() final;
+
+    void resetClip() final;
+    void clip(const FloatRect&) final;
+    void clipOut(const FloatRect&) final;
+    void clipOut(const Path&) final;
+    void clipPath(const Path&, WindRule) final;
+    IntRect clipBounds() const final;
+    void clipToImageBuffer(ImageBuffer&, const FloatRect&) final;
+
+    RenderingMode renderingMode() const final;
+
+    SkPaint createFillPaint(std::optional<Color> fillColor = std::nullopt) const;
+    SkPaint createStrokePaint(std::optional<Color> strokeColor = std::nullopt) const;
+
+private:
+    SkCanvas& canvas() const;
+
+    class SkiaState {
+    public:
+        SkiaState() = default;
+
+        struct {
+            SkScalar miter { 0 };
+            SkPaint::Cap cap { SkPaint::kButt_Cap };
+            SkPaint::Join join { SkPaint::kMiter_Join };
+        } m_stroke;
+    };
+
+    sk_sp<SkSurface> m_surface;
+    SkiaState m_skiaState;
+    Vector<SkiaState, 1> m_skiaStateStack;
+};
+
+} // namespace WebCore
+
+#endif // USE(SKIA)

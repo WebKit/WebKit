@@ -38,10 +38,12 @@
 
 typedef struct CGFont* CGFontRef;
 typedef const struct __CTFontDescriptor* CTFontDescriptorRef;
-#else
+#elif USE(CAIRO)
 #include "RefPtrCairo.h"
 
 typedef struct FT_FaceRec_*  FT_Face;
+#elif USE(SKIA)
+#include <skia/core/SkTypeface.h>
 #endif
 
 namespace WebCore {
@@ -75,8 +77,10 @@ public:
         , m_renderingResourceIdentifier(RenderingResourceIdentifier::generate())
     {
     }
-#else
+#elif USE(CAIRO)
     FontCustomPlatformData(FT_Face, FontPlatformData::CreationData&&);
+#elif USE(SKIA)
+    FontCustomPlatformData(sk_sp<SkTypeface>&&, FontPlatformData::CreationData&&);
 #endif
     WEBCORE_EXPORT ~FontCustomPlatformData();
 
@@ -93,8 +97,10 @@ public:
     String name;
 #elif USE(CORE_TEXT)
     RetainPtr<CTFontDescriptorRef> fontDescriptor;
-#else
+#elif USE(CAIRO)
     RefPtr<cairo_font_face_t> m_fontFace;
+#elif USE(SKIA)
+    sk_sp<SkTypeface> m_typeface;
 #endif
     FontPlatformData::CreationData creationData;
 

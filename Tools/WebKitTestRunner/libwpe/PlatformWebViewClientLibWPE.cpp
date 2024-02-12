@@ -55,7 +55,7 @@ void PlatformWebViewClientLibWPE::removeFromWindow()
     m_backend->removeActivityState(wpe_view_activity_state_in_window);
 }
 
-cairo_surface_t* PlatformWebViewClientLibWPE::snapshot()
+PlatformImage PlatformWebViewClientLibWPE::snapshot()
 {
     {
         struct TimeoutTimer {

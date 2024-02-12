@@ -42,13 +42,16 @@
 
 namespace Nicosia {
 
-PaintingContextCairo::ForPainting::ForPainting(Buffer& buffer)
+PaintingContextCairo::ForPainting::ForPainting(Buffer& baseBuffer)
 {
+    // All buffers used for painting with Cairo are unaccelerated.
+    auto& buffer = static_cast<UnacceleratedBuffer&>(baseBuffer);
+
     // Balanced by the deref in the s_bufferKey user data destroy callback.
     buffer.ref();
 
     m_surface = adoptRef(cairo_image_surface_create_for_data(buffer.data(),
-        CAIRO_FORMAT_ARGB32, buffer.size().width(), buffer.size().height(), buffer.stride()));
+        CAIRO_FORMAT_ARGB32, baseBuffer.size().width(), baseBuffer.size().height(), buffer.stride()));
 
     static cairo_user_data_key_t s_bufferKey;
     cairo_surface_set_user_data(m_surface.get(), &s_bufferKey,

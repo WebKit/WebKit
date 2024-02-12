@@ -30,6 +30,7 @@
 #include "ImageBuffer.h"
 #include "NativeImage.h"
 #include "NicosiaPlatformLayer.h"
+#include "NotImplemented.h"
 #include "TextureMapperFlags.h"
 #include "TextureMapperPlatformLayerBuffer.h"
 #include "TextureMapperPlatformLayerProxyGL.h"

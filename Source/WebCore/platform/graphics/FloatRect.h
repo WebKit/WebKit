@@ -45,6 +45,10 @@ typedef struct _NSRect NSRect;
 typedef struct _cairo_rectangle cairo_rectangle_t;
 #endif
 
+#if USE(SKIA)
+struct SkRect;
+#endif
+
 #if PLATFORM(WIN)
 typedef struct tagRECT RECT;
 #endif
@@ -220,6 +224,11 @@ public:
 #if PLATFORM(MAC) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES)
     WEBCORE_EXPORT FloatRect(const NSRect&);
     WEBCORE_EXPORT operator NSRect() const;
+#endif
+
+#if USE(SKIA)
+    FloatRect(const SkRect&);
+    operator SkRect() const;
 #endif
 
 #if USE(CAIRO)

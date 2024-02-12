@@ -49,6 +49,10 @@ if (USE_CAIRO)
     list(APPEND WebCore_SOURCES
         platform/image-decoders/cairo/ImageBackingStoreCairo.cpp
     )
+elseif (USE_SKIA)
+    list(APPEND WebCore_SOURCES
+        platform/image-decoders/skia/ImageBackingStoreSkia.cpp
+    )
 endif ()
 
 if (USE_AVIF)

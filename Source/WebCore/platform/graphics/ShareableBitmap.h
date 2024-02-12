@@ -36,6 +36,10 @@
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
+#if USE(SKIA)
+#include <skia/core/SkImageInfo.h>
+#endif
+
 namespace WebCore {
 
 class GraphicsContext;
@@ -66,6 +70,9 @@ public:
 #if USE(CG)
     CGBitmapInfo bitmapInfo() const { return m_bitmapInfo; }
 #endif
+#if USE(SKIA)
+    const SkImageInfo& imageInfo() const { return m_imageInfo; }
+#endif
 
     CheckedUint32 sizeInBytes() const { return m_bytesPerRow * m_size.height(); }
 
@@ -89,6 +96,9 @@ private:
     CheckedUint32 m_bytesPerRow;
 #if USE(CG)
     CGBitmapInfo m_bitmapInfo { 0 };
+#endif
+#if USE(SKIA)
+    SkImageInfo m_imageInfo;
 #endif
 };
 
@@ -179,6 +189,8 @@ public:
     WEBCORE_EXPORT RefPtr<cairo_surface_t> createCairoSurface();
 
     PlatformImagePtr createPlatformImage(BackingStoreCopy = CopyBackingStore, ShouldInterpolate = ShouldInterpolate::No) { return createCairoSurface(); }
+#elif USE(SKIA)
+    WEBCORE_EXPORT PlatformImagePtr createPlatformImage(BackingStoreCopy = CopyBackingStore, ShouldInterpolate = ShouldInterpolate::No);
 #endif
 
 private:

@@ -28,6 +28,7 @@
 #include "GraphicsContext.h"
 #include "ImageGStreamer.h"
 #include "ImageOrientation.h"
+#include "NotImplemented.h"
 #include "PixelBuffer.h"
 #include "VideoPixelFormat.h"
 #include <JavaScriptCore/JSCInlines.h>
@@ -99,6 +100,9 @@ RefPtr<VideoFrame> VideoFrame::fromNativeImage(NativeImage& image)
     auto sample = adoptGRef(gst_sample_new(buffer.get(), caps.get(), nullptr, nullptr));
     FloatSize presentationSize { static_cast<float>(width), static_cast<float>(height) };
     return VideoFrameGStreamer::create(WTFMove(sample), presentationSize);
+#elif USE(SKIA)
+    notImplemented();
+    UNUSED_PARAM(image);
 #endif
     return nullptr;
 }

@@ -29,6 +29,8 @@
 #include "config.h"
 #include "TestInvocation.h"
 
+#if USE(CAIRO)
+
 #include "PixelDumpSupport.h"
 #include "PlatformWebView.h"
 #include "TestController.h"
@@ -130,3 +132,5 @@ void TestInvocation::dumpPixelsAndCompareWithExpected(SnapshotResultType snapsho
 }
 
 } // namespace WTR
+
+#endif // USE(CAIRO)
