@@ -161,7 +161,7 @@ NSString* Queue::errorValidatingSubmit(const Vector<std::reference_wrapper<Comma
 {
     for (auto command : commands) {
         if (!isValidToUseWith(command.get(), *this) || command.get().bufferMapCount())
-            return command.get().lastError();
+            return command.get().lastError() ?: @"Validation failure.";
     }
 
     // FIXME: "Every GPUQuerySet referenced in a command in any element of commandBuffers is in the available state."
