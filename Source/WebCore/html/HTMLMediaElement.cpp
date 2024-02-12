@@ -6863,6 +6863,9 @@ void HTMLMediaElement::enterFullscreen(VideoFullscreenMode mode)
 #if ENABLE(FULLSCREEN_API) && ENABLE(VIDEO_USES_ELEMENT_FULLSCREEN)
 #if PLATFORM(IOS_FAMILY)
     bool videoUsesElementFullscreen = document().settings().videoFullscreenRequiresElementFullscreen();
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    videoUsesElementFullscreen &= !document().settings().linearMediaPlayerEnabled();
+#endif
 #else
     constexpr bool videoUsesElementFullscreen = true;
 #endif
