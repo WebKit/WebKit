@@ -215,7 +215,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     StdUnorderedMap<TrackID, RetainPtr<AVSampleBufferAudioRenderer>> m_audioRenderers;
 ALLOW_NEW_API_WITHOUT_GUARDS_END
-    RefPtr<WebAVSampleBufferListener> m_listener;
+    Ref<WebAVSampleBufferListener> m_listener;
 #if PLATFORM(IOS_FAMILY)
     bool m_displayLayerWasInterrupted { false };
 #endif
