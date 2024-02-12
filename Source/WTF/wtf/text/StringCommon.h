@@ -344,13 +344,36 @@ ALWAYS_INLINE bool equal(const LChar* a, const UChar* b, unsigned length)
         }
         return true;
     }
-    // Otherwise, we just do a naive loop.
-#endif
+    if (length >= 4) {
+        auto read4 = [](const LChar* p) ALWAYS_INLINE_LAMBDA {
+            // Copy 32 bits and expand to 64 bits.
+            uint32_t v32 = unalignedLoad<uint32_t>(p);
+            uint64_t v64 = static_cast<uint64_t>(v32);
+            v64 = (v64 | (v64 << 16)) & 0x0000ffff0000ffffULL;
+            return static_cast<uint64_t>((v64 | (v64 << 8)) & 0x00ff00ff00ff00ffULL);
+        };
+
+        return static_cast<unsigned>(read4(a) == unalignedLoad<uint64_t>(b)) & static_cast<unsigned>(read4(a + (length % 4)) == unalignedLoad<uint64_t>(b + (length % 4)));
+    }
+    if (length >= 2) {
+        auto read2 = [](const LChar* p) ALWAYS_INLINE_LAMBDA {
+            // Copy 16 bits and expand to 32 bits.
+            uint16_t v16 = unalignedLoad<uint16_t>(p);
+            uint32_t v32 = static_cast<uint32_t>(v16);
+            return static_cast<uint32_t>((v32 | (v32 << 8)) & 0x00ff00ffUL);
+        };
+        return static_cast<unsigned>(read2(a) == unalignedLoad<uint32_t>(b)) & static_cast<unsigned>(read2(a + (length % 2)) == unalignedLoad<uint32_t>(b + (length % 2)));
+    }
+    if (length == 1)
+        return *a == *b;
+    return true;
+#else
     for (unsigned i = 0; i < length; ++i) {
         if (a[i] != b[i])
             return false;
     }
     return true;
+#endif
 }
 
 ALWAYS_INLINE bool equal(const UChar* a, const LChar* b, unsigned length) { return equal(b, a, length); }
