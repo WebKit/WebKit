@@ -368,6 +368,49 @@ TEST(WKWebExtensionAPIPermissions, RequestMatchPatternsOnlyTest)
     TestWebKitAPI::Util::run(&requestComplete);
 }
 
+TEST(WKWebExtensionAPIPermissions, ValidMatchPatterns)
+{
+    auto *manifest = @{
+        @"manifest_version": @3,
+        @"permissions": @[ @"alarms", @"activeTab" ],
+        @"optional_permissions": @[ @"webNavigation", @"cookies" ],
+        @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO },
+        @"host_permissions": @[ @"*://*.example.com/*" ]
+    };
+
+    auto *backgroundScript = Util::constructScript(@[
+        // Supported Schemes
+        @"await browser.test.assertSafeResolve(() => browser.permissions.contains({ origins: [ '*://*.example.com/*' ] }))",
+        @"await browser.test.assertSafeResolve(() => browser.permissions.contains({ origins: [ 'http://*.example.com/*' ] }))",
+        @"await browser.test.assertSafeResolve(() => browser.permissions.contains({ origins: [ 'https://*.example.com/*' ] }))",
+        @"await browser.test.assertSafeResolve(() => browser.permissions.contains({ origins: [ 'webkit-extension://*/*' ] }))",
+
+        // Custom Web Extension Schemes
+        @"await browser.test.assertSafeResolve(() => browser.permissions.contains({ origins: [ 'test-extension://*/*' ] }))",
+        @"await browser.test.assertSafeResolve(() => browser.permissions.contains({ origins: [ 'other-extension://*/*' ] }))",
+
+        // Invalid Schemes
+        @"await browser.test.assertThrows(() => browser.permissions.contains({ origins: [ 'ftp://*.example.com/*' ] }), /not a valid pattern/)",
+        @"await browser.test.assertThrows(() => browser.permissions.contains({ origins: [ 'data:*' ] }), /not a valid pattern/)",
+        @"await browser.test.assertThrows(() => browser.permissions.contains({ origins: [ 'file:///*' ] }), /not a valid pattern/)",
+        @"await browser.test.assertThrows(() => browser.permissions.contains({ origins: [ 'chrome-extension://*/*' ] }), /not a valid pattern/)",
+
+        // Finish
+        @"browser.test.notifyPass()"
+    ]);
+
+    [_WKWebExtensionMatchPattern registerCustomURLScheme:@"test-extension"];
+    [_WKWebExtensionMatchPattern registerCustomURLScheme:@"other-extension"];
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    _WKWebExtensionMatchPattern *matchPatternApple = [_WKWebExtensionMatchPattern matchPatternWithString:@"*://*.example.com/*"];
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPatternApple];
+
+    [manager loadAndRun];
+}
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

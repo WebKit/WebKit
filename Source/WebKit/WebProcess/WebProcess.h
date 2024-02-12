@@ -494,6 +494,10 @@ private:
     void registerURLSchemeAsCachePartitioned(const String&) const;
     void registerURLSchemeAsCanDisplayOnlyIfCanRequest(const String&) const;
 
+#if ENABLE(WK_WEB_EXTENSIONS)
+    void registerURLSchemeAsWebExtension(const String&) const;
+#endif
+
     void setDefaultRequestTimeoutInterval(double);
     void setAlwaysUsesComplexTextCodePath(bool);
     void setDisableFontSubpixelAntialiasingForTesting(bool);

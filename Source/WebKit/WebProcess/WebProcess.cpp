@@ -572,6 +572,11 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
     for (auto& scheme : parameters.urlSchemesRegisteredAsCanDisplayOnlyIfCanRequest)
         registerURLSchemeAsCanDisplayOnlyIfCanRequest(scheme);
 
+#if ENABLE(WK_WEB_EXTENSIONS)
+    for (auto& scheme : parameters.urlSchemesRegisteredAsWebExtensions)
+        WebExtensionMatchPattern::registerCustomURLScheme(scheme);
+#endif
+
     setDefaultRequestTimeoutInterval(parameters.defaultRequestTimeoutInterval);
 
     setBackForwardCacheCapacity(parameters.backForwardCacheCapacity);
@@ -778,6 +783,13 @@ void WebProcess::registerURLSchemeAsCanDisplayOnlyIfCanRequest(const String& url
 {
     LegacySchemeRegistry::registerAsCanDisplayOnlyIfCanRequest(urlScheme);
 }
+
+#if ENABLE(WK_WEB_EXTENSIONS)
+void WebProcess::registerURLSchemeAsWebExtension(const String& urlScheme) const
+{
+    WebExtensionMatchPattern::registerCustomURLScheme(urlScheme);
+}
+#endif
 
 void WebProcess::setDefaultRequestTimeoutInterval(double timeoutInterval)
 {

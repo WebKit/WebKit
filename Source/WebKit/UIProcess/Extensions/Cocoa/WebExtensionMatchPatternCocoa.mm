@@ -32,6 +32,7 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#import "WebProcessMessages.h"
 #import "WebProcessPool.h"
 #import "_WKWebExtensionMatchPatternInternal.h"
 #import <wtf/HashMap.h>
@@ -80,6 +81,9 @@ void WebExtensionMatchPattern::registerCustomURLScheme(String urlScheme)
     extensionSchemes().addVoid(canonicalScheme.value());
     validSchemes().addVoid(canonicalScheme.value());
     supportedSchemes().addVoid(canonicalScheme.value());
+
+    for (auto& pool : WebProcessPool::allProcessPools())
+        pool->sendToAllProcesses(Messages::WebProcess::RegisterURLSchemeAsWebExtension(urlScheme));
 }
 
 RefPtr<WebExtensionMatchPattern> WebExtensionMatchPattern::getOrCreate(const String& pattern)

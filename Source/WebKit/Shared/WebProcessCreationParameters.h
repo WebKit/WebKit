@@ -95,6 +95,10 @@ struct WebProcessCreationParameters {
     Vector<String> urlSchemesRegisteredAsCachePartitioned;
     Vector<String> urlSchemesRegisteredAsCanDisplayOnlyIfCanRequest;
 
+#if ENABLE(WK_WEB_EXTENSIONS)
+    Vector<String> urlSchemesRegisteredAsWebExtensions;
+#endif
+
     Vector<String> fontAllowList;
     Vector<String> overrideLanguages;
 #if USE(GSTREAMER)

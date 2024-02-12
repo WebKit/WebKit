@@ -42,6 +42,10 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     RegisterURLSchemeAsCachePartitioned(String scheme)
     RegisterURLSchemeAsCanDisplayOnlyIfCanRequest(String scheme)
 
+#if ENABLE(WK_WEB_EXTENSIONS)
+    RegisterURLSchemeAsWebExtension(String scheme)
+#endif
+
     SetDefaultRequestTimeoutInterval(double timeoutInterval)
     SetAlwaysUsesComplexTextCodePath(bool alwaysUseComplexText)
     SetDisableFontSubpixelAntialiasingForTesting(bool disable)
