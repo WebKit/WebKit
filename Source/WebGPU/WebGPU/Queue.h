@@ -70,7 +70,7 @@ public:
     void onSubmittedWorkScheduled(CompletionHandler<void()>&&);
 
     bool isValid() const { return m_commandQueue; }
-    void makeInvalid() { m_commandQueue = nil; }
+    void makeInvalid();
 
     const Device& device() const;
     void waitUntilIdle();

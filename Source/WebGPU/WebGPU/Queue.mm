@@ -121,9 +121,30 @@ id<MTLCommandBuffer> Queue::commandBufferWithDescriptor(MTLCommandBufferDescript
     return buffer;
 }
 
+void Queue::makeInvalid()
+{
+    m_commandQueue = nil;
+    for (auto& [_, callbackVector] : m_onSubmittedWorkScheduledCallbacks) {
+        for (auto& callback : callbackVector)
+            callback();
+    }
+    for (auto& [_, callbackVector] : m_onSubmittedWorkDoneCallbacks) {
+        for (auto& callback : callbackVector)
+            callback(WGPUQueueWorkDoneStatus_DeviceLost);
+    }
+
+    m_onSubmittedWorkScheduledCallbacks.clear();
+    m_onSubmittedWorkDoneCallbacks.clear();
+}
+
 void Queue::onSubmittedWorkDone(CompletionHandler<void(WGPUQueueWorkDoneStatus)>&& callback)
 {
     // https://gpuweb.github.io/gpuweb/#dom-gpuqueue-onsubmittedworkdone
+    auto devicePtr = m_device.get();
+    if (!devicePtr || !devicePtr->isValid() || devicePtr->isLost()) {
+        callback(WGPUQueueWorkDoneStatus_DeviceLost);
+        return;
+    }
 
     ASSERT(m_submittedCommandBufferCount >= m_completedCommandBufferCount);
 
@@ -143,6 +164,11 @@ void Queue::onSubmittedWorkDone(CompletionHandler<void(WGPUQueueWorkDoneStatus)>
 void Queue::onSubmittedWorkScheduled(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(m_submittedCommandBufferCount >= m_scheduledCommandBufferCount);
+    auto devicePtr = m_device.get();
+    if (!devicePtr || !devicePtr->isValid() || devicePtr->isLost()) {
+        completionHandler();
+        return;
+    }
 
     finalizeBlitCommandEncoder();
 

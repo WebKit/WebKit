@@ -222,7 +222,7 @@ Device::~Device()
 
 void Device::loseTheDevice(WGPUDeviceLostReason reason)
 {
-    // https://gpuweb.github.io/gpuweb/#lose-the-device
+    m_device = nil;
 
     m_adapter->makeInvalid();
 
@@ -233,11 +233,7 @@ void Device::loseTheDevice(WGPUDeviceLostReason reason)
         m_deviceLostCallback = nullptr;
     }
 
-    // FIXME: The spec doesn't actually say to do this, but it's pretty important because
-    // the total number of command queues alive at a time is limited to a pretty low limit.
-    // We should make sure either that this is unobservable or that the spec says to do this.
     m_defaultQueue->makeInvalid();
-
     m_isLost = true;
 }
 
