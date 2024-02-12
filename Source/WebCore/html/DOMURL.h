@@ -41,7 +41,7 @@ class URLSearchParams;
 class DOMURL final : public RefCounted<DOMURL>, public CanMakeWeakPtr<DOMURL>, public URLDecomposition {
 public:
     static ExceptionOr<Ref<DOMURL>> create(const String& url, const String& base);
-    ~DOMURL();
+    WEBCORE_EXPORT ~DOMURL();
 
     static bool canParse(const String& url, const String& base);
 

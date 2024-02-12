@@ -55,7 +55,7 @@ class XMLHttpRequestUpload;
 struct OwnedString;
 
 class XMLHttpRequest final : public ActiveDOMObject, public RefCounted<XMLHttpRequest>, private ThreadableLoaderClient, public XMLHttpRequestEventTarget {
-    WTF_MAKE_ISO_ALLOCATED(XMLHttpRequest);
+    WTF_MAKE_ISO_ALLOCATED_EXPORT(XMLHttpRequest, WEBCORE_EXPORT);
 public:
     static Ref<XMLHttpRequest> create(ScriptExecutionContext&);
     WEBCORE_EXPORT ~XMLHttpRequest();

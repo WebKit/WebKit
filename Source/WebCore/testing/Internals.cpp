@@ -5476,13 +5476,13 @@ bool Internals::isProcessingUserGesture()
     return UserGestureIndicator::processingUserGesture();
 }
 
-void Internals::withUserGesture(RefPtr<VoidCallback>&& callback)
+void Internals::withUserGesture(Ref<VoidCallback>&& callback)
 {
     UserGestureIndicator gestureIndicator(IsProcessingUserGesture::Yes, contextDocument());
     callback->handleEvent();
 }
 
-void Internals::withoutUserGesture(RefPtr<VoidCallback>&& callback)
+void Internals::withoutUserGesture(Ref<VoidCallback>&& callback)
 {
     UserGestureIndicator gestureIndicator(IsProcessingUserGesture::No, contextDocument());
     callback->handleEvent();
@@ -5678,7 +5678,7 @@ void Internals::markContextAsInsecure()
     document->securityOrigin().setIsPotentiallyTrustworthy(false);
 }
 
-void Internals::postTask(RefPtr<VoidCallback>&& callback)
+void Internals::postTask(Ref<VoidCallback>&& callback)
 {
     auto* document = contextDocument();
     if (!document) {
@@ -5698,7 +5698,7 @@ static std::optional<TaskSource> taskSourceFromString(const String& taskSourceNa
     return std::nullopt;
 }
 
-ExceptionOr<void> Internals::queueTask(ScriptExecutionContext& context, const String& taskSourceName, RefPtr<VoidCallback>&& callback)
+ExceptionOr<void> Internals::queueTask(ScriptExecutionContext& context, const String& taskSourceName, Ref<VoidCallback>&& callback)
 {
     auto source = taskSourceFromString(taskSourceName);
     if (!source)
@@ -5711,7 +5711,7 @@ ExceptionOr<void> Internals::queueTask(ScriptExecutionContext& context, const St
     return { };
 }
 
-ExceptionOr<void> Internals::queueTaskToQueueMicrotask(Document& document, const String& taskSourceName, RefPtr<VoidCallback>&& callback)
+ExceptionOr<void> Internals::queueTaskToQueueMicrotask(Document& document, const String& taskSourceName, Ref<VoidCallback>&& callback)
 {
     auto source = taskSourceFromString(taskSourceName);
     if (!source)
@@ -6270,17 +6270,14 @@ static TextRecognitionLineData makeDataForLine(const Internals::ImageOverlayLine
     };
 }
 
-void Internals::requestTextRecognition(Element& element, RefPtr<VoidCallback>&& callback)
+void Internals::requestTextRecognition(Element& element, Ref<VoidCallback>&& callback)
 {
     auto page = contextDocument()->page();
-    if (!page) {
-        if (callback)
-            callback->handleEvent();
-    }
+    if (!page)
+        callback->handleEvent();
 
     page->chrome().client().requestTextRecognition(element, { }, [callback = WTFMove(callback)] (auto&&) {
-        if (callback)
-            callback->handleEvent();
+        callback->handleEvent();
     });
 }
 
@@ -7033,7 +7030,7 @@ ExceptionOr<Vector<String>> Internals::platformSupportedCommands() const
 #endif
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
-ExceptionOr<void> Internals::registerMockMediaSessionCoordinator(ScriptExecutionContext& context, RefPtr<StringCallback>&& listener)
+ExceptionOr<void> Internals::registerMockMediaSessionCoordinator(ScriptExecutionContext& context, Ref<StringCallback>&& listener)
 {
     if (m_mockMediaSessionCoordinator)
         return { };

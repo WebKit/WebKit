@@ -880,8 +880,8 @@ public:
     bool isProcessingUserGesture();
     double lastHandledUserGestureTimestamp();
 
-    void withUserGesture(RefPtr<VoidCallback>&&);
-    void withoutUserGesture(RefPtr<VoidCallback>&&);
+    void withUserGesture(Ref<VoidCallback>&&);
+    void withoutUserGesture(Ref<VoidCallback>&&);
 
     bool userIsInteracting();
 
@@ -1075,16 +1075,16 @@ public:
     bool hasActiveDataDetectorHighlight() const;
 
 #if ENABLE(IMAGE_ANALYSIS)
-    void requestTextRecognition(Element&, RefPtr<VoidCallback>&&);
+    void requestTextRecognition(Element&, Ref<VoidCallback>&&);
     RefPtr<Element> textRecognitionCandidate() const;
 #endif
 
     bool isSystemPreviewLink(Element&) const;
     bool isSystemPreviewImage(Element&) const;
 
-    void postTask(RefPtr<VoidCallback>&&);
-    ExceptionOr<void> queueTask(ScriptExecutionContext&, const String& source, RefPtr<VoidCallback>&&);
-    ExceptionOr<void> queueTaskToQueueMicrotask(Document&, const String& source, RefPtr<VoidCallback>&&);
+    void postTask(Ref<VoidCallback>&&);
+    ExceptionOr<void> queueTask(ScriptExecutionContext&, const String& source, Ref<VoidCallback>&&);
+    ExceptionOr<void> queueTaskToQueueMicrotask(Document&, const String& source, Ref<VoidCallback>&&);
     ExceptionOr<bool> hasSameEventLoopAs(WindowProxy&);
 
     void markContextAsInsecure();
@@ -1373,7 +1373,7 @@ public:
     ExceptionOr<Vector<String>> platformSupportedCommands() const;
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
-    ExceptionOr<void> registerMockMediaSessionCoordinator(ScriptExecutionContext&, RefPtr<StringCallback>&&);
+    ExceptionOr<void> registerMockMediaSessionCoordinator(ScriptExecutionContext&, Ref<StringCallback>&&);
     ExceptionOr<void> setMockMediaSessionCoordinatorCommandsShouldFail(bool);
 #endif
 

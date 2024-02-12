@@ -55,13 +55,13 @@ class MediaStream final
     , private LoggerHelper
 #endif
     , public RefCounted<MediaStream> {
-    WTF_MAKE_ISO_ALLOCATED(MediaStream);
+    WTF_MAKE_ISO_ALLOCATED_EXPORT(MediaStream, WEBCORE_EXPORT);
 public:
     static Ref<MediaStream> create(Document&);
     static Ref<MediaStream> create(Document&, MediaStream&);
     static Ref<MediaStream> create(Document&, const Vector<RefPtr<MediaStreamTrack>>&);
     static Ref<MediaStream> create(Document&, Ref<MediaStreamPrivate>&&);
-    virtual ~MediaStream();
+    WEBCORE_EXPORT virtual ~MediaStream();
 
     String id() const { return m_private->id(); }
 

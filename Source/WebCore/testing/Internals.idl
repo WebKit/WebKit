@@ -1116,7 +1116,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
 
     undefined updateQuotaBasedOnSpaceUsage();
 
-    undefined setConsoleMessageListener(StringCallback callback);
+    undefined setConsoleMessageListener(StringCallback? callback);
 
     readonly attribute boolean supportsAudioSession;
     AudioSessionCategory audioSessionCategory();

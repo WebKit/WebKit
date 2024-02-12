@@ -63,7 +63,7 @@ public:
         return adoptRef(*new MediaKeys(document, useDistinctiveIdentifier, persistentStateAllowed, supportedSessionTypes, WTFMove(implementation), WTFMove(instance)));
     }
 
-    ~MediaKeys();
+    WEBCORE_EXPORT ~MediaKeys();
 
     ExceptionOr<Ref<MediaKeySession>> createSession(Document&, MediaKeySessionType);
     void setServerCertificate(const BufferSource&, Ref<DeferredPromise>&&);

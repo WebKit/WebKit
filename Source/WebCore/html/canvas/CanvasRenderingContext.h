@@ -59,7 +59,7 @@ public:
     static HashSet<CanvasRenderingContext*>& instances() WTF_REQUIRES_LOCK(instancesLock());
     static Lock& instancesLock() WTF_RETURNS_LOCK(s_instancesLock);
 
-    void ref();
+    WEBCORE_EXPORT void ref();
     WEBCORE_EXPORT void deref();
 
     CanvasBase& canvasBase() const { return m_canvas; }

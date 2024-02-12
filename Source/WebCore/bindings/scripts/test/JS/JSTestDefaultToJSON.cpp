@@ -411,7 +411,7 @@ static inline bool setJSTestDefaultToJSON_thirdUnJSONableAttributeSetter(JSGloba
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLInterface<TestException>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestDefaultToJSON", "thirdUnJSONableAttribute", "TestException"); });
+    RefPtr nativeValue = convert<IDLInterface<TestException>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestDefaultToJSON", "thirdUnJSONableAttribute", "TestException"); });
     RETURN_IF_EXCEPTION(throwScope, false);
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
         return impl.setThirdUnJSONableAttribute(*nativeValue);
@@ -539,7 +539,7 @@ static inline bool setJSTestDefaultToJSON_seventhDirectlyToJSONableAttributeSett
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLInterface<TestDefaultToJSONInheritFinal>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestDefaultToJSON", "seventhDirectlyToJSONableAttribute", "TestDefaultToJSONInheritFinal"); });
+    RefPtr nativeValue = convert<IDLInterface<TestDefaultToJSONInheritFinal>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestDefaultToJSON", "seventhDirectlyToJSONableAttribute", "TestDefaultToJSONInheritFinal"); });
     RETURN_IF_EXCEPTION(throwScope, false);
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
         return impl.setSeventhDirectlyToJSONableAttribute(*nativeValue);
@@ -571,7 +571,7 @@ static inline bool setJSTestDefaultToJSON_eighthIndirectlyAttributeSetter(JSGlob
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLInterface<TestDefaultToJSONIndirectInheritance>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestDefaultToJSON", "eighthIndirectlyAttribute", "TestDefaultToJSONIndirectInheritance"); });
+    RefPtr nativeValue = convert<IDLInterface<TestDefaultToJSONIndirectInheritance>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestDefaultToJSON", "eighthIndirectlyAttribute", "TestDefaultToJSONIndirectInheritance"); });
     RETURN_IF_EXCEPTION(throwScope, false);
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
         return impl.setEighthIndirectlyAttribute(*nativeValue);
@@ -603,10 +603,10 @@ static inline bool setJSTestDefaultToJSON_ninthOptionalDirectlyToJSONableAttribu
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLNullable<IDLInterface<TestDefaultToJSONInheritFinal>>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestDefaultToJSON", "ninthOptionalDirectlyToJSONableAttribute", "TestDefaultToJSONInheritFinal"); });
+    RefPtr nativeValue = convert<IDLNullable<IDLInterface<TestDefaultToJSONInheritFinal>>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestDefaultToJSON", "ninthOptionalDirectlyToJSONableAttribute", "TestDefaultToJSONInheritFinal"); });
     RETURN_IF_EXCEPTION(throwScope, false);
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setNinthOptionalDirectlyToJSONableAttribute(WTFMove(nativeValue));
+        return impl.setNinthOptionalDirectlyToJSONableAttribute(nativeValue.get());
     });
     return true;
 }
