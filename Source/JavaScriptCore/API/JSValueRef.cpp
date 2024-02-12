@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -74,6 +74,8 @@ using namespace JSC;
         return kJSTypeString;
     if (jsValue.isSymbol())
         return kJSTypeSymbol;
+    if (jsValue.isBigInt())
+        return kJSTypeBigInt;
     ASSERT(jsValue.isObject());
     return kJSTypeObject;
 }
@@ -181,6 +183,21 @@ bool JSValueIsSymbol(JSContextRef ctx, JSValueRef value)
     return toJS(globalObject, value).isSymbol();
 #else
     return value && toJS(value).isSymbol();
+#endif
+}
+
+bool JSValueIsBigInt(JSContextRef ctx, JSValueRef value)
+{
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+#if !CPU(ADDRESS64)
+    JSGlobalObject* globalObject = toJS(ctx);
+    JSLockHolder locker(globalObject);
+    return toJS(globalObject, value).isBigInt();
+#else
+    return value && toJS(value).isBigInt();
 #endif
 }
 
@@ -366,6 +383,174 @@ JSValueRef JSValueMakeSymbol(JSContextRef ctx, JSStringRef description)
     if (!description)
         return toRef(globalObject, Symbol::create(vm));
     return toRef(globalObject, Symbol::createWithDescription(vm, description->string()));
+}
+
+JSValueRef JSBigIntCreateWithNumber(JSContextRef ctx, const double number, JSValueRef* exception)
+{
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+
+    JSGlobalObject* globalObject = toJS(ctx);
+    VM& vm = globalObject->vm();
+    JSLockHolder locker(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+
+    if (!isInteger(number)) {
+        setException(ctx, exception, createRangeError(globalObject, "Not an integer"_s));
+        return nullptr;
+    }
+
+    JSValue result = JSBigInt::makeHeapBigIntOrBigInt32(globalObject, number);
+    if (exception)
+        *exception = nullptr;
+    if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
+        return nullptr;
+
+    return toRef(globalObject, result);
+}
+
+JSValueRef JSBigIntCreateWithUInt64(JSContextRef ctx, const uint64_t integer, JSValueRef* exception)
+{
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+
+    JSGlobalObject* globalObject = toJS(ctx);
+    VM& vm = globalObject->vm();
+    JSLockHolder locker(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+
+    JSValue result = JSBigInt::makeHeapBigIntOrBigInt32(globalObject, integer);
+    if (exception)
+        *exception = nullptr;
+    if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
+        return nullptr;
+
+    return toRef(globalObject, result);
+}
+
+JSValueRef JSBigIntCreateWithInt64(JSContextRef ctx, const int64_t integer, JSValueRef* exception)
+{
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+
+    JSGlobalObject* globalObject = toJS(ctx);
+    VM& vm = globalObject->vm();
+    JSLockHolder locker(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+
+    JSValue result = JSBigInt::makeHeapBigIntOrBigInt32(globalObject, integer);
+    if (exception)
+        *exception = nullptr;
+    if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
+        return nullptr;
+
+    return toRef(globalObject, result);
+}
+
+JSValueRef JSBigIntCreateWithString(JSContextRef ctx, JSStringRef string, JSValueRef* exception)
+{
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+
+    JSGlobalObject* globalObject = toJS(ctx);
+    VM& vm = globalObject->vm();
+    JSLockHolder locker(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+
+    JSValue result = JSBigInt::parseInt(globalObject, string->string(), JSBigInt::ErrorParseMode::ThrowExceptions);
+    if (exception)
+        *exception = nullptr;
+    if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
+        return nullptr;
+
+    return toRef(globalObject, result);
+}
+
+uint64_t JSBigIntToUInt64(JSContextRef ctx, JSValueRef value, JSValueRef* exception)
+{
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
+
+    JSGlobalObject* globalObject = toJS(ctx);
+    JSLockHolder locker(globalObject);
+    JSValue jsValue = toJS(globalObject, value);
+
+    if (exception)
+        *exception = nullptr;
+    if (!jsValue.isBigInt()) {
+        setException(ctx, exception, createReferenceError(globalObject, "not a bigint JSValue"_s));
+        return 0;
+    }
+
+    ASSERT(jsValue.isBigInt());
+    return JSBigInt::toBigInt64(jsValue);
+}
+
+int64_t JSBigIntToInt64(JSContextRef ctx, JSValueRef value, JSValueRef* exception)
+{
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
+
+    JSGlobalObject* globalObject = toJS(ctx);
+    JSLockHolder locker(globalObject);
+    JSValue jsValue = toJS(globalObject, value);
+
+    if (exception)
+        *exception = nullptr;
+    if (!jsValue.isBigInt()) {
+        setException(ctx, exception, createReferenceError(globalObject, "not a bigint JSValue"_s));
+        return 0;
+    }
+
+    ASSERT(jsValue.isBigInt());
+    return JSBigInt::toBigInt64(jsValue);
+}
+
+JSStringRef JSBigIntToString(JSContextRef ctx, JSValueRef value, const size_t radix, JSValueRef* exception)
+{
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+
+    JSGlobalObject* globalObject = toJS(ctx);
+    VM& vm = globalObject->vm();
+    JSLockHolder locker(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+
+    if (radix < 2 || radix > 36) {
+        setException(ctx, exception, createRangeError(globalObject, "radix argument must be between 2 and 36"_s));
+        return nullptr;
+    }
+
+    JSValue jsValue = toJS(globalObject, value);
+    if (exception)
+        *exception = nullptr;
+    if (!jsValue.isBigInt()) {
+        setException(ctx, exception, createReferenceError(globalObject, "not a bigint JSValue"_s));
+        return nullptr;
+    }
+
+    ASSERT(jsValue.isBigInt());
+    String result = jsValue.asBigInt(globalObject)->toString(globalObject, radix);
+    if (exception)
+        *exception = nullptr;
+    if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
+        return nullptr;
+
+    return OpaqueJSString::tryCreate(result).leakRef();
 }
 
 JSValueRef JSValueMakeString(JSContextRef ctx, JSStringRef string)

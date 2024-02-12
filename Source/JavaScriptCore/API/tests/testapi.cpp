@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -157,6 +157,7 @@ public:
     void classDefinitionWithJSSubclass();
     void proxyReturnedWithJSSubclassing();
     void testJSObjectSetOnGlobalObjectSubclassDefinition();
+    void testBigInt();
 
     int failed() const { return m_failed; }
 
@@ -167,6 +168,10 @@ private:
 
     template<typename JSFunctor, typename APIFunctor>
     void checkJSAndAPIMatch(const JSFunctor&, const APIFunctor&, const char* description);
+
+    void checkIsBigIntType(JSValueRef);
+
+    void checkThrownException(JSValueRef* exception, const ASCIILiteral& expectedMessage, const char* description);
 
     // Helper methods.
     using ScriptResult = Expected<JSValueRef, JSValueRef>;
@@ -325,6 +330,16 @@ static const char* isSymbolFunction = "(function isSymbol(symbol) { return typeo
 static const char* getSymbolDescription = "(function getSymbolDescription(symbol) { return symbol.description; })";
 static const char* getFunction = "(function get(object, key) { return object[key]; })";
 static const char* setFunction = "(function set(object, key, value) { object[key] = value; })";
+static const char* isBigIntFunction = "(function isBigInt(bigint) { return typeof(bigint) === 'bigint'; })";
+static const char* createBigIntFunction = "(function bigInt(x) { print(x); return BigInt(x); })";
+static const char* createNegBigIntFunction = "(function bigInt(x) { print(x); return -BigInt(x); })";
+
+void TestAPI::checkIsBigIntType(JSValueRef value)
+{
+    check(JSValueGetType(context, value) == kJSTypeBigInt, "value is a bigint (JSValueGetType)");
+    check(JSValueIsBigInt(context, value), "value is a bigint (JSValueIsBigInt)");
+    check(functionReturnsTrue(isBigIntFunction, value), "value is a bigint (isBigIntFunction)");
+}
 
 void TestAPI::basicSymbol()
 {
@@ -742,6 +757,258 @@ void TestAPI::testJSObjectSetOnGlobalObjectSubclassDefinition()
     check(JSEvaluateScript(context, propertyName, globalObject, nullptr, 1, nullptr) == newObject, "Setting a property on a custom global object should set the property");
 }
 
+void TestAPI::checkThrownException(JSValueRef* exception, const ASCIILiteral& expectedMessage, const char* description)
+{
+    check(exception, description, " throws an exception");
+    JSC::JSGlobalObject* globalObject = toJS(context);
+    JSC::JSValue exceptionValue = toJS(globalObject, *exception);
+    check(exceptionValue.toWTFString(globalObject) == expectedMessage, description, " has correct exception message");
+}
+
+void TestAPI::testBigInt()
+{
+    {
+        auto result = evaluateScript("BigInt(42);");
+        checkIsBigIntType(result.value());
+    }
+
+    {
+        double number = 42;
+        const char* description = "checking JSValueMakeBigIntFromNumber with 42";
+        checkJSAndAPIMatch(
+            [&] {
+                return callFunction(createBigIntFunction, JSValueMakeNumber(context, number));
+            }, [&] (JSValueRef* exception) {
+                JSValueRef bigint = JSBigIntCreateWithNumber(context, number, exception);
+                checkIsBigIntType(bigint);
+                return bigint;
+            }, description);
+    }
+
+    {
+        double number = (1ULL << 32) + 1;
+        const char* description = "checking JSValueMakeBigIntFromNumber with 2 ^ 32 + 1";
+        checkJSAndAPIMatch(
+            [&] {
+                return callFunction(createBigIntFunction, JSValueMakeNumber(context, number));
+            }, [&] (JSValueRef* exception) {
+                JSValueRef bigint = JSBigIntCreateWithNumber(context, number, exception);
+                checkIsBigIntType(bigint);
+                return bigint;
+            }, description);
+    }
+
+    {
+        double number = JSC::pureNaN();
+        const char* description = "checking JSValueMakeBigIntFromNumber with NaN";
+        checkJSAndAPIMatch(
+            [&] {
+                return callFunction(createBigIntFunction, JSValueMakeNumber(context, number));
+            }, [&] (JSValueRef* exception) {
+                JSBigIntCreateWithNumber(context, number, exception);
+                checkThrownException(exception, "RangeError: Not an integer"_s, description);
+                return nullptr;
+            }, description);
+    }
+
+    {
+        double number = 1.1;
+        const char* description = "checking JSValueMakeBigIntFromNumber with NaN";
+        checkJSAndAPIMatch(
+            [&] {
+                return callFunction(createBigIntFunction, JSValueMakeNumber(context, number));
+            }, [&] (JSValueRef* exception) {
+                JSBigIntCreateWithNumber(context, number, exception);
+                checkThrownException(exception, "RangeError: Not an integer"_s, description);
+                return nullptr;
+            }, description);
+    }
+
+    {
+        int64_t int64Max = std::numeric_limits<int64_t>::max();
+        JSStringRef int64MaxStr = JSStringCreateWithUTF8CString("0x7fffffffffffffff");
+        const char* description = "checking JSBigIntCreateWithInt64 with int64 max";
+        checkJSAndAPIMatch(
+            [&] {
+                return callFunction(createBigIntFunction, JSValueMakeString(context, int64MaxStr));
+            },
+            [&](JSValueRef* exception) {
+                JSValueRef bigint = JSBigIntCreateWithInt64(context, int64Max, exception);
+                checkIsBigIntType(bigint);
+                int64_t result = JSBigIntToInt64(context, bigint, exception);
+                check(result == int64Max, description, ", result equals to int64Max"_s);
+                return bigint;
+            },
+            description);
+
+        JSStringRelease(int64MaxStr);
+    }
+
+    {
+        int64_t int64Min = std::numeric_limits<int64_t>::min();
+        JSStringRef int64MinStr = JSStringCreateWithUTF8CString("0x8000000000000000");
+        const char* description = "checking JSBigIntCreateWithInt64 with int64 min";
+        checkJSAndAPIMatch(
+            [&] {
+                return callFunction(createNegBigIntFunction, JSValueMakeString(context, int64MinStr));
+            },
+            [&](JSValueRef* exception) {
+                JSValueRef bigint = JSBigIntCreateWithInt64(context, int64Min, exception);
+                checkIsBigIntType(bigint);
+                int64_t result = JSBigIntToInt64(context, bigint, exception);
+                check(result == int64Min, description, ", result equals to int64Min"_s);
+                return bigint;
+            },
+            description);
+
+        JSStringRelease(int64MinStr);
+    }
+
+    {
+        const char* description = "checking JSBigIntToString with BigInt(0x2a) and toString(37)";
+        JSValueRef exceptionRef = nullptr;
+        JSValueRef* exception = &exceptionRef;
+        JSValueRef number = JSValueMakeNumber(context, 42.0);
+        uint64_t result = JSBigIntToInt64(context, number, exception);
+        check(!result, description, " has correct result");
+        checkThrownException(exception, "ReferenceError: not a bigint JSValue"_s, description);
+    }
+
+    {
+        uint64_t uint64Max = std::numeric_limits<uint64_t>::max();
+        JSStringRef uint64MaxStr = JSStringCreateWithUTF8CString("0xffffffffffffffff");
+        const char* description = "checking JSBigIntCreateWithUInt64 with int64 max";
+        checkJSAndAPIMatch(
+            [&] {
+                return callFunction(createBigIntFunction, JSValueMakeString(context, uint64MaxStr));
+            },
+            [&](JSValueRef* exception) {
+                JSValueRef bigint = JSBigIntCreateWithUInt64(context, uint64Max, exception);
+                checkIsBigIntType(bigint);
+                uint64_t result = JSBigIntToUInt64(context, bigint, exception);
+                check(result == uint64Max, description, ", result equals to uint64Max"_s);
+                return bigint;
+            },
+            description);
+
+        JSStringRelease(uint64MaxStr);
+    }
+
+    {
+        uint64_t uint64Min = std::numeric_limits<uint64_t>::min();
+        JSStringRef uint64MinStr = JSStringCreateWithUTF8CString("0x0");
+        const char* description = "checking JSBigIntCreateWithUInt64 with int64 min";
+        checkJSAndAPIMatch(
+            [&] {
+                return callFunction(createBigIntFunction, JSValueMakeString(context, uint64MinStr));
+            },
+            [&](JSValueRef* exception) {
+                JSValueRef bigint = JSBigIntCreateWithUInt64(context, uint64Min, exception);
+                checkIsBigIntType(bigint);
+                uint64_t result = JSBigIntToUInt64(context, bigint, exception);
+                check(result == uint64Min, description, ", result equals to uint64Min"_s);
+                return bigint;
+            },
+            description);
+
+        JSStringRelease(uint64MinStr);
+    }
+
+    {
+        const char* description = "checking JSBigIntToString with BigInt(0x2a) and toString(37)";
+        JSValueRef exceptionRef = nullptr;
+        JSValueRef* exception = &exceptionRef;
+        JSValueRef number = JSValueMakeNumber(context, 42.0);
+        uint64_t result = JSBigIntToUInt64(context, number, exception);
+        check(!result, description, " has correct result");
+        checkThrownException(exception, "ReferenceError: not a bigint JSValue"_s, description);
+    }
+
+    {
+        JSStringRef str = JSStringCreateWithUTF8CString("0x2a");
+        const char* description = "checking JSValueMakeBigIntFromString with 0x2a";
+        checkJSAndAPIMatch(
+            [&] {
+                return callFunction(createBigIntFunction, JSValueMakeString(context, str));
+            },
+            [&](JSValueRef* exception) {
+                JSValueRef bigint = JSBigIntCreateWithString(context, str, exception);
+                checkIsBigIntType(bigint);
+                JSStringRef string = JSBigIntToString(context, bigint, 16, exception);
+                check(string->string() == "2a"_s, "string should be \"2a\" (JSBigIntCreateWithString)");
+                JSStringRelease(string);
+                return bigint;
+            },
+            description);
+
+        JSStringRelease(str);
+    }
+
+    {
+        JSStringRef str = JSStringCreateWithUTF8CString("0h2a");
+        const char* description = "checking JSValueMakeBigIntFromString with 0h2a";
+        checkJSAndAPIMatch(
+            [&] {
+                return callFunction(createBigIntFunction, JSValueMakeString(context, str));
+            },
+            [&](JSValueRef* exception) {
+                JSBigIntCreateWithString(context, str, exception);
+                checkThrownException(exception, "SyntaxError: Failed to parse String to BigInt"_s, description);
+                return nullptr;
+            },
+            description);
+
+        JSStringRelease(str);
+    }
+
+    {
+        const char* description = "checking JSBigIntToString with BigInt(0x2a) and toString(16)";
+        checkJSAndAPIMatch(
+            [&] {
+                return callFunction(createBigIntFunction, JSValueMakeNumber(context, 0x2a));
+            }, [&] (JSValueRef* exception) {
+                JSValueRef bigint = JSBigIntCreateWithNumber(context, 0x2a, exception);
+                checkIsBigIntType(bigint);
+                JSStringRef string = JSBigIntToString(context, bigint, 16, exception);
+                check(string->string() == "2a"_s, description, " has correct string");
+                JSStringRelease(string);
+                return bigint;
+            }, description);
+    }
+
+    {
+        const char* description = "checking JSBigIntToString with BigInt(0x2a) and toString(1)";
+        JSValueRef exceptionRef = nullptr;
+        JSValueRef* exception = &exceptionRef;
+        JSValueRef bigint = JSBigIntCreateWithNumber(context, 0x2a, exception);
+        checkIsBigIntType(bigint);
+        JSStringRef string = JSBigIntToString(context, bigint, 1, exception);
+        check(!string, description, " has correct string");
+        checkThrownException(exception, "RangeError: radix argument must be between 2 and 36"_s, description);
+    }
+
+    {
+        const char* description = "checking JSBigIntToString with BigInt(0x2a) and toString(37)";
+        JSValueRef exceptionRef = nullptr;
+        JSValueRef* exception = &exceptionRef;
+        JSValueRef bigint = JSBigIntCreateWithNumber(context, 0x2a, exception);
+        checkIsBigIntType(bigint);
+        JSStringRef string = JSBigIntToString(context, bigint, 37, exception);
+        check(!string, description, " has correct string");
+        checkThrownException(exception, "RangeError: radix argument must be between 2 and 36"_s, description);
+    }
+
+    {
+        const char* description = "checking JSBigIntToString with BigInt(0x2a) and toString(37)";
+        JSValueRef exceptionRef = nullptr;
+        JSValueRef* exception = &exceptionRef;
+        JSValueRef number = JSValueMakeNumber(context, 42.0);
+        JSStringRef string = JSBigIntToString(context, number, 16, exception);
+        check(!string, description, " has correct string");
+        checkThrownException(exception, "ReferenceError: not a bigint JSValue"_s, description);
+    }
+}
+
 void configureJSCForTesting()
 {
     JSC::Config::configureForTesting();
@@ -786,6 +1053,7 @@ int testCAPIViaCpp(const char* filter)
     RUN(classDefinitionWithJSSubclass());
     RUN(proxyReturnedWithJSSubclassing());
     RUN(testJSObjectSetOnGlobalObjectSubclassDefinition());
+    RUN(testBigInt());
 
     if (tasks.isEmpty())
         return 0;

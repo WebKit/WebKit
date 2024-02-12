@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2019 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2024 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,7 +51,8 @@ typedef enum {
     kJSTypeNumber,
     kJSTypeString,
     kJSTypeObject,
-    kJSTypeSymbol JSC_API_AVAILABLE(macos(10.15), ios(13.0))
+    kJSTypeSymbol JSC_API_AVAILABLE(macos(10.15), ios(13.0)),
+    kJSTypeBigInt JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA))
 } JSType;
 
 /*!
@@ -154,6 +155,15 @@ JS_EXPORT bool JSValueIsString(JSContextRef ctx, JSValueRef value);
 @result         true if value's type is the symbol type, otherwise false.
 */
 JS_EXPORT bool JSValueIsSymbol(JSContextRef ctx, JSValueRef value) JSC_API_AVAILABLE(macos(10.15), ios(13.0));
+
+/*!
+@function
+@abstract       Tests whether a JavaScript value's type is the bigint type.
+@param ctx      The execution context to use.
+@param value    The JSValue to test.
+@result         true if value's type is the bigint type, otherwise false.
+*/
+JS_EXPORT bool JSValueIsBigInt(JSContextRef ctx, JSValueRef value) JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
 
 /*!
 @function
@@ -291,6 +301,81 @@ JS_EXPORT JSValueRef JSValueMakeString(JSContextRef ctx, JSStringRef string);
  @result              A unique JSValue of the symbol type, whose description matches the one provided.
  */
 JS_EXPORT JSValueRef JSValueMakeSymbol(JSContextRef ctx, JSStringRef description) JSC_API_AVAILABLE(macos(10.15), ios(13.0));
+
+/*!
+    @function
+    @abstract         Creates a JavaScript bigint with a number.
+    @param ctx        The execution context to use.
+    @param number     The number to copy into the new bigint JSValue.
+    @param exception  A pointer to a JSValueRef in which to store an exception, if any. Pass NULL if you do not care to store an exception.
+    @result           A bigint JSValue of the number, or NULL if an exception is thrown.
+    @discussion       If number is not an integer this function will return an exception.
+*/
+JS_EXPORT JSValueRef JSBigIntCreateWithNumber(JSContextRef ctx, const double number, JSValueRef* exception) JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
+
+/*!
+    @function
+    @abstract         Creates a JavaScript bigint with a 64-bit unsigned integer.
+    @param ctx        The execution context to use.
+    @param integer    The 64-bit unsigned integer to copy into the new bigint JSValue.
+    @param exception  A pointer to a JSValueRef in which to store an exception, if any. Pass NULL if you do not care to store an exception.
+    @result           A bigint JSValue of the integer, or NULL if an exception is thrown.
+*/
+JS_EXPORT JSValueRef JSBigIntCreateWithUInt64(JSContextRef ctx, const uint64_t integer, JSValueRef* exception) JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
+
+/*!
+    @function
+    @abstract         Creates a JavaScript bigint with a 64-bit signed integer.
+    @param ctx        The execution context to use.
+    @param integer    The 64-bit signed integer to copy into the new bigint JSValue.
+    @param exception  A pointer to a JSValueRef in which to store an exception, if any. Pass NULL if you do not care to store an exception.
+    @result           A bigint JSValue of the integer, or NULL if an exception is thrown.
+*/
+JS_EXPORT JSValueRef JSBigIntCreateWithInt64(JSContextRef ctx, const int64_t integer, JSValueRef* exception) JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
+
+/*!
+    @function
+    @abstract         Creates a JavaScript bigint with an integer represented in string.
+    @param ctx        The execution context to use.
+    @param string     The JSString representation of an integer.
+    @param exception  A pointer to a JSValueRef in which to store an exception, if any. Pass NULL if you do not care to store an exception.
+    @result           A bigint JSValue of the string, or NULL if an exception is thrown.
+*/
+JS_EXPORT JSValueRef JSBigIntCreateWithString(JSContextRef ctx, JSStringRef string, JSValueRef* exception) JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
+
+/*!
+    @function
+    @abstract         Truncates a JavaScript bigint to an unsigned 64-bit integer and returns the resulting integer.
+    @param ctx        The execution context to use.
+    @param value      The bigint JSValue to Truncate.
+    @param exception  A pointer to a JSValueRef in which to store an exception, if any. Pass NULL if you do not care to store an exception.
+    @result           A 64-bit unsigned integer representing the bigint JSValue value.
+    @discussion       If value is not an bigint this function will return an exception.
+*/
+JS_EXPORT uint64_t JSBigIntToUInt64(JSContextRef ctx, JSValueRef value, JSValueRef* exception) JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
+
+/*!
+    @function
+    @abstract         Truncates a JavaScript bigint to a singed 64-bit integer and returns the resulting integer.
+    @param ctx        The execution context to use.
+    @param value      The bigint JSValue to Truncate.
+    @param exception  A pointer to a JSValueRef in which to store an exception, if any. Pass NULL if you do not care to store an exception.
+    @result           A 64-bit signed integer representing the bigint JSValue value.
+    @discussion       If value is not an bigint this function will return an exception.
+*/
+JS_EXPORT int64_t JSBigIntToInt64(JSContextRef ctx, JSValueRef value, JSValueRef* exception) JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
+
+/*!
+    @function
+    @abstract         Convert a bigint JSValue to JSString.
+    @param ctx        The execution context to use.
+    @param value      The bigint JSValue to Truncate.
+    @param radix      The integer in the range from 2 to 36 as the base for representing the bigint JSValue value.
+    @param exception  A pointer to a JSValueRef in which to store an exception, if any. Pass NULL if you do not care to store an exception.
+    @result           A JSString representing the bigint JSValue value, or NULL if an exception is thrown.
+    @discussion       If value is not an bigint this function will return an exception.
+*/
+JS_EXPORT JSStringRef JSBigIntToString(JSContextRef ctx, JSValueRef value, const size_t radix, JSValueRef* exception) JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
 
 /* Converting to and from JSON formatted strings */
 

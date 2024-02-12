@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -170,6 +170,43 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 @result The JSValue representing a unique JavaScript value with type symbol.
 */
 + (JSValue *)valueWithNewSymbolFromDescription:(NSString *)description inContext:(JSContext *)context JSC_API_AVAILABLE(macos(10.15), ios(13.0));
+
+/*!
+@method
+@abstract Create a new, unique, bigint object.
+@param string The string representation of the bigint object being created.
+@param context The JSContext to which the resulting JSValue belongs.
+@result The JSValue representing a unique JavaScript value with type bigint.
+*/
++ (JSValue *)valueWithNewBigIntFromString:(NSString *)string inContext:(JSContext *)context JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
+
+/*!
+@method
+@abstract Create a new, unique, bigint object.
+@param int64 The signed 64-bit integer of the bigint object being created.
+@param context The JSContext to which the resulting JSValue belongs.
+@result The JSValue representing a unique JavaScript value with type bigint.
+*/
++ (JSValue *)valueWithNewBigIntFromInt64:(int64_t)int64 inContext:(JSContext *)context JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
+
+/*!
+@method
+@abstract Create a new, unique, bigint object.
+@param uint64 The unsigned 64-bit integer of the bigint object being created.
+@param context The JSContext to which the resulting JSValue belongs.
+@result The JSValue representing a unique JavaScript value with type bigint.
+*/
++ (JSValue *)valueWithNewBigIntFromUInt64:(uint64_t)uint64 inContext:(JSContext *)context JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
+
+/*!
+@method
+@abstract Create a new, unique, bigint object.
+@param number The number of the bigint object being created.
+@param context The JSContext to which the resulting JSValue belongs.
+@result The JSValue representing a unique JavaScript value with type bigint.
+@discussion If number is not an integer an exception will be thrown.
+*/
++ (JSValue *)valueWithNewBigIntFromNumber:(double)number inContext:(JSContext *)context JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
 
 /*!
 @method
@@ -401,6 +438,12 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
  @abstract Check if a JSValue is a symbol.
  */
 @property (readonly) BOOL isSymbol JSC_API_AVAILABLE(macos(10.15), ios(13.0));
+
+/*!
+@property
+@abstract Check if a JSValue is a bigint.
+*/
+@property (readonly) BOOL isBigInt JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
 
 /*!
 @method

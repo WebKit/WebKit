@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2021 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2024 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -288,6 +288,7 @@ public:
     JSValue toNumeric(JSGlobalObject*) const;
     JSValue toBigIntOrInt32(JSGlobalObject*) const;
     JSBigInt* asHeapBigInt() const;
+    JSBigInt* asBigInt(JSGlobalObject*) const;
 
     // toNumber conversion if it can be done without side effects.
     std::optional<double> toNumberFromPrimitive() const;

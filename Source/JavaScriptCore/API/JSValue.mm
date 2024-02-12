@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -157,6 +157,50 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
 {
     auto string = OpaqueJSString::tryCreate(description);
     return [JSValue valueWithJSValueRef:JSValueMakeSymbol([context JSGlobalContextRef], string.get()) inContext:context];
+}
+
++ (JSValue *)valueWithNewBigIntFromString:(NSString *)string inContext:(JSContext *)context
+{
+    JSValueRef exception = nullptr;
+    JSValueRef bigInt = JSBigIntCreateWithString([context JSGlobalContextRef], OpaqueJSString::tryCreate(string).get(), &exception);
+    if (exception) {
+        [context notifyException:exception];
+        return [JSValue valueWithUndefinedInContext:context];
+    }
+    return [JSValue valueWithJSValueRef:bigInt inContext:context];
+}
+
++ (JSValue *)valueWithNewBigIntFromInt64:(int64_t)int64 inContext:(JSContext *)context
+{
+    JSValueRef exception = nullptr;
+    JSValueRef bigInt = JSBigIntCreateWithInt64([context JSGlobalContextRef], int64, &exception);
+    if (exception) {
+        [context notifyException:exception];
+        return [JSValue valueWithUndefinedInContext:context];
+    }
+    return [JSValue valueWithJSValueRef:bigInt inContext:context];
+}
+
++ (JSValue *)valueWithNewBigIntFromUInt64:(uint64_t)uint64 inContext:(JSContext *)context
+{
+    JSValueRef exception = nullptr;
+    JSValueRef bigInt = JSBigIntCreateWithUInt64([context JSGlobalContextRef], uint64, &exception);
+    if (exception) {
+        [context notifyException:exception];
+        return [JSValue valueWithUndefinedInContext:context];
+    }
+    return [JSValue valueWithJSValueRef:bigInt inContext:context];
+}
+
++ (JSValue *)valueWithNewBigIntFromNumber:(double)number inContext:(JSContext *)context
+{
+    JSValueRef exception = nullptr;
+    JSValueRef bigInt = JSBigIntCreateWithNumber([context JSGlobalContextRef], number, &exception);
+    if (exception) {
+        [context notifyException:exception];
+        return [JSValue valueWithUndefinedInContext:context];
+    }
+    return [JSValue valueWithJSValueRef:bigInt inContext:context];
 }
 
 + (JSValue *)valueWithNewPromiseInContext:(JSContext *)context fromExecutor:(void (^)(JSValue *, JSValue *))executor
@@ -460,6 +504,15 @@ inline Expected<Result, JSValueRef> performPropertyOperation(NSStringFunction st
     return JSValueIsSymbol([_context JSGlobalContextRef], m_value);
 #else
     return toJS(m_value).isSymbol();
+#endif
+}
+
+- (BOOL)isBigInt
+{
+#if !CPU(ADDRESS64)
+    return JSValueIsBigInt([_context JSGlobalContextRef], m_value);
+#else
+    return toJS(m_value).isBigInt();
 #endif
 }
 
