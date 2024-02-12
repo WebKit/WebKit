@@ -794,8 +794,9 @@ void PDFPluginBase::print()
 
 #if PLATFORM(MAC)
 
-void PDFPluginBase::writeItemsToPasteboard(NSString *pasteboardName, NSArray *items, NSArray *types)
+void PDFPluginBase::writeItemsToPasteboard(NSString *pasteboardName, NSArray *items, NSArray *types) const
 {
+    // FIXME: <https://webkit.org/b/269174> PDFPluginBase::writeItemsToPasteboard should be platform-agnostic.
     auto pasteboardTypes = makeVector<String>(types);
     auto pageIdentifier = m_frame && m_frame->coreLocalFrame() ? m_frame->coreLocalFrame()->pageID() : std::nullopt;
 

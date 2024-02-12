@@ -213,7 +213,7 @@ public:
     virtual void windowActivityDidChange() { }
 
 #if PLATFORM(MAC)
-    void writeItemsToPasteboard(NSString *pasteboardName, NSArray *items, NSArray *types);
+    void writeItemsToPasteboard(NSString *pasteboardName, NSArray *items, NSArray *types) const;
 #endif
 
 private:

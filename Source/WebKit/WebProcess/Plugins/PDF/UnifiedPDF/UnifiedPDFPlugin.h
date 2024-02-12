@@ -168,6 +168,7 @@ private:
     bool takeFindStringFromSelection();
     bool forwardEditingCommandToEditor(const String& commandName, const String& argument) const;
     void selectAll();
+    bool performCopyEditingOperation() const;
 
     // Context Menu
     enum class ContextMenuItemTag : int8_t {

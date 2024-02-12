@@ -31,6 +31,7 @@
 #include "PDFContextMenu.h"
 #include "PDFKitSPI.h"
 #include "PDFPluginAnnotation.h"
+#include "PasteboardTypes.h"
 #include "PluginView.h"
 #include "WebEventConversion.h"
 #include "WebEventModifier.h"
@@ -1481,6 +1482,9 @@ bool UnifiedPDFPlugin::handleEditingCommand(const String& commandName, const Str
     if (commandName == "ScrollPageBackward"_s || commandName == "ScrollPageForward"_s)
         return forwardEditingCommandToEditor(commandName, argument);
 
+    if (commandName == "copy"_s)
+        return performCopyEditingOperation();
+
     if (commandName == "selectAll"_s) {
         selectAll();
         return true;
@@ -1503,6 +1507,31 @@ bool UnifiedPDFPlugin::isEditingCommandEnabled(const String& commandName)
     if (commandName == "copy"_s || commandName == "takeFindStringFromSelection"_s)
         return m_currentSelection;
 
+    return false;
+}
+
+bool UnifiedPDFPlugin::performCopyEditingOperation() const
+{
+#if PLATFORM(MAC)
+    if (!m_currentSelection)
+        return false;
+
+    if (![m_pdfDocument allowsCopying]) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:get_PDFKit_PDFViewCopyPermissionNotification() object:nil];
+        return false;
+    }
+
+    NSString *plainString = [m_currentSelection string];
+    NSString *htmlString = [m_currentSelection html];
+    NSData *webArchiveData = [m_currentSelection webArchive];
+
+    NSArray *types = @[ PasteboardTypes::WebArchivePboardType, NSPasteboardTypeString, NSPasteboardTypeHTML ];
+
+    NSArray *items = @[ webArchiveData, [plainString dataUsingEncoding:NSUTF8StringEncoding], [htmlString dataUsingEncoding:NSUTF8StringEncoding] ];
+
+    writeItemsToPasteboard(NSPasteboardNameGeneral, items, types);
+    return true;
+#endif
     return false;
 }
 
