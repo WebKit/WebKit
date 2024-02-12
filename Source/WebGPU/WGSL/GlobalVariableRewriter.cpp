@@ -211,10 +211,14 @@ void RewriteGlobalVariables::visitCallee(const CallGraph::Callee& callee)
     const auto& updateCallSites = [&] {
         for (auto& read : m_reads) {
             for (auto& call : callee.callSites) {
-                m_callGraph.ast().append(call->arguments(), m_callGraph.ast().astBuilder().construct<AST::IdentifierExpression>(
+                auto it = m_globals.find(read);
+                RELEASE_ASSERT(it != m_globals.end());
+                auto& global = m_callGraph.ast().astBuilder().construct<AST::IdentifierExpression>(
                     SourceSpan::empty(),
                     AST::Identifier::make(read)
-                ));
+                );
+                global.m_inferredType = it->value.declaration->storeType();
+                m_callGraph.ast().append(call->arguments(), global);
             }
         }
     };
@@ -1521,6 +1525,7 @@ Result<Vector<unsigned>> RewriteGlobalVariables::insertStructs(const PipelineLay
             if (variable) {
                 auto it = m_bufferLengthMap.find(variable);
                 RELEASE_ASSERT(it != m_bufferLengthMap.end());
+                serializedVariables.add(it->value);
                 entries.append({ binding, &createArgumentBufferEntry(binding, *it->value) });
             } else {
                 entries.append({
