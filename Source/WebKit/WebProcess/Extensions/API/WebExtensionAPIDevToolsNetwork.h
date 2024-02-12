@@ -38,15 +38,11 @@ class WebExtensionAPIDevToolsNetwork : public WebExtensionAPIObject, public JSWe
 
 public:
 #if PLATFORM(COCOA)
-    void getHAR(Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
-
     WebExtensionAPIEvent& onNavigated();
-    WebExtensionAPIEvent& onRequestFinished();
 #endif
 
 private:
     RefPtr<WebExtensionAPIEvent> m_onNavigated;
-    RefPtr<WebExtensionAPIEvent> m_onRequestFinished;
 };
 
 } // namespace WebKit

@@ -839,9 +839,7 @@ EXTENSION_INTERFACES = \
     WebExtensionAPICookies \
     WebExtensionAPIDeclarativeNetRequest \
     WebExtensionAPIDevTools \
-    WebExtensionAPIDevToolsElementsPanel \
     WebExtensionAPIDevToolsExtensionPanel \
-    WebExtensionAPIDevToolsExtensionSidebarPane \
     WebExtensionAPIDevToolsInspectedWindow \
     WebExtensionAPIDevToolsNetwork \
     WebExtensionAPIDevToolsPanels \

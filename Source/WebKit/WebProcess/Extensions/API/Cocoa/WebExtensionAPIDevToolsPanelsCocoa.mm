@@ -33,7 +33,6 @@
 #import "CocoaHelpers.h"
 #import "JSWebExtensionWrapper.h"
 #import "MessageSenderInlines.h"
-#import "WebExtensionAPIDevToolsElementsPanel.h"
 #import "WebExtensionAPIEvent.h"
 
 #if ENABLE(WK_WEB_EXTENSIONS) && ENABLE(INSPECTOR_EXTENSIONS)
@@ -47,16 +46,6 @@ void WebExtensionAPIDevToolsPanels::createTab(NSString *title, NSString *iconPat
     // FIXME: <https://webkit.org/b/246485> Implement.
 
     callback->call();
-}
-
-WebExtensionAPIDevToolsElementsPanel& WebExtensionAPIDevToolsPanels::elements()
-{
-    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/devtools/panels/elements
-
-    if (!m_elements)
-        m_elements = WebExtensionAPIDevToolsElementsPanel::create(forMainWorld(), runtime(), extensionContext());
-
-    return *m_elements;
 }
 
 NSString *WebExtensionAPIDevToolsPanels::themeName()

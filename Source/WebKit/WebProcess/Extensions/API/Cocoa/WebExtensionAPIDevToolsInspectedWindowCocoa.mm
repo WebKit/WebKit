@@ -38,13 +38,6 @@
 
 namespace WebKit {
 
-bool WebExtensionAPIDevToolsInspectedWindow::isPropertyAllowed(const ASCIILiteral& propertyName, WebPage&)
-{
-    // FIXME: <https://webkit.org/b/246485> Implement.
-
-    return true;
-}
-
 void WebExtensionAPIDevToolsInspectedWindow::eval(NSString *expression, NSDictionary *options, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/devtools/inspectedWindow/eval
@@ -61,15 +54,6 @@ void WebExtensionAPIDevToolsInspectedWindow::reload(NSDictionary *options, NSStr
     // FIXME: <https://webkit.org/b/246485> Implement.
 }
 
-void WebExtensionAPIDevToolsInspectedWindow::getResources(NSDictionary *options, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
-{
-    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/devtools/inspectedWindow/eval
-
-    // FIXME: <https://webkit.org/b/246485> Implement.
-
-    callback->call();
-}
-
 double WebExtensionAPIDevToolsInspectedWindow::tabId()
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/devtools/inspectedWindow/tabId
@@ -77,16 +61,6 @@ double WebExtensionAPIDevToolsInspectedWindow::tabId()
     // FIXME: <https://webkit.org/b/246485> Implement.
 
     return -1;
-}
-
-WebExtensionAPIEvent& WebExtensionAPIDevToolsInspectedWindow::onResourceAdded()
-{
-    // Documentation: https://developer.chrome.com/docs/extensions/mv2/reference/devtools/inspectedWindow#event-onResourceAdded
-
-    if (!m_onResourceAdded)
-        m_onResourceAdded = WebExtensionAPIEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::DevToolsInspectedWindowOnResourceAdded);
-
-    return *m_onResourceAdded;
 }
 
 } // namespace WebKit

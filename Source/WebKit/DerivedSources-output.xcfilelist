@@ -58,12 +58,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIDeclarativeNetReque
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIDeclarativeNetRequest.mm
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIDevTools.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIDevTools.mm
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIDevToolsElementsPanel.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIDevToolsElementsPanel.mm
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIDevToolsExtensionPanel.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIDevToolsExtensionPanel.mm
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIDevToolsExtensionSidebarPane.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIDevToolsExtensionSidebarPane.mm
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIDevToolsInspectedWindow.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIDevToolsInspectedWindow.mm
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIDevToolsNetwork.h

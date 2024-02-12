@@ -28,7 +28,6 @@
 #if ENABLE(WK_WEB_EXTENSIONS) && ENABLE(INSPECTOR_EXTENSIONS)
 
 #include "JSWebExtensionAPIDevToolsPanels.h"
-#include "WebExtensionAPIDevToolsElementsPanel.h"
 #include "WebExtensionAPIEvent.h"
 #include "WebExtensionAPIObject.h"
 
@@ -41,14 +40,12 @@ public:
 #if PLATFORM(COCOA)
     void createTab(NSString *title, NSString *iconPath, NSString *pagePath, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
-    WebExtensionAPIDevToolsElementsPanel& elements();
     NSString *themeName();
 
     WebExtensionAPIEvent& onThemeChanged();
 #endif
 
 private:
-    RefPtr<WebExtensionAPIDevToolsElementsPanel> m_elements;
     RefPtr<WebExtensionAPIEvent> m_onThemeChanged;
 };
 

@@ -30,10 +30,7 @@
 
     [RaisesException, ImplementedAs=createTab] void create(DOMString title, DOMString iconPath, DOMString pagePath, [Optional, CallbackHandler] function callback);
 
-    readonly attribute WebExtensionAPIDevToolsElementsPanel elements;
-
     readonly attribute DOMString themeName;
     readonly attribute WebExtensionAPIEvent onThemeChanged;
 
 };
-

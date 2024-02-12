@@ -28,10 +28,6 @@
     ReturnsPromiseWhenCallbackIsOmitted,
 ] interface WebExtensionAPIDevToolsNetwork {
 
-    [RaisesException] void getHAR([Optional, CallbackHandler] function callback);
-
     readonly attribute WebExtensionAPIEvent onNavigated;
-
-    readonly attribute WebExtensionAPIEvent onRequestFinished;
 
 };

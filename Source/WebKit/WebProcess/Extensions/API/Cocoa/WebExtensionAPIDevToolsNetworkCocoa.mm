@@ -38,15 +38,6 @@
 
 namespace WebKit {
 
-void WebExtensionAPIDevToolsNetwork::getHAR(Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
-{
-    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/devtools/network/getHAR
-
-    // FIXME: <https://webkit.org/b/246485> Implement.
-
-    callback->call();
-}
-
 WebExtensionAPIEvent& WebExtensionAPIDevToolsNetwork::onNavigated()
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/devtools/network/onNavigated
@@ -55,16 +46,6 @@ WebExtensionAPIEvent& WebExtensionAPIDevToolsNetwork::onNavigated()
         m_onNavigated = WebExtensionAPIEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::DevToolsNetworkOnNavigated);
 
     return *m_onNavigated;
-}
-
-WebExtensionAPIEvent& WebExtensionAPIDevToolsNetwork::onRequestFinished()
-{
-    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/devtools/network/onRequestFinished
-
-    if (!m_onRequestFinished)
-        m_onRequestFinished = WebExtensionAPIEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::DevToolsNetworkOnRequestFinished);
-
-    return *m_onRequestFinished;
 }
 
 } // namespace WebKit
