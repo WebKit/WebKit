@@ -91,3 +91,8 @@ class VersionMapTestCase(unittest.TestCase):
         self.assertEqual(
             {"iOS 1": Version(1), "iOS 2": Version(2), "iOS 3": Version(3)}, r
         )
+
+    def test_visionos_name_by_version(self):
+        map = VersionNameMap()
+        self.assertEqual(('visionos', Version(1)), map.from_name('visionOS 1'))
+        self.assertEqual('visionOS 1', map.to_name(version=Version(1), platform='visionos'))

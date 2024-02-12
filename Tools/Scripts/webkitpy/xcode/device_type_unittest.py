@@ -168,3 +168,9 @@ class DeviceTypeTest(unittest.TestCase):
         self.assertEqual(DeviceType.from_string('Apple Watch Series 5 (44mm)').standardized_hardware_type, 'Series 5 - 44mm')
         self.assertTrue(DeviceType.from_string('Apple Watch Series 5 (44mm)') == DeviceType.from_string('Apple Watch Series 5 - 44mm'))
         self.assertTrue(DeviceType.from_string('Apple Watch Series 5 (38mm)') != DeviceType.from_string('Apple Watch Series 5 - 44mm'))
+
+    def test_visionos(self):
+        type = DeviceType.from_string('Apple Vision Pro')
+        self.assertEqual('Vision', type.hardware_family)
+        self.assertEqual('Pro', type.hardware_type)
+        self.assertEqual('visionOS', type.software_variant)

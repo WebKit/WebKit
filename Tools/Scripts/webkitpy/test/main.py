@@ -236,6 +236,7 @@ def main():
         "webkitpy.port.linux_get_crash_log_unittest",
         "webkitpy.port.mac_unittest",
         "webkitpy.port.server_process_unittest",
+        "webkitpy.port.visionos_simulator_unittest",
         "webkitpy.port.watch_simulator_unittest",
         "webkitpy.port.waylanddriver_unittest",
         "webkitpy.port.westondriver_unittest",
