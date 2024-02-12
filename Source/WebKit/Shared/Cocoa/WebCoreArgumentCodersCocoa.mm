@@ -76,31 +76,6 @@
 
 namespace IPC {
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-
-template<> Class getClass<VKCImageAnalysis>()
-{
-    return PAL::getVKCImageAnalysisClass();
-}
-
-void ArgumentCoder<RetainPtr<VKCImageAnalysis>>::encode(Encoder& encoder, const RetainPtr<VKCImageAnalysis>& data)
-{
-    if (!PAL::isVisionKitCoreFrameworkAvailable())
-        return;
-
-    encoder << data.get();
-}
-
-std::optional<RetainPtr<VKCImageAnalysis>> ArgumentCoder<RetainPtr<VKCImageAnalysis>>::decode(Decoder& decoder)
-{
-    if (!PAL::isVisionKitCoreFrameworkAvailable())
-        return nil;
-
-    return decoder.decodeWithAllowedClasses<VKCImageAnalysis>();
-}
-
-#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-
 #if USE(AVFOUNDATION)
 
 void ArgumentCoder<RetainPtr<CVPixelBufferRef>>::encode(Encoder& encoder, const RetainPtr<CVPixelBufferRef>& pixelBuffer)

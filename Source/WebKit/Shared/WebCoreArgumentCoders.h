@@ -81,8 +81,6 @@
 #include <WebCore/MockContentFilterSettings.h>
 #endif
 
-OBJC_CLASS VKCImageAnalysis;
-
 #if USE(AVFOUNDATION)
 typedef struct __CVBuffer* CVPixelBufferRef;
 #endif
@@ -162,15 +160,6 @@ template<> struct ArgumentCoder<WebCore::FragmentedSharedBuffer> {
     static void encode(Encoder&, const WebCore::FragmentedSharedBuffer&);
     static std::optional<Ref<WebCore::FragmentedSharedBuffer>> decode(Decoder&);
 };
-
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-
-template<> struct ArgumentCoder<RetainPtr<VKCImageAnalysis>> {
-    static void encode(Encoder&, const RetainPtr<VKCImageAnalysis>&);
-    static WARN_UNUSED_RETURN std::optional<RetainPtr<VKCImageAnalysis>> decode(Decoder&);
-};
-
-#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
 #if USE(AVFOUNDATION)
 

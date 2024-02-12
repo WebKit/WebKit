@@ -139,7 +139,7 @@ TextRecognitionResult makeTextRecognitionResult(CocoaImageAnalysis *analysis)
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     if ([analysis isKindOfClass:PAL::getVKCImageAnalysisClass()])
-        result.platformData = analysis;
+        result.imageAnalysisData = TextRecognitionResult::encodeVKCImageAnalysis(analysis);
 #endif
 
     return result;
