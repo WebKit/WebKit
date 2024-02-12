@@ -774,6 +774,9 @@ http/tests/navigation/postredirect-basic.html [ Skip ] # Missing
 http/tests/navigation/postredirect-goback1.html [ Skip ] # Missing
 http/tests/navigation/page-cache-mediastream.html [ Skip ] # Timeout
 
+webkit.org/b/269223 http/tests/navigation/ping-attribute/area-cross-origin-from-https-UpgradeMixedContent.html [ Pass Failure ]
+webkit.org/b/269223 http/tests/navigation/ping-attribute/area-cross-origin-from-https.html [ Pass Failure ]
+
 http/tests/notifications [ Skip ]
 http/tests/paymentrequest [ Skip ]
 http/tests/pointer-lock [ Skip ]
@@ -806,6 +809,10 @@ http/tests/resourceLoadStatistics/omit-document-referrer-nested-third-party-ifra
 http/tests/resourceLoadStatistics/omit-document-referrer-third-party-iframe-ephemeral.html [ Failure ]
 http/tests/resourceLoadStatistics/omit-referrer-for-navigation-ephemeral.html [ Failure ]
 http/tests/resourceLoadStatistics/switch-session-on-navigation-to-prevalent-with-interaction.py [ Failure ]
+
+http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-filtered-link-decoration-after-long-deletion.html [ Failure ]
+http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-unfiltered-link-decoration-after-short-deletion.html [ Failure ]
+http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-without-link-decoration.html [ Failure ]
 
 http/tests/resourceLoadStatistics/website-data-removal-for-site-without-user-interaction.html [ Failure ]
 
@@ -1175,6 +1182,8 @@ editing/selection/regional-indicators.html [ Skip ]
 
 ###### Command enabling
 webkit.org/b/101539 editing/execCommand/switch-list-type-with-orphaned-li.html [ Failure ]
+
+webkit.org/b/239345 editing/execCommand/insert-ordered-list-and-delete.html [ Failure Pass ]
 
 ###### Inserting
 # Windows does not implement setAutomaticLinkDetectionEnabled
