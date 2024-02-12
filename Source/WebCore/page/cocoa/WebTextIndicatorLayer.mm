@@ -303,9 +303,10 @@ static RetainPtr<CABasicAnimation> createFadeInAnimation(CFTimeInterval duration
 
 - (void)present
 {
-    bool wantsBounce = [self indicatorWantsBounce:*_textIndicator];
-    bool wantsCrossfade = indicatorWantsContentCrossfade(*_textIndicator);
-    bool wantsFadeIn = indicatorWantsFadeIn(*_textIndicator);
+    RefPtr textIndicator = _textIndicator;
+    bool wantsBounce = [self indicatorWantsBounce:*textIndicator];
+    bool wantsCrossfade = indicatorWantsContentCrossfade(*textIndicator);
+    bool wantsFadeIn = indicatorWantsFadeIn(*textIndicator);
     CFTimeInterval animationDuration = [self _animationDuration];
 
     _hasCompletedAnimation = false;
@@ -319,13 +320,13 @@ static RetainPtr<CABasicAnimation> createFadeInAnimation(CFTimeInterval duration
     RetainPtr<CABasicAnimation> crossfadeAnimation;
     RetainPtr<CABasicAnimation> fadeShadowInAnimation;
     if (wantsCrossfade) {
-        crossfadeAnimation = createContentCrossfadeAnimation(animationDuration, *_textIndicator);
+        crossfadeAnimation = createContentCrossfadeAnimation(animationDuration, *textIndicator);
         fadeShadowInAnimation = createShadowFadeAnimation(animationDuration);
     }
 
     [CATransaction begin];
     for (CALayer *bounceLayer in _bounceLayers.get()) {
-        if ([self indicatorWantsManualAnimation:*_textIndicator])
+        if ([self indicatorWantsManualAnimation:*textIndicator])
             bounceLayer.speed = 0;
 
         if (!wantsFadeIn)

@@ -55,7 +55,7 @@ using namespace Inspector;
 PageRuntimeAgent::PageRuntimeAgent(PageAgentContext& context)
     : InspectorRuntimeAgent(context)
     , m_frontendDispatcher(makeUnique<Inspector::RuntimeFrontendDispatcher>(context.frontendRouter))
-    , m_backendDispatcher(Inspector::RuntimeBackendDispatcher::create(context.backendDispatcher, this))
+    , m_backendDispatcher(Inspector::RuntimeBackendDispatcher::create(Ref { context.backendDispatcher }, this))
     , m_instrumentingAgents(context.instrumentingAgents)
     , m_inspectedPage(context.inspectedPage)
 {
@@ -153,8 +153,8 @@ void PageRuntimeAgent::reportExecutionContextCreation()
             if (globalObject == &mainGlobalObject)
                 continue;
 
-            auto& securityOrigin = downcast<LocalDOMWindow>(jsWindowProxy->wrapped()).document()->securityOrigin();
-            notifyContextCreated(frameId, globalObject, jsWindowProxy->world(), &securityOrigin);
+            Ref securityOrigin = downcast<LocalDOMWindow>(jsWindowProxy->wrapped()).document()->securityOrigin();
+            notifyContextCreated(frameId, globalObject, jsWindowProxy->protectedWorld(), securityOrigin.ptr());
         }
     });
 }

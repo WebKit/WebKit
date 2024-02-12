@@ -88,8 +88,8 @@ private:
 
     Page& page() const { return m_page; }
 
-    Page& m_page;
-    PageOverlay* m_servicesOverlay { nullptr };
+    SingleThreadWeakRef<Page> m_page;
+    WeakPtr<PageOverlay> m_servicesOverlay;
 
     RefPtr<DataDetectorHighlight> m_activeHighlight;
     RefPtr<DataDetectorHighlight> m_nextActiveHighlight;

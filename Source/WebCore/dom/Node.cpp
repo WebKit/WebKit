@@ -1273,6 +1273,16 @@ ShadowRoot* Node::containingShadowRoot() const
     return dynamicDowncast<ShadowRoot>(treeScope().rootNode());
 }
 
+RefPtr<ShadowRoot> Node::protectedContainingShadowRoot() const
+{
+    return containingShadowRoot();
+}
+
+CheckedPtr<RenderObject> Node::checkedRenderer() const
+{
+    return renderer();
+}
+
 #if ASSERT_ENABLED
 // https://dom.spec.whatwg.org/#concept-closed-shadow-hidden
 static bool isClosedShadowHiddenUsingSpecDefinition(const Node& A, const Node& B)

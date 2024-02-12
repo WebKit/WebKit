@@ -166,10 +166,11 @@ bool Quirks::needsAutoplayPlayPauseEvents() const
     if (!needsQuirks())
         return false;
 
-    if (allowedAutoplayQuirks(*m_document).contains(AutoplayQuirk::SynthesizedPauseEvents))
+    Ref document = *m_document;
+    if (allowedAutoplayQuirks(document).contains(AutoplayQuirk::SynthesizedPauseEvents))
         return true;
 
-    return allowedAutoplayQuirks(m_document->topDocument()).contains(AutoplayQuirk::SynthesizedPauseEvents);
+    return allowedAutoplayQuirks(document->topDocument()).contains(AutoplayQuirk::SynthesizedPauseEvents);
 }
 
 // netflix.com https://bugs.webkit.org/show_bug.cgi?id=173030
@@ -189,8 +190,9 @@ bool Quirks::needsSeekingSupportDisabled() const
 bool Quirks::needsPerDocumentAutoplayBehavior() const
 {
 #if PLATFORM(MAC)
-    ASSERT(m_document == &m_document->topDocument());
-    return needsQuirks() && allowedAutoplayQuirks(*m_document).contains(AutoplayQuirk::PerDocumentAutoplayBehavior);
+    Ref document = *m_document;
+    ASSERT(document.ptr() == &document->topDocument());
+    return needsQuirks() && allowedAutoplayQuirks(document).contains(AutoplayQuirk::PerDocumentAutoplayBehavior);
 #else
     if (!needsQuirks())
         return false;
@@ -629,7 +631,7 @@ bool Quirks::shouldSynthesizeTouchEvents() const
         return false;
 
     if (!m_shouldSynthesizeTouchEventsQuirk)
-        m_shouldSynthesizeTouchEventsQuirk = isYahooMail(*m_document);
+        m_shouldSynthesizeTouchEventsQuirk = isYahooMail(*protectedDocument());
     return m_shouldSynthesizeTouchEventsQuirk.value();
 }
 #endif
@@ -934,7 +936,8 @@ bool Quirks::shouldBypassBackForwardCache() const
     if (!needsQuirks())
         return false;
 
-    auto topURL = m_document->topDocument().url();
+    RefPtr document = m_document.get();
+    auto topURL = document->topDocument().url();
     auto host = topURL.host();
     RegistrableDomain registrableDomain { topURL };
 
@@ -943,17 +946,17 @@ bool Quirks::shouldBypassBackForwardCache() const
     // because it changes the opacity of its body to 0 when navigating away and fails to restore the original opacity
     // when coming back from the back/forward cache (e.g. in 'pageshow' event handler). See <rdar://problem/56996057>.
     if (topURL.protocolIs("https"_s) && host == "vimeo.com"_s) {
-        if (auto* documentLoader = m_document->frame() ? m_document->frame()->loader().documentLoader() : nullptr)
+        if (auto* documentLoader = document->frame() ? document->frame()->loader().documentLoader() : nullptr)
             return documentLoader->response().cacheControlContainsNoStore();
     }
 
     // Login issue on bankofamerica.com (rdar://104938789).
     if (registrableDomain == "bankofamerica.com"_s) {
-        if (auto* window = m_document->domWindow()) {
+        if (RefPtr window = document->domWindow()) {
             if (window->hasEventListeners(eventNames().unloadEvent)) {
                 static MainThreadNeverDestroyed<const AtomString> signInId("signIn"_s);
                 static MainThreadNeverDestroyed<const AtomString> loadingClass("loading"_s);
-                RefPtr signinButton = m_document->getElementById(signInId.get());
+                RefPtr signinButton = document->getElementById(signInId.get());
                 return signinButton && signinButton->classNames().contains(loadingClass.get());
             }
         }
@@ -965,7 +968,7 @@ bool Quirks::shouldBypassBackForwardCache() const
     // to remove it when coming back from the back/forward cache (e.g. in 'pageshow' event handler). See <rdar://problem/57670064>.
     // Note that this does not check for docs.google.com host because of hosted G Suite apps.
     static MainThreadNeverDestroyed<const AtomString> googleDocsOverlayDivClass("docs-homescreen-freeze-el-full"_s);
-    auto* firstChildInBody = m_document->body() ? m_document->body()->firstChild() : nullptr;
+    auto* firstChildInBody = document->body() ? document->body()->firstChild() : nullptr;
     if (RefPtr div = dynamicDowncast<HTMLDivElement>(firstChildInBody)) {
         if (div->hasClass() && div->classNames().contains(googleDocsOverlayDivClass))
             return true;
@@ -1089,7 +1092,7 @@ bool Quirks::shouldAvoidPastingImagesAsWebContent() const
 
 #if PLATFORM(IOS_FAMILY)
     if (!m_shouldAvoidPastingImagesAsWebContent)
-        m_shouldAvoidPastingImagesAsWebContent = isYahooMail(*m_document);
+        m_shouldAvoidPastingImagesAsWebContent = isYahooMail(*protectedDocument());
     return *m_shouldAvoidPastingImagesAsWebContent;
 #else
     return false;
@@ -1189,7 +1192,8 @@ bool Quirks::hasStorageAccessForAllLoginDomains(const HashSet<RegistrableDomain>
 
 Quirks::StorageAccessResult Quirks::requestStorageAccessAndHandleClick(CompletionHandler<void(ShouldDispatchClick)>&& completionHandler) const
 {
-    auto firstPartyDomain = RegistrableDomain(m_document->topDocument().url());
+    RefPtr document = m_document.get();
+    auto firstPartyDomain = RegistrableDomain(document->topDocument().url());
     auto domainsInNeedOfStorageAccess = NetworkStorageSession::subResourceDomainsInNeedOfStorageAccessForFirstParty(firstPartyDomain);
     if (!domainsInNeedOfStorageAccess || domainsInNeedOfStorageAccess.value().isEmpty()) {
         completionHandler(ShouldDispatchClick::No);
@@ -1203,13 +1207,13 @@ Quirks::StorageAccessResult Quirks::requestStorageAccessAndHandleClick(Completio
 
     auto domainInNeedOfStorageAccess = RegistrableDomain(*domainsInNeedOfStorageAccess.value().begin().get());
 
-    if (!m_document) {
+    if (!document) {
         completionHandler(ShouldDispatchClick::No);
         return Quirks::StorageAccessResult::ShouldNotCancelEvent;
     }
 
-    m_document->addConsoleMessage(MessageSource::Other, MessageLevel::Info, makeString("requestStorageAccess is invoked on behalf of domain \"", domainInNeedOfStorageAccess.string(), "\""));
-    DocumentStorageAccess::requestStorageAccessForNonDocumentQuirk(*m_document, WTFMove(domainInNeedOfStorageAccess), [firstPartyDomain, domainInNeedOfStorageAccess, completionHandler = WTFMove(completionHandler)](StorageAccessWasGranted storageAccessGranted) mutable {
+    document->addConsoleMessage(MessageSource::Other, MessageLevel::Info, makeString("requestStorageAccess is invoked on behalf of domain \"", domainInNeedOfStorageAccess.string(), "\""));
+    DocumentStorageAccess::requestStorageAccessForNonDocumentQuirk(*document, WTFMove(domainInNeedOfStorageAccess), [firstPartyDomain, domainInNeedOfStorageAccess, completionHandler = WTFMove(completionHandler)](StorageAccessWasGranted storageAccessGranted) mutable {
         if (storageAccessGranted == StorageAccessWasGranted::No) {
             completionHandler(ShouldDispatchClick::Yes);
             return;
@@ -1222,18 +1226,23 @@ Quirks::StorageAccessResult Quirks::requestStorageAccessAndHandleClick(Completio
     return Quirks::StorageAccessResult::ShouldCancelEvent;
 }
 
+RefPtr<Document> Quirks::protectedDocument() const
+{
+    return m_document.get();
+}
+
 void Quirks::triggerOptionalStorageAccessIframeQuirk(const URL& frameURL, CompletionHandler<void()>&& completionHandler) const
 {
-    if (m_document) {
-        if (m_document->frame() && !m_document->frame()->isMainFrame()) {
-            auto& mainFrame = m_document->frame()->mainFrame();
+    if (RefPtr document = m_document.get()) {
+        if (document->frame() && !m_document->frame()->isMainFrame()) {
+            auto& mainFrame = document->frame()->mainFrame();
             if (auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame); localMainFrame && localMainFrame->document()) {
                 localMainFrame->document()->quirks().triggerOptionalStorageAccessIframeQuirk(frameURL, WTFMove(completionHandler));
                 return;
             }
         }
         if (subFrameDomainsForStorageAccessQuirk().contains(RegistrableDomain { frameURL })) {
-            return DocumentStorageAccess::requestStorageAccessForNonDocumentQuirk(*m_document, RegistrableDomain { frameURL }, [completionHandler = WTFMove(completionHandler)](StorageAccessWasGranted) mutable {
+            return DocumentStorageAccess::requestStorageAccessForNonDocumentQuirk(*document, RegistrableDomain { frameURL }, [completionHandler = WTFMove(completionHandler)](StorageAccessWasGranted) mutable {
                 completionHandler();
             });
         }
@@ -1276,15 +1285,16 @@ Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(Element& e
     static NeverDestroyed<UserScript> kinjaLoginUserScript { "function triggerLoginForm() { let elements = document.getElementsByClassName('js_header-userbutton'); if (elements && elements[0]) { elements[0].click(); clearInterval(interval); } } let interval = setInterval(triggerLoginForm, 200);"_s, URL(aboutBlankURL()), Vector<String>(), Vector<String>(), UserScriptInjectionTime::DocumentEnd, UserContentInjectedFrames::InjectInTopFrameOnly, WaitForNotificationBeforeInjecting::Yes };
 
     if (eventType == eventNames().clickEvent) {
-        if (!m_document)
+        RefPtr document = m_document.get();
+        if (!document)
             return Quirks::StorageAccessResult::ShouldNotCancelEvent;
 
         // Embedded YouTube case.
-        if (element.hasClass() && domain == youTubeDomain && !m_document->isTopDocument() && ResourceLoadObserver::shared().hasHadUserInteraction(youTubeDomain)) {
+        if (element.hasClass() && domain == youTubeDomain && !document->isTopDocument() && ResourceLoadObserver::shared().hasHadUserInteraction(youTubeDomain)) {
             auto& classNames = element.classNames();
             if (classNames.contains("ytp-watch-later-icon"_s) || classNames.contains("ytp-watch-later-icon"_s)) {
                 if (ResourceLoadObserver::shared().hasHadUserInteraction(youTubeDomain)) {
-                    DocumentStorageAccess::requestStorageAccessForDocumentQuirk(*m_document, [](StorageAccessWasGranted) { });
+                    DocumentStorageAccess::requestStorageAccessForDocumentQuirk(*document, [](StorageAccessWasGranted) { });
                     return Quirks::StorageAccessResult::ShouldNotCancelEvent;
                 }
             }
@@ -1294,11 +1304,11 @@ Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(Element& e
         // Kinja login case.
         if (kinjaQuirks.get().contains(domain) && isKinjaLoginAvatarElement(element)) {
             if (ResourceLoadObserver::shared().hasHadUserInteraction(kinjaDomain)) {
-                DocumentStorageAccess::requestStorageAccessForNonDocumentQuirk(*m_document, kinjaDomain.get().isolatedCopy(), [](StorageAccessWasGranted) { });
+                DocumentStorageAccess::requestStorageAccessForNonDocumentQuirk(*document, kinjaDomain.get().isolatedCopy(), [](StorageAccessWasGranted) { });
                 return Quirks::StorageAccessResult::ShouldNotCancelEvent;
             }
 
-            auto* domWindow = m_document->domWindow();
+            RefPtr domWindow = document->domWindow();
             if (!domWindow)
                 return Quirks::StorageAccessResult::ShouldNotCancelEvent;
 
@@ -1308,7 +1318,7 @@ Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(Element& e
             auto proxy = proxyOrException.releaseReturnValue();
 
             auto* abstractFrame = proxy->frame();
-            if (auto* frame = dynamicDowncast<LocalFrame>(abstractFrame)) {
+            if (RefPtr frame = dynamicDowncast<LocalFrame>(abstractFrame)) {
                 auto world = ScriptController::createWorld("kinjaComQuirkWorld"_s, ScriptController::WorldType::User);
                 frame->addUserScriptAwaitingNotification(world.get(), kinjaLoginUserScript);
                 return Quirks::StorageAccessResult::ShouldCancelEvent;
@@ -1316,7 +1326,7 @@ Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(Element& e
         }
 
         // If the click is synthetic, the user has already gone through the storage access flow and we should not request again.
-        if (isStorageAccessQuirkDomainAndElement(m_document->url(), element) && isSyntheticClick == IsSyntheticClick::No) {
+        if (isStorageAccessQuirkDomainAndElement(document->url(), element) && isSyntheticClick == IsSyntheticClick::No) {
             return requestStorageAccessAndHandleClick([element = WeakPtr { element }, platformEvent, eventType, detail, relatedTarget] (ShouldDispatchClick shouldDispatchClick) mutable {
                 RefPtr protectedElement { element.get() };
                 if (!protectedElement)
@@ -1700,8 +1710,9 @@ bool Quirks::needsDisableDOMPasteAccessQuirk() const
         if (!globalObject)
             return false;
 
-        JSC::JSLockHolder lock(globalObject->vm());
-        auto tableauPrepProperty = JSC::Identifier::fromString(globalObject->vm(), "tableauPrep"_s);
+        Ref vm = globalObject->vm();
+        JSC::JSLockHolder lock(vm);
+        auto tableauPrepProperty = JSC::Identifier::fromString(vm, "tableauPrep"_s);
         return globalObject->hasProperty(globalObject, tableauPrepProperty);
     }();
     return *m_needsDisableDOMPasteAccessQuirk;

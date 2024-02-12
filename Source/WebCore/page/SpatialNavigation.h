@@ -116,9 +116,9 @@ struct FocusCandidate {
     // We handle differently visibleNode and FocusableNode to properly handle the areas of imagemaps,
     // where visibleNode would represent the image element and focusableNode would represent the area element.
     // In all other cases, visibleNode and focusableNode are one and the same.
-    Node* visibleNode;
-    Node* focusableNode;
-    Node* enclosingScrollableBox;
+    WeakPtr<Node, WeakPtrImplWithEventTargetData> visibleNode;
+    WeakPtr<Node, WeakPtrImplWithEventTargetData> focusableNode;
+    WeakPtr<Node, WeakPtrImplWithEventTargetData> enclosingScrollableBox;
     long long distance;
     RectsAlignment alignment;
     LayoutRect rect;

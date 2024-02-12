@@ -203,12 +203,12 @@ bool EventHandler::passWidgetMouseDownEventToWidget(const MouseEventWithHitTestR
     // just pass currentEvent down to the widget, we don't want to call it for events that
     // don't correspond to Cocoa events. The mousedown/ups will have already been passed on as
     // part of the pressed/released handling.
-    return passMouseDownEventToWidget(downcast<RenderWidget>(*target).widget());
+    return passMouseDownEventToWidget(downcast<RenderWidget>(*target).protectedWidget().get());
 }
 
 bool EventHandler::passWidgetMouseDownEventToWidget(RenderWidget* renderWidget)
 {
-    return passMouseDownEventToWidget(renderWidget->widget());
+    return passMouseDownEventToWidget(renderWidget->protectedWidget().get());
 }
 
 static bool lastEventIsMouseUp()

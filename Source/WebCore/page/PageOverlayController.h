@@ -49,6 +49,7 @@ public:
 
     GraphicsLayer& layerWithDocumentOverlays();
     GraphicsLayer& layerWithViewOverlays();
+    Ref<GraphicsLayer> protectedLayerWithViewOverlays();
 
     const Vector<RefPtr<PageOverlay>>& pageOverlays() const { return m_pageOverlays; }
 
@@ -99,7 +100,9 @@ private:
     bool shouldDumpPropertyForLayer(const GraphicsLayer*, const char* propertyName, OptionSet<LayerTreeAsTextOptions>) const override;
     void tiledBackingUsageChanged(const GraphicsLayer*, bool) override;
 
-    Page& m_page;
+    Ref<Page> protectedPage() const;
+
+    SingleThreadWeakRef<Page> m_page;
     RefPtr<GraphicsLayer> m_documentOverlayRootLayer;
     RefPtr<GraphicsLayer> m_viewOverlayRootLayer;
 

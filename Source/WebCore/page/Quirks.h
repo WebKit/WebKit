@@ -194,6 +194,8 @@ private:
     bool isGoogleMaps() const;
 #endif
 
+    RefPtr<Document> protectedDocument() const;
+
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
 
     mutable std::optional<bool> m_hasBrokenEncryptedMediaAPISupportQuirk;

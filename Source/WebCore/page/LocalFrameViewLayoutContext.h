@@ -172,11 +172,13 @@ private:
     void enablePaintOffsetCache() { ASSERT(m_paintOffsetCacheDisableCount > 0); m_paintOffsetCacheDisableCount--; }
 
     LocalFrame& frame() const;
+    Ref<LocalFrame> protectedFrame();
     LocalFrameView& view() const;
+    Ref<LocalFrameView> protectedView() const;
     RenderView* renderView() const;
     Document* document() const;
 
-    LocalFrameView& m_frameView;
+    SingleThreadWeakRef<LocalFrameView> m_frameView;
     Timer m_layoutTimer;
     Timer m_postLayoutTaskTimer;
     SingleThreadWeakPtr<RenderElement> m_subtreeLayoutRoot;

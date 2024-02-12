@@ -85,7 +85,7 @@ String Navigator::appVersion() const
     if (!frame)
         return String();
     if (frame->settings().webAPIStatisticsEnabled())
-        ResourceLoadObserver::shared().logNavigatorAPIAccessed(*frame->document(), NavigatorAPIsAccessed::AppVersion);
+        ResourceLoadObserver::shared().logNavigatorAPIAccessed(*frame->protectedDocument(), NavigatorAPIsAccessed::AppVersion);
     return NavigatorBase::appVersion();
 }
 
@@ -95,7 +95,7 @@ const String& Navigator::userAgent() const
     if (!frame || !frame->page())
         return m_userAgent;
     if (frame->settings().webAPIStatisticsEnabled())
-        ResourceLoadObserver::shared().logNavigatorAPIAccessed(*frame->document(), NavigatorAPIsAccessed::UserAgent);
+        ResourceLoadObserver::shared().logNavigatorAPIAccessed(*frame->protectedDocument(), NavigatorAPIsAccessed::UserAgent);
     if (m_userAgent.isNull())
         m_userAgent = frame->loader().userAgent(frame->document()->url());
     return m_userAgent;
@@ -309,7 +309,7 @@ void Navigator::initializePluginAndMimeTypeArrays()
 DOMPluginArray& Navigator::plugins()
 {
     if (auto* frame = this->frame(); frame && frame->settings().webAPIStatisticsEnabled())
-        ResourceLoadObserver::shared().logNavigatorAPIAccessed(*frame->document(), NavigatorAPIsAccessed::Plugins);
+        ResourceLoadObserver::shared().logNavigatorAPIAccessed(*frame->protectedDocument(), NavigatorAPIsAccessed::Plugins);
 
     initializePluginAndMimeTypeArrays();
     return *m_plugins;
@@ -318,7 +318,7 @@ DOMPluginArray& Navigator::plugins()
 DOMMimeTypeArray& Navigator::mimeTypes()
 {
     if (auto* frame = this->frame(); frame && frame->settings().webAPIStatisticsEnabled())
-        ResourceLoadObserver::shared().logNavigatorAPIAccessed(*frame->document(), NavigatorAPIsAccessed::MimeTypes);
+        ResourceLoadObserver::shared().logNavigatorAPIAccessed(*frame->protectedDocument(), NavigatorAPIsAccessed::MimeTypes);
 
     initializePluginAndMimeTypeArrays();
     return *m_mimeTypes;
@@ -338,7 +338,7 @@ bool Navigator::cookieEnabled() const
         return false;
 
     if (frame->settings().webAPIStatisticsEnabled())
-        ResourceLoadObserver::shared().logNavigatorAPIAccessed(*frame->document(), NavigatorAPIsAccessed::CookieEnabled);
+        ResourceLoadObserver::shared().logNavigatorAPIAccessed(*frame->protectedDocument(), NavigatorAPIsAccessed::CookieEnabled);
 
     auto* page = frame->page();
     if (!page)

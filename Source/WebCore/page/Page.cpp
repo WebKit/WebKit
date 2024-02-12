@@ -530,7 +530,7 @@ static RefPtr<Document> viewportDocumentForFrame(const Frame& frame)
 
 ViewportArguments Page::viewportArguments() const
 {
-    if (RefPtr document = viewportDocumentForFrame(mainFrame()))
+    if (RefPtr document = viewportDocumentForFrame(protectedMainFrame()))
         return document->viewportArguments();
     return ViewportArguments();
 }
@@ -843,7 +843,7 @@ bool Page::showAllPlugins() const
     return false;
 }
 
-inline std::optional<std::pair<MediaCanStartListener&, Document&>>  Page::takeAnyMediaCanStartListener()
+inline std::optional<std::pair<WeakRef<MediaCanStartListener>, WeakRef<Document, WeakPtrImplWithEventTargetData>>>  Page::takeAnyMediaCanStartListener()
 {
     for (auto* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
@@ -868,8 +868,13 @@ void Page::setCanStartMedia(bool canStartMedia)
         auto listener = takeAnyMediaCanStartListener();
         if (!listener)
             break;
-        listener->first.mediaCanStart(listener->second);
+        listener->first->mediaCanStart(listener->second);
     }
+}
+
+Ref<Frame> Page::protectedMainFrame() const
+{
+    return m_mainFrame;
 }
 
 static Frame* incrementFrame(Frame* current, bool forward, CanWrap canWrap, DidWrap* didWrap = nullptr)
@@ -3901,7 +3906,7 @@ void Page::forEachDocumentFromMainFrame(const Frame& mainFrame, const Function<v
 
 void Page::forEachDocument(const Function<void(Document&)>& functor) const
 {
-    forEachDocumentFromMainFrame(mainFrame(), functor);
+    forEachDocumentFromMainFrame(protectedMainFrame(), functor);
 }
 
 void Page::forEachMediaElement(const Function<void(HTMLMediaElement&)>& functor)

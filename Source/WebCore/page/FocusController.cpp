@@ -440,7 +440,7 @@ FocusController::FocusController(Page& page, OptionSet<ActivityState> activitySt
 
 void FocusController::setFocusedFrame(Frame* frame, BroadcastFocusedFrame broadcast)
 {
-    ASSERT(!frame || frame->page() == &m_page);
+    ASSERT(!frame || frame->page() == m_page.ptr());
     if (m_focusedFrame == frame || m_isChangingFocusedFrame)
         return;
 
@@ -476,7 +476,7 @@ void FocusController::setFocusedFrame(Frame* frame, BroadcastFocusedFrame broadc
     }
 
     if (broadcast == BroadcastFocusedFrame::Yes)
-        m_page.chrome().focusedFrameChanged(frame);
+        protectedPage()->chrome().focusedFrameChanged(frame);
 
     m_isChangingFocusedFrame = false;
 }
@@ -485,17 +485,17 @@ LocalFrame& FocusController::focusedOrMainFrame() const
 {
     if (auto* frame = focusedLocalFrame())
         return *frame;
-    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame()))
+    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame()))
         return *localMainFrame;
 
     // FIXME: Do something better here in the site isolated case. <rdar://116201648>
-    ASSERT(m_page.settings().siteIsolationEnabled());
-    return *m_page.rootFrames().begin();
+    ASSERT(m_page->settings().siteIsolationEnabled());
+    return *m_page->rootFrames().begin();
 }
 
 void FocusController::setFocused(bool focused)
 {
-    m_page.setActivityState(focused ? m_activityState | ActivityState::IsFocused : m_activityState - ActivityState::IsFocused);
+    protectedPage()->setActivityState(focused ? m_activityState | ActivityState::IsFocused : m_activityState - ActivityState::IsFocused);
 }
 
 void FocusController::setFocusedInternal(bool focused)
@@ -504,12 +504,12 @@ void FocusController::setFocusedInternal(bool focused)
         focusedOrMainFrame().eventHandler().stopAutoscrollTimer();
 
     if (!focusedFrame())
-        setFocusedFrame(&m_page.mainFrame());
+        setFocusedFrame(m_page->protectedMainFrame().ptr());
 
-    auto* focusedFrame = focusedLocalFrame();
+    RefPtr focusedFrame = focusedLocalFrame();
     if (focusedFrame && focusedFrame->view()) {
-        focusedFrame->selection().setFocused(focused);
-        dispatchEventsOnWindowAndFocusedElement(focusedFrame->document(), focused);
+        focusedFrame->checkedSelection()->setFocused(focused);
+        dispatchEventsOnWindowAndFocusedElement(focusedFrame->protectedDocument().get(), focused);
     }
 }
 
@@ -570,13 +570,14 @@ bool FocusController::relinquishFocusToChrome(FocusDirection direction)
     if (!document)
         return false;
 
-    if (!m_page.chrome().canTakeFocus(direction) || m_page.isControlledByAutomation())
+    Ref page = m_page.get();
+    if (!page->chrome().canTakeFocus(direction) || page->isControlledByAutomation())
         return false;
 
     clearSelectionIfNeeded(frame.ptr(), nullptr, nullptr);
     document->setFocusedElement(nullptr);
     setFocusedFrame(nullptr);
-    m_page.chrome().takeFocus(direction);
+    page->chrome().takeFocus(direction);
     return true;
 }
 
@@ -604,10 +605,10 @@ bool FocusController::advanceFocusInDocumentOrder(FocusDirection direction, Keyb
         }
 
         // Chrome doesn't want focus, so we should wrap focus.
-        auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
+        auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
         if (!localMainFrame)
             return false;
-        element = findFocusableElementAcrossFocusScope(direction, FocusNavigationScope::scopeOf(*localMainFrame->document()), nullptr, event);
+        element = findFocusableElementAcrossFocusScope(direction, FocusNavigationScope::scopeOf(*localMainFrame->protectedDocument()), nullptr, event);
 
         if (!element)
             return false;
@@ -627,7 +628,7 @@ bool FocusController::advanceFocusInDocumentOrder(FocusDirection direction, Keyb
             return false;
 
         document->setFocusedElement(nullptr);
-        setFocusedFrame(owner->contentFrame());
+        setFocusedFrame(owner->protectedContentFrame().get());
         return true;
     }
     
@@ -642,7 +643,7 @@ bool FocusController::advanceFocusInDocumentOrder(FocusDirection direction, Keyb
         document->setFocusedElement(nullptr);
     }
 
-    setFocusedFrame(newDocument.frame());
+    setFocusedFrame(newDocument.protectedFrame().get());
 
     if (caretBrowsing) {
         VisibleSelection newSelection(firstPositionInOrBeforeNode(element.get()), Affinity::Downstream);
@@ -903,7 +904,7 @@ static bool shouldClearSelectionWhenChangingFocusedElement(const Page& page, Ref
     if (!oldFocusedElement->isRootEditableElement() && !is<HTMLInputElement>(oldFocusedElement) && !is<HTMLTextAreaElement>(oldFocusedElement))
         return true;
 
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(page.mainFrame());
+    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(page.mainFrame());
     if (!localMainFrame)
         return false;
     for (auto ancestor = localMainFrame->eventHandler().draggedElement(); ancestor; ancestor = ancestor->parentOrShadowHostElement()) {
@@ -925,9 +926,10 @@ bool FocusController::setFocusedElement(Element* element, LocalFrame& newFocused
     RefPtr oldDocument = oldFocusedFrame ? oldFocusedFrame->document() : nullptr;
     
     RefPtr oldFocusedElement = oldDocument ? oldDocument->focusedElement() : nullptr;
+    Ref page = m_page.get();
     if (oldFocusedElement == element) {
         if (element)
-            m_page.chrome().client().elementDidRefocus(*element, options);
+            page->chrome().client().elementDidRefocus(*element, options);
         return true;
     }
 
@@ -935,22 +937,22 @@ bool FocusController::setFocusedElement(Element* element, LocalFrame& newFocused
     if (oldFocusedElement && oldFocusedElement->isRootEditableElement() && !relinquishesEditingFocus(*oldFocusedElement))
         return false;
 
-    m_page.editorClient().willSetInputMethodState();
+    page->editorClient().willSetInputMethodState();
 
-    if (shouldClearSelectionWhenChangingFocusedElement(m_page, WTFMove(oldFocusedElement), element))
+    if (shouldClearSelectionWhenChangingFocusedElement(page, WTFMove(oldFocusedElement), element))
         clearSelectionIfNeeded(oldFocusedFrame.get(), &newFocusedFrame, element);
 
     if (!element) {
         if (oldDocument)
             oldDocument->setFocusedElement(nullptr);
-        m_page.editorClient().setInputMethodState(nullptr);
+        page->editorClient().setInputMethodState(nullptr);
         return true;
     }
 
     Ref newDocument(element->document());
 
     if (newDocument->focusedElement() == element) {
-        m_page.editorClient().setInputMethodState(element);
+        page->editorClient().setInputMethodState(element);
         return true;
     }
     
@@ -968,7 +970,7 @@ bool FocusController::setFocusedElement(Element* element, LocalFrame& newFocused
         return false;
 
     if (newDocument->focusedElement() == element)
-        m_page.editorClient().setInputMethodState(element);
+        page->editorClient().setInputMethodState(element);
 
     m_focusSetTime = MonotonicTime::now();
     m_focusRepaintTimer.stop();
@@ -990,17 +992,22 @@ void FocusController::setActivityState(OptionSet<ActivityState> activityState)
     }
 }
 
+Ref<Page> FocusController::protectedPage() const
+{
+    return m_page.get();
+}
+
 void FocusController::setActive(bool active)
 {
-    m_page.setActivityState(active ? m_activityState | ActivityState::WindowIsActive : m_activityState - ActivityState::WindowIsActive);
+    protectedPage()->setActivityState(active ? m_activityState | ActivityState::WindowIsActive : m_activityState - ActivityState::WindowIsActive);
 }
 
 void FocusController::setActiveInternal(bool active)
 {
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
+    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
     if (!localMainFrame)
         return;
-    if (auto* view = localMainFrame->view()) {
+    if (RefPtr view = localMainFrame->view()) {
         if (!view->platformWidget()) {
             view->updateLayoutAndStyleIfNeededRecursive();
             view->updateControlTints();
@@ -1011,7 +1018,7 @@ void FocusController::setActiveInternal(bool active)
     
     auto* focusedFrame = focusedLocalFrame();
     if (focusedFrame && isFocused())
-        dispatchEventsOnWindowAndFocusedElement(focusedFrame->document(), active);
+        dispatchEventsOnWindowAndFocusedElement(focusedFrame->protectedDocument().get(), active);
 }
 
 static void contentAreaDidShowOrHide(ScrollableArea* scrollableArea, bool didShow)
@@ -1024,17 +1031,18 @@ static void contentAreaDidShowOrHide(ScrollableArea* scrollableArea, bool didSho
 
 void FocusController::setIsVisibleAndActiveInternal(bool contentIsVisible)
 {
-    auto* view = m_page.mainFrame().virtualView();
+    Ref page = m_page.get();
+    RefPtr view = page->mainFrame().virtualView();
     if (!view)
         return;
 
-    contentAreaDidShowOrHide(view, contentIsVisible);
+    contentAreaDidShowOrHide(view.get(), contentIsVisible);
 
-    for (auto* frame = &m_page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+    for (auto* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
-        auto* frameView = localFrame->view();
+        RefPtr frameView = localFrame->view();
         if (!frameView)
             continue;
 
@@ -1042,10 +1050,9 @@ void FocusController::setIsVisibleAndActiveInternal(bool contentIsVisible)
         if (!scrollableAreas)
             continue;
 
-        for (auto& area : *scrollableAreas) {
-            CheckedPtr<ScrollableArea> scrollableArea(area);
-            ASSERT(scrollableArea->scrollbarsCanBeActive() || m_page.shouldSuppressScrollbarAnimations());
-            contentAreaDidShowOrHide(scrollableArea.get(), contentIsVisible);
+        for (CheckedRef area : *scrollableAreas) {
+            ASSERT(area->scrollbarsCanBeActive() || page->shouldSuppressScrollbarAnimations());
+            contentAreaDidShowOrHide(area.ptr(), contentIsVisible);
         }
     }
 }
@@ -1171,7 +1178,7 @@ bool FocusController::advanceFocusDirectionallyInContainer(Node* container, cons
         ASSERT(is<LocalFrame>(frameElement->contentFrame()));
 
         if (focusCandidate.isOffscreenAfterScrolling) {
-            scrollInDirection(&focusCandidate.visibleNode->document(), direction);
+            scrollInDirection(focusCandidate.visibleNode->protectedDocument().ptr(), direction);
             return true;
         }
         // Navigate into a new frame.
@@ -1182,14 +1189,14 @@ bool FocusController::advanceFocusDirectionallyInContainer(Node* container, cons
         dynamicDowncast<LocalFrame>(frameElement->contentFrame())->document()->updateLayoutIgnorePendingStylesheets();
         if (!advanceFocusDirectionallyInContainer(dynamicDowncast<LocalFrame>(frameElement->contentFrame())->document(), rect, direction, event)) {
             // The new frame had nothing interesting, need to find another candidate.
-            return advanceFocusDirectionallyInContainer(container, nodeRectInAbsoluteCoordinates(focusCandidate.visibleNode, true), direction, event);
+            return advanceFocusDirectionallyInContainer(container, nodeRectInAbsoluteCoordinates(RefPtr { focusCandidate.visibleNode.get() }.get(), true), direction, event);
         }
         return true;
     }
 
-    if (canScrollInDirection(focusCandidate.visibleNode, direction)) {
+    if (RefPtr visibleNode = focusCandidate.visibleNode.get(); canScrollInDirection(visibleNode.get(), direction)) {
         if (focusCandidate.isOffscreenAfterScrolling) {
-            scrollInDirection(focusCandidate.visibleNode, direction);
+            scrollInDirection(visibleNode.get(), direction);
             return true;
         }
         // Navigate into a new scrollable container.
@@ -1197,16 +1204,16 @@ bool FocusController::advanceFocusDirectionallyInContainer(Node* container, cons
         Element* focusedElement = focusedOrMainFrame().document()->focusedElement();
         if (focusedElement && !hasOffscreenRect(focusedElement))
             startingRect = nodeRectInAbsoluteCoordinates(focusedElement, true);
-        return advanceFocusDirectionallyInContainer(focusCandidate.visibleNode, startingRect, direction, event);
+        return advanceFocusDirectionallyInContainer(RefPtr { focusCandidate.visibleNode.get() }.get(), startingRect, direction, event);
     }
     if (focusCandidate.isOffscreenAfterScrolling) {
-        Node* container = focusCandidate.enclosingScrollableBox;
-        scrollInDirection(container, direction);
+        RefPtr container = focusCandidate.enclosingScrollableBox.get();
+        scrollInDirection(container.get(), direction);
         return true;
     }
 
     // We found a new focus node, navigate to it.
-    Element* element = downcast<Element>(focusCandidate.focusableNode);
+    RefPtr element = downcast<Element>(focusCandidate.focusableNode.get());
     ASSERT(element);
 
     element->focus({ SelectionRestorationMode::SelectAll, direction });

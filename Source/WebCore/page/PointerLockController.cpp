@@ -146,7 +146,7 @@ void PointerLockController::didAcquirePointerLock()
     
     ASSERT(m_element);
     
-    enqueueEvent(eventNames().pointerlockchangeEvent, m_element.get());
+    enqueueEvent(eventNames().pointerlockchangeEvent, m_element.copyRef().get());
     m_lockPending = false;
     m_forceCursorVisibleUponUnlock = false;
     m_documentAllowedToRelockWithoutUserGesture = m_element->document();
@@ -154,7 +154,7 @@ void PointerLockController::didAcquirePointerLock()
 
 void PointerLockController::didNotAcquirePointerLock()
 {
-    enqueueEvent(eventNames().pointerlockerrorEvent, m_element.get());
+    enqueueEvent(eventNames().pointerlockerrorEvent, m_element.copyRef().get());
     clearElement();
     m_unlockPending = false;
 }
@@ -164,7 +164,7 @@ void PointerLockController::didLosePointerLock()
     if (!m_unlockPending)
         m_documentAllowedToRelockWithoutUserGesture = nullptr;
 
-    enqueueEvent(eventNames().pointerlockchangeEvent, m_element ? &m_element->document() : m_documentOfRemovedElementWhileWaitingForUnlock.get());
+    enqueueEvent(eventNames().pointerlockchangeEvent, m_element ? m_element->protectedDocument().ptr() : RefPtr { m_documentOfRemovedElementWhileWaitingForUnlock.get() }.get());
     clearElement();
     m_unlockPending = false;
     m_documentOfRemovedElementWhileWaitingForUnlock = nullptr;
@@ -205,14 +205,14 @@ void PointerLockController::clearElement()
 void PointerLockController::enqueueEvent(const AtomString& type, Element* element)
 {
     if (element)
-        enqueueEvent(type, &element->document());
+        enqueueEvent(type, element->protectedDocument().ptr());
 }
 
 void PointerLockController::enqueueEvent(const AtomString& type, Document* document)
 {
     // FIXME: Spec doesn't specify which task source use.
-    if (RefPtr protectedDocument = document)
-        protectedDocument->queueTaskToDispatchEvent(TaskSource::UserInteraction, Event::create(type, Event::CanBubble::Yes, Event::IsCancelable::No));
+    if (document)
+        document->queueTaskToDispatchEvent(TaskSource::UserInteraction, Event::create(type, Event::CanBubble::Yes, Event::IsCancelable::No));
 }
 
 } // namespace WebCore

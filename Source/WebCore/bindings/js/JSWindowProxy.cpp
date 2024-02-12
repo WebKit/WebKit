@@ -184,6 +184,11 @@ JSC::GCClient::IsoSubspace* JSWindowProxy::subspaceForImpl(JSC::VM& vm)
     return &static_cast<JSVMClientData*>(vm.clientData)->windowProxySpace();
 }
 
+Ref<DOMWrapperWorld> JSWindowProxy::protectedWorld()
+{
+    return m_world;
+}
+
 #if ENABLE(WINDOW_PROXY_PROPERTY_ACCESS_NOTIFICATION)
 
 struct FrameInfo {

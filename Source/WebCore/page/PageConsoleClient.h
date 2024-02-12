@@ -83,7 +83,9 @@ private:
     void recordEnd(JSC::JSGlobalObject*, Ref<Inspector::ScriptArguments>&&) override;
     void screenshot(JSC::JSGlobalObject*, Ref<Inspector::ScriptArguments>&&) override;
 
-    Page& m_page;
+    Ref<Page> protectedPage() const;
+
+    SingleThreadWeakRef<Page> m_page;
 };
 
 } // namespace WebCore

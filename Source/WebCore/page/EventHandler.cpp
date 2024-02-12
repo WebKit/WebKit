@@ -1100,7 +1100,7 @@ void EventHandler::updateSelectionForMouseDrag(const HitTestResult& hitTestResul
     m_frame->selection().setSelectionByMouseIfDifferent(newSelection, m_frame->selection().granularity(),
         FrameSelection::EndPointsAdjustmentMode::AdjustAtBidiBoundary);
 
-    if (oldSelection != newSelection && ImageOverlay::isOverlayText(newSelection.start().containerNode()) && ImageOverlay::isOverlayText(newSelection.end().containerNode()))
+    if (oldSelection != newSelection && ImageOverlay::isOverlayText(newSelection.start().protectedContainerNode().get()) && ImageOverlay::isOverlayText(newSelection.end().protectedContainerNode().get()))
         invalidateClick();
 }
 #endif // ENABLE(DRAG_SUPPORT)
@@ -1271,7 +1271,7 @@ HitTestResult EventHandler::hitTestResultAtPoint(const LayoutPoint& point, Optio
     HitTestRequest request(hitType);
     document->hitTest(request, result);
     if (!request.readOnly())
-        frame->protectedDocument()->updateHoverActiveState(request, result.targetElement());
+        frame->protectedDocument()->updateHoverActiveState(request, result.protectedTargetElement().get());
 
     RefPtr innerNode = result.innerNode();
     if (request.disallowsUserAgentShadowContent()
@@ -2620,12 +2620,12 @@ bool EventHandler::performDragAndDrop(const PlatformMouseEvent& event, std::uniq
     Ref frame = m_frame.get();
 
     bool preventedDefault = false;
-    if (auto [isFrameOwner, targetFrame] = contentFrameForNode(m_dragTarget.get()); isFrameOwner) {
+    if (auto [isFrameOwner, targetFrame] = contentFrameForNode(RefPtr { m_dragTarget }.get()); isFrameOwner) {
         if (targetFrame)
-            preventedDefault = targetFrame->eventHandler().performDragAndDrop(event, WTFMove(pasteboard), sourceOperationMask, draggingFiles);
-    } else if (m_dragTarget) {
-        auto dataTransfer = DataTransfer::createForDrop(m_dragTarget->document(), WTFMove(pasteboard), sourceOperationMask, draggingFiles);
-        preventedDefault = dispatchDragEvent(eventNames().dropEvent, *m_dragTarget, event, dataTransfer);
+            preventedDefault = targetFrame->checkedEventHandler()->performDragAndDrop(event, WTFMove(pasteboard), sourceOperationMask, draggingFiles);
+    } else if (RefPtr dragTarget = m_dragTarget) {
+        Ref dataTransfer = DataTransfer::createForDrop(dragTarget->document(), WTFMove(pasteboard), sourceOperationMask, draggingFiles);
+        preventedDefault = dispatchDragEvent(eventNames().dropEvent, *dragTarget, event, dataTransfer);
         dataTransfer->makeInvalidForSecurity();
     }
     clearDragState();
@@ -2936,7 +2936,7 @@ bool EventHandler::dispatchMouseEvent(const AtomString& eventType, Node* targetN
     // will set a selection inside it, which will also set the focused element.
     if (element && frame->selection().isRange()) {
         if (auto range = frame->selection().selection().toNormalizedRange()) {
-            if (contains<ComposedTree>(*range, *element) && element->isDescendantOf(frame->document()->focusedElement()))
+            if (contains<ComposedTree>(*range, *element) && element->isDescendantOf(frame->document()->protectedFocusedElement().get()))
                 return true;
         }
     }
@@ -3438,7 +3438,7 @@ bool EventHandler::sendContextMenuEvent(const PlatformMouseEvent& event)
         selectClosestContextualWordOrLinkFromHitTestResult(mouseEvent.hitTestResult(), shouldAppendTrailingWhitespace(mouseEvent, m_frame));
     }
 
-    swallowEvent = !dispatchMouseEvent(eventNames().contextmenuEvent, mouseEvent.targetNode(), 0, event, FireMouseOverOut::No);
+    swallowEvent = !dispatchMouseEvent(eventNames().contextmenuEvent, mouseEvent.protectedTargetNode().get(), 0, event, FireMouseOverOut::No);
     
     return swallowEvent;
 }
@@ -4207,7 +4207,7 @@ bool EventHandler::shouldDispatchEventsToDragSourceElement()
 void EventHandler::dispatchEventToDragSourceElement(const AtomString& eventType, const PlatformMouseEvent& event)
 {
     if (shouldDispatchEventsToDragSourceElement())
-        dispatchDragEvent(eventType, *dragState().source, event, *dragState().dataTransfer);
+        dispatchDragEvent(eventType, Ref { *dragState().source }, event, *dragState().dataTransfer);
 }
 
 bool EventHandler::dispatchDragStartEventOnSourceElement(DataTransfer& dataTransfer)
@@ -4247,7 +4247,7 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event, CheckDr
         HitTestResult result(m_mouseDownContentsPosition);
         frame->protectedDocument()->hitTest(OptionSet<HitTestRequest::Type> { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::DisallowUserAgentShadowContent }, result);
         if (RefPtr page = frame->page())
-            dragState().source = page->dragController().draggableElement(frame.ptr(), result.targetElement(), m_mouseDownContentsPosition, dragState());
+            dragState().source = page->dragController().draggableElement(frame.ptr(), result.protectedTargetElement().get(), m_mouseDownContentsPosition, dragState());
         
         if (!dragState().source)
             m_mouseDownMayStartDrag = false; // no element is draggable
@@ -4704,7 +4704,7 @@ bool EventHandler::keyboardScrollRecursively(std::optional<ScrollDirection> dire
     if (!localParent)
         return false;
 
-    return localParent->eventHandler().keyboardScrollRecursively(direction, granularity, frame->ownerElement(), isKeyRepeat);
+    return localParent->checkedEventHandler()->keyboardScrollRecursively(direction, granularity, frame->protectedOwnerElement().get(), isKeyRepeat);
 }
 
 bool EventHandler::keyboardScroll(std::optional<ScrollDirection> direction, std::optional<ScrollGranularity> granularity, Node* startingNode, bool isKeyRepeat)

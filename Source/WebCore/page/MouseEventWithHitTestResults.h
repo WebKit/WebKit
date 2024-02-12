@@ -38,6 +38,7 @@ public:
     bool isOverLink() const;
     bool isOverWidget() const { return m_hitTestResult.isOverWidget(); }
     Node* targetNode() const { return m_hitTestResult.targetNode(); }
+    RefPtr<Node> protectedTargetNode() const  { return m_hitTestResult.protectedTargetNode(); }
 
 private:
     PlatformMouseEvent m_event;

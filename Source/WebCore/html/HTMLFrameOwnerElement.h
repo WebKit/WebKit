@@ -38,6 +38,7 @@ public:
     virtual ~HTMLFrameOwnerElement();
 
     Frame* contentFrame() const { return m_contentFrame.get(); }
+    RefPtr<Frame> protectedContentFrame() const;
     WEBCORE_EXPORT WindowProxy* contentWindow() const;
     WEBCORE_EXPORT Document* contentDocument() const;
     RefPtr<Document> protectedContentDocument() const { return contentDocument(); }

@@ -803,6 +803,11 @@ Vector<String> HitTestResult::dictationAlternatives() const
     return frame->editor().dictationAlternativesForMarker(*marker);
 }
 
+RefPtr<Node> HitTestResult::protectedTargetNode() const
+{
+    return innerNode();
+}
+
 Element* HitTestResult::targetElement() const
 {
     for (Node* node = m_innerNode.get(); node; node = node->parentInComposedTree()) {
@@ -810,6 +815,11 @@ Element* HitTestResult::targetElement() const
             return element;
     }
     return nullptr;
+}
+
+RefPtr<Element> HitTestResult::protectedTargetElement() const
+{
+    return targetElement();
 }
 
 Element* HitTestResult::innerNonSharedElement() const

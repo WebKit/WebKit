@@ -52,7 +52,7 @@ private:
     void processMayBecomeInactiveTimerFired();
     static void updateProcessStateForMemoryPressure();
 
-    Page& m_page;
+    SingleThreadWeakRef<Page> m_page;
 
     Timer m_postPageLoadCPUUsageTimer;
     std::optional<CPUTime> m_postLoadCPUTime;

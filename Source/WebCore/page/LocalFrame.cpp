@@ -1140,7 +1140,7 @@ FloatSize LocalFrame::screenSize() const
     if (!m_overrideScreenSize.isEmpty())
         return m_overrideScreenSize;
 
-    auto defaultSize = screenRect(view()).size();
+    auto defaultSize = screenRect(protectedView().get()).size();
     RefPtr document = this->document();
     if (!document)
         return defaultSize;

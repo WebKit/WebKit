@@ -325,6 +325,7 @@ public:
 
     Frame& mainFrame() { return m_mainFrame.get(); }
     const Frame& mainFrame() const { return m_mainFrame.get(); }
+    Ref<Frame> protectedMainFrame() const;
     WEBCORE_EXPORT void setMainFrame(Ref<Frame>&&);
     const URL& mainFrameURL() const { return m_mainFrameURL; }
     WEBCORE_EXPORT void setMainFrameURL(const URL&);
@@ -1110,7 +1111,7 @@ private:
 
     unsigned findMatchesForText(const String&, FindOptions, unsigned maxMatchCount, ShouldHighlightMatches, ShouldMarkMatches);
 
-    std::optional<std::pair<MediaCanStartListener&, Document&>> takeAnyMediaCanStartListener();
+    std::optional<std::pair<WeakRef<MediaCanStartListener>, WeakRef<Document, WeakPtrImplWithEventTargetData>>> takeAnyMediaCanStartListener();
 
 #if ENABLE(VIDEO)
     void playbackControlsManagerUpdateTimerFired();

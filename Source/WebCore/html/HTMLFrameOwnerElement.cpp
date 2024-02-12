@@ -87,8 +87,13 @@ void HTMLFrameOwnerElement::disconnectContentFrame()
 
 HTMLFrameOwnerElement::~HTMLFrameOwnerElement()
 {
-    if (m_contentFrame)
-        m_contentFrame->disconnectOwnerElement();
+    if (RefPtr contentFrame = m_contentFrame.get())
+        contentFrame->disconnectOwnerElement();
+}
+
+RefPtr<Frame> HTMLFrameOwnerElement::protectedContentFrame() const
+{
+    return m_contentFrame.get();
 }
 
 Document* HTMLFrameOwnerElement::contentDocument() const

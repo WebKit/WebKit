@@ -265,6 +265,7 @@ public:
     // If this node is in a shadow tree, returns its shadow host. Otherwise, returns null.
     WEBCORE_EXPORT Element* shadowHost() const;
     ShadowRoot* containingShadowRoot() const;
+    RefPtr<ShadowRoot> protectedContainingShadowRoot() const;
     inline ShadowRoot* shadowRoot() const; // Defined in ElementRareData.h
     bool isClosedShadowHidden(const Node&) const;
 
@@ -449,6 +450,7 @@ public:
 
     // As renderer() includes a branch you should avoid calling it repeatedly in hot code paths.
     RenderObject* renderer() const { return m_rendererWithStyleFlags.pointer(); }
+    CheckedPtr<RenderObject> checkedRenderer() const;
     void setRenderer(RenderObject*); // Defined in RenderObject.h
 
     // Use these two methods with caution.

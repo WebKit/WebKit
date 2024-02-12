@@ -120,8 +120,9 @@ private:
     void findFocusCandidateInContainer(Node& container, const LayoutRect& startingRect, FocusDirection, KeyboardEvent*, FocusCandidate& closest);
 
     void focusRepaintTimerFired();
+    Ref<Page> protectedPage() const;
 
-    Page& m_page;
+    SingleThreadWeakRef<Page> m_page;
     WeakPtr<Frame> m_focusedFrame;
     bool m_isChangingFocusedFrame;
     OptionSet<ActivityState> m_activityState;
