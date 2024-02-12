@@ -91,8 +91,10 @@ RefPtr<Texture> PresentationContextImpl::getCurrentTexture()
         return nullptr; // FIXME: This should return an invalid texture instead.
 
     if (!m_currentTexture) {
-        ASSERT(m_swapChain);
-        m_currentTexture = TextureImpl::create(WebGPUPtr<WGPUTexture> { wgpuSwapChainGetCurrentTexture(m_swapChain.get()) }, m_format, TextureDimension::_2d, m_convertToBackingContext);
+        auto texturePtr = wgpuSwapChainGetCurrentTexture(m_swapChain.get());
+        if (!texturePtr)
+            return nullptr;
+        m_currentTexture = TextureImpl::create(WebGPUPtr<WGPUTexture> { texturePtr }, m_format, TextureDimension::_2d, m_convertToBackingContext);
     }
 
     return m_currentTexture;

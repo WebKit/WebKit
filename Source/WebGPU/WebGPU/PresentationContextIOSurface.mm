@@ -164,7 +164,9 @@ void PresentationContextIOSurface::present()
 
 Texture* PresentationContextIOSurface::getCurrentTexture()
 {
-    ASSERT(m_ioSurfaces.count == m_renderBuffers.size());
+    if (m_ioSurfaces.count != m_renderBuffers.size() || m_renderBuffers.size() <= m_currentIndex)
+        return nullptr;
+
     auto& texture = m_renderBuffers[m_currentIndex].texture;
     texture->recreateIfNeeded();
     return texture.ptr();
@@ -172,7 +174,9 @@ Texture* PresentationContextIOSurface::getCurrentTexture()
 
 TextureView* PresentationContextIOSurface::getCurrentTextureView()
 {
-    ASSERT(m_ioSurfaces.count == m_renderBuffers.size());
+    if (m_ioSurfaces.count != m_renderBuffers.size() || m_renderBuffers.size() <= m_currentIndex)
+        return nullptr;
+
     return m_renderBuffers[m_currentIndex].textureView.ptr();
 }
 
