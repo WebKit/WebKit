@@ -26,7 +26,7 @@
 [
     Exposed=Window,
     SecureContext,
-    EnabledBySetting=DigitalCredentialsEnabled,
+    EnabledBySetting=DigitalIdentityEnabled,
     Conditional=WEB_AUTHN,
 ] interface DigitalIdentity : BasicCredential {
     [SameObject] readonly attribute ArrayBuffer data;

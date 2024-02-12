@@ -2,8 +2,8 @@
 <html>
     <head>
         <title>
-            Check that Credential Management parts of the API are not exposed by
-            default
+            Check that parts of the Digital Identity API are not exposed by
+            setting
         </title>
     </head>
     <script>
@@ -20,7 +20,7 @@
             );
         }
 
-        window.internals.settings.setDigitalCredentialsEnabled(true);
+        window.internals.settings.setDigitalIdentityEnabled(true);
 
         async function checkIFrame() {
             const iframeWin = document.querySelector("iframe").contentWindow;
