@@ -553,10 +553,11 @@ static inline bool objectIsRelayoutBoundary(const RenderElement* object)
     return true;
 }
 
-void RenderObject::clearNeedsLayout()
+void RenderObject::clearNeedsLayout(EverHadSkippedContentLayout everHadSkippedContentLayout)
 {
     m_stateBitfields.clearFlag(StateFlag::NeedsLayout);
     setEverHadLayout();
+    setEverHadSkippedContentLayout(everHadSkippedContentLayout == EverHadSkippedContentLayout::Yes);
     setPosChildNeedsLayoutBit(false);
     setNeedsSimplifiedNormalFlowLayoutBit(false);
     setNormalChildNeedsLayoutBit(false);

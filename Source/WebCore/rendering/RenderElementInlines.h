@@ -75,7 +75,7 @@ inline bool RenderElement::shouldApplyAnyContainment() const
 
 inline bool RenderElement::shouldApplyInlineSizeContainment() const
 {
-    return isSkippedContentRoot() || shouldApplySizeOrStyleContainment(style().containsInlineSize());
+    return WebCore::isSkippedContentRoot(style(), element()) || shouldApplySizeOrStyleContainment(style().containsInlineSize());
 }
 
 inline bool RenderElement::shouldApplyLayoutContainment() const
@@ -100,12 +100,12 @@ inline bool RenderElement::shouldApplyPaintContainment() const
 
 inline bool RenderElement::shouldApplySizeContainment() const
 {
-    return isSkippedContentRoot() || shouldApplySizeOrStyleContainment(style().containsSize());
+    return WebCore::isSkippedContentRoot(style(), element()) || shouldApplySizeOrStyleContainment(style().containsSize());
 }
 
 inline bool RenderElement::shouldApplySizeOrInlineSizeContainment() const
 {
-    return isSkippedContentRoot() || shouldApplySizeOrStyleContainment(style().containsSizeOrInlineSize());
+    return WebCore::isSkippedContentRoot(style(), element()) || shouldApplySizeOrStyleContainment(style().containsSizeOrInlineSize());
 }
 
 // FIXME: try to avoid duplication with isSkippedContentRoot.

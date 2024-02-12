@@ -289,9 +289,8 @@ public:
     bool createsNewFormattingContext() const;
 
     bool isSkippedContentRoot() const;
-    bool isSkippedContentRootForLayout() const;
 
-    void clearNeedsLayoutForDescendants();
+    void clearNeedsLayoutForSkippedContent();
 
 protected:
     RenderElement(Type, Element&, RenderStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags);

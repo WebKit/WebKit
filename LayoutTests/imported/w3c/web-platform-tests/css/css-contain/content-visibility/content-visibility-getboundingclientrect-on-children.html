@@ -1,0 +1,79 @@
+<!doctype HTML>
+<html>
+<meta charset="utf8">
+<title>CSS Content Visibility: stress test getBoundingClientRect</title>
+<link rel="author" title="Rob Buis" href="mailto:rbuis@igalia.com">
+<link rel="help" href="https://drafts.csswg.org/css-contain/#content-visibility">
+
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+
+<!--
+This test creates a container div with 10,000 non-trivial div children.
+It sets content-visibility: hidden on the container and tests performance of lazy layout through getBoundingClientRect.
+-->
+
+<style>
+#container {
+  content-visibility: hidden;
+
+  width: 500px;
+  height: 500px;
+  border: 1px solid black;
+  background: lightblue;
+}
+.item {
+  background: blue;
+  margin: 1px;
+  width: 10%;
+  height: 10%;
+}
+</style>
+
+<template id="item_template">
+<div class="item">
+  <div style="position: relative; width: 90%;">
+    relpos
+    <div style="position: absolute; top: 1px; left: 1%">
+      abspos
+    </div>
+  </div>
+  <div style="position: absolute; top: 1px; left: 1%">
+    abspos
+  </div>
+  lorem ipsum dolor sit amet
+</div>
+</template>
+
+<div id=container></div>
+
+<script>
+function construct(n) {
+  const specimen = document.importNode(document.getElementById("item_template").content, true).firstElementChild;
+  const container = document.getElementById("container");
+  for (let i = 0; i < n; ++i) {
+    const clone = specimen.cloneNode(true);
+    container.appendChild(clone);
+  }
+}
+test(() => {
+  container.innerHTML = "";
+  construct(1000);
+  for (let i = 0; i < 10; i++) {
+    assert_equals(container.getBoundingClientRect().width, 502);
+    assert_equals(container.getBoundingClientRect().height, 502);
+    Array.from(container.children).forEach((item) => { assert_equals(item.getBoundingClientRect().width, 50); assert_equals(item.getBoundingClientRect().height, 50); });
+  }
+}, "Calling getBoundingClientRect on container and then children should not timeout.");
+
+test(() => {
+  container.innerHTML = "";
+  construct(1000);
+  for (let i = 0; i < 10; i++) {
+    Array.from(container.children).forEach((item) => { assert_equals(item.getBoundingClientRect().width, 50); assert_equals(item.getBoundingClientRect().height, 50); });
+    assert_equals(container.getBoundingClientRect().width, 502);
+    assert_equals(container.getBoundingClientRect().height, 502);
+  }
+}, "Calling getBoundingClientRect on children and then container should not timeout.");
+
+</script>

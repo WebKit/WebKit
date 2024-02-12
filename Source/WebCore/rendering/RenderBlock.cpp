@@ -956,9 +956,8 @@ LayoutUnit RenderBlock::marginIntrinsicLogicalWidthForChild(RenderBox& child) co
 
 void RenderBlock::layoutPositionedObject(RenderBox& r, bool relayoutChildren, bool fixedPositionObjectsOnly)
 {
-    if (isSkippedContentRootForLayout()) {
-        r.clearNeedsLayoutForDescendants();
-        r.clearNeedsLayout();
+    if (isSkippedContentRoot()) {
+        r.clearNeedsLayoutForSkippedContent();
         return;
     }
 

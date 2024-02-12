@@ -2414,11 +2414,6 @@ FloatRect RenderElement::referenceBoxRect(CSSBoxType boxType) const
 
 bool RenderElement::isSkippedContentRoot() const
 {
-    return WebCore::isSkippedContentRoot(style(), element());
-}
-
-bool RenderElement::isSkippedContentRootForLayout() const
-{
     return WebCore::isSkippedContentRoot(style(), element()) && !view().frameView().layoutContext().needsSkippedContentLayout();
 }
 
@@ -2439,10 +2434,11 @@ bool RenderElement::hasEligibleContainmentForSizeQuery() const
     return false;
 }
 
-void RenderElement::clearNeedsLayoutForDescendants()
+void RenderElement::clearNeedsLayoutForSkippedContent()
 {
     for (CheckedRef descendant : descendantsOfType<RenderObject>(*this))
-        descendant->clearNeedsLayout();
+        descendant->clearNeedsLayout(EverHadSkippedContentLayout::No);
+    clearNeedsLayout(EverHadSkippedContentLayout::No);
 }
 
 void RenderElement::layoutIfNeeded()
@@ -2450,8 +2446,7 @@ void RenderElement::layoutIfNeeded()
     if (!needsLayout())
         return;
     if (isSkippedContentForLayout()) {
-        clearNeedsLayoutForDescendants();
-        clearNeedsLayout();
+        clearNeedsLayoutForSkippedContent();
         return;
     }
     layout();

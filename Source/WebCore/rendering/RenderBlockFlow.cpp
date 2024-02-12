@@ -899,8 +899,7 @@ void RenderBlockFlow::layoutBlockChildren(bool relayoutChildren, LayoutUnit& max
             continue; // Skip this child, since it will be positioned by the specialized subclass (fieldsets and ruby runs).
 
         if (child.isSkippedContentForLayout()) {
-            child.clearNeedsLayoutForDescendants();
-            child.clearNeedsLayout();
+            child.clearNeedsLayoutForSkippedContent();
             continue;
         }
 
