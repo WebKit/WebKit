@@ -36,6 +36,10 @@
     { "name": "igalia13-wpe-ews", "platform": "wpe" },
     { "name": "igalia14-wpe-ews", "platform": "wpe" },
     { "name": "igalia15-wpe-ews", "platform": "wpe" },
+    { "name": "igalia16-wpe-ews", "platform": "wpe" },
+    { "name": "igalia17-wpe-ews", "platform": "wpe" },
+    { "name": "igalia18-wpe-ews", "platform": "wpe" },
+    { "name": "igalia19-wpe-ews", "platform": "wpe" },
     { "name": "aperez-wpe-ews", "platform": "wpe" },
     { "name": "wincairo-ews-001", "platform": "wincairo" },
     { "name": "wincairo-ews-002", "platform": "wincairo" },
@@ -391,6 +395,12 @@
       "name": "Safe-Merge-Queue", "shortname": "safe-merge", "icon": "buildAndTest",
       "factory": "SafeMergeQueueFactory", "platform": "*",
       "workernames": ["webkit-cq-01", "webkit-cq-02", "webkit-cq-03", "webkit-cq-04", "webkit-cq-05"]
+    },
+    {
+      "name": "WPE-Skia-Build-EWS", "shortname": "wpe-skia", "icon": "buildOnly",
+      "factory": "WPEBuildFactory", "platform": "wpe",
+      "configuration": "release", "architectures": ["x86_64"],
+      "workernames": ["igalia16-wpe-ews", "igalia17-wpe-ews", "igalia18-wpe-ews", "igalia19-wpe-ews"]
     }
   ],
   "schedulers": [
@@ -401,7 +411,8 @@
             "JSC-ARMv7-32bits-Build-EWS", "JSC-i386-32bits-EWS", "JSC-Tests-EWS", "JSC-Tests-arm64-EWS",
             "macOS-AppleSilicon-Sonoma-Debug-Build-EWS", "macOS-Monterey-Release-Build-EWS",
             "Services-EWS", "Style-EWS", "tvOS-17-Build-EWS", "tvOS-17-Simulator-Build-EWS", "watchOS-10-Build-EWS",
-            "watchOS-10-Simulator-Build-EWS", "WPE-Build-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "WinCairo-EWS"
+            "watchOS-10-Simulator-Build-EWS", "WPE-Build-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "WinCairo-EWS",
+            "WPE-Skia-Build-EWS"
       ]
     },
     {
@@ -415,7 +426,8 @@
             "JSC-ARMv7-32bits-Build-EWS", "JSC-i386-32bits-EWS", "JSC-Tests-EWS", "JSC-Tests-arm64-EWS",
             "macOS-AppleSilicon-Sonoma-Debug-Build-EWS", "macOS-Monterey-Release-Build-EWS",
             "Services-EWS", "Style-EWS", "Style-EWS", "tvOS-17-Build-EWS", "tvOS-17-Simulator-Build-EWS", "watchOS-10-Build-EWS",
-            "watchOS-10-Simulator-Build-EWS", "WPE-Build-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "WinCairo-EWS"
+            "watchOS-10-Simulator-Build-EWS", "WPE-Build-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "WinCairo-EWS",
+            "WPE-Skia-Build-EWS"
       ]
     },
     {

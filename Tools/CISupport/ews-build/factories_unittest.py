@@ -370,6 +370,22 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'validate-change',
             'compile-webkit'
         ],
+        'WPE-Skia-Build-EWS': [
+            'configure-build',
+            'validate-change',
+            'configuration',
+            'clean-up-git-repo',
+            'checkout-source',
+            'fetch-branch-references',
+            'checkout-specific-revision',
+            'show-identifier',
+            'apply-patch',
+            'checkout-pull-request',
+            'kill-old-processes',
+            'jhbuild',
+            'validate-change',
+            'compile-webkit'
+        ],
         'WPE-WK2-Tests-EWS': [
             'configure-build',
             'validate-change',
