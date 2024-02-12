@@ -1178,7 +1178,7 @@ static uint32_t componentsForDataType(MTLDataType dataType)
     }
 }
 
-static NSString* errorValidatingInterstageShaderInterfaces(WebGPU::Device &device, const WGPURenderPipelineDescriptor& descriptor, const ShaderModule::VertexOutputs* vertexOutputs, const ShaderModule::FragmentInputs* fragmentInputs, const ShaderModule::FragmentOutputs* fragmentOutputs, const ShaderModule* fragmentModule)
+static NSString* errorValidatingInterstageShaderInterfaces(WebGPU::Device &device, const WGPURenderPipelineDescriptor& descriptor, const ShaderModule::VertexOutputs* vertexOutputs, const ShaderModule::FragmentInputs* fragmentInputs, const ShaderModule::FragmentOutputs* fragmentOutputs, const ShaderModule* fragmentModule, auto* fragmentDescriptor)
 {
     if (!vertexOutputs)
         return @"vertex shader has no outputs";
@@ -1207,11 +1207,12 @@ static NSString* errorValidatingInterstageShaderInterfaces(WebGPU::Device &devic
         auto decrement = ^(uint32_t& unsignedValue) {
             return unsignedValue-- ? true : false;
         };
-        if (fragmentModule->usesFrontFacingInInput() && !decrement(maxFragmentShaderInputComponents))
+        const auto& fragmentEntryPoint = (fragmentDescriptor && fragmentDescriptor->entryPoint) ? fromAPI(fragmentDescriptor->entryPoint) : fragmentModule->defaultFragmentEntryPoint();
+        if (fragmentModule->usesFrontFacingInInput(fragmentEntryPoint) && !decrement(maxFragmentShaderInputComponents))
             return @"maxFragmentShaderInputComponents is less than zero due to front facing";
-        if (fragmentModule->usesSampleIndexInInput() && !decrement(maxFragmentShaderInputComponents))
+        if (fragmentModule->usesSampleIndexInInput(fragmentEntryPoint) && !decrement(maxFragmentShaderInputComponents))
             return @"maxFragmentShaderInputComponents is less than zero due to sample index";
-        if (fragmentModule->usesSampleMaskInInput() && !decrement(maxFragmentShaderInputComponents))
+        if (fragmentModule->usesSampleMaskInInput(fragmentEntryPoint) && !decrement(maxFragmentShaderInputComponents))
             return @"maxFragmentShaderInputComponents is less than zero due to sample mask";
 
         if (fragmentInputs) {
@@ -1331,9 +1332,9 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
 
         auto fragmentShaderModule = fragmentModule->ast();
         RELEASE_ASSERT(fragmentShaderModule);
-        usesFragDepth = fragmentShaderModule->usesFragDepth();
-        usesSampleMask = fragmentShaderModule->usesSampleMask();
         const auto& fragmentEntryPoint = fragmentDescriptor.entryPoint ? fromAPI(fragmentDescriptor.entryPoint) : fragmentModule->defaultFragmentEntryPoint();
+        usesFragDepth = fragmentModule->usesFragDepth(fragmentEntryPoint);
+        usesSampleMask = fragmentModule->usesSampleMaskInOutput(fragmentEntryPoint);
         auto libraryCreationResult = createLibrary(m_device, *fragmentModule, pipelineLayout, fragmentEntryPoint, label, fragmentDescriptor.constantCount, fragmentDescriptor.constants);
         if (!libraryCreationResult)
             return returnInvalidRenderPipeline(*this, isAsync, "Fragment library could not be created"_s);
@@ -1460,7 +1461,7 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
         sampleMask = mask;
     }
 
-    if (NSString* error = errorValidatingInterstageShaderInterfaces(*this, descriptor, vertexOutputs, fragmentInputs, fragmentReturnTypes, fragmentModule))
+    if (NSString* error = errorValidatingInterstageShaderInterfaces(*this, descriptor, vertexOutputs, fragmentInputs, fragmentReturnTypes, fragmentModule, descriptor.fragment))
         return returnInvalidRenderPipeline(*this, isAsync, error);
 
     RenderPipeline::RequiredBufferIndicesContainer requiredBufferIndices;

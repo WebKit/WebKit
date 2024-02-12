@@ -429,7 +429,7 @@ static WGPUVertexFormat vertexFormatTypeForStructMember(const WGSL::Type* type)
     return vertexFormatTypeFromPrimitive(primitiveType, vectorSize);
 }
 
-static ShaderModule::FragmentOutputs parseFragmentReturnType(const WGSL::Type& type)
+ShaderModule::FragmentOutputs ShaderModule::parseFragmentReturnType(const WGSL::Type& type, const String& entryPoint)
 {
     ShaderModule::FragmentOutputs fragmentOutputs;
     if (auto* returnPrimitive = std::get_if<WGSL::Types::Primitive>(&type)) {
@@ -445,6 +445,18 @@ static ShaderModule::FragmentOutputs parseFragmentReturnType(const WGSL::Type& t
         return fragmentOutputs;
 
     for (auto& member : returnStruct->structure.members()) {
+        if (member.builtin()) {
+            switch (*member.builtin()) {
+            case WGSL::Builtin::SampleMask:
+                populateShaderModuleState(entryPoint).usesSampleMaskInOutput = true;
+                break;
+            case WGSL::Builtin::FragDepth:
+                populateShaderModuleState(entryPoint).usesFragDepth = true;
+                break;
+            default:
+                break;
+            }
+        }
         if (!member.location() || member.builtin())
             continue;
 
@@ -505,20 +517,56 @@ static void populateStageInMap(const WGSL::Type& type, ShaderModule::VertexStage
     }
 }
 
-bool ShaderModule::usesFrontFacingInInput() const
+const ShaderModule::ShaderModuleState* ShaderModule::shaderModuleState(const String& entryPoint) const
 {
-    return m_usesFrontFacingInInput;
-}
-bool ShaderModule::usesSampleIndexInInput() const
-{
-    return m_usesSampleIndexInInput;
-}
-bool ShaderModule::usesSampleMaskInInput() const
-{
-    return m_usesSampleMaskInInput;
+    if (auto it = m_usageInformationPerEntryPoint.find(entryPoint); it != m_usageInformationPerEntryPoint.end())
+        return &it->value;
+
+    return nullptr;
 }
 
-void ShaderModule::populateFragmentInputs(const WGSL::Type& type, ShaderModule::FragmentInputs& fragmentInputs)
+ShaderModule::ShaderModuleState& ShaderModule::populateShaderModuleState(const String& entryPoint)
+{
+    if (auto it = m_usageInformationPerEntryPoint.find(entryPoint); it != m_usageInformationPerEntryPoint.end())
+        return it->value;
+
+    return m_usageInformationPerEntryPoint.add(entryPoint, ShaderModule::ShaderModuleState()).iterator->value;
+}
+
+bool ShaderModule::usesFrontFacingInInput(const String& entryPoint) const
+{
+    if (auto state = shaderModuleState(entryPoint))
+        return state->usesFrontFacingInInput;
+    return false;
+}
+bool ShaderModule::usesSampleIndexInInput(const String& entryPoint) const
+{
+    if (auto state = shaderModuleState(entryPoint))
+        return state->usesSampleIndexInInput;
+    return false;
+}
+bool ShaderModule::usesSampleMaskInInput(const String& entryPoint) const
+{
+    if (auto state = shaderModuleState(entryPoint))
+        return state->usesSampleMaskInInput;
+    return false;
+}
+
+bool ShaderModule::usesSampleMaskInOutput(const String& entryPoint) const
+{
+    if (auto state = shaderModuleState(entryPoint))
+        return state->usesSampleMaskInOutput;
+    return false;
+}
+
+bool ShaderModule::usesFragDepth(const String& entryPoint) const
+{
+    if (auto state = shaderModuleState(entryPoint))
+        return state->usesFragDepth;
+    return false;
+}
+
+void ShaderModule::populateFragmentInputs(const WGSL::Type& type, ShaderModule::FragmentInputs& fragmentInputs, const String& entryPointName)
 {
     auto* inputStruct = std::get_if<WGSL::Types::Struct>(&type);
     if (!inputStruct)
@@ -529,9 +577,10 @@ void ShaderModule::populateFragmentInputs(const WGSL::Type& type, ShaderModule::
             using enum WGSL::Builtin;
             switch (*member.builtin()) {
             case FragDepth:
+                populateShaderModuleState(entryPointName).usesFragDepth = true;
                 break;
             case FrontFacing:
-                m_usesFrontFacingInInput = true;
+                populateShaderModuleState(entryPointName).usesFrontFacingInInput = true;
                 break;
             case GlobalInvocationId:
                 break;
@@ -546,10 +595,10 @@ void ShaderModule::populateFragmentInputs(const WGSL::Type& type, ShaderModule::
             case Position:
                 break;
             case SampleIndex:
-                m_usesSampleIndexInInput = true;
+                populateShaderModuleState(entryPointName).usesSampleIndexInInput = true;
                 break;
             case SampleMask:
-                m_usesSampleMaskInInput = true;
+                populateShaderModuleState(entryPointName).usesSampleMaskInInput = true;
                 break;
             case VertexIndex:
                 break;
@@ -590,7 +639,7 @@ ShaderModule::FragmentInputs ShaderModule::parseFragmentInputs(const WGSL::AST::
             continue;
 
         if (auto* inferredType = parameter.typeName().inferredType())
-            populateFragmentInputs(*inferredType, result);
+            populateFragmentInputs(*inferredType, result, function.name());
     }
 
     return result;
@@ -632,7 +681,7 @@ ShaderModule::ShaderModule(std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck
                 m_fragmentInputsForEntryPoint.add(function.name(), parseFragmentInputs(function));
                 if (auto expression = function.maybeReturnType()) {
                     if (auto* inferredType = expression->inferredType())
-                        m_fragmentReturnTypeForEntryPoint.add(function.name(), parseFragmentReturnType(*inferredType));
+                        m_fragmentReturnTypeForEntryPoint.add(function.name(), parseFragmentReturnType(*inferredType, function.name()));
                 }
                 if (!allowFragmentDefault || m_defaultFragmentEntryPoint.length()) {
                     allowFragmentDefault = false;

@@ -3090,8 +3090,7 @@ NSString* Texture::errorValidatingImageCopyTexture(const WGPUImageCopyTexture& i
         || fromAPI(imageCopyTexture.texture).sampleCount() > 1) {
         auto subresourceSize = imageCopyTextureSubresourceSize(imageCopyTexture);
         if (subresourceSize.width != copySize.width
-            || (copySize.height > 1 && subresourceSize.height != copySize.height)
-            || (copySize.depthOrArrayLayers > 1 && subresourceSize.depthOrArrayLayers != copySize.depthOrArrayLayers))
+            || (copySize.height > 1 && subresourceSize.height != copySize.height))
             return [NSString stringWithFormat:@"subresourceSize.width(%u) != copySize.width(%u) || subresourceSize.height(%u) != copySize.height(%u) || subresourceSize.depthOrArrayLayers(%u) != copySize.depthOrArrayLayers(%u)", subresourceSize.width, copySize.width, subresourceSize.height, copySize.height, subresourceSize.depthOrArrayLayers, copySize.depthOrArrayLayers];
     }
 
