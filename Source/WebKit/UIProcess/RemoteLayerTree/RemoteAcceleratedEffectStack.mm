@@ -45,10 +45,26 @@ RemoteAcceleratedEffectStack::RemoteAcceleratedEffectStack(Seconds acceleratedTi
 {
 }
 
+void RemoteAcceleratedEffectStack::setEffects(AcceleratedEffects&& effects)
+{
+    AcceleratedEffectStack::setEffects(WTFMove(effects));
+
+    for (auto& effect : m_primaryLayerEffects) {
+        if (effect->animatedProperties().contains(AcceleratedEffectProperty::Opacity)) {
+            m_affectedLayerProperties.add(LayerProperty::Opacity);
+            return;
+        }
+    }
+}
+
 #if PLATFORM(MAC)
 void RemoteAcceleratedEffectStack::initEffectsFromMainThread(PlatformLayer *layer, MonotonicTime now)
 {
     ASSERT(!m_opacityPresentationModifier);
+    ASSERT(!m_presentationModifierGroup);
+
+    if (!m_affectedLayerProperties.contains(LayerProperty::Opacity))
+        return;
 
     auto computedValues = computeValues(now);
     auto *opacity = @(computedValues.opacity);
@@ -63,6 +79,12 @@ void RemoteAcceleratedEffectStack::initEffectsFromMainThread(PlatformLayer *laye
 
 void RemoteAcceleratedEffectStack::applyEffectsFromScrollingThread(MonotonicTime now) const
 {
+    if (!m_affectedLayerProperties.contains(LayerProperty::Opacity))
+        return;
+
+    ASSERT(m_opacityPresentationModifier);
+    ASSERT(m_presentationModifierGroup);
+
     auto computedValues = computeValues(now);
     auto *opacity = @(computedValues.opacity);
     [m_opacityPresentationModifier setValue:opacity];
@@ -72,6 +94,9 @@ void RemoteAcceleratedEffectStack::applyEffectsFromScrollingThread(MonotonicTime
 
 void RemoteAcceleratedEffectStack::applyEffectsFromMainThread(PlatformLayer *layer, MonotonicTime now) const
 {
+    if (!m_affectedLayerProperties.contains(LayerProperty::Opacity))
+        return;
+
     auto computedValues = computeValues(now);
     [layer setOpacity:computedValues.opacity];
 }

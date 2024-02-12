@@ -43,6 +43,8 @@ class RemoteAcceleratedEffectStack final : public WebCore::AcceleratedEffectStac
 public:
     static Ref<RemoteAcceleratedEffectStack> create(Seconds);
 
+    void setEffects(WebCore::AcceleratedEffects&&) final;
+
 #if PLATFORM(MAC)
     void initEffectsFromMainThread(PlatformLayer*, MonotonicTime now);
     void applyEffectsFromScrollingThread(MonotonicTime now) const;
@@ -56,6 +58,13 @@ private:
     explicit RemoteAcceleratedEffectStack(Seconds);
 
     WebCore::AcceleratedEffectValues computeValues(MonotonicTime now) const;
+
+    enum class LayerProperty : uint8_t {
+        None = 1 << 0,
+        Opacity = 1 << 1
+    };
+
+    OptionSet<LayerProperty> m_affectedLayerProperties;
 
     Seconds m_acceleratedTimelineTimeOrigin;
 
