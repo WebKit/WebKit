@@ -87,11 +87,14 @@ auto ContainerQueryEvaluator::featureEvaluationContextForQuery(const CQ::Contain
     if (!containerStyle)
         return { };
 
+    auto* containerParent = container->parentElementInComposedTree();
+    auto* containerParentStyle = containerParent ? styleForContainer(*containerParent, containerQuery.requiredAxes, m_evaluationState) : nullptr;
+
     auto* rootStyle = m_element->document().documentElement()->renderStyle();
 
     return MQ::FeatureEvaluationContext {
         m_element->document(),
-        CSSToLengthConversionData { *containerStyle, rootStyle, nullptr, m_element->document().renderView(), container },
+        CSSToLengthConversionData { *containerStyle, rootStyle, containerParentStyle, m_element->document().renderView(), container },
         container->renderer()
     };
 }

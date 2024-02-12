@@ -59,7 +59,9 @@ static RefPtr<CSSValue> consumeCustomPropertyValue(AtomString propertyName, CSSP
 {
     auto propertyValueRange = range.consumeAllExcludingTrailingWhitespace();
     range.consumeWhitespace();
-    return CSSCustomPropertyValue::createSyntaxAll(propertyName, CSSVariableData::create(propertyValueRange));
+    if (propertyValueRange.atEnd())
+        return CSSCustomPropertyValue::createEmpty(propertyName);
+    return CSSVariableParser::parseDeclarationValue(propertyName, propertyValueRange, strictCSSParserContext());
 }
 
 std::optional<Feature> FeatureParser::consumeBooleanOrPlainFeature(CSSParserTokenRange& range, const MediaQueryParserContext& context)

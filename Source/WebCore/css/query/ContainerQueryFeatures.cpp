@@ -26,8 +26,10 @@
 #include "ContainerQueryFeatures.h"
 
 #include "ContainerQueryEvaluator.h"
+#include "CustomPropertyRegistry.h"
 #include "RenderBoxInlines.h"
 #include "RenderElementInlines.h"
+#include "StyleBuilder.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore::CQ::Features {
@@ -168,16 +170,39 @@ struct StyleFeatureSchema : public FeatureSchema {
 
     EvaluationResult evaluate(const MQ::Feature& feature, const FeatureEvaluationContext& context) const override
     {
-        if (!context.conversionData.style())
+        if (!context.conversionData.style() || !context.conversionData.parentStyle())
             return EvaluationResult::False;
 
         auto& style = *context.conversionData.style();
-        auto* customProperty = style.customPropertyValue(feature.name);
+
+        auto* customPropertyValue = style.customPropertyValue(feature.name);
         if (!feature.rightComparison)
-            return toEvaluationResult(!!customProperty);
+            return toEvaluationResult(!!customPropertyValue);
+
+        auto resolvedFeatureValue = [&]() -> RefPtr<const CSSCustomPropertyValue> {
+            auto featureValue = dynamicDowncast<CSSCustomPropertyValue>(feature.rightComparison->value);
+            if (!featureValue)
+                return nullptr;
+
+            // Resolve the queried custom property value for var() references, css-wide keywords and registered properties.
+            auto builderContext = Style::BuilderContext {
+                context.document.get(),
+                *context.conversionData.parentStyle(),
+                context.conversionData.rootStyle(),
+                nullptr
+            };
+
+            auto dummyStyle = RenderStyle::clone(style);
+
+            auto styleBuilder = Style::Builder { dummyStyle, WTFMove(builderContext), { }, { } };
+            return styleBuilder.resolveCustomPropertyForContainerQueries(*featureValue);
+        }();
+
+        if (!resolvedFeatureValue)
+            return toEvaluationResult(!customPropertyValue);
 
         ASSERT(feature.rightComparison->op == ComparisonOperator::Equal);
-        return toEvaluationResult(customProperty && *customProperty == *feature.rightComparison->value);
+        return toEvaluationResult(customPropertyValue && *customPropertyValue == *resolvedFeatureValue);
     }
 };
 
