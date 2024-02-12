@@ -349,7 +349,11 @@ const GRefPtr<GstCaps>& GStreamerElementHarness::Stream::outputCaps()
     if (m_outputCaps)
         return m_outputCaps;
 
-    m_outputCaps = adoptGRef(gst_pad_get_current_caps(m_pad.get()));
+    auto stream = adoptGRef(gst_pad_get_stream(m_pad.get()));
+    if (stream)
+        m_outputCaps = adoptGRef(gst_stream_get_caps(stream.get()));
+    else
+        m_outputCaps = adoptGRef(gst_pad_get_current_caps(m_pad.get()));
     GST_DEBUG_OBJECT(m_pad.get(), "Output caps: %" GST_PTR_FORMAT, m_outputCaps.get());
     return m_outputCaps;
 }
@@ -365,8 +369,9 @@ bool GStreamerElementHarness::Stream::sinkEvent(GstEvent* event)
 {
     Locker locker { m_sinkEventQueueLock };
 
-    // Clear cached output caps when the pad receives a new caps event.
-    if (GST_EVENT_TYPE(event) == GST_EVENT_CAPS)
+    // Clear cached output caps when the pad receives a new caps event or stream-start (potentially
+    // storing a GstStream).
+    if (GST_EVENT_TYPE(event) == GST_EVENT_CAPS || GST_EVENT_TYPE(event) == GST_EVENT_STREAM_START)
         m_outputCaps = nullptr;
 
     m_sinkEventQueue.prepend(GRefPtr<GstEvent>(event));
