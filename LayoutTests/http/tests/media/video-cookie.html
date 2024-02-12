@@ -1,38 +1,22 @@
-<html>
-<head>
-</head>
-<body onload="loadCookie()">
-<video id="video"></video>
-<script src=../../media-resources/video-test.js></script>
-<script src=../../media-resources/media-file.js></script>
+<!DOCTYPE html>
+<title>Tests that the media player will send the relevant cookies when requesting the media file.</title>
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<body>
+<video></video>
 <script>
-    if (window.testRunner) {
-        testRunner.dumpAsText();
-        testRunner.setAlwaysAcceptCookies(true);
-        testRunner.waitUntilDone();
-    }
+async_test(function(t) {
+    var movie = "resources/test.mp4";
+    var frame = document.createElement("iframe");
+    document.body.appendChild(frame);
 
-    function loadCookie () {
-        var movie = findMediaFile("video", "resources/test");
-        var frame = document.createElement("iframe");
-        document.body.appendChild(frame);
+    frame.onload = t.step_func(function() {
+        var video = document.querySelector("video");
+        video.src="http://127.0.0.1:8000/media/resources/video-cookie-check-cookie.py";
+        video.oncanplay = t.step_func_done();
+        video.play();
+    });
 
-        frame.addEventListener('load', function () {
-                video = document.getElementById('video');
-                video.src="http://127.0.0.1:8000/media/resources/video-cookie-check-cookie.py";
-                video.play();
-        });
-
-        frame.width = 0;
-        frame.height = 0;
-        frame.src = "http://127.0.0.1:8000/media/resources/setCookie.cgi?name=" + movie;
-    }
-
-    waitForEvent("canplay", function () {
-        if (window.testRunner)
-            window.testRunner.notifyDone();
-    } );
+    frame.src = "http://127.0.0.1:8000/media/resources/setCookie.cgi?name=" + movie;
+});
 </script>
-Tests that the media player will send the relevant cookies when requesting the media file.<br/>
-</body>
-</html>

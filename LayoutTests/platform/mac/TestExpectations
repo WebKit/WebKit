@@ -751,8 +751,6 @@ webkit.org/b/236722 http/tests/media/video-play-waiting.html [ Timeout ]
 # This test requires generation of progress events during loading
 webkit.org/b/100984 media/progress-events-generated-correctly.html [ Failure ]
 
-webkit.org/b/34287 http/tests/media/video-cookie.html
-
 # needs enhanced eventSender.contextMenu() return value
 webkit.org/b/116651 media/context-menu-actions.html [ Skip ]
 
