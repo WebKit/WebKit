@@ -380,71 +380,6 @@ webkit.org/b/99028 fast/autoresize [ Failure ]
 
 # Failures related with compositing tests.
 webkit.org/b/169918 compositing/clipping/border-radius-overflow-hidden-stacking-context.html [ Failure ]
-webkit.org/b/169918 compositing/contents-opaque/control-layer.html [ Failure ]
-webkit.org/b/169918 compositing/contents-scale/animating.html [ Failure ]
-webkit.org/b/169918 compositing/contents-scale/rounded-contents-scale.html [ Failure ]
-webkit.org/b/169918 compositing/contents-scale/scaled-ancestor.html [ Failure ]
-webkit.org/b/169918 compositing/contents-scale/simple-scale.html [ Failure ]
-webkit.org/b/169918 compositing/contents-scale/z-translate.html [ Failure ]
-webkit.org/b/169918 compositing/fixed-image-loading.html [ Failure ]
-webkit.org/b/169918 compositing/fixed-positioned-pseudo-content-no-compositing.html [ Failure ]
-webkit.org/b/169918 compositing/geometry/ancestor-overflow-change.html [ Failure ]
-webkit.org/b/169918 compositing/geometry/fixed-position-composited-switch.html [ Failure ]
-webkit.org/b/169918 compositing/geometry/limit-layer-bounds-overflow-root.html [ Failure ]
-webkit.org/b/169918 compositing/geometry/preserve-3d-switching.html [ Failure ]
-webkit.org/b/169918 compositing/iframes/become-overlapped-iframe.html [ Failure ]
-webkit.org/b/169918 compositing/iframes/composited-parent-iframe.html [ Failure ]
-webkit.org/b/169918 compositing/iframes/connect-compositing-iframe-delayed.html [ Failure ]
-webkit.org/b/169918 compositing/iframes/connect-compositing-iframe.html [ Failure ]
-webkit.org/b/169918 compositing/iframes/connect-compositing-iframe2.html [ Failure ]
-webkit.org/b/169918 compositing/iframes/connect-compositing-iframe3.html [ Failure ]
-webkit.org/b/169918 compositing/iframes/enter-compositing-iframe.html [ Failure ]
-webkit.org/b/169918 compositing/iframes/iframe-resize.html [ Failure ]
-webkit.org/b/169918 compositing/iframes/overlapped-iframe.html [ Failure ]
-webkit.org/b/169918 compositing/iframes/scrolling-iframe.html [ Failure ]
-webkit.org/b/169918 compositing/images/direct-image-object-fit.html [ Failure ]
-webkit.org/b/169918 compositing/layer-creation/fixed-position-out-of-view-scaled-scroll.html [ Failure ]
-webkit.org/b/169918 compositing/layer-creation/spanOverlapsCanvas.html [ Failure ]
-webkit.org/b/169918 compositing/layer-creation/fixed-position-out-of-view-scaled.html [ Failure ]
-webkit.org/b/169918 compositing/masks/clip-path-composited-descendent.html [ Failure ]
-webkit.org/b/169918 compositing/masks/compositing-clip-path-change-no-repaint.html [ Failure ]
-webkit.org/b/169918 compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants.html [ Failure ]
-webkit.org/b/169918 compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants2.html [ Failure ]
-webkit.org/b/169918 compositing/overflow/overflow-auto-with-touch-toggle.html [ Failure ]
-webkit.org/b/169918 compositing/overflow/scrolling-without-painting.html [ Failure ]
-webkit.org/b/169918 compositing/overflow/updating-scrolling-content.html [ Failure ]
-webkit.org/b/169918 compositing/repaint/invalidations-on-composited-layers.html [ Failure ]
-webkit.org/b/169918 compositing/repaint/positioned-movement.html [ Failure ]
-webkit.org/b/169918 compositing/repaint/resize-repaint.html [ Failure ]
-webkit.org/b/169918 compositing/rtl/rtl-fixed-overflow-scrolled.html [ Failure ]
-webkit.org/b/169918 compositing/rtl/rtl-fixed-overflow.html [ Failure ]
-webkit.org/b/169918 compositing/rtl/rtl-fixed.html [ Failure ]
-webkit.org/b/169918 compositing/rtl/rtl-iframe-absolute-overflow-scrolled.html [ Failure ]
-webkit.org/b/169918 compositing/rtl/rtl-iframe-absolute-overflow.html [ Failure ]
-webkit.org/b/169918 compositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Failure ]
-webkit.org/b/169918 compositing/rtl/rtl-iframe-fixed-overflow.html [ Failure ]
-webkit.org/b/169918 compositing/rtl/rtl-iframe-fixed.html [ Failure ]
-webkit.org/b/169918 compositing/tiling/backface-preserve-3d-tiled.html [ Failure ]
-webkit.org/b/169918 compositing/tiling/crash-reparent-tiled-layer.html [ Failure ]
-webkit.org/b/169918 compositing/tiling/huge-layer-img.html [ Failure ]
-webkit.org/b/169918 compositing/tiling/huge-layer-with-layer-children-resize.html [ Failure ]
-webkit.org/b/169918 compositing/tiling/huge-layer-with-layer-children.html [ Failure ]
-webkit.org/b/169918 compositing/tiling/non-active-window-tiles-size.html [ Failure ]
-webkit.org/b/169918 compositing/tiling/offscreen-tiled-layer.html [ Failure ]
-webkit.org/b/169918 compositing/tiling/tile-cache-zoomed.html [ Failure ]
-webkit.org/b/169918 compositing/tiling/tiled-layer-resize.html [ Failure ]
-webkit.org/b/169918 compositing/tiling/tiled-mask-inwindow.html [ Failure ]
-webkit.org/b/169918 compositing/tiling/tiled-reflection-inwindow.html [ Failure ]
-webkit.org/b/169918 compositing/tiling/transform-origin-tiled.html [ Failure ]
-# See also bug #175575
-webkit.org/b/169918 compositing/video/video-object-position.html [ Failure ]
-webkit.org/b/169918 compositing/visibility/visibility-image-layers-dynamic.html [ Failure ]
-webkit.org/b/169918 compositing/geometry/clipped-out-perspective.html [ ImageOnlyFailure ]
-webkit.org/b/169918 compositing/hidpi-subpixel-transform-origin.html [ ImageOnlyFailure ]
-webkit.org/b/169918 compositing/hidpi-transform-with-render-layer-on-fractional-pixel-value.html [ ImageOnlyFailure ]
-webkit.org/b/169918 compositing/layer-creation/deep-tree.html [ ImageOnlyFailure ]
-webkit.org/b/169918 compositing/text-on-scaled-layer.html [ ImageOnlyFailure ]
-webkit.org/b/169918 compositing/text-on-scaled-surface.html [ ImageOnlyFailure ]
 webkit.org/b/169918 compositing/tiling/rotated-tiled-clamped.html [ Missing Failure ]
 webkit.org/b/169918 compositing/tiling/rotated-tiled-preserve3d-clamped.html [ Missing Failure ]
 webkit.org/b/169918 compositing/transitions/scale-transition-no-start.html [ Missing Failure ]
@@ -452,7 +387,6 @@ webkit.org/b/169918 compositing/transitions/singular-scale-transition.html [ Mis
 webkit.org/b/169918 compositing/visibility/visibility-composited-transforms.html [ Missing Failure ]
 webkit.org/b/169918 compositing/visibility/visibility-composited.html [ Missing Failure ]
 webkit.org/b/169918 compositing/fixed-with-fixed-layout.html [ Crash ]
-webkit.org/b/169918 compositing/filters/drop-shadow.html [ ImageOnlyFailure ]
 
 webkit.org/b/224105 compositing/video/video-clip-change-src.html [ ImageOnlyFailure Pass ]
 
@@ -1129,26 +1063,12 @@ http/tests/security/contentSecurityPolicy/extensions/ [ Skip ]
 webkit.org/b/206223 imported/mozilla/svg/svg-integration/clipPath-html-02.xhtml
 webkit.org/b/206223 imported/mozilla/svg/svg-integration/clipPath-html-05.xhtml
 
-webkit.org/b/206498 compositing/contents-format/deep-color-backing-store.html [ Failure ]
-webkit.org/b/206498 compositing/geometry/layer-due-to-layer-children-switch.html [ Failure ]
-webkit.org/b/206498 compositing/geometry/layer-due-to-layer-children-deep-switch.html [ Failure ]
-webkit.org/b/206498 compositing/iframes/leave-compositing-iframe.html [ Failure ]
-webkit.org/b/206498 compositing/iframes/iframe-size-to-zero.html [ Failure ]
-webkit.org/b/206498 compositing/layer-creation/fixed-position-change-out-of-view-in-view.html [ Failure ]
-
-webkit.org/b/206499 compositing/visibility/visibility-change-in-subframe.html [ Failure ]
-
 # IsLoggedIn is an experimental feature (Introduced in r250944)
 http/tests/is-logged-in/ [ Skip ]
 
 webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--cover--height.html [ Pass ]
 
 webkit.org/b/206872 platform/gtk/scrollbars/main-frame-scrollbar-horizontal-wheel-scroll.html [ ImageOnlyFailure ]
-
-webkit.org/b/207254 compositing/backing/page-scale-overlap-in-iframe.html [ Failure ]
-
-webkit.org/b/207625 compositing/backing/backing-store-attachment-animating-outside-viewport.html [ Failure ]
-webkit.org/b/207625 compositing/backing/transition-extent.html [ Failure ]
 
 webkit.org/b/208182 fast/repaint/backgroundSizeRepaint.html [ ImageOnlyFailure Pass ]
 
@@ -1196,10 +1116,6 @@ webkit.org/b/210487 http/tests/resourceLoadStatistics/switch-session-on-navigati
 webkit.org/b/210796 http/tests/resourceLoadStatistics/standalone-web-application-exempt-from-website-data-deletion.html [ Failure ]
 
 webkit.org/b/210849 compositing/overflow/rtl-scrollbar-layer-positioning.html [ Failure ]
-
-webkit.org/b/210850 compositing/tiling/coverage-adjustment-secondary-quad-mapping.html [ Failure ]
-
-webkit.org/b/212223 compositing/tiling/perspective-on-scroller-tile-coverage.html [ Failure ]
 
 webkit.org/b/212233 fast/repaint/iframe-on-subpixel-position.html [ Failure ]
 
@@ -1330,10 +1246,6 @@ webkit.org/b/158918 fast/css3-text/css3-text-decoration/text-decoration-dotted.h
 webkit.org/b/170337 fast/repaint/obscured-background-no-repaint.html [ Failure ]
 
 webkit.org/b/172283 inspector/worker/debugger-multiple-targets-pause.html [ Timeout Pass Failure ]
-
-webkit.org/b/186136 compositing/animation/layer-for-filling-animation.html [ Failure ]
-
-webkit.org/b/186667 compositing/repaint/iframes/composited-iframe-with-fixed-background-doc-repaint.html [ Failure Pass ]
 
 webkit.org/b/186673 editing/spelling/spellcheck-async-mutation.html [ Failure Pass ]
 
@@ -1778,9 +1690,6 @@ webkit.org/b/207711 [ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb
 webkit.org/b/207711 [ Debug ] imported/w3c/web-platform-tests/web-animations/timing-model/animations/update-playback-rate-fast.html [ Timeout ]
 webkit.org/b/207711 imported/blink/storage/indexeddb/blob-valid-after-deletion.html [ Failure Pass Timeout ]
 
-# Probably categorized under the wrong bug.
-webkit.org/b/212202 compositing/fixed-with-main-thread-scrolling.html [ Skip ]
-
 webkit.org/b/210796 http/tests/resourceLoadStatistics/clear-in-memory-and-persistent-store-one-hour.html [ Skip ] # Timeout
 
 webkit.org/b/211566 http/tests/resourceLoadStatistics/exemptDomains/app-bound-domains-exempt-from-cookie-blocking-between-each-other.html [ Skip ]
@@ -2046,9 +1955,6 @@ webkit.org/b/133803 editing/undo/undo-deleteWord.html [ Failure ]
 
 webkit.org/b/135533 editing/pasteboard/img-srcset-copy-paste-canonicalization.html [ Failure ]
 
-# The backing store is cleared when page cached in GTK
-webkit.org/b/135348 compositing/iframes/page-cache-layer-tree.html [ Skip ]
-
 webkit.org/b/136255 fast/block/float/overhanging-tall-block.html [ Failure ]
 
 # Smooth scrolling causes failure of scrolling tests
@@ -2145,8 +2051,6 @@ webkit.org/b/144690 fast/writing-mode/english-bt-text-with-spelling-marker.html 
 
 webkit.org/b/179605 editing/execCommand/underline-selection-containing-image.html [ Failure ]
 
-webkit.org/b/179722 compositing/accelerated-layers-after-back.html [ Failure ]
-
 webkit.org/b/181662 fast/forms/auto-fill-button/input-strong-password-auto-fill-button.html [ Missing Failure ]
 webkit.org/b/181662 fast/forms/auto-fill-button/input-strong-password-viewable-baseline-alignment.html [ ImageOnlyFailure ]
 
@@ -2183,8 +2087,6 @@ webkit.org/b/186142 imported/w3c/web-platform-tests/css/css-text/text-transform/
 
 webkit.org/b/186601 fullscreen/full-screen-layer-dump.html [ Failure ]
 
-webkit.org/b/187268 compositing/backing/backing-store-attachment-outside-viewport.html [ Failure ]
-
 webkit.org/b/187994 compositing/backing/backing-store-attachment-fill-forwards-animation.html [ Failure ]
 
 webkit.org/b/188218 fast/repaint/canvas-object-fit.html [ Failure ]
@@ -2196,8 +2098,6 @@ webkit.org/b/189564 http/tests/xmlhttprequest/url-with-credentials.html [ Failur
 webkit.org/b/189994 fast/files/xhr-response-blob.html [ Failure ]
 
 webkit.org/b/190704 compositing/debug-borders-dynamic.html [ ImageOnlyFailure ]
-
-webkit.org/b/190706 compositing/overflow/composited-scrolling-paint-phases.html [ Failure ]
 
 webkit.org/b/190709 editing/pasteboard/emacs-ctrl-a-k-y.html [ Failure ]
 
@@ -2230,9 +2130,6 @@ webkit.org/b/191885 fast/inline/simple-inline-with-out-of-flow-descendant.html [
 webkit.org/b/191885 fast/inline/simple-inline-with-out-of-flow-descendant2.html [ Failure ]
 webkit.org/b/191885 fast/inline/simple-intruding-floats3.html [ Failure ]
 
-webkit.org/b/192432 compositing/backing/backing-store-attachment-scroll.html [ Failure ]
-webkit.org/b/192432 compositing/tiling/tile-coverage-on-scroll.html [ Failure Crash ]
-webkit.org/b/192433 compositing/iframes/remove-reinsert-webview-with-iframe.html [ Failure ]
 webkit.org/b/192434 fast/inline/inline-content-with-float-and-margin.html [ Failure ]
 
 imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-georgian.html [ ImageOnlyFailure ]
@@ -2254,23 +2151,15 @@ webkit.org/b/196197 http/wpt/cache-storage/cache-quota-after-restart.any.html [ 
 
 webkit.org/b/197708 http/wpt/beacon/beacon-async-error-logging.html [ Failure ]
 
-webkit.org/b/199002 compositing/repaint/scroller-with-foreground-layer-repaints.html [ Failure ]
-
 webkit.org/b/199868 accessibility/gtk/aria-haspopup.html [ Failure ]
 
-webkit.org/b/199437 compositing/geometry/limit-layer-bounds-clipping-ancestor.html [ Failure ]
-
 webkit.org/b/201260 http/wpt/service-workers/server-trust-evaluation.https.html [ Failure ]
-
-webkit.org/b/202227 compositing/backing/layer-outside-tiled-parent.html [ Failure ]
-webkit.org/b/202228 compositing/layer-creation/fixed-position-descendants-out-of-view.html [ Failure ]
 
 webkit.org/b/202744 compositing/layer-creation/absolute-in-async-overflow-scroll.html [ Failure ]
 webkit.org/b/202744 compositing/overflow/overflow-auto-with-touch.html [ Failure ]
 webkit.org/b/202744 compositing/overflow/overflow-overlay-with-touch.html [ Failure ]
 webkit.org/b/202744 compositing/overflow/scrolling-content-clip-to-viewport.html [ Failure ]
 webkit.org/b/202744 compositing/overflow/stacking-context-composited-scroller-with-foreground-paint-phases.html [ Failure ]
-webkit.org/b/202744 compositing/overflow/textarea-scroll-touch.html [ Failure ]
 webkit.org/b/202744 compositing/rtl/rtl-scrolling-with-transformed-descendants.html [ Failure ]
 webkit.org/b/202744 compositing/scrolling/overflow-scrolling-layers-are-self-painting.html [ Failure ]
 
@@ -2280,8 +2169,6 @@ webkit.org/b/99036 pointer-lock/locked-element-iframe-removed-from-dom.html [ Fa
 webkit.org/b/99036 pointer-lock/pointerlockchange-pointerlockerror-events.html [ Failure ]
 
 webkit.org/b/211981 editing/pasteboard/data-transfer-get-data-on-pasting-html-uses-blob-url.html [ Failure ]
-
-webkit.org/b/212744 compositing/repaint/compositing-toggle-in-overflow-scroll-repaint.html [ Failure ]
 
 webkit.org/b/219248 imported/w3c/web-platform-tests/uievents/mouse/mouseevent_move_button.html [ Failure ]
 
