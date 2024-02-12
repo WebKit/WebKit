@@ -127,6 +127,14 @@ ScrollingNodeID RenderEmbeddedObject::scrollingNodeID() const
     return pluginViewBase->scrollingNodeID();
 }
 
+void RenderEmbeddedObject::didAttachScrollingNode()
+{
+    auto* pluginViewBase = dynamicDowncast<PluginViewBase>(widget());
+    if (!pluginViewBase)
+        return;
+    pluginViewBase->didAttachScrollingNode();
+}
+
 #if !PLATFORM(IOS_FAMILY)
 static String unavailablePluginReplacementText(RenderEmbeddedObject::PluginUnavailabilityReason pluginUnavailabilityReason)
 {

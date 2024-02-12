@@ -7400,6 +7400,11 @@ void WebPage::didSameDocumentNavigationForFrame(WebFrame& frame)
 
     // Notify the UIProcess.
     send(Messages::WebPageProxy::DidSameDocumentNavigationForFrame(frame.frameID(), navigationID, SameDocumentNavigationType::AnchorNavigation, frame.coreLocalFrame()->document()->url(), UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
+
+#if ENABLE(PDF_PLUGIN)
+    for (auto& pluginView : m_pluginViews)
+        pluginView.didSameDocumentNavigationForFrame(frame);
+#endif
 }
 
 void WebPage::testProcessIncomingSyncMessagesWhenWaitingForSyncReply(CompletionHandler<void(bool)>&& reply)

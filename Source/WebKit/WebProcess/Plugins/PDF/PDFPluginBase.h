@@ -175,6 +175,8 @@ public:
     WebCore::Scrollbar* horizontalScrollbar() const override { return m_horizontalScrollbar.get(); }
     WebCore::Scrollbar* verticalScrollbar() const override { return m_verticalScrollbar.get(); }
 
+    virtual void didAttachScrollingNode() { }
+
     virtual void didChangeSettings() { }
 
     // HUD Actions.
@@ -211,6 +213,8 @@ public:
     void notifySelectionChanged();
 
     virtual void windowActivityDidChange() { }
+
+    virtual void didSameDocumentNavigationForFrame(WebFrame&) { }
 
 #if PLATFORM(MAC)
     void writeItemsToPasteboard(NSString *pasteboardName, NSArray *items, NSArray *types) const;

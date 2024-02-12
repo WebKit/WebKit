@@ -65,6 +65,7 @@ public:
 
     virtual bool usesAsyncScrolling() const { return false; }
     virtual ScrollingNodeID scrollingNodeID() const { return 0; }
+    virtual void didAttachScrollingNode() { }
 
 #if PLATFORM(COCOA)
     virtual id accessibilityAssociatedPluginParentForElement(Element*) const { return nullptr; }

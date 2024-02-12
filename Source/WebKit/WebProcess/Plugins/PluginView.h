@@ -49,6 +49,7 @@ class ShareableBitmap;
 namespace WebKit {
 
 class PDFPluginBase;
+class WebFrame;
 class WebPage;
 
 struct WebHitTestResultData;
@@ -110,6 +111,8 @@ public:
 
     void windowActivityDidChange();
 
+    void didSameDocumentNavigationForFrame(WebFrame&);
+
 private:
     PluginView(WebCore::HTMLPlugInElement&, const URL&, const String& contentType, bool shouldUseManualLoader, WebPage&);
     virtual ~PluginView();
@@ -151,6 +154,7 @@ private:
 
     bool usesAsyncScrolling() const final;
     WebCore::ScrollingNodeID scrollingNodeID() const final;
+    void didAttachScrollingNode() final;
 
     // WebCore::Widget
     void setFrameRect(const WebCore::IntRect&) final;

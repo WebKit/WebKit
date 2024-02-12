@@ -2654,8 +2654,10 @@ bool RenderLayerCompositor::attachWidgetContentLayers(RenderWidget& renderer)
                 if (auto pluginHostingNodeID = backing->scrollingNodeIDForRole(ScrollCoordinationRole::PluginHosting)) {
                     auto* renderEmbeddedObject = dynamicDowncast<RenderEmbeddedObject>(renderer);
                     if (auto pluginScrollingNodeID = renderEmbeddedObject->scrollingNodeID()) {
-                        if (auto* scrollingCoordinator = this->scrollingCoordinator())
+                        if (auto* scrollingCoordinator = this->scrollingCoordinator()) {
                             scrollingCoordinator->insertNode(ScrollingNodeType::PluginScrolling, pluginScrollingNodeID, pluginHostingNodeID, 0);
+                            renderEmbeddedObject->didAttachScrollingNode();
+                        }
                     }
                 }
             }

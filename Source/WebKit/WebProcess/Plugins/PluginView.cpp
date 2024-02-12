@@ -687,6 +687,14 @@ ScrollingNodeID PluginView::scrollingNodeID() const
     return m_plugin->scrollingNodeID();
 }
 
+void PluginView::didAttachScrollingNode()
+{
+    if (!m_isInitialized)
+        return;
+
+    return m_plugin->didAttachScrollingNode();
+}
+
 RefPtr<FragmentedSharedBuffer> PluginView::liveResourceData() const
 {
     if (!m_isInitialized) {
@@ -954,6 +962,14 @@ void PluginView::didChangeSettings()
 void PluginView::windowActivityDidChange()
 {
     m_plugin->windowActivityDidChange();
+}
+
+void PluginView::didSameDocumentNavigationForFrame(WebFrame& frame)
+{
+    if (!m_isInitialized)
+        return;
+
+    return m_plugin->didSameDocumentNavigationForFrame(frame);
 }
 
 } // namespace WebKit

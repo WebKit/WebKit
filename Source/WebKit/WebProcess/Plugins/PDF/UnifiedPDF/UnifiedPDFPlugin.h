@@ -94,6 +94,8 @@ public:
     void attemptToUnlockPDF(const String& password) final;
     void windowActivityDidChange() final;
 
+    void didSameDocumentNavigationForFrame(WebFrame&) final;
+
     float documentFittingScale() const { return m_documentLayout.scale(); }
 
 private:
@@ -137,6 +139,8 @@ private:
     WebCore::IntSize documentSize() const;
     WebCore::IntSize contentsSize() const override;
     unsigned firstPageHeight() const override;
+    unsigned heightForPage(PDFDocumentLayout::PageIndex) const;
+
 
     void scheduleRenderingUpdate();
 
@@ -148,6 +152,8 @@ private:
 
     void scrollbarStyleChanged(WebCore::ScrollbarStyle, bool forceUpdate) override;
     void updateScrollbars() override;
+    void didAttachScrollingNode() final;
+
     bool geometryDidChange(const WebCore::IntSize&, const WebCore::AffineTransform&) override;
 
     RefPtr<WebCore::FragmentedSharedBuffer> liveResourceData() const override;
@@ -271,7 +277,9 @@ private:
     void createScrollingNodeIfNecessary();
 
     void scrollToPDFDestination(PDFDestination *);
-    void scrollToPointInPDF(WebCore::IntPoint pointInPDFPageSpace, PDFDocumentLayout::PageIndex);
+    void scrollToPointInPage(WebCore::IntPoint pointInPDFPageSpace, PDFDocumentLayout::PageIndex);
+    void scrollToPage(PDFDocumentLayout::PageIndex);
+    void scrollToFragmentIfNeeded();
 
     // ScrollableArea
     bool requestScrollToPosition(const WebCore::ScrollPosition&, const WebCore::ScrollPositionChangeOptions& = WebCore::ScrollPositionChangeOptions::createProgrammatic()) override;
@@ -317,6 +325,9 @@ private:
 
     float m_scaleFactor { 1 };
     bool m_inMagnificationGesture { false };
+
+    bool m_didAttachScrollingTreeNode { false };
+    bool m_didScrollToFragment { false };
 
     AnnotationTrackingState m_annotationTrackingState;
 

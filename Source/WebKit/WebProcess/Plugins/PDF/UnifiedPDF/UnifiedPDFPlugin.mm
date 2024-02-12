@@ -64,6 +64,7 @@
 #include <WebCore/ScrollbarTheme.h>
 #include <WebCore/ScrollbarsController.h>
 #include <pal/spi/cg/CoreGraphicsSPI.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 #include "PDFKitSoftLink.h"
 
@@ -174,6 +175,8 @@ void UnifiedPDFPlugin::installPDFDocument()
     if (m_view)
         m_view->layerHostingStrategyDidChange();
     [[NSNotificationCenter defaultCenter] addObserver:m_pdfMutationObserver.get() selector:@selector(formChanged:) name:mutationObserverNotificationString() object:m_pdfDocument.get()];
+
+    scrollToFragmentIfNeeded();
 }
 
 RefPtr<GraphicsLayer> UnifiedPDFPlugin::createGraphicsLayer(const String& name, GraphicsLayer::Type layerType)
@@ -309,6 +312,20 @@ void UnifiedPDFPlugin::updatePageBackgroundLayers()
     }
 
     m_pageBackgroundsContainerLayer->setChildren(WTFMove(pageContainerLayers));
+}
+
+void UnifiedPDFPlugin::didAttachScrollingNode()
+{
+    m_didAttachScrollingTreeNode = true;
+    scrollToFragmentIfNeeded();
+}
+
+void UnifiedPDFPlugin::didSameDocumentNavigationForFrame(WebFrame& frame)
+{
+    if (&frame != m_frame)
+        return;
+    m_didScrollToFragment = false;
+    scrollToFragmentIfNeeded();
 }
 
 ScrollingNodeID UnifiedPDFPlugin::scrollingNodeID() const
@@ -720,11 +737,16 @@ IntSize UnifiedPDFPlugin::contentsSize() const
     return expandedIntSize(size);
 }
 
-unsigned UnifiedPDFPlugin::firstPageHeight() const
+unsigned UnifiedPDFPlugin::heightForPage(PDFDocumentLayout::PageIndex pageIndex) const
 {
     if (isLocked() || !m_documentLayout.pageCount())
         return 0;
-    return static_cast<unsigned>(CGCeiling(m_documentLayout.boundsForPageAtIndex(0).height()));
+    return std::ceil<unsigned>(m_documentLayout.boundsForPageAtIndex(pageIndex).height());
+}
+
+unsigned UnifiedPDFPlugin::firstPageHeight() const
+{
+    return heightForPage(0);
 }
 
 RefPtr<FragmentedSharedBuffer> UnifiedPDFPlugin::liveResourceData() const
@@ -1355,19 +1377,73 @@ void UnifiedPDFPlugin::followLinkAnnotation(PDFAnnotation *annotation)
 void UnifiedPDFPlugin::scrollToPDFDestination(PDFDestination *destination)
 {
     auto unspecifiedValue = get_PDFKit_kPDFDestinationUnspecifiedValue();
+
+    auto pageIndex = [m_pdfDocument indexForPage:[destination page]];
     auto pointInPDFPageSpace = [destination point];
     if (pointInPDFPageSpace.x == unspecifiedValue)
         pointInPDFPageSpace.x = 0;
     if (pointInPDFPageSpace.y == unspecifiedValue)
-        pointInPDFPageSpace.y = 0;
+        pointInPDFPageSpace.y = heightForPage(pageIndex);
 
-    scrollToPointInPDF(roundedIntPoint(pointInPDFPageSpace), [m_pdfDocument indexForPage:[destination page]] - 1);
+    scrollToPointInPage(roundedIntPoint(pointInPDFPageSpace), pageIndex);
 }
 
-void UnifiedPDFPlugin::scrollToPointInPDF(IntPoint pointInPDFPageSpace, PDFDocumentLayout::PageIndex pageIndex)
+void UnifiedPDFPlugin::scrollToPointInPage(IntPoint pointInPDFPageSpace, PDFDocumentLayout::PageIndex pageIndex)
 {
-    auto pointInDocumentSpace = convertFromPageToContents(pointInPDFPageSpace, pageIndex);
-    scrollToPositionWithoutAnimation(pointInDocumentSpace);
+    auto pointInContentsSpace = convertFromPageToContents(pointInPDFPageSpace, pageIndex);
+    scrollToPositionWithoutAnimation(pointInContentsSpace);
+}
+
+void UnifiedPDFPlugin::scrollToPage(PDFDocumentLayout::PageIndex pageIndex)
+{
+    scrollToPointInPage({ 0, static_cast<int>(heightForPage(pageIndex)) }, pageIndex);
+}
+
+void UnifiedPDFPlugin::scrollToFragmentIfNeeded()
+{
+    if (!m_pdfDocument || !m_didAttachScrollingTreeNode)
+        return;
+
+    if (m_didScrollToFragment)
+        return;
+
+    m_didScrollToFragment = true;
+
+    if (!m_frame)
+        return;
+
+    auto fragment = m_frame->url().fragmentIdentifier();
+    if (!fragment)
+        return;
+
+    auto fragmentView = StringView(fragment);
+
+    // Only respect the first fragment component.
+    if (auto endOfFirstComponentLocation = fragmentView.find('&'); endOfFirstComponentLocation != notFound)
+        fragmentView = fragment.left(endOfFirstComponentLocation);
+
+    // Ignore leading hashes.
+    auto isNotHash = [](UChar character) {
+        return character != '#';
+    };
+    if (auto firstNonHashLocation = fragmentView.find(isNotHash); firstNonHashLocation != notFound)
+        fragmentView = fragment.substring(firstNonHashLocation);
+    else
+        return;
+
+    auto remainderForPrefix = [&](ASCIILiteral prefix) -> std::optional<StringView> {
+        if (fragmentView.startsWith(prefix))
+            return fragmentView.substring(prefix.length());
+        return std::nullopt;
+    };
+
+    if (auto remainder = remainderForPrefix("page="_s)) {
+        if (auto pageNumber = parseInteger<PDFDocumentLayout::PageIndex>(*remainder); pageNumber)
+            scrollToPage(*pageNumber - 1);
+        return;
+    }
+
+    // FIXME (269224): Support named destinations.
 }
 
 #pragma mark Context Menu
