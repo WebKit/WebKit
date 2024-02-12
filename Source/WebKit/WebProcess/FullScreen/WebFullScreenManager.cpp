@@ -391,7 +391,7 @@ void WebFullScreenManager::didExitFullScreen()
     // Ensure the element (and all its parent fullscreen elements) that just exited fullscreen are still in view:
     while (!fullscreenElements.isEmpty()) {
         auto element = fullscreenElements.takeLast();
-        element->scrollIntoView();
+        element->scrollIntoViewIfNotVisible(true);
     }
 
     clearElement();
