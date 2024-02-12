@@ -103,6 +103,7 @@ WK_EXPORT void WKAccessibilityTestingInjectPreference(WKBundlePageRef, WKStringR
 WK_EXPORT void WKAccessibilitySetForceDeferredSpellChecking(bool);
 WK_EXPORT void WKAccessibilityEnableEnhancedAccessibility(bool);
 WK_EXPORT bool WKAccessibilityEnhancedAccessibilityEnabled();
+WK_EXPORT void WKAccessibilitySetForceInitialFrameCaching(bool);
 
 WK_EXPORT void WKBundlePageClickMenuItem(WKBundlePageRef, WKContextMenuItemRef);
 WK_EXPORT WKArrayRef WKBundlePageCopyContextMenuItems(WKBundlePageRef);

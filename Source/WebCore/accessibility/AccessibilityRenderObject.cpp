@@ -90,6 +90,7 @@
 #include "RenderListMarker.h"
 #include "RenderMathMLBlock.h"
 #include "RenderMenuList.h"
+#include "RenderSVGInlineText.h"
 #include "RenderSVGRoot.h"
 #include "RenderSVGShape.h"
 #include "RenderTableCell.h"
@@ -862,7 +863,13 @@ LayoutRect AccessibilityRenderObject::boundingBoxRect() const
     
     return result;
 }
-    
+
+bool AccessibilityRenderObject::isNonLayerSVGObject() const
+{
+    auto* renderer = this->renderer();
+    return renderer ? is<RenderSVGInlineText>(renderer) || is<LegacyRenderSVGModelObject>(renderer) : false;
+}
+
 bool AccessibilityRenderObject::supportsPath() const
 {
     return is<RenderText>(renderer()) || (renderer() && renderer()->isRenderOrLegacyRenderSVGShape());
@@ -2714,6 +2721,12 @@ void AccessibilityRenderObject::scrollTo(const IntPoint& point) const
     ASSERT(box->layer());
     ASSERT(box->layer()->scrollableArea());
     box->layer()->scrollableArea()->scrollToOffset(point);
+}
+
+FloatRect AccessibilityRenderObject::frameRect() const
+{
+    auto* box = dynamicDowncast<RenderBox>(renderer());
+    return box ? convertFrameToSpace(box->frameRect(), AccessibilityConversionSpace::Page) : FloatRect();
 }
 
 #if ENABLE(MATHML)

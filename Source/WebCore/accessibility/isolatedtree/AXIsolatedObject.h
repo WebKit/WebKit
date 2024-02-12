@@ -215,6 +215,7 @@ private:
     bool isMeter() const final { return boolAttributeValue(AXPropertyName::IsMeter); };
     FloatPoint screenRelativePosition() const final;
     FloatRect relativeFrame() const final;
+    bool hasCachedRelativeFrame() const { return optionalAttributeValue<IntRect>(AXPropertyName::RelativeFrame).has_value(); }
 #if PLATFORM(MAC)
     FloatRect primaryScreenRect() const final;
 #endif
@@ -464,6 +465,7 @@ private:
     bool isOnScreen() const final;
     bool isOffScreen() const final;
     bool isPressed() const final;
+    bool isNonLayerSVGObject() const { return boolAttributeValue(AXPropertyName::IsNonLayerSVGObject); }
     // FIXME: isVisible should be accurate for all objects, not just widgets, on COCOA.
     bool isVisible() const final { return boolAttributeValue(AXPropertyName::IsVisible); }
     bool isSelectedOptionActive() const final;

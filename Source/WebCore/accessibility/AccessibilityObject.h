@@ -770,6 +770,9 @@ public:
     void setLastPresentedTextPrediction(Node&, CompositionState, const String&, size_t, bool);
 #endif // PLATFORM(IOS_FAMILY)
 
+    virtual FloatRect frameRect() const { return { }; }
+    virtual bool isNonLayerSVGObject() const { return false; }
+
 protected:
     AccessibilityObject() = default;
 

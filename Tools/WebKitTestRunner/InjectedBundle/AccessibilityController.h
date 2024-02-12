@@ -61,6 +61,7 @@ public:
 
     void setIsolatedTreeMode(bool);
     void setForceDeferredSpellChecking(bool);
+    void setForceInitialFrameCaching(bool);
 
     JSRetainPtr<JSStringRef> platformName();
 

@@ -855,6 +855,9 @@ accessibility/mac/lazy-spellchecking.html [ Skip ]
 accessibility/mac/spellcheck-with-voiceover.html [ Skip ]
 accessibility/text-marker/text-marker-range-with-unordered-markers.html
 
+# AccessibilityController::setForceInitialFrameCaching not supported on WK1.
+accessibility/mac/initial-relative-frame-cached.html [ Skip ]
+
 # New API not supported in WK1
 accessibility/mac/intersection-with-selection-range.html [ Skip ]
 

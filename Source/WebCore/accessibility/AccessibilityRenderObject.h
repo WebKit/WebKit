@@ -57,6 +57,9 @@ public:
     static Ref<AccessibilityRenderObject> create(RenderObject*);
     virtual ~AccessibilityRenderObject();
     
+    FloatRect frameRect() const final;
+    bool isNonLayerSVGObject() const override;
+
     bool isAttachment() const override;
     bool isOffScreen() const override;
     bool hasBoldFont() const override;

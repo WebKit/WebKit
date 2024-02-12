@@ -30,6 +30,7 @@ interface AccessibilityController {
     undefined setForceDeferredSpellChecking(boolean shouldForce);
     undefined setRetainedElement(AccessibilityUIElement axElement);
     AccessibilityUIElement retainedElement();
+    undefined setForceInitialFrameCaching(boolean shouldForce);
 
     readonly attribute DOMString platformName;
     readonly attribute AccessibilityUIElement rootElement;

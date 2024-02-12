@@ -168,6 +168,7 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
     setProperty(AXPropertyName::IsKeyboardFocusable, object.isKeyboardFocusable());
     setProperty(AXPropertyName::BrailleRoleDescription, object.brailleRoleDescription().isolatedCopy());
     setProperty(AXPropertyName::BrailleLabel, object.brailleLabel().isolatedCopy());
+    setProperty(AXPropertyName::IsNonLayerSVGObject, object.isNonLayerSVGObject());
 
     RefPtr geometryManager = tree()->geometryManager();
     std::optional frame = geometryManager ? geometryManager->cachedRectForID(object.objectID()) : std::nullopt;
@@ -183,7 +184,8 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
     } else if (object.isMenuListPopup()) {
         // AccessibilityMenuListPopup's elementRect is hardcoded to return an empty rect, so preserve that behavior.
         setProperty(AXPropertyName::RelativeFrame, IntRect());
-    }
+    } else
+        setProperty(AXPropertyName::InitialFrameRect, object.frameRect());
 
     if (object.supportsCheckedState()) {
         setProperty(AXPropertyName::SupportsCheckedState, true);
@@ -1243,11 +1245,27 @@ FloatRect AXIsolatedObject::relativeFrame() const
     } else if (roleValue() == AccessibilityRole::Column || roleValue() == AccessibilityRole::TableHeaderContainer)
         return exposedTableAncestor() ? relativeFrameFromChildren() : FloatRect();
 
-    return Accessibility::retrieveValueFromMainThread<FloatRect>([this] () -> FloatRect {
-        if (auto* axObject = associatedAXObject())
-            return axObject->relativeFrame();
-        return { };
+    // Mock objects and SVG objects need use the main thread since they do not have render nodes and are not painted with layers, respectively.
+    // FIXME: Remove isNonLayerSVGObject when LBSE is enabled & SVG frames are cached.
+    if (!AXObjectCache::shouldServeInitialCachedFrame() || isMockObject() || isNonLayerSVGObject()) {
+        return Accessibility::retrieveValueFromMainThread<FloatRect>([this] () -> FloatRect {
+            if (auto* axObject = associatedAXObject())
+                return axObject->relativeFrame();
+            return { };
+        });
+    }
+
+    // InitialFrameRect stores the correct size, but not position, of the element before it is painted.
+    // We find the position of the nearest painted ancestor to use as the position until the object's frame
+    // is cached during painting.
+    auto* ancestor = Accessibility::findAncestor<AXIsolatedObject>(*this, false, [] (const auto& object) {
+        return object.hasCachedRelativeFrame();
     });
+    auto frameRect = rectAttributeValue<FloatRect>(AXPropertyName::InitialFrameRect);
+    if (ancestor && frameRect.location() == FloatPoint())
+        frameRect.setLocation(ancestor->relativeFrame().location());
+
+    return frameRect;
 }
 
 FloatRect AXIsolatedObject::relativeFrameFromChildren() const

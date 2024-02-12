@@ -73,6 +73,11 @@ void AccessibilityController::setForceDeferredSpellChecking(bool shouldForce)
     WKAccessibilitySetForceDeferredSpellChecking(shouldForce);
 }
 
+void AccessibilityController::setForceInitialFrameCaching(bool shouldForce)
+{
+    WKAccessibilitySetForceInitialFrameCaching(shouldForce);
+}
+
 void AccessibilityController::makeWindowObject(JSContextRef context)
 {
     setGlobalObjectProperty(context, "accessibilityController", this);
