@@ -183,6 +183,11 @@ void StyledElement::invalidateStyleAttribute()
     }
 }
 
+RefPtr<StyleProperties> StyledElement::protectedInlineStyle() const
+{
+    return elementData() ? elementData()->m_inlineStyle : nullptr;
+}
+
 void StyledElement::inlineStyleChanged()
 {
     invalidateStyleAttribute();

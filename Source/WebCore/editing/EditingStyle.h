@@ -109,6 +109,7 @@ public:
     WEBCORE_EXPORT ~EditingStyle();
 
     MutableStyleProperties* style() { return m_mutableStyle.get(); }
+    RefPtr<MutableStyleProperties> protectedStyle();
     Ref<MutableStyleProperties> styleWithResolvedTextDecorations() const;
     std::optional<WritingDirection> textDirection() const;
     bool isEmpty() const;
