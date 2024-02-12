@@ -28,11 +28,11 @@
 
 #if ENABLE(VIDEO)
 
-#include "Document.h"
 #include "InbandDataTextTrack.h"
 #include "InbandGenericTextTrack.h"
 #include "InbandTextTrackPrivate.h"
 #include "InbandWebVTTTextTrack.h"
+#include "ScriptExecutionContext.h"
 #include "TextTrackClient.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -40,24 +40,24 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(InbandTextTrack);
 
-Ref<InbandTextTrack> InbandTextTrack::create(Document& document, InbandTextTrackPrivate& trackPrivate)
+Ref<InbandTextTrack> InbandTextTrack::create(ScriptExecutionContext& context, InbandTextTrackPrivate& trackPrivate)
 {
     switch (trackPrivate.cueFormat()) {
     case InbandTextTrackPrivate::CueFormat::Data:
-        return InbandDataTextTrack::create(document, trackPrivate);
+        return InbandDataTextTrack::create(context, trackPrivate);
     case InbandTextTrackPrivate::CueFormat::Generic:
-        return InbandGenericTextTrack::create(document, trackPrivate);
+        return InbandGenericTextTrack::create(context, trackPrivate);
     case InbandTextTrackPrivate::CueFormat::WebVTT:
-        return InbandWebVTTTextTrack::create(document, trackPrivate);
+        return InbandWebVTTTextTrack::create(context, trackPrivate);
     }
     ASSERT_NOT_REACHED();
-    auto textTrack = InbandDataTextTrack::create(document, trackPrivate);
+    auto textTrack = InbandDataTextTrack::create(context, trackPrivate);
     textTrack->suspendIfNeeded();
     return textTrack;
 }
 
-InbandTextTrack::InbandTextTrack(Document& document, InbandTextTrackPrivate& trackPrivate)
-    : TextTrack(&document, emptyAtom(), trackPrivate.id(), trackPrivate.label(), trackPrivate.language(), InBand)
+InbandTextTrack::InbandTextTrack(ScriptExecutionContext& context, InbandTextTrackPrivate& trackPrivate)
+    : TextTrack(&context, emptyAtom(), trackPrivate.id(), trackPrivate.label(), trackPrivate.language(), InBand)
     , m_private(trackPrivate)
 {
     m_private->setClient(*this);

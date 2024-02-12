@@ -42,6 +42,8 @@ class HTMLTrackElement final : public HTMLElement, public ActiveDOMObject, publi
 public:
     static Ref<HTMLTrackElement> create(const QualifiedName&, Document&);
 
+    using HTMLElement::scriptExecutionContext;
+
     const AtomString& kind();
     void setKind(const AtomString&);
 

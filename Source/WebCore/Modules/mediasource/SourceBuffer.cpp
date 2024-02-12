@@ -883,7 +883,7 @@ Ref<MediaPromise> SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegme
                 // FIXME: Implement steps 5.4.1-5.4.8.1 as per Editor's Draft 09 January 2015, and reorder this
                 // 5.4.1 Let new text track be a new TextTrack object with its properties populated with the
                 // appropriate information from the initialization segment.
-                auto newTextTrack = InbandTextTrack::create(document(), textTrackPrivate);
+                auto newTextTrack = InbandTextTrack::create(*scriptExecutionContext(), textTrackPrivate);
                 newTextTrack->addClient(*this);
 
                 // 5.4.2 If the mode property on new text track equals "showing" or "hidden", then set active
@@ -1229,14 +1229,6 @@ MediaTime SourceBuffer::minimumUpcomingPresentationTimeForTrackID(TrackID trackI
 void SourceBuffer::setMaximumQueueDepthForTrackID(TrackID trackID, uint64_t maxQueueDepth)
 {
     m_private->setMaximumQueueDepthForTrackID(trackID, maxQueueDepth);
-}
-
-Document& SourceBuffer::document() const
-{
-    ASSERT(isMainThread());
-
-    ASSERT(scriptExecutionContext());
-    return downcast<Document>(*scriptExecutionContext());
 }
 
 const Settings& SourceBuffer::settings() const

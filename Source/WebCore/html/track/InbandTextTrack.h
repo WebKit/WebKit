@@ -35,7 +35,7 @@ namespace WebCore {
 class InbandTextTrack : public TextTrack, private InbandTextTrackPrivateClient {
     WTF_MAKE_ISO_ALLOCATED(InbandTextTrack);
 public:
-    static Ref<InbandTextTrack> create(Document&, InbandTextTrackPrivate&);
+    static Ref<InbandTextTrack> create(ScriptExecutionContext&, InbandTextTrackPrivate&);
     virtual ~InbandTextTrack();
 
     bool isClosedCaptions() const override;
@@ -55,7 +55,7 @@ public:
 #endif
 
 protected:
-    InbandTextTrack(Document&, InbandTextTrackPrivate&);
+    InbandTextTrack(ScriptExecutionContext&, InbandTextTrackPrivate&);
 
     void setModeInternal(Mode);
     void updateKindFromPrivate();

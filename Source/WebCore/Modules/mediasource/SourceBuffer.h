@@ -150,7 +150,6 @@ public:
 
 protected:
     SourceBuffer(Ref<SourceBufferPrivate>&&, MediaSource&);
-    Document& document() const;
     const Settings& settings() const;
 
 private:

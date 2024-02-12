@@ -36,7 +36,6 @@
 
 #include "CommonAtomStrings.h"
 #include "DataCue.h"
-#include "Document.h"
 #include "Event.h"
 #include "SourceBuffer.h"
 #include "TextTrackClient.h"
@@ -118,16 +117,16 @@ TextTrack::TextTrack(ScriptExecutionContext* context, const AtomString& kind, co
 {
 }
 
-Ref<TextTrack> TextTrack::create(Document* document, const AtomString& kind, TrackID id, const AtomString& label, const AtomString& language)
+Ref<TextTrack> TextTrack::create(ScriptExecutionContext* context, const AtomString& kind, TrackID id, const AtomString& label, const AtomString& language)
 {
-    auto textTrack = adoptRef(*new TextTrack(document, kind, id, label, language, AddTrack));
+    auto textTrack = adoptRef(*new TextTrack(context, kind, id, label, language, AddTrack));
     textTrack->suspendIfNeeded();
     return textTrack;
 }
 
-Ref<TextTrack> TextTrack::create(Document* document, const AtomString& kind, const AtomString& id, const AtomString& label, const AtomString& language)
+Ref<TextTrack> TextTrack::create(ScriptExecutionContext* context, const AtomString& kind, const AtomString& id, const AtomString& label, const AtomString& language)
 {
-    auto textTrack = adoptRef(*new TextTrack(document, kind, id, label, language, AddTrack));
+    auto textTrack = adoptRef(*new TextTrack(context, kind, id, label, language, AddTrack));
     textTrack->suspendIfNeeded();
     return textTrack;
 }
@@ -162,12 +161,6 @@ void TextTrack::clearClient(TextTrackClient& client)
 {
     ASSERT(m_clients.contains(client));
     m_clients.remove(client);
-}
-
-Document& TextTrack::document() const
-{
-    ASSERT(scriptExecutionContext());
-    return downcast<Document>(*scriptExecutionContext());
 }
 
 bool TextTrack::enabled() const
