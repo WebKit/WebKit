@@ -54,7 +54,7 @@ def parse_command_line(args):
     return parser.parse_args(args)
 
 
-def generate_results_page(project_dirs, id_string, output_root, static_analysis_dir):
+def generate_results_page(project_dirs, id_string, output_root, static_analysis_dir, is_new_result=False):
     project_list = ''
     for project_name in sorted(project_dirs):
         static_analyzer_index_path = os.path.join(static_analysis_dir, project_name, INDEX_HTML)
@@ -63,11 +63,30 @@ def generate_results_page(project_dirs, id_string, output_root, static_analysis_
                 project_issue_count=get_project_issue_count_as_string(static_analyzer_index_path),
                 project_name=project_name)
 
+    if is_new_result:
+        heading = 'New issues in {}'.format(id_string)
+    else:
+        heading = 'Results for {}'.format(id_string)
+
     return INDEX_TEMPLATE.format(
-        heading='Results for {}'.format(id_string),
+        heading=heading,
         project_list=project_list,
         title='Static Analysis Results'
     )
+
+
+def create_results_file(options, output_root, static_analysis_dir, is_new_result=False):
+    project_dirs = list(filter(lambda x: x[0] != '.' and os.path.isdir(os.path.join(static_analysis_dir, x)),
+                                         os.listdir(static_analysis_dir)))
+
+    if options.id_string:
+        results_page = generate_results_page(project_dirs, options.id_string, output_root, static_analysis_dir, is_new_result)
+        if is_new_result:
+            f = open(output_root + '/new-results.html', 'w')
+        else:
+            f = open(output_root + '/results.html', 'w')
+        f.write(results_page)
+        f.close()
 
 
 def get_total_issue_count(project_dirs, static_analysis_dir):
@@ -88,15 +107,12 @@ def main(options):
 
     if os.path.isdir(os.path.join(static_analysis_dir, 'StaticAnalyzer')):
         static_analysis_dir = os.path.join(static_analysis_dir, 'StaticAnalyzer')
+    
+    create_results_file(options, output_root, static_analysis_dir)
 
-    project_dirs = list(filter(lambda x: x[0] != '.' and os.path.isdir(os.path.join(static_analysis_dir, x)),
-                                         os.listdir(static_analysis_dir)))
-
-    if options.id_string:
-        results_page = generate_results_page(project_dirs, options.id_string, output_root, static_analysis_dir)
-        f = open(output_root + '/results.html', 'w')
-        f.write(results_page)
-        f.close()
+    if os.path.isdir(os.path.join(output_root, 'StaticAnalyzerRegressions')):
+        static_analysis_new_dir = os.path.join(output_root, 'StaticAnalyzerRegressions')
+        create_results_file(options, output_root, static_analysis_new_dir, is_new_result=True)
 
     if options.destination:
         if os.path.isfile(options.destination):
@@ -104,6 +120,8 @@ def main(options):
         subprocess.check_call(['/usr/bin/zip', '-9', '-r', options.destination, output_root, '-x', '*.d'])
 
     if options.count:
+        project_dirs = list(filter(lambda x: x[0] != '.' and os.path.isdir(os.path.join(static_analysis_dir, x)),
+                                             os.listdir(static_analysis_dir)))
         total_issue_count = get_total_issue_count(project_dirs, static_analysis_dir)
         print('Total issue count: {}'.format(total_issue_count))
 
