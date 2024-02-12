@@ -1742,19 +1742,20 @@ std::tuple<String, PDFSelection *, NSDictionary *> UnifiedPDFPlugin::lookupTextA
     return { };
 }
 
-id UnifiedPDFPlugin::accessibilityHitTest(const IntPoint&) const
+id UnifiedPDFPlugin::accessibilityHitTestIntPoint(const WebCore::IntPoint& point) const
 {
-    return nil;
+    auto convertedPoint =  convertFromRootViewToPDFView(point);
+    return [m_accessibilityObject accessibilityHitTest:convertedPoint];
+}
+
+id UnifiedPDFPlugin::accessibilityHitTest(const WebCore::IntPoint& point) const
+{
+    return accessibilityHitTestIntPoint(point);
 }
 
 id UnifiedPDFPlugin::accessibilityObject() const
 {
-    return nil;
-}
-
-id UnifiedPDFPlugin::accessibilityAssociatedPluginParentForElement(Element*) const
-{
-    return nil;
+    return m_accessibilityObject.get();
 }
 
 #if ENABLE(PDF_HUD)

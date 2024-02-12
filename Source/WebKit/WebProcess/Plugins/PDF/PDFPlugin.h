@@ -181,7 +181,6 @@ private:
 
     id accessibilityHitTest(const WebCore::IntPoint&) const override;
     id accessibilityObject() const override;
-    id accessibilityAssociatedPluginParentForElement(WebCore::Element*) const override;
 
     NSEvent *nsEventForWebMouseEvent(const WebMouseEvent&);
 

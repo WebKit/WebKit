@@ -47,6 +47,7 @@ OBJC_CLASS NSDictionary;
 OBJC_CLASS PDFAnnotation;
 OBJC_CLASS PDFDocument;
 OBJC_CLASS PDFSelection;
+OBJC_CLASS WKAccessibilityPDFDocumentObject;
 
 namespace WebCore {
 class FragmentedSharedBuffer;
@@ -153,7 +154,7 @@ public:
 
     virtual id accessibilityHitTest(const WebCore::IntPoint&) const = 0;
     virtual id accessibilityObject() const = 0;
-    virtual id accessibilityAssociatedPluginParentForElement(WebCore::Element*) const = 0;
+    id accessibilityAssociatedPluginParentForElement(WebCore::Element*) const;
 
     bool isBeingDestroyed() const { return m_isBeingDestroyed; }
 
@@ -170,11 +171,19 @@ public:
     WebCore::IntPoint convertFromPluginToRootView(const WebCore::IntPoint&) const;
     WebCore::IntRect convertFromPluginToRootView(const WebCore::IntRect&) const;
     WebCore::IntRect boundsOnScreen() const;
-
+    WebCore::FloatRect convertFromPDFViewToScreen(const WebCore::FloatRect&) const;
+    WebCore::IntPoint convertFromPDFViewToRootView(const WebCore::IntPoint&) const;
+    bool showContextMenuAtPoint(const WebCore::IntPoint&);
+    WebCore::IntPoint convertFromRootViewToPDFView(const WebCore::IntPoint&) const;
+    WebCore::AXObjectCache* axObjectCache() const;
+    void setScrollOffset(const WebCore::ScrollOffset&) final;
+#if PLATFORM(MAC)
+    RefPtr<PDFPluginAnnotation> m_activeAnnotation;
+    PDFPluginAnnotation* activeAnnotation() const { return m_activeAnnotation.get(); }
+#endif
     WebCore::ScrollPosition scrollPositionForTesting() const { return scrollPosition(); }
     WebCore::Scrollbar* horizontalScrollbar() const override { return m_horizontalScrollbar.get(); }
     WebCore::Scrollbar* verticalScrollbar() const override { return m_verticalScrollbar.get(); }
-
     virtual void didChangeSettings() { }
 
     // HUD Actions.
@@ -262,7 +271,6 @@ protected:
     bool isScrollableOrRubberbandable() final { return true; }
     bool hasScrollableOrRubberbandableAncestor() final { return true; }
     WebCore::IntRect scrollableAreaBoundingBox(bool* = nullptr) const final;
-    void setScrollOffset(const WebCore::ScrollOffset&) final;
     bool isActive() const final;
     bool isScrollCornerVisible() const final { return false; }
     WebCore::ScrollPosition minimumScrollPosition() const final;
@@ -317,6 +325,7 @@ protected:
     uint64_t m_streamedBytes { 0 };
 
     RetainPtr<PDFDocument> m_pdfDocument;
+    RetainPtr<WKAccessibilityPDFDocumentObject> m_accessibilityObject;
 
     String m_suggestedFilename;
 
@@ -334,9 +343,6 @@ protected:
     std::atomic<bool> m_hasBeenDestroyed { false };
     bool m_didRunScripts { false };
 
-#if PLATFORM(MAC)
-    RefPtr<PDFPluginAnnotation> m_activeAnnotation;
-#endif
     RefPtr<WebCore::Element> m_annotationContainer;
     bool m_pdfDocumentWasMutated { false };
 
