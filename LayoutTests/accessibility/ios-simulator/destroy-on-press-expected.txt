@@ -1,0 +1,7 @@
+This makes sure that we don't crash when activating an element that destroys itself.
+
+Did not crash when pressing #summary1.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

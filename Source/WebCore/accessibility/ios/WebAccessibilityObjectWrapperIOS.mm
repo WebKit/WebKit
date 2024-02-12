@@ -2007,14 +2007,15 @@ static NSArray *accessibleElementsForObjects(const AXCoreObject::AccessibilityCh
 {
     if (![self _prepareAccessibilityCall])
         return NO;
+    RefPtr<AccessibilityObject> backingObject = self.axBackingObject;
 
-    if (self.axBackingObject->press())
+    if (backingObject->press())
         return true;
 
     // On iOS, only the static text within a <summary> is exposed, not the <summary> itself.
     // So if this activation was for <summary> text, we should toggle the expanded state of the containing <details>.
-    if (self.axBackingObject->isStaticText())
-        return self.axBackingObject->toggleDetailsAncestor();
+    if (backingObject->isStaticText())
+        return backingObject->toggleDetailsAncestor();
 
     return false;
 }
