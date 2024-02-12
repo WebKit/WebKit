@@ -33,6 +33,7 @@
 #include "CSSPropertyAnimation.h"
 #include "CSSPropertyNames.h"
 #include "Document.h"
+#include "FloatRect.h"
 #include "KeyframeEffect.h"
 #include "LayoutSize.h"
 #include "StyleOriginatedAnimation.h"
@@ -279,11 +280,28 @@ AcceleratedEffect::AcceleratedEffect(const AcceleratedEffect& source, OptionSet<
     }
 }
 
-static void blend(AcceleratedEffectProperty property, AcceleratedEffectValues& output, const AcceleratedEffectValues& from, const AcceleratedEffectValues& to, const BlendingContext& blendingContext)
+static void blend(AcceleratedEffectProperty property, AcceleratedEffectValues& output, const AcceleratedEffectValues& from, const AcceleratedEffectValues& to, const BlendingContext& blendingContext, const FloatRect& bounds)
 {
     switch (property) {
     case AcceleratedEffectProperty::Opacity:
         output.opacity = blend(from.opacity, to.opacity, blendingContext);
+        break;
+    case AcceleratedEffectProperty::Transform: {
+        LayoutSize boxSize { bounds.size() };
+        output.transform = to.transform.blend(from.transform, blendingContext, boxSize);
+        break;
+    }
+    case AcceleratedEffectProperty::Translate:
+        if (auto toTranslate = to.translate)
+            output.translate = toTranslate->blend(from.translate.get(), blendingContext);
+        break;
+    case AcceleratedEffectProperty::Rotate:
+        if (auto toRotate = to.rotate)
+            output.rotate = toRotate->blend(from.rotate.get(), blendingContext);
+        break;
+    case AcceleratedEffectProperty::Scale:
+        if (auto toScale = to.scale)
+            output.scale = toScale->blend(from.scale.get(), blendingContext);
         break;
     case AcceleratedEffectProperty::Invalid:
         ASSERT_NOT_REACHED();
@@ -293,7 +311,7 @@ static void blend(AcceleratedEffectProperty property, AcceleratedEffectValues& o
     }
 }
 
-void AcceleratedEffect::apply(Seconds currentTime, AcceleratedEffectValues& values)
+void AcceleratedEffect::apply(Seconds currentTime, AcceleratedEffectValues& values, const FloatRect& bounds)
 {
     auto localTime = [&]() -> Seconds {
         ASSERT(m_holdTime || m_startTime);
@@ -314,7 +332,7 @@ void AcceleratedEffect::apply(Seconds currentTime, AcceleratedEffectValues& valu
     // progress which already accounts for the transition's timing function.
     if (m_animationType == WebAnimationType::CSSTransition) {
         ASSERT(m_animatedProperties.hasExactlyOneBitSet());
-        blend(*m_animatedProperties.begin(), values, m_keyframes.first().values(), m_keyframes.last().values(), { progress, false, m_compositeOperation });
+        blend(*m_animatedProperties.begin(), values, m_keyframes.first().values(), m_keyframes.last().values(), { progress, false, m_compositeOperation }, bounds);
         return;
     }
 
@@ -335,9 +353,9 @@ void AcceleratedEffect::apply(Seconds currentTime, AcceleratedEffectValues& valu
             ASSERT(is<AcceleratedEffect::Keyframe>(keyframe));
             auto& acceleratedKeyframe = downcast<AcceleratedEffect::Keyframe>(keyframe);
             if (acceleratedKeyframe.offset() == startKeyframe->offset())
-                blend(animatedProperty, startKeyframeValues, propertySpecificKeyframeWithZeroOffset.values(), acceleratedKeyframe.values(), { 1, false, compositeOperation });
+                blend(animatedProperty, startKeyframeValues, propertySpecificKeyframeWithZeroOffset.values(), acceleratedKeyframe.values(), { 1, false, compositeOperation }, bounds);
             else
-                blend(animatedProperty, endKeyframeValues, propertySpecificKeyframeWithZeroOffset.values(), acceleratedKeyframe.values(), { 1, false, compositeOperation });
+                blend(animatedProperty, endKeyframeValues, propertySpecificKeyframeWithZeroOffset.values(), acceleratedKeyframe.values(), { 1, false, compositeOperation }, bounds);
         };
 
         KeyframeInterpolation::AccumulationCallback accumulateProperty = [&](const KeyframeInterpolation::Keyframe&) {
@@ -346,7 +364,7 @@ void AcceleratedEffect::apply(Seconds currentTime, AcceleratedEffectValues& valu
 
         KeyframeInterpolation::InterpolationCallback interpolateProperty = [&](double intervalProgress, double, IterationCompositeOperation) {
             // FIXME: handle currentIteration and iterationCompositeOperation.
-            blend(animatedProperty, values, startKeyframeValues, endKeyframeValues, { intervalProgress });
+            blend(animatedProperty, values, startKeyframeValues, endKeyframeValues, { intervalProgress }, bounds);
         };
 
         KeyframeInterpolation::RequiresBlendingForAccumulativeIterationCallback requiresBlendingForAccumulativeIterationCallback = [&]() {

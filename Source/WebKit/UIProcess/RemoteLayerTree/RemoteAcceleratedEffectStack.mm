@@ -35,13 +35,14 @@ namespace WebKit {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(RemoteAcceleratedEffectStack);
 
-Ref<RemoteAcceleratedEffectStack> RemoteAcceleratedEffectStack::create(Seconds acceleratedTimelineTimeOrigin)
+Ref<RemoteAcceleratedEffectStack> RemoteAcceleratedEffectStack::create(WebCore::FloatRect bounds, Seconds acceleratedTimelineTimeOrigin)
 {
-    return adoptRef(*new RemoteAcceleratedEffectStack(acceleratedTimelineTimeOrigin));
+    return adoptRef(*new RemoteAcceleratedEffectStack(bounds, acceleratedTimelineTimeOrigin));
 }
 
-RemoteAcceleratedEffectStack::RemoteAcceleratedEffectStack(Seconds acceleratedTimelineTimeOrigin)
-    : m_acceleratedTimelineTimeOrigin(acceleratedTimelineTimeOrigin)
+RemoteAcceleratedEffectStack::RemoteAcceleratedEffectStack(WebCore::FloatRect bounds, Seconds acceleratedTimelineTimeOrigin)
+    : m_bounds(bounds)
+    , m_acceleratedTimelineTimeOrigin(acceleratedTimelineTimeOrigin)
 {
 }
 
@@ -49,56 +50,93 @@ void RemoteAcceleratedEffectStack::setEffects(AcceleratedEffects&& effects)
 {
     AcceleratedEffectStack::setEffects(WTFMove(effects));
 
+    bool affectsOpacity = false;
+    bool affectsTransform = false;
+
     for (auto& effect : m_primaryLayerEffects) {
-        if (effect->animatedProperties().contains(AcceleratedEffectProperty::Opacity)) {
-            m_affectedLayerProperties.add(LayerProperty::Opacity);
-            return;
-        }
+        auto& properties = effect->animatedProperties();
+        affectsOpacity = affectsOpacity || properties.contains(AcceleratedEffectProperty::Opacity);
+        affectsTransform = affectsTransform || properties.containsAny(transformRelatedAcceleratedProperties);
+        if (affectsOpacity && affectsTransform)
+            break;
     }
+
+    if (affectsOpacity)
+        m_affectedLayerProperties.add(LayerProperty::Opacity);
+    if (affectsTransform)
+        m_affectedLayerProperties.add(LayerProperty::Transform);
 }
 
 #if PLATFORM(MAC)
 void RemoteAcceleratedEffectStack::initEffectsFromMainThread(PlatformLayer *layer, MonotonicTime now)
 {
     ASSERT(!m_opacityPresentationModifier);
+    ASSERT(!m_transformPresentationModifier);
     ASSERT(!m_presentationModifierGroup);
 
-    if (!m_affectedLayerProperties.contains(LayerProperty::Opacity))
+    if (!m_affectedLayerProperties.containsAny({ LayerProperty::Opacity, LayerProperty::Transform }))
         return;
 
     auto computedValues = computeValues(now);
-    auto *opacity = @(computedValues.opacity);
 
-    m_presentationModifierGroup = [CAPresentationModifierGroup groupWithCapacity:1];
-    m_opacityPresentationModifier = adoptNS([[CAPresentationModifier alloc] initWithKeyPath:@"opacity" initialValue:opacity additive:NO group:m_presentationModifierGroup.get()]);
+    auto numberOfPresentationModifiers = m_affectedLayerProperties.containsAll({ LayerProperty::Opacity, LayerProperty::Transform }) ? 2 : 1;
+    m_presentationModifierGroup = [CAPresentationModifierGroup groupWithCapacity:numberOfPresentationModifiers];
 
-    [layer addPresentationModifier:m_opacityPresentationModifier.get()];
+    if (m_affectedLayerProperties.contains(LayerProperty::Opacity)) {
+        auto *opacity = @(computedValues.opacity);
+        m_opacityPresentationModifier = adoptNS([[CAPresentationModifier alloc] initWithKeyPath:@"opacity" initialValue:opacity additive:NO group:m_presentationModifierGroup.get()]);
+        [layer addPresentationModifier:m_opacityPresentationModifier.get()];
+    }
+
+    if (m_affectedLayerProperties.contains(LayerProperty::Transform)) {
+        auto computedTransform = computedValues.computedTransformationMatrix(m_bounds);
+        auto *transform = [NSValue valueWithCATransform3D:computedTransform];
+        m_transformPresentationModifier = adoptNS([[CAPresentationModifier alloc] initWithKeyPath:@"transform" initialValue:transform additive:NO group:m_presentationModifierGroup.get()]);
+        [layer addPresentationModifier:m_transformPresentationModifier.get()];
+    }
 
     [m_presentationModifierGroup flushWithTransaction];
 }
 
 void RemoteAcceleratedEffectStack::applyEffectsFromScrollingThread(MonotonicTime now) const
 {
-    if (!m_affectedLayerProperties.contains(LayerProperty::Opacity))
+    if (!m_affectedLayerProperties.containsAny({ LayerProperty::Opacity, LayerProperty::Transform }))
         return;
 
-    ASSERT(m_opacityPresentationModifier);
+    ASSERT(m_opacityPresentationModifier || m_transformPresentationModifier);
     ASSERT(m_presentationModifierGroup);
 
     auto computedValues = computeValues(now);
-    auto *opacity = @(computedValues.opacity);
-    [m_opacityPresentationModifier setValue:opacity];
+
+    if (m_opacityPresentationModifier) {
+        auto *opacity = @(computedValues.opacity);
+        [m_opacityPresentationModifier setValue:opacity];
+    }
+
+    if (m_transformPresentationModifier) {
+        auto computedTransform = computedValues.computedTransformationMatrix(m_bounds);
+        auto *transform = [NSValue valueWithCATransform3D:computedTransform];
+        [m_transformPresentationModifier setValue:transform];
+    }
+
     [m_presentationModifierGroup flush];
 }
 #endif
 
 void RemoteAcceleratedEffectStack::applyEffectsFromMainThread(PlatformLayer *layer, MonotonicTime now) const
 {
-    if (!m_affectedLayerProperties.contains(LayerProperty::Opacity))
+    if (!m_affectedLayerProperties.containsAny({ LayerProperty::Opacity, LayerProperty::Transform }))
         return;
 
     auto computedValues = computeValues(now);
-    [layer setOpacity:computedValues.opacity];
+
+    if (m_affectedLayerProperties.contains(LayerProperty::Opacity))
+        [layer setOpacity:computedValues.opacity];
+
+    if (m_affectedLayerProperties.contains(LayerProperty::Transform)) {
+        auto computedTransform = computedValues.computedTransformationMatrix(m_bounds);
+        [layer setTransform:computedTransform];
+    }
 }
 
 AcceleratedEffectValues RemoteAcceleratedEffectStack::computeValues(MonotonicTime now) const
@@ -106,23 +144,28 @@ AcceleratedEffectValues RemoteAcceleratedEffectStack::computeValues(MonotonicTim
     auto values = m_baseValues;
     auto currentTime = now.secondsSinceEpoch() - m_acceleratedTimelineTimeOrigin;
     for (auto& effect : m_primaryLayerEffects)
-        effect->apply(currentTime, values);
+        effect->apply(currentTime, values, m_bounds);
     return values;
 }
 
 void RemoteAcceleratedEffectStack::clear(PlatformLayer *layer)
 {
     if (!m_presentationModifierGroup) {
-        ASSERT(!m_opacityPresentationModifier);
+        ASSERT(!m_opacityPresentationModifier && !m_transformPresentationModifier);
         return;
     }
 
-    ASSERT(m_opacityPresentationModifier);
+    ASSERT(m_opacityPresentationModifier || m_transformPresentationModifier);
 
-    [layer removePresentationModifier:m_opacityPresentationModifier.get()];
+    if (m_opacityPresentationModifier)
+        [layer removePresentationModifier:m_opacityPresentationModifier.get()];
+    if (m_transformPresentationModifier)
+        [layer removePresentationModifier:m_transformPresentationModifier.get()];
+
     [m_presentationModifierGroup flushWithTransaction];
 
     m_opacityPresentationModifier = nil;
+    m_transformPresentationModifier = nil;
     m_presentationModifierGroup = nil;
 }
 

@@ -171,6 +171,41 @@ AcceleratedEffectValues::AcceleratedEffectValues(const RenderStyle& style, const
     }));
 }
 
+TransformationMatrix AcceleratedEffectValues::computedTransformationMatrix(const FloatRect& boundingBox) const
+{
+    // https://www.w3.org/TR/css-transforms-2/#ctm
+    // The transformation matrix is computed from the transform, transform-origin, translate, rotate, scale, and offset properties as follows:
+    // 1. Start with the identity matrix.
+    TransformationMatrix matrix;
+
+    // 2. Translate by the computed X, Y, and Z values of transform-origin.
+    // (not needed, the GraphicsLayer handles that)
+
+    // 3. Translate by the computed X, Y, and Z values of translate.
+    if (translate)
+        translate->apply(matrix, boundingBox.size());
+
+    // 4. Rotate by the computed <angle> about the specified axis of rotate.
+    if (rotate)
+        rotate->apply(matrix, boundingBox.size());
+
+    // 5. Scale by the computed X, Y, and Z values of scale.
+    if (scale)
+        scale->apply(matrix, boundingBox.size());
+
+    // 6. Translate and rotate by the transform specified by offset.
+    // FIXME: implement this step to support CSS Motion Path properties.
+
+    // 7. Multiply by each of the transform functions in transform from left to right.
+    for (auto& transformOperation : transform.operations())
+        transformOperation->apply(matrix, boundingBox.size());
+
+    // 8. Translate by the negated computed X, Y and Z values of transform-origin.
+    // (not needed, the GraphicsLayer handles that)
+
+    return matrix;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(THREADED_ANIMATION_RESOLUTION)

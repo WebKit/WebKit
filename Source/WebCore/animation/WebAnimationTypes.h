@@ -31,6 +31,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/Markable.h>
+#include <wtf/OptionSet.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/AtomStringHash.h>
 
@@ -86,6 +87,13 @@ enum class AcceleratedEffectProperty : uint16_t {
     OffsetRotate = 1 << 10,
     Filter = 1 << 11,
     BackdropFilter = 1 << 12
+};
+
+constexpr OptionSet<AcceleratedEffectProperty> transformRelatedAcceleratedProperties = {
+    AcceleratedEffectProperty::Transform,
+    AcceleratedEffectProperty::Translate,
+    AcceleratedEffectProperty::Rotate,
+    AcceleratedEffectProperty::Scale
 };
 
 struct CSSPropertiesBitSet {

@@ -41,7 +41,7 @@ namespace WebKit {
 class RemoteAcceleratedEffectStack final : public WebCore::AcceleratedEffectStack {
     WTF_MAKE_ISO_ALLOCATED(RemoteAcceleratedEffectStack);
 public:
-    static Ref<RemoteAcceleratedEffectStack> create(Seconds);
+    static Ref<RemoteAcceleratedEffectStack> create(WebCore::FloatRect, Seconds);
 
     void setEffects(WebCore::AcceleratedEffects&&) final;
 
@@ -55,21 +55,23 @@ public:
     void clear(PlatformLayer*);
 
 private:
-    explicit RemoteAcceleratedEffectStack(Seconds);
+    explicit RemoteAcceleratedEffectStack(WebCore::FloatRect, Seconds);
 
     WebCore::AcceleratedEffectValues computeValues(MonotonicTime now) const;
 
     enum class LayerProperty : uint8_t {
-        None = 1 << 0,
-        Opacity = 1 << 1
+        Opacity = 1 << 1,
+        Transform = 1 << 2
     };
 
     OptionSet<LayerProperty> m_affectedLayerProperties;
 
+    WebCore::FloatRect m_bounds;
     Seconds m_acceleratedTimelineTimeOrigin;
 
     RetainPtr<CAPresentationModifierGroup> m_presentationModifierGroup;
     RetainPtr<CAPresentationModifier> m_opacityPresentationModifier;
+    RetainPtr<CAPresentationModifier> m_transformPresentationModifier;
 };
 
 } // namespace WebKit
