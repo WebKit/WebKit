@@ -31,8 +31,9 @@ public:
     using Base = JSDOMWrapper<TestDefaultToJSON>;
     static JSTestDefaultToJSON* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestDefaultToJSON>&& impl)
     {
-        JSTestDefaultToJSON* ptr = new (NotNull, JSC::allocateCell<JSTestDefaultToJSON>(globalObject->vm())) JSTestDefaultToJSON(structure, *globalObject, WTFMove(impl));
-        ptr->finishCreation(globalObject->vm());
+        Ref vm = globalObject->vm();
+        JSTestDefaultToJSON* ptr = new (NotNull, JSC::allocateCell<JSTestDefaultToJSON>(vm)) JSTestDefaultToJSON(structure, *globalObject, WTFMove(impl));
+        ptr->finishCreation(vm);
         return ptr;
     }
 

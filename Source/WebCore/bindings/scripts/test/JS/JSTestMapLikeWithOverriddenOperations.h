@@ -31,8 +31,9 @@ public:
     using Base = JSDOMWrapper<TestMapLikeWithOverriddenOperations>;
     static JSTestMapLikeWithOverriddenOperations* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestMapLikeWithOverriddenOperations>&& impl)
     {
-        JSTestMapLikeWithOverriddenOperations* ptr = new (NotNull, JSC::allocateCell<JSTestMapLikeWithOverriddenOperations>(globalObject->vm())) JSTestMapLikeWithOverriddenOperations(structure, *globalObject, WTFMove(impl));
-        ptr->finishCreation(globalObject->vm());
+        Ref vm = globalObject->vm();
+        JSTestMapLikeWithOverriddenOperations* ptr = new (NotNull, JSC::allocateCell<JSTestMapLikeWithOverriddenOperations>(vm)) JSTestMapLikeWithOverriddenOperations(structure, *globalObject, WTFMove(impl));
+        ptr->finishCreation(vm);
         return ptr;
     }
 

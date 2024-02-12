@@ -31,8 +31,9 @@ public:
     using Base = JSDOMWrapper<TestReportExtraMemoryCost>;
     static JSTestReportExtraMemoryCost* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestReportExtraMemoryCost>&& impl)
     {
-        JSTestReportExtraMemoryCost* ptr = new (NotNull, JSC::allocateCell<JSTestReportExtraMemoryCost>(globalObject->vm())) JSTestReportExtraMemoryCost(structure, *globalObject, WTFMove(impl));
-        ptr->finishCreation(globalObject->vm());
+        Ref vm = globalObject->vm();
+        JSTestReportExtraMemoryCost* ptr = new (NotNull, JSC::allocateCell<JSTestReportExtraMemoryCost>(vm)) JSTestReportExtraMemoryCost(structure, *globalObject, WTFMove(impl));
+        ptr->finishCreation(vm);
         return ptr;
     }
 

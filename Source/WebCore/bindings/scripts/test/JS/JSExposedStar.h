@@ -32,8 +32,9 @@ public:
     using DOMWrapped = ExposedStar;
     static JSExposedStar* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<ExposedStar>&& impl)
     {
-        JSExposedStar* ptr = new (NotNull, JSC::allocateCell<JSExposedStar>(globalObject->vm())) JSExposedStar(structure, *globalObject, WTFMove(impl));
-        ptr->finishCreation(globalObject->vm());
+        Ref vm = globalObject->vm();
+        JSExposedStar* ptr = new (NotNull, JSC::allocateCell<JSExposedStar>(vm)) JSExposedStar(structure, *globalObject, WTFMove(impl));
+        ptr->finishCreation(vm);
         return ptr;
     }
 
