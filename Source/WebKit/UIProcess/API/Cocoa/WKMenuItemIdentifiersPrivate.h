@@ -59,6 +59,7 @@ WK_EXTERN NSString * const _WKMenuItemIdentifierAddHighlightToCurrentQuickNote W
 WK_EXTERN NSString * const _WKMenuItemIdentifierAddHighlightToNewQuickNote WK_API_AVAILABLE(macos(12.0), ios(15.0));
 
 WK_EXTERN NSString * const _WKMenuItemIdentifierTranslate WK_API_AVAILABLE(macos(12.0), ios(15.0));
+WK_EXTERN NSString * const _WKMenuItemIdentifierSwapCharacters WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 WK_EXTERN NSString * const _WKMenuItemIdentifierCopySubject WK_API_AVAILABLE(macos(13.0), ios(16.0));
 
 WK_EXTERN NSString * const _WKMenuItemIdentifierSpellingMenu WK_API_AVAILABLE(macos(13.0), ios(16.0));

@@ -78,6 +78,7 @@
 #import "WebPageProxy.h"
 #import "WebProcessPool.h"
 #import "WebProcessProxy.h"
+#import "WebTextReplacementData.h"
 #import "_WKDragActionsInternal.h"
 #import "_WKRemoteObjectRegistryInternal.h"
 #import "_WKThumbnailViewInternal.h"
@@ -154,6 +155,10 @@
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
 #include "MediaSessionCoordinatorProxyPrivate.h"
+#endif
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WebViewImplAdditionsBefore.mm>
 #endif
 
 #import <pal/cocoa/RevealSoftLink.h>
@@ -6259,6 +6264,14 @@ void WebViewImpl::handleContextMenuTranslation(const WebCore::TranslationContext
 
 #endif // HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT) && ENABLE(CONTEXT_MENUS)
+void WebViewImpl::handleContextMenuSwapCharacters(IntRect selectionBoundsInRootView)
+{
+    auto view = m_view.get();
+    showSwapCharactersViewRelativeToRectOfView(selectionBoundsInRootView, view.get());
+}
+#endif
+
 bool WebViewImpl::acceptsPreviewPanelControl(QLPreviewPanel *)
 {
 #if ENABLE(IMAGE_ANALYSIS)
@@ -6466,6 +6479,53 @@ void WebViewImpl::uninstallImageAnalysisOverlayView()
 }
 
 #endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+void WebViewImpl::willBeginTextReplacementSession(const WTF::UUID& uuid, CompletionHandler<void(const Vector<WebUnifiedTextReplacementContextData>&)>&& completionHandler)
+{
+    protectedPage()->willBeginTextReplacementSession(uuid, WTFMove(completionHandler));
+}
+
+void WebViewImpl::didBeginTextReplacementSession(const WTF::UUID& uuid, const Vector<WebUnifiedTextReplacementContextData>& contexts)
+{
+    protectedPage()->didBeginTextReplacementSession(uuid, contexts);
+}
+
+void WebViewImpl::textReplacementSessionDidReceiveReplacements(const WTF::UUID& uuid, const Vector<WebTextReplacementData>& replacements, const WebUnifiedTextReplacementContextData& context, bool finished)
+{
+    protectedPage()->textReplacementSessionDidReceiveReplacements(uuid, replacements, context, finished);
+}
+
+void WebViewImpl::textReplacementSessionDidUpdateStateForReplacement(const WTF::UUID& uuid, WebTextReplacementData::State state, const WebTextReplacementData& replacement, const WebUnifiedTextReplacementContextData& context)
+{
+    protectedPage()->textReplacementSessionDidUpdateStateForReplacement(uuid, state, replacement, context);
+}
+
+void WebViewImpl::didEndTextReplacementSession(const WTF::UUID& uuid, bool accepted)
+{
+    protectedPage()->didEndTextReplacementSession(uuid, accepted);
+}
+
+void WebViewImpl::textReplacementSessionDidReceiveTextWithReplacementRange(const WTF::UUID& uuid, const WebCore::AttributedString& attributedText, const WebCore::CharacterRange& range, const WebUnifiedTextReplacementContextData& context)
+{
+    protectedPage()->textReplacementSessionDidReceiveTextWithReplacementRange(uuid, attributedText, range, context);
+}
+
+void WebViewImpl::textReplacementSessionDidReceiveEditAction(const WTF::UUID& uuid, WebKit::WebTextReplacementData::EditAction action)
+{
+    protectedPage()->textReplacementSessionDidReceiveEditAction(uuid, action);
+}
+
+#endif
+
+Ref<WebPageProxy> WebViewImpl::protectedPage() const
+{
+    return m_page.get();
+}
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WebViewImplAdditionsAfter.mm>
+#endif
 
 } // namespace WebKit
 

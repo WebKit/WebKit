@@ -879,8 +879,6 @@ std::optional<SimpleRange> WebPage::autocorrectionContextRange()
 {
     Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
 
-    VisiblePosition contextStartPosition;
-
     VisiblePosition startPosition = frame->selection().selection().start();
     VisiblePosition endPosition = frame->selection().selection().end();
 
@@ -888,8 +886,9 @@ std::optional<SimpleRange> WebPage::autocorrectionContextRange()
     constexpr unsigned maxContextLength = 100;
 
     auto firstPositionInEditableContent = startOfEditableContent(startPosition);
+
     if (startPosition != firstPositionInEditableContent) {
-        contextStartPosition = startPosition;
+        VisiblePosition contextStartPosition = startPosition;
         unsigned totalContextLength = 0;
 
         for (unsigned i = 0; i < minContextWordCount; ++i) {
@@ -911,7 +910,7 @@ std::optional<SimpleRange> WebPage::autocorrectionContextRange()
 
         VisiblePosition sentenceContextStartPosition = startOfSentence(startPosition);
         if (sentenceContextStartPosition.isNotNull() && sentenceContextStartPosition < contextStartPosition)
-            contextStartPosition = sentenceContextStartPosition;
+            startPosition = sentenceContextStartPosition;
     }
 
     if (endPosition != endOfEditableContent(endPosition)) {
@@ -920,7 +919,7 @@ std::optional<SimpleRange> WebPage::autocorrectionContextRange()
             endPosition = nextPosition;
     }
 
-    return makeSimpleRange(contextStartPosition, endPosition);
+    return makeSimpleRange(startPosition, endPosition);
 }
 
 } // namespace WebKit

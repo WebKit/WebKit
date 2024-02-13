@@ -1081,6 +1081,13 @@ void PageClientImpl::handleContextMenuTranslation(const TranslationContextMenuIn
 
 #endif // HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT) && ENABLE(CONTEXT_MENUS)
+void PageClientImpl::handleContextMenuSwapCharacters(IntRect selectionBoundsInRootView)
+{
+    m_impl->handleContextMenuSwapCharacters(selectionBoundsInRootView);
+}
+#endif
+
 #if ENABLE(DATA_DETECTION)
 
 void PageClientImpl::handleClickForDataDetectionResult(const DataDetectorElementInfo& info, const IntPoint& clickLocation)

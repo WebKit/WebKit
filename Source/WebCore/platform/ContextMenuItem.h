@@ -153,6 +153,7 @@ enum ContextMenuAction {
     ContextMenuItemTagAddHighlightToNewQuickNote,
     ContextMenuItemTagLookUpImage,
     ContextMenuItemTagTranslate,
+    ContextMenuItemTagSwapCharacters,
     ContextMenuItemTagCopySubject,
     ContextMenuItemPDFSinglePageContinuous,
     ContextMenuItemPDFTwoPages,

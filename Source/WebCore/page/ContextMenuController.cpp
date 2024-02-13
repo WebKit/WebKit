@@ -641,6 +641,14 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
         }
 #endif
         break;
+
+    case ContextMenuItemTagSwapCharacters:
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+        if (RefPtr view = frame->view())
+            m_client->handleSwapCharacters(view->contentsToRootView(enclosingIntRect(frame->selection().selectionBounds())));
+#endif
+        break;
+
 #if ENABLE(PDFJS)
     case ContextMenuItemPDFAutoSize:
         performPDFJSAction(*frame, "context-menu-auto-size"_s);
@@ -1031,6 +1039,11 @@ void ContextMenuController::populate()
 #if HAVE(TRANSLATION_UI_SERVICES)
         ContextMenuItem translateItem(ContextMenuItemType::Action, ContextMenuItemTagTranslate, contextMenuItemTagTranslate(selectedText));
         appendItem(translateItem, m_contextMenu.get());
+#endif
+
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+        ContextMenuItem swapCharactersItem(ContextMenuItemType::Action, ContextMenuItemTagSwapCharacters, contextMenuItemTagSwapCharacters());
+        appendItem(swapCharactersItem, m_contextMenu.get());
 #endif
 
 #if !PLATFORM(GTK)
@@ -1760,6 +1773,7 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
             break;
         case ContextMenuItemTagLookUpImage:
         case ContextMenuItemTagTranslate:
+        case ContextMenuItemTagSwapCharacters:
             break;
     }
 

@@ -845,6 +845,15 @@ void WebPageProxy::requestActiveNowPlayingSessionInfo(CompletionHandler<void(boo
     sendWithAsyncReply(Messages::WebPage::RequestActiveNowPlayingSessionInfo(), WTFMove(callback));
 }
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT) && ENABLE(CONTEXT_MENUS)
+
+void WebPageProxy::handleContextMenuSwapCharacters(WebCore::IntRect selectionBoundsInRootView)
+{
+    protectedPageClient()->handleContextMenuSwapCharacters(selectionBoundsInRootView);
+}
+
+#endif
+
 void WebPageProxy::setLastNavigationWasAppInitiated(ResourceRequest& request)
 {
 #if ENABLE(APP_PRIVACY_REPORT)

@@ -8806,6 +8806,13 @@ void WebPage::handleContextMenuTranslation(const TranslationContextMenuInfo& inf
 }
 #endif
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT) && ENABLE(CONTEXT_MENUS)
+void WebPage::handleContextMenuSwapCharacters(WebCore::IntRect selectionBoundsInRootView)
+{
+    send(Messages::WebPageProxy::HandleContextMenuSwapCharacters(selectionBoundsInRootView));
+}
+#endif
+
 void WebPage::scrollToRect(const WebCore::FloatRect& targetRect, const WebCore::FloatPoint&)
 {
     RefPtr frameView = localMainFrameView();

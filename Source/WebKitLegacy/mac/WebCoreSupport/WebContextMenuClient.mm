@@ -151,6 +151,14 @@ void WebContextMenuClient::handleTranslation(const TranslationContextMenuInfo& i
 
 #endif
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+
+void WebContextMenuClient::handleSwapCharacters(IntRect selectionBoundsInRootView)
+{
+}
+
+#endif
+
 #if ENABLE(SERVICE_CONTROLS)
 
 void WebContextMenuClient::sharingServicePickerWillBeDestroyed(WebSharingServicePickerController &)

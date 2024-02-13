@@ -623,6 +623,9 @@ static NSString *menuItemIdentifier(const WebCore::ContextMenuAction action)
     case ContextMenuItemTagTranslate:
         return _WKMenuItemIdentifierTranslate;
 
+    case ContextMenuItemTagSwapCharacters:
+        return _WKMenuItemIdentifierSwapCharacters;
+
     case ContextMenuItemTagCopySubject:
         return _WKMenuItemIdentifierCopySubject;
 

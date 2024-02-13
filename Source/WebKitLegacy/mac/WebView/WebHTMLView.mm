@@ -411,6 +411,8 @@ static std::optional<WebCore::ContextMenuAction> toAction(NSInteger tag)
         return ContextMenuItemTagDictationAlternative;
     case WebMenuItemTagTranslate:
         return ContextMenuItemTagTranslate;
+    case WebMenuItemTagSwapCharacters:
+        return ContextMenuItemTagSwapCharacters;
     }
     return std::nullopt;
 }
@@ -593,6 +595,8 @@ static std::optional<NSInteger> toTag(WebCore::ContextMenuAction action)
         return WebMenuItemTagToggleVideoEnhancedFullscreen;
     case ContextMenuItemTagTranslate:
         return WebMenuItemTagTranslate;
+    case ContextMenuItemTagSwapCharacters:
+        return WebMenuItemTagSwapCharacters;
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     case ContextMenuItemTagPlayAllAnimations:
         return WebMenuItemTagPlayAllAnimations;

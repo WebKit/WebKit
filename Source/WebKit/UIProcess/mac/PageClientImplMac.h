@@ -302,6 +302,10 @@ private:
     void handleContextMenuTranslation(const WebCore::TranslationContextMenuInfo&) override;
 #endif
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT) && ENABLE(CONTEXT_MENUS)
+    void handleContextMenuSwapCharacters(WebCore::IntRect selectionBoundsInRootView) override;
+#endif
+
 #if ENABLE(DATA_DETECTION)
     void handleClickForDataDetectionResult(const WebCore::DataDetectorElementInfo&, const WebCore::IntPoint&) final;
 #endif
