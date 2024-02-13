@@ -177,6 +177,7 @@ fast/canvas/canvas-drawImage-hdr-video.html [ Skip ] # Timeout
 fast/events/media-focus-in-standalone-media-document.html [ Skip ]
 http/tests/canvas/webgl/origin-clean-conformance.html [ Skip ] # Timeout
 http/tests/navigation/page-cache-video.html [ Skip ] # Timeout
+http/tests/security/mixedContent/insecure-audio-video-in-main-frame-UpgradeMixedContent.html [ Skip ]
 imported/w3c/web-platform-tests/css/selectors/invalidation/media-pseudo-classes-in-has.html [ Skip ]
 imported/w3c/web-platform-tests/css/selectors/media [ Skip ]
 media/audio-data-url.html [ Skip ]
@@ -2756,3 +2757,5 @@ css1/units/rounding.html [ Failure ]
 webkit.org/b/267251 imported/w3c/web-platform-tests/css/selectors/invalidation/user-valid-user-invalid.html [ Failure Pass ]
 
 webkit.org/b/124566 fast/dom/SelectorAPI/resig-SelectorsAPI-test.xhtml [ Skip ] # Timeout
+
+imported/w3c/web-platform-tests/scroll-animations/css/view-timeline-inset-animation.html [ Pass Failure ]
