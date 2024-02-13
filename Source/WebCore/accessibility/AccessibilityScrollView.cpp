@@ -40,8 +40,8 @@ AccessibilityScrollView::AccessibilityScrollView(ScrollView* view)
     : m_scrollView(view)
     , m_childrenDirty(false)
 {
-    if (is<LocalFrameView>(view))
-        m_frameOwnerElement = downcast<LocalFrameView>(*view).frame().ownerElement();
+    if (auto* localFrameView = dynamicDowncast<LocalFrameView>(view))
+        m_frameOwnerElement = localFrameView->frame().ownerElement();
 }
 
 AccessibilityScrollView::~AccessibilityScrollView()
@@ -163,12 +163,12 @@ AccessibilityScrollbar* AccessibilityScrollView::addChildScrollbar(Scrollbar* sc
 {
     if (!scrollbar)
         return nullptr;
-    
-    AXObjectCache* cache = axObjectCache();
+
+    WeakPtr cache = axObjectCache();
     if (!cache)
         return nullptr;
 
-    auto& scrollBarObject = downcast<AccessibilityScrollbar>(*cache->getOrCreate(scrollbar));
+    auto& scrollBarObject = uncheckedDowncast<AccessibilityScrollbar>(*cache->getOrCreate(scrollbar));
     scrollBarObject.setParent(this);
     addChild(&scrollBarObject);
     return &scrollBarObject;
@@ -242,28 +242,26 @@ Document* AccessibilityScrollView::document() const
 
 LocalFrameView* AccessibilityScrollView::documentFrameView() const
 {
-    if (is<LocalFrameView>(m_scrollView))
-        return downcast<LocalFrameView>(m_scrollView.get());
+    if (auto* localFrameView = dynamicDowncast<LocalFrameView>(m_scrollView.get()))
+        return localFrameView;
 
     if (m_frameOwnerElement && m_frameOwnerElement->contentDocument())
         return m_frameOwnerElement->contentDocument()->view();
-
     return nullptr;
 }
 
 AccessibilityObject* AccessibilityScrollView::parentObject() const
 {
-    AXObjectCache* cache = axObjectCache();
+    WeakPtr cache = axObjectCache();
     if (!cache)
         return nullptr;
 
-    HTMLFrameOwnerElement* owner = m_frameOwnerElement.get();
-    if (is<LocalFrameView>(m_scrollView))
-        owner = downcast<LocalFrameView>(*m_scrollView).frame().ownerElement();
+    WeakPtr owner = m_frameOwnerElement.get();
+    if (auto* localFrameView = dynamicDowncast<LocalFrameView>(m_scrollView.get()))
+        owner = localFrameView->frame().ownerElement();
 
-    if (owner && owner->renderer())
-        return cache->getOrCreate(owner);
-
+    if (cache && owner && owner->renderer())
+        return cache->getOrCreate(owner.get());
     return nullptr;
 }
 
