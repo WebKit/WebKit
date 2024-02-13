@@ -79,8 +79,8 @@ public:
     NavigationHistoryEntry* currentEntry() const;
     RefPtr<NavigationTransition> transition() { return m_transition; };
 
-    bool canGoBack() const { return m_canGoBack; };
-    bool canGoForward() const { return m_canGoForward; };
+    bool canGoBack() const;
+    bool canGoForward() const;
 
     void initializeEntries(const Ref<HistoryItem>& currentItem, Vector<Ref<HistoryItem>> &items);
 
@@ -104,10 +104,8 @@ private:
 
     bool hasEntriesAndEventsDisabled() const;
 
-    int m_currentEntryIndex { -1 };
+    std::optional<size_t> m_currentEntryIndex;
     RefPtr<NavigationTransition> m_transition;
-    bool m_canGoBack { false };
-    bool m_canGoForward { false };
     Vector<Ref<NavigationHistoryEntry>> m_entries;
 };
 

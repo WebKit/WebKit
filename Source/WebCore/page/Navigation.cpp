@@ -44,6 +44,28 @@ Navigation::Navigation(ScriptExecutionContext* context, LocalDOMWindow& window)
 {
 }
 
+// https://html.spec.whatwg.org/multipage/nav-history-apis.html#dom-navigation-cangoback
+bool Navigation::canGoBack() const
+{
+    if (hasEntriesAndEventsDisabled())
+        return false;
+    ASSERT(m_currentEntryIndex);
+    if (!*m_currentEntryIndex)
+        return false;
+    return true;
+}
+
+// https://html.spec.whatwg.org/multipage/nav-history-apis.html#dom-navigation-cangoforward
+bool Navigation::canGoForward() const
+{
+    if (hasEntriesAndEventsDisabled())
+        return false;
+    ASSERT(m_currentEntryIndex);
+    if (*m_currentEntryIndex == m_entries.size() - 1)
+        return false;
+    return true;
+}
+
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#initialize-the-navigation-api-entries-for-a-new-document
 void Navigation::initializeEntries(const Ref<HistoryItem>& currentItem, Vector<Ref<HistoryItem>>& items)
 {
@@ -62,8 +84,8 @@ const Vector<Ref<NavigationHistoryEntry>>& Navigation::entries() const
 
 NavigationHistoryEntry* Navigation::currentEntry() const
 {
-    if (!hasEntriesAndEventsDisabled() && m_currentEntryIndex > -1)
-        return m_entries.at(m_currentEntryIndex).ptr();
+    if (!hasEntriesAndEventsDisabled() && m_currentEntryIndex)
+        return m_entries.at(*m_currentEntryIndex).ptr();
     return nullptr;
 }
 
