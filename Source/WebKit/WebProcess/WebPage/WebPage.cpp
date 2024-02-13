@@ -2922,10 +2922,18 @@ void WebPage::takeSnapshot(IntRect snapshotRect, IntSize bitmapSize, uint32_t op
     SnapshotOptions snapshotOptions = static_cast<SnapshotOptions>(options);
     snapshotOptions |= SnapshotOptionsShareable;
 
+    auto originalLayoutViewportOverrideRect = frameView->layoutViewportOverrideRect();
+    auto originalPaintBehavior = frameView->paintBehavior();
+    bool isPaintBehaviorChanged = false;
+
     if (options & SnapshotOptionsVisibleContentRect)
         snapshotRect = frameView->visibleContentRect();
-    else if (options & SnapshotOptionsFullContentRect)
+    else if (options & SnapshotOptionsFullContentRect) {
         snapshotRect = IntRect({ 0, 0 }, frameView->contentsSize());
+        frameView->setLayoutViewportOverrideRect(LayoutRect(snapshotRect));
+        frameView->setPaintBehavior(originalPaintBehavior | PaintBehavior::AnnotateLinks);
+        isPaintBehaviorChanged = true;
+    }
 
     if (bitmapSize.isEmpty()) {
         bitmapSize = snapshotRect.size();
@@ -2935,6 +2943,11 @@ void WebPage::takeSnapshot(IntRect snapshotRect, IntSize bitmapSize, uint32_t op
 
     if (auto image = snapshotAtSize(snapshotRect, bitmapSize, snapshotOptions, *coreFrame, *frameView))
         handle = image->createHandle(SharedMemory::Protection::ReadOnly);
+
+    if (isPaintBehaviorChanged) {
+        frameView->setLayoutViewportOverrideRect(originalLayoutViewportOverrideRect);
+        frameView->setPaintBehavior(originalPaintBehavior);
+    }
 
     completionHandler(WTFMove(handle));
 }

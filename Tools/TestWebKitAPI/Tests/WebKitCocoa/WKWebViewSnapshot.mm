@@ -688,4 +688,48 @@ TEST(WKWebView, SnapshotWithoutSelectionHighlighting)
 
     TestWebKitAPI::Util::run(&isDone);
 }
+
+TEST(WKWebView, SnapshotWithContentsRect)
+{
+    CGFloat viewWidth = 200;
+    CGFloat viewHeight = 200;
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, viewWidth, viewHeight)]);
+
+    auto window = adoptNS([[NSWindow alloc] initWithContentRect:[webView frame] styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO]);
+    [[window contentView] addSubview:webView.get()];
+    CGFloat backingScaleFactor = [window backingScaleFactor];
+
+    [webView loadHTMLString:@"<body><div style='position: absolute; left: 200px; width: 800px; height: 600px; background-color: blue;'></div>" baseURL:nil];
+    [webView _test_waitForDidFinishNavigation];
+
+    auto snapshotConfiguration = adoptNS([[WKSnapshotConfiguration alloc] init]);
+    [snapshotConfiguration _setUsesContentsRect:YES];
+
+    isDone = false;
+    [webView takeSnapshotWithConfiguration:snapshotConfiguration.get() completionHandler:^(PlatformImage snapshotImage, NSError *error) {
+        EXPECT_NULL(error);
+
+        NSInteger snapshotWidthInPixels = snapshotImage.size.width;
+        NSInteger snapshotHeightInPixels = snapshotImage.size.height;
+        EXPECT_GT(snapshotWidthInPixels, viewWidth);
+        EXPECT_GT(snapshotHeightInPixels, viewHeight);
+
+        auto cgImage = convertToCGImage(snapshotImage);
+        auto colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
+        uint8_t *rgba = (unsigned char *)calloc(snapshotWidthInPixels * snapshotHeightInPixels * 4, sizeof(unsigned char));
+        auto context = adoptCF(CGBitmapContextCreate(rgba, snapshotWidthInPixels, snapshotHeightInPixels, 8, 4 * snapshotWidthInPixels, colorSpace.get(), static_cast<uint32_t>(kCGImageAlphaPremultipliedLast) | static_cast<uint32_t>(kCGBitmapByteOrder32Big)));
+        CGContextDrawImage(context.get(), CGRectMake(0, 0, snapshotWidthInPixels, snapshotHeightInPixels), cgImage.get());
+
+        // Inside the blue div.
+        auto pixelIndex = getPixelIndex(300 * backingScaleFactor, 300 * backingScaleFactor, snapshotWidthInPixels);
+        EXPECT_EQ(0, rgba[pixelIndex]);
+        EXPECT_EQ(0, rgba[pixelIndex + 1]);
+        EXPECT_EQ(255, rgba[pixelIndex + 2]);
+        free(rgba);
+
+        isDone = true;
+    }];
+
+    TestWebKitAPI::Util::run(&isDone);
+}
 #endif
