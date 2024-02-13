@@ -541,18 +541,19 @@ void UnifiedPDFPlugin::paintContents(const GraphicsLayer* layer, GraphicsContext
     paintPDFContent(context, clipRect);
 }
 
-void UnifiedPDFPlugin::paintPDFContent(WebCore::GraphicsContext& context, const WebCore::FloatRect& clipRect)
+PDFPageCoverage UnifiedPDFPlugin::pageCoverageForRect(const FloatRect& clipRect) const
 {
     if (m_size.isEmpty() || documentSize().isEmpty())
-        return;
+        return { };
+
+    auto scale = m_documentLayout.scale();
+
+    auto pageCoverage = PDFPageCoverage { };
+    pageCoverage.deviceScaleFactor = deviceScaleFactor();
+    pageCoverage.documentScale = scale;
 
     auto drawingRect = IntRect { { }, documentSize() };
     drawingRect.intersect(enclosingIntRect(clipRect));
-
-    auto stateSaver = GraphicsContextStateSaver(context);
-
-    auto scale = m_documentLayout.scale();
-    context.scale(scale);
 
     auto inverseScale = 1.0f / scale;
     auto scaleTransform = AffineTransform::makeScale({ inverseScale, inverseScale });
@@ -563,28 +564,68 @@ void UnifiedPDFPlugin::paintPDFContent(WebCore::GraphicsContext& context, const 
         if (!page)
             continue;
 
-        auto destinationRect = m_documentLayout.boundsForPageAtIndex(i);
-
-        if (!destinationRect.intersects(drawingRectInPDFLayoutCoordinates))
+        auto pageBounds = m_documentLayout.boundsForPageAtIndex(i);
+        if (!pageBounds.intersects(drawingRectInPDFLayoutCoordinates))
             continue;
 
-        auto pageStateSaver = GraphicsContextStateSaver(context);
-        context.clip(destinationRect);
-        context.fillRect(destinationRect, Color::white);
-
-        // Translate the context to the bottom of pageBounds and flip, so that PDFKit operates
-        // from this page's drawing origin.
-        context.translate(destinationRect.minXMaxYCorner());
-        context.scale({ 1, -1 });
-
-        [page drawWithBox:kPDFDisplayBoxCropBox toContext:context.platformContext()];
-
-        bool isVisibleAndActive = isSelectionActiveAfterContextMenuInteraction();
-        if (RefPtr page = this->page())
-            isVisibleAndActive = isVisibleAndActive && page->isVisibleAndActive();
-        [m_currentSelection drawForPage:page.get() withBox:kCGPDFCropBox active:isVisibleAndActive inContext:context.platformContext()];
+        pageCoverage.pages.append(PerPageInfo { i, pageBounds });
     }
-    paintPDFOverlays(context);
+
+    return pageCoverage;
+}
+
+void UnifiedPDFPlugin::paintPDFContent(GraphicsContext& context, const FloatRect& clipRect)
+{
+    if (m_size.isEmpty() || documentSize().isEmpty())
+        return;
+
+    auto drawingRect = IntRect { { }, documentSize() };
+    drawingRect.intersect(enclosingIntRect(clipRect));
+
+    auto stateSaver = GraphicsContextStateSaver(context);
+
+    bool paintedPageContent = false; // This will be set by a future async rendering commit.
+    bool haveSelection = false;
+    bool isVisibleAndActive = false;
+    if (m_currentSelection) {
+        // FIXME: Also test is m_currentSelection is not empty.
+        haveSelection = true;
+        if (RefPtr page = this->page())
+            isVisibleAndActive = isSelectionActiveAfterContextMenuInteraction() && page->isVisibleAndActive();
+    }
+
+    if (!paintedPageContent || haveSelection) {
+        auto pageCoverage = pageCoverageForRect(clipRect);
+        auto scale = pageCoverage.documentScale;
+        context.scale(scale);
+
+        for (auto& pageInfo : pageCoverage.pages) {
+            auto page = m_documentLayout.pageAtIndex(pageInfo.pageIndex);
+            if (!page)
+                continue;
+
+            auto destinationRect = pageInfo.pageBounds;
+
+            auto pageStateSaver = GraphicsContextStateSaver(context);
+            context.clip(destinationRect);
+
+            // Translate the context to the bottom of pageBounds and flip, so that PDFKit operates
+            // from this page's drawing origin.
+            context.translate(destinationRect.minXMaxYCorner());
+            context.scale({ 1, -1 });
+
+            if (!paintedPageContent) {
+                LOG_WITH_STREAM(PDF, stream << "UnifiedPDFPlugin: painting PDF page " << pageInfo.pageIndex << " into rect " << destinationRect << " with clip " << clipRect);
+                context.fillRect(destinationRect, Color::white);
+                [page drawWithBox:kPDFDisplayBoxCropBox toContext:context.platformContext()];
+            }
+
+            if (haveSelection)
+                [m_currentSelection drawForPage:page.get() withBox:kCGPDFCropBox active:isVisibleAndActive inContext:context.platformContext()];
+        }
+    }
+
+    paintPDFOverlays(context, clipRect);
 }
 
 float UnifiedPDFPlugin::scaleForActualSize() const
@@ -624,10 +665,23 @@ static const WebCore::Color textAnnotationHoverColor()
     return color;
 }
 
-void UnifiedPDFPlugin::paintPDFOverlays(WebCore::GraphicsContext& context)
+void UnifiedPDFPlugin::paintPDFOverlays(GraphicsContext& context, const FloatRect& clipRect)
 {
-    if (auto* trackedAnnotation = m_annotationTrackingState.trackedAnnotation(); trackedAnnotation && [trackedAnnotation isKindOfClass:getPDFAnnotationTextWidgetClass()] && m_annotationTrackingState.isBeingHovered())
-        context.fillRect(IntRect { [trackedAnnotation bounds] }, textAnnotationHoverColor());
+    auto* trackedAnnotation = m_annotationTrackingState.trackedAnnotation();
+    if (!trackedAnnotation)
+        return;
+
+    if (![trackedAnnotation isKindOfClass:getPDFAnnotationTextWidgetClass()])
+        return;
+
+    if (!m_annotationTrackingState.isBeingHovered())
+        return;
+
+    auto annotationRect = FloatRect { [trackedAnnotation bounds] };
+    if (!annotationRect.intersects(clipRect))
+        return;
+
+    context.fillRect(annotationRect, textAnnotationHoverColor());
 }
 
 CGFloat UnifiedPDFPlugin::scaleFactor() const
