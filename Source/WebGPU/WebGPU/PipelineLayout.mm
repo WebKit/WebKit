@@ -255,10 +255,10 @@ const Vector<uint32_t>* PipelineLayout::computeOffsets(uint32_t bindGroupIndex, 
 
 NSString* PipelineLayout::errorValidatingBindGroupCompatibility(const PipelineLayout::BindGroupHashMap& bindGroups, size_t vertexStageInBufferCount) const
 {
-    auto setBindGroupsSize = bindGroups.size();
     if (!m_bindGroupLayouts)
-        return (!setBindGroupsSize && !vertexStageInBufferCount) ? nil : @"bind groups were set but layout has no bind groups";
+        return nil;
 
+    auto setBindGroupsSize = bindGroups.size();
     auto& bindGroupLayouts = *m_bindGroupLayouts;
     auto numberOfBindGroupsInPipeline = bindGroupLayouts.size();
     if (setBindGroupsSize + vertexStageInBufferCount < numberOfBindGroupsInPipeline) {

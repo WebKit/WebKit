@@ -122,21 +122,18 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
         }
 
         id<MTLTexture> depthTexture = textureView.texture();
-        std::optional<bool> isReadOnly = std::nullopt;
         if (!Device::isStencilOnlyFormat(depthTexture.pixelFormat)) {
             m_clearDepthAttachment = depthTexture && attachment->depthStoreOp == WGPUStoreOp_Discard;
             m_depthStencilAttachmentToClear = depthTexture;
-            isReadOnly = attachment->depthReadOnly;
+            addResourceToActiveResources(textureView, attachment->depthReadOnly ? BindGroupEntryUsage::AttachmentRead : BindGroupEntryUsage::Attachment, WGPUTextureAspect_DepthOnly);
         }
 
         m_stencilClearValue = attachment->stencilStoreOp == WGPUStoreOp_Discard ? 0 : attachment->stencilClearValue;
         if (Texture::stencilOnlyAspectMetalFormat(textureView.descriptor().format)) {
             m_clearStencilAttachment = depthTexture && attachment->stencilStoreOp == WGPUStoreOp_Discard;
             m_depthStencilAttachmentToClear = depthTexture;
-            isReadOnly = isReadOnly ? (*isReadOnly && attachment->stencilReadOnly) : attachment->stencilReadOnly;
+            addResourceToActiveResources(textureView, attachment->stencilReadOnly ? BindGroupEntryUsage::AttachmentRead : BindGroupEntryUsage::Attachment, WGPUTextureAspect_StencilOnly);
         }
-
-        addResourceToActiveResources(textureView, (isReadOnly && *isReadOnly) ? BindGroupEntryUsage::AttachmentRead : BindGroupEntryUsage::Attachment);
     }
 }
 
@@ -241,19 +238,45 @@ void RenderPassEncoder::addResourceToActiveResources(id<MTLResource> mtlResource
     }
 
     if (!BindGroup::allowedUsage(resourceUsage)) {
-        makeInvalid(@"Bind group has incompatible usage list");
+        makeInvalid([NSString stringWithFormat:@"Bind group has incompatible usage list: %@ for %p", BindGroup::usageName(resourceUsage), mtlResourceAddr]);
         return;
     }
     if (!entryMap) {
         EntryMap entryMap;
         entryMap.set(mapKey, resourceUsage);
         m_usagesForResource.set(mtlResourceAddr, entryMap);
-    }
+    } else
+        entryMap->set(mapKey, resourceUsage);
 }
 
-void RenderPassEncoder::addResourceToActiveResources(const TextureView& texture, BindGroupEntryUsage resourceUsage)
+void RenderPassEncoder::addResourceToActiveResources(const TextureView& texture, OptionSet<BindGroupEntryUsage> resourceUsage, WGPUTextureAspect textureAspect)
 {
-    return addResourceToActiveResources(texture.parentTexture(), resourceUsage, texture.baseMipLevel(), texture.baseArrayLayer(), texture.aspect());
+    addResourceToActiveResources(texture.parentTexture(), resourceUsage, texture.baseMipLevel(), texture.baseArrayLayer(), textureAspect);
+}
+
+void RenderPassEncoder::addResourceToActiveResources(const TextureView& texture, OptionSet<BindGroupEntryUsage> resourceUsage)
+{
+    WGPUTextureAspect textureAspect = texture.aspect();
+    if (textureAspect != WGPUTextureAspect_All) {
+        addResourceToActiveResources(texture.parentTexture(), resourceUsage, texture.baseMipLevel(), texture.baseArrayLayer(), textureAspect);
+        return;
+    }
+
+    addResourceToActiveResources(texture.parentTexture(), resourceUsage, texture.baseMipLevel(), texture.baseArrayLayer(), WGPUTextureAspect_DepthOnly);
+    addResourceToActiveResources(texture.parentTexture(), resourceUsage, texture.baseMipLevel(), texture.baseArrayLayer(), WGPUTextureAspect_StencilOnly);
+}
+
+void RenderPassEncoder::addResourceToActiveResources(const BindGroupEntryUsageData::Resource& resource, id<MTLResource> mtlResource, OptionSet<BindGroupEntryUsage> resourceUsage)
+{
+    WTF::switchOn(resource, [&](const WeakPtr<const Buffer>& buffer) {
+        if (buffer.get())
+            addResourceToActiveResources(buffer->buffer(), resourceUsage);
+        }, [&](const WeakPtr<const TextureView>& textureView) {
+            if (textureView.get())
+                addResourceToActiveResources(*textureView.get(), resourceUsage);
+        }, [&](const WeakPtr<const ExternalTexture>&) {
+            addResourceToActiveResources(mtlResource, resourceUsage);
+    });
 }
 
 bool RenderPassEncoder::runIndexBufferValidation(uint32_t firstInstance, uint32_t instanceCount)
@@ -659,7 +682,7 @@ void RenderPassEncoder::executeBundles(Vector<std::reference_wrapper<RenderBundl
                 ASSERT(resource.mtlResources.size() == resource.resourceUsages.size());
                 for (size_t i = 0, resourceCount = resource.mtlResources.size(); i < resourceCount; ++i) {
                     auto& resourceUsage = resource.resourceUsages[i];
-                    addResourceToActiveResources(resource.mtlResources[i], resourceUsage.usage);
+                    addResourceToActiveResources(resourceUsage.resource, resource.mtlResources[i], resourceUsage.usage);
                     setCommandEncoder(resourceUsage.resource);
                 }
             }
@@ -779,7 +802,7 @@ void RenderPassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup& group
         ASSERT(resource.mtlResources.size() == resource.resourceUsages.size());
         for (size_t i = 0, sz = resource.mtlResources.size(); i < sz; ++i) {
             auto& resourceUsage = resource.resourceUsages[i];
-            addResourceToActiveResources(resource.mtlResources[i], resourceUsage.usage);
+            addResourceToActiveResources(resourceUsage.resource, resource.mtlResources[i], resourceUsage.usage);
             setCommandEncoder(resourceUsage.resource);
         }
     }

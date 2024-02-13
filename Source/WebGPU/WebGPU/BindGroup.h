@@ -76,6 +76,7 @@ public:
 
     Device& device() const { return m_device; }
     static bool allowedUsage(const OptionSet<BindGroupEntryUsage>&);
+    static NSString* usageName(const OptionSet<BindGroupEntryUsage>&);
     static uint64_t makeEntryMapKey(uint32_t baseMipLevel, uint32_t baseArrayLayer, WGPUTextureAspect);
 
     const BindGroupLayout* bindGroupLayout() const;

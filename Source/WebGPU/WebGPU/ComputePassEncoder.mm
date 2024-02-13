@@ -82,11 +82,12 @@ struct EntryUsageData {
     uint32_t bindGroup;
 };
 using EntryMap = HashMap<uint64_t, EntryUsageData>;
-static bool addResourceToActiveResources(id<MTLResource> mtlResource, OptionSet<BindGroupEntryUsage> initialUsage, HashMap<void*, EntryMap>& usagesForResource, uint32_t bindGroup)
+using EntryMapContainer = HashMap<void*, EntryMap>;
+struct BindGroupId {
+    uint32_t bindGroup { 0 };
+};
+static bool addResourceToActiveResources(id<MTLResource> mtlResource, OptionSet<BindGroupEntryUsage> initialUsage, EntryMapContainer& usagesForResource, BindGroupId bindGroup, uint32_t baseMipLevel = 0, uint32_t baseArrayLayer = 0, WGPUTextureAspect aspect = WGPUTextureAspect_DepthOnly)
 {
-    uint32_t baseMipLevel = 0;
-    uint32_t baseArrayLayer = 0;
-    WGPUTextureAspect aspect = WGPUTextureAspect_All;
     if (isTextureBindGroupEntryUsage(initialUsage)) {
         ASSERT([mtlResource conformsToProtocol:@protocol(MTLTexture)]);
         id<MTLTexture> textureView = (id<MTLTexture>)mtlResource;
@@ -111,12 +112,12 @@ static bool addResourceToActiveResources(id<MTLResource> mtlResource, OptionSet<
         if (auto innerIt = it->value.find(mapKey); innerIt != it->value.end()) {
             auto existingUsage = innerIt->value.usage;
             resourceUsage.add(existingUsage);
-            if (innerIt->value.bindGroup != bindGroup) {
+            if (innerIt->value.bindGroup != bindGroup.bindGroup) {
                 if ((initialUsage == BindGroupEntryUsage::StorageTextureWriteOnly && existingUsage == BindGroupEntryUsage::StorageTextureWriteOnly) || (initialUsage == BindGroupEntryUsage::StorageTextureReadWrite && existingUsage == BindGroupEntryUsage::StorageTextureReadWrite))
                     return false;
             }
         } else
-            entryMap->set(mapKey, EntryUsageData { .usage = resourceUsage, .bindGroup = bindGroup });
+            entryMap->set(mapKey, EntryUsageData { .usage = resourceUsage, .bindGroup = bindGroup.bindGroup });
     }
 
     if (!BindGroup::allowedUsage(resourceUsage))
@@ -124,11 +125,35 @@ static bool addResourceToActiveResources(id<MTLResource> mtlResource, OptionSet<
 
     if (!entryMap) {
         EntryMap entryMap;
-        entryMap.set(mapKey, EntryUsageData { .usage = resourceUsage, .bindGroup = bindGroup });
+        entryMap.set(mapKey, EntryUsageData { .usage = resourceUsage, .bindGroup = bindGroup.bindGroup });
         usagesForResource.set(mtlResourceAddr, entryMap);
     }
 
     return true;
+}
+
+static bool addResourceToActiveResources(const TextureView& texture, OptionSet<BindGroupEntryUsage> resourceUsage, BindGroupId bindGroup, EntryMapContainer& usagesForResource)
+{
+    WGPUTextureAspect textureAspect = texture.aspect();
+    if (textureAspect != WGPUTextureAspect_All)
+        return addResourceToActiveResources(texture.parentTexture(), resourceUsage, usagesForResource, bindGroup, texture.baseMipLevel(), texture.baseArrayLayer(), textureAspect);
+
+    return addResourceToActiveResources(texture.parentTexture(), resourceUsage, usagesForResource, bindGroup, texture.baseMipLevel(), texture.baseArrayLayer(), WGPUTextureAspect_DepthOnly) && addResourceToActiveResources(texture.parentTexture(), resourceUsage, usagesForResource, bindGroup, texture.baseMipLevel(), texture.baseArrayLayer(), WGPUTextureAspect_StencilOnly);
+}
+
+static bool addResourceToActiveResources(const BindGroupEntryUsageData::Resource& resource, id<MTLResource> mtlResource, OptionSet<BindGroupEntryUsage> resourceUsage, BindGroupId bindGroup, EntryMapContainer& usagesForResource)
+{
+    return WTF::switchOn(resource, [&](const WeakPtr<const Buffer>& buffer) {
+        if (buffer.get())
+            return addResourceToActiveResources(buffer->buffer(), resourceUsage, usagesForResource, bindGroup);
+        return false;
+    }, [&](const WeakPtr<const TextureView>& textureView) {
+        if (textureView.get())
+            return addResourceToActiveResources(*textureView.get(), resourceUsage, bindGroup, usagesForResource);
+        return false;
+    }, [&](const WeakPtr<const ExternalTexture>&) {
+        return addResourceToActiveResources(mtlResource, resourceUsage, usagesForResource, bindGroup);
+    });
 }
 
 void ComputePassEncoder::executePreDispatchCommands(id<MTLBuffer> indirectBuffer)
@@ -146,7 +171,7 @@ void ComputePassEncoder::executePreDispatchCommands(id<MTLBuffer> indirectBuffer
 
     HashMap<void*, EntryMap> usagesForResource;
     if (indirectBuffer)
-        addResourceToActiveResources(indirectBuffer, BindGroupEntryUsage::Input, usagesForResource, INT32_MAX);
+        addResourceToActiveResources(indirectBuffer, BindGroupEntryUsage::Input, usagesForResource, BindGroupId { INT32_MAX });
 
     auto& pipelineLayout = m_pipeline->pipelineLayout();
     auto pipelineLayoutCount = pipelineLayout.numberOfBindGroupLayouts();
@@ -180,7 +205,7 @@ void ComputePassEncoder::executePreDispatchCommands(id<MTLBuffer> indirectBuffer
                 if (!bindingAccess)
                     continue;
 
-                if (!addResourceToActiveResources(mtlResource, usageData.usage, usagesForResource, bindGroupIndex)) {
+                if (!addResourceToActiveResources(usageData.resource, mtlResource, usageData.usage, BindGroupId { bindGroupIndex }, usagesForResource)) {
                     makeInvalid();
                     return;
                 }

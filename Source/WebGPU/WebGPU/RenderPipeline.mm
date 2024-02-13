@@ -775,7 +775,7 @@ static WGPUTextureFormat convertFormat(WGSL::TexelFormat format)
 
 NSString* Device::addPipelineLayouts(Vector<Vector<WGPUBindGroupLayoutEntry>>& pipelineEntries, const std::optional<WGSL::PipelineLayout>& optionalPipelineLayout)
 {
-    if (!optionalPipelineLayout)
+    if (!optionalPipelineLayout || !optionalPipelineLayout->bindGroupLayouts.size())
         return nil;
 
     auto &pipelineLayout = *optionalPipelineLayout;

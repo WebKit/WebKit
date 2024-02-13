@@ -1185,9 +1185,37 @@ bool BindGroup::allowedUsage(const OptionSet<BindGroupEntryUsage>& allowedUsage)
     return true;
 }
 
-uint64_t BindGroup::makeEntryMapKey(uint32_t baseMipLevel, uint32_t baseArrayLayer, WGPUTextureAspect)
+NSString* BindGroup::usageName(const OptionSet<BindGroupEntryUsage>& allowedUsage)
 {
-    return static_cast<uint64_t>(baseMipLevel) | (32 << static_cast<uint64_t>(baseArrayLayer));
+    NSString* result = @"";
+    if (allowedUsage & BindGroupEntryUsage::Input)
+        result = [result stringByAppendingString:@"Input "];
+    if (allowedUsage & BindGroupEntryUsage::Constant)
+        result = [result stringByAppendingString:@"Constant "];
+    if (allowedUsage & BindGroupEntryUsage::Storage)
+        result = [result stringByAppendingString:@"Storage "];
+    if (allowedUsage & BindGroupEntryUsage::StorageRead)
+        result = [result stringByAppendingString:@"StorageRead "];
+    if (allowedUsage & BindGroupEntryUsage::Attachment)
+        result = [result stringByAppendingString:@"Attachment "];
+    if (allowedUsage & BindGroupEntryUsage::AttachmentRead)
+        result = [result stringByAppendingString:@"AttachmentRead "];
+    if (allowedUsage & BindGroupEntryUsage::ConstantTexture)
+        result = [result stringByAppendingString:@"ConstantTexture "];
+    if (allowedUsage & BindGroupEntryUsage::StorageTextureWriteOnly)
+        result = [result stringByAppendingString:@"StorageTextureWriteOnly "];
+    if (allowedUsage & BindGroupEntryUsage::StorageTextureRead)
+        result = [result stringByAppendingString:@"StorageTextureRead "];
+    if (allowedUsage & BindGroupEntryUsage::StorageTextureReadWrite)
+        result = [result stringByAppendingString:@"StorageTextureReadWrite "];
+
+    return result;
+}
+
+uint64_t BindGroup::makeEntryMapKey(uint32_t baseMipLevel, uint32_t baseArrayLayer, WGPUTextureAspect aspect)
+{
+    RELEASE_ASSERT(aspect);
+    return (static_cast<uint64_t>(aspect) - 1) | (static_cast<uint64_t>(baseMipLevel) << 1) | (static_cast<uint64_t>(baseArrayLayer) << 32);
 }
 
 } // namespace WebGPU

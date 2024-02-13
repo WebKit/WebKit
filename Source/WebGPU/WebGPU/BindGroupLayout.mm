@@ -514,9 +514,9 @@ NSString* BindGroupLayout::errorValidatingBindGroupCompatibility(const BindGroup
     auto& entries = m_sortedEntries;
     auto& otherEntries = otherLayout.sortedEntries();
     if (entries.size() != otherEntries.size())
-        return @"entries size mismatch";
+        return [NSString stringWithFormat:@"entries.size()(%zu) > otherEntries.size()(%zu)", entries.size(), otherEntries.size()];
 
-    auto entryCount = otherEntries.size();
+    auto entryCount = entries.size();
     for (size_t i = 0; i < entryCount; ++i) {
         const auto* entry = entries[i];
         const auto* otherEntry = otherEntries[i];

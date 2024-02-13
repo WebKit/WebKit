@@ -223,7 +223,7 @@ void RenderBundleEncoder::addResource(RenderBundle::ResourcesContainer* resource
         if (resource.renderStages && mtlResource)
             [m_renderPassEncoder->renderCommandEncoder() useResource:mtlResource usage:resource.usage stages:resource.renderStages];
         ASSERT(resource.entryUsage.hasExactlyOneBitSet());
-        m_renderPassEncoder->addResourceToActiveResources(mtlResource, *resource.entryUsage.toSingleValue());
+        m_renderPassEncoder->addResourceToActiveResources(resource.resource, mtlResource, resource.entryUsage);
         m_renderPassEncoder->setCommandEncoder(resource.resource);
         return;
     }
@@ -233,7 +233,6 @@ void RenderBundleEncoder::addResource(RenderBundle::ResourcesContainer* resource
         existingResource.renderStages |= resource.renderStages;
         existingResource.entryUsage |= resource.entryUsage;
         existingResource.binding = resource.binding;
-        // !! assert resource is the same
     } else
         [resources setObject:resource forKey:mtlResource];
 }
