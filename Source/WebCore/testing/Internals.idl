@@ -1060,7 +1060,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     [Conditional=WEB_RTC] undefined setWebRTCVP9Support(boolean supportVP9Profile0, boolean supportVP9Profile2);
     [Conditional=WEB_RTC] undefined disableWebRTCHardwareVP9();
     [Conditional=WEB_RTC] boolean isSupportingVP9HardwareDecoder();
-    [Conditional=WEB_RTC] Promise<boolean> isVP9HardwareDeccoderUsed(RTCPeerConnection connection);
+    [Conditional=WEB_RTC] Promise<boolean> isVP9HardwareDecoderUsed(RTCPeerConnection connection);
     [Conditional=WEB_RTC] undefined setSFrameCounter(RTCRtpSFrameTransform transform, DOMString counter);
     [Conditional=WEB_RTC] unsigned long long sframeCounter(RTCRtpSFrameTransform transform);
     [Conditional=WEB_RTC] unsigned long long sframeKeyId(RTCRtpSFrameTransform transform);

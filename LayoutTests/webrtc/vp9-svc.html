@@ -67,7 +67,7 @@ async function testVP9Decoder(useVP9SVC)
        await new Promise(resolve => setTimeout(resolve, 50));
 
     if (window.internals && internals.isSupportingVP9HardwareDecoder())
-        assert_equals(await internals.isVP9HardwareDeccoderUsed(receivingConnection), !useVP9SVC, "isVP9HardwareDeccoderUsed");
+        assert_equals(await internals.isVP9HardwareDecoderUsed(receivingConnection), !useVP9SVC, "isVP9HardwareDecoderUsed");
 
     assert_equals(video.videoWidth, 1280);
     assert_equals(video.videoHeight, 720);

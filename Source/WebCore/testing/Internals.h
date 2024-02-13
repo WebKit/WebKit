@@ -721,7 +721,7 @@ public:
     void setWebRTCVP9Support(bool supportVP9Profile0, bool supportVP9Profile2);
     void disableWebRTCHardwareVP9();
     bool isSupportingVP9HardwareDecoder() const;
-    void isVP9HardwareDeccoderUsed(RTCPeerConnection&, DOMPromiseDeferred<IDLBoolean>&&);
+    void isVP9HardwareDecoderUsed(RTCPeerConnection&, DOMPromiseDeferred<IDLBoolean>&&);
 
     void setSFrameCounter(RTCRtpSFrameTransform&, const String&);
     uint64_t sframeCounter(const RTCRtpSFrameTransform&);

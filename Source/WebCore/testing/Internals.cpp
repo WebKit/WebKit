@@ -1779,7 +1779,7 @@ bool Internals::isSupportingVP9HardwareDecoder() const
     return false;
 }
 
-void Internals::isVP9HardwareDeccoderUsed(RTCPeerConnection& connection, DOMPromiseDeferred<IDLBoolean>&& promise)
+void Internals::isVP9HardwareDecoderUsed(RTCPeerConnection& connection, DOMPromiseDeferred<IDLBoolean>&& promise)
 {
     connection.gatherDecoderImplementationName([promise = WTFMove(promise)](auto&& name) mutable {
         promise.resolve(!name.contains("fallback from:"_s) && !name.contains("libvpx"_s));

@@ -42,7 +42,7 @@ promise_test(async t => {
     await video.play();
 
     if (window.internals)
-        assert_false(await internals.isVP9HardwareDeccoderUsed(receivingConnection));
+        assert_false(await internals.isVP9HardwareDecoderUsed(receivingConnection));
 }, "Check decoder is libvpx");
         </script>
     </body>
