@@ -143,6 +143,7 @@ SourceBufferPrivateAVFObjC::~SourceBufferPrivateAVFObjC()
     destroyStreamDataParser();
     destroyRenderers();
     clearTracks();
+    m_listener->invalidate();
 
     abort();
 }
@@ -502,11 +503,6 @@ void SourceBufferPrivateAVFObjC::destroyRenderers()
         if (m_cdmInstance && shouldAddContentKeyRecipients())
             [m_cdmInstance->contentKeySession() removeContentKeyRecipient:renderer.get()];
 #endif
-    }
-
-    if (m_listener) {
-        m_listener->invalidate();
-        m_listener = nullptr;
     }
 
     m_audioRenderers.clear();
@@ -1249,7 +1245,6 @@ void SourceBufferPrivateAVFObjC::setVideoLayer(AVSampleBufferDisplayLayer* layer
     ASSERT(!layer || !m_decompressionSession || hasSelectedVideo());
 
     if (m_videoLayer) {
-        ASSERT(m_listener);
         m_videoLayer->flush();
         m_videoLayer->stopRequestingMediaData();
         m_listener->stopObservingLayer(m_videoLayer->displayLayer());
