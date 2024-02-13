@@ -1145,7 +1145,7 @@ bool HTMLSelectElement::platformHandleKeydownEvent(KeyboardEvent* event)
             // Calling focus() may cause us to lose our renderer. Return true so
             // that our caller doesn't process the event further, but don't set
             // the event as handled.
-            CheckedPtr renderer = dynamicDowncast<RenderMenuList>(this->renderer());
+            WeakPtr renderer = dynamicDowncast<RenderMenuList>(this->renderer());
             if (!renderer)
                 return true;
 
@@ -1154,7 +1154,7 @@ bool HTMLSelectElement::platformHandleKeydownEvent(KeyboardEvent* event)
             // gets called from RenderMenuList::valueChanged, which gets called
             // after the user makes a selection from the menu.
             saveLastSelection();
-            renderer->showPopup();
+            renderer->showPopup(); // showPopup() may run JS and cause the renderer to get destroyed.
             event->setDefaultHandled();
         }
         return true;
@@ -1244,7 +1244,7 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event& event)
                 protectedDocument()->updateStyleIfNeeded();
 
                 // Calling focus() may remove the renderer or change the renderer type.
-                CheckedPtr renderer = dynamicDowncast<RenderMenuList>(this->renderer());
+                WeakPtr renderer = dynamicDowncast<RenderMenuList>(this->renderer());
                 if (!renderer)
                     return;
 
@@ -1253,7 +1253,7 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event& event)
                 // gets called from RenderMenuList::valueChanged, which gets called
                 // after the user makes a selection from the menu.
                 saveLastSelection();
-                renderer->showPopup();
+                renderer->showPopup(); // showPopup() may run JS and cause the renderer to get destroyed.
                 handled = true;
             }
         } else if (RenderTheme::singleton().popsMenuByArrowKeys()) {
@@ -1262,7 +1262,7 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event& event)
                 protectedDocument()->updateStyleIfNeeded();
 
                 // Calling focus() may remove the renderer or change the renderer type.
-                CheckedPtr renderer = dynamicDowncast<RenderMenuList>(this->renderer());
+                WeakPtr renderer = dynamicDowncast<RenderMenuList>(this->renderer());
                 if (!renderer)
                     return;
 
@@ -1271,7 +1271,7 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event& event)
                 // gets called from RenderMenuList::valueChanged, which gets called
                 // after the user makes a selection from the menu.
                 saveLastSelection();
-                renderer->showPopup();
+                renderer->showPopup(); // showPopup() may run JS and cause the renderer to get destroyed.
                 handled = true;
             } else if (keyCode == '\r') {
                 if (RefPtr form = this->form())
@@ -1290,7 +1290,7 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event& event)
 #if !PLATFORM(IOS_FAMILY)
         protectedDocument()->updateStyleIfNeeded();
 
-        if (CheckedPtr menuList = dynamicDowncast<RenderMenuList>(renderer())) {
+        if (WeakPtr menuList = dynamicDowncast<RenderMenuList>(renderer())) {
             ASSERT(!menuList->popupIsVisible());
             // Save the selection so it can be compared to the new
             // selection when we call onChange during selectOption,
@@ -1298,7 +1298,7 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event& event)
             // which gets called after the user makes a selection from
             // the menu.
             saveLastSelection();
-            menuList->showPopup();
+            menuList->showPopup(); // showPopup() may run JS and cause the renderer to get destroyed.
         }
 #endif
         event.setDefaultHandled();
@@ -1696,8 +1696,8 @@ ExceptionOr<void> HTMLSelectElement::showPicker()
         return Exception { ExceptionCode::NotAllowedError, "Select showPicker() requires a user gesture."_s };
 
 #if !PLATFORM(IOS_FAMILY)
-    if (CheckedPtr renderMenuList = dynamicDowncast<RenderMenuList>(renderer()))
-        renderMenuList->showPopup();
+    if (WeakPtr renderMenuList = dynamicDowncast<RenderMenuList>(renderer()))
+        renderMenuList->showPopup(); // showPopup() may run JS and cause the renderer to get destroyed.
 #endif
 
     return { };
