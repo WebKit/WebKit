@@ -1479,6 +1479,7 @@ PDFDocumentLayout::DisplayMode UnifiedPDFPlugin::displayModeFromContextMenuItemT
 auto UnifiedPDFPlugin::toContextMenuItemTag(int tagValue) const -> ContextMenuItemTag
 {
     static constexpr std::array regularContextMenuItemTags {
+        ContextMenuItemTag::Copy,
         ContextMenuItemTag::OpenWithPreview,
         ContextMenuItemTag::SinglePage,
         ContextMenuItemTag::SinglePageContinuous,
@@ -1501,6 +1502,11 @@ PDFContextMenu UnifiedPDFPlugin::createContextMenu(const IntPoint& contextMenuPo
     auto addSeparator = [&] {
         menuItems.append({ String(), 0, enumToUnderlyingType(ContextMenuItemTag::Invalid), ContextMenuItemEnablement::Disabled, ContextMenuItemHasAction::No, ContextMenuItemIsSeparator::Yes });
     };
+
+    if ([m_pdfDocument allowsCopying] && m_currentSelection) {
+        menuItems.append({ WebCore::contextMenuItemPDFCopy(), 0, enumToUnderlyingType(ContextMenuItemTag::Copy), ContextMenuItemEnablement::Enabled, ContextMenuItemHasAction::Yes, ContextMenuItemIsSeparator::No });
+        addSeparator();
+    }
 
     menuItems.append({ WebCore::contextMenuItemPDFOpenWithPreview(), 0,
         enumToUnderlyingType(ContextMenuItemTag::OpenWithPreview),
@@ -1529,6 +1535,9 @@ PDFContextMenu UnifiedPDFPlugin::createContextMenu(const IntPoint& contextMenuPo
 void UnifiedPDFPlugin::performContextMenuAction(ContextMenuItemTag tag)
 {
     switch (tag) {
+    case ContextMenuItemTag::Copy:
+        performCopyEditingOperation();
+        break;
     // The OpenWithPreview action is handled in the UI Process.
     case ContextMenuItemTag::OpenWithPreview: return;
     case ContextMenuItemTag::SinglePage:

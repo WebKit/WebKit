@@ -174,11 +174,12 @@ private:
     bool takeFindStringFromSelection();
     bool forwardEditingCommandToEditor(const String& commandName, const String& argument) const;
     void selectAll();
-    bool performCopyEditingOperation() const;
+    [[maybe_unused]] bool performCopyEditingOperation() const;
 
     // Context Menu
     enum class ContextMenuItemTag : int8_t {
         Invalid = -1,
+        Copy,
         OpenWithPreview,
         SinglePage,
         SinglePageContinuous,

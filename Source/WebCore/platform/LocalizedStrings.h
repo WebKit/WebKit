@@ -176,6 +176,7 @@ namespace WebCore {
 #endif
 #if ENABLE(UNIFIED_PDF)
     WEBCORE_EXPORT String contextMenuItemPDFOpenWithPreview();
+    WEBCORE_EXPORT String contextMenuItemPDFCopy();
 #endif
 #if ENABLE(PDFJS) || ENABLE(UNIFIED_PDF)
     WEBCORE_EXPORT String contextMenuItemPDFSinglePage();
