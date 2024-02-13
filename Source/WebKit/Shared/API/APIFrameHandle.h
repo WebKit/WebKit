@@ -37,12 +37,10 @@ public:
     {
         return adoptRef(*new FrameHandle(frameID, false));
     }
-
     static Ref<FrameHandle> createAutoconverting(WebCore::FrameIdentifier frameID)
     {
         return adoptRef(*new FrameHandle(frameID, true));
     }
-
     static Ref<FrameHandle> create(WebCore::FrameIdentifier frameID, bool autoconverting)
     {
         return adoptRef(*new FrameHandle(frameID, autoconverting));
@@ -52,7 +50,6 @@ public:
         : m_frameID(frameID)
         , m_isAutoconverting(isAutoconverting)
     {
-        ASSERT(m_frameID.object().isValid());
     }
 
     WebCore::FrameIdentifier frameID() const { return m_frameID; }

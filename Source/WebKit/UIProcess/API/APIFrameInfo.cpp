@@ -41,10 +41,7 @@ Ref<FrameInfo> FrameInfo::create(WebKit::FrameInfoData&& frameInfoData, RefPtr<W
 
 FrameInfo::FrameInfo(WebKit::FrameInfoData&& data, RefPtr<WebKit::WebPageProxy>&& page)
     : m_data(WTFMove(data))
-    , m_page(WTFMove(page))
-{
-    ASSERT(m_data.frameID.object().isValid());
-}
+    , m_page(WTFMove(page)) { }
 
 FrameInfo::~FrameInfo() = default;
 

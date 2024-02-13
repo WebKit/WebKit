@@ -48,10 +48,7 @@ public:
 private:
     FrameTreeNode(WebKit::FrameTreeNodeData&& data, WebKit::WebPageProxy& page)
         : m_data(WTFMove(data))
-        , m_page(page)
-    {
-        ASSERT(m_data.info.frameID.object().isValid());
-    }
+        , m_page(page) { }
 
     const WebKit::FrameTreeNodeData m_data;
     Ref<WebKit::WebPageProxy> m_page;
