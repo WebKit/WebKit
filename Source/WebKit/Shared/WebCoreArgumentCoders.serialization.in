@@ -7762,3 +7762,8 @@ class WebCore::SerializedPlatformDataCueValue {
     std::variant<std::nullptr_t, RetainPtr<NSString>, RetainPtr<NSDate>, RetainPtr<NSNumber>, RetainPtr<NSData>> value;
 #endif
 };
+
+header: <WebCore/SharedBuffer.h>
+[RefCounted, CustomHeader, CreateUsing=fromIPCData] class WebCore::FragmentedSharedBuffer {
+    std::variant<std::optional<WebCore::SharedMemoryHandle>, Vector<std::span<const uint8_t>>> toIPCData();
+};

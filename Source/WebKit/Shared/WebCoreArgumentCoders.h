@@ -156,11 +156,6 @@ template<> struct ArgumentCoder<WebCore::CurlProxySettings> {
 };
 #endif
 
-template<> struct ArgumentCoder<WebCore::FragmentedSharedBuffer> {
-    static void encode(Encoder&, const WebCore::FragmentedSharedBuffer&);
-    static std::optional<Ref<WebCore::FragmentedSharedBuffer>> decode(Decoder&);
-};
-
 #if USE(AVFOUNDATION)
 
 template<> struct ArgumentCoder<RetainPtr<CVPixelBufferRef>> {

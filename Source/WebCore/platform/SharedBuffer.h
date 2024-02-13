@@ -71,6 +71,7 @@ namespace WebCore {
 
 class SharedBuffer;
 class SharedBufferDataView;
+class SharedMemoryHandle;
 
 // Data wrapped by a DataSegment should be immutable because it can be referenced by other objects.
 // To modify or combine the data, allocate a new DataSegment.
@@ -158,6 +159,8 @@ private:
 
 class FragmentedSharedBuffer : public ThreadSafeRefCounted<FragmentedSharedBuffer> {
 public:
+    using IPCData = std::variant<std::optional<WebCore::SharedMemoryHandle>, Vector<std::span<const uint8_t>>>;
+
     WEBCORE_EXPORT static Ref<FragmentedSharedBuffer> create();
     WEBCORE_EXPORT static Ref<FragmentedSharedBuffer> create(const uint8_t*, size_t);
     static Ref<FragmentedSharedBuffer> create(const char* data, size_t size) { return create(reinterpret_cast<const uint8_t*>(data), size); }
@@ -165,6 +168,7 @@ public:
     WEBCORE_EXPORT static Ref<FragmentedSharedBuffer> create(Ref<SharedBuffer>&&);
     WEBCORE_EXPORT static Ref<FragmentedSharedBuffer> create(Vector<uint8_t>&&);
     WEBCORE_EXPORT static Ref<FragmentedSharedBuffer> create(DataSegment::Provider&&);
+    WEBCORE_EXPORT static std::optional<Ref<FragmentedSharedBuffer>> fromIPCData(IPCData&&);
 
 #if USE(FOUNDATION)
     WEBCORE_EXPORT RetainPtr<NSArray> createNSDataArray() const;
@@ -228,6 +232,8 @@ public:
     WEBCORE_EXPORT bool operator==(const FragmentedSharedBuffer&) const;
 
     WEBCORE_EXPORT Ref<SharedBuffer> makeContiguous() const;
+
+    WEBCORE_EXPORT IPCData toIPCData() const;
 
 protected:
     friend class SharedBuffer;
