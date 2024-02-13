@@ -23,22 +23,23 @@
 * THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-import Foundation
 import CryptoKit
+import Foundation
 
-@objc(WebCryptoAesGcmErrorCodes)
-public enum AesGcmErrorCodes: Int {
-    case Success = 0
-    case WrongTagSize = 1
-    case EncryptionFailed = 2
-    case EncryptionResultNil = 3
-    case InvalidArgument = 4
-    case TooBigArguments = 5
+@objc(WebCryptoErrorCodes)
+public enum ErrorCodes: Int {
+    case success = 0
+    case wrongTagSize = 1
+    case encryptionFailed = 2
+    case encryptionResultNil = 3
+    case invalidArgument = 4
+    case tooBigArguments = 5
+    case decryptionFailed = 6
 }
 
 @objc(WebCryptoAesGcm)
 public final class AesGcm: NSObject {
-    
+
     @objc public static func encrypt(
         _ key: UnsafePointer<UInt8>,
         keySize: UInt,
@@ -48,47 +49,138 @@ public final class AesGcm: NSObject {
         additionalDataSize: UInt,
         plainText: UnsafePointer<UInt8>,
         plainTextSize: UInt,
-        cipherText: UnsafeMutablePointer<UInt8>) -> AesGcmErrorCodes
-    {
+        cipherText: UnsafeMutablePointer<UInt8>
+    ) -> ErrorCodes {
         do {
             if keySize > Int.max
-                || ivSize > Int.max 
+                || ivSize > Int.max
                 || plainTextSize > Int.max
-                || additionalDataSize > Int.max {
-                return AesGcmErrorCodes.TooBigArguments
+                || additionalDataSize > Int.max
+            {
+                return .tooBigArguments
             }
             if ivSize == 0 {
-                return AesGcmErrorCodes.InvalidArgument
+                return .invalidArgument
             }
-            let zeroArray = [UInt8](repeating: 0, count: 0)
             let nonce = try AES.GCM.Nonce(data: UnsafeBufferPointer(start: iv, count: Int(ivSize)))
             var message = UnsafeBufferPointer(start: plainText, count: Int(plainTextSize))
+            let zeroArray = [UInt8](repeating: 0, count: 0)
             if plainTextSize == 0 {
-                zeroArray.withUnsafeBufferPointer { ptr in 
+                zeroArray.withUnsafeBufferPointer { ptr in
                     message = ptr
                 }
             }
-            let symKey = SymmetricKey(data: UnsafeBufferPointer(start: key, count: Int(keySize)))
+            let symKey = SymmetricKey(
+                data: UnsafeBufferPointer(start: key, count: Int(keySize)))
             let sealedBox: AES.GCM.SealedBox
             if additionalDataSize > 0 {
                 sealedBox = try AES.GCM.seal(
                     message,
-                    using: symKey, 
+                    using: symKey,
                     nonce: nonce,
-                    authenticating: UnsafeBufferPointer(start: additionalData, count: Int(additionalDataSize))
+                    authenticating: UnsafeBufferPointer(
+                        start: additionalData, count: Int(additionalDataSize))
                 )
             } else {
                 sealedBox = try AES.GCM.seal(
                     message,
-                    using: symKey, 
+                    using: symKey,
                     nonce: nonce
                 )
             }
-            sealedBox.ciphertext.copyBytes(to: cipherText, count: Int(plainTextSize));
-            sealedBox.tag.copyBytes(to: cipherText + Int(plainTextSize), count: sealedBox.tag.count);
+            sealedBox.ciphertext.copyBytes(to: cipherText, count: Int(plainTextSize))
+            sealedBox.tag.copyBytes(to: cipherText + Int(plainTextSize), count: sealedBox.tag.count)
         } catch {
-            return AesGcmErrorCodes.EncryptionFailed
+            return .encryptionFailed
         }
-        return AesGcmErrorCodes.Success
+        return .success
     }
 }
+
+@objc(WebCryptoAesKwReturnValue)
+public final class AesKwReturnValue: NSObject {
+    @objc public var errCode: ErrorCodes = ErrorCodes.success
+    @objc public var outputSize: UInt64 = 0
+}
+
+@objc(WebCryptoAesKw)
+public final class AesKw: NSObject {
+    @objc public static func wrap(
+        _ key: UnsafePointer<UInt8>,
+        keySize: UInt,
+        data: UnsafePointer<UInt8>,
+        dataSize: UInt,
+        cipherText: UnsafeMutablePointer<UInt8>,
+        cipherTextSize: UInt64
+    ) -> AesKwReturnValue {
+        let rv = AesKwReturnValue()
+        rv.errCode = .success
+        if keySize > Int.max
+            || dataSize > Int.max
+            || cipherTextSize > Int.max
+            || keySize == 0
+            || dataSize == 0
+            || cipherTextSize == 0
+        {
+            rv.errCode = .invalidArgument
+            return rv
+        }
+        do {
+            let cipher = try AES.KeyWrap.wrap(
+                SymmetricKey(data: UnsafeBufferPointer(start: data, count: Int(dataSize))),
+                using: SymmetricKey(data: UnsafeBufferPointer(start: key, count: Int(keySize))))
+            if cipher.count > Int(cipherTextSize) {
+                rv.errCode = .encryptionFailed
+                return rv
+            }
+            cipher.copyBytes(to: cipherText, count: cipher.count)
+            rv.errCode = .success
+            rv.outputSize = UInt64(cipher.count)
+        } catch {
+            rv.errCode = .encryptionFailed
+            return rv
+        }
+        return rv
+    }
+
+    @objc public static func unwrap(
+        _ key: UnsafePointer<UInt8>,
+        keySize: UInt,
+        cipherText: UnsafePointer<UInt8>,
+        cipherTextSize: UInt,
+        data: UnsafeMutablePointer<UInt8>,
+        dataSize: UInt64
+    ) -> AesKwReturnValue {
+        let rv = AesKwReturnValue()
+        rv.errCode = ErrorCodes.success
+        if keySize > Int.max
+            || dataSize > Int.max
+            || cipherTextSize > Int.max
+            || keySize == 0
+            || dataSize == 0
+            || cipherTextSize == 0
+        {
+            rv.errCode = .invalidArgument
+            return rv
+        }
+        do {
+            let unwrappedKey = try AES.KeyWrap.unwrap(
+                UnsafeBufferPointer(start: cipherText, count: Int(cipherTextSize)),
+                using: SymmetricKey(data: UnsafeBufferPointer(start: key, count: Int(keySize))))
+            if (unwrappedKey.bitCount / 8) > Int(dataSize) {
+                rv.errCode = .encryptionFailed
+                return rv
+            }
+            unwrappedKey.withUnsafeBytes { buf in
+                let mutable = UnsafeMutableRawBufferPointer(start: data, count: Int(dataSize))
+                mutable.copyBytes(from: buf)
+            }
+            rv.errCode = .success
+            rv.outputSize = UInt64(unwrappedKey.bitCount / 8)
+        } catch {
+            rv.errCode = .decryptionFailed
+            return rv
+        }
+        return rv
+    }
+}  // AesKw

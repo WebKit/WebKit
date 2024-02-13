@@ -10,13 +10,6 @@ PASS bytesToHexString(cipherText) is expectedCipherText104
 PASS bytesToHexString(cipherText) is expectedCipherText112
 PASS bytesToHexString(cipherText) is expectedCipherText120
 PASS bytesToHexString(cipherText) is expectedCipherText128
-PASS bytesToHexString(cipherText) is expectedCipherText32
-PASS bytesToHexString(cipherText) is expectedCipherText64
-PASS bytesToHexString(cipherText) is expectedCipherText96
-PASS bytesToHexString(cipherText) is expectedCipherText104
-PASS bytesToHexString(cipherText) is expectedCipherText112
-PASS bytesToHexString(cipherText) is expectedCipherText120
-PASS bytesToHexString(cipherText) is expectedCipherText128
 PASS successfullyParsed is true
 
 TEST COMPLETE

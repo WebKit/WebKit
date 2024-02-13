@@ -155,7 +155,7 @@ crypto/cocoa/CryptoAlgorithmAESCBCMac.cpp
 crypto/cocoa/CryptoAlgorithmAESCFBMac.cpp
 crypto/cocoa/CryptoAlgorithmAESCTRMac.cpp
 crypto/cocoa/CryptoAlgorithmAESGCMMac.mm
-crypto/cocoa/CryptoAlgorithmAESKWMac.cpp
+crypto/cocoa/CryptoAlgorithmAESKWMac.mm
 crypto/cocoa/CryptoAlgorithmECDHMac.cpp
 crypto/cocoa/CryptoAlgorithmECDSAMac.cpp
 crypto/cocoa/CryptoAlgorithmEd25519Cocoa.cpp

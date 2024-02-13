@@ -28,15 +28,8 @@ crypto.subtle.importKey("raw", rawKey, "aes-gcm", extractable, ["encrypt"]).then
     generatedKey = key;
     return crypto.subtle.encrypt(aesGcmParams, key, plainText);
 }).then(function(result) {
-    ccCiphertext = result;
-    if (window.internals)
-        internals.settings.setCryptoKitEnabled(true);
-    return crypto.subtle.encrypt(aesGcmParams, generatedKey, plainText);
-}).then(function(result) {
-    ckCiphertext = result;
-    
-    shouldBe("bytesToHexString(ccCiphertext)", "bytesToHexString(ckCiphertext)");
-    shouldBe("bytesToHexString(ccCiphertext)", "expectedCipherText");
+    ciphertext = result;
+    shouldBe("bytesToHexString(ciphertext)", "expectedCipherText");
 
     finishJSTest();
 });

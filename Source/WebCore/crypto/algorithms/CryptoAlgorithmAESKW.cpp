@@ -150,14 +150,13 @@ void CryptoAlgorithmAESKW::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& ke
     callback(format, WTFMove(result));
 }
 
-void CryptoAlgorithmAESKW::wrapKey(Ref<CryptoKey>&& key, Vector<uint8_t>&& data, VectorCallback&& callback, ExceptionCallback&& exceptionCallback)
+void CryptoAlgorithmAESKW::wrapKey(Ref<CryptoKey>&& key, Vector<uint8_t>&& data, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, bool useCryptoKit)
 {
     if (data.size() % 8) {
         exceptionCallback(ExceptionCode::OperationError);
         return;
     }
-
-    auto result = platformWrapKey(downcast<CryptoKeyAES>(key.get()), WTFMove(data));
+    auto result = platformWrapKey(downcast<CryptoKeyAES>(key.get()), WTFMove(data), useCryptoKit);
     if (result.hasException()) {
         exceptionCallback(result.releaseException().code());
         return;
@@ -166,9 +165,9 @@ void CryptoAlgorithmAESKW::wrapKey(Ref<CryptoKey>&& key, Vector<uint8_t>&& data,
     callback(result.releaseReturnValue());
 }
 
-void CryptoAlgorithmAESKW::unwrapKey(Ref<CryptoKey>&& key, Vector<uint8_t>&& data, VectorCallback&& callback, ExceptionCallback&& exceptionCallback)
+void CryptoAlgorithmAESKW::unwrapKey(Ref<CryptoKey>&& key, Vector<uint8_t>&& data, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, bool useCryptoKit)
 {
-    auto result = platformUnwrapKey(downcast<CryptoKeyAES>(key.get()), WTFMove(data));
+    auto result = platformUnwrapKey(downcast<CryptoKeyAES>(key.get()), WTFMove(data), useCryptoKit);
     if (result.hasException()) {
         exceptionCallback(result.releaseException().code());
         return;

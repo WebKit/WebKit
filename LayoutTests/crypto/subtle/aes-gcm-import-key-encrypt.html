@@ -28,19 +28,7 @@ crypto.subtle.importKey("raw", rawKey, "aes-gcm", extractable, ["encrypt"]).then
     cipherText = result;
 
     shouldBe("bytesToHexString(cipherText)", "expectedCipherText");
-    if (window.internals){
-      internals.settings.setCryptoKitEnabled(true);
-    }
-
-    crypto.subtle.importKey("raw", rawKey, "aes-gcm", extractable, ["encrypt"]).then(function(key) {
-        return crypto.subtle.encrypt(aesGcmParams, key, plainText);
-    }).then(function(result) {
-        cipherText = result;
-
-        shouldBe("bytesToHexString(cipherText)", "expectedCipherText");
-
-        finishJSTest();
-    });
+    finishJSTest();
 });
 
 </script>

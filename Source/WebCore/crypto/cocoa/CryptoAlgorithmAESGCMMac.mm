@@ -55,7 +55,7 @@ static ExceptionOr<Vector<uint8_t>> encryptCryptoKitAESGCM(const Vector<uint8_t>
     if (desiredTagLengthInBytes > CryptoAlgorithmAESGCM::DefaultTagLength / 8)
         return Exception { ExceptionCode::OperationError };
     Vector<uint8_t> cipherText(plainText.size() + CryptoAlgorithmAESGCM::DefaultTagLength);
-    if (WebCryptoAesGcmErrorCodesSuccess != [WebCryptoAesGcm encrypt:key.data() keySize:key.size() iv:iv.data() ivSize:iv.size() additionalData:additionalData.data() additionalDataSize:additionalData.size() plainText:plainText.data() plainTextSize:plainText.size() cipherText:cipherText.data()])
+    if (WebCryptoErrorCodesSuccess != [WebCryptoAesGcm encrypt:key.data() keySize:key.size() iv:iv.data() ivSize:iv.size() additionalData:additionalData.data() additionalDataSize:additionalData.size() plainText:plainText.data() plainTextSize:plainText.size() cipherText:cipherText.data()])
         return Exception { ExceptionCode::OperationError };
     cipherText.resize(cipherText.size() - (CryptoAlgorithmAESGCM::DefaultTagLength - desiredTagLengthInBytes));
     return WTFMove(cipherText);
