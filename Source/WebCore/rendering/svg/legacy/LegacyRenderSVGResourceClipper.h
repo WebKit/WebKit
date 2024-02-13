@@ -64,6 +64,7 @@ public:
     virtual ~LegacyRenderSVGResourceClipper();
 
     inline SVGClipPathElement& clipPathElement() const;
+    inline Ref<SVGClipPathElement> protectedClipPathElement() const;
 
     void removeAllClientsFromCacheIfNeeded(bool markForInvalidation, SingleThreadWeakHashSet<RenderObject>* visitedRenderers) override;
     void removeClientFromCache(RenderElement&, bool markForInvalidation = true) override;

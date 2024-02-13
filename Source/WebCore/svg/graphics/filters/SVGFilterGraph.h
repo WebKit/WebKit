@@ -47,8 +47,8 @@ public:
         m_sourceNodes.add(SourceGraphic::effectName(), WTFMove(sourceGraphic));
         m_sourceNodes.add(SourceAlpha::effectName(), WTFMove(sourceAlpha));
 
-        setNodeInputs(*this->sourceGraphic(), NodeVector { });
-        setNodeInputs(*this->sourceAlpha(), NodeVector { *this->sourceGraphic() });
+        setNodeInputs(Ref { *this->sourceGraphic() }, NodeVector { });
+        setNodeInputs(Ref { *this->sourceAlpha() }, NodeVector { *this->sourceGraphic() });
     }
 
     NodeType* sourceGraphic() const

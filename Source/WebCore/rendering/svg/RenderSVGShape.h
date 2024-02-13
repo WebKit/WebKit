@@ -66,6 +66,7 @@ public:
     virtual ~RenderSVGShape();
 
     inline SVGGraphicsElement& graphicsElement() const;
+    inline Ref<SVGGraphicsElement> protectedGraphicsElement() const;
 
     void setNeedsShapeUpdate() { m_needsShapeUpdate = true; }
 

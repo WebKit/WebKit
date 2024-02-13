@@ -47,6 +47,11 @@ SVGGraphicsElement& RenderSVGTransformableContainer::graphicsElement() const
     return downcast<SVGGraphicsElement>(RenderSVGContainer::element());
 }
 
+Ref<SVGGraphicsElement> RenderSVGTransformableContainer::protectedGraphicsElement() const
+{
+    return graphicsElement();
+}
+
 inline SVGUseElement* associatedUseElement(SVGGraphicsElement& element)
 {
     // If we're either the renderer for a <use> element, or for any <g> element inside the shadow
@@ -66,8 +71,9 @@ inline SVGUseElement* associatedUseElement(SVGGraphicsElement& element)
 
 FloatSize RenderSVGTransformableContainer::additionalContainerTranslation() const
 {
-    if (auto* useElement = associatedUseElement(graphicsElement())) {
-        SVGLengthContext lengthContext(&graphicsElement());
+    Ref graphicsElement = this->graphicsElement();
+    if (auto* useElement = associatedUseElement(graphicsElement)) {
+        SVGLengthContext lengthContext(graphicsElement.ptr());
         return { useElement->x().value(lengthContext), useElement->y().value(lengthContext) };
     }
 
@@ -76,7 +82,8 @@ FloatSize RenderSVGTransformableContainer::additionalContainerTranslation() cons
 
 bool RenderSVGTransformableContainer::needsHasSVGTransformFlags() const
 {
-    return graphicsElement().hasTransformRelatedAttributes() || associatedUseElement(graphicsElement());
+    Ref graphicsElement = this->graphicsElement();
+    return graphicsElement->hasTransformRelatedAttributes() || associatedUseElement(graphicsElement);
 }
 
 void RenderSVGTransformableContainer::updateLayerTransform()
@@ -91,7 +98,7 @@ void RenderSVGTransformableContainer::updateLayerTransform()
 void RenderSVGTransformableContainer::applyTransform(TransformationMatrix& transform, const RenderStyle& style, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> options) const
 {
     auto postTransform = m_supplementalLayerTransform.isIdentity() ? std::nullopt : std::make_optional(m_supplementalLayerTransform);
-    applySVGTransform(transform, graphicsElement(), style, boundingBox, std::nullopt, postTransform, options);
+    applySVGTransform(transform, protectedGraphicsElement(), style, boundingBox, std::nullopt, postTransform, options);
 }
 
 }

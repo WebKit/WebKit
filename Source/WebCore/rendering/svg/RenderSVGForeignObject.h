@@ -39,6 +39,7 @@ public:
     virtual ~RenderSVGForeignObject();
 
     SVGForeignObjectElement& foreignObjectElement() const;
+    Ref<SVGForeignObjectElement> protectedForeignObjectElement() const;
 
     void paint(PaintInfo&, const LayoutPoint&) override;
 

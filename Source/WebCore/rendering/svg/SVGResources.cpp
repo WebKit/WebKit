@@ -185,8 +185,8 @@ static inline LegacyRenderSVGResourceContainer* paintingResourceFromSVGPaint(Tre
     if (paintType != SVGPaintType::URI && paintType != SVGPaintType::URIRGBColor && paintType != SVGPaintType::URICurrentColor)
         return nullptr;
 
-    id = SVGURIReference::fragmentIdentifierFromIRIString(paintUri, treeScope.documentScope());
-    LegacyRenderSVGResourceContainer* container = getRenderSVGResourceContainerById(treeScope, id);
+    id = SVGURIReference::fragmentIdentifierFromIRIString(paintUri, treeScope.protectedDocumentScope());
+    CheckedPtr container = getRenderSVGResourceContainerById(treeScope, id);
     if (!container) {
         hasPendingResource = true;
         return nullptr;
@@ -196,7 +196,7 @@ static inline LegacyRenderSVGResourceContainer* paintingResourceFromSVGPaint(Tre
     if (resourceType != PatternResourceType && resourceType != LinearGradientResourceType && resourceType != RadialGradientResourceType)
         return nullptr;
 
-    return container;
+    return container.get();
 }
 
 std::unique_ptr<SVGResources> SVGResources::buildCachedResources(const RenderElement& renderer, const RenderStyle& style)

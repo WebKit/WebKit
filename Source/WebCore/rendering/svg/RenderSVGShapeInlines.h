@@ -44,6 +44,11 @@ inline SVGGraphicsElement& RenderSVGShape::graphicsElement() const
     return downcast<SVGGraphicsElement>(RenderSVGModelObject::element());
 }
 
+inline Ref<SVGGraphicsElement> RenderSVGShape::protectedGraphicsElement() const
+{
+    return graphicsElement();
+}
+
 } // namespace WebCore
 
 #endif // LAYER_BASED_SVG_ENGINE

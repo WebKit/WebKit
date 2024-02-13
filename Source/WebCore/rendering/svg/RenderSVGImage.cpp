@@ -260,7 +260,7 @@ bool RenderSVGImage::nodeAtPoint(const HitTestRequest& request, HitTestResult& r
         if (hitRules.canHitFill) {
             if (m_objectBoundingBox.contains(localPoint)) {
                 updateHitTestResult(result, locationInContainer.point() - toLayoutSize(adjustedLocation));
-                if (result.addNodeToListBasedTestResult(nodeForHitTest(), request, locationInContainer, visualOverflowRect) == HitTestProgress::Stop)
+                if (result.addNodeToListBasedTestResult(protectedNodeForHitTest().get(), request, locationInContainer, visualOverflowRect) == HitTestProgress::Stop)
                     return true;
             }
         }
@@ -395,7 +395,7 @@ bool RenderSVGImage::bufferForeground(PaintInfo& paintInfo, const LayoutPoint& p
     paintForeground(bufferedInfo, paintOffset);
 
     destinationContext.concatCTM(absoluteTransform.inverse().value_or(AffineTransform()));
-    destinationContext.drawImageBuffer(*m_bufferedForeground, absoluteTargetRect);
+    destinationContext.drawImageBuffer(*m_bufferedForeground.copyRef(), absoluteTargetRect);
     destinationContext.concatCTM(absoluteTransform);
 
     return true;

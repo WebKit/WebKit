@@ -46,6 +46,7 @@
 #include "NullGraphicsContext.h"
 #include "RenderImage.h"
 #include "RenderIterator.h"
+#include "RenderObjectInlines.h"
 #include "RenderSVGContainer.h"
 #include "RenderSVGGradientStopInlines.h"
 #include "RenderSVGInlineText.h"
@@ -233,7 +234,7 @@ void writeSVGPaintingFeatures(TextStream& ts, const RenderElement& renderer, Opt
     if (auto* shape = dynamicDowncast<LegacyRenderSVGShape>(renderer)) {
         Color fallbackColor;
         if (auto* strokePaintingResource = LegacyRenderSVGResource::strokePaintingResource(const_cast<LegacyRenderSVGShape&>(*shape), shape->style(), fallbackColor))
-            writeSVGStrokePaintingResource(ts, renderer, *strokePaintingResource, shape->graphicsElement());
+            writeSVGStrokePaintingResource(ts, renderer, *strokePaintingResource, shape->protectedGraphicsElement());
 
         if (auto* fillPaintingResource = LegacyRenderSVGResource::fillPaintingResource(const_cast<LegacyRenderSVGShape&>(*shape), shape->style(), fallbackColor))
             writeSVGFillPaintingResource(ts, renderer, *fillPaintingResource);
@@ -245,7 +246,7 @@ void writeSVGPaintingFeatures(TextStream& ts, const RenderElement& renderer, Opt
     else if (auto* shape = dynamicDowncast<RenderSVGShape>(renderer)) {
         Color fallbackColor;
         if (auto* strokePaintingResource = LegacyRenderSVGResource::strokePaintingResource(const_cast<RenderSVGShape&>(*shape), shape->style(), fallbackColor))
-            writeSVGStrokePaintingResource(ts, renderer, *strokePaintingResource, shape->graphicsElement());
+            writeSVGStrokePaintingResource(ts, renderer, *strokePaintingResource, shape->protectedGraphicsElement());
 
         if (auto* fillPaintingResource = LegacyRenderSVGResource::fillPaintingResource(const_cast<RenderSVGShape&>(*shape), shape->style(), fallbackColor))
             writeSVGFillPaintingResource(ts, renderer, *fillPaintingResource);
@@ -259,7 +260,7 @@ void writeSVGPaintingFeatures(TextStream& ts, const RenderElement& renderer, Opt
         if (!element)
             return;
 
-        auto fragment = SVGURIReference::fragmentIdentifierFromIRIString(value, element->document());
+        auto fragment = SVGURIReference::fragmentIdentifierFromIRIString(value, element->protectedDocument());
         writeIfNotEmpty(ts, name, fragment);
     };
 
@@ -591,7 +592,7 @@ void writeResources(TextStream& ts, const RenderObject& renderer, OptionSet<Rend
     // For now leave the DRT output as is, but later on we should change this so cycles are properly ignored in the DRT output.
     if (style.hasPositionedMask()) {
         auto* maskImage = style.maskImage();
-        auto& document = renderer.document();
+        Ref document = renderer.document();
         auto reresolvedURL = maskImage ? maskImage->reresolvedURL(document) : URL();
 
         if (!reresolvedURL.isEmpty()) {
@@ -620,7 +621,7 @@ void writeResources(TextStream& ts, const RenderObject& renderer, OptionSet<Rend
         if (filterOperations.size() == 1) {
             const FilterOperation& filterOperation = *filterOperations.at(0);
             if (auto* referenceFilterOperation = dynamicDowncast<ReferenceFilterOperation>(filterOperation)) {
-                AtomString id = SVGURIReference::fragmentIdentifierFromIRIString(referenceFilterOperation->url(), renderer.document());
+                AtomString id = SVGURIReference::fragmentIdentifierFromIRIString(referenceFilterOperation->url(), renderer.protectedDocument());
                 if (LegacyRenderSVGResourceFilter* filter = getRenderSVGResourceById<LegacyRenderSVGResourceFilter>(renderer.treeScopeForSVGReferences(), id)) {
                     ts << indent << " ";
                     writeNameAndQuotedValue(ts, "filter", id);

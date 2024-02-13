@@ -35,6 +35,11 @@ inline SVGClipPathElement& RenderSVGResourceClipper::clipPathElement() const
     return downcast<SVGClipPathElement>(nodeForNonAnonymous());
 }
 
+inline Ref<SVGClipPathElement> RenderSVGResourceClipper::protectedClipPathElement() const
+{
+    return clipPathElement();
+}
+
 inline SVGUnitTypes::SVGUnitType RenderSVGResourceClipper::clipPathUnits() const
 {
     return clipPathElement().clipPathUnits();

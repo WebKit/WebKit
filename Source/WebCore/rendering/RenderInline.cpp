@@ -840,7 +840,7 @@ void RenderInline::updateHitTestResult(HitTestResult& result, const LayoutPoint&
         return;
 
     LayoutPoint localPoint(point);
-    if (auto* node = nodeForHitTest()) {
+    if (RefPtr node = nodeForHitTest()) {
         if (isContinuation()) {
             // We're in the continuation of a split inline. Adjust our local point to be in the coordinate space
             // of the principal renderer's containing block. This will end up being the innerNonSharedNode.
@@ -848,9 +848,9 @@ void RenderInline::updateHitTestResult(HitTestResult& result, const LayoutPoint&
             localPoint.moveBy(containingBlock()->location() - firstBlock->locationOffset());
         }
 
-        result.setInnerNode(node);
+        result.setInnerNode(node.get());
         if (!result.innerNonSharedNode())
-            result.setInnerNonSharedNode(node);
+            result.setInnerNonSharedNode(node.get());
         result.setLocalPoint(localPoint);
     }
 }

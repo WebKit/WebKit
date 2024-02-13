@@ -56,6 +56,11 @@ SVGForeignObjectElement& RenderSVGForeignObject::foreignObjectElement() const
     return downcast<SVGForeignObjectElement>(RenderSVGBlock::graphicsElement());
 }
 
+Ref<SVGForeignObjectElement> RenderSVGForeignObject::protectedForeignObjectElement() const
+{
+    return foreignObjectElement();
+}
+
 void RenderSVGForeignObject::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     if (!shouldPaintSVGRenderer(paintInfo))
@@ -94,14 +99,14 @@ void RenderSVGForeignObject::layout()
 
     LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
 
-    auto& useForeignObjectElement = foreignObjectElement();
-    SVGLengthContext lengthContext(&useForeignObjectElement);
+    Ref useForeignObjectElement = foreignObjectElement();
+    SVGLengthContext lengthContext(useForeignObjectElement.ptr());
 
     // Cache viewport boundaries
-    auto x = useForeignObjectElement.x().value(lengthContext);
-    auto y = useForeignObjectElement.y().value(lengthContext);
-    auto width = useForeignObjectElement.width().value(lengthContext);
-    auto height = useForeignObjectElement.height().value(lengthContext);
+    auto x = useForeignObjectElement->x().value(lengthContext);
+    auto y = useForeignObjectElement->y().value(lengthContext);
+    auto width = useForeignObjectElement->width().value(lengthContext);
+    auto height = useForeignObjectElement->height().value(lengthContext);
     m_viewport = { x, y, width, height };
 
     RenderSVGBlock::layout();
@@ -128,7 +133,7 @@ void RenderSVGForeignObject::updateFromStyle()
 
 void RenderSVGForeignObject::applyTransform(TransformationMatrix& transform, const RenderStyle& style, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> options) const
 {
-    applySVGTransform(transform, foreignObjectElement(), style, boundingBox, std::nullopt, std::nullopt, options);
+    applySVGTransform(transform, protectedForeignObjectElement(), style, boundingBox, std::nullopt, std::nullopt, options);
 }
 
 }

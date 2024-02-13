@@ -514,7 +514,7 @@ void SVGRenderSupport::updateMaskedAncestorShouldIsolateBlending(const RenderEle
     ASSERT(renderer.element());
     ASSERT(renderer.element()->isSVGElement());
 
-    for (auto& ancestor : ancestorsOfType<SVGGraphicsElement>(*renderer.element())) {
+    for (auto& ancestor : ancestorsOfType<SVGGraphicsElement>(*renderer.protectedElement())) {
         auto* style = ancestor.computedStyle();
         if (!style || !isolatesBlending(*style))
             continue;

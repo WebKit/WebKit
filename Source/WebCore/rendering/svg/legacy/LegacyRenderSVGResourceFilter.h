@@ -60,6 +60,7 @@ public:
     virtual ~LegacyRenderSVGResourceFilter();
 
     inline SVGFilterElement& filterElement() const;
+    inline Ref<SVGFilterElement> protectedFilterElement() const;
     bool isIdentity() const;
 
     void removeAllClientsFromCacheIfNeeded(bool markForInvalidation, SingleThreadWeakHashSet<RenderObject>* visitedRenderers) override;

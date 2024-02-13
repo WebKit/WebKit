@@ -174,22 +174,22 @@ void SVGSVGElement::attributeChanged(const QualifiedName& name, const AtomString
         // setting certain event handlers directly on the window object.
         switch (name.nodeName()) {
         case AttributeNames::onunloadAttr:
-            protectedDocument()->setWindowAttributeEventListener(eventNames().unloadEvent, name, newValue, mainThreadNormalWorld());
+            protectedDocument()->setWindowAttributeEventListener(eventNames().unloadEvent, name, newValue, protectedMainThreadNormalWorld());
             return;
         case AttributeNames::onresizeAttr:
-            protectedDocument()->setWindowAttributeEventListener(eventNames().resizeEvent, name, newValue, mainThreadNormalWorld());
+            protectedDocument()->setWindowAttributeEventListener(eventNames().resizeEvent, name, newValue, protectedMainThreadNormalWorld());
             return;
         case AttributeNames::onscrollAttr:
-            protectedDocument()->setWindowAttributeEventListener(eventNames().scrollEvent, name, newValue, mainThreadNormalWorld());
+            protectedDocument()->setWindowAttributeEventListener(eventNames().scrollEvent, name, newValue, protectedMainThreadNormalWorld());
             return;
         case AttributeNames::onzoomAttr:
-            protectedDocument()->setWindowAttributeEventListener(eventNames().zoomEvent, name, newValue, mainThreadNormalWorld());
+            protectedDocument()->setWindowAttributeEventListener(eventNames().zoomEvent, name, newValue, protectedMainThreadNormalWorld());
             return;
         case AttributeNames::onabortAttr:
-            protectedDocument()->setWindowAttributeEventListener(eventNames().abortEvent, name, newValue, mainThreadNormalWorld());
+            protectedDocument()->setWindowAttributeEventListener(eventNames().abortEvent, name, newValue, protectedMainThreadNormalWorld());
             return;
         case AttributeNames::onerrorAttr:
-            protectedDocument()->setWindowAttributeEventListener(eventNames().errorEvent, name, newValue, mainThreadNormalWorld());
+            protectedDocument()->setWindowAttributeEventListener(eventNames().errorEvent, name, newValue, protectedMainThreadNormalWorld());
             return;
         default:
             break;

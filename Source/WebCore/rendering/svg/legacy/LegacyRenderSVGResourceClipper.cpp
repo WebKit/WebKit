@@ -247,7 +247,7 @@ bool LegacyRenderSVGResourceClipper::drawContentIntoMaskImage(ImageBuffer& maskI
     view().frameView().setPaintBehavior(oldBehavior | PaintBehavior::RenderingSVGClipOrMask);
 
     // Draw all clipPath children into a global mask.
-    for (auto& child : childrenOfType<SVGElement>(clipPathElement())) {
+    for (auto& child : childrenOfType<SVGElement>(protectedClipPathElement())) {
         auto renderer = child.renderer();
         if (!renderer)
             continue;

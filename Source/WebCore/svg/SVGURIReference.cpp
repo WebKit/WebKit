@@ -112,7 +112,7 @@ auto SVGURIReference::targetElementFromIRIString(const String& iri, const TreeSc
 
 bool SVGURIReference::haveLoadedRequiredResources() const
 {
-    if (href().isEmpty() || !isExternalURIReference(href(), contextElement().document()))
+    if (href().isEmpty() || !isExternalURIReference(href(), contextElement().protectedDocument()))
         return true;
     return errorOccurred() || haveFiredLoadEvent();
 }

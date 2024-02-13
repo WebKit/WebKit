@@ -779,10 +779,10 @@ void RenderView::updateHitTestResult(HitTestResult& result, const LayoutPoint& p
     if (multiColumnFlow() && multiColumnFlow()->firstMultiColumnSet())
         return multiColumnFlow()->firstMultiColumnSet()->updateHitTestResult(result, point);
 
-    if (auto* node = nodeForHitTest()) {
-        result.setInnerNode(node);
+    if (RefPtr node = nodeForHitTest()) {
+        result.setInnerNode(node.get());
         if (!result.innerNonSharedNode())
-            result.setInnerNonSharedNode(node);
+            result.setInnerNonSharedNode(node.get());
 
         LayoutPoint adjustedPoint = point;
         offsetForContents(adjustedPoint);

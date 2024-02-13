@@ -241,6 +241,8 @@ private:
         return value * s_outputUnitsPerEm / m_inputUnitsPerEm;
     }
 
+    Ref<const SVGFontElement> protectedFontElement() const { return m_fontElement.get(); }
+
     Vector<GlyphData> m_glyphs;
     HashMap<String, Glyph> m_glyphNameToIndexMap; // SVG 1.1: "It is recommended that glyph names be unique within a font."
     HashMap<String, Vector<Glyph, 1>> m_codepointsToIndicesMap;
@@ -1055,7 +1057,7 @@ void SVGToOTFFontConverter::addKerningPair(Vector<KerningData>& data, SVGKerning
 template<typename T> inline size_t SVGToOTFFontConverter::appendKERNSubtable(std::optional<SVGKerningPair> (T::*buildKerningPair)() const, uint16_t coverage)
 {
     Vector<KerningData> kerningData;
-    for (auto& element : childrenOfType<T>(m_fontElement)) {
+    for (auto& element : childrenOfType<T>(protectedFontElement())) {
         if (auto kerningPair = (element.*buildKerningPair)())
             addKerningPair(kerningData, WTFMove(*kerningPair));
     }
@@ -1361,8 +1363,8 @@ static void populateEmptyGlyphCharString(Vector<char, 17>& o, unsigned unitsPerE
 
 SVGToOTFFontConverter::SVGToOTFFontConverter(const SVGFontElement& fontElement)
     : m_fontElement(fontElement)
-    , m_fontFaceElement(childrenOfType<SVGFontFaceElement>(m_fontElement).first())
-    , m_missingGlyphElement(childrenOfType<SVGMissingGlyphElement>(m_fontElement).first())
+    , m_fontFaceElement(childrenOfType<SVGFontFaceElement>(fontElement).first())
+    , m_missingGlyphElement(childrenOfType<SVGMissingGlyphElement>(fontElement).first())
     , m_advanceWidthMax(0)
     , m_advanceHeightMax(0)
     , m_minRightSideBearing(std::numeric_limits<float>::max())
@@ -1408,7 +1410,7 @@ SVGToOTFFontConverter::SVGToOTFFontConverter(const SVGFontElement& fontElement)
         boundingBox = FloatRect(0, 0, s_outputUnitsPerEm, s_outputUnitsPerEm);
     }
 
-    for (auto& glyphElement : childrenOfType<SVGGlyphElement>(m_fontElement)) {
+    for (auto& glyphElement : childrenOfType<SVGGlyphElement>(protectedFontElement())) {
         auto& unicodeAttribute = glyphElement.attributeWithoutSynchronization(SVGNames::unicodeAttr);
         if (!unicodeAttribute.isEmpty()) // If we can never actually trigger this glyph, ignore it completely
             processGlyphElement(glyphElement, &glyphElement, defaultHorizontalAdvance, defaultVerticalAdvance, unicodeAttribute, boundingBox);

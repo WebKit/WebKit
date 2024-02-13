@@ -138,7 +138,7 @@ bool LegacyRenderSVGResourceMasker::drawContentIntoContext(GraphicsContext& cont
     }
 
     // Draw the content into the ImageBuffer.
-    for (auto& child : childrenOfType<SVGElement>(maskElement())) {
+    for (auto& child : childrenOfType<SVGElement>(protectedMaskElement())) {
         auto renderer = child.renderer();
         if (!renderer)
             continue;
@@ -185,7 +185,8 @@ void LegacyRenderSVGResourceMasker::calculateMaskContentRepaintRect(RepaintRectC
 FloatRect LegacyRenderSVGResourceMasker::resourceBoundingBox(const RenderObject& object, RepaintRectCalculation repaintRectCalculation)
 {
     FloatRect objectBoundingBox = object.objectBoundingBox();
-    FloatRect maskBoundaries = SVGLengthContext::resolveRectangle<SVGMaskElement>(&maskElement(), maskElement().maskUnits(), objectBoundingBox);
+    Ref maskElement = this->maskElement();
+    FloatRect maskBoundaries = SVGLengthContext::resolveRectangle<SVGMaskElement>(maskElement.ptr(), maskElement->maskUnits(), objectBoundingBox);
 
     // Resource was not layouted yet. Give back clipping rect of the mask.
     if (selfNeedsLayout())
@@ -195,7 +196,7 @@ FloatRect LegacyRenderSVGResourceMasker::resourceBoundingBox(const RenderObject&
         calculateMaskContentRepaintRect(repaintRectCalculation);
 
     FloatRect maskRect = m_maskContentBoundaries[repaintRectCalculation];
-    if (maskElement().maskContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
+    if (maskElement->maskContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
         AffineTransform transform;
         transform.translate(objectBoundingBox.location());
         transform.scale(objectBoundingBox.size());

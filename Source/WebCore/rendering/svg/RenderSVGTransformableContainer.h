@@ -38,6 +38,7 @@ private:
 
     void element() const = delete;
     SVGGraphicsElement& graphicsElement() const;
+    Ref<SVGGraphicsElement> protectedGraphicsElement() const;
 
     FloatSize additionalContainerTranslation() const;
     void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption>) const final;

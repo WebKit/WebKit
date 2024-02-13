@@ -1892,6 +1892,11 @@ Node* RenderObject::nodeForHitTest() const
     return node;
 }
 
+RefPtr<Node> RenderObject::protectedNodeForHitTest() const
+{
+    return nodeForHitTest();
+}
+
 void RenderObject::updateHitTestResult(HitTestResult& result, const LayoutPoint& point)
 {
     if (result.innerNode())

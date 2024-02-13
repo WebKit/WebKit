@@ -51,7 +51,7 @@ LegacyRenderSVGResourceFilter::~LegacyRenderSVGResourceFilter() = default;
 
 bool LegacyRenderSVGResourceFilter::isIdentity() const
 {
-    return SVGFilter::isIdentity(filterElement());
+    return SVGFilter::isIdentity(protectedFilterElement());
 }
 
 void LegacyRenderSVGResourceFilter::removeAllClientsFromCacheIfNeeded(bool markForInvalidation, SingleThreadWeakHashSet<RenderObject>* visitedRenderers)
@@ -105,7 +105,8 @@ bool LegacyRenderSVGResourceFilter::applyResource(RenderElement& renderer, const
     auto filterData = addResult.iterator->value.get();
 
     auto targetBoundingBox = renderer.objectBoundingBox();
-    auto filterRegion = SVGLengthContext::resolveRectangle<SVGFilterElement>(&filterElement(), filterElement().filterUnits(), targetBoundingBox);
+    Ref filterElement = this->filterElement();
+    auto filterRegion = SVGLengthContext::resolveRectangle<SVGFilterElement>(filterElement.ptr(), filterElement->filterUnits(), targetBoundingBox);
     if (filterRegion.isEmpty()) {
         m_rendererFilterDataMap.remove(renderer);
         return false;
@@ -131,7 +132,7 @@ bool LegacyRenderSVGResourceFilter::applyResource(RenderElement& renderer, const
     auto preferredFilterModes = renderer.page().preferredFilterRenderingModes();
 
     // Create the SVGFilter object.
-    filterData->filter = SVGFilter::create(filterElement(), preferredFilterModes, filterScale, filterRegion, targetBoundingBox, *context, RenderingResourceIdentifier::generate());
+    filterData->filter = SVGFilter::create(filterElement, preferredFilterModes, filterScale, filterRegion, targetBoundingBox, *context, RenderingResourceIdentifier::generate());
     if (!filterData->filter) {
         m_rendererFilterDataMap.remove(renderer);
         return false;
@@ -223,7 +224,8 @@ void LegacyRenderSVGResourceFilter::postApplyResource(RenderElement& renderer, G
 
 FloatRect LegacyRenderSVGResourceFilter::resourceBoundingBox(const RenderObject& object, RepaintRectCalculation)
 {
-    return SVGLengthContext::resolveRectangle<SVGFilterElement>(&filterElement(), filterElement().filterUnits(), object.objectBoundingBox());
+    Ref filterElement = this->filterElement();
+    return SVGLengthContext::resolveRectangle<SVGFilterElement>(filterElement.ptr(), filterElement->filterUnits(), object.objectBoundingBox());
 }
 
 void LegacyRenderSVGResourceFilter::markFilterForRepaint(FilterEffect& effect)

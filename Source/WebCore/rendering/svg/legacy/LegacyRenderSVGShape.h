@@ -61,6 +61,7 @@ public:
     virtual ~LegacyRenderSVGShape();
 
     inline SVGGraphicsElement& graphicsElement() const;
+    inline Ref<SVGGraphicsElement> protectedGraphicsElement() const;
 
     void setNeedsShapeUpdate() { m_needsShapeUpdate = true; }
     void setNeedsBoundariesUpdate() final { m_needsBoundariesUpdate = true; }

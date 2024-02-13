@@ -615,7 +615,7 @@ void SVGSMILElement::disconnectConditions()
             // our condition event listener, in case it later fires.
             RefPtr eventBase = eventBaseFor(condition);
             if (eventBase)
-                eventBase->removeEventListener(condition.m_name, *condition.m_eventListener, false);
+                eventBase->removeEventListener(condition.m_name, Ref { *condition.m_eventListener }, false);
             condition.m_eventListener->disconnectAnimation();
             condition.m_eventListener = nullptr;
         } else if (condition.m_type == Condition::Syncbase) {
@@ -1171,7 +1171,7 @@ bool SVGSMILElement::progress(SMILTime elapsed, SVGSMILElement& firstAnimation, 
         smilEventSender().dispatchEventSoon(*this, eventNames().endEventEvent);
         endedActiveInterval();
         if (m_activeState != Frozen)
-            stopAnimation(m_targetElement.get());
+            stopAnimation(protectedTargetElement().get());
     } else if (oldActiveState != Active && m_activeState == Active)
         smilEventSender().dispatchEventSoon(*this, eventNames().beginEventEvent);
 

@@ -223,7 +223,7 @@ FloatRect RenderSVGResourceClipper::resourceBoundingBox(const RenderObject& obje
 
     SVGVisitedRendererTracking::Scope recursionScope(recursionTracking, *this);
 
-    auto clipContentRepaintRect = clipPathElement().calculateClipContentRepaintRect(repaintRectCalculation);
+    auto clipContentRepaintRect = protectedClipPathElement()->calculateClipContentRepaintRect(repaintRectCalculation);
     if (clipPathUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
         AffineTransform contentTransform;
         contentTransform.translate(targetBoundingBox.location());
@@ -242,12 +242,12 @@ void RenderSVGResourceClipper::updateFromStyle()
 void RenderSVGResourceClipper::applyTransform(TransformationMatrix& transform, const RenderStyle& style, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> options) const
 {
     ASSERT(document().settings().layerBasedSVGEngineEnabled());
-    applySVGTransform(transform, clipPathElement(), style, boundingBox, std::nullopt, std::nullopt, options);
+    applySVGTransform(transform, protectedClipPathElement(), style, boundingBox, std::nullopt, std::nullopt, options);
 }
 
 bool RenderSVGResourceClipper::needsHasSVGTransformFlags() const
 {
-    return clipPathElement().hasTransformRelatedAttributes();
+    return protectedClipPathElement()->hasTransformRelatedAttributes();
 }
 
 }

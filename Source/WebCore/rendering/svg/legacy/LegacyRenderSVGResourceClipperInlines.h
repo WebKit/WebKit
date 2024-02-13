@@ -35,6 +35,11 @@ inline SVGClipPathElement& LegacyRenderSVGResourceClipper::clipPathElement() con
     return downcast<SVGClipPathElement>(nodeForNonAnonymous());
 }
 
+inline Ref<SVGClipPathElement> LegacyRenderSVGResourceClipper::protectedClipPathElement() const
+{
+    return clipPathElement();
+}
+
 inline SVGUnitTypes::SVGUnitType LegacyRenderSVGResourceClipper::clipPathUnits() const
 {
     return clipPathElement().clipPathUnits();
