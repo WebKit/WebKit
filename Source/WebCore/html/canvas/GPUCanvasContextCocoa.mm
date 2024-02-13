@@ -106,26 +106,26 @@ static GPUPresentationContextDescriptor presentationContextDescriptor(GPUComposi
     };
 }
 
-static int getCanvasWidth(const GPUCanvasContext::CanvasType& canvas)
+static GPUIntegerCoordinate getCanvasWidth(const GPUCanvasContext::CanvasType& canvas)
 {
-    return WTF::switchOn(canvas, [](const RefPtr<HTMLCanvasElement>& htmlCanvas) -> int {
+    return WTF::switchOn(canvas, [](const RefPtr<HTMLCanvasElement>& htmlCanvas) -> GPUIntegerCoordinate {
         return htmlCanvas->width();
     }
 #if ENABLE(OFFSCREEN_CANVAS)
-    , [](const RefPtr<OffscreenCanvas>& offscreenCanvas) -> int {
+    , [](const RefPtr<OffscreenCanvas>& offscreenCanvas) -> GPUIntegerCoordinate {
         return offscreenCanvas->width();
     }
 #endif
     );
 }
 
-static int getCanvasHeight(const GPUCanvasContext::CanvasType& canvas)
+static GPUIntegerCoordinate getCanvasHeight(const GPUCanvasContext::CanvasType& canvas)
 {
-    return WTF::switchOn(canvas, [](const RefPtr<HTMLCanvasElement>& htmlCanvas) -> int {
+    return WTF::switchOn(canvas, [](const RefPtr<HTMLCanvasElement>& htmlCanvas) -> GPUIntegerCoordinate {
         return htmlCanvas->height();
     }
 #if ENABLE(OFFSCREEN_CANVAS)
-    , [](const RefPtr<OffscreenCanvas>& offscreenCanvas) -> int {
+    , [](const RefPtr<OffscreenCanvas>& offscreenCanvas) -> GPUIntegerCoordinate {
         return offscreenCanvas->height();
     }
 #endif
@@ -151,11 +151,11 @@ GPUCanvasContextCocoa::GPUCanvasContextCocoa(CanvasBase& canvas, GPU& gpu)
 
 void GPUCanvasContextCocoa::reshape(int width, int height)
 {
-    if (m_width == width && m_height == height)
+    if (width <= 0 || height <= 0 || (m_width == static_cast<GPUIntegerCoordinate>(width) && m_height == static_cast<GPUIntegerCoordinate>(height)))
         return;
 
-    m_width = width;
-    m_height = height;
+    m_width = static_cast<GPUIntegerCoordinate>(width);
+    m_height = static_cast<GPUIntegerCoordinate>(height);
 
     auto configuration = WTFMove(m_configuration);
     m_configuration.reset();
@@ -212,7 +212,7 @@ ExceptionOr<void> GPUCanvasContextCocoa::configure(GPUCanvasConfiguration&& conf
     // FIXME: This ASSERT() is wrong. It's totally possible for the IPC to the GPU process to timeout if the GPUP is busy, and return nothing here.
     ASSERT(!renderBuffers.isEmpty());
 
-    m_presentationContext->configure(configuration);
+    m_presentationContext->configure(configuration, m_width, m_height);
 
     m_configuration = {
         *configuration.device,
