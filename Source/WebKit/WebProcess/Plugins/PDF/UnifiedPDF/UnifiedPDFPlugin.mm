@@ -1493,7 +1493,11 @@ void UnifiedPDFPlugin::scrollToFragmentIfNeeded()
         return;
     }
 
-    // FIXME (269224): Support named destinations.
+    if (auto remainder = remainderForPrefix("nameddest="_s)) {
+        if (auto destination = [m_pdfDocument namedDestination:remainder->createNSString().get()])
+            scrollToPDFDestination(destination);
+        return;
+    }
 }
 
 #pragma mark Context Menu

@@ -102,6 +102,10 @@
 #endif // HAVE(INCREMENTAL_PDF_APIS)
 
 #if ENABLE(UNIFIED_PDF)
+@interface PDFDocument (IPI)
+- (PDFDestination *)namedDestination:(NSString *)name;
+@end
+
 @interface PDFPage (IPI)
 - (CGPDFPageLayoutRef) pageLayout;
 @end
