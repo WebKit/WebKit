@@ -27,7 +27,7 @@
 
 - path: tests/sunspider-1.0
   cmd: |
-      if ($architecture == "arm" || $architecture == "mips")
+      if $architecture == "arm"
           requireOptions("--useBaselineJITCodeSharing=true")
           defaultRun
       else

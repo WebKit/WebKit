@@ -1,6 +1,3 @@
-// This test takes too long on mips devices.
-//@ requireOptions("-e", "let iterations=1e5") if ["mips"].include?($architecture)
-
 iterations = typeof(iterations) === 'undefined' ? 1e6 : iterations;
 
 function shouldBe(actual, expected) {

@@ -1,5 +1,3 @@
-// Currently flaky on mips.
-//@ skip if $architecture == "mips"
 // This test seems to require 64 MB for the executable memory pool, but only
 // arm64 and x86_64 have that much by default.
 //@ requireOptions("--jitMemoryReservationSize=67108864") if !["arm64", "x86_64"].include?($architecture)

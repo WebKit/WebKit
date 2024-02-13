@@ -1,6 +1,6 @@
 //@ if $buildType == "debug" then skip else runTypeProfiler end
-//@ requireOptions("-e", "let iterations=15") if $architecture =~ /(^arm$)|mips/
-//@ requireOptions("-e", "let numConstraints=30") if $architecture =~ /(^arm$)|mips/
+//@ requireOptions("-e", "let iterations=15") if $architecture =~ /^arm$/
+//@ requireOptions("-e", "let numConstraints=30") if $architecture =~ /^arm$/
 
 iterations = typeof(iterations) === 'undefined' ? 30 : iterations;
 numConstraints = typeof(numConstraints) === 'undefined' ? 50 : numConstraints;

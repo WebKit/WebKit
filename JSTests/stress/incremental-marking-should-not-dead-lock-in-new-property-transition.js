@@ -1,4 +1,4 @@
-//@ skip if $hostOS == "playstation" || ($memoryLimited and not ["mips", "arm"].include?($architecture))
+//@ skip if $hostOS == "playstation" || ($memoryLimited and not ["arm"].include?($architecture))
 //@ runDefault("--gcIncrementScale=100", "--gcIncrementBytes=10", "--numberOfGCMarkers=1")
 
 let a = [];

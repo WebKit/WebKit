@@ -1,4 +1,3 @@
-//@ requireOptions("-e", "let iterations=50") if ["mips"].include?($architecture)
 //@ if $buildType == "debug" or not $jitTests then skip else runTypeProfiler end
 
 iterations = typeof(iterations) === 'undefined' ? 150 : iterations;
