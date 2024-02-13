@@ -553,6 +553,8 @@ class Port(object):
         This can be used when sorting paths so that files in a directory.
         directory are kept together rather than being mixed in with files in
         subdirectories."""
+        if sys.platform.startswith('win'):
+            test_name = test_name.replace(self.host.filesystem.sep, self.TEST_PATH_SEPARATOR)
         dirname, basename = self.split_test(test_name)
         return (self._natural_sort_key(dirname + self.TEST_PATH_SEPARATOR), self._natural_sort_key(basename))
 
