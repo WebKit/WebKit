@@ -31,7 +31,7 @@
 #include "LayerTreeContext.h"
 #include <wtf/RunLoop.h>
 
-#if !PLATFORM(WPE)
+#if USE(CAIRO) && !PLATFORM(WPE)
 typedef struct _cairo cairo_t;
 #endif
 
@@ -48,7 +48,7 @@ public:
     DrawingAreaProxyCoordinatedGraphics(WebPageProxy&, WebProcessProxy&);
     virtual ~DrawingAreaProxyCoordinatedGraphics();
 
-#if !PLATFORM(WPE)
+#if USE(CAIRO) && !PLATFORM(WPE)
     void paint(cairo_t*, const WebCore::IntRect&, WebCore::Region& unpaintedRegion);
 #endif
 
@@ -88,7 +88,7 @@ private:
     void sendUpdateGeometry();
     void didUpdateGeometry();
 
-#if !PLATFORM(WPE)
+#if USE(CAIRO) && !PLATFORM(WPE)
     bool forceUpdateIfNeeded();
     void incorporateUpdate(UpdateInfo&&);
     void discardBackingStoreSoon();
@@ -120,7 +120,7 @@ private:
     WebCore::IntSize m_lastSentSize;
 
 
-#if !PLATFORM(WPE)
+#if USE(CAIRO) && !PLATFORM(WPE)
     bool m_isBackingStoreDiscardable { true };
     bool m_inForceUpdate { false };
     std::unique_ptr<BackingStore> m_backingStore;
