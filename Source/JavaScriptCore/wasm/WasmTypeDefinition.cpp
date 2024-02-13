@@ -293,7 +293,7 @@ static unsigned computeSubtypeHash(SupertypeCount supertypeCount, const TypeInde
     if (supertypeCount > 0)
         accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<TypeIndex>::hash(superTypes[0]));
     accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<TypeIndex>::hash(underlyingType));
-    accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<TypeIndex>::hash(isFinal));
+    accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<bool>::hash(isFinal));
     return accumulator;
 }
 
@@ -835,6 +835,9 @@ struct SubtypeParameterTypes {
         }
 
         if (subtype->underlyingType() != params.underlyingType)
+            return false;
+
+        if (subtype->isFinal() != params.isFinal)
             return false;
 
         return true;

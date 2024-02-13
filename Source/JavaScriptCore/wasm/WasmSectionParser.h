@@ -87,7 +87,7 @@ private:
     PartialResult WARN_UNUSED_RETURN parseI32InitExprForDataSection(std::optional<I32InitExpr>&);
 
     static bool checkStructuralSubtype(const TypeDefinition&, const TypeDefinition&);
-    PartialResult WARN_UNUSED_RETURN checkSubtypeValidity(const TypeDefinition&, RefPtr<const TypeDefinition>);
+    PartialResult WARN_UNUSED_RETURN checkSubtypeValidity(const TypeDefinition&);
 
     size_t m_offsetInSource;
     Ref<ModuleInformation> m_info;
