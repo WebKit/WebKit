@@ -10,6 +10,10 @@
         testRunner.dumpAsText();
         testRunner.waitUntilDone();
 
+        if (window.navigator.identity !== undefined) {
+            console.log("FAIL: identity must not be exposed by default.");
+        }
+
         if (window.DigitalIdentity !== undefined) {
             console.log(
                 "FAIL: DigitalIdentity interface must not be exposed by default."
@@ -24,6 +28,20 @@
             if (iframeWin.navigator.credentials.requestIdentity) {
                 console.log(
                     "FAIL: navigator.credentials.requestIdentity() was removed from the spec!"
+                );
+            }
+
+            const { identity } = iframeWin.navigator;
+            if (!identity) {
+                console.log(
+                    "FAIL: navigator.identity must be exposed. Was enabled by pref."
+                );
+            }
+            const isInstanceOfCredentialContainer =
+                identity instanceof iframeWin.CredentialsContainer;
+            if (!isInstanceOfCredentialContainer) {
+                console.log(
+                    "FAIL: navigator.identity must be and instance of CredentialsContainer."
                 );
             }
 

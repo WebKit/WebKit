@@ -146,6 +146,7 @@ Modules/highlight/AppHighlightRangeData.cpp
 Modules/highlight/AppHighlightStorage.cpp
 Modules/highlight/HighlightRegistry.cpp
 Modules/highlight/Highlight.cpp
+Modules/identity/NavigatorIdentity.cpp
 Modules/indexeddb/IDBCursor.cpp
 Modules/indexeddb/IDBCursorWithValue.cpp
 Modules/indexeddb/IDBDatabase.cpp
