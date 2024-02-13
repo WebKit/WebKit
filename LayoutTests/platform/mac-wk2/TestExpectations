@@ -1993,3 +1993,7 @@ webkit.org/b/268836 [ Monterey+ Debug ] loader/stateobjects/pushstate-size-ifram
 [ Monterey+ Release ] fast/speechrecognition/start-recognition-after-denied-gum.html [ Pass Timeout ]
 
 webkit.org/b/269251 [ Monterey+ Debug ] http/tests/site-isolation/iframe-process-termination-after-navigation-completed.html [ Skip ]
+
+#webkit.org/b/269301  (2X imported/w3c/web-platform-tests/webcodecs/videoFrame (layout-tests) are constant failures)
+[ Ventura+ x86_64 ] imported/w3c/web-platform-tests/webcodecs/videoFrame-createImageBitmap.https.any.html [ Failure ]
+[ Ventura+ x86_64 ] imported/w3c/web-platform-tests/webcodecs/videoFrame-createImageBitmap.https.any.worker.html [ Failure ]
