@@ -26,11 +26,13 @@
 
 #include "SecurityOrigin.h"
 #include <wtf/Vector.h>
+#include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 
 class Document;
 class RTCPeerConnection;
+class WeakPtrImplWithEventTargetData;
 
 class RTCController {
 public:
@@ -57,7 +59,7 @@ private:
         Ref<SecurityOrigin> clientOrigin;
     };
     Vector<PeerConnectionOrigin> m_filteringDisabledOrigins;
-    Vector<std::reference_wrapper<RTCPeerConnection>> m_peerConnections;
+    WeakHashSet<RTCPeerConnection, WeakPtrImplWithEventTargetData> m_peerConnections;
     bool m_shouldFilterICECandidates { true };
 #endif
 };

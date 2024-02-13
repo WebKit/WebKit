@@ -36,24 +36,22 @@ namespace WebCore {
 
 RTCController::~RTCController()
 {
-    for (RTCPeerConnection& connection : m_peerConnections)
-        connection.clearController();
+    for (Ref connection : m_peerConnections)
+        connection->clearController();
 }
 
 void RTCController::reset(bool shouldFilterICECandidates)
 {
     m_shouldFilterICECandidates = shouldFilterICECandidates;
-    for (RTCPeerConnection& connection : m_peerConnections)
-        connection.clearController();
+    for (Ref connection : m_peerConnections)
+        connection->clearController();
     m_peerConnections.clear();
     m_filteringDisabledOrigins.clear();
 }
 
 void RTCController::remove(RTCPeerConnection& connection)
 {
-    m_peerConnections.removeFirstMatching([&connection](auto item) {
-        return &connection == &item.get();
-    });
+    m_peerConnections.remove(connection);
 }
 
 static inline bool matchDocumentOrigin(Document& document, SecurityOrigin& topOrigin, SecurityOrigin& clientOrigin)
@@ -78,7 +76,7 @@ void RTCController::add(RTCPeerConnection& connection)
     if (RefPtr networkManager = document->rtcNetworkManager())
         networkManager->setICECandidateFiltering(!shouldDisableICECandidateFiltering(document));
 
-    m_peerConnections.append(connection);
+    m_peerConnections.add(connection);
     if (shouldDisableICECandidateFiltering(downcast<Document>(*connection.scriptExecutionContext())))
         connection.disableICECandidateFiltering();
 }
@@ -89,12 +87,12 @@ void RTCController::disableICECandidateFilteringForAllOrigins()
         return;
 
     m_shouldFilterICECandidates = false;
-    for (RTCPeerConnection& connection : m_peerConnections) {
-        if (RefPtr document = downcast<Document>(connection.scriptExecutionContext())) {
+    for (Ref connection : m_peerConnections) {
+        if (RefPtr document = downcast<Document>(connection->scriptExecutionContext())) {
             if (RefPtr networkManager = document->rtcNetworkManager())
                 networkManager->setICECandidateFiltering(false);
         }
-        connection.disableICECandidateFiltering();
+        connection->disableICECandidateFiltering();
     }
 }
 
@@ -107,12 +105,12 @@ void RTCController::disableICECandidateFilteringForDocument(Document& document)
         networkManager->setICECandidateFiltering(false);
 
     m_filteringDisabledOrigins.append(PeerConnectionOrigin { document.topOrigin(), document.securityOrigin() });
-    for (RTCPeerConnection& connection : m_peerConnections) {
-        if (RefPtr peerConnectionDocument = downcast<Document>(connection.scriptExecutionContext())) {
+    for (Ref connection : m_peerConnections) {
+        if (RefPtr peerConnectionDocument = downcast<Document>(connection->scriptExecutionContext())) {
             if (matchDocumentOrigin(*peerConnectionDocument, document.topOrigin(), document.securityOrigin())) {
                 if (RefPtr networkManager = peerConnectionDocument->rtcNetworkManager())
                     networkManager->setICECandidateFiltering(false);
-                connection.disableICECandidateFiltering();
+                connection->disableICECandidateFiltering();
             }
         }
     }
@@ -125,9 +123,9 @@ void RTCController::enableICECandidateFiltering()
 
     m_filteringDisabledOrigins.clear();
     m_shouldFilterICECandidates = true;
-    for (RTCPeerConnection& connection : m_peerConnections) {
-        connection.enableICECandidateFiltering();
-        if (RefPtr document = downcast<Document>(connection.scriptExecutionContext())) {
+    for (Ref connection : m_peerConnections) {
+        connection->enableICECandidateFiltering();
+        if (RefPtr document = downcast<Document>(connection->scriptExecutionContext())) {
             if (RefPtr networkManager = document->rtcNetworkManager())
                 networkManager->setICECandidateFiltering(true);
         }
