@@ -1139,17 +1139,14 @@ static bool elementHasClassInClosestAncestors(const Element& element, const Atom
     if (element.hasClass() && element.classNames().contains(className))
         return true;
 
-    unsigned currentDistance = 1;
+    unsigned currentDistance = 0;
     RefPtr ancestor = dynamicDowncast<Element>(element.parentNode());
-    while (currentDistance <= distance) {
+    while (ancestor && currentDistance < distance) {
+        ++currentDistance;
         if (ancestor->hasClass() && ancestor->classNames().contains(className))
             return true;
 
         ancestor = dynamicDowncast<Element>(ancestor->parentNode());
-        if (!ancestor)
-            return false;
-
-        ++currentDistance;
     }
     return false;
 }
