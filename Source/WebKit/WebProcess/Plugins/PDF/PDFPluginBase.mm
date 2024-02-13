@@ -462,6 +462,7 @@ bool PDFPluginBase::geometryDidChange(const IntSize& pluginSize, const AffineTra
     return true;
 }
 
+#if ENABLE(PDF_HUD)
 bool PDFPluginBase::shouldShowHUD() const
 {
     if (!hudEnabled())
@@ -480,7 +481,6 @@ bool PDFPluginBase::shouldShowHUD() const
 
 void PDFPluginBase::updateHUDVisibility()
 {
-#if ENABLE(PDF_HUD)
     if (!m_frame)
         return;
 
@@ -488,12 +488,14 @@ void PDFPluginBase::updateHUDVisibility()
         m_frame->page()->createPDFHUD(*this, frameForHUDInRootViewCoordinates());
     else
         m_frame->page()->removePDFHUD(*this);
-#endif
 }
+#endif
 
 void PDFPluginBase::visibilityDidChange(bool)
 {
+#if ENABLE(PDF_HUD)
     updateHUDVisibility();
+#endif
 }
 
 FloatSize PDFPluginBase::pdfDocumentSizeForPrinting() const

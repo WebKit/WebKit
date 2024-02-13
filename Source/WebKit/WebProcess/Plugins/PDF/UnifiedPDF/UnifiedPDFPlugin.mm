@@ -177,7 +177,9 @@ void UnifiedPDFPlugin::installPDFDocument()
 
     updateLayout();
 
+#if ENABLE(PDF_HUD)
     updateHUDVisibility();
+#endif
 
     if (isLocked())
         createPasswordEntryForm();
@@ -207,8 +209,12 @@ void UnifiedPDFPlugin::attemptToUnlockPDF(const String& password)
     m_passwordField = nullptr;
 
     updateLayout();
+
+#if ENABLE(PDF_HUD)
     updateHUDVisibility();
     updateHUDLocation();
+#endif
+
     scrollToFragmentIfNeeded();
 }
 
