@@ -42,6 +42,7 @@ enum class DelegatedScrollingMode : uint8_t;
 namespace WebKit {
 
 struct PDFContextMenu;
+class PDFPluginPasswordField;
 class WebFrame;
 class WebMouseEvent;
 enum class WebEventType : uint8_t;
@@ -140,7 +141,6 @@ private:
     WebCore::IntSize contentsSize() const override;
     unsigned firstPageHeight() const override;
     unsigned heightForPage(PDFDocumentLayout::PageIndex) const;
-
 
     void scheduleRenderingUpdate();
 
@@ -310,6 +310,8 @@ private:
 
     bool isTaggedPDF() const;
 
+    void createPasswordEntryForm();
+
     PDFDocumentLayout m_documentLayout;
     RefPtr<WebCore::GraphicsLayer> m_rootLayer;
     RefPtr<WebCore::GraphicsLayer> m_scrollContainerLayer;
@@ -347,6 +349,8 @@ private:
     RetainPtr<PDFSelection> m_currentSelection;
 
     RetainPtr<WKPDFFormMutationObserver> m_pdfMutationObserver;
+
+    RefPtr<PDFPluginPasswordField> m_passwordField;
 };
 
 } // namespace WebKit

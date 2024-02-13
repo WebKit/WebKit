@@ -299,9 +299,11 @@ protected:
     virtual void destroyScrollbar(WebCore::ScrollbarOrientation);
 
 #if ENABLE(PDF_HUD)
-    void updatePDFHUDLocation();
+    void updateHUDLocation();
     WebCore::IntRect frameForHUDInRootViewCoordinates() const;
     bool hudEnabled() const;
+    bool shouldShowHUD() const;
+    void updateHUDVisibility();
 #endif
 
 #if !LOG_DISABLED

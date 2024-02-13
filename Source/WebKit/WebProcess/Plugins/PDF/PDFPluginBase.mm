@@ -456,22 +456,44 @@ bool PDFPluginBase::geometryDidChange(const IntSize& pluginSize, const AffineTra
     LOG_WITH_STREAM(PDF, stream << "PDFPluginBase::geometryDidChange - size " << pluginSize << " pluginToRootViewTransform " << pluginToRootViewTransform);
 
 #if ENABLE(PDF_HUD)
-    updatePDFHUDLocation();
+    updateHUDLocation();
 #endif
 
     return true;
 }
 
-void PDFPluginBase::visibilityDidChange(bool visible)
+bool PDFPluginBase::shouldShowHUD() const
+{
+    if (!hudEnabled())
+        return false;
+
+    if (!m_view->isVisible())
+        return false;
+
+    if (isLocked())
+        return false;
+
+    // FIXME: Don't show HUD if it won't fit.
+
+    return true;
+}
+
+void PDFPluginBase::updateHUDVisibility()
 {
 #if ENABLE(PDF_HUD)
-    if (!m_frame || !hudEnabled())
+    if (!m_frame)
         return;
-    if (visible)
+
+    if (shouldShowHUD())
         m_frame->page()->createPDFHUD(*this, frameForHUDInRootViewCoordinates());
     else
         m_frame->page()->removePDFHUD(*this);
 #endif
+}
+
+void PDFPluginBase::visibilityDidChange(bool)
+{
+    updateHUDVisibility();
 }
 
 FloatSize PDFPluginBase::pdfDocumentSizeForPrinting() const
@@ -828,9 +850,9 @@ void PDFPluginBase::writeItemsToPasteboard(NSString *pasteboardName, NSArray *it
 
 #if ENABLE(PDF_HUD)
 
-void PDFPluginBase::updatePDFHUDLocation()
+void PDFPluginBase::updateHUDLocation()
 {
-    if (isLocked() || !m_frame || !m_frame->page())
+    if (!shouldShowHUD())
         return;
     m_frame->protectedPage()->updatePDFHUDLocation(*this, frameForHUDInRootViewCoordinates());
 }

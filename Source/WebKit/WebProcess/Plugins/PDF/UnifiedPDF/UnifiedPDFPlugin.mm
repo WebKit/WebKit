@@ -31,6 +31,7 @@
 #include "PDFContextMenu.h"
 #include "PDFKitSPI.h"
 #include "PDFPluginAnnotation.h"
+#include "PDFPluginPasswordField.h"
 #include "PasteboardTypes.h"
 #include "PluginView.h"
 #include "WebEventConversion.h"
@@ -176,10 +177,38 @@ void UnifiedPDFPlugin::installPDFDocument()
 
     updateLayout();
 
+    updateHUDVisibility();
+
+    if (isLocked())
+        createPasswordEntryForm();
+
     if (m_view)
         m_view->layerHostingStrategyDidChange();
     [[NSNotificationCenter defaultCenter] addObserver:m_pdfMutationObserver.get() selector:@selector(formChanged:) name:mutationObserverNotificationString() object:m_pdfDocument.get()];
 
+    scrollToFragmentIfNeeded();
+}
+
+void UnifiedPDFPlugin::createPasswordEntryForm()
+{
+    if (!supportsForms())
+        return;
+
+    auto passwordField = PDFPluginPasswordField::create(this);
+    m_passwordField = passwordField.ptr();
+    passwordField->attach(m_annotationContainer.get());
+}
+
+void UnifiedPDFPlugin::attemptToUnlockPDF(const String& password)
+{
+    if (![m_pdfDocument unlockWithPassword:password])
+        return;
+
+    m_passwordField = nullptr;
+
+    updateLayout();
+    updateHUDVisibility();
+    updateHUDLocation();
     scrollToFragmentIfNeeded();
 }
 
@@ -255,6 +284,9 @@ void UnifiedPDFPlugin::updatePageBackgroundLayers()
 {
     RefPtr page = this->page();
     if (!page)
+        return;
+
+    if (isLocked())
         return;
 
     Vector<Ref<GraphicsLayer>> pageContainerLayers = m_pageBackgroundsContainerLayer->children();
@@ -1405,7 +1437,7 @@ void UnifiedPDFPlugin::scrollToPage(PDFDocumentLayout::PageIndex pageIndex)
 
 void UnifiedPDFPlugin::scrollToFragmentIfNeeded()
 {
-    if (!m_pdfDocument || !m_didAttachScrollingTreeNode)
+    if (!m_pdfDocument || !m_didAttachScrollingTreeNode || isLocked())
         return;
 
     if (m_didScrollToFragment)
@@ -2041,10 +2073,6 @@ void AnnotationTrackingState::resetAnnotationTrackingState()
     ASSERT(m_trackedAnnotation);
     m_trackedAnnotation = nullptr;
     m_isBeingHovered = false;
-}
-
-void UnifiedPDFPlugin::attemptToUnlockPDF(const String& password)
-{
 }
 
 bool UnifiedPDFPlugin::isTaggedPDF() const
