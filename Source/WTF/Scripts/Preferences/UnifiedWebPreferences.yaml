@@ -453,6 +453,21 @@ AlternateWebMPlayerEnabled:
     WebCore:
       default: true
 
+AlwaysAllowLocalWebarchive:
+  type: bool
+  status: internal
+  category: dom
+  humanReadableName: "Always allow loading local Web Archive"
+  humanReadableDescription: "Enable always allowing loading local Web Archive"
+  condition: ENABLE(WEB_ARCHIVE)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 AlwaysZoomOnDoubleTap:
   type: bool
   status: internal
@@ -4092,6 +4107,21 @@ LoadDeferringEnabled:
   defaultValue:
     WebKitLegacy:
       PLATFORM(MAC): WebKit::defaultLoadDeferringEnabled()
+      default: true
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+
+LoadWebArchiveWithEphemeralStorageEnabled:
+  type: bool
+  status: stable
+  category: dom
+  humanReadableName: "Load Web Archive with ephemeral storage"
+  humanReadableDescription: "Enable loading web archive with ephemeral storage"
+  condition: ENABLE(WEB_ARCHIVE)
+  defaultValue:
+    WebKitLegacy:
       default: true
     WebKit:
       default: true

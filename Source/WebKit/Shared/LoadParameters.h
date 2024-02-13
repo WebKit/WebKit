@@ -87,6 +87,7 @@ struct LoadParameters {
 #if PLATFORM(COCOA)
     std::optional<double> dataDetectionReferenceDate;
 #endif
+    bool isRequestFromClientOrUserInput { false };
 
     OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections;
 };

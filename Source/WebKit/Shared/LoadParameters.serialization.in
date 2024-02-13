@@ -52,6 +52,7 @@
 #if PLATFORM(COCOA)
     std::optional<double> dataDetectionReferenceDate;
 #endif
+    bool isRequestFromClientOrUserInput;
 
     OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections;
 };

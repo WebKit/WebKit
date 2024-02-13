@@ -26,15 +26,20 @@
 #import "config.h"
 
 #import "DragAndDropSimulator.h"
+#import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestUIDelegate.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKDragDestinationAction.h>
 #import <WebKit/WKNavigationPrivate.h>
+#import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/WKWebsiteDataStorePrivate.h>
+#import <WebKit/_WKFeature.h>
+#import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/WTFString.h>
 
@@ -78,7 +83,14 @@ TEST(LoadWebArchive, FailNavigation1)
     // Using `document.location.href = 'helloworld.webarchive';`.
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"load-web-archive-1" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
 
-    auto webView = adoptNS([[WKWebView alloc] init]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    for (_WKFeature *feature in WKPreferences._features) {
+        NSString *key = feature.key;
+        if ([key isEqualToString:@"LoadWebArchiveWithEphemeralStorageEnabled"])
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
+    }
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
     auto delegate = adoptNS([[TestLoadWebArchiveNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
 
@@ -97,7 +109,14 @@ TEST(LoadWebArchive, FailNavigation2)
     auto delegate = adoptNS([[TestLoadWebArchiveNavigationDelegate alloc] init]);
     gDelegate = delegate.get();
 
-    auto webView = adoptNS([[WKWebView alloc] init]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    for (_WKFeature *feature in WKPreferences._features) {
+        NSString *key = feature.key;
+        if ([key isEqualToString:@"LoadWebArchiveWithEphemeralStorageEnabled"])
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
+    }
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
     [webView setNavigationDelegate:delegate.get()];
     [webView setUIDelegate:delegate.get()];
 
@@ -127,7 +146,15 @@ TEST(LoadWebArchive, ClientNavigationReload)
 {
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"helloworld" withExtension:@"webarchive" subdirectory:@"TestWebKitAPI.resources"];
 
-    auto webView = adoptNS([[WKWebView alloc] init]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    for (_WKFeature *feature in WKPreferences._features) {
+        NSString *key = feature.key;
+        if ([key isEqualToString:@"LoadWebArchiveWithEphemeralStorageEnabled"])
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
+    }
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+
     auto delegate = adoptNS([[TestLoadWebArchiveNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
 
@@ -142,6 +169,55 @@ TEST(LoadWebArchive, ClientNavigationReload)
     EXPECT_WK_STREQ(finalURL, "");
 }
 
+TEST(LoadWebArchive, ClientNavigationWithStorageReload)
+{
+    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"helloworld" withExtension:@"webarchive" subdirectory:@"TestWebKitAPI.resources"];
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    for (_WKFeature *feature in WKPreferences._features) {
+        NSString *key = feature.key;
+        if ([key isEqualToString:@"LoadWebArchiveWithEphemeralStorageEnabled"])
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
+    }
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    auto delegate = adoptNS([[TestLoadWebArchiveNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    navigationComplete = false;
+    [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
+    Util::run(&navigationComplete);
+    EXPECT_WK_STREQ(finalURL, "helloworld.webarchive");
+
+    __block bool doneEvaluatingJavaScript { false };
+    [webView evaluateJavaScript:@"localStorage.setItem(\"key\", \"value\");" completionHandler:^(id value, NSError *error) {
+        EXPECT_NULL(error);
+        doneEvaluatingJavaScript = true;
+    }];
+    TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
+
+    [webView evaluateJavaScript:@"localStorage.getItem(\"key\");" completionHandler:^(id value, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_TRUE([value isKindOfClass:[NSString class]]);
+        EXPECT_WK_STREQ(@"value", value);
+        doneEvaluatingJavaScript = true;
+    }];
+    TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
+
+    navigationComplete = false;
+    [webView reload];
+    Util::run(&navigationComplete);
+    EXPECT_WK_STREQ(finalURL, "");
+
+    [webView evaluateJavaScript:@"localStorage.getItem(\"key\");" completionHandler:^(id value, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_TRUE([value isKindOfClass:[NSString class]]);
+        EXPECT_WK_STREQ(@"value", value);
+        doneEvaluatingJavaScript = true;
+    }];
+    TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
+}
+
 TEST(LoadWebArchive, DragNavigationSucceed)
 {
     RetainPtr<NSURL> webArchiveURL = [[NSBundle mainBundle] URLForResource:@"helloworld" withExtension:@"webarchive" subdirectory:@"TestWebKitAPI.resources"];
@@ -152,7 +228,14 @@ TEST(LoadWebArchive, DragNavigationSucceed)
     [pasteboard declareTypes:@[NSFilenamesPboardType] owner:nil];
     [pasteboard setPropertyList:@[webArchiveURL.get().path] forType:NSFilenamesPboardType];
 
-    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:CGRectMake(0, 0, 320, 500)]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    for (_WKFeature *feature in WKPreferences._features) {
+        NSString *key = feature.key;
+        if ([key isEqualToString:@"LoadWebArchiveWithEphemeralStorageEnabled"])
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
+    }
+
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
     [simulator setExternalDragPasteboard:pasteboard];
     [simulator setDragDestinationAction:WKDragDestinationActionAny];
 
@@ -181,7 +264,14 @@ TEST(LoadWebArchive, DragNavigationReload)
     [pasteboard declareTypes:@[NSFilenamesPboardType] owner:nil];
     [pasteboard setPropertyList:@[webArchiveURL.get().path] forType:NSFilenamesPboardType];
 
-    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:CGRectMake(0, 0, 320, 500)]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    for (_WKFeature *feature in WKPreferences._features) {
+        NSString *key = feature.key;
+        if ([key isEqualToString:@"LoadWebArchiveWithEphemeralStorageEnabled"])
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
+    }
+
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
     [simulator setExternalDragPasteboard:pasteboard];
     [simulator setDragDestinationAction:WKDragDestinationActionAny];
 
@@ -208,7 +298,7 @@ TEST(LoadWebArchive, DragNavigationReload)
 static NSData* constructArchive()
 {
     NSString *js = @"alert('loaded http subresource successfully')";
-    auto response = adoptNS([[NSURLResponse alloc] initWithURL:[NSURL URLWithString:@"http://download/script.js"] MIMEType:@"application/javascript" expectedContentLength:js.length textEncodingName:@"utf-8"]);
+    auto response = adoptNS([[NSURLResponse alloc] initWithURL:[NSURL URLWithString:@"http://download.example/script.js"] MIMEType:@"application/javascript" expectedContentLength:js.length textEncodingName:@"utf-8"]);
     auto responseArchiver = adoptNS([[NSKeyedArchiver alloc] initRequiringSecureCoding:YES]);
     [responseArchiver encodeObject:response.get() forKey:@"WebResourceResponse"];
     NSDictionary *archive = @{
@@ -217,14 +307,14 @@ static NSData* constructArchive()
             @"WebResourceFrameName": @"",
             @"WebResourceMIMEType": @"text/html",
             @"WebResourceTextEncodingName": @"UTF-8",
-            @"WebResourceURL": @"http://download/",
+            @"WebResourceURL": @"http://download.example/",
         },
         @"WebSubresources": @[@{
             @"WebResourceData": [js dataUsingEncoding:NSUTF8StringEncoding],
             @"WebResourceMIMEType": @"application/javascript",
             @"WebResourceResponse": responseArchiver.get().encodedData,
             @"WebResourceTextEncodingName": @"utf-8",
-            @"WebResourceURL": @"http://download/script.js",
+            @"WebResourceURL": @"http://download.example/script.js",
         }]
     };
     return [NSPropertyListSerialization dataFromPropertyList:archive format:NSPropertyListBinaryFormat_v1_0 errorDescription:nil];
@@ -234,8 +324,16 @@ TEST(LoadWebArchive, HTTPSUpgrade)
 {
     NSData *data = constructArchive();
 
-    auto webView = adoptNS([WKWebView new]);
-    [webView loadData:data MIMEType:@"application/x-webarchive" characterEncodingName:@"utf-8" baseURL:[NSURL URLWithString:@"http://download/"]];
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    for (_WKFeature *feature in WKPreferences._features) {
+        NSString *key = feature.key;
+        if ([key isEqualToString:@"LoadWebArchiveWithEphemeralStorageEnabled"])
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
+    }
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+
+    [webView loadData:data MIMEType:@"application/x-webarchive" characterEncodingName:@"utf-8" baseURL:[NSURL URLWithString:@"http://download.example/"]];
     EXPECT_WK_STREQ([webView _test_waitForAlert], "loaded http subresource successfully");
 }
 
@@ -246,9 +344,304 @@ TEST(LoadWebArchive, DisallowedNetworkHosts)
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     configuration.get()._allowedNetworkHosts = [NSSet set];
 
+    for (_WKFeature *feature in WKPreferences._features) {
+        NSString *key = feature.key;
+        if ([key isEqualToString:@"LoadWebArchiveWithEphemeralStorageEnabled"])
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
+    }
+
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
-    [webView loadData:data MIMEType:@"application/x-webarchive" characterEncodingName:@"utf-8" baseURL:[NSURL URLWithString:@"http://download/"]];
+    [webView loadData:data MIMEType:@"application/x-webarchive" characterEncodingName:@"utf-8" baseURL:[NSURL URLWithString:@"http://download.example/"]];
     EXPECT_WK_STREQ([webView _test_waitForAlert], "loaded http subresource successfully");
+}
+
+TEST(LoadWebArchive, SiteToWebArchiveAndBack)
+{
+    using namespace TestWebKitAPI;
+    HTTPServer server({
+        { "http://download.example/"_s, { "<body>/</body>"_s } },
+        { "http://download.example/page1.html"_s, { "<body>page1</body>"_s } },
+    }, HTTPServer::Protocol::Http);
+
+    auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    [storeConfiguration setProxyConfiguration:@{
+        (NSString *)kCFStreamPropertyHTTPProxyHost: @"127.0.0.1",
+        (NSString *)kCFStreamPropertyHTTPProxyPort: @(server.port())
+    }];
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration setWebsiteDataStore:dataStore.get()];
+
+    for (_WKFeature *feature in WKPreferences._features) {
+        NSString *key = feature.key;
+        if ([key isEqualToString:@"LoadWebArchiveWithEphemeralStorageEnabled"])
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
+    }
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+
+    auto delegate = adoptNS([[TestLoadWebArchiveNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    navigationComplete = false;
+
+    RetainPtr<NSURL> webArchiveURL = [[NSBundle mainBundle] URLForResource:@"download.example" withExtension:@"webarchive" subdirectory:@"TestWebKitAPI.resources"];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://download.example/page1.html"]]];
+    Util::run(&navigationComplete);
+    EXPECT_WK_STREQ([webView URL].absoluteString, @"http://download.example/page1.html");
+    navigationComplete = false;
+
+    __block bool doneEvaluatingJavaScript { false };
+    [webView evaluateJavaScript:@"localStorage.setItem(\"key\", \"value\");" completionHandler:^(id value, NSError *error) {
+        EXPECT_NULL(error);
+        doneEvaluatingJavaScript = true;
+    }];
+    TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
+    doneEvaluatingJavaScript = false;
+
+    [webView evaluateJavaScript:@"localStorage.getItem(\"key\");" completionHandler:^(id value, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_TRUE([value isKindOfClass:[NSString class]]);
+        EXPECT_WK_STREQ(@"value", value);
+        doneEvaluatingJavaScript = true;
+    }];
+    TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
+    doneEvaluatingJavaScript = false;
+
+    [webView loadFileURL:webArchiveURL.get() allowingReadAccessToURL:webArchiveURL.get()];
+    Util::run(&navigationComplete);
+    EXPECT_WK_STREQ(finalURL, @"download.example.webarchive");
+    navigationComplete = false;
+
+    [webView evaluateJavaScript:@"location.href" completionHandler:^(id value, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_TRUE([value isKindOfClass:[NSString class]]);
+        EXPECT_WK_STREQ(@"http://download.example/", value);
+        doneEvaluatingJavaScript = true;
+    }];
+    TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
+    doneEvaluatingJavaScript = false;
+
+    EXPECT_TRUE([webView canGoBack]);
+
+    [webView evaluateJavaScript:@"localStorage.getItem(\"key\");" completionHandler:^(id value, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_TRUE([value isKindOfClass:[NSNull class]]);
+        doneEvaluatingJavaScript = true;
+    }];
+    TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
+    doneEvaluatingJavaScript = false;
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://download.example/page1.html"]]];
+    Util::run(&navigationComplete);
+    EXPECT_WK_STREQ([webView URL].absoluteString, @"http://download.example/page1.html");
+    navigationComplete = false;
+
+    [webView evaluateJavaScript:@"localStorage.getItem(\"key\");" completionHandler:^(id value, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_FALSE([value isKindOfClass:[NSNull class]]);
+        EXPECT_TRUE([value isKindOfClass:[NSString class]]);
+        EXPECT_WK_STREQ(@"value", value);
+        doneEvaluatingJavaScript = true;
+    }];
+    TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
+    doneEvaluatingJavaScript = false;
+}
+
+TEST(LoadWebArchive, WebArchiveToSiteAndBack)
+{
+    using namespace TestWebKitAPI;
+    HTTPServer server({
+        { "http://download.example/"_s, { "<body>/</body>"_s } },
+        { "http://download.example/page1.html"_s, { "<body>page1</body>"_s } },
+    }, HTTPServer::Protocol::Http);
+
+    auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    [storeConfiguration setProxyConfiguration:@{
+        (NSString *)kCFStreamPropertyHTTPProxyHost: @"127.0.0.1",
+        (NSString *)kCFStreamPropertyHTTPProxyPort: @(server.port())
+    }];
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration setWebsiteDataStore:dataStore.get()];
+
+    for (_WKFeature *feature in WKPreferences._features) {
+        NSString *key = feature.key;
+        if ([key isEqualToString:@"LoadWebArchiveWithEphemeralStorageEnabled"])
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
+    }
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+
+    auto delegate = adoptNS([[TestLoadWebArchiveNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    navigationComplete = false;
+
+    RetainPtr<NSURL> webArchiveURL = [[NSBundle mainBundle] URLForResource:@"download.example" withExtension:@"webarchive" subdirectory:@"TestWebKitAPI.resources"];
+    [webView loadFileURL:webArchiveURL.get() allowingReadAccessToURL:webArchiveURL.get()];
+    Util::run(&navigationComplete);
+    EXPECT_WK_STREQ(finalURL, @"download.example.webarchive");
+    navigationComplete = false;
+
+    __block bool doneEvaluatingJavaScript { false };
+    [webView evaluateJavaScript:@"location.href" completionHandler:^(id value, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_TRUE([value isKindOfClass:[NSString class]]);
+        EXPECT_WK_STREQ(@"http://download.example/", value);
+        doneEvaluatingJavaScript = true;
+    }];
+    TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
+    doneEvaluatingJavaScript = false;
+
+    [webView evaluateJavaScript:@"localStorage.setItem(\"key\", \"value\");" completionHandler:^(id value, NSError *error) {
+        EXPECT_NULL(error);
+        doneEvaluatingJavaScript = true;
+    }];
+    TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
+    doneEvaluatingJavaScript = false;
+
+    [webView evaluateJavaScript:@"localStorage.getItem(\"key\");" completionHandler:^(id value, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_TRUE([value isKindOfClass:[NSString class]]);
+        EXPECT_WK_STREQ(@"value", value);
+        doneEvaluatingJavaScript = true;
+    }];
+    TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
+    doneEvaluatingJavaScript = false;
+
+    [webView evaluateJavaScript:@"let anchor = document.createElement('a'); anchor.href = \"http://download.example/page1.html\"; anchor.click();" completionHandler:^(id value, NSError *error) {
+        EXPECT_NULL(error);
+        doneEvaluatingJavaScript = true;
+    }];
+    TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
+    doneEvaluatingJavaScript = false;
+    Util::run(&navigationComplete);
+    EXPECT_WK_STREQ([webView URL].absoluteString, @"http://download.example/page1.html");
+    navigationComplete = false;
+
+    [webView evaluateJavaScript:@"localStorage.getItem(\"key\");" completionHandler:^(id value, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_TRUE([value isKindOfClass:[NSNull class]]);
+        doneEvaluatingJavaScript = true;
+    }];
+    TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
+    doneEvaluatingJavaScript = false;
+
+    WKBackForwardList *list = [webView backForwardList];
+    EXPECT_WK_STREQ(@"http://download.example/page1.html", [list.currentItem.URL absoluteString]);
+    EXPECT_EQ((NSUInteger)1, list.backList.count);
+    EXPECT_EQ((NSUInteger)0, list.forwardList.count);
+    EXPECT_TRUE([webView canGoBack]);
+
+    [webView goBack];
+    Util::run(&navigationComplete);
+    EXPECT_WK_STREQ(finalURL, @"download.example.webarchive");
+    navigationComplete = false;
+
+    [webView evaluateJavaScript:@"location.href" completionHandler:^(id value, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_TRUE([value isKindOfClass:[NSString class]]);
+        EXPECT_WK_STREQ(@"http://download.example/", value);
+        doneEvaluatingJavaScript = true;
+    }];
+    TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
+    doneEvaluatingJavaScript = false;
+
+    [webView evaluateJavaScript:@"localStorage.getItem(\"key\");" completionHandler:^(id value, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_FALSE([value isKindOfClass:[NSNull class]]);
+        EXPECT_TRUE([value isKindOfClass:[NSString class]]);
+        EXPECT_WK_STREQ(@"value", value);
+        doneEvaluatingJavaScript = true;
+    }];
+    TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
+    doneEvaluatingJavaScript = false;
+}
+
+TEST(LoadWebArchive, FileWebArchiveToDataWebArchiveAndBack)
+{
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    for (_WKFeature *feature in WKPreferences._features) {
+        NSString *key = feature.key;
+        if ([key isEqualToString:@"LoadWebArchiveWithEphemeralStorageEnabled"])
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
+    }
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+
+    auto delegate = adoptNS([[TestLoadWebArchiveNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    navigationComplete = false;
+
+    RetainPtr<NSURL> webArchiveURL = [[NSBundle mainBundle] URLForResource:@"download.example" withExtension:@"webarchive" subdirectory:@"TestWebKitAPI.resources"];
+    [webView loadFileURL:webArchiveURL.get() allowingReadAccessToURL:webArchiveURL.get()];
+    Util::run(&navigationComplete);
+    EXPECT_WK_STREQ(finalURL, @"download.example.webarchive");
+    navigationComplete = false;
+
+    __block bool doneEvaluatingJavaScript { false };
+    [webView evaluateJavaScript:@"location.href" completionHandler:^(id value, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_TRUE([value isKindOfClass:[NSString class]]);
+        EXPECT_WK_STREQ(@"http://download.example/", value);
+        doneEvaluatingJavaScript = true;
+    }];
+    TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
+    doneEvaluatingJavaScript = false;
+
+    [webView evaluateJavaScript:@"localStorage.setItem(\"key\", \"value\");" completionHandler:^(id value, NSError *error) {
+        EXPECT_NULL(error);
+        doneEvaluatingJavaScript = true;
+    }];
+    TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
+    doneEvaluatingJavaScript = false;
+
+    [webView evaluateJavaScript:@"localStorage.getItem(\"key\");" completionHandler:^(id value, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_TRUE([value isKindOfClass:[NSString class]]);
+        EXPECT_WK_STREQ(@"value", value);
+        doneEvaluatingJavaScript = true;
+    }];
+    TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
+    doneEvaluatingJavaScript = false;
+
+    NSData *data = constructArchive();
+    [webView loadData:data MIMEType:@"application/x-webarchive" characterEncodingName:@"utf-8" baseURL:[NSURL URLWithString:@"http://download.example/"]];
+    Util::run(&navigationComplete);
+    EXPECT_WK_STREQ([webView URL].absoluteString, @"http://download.example/");
+    navigationComplete = false;
+
+    [webView evaluateJavaScript:@"localStorage.getItem(\"key\");" completionHandler:^(id value, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_TRUE([value isKindOfClass:[NSNull class]]);
+        doneEvaluatingJavaScript = true;
+    }];
+    TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
+    doneEvaluatingJavaScript = false;
+
+    [webView loadFileURL:webArchiveURL.get() allowingReadAccessToURL:webArchiveURL.get()];
+    Util::run(&navigationComplete);
+    EXPECT_WK_STREQ(finalURL, @"download.example.webarchive");
+    navigationComplete = false;
+
+    [webView evaluateJavaScript:@"location.href" completionHandler:^(id value, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_TRUE([value isKindOfClass:[NSString class]]);
+        EXPECT_WK_STREQ(@"http://download.example/", value);
+        doneEvaluatingJavaScript = true;
+    }];
+    TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
+    doneEvaluatingJavaScript = false;
+
+    [webView evaluateJavaScript:@"localStorage.getItem(\"key\");" completionHandler:^(id value, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_TRUE([value isKindOfClass:[NSNull class]]);
+        doneEvaluatingJavaScript = true;
+    }];
+    TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
+    doneEvaluatingJavaScript = false;
 }
 
 } // namespace TestWebKitAPI

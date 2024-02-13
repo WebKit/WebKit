@@ -1,12 +1,10 @@
 main frame - didStartProvisionalLoadForFrame
 main frame - didCommitLoadForFrame
-main frame - willPerformClientRedirectToURL: resources/video-in-webarchive.webarchive
+main frame - willPerformClientRedirectToURL: resources/top.webarchive
 main frame - didFinishDocumentLoadForFrame
 main frame - didFinishLoadForFrame
 main frame - didCancelClientRedirectForFrame
 main frame - didFinishDocumentLoadForFrame
-frame "<!--frame1-->" - didStartProvisionalLoadForFrame
 main frame - didHandleOnloadEventsForFrame
-frame "<!--frame1-->" - didFailProvisionalLoadWithError
 main frame - didFinishLoadForFrame
-
+hello, world.

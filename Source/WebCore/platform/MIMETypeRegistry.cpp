@@ -841,4 +841,20 @@ bool MIMETypeRegistry::isJPEGMIMEType(const String& mimeType)
 #endif
 }
 
+bool MIMETypeRegistry::isWebArchiveMIMEType(const String& mimeType)
+{
+    using MIMETypeHashSet = HashSet<String, ASCIICaseInsensitiveHash>;
+    static NeverDestroyed<MIMETypeHashSet> webArchiveMIMETypes {
+        MIMETypeHashSet {
+            "application/x-webarchive"_s,
+            "application/x-mimearchive"_s,
+            "multipart/related"_s,
+#if PLATFORM(GTK)
+            "message/rfc822"_s,
+#endif
+        }
+    };
+
+    return webArchiveMIMETypes.get().isValidValue(mimeType) ? webArchiveMIMETypes.get().contains(mimeType) : false;
+}
 } // namespace WebCore

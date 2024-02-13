@@ -1,9 +1,9 @@
 main frame - didStartProvisionalLoadForFrame
 main frame - didCommitLoadForFrame
-frame "<!--frame1-->" - didStartProvisionalLoadForFrame
-resources/cache-expired-subresource.webarchive - willSendRequest <NSURLRequest URL resources/cache-expired-subresource.webarchive, main document URL cache-expired-subresource.html, http method GET> redirectResponse (null)
 main frame - didFinishDocumentLoadForFrame
 cache-expired-subresource.html - didFinishLoading
+frame "<!--frame1-->" - didStartProvisionalLoadForFrame
+resources/cache-expired-subresource.webarchive - willSendRequest <NSURLRequest URL resources/cache-expired-subresource.webarchive, main document URL cache-expired-subresource.html, http method GET> redirectResponse (null)
 resources/cache-expired-subresource.webarchive - didReceiveResponse <NSURLResponse resources/cache-expired-subresource.webarchive, http status code 0>
 frame "<!--frame1-->" - didCommitLoadForFrame
 http://localhost/pink-bullet.png - willSendRequest <NSURLRequest URL http://localhost/pink-bullet.png, main document URL cache-expired-subresource.html, http method GET> redirectResponse (null)

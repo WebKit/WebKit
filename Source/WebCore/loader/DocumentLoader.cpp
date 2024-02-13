@@ -68,6 +68,7 @@
 #include "LocalFrame.h"
 #include "LocalFrameLoaderClient.h"
 #include "Logging.h"
+#include "MIMETypeRegistry.h"
 #include "MemoryCache.h"
 #include "MixedContentChecker.h"
 #include "NavigationRequester.h"
@@ -1053,20 +1054,8 @@ void DocumentLoader::responseReceived(const ResourceResponse& response, Completi
 // because they can claim to be from any domain and thus avoid cross-domain security checks (4120255, 45524528, 47610130).
 bool DocumentLoader::disallowWebArchive() const
 {
-    using MIMETypeHashSet = HashSet<String, ASCIICaseInsensitiveHash>;
-    static NeverDestroyed<MIMETypeHashSet> webArchiveMIMETypes {
-        MIMETypeHashSet {
-            "application/x-webarchive"_s,
-            "application/x-mimearchive"_s,
-            "multipart/related"_s,
-#if PLATFORM(GTK)
-            "message/rfc822"_s,
-#endif
-        }
-    };
-
     String mimeType = m_response.mimeType();
-    if (mimeType.isNull() || !webArchiveMIMETypes.get().contains(mimeType))
+    if (mimeType.isNull() || !MIMETypeRegistry::isWebArchiveMIMEType(mimeType))
         return false;
 
 #if USE(QUICK_LOOK)
@@ -1080,16 +1069,16 @@ bool DocumentLoader::disallowWebArchive() const
     if (!LegacySchemeRegistry::shouldTreatURLSchemeAsLocal(m_request.url().protocol()))
         return true;
 
-    if (!frame() || (frame()->isMainFrame() && allowsWebArchiveForMainFrame()))
-        return false;
-
+#if ENABLE(WEB_ARCHIVE)
     // On purpose of maintaining existing tests.
     auto* localFrame = dynamicDowncast<LocalFrame>(frame()->mainFrame());
-    if (!localFrame)
+    bool alwaysAllowLocalWebArchive = localFrame && localFrame->settings().alwaysAllowLocalWebarchive();
+#else
+    bool alwaysAllowLocalWebArchive { false };
+#endif
+    if (!frame() || (frame()->isMainFrame() && allowsWebArchiveForMainFrame()) || alwaysAllowLocalWebArchive)
         return false;
 
-    if (localFrame->loader().alwaysAllowLocalWebarchive())
-        return false;
     return true;
 }
 

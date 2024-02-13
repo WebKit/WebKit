@@ -1465,6 +1465,9 @@ imported/w3c/web-platform-tests/cookies/secure/set-from-ws.sub.html [ Failure ]
 
 webkit.org/b/244308 imported/w3c/web-platform-tests/cookies/attributes/attributes-ctl.sub.html [ Pass Failure ]
 
+# Only flakey in WK1
+webarchive/loading/test-loading-archive-subresource-null-mimetype.html [ Failure Pass ]
+
 # WebKit1 frames use native scrollbars causing these tests to fail.
 
 # Lack of ways to control the cross-frame scroll chaining in WK1.
