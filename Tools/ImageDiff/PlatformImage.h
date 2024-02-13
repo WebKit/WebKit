@@ -29,7 +29,7 @@
 #if defined(USE_CAIRO) && USE_CAIRO
 typedef struct _cairo_surface cairo_surface_t;
 #elif defined(USE_SKIA) && USE_SKIA
-class SkBitmap;
+#include <skia/core/SkImage.h>
 #else
 typedef struct CGImage *CGImageRef;
 #endif
@@ -45,7 +45,7 @@ public:
 #if defined(USE_CAIRO) && USE_CAIRO
     PlatformImage(cairo_surface_t*);
 #elif defined(USE_SKIA) && USE_SKIA
-    PlatformImage(SkBitmap*);
+    explicit PlatformImage(sk_sp<SkImage>&&);
 #else
     PlatformImage(CGImageRef, double scaleFactor = 1);
 #endif
@@ -74,6 +74,8 @@ public:
 private:
 #if defined(USE_CAIRO) && USE_CAIRO
     cairo_surface_t* m_image;
+#elif defined(USE_SKIA) && USE_SKIA
+    sk_sp<SkImage> m_image;
 #else
     CGImageRef m_image;
     mutable void* m_buffer { nullptr };

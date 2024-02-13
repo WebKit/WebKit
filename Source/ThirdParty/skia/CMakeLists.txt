@@ -140,6 +140,14 @@ add_library(Skia STATIC
     src/base/SkUTF.cpp
     src/base/SkUtils.cpp
 
+    src/codec/SkCodec.cpp
+    src/codec/SkColorPalette.cpp
+    src/codec/SkEncodedInfo.cpp
+    src/codec/SkPixmapUtils.cpp
+    src/codec/SkPngCodec.cpp
+    src/codec/SkSampler.cpp
+    src/codec/SkSwizzler.cpp
+
     src/core/SkAAClip.cpp
     src/core/SkATrace.cpp
     src/core/SkAlphaRuns.cpp
@@ -890,6 +898,8 @@ target_include_directories(Skia INTERFACE
 
 target_compile_definitions(Skia PRIVATE
     SKIA_IMPLEMENTATION=1
+
+    SK_CODEC_DECODES_PNG
 
     SK_GAMMA_APPLY_TO_A8
 )
