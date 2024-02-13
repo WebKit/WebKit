@@ -760,6 +760,54 @@ void JIT::compileOpStrictEq(const JSInstruction* currentInstruction)
     emitGetVirtualRegister(src1, regT0);
     emitGetVirtualRegister(src2, regT1);
 
+    auto tryGetAtomStringConstant = [&](VirtualRegister src) -> JSString* {
+        if (!src.isConstant())
+            return nullptr;
+        if (!m_profiledCodeBlock->isConstantOwnedByUnlinkedCodeBlock(src))
+            return nullptr;
+        JSValue value = m_unlinkedCodeBlock->getConstant(src);
+        if (!value.isString())
+            return nullptr;
+        JSString* string = asString(value);
+        auto* impl = string->tryGetValueImpl();
+        if (!impl)
+            return nullptr;
+        if (!impl->isAtom())
+            return nullptr;
+        return string;
+    };
+
+    auto emitStringConstantFastPath = [&](GPRReg stringGPR, GPRReg knownStringGPR, JSString* string) {
+        JumpList fallThrough;
+        JumpList equals;
+        moveTrustedValue(jsBoolean(!std::is_same_v<Op, OpStricteq>), jsRegT32);
+
+        equals.append(branch64(Equal, stringGPR, knownStringGPR));
+        fallThrough.append(branchIfNotCell(stringGPR));
+
+        fallThrough.append(branchIfNotString(stringGPR));
+        loadPtr(Address(stringGPR, JSString::offsetOfValue()), regT5);
+        addSlowCase(branchIfRopeStringImpl(regT5));
+        addSlowCase(branchTest32(Zero, Address(regT5, StringImpl::flagsOffset()), TrustedImm32(StringImpl::flagIsAtom())));
+        fallThrough.append(branchPtr(NotEqual, regT5, TrustedImmPtr(string->tryGetValueImpl())));
+
+        equals.link(this);
+        moveTrustedValue(jsBoolean(std::is_same_v<Op, OpStricteq>), jsRegT32);
+
+        fallThrough.link(this);
+        emitPutVirtualRegister(dst, jsRegT32);
+    };
+
+    if (auto* string = tryGetAtomStringConstant(src1)) {
+        emitStringConstantFastPath(regT1, regT0, string);
+        return;
+    }
+
+    if (auto* string = tryGetAtomStringConstant(src2)) {
+        emitStringConstantFastPath(regT0, regT1, string);
+        return;
+    }
+
 #if USE(BIGINT32)
     /* At a high level we do (assuming 'type' to be StrictEq):
     If (left is Double || right is Double)
@@ -845,6 +893,57 @@ void JIT::compileOpStrictEqJump(const JSInstruction* currentInstruction)
 
     emitGetVirtualRegister(src1, regT0);
     emitGetVirtualRegister(src2, regT1);
+
+    auto tryGetAtomStringConstant = [&](VirtualRegister src) -> JSString* {
+        if (!src.isConstant())
+            return nullptr;
+        if (!m_profiledCodeBlock->isConstantOwnedByUnlinkedCodeBlock(src))
+            return nullptr;
+        JSValue value = m_unlinkedCodeBlock->getConstant(src);
+        if (!value.isString())
+            return nullptr;
+        JSString* string = asString(value);
+        auto* impl = string->tryGetValueImpl();
+        if (!impl)
+            return nullptr;
+        if (!impl->isAtom())
+            return nullptr;
+        return string;
+    };
+
+    auto emitStringConstantFastPath = [&](GPRReg stringGPR, GPRReg knownStringGPR, JSString* string) {
+        JumpList fallThrough;
+        if constexpr (std::is_same_v<Op, OpJstricteq>) {
+            addJump(branch64(Equal, stringGPR, knownStringGPR), target);
+            fallThrough.append(branchIfNotCell(stringGPR));
+
+            fallThrough.append(branchIfNotString(stringGPR));
+            loadPtr(Address(stringGPR, JSString::offsetOfValue()), regT2);
+            addSlowCase(branchIfRopeStringImpl(regT2));
+            addSlowCase(branchTest32(Zero, Address(regT2, StringImpl::flagsOffset()), TrustedImm32(StringImpl::flagIsAtom())));
+            addJump(branchPtr(Equal, regT2, TrustedImmPtr(string->tryGetValueImpl())), target);
+        } else {
+            fallThrough.append(branch64(Equal, stringGPR, knownStringGPR));
+            addJump(branchIfNotCell(stringGPR), target);
+
+            addJump(branchIfNotString(stringGPR), target);
+            loadPtr(Address(stringGPR, JSString::offsetOfValue()), regT2);
+            addSlowCase(branchIfRopeStringImpl(regT2));
+            addSlowCase(branchTest32(Zero, Address(regT2, StringImpl::flagsOffset()), TrustedImm32(StringImpl::flagIsAtom())));
+            addJump(branchPtr(NotEqual, regT2, TrustedImmPtr(string->tryGetValueImpl())), target);
+        }
+        fallThrough.link(this);
+    };
+
+    if (auto* string = tryGetAtomStringConstant(src1)) {
+        emitStringConstantFastPath(regT1, regT0, string);
+        return;
+    }
+
+    if (auto* string = tryGetAtomStringConstant(src2)) {
+        emitStringConstantFastPath(regT0, regT1, string);
+        return;
+    }
 
 #if USE(BIGINT32)
     /* At a high level we do (assuming 'type' to be StrictEq):
