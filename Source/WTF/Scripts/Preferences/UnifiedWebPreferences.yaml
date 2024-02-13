@@ -6726,6 +6726,15 @@ TextAutosizingUsesIdempotentMode:
     WebCore:
       default: false
 
+TextExtractionEnabled:
+  type: bool
+  status: embedder
+  webcoreBinding: none
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: false
+
 TextInteractionEnabled:
   type: bool
   status: embedder

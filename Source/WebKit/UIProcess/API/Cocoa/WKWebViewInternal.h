@@ -105,6 +105,7 @@ class ViewGestureController;
 @class WKPasswordView;
 @class WKSafeBrowsingWarning;
 @class WKScrollView;
+@class WKTextExtractionItem;
 @class WKWebViewContentProviderRegistry;
 @class _WKFrameHandle;
 
@@ -386,3 +387,7 @@ RetainPtr<NSError> nsErrorFromExceptionDetails(const WebCore::ExceptionDetails&)
 @property (nonatomic, readonly) id <_WKWebViewPrintProvider> _printProvider;
 @end
 #endif
+
+@interface WKWebView (WKTextExtraction)
+- (void)_requestTextExtraction:(CGRect)rect completionHandler:(void(^)(WKTextExtractionItem *))completionHandler;
+@end

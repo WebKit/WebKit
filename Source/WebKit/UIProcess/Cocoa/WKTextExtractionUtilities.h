@@ -37,6 +37,7 @@ struct Item;
 
 namespace WebKit {
 
+void prepareTextExtractionSupport();
 RetainPtr<WKTextExtractionItem> createItem(const WebCore::TextExtraction::Item&);
 
 } // namespace WebKit

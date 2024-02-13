@@ -29,6 +29,7 @@
 #import "APIArray.h"
 #import "Logging.h"
 #import "WKNSArray.h"
+#import "WKTextExtractionUtilities.h"
 #import "WebPreferences.h"
 #import "_WKFeatureInternal.h"
 #import <WebCore/SecurityOrigin.h>
@@ -818,6 +819,22 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 - (BOOL)_avFoundationEnabled
 {
     return _preferences->isAVFoundationEnabled();
+}
+
+- (void)_setTextExtractionEnabled:(BOOL)enabled
+{
+    if (enabled) {
+        static std::once_flag onceFlag;
+        std::call_once(onceFlag, [] {
+            WebKit::prepareTextExtractionSupport();
+        });
+    }
+    _preferences->setTextExtractionEnabled(enabled);
+}
+
+- (BOOL)_textExtractionEnabled
+{
+    return _preferences->textExtractionEnabled();
 }
 
 - (void)_setColorFilterEnabled:(BOOL)enabled

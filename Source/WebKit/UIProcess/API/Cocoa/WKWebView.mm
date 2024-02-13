@@ -82,6 +82,7 @@
 #import "WKSecurityOriginInternal.h"
 #import "WKSharedAPICast.h"
 #import "WKSnapshotConfigurationPrivate.h"
+#import "WKTextExtractionUtilities.h"
 #import "WKUIDelegate.h"
 #import "WKUIDelegatePrivate.h"
 #import "WKUserContentControllerInternal.h"
@@ -4202,6 +4203,31 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 - (void)_setFormDelegate:(id <_WKInputDelegate>)formDelegate
 {
     self._inputDelegate = formDelegate;
+}
+
+@end
+
+@implementation WKWebView (WKTextExtraction)
+
+- (void)_requestTextExtraction:(CGRect)rectInWebView completionHandler:(void(^)(WKTextExtractionItem *))completionHandler
+{
+    if (!self._isValid || !_page->preferences().textExtractionEnabled())
+        return completionHandler(nil);
+
+    auto rectInRootView = [&]() -> std::optional<WebCore::FloatRect> {
+        if (CGRectIsNull(rectInWebView))
+            return std::nullopt;
+
+#if PLATFORM(IOS_FAMILY)
+        return WebCore::FloatRect { [self convertRect:rectInWebView toView:_contentView.get()] };
+#else
+        return WebCore::FloatRect { rectInWebView };
+#endif
+    }();
+
+    _page->requestTextExtraction(WTFMove(rectInRootView), [completionHandler = makeBlockPtr(completionHandler)](auto&& item) {
+        completionHandler(WebKit::createItem(item).get());
+    });
 }
 
 @end
