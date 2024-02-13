@@ -929,7 +929,6 @@
 
 (define (mach-extension-list)
     (global-name
-        "com.apple.iconservices"
         "com.apple.mobileassetd.v2"))
 
 (allow mach-lookup (with telemetry-backtrace)
