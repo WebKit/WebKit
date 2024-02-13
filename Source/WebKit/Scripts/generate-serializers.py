@@ -311,6 +311,8 @@ class SerializedEnum(object):
 
 class MemberVariable(object):
     def __init__(self, type, name, condition, attributes, namespace=None, is_subclass=False):
+        assert type == type.strip(), "MemberVariable(" + type + " " + name + ") has invalid type '" + type + "'"
+        assert name == name.strip(), "MemberVariable(" + type + " " + name + ") has invalid name '" + name + "'"
         self.type = type
         self.name = name
         self.condition = condition
