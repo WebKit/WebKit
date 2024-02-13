@@ -252,10 +252,9 @@ void RemoteLayerTreeNode::setAcceleratedEffectsAndBaseValues(const WebCore::Acce
 {
     ASSERT(isUIThread());
 
-    if (m_effectStack) {
+    if (m_effectStack)
         m_effectStack->clear(layer());
-        host.animationsWereRemovedFromNode(*this);
-    }
+    host.animationsWereRemovedFromNode(*this);
 
     if (effects.isEmpty())
         return;
