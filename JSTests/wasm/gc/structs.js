@@ -736,7 +736,21 @@ function testStructGet() {
         )
       `),
     WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: struct.get invalid index: (ref null struct), in function at index 1 (evaluating 'new WebAssembly.Module(binary)')"
+    "struct.get structref to type (ref null struct) expected (ref null <struct:0>), in function at index 1"
+  );
+
+  // Cannot struct.get from an anyref.
+  assert.throws(
+    () =>
+      compile(`
+        (module
+          (type $s (struct (field i32)))
+          (func (result anyref) (ref.null 0))
+          (func (result i32) (struct.get 0 0 (call 0)))
+        )
+      `),
+    WebAssembly.CompileError,
+    "struct.get structref to type (ref null any) expected (ref null <struct:0>), in function at index 1"
   );
 
   // Test null checks.
@@ -746,6 +760,19 @@ function testStructGet() {
         (type (struct (field i32)))
         (func (export "f") (result i32)
           (struct.get 0 0 (ref.null 0)))
+      )
+    `).exports.f(),
+    WebAssembly.RuntimeError,
+    "struct.get to a null reference"
+  );
+
+  // Bottom is type valid but throws due to null.
+  assert.throws(
+    () => instantiate(`
+      (module
+        (type (struct (field i32)))
+        (func (export "f") (result i32)
+          (struct.get 0 0 (ref.null none)))
       )
     `).exports.f(),
     WebAssembly.RuntimeError,
@@ -1163,6 +1190,19 @@ function testStructSet() {
     WebAssembly.RuntimeError,
     "struct.set to a null reference"
   );
+
+  // Bottom is type valid but throws on null.
+  assert.throws(
+    () => instantiate(`
+      (module
+        (type (struct (field (mut i32))))
+        (func (export "f") (result)
+          (struct.set 0 0 (ref.null none) (i32.const 42)))
+      )
+    `).exports.f(),
+    WebAssembly.RuntimeError,
+    "struct.set to a null reference"
+  );
 }
 
 function testStructTable() {
@@ -1194,7 +1234,7 @@ function testStructTable() {
       )
     `),
     WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: struct.get invalid index: (ref null struct), in function at index 0 (evaluating 'new WebAssembly.Module(binary)')"
+    "struct.get structref to type (ref null struct) expected (ref null <struct:0>), in function at index 0"
   );
 
   // Invalid non-defaultable table type.

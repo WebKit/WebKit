@@ -330,6 +330,24 @@ function testArrayGet() {
     );
   }
 
+  // Bottom is type valid but throws due to null.
+  {
+    let m = instantiate(`
+      (module
+        (type (array i32))
+        (func (export "f") (result i32)
+          (ref.null none)
+          (i32.const 3)
+          (array.get 0))
+      )
+    `);
+    assert.throws(
+      () => { m.exports.f(); },
+      WebAssembly.RuntimeError,
+      "array.get to a null reference"
+    );
+  }
+
   // Should trap on index out of bounds.
   {
     let m = instantiate(`
@@ -503,6 +521,22 @@ function testArraySet() {
     );
   }
 
+  // Bottom is type valid but throws due to null.
+  {
+    let m = instantiate(`
+      (module
+        (type (array (mut i32)))
+        (func (export "f")
+          (array.set 0 (ref.null none) (i32.const 3) (i32.const 42)))
+      )
+    `);
+    assert.throws(
+      () => { m.exports.f(); },
+      WebAssembly.RuntimeError,
+      "array.set to a null reference"
+    );
+  }
+
   // Should trap on index out of bounds.
   {
     let m = instantiate(`
@@ -555,6 +589,23 @@ function testArrayLen() {
         (type (array i32))
         (func (export "f") (result i32)
           (ref.null 0)
+          (array.len))
+      )
+    `);
+    assert.throws(
+      () => { m.exports.f(); },
+      WebAssembly.RuntimeError,
+      "array.len to a null reference"
+    );
+  }
+
+  // Bottom is type valid but throws on null.
+  {
+    let m = instantiate(`
+      (module
+        (type (array i32))
+        (func (export "f") (result i32)
+          (ref.null none)
           (array.len))
       )
     `);
