@@ -17,12 +17,18 @@
     #define SKIA_IMPLEMENTATION 0
 #endif
 
+// Clang macro for detecting declspec support
+// https://clang.llvm.org/docs/LanguageExtensions.html#has-declspec-attribute
+#ifndef __has_declspec_attribute
+    #define __has_declspec_attribute(x) 0
+#endif
+
 // If we are compiling Skia is being as a DLL, we need to be sure to export all of our public
 // APIs to that DLL. If a client is using Skia which was compiled as a DLL, we need to instruct
 // the linker to use the symbols from that DLL. This is the goal of the SK_API define.
 #if !defined(SK_API)
     #if defined(SKIA_DLL)
-        #if defined(_MSC_VER)
+        #if defined(_MSC_VER) || (__has_declspec_attribute(dllexport) && __has_declspec_attribute(dllimport))
             #if SKIA_IMPLEMENTATION
                 #define SK_API __declspec(dllexport)
             #else
