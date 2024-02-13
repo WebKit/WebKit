@@ -866,6 +866,16 @@ void WebPage::didEndTextReplacementSession(const WTF::UUID& uuid, bool accepted)
     m_unifiedTextReplacementController->didEndTextReplacementSession(uuid, accepted);
 }
 
+void WebPage::textReplacementSessionDidReceiveTextWithReplacementRange(const WTF::UUID& uuid, const WebCore::AttributedString& attributedText, const WebCore::CharacterRange& range, const WebUnifiedTextReplacementContextData& context)
+{
+    m_unifiedTextReplacementController->textReplacementSessionDidReceiveTextWithReplacementRange(uuid, attributedText, range, context);
+}
+
+void WebPage::textReplacementSessionDidReceiveEditAction(const WTF::UUID& uuid, WebKit::WebTextReplacementData::EditAction action)
+{
+    m_unifiedTextReplacementController->textReplacementSessionDidReceiveEditAction(uuid, action);
+}
+
 #endif
 
 std::optional<SimpleRange> WebPage::autocorrectionContextRange()

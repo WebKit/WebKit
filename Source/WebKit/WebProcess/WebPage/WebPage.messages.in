@@ -772,6 +772,10 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     TextReplacementSessionDidUpdateStateForReplacement(WTF::UUID uuid, enum:uint8_t WebKit::WebTextReplacementData::State state, struct WebKit::WebTextReplacementData replacement, struct WebKit::WebUnifiedTextReplacementContextData context)
 
     DidEndTextReplacementSession(WTF::UUID uuid, bool accepted)
+
+    TextReplacementSessionDidReceiveTextWithReplacementRange(WTF::UUID uuid, struct WebCore::AttributedString attributedText, struct WebCore::CharacterRange range, struct WebKit::WebUnifiedTextReplacementContextData context);
+
+    TextReplacementSessionDidReceiveEditAction(WTF::UUID uuid, enum:uint8_t WebKit::WebTextReplacementData::EditAction action);
 #endif
 
     RemoteViewCoordinatesToRootView(WebCore::FrameIdentifier frameID, WebCore::FloatRect rect) -> (WebCore::FloatRect rect)

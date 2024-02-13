@@ -31,6 +31,13 @@ header: "WebTextReplacementData.h"
 };
 
 header: "WebTextReplacementData.h"
+[CustomHeader] enum class WebKit::WebTextReplacementDataEditAction : uint8_t {
+    Undo,
+    Redo,
+    UndoAll,
+};
+
+header: "WebTextReplacementData.h"
 [CustomHeader] struct WebKit::WebTextReplacementData {
     WTF::UUID uuid;
     WebCore::CharacterRange originalRange;

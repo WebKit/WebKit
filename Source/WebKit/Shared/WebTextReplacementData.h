@@ -42,8 +42,16 @@ enum class WebTextReplacementDataState : uint8_t {
     Invalid,
 };
 
+enum class WebTextReplacementDataEditAction : uint8_t {
+    Undo,
+    Redo,
+    UndoAll,
+};
+
 struct WebTextReplacementData {
     using State = WebTextReplacementDataState;
+
+    using EditAction = WebTextReplacementDataEditAction;
 
     WTF::UUID uuid;
     WebCore::CharacterRange originalRange;

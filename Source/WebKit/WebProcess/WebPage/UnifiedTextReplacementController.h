@@ -29,6 +29,8 @@
 
 #include "WebTextReplacementData.h"
 
+#include <WebCore/DocumentFragment.h>
+#include <WebCore/Node.h>
 #include <WebCore/Range.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
@@ -56,10 +58,21 @@ public:
 
     void didEndTextReplacementSession(const WTF::UUID&, bool accepted);
 
+    void textReplacementSessionDidReceiveTextWithReplacementRange(const WTF::UUID&, const WebCore::AttributedString&, const WebCore::CharacterRange&, const WebKit::WebUnifiedTextReplacementContextData&);
+
+    void textReplacementSessionDidReceiveEditAction(const WTF::UUID&, WebKit::WebTextReplacementData::EditAction);
+
 private:
+    struct Replacement {
+        WebCore::AttributedString attributedText;
+        WebCore::CharacterRange range;
+    };
+
     WeakPtr<WebPage> m_webPage;
 
     HashMap<WTF::UUID, Ref<WebCore::Range>> m_contextRanges;
+    HashMap<WTF::UUID, Ref<WebCore::DocumentFragment>> m_originalDocumentNodes;
+    HashMap<WTF::UUID, Vector<Replacement>> m_replacements;
 };
 
 } // namespace WebKit
