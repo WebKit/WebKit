@@ -28,6 +28,7 @@
 
 #include "ASTIdentifierExpression.h"
 #include "AttributeValidator.h"
+#include "BoundsCheck.h"
 #include "CallGraph.h"
 #include "EntryPointRewriter.h"
 #include "GlobalSorting.h"
@@ -101,6 +102,7 @@ inline std::variant<PrepareResult, Error> prepareImpl(ShaderModule& shaderModule
         RUN_PASS_WITH_RESULT(callGraph, buildCallGraph, shaderModule, pipelineLayouts, entryPoints);
         RUN_PASS(mangleNames, callGraph, entryPoints);
         RUN_PASS(rewritePointers, callGraph);
+        RUN_PASS(insertBoundsChecks, shaderModule);
         RUN_PASS(rewriteEntryPoints, callGraph);
         CHECK_PASS(rewriteGlobalVariables, callGraph, pipelineLayouts);
 

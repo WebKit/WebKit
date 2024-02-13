@@ -137,6 +137,8 @@
 		9776BE7629957E12002D6D93 /* WGSLShaderModule.h in Headers */ = {isa = PBXBuildFile; fileRef = 9776BE7529957E12002D6D93 /* WGSLShaderModule.h */; };
 		977F5AC02B73057700D05129 /* CompilationScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 977F5ABE2B73057700D05129 /* CompilationScope.h */; };
 		977F5AC12B73057700D05129 /* CompilationScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 977F5ABF2B73057700D05129 /* CompilationScope.cpp */; };
+		977F5AC42B7A9EC000D05129 /* BoundsCheck.h in Headers */ = {isa = PBXBuildFile; fileRef = 977F5AC22B7A9EC000D05129 /* BoundsCheck.h */; };
+		977F5AC52B7A9EC000D05129 /* BoundsCheck.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 977F5AC32B7A9EC000D05129 /* BoundsCheck.cpp */; };
 		97835C9329F7C9C600939EBA /* ASTBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 97835C9229F7C9C600939EBA /* ASTBuilder.h */; };
 		97835C9529F7D85A00939EBA /* ASTBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97835C9429F7D85A00939EBA /* ASTBuilder.cpp */; };
 		9789C31A297EA105009E9006 /* CallGraph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9789C318297EA105009E9006 /* CallGraph.cpp */; };
@@ -430,6 +432,8 @@
 		9776BE7529957E12002D6D93 /* WGSLShaderModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WGSLShaderModule.h; sourceTree = "<group>"; };
 		977F5ABE2B73057700D05129 /* CompilationScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompilationScope.h; sourceTree = "<group>"; };
 		977F5ABF2B73057700D05129 /* CompilationScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CompilationScope.cpp; sourceTree = "<group>"; };
+		977F5AC22B7A9EC000D05129 /* BoundsCheck.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BoundsCheck.h; sourceTree = "<group>"; };
+		977F5AC32B7A9EC000D05129 /* BoundsCheck.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BoundsCheck.cpp; sourceTree = "<group>"; };
 		97835C9229F7C9C600939EBA /* ASTBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTBuilder.h; sourceTree = "<group>"; };
 		97835C9429F7D85A00939EBA /* ASTBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ASTBuilder.cpp; sourceTree = "<group>"; };
 		9789C318297EA105009E9006 /* CallGraph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CallGraph.cpp; sourceTree = "<group>"; };
@@ -624,6 +628,8 @@
 				3AD0D2362988D3F90080D728 /* API.h */,
 				97A448A02AE3544800A4E147 /* AttributeValidator.cpp */,
 				97A4489F2AE3544800A4E147 /* AttributeValidator.h */,
+				977F5AC32B7A9EC000D05129 /* BoundsCheck.cpp */,
+				977F5AC22B7A9EC000D05129 /* BoundsCheck.h */,
 				9789C318297EA105009E9006 /* CallGraph.cpp */,
 				9789C319297EA105009E9006 /* CallGraph.h */,
 				33EA186727BC1B1400A1DD52 /* CompilationMessage.cpp */,
@@ -908,6 +914,7 @@
 				3A12AEC828FCEEC400C1B975 /* ASTWhileStatement.h in Headers */,
 				3A12AEB228FCE94C00C1B975 /* ASTWorkgroupSizeAttribute.h in Headers */,
 				97A448A12AE3544800A4E147 /* AttributeValidator.h in Headers */,
+				977F5AC42B7A9EC000D05129 /* BoundsCheck.h in Headers */,
 				33EA186627BC1AD500A1DD52 /* CompilationMessage.h in Headers */,
 				977F5AC02B73057700D05129 /* CompilationScope.h in Headers */,
 				97E21C992A2512F7009CEB0E /* ConstantFunctions.h in Headers */,
@@ -1145,6 +1152,7 @@
 				3AD0D23B2988ED8F0080D728 /* ASTUnaryExpression.cpp in Sources */,
 				3A1337E728FBD56400F29B73 /* ASTVisitor.cpp in Sources */,
 				97A448A22AE3544800A4E147 /* AttributeValidator.cpp in Sources */,
+				977F5AC52B7A9EC000D05129 /* BoundsCheck.cpp in Sources */,
 				9789C31A297EA105009E9006 /* CallGraph.cpp in Sources */,
 				339B7B1E27D816270072BF9A /* CompilationMessage.cpp in Sources */,
 				977F5AC12B73057700D05129 /* CompilationScope.cpp in Sources */,
