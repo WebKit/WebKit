@@ -28,6 +28,7 @@
 #include "config.h"
 #include "SharedBuffer.h"
 
+#include "SharedMemory.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <algorithm>
 #include <wtf/HexNumber.h>
