@@ -40,7 +40,7 @@
 #import "WebPreferences.h"
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/PlaybackSessionInterfaceAVKit.h>
-#import <WebCore/VideoPresentationInterfaceAVKit.h>
+#import <WebCore/VideoPresentationInterfaceIOS.h>
 #import <pal/spi/cocoa/AVKitSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
