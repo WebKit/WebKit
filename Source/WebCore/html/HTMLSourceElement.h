@@ -58,6 +58,7 @@ private:
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
     void removedFromAncestor(RemovalType, ContainerNode&) final;
     bool isURLAttribute(const Attribute&) const final;
+    bool attributeContainsURL(const Attribute&) const final;
     Attribute replaceURLsInAttributeValue(const Attribute&, const HashMap<String, String>&) const override;
     void addCandidateSubresourceURLs(ListHashSet<URL>&) const override;
 

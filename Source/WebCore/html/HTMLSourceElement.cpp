@@ -143,6 +143,12 @@ bool HTMLSourceElement::isURLAttribute(const Attribute& attribute) const
     return attribute.name() == srcAttr || HTMLElement::isURLAttribute(attribute);
 }
 
+bool HTMLSourceElement::attributeContainsURL(const Attribute& attribute) const
+{
+    return attribute.name() == srcsetAttr
+        || HTMLElement::attributeContainsURL(attribute);
+}
+
 const char* HTMLSourceElement::activeDOMObjectName() const
 {
     return "HTMLSourceElement";
