@@ -31,6 +31,8 @@
 #include <WebCore/NotImplemented.h>
 
 #if ENABLE(REMOTE_INSPECTOR)
+#include "AutomationClientWin.h"
+#include "WebPageProxy.h"
 #include <JavaScriptCore/RemoteInspectorServer.h>
 #include <WebCore/WebCoreBundleWin.h>
 #include <wtf/text/StringToIntegerConversion.h>
@@ -64,6 +66,7 @@ void WebProcessPool::platformInitialize(NeedsGlobalStaticInitialization)
 #if ENABLE(REMOTE_INSPECTOR)
     if (const char* address = getenv("WEBKIT_INSPECTOR_SERVER"))
         initializeRemoteInspectorServer(StringView::fromLatin1(address));
+    setAutomationClient(WTF::makeUnique<AutomationClient>(*this));
 #endif
 }
 
