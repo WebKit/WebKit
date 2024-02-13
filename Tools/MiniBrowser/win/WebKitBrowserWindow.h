@@ -84,10 +84,8 @@ private:
     static WKStringRef downloadDecideDestinationWithResponse(WKDownloadRef, WKURLResponseRef, WKStringRef, const void*);
     static void downloadDidFinish(WKDownloadRef, const void*);
     static void downloadDidFailWithError(WKDownloadRef, WKErrorRef, WKDataRef, const void*);
-    static void close(WKPageRef, const void*);
     static WKPageRef createNewPage(WKPageRef, WKPageConfigurationRef, WKNavigationActionRef, WKWindowFeaturesRef, const void *);
     static void didNotHandleKeyEvent(WKPageRef, WKNativeEventPtr, const void*);
-    static WKRect getWindowFrame(WKPageRef, const void*);
     static void runJavaScriptAlert(WKPageRef, WKStringRef, WKFrameRef, WKSecurityOriginRef, WKPageRunJavaScriptAlertResultListenerRef, const void *);
     static void runJavaScriptConfirm(WKPageRef, WKStringRef, WKFrameRef, WKSecurityOriginRef, WKPageRunJavaScriptConfirmResultListenerRef, const void *);
     static void runJavaScriptPrompt(WKPageRef, WKStringRef, WKStringRef, WKFrameRef, WKSecurityOriginRef, WKPageRunJavaScriptPromptResultListenerRef, const void *);

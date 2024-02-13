@@ -172,10 +172,6 @@ void SessionHost::setTargetList(uint64_t connectionID, Vector<Target>&& targetLi
         // Disconnected from backend
         m_clientID = std::nullopt;
         inspectorDisconnected();
-        if (m_startSessionCompletionHandler) {
-            auto startSessionCompletionHandler = std::exchange(m_startSessionCompletionHandler, nullptr);
-            startSessionCompletionHandler(true, "received empty target list"_s);
-        }
         return;
     }
 

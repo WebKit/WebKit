@@ -67,8 +67,6 @@ list(APPEND WebKit_SOURCES
 
     UIProcess/Automation/cairo/WebAutomationSessionCairo.cpp
 
-    UIProcess/Automation/win/WebAutomationSessionWin.cpp
-
     UIProcess/DefaultUndoController.cpp
     UIProcess/LegacySessionStateCodingNone.cpp
     UIProcess/WebGrammarDetail.cpp
@@ -88,7 +86,6 @@ list(APPEND WebKit_SOURCES
 
     UIProcess/wc/DrawingAreaProxyWC.cpp
 
-    UIProcess/win/AutomationClientWin.cpp
     UIProcess/win/PageClientImpl.cpp
     UIProcess/win/WebContextMenuProxyWin.cpp
     UIProcess/win/WebPageProxyWin.cpp

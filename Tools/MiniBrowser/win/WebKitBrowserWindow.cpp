@@ -181,9 +181,7 @@ WebKitBrowserWindow::WebKitBrowserWindow(BrowserWindowClient& client, WKPageConf
     uiClient.base.version = 13;
     uiClient.base.clientInfo = this;
     uiClient.createNewPage = createNewPage;
-    uiClient.close = close;
     uiClient.didNotHandleKeyEvent = didNotHandleKeyEvent;
-    uiClient.getWindowFrame = getWindowFrame;
     uiClient.runJavaScriptAlert = runJavaScriptAlert;
     uiClient.runJavaScriptConfirm = runJavaScriptConfirm;
     uiClient.runJavaScriptPrompt = runJavaScriptPrompt;
@@ -659,12 +657,6 @@ void WebKitBrowserWindow::downloadDidFailWithError(WKDownloadRef, WKErrorRef err
     MessageBox(thisWindow.hwnd(), text.str().c_str(), L"Download Failure", MB_OK | MB_ICONWARNING);
 }
 
-void WebKitBrowserWindow::close(WKPageRef, const void* clientInfo)
-{
-    auto& thisWindow = toWebKitBrowserWindow(clientInfo);
-    PostMessage(thisWindow.hwnd(), WM_CLOSE, 0, 0);
-}
-
 WKPageRef WebKitBrowserWindow::createNewPage(WKPageRef, WKPageConfigurationRef pageConf, WKNavigationActionRef, WKWindowFeaturesRef, const void*)
 {
     auto& newWindow = MainWindow::create().leakRef();
@@ -684,14 +676,6 @@ void WebKitBrowserWindow::didNotHandleKeyEvent(WKPageRef, WKNativeEventPtr event
 {
     auto& thisWindow = toWebKitBrowserWindow(clientInfo);
     PostMessage(thisWindow.m_hMainWnd, event->message, event->wParam, event->lParam);
-}
-
-WKRect WebKitBrowserWindow::getWindowFrame(WKPageRef, const void* clientInfo)
-{
-    auto& thisWindow = toWebKitBrowserWindow(clientInfo);
-    RECT rect;
-    GetWindowRect(thisWindow.hwnd(), &rect);
-    return WKRectMake(rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
 }
 
 void WebKitBrowserWindow::runJavaScriptAlert(WKPageRef, WKStringRef alertText, WKFrameRef, WKSecurityOriginRef securityOrigin, WKPageRunJavaScriptAlertResultListenerRef listener, const void* clientInfo)
