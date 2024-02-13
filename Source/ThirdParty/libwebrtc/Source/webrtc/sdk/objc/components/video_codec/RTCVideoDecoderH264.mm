@@ -161,7 +161,8 @@ CMSampleBufferRef H264BufferToCMSampleBuffer(const uint8_t* buffer, size_t buffe
   rtc::ScopedCFTypeRef<CMVideoFormatDescriptionRef> inputFormat =
       rtc::ScopedCF(webrtc::CreateVideoFormatDescription(data, size));
   if (inputFormat) {
-    _reorderQueue.setReorderSize(webrtc::ComputeH264ReorderSizeFromAnnexB(data, size));
+    // FIXME: Reenable reorder size computation for AnnexB decoders, once feasible (rdar://122902399).
+    _reorderQueue.setReorderSize(_useAVC ? webrtc::ComputeH264ReorderSizeFromAnnexB(data, size) : 0);
     // Check if the video format has changed, and reinitialize decoder if
      // needed.
     if (!CMFormatDescriptionEqual(inputFormat.get(), _videoFormat)) {
