@@ -74,14 +74,11 @@ extern "C" AXUIElementRef NSAccessibilityCreateAXUIElementRef(id element);
 #define AXEndTextMarkerAttribute @"AXEndTextMarker"
 
 // TextMarkerRange creation:
-#define AXTextMarkerRangeForNSRangeAttribute @"AXTextMarkerRangeForNSRange"
 #define AXTextMarkerRangeForTextMarkersAttribute @"AXTextMarkerRangeForTextMarkers"
 #define AXTextMarkerRangeForUnorderedTextMarkersAttribute @"AXTextMarkerRangeForUnorderedTextMarkers"
 
 // TextMarkerRange attributes:
 #define AXLengthForTextMarkerRangeAttribute @"AXLengthForTextMarkerRange"
-#define AXStartTextMarkerForTextMarkerRangeAttribute @"AXStartTextMarkerForTextMarkerRange"
-#define AXEndTextMarkerForTextMarkerRangeAttribute @"AXEndTextMarkerForTextMarkerRange"
 
 // Text extraction:
 #define AXStringForTextMarkerRangeAttribute @"AXStringForTextMarkerRange"
@@ -124,6 +121,11 @@ extern "C" AXUIElementRef NSAccessibilityCreateAXUIElementRef(id element);
 #define AXMisspellingTextMarkerRangeAttribute @"AXMisspellingTextMarkerRange"
 #define AXSelectedTextMarkerRangeAttribute @"AXSelectedTextMarkerRange"
 #define AXStyleTextMarkerRangeForTextMarkerAttribute @"AXStyleTextMarkerRangeForTextMarker"
+
+// Private attributes exposed only for testing:
+#define _AXStartTextMarkerForTextMarkerRangeAttribute @"_AXStartTextMarkerForTextMarkerRange"
+#define _AXEndTextMarkerForTextMarkerRangeAttribute @"_AXEndTextMarkerForTextMarkerRange"
+#define _AXTextMarkerRangeForNSRangeAttribute @"_AXTextMarkerRangeForNSRange"
 
 #if ENABLE(TREE_DEBUGGING)
 #define AXTextMarkerDebugDescriptionAttribute @"AXTextMarkerDebugDescription"

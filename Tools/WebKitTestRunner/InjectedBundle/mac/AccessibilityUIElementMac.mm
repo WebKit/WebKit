@@ -2075,7 +2075,7 @@ RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::textMarkerRangeForU
 RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::textMarkerRangeForRange(unsigned location, unsigned length)
 {
     BEGIN_AX_OBJC_EXCEPTIONS
-    return AccessibilityTextMarkerRange::create(attributeValueForParameter(@"AXTextMarkerRangeForNSRange",
+    return AccessibilityTextMarkerRange::create(attributeValueForParameter(@"_AXTextMarkerRangeForNSRange",
         [NSValue valueWithRange:NSMakeRange(location, length)]).get());
     END_AX_OBJC_EXCEPTIONS
 
@@ -2122,7 +2122,7 @@ RefPtr<AccessibilityTextMarker> AccessibilityUIElement::startTextMarkerForTextMa
         return nullptr;
 
     BEGIN_AX_OBJC_EXCEPTIONS
-    auto textMarker = attributeValueForParameter(@"AXStartTextMarkerForTextMarkerRange", range->platformTextMarkerRange());
+    auto textMarker = attributeValueForParameter(@"_AXStartTextMarkerForTextMarkerRange", range->platformTextMarkerRange());
     return AccessibilityTextMarker::create(textMarker.get());
     END_AX_OBJC_EXCEPTIONS
 
@@ -2135,7 +2135,7 @@ RefPtr<AccessibilityTextMarker> AccessibilityUIElement::endTextMarkerForTextMark
         return nullptr;
 
     BEGIN_AX_OBJC_EXCEPTIONS
-    auto textMarker = attributeValueForParameter(@"AXEndTextMarkerForTextMarkerRange", range->platformTextMarkerRange());
+    auto textMarker = attributeValueForParameter(@"_AXEndTextMarkerForTextMarkerRange", range->platformTextMarkerRange());
     return AccessibilityTextMarker::create(textMarker.get());
     END_AX_OBJC_EXCEPTIONS
 

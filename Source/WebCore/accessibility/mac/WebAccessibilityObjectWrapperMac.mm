@@ -3223,9 +3223,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     }
 
     // TextMarkerRange attributes.
-    if ([attribute isEqualToString:AXTextMarkerRangeForNSRangeAttribute])
-        return backingObject->textMarkerRangeForNSRange(range).platformData().bridgingAutorelease();
-
     if ([attribute isEqualToString:AXLineTextMarkerRangeForTextMarkerAttribute]) {
 #if ENABLE(AX_THREAD_TEXT_APIS)
         if (AXObjectCache::useAXThreadTextApis()) {
@@ -3580,17 +3577,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return @(length);
     }
 
-    // Used only by DumpRenderTree (so far).
-    if ([attribute isEqualToString:AXStartTextMarkerForTextMarkerRangeAttribute]) {
-        AXTextMarkerRange markerRange { textMarkerRange };
-        return markerRange.start().platformData().bridgingAutorelease();
-    }
-
-    if ([attribute isEqualToString:AXEndTextMarkerForTextMarkerRangeAttribute]) {
-        AXTextMarkerRange markerRange { textMarkerRange };
-        return markerRange.end().platformData().bridgingAutorelease();
-    }
-
 #if ENABLE(TREE_DEBUGGING)
     if ([attribute isEqualToString:AXTextMarkerDebugDescriptionAttribute])
         return [self debugDescriptionForTextMarker:textMarker];
@@ -3668,6 +3654,20 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             return [NSValue valueWithRange:textRange];
         }
     }
+
+    // Private attributes exposed only for testing.
+    if (UNLIKELY([attribute isEqualToString:_AXStartTextMarkerForTextMarkerRangeAttribute])) {
+        AXTextMarkerRange markerRange { textMarkerRange };
+        return markerRange.start().platformData().bridgingAutorelease();
+    }
+
+    if (UNLIKELY([attribute isEqualToString:_AXEndTextMarkerForTextMarkerRangeAttribute])) {
+        AXTextMarkerRange markerRange { textMarkerRange };
+        return markerRange.end().platformData().bridgingAutorelease();
+    }
+
+    if (UNLIKELY([attribute isEqualToString:_AXTextMarkerRangeForNSRangeAttribute]))
+        return backingObject->textMarkerRangeForNSRange(range).platformData().bridgingAutorelease();
 
     // There are some parameters that super handles that are not explicitly returned by the list of the element's attributes.
     // In that case it must be passed to super.
