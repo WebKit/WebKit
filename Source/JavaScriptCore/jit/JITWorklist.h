@@ -103,7 +103,7 @@ private:
     std::array<unsigned, static_cast<size_t>(JITPlan::Tier::Count)> m_ongoingCompilationsPerTier { 0, 0, 0 };
     std::array<unsigned, static_cast<size_t>(JITPlan::Tier::Count)> m_maximumNumberOfConcurrentCompilationsPerTier;
 
-    Vector<RefPtr<JITWorklistThread>> m_threads;
+    Vector<Ref<JITWorklistThread>> m_threads;
 
     // Used to inform the thread about what work there is left to do.
     std::array<Deque<RefPtr<JITPlan>>, static_cast<size_t>(JITPlan::Tier::Count)> m_queues;
