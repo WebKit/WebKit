@@ -1133,6 +1133,16 @@ inline void copyElements(uint8_t* __restrict destination, const uint64_t* __rest
         *destination++ = *source++;
 }
 
+inline void copyElements(UChar* __restrict destination, const LChar* __restrict source, size_t length)
+{
+    copyElements(bitwise_cast<uint16_t*>(destination), bitwise_cast<const uint8_t*>(source), length);
+}
+
+inline void copyElements(LChar* __restrict destination, const UChar* __restrict source, size_t length)
+{
+    copyElements(bitwise_cast<uint8_t*>(destination), bitwise_cast<const uint16_t*>(source), length);
+}
+
 }
 
 using WTF::equalIgnoringASCIICase;
