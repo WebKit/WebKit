@@ -1991,3 +1991,5 @@ webkit.org/b/268836 [ Monterey+ Debug ] loader/stateobjects/pushstate-size-ifram
 [ Monterey+ Release ] media/audio-session-category.html [ Pass Failure ]
 [ Monterey+ Release ] imported/w3c/web-platform-tests/preload/preload-in-data-doc.html [ Pass ImageOnlyFailure ]
 [ Monterey+ Release ] fast/speechrecognition/start-recognition-after-denied-gum.html [ Pass Timeout ]
+
+webkit.org/b/269251 [ Monterey+ Debug ] http/tests/site-isolation/iframe-process-termination-after-navigation-completed.html [ Skip ]
