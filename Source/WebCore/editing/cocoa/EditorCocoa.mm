@@ -427,7 +427,7 @@ void Editor::insertMultiRepresentationHEIC(const std::span<const uint8_t>& data)
 
     auto primaryAttachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, document.get());
     auto primaryIdentifier = primaryAttachment->ensureUniqueIdentifier();
-    registerAttachmentIdentifier(primaryIdentifier, primaryType, makeString(primaryIdentifier, ".heic"_s), WTFMove(primaryBuffer));
+    registerAttachmentIdentifier(primaryIdentifier, "image/heic"_s, makeString(primaryIdentifier, ".heic"_s), WTFMove(primaryBuffer));
     source->setAttachmentElement(WTFMove(primaryAttachment));
 
     auto fallbackAttachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, document.get());
