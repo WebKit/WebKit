@@ -218,6 +218,7 @@ struct JSTextPosition {
     JSTextPosition operator-(unsigned adjustment) const { return *this + (- static_cast<int>(adjustment)); }
 
     operator int() const { return offset; }
+    explicit operator bool() const { return *this != JSTextPosition(); }
 
     friend bool operator==(const JSTextPosition&, const JSTextPosition&) = default;
 
