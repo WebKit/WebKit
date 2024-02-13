@@ -31,14 +31,21 @@
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS NSValue;
+OBJC_CLASS CAPresentationModifier;
+OBJC_CLASS CAPresentationModifierGroup;
 
 namespace WebCore {
 
 class PlatformCALayer;
 
+using TypedFilterPresentationModifier = std::pair<FilterOperation::Type, RetainPtr<CAPresentationModifier>>;
+
 class PlatformCAFilters {
 public:
     WEBCORE_EXPORT static void setFiltersOnLayer(PlatformLayer*, const FilterOperations&);
+    WEBCORE_EXPORT static void presentationModifiers(const FilterOperations& initialFilters, const FilterOperations* canonicalFilters, Vector<TypedFilterPresentationModifier>& presentationModifiers, RetainPtr<CAPresentationModifierGroup>&);
+    WEBCORE_EXPORT static void updatePresentationModifiers(const FilterOperations& filters, const Vector<TypedFilterPresentationModifier>& presentationModifiers);
+    WEBCORE_EXPORT static size_t presentationModifierCount(const FilterOperations&);
     WEBCORE_EXPORT static void setBlendingFiltersOnLayer(PlatformLayer*, const BlendMode);
     static bool isAnimatedFilterProperty(FilterOperation::Type);
     static String animatedFilterPropertyName(FilterOperation::Type);
