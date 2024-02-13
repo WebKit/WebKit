@@ -1,0 +1,28 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Verifies that the iframe receives a context menu event and the main frame does not.");
+jsTestIsAsync = true;
+
+addEventListener("message", (event) => {
+    if (event.data == "contextmenu") {
+        testPassed("iframe received context menu event.");
+        finishJSTest();
+    }
+});
+
+addEventListener("contextmenu", () => {
+    testFailed("Main frame contextmenu event listener was called.");
+    finishJSTest();
+});
+
+function onLoad() {
+    let frame = document.getElementById("frame");
+    let x = frame.offsetParent.offsetLeft + frame.offsetLeft + frame.offsetWidth / 2;
+    let y = frame.offsetParent.offsetTop + frame.offsetTop + frame.offsetHeight / 2;
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown(2);
+    eventSender.mouseUp(2);
+}
+</script>
+<iframe onload="onLoad()" id="frame" src="http://localhost:8000/site-isolation/mouse-events/resources/context-menu-event-listener.html"></iframe>
