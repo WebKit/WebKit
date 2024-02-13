@@ -69,27 +69,27 @@ static void notifyNodeInsertedIntoDocument(ContainerNode& parentOfInsertedTree, 
     }
 }
 
-static void notifyNodeInsertedIntoTree(ContainerNode& parentOfInsertedTree, Node& node, TreeScopeChange treeScopeChange)
+static void notifyNodeInsertedIntoTree(ContainerNode& parentOfInsertedTree, Node& node, TreeScopeChange treeScopeChange, NodeVector& postInsertionNotificationTargets)
 {
     ASSERT(!parentOfInsertedTree.isConnected());
     ASSERT(!node.isConnected());
 
-    auto result = node.insertedIntoAncestor(Node::InsertionType { /* connectedToDocument */ false, treeScopeChange == TreeScopeChange::Changed }, parentOfInsertedTree);
-    ASSERT_UNUSED(result, result == Node::InsertedIntoAncestorResult::Done);
+    if (node.insertedIntoAncestor(Node::InsertionType { /* connectedToDocument */ false, treeScopeChange == TreeScopeChange::Changed }, parentOfInsertedTree) == Node::InsertedIntoAncestorResult::NeedsPostInsertionCallback)
+        postInsertionNotificationTargets.append(node);
 
     auto* containerNode = dynamicDowncast<ContainerNode>(node);
     if (!containerNode)
         return;
 
     for (RefPtr child = containerNode->firstChild(); child; child = child->nextSibling())
-        notifyNodeInsertedIntoTree(parentOfInsertedTree, *child, treeScopeChange);
+        notifyNodeInsertedIntoTree(parentOfInsertedTree, *child, treeScopeChange, postInsertionNotificationTargets);
 
     auto* element = dynamicDowncast<Element>(*containerNode);
     if (!element)
         return;
 
     if (RefPtr root = element->shadowRoot())
-        notifyNodeInsertedIntoTree(parentOfInsertedTree, *root, TreeScopeChange::DidNotChange);
+        notifyNodeInsertedIntoTree(parentOfInsertedTree, *root, TreeScopeChange::DidNotChange, postInsertionNotificationTargets);
 }
 
 // We intentionally use an out-parameter for postInsertionNotificationTargets instead of returning the vector. This is because
@@ -108,7 +108,7 @@ void notifyChildNodeInserted(ContainerNode& parentOfInsertedTree, Node& node, No
     if (parentOfInsertedTree.isConnected())
         notifyNodeInsertedIntoDocument(parentOfInsertedTree, node, treeScopeChange, postInsertionNotificationTargets);
     else
-        notifyNodeInsertedIntoTree(parentOfInsertedTree, node, treeScopeChange);
+        notifyNodeInsertedIntoTree(parentOfInsertedTree, node, treeScopeChange, postInsertionNotificationTargets);
 }
 
 inline RemovedSubtreeObservability observabilityOfRemovedNode(Node& node)
