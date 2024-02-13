@@ -2398,3 +2398,4 @@ webkit.org/b/269116 imported/w3c/web-platform-tests/css/css-flexbox/negative-ove
 
 webkit.org/b/269246 imported/w3c/web-platform-tests/css/css-fonts/font-size-adjust-zero-1.html [ ImageOnlyFailure ]
 
+webkit.org/b/269314 [ Release ] imported/w3c/web-platform-tests/webrtc-stats/supported-stats.https.html [ Failure ]
