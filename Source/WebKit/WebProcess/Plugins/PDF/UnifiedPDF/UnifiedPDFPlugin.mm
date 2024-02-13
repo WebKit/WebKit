@@ -1858,7 +1858,7 @@ bool UnifiedPDFPlugin::performDictionaryLookupAtLocation(const FloatPoint&)
     return false;
 }
 
-std::tuple<String, PDFSelection *, NSDictionary *> UnifiedPDFPlugin::lookupTextAtLocation(const FloatPoint&, WebHitTestResultData&) const
+std::pair<String, PDFSelection *> UnifiedPDFPlugin::lookupTextAtLocation(const FloatPoint&, WebHitTestResultData&) const
 {
     return { };
 }

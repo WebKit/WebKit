@@ -209,18 +209,16 @@ void WebPage::performDictionaryLookupAtLocation(const FloatPoint& floatPoint)
     if (!rangeResult)
         return;
 
-    auto [range, options] = WTFMove(*rangeResult);
-    performDictionaryLookupForRange(*frame, range, options, TextIndicatorPresentationTransition::Bounce);
+    performDictionaryLookupForRange(*frame, *rangeResult, TextIndicatorPresentationTransition::Bounce);
 }
 
 void WebPage::performDictionaryLookupForSelection(LocalFrame& frame, const VisibleSelection& selection, TextIndicatorPresentationTransition presentationTransition)
 {
-    auto result = DictionaryLookup::rangeForSelection(selection);
-    if (!result)
+    auto range = DictionaryLookup::rangeForSelection(selection);
+    if (!range)
         return;
 
-    auto [range, options] = WTFMove(*result);
-    performDictionaryLookupForRange(frame, range, options, presentationTransition);
+    performDictionaryLookupForRange(frame, *range, presentationTransition);
 }
 
 void WebPage::performDictionaryLookupOfCurrentSelection()
@@ -228,13 +226,13 @@ void WebPage::performDictionaryLookupOfCurrentSelection()
     Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
     performDictionaryLookupForSelection(frame, frame->selection().selection(), TextIndicatorPresentationTransition::BounceAndCrossfade);
 }
-    
-void WebPage::performDictionaryLookupForRange(LocalFrame& frame, const SimpleRange& range, NSDictionary *options, TextIndicatorPresentationTransition presentationTransition)
+
+void WebPage::performDictionaryLookupForRange(LocalFrame& frame, const SimpleRange& range, TextIndicatorPresentationTransition presentationTransition)
 {
-    send(Messages::WebPageProxy::DidPerformDictionaryLookup(dictionaryPopupInfoForRange(frame, range, options, presentationTransition)));
+    send(Messages::WebPageProxy::DidPerformDictionaryLookup(dictionaryPopupInfoForRange(frame, range, presentationTransition)));
 }
 
-DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(LocalFrame& frame, const SimpleRange& range, NSDictionary *options, TextIndicatorPresentationTransition presentationTransition)
+DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(LocalFrame& frame, const SimpleRange& range, TextIndicatorPresentationTransition presentationTransition)
 {
     Editor& editor = frame.editor();
     editor.setIsGettingDictionaryPopupInfo(true);
@@ -257,7 +255,6 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(LocalFrame& frame, cons
     const RenderStyle* style = range.startContainer().renderStyle();
     float scaledAscent = style ? style->metricsOfPrimaryFont().ascent() * pageScaleFactor() : 0;
     dictionaryPopupInfo.origin = FloatPoint(rangeRect.x(), rangeRect.y() + scaledAscent);
-    dictionaryPopupInfo.platformData.options = options;
 
 #if PLATFORM(MAC)
     auto attributedString = editingAttributedString(range, IncludeImages::No).nsAttributedString();

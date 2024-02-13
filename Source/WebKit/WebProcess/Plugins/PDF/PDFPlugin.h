@@ -174,7 +174,7 @@ private:
     bool findString(const String& target, WebCore::FindOptions, unsigned maxMatchCount) override;
 
     bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&) override;
-    std::tuple<String, PDFSelection *, NSDictionary *> lookupTextAtLocation(const WebCore::FloatPoint&, WebHitTestResultData&) const override;
+    std::pair<String, PDFSelection *> lookupTextAtLocation(const WebCore::FloatPoint&, WebHitTestResultData&) const override;
 
     bool shouldCreateTransientPaintingSnapshot() const override { return true; }
     RefPtr<WebCore::ShareableBitmap> snapshot() override;

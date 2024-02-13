@@ -137,7 +137,7 @@ ExceptionOr<RefPtr<Range>> Internals::rangeForDictionaryLookupAtLocation(int x, 
     if (!range)
         return nullptr;
 
-    return RefPtr<Range> { createLiveRange(std::get<SimpleRange>(*range)) };
+    return RefPtr<Range> { createLiveRange(*range) };
 }
 
 void Internals::setUsesOverlayScrollbars(bool enabled)

@@ -373,7 +373,7 @@ void WebPage::attributedSubstringForCharacterRangeAsync(const EditingRange& edit
 
 #if ENABLE(LEGACY_PDFKIT_PLUGIN)
 
-DictionaryPopupInfo WebPage::dictionaryPopupInfoForSelectionInPDFPlugin(PDFSelection *selection, PluginView& pdfPlugin, NSDictionary *options, WebCore::TextIndicatorPresentationTransition presentationTransition)
+DictionaryPopupInfo WebPage::dictionaryPopupInfoForSelectionInPDFPlugin(PDFSelection *selection, PluginView& pdfPlugin, WebCore::TextIndicatorPresentationTransition presentationTransition)
 {
     DictionaryPopupInfo dictionaryPopupInfo;
     if (!selection.string.length)
@@ -415,7 +415,6 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForSelectionInPDFPlugin(PDFSelec
     dataForSelection.presentationTransition = presentationTransition;
     
     dictionaryPopupInfo.origin = rangeRect.origin;
-    dictionaryPopupInfo.platformData.options = options;
     dictionaryPopupInfo.textIndicator = dataForSelection;
     dictionaryPopupInfo.platformData.attributedString = WebCore::AttributedString::fromNSAttributedString(scaledNSAttributedString);
     
@@ -878,11 +877,11 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locati
     }
 
     if (auto lookupResult = lookupTextAtLocation(locationInViewCoordinates)) {
-        auto [lookupRange, options] = WTFMove(*lookupResult);
+        auto lookupRange = WTFMove(*lookupResult);
         immediateActionResult.lookupText = plainText(lookupRange);
         if (auto* node = hitTestResult.innerNode()) {
             if (auto* frame = node->document().frame())
-                immediateActionResult.dictionaryPopupInfo = dictionaryPopupInfoForRange(*frame, lookupRange, options, TextIndicatorPresentationTransition::FadeIn);
+                immediateActionResult.dictionaryPopupInfo = dictionaryPopupInfoForRange(*frame, lookupRange, TextIndicatorPresentationTransition::FadeIn);
         }
     }
 
@@ -930,12 +929,11 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locati
                     pluginDocument->setFocusedElement(element.get());
 
                 auto selection = std::get<PDFSelection *>(lookupResult);
-                auto options = std::get<NSDictionary *>(lookupResult);
 
                 immediateActionResult.lookupText = lookupText;
                 immediateActionResult.isTextNode = true;
                 immediateActionResult.isSelected = true;
-                immediateActionResult.dictionaryPopupInfo = dictionaryPopupInfoForSelectionInPDFPlugin(selection, *pluginView, options, TextIndicatorPresentationTransition::FadeIn);
+                immediateActionResult.dictionaryPopupInfo = dictionaryPopupInfoForSelectionInPDFPlugin(selection, *pluginView, TextIndicatorPresentationTransition::FadeIn);
             }
         }
     }
@@ -948,7 +946,7 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locati
     send(Messages::WebPageProxy::DidPerformImmediateActionHitTest(immediateActionResult, immediateActionHitTestPreventsDefault, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
 }
 
-std::optional<std::tuple<WebCore::SimpleRange, NSDictionary *>> WebPage::lookupTextAtLocation(FloatPoint locationInViewCoordinates)
+std::optional<WebCore::SimpleRange> WebPage::lookupTextAtLocation(FloatPoint locationInViewCoordinates)
 {
     RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
     if (!localMainFrame || !localMainFrame->view() || !localMainFrame->view()->renderView())

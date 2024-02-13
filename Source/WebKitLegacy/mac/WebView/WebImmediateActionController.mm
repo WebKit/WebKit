@@ -505,7 +505,7 @@ static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::N
 
 #pragma mark Text action
 
-+ (WebCore::DictionaryPopupInfo)_dictionaryPopupInfoForRange:(const WebCore::SimpleRange&)range inFrame:(WebCore::LocalFrame*)frame withLookupOptions:(NSDictionary *)lookupOptions indicatorOptions:(OptionSet<WebCore::TextIndicatorOption>)indicatorOptions transition:(WebCore::TextIndicatorPresentationTransition)presentationTransition
++ (WebCore::DictionaryPopupInfo)_dictionaryPopupInfoForRange:(const WebCore::SimpleRange&)range inFrame:(WebCore::LocalFrame*)frame indicatorOptions:(OptionSet<WebCore::TextIndicatorOption>)indicatorOptions transition:(WebCore::TextIndicatorPresentationTransition)presentationTransition
 {
     auto& editor = frame->editor();
     editor.setIsGettingDictionaryPopupInfo(true);
@@ -530,7 +530,6 @@ static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::N
     auto rangeRect = frame->view()->contentsToWindow(quads[0].enclosingBoundingBox());
 
     popupInfo.origin = NSMakePoint(rangeRect.x(), rangeRect.y() + scaledDescent);
-    popupInfo.platformData.options = lookupOptions;
 
     auto attributedString = editingAttributedString(range, WebCore::IncludeImages::No).nsAttributedString();
     auto scaledAttributedString = adoptNS([[NSMutableAttributedString alloc] initWithString:[attributedString string]]);
@@ -572,8 +571,8 @@ static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::N
     if (!range)
         return nil;
 
-    auto [dictionaryRange, options] = WTFMove(*range);
-    auto dictionaryPopupInfo = [WebImmediateActionController _dictionaryPopupInfoForRange:dictionaryRange inFrame:frame withLookupOptions:options indicatorOptions: { } transition: WebCore::TextIndicatorPresentationTransition::FadeIn];
+    auto dictionaryRange = WTFMove(*range);
+    auto dictionaryPopupInfo = [WebImmediateActionController _dictionaryPopupInfoForRange:dictionaryRange inFrame:frame indicatorOptions: { } transition: WebCore::TextIndicatorPresentationTransition::FadeIn];
     if (!dictionaryPopupInfo.platformData.attributedString.nsAttributedString())
         return nil;
 

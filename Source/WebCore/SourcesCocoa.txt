@@ -199,7 +199,6 @@ editing/cocoa/WebContentReaderCocoa.mm
 editing/cocoa/WebCoreTextAttachment.mm
 editing/ios/DictationCommandIOS.cpp
 editing/ios/EditorIOS.mm
-editing/mac/DictionaryLookupLegacy.mm
 editing/mac/EditorMac.mm
 editing/mac/FrameSelectionMac.mm
 editing/mac/TextAlternativeWithRange.mm @no-unify

@@ -44,7 +44,7 @@ VisibleSelection EventHandler::selectClosestWordFromHitTestResultBasedOnLookup(c
     if (!range)
         return { };
 
-    return std::get<SimpleRange>(*range);
+    return *range;
 }
 
 #else

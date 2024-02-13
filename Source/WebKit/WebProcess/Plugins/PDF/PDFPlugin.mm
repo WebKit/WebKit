@@ -1442,16 +1442,16 @@ static NSPoint pointInLayoutSpaceForPointInWindowSpace(PDFLayerController* pdfLa
     return NSPointFromCGPoint(newPoint);
 }
 
-std::tuple<String, PDFSelection *, NSDictionary *> PDFPlugin::lookupTextAtLocation(const WebCore::FloatPoint& locationInViewCoordinates, WebHitTestResultData& data) const
+std::pair<String, PDFSelection *> PDFPlugin::lookupTextAtLocation(const WebCore::FloatPoint& locationInViewCoordinates, WebHitTestResultData& data) const
 {
     auto selection = [m_pdfLayerController currentSelection];
     if (existingSelectionContainsPoint(locationInViewCoordinates))
-        return { selection.string, selection, nil };
+        return { selection.string, selection };
 
     IntPoint pointInPDFView = convertFromPluginToPDFView(convertFromRootViewToPlugin(roundedIntPoint(locationInViewCoordinates)));
     selection = [m_pdfLayerController getSelectionForWordAtPoint:pointInPDFView];
     if (!selection)
-        return { emptyString(), nil, nil };
+        return { emptyString(), nil };
 
     NSPoint pointInLayoutSpace = pointInLayoutSpaceForPointInWindowSpace(m_pdfLayerController.get(), pointInPDFView);
     PDFPage *currentPage = [[m_pdfLayerController layout] pageNearestPoint:pointInLayoutSpace currentPage:[m_pdfLayerController currentPage]];
@@ -1474,15 +1474,15 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
         data.absoluteLinkURL = url.absoluteString;
         data.linkLabel = selection.string;
-        return { selection.string, selection, nil };
+        return { selection.string, selection };
     }
 
-    auto [lookupText, options] = DictionaryLookup::stringForPDFSelection(selection);
+    NSString *lookupText = DictionaryLookup::stringForPDFSelection(selection);
     if (!lookupText.length)
-        return { emptyString(), selection, nil };
+        return { emptyString(), selection };
 
     [m_pdfLayerController setCurrentSelection:selection];
-    return { lookupText, selection, options };
+    return { lookupText, selection };
 }
 
 static NSRect rectInViewSpaceForRectInLayoutSpace(PDFLayerController* pdfLayerController, NSRect layoutSpaceRect)

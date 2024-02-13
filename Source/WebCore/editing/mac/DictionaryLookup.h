@@ -55,9 +55,9 @@ struct SimpleRange;
 
 class DictionaryLookup {
 public:
-    WEBCORE_EXPORT static std::optional<std::tuple<SimpleRange, NSDictionary *>> rangeForSelection(const VisibleSelection&);
-    WEBCORE_EXPORT static std::optional<std::tuple<SimpleRange, NSDictionary *>> rangeAtHitTestResult(const HitTestResult&);
-    WEBCORE_EXPORT static std::tuple<NSString *, NSDictionary *> stringForPDFSelection(PDFSelection *);
+    WEBCORE_EXPORT static std::optional<SimpleRange> rangeForSelection(const VisibleSelection&);
+    WEBCORE_EXPORT static std::optional<SimpleRange> rangeAtHitTestResult(const HitTestResult&);
+    WEBCORE_EXPORT static NSString *stringForPDFSelection(PDFSelection *);
 
     // FIXME: Should move/unify dictionaryPopupInfoForRange here too.
 
