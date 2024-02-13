@@ -1105,7 +1105,7 @@ static EncodedJSValue stringIndexOfImpl(JSGlobalObject* globalObject, CallFrame*
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     auto otherViewWithString = otherJSString->viewWithUnderlyingString(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    size_t result = thisViewWithString.view.find(otherViewWithString.view, pos);
+    size_t result = thisViewWithString.view.find(vm.adaptiveStringSearcherTables(), otherViewWithString.view, pos);
     if (result == notFound)
         return JSValue::encode(jsNumber(-1));
     return JSValue::encode(jsNumber(result));
@@ -1378,7 +1378,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncSplitFast, (JSGlobalObject* globalObject
         //   b. If e is failure, then let q = q+1.
         //   c. Else, e is an integer index <= s.
         size_t position = 0;
-        while ((matchPosition = stringImpl->find(separatorImpl, position)) != notFound) {
+        while ((matchPosition = StringView(stringImpl).find(vm.adaptiveStringSearcherTables(), StringView(separatorImpl), position)) != notFound) {
             // 1. Let T be a String value equal to the substring of S consisting of the characters at positions p (inclusive)
             //    through q (exclusive).
             // 2. Call CreateDataProperty(A, ToString(lengthA), T).
@@ -1810,7 +1810,7 @@ static EncodedJSValue stringIncludesImpl(JSGlobalObject* globalObject, VM& vm, S
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
 
-    return JSValue::encode(jsBoolean(stringToSearchIn.find(searchString, start) != notFound));
+    return JSValue::encode(jsBoolean(StringView(stringToSearchIn).find(vm.adaptiveStringSearcherTables(), StringView(searchString), start) != notFound));
 }
 
 JSC_DEFINE_HOST_FUNCTION(stringProtoFuncIncludes, (JSGlobalObject* globalObject, CallFrame* callFrame))

@@ -46,6 +46,8 @@
 
 namespace WTF {
 
+class AdaptiveStringSearcherTables;
+
 // StringView is a non-owning reference to a string, similar to the proposed std::string_view.
 
 class StringView final {
@@ -158,6 +160,7 @@ public:
     size_t find(CodeUnitMatchFunction&&, unsigned start = 0) const;
     ALWAYS_INLINE size_t find(ASCIILiteral literal, unsigned start = 0) const { return find(literal.characters8(), literal.length(), start); }
     WTF_EXPORT_PRIVATE size_t find(StringView, unsigned start = 0) const;
+    WTF_EXPORT_PRIVATE size_t find(AdaptiveStringSearcherTables&, StringView, unsigned start = 0) const;
 
     size_t reverseFind(UChar, unsigned index = std::numeric_limits<unsigned>::max()) const;
     ALWAYS_INLINE size_t reverseFind(ASCIILiteral literal, unsigned start = std::numeric_limits<unsigned>::max()) const { return reverseFind(literal.characters8(), literal.length(), start); }

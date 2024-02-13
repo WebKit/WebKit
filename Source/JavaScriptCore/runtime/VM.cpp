@@ -256,6 +256,10 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
             ref.set(makeUniqueRef<HeapProfiler>(vm));
         });
 
+        m_stringSearcherTables.initLater([](VM&, auto& ref) {
+            ref.set(makeUniqueRef<AdaptiveStringSearcherTables>());
+        });
+
         m_watchdog.initLater([](VM& vm, auto& ref) {
             ref.set(adoptRef(*new Watchdog(&vm)));
             vm.ensureTerminationException();
