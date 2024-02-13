@@ -136,7 +136,11 @@ void PointerRewriter::visit(AST::IdentifierExpression& identifier)
     if (!variable || !*variable)
         return;
 
-    m_callGraph.ast().replace(identifier, **variable);
+    auto& identity = m_callGraph.ast().astBuilder().construct<AST::IdentityExpression>(
+        identifier.span(),
+        **variable
+    );
+    m_callGraph.ast().replace(identifier, identity);
 }
 
 void PointerRewriter::visit(AST::UnaryExpression& unary)
