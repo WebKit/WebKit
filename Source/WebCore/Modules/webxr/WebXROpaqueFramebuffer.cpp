@@ -295,7 +295,7 @@ PlatformGLObject WebXROpaqueFramebuffer::allocateRenderbufferStorage(GraphicsCon
 
 PlatformGLObject WebXROpaqueFramebuffer::allocateColorStorage(GraphicsContextGL& gl, GCGLsizei samples, IntSize size)
 {
-    return allocateRenderbufferStorage(gl, samples, GL::SRGB8_ALPHA8, size);
+    return allocateRenderbufferStorage(gl, samples, GL::RGBA8, size);
 }
 
 PlatformGLObject WebXROpaqueFramebuffer::allocateDepthStencilStorage(GraphicsContextGL& gl, GCGLsizei samples, IntSize size)
