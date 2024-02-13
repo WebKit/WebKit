@@ -310,6 +310,11 @@ std::unique_ptr<SVGResources> SVGResources::buildCachedResources(const RenderEle
 
 void SVGResources::layoutDifferentRootIfNeeded(const RenderElement& resourcesClient)
 {
+    if (m_inLayoutForDifferentRoot)
+        return;
+
+    SetForScope inLayoutForDifferentRoot(m_inLayoutForDifferentRoot, true);
+
     const LegacyRenderSVGRoot* clientRoot = nullptr;
 
     auto layoutDifferentRootIfNeeded = [&](LegacyRenderSVGResourceContainer* container) {
