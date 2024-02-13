@@ -51,6 +51,7 @@ class AudioTrackList;
 class BufferSource;
 class MediaSource;
 class PlatformTimeRanges;
+class Settings;
 class SourceBufferPrivate;
 class TextTrackList;
 class TimeRanges;

@@ -48,6 +48,7 @@
 #include "Logging.h"
 #include "MediaDescription.h"
 #include "MediaSource.h"
+#include "Settings.h"
 #include "SharedBuffer.h"
 #include "SourceBufferList.h"
 #include "SourceBufferPrivate.h"
