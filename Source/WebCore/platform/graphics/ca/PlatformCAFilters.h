@@ -32,9 +32,18 @@
 
 OBJC_CLASS NSValue;
 
+#if PLATFORM(MAC)
+OBJC_CLASS CAPresentationModifier;
+OBJC_CLASS CAPresentationModifierGroup;
+#endif
+
 namespace WebCore {
 
 class PlatformCALayer;
+
+#if PLATFORM(MAC)
+using TypedFilterPresentationModifier = std::pair<FilterOperation::Type, RetainPtr<CAPresentationModifier>>;
+#endif
 
 class PlatformCAFilters {
 public:
@@ -48,6 +57,12 @@ public:
 
     // A null operation indicates that we should make a "no-op" filter of the given type.
     static RetainPtr<NSValue> colorMatrixValueForFilter(FilterOperation::Type, const FilterOperation*);
+
+#if PLATFORM(MAC)
+    WEBCORE_EXPORT static void presentationModifiers(const FilterOperations& initialFilters, const FilterOperations* canonicalFilters, Vector<TypedFilterPresentationModifier>& presentationModifiers, RetainPtr<CAPresentationModifierGroup>&);
+    WEBCORE_EXPORT static void updatePresentationModifiers(const FilterOperations& filters, const Vector<TypedFilterPresentationModifier>& presentationModifiers);
+    WEBCORE_EXPORT static size_t presentationModifierCount(const FilterOperations&);
+#endif
 };
 
 }

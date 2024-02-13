@@ -30,7 +30,9 @@
 #include <WebCore/AcceleratedEffect.h>
 #include <WebCore/AcceleratedEffectStack.h>
 #include <WebCore/AcceleratedEffectValues.h>
+#include <WebCore/PlatformCAFilters.h>
 #include <WebCore/PlatformLayer.h>
+#include <wtf/OptionSet.h>
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS CAPresentationModifierGroup;
@@ -59,9 +61,14 @@ private:
 
     WebCore::AcceleratedEffectValues computeValues(MonotonicTime now) const;
 
+#if PLATFORM(MAC)
+    const WebCore::FilterOperations* longestFilterList() const;
+#endif
+
     enum class LayerProperty : uint8_t {
         Opacity = 1 << 1,
-        Transform = 1 << 2
+        Transform = 1 << 2,
+        Filter = 1 << 3
     };
 
     OptionSet<LayerProperty> m_affectedLayerProperties;
@@ -69,9 +76,12 @@ private:
     WebCore::FloatRect m_bounds;
     Seconds m_acceleratedTimelineTimeOrigin;
 
+#if PLATFORM(MAC)
     RetainPtr<CAPresentationModifierGroup> m_presentationModifierGroup;
     RetainPtr<CAPresentationModifier> m_opacityPresentationModifier;
     RetainPtr<CAPresentationModifier> m_transformPresentationModifier;
+    Vector<WebCore::TypedFilterPresentationModifier> m_filterPresentationModifiers;
+#endif
 };
 
 } // namespace WebKit

@@ -37,6 +37,189 @@
 
 namespace WebCore {
 
+#if PLATFORM(MAC)
+static unsigned keyValueCountForFilter(const FilterOperation& filterOperation)
+{
+    switch (filterOperation.type()) {
+    case FilterOperation::Type::Default:
+    case FilterOperation::Type::Reference:
+    case FilterOperation::Type::None:
+        ASSERT_NOT_REACHED();
+        return 0;
+    case FilterOperation::Type::DropShadow:
+        return 3;
+    case FilterOperation::Type::Sepia:
+    case FilterOperation::Type::Saturate:
+    case FilterOperation::Type::HueRotate:
+    case FilterOperation::Type::Invert:
+    case FilterOperation::Type::Opacity:
+    case FilterOperation::Type::Brightness:
+    case FilterOperation::Type::Contrast:
+    case FilterOperation::Type::Grayscale:
+    case FilterOperation::Type::Blur:
+        return 1;
+    case FilterOperation::Type::AppleInvertLightness:
+        ASSERT_NOT_REACHED(); // AppleInvertLightness is only used in -apple-color-filter.
+        break;
+    case FilterOperation::Type::Passthrough:
+        return 0;
+    }
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+size_t PlatformCAFilters::presentationModifierCount(const FilterOperations& filters)
+{
+    size_t count = 0;
+    for (const auto& filter : filters.operations())
+        count += keyValueCountForFilter(*filter.get());
+    return count;
+}
+
+static const FilterOperation& passthroughFilter(const FilterOperation::Type typeToMatch)
+{
+    switch (typeToMatch) {
+    case FilterOperation::Type::DropShadow:
+        static NeverDestroyed<Ref<DropShadowFilterOperation>> passthroughDropShadowFilter = DropShadowFilterOperation::create({ }, 0, { });
+        return passthroughDropShadowFilter.get();
+    case FilterOperation::Type::Grayscale:
+        static NeverDestroyed<Ref<BasicColorMatrixFilterOperation>> passthroughGrayscaleFilter = BasicColorMatrixFilterOperation::create(0, typeToMatch);
+        return passthroughGrayscaleFilter.get();
+    case FilterOperation::Type::Sepia:
+        static NeverDestroyed<Ref<BasicColorMatrixFilterOperation>> passthroughSepiaFilter = BasicColorMatrixFilterOperation::create(0, typeToMatch);
+        return passthroughSepiaFilter.get();
+    case FilterOperation::Type::Saturate:
+        static NeverDestroyed<Ref<BasicColorMatrixFilterOperation>> passthroughSaturateFilter = BasicColorMatrixFilterOperation::create(0, typeToMatch);
+        return passthroughSaturateFilter.get();
+    case FilterOperation::Type::HueRotate:
+        static NeverDestroyed<Ref<BasicColorMatrixFilterOperation>> passthroughHueRotateFilter = BasicColorMatrixFilterOperation::create(0, typeToMatch);
+        return passthroughHueRotateFilter.get();
+    case FilterOperation::Type::Invert:
+        static NeverDestroyed<Ref<BasicColorMatrixFilterOperation>> passthroughInvertFilter = BasicColorMatrixFilterOperation::create(0, typeToMatch);
+        return passthroughInvertFilter.get();
+    case FilterOperation::Type::Opacity:
+        static NeverDestroyed<Ref<BasicColorMatrixFilterOperation>> passthroughOpacityFilter = BasicColorMatrixFilterOperation::create(0, typeToMatch);
+        return passthroughOpacityFilter.get();
+    case FilterOperation::Type::Brightness:
+        static NeverDestroyed<Ref<BasicColorMatrixFilterOperation>> passthroughBrightnessFilter = BasicColorMatrixFilterOperation::create(0, typeToMatch);
+        return passthroughBrightnessFilter.get();
+    case FilterOperation::Type::Contrast:
+        static NeverDestroyed<Ref<BasicColorMatrixFilterOperation>> passthroughContrastFilter = BasicColorMatrixFilterOperation::create(0, typeToMatch);
+        return passthroughContrastFilter.get();
+    case FilterOperation::Type::Blur:
+        static NeverDestroyed<Ref<BlurFilterOperation>> passthroughBlurFilter = BlurFilterOperation::create({ 0, LengthType::Fixed });
+        return passthroughBlurFilter.get();
+    default:
+        ASSERT_NOT_REACHED();
+        static NeverDestroyed<Ref<BasicColorMatrixFilterOperation>> passthroughDefaultFilter = BasicColorMatrixFilterOperation::create(0, FilterOperation::Type::Grayscale);
+        return passthroughDefaultFilter.get();
+    }
+}
+
+void PlatformCAFilters::presentationModifiers(const FilterOperations& initialFilters, const FilterOperations* canonicalFilters, Vector<TypedFilterPresentationModifier>& presentationModifiers, RetainPtr<CAPresentationModifierGroup>& group)
+{
+    if (!canonicalFilters || canonicalFilters->isEmpty())
+        return;
+
+    ASSERT(canonicalFilters->size() >= initialFilters.size());
+    ASSERT(presentationModifierCount(*canonicalFilters));
+
+    auto& canonicalFilterOperations = canonicalFilters->operations();
+    auto& initialFilterOperations = initialFilters.operations();
+    auto numberOfInitialFilters = initialFilterOperations.size();
+    for (size_t i = 0; i < canonicalFilterOperations.size(); ++i) {
+        auto& canonicalFilterOperation = *canonicalFilterOperations[i];
+        auto& initialFilterOperation = i < numberOfInitialFilters ? *initialFilterOperations[i] : passthroughFilter(canonicalFilterOperation.type());
+        ASSERT(canonicalFilterOperation.type() == initialFilterOperation.type());
+        auto filterName = makeString("filter_", i);
+        auto type = initialFilterOperation.type();
+        switch (type) {
+        case FilterOperation::Type::Default:
+        case FilterOperation::Type::Reference:
+        case FilterOperation::Type::None:
+            ASSERT_NOT_REACHED();
+            break;
+        case FilterOperation::Type::DropShadow: {
+            const auto& dropShadowOperation = downcast<DropShadowFilterOperation>(initialFilterOperation);
+            auto size = CGSizeMake(dropShadowOperation.x(), dropShadowOperation.y());
+            presentationModifiers.append({ type, adoptNS([[CAPresentationModifier alloc] initWithKeyPath:@"shadowOffset" initialValue:[NSValue value:&size withObjCType:@encode(CGSize)] additive:NO group:group.get()]) });
+            presentationModifiers.append({ type, adoptNS([[CAPresentationModifier alloc] initWithKeyPath:@"shadowColor" initialValue:(id) cachedCGColor(dropShadowOperation.color()).autorelease() additive:NO group:group.get()]) });
+            presentationModifiers.append({ type, adoptNS([[CAPresentationModifier alloc] initWithKeyPath:@"shadowRadius" initialValue:@(dropShadowOperation.stdDeviation()) additive:NO group:group.get()]) });
+            continue;
+        }
+        case FilterOperation::Type::Grayscale:
+        case FilterOperation::Type::Sepia:
+        case FilterOperation::Type::Saturate:
+        case FilterOperation::Type::HueRotate:
+        case FilterOperation::Type::Invert:
+        case FilterOperation::Type::Opacity:
+        case FilterOperation::Type::Brightness:
+        case FilterOperation::Type::Contrast:
+        case FilterOperation::Type::Blur: {
+            auto keyValueName = makeString("filters.", filterName, ".", animatedFilterPropertyName(initialFilterOperation.type()));
+            presentationModifiers.append({ type, adoptNS([[CAPresentationModifier alloc] initWithKeyPath:keyValueName initialValue:filterValueForOperation(&initialFilterOperation).get() additive:NO group:group.get()]) });
+            continue;
+        }
+        case FilterOperation::Type::AppleInvertLightness:
+            ASSERT_NOT_REACHED(); // AppleInvertLightness is only used in -apple-color-filter.
+            break;
+        case FilterOperation::Type::Passthrough:
+            continue;
+        }
+        ASSERT_NOT_REACHED();
+        break;
+    }
+
+    ASSERT(presentationModifierCount(*canonicalFilters) == presentationModifiers.size());
+}
+
+void PlatformCAFilters::updatePresentationModifiers(const FilterOperations& filters, const Vector<TypedFilterPresentationModifier>& presentationModifiers)
+{
+    ASSERT(presentationModifierCount(filters) <= presentationModifiers.size());
+
+    size_t filterIndex = 0;
+    auto numberOfFilters = filters.size();
+    for (size_t i = 0; i < presentationModifiers.size(); ++i) {
+        auto& filterOperation = filterIndex < numberOfFilters ? *filters.at(filterIndex) : passthroughFilter(presentationModifiers[i].first);
+        ++filterIndex;
+        switch (filterOperation.type()) {
+        case FilterOperation::Type::Default:
+        case FilterOperation::Type::Reference:
+        case FilterOperation::Type::None:
+            ASSERT_NOT_REACHED();
+            return;
+        case FilterOperation::Type::DropShadow: {
+            const auto& dropShadowOperation = downcast<DropShadowFilterOperation>(filterOperation);
+            auto size = CGSizeMake(dropShadowOperation.x(), dropShadowOperation.y());
+            [presentationModifiers[i].second.get() setValue:[NSValue value:&size withObjCType:@encode(CGSize)]];
+            [presentationModifiers[i++].second.get() setValue:(id) cachedCGColor(dropShadowOperation.color()).autorelease()];
+            [presentationModifiers[i++].second.get() setValue:@(dropShadowOperation.stdDeviation())];
+            continue;
+        }
+        case FilterOperation::Type::Grayscale:
+        case FilterOperation::Type::Sepia:
+        case FilterOperation::Type::Saturate:
+        case FilterOperation::Type::HueRotate:
+        case FilterOperation::Type::Invert:
+        case FilterOperation::Type::Opacity:
+        case FilterOperation::Type::Brightness:
+        case FilterOperation::Type::Contrast:
+        case FilterOperation::Type::Blur: {
+            [presentationModifiers[i].second.get() setValue:filterValueForOperation(&filterOperation).get()];
+            continue;
+        }
+        case FilterOperation::Type::AppleInvertLightness:
+            ASSERT_NOT_REACHED(); // AppleInvertLightness is only used in -apple-color-filter.
+            return;
+        case FilterOperation::Type::Passthrough:
+            continue;
+        }
+        ASSERT_NOT_REACHED();
+        return;
+    }
+}
+#endif // PLATFORM(MAC)
+
 void PlatformCAFilters::setFiltersOnLayer(PlatformLayer* layer, const FilterOperations& filters)
 {
     if (!filters.size()) {
@@ -101,7 +284,6 @@ void PlatformCAFilters::setFiltersOnLayer(PlatformLayer* layer, const FilterOper
             const auto& colorMatrixOperation = downcast<BasicColorMatrixFilterOperation>(filterOperation);
             CAFilter *filter = [CAFilter filterWithType:kCAFilterColorHueRotate];
             [filter setValue:[NSNumber numberWithFloat:deg2rad(colorMatrixOperation.amount())] forKey:@"inputAngle"];
-            [filter setName:@"hueRotate"];
             [filter setName:filterName];
             return filter;
         }
