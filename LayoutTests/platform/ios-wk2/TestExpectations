@@ -2395,3 +2395,6 @@ webkit.org/b/269086 [ Release ] imported/w3c/web-platform-tests/feature-policy/f
 webkit.org/b/269088 imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpSynchronizationSource-senderCaptureTimeOffset.html [ Pass Failure ]
 
 webkit.org/b/269116 imported/w3c/web-platform-tests/css/css-flexbox/negative-overflow-002.html [ Failure ]
+
+webkit.org/b/269246 imported/w3c/web-platform-tests/css/css-fonts/font-size-adjust-zero-1.html [ ImageOnlyFailure ]
+
