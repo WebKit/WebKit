@@ -406,6 +406,9 @@ static inline bool isAtSoftWrapOpportunity(const InlineItem& previous, const Inl
         // Both previous and next items are non-whitespace text.
         // [text][text] : is a continuous content.
         // [text-][text] : after [hyphen] position is a soft wrap opportunity.
+        auto currentAndNextHaveSameParent = &currentInlineTextItem.layoutBox().parent() == &nextInlineTextItem.layoutBox().parent();
+        if (currentAndNextHaveSameParent && !TextUtil::isWrappingAllowed(currentInlineTextItem.style()))
+            return false;
         return endsWithSoftWrapOpportunity(currentInlineTextItem, nextInlineTextItem);
     }
     if (previous.layoutBox().isListMarkerBox()) {
