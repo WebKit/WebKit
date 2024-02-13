@@ -285,9 +285,11 @@ void FindController::findString(const String& string, OptionSet<FindOptions> opt
     std::optional<FrameIdentifier> idOfFrameContainingString;
     DidWrap didWrap = DidWrap::No;
 #if ENABLE(PDF_PLUGIN)
-    if (pluginView)
+    if (pluginView) {
         found = pluginView->findString(string, coreOptions, maxMatchCount);
-    else
+        if (auto* frame = pluginView->frame(); frame && found)
+            idOfFrameContainingString = frame->frameID();
+    } else
 #endif
     {
         idOfFrameContainingString = m_webPage->corePage()->findString(string, coreOptions, &didWrap);
