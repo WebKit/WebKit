@@ -2050,7 +2050,7 @@ void HTMLMediaElement::speakCueText(TextTrackCue& cue)
     m_cueBeingSpoken = &cue;
     RefPtr { m_cueBeingSpoken }->prepareToSpeak(protectedSpeechSynthesis(), m_reportedPlaybackRate ? m_reportedPlaybackRate : m_requestedPlaybackRate, volume(), [weakThis = WeakPtr { *this }](const TextTrackCue&) {
         ASSERT(isMainThread());
-        RefPtr protectedThis = weakThis.get();
+        RefPtrAllowingPartiallyDestroyed<HTMLMediaElement> protectedThis = weakThis.get();
         if (!protectedThis)
             return;
 
