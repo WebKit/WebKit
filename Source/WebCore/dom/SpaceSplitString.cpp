@@ -164,11 +164,17 @@ private:
 class TokenAtomStringInitializer {
     WTF_MAKE_NONCOPYABLE(TokenAtomStringInitializer);
 public:
-    TokenAtomStringInitializer(AtomString* memory) : m_memoryBucket(memory) { }
+    TokenAtomStringInitializer(const AtomString& keyString, AtomString* memory)
+        : m_keyString(keyString)
+        , m_memoryBucket(memory)
+    { }
 
     template<typename CharacterType> bool processToken(const CharacterType* characters, unsigned length)
     {
-        new (NotNull, m_memoryBucket) AtomString(characters, length);
+        if (length == m_keyString.length())
+            new (NotNull, m_memoryBucket) AtomString(m_keyString);
+        else
+            new (NotNull, m_memoryBucket) AtomString(characters, length);
         ++m_memoryBucket;
         return true;
     }
@@ -176,6 +182,7 @@ public:
     const AtomString* nextMemoryBucket() const { return m_memoryBucket; }
 
 private:
+    const AtomString& m_keyString;
     AtomString* m_memoryBucket;
 };
 
@@ -189,7 +196,7 @@ inline Ref<SpaceSplitStringData> SpaceSplitStringData::create(const AtomString& 
 
     new (NotNull, spaceSplitStringData) SpaceSplitStringData(keyString, tokenCount);
     AtomString* tokenArrayStart = spaceSplitStringData->tokenArrayStart();
-    TokenAtomStringInitializer tokenInitializer(tokenArrayStart);
+    TokenAtomStringInitializer tokenInitializer(keyString, tokenArrayStart);
     tokenizeSpaceSplitString(tokenInitializer, keyString);
     ASSERT(static_cast<unsigned>(tokenInitializer.nextMemoryBucket() - tokenArrayStart) == tokenCount);
     ASSERT(reinterpret_cast<const char*>(tokenInitializer.nextMemoryBucket()) == reinterpret_cast<const char*>(spaceSplitStringData) + sizeToAllocate);
