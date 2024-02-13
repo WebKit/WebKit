@@ -171,7 +171,7 @@ bool CanvasBase::hasObserver(CanvasObserver& observer) const
     return m_observers.contains(observer);
 }
 
-void CanvasBase::notifyObserversCanvasChanged(const std::optional<FloatRect>& rect)
+void CanvasBase::notifyObserversCanvasChanged(const FloatRect& rect)
 {
     for (auto& observer : m_observers)
         observer.canvasChanged(*this, rect);
@@ -179,13 +179,16 @@ void CanvasBase::notifyObserversCanvasChanged(const std::optional<FloatRect>& re
 
 void CanvasBase::didDraw(const std::optional<FloatRect>& rect, ShouldApplyPostProcessingToDirtyRect shouldApplyPostProcessingToDirtyRect)
 {
+    addCanvasNeedingPreparationForDisplayOrFlush();
+    IntRect dirtyRect { { }, size() };
+    if (rect)
+        dirtyRect.intersect(enclosingIntRect(*rect));
+    notifyObserversCanvasChanged(dirtyRect);
+
     // FIXME: We should exclude rects with ShouldApplyPostProcessingToDirtyRect::No
     if (shouldInjectNoiseBeforeReadback()) {
         if (shouldApplyPostProcessingToDirtyRect == ShouldApplyPostProcessingToDirtyRect::Yes) {
-            if (rect)
-                m_canvasNoiseInjection.updateDirtyRect(intersection(enclosingIntRect(*rect), { { }, size() }));
-            else
-                m_canvasNoiseInjection.updateDirtyRect({ { }, size() });
+            m_canvasNoiseInjection.updateDirtyRect(dirtyRect);
         } else if (!rect)
             m_canvasNoiseInjection.clearDirtyRect();
     }
@@ -354,6 +357,20 @@ void CanvasBase::recordLastFillText(const String& text)
     if (!shouldInjectNoiseBeforeReadback())
         return;
     m_lastFillText = text;
+}
+
+void CanvasBase::addCanvasNeedingPreparationForDisplayOrFlush()
+{
+    if (auto* document = dynamicDowncast<Document>(scriptExecutionContext()))
+        document->addCanvasNeedingPreparationForDisplayOrFlush(*this);
+    // FIXME: WorkerGlobalContext does not have prepare phase yet.
+}
+
+void CanvasBase::removeCanvasNeedingPreparationForDisplayOrFlush()
+{
+    if (auto* document = dynamicDowncast<Document>(scriptExecutionContext()))
+        document->removeCanvasNeedingPreparationForDisplayOrFlush(*this);
+    // FIXME: WorkerGlobalContext does not have prepare phase yet.
 }
 
 bool CanvasBase::postProcessPixelBufferResults(Ref<PixelBuffer>&& pixelBuffer) const

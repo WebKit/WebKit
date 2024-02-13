@@ -274,33 +274,8 @@ void GPUCanvasContextCocoa::prepareForDisplay()
 void GPUCanvasContextCocoa::markContextChangedAndNotifyCanvasObservers()
 {
     m_compositingResultsNeedsUpdating = true;
-
-    bool canvasIsDirty = false;
-
-    auto canvas = htmlOrOffscreenCanvas();
-    CanvasBase *canvasBase = nullptr;
-    WTF::switchOn(canvas, [&](RefPtr<HTMLCanvasElement>& htmlCanvas) {
-        auto* renderBox = htmlCanvas->renderBox();
-        canvasBase = htmlCanvas.get();
-        if (isAccelerated() && renderBox && renderBox->hasAcceleratedCompositing()) {
-            canvasIsDirty = true;
-            htmlCanvas->clearCopiedImage();
-            renderBox->contentChanged(CanvasChanged);
-        }
-    }, [&](RefPtr<OffscreenCanvas>& offscreenCanvas) {
-        canvasBase = offscreenCanvas.get();
-    });
-
-    if (!canvasIsDirty)
-        this->canvasBase().didDraw({ });
-
-    if (!isAccelerated())
-        return;
-
-    if (!canvasBase)
-        return;
-
-    canvasBase->notifyObserversCanvasChanged({ });
+    markCanvasChanged();
 }
+
 
 } // namespace WebCore
