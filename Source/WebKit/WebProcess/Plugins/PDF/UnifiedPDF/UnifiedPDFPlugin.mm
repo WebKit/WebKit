@@ -1358,6 +1358,10 @@ bool UnifiedPDFPlugin::handleMouseEvent(const WebMouseEvent& event)
                 if (annotationIsLinkWithDestination(trackedAnnotation.get()))
                     followLinkAnnotation(trackedAnnotation.get());
 
+#if PLATFORM(MAC)
+                if (RetainPtr pdfAction = [trackedAnnotation action])
+                    handlePDFActionForAnnotation(trackedAnnotation.get());
+#endif
                 updateLayerHierarchy();
             }
 
@@ -2044,6 +2048,41 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     updateLayerHierarchy();
 #endif
 }
+
+#if PLATFORM(MAC)
+void UnifiedPDFPlugin::handlePDFActionForAnnotation(PDFAnnotation *annotation)
+{
+    if (!annotation)
+        return;
+    RetainPtr firstAction = [annotation action];
+    ASSERT(firstAction);
+    if (!firstAction)
+        return;
+
+    using PDFActionList = Vector<RetainPtr<PDFAction>>;
+    auto performPDFAction = [this](PDFAction *action) {
+        if (!action)
+            return;
+        if ([action isKindOfClass:getPDFActionResetFormClass()] && [m_pdfDocument respondsToSelector:@selector(resetFormFields:)])
+            [m_pdfDocument resetFormFields:static_cast<PDFActionResetForm *>(action)];
+    };
+
+    PDFActionList actionsForAnnotation;
+    actionsForAnnotation.append(firstAction);
+    while (!actionsForAnnotation.isEmpty()) {
+        RetainPtr currentAction = actionsForAnnotation.takeLast().get();
+        performPDFAction(currentAction.get());
+
+        if ([currentAction respondsToSelector:@selector(nextActions)]) {
+            RetainPtr reversedNextActions = [[currentAction nextActions] reverseObjectEnumerator];
+            while (RetainPtr nextAction = [reversedNextActions nextObject]) {
+                actionsForAnnotation.append(WTFMove(nextAction));
+                nextAction = [reversedNextActions nextObject];
+            }
+        }
+    }
+}
+#endif
 
 void AnnotationTrackingState::startAnnotationTracking(RetainPtr<PDFAnnotation>&& annotation, WebEventType mouseEventType, WebMouseEventButton mouseEventButton)
 {

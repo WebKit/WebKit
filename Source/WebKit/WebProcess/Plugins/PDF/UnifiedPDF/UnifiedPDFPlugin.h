@@ -32,6 +32,7 @@
 #include <WebCore/GraphicsLayer.h>
 #include <wtf/OptionSet.h>
 
+OBJC_CLASS PDFAction;
 OBJC_CLASS PDFDestination;
 OBJC_CLASS WKPDFFormMutationObserver;
 
@@ -90,6 +91,7 @@ public:
     void focusPreviousAnnotation() final;
 #if PLATFORM(MAC)
     RetainPtr<PDFAnnotation> nextTextAnnotation(AnnotationSearchDirection) const;
+    void handlePDFActionForAnnotation(PDFAnnotation *);
 #endif
 
     void attemptToUnlockPDF(const String& password) final;

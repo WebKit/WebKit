@@ -36,7 +36,15 @@
 #import <PDFKit/PDFHostViewController.h>
 #endif // PLATFORM(IOS_FAMILY)
 
+#import <PDFKit/PDFDocumentPriv.h>
 #import <PDFKit/PDFSelectionPriv.h>
+#if __has_include(<PDFKit/PDFActionPriv.h>)
+#import <PDFKit/PDFActionPriv.h>
+#else
+@interface PDFAction(SPI)
+- (NSArray *) nextActions;
+@end
+#endif // __has_include(PDFKIT/PDFActionPriv.h)
 
 #endif // HAVE(PDFKIT)
 
@@ -97,6 +105,7 @@
 @interface PDFDocument ()
 -(instancetype)initWithProvider:(CGDataProviderRef)dataProvider;
 -(void)preloadDataOfPagesInRange:(NSRange)range onQueue:(dispatch_queue_t)queue completion:(void (^)(NSIndexSet* loadedPageIndexes))completionBlock;
+-(void)resetFormFields:(PDFActionResetForm *) action;
 @property (readwrite, nonatomic) BOOL hasHighLatencyDataProvider;
 @end
 #endif // HAVE(INCREMENTAL_PDF_APIS)
