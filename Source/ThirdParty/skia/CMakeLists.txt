@@ -1,8 +1,8 @@
 set_property(DIRECTORY . PROPERTY FOLDER "skia")
 
 # Skia dependencies not used directly in WebKit.
-find_package(Freetype 2.9.0 REQUIRED)
-find_package(Fontconfig 2.13.0 REQUIRED)
+#find_package(Freetype 2.9.0 REQUIRED)
+#find_package(Fontconfig 2.13.0 REQUIRED)
 
 #
 # SKIA_ROOT_DIR may point to a checkout from the upstream Skia repository,
@@ -116,6 +116,7 @@ endif ()
 # The rest may be added later as-needed with target_sources().
 #
 add_library(Skia STATIC
+    # Maybe bust out into a variable???
     src/base/SkArenaAlloc.cpp
     src/base/SkBezierCurves.cpp
     src/base/SkBlockAllocator.cpp
@@ -444,6 +445,7 @@ add_library(Skia STATIC
     src/gpu/ganesh/GrWaitRenderTask.cpp
     src/gpu/ganesh/GrWritePixelsRenderTask.cpp
     src/gpu/ganesh/GrXferProcessor.cpp
+    src/gpu/ganesh/GrYUVABackendTextures.cpp
     src/gpu/ganesh/GrYUVATextureProxies.cpp
     src/gpu/ganesh/PathRenderer.cpp
     src/gpu/ganesh/PathRenderer.cpp
@@ -513,8 +515,7 @@ add_library(Skia STATIC
     src/gpu/ganesh/gl/GrGLVertexArray.cpp
     src/gpu/ganesh/gl/builders/GrGLProgramBuilder.cpp
     src/gpu/ganesh/gl/builders/GrGLShaderStringBuilder.cpp
-    src/gpu/ganesh/gl/epoxy/GrGLMakeEpoxyEGLInterface.cpp
-    src/gpu/ganesh/gl/epoxy/GrGLMakeNativeInterface_epoxy.cpp
+
     src/gpu/ganesh/glsl/GrGLSLBlend.cpp
     src/gpu/ganesh/glsl/GrGLSLFragmentShaderBuilder.cpp
     src/gpu/ganesh/glsl/GrGLSLProgramBuilder.cpp
@@ -604,6 +605,7 @@ add_library(Skia STATIC
     src/effects/Sk1DPathEffect.cpp
     src/effects/Sk2DPathEffect.cpp
     src/effects/SkBlenders.cpp
+    src/effects/SkColorMatrix.cpp
     src/effects/SkCornerPathEffect.cpp
     src/effects/SkDashPathEffect.cpp
     src/effects/SkDiscretePathEffect.cpp
@@ -640,7 +642,6 @@ add_library(Skia STATIC
 
     src/encode/SkEncoder.cpp
     src/encode/SkICC.cpp
-    src/encode/SkPngEncoderImpl.cpp
 
     src/pathops/SkAddIntersections.cpp
     src/pathops/SkDConicLineIntersection.cpp
@@ -830,17 +831,9 @@ add_library(Skia STATIC
     src/opts/SkOpts_hsw.cpp
     src/opts/SkOpts_skx.cpp
 
-    src/ports/SkDebug_stdio.cpp
-    src/ports/SkFontConfigInterface.cpp
-    src/ports/SkFontConfigInterface_direct.cpp
-    src/ports/SkFontConfigInterface_direct_factory.cpp
-    src/ports/SkFontHost_FreeType.cpp
-    src/ports/SkFontHost_FreeType_common.cpp
-    src/ports/SkFontMgr_fontconfig.cpp
     src/ports/SkGlobalInitialization_default.cpp
     src/ports/SkImageGenerator_skia.cpp
     src/ports/SkMemory_malloc.cpp
-    src/ports/SkOSFile_posix.cpp
     src/ports/SkOSFile_stdio.cpp
 
     src/sfnt/SkOTTable_name.cpp
@@ -848,18 +841,149 @@ add_library(Skia STATIC
 
     modules/skcms/skcms.cc
     modules/skcms/src/skcms_TransformBaseline.cc
-    modules/skcms/src/skcms_TransformHsw.cc
-    modules/skcms/src/skcms_TransformSkx.cc
+    #modules/skcms/src/skcms_TransformHsw.cc
+    #modules/skcms/src/skcms_TransformSkx.cc
+
+
+    # Windows specific?
+    src/utils/SkEventTracer.cpp
+
+    #src/ports/SkDebug_win.cpp
 )
+
+# Needed???
+set(skia_codec_core_srcs
+    src/codec/SkCodec.cpp
+    src/codec/SkCodecImageGenerator.cpp
+    src/codec/SkCodecImageGenerator.h
+    src/codec/SkCodecPriv.h
+    src/codec/SkColorPalette.cpp
+    src/codec/SkColorPalette.h
+    src/codec/SkExif.cpp
+    src/codec/SkFrameHolder.h
+    src/codec/SkImageGenerator_FromEncoded.cpp
+    src/codec/SkMaskSwizzler.cpp
+    src/codec/SkMaskSwizzler.h
+    src/codec/SkPixmapUtils.cpp
+    src/codec/SkPixmapUtilsPriv.h
+    src/codec/SkSampler.cpp
+    src/codec/SkSampler.h
+    src/codec/SkSwizzler.cpp
+    src/codec/SkSwizzler.h
+    src/codec/SkTiffUtility.cpp
+    src/codec/SkTiffUtility.h
+
+    src/codec/SkEncodedInfo.cpp
+    src/codec/SkPngCodec.cpp
+)
+
+if (WIN32)
+    # OS specific
+    target_sources(Skia PRIVATE
+        src/ports/SkDebug_win.cpp
+        src/ports/SkOSFile_win.cpp
+    )
+
+    # EGL
+    target_sources(Skia PRIVATE
+        ${skia_codec_core_srcs}
+
+        src/gpu/ganesh/gl/egl/GrGLMakeEGLInterface.cpp
+        src/gpu/ganesh/gl/egl/GrGLMakeNativeInterface_egl.cpp
+    )
+    target_link_libraries(Skia PRIVATE 
+        ANGLE::EGL
+        ANGLE::GLES
+    )
+
+    # DirectWrite specific
+    target_sources(Skia PRIVATE
+        src/fonts/SkFontMgr_indirect.cpp
+        src/ports/SkFontMgr_win_dw.cpp
+        src/ports/SkScalerContext_win_dw.cpp
+        #src/ports/SkScalerContext_win_dw.h
+        src/ports/SkTypeface_win_dw.cpp
+        #src/ports/SkTypeface_win_dw.h
+
+        src/utils/win/SkDWrite.cpp
+        src/utils/win/SkDWriteGeometrySink.cpp
+        src/utils/win/SkDWriteFontFileStream.cpp
+    )
+
+    target_compile_definitions(Skia PRIVATE SK_TYPEFACE_FACTORY_DIRECTWRITE)
+elseif (UNIX)
+    # OS specific
+    target_sources(Skia PRIVATE
+        src/ports/SkDebug_stdio.cpp
+        src/ports/SkOSFile_posix.cpp
+    )
+
+    # FreeType specific
+    target_sources(Skia PRIVATE
+        src/ports/SkFontConfigInterface.cpp
+        src/ports/SkFontConfigInterface_direct.cpp
+        src/ports/SkFontConfigInterface_direct_factory.cpp
+        src/ports/SkFontHost_FreeType.cpp
+        src/ports/SkFontHost_FreeType_common.cpp
+        src/ports/SkFontMgr_fontconfig.cpp
+    )
+
+    target_link_libraries(Skia PRIVATE
+        Fontconfig::Fontconfig
+        Freetype::Freetype
+    )
+
+    target_compile_definitions(Skia PRIVATE SK_TYPEFACE_FACTORY_FREETYPE)
+endif ()
+
+if (USE_LIBEPOXY)
+    target_sources(Skia PRIVATE
+        src/gpu/ganesh/gl/epoxy/GrGLMakeEpoxyEGLInterface.cpp
+        src/gpu/ganesh/gl/epoxy/GrGLMakeNativeInterface_epoxy.cpp    
+    )
+
+    target_link_libraries(Skia PRIVATE Epoxy::Epoxy)
+else ()
+    target_sources(Skia PRIVATE
+        #${skia_codec_core_srcs}
+
+        src/gpu/ganesh/gl/egl/GrGLMakeEGLInterface.cpp
+        src/gpu/ganesh/gl/egl/GrGLMakeNativeInterface_egl.cpp
+    )
+    target_compile_definitions(Skia PRIVATE SKCMS_DISABLE_HSW SKCMS_DISABLE_SKX)
+
+    if (USE_ANGLE_EGL)
+        target_link_libraries(Skia PRIVATE
+            ANGLE::EGL
+            ANGLE::GLES
+        )
+    else ()
+        target_link_libraries(Skia PRIVATE OpenGL::GLES)
+
+        if (USE_EGL)
+            target_link_libraries(Skia PRIVATE ${EGL_LIBRARIES})
+        endif ()
+    endif ()
+endif ()
+
+if (SKIA_ENCODERS)
+target_sources(Skia PRIVATE src/encode/SkPngEncoderImpl.cpp)
+else ()
+target_sources(Skia PRIVATE src/encode/SkPngEncoder_none.cpp)
+endif ()
+
 
 set_target_properties(Skia PROPERTIES
     CXX_STANDARD 17
 )
 
 target_link_libraries(Skia PRIVATE
-    Epoxy::Epoxy
-    Fontconfig::Fontconfig
-    Freetype::Freetype
+    #Epoxy::Epoxy
+    #Fontconfig::Fontconfig
+    #Freetype::Freetype
+
+
+    # This should be optional
     PNG::PNG
 )
 
@@ -878,22 +1002,8 @@ WEBKIT_ADD_TARGET_CXX_FLAGS(Skia
     -Wno-unused-parameter
 )
 
-add_custom_target(Skia_headers_symlink
-    COMMAND ${CMAKE_COMMAND} -E create_symlink
-        "${CMAKE_CURRENT_SOURCE_DIR}/include"
-        "${FORWARDING_HEADERS_DIR}/skia"
-    BYPRODUCTS
-        "${FORWARDING_HEADERS_DIR}/skia"
-    COMMENT "Link Skia headers"
-    VERBATIM
-)
-add_dependencies(Skia Skia_headers_symlink)
 target_include_directories(Skia PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}"
-)
-target_include_directories(Skia INTERFACE
-    "${CMAKE_CURRENT_SOURCE_DIR}"
-    "${FORWARDING_HEADERS_DIR}"
 )
 
 target_compile_definitions(Skia PRIVATE
@@ -913,7 +1023,7 @@ target_compile_definitions(Skia PUBLIC
 
     SK_ENABLE_PRECOMPILE
 
-    SK_R32_SHIFT=16
+    #SK_R32_SHIFT=16
 
     # Use SK_RELEASE for all build types, even "Debug". The alternative
     # is SK_DEBUG, which enables consistency checks useful to develop
@@ -950,13 +1060,14 @@ target_compile_definitions(Skia PUBLIC
     SK_ASSUME_GL=0
     SK_ASSUME_GL_ES=1
     SK_ASSUME_WEBGL=0
+
+    SKIA_DLL
+    SK_ENABLE_OPTIMIZE_SIZE
 )
 
-#
-# FIXME: Support options other than FreeType + FontConfig
-#
-target_compile_definitions(Skia PRIVATE SK_TYPEFACE_FACTORY_FREETYPE)
+# Need to handle Windows
 
+#[===[
 #
 # The SkCMS module includes AVX/SSE optimizations, which may need additional
 # compiler flags.
@@ -1037,3 +1148,25 @@ if (Skia_SkCMS_SKX_OPTS)
 else ()
     target_compile_definitions(Skia PRIVATE SKCMS_DISABLE_SKX)
 endif ()
+]===]
+
+add_custom_target(SkiaHeaders_Symlink
+    COMMAND ${CMAKE_COMMAND} -E create_symlink
+        "${CMAKE_CURRENT_SOURCE_DIR}/include"
+        "${Skia_FRAMEWORK_HEADERS_DIR}/skia"
+    BYPRODUCTS
+        "${Skia_FRAMEWORK_HEADERS_DIR}/skia"
+    COMMENT "Link Skia headers"
+    VERBATIM
+)
+
+add_library(SkiaFramework INTERFACE)
+add_dependencies(SkiaFramework SkiaHeaders_Symlink)
+target_link_libraries(SkiaFramework INTERFACE Skia)
+target_include_directories(SkiaFramework INTERFACE 
+
+    "${CMAKE_CURRENT_SOURCE_DIR}"
+    ${Skia_FRAMEWORK_HEADERS_DIR}
+    )
+
+add_library(Skia::Skia ALIAS SkiaFramework)
