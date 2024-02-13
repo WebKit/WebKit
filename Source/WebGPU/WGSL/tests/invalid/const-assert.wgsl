@@ -26,7 +26,7 @@ const_assert(x > y);
 
 var<private> z = 3;
 
-// CHECK-L: const assertion requires a const-expression
+// CHECK-L: cannot use runtime value in constant expression
 const_assert(x > z);
 
 fn f()
@@ -57,7 +57,7 @@ fn f()
 
     let z = 3;
 
-    // CHECK-L: const assertion requires a const-expression
+    // CHECK-L: cannot use runtime value in constant expression
     const_assert(x > z);
 }
 

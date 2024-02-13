@@ -320,6 +320,9 @@ Packing RewriteGlobalVariables::pack(Packing expectedPacking, AST::Expression& e
         if (std::holds_alternative<Types::Struct>(*type))
             operation = packing & Packing::Packed ? "__unpack"_s : "__pack"_s;
         else if (std::holds_alternative<Types::Array>(*type)) {
+            // array of vec3 can be implicitly converted
+            if (packing & Packing::Vec3)
+                return expectedPacking;
             if (packing & Packing::Packed) {
                 operation = "__unpack"_s;
                 m_callGraph.ast().setUsesUnpackArray();
