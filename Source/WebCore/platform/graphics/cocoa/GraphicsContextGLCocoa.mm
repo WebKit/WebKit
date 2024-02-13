@@ -764,12 +764,10 @@ void GraphicsContextGLCocoa::prepareForDisplayWithFinishedSignal(Function<void()
     prepareTexture();
     // The fence inserted by this will be scheduled because next BindTexImage will wait until scheduled.
     insertFinishedSignalOrInvoke(WTFMove(finishedSignal));
-    if (!bindNextDrawingBuffer()) {
-        // If the allocation failed, BindTexImage did not run. The fence must be scheduled.
-        waitUntilWorkScheduled();
+    bool success = bindNextDrawingBuffer();
+    waitUntilWorkScheduled();
+    if (!success)
         forceContextLost();
-        return;
-    }
 }
 
 
