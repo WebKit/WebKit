@@ -1,0 +1,27 @@
+<style></style>
+<div>This test should not crash</div>
+<span id="x3"></span><svg id="x11"><clipPath id="x19"><svg><line marker-end="url(#x22)"></line>
+<switch id="x67"></switch><use id="x16"></use><marker id="x22"><mask clip-path="url(#x19)">
+<script>
+var run_count = 0;
+document.body.offsetHeight;
+x3.outerHTML = x16.outerHTML;
+x67.addEventListener("DOMNodeRemoved",f0);
+f0();
+
+function f0() {
+  run_count++;
+  if (run_count > 3) {
+    if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.notifyDone();
+    }
+    return;
+  }
+  try { document.createElement("span").append(x67); } catch (e) { }
+
+  document.getElementById("x16").insertAdjacentHTML("beforeend",document.getElementById("x11").outerHTML);
+  document.body.offsetHeight;
+  document.styleSheets[0].insertRule("foobar { }");
+}
+</script>

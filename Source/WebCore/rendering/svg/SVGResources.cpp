@@ -309,12 +309,18 @@ std::unique_ptr<SVGResources> SVGResources::buildCachedResources(const RenderEle
 
 void SVGResources::layoutDifferentRootIfNeeded(const LegacyRenderSVGRoot* svgRoot)
 {
+    if (m_inLayoutForDifferentRoot)
+        return;
+
+    SetForScope inLayoutForDifferentRoot(m_inLayoutForDifferentRoot, true);
+
     auto layoutDifferentRootIfNeeded = [&](RenderElement* container) {
         if (!container)
             return;
         auto* root = SVGRenderSupport::findTreeRootObject(*container);
         if (svgRoot == root || root->isInLayout())
             return;
+
         container->layoutIfNeeded();
     };
     layoutDifferentRootIfNeeded(clipper());
