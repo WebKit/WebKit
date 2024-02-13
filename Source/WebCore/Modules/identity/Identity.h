@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,51 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "BasicCredential.h"
+#pragma once
 
 #if ENABLE(WEB_AUTHN)
 
-#include "AuthenticatorCoordinator.h"
-#include "JSDOMPromiseDeferred.h"
-#include "Page.h"
+#include "BasicCredential.h"
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-BasicCredential::BasicCredential(const String& id, Type type, Discovery discovery)
-    : m_id(id)
-    , m_type(type)
-    , m_discovery(discovery)
-{
-}
+class Identity : public BasicCredential {
+public:
+    ~Identity() override = default;
 
-BasicCredential::~BasicCredential() = default;
+protected:
+    Identity(const String& id, Type type, Discovery discovery)
+        : BasicCredential(id, type, discovery) { }
 
-String BasicCredential::type() const
-{
-    switch (m_type) {
-    case Type::Identity:
-        return "identity"_s;
+private:
+    Type credentialType() const override { return Type::Identity; }
 
-    case Type::DigitalIdentity:
-        return "digital-identity"_s;
-
-    case Type::PublicKey:
-        return "public-key"_s;
-    }
-
-    ASSERT_NOT_REACHED();
-    return emptyString();
-}
-
-void BasicCredential::isConditionalMediationAvailable(Document& document, DOMPromiseDeferred<IDLBoolean>&& promise)
-{
-    if (auto* page = document.page())
-        page->authenticatorCoordinator().isConditionalMediationAvailable(document, WTFMove(promise));
-    else
-        promise.reject(Exception { ExceptionCode::InvalidStateError });
-}
+};
 
 } // namespace WebCore
 
+SPECIALIZE_TYPE_TRAITS_BASIC_CREDENTIAL(Identity, BasicCredential::Type::Identity)
 #endif // ENABLE(WEB_AUTHN)

@@ -10,11 +10,35 @@
         testRunner.dumpAsText();
         testRunner.waitUntilDone();
 
-        if (window.DigitalIdentity !== undefined) {
-            console.log(
-                "FAIL: DigitalIdentity interface must not be exposed by default."
-            );
+        const idlInterfaces = [
+            {
+                name: "DigitalIdentity",
+                proto: "Credential",
+            },
+            {
+                name: "Identity",
+                proto: "Credential",
+            },
+        ];
+
+        function checkPrototype(context, interfaceName, expectedProto) {
+            const isInstance =
+                context[interfaceName].prototype instanceof
+                context[expectedProto];
+            if (!isInstance) {
+                console.log(
+                    `FAIL: expected ${interfaceName}'s prototype interface to be ${expectedProto}.`
+                );
+            }
         }
+
+        idlInterfaces
+            .filter(({ name }) => window[name])
+            .forEach((name) => {
+                console.log(
+                    `FAIL: ${name} interface must not be exposed by default.`
+                );
+            });
 
         window.internals.settings.setDigitalIdentityEnabled(true);
 
@@ -27,16 +51,20 @@
                 );
             }
 
-            const isInstanceOfDigitalIdentity =
-                iframeWin.DigitalIdentity.prototype instanceof
-                iframeWin.Credential;
-            if (!isInstanceOfDigitalIdentity) {
-                console.log(
-                    "FAIL: DigitalIdentity's prototype interface must be an instance of Credential."
-                );
+            try {
+                idlInterfaces
+                    .filter(({ name }) => !iframeWin[name])
+                    .forEach(({ name, proto }) => {
+                        console.log(
+                            `FAIL: expected "${name}" interface to be exposed on iframeWin. Was exposed by pref.`
+                        );
+                    });
+            } catch (err) {
+                console.log(`FAIL: ${err}`);
+            } finally {
+                testRunner.notifyDone();
             }
             console.log("Test finished");
-            testRunner.notifyDone();
         }
     </script>
     <body>

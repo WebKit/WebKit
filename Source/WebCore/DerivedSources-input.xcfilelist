@@ -433,8 +433,8 @@ $(PROJECT_DIR)/Modules/credentialmanagement/CredentialCreationOptions.idl
 $(PROJECT_DIR)/Modules/credentialmanagement/CredentialMediationRequirement.idl
 $(PROJECT_DIR)/Modules/credentialmanagement/CredentialRequestOptions.idl
 $(PROJECT_DIR)/Modules/credentialmanagement/CredentialsContainer.idl
-$(PROJECT_DIR)/Modules/credentialmanagement/DigitalIdentity.idl
 $(PROJECT_DIR)/Modules/credentialmanagement/DigitalCredentialRequestOptions.idl
+$(PROJECT_DIR)/Modules/credentialmanagement/DigitalIdentity.idl
 $(PROJECT_DIR)/Modules/credentialmanagement/IdentityCredentialProtocol.idl
 $(PROJECT_DIR)/Modules/credentialmanagement/IdentityRequestProvider.idl
 $(PROJECT_DIR)/Modules/credentialmanagement/Navigator+Credentials.idl
@@ -504,6 +504,7 @@ $(PROJECT_DIR)/Modules/geolocation/PositionErrorCallback.idl
 $(PROJECT_DIR)/Modules/geolocation/PositionOptions.idl
 $(PROJECT_DIR)/Modules/highlight/Highlight.idl
 $(PROJECT_DIR)/Modules/highlight/HighlightRegistry.idl
+$(PROJECT_DIR)/Modules/identity/Identity.idl
 $(PROJECT_DIR)/Modules/indexeddb/IDBCursor.idl
 $(PROJECT_DIR)/Modules/indexeddb/IDBCursorDirection.idl
 $(PROJECT_DIR)/Modules/indexeddb/IDBCursorWithValue.idl

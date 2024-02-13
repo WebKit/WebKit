@@ -3804,6 +3804,7 @@ JSHighlight.cpp
 JSHistory.cpp
 JSHkdfParams.cpp
 JSHmacKeyParams.cpp
+JSIdentity.cpp
 JSIDBCursor.cpp
 JSIDBCursorDirection.cpp
 JSIDBCursorWithValue.cpp
