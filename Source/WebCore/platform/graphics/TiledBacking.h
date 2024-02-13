@@ -25,8 +25,10 @@
 
 #pragma once
 
+#include "IntPoint.h"
 #include <wtf/CheckedRef.h>
 #include <wtf/MonotonicTime.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -57,9 +59,25 @@ enum class TiledBackingScrollability : uint8_t {
     VerticallyScrollable    = 1 << 1
 };
 
+using TileIndex = IntPoint;
+using TileGridIndex = unsigned;
+
+class TiledBackingClient : public CanMakeWeakPtr<TiledBackingClient> {
+public:
+    virtual ~TiledBackingClient() = default;
+
+    // paintDirtyRect is in the same coordinate system as tileClip.
+    virtual void willRepaintTile(TileGridIndex, TileIndex, const FloatRect& tileClip, const FloatRect& paintDirtyRect) = 0;
+    virtual void willRemoveTile(TileGridIndex, TileIndex) = 0;
+    virtual void willRepaintAllTiles(TileGridIndex) = 0;
+};
+
+
 class TiledBacking : public CanMakeCheckedPtr {
 public:
     virtual ~TiledBacking() = default;
+
+    virtual void setClient(TiledBackingClient*) = 0;
 
     virtual void setVisibleRect(const FloatRect&) = 0;
     virtual FloatRect visibleRect() const = 0;

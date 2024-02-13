@@ -153,6 +153,7 @@ private:
     float topContentInset() const { return m_topContentInset; }
 
     // TiledBacking member functions.
+    void setClient(TiledBackingClient*) final;
     void setVisibleRect(const FloatRect&) final;
     void setLayoutViewportRect(std::optional<FloatRect>) final;
     void setCoverageRect(const FloatRect&) final;
@@ -189,6 +190,10 @@ private:
     void notePendingTileSizeChange();
     void tileSizeChangeTimerFired();
 
+    void willRepaintTile(TileGrid&, TileIndex, const FloatRect& tileClip, const FloatRect& paintDirtyRect);
+    void willRemoveTile(TileGrid&, TileIndex);
+    void willRepaintAllTiles(TileGrid&);
+
 #if !PLATFORM(IOS_FAMILY)
     FloatRect adjustTileCoverageForDesktopPageScrolling(const FloatRect& coverageRect, const FloatSize& newSize, const FloatRect& previousVisibleRect, const FloatRect& visibleRect) const;
 #endif
@@ -200,6 +205,8 @@ private:
     PlatformCALayerClient* owningGraphicsLayer() const { return m_tileCacheLayer->owner(); }
 
     PlatformCALayer* m_tileCacheLayer;
+
+    WeakPtr<TiledBackingClient> m_client;
 
     float m_zoomedOutContentsScale { 0 };
     float m_deviceScaleFactor;

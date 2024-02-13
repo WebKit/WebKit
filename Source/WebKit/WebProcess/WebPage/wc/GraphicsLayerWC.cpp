@@ -89,6 +89,7 @@ public:
     TiledBacking* tiledBacking() const { return const_cast<WCTiledBacking*>(this); };
 
     // TiledBacking override
+    void setClient(TiledBackingClient*) final { }
     void setVisibleRect(const FloatRect&) final { }
     FloatRect visibleRect() const final { return { }; };
     void setLayoutViewportRect(std::optional<FloatRect>) final { }
