@@ -154,8 +154,6 @@ struct WKWebViewState {
 #endif
     UIScrollViewContentInsetAdjustmentBehavior _savedContentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentAutomatic;
     CGPoint _savedContentOffset = CGPointZero;
-    CGFloat _savedMinimumZoomScale = 1;
-    CGFloat _savedMaximumZoomScale = 1;
     BOOL _savedBouncesZoom = NO;
     BOOL _savedForceAlwaysUserScalable = NO;
     CGFloat _savedMinimumEffectiveDeviceWidth = 0;
@@ -207,8 +205,6 @@ struct WKWebViewState {
         }
         [webView _setViewScale:_savedViewScale];
         scrollView.zoomScale = _savedZoomScale;
-        scrollView.minimumZoomScale = _savedMinimumZoomScale;
-        scrollView.maximumZoomScale = _savedMaximumZoomScale;
         scrollView.bouncesZoom = _savedBouncesZoom;
         webView._minimumEffectiveDeviceWidth = _savedMinimumEffectiveDeviceWidth;
     }
@@ -236,8 +232,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         _savedViewScale = webView._viewScale;
         _savedZoomScale = scrollView.zoomScale;
         _savedContentZoomScale = webView._contentZoomScale;
-        _savedMinimumZoomScale = scrollView.minimumZoomScale;
-        _savedMaximumZoomScale = scrollView.maximumZoomScale;
         _savedBouncesZoom = scrollView.bouncesZoom;
         _savedMinimumEffectiveDeviceWidth = webView._minimumEffectiveDeviceWidth;
         _savedHaveSetUnobscuredSafeAreaInsets = webView._haveSetUnobscuredSafeAreaInsets;
@@ -960,6 +954,7 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
         [webView _setMinimumEffectiveDeviceWidth:0];
         [webView _setViewScale:1.f];
         WebKit::WKWebViewState().applyTo(webView.get());
+        [webView _overrideZoomScaleParametersWithMinimumZoomScale:1 maximumZoomScale:1 allowUserScaling:NO];
         [webView _resetContentOffset];
         [_window insertSubview:webView.get() atIndex:0];
         [webView setNeedsLayout];
@@ -1225,6 +1220,7 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
     [[webView window] makeKeyAndVisible];
     [webView becomeFirstResponder];
 
+    [webView _clearOverrideZoomScaleParameters];
     _viewState.applyTo(webView.get());
     if (auto page = [webView _page])
         page->setOverrideViewportArguments(std::nullopt);

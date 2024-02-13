@@ -956,9 +956,19 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
     CGSize newContentSize = roundScrollViewContentSize(*_page, [_contentView frame].size);
     [_scrollView _setContentSizePreservingContentOffsetDuringRubberband:newContentSize];
 
-    [_scrollView setMinimumZoomScale:layerTreeTransaction.minimumScaleFactor()];
-    [_scrollView setMaximumZoomScale:layerTreeTransaction.maximumScaleFactor()];
-    [_scrollView _setZoomEnabledInternal:layerTreeTransaction.allowsUserScaling()];
+    CGFloat minimumScaleFactor = layerTreeTransaction.minimumScaleFactor();
+    CGFloat maximumScaleFactor = layerTreeTransaction.maximumScaleFactor();
+    BOOL allowsUserScaling = layerTreeTransaction.allowsUserScaling();
+
+    if (_overriddenZoomScaleParameters) {
+        minimumScaleFactor = _overriddenZoomScaleParameters->minimumZoomScale;
+        maximumScaleFactor = _overriddenZoomScaleParameters->maximumZoomScale;
+        allowsUserScaling = _overriddenZoomScaleParameters->allowUserScaling;
+    }
+
+    [_scrollView setMinimumZoomScale:minimumScaleFactor];
+    [_scrollView setMaximumZoomScale:maximumScaleFactor];
+    [_scrollView _setZoomEnabledInternal:allowsUserScaling];
 
     auto horizontalOverscrollBehavior = _page->scrollingCoordinatorProxy()->mainFrameHorizontalOverscrollBehavior();
     auto verticalOverscrollBehavior = _page->scrollingCoordinatorProxy()->mainFrameVerticalOverscrollBehavior();
@@ -3601,6 +3611,18 @@ static bool isLockdownModeWarningNeeded()
     return axesToPrevent;
 }
 
+- (void)_overrideZoomScaleParametersWithMinimumZoomScale:(CGFloat)minimumZoomScale maximumZoomScale:(CGFloat)maximumZoomScale allowUserScaling:(BOOL)allowUserScaling
+{
+    _overriddenZoomScaleParameters = { minimumZoomScale, maximumZoomScale, allowUserScaling };
+    [_scrollView setMinimumZoomScale:minimumZoomScale];
+    [_scrollView setMaximumZoomScale:maximumZoomScale];
+    [_scrollView _setZoomEnabledInternal:allowUserScaling];
+}
+
+- (void)_clearOverrideZoomScaleParameters
+{
+    _overriddenZoomScaleParameters = std::nullopt;
+}
 @end
 
 @implementation WKWebView (WKPrivateIOS)
