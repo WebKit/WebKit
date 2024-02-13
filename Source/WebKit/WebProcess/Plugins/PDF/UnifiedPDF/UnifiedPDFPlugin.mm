@@ -181,8 +181,10 @@ void UnifiedPDFPlugin::installPDFDocument()
     updateHUDVisibility();
 #endif
 
+#if PLATFORM(MAC)
     if (isLocked())
         createPasswordEntryForm();
+#endif
 
     if (m_view)
         m_view->layerHostingStrategyDidChange();
@@ -190,6 +192,8 @@ void UnifiedPDFPlugin::installPDFDocument()
 
     scrollToFragmentIfNeeded();
 }
+
+#if PLATFORM(MAC)
 
 void UnifiedPDFPlugin::createPasswordEntryForm()
 {
@@ -201,12 +205,16 @@ void UnifiedPDFPlugin::createPasswordEntryForm()
     passwordField->attach(m_annotationContainer.get());
 }
 
+#endif
+
 void UnifiedPDFPlugin::attemptToUnlockPDF(const String& password)
 {
     if (![m_pdfDocument unlockWithPassword:password])
         return;
 
+#if PLATFORM(MAC)
     m_passwordField = nullptr;
+#endif
 
     updateLayout();
 

@@ -310,7 +310,9 @@ private:
 
     bool isTaggedPDF() const;
 
+#if PLATFORM(MAC)
     void createPasswordEntryForm();
+#endif
 
     PDFDocumentLayout m_documentLayout;
     RefPtr<WebCore::GraphicsLayer> m_rootLayer;
@@ -350,7 +352,9 @@ private:
 
     RetainPtr<WKPDFFormMutationObserver> m_pdfMutationObserver;
 
+#if PLATFORM(MAC)
     RefPtr<PDFPluginPasswordField> m_passwordField;
+#endif
 };
 
 } // namespace WebKit
