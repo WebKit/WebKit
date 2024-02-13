@@ -1393,7 +1393,7 @@ void PDFPlugin::focusPreviousAnnotation()
     [m_pdfLayerController activateNextAnnotation:true];
 }
 
-String PDFPlugin::getSelectionString() const
+String PDFPlugin::selectionString() const
 {
     return [[m_pdfLayerController currentSelection] string];
 }

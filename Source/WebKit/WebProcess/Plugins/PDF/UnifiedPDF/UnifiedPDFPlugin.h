@@ -224,7 +224,7 @@ private:
     void repaintOnSelectionActiveStateChangeIfNeeded(ActiveStateChangeReason);
     bool isSelectionActiveAfterContextMenuInteraction() const;
 
-    String getSelectionString() const override;
+    String selectionString() const override;
     bool existingSelectionContainsPoint(const WebCore::FloatPoint&) const override;
     WebCore::FloatRect rectForSelectionInRootView(PDFSelection *) const override;
     unsigned countFindMatches(const String& target, WebCore::FindOptions, unsigned maxMatchCount) override;

@@ -595,12 +595,12 @@ bool PluginView::findString(const String& target, WebCore::FindOptions options, 
     return m_plugin->findString(target, options, maxMatchCount);
 }
 
-String PluginView::getSelectionString() const
+String PluginView::selectionString() const
 {
     if (!m_isInitialized)
         return String();
 
-    return m_plugin->getSelectionString();
+    return m_plugin->selectionString();
 }
 
 void PluginView::handleEvent(Event& event)

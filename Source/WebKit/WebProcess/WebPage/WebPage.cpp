@@ -1432,7 +1432,7 @@ EditorState WebPage::editorState(ShouldPerformLayout shouldPerformLayout) const
 
 #if ENABLE(PDF_PLUGIN)
     if (auto* pluginView = focusedPluginViewForFrame(frame)) {
-        if (!pluginView->getSelectionString().isNull()) {
+        if (!pluginView->selectionString().isNull()) {
             result.selectionIsNone = false;
             result.selectionIsRange = true;
             result.isInPlugin = true;

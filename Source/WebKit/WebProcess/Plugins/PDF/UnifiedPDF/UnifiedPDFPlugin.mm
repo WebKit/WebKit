@@ -1844,8 +1844,10 @@ void UnifiedPDFPlugin::setCurrentSelection(RetainPtr<PDFSelection>&& selection)
     notifySelectionChanged();
 }
 
-String UnifiedPDFPlugin::getSelectionString() const
+String UnifiedPDFPlugin::selectionString() const
 {
+    if (!m_currentSelection)
+        return { };
     return m_currentSelection.get().string;
 }
 
