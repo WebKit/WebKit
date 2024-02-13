@@ -647,16 +647,12 @@ template<> std::optional<RetainPtr<id>> decodeObjectDirectlyRequiringAllowedClas
         allowedClasses.add(NSMutableParagraphStyle.class);
 
 #if USE(PASSKIT)
-    // FIXME: Remove these exceptions for CNContact and PKSecureElementPass
+    // FIXME: Remove these exceptions for PKSecureElementPass
     // once we directly serialize them ourselves.
     if (PAL::isContactsFrameworkAvailable()) {
         if (allowedClasses.contains(PAL::getPKPaymentClass()) || allowedClasses.contains(PAL::getPKPaymentMethodClass()) || allowedClasses.contains(PAL::getPKPaymentTokenClass())) {
-            allowedClasses.add(PAL::getCNContactClass());
             allowedClasses.add(PAL::getPKSecureElementPassClass());
         }
-
-        if (allowedClasses.contains(PAL::getCNContactClass()))
-            allowedClasses.add(PAL::getCNMutableContactClass());
     }
 #endif
 

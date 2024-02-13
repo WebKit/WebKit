@@ -62,9 +62,7 @@ static ObjectValue valueFromID(id object)
         return CoreIPCArray((NSArray *)object);
 #if USE(PASSKIT)
     case IPC::NSType::CNContact:
-        // FIXME: Serialize CNContact directly instead of relying on secure coding.
-        // Difficult because of the reliance on CNLabeledValue<>
-        return CoreIPCSecureCoding(object);
+        return CoreIPCCNContact((CNContact *)object);
     case IPC::NSType::CNPhoneNumber:
         return CoreIPCCNPhoneNumber((CNPhoneNumber *)object);
     case IPC::NSType::CNPostalAddress:

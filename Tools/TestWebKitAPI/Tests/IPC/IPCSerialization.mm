@@ -1242,6 +1242,8 @@ TEST(IPCSerialization, SecureCoding)
     RetainPtr<CNPostalAddress> address = postalAddressForTesting();
     RetainPtr<CNLabeledValue> labeledPostalAddress = adoptNS([[PAL::getCNLabeledValueClass() alloc] initWithLabel:@"Work" value:address.get()]);
 
+    RetainPtr<CNLabeledValue> labeledEmailAddress = adoptNS([[PAL::getCNLabeledValueClass() alloc] initWithLabel:@"WorkSPAM" value:@"spam@webkit.org"]);
+
     RetainPtr<CNMutableContact> billingContact = adoptNS([PAL::getCNMutableContactClass() new]);
     billingContact.get().contactType = CNContactTypePerson;
     billingContact.get().namePrefix = @"Mrs";
@@ -1252,8 +1254,8 @@ TEST(IPCSerialization, SecureCoding)
     billingContact.get().organizationName = @"WebKit";
     billingContact.get().jobTitle = @"Web Kitten";
     billingContact.get().note = @"The Coolest Kitten out there";
-    billingContact.get().postalAddresses = @[ labeledPostalAddress.get(), labeledPostalAddress.get() ];
-
+    billingContact.get().postalAddresses = @[ labeledPostalAddress.get() ];
+    billingContact.get().emailAddresses = @[ labeledEmailAddress.get() ];
     runTestNS({ billingContact.get() });
 
     RetainPtr<PKPaymentMethod> paymentMethod = adoptNS([PAL::getPKPaymentMethodClass() new]);

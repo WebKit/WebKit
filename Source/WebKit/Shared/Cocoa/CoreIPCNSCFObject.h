@@ -71,6 +71,7 @@ using ObjectValue = std::variant<
     CoreIPCArray,
     CoreIPCCFType,
 #if USE(PASSKIT)
+    CoreIPCCNContact,
     CoreIPCCNPhoneNumber,
     CoreIPCCNPostalAddress,
     CoreIPCDateComponents,

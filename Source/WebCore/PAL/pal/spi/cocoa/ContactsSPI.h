@@ -29,6 +29,8 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
+#import <Contacts/CNContact_ReallyPrivate.h>
+#import <Contacts/CNLabeledValue_Private.h>
 #import <Contacts/CNMutablePostalAddress_Private.h>
 #import <Contacts/CNPhoneNumber_Private.h>
 #import <Contacts/CNPostalAddress_Private.h>
@@ -42,12 +44,19 @@
 @property (readonly, copy, nonnull) NSString *digits;
 @end
 
-
 @interface CNPostalAddress ()
-
 @property (copy, nullable) NSString *formattedAddress;
-
 @end
+
+NS_ASSUME_NONNULL_BEGIN
+@interface CNContact ()
+- (instancetype)initWithIdentifier:(NSString *)identifier;
+@end
+
+@interface CNLabeledValue ()
+- (id)initWithIdentifier:(NSString *)identifier label:(NSString *)label value:(id<NSCopying>)value;
+@end
+NS_ASSUME_NONNULL_END
 
 #endif // USE(APPLE_INTERNAL_SDK)
 #endif // HAVE(CONTACTS)

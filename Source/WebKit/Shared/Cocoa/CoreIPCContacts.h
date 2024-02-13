@@ -27,6 +27,8 @@
 
 #if HAVE(CONTACTS)
 
+#include "CoreIPCDateComponents.h"
+#include "CoreIPCString.h"
 #include <wtf/ArgumentCoder.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
@@ -87,6 +89,61 @@ private:
 
     String m_digits;
     String m_countryCode;
+};
+
+struct CoreIPCContactLabeledValue {
+    String identifier;
+    String label;
+    std::variant<CoreIPCDateComponents, CoreIPCCNPhoneNumber, CoreIPCCNPostalAddress, CoreIPCString> value;
+
+    template <typename T> static bool allValuesAreOfType(const Vector<CoreIPCContactLabeledValue>& values) {
+        for (auto& value : values) {
+            if (!std::holds_alternative<T>(value.value))
+                return false;
+        }
+        return true;
+    }
+};
+
+class CoreIPCCNContact {
+public:
+    CoreIPCCNContact(CNContact *);
+
+    RetainPtr<id> toID() const;
+
+    static bool isValidCNContactType(NSInteger);
+
+private:
+    friend struct IPC::ArgumentCoder<CoreIPCCNContact, void>;
+    CoreIPCCNContact() = default;
+
+    String m_identifier;
+    NSInteger m_contactType { 0 };
+
+    String m_namePrefix;
+    String m_givenName;
+    String m_middleName;
+    String m_familyName;
+    String m_previousFamilyName;
+    String m_nameSuffix;
+    String m_nickname;
+    String m_organizationName;
+    String m_departmentName;
+    String m_jobTitle;
+    String m_phoneticGivenName;
+    String m_phoneticMiddleName;
+    String m_phoneticFamilyName;
+    String m_phoneticOrganizationName;
+    String m_note;
+
+    std::optional<CoreIPCDateComponents> m_birthday;
+    std::optional<CoreIPCDateComponents> m_nonGregorianBirthday;
+
+    Vector<CoreIPCContactLabeledValue> m_dates;
+    Vector<CoreIPCContactLabeledValue> m_phoneNumbers;
+    Vector<CoreIPCContactLabeledValue> m_emailAddresses;
+    Vector<CoreIPCContactLabeledValue> m_postalAddresses;
+    Vector<CoreIPCContactLabeledValue> m_urlAddresses;
 };
 
 } // namespace WebKit

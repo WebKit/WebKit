@@ -41,4 +41,40 @@ webkit_platform_headers: "CoreIPCContacts.h"
     String m_countryCode;
 }
 
+[CustomHeader, WebKitPlatform] struct WebKit::CoreIPCContactLabeledValue {
+    String identifier;
+    String label;
+    std::variant<WebKit::CoreIPCDateComponents, WebKit::CoreIPCCNPhoneNumber, WebKit::CoreIPCCNPostalAddress, WebKit::CoreIPCString> value;
+}
+
+[CustomHeader, WebKitPlatform, LegacyPopulateFromEmptyConstructor] class WebKit::CoreIPCCNContact {
+    String m_identifier;
+    [Validator='WebKit::CoreIPCCNContact::isValidCNContactType(*m_contactType)'] NSInteger m_contactType;
+
+    String m_namePrefix;
+    String m_givenName;
+    String m_middleName;
+    String m_familyName;
+    String m_previousFamilyName;
+    String m_nameSuffix;
+    String m_nickname;
+    String m_organizationName;
+    String m_departmentName;
+    String m_jobTitle;
+    String m_phoneticGivenName;
+    String m_phoneticMiddleName;
+    String m_phoneticFamilyName;
+    String m_phoneticOrganizationName;
+    String m_note;
+
+    std::optional<WebKit::CoreIPCDateComponents> m_birthday;
+    std::optional<WebKit::CoreIPCDateComponents> m_nonGregorianBirthday;
+
+    [Validator='WebKit::CoreIPCContactLabeledValue::allValuesAreOfType<WebKit::CoreIPCDateComponents>(*m_dates)'] Vector<WebKit::CoreIPCContactLabeledValue> m_dates;
+    [Validator='WebKit::CoreIPCContactLabeledValue::allValuesAreOfType<WebKit::CoreIPCCNPhoneNumber>(*m_phoneNumbers)'] Vector<WebKit::CoreIPCContactLabeledValue> m_phoneNumbers;
+    [Validator='WebKit::CoreIPCContactLabeledValue::allValuesAreOfType<WebKit::CoreIPCString>(*m_emailAddresses)'] Vector<WebKit::CoreIPCContactLabeledValue> m_emailAddresses;
+    [Validator='WebKit::CoreIPCContactLabeledValue::allValuesAreOfType<WebKit::CoreIPCCNPostalAddress>(*m_postalAddresses)'] Vector<WebKit::CoreIPCContactLabeledValue> m_postalAddresses;
+    [Validator='WebKit::CoreIPCContactLabeledValue::allValuesAreOfType<WebKit::CoreIPCString>(*m_urlAddresses)'] Vector<WebKit::CoreIPCContactLabeledValue> m_urlAddresses;
+}
+
 #endif // USE(PASSKIT)
