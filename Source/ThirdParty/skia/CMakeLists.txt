@@ -76,7 +76,7 @@ if (DEVELOPER_MODE AND (SKIA_ROOT_DIR OR NOT "$ENV{SKIA_ROOT_DIR}" STREQUAL ""))
     add_library(Skia UNKNOWN IMPORTED GLOBAL)
     set_target_properties(Skia PROPERTIES
         IMPORTED_LOCATION "${SKIA_LIBRARY}"
-        INTERFACE_INCLUDE_DIRECTORIES "${FORWARDING_HEADERS_DIR};${SKIA_INCLUDE_DIR}"
+        INTERFACE_INCLUDE_DIRECTORIES "${Skia_FRAMEWORK_HEADERS_DIR};${SKIA_INCLUDE_DIR}"
         INTERFACE_COMPILE_DEFINITIONS "${SKIA_COMPILE_DEFINITIONS}"
     )
 
@@ -94,9 +94,9 @@ if (DEVELOPER_MODE AND (SKIA_ROOT_DIR OR NOT "$ENV{SKIA_ROOT_DIR}" STREQUAL ""))
     add_custom_target(Skia_headers_symlink
         COMMAND ${CMAKE_COMMAND} -E create_symlink
             "${SKIA_INCLUDE_DIR}/include"
-            "${FORWARDING_HEADERS_DIR}/skia"
+            "${Skia_FRAMEWORK_HEADERS_DIR}/skia"
         BYPRODUCTS
-            "${FORWARDING_HEADERS_DIR}/skia"
+            "${Skia_FRAMEWORK_HEADERS_DIR}/skia"
         COMMENT "Link Skia headers"
         VERBATIM
     )
@@ -881,9 +881,9 @@ WEBKIT_ADD_TARGET_CXX_FLAGS(Skia
 add_custom_target(Skia_headers_symlink
     COMMAND ${CMAKE_COMMAND} -E create_symlink
         "${CMAKE_CURRENT_SOURCE_DIR}/include"
-        "${FORWARDING_HEADERS_DIR}/skia"
+        "${Skia_FRAMEWORK_HEADERS_DIR}/skia"
     BYPRODUCTS
-        "${FORWARDING_HEADERS_DIR}/skia"
+        "${Skia_FRAMEWORK_HEADERS_DIR}/skia"
     COMMENT "Link Skia headers"
     VERBATIM
 )
@@ -893,7 +893,7 @@ target_include_directories(Skia PRIVATE
 )
 target_include_directories(Skia INTERFACE
     "${CMAKE_CURRENT_SOURCE_DIR}"
-    "${FORWARDING_HEADERS_DIR}"
+    "${Skia_FRAMEWORK_HEADERS_DIR}"
 )
 
 target_compile_definitions(Skia PRIVATE
