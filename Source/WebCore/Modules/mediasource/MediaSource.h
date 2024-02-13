@@ -164,7 +164,7 @@ protected:
 
     RefPtr<MediaSourcePrivate> m_private;
     const Ref<RefCountedSerialFunctionDispatcher> m_dispatcher;
-    WeakPtr<HTMLMediaElement, WeakPtrImplWithEventTargetData> m_mediaElement;
+    WeakPtr<HTMLMediaElement> m_mediaElement;
 
 private:
     // ActiveDOMObject.

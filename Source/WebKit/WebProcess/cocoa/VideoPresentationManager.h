@@ -202,11 +202,11 @@ protected:
 
     WeakPtr<WebPage> m_page;
     Ref<PlaybackSessionManager> m_playbackSessionManager;
-    WeakHashMap<WebCore::HTMLVideoElement, PlaybackSessionContextIdentifier, WebCore::WeakPtrImplWithEventTargetData> m_videoElements;
+    WeakHashMap<WebCore::HTMLVideoElement, PlaybackSessionContextIdentifier> m_videoElements;
     HashMap<PlaybackSessionContextIdentifier, ModelInterfaceTuple> m_contextMap;
     PlaybackSessionContextIdentifier m_controlsManagerContextId;
     HashMap<PlaybackSessionContextIdentifier, int> m_clientCounts;
-    WeakPtr<WebCore::HTMLVideoElement, WebCore::WeakPtrImplWithEventTargetData> m_videoElementInPictureInPicture;
+    WeakPtr<WebCore::HTMLVideoElement> m_videoElementInPictureInPicture;
     bool m_currentlyInFullscreen { false };
     WTF::Function<void(LayerHostingContextID, const WebCore::FloatSize&)> m_setupFullscreenHandler;
 };

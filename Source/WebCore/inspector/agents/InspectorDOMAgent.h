@@ -311,7 +311,7 @@ private:
     };
 
     // The pointer key for this map should not be used for anything other than matching.
-    WeakHashMap<HTMLMediaElement, MediaMetrics, WeakPtrImplWithEventTargetData> m_mediaMetrics;
+    WeakHashMap<HTMLMediaElement, MediaMetrics> m_mediaMetrics;
 #endif
 
     struct InspectorEventListener {

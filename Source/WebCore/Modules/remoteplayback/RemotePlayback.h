@@ -105,7 +105,7 @@ private:
     const void* m_logIdentifier { nullptr };
 #endif
 
-    WeakPtr<HTMLMediaElement, WeakPtrImplWithEventTargetData> m_mediaElement;
+    WeakPtr<HTMLMediaElement> m_mediaElement;
     uint32_t m_nextId { 0 };
 
     using CallbackMap = HashMap<int32_t, Ref<RemotePlaybackAvailabilityCallback>>;

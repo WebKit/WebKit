@@ -159,7 +159,7 @@ private:
     HashSet<GPUBuffer*> m_buffersToUnmap;
     GPUExternalTexture* externalTextureForDescriptor(const GPUExternalTextureDescriptor&);
 
-    WeakHashMap<HTMLVideoElement, WeakPtr<GPUExternalTexture>, WeakPtrImplWithEventTargetData> m_videoElementToExternalTextureMap;
+    WeakHashMap<HTMLVideoElement, WeakPtr<GPUExternalTexture>> m_videoElementToExternalTextureMap;
     bool m_waitingForDeviceLostPromise { false };
 };
 

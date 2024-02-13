@@ -328,7 +328,7 @@ public:
     }
 
 private:
-    WeakRef<HTMLMediaElement, WeakPtrImplWithEventTargetData> m_element;
+    WeakRef<HTMLMediaElement> m_element;
 };
 
 struct HTMLMediaElement::TrackGroup {
@@ -346,9 +346,9 @@ struct HTMLMediaElement::TrackGroup {
     bool hasSrcLang { false };
 };
 
-HashSet<WeakRef<HTMLMediaElement, WeakPtrImplWithEventTargetData>>& HTMLMediaElement::allMediaElements()
+HashSet<WeakRef<HTMLMediaElement>>& HTMLMediaElement::allMediaElements()
 {
-    static NeverDestroyed<HashSet<WeakRef<HTMLMediaElement, WeakPtrImplWithEventTargetData>>> elements;
+    static NeverDestroyed<HashSet<WeakRef<HTMLMediaElement>>> elements;
     return elements;
 }
 
@@ -1846,7 +1846,7 @@ void HTMLMediaElement::updateActiveTextTrackCues(const MediaTime& movieTime)
     INFO_LOG(identifier, "nextInterestingTime:", nextInterestingTime);
 
     if (RefPtr player = m_player; nextInterestingTime.isValid() && player) {
-        player->performTaskAtTime([this, weakThis = WeakPtr<HTMLMediaElement, WeakPtrImplWithEventTargetData> { *this }, identifier] {
+        player->performTaskAtTime([this, weakThis = WeakPtr { *this }, identifier] {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return;
@@ -3304,7 +3304,7 @@ void HTMLMediaElement::progressEventTimerFired()
     if (!m_player->supportsProgressMonitoring())
         return;
 
-    m_player->didLoadingProgress([this, weakThis = WeakPtr<HTMLMediaElement, WeakPtrImplWithEventTargetData> { *this }](bool progress) {
+    m_player->didLoadingProgress([this, weakThis = WeakPtr { *this }](bool progress) {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;

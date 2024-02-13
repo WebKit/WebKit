@@ -112,7 +112,7 @@ public:
 private:
     explicit MediaControlsHost(HTMLMediaElement&);
 
-    WeakPtr<HTMLMediaElement, WeakPtrImplWithEventTargetData> m_mediaElement;
+    WeakPtr<HTMLMediaElement> m_mediaElement;
     RefPtr<MediaControlTextTrackContainerElement> m_textTrackContainer;
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)

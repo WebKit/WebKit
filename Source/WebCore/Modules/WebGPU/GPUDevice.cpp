@@ -299,14 +299,14 @@ public:
         m_weakMap.remove(m_videoElement);
         return CallbackResult<void>();
     }
-    static Ref<GPUDeviceVideoFrameRequestCallback> create(GPUExternalTexture& externalTexture, HTMLVideoElement& videoElement, WeakHashMap<HTMLVideoElement, WeakPtr<GPUExternalTexture>, WeakPtrImplWithEventTargetData>& weakMap, ScriptExecutionContext* scriptExecutionContext)
+    static Ref<GPUDeviceVideoFrameRequestCallback> create(GPUExternalTexture& externalTexture, HTMLVideoElement& videoElement, WeakHashMap<HTMLVideoElement, WeakPtr<GPUExternalTexture>>& weakMap, ScriptExecutionContext* scriptExecutionContext)
     {
         return adoptRef(*new GPUDeviceVideoFrameRequestCallback(externalTexture, videoElement, weakMap, scriptExecutionContext));
     }
 
     ~GPUDeviceVideoFrameRequestCallback() final { }
 private:
-    GPUDeviceVideoFrameRequestCallback(GPUExternalTexture& externalTexture, HTMLVideoElement& videoElement, WeakHashMap<HTMLVideoElement, WeakPtr<GPUExternalTexture>, WeakPtrImplWithEventTargetData>& weakMap, ScriptExecutionContext* scriptExecutionContext)
+    GPUDeviceVideoFrameRequestCallback(GPUExternalTexture& externalTexture, HTMLVideoElement& videoElement, WeakHashMap<HTMLVideoElement, WeakPtr<GPUExternalTexture>>& weakMap, ScriptExecutionContext* scriptExecutionContext)
         : VideoFrameRequestCallback(scriptExecutionContext)
         , m_externalTexture(externalTexture)
         , m_videoElement(videoElement)
@@ -316,7 +316,7 @@ private:
 
     Ref<GPUExternalTexture> m_externalTexture;
     HTMLVideoElement& m_videoElement;
-    WeakHashMap<HTMLVideoElement, WeakPtr<GPUExternalTexture>, WeakPtrImplWithEventTargetData> &m_weakMap;
+    WeakHashMap<HTMLVideoElement, WeakPtr<GPUExternalTexture>> &m_weakMap;
 };
 
 Ref<GPUExternalTexture> GPUDevice::importExternalTexture(const GPUExternalTextureDescriptor& externalTextureDescriptor)
