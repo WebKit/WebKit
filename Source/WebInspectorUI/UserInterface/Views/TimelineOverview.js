@@ -552,6 +552,11 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
 
     _handleWheelEvent(event)
     {
+        // Ignore handling wheel events originating over the timelines tree outline to allow the timelines overview to be scrolled on small viewports.
+        // The result of compareDocumentPosition() is a bitwise mask: https://developer.mozilla.org/en-US/docs/Web/API/Node/compareDocumentPosition#node.document_position_contains
+        if (event.target.compareDocumentPosition(this._timelinesTreeOutline.element) & Node.DOCUMENT_POSITION_CONTAINS)
+            return;
+
         // Ignore cloned events that come our way, we already handled the original.
         if (event.__cloned)
             return;
@@ -563,6 +568,9 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
         // Require twice the vertical delta to overcome horizontal scrolling. This prevents most
         // cases of inadvertent zooming for slightly diagonal scrolls.
         if (Math.abs(event.deltaX) >= Math.abs(event.deltaY) * 0.5) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+
             // Clone the event to dispatch it on the scroll container. Mark it as cloned so we don't get into a loop.
             let newWheelEvent = new event.constructor(event.type, event);
             newWheelEvent.__cloned = true;

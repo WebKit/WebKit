@@ -23,15 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+.content-view.timeline-recording {
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+
+    --timeline-content-browser-min-height: 250px;
+}
+
 .content-view.timeline-recording > .timeline-overview {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
+    position: relative;
+    flex: none;
 }
 
 .content-view.timeline-recording.edit-instruments > .timeline-overview {
-    bottom: 0;
+    flex: 1;
 }
 
 .content-view.timeline-recording.edit-instruments > .content-browser {
@@ -39,12 +45,8 @@
 }
 
 .content-view.timeline-recording > .content-browser {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    overflow: hidden;
-
+    flex: 1;
+    min-height: var(--timeline-content-browser-min-height);
     border-top: 1px solid var(--border-color);
 }
 

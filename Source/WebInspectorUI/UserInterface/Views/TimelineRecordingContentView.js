@@ -338,7 +338,6 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
             newViewMode = WI.TimelineOverview.ViewMode.Timelines;
 
         this._timelineOverview.viewMode = newViewMode;
-        this._updateTimelineOverviewHeight();
         this._updateProgressView();
         this._updateFilterBar();
 
@@ -661,19 +660,6 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
         this._recording.reset();
     }
 
-    _updateTimelineOverviewHeight()
-    {
-        if (this._timelineOverview.editingInstruments)
-            this._timelineOverview.element.style.height = "";
-        else {
-            const rulerHeight = 23;
-
-            let styleValue = (rulerHeight + this._timelineOverview.height) + "px";
-            this._timelineOverview.element.style.height = styleValue;
-            this._timelineContentBrowser.element.style.top = styleValue;
-        }
-    }
-
     _instrumentAdded(instrumentOrEvent)
     {
         let instrument = instrumentOrEvent instanceof WI.Instrument ? instrumentOrEvent : instrumentOrEvent.data.instrument;
@@ -725,8 +711,6 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
 
             previousPathComponent = pathComponent;
         }
-
-        this._updateTimelineOverviewHeight();
     }
 
     _recordingReset(event)
@@ -885,8 +869,6 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
     {
         let editingInstruments = this._timelineOverview.editingInstruments;
         this.element.classList.toggle(WI.TimelineOverview.EditInstrumentsStyleClassName, editingInstruments);
-
-        this._updateTimelineOverviewHeight();
     }
 
     _filterDidChange()
