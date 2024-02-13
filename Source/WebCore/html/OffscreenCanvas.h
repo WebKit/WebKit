@@ -125,8 +125,6 @@ public:
     static Ref<OffscreenCanvas> create(ScriptExecutionContext&, HTMLCanvasElement&);
     WEBCORE_EXPORT virtual ~OffscreenCanvas();
 
-    unsigned width() const final;
-    unsigned height() const final;
     void setWidth(unsigned);
     void setHeight(unsigned);
 

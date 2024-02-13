@@ -151,20 +151,6 @@ OffscreenCanvas::~OffscreenCanvas()
     setImageBuffer(nullptr);
 }
 
-unsigned OffscreenCanvas::width() const
-{
-    if (m_detached)
-        return 0;
-    return CanvasBase::width();
-}
-
-unsigned OffscreenCanvas::height() const
-{
-    if (m_detached)
-        return 0;
-    return CanvasBase::height();
-}
-
 void OffscreenCanvas::setWidth(unsigned newWidth)
 {
     if (m_detached)
@@ -383,11 +369,15 @@ void OffscreenCanvas::convertToBlob(ImageEncodeOptions&& options, Ref<DeferredPr
         promise->reject(ExceptionCode::SecurityError);
         return;
     }
+    if (m_detached) {
+        promise->reject(ExceptionCode::InvalidStateError);
+        return;
+    }
     if (size().isEmpty()) {
         promise->reject(ExceptionCode::IndexSizeError);
         return;
     }
-    if (m_detached || !buffer()) {
+    if (!buffer()) {
         promise->reject(ExceptionCode::InvalidStateError);
         return;
     }
@@ -457,6 +447,8 @@ std::unique_ptr<DetachedOffscreenCanvas> OffscreenCanvas::detach()
 
     auto detached = makeUnique<DetachedOffscreenCanvas>(takeImageBuffer(), size(), originClean());
     detached->m_placeholderCanvas = std::exchange(m_placeholderData->canvas, nullptr);
+
+    setSize(IntSize(0, 0));
 
     return detached;
 }
