@@ -544,6 +544,15 @@ bool TypeDefinition::hasRecursiveReference() const
     return TypeInformation::get(as<Subtype>()->underlyingType()).hasRecursiveReference();
 }
 
+bool TypeDefinition::isFinalType() const
+{
+    const auto& unrolled = unroll();
+    if (unrolled.is<Subtype>())
+        return unrolled.as<Subtype>()->isFinal();
+
+    return true;
+}
+
 RefPtr<RTT> RTT::tryCreateRTT(RTTKind kind, DisplayCount displaySize)
 {
     auto result = tryFastMalloc(allocatedRTTSize(displaySize));
@@ -1097,7 +1106,7 @@ bool TypeInformation::castReference(JSValue refValue, bool allowNull, TypeIndex 
             if (!funcRef)
                 return false;
             auto funcRTT = funcRef->rtt();
-            if (funcRTT.get() == signatureRTT.get())
+            if (funcRTT == signatureRTT.get())
                 return true;
             return funcRTT->isSubRTT(*signatureRTT);
         }

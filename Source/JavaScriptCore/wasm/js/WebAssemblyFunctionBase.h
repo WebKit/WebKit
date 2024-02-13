@@ -50,7 +50,7 @@ public:
     WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation() const { return m_importableFunction.entrypointLoadLocation; }
     const uintptr_t* boxedWasmCalleeLoadLocation() const { return m_importableFunction.boxedWasmCalleeLoadLocation; }
     WasmToWasmImportableFunction importableFunction() const { return m_importableFunction; }
-    CompactRefPtr<const Wasm::RTT> rtt() const { ASSERT(m_rtt); return m_rtt; }
+    const Wasm::RTT* rtt() const { return m_importableFunction.rtt; }
 
     static ptrdiff_t offsetOfInstance() { return OBJECT_OFFSETOF(WebAssemblyFunctionBase, m_instance); }
 
@@ -59,22 +59,19 @@ public:
     static ptrdiff_t offsetOfEntrypointLoadLocation() { return OBJECT_OFFSETOF(WebAssemblyFunctionBase, m_importableFunction) + WasmToWasmImportableFunction::offsetOfEntrypointLoadLocation(); }
     static ptrdiff_t offsetOfBoxedWasmCalleeLoadLocation() { return OBJECT_OFFSETOF(WebAssemblyFunctionBase, m_importableFunction) + WasmToWasmImportableFunction::offsetOfBoxedWasmCalleeLoadLocation(); }
 
-    static ptrdiff_t offsetOfRTT() { return OBJECT_OFFSETOF(WebAssemblyFunctionBase, m_rtt); }
+    static ptrdiff_t offsetOfRTT() { return OBJECT_OFFSETOF(WebAssemblyFunctionBase, m_importableFunction) + WasmToWasmImportableFunction::offsetOfRTT(); }
 
 protected:
     DECLARE_VISIT_CHILDREN;
     void finishCreation(VM&, NativeExecutable*, unsigned length, const String& name);
-    WebAssemblyFunctionBase(VM&, NativeExecutable*, JSGlobalObject*, Structure*, JSWebAssemblyInstance*, WasmToWasmImportableFunction, RefPtr<const Wasm::RTT>);
+    WebAssemblyFunctionBase(VM&, NativeExecutable*, JSGlobalObject*, Structure*, JSWebAssemblyInstance*, WasmToWasmImportableFunction);
 
     WriteBarrier<JSWebAssemblyInstance> m_instance;
 
     // It's safe to just hold the raw WasmToWasmImportableFunction because we have a reference
     // to our Instance, which points to the CodeBlock, which points to the Module
-    // that exported us, which ensures that the actual Signature/code doesn't get deallocated.
+    // that exported us, which ensures that the actual Signature/RTT/code doesn't get deallocated.
     WasmToWasmImportableFunction m_importableFunction;
-
-    // This can be a null pointer if GC support is turned off, in which case the RTT should not be accessed anyway.
-    CompactRefPtr<const Wasm::RTT> m_rtt;
 };
 
 } // namespace JSC

@@ -5035,21 +5035,74 @@ auto B3IRGenerator::addCallIndirect(unsigned tableIndex, const TypeDefinition& o
     Value* calleeCodeLocation = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), callableFunction, safeCast<int32_t>(FuncRefTable::Function::offsetOfFunction() + WasmToWasmImportableFunction::offsetOfEntrypointLoadLocation()));
     Value* calleeCallee = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(),
         m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), callableFunction, safeCast<int32_t>(FuncRefTable::Function::offsetOfFunction() + WasmToWasmImportableFunction::offsetOfBoxedWasmCalleeLoadLocation())));
+    Value* calleeRTT = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), callableFunction, safeCast<int32_t>(FuncRefTable::Function::offsetOfFunction() + WasmToWasmImportableFunction::offsetOfRTT()));
     Value* calleeInstance = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), callableFunction, safeCast<int32_t>(FuncRefTable::Function::offsetOfInstance()));
     Value* jsCalleeAnchor = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), callableFunction, safeCast<int32_t>(FuncRefTable::Function::offsetOfValue()));
 
+    BasicBlock* continuation = m_proc.addBlock();
+    BasicBlock* moreChecks = m_proc.addBlock();
     Value* expectedSignatureIndex = m_currentBlock->appendNew<Const64Value>(m_proc, origin(), TypeInformation::get(originalSignature));
-    CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(), m_currentBlock->appendNew<Value>(m_proc, NotEqual, origin(), calleeSignatureIndex, expectedSignatureIndex));
-    check->append(calleeSignatureIndex, ValueRep::SomeRegister);
-    check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
-        GPRReg indexGPR = params[0].gpr();
-        static_assert(TypeDefinition::invalidIndex == 0);
-        auto badSignatureCase = jit.branchTest64(CCallHelpers::NonZero, indexGPR);
-        this->emitExceptionCheck(jit, ExceptionType::NullTableEntry);
-        badSignatureCase.link(&jit);
+    Value* hasEqualSignatures = m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), calleeSignatureIndex, expectedSignatureIndex);
+    m_currentBlock->appendNewControlValue(m_proc, B3::Branch, origin(), hasEqualSignatures,
+        FrequentedBlock(continuation), FrequentedBlock(moreChecks, FrequencyClass::Rare));
+
+    m_currentBlock = moreChecks;
+    // If the table entry is null we can't do any further checks.
+    {
+        CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
+            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), calleeSignatureIndex, constant(pointerType(), 0)));
+
+        check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            this->emitExceptionCheck(jit, ExceptionType::NullTableEntry);
+        });
+    }
+
+    BasicBlock* throwBlock = m_proc.addBlock();
+    // The subtype check can be omitted as an optimization for final types, but is needed otherwise if GC is on.
+    if (Options::useWebAssemblyGC() && !originalSignature.isFinalType()) {
+        // We don't need to check the RTT kind because by validation both RTTs must be for functions.
+        Value* rttSize = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, origin(), calleeRTT, safeCast<uint32_t>(RTT::offsetOfDisplaySize()));
+        Value* rttSizeAsPointerType = m_currentBlock->appendNew<Value>(m_proc, ZExt32, origin(), rttSize);
+        Value* rttPayloadPointer = m_currentBlock->appendNew<Value>(m_proc, Add, pointerType(), origin(), calleeRTT, constant(pointerType(), RTT::offsetOfPayload()));
+        auto signatureRTT = TypeInformation::getCanonicalRTT(originalSignature.index());
+
+        // If the RTT display size is <= 0 then throw.
+        BasicBlock* greaterThanZero = m_proc.addBlock();
+        m_currentBlock->appendNewControlValue(m_proc, B3::Branch, origin(),
+            m_currentBlock->appendNew<Value>(m_proc, Above, origin(), rttSize, constant(Int32, 0)),
+            FrequentedBlock(greaterThanZero), FrequentedBlock(throwBlock, FrequencyClass::Rare));
+        m_currentBlock = greaterThanZero;
+
+        BasicBlock* checkIfSupertypeIsInDisplay = m_proc.addBlock();
+        bool parentRTTHasEntries = signatureRTT->displaySize() > 0;
+        if (parentRTTHasEntries) {
+            // If the RTT display is not larger than the signature display, throw.
+            m_currentBlock->appendNewControlValue(m_proc, B3::Branch, origin(),
+                m_currentBlock->appendNew<Value>(m_proc, Above, origin(), rttSize, constant(Int32, signatureRTT->displaySize())),
+                FrequentedBlock(checkIfSupertypeIsInDisplay), FrequentedBlock(throwBlock, FrequencyClass::Rare));
+        } else
+            m_currentBlock->appendNewControlValue(m_proc, B3::Jump, origin(), FrequentedBlock(checkIfSupertypeIsInDisplay));
+
+        // Check if the display contains the supertype signature.
+        m_currentBlock = checkIfSupertypeIsInDisplay;
+        Value* payloadIndexed = m_currentBlock->appendNew<Value>(m_proc, Add, pointerType(), origin(), rttPayloadPointer,
+            m_currentBlock->appendNew<Value>(m_proc, Mul, pointerType(), origin(), constant(pointerType(), sizeof(uintptr_t)),
+                m_currentBlock->appendNew<Value>(m_proc, Sub, pointerType(), origin(), rttSizeAsPointerType, constant(pointerType(), 1 + (parentRTTHasEntries ? signatureRTT->displaySize() : 0)))));
+        Value* displayEntry = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), payloadIndexed);
+        m_currentBlock->appendNewControlValue(m_proc, B3::Branch, origin(),
+            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), displayEntry, constant(pointerType(), bitwise_cast<uintptr_t>(signatureRTT.get()))),
+            FrequentedBlock(continuation), FrequentedBlock(throwBlock, FrequencyClass::Rare));
+    } else
+        m_currentBlock->appendNewControlValue(m_proc, B3::Jump, origin(), throwBlock);
+
+    m_currentBlock = throwBlock;
+    B3::PatchpointValue* throwException = m_currentBlock->appendNew<B3::PatchpointValue>(m_proc, B3::Void, origin());
+    throwException->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
         this->emitExceptionCheck(jit, ExceptionType::BadSignature);
     });
+    throwException->effects.terminal = true;
 
+    m_currentBlock = continuation;
     Value* calleeCode = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), calleeCodeLocation);
     return emitIndirectCall(calleeInstance, calleeCode, calleeCallee, jsCalleeAnchor, signature, args, results, callType);
 }

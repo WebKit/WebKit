@@ -701,6 +701,7 @@ public:
 
     static ptrdiff_t offsetOfKind() { return OBJECT_OFFSETOF(RTT, m_kind); }
     static ptrdiff_t offsetOfDisplaySize() { return OBJECT_OFFSETOF(RTT, m_displaySize); }
+    static ptrdiff_t offsetOfPayload() { return offsetOfDisplaySize() + sizeof(DisplayCount); }
 
 private:
     // Payload starts past end of this object.
@@ -789,6 +790,7 @@ public:
     const TypeDefinition& unroll() const;
     const TypeDefinition& expand() const;
     bool hasRecursiveReference() const;
+    bool isFinalType() const;
 
     // Type definitions that are compound and contain references to other definitions
     // via a type index should ref() the other definition when new unique instances are

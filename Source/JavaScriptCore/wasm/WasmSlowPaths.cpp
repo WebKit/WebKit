@@ -673,8 +673,7 @@ static inline UGPRPair doWasmCallIndirect(Register* partiallyConstructedCalleeFr
         WASM_THROW(Wasm::ExceptionType::NullTableEntry);
 
     const auto& callSignature = CALLEE()->signature(typeIndex);
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=260820
-    if (callSignature.index() != function.m_function.typeIndex)
+    if (!Wasm::isSubtypeIndex(function.m_function.typeIndex, callSignature.index()))
         WASM_THROW(Wasm::ExceptionType::BadSignature);
 
     Register& calleeStackSlot = partiallyConstructedCalleeFrame[static_cast<int>(CallFrameSlot::callee)];
