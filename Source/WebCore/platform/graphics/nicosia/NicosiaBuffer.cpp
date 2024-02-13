@@ -33,7 +33,6 @@
 
 #if USE(SKIA)
 #include "PlatformDisplay.h"
-#include <epoxy/gl.h>
 #include <skia/core/SkCanvas.h>
 #include <skia/core/SkImage.h>
 #include <skia/core/SkStream.h>
@@ -41,6 +40,12 @@
 #include <skia/gpu/ganesh/SkSurfaceGanesh.h>
 #include <skia/gpu/ganesh/gl/GrGLBackendSurface.h>
 #include <skia/gpu/ganesh/gl/GrGLDirectContext.h>
+
+#if USE(LIBEPOXY)
+#include <epoxy/gl.h>
+#else
+#include <GLES3/gl3.h>
+#endif
 #endif
 
 namespace Nicosia {
