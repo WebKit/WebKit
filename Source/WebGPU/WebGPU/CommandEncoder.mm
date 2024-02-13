@@ -148,11 +148,9 @@ id<MTLBlitCommandEncoder> CommandEncoder::ensureBlitCommandEncoder()
 
 void CommandEncoder::finalizeBlitCommandEncoder()
 {
-    if (m_blitCommandEncoder) {
-        endEncoding(m_blitCommandEncoder);
-        m_blitCommandEncoder = nil;
-        setExistingEncoder(nil);
-    }
+    endEncoding(m_blitCommandEncoder);
+    m_blitCommandEncoder = nil;
+    setExistingEncoder(nil);
 
     if (!m_pendingTimestampWrites.isEmpty()) {
         ASSERT(m_device->baseCapabilities().counterSamplingAPI == HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::StageBoundary);
@@ -261,7 +259,9 @@ void CommandEncoder::setExistingEncoder(id<MTLCommandEncoder> encoder)
 
 void CommandEncoder::endEncoding(id<MTLCommandEncoder> encoder)
 {
-    if (m_device->getQueue().encoderForBuffer(m_commandBuffer) != encoder) {
+    id<MTLCommandEncoder> existingEncoder = m_device->getQueue().encoderForBuffer(m_commandBuffer);
+    if (existingEncoder != encoder) {
+        [existingEncoder endEncoding];
         setExistingEncoder(nil);
         return;
     }
