@@ -333,6 +333,7 @@ enum class PromiseOption : uint8_t {
     NonExclusive = (1 << 0),
     WithCrossThreadCopy = (1 << 2),
     WithoutCrossThreadCopy = (1 << 3),
+    AutoRejectProducer = (1 << 4),
 };
 constexpr unsigned operator|(PromiseOption a, PromiseOption b)
 {
@@ -375,6 +376,7 @@ public:
     // We split the functionalities from a "Producer" that can create and resolve/reject a promise and a "Consumer"
     // that will then()/whenSettled() on such promise.
     using Producer = NativePromiseProducer<ResolveValueT, RejectValueT, options>;
+    using AutoRejectProducer = NativePromiseProducer<ResolveValueT, RejectValueT, options | PromiseOption::AutoRejectProducer>;
 
     virtual ~NativePromise()
     {
@@ -1244,11 +1246,24 @@ class NativePromiseProducer final : public ConvertibleToNativePromise {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     // used by IsConvertibleToNativePromise to determine how to cast the result.
-    using PromiseType = NativePromise<ResolveValueT, RejectValueT, options>;
+    using PromiseType = NativePromise<ResolveValueT, RejectValueT, options & ~static_cast<unsigned>(PromiseOption::AutoRejectProducer)>;
+    static constexpr bool AutoReject = options & PromiseOption::AutoRejectProducer;
+    static constexpr bool AutoRejectNonVoid = AutoReject && !std::is_void_v<RejectValueT>;
 
+    template<typename = std::enable_if<!AutoRejectNonVoid>>
     explicit NativePromiseProducer(PromiseDispatchMode dispatchMode = PromiseDispatchMode::Default, const Logger::LogSiteIdentifier& creationSite = DEFAULT_LOGSITEIDENTIFIER)
         : m_promise(adoptRef(new PromiseType(creationSite)))
         , m_creationSite(creationSite)
+    {
+        if constexpr (PromiseType::IsExclusive)
+            m_promise->setDispatchMode(dispatchMode, creationSite);
+    }
+
+    template<typename RejectValueT_ = RejectValueT, typename = std::enable_if<AutoRejectNonVoid>>
+    explicit NativePromiseProducer(RejectValueT_&& defaulReject, PromiseDispatchMode dispatchMode = PromiseDispatchMode::Default, const Logger::LogSiteIdentifier& creationSite = DEFAULT_LOGSITEIDENTIFIER)
+        : m_promise(adoptRef(new PromiseType(creationSite)))
+        , m_creationSite(creationSite)
+        , m_defaultReject(WTFMove(defaulReject))
     {
         if constexpr (PromiseType::IsExclusive)
             m_promise->setDispatchMode(dispatchMode, creationSite);
@@ -1259,6 +1274,15 @@ public:
 
     ~NativePromiseProducer()
     {
+        if constexpr (AutoReject) {
+            if (m_promise && !m_promise->isSettled()) {
+                PROMISE_LOG("Non settled AutoRejectProducer, reject with default value", *m_promise);
+                if constexpr (std::is_void_v<RejectValueT>)
+                    reject();
+                else
+                    reject(WTFMove(m_defaultReject));
+            }
+        }
         assertIsDead();
     }
 
@@ -1385,6 +1409,12 @@ public:
         m_promise->template chainTo<ResolveValueT2, RejectValueT2, options2>(WTFMove(chainedPromise), callSite);
     }
 
+    template<typename RejectValueType_, typename = std::enable_if<AutoRejectNonVoid>>
+    void setDefaultReject(RejectValueType_&& rejectValue)
+    {
+        m_defaultReject = WTFMove(rejectValue);
+    }
+
 private:
     template<typename ResolveValueT2, typename RejectValueT2, unsigned options2>
     friend class NativePromise;
@@ -1406,6 +1436,7 @@ private:
     // While we expect m_promise to never be null, it would cause a null dereference in the destructor if the destructor was called after a move.
     RefPtr<PromiseType> m_promise;
     const Logger::LogSiteIdentifier m_creationSite; // For logging
+    NO_UNIQUE_ADDRESS std::conditional_t<AutoRejectNonVoid, RejectValueT, detail::VoidPlaceholder> m_defaultReject;
 };
 
 // A generic promise type that does the trick for simple use cases.

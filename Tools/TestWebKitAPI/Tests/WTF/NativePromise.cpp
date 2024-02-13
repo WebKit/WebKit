@@ -1692,6 +1692,52 @@ TEST(NativePromise, DisconnectNotOwnedInstance)
     producer.resolve();
 }
 
+TEST(NativePromise, AutoRejectProducer)
+{
+    AutoWorkQueue awq;
+    auto queue = awq.queue();
+    queue->dispatch([queue] {
+        RefPtr<GenericPromise> promise1;
+        {
+            GenericPromise::AutoRejectProducer producer;
+            promise1 = producer.promise();
+        }
+        promise1->then(queue, doFail(), [] {
+            EXPECT_TRUE(true);
+        });
+
+        RefPtr<NativePromise<int, int>> promise2;
+        {
+            NativePromise<int, int>::AutoRejectProducer producer(-1);
+            promise2 = producer.promise();
+        }
+        promise2->then(queue, doFail(), [](auto result) {
+            EXPECT_EQ(result, -1);
+        });
+
+        // Check that AutoRejectProducer is usable with non-copyable type.
+        RefPtr<NativePromise<int, std::unique_ptr<int>>> promise3;
+        {
+            NativePromise<int, std::unique_ptr<int>>::AutoRejectProducer producer(makeUniqueWithoutFastMallocCheck<int>(-1));
+            promise3 = producer.promise();
+        }
+        promise3->then(queue, doFail(), [](auto&& result) {
+            EXPECT_EQ(*result, -1);
+        });
+
+        RefPtr<NativePromise<int, std::unique_ptr<int>>> promise4;
+        {
+            NativePromise<int, std::unique_ptr<int>>::AutoRejectProducer producer(makeUniqueWithoutFastMallocCheck<int>(-2));
+            promise4 = producer.promise();
+            producer.setDefaultReject(makeUniqueWithoutFastMallocCheck<int>(-1));
+        }
+        promise4->then(queue, doFail(), [queue](auto&& result) {
+            EXPECT_EQ(*result, -1);
+            queue->beginShutdown();
+        });
+    });
+}
+
 // Example:
 // Consider a PhotoProducer class that can take a photo and returns an image and its mimetype.
 // The PhotoProducer uses some system framework that takes a completion handler which will receive the photo once taken.
