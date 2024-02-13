@@ -310,7 +310,7 @@ ConversionRank OverloadResolver::calculateRank(const AbstractType& parameter, co
         ASSERT(resolvedType);
         if (variable->constraints) {
             resolvedType = satisfyOrPromote(resolvedType, variable->constraints, m_types);
-            ASSERT(resolvedType);
+            RELEASE_ASSERT(resolvedType);
         }
         return conversionRank(argumentType, resolvedType);
     }

@@ -500,6 +500,7 @@ void TypeChecker::visitVariable(AST::Variable& variable, VariableKind variableKi
                 result = initializerType;
             else {
                 result = concretize(initializerType, m_types);
+                RELEASE_ASSERT(result);
                 variable.maybeInitializer()->m_inferredType = result;
             }
         } else if (unify(result, initializerType))
@@ -1031,8 +1032,10 @@ void TypeChecker::visit(AST::IndexAccessExpression& access)
             return nullptr;
         }
 
-        if (!access.index().constantValue().has_value())
+        if (!access.index().constantValue().has_value()) {
             result = concretize(result, m_types);
+            RELEASE_ASSERT(result);
+        }
         return result;
     };
 
@@ -1375,7 +1378,6 @@ void TypeChecker::bitcast(AST::CallExpression& call, const Vector<const Type*>& 
 
     if (auto* reference = std::get_if<Types::Reference>(sourceType))
         sourceType = reference->element;
-    sourceType = concretize(sourceType, m_types);
 
     const auto& primitivePrimitive = [&](const Type* p1, const Type* p2) {
         return (satisfies(p1, Constraints::Concrete32BitNumber) && satisfies(p2, Constraints::Concrete32BitNumber))
@@ -1420,7 +1422,8 @@ void TypeChecker::bitcast(AST::CallExpression& call, const Vector<const Type*>& 
         return;
     }
 
-    typeError(call.span(), "cannot bitcast from '", *sourceType, "' to '", *destinationType, "'");
+    auto* concreteType = concretize(sourceType, m_types) ?: sourceType;
+    typeError(call.span(), "cannot bitcast from '", *concreteType, "' to '", *destinationType, "'");
 }
 
 void TypeChecker::visit(AST::UnaryExpression& unary)

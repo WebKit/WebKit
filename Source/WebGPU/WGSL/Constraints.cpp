@@ -187,22 +187,22 @@ const Type* concretize(const Type* type, TypeStore& types)
             return type;
         },
         [&](const Function&) -> const Type* {
-            RELEASE_ASSERT_NOT_REACHED();
+            return nullptr;
         },
         [&](const Texture&) -> const Type* {
-            RELEASE_ASSERT_NOT_REACHED();
+            return nullptr;
         },
         [&](const TextureStorage&) -> const Type* {
-            RELEASE_ASSERT_NOT_REACHED();
+            return nullptr;
         },
         [&](const TextureDepth&) -> const Type* {
-            RELEASE_ASSERT_NOT_REACHED();
+            return nullptr;
         },
         [&](const Reference&) -> const Type* {
-            RELEASE_ASSERT_NOT_REACHED();
+            return nullptr;
         },
         [&](const TypeConstructor&) -> const Type* {
-            RELEASE_ASSERT_NOT_REACHED();
+            return nullptr;
         });
 }
 

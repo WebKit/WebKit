@@ -38,3 +38,15 @@ fn testFunctionAsValue()
     // CHECK-L: cannot use function 'testI32Overflow' as value
     { const x: f32 = bitcast<f32>(testI32Overflow); }
 }
+
+@group(0) @binding(1) var s: sampler;
+@group(0) @binding(2) var t: texture_depth_2d;
+
+fn testTypeCannotBeConcretized()
+{
+    // CHECK-L: cannot bitcast from 'sampler' to 'i32'
+    let x = bitcast<i32>(s);
+
+    // CHECK-L: cannot bitcast from 'texture_depth_2d' to 'i32'
+    let x = bitcast<i32>(t);
+}
