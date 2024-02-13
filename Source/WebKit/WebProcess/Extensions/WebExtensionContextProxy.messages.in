@@ -39,6 +39,11 @@ messages -> WebExtensionContextProxy {
     // Cookies
     DispatchCookiesChangedEvent()
 
+#if ENABLE(INSPECTOR_EXTENSIONS)
+    // DevTools
+    AddInspectorBackgroundPageIdentifier(WebCore::PageIdentifier pageID, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier, std::optional<WebKit::WebExtensionWindowIdentifier> windowIdentifier)
+#endif
+
     // Extension
     SetBackgroundPageIdentifier(WebCore::PageIdentifier pageID)
     AddPopupPageIdentifier(WebCore::PageIdentifier pageID, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier, std::optional<WebKit::WebExtensionWindowIdentifier> windowIdentifier)

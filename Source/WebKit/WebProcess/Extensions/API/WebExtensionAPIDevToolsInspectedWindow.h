@@ -38,15 +38,10 @@ class WebExtensionAPIDevToolsInspectedWindow : public WebExtensionAPIObject, pub
 
 public:
 #if PLATFORM(COCOA)
-    bool isPropertyAllowed(const ASCIILiteral& propertyName, WebPage&);
-
     void eval(NSString *expression, NSDictionary *options, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
     void reload(NSDictionary *options, NSString **outExceptionString);
-    void getResources(NSDictionary *options, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
-    double tabId();
-
-    WebExtensionAPIEvent& onResourceAdded();
+    double tabId(WebPage&);
 #endif
 
 private:

@@ -50,6 +50,9 @@ struct WebExtensionContextParameters {
     bool isSessionStorageAllowedInContentScripts { false };
 
     std::optional<WebCore::PageIdentifier> backgroundPageIdentifier;
+#if ENABLE(INSPECTOR_EXTENSIONS)
+    Vector<WebExtensionContext::PageIdentifierTuple> inspectorBackgroundPageIdentifiers;
+#endif
     Vector<WebExtensionContext::PageIdentifierTuple> popupPageIdentifiers;
     Vector<WebExtensionContext::PageIdentifierTuple> tabPageIdentifiers;
 };

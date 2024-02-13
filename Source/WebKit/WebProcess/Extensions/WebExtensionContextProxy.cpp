@@ -30,6 +30,7 @@
 
 #include "JSWebExtensionAPINamespace.h"
 #include "JSWebExtensionWrapper.h"
+#include "WebExtensionAPINamespace.h"
 #include "WebFrame.h"
 #include "WebPage.h"
 #include "WebProcess.h"
@@ -43,6 +44,22 @@ void WebExtensionContextProxy::addFrameWithExtensionContent(WebFrame& frame)
     m_extensionContentFrames.add(frame);
 }
 
+std::optional<WebExtensionTabIdentifier> WebExtensionContextProxy::tabIdentifier(WebPage& page) const
+{
+    if (m_popupPageMap.contains(page))
+        return std::get<std::optional<WebExtensionTabIdentifier>>(m_popupPageMap.get(page));
+
+    if (m_tabPageMap.contains(page))
+        return std::get<std::optional<WebExtensionTabIdentifier>>(m_tabPageMap.get(page));
+
+#if ENABLE(INSPECTOR_EXTENSIONS)
+    if (m_inspectorBackgroundPageMap.contains(page))
+        return std::get<std::optional<WebExtensionTabIdentifier>>(m_inspectorBackgroundPageMap.get(page));
+#endif
+
+    return std::nullopt;
+}
+
 RefPtr<WebPage> WebExtensionContextProxy::backgroundPage() const
 {
     return m_backgroundPage.get();
@@ -52,6 +69,24 @@ void WebExtensionContextProxy::setBackgroundPage(WebPage& page)
 {
     m_backgroundPage = page;
 }
+
+#if ENABLE(INSPECTOR_EXTENSIONS)
+void WebExtensionContextProxy::addInspectorBackgroundPageIdentifier(WebCore::PageIdentifier pageIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, std::optional<WebExtensionWindowIdentifier> windowIdentifier)
+{
+    if (RefPtr page = WebProcess::singleton().webPage(pageIdentifier))
+        addInspectorBackgroundPage(*page, tabIdentifier, windowIdentifier);
+}
+
+void WebExtensionContextProxy::addInspectorBackgroundPage(WebPage& page, std::optional<WebExtensionTabIdentifier> tabIdentifier, std::optional<WebExtensionWindowIdentifier> windowIdentifier)
+{
+    m_inspectorBackgroundPageMap.set(page, TabWindowIdentifierPair { tabIdentifier, windowIdentifier });
+}
+
+bool WebExtensionContextProxy::isInspectorBackgroundPage(WebPage& page) const
+{
+    return m_inspectorBackgroundPageMap.contains(page);
+}
+#endif // ENABLE(INSPECTOR_EXTENSIONS)
 
 Vector<Ref<WebPage>> WebExtensionContextProxy::popupPages(std::optional<WebExtensionTabIdentifier> tabIdentifier, std::optional<WebExtensionWindowIdentifier> windowIdentifier) const
 {
@@ -99,19 +134,19 @@ void WebExtensionContextProxy::addTabPage(WebPage& page, std::optional<WebExtens
 
 void WebExtensionContextProxy::setBackgroundPageIdentifier(WebCore::PageIdentifier pageIdentifier)
 {
-    if (auto* page = WebProcess::singleton().webPage(pageIdentifier))
+    if (RefPtr page = WebProcess::singleton().webPage(pageIdentifier))
         setBackgroundPage(*page);
 }
 
 void WebExtensionContextProxy::addPopupPageIdentifier(WebCore::PageIdentifier pageIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, std::optional<WebExtensionWindowIdentifier> windowIdentifier)
 {
-    if (auto* page = WebProcess::singleton().webPage(pageIdentifier))
+    if (RefPtr page = WebProcess::singleton().webPage(pageIdentifier))
         addPopupPage(*page, tabIdentifier, windowIdentifier);
 }
 
 void WebExtensionContextProxy::addTabPageIdentifier(WebCore::PageIdentifier pageIdentifier, WebExtensionTabIdentifier tabIdentifier, std::optional<WebExtensionWindowIdentifier> windowIdentifier)
 {
-    if (auto* page = WebProcess::singleton().webPage(pageIdentifier))
+    if (RefPtr page = WebProcess::singleton().webPage(pageIdentifier))
         addTabPage(*page, tabIdentifier, windowIdentifier);
 }
 
@@ -122,18 +157,18 @@ void WebExtensionContextProxy::setStorageAccessLevel(bool allowedInContentScript
 
 void WebExtensionContextProxy::enumerateFramesAndNamespaceObjects(const Function<void(WebFrame&, WebExtensionAPINamespace&)>& function, DOMWrapperWorld& world)
 {
-    for (auto& frame : m_extensionContentFrames) {
-        auto* page = frame.page() ? frame.page()->corePage() : nullptr;
+    for (Ref frame : m_extensionContentFrames) {
+        RefPtr page = frame->page() ? frame->page()->corePage() : nullptr;
         if (!page)
             continue;
 
-        auto context = page->isServiceWorkerPage() ? frame.jsContextForServiceWorkerWorld(world) : frame.jsContextForWorld(world);
+        auto context = page->isServiceWorkerPage() ? frame->jsContextForServiceWorkerWorld(world) : frame->jsContextForWorld(world);
         auto globalObject = JSContextGetGlobalObject(context);
         auto namespaceObject = JSObjectGetProperty(context, globalObject, toJSString("browser").get(), nullptr);
         if (!namespaceObject || !JSValueIsObject(context, namespaceObject))
             continue;
 
-        auto* namespaceObjectImpl = toWebExtensionAPINamespace(context, namespaceObject);
+        RefPtr namespaceObjectImpl = toWebExtensionAPINamespace(context, namespaceObject);
         if (!namespaceObjectImpl)
             continue;
 

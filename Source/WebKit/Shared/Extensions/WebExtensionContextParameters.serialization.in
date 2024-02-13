@@ -36,6 +36,9 @@ struct WebKit::WebExtensionContextParameters {
     bool isSessionStorageAllowedInContentScripts;
 
     std::optional<WebCore::PageIdentifier> backgroundPageIdentifier;
+#if ENABLE(INSPECTOR_EXTENSIONS)
+    Vector<WebKit::WebExtensionContext::PageIdentifierTuple> inspectorBackgroundPageIdentifiers;
+#endif
     Vector<WebKit::WebExtensionContext::PageIdentifierTuple> popupPageIdentifiers;
     Vector<WebKit::WebExtensionContext::PageIdentifierTuple> tabPageIdentifiers;
 }

@@ -33,6 +33,7 @@
 #import "CocoaHelpers.h"
 #import "JSWebExtensionWrapper.h"
 #import "MessageSenderInlines.h"
+#import "WebExtensionTabIdentifier.h"
 
 #if ENABLE(WK_WEB_EXTENSIONS) && ENABLE(INSPECTOR_EXTENSIONS)
 
@@ -54,13 +55,12 @@ void WebExtensionAPIDevToolsInspectedWindow::reload(NSDictionary *options, NSStr
     // FIXME: <https://webkit.org/b/246485> Implement.
 }
 
-double WebExtensionAPIDevToolsInspectedWindow::tabId()
+double WebExtensionAPIDevToolsInspectedWindow::tabId(WebPage& page)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/devtools/inspectedWindow/tabId
 
-    // FIXME: <https://webkit.org/b/246485> Implement.
-
-    return -1;
+    auto result = extensionContext().tabIdentifier(page);
+    return toWebAPI(result ? result.value() : WebExtensionTabConstants::NoneIdentifier);
 }
 
 } // namespace WebKit

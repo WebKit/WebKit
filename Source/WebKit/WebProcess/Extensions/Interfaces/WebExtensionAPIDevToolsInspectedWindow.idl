@@ -31,6 +31,6 @@
     [RaisesException] void eval(DOMString expression, [Optional, NSDictionary] any options, [Optional, CallbackHandler] function callback);
     [RaisesException] void reload([Optional, NSDictionary] any options);
 
-    readonly attribute double tabId;
+    [NeedsPage] readonly attribute double tabId;
 
 };

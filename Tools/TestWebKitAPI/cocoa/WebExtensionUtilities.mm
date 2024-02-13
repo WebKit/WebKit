@@ -33,6 +33,7 @@
 
 #import "TestWebExtensionsDelegate.h"
 #import "WebExtensionUtilities.h"
+#import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKWebExtensionTabCreationOptions.h>
@@ -327,6 +328,7 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
         configuration._webExtensionController = extensionController;
         configuration.websiteDataStore = usingPrivateBrowsing ? WKWebsiteDataStore.nonPersistentDataStore : WKWebsiteDataStore.defaultDataStore;
         configuration.userContentController = userContentController(usingPrivateBrowsing);
+        configuration.preferences._developerExtrasEnabled = YES;
 
         _mainWebView = [[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration];
         _mainWebView.navigationDelegate = self;

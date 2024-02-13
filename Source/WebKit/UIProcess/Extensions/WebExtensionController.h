@@ -61,6 +61,10 @@ class WebProcessPool;
 class WebsiteDataStore;
 struct WebExtensionControllerParameters;
 
+#if ENABLE(INSPECTOR_EXTENSIONS)
+class WebInspectorUIProxy;
+#endif
+
 class WebExtensionController : public API::ObjectImpl<API::Object::Type::WebExtensionController>, public IPC::MessageReceiver {
     WTF_MAKE_NONCOPYABLE(WebExtensionController);
 
@@ -134,7 +138,11 @@ public:
 
     void handleContentRuleListNotification(WebPageProxyIdentifier, URL&, WebCore::ContentRuleListResults&);
 
-    // webRequest support
+#if ENABLE(INSPECTOR_EXTENSIONS)
+    void inspectorWillOpen(WebInspectorUIProxy&, WebPageProxy&);
+    void inspectorWillClose(WebInspectorUIProxy&, WebPageProxy&);
+#endif
+
     void resourceLoadDidSendRequest(WebPageProxyIdentifier, const ResourceLoadInfo&, const WebCore::ResourceRequest&);
     void resourceLoadDidPerformHTTPRedirection(WebPageProxyIdentifier, const ResourceLoadInfo&, const WebCore::ResourceResponse&, const WebCore::ResourceRequest&);
     void resourceLoadDidReceiveChallenge(WebPageProxyIdentifier, const ResourceLoadInfo&, const WebCore::AuthenticationChallenge&);

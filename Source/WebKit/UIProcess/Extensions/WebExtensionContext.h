@@ -69,6 +69,11 @@
 #include <wtf/WeakHashMap.h>
 #include <wtf/WeakPtr.h>
 
+#if ENABLE(INSPECTOR_EXTENSIONS)
+#include "APIInspectorExtension.h"
+#include "WebInspectorUIProxy.h"
+#endif
+
 OBJC_CLASS NSArray;
 OBJC_CLASS NSDate;
 OBJC_CLASS NSDictionary;
@@ -185,6 +190,11 @@ public:
 
     using UserContentControllerProxySet = WeakHashSet<WebUserContentControllerProxy>;
 
+#if ENABLE(INSPECTOR_EXTENSIONS)
+    using InspectorTabVector = Vector<std::pair<Ref<WebInspectorUIProxy>, RefPtr<WebExtensionTab>>>;
+    using TabIdentifierWebViewPair = std::pair<WebExtensionTabIdentifier, RetainPtr<WKWebView>>;
+#endif
+
     enum class EqualityOnly : bool { No, Yes };
     enum class WindowIsClosing : bool { No, Yes };
     enum class ReloadFromOrigin : bool { No, Yes };
@@ -220,6 +230,7 @@ public:
     enum class WebViewPurpose : uint8_t {
         Any,
         Background,
+        Inspector,
         Popup,
         Tab,
     };
@@ -360,6 +371,11 @@ public:
     void resourceLoadDidReceiveResponse(WebPageProxyIdentifier, const ResourceLoadInfo&, const WebCore::ResourceResponse&);
     void resourceLoadDidCompleteWithError(WebPageProxyIdentifier, const ResourceLoadInfo&, const WebCore::ResourceResponse&, const WebCore::ResourceError&);
 
+#if ENABLE(INSPECTOR_EXTENSIONS)
+    void inspectorWillOpen(WebInspectorUIProxy&, WebPageProxy&);
+    void inspectorWillClose(WebInspectorUIProxy&, WebPageProxy&);
+#endif
+
     WebExtensionAction& defaultAction();
     Ref<WebExtensionAction> getAction(WebExtensionWindow*);
     Ref<WebExtensionAction> getAction(WebExtensionTab*);
@@ -415,6 +431,9 @@ public:
     UserStyleSheetVector& dynamicallyInjectedUserStyleSheets() { return m_dynamicallyInjectedUserStyleSheets; };
 
     std::optional<WebCore::PageIdentifier> backgroundPageIdentifier() const;
+#if ENABLE(INSPECTOR_EXTENSIONS)
+    Vector<PageIdentifierTuple> inspectorBackgroundPageIdentifiers() const;
+#endif
     Vector<PageIdentifierTuple> popupPageIdentifiers() const;
     Vector<PageIdentifierTuple> tabPageIdentifiers() const;
 
@@ -494,6 +513,24 @@ private:
     void queueEventToFireAfterBackgroundContentLoads(CompletionHandler<void()>&&);
 
     void performTasksAfterBackgroundContentLoads();
+
+#if ENABLE(INSPECTOR_EXTENSIONS)
+    URL inspectorBackgroundPageURL() const;
+
+    InspectorTabVector openInspectors(Function<bool(WebExtensionTab&, WebInspectorUIProxy&)>&& = nullptr) const;
+    InspectorTabVector loadedInspectors() const;
+
+    bool isInspectorBackgroundPage(WKWebView *) const;
+
+    void loadInspectorBackgroundPagesDuringLoad();
+    void unloadInspectorBackgroundPages();
+
+    void loadInspectorBackgroundPagesForPrivateBrowsing();
+    void unloadInspectorBackgroundPagesForPrivateBrowsing();
+
+    void loadInspectorBackgroundPage(WebInspectorUIProxy&, WebExtensionTab&);
+    void unloadInspectorBackgroundPage(WebInspectorUIProxy&);
+#endif // ENABLE(INSPECTOR_EXTENSIONS)
 
     void addInjectedContent() { addInjectedContent(injectedContents()); }
     void addInjectedContent(const InjectedContentVector&);
@@ -773,6 +810,11 @@ private:
 
     RetainPtr<WKWebView> m_backgroundWebView;
     RetainPtr<_WKWebExtensionContextDelegate> m_delegate;
+
+#if ENABLE(INSPECTOR_EXTENSIONS)
+    WeakHashMap<WebInspectorUIProxy, TabIdentifierWebViewPair> m_inspectorBackgroundPageMap;
+    WeakHashMap<WebInspectorUIProxy, Ref<API::InspectorExtension>> m_inspectorExtensionMap;
+#endif
 
     HashMap<Ref<WebExtensionMatchPattern>, UserScriptVector> m_injectedScriptsPerPatternMap;
     HashMap<Ref<WebExtensionMatchPattern>, UserStyleSheetVector> m_injectedStyleSheetsPerPatternMap;

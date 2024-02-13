@@ -52,6 +52,10 @@
 #include <pal/text/TextEncoding.h>
 #include <wtf/SetForScope.h>
 
+#if ENABLE(INSPECTOR_EXTENSIONS)
+#include "WebExtensionController.h"
+#endif
+
 #if PLATFORM(GTK)
 #include "WebInspectorUIProxyClient.h"
 #endif
@@ -432,7 +436,7 @@ void WebInspectorUIProxy::createFrontendPage()
 
 void WebInspectorUIProxy::openLocalInspectorFrontend(bool canAttach, bool underTest)
 {
-    auto inspectedPage = this->inspectedPage();
+    RefPtr inspectedPage = this->inspectedPage();
     if (!inspectedPage)
         return;
 
@@ -447,7 +451,7 @@ void WebInspectorUIProxy::openLocalInspectorFrontend(bool canAttach, bool underT
     m_underTest = underTest;
     createFrontendPage();
 
-    auto inspectorPage = this->inspectorPage();
+    RefPtr inspectorPage = this->inspectorPage();
     ASSERT(inspectorPage);
     if (!inspectorPage)
         return;
@@ -485,7 +489,13 @@ void WebInspectorUIProxy::openLocalInspectorFrontend(bool canAttach, bool underT
         inspectorPage->send(Messages::WebInspectorUI::SetDockingUnavailable(!m_canAttach));
     }
 
-    // Notify WebKit client when a local inspector attaches so that it may install delegates prior to the _WKInspector loading its frontend.
+    // Notify clients when a local inspector attaches so that it may install delegates prior to the _WKInspector loading its frontend.
+
+#if ENABLE(INSPECTOR_EXTENSIONS)
+    if (RefPtr webExtensionController = inspectedPage->webExtensionController())
+        webExtensionController->inspectorWillOpen(*this, *inspectedPage);
+#endif
+
     inspectedPage->uiClient().didAttachLocalInspector(*inspectedPage, *this);
 
     // Bail out if the client closed the inspector from the delegate method.
@@ -535,9 +545,15 @@ void WebInspectorUIProxy::closeFrontendPageAndWindow()
     
     SetForScope reentrancyProtector(m_closing, true);
     
-    // Notify WebKit client when a local inspector closes so it can clear _WKInspectorDelegate and perform other cleanup.
-    if (auto inspectedPage = this->inspectedPage())
+    // Notify clients when a local inspector closes so it can clear _WKInspectorDelegate and perform other cleanup.
+    if (RefPtr inspectedPage = this->inspectedPage()) {
+#if ENABLE(INSPECTOR_EXTENSIONS)
+        if (RefPtr webExtensionController = inspectedPage->webExtensionController())
+            webExtensionController->inspectorWillClose(*this, *inspectedPage);
+#endif
+
         inspectedPage->uiClient().willCloseLocalInspector(*inspectedPage, *this);
+    }
 
     m_isVisible = false;
     m_isProfilingPage = false;

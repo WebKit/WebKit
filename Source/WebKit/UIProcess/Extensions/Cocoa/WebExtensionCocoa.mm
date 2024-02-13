@@ -97,6 +97,8 @@ static NSString * const backgroundPageTypeModuleValue = @"module";
 
 static NSString * const generatedBackgroundPageFilename = @"_generated_background_page.html";
 
+static NSString * const devtoolsPageManifestKey = @"devtools_page";
+
 static NSString * const contentScriptsManifestKey = @"content_scripts";
 static NSString * const contentScriptsMatchesManifestKey = @"matches";
 static NSString * const contentScriptsExcludeMatchesManifestKey = @"exclude_matches";
@@ -1299,6 +1301,32 @@ void WebExtension::populateBackgroundPropertiesIfNeeded()
     if (m_backgroundContentIsPersistent)
         recordError(createError(Error::InvalidBackgroundPersistence, WEB_UI_STRING("Invalid `persistent` manifest entry. A non-persistent background is required on iOS and iPadOS.", "WKWebExtensionErrorInvalidBackgroundPersistence description for iOS")));
 #endif
+}
+
+bool WebExtension::hasInspectorBackgroundPage()
+{
+    return !!inspectorBackgroundPagePath();
+}
+
+NSString *WebExtension::inspectorBackgroundPagePath()
+{
+    populateInspectorPropertiesIfNeeded();
+    return m_inspectorBackgroundPagePath.get();
+}
+
+void WebExtension::populateInspectorPropertiesIfNeeded()
+{
+    if (!manifestParsedSuccessfully())
+        return;
+
+    if (m_parsedManifestInspectorProperties)
+        return;
+
+    m_parsedManifestInspectorProperties = true;
+
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/devtools_page
+
+    m_inspectorBackgroundPagePath = objectForKey<NSString>(m_manifest, devtoolsPageManifestKey);
 }
 
 bool WebExtension::hasOptionsPage()

@@ -245,6 +245,9 @@ public:
     NSString *backgroundContentPath();
     NSString *generatedBackgroundContent();
 
+    bool hasInspectorBackgroundPage();
+    NSString *inspectorBackgroundPagePath();
+
     bool hasOptionsPage();
     bool hasOverrideNewTabPage();
 
@@ -295,6 +298,7 @@ private:
     void populateDisplayStringsIfNeeded();
     void populateActionPropertiesIfNeeded();
     void populateBackgroundPropertiesIfNeeded();
+    void populateInspectorPropertiesIfNeeded();
     void populateContentScriptPropertiesIfNeeded();
     void populatePermissionsPropertiesIfNeeded();
     void populatePagePropertiesIfNeeded();
@@ -350,6 +354,8 @@ private:
     RetainPtr<NSString> m_backgroundServiceWorkerPath;
     RetainPtr<NSString> m_generatedBackgroundContent;
 
+    RetainPtr<NSString> m_inspectorBackgroundPagePath;
+
     RetainPtr<NSString> m_optionsPagePath;
     RetainPtr<NSString> m_overrideNewTabPagePath;
 
@@ -360,6 +366,7 @@ private:
     bool m_parsedManifestContentSecurityPolicyStrings : 1 { false };
     bool m_parsedManifestActionProperties : 1 { false };
     bool m_parsedManifestBackgroundProperties : 1 { false };
+    bool m_parsedManifestInspectorProperties : 1 { false };
     bool m_parsedManifestContentScriptProperties : 1 { false };
     bool m_parsedManifestPermissionProperties : 1 { false };
     bool m_parsedManifestPageProperties : 1 { false };

@@ -49,7 +49,7 @@ using namespace WebCore;
 
 void WebExtensionControllerProxy::globalObjectIsAvailableForFrame(WebPage& page, WebFrame& frame, DOMWrapperWorld& world)
 {
-    auto extension = extensionContext(frame, world);
+    RefPtr extension = extensionContext(frame, world);
     bool isMainWorld = world.isNormal();
 
     if (!extension && isMainWorld) {
@@ -73,7 +73,13 @@ void WebExtensionControllerProxy::globalObjectIsAvailableForFrame(WebPage& page,
         extension->setContentScriptWorld(&world);
 
     auto forMainWorld = isMainWorld ? WebExtensionAPINamespace::ForMainWorld::Yes : WebExtensionAPINamespace::ForMainWorld::No;
-    // FIXME: <https://webkit.org/b/246485> Handle inspector pages by setting forMainWorld to No.
+
+#if ENABLE(INSPECTOR_EXTENSIONS)
+    if (extension->isInspectorBackgroundPage(page)) {
+        // Inspector background pages have a limited set of APIs (like content scripts).
+        forMainWorld = WebExtensionAPINamespace::ForMainWorld::No;
+    }
+#endif
 
     namespaceObject = toJS(context, WebExtensionAPINamespace::create(forMainWorld, *extension).ptr());
 
@@ -85,7 +91,7 @@ void WebExtensionControllerProxy::serviceWorkerGlobalObjectIsAvailableForFrame(W
 {
     RELEASE_ASSERT(world.isNormal());
 
-    auto extension = extensionContext(frame, world);
+    RefPtr extension = extensionContext(frame, world);
     if (!extension)
         return;
 

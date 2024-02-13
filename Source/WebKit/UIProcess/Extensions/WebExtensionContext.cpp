@@ -68,6 +68,9 @@ WebExtensionContextParameters WebExtensionContext::parameters() const
         inTestingMode(),
         isSessionStorageAllowedInContentScripts(),
         backgroundPageIdentifier(),
+#if ENABLE(INSPECTOR_EXTENSIONS)
+        inspectorBackgroundPageIdentifiers(),
+#endif
         popupPageIdentifiers(),
         tabPageIdentifiers()
     };

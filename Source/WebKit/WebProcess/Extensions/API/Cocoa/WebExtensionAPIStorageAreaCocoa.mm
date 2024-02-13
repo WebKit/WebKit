@@ -273,19 +273,19 @@ double WebExtensionAPIStorageArea::quotaBytesPerItem()
     return webExtensionStorageAreaSyncQuotaBytesPerItem;
 }
 
-NSUInteger WebExtensionAPIStorageArea::maxItems()
+double WebExtensionAPIStorageArea::maxItems()
 {
     ASSERT(m_type == WebExtensionStorageType::Sync);
     return webExtensionStorageAreaSyncMaximumItems;
 }
 
-NSUInteger WebExtensionAPIStorageArea::maxWriteOperationsPerHour()
+double WebExtensionAPIStorageArea::maxWriteOperationsPerHour()
 {
     ASSERT(m_type == WebExtensionStorageType::Sync);
     return webExtensionStorageAreaSyncMaximumWriteOperationsPerHour;
 }
 
-NSUInteger WebExtensionAPIStorageArea::maxWriteOperationsPerMinute()
+double WebExtensionAPIStorageArea::maxWriteOperationsPerMinute()
 {
     ASSERT(m_type == WebExtensionStorageType::Sync);
     return webExtensionStorageAreaSyncMaximumWriteOperationsPerMinute;

@@ -84,6 +84,11 @@
 #import <wtf/URLParser.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
+#if ENABLE(INSPECTOR_EXTENSIONS)
+#import "WebInspectorUIExtensionControllerProxy.h"
+#import "_WKInspectorInternal.h"
+#endif
+
 // This number was chosen arbitrarily based on testing with some popular extensions.
 static constexpr size_t maximumCachedPermissionResults = 256;
 
@@ -250,6 +255,10 @@ bool WebExtensionContext::load(WebExtensionController& controller, String storag
 
     moveLocalStorageIfNeeded(lastSeenBaseURL, [&] {
         loadBackgroundWebViewDuringLoad();
+
+#if ENABLE(INSPECTOR_EXTENSIONS)
+        loadInspectorBackgroundPagesDuringLoad();
+#endif
 
         loadRegisteredContentScripts();
 
@@ -514,11 +523,19 @@ void WebExtensionContext::setHasAccessInPrivateBrowsing(bool hasAccess)
 
         for (auto& controller : extensionController()->allPrivateUserContentControllers())
             addInjectedContent(controller);
+
+#if ENABLE(INSPECTOR_EXTENSIONS)
+        loadInspectorBackgroundPagesForPrivateBrowsing();
+#endif
     } else {
         for (auto& controller : extensionController()->allPrivateUserContentControllers()) {
             removeInjectedContent(controller);
             controller.removeContentRuleList(uniqueIdentifier());
         }
+
+#if ENABLE(INSPECTOR_EXTENSIONS)
+        unloadInspectorBackgroundPagesForPrivateBrowsing();
+#endif
     }
 }
 
@@ -2448,6 +2465,27 @@ std::optional<WebCore::PageIdentifier> WebExtensionContext::backgroundPageIdenti
     return m_backgroundWebView.get()._page->webPageID();
 }
 
+#if ENABLE(INSPECTOR_EXTENSIONS)
+Vector<WebExtensionContext::PageIdentifierTuple> WebExtensionContext::inspectorBackgroundPageIdentifiers() const
+{
+    Vector<PageIdentifierTuple> result;
+
+    for (auto entry : m_inspectorBackgroundPageMap) {
+        RefPtr tab = getTab(std::get<WebExtensionTabIdentifier>(entry.value));
+        RefPtr window = tab ? tab->window() : nullptr;
+
+        auto tabIdentifier = tab ? std::optional(tab->identifier()) : std::nullopt;
+        auto windowIdentifier = window ? std::optional(window->identifier()) : std::nullopt;
+
+        RetainPtr webView = std::get<RetainPtr<WKWebView>>(entry.value);
+
+        result.append({ webView.get()._page->webPageID(), tabIdentifier, windowIdentifier });
+    }
+
+    return result;
+}
+#endif // ENABLE(INSPECTOR_EXTENSIONS)
+
 Vector<WebExtensionContext::PageIdentifierTuple> WebExtensionContext::popupPageIdentifiers() const
 {
     Vector<PageIdentifierTuple> result;
@@ -2868,8 +2906,11 @@ void WebExtensionContext::queueEventToFireAfterBackgroundContentLoads(Completion
 
 bool WebExtensionContext::decidePolicyForNavigationAction(WKWebView *webView, WKNavigationAction *navigationAction)
 {
-    // FIXME: <https://webkit.org/b/246485> Handle inspector background pages in the assert.
+#if ENABLE(INSPECTOR_EXTENSIONS)
+    ASSERT(webView == m_backgroundWebView || isInspectorBackgroundPage(webView));
+#else
     ASSERT(webView == m_backgroundWebView);
+#endif
 
     NSURL *url = navigationAction.request.URL;
     if (!navigationAction.targetFrame.isMainFrame || isURLForThisExtension(url))
@@ -2909,10 +2950,175 @@ void WebExtensionContext::webViewWebContentProcessDidTerminate(WKWebView *webVie
         return;
     }
 
-    // FIXME: <https://webkit.org/b/246485> Handle inspector background pages too.
+#if ENABLE(INSPECTOR_EXTENSIONS)
+    if (isInspectorBackgroundPage(webView)) {
+        [webView loadRequest:[NSURLRequest requestWithURL:inspectorBackgroundPageURL()]];
+        return;
+    }
+#endif
 
     ASSERT_NOT_REACHED();
 }
+
+#if ENABLE(INSPECTOR_EXTENSIONS)
+URL WebExtensionContext::inspectorBackgroundPageURL() const
+{
+    if (!extension().hasInspectorBackgroundPage())
+        return { };
+    return { m_baseURL, extension().inspectorBackgroundPagePath() };
+}
+
+WebExtensionContext::InspectorTabVector WebExtensionContext::openInspectors(Function<bool(WebExtensionTab&, WebInspectorUIProxy&)>&& predicate) const
+{
+    InspectorTabVector result;
+
+    for (Ref tab : openTabs()) {
+        if (!tab->extensionHasAccess())
+            continue;
+
+        for (WKWebView *webView in tab->webViews()) {
+            Ref inspector = *webView._inspector->_inspector;
+            if (inspector->isConnected() && (!predicate || predicate(tab, inspector)))
+                result.append({ inspector, tab.ptr() });
+        }
+    }
+
+    return result;
+}
+
+WebExtensionContext::InspectorTabVector WebExtensionContext::loadedInspectors() const
+{
+    InspectorTabVector result;
+    for (auto entry : m_inspectorBackgroundPageMap)
+        result.append({ entry.key, getTab(std::get<WebExtensionTabIdentifier>(entry.value)) });
+    return result;
+}
+
+bool WebExtensionContext::isInspectorBackgroundPage(WKWebView *webView) const
+{
+    for (auto entry : m_inspectorBackgroundPageMap) {
+        if (webView == std::get<RetainPtr<WKWebView>>(entry.value))
+            return true;
+    }
+
+    return false;
+}
+
+void WebExtensionContext::loadInspectorBackgroundPagesDuringLoad()
+{
+    ASSERT(isLoaded());
+
+    if (!extension().hasInspectorBackgroundPage())
+        return;
+
+    for (auto [inspector, tab] : openInspectors())
+        loadInspectorBackgroundPage(inspector, *tab);
+}
+
+void WebExtensionContext::unloadInspectorBackgroundPages()
+{
+    if (!extension().hasInspectorBackgroundPage())
+        return;
+
+    for (auto [inspector, tab] : loadedInspectors())
+        unloadInspectorBackgroundPage(inspector);
+}
+
+void WebExtensionContext::loadInspectorBackgroundPagesForPrivateBrowsing()
+{
+    ASSERT(isLoaded());
+
+    if (!extension().hasInspectorBackgroundPage())
+        return;
+
+    auto predicate = [](WebExtensionTab& tab, WebInspectorUIProxy&) -> bool {
+        return tab.isPrivate();
+    };
+
+    for (auto [inspector, tab] : openInspectors(WTFMove(predicate)))
+        loadInspectorBackgroundPage(inspector, *tab);
+}
+
+void WebExtensionContext::unloadInspectorBackgroundPagesForPrivateBrowsing()
+{
+    if (!extension().hasInspectorBackgroundPage())
+        return;
+
+    for (auto [inspector, tab] : loadedInspectors()) {
+        if (!tab || !tab->isPrivate())
+            continue;
+
+        unloadInspectorBackgroundPage(inspector);
+    }
+}
+
+void WebExtensionContext::loadInspectorBackgroundPage(WebInspectorUIProxy& inspector, WebExtensionTab& tab)
+{
+    ASSERT(isLoaded());
+    ASSERT(extension().hasInspectorBackgroundPage());
+
+    inspector.extensionController()->registerExtension(uniqueIdentifier(), uniqueIdentifier(), extension().displayName(), [this, protectedThis = Ref { *this }, inspector = Ref { inspector }, tab = Ref { tab }](Expected<RefPtr<API::InspectorExtension>, Inspector::ExtensionError> result) {
+        if (!result) {
+            RELEASE_LOG_ERROR(Extensions, "Failed to register Inspector extension (error %{public}hhu)", result.error());
+            return;
+        }
+
+        auto *webView = [[WKWebView alloc] initWithFrame:CGRectZero configuration:webViewConfiguration(WebViewPurpose::Inspector)];
+
+        webView.UIDelegate = m_delegate.get();
+        webView.navigationDelegate = m_delegate.get();
+        webView.inspectable = m_inspectable;
+
+        m_inspectorBackgroundPageMap.set(inspector.get(), TabIdentifierWebViewPair { tab->identifier(), webView });
+        m_inspectorExtensionMap.set(inspector.get(), result.value().releaseNonNull());
+
+        RefPtr window = tab->window();
+        auto windowIdentifier = window ? std::optional(window->identifier()) : std::nullopt;
+
+        auto page = webView._page;
+        page->process().send(Messages::WebExtensionContextProxy::AddInspectorBackgroundPageIdentifier(page->webPageID(), tab->identifier(), windowIdentifier), identifier());
+
+        [webView loadRequest:[NSURLRequest requestWithURL:inspectorBackgroundPageURL()]];
+    });
+}
+
+void WebExtensionContext::unloadInspectorBackgroundPage(WebInspectorUIProxy& inspector)
+{
+    auto [tabIdentifier, inspectorWebView] = m_inspectorBackgroundPageMap.take(inspector);
+    m_inspectorExtensionMap.remove(inspector);
+
+    [inspectorWebView _close];
+
+    inspector.extensionController()->unregisterExtension(uniqueIdentifier(), [](Expected<void, Inspector::ExtensionError> result) {
+        if (!result)
+            RELEASE_LOG_ERROR(Extensions, "Failed to unregister Inspector extension (error %{public}hhu)", result.error());
+    });
+}
+
+void WebExtensionContext::inspectorWillOpen(WebInspectorUIProxy& inspector, WebPageProxy& inspectedPage)
+{
+    ASSERT(isLoaded());
+
+    if (!extension().hasInspectorBackgroundPage())
+        return;
+
+    RefPtr tab = getTab(inspectedPage.identifier());
+    if (!tab)
+        return;
+
+    loadInspectorBackgroundPage(inspector, *tab);
+}
+
+void WebExtensionContext::inspectorWillClose(WebInspectorUIProxy& inspector, WebPageProxy& inspectedPage)
+{
+    ASSERT(isLoaded());
+
+    if (!extension().hasInspectorBackgroundPage())
+        return;
+
+    unloadInspectorBackgroundPage(inspector);
+}
+#endif // ENABLE(INSPECTOR_EXTENSIONS)
 
 void WebExtensionContext::addInjectedContent(const InjectedContentVector& injectedContents)
 {

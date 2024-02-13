@@ -55,9 +55,9 @@ public:
 
     // Exposed only by storage.sync.
     double quotaBytesPerItem();
-    NSUInteger maxItems();
-    NSUInteger maxWriteOperationsPerHour();
-    NSUInteger maxWriteOperationsPerMinute();
+    double maxItems();
+    double maxWriteOperationsPerHour();
+    double maxWriteOperationsPerMinute();
 
     WebExtensionAPIEvent& onChanged();
 

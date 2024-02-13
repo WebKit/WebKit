@@ -85,15 +85,15 @@ bool WebExtensionController::load(WebExtensionContext& extensionContext, NSError
         return false;
     }
 
-    for (auto& processPool : m_processPools)
-        processPool.addMessageReceiver(Messages::WebExtensionContext::messageReceiverName(), extensionContext.identifier(), extensionContext);
+    for (Ref processPool : m_processPools)
+        processPool->addMessageReceiver(Messages::WebExtensionContext::messageReceiverName(), extensionContext.identifier(), extensionContext);
 
     auto scheme = extensionContext.baseURL().protocol().toString();
     m_registeredSchemeHandlers.ensure(scheme, [&]() {
-        auto handler = WebExtensionURLSchemeHandler::create(*this);
+        Ref handler = WebExtensionURLSchemeHandler::create(*this);
 
-        for (auto& page : m_pages)
-            page.setURLSchemeHandlerForScheme(handler.copyRef(), scheme);
+        for (Ref page : m_pages)
+            page->setURLSchemeHandlerForScheme(handler.copyRef(), scheme);
 
         return handler;
     });
@@ -106,8 +106,8 @@ bool WebExtensionController::load(WebExtensionContext& extensionContext, NSError
         m_extensionContexts.remove(extensionContext);
         m_extensionContextBaseURLMap.remove(extensionContext.baseURL().protocolHostAndPort());
 
-        for (auto& processPool : m_processPools)
-            processPool.removeMessageReceiver(Messages::WebExtensionContext::messageReceiverName(), extensionContext.identifier());
+        for (Ref processPool : m_processPools)
+            processPool->removeMessageReceiver(Messages::WebExtensionContext::messageReceiverName(), extensionContext.identifier());
 
         return false;
     }
@@ -137,8 +137,8 @@ bool WebExtensionController::unload(WebExtensionContext& extensionContext, NSErr
 
     sendToAllProcesses(Messages::WebExtensionControllerProxy::Unload(extensionContext.identifier()), m_identifier);
 
-    for (auto& processPool : m_processPools)
-        processPool.removeMessageReceiver(Messages::WebExtensionContext::messageReceiverName(), extensionContext.identifier());
+    for (Ref processPool : m_processPools)
+        processPool->removeMessageReceiver(Messages::WebExtensionContext::messageReceiverName(), extensionContext.identifier());
 
     if (!extensionContext.unload(outError))
         return false;
@@ -149,7 +149,7 @@ bool WebExtensionController::unload(WebExtensionContext& extensionContext, NSErr
 void WebExtensionController::unloadAll()
 {
     auto contextsCopy = m_extensionContexts;
-    for (auto& context : contextsCopy)
+    for (Ref context : contextsCopy)
         unload(context, nullptr);
 }
 
@@ -199,21 +199,21 @@ void WebExtensionController::addProcessPool(WebProcessPool& processPool)
 
     processPool.addMessageReceiver(Messages::WebExtensionController::messageReceiverName(), m_identifier, *this);
 
-    for (auto& context : m_extensionContexts)
+    for (Ref context : m_extensionContexts)
         processPool.addMessageReceiver(Messages::WebExtensionContext::messageReceiverName(), context->identifier(), context);
 }
 
 void WebExtensionController::removeProcessPool(WebProcessPool& processPool)
 {
     // Only remove the message receiver and process pool if no other pages use the same process pool.
-    for (auto& knownPage : m_pages) {
-        if (knownPage.process().processPool() == processPool)
+    for (Ref knownPage : m_pages) {
+        if (knownPage->process().processPool() == processPool)
             return;
     }
 
     processPool.removeMessageReceiver(Messages::WebExtensionController::messageReceiverName(), m_identifier);
 
-    for (auto& context : m_extensionContexts)
+    for (Ref context : m_extensionContexts)
         processPool.removeMessageReceiver(Messages::WebExtensionContext::messageReceiverName(), context->identifier());
 
     m_processPools.remove(processPool);
@@ -229,7 +229,7 @@ void WebExtensionController::addUserContentController(WebUserContentControllerPr
     if (!m_allUserContentControllers.add(userContentController))
         return;
 
-    for (auto& context : m_extensionContexts) {
+    for (Ref context : m_extensionContexts) {
         if (!context->hasAccessInPrivateBrowsing() && forPrivateBrowsing == ForPrivateBrowsing::Yes)
             continue;
 
@@ -240,12 +240,12 @@ void WebExtensionController::addUserContentController(WebUserContentControllerPr
 void WebExtensionController::removeUserContentController(WebUserContentControllerProxy& userContentController)
 {
     // Only remove the user content controller if no other pages use the same one.
-    for (auto& knownPage : m_pages) {
-        if (knownPage.userContentController() == userContentController)
+    for (Ref knownPage : m_pages) {
+        if (knownPage->userContentController() == userContentController)
             return;
     }
 
-    for (auto& context : m_extensionContexts)
+    for (Ref context : m_extensionContexts)
         context->removeInjectedContent(userContentController);
 
     m_allNonPrivateUserContentControllers.remove(userContentController);
@@ -278,8 +278,8 @@ void WebExtensionController::addWebsiteDataStore(WebsiteDataStore& dataStore)
 void WebExtensionController::removeWebsiteDataStore(WebsiteDataStore& dataStore)
 {
     // Only remove the data store if no other pages use the same one.
-    for (auto& knownPage : m_pages) {
-        if (knownPage.websiteDataStore() == dataStore)
+    for (Ref knownPage : m_pages) {
+        if (knownPage->websiteDataStore() == dataStore)
             return;
     }
 
@@ -294,15 +294,15 @@ void WebExtensionController::cookiesDidChange(API::HTTPCookieStore& cookieStore)
 {
     // FIXME: <https://webkit.org/b/267514> Add support for changeInfo.
 
-    for (auto& extensionContext : m_extensionContexts)
-        extensionContext->cookiesDidChange(cookieStore);
+    for (Ref context : m_extensionContexts)
+        context->cookiesDidChange(cookieStore);
 }
 
 RefPtr<WebExtensionContext> WebExtensionController::extensionContext(const WebExtension& extension) const
 {
-    for (auto& extensionContext : m_extensionContexts) {
-        if (extensionContext->extension() == extension)
-            return extensionContext.ptr();
+    for (Ref context : m_extensionContexts) {
+        if (context->extension() == extension)
+            return context.ptr();
     }
 
     return nullptr;
@@ -317,8 +317,8 @@ WebExtensionController::WebExtensionSet WebExtensionController::extensions() con
 {
     WebExtensionSet extensions;
     extensions.reserveInitialCapacity(m_extensionContexts.size());
-    for (auto& extensionContext : m_extensionContexts)
-        extensions.addVoid(extensionContext->extension());
+    for (Ref context : m_extensionContexts)
+        extensions.addVoid(context->extension());
     return extensions;
 }
 
@@ -327,7 +327,7 @@ void WebExtensionController::addItemsToContextMenu(WebPageProxy& page, const Con
 {
     [menu addItem:NSMenuItem.separatorItem];
 
-    for (auto& context : m_extensionContexts)
+    for (Ref context : m_extensionContexts)
         context->addItemsToContextMenu(page, contextData, menu);
 }
 #endif
@@ -336,25 +336,25 @@ void WebExtensionController::addItemsToContextMenu(WebPageProxy& page, const Con
 
 void WebExtensionController::didStartProvisionalLoadForFrame(WebPageProxyIdentifier pageID, WebExtensionFrameIdentifier frameID, WebExtensionFrameIdentifier parentFrameID, const URL& targetURL, WallTime timestamp)
 {
-    for (auto& context : m_extensionContexts)
+    for (Ref context : m_extensionContexts)
         context->didStartProvisionalLoadForFrame(pageID, frameID, parentFrameID, targetURL, timestamp);
 }
 
 void WebExtensionController::didCommitLoadForFrame(WebPageProxyIdentifier pageID, WebExtensionFrameIdentifier frameID, WebExtensionFrameIdentifier parentFrameID, const URL& frameURL, WallTime timestamp)
 {
-    for (auto& context : m_extensionContexts)
+    for (Ref context : m_extensionContexts)
         context->didCommitLoadForFrame(pageID, frameID, parentFrameID, frameURL, timestamp);
 }
 
 void WebExtensionController::didFinishLoadForFrame(WebPageProxyIdentifier pageID, WebExtensionFrameIdentifier frameID, WebExtensionFrameIdentifier parentFrameID, const URL& frameURL, WallTime timestamp)
 {
-    for (auto& context : m_extensionContexts)
+    for (Ref context : m_extensionContexts)
         context->didFinishLoadForFrame(pageID, frameID, parentFrameID, frameURL, timestamp);
 }
 
 void WebExtensionController::didFailLoadForFrame(WebPageProxyIdentifier pageID, WebExtensionFrameIdentifier frameID, WebExtensionFrameIdentifier parentFrameID, const URL& frameURL, WallTime timestamp)
 {
-    for (auto& context : m_extensionContexts)
+    for (Ref context : m_extensionContexts)
         context->didFailLoadForFrame(pageID, frameID, parentFrameID, frameURL, timestamp);
 }
 
@@ -366,7 +366,7 @@ void WebExtensionController::handleContentRuleListNotification(WebPageProxyIdent
 
     for (const auto& result : results.results) {
         auto contentRuleListIdentifier = result.first;
-        for (auto& context : m_extensionContexts) {
+        for (Ref context : m_extensionContexts) {
             if (context->uniqueIdentifier() != contentRuleListIdentifier)
                 continue;
 
@@ -392,8 +392,8 @@ void WebExtensionController::purgeOldMatchedRules()
     WallTime earliestDateToKeep = WallTime::now() - purgeMatchedRulesInterval;
 
     bool stillHaveRules = false;
-    for (auto& extensionContext : m_extensionContexts)
-        stillHaveRules |= extensionContext->purgeMatchedRulesFromBefore(earliestDateToKeep);
+    for (Ref context : m_extensionContexts)
+        stillHaveRules |= context->purgeMatchedRulesFromBefore(earliestDateToKeep);
 
     if (!stillHaveRules)
         m_purgeOldMatchedRulesTimer = nullptr;
@@ -403,33 +403,49 @@ void WebExtensionController::purgeOldMatchedRules()
 
 void WebExtensionController::resourceLoadDidSendRequest(WebPageProxyIdentifier pageID, const ResourceLoadInfo& loadInfo, const WebCore::ResourceRequest& request)
 {
-    for (auto& context : m_extensionContexts)
+    for (Ref context : m_extensionContexts)
         context->resourceLoadDidSendRequest(pageID, loadInfo, request);
 }
 
 void WebExtensionController::resourceLoadDidPerformHTTPRedirection(WebPageProxyIdentifier pageID, const ResourceLoadInfo& loadInfo, const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& request)
 {
-    for (auto& context : m_extensionContexts)
+    for (Ref context : m_extensionContexts)
         context->resourceLoadDidPerformHTTPRedirection(pageID, loadInfo, response, request);
 }
 
 void WebExtensionController::resourceLoadDidReceiveChallenge(WebPageProxyIdentifier pageID, const ResourceLoadInfo& loadInfo, const WebCore::AuthenticationChallenge& challenge)
 {
-    for (auto& context : m_extensionContexts)
+    for (Ref context : m_extensionContexts)
         context->resourceLoadDidReceiveChallenge(pageID, loadInfo, challenge);
 }
 
 void WebExtensionController::resourceLoadDidReceiveResponse(WebPageProxyIdentifier pageID, const ResourceLoadInfo& loadInfo, const WebCore::ResourceResponse& response)
 {
-    for (auto& context : m_extensionContexts)
+    for (Ref context : m_extensionContexts)
         context->resourceLoadDidReceiveResponse(pageID, loadInfo, response);
 }
 
 void WebExtensionController::resourceLoadDidCompleteWithError(WebPageProxyIdentifier pageID, const ResourceLoadInfo& loadInfo, const WebCore::ResourceResponse& response, const WebCore::ResourceError& error)
 {
-    for (auto& context : m_extensionContexts)
+    for (Ref context : m_extensionContexts)
         context->resourceLoadDidCompleteWithError(pageID, loadInfo, response, error);
 }
+
+// MARK: Inspector
+
+#if ENABLE(INSPECTOR_EXTENSIONS)
+void WebExtensionController::inspectorWillOpen(WebInspectorUIProxy& inspector, WebPageProxy& inspectedPage)
+{
+    for (Ref context : m_extensionContexts)
+        context->inspectorWillOpen(inspector, inspectedPage);
+}
+
+void WebExtensionController::inspectorWillClose(WebInspectorUIProxy& inspector, WebPageProxy& inspectedPage)
+{
+    for (Ref context : m_extensionContexts)
+        context->inspectorWillClose(inspector, inspectedPage);
+}
+#endif // ENABLE(INSPECTOR_EXTENSIONS)
 
 } // namespace WebKit
 
