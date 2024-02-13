@@ -1930,7 +1930,7 @@ webkit.org/b/187064 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-get
 
 webrtc/video-av1.html [ Skip ]
 
-webrtc/h265.html [ Pass Timeout ]
+webkit.org/b/269285 webrtc/h265.html [ Pass Timeout Failure ]
 
 # GStreamer's DTLS agent currently generates RSA certificates only. DTLS 1.2 is not supported yet (AFAIK).
 webrtc/datachannel/dtls10.html [ Failure ]
