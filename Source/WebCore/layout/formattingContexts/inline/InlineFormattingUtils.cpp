@@ -367,14 +367,42 @@ static inline bool endsWithSoftWrapOpportunity(const InlineTextItem& previousInl
     return TextUtil::mayBreakInBetween(previousInlineTextItem, nextInlineTextItem);
 }
 
-static inline bool isAtSoftWrapOpportunity(const InlineItem& previous, const InlineItem& next)
+static inline const ElementBox& nearestCommonAncestor(const Box& first, const Box& second, const ElementBox& rootBox)
+{
+    auto& firstParent = first.parent();
+    auto& secondParent = second.parent();
+    // Cover a few common cases first.
+    // 'some content'
+    if (&firstParent == &secondParent)
+        return firstParent;
+    // some<span>content</span>
+    if (&secondParent != &rootBox && &secondParent.parent() == &firstParent)
+        return firstParent;
+    // <span>some</span>content
+    if (&firstParent != &rootBox && &firstParent.parent() == &secondParent)
+        return secondParent;
+    // <span>some</span><span>content</span>
+    if (&firstParent != &rootBox && &secondParent != &rootBox && &firstParent.parent() == &secondParent.parent())
+        return firstParent.parent();
+
+    HashSet<const ElementBox*> descendantsSet;
+    for (auto* descendant = &firstParent; descendant != &rootBox; descendant = &descendant->parent())
+        descendantsSet.add(descendant);
+    for (auto* descendant = &secondParent; descendant != &rootBox; descendant = &descendant->parent()) {
+        if (!descendantsSet.add(descendant).isNewEntry)
+            return *descendant;
+    }
+    return rootBox;
+}
+
+bool InlineFormattingUtils::isAtSoftWrapOpportunity(const InlineItem& previous, const InlineItem& next) const
 {
     // FIXME: Transition no-wrapping logic from InlineContentBreaker to here where we compute the soft wrap opportunity indexes.
     // "is at" simple means that there's a soft wrap opportunity right after the [previous].
     // [text][ ][text][inline box start]... (<div>text content<span>..</div>)
     // soft wrap indexes: 0 and 1 definitely, 2 depends on the content after the [inline box start].
 
-    // https://drafts.csswg.org/css-text-3/#line-break-details
+    // https://www.w3.org/TR/css-text-4/#line-break-details
     // Figure out if the new incoming content puts the uncommitted content on a soft wrap opportunity.
     // e.g. [inline box start][prior_continuous_content][inline box end] (<span>prior_continuous_content</span>)
     // An incoming <img> box would enable us to commit the "<span>prior_continuous_content</span>" content
@@ -393,11 +421,13 @@ static inline bool isAtSoftWrapOpportunity(const InlineItem& previous, const Inl
     if (previous.isText() && next.isText()) {
         auto& previousInlineTextItem = downcast<InlineTextItem>(previous);
         auto& nextInlineTextItem = downcast<InlineTextItem>(next);
-        if (previousInlineTextItem.isWhitespace()) {
+        if (previousInlineTextItem.isWhitespace() || nextInlineTextItem.isWhitespace()) {
+            // For soft wrap opportunities created by characters that disappear at the line break (e.g. U+0020 SPACE), properties on the box directly
+            // containing that character control the line breaking at that opportunity.
             // "<nowrap> </nowrap>after"
-            return mayWrapPrevious;
-        }
-        if (nextInlineTextItem.isWhitespace()) {
+            if (previousInlineTextItem.isWhitespace())
+                return mayWrapPrevious;
+
             // "<span>before</span><nowrap> </nowrap>"
             if (!mayWrapNext)
                 return false;
@@ -406,13 +436,15 @@ static inline bool isAtSoftWrapOpportunity(const InlineItem& previous, const Inl
             return style.whiteSpaceCollapse() != WhiteSpaceCollapse::BreakSpaces && style.lineBreak() != LineBreak::AfterWhiteSpace;
         }
         if (previous.style().lineBreak() == LineBreak::Anywhere || next.style().lineBreak() == LineBreak::Anywhere) {
+            // which elements’ line-break, word-break, and overflow-wrap properties control the determination of soft wrap opportunities at such boundaries is undefined in this level.
             // There is a soft wrap opportunity around every typographic character unit, including around any punctuation character or preserved white spaces, or in the middle of words.
             return true;
         }
         // Both previous and next items are non-whitespace text.
-        // [text][text] : is a continuous content.
-        // [text-][text] : after [hyphen] position is a soft wrap opportunity.
-        return endsWithSoftWrapOpportunity(previousInlineTextItem, nextInlineTextItem);
+        // For soft wrap opportunities defined by the boundary between two characters, the white-space property on the nearest common ancestor of the two characters controls breaking.
+        if (!endsWithSoftWrapOpportunity(previousInlineTextItem, nextInlineTextItem))
+            return false;
+        return TextUtil::isWrappingAllowed(nearestCommonAncestor(previousInlineTextItem.layoutBox(), nextInlineTextItem.layoutBox(), formattingContext().root()).style());
     }
     if (previous.layoutBox().isListMarkerBox()) {
         auto& listMarkerBox = downcast<ElementBox>(previous.layoutBox());
@@ -432,7 +464,7 @@ static inline bool isAtSoftWrapOpportunity(const InlineItem& previous, const Inl
     return true;
 }
 
-size_t InlineFormattingUtils::nextWrapOpportunity(size_t startIndex, const InlineItemRange& layoutRange, const InlineItemList& inlineItemList)
+size_t InlineFormattingUtils::nextWrapOpportunity(size_t startIndex, const InlineItemRange& layoutRange, const InlineItemList& inlineItemList) const
 {
     // 1. Find the start candidate by skipping leading non-content items e.g "<span><span>start". Opportunity is after "<span><span>".
     // 2. Find the end candidate by skipping non-content items inbetween e.g. "<span><span>start</span>end". Opportunity is after "</span>".

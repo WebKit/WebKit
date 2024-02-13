@@ -62,7 +62,7 @@ public:
 
     InlineLayoutUnit inlineItemWidth(const InlineItem&, InlineLayoutUnit contentLogicalLeft, bool useFirstLineStyle) const;
 
-    static size_t nextWrapOpportunity(size_t startIndex, const InlineItemRange& layoutRange, const InlineItemList&);
+    size_t nextWrapOpportunity(size_t startIndex, const InlineItemRange& layoutRange, const InlineItemList&) const;
 
     static std::pair<InlineLayoutUnit, InlineLayoutUnit> textEmphasisForInlineBox(const Box&, const ElementBox& rootBox);
 
@@ -70,6 +70,7 @@ public:
 
 private:
     InlineLayoutUnit contentLeftAfterLastLine(const ConstraintsForInFlowContent&, std::optional<InlineLayoutUnit> lastLineLogicalBottom, const FloatingContext&) const;
+    bool isAtSoftWrapOpportunity(const InlineItem& previous, const InlineItem& next) const;
 
     const InlineLayoutState& layoutState() const;
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }

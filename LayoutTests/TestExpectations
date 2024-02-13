@@ -7439,6 +7439,8 @@ imported/w3c/web-platform-tests/css/css-ruby/ruby-base-different-size.html [ Ima
 imported/w3c/web-platform-tests/css/css-ruby/ruby-bidi-004.html [ ImageOnlyFailure ]
 # <rt> is not a block so should not respect ::first-letter (needs clarification)
 imported/blink/fast/ruby/ruby-first-letter.html [ ImageOnlyFailure ]
+# <rb> <rbc> inline boxes are not recognized as ruby base boxes.
+imported/w3c/web-platform-tests/css/css-ruby/ruby-line-breaking-003.html [ ImageOnlyFailure ]
 
 webkit.org/b/266537 [ Debug ] imported/w3c/web-platform-tests/css/css-ruby/empty-ruby-text-container-float.html [ Skip ]
 

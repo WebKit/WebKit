@@ -41,18 +41,6 @@ namespace Layout {
 // used decreases. So, we ignore this ideal number of lines requirement beyond this threshold.
 static const size_t maximumLinesToBalanceWithLineRequirement { 12 };
 
-static Vector<size_t> computeBreakOpportunities(const InlineItemList& inlineItemList, InlineItemRange range)
-{
-    Vector<size_t> breakOpportunities;
-    size_t currentIndex = range.startIndex();
-    while (currentIndex < range.endIndex()) {
-        currentIndex = InlineFormattingUtils::nextWrapOpportunity(currentIndex, range, inlineItemList);
-        breakOpportunities.append(currentIndex);
-    }
-    return breakOpportunities;
-}
-
-
 static float computeCost(InlineLayoutUnit candidateLineWidth, InlineLayoutUnit idealLineWidth)
 {
     auto difference = idealLineWidth - candidateLineWidth;
@@ -229,7 +217,7 @@ std::optional<Vector<LayoutUnit>> InlineContentBalancer::computeBalanceConstrain
 std::optional<Vector<LayoutUnit>> InlineContentBalancer::balanceRangeWithLineRequirement(InlineItemRange range, InlineLayoutUnit idealLineWidth, size_t numberOfLines, bool isFirstChunk)
 {
     // breakOpportunities holds the indices i such that a line break can occur before m_inlineItemList[i].
-    auto breakOpportunities = computeBreakOpportunities(m_inlineItemList, range);
+    auto breakOpportunities = computeBreakOpportunities(range);
 
     // We need a dummy break opportunity at the beginning for algorithmic base case purposes
     breakOpportunities.insert(0, range.startIndex());
@@ -330,7 +318,7 @@ std::optional<Vector<LayoutUnit>> InlineContentBalancer::balanceRangeWithLineReq
 std::optional<Vector<LayoutUnit>> InlineContentBalancer::balanceRangeWithNoLineRequirement(InlineItemRange range, InlineLayoutUnit idealLineWidth, bool isFirstChunk)
 {
     // breakOpportunities holds the indices i such that a line break can occur before m_inlineItemList[i].
-    auto breakOpportunities = computeBreakOpportunities(m_inlineItemList, range);
+    auto breakOpportunities = computeBreakOpportunities(range);
 
     // We need a dummy break opportunity at the beginning for algorithmic base case purposes
     breakOpportunities.insert(0, range.startIndex());
@@ -562,6 +550,17 @@ void InlineContentBalancer::SlidingWidth::advanceEndTo(size_t newEnd)
     ASSERT(m_end <= newEnd);
     while (m_end < newEnd)
         advanceEnd();
+}
+
+Vector<size_t> InlineContentBalancer::computeBreakOpportunities(InlineItemRange range) const
+{
+    Vector<size_t> breakOpportunities;
+    size_t currentIndex = range.startIndex();
+    while (currentIndex < range.endIndex()) {
+        currentIndex = m_inlineFormattingContext.formattingUtils().nextWrapOpportunity(currentIndex, range, m_inlineItemList);
+        breakOpportunities.append(currentIndex);
+    }
+    return breakOpportunities;
 }
 
 }
