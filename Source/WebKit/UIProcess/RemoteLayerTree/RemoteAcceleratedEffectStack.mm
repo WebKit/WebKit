@@ -50,23 +50,17 @@ void RemoteAcceleratedEffectStack::setEffects(AcceleratedEffects&& effects)
 {
     AcceleratedEffectStack::setEffects(WTFMove(effects));
 
-    bool affectsFilter = false;
     bool affectsOpacity = false;
     bool affectsTransform = false;
 
-    for (auto& effect : m_backdropLayerEffects.isEmpty() ? m_primaryLayerEffects : m_backdropLayerEffects) {
+    for (auto& effect : m_primaryLayerEffects) {
         auto& properties = effect->animatedProperties();
-        affectsFilter = affectsFilter || properties.containsAny({ AcceleratedEffectProperty::Filter, AcceleratedEffectProperty::BackdropFilter });
         affectsOpacity = affectsOpacity || properties.contains(AcceleratedEffectProperty::Opacity);
         affectsTransform = affectsTransform || properties.containsAny(transformRelatedAcceleratedProperties);
-        if (affectsFilter && affectsOpacity && affectsTransform)
+        if (affectsOpacity && affectsTransform)
             break;
     }
 
-    ASSERT(affectsFilter || affectsOpacity || affectsTransform);
-
-    if (affectsFilter)
-        m_affectedLayerProperties.add(LayerProperty::Filter);
     if (affectsOpacity)
         m_affectedLayerProperties.add(LayerProperty::Opacity);
     if (affectsTransform)
@@ -74,68 +68,19 @@ void RemoteAcceleratedEffectStack::setEffects(AcceleratedEffects&& effects)
 }
 
 #if PLATFORM(MAC)
-const WebCore::FilterOperations* RemoteAcceleratedEffectStack::longestFilterList() const
-{
-    if (!m_affectedLayerProperties.contains(LayerProperty::Filter))
-        return nullptr;
-
-    auto isBackdrop = !m_backdropLayerEffects.isEmpty();
-    auto filterProperty = isBackdrop ? AcceleratedEffectProperty::BackdropFilter : AcceleratedEffectProperty::Filter;
-    auto& effects = isBackdrop ? m_backdropLayerEffects : m_primaryLayerEffects;
-
-    const WebCore::FilterOperations* longestFilterList = nullptr;
-    for (auto& effect : effects) {
-        if (!effect->animatedProperties().contains(filterProperty))
-            continue;
-        for (auto& keyframe : effect->keyframes()) {
-            if (!keyframe.animatedProperties().contains(filterProperty))
-                continue;
-            auto& filter = isBackdrop ? keyframe.values().backdropFilter : keyframe.values().filter;
-            if (!longestFilterList || longestFilterList->size() < filter.size())
-                longestFilterList = &filter;
-        }
-    }
-
-    if (longestFilterList) {
-        auto& baseFilter = isBackdrop ? m_baseValues.backdropFilter : m_baseValues.filter;
-        if (longestFilterList->size() < baseFilter.size())
-            longestFilterList = &baseFilter;
-    }
-
-    return longestFilterList && !longestFilterList->isEmpty() ? longestFilterList : nullptr;
-}
-
 void RemoteAcceleratedEffectStack::initEffectsFromMainThread(PlatformLayer *layer, MonotonicTime now)
 {
-    ASSERT(m_filterPresentationModifiers.isEmpty());
     ASSERT(!m_opacityPresentationModifier);
     ASSERT(!m_transformPresentationModifier);
     ASSERT(!m_presentationModifierGroup);
 
+    if (!m_affectedLayerProperties.containsAny({ LayerProperty::Opacity, LayerProperty::Transform }))
+        return;
+
     auto computedValues = computeValues(now);
 
-    auto* canonicalFilters = longestFilterList();
-
-    auto numberOfPresentationModifiers = [&]() {
-        size_t count = 0;
-        if (m_affectedLayerProperties.contains(LayerProperty::Filter)) {
-            ASSERT(canonicalFilters);
-            count += PlatformCAFilters::presentationModifierCount(*canonicalFilters);
-        }
-        if (m_affectedLayerProperties.contains(LayerProperty::Opacity))
-            count++;
-        if (m_affectedLayerProperties.contains(LayerProperty::Transform))
-            count++;
-        return count;
-    }();
-
+    auto numberOfPresentationModifiers = m_affectedLayerProperties.containsAll({ LayerProperty::Opacity, LayerProperty::Transform }) ? 2 : 1;
     m_presentationModifierGroup = [CAPresentationModifierGroup groupWithCapacity:numberOfPresentationModifiers];
-
-    if (m_affectedLayerProperties.contains(LayerProperty::Filter)) {
-        PlatformCAFilters::presentationModifiers(computedValues.filter, longestFilterList(), m_filterPresentationModifiers, m_presentationModifierGroup);
-        for (auto& filterPresentationModifier : m_filterPresentationModifiers)
-            [layer addPresentationModifier:filterPresentationModifier.second.get()];
-    }
 
     if (m_affectedLayerProperties.contains(LayerProperty::Opacity)) {
         auto *opacity = @(computedValues.opacity);
@@ -155,12 +100,13 @@ void RemoteAcceleratedEffectStack::initEffectsFromMainThread(PlatformLayer *laye
 
 void RemoteAcceleratedEffectStack::applyEffectsFromScrollingThread(MonotonicTime now) const
 {
+    if (!m_affectedLayerProperties.containsAny({ LayerProperty::Opacity, LayerProperty::Transform }))
+        return;
+
+    ASSERT(m_opacityPresentationModifier || m_transformPresentationModifier);
     ASSERT(m_presentationModifierGroup);
 
     auto computedValues = computeValues(now);
-
-    if (!m_filterPresentationModifiers.isEmpty())
-        PlatformCAFilters::updatePresentationModifiers(computedValues.filter, m_filterPresentationModifiers);
 
     if (m_opacityPresentationModifier) {
         auto *opacity = @(computedValues.opacity);
@@ -179,10 +125,10 @@ void RemoteAcceleratedEffectStack::applyEffectsFromScrollingThread(MonotonicTime
 
 void RemoteAcceleratedEffectStack::applyEffectsFromMainThread(PlatformLayer *layer, MonotonicTime now) const
 {
-    auto computedValues = computeValues(now);
+    if (!m_affectedLayerProperties.containsAny({ LayerProperty::Opacity, LayerProperty::Transform }))
+        return;
 
-    if (m_affectedLayerProperties.contains(LayerProperty::Filter))
-        PlatformCAFilters::setFiltersOnLayer(layer, computedValues.filter);
+    auto computedValues = computeValues(now);
 
     if (m_affectedLayerProperties.contains(LayerProperty::Opacity))
         [layer setOpacity:computedValues.opacity];
@@ -197,17 +143,20 @@ AcceleratedEffectValues RemoteAcceleratedEffectStack::computeValues(MonotonicTim
 {
     auto values = m_baseValues;
     auto currentTime = now.secondsSinceEpoch() - m_acceleratedTimelineTimeOrigin;
-    for (auto& effect : m_backdropLayerEffects.isEmpty() ? m_primaryLayerEffects : m_backdropLayerEffects)
+    for (auto& effect : m_primaryLayerEffects)
         effect->apply(currentTime, values, m_bounds);
     return values;
 }
 
 void RemoteAcceleratedEffectStack::clear(PlatformLayer *layer)
 {
-    ASSERT(m_presentationModifierGroup);
+    if (!m_presentationModifierGroup) {
+        ASSERT(!m_opacityPresentationModifier && !m_transformPresentationModifier);
+        return;
+    }
 
-    for (auto& filterPresentationModifier : m_filterPresentationModifiers)
-        [layer removePresentationModifier:filterPresentationModifier.second.get()];
+    ASSERT(m_opacityPresentationModifier || m_transformPresentationModifier);
+
     if (m_opacityPresentationModifier)
         [layer removePresentationModifier:m_opacityPresentationModifier.get()];
     if (m_transformPresentationModifier)
@@ -215,7 +164,6 @@ void RemoteAcceleratedEffectStack::clear(PlatformLayer *layer)
 
     [m_presentationModifierGroup flushWithTransaction];
 
-    m_filterPresentationModifiers.clear();
     m_opacityPresentationModifier = nil;
     m_transformPresentationModifier = nil;
     m_presentationModifierGroup = nil;
