@@ -1699,7 +1699,7 @@ void HTMLInputElement::didChangeForm()
 
 Node::InsertedIntoAncestorResult HTMLInputElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    HTMLTextFormControlElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
+    auto result = HTMLTextFormControlElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
 #if ENABLE(DATALIST_ELEMENT)
     resetListAttributeTargetObserver();
 #endif
@@ -1709,6 +1709,8 @@ Node::InsertedIntoAncestorResult HTMLInputElement::insertedIntoAncestor(Insertio
         document().addElementWithPendingUserAgentShadowTreeUpdate(*this);
         m_hasPendingUserAgentShadowTreeUpdate = true;
     }
+    if (!insertionType.connectedToDocument)
+        return result;
     return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
 }
 
