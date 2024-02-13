@@ -420,6 +420,28 @@ void PDFPluginBase::receivedNonLinearizedPDFSentinel()
 
 #endif // HAVE(INCREMENTAL_PDF_APIS)
 
+void PDFPluginBase::performSpotlightSearch(const String& query)
+{
+    if (!m_frame || !m_frame->page())
+        return;
+
+    if (!query || !query.trim(isASCIIWhitespace) || query.utf8().isNull())
+        return;
+
+    m_frame->protectedPage()->send(Messages::WebPageProxy::SearchWithSpotlight(query));
+}
+
+void PDFPluginBase::performWebSearch(const String& query)
+{
+    if (!m_frame || !m_frame->page())
+        return;
+
+    if (!query)
+        return;
+
+    m_frame->protectedPage()->send(Messages::WebPageProxy::SearchTheWeb(query));
+}
+
 void PDFPluginBase::addArchiveResource()
 {
     // FIXME: It's a hack to force add a resource to DocumentLoader. PDF documents should just be fetched as CachedResources.

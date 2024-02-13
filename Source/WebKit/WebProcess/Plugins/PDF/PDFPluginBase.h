@@ -149,6 +149,8 @@ public:
     virtual bool findString(const String& target, WebCore::FindOptions, unsigned maxMatchCount) = 0;
 
     virtual bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&) = 0;
+    void performSpotlightSearch(const String& query);
+    void performWebSearch(const String& query);
     virtual std::pair<String, PDFSelection *> lookupTextAtLocation(const WebCore::FloatPoint&, WebHitTestResultData&) const = 0;
 
     virtual id accessibilityHitTest(const WebCore::IntPoint&) const = 0;

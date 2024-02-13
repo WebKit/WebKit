@@ -99,8 +99,6 @@ public:
     void clickedLink(NSURL *);
 
     void showDefinitionForAttributedString(NSAttributedString *, CGPoint);
-    void performWebSearch(NSString *);
-    void performSpotlightSearch(NSString *);
 
     CGRect pluginBoundsForAnnotation(RetainPtr<PDFAnnotation>&) const final;
     void focusNextAnnotation() final;

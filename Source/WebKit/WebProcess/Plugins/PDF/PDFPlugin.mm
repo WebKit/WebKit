@@ -433,12 +433,12 @@ static WebCore::Cursor::Type toWebCoreCursorType(PDFLayerControllerCursorType cu
 
 - (void)performWebSearch:(NSString *)string
 {
-    _pdfPlugin->performWebSearch(string);
+    _pdfPlugin->performWebSearch({ string });
 }
 
 - (void)performSpotlightSearch:(NSString *)string
 {
-    _pdfPlugin->performSpotlightSearch(string);
+    _pdfPlugin->performSpotlightSearch({ string });
 }
 
 - (void)openWithNativeApplication
@@ -1538,20 +1538,6 @@ CGSize PDFPlugin::contentSizeRespectingZoom() const
 CGFloat PDFPlugin::scaleFactor() const
 {
     return [m_pdfLayerController contentScaleFactor];
-}
-
-void PDFPlugin::performWebSearch(NSString *string)
-{
-    if (!m_frame || !m_frame->page())
-        return;
-    m_frame->page()->send(Messages::WebPageProxy::SearchTheWeb(string));
-}
-
-void PDFPlugin::performSpotlightSearch(NSString *string)
-{
-    if (!m_frame || !m_frame->page())
-        return;
-    m_frame->page()->send(Messages::WebPageProxy::SearchWithSpotlight(string));
 }
 
 bool PDFPlugin::handleWheelEvent(const WebWheelEvent& event)
