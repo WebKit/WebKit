@@ -27,10 +27,13 @@
 #include "EventSenderProxy.h"
 
 #include "EventSenderProxyClientLibWPE.h"
-#include "EventSenderProxyClientWPE.h"
 #include "TestController.h"
 #include <WebCore/NotImplemented.h>
 #include <wtf/MonotonicTime.h>
+
+#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
+#include "EventSenderProxyClientWPE.h"
+#endif
 
 namespace WTR {
 

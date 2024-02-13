@@ -27,11 +27,14 @@
 #include "PlatformWebView.h"
 
 #include "PlatformWebViewClientLibWPE.h"
-#include "PlatformWebViewClientWPE.h"
 #include "TestController.h"
 #include <cstdio>
 #include <wtf/RunLoop.h>
 #include <wtf/text/WTFString.h>
+
+#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
+#include "PlatformWebViewClientWPE.h"
+#endif
 
 namespace WTR {
 
