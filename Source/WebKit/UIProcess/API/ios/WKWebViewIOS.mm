@@ -1232,8 +1232,8 @@ static void configureScrollViewWithOverlayRegionsIDs(WKBaseScrollView* scrollVie
         overlayRegionRects.add(WebCore::enclosingIntRect(snappedRect));
     }
 
-    [scrollView _updateOverlayRegionRects:overlayRegionRects];
     [scrollView _updateOverlayRegionsBehavior:true];
+    [scrollView _updateOverlayRegionRects:overlayRegionRects];
 }
 
 - (bool)_scrollViewCanHaveOverlayRegions:(WKBaseScrollView*)scrollView
