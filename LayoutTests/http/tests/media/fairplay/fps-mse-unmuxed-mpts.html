@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>fps-mse-unmuxed-same-key</title>
+    <script src=../../../media-resources/video-test.js></script>
+    <script src=support.js></script>
+    <script src="eme2016.js"></script>
+    <script>
+    window.addEventListener('load', async event => {
+        startTest().then(endTest).catch(failTest);
+    });
+
+    async function startTest() {
+        let video = document.querySelector('video');
+        let keys = await startEME({video: video, setMediaKeys: true, capabilities: [{
+            initDataTypes: ['mpts'],
+            audioCapabilities: [{ contentType: 'audio/mp4', robustness: '' }],
+            videoCapabilities: [{ contentType: 'video/mp4', robustness: '' }],
+            distinctiveIdentifier: 'not-allowed',
+            persistentState: 'not-allowed',
+            sessionTypes: ['temporary'],
+        }]});
+
+        let mediaSource = new MediaSource;
+        video.srcObject = mediaSource;
+        consoleWrite('Created mediaSource');
+        await waitFor(mediaSource, 'sourceopen');
+
+        consoleWrite('-');
+        consoleWrite('Appending Encrypted Video Payload');
+
+        let {sourceBuffer: sourceBuffer, session: session} = await createBufferAppendAndWaitForEncrypted(video, mediaSource, keys, 'video/mp4', 'content/elementary-stream-video-keyid-1.ts');
+
+        consoleWrite('-');
+        consoleWrite('Playing video');
+
+        mediaSource.duration = sourceBuffer.buffered.end(0);
+        video.currentTime = sourceBuffer.buffered.start(0);
+        await waitFor(video, 'seeked');
+
+        await shouldResolve(video.play());
+    }
+    </script>
+</head>
+<body>
+    <video controls width="480"></video>
+</body>
+</html>

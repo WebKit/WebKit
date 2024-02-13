@@ -299,6 +299,13 @@ void SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataFo
 
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
     auto keyIDs = CDMPrivateFairPlayStreaming::extractKeyIDsSinf(*m_initData);
+    AtomString initDataType = CDMPrivateFairPlayStreaming::sinfName();
+#if HAVE(FAIRPLAYSTREAMING_MTPS_INITDATA)
+    if (!keyIDs) {
+        keyIDs = CDMPrivateFairPlayStreaming::extractKeyIDsMpts(*m_initData);
+        initDataType = CDMPrivateFairPlayStreaming::mptsName();
+    }
+#endif
     if (!keyIDs)
         return;
 
@@ -320,7 +327,7 @@ void SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataFo
     }
 
     m_keyIDs = WTFMove(keyIDs.value());
-    player->initializationDataEncountered("sinf"_s, m_initData->tryCreateArrayBuffer());
+    player->initializationDataEncountered(initDataType, m_initData->tryCreateArrayBuffer());
     player->needsVideoLayerChanged();
 
     m_waitingForKey = true;
