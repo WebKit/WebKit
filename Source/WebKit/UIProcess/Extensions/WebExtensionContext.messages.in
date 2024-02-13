@@ -66,6 +66,11 @@ messages -> WebExtensionContext {
     DeclarativeNetRequestGetSessionRules() -> (std::optional<String> rulesJSON, std::optional<String> error);
     DeclarativeNetRequestUpdateSessionRules(std::optional<String> rulesToAddJSON, std::optional<Vector<double>> ruleIdsToRemove) -> (std::optional<String> error);
 
+#if ENABLE(INSPECTOR_EXTENSIONS)
+    // DevTools APIs
+    DevToolsPanelsCreate(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, String title, String iconPath, String pagePath) -> (Expected<Inspector::ExtensionTabID, String> result);
+#endif
+
     // Event APIs
     AddListener(WebKit::WebPageProxyIdentifier identifier, WebKit::WebExtensionEventListenerType type, WebKit::WebExtensionContentWorldType contentWorldType);
     RemoveListener(WebKit::WebPageProxyIdentifier identifier, WebKit::WebExtensionEventListenerType type, WebKit::WebExtensionContentWorldType contentWorldType, size_t removedCount);

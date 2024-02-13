@@ -42,6 +42,8 @@ messages -> WebExtensionContextProxy {
 #if ENABLE(INSPECTOR_EXTENSIONS)
     // DevTools
     AddInspectorBackgroundPageIdentifier(WebCore::PageIdentifier pageID, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier, std::optional<WebKit::WebExtensionWindowIdentifier> windowIdentifier)
+    DispatchDevToolsExtensionPanelShownEvent(Inspector::ExtensionTabID identifier, WebCore::FrameIdentifier frameIdentifier)
+    DispatchDevToolsExtensionPanelHiddenEvent(Inspector::ExtensionTabID identifier)
 #endif
 
     // Extension

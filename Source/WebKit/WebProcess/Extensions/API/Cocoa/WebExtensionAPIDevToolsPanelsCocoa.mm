@@ -30,22 +30,41 @@
 #import "config.h"
 #import "WebExtensionAPIDevToolsPanels.h"
 
+#if ENABLE(WK_WEB_EXTENSIONS) && ENABLE(INSPECTOR_EXTENSIONS)
+
 #import "CocoaHelpers.h"
+#import "InspectorExtensionTypes.h"
 #import "JSWebExtensionWrapper.h"
 #import "MessageSenderInlines.h"
 #import "WebExtensionAPIEvent.h"
-
-#if ENABLE(WK_WEB_EXTENSIONS) && ENABLE(INSPECTOR_EXTENSIONS)
+#import "WebExtensionContextMessages.h"
+#import "WebProcess.h"
 
 namespace WebKit {
 
-void WebExtensionAPIDevToolsPanels::createTab(NSString *title, NSString *iconPath, NSString *pagePath, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+RefPtr<WebExtensionAPIDevToolsExtensionPanel> WebExtensionAPIDevToolsPanels::extensionPanel(Inspector::ExtensionTabID identifier) const
+{
+    return m_extensionPanels.get(identifier);
+}
+
+void WebExtensionAPIDevToolsPanels::createPanel(WebPage& page, NSString *title, NSString *iconPath, NSString *pagePath, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/devtools/panels/create
 
-    // FIXME: <https://webkit.org/b/246485> Implement.
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::DevToolsPanelsCreate(page.webPageProxyIdentifier(), title, iconPath, pagePath), [this, protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<Inspector::ExtensionTabID, String> result) mutable {
+        if (!result) {
+            callback->reportError(result.error());
+            return;
+        }
 
-    callback->call();
+        Ref extensionPanel = WebExtensionAPIDevToolsExtensionPanel::create(forMainWorld(), runtime(), extensionContext());
+        m_extensionPanels.set(result.value(), extensionPanel);
+
+        auto globalContext = callback->globalContext();
+        auto *panelValue = toJSValue(globalContext, toJS(globalContext, extensionPanel.ptr()));
+
+        callback->call(panelValue);
+    }, extensionContext().identifier());
 }
 
 NSString *WebExtensionAPIDevToolsPanels::themeName()

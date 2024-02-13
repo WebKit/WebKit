@@ -2611,7 +2611,7 @@ WKWebViewConfiguration *WebExtensionContext::webViewConfiguration(WebViewPurpose
         configuration._webExtensionController = nil;
     }
 
-    if (purpose == WebViewPurpose::Background) {
+    if (purpose == WebViewPurpose::Background || purpose == WebViewPurpose::Inspector) {
         // FIXME: <https://webkit.org/b/263286> Consider allowing the background page to throttle or be suspended.
         auto *preferences = configuration.preferences;
         preferences._hiddenPageDOMTimerThrottlingEnabled = NO;
@@ -2978,7 +2978,7 @@ WebExtensionContext::InspectorTabVector WebExtensionContext::openInspectors(Func
 
         for (WKWebView *webView in tab->webViews()) {
             Ref inspector = *webView._inspector->_inspector;
-            if (inspector->isConnected() && (!predicate || predicate(tab, inspector)))
+            if (inspector->isVisible() && (!predicate || predicate(tab, inspector)))
                 result.append({ inspector, tab.ptr() });
         }
     }
@@ -2991,6 +2991,57 @@ WebExtensionContext::InspectorTabVector WebExtensionContext::loadedInspectors() 
     InspectorTabVector result;
     for (auto entry : m_inspectorBackgroundPageMap)
         result.append({ entry.key, getTab(std::get<WebExtensionTabIdentifier>(entry.value)) });
+    return result;
+}
+
+RefPtr<API::InspectorExtension> WebExtensionContext::inspectorExtension(WebPageProxyIdentifier webPageProxyIdentifier) const
+{
+    RefPtr<WebInspectorUIProxy> foundInspector;
+
+    for (auto entry : m_inspectorBackgroundPageMap) {
+        auto *webView = std::get<RetainPtr<WKWebView>>(entry.value).get();
+        if (webView._page->identifier() == webPageProxyIdentifier)
+            foundInspector = &entry.key;
+    }
+
+    if (!foundInspector) {
+        for (auto [inspector, tab] : openInspectors()) {
+            if (inspector->inspectorPage()->identifier() == webPageProxyIdentifier)
+                foundInspector = inspector.ptr();
+        }
+    }
+
+    if (!foundInspector)
+        return nullptr;
+
+    return m_inspectorExtensionMap.get(*foundInspector);
+}
+
+RefPtr<WebInspectorUIProxy> WebExtensionContext::inspector(const API::InspectorExtension& inspectorExtension) const
+{
+    for (auto entry : m_inspectorExtensionMap) {
+        if (entry.value.ptr() == &inspectorExtension)
+            return &entry.key;
+    }
+
+    return nullptr;
+}
+
+HashSet<Ref<WebProcessProxy>> WebExtensionContext::processes(const API::InspectorExtension& inspectorExtension) const
+{
+    HashSet<Ref<WebProcessProxy>> result;
+
+    RefPtr inspectorProxy = inspector(inspectorExtension);
+    if (!inspectorProxy)
+        return result;
+
+    ASSERT(m_inspectorBackgroundPageMap.contains(*inspectorProxy));
+
+    auto [tabIdentifier, webView] = m_inspectorBackgroundPageMap.get(*inspectorProxy);
+    ASSERT(webView);
+
+    result.add(webView->_page->process());
+
     return result;
 }
 
@@ -3057,26 +3108,76 @@ void WebExtensionContext::loadInspectorBackgroundPage(WebInspectorUIProxy& inspe
     ASSERT(isLoaded());
     ASSERT(extension().hasInspectorBackgroundPage());
 
+    ASSERT(!m_inspectorBackgroundPageMap.contains(inspector));
+    if (m_inspectorBackgroundPageMap.contains(inspector))
+        return;
+
+    class InspectorExtensionClient : public API::InspectorExtensionClient {
+        WTF_MAKE_FAST_ALLOCATED;
+
+    public:
+        explicit InspectorExtensionClient(API::InspectorExtension& inspectorExtension, WebExtensionContext& extensionContext)
+            : m_inspectorExtension(&inspectorExtension)
+            , m_extensionContext(extensionContext)
+        {
+        }
+
+    private:
+        void didShowExtensionTab(const Inspector::ExtensionTabID& identifier, WebCore::FrameIdentifier frameIdentifier) override
+        {
+            if (RefPtr extensionContext = m_extensionContext.get())
+                extensionContext->didShowInspectorExtensionPanel(*m_inspectorExtension, identifier, frameIdentifier);
+        }
+
+        void didHideExtensionTab(const Inspector::ExtensionTabID& identifier) override
+        {
+            if (RefPtr extensionContext = m_extensionContext.get())
+                extensionContext->didHideInspectorExtensionPanel(*m_inspectorExtension, identifier);
+        }
+
+        NakedPtr<API::InspectorExtension> m_inspectorExtension;
+        WeakPtr<WebExtensionContext> m_extensionContext;
+    };
+
     inspector.extensionController()->registerExtension(uniqueIdentifier(), uniqueIdentifier(), extension().displayName(), [this, protectedThis = Ref { *this }, inspector = Ref { inspector }, tab = Ref { tab }](Expected<RefPtr<API::InspectorExtension>, Inspector::ExtensionError> result) {
         if (!result) {
             RELEASE_LOG_ERROR(Extensions, "Failed to register Inspector extension (error %{public}hhu)", result.error());
             return;
         }
 
-        auto *webView = [[WKWebView alloc] initWithFrame:CGRectZero configuration:webViewConfiguration(WebViewPurpose::Inspector)];
+        auto *inspectorWebView = inspector->inspectorPage()->cocoaView().get();
+        auto *inspectorWebViewConfiguration = inspectorWebView.configuration;
 
+        auto *configuration = webViewConfiguration(WebViewPurpose::Inspector);
+
+        // The devtools_page needs to load in the Inspector's process instead of the extension's web process.
+        // Force this by relating the web view to the Inspector's web view and sharing the same process pool and data store.
+        configuration._relatedWebView = inspectorWebView;
+        configuration._processDisplayName = inspectorWebViewConfiguration._processDisplayName;
+        configuration.processPool = inspectorWebViewConfiguration.processPool;
+        configuration.websiteDataStore = inspectorWebViewConfiguration.websiteDataStore;
+
+        auto *webView = [[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration];
         webView.UIDelegate = m_delegate.get();
         webView.navigationDelegate = m_delegate.get();
         webView.inspectable = m_inspectable;
 
+        // In order for new web view to use the same process as _relatedWebView we need to force it here. Otherwise a process swap
+        // will happen because the Inspector URL scheme and Web Extension scheme don't match.
+        webView._page->setAlwaysUseRelatedPageProcess();
+
+        Ref inspectorExtension = result.value().releaseNonNull();
+        inspectorExtension->setClient(makeUniqueRef<InspectorExtensionClient>(inspectorExtension, *this));
+
         m_inspectorBackgroundPageMap.set(inspector.get(), TabIdentifierWebViewPair { tab->identifier(), webView });
-        m_inspectorExtensionMap.set(inspector.get(), result.value().releaseNonNull());
+        m_inspectorExtensionMap.set(inspector.get(), inspectorExtension);
 
         RefPtr window = tab->window();
         auto windowIdentifier = window ? std::optional(window->identifier()) : std::nullopt;
 
-        auto page = webView._page;
-        page->process().send(Messages::WebExtensionContextProxy::AddInspectorBackgroundPageIdentifier(page->webPageID(), tab->identifier(), windowIdentifier), identifier());
+        Ref process = webView._page->process();
+        ASSERT(inspectorWebView._page->process() == process);
+        process->send(Messages::WebExtensionContextProxy::AddInspectorBackgroundPageIdentifier(webView._page->webPageID(), tab->identifier(), windowIdentifier), identifier());
 
         [webView loadRequest:[NSURLRequest requestWithURL:inspectorBackgroundPageURL()]];
     });
@@ -3084,6 +3185,8 @@ void WebExtensionContext::loadInspectorBackgroundPage(WebInspectorUIProxy& inspe
 
 void WebExtensionContext::unloadInspectorBackgroundPage(WebInspectorUIProxy& inspector)
 {
+    ASSERT(m_inspectorBackgroundPageMap.contains(inspector));
+
     auto [tabIdentifier, inspectorWebView] = m_inspectorBackgroundPageMap.take(inspector);
     m_inspectorExtensionMap.remove(inspector);
 
@@ -3117,6 +3220,16 @@ void WebExtensionContext::inspectorWillClose(WebInspectorUIProxy& inspector, Web
         return;
 
     unloadInspectorBackgroundPage(inspector);
+}
+
+void WebExtensionContext::didShowInspectorExtensionPanel(API::InspectorExtension& inspectorExtension, const Inspector::ExtensionTabID& identifier, WebCore::FrameIdentifier frameIdentifier) const
+{
+    sendToProcesses(processes(inspectorExtension), Messages::WebExtensionContextProxy::DispatchDevToolsExtensionPanelShownEvent(identifier, frameIdentifier));
+}
+
+void WebExtensionContext::didHideInspectorExtensionPanel(API::InspectorExtension& inspectorExtension, const Inspector::ExtensionTabID& identifier) const
+{
+    sendToProcesses(processes(inspectorExtension), Messages::WebExtensionContextProxy::DispatchDevToolsExtensionPanelHiddenEvent(identifier));
 }
 #endif // ENABLE(INSPECTOR_EXTENSIONS)
 

@@ -72,7 +72,7 @@ void WebExtensionURLSchemeHandler::platformStartTask(WebPageProxy& page, WebURLS
             return;
         }
 
-        auto extensionContext = m_webExtensionController->extensionContext(requestURL);
+        RefPtr extensionContext = m_webExtensionController->extensionContext(requestURL);
         if (!extensionContext) {
             // We need to return the same error here, as we do below for URLs that don't match web_accessible_resources.
             // Otherwise, a page tracking extension injected content and watching extension UUIDs across page loads can fingerprint
@@ -81,9 +81,13 @@ void WebExtensionURLSchemeHandler::platformStartTask(WebPageProxy& page, WebURLS
             return;
         }
 
-        // FIXME: <https://webkit.org/b/246485> Support devtools' exception to web accessible resources.
-
-        if (!protocolHostAndPortAreEqual(frameDocumentURL, requestURL)) {
+#if ENABLE(INSPECTOR_EXTENSIONS)
+        // Chrome does not require devtools extensions to explicitly list resources as web_accessible_resources.
+        if (!frameDocumentURL.protocolIs("inspector-resource"_s) && !protocolHostAndPortAreEqual(frameDocumentURL, requestURL))
+#else
+        if (!protocolHostAndPortAreEqual(frameDocumentURL, requestURL))
+#endif
+        {
             if (!extensionContext->extension().isWebAccessibleResource(requestURL, frameDocumentURL)) {
                 task.didComplete([NSError errorWithDomain:NSURLErrorDomain code:noPermissionErrorCode userInfo:nil]);
                 return;

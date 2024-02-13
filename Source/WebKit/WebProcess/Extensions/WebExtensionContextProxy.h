@@ -146,6 +146,8 @@ private:
 #if ENABLE(INSPECTOR_EXTENSIONS)
     // DevTools
     void addInspectorBackgroundPageIdentifier(WebCore::PageIdentifier, std::optional<WebExtensionTabIdentifier>, std::optional<WebExtensionWindowIdentifier>);
+    void dispatchDevToolsExtensionPanelShownEvent(Inspector::ExtensionTabID, WebCore::FrameIdentifier);
+    void dispatchDevToolsExtensionPanelHiddenEvent(Inspector::ExtensionTabID);
 #endif
 
     // Extension

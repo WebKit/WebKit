@@ -30,11 +30,13 @@
 #import "config.h"
 #import "WebExtensionAPIDevToolsExtensionPanel.h"
 
+#if ENABLE(WK_WEB_EXTENSIONS) && ENABLE(INSPECTOR_EXTENSIONS)
+
 #import "CocoaHelpers.h"
 #import "JSWebExtensionWrapper.h"
 #import "MessageSenderInlines.h"
-
-#if ENABLE(WK_WEB_EXTENSIONS) && ENABLE(INSPECTOR_EXTENSIONS)
+#import "WebExtensionAPINamespace.h"
+#import "WebProcess.h"
 
 namespace WebKit {
 
@@ -52,10 +54,44 @@ WebExtensionAPIEvent& WebExtensionAPIDevToolsExtensionPanel::onHidden()
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/devtools/panels/ExtensionPanel
 
-    if (!m_onShown)
-        m_onShown = WebExtensionAPIEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::DevToolsExtensionPanelOnHidden);
+    if (!m_onHidden)
+        m_onHidden = WebExtensionAPIEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::DevToolsExtensionPanelOnHidden);
 
-    return *m_onShown;
+    return *m_onHidden;
+}
+
+void WebExtensionContextProxy::dispatchDevToolsExtensionPanelShownEvent(Inspector::ExtensionTabID identifier, WebCore::FrameIdentifier frameIdentifier)
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/devtools/panels/ExtensionPanel
+
+    RefPtr frame = WebProcess::singleton().webFrame(frameIdentifier);
+    if (!frame)
+        return;
+
+    enumerateNamespaceObjects([&](auto& namespaceObject) {
+        RefPtr extensionPanel = namespaceObject.devtools().panels().extensionPanel(identifier);
+        if (!extensionPanel)
+            return;
+
+        for (auto& listener : extensionPanel->onShown().listeners()) {
+            auto globalContext = listener->globalContext();
+            auto *windowObject = toWindowObject(globalContext, *frame);
+            listener->call(windowObject);
+        }
+    });
+}
+
+void WebExtensionContextProxy::dispatchDevToolsExtensionPanelHiddenEvent(Inspector::ExtensionTabID identifier)
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/devtools/panels/ExtensionPanel
+
+    enumerateNamespaceObjects([&](auto& namespaceObject) {
+        RefPtr extensionPanel = namespaceObject.devtools().panels().extensionPanel(identifier);
+        if (!extensionPanel)
+            return;
+
+        extensionPanel->onHidden().invokeListeners();
+    });
 }
 
 } // namespace WebKit

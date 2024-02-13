@@ -30,12 +30,12 @@
 #import "config.h"
 #import "WebExtensionAPIDevToolsInspectedWindow.h"
 
+#if ENABLE(WK_WEB_EXTENSIONS) && ENABLE(INSPECTOR_EXTENSIONS)
+
 #import "CocoaHelpers.h"
 #import "JSWebExtensionWrapper.h"
 #import "MessageSenderInlines.h"
 #import "WebExtensionTabIdentifier.h"
-
-#if ENABLE(WK_WEB_EXTENSIONS) && ENABLE(INSPECTOR_EXTENSIONS)
 
 namespace WebKit {
 

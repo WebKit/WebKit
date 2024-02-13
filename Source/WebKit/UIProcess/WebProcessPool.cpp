@@ -2057,6 +2057,9 @@ std::tuple<Ref<WebProcessProxy>, SuspendedPageProxy*, ASCIILiteral> WebProcessPo
     if (usesSingleWebProcess())
         return { WTFMove(sourceProcess), nullptr, "Single WebProcess mode is enabled"_s };
 
+    if (page.configuration().relatedPage() && page.alwaysUseRelatedPageProcess())
+        return { WTFMove(sourceProcess), nullptr, "Always using related page process"_s };
+
     if (sourceProcess->lockdownMode() != lockdownMode)
         return { createNewProcess(), nullptr, "Process swap due to Lockdown mode change"_s };
 

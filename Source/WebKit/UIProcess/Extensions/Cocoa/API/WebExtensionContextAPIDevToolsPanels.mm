@@ -28,47 +28,34 @@
 #endif
 
 #import "config.h"
-#import "WebExtensionAPIDevTools.h"
+#import "WebExtensionContext.h"
 
 #if ENABLE(WK_WEB_EXTENSIONS) && ENABLE(INSPECTOR_EXTENSIONS)
 
-#import "CocoaHelpers.h"
-#import "JSWebExtensionWrapper.h"
-#import "MessageSenderInlines.h"
-#import "WebExtensionAPIDevToolsInspectedWindow.h"
-#import "WebExtensionAPIDevToolsNetwork.h"
-#import "WebExtensionAPIDevToolsPanels.h"
+#import "APIInspectorExtension.h"
+#import "WebExtensionContextProxyMessages.h"
+#import "WebExtensionUtilities.h"
 
 namespace WebKit {
 
-WebExtensionAPIDevToolsInspectedWindow& WebExtensionAPIDevTools::inspectedWindow()
+void WebExtensionContext::devToolsPanelsCreate(WebPageProxyIdentifier webPageProxyIdentifier, const String& title, const String& iconPath, const String& pagePath, CompletionHandler<void(Expected<Inspector::ExtensionTabID, String>)>&& completionHandler)
 {
-    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/devtools/inspectedWindow
+    static NSString * const apiName = @"devtools.panels.create()";
 
-    if (!m_inspectedWindow)
-        m_inspectedWindow = WebExtensionAPIDevToolsInspectedWindow::create(forMainWorld(), runtime(), extensionContext());
+    RefPtr extension = inspectorExtension(webPageProxyIdentifier);
+    if (!extension) {
+        completionHandler(makeUnexpected(toErrorString(apiName, nil, @"Web Inspector not found")));
+        return;
+    }
 
-    return *m_inspectedWindow;
-}
+    extension->createTab(title, { baseURL(), iconPath }, { baseURL(), pagePath }, [completionHandler = WTFMove(completionHandler)](Expected<Inspector::ExtensionTabID, Inspector::ExtensionError> result) mutable {
+        if (!result) {
+            completionHandler(makeUnexpected(toErrorString(apiName, nil, @"Web Inspector could not create the panel")));
+            return;
+        }
 
-WebExtensionAPIDevToolsNetwork& WebExtensionAPIDevTools::network()
-{
-    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/devtools/network
-
-    if (!m_network)
-        m_network = WebExtensionAPIDevToolsNetwork::create(forMainWorld(), runtime(), extensionContext());
-
-    return *m_network;
-}
-
-WebExtensionAPIDevToolsPanels& WebExtensionAPIDevTools::panels()
-{
-    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/devtools/panels
-
-    if (!m_panels)
-        m_panels = WebExtensionAPIDevToolsPanels::create(forMainWorld(), runtime(), extensionContext());
-
-    return *m_panels;
+        completionHandler(result.value());
+    });
 }
 
 } // namespace WebKit

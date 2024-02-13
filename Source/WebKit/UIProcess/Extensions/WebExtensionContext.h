@@ -71,6 +71,8 @@
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
 #include "APIInspectorExtension.h"
+#include "APIInspectorExtensionClient.h"
+#include "InspectorExtensionTypes.h"
 #include "WebInspectorUIProxy.h"
 #endif
 
@@ -374,6 +376,9 @@ public:
 #if ENABLE(INSPECTOR_EXTENSIONS)
     void inspectorWillOpen(WebInspectorUIProxy&, WebPageProxy&);
     void inspectorWillClose(WebInspectorUIProxy&, WebPageProxy&);
+
+    void didShowInspectorExtensionPanel(API::InspectorExtension&, const Inspector::ExtensionTabID&, WebCore::FrameIdentifier) const;
+    void didHideInspectorExtensionPanel(API::InspectorExtension&, const Inspector::ExtensionTabID&) const;
 #endif
 
     WebExtensionAction& defaultAction();
@@ -460,16 +465,16 @@ public:
     bool pageListensForEvent(const WebPageProxy&, WebExtensionEventListenerType, WebExtensionContentWorldType) const;
 
     template<typename T>
-    void sendToProcesses(const WebProcessProxySet&, const T& message);
+    void sendToProcesses(const WebProcessProxySet&, const T& message) const;
 
     template<typename T>
-    void sendToProcessesForEvent(WebExtensionEventListenerType, const T& message);
+    void sendToProcessesForEvent(WebExtensionEventListenerType, const T& message) const;
 
     template<typename T>
-    void sendToProcessesForEvents(EventListenerTypeSet, const T& message);
+    void sendToProcessesForEvents(EventListenerTypeSet, const T& message) const;
 
     template<typename T>
-    void sendToContentScriptProcessesForEvent(WebExtensionEventListenerType, const T& message);
+    void sendToContentScriptProcessesForEvent(WebExtensionEventListenerType, const T& message) const;
 
 #ifdef __OBJC__
     _WKWebExtensionContext *wrapper() const { return (_WKWebExtensionContext *)API::ObjectImpl<API::Object::Type::WebExtensionContext>::wrapper(); }
@@ -530,6 +535,10 @@ private:
 
     void loadInspectorBackgroundPage(WebInspectorUIProxy&, WebExtensionTab&);
     void unloadInspectorBackgroundPage(WebInspectorUIProxy&);
+
+    RefPtr<API::InspectorExtension> inspectorExtension(WebPageProxyIdentifier) const;
+    RefPtr<WebInspectorUIProxy> inspector(const API::InspectorExtension&) const;
+    HashSet<Ref<WebProcessProxy>> processes(const API::InspectorExtension&) const;
 #endif // ENABLE(INSPECTOR_EXTENSIONS)
 
     void addInjectedContent() { addInjectedContent(injectedContents()); }
@@ -584,7 +593,6 @@ private:
     _WKWebExtensionStorageSQLiteStore *syncStorageStore();
     _WKWebExtensionStorageSQLiteStore *storageForType(WebExtensionStorageType);
 
-
     void fetchCookies(WebsiteDataStore&, const URL&, const WebExtensionCookieFilterParameters&, CompletionHandler<void(Vector<WebExtensionCookieParameters>&&, ErrorString)>&&);
 
     // Action APIs
@@ -634,6 +642,11 @@ private:
     void declarativeNetRequestUpdateDynamicRules(std::optional<String> rulesToAddJSON, std::optional<Vector<double>> ruleIDsToDelete, CompletionHandler<void(std::optional<String>)>&&);
     void declarativeNetRequestGetSessionRules(CompletionHandler<void(std::optional<String>, std::optional<String>)>&&);
     void declarativeNetRequestUpdateSessionRules(std::optional<String> rulesToAddJSON, std::optional<Vector<double>> ruleIDsToDelete, CompletionHandler<void(std::optional<String>)>&&);
+
+#if ENABLE(INSPECTOR_EXTENSIONS)
+    // DevTools APIs
+    void devToolsPanelsCreate(WebPageProxyIdentifier, const String& title, const String& iconPath, const String& pagePath, CompletionHandler<void(Expected<Inspector::ExtensionTabID, String>)>&&);
+#endif
 
     // Event APIs
     void addListener(WebPageProxyIdentifier, WebExtensionEventListenerType, WebExtensionContentWorldType);
@@ -861,26 +874,26 @@ private:
 };
 
 template<typename T>
-void WebExtensionContext::sendToProcesses(const WebProcessProxySet& processes, const T& message)
+void WebExtensionContext::sendToProcesses(const WebProcessProxySet& processes, const T& message) const
 {
     for (auto& process : processes)
         process->send(T(message), identifier());
 }
 
 template<typename T>
-void WebExtensionContext::sendToProcessesForEvent(WebExtensionEventListenerType type, const T& message)
+void WebExtensionContext::sendToProcessesForEvent(WebExtensionEventListenerType type, const T& message) const
 {
     sendToProcesses(processes(type, WebExtensionContentWorldType::Main), message);
 }
 
 template<typename T>
-void WebExtensionContext::sendToProcessesForEvents(EventListenerTypeSet typeSet, const T& message)
+void WebExtensionContext::sendToProcessesForEvents(EventListenerTypeSet typeSet, const T& message) const
 {
     sendToProcesses(processes(typeSet, WebExtensionContentWorldType::Main), message);
 }
 
 template<typename T>
-void WebExtensionContext::sendToContentScriptProcessesForEvent(WebExtensionEventListenerType type, const T& message)
+void WebExtensionContext::sendToContentScriptProcessesForEvent(WebExtensionEventListenerType type, const T& message) const
 {
     sendToProcesses(processes(type, WebExtensionContentWorldType::ContentScript), message);
 }

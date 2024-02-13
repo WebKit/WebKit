@@ -30,11 +30,11 @@
 #import "config.h"
 #import "WebExtensionAPIDevToolsNetwork.h"
 
+#if ENABLE(WK_WEB_EXTENSIONS) && ENABLE(INSPECTOR_EXTENSIONS)
+
 #import "CocoaHelpers.h"
 #import "JSWebExtensionWrapper.h"
 #import "MessageSenderInlines.h"
-
-#if ENABLE(WK_WEB_EXTENSIONS) && ENABLE(INSPECTOR_EXTENSIONS)
 
 namespace WebKit {
 

@@ -188,7 +188,7 @@ private:
         {
             // FIXME: <https://webkit.org/b/267514> Add support for changeInfo.
 
-            if (RefPtr extensionController = m_extensionController.get(); extensionController)
+            if (RefPtr extensionController = m_extensionController.get())
                 extensionController->cookiesDidChange(cookieStore);
         }
 

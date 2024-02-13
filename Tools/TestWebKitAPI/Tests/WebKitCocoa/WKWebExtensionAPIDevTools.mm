@@ -85,6 +85,79 @@ TEST(WKWebExtensionAPIDevTools, Basics)
     [manager loadAndRun];
 }
 
+TEST(WKWebExtensionAPIDevTools, CreatePanel)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *devToolsScript = Util::constructScript(@[
+        @"let cachedPanelWindow = null",
+
+        @"let panel = await browser.test.assertSafeResolve(() => browser.devtools.panels.create('Test Panel', 'icon.svg', 'panel.html'))",
+        @"browser.test.assertEq(typeof panel, 'object', 'panel should be an object')",
+
+        @"panel?.onShown.addListener((panelWindow) => {",
+        @"  browser.test.assertEq(typeof panelWindow, 'object', 'panelWindow should be an object')",
+
+        @"  cachedPanelWindow = panelWindow",
+
+        @"  browser.test.yield('Panel Shown')",
+        @"})",
+
+        @"panel?.onHidden.addListener(() => {",
+        @"  browser.test.assertTrue(cachedPanelWindow !== null, 'panel should be shown first')",
+        @"  browser.test.assertEq(typeof cachedPanelWindow?.notifyHidden, 'function', 'cachedPanelWindow should have the notifyHidden function')",
+
+        @"  cachedPanelWindow?.notifyHidden()",
+        @"})",
+
+        @"browser.test.yield('Panel Created')",
+    ]);
+
+    auto *panelScript = Util::constructScript(@[
+        @"window.notifyHidden = () => {",
+        @"  browser.test.yield('Panel Hidden')",
+        @"}"
+    ]);
+
+    auto *iconSVG = @"<svg width='16' height='16' xmlns='http://www.w3.org/2000/svg'><circle cx='8' cy='8' r='8' fill='red' /></svg>";
+
+    auto *resources = @{
+        @"background.js": @"// This script is intentionally left blank.",
+        @"devtools.html": @"<script type='module' src='devtools.js'></script>",
+        @"devtools.js": devToolsScript,
+        @"panel.html": @"<script type='module' src='panel.js'></script>",
+        @"panel.js": panelScript,
+        @"icon.svg": iconSVG,
+    };
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager.get().defaultTab.mainWebView loadRequest:server.requestWithLocalhost()];
+    [manager.get().defaultTab.mainWebView._inspector show];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Panel Created");
+
+    NSString *extensionIdentifier = [NSString stringWithFormat:@"WebExtensionTab-%@-1", manager.get().context.uniqueIdentifier];
+    [manager.get().defaultTab.mainWebView._inspector showExtensionTabWithIdentifier:extensionIdentifier completionHandler:^(NSError *error) {
+        EXPECT_NULL(error);
+    }];
+
+    [manager run];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Panel Shown");
+
+    [manager.get().defaultTab.mainWebView._inspector showResources];
+
+    [manager run];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Panel Hidden");
+}
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(WK_WEB_EXTENSIONS) && ENABLE(INSPECTOR_EXTENSIONS)

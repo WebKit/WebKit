@@ -776,6 +776,9 @@ public:
 
     bool hasCommittedAnyProvisionalLoads() const { return m_hasCommittedAnyProvisionalLoads; }
 
+    void setAlwaysUseRelatedPageProcess() { m_alwaysUseRelatedPageProcess = true; }
+    bool alwaysUseRelatedPageProcess() const { return m_alwaysUseRelatedPageProcess; }
+
     bool preferFasterClickOverDoubleTap() const { return m_preferFasterClickOverDoubleTap; }
 
     void closePage();
@@ -3380,6 +3383,7 @@ private:
     bool m_openedByDOM { false };
     bool m_hasCommittedAnyProvisionalLoads { false };
     bool m_preferFasterClickOverDoubleTap { false };
+    bool m_alwaysUseRelatedPageProcess { false };
 
     HashMap<String, Ref<WebURLSchemeHandler>> m_urlSchemeHandlersByScheme;
 

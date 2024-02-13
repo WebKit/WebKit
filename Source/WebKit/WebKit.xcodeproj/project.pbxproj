@@ -578,6 +578,7 @@
 		1CCEE4532B0989FC0034E059 /* JSWebExtensionAPIMenus.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CCEE4512B0989FC0034E059 /* JSWebExtensionAPIMenus.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		1CCEE4552B098B070034E059 /* WebExtensionAPIMenus.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CCEE4542B098B070034E059 /* WebExtensionAPIMenus.h */; };
 		1CCEE4572B098B4C0034E059 /* WebExtensionAPIMenusCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CCEE4562B098B4C0034E059 /* WebExtensionAPIMenusCocoa.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		1CD69BC82B7ADD1E00FDC9A7 /* WebExtensionContextAPIDevToolsPanels.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CD69BC72B7ADD1E00FDC9A7 /* WebExtensionContextAPIDevToolsPanels.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		1CF0C9462AC34BC600EC82F2 /* _WKWebExtensionAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CF0C9452AC34BC600EC82F2 /* _WKWebExtensionAction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1CF0C9482AC37FAD00EC82F2 /* _WKWebExtensionAction.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CF0C9472AC37FAD00EC82F2 /* _WKWebExtensionAction.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		1CF0C94A2AC37FFA00EC82F2 /* _WKWebExtensionActionPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CF0C9492AC37FFA00EC82F2 /* _WKWebExtensionActionPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4230,6 +4231,7 @@
 		1CCEE4512B0989FC0034E059 /* JSWebExtensionAPIMenus.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = JSWebExtensionAPIMenus.mm; sourceTree = "<group>"; };
 		1CCEE4542B098B070034E059 /* WebExtensionAPIMenus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebExtensionAPIMenus.h; sourceTree = "<group>"; };
 		1CCEE4562B098B4C0034E059 /* WebExtensionAPIMenusCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionAPIMenusCocoa.mm; sourceTree = "<group>"; };
+		1CD69BC72B7ADD1E00FDC9A7 /* WebExtensionContextAPIDevToolsPanels.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionContextAPIDevToolsPanels.mm; sourceTree = "<group>"; };
 		1CDA62A02925DA3700D90390 /* WebExtensionAPITest.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebExtensionAPITest.idl; sourceTree = "<group>"; };
 		1CDDFC7B2755860000C93C62 /* RemoteGPUProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteGPUProxy.messages.in; sourceTree = "<group>"; };
 		1CDDFC7D2755866D00C93C62 /* RemoteGPUProxyMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteGPUProxyMessageReceiver.cpp; sourceTree = "<group>"; };
@@ -9461,6 +9463,7 @@
 				1C8ECFEB2AFC8033007BAA62 /* WebExtensionContextAPICommandsCocoa.mm */,
 				1C7308812B33580D00B341DE /* WebExtensionContextAPICookiesCocoa.mm */,
 				331102462B17CFE300B21C8C /* WebExtensionContextAPIDeclarativeNetRequestCocoa.mm */,
+				1CD69BC72B7ADD1E00FDC9A7 /* WebExtensionContextAPIDevToolsPanels.mm */,
 				B6544F9E2939457C00034EB0 /* WebExtensionContextAPIEventCocoa.mm */,
 				1C78656D2AD1FD4F00EF3082 /* WebExtensionContextAPIExtensionCocoa.mm */,
 				1C6B84B92B0BE3A300E885DD /* WebExtensionContextAPIMenusCocoa.mm */,
@@ -19288,6 +19291,7 @@
 				1C8ECFEC2AFC8033007BAA62 /* WebExtensionContextAPICommandsCocoa.mm in Sources */,
 				1C7308822B33580D00B341DE /* WebExtensionContextAPICookiesCocoa.mm in Sources */,
 				331102472B17CFE300B21C8C /* WebExtensionContextAPIDeclarativeNetRequestCocoa.mm in Sources */,
+				1CD69BC82B7ADD1E00FDC9A7 /* WebExtensionContextAPIDevToolsPanels.mm in Sources */,
 				B6544F9F2939457C00034EB0 /* WebExtensionContextAPIEventCocoa.mm in Sources */,
 				1C78656E2AD1FD4F00EF3082 /* WebExtensionContextAPIExtensionCocoa.mm in Sources */,
 				1C6B84BA2B0BE3A300E885DD /* WebExtensionContextAPIMenusCocoa.mm in Sources */,
