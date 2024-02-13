@@ -935,6 +935,9 @@ void RenderTableSection::paint(PaintInfo& paintInfo, const LayoutPoint& paintOff
     if (!totalRows || !totalCols)
         return;
 
+    if (isVisualPaintPhase(paintInfo.phase))
+        setHasPainted();
+
     LayoutPoint adjustedPaintOffset = paintOffset + location();
 
     PaintPhase phase = paintInfo.phase;

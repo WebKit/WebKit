@@ -290,6 +290,9 @@ void RenderSVGRoot::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
             return;
     }
 
+    if (isVisualPaintPhase(paintInfo.phase))
+        setHasPainted();
+
     bool pushedClip = pushContentsClip(paintInfo, adjustedPaintOffset);
     paintObject(paintInfo, adjustedPaintOffset);
     if (pushedClip)

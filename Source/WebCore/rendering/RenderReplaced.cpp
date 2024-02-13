@@ -234,6 +234,9 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         return;
     }
 
+    if (isVisualPaintPhase(paintInfo.phase))
+        setHasPainted();
+
     SetLayoutNeededForbiddenScope scope(*this);
 
     GraphicsContextStateSaver savedGraphicsContext(paintInfo.context(), false);

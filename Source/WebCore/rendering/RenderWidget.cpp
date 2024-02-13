@@ -298,6 +298,9 @@ void RenderWidget::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     if (paintInfo.context().detectingContentfulPaint())
         return;
 
+    if (isVisualPaintPhase(paintInfo.phase))
+        setHasPainted();
+
     LayoutPoint adjustedPaintOffset = paintOffset + location();
 
     if (hasVisibleBoxDecorations() && (paintInfo.phase == PaintPhase::Foreground || paintInfo.phase == PaintPhase::Selection))

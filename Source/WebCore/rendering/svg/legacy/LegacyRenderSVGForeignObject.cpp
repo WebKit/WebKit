@@ -83,6 +83,9 @@ void LegacyRenderSVGForeignObject::paint(PaintInfo& paintInfo, const LayoutPoint
         return;
     }
 
+    if (isVisualPaintPhase(paintInfo.phase))
+        setHasPainted();
+
     // Paint all phases of FO elements atomically, as though the FO element established its
     // own stacking context.
     childPaintInfo.phase = PaintPhase::BlockBackground;
