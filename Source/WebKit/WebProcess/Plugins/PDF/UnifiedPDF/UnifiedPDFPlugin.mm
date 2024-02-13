@@ -170,6 +170,10 @@ void UnifiedPDFPlugin::installPDFDocument()
 
     m_documentLayout.setPDFDocument(m_pdfDocument.get());
 
+#if HAVE(INCREMENTAL_PDF_APIS)
+    maybeClearHighLatencyDataProviderFlag();
+#endif
+
     updateLayout();
 
     if (m_view)
