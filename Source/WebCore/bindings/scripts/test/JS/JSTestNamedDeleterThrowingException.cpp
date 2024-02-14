@@ -354,7 +354,7 @@ void JSTestNamedDeleterThrowingExceptionOwner::finalize(JSC::Handle<JSC::Unknown
 {
     auto* jsTestNamedDeleterThrowingException = static_cast<JSTestNamedDeleterThrowingException*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestNamedDeleterThrowingException->wrapped(), jsTestNamedDeleterThrowingException);
+    uncacheWrapper(world, jsTestNamedDeleterThrowingException->protectedWrapped().ptr(), jsTestNamedDeleterThrowingException);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

@@ -380,7 +380,7 @@ void JSTestNamedSetterThrowingExceptionOwner::finalize(JSC::Handle<JSC::Unknown>
 {
     auto* jsTestNamedSetterThrowingException = static_cast<JSTestNamedSetterThrowingException*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestNamedSetterThrowingException->wrapped(), jsTestNamedSetterThrowingException);
+    uncacheWrapper(world, jsTestNamedSetterThrowingException->protectedWrapped().ptr(), jsTestNamedSetterThrowingException);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

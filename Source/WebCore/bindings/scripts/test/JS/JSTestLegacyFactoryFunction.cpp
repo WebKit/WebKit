@@ -256,7 +256,7 @@ void JSTestLegacyFactoryFunctionOwner::finalize(JSC::Handle<JSC::Unknown> handle
 {
     auto* jsTestLegacyFactoryFunction = static_cast<JSTestLegacyFactoryFunction*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestLegacyFactoryFunction->wrapped(), jsTestLegacyFactoryFunction);
+    uncacheWrapper(world, jsTestLegacyFactoryFunction->protectedWrapped().ptr(), jsTestLegacyFactoryFunction);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

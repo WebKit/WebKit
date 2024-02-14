@@ -1218,7 +1218,7 @@ void JSTestInterfaceOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* cont
 {
     auto* jsTestInterface = static_cast<JSTestInterface*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestInterface->wrapped(), jsTestInterface);
+    uncacheWrapper(world, jsTestInterface->protectedWrapped().ptr(), jsTestInterface);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

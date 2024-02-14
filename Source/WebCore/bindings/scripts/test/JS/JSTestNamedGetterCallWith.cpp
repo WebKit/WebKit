@@ -364,7 +364,7 @@ void JSTestNamedGetterCallWithOwner::finalize(JSC::Handle<JSC::Unknown> handle, 
 {
     auto* jsTestNamedGetterCallWith = static_cast<JSTestNamedGetterCallWith*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestNamedGetterCallWith->wrapped(), jsTestNamedGetterCallWith);
+    uncacheWrapper(world, jsTestNamedGetterCallWith->protectedWrapped().ptr(), jsTestNamedGetterCallWith);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

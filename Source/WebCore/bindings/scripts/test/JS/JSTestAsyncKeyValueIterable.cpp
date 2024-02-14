@@ -294,7 +294,7 @@ void JSTestAsyncKeyValueIterableOwner::finalize(JSC::Handle<JSC::Unknown> handle
 {
     auto* jsTestAsyncKeyValueIterable = static_cast<JSTestAsyncKeyValueIterable*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestAsyncKeyValueIterable->wrapped(), jsTestAsyncKeyValueIterable);
+    uncacheWrapper(world, jsTestAsyncKeyValueIterable->protectedWrapped().ptr(), jsTestAsyncKeyValueIterable);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

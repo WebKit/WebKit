@@ -4630,7 +4630,7 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestObj_customAttr, (JSGlobalObject* lexicalGlobal
 static inline JSValue jsTestObj_onfooGetter(JSGlobalObject& lexicalGlobalObject, JSTestObj& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return eventHandlerAttribute(thisObject.wrapped(), eventNames().fooEvent, worldForDOMObject(thisObject));
+    return eventHandlerAttribute(thisObject.protectedWrapped(), eventNames().fooEvent, worldForDOMObject(thisObject));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestObj_onfoo, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -4642,7 +4642,7 @@ static inline bool setJSTestObj_onfooSetter(JSGlobalObject& lexicalGlobalObject,
 {
     Ref vm = JSC::getVM(&lexicalGlobalObject);
     UNUSED_PARAM(vm);
-    setEventHandlerAttribute<JSEventListener>(thisObject.wrapped(), eventNames().fooEvent, value, thisObject);
+    setEventHandlerAttribute<JSEventListener>(thisObject.protectedWrapped(), eventNames().fooEvent, value, thisObject);
     vm->writeBarrier(&thisObject, value);
     ensureStillAliveHere(value);
 
@@ -4657,7 +4657,7 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestObj_onfoo, (JSGlobalObject* lexicalGlobalObjec
 static inline JSValue jsTestObj_onwebkitfooGetter(JSGlobalObject& lexicalGlobalObject, JSTestObj& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return eventHandlerAttribute(thisObject.wrapped(), eventNames().fooEvent, worldForDOMObject(thisObject));
+    return eventHandlerAttribute(thisObject.protectedWrapped(), eventNames().fooEvent, worldForDOMObject(thisObject));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestObj_onwebkitfoo, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -4669,7 +4669,7 @@ static inline bool setJSTestObj_onwebkitfooSetter(JSGlobalObject& lexicalGlobalO
 {
     Ref vm = JSC::getVM(&lexicalGlobalObject);
     UNUSED_PARAM(vm);
-    setEventHandlerAttribute<JSEventListener>(thisObject.wrapped(), eventNames().fooEvent, value, thisObject);
+    setEventHandlerAttribute<JSEventListener>(thisObject.protectedWrapped(), eventNames().fooEvent, value, thisObject);
     vm->writeBarrier(&thisObject, value);
     ensureStillAliveHere(value);
 
@@ -9675,7 +9675,7 @@ void JSTestObjOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
     auto* jsTestObj = static_cast<JSTestObj*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestObj->wrapped(), jsTestObj);
+    uncacheWrapper(world, jsTestObj->protectedWrapped().ptr(), jsTestObj);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

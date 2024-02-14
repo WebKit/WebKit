@@ -298,7 +298,7 @@ void JSTestIterableOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* conte
 {
     auto* jsTestIterable = static_cast<JSTestIterable*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestIterable->wrapped(), jsTestIterable);
+    uncacheWrapper(world, jsTestIterable->protectedWrapped().ptr(), jsTestIterable);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

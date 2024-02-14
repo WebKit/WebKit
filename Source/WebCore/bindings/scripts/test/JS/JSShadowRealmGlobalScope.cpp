@@ -180,7 +180,7 @@ void JSShadowRealmGlobalScopeOwner::finalize(JSC::Handle<JSC::Unknown> handle, v
 {
     auto* jsShadowRealmGlobalScope = static_cast<JSShadowRealmGlobalScope*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsShadowRealmGlobalScope->wrapped(), jsShadowRealmGlobalScope);
+    uncacheWrapper(world, jsShadowRealmGlobalScope->protectedWrapped().ptr(), jsShadowRealmGlobalScope);
 }
 
 ShadowRealmGlobalScope* JSShadowRealmGlobalScope::toWrapped(JSC::VM&, JSC::JSValue value)

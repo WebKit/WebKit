@@ -297,7 +297,7 @@ void JSTestPluginInterfaceOwner::finalize(JSC::Handle<JSC::Unknown> handle, void
 {
     auto* jsTestPluginInterface = static_cast<JSTestPluginInterface*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestPluginInterface->wrapped(), jsTestPluginInterface);
+    uncacheWrapper(world, jsTestPluginInterface->protectedWrapped().ptr(), jsTestPluginInterface);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

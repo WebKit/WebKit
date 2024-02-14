@@ -228,7 +228,7 @@ void JSTestStringifierOperationImplementedAsOwner::finalize(JSC::Handle<JSC::Unk
 {
     auto* jsTestStringifierOperationImplementedAs = static_cast<JSTestStringifierOperationImplementedAs*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestStringifierOperationImplementedAs->wrapped(), jsTestStringifierOperationImplementedAs);
+    uncacheWrapper(world, jsTestStringifierOperationImplementedAs->protectedWrapped().ptr(), jsTestStringifierOperationImplementedAs);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

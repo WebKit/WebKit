@@ -361,7 +361,7 @@ void JSTestSetLikeOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* contex
 {
     auto* jsTestSetLike = static_cast<JSTestSetLike*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestSetLike->wrapped(), jsTestSetLike);
+    uncacheWrapper(world, jsTestSetLike->protectedWrapped().ptr(), jsTestSetLike);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

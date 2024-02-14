@@ -206,7 +206,7 @@ void JSTestExceptionOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* cont
 {
     auto* jsTestException = static_cast<JSTestException*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestException->wrapped(), jsTestException);
+    uncacheWrapper(world, jsTestException->protectedWrapped().ptr(), jsTestException);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

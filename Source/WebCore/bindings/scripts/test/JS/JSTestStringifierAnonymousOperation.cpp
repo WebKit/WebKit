@@ -211,7 +211,7 @@ void JSTestStringifierAnonymousOperationOwner::finalize(JSC::Handle<JSC::Unknown
 {
     auto* jsTestStringifierAnonymousOperation = static_cast<JSTestStringifierAnonymousOperation*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestStringifierAnonymousOperation->wrapped(), jsTestStringifierAnonymousOperation);
+    uncacheWrapper(world, jsTestStringifierAnonymousOperation->protectedWrapped().ptr(), jsTestStringifierAnonymousOperation);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

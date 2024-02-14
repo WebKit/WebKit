@@ -2270,7 +2270,7 @@ void JSTestGlobalObjectOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* c
 {
     auto* jsTestGlobalObject = static_cast<JSTestGlobalObject*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestGlobalObject->wrapped(), jsTestGlobalObject);
+    uncacheWrapper(world, jsTestGlobalObject->protectedWrapped().ptr(), jsTestGlobalObject);
 }
 
 TestGlobalObject* JSTestGlobalObject::toWrapped(JSC::VM&, JSC::JSValue value)

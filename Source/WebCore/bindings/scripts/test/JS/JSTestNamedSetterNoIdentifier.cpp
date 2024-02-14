@@ -380,7 +380,7 @@ void JSTestNamedSetterNoIdentifierOwner::finalize(JSC::Handle<JSC::Unknown> hand
 {
     auto* jsTestNamedSetterNoIdentifier = static_cast<JSTestNamedSetterNoIdentifier*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestNamedSetterNoIdentifier->wrapped(), jsTestNamedSetterNoIdentifier);
+    uncacheWrapper(world, jsTestNamedSetterNoIdentifier->protectedWrapped().ptr(), jsTestNamedSetterNoIdentifier);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

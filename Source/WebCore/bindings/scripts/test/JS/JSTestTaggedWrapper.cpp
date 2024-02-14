@@ -189,7 +189,7 @@ void JSTestTaggedWrapperOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* 
 {
     auto* jsTestTaggedWrapper = static_cast<JSTestTaggedWrapper*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestTaggedWrapper->wrapped(), jsTestTaggedWrapper);
+    uncacheWrapper(world, jsTestTaggedWrapper->protectedWrapped().ptr(), jsTestTaggedWrapper);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

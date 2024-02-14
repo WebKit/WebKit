@@ -482,7 +482,7 @@ void JSTestConditionallyReadWriteOwner::finalize(JSC::Handle<JSC::Unknown> handl
 {
     auto* jsTestConditionallyReadWrite = static_cast<JSTestConditionallyReadWrite*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestConditionallyReadWrite->wrapped(), jsTestConditionallyReadWrite);
+    uncacheWrapper(world, jsTestConditionallyReadWrite->protectedWrapped().ptr(), jsTestConditionallyReadWrite);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

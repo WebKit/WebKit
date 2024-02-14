@@ -385,7 +385,7 @@ void JSTestMapLikeOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* contex
 {
     auto* jsTestMapLike = static_cast<JSTestMapLike*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestMapLike->wrapped(), jsTestMapLike);
+    uncacheWrapper(world, jsTestMapLike->protectedWrapped().ptr(), jsTestMapLike);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

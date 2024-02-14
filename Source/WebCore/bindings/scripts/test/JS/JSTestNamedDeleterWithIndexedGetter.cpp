@@ -371,7 +371,7 @@ void JSTestNamedDeleterWithIndexedGetterOwner::finalize(JSC::Handle<JSC::Unknown
 {
     auto* jsTestNamedDeleterWithIndexedGetter = static_cast<JSTestNamedDeleterWithIndexedGetter*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestNamedDeleterWithIndexedGetter->wrapped(), jsTestNamedDeleterWithIndexedGetter);
+    uncacheWrapper(world, jsTestNamedDeleterWithIndexedGetter->protectedWrapped().ptr(), jsTestNamedDeleterWithIndexedGetter);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

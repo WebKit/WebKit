@@ -293,7 +293,7 @@ void JSTestAsyncIterableOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* 
 {
     auto* jsTestAsyncIterable = static_cast<JSTestAsyncIterable*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestAsyncIterable->wrapped(), jsTestAsyncIterable);
+    uncacheWrapper(world, jsTestAsyncIterable->protectedWrapped().ptr(), jsTestAsyncIterable);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

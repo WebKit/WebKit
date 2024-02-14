@@ -337,7 +337,7 @@ void JSTestIndexedSetterNoIdentifierOwner::finalize(JSC::Handle<JSC::Unknown> ha
 {
     auto* jsTestIndexedSetterNoIdentifier = static_cast<JSTestIndexedSetterNoIdentifier*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestIndexedSetterNoIdentifier->wrapped(), jsTestIndexedSetterNoIdentifier);
+    uncacheWrapper(world, jsTestIndexedSetterNoIdentifier->protectedWrapped().ptr(), jsTestIndexedSetterNoIdentifier);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

@@ -503,7 +503,7 @@ void JSTestNamedSetterWithIndexedGetterAndSetterOwner::finalize(JSC::Handle<JSC:
 {
     auto* jsTestNamedSetterWithIndexedGetterAndSetter = static_cast<JSTestNamedSetterWithIndexedGetterAndSetter*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestNamedSetterWithIndexedGetterAndSetter->wrapped(), jsTestNamedSetterWithIndexedGetterAndSetter);
+    uncacheWrapper(world, jsTestNamedSetterWithIndexedGetterAndSetter->protectedWrapped().ptr(), jsTestNamedSetterWithIndexedGetterAndSetter);
 }
 
 #if ENABLE(BINDING_INTEGRITY)
