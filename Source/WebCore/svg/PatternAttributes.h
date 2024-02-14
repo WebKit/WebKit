@@ -26,6 +26,7 @@
 namespace WebCore {
 
 class SVGPatternElement;
+class WeakPtrImplWithEventTargetData;
 
 struct PatternAttributes {
     PatternAttributes()

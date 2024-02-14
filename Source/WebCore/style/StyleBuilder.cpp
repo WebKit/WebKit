@@ -42,9 +42,10 @@
 #include "DocumentInlines.h"
 #include "HTMLElement.h"
 #include "PaintWorkletGlobalScope.h"
-#include "RenderStyle.h"
+#include "RenderStyleInlines.h"
 #include "Settings.h"
 #include "StyleBuilderGenerated.h"
+#include "StyleCustomPropertyData.h"
 #include "StyleFontSizeFunctions.h"
 #include "StylePropertyShorthand.h"
 

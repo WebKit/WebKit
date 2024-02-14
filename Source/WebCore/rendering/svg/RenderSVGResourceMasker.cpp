@@ -33,6 +33,7 @@
 #include "RenderSVGModelObjectInlines.h"
 #include "RenderSVGResourceMaskerInlines.h"
 #include "SVGContainerLayout.h"
+#include "SVGGraphicsElement.h"
 #include "SVGLengthContext.h"
 #include "SVGRenderStyle.h"
 #include <wtf/IsoMallocInlines.h>

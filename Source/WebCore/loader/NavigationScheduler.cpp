@@ -35,6 +35,7 @@
 #include "BackForwardController.h"
 #include "CommonAtomStrings.h"
 #include "CommonVM.h"
+#include "DocumentInlines.h"
 #include "DocumentLoader.h"
 #include "Event.h"
 #include "FormState.h"

@@ -39,6 +39,7 @@
 #include "ContentRuleListResults.h"
 #include "ContentSecurityPolicy.h"
 #include "DocumentInlines.h"
+#include "DocumentLoader.h"
 #include "FrameLoader.h"
 #include "HTTPHeaderValues.h"
 #include "InspectorInstrumentation.h"

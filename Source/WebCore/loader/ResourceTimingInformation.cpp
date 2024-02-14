@@ -27,7 +27,7 @@
 #include "ResourceTimingInformation.h"
 
 #include "CachedResource.h"
-#include "Document.h"
+#include "DocumentInlines.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
 #include "HTMLFrameOwnerElement.h"
@@ -35,6 +35,7 @@
 #include "LocalFrame.h"
 #include "Performance.h"
 #include "ResourceTiming.h"
+#include "SecurityOrigin.h"
 
 namespace WebCore {
 

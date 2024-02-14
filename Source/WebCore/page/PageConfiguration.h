@@ -63,6 +63,7 @@ class DatabaseProvider;
 class DiagnosticLoggingClient;
 class DragClient;
 class EditorClient;
+class Frame;
 class HistoryItemClient;
 class InspectorClient;
 class LocalFrameLoaderClient;
