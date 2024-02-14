@@ -58,7 +58,7 @@ void ImageOverlayController::updateDataDetectorHighlights(const HTMLElement& ove
     }
 
     Vector<Ref<HTMLElement>> dataDetectorResultElements;
-    for (auto& child : descendantsOfType<HTMLElement>(*overlayHost.userAgentShadowRoot())) {
+    for (auto& child : descendantsOfType<HTMLElement>(*overlayHost.protectedUserAgentShadowRoot())) {
         if (ImageOverlay::isDataDetectorResult(child) && child.renderer())
             dataDetectorResultElements.append(child);
     }

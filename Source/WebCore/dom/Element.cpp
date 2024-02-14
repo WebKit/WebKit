@@ -2990,10 +2990,15 @@ RefPtr<ShadowRoot> Element::shadowRootForBindings(JSC::JSGlobalObject& lexicalGl
     return nullptr;
 }
 
-RefPtr<ShadowRoot> Element::userAgentShadowRoot() const
+ShadowRoot* Element::userAgentShadowRoot() const
 {
     ASSERT(!shadowRoot() || shadowRoot()->mode() == ShadowRootMode::UserAgent);
     return shadowRoot();
+}
+
+RefPtr<ShadowRoot> Element::protectedUserAgentShadowRoot() const
+{
+    return userAgentShadowRoot();
 }
 
 ShadowRoot& Element::ensureUserAgentShadowRoot()

@@ -82,15 +82,16 @@ void CheckboxInputType::createShadowSubtree()
     ASSERT(element());
     ASSERT(element()->userAgentShadowRoot());
 
-    ScriptDisallowedScope::EventAllowedScope eventAllowedScope { *element()->userAgentShadowRoot() };
+    Ref shadowRoot = *element()->userAgentShadowRoot();
+    ScriptDisallowedScope::EventAllowedScope eventAllowedScope { shadowRoot };
 
     Ref document = element()->document();
-    auto track = HTMLDivElement::create(document);
+    Ref track = HTMLDivElement::create(document);
     track->setUserAgentPart(UserAgentParts::track());
-    element()->userAgentShadowRoot()->appendChild(ContainerNode::ChildChange::Source::Parser, track);
-    auto thumb = HTMLDivElement::create(document);
+    shadowRoot->appendChild(ContainerNode::ChildChange::Source::Parser, track);
+    Ref thumb = HTMLDivElement::create(document);
     thumb->setUserAgentPart(UserAgentParts::thumb());
-    element()->userAgentShadowRoot()->appendChild(ContainerNode::ChildChange::Source::Parser, thumb);
+    shadowRoot->appendChild(ContainerNode::ChildChange::Source::Parser, thumb);
 }
 
 void CheckboxInputType::handleKeyupEvent(KeyboardEvent& event)

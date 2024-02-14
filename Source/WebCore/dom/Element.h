@@ -364,7 +364,8 @@ public:
     WEBCORE_EXPORT ExceptionOr<ShadowRoot&> attachShadow(const ShadowRootInit&);
     ExceptionOr<ShadowRoot&> attachDeclarativeShadow(ShadowRootMode, bool delegatesFocus);
 
-    RefPtr<ShadowRoot> userAgentShadowRoot() const;
+    ShadowRoot* userAgentShadowRoot() const;
+    RefPtr<ShadowRoot> protectedUserAgentShadowRoot() const;
     WEBCORE_EXPORT ShadowRoot& ensureUserAgentShadowRoot();
     WEBCORE_EXPORT ShadowRoot& createUserAgentShadowRoot();
 

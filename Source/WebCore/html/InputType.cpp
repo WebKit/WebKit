@@ -655,7 +655,7 @@ void InputType::createShadowSubtree()
 void InputType::removeShadowSubtree()
 {
     ASSERT(element());
-    RefPtr<ShadowRoot> root = element()->userAgentShadowRoot();
+    RefPtr root = element()->userAgentShadowRoot();
     if (!root)
         return;
 

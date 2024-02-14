@@ -294,9 +294,7 @@ void SVGUseElement::updateUserAgentShadowTree()
 RefPtr<SVGElement> SVGUseElement::targetClone() const
 {
     RefPtr root = userAgentShadowRoot();
-    if (!root)
-        return nullptr;
-    return childrenOfType<SVGElement>(*root).first();
+    return root ? childrenOfType<SVGElement>(*root).first() : nullptr;
 }
 
 RenderPtr<RenderElement> SVGUseElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
@@ -510,7 +508,7 @@ static void cloneDataAndChildren(SVGElement& replacementClone, SVGElement& origi
 
 void SVGUseElement::expandUseElementsInShadowTree() const
 {
-    auto descendants = descendantsOfType<SVGUseElement>(*userAgentShadowRoot());
+    auto descendants = descendantsOfType<SVGUseElement>(*protectedUserAgentShadowRoot());
     for (auto it = descendants.begin(); it; ) {
         Ref originalClone = *it;
         it.dropAssertions();
@@ -544,7 +542,7 @@ void SVGUseElement::expandUseElementsInShadowTree() const
 
 void SVGUseElement::expandSymbolElementsInShadowTree() const
 {
-    auto descendants = descendantsOfType<SVGSymbolElement>(*userAgentShadowRoot());
+    auto descendants = descendantsOfType<SVGSymbolElement>(*protectedUserAgentShadowRoot());
     for (auto it = descendants.begin(); it; ) {
         Ref originalClone = *it;
         it.dropAssertions();
@@ -571,7 +569,7 @@ void SVGUseElement::expandSymbolElementsInShadowTree() const
 void SVGUseElement::transferEventListenersToShadowTree() const
 {
     // FIXME: Don't directly add event listeners on each descendant. Copy event listeners on the use element instead.
-    for (Ref descendant : descendantsOfType<SVGElement>(*userAgentShadowRoot())) {
+    for (Ref descendant : descendantsOfType<SVGElement>(*protectedUserAgentShadowRoot())) {
         if (EventTargetData* data = descendant->correspondingElement()->eventTargetData())
             data->eventListenerMap.copyEventListenersNotCreatedFromMarkupToTarget(descendant.ptr());
     }

@@ -137,17 +137,17 @@ void RangeInputType::handleMouseDownEvent(MouseEvent& event)
     if (element()->isDisabledFormControl())
         return;
 
-    auto* targetNode = dynamicDowncast<Node>(event.target());
+    RefPtr targetNode = dynamicDowncast<Node>(event.target());
     if (!targetNode)
         return;
 
     ASSERT(element()->shadowRoot());
-    if (targetNode != element() && !targetNode->isDescendantOf(element()->userAgentShadowRoot().get()))
+    if (targetNode != element() && !targetNode->isDescendantOf(element()->protectedUserAgentShadowRoot().get()))
         return;
-    auto& thumb = typedSliderThumbElement();
-    if (targetNode == &thumb)
+    Ref thumb = typedSliderThumbElement();
+    if (targetNode == thumb.ptr())
         return;
-    thumb.dragFrom(event.absoluteLocation());
+    thumb->dragFrom(event.absoluteLocation());
 }
 
 #if ENABLE(TOUCH_EVENTS)
@@ -246,13 +246,14 @@ void RangeInputType::createShadowSubtree()
     ASSERT(element());
     ASSERT(element()->userAgentShadowRoot());
 
-    Document& document = element()->document();
+    Ref document = element()->document();
 
-    ScriptDisallowedScope::EventAllowedScope eventAllowedScope { *element()->userAgentShadowRoot() };
+    Ref shadowRoot = *element()->userAgentShadowRoot();
+    ScriptDisallowedScope::EventAllowedScope eventAllowedScope { shadowRoot };
 
-    auto track = HTMLDivElement::create(document);
-    auto container = SliderContainerElement::create(document);
-    element()->userAgentShadowRoot()->appendChild(ContainerNode::ChildChange::Source::Parser, container);
+    Ref track = HTMLDivElement::create(document);
+    Ref container = SliderContainerElement::create(document);
+    shadowRoot->appendChild(ContainerNode::ChildChange::Source::Parser, container);
     container->appendChild(ContainerNode::ChildChange::Source::Parser, track);
 
     track->setUserAgentPart(UserAgentParts::webkitSliderRunnableTrack());
@@ -266,16 +267,16 @@ HTMLElement* RangeInputType::sliderTrackElement() const
     if (!hasCreatedShadowSubtree())
         return nullptr;
 
-    ASSERT(element()->userAgentShadowRoot());
-    ASSERT(element()->userAgentShadowRoot()->firstChild()); // container
-    ASSERT(element()->userAgentShadowRoot()->firstChild()->isHTMLElement());
-    ASSERT(element()->userAgentShadowRoot()->firstChild()->firstChild()); // track
+    RefPtr root = element()->userAgentShadowRoot();
+    ASSERT(root);
+    ASSERT(root->firstChild()); // container
+    ASSERT(root->firstChild()->isHTMLElement());
+    ASSERT(root->firstChild()->firstChild()); // track
 
-    RefPtr<ShadowRoot> root = element()->userAgentShadowRoot();
     if (!root)
         return nullptr;
     
-    auto* container = childrenOfType<SliderContainerElement>(*root).first();
+    RefPtr container = childrenOfType<SliderContainerElement>(*root).first();
     if (!container)
         return nullptr;
 

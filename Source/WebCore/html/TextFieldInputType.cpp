@@ -338,7 +338,7 @@ void TextFieldInputType::createShadowSubtree()
     ASSERT(!m_capsLockIndicator);
     ASSERT(!m_autoFillButton);
 
-    Document& document = element()->document();
+    Ref document = element()->document();
     bool shouldHaveSpinButton = this->shouldHaveSpinButton();
     bool shouldHaveCapsLockIndicator = this->shouldHaveCapsLockIndicator();
     bool shouldDrawAutoFillButton = this->shouldDrawAutoFillButton();
@@ -351,11 +351,13 @@ void TextFieldInputType::createShadowSubtree()
 #endif
         || needsContainer();
 
-    m_innerText = TextControlInnerTextElement::create(document, element()->isInnerTextElementEditable());
+    Ref innerText = TextControlInnerTextElement::create(document, element()->isInnerTextElementEditable());
+    m_innerText = innerText.copyRef();
 
-    ScriptDisallowedScope::EventAllowedScope eventAllowedScope { *element()->userAgentShadowRoot() };
+    Ref shadowRoot = *element()->userAgentShadowRoot();
+    ScriptDisallowedScope::EventAllowedScope eventAllowedScope { shadowRoot };
     if (!createsContainer) {
-        element()->userAgentShadowRoot()->appendChild(ContainerNode::ChildChange::Source::Parser, *m_innerText);
+        shadowRoot->appendChild(ContainerNode::ChildChange::Source::Parser, innerText);
         updatePlaceholderText();
         updateInnerTextValue();
         return;
@@ -366,18 +368,20 @@ void TextFieldInputType::createShadowSubtree()
     updateInnerTextValue();
 
     if (shouldHaveSpinButton) {
-        m_innerSpinButton = SpinButtonElement::create(document, *this);
-        m_container->appendChild(ContainerNode::ChildChange::Source::Parser, *m_innerSpinButton);
+        Ref innerSpinButton = SpinButtonElement::create(document, *this);
+        m_innerSpinButton = innerSpinButton.copyRef();
+        RefPtr { m_container }->appendChild(ContainerNode::ChildChange::Source::Parser, innerSpinButton);
     }
 
     if (shouldHaveCapsLockIndicator) {
-        m_capsLockIndicator = HTMLDivElement::create(document);
-        m_container->appendChild(ContainerNode::ChildChange::Source::Parser, *m_capsLockIndicator);
+        Ref capsLockIndicator = HTMLDivElement::create(document);
+        m_capsLockIndicator = capsLockIndicator.copyRef();
+        RefPtr { m_container }->appendChild(ContainerNode::ChildChange::Source::Parser, capsLockIndicator);
 
-        m_capsLockIndicator->setUserAgentPart(UserAgentParts::webkitCapsLockIndicator());
+        capsLockIndicator->setUserAgentPart(UserAgentParts::webkitCapsLockIndicator());
 
         bool shouldDrawCapsLockIndicator = this->shouldDrawCapsLockIndicator();
-        m_capsLockIndicator->setInlineStyleProperty(CSSPropertyDisplay, shouldDrawCapsLockIndicator ? CSSValueBlock : CSSValueNone, true);
+        capsLockIndicator->setInlineStyleProperty(CSSPropertyDisplay, shouldDrawCapsLockIndicator ? CSSValueBlock : CSSValueNone, true);
     }
 
     updateAutoFillButton();
@@ -651,20 +655,19 @@ void TextFieldInputType::updatePlaceholderText()
 
     String placeholderText = element()->placeholder();
     if (placeholderText.isEmpty()) {
-        if (m_placeholder) {
-            m_placeholder->parentNode()->removeChild(*m_placeholder);
-            m_placeholder = nullptr;
-        }
+        if (RefPtr placeholder = std::exchange(m_placeholder, nullptr))
+            placeholder->remove();
         return;
     }
     if (!m_placeholder) {
-        m_placeholder = TextControlPlaceholderElement::create(element()->document());
-        if (m_container)
-            element()->userAgentShadowRoot()->insertBefore(*m_placeholder, m_container.copyRef());
+        Ref placeholder = TextControlPlaceholderElement::create(element()->protectedDocument());
+        m_placeholder = placeholder.copyRef();
+        if (RefPtr container = m_container)
+            element()->protectedUserAgentShadowRoot()->insertBefore(placeholder, container);
         else
-            element()->userAgentShadowRoot()->insertBefore(*m_placeholder, innerTextElement());
+            element()->protectedUserAgentShadowRoot()->insertBefore(placeholder, innerTextElement());
     }
-    m_placeholder->setInnerText(WTFMove(placeholderText));
+    RefPtr { m_placeholder }->setInnerText(WTFMove(placeholderText));
 }
 
 bool TextFieldInputType::appendFormData(DOMFormData& formData) const
@@ -818,23 +821,27 @@ void TextFieldInputType::createContainer(PreserveSelectionRange preserveSelectio
 
     static MainThreadNeverDestroyed<const AtomString> webkitTextfieldDecorationContainerName("-webkit-textfield-decoration-container"_s);
 
-    ScriptDisallowedScope::EventAllowedScope allowedScope(*element()->userAgentShadowRoot());
+    Ref shadowRoot = *element()->userAgentShadowRoot();
+    ScriptDisallowedScope::EventAllowedScope allowedScope(shadowRoot);
 
+    Ref document = element()->document();
     // FIXME: <https://webkit.org/b/245977> Suppress selectionchange events during subtree modification.
     std::optional<std::tuple<unsigned, unsigned, TextFieldSelectionDirection>> selectionState;
-    if (preserveSelection == PreserveSelectionRange::Yes && enclosingTextFormControl(element()->document().selection().selection().start()) == element())
+    if (preserveSelection == PreserveSelectionRange::Yes && enclosingTextFormControl(document->selection().selection().start()) == element())
         selectionState = { element()->selectionStart(), element()->selectionEnd(), element()->computeSelectionDirection() };
 
-    m_container = TextControlInnerContainer::create(element()->document());
-    element()->userAgentShadowRoot()->appendChild(*m_container);
-    m_container->setUserAgentPart(UserAgentParts::webkitTextfieldDecorationContainer());
+    Ref container = TextControlInnerContainer::create(document);
+    m_container = container.copyRef();
+    shadowRoot->appendChild(container);
+    container->setUserAgentPart(UserAgentParts::webkitTextfieldDecorationContainer());
 
-    m_innerBlock = TextControlInnerElement::create(element()->document());
-    m_container->appendChild(*m_innerBlock);
-    m_innerBlock->appendChild(*m_innerText);
+    Ref innerBlock = TextControlInnerElement::create(document);
+    m_innerBlock = innerBlock.copyRef();
+    m_container->appendChild(innerBlock);
+    innerBlock->appendChild(*m_innerText.copyRef());
 
     if (selectionState) {
-        element()->document().eventLoop().queueTask(TaskSource::DOMManipulation, [selectionState = *selectionState, element = WeakPtr { element() }] {
+        document->checkedEventLoop()->queueTask(TaskSource::DOMManipulation, [selectionState = *selectionState, element = WeakPtr { element() }] {
             if (!element || !element->focused())
                 return;
 

@@ -315,9 +315,7 @@ String HTMLTextAreaElement::sanitizeUserInputValue(const String& proposedValue, 
 RefPtr<TextControlInnerTextElement> HTMLTextAreaElement::innerTextElement() const
 {
     RefPtr root = userAgentShadowRoot();
-    if (!root)
-        return nullptr;
-    return childrenOfType<TextControlInnerTextElement>(*root).first();
+    return root ? childrenOfType<TextControlInnerTextElement>(*root).first() : nullptr;
 }
 
 RefPtr<TextControlInnerTextElement> HTMLTextAreaElement::innerTextElementCreatingShadowSubtreeIfNeeded()
@@ -518,17 +516,22 @@ void HTMLTextAreaElement::updatePlaceholderText()
 {
     auto& placeholderText = attributeWithoutSynchronization(placeholderAttr);
     if (placeholderText.isEmpty()) {
-        if (m_placeholder) {
-            userAgentShadowRoot()->removeChild(*m_placeholder);
+        if (RefPtr placeholder = m_placeholder) {
+            protectedUserAgentShadowRoot()->removeChild(*placeholder);
             m_placeholder = nullptr;
         }
         return;
     }
     if (!m_placeholder) {
         m_placeholder = TextControlPlaceholderElement::create(document());
-        userAgentShadowRoot()->insertBefore(*m_placeholder, innerTextElement()->protectedNextSibling());
+        protectedUserAgentShadowRoot()->insertBefore(*protectedPlaceholderElement(), innerTextElement()->protectedNextSibling());
     }
-    m_placeholder->setInnerText(String { placeholderText });
+    protectedPlaceholderElement()->setInnerText(String { placeholderText });
+}
+
+RefPtr<HTMLElement> HTMLTextAreaElement::protectedPlaceholderElement() const
+{
+    return m_placeholder;
 }
 
 RenderStyle HTMLTextAreaElement::createInnerTextStyle(const RenderStyle& style)

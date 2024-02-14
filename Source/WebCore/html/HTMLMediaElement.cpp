@@ -5079,11 +5079,11 @@ void HTMLMediaElement::updateCaptionContainer()
 void HTMLMediaElement::layoutSizeChanged()
 {
     auto task = [this] {
-        if (auto root = userAgentShadowRoot())
+        if (RefPtr root = userAgentShadowRoot())
             root->dispatchEvent(Event::create(eventNames().resizeEvent, Event::CanBubble::No, Event::IsCancelable::No));
 
-        if (m_mediaControlsHost)
-            m_mediaControlsHost->updateCaptionDisplaySizes();
+        if (RefPtr mediaControlsHost = m_mediaControlsHost)
+            mediaControlsHost->updateCaptionDisplaySizes();
     };
     queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, WTFMove(task));
 

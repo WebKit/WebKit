@@ -74,7 +74,7 @@ RenderProgress* HTMLProgressElement::renderProgress() const
 {
     if (auto* renderProgress = dynamicDowncast<RenderProgress>(renderer()))
         return renderProgress;
-    return downcast<RenderProgress>(descendantsOfType<Element>(*userAgentShadowRoot()).first()->renderer());
+    return downcast<RenderProgress>(descendantsOfType<Element>(*protectedUserAgentShadowRoot()).first()->renderer());
 }
 
 void HTMLProgressElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)

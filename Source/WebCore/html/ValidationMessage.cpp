@@ -255,11 +255,12 @@ bool ValidationMessage::shadowTreeContains(const Node& node) const
 void ValidationMessage::deleteBubbleTree()
 {
     ASSERT(!validationMessageClient());
-    if (m_bubble) {
-        ScriptDisallowedScope::EventAllowedScope allowedScope(*m_element->userAgentShadowRoot());
+    if (RefPtr bubble = m_bubble) {
+        Ref shadowRoot = *m_element->userAgentShadowRoot();
+        ScriptDisallowedScope::EventAllowedScope allowedScope(shadowRoot);
         m_messageHeading = nullptr;
         m_messageBody = nullptr;
-        m_element->userAgentShadowRoot()->removeChild(*m_bubble);
+        shadowRoot->removeChild(*bubble);
         m_bubble = nullptr;
     }
     m_message = String();
