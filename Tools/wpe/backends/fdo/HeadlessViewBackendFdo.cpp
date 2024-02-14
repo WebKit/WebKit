@@ -36,10 +36,10 @@
 #endif
 
 #if defined(USE_SKIA) && USE_SKIA
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wcast-align"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wcast-align"
 #include <skia/core/SkPixmap.h>
-#pragma clang diagnostic pop
+#pragma GCC diagnostic pop
 #endif
 
 namespace WPEToolingBackends {

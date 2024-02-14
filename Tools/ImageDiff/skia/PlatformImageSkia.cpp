@@ -27,10 +27,10 @@
 
 #include <cstdio>
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wcast-align"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wcast-align"
 #include <skia/codec/SkPngDecoder.h>
-#pragma clang diagnostic pop
+#pragma GCC diagnostic pop
 
 #include <skia/core/SkImage.h>
 #include <skia/core/SkPixmap.h>
