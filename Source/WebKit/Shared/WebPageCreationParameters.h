@@ -199,6 +199,9 @@ struct WebPageCreationParameters {
     Vector<SandboxExtension::Handle> gpuIOKitExtensionHandles;
     Vector<SandboxExtension::Handle> gpuMachExtensionHandles;
 #endif
+#if PLATFORM(MAC)
+    SandboxExtension::Handle renderServerMachExtensionHandle;
+#endif
 #if HAVE(STATIC_FONT_REGISTRY)
     Vector<SandboxExtension::Handle> fontMachExtensionHandles;
 #endif

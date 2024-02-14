@@ -9970,6 +9970,14 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
 #endif // !ENABLE(WEBCONTENT_GPU_SANDBOX_EXTENSIONS_BLOCKING)
 #endif // PLATFORM(COCOA)
 
+#if PLATFORM(MAC)
+    if (!shouldBlockIOKit(preferences(), drawingArea.type()) || !preferences().unifiedPDFEnabled()) {
+        auto handle = SandboxExtension::createHandleForMachLookup("com.apple.CARenderServer"_s, std::nullopt);
+        if (handle)
+            parameters.renderServerMachExtensionHandle = WTFMove(*handle);
+    }
+#endif
+
 #if HAVE(STATIC_FONT_REGISTRY)
     if (preferences().shouldAllowUserInstalledFonts())
         parameters.fontMachExtensionHandles = process.fontdMachExtensionHandles(SandboxExtension::MachBootstrapOptions::EnableMachBootstrap);

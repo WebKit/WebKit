@@ -138,6 +138,9 @@ headers: "ArgumentCoders.h"
     Vector<WebKit::SandboxExtension::Handle> gpuIOKitExtensionHandles;
     Vector<WebKit::SandboxExtension::Handle> gpuMachExtensionHandles;
 #endif
+#if PLATFORM(MAC)
+    WebKit::SandboxExtension::Handle renderServerMachExtensionHandle;
+#endif
 #if HAVE(STATIC_FONT_REGISTRY)
     Vector<WebKit::SandboxExtension::Handle> fontMachExtensionHandles;
 #endif

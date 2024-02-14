@@ -1353,7 +1353,10 @@
 ; Needed for [CAContext remoteContextWithOptions]
 #if HAVE(SANDBOX_STATE_FLAGS) && PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 140000
 (with-filter (require-not (lockdown-mode))
-    (allow mach-lookup (global-name "com.apple.CARenderServer")))
+    (allow mach-lookup
+        (require-all
+            (extension "com.apple.webkit.extension.mach")
+            (global-name "com.apple.CARenderServer"))))
 #else
 (allow mach-lookup (global-name "com.apple.CARenderServer"))
 #endif
