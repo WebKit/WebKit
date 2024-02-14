@@ -503,9 +503,15 @@ typedef enum {
 - (UIEventButtonMask)_buttonMask;
 @end
 
+@interface UIKeyEvent : NSObject
+- (instancetype)initWithWebEvent:(WebEvent *)webEvent;
+@end
+
 #endif // USE(APPLE_INTERNAL_SDK)
 
 // Start of UIKit IPI
+
+@class UITextInputArrowKeyHistory;
 
 @interface UITextAutofillSuggestion ()
 + (instancetype)autofillSuggestionWithUsername:(NSString *)username password:(NSString *)password;
@@ -623,13 +629,6 @@ typedef NS_ENUM(NSInteger, NSTextBlockLayer) {
 @end
 #endif
 
-#if USE(BROWSERENGINEKIT)
-@interface UIKeyEvent : NSObject
-- (instancetype)initWithWebEvent:(WebEvent *)webEvent;
-@property (nonatomic, readonly) WebEvent *webEvent;
-@end
-#endif
-
 @interface UIView (IPI)
 - (void)_updateSafeAreaInsets;
 @end
@@ -650,6 +649,10 @@ typedef NS_ENUM(NSInteger, NSTextBlockLayer) {
 
 @interface UIApplication (IPI)
 - (UIPressInfo *)_pressInfoForPhysicalKeyboardEvent:(UIPhysicalKeyboardEvent *)physicalKeyboardEvent;
+@end
+
+@interface UIKeyEvent (IPI)
+@property (nonatomic, readonly) WebEvent *webEvent;
 @end
 
 #endif // PLATFORM(IOS_FAMILY)
