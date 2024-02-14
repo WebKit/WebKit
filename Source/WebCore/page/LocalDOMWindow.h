@@ -183,7 +183,8 @@ public:
 
     DOMSelection* getSelection();
 
-    Element* frameElement() const;
+    HTMLFrameOwnerElement* frameElement() const;
+    RefPtr<HTMLFrameOwnerElement> protectedFrameElement() const;
 
     WEBCORE_EXPORT void focus(bool allowFocus = false);
     void focus(LocalDOMWindow& incumbentWindow);

@@ -125,6 +125,11 @@ CSSStyleSheet* CSSImportRule::styleSheet() const
     return m_styleSheetCSSOMWrapper.get(); 
 }
 
+RefPtr<CSSStyleSheet> CSSImportRule::protectedStyleSheet() const
+{
+    return styleSheet();
+}
+
 void CSSImportRule::reattach(StyleRuleBase&)
 {
     // FIXME: Implement when enabling caching for stylesheets with import rules.

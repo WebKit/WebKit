@@ -226,7 +226,8 @@ protected:
 
     virtual void willCommitTree() { }
 
-    SingleThreadWeakPtr<Page> m_page; // FIXME: ideally this would be a WeakRef but it gets nulled on async teardown.
+    WEBCORE_EXPORT Page* page() const;
+    RefPtr<Page> protectedPage() const;
 
 private:
     virtual bool hasVisibleSlowRepaintViewportConstrainedObjects(const LocalFrameView&) const;
@@ -237,6 +238,8 @@ private:
     EventTrackingRegions absoluteEventTrackingRegionsForFrame(const LocalFrame&) const;
 
     bool m_forceSynchronousScrollLayerPositionUpdates { false };
+    SingleThreadWeakPtr<Page> m_page; // FIXME: ideally this would be a WeakRef but it gets nulled on async teardown.
+
 };
 
 } // namespace WebCore

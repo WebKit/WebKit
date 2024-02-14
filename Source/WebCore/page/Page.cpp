@@ -3763,14 +3763,14 @@ void Page::effectiveAppearanceDidChange(bool useDarkAppearance, bool useElevated
 bool Page::useDarkAppearance() const
 {
 #if ENABLE(DARK_MODE_CSS)
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
-    auto* view = localMainFrame ? localMainFrame->view() : nullptr;
+    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
+    RefPtr view = localMainFrame ? localMainFrame->view() : nullptr;
     if (!view || view->mediaType() != screenAtom())
         return false;
     if (m_useDarkAppearanceOverride)
         return m_useDarkAppearanceOverride.value();
 
-    if (auto* documentLoader = localMainFrame->loader().documentLoader()) {
+    if (RefPtr documentLoader = localMainFrame->loader().documentLoader()) {
         auto colorSchemePreference = documentLoader->colorSchemePreference();
         if (colorSchemePreference != ColorSchemePreference::NoPreference)
             return colorSchemePreference == ColorSchemePreference::Dark;
@@ -3971,7 +3971,7 @@ bool Page::hasLocalDataForURL(const URL& url)
     if (url.protocolIsFile())
         return true;
 
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
+    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
     RefPtr documentLoader = localMainFrame ? localMainFrame->loader().documentLoader() : nullptr;
     if (documentLoader && documentLoader->subresource(MemoryCache::removeFragmentIdentifierIfNeeded(url)))
         return true;
@@ -4138,7 +4138,7 @@ void Page::configureLoggingChannel(const String& channelName, WTFLogChannelState
         channel->level = level;
 
 #if USE(LIBWEBRTC)
-        auto* localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
+        RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
         if (channel == &LogWebRTC && localMainFrame && localMainFrame->document() && !sessionID().isEphemeral())
             webRTCProvider().setLoggingLevel(LogWebRTC.level);
 #endif
@@ -4264,7 +4264,7 @@ void Page::removeInjectedUserStyleSheet(UserStyleSheet& userStyleSheet)
     }
 
     if (userStyleSheet.injectedFrames() == UserContentInjectedFrames::InjectInTopFrameOnly) {
-        auto* localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
+        RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
         if (RefPtr document = localMainFrame ? localMainFrame->document() : nullptr)
             document->checkedExtensionStyleSheets()->removePageSpecificUserStyleSheet(userStyleSheet);
     } else {
@@ -4582,7 +4582,7 @@ void Page::setMediaKeysStorageDirectory(const String& directory)
 
 void Page::reloadExecutionContextsForOrigin(const ClientOrigin& origin, std::optional<FrameIdentifier> triggeringFrame) const
 {
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
+    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
     if (!localMainFrame || localMainFrame->document()->topOrigin().data() != origin.topOrigin)
         return;
 

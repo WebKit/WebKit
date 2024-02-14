@@ -141,9 +141,9 @@ GraphicsLayer& PageOverlayController::layerWithDocumentOverlays()
 
     bool inWindow = m_page->isInWindow();
 
-    for (auto& overlayAndLayer : m_overlayGraphicsLayers) {
-        PageOverlay& overlay = *overlayAndLayer.key;
-        if (overlay.overlayType() != PageOverlay::OverlayType::Document)
+    for (auto overlayAndLayer : m_overlayGraphicsLayers) {
+        Ref overlay = overlayAndLayer.key;
+        if (overlay->overlayType() != PageOverlay::OverlayType::Document)
             continue;
 
         auto& layer = overlayAndLayer.value;
@@ -165,9 +165,9 @@ GraphicsLayer& PageOverlayController::layerWithViewOverlays()
 
     bool inWindow = m_page->isInWindow();
 
-    for (auto& overlayAndLayer : m_overlayGraphicsLayers) {
-        PageOverlay& overlay = *overlayAndLayer.key;
-        if (overlay.overlayType() != PageOverlay::OverlayType::View)
+    for (auto overlayAndLayer : m_overlayGraphicsLayers) {
+        Ref overlay = overlayAndLayer.key;
+        if (overlay->overlayType() != PageOverlay::OverlayType::View)
             continue;
 
         auto& layer = overlayAndLayer.value;
@@ -214,8 +214,7 @@ void PageOverlayController::installPageOverlay(PageOverlay& overlay, PageOverlay
         break;
     }
 
-    auto& rawLayer = layer.get();
-    m_overlayGraphicsLayers.set(&overlay, WTFMove(layer));
+    m_overlayGraphicsLayers.set(overlay, layer.copyRef());
 
     overlay.setPage(protectedPage().ptr());
 
@@ -224,7 +223,7 @@ void PageOverlayController::installPageOverlay(PageOverlay& overlay, PageOverlay
             frameView->enterCompositingMode();
     }
 
-    updateOverlayGeometry(overlay, rawLayer);
+    updateOverlayGeometry(overlay, layer.get());
 
     if (fadeMode == PageOverlay::FadeMode::Fade)
         overlay.startFadeInAnimation();
@@ -241,7 +240,7 @@ void PageOverlayController::uninstallPageOverlay(PageOverlay& overlay, PageOverl
 
     overlay.setPage(nullptr);
 
-    if (auto optionalLayer = m_overlayGraphicsLayers.take(&overlay))
+    if (auto optionalLayer = m_overlayGraphicsLayers.take(overlay))
         optionalLayer->removeFromParent();
 
     bool removed = m_pageOverlays.removeFirst(&overlay);
@@ -268,7 +267,7 @@ void PageOverlayController::updateForceSynchronousScrollLayerPositionUpdates()
 void PageOverlayController::setPageOverlayNeedsDisplay(PageOverlay& overlay, const IntRect& dirtyRect)
 {
     ASSERT(m_pageOverlays.contains(&overlay));
-    auto* graphicsLayer = m_overlayGraphicsLayers.get(&overlay);
+    auto* graphicsLayer = m_overlayGraphicsLayers.get(overlay);
 
     if (!graphicsLayer->drawsContent()) {
         graphicsLayer->setDrawsContent(true);
@@ -281,42 +280,42 @@ void PageOverlayController::setPageOverlayNeedsDisplay(PageOverlay& overlay, con
 void PageOverlayController::setPageOverlayOpacity(PageOverlay& overlay, float opacity)
 {
     ASSERT(m_pageOverlays.contains(&overlay));
-    m_overlayGraphicsLayers.get(&overlay)->setOpacity(opacity);
+    m_overlayGraphicsLayers.get(overlay)->setOpacity(opacity);
 }
 
 void PageOverlayController::clearPageOverlay(PageOverlay& overlay)
 {
     ASSERT(m_pageOverlays.contains(&overlay));
-    m_overlayGraphicsLayers.get(&overlay)->setDrawsContent(false);
+    m_overlayGraphicsLayers.get(overlay)->setDrawsContent(false);
 }
 
 GraphicsLayer& PageOverlayController::layerForOverlay(PageOverlay& overlay) const
 {
     ASSERT(m_pageOverlays.contains(&overlay));
-    return *m_overlayGraphicsLayers.get(&overlay);
+    return *m_overlayGraphicsLayers.get(overlay);
 }
 
 void PageOverlayController::didChangeViewSize()
 {
-    for (auto& overlayAndLayer : m_overlayGraphicsLayers) {
-        if (overlayAndLayer.key->overlayType() == PageOverlay::OverlayType::View)
-            updateOverlayGeometry(*overlayAndLayer.key, overlayAndLayer.value.get());
+    for (auto overlayAndLayer : m_overlayGraphicsLayers) {
+        if (overlayAndLayer.key.overlayType() == PageOverlay::OverlayType::View)
+            updateOverlayGeometry(Ref { overlayAndLayer.key }, overlayAndLayer.value.get());
     }
 }
 
 void PageOverlayController::didChangeDocumentSize()
 {
-    for (auto& overlayAndLayer : m_overlayGraphicsLayers) {
-        if (overlayAndLayer.key->overlayType() == PageOverlay::OverlayType::Document)
-            updateOverlayGeometry(*overlayAndLayer.key, overlayAndLayer.value.get());
+    for (auto overlayAndLayer : m_overlayGraphicsLayers) {
+        if (overlayAndLayer.key.overlayType() == PageOverlay::OverlayType::Document)
+            updateOverlayGeometry(Ref { overlayAndLayer.key }, overlayAndLayer.value.get());
     }
 }
 
 void PageOverlayController::didChangeSettings()
 {
     // FIXME: We should apply these settings to all overlay sublayers recursively.
-    for (auto& graphicsLayer : m_overlayGraphicsLayers.values())
-        updateSettingsForLayer(graphicsLayer.get());
+    for (auto overlayAndLayer : m_overlayGraphicsLayers)
+        updateSettingsForLayer(Ref { overlayAndLayer.value });
 }
 
 void PageOverlayController::didChangeDeviceScaleFactor()
@@ -327,8 +326,8 @@ void PageOverlayController::didChangeDeviceScaleFactor()
     m_documentOverlayRootLayer->noteDeviceOrPageScaleFactorChangedIncludingDescendants();
     m_viewOverlayRootLayer->noteDeviceOrPageScaleFactorChangedIncludingDescendants();
 
-    for (auto& graphicsLayer : m_overlayGraphicsLayers.values())
-        graphicsLayer->setNeedsDisplay();
+    for (auto overlayAndLayer : m_overlayGraphicsLayers)
+        Ref { overlayAndLayer.value }->setNeedsDisplay();
 }
 
 void PageOverlayController::didChangeViewExposedRect()
@@ -338,10 +337,10 @@ void PageOverlayController::didChangeViewExposedRect()
 
 void PageOverlayController::didScrollFrame(LocalFrame& frame)
 {
-    for (auto& overlayAndLayer : m_overlayGraphicsLayers) {
-        if (overlayAndLayer.key->overlayType() == PageOverlay::OverlayType::View || !frame.isMainFrame())
+    for (auto overlayAndLayer : m_overlayGraphicsLayers) {
+        if (overlayAndLayer.key.overlayType() == PageOverlay::OverlayType::View || !frame.isMainFrame())
             overlayAndLayer.value->setNeedsDisplay();
-        overlayAndLayer.key->didScrollFrame(frame);
+        Ref { overlayAndLayer.key }->didScrollFrame(frame);
     }
 }
 
@@ -408,13 +407,13 @@ Vector<String> PageOverlayController::copyAccessibilityAttributesNames(bool para
 
 void PageOverlayController::paintContents(const GraphicsLayer* graphicsLayer, GraphicsContext& graphicsContext, const FloatRect& clipRect, OptionSet<GraphicsLayerPaintBehavior>)
 {
-    for (auto& overlayAndGraphicsLayer : m_overlayGraphicsLayers) {
+    for (auto overlayAndGraphicsLayer : m_overlayGraphicsLayers) {
         if (overlayAndGraphicsLayer.value.ptr() != graphicsLayer)
             continue;
 
         GraphicsContextStateSaver stateSaver(graphicsContext);
         graphicsContext.clip(clipRect);
-        overlayAndGraphicsLayer.key->drawRect(graphicsContext, enclosingIntRect(clipRect));
+        Ref { overlayAndGraphicsLayer.key }->drawRect(graphicsContext, enclosingIntRect(clipRect));
 
         return;
     }
@@ -433,14 +432,14 @@ void PageOverlayController::notifyFlushRequired(const GraphicsLayer*)
 void PageOverlayController::didChangeOverlayFrame(PageOverlay& overlay)
 {
     ASSERT(m_pageOverlays.contains(&overlay));
-    if (RefPtr layer = m_overlayGraphicsLayers.get(&overlay))
+    if (RefPtr layer = m_overlayGraphicsLayers.get(overlay))
         updateOverlayGeometry(overlay, *layer);
 }
 
 void PageOverlayController::didChangeOverlayBackgroundColor(PageOverlay& overlay)
 {
     ASSERT(m_pageOverlays.contains(&overlay));
-    if (RefPtr layer = m_overlayGraphicsLayers.get(&overlay))
+    if (RefPtr layer = m_overlayGraphicsLayers.get(overlay))
         layer->setBackgroundColor(overlay.backgroundColor());
 }
 

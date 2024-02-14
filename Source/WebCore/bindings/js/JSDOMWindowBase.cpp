@@ -33,6 +33,7 @@
 #include "Event.h"
 #include "EventLoop.h"
 #include "FetchResponse.h"
+#include "HTMLFrameOwnerElement.h"
 #include "InspectorController.h"
 #include "JSDOMBindingSecurity.h"
 #include "JSDocument.h"

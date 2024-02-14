@@ -414,16 +414,16 @@ bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& eve
         return true;
         
     case NSEventTypeLeftMouseDown: {
-        Node* node = event.targetNode();
+        RefPtr node = event.targetNode();
         if (!node)
             return false;
-        auto* renderer = node->renderer();
-        if (!is<RenderWidget>(renderer))
+        WeakPtr renderer = node->renderer();
+        if (!is<RenderWidget>(renderer.get()))
             return false;
-        Widget* widget = downcast<RenderWidget>(*renderer).widget();
+        RefPtr widget = downcast<RenderWidget>(*renderer).widget();
         if (!widget || !widget->isLocalFrameView())
             return false;
-        if (!passWidgetMouseDownEventToWidget(downcast<RenderWidget>(renderer)))
+        if (!passWidgetMouseDownEventToWidget(downcast<RenderWidget>(renderer.get()))) // May destroy the renderer.
             return false;
         m_mouseDownWasInSubframe = true;
         return true;

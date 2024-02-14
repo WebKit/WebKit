@@ -918,8 +918,8 @@ void LocalFrameView::updateSnapOffsets()
     if (!m_frame->document())
         return;
 
-    auto* documentElement = m_frame->document()->documentElement();
-    auto* rootRenderer = documentElement ? documentElement->renderBox() : nullptr;
+    RefPtr documentElement = m_frame->document()->documentElement();
+    CheckedPtr rootRenderer = documentElement ? documentElement->renderBox() : nullptr;
 
     const RenderStyle* styleToUse = nullptr;
     if (rootRenderer && rootRenderer->style().scrollSnapType().strictness != ScrollSnapStrictness::None)
@@ -3278,7 +3278,7 @@ void LocalFrameView::adjustTiledBackingCoverage()
 
 static bool shouldEnableSpeculativeTilingDuringLoading(const LocalFrameView& view)
 {
-    auto* page = view.frame().page();
+    RefPtr page = view.frame().page();
     return page && view.isVisuallyNonEmpty() && !page->progress().isMainLoadProgressing();
 }
 
@@ -3585,23 +3585,23 @@ bool LocalFrameView::shouldUpdate() const
 
 bool LocalFrameView::safeToPropagateScrollToParent() const
 {
-    auto* document = m_frame->document();
+    RefPtr document = m_frame->document();
     if (!document)
         return false;
 
-    auto* parentFrame = m_frame->tree().parent();
+    RefPtr parentFrame = m_frame->tree().parent();
     if (!parentFrame)
         return false;
     
-    auto* localParent = dynamicDowncast<LocalFrame>(parentFrame);
+    RefPtr localParent = dynamicDowncast<LocalFrame>(parentFrame);
     if (!localParent)
         return false;
 
-    auto* parentDocument = localParent->document();
+    RefPtr parentDocument = localParent->document();
     if (!parentDocument)
         return false;
 
-    return document->securityOrigin().isSameOriginDomain(parentDocument->securityOrigin());
+    return document->protectedSecurityOrigin()->isSameOriginDomain(parentDocument->protectedSecurityOrigin());
 }
 
 void LocalFrameView::scheduleScrollToAnchorAndTextFragment()
@@ -4415,10 +4415,10 @@ void LocalFrameView::notifyScrollableAreasThatContentAreaWillPaint() const
 
 void LocalFrameView::updateScrollCorner()
 {
-    RenderElement* renderer = nullptr;
+    CheckedPtr<RenderElement> renderer;
     std::unique_ptr<RenderStyle> cornerStyle;
     IntRect cornerRect = scrollCornerRect();
-    Document* doc = m_frame->document();
+    RefPtr doc = m_frame->document();
 
     auto usesStandardScrollbarStyle = [](auto& doc) {
         if (!doc || !doc->documentElement())
@@ -4431,7 +4431,7 @@ void LocalFrameView::updateScrollCorner()
 
     if (!(usesStandardScrollbarStyle(doc) || cornerRect.isEmpty())) {
         // Try the <body> element first as a scroll corner source.
-        Element* body = doc ? doc->bodyOrFrameset() : nullptr;
+        RefPtr body = doc ? doc->bodyOrFrameset() : nullptr;
         if (body && body->renderer()) {
             renderer = body->renderer();
             cornerStyle = renderer->getUncachedPseudoStyle({ PseudoId::WebKitScrollbarCorner }, &renderer->style());
@@ -4439,7 +4439,7 @@ void LocalFrameView::updateScrollCorner()
         
         if (!cornerStyle) {
             // If the <body> didn't have a custom style, then the root element might.
-            Element* docElement = doc ? doc->documentElement() : nullptr;
+            RefPtr docElement = doc ? doc->documentElement() : nullptr;
             if (docElement && docElement->renderer()) {
                 renderer = docElement->renderer();
                 cornerStyle = renderer->getUncachedPseudoStyle({ PseudoId::WebKitScrollbarCorner }, &renderer->style());
@@ -4449,7 +4449,7 @@ void LocalFrameView::updateScrollCorner()
         if (!cornerStyle) {
             // If we have an owning iframe/frame element, then it can set the custom scrollbar also.
             // FIXME: Seems wrong to do this for cross-origin frames.
-            if (RenderWidget* renderer = m_frame->ownerRenderer())
+            if (RefPtr renderer = m_frame->ownerRenderer())
                 cornerStyle = renderer->getUncachedPseudoStyle({ PseudoId::WebKitScrollbarCorner }, &renderer->style());
         }
     }
@@ -4458,7 +4458,7 @@ void LocalFrameView::updateScrollCorner()
         m_scrollCorner = nullptr;
     else {
         if (!m_scrollCorner) {
-            m_scrollCorner = createRenderer<RenderScrollbarPart>(renderer->document(), WTFMove(*cornerStyle));
+            m_scrollCorner = createRenderer<RenderScrollbarPart>(renderer->protectedDocument(), WTFMove(*cornerStyle));
             m_scrollCorner->initializeStyle();
         } else
             m_scrollCorner->setStyle(WTFMove(*cornerStyle));
@@ -4927,7 +4927,7 @@ void LocalFrameView::updateLayoutAndStyleIfNeededRecursive(OptionSet<LayoutOptio
     auto needsStyleRecalc = [&] {
         DescendantsDeque deque;
         while (auto view = nextRenderedDescendant(deque)) {
-            auto* document = view->m_frame->document();
+            RefPtr document = view->m_frame->document();
             if (document && document->childNeedsStyleRecalc())
                 return true;
         }

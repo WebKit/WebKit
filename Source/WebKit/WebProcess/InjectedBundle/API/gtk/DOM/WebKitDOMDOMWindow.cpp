@@ -25,6 +25,7 @@
 #include <WebCore/DOMException.h>
 #include <WebCore/Document.h>
 #include "GObjectEventListener.h"
+#include <WebCore/HTMLFrameOwnerElement.h>
 #include <WebCore/JSDOMGlobalObject.h>
 #include <WebCore/JSDOMPromiseDeferred.h>
 #include <WebCore/JSExecState.h>

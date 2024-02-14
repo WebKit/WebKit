@@ -82,15 +82,15 @@ void ScrollingCoordinatorMac::didCompletePlatformRenderingUpdate()
 
 void ScrollingCoordinatorMac::updateTiledScrollingIndicator()
 {
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(page()->mainFrame());
     if (!localMainFrame)
         return;
 
-    auto* frameView = localMainFrame->view();
+    RefPtr frameView = localMainFrame->view();
     if (!frameView)
         return;
     
-    TiledBacking* tiledBacking = frameView->tiledBacking();
+    CheckedPtr tiledBacking = frameView->tiledBacking();
     if (!tiledBacking)
         return;
 

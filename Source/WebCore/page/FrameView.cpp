@@ -125,7 +125,7 @@ void FrameView::invalidateRect(const IntRect& rect)
         return;
     }
 
-    auto* renderer = frame->ownerRenderer();
+    CheckedPtr renderer = frame->ownerRenderer();
     if (!renderer)
         return;
 
@@ -142,7 +142,7 @@ bool FrameView::forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const
 
 IntRect FrameView::scrollableAreaBoundingBox(bool*) const
 {
-    RenderWidget* ownerRenderer = frame().ownerRenderer();
+    RefPtr ownerRenderer = frame().ownerRenderer();
     if (!ownerRenderer)
         return frameRect();
 

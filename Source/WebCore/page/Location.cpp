@@ -293,7 +293,7 @@ ExceptionOr<void> Location::setLocation(LocalDOMWindow& incumbentWindow, LocalDO
     RefPtr frame = this->frame();
     ASSERT(frame);
 
-    auto* firstFrame = firstWindow.frame();
+    RefPtr firstFrame = firstWindow.frame();
     if (!firstFrame || !firstFrame->document())
         return { };
 

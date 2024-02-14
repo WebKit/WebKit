@@ -247,6 +247,16 @@ GraphicsLayer* ScrollingCoordinator::footerLayerForFrameView(LocalFrameView& fra
 #endif
 }
 
+Page* ScrollingCoordinator::page() const
+{
+    return m_page.get();
+}
+
+RefPtr<Page> ScrollingCoordinator::protectedPage() const
+{
+    return m_page.get();
+}
+
 GraphicsLayer* ScrollingCoordinator::counterScrollingLayerForFrameView(LocalFrameView& frameView)
 {
     if (auto* renderView = frameView.frame().contentRenderer())

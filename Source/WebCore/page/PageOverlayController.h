@@ -27,9 +27,9 @@
 
 #include "GraphicsLayerClient.h"
 #include "PageOverlay.h"
-#include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakHashMap.h>
 
 namespace WebCore {
 
@@ -71,7 +71,7 @@ public:
     void didChangeOverlayFrame(PageOverlay&);
     void didChangeOverlayBackgroundColor(PageOverlay&);
 
-    int overlayCount() const { return m_overlayGraphicsLayers.size(); }
+    int overlayCount() const { return m_overlayGraphicsLayers.computeSize(); }
 
     bool handleMouseEvent(const PlatformMouseEvent&);
 
@@ -106,7 +106,7 @@ private:
     RefPtr<GraphicsLayer> m_documentOverlayRootLayer;
     RefPtr<GraphicsLayer> m_viewOverlayRootLayer;
 
-    HashMap<PageOverlay*, Ref<GraphicsLayer>> m_overlayGraphicsLayers;
+    WeakHashMap<PageOverlay, Ref<GraphicsLayer>> m_overlayGraphicsLayers;
     Vector<RefPtr<PageOverlay>> m_pageOverlays;
     bool m_initialized { false };
 };

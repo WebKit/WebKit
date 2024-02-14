@@ -470,7 +470,7 @@ void EventHandler::clear()
 
 void EventHandler::nodeWillBeRemoved(Node& nodeToBeRemoved)
 {
-    if (nodeToBeRemoved.containsIncludingShadowDOM(m_clickNode.get()))
+    if (nodeToBeRemoved.containsIncludingShadowDOM(RefPtr { m_clickNode }.get()))
         m_clickNode = nullptr;
 }
 
@@ -2147,8 +2147,8 @@ HandleUserInputEventResult EventHandler::handleMouseMoveEvent(const PlatformMous
             m_offsetFromResizeCorner.setWidth(m_resizeLayer->offsetFromResizeCorner(localPoint).width());
         }
     } else {
-        Scrollbar* scrollbar = mouseEvent.scrollbar();
-        updateLastScrollbarUnderMouse(scrollbar, m_mousePressed ? SetOrClearLastScrollbar::Clear : SetOrClearLastScrollbar::Set);
+        RefPtr scrollbar = mouseEvent.scrollbar();
+        updateLastScrollbarUnderMouse(scrollbar.get(), m_mousePressed ? SetOrClearLastScrollbar::Clear : SetOrClearLastScrollbar::Set);
 
         // On iOS, our scrollbars are managed by UIKit.
 #if !PLATFORM(IOS_FAMILY)
@@ -2157,7 +2157,7 @@ HandleUserInputEventResult EventHandler::handleMouseMoveEvent(const PlatformMous
 #endif
         if (onlyUpdateScrollbars) {
             if (shouldSendMouseEventsToInactiveWindows())
-                updateMouseEventTargetNode(eventNames().mousemoveEvent, mouseEvent.targetNode(), platformMouseEvent, FireMouseOverOut::Yes);
+                updateMouseEventTargetNode(eventNames().mousemoveEvent, mouseEvent.protectedTargetNode().get(), platformMouseEvent, FireMouseOverOut::Yes);
 
             return true;
         }
@@ -2311,10 +2311,10 @@ HandleUserInputEventResult EventHandler::handleMouseReleaseEvent(const PlatformM
     if (localSubframe && passMouseReleaseEventToSubframe(mouseEvent, *localSubframe))
         return true;
 
-    bool swallowMouseUpEvent = !dispatchMouseEvent(eventNames().mouseupEvent, mouseEvent.targetNode(), m_clickCount, platformMouseEvent, FireMouseOverOut::No);
+    bool swallowMouseUpEvent = !dispatchMouseEvent(eventNames().mouseupEvent, mouseEvent.protectedTargetNode().get(), m_clickCount, platformMouseEvent, FireMouseOverOut::No);
     bool contextMenuEvent = platformMouseEvent.button() == MouseButton::Right;
 
-    auto nodeToClick = targetNodeForClickEvent(m_clickNode.get(), mouseEvent.targetNode());
+    auto nodeToClick = targetNodeForClickEvent(RefPtr { m_clickNode }.get(), mouseEvent.protectedTargetNode().get());
     bool swallowClickEvent = m_clickCount > 0 && !contextMenuEvent && nodeToClick && !dispatchMouseEvent(eventNames().clickEvent, nodeToClick.get(), m_clickCount, platformMouseEvent, FireMouseOverOut::Yes);
 
     if (m_resizeLayer) {

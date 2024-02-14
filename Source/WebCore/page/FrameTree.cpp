@@ -122,16 +122,14 @@ AtomString FrameTree::generateUniqueName() const
 
 static bool inScope(Frame& frame, TreeScope& scope)
 {
-    auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+    RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
     if (!localFrame)
         return true;
-    Document* document = localFrame->document();
+    RefPtr document = localFrame->document();
     if (!document)
         return false;
-    HTMLFrameOwnerElement* owner = document->ownerElement();
-    if (!owner)
-        return false;
-    return &owner->treeScope() == &scope;
+    RefPtr owner = document->ownerElement();
+    return owner && &owner->treeScope() == &scope;
 }
 
 Frame* FrameTree::scopedChild(unsigned index, TreeScope* scope) const
@@ -289,7 +287,7 @@ inline Frame* FrameTree::find(const AtomString& name, const Function<const AtomS
     }
 
     // Search the entire tree of each of the other pages in this namespace.
-    Page* page = m_thisFrame.page();
+    RefPtr page = m_thisFrame.page();
     if (!page)
         return nullptr;
 

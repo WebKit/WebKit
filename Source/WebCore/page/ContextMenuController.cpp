@@ -298,9 +298,9 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
         return;
     }
 
-    auto& document = m_context.hitTestResult().innerNonSharedNode()->document();
+    Ref document = m_context.hitTestResult().innerNonSharedNode()->document();
 
-    RefPtr frame = document.frame();
+    RefPtr frame = document->frame();
     if (!frame)
         return;
 

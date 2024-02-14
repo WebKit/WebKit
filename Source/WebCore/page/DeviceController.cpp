@@ -77,7 +77,7 @@ bool DeviceController::hasDeviceEventListener(LocalDOMWindow& window) const
 void DeviceController::dispatchDeviceEvent(Event& event)
 {
     for (auto& listener : copyToVector(m_listeners.values())) {
-        auto document = listener->document();
+        RefPtr document = listener->document();
         if (document && !document->activeDOMObjectsAreSuspended() && !document->activeDOMObjectsAreStopped())
             listener->dispatchEvent(event);
     }

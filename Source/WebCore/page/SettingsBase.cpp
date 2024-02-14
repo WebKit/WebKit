@@ -331,18 +331,18 @@ void SettingsBase::setNeedsRelayoutAllFrames()
 
 void SettingsBase::mediaTypeOverrideChanged()
 {
-    if (!m_page)
+    RefPtr page = m_page.get();
+    if (!page)
         return;
 
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
     if (!localMainFrame)
         return;
 
-    auto* view = localMainFrame->view();
-    if (view)
-        view->setMediaType(AtomString(m_page->settings().mediaTypeOverride()));
+    if (RefPtr view = localMainFrame->view())
+        view->setMediaType(AtomString(page->settings().mediaTypeOverride()));
 
-    m_page->setNeedsRecalcStyleInAllFrames();
+    page->setNeedsRecalcStyleInAllFrames();
 }
 
 void SettingsBase::imagesEnabledChanged()

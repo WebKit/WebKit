@@ -680,13 +680,13 @@ Element* FocusController::findFocusableElementAcrossFocusScope(FocusDirection di
     }
 
     // If there's no focusable node to advance to, move up the focus scopes until we find one.
-    Element* owner = scope.owner();
+    RefPtr owner = scope.owner();
     while (owner) {
         if (direction == FocusDirection::Backward && isFocusableScopeOwner(*owner, event))
-            return findFocusableElementDescendingIntoSubframes(direction, owner, event);
+            return findFocusableElementDescendingIntoSubframes(direction, owner.get(), event);
 
         auto outerScope = FocusNavigationScope::scopeOf(*owner);
-        if (Element* candidateInOuterScope = findFocusableElementWithinScope(direction, outerScope, owner, event))
+        if (Element* candidateInOuterScope = findFocusableElementWithinScope(direction, outerScope, owner.get(), event))
             return candidateInOuterScope;
         owner = outerScope.owner();
     }
@@ -696,42 +696,42 @@ Element* FocusController::findFocusableElementAcrossFocusScope(FocusDirection di
 Element* FocusController::findFocusableElementWithinScope(FocusDirection direction, const FocusNavigationScope& scope, Node* start, KeyboardEvent* event)
 {
     // Starting node is exclusive.
-    Element* candidate = direction == FocusDirection::Forward
+    RefPtr candidate = direction == FocusDirection::Forward
         ? nextFocusableElementWithinScope(scope, start, event)
         : previousFocusableElementWithinScope(scope, start, event);
-    return findFocusableElementDescendingIntoSubframes(direction, candidate, event);
+    return findFocusableElementDescendingIntoSubframes(direction, candidate.get(), event);
 }
 
 Element* FocusController::nextFocusableElementWithinScope(const FocusNavigationScope& scope, Node* start, KeyboardEvent* event)
 {
-    Element* found = nextFocusableElementOrScopeOwner(scope, start, event);
+    RefPtr found = nextFocusableElementOrScopeOwner(scope, start, event);
     if (!found)
         return nullptr;
     if (isNonFocusableScopeOwner(*found, event)) {
         if (Element* foundInInnerFocusScope = nextFocusableElementWithinScope(FocusNavigationScope::scopeOwnedByScopeOwner(*found), 0, event))
             return foundInInnerFocusScope;
-        return nextFocusableElementWithinScope(scope, found, event);
+        return nextFocusableElementWithinScope(scope, found.get(), event);
     }
-    return found;
+    return found.get();
 }
 
 Element* FocusController::previousFocusableElementWithinScope(const FocusNavigationScope& scope, Node* start, KeyboardEvent* event)
 {
-    Element* found = previousFocusableElementOrScopeOwner(scope, start, event);
+    RefPtr found = previousFocusableElementOrScopeOwner(scope, start, event);
     if (!found)
         return nullptr;
     if (isFocusableScopeOwner(*found, event)) {
         // Search an inner focusable element in the shadow tree from the end.
         if (Element* foundInInnerFocusScope = previousFocusableElementWithinScope(FocusNavigationScope::scopeOwnedByScopeOwner(*found), 0, event))
             return foundInInnerFocusScope;
-        return found;
+        return found.get();
     }
     if (isNonFocusableScopeOwner(*found, event)) {
         if (Element* foundInInnerFocusScope = previousFocusableElementWithinScope(FocusNavigationScope::scopeOwnedByScopeOwner(*found), 0, event))
             return foundInInnerFocusScope;
-        return previousFocusableElementWithinScope(scope, found, event);
+        return previousFocusableElementWithinScope(scope, found.get(), event);
     }
-    return found;
+    return found.get();
 }
 
 Element* FocusController::findFocusableElementOrScopeOwner(FocusDirection direction, const FocusNavigationScope& scope, Node* node, KeyboardEvent* event)
@@ -1183,9 +1183,9 @@ bool FocusController::advanceFocusDirectionallyInContainer(Node* container, cons
         }
         // Navigate into a new frame.
         LayoutRect rect;
-        Element* focusedElement = focusedOrMainFrame().document()->focusedElement();
-        if (focusedElement && !hasOffscreenRect(focusedElement))
-            rect = nodeRectInAbsoluteCoordinates(focusedElement, true /* ignore border */);
+        RefPtr focusedElement = focusedOrMainFrame().document()->focusedElement();
+        if (focusedElement && !hasOffscreenRect(focusedElement.get()))
+            rect = nodeRectInAbsoluteCoordinates(focusedElement.get(), true /* ignore border */);
         dynamicDowncast<LocalFrame>(frameElement->contentFrame())->document()->updateLayoutIgnorePendingStylesheets();
         if (!advanceFocusDirectionallyInContainer(dynamicDowncast<LocalFrame>(frameElement->contentFrame())->document(), rect, direction, event)) {
             // The new frame had nothing interesting, need to find another candidate.
@@ -1201,9 +1201,9 @@ bool FocusController::advanceFocusDirectionallyInContainer(Node* container, cons
         }
         // Navigate into a new scrollable container.
         LayoutRect startingRect;
-        Element* focusedElement = focusedOrMainFrame().document()->focusedElement();
-        if (focusedElement && !hasOffscreenRect(focusedElement))
-            startingRect = nodeRectInAbsoluteCoordinates(focusedElement, true);
+        RefPtr focusedElement = focusedOrMainFrame().document()->focusedElement();
+        if (focusedElement && !hasOffscreenRect(focusedElement.get()))
+            startingRect = nodeRectInAbsoluteCoordinates(focusedElement.get(), true);
         return advanceFocusDirectionallyInContainer(RefPtr { focusCandidate.visibleNode.get() }.get(), startingRect, direction, event);
     }
     if (focusCandidate.isOffscreenAfterScrolling) {

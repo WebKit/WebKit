@@ -124,7 +124,7 @@ bool PointerCaptureController::hasPointerCapture(Element* capturingTarget, Point
     if (!m_haveAnyCapturingElement)
         return false;
 
-    auto capturingData = m_activePointerIdsToCapturingData.get(pointerId);
+    RefPtr capturingData = m_activePointerIdsToCapturingData.get(pointerId);
     return capturingData && capturingData->pendingTargetOverride == capturingTarget;
 }
 
@@ -509,10 +509,10 @@ void PointerCaptureController::cancelPointer(PointerID pointerId, const IntPoint
         if (capturingData->targetOverride)
             return capturingData->targetOverride;
         constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::AllowChildFrameContent };
-        auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
+        RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
         if (!localMainFrame)
             return nullptr;
-        return Ref(*localMainFrame)->eventHandler().hitTestResultAtPoint(documentPoint, hitType).innerNonSharedElement();
+        return localMainFrame->checkedEventHandler()->hitTestResultAtPoint(documentPoint, hitType).innerNonSharedElement();
     }();
 
     if (!target)
