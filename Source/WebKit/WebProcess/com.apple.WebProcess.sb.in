@@ -1380,10 +1380,14 @@
 
 ;; <rdar://problem/47268166>
 (allow mach-lookup
+#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 140000
     (require-all
         (extension "com.apple.webkit.extension.mach")
         (xpc-service-name "com.apple.MTLCompilerService")
     )
+#else
+    (xpc-service-name "com.apple.MTLCompilerService")
+#endif
 )
 
 (deny mach-lookup (with no-report)
