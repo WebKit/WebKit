@@ -140,8 +140,12 @@ static bool hasTrailingSoftWrapOpportunity(size_t softWrapOpportunityIndex, size
         return false;
     }
     if (trailingInlineItem.isOpaque()) {
-        ASSERT(softWrapOpportunityIndex > 1 || inlineItemList[softWrapOpportunityIndex].isFloat()); // Can't have opaque items only candidate content.
-        return hasTrailingSoftWrapOpportunity(softWrapOpportunityIndex - 1, layoutRangeEnd, inlineItemList);
+        for (auto index = softWrapOpportunityIndex; index--;) {
+            if (!inlineItemList[index].isOpaque())
+                return hasTrailingSoftWrapOpportunity(index + 1, layoutRangeEnd, inlineItemList);
+        }
+        ASSERT(inlineItemList[softWrapOpportunityIndex].isFloat());
+        return false;
     }
     ASSERT_NOT_REACHED();
     return true;
