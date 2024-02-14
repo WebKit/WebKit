@@ -110,7 +110,7 @@ private:
     void stopOutgoingSource();
 
     virtual RTCRtpCapabilities rtpCapabilities() const = 0;
-    void codecPreferencesChanged(const GRefPtr<GstCaps>&);
+    void codecPreferencesChanged();
 
     virtual void connectFallbackSource() { }
     virtual void unlinkOutgoingSource() { }
@@ -124,7 +124,7 @@ private:
 
     void unlinkPayloader();
 
-    GRefPtr<GstCaps> m_pendingCodecPreferences;
+    unsigned long m_padBlockedProbe { 0 };
 };
 
 } // namespace WebCore
