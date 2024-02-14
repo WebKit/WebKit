@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,32 +25,25 @@
 
 #pragma once
 
-#include <wtf/ForbidHeapAllocation.h>
 #include <wtf/Platform.h>
 
 #if USE(SYSTEM_MALLOC) || !USE(TZONE_MALLOC)
 
-#include <wtf/FastMalloc.h>
-
-#define WTF_TZONE_REGISTER_TYPES(begin, end)
-#define WTF_MAKE_TZONE_ALLOCATED(name) WTF_MAKE_FAST_ALLOCATED
-#define WTF_MAKE_TZONE_ALLOCATED_EXPORT(name, exportMacro) WTF_MAKE_FAST_ALLOCATED
-#define WTF_MAKE_TZONE_NONALLOCATABLE(name) WTF_FORBID_HEAP_ALLOCATION
+#define WTF_TZONE_EXTRA_MAIN_ARGS
+#define WTF_TZONE_INIT(seed)
+#define WTF_TZONE_REGISTRATION_DONE()
 
 #else
 
-#include <bmalloc/TZoneHeap.h>
+#include <_simple.h>
+#include <bmalloc/TZoneHeapManager.h>
 
 #if !BUSE(TZONE)
 #error "TZones enabled in WTF, but not enabled in bmalloc"
 #endif
 
-#define WTF_NOEXPORT
-
-#define WTF_TZONE_REGISTER_TYPES(begin, end) BTZONE_REGISTER_TYPES((const bmalloc_type*)begin, (const bmalloc_type*)end)
-#define WTF_MAKE_TZONE_ALLOCATED(name) MAKE_BTZONE_MALLOCED(name, WTF_NOEXPORT)
-#define WTF_MAKE_TZONE_ALLOCATED_EXPORT(name, exportMacro) MAKE_BTZONE_MALLOCED(name, exportMacro)
-#define WTF_MAKE_TZONE_NONALLOCATABLE(name) WTF_FORBID_HEAP_ALLOCATION
+#define WTF_TZONE_EXTRA_MAIN_ARGS , [[maybe_unused]] const char**, [[maybe_unused]] const char** darwinEnvp
+#define WTF_TZONE_INIT(seed) BTZONE_INIT(seed)
+#define WTF_TZONE_REGISTRATION_DONE() BTZONE_REGISTRATION_DONE()
 
 #endif
-

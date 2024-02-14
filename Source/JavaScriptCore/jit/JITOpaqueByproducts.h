@@ -36,7 +36,7 @@ namespace JSC {
 
 class OpaqueByproducts {
     WTF_MAKE_NONCOPYABLE(OpaqueByproducts)
-    WTF_MAKE_TZONE_ALLOCATED(OpaqueByproducts);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(OpaqueByproducts, JS_EXPORT_PRIVATE);
 public:
     OpaqueByproducts();
     JS_EXPORT_PRIVATE ~OpaqueByproducts();

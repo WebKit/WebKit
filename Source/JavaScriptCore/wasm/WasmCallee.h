@@ -277,6 +277,7 @@ private:
 #if ENABLE(WEBASSEMBLY_OMGJIT)
 
 class OMGCallee final : public OptimizingJITCallee {
+    WTF_MAKE_TZONE_ALLOCATED(OMGCallee);
 public:
     static Ref<OMGCallee> create(size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name)
     {

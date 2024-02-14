@@ -25,7 +25,7 @@
 
 #include "TZoneHeap.h"
 
-#if BUSE(LIBPAS)
+#if BUSE(TZONE)
 
 #include "IsoMallocFallback.h"
 #include "bmalloc_heap_inlines.h"
@@ -72,5 +72,5 @@ void tzoneDeallocate(void* ptr)
 
 } } // namespace bmalloc::api
 
-#endif // BUSE(LIBPAS)
+#endif // BUSE(TZONE)
 

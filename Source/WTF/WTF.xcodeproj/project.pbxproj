@@ -110,6 +110,7 @@
 		6311592628989A55006A9A12 /* LibraryPathDiagnostics.h in Headers */ = {isa = PBXBuildFile; fileRef = 6311592428989A55006A9A12 /* LibraryPathDiagnostics.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6311592728989A55006A9A12 /* LibraryPathDiagnostics.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6311592528989A55006A9A12 /* LibraryPathDiagnostics.mm */; };
 		63F9BED42898D96400371416 /* CFPrivSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 63F9BED32898D96400371416 /* CFPrivSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		65072B162B6D7FAA0065065C /* TZoneMallocInitialization.h in Headers */ = {isa = PBXBuildFile; fileRef = 65072B152B6D7FAA0065065C /* TZoneMallocInitialization.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		70A993FE1AD7151300FA615B /* SymbolRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70A993FC1AD7151300FA615B /* SymbolRegistry.cpp */; };
 		70ECA60D1B02426800449739 /* AtomStringImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70ECA60A1B02426800449739 /* AtomStringImpl.cpp */; };
 		7A05093F1FB9DCC500B33FB8 /* JSONValues.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A05093E1FB9DCC500B33FB8 /* JSONValues.cpp */; };
@@ -1231,6 +1232,7 @@
 		6311592428989A55006A9A12 /* LibraryPathDiagnostics.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LibraryPathDiagnostics.h; sourceTree = "<group>"; };
 		6311592528989A55006A9A12 /* LibraryPathDiagnostics.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = LibraryPathDiagnostics.mm; sourceTree = "<group>"; };
 		63F9BED32898D96400371416 /* CFPrivSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFPrivSPI.h; sourceTree = "<group>"; };
+		65072B152B6D7FAA0065065C /* TZoneMallocInitialization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TZoneMallocInitialization.h; sourceTree = "<group>"; };
 		70A993FC1AD7151300FA615B /* SymbolRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SymbolRegistry.cpp; sourceTree = "<group>"; };
 		70A993FD1AD7151300FA615B /* SymbolRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SymbolRegistry.h; sourceTree = "<group>"; };
 		70ECA60A1B02426800449739 /* AtomStringImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AtomStringImpl.cpp; sourceTree = "<group>"; };
@@ -2428,6 +2430,7 @@
 				83FBA93119DF459700F30ADB /* TypeCasts.h */,
 				5164042E2AB1D4DD0042B1C3 /* TypeTraits.h */,
 				FE03831B2ABC04F700A576A2 /* TZoneMalloc.h */,
+				65072B152B6D7FAA0065065C /* TZoneMallocInitialization.h */,
 				FE03831A2ABC04F700A576A2 /* TZoneMallocInlines.h */,
 				E360C7642127B85B00C90F0E /* UnalignedAccess.h */,
 				E360C7652127B85C00C90F0E /* Unexpected.h */,
@@ -3464,6 +3467,7 @@
 				DDF306FD27C086CC006A526F /* TypeCastsCocoa.h in Headers */,
 				5164042F2AB1D4DD0042B1C3 /* TypeTraits.h in Headers */,
 				FE03831D2ABC04F700A576A2 /* TZoneMalloc.h in Headers */,
+				65072B162B6D7FAA0065065C /* TZoneMallocInitialization.h in Headers */,
 				FE03831C2ABC04F700A576A2 /* TZoneMallocInlines.h in Headers */,
 				DD3DC8C927A4BF8E007E5B61 /* UnalignedAccess.h in Headers */,
 				DD3DC86A27A4BF8E007E5B61 /* Unexpected.h in Headers */,

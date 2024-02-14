@@ -29,7 +29,10 @@
 // The above are needed before DFGAbstractValue.h
 #include "DFGAbstractValue.h"
 #include "InitializeThreading.h"
+#include "RegisterTZoneTypes.h"
 #include <wtf/DataLog.h>
+#include <wtf/TZoneMallocInitialization.h>
+#include <wtf/Threading.h>
 #include <wtf/WTFProcess.h>
 #include <wtf/text/StringCommon.h>
 
@@ -98,8 +101,15 @@ static void run(const char*)
 
 #endif // ENABLE(DFG_JIT)
 
-int main(int argc, char** argv)
+int main(int argc, char** argv WTF_TZONE_EXTRA_MAIN_ARGS)
 {
+#if USE(TZONE_MALLOC)
+    const char* boothash = _simple_getenv(darwinEnvp, "executable_boothash");
+    WTF_TZONE_INIT(boothash);
+    JSC::registerTZoneTypes();
+    WTF_TZONE_REGISTRATION_DONE();
+#endif
+
     const char* filter = nullptr;
     switch (argc) {
     case 1:

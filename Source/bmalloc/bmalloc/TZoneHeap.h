@@ -25,10 +25,15 @@
 
 #pragma once
 
+#include "BPlatform.h"
+
+#if BUSE(TZONE)
+
 #include "IsoConfig.h"
 #include "Mutex.h"
 
 #if BUSE(LIBPAS)
+#include "TZoneHeapManager.h"
 #include "bmalloc_heap_ref.h"
 #endif
 
@@ -52,6 +57,12 @@ namespace api {
 BEXPORT void* tzoneAllocate(pas_heap_ref&);
 BEXPORT void* tzoneTryAllocate(pas_heap_ref&);
 BEXPORT void tzoneDeallocate(void* ptr);
+
+using TZoneAnnotation = bmalloc_type;
+
+#define HEAP_DESCRIPTION_SPACE  __attribute__((used, section("__DATA_CONST,__tzone_descs")))
+
+static inline constexpr size_t roundUpToMulipleOf8(size_t x) { return ((x + 7) / 8) * 8; }
 
 // The name "LibPasBmallocHeapType" is important for the pas_status_reporter to work right.
 template<typename LibPasBmallocHeapType>
@@ -88,9 +99,13 @@ struct TZoneHeap {
 
     static pas_heap_ref& provideHeap()
     {
-        static const bmalloc_type type = BMALLOC_TYPE_INITIALIZER(sizeof(LibPasBmallocHeapType), alignof(LibPasBmallocHeapType), __PRETTY_FUNCTION__);
-        static pas_heap_ref heap = BMALLOC_HEAP_REF_INITIALIZER(&type);
-        return heap;
+        static bmalloc_type HEAP_DESCRIPTION_SPACE type = BMALLOC_TYPE_INITIALIZER(roundUpToMulipleOf8(sizeof(LibPasBmallocHeapType)), roundUpToMulipleOf8(alignof(LibPasBmallocHeapType)), __PRETTY_FUNCTION__);
+        static pas_heap_ref* heap = nullptr;
+
+        if (!heap)
+            heap = TZoneHeapManager::getInstance().heapRefForTZoneType(&type);
+
+        return *heap;
     }
 };
 #else // BUSE(LIBPAS) -> so !BUSE(LIBPAS)
@@ -155,6 +170,8 @@ public: \
     \
     using webkitFastMalloced = int; \
 private: \
-    using __makeTZoneMallocedMacroSemicolonifier BunusedTypeAlias = int
+    using __makeTZoneMallocedMacroSemicolonifier BUNUSED_TYPE_ALIAS = int
 
 } } // namespace bmalloc::api
+
+#endif // BUSE(TZONE)

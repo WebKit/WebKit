@@ -31,21 +31,25 @@
 
 #include <wtf/FastMalloc.h>
 
-#define WTF_MAKE_TZONE_ALLOCATED_INLINE(name) WTF_MAKE_FAST_ALLOCATED
-#define WTF_MAKE_TZONE_ALLOCATED_IMPL(name) struct WTFIsoMallocSemicolonifier##name { }
-#define WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(name, type) struct WTFIsoMallocSemicolonifier##name { }
-#define WTF_MAKE_TZONE_ALLOCATED_IMPL_TEMPLATE(name) struct WTFIsoMallocSemicolonifier##name { }
-#define WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED_TEMPLATE(name, type) struct WTFIsoMallocSemicolonifier##name { }
+#define WTF_MAKE_TZONE_ALLOCATED_INLINE(typeName) WTF_MAKE_FAST_ALLOCATED
+#define WTF_MAKE_TZONE_ALLOCATED_IMPL(typeName) struct WTFIsoMallocSemicolonifier##typeName { }
+#define WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(typeName, type) struct WTFIsoMallocSemicolonifier##typeName { }
+#define WTF_MAKE_TZONE_ALLOCATED_IMPL_TEMPLATE(typeName) struct WTFIsoMallocSemicolonifier##typeName { }
+#define WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED_TEMPLATE(typeName, type) struct WTFIsoMallocSemicolonifier##typeName { }
 
 #else
 
 #include <bmalloc/TZoneHeapInlines.h>
 
-#define WTF_MAKE_TZONE_ALLOCATED_INLINE(name) MAKE_BTZONE_MALLOCED_INLINE(name)
-#define WTF_MAKE_TZONE_ALLOCATED_IMPL(name) MAKE_BTZONE_MALLOCED_IMPL(name)
-#define WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(name, type) MAKE_BTZONE_MALLOCED_IMPL_NESTED(name, type)
-#define WTF_MAKE_TZONE_ALLOCATED_IMPL_TEMPLATE(name) MAKE_BTZONE_MALLOCED_IMPL_TEMPLATE(name)
-#define WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED_TEMPLATE(name, type) MAKE_BTZONE_MALLOCED_IMPL_NESTED_TEMPLATE(name, type)
+#if !BUSE(TZONE)
+#error "TZones enabled in WTF, but not enabled in bmalloc"
+#endif
+
+#define WTF_MAKE_TZONE_ALLOCATED_INLINE(typeName) MAKE_BTZONE_MALLOCED_INLINE(typeName)
+#define WTF_MAKE_TZONE_ALLOCATED_IMPL(type) MAKE_BTZONE_MALLOCED_IMPL(type)
+#define WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(typeName, type) MAKE_BTZONE_MALLOCED_IMPL_NESTED(typeName, type)
+#define WTF_MAKE_TZONE_ALLOCATED_IMPL_TEMPLATE(typeName) MAKE_BTZONE_MALLOCED_IMPL_TEMPLATE(typeName)
+#define WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED_TEMPLATE(typeName, type) MAKE_BTZONE_MALLOCED_IMPL_NESTED_TEMPLATE(typeName, type)
 
 #endif
 

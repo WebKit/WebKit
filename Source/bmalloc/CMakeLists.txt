@@ -36,6 +36,8 @@ set(bmalloc_SOURCES
     bmalloc/ObjectTypeTable.cpp
     bmalloc/PerProcess.cpp
     bmalloc/Scavenger.cpp
+    bmalloc/TZoneHeap.cpp
+    bmalloc/TZoneHeapManager.cpp
     bmalloc/bmalloc.cpp
 
     libpas/src/libpas/bmalloc_heap.c
@@ -284,6 +286,9 @@ set(bmalloc_PUBLIC_HEADERS
     bmalloc/SmallPage.h
     bmalloc/StaticPerProcess.h
     bmalloc/StdLibExtras.h
+    bmalloc/TZoneHeap.h
+    bmalloc/TZoneHeapInlines.h
+    bmalloc/TZoneHeapManager.h
     bmalloc/VMAllocate.h
     bmalloc/Vector.h
     bmalloc/Zone.h

@@ -942,7 +942,7 @@
 		44F93E0E2AE71FBD00FFA37C /* JavaScriptCoreFramework.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 44F93E0D2AE71F9F00FFA37C /* JavaScriptCoreFramework.cpp */; };
 		451539B912DC994500EF7AC4 /* Yarr.h in Headers */ = {isa = PBXBuildFile; fileRef = 451539B812DC994500EF7AC4 /* Yarr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4615E46A2B5849F4001D4D53 /* WasmBBQJIT32_64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4615E4672B5833FB001D4D53 /* WasmBBQJIT32_64.cpp */; };
-        4615E46B2B5849F4001D4D53 /* WasmBBQJIT64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4615E4682B5833FB001D4D53 /* WasmBBQJIT64.cpp */; };
+		4615E46B2B5849F4001D4D53 /* WasmBBQJIT64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4615E4682B5833FB001D4D53 /* WasmBBQJIT64.cpp */; };
 		473DA4A4764C45FE871B0485 /* DefinePropertyAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = 169948EDE68D4054B01EF797 /* DefinePropertyAttributes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4B1F22F62900BFC700CB5E66 /* Width.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BBA4CD428FF5FE5003EBFC4 /* Width.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4B46940328984FA800512FDF /* MacroAssemblerARM64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEB137561BB11EEE00CD5100 /* MacroAssemblerARM64.cpp */; };
@@ -1242,6 +1242,7 @@
 		641DF80E2890C7D500F9895F /* WasmSIMDOpcodes.h in Headers */ = {isa = PBXBuildFile; fileRef = 641DF80D2890C7D500F9895F /* WasmSIMDOpcodes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		642D20D42B476A250030545E /* WasmSlowPaths.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14AB0C92231747B7000250BC /* WasmSlowPaths.cpp */; };
 		642D20D52B476A2E0030545E /* WasmIPIntSlowPaths.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53091F972ABE1F570076CBC4 /* WasmIPIntSlowPaths.cpp */; };
+		65072B082B6C3DEA0065065C /* RegisterTZoneTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 65072B062B6C3DEA0065065C /* RegisterTZoneTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6507D29E0E871E5E00D7D896 /* JSTypeInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 6507D2970E871E4A00D7D896 /* JSTypeInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		651122FD14046A4C002B101D /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 932F5BD90822A1C700736975 /* JavaScriptCore.framework */; };
 		651122FE14046A4C002B101D /* libedit.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D5D8AD00E0D0EBE00F9C692 /* libedit.dylib */; };
@@ -1250,7 +1251,6 @@
 		65303D641447B9E100D3F904 /* ParserTokens.h in Headers */ = {isa = PBXBuildFile; fileRef = 65303D631447B9E100D3F904 /* ParserTokens.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		653BC43F26D013A600D8BE20 /* YarrJITRegisters.h in Headers */ = {isa = PBXBuildFile; fileRef = 653BC43E26D013A600D8BE20 /* YarrJITRegisters.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65570F5A1AA4C3EA009B3C23 /* Regress141275.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65570F591AA4C00A009B3C23 /* Regress141275.mm */; };
-		6571E9822B23F4D0009DF224 /* JITTZoneImpls.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6571E9812B23F4D0009DF224 /* JITTZoneImpls.cpp */; };
 		657CF45919BF6662004ACBF2 /* JSCallee.h in Headers */ = {isa = PBXBuildFile; fileRef = 657CF45719BF6662004ACBF2 /* JSCallee.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		658824AF1E5CFDB000FB7359 /* ConfigFile.h in Headers */ = {isa = PBXBuildFile; fileRef = 658824AE1E5CFDB000FB7359 /* ConfigFile.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		658D3A5619638268003C45D6 /* VMEntryRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = 658D3A5519638268003C45D6 /* VMEntryRecord.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3963,9 +3963,9 @@
 		451539B812DC994500EF7AC4 /* Yarr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Yarr.h; path = yarr/Yarr.h; sourceTree = "<group>"; };
 		45E12D8806A49B0F00E9DF84 /* jsc.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = jsc.cpp; sourceTree = "<group>"; tabWidth = 4; };
 		4615E4662B5833FB001D4D53 /* WasmBBQJIT64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmBBQJIT64.h; sourceTree = "<group>"; };
-        4615E4672B5833FB001D4D53 /* WasmBBQJIT32_64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmBBQJIT32_64.cpp; sourceTree = "<group>"; };
-        4615E4682B5833FB001D4D53 /* WasmBBQJIT64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmBBQJIT64.cpp; sourceTree = "<group>"; };
-        4615E4692B5833FC001D4D53 /* WasmBBQJIT32_64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmBBQJIT32_64.h; sourceTree = "<group>"; };
+		4615E4672B5833FB001D4D53 /* WasmBBQJIT32_64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmBBQJIT32_64.cpp; sourceTree = "<group>"; };
+		4615E4682B5833FB001D4D53 /* WasmBBQJIT64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmBBQJIT64.cpp; sourceTree = "<group>"; };
+		4615E4692B5833FC001D4D53 /* WasmBBQJIT32_64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmBBQJIT32_64.h; sourceTree = "<group>"; };
 		4B78E098294427D2003C6682 /* B3SIMDValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3SIMDValue.cpp; path = b3/B3SIMDValue.cpp; sourceTree = "<group>"; };
 		4B78E099294427D2003C6682 /* B3Const128Value.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3Const128Value.h; path = b3/B3Const128Value.h; sourceTree = "<group>"; };
 		4B78E09A294427D2003C6682 /* B3SIMDValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3SIMDValue.h; path = b3/B3SIMDValue.h; sourceTree = "<group>"; };
@@ -4356,6 +4356,8 @@
 		62EC9BB41B7EB07C00303AD1 /* CallFrameShuffleData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CallFrameShuffleData.cpp; sourceTree = "<group>"; };
 		62EC9BB51B7EB07C00303AD1 /* CallFrameShuffleData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallFrameShuffleData.h; sourceTree = "<group>"; };
 		641DF80D2890C7D500F9895F /* WasmSIMDOpcodes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmSIMDOpcodes.h; sourceTree = "<group>"; };
+		65072B052B6C3DEA0065065C /* RegisterTZoneTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RegisterTZoneTypes.cpp; sourceTree = "<group>"; };
+		65072B062B6C3DEA0065065C /* RegisterTZoneTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegisterTZoneTypes.h; sourceTree = "<group>"; };
 		6507D2970E871E4A00D7D896 /* JSTypeInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTypeInfo.h; sourceTree = "<group>"; };
 		651122E5140469BA002B101D /* testRegExp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = testRegExp.cpp; sourceTree = "<group>"; };
 		6511230514046A4C002B101D /* testRegExp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testRegExp; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -7687,9 +7689,9 @@
 				FED5FA3329A0859C00798A7F /* WasmBBQJIT.cpp */,
 				FED5FA3229A0859C00798A7F /* WasmBBQJIT.h */,
 				4615E4672B5833FB001D4D53 /* WasmBBQJIT32_64.cpp */,
-                4615E4692B5833FC001D4D53 /* WasmBBQJIT32_64.h */,
-                4615E4682B5833FB001D4D53 /* WasmBBQJIT64.cpp */,
-                4615E4662B5833FB001D4D53 /* WasmBBQJIT64.h */,
+				4615E4692B5833FC001D4D53 /* WasmBBQJIT32_64.h */,
+				4615E4682B5833FB001D4D53 /* WasmBBQJIT64.cpp */,
+				4615E4662B5833FB001D4D53 /* WasmBBQJIT64.h */,
 				53CA73071EA533D80076049D /* WasmBBQPlan.cpp */,
 				53CA73081EA533D80076049D /* WasmBBQPlan.h */,
 				AD4B1DF71DF244D70071AE32 /* WasmBinding.cpp */,
@@ -8636,6 +8638,8 @@
 				84925A9A22B30CBA00D1DFFF /* RegExpStringIteratorPrototype.cpp */,
 				84925A9B22B30CBA00D1DFFF /* RegExpStringIteratorPrototype.h */,
 				276B38A22A71D1B600252F4E /* RegExpStringIteratorPrototypeInlines.h */,
+				65072B052B6C3DEA0065065C /* RegisterTZoneTypes.cpp */,
+				65072B062B6C3DEA0065065C /* RegisterTZoneTypes.h */,
 				FE9F3FBA2613C87C0069E89F /* ResourceExhaustion.cpp */,
 				FE9F3FB82613C7880069E89F /* ResourceExhaustion.h */,
 				70B0A9D01A9B66200001306A /* RuntimeFlags.h */,
@@ -11583,6 +11587,7 @@
 				623A37EC1B87A7C000754209 /* RegisterMap.h in Headers */,
 				0FC314121814559100033232 /* RegisterSet.h in Headers */,
 				0FD0E5F01E46BF250006AB08 /* RegisterState.h in Headers */,
+				65072B082B6C3DEA0065065C /* RegisterTZoneTypes.h in Headers */,
 				A57D23EE1891B5540031C7FA /* RegularExpression.h in Headers */,
 				0F7CF94F1DBEEE880098CC12 /* ReleaseHeapAccessScope.h in Headers */,
 				99D6A1161BEAD34D00E25C37 /* RemoteAutomationTarget.h in Headers */,
@@ -13135,7 +13140,7 @@
 				538F15EF268FBBB600D601C4 /* UnifiedSource155.cpp in Sources */,
 				E3C091E929B07D4C00CD6D97 /* WasmBBQJIT.cpp in Sources */,
 				4615E46A2B5849F4001D4D53 /* WasmBBQJIT32_64.cpp in Sources */,
-                4615E46B2B5849F4001D4D53 /* WasmBBQJIT64.cpp in Sources */,
+				4615E46B2B5849F4001D4D53 /* WasmBBQJIT64.cpp in Sources */,
 				642D20D52B476A2E0030545E /* WasmIPIntSlowPaths.cpp in Sources */,
 				642D20D42B476A250030545E /* WasmSlowPaths.cpp in Sources */,
 				E31135C9281B5B0000C1A4A9 /* ZydisFormatterATT.c in Sources */,
@@ -13173,7 +13178,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				44F93E0E2AE71FBD00FFA37C /* JavaScriptCoreFramework.cpp in Sources */,
-				6571E9822B23F4D0009DF224 /* JITTZoneImpls.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
