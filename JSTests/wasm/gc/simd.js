@@ -404,6 +404,18 @@ function testJSAPI() {
   }
 }
 
+function testSIMDGlobal() {
+  instantiate(`
+    (module
+      (global v128 (v128.const i64x2 0 0))
+      (global v128 (v128.const i64x2 1 1))
+      (global v128 (v128.const i64x2 2 2))
+      (global v128 (global.get 1))
+      (global v128 (global.get 3)))
+  `);
+}
+
 testSIMDStruct();
 testSIMDArray();
 testJSAPI();
+testSIMDGlobal();

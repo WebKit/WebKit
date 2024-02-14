@@ -51,6 +51,28 @@ function testTableInit() {
       assert.eq(m.exports.t.get(i), 42);
     }
   }
+
+  {
+    const m = instantiate(`
+      (module
+        (global (import "m" "g") i31ref)
+        (table (export "t") 10 i31ref (global.get 0)))
+    `, { m: { g: 42 } });
+    for (var i = 0; i < m.exports.t.length; i++) {
+      assert.eq(m.exports.t.get(i), 42);
+    }
+  }
+
+  // Table init can't refer to non-imported globals.
+  assert.throws(
+    () => instantiate(`
+      (module
+        (global i31ref (ref.i31 (i32.const 42)))
+        (table (export "t") 10 i31ref (global.get 0)))
+    `),
+    WebAssembly.CompileError,
+    "get_global's index 0 exceeds the number of globals 0"
+  );
 }
 
 testTableValidation();

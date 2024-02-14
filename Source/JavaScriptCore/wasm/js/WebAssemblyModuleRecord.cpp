@@ -590,7 +590,8 @@ void WebAssemblyModuleRecord::initializeExports(JSGlobalObject* globalObject)
                 v128_t initialVector;
 
                 if (global.initializationType == Wasm::GlobalInformation::FromGlobalImport) {
-                    ASSERT(global.initialBits.initialBitsOrImportNumber < moduleInformation.firstInternalGlobal);
+                    ASSERT(global.initialBits.initialBitsOrImportNumber < m_instance->module()->moduleInformation().globals.size());
+                    ASSERT_IMPLIES(!Options::useWebAssemblyGC(), global.initialBits.initialBitsOrImportNumber < moduleInformation.firstInternalGlobal);
                     initialVector = m_instance->instance().loadV128Global(global.initialBits.initialBitsOrImportNumber);
                 } else if (global.initializationType == Wasm::GlobalInformation::FromExpression)
                     initialVector = global.initialBits.initialVector;
@@ -616,7 +617,8 @@ void WebAssemblyModuleRecord::initializeExports(JSGlobalObject* globalObject)
 
             uint64_t initialBits = 0;
             if (global.initializationType == Wasm::GlobalInformation::FromGlobalImport) {
-                ASSERT(global.initialBits.initialBitsOrImportNumber < moduleInformation.firstInternalGlobal);
+                ASSERT(global.initialBits.initialBitsOrImportNumber < m_instance->module()->moduleInformation().globals.size());
+                ASSERT_IMPLIES(!Options::useWebAssemblyGC(), global.initialBits.initialBitsOrImportNumber < moduleInformation.firstInternalGlobal);
                 initialBits = m_instance->instance().loadI64Global(global.initialBits.initialBitsOrImportNumber);
             } else if (global.initializationType == Wasm::GlobalInformation::FromRefFunc) {
                 ASSERT(global.initialBits.initialBitsOrImportNumber < moduleInformation.functionIndexSpaceSize());
