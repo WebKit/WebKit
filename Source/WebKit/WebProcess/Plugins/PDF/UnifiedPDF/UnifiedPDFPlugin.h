@@ -262,7 +262,6 @@ private:
     PDFPageCoverage pageCoverageForRect(const WebCore::FloatRect& clipRect) const;
 
     void paintPDFContent(WebCore::GraphicsContext&, const WebCore::FloatRect& clipRect);
-    void paintPDFOverlays(WebCore::GraphicsContext&, const WebCore::FloatRect& clipRect);
 
     void ensureLayers();
     void updatePageBackgroundLayers();
@@ -311,17 +310,27 @@ private:
     void zoomOut() final;
 #endif
 
+    std::optional<PDFDocumentLayout::PageIndex> pageIndexWithHoveredAnnotation() const;
+    void paintHoveredAnnotationOnPage(PDFDocumentLayout::PageIndex, WebCore::GraphicsContext&, const WebCore::FloatRect& clipRect);
+
     void followLinkAnnotation(PDFAnnotation *);
 
     RefPtr<WebCore::GraphicsLayer> createGraphicsLayer(const String& name, WebCore::GraphicsLayer::Type);
 
     WebCore::IntPoint convertFromPluginToDocument(const WebCore::IntPoint&) const;
     WebCore::IntPoint convertFromDocumentToPlugin(const WebCore::IntPoint&) const;
-    std::optional<PDFDocumentLayout::PageIndex> pageIndexForDocumentPoint(const WebCore::IntPoint&) const;
-    RetainPtr<PDFAnnotation> annotationForRootViewPoint(const WebCore::IntPoint&) const;
+
     WebCore::IntPoint convertFromDocumentToPage(const WebCore::IntPoint&, PDFDocumentLayout::PageIndex) const;
     WebCore::IntPoint convertFromPageToDocument(const WebCore::IntPoint&, PDFDocumentLayout::PageIndex) const;
+    WebCore::FloatRect convertFromPageToDocument(const WebCore::FloatRect&, PDFDocumentLayout::PageIndex) const;
+
     WebCore::IntPoint convertFromPageToContents(const WebCore::IntPoint&, PDFDocumentLayout::PageIndex) const;
+    WebCore::FloatRect convertFromPageToContents(const WebCore::FloatRect&, PDFDocumentLayout::PageIndex) const;
+
+    std::optional<PDFDocumentLayout::PageIndex> pageIndexForDocumentPoint(const WebCore::IntPoint&) const;
+
+    RetainPtr<PDFAnnotation> annotationForRootViewPoint(const WebCore::IntPoint&) const;
+
     PDFElementTypes pdfElementTypesForPluginPoint(const WebCore::IntPoint&) const;
 
     bool isTaggedPDF() const;

@@ -594,7 +594,9 @@ void UnifiedPDFPlugin::paintPDFContent(GraphicsContext& context, const FloatRect
             isVisibleAndActive = isSelectionActiveAfterContextMenuInteraction() && page->isVisibleAndActive();
     }
 
-    if (!paintedPageContent || haveSelection) {
+    auto pageWithAnnotation = pageIndexWithHoveredAnnotation();
+
+    if (!paintedPageContent || haveSelection || pageWithAnnotation) {
         auto pageCoverage = pageCoverageForRect(clipRect);
         auto scale = pageCoverage.documentScale;
         context.scale(scale);
@@ -622,10 +624,51 @@ void UnifiedPDFPlugin::paintPDFContent(GraphicsContext& context, const FloatRect
 
             if (haveSelection)
                 [m_currentSelection drawForPage:page.get() withBox:kCGPDFCropBox active:isVisibleAndActive inContext:context.platformContext()];
+
+            if (pageWithAnnotation && *pageWithAnnotation == pageInfo.pageIndex)
+                paintHoveredAnnotationOnPage(pageInfo.pageIndex, context, clipRect);
         }
     }
+}
 
-    paintPDFOverlays(context, clipRect);
+static const WebCore::Color textAnnotationHoverColor()
+{
+    static constexpr auto textAnnotationHoverAlpha = 0.12;
+    static NeverDestroyed color = WebCore::Color::createAndPreserveColorSpace([[[WebCore::CocoaColor systemBlueColor] colorWithAlphaComponent:textAnnotationHoverAlpha] CGColor]);
+    return color;
+}
+
+void UnifiedPDFPlugin::paintHoveredAnnotationOnPage(PDFDocumentLayout::PageIndex indexOfPaintedPage, WebCore::GraphicsContext& context, const WebCore::FloatRect& clipRect)
+{
+    ASSERT(pageIndexWithHoveredAnnotation());
+
+    auto* trackedAnnotation = m_annotationTrackingState.trackedAnnotation();
+    auto pageIndex = [m_pdfDocument indexForPage:[trackedAnnotation page]];
+    if (pageIndex != indexOfPaintedPage)
+        return;
+
+    auto annotationRect = FloatRect { [trackedAnnotation bounds] };
+    context.fillRect(annotationRect, textAnnotationHoverColor());
+}
+
+std::optional<PDFDocumentLayout::PageIndex> UnifiedPDFPlugin::pageIndexWithHoveredAnnotation() const
+{
+    auto* trackedAnnotation = m_annotationTrackingState.trackedAnnotation();
+    if (!trackedAnnotation)
+        return { };
+
+    if (![trackedAnnotation isKindOfClass:getPDFAnnotationTextWidgetClass()])
+        return { };
+
+    if (!m_annotationTrackingState.isBeingHovered())
+        return { };
+
+    auto annotationRect = FloatRect { [trackedAnnotation bounds] };
+    auto pageIndex = [m_pdfDocument indexForPage:[trackedAnnotation page]];
+    if (pageIndex == NSNotFound)
+        return { };
+
+    return pageIndex;
 }
 
 float UnifiedPDFPlugin::scaleForActualSize() const
@@ -656,32 +699,6 @@ float UnifiedPDFPlugin::scaleForActualSize() const
     return pixelSize / size().width();
 #endif
     return 1;
-}
-
-static const WebCore::Color textAnnotationHoverColor()
-{
-    static constexpr auto textAnnotationHoverAlpha = 0.12;
-    static NeverDestroyed color = WebCore::Color::createAndPreserveColorSpace([[[WebCore::CocoaColor systemBlueColor] colorWithAlphaComponent:textAnnotationHoverAlpha] CGColor]);
-    return color;
-}
-
-void UnifiedPDFPlugin::paintPDFOverlays(GraphicsContext& context, const FloatRect& clipRect)
-{
-    auto* trackedAnnotation = m_annotationTrackingState.trackedAnnotation();
-    if (!trackedAnnotation)
-        return;
-
-    if (![trackedAnnotation isKindOfClass:getPDFAnnotationTextWidgetClass()])
-        return;
-
-    if (!m_annotationTrackingState.isBeingHovered())
-        return;
-
-    auto annotationRect = FloatRect { [trackedAnnotation bounds] };
-    if (!annotationRect.intersects(clipRect))
-        return;
-
-    context.fillRect(annotationRect, textAnnotationHoverColor());
 }
 
 CGFloat UnifiedPDFPlugin::scaleFactor() const
@@ -1211,9 +1228,23 @@ WebCore::IntPoint UnifiedPDFPlugin::convertFromPageToDocument(const WebCore::Int
 {
     auto pageBounds = m_documentLayout.boundsForPageAtIndex(pageIndex);
     auto pageRotation = m_documentLayout.rotationForPageAtIndex(pageIndex);
+
     auto pageSpacePointWithFlippedYOrigin = IntPoint { pageSpacePoint.x(), static_cast<int>(pageBounds.height()) - pageSpacePoint.y() };
     auto documentSpacePoint = WebCore::flooredIntPoint(pageBounds.location()) + pageSpacePointWithFlippedYOrigin;
     return documentSpaceToPageSpaceTransform(pageRotation, pageBounds).inverse()->mapPoint(documentSpacePoint);
+}
+
+WebCore::FloatRect UnifiedPDFPlugin::convertFromPageToDocument(const WebCore::FloatRect& pageSpaceRect, PDFDocumentLayout::PageIndex pageIndex) const
+{
+    auto pageBounds = m_documentLayout.boundsForPageAtIndex(pageIndex);
+    auto pageRotation = m_documentLayout.rotationForPageAtIndex(pageIndex);
+
+    auto flippedYLocation = FloatPoint { pageSpaceRect.x(), pageBounds.height() - pageSpaceRect.y() };
+    auto pageSpaceRectWithFlippedYOrigin = FloatRect { flippedYLocation, pageSpaceRect.size() };
+    auto documentSpaceRect = pageSpaceRectWithFlippedYOrigin;
+    documentSpaceRect.moveBy(pageBounds.location());
+
+    return documentSpaceToPageSpaceTransform(pageRotation, pageBounds).inverse()->mapRect(documentSpaceRect);
 }
 
 WebCore::IntPoint UnifiedPDFPlugin::convertFromPageToContents(const WebCore::IntPoint& pageSpacePoint, PDFDocumentLayout::PageIndex pageIndex) const
@@ -1224,6 +1255,16 @@ WebCore::IntPoint UnifiedPDFPlugin::convertFromPageToContents(const WebCore::Int
     transformedPoint.scale(m_scaleFactor);
     return roundedIntPoint(transformedPoint);
 }
+
+WebCore::FloatRect UnifiedPDFPlugin::convertFromPageToContents(const WebCore::FloatRect& rect, PDFDocumentLayout::PageIndex pageIndex) const
+{
+    auto transformedRect = convertFromPageToDocument(rect, pageIndex);
+    transformedRect.scale(m_documentLayout.scale());
+    transformedRect.move(sidePaddingWidth(), 0);
+    transformedRect.scale(m_scaleFactor);
+    return transformedRect;
+}
+
 
 #if !LOG_DISABLED
 static TextStream& operator<<(TextStream& ts, UnifiedPDFPlugin::PDFElementType elementType)
@@ -2177,6 +2218,7 @@ void AnnotationTrackingState::startAnnotationTracking(RetainPtr<PDFAnnotation>&&
 
     if ([m_trackedAnnotation isKindOfClass:getPDFAnnotationButtonWidgetClass()])
         [m_trackedAnnotation setHighlighted:YES];
+
     if (mouseEventType == WebEventType::MouseMove && mouseEventButton == WebMouseEventButton::None)
         m_isBeingHovered = true;
 }
@@ -2197,6 +2239,7 @@ void AnnotationTrackingState::finishAnnotationTracking(WebEventType mouseEventTy
         }
     } else if (mouseEventType == WebEventType::MouseMove && mouseEventButton == WebMouseEventButton::Left)
         handleMouseDraggedOffTrackedAnnotation();
+
     resetAnnotationTrackingState();
 }
 
