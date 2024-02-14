@@ -88,6 +88,20 @@ static ASCIILiteral evaluationToString(Evaluation evaluation)
     }
 }
 
+static ASCIILiteral variableFlavorToString(AST::VariableFlavor flavor)
+{
+    switch (flavor) {
+    case AST::VariableFlavor::Var:
+        return "var"_s;
+    case AST::VariableFlavor::Let:
+        return "let"_s;
+    case AST::VariableFlavor::Const:
+        return "const"_s;
+    case AST::VariableFlavor::Override:
+        return "override"_s;
+    }
+}
+
 class TypeChecker : public AST::ScopedVisitor<Binding> {
     using Base  = AST::ScopedVisitor<Binding>;
     using Base::visit;
@@ -502,7 +516,8 @@ void TypeChecker::visitVariable(AST::Variable& variable, VariableKind variableKi
                 result = initializerType;
             else {
                 result = concretize(initializerType, m_types);
-                RELEASE_ASSERT(result);
+                if (!result)
+                    return error("'", *initializerType, "' cannot be used as the type of a '", variableFlavorToString(variable.flavor()), "'");
                 variable.maybeInitializer()->m_inferredType = result;
             }
         } else if (unify(result, initializerType))
