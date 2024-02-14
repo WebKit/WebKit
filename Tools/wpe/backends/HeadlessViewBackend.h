@@ -79,7 +79,11 @@ private:
 #endif
 
     PlatformViewBackend m_exportable { nullptr };
+#if defined(USE_SKIA) && USE_SKIA
+    sk_sp<SkImage> m_snapshot;
+#else
     PlatformImage m_snapshot { nullptr };
+#endif
 
 #if defined(USE_GLIB) && USE_GLIB
     struct {

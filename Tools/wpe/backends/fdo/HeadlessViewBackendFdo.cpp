@@ -35,6 +35,10 @@
 #include <wpe/unstable/fdo-shm.h>
 #endif
 
+#if defined(USE_SKIA) && USE_SKIA
+#include <skia/core/SkPixmap.h>
+#endif
+
 namespace WPEToolingBackends {
 
 struct HeadlessInstance {
@@ -103,7 +107,18 @@ HeadlessViewBackend::HeadlessViewBackend(uint32_t width, uint32_t height)
         cairo_surface_mark_dirty(m_snapshot);
     }
 #elif defined(USE_SKIA) && USE_SKIA
-    // FIXME: Add Skia implementation
+    {
+        auto info = SkImageInfo::MakeN32Premul(m_width, m_height);
+        size_t stride = info.minRowBytes();
+        uint8_t* buffer = new uint8_t[stride * m_height];
+        memset(buffer, 0, stride * m_height);
+
+        SkPixmap pixmap(info, buffer, stride);
+        m_snapshot = SkImages::RasterFromPixmap(pixmap, [](const void*, void* data) {
+            auto* buffer = static_cast<uint8_t*>(data);
+            delete[] buffer;
+        }, buffer);
+    }
 #endif
 
 #if WPE_CHECK_VERSION(1, 11, 1)
@@ -129,8 +144,6 @@ HeadlessViewBackend::~HeadlessViewBackend()
 #if defined(USE_CAIRO) && USE_CAIRO
     if (m_snapshot)
         cairo_surface_destroy(m_snapshot);
-#elif defined(USE_SKIA) && USE_SKIA
-    // FIXME: Add Skia implementation
 #endif
 
     if (m_exportable)
@@ -149,8 +162,7 @@ PlatformImage HeadlessViewBackend::snapshot()
 #if defined(USE_CAIRO) && USE_CAIRO
     return cairo_surface_reference(m_snapshot);
 #elif defined(USE_SKIA) && USE_SKIA
-    // FIXME: Add Skia implementation
-    return nullptr;
+    return m_snapshot.get();
 #endif
 }
 
@@ -166,6 +178,10 @@ void HeadlessViewBackend::updateSnapshot(PlatformBuffer exportedBuffer)
 
 #if defined(USE_CAIRO) && USE_CAIRO
     uint32_t bufferStride = cairo_format_stride_for_width(CAIRO_FORMAT_ARGB32, m_width);
+#elif defined(USE_SKIA) && USE_SKIA
+    auto info = SkImageInfo::MakeN32Premul(m_width, m_height);
+    uint32_t bufferStride = info.minRowBytes();
+#endif
     uint8_t* buffer = new uint8_t[bufferStride * m_height];
     memset(buffer, 0, bufferStride * m_height);
 
@@ -189,6 +205,7 @@ void HeadlessViewBackend::updateSnapshot(PlatformBuffer exportedBuffer)
         wl_shm_buffer_end_access(shmBuffer);
     }
 
+#if defined(USE_CAIRO) && USE_CAIRO
     if (m_snapshot)
         cairo_surface_destroy(m_snapshot);
 
@@ -203,7 +220,11 @@ void HeadlessViewBackend::updateSnapshot(PlatformBuffer exportedBuffer)
         });
     cairo_surface_mark_dirty(m_snapshot);
 #elif defined(USE_SKIA) && USE_SKIA
-    // FIXME: Add Skia implementation
+    SkPixmap pixmap(info, buffer, bufferStride);
+    m_snapshot = SkImages::RasterFromPixmap(pixmap, [](const void*, void* data) {
+        auto* buffer = static_cast<uint8_t*>(data);
+        delete[] buffer;
+    }, buffer);
 #endif
 
 #else
