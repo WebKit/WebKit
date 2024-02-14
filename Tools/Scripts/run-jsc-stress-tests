@@ -171,6 +171,7 @@ $reportExecutionTime = false
 $ldd = nil
 $artifact_exec_wrapper = nil
 $numChildProcessesSetByUser = false
+$maxTimeout = nil
 $runUniqueId = Random.new.bytes(16).unpack("H*")[0]
 $gnuParallelChunkSize = 1
 $testsDebugStream = nil # set to $stderr for debugging
@@ -212,6 +213,7 @@ def usage
     puts "--remote-config-file        Specify a remote host on which to run tests from JSON file."
     puts "--report-execution-time     Print execution time for each test."
     puts "--child-processes    (-c)   Specify the number of child processes."
+    puts "--max-timeout               Specify a cap for the effective timeout"
     puts "--filter                    Only run tests whose name matches the given regular expression."
     puts "--help               (-h)   Print this message."
     puts "--env-vars                  Add a list of environment variables to set before running jsc."
@@ -257,6 +259,7 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
                ['--report-execution-time', GetoptLong::NO_ARGUMENT],
                ['--model', GetoptLong::REQUIRED_ARGUMENT],
                ['--child-processes', '-c', GetoptLong::REQUIRED_ARGUMENT],
+               ['--max-timeout', GetoptLong::REQUIRED_ARGUMENT],
                ['--filter', GetoptLong::REQUIRED_ARGUMENT],
                ['--verbose', '-v', GetoptLong::NO_ARGUMENT],
                ['--env-vars', GetoptLong::REQUIRED_ARGUMENT],
@@ -343,6 +346,8 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
     when '--child-processes'
         $numChildProcesses = arg.to_i
         $numChildProcessesSetByUser = true
+    when '--max-timeout'
+        $maxTimeout = arg.to_i
     when '--filter'
         $filter = Regexp.new(arg)
     when '--arch'
@@ -3023,6 +3028,15 @@ if ENV["JSCTEST_timeout"]
     # In the worst case, the processors just interfere with each other.
     # Increase the timeout proportionally to the number of processors.
     ENV["JSCTEST_timeout"] = (ENV["JSCTEST_timeout"].to_i.to_f * Math.sqrt($numChildProcesses)).to_i.to_s
+    if not $maxTimeout.nil?
+        # The above adjustment can push the effective timeout over the timeout
+        # enforced by buildbot's ShellCommand. Tests that hang would then result
+        # in the whole run getting killed. Allow the user to cap the effective
+        # timeout.
+        if $maxTimeout < ENV["JSCTEST_timeout"].to_i
+            ENV["JSCTEST_timeout"] = $maxTimeout.to_s
+        end
+    end
 end
 
 # We do not adjust hardTimeout. If we are not producing any results during 1200 seconds, buildbot terminates the tests. So we should terminate hung tests.
