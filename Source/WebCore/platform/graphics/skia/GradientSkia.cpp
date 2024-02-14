@@ -136,16 +136,11 @@ sk_sp<SkShader> Gradient::shader(float globalAlpha, const AffineTransform& gradi
 
             return SkGradientShader::MakeTwoPointConical(start, startRadius, end, endRadius, colors.data(), nullptr, positions.data(), colors.size(), tileMode, interpolation, &matrix);
         },
-        [&](const ConicData&) {
-            // FIXME: Just some initial gradient for testing purposes.
-            SkPoint pts[] = { SkPoint::Make(0, 0), SkPoint::Make(20, 20) };
-            SkColor colors[] = { SK_ColorRED, SK_ColorGREEN, SK_ColorBLUE };
-            SkScalar pos[] = { 0.0f, 0.5f, 1.0f };
+        [&](const ConicData& data) {
+            // Skia's renders it tilted by 90 degrees, so offset that rotation in the matrix
+            matrix.preRotate(SkRadiansToDegrees(data.angleRadians) - 90.0f, data.point0.x(), data.point0.y());
 
-            notImplemented();
-
-            auto gradient = SkGradientShader::MakeLinear(pts, colors, pos, 3, SkTileMode::kClamp);
-            return gradient;
+            return SkGradientShader::MakeSweep(data.point0.x(), data.point0.y(), colors.data(), SkColorSpace::MakeSRGB(), positions.data(), colors.size(), 0, &matrix);
         });
 
     return m_shader;
