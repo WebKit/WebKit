@@ -213,7 +213,7 @@ GraphBuilder::GraphBuilder(Graph& graph, Graph::Node& node)
 void GraphBuilder::visit(AST::Parameter& parameter)
 {
     introduceVariable(parameter.name());
-    Base::visit(parameter.typeName());
+    Base::visit(parameter);
 }
 
 void GraphBuilder::visit(AST::VariableStatement& variable)
