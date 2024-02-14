@@ -1701,7 +1701,8 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     if (![self _prepareAccessibilityCall])
         return;
 
-    self.axBackingObject->axObjectCache()->relayNotification({ notificationName }, notificationData);
+    if (auto* cache = self.axBackingObject->axObjectCache())
+        cache->relayNotification({ notificationName }, notificationData);
 }
 
 - (CGRect)_accessibilityRelativeFrame
