@@ -1997,3 +1997,5 @@ webkit.org/b/269251 [ Monterey+ Debug ] http/tests/site-isolation/iframe-process
 #webkit.org/b/269301  (2X imported/w3c/web-platform-tests/webcodecs/videoFrame (layout-tests) are constant failures)
 [ Monterey+ x86_64 ] imported/w3c/web-platform-tests/webcodecs/videoFrame-createImageBitmap.https.any.html [ Failure ]
 [ Monterey+ x86_64 ] imported/w3c/web-platform-tests/webcodecs/videoFrame-createImageBitmap.https.any.worker.html [ Failure ]
+
+webkit.org/b/269327 [ Sonoma+ Release ] webrtc/audio-samplerate-change.html [ Pass Failure ]
