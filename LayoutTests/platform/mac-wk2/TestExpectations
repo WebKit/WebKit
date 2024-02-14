@@ -1999,3 +1999,5 @@ webkit.org/b/269251 [ Monterey+ Debug ] http/tests/site-isolation/iframe-process
 [ Monterey+ x86_64 ] imported/w3c/web-platform-tests/webcodecs/videoFrame-createImageBitmap.https.any.worker.html [ Failure ]
 
 webkit.org/b/269327 [ Sonoma+ Release ] webrtc/audio-samplerate-change.html [ Pass Failure ]
+
+webkit.org/b/268398 [ Sonoma+ ] compositing/plugins/pdf/pdf-in-iframe-scrolling-tree-after-back.html [ Pass Failure ]
