@@ -44,3 +44,6 @@ SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASAuthorizationPublicKeyCredentialParameters)
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASAuthorizationPlatformPublicKeyCredentialDescriptor);
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASAuthorizationSecurityKeyPublicKeyCredentialDescriptor);
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASAuthorizationSecurityKeyPublicKeyCredentialAssertion);
+
+SOFT_LINK_CONSTANT_FOR_HEADER(WebKit, AuthenticationServices, ASAuthorizationErrorDomain, NSErrorDomain);
+#define ASAuthorizationErrorDomain WebKit::get_AuthenticationServices_ASAuthorizationErrorDomain()

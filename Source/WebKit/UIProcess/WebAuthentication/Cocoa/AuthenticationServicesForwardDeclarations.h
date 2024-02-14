@@ -206,6 +206,15 @@ typedef NS_ENUM(NSInteger, ASPublicKeyCredentialClientDataCrossOriginValue) {
 
 @end
 
+@protocol ASAuthorizationWebBrowserPlatformPublicKeyCredentialRegistrationRequest
+@property (nonatomic, readonly, nullable) ASPublicKeyCredentialClientData *clientData;
+@property (nonatomic, nullable, copy) NSArray<ASAuthorizationPlatformPublicKeyCredentialDescriptor *> *excludedCredentials;
+@property (nonatomic) BOOL shouldShowHybridTransport;
+@end
+
+@interface ASAuthorizationPlatformPublicKeyCredentialRegistrationRequest () <ASAuthorizationWebBrowserPlatformPublicKeyCredentialRegistrationRequest>
+@end
+
 typedef NS_ENUM(NSInteger, ASAuthorizationPublicKeyCredentialLargeBlobAssertionOperation) {
     ASAuthorizationPublicKeyCredentialLargeBlobAssertionOperationRead,
     ASAuthorizationPublicKeyCredentialLargeBlobAssertionOperationWrite,
@@ -250,6 +259,14 @@ typedef NS_ENUM(NSInteger, ASAuthorizationPublicKeyCredentialLargeBlobAssertionO
 @property (nonatomic, nullable, copy) ASAuthorizationPublicKeyCredentialLargeBlobAssertionInput *largeBlob;
 @end
 
+@protocol ASAuthorizationWebBrowserPlatformPublicKeyCredentialAssertionRequest
+@property (nonatomic, readonly, nullable) ASPublicKeyCredentialClientData *clientData;
+@property (nonatomic) BOOL shouldShowHybridTransport;
+@end
+
+@interface ASAuthorizationPlatformPublicKeyCredentialAssertionRequest () <ASAuthorizationWebBrowserPlatformPublicKeyCredentialAssertionRequest>
+@end
+
 @interface ASAuthorizationPlatformPublicKeyCredentialProvider : NSObject <ASAuthorizationProvider>
 
 - (instancetype)initWithRelyingPartyIdentifier:(NSString *)relyingPartyIdentifier NS_DESIGNATED_INITIALIZER;
@@ -272,6 +289,9 @@ typedef NS_ENUM(NSInteger, ASAuthorizationPublicKeyCredentialLargeBlobAssertionO
 
 - (ASAuthorizationPlatformPublicKeyCredentialAssertionRequest *)createCredentialAssertionRequestWithClientData:(ASPublicKeyCredentialClientData *)clientData;
 
+@end
+
+@interface ASAuthorizationPlatformPublicKeyCredentialProvider () <ASAuthorizationWebBrowserPlatformPublicKeyCredentialProvider>
 @end
 
 typedef NSString *ASAuthorizationSecurityKeyPublicKeyCredentialDescriptorTransport;
@@ -335,5 +355,16 @@ typedef NSString *ASAuthorizationPublicKeyCredentialResidentKeyPreference;
 @property (nonatomic, readonly, copy) NSString *relyingPartyIdentifier;
 
 @end
+
+extern NSErrorDomain const ASAuthorizationErrorDomain;
+
+typedef NS_ERROR_ENUM(ASAuthorizationErrorDomain, ASAuthorizationError) {
+    ASAuthorizationErrorUnknown = 1000,
+    ASAuthorizationErrorCanceled = 1001,
+    ASAuthorizationErrorInvalidResponse = 1002,
+    ASAuthorizationErrorNotHandled = 1003,
+    ASAuthorizationErrorFailed = 1004,
+    ASAuthorizationErrorNotInteractive = 1005,
+};
 
 NS_ASSUME_NONNULL_END

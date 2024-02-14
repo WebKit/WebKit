@@ -754,7 +754,7 @@ void LocalAuthenticator::continueGetAssertionAfterUserVerification(Ref<WebCore::
     };
 
     NSDictionary *updateParams = @{
-        (id)kSecAttrLabel: requestOptions.rpId,
+        (id)kSecAttrApplicationLabel: nsCredentialId.get(),
     };
     auto status = SecItemUpdate((__bridge CFDictionaryRef)query, (__bridge CFDictionaryRef)updateParams);
     if (status)

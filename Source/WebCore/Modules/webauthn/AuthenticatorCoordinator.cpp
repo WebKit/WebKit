@@ -131,10 +131,6 @@ void AuthenticatorCoordinator::create(const Document& document, CredentialCreati
     // Step 8.
     if (!options.rp.id)
         options.rp.id = callerOrigin.domain();
-    else if (!callerOrigin.isMatchingRegistrableDomainSuffix(*options.rp.id)) {
-        promise.reject(Exception { ExceptionCode::SecurityError, "The provided RP ID is not a registrable domain suffix of the effective domain of the document."_s });
-        return;
-    }
 
     // Step 9-11.
     // Most of the jobs are done by bindings.
@@ -245,10 +241,6 @@ void AuthenticatorCoordinator::discoverFromExternalSource(const Document& docume
     }
 
     // Step 7.
-    if (!options.rpId.isEmpty() && !callerOrigin.isMatchingRegistrableDomainSuffix(options.rpId)) {
-        promise.reject(Exception { ExceptionCode::SecurityError, "The provided RP ID is not a registrable domain suffix of the effective domain of the document."_s });
-        return;
-    }
     if (options.rpId.isEmpty())
         options.rpId = callerOrigin.domain();
 
