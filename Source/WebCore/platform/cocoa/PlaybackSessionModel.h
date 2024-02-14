@@ -72,6 +72,7 @@ public:
     virtual void selectAudioMediaOption(uint64_t index) = 0;
     virtual void selectLegibleMediaOption(uint64_t index) = 0;
     virtual void togglePictureInPicture() = 0;
+    virtual void toggleInWindow() = 0;
     virtual void toggleMuted() = 0;
     virtual void setMuted(bool) = 0;
     virtual void setVolume(double) = 0;

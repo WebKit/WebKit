@@ -164,6 +164,7 @@ private:
     void selectLegibleMediaOption(PlaybackSessionContextIdentifier, uint64_t index);
     void handleControlledElementIDRequest(PlaybackSessionContextIdentifier);
     void togglePictureInPicture(PlaybackSessionContextIdentifier);
+    void toggleInWindow(PlaybackSessionContextIdentifier);
     void toggleMuted(PlaybackSessionContextIdentifier);
     void setMuted(PlaybackSessionContextIdentifier, bool muted);
     void setVolume(PlaybackSessionContextIdentifier, double volume);

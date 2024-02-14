@@ -99,6 +99,7 @@ private:
     void selectAudioMediaOption(uint64_t) final;
     void selectLegibleMediaOption(uint64_t) final;
     void togglePictureInPicture() final;
+    void toggleInWindow() final;
     void toggleMuted() final;
     void setMuted(bool) final;
     void setVolume(double) final;
@@ -249,6 +250,7 @@ private:
     void selectAudioMediaOption(PlaybackSessionContextIdentifier, uint64_t index);
     void selectLegibleMediaOption(PlaybackSessionContextIdentifier, uint64_t index);
     void togglePictureInPicture(PlaybackSessionContextIdentifier);
+    void toggleInWindow(PlaybackSessionContextIdentifier);
     void toggleMuted(PlaybackSessionContextIdentifier);
     void setMuted(PlaybackSessionContextIdentifier, bool);
     void setVolume(PlaybackSessionContextIdentifier, double);

@@ -516,6 +516,12 @@ void PlaybackSessionManager::togglePictureInPicture(PlaybackSessionContextIdenti
     ensureModel(contextId).togglePictureInPicture();
 }
 
+void PlaybackSessionManager::toggleInWindow(PlaybackSessionContextIdentifier contextId)
+{
+    UserGestureIndicator indicator(IsProcessingUserGesture::Yes);
+    ensureModel(contextId).toggleInWindow();
+}
+
 void PlaybackSessionManager::toggleMuted(PlaybackSessionContextIdentifier contextId)
 {
     UserGestureIndicator indicator(IsProcessingUserGesture::Yes);

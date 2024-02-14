@@ -367,9 +367,12 @@ for this property.
 - (void)_stopMediaCapture WK_API_AVAILABLE(macos(10.15.4), ios(13.4));
 
 @property (nonatomic, readonly) BOOL _canTogglePictureInPicture;
+@property (nonatomic, readonly) BOOL _canToggleInWindow;
 @property (nonatomic, readonly) BOOL _isPictureInPictureActive;
+@property (nonatomic, readonly) BOOL _isInWindowActive;
 - (void)_updateMediaPlaybackControlsManager;
 - (void)_togglePictureInPicture;
+- (void)_toggleInWindow;
 - (void)_stopAllMediaPlayback;
 - (void)_suspendAllMediaPlayback;
 - (void)_resumeAllMediaPlayback;

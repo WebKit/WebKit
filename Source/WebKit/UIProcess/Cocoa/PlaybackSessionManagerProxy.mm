@@ -183,6 +183,13 @@ void PlaybackSessionModelContext::togglePictureInPicture()
         m_manager->togglePictureInPicture(m_contextId);
 }
 
+void PlaybackSessionModelContext::toggleInWindow()
+{
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
+    if (m_manager)
+        m_manager->toggleInWindow(m_contextId);
+}
+
 void PlaybackSessionModelContext::toggleMuted()
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
@@ -659,6 +666,11 @@ void PlaybackSessionManagerProxy::selectLegibleMediaOption(PlaybackSessionContex
 void PlaybackSessionManagerProxy::togglePictureInPicture(PlaybackSessionContextIdentifier contextId)
 {
     m_page->send(Messages::PlaybackSessionManager::TogglePictureInPicture(contextId));
+}
+
+void PlaybackSessionManagerProxy::toggleInWindow(PlaybackSessionContextIdentifier contextId)
+{
+    m_page->send(Messages::PlaybackSessionManager::ToggleInWindow(contextId));
 }
 
 void PlaybackSessionManagerProxy::toggleMuted(PlaybackSessionContextIdentifier contextId)

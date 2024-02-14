@@ -351,6 +351,21 @@ void PlaybackSessionModelMediaElement::togglePictureInPicture()
 #endif
 }
 
+void PlaybackSessionModelMediaElement::toggleInWindow()
+{
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    ASSERT(is<HTMLVideoElement>(*m_mediaElement));
+    if (!is<HTMLVideoElement>(*m_mediaElement))
+        return;
+
+    auto& element = downcast<HTMLVideoElement>(*m_mediaElement);
+    if (element.fullscreenMode() == MediaPlayerEnums::VideoFullscreenModeInWindow)
+        element.setPresentationMode(HTMLVideoElement::VideoPresentationMode::Inline);
+    else
+        element.setPresentationMode(HTMLVideoElement::VideoPresentationMode::InWindow);
+#endif
+}
+
 void PlaybackSessionModelMediaElement::toggleMuted()
 {
     setMuted(!isMuted());

@@ -162,6 +162,7 @@ private:
     String externalPlaybackLocalizedDeviceName() const override;
     bool wirelessVideoPlaybackDisabled() const override;
     void togglePictureInPicture() override { }
+    void toggleInWindow() override { }
     void toggleMuted() override;
     void setMuted(bool) final;
     void setVolume(double) final;
