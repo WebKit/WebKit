@@ -123,11 +123,7 @@ void RealtimeOutgoingMediaSourceGStreamer::start()
         auto selectorSrcPad = adoptGRef(gst_element_get_static_pad(m_inputSelector.get(), "src"));
         if (!gst_pad_is_linked(selectorSrcPad.get())) {
             GST_DEBUG_OBJECT(m_bin.get(), "Codec preferences haven't changed before startup, ensuring source is linked");
-            GRefPtr<GstCaps> codecPreferences;
-            g_object_get(m_transceiver.get(), "codec-preferences", &codecPreferences.outPtr(), nullptr);
-            callOnMainThreadAndWait([&] {
-                codecPreferencesChanged(codecPreferences);
-            });
+            codecPreferencesChanged();
         }
     }
 
@@ -228,12 +224,8 @@ void RealtimeOutgoingMediaSourceGStreamer::setSinkPad(GRefPtr<GstPad>&& pad)
         g_signal_handlers_disconnect_by_data(m_transceiver.get(), this);
 
     g_object_get(m_webrtcSinkPad.get(), "transceiver", &m_transceiver.outPtr(), nullptr);
-    g_signal_connect_swapped(m_transceiver.get(), "notify::codec-preferences", G_CALLBACK(+[](RealtimeOutgoingMediaSourceGStreamer* source, GParamSpec*, GstWebRTCRTPTransceiver* transceiver) {
-        GRefPtr<GstCaps> codecPreferences;
-        g_object_get(transceiver, "codec-preferences", &codecPreferences.outPtr(), nullptr);
-        callOnMainThreadAndWait([&] {
-            source->codecPreferencesChanged(codecPreferences);
-        });
+    g_signal_connect_swapped(m_transceiver.get(), "notify::codec-preferences", G_CALLBACK(+[](RealtimeOutgoingMediaSourceGStreamer* source) {
+        source->codecPreferencesChanged();
     }), this);
     g_object_get(m_transceiver.get(), "sender", &m_sender.outPtr(), nullptr);
 }
@@ -312,7 +304,6 @@ void RealtimeOutgoingMediaSourceGStreamer::teardown()
     m_webrtcSinkPad.clear();
     m_parameters.reset();
     m_fallbackSource.clear();
-    m_pendingCodecPreferences.clear();
 }
 
 void RealtimeOutgoingMediaSourceGStreamer::unlinkPayloader()
@@ -337,16 +328,22 @@ void RealtimeOutgoingMediaSourceGStreamer::unlinkPayloader()
     m_payloader.clear();
 }
 
-void RealtimeOutgoingMediaSourceGStreamer::codecPreferencesChanged(const GRefPtr<GstCaps>& codecPreferences)
+void RealtimeOutgoingMediaSourceGStreamer::codecPreferencesChanged()
 {
+    if (m_padBlockedProbe)
+        return;
+
+    GRefPtr<GstCaps> codecPreferences;
+    g_object_get(m_transceiver.get(), "codec-preferences", &codecPreferences.outPtr(), nullptr);
+    GST_DEBUG_OBJECT(m_bin.get(), "Codec preferences changed on transceiver %" GST_PTR_FORMAT " to: %" GST_PTR_FORMAT, m_transceiver.get(), codecPreferences.get());
+
     if (m_payloader) {
         // We have a linked encoder/payloader, so to replace the audio encoder and audio/video
         // payloader we need to block upstream data flow, send an EOS event to the first element we
         // want to remove (encoder for audio, payloader for video) and wait it reaches the payloader
         // source pad. Then we can unlink/clean-up elements.
-        m_pendingCodecPreferences = codecPreferences;
         auto srcPad = adoptGRef(gst_element_get_static_pad(m_preEncoderQueue.get(), "src"));
-        gst_pad_add_probe(srcPad.get(), GST_PAD_PROBE_TYPE_BLOCK_DOWNSTREAM, reinterpret_cast<GstPadProbeCallback>(+[](GstPad* pad, GstPadProbeInfo* info, gpointer userData) -> GstPadProbeReturn {
+        m_padBlockedProbe = gst_pad_add_probe(srcPad.get(), GST_PAD_PROBE_TYPE_BLOCK_DOWNSTREAM, reinterpret_cast<GstPadProbeCallback>(+[](GstPad* pad, GstPadProbeInfo* info, gpointer userData) -> GstPadProbeReturn {
             gst_pad_remove_probe(pad, GST_PAD_PROBE_INFO_ID(info));
 
             auto self = reinterpret_cast<RealtimeOutgoingMediaSourceGStreamer*>(userData);
@@ -359,10 +356,10 @@ void RealtimeOutgoingMediaSourceGStreamer::codecPreferencesChanged(const GRefPtr
 
                 auto self = reinterpret_cast<RealtimeOutgoingMediaSourceGStreamer*>(userData);
                 self->unlinkPayloader();
-                self->codecPreferencesChanged(self->m_pendingCodecPreferences);
-                self->m_pendingCodecPreferences.clear();
+                self->m_padBlockedProbe = 0;
+                self->codecPreferencesChanged();
                 return GST_PAD_PROBE_DROP;
-            }),  userData, nullptr);
+            }), userData, nullptr);
 
             auto head = self->m_encoder.get();
             if (self->m_type == RealtimeOutgoingMediaSourceGStreamer::Type::Video)
