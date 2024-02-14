@@ -1,0 +1,50 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+input {
+    width: 300px;
+    height: 50px;
+}
+body {
+    margin: 0;
+}
+</style>
+</head>
+<body>
+
+<input id="fruit" list="fruits" type="text"/>
+<datalist id="fruits">
+</datalist>
+
+<script>
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+function addOptions() {
+  let options = "";
+  options += "<option value='Apple'>\n";
+  options += "<option value='Orange'>\n";
+  options += "<option value='Pear'>\n";
+  document.getElementById('fruits').innerHTML = options;
+}
+
+(async () => {
+    addOptions();
+
+    isShowingDataListSuggestions = await UIHelper.isShowingDataListSuggestions();
+    shouldBeFalse("isShowingDataListSuggestions");
+
+    testRunner.notifyDone();
+})();
+
+</script>
+
+</body>
+</html>

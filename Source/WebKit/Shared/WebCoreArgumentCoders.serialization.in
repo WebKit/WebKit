@@ -2321,6 +2321,7 @@ header: <WebCore/DataListSuggestionInformation.h>
     ControlClicked,
     IndicatorClicked,
     TextChanged,
+    DataListMayHaveChanged,
 };
 
 header: <WebCore/DataListSuggestionInformation.h>

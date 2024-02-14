@@ -918,6 +918,8 @@ void TextFieldInputType::dataListMayHaveChanged()
     if (!element())
         return;
     m_dataListDropdownIndicator->setInlineStyleProperty(CSSPropertyDisplay, element()->list() ? CSSValueBlock : CSSValueNone, true);
+    if (element()->list() && element()->focused())
+        displaySuggestions(DataListSuggestionActivationType::DataListMayHaveChanged);
 }
 
 HTMLElement* TextFieldInputType::dataListButtonElement() const
@@ -1001,7 +1003,7 @@ void TextFieldInputType::displaySuggestions(DataListSuggestionActivationType typ
     if (element()->isDisabledFormControl() || !element()->renderer())
         return;
 
-    if (!UserGestureIndicator::processingUserGesture() && type != DataListSuggestionActivationType::TextChanged)
+    if (!UserGestureIndicator::processingUserGesture() && !(type == DataListSuggestionActivationType::TextChanged || type == DataListSuggestionActivationType::DataListMayHaveChanged))
         return;
 
     if (!m_suggestionPicker && suggestions().size() > 0)

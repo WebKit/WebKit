@@ -464,7 +464,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     [self _updateTextSuggestions];
 
-    if (![UIKeyboard isInHardwareKeyboardMode] && activationType != WebCore::DataListSuggestionActivationType::IndicatorClicked)
+    if (![UIKeyboard isInHardwareKeyboardMode] && !(activationType == WebCore::DataListSuggestionActivationType::IndicatorClicked || activationType == WebCore::DataListSuggestionActivationType::DataListMayHaveChanged))
         return;
 
     [self _showSuggestions];
