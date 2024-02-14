@@ -330,7 +330,7 @@ bool HTMLPlugInImageElement::requestObject(const String& relativeURL, const Stri
         return document->frame()->loader().subframeLoader().requestObject(*this, relativeURL, getNameAttribute(), mimeType, paramNames, paramValues);
 
     document->eventLoop().queueTask(TaskSource::Networking, [this, protectedThis = Ref { *this }, relativeURL, nameAttribute = getNameAttribute(), mimeType, paramNames, paramValues]() mutable {
-        if (!isConnected())
+        if (!this->isConnected())
             return;
         RefPtr frame = this->document().frame();
         if (!frame)
