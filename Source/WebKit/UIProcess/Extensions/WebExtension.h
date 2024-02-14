@@ -271,10 +271,14 @@ public:
 
     bool hasRequestedPermission(NSString *) const;
 
-    // Permission patterns requested by the extension in their manifest.
+    // Match patterns requested by the extension in their manifest.
     // These are not the currently allowed permission patterns.
     const MatchPatternSet& requestedPermissionMatchPatterns();
     const MatchPatternSet& optionalPermissionMatchPatterns();
+
+    // Permission patterns requested by the extension in their manifest.
+    // These determine which websites the extension can communicate with.
+    const MatchPatternSet& externallyConnectableMatchPatterns();
 
     // Combined pattern set that includes permission patterns and injected content patterns from the manifest.
     MatchPatternSet allRequestedMatchPatterns();
@@ -306,6 +310,7 @@ private:
     void populateWebAccessibleResourcesIfNeeded();
     void populateCommandsIfNeeded();
     void populateDeclarativeNetRequestPropertiesIfNeeded();
+    void populateExternallyConnectableIfNeeded();
 
     std::optional<WebExtension::DeclarativeNetRequestRulesetData> parseDeclarativeNetRequestRulesetDictionary(NSDictionary *, NSError **);
 
@@ -319,6 +324,8 @@ private:
 
     PermissionsSet m_permissions;
     PermissionsSet m_optionalPermissions;
+
+    MatchPatternSet m_externallyConnectableMatchPatterns;
 
 #if PLATFORM(MAC)
     RetainPtr<SecStaticCodeRef> m_bundleStaticCode;
@@ -373,6 +380,7 @@ private:
     bool m_parsedManifestWebAccessibleResources : 1 { false };
     bool m_parsedManifestCommands : 1 { false };
     bool m_parsedManifestDeclarativeNetRequestRulesets : 1 { false };
+    bool m_parsedExternallyConnectable : 1 { false };
 };
 
 #ifdef __OBJC__

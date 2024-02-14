@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -141,6 +141,10 @@ static NSString * const declarativeNetRequestRulesManifestKey = @"rule_resources
 static NSString * const declarativeNetRequestRulesetIDManifestKey = @"id";
 static NSString * const declarativeNetRequestRuleEnabledManifestKey = @"enabled";
 static NSString * const declarativeNetRequestRulePathManifestKey = @"path";
+
+static NSString * const externallyConnectableManifestKey = @"externally_connectable";
+static NSString * const externallyConnectableMatchesManifestKey = @"matches";
+static NSString * const externallyConnectableIDsManifestKey = @"ids";
 
 static const size_t maximumNumberOfShortcutCommands = 4;
 
@@ -793,6 +797,7 @@ NSArray *WebExtension::errors()
     populateWebAccessibleResourcesIfNeeded();
     populateCommandsIfNeeded();
     populateDeclarativeNetRequestPropertiesIfNeeded();
+    populateExternallyConnectableIfNeeded();
 
     return [m_errors copy] ?: @[ ];
 }
@@ -841,6 +846,63 @@ NSString *WebExtension::version()
 {
     populateDisplayStringsIfNeeded();
     return m_version.get();
+}
+
+void WebExtension::populateExternallyConnectableIfNeeded()
+{
+    if (!manifestParsedSuccessfully())
+        return;
+
+    if (m_parsedExternallyConnectable)
+        return;
+
+    m_parsedExternallyConnectable = true;
+
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/externally_connectable
+
+    auto *externallyConnectableDictionary = objectForKey<NSDictionary>(m_manifest, externallyConnectableManifestKey, false);
+
+    if (!externallyConnectableDictionary)
+        return;
+
+    if (!externallyConnectableDictionary.count) {
+        recordError(createError(Error::InvalidExternallyConnectable));
+        return;
+    }
+
+    bool shouldReportError = false;
+    MatchPatternSet matchPatterns;
+
+    auto *matchPatternStrings = objectForKey<NSArray>(externallyConnectableDictionary, externallyConnectableMatchesManifestKey, true, NSString.class);
+    for (NSString *matchPatternString in matchPatternStrings) {
+        if (!matchPatternString.length)
+            continue;
+
+        if (auto matchPattern = WebExtensionMatchPattern::getOrCreate(matchPatternString)) {
+            if (matchPattern->matchesAllURLs() || !matchPattern->isSupported()) {
+                shouldReportError = true;
+                continue;
+            }
+
+            // URL patterns must contain at least a second-level domain. Top level domains and wildcards are not standalone patterns.
+            if (matchPattern->hostIsPublicSuffix()) {
+                shouldReportError = true;
+                continue;
+            }
+
+            matchPatterns.add(matchPattern.releaseNonNull());
+        }
+    }
+
+    m_externallyConnectableMatchPatterns = matchPatterns;
+
+    auto *extensionIDs = objectForKey<NSArray>(externallyConnectableDictionary, externallyConnectableIDsManifestKey, true, NSString.class);
+    extensionIDs = filterObjects(extensionIDs, ^bool(id key, NSString *extensionID) {
+        return !!extensionID.length;
+    });
+
+    if (shouldReportError || (matchPatterns.isEmpty() && !extensionIDs.count))
+        recordError(createError(Error::InvalidExternallyConnectable));
 }
 
 void WebExtension::populateDisplayStringsIfNeeded()
@@ -1934,17 +1996,25 @@ const WebExtension::MatchPatternSet& WebExtension::optionalPermissionMatchPatter
     return m_optionalPermissionMatchPatterns;
 }
 
+const WebExtension::MatchPatternSet& WebExtension::externallyConnectableMatchPatterns()
+{
+    populateExternallyConnectableIfNeeded();
+    return m_externallyConnectableMatchPatterns;
+}
+
 WebExtension::MatchPatternSet WebExtension::allRequestedMatchPatterns()
 {
     populatePermissionsPropertiesIfNeeded();
     populateContentScriptPropertiesIfNeeded();
+    populateExternallyConnectableIfNeeded();
 
     WebExtension::MatchPatternSet result;
 
     for (auto& matchPattern : m_permissionMatchPatterns)
         result.add(matchPattern);
 
-    // FIXME: <https://webkit.org/b/246491> Add externally connectable match patterns.
+    for (auto& matchPattern : m_externallyConnectableMatchPatterns)
+        result.add(matchPattern);
 
     for (auto& injectedContent : m_staticInjectedContents) {
         for (auto& matchPattern : injectedContent.includeMatchPatterns)

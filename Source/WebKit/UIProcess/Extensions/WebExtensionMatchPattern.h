@@ -90,6 +90,8 @@ public:
     String host() const;
     String path() const;
 
+    bool hostIsPublicSuffix() const;
+
     bool matchesAllURLs() const { return m_matchesAllURLs; }
     bool matchesAllHosts() const;
 

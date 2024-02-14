@@ -35,6 +35,7 @@
 #import "WebProcessMessages.h"
 #import "WebProcessPool.h"
 #import "_WKWebExtensionMatchPatternInternal.h"
+#import <WebCore/PublicSuffix.h>
 #import <wtf/HashMap.h>
 #import <wtf/HashSet.h>
 #import <wtf/NeverDestroyed.h>
@@ -276,6 +277,15 @@ String WebExtensionMatchPattern::path() const
     if (!isValid() || matchesAllURLs())
         return nullString();
     return pattern().path();
+}
+
+bool WebExtensionMatchPattern::hostIsPublicSuffix() const
+{
+    auto host = pattern().host();
+    if (host.startsWith("*."_s))
+        host = host.substring(2);
+
+    return isPublicSuffix(host);
 }
 
 String WebExtensionMatchPattern::stringWithScheme(const String& differentScheme) const
