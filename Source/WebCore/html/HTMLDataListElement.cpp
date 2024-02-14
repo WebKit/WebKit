@@ -75,6 +75,12 @@ Ref<HTMLCollection> HTMLDataListElement::options()
     return ensureRareData().ensureNodeLists().addCachedCollection<GenericCachedHTMLCollection<CollectionTypeTraits<CollectionType::DataListOptions>::traversalType>>(*this, CollectionType::DataListOptions);
 }
 
+void HTMLDataListElement::childrenChanged(const ChildChange& change)
+{
+    if (change.source == ChildChange::Source::API)
+        optionElementChildrenChanged();
+}
+
 void HTMLDataListElement::optionElementChildrenChanged()
 {
     if (auto& id = getIdAttribute(); !id.isEmpty()) {
