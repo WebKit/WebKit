@@ -3,35 +3,21 @@ a b
 Testing first letter with narrow width...
   Default behavior
     'a' (location 0 length 1)
-  IgnoresWhiteSpaceAtEndOfRun
-    'a' (location 0 length 1)
 
 Testing first letter with wide width...
   Default behavior
-    'a' (location 0 length 1)
-  IgnoresWhiteSpaceAtEndOfRun
     'a' (location 0 length 1)
 
 Testing everything except last letter with narrow width...
   Default behavior
     'a' (location 0 length 1)
-    ' ' (location 1 length 0)
-  IgnoresWhiteSpaceAtEndOfRun
-    'a' (location 0 length 1)
 
 Testing everything except last letter with wide width...
   Default behavior
     'a ' (location 0 length 2)
-  IgnoresWhiteSpaceAtEndOfRun
-    'a ' (location 0 length 2)
 
 Testing everything with narrow width...
   Default behavior
-    'a' (location 0 length 1)
-    ' ' (location 1 length 0)
-    'b' (location 2 length 1)
-    '\n' (location 3 length 0)
-  IgnoresWhiteSpaceAtEndOfRun
     'a' (location 0 length 1)
     ' ' (location 1 length 0)
     'b' (location 1 length 1)
@@ -39,10 +25,6 @@ Testing everything with narrow width...
 
 Testing everything with wide width...
   Default behavior
-    'a ' (location 0 length 2)
-    'b' (location 2 length 1)
-    '\n' (location 3 length 0)
-  IgnoresWhiteSpaceAtEndOfRun
     'a ' (location 0 length 2)
     'b' (location 2 length 1)
     '\n' (location 3 length 0)

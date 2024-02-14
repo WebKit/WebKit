@@ -62,9 +62,7 @@ enum class TextIteratorBehavior : uint16_t {
 
     EntersImageOverlays = 1 << 10,
 
-    IgnoresWhiteSpaceAtEndOfRun = 1 << 11,
-
-    IgnoresUserSelectNone = 1 << 12,
+    IgnoresUserSelectNone = 1 << 11,
 };
 
 using TextIteratorBehaviors = OptionSet<TextIteratorBehavior>;

@@ -625,26 +625,23 @@ void TextIterator::handleTextRun()
     auto [firstTextRun, orderCache] = InlineIterator::firstTextBoxInLogicalOrderFor(renderer);
 
     String rendererText = renderer->text();
-    unsigned start = m_offset;
-    unsigned end = (textNode.ptr() == m_endContainer) ? static_cast<unsigned>(m_endOffset) : UINT_MAX;
+    unsigned rangeStart = m_offset;
+    auto rangeEnd = std::optional<unsigned> { };
+    if (textNode.ptr() == m_endContainer)
+        rangeEnd = m_endOffset;
+
     while (m_textRun) {
-        unsigned textRunStart = m_textRun->start();
-        unsigned runStart = std::max(textRunStart, start);
+        auto textRunStart = m_textRun->start();
+        auto textRunEnd = textRunStart + m_textRun->length();
 
-        unsigned textRunEnd = textRunStart + m_textRun->length();
-        unsigned runEnd = std::min(textRunEnd, end);
+        auto runStart = std::max(textRunStart, rangeStart);
+        auto runEnd = std::min(textRunEnd, rangeEnd.value_or(textRunEnd));
 
-        // Determine what the next text run will be, but don't advance yet
-        auto nextTextRun = InlineIterator::nextTextBoxInLogicalOrder(m_textRun, m_textRunLogicalOrderCache);
-
-        // Check for collapsed space at the start of this run.
-        bool needSpace = m_lastTextNodeEndedWithCollapsedSpace || (m_textRun == firstTextRun && textRunStart == runStart && runStart);
-        if (needSpace && !renderer->style().isCollapsibleWhiteSpace(m_lastCharacter) && m_lastCharacter) {
-            if (runStart >= runEnd && m_behaviors.contains(TextIteratorBehavior::IgnoresWhiteSpaceAtEndOfRun)) {
-                m_textRun = nextTextRun;
-                continue;
-            }
-
+        // Check if we need to emit (previously) collapsed whitespace at the start of this run.
+        auto isAtRangeEnd = rangeEnd ? runStart >= *rangeEnd : false;
+        auto hasPreviousCollapsedWhitespace = m_lastTextNodeEndedWithCollapsedSpace || (m_textRun == firstTextRun && textRunStart == runStart && runStart);
+        auto shouldEmitWhitespace = !isAtRangeEnd && hasPreviousCollapsedWhitespace && m_lastCharacter && !renderer->style().isCollapsibleWhiteSpace(m_lastCharacter);
+        if (shouldEmitWhitespace) {
             if (m_lastTextNode == textNode.ptr() && runStart && rendererText[runStart - 1] == ' ') {
                 unsigned spaceRunStart = runStart - 1;
                 while (spaceRunStart && rendererText[spaceRunStart - 1] == ' ')
@@ -655,6 +652,8 @@ void TextIterator::handleTextRun()
             return;
         }
 
+        // Determine what the next text run will be, but don't advance yet
+        auto nextTextRun = InlineIterator::nextTextBoxInLogicalOrder(m_textRun, m_textRunLogicalOrderCache);
         if (runStart < runEnd) {
             auto isNewlineOrTab = [&](UChar character) {
                 return character == '\n' || character == '\t';
