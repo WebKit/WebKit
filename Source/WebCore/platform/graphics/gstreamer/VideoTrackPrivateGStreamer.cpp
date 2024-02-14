@@ -34,6 +34,7 @@
 #include "VP9Utilities.h"
 #include <gst/pbutils/pbutils.h>
 #include <wtf/Scope.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
 
@@ -94,6 +95,16 @@ void VideoTrackPrivateGStreamer::updateConfigurationFromTags(GRefPtr<GstTagList>
     GST_DEBUG_OBJECT(objectForLogging(), "Updating video configuration from %" GST_PTR_FORMAT, tags.get());
     if (!tags)
         return;
+
+    GUniqueOutPtr<char> trackIDString;
+    if (gst_tag_list_get_string(tags.get(), "container-specific-track-id", &trackIDString.outPtr())) {
+        if (auto trackID = WTF::parseInteger<TrackID>(StringView { trackIDString.get(), static_cast<unsigned>(strlen(trackIDString.get())) })) {
+            m_trackID = *trackID;
+            GST_DEBUG_OBJECT(objectForLogging(), "Video track ID set from container-specific-track-id tag %" G_GUINT64_FORMAT, *m_trackID);
+            m_stringId = AtomString::number(static_cast<unsigned long long>(*m_trackID));
+            client()->idChanged(*m_trackID);
+        }
+    }
 
     unsigned bitrate;
     if (!gst_tag_list_get_uint(tags.get(), GST_TAG_BITRATE, &bitrate))

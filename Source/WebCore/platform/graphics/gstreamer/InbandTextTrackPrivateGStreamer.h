@@ -53,13 +53,16 @@ public:
     }
 
     Kind kind() const final { return m_kind; }
-    TrackID id() const final { return m_index; }
+    TrackID id() const final { return m_trackID.value_or(m_index); }
     std::optional<AtomString> trackUID() const final { return m_stringId; }
     AtomString label() const final { return m_label; }
     AtomString language() const final { return m_language; }
     int trackIndex() const final { return m_index; }
 
     void handleSample(GRefPtr<GstSample>);
+
+protected:
+    void tagsChanged(GRefPtr<GstTagList>&&) final;
 
 private:
     InbandTextTrackPrivateGStreamer(unsigned index, GRefPtr<GstPad>&&, bool shouldHandleStreamStartEvent);
@@ -70,6 +73,7 @@ private:
     Vector<GRefPtr<GstSample>> m_pendingSamples WTF_GUARDED_BY_LOCK(m_sampleMutex);
     Kind m_kind;
     Lock m_sampleMutex;
+    std::optional<TrackID> m_trackID;
 };
 
 } // namespace WebCore

@@ -30,29 +30,59 @@
 #include "InbandTextTrackPrivateGStreamer.h"
 
 #include <wtf/Lock.h>
-
-GST_DEBUG_CATEGORY_EXTERN(webkit_media_player_debug);
-#define GST_CAT_DEFAULT webkit_media_player_debug
+#include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
+
+GST_DEBUG_CATEGORY(webkit_text_track_debug);
+#define GST_CAT_DEFAULT webkit_text_track_debug
+
+static void ensureTextTrackDebugCategoryInitialized()
+{
+    static std::once_flag debugRegisteredFlag;
+    std::call_once(debugRegisteredFlag, [] {
+        GST_DEBUG_CATEGORY_INIT(webkit_text_track_debug, "webkittexttrack", 0, "WebKit Text Track");
+    });
+}
 
 InbandTextTrackPrivateGStreamer::InbandTextTrackPrivateGStreamer(unsigned index, GRefPtr<GstPad>&& pad, bool shouldHandleStreamStartEvent)
     : InbandTextTrackPrivate(CueFormat::WebVTT)
     , TrackPrivateBaseGStreamer(TrackPrivateBaseGStreamer::TrackType::Text, this, index, WTFMove(pad), shouldHandleStreamStartEvent)
     , m_kind(Kind::Subtitles)
 {
+    ensureTextTrackDebugCategoryInitialized();
+    installUpdateConfigurationHandlers();
 }
 
 InbandTextTrackPrivateGStreamer::InbandTextTrackPrivateGStreamer(unsigned index, GstStream* stream)
     : InbandTextTrackPrivate(CueFormat::WebVTT)
     , TrackPrivateBaseGStreamer(TrackPrivateBaseGStreamer::TrackType::Text, this, index, stream)
 {
+    ensureTextTrackDebugCategoryInitialized();
+    installUpdateConfigurationHandlers();
+
     GST_INFO("Track %d got stream start for stream %s.", m_index, m_stringId.string().utf8().data());
 
     GST_DEBUG("Stream %" GST_PTR_FORMAT, m_stream.get());
     auto caps = adoptGRef(gst_stream_get_caps(m_stream.get()));
     const char* mediaType = capsMediaType(caps.get());
     m_kind = g_str_has_prefix(mediaType, "closedcaption/") ? Kind::Captions : Kind::Subtitles;
+}
+
+void InbandTextTrackPrivateGStreamer::tagsChanged(GRefPtr<GstTagList>&& tags)
+{
+    if (!tags)
+        return;
+
+    GUniqueOutPtr<char> trackIDString;
+    if (gst_tag_list_get_string(tags.get(), "container-specific-track-id", &trackIDString.outPtr())) {
+        if (auto trackID = WTF::parseInteger<TrackID>(StringView { trackIDString.get(), static_cast<unsigned>(strlen(trackIDString.get())) })) {
+            m_trackID = *trackID;
+            GST_DEBUG_OBJECT(objectForLogging(), "Text track ID set from container-specific-track-id tag %" G_GUINT64_FORMAT, *m_trackID);
+            m_stringId = AtomString::number(static_cast<unsigned long long>(*m_trackID));
+            client()->idChanged(*m_trackID);
+        }
+    }
 }
 
 void InbandTextTrackPrivateGStreamer::handleSample(GRefPtr<GstSample> sample)

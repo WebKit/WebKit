@@ -57,7 +57,7 @@ public:
 
     int trackIndex() const final { return m_index; }
 
-    TrackID id() const final { return m_index; }
+    TrackID id() const final { return m_trackID.value_or(m_index); }
     std::optional<AtomString> trackUID() const final { return m_stringId; }
     AtomString label() const final { return m_label; }
     AtomString language() const final { return m_language; }
@@ -75,6 +75,7 @@ private:
     VideoTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivateGStreamer>, unsigned index, GstStream*);
 
     WeakPtr<MediaPlayerPrivateGStreamer> m_player;
+    std::optional<TrackID> m_trackID;
 };
 
 } // namespace WebCore
