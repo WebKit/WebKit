@@ -515,11 +515,6 @@ String contextMenuItemPDFOpenWithPreview()
 {
     return WEB_UI_STRING("Open with Preview", "Open with Preview context menu item");
 }
-
-String contextMenuItemPDFCopy()
-{
-    return WEB_UI_STRING("Copy", "Copy context menu item");
-}
 #endif
 
 #if ENABLE(PDFJS) || ENABLE(UNIFIED_PDF)

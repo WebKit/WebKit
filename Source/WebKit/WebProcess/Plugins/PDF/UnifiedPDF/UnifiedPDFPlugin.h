@@ -43,6 +43,7 @@ enum class DelegatedScrollingMode : uint8_t;
 namespace WebKit {
 
 struct PDFContextMenu;
+struct PDFContextMenuItem;
 class PDFPluginPasswordField;
 class PDFPluginPasswordForm;
 class WebFrame;
@@ -191,9 +192,13 @@ private:
     [[maybe_unused]] bool performCopyEditingOperation() const;
 
     // Context Menu
+#if ENABLE(CONTEXT_MENUS)
     enum class ContextMenuItemTag : int8_t {
         Invalid = -1,
+        WebSearch,
+        DictionaryLookup,
         Copy,
+        CopyLink,
         OpenWithPreview,
         SinglePage,
         SinglePageContinuous,
@@ -205,8 +210,14 @@ private:
         Unknown,
     };
 
-#if PLATFORM(MAC)
-    PDFContextMenu createContextMenu(const WebCore::IntPoint& contextMenuPoint) const;
+    std::optional<PDFContextMenu> createContextMenu(const WebMouseEvent&) const;
+    PDFContextMenuItem contextMenuItem(ContextMenuItemTag) const;
+    String titleForContextMenuItemTag(ContextMenuItemTag) const;
+    bool isDisplayModeContextMenuItemTag(ContextMenuItemTag) const;
+    PDFContextMenuItem separatorContextMenuItem() const;
+    Vector<PDFContextMenuItem> selectionContextMenuItems(const WebCore::IntPoint& contextMenuPoint) const;
+    Vector<PDFContextMenuItem> displayModeContextMenuItems() const;
+    Vector<PDFContextMenuItem> scaleContextMenuItems() const;
     ContextMenuItemTag toContextMenuItemTag(int tagValue) const;
     void performContextMenuAction(ContextMenuItemTag);
 

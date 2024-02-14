@@ -1490,19 +1490,16 @@ bool UnifiedPDFPlugin::handleMouseLeaveEvent(const WebMouseEvent&)
 
 bool UnifiedPDFPlugin::handleContextMenuEvent(const WebMouseEvent& event)
 {
-#if PLATFORM(MAC)
-    if (!m_frame || !m_frame->coreLocalFrame())
-        return false;
+#if ENABLE(CONTEXT_MENUS)
     RefPtr webPage = m_frame->page();
     if (!webPage)
         return false;
-    RefPtr frameView = m_frame->coreLocalFrame()->view();
-    if (!frameView)
+
+    auto contextMenu = createContextMenu(event);
+    if (!contextMenu)
         return false;
 
-    auto contextMenu = createContextMenu(frameView->contentsToScreen(IntRect(frameView->windowToContents(event.position()), IntSize())).location());
-
-    webPage->sendWithAsyncReply(Messages::WebPageProxy::ShowPDFContextMenu { contextMenu, m_identifier }, [this, weakThis = WeakPtr { *this }](std::optional<int32_t>&& selectedItemTag) {
+    webPage->sendWithAsyncReply(Messages::WebPageProxy::ShowPDFContextMenu { *contextMenu, m_identifier }, [this, weakThis = WeakPtr { *this }](std::optional<int32_t>&& selectedItemTag) {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -1515,7 +1512,7 @@ bool UnifiedPDFPlugin::handleContextMenuEvent(const WebMouseEvent& event)
     return true;
 #else
     return false;
-#endif // PLATFORM(MAC)
+#endif // ENABLE(CONTEXT_MENUS)
 }
 
 bool UnifiedPDFPlugin::handleKeyboardEvent(const WebKeyboardEvent&)
@@ -1610,7 +1607,7 @@ void UnifiedPDFPlugin::scrollToFragmentIfNeeded()
 
 #pragma mark Context Menu
 
-#if PLATFORM(MAC)
+#if ENABLE(CONTEXT_MENUS)
 UnifiedPDFPlugin::ContextMenuItemTag UnifiedPDFPlugin::contextMenuItemTagFromDisplayMode(const PDFDocumentLayout::DisplayMode& displayMode) const
 {
     switch (displayMode) {
@@ -1637,7 +1634,10 @@ PDFDocumentLayout::DisplayMode UnifiedPDFPlugin::displayModeFromContextMenuItemT
 auto UnifiedPDFPlugin::toContextMenuItemTag(int tagValue) const -> ContextMenuItemTag
 {
     static constexpr std::array regularContextMenuItemTags {
+        ContextMenuItemTag::WebSearch,
+        ContextMenuItemTag::DictionaryLookup,
         ContextMenuItemTag::Copy,
+        ContextMenuItemTag::CopyLink,
         ContextMenuItemTag::OpenWithPreview,
         ContextMenuItemTag::SinglePage,
         ContextMenuItemTag::SinglePageContinuous,
@@ -1653,48 +1653,154 @@ auto UnifiedPDFPlugin::toContextMenuItemTag(int tagValue) const -> ContextMenuIt
     return isKnownContextMenuItemTag ? static_cast<ContextMenuItemTag>(tagValue) : ContextMenuItemTag::Unknown;
 }
 
-PDFContextMenu UnifiedPDFPlugin::createContextMenu(const IntPoint& contextMenuPoint) const
+std::optional<PDFContextMenu> UnifiedPDFPlugin::createContextMenu(const WebMouseEvent& contextMenuEvent) const
 {
+    ASSERT(isContextMenuEvent(contextMenuEvent));
+
+    if (!m_frame || !m_frame->coreLocalFrame())
+        return std::nullopt;
+
+    RefPtr frameView = m_frame->coreLocalFrame()->view();
+    if (!frameView)
+        return std::nullopt;
+
     Vector<PDFContextMenuItem> menuItems;
 
-    auto addSeparator = [&] {
-        menuItems.append({ String(), 0, enumToUnderlyingType(ContextMenuItemTag::Invalid), ContextMenuItemEnablement::Disabled, ContextMenuItemHasAction::No, ContextMenuItemIsSeparator::Yes });
+    auto addSeparator = [item = separatorContextMenuItem(), &menuItems] {
+        menuItems.append(item);
     };
 
     if ([m_pdfDocument allowsCopying] && m_currentSelection) {
-        menuItems.append({ WebCore::contextMenuItemPDFCopy(), 0, enumToUnderlyingType(ContextMenuItemTag::Copy), ContextMenuItemEnablement::Enabled, ContextMenuItemHasAction::Yes, ContextMenuItemIsSeparator::No });
+        menuItems.appendVector(selectionContextMenuItems(convertFromRootViewToPlugin(contextMenuEvent.position())));
         addSeparator();
     }
 
-    menuItems.append({ WebCore::contextMenuItemPDFOpenWithPreview(), 0,
-        enumToUnderlyingType(ContextMenuItemTag::OpenWithPreview),
-        ContextMenuItemEnablement::Enabled,
-        ContextMenuItemHasAction::Yes,
-        ContextMenuItemIsSeparator::No
-    });
+    menuItems.append(contextMenuItem(ContextMenuItemTag::OpenWithPreview));
 
     addSeparator();
 
-    auto currentDisplayMode = contextMenuItemTagFromDisplayMode(m_documentLayout.displayMode());
-    menuItems.append({ WebCore::contextMenuItemPDFSinglePage(), currentDisplayMode == ContextMenuItemTag::SinglePage, enumToUnderlyingType(ContextMenuItemTag::SinglePage), ContextMenuItemEnablement::Enabled, ContextMenuItemHasAction::Yes, ContextMenuItemIsSeparator::No });
-    menuItems.append({ WebCore::contextMenuItemPDFSinglePageContinuous(), currentDisplayMode == ContextMenuItemTag::SinglePageContinuous, enumToUnderlyingType(ContextMenuItemTag::SinglePageContinuous), ContextMenuItemEnablement::Enabled, ContextMenuItemHasAction::Yes, ContextMenuItemIsSeparator::No });
-    menuItems.append({ WebCore::contextMenuItemPDFTwoPages(), currentDisplayMode == ContextMenuItemTag::TwoPages, enumToUnderlyingType(ContextMenuItemTag::TwoPages), ContextMenuItemEnablement::Enabled, ContextMenuItemHasAction::Yes, ContextMenuItemIsSeparator::No });
-    menuItems.append({ WebCore::contextMenuItemPDFTwoPagesContinuous(), currentDisplayMode == ContextMenuItemTag::TwoPagesContinuous, enumToUnderlyingType(ContextMenuItemTag::TwoPagesContinuous), ContextMenuItemEnablement::Enabled, ContextMenuItemHasAction::Yes, ContextMenuItemIsSeparator::No });
+    menuItems.appendVector(displayModeContextMenuItems());
 
     addSeparator();
 
-    menuItems.append({ WebCore::contextMenuItemPDFZoomIn(), 0, enumToUnderlyingType(ContextMenuItemTag::ZoomIn), ContextMenuItemEnablement::Enabled, ContextMenuItemHasAction::Yes, ContextMenuItemIsSeparator::No });
-    menuItems.append({ WebCore::contextMenuItemPDFZoomOut(), 0, enumToUnderlyingType(ContextMenuItemTag::ZoomOut), ContextMenuItemEnablement::Enabled, ContextMenuItemHasAction::Yes, ContextMenuItemIsSeparator::No });
-    menuItems.append({ WebCore::contextMenuItemPDFActualSize(), 0, enumToUnderlyingType(ContextMenuItemTag::ActualSize), ContextMenuItemEnablement::Enabled, ContextMenuItemHasAction::Yes, ContextMenuItemIsSeparator::No });
+    menuItems.appendVector(scaleContextMenuItems());
 
-    return { contextMenuPoint, WTFMove(menuItems), { enumToUnderlyingType(ContextMenuItemTag::OpenWithPreview) } };
+    auto contextMenuPoint = frameView->contentsToScreen(IntRect(frameView->windowToContents(contextMenuEvent.position()), IntSize())).location();
+
+    return PDFContextMenu { contextMenuPoint, WTFMove(menuItems), { enumToUnderlyingType(ContextMenuItemTag::OpenWithPreview) } };
+}
+
+bool UnifiedPDFPlugin::isDisplayModeContextMenuItemTag(ContextMenuItemTag tag) const
+{
+    return tag == ContextMenuItemTag::SinglePage || tag == ContextMenuItemTag::SinglePageContinuous || tag == ContextMenuItemTag::TwoPages || tag == ContextMenuItemTag::TwoPagesContinuous;
+}
+
+String UnifiedPDFPlugin::titleForContextMenuItemTag(ContextMenuItemTag tag) const
+{
+    switch (tag) {
+    case ContextMenuItemTag::Invalid:
+        return { };
+    case ContextMenuItemTag::WebSearch:
+        return contextMenuItemTagSearchWeb();
+    case ContextMenuItemTag::DictionaryLookup:
+        return contextMenuItemTagLookUpInDictionary(selectionString());
+    case ContextMenuItemTag::Copy:
+        return contextMenuItemTagCopy();
+    case ContextMenuItemTag::CopyLink:
+        return contextMenuItemTagCopyLinkToClipboard();
+    case ContextMenuItemTag::OpenWithPreview:
+        return contextMenuItemPDFOpenWithPreview();
+    case ContextMenuItemTag::SinglePage:
+        return contextMenuItemPDFSinglePage();
+    case ContextMenuItemTag::SinglePageContinuous:
+        return contextMenuItemPDFSinglePageContinuous();
+    case ContextMenuItemTag::TwoPages:
+        return contextMenuItemPDFTwoPages();
+    case ContextMenuItemTag::TwoPagesContinuous:
+        return contextMenuItemPDFTwoPagesContinuous();
+    case ContextMenuItemTag::ZoomIn:
+        return contextMenuItemPDFZoomIn();
+    case ContextMenuItemTag::ZoomOut:
+        return contextMenuItemPDFZoomOut();
+    case ContextMenuItemTag::ActualSize:
+        return contextMenuItemPDFActualSize();
+    default:
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+}
+
+PDFContextMenuItem UnifiedPDFPlugin::contextMenuItem(ContextMenuItemTag tag) const
+{
+    switch (tag) {
+    case ContextMenuItemTag::Unknown:
+    case ContextMenuItemTag::Invalid:
+        return separatorContextMenuItem();
+    default: {
+        auto currentDisplayMode = contextMenuItemTagFromDisplayMode(m_documentLayout.displayMode());
+        int state = isDisplayModeContextMenuItemTag(tag) ? currentDisplayMode == tag : 0;
+        return { titleForContextMenuItemTag(tag), state, enumToUnderlyingType(tag), ContextMenuItemEnablement::Enabled, ContextMenuItemHasAction::Yes, ContextMenuItemIsSeparator::No };
+    }
+    }
+}
+
+PDFContextMenuItem UnifiedPDFPlugin::separatorContextMenuItem() const
+{
+    return { { }, 0, enumToUnderlyingType(ContextMenuItemTag::Invalid), ContextMenuItemEnablement::Disabled, ContextMenuItemHasAction::No, ContextMenuItemIsSeparator::Yes };
+}
+
+Vector<PDFContextMenuItem> UnifiedPDFPlugin::selectionContextMenuItems(const IntPoint& contextMenuPointInPluginSpace) const
+{
+    if (![m_pdfDocument allowsCopying] || !m_currentSelection)
+        return { };
+
+    Vector<PDFContextMenuItem> items {
+        contextMenuItem(ContextMenuItemTag::WebSearch),
+        separatorContextMenuItem(),
+        contextMenuItem(ContextMenuItemTag::DictionaryLookup),
+        separatorContextMenuItem(),
+        contextMenuItem(ContextMenuItemTag::Copy),
+    };
+
+    if (pdfElementTypesForPluginPoint(contextMenuPointInPluginSpace).contains(PDFElementType::Link))
+        items.append(contextMenuItem(ContextMenuItemTag::CopyLink));
+
+    return items;
+}
+
+Vector<PDFContextMenuItem> UnifiedPDFPlugin::displayModeContextMenuItems() const
+{
+    return {
+        contextMenuItem(ContextMenuItemTag::SinglePage),
+        contextMenuItem(ContextMenuItemTag::SinglePageContinuous),
+        contextMenuItem(ContextMenuItemTag::TwoPages),
+        contextMenuItem(ContextMenuItemTag::TwoPagesContinuous),
+    };
+}
+
+Vector<PDFContextMenuItem> UnifiedPDFPlugin::scaleContextMenuItems() const
+{
+    return {
+        contextMenuItem(ContextMenuItemTag::ZoomIn),
+        contextMenuItem(ContextMenuItemTag::ZoomOut),
+        contextMenuItem(ContextMenuItemTag::ActualSize),
+    };
 }
 
 void UnifiedPDFPlugin::performContextMenuAction(ContextMenuItemTag tag)
 {
     switch (tag) {
+    case ContextMenuItemTag::WebSearch:
+        performWebSearch(selectionString());
+        break;
+    case ContextMenuItemTag::DictionaryLookup:
+        notImplemented();
+        break;
     case ContextMenuItemTag::Copy:
         performCopyEditingOperation();
+        break;
+    case ContextMenuItemTag::CopyLink:
+        notImplemented();
         break;
     // The OpenWithPreview action is handled in the UI Process.
     case ContextMenuItemTag::OpenWithPreview: return;
@@ -1720,7 +1826,7 @@ void UnifiedPDFPlugin::performContextMenuAction(ContextMenuItemTag tag)
         RELEASE_ASSERT_NOT_REACHED();
     }
 }
-#endif // PLATFORM(MAC)
+#endif // ENABLE(CONTEXT_MENUS)
 
 #pragma mark Editing Commands
 
