@@ -893,7 +893,8 @@ WebExtensionTab::WebProcessProxySet WebExtensionTab::processes(WebExtensionEvent
     if (!isValid())
         return { };
 
-    auto *webViews = mainWebViewOnly == MainWebViewOnly::Yes ? [NSArray arrayWithObject:mainWebView()] : this->webViews();
+    // This approach is nil-safe, unlike using @[ mainWebView() ] or [NSArray arrayWithObject:].
+    auto *webViews = mainWebViewOnly == MainWebViewOnly::Yes ? [NSArray arrayWithObjects:mainWebView(), nil] : this->webViews();
 
     WebProcessProxySet result;
     for (WKWebView *webView in webViews) {
