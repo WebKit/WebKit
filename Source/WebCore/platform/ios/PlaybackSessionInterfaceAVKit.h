@@ -22,42 +22,35 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-
 #pragma once
-
 #if PLATFORM(COCOA) && HAVE(AVKIT)
-
 #include "PlaybackSessionInterfaceIOS.h"
-
 namespace WebCore {
-
 class WEBCORE_EXPORT PlaybackSessionInterfaceAVKit
     : public PlaybackSessionInterfaceIOS {
 
 public:
-    static Ref<PlaybackSessionInterfaceAVKit> create(PlaybackSessionModel& model)
-    {
-        return adoptRef(*new PlaybackSessionInterfaceAVKit(model));
-    }
-    WebAVPlayerController *playerController() const override;
-    virtual ~PlaybackSessionInterfaceAVKit();
-    void durationChanged(double) override;
-    void currentTimeChanged(double currentTime, double anchorTime) override;
-    void bufferedTimeChanged(double) override;
-    void rateChanged(OptionSet<PlaybackSessionModel::PlaybackState>, double playbackRate, double defaultPlaybackRate) override;
-    void seekableRangesChanged(const TimeRanges&, double lastModifiedTime, double liveUpdateInterval) override;
-    void canPlayFastReverseChanged(bool) override;
-    void audioMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex) override;
-    void legibleMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex) override;
-    void externalPlaybackChanged(bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType, const String& localizedDeviceName) override;
-    void wirelessVideoPlaybackDisabledChanged(bool) override;
-    void mutedChanged(bool) override;
-    void volumeChanged(double) override;
-    void invalidate() override;
+    static Ref<PlaybackSessionInterfaceAVKit> create(PlaybackSessionModel&);
+    ~PlaybackSessionInterfaceAVKit();
+    void invalidate() final;
 
+    WebAVPlayerController *playerController() const final;
+    WKSLinearMediaPlayer *linearMediaPlayer() const final;
+
+    void durationChanged(double) final;
+    void currentTimeChanged(double currentTime, double anchorTime) final;
+    void bufferedTimeChanged(double) final;
+    void rateChanged(OptionSet<PlaybackSessionModel::PlaybackState>, double playbackRate, double defaultPlaybackRate) final;
+    void seekableRangesChanged(const TimeRanges&, double lastModifiedTime, double liveUpdateInterval) final;
+    void canPlayFastReverseChanged(bool) final;
+    void audioMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex) final;
+    void legibleMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex) final;
+    void externalPlaybackChanged(bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType, const String& localizedDeviceName) final;
+    void wirelessVideoPlaybackDisabledChanged(bool) final;
+    void mutedChanged(bool) final;
+    void volumeChanged(double) final;
 #if !RELEASE_LOG_DISABLED
-    const char* logClassName() const override;
+    const char* logClassName() const final;
 #endif
 
 private:

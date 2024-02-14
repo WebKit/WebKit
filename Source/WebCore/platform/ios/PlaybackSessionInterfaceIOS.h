@@ -40,6 +40,7 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/WeakPtr.h>
 
+OBJC_CLASS WKSLinearMediaPlayer;
 OBJC_CLASS WebAVPlayerController;
 
 namespace WebCore {
@@ -52,8 +53,10 @@ class WEBCORE_EXPORT PlaybackSessionInterfaceIOS
     , public RefCounted<PlaybackSessionInterfaceIOS> {
 
 public:
+    void initialize();
     virtual ~PlaybackSessionInterfaceIOS();
     virtual WebAVPlayerController *playerController() const = 0;
+    virtual WKSLinearMediaPlayer *linearMediaPlayer() const = 0;
     PlaybackSessionModel* playbackSessionModel() const;
     void durationChanged(double) override = 0;
     void currentTimeChanged(double currentTime, double anchorTime) override = 0;

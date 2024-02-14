@@ -46,6 +46,13 @@ SOFT_LINK_CLASS_OPTIONAL(AVKit, AVValueTiming)
 
 namespace WebCore {
 
+Ref<PlaybackSessionInterfaceAVKit> PlaybackSessionInterfaceAVKit::create(PlaybackSessionModel& model)
+{
+    Ref interface = adoptRef(*new PlaybackSessionInterfaceAVKit(model));
+    interface->initialize();
+    return interface;
+}
+
 PlaybackSessionInterfaceAVKit::PlaybackSessionInterfaceAVKit(PlaybackSessionModel& model)
     : PlaybackSessionInterfaceIOS(model)
     , m_playerController(createWebAVPlayerController())
@@ -53,30 +60,11 @@ PlaybackSessionInterfaceAVKit::PlaybackSessionInterfaceAVKit(PlaybackSessionMode
     ASSERT(isUIThread());
     [m_playerController setPlaybackSessionInterface:this];
     [m_playerController setDelegate:&model];
-
-    durationChanged(model.duration());
-    currentTimeChanged(model.currentTime(), [[NSProcessInfo processInfo] systemUptime]);
-    bufferedTimeChanged(model.bufferedTime());
-    OptionSet<PlaybackSessionModel::PlaybackState> playbackState;
-    if (model.isPlaying())
-        playbackState.add(PlaybackSessionModel::PlaybackState::Playing);
-    if (model.isStalled())
-        playbackState.add(PlaybackSessionModel::PlaybackState::Stalled);
-    rateChanged(playbackState, model.playbackRate(), model.defaultPlaybackRate());
-    seekableRangesChanged(model.seekableRanges(), model.seekableTimeRangesLastModifiedTime(), model.liveUpdateInterval());
-    canPlayFastReverseChanged(model.canPlayFastReverse());
-    audioMediaSelectionOptionsChanged(model.audioMediaSelectionOptions(), model.audioMediaSelectedIndex());
-    legibleMediaSelectionOptionsChanged(model.legibleMediaSelectionOptions(), model.legibleMediaSelectedIndex());
-    externalPlaybackChanged(model.externalPlaybackEnabled(), model.externalPlaybackTargetType(), model.externalPlaybackLocalizedDeviceName());
-    wirelessVideoPlaybackDisabledChanged(model.wirelessVideoPlaybackDisabled());
 }
 
 PlaybackSessionInterfaceAVKit::~PlaybackSessionInterfaceAVKit()
 {
     ASSERT(isUIThread());
-    [m_playerController setPlaybackSessionInterface:nullptr];
-    [m_playerController setExternalPlaybackActive:false];
-
     invalidate();
 }
 
@@ -85,14 +73,20 @@ WebAVPlayerController *PlaybackSessionInterfaceAVKit::playerController() const
     return m_playerController.get();
 }
 
+WKSLinearMediaPlayer *PlaybackSessionInterfaceAVKit::linearMediaPlayer() const
+{
+    return nullptr;
+}
+
 void PlaybackSessionInterfaceAVKit::invalidate()
 {
     if (!m_playbackSessionModel)
         return;
 
+    [m_playerController setPlaybackSessionInterface:nullptr];
+    [m_playerController setExternalPlaybackActive:false];
     [m_playerController setDelegate:nullptr];
-    m_playbackSessionModel->removeClient(*this);
-    m_playbackSessionModel = nullptr;
+    PlaybackSessionInterfaceIOS::invalidate();
 }
 
 void PlaybackSessionInterfaceAVKit::durationChanged(double duration)

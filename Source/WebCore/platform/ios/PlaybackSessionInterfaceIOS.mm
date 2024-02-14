@@ -30,7 +30,9 @@
 #if PLATFORM(COCOA) && HAVE(AVKIT)
 
 #import "Logging.h"
+#import "MediaSelectionOption.h"
 #import "PlaybackSessionModel.h"
+#import "TimeRanges.h"
 #import <AVFoundation/AVTime.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/CString.h>
@@ -50,8 +52,38 @@ PlaybackSessionInterfaceIOS::PlaybackSessionInterfaceIOS(PlaybackSessionModel& m
 
 PlaybackSessionInterfaceIOS::~PlaybackSessionInterfaceIOS()
 {
-
+    ASSERT(isUIThread());
 }
+
+void PlaybackSessionInterfaceIOS::initialize()
+{
+    auto& model = *m_playbackSessionModel;
+
+    durationChanged(model.duration());
+    currentTimeChanged(model.currentTime(), [[NSProcessInfo processInfo] systemUptime]);
+    bufferedTimeChanged(model.bufferedTime());
+    OptionSet<PlaybackSessionModel::PlaybackState> playbackState;
+    if (model.isPlaying())
+        playbackState.add(PlaybackSessionModel::PlaybackState::Playing);
+    if (model.isStalled())
+        playbackState.add(PlaybackSessionModel::PlaybackState::Stalled);
+    rateChanged(playbackState, model.playbackRate(), model.defaultPlaybackRate());
+    seekableRangesChanged(model.seekableRanges(), model.seekableTimeRangesLastModifiedTime(), model.liveUpdateInterval());
+    canPlayFastReverseChanged(model.canPlayFastReverse());
+    audioMediaSelectionOptionsChanged(model.audioMediaSelectionOptions(), model.audioMediaSelectedIndex());
+    legibleMediaSelectionOptionsChanged(model.legibleMediaSelectionOptions(), model.legibleMediaSelectedIndex());
+    externalPlaybackChanged(model.externalPlaybackEnabled(), model.externalPlaybackTargetType(), model.externalPlaybackLocalizedDeviceName());
+    wirelessVideoPlaybackDisabledChanged(model.wirelessVideoPlaybackDisabled());
+}
+
+void PlaybackSessionInterfaceIOS::invalidate()
+{
+    if (!m_playbackSessionModel)
+        return;
+    m_playbackSessionModel->removeClient(*this);
+    m_playbackSessionModel = nullptr;
+}
+
 
 PlaybackSessionModel* PlaybackSessionInterfaceIOS::playbackSessionModel() const
 {

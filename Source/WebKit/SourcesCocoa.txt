@@ -94,6 +94,8 @@ Platform/cocoa/WebKitAdditions.mm @no-unify
 Platform/cocoa/WebPrivacyHelpers.mm
 
 Platform/ios/PaymentAuthorizationController.mm
+Platform/ios/PlaybackSessionInterfaceLMK.mm @no-unify
+Platform/ios/VideoPresentationInterfaceLMK.mm
 
 Platform/mac/MenuUtilities.mm
 Platform/mac/StringUtilities.mm
