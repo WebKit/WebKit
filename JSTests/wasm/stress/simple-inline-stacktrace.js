@@ -1,4 +1,3 @@
-//@ skip if $architecture == "arm"
 
 var wasm_code = read('simple-inline-stacktrace.wasm', 'binary')
 var wasm_module = new WebAssembly.Module(wasm_code);
