@@ -32,7 +32,7 @@
 
 #import "CocoaHelpers.h"
 #import "Logging.h"
-#import "WebExtensionStorageType.h"
+#import "WebExtensionDataType.h"
 #import "WebExtensionUtilities.h"
 #import "_WKWebExtensionSQLiteDatabase.h"
 #import "_WKWebExtensionSQLiteHelpers.h"
@@ -58,10 +58,10 @@ static NSString *rowFilterStringFromRowKeys(NSArray<NSString *> *keys)
 }
 
 @implementation _WKWebExtensionStorageSQLiteStore {
-    WebExtensionStorageType _storageType;
+    WebExtensionDataType _storageType;
 }
 
-- (instancetype)initWithUniqueIdentifier:(NSString *)uniqueIdentifier storageType:(WebExtensionStorageType)storageType directory:(NSString *)directory usesInMemoryDatabase:(BOOL)useInMemoryDatabase
+- (instancetype)initWithUniqueIdentifier:(NSString *)uniqueIdentifier storageType:(WebExtensionDataType)storageType directory:(NSString *)directory usesInMemoryDatabase:(BOOL)useInMemoryDatabase
 {
     if (!(self = [super initWithUniqueIdentifier:uniqueIdentifier directory:directory usesInMemoryDatabase:useInMemoryDatabase]))
         return nil;
@@ -242,13 +242,13 @@ static NSString *rowFilterStringFromRowKeys(NSArray<NSString *> *keys)
 
     NSString *databaseName;
     switch (_storageType) {
-    case WebExtensionStorageType::Local:
+    case WebExtensionDataType::Local:
         databaseName = @"LocalStorage.db";
         break;
-    case WebExtensionStorageType::Sync:
+    case WebExtensionDataType::Sync:
         databaseName = @"SyncStorage.db";
         break;
-    case WebExtensionStorageType::Session:
+    case WebExtensionDataType::Session:
         // Session storage is kept in memory only.
         ASSERT_NOT_REACHED();
     }

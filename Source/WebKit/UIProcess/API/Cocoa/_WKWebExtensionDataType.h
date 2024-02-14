@@ -23,45 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import <Foundation/Foundation.h>
 
-#if ENABLE(WK_WEB_EXTENSIONS)
+#import <WebKit/WKFoundation.h>
 
-#include "JSWebExtensionAPIStorage.h"
-#include "JSWebExtensionWrappable.h"
-#include "WebExtensionAPIObject.h"
-#include "WebExtensionAPIStorageArea.h"
+/*! @abstract Constants for specifying data types for a @link WKWebExtensionContext @/link. */
+WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+typedef NSString * _WKWebExtensionDataType NS_TYPED_EXTENSIBLE_ENUM NS_SWIFT_NAME(_WKWebExtension.DataType);
 
-namespace WebKit {
+/*! @abstract Specifies local storage, including `browser.storage.local`. */
+WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_EXTERN _WKWebExtensionDataType const _WKWebExtensionDataTypeLocal;
 
-class WebExtensionAPIStorageArea;
+/*! @abstract Specifies session storage, including `browser.storage.session`. */
+WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_EXTERN _WKWebExtensionDataType const _WKWebExtensionDataTypeSession;
 
-class WebExtensionAPIStorage : public WebExtensionAPIObject, public JSWebExtensionWrappable {
-    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIStorage, storage);
-
-public:
-#if PLATFORM(COCOA)
-    bool isPropertyAllowed(const ASCIILiteral& propertyName, WebPage&);
-
-    WebExtensionAPIStorageArea& local();
-    WebExtensionAPIStorageArea& session();
-    WebExtensionAPIStorageArea& sync();
-
-    WebExtensionAPIEvent& onChanged();
-
-private:
-    friend class WebExtensionContextProxy;
-
-    WebExtensionAPIStorageArea& storageAreaForType(WebExtensionDataType);
-
-    RefPtr<WebExtensionAPIStorageArea> m_local;
-    RefPtr<WebExtensionAPIStorageArea> m_session;
-    RefPtr<WebExtensionAPIStorageArea> m_sync;
-
-    RefPtr<WebExtensionAPIEvent> m_onChanged;
-#endif
-};
-
-} // namespace WebKit
-
-#endif // ENABLE(WK_WEB_EXTENSIONS)
+/*! @abstract Specifies synchronized storage, including `browser.storage.sync`. */
+WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_EXTERN _WKWebExtensionDataType const _WKWebExtensionDataTypeSync;

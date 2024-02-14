@@ -44,10 +44,14 @@
 #import "WebExtensionContextProxyMessages.h"
 #import "WebExtensionControllerMessages.h"
 #import "WebExtensionControllerProxyMessages.h"
+#import "WebExtensionDataRecord.h"
 #import "WebExtensionEventListenerType.h"
 #import "WebPageProxy.h"
 #import "WebProcessPool.h"
+#import "_WKWebExtensionStorageSQLiteStore.h"
 #import <WebCore/ContentRuleListResults.h>
+#import <wtf/BlockPtr.h>
+#import <wtf/CallbackAggregator.h>
 #import <wtf/FileSystem.h>
 #import <wtf/HashMap.h>
 #import <wtf/HashSet.h>
@@ -63,6 +67,133 @@ String WebExtensionController::storageDirectory(WebExtensionContext& extensionCo
     if (m_configuration->storageIsPersistent() && extensionContext.hasCustomUniqueIdentifier())
         return FileSystem::pathByAppendingComponent(m_configuration->storageDirectory(), extensionContext.uniqueIdentifier());
     return nullString();
+}
+
+void WebExtensionController::getDataRecords(OptionSet<WebExtensionDataType> types, CompletionHandler<void(Vector<Ref<WebExtensionDataRecord>>)>&& completionHandler)
+{
+    if (!m_configuration->storageIsPersistent() || types.isEmpty()) {
+        completionHandler({ });
+        return;
+    }
+
+    auto recordHolder = WebExtensionDataRecordHolder::create();
+    auto aggregator = MainRunLoopCallbackAggregator::create([recordHolder, completionHandler = WTFMove(completionHandler)]() mutable {
+        Vector<Ref<WebExtensionDataRecord>> records;
+        for (auto& entry : recordHolder->recordsMap)
+            records.append(entry.value);
+
+        completionHandler(records);
+    });
+
+    auto uniqueIdentifiers = FileSystem::listDirectory(m_configuration->storageDirectory());
+    for (auto& uniqueIdentifier : uniqueIdentifiers) {
+        String displayName;
+        URL lastBaseURL;
+        if (!WebExtensionContext::readDisplayNameAndLastBaseURLFromState(stateFilePath(uniqueIdentifier), displayName, lastBaseURL))
+            continue;
+
+        for (auto type : types) {
+            auto *storage = sqliteStore(storageDirectory(uniqueIdentifier), type, this->extensionContext(lastBaseURL));
+            if (!storage)
+                continue;
+
+            calculateStorageSize(storage, type, makeBlockPtr([recordHolder, aggregator, uniqueIdentifier, displayName, type](size_t size) mutable {
+                Ref record = recordHolder->recordsMap.ensure(uniqueIdentifier, [&] {
+                    return WebExtensionDataRecord::create(displayName, uniqueIdentifier);
+                }).iterator->value;
+                record->setSizeOfType(type, size);
+            }));
+        }
+    }
+}
+
+void WebExtensionController::getDataRecord(OptionSet<WebExtensionDataType> types, WebExtensionContext& extensionContext, CompletionHandler<void(RefPtr<WebExtensionDataRecord>)>&& completionHandler)
+{
+    if (!m_configuration->storageIsPersistent() || types.isEmpty()) {
+        completionHandler(nullptr);
+        return;
+    }
+
+    String matchingUniqueIdentifier;
+    String displayName;
+    URL lastBaseURL;
+
+    auto recordHolder = WebExtensionDataRecordHolder::create();
+    auto aggregator = MainRunLoopCallbackAggregator::create([recordHolder, completionHandler = WTFMove(completionHandler)]() mutable {
+        completionHandler(recordHolder->recordsMap.takeFirst());
+    });
+
+    auto uniqueIdentifiers = FileSystem::listDirectory(m_configuration->storageDirectory());
+    for (auto& uniqueIdentifier : uniqueIdentifiers) {
+        if (!WebExtensionContext::readDisplayNameAndLastBaseURLFromState(stateFilePath(uniqueIdentifier), displayName, lastBaseURL))
+            continue;
+
+        if (this->extensionContext(lastBaseURL)->extension() == extensionContext.extension()) {
+            matchingUniqueIdentifier = uniqueIdentifier;
+            break;
+        }
+    }
+
+    if (!matchingUniqueIdentifier) {
+        completionHandler(nullptr);
+        return;
+    }
+
+    for (auto type : types) {
+        auto *storage = sqliteStore(storageDirectory(matchingUniqueIdentifier), type, this->extensionContext(lastBaseURL));
+        if (!storage)
+            continue;
+
+        calculateStorageSize(storage, type, makeBlockPtr([recordHolder, aggregator, matchingUniqueIdentifier, displayName, type](size_t size) mutable {
+            Ref record = recordHolder->recordsMap.ensure(matchingUniqueIdentifier, [&] {
+                return WebExtensionDataRecord::create(displayName, matchingUniqueIdentifier);
+            }).iterator->value;
+            record->setSizeOfType(type, size);
+        }));
+    }
+}
+
+void WebExtensionController::removeData(OptionSet<WebExtensionDataType> types, const Vector<Ref<WebExtensionDataRecord>>& records, CompletionHandler<void()>&& completionHandler)
+{
+    if (!m_configuration->storageIsPersistent() || types.isEmpty() || records.isEmpty()) {
+        completionHandler();
+        return;
+    }
+
+    auto aggregator = MainRunLoopCallbackAggregator::create([completionHandler = WTFMove(completionHandler)]() mutable {
+        completionHandler();
+    });
+
+    for (auto& record : records) {
+        URL lastBaseURL;
+        auto uniqueIdentifier = record.get().uniqueIdentifier();
+        if (!WebExtensionContext::readLastBaseURLFromState(stateFilePath(uniqueIdentifier), lastBaseURL))
+            continue;
+
+        for (auto type : types) {
+            auto *storage = sqliteStore(storageDirectory(uniqueIdentifier), type, this->extensionContext(lastBaseURL));
+            if (!storage)
+                continue;
+
+            removeStorage(storage, type, makeBlockPtr([aggregator]() mutable { }));
+        }
+    }
+}
+
+void WebExtensionController::calculateStorageSize(_WKWebExtensionStorageSQLiteStore *storage, WebExtensionDataType type, CompletionHandler<void(size_t)>&& completionHandler)
+{
+    [storage getStorageSizeForKeys:@[ ] completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler)](size_t storageSize, NSString *errorMessage) mutable {
+        // FIXME: <https://webkit.org/b/269100> Add storage size of window.localStorage, window.sessionStorage and indexedDB.
+        completionHandler(storageSize);
+    }).get()];
+}
+
+void WebExtensionController::removeStorage(_WKWebExtensionStorageSQLiteStore *storage, WebExtensionDataType type, CompletionHandler<void()>&& completionHandler)
+{
+    [storage deleteDatabaseWithCompletionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler)](NSString *) mutable {
+        // FIXME: <https://webkit.org/b/269100> Remove window.localStorage, window.sessionStorage, indexedDB.
+        completionHandler();
+    }).get()];
 }
 
 bool WebExtensionController::load(WebExtensionContext& extensionContext, NSError **outError)
@@ -320,6 +451,28 @@ WebExtensionController::WebExtensionSet WebExtensionController::extensions() con
     for (Ref context : m_extensionContexts)
         extensions.addVoid(context->extension());
     return extensions;
+}
+
+String WebExtensionController::stateFilePath(const String& uniqueIdentifier) const
+{
+    return FileSystem::pathByAppendingComponent(storageDirectory(uniqueIdentifier), WebExtensionContext::plistFileName());
+}
+
+String WebExtensionController::storageDirectory(const String& uniqueIdentifier) const
+{
+    return FileSystem::pathByAppendingComponent(m_configuration->storageDirectory(), uniqueIdentifier);
+}
+
+_WKWebExtensionStorageSQLiteStore *WebExtensionController::sqliteStore(const String& storageDirectory, WebExtensionDataType type, std::optional<RefPtr<WebExtensionContext>> extensionContext)
+{
+    if (type == WebExtensionDataType::Session) {
+        ASSERT(extensionContext.has_value());
+
+        return extensionContext.value()->isLoaded() ? extensionContext.value()->storageForType(WebExtensionDataType::Session) : nil;
+    }
+
+    auto uniqueIdentifier = FileSystem::lastComponentOfPathIgnoringTrailingSlash(storageDirectory);
+    return [[_WKWebExtensionStorageSQLiteStore alloc] initWithUniqueIdentifier:uniqueIdentifier storageType:type directory:storageDirectory usesInMemoryDatabase:NO];
 }
 
 #if PLATFORM(MAC)

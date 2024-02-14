@@ -311,6 +311,7 @@ Tests/WebKitCocoa/WKWebExtensionAPIWindows.mm
 Tests/WebKitCocoa/WKWebExtensionContext.mm
 Tests/WebKitCocoa/WKWebExtensionController.mm
 Tests/WebKitCocoa/WKWebExtensionControllerConfiguration.mm
+Tests/WebKitCocoa/WKWebExtensionDataRecord.mm
 Tests/WebKitCocoa/WKWebExtensionMatchPattern.mm
 Tests/WebKitCocoa/WKWebExtensionTab.mm
 Tests/WebKitCocoa/WKWebExtensionWindow.mm

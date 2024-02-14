@@ -23,44 +23,55 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#if !__has_feature(objc_arc)
+#error This file requires ARC. Add the "-fobjc-arc" compiler flag for this file.
+#endif
+
+#import "config.h"
+#import "_WKWebExtensionDataType.h"
+
+#import "_WKWebExtensionDataTypeInternal.h"
+#import <wtf/OptionSet.h>
+
+_WKWebExtensionDataType const _WKWebExtensionDataTypeLocal = @"local";
+_WKWebExtensionDataType const _WKWebExtensionDataTypeSession = @"session";
+_WKWebExtensionDataType const _WKWebExtensionDataTypeSync = @"sync";
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-#include "JSWebExtensionAPIStorage.h"
-#include "JSWebExtensionWrappable.h"
-#include "WebExtensionAPIObject.h"
-#include "WebExtensionAPIStorageArea.h"
-
 namespace WebKit {
 
-class WebExtensionAPIStorageArea;
+OptionSet<WebExtensionDataType> toWebExtensionDataTypes(NSSet *types)
+{
+    OptionSet<WebExtensionDataType> result;
 
-class WebExtensionAPIStorage : public WebExtensionAPIObject, public JSWebExtensionWrappable {
-    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIStorage, storage);
+    if ([types containsObject:_WKWebExtensionDataTypeLocal])
+        result.add(WebExtensionDataType::Local);
 
-public:
-#if PLATFORM(COCOA)
-    bool isPropertyAllowed(const ASCIILiteral& propertyName, WebPage&);
+    if ([types containsObject:_WKWebExtensionDataTypeSession])
+        result.add(WebExtensionDataType::Session);
 
-    WebExtensionAPIStorageArea& local();
-    WebExtensionAPIStorageArea& session();
-    WebExtensionAPIStorageArea& sync();
+    if ([types containsObject:_WKWebExtensionDataTypeSync])
+        result.add(WebExtensionDataType::Sync);
 
-    WebExtensionAPIEvent& onChanged();
+    return result;
+}
 
-private:
-    friend class WebExtensionContextProxy;
+NSSet *toAPI(OptionSet<WebExtensionDataType> types)
+{
+    auto *result = [[NSMutableSet alloc] init];
 
-    WebExtensionAPIStorageArea& storageAreaForType(WebExtensionDataType);
+    if (types.contains(WebExtensionDataType::Local))
+        [result addObject:_WKWebExtensionDataTypeLocal];
 
-    RefPtr<WebExtensionAPIStorageArea> m_local;
-    RefPtr<WebExtensionAPIStorageArea> m_session;
-    RefPtr<WebExtensionAPIStorageArea> m_sync;
+    if (types.contains(WebExtensionDataType::Session))
+        [result addObject:_WKWebExtensionDataTypeSession];
 
-    RefPtr<WebExtensionAPIEvent> m_onChanged;
-#endif
-};
+    if (types.contains(WebExtensionDataType::Sync))
+        [result addObject:_WKWebExtensionDataTypeSync];
+
+    return [result copy];
+}
 
 } // namespace WebKit
 

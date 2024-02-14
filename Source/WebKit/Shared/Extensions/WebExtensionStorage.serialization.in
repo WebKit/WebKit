@@ -22,14 +22,14 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-headers: "WebExtensionStorageAccessLevel.h" "WebExtensionStorageType.h"
+headers: "WebExtensionStorageAccessLevel.h" "WebExtensionDataType.h"
 
 enum class WebKit::WebExtensionStorageAccessLevel : uint8_t {
     TrustedContexts,
     TrustedAndUntrustedContexts,
 }
 
-enum class WebKit::WebExtensionStorageType : uint8_t {
+[OptionSet] enum class WebKit::WebExtensionDataType : uint8_t {
     Local,
     Session,
     Sync,

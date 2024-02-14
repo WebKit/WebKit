@@ -23,44 +23,49 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "WebExtensionDataRecord.h"
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-#include "JSWebExtensionAPIStorage.h"
-#include "JSWebExtensionWrappable.h"
-#include "WebExtensionAPIObject.h"
-#include "WebExtensionAPIStorageArea.h"
+#include <wtf/OptionSet.h>
 
 namespace WebKit {
 
-class WebExtensionAPIStorageArea;
+WebExtensionDataRecord::WebExtensionDataRecord(const String& displayName, const String& uniqueIdentifier)
+    : m_displayName(displayName)
+    , m_uniqueIdentifier(uniqueIdentifier)
+{
+}
 
-class WebExtensionAPIStorage : public WebExtensionAPIObject, public JSWebExtensionWrappable {
-    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIStorage, storage);
+bool WebExtensionDataRecord::operator==(const WebExtensionDataRecord& other) const
+{
+    return this == &other || (m_displayName == other.m_displayName && m_uniqueIdentifier == other.m_uniqueIdentifier);
+}
 
-public:
-#if PLATFORM(COCOA)
-    bool isPropertyAllowed(const ASCIILiteral& propertyName, WebPage&);
+size_t WebExtensionDataRecord::totalSize() const
+{
+    size_t total = 0;
+    for (auto& entry : m_typeSizes)
+        total += entry.value;
+    return total;
+}
 
-    WebExtensionAPIStorageArea& local();
-    WebExtensionAPIStorageArea& session();
-    WebExtensionAPIStorageArea& sync();
+size_t WebExtensionDataRecord::sizeOfTypes(OptionSet<Type> types) const
+{
+    size_t total = 0;
+    for (auto type : types)
+        total += m_typeSizes.get(type);
+    return total;
+}
 
-    WebExtensionAPIEvent& onChanged();
-
-private:
-    friend class WebExtensionContextProxy;
-
-    WebExtensionAPIStorageArea& storageAreaForType(WebExtensionDataType);
-
-    RefPtr<WebExtensionAPIStorageArea> m_local;
-    RefPtr<WebExtensionAPIStorageArea> m_session;
-    RefPtr<WebExtensionAPIStorageArea> m_sync;
-
-    RefPtr<WebExtensionAPIEvent> m_onChanged;
-#endif
-};
+OptionSet<WebExtensionDataRecord::Type> WebExtensionDataRecord::types() const
+{
+    OptionSet<WebExtensionDataRecord::Type> result;
+    for (auto& entry : m_typeSizes)
+        result.add(entry.key);
+    return result;
+}
 
 } // namespace WebKit
 

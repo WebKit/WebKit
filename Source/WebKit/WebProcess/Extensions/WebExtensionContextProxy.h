@@ -175,7 +175,7 @@ private:
 
     // Storage
     void setStorageAccessLevel(bool);
-    void dispatchStorageChangedEvent(const String& onChangedJSON, WebExtensionStorageType, WebExtensionContentWorldType);
+    void dispatchStorageChangedEvent(const String& onChangedJSON, WebExtensionDataType, WebExtensionContentWorldType);
 
     // Tabs
     void dispatchTabsCreatedEvent(const WebExtensionTabParameters&);

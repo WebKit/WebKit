@@ -3076,6 +3076,21 @@ framework module WebKit_Private [system] {
     export *
   }
 
+  explicit module _WKWebExtensionDataRecord {
+    header "_WKWebExtensionDataRecord.h"
+    export *
+  }
+
+  explicit module _WKWebExtensionDataRecordPrivate {
+    header "_WKWebExtensionDataRecordPrivate.h"
+    export *
+  }
+
+  explicit module _WKWebExtensionDataType {
+    header "_WKWebExtensionDataType.h"
+    export *
+  }
+
   explicit module _WKWebExtensionMatchPattern {
     header "_WKWebExtensionMatchPattern.h"
     export *

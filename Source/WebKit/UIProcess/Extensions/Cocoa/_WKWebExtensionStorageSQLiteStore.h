@@ -30,7 +30,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 namespace WebKit {
-enum class WebExtensionStorageType : uint8_t;
+enum class WebExtensionDataType : uint8_t;
 }
 
 @interface _WKWebExtensionStorageSQLiteStore : _WKWebExtensionSQLiteStore
@@ -38,7 +38,7 @@ enum class WebExtensionStorageType : uint8_t;
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)new NS_UNAVAILABLE;
 
-- (instancetype)initWithUniqueIdentifier:(NSString *)uniqueIdentifier storageType:(WebKit::WebExtensionStorageType)storageType directory:(NSString *)directory usesInMemoryDatabase:(BOOL)useInMemoryDatabase;
+- (instancetype)initWithUniqueIdentifier:(NSString *)uniqueIdentifier storageType:(WebKit::WebExtensionDataType)storageType directory:(NSString *)directory usesInMemoryDatabase:(BOOL)useInMemoryDatabase;
 
 - (void)getValuesForKeys:(NSArray<NSString *> *)keys completionHandler:(void (^)(NSDictionary<NSString *, NSString *> *results, NSString * _Nullable errorMessage))completionHandler;
 - (void)getStorageSizeForKeys:(NSArray<NSString *> *)keys completionHandler:(void (^)(size_t storageSize, NSString * _Nullable errorMessage))completionHandler;

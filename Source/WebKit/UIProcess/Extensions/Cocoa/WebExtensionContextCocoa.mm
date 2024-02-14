@@ -54,9 +54,9 @@
 #import "WebExtensionAction.h"
 #import "WebExtensionConstants.h"
 #import "WebExtensionContextProxyMessages.h"
+#import "WebExtensionDataType.h"
 #import "WebExtensionDynamicScripts.h"
 #import "WebExtensionMenuItemContextParameters.h"
-#import "WebExtensionStorageType.h"
 #import "WebExtensionTab.h"
 #import "WebExtensionURLSchemeHandler.h"
 #import "WebExtensionWindow.h"
@@ -96,6 +96,7 @@ static NSString * const backgroundContentEventListenersKey = @"BackgroundContent
 static NSString * const backgroundContentEventListenersVersionKey = @"BackgroundContentEventListenersVersion";
 static NSString * const lastSeenBaseURLStateKey = @"LastSeenBaseURL";
 static NSString * const lastSeenVersionStateKey = @"LastSeenVersion";
+static NSString * const lastSeenDisplayNameStateKey = @"LastSeenDisplayName";
 static NSString * const lastLoadedDeclarativeNetRequestHashStateKey = @"LastLoadedDeclarativeNetRequestHash";
 
 static NSString * const sessionStorageAllowedInContentScriptsKey = @"SessionStorageAllowedInContentScripts";
@@ -245,6 +246,9 @@ bool WebExtensionContext::load(WebExtensionController& controller, String storag
     auto lastSeenBaseURL = URL { objectForKey<NSString>(m_state, lastSeenBaseURLStateKey) };
     [m_state setObject:(NSString *)m_baseURL.string() forKey:lastSeenBaseURLStateKey];
 
+    if (NSString *displayName = extension().displayName())
+        [m_state setObject:displayName forKey:lastSeenDisplayNameStateKey];
+
     m_isSessionStorageAllowedInContentScripts = boolForKey(m_state.get(), sessionStorageAllowedInContentScriptsKey, false);
 
     writeStateToStorage();
@@ -323,12 +327,49 @@ String WebExtensionContext::stateFilePath() const
 {
     if (!storageIsPersistent())
         return nullString();
-    return FileSystem::pathByAppendingComponent(storageDirectory(), "State.plist"_s);
+    return FileSystem::pathByAppendingComponent(storageDirectory(), plistFileName());
 }
 
 NSDictionary *WebExtensionContext::currentState() const
 {
     return [m_state copy];
+}
+
+NSMutableDictionary *WebExtensionContext::readStateFromPath(const String& stateFilePath)
+{
+    NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
+
+    __block NSMutableDictionary *savedState;
+
+    NSError *coordinatorError;
+    [fileCoordinator coordinateReadingItemAtURL:[NSURL fileURLWithPath:stateFilePath] options:NSFileCoordinatorReadingWithoutChanges error:&coordinatorError byAccessor:^(NSURL *fileURL) {
+        savedState = [NSMutableDictionary dictionaryWithContentsOfURL:fileURL] ?: [NSMutableDictionary dictionary];
+    }];
+
+    if (coordinatorError)
+        RELEASE_LOG_ERROR(Extensions, "Failed to coordinate reading extension state: %{private}@", coordinatorError);
+
+    return savedState;
+}
+
+bool WebExtensionContext::readLastBaseURLFromState(const String& filePath, URL& outLastBaseURL)
+{
+    auto *state = readStateFromPath(filePath);
+
+    if (auto *baseURL = objectForKey<NSString>(state, lastSeenBaseURLStateKey))
+        outLastBaseURL = URL { baseURL };
+
+    return outLastBaseURL.isValid();
+}
+
+bool WebExtensionContext::readDisplayNameAndLastBaseURLFromState(const String& filePath, String& outDisplayName, URL& outLastBaseURL)
+{
+    auto *state = readStateFromPath(filePath);
+
+    if (auto *displayName = objectForKey<NSString>(state, lastSeenDisplayNameStateKey))
+        outDisplayName = displayName;
+
+    return !outDisplayName.isEmpty() && readLastBaseURLFromState(filePath, outLastBaseURL);
 }
 
 NSDictionary *WebExtensionContext::readStateFromStorage()
@@ -339,17 +380,7 @@ NSDictionary *WebExtensionContext::readStateFromStorage()
         return m_state.get();
     }
 
-    NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
-
-    __block NSMutableDictionary *savedState;
-
-    NSError *coordinatorError;
-    [fileCoordinator coordinateReadingItemAtURL:[NSURL fileURLWithPath:stateFilePath()] options:NSFileCoordinatorReadingWithoutChanges error:&coordinatorError byAccessor:^(NSURL *fileURL) {
-        savedState = [NSMutableDictionary dictionaryWithContentsOfURL:fileURL] ?: [NSMutableDictionary dictionary];
-    }];
-
-    if (coordinatorError)
-        RELEASE_LOG_ERROR(Extensions, "Failed to coordinate reading extension state: %{private}@", coordinatorError);
+    auto *savedState = readStateFromPath(stateFilePath());
 
     m_state = savedState;
 
@@ -3755,14 +3786,14 @@ void WebExtensionContext::setSessionStorageAllowedInContentScripts(bool allowed)
     extensionController()->sendToAllProcesses(Messages::WebExtensionContextProxy::SetStorageAccessLevel(allowed), identifier());
 }
 
-size_t WebExtensionContext::quoataForStorageType(WebExtensionStorageType storageType)
+size_t WebExtensionContext::quoataForStorageType(WebExtensionDataType storageType)
 {
     switch (storageType) {
-    case WebExtensionStorageType::Local:
+    case WebExtensionDataType::Local:
         return hasPermission(_WKWebExtensionPermissionUnlimitedStorage) ? webExtensionUnlimitedStorageQuotaBytes : webExtensionStorageAreaLocalQuotaBytes;
-    case WebExtensionStorageType::Session:
+    case WebExtensionDataType::Session:
         return webExtensionStorageAreaSessionQuotaBytes;
-    case WebExtensionStorageType::Sync:
+    case WebExtensionDataType::Sync:
         return webExtensionStorageAreaSyncQuotaBytes;
     }
 
@@ -3773,32 +3804,32 @@ size_t WebExtensionContext::quoataForStorageType(WebExtensionStorageType storage
 _WKWebExtensionStorageSQLiteStore *WebExtensionContext::localStorageStore()
 {
     if (!m_localStorageStore)
-        m_localStorageStore = [[_WKWebExtensionStorageSQLiteStore alloc] initWithUniqueIdentifier:m_uniqueIdentifier storageType:WebExtensionStorageType::Local directory:storageDirectory() usesInMemoryDatabase:!storageIsPersistent()];
+        m_localStorageStore = [[_WKWebExtensionStorageSQLiteStore alloc] initWithUniqueIdentifier:m_uniqueIdentifier storageType:WebExtensionDataType::Local directory:storageDirectory() usesInMemoryDatabase:!storageIsPersistent()];
     return m_localStorageStore.get();
 }
 
 _WKWebExtensionStorageSQLiteStore *WebExtensionContext::sessionStorageStore()
 {
     if (!m_sessionStorageStore)
-        m_sessionStorageStore = [[_WKWebExtensionStorageSQLiteStore alloc] initWithUniqueIdentifier:m_uniqueIdentifier storageType:WebExtensionStorageType::Session directory:storageDirectory() usesInMemoryDatabase:true];
+        m_sessionStorageStore = [[_WKWebExtensionStorageSQLiteStore alloc] initWithUniqueIdentifier:m_uniqueIdentifier storageType:WebExtensionDataType::Session directory:storageDirectory() usesInMemoryDatabase:true];
     return m_sessionStorageStore.get();
 }
 
 _WKWebExtensionStorageSQLiteStore *WebExtensionContext::syncStorageStore()
 {
     if (!m_syncStorageStore)
-        m_syncStorageStore = [[_WKWebExtensionStorageSQLiteStore alloc] initWithUniqueIdentifier:m_uniqueIdentifier storageType:WebExtensionStorageType::Sync directory:storageDirectory() usesInMemoryDatabase:!storageIsPersistent()];
+        m_syncStorageStore = [[_WKWebExtensionStorageSQLiteStore alloc] initWithUniqueIdentifier:m_uniqueIdentifier storageType:WebExtensionDataType::Sync directory:storageDirectory() usesInMemoryDatabase:!storageIsPersistent()];
     return m_syncStorageStore.get();
 }
 
-_WKWebExtensionStorageSQLiteStore *WebExtensionContext::storageForType(WebExtensionStorageType storageType)
+_WKWebExtensionStorageSQLiteStore *WebExtensionContext::storageForType(WebExtensionDataType storageType)
 {
     switch (storageType) {
-    case WebExtensionStorageType::Local:
+    case WebExtensionDataType::Local:
         return localStorageStore();
-    case WebExtensionStorageType::Session:
+    case WebExtensionDataType::Session:
         return sessionStorageStore();
-    case WebExtensionStorageType::Sync:
+    case WebExtensionDataType::Sync:
         return syncStorageStore();
     }
 

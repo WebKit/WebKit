@@ -181,6 +181,7 @@ public:
         WebExtensionContext,
         WebExtensionController,
         WebExtensionControllerConfiguration,
+        WebExtensionDataRecord,
         WebExtensionMatchPattern,
         WebExtensionMessagePort,
 #endif

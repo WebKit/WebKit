@@ -27,28 +27,45 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#include <wtf/HashTraits.h>
+#include <wtf/OptionSet.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
-enum class WebExtensionStorageType : uint8_t {
-    Local,
-    Session,
-    Sync,
+enum class WebExtensionDataType : uint8_t {
+    Local   = 1 << 0,
+    Session = 1 << 1,
+    Sync    = 1 << 2,
 };
 
-inline String toAPIPrefixString(WebExtensionStorageType storageType)
+inline String toAPIPrefixString(WebExtensionDataType dataType)
 {
-    switch (storageType) {
-    case WebExtensionStorageType::Local:
+    switch (dataType) {
+    case WebExtensionDataType::Local:
         return "browser.local"_s;
-    case WebExtensionStorageType::Session:
+    case WebExtensionDataType::Session:
         return "browser.session"_s;
-    case WebExtensionStorageType::Sync:
+    case WebExtensionDataType::Sync:
         return "browser.sync"_s;
     }
 }
 
 } // namespace WebKit
+
+namespace WTF {
+
+template<> struct DefaultHash<WebKit::WebExtensionDataType> : IntHash<WebKit::WebExtensionDataType> { };
+template<> struct HashTraits<WebKit::WebExtensionDataType> : StrongEnumHashTraits<WebKit::WebExtensionDataType> { };
+template<> struct EnumTraits<WebKit::WebExtensionDataType> {
+    using values = EnumValues<
+        WebKit::WebExtensionDataType,
+        WebKit::WebExtensionDataType::Local,
+        WebKit::WebExtensionDataType::Session,
+        WebKit::WebExtensionDataType::Sync
+    >;
+};
+
+} // namespace WTF
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

@@ -54,10 +54,10 @@ bool WebExtensionAPIStorageArea::isPropertyAllowed(const ASCIILiteral& propertyN
     static NeverDestroyed<HashSet<AtomString>> syncStorageProperties { HashSet { AtomString("QUOTA_BYTES_PER_ITEM"_s), AtomString("MAX_ITEMS"_s), AtomString("MAX_WRITE_OPERATIONS_PER_HOUR"_s), AtomString("MAX_WRITE_OPERATIONS_PER_MINUTE"_s) } };
 
     if (syncStorageProperties.get().contains(propertyName))
-        return m_type == WebExtensionStorageType::Sync;
+        return m_type == WebExtensionDataType::Sync;
 
     if (propertyName == "setAccessLevel"_s)
-        return m_type == WebExtensionStorageType::Session;
+        return m_type == WebExtensionDataType::Session;
 
     ASSERT_NOT_REACHED();
     return false;
@@ -255,11 +255,11 @@ WebExtensionAPIEvent& WebExtensionAPIStorageArea::onChanged()
 double WebExtensionAPIStorageArea::quotaBytes()
 {
     switch (m_type) {
-    case WebExtensionStorageType::Local:
+    case WebExtensionDataType::Local:
         return webExtensionStorageAreaLocalQuotaBytes;
-    case WebExtensionStorageType::Sync:
+    case WebExtensionDataType::Sync:
         return webExtensionStorageAreaSyncQuotaBytes;
-    case WebExtensionStorageType::Session:
+    case WebExtensionDataType::Session:
         return webExtensionStorageAreaSessionQuotaBytes;
     }
 
@@ -269,25 +269,25 @@ double WebExtensionAPIStorageArea::quotaBytes()
 
 double WebExtensionAPIStorageArea::quotaBytesPerItem()
 {
-    ASSERT(m_type == WebExtensionStorageType::Sync);
+    ASSERT(m_type == WebExtensionDataType::Sync);
     return webExtensionStorageAreaSyncQuotaBytesPerItem;
 }
 
 double WebExtensionAPIStorageArea::maxItems()
 {
-    ASSERT(m_type == WebExtensionStorageType::Sync);
+    ASSERT(m_type == WebExtensionDataType::Sync);
     return webExtensionStorageAreaSyncMaximumItems;
 }
 
 double WebExtensionAPIStorageArea::maxWriteOperationsPerHour()
 {
-    ASSERT(m_type == WebExtensionStorageType::Sync);
+    ASSERT(m_type == WebExtensionDataType::Sync);
     return webExtensionStorageAreaSyncMaximumWriteOperationsPerHour;
 }
 
 double WebExtensionAPIStorageArea::maxWriteOperationsPerMinute()
 {
-    ASSERT(m_type == WebExtensionStorageType::Sync);
+    ASSERT(m_type == WebExtensionDataType::Sync);
     return webExtensionStorageAreaSyncMaximumWriteOperationsPerMinute;
 }
 

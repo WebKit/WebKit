@@ -31,7 +31,7 @@
 #include "JSWebExtensionWrappable.h"
 #include "WebExtensionAPIEvent.h"
 #include "WebExtensionAPIObject.h"
-#include "WebExtensionStorageType.h"
+#include "WebExtensionDataType.h"
 
 namespace WebKit {
 
@@ -62,13 +62,13 @@ public:
     WebExtensionAPIEvent& onChanged();
 
 private:
-    explicit WebExtensionAPIStorageArea(ForMainWorld forMainWorld, WebExtensionAPIRuntimeBase& runtime, WebExtensionContextProxy& context, WebExtensionStorageType type)
+    explicit WebExtensionAPIStorageArea(ForMainWorld forMainWorld, WebExtensionAPIRuntimeBase& runtime, WebExtensionContextProxy& context, WebExtensionDataType type)
         : WebExtensionAPIObject(forMainWorld, runtime, context)
         , m_type(type)
     {
     }
 
-    WebExtensionStorageType m_type { WebExtensionStorageType::Local };
+    WebExtensionDataType m_type { WebExtensionDataType::Local };
     RefPtr<WebExtensionAPIEvent> m_onChanged;
 #endif
 };

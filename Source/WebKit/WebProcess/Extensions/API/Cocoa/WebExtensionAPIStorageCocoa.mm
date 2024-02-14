@@ -54,7 +54,7 @@ WebExtensionAPIStorageArea& WebExtensionAPIStorage::local()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/storage/local
 
     if (!m_local)
-        m_local = WebExtensionAPIStorageArea::create(forMainWorld(), runtime(), extensionContext(), WebExtensionStorageType::Local);
+        m_local = WebExtensionAPIStorageArea::create(forMainWorld(), runtime(), extensionContext(), WebExtensionDataType::Local);
 
     return *m_local;
 }
@@ -64,7 +64,7 @@ WebExtensionAPIStorageArea& WebExtensionAPIStorage::session()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/storage/session
 
     if (!m_session)
-        m_session = WebExtensionAPIStorageArea::create(forMainWorld(), runtime(), extensionContext(), WebExtensionStorageType::Session);
+        m_session = WebExtensionAPIStorageArea::create(forMainWorld(), runtime(), extensionContext(), WebExtensionDataType::Session);
 
     return *m_session;
 }
@@ -74,19 +74,19 @@ WebExtensionAPIStorageArea& WebExtensionAPIStorage::sync()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/storage/sync
 
     if (!m_sync)
-        m_sync = WebExtensionAPIStorageArea::create(forMainWorld(), runtime(), extensionContext(), WebExtensionStorageType::Sync);
+        m_sync = WebExtensionAPIStorageArea::create(forMainWorld(), runtime(), extensionContext(), WebExtensionDataType::Sync);
 
     return *m_sync;
 }
 
-WebExtensionAPIStorageArea& WebExtensionAPIStorage::storageAreaForType(WebExtensionStorageType storageType)
+WebExtensionAPIStorageArea& WebExtensionAPIStorage::storageAreaForType(WebExtensionDataType storageType)
 {
     switch (storageType) {
-    case WebExtensionStorageType::Local:
+    case WebExtensionDataType::Local:
         return local();
-    case WebExtensionStorageType::Session:
+    case WebExtensionDataType::Session:
         return session();
-    case WebExtensionStorageType::Sync:
+    case WebExtensionDataType::Sync:
         return sync();
     }
 
@@ -104,13 +104,13 @@ WebExtensionAPIEvent& WebExtensionAPIStorage::onChanged()
     return *m_onChanged;
 }
 
-void WebExtensionContextProxy::dispatchStorageChangedEvent(const String& onChangedJSON, WebExtensionStorageType storageType, WebExtensionContentWorldType contentWorldType)
+void WebExtensionContextProxy::dispatchStorageChangedEvent(const String& onChangedJSON, WebExtensionDataType dataType, WebExtensionContentWorldType contentWorldType)
 {
     NSDictionary *onChangedData = parseJSON(onChangedJSON);
 
     enumerateFramesAndNamespaceObjects([&](WebFrame&, auto& namespaceObject) {
         namespaceObject.storage().onChanged().invokeListenersWithArgument(onChangedData);
-        namespaceObject.storage().storageAreaForType(storageType).onChanged().invokeListenersWithArgument(onChangedData);
+        namespaceObject.storage().storageAreaForType(dataType).onChanged().invokeListenersWithArgument(onChangedData);
     }, toDOMWorld(contentWorldType));
 }
 

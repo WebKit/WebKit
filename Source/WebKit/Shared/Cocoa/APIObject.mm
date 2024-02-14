@@ -109,6 +109,7 @@
 #import "_WKWebExtensionContextInternal.h"
 #import "_WKWebExtensionControllerConfigurationInternal.h"
 #import "_WKWebExtensionControllerInternal.h"
+#import "_WKWebExtensionDataRecordInternal.h"
 #import "_WKWebExtensionInternal.h"
 #import "_WKWebExtensionMatchPatternInternal.h"
 #import "_WKWebExtensionMessagePortInternal.h"
@@ -420,6 +421,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     case Type::WebExtensionControllerConfiguration:
         wrapper = [_WKWebExtensionControllerConfiguration alloc];
+        break;
+
+    case Type::WebExtensionDataRecord:
+        wrapper = [_WKWebExtensionDataRecord alloc];
         break;
 
     case Type::WebExtensionMatchPattern:

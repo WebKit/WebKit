@@ -35,6 +35,7 @@
 #include "WebExtensionContextIdentifier.h"
 #include "WebExtensionControllerConfiguration.h"
 #include "WebExtensionControllerIdentifier.h"
+#include "WebExtensionDataType.h"
 #include "WebExtensionFrameIdentifier.h"
 #include "WebExtensionURLSchemeHandler.h"
 #include "WebProcessProxy.h"
@@ -46,6 +47,7 @@
 
 OBJC_CLASS NSError;
 OBJC_CLASS NSMenu;
+OBJC_CLASS _WKWebExtensionStorageSQLiteStore;
 OBJC_PROTOCOL(_WKWebExtensionControllerDelegatePrivate);
 
 #ifdef __OBJC__
@@ -56,6 +58,7 @@ namespace WebKit {
 
 class ContextMenuContextData;
 class WebExtensionContext;
+class WebExtensionDataRecord;
 class WebPageProxy;
 class WebProcessPool;
 class WebsiteDataStore;
@@ -95,7 +98,14 @@ public:
     bool operator==(const WebExtensionController& other) const { return (this == &other); }
 
     bool storageIsPersistent() const { return m_configuration->storageIsPersistent(); }
-    String storageDirectory(WebExtensionContext&) const;
+
+    void getDataRecords(OptionSet<WebExtensionDataType>, CompletionHandler<void(Vector<Ref<WebExtensionDataRecord>>)>&&);
+    void getDataRecord(OptionSet<WebExtensionDataType>, WebExtensionContext&, CompletionHandler<void(RefPtr<WebExtensionDataRecord>)>&&);
+    void removeData(OptionSet<WebExtensionDataType>, const Vector<Ref<WebExtensionDataRecord>>&, CompletionHandler<void()>&&);
+    void removeData(OptionSet<WebExtensionDataType>, const WebExtensionContextSet&, CompletionHandler<void()>&&);
+
+    void calculateStorageSize(_WKWebExtensionStorageSQLiteStore *, WebExtensionDataType, CompletionHandler<void(size_t)>&&);
+    void removeStorage(_WKWebExtensionStorageSQLiteStore *, WebExtensionDataType, CompletionHandler<void()>&&);
 
     bool hasLoadedContexts() const { return !m_extensionContexts.isEmpty(); }
     bool isFreshlyCreated() const { return m_freshlyCreated; }
@@ -166,6 +176,12 @@ private:
 
     void addWebsiteDataStore(WebsiteDataStore&);
     void removeWebsiteDataStore(WebsiteDataStore&);
+
+    String storageDirectory(const String& uniqueIdentifier) const;
+    String storageDirectory(WebExtensionContext&) const;
+
+    String stateFilePath(const String& uniqueIdentifier) const;
+    _WKWebExtensionStorageSQLiteStore* sqliteStore(const String& storageDirectory, WebExtensionDataType, std::optional<RefPtr<WebExtensionContext>>);
 
     void didStartProvisionalLoadForFrame(WebPageProxyIdentifier, WebExtensionFrameIdentifier, WebExtensionFrameIdentifier parentFrameID, const URL&, WallTime);
     void didCommitLoadForFrame(WebPageProxyIdentifier, WebExtensionFrameIdentifier, WebExtensionFrameIdentifier parentFrameID, const URL&, WallTime);
