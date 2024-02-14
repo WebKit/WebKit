@@ -2055,7 +2055,7 @@ void RenderBox::imageChanged(WrappedImagePtr image, const IntRect*)
 
     repaintForBackgroundAndMask(style());
 
-    if (auto* firstLineStyle = style().getCachedPseudoStyle(PseudoId::FirstLine))
+    if (auto* firstLineStyle = style().getCachedPseudoStyle({ PseudoId::FirstLine }))
         repaintForBackgroundAndMask(*firstLineStyle);
 
     if (!isComposited())

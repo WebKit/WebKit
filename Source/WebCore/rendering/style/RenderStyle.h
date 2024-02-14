@@ -275,6 +275,7 @@ using LayoutBoxExtent = RectEdges<LayoutUnit>;
 
 namespace Style {
 class CustomPropertyRegistry;
+struct PseudoElementIdentifier;
 struct ScopedName;
 }
 
@@ -348,7 +349,7 @@ public:
     const AtomString& pseudoElementNameArgument() const;
     void setPseudoElementNameArgument(const AtomString&);
 
-    RenderStyle* getCachedPseudoStyle(PseudoId) const;
+    RenderStyle* getCachedPseudoStyle(const Style::PseudoElementIdentifier&) const;
     RenderStyle* addCachedPseudoStyle(std::unique_ptr<RenderStyle>);
 
     const PseudoStyleCache* cachedPseudoStyles() const { return m_cachedPseudoStyles.get(); }

@@ -2823,7 +2823,7 @@ static inline const RenderStyle* computeRenderStyleForProperty(Element& element,
         ownedStyle = renderer->animatedStyle();
         if (pseudoElementIdentifier) {
             // FIXME: This cached pseudo style will only exist if the animation has been run at least once.
-            return !pseudoElementIdentifier->nameArgument ? ownedStyle->getCachedPseudoStyle(pseudoElementIdentifier->pseudoId) : element.computedStyle(pseudoElementIdentifier);
+            return ownedStyle->getCachedPseudoStyle(*pseudoElementIdentifier);
         }
         return ownedStyle.get();
     }

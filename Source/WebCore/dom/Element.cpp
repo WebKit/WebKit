@@ -4011,7 +4011,7 @@ const RenderStyle* Element::renderOrDisplayContentsStyle(PseudoId pseudoId) cons
             return pseudoElement->renderOrDisplayContentsStyle();
 
         if (auto* style = renderOrDisplayContentsStyle()) {
-            if (auto* cachedPseudoStyle = style->getCachedPseudoStyle(pseudoId))
+            if (auto* cachedPseudoStyle = style->getCachedPseudoStyle({ pseudoId }))
                 return cachedPseudoStyle;
         }
         return nullptr;
@@ -4119,7 +4119,7 @@ const RenderStyle& Element::resolvePseudoElementStyle(const Style::PseudoElement
 
     auto* parentStyle = existingComputedStyle();
     ASSERT(parentStyle);
-    ASSERT(!parentStyle->getCachedPseudoStyle(pseudoElementIdentifier.pseudoId));
+    ASSERT(!parentStyle->getCachedPseudoStyle(pseudoElementIdentifier));
 
     Ref document = this->document();
     Style::PostResolutionCallbackDisabler disabler(document, Style::PostResolutionCallbackDisabler::DrainCallbacks::No);
@@ -4135,8 +4135,8 @@ const RenderStyle& Element::resolvePseudoElementStyle(const Style::PseudoElement
     }
 
     auto* computedStyle = style.get();
-    if (!pseudoElementIdentifier.nameArgument)
-        const_cast<RenderStyle*>(parentStyle)->addCachedPseudoStyle(WTFMove(style));
+    const_cast<RenderStyle*>(parentStyle)->addCachedPseudoStyle(WTFMove(style));
+    ASSERT(parentStyle->getCachedPseudoStyle(pseudoElementIdentifier));
     return *computedStyle;
 }
 
@@ -4156,10 +4156,8 @@ const RenderStyle* Element::computedStyle(const std::optional<Style::PseudoEleme
         style = resolveComputedStyle();
 
     if (pseudoElementIdentifier) {
-        if (!pseudoElementIdentifier->nameArgument) {
-            if (auto* cachedPseudoStyle = style->getCachedPseudoStyle(pseudoElementIdentifier->pseudoId))
-                return cachedPseudoStyle;
-        }
+        if (auto* cachedPseudoStyle = style->getCachedPseudoStyle(*pseudoElementIdentifier))
+            return cachedPseudoStyle;
         return &resolvePseudoElementStyle(*pseudoElementIdentifier);
     }
 

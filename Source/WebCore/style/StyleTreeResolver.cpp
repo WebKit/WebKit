@@ -285,7 +285,7 @@ auto TreeResolver::resolveElement(Element& element, const RenderStyle* existingS
                     return pseudoElementUpdate->change;
                 return pseudoElementUpdate->change == Change::None ? Change::None : Change::NonInherited;
             }
-            if (!existingStyle || !existingStyle->getCachedPseudoStyle(pseudoId))
+            if (!existingStyle || !existingStyle->getCachedPseudoStyle({ pseudoId }))
                 return Change::None;
             // If ::first-letter goes aways rebuild the renderers.
             return pseudoId == PseudoId::FirstLetter ? Change::Renderer : Change::NonInherited;
@@ -529,7 +529,7 @@ ResolutionContext TreeResolver::makeResolutionContextForPseudoElement(const Elem
 {
     auto parentStyle = [&]() -> const RenderStyle* {
         if (pseudoId == PseudoId::FirstLetter) {
-            if (auto* firstLineStyle = elementUpdate.style->getCachedPseudoStyle(PseudoId::FirstLine))
+            if (auto* firstLineStyle = elementUpdate.style->getCachedPseudoStyle({ PseudoId::FirstLine }))
                 return firstLineStyle;
         }
         return elementUpdate.style.get();
@@ -545,7 +545,7 @@ ResolutionContext TreeResolver::makeResolutionContextForPseudoElement(const Elem
 
 std::optional<ResolutionContext> TreeResolver::makeResolutionContextForInheritedFirstLine(const ElementUpdate& elementUpdate, const RenderStyle& inheritStyle)
 {
-    auto parentFirstLineStyle = inheritStyle.getCachedPseudoStyle(PseudoId::FirstLine);
+    auto parentFirstLineStyle = inheritStyle.getCachedPseudoStyle({ PseudoId::FirstLine });
     if (!parentFirstLineStyle)
         return { };
 

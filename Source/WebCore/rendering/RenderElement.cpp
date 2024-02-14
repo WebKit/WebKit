@@ -257,13 +257,13 @@ const RenderStyle& RenderElement::firstLineStyle() const
     // FIXME: It would be better to just set anonymous block first-line styles correctly.
     if (isAnonymousBlock()) {
         if (!previousInFlowSibling()) {
-            if (auto* firstLineStyle = parent()->style().getCachedPseudoStyle(PseudoId::FirstLine))
+            if (auto* firstLineStyle = parent()->style().getCachedPseudoStyle({ PseudoId::FirstLine }))
                 return *firstLineStyle;
         }
         return style();
     }
 
-    if (auto* firstLineStyle = style().getCachedPseudoStyle(PseudoId::FirstLine))
+    if (auto* firstLineStyle = style().getCachedPseudoStyle({ PseudoId::FirstLine }))
         return *firstLineStyle;
 
     return style();
@@ -991,7 +991,7 @@ void RenderElement::styleDidChange(StyleDifference diff, const RenderStyle* oldS
     registerImages(&style(), oldStyle);
 
     // Are there other pseudo-elements that need the resources to be registered?
-    registerImages(style().getCachedPseudoStyle(PseudoId::FirstLine), oldStyle ? oldStyle->getCachedPseudoStyle(PseudoId::FirstLine) : nullptr);
+    registerImages(style().getCachedPseudoStyle({ PseudoId::FirstLine }), oldStyle ? oldStyle->getCachedPseudoStyle({ PseudoId::FirstLine }) : nullptr);
 
     SVGRenderSupport::styleChanged(*this, oldStyle);
 
@@ -1146,7 +1146,7 @@ void RenderElement::willBeDestroyed()
         if (style().hasOutline())
             checkedView()->decrementRendersWithOutline();
 
-        if (auto* firstLineStyle = style().getCachedPseudoStyle(PseudoId::FirstLine))
+        if (auto* firstLineStyle = style().getCachedPseudoStyle({ PseudoId::FirstLine }))
             unregisterImages(*firstLineStyle);
     }
 
@@ -1651,7 +1651,7 @@ const RenderStyle* RenderElement::getCachedPseudoStyle(PseudoId pseudo, const Re
     if (pseudo < PseudoId::FirstInternalPseudoId && !style().hasPseudoStyle(pseudo))
         return nullptr;
 
-    RenderStyle* cachedStyle = style().getCachedPseudoStyle(pseudo);
+    RenderStyle* cachedStyle = style().getCachedPseudoStyle({ pseudo });
     if (cachedStyle)
         return cachedStyle;
 

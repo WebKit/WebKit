@@ -128,7 +128,7 @@ void RenderTreeUpdater::GeneratedContent::updatePseudoElement(Element& current, 
     if (auto* renderer = pseudoElement ? pseudoElement->renderer() : nullptr)
         m_updater.renderTreePosition().invalidateNextSibling(*renderer);
 
-    auto* updateStyle = elementUpdate.style ? elementUpdate.style->getCachedPseudoStyle(pseudoId) : nullptr;
+    auto* updateStyle = elementUpdate.style ? elementUpdate.style->getCachedPseudoStyle({ pseudoId }) : nullptr;
 
     if (!needsPseudoElement(updateStyle) && !elementIsTargetedByKeyframeEffectRequiringPseudoElement(&current, pseudoId)) {
         if (pseudoElement) {
