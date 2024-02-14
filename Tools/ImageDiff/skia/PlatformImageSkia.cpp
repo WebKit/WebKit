@@ -26,7 +26,12 @@
 #include "PlatformImage.h"
 
 #include <cstdio>
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wcast-align"
 #include <skia/codec/SkPngDecoder.h>
+#pragma clang diagnostic pop
+
 #include <skia/core/SkImage.h>
 #include <skia/core/SkPixmap.h>
 #include <skia/core/SkStream.h>
