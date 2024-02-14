@@ -1293,6 +1293,11 @@ void TypeChecker::visit(AST::CallExpression& call)
                 return;
             }
 
+            if (!elementType->isConstructible()) {
+                typeError(array.span(), "'", *elementType, "' cannot be used as an element type of an array");
+                return;
+            }
+
             auto constantValue = array.maybeElementCount()->constantValue();
             if (!constantValue) {
                 typeError(call.span(), "array must have constant size in order to be constructed");
@@ -1329,8 +1334,15 @@ void TypeChecker::visit(AST::CallExpression& call)
             for (auto& argument : call.arguments()) {
                 if (!elementType) {
                     elementType = infer(argument, m_evaluation);
+
                     if (auto* reference = std::get_if<Types::Reference>(elementType))
                         elementType = reference->element;
+
+                    if (!elementType->isConstructible()) {
+                        typeError(array.span(), "'", *elementType, "' cannot be used as an element type of an array");
+                        return;
+                    }
+
                     continue;
                 }
                 auto* argumentType = infer(argument, m_evaluation);
@@ -1499,6 +1511,11 @@ void TypeChecker::visit(AST::ArrayTypeExpression& array)
     auto* elementType = resolve(*array.maybeElementType());
     if (isBottom(elementType)) {
         inferred(m_types.bottomType());
+        return;
+    }
+
+    if (!elementType->isConstructible()) {
+        typeError(array.span(), "'", *elementType, "' cannot be used as an element type of an array");
         return;
     }
 
