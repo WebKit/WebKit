@@ -53,6 +53,11 @@
 // 1 - Add that type to ObjCHolderForTesting's ValueType variant
 // 2 - Run a test exercising that type
 
+@interface NSURLProtectionSpace (WebKitNSURLProtectionSpace)
+- (void)_setServerTrust:(nullable SecTrustRef)serverTrust;
+- (void)_setDistinguishedNames:(nullable NSArray<NSData *> *)distinguishedNames;
+@end
+
 class SerializationTestSender final : public IPC::MessageSender {
 public:
     ~SerializationTestSender() final { };
@@ -380,6 +385,7 @@ struct ObjCHolderForTesting {
 #endif
         RetainPtr<NSPersonNameComponents>,
         RetainPtr<NSPresentationIntent>,
+        RetainPtr<NSURLProtectionSpace>,
 #if USE(PASSKIT) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
         RetainPtr<CNContact>,
         RetainPtr<CNPhoneNumber>,
@@ -474,6 +480,26 @@ static BOOL wkDDActionContext_isEqual(WKDDActionContext *a, SEL, WKDDActionConte
 }
 #endif
 
+static bool wkNSURLProtectionSpace_isEqual(NSURLProtectionSpace *a, SEL, NSURLProtectionSpace* b)
+{
+    if (![a.host isEqual: b.host])
+        return false;
+    if (!(a.port == b.port))
+        return false;
+    if (![a.protocol isEqual:b.protocol])
+        return false;
+    if (!([a.realm isEqual:b.realm] || (!a.realm && a.realm == b.realm)))
+        return false;
+    if (![a.authenticationMethod isEqual:b.authenticationMethod])
+        return false;
+    if (!([a.distinguishedNames isEqual:b.distinguishedNames] || (!a.distinguishedNames && a.distinguishedNames == b.distinguishedNames)))
+        return false;
+    if (!((!a.serverTrust && a.serverTrust == b.serverTrust) || secTrustRefsEqual(a.serverTrust, a.serverTrust)))
+        return false;
+
+    return true;
+}
+
 #if USE(PASSKIT) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
 static BOOL wkSecureCoding_isEqual(id a, SEL, id b)
 {
@@ -496,6 +522,10 @@ inline bool operator==(const ObjCHolderForTesting& a, const ObjCHolderForTesting
         auto oldIsEqual = class_getMethodImplementation([NSDateComponents class], @selector(isEqual:));
         class_replaceMethod([NSDateComponents class], @selector(isEqual:), (IMP)nsDateComponentsTesting_isEqual, "v@:@");
         class_addMethod([NSDateComponents class], @selector(oldIsEqual:), oldIsEqual, "v@:@");
+
+        auto oldIsEqual2 = class_getMethodImplementation([NSURLProtectionSpace class], @selector(isEqual:));
+        class_replaceMethod([NSURLProtectionSpace class], @selector(isEqual:), (IMP)wkNSURLProtectionSpace_isEqual, "v@:@");
+        class_addMethod([NSURLProtectionSpace class], @selector(oldIsEqual:), oldIsEqual2, "v@:@");
 
 #if USE(PASSKIT) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
         class_addMethod(PAL::getPKPaymentMethodClass(), @selector(isEqual:), (IMP)wkSecureCoding_isEqual, "v@:@");
@@ -1129,6 +1159,17 @@ TEST(IPCSerialization, Basic)
     runTestCF({ kCFNull });
     runTestNS({ nil });
     runTestCF({ nullptr });
+
+    // NSURLProtectionSpace
+    RetainPtr<NSURLProtectionSpace> protectionSpace = adoptNS([[NSURLProtectionSpace alloc] initWithHost:@"127.0.0.1" port:8000 protocol:NSURLProtectionSpaceHTTP realm:@"testrealm" authenticationMethod:NSURLAuthenticationMethodHTTPBasic]);
+    runTestNS({ protectionSpace.get() });
+
+    RetainPtr<NSURLProtectionSpace> protectionSpace2 = adoptNS([[NSURLProtectionSpace alloc] initWithHost:@"127.0.0.1" port:443 protocol:NSURLProtectionSpaceHTTPS realm:nil authenticationMethod:NSURLAuthenticationMethodServerTrust]);
+    NSData *distinguishedNamesData = [NSData dataWithBytes:"AAAA" length:4];
+    NSArray *distinguishedNames = @[distinguishedNamesData];
+    [protectionSpace2.get() _setServerTrust:trustRef];
+    [protectionSpace2.get() _setDistinguishedNames:distinguishedNames];
+    runTestNS({ protectionSpace2.get() });
 }
 
 #if PLATFORM(MAC)

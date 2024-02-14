@@ -125,6 +125,9 @@ static ObjectValue valueFromID(id object)
         return CoreIPCString((NSString *)object);
     case IPC::NSType::URL:
         return CoreIPCURL((NSURL *)object);
+    case IPC::NSType::NSURLProtectionSpace:
+        return CoreIPCNSURLProtectionSpace((NSURLProtectionSpace *)object);
+    case IPC::NSType::SecTrustRef:
     case IPC::NSType::CF:
         return CoreIPCCFType((CFTypeRef)object);
     case IPC::NSType::Unknown:

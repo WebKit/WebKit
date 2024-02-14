@@ -62,6 +62,7 @@ class CoreIPCNull;
 class CoreIPCSecureCoding;
 class CoreIPCString;
 class CoreIPCURL;
+class CoreIPNSCURLProtectionSpace;
 
 using ObjectValue = std::variant<
     std::nullptr_t,
@@ -103,7 +104,8 @@ using ObjectValue = std::variant<
     CoreIPCPresentationIntent,
     CoreIPCSecureCoding,
     CoreIPCString,
-    CoreIPCURL
+    CoreIPCURL,
+    CoreIPCNSURLProtectionSpace
 >;
 
 class CoreIPCNSCFObject {
