@@ -200,7 +200,7 @@ void RenderTreeUpdater::GeneratedContent::updateBackdropRenderer(RenderElement& 
         return;
     }
 
-    auto style = renderer.getCachedPseudoStyle(PseudoId::Backdrop, &renderer.style());
+    auto style = renderer.getCachedPseudoStyle({ PseudoId::Backdrop }, &renderer.style());
     if (!style || style->display() == DisplayType::None) {
         destroyBackdropIfNeeded();
         return;

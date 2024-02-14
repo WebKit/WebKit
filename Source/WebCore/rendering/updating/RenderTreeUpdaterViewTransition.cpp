@@ -60,7 +60,7 @@ void RenderTreeUpdater::ViewTransition::updatePseudoElementTree(RenderElement& d
     }
 
     // Destroy pseudo element tree ::view-transition has display: none or no style.
-    auto rootStyle = documentElementRenderer.getCachedPseudoStyle(PseudoId::ViewTransition, &documentElementRenderer.style());
+    auto rootStyle = documentElementRenderer.getCachedPseudoStyle({ PseudoId::ViewTransition }, &documentElementRenderer.style());
     if (!rootStyle || rootStyle->display() == DisplayType::None) {
         destroyPseudoElementTreeIfNeeded();
         return;
@@ -93,7 +93,7 @@ void RenderTreeUpdater::ViewTransition::updatePseudoElementTree(RenderElement& d
     for (auto& name : activeViewTransition->namedElements().keys()) {
         ASSERT(!currentGroup || currentGroup->style().pseudoElementType() == PseudoId::ViewTransitionGroup);
         if (currentGroup && name == currentGroup->style().pseudoElementNameArgument()) {
-            auto style = documentElementRenderer.getUncachedPseudoStyle({ PseudoId::ViewTransitionGroup, name }, &documentElementRenderer.style());
+            auto style = documentElementRenderer.getCachedPseudoStyle({ PseudoId::ViewTransitionGroup, name }, &documentElementRenderer.style());
             if (!style || style->display() == DisplayType::None)
                 descendantsToDelete.append(currentGroup);
             else
@@ -116,7 +116,7 @@ void RenderTreeUpdater::ViewTransition::buildPseudoElementGroup(const AtomString
     Ref document = documentElementRenderer.document();
     auto& documentElementStyle = documentElementRenderer.style();
     auto createRendererIfNeeded = [&](const AtomString& name, PseudoId pseudoId) -> RenderPtr<RenderBlockFlow> {
-        auto style = documentElementRenderer.getUncachedPseudoStyle({ pseudoId, name }, &documentElementStyle);
+        auto style = documentElementRenderer.getCachedPseudoStyle({ pseudoId, name }, &documentElementStyle);
         if (!style || style->display() == DisplayType::None)
             return nullptr;
         auto newStyle = RenderStyle::clone(*style);
@@ -152,7 +152,7 @@ void RenderTreeUpdater::ViewTransition::updatePseudoElementGroup(const RenderSty
     group.setStyle(WTFMove(newGroupStyle));
 
     auto createRendererIfNeeded = [&](PseudoId pseudoId) -> RenderPtr<RenderBlockFlow> {
-        auto style = documentElementRenderer.getUncachedPseudoStyle({ pseudoId, name }, &documentElementStyle);
+        auto style = documentElementRenderer.getCachedPseudoStyle({ pseudoId, name }, &documentElementStyle);
         if (!style || style->display() == DisplayType::None)
             return nullptr;
         auto newStyle = RenderStyle::clone(*style);
@@ -163,7 +163,7 @@ void RenderTreeUpdater::ViewTransition::updatePseudoElementGroup(const RenderSty
 
     enum class ShouldDeleteRenderer : bool { No, Yes };
     auto updateRenderer = [&](RenderObject& renderer) -> ShouldDeleteRenderer {
-        auto style = documentElementRenderer.getUncachedPseudoStyle({ renderer.style().pseudoElementType(), name }, &documentElementStyle);
+        auto style = documentElementRenderer.getCachedPseudoStyle({ renderer.style().pseudoElementType(), name }, &documentElementStyle);
         if (!style || style->display() == DisplayType::None)
             return ShouldDeleteRenderer::Yes;
 
