@@ -29,6 +29,7 @@
 #if ENABLE(UNIFIED_PDF)
 
 #import "Logging.h"
+#import <WebCore/AffineTransform.h>
 #import <wtf/text/TextStream.h>
 
 #import "PDFKitSoftLink.h"

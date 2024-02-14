@@ -126,6 +126,8 @@ private:
     void installPDFDocument() override;
 
     float scaleForActualSize() const;
+    float initialScale() const;
+    float scaleForFitToView() const;
 
     CGFloat scaleFactor() const override;
     CGSize contentSizeRespectingZoom() const final;
@@ -159,7 +161,11 @@ private:
 
     void scheduleRenderingUpdate();
 
-    void updateLayout();
+    enum class AdjustScaleAfterLayout : bool {
+        No,
+        Yes
+    };
+    void updateLayout(AdjustScaleAfterLayout = AdjustScaleAfterLayout::No);
 
     WebCore::IntRect availableContentsRect() const;
 
@@ -314,7 +320,7 @@ private:
     bool requestStartKeyboardScrollAnimation(const WebCore::KeyboardScroll& scrollData) override;
     bool requestStopKeyboardScrollAnimation(bool immediate) override;
 
-    float sidePaddingWidth() const;
+    WebCore::FloatSize centeringOffset() const;
 
     // HUD Actions.
 #if ENABLE(PDF_HUD)

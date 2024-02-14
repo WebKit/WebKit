@@ -50,6 +50,7 @@
 #include <WebCore/EditorClient.h>
 #include <WebCore/FilterOperations.h>
 #include <WebCore/FloatPoint.h>
+#include <WebCore/GeometryUtilities.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/HTMLNames.h>
 #include <WebCore/HTMLPlugInElement.h>
@@ -176,7 +177,7 @@ void UnifiedPDFPlugin::installPDFDocument()
     maybeClearHighLatencyDataProviderFlag();
 #endif
 
-    updateLayout();
+    updateLayout(AdjustScaleAfterLayout::Yes);
 
 #if ENABLE(PDF_HUD)
     updateHUDVisibility();
@@ -189,6 +190,7 @@ void UnifiedPDFPlugin::installPDFDocument()
 
     if (m_view)
         m_view->layerHostingStrategyDidChange();
+
     [[NSNotificationCenter defaultCenter] addObserver:m_pdfMutationObserver.get() selector:@selector(formChanged:) name:mutationObserverNotificationString() object:m_pdfDocument.get()];
 
     scrollToFragmentIfNeeded();
@@ -227,7 +229,7 @@ void UnifiedPDFPlugin::attemptToUnlockPDF(const String& password)
     m_passwordField = nullptr;
 #endif
 
-    updateLayout();
+    updateLayout(AdjustScaleAfterLayout::Yes);
 
 #if ENABLE(PDF_HUD)
     updateHUDVisibility();
@@ -331,12 +333,11 @@ void UnifiedPDFPlugin::updatePageBackgroundLayers()
 
         const auto containerShadowOffset = IntPoint { 0, 1 };
         constexpr auto containerShadowColor = SRGBA<uint8_t> { 0, 0, 0, 46 };
-        constexpr int containerShadowStdDeviation = 2; // FIXME: Same as radius?
+        constexpr int containerShadowStdDeviation = 2;
 
         const auto shadowOffset = IntPoint { 0, 2 };
         constexpr auto shadowColor = SRGBA<uint8_t> { 0, 0, 0, 38 };
-        constexpr int shadowStdDeviation = 6; // FIXME: Same as radius?
-
+        constexpr int shadowStdDeviation = 6;
 
         auto pageContainerLayer = [&](PDFDocumentLayout::PageIndex pageIndex) {
             if (pageIndex < pageContainerLayers.size())
@@ -712,6 +713,28 @@ float UnifiedPDFPlugin::scaleForActualSize() const
     return 1;
 }
 
+float UnifiedPDFPlugin::scaleForFitToView() const
+{
+    auto contentsSize = m_documentLayout.scaledContentsSize();
+    auto availableSize = FloatSize { availableContentsRect().size() };
+
+    if (contentsSize.isEmpty() || availableSize.isEmpty())
+        return 1;
+
+    auto aspectRatioFitRect = largestRectWithAspectRatioInsideRect(contentsSize.aspectRatio(), FloatRect { { }, availableSize });
+    return aspectRatioFitRect.width() / size().width();
+}
+
+float UnifiedPDFPlugin::initialScale() const
+{
+    auto actualSizeScale = scaleForActualSize();
+    auto fitToViewScale = scaleForFitToView();
+    auto initialScale = std::max(actualSizeScale, fitToViewScale);
+    // Only let actual size scaling scale down, not up.
+    initialScale = std::min(initialScale, 1.0f);
+    return initialScale;
+}
+
 CGFloat UnifiedPDFPlugin::scaleFactor() const
 {
     return m_scaleFactor;
@@ -760,7 +783,8 @@ void UnifiedPDFPlugin::setPageScaleFactor(double scale, std::optional<WebCore::I
 
     TransformationMatrix transform;
     transform.scale(m_scaleFactor);
-    transform.translate(sidePaddingWidth(), 0);
+    auto padding = centeringOffset();
+    transform.translate(padding.width(), padding.height());
 
     m_contentsLayer->setTransform(transform);
     m_pageBackgroundsContainerLayer->setTransform(transform);
@@ -819,7 +843,7 @@ IntRect UnifiedPDFPlugin::availableContentsRect() const
     return availableRect;
 }
 
-void UnifiedPDFPlugin::updateLayout()
+void UnifiedPDFPlugin::updateLayout(AdjustScaleAfterLayout shouldAdjustScale)
 {
     auto layoutSize = availableContentsRect().size();
     m_documentLayout.updateLayout(layoutSize);
@@ -834,20 +858,28 @@ void UnifiedPDFPlugin::updateLayout()
 
     updateLayerHierarchy();
     updateScrollingExtents();
+
+    if (shouldAdjustScale == AdjustScaleAfterLayout::Yes && m_view) {
+        auto initialScaleFactor = initialScale();
+        LOG_WITH_STREAM(PDF, stream << "UnifiedPDFPlugin::updateLayout - on first layout, chose scale for actual size " << initialScaleFactor);
+        m_view->setPageScaleFactor(initialScaleFactor, std::nullopt);
+    }
 }
 
-float UnifiedPDFPlugin::sidePaddingWidth() const
+FloatSize UnifiedPDFPlugin::centeringOffset() const
 {
-    auto sidePadding = 0.0f;
-    if (m_scaleFactor < 1) {
-        auto availableWidth = availableContentsRect().size().width();
-        auto documentPresentationWidth = m_documentLayout.scaledContentsSize().width() * m_scaleFactor;
+    auto availableSize = FloatSize { availableContentsRect().size() };
+    auto documentPresentationSize = m_documentLayout.scaledContentsSize() * m_scaleFactor;
+    if (availableSize.isEmpty() || documentPresentationSize.isEmpty())
+        return { };
 
-        sidePadding = std::floor(std::max<float>(availableWidth - documentPresentationWidth, 0) / 2);
-        sidePadding /= m_scaleFactor;
-    }
+    auto offset = FloatSize {
+        std::floor(std::max<float>(availableSize.width() - documentPresentationSize.width(), 0) / 2),
+        std::floor(std::max<float>(availableSize.height() - documentPresentationSize.height(), 0) / 2)
+    };
 
-    return sidePadding;
+    offset.scale(1.0f / m_scaleFactor);
+    return offset;
 }
 
 IntSize UnifiedPDFPlugin::documentSize() const
@@ -1162,7 +1194,8 @@ WebCore::IntPoint UnifiedPDFPlugin::convertFromPluginToDocument(const WebCore::I
     transformedPoint.moveBy(FloatPoint(m_scrollOffset));
 
     transformedPoint.scale(1.0f / m_scaleFactor);
-    transformedPoint.move(-sidePaddingWidth(), 0);
+    auto padding = centeringOffset();
+    transformedPoint.move(-padding.width(), -padding.height());
     transformedPoint.scale(1.0f / m_documentLayout.scale());
 
     return roundedIntPoint(transformedPoint);
@@ -1173,7 +1206,8 @@ WebCore::IntPoint UnifiedPDFPlugin::convertFromDocumentToPlugin(const WebCore::I
     auto transformedPoint = FloatPoint { point };
 
     transformedPoint.scale(m_documentLayout.scale());
-    transformedPoint.move(sidePaddingWidth(), 0);
+    auto padding = centeringOffset();
+    transformedPoint.move(padding.width(), padding.height());
     transformedPoint.scale(m_scaleFactor);
     transformedPoint.moveBy(-FloatPoint(m_scrollOffset));
 
@@ -1218,7 +1252,8 @@ WebCore::IntPoint UnifiedPDFPlugin::convertFromPageToContents(const WebCore::Int
 {
     FloatPoint transformedPoint = convertFromPageToDocument(pageSpacePoint, pageIndex);
     transformedPoint.scale(m_documentLayout.scale());
-    transformedPoint.move(sidePaddingWidth(), 0);
+    auto padding = centeringOffset();
+    transformedPoint.move(padding.width(), padding.height());
     transformedPoint.scale(m_scaleFactor);
     return roundedIntPoint(transformedPoint);
 }
@@ -1758,7 +1793,8 @@ void UnifiedPDFPlugin::performContextMenuAction(ContextMenuItemTag tag)
     case ContextMenuItemTag::TwoPages:
         if (tag != contextMenuItemTagFromDisplayMode(m_documentLayout.displayMode())) {
             m_documentLayout.setDisplayMode(displayModeFromContextMenuItemTag(tag));
-            updateLayout();
+            // FIXME: Scroll to the first page that was visible after the layout.
+            updateLayout(AdjustScaleAfterLayout::Yes);
         }
         break;
     case ContextMenuItemTag::ZoomIn:
