@@ -4300,17 +4300,17 @@ MaskWebGLStringsEnabled:
 
 MasonryEnabled:
   type: bool
-  status: preview
+  status: stable
   category: css
   humanReadableName: "CSS Masonry Layout"
   humanReadableDescription: "Enable Masonry Layout for CSS Grid"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 MathMLEnabled:
   type: bool
