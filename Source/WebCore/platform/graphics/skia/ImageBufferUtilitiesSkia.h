@@ -29,7 +29,7 @@
 
 #include <wtf/Vector.h>
 
-class SkBitmap;
+class SkImage;
 
 namespace WebCore {
 

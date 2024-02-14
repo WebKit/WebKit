@@ -32,6 +32,7 @@ namespace WebCore {
 class FontCreationContext;
 class SVGFontFaceElement;
 class Settings;
+class WeakPtrImplWithEventTargetData;
 
 class CachedSVGFont final : public CachedFont {
 public:

@@ -42,6 +42,10 @@ class WebAnimation;
 
 enum class ParserContentPolicy : uint8_t;
 
+namespace Style {
+class Scope;
+}
+
 class ShadowRoot final : public CanMakeCheckedPtr, public DocumentFragment, public TreeScope {
     WTF_MAKE_ISO_ALLOCATED(ShadowRoot);
 public:

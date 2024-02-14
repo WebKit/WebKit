@@ -30,6 +30,7 @@ namespace WebCore {
 
 class SVGElement;
 class SVGStringList;
+class WeakPtrImplWithEventTargetData;
 
 template<typename OwnerType, typename... BaseTypes>
 class SVGPropertyOwnerRegistry;

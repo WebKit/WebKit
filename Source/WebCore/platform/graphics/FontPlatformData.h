@@ -40,8 +40,8 @@
 #if USE(CAIRO)
 #include "RefPtrCairo.h"
 #elif USE(SKIA)
+#include <hb.h>
 #include <skia/core/SkFont.h>
-typedef struct hb_font_t hb_font_t;
 #endif
 
 #if ENABLE(MATHML) && USE(HARFBUZZ)

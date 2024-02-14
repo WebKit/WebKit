@@ -30,6 +30,7 @@
 #include "GlyphPage.h"
 
 #include "Font.h"
+#include "SkiaHarfBuzzFont.h"
 
 namespace WebCore {
 

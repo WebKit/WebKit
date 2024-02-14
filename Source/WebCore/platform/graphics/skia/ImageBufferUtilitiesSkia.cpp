@@ -28,7 +28,7 @@
 
 #if USE(SKIA)
 #include "NotImplemented.h"
-#include <skia/core/SkBitmap.h>
+#include <skia/core/SkImage.h>
 
 namespace WebCore {
 

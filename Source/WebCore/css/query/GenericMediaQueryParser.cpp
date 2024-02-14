@@ -27,6 +27,7 @@
 
 #include "CSSAspectRatioValue.h"
 #include "CSSCustomPropertyValue.h"
+#include "CSSPropertyParser.h"
 #include "CSSPropertyParserHelpers.h"
 #include "CSSValue.h"
 #include "CSSVariableParser.h"

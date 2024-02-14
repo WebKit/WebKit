@@ -39,6 +39,7 @@
 #include "JSWebAssemblyRuntimeError.h"
 #include "LLIntThunks.h"
 #include "LinkBuffer.h"
+#include "NativeExecutable.h"
 #include "ProtoCallFrameInlines.h"
 #include "SlotVisitorInlines.h"
 #include "StructureInlines.h"

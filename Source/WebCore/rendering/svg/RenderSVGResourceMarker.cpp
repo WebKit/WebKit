@@ -34,6 +34,7 @@
 #include "RenderLayerInlines.h"
 #include "RenderSVGModelObjectInlines.h"
 #include "RenderSVGResourceMarkerInlines.h"
+#include "SVGGraphicsElement.h"
 #include "SVGLengthContext.h"
 #include "SVGRenderStyle.h"
 #include <wtf/IsoMallocInlines.h>

@@ -28,9 +28,13 @@
 #include "FlexFormattingConstraints.h"
 #include "FlexRect.h"
 #include "LogicalFlexItem.h"
+#include "RenderStyleConstants.h"
 #include <wtf/Range.h>
 
 namespace WebCore {
+
+class RenderStyle;
+
 namespace Layout {
 
 class FlexFormattingContext;

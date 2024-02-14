@@ -26,6 +26,7 @@
 #include "config.h"
 #include "SVGLengthList.h"
 
+#include "EventTarget.h"
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringParsingBuffer.h>
 
