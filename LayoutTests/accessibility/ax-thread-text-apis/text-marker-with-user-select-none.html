@@ -20,13 +20,14 @@ var output = "This tests that accessibility text markers still work even when us
 if (window.accessibilityController) {
     var textElement = accessibilityController.accessibleElementById("text");
     var textMarkerRange = textElement.textMarkerRangeForElement(textElement);
-    // FIXME: This will pass after we implement textMarkerRangeForElement in terms of AccessibilityThreadTextApisEnabled.
+    // FIXME: We don't emit newlines for either of the <br>s because they are ignored, causing this length to be wrong.
     output += expect("textElement.textMarkerRangeLength(textMarkerRange)", "45");
 
     var startMarker = textElement.startTextMarkerForTextMarkerRange(textMarkerRange);
     var endMarker = textElement.endTextMarkerForTextMarkerRange(textMarkerRange);
     textMarkerRange = textElement.textMarkerRangeForMarkers(startMarker, endMarker);
     var text = textElement.stringForTextMarkerRange(textMarkerRange);
+    // FIXME: Fails due to the missing <br> newlines mentioned above.
     output += expect(`"${text}" == "hello test world test hello\\nlink to here\\ntest"`, "true");
 
     var nextMarker = textElement.nextTextMarker(startMarker);

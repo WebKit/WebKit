@@ -581,9 +581,6 @@ enum class AccessibilitySearchKey {
     FontColorChange,
     Frame,
     Graphic,
-#if ENABLE(AX_THREAD_TEXT_APIS)
-    HasTextRuns,
-#endif
     HeadingLevel1,
     HeadingLevel2,
     HeadingLevel3,
@@ -619,7 +616,6 @@ using AXEditingStyleValueVariant = std::variant<String, bool, int>;
 struct AccessibilitySearchCriteria {
     AXCoreObject* anchorObject { nullptr };
     AXCoreObject* startObject;
-    AXID stopAtID;
     AccessibilitySearchDirection searchDirection;
     Vector<AccessibilitySearchKey> searchKeys;
     String searchText;
@@ -1119,6 +1115,7 @@ public:
     virtual std::optional<String> textContent() const = 0;
 #if ENABLE(AX_THREAD_TEXT_APIS)
     virtual bool hasTextRuns() = 0;
+    virtual bool shouldEmitNewlinesBeforeAndAfterNode() const = 0;
 #endif
 
     // Methods for determining accessibility text.

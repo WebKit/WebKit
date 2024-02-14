@@ -214,6 +214,7 @@ enum class AXPropertyName : uint16_t {
     SelectedChildren,
     SelectedTextRange,
     SetSize,
+    ShouldEmitNewlinesBeforeAndAfterNode,
     SortDirection,
     SpeechHint,
     StringValue,

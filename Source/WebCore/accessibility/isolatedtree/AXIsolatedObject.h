@@ -77,6 +77,7 @@ public:
         const auto* runs = textRuns();
         return runs && runs->size();
     }
+    bool shouldEmitNewlinesBeforeAndAfterNode() const final { return boolAttributeValue(AXPropertyName::ShouldEmitNewlinesBeforeAndAfterNode); }
 #endif // ENABLE(AX_THREAD_TEXT_APIS)
 
 private:

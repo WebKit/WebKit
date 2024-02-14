@@ -4471,10 +4471,6 @@ static bool isAccessibilityObjectSearchMatchAtIndex(RefPtr<AXCoreObject> axObjec
         return axObject->isWebArea();
     case AccessibilitySearchKey::Graphic:
         return axObject->isImage();
-#if ENABLE(AX_THREAD_TEXT_APIS)
-    case AccessibilitySearchKey::HasTextRuns:
-        return axObject->hasTextRuns();
-#endif
     case AccessibilitySearchKey::HeadingLevel1:
         return axObject->headingLevel() == 1;
     case AccessibilitySearchKey::HeadingLevel2:
@@ -4678,11 +4674,6 @@ void findMatchingObjects(const AccessibilitySearchCriteria& criteria, AXCoreObje
         while (!searchStack.isEmpty()) {
             auto searchObject = searchStack.last();
             searchStack.removeLast();
-
-            if (criteria.stopAtID.isValid() && searchObject->objectID() == criteria.stopAtID) {
-                AXLOG(results);
-                return;
-            }
 
             if (objectMatchesSearchCriteriaWithResultLimit(searchObject, criteria, results))
                 break;

@@ -360,6 +360,7 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
 
 #if ENABLE(AX_THREAD_TEXT_APIS)
     setProperty(AXPropertyName::TextRuns, object.textRuns());
+    setProperty(AXPropertyName::ShouldEmitNewlinesBeforeAndAfterNode, object.shouldEmitNewlinesBeforeAndAfterNode());
 #endif
 
     // These properties are only needed on the AXCoreObject interface due to their use in ATSPI,

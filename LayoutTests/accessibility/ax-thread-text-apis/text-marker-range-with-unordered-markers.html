@@ -48,7 +48,11 @@ if (accessibilityController) {
         end = link.nextTextMarker(end);
     var range4 = text.textMarkerRangeForMarkers(end, start);
     var expected = "graph.\n\nClick";
-    // FIXME: Fails because we are missing two newline characters between "graph." and "Click".
+    // FIXME: We fail because we are missing one newline between "graph." and "Click".
+    // TextIterator emits this newline as part of handling TextIterator::m_nodeForAdditionalNewline, which is only set
+    // when shouldEmitExtraNewlineForNode is true upon TextIterator::exitNode. shouldEmitExtraNewlineForNode is only
+    // true "When there is a significant collapsed bottom margin" (quoting that function) to create a more realistic result.
+    // Copy-pasting the text without any AT in play does not have this extra newline, so its necessity is questionable?
     output += expect("text.stringForTextMarkerRange(range4)", "expected");
     output += expect("text.textMarkerRangeLength(range4)", "expected.length");
 

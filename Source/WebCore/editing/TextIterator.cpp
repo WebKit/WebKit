@@ -848,7 +848,7 @@ static bool shouldEmitReplacementInsteadOfNode(const Node& node)
     return is<TextPlaceholderElement>(node);
 }
 
-static bool shouldEmitNewlinesBeforeAndAfterNode(Node& node)
+bool shouldEmitNewlinesBeforeAndAfterNode(Node& node)
 {
     // Block flow (versus inline flow) is represented by having
     // a newline both before and after the element.

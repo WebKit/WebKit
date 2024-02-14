@@ -144,6 +144,10 @@ public:
 
     LayoutRect elementRect() const override;
 
+#if ENABLE(AX_THREAD_TEXT_APIS)
+    bool shouldEmitNewlinesBeforeAndAfterNode() const final;
+#endif
+
 protected:
     explicit AccessibilityNodeObject(Node*);
     void detachRemoteParts(AccessibilityDetachmentType) override;

@@ -79,6 +79,7 @@
 #include "ShadowRoot.h"
 #include "Text.h"
 #include "TextControlInnerElements.h"
+#include "TextIterator.h"
 #include "UserGestureIndicator.h"
 #include "VisibleUnits.h"
 #include <wtf/Scope.h>
@@ -1106,6 +1107,14 @@ AccessibilityButtonState AccessibilityNodeObject::checkboxOrRadioValue() const
 
     return AccessibilityObject::checkboxOrRadioValue();
 }
+
+#if ENABLE(AX_THREAD_TEXT_APIS)
+bool AccessibilityNodeObject::shouldEmitNewlinesBeforeAndAfterNode() const
+{
+    RefPtr node = this->node();
+    return node ? WebCore::shouldEmitNewlinesBeforeAndAfterNode(*node) : false;
+}
+#endif
 
 Element* AccessibilityNodeObject::anchorElement() const
 {

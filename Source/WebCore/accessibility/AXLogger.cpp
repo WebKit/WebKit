@@ -295,11 +295,6 @@ TextStream& operator<<(TextStream& stream, AccessibilitySearchKey searchKey)
     case AccessibilitySearchKey::Graphic:
         stream << "Graphic";
         break;
-#if ENABLE(AX_THREAD_TEXT_APIS)
-    case AccessibilitySearchKey::HasTextRuns:
-        stream << "HasTextRuns";
-        break;
-#endif
     case AccessibilitySearchKey::HeadingLevel1:
         stream << "HeadingLevel1";
         break;

@@ -92,6 +92,8 @@ private:
 // at points where replaced elements break up the text flow. The text is delivered in
 // the chunks it's already stored in, to avoid copying any text.
 
+bool shouldEmitNewlinesBeforeAndAfterNode(Node&);
+
 class TextIterator {
     WTF_MAKE_FAST_ALLOCATED;
 public:
