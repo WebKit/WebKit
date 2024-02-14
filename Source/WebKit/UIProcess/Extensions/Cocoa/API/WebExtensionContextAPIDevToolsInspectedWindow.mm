@@ -33,14 +33,16 @@
 #if ENABLE(WK_WEB_EXTENSIONS) && ENABLE(INSPECTOR_EXTENSIONS)
 
 #import "APIInspectorExtension.h"
+#import "APISerializedScriptValue.h"
 #import "WebExtensionContextProxyMessages.h"
 #import "WebExtensionUtilities.h"
+#import <WebCore/ExceptionDetails.h>
 
 namespace WebKit {
 
-void WebExtensionContext::devToolsPanelsCreate(WebPageProxyIdentifier webPageProxyIdentifier, const String& title, const String& iconPath, const String& pagePath, CompletionHandler<void(Expected<Inspector::ExtensionTabID, String>)>&& completionHandler)
+void WebExtensionContext::devToolsInspectedWindowEval(WebPageProxyIdentifier webPageProxyIdentifier, const String& scriptSource, const std::optional<URL>& frameURL, CompletionHandler<void(Expected<Expected<std::span<const uint8_t>, WebCore::ExceptionDetails>, String>)>&& completionHandler)
 {
-    static NSString * const apiName = @"devtools.panels.create()";
+    static NSString * const apiName = @"devtools.inspectedWindow.eval()";
 
     RefPtr extension = inspectorExtension(webPageProxyIdentifier);
     if (!extension) {
@@ -49,14 +51,38 @@ void WebExtensionContext::devToolsPanelsCreate(WebPageProxyIdentifier webPagePro
         return;
     }
 
-    extension->createTab(title, { baseURL(), iconPath }, { baseURL(), pagePath }, [completionHandler = WTFMove(completionHandler)](Expected<Inspector::ExtensionTabID, Inspector::ExtensionError> result) mutable {
+    // FIXME: <https://webkit.org/b/269349> Implement `contextSecurityOrigin` and `useContentScriptContext` options for `devtools.inspectedWindow.eval` command
+
+    extension->evaluateScript(scriptSource, frameURL, std::nullopt, std::nullopt, [completionHandler = WTFMove(completionHandler)](Inspector::ExtensionEvaluationResult result) mutable {
         if (!result) {
-            RELEASE_LOG_ERROR(Extensions, "Inspector could not create panel (%{public}@)", (NSString *)extensionErrorToString(result.error()));
-            completionHandler(makeUnexpected(toErrorString(apiName, nil, @"Web Inspector could not create the panel")));
+            RELEASE_LOG_ERROR(Extensions, "Inspector could not evaluate script (%{public}@)", (NSString *)extensionErrorToString(result.error()));
+            completionHandler(makeUnexpected(toErrorString(apiName, nil, @"Web Inspector could not evaluate script")));
             return;
         }
 
-        completionHandler(result.value());
+        if (!result.value()) {
+            Expected<std::span<const uint8_t>, WebCore::ExceptionDetails> returnedValue = makeUnexpected(result.value().error());
+            completionHandler({ returnedValue });
+            return;
+        }
+
+        completionHandler({ result.value()->get().dataReference() });
+    });
+}
+
+void WebExtensionContext::devToolsInspectedWindowReload(WebPageProxyIdentifier webPageProxyIdentifier, const std::optional<bool>& ignoreCache)
+{
+    RefPtr extension = inspectorExtension(webPageProxyIdentifier);
+    if (!extension) {
+        RELEASE_LOG_ERROR(Extensions, "Inspector extension not found for page %llu", webPageProxyIdentifier.toUInt64());
+        return;
+    }
+
+    // FIXME: <https://webkit.org/b/222328> Implement `userAgent` and `injectedScript` options for `devtools.inspectedWindow.reload` command
+
+    extension->reloadIgnoringCache(ignoreCache, std::nullopt, std::nullopt, [](Inspector::ExtensionVoidResult result) {
+        if (!result)
+            RELEASE_LOG_ERROR(Extensions, "Inspector could not reload page (%{public}@)", (NSString *)extensionErrorToString(result.error()));
     });
 }
 

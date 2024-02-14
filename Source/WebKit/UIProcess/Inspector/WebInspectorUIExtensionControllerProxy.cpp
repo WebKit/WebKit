@@ -174,16 +174,17 @@ void WebInspectorUIExtensionControllerProxy::evaluateScriptForExtension(const In
             }
 
             if (details) {
-                Expected<RefPtr<API::SerializedScriptValue>, WebCore::ExceptionDetails> returnedValue = makeUnexpected(details.value());
-                return completionHandler({ returnedValue });
+                Expected<Ref<API::SerializedScriptValue>, WebCore::ExceptionDetails> returnedValue = makeUnexpected(details.value());
+                completionHandler({ returnedValue });
+                return;
             }
 
-            completionHandler({ { API::SerializedScriptValue::createFromWireBytes(Vector { dataReference.data(), dataReference.size() }).ptr() } });
+            completionHandler({ API::SerializedScriptValue::createFromWireBytes(dataReference) });
         });
     });
 }
 
-void WebInspectorUIExtensionControllerProxy::reloadForExtension(const Inspector::ExtensionID& extensionID, const std::optional<bool>& ignoreCache, const std::optional<String>& userAgent, const std::optional<String>& injectedScript, WTF::CompletionHandler<void(Inspector::ExtensionEvaluationResult)>&& completionHandler)
+void WebInspectorUIExtensionControllerProxy::reloadForExtension(const Inspector::ExtensionID& extensionID, const std::optional<bool>& ignoreCache, const std::optional<String>& userAgent, const std::optional<String>& injectedScript, WTF::CompletionHandler<void(Expected<void, Inspector::ExtensionError>)>&& completionHandler)
 {
     whenFrontendHasLoaded([weakThis = WeakPtr { *this }, extensionID, ignoreCache, userAgent, injectedScript, completionHandler = WTFMove(completionHandler)] () mutable {
         if (!weakThis || !weakThis->m_inspectorPage) {
@@ -243,11 +244,12 @@ void WebInspectorUIExtensionControllerProxy::evaluateScriptInExtensionTab(const 
             }
 
             if (details) {
-                Expected<RefPtr<API::SerializedScriptValue>, WebCore::ExceptionDetails> returnedValue = makeUnexpected(details.value());
-                return completionHandler({ returnedValue });
+                Expected<Ref<API::SerializedScriptValue>, WebCore::ExceptionDetails> returnedValue = makeUnexpected(details.value());
+                completionHandler({ returnedValue });
+                return;
             }
 
-            completionHandler({ { API::SerializedScriptValue::createFromWireBytes({ dataReference.data(), dataReference.size() }).ptr() } });
+            completionHandler({ API::SerializedScriptValue::createFromWireBytes(dataReference) });
         });
     });
 }

@@ -33,13 +33,15 @@
 
 namespace WebKit {
 
+class WebPage;
+
 class WebExtensionAPIDevToolsInspectedWindow : public WebExtensionAPIObject, public JSWebExtensionWrappable {
     WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIDevToolsInspectedWindow, devToolsInspectedWindow);
 
 public:
 #if PLATFORM(COCOA)
-    void eval(NSString *expression, NSDictionary *options, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
-    void reload(NSDictionary *options, NSString **outExceptionString);
+    void eval(WebPage&, NSString *expression, NSDictionary *options, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void reload(WebPage&, NSDictionary *options, NSString **outExceptionString);
 
     double tabId(WebPage&);
 #endif

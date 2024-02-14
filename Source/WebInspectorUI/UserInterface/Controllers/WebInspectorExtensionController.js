@@ -139,6 +139,7 @@ WI.WebInspectorExtensionController = class WebInspectorExtensionController exten
             return WI.WebInspectorExtension.ErrorCode.InvalidRequest;
         }
 
+        // FIXME: <https://webkit.org/b/269349> Implement `contextSecurityOrigin` and `useContentScriptContext` options for `devtools.inspectedWindow.eval` command
         if (contextSecurityOrigin) {
             WI.reportInternalError("evaluateScriptForExtension: the 'contextSecurityOrigin' option is not yet implemented.");
             return WI.WebInspectorExtension.ErrorCode.NotImplemented;
@@ -179,7 +180,7 @@ WI.WebInspectorExtensionController = class WebInspectorExtensionController exten
             return WI.WebInspectorExtension.ErrorCode.InvalidRequest;
         }
 
-        // FIXME: <webkit.org/b/222328> Implement `userAgent` and `injectedScript` options for `devtools.inspectedWindow.reload` command
+        // FIXME: <https://webkit.org/b/222328> Implement `userAgent` and `injectedScript` options for `devtools.inspectedWindow.reload` command
         if (userAgent) {
             WI.reportInternalError("reloadForExtension: the 'userAgent' option is not yet implemented.");
             return WI.WebInspectorExtension.ErrorCode.NotImplemented;

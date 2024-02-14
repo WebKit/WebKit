@@ -60,7 +60,7 @@ public:
     void unregisterExtension(const Inspector::ExtensionID&, WTF::CompletionHandler<void(Expected<void, Inspector::ExtensionError>)>&&);
     void createTabForExtension(const Inspector::ExtensionID&, const String& tabName, const URL& tabIconURL, const URL& sourceURL, WTF::CompletionHandler<void(Expected<Inspector::ExtensionTabID, Inspector::ExtensionError>)>&&);
     void evaluateScriptForExtension(const Inspector::ExtensionID&, const String& scriptSource, const std::optional<URL>& frameURL, const std::optional<URL>& contextSecurityOrigin, const std::optional<bool>& useContentScriptContext, WTF::CompletionHandler<void(Inspector::ExtensionEvaluationResult)>&&);
-    void reloadForExtension(const Inspector::ExtensionID&, const std::optional<bool>& ignoreCache, const std::optional<String>& userAgent, const std::optional<String>& injectedScript, WTF::CompletionHandler<void(Inspector::ExtensionEvaluationResult)>&&);
+    void reloadForExtension(const Inspector::ExtensionID&, const std::optional<bool>& ignoreCache, const std::optional<String>& userAgent, const std::optional<String>& injectedScript, WTF::CompletionHandler<void(Inspector::ExtensionVoidResult)>&&);
     void showExtensionTab(const Inspector::ExtensionTabID&, CompletionHandler<void(Expected<void, Inspector::ExtensionError>)>&&);
     void navigateTabForExtension(const Inspector::ExtensionTabID&, const URL& sourceURL, CompletionHandler<void(const std::optional<Inspector::ExtensionError>)>&&);
     // API for testing.

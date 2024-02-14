@@ -69,6 +69,8 @@ messages -> WebExtensionContext {
 #if ENABLE(INSPECTOR_EXTENSIONS)
     // DevTools APIs
     DevToolsPanelsCreate(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, String title, String iconPath, String pagePath) -> (Expected<Inspector::ExtensionTabID, String> result);
+    DevToolsInspectedWindowEval(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, String scriptSource, std::optional<URL> frameURL) -> (Expected<Expected<std::span<const uint8_t>, WebCore::ExceptionDetails>, String> result);
+    DevToolsInspectedWindowReload(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<bool> ignoreCache);
 #endif
 
     // Event APIs

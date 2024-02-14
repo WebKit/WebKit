@@ -501,6 +501,7 @@
 		1C62747E288B4C3E00CED3A2 /* CocoaHelpers.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C62747C288B4C3E00CED3A2 /* CocoaHelpers.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		1C62900D28EE2CD300C26B60 /* CoreSVGSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C62900C28EE2CD300C26B60 /* CoreSVGSPI.h */; };
 		1C62900F28EF4A1D00C26B60 /* FoundationSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C62900E28EF4A1D00C26B60 /* FoundationSPI.h */; };
+		1C66A8EF2B7C1D6D00BCF58D /* WebExtensionContextAPIDevToolsInspectedWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C66A8EE2B7C1D6D00BCF58D /* WebExtensionContextAPIDevToolsInspectedWindow.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		1C66BDDA2A8ADB8A009D4452 /* WebExtensionTabIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C66BDD82A8ADB8A009D4452 /* WebExtensionTabIdentifier.h */; };
 		1C66BDDB2A8ADB8A009D4452 /* WebExtensionWindowIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C66BDD92A8ADB8A009D4452 /* WebExtensionWindowIdentifier.h */; };
 		1C66BDDC2A8ADB94009D4452 /* WebExtensionTab.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C66BDD72A8AD957009D4452 /* WebExtensionTab.h */; };
@@ -3876,6 +3877,7 @@
 		1C62747C288B4C3E00CED3A2 /* CocoaHelpers.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CocoaHelpers.mm; sourceTree = "<group>"; };
 		1C62900C28EE2CD300C26B60 /* CoreSVGSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreSVGSPI.h; sourceTree = "<group>"; };
 		1C62900E28EF4A1D00C26B60 /* FoundationSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FoundationSPI.h; sourceTree = "<group>"; };
+		1C66A8EE2B7C1D6D00BCF58D /* WebExtensionContextAPIDevToolsInspectedWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionContextAPIDevToolsInspectedWindow.mm; sourceTree = "<group>"; };
 		1C66BDD72A8AD957009D4452 /* WebExtensionTab.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebExtensionTab.h; sourceTree = "<group>"; };
 		1C66BDD82A8ADB8A009D4452 /* WebExtensionTabIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebExtensionTabIdentifier.h; sourceTree = "<group>"; };
 		1C66BDD92A8ADB8A009D4452 /* WebExtensionWindowIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebExtensionWindowIdentifier.h; sourceTree = "<group>"; };
@@ -9489,6 +9491,7 @@
 				1C8ECFEB2AFC8033007BAA62 /* WebExtensionContextAPICommandsCocoa.mm */,
 				1C7308812B33580D00B341DE /* WebExtensionContextAPICookiesCocoa.mm */,
 				331102462B17CFE300B21C8C /* WebExtensionContextAPIDeclarativeNetRequestCocoa.mm */,
+				1C66A8EE2B7C1D6D00BCF58D /* WebExtensionContextAPIDevToolsInspectedWindow.mm */,
 				1CD69BC72B7ADD1E00FDC9A7 /* WebExtensionContextAPIDevToolsPanels.mm */,
 				B6544F9E2939457C00034EB0 /* WebExtensionContextAPIEventCocoa.mm */,
 				1C78656D2AD1FD4F00EF3082 /* WebExtensionContextAPIExtensionCocoa.mm */,
@@ -19343,6 +19346,7 @@
 				1C8ECFEC2AFC8033007BAA62 /* WebExtensionContextAPICommandsCocoa.mm in Sources */,
 				1C7308822B33580D00B341DE /* WebExtensionContextAPICookiesCocoa.mm in Sources */,
 				331102472B17CFE300B21C8C /* WebExtensionContextAPIDeclarativeNetRequestCocoa.mm in Sources */,
+				1C66A8EF2B7C1D6D00BCF58D /* WebExtensionContextAPIDevToolsInspectedWindow.mm in Sources */,
 				1CD69BC82B7ADD1E00FDC9A7 /* WebExtensionContextAPIDevToolsPanels.mm in Sources */,
 				B6544F9F2939457C00034EB0 /* WebExtensionContextAPIEventCocoa.mm in Sources */,
 				1C78656E2AD1FD4F00EF3082 /* WebExtensionContextAPIExtensionCocoa.mm in Sources */,

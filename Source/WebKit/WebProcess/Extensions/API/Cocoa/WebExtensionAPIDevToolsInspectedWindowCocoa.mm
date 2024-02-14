@@ -32,27 +32,86 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS) && ENABLE(INSPECTOR_EXTENSIONS)
 
+#import "APISerializedScriptValue.h"
 #import "CocoaHelpers.h"
 #import "JSWebExtensionWrapper.h"
 #import "MessageSenderInlines.h"
+#import "WebExtensionContextMessages.h"
 #import "WebExtensionTabIdentifier.h"
+#import "WebExtensionUtilities.h"
+#import "WebProcess.h"
+
+static NSString * const frameURLKey = @"frameURL";
+static NSString * const ignoreCacheKey = @"ignoreCache";
+
+static NSString * const isExceptionKey = @"isException";
+static NSString * const valueKey = @"value";
 
 namespace WebKit {
 
-void WebExtensionAPIDevToolsInspectedWindow::eval(NSString *expression, NSDictionary *options, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+void WebExtensionAPIDevToolsInspectedWindow::eval(WebPage& page, NSString *expression, NSDictionary *options, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/devtools/inspectedWindow/eval
 
-    // FIXME: <https://webkit.org/b/246485> Implement.
+    static NSDictionary<NSString *, id> *types = @{
+        frameURLKey: NSString.class,
+    };
 
-    callback->call();
+    if (!validateDictionary(options, @"options", nil, types, outExceptionString))
+        return;
+
+    // FIXME: <https://webkit.org/b/269349> Implement `contextSecurityOrigin` and `useContentScriptContext` options for `devtools.inspectedWindow.eval` command
+
+    std::optional<WTF::URL> frameURL;
+    if (NSString *url = options[frameURLKey]) {
+        frameURL = URL { url };
+
+        if (!frameURL.value().isValid()) {
+            *outExceptionString = toErrorString(nil, frameURLKey, @"'%@' is not a valid URL", url);
+            return;
+        }
+    }
+
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::DevToolsInspectedWindowEval(page.webPageProxyIdentifier(), expression, frameURL), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<Expected<std::span<const uint8_t>, WebCore::ExceptionDetails>, String> result) mutable {
+        if (!result) {
+            callback->reportError(result.error());
+            return;
+        }
+
+        auto *undefinedValue = [JSValue valueWithUndefinedInContext:[JSContext contextWithJSGlobalContextRef:callback->globalContext()]];
+
+        if (!result.value()) {
+            // If an error occurred, element 0 will be undefined, and element 1 will contain an object giving details about the error.
+            callback->call(@[ undefinedValue, @{ isExceptionKey: @YES, valueKey: result.value().error().message } ]);
+            return;
+        }
+
+        Ref serializedValue = API::SerializedScriptValue::createFromWireBytes(result.value().value());
+        id scriptResult = API::SerializedScriptValue::deserialize(serializedValue->internalRepresentation(), nullptr);
+
+        // If no error occurred, element 0 will contain the result of evaluating the expression, and element 1 will be undefined.
+        callback->call(@[ scriptResult ?: undefinedValue, undefinedValue ]);
+    }, extensionContext().identifier());
 }
 
-void WebExtensionAPIDevToolsInspectedWindow::reload(NSDictionary *options, NSString **outExceptionString)
+void WebExtensionAPIDevToolsInspectedWindow::reload(WebPage& page, NSDictionary *options, NSString **outExceptionString)
 {
-    // Documentation: https://developer.chrome.com/docs/extensions/mv2/reference/devtools/inspectedWindow#method-reload
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/devtools/inspectedWindow/reload
 
-    // FIXME: <https://webkit.org/b/246485> Implement.
+    static NSDictionary<NSString *, id> *types = @{
+        ignoreCacheKey: @YES.class,
+    };
+
+    if (!validateDictionary(options, @"options", nil, types, outExceptionString))
+        return;
+
+    // FIXME: <https://webkit.org/b/222328> Implement `userAgent` and `injectedScript` options for `devtools.inspectedWindow.reload` command
+
+    std::optional<bool> ignoreCache;
+    if (NSNumber *value = options[ignoreCacheKey])
+        ignoreCache = value.boolValue;
+
+    WebProcess::singleton().send(Messages::WebExtensionContext::DevToolsInspectedWindowReload(page.webPageProxyIdentifier(), ignoreCache), extensionContext().identifier());
 }
 
 double WebExtensionAPIDevToolsInspectedWindow::tabId(WebPage& page)
