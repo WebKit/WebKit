@@ -215,8 +215,10 @@ void UnifiedPDFPlugin::createPasswordEntryForm()
 void UnifiedPDFPlugin::attemptToUnlockPDF(const String& password)
 {
     if (![m_pdfDocument unlockWithPassword:password]) {
+#if PLATFORM(MAC)
         m_passwordField->resetField();
         m_passwordForm->unlockFailed();
+#endif
         return;
     }
 
