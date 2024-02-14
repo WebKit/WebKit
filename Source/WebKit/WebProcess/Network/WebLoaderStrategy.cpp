@@ -422,6 +422,8 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
     loadParameters.httpHeadersToKeep = resourceLoader.options().httpHeadersToKeep;
     if (resourceLoader.options().navigationPreloadIdentifier)
         loadParameters.navigationPreloadIdentifier = resourceLoader.options().navigationPreloadIdentifier;
+    if (frame && !frame->isMainFrame())
+        loadParameters.shouldRecordFrameLoadForStorageAccess = frame->settings().requestStorageAccessThrowsExceptionUntilReload();
 
     auto* document = frame ? frame->document() : nullptr;
     if (resourceLoader.options().cspResponseHeaders)

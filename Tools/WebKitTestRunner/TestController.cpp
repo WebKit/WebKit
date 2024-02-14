@@ -4312,4 +4312,11 @@ void TestController::setShouldAllowDeviceOrientationAndMotionAccess(bool value)
     WKWebsiteDataStoreClearAllDeviceOrientationPermissions(websiteDataStore());
 }
 
+void TestController::setRequestStorageAccessThrowsExceptionUntilReload(bool enabled)
+{
+    auto configuration = adoptWK(WKPageCopyPageConfiguration(m_mainWebView->page()));
+    auto preferences = WKPageConfigurationGetPreferences(configuration.get());
+    WKPreferencesSetBoolValueForKeyForTesting(preferences, enabled, toWK("RequestStorageAccessThrowsExceptionUntilReload").get());
+}
+
 } // namespace WTR

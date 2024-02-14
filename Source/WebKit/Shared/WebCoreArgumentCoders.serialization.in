@@ -4965,7 +4965,11 @@ struct WebCore::MessageWithMessagePorts {
     Vector<WebCore::TransferredMessagePort> transferredPorts;
 };
 
-enum class WebCore::StorageAccessWasGranted : bool
+enum class WebCore::StorageAccessWasGranted : uint8_t {
+    No,
+    Yes,
+    YesWithException
+};
 
 enum class WebCore::StorageAccessPromptWasShown : bool
 

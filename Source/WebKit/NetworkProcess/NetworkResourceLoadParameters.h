@@ -90,6 +90,7 @@ public:
         , bool pageHasExtensionController
 #endif
         , bool linkPreconnectEarlyHintsEnabled
+        , bool shouldRecordFrameLoadForStorageAccess
     );
     
     std::optional<Vector<SandboxExtension::Handle>> sandboxExtensionsIfHttpBody() const;
@@ -141,6 +142,7 @@ public:
 #endif
 
     bool linkPreconnectEarlyHintsEnabled { false };
+    bool shouldRecordFrameLoadForStorageAccess { false };
 };
 
 } // namespace WebKit

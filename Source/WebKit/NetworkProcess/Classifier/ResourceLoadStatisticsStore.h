@@ -44,7 +44,7 @@ class KeyedDecoder;
 class KeyedEncoder;
 class SQLiteStatement;
 enum class StorageAccessPromptWasShown : bool;
-enum class StorageAccessWasGranted : bool;
+enum class StorageAccessWasGranted : uint8_t;
 struct ResourceLoadStatistics;
 }
 

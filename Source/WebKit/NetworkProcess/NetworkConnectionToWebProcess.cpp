@@ -568,6 +568,13 @@ void NetworkConnectionToWebProcess::scheduleResourceLoad(NetworkResourceLoadPara
             CONNECTION_RELEASE_LOG_ERROR(Loading, "scheduleResourceLoad: Could not find network session of existing NetworkResourceLoader to resume, will do a fresh load");
     }
 
+    if (loadParameters.shouldRecordFrameLoadForStorageAccess && loadParameters.mainResourceNavigationDataForAnyFrame) {
+        if (auto* session = networkSession()) {
+            if (auto* resourceLoadStatistics = session->resourceLoadStatistics())
+                resourceLoadStatistics->recordFrameLoadForStorageAccess(loadParameters.webPageProxyID, loadParameters.webFrameID, RegistrableDomain { loadParameters.request.url() });
+        }
+    }
+
     auto& loader = m_networkResourceLoaders.add(identifier, NetworkResourceLoader::create(WTFMove(loadParameters), *this)).iterator->value;
 
     loader->startWithServiceWorker();
@@ -1578,6 +1585,14 @@ void NetworkConnectionToWebProcess::destroyWebTransportSession(WebTransportSessi
 {
     ASSERT(m_networkTransportSessions.contains(identifier));
     m_networkTransportSessions.remove(identifier);
+}
+
+void NetworkConnectionToWebProcess::clearFrameLoadRecordsForStorageAccess(WebCore::FrameIdentifier frameID)
+{
+    if (auto* session = networkSession()) {
+        if (auto* resourceLoadStatistics = session->resourceLoadStatistics())
+            resourceLoadStatistics->clearFrameLoadRecordsForStorageAccess(frameID);
+    }
 }
 
 } // namespace WebKit

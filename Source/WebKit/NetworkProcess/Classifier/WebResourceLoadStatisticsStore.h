@@ -93,7 +93,7 @@ struct RegistrableDomainsToDeleteOrRestrictWebsiteDataFor {
     bool isEmpty() const { return domainsToDeleteAllCookiesFor.isEmpty() && domainsToDeleteAllButHttpOnlyCookiesFor.isEmpty() && domainsToDeleteAllScriptWrittenStorageFor.isEmpty() && domainsToEnforceSameSiteStrictFor.isEmpty(); }
 };
 
-class WebResourceLoadStatisticsStore final : public ThreadSafeRefCounted<WebResourceLoadStatisticsStore, WTF::DestructionThread::Main> {
+class WebResourceLoadStatisticsStore final : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WebResourceLoadStatisticsStore, WTF::DestructionThread::Main> {
 public:
     using ResourceLoadStatistics = WebCore::ResourceLoadStatistics;
     using RegistrableDomain = WebCore::RegistrableDomain;
@@ -221,6 +221,9 @@ public:
     
     bool isEphemeral() const { return m_isEphemeral == WebCore::ResourceLoadStatistics::IsEphemeral::Yes; };
     void insertExpiredStatisticForTesting(RegistrableDomain&&, unsigned numberOfOperatingDaysPassed, bool hadUserInteraction, bool isScheduledForAllButCookieDataRemoval, bool isPrevalent, CompletionHandler<void()>&&);
+    void recordFrameLoadForStorageAccess(WebPageProxyIdentifier, WebCore::FrameIdentifier, const WebCore::RegistrableDomain&);
+    void clearFrameLoadRecordsForStorageAccess(WebCore::FrameIdentifier);
+    void clearFrameLoadRecordsForStorageAccess(WebPageProxyIdentifier);
 
 private:
     explicit WebResourceLoadStatisticsStore(NetworkSession&, const String&, ShouldIncludeLocalhost, WebCore::ResourceLoadStatistics::IsEphemeral);
@@ -242,6 +245,7 @@ private:
     StorageAccessStatus storageAccessStatus(const String& subFramePrimaryDomain, const String& topFramePrimaryDomain);
 
     void destroyResourceLoadStatisticsStore(CompletionHandler<void()>&&);
+    StorageAccessWasGranted storageAccessWasGrantedValueForFrame(WebCore::FrameIdentifier, const WebCore::RegistrableDomain&);
 
     WeakPtr<NetworkSession> m_networkSession;
     Ref<SuspendableWorkQueue> m_statisticsQueue;
@@ -256,8 +260,15 @@ private:
     HashMap<TopFrameDomain, SubResourceDomain> m_domainsWithCrossPageStorageAccessQuirk;
 
     bool m_hasScheduledProcessStats { false };
-
     bool m_firstNetworkProcessCreated { false };
+
+    struct StorageAccessRequestRecordValue {
+        WebPageProxyIdentifier webPageProxyID;
+        Markable<WallTime> lastRequestTime;
+        WallTime lastLoadTime;
+    };
+    using StorageAccessRequestRecordKey = std::pair<WebCore::FrameIdentifier, RegistrableDomain>;
+    HashMap<StorageAccessRequestRecordKey, StorageAccessRequestRecordValue> m_storageAccessRequestRecords;
 };
 
 } // namespace WebKit

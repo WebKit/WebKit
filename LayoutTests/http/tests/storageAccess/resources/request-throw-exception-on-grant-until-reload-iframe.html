@@ -1,0 +1,25 @@
+<html>
+<head>
+    <script>
+        function messageToTop(message) {
+            top.postMessage(message, "http://127.0.0.1:8000");
+        }
+
+        function performStorageAccessRequest() {
+            document.requestStorageAccess().then(() => {
+                messageToTop("Done");
+            }).catch((error) => {
+                if (!error) {
+                    messageToTop("None");
+                    return;
+                }
+
+                messageToTop(error.name);
+                if (!window.location.hash && error.name == "NoModificationAllowedError") 
+                    location.reload();
+            });
+        }
+    </script>
+</head>
+<body onclick="performStorageAccessRequest()">
+</html>

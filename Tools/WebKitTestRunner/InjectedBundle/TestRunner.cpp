@@ -1876,10 +1876,16 @@ static JSValueRef makeDomainsValue(const Vector<String>& domains)
     builder.append(']');
     return JSValueMakeFromJSONString(mainFrameJSContext(), createJSString(builder.toString().utf8().data()).get());
 }
+
 void TestRunner::callDidReceiveAllStorageAccessEntriesCallback(Vector<String>& domains)
 {
     auto result = makeDomainsValue(domains);
     callTestRunnerCallback(AllStorageAccessEntriesCallbackID, 1, &result);
+}
+
+void TestRunner::setRequestStorageAccessThrowsExceptionUntilReload(bool enabled)
+{
+    postSynchronousPageMessage("SetRequestStorageAccessThrowsExceptionUntilReload", enabled);
 }
 
 void TestRunner::loadedSubresourceDomains(JSValueRef callback)

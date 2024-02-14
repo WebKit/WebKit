@@ -73,6 +73,7 @@ NetworkResourceLoadParameters::NetworkResourceLoadParameters(
     , bool pageHasExtensionController
 #endif
     , bool linkPreconnectEarlyHintsEnabled
+    , bool shouldRecordFrameLoadForStorageAccess
     ) : NetworkLoadParameters(WTFMove(networkLoadParameters))
         , identifier(identifier)
         , maximumBufferingTime(maximumBufferingTime)
@@ -111,6 +112,7 @@ NetworkResourceLoadParameters::NetworkResourceLoadParameters(
         , pageHasExtensionController(pageHasExtensionController)
 #endif
         , linkPreconnectEarlyHintsEnabled(linkPreconnectEarlyHintsEnabled)
+        , shouldRecordFrameLoadForStorageAccess(shouldRecordFrameLoadForStorageAccess)
 {
     if (httpBody) {
         request.setHTTPBody(WTFMove(httpBody));

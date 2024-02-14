@@ -5559,6 +5559,20 @@ RequestIdleCallbackEnabled:
     WebCore:
       default: false
 
+RequestStorageAccessThrowsExceptionUntilReload:
+  type: bool
+  status: unstable
+  category: dom
+  humanReadableName: "requestStorageAccess throws execption until reload"
+  humanReadableDescription: "requestStorageAccess throws execption until reload"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 RequestSubmitEnabled:
   type: bool
   status: stable

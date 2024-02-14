@@ -507,6 +507,7 @@ public:
     // Storage Access API
     void getAllStorageAccessEntries(JSValueRef callback);
     void callDidReceiveAllStorageAccessEntriesCallback(Vector<String>& domains);
+    void setRequestStorageAccessThrowsExceptionUntilReload(bool enabled);
 
     // Open panel
     void setOpenPanelFiles(JSValueRef);

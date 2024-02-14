@@ -279,6 +279,7 @@ public:
     void removeAllCookies();
 
     void getAllStorageAccessEntries();
+    void setRequestStorageAccessThrowsExceptionUntilReload(bool enabled);
     void loadedSubresourceDomains();
     void clearLoadedSubresourceDomains();
     void clearAppBoundSession();

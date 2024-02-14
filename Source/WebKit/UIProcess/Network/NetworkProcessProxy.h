@@ -76,7 +76,7 @@ class SecurityOrigin;
 class SecurityOriginData;
 enum class ShouldSample : bool;
 enum class StorageAccessPromptWasShown : bool;
-enum class StorageAccessWasGranted : bool;
+enum class StorageAccessWasGranted : uint8_t;
 enum class StoredCredentialsPolicy : uint8_t;
 struct ClientOrigin;
 struct NotificationData;

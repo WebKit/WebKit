@@ -135,4 +135,6 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
 
     InitializeWebTransportSession(URL url) -> (std::optional<WebKit::WebTransportSessionIdentifier> identifier)
     DestroyWebTransportSession(WebKit::WebTransportSessionIdentifier identifier)
+
+    ClearFrameLoadRecordsForStorageAccess(WebCore::FrameIdentifier frameID)
 }

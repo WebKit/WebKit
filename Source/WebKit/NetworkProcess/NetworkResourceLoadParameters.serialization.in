@@ -111,4 +111,5 @@ class WebKit::NetworkResourceLoadParameters : WebKit::NetworkLoadParameters {
 #endif
 
     bool linkPreconnectEarlyHintsEnabled;
+    bool shouldRecordFrameLoadForStorageAccess;
 };

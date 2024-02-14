@@ -998,7 +998,9 @@ void WebProcess::addWebFrame(FrameIdentifier frameID, WebFrame* frame)
 
 void WebProcess::removeWebFrame(FrameIdentifier frameID, std::optional<WebPageProxyIdentifier> pageID)
 {
-    m_frameMap.remove(frameID);
+    auto frame = m_frameMap.take(frameID);
+    if (frame && frame->coreLocalFrame() && m_networkProcessConnection)
+        m_networkProcessConnection->connection().send(Messages::NetworkConnectionToWebProcess::ClearFrameLoadRecordsForStorageAccess(frameID), 0);
 
     // We can end up here after our connection has closed when WebCore's frame life-support timer
     // fires when the application is shutting down. There's no need (and no way) to update the UI
