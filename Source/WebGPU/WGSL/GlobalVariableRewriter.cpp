@@ -1591,7 +1591,7 @@ void RewriteGlobalVariables::insertParameters(AST::Function& function, const Vec
     };
     for (auto group : groups)
         insertParameter(group, argumentBufferParameterName(group));
-    if (!m_globalsUsingDynamicOffset.isEmpty()) {
+    if (!m_globalsUsingDynamicOffset.isEmpty() || (m_stage == ShaderStage::Fragment && m_callGraph.ast().usesFragDepth())) {
         unsigned group;
         switch (m_stage) {
         case ShaderStage::Vertex:

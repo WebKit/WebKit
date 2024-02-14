@@ -113,7 +113,6 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
     }
 
     if (const auto* attachment = descriptor.depthStencilAttachment) {
-        m_depthClearValue = attachment->depthStoreOp == WGPUStoreOp_Discard ? 0 : attachment->depthClearValue;
         auto& textureView = fromAPI(attachment->view);
         textureView.setPreviouslyCleared();
         if (textureView.width() && !m_renderTargetWidth) {
@@ -122,6 +121,7 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
         }
 
         id<MTLTexture> depthTexture = textureView.texture();
+        m_depthClearValue = attachment->depthStoreOp == WGPUStoreOp_Discard ? 0 : quantizedDepthValue(attachment->depthClearValue, textureView.format());
         if (!Device::isStencilOnlyFormat(depthTexture.pixelFormat)) {
             m_clearDepthAttachment = depthTexture && attachment->depthStoreOp == WGPUStoreOp_Discard;
             m_depthStencilAttachmentToClear = depthTexture;
@@ -134,6 +134,22 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
             m_depthStencilAttachmentToClear = depthTexture;
             addResourceToActiveResources(textureView, attachment->stencilReadOnly ? BindGroupEntryUsage::AttachmentRead : BindGroupEntryUsage::Attachment, WGPUTextureAspect_StencilOnly);
         }
+    }
+
+    m_viewportWidth = static_cast<float>(m_renderTargetWidth);
+    m_viewportHeight = static_cast<float>(m_renderTargetHeight);
+}
+
+double RenderPassEncoder::quantizedDepthValue(double depthClearValue, WGPUTextureFormat pixelFormat)
+{
+    if (depthClearValue < 0 || depthClearValue > 1)
+        return depthClearValue;
+
+    switch (pixelFormat) {
+    case WGPUTextureFormat_Depth16Unorm:
+        return depthClearValue + 1.0 / USHRT_MAX;
+    default:
+        return depthClearValue;
     }
 }
 
@@ -411,8 +427,8 @@ bool RenderPassEncoder::executePreDrawCommands(id<MTLBuffer> indirectBuffer)
         makeInvalid(@"Missing pipeline before draw command");
         return false;
     }
-
-    if (NSString* error = m_pipeline->pipelineLayout().errorValidatingBindGroupCompatibility(m_bindGroups, m_pipeline->vertexStageInBufferCount())) {
+    auto& pipeline = *m_pipeline.get();
+    if (NSString* error = pipeline.pipelineLayout().errorValidatingBindGroupCompatibility(m_bindGroups, pipeline.vertexStageInBufferCount())) {
         makeInvalid(error);
         return false;
     }
@@ -433,6 +449,16 @@ bool RenderPassEncoder::executePreDrawCommands(id<MTLBuffer> indirectBuffer)
         [m_renderCommandEncoder setVertexBuffer:group.vertexArgumentBuffer() offset:0 atIndex:m_device->vertexBufferIndexForBindGroup(groupIndex)];
         [m_renderCommandEncoder setFragmentBuffer:group.fragmentArgumentBuffer() offset:0 atIndex:groupIndex];
     }
+
+    if (pipeline.renderPipelineState())
+        [m_renderCommandEncoder setRenderPipelineState:pipeline.renderPipelineState()];
+    if (pipeline.depthStencilState())
+        [m_renderCommandEncoder setDepthStencilState:pipeline.depthStencilState()];
+    [m_renderCommandEncoder setCullMode:pipeline.cullMode()];
+    [m_renderCommandEncoder setFrontFacingWinding:pipeline.frontFace()];
+    [m_renderCommandEncoder setDepthClipMode:pipeline.depthClipMode()];
+    [m_renderCommandEncoder setDepthBias:pipeline.depthBias() slopeScale:pipeline.depthBiasSlopeScale() clamp:pipeline.depthBiasClamp()];
+    [m_renderCommandEncoder setViewport: { m_viewportX, m_viewportY, m_viewportWidth, m_viewportHeight, m_minDepth, m_maxDepth } ];
 
     m_queryBufferIndicesToClear.remove(m_visibilityResultBufferOffset);
 
@@ -875,14 +901,6 @@ void RenderPassEncoder::setPipeline(const RenderPipeline& pipeline)
     m_vertexDynamicOffsets.resize(pipeline.pipelineLayout().sizeOfVertexDynamicOffsets());
     m_fragmentDynamicOffsets.resize(pipeline.pipelineLayout().sizeOfFragmentDynamicOffsets() + RenderBundleEncoder::startIndexForFragmentDynamicOffsets);
 
-    if (pipeline.renderPipelineState())
-        [m_renderCommandEncoder setRenderPipelineState:pipeline.renderPipelineState()];
-    if (pipeline.depthStencilState())
-        [m_renderCommandEncoder setDepthStencilState:pipeline.depthStencilState()];
-    [m_renderCommandEncoder setCullMode:pipeline.cullMode()];
-    [m_renderCommandEncoder setFrontFacingWinding:pipeline.frontFace()];
-    [m_renderCommandEncoder setDepthClipMode:pipeline.depthClipMode()];
-    [m_renderCommandEncoder setDepthBias:pipeline.depthBias() slopeScale:pipeline.depthBiasSlopeScale() clamp:pipeline.depthBiasClamp()];
     if (m_fragmentDynamicOffsets.size() < RenderBundleEncoder::startIndexForFragmentDynamicOffsets)
         m_fragmentDynamicOffsets.grow(RenderBundleEncoder::startIndexForFragmentDynamicOffsets);
     static_assert(RenderBundleEncoder::startIndexForFragmentDynamicOffsets > 2, "code path assumes value is greater than 2");
@@ -955,7 +973,10 @@ void RenderPassEncoder::setViewport(float x, float y, float width, float height,
     }
     m_minDepth = minDepth;
     m_maxDepth = maxDepth;
-    [m_renderCommandEncoder setViewport: { x, y, width, height, minDepth, maxDepth } ];
+    m_viewportX = x;
+    m_viewportY = y;
+    m_viewportWidth = width;
+    m_viewportHeight = height;
 }
 
 void RenderPassEncoder::setLabel(String&& label)

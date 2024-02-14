@@ -98,6 +98,7 @@ public:
     CommandEncoder& parentEncoder();
     void setCommandEncoder(const BindGroupEntryUsageData::Resource&);
     void addResourceToActiveResources(const BindGroupEntryUsageData::Resource&, id<MTLResource>, OptionSet<BindGroupEntryUsage>);
+    static double quantizedDepthValue(double, WGPUTextureFormat);
 
 private:
     RenderPassEncoder(id<MTLRenderCommandEncoder>, const WGPURenderPassDescriptor&, NSUInteger, bool depthReadOnly, bool stencilReadOnly, CommandEncoder&, id<MTLBuffer>, uint64_t maxDrawCount, Device&);
@@ -173,6 +174,10 @@ private:
     uint64_t m_drawCount { 0 };
     const uint64_t m_maxDrawCount { 0 };
     uint32_t m_stencilClearValue { 0 };
+    float m_viewportX { 0 };
+    float m_viewportY { 0 };
+    float m_viewportWidth { 0 };
+    float m_viewportHeight { 0 };
     bool m_clearDepthAttachment { false };
     bool m_clearStencilAttachment { false };
     bool m_occlusionQueryActive { false };
