@@ -328,6 +328,8 @@ protected:
 
     String m_suggestedFilename;
 
+    String m_lastFindString;
+
     WebCore::IntSize m_size;
     WebCore::AffineTransform m_rootViewToPluginTransform;
 

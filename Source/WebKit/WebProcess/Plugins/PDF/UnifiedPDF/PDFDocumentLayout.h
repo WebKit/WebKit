@@ -72,6 +72,7 @@ public:
 
     WebCore::FloatPoint documentPointToPDFPagePoint(WebCore::FloatPoint documentPoint, PageIndex) const;
     WebCore::FloatPoint pdfPagePointToDocumentPoint(WebCore::FloatPoint pagePoint, PageIndex) const;
+    WebCore::FloatRect pdfPageRectToDocumentRect(WebCore::FloatRect pageRect, PageIndex) const;
 
     // This is the scale that scales the largest page or pair of pages up or down to fit the available width.
     float scale() const { return m_scale; }

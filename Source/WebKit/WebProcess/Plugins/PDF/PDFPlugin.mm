@@ -1347,11 +1347,11 @@ bool PDFPlugin::findString(const String& target, WebCore::FindOptions options, u
         auto searchSelection = [m_pdfLayerController searchSelection];
         [m_pdfLayerController findString:target caseSensitive:caseSensitive highlightMatches:YES];
         [m_pdfLayerController setSearchSelection:searchSelection];
-        m_lastFoundString = emptyString();
+        m_lastFindString = emptyString();
         return false;
     }
 
-    if (m_lastFoundString == target) {
+    if (m_lastFindString == target) {
         auto selection = nextMatchForString(target, searchForward, caseSensitive, wrapSearch, [m_pdfLayerController searchSelection], NO);
         if (!selection)
             return false;
@@ -1359,7 +1359,7 @@ bool PDFPlugin::findString(const String& target, WebCore::FindOptions options, u
         [m_pdfLayerController gotoSelection:selection];
     } else {
         [m_pdfLayerController findString:target caseSensitive:caseSensitive highlightMatches:YES];
-        m_lastFoundString = target;
+        m_lastFindString = target;
     }
 
     return foundMatch;

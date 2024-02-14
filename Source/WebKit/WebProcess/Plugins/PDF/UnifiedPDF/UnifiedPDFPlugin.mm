@@ -1248,6 +1248,12 @@ WebCore::IntPoint UnifiedPDFPlugin::convertFromPageToDocument(const WebCore::Int
     return roundedIntPoint(m_documentLayout.pdfPagePointToDocumentPoint(pageSpacePoint, pageIndex));
 }
 
+WebCore::IntRect UnifiedPDFPlugin::convertFromPageToDocument(const WebCore::IntRect& pageSpaceRect, PDFDocumentLayout::PageIndex pageIndex) const
+{
+    ASSERT(pageIndex < m_documentLayout.pageCount());
+    return IntRect { m_documentLayout.pdfPageRectToDocumentRect(pageSpaceRect, pageIndex) };
+}
+
 WebCore::IntPoint UnifiedPDFPlugin::convertFromPageToContents(const WebCore::IntPoint& pageSpacePoint, PDFDocumentLayout::PageIndex pageIndex) const
 {
     FloatPoint transformedPoint = convertFromPageToDocument(pageSpacePoint, pageIndex);
@@ -1256,6 +1262,16 @@ WebCore::IntPoint UnifiedPDFPlugin::convertFromPageToContents(const WebCore::Int
     transformedPoint.move(padding.width(), padding.height());
     transformedPoint.scale(m_scaleFactor);
     return roundedIntPoint(transformedPoint);
+}
+
+WebCore::IntRect UnifiedPDFPlugin::convertFromPageToContents(const WebCore::IntRect& pageSpaceRect, PDFDocumentLayout::PageIndex pageIndex) const
+{
+    auto transformedRect = convertFromPageToDocument(pageSpaceRect, pageIndex);
+    transformedRect.scale(m_documentLayout.scale());
+    auto padding = centeringOffset();
+    transformedRect.move(padding.width(), padding.height());
+    transformedRect.scale(m_scaleFactor);
+    return transformedRect;
 }
 
 #if !LOG_DISABLED
@@ -2061,14 +2077,78 @@ FloatRect UnifiedPDFPlugin::rectForSelectionInRootView(PDFSelection *) const
 
 #pragma mark -
 
-unsigned UnifiedPDFPlugin::countFindMatches(const String& target, WebCore::FindOptions, unsigned maxMatchCount)
+unsigned UnifiedPDFPlugin::countFindMatches(const String& target, WebCore::FindOptions options, unsigned maxMatchCount)
 {
-    return 0;
+    // FIXME: Why is it OK to ignore the passed-in maximum match count?
+
+    if (!target.length())
+        return 0;
+
+    NSStringCompareOptions nsOptions = options.contains(WebCore::CaseInsensitive) ? NSCaseInsensitiveSearch : 0;
+    return [[m_pdfDocument findString:target withOptions:nsOptions] count];
 }
 
-bool UnifiedPDFPlugin::findString(const String& target, WebCore::FindOptions, unsigned maxMatchCount)
+bool UnifiedPDFPlugin::findString(const String& target, WebCore::FindOptions options, unsigned maxMatchCount)
 {
-    return false;
+    if (target.isEmpty()) {
+        m_lastFindString = target;
+        setCurrentSelection(nullptr);
+        return false;
+    }
+
+    if (options.contains(WebCore::DoNotSetSelection)) {
+        // If the max was zero, any result means we exceeded the max, so we can skip computing the actual count.
+        // FIXME: How can always returning true without searching if passed a max of 0 be right?
+        // Even if it is right, why not put that special case inside countFindMatches instead of here?
+        return !target.isEmpty() && (!maxMatchCount || countFindMatches(target, options, maxMatchCount));
+    }
+
+    bool searchForward = !options.contains(WebCore::Backwards);
+    bool isCaseSensitive = !options.contains(WebCore::CaseInsensitive);
+    bool wrapSearch = options.contains(WebCore::WrapAround);
+
+    auto nextMatchForString = [&]() -> PDFSelection * {
+        if (!target.length())
+            return nullptr;
+        NSStringCompareOptions options = 0;
+        if (!searchForward)
+            options |= NSBackwardsSearch;
+        if (!isCaseSensitive)
+            options |= NSCaseInsensitiveSearch;
+        PDFSelection *foundSelection = [m_pdfDocument findString:target fromSelection:m_currentSelection.get() withOptions:options];
+        if (!foundSelection && wrapSearch) {
+            auto emptySelection = adoptNS([allocPDFSelectionInstance() initWithDocument:m_pdfDocument.get()]);
+            foundSelection = [m_pdfDocument findString:target fromSelection:emptySelection.get() withOptions:options];
+        }
+        return foundSelection;
+    };
+
+    if (m_lastFindString != target) {
+        setCurrentSelection(nullptr);
+        m_lastFindString = target;
+    }
+
+    RetainPtr selection = nextMatchForString();
+    if (!selection)
+        return false;
+
+    RetainPtr firstPageForSelection = [[selection pages] firstObject];
+    if (!firstPageForSelection)
+        return false;
+
+    auto firstPageIndex = m_documentLayout.indexForPage(firstPageForSelection);
+    if (!firstPageIndex)
+        return false;
+
+    auto selectionContentsSpaceBounds = convertFromPageToContents(IntRect { [selection boundsForPage:firstPageForSelection.get()] }, firstPageIndex.value());
+    selectionContentsSpaceBounds.setY(selectionContentsSpaceBounds.location().y() - selectionContentsSpaceBounds.size().height());
+    auto currentScrollPositionY = scrollPosition().y();
+
+    if (selectionContentsSpaceBounds.y() < currentScrollPositionY || selectionContentsSpaceBounds.y() > currentScrollPositionY + size().height())
+        scrollToPositionWithoutAnimation(selectionContentsSpaceBounds.location());
+
+    setCurrentSelection(WTFMove(selection));
+    return true;
 }
 
 bool UnifiedPDFPlugin::performDictionaryLookupAtLocation(const FloatPoint&)

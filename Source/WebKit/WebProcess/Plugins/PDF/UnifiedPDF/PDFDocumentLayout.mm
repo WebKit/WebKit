@@ -308,6 +308,22 @@ WebCore::FloatPoint PDFDocumentLayout::pdfPagePointToDocumentPoint(WebCore::Floa
     return mappedPoint;
 }
 
+WebCore::FloatRect PDFDocumentLayout::pdfPageRectToDocumentRect(const WebCore::FloatRect pageSpaceRect, PageIndex pageIndex) const
+{
+    if (pageIndex >= m_pageGeometry.size())
+        return pageSpaceRect;
+
+    auto& pageGeometry = m_pageGeometry[pageIndex];
+
+    auto matrix = toPageTransform(pageGeometry);
+    auto mappedRect = matrix.inverse().value_or(AffineTransform { }).mapRect(pageSpaceRect);
+
+    mappedRect.setY(pageGeometry.layoutBounds.height() - mappedRect.y());
+    mappedRect.moveBy(pageGeometry.layoutBounds.location());
+
+    return mappedRect;
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(UNIFIED_PDF)
