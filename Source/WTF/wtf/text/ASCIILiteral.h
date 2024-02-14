@@ -51,6 +51,9 @@ public:
     WTF_EXPORT_PRIVATE void dump(PrintStream& out) const;
 
     ASCIILiteral() = default;
+    constexpr ASCIILiteral(std::nullptr_t)
+        : ASCIILiteral()
+    { }
 
     unsigned hash() const;
     constexpr bool isNull() const { return !m_characters; }

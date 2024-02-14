@@ -92,7 +92,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JITSlowPathCall::generateThunk(VM& vm, Slo
     jit.jumpThunk(CodeLocationLabel(vm.getCTIStub(CommonJITThunkID::CheckException).retaggedCode<NoPtrTag>()));
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
-    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "SlowPathCall");
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "SlowPathCall"_s, "SlowPathCall");
 }
 
 } // namespace JSC

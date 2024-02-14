@@ -56,7 +56,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> handleExceptionGenerator(VM& vm)
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
     patchBuffer.link<OperationPtrTag>(operation, operationLookupExceptionHandler);
-    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "handleException");
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "handleException"_s, "handleException");
 }
 
 MacroAssemblerCodeRef<JITThunkPtrTag> handleExceptionWithCallFrameRollbackGenerator(VM& vm)
@@ -72,7 +72,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> handleExceptionWithCallFrameRollbackGenera
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
     patchBuffer.link<OperationPtrTag>(operation, operationLookupExceptionHandlerFromCallerFrame);
-    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "handleExceptionWithCallFrameRollback");
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "handleExceptionWithCallFrameRollback"_s, "handleExceptionWithCallFrameRollback");
 }
 
 MacroAssemblerCodeRef<JITThunkPtrTag> popThunkStackPreservesAndHandleExceptionGenerator(VM& vm)
@@ -87,7 +87,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> popThunkStackPreservesAndHandleExceptionGe
     jit.jumpThunk(CodeLocationLabel(vm.getCTIStub(CommonJITThunkID::HandleException).retaggedCode<NoPtrTag>()));
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
-    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "popThunkStackPreservesAndHandleException");
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "popThunkStackPreservesAndHandleException"_s, "popThunkStackPreservesAndHandleException");
 }
 
 MacroAssemblerCodeRef<JITThunkPtrTag> checkExceptionGenerator(VM& vm)
@@ -119,7 +119,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> checkExceptionGenerator(VM& vm)
     handleException.linkThunk(jumpTarget, &jit);
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
-    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "CheckException");
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "checkException"_s, "CheckException");
 }
 
 template<typename TagType>
@@ -159,7 +159,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> throwExceptionFromCallGenerator(VM& vm)
     jit.jumpToExceptionHandler(vm);
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
-    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "Throw exception from call thunk");
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "throwExceptionFromCall"_s, "Throw exception from call thunk");
 }
 
 // We will jump here if the JIT code tries to make a call, but the
@@ -182,7 +182,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> throwExceptionFromCallSlowPathGenerator(VM
     jit.jumpToExceptionHandler(vm);
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
-    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "Throw exception from call slow path thunk");
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "throwExceptionFromCallSlowPath"_s, "Throw exception from call slow path thunk");
 }
 
 // FIXME: We should distinguish between a megamorphic virtual call vs. a slow
@@ -282,8 +282,8 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkFor(VM& vm, CallMode mo
     jit.untagReturnAddress();
     jit.farJump(GPRInfo::returnValueGPR, JSEntryPtrTag);
 
-    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::VirtualThunk);
-    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "Virtual %s thunk", mode == CallMode::Regular ? "call" : mode == CallMode::Tail ? "tail call" : "construct");
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::InlineCache);
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "VirtualCall"_s "Virtual %s thunk", mode == CallMode::Regular ? "call" : mode == CallMode::Tail ? "tail call" : "construct");
 }
 
 MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkForRegularCall(VM& vm)
@@ -397,9 +397,10 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicThunkFor(VM&, CallMode m
     jit.untagReturnAddress();
     jit.farJump(GPRInfo::returnValueGPR, JSEntryPtrTag);
 
-    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::InlineCache);
     return FINALIZE_THUNK(
         patchBuffer, JITThunkPtrTag,
+        "PolymorphicCall"_s,
         "Polymorphic %s slow path thunk",
         mode == CallMode::Regular ? "call" : mode == CallMode::Tail ? "tail call" : "construct");
 }
@@ -450,8 +451,8 @@ MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicRepatchThunk(VM&)
     jit.untagReturnAddress();
     jit.farJump(GPRInfo::returnValueGPR, JSEntryPtrTag);
 
-    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
-    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "Polymorphic repatch thunk");
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::InlineCache);
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "PolymorphicRepatch"_s, "Polymorphic repatch thunk");
 }
 
 enum ThunkEntryType { EnterViaCall, EnterViaJumpWithSavedTags, EnterViaJumpWithoutSavedTags };
@@ -560,7 +561,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> nativeForGenerator(VM& vm, ThunkFun
     jit.jumpToExceptionHandler(vm);
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
-    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "%s %s%s%s trampoline", thunkFunctionType == ThunkFunctionType::JSFunction ? "native" : "internal", entryType == EnterViaJumpWithSavedTags ? "Tail With Saved Tags " : entryType == EnterViaJumpWithoutSavedTags ? "Tail Without Saved Tags " : "", toCString(kind).data(), includeDebuggerHook == IncludeDebuggerHook::Yes ? " Debugger" : "");
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "CallTrampoline"_s, "%s %s%s%s trampoline", thunkFunctionType == ThunkFunctionType::JSFunction ? "native" : "internal", entryType == EnterViaJumpWithSavedTags ? "Tail With Saved Tags " : entryType == EnterViaJumpWithoutSavedTags ? "Tail Without Saved Tags " : "", toCString(kind).data(), includeDebuggerHook == IncludeDebuggerHook::Yes ? " Debugger" : "");
 }
 
 MacroAssemblerCodeRef<JITThunkPtrTag> nativeCallGenerator(VM& vm)
@@ -767,7 +768,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> arityFixupGenerator(VM& vm)
 #endif // End of USE(JSVALUE32_64) section.
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
-    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "fixup arity");
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "arityFixup"_s, "fixup arity");
 }
 
 MacroAssemblerCodeRef<JITThunkPtrTag> unreachableGenerator(VM& vm)
@@ -777,7 +778,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> unreachableGenerator(VM& vm)
     jit.breakpoint();
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
-    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "unreachable thunk");
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "unreachable"_s, "unreachable thunk");
 }
 
 MacroAssemblerCodeRef<JITThunkPtrTag> stringGetByValGenerator(VM& vm)
@@ -828,7 +829,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> stringGetByValGenerator(VM& vm)
     jit.ret();
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
-    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "String get_by_val stub");
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "string_get_by_val"_s, "String get_by_val stub");
 }
 
 static void stringCharLoad(SpecializedThunkJIT& jit)
@@ -1589,8 +1590,8 @@ MacroAssemblerCodeRef<JITThunkPtrTag> boundFunctionCallGenerator(VM& vm)
     jit.call(GPRInfo::nonArgGPR0, OperationPtrTag);
     jit.jumpToExceptionHandler(vm);
 
-    LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::BoundFunctionThunk);
-    return FINALIZE_THUNK(linkBuffer, JITThunkPtrTag, "Specialized thunk for bound function calls with no arguments");
+    LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
+    return FINALIZE_THUNK(linkBuffer, JITThunkPtrTag, "bound"_s, "Specialized thunk for bound function calls with no arguments");
 }
 
 MacroAssemblerCodeRef<JITThunkPtrTag> remoteFunctionCallGenerator(VM& vm)
@@ -1791,8 +1792,8 @@ MacroAssemblerCodeRef<JITThunkPtrTag> remoteFunctionCallGenerator(VM& vm)
 
     jit.jumpToExceptionHandler(vm);
 
-    LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::RemoteFunctionThunk);
-    return FINALIZE_THUNK(linkBuffer, JITThunkPtrTag, "Specialized thunk for remote function calls");
+    LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
+    return FINALIZE_THUNK(linkBuffer, JITThunkPtrTag, "remote"_s, "Specialized thunk for remote function calls");
 }
 
 MacroAssemblerCodeRef<JITThunkPtrTag> returnFromBaselineGenerator(VM&)
@@ -1805,7 +1806,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> returnFromBaselineGenerator(VM&)
     jit.ret();
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
-    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "Baseline: op_ret_handler");
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "op_ret_handler"_s, "Baseline: op_ret_handler");
 }
 
 MacroAssemblerCodeRef<JITThunkPtrTag> toIntegerOrInfinityThunkGenerator(VM& vm)

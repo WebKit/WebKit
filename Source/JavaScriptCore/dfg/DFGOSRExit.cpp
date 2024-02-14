@@ -204,7 +204,7 @@ JSC_DEFINE_JIT_OPERATION(operationCompileOSRExit, void, (CallFrame* callFrame, v
         LinkBuffer patchBuffer(jit, codeBlock, LinkBuffer::Profile::DFGOSRExit);
         exitCode = FINALIZE_CODE_IF(
             shouldDumpDisassembly() || Options::verboseOSR() || Options::verboseDFGOSRExit(),
-            patchBuffer, OSRExitPtrTag,
+            patchBuffer, OSRExitPtrTag, nullptr,
             "DFG OSR exit #%u (D@%u, %s, %s) from %s, with operands = %s",
                 exitIndex, exit.m_dfgNodeIndex, toCString(exit.m_codeOrigin).data(),
                 exitKindToString(exit.m_kind), toCString(*codeBlock).data(),

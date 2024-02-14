@@ -155,16 +155,21 @@ static inline uint32_t getCurrentThreadID()
 PerfLog::PerfLog()
 {
     {
-        std::array<char, 1024> filename;
-        snprintf(filename.data(), filename.size() - 1, "./jit-%d.dump", getCurrentProcessID());
-        filename[filename.size() - 1] = '\0';
-        m_fd = open(filename.data(), O_CREAT | O_TRUNC | O_RDWR, 0666);
+        StringPrintStream filename;
+        if (auto* optionalDirectory = Options::jitDumpDirectory())
+            filename.print(optionalDirectory);
+        else
+            filename.print("/tmp");
+        filename.print("/jit-", getCurrentProcessID(), ".dump");
+        m_fd = open(filename.toCString().data(), O_CREAT | O_TRUNC | O_RDWR, 0666);
         RELEASE_ASSERT(m_fd != -1);
 
+#if OS(LINUX)
         // Linux perf command records this mmap operation in perf.data as a metadata to the JIT perf annotations.
         // We do not use this mmap-ed memory region actually.
         m_marker = mmap(nullptr, pageSize(), PROT_READ | PROT_EXEC, MAP_PRIVATE, m_fd, 0);
         RELEASE_ASSERT(m_marker != MAP_FAILED);
+#endif
 
         m_file = fdopen(m_fd, "wb");
         RELEASE_ASSERT(m_file);

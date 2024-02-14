@@ -196,6 +196,11 @@ void CodeBlock::dump(PrintStream& out) const
     dumpAssumingJITType(out, jitType());
 }
 
+void CodeBlock::dumpSimpleName(PrintStream& out) const
+{
+    out.print(inferredName(), "#", hashAsStringIfPossible());
+}
+
 void CodeBlock::dumpSource()
 {
     dumpSource(WTF::dataFile());

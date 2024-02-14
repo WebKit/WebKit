@@ -736,8 +736,8 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> getByIdSlowPathCodeGenerator(VM& vm
     jit.ret();
 
     // While sp is extended, it is OK. Jump target will adjust it.
-    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
-    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "DataIC get_by_id_slow");
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::InlineCache);
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "get_by_id_slow"_s, "DataIC get_by_id_slow");
 }
 
 static MacroAssemblerCodeRef<JITThunkPtrTag> getByIdWithThisSlowPathCodeGenerator(VM& vm)
@@ -766,8 +766,8 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> getByIdWithThisSlowPathCodeGenerato
     jit.ret();
 
     // While sp is extended, it is OK. Jump target will adjust it.
-    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
-    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "DataIC get_by_id_with_this_slow");
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::InlineCache);
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "get_by_id_with_this_slow"_s, "DataIC get_by_id_with_this_slow");
 }
 
 static MacroAssemblerCodeRef<JITThunkPtrTag> getByValSlowPathCodeGenerator(VM& vm)
@@ -797,8 +797,8 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> getByValSlowPathCodeGenerator(VM& v
     jit.ret();
 
     // While sp is extended, it is OK. Jump target will adjust it.
-    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
-    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "DataIC get_by_val_slow");
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::InlineCache);
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "get_by_val_slow"_s, "DataIC get_by_val_slow");
 }
 
 static MacroAssemblerCodeRef<JITThunkPtrTag> getPrivateNameSlowPathCodeGenerator(VM& vm)
@@ -827,8 +827,8 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> getPrivateNameSlowPathCodeGenerator
     jit.ret();
 
     // While sp is extended, it is OK. Jump target will adjust it.
-    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
-    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "DataIC get_private_name_slow");
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::InlineCache);
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "get_private_name_slow"_s, "DataIC get_private_name_slow");
 }
 
 #if USE(JSVALUE64)
@@ -860,8 +860,8 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithThisSlowPathCodeGenerat
     jit.ret();
 
     // While sp is extended, it is OK. Jump target will adjust it.
-    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
-    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "DataIC get_by_val_with_this_slow");
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::InlineCache);
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "get_by_val_with_this_slow"_s, "DataIC get_by_val_with_this_slow");
 }
 #endif
 
@@ -891,8 +891,8 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> putByIdSlowPathCodeGenerator(VM& vm
     jit.ret();
 
     // While sp is extended, it is OK. Jump target will adjust it.
-    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
-    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "DataIC put_by_id_slow");
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::InlineCache);
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "put_by_id_slow"_s, "DataIC put_by_id_slow");
 }
 
 static MacroAssemblerCodeRef<JITThunkPtrTag> putByValSlowPathCodeGenerator(VM& vm)
@@ -926,8 +926,8 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> putByValSlowPathCodeGenerator(VM& v
     jit.ret();
 
     // While sp is extended, it is OK. Jump target will adjust it.
-    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
-    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "DataIC put_by_val_slow");
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::InlineCache);
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "put_by_val_slow"_s, "DataIC put_by_val_slow");
 }
 
 static MacroAssemblerCodeRef<JITThunkPtrTag> instanceOfSlowPathCodeGenerator(VM& vm)
@@ -956,8 +956,8 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> instanceOfSlowPathCodeGenerator(VM&
     jit.ret();
 
     // While sp is extended, it is OK. Jump target will adjust it.
-    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
-    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "DataIC instanceof_slow");
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::InlineCache);
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "instanceof_slow"_s, "DataIC instanceof_slow");
 }
 
 static MacroAssemblerCodeRef<JITThunkPtrTag> delByIdSlowPathCodeGenerator(VM& vm)
@@ -985,8 +985,8 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> delByIdSlowPathCodeGenerator(VM& vm
     jit.ret();
 
     // While sp is extended, it is OK. Jump target will adjust it.
-    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
-    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "DataIC del_by_id_slow");
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::InlineCache);
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "del_by_id_slow"_s, "DataIC del_by_id_slow");
 }
 
 static MacroAssemblerCodeRef<JITThunkPtrTag> delByValSlowPathCodeGenerator(VM& vm)
@@ -1015,8 +1015,8 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> delByValSlowPathCodeGenerator(VM& v
     jit.ret();
 
     // While sp is extended, it is OK. Jump target will adjust it.
-    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
-    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "DataIC del_by_val_slow");
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::InlineCache);
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "del_by_val_slow"_s, "DataIC del_by_val_slow");
 }
 
 MacroAssemblerCodeRef<JITThunkPtrTag> InlineCacheCompiler::generateSlowPathCode(VM& vm, AccessType type)
@@ -3590,6 +3590,21 @@ static inline bool canUseMegamorphicPutFastPath(Structure* structure)
     }
 }
 
+static inline ASCIILiteral categoryName(AccessType type)
+{
+    switch (type) {
+#define JSC_DEFINE_ACCESS_TYPE_CASE(name) \
+    case AccessType::name: \
+        return #name ""_s; \
+
+        JSC_FOR_EACH_STRUCTURE_STUB_INFO_ACCESS_TYPE(JSC_DEFINE_ACCESS_TYPE_CASE)
+
+#undef JSC_DEFINE_ACCESS_TYPE_CASE
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return nullptr;
+}
+
 AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSLocker& locker, PolymorphicAccess& poly, CodeBlock* codeBlock)
 {
     SuperSamplerScope superSamplerScope(false);
@@ -4197,9 +4212,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
 
     dataLogLnIf(InlineCacheCompilerInternal::verbose, FullCodeOrigin(codeBlock, m_stubInfo->codeOrigin), ": Generating polymorphic access stub for ", listDump(cases));
 
-    MacroAssemblerCodeRef<JITStubRoutinePtrTag> code = FINALIZE_CODE_FOR(
-        codeBlock, linkBuffer, JITStubRoutinePtrTag,
-        "%s", toCString("Access stub for ", *codeBlock, " ", m_stubInfo->codeOrigin, "with start: ", m_stubInfo->startLocation, " with return point ", successLabel, ": ", listDump(cases)).data());
+    MacroAssemblerCodeRef<JITStubRoutinePtrTag> code = FINALIZE_CODE_FOR(codeBlock, linkBuffer, JITStubRoutinePtrTag, categoryName(m_stubInfo->accessType), "%s", toCString("Access stub for ", *codeBlock, " ", m_stubInfo->codeOrigin, "with start: ", m_stubInfo->startLocation, " with return point ", successLabel, ": ", listDump(cases)).data());
 
     CodeBlock* owner = codeBlock;
     if (generatedMegamorphicCode && useHandlerIC()) {

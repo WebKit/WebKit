@@ -97,7 +97,7 @@ std::unique_ptr<Compilation> compile(B3::Procedure& proc)
     LinkBuffer linkBuffer(jit, nullptr);
 
     return makeUnique<Compilation>(
-        FINALIZE_CODE(linkBuffer, JITCompilationPtrTag, "testair compilation"), proc.releaseByproducts());
+        FINALIZE_CODE(linkBuffer, JITCompilationPtrTag, nullptr, "testair compilation"), proc.releaseByproducts());
 }
 
 template<typename T, typename... Arguments>

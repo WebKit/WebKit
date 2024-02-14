@@ -711,7 +711,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::consistencyCheckGenerator(VM&)
     jit.ret();
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
-    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "Baseline: generateConsistencyCheck");
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "generateConsistencyCheck"_s, "generateConsistencyCheck");
 }
 
 void JIT::emitConsistencyCheck()
@@ -877,7 +877,7 @@ std::tuple<std::unique_ptr<LinkBuffer>, RefPtr<BaselineJITCode>> JIT::compileAnd
         m_disassembler->setEndOfCode(label());
     m_pcToCodeOriginMapBuilder.appendItem(label(), PCToCodeOriginMapBuilder::defaultCodeOrigin());
 
-    auto linkBuffer = makeUnique<LinkBuffer>(*this, m_unlinkedCodeBlock, LinkBuffer::Profile::BaselineJIT, effort);
+    auto linkBuffer = makeUnique<LinkBuffer>(*this, m_profiledCodeBlock, LinkBuffer::Profile::Baseline, effort);
     auto jitCode = link(*linkBuffer);
     return std::tuple { WTFMove(linkBuffer), WTFMove(jitCode) };
 }
@@ -983,7 +983,7 @@ RefPtr<BaselineJITCode> JIT::link(LinkBuffer& patchBuffer)
     
     // FIXME: Make a version of CodeBlockWithJITType that knows about UnlinkedCodeBlock.
     CodeRef<JSEntryPtrTag> result = FINALIZE_CODE(
-        patchBuffer, JSEntryPtrTag,
+        patchBuffer, JSEntryPtrTag, nullptr,
         "Baseline JIT code for %s", toCString(CodeBlockWithJITType(m_profiledCodeBlock, JITType::BaselineJIT)).data());
     
     CodePtr<JSEntryPtrTag> withArityCheck = patchBuffer.locationOf<JSEntryPtrTag>(m_arityCheck);

@@ -63,7 +63,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> throwExceptionFromWasmThunkGenerator(const
 
     LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::WasmThunk);
     linkBuffer.link<OperationPtrTag>(call, operationWasmToJSException);
-    return FINALIZE_WASM_CODE(linkBuffer, JITThunkPtrTag, "Throw exception from Wasm");
+    return FINALIZE_WASM_CODE(linkBuffer, JITThunkPtrTag, "throwExceptionFromWasmThunk"_s, "Throw exception from Wasm");
 }
 
 MacroAssemblerCodeRef<JITThunkPtrTag> throwStackOverflowFromWasmThunkGenerator(const AbstractLocker& locker)
@@ -77,7 +77,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> throwStackOverflowFromWasmThunkGenerator(c
     jit.move(CCallHelpers::TrustedImm32(static_cast<uint32_t>(ExceptionType::StackOverflow)), GPRInfo::argumentGPR1);
     jit.jumpThunk(CodeLocationLabel<JITThunkPtrTag> { Thunks::singleton().stub(locker, throwExceptionFromWasmThunkGenerator).code() });
     LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::WasmThunk);
-    return FINALIZE_WASM_CODE(linkBuffer, JITThunkPtrTag, "Throw stack overflow from Wasm");
+    return FINALIZE_WASM_CODE(linkBuffer, JITThunkPtrTag, "throwStackOverflowFromWasmThunk"_s, "Throw stack overflow from Wasm");
 }
 
 #if USE(JSVALUE64)
@@ -127,7 +127,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> catchInWasmThunkGenerator(const AbstractLo
     jit.farJump(GPRInfo::returnValueGPR2, ExceptionHandlerPtrTag);
 
     LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::WasmThunk);
-    return FINALIZE_WASM_CODE(linkBuffer, JITThunkPtrTag, "Wasm catch runway");
+    return FINALIZE_WASM_CODE(linkBuffer, JITThunkPtrTag, "catchInWasmThunk"_s, "Wasm catch runway");
 }
 #elif USE(JSVALUE32_64)
 // Same as JSVALUE64 version, except operationWasmRetrieveAndClearExceptionIfCatchable returns exception on stack.
@@ -187,7 +187,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> catchInWasmThunkGenerator(const AbstractLo
     jit.farJump(GPRInfo::regT3, ExceptionHandlerPtrTag);
 
     LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::WasmThunk);
-    return FINALIZE_WASM_CODE(linkBuffer, JITThunkPtrTag, "Wasm catch runway");
+    return FINALIZE_WASM_CODE(linkBuffer, JITThunkPtrTag, "catchInWasmThunk"_s, "Wasm catch runway");
 }
 #endif
 
@@ -216,7 +216,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> triggerOMGEntryTierUpThunkGeneratorImpl(co
     jit.emitFunctionEpilogue();
     jit.ret();
     LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::WasmThunk);
-    return FINALIZE_WASM_CODE(linkBuffer, JITThunkPtrTag, "Trigger OMG entry tier up");
+    return FINALIZE_WASM_CODE(linkBuffer, JITThunkPtrTag, "triggerOMGEntryTierUpThunk"_s, "Trigger OMG entry tier up");
 }
 
 MacroAssemblerCodeRef<JITThunkPtrTag> triggerOMGEntryTierUpThunkGeneratorSIMD(const AbstractLocker& locker)

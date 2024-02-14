@@ -1771,7 +1771,7 @@ inline SelectorCompilationStatus SelectorCodeGenerator::compile(JSC::MacroAssemb
 #if CSS_SELECTOR_JIT_DEBUGGING
     codeRef = linkBuffer.finalizeCodeWithDisassembly(JSC::CSSSelectorPtrTag, "CSS Selector JIT for \"%s\"", m_originalSelector->selectorText().utf8().data());
 #else
-    codeRef = FINALIZE_CODE(linkBuffer, JSC::CSSSelectorPtrTag, "CSS Selector JIT");
+    codeRef = FINALIZE_CODE(linkBuffer, JSC::CSSSelectorPtrTag, nullptr, "CSS Selector JIT");
 #endif
 
     if (m_functionType == FunctionType::SimpleSelectorChecker || m_functionType == FunctionType::CannotMatchAnything)

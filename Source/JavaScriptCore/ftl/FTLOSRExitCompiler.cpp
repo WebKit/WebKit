@@ -630,7 +630,7 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
     LinkBuffer patchBuffer(jit, codeBlock, LinkBuffer::Profile::FTLOSRExit);
     exit.m_code = FINALIZE_CODE_IF(
         shouldDumpDisassembly() || Options::verboseOSR() || Options::verboseFTLOSRExit(),
-        patchBuffer, OSRExitPtrTag,
+        patchBuffer, OSRExitPtrTag, nullptr,
         "FTL OSR exit #%u (D@%u, %s, %s) from %s, with operands = %s",
             exitID, exit.m_dfgNodeIndex, toCString(exit.m_codeOrigin).data(),
             exitKindToString(exit.m_kind), toCString(*codeBlock).data(),

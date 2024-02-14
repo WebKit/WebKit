@@ -35,8 +35,8 @@ template<PtrTag> class MacroAssemblerCodeRef;
 
 using ThunkGenerator = MacroAssemblerCodeRef<JITThunkPtrTag> (*)(VM&);
 
-#define FINALIZE_THUNK(linkBufferReference, resultPtrTag, ...) \
-    (linkBufferReference.setIsThunk(), FINALIZE_CODE(linkBufferReference, resultPtrTag, __VA_ARGS__))
+#define FINALIZE_THUNK(linkBufferReference, resultPtrTag, simpleName, ...) \
+    (linkBufferReference.setIsThunk(), FINALIZE_CODE(linkBufferReference, resultPtrTag, simpleName, __VA_ARGS__))
 
 } // namespace JSC
 

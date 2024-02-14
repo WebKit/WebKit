@@ -1075,8 +1075,8 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::generateOpResolveScopeThunk(VM& vm)
 
     slowCase.linkThunk(CodeLocationLabel { vm.getCTIStub(slow_op_resolve_scopeGenerator).retaggedCode<NoPtrTag>() }, &jit);
 
-    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
-    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "resolve_scope thunk");
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "resolve_scope"_s, "Baseline: resolve_scope");
 }
 
 MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_resolve_scopeGenerator(VM& vm)
@@ -1111,8 +1111,8 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_resolve_scopeGenerator(VM& vm
     // Tail call to exception check thunk
     jit.jumpThunk(CodeLocationLabel(vm.getCTIStub(CommonJITThunkID::CheckException).retaggedCode<NoPtrTag>()));
 
-    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
-    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "Baseline: slow_op_resolve_scope");
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "slow_op_resolve_scope"_s, "Baseline: slow_op_resolve_scope");
 }
 
 void JIT::emit_op_get_from_scope(const JSInstruction* currentInstruction)
@@ -1289,8 +1289,8 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::generateOpGetFromScopeThunk(VM& vm)
 
     slowCase.linkThunk(CodeLocationLabel { vm.getCTIStub(slow_op_get_from_scopeGenerator).retaggedCode<NoPtrTag>() }, &jit);
 
-    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
-    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "get_from_scope thunk");
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "get_from_scope"_s, "Baseline: get_from_scope");
 }
 
 MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_get_from_scopeGenerator(VM& vm)
@@ -1337,7 +1337,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_get_from_scopeGenerator(VM& v
     jit.jumpThunk(CodeLocationLabel { vm.getCTIStub(popThunkStackPreservesAndHandleExceptionGenerator).retaggedCode<NoPtrTag>() });
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
-    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "Baseline: slow_op_get_from_scope");
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "slow_op_get_from_scope"_s, "Baseline: slow_op_get_from_scope");
 }
 
 void JIT::emit_op_put_to_scope(const JSInstruction* currentInstruction)
@@ -1534,7 +1534,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_put_to_scopeGenerator(VM& vm)
     jit.jumpThunk(CodeLocationLabel(vm.getCTIStub(CommonJITThunkID::CheckException).retaggedCode<NoPtrTag>()));
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
-    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "Baseline: slow_op_put_to_scope");
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "slow_op_put_to_scope"_s, "Baseline: slow_op_put_to_scope");
 }
 
 void JIT::emit_op_get_from_arguments(const JSInstruction* currentInstruction)

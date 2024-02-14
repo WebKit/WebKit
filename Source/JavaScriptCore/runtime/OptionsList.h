@@ -144,6 +144,7 @@ bool canUseHandlerIC();
     v(Bool, dumpBBQDisassembly, false, Normal, "dumps disassembly of BBQ Wasm code upon compilation") \
     v(Bool, dumpOMGDisassembly, false, Normal, "dumps disassembly of OMG Wasm code upon compilation") \
     v(Bool, logJITCodeForPerf, false, Configurable, nullptr) \
+    v(OptionString, jitDumpDirectory, nullptr, Normal, "Directory to place JITDump") \
     v(OptionRange, bytecodeRangeToJITCompile, nullptr, Normal, "bytecode size range to allow compilation on, e.g. 1:100") \
     v(OptionRange, bytecodeRangeToDFGCompile, nullptr, Normal, "bytecode size range to allow DFG compilation on, e.g. 1:100") \
     v(OptionRange, bytecodeRangeToFTLCompile, nullptr, Normal, "bytecode size range to allow FTL compilation on, e.g. 1:100") \

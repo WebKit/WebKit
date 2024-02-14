@@ -4681,17 +4681,17 @@ public:
 
         if (m_compileMode == JITCompileMode::MatchOnly) {
             if (m_charSize == CharSize::Char8) {
-                codeBlock.set8BitCodeMatchOnly(FINALIZE_REGEXP_CODE(linkBuffer, YarrMatchOnly8BitPtrTag, "Match-only 8-bit regular expression"), WTFMove(m_bmMaps));
+                codeBlock.set8BitCodeMatchOnly(FINALIZE_REGEXP_CODE(linkBuffer, YarrMatchOnly8BitPtrTag, nullptr, "Match-only 8-bit regular expression"), WTFMove(m_bmMaps));
                 codeBlock.set8BitInlineStats(codeSize, callFrameSizeInBytes, canInline, m_usesT2);
             } else {
-                codeBlock.set16BitCodeMatchOnly(FINALIZE_REGEXP_CODE(linkBuffer, YarrMatchOnly16BitPtrTag, "Match-only 16-bit regular expression"), WTFMove(m_bmMaps));
+                codeBlock.set16BitCodeMatchOnly(FINALIZE_REGEXP_CODE(linkBuffer, YarrMatchOnly16BitPtrTag, nullptr, "Match-only 16-bit regular expression"), WTFMove(m_bmMaps));
                 codeBlock.set16BitInlineStats(codeSize, callFrameSizeInBytes, canInline, m_usesT2);
             }
         } else {
             if (m_charSize == CharSize::Char8)
-                codeBlock.set8BitCode(FINALIZE_REGEXP_CODE(linkBuffer, Yarr8BitPtrTag, "8-bit regular expression"), WTFMove(m_bmMaps));
+                codeBlock.set8BitCode(FINALIZE_REGEXP_CODE(linkBuffer, Yarr8BitPtrTag, nullptr, "8-bit regular expression"), WTFMove(m_bmMaps));
             else
-                codeBlock.set16BitCode(FINALIZE_REGEXP_CODE(linkBuffer, Yarr16BitPtrTag, "16-bit regular expression"), WTFMove(m_bmMaps));
+                codeBlock.set16BitCode(FINALIZE_REGEXP_CODE(linkBuffer, Yarr16BitPtrTag, nullptr, "16-bit regular expression"), WTFMove(m_bmMaps));
         }
         if (m_failureReason)
             codeBlock.setFallBackWithFailureReason(*m_failureReason);

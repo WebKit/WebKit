@@ -155,7 +155,7 @@ ALWAYS_INLINE static bool linkCodeInline(const char* name, CCallHelpers& jit, St
         bool needsBranchCompaction = true;
         LinkBuffer linkBuffer(jit, stubInfo.startLocation, stubInfo.inlineCodeSize(), LinkBuffer::Profile::InlineCache, JITCompilationMustSucceed, needsBranchCompaction);
         ASSERT(linkBuffer.isValid());
-        FINALIZE_CODE(linkBuffer, NoPtrTag, "InlineAccessType: '%s'", name);
+        FINALIZE_CODE(linkBuffer, NoPtrTag, ASCIILiteral::fromLiteralUnsafe(name), "InlineAccessType: '%s'", name);
         return true;
     }
 

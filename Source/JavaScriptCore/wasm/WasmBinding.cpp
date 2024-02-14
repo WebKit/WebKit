@@ -79,7 +79,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToWasm(unsi
     if (UNLIKELY(patchBuffer.didFailToAllocate()))
         return makeUnexpected(BindingFailure::OutOfMemory);
 
-    return FINALIZE_WASM_CODE(patchBuffer, WasmEntryPtrTag, "WebAssembly->WebAssembly import[%i]", importIndex);
+    return FINALIZE_WASM_CODE(patchBuffer, WasmEntryPtrTag, nullptr, "WebAssembly->WebAssembly import[%i]", importIndex);
 }
 
 } } // namespace JSC::Wasm

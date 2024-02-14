@@ -62,7 +62,7 @@ static Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> handleBa
     if (UNLIKELY(linkBuffer.didFailToAllocate()))
         return makeUnexpected(BindingFailure::OutOfMemory);
 
-    return FINALIZE_WASM_CODE(linkBuffer, WasmEntryPtrTag, "WebAssembly->JavaScript throw exception due to invalid use of restricted type in import[%i]", importIndex);
+    return FINALIZE_WASM_CODE(linkBuffer, WasmEntryPtrTag, nullptr, "WebAssembly->JavaScript throw exception due to invalid use of restricted type in import[%i]", importIndex);
 }
 
 Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm, WasmToJSCallee& callee, OptimizingCallLinkInfo& callLinkInfo, TypeIndex typeIndex, unsigned importIndex)
@@ -506,7 +506,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
 
     callLinkInfo.setCodeLocations(patchBuffer.locationOf<JSInternalPtrTag>(doneLocation));
 
-    return FINALIZE_WASM_CODE(patchBuffer, WasmEntryPtrTag, "WebAssembly->JavaScript import[%i] %s", importIndex, signature.toString().ascii().data());
+    return FINALIZE_WASM_CODE(patchBuffer, WasmEntryPtrTag, nullptr, "WebAssembly->JavaScript import[%i] %s", importIndex, signature.toString().ascii().data());
 }
 
 void emitThrowWasmToJSException(CCallHelpers& jit, GPRReg wasmInstance, Wasm::ExceptionType type)

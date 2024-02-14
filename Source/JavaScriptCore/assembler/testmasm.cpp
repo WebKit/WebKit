@@ -262,7 +262,7 @@ MacroAssemblerCodeRef<JSEntryPtrTag> compile(Generator&& generate)
     CCallHelpers jit;
     generate(jit);
     LinkBuffer linkBuffer(jit, nullptr);
-    return FINALIZE_CODE(linkBuffer, JSEntryPtrTag, "testmasm compilation");
+    return FINALIZE_CODE(linkBuffer, JSEntryPtrTag, nullptr, "testmasm compilation");
 }
 
 template<typename T, typename... Arguments>

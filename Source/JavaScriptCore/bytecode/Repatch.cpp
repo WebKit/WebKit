@@ -2007,7 +2007,7 @@ void linkPolymorphicCall(VM& vm, JSCell* owner, CallFrame* callFrame, CallLinkIn
     
     auto stubRoutine = PolymorphicCallStubRoutine::create(
         FINALIZE_CODE_FOR(
-            callerCodeBlock, patchBuffer, JITStubRoutinePtrTag,
+            callerCodeBlock, patchBuffer, JITStubRoutinePtrTag, "PolymorphicCall"_s,
             "Polymorphic call stub for %s, return point %p, targets %s",
                 isWebAssembly ? "WebAssembly" : toCString(*callerCodeBlock).data(), callLinkInfo.doneLocation().taggedPtr(),
                 toCString(listDump(callSlots.map([&](auto& slot) { return PolymorphicCallCase(CallVariant(slot.m_calleeOrExecutable), slot.m_codeBlock); }))).data()),

@@ -123,7 +123,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> genericGenerationThunkGenerator(
     jit.ret();
     
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::FTLThunk);
-    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "%s", name);
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, nullptr, "%s", name);
 }
 
 MacroAssemblerCodeRef<JITThunkPtrTag> osrExitGenerationThunkGenerator(VM& vm)
@@ -242,7 +242,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> slowPathCallThunkGenerator(VM& vm, const S
     jit.ret();
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::FTLThunk);
-    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "FTL slow path call thunk for %s", toCString(key).data());
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, nullptr, "FTL slow path call thunk for %s", toCString(key).data());
 }
 
 } } // namespace JSC::FTL
