@@ -124,3 +124,8 @@ webkit.org/b/244674 [ Release ] imported/w3c/web-platform-tests/IndexedDB/idbfac
 
 media/mediacapabilities/mediacapabilities-allowed-codecs.html [ Pass ]
 media/mediacapabilities/mediacapabilities-allowed-containers.html [ Pass ]
+
+# webkit.org/b/269393 ([ iOS wk2 ] 3 iOS orientation(layout-tests) are constant text failures)
+compositing/backing/page-scale-overlap-in-iframe.html [ Failure ]
+fast/events/ios/rotation/zz-no-rotation.html [ Failure ]
+fast/screen-orientation/natural-orientation.html [ Failure ]
