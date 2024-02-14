@@ -109,7 +109,7 @@ void PDFDocumentLayout::updateLayout(IntSize pluginSize)
         } else
             maxRowWidth = std::max(maxRowWidth, pageBounds.width());
 
-        m_pageGeometry.append({ pageBounds, rotation });
+        m_pageGeometry.append({ pageCropBox, pageBounds, rotation });
     }
 
     maxRowWidth += 2 * documentMargin.width();
@@ -144,7 +144,7 @@ void PDFDocumentLayout::layoutSingleColumn(float availableWidth, float maxRowWid
         if (i >= m_pageGeometry.size())
             break;
 
-        auto pageBounds = m_pageGeometry[i].normalizedBounds;
+        auto pageBounds = m_pageGeometry[i].layoutBounds;
 
         LOG_WITH_STREAM(PDF, stream << "PDFDocumentLayout::layoutSingleColumn - page " << i << " bounds " << pageBounds);
 
@@ -153,7 +153,7 @@ void PDFDocumentLayout::layoutSingleColumn(float availableWidth, float maxRowWid
 
         currentYOffset += pageBounds.height() + pageMargin.height();
 
-        m_pageGeometry[i].normalizedBounds = pageBounds;
+        m_pageGeometry[i].layoutBounds = pageBounds;
     }
 
     currentYOffset -= pageMargin.height();
@@ -175,14 +175,14 @@ void PDFDocumentLayout::layoutTwoUpColumn(float availableWidth, float maxRowWidt
         if (i >= m_pageGeometry.size())
             break;
 
-        auto pageBounds = m_pageGeometry[i].normalizedBounds;
+        auto pageBounds = m_pageGeometry[i].layoutBounds;
 
         // Lay out the pages in pairs.
         if (i % 2) {
             currentRowSize.expand(pageMargin.width() + pageBounds.width(), 0);
             currentRowSize.setHeight(std::max(currentRowSize.height(), pageBounds.height()));
 
-            auto leftPageBounds = m_pageGeometry[i - 1].normalizedBounds;
+            auto leftPageBounds = m_pageGeometry[i - 1].layoutBounds;
             auto rightPageBounds = pageBounds;
 
             // Center each page vertically in the row.
@@ -197,8 +197,8 @@ void PDFDocumentLayout::layoutTwoUpColumn(float availableWidth, float maxRowWidt
             float rightVerticalSpace = currentRowSize.height() - rightPageBounds.height();
             rightPageBounds.setY(currentYOffset + std::floor(rightVerticalSpace / 2));
 
-            m_pageGeometry[i - 1].normalizedBounds = leftPageBounds;
-            m_pageGeometry[i].normalizedBounds = rightPageBounds;
+            m_pageGeometry[i - 1].layoutBounds = leftPageBounds;
+            m_pageGeometry[i].layoutBounds = rightPageBounds;
 
             currentYOffset += currentRowSize.height() + pageMargin.height();
         } else {
@@ -206,7 +206,7 @@ void PDFDocumentLayout::layoutTwoUpColumn(float availableWidth, float maxRowWidt
             if (i == pageCount - 1) {
                 // Position the last page, which is centered horizontally.
                 float horizontalSpace = maxRowWidth - 2 * documentMargin.width() - pageBounds.width();
-                m_pageGeometry[i].normalizedBounds.setLocation({ documentMargin.width() + std::floor(horizontalSpace / 2), currentYOffset });
+                m_pageGeometry[i].layoutBounds.setLocation({ documentMargin.width() + std::floor(horizontalSpace / 2), currentYOffset });
                 currentYOffset += currentRowSize.height() + pageMargin.height();
             }
         }
@@ -228,12 +228,12 @@ size_t PDFDocumentLayout::pageCount() const
     return [m_pdfDocument pageCount];
 }
 
-WebCore::FloatRect PDFDocumentLayout::boundsForPageAtIndex(PageIndex index) const
+WebCore::FloatRect PDFDocumentLayout::layoutBoundsForPageAtIndex(PageIndex index) const
 {
     if (index >= m_pageGeometry.size())
         return { };
 
-    return m_pageGeometry[index].normalizedBounds;
+    return m_pageGeometry[index].layoutBounds;
 }
 
 IntDegrees PDFDocumentLayout::rotationForPageAtIndex(PageIndex index) const
@@ -247,6 +247,64 @@ IntDegrees PDFDocumentLayout::rotationForPageAtIndex(PageIndex index) const
 WebCore::FloatSize PDFDocumentLayout::scaledContentsSize() const
 {
     return m_documentBounds.size().scaled(m_scale);
+}
+
+AffineTransform PDFDocumentLayout::toPageTransform(const PageGeometry& pageGeometry) const
+{
+    AffineTransform matrix;
+    switch (pageGeometry.rotation) {
+    default:
+        FALLTHROUGH;
+    case 0:
+        matrix = AffineTransform::makeTranslation(FloatSize { pageGeometry.cropBox.x(), pageGeometry.cropBox.y() });
+        break;
+    case 90:
+        matrix = AffineTransform::makeRotation(pageGeometry.rotation);
+        matrix.translate(pageGeometry.cropBox.y(), -pageGeometry.cropBox.width() - pageGeometry.cropBox.x());
+        break;
+    case 180:
+        matrix = AffineTransform::makeRotation(pageGeometry.rotation);
+        matrix.translate(-pageGeometry.cropBox.width() - pageGeometry.cropBox.x(), -pageGeometry.cropBox.height() - pageGeometry.cropBox.y());
+        break;
+    case 270:
+        matrix = AffineTransform::makeRotation(pageGeometry.rotation);
+        matrix.translate(-pageGeometry.cropBox.height() - pageGeometry.cropBox.y(), pageGeometry.cropBox.x());
+        break;
+    }
+    return matrix;
+}
+
+WebCore::FloatPoint PDFDocumentLayout::documentPointToPDFPagePoint(WebCore::FloatPoint documentPoint, PageIndex pageIndex) const
+{
+    if (pageIndex >= m_pageGeometry.size())
+        return documentPoint;
+
+    auto& pageGeometry = m_pageGeometry[pageIndex];
+
+    auto mappedPoint = documentPoint;
+    mappedPoint.moveBy(-pageGeometry.layoutBounds.location());
+
+    mappedPoint.setY(pageGeometry.layoutBounds.height() - mappedPoint.y());
+
+    auto matrix = toPageTransform(pageGeometry);
+    mappedPoint = matrix.mapPoint(mappedPoint);
+    return mappedPoint;
+}
+
+WebCore::FloatPoint PDFDocumentLayout::pdfPagePointToDocumentPoint(WebCore::FloatPoint pagePoint, PageIndex pageIndex) const
+{
+    if (pageIndex >= m_pageGeometry.size())
+        return pagePoint;
+
+    auto& pageGeometry = m_pageGeometry[pageIndex];
+
+    auto matrix = toPageTransform(pageGeometry);
+    auto mappedPoint = matrix.inverse().value_or(AffineTransform { }).mapPoint(pagePoint);
+
+    mappedPoint.setY(pageGeometry.layoutBounds.height() - mappedPoint.y());
+    mappedPoint.moveBy(pageGeometry.layoutBounds.location());
+
+    return mappedPoint;
 }
 
 } // namespace WebKit

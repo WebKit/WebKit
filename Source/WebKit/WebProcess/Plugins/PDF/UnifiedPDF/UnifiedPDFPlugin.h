@@ -334,10 +334,8 @@ private:
 
     WebCore::IntPoint convertFromDocumentToPage(const WebCore::IntPoint&, PDFDocumentLayout::PageIndex) const;
     WebCore::IntPoint convertFromPageToDocument(const WebCore::IntPoint&, PDFDocumentLayout::PageIndex) const;
-    WebCore::FloatRect convertFromPageToDocument(const WebCore::FloatRect&, PDFDocumentLayout::PageIndex) const;
 
     WebCore::IntPoint convertFromPageToContents(const WebCore::IntPoint&, PDFDocumentLayout::PageIndex) const;
-    WebCore::FloatRect convertFromPageToContents(const WebCore::FloatRect&, PDFDocumentLayout::PageIndex) const;
 
     std::optional<PDFDocumentLayout::PageIndex> pageIndexForDocumentPoint(const WebCore::IntPoint&) const;
 

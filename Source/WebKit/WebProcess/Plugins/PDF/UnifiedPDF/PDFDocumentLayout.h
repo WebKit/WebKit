@@ -66,9 +66,12 @@ public:
     std::optional<unsigned> indexForPage(RetainPtr<PDFPage>) const;
 
     // This is not scaled by scale().
-    WebCore::FloatRect boundsForPageAtIndex(PageIndex) const;
+    WebCore::FloatRect layoutBoundsForPageAtIndex(PageIndex) const;
     // Returns 0, 90, 180, 270.
     WebCore::IntDegrees rotationForPageAtIndex(PageIndex) const;
+
+    WebCore::FloatPoint documentPointToPDFPagePoint(WebCore::FloatPoint documentPoint, PageIndex) const;
+    WebCore::FloatPoint pdfPagePointToDocumentPoint(WebCore::FloatPoint pagePoint, PageIndex) const;
 
     // This is the scale that scales the largest page or pair of pages up or down to fit the available width.
     float scale() const { return m_scale; }
@@ -86,9 +89,12 @@ private:
     void layoutTwoUpColumn(float availableWidth, float maxRowWidth);
 
     struct PageGeometry {
-        WebCore::FloatRect normalizedBounds;
+        WebCore::FloatRect cropBox;
+        WebCore::FloatRect layoutBounds;
         WebCore::IntDegrees rotation { 0 };
     };
+
+    WebCore::AffineTransform toPageTransform(const PageGeometry&) const;
 
     RetainPtr<PDFDocument> m_pdfDocument;
     Vector<PageGeometry> m_pageGeometry;
