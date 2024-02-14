@@ -48,7 +48,10 @@ using GL = GraphicsContextGL;
 #if PLATFORM(COCOA)
 static std::optional<GL::EGLImageAttachResult> createAndBindCompositorTexture(GL& gl, GCGLenum target, GCGLOwnedTexture& texture, GL::EGLImageSource source)
 {
-    texture.ensure(gl);
+    auto object = gl.createTexture();
+    if (!object)
+        return { };
+    texture.adopt(gl, object);
     gl.bindTexture(target, texture);
     gl.texParameteri(target, GL::TEXTURE_MAG_FILTER, GL::LINEAR);
     gl.texParameteri(target, GL::TEXTURE_MIN_FILTER, GL::LINEAR);
@@ -66,7 +69,10 @@ static std::optional<GL::EGLImageAttachResult> createAndBindCompositorTexture(GL
 
 static std::optional<GL::EGLImageAttachResult> createAndBindCompositorBuffer(GL& gl, GCGLOwnedRenderbuffer& buffer, GL::EGLImageSource source)
 {
-    buffer.ensure(gl);
+    auto object = gl.createRenderbuffer();
+    if (!object)
+        return { };
+    buffer.adopt(gl, object);
     gl.bindRenderbuffer(GL::RENDERBUFFER, buffer);
 
     auto attachResult = gl.createAndBindEGLImage(GL::RENDERBUFFER, source);
@@ -262,7 +268,10 @@ bool WebXROpaqueFramebuffer::setupFramebuffer()
     auto sampleCount = m_attributes.antialias ? std::min(4, m_context.maxSamples()) : 0;
 
     if (m_attributes.antialias) {
-        m_resolvedFBO.ensure(*gl);
+        auto fbo = gl->createFramebuffer();
+        if (!fbo)
+            return false;
+        m_resolvedFBO.adopt(*gl, fbo);
 
         auto colorBuffer = allocateColorStorage(*gl, sampleCount, m_framebufferSize);
         bindColorBuffer(*gl, colorBuffer);
