@@ -97,7 +97,7 @@ void JSWindowProxy::setWindow(DOMWindow& domWindow)
 
     auto* localWindow = dynamicDowncast<LocalDOMWindow>(domWindow);
 
-    VM& vm = commonVM();
+    Ref vm = commonVM();
     auto& prototypeStructure = localWindow ? *JSLocalDOMWindowPrototype::createStructure(vm, nullptr, jsNull()) : *JSRemoteDOMWindowPrototype::createStructure(vm, nullptr, jsNull());
 
     // Explicitly protect the prototype so it isn't collected when we allocate the global object.

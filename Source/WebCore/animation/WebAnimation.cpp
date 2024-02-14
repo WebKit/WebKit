@@ -70,11 +70,11 @@ HashSet<WebAnimation*>& WebAnimation::instances()
     return instances;
 }
 
-Ref<WebAnimation> WebAnimation::create(Document& document, AnimationEffect* effect)
+Ref<WebAnimation> WebAnimation::create(Document& document, RefPtr<AnimationEffect>&& effect)
 {
     auto result = adoptRef(*new WebAnimation(document));
     result->initialize();
-    result->setEffect(effect);
+    result->setEffect(WTFMove(effect));
     result->setTimeline(&document.timeline());
 
     InspectorInstrumentation::didCreateWebAnimation(result.get());
@@ -82,11 +82,11 @@ Ref<WebAnimation> WebAnimation::create(Document& document, AnimationEffect* effe
     return result;
 }
 
-Ref<WebAnimation> WebAnimation::create(Document& document, AnimationEffect* effect, AnimationTimeline* timeline)
+Ref<WebAnimation> WebAnimation::create(Document& document, RefPtr<AnimationEffect>&& effect, AnimationTimeline* timeline)
 {
     auto result = adoptRef(*new WebAnimation(document));
     result->initialize();
-    result->setEffect(effect);
+    result->setEffect(WTFMove(effect));
     if (timeline)
         result->setTimeline(timeline);
 

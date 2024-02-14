@@ -36,7 +36,8 @@ template<typename T> struct Converter<IDLEventListener<T>> : DefaultConverter<ID
     template<typename ExceptionThrower = DefaultExceptionThrower>
     static ReturnType convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, JSC::JSObject& thisObject, ExceptionThrower&& exceptionThrower = ExceptionThrower())
     {
-        auto scope = DECLARE_THROW_SCOPE(JSC::getVM(&lexicalGlobalObject));
+        Ref vm = JSC::getVM(&lexicalGlobalObject);
+        auto scope = DECLARE_THROW_SCOPE(vm);
 
         if (UNLIKELY(!value.isObject())) {
             exceptionThrower(lexicalGlobalObject, scope);

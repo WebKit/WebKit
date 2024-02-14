@@ -55,14 +55,14 @@ JSValue JSPopStateEvent::state(JSGlobalObject& lexicalGlobalObject) const
         return eventState;
     };
 
-    PopStateEvent& event = wrapped();
+    Ref event = wrapped();
 
-    if (event.state()) {
-        JSC::JSValue eventState = event.state().getValue();
+    if (event->state()) {
+        JSC::JSValue eventState = event->state().getValue();
         // We need to make sure a PopStateEvent does not leak objects in its lexicalGlobalObject property across isolated DOM worlds.
         // Ideally, we would check that the worlds have different privileges but that's not possible yet.
         if (!isWorldCompatible(lexicalGlobalObject, eventState)) {
-            if (auto serializedValue = event.trySerializeState(lexicalGlobalObject))
+            if (auto serializedValue = event->trySerializeState(lexicalGlobalObject))
                 eventState = serializedValue->deserialize(lexicalGlobalObject, globalObject());
             else
                 eventState = jsNull();
@@ -70,8 +70,8 @@ JSValue JSPopStateEvent::state(JSGlobalObject& lexicalGlobalObject) const
         return cacheState(eventState);
     }
     
-    History* history = event.history();
-    if (!history || !event.serializedState())
+    RefPtr history = event->history();
+    if (!history || !event->serializedState())
         return cacheState(jsNull());
 
     // There's no cached value from a previous invocation, nor a lexicalGlobalObject value was provided by the
@@ -80,14 +80,14 @@ JSValue JSPopStateEvent::state(JSGlobalObject& lexicalGlobalObject) const
     // The current history lexicalGlobalObject object might've changed in the meantime, so we need to take care
     // of using the correct one, and always share the same deserialization with history.lexicalGlobalObject.
 
-    bool isSameState = history->isSameAsCurrentState(event.serializedState());
+    bool isSameState = history->isSameAsCurrentState(event->serializedState());
     JSValue result;
 
     if (isSameState) {
         JSHistory* jsHistory = jsCast<JSHistory*>(toJS(&lexicalGlobalObject, globalObject(), *history).asCell());
         result = jsHistory->state(lexicalGlobalObject);
     } else
-        result = event.serializedState()->deserialize(lexicalGlobalObject, globalObject());
+        result = event->serializedState()->deserialize(lexicalGlobalObject, globalObject());
 
     return cacheState(result);
 }

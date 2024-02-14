@@ -78,6 +78,7 @@ public:
     inline DOMGuardedObjectSet& guardedObjects(NoLockingNecessaryTag);
 
     ScriptExecutionContext* scriptExecutionContext() const;
+    RefPtr<ScriptExecutionContext> protectedScriptExecutionContext() const;
 
     // https://tc39.es/ecma262/#sec-agent-clusters
     String agentClusterID() const;
@@ -89,6 +90,7 @@ public:
     DECLARE_VISIT_CHILDREN;
 
     DOMWrapperWorld& world() { return m_world.get(); }
+    Ref<DOMWrapperWorld> protectedWorld();
     bool worldIsNormal() const { return m_worldIsNormal; }
     static ptrdiff_t offsetOfWorldIsNormal() { return OBJECT_OFFSETOF(JSDOMGlobalObject, m_worldIsNormal); }
 

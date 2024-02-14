@@ -38,7 +38,7 @@ class Frame;
 class JSDOMGlobalObject;
 class JSWindowProxy;
 
-class WindowProxy : public RefCounted<WindowProxy> {
+class WindowProxy : public RefCounted<WindowProxy>, public CanMakeSingleThreadWeakPtr<WindowProxy> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     using ProxyMap = HashMap<RefPtr<DOMWrapperWorld>, JSC::Strong<JSWindowProxy>>;
@@ -51,6 +51,7 @@ public:
     WEBCORE_EXPORT ~WindowProxy();
 
     WEBCORE_EXPORT Frame* frame() const;
+    RefPtr<Frame> protectedFrame() const;
     void detachFromFrame();
     void replaceFrame(Frame&);
 

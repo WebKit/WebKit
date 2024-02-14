@@ -58,14 +58,14 @@ Ref<Microtask> createJSDOMMicrotask(VM& vm, JSObject* job)
 
 void JSDOMMicrotask::run(JSGlobalObject* globalObject)
 {
-    VM& vm = globalObject->vm();
+    Ref vm = globalObject->vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     JSObject* job = m_job.get();
 
 
     auto* lexicalGlobalObject = job->globalObject();
-    auto* context = jsCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext();
+    RefPtr context = jsCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext();
     if (!context || context->activeDOMObjectsAreSuspended() || context->activeDOMObjectsAreStopped())
         return;
 
@@ -84,7 +84,7 @@ void JSDOMMicrotask::run(JSGlobalObject* globalObject)
     }
 
     NakedPtr<JSC::Exception> returnedException = nullptr;
-    if (LIKELY(!vm.hasPendingTerminationException())) {
+    if (LIKELY(!vm->hasPendingTerminationException())) {
         JSExecState::profiledCall(lexicalGlobalObject, JSC::ProfilingReason::Microtask, job, callData, jsUndefined(), ArgList(), returnedException);
         if (returnedException)
             reportException(lexicalGlobalObject, returnedException);

@@ -43,18 +43,19 @@ static JSC_DECLARE_HOST_FUNCTION(callJSHTMLAllCollection);
 // https://html.spec.whatwg.org/multipage/common-dom-interfaces.html#HTMLAllCollection-call
 JSC_DEFINE_HOST_FUNCTION(callJSHTMLAllCollection, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    VM& vm = lexicalGlobalObject->vm();
+    Ref vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     auto* castedThis = jsCast<JSHTMLAllCollection*>(callFrame->jsCallee());
     ASSERT(castedThis);
-    auto& impl = castedThis->wrapped();
     if (callFrame->argument(0).isUndefined())
         return JSValue::encode(jsNull());
 
     AtomString nameOrIndex = callFrame->uncheckedArgument(0).toString(lexicalGlobalObject)->toAtomString(lexicalGlobalObject);
     RETURN_IF_EXCEPTION(scope, { });
-    RELEASE_AND_RETURN(scope, JSValue::encode(toJS<IDLNullable<IDLUnion<IDLInterface<HTMLCollection>, IDLInterface<Element>>>>(*lexicalGlobalObject, *castedThis->globalObject(), impl.namedOrIndexedItemOrItems(WTFMove(nameOrIndex)))));
+
+    Ref impl = castedThis->wrapped();
+    RELEASE_AND_RETURN(scope, JSValue::encode(toJS<IDLNullable<IDLUnion<IDLInterface<HTMLCollection>, IDLInterface<Element>>>>(*lexicalGlobalObject, *castedThis->globalObject(), impl->namedOrIndexedItemOrItems(WTFMove(nameOrIndex)))));
 }
 
 CallData JSHTMLAllCollection::getCallData(JSCell*)

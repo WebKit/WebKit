@@ -42,10 +42,9 @@ void DOMSetAdapter::clear()
 
 std::pair<bool, std::reference_wrapper<JSC::JSObject>> getBackingSet(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSObject& setLike)
 {
-    auto& vm = lexicalGlobalObject.vm();
+    Ref vm = lexicalGlobalObject.vm();
     auto backingSet = setLike.getDirect(vm, builtinNames(vm).backingSetPrivateName());
     if (!backingSet) {
-        auto& vm = lexicalGlobalObject.vm();
         backingSet = JSC::JSSet::create(vm, lexicalGlobalObject.setStructure());
         setLike.putDirect(vm, builtinNames(vm).backingSetPrivateName(), backingSet, enumToUnderlyingType(JSC::PropertyAttribute::DontEnum));
         return { true, *JSC::asObject(backingSet) };
@@ -55,8 +54,8 @@ std::pair<bool, std::reference_wrapper<JSC::JSObject>> getBackingSet(JSC::JSGlob
 
 void clearBackingSet(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSObject& backingSet)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
-    auto function = lexicalGlobalObject.jsSetPrototype()->getDirect(vm, vm.propertyNames->builtinNames().clearPrivateName());
+    Ref vm = JSC::getVM(&lexicalGlobalObject);
+    auto function = lexicalGlobalObject.jsSetPrototype()->getDirect(vm, vm->propertyNames->builtinNames().clearPrivateName());
     ASSERT(function);
 
     auto callData = JSC::getCallData(function);
@@ -67,8 +66,8 @@ void clearBackingSet(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSObject& ba
 
 void addToBackingSet(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSObject& backingSet, JSC::JSValue item)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
-    auto function = lexicalGlobalObject.jsSetPrototype()->getDirect(vm, vm.propertyNames->builtinNames().addPrivateName());
+    Ref vm = JSC::getVM(&lexicalGlobalObject);
+    auto function = lexicalGlobalObject.jsSetPrototype()->getDirect(vm, vm->propertyNames->builtinNames().addPrivateName());
     ASSERT(function);
 
     auto callData = JSC::getCallData(function);
@@ -86,7 +85,7 @@ JSC::JSValue forwardAttributeGetterToBackingSet(JSC::JSGlobalObject& lexicalGlob
 
 JSC::JSValue forwardFunctionCallToBackingSet(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, JSC::JSObject& backingSet, const JSC::Identifier& functionName)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    Ref vm = JSC::getVM(&lexicalGlobalObject);
     auto function = lexicalGlobalObject.jsSetPrototype()->getDirect(vm, functionName);
     ASSERT(function);
 

@@ -79,7 +79,7 @@ template<typename JSClass> inline void JSDOMBuiltinConstructor<JSClass>::finishC
 
 template<typename JSClass> inline JSC::Structure* JSDOMBuiltinConstructor<JSClass>::getDOMStructureForJSObject(JSC::JSGlobalObject* lexicalGlobalObject, JSC::JSObject* newTarget)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    Ref vm = JSC::getVM(lexicalGlobalObject);
 
     if (LIKELY(newTarget == this))
         return getDOMStructure<JSClass>(vm, *globalObject());

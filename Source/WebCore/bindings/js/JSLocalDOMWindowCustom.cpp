@@ -90,7 +90,7 @@ DEFINE_VISIT_ADDITIONAL_CHILDREN(JSLocalDOMWindow);
 #if ENABLE(USER_MESSAGE_HANDLERS)
 JSC_DEFINE_CUSTOM_GETTER(jsLocalDOMWindow_webkit, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    VM& vm = lexicalGlobalObject->vm();
+    Ref vm = lexicalGlobalObject->vm();
     auto* castedThis = toJSDOMGlobalObject<JSLocalDOMWindow>(vm, JSValue::decode(thisValue));
     if (!BindingSecurity::shouldAllowAccessToDOMWindow(lexicalGlobalObject, castedThis->wrapped()))
         return JSValue::encode(jsUndefined());
@@ -113,7 +113,7 @@ static ALWAYS_INLINE bool allowsLegacyExpandoIndexedProperties()
 template <DOMWindowType windowType>
 bool jsLocalDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMGlobalObject* thisObject, DOMWindow& window, JSGlobalObject& lexicalGlobalObject, PropertyName propertyName, PropertySlot& slot, const String& errorMessage)
 {
-    VM& vm = lexicalGlobalObject.vm();
+    Ref vm = lexicalGlobalObject.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     auto& builtinNames = WebCore::builtinNames(vm);
@@ -140,7 +140,7 @@ bool jsLocalDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMGlobalObject* thisO
         || propertyName == builtinNames.locationPublicName()
         || propertyName == builtinNames.closedPublicName()
         || propertyName == builtinNames.framesPublicName()
-        || propertyName == vm.propertyNames->length
+        || propertyName == vm->propertyNames->length
         || propertyName == builtinNames.topPublicName()
         || propertyName == builtinNames.openerPublicName()
         || propertyName == builtinNames.parentPublicName()) {
@@ -157,8 +157,8 @@ bool jsLocalDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMGlobalObject* thisO
     // the Moz way.
     // FIXME: Add support to named attributes on RemoteFrames.
     if (RefPtr frame = window.frame()) {
-        if (auto* scopedChild = dynamicDowncast<LocalFrame>(frame->tree().scopedChildBySpecifiedName(propertyNameToAtomString(propertyName)))) {
-            slot.setValue(thisObject, PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum, toJS(&lexicalGlobalObject, scopedChild->document()->domWindow()));
+        if (RefPtr scopedChild = dynamicDowncast<LocalFrame>(frame->tree().scopedChildBySpecifiedName(propertyNameToAtomString(propertyName)))) {
+            slot.setValue(thisObject, PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum, toJS(&lexicalGlobalObject, scopedChild->document()->protectedWindow().get()));
             return true;
         }
     }
@@ -200,12 +200,13 @@ bool JSLocalDOMWindow::getOwnPropertySlot(JSObject* object, JSGlobalObject* lexi
     ASSERT(lexicalGlobalObject->vm().currentThreadIsHoldingAPILock());
 
     // Hand off all cross-domain access to jsLocalDOMWindowGetOwnPropertySlotRestrictedAccess.
+    Ref wrapped = thisObject->wrapped();
     String errorMessage;
-    if (!BindingSecurity::shouldAllowAccessToDOMWindow(*lexicalGlobalObject, thisObject->wrapped(), errorMessage))
-        return jsLocalDOMWindowGetOwnPropertySlotRestrictedAccess<DOMWindowType::Local>(thisObject, thisObject->wrapped(), *lexicalGlobalObject, propertyName, slot, errorMessage);
+    if (!BindingSecurity::shouldAllowAccessToDOMWindow(*lexicalGlobalObject, wrapped, errorMessage))
+        return jsLocalDOMWindowGetOwnPropertySlotRestrictedAccess<DOMWindowType::Local>(thisObject, wrapped, *lexicalGlobalObject, propertyName, slot, errorMessage);
 
     if (UNLIKELY(!thisObject->m_windowCloseWatchpoints))
-        thisObject->m_windowCloseWatchpoints = WatchpointSet::create(thisObject->wrapped().frame() ? IsWatched : IsInvalidated);
+        thisObject->m_windowCloseWatchpoints = WatchpointSet::create(wrapped->frame() ? IsWatched : IsInvalidated);
     // We use m_windowCloseWatchpoints to clear any inline caches once the frame is cleared.
     // This is sound because LocalDOMWindow can be associated with at most one frame in its lifetime.
     if (thisObject->m_windowCloseWatchpoints->isStillValid())
@@ -218,7 +219,7 @@ bool JSLocalDOMWindow::getOwnPropertySlot(JSObject* object, JSGlobalObject* lexi
         return false;
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
-    if (propertyName == builtinNames(lexicalGlobalObject->vm()).webkitPublicName() && thisObject->wrapped().shouldHaveWebKitNamespaceForWorld(thisObject->world())) {
+    if (propertyName == builtinNames(lexicalGlobalObject->vm()).webkitPublicName() && wrapped->shouldHaveWebKitNamespaceForWorld(thisObject->protectedWorld())) {
         slot.setCacheableCustom(thisObject, JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly, jsLocalDOMWindow_webkit);
         return true;
     }
@@ -230,8 +231,8 @@ bool JSLocalDOMWindow::getOwnPropertySlot(JSObject* object, JSGlobalObject* lexi
 bool JSLocalDOMWindow::getOwnPropertySlotByIndex(JSObject* object, JSGlobalObject* lexicalGlobalObject, unsigned index, PropertySlot& slot)
 {
     auto* thisObject = jsCast<JSLocalDOMWindow*>(object);
-    auto& window = thisObject->wrapped();
-    auto* frame = window.frame();
+    Ref window = thisObject->wrapped();
+    RefPtr frame = window->frame();
 
     // Indexed getters take precendence over regular properties, so caching would be invalid.
     slot.disableCaching();
@@ -241,8 +242,8 @@ bool JSLocalDOMWindow::getOwnPropertySlotByIndex(JSObject* object, JSGlobalObjec
     if (frame && index < frame->tree().scopedChildCount()) {
         // FIXME: <rdar://118263337> LocalDOMWindow::length needs to include RemoteFrames.
         // This should also work if it's a RemoteFrame, it should just return a RemoteDOMWindow.
-        if (auto* scopedChild = dynamicDowncast<LocalFrame>(frame->tree().scopedChild(index))) {
-            slot.setValue(thisObject, enumToUnderlyingType(JSC::PropertyAttribute::ReadOnly), toJS(lexicalGlobalObject, scopedChild->document()->domWindow()));
+        if (RefPtr scopedChild = dynamicDowncast<LocalFrame>(frame->tree().scopedChild(index))) {
+            slot.setValue(thisObject, enumToUnderlyingType(JSC::PropertyAttribute::ReadOnly), toJS(lexicalGlobalObject, scopedChild->document()->protectedWindow().get()));
             return true;
         }
     }
@@ -256,13 +257,13 @@ bool JSLocalDOMWindow::getOwnPropertySlotByIndex(JSObject* object, JSGlobalObjec
 
 bool JSLocalDOMWindow::put(JSCell* cell, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
-    VM& vm = lexicalGlobalObject->vm();
+    Ref vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     auto* thisObject = jsCast<JSLocalDOMWindow*>(cell);
 
     String errorMessage;
-    if (!BindingSecurity::shouldAllowAccessToDOMWindow(*lexicalGlobalObject, thisObject->wrapped(), errorMessage)) {
+    if (!BindingSecurity::shouldAllowAccessToDOMWindow(*lexicalGlobalObject, thisObject->protectedWrapped(), errorMessage)) {
         // We only allow setting "location" attribute cross-origin.
         if (propertyName == builtinNames(vm).locationPublicName()) {
             auto setter = s_info.staticPropHashTable->entry(propertyName)->propertyPutter();
@@ -281,18 +282,18 @@ bool JSLocalDOMWindow::put(JSCell* cell, JSGlobalObject* lexicalGlobalObject, Pr
 
 bool JSLocalDOMWindow::putByIndex(JSCell* cell, JSGlobalObject* lexicalGlobalObject, unsigned index, JSValue value, bool shouldThrow)
 {
-    VM& vm = lexicalGlobalObject->vm();
+    Ref vm = lexicalGlobalObject->vm();
     auto* thisObject = jsCast<JSLocalDOMWindow*>(cell);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     String errorMessage;
-    if (!BindingSecurity::shouldAllowAccessToDOMWindow(*lexicalGlobalObject, thisObject->wrapped(), errorMessage)) {
+    if (!BindingSecurity::shouldAllowAccessToDOMWindow(*lexicalGlobalObject, thisObject->protectedWrapped(), errorMessage)) {
         throwSecurityError(*lexicalGlobalObject, scope, errorMessage);
         return false;
     }
     
     if (allowsLegacyExpandoIndexedProperties()) {
-        if (auto* document = thisObject->wrapped().document())
+        if (RefPtr document = thisObject->wrapped().document())
             document->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "Adding expando indexed properties to 'window' was a non-standard behavior that is now removed."_s);
         RELEASE_AND_RETURN(scope, Base::putByIndex(thisObject, lexicalGlobalObject, index, value, shouldThrow));
     }
@@ -303,7 +304,7 @@ bool JSLocalDOMWindow::deleteProperty(JSCell* cell, JSGlobalObject* lexicalGloba
 {
     auto* thisObject = jsCast<JSLocalDOMWindow*>(cell);
     // Only allow deleting properties by frames in the same origin.
-    if (!BindingSecurity::shouldAllowAccessToDOMWindow(lexicalGlobalObject, thisObject->wrapped(), ThrowSecurityError))
+    if (!BindingSecurity::shouldAllowAccessToDOMWindow(lexicalGlobalObject, thisObject->protectedWrapped(), ThrowSecurityError))
         return false;
     if (std::optional<uint32_t> index = parseIndex(propertyName)) {
         if (!allowsLegacyExpandoIndexedProperties())
@@ -316,7 +317,7 @@ bool JSLocalDOMWindow::deletePropertyByIndex(JSCell* cell, JSGlobalObject* lexic
 {
     auto* thisObject = jsCast<JSLocalDOMWindow*>(cell);
     // Only allow deleting properties by frames in the same origin.
-    if (!BindingSecurity::shouldAllowAccessToDOMWindow(lexicalGlobalObject, thisObject->wrapped(), ThrowSecurityError))
+    if (!BindingSecurity::shouldAllowAccessToDOMWindow(lexicalGlobalObject, thisObject->protectedWrapped(), ThrowSecurityError))
         return false;
     if (isIndex(propertyName) && !allowsLegacyExpandoIndexedProperties())
         return propertyName >= thisObject->wrapped().length();
@@ -364,11 +365,11 @@ static void addCrossOriginPropertyNames(VM& vm, PropertyNameArray& propertyNames
 template <CrossOriginObject objectType>
 void addCrossOriginOwnPropertyNames(JSC::JSGlobalObject& lexicalGlobalObject, JSC::PropertyNameArray& propertyNames)
 {
-    auto& vm = lexicalGlobalObject.vm();
+    Ref vm = lexicalGlobalObject.vm();
     addCrossOriginPropertyNames<objectType>(vm, propertyNames);
 
     static const Identifier* const properties[] = {
-        &vm.propertyNames->builtinNames().thenPublicName(), &vm.propertyNames->toStringTagSymbol, &vm.propertyNames->hasInstanceSymbol, &vm.propertyNames->isConcatSpreadableSymbol
+        &vm->propertyNames->builtinNames().thenPublicName(), &vm->propertyNames->toStringTagSymbol, &vm->propertyNames->hasInstanceSymbol, &vm->propertyNames->isConcatSpreadableSymbol
     };
 
     for (auto* property : properties)
@@ -380,15 +381,15 @@ template void addCrossOriginOwnPropertyNames<CrossOriginObject::Location>(JSC::J
 
 static void addScopedChildrenIndexes(JSGlobalObject& lexicalGlobalObject, LocalDOMWindow& window, PropertyNameArray& propertyNames)
 {
-    auto* document = window.document();
+    RefPtr document = window.document();
     if (!document)
         return;
 
-    auto* frame = document->frame();
+    RefPtr frame = document->frame();
     if (!frame)
         return;
 
-    VM& vm = lexicalGlobalObject.vm();
+    Ref vm = lexicalGlobalObject.vm();
     unsigned scopedChildCount = frame->tree().scopedChildCount();
     for (unsigned i = 0; i < scopedChildCount; ++i)
         propertyNames.add(Identifier::from(vm, i));
@@ -399,7 +400,7 @@ void JSLocalDOMWindow::getOwnPropertyNames(JSObject* object, JSGlobalObject* lex
 {
     auto* thisObject = jsCast<JSLocalDOMWindow*>(object);
 
-    addScopedChildrenIndexes(*lexicalGlobalObject, thisObject->wrapped(), propertyNames);
+    addScopedChildrenIndexes(*lexicalGlobalObject, thisObject->protectedWrapped(), propertyNames);
 
     if (!BindingSecurity::shouldAllowAccessToDOMWindow(lexicalGlobalObject, thisObject->wrapped(), DoNotReportSecurityError)) {
         if (mode == DontEnumPropertiesMode::Include)
@@ -411,12 +412,12 @@ void JSLocalDOMWindow::getOwnPropertyNames(JSObject* object, JSGlobalObject* lex
 
 bool JSLocalDOMWindow::defineOwnProperty(JSC::JSObject* object, JSC::JSGlobalObject* lexicalGlobalObject, JSC::PropertyName propertyName, const JSC::PropertyDescriptor& descriptor, bool shouldThrow)
 {
-    VM& vm = lexicalGlobalObject->vm();
+    Ref vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     auto* thisObject = jsCast<JSLocalDOMWindow*>(object);
     // Only allow defining properties in this way by frames in the same origin, as it allows setters to be introduced.
-    if (!BindingSecurity::shouldAllowAccessToDOMWindow(lexicalGlobalObject, thisObject->wrapped(), ThrowSecurityError))
+    if (!BindingSecurity::shouldAllowAccessToDOMWindow(lexicalGlobalObject, thisObject->protectedWrapped(), ThrowSecurityError))
         return false;
     if (parseIndex(propertyName) && !allowsLegacyExpandoIndexedProperties())
         return typeError(lexicalGlobalObject, scope, shouldThrow, makeUnsupportedIndexedSetterErrorMessage("Window"));
@@ -432,7 +433,7 @@ bool JSLocalDOMWindow::defineOwnProperty(JSC::JSObject* object, JSC::JSGlobalObj
 JSValue JSLocalDOMWindow::getPrototype(JSObject* object, JSGlobalObject* lexicalGlobalObject)
 {
     auto* thisObject = jsCast<JSLocalDOMWindow*>(object);
-    if (!BindingSecurity::shouldAllowAccessToDOMWindow(lexicalGlobalObject, thisObject->wrapped(), DoNotReportSecurityError))
+    if (!BindingSecurity::shouldAllowAccessToDOMWindow(lexicalGlobalObject, thisObject->protectedWrapped(), DoNotReportSecurityError))
         return jsNull();
 
     return Base::getPrototype(object, lexicalGlobalObject);
@@ -474,7 +475,7 @@ private:
 
 inline void DialogHandler::dialogCreated(LocalDOMWindow& dialog)
 {
-    VM& vm = m_globalObject.vm();
+    Ref vm = m_globalObject.vm();
     m_frame = dialog.frame();
     
     // FIXME: This looks like a leak between the normal world and an isolated
@@ -486,7 +487,7 @@ inline void DialogHandler::dialogCreated(LocalDOMWindow& dialog)
 
 inline JSValue DialogHandler::returnValue() const
 {
-    VM& vm = m_globalObject.vm();
+    Ref vm = m_globalObject.vm();
     auto* globalObject = toJSLocalDOMWindow(m_frame.get(), normalWorld(vm));
     if (!globalObject)
         return jsUndefined();
@@ -501,17 +502,17 @@ static JSC_DECLARE_HOST_FUNCTION(showModalDialog);
 
 JSC_DEFINE_CUSTOM_GETTER(showModalDialogGetter, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName propertyName))
 {
-    VM& vm = lexicalGlobalObject->vm();
+    Ref vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     auto* thisObject = castThisValue<JSLocalDOMWindow>(*lexicalGlobalObject, JSValue::decode(thisValue));
     if (UNLIKELY(!thisObject))
         return throwVMDOMAttributeGetterTypeError(lexicalGlobalObject, scope, JSLocalDOMWindow::info(), propertyName);
 
-    if (auto* document = thisObject->wrapped().document())
+    if (RefPtr document = thisObject->wrapped().document())
         document->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "Window 'showModalDialog' function is deprecated and will be removed soon."_s);
 
-    if (auto* frame = thisObject->wrapped().frame()) {
+    if (RefPtr frame = thisObject->wrapped().frame()) {
         if (frame->settings().showModalDialogEnabled() && LocalDOMWindow::canShowModalDialog(*frame)) {
             auto* jsFunction = JSFunction::create(vm, lexicalGlobalObject, 1, "showModalDialog"_s, showModalDialog, ImplementationVisibility::Public);
             thisObject->putDirect(vm, propertyName, jsFunction);
@@ -527,14 +528,14 @@ JSC_DEFINE_HOST_FUNCTION(showModalDialog, (JSGlobalObject* lexicalGlobalObjectPt
     auto& lexicalGlobalObject = *lexicalGlobalObjectPtr;
     auto& callFrame = *callFramePtr;
 
-    VM& vm = lexicalGlobalObject.vm();
+    Ref vm = lexicalGlobalObject.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     auto* thisObject = IDLOperation<JSLocalDOMWindow>::cast(lexicalGlobalObject, callFrame);
     if (UNLIKELY(!thisObject))
         return throwThisTypeError(lexicalGlobalObject, scope, "Window"_s, "showModalDialog"_s);
 
-    bool shouldAllowAccess = BindingSecurity::shouldAllowAccessToDOMWindow(lexicalGlobalObjectPtr, thisObject->wrapped(), ThrowSecurityError);
+    bool shouldAllowAccess = BindingSecurity::shouldAllowAccessToDOMWindow(lexicalGlobalObjectPtr, thisObject->protectedWrapped(), ThrowSecurityError);
     EXCEPTION_ASSERT_UNUSED(scope, !scope.exception() || !shouldAllowAccess);
     if (!shouldAllowAccess)
         return JSValue::encode(jsUndefined());
@@ -549,7 +550,7 @@ JSC_DEFINE_HOST_FUNCTION(showModalDialog, (JSGlobalObject* lexicalGlobalObjectPt
 
     DialogHandler handler(lexicalGlobalObject, callFrame);
 
-    thisObject->wrapped().showModalDialog(urlString, dialogFeaturesString, activeDOMWindow(lexicalGlobalObject), firstDOMWindow(lexicalGlobalObject), [&handler](LocalDOMWindow& dialog) {
+    thisObject->protectedWrapped()->showModalDialog(urlString, dialogFeaturesString, Ref { activeDOMWindow(lexicalGlobalObject) }, Ref { firstDOMWindow(lexicalGlobalObject) }, [&handler](LocalDOMWindow& dialog) {
         handler.dialogCreated(dialog);
     });
 
@@ -558,7 +559,7 @@ JSC_DEFINE_HOST_FUNCTION(showModalDialog, (JSGlobalObject* lexicalGlobalObjectPt
 
 JSValue JSLocalDOMWindow::queueMicrotask(JSGlobalObject& lexicalGlobalObject, CallFrame& callFrame)
 {
-    VM& vm = lexicalGlobalObject.vm();
+    Ref vm = lexicalGlobalObject.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (UNLIKELY(callFrame.argumentCount() < 1))
@@ -589,11 +590,11 @@ LocalDOMWindow* JSLocalDOMWindow::toWrapped(VM&, JSValue value)
 
 void JSLocalDOMWindow::setOpener(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
 {
-    if (!BindingSecurity::shouldAllowAccessToDOMWindow(&lexicalGlobalObject, wrapped(), ThrowSecurityError))
+    if (!BindingSecurity::shouldAllowAccessToDOMWindow(&lexicalGlobalObject, protectedWrapped(), ThrowSecurityError))
         return;
 
     if (value.isNull()) {
-        wrapped().disownOpener();
+        protectedWrapped()->disownOpener();
         return;
     }
 
@@ -618,10 +619,10 @@ JSValue JSLocalDOMWindow::frames(JSC::JSGlobalObject&) const
 
 static inline JSC::EncodedJSValue jsLocalDOMWindowInstanceFunction_openDatabaseBody(JSC::JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame, typename IDLOperation<JSLocalDOMWindow>::ClassParameter castedThis)
 {
-    auto& vm = lexicalGlobalObject->vm();
+    Ref vm = lexicalGlobalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    if (!BindingSecurity::shouldAllowAccessToDOMWindow(lexicalGlobalObject, castedThis->wrapped(), ThrowSecurityError))
+    if (!BindingSecurity::shouldAllowAccessToDOMWindow(lexicalGlobalObject, castedThis->protectedWrapped(), ThrowSecurityError))
         return JSValue::encode(jsUndefined());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(callFrame->argumentCount() < 4))
@@ -655,7 +656,7 @@ JSC_DEFINE_HOST_FUNCTION(jsLocalDOMWindowInstanceFunction_openDatabase, (JSGloba
 
 JSValue JSLocalDOMWindow::openDatabase(JSC::JSGlobalObject& lexicalGlobalObject) const
 {
-    VM& vm = lexicalGlobalObject.vm();
+    Ref vm = lexicalGlobalObject.vm();
     StringImpl* name = PropertyName(builtinNames(vm).openDatabasePublicName()).publicName();
     if (DeprecatedGlobalSettings::webSQLEnabled())
         return JSFunction::create(vm, &lexicalGlobalObject, 4, name, jsLocalDOMWindowInstanceFunction_openDatabase, ImplementationVisibility::Public);
@@ -665,7 +666,7 @@ JSValue JSLocalDOMWindow::openDatabase(JSC::JSGlobalObject& lexicalGlobalObject)
 
 void JSLocalDOMWindow::setOpenDatabase(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
 {
-    if (!BindingSecurity::shouldAllowAccessToDOMWindow(&lexicalGlobalObject, wrapped(), ThrowSecurityError))
+    if (!BindingSecurity::shouldAllowAccessToDOMWindow(&lexicalGlobalObject, protectedWrapped(), ThrowSecurityError))
         return;
 
     bool shouldThrow = true;

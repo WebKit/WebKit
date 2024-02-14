@@ -49,7 +49,7 @@ DOMWrapperWorld::~DOMWrapperWorld()
 
     // These items are created lazily.
     while (!m_jsWindowProxies.isEmpty())
-        (*m_jsWindowProxies.begin())->destroyJSWindowProxy(*this);
+        Ref { (*m_jsWindowProxies.begin()).get() }->destroyJSWindowProxy(*this);
 }
 
 void DOMWrapperWorld::clearWrappers()
@@ -58,7 +58,17 @@ void DOMWrapperWorld::clearWrappers()
 
     // These items are created lazily.
     while (!m_jsWindowProxies.isEmpty())
-        (*m_jsWindowProxies.begin())->destroyJSWindowProxy(*this);
+        Ref { (*m_jsWindowProxies.begin()).get() }->destroyJSWindowProxy(*this);
+}
+
+void DOMWrapperWorld::didCreateWindowProxy(WindowProxy& controller)
+{
+    m_jsWindowProxies.add(controller);
+}
+
+void DOMWrapperWorld::didDestroyWindowProxy(WindowProxy& controller)
+{
+    m_jsWindowProxies.remove(controller);
 }
 
 DOMWrapperWorld& normalWorld(JSC::VM& vm)

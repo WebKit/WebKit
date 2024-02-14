@@ -109,8 +109,8 @@ void ScriptController::updatePlatformScriptObjects()
 
 void ScriptController::disconnectPlatformScriptObjects()
 {
-    if (m_windowScriptObject)
-        disconnectWindowWrapper(m_windowScriptObject.get());
+    if (RetainPtr windowScriptObject = m_windowScriptObject)
+        disconnectWindowWrapper(windowScriptObject.get());
 }
 
 }

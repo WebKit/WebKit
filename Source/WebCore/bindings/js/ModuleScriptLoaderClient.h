@@ -25,12 +25,14 @@
 
 #pragma once
 
+#include <wtf/WeakPtr.h>
+
 namespace WebCore {
 
 class ModuleScriptLoader;
 class DeferredPromise;
 
-class ModuleScriptLoaderClient {
+class ModuleScriptLoaderClient : public CanMakeWeakPtr<ModuleScriptLoaderClient> {
 public:
     virtual ~ModuleScriptLoaderClient() = default;
 

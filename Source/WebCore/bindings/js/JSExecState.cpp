@@ -35,10 +35,10 @@ namespace WebCore {
 
 void JSExecState::didLeaveScriptContext(JSC::JSGlobalObject* lexicalGlobalObject)
 {
-    auto context = executionContext(lexicalGlobalObject);
+    RefPtr context = executionContext(lexicalGlobalObject);
     if (!context)
         return;
-    context->eventLoop().performMicrotaskCheckpoint();
+    context->checkedEventLoop()->performMicrotaskCheckpoint();
 }
 
 JSC::JSValue functionCallHandlerFromAnyThread(JSC::JSGlobalObject* lexicalGlobalObject, JSC::JSValue functionObject, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args, NakedPtr<JSC::Exception>& returnedException)

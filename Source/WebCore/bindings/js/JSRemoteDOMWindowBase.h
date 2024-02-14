@@ -43,6 +43,7 @@ public:
     static void subspaceFor(JSC::VM&) { RELEASE_ASSERT_NOT_REACHED(); }
 
     RemoteDOMWindow& wrapped() const { return *m_wrapped; }
+    Ref<RemoteDOMWindow> protectedWrapped() const;
 
     DECLARE_INFO;
 

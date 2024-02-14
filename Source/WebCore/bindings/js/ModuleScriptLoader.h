@@ -49,14 +49,14 @@ public:
 
 protected:
     ModuleScriptLoader(ModuleScriptLoaderClient& client, DeferredPromise& promise, JSC::ScriptFetcher& scriptFetcher, RefPtr<JSC::ScriptFetchParameters>&& parameters)
-        : m_client(&client)
+        : m_client(client)
         , m_promise(&promise)
         , m_scriptFetcher(scriptFetcher)
         , m_parameters(WTFMove(parameters))
     {
     }
 
-    ModuleScriptLoaderClient* m_client;
+    WeakPtr<ModuleScriptLoaderClient> m_client;
     RefPtr<DeferredPromise> m_promise;
     Ref<JSC::ScriptFetcher> m_scriptFetcher;
     RefPtr<JSC::ScriptFetchParameters> m_parameters;

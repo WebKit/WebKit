@@ -42,7 +42,7 @@ using namespace JSC;
 
 static JSObject* getCustomElementCallback(JSGlobalObject& lexicalGlobalObject, JSObject& prototype, const Identifier& id)
 {
-    VM& vm = lexicalGlobalObject.vm();
+    Ref vm = lexicalGlobalObject.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue callback = prototype.get(&lexicalGlobalObject, id);
@@ -58,7 +58,8 @@ static JSObject* getCustomElementCallback(JSGlobalObject& lexicalGlobalObject, J
 
 static bool validateCustomElementNameAndThrowIfNeeded(JSGlobalObject& lexicalGlobalObject, const AtomString& name)
 {
-    auto scope = DECLARE_THROW_SCOPE(lexicalGlobalObject.vm());
+    Ref vm = lexicalGlobalObject.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     switch (Document::validateCustomElementName(name)) {
     case CustomElementNameValidationStatus::Valid:
         return true;
@@ -85,7 +86,7 @@ static bool validateCustomElementNameAndThrowIfNeeded(JSGlobalObject& lexicalGlo
 // https://html.spec.whatwg.org/#dom-customelementregistry-define
 JSValue JSCustomElementRegistry::define(JSGlobalObject& lexicalGlobalObject, CallFrame& callFrame)
 {
-    VM& vm = lexicalGlobalObject.vm();
+    Ref vm = lexicalGlobalObject.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (UNLIKELY(callFrame.argumentCount() < 2))
@@ -102,32 +103,32 @@ JSValue JSCustomElementRegistry::define(JSGlobalObject& lexicalGlobalObject, Cal
     if (!validateCustomElementNameAndThrowIfNeeded(lexicalGlobalObject, localName))
         return jsUndefined();
 
-    CustomElementRegistry& registry = wrapped();
+    Ref registry = wrapped();
 
-    if (registry.elementDefinitionIsRunning()) {
+    if (registry->elementDefinitionIsRunning()) {
         throwNotSupportedError(lexicalGlobalObject, scope, "Cannot define a custom element while defining another custom element"_s);
         return jsUndefined();
     }
-    SetForScope change(registry.elementDefinitionIsRunning(), true);
+    SetForScope change(registry->elementDefinitionIsRunning(), true);
 
-    if (registry.findInterface(localName)) {
+    if (registry->findInterface(localName)) {
         throwNotSupportedError(lexicalGlobalObject, scope, "Cannot define multiple custom elements with the same tag name"_s);
         return jsUndefined();
     }
 
-    if (registry.containsConstructor(constructor)) {
+    if (registry->containsConstructor(constructor)) {
         throwNotSupportedError(lexicalGlobalObject, scope, "Cannot define multiple custom elements with the same class"_s);
         return jsUndefined();
     }
 
-    JSValue prototypeValue = constructor->get(&lexicalGlobalObject, vm.propertyNames->prototype);
+    JSValue prototypeValue = constructor->get(&lexicalGlobalObject, vm->propertyNames->prototype);
     RETURN_IF_EXCEPTION(scope, JSValue());
     if (!prototypeValue.isObject())
         return throwTypeError(&lexicalGlobalObject, scope, "Custom element constructor's prototype must be an object"_s);
     JSObject& prototypeObject = *asObject(prototypeValue);
 
     QualifiedName name(nullAtom(), localName, HTMLNames::xhtmlNamespaceURI);
-    auto elementInterface = JSCustomElementInterface::create(name, constructor, globalObject());
+    Ref elementInterface = JSCustomElementInterface::create(name, constructor, globalObject());
 
     auto* connectedCallback = getCustomElementCallback(lexicalGlobalObject, prototypeObject, Identifier::fromString(vm, "connectedCallback"_s));
     if (connectedCallback)
@@ -168,7 +169,7 @@ JSValue JSCustomElementRegistry::define(JSGlobalObject& lexicalGlobalObject, Cal
             elementInterface->disableShadow();
     }
 
-    if (registry.document() && registry.document()->settings().formAssociatedCustomElementsEnabled()) {
+    if (registry->document() && registry->document()->settings().formAssociatedCustomElementsEnabled()) {
         auto formAssociatedValue = constructor->get(&lexicalGlobalObject, Identifier::fromString(vm, "formAssociated"_s));
         RETURN_IF_EXCEPTION(scope, { });
         if (formAssociatedValue.toBoolean(&lexicalGlobalObject)) {
@@ -196,7 +197,7 @@ JSValue JSCustomElementRegistry::define(JSGlobalObject& lexicalGlobalObject, Cal
         }
     }
 
-    if (auto promise = registry.addElementDefinition(WTFMove(elementInterface)))
+    if (auto promise = registry->addElementDefinition(WTFMove(elementInterface)))
         promise->resolveWithJSValue(constructor);
 
     return jsUndefined();
@@ -205,7 +206,8 @@ JSValue JSCustomElementRegistry::define(JSGlobalObject& lexicalGlobalObject, Cal
 // https://html.spec.whatwg.org/#dom-customelementregistry-whendefined
 static JSValue whenDefinedPromise(JSGlobalObject& lexicalGlobalObject, CallFrame& callFrame, JSDOMGlobalObject& globalObject, CustomElementRegistry& registry, JSPromise& promise)
 {
-    auto scope = DECLARE_THROW_SCOPE(lexicalGlobalObject.vm());
+    Ref vm = lexicalGlobalObject.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (UNLIKELY(callFrame.argumentCount() < 1))
         return throwException(&lexicalGlobalObject, scope, createNotEnoughArgumentsError(&lexicalGlobalObject));
@@ -232,11 +234,12 @@ static JSValue whenDefinedPromise(JSGlobalObject& lexicalGlobalObject, CallFrame
 
 JSValue JSCustomElementRegistry::whenDefined(JSGlobalObject& lexicalGlobalObject, CallFrame& callFrame)
 {
-    auto catchScope = DECLARE_CATCH_SCOPE(lexicalGlobalObject.vm());
+    Ref vm = lexicalGlobalObject.vm();
+    auto catchScope = DECLARE_CATCH_SCOPE(vm);
 
     ASSERT(globalObject());
-    auto* result = JSPromise::create(lexicalGlobalObject.vm(), lexicalGlobalObject.promiseStructure());
-    JSValue promise = whenDefinedPromise(lexicalGlobalObject, callFrame, *globalObject(), wrapped(), *result);
+    auto* result = JSPromise::create(vm, lexicalGlobalObject.promiseStructure());
+    JSValue promise = whenDefinedPromise(lexicalGlobalObject, callFrame, *globalObject(), protectedWrapped(), *result);
 
     if (UNLIKELY(catchScope.exception())) {
         rejectPromiseWithExceptionIfAny(lexicalGlobalObject, *globalObject(), *result, catchScope);

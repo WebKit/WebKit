@@ -1781,7 +1781,7 @@ JS_EXPORT_PRIVATE NEVER_INLINE bool ordinarySetWithOwnDescriptor(JSGlobalObject*
         vm, globalObject, makeIdentifier(vm, (jsName)), (generatorName)(vm), (attributes))
 
 #define JSC_TO_STRING_TAG_WITHOUT_TRANSITION() \
-    putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, \
+    putDirectWithoutTransition(vm, WTF::getPtr(vm)->propertyNames->toStringTagSymbol, \
         jsNontrivialString(vm, info()->className), JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::ReadOnly)
 
 // Helper for defining native getters on properties.

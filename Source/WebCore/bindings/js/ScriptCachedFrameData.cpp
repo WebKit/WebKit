@@ -57,7 +57,7 @@ ScriptCachedFrameData::ScriptCachedFrameData(LocalFrame& frame)
         window->setConsoleClient(nullptr);
     }
 
-    frame.windowProxy().attachDebugger(nullptr);
+    frame.protectedWindowProxy()->attachDebugger(nullptr);
 }
 
 ScriptCachedFrameData::~ScriptCachedFrameData()
@@ -69,17 +69,17 @@ void ScriptCachedFrameData::restore(LocalFrame& frame)
 {
     JSLockHolder lock(commonVM());
 
-    Page* page = frame.page();
+    RefPtr page = frame.page();
 
-    for (auto windowProxy : frame.windowProxy().jsWindowProxiesAsVector()) {
-        auto* world = &windowProxy->world();
+    for (auto& windowProxy : frame.windowProxy().jsWindowProxiesAsVector()) {
+        Ref world = windowProxy->world();
 
-        if (auto* window = m_windows.get(world).get())
-            windowProxy->setWindow(window->vm(), *window);
+        if (auto* window = m_windows.get(world.ptr()).get())
+            windowProxy->setWindow(Ref { window->vm() }, *window);
         else {
             ASSERT(frame.document()->domWindow());
-            auto& domWindow = *frame.document()->domWindow();
-            if (&windowProxy->wrapped() == &domWindow)
+            Ref domWindow = *frame.document()->domWindow();
+            if (&windowProxy->wrapped() == domWindow.ptr())
                 continue;
 
             windowProxy->setWindow(domWindow);

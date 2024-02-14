@@ -125,7 +125,7 @@ struct BufferSourceConverter {
     template<typename ExceptionThrower = DefaultExceptionThrower>
     static ReturnType convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
     {
-        auto& vm = JSC::getVM(&lexicalGlobalObject);
+        Ref vm = JSC::getVM(&lexicalGlobalObject);
         auto scope = DECLARE_THROW_SCOPE(vm);
         ReturnType object { };
         if constexpr (mode == BufferSourceConverterAllowSharedMode::Allow)

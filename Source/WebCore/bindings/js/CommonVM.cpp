@@ -59,12 +59,12 @@ JSC::VM& commonVMSlow()
     ScriptController::initializeMainThread();
 
 #if PLATFORM(IOS_FAMILY)
-    RunLoop* runLoop = RunLoop::webIfExists();
+    RefPtr runLoop = RunLoop::webIfExists();
 #else
-    RunLoop* runLoop = nullptr;
+    RefPtr<RunLoop> runLoop;
 #endif
 
-    auto& vm = JSC::VM::create(JSC::HeapType::Large, runLoop).leakRef();
+    auto& vm = JSC::VM::create(JSC::HeapType::Large, runLoop.get()).leakRef();
 #if !PLATFORM(IOS_FAMILY)
     vm.heap.setFullActivityCallback(OpportunisticTaskScheduler::FullGCActivityCallback::create(vm.heap));
     vm.heap.setEdenActivityCallback(OpportunisticTaskScheduler::EdenGCActivityCallback::create(vm.heap));
@@ -101,7 +101,12 @@ LocalFrame* lexicalFrameFromCommonVM()
 
 void addImpureProperty(const AtomString& propertyName)
 {
-    commonVM().addImpureProperty(propertyName.impl());
+    protectedCommonVM()->addImpureProperty(propertyName.impl());
+}
+
+Ref<JSC::VM> protectedCommonVM()
+{
+    return commonVM();
 }
 
 } // namespace WebCore

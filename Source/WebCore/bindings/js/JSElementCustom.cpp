@@ -68,7 +68,7 @@ static JSValue createNewElementWrapper(JSDOMGlobalObject* globalObject, Ref<Elem
 
 JSValue toJS(JSGlobalObject*, JSDOMGlobalObject* globalObject, Element& element)
 {
-    if (auto* wrapper = getCachedWrapper(globalObject->world(), element))
+    if (auto* wrapper = getCachedWrapper(globalObject->protectedWorld(), element))
         return wrapper;
     return createNewElementWrapper(globalObject, element);
 }
@@ -76,18 +76,18 @@ JSValue toJS(JSGlobalObject*, JSDOMGlobalObject* globalObject, Element& element)
 JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<Element>&& element)
 {
     if (element->isDefinedCustomElement()) {
-        JSValue result = getCachedWrapper(globalObject->world(), element);
+        JSValue result = getCachedWrapper(globalObject->protectedWorld(), element);
         if (result)
             return result;
         ASSERT(!globalObject->vm().exceptionForInspection());
     }
-    ASSERT(!getCachedWrapper(globalObject->world(), element));
+    ASSERT(!getCachedWrapper(globalObject->protectedWorld(), element));
     return createNewElementWrapper(globalObject, WTFMove(element));
 }
 
 static JSValue getElementsArrayAttribute(JSGlobalObject& lexicalGlobalObject, const JSElement& thisObject, const QualifiedName& attributeName)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    Ref vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     JSObject* cachedObject = nullptr;

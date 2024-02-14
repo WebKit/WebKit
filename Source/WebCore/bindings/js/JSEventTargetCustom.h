@@ -38,7 +38,7 @@ public:
     JSEventTargetWrapper() = default;
 
     JSEventTargetWrapper(EventTarget& wrapped, JSC::JSObject& wrapper)
-        : m_wrapped(&wrapped)
+        : m_wrapped(wrapped)
         , m_wrapper(&wrapper)
     { }
 
@@ -48,7 +48,7 @@ public:
     operator JSC::JSObject&() { ASSERT(m_wrapper); return *m_wrapper; }
 
 private:
-    EventTarget* m_wrapped { nullptr };
+    WeakPtr<EventTarget, WeakPtrImplWithEventTargetData> m_wrapped;
     JSC::JSObject* m_wrapper { nullptr };
 };
 
@@ -62,7 +62,7 @@ public:
     template<Operation operation, CastedThisErrorBehavior = CastedThisErrorBehavior::Throw>
     static JSC::EncodedJSValue call(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, const char* operationName)
     {
-        auto& vm = JSC::getVM(&lexicalGlobalObject);
+        Ref vm = JSC::getVM(&lexicalGlobalObject);
         auto throwScope = DECLARE_THROW_SCOPE(vm);
 
         auto thisValue = callFrame.thisValue().toThis(&lexicalGlobalObject, JSC::ECMAMode::strict());
@@ -70,8 +70,7 @@ public:
         if (UNLIKELY(thisObject.isNull()))
             return throwThisTypeError(lexicalGlobalObject, throwScope, "EventTarget", operationName);
 
-        auto& wrapped = thisObject.wrapped();
-        if (auto window = dynamicDowncast<LocalDOMWindow>(wrapped)) {
+        if (RefPtr window = dynamicDowncast<LocalDOMWindow>(thisObject.wrapped())) {
             if (!window->frame() || !BindingSecurity::shouldAllowAccessToDOMWindow(&lexicalGlobalObject, *window, ThrowSecurityError))
                 return JSC::JSValue::encode(JSC::jsUndefined());
         }

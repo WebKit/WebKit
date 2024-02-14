@@ -86,7 +86,7 @@ JSC::JSObject& getAndInitializeBackingSet(JSC::JSGlobalObject& lexicalGlobalObje
     auto pair = getBackingSet(lexicalGlobalObject, setLike);
     if (pair.first) {
         DOMSetAdapter adapter { lexicalGlobalObject, pair.second.get() };
-        setLike.wrapped().initializeSetLike(adapter);
+        setLike.protectedWrapped()->initializeSetLike(adapter);
     }
     return pair.second.get();
 }
@@ -94,29 +94,29 @@ JSC::JSObject& getAndInitializeBackingSet(JSC::JSGlobalObject& lexicalGlobalObje
 template<typename WrapperClass>
 JSC::JSValue forwardSizeToSetLike(JSC::JSGlobalObject& lexicalGlobalObject, WrapperClass& setLike)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
-    return forwardAttributeGetterToBackingSet(lexicalGlobalObject, getAndInitializeBackingSet(lexicalGlobalObject, setLike), vm.propertyNames->builtinNames().sizePrivateName());
+    Ref vm = JSC::getVM(&lexicalGlobalObject);
+    return forwardAttributeGetterToBackingSet(lexicalGlobalObject, getAndInitializeBackingSet(lexicalGlobalObject, setLike), vm->propertyNames->builtinNames().sizePrivateName());
 }
 
 template<typename WrapperClass>
 JSC::JSValue forwardEntriesToSetLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, WrapperClass& setLike)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
-    return forwardFunctionCallToBackingSet(lexicalGlobalObject, callFrame, getAndInitializeBackingSet(lexicalGlobalObject, setLike), vm.propertyNames->builtinNames().entriesPrivateName());
+    Ref vm = JSC::getVM(&lexicalGlobalObject);
+    return forwardFunctionCallToBackingSet(lexicalGlobalObject, callFrame, getAndInitializeBackingSet(lexicalGlobalObject, setLike), vm->propertyNames->builtinNames().entriesPrivateName());
 }
 
 template<typename WrapperClass>
 JSC::JSValue forwardKeysToSetLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, WrapperClass& setLike)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
-    return forwardFunctionCallToBackingSet(lexicalGlobalObject, callFrame, getAndInitializeBackingSet(lexicalGlobalObject, setLike), vm.propertyNames->builtinNames().keysPrivateName());
+    Ref vm = JSC::getVM(&lexicalGlobalObject);
+    return forwardFunctionCallToBackingSet(lexicalGlobalObject, callFrame, getAndInitializeBackingSet(lexicalGlobalObject, setLike), vm->propertyNames->builtinNames().keysPrivateName());
 }
 
 template<typename WrapperClass>
 JSC::JSValue forwardValuesToSetLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, WrapperClass& setLike)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
-    return forwardFunctionCallToBackingSet(lexicalGlobalObject, callFrame, getAndInitializeBackingSet(lexicalGlobalObject, setLike), vm.propertyNames->builtinNames().valuesPrivateName());
+    Ref vm = JSC::getVM(&lexicalGlobalObject);
+    return forwardFunctionCallToBackingSet(lexicalGlobalObject, callFrame, getAndInitializeBackingSet(lexicalGlobalObject, setLike), vm->propertyNames->builtinNames().valuesPrivateName());
 }
 
 template<typename WrapperClass, typename Callback>
@@ -129,26 +129,26 @@ JSC::JSValue forwardForEachToSetLike(JSC::JSGlobalObject& lexicalGlobalObject, J
 template<typename WrapperClass>
 JSC::JSValue forwardClearToSetLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, WrapperClass& setLike)
 {
-    setLike.wrapped().clearFromSetLike();
+    setLike.protectedWrapped()->clearFromSetLike();
 
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
-    return forwardFunctionCallToBackingSet(lexicalGlobalObject, callFrame, getAndInitializeBackingSet(lexicalGlobalObject, setLike), vm.propertyNames->builtinNames().clearPrivateName());
+    Ref vm = JSC::getVM(&lexicalGlobalObject);
+    return forwardFunctionCallToBackingSet(lexicalGlobalObject, callFrame, getAndInitializeBackingSet(lexicalGlobalObject, setLike), vm->propertyNames->builtinNames().clearPrivateName());
 }
 
 template<typename WrapperClass, typename ItemType>
 JSC::JSValue forwardHasToSetLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, WrapperClass& setLike, ItemType&&)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
-    return forwardFunctionCallToBackingSet(lexicalGlobalObject, callFrame, getAndInitializeBackingSet(lexicalGlobalObject, setLike), vm.propertyNames->builtinNames().hasPrivateName());
+    Ref vm = JSC::getVM(&lexicalGlobalObject);
+    return forwardFunctionCallToBackingSet(lexicalGlobalObject, callFrame, getAndInitializeBackingSet(lexicalGlobalObject, setLike), vm->propertyNames->builtinNames().hasPrivateName());
 }
 
 template<typename WrapperClass, typename ItemType>
 JSC::JSValue forwardAddToSetLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, WrapperClass& setLike, ItemType&& item)
 {
-    setLike.wrapped().addToSetLike(std::forward<ItemType>(item));
+    setLike.protectedWrapped()->addToSetLike(std::forward<ItemType>(item));
 
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
-    forwardFunctionCallToBackingSet(lexicalGlobalObject, callFrame, getAndInitializeBackingSet(lexicalGlobalObject, setLike), vm.propertyNames->builtinNames().addPrivateName());
+    Ref vm = JSC::getVM(&lexicalGlobalObject);
+    forwardFunctionCallToBackingSet(lexicalGlobalObject, callFrame, getAndInitializeBackingSet(lexicalGlobalObject, setLike), vm->propertyNames->builtinNames().addPrivateName());
     return &setLike;
 }
 
@@ -158,11 +158,11 @@ JSC::JSValue forwardDeleteToSetLike(JSC::JSGlobalObject& lexicalGlobalObject, JS
     // Initialize backingSet before removing value so assertion below actually holds.
     auto& backingSet = getAndInitializeBackingSet(lexicalGlobalObject, setLike);
 
-    auto isDeleted = setLike.wrapped().removeFromSetLike(std::forward<ItemType>(item));
+    auto isDeleted = setLike.protectedWrapped()->removeFromSetLike(std::forward<ItemType>(item));
     UNUSED_PARAM(isDeleted);
 
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
-    auto result = forwardFunctionCallToBackingSet(lexicalGlobalObject, callFrame, backingSet, vm.propertyNames->builtinNames().deletePrivateName());
+    Ref vm = JSC::getVM(&lexicalGlobalObject);
+    auto result = forwardFunctionCallToBackingSet(lexicalGlobalObject, callFrame, backingSet, vm->propertyNames->builtinNames().deletePrivateName());
     ASSERT_UNUSED(result, result.asBoolean() == isDeleted);
     return result;
 }

@@ -72,6 +72,11 @@ void JSRemoteDOMWindowBase::destroy(JSCell* cell)
     static_cast<JSRemoteDOMWindowBase*>(cell)->JSRemoteDOMWindowBase::~JSRemoteDOMWindowBase();
 }
 
+Ref<RemoteDOMWindow> JSRemoteDOMWindowBase::protectedWrapped() const
+{
+    return *m_wrapped;
+}
+
 RuntimeFlags JSRemoteDOMWindowBase::javaScriptRuntimeFlags(const JSGlobalObject*)
 {
     return RuntimeFlags { };

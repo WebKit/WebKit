@@ -74,7 +74,7 @@ public:
         ASSERT(deferred());
         ASSERT(globalObject());
         JSC::JSGlobalObject* lexicalGlobalObject = globalObject();
-        auto& vm = lexicalGlobalObject->vm();
+        Ref vm = lexicalGlobalObject->vm();
         JSC::JSLockHolder locker(vm);
         auto scope = DECLARE_CATCH_SCOPE(vm);
         auto jsValue = toJS<IDLType>(*lexicalGlobalObject, *globalObject(), std::forward<typename IDLType::ParameterType>(value));
@@ -116,7 +116,7 @@ public:
         ASSERT(deferred());
         ASSERT(globalObject());
         JSC::JSGlobalObject* lexicalGlobalObject = globalObject();
-        auto& vm = lexicalGlobalObject->vm();
+        Ref vm = lexicalGlobalObject->vm();
         JSC::JSLockHolder locker(vm);
         auto scope = DECLARE_CATCH_SCOPE(vm);
         auto jsValue = toJSNewlyCreated<IDLType>(*lexicalGlobalObject, *globalObject(), std::forward<typename IDLType::ParameterType>(value));
@@ -133,10 +133,10 @@ public:
         ASSERT(deferred());
         ASSERT(globalObject());
         auto* lexicalGlobalObject = globalObject();
-        auto& vm = lexicalGlobalObject->vm();
+        Ref vm = lexicalGlobalObject->vm();
         JSC::JSLockHolder locker(vm);
         auto scope = DECLARE_CATCH_SCOPE(vm);
-        auto jsValue = toJSNewlyCreated<IDLType>(*lexicalGlobalObject, *globalObject(), createValue(*globalObject()->scriptExecutionContext()));
+        auto jsValue = toJSNewlyCreated<IDLType>(*lexicalGlobalObject, *globalObject(), createValue(*globalObject()->protectedScriptExecutionContext()));
         DEFERRED_PROMISE_HANDLE_AND_RETURN_IF_EXCEPTION(scope, lexicalGlobalObject);
         resolve(*lexicalGlobalObject, jsValue);
     }
@@ -150,7 +150,7 @@ public:
         ASSERT(deferred());
         ASSERT(globalObject());
         JSC::JSGlobalObject* lexicalGlobalObject = globalObject();
-        auto& vm = lexicalGlobalObject->vm();
+        Ref vm = lexicalGlobalObject->vm();
         JSC::JSLockHolder locker(vm);
         auto scope = DECLARE_CATCH_SCOPE(vm);
         auto jsValue = toJS<IDLType>(*lexicalGlobalObject, *globalObject(), std::forward<typename IDLType::ParameterType>(value));
@@ -173,7 +173,7 @@ public:
         ASSERT(deferred());
         ASSERT(globalObject());
         auto* lexicalGlobalObject = globalObject();
-        auto& vm = lexicalGlobalObject->vm();
+        Ref vm = lexicalGlobalObject->vm();
         JSC::JSLockHolder locker(vm);
         auto scope = DECLARE_CATCH_SCOPE(vm);
         auto jsValue = callback(*globalObject());
@@ -190,7 +190,7 @@ public:
         ASSERT(deferred());
         ASSERT(globalObject());
         auto* lexicalGlobalObject = globalObject();
-        JSC::VM& vm = lexicalGlobalObject->vm();
+        Ref vm = lexicalGlobalObject->vm();
         JSC::JSLockHolder locker(vm);
         auto scope = DECLARE_CATCH_SCOPE(vm);
         auto jsValue = callback(*globalObject());
@@ -262,29 +262,31 @@ public:
 
     void reject(RejectAsHandled rejectAsHandled = RejectAsHandled::No)
     {
-        m_promise->reject(rejectAsHandled);
+        protectedPromise()->reject(rejectAsHandled);
     }
 
     template<typename... ErrorType> 
     void reject(ErrorType&&... error)
     {
-        m_promise->reject(std::forward<ErrorType>(error)...);
+        protectedPromise()->reject(std::forward<ErrorType>(error)...);
     }
 
     template<typename IDLType>
     void rejectType(typename IDLType::ParameterType value, RejectAsHandled rejectAsHandled = RejectAsHandled::No)
     {
-        m_promise->reject<IDLType>(std::forward<typename IDLType::ParameterType>(value), rejectAsHandled);
+        protectedPromise()->reject<IDLType>(std::forward<typename IDLType::ParameterType>(value), rejectAsHandled);
     }
 
     JSC::JSValue promise() const { return m_promise->promise(); };
 
     void whenSettled(Function<void()>&& function)
     {
-        m_promise->whenSettled(WTFMove(function));
+        protectedPromise()->whenSettled(WTFMove(function));
     }
 
 protected:
+    Ref<DeferredPromise> protectedPromise() const { return m_promise; }
+
     Ref<DeferredPromise> m_promise;
 };
 
@@ -298,7 +300,7 @@ public:
 
     void resolve(typename IDLType::ParameterType value)
     {
-        m_promise->resolve<IDLType>(std::forward<typename IDLType::ParameterType>(value));
+        protectedPromise()->template resolve<IDLType>(std::forward<typename IDLType::ParameterType>(value));
     }
 
     template<typename U>
@@ -321,7 +323,7 @@ public:
 
     void resolve()
     { 
-        m_promise->resolve();
+        protectedPromise()->resolve();
     }
 
     void settle(ExceptionOr<void>&& result)
@@ -347,7 +349,7 @@ using PromiseFunction = void(JSC::JSGlobalObject&, JSC::CallFrame&, Ref<Deferred
 template<PromiseFunction promiseFunction>
 inline JSC::JSValue callPromiseFunction(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame)
 {
-    JSC::VM& vm = JSC::getVM(&lexicalGlobalObject);
+    Ref vm = JSC::getVM(&lexicalGlobalObject);
     auto catchScope = DECLARE_CATCH_SCOPE(vm);
 
     auto& globalObject = *JSC::jsSecureCast<JSDOMGlobalObject*>(&lexicalGlobalObject);
@@ -366,7 +368,7 @@ inline JSC::JSValue callPromiseFunction(JSC::JSGlobalObject& lexicalGlobalObject
 template<typename PromiseFunctor>
 inline JSC::JSValue callPromiseFunction(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, PromiseFunctor functor)
 {
-    JSC::VM& vm = JSC::getVM(&lexicalGlobalObject);
+    Ref vm = JSC::getVM(&lexicalGlobalObject);
     auto catchScope = DECLARE_CATCH_SCOPE(vm);
 
     auto& globalObject = *JSC::jsSecureCast<JSDOMGlobalObject*>(&lexicalGlobalObject);
@@ -387,7 +389,7 @@ using PromisePairFunction = JSC::EncodedJSValue(JSC::JSGlobalObject&, JSC::CallF
 template<typename PromisePairFunctor>
 inline JSC::EncodedJSValue callPromisePairFunction(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, PromisePairFunctor functor)
 {
-    JSC::VM& vm = JSC::getVM(&lexicalGlobalObject);
+    Ref vm = JSC::getVM(&lexicalGlobalObject);
     auto catchScope = DECLARE_CATCH_SCOPE(vm);
 
     auto& globalObject = *JSC::jsSecureCast<JSDOMGlobalObject*>(&lexicalGlobalObject);

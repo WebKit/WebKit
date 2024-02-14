@@ -169,7 +169,7 @@ JSC::JSObject* getOutOfLineCachedWrapper(JSDOMGlobalObject* globalObject, Node& 
 
 void willCreatePossiblyOrphanedTreeByRemovalSlowCase(Node& root)
 {
-    auto frame = root.document().frame();
+    RefPtr frame = root.document().frame();
     if (!frame)
         return;
 

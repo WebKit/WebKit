@@ -37,7 +37,7 @@ using namespace JSC;
 
 JSValue JSRTCRtpSFrameTransform::setEncryptionKey(JSGlobalObject& lexicalGlobalObject, CallFrame& callFrame, Ref<DeferredPromise>&& promise)
 {
-    auto& vm = getVM(&lexicalGlobalObject);
+    Ref vm = getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     if (UNLIKELY(callFrame.argumentCount() < 1)) {
@@ -66,7 +66,7 @@ JSValue JSRTCRtpSFrameTransform::setEncryptionKey(JSGlobalObject& lexicalGlobalO
     RETURN_IF_EXCEPTION(throwScope, jsUndefined());
     throwScope.release();
 
-    wrapped().setEncryptionKey(*key, keyID, WTFMove(promise));
+    protectedWrapped()->setEncryptionKey(*key, keyID, WTFMove(promise));
     return jsUndefined();
 }
 

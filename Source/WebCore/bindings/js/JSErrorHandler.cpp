@@ -66,14 +66,14 @@ void JSErrorHandler::handleEvent(ScriptExecutionContext& scriptExecutionContext,
     if (!errorEvent)
         return JSEventListener::handleEvent(scriptExecutionContext, event);
 
-    VM& vm = scriptExecutionContext.vm();
+    Ref vm = scriptExecutionContext.vm();
     JSLockHolder lock(vm);
 
     JSObject* jsFunction = this->ensureJSFunction(scriptExecutionContext);
     if (!jsFunction)
         return;
 
-    auto* isolatedWorld = this->isolatedWorld();
+    RefPtr isolatedWorld = this->isolatedWorld();
     if (UNLIKELY(!isolatedWorld))
         return;
 
@@ -103,8 +103,8 @@ void JSErrorHandler::handleEvent(ScriptExecutionContext& scriptExecutionContext,
         args.append(errorEvent->error(*globalObject));
         ASSERT(!args.hasOverflowed());
 
-        VM& vm = globalObject->vm();
-        VMEntryScope entryScope(vm, vm.entryScope ? vm.entryScope->globalObject() : globalObject);
+        Ref vm = globalObject->vm();
+        VMEntryScope entryScope(vm, vm->entryScope ? vm->entryScope->globalObject() : globalObject);
 
         JSExecState::instrumentFunction(&scriptExecutionContext, callData);
 

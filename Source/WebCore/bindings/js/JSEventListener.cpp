@@ -133,7 +133,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
     if (scriptExecutionContext.isJSExecutionForbidden())
         return;
 
-    VM& vm = scriptExecutionContext.vm();
+    Ref vm = scriptExecutionContext.vm();
     JSLockHolder lock(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
@@ -148,7 +148,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
     if (UNLIKELY(!m_isolatedWorld))
         return;
 
-    auto* globalObject = toJSDOMGlobalObject(scriptExecutionContext, *m_isolatedWorld);
+    auto* globalObject = toJSDOMGlobalObject(scriptExecutionContext, *m_isolatedWorld.copyRef());
     if (!globalObject)
         return;
 
@@ -218,7 +218,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
     args.append(toJS(lexicalGlobalObject, globalObject, &event));
     ASSERT(!args.hasOverflowed());
 
-    VMEntryScope entryScope(vm, vm.entryScope ? vm.entryScope->globalObject() : lexicalGlobalObject);
+    VMEntryScope entryScope(vm, vm->entryScope ? vm->entryScope->globalObject() : lexicalGlobalObject);
 
     JSExecState::instrumentFunction(&scriptExecutionContext, callData);
 
@@ -230,8 +230,8 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
 
     auto handleExceptionIfNeeded = [&] (JSC::Exception* exception) -> bool {
         if (auto* globalScope = dynamicDowncast<WorkerGlobalScope>(scriptExecutionContext)) {
-            auto* scriptController = globalScope->script();
-            bool terminatorCausedException = (exception && vm.isTerminationException(exception));
+            CheckedPtr scriptController = globalScope->script();
+            bool terminatorCausedException = (exception && vm->isTerminationException(exception));
             if (terminatorCausedException || (scriptController && scriptController->isTerminatingExecution()))
                 scriptController->forbidExecution();
         }
@@ -282,7 +282,7 @@ String JSEventListener::functionName() const
     if (!m_wrapper || !m_jsFunction)
         return { };
 
-    auto& vm = m_isolatedWorld->vm();
+    Ref vm = m_isolatedWorld->vm();
     JSC::JSLockHolder lock(vm);
 
     auto* handlerFunction = JSC::jsDynamicCast<JSC::JSFunction*>(m_jsFunction.get());

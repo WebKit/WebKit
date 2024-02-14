@@ -60,6 +60,7 @@ public:
     Ref<WindowProxy> protectedWindowProxy() const;
 
     DOMWindow* window() const { return virtualWindow(); }
+    RefPtr<DOMWindow> protectedWindow() const;
     FrameTree& tree() const { return m_treeNode; }
     FrameIdentifier frameID() const { return m_frameID; }
     inline Page* page() const; // Defined in Page.h.

@@ -95,7 +95,7 @@ void ScheduledAction::execute(ScriptExecutionContext& context)
 void ScheduledAction::executeFunctionInContext(JSGlobalObject* globalObject, JSValue thisValue, ScriptExecutionContext& context)
 {
     ASSERT(m_function);
-    VM& vm = context.vm();
+    Ref vm = context.vm();
     JSLockHolder lock(vm);
     auto catchScope = DECLARE_CATCH_SCOPE(vm);
 
@@ -142,7 +142,7 @@ void ScheduledAction::execute(Document& document)
     if (m_function)
         executeFunctionInContext(window, &window->proxy(), document);
     else
-        frame->script().executeScriptInWorldIgnoringException(m_isolatedWorld, m_code, m_sourceTaintedOrigin);
+        frame->checkedScript()->executeScriptInWorldIgnoringException(m_isolatedWorld, m_code, m_sourceTaintedOrigin);
 }
 
 void ScheduledAction::execute(WorkerGlobalScope& workerGlobalScope)
@@ -150,7 +150,7 @@ void ScheduledAction::execute(WorkerGlobalScope& workerGlobalScope)
     // In a Worker, the execution should always happen on a worker thread.
     ASSERT(workerGlobalScope.thread().thread() == &Thread::current());
 
-    auto* scriptController = workerGlobalScope.script();
+    CheckedPtr scriptController = workerGlobalScope.script();
 
     if (m_function) {
         auto* contextWrapper = scriptController->globalScopeWrapper();

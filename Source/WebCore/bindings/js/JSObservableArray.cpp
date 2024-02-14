@@ -80,7 +80,7 @@ void JSObservableArray::destroy(JSCell* cell)
 
 JSC_DEFINE_CUSTOM_GETTER(arrayLengthGetter, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    VM& vm = lexicalGlobalObject->vm();
+    Ref vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSObservableArray* thisObject = jsDynamicCast<JSObservableArray*>(JSValue::decode(thisValue));
@@ -91,23 +91,23 @@ JSC_DEFINE_CUSTOM_GETTER(arrayLengthGetter, (JSGlobalObject* lexicalGlobalObject
 
 void JSObservableArray::getOwnPropertyNames(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyNameArray& propertyNames, DontEnumPropertiesMode mode)
 {
-    VM& vm = lexicalGlobalObject->vm();
+    Ref vm = lexicalGlobalObject->vm();
     JSObservableArray* thisObject = jsCast<JSObservableArray*>(object);
     unsigned length = thisObject->length();
     for (unsigned i = 0; i < length; ++i)
         propertyNames.add(Identifier::from(vm, i));
 
     if (mode == DontEnumPropertiesMode::Include)
-        propertyNames.add(vm.propertyNames->length);
+        propertyNames.add(vm->propertyNames->length);
 
     thisObject->getOwnNonIndexPropertyNames(lexicalGlobalObject, propertyNames, mode);
 }
 
 bool JSObservableArray::getOwnPropertySlot(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, PropertySlot& slot)
 {
-    VM& vm = lexicalGlobalObject->vm();
+    Ref vm = lexicalGlobalObject->vm();
     JSObservableArray* thisObject = jsCast<JSObservableArray*>(object);
-    if (propertyName == vm.propertyNames->length) {
+    if (propertyName == vm->propertyNames->length) {
         slot.setCacheableCustom(thisObject, PropertyAttribute::DontDelete | PropertyAttribute::DontEnum, arrayLengthGetter);
         return true;
     }
@@ -136,11 +136,11 @@ bool JSObservableArray::getOwnPropertySlotByIndex(JSObject* object, JSGlobalObje
 
 bool JSObservableArray::put(JSCell* cell, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
-    VM& vm = lexicalGlobalObject->vm();
+    Ref vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     auto* thisObject = jsCast<JSObservableArray*>(cell);
-    if (propertyName == vm.propertyNames->length)
+    if (propertyName == vm->propertyNames->length)
         return observableArraySetLength(thisObject, lexicalGlobalObject, scope, value);
 
     if (auto index = parseIndex(propertyName))
@@ -162,10 +162,10 @@ bool JSObservableArray::putByIndex(JSCell* cell, JSGlobalObject* lexicalGlobalOb
 // https://webidl.spec.whatwg.org/#es-observable-array-deleteProperty
 bool JSObservableArray::deleteProperty(JSCell* cell, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, DeletePropertySlot& slot)
 {
-    VM& vm = lexicalGlobalObject->vm();
+    Ref vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (propertyName == vm.propertyNames->length)
+    if (propertyName == vm->propertyNames->length)
         return false;
 
     if (auto index = parseIndex(propertyName))
@@ -189,11 +189,11 @@ bool JSObservableArray::deletePropertyByIndex(JSCell* cell, JSGlobalObject*, uns
 // https://webidl.spec.whatwg.org/#es-observable-array-defineProperty
 bool JSObservableArray::defineOwnProperty(JSObject* object, JSGlobalObject* globalObject, PropertyName propertyName, const PropertyDescriptor& descriptor, bool throwException)
 {
-    VM& vm = globalObject->vm();
+    Ref vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSObservableArray* thisObject = jsCast<JSObservableArray*>(object);
-    if (propertyName == vm.propertyNames->length) {
+    if (propertyName == vm->propertyNames->length) {
         if (descriptor.isAccessorDescriptor())
             return typeError(globalObject, scope, throwException, "Not allowed to change access mechanism for 'length' property"_s);
         if (descriptor.configurablePresent() && descriptor.configurable())

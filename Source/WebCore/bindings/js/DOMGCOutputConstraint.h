@@ -48,8 +48,8 @@ protected:
 private:
     template<typename Visitor> void executeImplImpl(Visitor&);
 
-    JSC::VM& m_vm;
-    JSHeapData& m_heapData;
+    JSC::VM& m_vm; // FIXME: This should use a smart pointer.
+    JSHeapData& m_heapData; // FIXME: This should use a smart pointer.
     uint64_t m_lastExecutionVersion;
 };
 

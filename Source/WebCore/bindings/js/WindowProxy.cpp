@@ -69,6 +69,11 @@ Frame* WindowProxy::frame() const
     return m_frame.get();
 }
 
+RefPtr<Frame> WindowProxy::protectedFrame() const
+{
+    return m_frame.get();
+}
+
 void WindowProxy::detachFromFrame()
 {
     ASSERT(m_frame);
@@ -80,7 +85,7 @@ void WindowProxy::detachFromFrame()
         while (!m_jsWindowProxies->isEmpty()) {
             auto it = m_jsWindowProxies->begin();
             it->value->window()->setConsoleClient(nullptr);
-            destroyJSWindowProxy(*it->key);
+            destroyJSWindowProxy(Ref { *it->key });
         }
         collectGarbageAfterWindowProxyDestruction();
     }
@@ -91,14 +96,14 @@ void WindowProxy::replaceFrame(Frame& frame)
     ASSERT(m_frame);
     ASSERT(is<LocalFrame>(m_frame) != is<LocalFrame>(frame));
     m_frame = frame;
-    setDOMWindow(frame.window());
+    setDOMWindow(frame.protectedWindow().get());
 }
 
 void WindowProxy::destroyJSWindowProxy(DOMWrapperWorld& world)
 {
     ASSERT(m_jsWindowProxies->contains(&world));
     m_jsWindowProxies->remove(&world);
-    world.didDestroyWindowProxy(this);
+    world.didDestroyWindowProxy(*this);
 }
 
 JSWindowProxy& WindowProxy::createJSWindowProxy(DOMWrapperWorld& world)
@@ -108,11 +113,11 @@ JSWindowProxy& WindowProxy::createJSWindowProxy(DOMWrapperWorld& world)
     ASSERT(!m_jsWindowProxies->contains(&world));
     ASSERT(m_frame->window());
 
-    VM& vm = world.vm();
+    Ref vm = world.vm();
 
-    Strong<JSWindowProxy> jsWindowProxy(vm, &JSWindowProxy::create(vm, *m_frame->window(), world));
+    Strong<JSWindowProxy> jsWindowProxy(vm, &JSWindowProxy::create(vm, *m_frame->protectedWindow(), world));
     m_jsWindowProxies->add(&world, jsWindowProxy);
-    world.didCreateWindowProxy(this);
+    world.didCreateWindowProxy(*this);
     return *jsWindowProxy.get();
 }
 
@@ -134,8 +139,8 @@ JSWindowProxy& WindowProxy::createJSWindowProxyWithInitializedScript(DOMWrapperW
 
     JSLockHolder lock(world.vm());
     auto& windowProxy = createJSWindowProxy(world);
-    if (auto* localFrame = dynamicDowncast<LocalFrame>(*m_frame))
-        localFrame->script().initScriptForWindowProxy(windowProxy);
+    if (RefPtr localFrame = dynamicDowncast<LocalFrame>(*m_frame))
+        localFrame->checkedScript()->initScriptForWindowProxy(windowProxy);
     return windowProxy;
 }
 
@@ -180,8 +185,8 @@ void WindowProxy::setDOMWindow(DOMWindow* newDOMWindow)
 
         windowProxy->setWindow(*newDOMWindow);
 
-        ScriptController* scriptController = nullptr;
-        Page* page = nullptr;
+        CheckedPtr<ScriptController> scriptController;
+        RefPtr<Page> page;
         if (auto* localFrame = dynamicDowncast<LocalFrame>(*m_frame)) {
             scriptController = &localFrame->script();
             page = localFrame->page();

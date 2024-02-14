@@ -45,7 +45,7 @@ JSValue JSElementInternals::setFormValue(JSGlobalObject& lexicalGlobalObject, Ca
 {
     using JSCustomElementFormValue = IDLUnion<IDLNull, IDLInterface<File>, IDLUSVString, IDLInterface<DOMFormData>>;
 
-    auto& vm = lexicalGlobalObject.vm();
+    Ref vm = lexicalGlobalObject.vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     if (UNLIKELY(callFrame.argumentCount() < 1)) {
         throwException(&lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(&lexicalGlobalObject));
@@ -63,7 +63,7 @@ JSValue JSElementInternals::setFormValue(JSGlobalObject& lexicalGlobalObject, Ca
         RETURN_IF_EXCEPTION(throwScope, { });
     }
 
-    auto result = wrapped().setFormValue(WTFMove(value), WTFMove(state));
+    auto result = protectedWrapped()->setFormValue(WTFMove(value), WTFMove(state));
     if (UNLIKELY(result.hasException())) {
         propagateException(lexicalGlobalObject, throwScope, result.releaseException());
         return { };
@@ -74,7 +74,7 @@ JSValue JSElementInternals::setFormValue(JSGlobalObject& lexicalGlobalObject, Ca
 
 static JSValue getElementsArrayAttribute(JSGlobalObject& lexicalGlobalObject, const JSElementInternals& thisObject, const QualifiedName& attributeName)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    Ref vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     JSObject* cachedObject = nullptr;
@@ -86,7 +86,7 @@ static JSValue getElementsArrayAttribute(JSGlobalObject& lexicalGlobalObject, co
         const_cast<JSElementInternals&>(thisObject).putDirect(vm, builtinNames(vm).cachedAttrAssociatedElementsPrivateName(), cachedObject);
     }
 
-    std::optional<Vector<RefPtr<Element>>> elements = thisObject.wrapped().getElementsArrayAttribute(attributeName);
+    std::optional<Vector<RefPtr<Element>>> elements = thisObject.protectedWrapped()->getElementsArrayAttribute(attributeName);
     auto propertyName = PropertyName(Identifier::fromString(vm, attributeName.toString()));
     JSValue cachedValue = cachedObject->getDirect(vm, propertyName);
     if (!cachedValue.isEmpty()) {

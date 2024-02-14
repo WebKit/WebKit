@@ -44,10 +44,10 @@ enum class CastedThisErrorBehavior : uint8_t {
 template<class JSClass>
 JSClass* castThisValue(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue thisValue)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
-    if constexpr (std::is_base_of_v<JSDOMGlobalObject, JSClass>)
+    if constexpr (std::is_base_of_v<JSDOMGlobalObject, JSClass>) {
+        Ref vm = JSC::getVM(&lexicalGlobalObject);
         return toJSDOMGlobalObject<JSClass>(vm, thisValue.isUndefinedOrNull() ? JSC::JSValue(&lexicalGlobalObject) : thisValue);
-    else
+    } else
         return JSC::jsDynamicCast<JSClass*>(thisValue);
 }
 

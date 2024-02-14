@@ -111,7 +111,7 @@ void GCController::garbageCollectNowIfNotDoneRecently()
 
 void GCController::garbageCollectOnAlternateThreadForDebugging(bool waitUntilDone)
 {
-    auto thread = Thread::create("WebCore: GCController", &collect, ThreadType::GarbageCollection);
+    Ref thread = Thread::create("WebCore: GCController", &collect, ThreadType::GarbageCollection);
 
     if (waitUntilDone) {
         thread->waitForCompletion();
@@ -128,14 +128,16 @@ void GCController::setJavaScriptGarbageCollectorTimerEnabled(bool enable)
 
 void GCController::deleteAllCode(DeleteAllCodeEffort effort)
 {
-    JSLockHolder lock(commonVM());
-    commonVM().deleteAllCode(effort);
+    Ref vm = commonVM();
+    JSLockHolder lock(vm);
+    vm->deleteAllCode(effort);
 }
 
 void GCController::deleteAllLinkedCode(DeleteAllCodeEffort effort)
 {
-    JSLockHolder lock(commonVM());
-    commonVM().deleteAllLinkedCode(effort);
+    Ref vm = commonVM();
+    JSLockHolder lock(vm);
+    vm->deleteAllLinkedCode(effort);
 }
 
 void GCController::dumpHeap()
@@ -147,7 +149,7 @@ void GCController::dumpHeap()
         return;
     }
 
-    VM& vm = commonVM();
+    Ref vm = commonVM();
     JSLockHolder lock(vm);
 
     sanitizeStackForVM(vm);
@@ -156,7 +158,7 @@ void GCController::dumpHeap()
     {
         DeferGCForAWhile deferGC(vm); // Prevent concurrent GC from interfering with the full GC that the snapshot does.
 
-        HeapSnapshotBuilder snapshotBuilder(vm.ensureHeapProfiler(), HeapSnapshotBuilder::SnapshotType::GCDebuggingSnapshot);
+        HeapSnapshotBuilder snapshotBuilder(vm->ensureHeapProfiler(), HeapSnapshotBuilder::SnapshotType::GCDebuggingSnapshot);
         snapshotBuilder.buildSnapshot();
 
         jsonData = snapshotBuilder.json();
