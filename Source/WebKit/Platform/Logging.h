@@ -85,6 +85,7 @@ extern "C" {
     M(NetworkSession) \
     M(Notifications) \
     M(PDF) \
+    M(PDFAsyncRendering) \
     M(PerformanceLogging) \
     M(Plugins) \
     M(Printing) \

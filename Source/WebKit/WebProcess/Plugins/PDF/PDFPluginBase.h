@@ -115,6 +115,7 @@ public:
 
     bool isLocked() const;
 
+    RetainPtr<PDFDocument> pdfDocument() const { return m_pdfDocument; }
     RetainPtr<PDFDocument> pdfDocumentForPrinting() const { return m_pdfDocument; }
     WebCore::FloatSize pdfDocumentSizeForPrinting() const;
 
