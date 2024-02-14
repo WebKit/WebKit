@@ -428,6 +428,18 @@ def parse_args(args):
             options.internal_feature = []
         options.internal_feature.append('UseAsyncUIKitInteractions=0')
 
+    if options.site_isolation:
+        host = Host()
+        host.initialize_scm()
+        options.self_compare_with_header = 'SiteIsolationEnabled=true runInCrossOriginIframe=true'
+        options.additional_expectations.insert(0, host.filesystem.join(host.scm().checkout_root, 'LayoutTests/platform/mac-site-isolation/TestExpectations'))
+        if not options.additional_platform_directory:
+            options.additional_platform_directory = []
+        options.additional_platform_directory.insert(0, host.filesystem.join(host.scm().checkout_root, 'LayoutTests/platform/mac-site-isolation'))
+        if options.result_report_flavor:
+            raise RuntimeError('--site-isolation implicitly sets the result flavor, this should not be overridden')
+        options.result_report_flavor = 'site-isolation'
+
     return options, args
 
 
@@ -478,16 +490,12 @@ def _set_up_derived_options(port, options):
         options.additional_platform_directory.insert(0, port.host.filesystem.join(host.scm().checkout_root, 'LayoutTests/platform/mac-gpup'))
 
     if port.port_name == "mac" and options.site_isolation:
-        options.self_compare_with_header = 'SiteIsolationEnabled=true runInCrossOriginIframe=true'
         host = Host()
         host.initialize_scm()
         options.additional_expectations.insert(0, port.host.filesystem.join(host.scm().checkout_root, 'LayoutTests/platform/mac-site-isolation/TestExpectations'))
         if not options.additional_platform_directory:
             options.additional_platform_directory = []
         options.additional_platform_directory.insert(0, port.host.filesystem.join(host.scm().checkout_root, 'LayoutTests/platform/mac-site-isolation'))
-        if options.result_report_flavor:
-            raise RuntimeError('--site-isolation implicitly sets the result flavor, this should not be overridden')
-        options.result_report_flavor = 'site-isolation'
 
     if options.additional_platform_directory:
         additional_platform_directories = []
