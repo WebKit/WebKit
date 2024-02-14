@@ -1777,10 +1777,9 @@ template<typename Lexer>
 Result<AST::Expression::Ref> Parser<Lexer>::parseLHSExpression()
 {
     START_PARSE();
+    CHECK_RECURSION();
 
     if (current().type == TokenType::And || current().type == TokenType::Star) {
-        CHECK_RECURSION();
-
         auto op = toUnaryOperation(current());
         consume();
         PARSE(expression, LHSExpression);
