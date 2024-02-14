@@ -50,7 +50,7 @@ class SearchView {
         this.currentLimit = this.currentParams.limit ? parseInt(this.currentParams.limit[this.currentParams.limit.length - 1]) : DEFAULT_LIMIT;
         delete this.currentParams.limit;
 
-        let state = {children: [], prepending: []};
+        let state = {children: [], prepending: [], appending: []};
         if (this.currentParams.test && (!this.currentParams.suite || this.currentParams.test.length != this.currentParams.suite.length))
             state = {error: "Query Error", description: 'Must have the same number of suites and tests in query'};
         else if (this.currentParams.test) {
@@ -138,12 +138,21 @@ class SearchView {
                 if (diff.prepending) {
                     diff.prepending.forEach(child => {
                         if (element.firstElementChild)
-                            DOM.after(element.firstElementChild, renderChild(child));
+                            DOM.before(element.firstElementChild, renderChild(child));
                         else
                             DOM.inject(element, renderChild(child));
                         this.ref.state.children.unshift(child);
                     });
-                } 
+                }
+                if (diff.appending) {
+                    diff.appending.forEach(child => {
+                        if (element.lastElementChild)
+                            DOM.after(element.lastElementChild, renderChild(child));
+                        else
+                            DOM.inject(element, renderChild(child));
+                        this.ref.state.children.push(child);
+                    });
+                }
             }
         });
     }
@@ -263,7 +272,7 @@ DOM.inject(
                     viewport = element;
                 }
             })}>
-            ${SearchBar(function () {
+            ${SearchBar(function (pairs, append) {
                 const splitURL = document.URL.split('?');
                 let params = queryToParams(splitURL[1]);
                 if (!params.suite)
@@ -271,25 +280,32 @@ DOM.inject(
                 if (!params.test)
                     params.test = [];
 
-                for (let i = 0; i < arguments.length; i++) {
+                for (let i = 0; i < pairs.length; i++) {
                     let needToAdd = true;
                     if (!needToAdd)
                         continue;
 
                     let child = {
-                        suite: arguments[i].suite,
-                        test: arguments[i].test,
-                        timeline: new TimelineFromEndpoint(`api/results/${arguments[i].suite}/${arguments[i].test}`, {
-                            suite: arguments[i].suite, 
-                            test: arguments[i].test, 
+                        suite: pairs[i].suite,
+                        test: pairs[i].test,
+                        timeline: new TimelineFromEndpoint(`api/results/${pairs[i].suite}/${pairs[i].test}`, {
+                            suite: pairs[i].suite, 
+                            test: pairs[i].test, 
                             searchEvent: onCommitSearch,
                             viewport,
                         }),
                     }
 
-                    view.ref.setState({prepending: [child]});
-                    params.suite.push(child.suite);
-                    params.test.push(child.test);
+                    if (append) {
+                        view.ref.setState({appending: [child]});
+                        params.suite.push(child.suite);
+                        params.test.push(child.test);
+                    } else {
+                        view.ref.setState({prepending: [child]});
+                        params.suite.unshift(child.suite);
+                        params.test.unshift(child.test);
+                    }
+                    
                 }
                 const queryString = paramsToQuery(params);
                 window.history.pushState(queryString, '', splitURL[0] + '?' + queryString);
