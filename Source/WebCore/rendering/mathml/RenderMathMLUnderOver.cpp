@@ -251,7 +251,7 @@ RenderMathMLUnderOver::VerticalParameters RenderMathMLUnderOver::verticalParamet
         parameters.overGapMin = 3 * defaultLineThickness;
         parameters.underExtraDescender = defaultLineThickness;
         parameters.overExtraAscender = defaultLineThickness;
-        parameters.accentBaseHeight = style().metricsOfPrimaryFont().xHeight();
+        parameters.accentBaseHeight = style().metricsOfPrimaryFont().xHeight().value_or(0);
         parameters.useUnderOverBarFallBack = true;
         return parameters;
     }

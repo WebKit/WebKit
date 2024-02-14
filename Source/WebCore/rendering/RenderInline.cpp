@@ -893,7 +893,7 @@ LayoutUnit RenderInline::baselinePosition(FontBaseline baselineType, bool firstL
 {
     const RenderStyle& style = firstLine ? firstLineStyle() : this->style();
     const FontMetrics& fontMetrics = style.metricsOfPrimaryFont();
-    return LayoutUnit { (fontMetrics.ascent(baselineType) + (lineHeight(firstLine, direction, linePositionMode) - fontMetrics.height()) / 2).toInt() };
+    return LayoutUnit { (fontMetrics.intAscent(baselineType) + (lineHeight(firstLine, direction, linePositionMode) - fontMetrics.intHeight()) / 2).toInt() };
 }
 
 LayoutSize RenderInline::offsetForInFlowPositionedInline(const RenderBox* child) const

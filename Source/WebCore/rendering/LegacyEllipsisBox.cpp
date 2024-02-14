@@ -80,7 +80,7 @@ void LegacyEllipsisBox::paintMarkupBox(PaintInfo& paintInfo, const LayoutPoint& 
 
     LayoutPoint adjustedPaintOffset = paintOffset;
     adjustedPaintOffset.move(x() + logicalWidth() - markupBox->x(),
-        y() + style.metricsOfPrimaryFont().ascent() - (markupBox->y() + markupBox->lineStyle().metricsOfPrimaryFont().ascent()));
+        y() + style.metricsOfPrimaryFont().intAscent() - (markupBox->y() + markupBox->lineStyle().metricsOfPrimaryFont().intAscent()));
     markupBox->paint(paintInfo, adjustedPaintOffset, lineTop, lineBottom);
 }
 
@@ -104,7 +104,7 @@ bool LegacyEllipsisBox::nodeAtPoint(const HitTestRequest& request, HitTestResult
     if (LegacyInlineBox* markupBox = this->markupBox()) {
         const RenderStyle& lineStyle = this->lineStyle();
         LayoutUnit mtx { adjustedLocation.x() + logicalWidth() - markupBox->x() };
-        LayoutUnit mty { adjustedLocation.y() + lineStyle.metricsOfPrimaryFont().ascent() - (markupBox->y() + markupBox->lineStyle().metricsOfPrimaryFont().ascent()) };
+        LayoutUnit mty { adjustedLocation.y() + lineStyle.metricsOfPrimaryFont().intAscent() - (markupBox->y() + markupBox->lineStyle().metricsOfPrimaryFont().intAscent()) };
         if (markupBox->nodeAtPoint(request, result, locationInContainer, LayoutPoint(mtx, mty), lineTop, lineBottom, hitTestAction)) {
             blockFlow().updateHitTestResult(result, locationInContainer.point() - LayoutSize(mtx, mty));
             return true;

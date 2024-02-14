@@ -49,23 +49,19 @@ struct FontSizeAdjust {
         std::optional<float> metricValue;
         switch (metric) {
         case FontSizeAdjust::Metric::CapHeight:
-            if (fontMetrics.hasCapHeight())
-                metricValue = fontMetrics.floatCapHeight();
+            metricValue = fontMetrics.capHeight();
             break;
         case FontSizeAdjust::Metric::ChWidth:
-            if (fontMetrics.zeroWidth())
-                metricValue = fontMetrics.zeroWidth();
+            metricValue = fontMetrics.zeroWidth();
             break;
         // FIXME: Are ic-height and ic-width the same? Gecko treats them the same.
         case FontSizeAdjust::Metric::IcWidth:
         case FontSizeAdjust::Metric::IcHeight:
-            if (fontMetrics.ideogramWidth() > 0)
-                metricValue = fontMetrics.ideogramWidth();
+            metricValue = fontMetrics.ideogramWidth();
             break;
         case FontSizeAdjust::Metric::ExHeight:
         default:
-            if (fontMetrics.hasXHeight())
-                metricValue = fontMetrics.xHeight();
+            metricValue = fontMetrics.xHeight();
         }
 
         return metricValue.has_value() && computedSize

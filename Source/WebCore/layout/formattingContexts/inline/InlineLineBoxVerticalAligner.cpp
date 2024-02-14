@@ -179,7 +179,7 @@ LineBoxVerticalAligner::LineBoxAlignmentContent LineBoxVerticalAligner::computeL
             logicalTop = parentInlineBoxAscent - layoutBounds.ascent;
             break;
         case VerticalAlign::Middle: {
-            auto logicalTopOffsetFromParentBaseline = layoutBounds.height() / 2 + parentInlineBox.primarymetricsOfPrimaryFont().xHeight() / 2;
+            auto logicalTopOffsetFromParentBaseline = layoutBounds.height() / 2 + parentInlineBox.primarymetricsOfPrimaryFont().xHeight().value_or(0) / 2;
             logicalTop = parentInlineBoxAscent - logicalTopOffsetFromParentBaseline;
             break;
         }
@@ -292,7 +292,7 @@ void LineBoxVerticalAligner::computeRootInlineBoxVerticalPosition(LineBox& lineB
             baselineOffsetFromParentBaseline = { };
             break;
         case VerticalAlign::Middle: {
-            auto logicalTopOffsetFromParentBaseline = (layoutBounds.height() / 2 + parentInlineBox.primarymetricsOfPrimaryFont().xHeight() / 2);
+            auto logicalTopOffsetFromParentBaseline = (layoutBounds.height() / 2 + parentInlineBox.primarymetricsOfPrimaryFont().xHeight().value_or(0) / 2);
             baselineOffsetFromParentBaseline = logicalTopOffsetFromParentBaseline - layoutBounds.ascent;
             break;
         }
@@ -411,7 +411,7 @@ void LineBoxVerticalAligner::alignInlineLevelBoxes(LineBox& lineBox, InlineLayou
             logicalTop = parentInlineBox.ascent() - inlineLevelBox.ascent();
             break;
         case VerticalAlign::Middle: {
-            auto logicalTopOffsetFromParentBaseline = (inlineLevelBox.logicalHeight() / 2 + parentInlineBox.primarymetricsOfPrimaryFont().xHeight() / 2);
+            auto logicalTopOffsetFromParentBaseline = (inlineLevelBox.logicalHeight() / 2 + parentInlineBox.primarymetricsOfPrimaryFont().xHeight().value_or(0) / 2);
             logicalTop = parentInlineBox.ascent() - logicalTopOffsetFromParentBaseline;
             break;
         }

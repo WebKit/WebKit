@@ -699,8 +699,8 @@ double CSSPrimitiveValue::computeUnzoomedNonCalcLengthDouble(CSSUnitType primiti
     case CSSUnitType::CSS_REX: {
         ASSERT(fontCascadeForUnit);
         auto& fontMetrics = fontCascadeForUnit->metricsOfPrimaryFont();
-        if (fontMetrics.hasXHeight())
-            return fontMetrics.xHeight() * value;
+        if (fontMetrics.xHeight())
+            return fontMetrics.xHeight().value() * value;
         auto& fontDescription = fontCascadeForUnit->fontDescription();
         return ((propertyToCompute == CSSPropertyFontSize) ? fontDescription.specifiedSize() : fontDescription.computedSize()) / 2.0 * value;
     }
@@ -708,9 +708,9 @@ double CSSPrimitiveValue::computeUnzoomedNonCalcLengthDouble(CSSUnitType primiti
     case CSSUnitType::CSS_RCAP: {
         ASSERT(fontCascadeForUnit);
         auto& fontMetrics = fontCascadeForUnit->metricsOfPrimaryFont();
-        if (fontMetrics.hasCapHeight())
-            return fontMetrics.floatCapHeight() * value;
-        return fontMetrics.ascent() * value;
+        if (fontMetrics.capHeight())
+            return fontMetrics.capHeight().value() * value;
+        return fontMetrics.intAscent() * value;
     }
     case CSSUnitType::CSS_CH:
     case CSSUnitType::CSS_RCH:
@@ -719,7 +719,7 @@ double CSSPrimitiveValue::computeUnzoomedNonCalcLengthDouble(CSSUnitType primiti
     case CSSUnitType::CSS_IC:
     case CSSUnitType::CSS_RIC:
         ASSERT(fontCascadeForUnit);
-        return fontCascadeForUnit->metricsOfPrimaryFont().ideogramWidth() * value;
+        return fontCascadeForUnit->metricsOfPrimaryFont().ideogramWidth().value_or(0) * value;
     case CSSUnitType::CSS_PX:
         return value;
     case CSSUnitType::CSS_CM:
@@ -933,7 +933,7 @@ double CSSPrimitiveValue::computeNonCalcLengthDouble(const CSSToLengthConversion
     case CSSUnitType::CSS_LH:
         if (conversionData.computingLineHeight() || conversionData.computingFontSize()) {
             // Try to get the parent's computed line-height, or fall back to the initial line-height of this element's font spacing.
-            value *= conversionData.parentStyle() ? conversionData.parentStyle()->computedLineHeight() : conversionData.fontCascadeForFontUnits().metricsOfPrimaryFont().lineSpacing();
+            value *= conversionData.parentStyle() ? conversionData.parentStyle()->computedLineHeight() : conversionData.fontCascadeForFontUnits().metricsOfPrimaryFont().intLineSpacing();
         } else
             value *= conversionData.computedLineHeightForFontUnits();
         break;

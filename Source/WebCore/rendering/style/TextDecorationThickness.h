@@ -74,7 +74,7 @@ public:
             return fontSize / textDecorationBaseFontSize;
         }
         if (isFromFont())
-            return metrics.underlineThickness();
+            return metrics.underlineThickness().value_or(0);
 
         ASSERT(isLength());
         if (m_length.isPercent())

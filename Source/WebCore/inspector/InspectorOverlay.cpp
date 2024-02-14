@@ -1018,7 +1018,7 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverl
 
                 GraphicsContextStateSaver verticalLabelStateSaver(context);
                 context.translate(zoom(x) + 0.5f, scrollY);
-                context.drawText(font, TextRun(String::number(x)), { 2, drawTopEdge ? rulerLabelSize : rulerLabelSize - rulerSize + font.metricsOfPrimaryFont().height() - 1.0f });
+                context.drawText(font, TextRun(String::number(x)), { 2, drawTopEdge ? rulerLabelSize : rulerLabelSize - rulerSize + font.metricsOfPrimaryFont().intHeight() - 1.0f });
             }
         }
 
@@ -1077,7 +1077,7 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverl
         const float padding = 2;
         const float radius = 4;
         float fontWidth = font.width(viewportTextRun);
-        float fontHeight = font.metricsOfPrimaryFont().floatHeight();
+        float fontHeight = font.metricsOfPrimaryFont().height();
         FloatRect viewportTextRect(margin, margin, (padding * 2.0f) + fontWidth, (padding * 2.0f) + fontHeight);
         const auto viewportTextRectCenter = viewportTextRect.center();
 
@@ -1115,7 +1115,7 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverl
         context.fillRoundedRect(FloatRoundedRect(viewportTextRect, FloatRoundedRect::Radii(radius)), rulerBackgroundColor);
 
         context.setFillColor(Color::black);
-        context.drawText(font, viewportTextRun, { margin +  padding, margin + padding + fontHeight - font.metricsOfPrimaryFont().descent() });
+        context.drawText(font, viewportTextRun, { margin +  padding, margin + padding + fontHeight - font.metricsOfPrimaryFont().intDescent() });
     }
 }
 

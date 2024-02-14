@@ -51,7 +51,7 @@ SVGTextMetrics::SVGTextMetrics(RenderSVGInlineText& textRenderer, const TextRun&
     m_width = scaledFont.width(run) / scalingFactor;
     length = run.length();
     m_glyph.name = emptyString();
-    m_height = scaledFont.metricsOfPrimaryFont().floatHeight() / scalingFactor;
+    m_height = scaledFont.metricsOfPrimaryFont().height() / scalingFactor;
 
     m_glyph.unicodeString = run.is8Bit() ? String(run.characters8(), length) : String(run.characters16(), length);
     m_glyph.isValid = true;
@@ -87,7 +87,7 @@ SVGTextMetrics::SVGTextMetrics(RenderSVGInlineText& text, unsigned length, float
     ASSERT(scalingFactor);
 
     m_width = width / scalingFactor;
-    m_height = text.scaledFont().metricsOfPrimaryFont().floatHeight() / scalingFactor;
+    m_height = text.scaledFont().metricsOfPrimaryFont().height() / scalingFactor;
 
     m_length = length;
 }

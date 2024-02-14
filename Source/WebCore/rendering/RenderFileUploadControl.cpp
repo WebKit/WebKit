@@ -194,15 +194,15 @@ void RenderFileUploadControl::paintControl(PaintInfo& paintInfo, const LayoutPoi
 
                         if (!isHorizontalWritingMode) {
                             if (isFlippedBlocksWritingMode)
-                                return textVisualRect.x() - metrics.ascent();
+                                return textVisualRect.x() - metrics.intAscent();
 
-                            return textVisualRect.x() + metrics.descent();
+                            return textVisualRect.x() + metrics.intDescent();
                         }
 
                         if (isFlippedBlocksWritingMode)
-                            return textVisualRect.y() - metrics.descent();
+                            return textVisualRect.y() - metrics.intDescent();
 
-                        return textVisualRect.y() + metrics.ascent();
+                        return textVisualRect.y() + metrics.intAscent();
                     }
                 }
             }

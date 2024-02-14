@@ -2824,14 +2824,14 @@ void RenderBlockFlow::adjustInitialLetterPosition(RenderBox& childBox, LayoutUni
 {
     const RenderStyle& style = firstLineStyle();
     const FontMetrics& fontMetrics = style.metricsOfPrimaryFont();
-    if (!fontMetrics.hasCapHeight())
+    if (!fontMetrics.capHeight())
         return;
 
     LayoutUnit heightOfLine = lineHeight(true, isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes);
     LayoutUnit beforeMarginBorderPadding = childBox.borderAndPaddingBefore() + childBox.marginBefore();
     
     // Make an adjustment to align with the cap height of a theoretical block line.
-    LayoutUnit adjustment = fontMetrics.ascent() + (heightOfLine - fontMetrics.height()) / 2 - fontMetrics.capHeight() - beforeMarginBorderPadding;
+    LayoutUnit adjustment = fontMetrics.intAscent() + (heightOfLine - fontMetrics.intHeight()) / 2 - fontMetrics.intCapHeight() - beforeMarginBorderPadding;
     logicalTopOffset += adjustment;
 
     // For sunken and raised caps, we have to make some adjustments. Test if we're sunken or raised (dropHeightDelta will be
@@ -3378,8 +3378,8 @@ std::optional<LayoutUnit> RenderBlockFlow::firstLineBaseline() const
 
     ASSERT(firstRootBox());
     if (style().isFlippedLinesWritingMode())
-        return LayoutUnit { firstRootBox()->logicalTop() + firstLineStyle().metricsOfPrimaryFont().descent(firstRootBox()->baselineType()) };
-    return LayoutUnit { firstRootBox()->logicalTop() + firstLineStyle().metricsOfPrimaryFont().ascent(firstRootBox()->baselineType()) };
+        return LayoutUnit { firstRootBox()->logicalTop() + firstLineStyle().metricsOfPrimaryFont().intDescent(firstRootBox()->baselineType()) };
+    return LayoutUnit { firstRootBox()->logicalTop() + firstLineStyle().metricsOfPrimaryFont().intAscent(firstRootBox()->baselineType()) };
 }
 
 std::optional<LayoutUnit> RenderBlockFlow::lastLineBaseline() const
@@ -3403,8 +3403,8 @@ std::optional<LayoutUnit> RenderBlockFlow::lastLineBaseline() const
     auto rootBox = lastRootBox();
     const RenderStyle& lastLineBoxStyle = InlineIterator::lastLineBoxFor(*this)->style();
     if (style().isFlippedLinesWritingMode())
-        return LayoutUnit { rootBox->logicalTop() + lastLineBoxStyle.metricsOfPrimaryFont().descent(rootBox->baselineType()) };
-    return LayoutUnit { rootBox->logicalTop() + lastLineBoxStyle.metricsOfPrimaryFont().ascent(rootBox->baselineType()) };
+        return LayoutUnit { rootBox->logicalTop() + lastLineBoxStyle.metricsOfPrimaryFont().intDescent(rootBox->baselineType()) };
+    return LayoutUnit { rootBox->logicalTop() + lastLineBoxStyle.metricsOfPrimaryFont().intAscent(rootBox->baselineType()) };
 }
 
 std::optional<LayoutUnit> RenderBlockFlow::inlineBlockBaseline(LineDirectionMode lineDirection) const
@@ -3435,8 +3435,8 @@ std::optional<LayoutUnit> RenderBlockFlow::inlineBlockBaseline(LineDirectionMode
             if (!hasLineIfEmpty())
                 return std::nullopt;
             const auto& fontMetrics = firstLineStyle().metricsOfPrimaryFont();
-            return LayoutUnit { LayoutUnit(fontMetrics.ascent()
-                + (lineHeight(true, lineDirection, PositionOfInteriorLineBoxes) - fontMetrics.height()) / 2
+            return LayoutUnit { LayoutUnit(fontMetrics.intAscent()
+                + (lineHeight(true, lineDirection, PositionOfInteriorLineBoxes) - fontMetrics.intHeight()) / 2
                 + (lineDirection == HorizontalLine ? borderTop() + paddingTop() : borderRight() + paddingRight())).toInt() };
         }
 
@@ -3444,7 +3444,7 @@ std::optional<LayoutUnit> RenderBlockFlow::inlineBlockBaseline(LineDirectionMode
             bool isFirstLine = lastRootBox() == firstRootBox();
             const auto& style = isFirstLine ? firstLineStyle() : this->style();
             // LegacyInlineFlowBox::placeBoxesInBlockDirection will flip lines in case of verticalLR mode, so we can assume verticalRL for now.
-            lastBaseline = style.metricsOfPrimaryFont().ascent(lastRootBox()->baselineType())
+            lastBaseline = style.metricsOfPrimaryFont().intAscent(lastRootBox()->baselineType())
                 + (style.isFlippedLinesWritingMode() ? logicalHeight() - lastRootBox()->logicalBottom() : lastRootBox()->logicalTop());
         }
         else if (modernLineLayout())

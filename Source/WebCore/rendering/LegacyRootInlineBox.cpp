@@ -364,8 +364,8 @@ LayoutUnit LegacyRootInlineBox::lineSnapAdjustment(LayoutUnit delta) const
         return 0;
 
     auto& gridFontMetrics = lineGrid->style().metricsOfPrimaryFont();
-    LayoutUnit lineGridFontAscent = gridFontMetrics.ascent(baselineType());
-    LayoutUnit lineGridFontHeight = gridFontMetrics.height();
+    LayoutUnit lineGridFontAscent = gridFontMetrics.intAscent(baselineType());
+    LayoutUnit lineGridFontHeight = gridFontMetrics.intHeight();
     LayoutUnit lineGridHalfLeading = (gridLineHeight - lineGridFontHeight) / 2;
 
     LayoutUnit firstLineTop = lineGridBlockOffset + lineGrid->borderAndPaddingBefore();
@@ -373,7 +373,7 @@ LayoutUnit LegacyRootInlineBox::lineSnapAdjustment(LayoutUnit delta) const
     LayoutUnit firstBaselinePosition = firstTextTop + lineGridFontAscent;
 
     LayoutUnit currentTextTop { blockOffset + logicalTop() + delta };
-    LayoutUnit currentFontAscent = blockFlow().style().metricsOfPrimaryFont().ascent(baselineType());
+    LayoutUnit currentFontAscent = blockFlow().style().metricsOfPrimaryFont().intAscent(baselineType());
     LayoutUnit currentBaselinePosition = currentTextTop + currentFontAscent;
 
     LayoutUnit lineGridPaginationOrigin = isHorizontal() ? layoutState->lineGridPaginationOrigin().height() : layoutState->lineGridPaginationOrigin().width();
@@ -707,11 +707,11 @@ void LegacyRootInlineBox::ascentAndDescentForBox(LegacyInlineBox& box, GlyphOver
         usedFonts->append(&boxLineStyle.fontCascade().primaryFont());
         for (auto& font : *usedFonts) {
             auto& fontMetrics = font->fontMetrics();
-            LayoutUnit usedFontAscent { fontMetrics.ascent(baselineType()) };
-            LayoutUnit usedFontDescent { fontMetrics.descent(baselineType()) };
-            LayoutUnit halfLeading { (fontMetrics.lineSpacing() - fontMetrics.height()) / 2 };
+            LayoutUnit usedFontAscent { fontMetrics.intAscent(baselineType()) };
+            LayoutUnit usedFontDescent { fontMetrics.intDescent(baselineType()) };
+            LayoutUnit halfLeading { (fontMetrics.intLineSpacing() - fontMetrics.intHeight()) / 2 };
             LayoutUnit usedFontAscentAndLeading { usedFontAscent + halfLeading };
-            LayoutUnit usedFontDescentAndLeading { fontMetrics.lineSpacing() - usedFontAscentAndLeading };
+            LayoutUnit usedFontDescentAndLeading { fontMetrics.intLineSpacing() - usedFontAscentAndLeading };
             if (includeFont) {
                 setAscentAndDescent(ascent, descent, usedFontAscent, usedFontDescent, ascentDescentSet);
                 setUsedFont = true;
@@ -742,8 +742,8 @@ void LegacyRootInlineBox::ascentAndDescentForBox(LegacyInlineBox& box, GlyphOver
     }
     
     if (includeFontForBox(box) && !setUsedFont) {
-        LayoutUnit fontAscent { boxLineStyle.metricsOfPrimaryFont().ascent(baselineType()) };
-        LayoutUnit fontDescent { boxLineStyle.metricsOfPrimaryFont().descent(baselineType()) };
+        LayoutUnit fontAscent { boxLineStyle.metricsOfPrimaryFont().intAscent(baselineType()) };
+        LayoutUnit fontDescent { boxLineStyle.metricsOfPrimaryFont().intDescent(baselineType()) };
         setAscentAndDescent(ascent, descent, fontAscent, fontDescent, ascentDescentSet);
         affectsAscent = fontAscent - box.logicalTop() > 0;
         affectsDescent = fontDescent + box.logicalTop() > 0;
@@ -753,26 +753,26 @@ void LegacyRootInlineBox::ascentAndDescentForBox(LegacyInlineBox& box, GlyphOver
         setAscentAndDescent(ascent, descent, glyphOverflow->top, glyphOverflow->bottom, ascentDescentSet);
         affectsAscent = glyphOverflow->top - box.logicalTop() > 0;
         affectsDescent = glyphOverflow->bottom + box.logicalTop() > 0;
-        glyphOverflow->top = std::min(glyphOverflow->top, std::max(0_lu, glyphOverflow->top - boxLineStyle.metricsOfPrimaryFont().ascent(baselineType())));
-        glyphOverflow->bottom = std::min(glyphOverflow->bottom, std::max(0_lu, glyphOverflow->bottom - boxLineStyle.metricsOfPrimaryFont().descent(baselineType())));
+        glyphOverflow->top = std::min(glyphOverflow->top, std::max(0_lu, glyphOverflow->top - boxLineStyle.metricsOfPrimaryFont().intAscent(baselineType())));
+        glyphOverflow->bottom = std::min(glyphOverflow->bottom, std::max(0_lu, glyphOverflow->bottom - boxLineStyle.metricsOfPrimaryFont().intDescent(baselineType())));
     }
     
     if (includeInitialLetterForBox(box)) {
         bool canUseGlyphs = glyphOverflow && glyphOverflow->computeBounds;
-        auto letterAscent { baselineType() == AlphabeticBaseline ? LayoutUnit(boxLineStyle.metricsOfPrimaryFont().capHeight()) : (canUseGlyphs ? glyphOverflow->top : LayoutUnit(boxLineStyle.metricsOfPrimaryFont().ascent(baselineType()))) };
-        auto letterDescent { canUseGlyphs ? glyphOverflow->bottom : (box.isRootInlineBox() ? 0_lu : LayoutUnit(boxLineStyle.metricsOfPrimaryFont().descent(baselineType()))) };
+        auto letterAscent { baselineType() == AlphabeticBaseline ? LayoutUnit(boxLineStyle.metricsOfPrimaryFont().intCapHeight()) : (canUseGlyphs ? glyphOverflow->top : LayoutUnit(boxLineStyle.metricsOfPrimaryFont().intAscent(baselineType()))) };
+        auto letterDescent { canUseGlyphs ? glyphOverflow->bottom : (box.isRootInlineBox() ? 0_lu : LayoutUnit(boxLineStyle.metricsOfPrimaryFont().intDescent(baselineType()))) };
         setAscentAndDescent(ascent, descent, letterAscent, letterDescent, ascentDescentSet);
         affectsAscent = letterAscent - box.logicalTop() > 0;
         affectsDescent = letterDescent + box.logicalTop() > 0;
         if (canUseGlyphs) {
-            glyphOverflow->top = std::min(glyphOverflow->top, std::max(0_lu, glyphOverflow->top - boxLineStyle.metricsOfPrimaryFont().ascent(baselineType())));
-            glyphOverflow->bottom = std::min(glyphOverflow->bottom, std::max(0_lu, glyphOverflow->bottom - boxLineStyle.metricsOfPrimaryFont().descent(baselineType())));
+            glyphOverflow->top = std::min(glyphOverflow->top, std::max(0_lu, glyphOverflow->top - boxLineStyle.metricsOfPrimaryFont().intAscent(baselineType())));
+            glyphOverflow->bottom = std::min(glyphOverflow->bottom, std::max(0_lu, glyphOverflow->bottom - boxLineStyle.metricsOfPrimaryFont().intDescent(baselineType())));
         }
     }
 
     if (includeMarginForBox(box)) {
-        LayoutUnit ascentWithMargin = boxLineStyle.metricsOfPrimaryFont().ascent(baselineType());
-        LayoutUnit descentWithMargin = boxLineStyle.metricsOfPrimaryFont().descent(baselineType());
+        LayoutUnit ascentWithMargin = boxLineStyle.metricsOfPrimaryFont().intAscent(baselineType());
+        LayoutUnit descentWithMargin = boxLineStyle.metricsOfPrimaryFont().intDescent(baselineType());
         if (box.parent() && !box.renderer().isRenderTextOrLineBreak()) {
             ascentWithMargin += box.boxModelObject()->borderAndPaddingBefore() + box.boxModelObject()->marginBefore();
             descentWithMargin += box.boxModelObject()->borderAndPaddingAfter() + box.boxModelObject()->marginAfter();
@@ -828,11 +828,11 @@ LayoutUnit LegacyRootInlineBox::verticalPositionForBox(LegacyInlineBox* box, Ver
         else if (verticalAlign == VerticalAlign::Super)
             verticalPosition -= fontSize / 3 + 1;
         else if (verticalAlign == VerticalAlign::TextTop)
-            verticalPosition += renderer->baselinePosition(baselineType(), firstLine, lineDirection) - fontMetrics.ascent(baselineType());
+            verticalPosition += renderer->baselinePosition(baselineType(), firstLine, lineDirection) - fontMetrics.intAscent(baselineType());
         else if (verticalAlign == VerticalAlign::Middle)
-            verticalPosition = (verticalPosition - LayoutUnit(fontMetrics.xHeight() / 2) - renderer->lineHeight(firstLine, lineDirection) / 2 + renderer->baselinePosition(baselineType(), firstLine, lineDirection));
+            verticalPosition = (verticalPosition - LayoutUnit(fontMetrics.xHeight().value_or(0) / 2) - renderer->lineHeight(firstLine, lineDirection) / 2 + renderer->baselinePosition(baselineType(), firstLine, lineDirection));
         else if (verticalAlign == VerticalAlign::TextBottom) {
-            verticalPosition += fontMetrics.descent(baselineType());
+            verticalPosition += fontMetrics.intDescent(baselineType());
             // lineHeight - baselinePosition is always 0 for replaced elements (except inline blocks), so don't bother wasting time in that case.
             if (!renderer->isReplacedOrInlineBlock() || renderer->isInlineBlockOrInlineTable())
                 verticalPosition -= (renderer->lineHeight(firstLine, lineDirection) - renderer->baselinePosition(baselineType(), firstLine, lineDirection));

@@ -166,7 +166,7 @@ void RenderRubyRun::layoutBlock(bool relayoutChildren, LayoutUnit pageHeight)
         // Bopomofo. We need to move the RenderRubyText over to the right side and center it
         // vertically relative to the base.
         const FontCascade& font = style().fontCascade();
-        float distanceBetweenBase = std::max(font.letterSpacing(), 2.0f * rt->style().fontCascade().metricsOfPrimaryFont().height());
+        float distanceBetweenBase = std::max(font.letterSpacing(), 2.0f * rt->style().fontCascade().metricsOfPrimaryFont().intHeight());
         setWidth(width() + distanceBetweenBase - font.letterSpacing());
         if (RenderRubyBase* rb = rubyBase()) {
             LayoutUnit firstLineTop;
@@ -212,7 +212,7 @@ LayoutUnit RenderRubyRun::baselinePosition(FontBaseline baselineType, bool first
     if (!rubyBase() || rubyBase()->isEmptyOrHasInFlowContent())
         return RenderBlockFlow::baselinePosition(baselineType, firstLine, lineDirectionMode, linePositionMode);
     auto& style = firstLine ? firstLineStyle() : this->style();
-    return LayoutUnit { style.metricsOfPrimaryFont().ascent(baselineType) };
+    return LayoutUnit { style.metricsOfPrimaryFont().intAscent(baselineType) };
 }
 
 static bool shouldOverhang(bool firstLine, const RenderObject* renderer, const RenderRubyBase& rubyBase)

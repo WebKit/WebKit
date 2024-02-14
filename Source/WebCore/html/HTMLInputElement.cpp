@@ -2300,7 +2300,7 @@ RenderStyle HTMLInputElement::createInnerTextStyle(const RenderStyle& style)
 
     auto shouldUseInitialLineHeight = [&] {
         // Do not allow line-height to be smaller than our default.
-        if (textBlockStyle.metricsOfPrimaryFont().lineSpacing() > style.computedLineHeight())
+        if (textBlockStyle.metricsOfPrimaryFont().intLineSpacing() > style.computedLineHeight())
             return true;
         return isText() && !style.logicalHeight().isAuto() && !hasAutoFillStrongPasswordButton();
     };

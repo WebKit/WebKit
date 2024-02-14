@@ -1315,7 +1315,7 @@ int FontCascade::emphasisMarkAscent(const AtomString& mark) const
     if (!markFontData)
         return 0;
 
-    return markFontData->fontMetrics().ascent();
+    return markFontData->fontMetrics().intAscent();
 }
 
 int FontCascade::emphasisMarkDescent(const AtomString& mark) const
@@ -1329,7 +1329,7 @@ int FontCascade::emphasisMarkDescent(const AtomString& mark) const
     if (!markFontData)
         return 0;
 
-    return markFontData->fontMetrics().descent();
+    return markFontData->fontMetrics().intDescent();
 }
 
 const Font* FontCascade::fontForEmphasisMark(const AtomString& mark) const
@@ -1345,14 +1345,14 @@ const Font* FontCascade::fontForEmphasisMark(const AtomString& mark) const
 int FontCascade::emphasisMarkHeight(const AtomString& mark) const
 {
     if (RefPtr font = fontForEmphasisMark(mark))
-        return font->fontMetrics().height();
+        return font->fontMetrics().intHeight();
     return { };
 }
 
 float FontCascade::floatEmphasisMarkHeight(const AtomString& mark) const
 {
     if (RefPtr font = fontForEmphasisMark(mark))
-        return font->fontMetrics().floatHeight();
+        return font->fontMetrics().height();
     return { };
 }
 
@@ -1527,8 +1527,8 @@ float FontCascade::floatWidthForSimpleText(const TextRun& run, SingleThreadWeakH
     it.finalize(glyphBuffer);
 
     if (glyphOverflow) {
-        glyphOverflow->top = std::max<int>(glyphOverflow->top, ceilf(-it.minGlyphBoundingBoxY()) - (glyphOverflow->computeBounds ? 0 : metricsOfPrimaryFont().ascent()));
-        glyphOverflow->bottom = std::max<int>(glyphOverflow->bottom, ceilf(it.maxGlyphBoundingBoxY()) - (glyphOverflow->computeBounds ? 0 : metricsOfPrimaryFont().descent()));
+        glyphOverflow->top = std::max<int>(glyphOverflow->top, ceilf(-it.minGlyphBoundingBoxY()) - (glyphOverflow->computeBounds ? 0 : metricsOfPrimaryFont().intAscent()));
+        glyphOverflow->bottom = std::max<int>(glyphOverflow->bottom, ceilf(it.maxGlyphBoundingBoxY()) - (glyphOverflow->computeBounds ? 0 : metricsOfPrimaryFont().intDescent()));
         glyphOverflow->left = ceilf(it.firstGlyphOverflow());
         glyphOverflow->right = ceilf(it.lastGlyphOverflow());
     }
@@ -1540,8 +1540,8 @@ float FontCascade::floatWidthForComplexText(const TextRun& run, SingleThreadWeak
 {
     ComplexTextController controller(*this, run, true, fallbackFonts);
     if (glyphOverflow) {
-        glyphOverflow->top = std::max<int>(glyphOverflow->top, ceilf(-controller.minGlyphBoundingBoxY()) - (glyphOverflow->computeBounds ? 0 : metricsOfPrimaryFont().ascent()));
-        glyphOverflow->bottom = std::max<int>(glyphOverflow->bottom, ceilf(controller.maxGlyphBoundingBoxY()) - (glyphOverflow->computeBounds ? 0 : metricsOfPrimaryFont().descent()));
+        glyphOverflow->top = std::max<int>(glyphOverflow->top, ceilf(-controller.minGlyphBoundingBoxY()) - (glyphOverflow->computeBounds ? 0 : metricsOfPrimaryFont().intAscent()));
+        glyphOverflow->bottom = std::max<int>(glyphOverflow->bottom, ceilf(controller.maxGlyphBoundingBoxY()) - (glyphOverflow->computeBounds ? 0 : metricsOfPrimaryFont().intDescent()));
         glyphOverflow->left = std::max<int>(0, ceilf(-controller.minGlyphBoundingBoxX()));
         glyphOverflow->right = std::max<int>(0, ceilf(controller.maxGlyphBoundingBoxX() - controller.totalAdvance().width()));
     }

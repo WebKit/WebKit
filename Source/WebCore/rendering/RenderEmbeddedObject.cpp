@@ -278,7 +278,7 @@ void RenderEmbeddedObject::paintReplaced(PaintInfo& paintInfo, const LayoutPoint
 
     const FontMetrics& fontMetrics = font.metricsOfPrimaryFont();
     float labelX = roundf(replacementTextRect.location().x() + replacementTextRoundedRectLeftTextMargin);
-    float labelY = roundf(replacementTextRect.location().y() + (replacementTextRect.size().height() - fontMetrics.height()) / 2 + fontMetrics.ascent() + replacementTextRoundedRectTopTextMargin);
+    float labelY = roundf(replacementTextRect.location().y() + (replacementTextRect.size().height() - fontMetrics.intHeight()) / 2 + fontMetrics.intAscent() + replacementTextRoundedRectTopTextMargin);
     context.setFillColor(replacementTextColor);
     context.drawBidiText(font, run, FloatPoint(labelX, labelY));
 

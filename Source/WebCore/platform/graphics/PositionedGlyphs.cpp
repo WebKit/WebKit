@@ -36,8 +36,8 @@ FloatRect PositionedGlyphs::computeBounds(const Font& font) const
 
     // FIXME: This code doesn't actually take the extents of the glyphs into consideration. It assumes that
     // the glyph lies entirely within its [(ascent + descent), advance] rect.
-    float ascent = font.fontMetrics().floatAscent();
-    float descent = font.fontMetrics().floatDescent();
+    float ascent = font.fontMetrics().ascent().value_or(0);
+    float descent = font.fontMetrics().descent().value_or(0);
     FloatPoint current = localAnchor;
     for (auto& advance : advances) {
         FloatRect glyphRect = FloatRect(current.x(), current.y() - ascent, width(advance), ascent + descent);

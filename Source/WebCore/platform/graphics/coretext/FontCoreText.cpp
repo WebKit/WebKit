@@ -221,7 +221,7 @@ void Font::platformInit()
             else
                 xHeight = CTFontGetXHeight(m_platformData.font());
         } else
-            xHeight = verticalRightOrientationFont().fontMetrics().xHeight();
+            xHeight = verticalRightOrientationFont().fontMetrics().xHeight().value_or(0);
     }
 
     if (CTFontGetSymbolicTraits(m_platformData.font()) & kCTFontTraitColorGlyphs) {

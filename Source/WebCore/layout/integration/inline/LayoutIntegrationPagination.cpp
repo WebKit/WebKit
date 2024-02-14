@@ -42,8 +42,8 @@ static LayoutUnit computeFirstLineSnapAdjustment(const InlineDisplay::Line& line
     auto gridLineHeight = lineGrid.rowHeight;
 
     auto& gridFontMetrics = lineGrid.primaryFont->fontMetrics();
-    auto lineGridFontAscent = gridFontMetrics.ascent(line.baselineType());
-    auto lineGridFontHeight = gridFontMetrics.height();
+    auto lineGridFontAscent = gridFontMetrics.intAscent(line.baselineType());
+    auto lineGridFontHeight = gridFontMetrics.intHeight();
     auto lineGridHalfLeading = (gridLineHeight - lineGridFontHeight) / 2;
     auto firstLineTop = lineGrid.topRowOffset;
     auto firstTextTop = firstLineTop + lineGridHalfLeading;

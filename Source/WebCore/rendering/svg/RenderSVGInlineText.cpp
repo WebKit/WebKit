@@ -159,7 +159,7 @@ VisiblePosition RenderSVGInlineText::positionForPoint(const LayoutPoint& point, 
     if (!firstTextBox() || text().isEmpty())
         return createVisiblePosition(0, Affinity::Downstream);
 
-    float baseline = m_scaledFont.metricsOfPrimaryFont().floatAscent();
+    float baseline = m_scaledFont.metricsOfPrimaryFont().ascent().value_or(0);
 
     RenderBlock* containingBlock = this->containingBlock();
     ASSERT(containingBlock);

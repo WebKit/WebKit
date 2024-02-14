@@ -80,7 +80,7 @@ LayoutUnit RenderLineBreak::baselinePosition(FontBaseline baselineType, bool fir
 {
     const RenderStyle& style = firstLine ? firstLineStyle() : this->style();
     const FontMetrics& fontMetrics = style.metricsOfPrimaryFont();
-    return LayoutUnit { (fontMetrics.ascent(baselineType) + (lineHeight(firstLine, direction, linePositionMode) - fontMetrics.height()) / 2).toInt() };
+    return LayoutUnit { (fontMetrics.intAscent(baselineType) + (lineHeight(firstLine, direction, linePositionMode) - fontMetrics.intHeight()) / 2).toInt() };
 }
 
 std::unique_ptr<LegacyInlineElementBox> RenderLineBreak::createInlineBox()

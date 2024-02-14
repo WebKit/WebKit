@@ -2779,7 +2779,7 @@ int RenderStyle::computeLineHeight(const Length& lineHeightLength) const
 {
     // Negative value means the line height is not set. Use the font's built-in spacing.
     if (lineHeightLength.isNegative())
-        return metricsOfPrimaryFont().lineSpacing();
+        return metricsOfPrimaryFont().intLineSpacing();
 
     if (lineHeightLength.isPercentOrCalculated())
         return minimumValueForLength(lineHeightLength, computedFontSize());

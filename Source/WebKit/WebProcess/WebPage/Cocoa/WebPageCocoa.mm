@@ -253,7 +253,7 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(LocalFrame& frame, cons
     IntRect rangeRect = frame.view()->contentsToWindow(quads[0].enclosingBoundingBox());
 
     const RenderStyle* style = range.startContainer().renderStyle();
-    float scaledAscent = style ? style->metricsOfPrimaryFont().ascent() * pageScaleFactor() : 0;
+    float scaledAscent = style ? style->metricsOfPrimaryFont().intAscent() * pageScaleFactor() : 0;
     dictionaryPopupInfo.origin = FloatPoint(rangeRect.x(), rangeRect.y() + scaledAscent);
 
 #if PLATFORM(MAC)
