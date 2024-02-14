@@ -1,0 +1,11 @@
+a
+b
+
+PASS direction returns "none" when there is no selection
+PASS direction returns "forward" when there is a forward-direction selection in the document tree
+PASS direction returns "backward" when there is a backward-direction selection in the document tree
+PASS direction returns "forward" when there is a forward selection in the shadow tree
+PASS direction returns "backward" when there is a backward selection in the shadow tree
+PASS direction returns "forward" when there is a forward selection that crosses shadow boundaries
+PASS direction returns "backward" when there is a forward selection that crosses shadow boundaries
+

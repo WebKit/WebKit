@@ -11,8 +11,8 @@
 <script src="resources/focus-utils.js"></script>
 
 <div>
-  <template shadowroot=open>
-    <slot />
+  <template shadowrootmode=open>
+    <slot></slot>
   </template>
   <slot>
     <input id=input1>
@@ -24,7 +24,6 @@
 
 <script>
 promise_test(async () => {
-  convertDeclarativeTemplatesToShadowRootsWithin(document);
   input2.focus();
   assert_equals(document.activeElement, input2);
 

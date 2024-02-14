@@ -1,0 +1,8 @@
+
+FAIL attachShadow with clonable: true null is not an object (evaluating 'shallowClonedRoot.clonable')
+PASS attachShadow with clonable: false
+PASS attachShadow with clonable: undefined
+FAIL declarative shadow roots do *not* get clonable: true automatically assert_false: clonable is *not* automatically true for declarative shadow root expected false got true
+PASS declarative shadow roots can opt in to clonable with shadowrootclonable
+FAIL declarative shadow roots inside templates do *not* get cloned automatically assert_true: no shadow root gets cloned expected true got false
+

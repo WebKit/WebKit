@@ -1,0 +1,4 @@
+New Content
+
+PASS Don't clear focus within shadow root if light DOM children are cleared
+

@@ -29,6 +29,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/Range-prototype-insertNode.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/ShadowRoot-interface.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/Slottable-mixin.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/accesskey.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/capturing-and-bubbling-event-listeners-across-shadow-trees.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/directionality-001-ref.html
@@ -47,6 +48,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/event-on-pseudo-element-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/event-post-dispatch.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/event-with-related-target.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus-within-shadow.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/form-control-form-attribute.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/getElementById-dynamic-001.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/historical.html
@@ -74,6 +76,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/offsetParent-across-shadow-boundaries.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/offsetTop-offsetLeft-across-shadow-boundaries.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/scroll-to-the-fragment-in-shadow-tree.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/selection-collapse-and-extend.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/selection-direction.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/selection-getComposedRanges.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/shadow-root-clonable.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/shadow-style-invalidation-vw-units-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/shadow-style-invalidation-vw-units-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/shadow-style-invalidation-vw-units.html

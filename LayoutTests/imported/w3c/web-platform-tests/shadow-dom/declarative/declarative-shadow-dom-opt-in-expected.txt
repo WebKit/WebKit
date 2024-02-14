@@ -106,7 +106,7 @@ PASS innerHTML on a <wbr>
 PASS innerHTML on template
 PASS innerHTML on template, with nested template content
 PASS innerHTML on shadowRoot
-PASS DOMParser (includingShadowRoots is historical)
+PASS DOMParser (includeShadowRoots is historical)
 PASS createHTMLDocument with innerHTML - not supported
 PASS createContextualFragment - not supported
 PASS XMLHttpRequest - not supported
