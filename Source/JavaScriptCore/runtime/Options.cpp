@@ -715,6 +715,11 @@ void Options::notifyOptionsChanged()
     Options::useBBQTierUpChecks() = false;
 #endif
 #endif
+
+#if !CPU(ARM64)
+    Options::useRandomizingExecutableIslandAllocation() = false;
+#endif
+
     Options::useDataICInFTL() = false; // Currently, it is not completed. Disable forcefully.
     Options::forceUnlinkedDFG() = false; // Currently, IC is rapidly changing. We disable this until we get the final form of Data IC.
 
