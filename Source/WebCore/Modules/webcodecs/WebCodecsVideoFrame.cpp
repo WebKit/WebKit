@@ -199,7 +199,7 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutio
     },
 #if ENABLE(VIDEO)
     [&] (RefPtr<HTMLVideoElement>& video) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {
-        RefPtr<VideoFrame> videoFrame = video->player() ? video->player()->videoFrameForCurrentTime() : nullptr;
+        RefPtr videoFrame = video->player() ? video->player()->videoFrameForCurrentTime() : nullptr;
         if (!videoFrame)
             return Exception { ExceptionCode::InvalidStateError,  "Video element has no video frame"_s };
         return initializeFrameFromOtherFrame(context, videoFrame.releaseNonNull(), WTFMove(init), VideoFrame::ShouldCloneWithDifferentTimestamp::No);

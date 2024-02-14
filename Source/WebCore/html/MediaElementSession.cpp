@@ -754,7 +754,7 @@ bool MediaElementSession::wirelessVideoPlaybackDisabled() const
         return true;
     }
 
-    auto player = m_element.player();
+    RefPtr player = m_element.player();
     if (!player)
         return true;
 
@@ -771,7 +771,7 @@ void MediaElementSession::setWirelessVideoPlaybackDisabled(bool disabled)
     else
         removeBehaviorRestriction(WirelessVideoPlaybackDisabled);
 
-    auto player = m_element.player();
+    RefPtr player = m_element.player();
     if (!player)
         return;
 

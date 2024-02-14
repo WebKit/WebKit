@@ -288,7 +288,7 @@ String MediaControlsHost::externalDeviceDisplayName() const
     if (!m_mediaElement)
         return emptyString();
 
-    auto player = m_mediaElement->player();
+    RefPtr player = m_mediaElement->player();
     if (!player) {
         LOG(Media, "MediaControlsHost::externalDeviceDisplayName - returning \"\" because player is NULL");
         return emptyString();
@@ -310,7 +310,7 @@ auto MediaControlsHost::externalDeviceType() const -> DeviceType
     if (!m_mediaElement)
         return DeviceType::None;
 
-    auto player = m_mediaElement->player();
+    RefPtr player = m_mediaElement->player();
     if (!player) {
         LOG(Media, "MediaControlsHost::externalDeviceType - returning \"none\" because player is NULL");
         return DeviceType::None;

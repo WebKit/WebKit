@@ -129,7 +129,7 @@ void VideoPresentationModelVideoElement::updateForEventName(const WTF::AtomStrin
             if (!m_videoElement)
                 return std::nullopt;
 
-            auto player = m_videoElement->player();
+            RefPtr player = m_videoElement->player();
             if (!player)
                 return std::nullopt;
 

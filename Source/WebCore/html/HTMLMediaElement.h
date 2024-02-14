@@ -167,7 +167,8 @@ public:
 
     HTMLMediaElementIdentifier identifier() const { return m_identifier; }
 
-    RefPtr<MediaPlayer> player() const { return m_player; }
+    MediaPlayer* player() const { return m_player.get(); }
+    RefPtr<MediaPlayer> protectedPlayer() const { return m_player; }
     WEBCORE_EXPORT std::optional<MediaPlayerIdentifier> playerIdentifier() const;
 
     bool supportsAcceleratedRendering() const { return m_player && m_player->supportsAcceleratedRendering(); }

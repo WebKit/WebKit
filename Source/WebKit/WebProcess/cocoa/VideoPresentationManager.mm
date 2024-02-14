@@ -389,7 +389,7 @@ void VideoPresentationManager::enterVideoFullscreenForVideoElement(HTMLVideoElem
             return;
         page->send(Messages::VideoPresentationManagerProxy::SetupFullscreenWithID(contextId, contextID, videoRect, initialSize, size, page->deviceScaleFactor(), fullscreenMode, allowsPictureInPicture, standby, videoElement->document().quirks().blocksReturnToFullscreenFromPictureInPictureQuirk()));
 
-        if (auto player = videoElement->player()) {
+        if (RefPtr player = videoElement->player()) {
             if (auto identifier = player->identifier())
                 protectedThis->setPlayerIdentifier(contextId, identifier);
         }

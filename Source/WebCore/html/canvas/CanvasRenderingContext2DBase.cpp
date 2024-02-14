@@ -1452,7 +1452,7 @@ static inline FloatSize size(ImageBitmap& imageBitmap)
 
 static inline FloatSize size(HTMLVideoElement& video)
 {
-    auto player = video.player();
+    RefPtr player = video.player();
     if (!player)
         return { };
     return player->naturalSize();

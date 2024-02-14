@@ -270,16 +270,16 @@ void HTMLVideoElement::mediaPlayerFirstVideoFrameAvailable()
 
     invalidateStyleAndLayerComposition();
 
-    if (auto player = this->player())
+    if (RefPtr player = this->player())
         player->prepareForRendering();
 
-    if (auto* renderer = this->renderer())
+    if (CheckedPtr renderer = this->renderer())
         renderer->updateFromElement();
 }
 
 std::optional<DestinationColorSpace> HTMLVideoElement::colorSpace() const
 {
-    auto player = this->player();
+    RefPtr player = this->player();
     if (!player)
         return std::nullopt;
 
@@ -294,7 +294,7 @@ RefPtr<ImageBuffer> HTMLVideoElement::createBufferForPainting(const FloatSize& s
 
 void HTMLVideoElement::paintCurrentFrameInContext(GraphicsContext& context, const FloatRect& destRect)
 {
-    RefPtr<MediaPlayer> player = HTMLMediaElement::player();
+    RefPtr player = this->player();
     if (!player)
         return;
 
@@ -323,11 +323,8 @@ bool HTMLVideoElement::shouldGetNativeImageForCanvasDrawing() const
 
 RefPtr<NativeImage> HTMLVideoElement::nativeImageForCurrentTime()
 {
-    auto player = this->player();
-    if (!player)
-        return nullptr;
-
-    return player->nativeImageForCurrentTime();
+    RefPtr player = this->player();
+    return player? player->nativeImageForCurrentTime() : nullptr;
 }
 
 ExceptionOr<void> HTMLVideoElement::webkitEnterFullscreen()
@@ -597,8 +594,10 @@ void HTMLVideoElement::exitToFullscreenModeWithoutAnimationIfPossible(HTMLMediaE
 
 unsigned HTMLVideoElement::requestVideoFrameCallback(Ref<VideoFrameRequestCallback>&& callback)
 {
-    if (m_videoFrameRequests.isEmpty() && player())
-        player()->startVideoFrameMetadataGathering();
+    if (m_videoFrameRequests.isEmpty()) {
+        if (RefPtr player = this->player())
+            player->startVideoFrameMetadataGathering();
+    }
 
     auto identifier = ++m_nextVideoFrameRequestIndex;
     m_videoFrameRequests.append(makeUniqueRef<VideoFrameRequest>(identifier, WTFMove(callback)));
@@ -623,8 +622,10 @@ void HTMLVideoElement::cancelVideoFrameCallback(unsigned identifier)
         return;
     m_videoFrameRequests.remove(index);
 
-    if (m_videoFrameRequests.isEmpty() && player())
-        player()->stopVideoFrameMetadataGathering();
+    if (m_videoFrameRequests.isEmpty()) {
+        if (RefPtr player = this->player())
+            player->stopVideoFrameMetadataGathering();
+    }
 }
 
 static void processVideoFrameMetadataTimestamps(VideoFrameMetadata& metadata, Performance& performance)
@@ -665,15 +666,19 @@ void HTMLVideoElement::serviceRequestVideoFrameCallbacks(ReducedResolutionSecond
     }
     m_servicedVideoFrameRequests.clear();
 
-    if (m_videoFrameRequests.isEmpty() && player())
-        player()->stopVideoFrameMetadataGathering();
+    if (m_videoFrameRequests.isEmpty()) {
+        if (RefPtr player = this->player())
+            player->stopVideoFrameMetadataGathering();
+    }
 }
 
 void HTMLVideoElement::mediaPlayerEngineUpdated()
 {
     HTMLMediaElement::mediaPlayerEngineUpdated();
-    if (!m_videoFrameRequests.isEmpty() && player())
-        player()->startVideoFrameMetadataGathering();
+    if (!m_videoFrameRequests.isEmpty()) {
+        if (RefPtr player = this->player())
+            player->startVideoFrameMetadataGathering();
+    }
     // If the RenderLayerCompositor had queried the element's MediaPlayer::supportsAcceleratedRendering prior the player having been created it would have been set to false.
     HTMLMediaElement::mediaPlayerRenderingModeChanged();
 }

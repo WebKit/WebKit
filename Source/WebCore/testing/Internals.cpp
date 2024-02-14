@@ -4297,7 +4297,7 @@ Vector<String> Internals::mediaResponseContentRanges(HTMLMediaElement& media)
 void Internals::simulateAudioInterruption(HTMLMediaElement& element)
 {
 #if USE(GSTREAMER)
-    element.player()->simulateAudioInterruption();
+    element.protectedPlayer()->simulateAudioInterruption();
 #else
     UNUSED_PARAM(element);
 #endif
@@ -4317,13 +4317,13 @@ ExceptionOr<bool> Internals::mediaElementHasCharacteristic(HTMLMediaElement& ele
 
 void Internals::beginSimulatedHDCPError(HTMLMediaElement& element)
 {
-    if (auto player = element.player())
+    if (RefPtr player = element.player())
         player->beginSimulatedHDCPError();
 }
 
 void Internals::endSimulatedHDCPError(HTMLMediaElement& element)
 {
-    if (auto player = element.player())
+    if (RefPtr player = element.player())
         player->endSimulatedHDCPError();
 }
 
@@ -4810,19 +4810,19 @@ bool Internals::elementIsBlockingDisplaySleep(const HTMLMediaElement& element) c
 
 bool Internals::isPlayerVisibleInViewport(const HTMLMediaElement& element) const
 {
-    auto player = element.player();
+    RefPtr player = element.player();
     return player && player->isVisibleInViewport();
 }
 
 bool Internals::isPlayerMuted(const HTMLMediaElement& element) const
 {
-    auto player = element.player();
+    RefPtr player = element.player();
     return player && player->muted();
 }
 
 bool Internals::isPlayerPaused(const HTMLMediaElement& element) const
 {
-    auto player = element.player();
+    RefPtr player = element.player();
     return player && player->paused();
 }
 

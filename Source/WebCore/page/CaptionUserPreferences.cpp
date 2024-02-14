@@ -352,7 +352,7 @@ int CaptionUserPreferences::textTrackSelectionScore(TextTrack* track, HTMLMediaE
         if (testingMode())
             audioTrackLanguage = primaryAudioTrackLanguageOverride();
         else
-            audioTrackLanguage = mediaElement->player()->languageOfPrimaryAudioTrack();
+            audioTrackLanguage = mediaElement->protectedPlayer()->languageOfPrimaryAudioTrack();
 
         if (audioTrackLanguage.isEmpty())
             return 0;

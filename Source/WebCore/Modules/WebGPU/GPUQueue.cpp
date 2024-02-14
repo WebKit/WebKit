@@ -309,7 +309,7 @@ static void imageBytesForSource(const auto& source, const auto& destination, Ima
         return callback(nullptr, 0, 0);
     }, [&](const RefPtr<HTMLVideoElement> videoElement) -> ResultType {
 #if PLATFORM(COCOA)
-        if (auto player = videoElement->player(); player->isVideoPlayer())
+        if (RefPtr player = videoElement->player(); player->isVideoPlayer())
             return getImageBytesFromVideoFrame(player->videoFrameForCurrentTime(), WTFMove(callback));
 #endif
         UNUSED_PARAM(videoElement);

@@ -3394,7 +3394,7 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource(TexImageFunctionID f
     bool sourceImageRectIsDefault = inputSourceImageRect == sentinelEmptyRect() || inputSourceImageRect == IntRect(0, 0, source.videoWidth(), source.videoHeight());
 
 #if PLATFORM(COCOA) && !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
-    if (auto player = source.player())
+    if (RefPtr player = source.player())
         player->willBeAskedToPaintGL();
 #endif
     // Go through the fast path doing a GPU-GPU textures copy without a readback to system memory if possible.
@@ -3405,7 +3405,7 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource(TexImageFunctionID f
         && (format == GraphicsContextGL::RGB || format == GraphicsContextGL::RGBA)
         && type == GraphicsContextGL::UNSIGNED_BYTE
         && !level) {
-        if (auto player = source.player()) {
+        if (RefPtr player = source.player()) {
             if (m_context->copyTextureFromMedia(*player, texture->object(), target, level, internalformat, format, type, m_unpackPremultiplyAlpha, m_unpackFlipY))
                 return { };
         }
