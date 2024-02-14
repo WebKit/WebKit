@@ -387,6 +387,7 @@ public:
 
     void didShowInspectorExtensionPanel(API::InspectorExtension&, const Inspector::ExtensionTabID&, WebCore::FrameIdentifier) const;
     void didHideInspectorExtensionPanel(API::InspectorExtension&, const Inspector::ExtensionTabID&) const;
+    void inspectedPageDidNavigate(API::InspectorExtension&, const URL&);
 #endif
 
     WebExtensionAction& defaultAction();

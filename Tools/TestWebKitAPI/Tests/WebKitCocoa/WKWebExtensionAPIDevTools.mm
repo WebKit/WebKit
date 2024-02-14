@@ -276,6 +276,45 @@ TEST(WKWebExtensionAPIDevTools, InspectedWindowReloadIgnoringCache)
     EXPECT_EQ(server.totalRequests(), 2ul);
 }
 
+TEST(WKWebExtensionAPIDevTools, NetworkNavigatedEvent)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *devToolsScript = Util::constructScript(@[
+        @"browser.devtools.network.onNavigated.addListener((url) => {",
+        @"  browser.test.assertEq(typeof url, 'string', 'url should be a string')",
+        @"  browser.test.assertTrue(url?.startsWith('http://127.0.0.1:'), 'url should be local IP address')",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"browser.test.yield('Load Next Page')",
+    ]);
+
+    auto *resources = @{
+        @"background.js": @"// This script is intentionally left blank.",
+        @"devtools.html": @"<script type='module' src='devtools.js'></script>",
+        @"devtools.js": devToolsScript
+    };
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager.get().defaultTab.mainWebView loadRequest:server.requestWithLocalhost()];
+    [manager.get().defaultTab.mainWebView._inspector show];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Next Page");
+
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:server.request().URL];
+    [manager.get().defaultTab.mainWebView loadRequest:server.request()];
+
+    [manager run];
+}
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(WK_WEB_EXTENSIONS) && ENABLE(INSPECTOR_EXTENSIONS)

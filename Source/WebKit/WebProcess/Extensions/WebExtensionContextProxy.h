@@ -148,6 +148,7 @@ private:
     void addInspectorBackgroundPageIdentifier(WebCore::PageIdentifier, std::optional<WebExtensionTabIdentifier>, std::optional<WebExtensionWindowIdentifier>);
     void dispatchDevToolsExtensionPanelShownEvent(Inspector::ExtensionTabID, WebCore::FrameIdentifier);
     void dispatchDevToolsExtensionPanelHiddenEvent(Inspector::ExtensionTabID);
+    void dispatchDevToolsNetworkNavigatedEvent(const URL&);
 #endif
 
     // Extension

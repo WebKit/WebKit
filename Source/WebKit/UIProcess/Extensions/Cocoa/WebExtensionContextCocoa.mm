@@ -3166,6 +3166,12 @@ void WebExtensionContext::loadInspectorBackgroundPage(WebInspectorUIProxy& inspe
                 extensionContext->didHideInspectorExtensionPanel(*m_inspectorExtension, identifier);
         }
 
+        void inspectedPageDidNavigate(const WTF::URL& url) override
+        {
+            if (RefPtr extensionContext = m_extensionContext.get())
+                extensionContext->inspectedPageDidNavigate(*m_inspectorExtension, url);
+        }
+
         NakedPtr<API::InspectorExtension> m_inspectorExtension;
         WeakPtr<WebExtensionContext> m_extensionContext;
     };
@@ -3261,6 +3267,14 @@ void WebExtensionContext::didShowInspectorExtensionPanel(API::InspectorExtension
 void WebExtensionContext::didHideInspectorExtensionPanel(API::InspectorExtension& inspectorExtension, const Inspector::ExtensionTabID& identifier) const
 {
     sendToProcesses(processes(inspectorExtension), Messages::WebExtensionContextProxy::DispatchDevToolsExtensionPanelHiddenEvent(identifier));
+}
+
+void WebExtensionContext::inspectedPageDidNavigate(API::InspectorExtension& inspectorExtension, const URL& url)
+{
+    if (!hasPermission(url))
+        return;
+
+    sendToProcesses(processes(inspectorExtension), Messages::WebExtensionContextProxy::DispatchDevToolsNetworkNavigatedEvent(url));
 }
 #endif // ENABLE(INSPECTOR_EXTENSIONS)
 
