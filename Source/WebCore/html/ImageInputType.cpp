@@ -146,7 +146,7 @@ void ImageInputType::attach()
         return;
 
     auto& imageResource = renderer->imageResource();
-    imageResource.setCachedImage(imageLoader.image());
+    imageResource.setCachedImage(imageLoader.protectedImage());
 
     // If we have no image at all because we have no src attribute, set
     // image height and width for the alt text instead.

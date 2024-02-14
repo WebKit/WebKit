@@ -468,7 +468,7 @@ void HTMLImageElement::didAttachRenderers()
     RenderImageResource& renderImageResource = renderImage->imageResource();
     if (renderImageResource.cachedImage())
         return;
-    renderImageResource.setCachedImage(m_imageLoader->image());
+    renderImageResource.setCachedImage(m_imageLoader->protectedImage());
 
     // If we have no image at all because we have no src attribute, set
     // image height and width for the alt text instead.

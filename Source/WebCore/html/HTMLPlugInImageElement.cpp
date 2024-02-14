@@ -176,7 +176,7 @@ void HTMLPlugInImageElement::didAttachRenderers()
         if (auto* renderImage = dynamicDowncast<RenderImage>(renderer())) {
             auto& renderImageResource = renderImage->imageResource();
             if (!renderImageResource.cachedImage())
-                renderImageResource.setCachedImage(m_imageLoader->image());
+                renderImageResource.setCachedImage(m_imageLoader->protectedImage());
         }
     }
 

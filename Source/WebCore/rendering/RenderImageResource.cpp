@@ -57,7 +57,7 @@ void RenderImageResource::shutdown()
     setCachedImage(nullptr);
 }
 
-void RenderImageResource::setCachedImage(CachedImage* newImage)
+void RenderImageResource::setCachedImage(CachedResourceHandle<CachedImage>&& newImage)
 {
     if (m_cachedImage == newImage)
         return;
@@ -68,7 +68,7 @@ void RenderImageResource::setCachedImage(CachedImage* newImage)
         // removeClient may have destroyed the renderer.
         return;
     }
-    m_cachedImage = newImage;
+    m_cachedImage = WTFMove(newImage);
     m_cachedImageRemoveClientIsNeeded = true;
     if (!m_cachedImage)
         return;

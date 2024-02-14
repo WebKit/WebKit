@@ -156,7 +156,7 @@ private:
 #endif
 
 #if ENABLE(PICTURE_IN_PICTURE_API)
-    PictureInPictureObserver* m_pictureInPictureObserver { nullptr };
+    WeakPtr<PictureInPictureObserver> m_pictureInPictureObserver;
 #endif
 
     struct VideoFrameRequest {

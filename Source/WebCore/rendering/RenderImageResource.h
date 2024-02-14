@@ -46,7 +46,7 @@ public:
     virtual void initialize(RenderElement& renderer) { initialize(renderer, nullptr); }
     virtual void shutdown();
 
-    void setCachedImage(CachedImage*);
+    void setCachedImage(CachedResourceHandle<CachedImage>&&);
     CachedImage* cachedImage() const { return m_cachedImage.get(); }
 
     void resetAnimation();

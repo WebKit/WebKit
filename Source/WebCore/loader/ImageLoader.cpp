@@ -480,7 +480,7 @@ void ImageLoader::updateRenderer()
     // change is happening between two images.
     CachedImage* cachedImage = imageResource->cachedImage();
     if (m_image != cachedImage && (m_imageComplete || !cachedImage))
-        imageResource->setCachedImage(m_image.get());
+        imageResource->setCachedImage(CachedResourceHandle { m_image });
 }
 
 void ImageLoader::updatedHasPendingEvent()

@@ -172,13 +172,13 @@ void SVGImageElement::didAttachRenderers()
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (CheckedPtr image = dynamicDowncast<RenderSVGImage>(renderer()); image && !image->imageResource().cachedImage()) {
-        image->checkedImageResource()->setCachedImage(m_imageLoader.image());
+        image->checkedImageResource()->setCachedImage(m_imageLoader.protectedImage());
         return;
     }
 #endif
 
     if (CheckedPtr image = dynamicDowncast<LegacyRenderSVGImage>(renderer()); image && !image->imageResource().cachedImage()) {
-        image->checkedImageResource()->setCachedImage(m_imageLoader.protectedImage().get());
+        image->checkedImageResource()->setCachedImage(m_imageLoader.protectedImage());
         return;
     }
 }

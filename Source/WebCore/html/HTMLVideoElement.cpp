@@ -75,7 +75,7 @@ inline HTMLVideoElement::HTMLVideoElement(const QualifiedName& tagName, Document
 
 Ref<HTMLVideoElement> HTMLVideoElement::create(const QualifiedName& tagName, Document& document, bool createdByParser)
 {
-    auto videoElement = adoptRef(*new HTMLVideoElement(tagName, document, createdByParser));
+    Ref videoElement = adoptRef(*new HTMLVideoElement(tagName, document, createdByParser));
 
 #if ENABLE(PICTURE_IN_PICTURE_API)
     HTMLVideoElementPictureInPicture::providePictureInPictureTo(videoElement);
@@ -108,8 +108,8 @@ void HTMLVideoElement::didAttachRenderers()
         if (!m_imageLoader)
             m_imageLoader = makeUnique<HTMLImageLoader>(*this);
         m_imageLoader->updateFromElement();
-        if (auto* renderer = this->renderer())
-            renderer->imageResource().setCachedImage(m_imageLoader->image());
+        if (CheckedPtr renderer = this->renderer())
+            renderer->checkedImageResource()->setCachedImage(m_imageLoader->protectedImage());
     }
 }
 
@@ -140,8 +140,8 @@ void HTMLVideoElement::attributeChanged(const QualifiedName& name, const AtomStr
                 m_imageLoader = makeUnique<HTMLImageLoader>(*this);
             m_imageLoader->updateFromElementIgnoringPreviousError();
         } else {
-            if (auto* renderer = this->renderer()) {
-                renderer->imageResource().setCachedImage(nullptr);
+            if (CheckedPtr renderer = this->renderer()) {
+                renderer->checkedImageResource()->setCachedImage(nullptr);
                 renderer->updateFromElement();
             }
         }
@@ -168,7 +168,7 @@ bool HTMLVideoElement::supportsFullscreen(HTMLMediaElementEnums::VideoFullscreen
             return false;
     }
 
-    Page* page = document().page();
+    RefPtr page = document().page();
     if (!page) 
         return false;
 
@@ -413,7 +413,7 @@ URL HTMLVideoElement::posterImageURL() const
     auto url = imageSourceURL().string().trim(isASCIIWhitespace);
     if (url.isEmpty())
         return URL();
-    return document().completeURL(url);
+    return protectedDocument()->completeURL(url);
 }
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
@@ -587,8 +587,9 @@ void HTMLVideoElement::setPictureInPictureObserver(PictureInPictureObserver* obs
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
 void HTMLVideoElement::exitToFullscreenModeWithoutAnimationIfPossible(HTMLMediaElementEnums::VideoFullscreenMode fromMode, HTMLMediaElementEnums::VideoFullscreenMode toMode)
 {
-    if (document().page()->chrome().client().supportsVideoFullscreen(fromMode))
-        document().page()->chrome().client().exitVideoFullscreenToModeWithoutAnimation(*this, toMode);
+    RefPtr page = document().page();
+    if (page->chrome().client().supportsVideoFullscreen(fromMode))
+        page->chrome().client().exitVideoFullscreenToModeWithoutAnimation(*this, toMode);
 }
 #endif
 
@@ -602,7 +603,7 @@ unsigned HTMLVideoElement::requestVideoFrameCallback(Ref<VideoFrameRequestCallba
     auto identifier = ++m_nextVideoFrameRequestIndex;
     m_videoFrameRequests.append(makeUniqueRef<VideoFrameRequest>(identifier, WTFMove(callback)));
 
-    if (auto* page = document().page())
+    if (RefPtr page = document().page())
         page->scheduleRenderingUpdate(RenderingUpdateStep::VideoFrameCallbacks);
 
     return identifier;
@@ -653,14 +654,14 @@ void HTMLVideoElement::serviceRequestVideoFrameCallbacks(ReducedResolutionSecond
     if (!videoFrameMetadata || !document().domWindow())
         return;
 
-    processVideoFrameMetadataTimestamps(*videoFrameMetadata, document().domWindow()->performance());
+    processVideoFrameMetadataTimestamps(*videoFrameMetadata, document().domWindow()->protectedPerformance());
 
     Ref protectedThis { *this };
 
     m_videoFrameRequests.swap(m_servicedVideoFrameRequests);
     for (auto& request : m_servicedVideoFrameRequests) {
         if (!request->cancelled) {
-            request->callback->handleEvent(std::round(now.milliseconds()), *videoFrameMetadata);
+            Ref { request->callback }->handleEvent(std::round(now.milliseconds()), *videoFrameMetadata);
             request->cancelled = true;
         }
     }
