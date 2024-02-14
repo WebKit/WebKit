@@ -32,6 +32,7 @@
 #include "PDFKitSPI.h"
 #include "PDFPluginAnnotation.h"
 #include "PDFPluginPasswordField.h"
+#include "PDFPluginPasswordForm.h"
 #include "PasteboardTypes.h"
 #include "PluginView.h"
 #include "WebEventConversion.h"
@@ -200,6 +201,10 @@ void UnifiedPDFPlugin::createPasswordEntryForm()
     if (!supportsForms())
         return;
 
+    auto passwordForm = PDFPluginPasswordForm::create(this);
+    m_passwordForm = passwordForm.ptr();
+    passwordForm->attach(m_annotationContainer.get());
+
     auto passwordField = PDFPluginPasswordField::create(this);
     m_passwordField = passwordField.ptr();
     passwordField->attach(m_annotationContainer.get());
@@ -209,10 +214,14 @@ void UnifiedPDFPlugin::createPasswordEntryForm()
 
 void UnifiedPDFPlugin::attemptToUnlockPDF(const String& password)
 {
-    if (![m_pdfDocument unlockWithPassword:password])
+    if (![m_pdfDocument unlockWithPassword:password]) {
+        m_passwordField->resetField();
+        m_passwordForm->unlockFailed();
         return;
+    }
 
 #if PLATFORM(MAC)
+    m_passwordForm = nullptr;
     m_passwordField = nullptr;
 #endif
 

@@ -44,6 +44,7 @@ namespace WebKit {
 
 struct PDFContextMenu;
 class PDFPluginPasswordField;
+class PDFPluginPasswordForm;
 class WebFrame;
 class WebMouseEvent;
 enum class WebEventType : uint8_t;
@@ -379,6 +380,7 @@ private:
 
 #if PLATFORM(MAC)
     RefPtr<PDFPluginPasswordField> m_passwordField;
+    RefPtr<PDFPluginPasswordForm> m_passwordForm;
 #endif
 };
 

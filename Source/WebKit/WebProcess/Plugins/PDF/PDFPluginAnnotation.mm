@@ -72,7 +72,8 @@ void PDFPluginAnnotation::attach(Element* parent)
     Ref element = createAnnotationElement();
     m_element = element.copyRef();
 
-    element->setAttributeWithoutSynchronization(classAttr, "annotation"_s);
+    if (!element->hasClass())
+        element->setAttributeWithoutSynchronization(classAttr, "annotation"_s);
     element->setAttributeWithoutSynchronization(x_apple_pdf_annotationAttr, "true"_s);
     element->addEventListener(eventNames().changeEvent, *m_eventListener, false);
     element->addEventListener(eventNames().blurEvent, *m_eventListener, false);

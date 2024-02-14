@@ -48,6 +48,8 @@ public:
     void updateGeometry() override;
     void commit() override;
 
+    void setValue(const String&);
+
 protected:
     PDFPluginTextAnnotation(PDFAnnotation *annotation, PDFPluginBase* plugin)
         : PDFPluginAnnotation(annotation, plugin)

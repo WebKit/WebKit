@@ -61,6 +61,7 @@ Ref<Element> PDFPluginPasswordField::createAnnotationElement()
 
 void PDFPluginPasswordField::updateGeometry()
 {
+    // Intentionally do not call the superclass.
 }
 
 bool PDFPluginPasswordField::handleEvent(WebCore::Event& event)
@@ -76,6 +77,11 @@ bool PDFPluginPasswordField::handleEvent(WebCore::Event& event)
     }
 
     return false;
+}
+
+void PDFPluginPasswordField::resetField()
+{
+    setValue(""_s);
 }
     
 } // namespace WebKit

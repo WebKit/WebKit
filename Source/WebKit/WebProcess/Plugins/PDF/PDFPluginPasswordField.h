@@ -39,9 +39,11 @@ public:
 
     void updateGeometry() override;
 
+    void resetField();
+
 private:
     PDFPluginPasswordField(PDFPluginBase* plugin)
-        : PDFPluginTextAnnotation(0, plugin)
+        : PDFPluginTextAnnotation(nullptr, plugin)
     {
     }
 

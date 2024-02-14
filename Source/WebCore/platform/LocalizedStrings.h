@@ -414,6 +414,10 @@ namespace WebCore {
     WEBCORE_EXPORT String contextMenuItemTitleRemoveBackground();
 #endif
 
+    WEBCORE_EXPORT String pdfPasswordFormTitle();
+    WEBCORE_EXPORT String pdfPasswordFormSubtitle();
+    WEBCORE_EXPORT String pdfPasswordFormInvalidPasswordSubtitle();
+
 #if PLATFORM(COCOA)
 #define WEB_UI_STRING(string, description) WebCore::localizedString(CFSTR(string))
 #define WEB_UI_STRING_KEY(string, key, description) WebCore::localizedString(CFSTR(key))

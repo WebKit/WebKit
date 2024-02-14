@@ -100,10 +100,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     styledElement.setInlineStyleProperty(CSSPropertyFontFamily, textAnnotation.font.familyName);
     styledElement.setInlineStyleProperty(CSSPropertyTextAlign, cssAlignmentValueForNSTextAlignment(textAnnotation.alignment));
 
-    if (isMultiline)
-        downcast<HTMLTextAreaElement>(styledElement).setValue(textAnnotation.stringValue);
-    else
-        downcast<HTMLInputElement>(styledElement).setValue(textAnnotation.stringValue);
+    setValue(textAnnotation.stringValue);
 
     return element;
 }
@@ -130,6 +127,11 @@ void PDFPluginTextAnnotation::commit()
 String PDFPluginTextAnnotation::value() const
 {
     return downcast<HTMLTextFormControlElement>(element())->value();
+}
+
+void PDFPluginTextAnnotation::setValue(const String& value)
+{
+    downcast<HTMLTextFormControlElement>(element())->setValue(value);
 }
 
 bool PDFPluginTextAnnotation::handleEvent(Event& event)

@@ -4473,6 +4473,8 @@
 		2D65D194274B8E73009C4101 /* ScrollingAccelerationCurveMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollingAccelerationCurveMac.mm; sourceTree = "<group>"; };
 		2D65D195274B8E84009C4101 /* ScrollingAccelerationCurve.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScrollingAccelerationCurve.h; sourceTree = "<group>"; };
 		2D65D196274B8E84009C4101 /* ScrollingAccelerationCurve.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollingAccelerationCurve.cpp; sourceTree = "<group>"; };
+		2D667CE82B7C076700F8D5A6 /* PDFPluginPasswordForm.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = PDFPluginPasswordForm.mm; path = PDF/PDFPluginPasswordForm.mm; sourceTree = "<group>"; };
+		2D667CE92B7C076700F8D5A6 /* PDFPluginPasswordForm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PDFPluginPasswordForm.h; path = PDF/PDFPluginPasswordForm.h; sourceTree = "<group>"; };
 		2D6B371918A967AD0042AE80 /* _WKThumbnailView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKThumbnailView.h; sourceTree = "<group>"; };
 		2D6B371A18A967AD0042AE80 /* _WKThumbnailView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKThumbnailView.mm; sourceTree = "<group>"; };
 		2D6CD117189058A500E5A4A0 /* ViewSnapshotStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewSnapshotStore.h; sourceTree = "<group>"; };
@@ -15328,6 +15330,8 @@
 				2D2ADF0E16364D8200197E47 /* PDFPluginChoiceAnnotation.mm */,
 				2D429BFA1721E2BA00EC681F /* PDFPluginPasswordField.h */,
 				2D429BFB1721E2BA00EC681F /* PDFPluginPasswordField.mm */,
+				2D667CE92B7C076700F8D5A6 /* PDFPluginPasswordForm.h */,
+				2D667CE82B7C076700F8D5A6 /* PDFPluginPasswordForm.mm */,
 				2D2ADF0516362DC700197E47 /* PDFPluginTextAnnotation.h */,
 				2D2ADF0616362DC700197E47 /* PDFPluginTextAnnotation.mm */,
 				2DC2515E2AFE0E8F00EB4EC5 /* PDFScriptEvaluator.h */,
