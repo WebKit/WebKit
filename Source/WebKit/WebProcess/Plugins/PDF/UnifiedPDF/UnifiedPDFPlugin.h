@@ -102,7 +102,7 @@ public:
     void focusPreviousAnnotation() final;
 #if PLATFORM(MAC)
     RetainPtr<PDFAnnotation> nextTextAnnotation(AnnotationSearchDirection) const;
-    void handlePDFActionForAnnotation(PDFAnnotation *);
+    void handlePDFActionForAnnotation(PDFAnnotation *, unsigned currentPageIndex);
 #endif
 
     void attemptToUnlockPDF(const String& password) final;

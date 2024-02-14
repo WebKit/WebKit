@@ -1414,7 +1414,7 @@ bool UnifiedPDFPlugin::handleMouseEvent(const WebMouseEvent& event)
 
 #if PLATFORM(MAC)
                 if (RetainPtr pdfAction = [trackedAnnotation action])
-                    handlePDFActionForAnnotation(trackedAnnotation.get());
+                    handlePDFActionForAnnotation(trackedAnnotation.get(), pageIndex.value());
 #endif
                 updateLayerHierarchy();
             }
@@ -1499,7 +1499,7 @@ void UnifiedPDFPlugin::scrollToPDFDestination(PDFDestination *destination)
 void UnifiedPDFPlugin::scrollToPointInPage(IntPoint pointInPDFPageSpace, PDFDocumentLayout::PageIndex pageIndex)
 {
     auto pointInContentsSpace = convertFromPageToContents(pointInPDFPageSpace, pageIndex);
-    scrollToPositionWithoutAnimation(pointInContentsSpace);
+    scrollToPositionWithoutAnimation(pointInContentsSpace - m_documentLayout.documentMargin.scaled(this->scaleFactor() * documentFittingScale()));
 }
 
 void UnifiedPDFPlugin::scrollToPage(PDFDocumentLayout::PageIndex pageIndex)
@@ -2104,21 +2104,53 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 #if PLATFORM(MAC)
-void UnifiedPDFPlugin::handlePDFActionForAnnotation(PDFAnnotation *annotation)
+void UnifiedPDFPlugin::handlePDFActionForAnnotation(PDFAnnotation *annotation, unsigned currentPageIndex)
 {
     if (!annotation)
         return;
+
     RetainPtr firstAction = [annotation action];
     ASSERT(firstAction);
     if (!firstAction)
         return;
 
     using PDFActionList = Vector<RetainPtr<PDFAction>>;
-    auto performPDFAction = [this](PDFAction *action) {
+    auto performPDFAction = [this, currentPageIndex, annotation](PDFAction *action) {
         if (!action)
             return;
+
         if ([action isKindOfClass:getPDFActionResetFormClass()] && [m_pdfDocument respondsToSelector:@selector(resetFormFields:)])
             [m_pdfDocument resetFormFields:static_cast<PDFActionResetForm *>(action)];
+
+        RetainPtr actionType = [action type];
+        if ([actionType isEqualToString:@"Named"]) {
+            switch ([static_cast<PDFActionNamed *>(action) name]) {
+            case kPDFActionNamedNextPage:
+                if (currentPageIndex + 1 < m_documentLayout.pageCount())
+                    scrollToPage(currentPageIndex + 1);
+                break;
+            case kPDFActionNamedPreviousPage:
+                if (currentPageIndex)
+                    scrollToPage(currentPageIndex - 1);
+                break;
+            case kPDFActionNamedFirstPage:
+                scrollToPage(0);
+                break;
+            case kPDFActionNamedLastPage:
+                scrollToPage(m_documentLayout.pageCount() - 1);
+                break;
+            case kPDFActionNamedZoomIn:
+                zoomIn();
+                break;
+            case kPDFActionNamedZoomOut:
+                zoomOut();
+                break;
+            default:
+                ASSERT_NOT_REACHED();
+                break;
+            }
+        } else if ([actionType isEqualToString:@"GoTo"])
+            scrollToPDFDestination([annotation destination]);
     };
 
     PDFActionList actionsForAnnotation;
