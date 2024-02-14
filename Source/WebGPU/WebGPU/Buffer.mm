@@ -222,10 +222,8 @@ static size_t computeRangeSize(uint64_t size, size_t offset)
 void* Buffer::getMappedRange(size_t offset, size_t size)
 {
     // https://gpuweb.github.io/gpuweb/#dom-gpubuffer-getmappedrange
-    if (!isValid()) {
-        m_emptyBuffer.resize(std::max<size_t>(size, 1));
-        return &m_emptyBuffer[0];
-    }
+    if (!isValid())
+        return nullptr;
 
     auto rangeSize = size;
     if (size == WGPU_WHOLE_MAP_SIZE)
@@ -359,7 +357,7 @@ void Buffer::setLabel(String&& label)
 
 uint64_t Buffer::size() const
 {
-    return m_emptyBuffer.size() ?: m_size;
+    return m_size;
 }
 
 bool Buffer::isValid() const

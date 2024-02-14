@@ -112,7 +112,6 @@ private:
     using MappedRanges = RangeSet<Range<size_t>>;
     MappedRanges m_mappedRanges;
     WGPUMapModeFlags m_mapMode { WGPUMapMode_None };
-    Vector<uint8_t> m_emptyBuffer;
 
     const Ref<Device> m_device;
     mutable WeakPtr<CommandEncoder> m_commandEncoder;

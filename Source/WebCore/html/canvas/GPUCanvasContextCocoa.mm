@@ -201,7 +201,7 @@ ExceptionOr<void> GPUCanvasContextCocoa::configure(GPUCanvasConfiguration&& conf
         return { };
 
     if (!configuration.device->isSupportedFormat(configuration.format))
-        return Exception { ExceptionCode::TypeError, "Unsupported texture format."_s };
+        return Exception { ExceptionCode::TypeError, "GPUCanvasContextCocoa.configure: Unsupported texture format."_s };
 
     for (auto viewFormat : configuration.viewFormats) {
         if (!configuration.device->isSupportedFormat(viewFormat))
