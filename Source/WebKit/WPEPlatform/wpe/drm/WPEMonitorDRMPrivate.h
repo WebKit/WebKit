@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Igalia S.L.
+ * Copyright (C) 2024 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,12 +26,8 @@
 #pragma once
 
 #include "WPEDRM.h"
-#include "WPEDRMCursor.h"
-#include "WPEDRMSeat.h"
-#include "WPEMonitor.h"
+#include "WPEMonitorDRM.h"
 
-const WPE::DRM::Connector& wpeDisplayDRMGetConnector(WPEDisplayDRM*);
-WPEMonitor* wpeDisplayDRMGetMonitor(WPEDisplayDRM*);
-const WPE::DRM::Plane& wpeDisplayDRMGetPrimaryPlane(WPEDisplayDRM*);
-WPE::DRM::Cursor* wpeDisplayDRMGetCursor(WPEDisplayDRM*);
-const WPE::DRM::Seat& wpeDisplayDRMGetSeat(WPEDisplayDRM*);
+WPEMonitor* wpeMonitorDRMCreate(std::unique_ptr<WPE::DRM::Crtc>&&, const WPE::DRM::Connector&);
+drmModeModeInfo* wpeMonitorDRMGetMode(WPEMonitorDRM*);
+const WPE::DRM::Crtc wpeMonitorDRMGetCrtc(WPEMonitorDRM*);

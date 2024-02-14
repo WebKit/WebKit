@@ -61,6 +61,10 @@ std::unique_ptr<Crtc> Crtc::create(int fd, drmModeCrtc* crtc, unsigned index)
 Crtc::Crtc(drmModeCrtc* crtc, unsigned index, Properties&& properties)
     : m_id(crtc->crtc_id)
     , m_index(index)
+    , m_x(crtc->x)
+    , m_y(crtc->y)
+    , m_width(crtc->width)
+    , m_height(crtc->height)
     , m_properties(WTFMove(properties))
 {
     if (crtc->mode_valid)
@@ -88,6 +92,8 @@ std::unique_ptr<Connector> Connector::create(int fd, drmModeConnector* connector
 Connector::Connector(drmModeConnector* connector, Properties&& properties)
     : m_id(connector->connector_id)
     , m_encoderID(connector->encoder_id)
+    , m_widthMM(connector->mmWidth)
+    , m_heightMM(connector->mmHeight)
     , m_properties(WTFMove(properties))
 {
     m_modes.reserveInitialCapacity(connector->count_modes);

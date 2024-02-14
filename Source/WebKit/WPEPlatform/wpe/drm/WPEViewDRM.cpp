@@ -28,6 +28,7 @@
 
 #include "DRMUniquePtr.h"
 #include "WPEDisplayDRMPrivate.h"
+#include "WPEMonitorDRMPrivate.h"
 #include "WPEViewDRMPrivate.h"
 #include <drm_fourcc.h>
 #include <glib-unix.h>
@@ -43,7 +44,7 @@ enum class UpdateFlags : uint8_t {
     BufferUpdateRequested = 1 << 0,
     CursorUpdateRequested = 1 << 1,
     BufferUpdatePending = 1 << 2,
-    CursorUpdatePending =  1 << 3
+    CursorUpdatePending = 1 << 3
 };
 
 /**
@@ -71,46 +72,16 @@ static void wpeViewDRMConstructed(GObject* object)
     auto* view = WPE_VIEW_DRM(object);
     auto* priv = view->priv;
     auto* display = WPE_DISPLAY_DRM(wpe_view_get_display(WPE_VIEW(view)));
-    const auto& crtc = wpeDisplayDRMGetCrtc(display);
-    if (const auto& mode = crtc.currentMode())
-        priv->mode = mode.value();
-    else {
-        const auto& connector = wpeDisplayDRMGetConnector(display);
-        if (const auto& preferredModeIndex = connector.preferredModeIndex())
-            priv->mode = connector.modes()[preferredModeIndex.value()];
-        else {
-            int area = 0;
-            for (const auto& mode : connector.modes()) {
-                int modeArea = mode.hdisplay * mode.vdisplay;
-                if (modeArea > area) {
-                    priv->mode = mode;
-                    area = modeArea;
-                }
-            }
-        }
-    }
+    auto* monitor = wpeDisplayDRMGetMonitor(display);
 
-    priv->refreshDuration = [](drmModeModeInfo* info) -> Seconds {
-        uint64_t refresh = (info->clock * 1000000LL / info->htotal + info->vtotal / 2) / info->vtotal;
-        if (info->flags & DRM_MODE_FLAG_INTERLACE)
-            refresh *= 2;
-        if (info->flags & DRM_MODE_FLAG_DBLSCAN)
-            refresh /= 2;
-        if (info->vscan > 1)
-            refresh /= info->vscan;
-
-        return Seconds(1 / (refresh / 1000.));
-    }(&priv->mode);
-
-    // FIXME: add API to set the default scale factor.
-    double scale = 1;
-    if (const char* scaleString = getenv("WPE_DRM_SCALE"))
-        scale = g_ascii_strtod(scaleString, nullptr);
-
+    auto* mode = wpeMonitorDRMGetMode(WPE_MONITOR_DRM(monitor));
+    double scale = wpe_monitor_get_scale(monitor);
     auto* wpeView = WPE_VIEW(view);
-    wpe_view_resize(wpeView, priv->mode.hdisplay / scale, priv->mode.vdisplay / scale);
+    wpe_view_resize(wpeView, mode->hdisplay / scale, mode->vdisplay / scale);
     wpe_view_set_scale(wpeView, scale);
     wpe_view_set_state(wpeView, WPE_VIEW_STATE_FULLSCREEN);
+
+    priv->refreshDuration = Seconds(1 / (wpe_monitor_get_refresh_rate(monitor) / 1000.));
 
     int fd = gbm_device_get_fd(wpe_display_drm_get_device(display));
     priv->eventContext.version = DRM_EVENT_CONTEXT_VERSION;
@@ -324,14 +295,16 @@ static bool wpeViewDRMCommitAtomic(WPEViewDRM* view, WPE::DRM::Buffer* buffer, G
     uint32_t flags = DRM_MODE_PAGE_FLIP_EVENT | DRM_MODE_ATOMIC_NONBLOCK;
 
     auto* display = WPE_DISPLAY_DRM(wpe_view_get_display(WPE_VIEW(view)));
-    const auto& crtc = wpeDisplayDRMGetCrtc(display);
+    auto* monitor = WPE_MONITOR_DRM(wpeDisplayDRMGetMonitor(display));
+    const auto& crtc = wpeMonitorDRMGetCrtc(monitor);
+    auto* mode = wpeMonitorDRMGetMode(monitor);
     auto fd = gbm_device_get_fd(wpe_display_drm_get_device(display));
-    if (!crtc.modeIsCurrent(&view->priv->mode)) {
+    if (!crtc.modeIsCurrent(mode)) {
         flags |= DRM_MODE_ATOMIC_ALLOW_MODESET;
 
         if (!view->priv->modeBlob) {
             uint32_t blobID;
-            if (drmModeCreatePropertyBlob(fd, &view->priv->mode, sizeof(drmModeModeInfo), &blobID) == -1) {
+            if (drmModeCreatePropertyBlob(fd, mode, sizeof(drmModeModeInfo), &blobID) == -1) {
                 g_set_error_literal(error, WPE_VIEW_ERROR, WPE_VIEW_ERROR_RENDER_FAILED, "Failed to render buffer: failed to crate blob from DRM mode");
                 return false;
             }
@@ -349,7 +322,7 @@ static bool wpeViewDRMCommitAtomic(WPEViewDRM* view, WPE::DRM::Buffer* buffer, G
     }
 
     auto& plane = wpeDisplayDRMGetPrimaryPlane(display);
-    if (!addPlaneProperties(request.get(), plane, buffer ? primaryPlaneProperties(plane, crtc.id(), &view->priv->mode, *buffer) : emptyPlaneProperties(plane))) {
+    if (!addPlaneProperties(request.get(), plane, buffer ? primaryPlaneProperties(plane, crtc.id(), mode, *buffer) : emptyPlaneProperties(plane))) {
         g_set_error_literal(error, WPE_VIEW_ERROR, WPE_VIEW_ERROR_RENDER_FAILED, "Failed to render buffer: failed to set plane properties");
         return false;
     }
@@ -368,12 +341,14 @@ static bool wpeViewDRMCommitAtomic(WPEViewDRM* view, WPE::DRM::Buffer* buffer, G
 static bool wpeViewDRMCommitLegacy(WPEViewDRM* view, const WPE::DRM::Buffer& buffer, GError** error)
 {
     auto* display = WPE_DISPLAY_DRM(wpe_view_get_display(WPE_VIEW(view)));
-    const auto& crtc = wpeDisplayDRMGetCrtc(display);
+    auto* monitor = WPE_MONITOR_DRM(wpeDisplayDRMGetMonitor(display));
+    const auto& crtc = wpeMonitorDRMGetCrtc(monitor);
+    auto* mode = wpeMonitorDRMGetMode(monitor);
     auto fd = gbm_device_get_fd(wpe_display_drm_get_device(display));
-    if (!crtc.modeIsCurrent(&view->priv->mode)) {
+    if (!crtc.modeIsCurrent(mode)) {
         const auto& connector = wpeDisplayDRMGetConnector(display);
         auto connectorID = connector.id();
-        if (drmModeSetCrtc(fd, crtc.id(), buffer.frameBufferID(), 0, 0, &connectorID, 1, &view->priv->mode)) {
+        if (drmModeSetCrtc(fd, crtc.id(), buffer.frameBufferID(), 0, 0, &connectorID, 1, mode)) {
             g_set_error_literal(error, WPE_VIEW_ERROR, WPE_VIEW_ERROR_RENDER_FAILED, "Failed to render buffer: failed to set CRTC");
             return false;
         }
@@ -443,6 +418,11 @@ static gboolean wpeViewDRMRenderBuffer(WPEView* view, WPEBuffer* buffer, GError*
     return FALSE;
 }
 
+static WPEMonitor* wpeViewDRMGetMonitor(WPEView* view)
+{
+    return wpeDisplayDRMGetMonitor(WPE_DISPLAY_DRM(wpe_view_get_display(view)));
+}
+
 static void wpeViewDRMSetCursorFromName(WPEView* view, const char* name)
 {
     if (auto* cursor = wpeDisplayDRMGetCursor(WPE_DISPLAY_DRM(wpe_view_get_display(view))))
@@ -470,7 +450,8 @@ static void wpeViewDRMScheduleCursorUpdate(WPEViewDRM* view)
 
     // Wait until the end of the frame to do the cursor update.
     auto* display = WPE_DISPLAY_DRM(wpe_view_get_display(WPE_VIEW(view)));
-    auto crtcIndex = wpeDisplayDRMGetCrtc(display).index();
+    auto* monitor = WPE_MONITOR_DRM(wpeDisplayDRMGetMonitor(display));
+    auto crtcIndex = wpeMonitorDRMGetCrtc(monitor).index();
     int crtcBitmask = 0;
     if (crtcIndex > 1)
         crtcBitmask = ((crtcIndex << DRM_VBLANK_HIGH_CRTC_SHIFT) & DRM_VBLANK_HIGH_CRTC_MASK);
@@ -527,6 +508,7 @@ static void wpe_view_drm_class_init(WPEViewDRMClass* viewDRMClass)
 
     WPEViewClass* viewClass = WPE_VIEW_CLASS(viewDRMClass);
     viewClass->render_buffer = wpeViewDRMRenderBuffer;
+    viewClass->get_monitor = wpeViewDRMGetMonitor;
     viewClass->set_cursor_from_name = wpeViewDRMSetCursorFromName;
     viewClass->set_cursor_from_bytes = wpeViewDRMSetCursorFromBytes;
 }

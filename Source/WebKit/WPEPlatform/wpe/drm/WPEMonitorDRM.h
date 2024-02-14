@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Igalia S.L.
+ * Copyright (C) 2024 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,15 +23,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef WPEMonitorDRM_h
+#define WPEMonitorDRM_h
 
-#include "WPEDRM.h"
-#include "WPEDRMCursor.h"
-#include "WPEDRMSeat.h"
-#include "WPEMonitor.h"
+#if !defined(__WPE_DRM_H_INSIDE__) && !defined(BUILDING_WEBKIT)
+#error "Only <wpe/drm/wpe-drm.h> can be included directly."
+#endif
 
-const WPE::DRM::Connector& wpeDisplayDRMGetConnector(WPEDisplayDRM*);
-WPEMonitor* wpeDisplayDRMGetMonitor(WPEDisplayDRM*);
-const WPE::DRM::Plane& wpeDisplayDRMGetPrimaryPlane(WPEDisplayDRM*);
-WPE::DRM::Cursor* wpeDisplayDRMGetCursor(WPEDisplayDRM*);
-const WPE::DRM::Seat& wpeDisplayDRMGetSeat(WPEDisplayDRM*);
+#include <glib-object.h>
+#include <wpe/wpe-platform.h>
+
+G_BEGIN_DECLS
+
+#define WPE_TYPE_MONITOR_DRM (wpe_monitor_drm_get_type())
+WPE_API G_DECLARE_FINAL_TYPE (WPEMonitorDRM, wpe_monitor_drm, WPE, MONITOR_DRM, WPEMonitor)
+
+WPE_API guint wpe_monitor_drm_get_crtc_index(WPEMonitorDRM *monitor);
+
+G_END_DECLS
+
+#endif /* WPEMonitorDRM_h */

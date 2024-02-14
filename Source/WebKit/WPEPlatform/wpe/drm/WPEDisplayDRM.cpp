@@ -29,6 +29,7 @@
 #include "DRMUniquePtr.h"
 #include "WPEDisplayDRMPrivate.h"
 #include "WPEExtensions.h"
+#include "WPEMonitorDRMPrivate.h"
 #include "WPEViewDRM.h"
 #include <fcntl.h>
 #include <gio/gio.h>
@@ -47,7 +48,7 @@ struct _WPEDisplayDRMPrivate {
     uint32_t cursorWidth;
     uint32_t cursorHeight;
     std::unique_ptr<WPE::DRM::Connector> connector;
-    std::unique_ptr<WPE::DRM::Crtc> crtc;
+    GRefPtr<WPEMonitor> monitor;
     std::unique_ptr<WPE::DRM::Plane> primaryPlane;
     std::unique_ptr<WPE::DRM::Cursor> cursor;
     std::unique_ptr<WPE::DRM::Seat> seat;
@@ -248,7 +249,7 @@ static gboolean wpeDisplayDRMConnect(WPEDisplay* display, GError** error)
     displayDRM->priv->fd = WTFMove(fd);
     displayDRM->priv->device = device;
     displayDRM->priv->connector = WTFMove(connector);
-    displayDRM->priv->crtc = WTFMove(crtc);
+    displayDRM->priv->monitor = wpeMonitorDRMCreate(WTFMove(crtc), *displayDRM->priv->connector);
     displayDRM->priv->primaryPlane = WTFMove(primaryPlane);
     displayDRM->priv->seat = WPE::DRM::Seat::create();
     if (cursorPlane)
@@ -278,6 +279,18 @@ static GList* wpeDisplayDRMGetPreferredDMABufFormats(WPEDisplay* display)
     return g_list_reverse(preferredFormats);
 }
 
+static guint wpeDisplayDRMGetNMonitors(WPEDisplay*)
+{
+    return 1;
+}
+
+static WPEMonitor* wpeDisplayDRMGetMonitor(WPEDisplay* display, guint index)
+{
+    if (index)
+        return nullptr;
+    return WPE_DISPLAY_DRM(display)->priv->monitor.get();
+}
+
 static void wpe_display_drm_class_init(WPEDisplayDRMClass* displayDRMClass)
 {
     GObjectClass* objectClass = G_OBJECT_CLASS(displayDRMClass);
@@ -287,6 +300,8 @@ static void wpe_display_drm_class_init(WPEDisplayDRMClass* displayDRMClass)
     displayClass->connect = wpeDisplayDRMConnect;
     displayClass->create_view = wpeDisplayDRMCreateView;
     displayClass->get_preferred_dma_buf_formats = wpeDisplayDRMGetPreferredDMABufFormats;
+    displayClass->get_n_monitors = wpeDisplayDRMGetNMonitors;
+    displayClass->get_monitor = wpeDisplayDRMGetMonitor;
 }
 
 const WPE::DRM::Connector& wpeDisplayDRMGetConnector(WPEDisplayDRM* display)
@@ -294,9 +309,9 @@ const WPE::DRM::Connector& wpeDisplayDRMGetConnector(WPEDisplayDRM* display)
     return *display->priv->connector;
 }
 
-const WPE::DRM::Crtc& wpeDisplayDRMGetCrtc(WPEDisplayDRM* display)
+WPEMonitor* wpeDisplayDRMGetMonitor(WPEDisplayDRM* display)
 {
-    return *display->priv->crtc;
+    return display->priv->monitor.get();
 }
 
 const WPE::DRM::Plane& wpeDisplayDRMGetPrimaryPlane(WPEDisplayDRM* display)
