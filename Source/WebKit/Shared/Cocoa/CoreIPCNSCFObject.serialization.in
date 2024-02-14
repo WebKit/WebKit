@@ -24,6 +24,9 @@
 
 webkit_platform_headers: "ArgumentCodersCocoa.h" "CoreIPCNSCFObject.h"
 
+# rdar://122953036
+using WebKit::ObjectValue = std::variant<std::nullptr_t,CoreIPCAVOutputContext,CoreIPCArray,CoreIPCCFType,CoreIPCCNContact,CoreIPCCNPhoneNumber,CoreIPCCNPostalAddress,CoreIPCDateComponents,CoreIPCPKContact,CoreIPCPKPaymentMerchantSession,CoreIPCPKPayment,CoreIPCPKPaymentToken,CoreIPCPKShippingMethod,CoreIPCPKDateComponentsRange,CoreIPCPKPaymentMethod,CoreIPCColor,CoreIPCDDActionContext,CoreIPCDDScannerResult,CoreIPCData,CoreIPCDate,CoreIPCDictionary,CoreIPCError,CoreIPCFont,CoreIPCLocale,CoreIPCNSValue,CoreIPCNumber,CoreIPCNull,CoreIPCPersonNameComponents,CoreIPCPresentationIntent,CoreIPCSecureCoding,CoreIPCString,CoreIPCURL>;
+
 [WebKitPlatform] class WebKit::CoreIPCNSCFObject {
     [Validator='WebKit::CoreIPCNSCFObject::valueIsAllowed(decoder, *value)'] UniqueRef<WebKit::ObjectValue> value();
 }

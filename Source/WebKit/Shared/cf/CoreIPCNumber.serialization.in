@@ -24,6 +24,8 @@
 
 webkit_platform_headers: "CoreIPCNumber.h"
 
+using WebKit::CoreIPCNumber::NumberHolder = std::variant<char,unsigned char,short,unsigned short,int,unsigned,long,unsigned long,long long,unsigned long long,float,double>;
+
 [WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder] class WebKit::CoreIPCNumber {
      WebKit::CoreIPCNumber::NumberHolder get()
 }
