@@ -231,8 +231,10 @@ LocalFrame::~LocalFrame()
         localMainFrame->selfOnlyDeref();
 
     if (isRootFrame()) {
-        if (auto* page = this->page())
-            page->removeRootFrame(*this);
+        if (auto* page = this->page()) {
+            if (page->rootFrames().contains(this))
+                page->removeRootFrame(*this);
+        }
     }
 }
 

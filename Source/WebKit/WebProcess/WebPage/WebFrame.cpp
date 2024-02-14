@@ -393,6 +393,9 @@ void WebFrame::didCommitLoadInAnotherProcess(std::optional<WebCore::LayerHosting
 
     if (ownerElement)
         ownerElement->scheduleInvalidateStyleAndLayerComposition();
+
+    if (localFrame->isRootFrame())
+        corePage->removeRootFrame(*localFrame);
 }
 
 void WebFrame::removeFromTree()
