@@ -61,7 +61,8 @@ static bool compareStyleOriginatedAnimationOwningElementPositionsInDocumentTreeO
     //     - any other pseudo-elements not mentioned specifically in this list, sorted in ascending order by the Unicode codepoints that make up each selector
     //     - ::after
     //     - element children
-    enum SortingIndex : uint8_t { NotPseudo, Marker, Before, FirstLetter, FirstLine, GrammarError, Highlight, WebKitScrollbar, Selection, SpellingError, After, Other };
+    // FIXME: Tree order should account for the name argument of view transitions.
+    enum SortingIndex : uint8_t { NotPseudo, Marker, Before, FirstLetter, FirstLine, GrammarError, Highlight, WebKitScrollbar, Selection, SpellingError, After, ViewTransition, ViewTransitionGroup, ViewTransitionImagePair, ViewTransitionOld, ViewTransitionNew, Other };
     auto sortingIndex = [](const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier) -> SortingIndex {
         if (!pseudoElementIdentifier)
             return NotPseudo;
@@ -87,6 +88,16 @@ static bool compareStyleOriginatedAnimationOwningElementPositionsInDocumentTreeO
             return SpellingError;
         case PseudoId::After:
             return After;
+        case PseudoId::ViewTransition:
+            return ViewTransition;
+        case PseudoId::ViewTransitionGroup:
+            return ViewTransitionGroup;
+        case PseudoId::ViewTransitionImagePair:
+            return ViewTransitionImagePair;
+        case PseudoId::ViewTransitionOld:
+            return ViewTransitionOld;
+        case PseudoId::ViewTransitionNew:
+            return ViewTransitionNew;
         default:
             ASSERT_NOT_REACHED();
             return Other;
