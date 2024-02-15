@@ -116,8 +116,6 @@ private:
     const id<MTLLibrary> m_library { nil }; // This is only non-null if we could compile the module early.
     void populateFragmentInputs(const WGSL::Type&, ShaderModule::FragmentInputs&, const String&);
     FragmentInputs parseFragmentInputs(const WGSL::AST::Function&);
-    void populateOutputState(const String&, WGSL::Builtin);
-
     ShaderModule::FragmentOutputs parseFragmentReturnType(const WGSL::Type&, const String&);
 
     const Ref<Device> m_device;

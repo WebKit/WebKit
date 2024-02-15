@@ -584,8 +584,7 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
         depthReadOnly = attachment->depthReadOnly;
         if (hasDepthComponent) {
             const auto& mtlAttachment = mtlDescriptor.depthAttachment;
-            auto clearDepth = std::clamp(RenderPassEncoder::quantizedDepthValue(attachment->depthClearValue, textureView.format()), 0., 1.);
-            mtlAttachment.clearDepth = clearDepth;
+            mtlAttachment.clearDepth = std::min(1.f, std::max(0.f, attachment->depthClearValue));
             mtlAttachment.texture = metalDepthStencilTexture;
             mtlAttachment.level = 0;
             mtlAttachment.loadAction = loadAction(attachment->depthLoadOp, attachment->depthStoreOp);
