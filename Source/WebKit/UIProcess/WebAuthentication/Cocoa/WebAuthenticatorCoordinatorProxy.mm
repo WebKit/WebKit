@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <wtf/Assertions.h>
 #if HAVE(UNIFIED_ASC_AUTH_UI)
 
 #import "config.h"
@@ -55,7 +56,7 @@
 #import "AuthenticationServicesSoftLink.h"
 
 @interface _WKASDelegate : NSObject {
-    WeakPtr<WebKit::WebPageProxy> m_page;
+    RetainPtr<WKWebView> m_view;
     BlockPtr<void(ASAuthorization *, NSError *)> m_completionHandler;
 }
 - (instancetype)initWithPage:(WeakPtr<WebKit::WebPageProxy> &&)page completionHandler:(BlockPtr<void(ASAuthorization *, NSError *)> &&)completionHandler;
@@ -67,7 +68,8 @@
     if (!(self = [super init]))
         return nil;
 
-    m_page = WTFMove(page);
+    if (page)
+        m_view = page->cocoaView();
     m_completionHandler = WTFMove(completionHandler);
 
     return self;
@@ -77,7 +79,9 @@
 {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    return [m_page->cocoaView() window];
+    if (m_view)
+        return [m_view window];
+    return nil;
 #pragma clang diagnostic pop
 }
 
@@ -102,6 +106,14 @@ static inline Ref<ArrayBuffer> toArrayBuffer(NSData *data)
 }
 
 #if HAVE(WEB_AUTHN_AS_MODERN)
+
+static inline ASAuthorizationPublicKeyCredentialLargeBlobSupportRequirement toASAuthorizationPublicKeyCredentialLargeBlobSupportRequirement(const String& requirement)
+{
+    if (requirement == "required"_s)
+        return ASAuthorizationPublicKeyCredentialLargeBlobSupportRequirementRequired;
+    return ASAuthorizationPublicKeyCredentialLargeBlobSupportRequirementPreferred;
+}
+
 
 static inline RetainPtr<NSString> toASUserVerificationPreference(WebCore::UserVerificationRequirement requirement)
 {
@@ -203,6 +215,11 @@ RetainPtr<NSArray> WebAuthenticatorCoordinatorProxy::requestsForRegisteration(co
             request.get().attestationPreference = toAttestationConveyancePreference(options.attestation).get();
         if (options.authenticatorSelection)
             request.get().userVerificationPreference = toASUserVerificationPreference(options.authenticatorSelection->userVerification).get();
+        if (options.extensions->largeBlob) {
+            // These are satisfied by validation in AuthenticatorCoordinator.
+            ASSERT(!options.extensions->largeBlob->read && !options.extensions->largeBlob->write);
+            request.get().largeBlob = adoptNS([allocASAuthorizationPublicKeyCredentialLargeBlobRegistrationInputInstance() initWithSupportRequirement:toASAuthorizationPublicKeyCredentialLargeBlobSupportRequirement(options.extensions->largeBlob->support)]).get();
+        }
         [requests addObject:request.leakRef()];
     }
     if (includeSecurityKeyRequest) {
@@ -254,6 +271,15 @@ RetainPtr<NSArray> WebAuthenticatorCoordinatorProxy::requestsForAssertion(const 
         RetainPtr request = adoptNS([[allocASAuthorizationPlatformPublicKeyCredentialProviderInstance() initWithRelyingPartyIdentifier:options.rpId] createCredentialAssertionRequestWithClientData:clientData.get()]);
         if (platformAllowedCredentials)
             request.get().allowedCredentials = platformAllowedCredentials.get();
+        if (options.extensions->largeBlob) {
+            // These are satisfied by validation in AuthenticatorCoordinator.
+            ASSERT(!options.extensions->largeBlob->support);
+            ASSERT(!(options.extensions->largeBlob->read && options.extensions->largeBlob->write));
+            auto largeBlob = options.extensions->largeBlob;
+            request.get().largeBlob = adoptNS([allocASAuthorizationPublicKeyCredentialLargeBlobAssertionInputInstance() initWithOperation:(largeBlob->read && *largeBlob->read) ? ASAuthorizationPublicKeyCredentialLargeBlobAssertionOperationRead : ASAuthorizationPublicKeyCredentialLargeBlobAssertionOperationWrite]).get();
+            if (largeBlob->write)
+                request.get().largeBlob.dataToWrite = WebCore::toNSData(*largeBlob->write).get();
+        }
         [requests addObject:request.leakRef()];
     }
 
@@ -315,10 +341,8 @@ void WebAuthenticatorCoordinatorProxy::performRequest(WebAuthenticationRequestDa
     }
     m_controller = WTFMove(controller);
     m_completionHandler = WTFMove(handler);
-    m_delegate = adoptNS([[_WKASDelegate alloc] initWithPage:WTFMove(requestData.page) completionHandler:makeBlockPtr([weakThis = WeakPtr { *this }, this](ASAuthorization *auth, NSError *error) mutable {
-        if (!weakThis)
-            return;
-        ensureOnMainRunLoop([weakThis = WTFMove(weakThis), this, auth = retainPtr(auth)]() {
+    m_delegate = adoptNS([[_WKASDelegate alloc] initWithPage:WTFMove(requestData.page) completionHandler:makeBlockPtr([weakThis = WeakPtr { *this }](ASAuthorization *auth, NSError *error) mutable {
+        ensureOnMainRunLoop([weakThis = WTFMove(weakThis), auth = retainPtr(auth), error = retainPtr(error)]() {
             if (!weakThis)
                 return;
             WebCore::AuthenticatorResponseData response = { };
@@ -331,6 +355,8 @@ void WebAuthenticatorCoordinatorProxy::performRequest(WebAuthenticationRequestDa
                 response.attestationObject = toArrayBuffer(credential.get().rawAttestationObject);
                 response.transports = { };
                 response.clientDataJSON = toArrayBuffer(credential.get().rawClientDataJSON);
+                if (credential.get().largeBlob)
+                    response.extensionOutputs = { { std::nullopt, std::nullopt, { { credential.get().largeBlob.isSupported, nullptr, std::nullopt } } } };
             } else if ([auth.get().credential isKindOfClass:getASAuthorizationPlatformPublicKeyCredentialAssertionClass()]) {
                 auto credential = retainPtr((ASAuthorizationPlatformPublicKeyCredentialAssertion *)auth.get().credential);
                 response.rawId = toArrayBuffer(credential.get().credentialID);
@@ -338,6 +364,12 @@ void WebAuthenticatorCoordinatorProxy::performRequest(WebAuthenticationRequestDa
                 response.signature = toArrayBuffer(credential.get().signature);
                 response.userHandle = toArrayBuffer(credential.get().userID);
                 response.clientDataJSON = toArrayBuffer(credential.get().rawClientDataJSON);
+                if (credential.get().largeBlob) {
+                    RefPtr<ArrayBuffer> protector = nullptr;
+                    if (credential.get().largeBlob.readData)
+                        protector = toArrayBuffer(credential.get().largeBlob.readData);
+                    response.extensionOutputs = { { std::nullopt, std::nullopt, { { std::nullopt, protector, credential.get().largeBlob.didWrite } } } };
+                }
             } else if ([auth.get().credential isKindOfClass:getASAuthorizationSecurityKeyPublicKeyCredentialRegistrationClass()]) {
                 auto credential = retainPtr((ASAuthorizationSecurityKeyPublicKeyCredentialRegistration *)auth.get().credential);
                 response.isAuthenticatorAttestationResponse = true;
@@ -353,11 +385,11 @@ void WebAuthenticatorCoordinatorProxy::performRequest(WebAuthenticationRequestDa
                 response.userHandle = toArrayBuffer(credential.get().userID);
                 response.clientDataJSON = toArrayBuffer(credential.get().rawClientDataJSON);
             }
-            if (!m_paused) {
-                m_completionHandler(response, attachment, exceptionData);
-                m_delegate.clear();
-                m_controller.clear();
-                m_isConditionalAssertion = false;
+            if (!weakThis->m_paused) {
+                weakThis->m_completionHandler(response, attachment, exceptionData);
+                weakThis->m_delegate.clear();
+                weakThis->m_controller.clear();
+                weakThis->m_isConditionalAssertion = false;
             }
         });
     }).get()]);
