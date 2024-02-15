@@ -7446,6 +7446,8 @@ fast/canvas/2d.context.many.small.html [ Slow Skip ]
 
 webkit.org/b/268995 [ Debug ] fast/misc/out-of-flow-position-inside-mathml-crash.html [ Skip ]
 
+webkit.org/b/261557 media/video-remove-insert-repaints.html [ Pass Crash ]
+
 # web-platform-tests/html/dom/elements/global-attributes failures
 webkit.org/b/267951 imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir-shadow-06.html [ ImageOnlyFailure ]
 webkit.org/b/267951 imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir-shadow-36.html [ ImageOnlyFailure ]
