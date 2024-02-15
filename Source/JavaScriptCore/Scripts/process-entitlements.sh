@@ -98,6 +98,7 @@ function ios_family_process_jsc_entitlements()
         if [[ "${PLATFORM_NAME}" == iphoneos ]]; then
             if (( $(( ${SDK_VERSION_ACTUAL} )) >= 170400 )); then
                 plistbuddy Add :com.apple.developer.cs.allow-jit bool YES
+                plistbuddy Add :com.apple.developer.web-browser-engine.webcontent bool YES
             else
                 plistbuddy Add :dynamic-codesigning bool YES
             fi
