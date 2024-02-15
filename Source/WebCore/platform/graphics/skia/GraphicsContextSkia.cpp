@@ -36,10 +36,12 @@
 #include "NotImplemented.h"
 #include <skia/core/SkImage.h>
 #include <skia/core/SkPath.h>
+#include <skia/core/SkPathEffect.h>
 #include <skia/core/SkPathTypes.h>
 #include <skia/core/SkRRect.h>
 #include <skia/core/SkRegion.h>
 #include <skia/core/SkTileMode.h>
+#include <skia/effects/SkDashPathEffect.h>
 #include <wtf/MathExtras.h>
 
 #if USE(THEME_ADWAITA)
@@ -334,6 +336,9 @@ SkPaint GraphicsContextSkia::createStrokePaint(std::optional<Color> strokeColor)
         paint.setColor(SkColorSetARGB(a, r, g, b));
     }
 
+    if (!m_skiaState.m_dash.array.isEmpty())
+        paint.setPathEffect(SkDashPathEffect::Make(m_skiaState.m_dash.array.data(), m_skiaState.m_dash.array.size(), m_skiaState.m_dash.offset));
+
     return paint;
 }
 
@@ -534,9 +539,12 @@ void GraphicsContextSkia::setLineCap(LineCap lineCap)
     m_skiaState.m_stroke.cap = toSkiaCap(lineCap);
 }
 
-void GraphicsContextSkia::setLineDash(const DashArray&, float /*dashOffset*/)
+void GraphicsContextSkia::setLineDash(const DashArray& dashArray, float dashOffset)
 {
-    notImplemented();
+    ASSERT(!(dashArray.size() % 2));
+
+    m_skiaState.m_dash.array = dashArray;
+    m_skiaState.m_dash.offset = dashOffset;
 }
 
 void GraphicsContextSkia::setLineJoin(LineJoin lineJoin)

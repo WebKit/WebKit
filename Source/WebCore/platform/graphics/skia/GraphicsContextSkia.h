@@ -113,6 +113,11 @@ private:
             SkPaint::Cap cap { SkPaint::kButt_Cap };
             SkPaint::Join join { SkPaint::kMiter_Join };
         } m_stroke;
+
+        struct {
+            DashArray array;
+            float offset { 0.0f };
+        } m_dash;
     };
 
     sk_sp<SkSurface> m_surface;
