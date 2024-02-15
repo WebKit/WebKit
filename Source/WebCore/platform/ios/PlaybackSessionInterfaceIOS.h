@@ -23,13 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 #pragma once
 
 #if PLATFORM(COCOA) && HAVE(AVKIT)
 
 #include "EventListener.h"
 #include "HTMLMediaElementEnums.h"
+#include "MediaPlayerIdentifier.h"
 #include "PlaybackSessionModel.h"
 #include "Timer.h"
 #include <functional>
@@ -40,9 +40,11 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/WeakPtr.h>
 
+OBJC_CLASS WKSLinearMediaPlayer;
 OBJC_CLASS WebAVPlayerController;
 
 namespace WebCore {
+
 class IntRect;
 class PlaybackSessionModel;
 class WebPlaybackSessionChangeObserver;
@@ -50,11 +52,13 @@ class WebPlaybackSessionChangeObserver;
 class WEBCORE_EXPORT PlaybackSessionInterfaceIOS
     : public PlaybackSessionModelClient
     , public RefCounted<PlaybackSessionInterfaceIOS> {
-
 public:
     void initialize();
+    virtual void invalidate();
     virtual ~PlaybackSessionInterfaceIOS();
+
     virtual WebAVPlayerController *playerController() const = 0;
+    virtual WKSLinearMediaPlayer *linearMediaPlayer() const = 0;
     PlaybackSessionModel* playbackSessionModel() const;
     void durationChanged(double) override = 0;
     void currentTimeChanged(double currentTime, double anchorTime) override = 0;
@@ -70,7 +74,8 @@ public:
     void volumeChanged(double) override = 0;
     void modelDestroyed() override;
 
-    virtual void invalidate();
+    std::optional<MediaPlayerIdentifier> playerIdentifier() const;
+    void setPlayerIdentifier(std::optional<MediaPlayerIdentifier>);
 
 #if !RELEASE_LOG_DISABLED
     const void* logIdentifier() const;
@@ -83,8 +88,10 @@ protected:
     PlaybackSessionInterfaceIOS(PlaybackSessionModel&);
     PlaybackSessionModel* m_playbackSessionModel { nullptr };
 
+private:
+    std::optional<MediaPlayerIdentifier> m_playerIdentifier;
 };
 
-}
+} // namespace WebCore
 
 #endif // PLATFORM(COCOA) && HAVE(AVKIT)

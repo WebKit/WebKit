@@ -161,6 +161,7 @@ private:
     ExternalPlaybackTargetType externalPlaybackTargetType() const override;
     String externalPlaybackLocalizedDeviceName() const override;
     bool wirelessVideoPlaybackDisabled() const override;
+    void toggleFullscreen() override { }
     void togglePictureInPicture() override { }
     void toggleInWindow() override { }
     void toggleMuted() override;

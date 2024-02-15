@@ -25,38 +25,46 @@
 
 #pragma once
 
-#if PLATFORM(VISION) && HAVE(AVKIT)
+#if ENABLE(LINEAR_MEDIA_PLAYER)
 
 #include <WebCore/PlaybackSessionInterfaceIOS.h>
+
+OBJC_CLASS WKLinearMediaPlayerDelegate;
 
 namespace WebKit {
 
 using namespace WebCore;
 
-class PlaybackSessionInterfaceLMK : public PlaybackSessionInterfaceIOS {
+class PlaybackSessionInterfaceLMK final : public PlaybackSessionInterfaceIOS {
 public:
+    static Ref<PlaybackSessionInterfaceLMK> create(PlaybackSessionModel&);
     ~PlaybackSessionInterfaceLMK();
 
-    WebAVPlayerController *playerController() const override;
-    void durationChanged(double) override;
-    void currentTimeChanged(double, double) override;
-    void bufferedTimeChanged(double) override;
-    void rateChanged(OptionSet<PlaybackSessionModel::PlaybackState>, double, double) override;
-    void seekableRangesChanged(const TimeRanges&, double, double) override;
-    void canPlayFastReverseChanged(bool) override;
-    void audioMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>&, uint64_t) override;
-    void legibleMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>&, uint64_t) override;
-    void externalPlaybackChanged(bool, PlaybackSessionModel::ExternalPlaybackTargetType, const String&) override;
-    void wirelessVideoPlaybackDisabledChanged(bool) override;
-    void mutedChanged(bool) override;
-    void volumeChanged(double) override;
+    WebAVPlayerController *playerController() const final { return nullptr; }
+    WKSLinearMediaPlayer *linearMediaPlayer() const final;
+    void durationChanged(double) final;
+    void currentTimeChanged(double, double) final;
+    void bufferedTimeChanged(double) final { }
+    void rateChanged(OptionSet<PlaybackSessionModel::PlaybackState>, double, double) final;
+    void seekableRangesChanged(const TimeRanges&, double, double) final;
+    void canPlayFastReverseChanged(bool) final;
+    void audioMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>&, uint64_t) final { }
+    void legibleMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>&, uint64_t) final { }
+    void externalPlaybackChanged(bool, PlaybackSessionModel::ExternalPlaybackTargetType, const String&) final { }
+    void wirelessVideoPlaybackDisabledChanged(bool) final { }
+    void mutedChanged(bool) final;
+    void volumeChanged(double) final;
 #if !RELEASE_LOG_DISABLED
-    const char* logClassName() const override;
+    const char* logClassName() const final;
 #endif
 
 private:
     PlaybackSessionInterfaceLMK(PlaybackSessionModel&);
+
+    RetainPtr<WKSLinearMediaPlayer> m_player;
+    RetainPtr<WKLinearMediaPlayerDelegate> m_playerDelegate;
 };
+
 } // namespace WebKit
 
-#endif // PLATFORM(VISION) && HAVE(AVKIT)
+#endif // ENABLE(LINEAR_MEDIA_PLAYER)

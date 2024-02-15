@@ -818,6 +818,7 @@ void VideoPresentationInterfaceAVKit::setupPlayerViewController()
 {
     if (!m_playerViewController)
         m_playerViewController = adoptNS([[WebAVPlayerViewController alloc] initWithFullscreenInterface:this]);
+
     [m_playerViewController setShowsPlaybackControls:NO];
     [m_playerViewController setPlayerController:(AVPlayerController *)playerController()];
     [m_playerViewController setDelegate:m_playerViewControllerDelegate.get()];
@@ -825,6 +826,7 @@ void VideoPresentationInterfaceAVKit::setupPlayerViewController()
     [playerController() setAllowsPictureInPicture:m_allowsPictureInPicturePlayback];
     if (!m_routingContextUID.isEmpty())
         [m_playerViewController setWebKitOverrideRouteSharingPolicy:(NSUInteger)m_routeSharingPolicy routingContextUID:m_routingContextUID];
+
 #if PLATFORM(WATCHOS)
     m_viewController = videoPresentationModel() ? videoPresentationModel()->createVideoFullscreenViewController(avPlayerViewController()) : nil;
 #endif
@@ -875,6 +877,11 @@ void VideoPresentationInterfaceAVKit::setShowsPlaybackControls(bool showsPlaybac
 void VideoPresentationInterfaceAVKit::setContentDimensions(const FloatSize& contentDimensions)
 {
     [playerController() setContentDimensions:contentDimensions];
+}
+
+bool VideoPresentationInterfaceAVKit::isExternalPlaybackActive() const
+{
+    return [playerController() isExternalPlaybackActive];
 }
 
 static std::optional<bool> isPictureInPictureSupported;

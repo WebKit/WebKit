@@ -124,7 +124,7 @@ public:
     };
 
     RefPtr<VideoPresentationModel> videoPresentationModel() const { return m_videoPresentationModel.get(); }
-    virtual bool shouldExitFullscreenWithReason(ExitFullScreenReason);
+    WEBCORE_EXPORT virtual bool shouldExitFullscreenWithReason(ExitFullScreenReason);
     HTMLMediaElementEnums::VideoFullscreenMode mode() const { return m_currentMode.mode(); }
     WEBCORE_EXPORT virtual bool mayAutomaticallyShowVideoPictureInPicture() const = 0;
     void prepareForPictureInPictureStop(Function<void(bool)>&& callback);
@@ -132,12 +132,12 @@ public:
     bool inPictureInPicture() const { return m_enteringPictureInPicture || m_currentMode.hasPictureInPicture(); }
     bool returningToStandby() const { return m_returningToStandby; }
 
-    virtual void willStartPictureInPicture();
-    virtual void didStartPictureInPicture();
-    virtual void failedToStartPictureInPicture();
+    WEBCORE_EXPORT virtual void willStartPictureInPicture();
+    WEBCORE_EXPORT virtual void didStartPictureInPicture();
+    WEBCORE_EXPORT virtual void failedToStartPictureInPicture();
     void willStopPictureInPicture();
-    virtual void didStopPictureInPicture();
-    virtual void prepareForPictureInPictureStopWithCompletionHandler(void (^)(BOOL));
+    WEBCORE_EXPORT virtual void didStopPictureInPicture();
+    WEBCORE_EXPORT virtual void prepareForPictureInPictureStopWithCompletionHandler(void (^)(BOOL));
     virtual bool isPlayingVideoInEnhancedFullscreen() const = 0;
 
     WEBCORE_EXPORT void setMode(HTMLMediaElementEnums::VideoFullscreenMode, bool shouldNotifyModel);
@@ -149,7 +149,7 @@ public:
 #endif
     WEBCORE_EXPORT virtual bool pictureInPictureWasStartedWhenEnteringBackground() const = 0;
 
-    std::optional<MediaPlayerIdentifier> playerIdentifier() const { return m_playerIdentifier; }
+    WEBCORE_EXPORT std::optional<MediaPlayerIdentifier> playerIdentifier() const;
 
 #if !RELEASE_LOG_DISABLED
     const void* logIdentifier() const;
@@ -160,6 +160,7 @@ public:
 
 protected:
     WEBCORE_EXPORT VideoPresentationInterfaceIOS(PlaybackSessionInterfaceIOS&);
+
     RunLoop::Timer m_watchdogTimer;
     RetainPtr<UIView> m_parentView;
     Mode m_targetMode;
@@ -176,7 +177,6 @@ protected:
     RetainPtr<UIViewController> m_viewController;
     bool m_hasVideoContentLayer { false };
     Function<void(bool)> m_prepareToInlineCallback;
-    std::optional<MediaPlayerIdentifier> m_playerIdentifier;
     bool m_exitingPictureInPicture { false };
     bool m_shouldReturnToFullscreenWhenStoppingPictureInPicture { false };
     bool m_enterFullscreenNeedsExitPictureInPicture { false };
@@ -220,6 +220,7 @@ protected:
     virtual void setShowsPlaybackControls(bool) = 0;
     virtual void setContentDimensions(const FloatSize&) = 0;
     virtual void setAllowsPictureInPicturePlayback(bool) = 0;
+    virtual bool isExternalPlaybackActive() const = 0;
 
 #if PLATFORM(WATCHOS)
     bool m_waitingForPreparedToExit { false };
@@ -227,10 +228,12 @@ protected:
 private:
     void returnToStandby();
     void watchdogTimerFired();
+
     bool m_finalizeSetupNeedsVideoContentLayer { false };
     bool m_finalizeSetupNeedsReturnVideoContentLayer { false };
     Ref<PlaybackSessionInterfaceIOS> m_playbackSessionInterface;
 };
+
 } // namespace WebCore
 
 #endif // PLATFORM(IOS_FAMILY)

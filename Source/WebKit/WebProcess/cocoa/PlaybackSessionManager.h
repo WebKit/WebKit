@@ -163,6 +163,7 @@ private:
     void selectAudioMediaOption(PlaybackSessionContextIdentifier, uint64_t index);
     void selectLegibleMediaOption(PlaybackSessionContextIdentifier, uint64_t index);
     void handleControlledElementIDRequest(PlaybackSessionContextIdentifier);
+    void toggleFullscreen(PlaybackSessionContextIdentifier);
     void togglePictureInPicture(PlaybackSessionContextIdentifier);
     void toggleInWindow(PlaybackSessionContextIdentifier);
     void toggleMuted(PlaybackSessionContextIdentifier);

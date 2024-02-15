@@ -22,20 +22,23 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#pragma once
-#if PLATFORM(COCOA) && HAVE(AVKIT)
-#include "PlaybackSessionInterfaceIOS.h"
-namespace WebCore {
-class WEBCORE_EXPORT PlaybackSessionInterfaceAVKit
-    : public PlaybackSessionInterfaceIOS {
 
+#pragma once
+
+#if PLATFORM(COCOA) && HAVE(AVKIT)
+
+#include "PlaybackSessionInterfaceIOS.h"
+
+namespace WebCore {
+
+class WEBCORE_EXPORT PlaybackSessionInterfaceAVKit final : public PlaybackSessionInterfaceIOS {
 public:
     static Ref<PlaybackSessionInterfaceAVKit> create(PlaybackSessionModel&);
     ~PlaybackSessionInterfaceAVKit();
     void invalidate() final;
 
     WebAVPlayerController *playerController() const final;
-
+    WKSLinearMediaPlayer *linearMediaPlayer() const final;
     void durationChanged(double) final;
     void currentTimeChanged(double currentTime, double anchorTime) final;
     void bufferedTimeChanged(double) final;
@@ -54,6 +57,7 @@ public:
 
 private:
     PlaybackSessionInterfaceAVKit(PlaybackSessionModel&);
+
     RetainPtr<WebAVPlayerController> m_playerController;
 
 };

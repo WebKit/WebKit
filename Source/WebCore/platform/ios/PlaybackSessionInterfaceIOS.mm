@@ -23,7 +23,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 #import "config.h"
 #import "PlaybackSessionInterfaceIOS.h"
 
@@ -40,7 +39,6 @@
 
 #import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
-
 
 namespace WebCore {
 
@@ -84,7 +82,6 @@ void PlaybackSessionInterfaceIOS::invalidate()
     m_playbackSessionModel = nullptr;
 }
 
-
 PlaybackSessionModel* PlaybackSessionInterfaceIOS::playbackSessionModel() const
 {
     return m_playbackSessionModel;
@@ -95,6 +92,16 @@ void PlaybackSessionInterfaceIOS::modelDestroyed()
     ASSERT(isUIThread());
     invalidate();
     ASSERT(!m_playbackSessionModel);
+}
+
+std::optional<MediaPlayerIdentifier> PlaybackSessionInterfaceIOS::playerIdentifier() const
+{
+    return m_playerIdentifier;
+}
+
+void PlaybackSessionInterfaceIOS::setPlayerIdentifier(std::optional<MediaPlayerIdentifier> identifier)
+{
+    m_playerIdentifier = WTFMove(identifier);
 }
 
 #if !RELEASE_LOG_DISABLED
@@ -114,6 +121,6 @@ WTFLogChannel& PlaybackSessionInterfaceIOS::logChannel() const
 }
 #endif
 
-}
+} // namespace WebCore
 
 #endif // PLATFORM(COCOA) && HAVE(AVKIT)

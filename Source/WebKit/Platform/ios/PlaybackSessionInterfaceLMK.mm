@@ -26,11 +26,144 @@
 #import "config.h"
 #import "PlaybackSessionInterfaceLMK.h"
 
-#if PLATFORM(VISION)
+#if ENABLE(LINEAR_MEDIA_PLAYER)
 
 #import <WebCore/MediaSelectionOption.h>
+#import <WebCore/PlaybackSessionModel.h>
 #import <WebCore/TimeRanges.h>
+#import <WebKitSwift/WebKitSwift.h>
+#import <wtf/OSObjectPtr.h>
 #import <wtf/WeakPtr.h>
+
+#import "WebKitSwiftSoftLink.h"
+
+@interface WKLinearMediaPlayerDelegate : NSObject <WKSLinearMediaPlayerDelegate>
++ (instancetype)new NS_UNAVAILABLE;
+- (instancetype)init NS_UNAVAILABLE;
+- (instancetype)initWithModel:(WebKit::PlaybackSessionModel&)model;
+@end
+
+@implementation WKLinearMediaPlayerDelegate {
+    WeakPtr<WebKit::PlaybackSessionModel> _model;
+}
+
+- (instancetype)initWithModel:(WebKit::PlaybackSessionModel&)model
+{
+    self = [super init];
+    if (!self)
+        return nil;
+
+    _model = model;
+    return self;
+}
+
+- (void)linearMediaPlayerPlay:(WKSLinearMediaPlayer *)player
+{
+    if (auto model = _model.get())
+        model->play();
+}
+
+- (void)linearMediaPlayerPause:(WKSLinearMediaPlayer *)player
+{
+    if (auto model = _model.get())
+        model->pause();
+}
+
+- (void)linearMediaPlayerTogglePlayback:(WKSLinearMediaPlayer *)player
+{
+    auto model = _model.get();
+    if (!model)
+        return;
+
+    if (model->isPlaying())
+        model->pause();
+    else
+        model->play();
+}
+
+- (void)linearMediaPlayer:(WKSLinearMediaPlayer *)player setPlaybackRate:(double)playbackRate
+{
+    if (auto model = _model.get())
+        model->setPlaybackRate(playbackRate);
+}
+
+- (void)linearMediaPlayer:(WKSLinearMediaPlayer *)player seekToTime:(NSTimeInterval)time
+{
+    if (auto model = _model.get())
+        model->seekToTime(time);
+}
+
+- (void)linearMediaPlayer:(WKSLinearMediaPlayer *)player seekByDelta:(NSTimeInterval)delta
+{
+    if (auto model = _model.get())
+        model->seekToTime(player.currentTime + delta);
+}
+
+- (NSTimeInterval)linearMediaPlayer:(WKSLinearMediaPlayer *)player seekToDestination:(NSTimeInterval)destination fromSource:(NSTimeInterval)source
+{
+    auto model = _model.get();
+    if (!model)
+        return 0;
+
+    model->seekToTime(destination);
+    return destination;
+}
+
+- (void)linearMediaPlayerBeginScrubbing:(WKSLinearMediaPlayer *)player
+{
+    if (auto model = _model.get())
+        model->beginScrubbing();
+}
+
+- (void)linearMediaPlayerEndScrubbing:(WKSLinearMediaPlayer *)player
+{
+    if (auto model = _model.get())
+        model->endScrubbing();
+}
+
+- (void)linearMediaPlayerBeginScanningForward:(WKSLinearMediaPlayer *)player
+{
+    if (auto model = _model.get())
+        model->beginScanningForward();
+}
+
+- (void)linearMediaPlayerEndScanningForward:(WKSLinearMediaPlayer *)player
+{
+    if (auto model = _model.get())
+        model->endScanning();
+}
+
+- (void)linearMediaPlayerBeginScanningBackward:(WKSLinearMediaPlayer *)player
+{
+    if (auto model = _model.get())
+        model->beginScanningBackward();
+}
+
+- (void)linearMediaPlayerEndScanningBackward:(WKSLinearMediaPlayer *)player
+{
+    if (auto model = _model.get())
+        model->endScanning();
+}
+
+- (void)linearMediaPlayer:(WKSLinearMediaPlayer *)player setVolume:(double)volume
+{
+    if (auto model = _model.get())
+        model->setVolume(volume);
+}
+
+- (void)linearMediaPlayer:(WKSLinearMediaPlayer *)player setMuted:(BOOL)muted
+{
+    if (auto model = _model.get())
+        model->setMuted(muted);
+}
+
+- (void)linearMediaPlayerToggleInlineMode:(WKSLinearMediaPlayer *)player
+{
+    if (auto model = _model.get())
+        model->toggleFullscreen();
+}
+
+@end
 
 namespace WebKit {
 
@@ -43,6 +176,8 @@ Ref<PlaybackSessionInterfaceLMK> PlaybackSessionInterfaceLMK::create(PlaybackSes
 
 PlaybackSessionInterfaceLMK::PlaybackSessionInterfaceLMK(PlaybackSessionModel& model)
     : PlaybackSessionInterfaceIOS { model }
+    , m_player { adoptNS([allocWKSLinearMediaPlayerInstance() init]) }
+    , m_playerDelegate { adoptNS([[WKLinearMediaPlayerDelegate alloc] initWithModel:model]) }
 {
 }
 
@@ -52,69 +187,56 @@ PlaybackSessionInterfaceLMK::~PlaybackSessionInterfaceLMK()
     invalidate();
 }
 
-WebAVPlayerController *PlaybackSessionInterfaceLMK::playerController() const
+WKSLinearMediaPlayer *PlaybackSessionInterfaceLMK::linearMediaPlayer() const
 {
-    return nullptr;
+    return m_player.get();
 }
 
 void PlaybackSessionInterfaceLMK::durationChanged(double duration)
 {
-
+    [m_player setDuration:duration];
 }
 
 void PlaybackSessionInterfaceLMK::currentTimeChanged(double currentTime, double)
 {
-
+    [m_player setCurrentTime:currentTime];
 }
 
-void PlaybackSessionInterfaceLMK::bufferedTimeChanged(double bufferedTime)
+void PlaybackSessionInterfaceLMK::rateChanged(OptionSet<PlaybackSessionModel::PlaybackState> playbackState, double playbackRate, double)
 {
+    if (playbackState.contains(PlaybackSessionModel::PlaybackState::Stalled))
+        return;
 
+    [m_player setPlaybackRate:playbackState.contains(PlaybackSessionModel::PlaybackState::Playing) ? playbackRate : 0];
 }
 
-void PlaybackSessionInterfaceLMK::rateChanged(OptionSet<PlaybackSessionModel::PlaybackState>, double, double)
+void PlaybackSessionInterfaceLMK::seekableRangesChanged(const TimeRanges& timeRanges, double, double)
 {
+    RetainPtr seekableRanges = adoptNS([[NSMutableArray alloc] initWithCapacity:timeRanges.length()]);
+    for (unsigned i = 0; i < timeRanges.length(); ++i) {
+        double lowerBound = timeRanges.start(i).releaseReturnValue();
+        double upperBound = timeRanges.end(i).releaseReturnValue();
+        RetainPtr timeRange = adoptNS([allocWKSLinearMediaTimeRangeInstance() initWithLowerBound:lowerBound upperBound:upperBound]);
+        [seekableRanges addObject:timeRange.get()];
+    }
 
+    [m_player setSeekableTimeRanges:seekableRanges.get()];
+    [m_player setCanSeek:!![seekableRanges count]];
 }
 
-void PlaybackSessionInterfaceLMK::seekableRangesChanged(const TimeRanges&, double, double)
+void PlaybackSessionInterfaceLMK::canPlayFastReverseChanged(bool canPlayFastReverse)
 {
-
+    [m_player setCanScanBackward:canPlayFastReverse];
 }
 
-void PlaybackSessionInterfaceLMK::canPlayFastReverseChanged(bool)
+void PlaybackSessionInterfaceLMK::mutedChanged(bool muted)
 {
-
+    [m_player setIsMuted:muted];
 }
 
-void PlaybackSessionInterfaceLMK::audioMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>&, uint64_t)
+void PlaybackSessionInterfaceLMK::volumeChanged(double volume)
 {
-
-}
-
-void PlaybackSessionInterfaceLMK::legibleMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>&, uint64_t)
-{
-
-}
-
-void PlaybackSessionInterfaceLMK::externalPlaybackChanged(bool, PlaybackSessionModel::ExternalPlaybackTargetType, const String&)
-{
-
-}
-
-void PlaybackSessionInterfaceLMK::wirelessVideoPlaybackDisabledChanged(bool)
-{
-
-}
-
-void PlaybackSessionInterfaceLMK::mutedChanged(bool)
-{
-
-}
-
-void PlaybackSessionInterfaceLMK::volumeChanged(double)
-{
-
+    [m_player setVolume:volume];
 }
 
 #if !RELEASE_LOG_DISABLED
@@ -126,4 +248,4 @@ const char* PlaybackSessionInterfaceLMK::logClassName() const
 
 } // namespace WebKit
 
-#endif // PLATFORM(VISION)
+#endif // ENABLE(LINEAR_MEDIA_PLAYER)

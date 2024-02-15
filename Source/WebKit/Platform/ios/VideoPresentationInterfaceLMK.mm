@@ -26,17 +26,18 @@
 #import "config.h"
 #import "VideoPresentationInterfaceLMK.h"
 
-#if PLATFORM(VISION)
+#if ENABLE(LINEAR_MEDIA_PLAYER)
 
 #import "PlaybackSessionInterfaceLMK.h"
 #import <UIKit/UIKit.h>
 #import <WebCore/WebAVPlayerLayerView.h>
+#import <WebKitSwift/WebKitSwift.h>
+#import <pal/spi/vision/LinearMediaKitSPI.h>
 
 namespace WebKit {
 
 VideoPresentationInterfaceLMK::~VideoPresentationInterfaceLMK()
 {
-
 }
 
 Ref<VideoPresentationInterfaceLMK> VideoPresentationInterfaceLMK::create(PlaybackSessionInterfaceIOS& playbackSessionInterface)
@@ -49,76 +50,62 @@ VideoPresentationInterfaceLMK::VideoPresentationInterfaceLMK(PlaybackSessionInte
 {
 }
 
-void VideoPresentationInterfaceLMK::setupFullscreen(UIView&, const FloatRect&, const FloatSize&, UIView*, HTMLMediaElementEnums::VideoFullscreenMode, bool, bool, bool)
+WKSLinearMediaPlayer *VideoPresentationInterfaceLMK::linearMediaPlayer() const
 {
-
+    return playbackSessionInterface().linearMediaPlayer();
 }
 
-bool VideoPresentationInterfaceLMK::pictureInPictureWasStartedWhenEnteringBackground() const
+void VideoPresentationInterfaceLMK::setupFullscreen(UIView& videoView, const FloatRect& initialRect, const FloatSize& videoDimensions, UIView* parentView, HTMLMediaElementEnums::VideoFullscreenMode mode, bool allowsPictureInPicturePlayback, bool standby, bool blocksReturnToFullscreenFromPictureInPicture)
 {
-    return false;
-}
-
-void VideoPresentationInterfaceLMK::hasVideoChanged(bool)
-{
-
-}
-
-void VideoPresentationInterfaceLMK::setPlayerIdentifier(std::optional<MediaPlayerIdentifier> identifier)
-{
-
-}
-
-bool VideoPresentationInterfaceLMK::mayAutomaticallyShowVideoPictureInPicture() const
-{
-    return false;
+    linearMediaPlayer().contentDimensions = videoDimensions;
+    VideoPresentationInterfaceIOS::setupFullscreen(videoView, initialRect, videoDimensions, parentView, mode, allowsPictureInPicturePlayback, standby, blocksReturnToFullscreenFromPictureInPicture);
 }
 
 void VideoPresentationInterfaceLMK::setupPlayerViewController()
 {
+    if (!m_playerViewController)
+        m_playerViewController = [linearMediaPlayer() makeViewController];
 
+    linearMediaPlayer().allowFullScreenFromInline = YES;
+    linearMediaPlayer().contentType = WKSLinearMediaContentTypePlanar;
+    linearMediaPlayer().presentationMode = WKSLinearMediaPresentationModeInline;
+    linearMediaPlayer().videoLayer = [m_playerLayerView playerLayer];
 }
 
 void VideoPresentationInterfaceLMK::invalidatePlayerViewController()
 {
-
+    m_playerViewController = nil;
 }
 
-void VideoPresentationInterfaceLMK::presentFullscreen(bool, CompletionHandler<void(BOOL, NSError *)>&&)
+void VideoPresentationInterfaceLMK::presentFullscreen(bool animated, CompletionHandler<void(BOOL, NSError *)>&& completionHandler)
 {
-
+    linearMediaPlayer().presentationMode = WKSLinearMediaPresentationModeFullscreenFromInline;
+    // FIXME: Wait until -linearMediaPlayer:didEnterFullscreenWithError: is called before calling completionHandler
+    completionHandler(YES, nil);
 }
 
-void VideoPresentationInterfaceLMK::dismissFullscreen(bool, CompletionHandler<void(BOOL, NSError *)>&&)
+void VideoPresentationInterfaceLMK::dismissFullscreen(bool animated, CompletionHandler<void(BOOL, NSError *)>&& completionHandler)
 {
-
-}
-
-bool VideoPresentationInterfaceLMK::isPlayingVideoInEnhancedFullscreen() const
-{
-    return false;
-}
-
-AVPlayerViewController *VideoPresentationInterfaceLMK::avPlayerViewController() const
-{
-    return nullptr;
+    linearMediaPlayer().presentationMode = WKSLinearMediaPresentationModeInline;
+    // FIXME: Wait until -linearMediaPlayer:didExitFullscreenWithError: is called before calling completionHandler
+    completionHandler(YES, nil);
 }
 
 UIViewController *VideoPresentationInterfaceLMK::playerViewController() const
 {
-    return nullptr;
+    return m_playerViewController.get();
 }
 
-void VideoPresentationInterfaceLMK::setContentDimensions(const FloatSize&)
+void VideoPresentationInterfaceLMK::setContentDimensions(const FloatSize& contentDimensions)
 {
-
+    linearMediaPlayer().contentDimensions = contentDimensions;
 }
 
-void VideoPresentationInterfaceLMK::setShowsPlaybackControls(bool)
+void VideoPresentationInterfaceLMK::setShowsPlaybackControls(bool showsPlaybackControls)
 {
-
+    linearMediaPlayer().showsPlaybackControls = showsPlaybackControls;
 }
 
 } // namespace WebKit
 
-#endif // PLATFORM(VISION)
+#endif // ENABLE(LINEAR_MEDIA_PLAYER)

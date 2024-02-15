@@ -336,6 +336,21 @@ void PlaybackSessionModelMediaElement::selectLegibleMediaOption(uint64_t index)
     m_mediaElement->setSelectedTextTrack(textTrack);
 }
 
+void PlaybackSessionModelMediaElement::toggleFullscreen()
+{
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    ASSERT(is<HTMLVideoElement>(*m_mediaElement));
+    if (!is<HTMLVideoElement>(*m_mediaElement))
+        return;
+
+    auto& element = downcast<HTMLVideoElement>(*m_mediaElement);
+    if (element.fullscreenMode() == MediaPlayerEnums::VideoFullscreenModeStandard)
+        element.setPresentationMode(HTMLVideoElement::VideoPresentationMode::Inline);
+    else
+        element.setPresentationMode(HTMLVideoElement::VideoPresentationMode::Fullscreen);
+#endif
+}
+
 void PlaybackSessionModelMediaElement::togglePictureInPicture()
 {
 #if ENABLE(VIDEO_PRESENTATION_MODE)

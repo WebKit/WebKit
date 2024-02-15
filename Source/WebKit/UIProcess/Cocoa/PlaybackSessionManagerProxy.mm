@@ -29,6 +29,7 @@
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
 #import "MessageSenderInlines.h"
+#import "PlaybackSessionInterfaceLMK.h"
 #import "PlaybackSessionManagerMessages.h"
 #import "PlaybackSessionManagerProxyMessages.h"
 #import "WebPageProxy.h"
@@ -174,6 +175,13 @@ void PlaybackSessionModelContext::selectLegibleMediaOption(uint64_t index)
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, index);
     if (m_manager)
         m_manager->selectLegibleMediaOption(m_contextId, index);
+}
+
+void PlaybackSessionModelContext::toggleFullscreen()
+{
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
+    if (m_manager)
+        m_manager->toggleFullscreen(m_contextId);
 }
 
 void PlaybackSessionModelContext::togglePictureInPicture()
@@ -418,7 +426,16 @@ void PlaybackSessionManagerProxy::invalidate()
 PlaybackSessionManagerProxy::ModelInterfaceTuple PlaybackSessionManagerProxy::createModelAndInterface(PlaybackSessionContextIdentifier contextId)
 {
     Ref<PlaybackSessionModelContext> model = PlaybackSessionModelContext::create(*this, contextId);
-    Ref<PlatformPlaybackSessionInterface> interface = PlatformPlaybackSessionInterface::create(model);
+
+    RefPtr<PlatformPlaybackSessionInterface> interface;
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    if (m_page->preferences().linearMediaPlayerEnabled())
+        interface = PlaybackSessionInterfaceLMK::create(model);
+    else
+        interface = PlaybackSessionInterfaceAVKit::create(model);
+#else
+    interface = PlatformPlaybackSessionInterface::create(model);
+#endif
 
     return std::make_tuple(WTFMove(model), WTFMove(interface));
 }
@@ -661,6 +678,11 @@ void PlaybackSessionManagerProxy::selectAudioMediaOption(PlaybackSessionContextI
 void PlaybackSessionManagerProxy::selectLegibleMediaOption(PlaybackSessionContextIdentifier contextId, uint64_t index)
 {
     m_page->send(Messages::PlaybackSessionManager::SelectLegibleMediaOption(contextId, index));
+}
+
+void PlaybackSessionManagerProxy::toggleFullscreen(PlaybackSessionContextIdentifier contextId)
+{
+    m_page->send(Messages::PlaybackSessionManager::ToggleFullscreen(contextId));
 }
 
 void PlaybackSessionManagerProxy::togglePictureInPicture(PlaybackSessionContextIdentifier contextId)

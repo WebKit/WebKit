@@ -41,11 +41,9 @@ namespace WebCore {
 class PlaybackSessionInterfaceIOS;
 
 class VideoPresentationInterfaceAVKit final : public VideoPresentationInterfaceIOS {
-
 public:
     WEBCORE_EXPORT static Ref<VideoPresentationInterfaceAVKit> create(PlaybackSessionInterfaceIOS&);
     WEBCORE_EXPORT ~VideoPresentationInterfaceAVKit();
-    WEBCORE_EXPORT AVPlayerViewController *avPlayerViewController() const;
 
     WEBCORE_EXPORT void hasVideoChanged(bool) final;
 
@@ -53,6 +51,7 @@ public:
     const char* logClassName() const { return "VideoPresentationInterfaceAVKit"; };
 #endif
 
+    WEBCORE_EXPORT AVPlayerViewController *avPlayerViewController() const final;
     WEBCORE_EXPORT void setupFullscreen(UIView& videoView, const FloatRect& initialRect, const FloatSize& videoDimensions, UIView* parentView, HTMLMediaElementEnums::VideoFullscreenMode, bool allowsPictureInPicturePlayback, bool standby, bool blocksReturnToFullscreenFromPictureInPicture);
     WEBCORE_EXPORT bool pictureInPictureWasStartedWhenEnteringBackground() const final;
     WEBCORE_EXPORT void setPlayerIdentifier(std::optional<MediaPlayerIdentifier>) final;
@@ -61,8 +60,10 @@ public:
     bool allowsPictureInPicturePlayback() const { return m_allowsPictureInPicturePlayback; }
     void presentFullscreen(bool animated, CompletionHandler<void(BOOL, NSError *)>&&) final;
     void dismissFullscreen(bool animated, CompletionHandler<void(BOOL, NSError *)>&&) final;
+
 private:
     WEBCORE_EXPORT VideoPresentationInterfaceAVKit(PlaybackSessionInterfaceIOS&);
+
     void updateRouteSharingPolicy() final;
     void setupPlayerViewController() final;
     void invalidatePlayerViewController() final;
@@ -72,10 +73,12 @@ private:
     void setShowsPlaybackControls(bool) final;
     void setContentDimensions(const FloatSize&) final;
     void setAllowsPictureInPicturePlayback(bool) final;
+    bool isExternalPlaybackActive() const final;
 
     RetainPtr<WebAVPlayerViewControllerDelegate> m_playerViewControllerDelegate;
     RetainPtr<WebAVPlayerViewController> m_playerViewController;
 };
+
 } // namespace WebCore
 
 #endif // PLATFORM(IOS_FAMILY) && HAVE(AVKIT)

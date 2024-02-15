@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 55;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -1926,6 +1926,7 @@
 		A1AE0EC32B166439008A2563 /* ExtensionCapabilityGranter.h in Headers */ = {isa = PBXBuildFile; fileRef = A1AE0EC12B1663D4008A2563 /* ExtensionCapabilityGranter.h */; };
 		A1B4DCE125A7923C007D178C /* MediaSampleByteRange.h in Headers */ = {isa = PBXBuildFile; fileRef = A1B4DCDF25A79211007D178C /* MediaSampleByteRange.h */; };
 		A1C512C9190656E500448914 /* WebPreviewLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A1C512C7190656E500448914 /* WebPreviewLoaderClient.h */; };
+		A1D4D2092B7DE6D00008C40E /* PlaybackSessionInterfaceLMK.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1F6B9EFA2B7AA21B0051676F /* PlaybackSessionInterfaceLMK.mm */; };
 		A1D615672B06BBAC002D0E19 /* ExtensionCapability.h in Headers */ = {isa = PBXBuildFile; fileRef = A1D615622B06BBAB002D0E19 /* ExtensionCapability.h */; };
 		A1D6156B2B06BBAC002D0E19 /* AssertionCapability.h in Headers */ = {isa = PBXBuildFile; fileRef = A1D615662B06BBAB002D0E19 /* AssertionCapability.h */; };
 		A1D6156D2B06BCB2002D0E19 /* ExtensionKitSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = A1D6156C2B06BCB2002D0E19 /* ExtensionKitSoftLink.h */; };
@@ -19024,6 +19025,7 @@
 				31F060E11654318500F3281C /* NetworkSocketChannelMessageReceiver.cpp in Sources */,
 				93085DD226E2F58D000EC6A7 /* NetworkStorageManagerMessageReceiver.cpp in Sources */,
 				51452703271FBA3A000467B6 /* NotificationManagerMessageHandlerMessageReceiver.cpp in Sources */,
+				A1D4D2092B7DE6D00008C40E /* PlaybackSessionInterfaceLMK.mm in Sources */,
 				CDA29A281CBEB67A00901CCF /* PlaybackSessionManagerMessageReceiver.cpp in Sources */,
 				CDA29A2A1CBEB67A00901CCF /* PlaybackSessionManagerProxyMessageReceiver.cpp in Sources */,
 				C15CBB3723F37ECB00300CC7 /* PreferenceObserver.mm in Sources */,
@@ -19581,7 +19583,9 @@
 		};
 		5C400E6A29DB8AB500446F6F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			platformFilter = ios;
+			platformFilters = (
+				ios,
+			);
 			target = 5C139DA129DB82E500D5117B /* WebContentCaptivePortalExtension */;
 			targetProxy = 5C400E6929DB8AB500446F6F /* PBXContainerItemProxy */;
 		};
@@ -19597,19 +19601,25 @@
 		};
 		5CE4B60729CEBB760038F565 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			platformFilter = ios;
+			platformFilters = (
+				ios,
+			);
 			target = 5CA5A2C929CBBA1A000F1046 /* WebContentExtension */;
 			targetProxy = 5CE4B60629CEBB760038F565 /* PBXContainerItemProxy */;
 		};
 		5CE4B62329CF880B0038F565 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			platformFilter = ios;
+			platformFilters = (
+				ios,
+			);
 			target = 5CE4B61529CF877F0038F565 /* GPUExtension */;
 			targetProxy = 5CE4B62229CF880B0038F565 /* PBXContainerItemProxy */;
 		};
 		5CE4B62529CF880B0038F565 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			platformFilter = ios;
+			platformFilters = (
+				ios,
+			);
 			target = 5CE4B60829CF87680038F565 /* NetworkingExtension */;
 			targetProxy = 5CE4B62429CF880B0038F565 /* PBXContainerItemProxy */;
 		};

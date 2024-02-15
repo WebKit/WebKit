@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,21 +25,19 @@
 
 #pragma once
 
-namespace WebCore {
+#if USE(LINEARMEDIAKIT)
 
-class NullVideoPresentationInterface;
-class VideoPresentationInterfaceAVKit;
-class VideoPresentationInterfaceIOS;
-class VideoPresentationInterfaceMac;
+#import <UIKit/UIKit.h>
 
-#if PLATFORM(WATCHOS)
-using PlatformVideoPresentationInterface = NullVideoPresentationInterface;
-#elif ENABLE(LINEAR_MEDIA_PLAYER)
-using PlatformVideoPresentationInterface = VideoPresentationInterfaceIOS;
-#elif PLATFORM(IOS_FAMILY)
-using PlatformVideoPresentationInterface = VideoPresentationInterfaceAVKit;
-#elif PLATFORM(MAC)
-using PlatformVideoPresentationInterface = VideoPresentationInterfaceMac;
+#if USE(APPLE_INTERNAL_SDK)
+
+#import <LinearMediaKit/LinearMediaKit.h>
+
+#else
+
+@interface LMPlayableViewController : UIViewController
+@end
+
 #endif
 
-} // namespace WebCore
+#endif // USE(LINEARMEDIAKIT)

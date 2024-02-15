@@ -34,7 +34,9 @@
 #import "Logging.h"
 #import "MessageSenderInlines.h"
 #import "PageClient.h"
+#import "PlaybackSessionInterfaceLMK.h"
 #import "PlaybackSessionManagerProxy.h"
+#import "VideoPresentationInterfaceLMK.h"
 #import "VideoPresentationManagerMessages.h"
 #import "VideoPresentationManagerProxyMessages.h"
 #import "WKVideoView.h"
@@ -569,7 +571,17 @@ VideoPresentationManagerProxy::ModelInterfaceTuple VideoPresentationManagerProxy
     Ref playbackSessionModel = m_playbackSessionManagerProxy->ensureModel(contextId);
     auto model = VideoPresentationModelContext::create(*this, playbackSessionModel, contextId);
     Ref playbackSessionInterface = m_playbackSessionManagerProxy->ensureInterface(contextId);
-    Ref<PlatformVideoPresentationInterface> interface = PlatformVideoPresentationInterface::create(playbackSessionInterface.get());
+
+    RefPtr<PlatformVideoPresentationInterface> interface;
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    if (m_page->preferences().linearMediaPlayerEnabled())
+        interface = VideoPresentationInterfaceLMK::create(playbackSessionInterface.get());
+    else
+        interface = VideoPresentationInterfaceAVKit::create(playbackSessionInterface.get());
+#else
+    interface = PlatformVideoPresentationInterface::create(playbackSessionInterface.get());
+#endif
+
     m_playbackSessionManagerProxy->addClientForContext(contextId);
 
     interface->setVideoPresentationModel(model.ptr());

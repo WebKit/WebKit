@@ -154,9 +154,14 @@ void VideoPresentationInterfaceIOS::setupFullscreen(UIView& videoView, const Flo
     doSetup();
 }
 
+std::optional<MediaPlayerIdentifier>VideoPresentationInterfaceIOS::playerIdentifier() const
+{
+    return m_playbackSessionInterface->playerIdentifier();
+}
+
 void VideoPresentationInterfaceIOS::setPlayerIdentifier(std::optional<MediaPlayerIdentifier> identifier)
 {
-    m_playerIdentifier = identifier;
+    m_playbackSessionInterface->setPlayerIdentifier(WTFMove(identifier));
 }
 
 void VideoPresentationInterfaceIOS::requestHideAndExitFullscreen()
@@ -230,7 +235,7 @@ void VideoPresentationInterfaceIOS::doSetup()
 
     if (!m_playerLayerView)
         m_playerLayerView = adoptNS([allocWebAVPlayerLayerViewInstance() init]);
-    [m_playerLayerView setHidden:[playerController() isExternalPlaybackActive]];
+    [m_playerLayerView setHidden:isExternalPlaybackActive()];
     [m_playerLayerView setBackgroundColor:clearUIColor()];
     [m_playerLayerView setVideoView:m_videoView.get()];
 

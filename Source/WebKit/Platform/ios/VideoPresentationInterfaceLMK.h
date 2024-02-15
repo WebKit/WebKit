@@ -25,12 +25,12 @@
 
 #pragma once
 
-#if PLATFORM(VISION)
+#if ENABLE(LINEAR_MEDIA_PLAYER)
 
 #include <WebCore/VideoPresentationInterfaceIOS.h>
 
 OBJC_CLASS LMPlayableViewController;
-OBJC_CLASS WKPlayableViewControllerDelegate;
+OBJC_CLASS WKSLinearMediaPlayer;
 
 namespace WebCore {
 class PlaybackSessionInterfaceIOS;
@@ -47,17 +47,15 @@ public:
     const char* logClassName() const { return "VideoPresentationInterfaceLMK"; };
 #endif
     ~VideoPresentationInterfaceLMK();
-    void setupFullscreen(UIView&, const FloatRect&, const FloatSize&, UIView*, HTMLMediaElementEnums::VideoFullscreenMode, bool, bool, bool);
-    bool pictureInPictureWasStartedWhenEnteringBackground() const final;
-    AVPlayerViewController *avPlayerViewController() const;
 
-    void hasVideoChanged(bool);
-    void setPlayerIdentifier(std::optional<MediaPlayerIdentifier>) final;
-    bool mayAutomaticallyShowVideoPictureInPicture() const;
-    bool isPlayingVideoInEnhancedFullscreen() const;
 private:
     VideoPresentationInterfaceLMK(PlaybackSessionInterfaceIOS&);
 
+    bool pictureInPictureWasStartedWhenEnteringBackground() const final { return false; }
+    bool mayAutomaticallyShowVideoPictureInPicture() const final { return false; }
+    bool isPlayingVideoInEnhancedFullscreen() const final { return false; }
+    void setupFullscreen(UIView&, const FloatRect&, const FloatSize&, UIView*, HTMLMediaElementEnums::VideoFullscreenMode, bool, bool, bool) final;
+    void hasVideoChanged(bool) final { }
     void updateRouteSharingPolicy() final { }
     void setupPlayerViewController() final;
     void invalidatePlayerViewController() final;
@@ -69,12 +67,14 @@ private:
     void setShowsPlaybackControls(bool) final;
     void setContentDimensions(const FloatSize&) final;
     void setAllowsPictureInPicturePlayback(bool) final { }
+    bool isExternalPlaybackActive() const final { return false; }
+    AVPlayerViewController *avPlayerViewController() const final { return nullptr; }
+
+    WKSLinearMediaPlayer *linearMediaPlayer() const;
 
     RetainPtr<LMPlayableViewController> m_playerViewController;
-    RetainPtr<WKPlayableViewControllerDelegate> m_playerViewControllerDelegate;
-    RetainPtr<UIViewController> m_presentingViewController;
 };
 
 } // namespace WebKit
 
-#endif // PLATFORM(VISION)
+#endif // ENABLE(LINEAR_MEDIA_PLAYER)

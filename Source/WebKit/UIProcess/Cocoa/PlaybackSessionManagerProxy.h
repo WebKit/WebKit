@@ -98,6 +98,7 @@ private:
     void setPlaybackRate(double) final;
     void selectAudioMediaOption(uint64_t) final;
     void selectLegibleMediaOption(uint64_t) final;
+    void toggleFullscreen() final;
     void togglePictureInPicture() final;
     void toggleInWindow() final;
     void toggleMuted() final;
@@ -249,6 +250,7 @@ private:
     void setPlaybackRate(PlaybackSessionContextIdentifier, double);
     void selectAudioMediaOption(PlaybackSessionContextIdentifier, uint64_t index);
     void selectLegibleMediaOption(PlaybackSessionContextIdentifier, uint64_t index);
+    void toggleFullscreen(PlaybackSessionContextIdentifier);
     void togglePictureInPicture(PlaybackSessionContextIdentifier);
     void toggleInWindow(PlaybackSessionContextIdentifier);
     void toggleMuted(PlaybackSessionContextIdentifier);
