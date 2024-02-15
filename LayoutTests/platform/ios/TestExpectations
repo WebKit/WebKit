@@ -4690,6 +4690,8 @@ webkit.org/b/266996 imported/w3c/web-platform-tests/css/css-writing-modes/mongol
 
 webkit.org/b/263317 media/media-controller-play-then-pause.html [ Failure ]
 
+webkit.org/b/269507 http/tests/download/area-download.html [ Pass Failure ]
+
 webkit.org/b/268929 imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-worker-aborted.html [ Skip ]
 webkit.org/b/268929 imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-worker-aborted.html?aborted%20immediately%20after%20send() [ Skip ]
 webkit.org/b/268929 imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-worker-aborted.html?call%20abort()%20after%20TIME_NORMAL_LOAD [ Skip ]
