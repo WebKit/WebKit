@@ -47,7 +47,7 @@ RefPtr<NativeImage> ImageAdapter::nativeImageOfSize(const IntSize& size)
     unsigned count = image().frameCount();
 
     for (unsigned i = 0; i < count; ++i) {
-        auto nativeImage = image().nativeImageAtIndexCacheIfNeeded(i);
+        RefPtr nativeImage = image().nativeImageAtIndex(i);
         if (nativeImage && nativeImage->size() == size)
             return nativeImage;
     }
@@ -62,7 +62,7 @@ Vector<Ref<NativeImage>> ImageAdapter::allNativeImages()
     unsigned count = image().frameCount();
 
     for (unsigned i = 0; i < count; ++i) {
-        if (auto nativeImage = image().nativeImageAtIndexCacheIfNeeded(i))
+        if (RefPtr nativeImage = image().nativeImageAtIndex(i))
             nativeImages.append(nativeImage.releaseNonNull());
     }
 

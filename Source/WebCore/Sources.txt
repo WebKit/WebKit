@@ -2234,6 +2234,7 @@ platform/graphics/AlphaPremultiplication.cpp
 platform/graphics/AnimationFrameRate.cpp
 platform/graphics/BifurcatedGraphicsContext.cpp
 platform/graphics/BitmapImage.cpp
+platform/graphics/BitmapImageSource.cpp
 platform/graphics/ByteArrayPixelBuffer.cpp
 platform/graphics/CachedSubimage.cpp
 platform/graphics/CodecUtilities.cpp
@@ -2304,6 +2305,8 @@ platform/graphics/ImageBufferBackend.cpp
 platform/graphics/ImageBufferPipe.cpp
 platform/graphics/ImageDecoder.cpp
 platform/graphics/ImageFrame.cpp
+platform/graphics/ImageFrameAnimator.cpp
+platform/graphics/ImageFrameWorkQueue.cpp
 platform/graphics/ImagePaintingOptions.cpp
 platform/graphics/ImageSource.cpp
 platform/graphics/InbandGenericCue.cpp
@@ -2322,6 +2325,7 @@ platform/graphics/Model.cpp
 platform/graphics/NamedImageGeneratedImage.cpp
 platform/graphics/NullImageBufferBackend.cpp
 platform/graphics/NativeImage.cpp
+platform/graphics/NativeImageSource.cpp
 platform/graphics/Path.cpp
 platform/graphics/PathImpl.cpp
 platform/graphics/PathSegment.cpp

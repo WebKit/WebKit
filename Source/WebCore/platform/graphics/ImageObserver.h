@@ -50,7 +50,6 @@ public:
 
     virtual void didDraw(const Image&) = 0;
 
-    virtual bool canDestroyDecodedData(const Image&) = 0;
     virtual void imageFrameAvailable(const Image&, ImageAnimatingState, const IntRect* changeRect = nullptr, DecodingStatus = DecodingStatus::Invalid) = 0;
     virtual void changedInRect(const Image&, const IntRect* changeRect = nullptr) = 0;
     virtual void scheduleRenderingUpdate(const Image&) = 0;

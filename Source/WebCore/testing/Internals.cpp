@@ -1101,7 +1101,7 @@ float Internals::imageFrameDurationAtIndex(HTMLImageElement& element, unsigned i
 void Internals::setImageFrameDecodingDuration(HTMLImageElement& element, float duration)
 {
     if (auto* bitmapImage = bitmapImageFromImageElement(element))
-        bitmapImage->setFrameDecodingDurationForTesting(Seconds { duration });
+        bitmapImage->setMinimumDecodingDurationForTesting(Seconds { duration });
 }
 
 void Internals::resetImageAnimation(HTMLImageElement& element)

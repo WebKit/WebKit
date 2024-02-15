@@ -185,10 +185,12 @@ void CachedImage::removeAllClientsWaitingForAsyncDecoding()
 {
     if (m_clientsWaitingForAsyncDecoding.isEmptyIgnoringNullReferences() || !hasImage())
         return;
+
     RefPtr bitmapImage = dynamicDowncast<BitmapImage>(image());
     if (!bitmapImage)
         return;
-    bitmapImage->stopAsyncDecodingQueue();
+    bitmapImage->stopDecodingWorkQueue();
+
     for (auto& client : m_clientsWaitingForAsyncDecoding)
         client.imageChanged(this);
     m_clientsWaitingForAsyncDecoding.clear();
@@ -432,17 +434,6 @@ void CachedImage::CachedImageObserver::didDraw(const Image& image)
         cachedImage->didDraw(image);
 }
 
-bool CachedImage::CachedImageObserver::canDestroyDecodedData(const Image& image)
-{
-    for (CachedResourceHandle cachedImage : m_cachedImages) {
-        if (&image != cachedImage->image())
-            continue;
-        if (!cachedImage->canDestroyDecodedData(image))
-            return false;
-    }
-    return true;
-}
-
 void CachedImage::CachedImageObserver::imageFrameAvailable(const Image& image, ImageAnimatingState animatingState, const IntRect* changeRect, DecodingStatus decodingStatus)
 {
     for (CachedResourceHandle cachedImage : m_cachedImages)
@@ -667,20 +658,6 @@ void CachedImage::didDraw(const Image& image)
         timeStamp = MonotonicTime::now();
     
     CachedResource::didAccessDecodedData(timeStamp);
-}
-
-bool CachedImage::canDestroyDecodedData(const Image& image)
-{
-    if (&image != m_image)
-        return false;
-
-    CachedResourceClientWalker<CachedImageClient> walker(*this);
-    while (CachedImageClient* client = walker.next()) {
-        if (!client->canDestroyDecodedData())
-            return false;
-    }
-
-    return true;
 }
 
 void CachedImage::imageFrameAvailable(const Image& image, ImageAnimatingState animatingState, const IntRect* changeRect, DecodingStatus decodingStatus)

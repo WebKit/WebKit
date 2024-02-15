@@ -305,6 +305,12 @@ bool RenderBoxModelObject::hasAutoHeightOrContainingBlockWithAutoHeight() const
 
 DecodingMode RenderBoxModelObject::decodingModeForImageDraw(const Image& image, const PaintInfo& paintInfo) const
 {
+    // Some document types force synchronous decoding.
+#if PLATFORM(IOS_FAMILY)
+    if (IOSApplication::isIBooksStorytime())
+        return DecodingMode::Synchronous;
+#endif
+
     if (document().isImageDocument())
         return DecodingMode::Synchronous;
 
@@ -312,10 +318,6 @@ DecodingMode RenderBoxModelObject::decodingModeForImageDraw(const Image& image, 
     if (paintInfo.paintBehavior.contains(PaintBehavior::Snapshotting))
         return DecodingMode::Synchronous;
 
-#if PLATFORM(IOS_FAMILY)
-    if (IOSApplication::isIBooksStorytime())
-        return DecodingMode::Synchronous;
-#endif
 
     auto* bitmapImage = dynamicDowncast<BitmapImage>(image);
     if (!bitmapImage)
@@ -344,7 +346,6 @@ DecodingMode RenderBoxModelObject::decodingModeForImageDraw(const Image& image, 
         // <img decoding="async"> forces asynchronous decoding but make sure this
         // will not cause flickering.
         if (imgElement->decodingMode() == DecodingMode::Asynchronous) {
-            // isAsyncDecodingEnabledForTesting() forces async image decoding regardless whether it is in the viewport or not.
             if (bitmapImage->isAsyncDecodingEnabledForTesting())
                 return DecodingMode::Asynchronous;
 
@@ -358,11 +359,10 @@ DecodingMode RenderBoxModelObject::decodingModeForImageDraw(const Image& image, 
         return DecodingMode::Asynchronous;
 
     // Animated image case.
-    if (bitmapImage->canAnimate()) {
-        if (!(bitmapImage->shouldUseAsyncDecodingForAnimatedImages() && settings().animatedImageAsyncDecodingEnabled()))
+    if (bitmapImage->isAnimated()) {
+        if (!(bitmapImage->isLargeForDecoding() && settings().animatedImageAsyncDecodingEnabled()))
             return DecodingMode::Synchronous;
 
-        // First frame should be decoded according to its state in the viewport.
         if (bitmapImage->currentFrameIndex())
             return DecodingMode::Asynchronous;
 
@@ -370,7 +370,7 @@ DecodingMode RenderBoxModelObject::decodingModeForImageDraw(const Image& image, 
     }
 
     // Large image case.
-    if (!(bitmapImage->canUseAsyncDecodingForLargeImages() && settings().largeImageAsyncDecodingEnabled()))
+    if (!(bitmapImage->isLargeForDecoding() && settings().largeImageAsyncDecodingEnabled()))
         return DecodingMode::Synchronous;
 
     // Choose a decodingMode such that the image does not flicker.

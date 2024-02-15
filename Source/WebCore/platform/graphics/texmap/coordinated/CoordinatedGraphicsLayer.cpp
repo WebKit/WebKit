@@ -625,7 +625,7 @@ void CoordinatedGraphicsLayer::setShowRepaintCounter(bool show)
 
 void CoordinatedGraphicsLayer::setContentsToImage(Image* image)
 {
-    auto nativeImage = image ? image->nativeImageForCurrentFrame() : nullptr;
+    auto nativeImage = image ? image->currentNativeImage() : nullptr;
     if (m_compositedImage == image && m_compositedNativeImage == nativeImage)
         return;
 

@@ -1,11 +1,23 @@
 <style>
-    div {
+    .box {
         width: 100px;
         height: 100px;
+        display: inline-block;
+    }
+    .red-background {
+        background-color: red;
+    }
+    .green-background {
+        background-color: green;
+    }
+    .blue-background {
         background-color: blue;
     }
 </style>
 <body>
-	<p>This tests calling decode() for a animated image which is also an element in the DOM tree.</p>
-    <div></div>
+    <p>This tests calling decode() for a animated image which is also an element in the DOM tree.</p>
+    <div class="box red-background"></div>
+    <div class="box green-background"></div>
+    <div class="box blue-background"></div>
+    <div class="box red-background"></div>
 </body>

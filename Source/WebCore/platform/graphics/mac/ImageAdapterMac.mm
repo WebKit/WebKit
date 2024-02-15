@@ -152,7 +152,7 @@ NSImage* ImageAdapter::nsImage()
 
 RetainPtr<NSImage> ImageAdapter::snapshotNSImage()
 {
-    auto nativeImage =  image().nativeImageForCurrentFrame();
+    RefPtr nativeImage =  image().currentNativeImage();
     if (!nativeImage)
         return nullptr;
 
