@@ -392,9 +392,9 @@ void MediaPlayerPrivateGStreamer::prepareToPlay()
 
 bool MediaPlayerPrivateGStreamer::isPipelineSeeking(GstState current, GstState pending, GstStateChangeReturn change) const
 {
-    bool isSeeking = m_isSeeking && change == GST_STATE_CHANGE_ASYNC && current == GST_STATE_PAUSED && pending == GST_STATE_PAUSED;
-    return isSeeking;
+    return change == GST_STATE_CHANGE_ASYNC && current == GST_STATE_PAUSED && pending == GST_STATE_PAUSED;
 }
+
 bool MediaPlayerPrivateGStreamer::isPipelineSeeking() const
 {
     GstState current, pending;
@@ -470,19 +470,31 @@ bool MediaPlayerPrivateGStreamer::paused() const
         return false;
     }
 
+    // For debug mode (either GStreamer of WebKit) we make some extra check to ensure there is no desynchronization
+    // between pipeline and player. In the case of media stream, we just return the result of the pipeline as there are
+    // nuances regarding the prerolling creating some regressions in the tests.
+#if !defined(GST_DISABLE_GST_DEBUG) || !defined(NDEBUG) || (defined(ENABLE_MEDIA_STREAM) && ENABLE_MEDIA_STREAM)
     GstState state, pending;
     auto stateChange = gst_element_get_state(m_pipeline.get(), &state, &pending, 0);
-    bool isSeeking = isPipelineSeeking(state, pending, stateChange);
-    if (isSeeking)
-        return !m_isPipelinePlaying;
+    bool isPipelinePaused = state <= GST_STATE_PAUSED;
 
-    bool paused = state <= GST_STATE_PAUSED;
-    // We also consider ourselves as paused if we are transitioning from playing to paused.
-    if (!paused && stateChange == GST_STATE_CHANGE_ASYNC)
-        paused = pending <= GST_STATE_PAUSED;
-    GST_LOG_OBJECT(pipeline(), "Paused: %s (state %s, pending %s, state change %s)", boolForPrinting(paused),
-        gst_element_state_get_name(state), gst_element_state_get_name(pending), gst_element_state_change_return_get_name(stateChange));
-    return paused;
+    if (isMediaStreamPlayer())
+        return isPipelinePaused;
+
+#if !defined(GST_DISABLE_GST_DEBUG) || !defined(NDEBUG)
+    if (!isPipelineSeeking(state, pending, stateChange) && isPipelinePaused != !m_isPipelinePlaying
+        && (stateChange == GST_STATE_CHANGE_SUCCESS || stateChange == GST_STATE_CHANGE_NO_PREROLL)) {
+        GST_WARNING_OBJECT(pipeline(), "states are not synchronized, player paused %s, pipeline paused %s",
+            boolForPrinting(!m_isPipelinePlaying), boolForPrinting(isPipelinePaused));
+        ASSERT_NOT_REACHED_WITH_MESSAGE("pipeline and player states are not synchronized");
+    }
+#else
+    UNUSED_VARIABLE(stateChange);
+#endif
+#endif
+
+    GST_DEBUG_OBJECT(pipeline(), "paused %s", boolForPrinting(!m_isPipelinePlaying));
+    return !m_isPipelinePlaying;
 }
 
 bool MediaPlayerPrivateGStreamer::doSeek(const SeekTarget& target, float rate)
@@ -2674,6 +2686,14 @@ void MediaPlayerPrivateGStreamer::updateStates()
             changePipelineState(GST_STATE_PLAYING);
 
         m_networkState = MediaPlayer::NetworkState::Loading;
+
+        if (!isMediaStreamPlayer() && m_isLiveStream.value_or(false) && m_readyState < MediaPlayer::ReadyState::HaveEnoughData
+            && m_currentState >= GST_STATE_PAUSED) {
+            GST_DEBUG_OBJECT(pipeline(), "live stream reached %s", gst_element_state_get_name(m_currentState));
+            m_readyState = MediaPlayer::ReadyState::HaveEnoughData;
+            if (player)
+                player->readyStateChanged();
+        }
         break;
     default:
         GST_DEBUG_OBJECT(pipeline(), "Else : %d", getStateResult);
