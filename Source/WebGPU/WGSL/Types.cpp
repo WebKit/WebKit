@@ -497,8 +497,9 @@ bool Type::isConstructible() const
             return true;
         },
         [&](const PrimitiveStruct&) -> bool {
-            return false;
+            return true;
         },
+
         [&](const Function&) -> bool {
             return false;
         },
