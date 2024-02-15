@@ -162,6 +162,9 @@ class WebCore::PaymentSessionError {
     bool supportsEMV;
     bool supportsCredit;
     bool supportsDebit;
+#if ENABLE(APPLE_PAY_DISBURSEMENTS)
+    bool supportsInstantFundsOut;
+#endif
 }
 
 [Nested] struct WebCore::ApplePaySessionPaymentRequest::ContactFields {
