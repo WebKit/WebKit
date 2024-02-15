@@ -29,6 +29,7 @@
 
 #include "PDFDocumentLayout.h"
 #include "PDFPluginBase.h"
+#include <WebCore/ElementIdentifier.h>
 #include <WebCore/GraphicsLayer.h>
 #include <wtf/OptionSet.h>
 
@@ -325,7 +326,7 @@ private:
     bool shouldUseScrollSnapping() const;
     bool shouldDisplayPage(PDFDocumentLayout::PageIndex);
     void populateScrollSnapIdentifiers();
-    PDFDocumentLayout::PageIndex pageForScrollSnapIdentifier(ElementIdentifier) const;
+    PDFDocumentLayout::PageIndex pageForScrollSnapIdentifier(WebCore::ElementIdentifier) const;
     void determineCurrentlySnappedPage();
 
     WebCore::FloatSize centeringOffset() const;
@@ -408,7 +409,7 @@ private:
     RefPtr<PDFPluginPasswordForm> m_passwordForm;
 #endif
 
-    Vector<ElementIdentifier> m_scrollSnapIdentifiers;
+    Vector<WebCore::ElementIdentifier> m_scrollSnapIdentifiers;
     std::optional<PDFDocumentLayout::PageIndex> m_currentlySnappedPage;
 };
 
