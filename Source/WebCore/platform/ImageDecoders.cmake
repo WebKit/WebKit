@@ -38,7 +38,6 @@ list(APPEND WebCore_LIBRARIES
     JPEG::JPEG
     PNG::PNG
     WebP::demux
-    WebP::libwebp
 )
 
 if (USE_JPEGXL)

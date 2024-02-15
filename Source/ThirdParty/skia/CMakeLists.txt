@@ -3,6 +3,7 @@ set_property(DIRECTORY . PROPERTY FOLDER "skia")
 # Skia dependencies not used directly in WebKit.
 find_package(Freetype 2.9.0 REQUIRED)
 find_package(Fontconfig 2.13.0 REQUIRED)
+find_package(WebP REQUIRED COMPONENTS mux)
 
 #
 # SKIA_ROOT_DIR may point to a checkout from the upstream Skia repository,
@@ -86,8 +87,10 @@ if (DEVELOPER_MODE AND (SKIA_ROOT_DIR OR NOT "$ENV{SKIA_ROOT_DIR}" STREQUAL ""))
     target_link_libraries(Skia INTERFACE
         Fontconfig::Fontconfig
         Freetype::Freetype
+        JPEG::JPEG
         OpenGL::GLES
         PNG::PNG
+        WebP::mux
         ${EGL_LIBRARIES}
     )
 
@@ -640,7 +643,10 @@ add_library(Skia STATIC
 
     src/encode/SkEncoder.cpp
     src/encode/SkICC.cpp
+    src/encode/SkJPEGWriteUtility.cpp
+    src/encode/SkJpegEncoderImpl.cpp
     src/encode/SkPngEncoderImpl.cpp
+    src/encode/SkWebpEncoderImpl.cpp
 
     src/pathops/SkAddIntersections.cpp
     src/pathops/SkDConicLineIntersection.cpp
@@ -860,7 +866,9 @@ target_link_libraries(Skia PRIVATE
     Epoxy::Epoxy
     Fontconfig::Fontconfig
     Freetype::Freetype
+    JPEG::JPEG
     PNG::PNG
+    WebP::mux
 )
 
 WEBKIT_ADD_TARGET_CXX_FLAGS(Skia
