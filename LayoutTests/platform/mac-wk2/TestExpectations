@@ -1961,7 +1961,7 @@ webkit.org/b/268098 [ Monterey+ ] imported/w3c/web-platform-tests/webrtc/RTCPeer
 
 webkit.org/b/268200 [ Sonoma+ Release ] inspector/console/console-screenshot.html [ Pass Failure ]
 
-webkit.org/b/268332 [ Sonoma+ Release ] imported/w3c/web-platform-tests/webrtc/simulcast/getStats.https.html [ Pass Failure ]
+webkit.org/b/268332 [ Monterey+ x86_64 ] imported/w3c/web-platform-tests/webrtc/simulcast/getStats.https.html [ Failure ]
 
 # webkit.org/b/268347 REGRESSION(273637@main?): [ Sonoma+ wk2 Release arm64] 7 http/wpt/webcodecs (layout-tests) are constant text failures
 [ Sonoma+ Release arm64 ] http/tests/webcodecs/h264-reordering.html [ Failure ]
