@@ -426,7 +426,7 @@ public:
     inline bool hasStaticInlinePosition(bool horizontal) const;
     inline bool hasStaticBlockPosition(bool horizontal) const;
 
-    inline PositionType position() const;
+    PositionType position() const;
     inline bool hasOutOfFlowPosition() const;
     inline bool hasInFlowPosition() const;
     inline bool hasViewportConstrainedPosition() const;
