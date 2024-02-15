@@ -59,10 +59,228 @@
 #import <WebCore/ResourceResponse.h>
 #import <WebCore/ScrollAnimator.h>
 #import <WebCore/SharedBuffer.h>
+#import <WebCore/WebAccessibilityObjectWrapperMac.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/TextStream.h>
 
 #import "PDFKitSoftLink.h"
+
+
+@interface WKAccessibilityPDFDocumentObject: NSObject {
+    RetainPtr<PDFDocument> _pdfDocument;
+    WeakObjCPtr<NSObject> _parent;
+    ThreadSafeWeakPtr<WebKit::PDFPluginBase> _pdfPlugin;
+}
+
+@property (assign) WeakPtr<WebCore::HTMLPlugInElement, WebCore::WeakPtrImplWithEventTargetData> pluginElement;
+
+- (id)initWithPDFDocument:(RetainPtr<PDFDocument>)document andElement:(WebCore::HTMLPlugInElement*)element;
+- (void)setParent:(NSObject *)parent;
+- (void)setPDFDocument:(RetainPtr<PDFDocument>)document;
+- (void)setPDFPlugin:(WebKit::PDFPluginBase*)plugin;
+- (PDFDocument *)document;
+- (NSObject *)parent;
+- (id)accessibilityHitTest:(NSPoint)point;
+- (void)gotoDestination:(PDFDestination *)destination;
+
+@end
+
+@implementation WKAccessibilityPDFDocumentObject
+
+@synthesize pluginElement = _pluginElement;
+
+- (id)initWithPDFDocument:(RetainPtr<PDFDocument>)document andElement:(WebCore::HTMLPlugInElement*)element
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _pdfDocument = document;
+    _pluginElement = element;
+    return self;
+}
+
+- (void)setPDFPlugin:(WebKit::PDFPluginBase*)plugin
+{
+    _pdfPlugin = plugin;
+}
+
+- (void)setPDFDocument:(RetainPtr<PDFDocument>)document
+{
+    _pdfDocument = document;
+}
+
+- (BOOL)isAccessibilityElement
+{
+    return YES;
+}
+
+- (id)accessibilityFocusedUIElement
+{
+    RefPtr plugin = _pdfPlugin.get();
+    if (plugin) {
+        if (RefPtr activeAnnotation = plugin->activeAnnotation()) {
+            if (WebCore::AXObjectCache* existingCache = plugin->axObjectCache()) {
+                if (RefPtr object = existingCache->getOrCreate(activeAnnotation->element())) {
+                ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+                    return [object->wrapper() accessibilityAttributeValue:@"_AXAssociatedPluginParent"];
+                ALLOW_DEPRECATED_DECLARATIONS_END
+                }
+            }
+        }
+    }
+    for (id page in [self accessibilityChildren]) {
+        id focusedElement = [page accessibilityFocusedUIElement];
+        if (!focusedElement)
+            return focusedElement;
+    }
+    return nil;
+}
+
+- (PDFDocument*)document
+{
+    return _pdfDocument.get();
+}
+
+- (NSArray *)accessibilityVisibleChildren
+{
+    RetainPtr<NSMutableArray> visiblePageElements = adoptNS([[NSMutableArray alloc] init]);
+    for (id page in [self accessibilityChildren]) {
+        id focusedElement = [page accessibilityFocusedUIElement];
+        if (!focusedElement)
+            [visiblePageElements addObject:page];
+    }
+    return visiblePageElements.autorelease();
+}
+
+- (NSObject *)parent
+{
+    RetainPtr protectedSelf = self;
+    if (!protectedSelf->_parent) {
+        callOnMainRunLoopAndWait([protectedSelf] {
+            if (auto* axObjectCache = protectedSelf->_pdfPlugin.get()->axObjectCache()) {
+                if (RefPtr pluginAxObject = axObjectCache->getOrCreate(protectedSelf->_pluginElement.get()))
+                    protectedSelf->_parent = pluginAxObject->wrapper();
+            }
+        });
+    }
+    return protectedSelf->_parent.get().get();
+}
+
+- (void)setParent:(NSObject *)parent
+{
+    _parent = parent;
+}
+
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
+- (id)accessibilityAttributeValue:(NSString *)attribute
+{
+    if ([attribute isEqualToString:NSAccessibilityParentAttribute])
+        return [self parent];
+    if ([attribute isEqualToString:NSAccessibilityChildrenAttribute])
+        return [self accessibilityChildren];
+    if ([attribute isEqualToString:NSAccessibilityVisibleChildrenAttribute])
+        return [self accessibilityVisibleChildren];
+    if ([attribute isEqualToString:NSAccessibilityTopLevelUIElementAttribute])
+        return [[self parent] accessibilityAttributeValue:NSAccessibilityTopLevelUIElementAttribute];
+    if ([attribute isEqualToString:NSAccessibilityWindowAttribute])
+        return [[self parent] accessibilityAttributeValue:NSAccessibilityWindowAttribute];
+    if ([attribute isEqualToString:NSAccessibilityEnabledAttribute])
+        return [[self parent] accessibilityAttributeValue:NSAccessibilityEnabledAttribute];
+    if ([attribute isEqualToString:NSAccessibilityRoleAttribute])
+        return NSAccessibilityGroupRole;
+    if ([attribute isEqualToString:NSAccessibilityPrimaryScreenHeightAttribute])
+        return [[self parent] accessibilityAttributeValue:NSAccessibilityPrimaryScreenHeightAttribute];
+    if ([attribute isEqualToString:NSAccessibilitySubroleAttribute])
+        return @"AXPDFPluginSubrole";
+    if ([attribute isEqualToString:NSAccessibilitySizeAttribute]) {
+        RefPtr plugin = _pdfPlugin.get();
+        if (plugin)
+            return [NSValue valueWithSize:plugin->boundsOnScreen().size()];
+    }
+    if ([attribute isEqualToString:NSAccessibilityPositionAttribute]) {
+        RefPtr plugin = _pdfPlugin.get();
+        if (plugin)
+            return [NSValue valueWithPoint:plugin->boundsOnScreen().location()];
+    }
+    return nil;
+}
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
+
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
+- (NSArray *)accessibilityAttributeNames
+{
+    static NeverDestroyed<RetainPtr<NSArray>> attributeNames = @[
+        NSAccessibilityParentAttribute,
+        NSAccessibilityWindowAttribute,
+        NSAccessibilityTopLevelUIElementAttribute,
+        NSAccessibilityRoleDescriptionAttribute,
+        NSAccessibilitySizeAttribute,
+        NSAccessibilityEnabledAttribute,
+        NSAccessibilityPositionAttribute,
+        NSAccessibilityFocusedAttribute,
+        NSAccessibilityChildrenAttribute,
+        NSAccessibilityPrimaryScreenHeightAttribute,
+        NSAccessibilitySubroleAttribute
+    ];
+    return attributeNames.get().get();
+}
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
+
+- (BOOL)accessibilityShouldUseUniqueId
+{
+    return YES;
+}
+
+- (NSUInteger)accessibilityArrayAttributeCount:(NSString *)attribute
+{
+    if (!_pdfDocument) {
+        RefPtr plugin = _pdfPlugin.get();
+        if (plugin)
+            _pdfDocument = plugin->pdfDocument();
+    }
+    if ([attribute isEqualToString:NSAccessibilityChildrenAttribute])
+        return [_pdfDocument.get() pageCount];
+    if ([attribute isEqualToString:NSAccessibilityVisibleChildrenAttribute])
+        return [self accessibilityVisibleChildren].count;
+    return [super accessibilityArrayAttributeCount:attribute];
+}
+
+- (NSArray*)accessibilityChildren
+{
+#if USE(APPLE_INTERNAL_SDK)
+#if HAVE(PDFKIT)
+    if (!_pdfDocument) {
+        RefPtr plugin = _pdfPlugin.get();
+        if (plugin)
+            _pdfDocument = plugin->pdfDocument();
+    }
+    return [_pdfDocument.get() accessibilityChildren:self];
+#endif // HAVE(PDFKIT)
+#endif // USE(APPLE_INTERNAL_SDK)
+    return nil;
+}
+
+- (id)accessibilityHitTest:(NSPoint)point
+{
+    for (id element in [self accessibilityChildren]) {
+        id result = [element accessibilityHitTest:point];
+        if (!result)
+            return result;
+    }
+    return self;
+}
+
+// this function allows VoiceOver to scroll to the current page with VO cursor
+- (void)gotoDestination:(PDFDestination *)destination
+{
+    NSInteger pageIndex = [_pdfDocument indexForPage:[destination page]];
+    PDFRect rect = [[self accessibilityChildren][0] accessibilityFrame];
+    WebCore::IntPoint point = { 0, (int) (rect.size.height * pageIndex) + 1 };
+    callOnMainRunLoopAndWait([protectedPlugin = Ref { *_pdfPlugin.get() }, point] {
+        protectedPlugin->setScrollOffset(point);
+    });
+}
+@end
 
 namespace WebKit {
 using namespace WebCore;
@@ -104,6 +322,10 @@ PDFPluginBase::PDFPluginBase(HTMLPlugInElement& element)
     , m_incrementalPDFLoadingEnabled(element.document().settings().incrementalPDFLoadingEnabled())
 #endif
 {
+    m_accessibilityDocumentObject = adoptNS([[WKAccessibilityPDFDocumentObject alloc] initWithPDFDocument:m_pdfDocument andElement:&element]);
+    [m_accessibilityDocumentObject setPDFPlugin:this];
+    if (this->isFullFramePlugin() && m_frame->isMainFrame())
+        [m_accessibilityDocumentObject setParent:m_frame->page()->accessibilityRemoteObject()];
 }
 
 PDFPluginBase::~PDFPluginBase()
@@ -932,6 +1154,50 @@ bool PDFPluginBase::supportsForms()
     return isFullFramePlugin();
 }
 
+bool PDFPluginBase::showContextMenuAtPoint(const IntPoint& point)
+{
+    auto* frameView = m_frame ? m_frame->coreLocalFrame()->view() : nullptr;
+    if (!frameView)
+        return false;
+    IntPoint contentsPoint = frameView->contentsToRootView(point);
+    WebMouseEvent event({ WebEventType::MouseDown, OptionSet<WebEventModifier> { }, WallTime::now() }, WebMouseEventButton::Right, 0, contentsPoint, contentsPoint, 0, 0, 0, 1, WebCore::ForceAtClick);
+    return handleContextMenuEvent(event);
+}
+
+IntPoint PDFPluginBase::convertFromPDFViewToRootView(const IntPoint& point) const
+{
+    // FIXME fix the coordinate space
+    IntPoint pointInPluginCoordinates(point.x(), size().height() - point.y());
+    return valueOrDefault(m_rootViewToPluginTransform.inverse()).mapPoint(pointInPluginCoordinates);
+}
+
+FloatRect PDFPluginBase::convertFromPDFViewToScreenForAccessibility(const FloatRect& rect) const
+{
+    return WebCore::Accessibility::retrieveValueFromMainThread<WebCore::FloatRect>([&] () -> WebCore::FloatRect {
+        FloatRect updatedRect = rect;
+        updatedRect.setLocation(convertFromPDFViewToRootView(IntPoint(updatedRect.location())));
+        RefPtr page = this->page();
+        if (!page)
+            return { };
+        return page->chrome().rootViewToScreen(enclosingIntRect(updatedRect));
+    });
+}
+
+WebCore::AXObjectCache* PDFPluginBase::axObjectCache() const
+{
+    ASSERT(isMainRunLoop());
+    if (!m_frame || !m_frame->coreLocalFrame() || !m_frame->coreLocalFrame()->document())
+        return nullptr;
+    return m_frame->coreLocalFrame()->document()->axObjectCache();
+}
+
+IntPoint PDFPluginBase::convertFromRootViewToPDFView(const IntPoint& point) const
+{
+    ASSERT(isMainRunLoop());
+    IntPoint pointInPluginCoordinates = m_rootViewToPluginTransform.mapPoint(point);
+    return IntPoint(pointInPluginCoordinates.x(), size().height() - pointInPluginCoordinates.y());
+}
+
 WebCore::IntPoint PDFPluginBase::lastKnownMousePositionInView() const
 {
     if (m_lastMouseEvent)
@@ -954,6 +1220,18 @@ void PDFPluginBase::navigateToURL(const URL& url)
         coreEvent = MouseEvent::create(eventNames().clickEvent, &frame->windowProxy(), platform(*m_lastMouseEvent), 0, 0);
 
     frame->loader().changeLocation(url, emptyAtom(), coreEvent.get(), ReferrerPolicy::NoReferrer, ShouldOpenExternalURLsPolicy::ShouldAllow);
+}
+
+id PDFPluginBase::accessibilityAssociatedPluginParentForElement(Element* element) const
+{
+    ASSERT(isMainRunLoop());
+    if (!m_activeAnnotation)
+        return nil;
+
+    if (m_activeAnnotation->element() != element)
+        return nil;
+
+    return [m_activeAnnotation->annotation() accessibilityNode];
 }
 
 #if !LOG_DISABLED

@@ -1594,17 +1594,6 @@ NSData *PDFPlugin::liveData() const
     return originalData();
 }
 
-id PDFPlugin::accessibilityAssociatedPluginParentForElement(WebCore::Element* element) const
-{
-    if (!m_activeAnnotation)
-        return nil;
-
-    if (m_activeAnnotation->element() != element)
-        return nil;
-
-    return [m_activeAnnotation->annotation() accessibilityNode];
-}
-
 id PDFPlugin::accessibilityHitTest(const WebCore::IntPoint& point) const
 {
     return [m_accessibilityObject accessibilityHitTestIntPoint:point];
