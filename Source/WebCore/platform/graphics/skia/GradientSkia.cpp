@@ -140,7 +140,7 @@ sk_sp<SkShader> Gradient::shader(float globalAlpha, const AffineTransform& gradi
             // Skia's renders it tilted by 90 degrees, so offset that rotation in the matrix
             matrix.preRotate(SkRadiansToDegrees(data.angleRadians) - 90.0f, data.point0.x(), data.point0.y());
 
-            return SkGradientShader::MakeSweep(data.point0.x(), data.point0.y(), colors.data(), SkColorSpace::MakeSRGB(), positions.data(), colors.size(), 0, &matrix);
+            return SkGradientShader::MakeSweep(data.point0.x(), data.point0.y(), colors.data(), nullptr, positions.data(), colors.size(), tileMode, 0, 360, interpolation, &matrix);
         });
 
     return m_shader;
