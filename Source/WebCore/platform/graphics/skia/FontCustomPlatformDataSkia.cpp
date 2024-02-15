@@ -94,11 +94,16 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&
     return platformData;
 }
 
-RefPtr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer& buffer, const String& itemInCollection)
+RefPtr<FontCustomPlatformData> FontCustomPlatformData::create(SharedBuffer& buffer, const String& itemInCollection)
 {
     sk_sp<SkTypeface> typeface = FontCache::forCurrentThread().fontManager()->makeFromData(buffer.createSkData());
     FontPlatformData::CreationData creationData = { buffer, itemInCollection };
     return adoptRef(new FontCustomPlatformData(WTFMove(typeface), WTFMove(creationData)));
+}
+
+RefPtr<FontCustomPlatformData> FontCustomPlatformData::createMemorySafe(SharedBuffer&, const String&)
+{
+    return nullptr;
 }
 
 bool FontCustomPlatformData::supportsFormat(const String& format)
