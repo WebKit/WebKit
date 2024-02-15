@@ -216,14 +216,7 @@ void PaymentAuthorizationPresenter::completePaymentMethodSelection(std::optional
         return;
     }
 
-    RetainPtr<PKPaymentRequestPaymentMethodUpdate> paymentMethodUpdate;
-#if HAVE(PASSKIT_DISBURSEMENTS)
-    bool isDisbursementRequestBasedOnSummaryItems = update->newLineItems.isEmpty() ? NO : update->newLineItems.last().disbursementLineItemType == WebCore::ApplePayLineItem::DisbursementLineItemType::Disbursement;
-    if (isDisbursementRequestBasedOnSummaryItems)
-        paymentMethodUpdate = adoptNS([PAL::allocPKPaymentRequestPaymentMethodUpdateInstance() initWithPaymentSummaryItems:WebCore::platformDisbursementSummaryItems(WTFMove(update->newLineItems))]);
-    else
-#endif
-        paymentMethodUpdate = adoptNS([PAL::allocPKPaymentRequestPaymentMethodUpdateInstance() initWithPaymentSummaryItems:WebCore::platformSummaryItems(WTFMove(update->newTotal), WTFMove(update->newLineItems))]);
+    auto paymentMethodUpdate = adoptNS([PAL::allocPKPaymentRequestPaymentMethodUpdateInstance() initWithPaymentSummaryItems:WebCore::platformSummaryItems(WTFMove(update->newTotal), WTFMove(update->newLineItems))]);
 #if HAVE(PASSKIT_UPDATE_SHIPPING_METHODS_WHEN_CHANGING_SUMMARY_ITEMS)
     [paymentMethodUpdate setErrors:toNSErrors(WTFMove(update->errors)).get()];
 #if HAVE(PASSKIT_DEFAULT_SHIPPING_METHOD)
@@ -283,13 +276,7 @@ void PaymentAuthorizationPresenter::completeShippingContactSelection(std::option
         return;
     }
 
-    RetainPtr<PKPaymentRequestShippingContactUpdate> shippingContactUpdate;
-#if HAVE(PASSKIT_DISBURSEMENTS)
-    if (update->newDisbursementPaymentRequest)
-        shippingContactUpdate = adoptNS([PAL::allocPKPaymentRequestShippingContactUpdateInstance() initWithPaymentSummaryItems:WebCore::platformDisbursementSummaryItems(WTFMove(update->newLineItems))]);
-    else
-#endif // HAVE(PASSKIT_DISBURSEMENTS)
-        shippingContactUpdate = adoptNS([PAL::allocPKPaymentRequestShippingContactUpdateInstance() initWithPaymentSummaryItems:WebCore::platformSummaryItems(WTFMove(update->newTotal), WTFMove(update->newLineItems))]);
+    auto shippingContactUpdate = adoptNS([PAL::allocPKPaymentRequestShippingContactUpdateInstance() initWithPaymentSummaryItems:WebCore::platformSummaryItems(WTFMove(update->newTotal), WTFMove(update->newLineItems))]);
     [shippingContactUpdate setErrors:toNSErrors(WTFMove(update->errors)).get()];
 #if HAVE(PASSKIT_DEFAULT_SHIPPING_METHOD)
     [shippingContactUpdate setAvailableShippingMethods:toPKShippingMethods(WTFMove(update->newShippingMethods))];
