@@ -294,7 +294,6 @@ void PDFIncrementalLoader::clear()
     // we can force the PDFThread to complete quickly
     if (m_pdfThread) {
         unconditionalCompleteOutstandingRangeRequests();
-        m_dataSemaphore.signal();
         m_pdfThread->waitForCompletion();
     }
 }
@@ -650,21 +649,19 @@ size_t PDFIncrementalLoader::dataProviderGetBytesAtPosition(void* buffer, off_t 
         return 0;
     }
 
+    WTF::Semaphore dataSemaphore { 0 };
     size_t bytesProvided = 0;
-    // Do not dispatch main runloop (again) and wait anymore if plugin has been destroyed.
-    if (plugin->hasBeenDestroyed())
-        return 0;
 
-    RunLoop::main().dispatch([this, protectedLoader = Ref { *this }, position, count, buffer, &bytesProvided] {
-        protectedLoader->getResourceBytesAtPosition(count, position, [this, count, buffer, &bytesProvided](const uint8_t* bytes, size_t bytesCount) {
+    RunLoop::main().dispatch([protectedLoader = Ref { *this }, position, count, buffer, &dataSemaphore, &bytesProvided] {
+        protectedLoader->getResourceBytesAtPosition(count, position, [count, buffer, &dataSemaphore, &bytesProvided](const uint8_t* bytes, size_t bytesCount) {
             RELEASE_ASSERT(bytesCount <= count);
             memcpy(buffer, bytes, bytesCount);
             bytesProvided = bytesCount;
-            m_dataSemaphore.signal();
+            dataSemaphore.signal();
         });
     });
 
-    m_dataSemaphore.wait();
+    dataSemaphore.wait();
 
 #if !LOG_DISABLED
     decrementThreadsWaitingOnCallback();

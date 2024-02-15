@@ -31,7 +31,6 @@
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/Threading.h>
-#include <wtf/threads/BinarySemaphore.h>
 
 OBJC_CLASS PDFDocument;
 
@@ -119,7 +118,6 @@ private:
 
     RetainPtr<PDFDocument> m_backgroundThreadDocument;
     RefPtr<Thread> m_pdfThread;
-    BinarySemaphore m_dataSemaphore;
 
     Ref<PDFPluginStreamLoaderClient> m_streamLoaderClient;
 
