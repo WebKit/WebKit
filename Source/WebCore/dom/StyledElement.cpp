@@ -314,7 +314,8 @@ const ImmutableStyleProperties* StyledElement::presentationalHintStyle() const
 
 void StyledElement::rebuildPresentationalHintStyle()
 {
-    auto style = MutableStyleProperties::create(isSVGElement() ? SVGAttributeMode : HTMLQuirksMode);
+    bool isSVG = isSVGElement();
+    auto style = MutableStyleProperties::create(isSVG ? SVGAttributeMode : HTMLQuirksMode);
     for (auto& attribute : attributesIterator())
         collectPresentationalHintsForAttribute(attribute.name(), attribute.value(), style);
 
@@ -325,10 +326,31 @@ void StyledElement::rebuildPresentationalHintStyle()
     auto& elementData = ensureUniqueElementData();
 
     elementData.setPresentationalHintStyleIsDirty(false);
-    if (style->isEmpty())
+    if (style->isEmpty()) {
         elementData.m_presentationalHintStyle = nullptr;
-    else
-        elementData.m_presentationalHintStyle = style->immutableCopy();
+        return;
+    }
+
+    auto shouldDeduplicate = [&] {
+        auto hasNonZeroProperty = [&](auto property) {
+            auto value = dynamicDowncast<CSSPrimitiveValue>(style->getPropertyCSSValue(property));
+            return value && !value->isZero().value_or(false);
+        };
+        if (isSVG) {
+            // SVG style tends to have unique x/y properties. Don't spend effort trying to deduplicate them.
+            if (hasNonZeroProperty(CSSPropertyX))
+                return false;
+            if (hasNonZeroProperty(CSSPropertyY))
+                return false;
+            if (hasNonZeroProperty(CSSPropertyCx))
+                return false;
+            if (hasNonZeroProperty(CSSPropertyCy))
+                return false;
+        }
+        return true;
+    }();
+
+    elementData.m_presentationalHintStyle = shouldDeduplicate ? style->immutableDeduplicatedCopy() : style->immutableCopy();
 }
 
 void StyledElement::addPropertyToPresentationalHintStyle(MutableStyleProperties& style, CSSPropertyID propertyID, CSSValueID identifier)

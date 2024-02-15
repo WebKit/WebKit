@@ -47,6 +47,7 @@ public:
     WEBCORE_EXPORT ~MutableStyleProperties();
 
     Ref<ImmutableStyleProperties> immutableCopy() const;
+    Ref<ImmutableStyleProperties> immutableDeduplicatedCopy() const;
 
     unsigned propertyCount() const { return m_propertyVector.size(); }
     bool isEmpty() const { return !propertyCount(); }

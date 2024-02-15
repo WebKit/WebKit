@@ -774,8 +774,16 @@ void ElementRuleCollector::matchAllRules(bool matchAuthorAndUserStyles, bool inc
         matchUserRules();
 
     if (auto* styledElement = dynamicDowncast<StyledElement>(element())) {
-        // https://html.spec.whatwg.org/#presentational-hints
-        addElementStyleProperties(styledElement->presentationalHintStyle(), RuleSet::cascadeLayerPriorityForPresentationalHints);
+        if (auto* presentationalHintStyle = styledElement->presentationalHintStyle()) {
+            // https://html.spec.whatwg.org/#presentational-hints
+
+            // Presentation attributes in SVG elements tend to be unique and not restyled often. Avoid bloating the cache.
+            // FIXME: Refcount is an imperfect proxy for sharing within a single document.
+            static constexpr auto matchedDeclarationsCacheSharingThreshold = 4;
+            bool allowCaching = !styledElement->isSVGElement() || presentationalHintStyle->refCount() > matchedDeclarationsCacheSharingThreshold;
+
+            addElementStyleProperties(presentationalHintStyle, RuleSet::cascadeLayerPriorityForPresentationalHints, allowCaching);
+        }
 
         // Tables and table cells share an additional presentation style that must be applied
         // after all attributes, since their style depends on the values of multiple attributes.
