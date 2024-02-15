@@ -1567,7 +1567,7 @@ void TypeChecker::visit(AST::ArrayTypeExpression& array)
         return;
     }
 
-    if (!elementType->isConstructible()) {
+    if (!elementType->hasCreationFixedFootprint()) {
         typeError(array.span(), "'", *elementType, "' cannot be used as an element type of an array");
         return;
     }
