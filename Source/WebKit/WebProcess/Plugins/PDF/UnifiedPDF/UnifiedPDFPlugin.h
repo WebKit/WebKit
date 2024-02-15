@@ -209,7 +209,9 @@ private:
         DictionaryLookup,
         Copy,
         CopyLink,
+        NextPage,
         OpenWithPreview,
+        PreviousPage,
         SinglePage,
         SinglePageContinuous,
         TwoPages,
@@ -221,13 +223,14 @@ private:
     };
 
     std::optional<PDFContextMenu> createContextMenu(const WebMouseEvent&) const;
-    PDFContextMenuItem contextMenuItem(ContextMenuItemTag) const;
+    PDFContextMenuItem contextMenuItem(ContextMenuItemTag, bool hasAction = true) const;
     String titleForContextMenuItemTag(ContextMenuItemTag) const;
     bool isDisplayModeContextMenuItemTag(ContextMenuItemTag) const;
     PDFContextMenuItem separatorContextMenuItem() const;
     Vector<PDFContextMenuItem> selectionContextMenuItems(const WebCore::IntPoint& contextMenuEventRootViewPoint) const;
     Vector<PDFContextMenuItem> displayModeContextMenuItems() const;
     Vector<PDFContextMenuItem> scaleContextMenuItems() const;
+    Vector<PDFContextMenuItem> navigationContextMenuItems() const;
     ContextMenuItemTag toContextMenuItemTag(int tagValue) const;
     void performContextMenuAction(ContextMenuItemTag, const WebCore::IntPoint& contextMenuEventRootViewPoint);
 
@@ -357,7 +360,12 @@ private:
     WebCore::IntPoint convertFromPageToContents(const WebCore::IntPoint&, PDFDocumentLayout::PageIndex) const;
     WebCore::IntRect convertFromPageToContents(const WebCore::IntRect&, PDFDocumentLayout::PageIndex) const;
 
+    WebCore::IntPoint convertFromDocumentToContents(WebCore::IntPoint) const;
+
+    WebCore::IntPoint offsetContentsSpacePointByPageMargins(WebCore::IntPoint pointInContentsSpace) const;
+
     std::optional<PDFDocumentLayout::PageIndex> pageIndexForDocumentPoint(const WebCore::IntPoint&) const;
+    std::optional<PDFDocumentLayout::PageIndex> indexForCurrentPageInView() const;
 
     RetainPtr<PDFAnnotation> annotationForRootViewPoint(const WebCore::IntPoint&) const;
 

@@ -1379,6 +1379,12 @@ std::optional<PDFDocumentLayout::PageIndex> UnifiedPDFPlugin::pageIndexForDocume
     return std::nullopt;
 }
 
+std::optional<PDFDocumentLayout::PageIndex> UnifiedPDFPlugin::indexForCurrentPageInView() const
+{
+    auto centerInDocumentSpace = convertFromPluginToDocument(flooredIntPoint(size() / 2));
+    return pageIndexForDocumentPoint(centerInDocumentSpace);
+}
+
 RetainPtr<PDFAnnotation> UnifiedPDFPlugin::annotationForRootViewPoint(const WebCore::IntPoint& point) const
 {
     auto pointInDocumentSpace = convertFromPluginToDocument(convertFromRootViewToPlugin(point));
@@ -1416,11 +1422,21 @@ WebCore::IntRect UnifiedPDFPlugin::convertFromPageToDocument(const WebCore::IntR
 WebCore::IntPoint UnifiedPDFPlugin::convertFromPageToContents(const WebCore::IntPoint& pageSpacePoint, PDFDocumentLayout::PageIndex pageIndex) const
 {
     FloatPoint transformedPoint = convertFromPageToDocument(pageSpacePoint, pageIndex);
-    transformedPoint.scale(m_documentLayout.scale());
+    return convertFromDocumentToContents(WebCore::flooredIntPoint(transformedPoint));
+}
+
+WebCore::IntPoint UnifiedPDFPlugin::convertFromDocumentToContents(WebCore::IntPoint documentSpacePoint) const
+{
+    documentSpacePoint.scale(m_documentLayout.scale());
     auto padding = centeringOffset();
-    transformedPoint.move(padding.width(), padding.height());
-    transformedPoint.scale(m_scaleFactor);
-    return roundedIntPoint(transformedPoint);
+    documentSpacePoint.move(padding.width(), padding.height());
+    documentSpacePoint.scale(m_scaleFactor);
+    return documentSpacePoint;
+}
+
+WebCore::IntPoint UnifiedPDFPlugin::offsetContentsSpacePointByPageMargins(WebCore::IntPoint pointInContentsSpace) const
+{
+    return WebCore::flooredIntPoint(pointInContentsSpace - m_documentLayout.pageMargin.scaled(this->scaleFactor() * documentFittingScale()));
 }
 
 WebCore::IntRect UnifiedPDFPlugin::convertFromPageToContents(const WebCore::IntRect& pageSpaceRect, PDFDocumentLayout::PageIndex pageIndex) const
@@ -1713,12 +1729,14 @@ void UnifiedPDFPlugin::scrollToPDFDestination(PDFDestination *destination)
 void UnifiedPDFPlugin::scrollToPointInPage(IntPoint pointInPDFPageSpace, PDFDocumentLayout::PageIndex pageIndex)
 {
     auto pointInContentsSpace = convertFromPageToContents(pointInPDFPageSpace, pageIndex);
-    scrollToPositionWithoutAnimation(pointInContentsSpace - m_documentLayout.documentMargin.scaled(this->scaleFactor() * documentFittingScale()));
+    scrollToPositionWithoutAnimation(offsetContentsSpacePointByPageMargins(pointInContentsSpace));
 }
 
 void UnifiedPDFPlugin::scrollToPage(PDFDocumentLayout::PageIndex pageIndex)
 {
-    scrollToPointInPage({ 0, static_cast<int>(heightForPage(pageIndex)) }, pageIndex);
+    ASSERT(pageIndex < m_documentLayout.pageCount());
+    auto pointInContentsSpace = convertFromDocumentToContents(WebCore::flooredIntPoint(m_documentLayout.layoutBoundsForPageAtIndex(pageIndex).location()));
+    scrollToPositionWithoutAnimation(offsetContentsSpacePointByPageMargins(pointInContentsSpace));
 }
 
 void UnifiedPDFPlugin::scrollToFragmentIfNeeded()
@@ -1805,7 +1823,9 @@ auto UnifiedPDFPlugin::toContextMenuItemTag(int tagValue) const -> ContextMenuIt
         ContextMenuItemTag::DictionaryLookup,
         ContextMenuItemTag::Copy,
         ContextMenuItemTag::CopyLink,
+        ContextMenuItemTag::NextPage,
         ContextMenuItemTag::OpenWithPreview,
+        ContextMenuItemTag::PreviousPage,
         ContextMenuItemTag::SinglePage,
         ContextMenuItemTag::SinglePageContinuous,
         ContextMenuItemTag::TwoPages,
@@ -1846,11 +1866,15 @@ std::optional<PDFContextMenu> UnifiedPDFPlugin::createContextMenu(const WebMouse
 
     addSeparator();
 
+    menuItems.appendVector(scaleContextMenuItems());
+
+    addSeparator();
+
     menuItems.appendVector(displayModeContextMenuItems());
 
     addSeparator();
 
-    menuItems.appendVector(scaleContextMenuItems());
+    menuItems.appendVector(navigationContextMenuItems());
 
     auto contextMenuPoint = frameView->contentsToScreen(IntRect(frameView->windowToContents(contextMenuEvent.position()), IntSize())).location();
 
@@ -1875,8 +1899,12 @@ String UnifiedPDFPlugin::titleForContextMenuItemTag(ContextMenuItemTag tag) cons
         return contextMenuItemTagCopy();
     case ContextMenuItemTag::CopyLink:
         return contextMenuItemTagCopyLinkToClipboard();
+    case ContextMenuItemTag::NextPage:
+        return contextMenuItemPDFNextPage();
     case ContextMenuItemTag::OpenWithPreview:
         return contextMenuItemPDFOpenWithPreview();
+    case ContextMenuItemTag::PreviousPage:
+        return contextMenuItemPDFPreviousPage();
     case ContextMenuItemTag::SinglePage:
         return contextMenuItemPDFSinglePage();
     case ContextMenuItemTag::SinglePageContinuous:
@@ -1897,7 +1925,7 @@ String UnifiedPDFPlugin::titleForContextMenuItemTag(ContextMenuItemTag tag) cons
     }
 }
 
-PDFContextMenuItem UnifiedPDFPlugin::contextMenuItem(ContextMenuItemTag tag) const
+PDFContextMenuItem UnifiedPDFPlugin::contextMenuItem(ContextMenuItemTag tag, bool hasAction) const
 {
     switch (tag) {
     case ContextMenuItemTag::Unknown:
@@ -1906,7 +1934,7 @@ PDFContextMenuItem UnifiedPDFPlugin::contextMenuItem(ContextMenuItemTag tag) con
     default: {
         auto currentDisplayMode = contextMenuItemTagFromDisplayMode(m_documentLayout.displayMode());
         int state = isDisplayModeContextMenuItemTag(tag) ? currentDisplayMode == tag : 0;
-        return { titleForContextMenuItemTag(tag), state, enumToUnderlyingType(tag), ContextMenuItemEnablement::Enabled, ContextMenuItemHasAction::Yes, ContextMenuItemIsSeparator::No };
+        return { titleForContextMenuItemTag(tag), state, enumToUnderlyingType(tag), ContextMenuItemEnablement::Enabled, hasAction ? ContextMenuItemHasAction::Yes : ContextMenuItemHasAction::No, ContextMenuItemIsSeparator::No };
     }
     }
 }
@@ -1954,6 +1982,15 @@ Vector<PDFContextMenuItem> UnifiedPDFPlugin::scaleContextMenuItems() const
     };
 }
 
+Vector<PDFContextMenuItem> UnifiedPDFPlugin::navigationContextMenuItems() const
+{
+    auto currentPageIndex = indexForCurrentPageInView();
+    return {
+        contextMenuItem(ContextMenuItemTag::NextPage, currentPageIndex != m_documentLayout.pageCount() - 1),
+        contextMenuItem(ContextMenuItemTag::PreviousPage, currentPageIndex && currentPageIndex.value())
+    };
+}
+
 void UnifiedPDFPlugin::performContextMenuAction(ContextMenuItemTag tag, const IntPoint& contextMenuEventRootViewPoint)
 {
     switch (tag) {
@@ -1981,6 +2018,14 @@ void UnifiedPDFPlugin::performContextMenuAction(ContextMenuItemTag tag, const In
             updateLayout(AdjustScaleAfterLayout::Yes);
             resnapAfterLayout();
         }
+        break;
+    case ContextMenuItemTag::NextPage:
+        if (auto currentPageIndex = indexForCurrentPageInView(); currentPageIndex < m_documentLayout.pageCount() - 1)
+            scrollToPage(currentPageIndex.value() + 1);
+        break;
+    case ContextMenuItemTag::PreviousPage:
+        if (auto currentPageIndex = indexForCurrentPageInView(); currentPageIndex && currentPageIndex.value())
+            return scrollToPage(currentPageIndex.value() - 1);
         break;
     case ContextMenuItemTag::ZoomIn:
         zoomIn();

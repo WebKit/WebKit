@@ -188,11 +188,11 @@ namespace WebCore {
     WEBCORE_EXPORT String contextMenuItemPDFZoomIn();
     WEBCORE_EXPORT String contextMenuItemPDFZoomOut();
     WEBCORE_EXPORT String contextMenuItemPDFActualSize();
+    WEBCORE_EXPORT String contextMenuItemPDFNextPage();
+    WEBCORE_EXPORT String contextMenuItemPDFPreviousPage();
 #endif
 #if ENABLE(PDFJS)
     String contextMenuItemPDFAutoSize();
-    String contextMenuItemPDFNextPage();
-    String contextMenuItemPDFPreviousPage();
 #endif
 #endif // ENABLE(CONTEXT_MENU)
 

@@ -552,13 +552,6 @@ String contextMenuItemPDFActualSize()
 {
     return WEB_UI_STRING_WITH_MNEMONIC("Actual Size", "_Actual Size", "Actual Size context menu item");
 }
-#endif
-
-#if ENABLE(PDFJS)
-String contextMenuItemPDFAutoSize()
-{
-    return WEB_UI_STRING_WITH_MNEMONIC("Automatically Resize", "_Automatically Resize", "Automatically Resize context menu item");
-}
 
 String contextMenuItemPDFNextPage()
 {
@@ -569,6 +562,14 @@ String contextMenuItemPDFPreviousPage()
 {
     return WEB_UI_STRING_WITH_MNEMONIC("Previous Page", "_Previous Page", "Previous Page context menu item");
 }
+#endif
+
+#if ENABLE(PDFJS)
+String contextMenuItemPDFAutoSize()
+{
+    return WEB_UI_STRING_WITH_MNEMONIC("Automatically Resize", "_Automatically Resize", "Automatically Resize context menu item");
+}
+
 #endif
 #endif // ENABLE(CONTEXT_MENUS)
 
