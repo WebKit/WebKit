@@ -64,22 +64,20 @@ Ref<AccessibilityTableCell> AccessibilityTableCell::create(Node& node)
 
 bool AccessibilityTableCell::computeAccessibilityIsIgnored() const
 {
-    AccessibilityObjectInclusion decision = defaultObjectInclusion();
+    auto decision = defaultObjectInclusion();
     if (decision == AccessibilityObjectInclusion::IncludeObject)
         return false;
     if (decision == AccessibilityObjectInclusion::IgnoreObject)
         return true;
-    
+
     // Ignore anonymous table cells as long as they're not in a table (ie. when display:table is used).
-    RenderObject* renderTable = is<RenderTableCell>(renderer()) ? downcast<RenderTableCell>(*m_renderer).table() : nullptr;
-    bool inTable = renderTable && renderTable->node() && (renderTable->node()->hasTagName(tableTag) || nodeHasGridRole(renderTable->node()));
-    if (!node() && !inTable)
+    auto* renderTableCell = dynamicDowncast<RenderTableCell>(renderer());
+    auto* renderTable = renderTableCell ? renderTableCell->table() : nullptr;
+    bool inTable = renderTable && renderTable->element() && (renderTable->element()->hasTagName(tableTag) || nodeHasGridRole(renderTable->element()));
+    if (!element() && !inTable)
         return true;
-        
-    if (!isExposedTableCell())
-        return AccessibilityRenderObject::computeAccessibilityIsIgnored();
-    
-    return false;
+
+    return !isExposedTableCell() && AccessibilityRenderObject::computeAccessibilityIsIgnored();
 }
 
 AccessibilityTable* AccessibilityTableCell::parentTable() const
