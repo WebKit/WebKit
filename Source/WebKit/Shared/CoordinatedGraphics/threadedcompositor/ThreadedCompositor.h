@@ -56,7 +56,7 @@ public:
 
         virtual void resize(const WebCore::IntSize&) = 0;
         virtual void willRenderFrame() = 0;
-        virtual void didRenderFrame() = 0;
+        virtual void didRenderFrame(const Vector<WebCore::IntRect>&) = 0;
         virtual void displayDidRefresh(WebCore::PlatformDisplayID) = 0;
     };
 

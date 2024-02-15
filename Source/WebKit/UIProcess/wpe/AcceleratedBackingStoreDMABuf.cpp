@@ -118,7 +118,7 @@ void AcceleratedBackingStoreDMABuf::didDestroyBuffer(uint64_t id)
         m_bufferIDs.remove(buffer.get());
 }
 
-void AcceleratedBackingStoreDMABuf::frame(uint64_t bufferID)
+void AcceleratedBackingStoreDMABuf::frame(uint64_t bufferID, const Vector<WebCore::IntRect>& damageRects)
 {
     ASSERT(!m_pendingBuffer);
     auto* buffer = m_buffers.get(bufferID);
@@ -127,9 +127,16 @@ void AcceleratedBackingStoreDMABuf::frame(uint64_t bufferID)
         return;
     }
 
+    GRefPtr<GArray> damage;
+    if (!damageRects.isEmpty()) {
+        damage = adoptGRef(g_array_sized_new(FALSE, FALSE, sizeof(WPERectangle), damageRects.size()));
+        for (const auto& rect : damageRects)
+            g_array_append_val(damage.get(), rect);
+    }
+
     m_pendingBuffer = buffer;
     GUniqueOutPtr<GError> error;
-    if (!wpe_view_render_buffer(m_wpeView.get(), m_pendingBuffer.get(), &error.outPtr())) {
+    if (!wpe_view_render_buffer(m_wpeView.get(), m_pendingBuffer.get(), damage ? reinterpret_cast<WPERectangle*>(damage->data) : nullptr, damageRects.size(), &error.outPtr())) {
         g_warning("Failed to render frame: %s", error->message);
         frameDone();
     }

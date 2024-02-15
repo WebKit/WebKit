@@ -65,7 +65,7 @@ private:
     void didCreateBuffer(uint64_t id, const WebCore::IntSize&, uint32_t format, Vector<WTF::UnixFileDescriptor>&&, Vector<uint32_t>&& offsets, Vector<uint32_t>&& strides, uint64_t modifier);
     void didCreateBufferSHM(uint64_t id, WebCore::ShareableBitmapHandle&&);
     void didDestroyBuffer(uint64_t id);
-    void frame(uint64_t bufferID);
+    void frame(uint64_t bufferID, const Vector<WebCore::IntRect>&);
     void frameDone();
     void bufferRendered();
 

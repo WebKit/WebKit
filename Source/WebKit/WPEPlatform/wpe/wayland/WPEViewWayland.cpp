@@ -541,7 +541,7 @@ const struct wl_callback_listener frameListener = {
     }
 };
 
-static gboolean wpeViewWaylandRenderBuffer(WPEView* view, WPEBuffer* buffer, GError** error)
+static gboolean wpeViewWaylandRenderBuffer(WPEView* view, WPEBuffer* buffer, WPERectangle* damageRects, guint damageRectsCount, GError** error)
 {
     auto* wlBuffer = createWaylandBuffer(buffer, error);
     if (!wlBuffer)
@@ -552,7 +552,11 @@ static gboolean wpeViewWaylandRenderBuffer(WPEView* view, WPEBuffer* buffer, GEr
 
     auto* wlSurface = wpe_view_wayland_get_wl_surface(WPE_VIEW_WAYLAND(view));
     wl_surface_attach(wlSurface, wlBuffer, 0, 0);
-    wl_surface_damage(wlSurface, 0, 0, wpe_view_get_width(view), wpe_view_get_height(view));
+    if (damageRects) {
+        for (unsigned i = 0; i < damageRectsCount; ++i)
+            wl_surface_damage(wlSurface, damageRects[i].x, damageRects[i].y, damageRects[i].width, damageRects[i].height);
+    } else
+        wl_surface_damage(wlSurface, 0, 0, wpe_view_get_width(view), wpe_view_get_height(view));
     priv->frameCallback = wl_surface_frame(wlSurface);
     wl_callback_add_listener(priv->frameCallback, &frameListener, view);
     wl_surface_commit(wlSurface);

@@ -571,7 +571,7 @@ void AcceleratedSurfaceDMABuf::willRenderFrame()
         WTFLogAlways("AcceleratedSurfaceDMABuf was unable to construct a complete framebuffer");
 }
 
-void AcceleratedSurfaceDMABuf::didRenderFrame()
+void AcceleratedSurfaceDMABuf::didRenderFrame(const Vector<WebCore::IntRect>& damagedRects)
 {
     if (!m_target)
         return;
@@ -579,7 +579,7 @@ void AcceleratedSurfaceDMABuf::didRenderFrame()
     glFlush();
 
     m_target->didRenderFrame();
-    WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStoreDMABuf::Frame(m_target->id()), m_id);
+    WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStoreDMABuf::Frame(m_target->id(), damagedRects), m_id);
 }
 
 void AcceleratedSurfaceDMABuf::releaseBuffer(uint64_t targetID)

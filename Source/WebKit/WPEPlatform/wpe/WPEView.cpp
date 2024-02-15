@@ -643,6 +643,8 @@ gboolean wpe_view_unfullscreen(WPEView* view)
  * wpe_view_render_buffer:
  * @view: a #WPEView
  * @buffer: a #WPEBuffer to render
+ * @damage_rects: (nullable) (array length=n_damage_rects): damage rectangles
+ * @n_damage_rects: the total number of elements in @damage_rects
  * @error: return location for error or %NULL to ignore
  *
  * Render the given @buffer into @view.
@@ -651,13 +653,14 @@ gboolean wpe_view_unfullscreen(WPEView* view)
  *
  * Returns: %TRUE if buffer will be rendered, or %FALSE otherwise
  */
-gboolean wpe_view_render_buffer(WPEView* view, WPEBuffer* buffer, GError** error)
+gboolean wpe_view_render_buffer(WPEView* view, WPEBuffer* buffer, WPERectangle* damageRects, guint damageRectsCount, GError** error)
 {
     g_return_val_if_fail(WPE_IS_VIEW(view), FALSE);
     g_return_val_if_fail(WPE_IS_BUFFER(buffer), FALSE);
+    g_return_val_if_fail(!damageRects || damageRectsCount > 0, FALSE);
 
     auto* viewClass = WPE_VIEW_GET_CLASS(view);
-    return viewClass->render_buffer(view, buffer, error);
+    return viewClass->render_buffer(view, buffer, damageRects, damageRectsCount, error);
 }
 
 /**

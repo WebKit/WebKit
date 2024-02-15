@@ -400,9 +400,9 @@ void LayerTreeHost::willRenderFrame()
     m_surface->willRenderFrame();
 }
 
-void LayerTreeHost::didRenderFrame()
+void LayerTreeHost::didRenderFrame(const Vector<WebCore::IntRect>& damagedRects)
 {
-    m_surface->didRenderFrame();
+    m_surface->didRenderFrame(damagedRects);
 #if HAVE(DISPLAY_LINK)
     if (!m_didRenderFrameTimer.isActive())
         m_didRenderFrameTimer.startOneShot(0_s);

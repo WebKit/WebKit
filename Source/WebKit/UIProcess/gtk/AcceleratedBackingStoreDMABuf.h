@@ -78,7 +78,7 @@ private:
     void didCreateBuffer(uint64_t id, const WebCore::IntSize&, uint32_t format, Vector<WTF::UnixFileDescriptor>&&, Vector<uint32_t>&& offsets, Vector<uint32_t>&& strides, uint64_t modifier);
     void didCreateBufferSHM(uint64_t id, WebCore::ShareableBitmapHandle&&);
     void didDestroyBuffer(uint64_t id);
-    void frame(uint64_t id);
+    void frame(uint64_t id, const Vector<WebCore::IntRect>&);
     void frameDone();
     void ensureGLContext();
     bool prepareForRendering();
@@ -107,7 +107,7 @@ private:
         };
 
         virtual Type type() const = 0;
-        virtual void didUpdateContents() = 0;
+        virtual void didUpdateContents(Buffer*, const Vector<WebCore::IntRect>&) = 0;
 #if USE(GTK4)
         virtual GdkTexture* texture() const { return nullptr; }
 #else
@@ -139,7 +139,7 @@ private:
         BufferDMABuf(uint64_t id, const WebCore::IntSize&, float deviceScaleFactor, Vector<WTF::UnixFileDescriptor>&&, GRefPtr<GdkDmabufTextureBuilder>&&);
 
         Buffer::Type type() const override { return Buffer::Type::DmaBuf; }
-        void didUpdateContents() override;
+        void didUpdateContents(Buffer*, const Vector<WebCore::IntRect>&) override;
         GdkTexture* texture() const override { return m_texture.get(); }
 
         Vector<WTF::UnixFileDescriptor> m_fds;
@@ -157,7 +157,7 @@ private:
         BufferEGLImage(uint64_t id, const WebCore::IntSize&, float deviceScaleFactor, Vector<WTF::UnixFileDescriptor>&&, EGLImage);
 
         Buffer::Type type() const override { return Buffer::Type::EglImage; }
-        void didUpdateContents() override;
+        void didUpdateContents(Buffer*, const Vector<WebCore::IntRect>&) override;
 #if USE(GTK4)
         GdkTexture* texture() const override { return m_texture.get(); }
 #else
@@ -183,7 +183,7 @@ private:
         BufferGBM(uint64_t id, const WebCore::IntSize&, float deviceScaleFactor, WTF::UnixFileDescriptor&&, struct gbm_bo*);
 
         Buffer::Type type() const override { return Buffer::Type::Gbm; }
-        void didUpdateContents() override;
+        void didUpdateContents(Buffer*, const Vector<WebCore::IntRect>&) override;
         cairo_surface_t* surface() const override { return m_surface.get(); }
 
         WTF::UnixFileDescriptor m_fd;
@@ -201,7 +201,7 @@ private:
         BufferSHM(uint64_t id, RefPtr<WebCore::ShareableBitmap>&&, float deviceScaleFactor);
 
         Buffer::Type type() const override { return Buffer::Type::SharedMemory; }
-        void didUpdateContents() override;
+        void didUpdateContents(Buffer*, const Vector<WebCore::IntRect>&) override;
         cairo_surface_t* surface() const override { return m_surface.get(); }
 
         RefPtr<WebCore::ShareableBitmap> m_bitmap;
