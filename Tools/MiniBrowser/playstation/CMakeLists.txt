@@ -1,5 +1,4 @@
-find_library(TOOLKIT_LIBRARY ToolKitten)
-set(MiniBrowser_DEPENDENCIES ToolKitten_CopyModule)
+set(MiniBrowser_DEPENDENCIES Cairo_CopyModule ToolKitten_CopyModule)
 
 set(MiniBrowser_PRIVATE_INCLUDE_DIRECTORIES
     ${CMAKE_BINARY_DIR}
@@ -22,8 +21,12 @@ set(MiniBrowser_LIBRARIES
 )
 set(MiniBrowser_FRAMEWORKS WebKit)
 
+# Currently Cairo is required for MiniBrowser on PlayStation
+list(APPEND MiniBrowser_DEFINITIONS USE_CAIRO=1)
+list(APPEND MiniBrowser_LIBRARIES Cairo::Cairo)
+
 if (USE_WPE_BACKEND_PLAYSTATION)
-    set(MiniBrowser_DEFINITIONS USE_WPE_BACKEND_PLAYSTATION)
+    list(APPEND MiniBrowser_DEFINITIONS USE_WPE_BACKEND_PLAYSTATION)
     list(APPEND MiniBrowser_LIBRARIES WebKit::WPEToolingBackends)
 endif ()
 

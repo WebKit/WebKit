@@ -1,9 +1,14 @@
-include(platform/Cairo.cmake)
 include(platform/Curl.cmake)
-include(platform/FreeType.cmake)
 include(platform/ImageDecoders.cmake)
 include(platform/OpenSSL.cmake)
 include(platform/TextureMapper.cmake)
+
+if (USE_CAIRO)
+    include(platform/Cairo.cmake)
+    include(platform/FreeType.cmake)
+elseif (USE_SKIA)
+    include(platform/Skia.cmake)
+endif ()
 
 list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     ${WEBCORE_DIR}/platform
@@ -127,7 +132,6 @@ endif ()
 set(WebCore_MODULES
     Brotli
     CURL
-    Cairo
     EGL
     Fontconfig
     Freetype
@@ -142,6 +146,10 @@ set(WebCore_MODULES
     WebKitRequirements
     WebP
 )
+
+if (USE_CAIRO)
+    list(APPEND WebCore_MODULES Cairo)
+endif ()
 
 if (USE_LCMS)
     list(APPEND WebCore_MODULES LCMS2)

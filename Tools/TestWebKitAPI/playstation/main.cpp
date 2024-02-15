@@ -59,7 +59,9 @@ int main(int argc, char** argv)
     loadLibraryOrExit(Fontconfig_LOAD_AT);
     loadLibraryOrExit(Freetype_LOAD_AT);
     loadLibraryOrExit(HarfBuzz_LOAD_AT);
+#if USE(CAIRO) && defined(Cairo_LOAD_AT)
     loadLibraryOrExit(Cairo_LOAD_AT);
+#endif
     loadLibraryOrExit(WebKitRequirements_LOAD_AT);
 #endif
 #if defined(BUILDING_TestWebCore) || defined(BUILDING_TestWebKit) || defined(BUILDING_TestJavaScriptCore)

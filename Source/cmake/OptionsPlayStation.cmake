@@ -102,7 +102,6 @@ if (ENABLE_WEBCORE)
 
     find_package(Brotli OPTIONAL_COMPONENTS dec)
     find_package(CURL 7.85.0 REQUIRED)
-    find_package(Cairo REQUIRED)
     find_package(EGL REQUIRED)
     find_package(Fontconfig REQUIRED)
     find_package(Freetype REQUIRED)
@@ -114,7 +113,6 @@ if (ENABLE_WEBCORE)
     list(APPEND PlayStationModule_TARGETS
         Brotli::dec
         CURL::libcurl
-        Cairo::Cairo
         Fontconfig::Fontconfig
         Freetype::Freetype
         HarfBuzz::HarfBuzz
@@ -264,12 +262,18 @@ SET_AND_EXPOSE_TO_BUILD(USE_INSPECTOR_SOCKET_SERVER ${ENABLE_REMOTE_INSPECTOR})
 SET_AND_EXPOSE_TO_BUILD(USE_UNIX_DOMAIN_SOCKETS ON)
 
 if (ENABLE_WEBCORE)
-    SET_AND_EXPOSE_TO_BUILD(USE_CAIRO ON)
     SET_AND_EXPOSE_TO_BUILD(USE_CURL ON)
-    SET_AND_EXPOSE_TO_BUILD(USE_FREETYPE ON)
     SET_AND_EXPOSE_TO_BUILD(USE_HARFBUZZ ON)
     SET_AND_EXPOSE_TO_BUILD(USE_LIBWPE ON)
     SET_AND_EXPOSE_TO_BUILD(USE_OPENSSL ON)
+
+    if (NOT USE_SKIA)
+        find_package(Cairo REQUIRED)
+        list(APPEND PlayStationModule_TARGETS Cairo::Cairo)
+
+        SET_AND_EXPOSE_TO_BUILD(USE_CAIRO ON)
+        SET_AND_EXPOSE_TO_BUILD(USE_FREETYPE ON)
+    endif ()
 
     if (USE_LCMS)
         set(LCMS2_NAMES SceVshLCMS2)
@@ -330,6 +334,12 @@ if (ENABLE_MINIBROWSER)
     find_library(TOOLKIT_LIBRARY ToolKitten)
     if (NOT TOOLKIT_LIBRARY)
         message(FATAL_ERROR "ToolKit library required to run MiniBrowser")
+    endif ()
+
+    # ToolKitten has a dependency on Cairo so find it here but don't turn on Cairo
+    if (USE_SKIA)
+        find_package(Cairo REQUIRED)
+        list(APPEND PlayStationModule_TARGETS Cairo::Cairo)
     endif ()
 endif ()
 

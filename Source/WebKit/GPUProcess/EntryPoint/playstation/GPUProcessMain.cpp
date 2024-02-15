@@ -44,7 +44,9 @@ static void loadLibraryOrExit(const char* name)
 int main(int argc, char** argv)
 {
     loadLibraryOrExit(WebKitRequirements_LOAD_AT);
+#if USE(CAIRO) && defined(Cairo_LOAD_AT)
     loadLibraryOrExit(Cairo_LOAD_AT);
+#endif
     loadLibraryOrExit("libWebKit");
     // load backend libraries as needed here
 

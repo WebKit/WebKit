@@ -59,15 +59,11 @@ list(APPEND WebKit_SOURCES
     Platform/unix/LoggingUnix.cpp
     Platform/unix/ModuleUnix.cpp
 
-    Shared/API/c/cairo/WKImageCairo.cpp
-
     Shared/API/c/curl/WKCertificateInfoCurl.cpp
 
     Shared/API/c/playstation/WKEventPlayStation.cpp
 
     Shared/curl/WebCoreArgumentCodersCurl.cpp
-
-    Shared/freetype/WebCoreArgumentCodersFreeType.cpp
 
     Shared/libwpe/NativeWebKeyboardEventLibWPE.cpp
     Shared/libwpe/NativeWebMouseEventLibWPE.cpp
@@ -94,8 +90,6 @@ list(APPEND WebKit_SOURCES
     UIProcess/API/C/playstation/WKRunloop.cpp
     UIProcess/API/C/playstation/WKView.cpp
 
-    UIProcess/Automation/cairo/WebAutomationSessionCairo.cpp
-
     UIProcess/CoordinatedGraphics/DrawingAreaProxyCoordinatedGraphics.cpp
 
     UIProcess/Launcher/playstation/ProcessLauncherPlayStation.cpp
@@ -103,8 +97,6 @@ list(APPEND WebKit_SOURCES
     UIProcess/WebsiteData/curl/WebsiteDataStoreCurl.cpp
 
     UIProcess/WebsiteData/playstation/WebsiteDataStorePlayStation.cpp
-
-    UIProcess/cairo/BackingStore.cpp
 
     UIProcess/libwpe/WebPasteboardProxyLibWPE.cpp
 
@@ -140,13 +132,11 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/Shared/CoordinatedGraphics"
     "${WEBKIT_DIR}/Shared/CoordinatedGraphics/threadedcompositor"
     "${WEBKIT_DIR}/Shared/libwpe"
-    "${WEBKIT_DIR}/UIProcess/API/C/cairo"
     "${WEBKIT_DIR}/UIProcess/API/C/curl"
     "${WEBKIT_DIR}/UIProcess/API/C/playstation"
     "${WEBKIT_DIR}/UIProcess/API/libwpe"
     "${WEBKIT_DIR}/UIProcess/API/playstation"
     "${WEBKIT_DIR}/UIProcess/CoordinatedGraphics"
-    "${WEBKIT_DIR}/UIProcess/cairo"
     "${WEBKIT_DIR}/UIProcess/playstation"
     "${WEBKIT_DIR}/WebProcess/WebCoreSupport/curl"
     "${WEBKIT_DIR}/WebProcess/WebPage/CoordinatedGraphics"
@@ -162,6 +152,40 @@ endif ()
 if (ENABLE_WEBDRIVER AND USE_WPE_BACKEND_PLAYSTATION)
     list(APPEND WebKit_SOURCES
         UIProcess/Automation/libwpe/WebAutomationSessionLibWPE.cpp
+    )
+endif ()
+
+if (USE_CAIRO)
+    list(APPEND WebKit_SOURCES
+        Shared/API/c/cairo/WKImageCairo.cpp
+
+        Shared/freetype/WebCoreArgumentCodersFreeType.cpp
+
+        UIProcess/Automation/cairo/WebAutomationSessionCairo.cpp
+
+        UIProcess/cairo/BackingStore.cpp
+    )
+
+    list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
+        "${WEBKIT_DIR}/UIProcess/API/C/cairo"
+        "${WEBKIT_DIR}/UIProcess/cairo"
+    )
+
+    list(APPEND WebKit_LIBRARIES
+        Cairo::Cairo
+        Freetype::Freetype
+    )
+
+    list(APPEND WebKit_PUBLIC_FRAMEWORK_HEADERS
+        Shared/API/c/cairo/WKImageCairo.h
+    )
+elseif (USE_SKIA)
+    list(APPEND WebKit_SOURCES
+        Shared/skia/WebCoreArgumentCodersSkia.cpp
+    )
+
+    list(APPEND WebKit_LIBRARIES
+        Skia
     )
 endif ()
 
@@ -195,8 +219,6 @@ endif ()
 
 # PlayStation specific
 list(APPEND WebKit_PUBLIC_FRAMEWORK_HEADERS
-    Shared/API/c/cairo/WKImageCairo.h
-
     Shared/API/c/curl/WKCertificateInfoCurl.h
 
     Shared/API/c/playstation/WKBasePlayStation.h
