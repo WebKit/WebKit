@@ -1340,10 +1340,9 @@
 #endif
 
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
-(with-filter (system-attribute apple-internal)
-    (allow mach-lookup (global-name
-        "com.apple.logd"
-        "com.apple.logd.events")))
+(allow mach-lookup (with telemetry) (global-name
+    "com.apple.logd"
+    "com.apple.logd.events"))
 #else
 (allow mach-lookup (global-name
     "com.apple.logd"
