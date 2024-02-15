@@ -85,7 +85,8 @@ TEST(WKWebExtensionAPIDevTools, Basics)
     [manager loadAndRun];
 }
 
-TEST(WKWebExtensionAPIDevTools, CreatePanel)
+// FIXME: Re-enable this test once webkit.org/b/269402 is resolved.
+TEST(WKWebExtensionAPIDevTools, DISABLED_CreatePanel)
 {
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
