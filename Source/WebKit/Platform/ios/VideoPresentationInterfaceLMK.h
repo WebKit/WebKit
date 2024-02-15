@@ -31,7 +31,6 @@
 
 OBJC_CLASS LMPlayableViewController;
 OBJC_CLASS WKPlayableViewControllerDelegate;
-OBJC_CLASS WKSLinearMediaPlayer;
 
 namespace WebCore {
 class PlaybackSessionInterfaceIOS;
@@ -58,8 +57,6 @@ public:
     bool isPlayingVideoInEnhancedFullscreen() const;
 private:
     VideoPresentationInterfaceLMK(PlaybackSessionInterfaceIOS&);
-
-    WKSLinearMediaPlayer *linearMediaPlayer() const;
 
     void updateRouteSharingPolicy() final { }
     void setupPlayerViewController() final;

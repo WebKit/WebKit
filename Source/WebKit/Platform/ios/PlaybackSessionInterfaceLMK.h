@@ -29,9 +29,6 @@
 
 #include <WebCore/PlaybackSessionInterfaceIOS.h>
 
-OBJC_CLASS WKLinearMediaPlayerDelegate;
-OBJC_CLASS WKSLinearMediaPlayer;
-
 namespace WebKit {
 
 using namespace WebCore;
@@ -39,10 +36,8 @@ using namespace WebCore;
 class PlaybackSessionInterfaceLMK : public PlaybackSessionInterfaceIOS {
 public:
     ~PlaybackSessionInterfaceLMK();
-    void invalidate() final;
 
     WebAVPlayerController *playerController() const override;
-    WKSLinearMediaPlayer *linearMediaPlayer() const final { return m_player.get(); }
     void durationChanged(double) override;
     void currentTimeChanged(double, double) override;
     void bufferedTimeChanged(double) override;
@@ -61,9 +56,6 @@ public:
 
 private:
     PlaybackSessionInterfaceLMK(PlaybackSessionModel&);
-
-    RetainPtr<WKSLinearMediaPlayer> m_player;
-    RetainPtr<WKLinearMediaPlayerDelegate> m_playerDelegate;
 };
 } // namespace WebKit
 

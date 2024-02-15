@@ -31,7 +31,6 @@
 #import "PlaybackSessionInterfaceLMK.h"
 #import <UIKit/UIKit.h>
 #import <WebCore/WebAVPlayerLayerView.h>
-#import <WebKitSwift/WebKitSwift.h>
 
 namespace WebKit {
 
@@ -48,11 +47,6 @@ Ref<VideoPresentationInterfaceLMK> VideoPresentationInterfaceLMK::create(Playbac
 VideoPresentationInterfaceLMK::VideoPresentationInterfaceLMK(PlaybackSessionInterfaceIOS& playbackSessionInterface)
     : VideoPresentationInterfaceIOS { playbackSessionInterface }
 {
-}
-
-WKSLinearMediaPlayer *VideoPresentationInterfaceLMK::linearMediaPlayer() const
-{
-    return nullptr;
 }
 
 void VideoPresentationInterfaceLMK::setupFullscreen(UIView&, const FloatRect&, const FloatSize&, UIView*, HTMLMediaElementEnums::VideoFullscreenMode, bool, bool, bool)

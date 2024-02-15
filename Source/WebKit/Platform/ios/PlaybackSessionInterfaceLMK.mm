@@ -30,32 +30,7 @@
 
 #import <WebCore/MediaSelectionOption.h>
 #import <WebCore/TimeRanges.h>
-#import <WebKitSwift/WebKitSwift.h>
 #import <wtf/WeakPtr.h>
-
-#import "WebKitSwiftSoftLink.h"
-
-@interface WKLinearMediaPlayerDelegate : NSObject <WKSLinearMediaPlayerDelegate>
-+ (instancetype)new NS_UNAVAILABLE;
-- (instancetype)init NS_UNAVAILABLE;
-- (instancetype)initWithInterface:(WebKit::PlaybackSessionInterfaceLMK&)interface;
-@end
-
-@implementation WKLinearMediaPlayerDelegate {
-    WeakPtr<WebKit::PlaybackSessionInterfaceLMK> _interface;
-}
-
-- (instancetype)initWithInterface:(WebKit::PlaybackSessionInterfaceLMK&)interface
-{
-    self = [super init];
-    if (!self)
-        return nil;
-
-    _interface = interface;
-    return self;
-}
-
-@end
 
 namespace WebKit {
 
@@ -68,23 +43,13 @@ Ref<PlaybackSessionInterfaceLMK> PlaybackSessionInterfaceLMK::create(PlaybackSes
 
 PlaybackSessionInterfaceLMK::PlaybackSessionInterfaceLMK(PlaybackSessionModel& model)
     : PlaybackSessionInterfaceIOS { model }
-    , m_player { adoptNS([allocWKSLinearMediaPlayerInstance() init]) }
-    , m_playerDelegate { adoptNS([[WKLinearMediaPlayerDelegate alloc] initWithInterface:*this]) }
 {
-    ASSERT(isUIThread());
-    [m_player setDelegate:m_playerDelegate.get()];
 }
 
 PlaybackSessionInterfaceLMK::~PlaybackSessionInterfaceLMK()
 {
     ASSERT(isUIThread());
     invalidate();
-}
-
-void PlaybackSessionInterfaceLMK::invalidate()
-{
-    [m_player setDelegate:nullptr];
-    PlaybackSessionInterfaceIOS::invalidate();
 }
 
 WebAVPlayerController *PlaybackSessionInterfaceLMK::playerController() const
@@ -94,14 +59,12 @@ WebAVPlayerController *PlaybackSessionInterfaceLMK::playerController() const
 
 void PlaybackSessionInterfaceLMK::durationChanged(double duration)
 {
-    [m_player setDuration:duration];
-    [m_player setCanTogglePlayback:YES];
-    [m_player setHasAudioContent:YES];
+
 }
 
 void PlaybackSessionInterfaceLMK::currentTimeChanged(double currentTime, double)
 {
-    [m_player setCurrentTime:currentTime];
+
 }
 
 void PlaybackSessionInterfaceLMK::bufferedTimeChanged(double bufferedTime)

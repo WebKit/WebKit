@@ -73,11 +73,6 @@ WebAVPlayerController *PlaybackSessionInterfaceAVKit::playerController() const
     return m_playerController.get();
 }
 
-WKSLinearMediaPlayer *PlaybackSessionInterfaceAVKit::linearMediaPlayer() const
-{
-    return nullptr;
-}
-
 void PlaybackSessionInterfaceAVKit::invalidate()
 {
     if (!m_playbackSessionModel)

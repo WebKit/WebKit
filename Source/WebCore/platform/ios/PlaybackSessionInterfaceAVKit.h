@@ -35,7 +35,6 @@ public:
     void invalidate() final;
 
     WebAVPlayerController *playerController() const final;
-    WKSLinearMediaPlayer *linearMediaPlayer() const final;
 
     void durationChanged(double) final;
     void currentTimeChanged(double currentTime, double anchorTime) final;
