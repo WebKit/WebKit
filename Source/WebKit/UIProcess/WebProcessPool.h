@@ -532,6 +532,12 @@ public:
     int32_t userId() const { return m_userId; }
 #endif
 
+#if PLATFORM(WIN) // FIXME: remove this line when this feature is enabled for playstation port.
+#if ENABLE(REMOTE_INSPECTOR)
+    void setPagesControlledByAutomation(bool);
+#endif
+#endif
+
     static void platformInitializeNetworkProcess(NetworkProcessCreationParameters&);
     static Vector<String> urlSchemesWithCustomProtocolHandlers();
 
