@@ -60,6 +60,7 @@ public:
         bool animatesProperty(KeyframeInterpolation::Property) const final;
         bool isAcceleratedEffectKeyframe() const final { return true; }
 
+        void clearProperty(AcceleratedEffectProperty);
         const OptionSet<AcceleratedEffectProperty>& animatedProperties() const { return m_animatedProperties; }
         const RefPtr<TimingFunction>& timingFunction() const { return m_timingFunction; }
         const AcceleratedEffectValues& values() const { return m_values; }
@@ -72,7 +73,7 @@ public:
         OptionSet<AcceleratedEffectProperty> m_animatedProperties;
     };
 
-    static Ref<AcceleratedEffect> create(const KeyframeEffect&, const IntRect&);
+    static RefPtr<AcceleratedEffect> create(const KeyframeEffect&, const IntRect&, const AcceleratedEffectValues&);
     WEBCORE_EXPORT static Ref<AcceleratedEffect> create(AnimationEffectTiming, Vector<Keyframe>&&, WebAnimationType, CompositeOperation, RefPtr<TimingFunction>&& defaultKeyframeTimingFunction, OptionSet<AcceleratedEffectProperty>&&, bool paused, double playbackRate, std::optional<Seconds> startTime, std::optional<Seconds> holdTime);
 
     virtual ~AcceleratedEffect() = default;
@@ -100,6 +101,8 @@ private:
     AcceleratedEffect(const KeyframeEffect&, const IntRect&);
     explicit AcceleratedEffect(AnimationEffectTiming, Vector<Keyframe>&&, WebAnimationType, CompositeOperation, RefPtr<TimingFunction>&& defaultKeyframeTimingFunction, OptionSet<AcceleratedEffectProperty>&&, bool paused, double playbackRate, std::optional<WTF::Seconds> startTime, std::optional<WTF::Seconds> holdTime);
     explicit AcceleratedEffect(const AcceleratedEffect&, OptionSet<AcceleratedEffectProperty>&);
+
+    void validateFilters(const AcceleratedEffectValues& baseValues);
 
     // KeyframeInterpolation
     bool isPropertyAdditiveOrCumulative(KeyframeInterpolation::Property) const final;

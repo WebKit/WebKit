@@ -4059,14 +4059,23 @@ bool RenderLayerBacking::updateAcceleratedEffectsAndBaseValues()
     bool hasInterpolatingEffect = false;
     auto borderBoxRect = snappedIntRect(m_owningLayer.rendererBorderBoxRect());
 
+    auto baseValues = [&]() -> AcceleratedEffectValues {
+        if (auto* style = target->lastStyleChangeEventStyle())
+            return { *style, borderBoxRect };
+        return { };
+    }();
+
     AcceleratedEffects acceleratedEffects;
     if (auto* effectStack = target->keyframeEffectStack()) {
         for (const auto& effect : effectStack->sortedEffects()) {
             if (!effect || !effect->canBeAccelerated())
                 continue;
+            auto acceleratedEffect = AcceleratedEffect::create(*effect, borderBoxRect, baseValues);
+            if (!acceleratedEffect)
+                continue;
             if (!hasInterpolatingEffect && effect->isRunningAccelerated())
                 hasInterpolatingEffect = true;
-            acceleratedEffects.append(AcceleratedEffect::create(*effect, borderBoxRect));
+            acceleratedEffects.append(acceleratedEffect.releaseNonNull());
         }
     }
 
@@ -4075,12 +4084,6 @@ bool RenderLayerBacking::updateAcceleratedEffectsAndBaseValues()
     // any of these effects.
     if (!hasInterpolatingEffect)
         acceleratedEffects.clear();
-
-    auto baseValues = [&]() -> AcceleratedEffectValues {
-        if (auto* style = target->lastStyleChangeEventStyle())
-            return { *style, borderBoxRect };
-        return { };
-    }();
 
     m_graphicsLayer->setAcceleratedEffectsAndBaseValues(WTFMove(acceleratedEffects), WTFMove(baseValues));
 
