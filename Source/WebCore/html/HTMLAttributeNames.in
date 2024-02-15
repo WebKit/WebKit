@@ -385,8 +385,9 @@ scrolldelay
 scrolling
 select
 selected
-shadowrootmode
+shadowrootclonable
 shadowrootdelegatesfocus
+shadowrootmode
 shape
 size
 sizes

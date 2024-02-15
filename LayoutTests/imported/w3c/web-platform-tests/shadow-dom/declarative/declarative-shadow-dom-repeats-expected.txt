@@ -1,9 +1,5 @@
 
-FAIL Repeated declarative shadow roots keep only the first assert_equals: expected "Open" but got "Closed"
-FAIL Calling attachShadow() on declarative shadow root must match type assert_throws_dom: Mismatched shadow root type should throw function "() => {
-    open1.attachShadow({mode: "closed"});
-  }" did not throw
-FAIL Calling attachShadow() on declarative shadow root must match all parameters assert_throws_dom: Mismatched shadow root type should throw function "() => {
-    open2.attachShadow({mode: "closed", delegatesFocus: true, slotAssignment: "named", clonable: true});
-  }" did not throw
+PASS Repeated declarative shadow roots keep only the first
+PASS Calling attachShadow() on declarative shadow root must match type
+PASS Calling attachShadow() on declarative shadow root must match all parameters
 

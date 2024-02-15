@@ -20,6 +20,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/declarative-shadow-dom-available-to-element-internals.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/declarative-shadow-dom-basic.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/declarative-shadow-dom-opt-in.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/declarative-shadow-dom-repeats-2.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/declarative-shadow-dom-repeats.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/declarative-with-disabled-shadow.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/gethtml.tentative.html
