@@ -192,8 +192,9 @@ void PlatformCAFilters::updatePresentationModifiers(const FilterOperations& filt
             const auto& dropShadowOperation = downcast<DropShadowFilterOperation>(filterOperation);
             auto size = CGSizeMake(dropShadowOperation.x(), dropShadowOperation.y());
             [presentationModifiers[i].second.get() setValue:[NSValue value:&size withObjCType:@encode(CGSize)]];
-            [presentationModifiers[i++].second.get() setValue:(id) cachedCGColor(dropShadowOperation.color()).autorelease()];
-            [presentationModifiers[i++].second.get() setValue:@(dropShadowOperation.stdDeviation())];
+            [presentationModifiers[i + 1].second.get() setValue:(id) cachedCGColor(dropShadowOperation.color()).autorelease()];
+            [presentationModifiers[i + 2].second.get() setValue:@(dropShadowOperation.stdDeviation())];
+            i += 2;
             continue;
         }
         case FilterOperation::Type::Grayscale:
