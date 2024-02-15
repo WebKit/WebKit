@@ -85,7 +85,7 @@ class Commit(Command):
                 issue = Tracker.instance().issue(int(args.issue))
             else:
                 issue = Tracker.from_string(args.issue)
-            if not issue:
+            if not issue or not issue.title:
                 sys.stderr.write("'{}' cannot be converted to an issue\n".format(args.issue))
                 return 1
 
