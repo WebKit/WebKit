@@ -2385,19 +2385,29 @@ ExceptionOr<void> Internals::invalidateControlTints()
     return { };
 }
 
+static TextIteratorBehaviors toTextIteratorBehaviors(const Vector<String>& stringBehaviors)
+{
+    TextIteratorBehaviors behaviors;
+    for (const auto& stringBehavior : stringBehaviors) {
+        if (stringBehavior == "IgnoresWhiteSpaceAtEndOfRun"_s)
+            behaviors.add(TextIteratorBehavior::IgnoresWhiteSpaceAtEndOfRun);
+    }
+    return behaviors;
+}
+
 RefPtr<Range> Internals::rangeFromLocationAndLength(Element& scope, unsigned rangeLocation, unsigned rangeLength)
 {
     return createLiveRange(resolveCharacterRange(makeRangeSelectingNodeContents(scope), { rangeLocation, rangeLength }));
 }
 
-unsigned Internals::locationFromRange(Element& scope, const Range& range)
+unsigned Internals::locationFromRange(Element& scope, const Range& range, const Vector<String>& stringBehaviors)
 {
-    return clampTo<unsigned>(characterRange(makeBoundaryPointBeforeNodeContents(scope), makeSimpleRange(range)).location);
+    return clampTo<unsigned>(characterRange(makeBoundaryPointBeforeNodeContents(scope), makeSimpleRange(range), toTextIteratorBehaviors(stringBehaviors)).location);
 }
 
-unsigned Internals::lengthFromRange(Element& scope, const Range& range)
+unsigned Internals::lengthFromRange(Element& scope, const Range& range, const Vector<String>& stringBehaviors)
 {
-    return clampTo<unsigned>(characterRange(makeBoundaryPointBeforeNodeContents(scope), makeSimpleRange(range)).length);
+    return clampTo<unsigned>(characterRange(makeBoundaryPointBeforeNodeContents(scope), makeSimpleRange(range), toTextIteratorBehaviors(stringBehaviors)).length);
 }
 
 String Internals::rangeAsText(const Range& liveRange)
@@ -2441,13 +2451,13 @@ RefPtr<Range> Internals::rangeOfStringNearLocation(const Range& liveRange, const
     return createLiveRange(findClosestPlainText(range, text, { }, targetOffset));
 }
 
-Vector<Internals::TextIteratorState> Internals::statesOfTextIterator(const Range& liveRange)
+Vector<Internals::TextIteratorState> Internals::statesOfTextIterator(const Range& liveRange, const Vector<String>& stringBehaviors)
 {
     auto simpleRange = makeSimpleRange(liveRange);
     simpleRange.start.document().updateLayout();
 
     Vector<TextIteratorState> states;
-    for (TextIterator it(simpleRange); !it.atEnd(); it.advance())
+    for (TextIterator it(simpleRange, toTextIteratorBehaviors(stringBehaviors)); !it.atEnd(); it.advance())
         states.append({ it.text().toString(), createLiveRange(it.range()) });
     return states;
 }

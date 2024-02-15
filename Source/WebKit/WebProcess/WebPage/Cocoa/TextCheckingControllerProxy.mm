@@ -179,7 +179,9 @@ WebCore::AttributedString TextCheckingControllerProxy::annotatedSubstringBetween
 
     auto string = adoptNS([[NSMutableAttributedString alloc] init]);
 
-    for (TextIterator it(*entireRange); !it.atEnd(); it.advance()) {
+    constexpr TextIteratorBehaviors behaviors { TextIteratorBehavior::IgnoresWhiteSpaceAtEndOfRun };
+
+    for (TextIterator it(*entireRange, behaviors); !it.atEnd(); it.advance()) {
         if (!it.text().length())
             continue;
         [string appendAttributedString:adoptNS([[NSAttributedString alloc] initWithString:it.text().createNSStringWithoutCopying().get()]).get()];
