@@ -185,7 +185,7 @@ void JSTestDefaultToJSONFilteredByExposed::destroy(JSC::JSCell* cell)
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONFilteredByExposedConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    Ref vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestDefaultToJSONFilteredByExposedPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
@@ -195,7 +195,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONFilteredByExposedConstructor, (JSGlo
 
 static inline JSValue jsTestDefaultToJSONFilteredByExposed_normalAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSONFilteredByExposed& thisObject)
 {
-    Ref vm = JSC::getVM(&lexicalGlobalObject);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
     RELEASE_AND_RETURN(throwScope, (toJS<IDLLong>(lexicalGlobalObject, throwScope, impl.normalAttribute())));
@@ -208,7 +208,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONFilteredByExposed_normalAttribute, (
 
 static inline JSValue jsTestDefaultToJSONFilteredByExposed_filteredByExposedWindowAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSONFilteredByExposed& thisObject)
 {
-    Ref vm = JSC::getVM(&lexicalGlobalObject);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDouble>(lexicalGlobalObject, throwScope, impl.filteredByExposedWindowAttribute())));
@@ -221,7 +221,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONFilteredByExposed_filteredByExposedW
 
 static inline JSValue jsTestDefaultToJSONFilteredByExposed_filteredByExposedWorkerAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSONFilteredByExposed& thisObject)
 {
-    Ref vm = JSC::getVM(&lexicalGlobalObject);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.filteredByExposedWorkerAttribute())));
@@ -234,7 +234,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONFilteredByExposed_filteredByExposedW
 
 static inline EncodedJSValue jsTestDefaultToJSONFilteredByExposedPrototypeFunction_toJSONBody(JSGlobalObject* lexicalGlobalObject, CallFrame*, JSTestDefaultToJSONFilteredByExposed* castedThis)
 {
-    Ref vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();

@@ -37,7 +37,7 @@ using namespace JSC;
 
 template<> TestInheritedDictionary convertDictionary<TestInheritedDictionary>(JSGlobalObject& lexicalGlobalObject, JSValue value)
 {
-    Ref vm = JSC::getVM(&lexicalGlobalObject);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     bool isNullOrUndefined = value.isUndefinedOrNull();
     auto* object = isNullOrUndefined ? nullptr : value.getObject();
@@ -168,7 +168,7 @@ template<> TestInheritedDictionary convertDictionary<TestInheritedDictionary>(JS
 
 JSC::JSObject* convertDictionaryToJS(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, const TestInheritedDictionary& dictionary)
 {
-    Ref vm = JSC::getVM(&lexicalGlobalObject);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     auto result = constructEmptyObject(&lexicalGlobalObject, globalObject.objectPrototype());

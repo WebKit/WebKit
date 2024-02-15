@@ -29,7 +29,7 @@ public:
     using Base = JSDOMObject;
     static JSTestJSBuiltinConstructor* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject)
     {
-        Ref vm = globalObject->vm();
+        auto& vm = globalObject->vm();
         JSTestJSBuiltinConstructor* ptr = new (NotNull, JSC::allocateCell<JSTestJSBuiltinConstructor>(vm)) JSTestJSBuiltinConstructor(structure, *globalObject);
         ptr->finishCreation(vm);
         return ptr;

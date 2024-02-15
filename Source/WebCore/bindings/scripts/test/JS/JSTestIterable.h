@@ -31,7 +31,7 @@ public:
     using Base = JSDOMWrapper<TestIterable>;
     static JSTestIterable* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestIterable>&& impl)
     {
-        Ref vm = globalObject->vm();
+        auto& vm = globalObject->vm();
         JSTestIterable* ptr = new (NotNull, JSC::allocateCell<JSTestIterable>(vm)) JSTestIterable(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(vm);
         return ptr;

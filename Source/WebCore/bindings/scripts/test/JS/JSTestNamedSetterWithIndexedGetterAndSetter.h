@@ -31,7 +31,7 @@ public:
     using Base = JSDOMWrapper<TestNamedSetterWithIndexedGetterAndSetter>;
     static JSTestNamedSetterWithIndexedGetterAndSetter* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestNamedSetterWithIndexedGetterAndSetter>&& impl)
     {
-        Ref vm = globalObject->vm();
+        auto& vm = globalObject->vm();
         JSTestNamedSetterWithIndexedGetterAndSetter* ptr = new (NotNull, JSC::allocateCell<JSTestNamedSetterWithIndexedGetterAndSetter>(vm)) JSTestNamedSetterWithIndexedGetterAndSetter(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(vm);
         return ptr;

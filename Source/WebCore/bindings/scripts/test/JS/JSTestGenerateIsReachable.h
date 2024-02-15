@@ -31,7 +31,7 @@ public:
     using Base = JSDOMWrapper<TestGenerateIsReachable>;
     static JSTestGenerateIsReachable* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestGenerateIsReachable>&& impl)
     {
-        Ref vm = globalObject->vm();
+        auto& vm = globalObject->vm();
         JSTestGenerateIsReachable* ptr = new (NotNull, JSC::allocateCell<JSTestGenerateIsReachable>(vm)) JSTestGenerateIsReachable(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(vm);
         return ptr;

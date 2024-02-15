@@ -33,7 +33,7 @@ public:
     using DOMWrapped = TestDOMJIT;
     static JSTestDOMJIT* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestDOMJIT>&& impl)
     {
-        Ref vm = globalObject->vm();
+        auto& vm = globalObject->vm();
         JSTestDOMJIT* ptr = new (NotNull, JSC::allocateCell<JSTestDOMJIT>(vm)) JSTestDOMJIT(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(vm);
         return ptr;

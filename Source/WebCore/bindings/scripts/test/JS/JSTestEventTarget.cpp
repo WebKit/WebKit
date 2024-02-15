@@ -197,7 +197,7 @@ bool JSTestEventTarget::getOwnPropertySlot(JSObject* object, JSGlobalObject* lex
 
 bool JSTestEventTarget::getOwnPropertySlotByIndex(JSObject* object, JSGlobalObject* lexicalGlobalObject, unsigned index, PropertySlot& slot)
 {
-    Ref vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* thisObject = jsCast<JSTestEventTarget*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
@@ -226,7 +226,7 @@ bool JSTestEventTarget::getOwnPropertySlotByIndex(JSObject* object, JSGlobalObje
 
 void JSTestEventTarget::getOwnPropertyNames(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyNameArray& propertyNames, DontEnumPropertiesMode mode)
 {
-    Ref vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto* thisObject = jsCast<JSTestEventTarget*>(object);
     ASSERT_GC_OBJECT_INHERITS(object, info());
     for (unsigned i = 0, count = thisObject->wrapped().length(); i < count; ++i)
@@ -277,7 +277,7 @@ bool JSTestEventTarget::putByIndex(JSCell* cell, JSGlobalObject* lexicalGlobalOb
     auto* thisObject = jsCast<JSTestEventTarget*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
-    Ref vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     throwScope.assertNoException();
@@ -350,7 +350,7 @@ bool JSTestEventTarget::deletePropertyByIndex(JSCell* cell, JSGlobalObject* lexi
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestEventTargetConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    Ref vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestEventTargetPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
@@ -360,7 +360,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestEventTargetConstructor, (JSGlobalObject* lexicalG
 
 static inline JSC::EncodedJSValue jsTestEventTargetPrototypeFunction_itemBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestEventTarget>::ClassParameter castedThis)
 {
-    Ref vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);

@@ -32,7 +32,7 @@ public:
     using Base = JSDOMWrapper<TestTaggedWrapper, SignedPtrTraits<TestTaggedWrapper, TestTaggedWrapperPtrTag>>;
     static JSTestTaggedWrapper* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestTaggedWrapper>&& impl)
     {
-        Ref vm = globalObject->vm();
+        auto& vm = globalObject->vm();
         JSTestTaggedWrapper* ptr = new (NotNull, JSC::allocateCell<JSTestTaggedWrapper>(vm)) JSTestTaggedWrapper(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(vm);
         return ptr;

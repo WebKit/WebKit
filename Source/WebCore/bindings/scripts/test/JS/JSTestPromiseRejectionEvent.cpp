@@ -54,7 +54,7 @@ using namespace JSC;
 
 template<> TestPromiseRejectionEvent::Init convertDictionary<TestPromiseRejectionEvent::Init>(JSGlobalObject& lexicalGlobalObject, JSValue value)
 {
-    Ref vm = JSC::getVM(&lexicalGlobalObject);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     bool isNullOrUndefined = value.isUndefinedOrNull();
     auto* object = isNullOrUndefined ? nullptr : value.getObject();
@@ -170,7 +170,7 @@ using JSTestPromiseRejectionEventDOMConstructor = JSDOMConstructor<JSTestPromise
 
 template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestPromiseRejectionEventDOMConstructor::construct(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
-    VM& vm = lexicalGlobalObject->vm();
+    auto& vm = lexicalGlobalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* castedThis = jsCast<JSTestPromiseRejectionEventDOMConstructor*>(callFrame->jsCallee());
     ASSERT(castedThis);
@@ -262,7 +262,7 @@ JSValue JSTestPromiseRejectionEvent::getConstructor(VM& vm, const JSGlobalObject
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestPromiseRejectionEventConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    Ref vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestPromiseRejectionEventPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
@@ -272,7 +272,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestPromiseRejectionEventConstructor, (JSGlobalObject
 
 static inline JSValue jsTestPromiseRejectionEvent_promiseGetter(JSGlobalObject& lexicalGlobalObject, JSTestPromiseRejectionEvent& thisObject)
 {
-    Ref vm = JSC::getVM(&lexicalGlobalObject);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
     RELEASE_AND_RETURN(throwScope, (toJS<IDLPromise<IDLAny>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, [&]() -> decltype(auto) { return impl.promise(); })));
@@ -285,7 +285,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestPromiseRejectionEvent_promise, (JSGlobalObject* l
 
 static inline JSValue jsTestPromiseRejectionEvent_reasonGetter(JSGlobalObject& lexicalGlobalObject, JSTestPromiseRejectionEvent& thisObject)
 {
-    Ref vm = JSC::getVM(&lexicalGlobalObject);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
     RELEASE_AND_RETURN(throwScope, (toJS<IDLAny>(lexicalGlobalObject, throwScope, impl.reason())));

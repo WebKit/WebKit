@@ -31,7 +31,7 @@ public:
     using Base = JSDOMWrapper<TestAsyncKeyValueIterable>;
     static JSTestAsyncKeyValueIterable* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestAsyncKeyValueIterable>&& impl)
     {
-        Ref vm = globalObject->vm();
+        auto& vm = globalObject->vm();
         JSTestAsyncKeyValueIterable* ptr = new (NotNull, JSC::allocateCell<JSTestAsyncKeyValueIterable>(vm)) JSTestAsyncKeyValueIterable(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(vm);
         return ptr;

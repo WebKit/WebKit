@@ -31,7 +31,7 @@ public:
     using Base = JSDOMWrapper<TestNamedGetterCallWith>;
     static JSTestNamedGetterCallWith* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestNamedGetterCallWith>&& impl)
     {
-        Ref vm = globalObject->vm();
+        auto& vm = globalObject->vm();
         JSTestNamedGetterCallWith* ptr = new (NotNull, JSC::allocateCell<JSTestNamedGetterCallWith>(vm)) JSTestNamedGetterCallWith(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(vm);
         return ptr;

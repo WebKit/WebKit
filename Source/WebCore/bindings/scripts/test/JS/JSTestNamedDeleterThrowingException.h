@@ -31,7 +31,7 @@ public:
     using Base = JSDOMWrapper<TestNamedDeleterThrowingException>;
     static JSTestNamedDeleterThrowingException* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestNamedDeleterThrowingException>&& impl)
     {
-        Ref vm = globalObject->vm();
+        auto& vm = globalObject->vm();
         JSTestNamedDeleterThrowingException* ptr = new (NotNull, JSC::allocateCell<JSTestNamedDeleterThrowingException>(vm)) JSTestNamedDeleterThrowingException(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(vm);
         return ptr;

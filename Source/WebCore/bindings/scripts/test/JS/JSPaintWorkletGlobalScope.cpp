@@ -141,7 +141,7 @@ JSValue JSPaintWorkletGlobalScope::getConstructor(VM& vm, const JSGlobalObject* 
 
 JSC_DEFINE_CUSTOM_GETTER(jsPaintWorkletGlobalScopeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    Ref vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSPaintWorkletGlobalScopePrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
@@ -152,7 +152,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsPaintWorkletGlobalScopeConstructor, (JSGlobalObject* 
 static inline JSValue jsPaintWorkletGlobalScope_ExposedStarConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSPaintWorkletGlobalScope& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSExposedStar::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
+    return JSExposedStar::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsPaintWorkletGlobalScope_ExposedStarConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -163,7 +163,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsPaintWorkletGlobalScope_ExposedStarConstructor, (JSGl
 static inline JSValue jsPaintWorkletGlobalScope_PaintWorkletGlobalScopeConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSPaintWorkletGlobalScope& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSPaintWorkletGlobalScope::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
+    return JSPaintWorkletGlobalScope::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsPaintWorkletGlobalScope_PaintWorkletGlobalScopeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))

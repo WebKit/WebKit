@@ -187,7 +187,7 @@ bool JSTestIndexedSetterWithIdentifier::getOwnPropertySlot(JSObject* object, JSG
 
 bool JSTestIndexedSetterWithIdentifier::getOwnPropertySlotByIndex(JSObject* object, JSGlobalObject* lexicalGlobalObject, unsigned index, PropertySlot& slot)
 {
-    Ref vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* thisObject = jsCast<JSTestIndexedSetterWithIdentifier*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
@@ -204,7 +204,7 @@ bool JSTestIndexedSetterWithIdentifier::getOwnPropertySlotByIndex(JSObject* obje
 
 void JSTestIndexedSetterWithIdentifier::getOwnPropertyNames(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyNameArray& propertyNames, DontEnumPropertiesMode mode)
 {
-    Ref vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto* thisObject = jsCast<JSTestIndexedSetterWithIdentifier*>(object);
     ASSERT_GC_OBJECT_INHERITS(object, info());
     for (unsigned i = 0, count = thisObject->wrapped().length(); i < count; ++i)
@@ -237,7 +237,7 @@ bool JSTestIndexedSetterWithIdentifier::putByIndex(JSCell* cell, JSGlobalObject*
     auto* thisObject = jsCast<JSTestIndexedSetterWithIdentifier*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
-    Ref vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     if (LIKELY(index <= MAX_ARRAY_INDEX)) {
@@ -307,7 +307,7 @@ bool JSTestIndexedSetterWithIdentifier::deletePropertyByIndex(JSCell* cell, JSGl
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestIndexedSetterWithIdentifierConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    Ref vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestIndexedSetterWithIdentifierPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
@@ -317,7 +317,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestIndexedSetterWithIdentifierConstructor, (JSGlobal
 
 static inline JSC::EncodedJSValue jsTestIndexedSetterWithIdentifierPrototypeFunction_indexedSetterBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestIndexedSetterWithIdentifier>::ClassParameter castedThis)
 {
-    Ref vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);

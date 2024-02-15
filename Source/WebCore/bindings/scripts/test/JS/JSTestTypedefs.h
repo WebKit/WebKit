@@ -31,7 +31,7 @@ public:
     using Base = JSDOMWrapper<TestTypedefs>;
     static JSTestTypedefs* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestTypedefs>&& impl)
     {
-        Ref vm = globalObject->vm();
+        auto& vm = globalObject->vm();
         JSTestTypedefs* ptr = new (NotNull, JSC::allocateCell<JSTestTypedefs>(vm)) JSTestTypedefs(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(vm);
         return ptr;

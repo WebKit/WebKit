@@ -31,7 +31,7 @@ public:
     using Base = JSDOMWrapper<TestSetLikeWithOverriddenOperations>;
     static JSTestSetLikeWithOverriddenOperations* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestSetLikeWithOverriddenOperations>&& impl)
     {
-        Ref vm = globalObject->vm();
+        auto& vm = globalObject->vm();
         JSTestSetLikeWithOverriddenOperations* ptr = new (NotNull, JSC::allocateCell<JSTestSetLikeWithOverriddenOperations>(vm)) JSTestSetLikeWithOverriddenOperations(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(vm);
         return ptr;

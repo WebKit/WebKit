@@ -178,7 +178,7 @@ bool JSTestIndexedSetterNoIdentifier::getOwnPropertySlot(JSObject* object, JSGlo
 
 bool JSTestIndexedSetterNoIdentifier::getOwnPropertySlotByIndex(JSObject* object, JSGlobalObject* lexicalGlobalObject, unsigned index, PropertySlot& slot)
 {
-    Ref vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* thisObject = jsCast<JSTestIndexedSetterNoIdentifier*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
@@ -195,7 +195,7 @@ bool JSTestIndexedSetterNoIdentifier::getOwnPropertySlotByIndex(JSObject* object
 
 void JSTestIndexedSetterNoIdentifier::getOwnPropertyNames(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyNameArray& propertyNames, DontEnumPropertiesMode mode)
 {
-    Ref vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto* thisObject = jsCast<JSTestIndexedSetterNoIdentifier*>(object);
     ASSERT_GC_OBJECT_INHERITS(object, info());
     for (unsigned i = 0, count = thisObject->wrapped().length(); i < count; ++i)
@@ -228,7 +228,7 @@ bool JSTestIndexedSetterNoIdentifier::putByIndex(JSCell* cell, JSGlobalObject* l
     auto* thisObject = jsCast<JSTestIndexedSetterNoIdentifier*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
-    Ref vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     if (LIKELY(index <= MAX_ARRAY_INDEX)) {
@@ -298,7 +298,7 @@ bool JSTestIndexedSetterNoIdentifier::deletePropertyByIndex(JSCell* cell, JSGlob
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestIndexedSetterNoIdentifierConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    Ref vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestIndexedSetterNoIdentifierPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))

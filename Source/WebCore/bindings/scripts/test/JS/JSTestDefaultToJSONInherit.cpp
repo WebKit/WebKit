@@ -177,7 +177,7 @@ JSValue JSTestDefaultToJSONInherit::getConstructor(VM& vm, const JSGlobalObject*
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONInheritConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    Ref vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestDefaultToJSONInheritPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
@@ -187,7 +187,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONInheritConstructor, (JSGlobalObject*
 
 static inline JSValue jsTestDefaultToJSONInherit_inheritLongAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSONInherit& thisObject)
 {
-    Ref vm = JSC::getVM(&lexicalGlobalObject);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
     RELEASE_AND_RETURN(throwScope, (toJS<IDLLong>(lexicalGlobalObject, throwScope, impl.inheritLongAttribute())));
@@ -200,7 +200,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONInherit_inheritLongAttribute, (JSGlo
 
 static inline bool setJSTestDefaultToJSONInherit_inheritLongAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSONInherit& thisObject, JSValue value)
 {
-    Ref vm = JSC::getVM(&lexicalGlobalObject);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
@@ -219,7 +219,7 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestDefaultToJSONInherit_inheritLongAttribute, (JS
 
 static inline EncodedJSValue jsTestDefaultToJSONInheritPrototypeFunction_toJSONBody(JSGlobalObject* lexicalGlobalObject, CallFrame*, JSTestDefaultToJSONInherit* castedThis)
 {
-    Ref vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();

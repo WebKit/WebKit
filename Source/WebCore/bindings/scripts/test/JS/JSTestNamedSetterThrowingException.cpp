@@ -181,7 +181,7 @@ bool JSTestNamedSetterThrowingException::getOwnPropertySlot(JSObject* object, JS
 
 bool JSTestNamedSetterThrowingException::getOwnPropertySlotByIndex(JSObject* object, JSGlobalObject* lexicalGlobalObject, unsigned index, PropertySlot& slot)
 {
-    Ref vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* thisObject = jsCast<JSTestNamedSetterThrowingException*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
@@ -201,7 +201,7 @@ bool JSTestNamedSetterThrowingException::getOwnPropertySlotByIndex(JSObject* obj
 
 void JSTestNamedSetterThrowingException::getOwnPropertyNames(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyNameArray& propertyNames, DontEnumPropertiesMode mode)
 {
-    Ref vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto* thisObject = jsCast<JSTestNamedSetterThrowingException*>(object);
     ASSERT_GC_OBJECT_INHERITS(object, info());
     for (auto& propertyName : thisObject->wrapped().supportedPropertyNames())
@@ -250,11 +250,11 @@ bool JSTestNamedSetterThrowingException::putByIndex(JSCell* cell, JSGlobalObject
     auto* thisObject = jsCast<JSTestNamedSetterThrowingException*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
-    Ref vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     auto propertyName = Identifier::from(vm, index);
-    PropertySlot slot { thisObject, PropertySlot::InternalMethodType::VMInquiry, vm.ptr() };
+    PropertySlot slot { thisObject, PropertySlot::InternalMethodType::VMInquiry, &vm };
     JSValue prototype = thisObject->getPrototypeDirect();
     bool found = prototype.isObject() && asObject(prototype)->getPropertySlot(lexicalGlobalObject, propertyName, slot);
     slot.disallowVMEntry.reset();
@@ -329,7 +329,7 @@ bool JSTestNamedSetterThrowingException::deletePropertyByIndex(JSCell* cell, JSG
             return JSObject::deletePropertyByIndex(cell, lexicalGlobalObject, index);
     }
 
-    Ref vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto propertyName = Identifier::from(vm, index);
     if (impl.isSupportedPropertyName(propertyNameToString(propertyName))) {
         PropertySlot slotForGet { &thisObject, PropertySlot::InternalMethodType::VMInquiry, &lexicalGlobalObject->vm() };
@@ -341,7 +341,7 @@ bool JSTestNamedSetterThrowingException::deletePropertyByIndex(JSCell* cell, JSG
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestNamedSetterThrowingExceptionConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    Ref vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestNamedSetterThrowingExceptionPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))

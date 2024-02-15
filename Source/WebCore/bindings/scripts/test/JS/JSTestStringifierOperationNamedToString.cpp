@@ -157,7 +157,7 @@ void JSTestStringifierOperationNamedToString::destroy(JSC::JSCell* cell)
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestStringifierOperationNamedToStringConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    Ref vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestStringifierOperationNamedToStringPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
@@ -167,7 +167,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestStringifierOperationNamedToStringConstructor, (JS
 
 static inline JSC::EncodedJSValue jsTestStringifierOperationNamedToStringPrototypeFunction_toStringBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestStringifierOperationNamedToString>::ClassParameter castedThis)
 {
-    Ref vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);

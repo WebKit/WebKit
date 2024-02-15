@@ -173,7 +173,7 @@ bool JSTestPluginInterface::getOwnPropertySlot(JSObject* object, JSGlobalObject*
 
 bool JSTestPluginInterface::getOwnPropertySlotByIndex(JSObject* object, JSGlobalObject* lexicalGlobalObject, unsigned index, PropertySlot& slot)
 {
-    Ref vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto* thisObject = jsCast<JSTestPluginInterface*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     auto propertyName = Identifier::from(vm, index);
@@ -223,7 +223,7 @@ bool JSTestPluginInterface::putByIndex(JSCell* cell, JSGlobalObject* lexicalGlob
     auto* thisObject = jsCast<JSTestPluginInterface*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
-    Ref vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     auto propertyName = Identifier::from(vm, index);
@@ -248,7 +248,7 @@ CallData JSTestPluginInterface::getCallData(JSCell* cell)
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestPluginInterfaceConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    Ref vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestPluginInterfacePrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))

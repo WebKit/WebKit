@@ -52,7 +52,7 @@ using namespace JSC;
 
 template<> ExposedToWorkerAndWindow::Dict convertDictionary<ExposedToWorkerAndWindow::Dict>(JSGlobalObject& lexicalGlobalObject, JSValue value)
 {
-    Ref vm = JSC::getVM(&lexicalGlobalObject);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     bool isNullOrUndefined = value.isUndefinedOrNull();
     auto* object = isNullOrUndefined ? nullptr : value.getObject();
@@ -77,7 +77,7 @@ template<> ExposedToWorkerAndWindow::Dict convertDictionary<ExposedToWorkerAndWi
 
 JSC::JSObject* convertDictionaryToJS(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, const ExposedToWorkerAndWindow::Dict& dictionary)
 {
-    Ref vm = JSC::getVM(&lexicalGlobalObject);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     auto result = constructEmptyObject(&lexicalGlobalObject, globalObject.objectPrototype());
@@ -134,7 +134,7 @@ using JSExposedToWorkerAndWindowDOMConstructor = JSDOMConstructor<JSExposedToWor
 
 template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSExposedToWorkerAndWindowDOMConstructor::construct(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
-    VM& vm = lexicalGlobalObject->vm();
+    auto& vm = lexicalGlobalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* castedThis = jsCast<JSExposedToWorkerAndWindowDOMConstructor*>(callFrame->jsCallee());
     ASSERT(castedThis);
@@ -219,7 +219,7 @@ void JSExposedToWorkerAndWindow::destroy(JSC::JSCell* cell)
 
 JSC_DEFINE_CUSTOM_GETTER(jsExposedToWorkerAndWindowConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    Ref vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSExposedToWorkerAndWindowPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
@@ -229,7 +229,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsExposedToWorkerAndWindowConstructor, (JSGlobalObject*
 
 static inline JSC::EncodedJSValue jsExposedToWorkerAndWindowPrototypeFunction_doSomethingBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSExposedToWorkerAndWindow>::ClassParameter castedThis)
 {
-    Ref vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);

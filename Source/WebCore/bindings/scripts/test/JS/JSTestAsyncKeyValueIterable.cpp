@@ -166,7 +166,7 @@ void JSTestAsyncKeyValueIterable::destroy(JSC::JSCell* cell)
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestAsyncKeyValueIterableConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    Ref vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestAsyncKeyValueIterablePrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))

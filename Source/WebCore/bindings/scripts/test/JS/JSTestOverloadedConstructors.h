@@ -31,7 +31,7 @@ public:
     using Base = JSDOMWrapper<TestOverloadedConstructors>;
     static JSTestOverloadedConstructors* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestOverloadedConstructors>&& impl)
     {
-        Ref vm = globalObject->vm();
+        auto& vm = globalObject->vm();
         JSTestOverloadedConstructors* ptr = new (NotNull, JSC::allocateCell<JSTestOverloadedConstructors>(vm)) JSTestOverloadedConstructors(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(vm);
         return ptr;

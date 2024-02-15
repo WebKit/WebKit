@@ -118,7 +118,7 @@ void JSShadowRealmGlobalScope::destroy(JSC::JSCell* cell)
 
 JSC_DEFINE_CUSTOM_GETTER(jsShadowRealmGlobalScopeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    Ref vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSShadowRealmGlobalScopePrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
@@ -129,7 +129,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsShadowRealmGlobalScopeConstructor, (JSGlobalObject* l
 static inline JSValue jsShadowRealmGlobalScope_ExposedStarConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSShadowRealmGlobalScope& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSExposedStar::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
+    return JSExposedStar::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsShadowRealmGlobalScope_ExposedStarConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -140,7 +140,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsShadowRealmGlobalScope_ExposedStarConstructor, (JSGlo
 static inline JSValue jsShadowRealmGlobalScope_ShadowRealmGlobalScopeConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSShadowRealmGlobalScope& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSShadowRealmGlobalScope::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
+    return JSShadowRealmGlobalScope::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsShadowRealmGlobalScope_ShadowRealmGlobalScopeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))

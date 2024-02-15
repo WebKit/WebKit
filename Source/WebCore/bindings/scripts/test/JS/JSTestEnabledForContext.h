@@ -31,7 +31,7 @@ public:
     using Base = JSDOMWrapper<TestEnabledForContext>;
     static JSTestEnabledForContext* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestEnabledForContext>&& impl)
     {
-        Ref vm = globalObject->vm();
+        auto& vm = globalObject->vm();
         JSTestEnabledForContext* ptr = new (NotNull, JSC::allocateCell<JSTestEnabledForContext>(vm)) JSTestEnabledForContext(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(vm);
         return ptr;

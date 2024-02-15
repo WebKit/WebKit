@@ -142,7 +142,7 @@ JSValue JSSharedWorkerGlobalScope::getConstructor(VM& vm, const JSGlobalObject* 
 
 JSC_DEFINE_CUSTOM_GETTER(jsSharedWorkerGlobalScopeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    Ref vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSSharedWorkerGlobalScopePrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
@@ -153,7 +153,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsSharedWorkerGlobalScopeConstructor, (JSGlobalObject* 
 static inline JSValue jsSharedWorkerGlobalScope_ExposedStarConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSSharedWorkerGlobalScope& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSExposedStar::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
+    return JSExposedStar::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsSharedWorkerGlobalScope_ExposedStarConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -164,7 +164,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsSharedWorkerGlobalScope_ExposedStarConstructor, (JSGl
 static inline JSValue jsSharedWorkerGlobalScope_SharedWorkerGlobalScopeConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSSharedWorkerGlobalScope& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSSharedWorkerGlobalScope::getConstructor(Ref { JSC::getVM(&lexicalGlobalObject) }, &thisObject);
+    return JSSharedWorkerGlobalScope::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsSharedWorkerGlobalScope_SharedWorkerGlobalScopeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))

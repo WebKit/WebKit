@@ -33,7 +33,7 @@ public:
     using Base = JSDOMWrapper<TestInterface>;
     static JSTestInterface* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestInterface>&& impl)
     {
-        Ref vm = globalObject->vm();
+        auto& vm = globalObject->vm();
         JSTestInterface* ptr = new (NotNull, JSC::allocateCell<JSTestInterface>(vm)) JSTestInterface(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(vm);
         return ptr;

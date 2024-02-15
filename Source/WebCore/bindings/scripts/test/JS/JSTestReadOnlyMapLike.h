@@ -31,7 +31,7 @@ public:
     using Base = JSDOMWrapper<TestReadOnlyMapLike>;
     static JSTestReadOnlyMapLike* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestReadOnlyMapLike>&& impl)
     {
-        Ref vm = globalObject->vm();
+        auto& vm = globalObject->vm();
         JSTestReadOnlyMapLike* ptr = new (NotNull, JSC::allocateCell<JSTestReadOnlyMapLike>(vm)) JSTestReadOnlyMapLike(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(vm);
         return ptr;

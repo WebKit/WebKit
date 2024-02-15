@@ -174,7 +174,7 @@ void JSTestReadOnlyMapLike::destroy(JSC::JSCell* cell)
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestReadOnlyMapLikeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    Ref vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestReadOnlyMapLikePrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
@@ -184,7 +184,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestReadOnlyMapLikeConstructor, (JSGlobalObject* lexi
 
 static inline JSValue jsTestReadOnlyMapLike_sizeGetter(JSGlobalObject& lexicalGlobalObject, JSTestReadOnlyMapLike& thisObject)
 {
-    Ref vm = JSC::getVM(&lexicalGlobalObject);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     RELEASE_AND_RETURN(throwScope, (toJS<IDLAny>(lexicalGlobalObject, throwScope, forwardSizeToMapLike(lexicalGlobalObject, thisObject))));
 }
@@ -196,7 +196,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestReadOnlyMapLike_size, (JSGlobalObject* lexicalGlo
 
 static inline JSC::EncodedJSValue jsTestReadOnlyMapLikePrototypeFunction_getBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestReadOnlyMapLike>::ClassParameter castedThis)
 {
-    Ref vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
@@ -215,7 +215,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestReadOnlyMapLikePrototypeFunction_get, (JSGlobalOb
 
 static inline JSC::EncodedJSValue jsTestReadOnlyMapLikePrototypeFunction_hasBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestReadOnlyMapLike>::ClassParameter castedThis)
 {
-    Ref vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
@@ -234,7 +234,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestReadOnlyMapLikePrototypeFunction_has, (JSGlobalOb
 
 static inline JSC::EncodedJSValue jsTestReadOnlyMapLikePrototypeFunction_entriesBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestReadOnlyMapLike>::ClassParameter castedThis)
 {
-    Ref vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
@@ -248,7 +248,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestReadOnlyMapLikePrototypeFunction_entries, (JSGlob
 
 static inline JSC::EncodedJSValue jsTestReadOnlyMapLikePrototypeFunction_keysBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestReadOnlyMapLike>::ClassParameter castedThis)
 {
-    Ref vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
@@ -262,7 +262,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestReadOnlyMapLikePrototypeFunction_keys, (JSGlobalO
 
 static inline JSC::EncodedJSValue jsTestReadOnlyMapLikePrototypeFunction_valuesBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestReadOnlyMapLike>::ClassParameter castedThis)
 {
-    Ref vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
@@ -276,7 +276,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestReadOnlyMapLikePrototypeFunction_values, (JSGloba
 
 static inline JSC::EncodedJSValue jsTestReadOnlyMapLikePrototypeFunction_forEachBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestReadOnlyMapLike>::ClassParameter castedThis)
 {
-    Ref vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);

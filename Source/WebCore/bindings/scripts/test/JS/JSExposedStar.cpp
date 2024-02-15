@@ -178,7 +178,7 @@ JSValue JSExposedStar::getConstructor(VM& vm, const JSGlobalObject* globalObject
 
 JSC_DEFINE_CUSTOM_GETTER(jsExposedStarConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    Ref vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSExposedStarPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
@@ -188,7 +188,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsExposedStarConstructor, (JSGlobalObject* lexicalGloba
 
 static inline JSC::EncodedJSValue jsExposedStarPrototypeFunction_operationForAllContextsBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSExposedStar>::ClassParameter castedThis)
 {
-    Ref vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
@@ -203,7 +203,7 @@ JSC_DEFINE_HOST_FUNCTION(jsExposedStarPrototypeFunction_operationForAllContexts,
 
 static inline JSC::EncodedJSValue jsExposedStarPrototypeFunction_operationJustForWindowContextsBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSExposedStar>::ClassParameter castedThis)
 {
-    Ref vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
@@ -218,7 +218,7 @@ JSC_DEFINE_HOST_FUNCTION(jsExposedStarPrototypeFunction_operationJustForWindowCo
 
 static inline JSC::EncodedJSValue jsExposedStarPrototypeFunction_operationJustForWorkerContextsBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSExposedStar>::ClassParameter castedThis)
 {
-    Ref vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);

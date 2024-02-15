@@ -33,7 +33,7 @@ public:
     using Base = JSDOMWrapper<TestLegacyNoInterfaceObject>;
     static JSTestLegacyNoInterfaceObject* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestLegacyNoInterfaceObject>&& impl)
     {
-        Ref vm = globalObject->vm();
+        auto& vm = globalObject->vm();
         JSTestLegacyNoInterfaceObject* ptr = new (NotNull, JSC::allocateCell<JSTestLegacyNoInterfaceObject>(vm)) JSTestLegacyNoInterfaceObject(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(vm);
         return ptr;

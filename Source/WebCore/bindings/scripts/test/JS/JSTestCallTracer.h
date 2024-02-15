@@ -31,7 +31,7 @@ public:
     using Base = JSDOMWrapper<TestCallTracer>;
     static JSTestCallTracer* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestCallTracer>&& impl)
     {
-        Ref vm = globalObject->vm();
+        auto& vm = globalObject->vm();
         JSTestCallTracer* ptr = new (NotNull, JSC::allocateCell<JSTestCallTracer>(vm)) JSTestCallTracer(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(vm);
         return ptr;

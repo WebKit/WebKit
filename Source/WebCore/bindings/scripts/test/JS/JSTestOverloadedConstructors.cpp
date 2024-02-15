@@ -92,7 +92,7 @@ using JSTestOverloadedConstructorsDOMConstructor = JSDOMConstructor<JSTestOverlo
 
 static inline EncodedJSValue constructJSTestOverloadedConstructors1(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
-    VM& vm = lexicalGlobalObject->vm();
+    auto& vm = lexicalGlobalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* castedThis = jsCast<JSTestOverloadedConstructorsDOMConstructor*>(callFrame->jsCallee());
     ASSERT(castedThis);
@@ -113,7 +113,7 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors1(JSGlobalObje
 
 static inline EncodedJSValue constructJSTestOverloadedConstructors2(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
-    VM& vm = lexicalGlobalObject->vm();
+    auto& vm = lexicalGlobalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* castedThis = jsCast<JSTestOverloadedConstructorsDOMConstructor*>(callFrame->jsCallee());
     ASSERT(castedThis);
@@ -134,7 +134,7 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors2(JSGlobalObje
 
 static inline EncodedJSValue constructJSTestOverloadedConstructors3(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
-    VM& vm = lexicalGlobalObject->vm();
+    auto& vm = lexicalGlobalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* castedThis = jsCast<JSTestOverloadedConstructorsDOMConstructor*>(callFrame->jsCallee());
     ASSERT(castedThis);
@@ -155,7 +155,7 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors3(JSGlobalObje
 
 static inline EncodedJSValue constructJSTestOverloadedConstructors4(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
-    VM& vm = lexicalGlobalObject->vm();
+    auto& vm = lexicalGlobalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* castedThis = jsCast<JSTestOverloadedConstructorsDOMConstructor*>(callFrame->jsCallee());
     ASSERT(castedThis);
@@ -176,7 +176,7 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors4(JSGlobalObje
 
 static inline EncodedJSValue constructJSTestOverloadedConstructors5(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
-    VM& vm = lexicalGlobalObject->vm();
+    auto& vm = lexicalGlobalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* castedThis = jsCast<JSTestOverloadedConstructorsDOMConstructor*>(callFrame->jsCallee());
     ASSERT(castedThis);
@@ -196,7 +196,7 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors5(JSGlobalObje
 
 template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestOverloadedConstructorsDOMConstructor::construct(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
-    VM& vm = lexicalGlobalObject->vm();
+    auto& vm = lexicalGlobalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     size_t argsCount = std::min<size_t>(1, callFrame->argumentCount());
@@ -286,7 +286,7 @@ void JSTestOverloadedConstructors::destroy(JSC::JSCell* cell)
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestOverloadedConstructorsConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    Ref vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestOverloadedConstructorsPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))

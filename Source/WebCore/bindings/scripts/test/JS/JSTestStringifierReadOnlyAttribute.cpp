@@ -160,7 +160,7 @@ void JSTestStringifierReadOnlyAttribute::destroy(JSC::JSCell* cell)
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestStringifierReadOnlyAttributeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    Ref vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestStringifierReadOnlyAttributePrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
@@ -170,7 +170,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestStringifierReadOnlyAttributeConstructor, (JSGloba
 
 static inline JSValue jsTestStringifierReadOnlyAttribute_identifierGetter(JSGlobalObject& lexicalGlobalObject, JSTestStringifierReadOnlyAttribute& thisObject)
 {
-    Ref vm = JSC::getVM(&lexicalGlobalObject);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.identifier())));
@@ -183,7 +183,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestStringifierReadOnlyAttribute_identifier, (JSGloba
 
 static inline JSC::EncodedJSValue jsTestStringifierReadOnlyAttributePrototypeFunction_toStringBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestStringifierReadOnlyAttribute>::ClassParameter castedThis)
 {
-    Ref vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);

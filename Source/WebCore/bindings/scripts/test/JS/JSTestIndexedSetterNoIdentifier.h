@@ -31,7 +31,7 @@ public:
     using Base = JSDOMWrapper<TestIndexedSetterNoIdentifier>;
     static JSTestIndexedSetterNoIdentifier* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestIndexedSetterNoIdentifier>&& impl)
     {
-        Ref vm = globalObject->vm();
+        auto& vm = globalObject->vm();
         JSTestIndexedSetterNoIdentifier* ptr = new (NotNull, JSC::allocateCell<JSTestIndexedSetterNoIdentifier>(vm)) JSTestIndexedSetterNoIdentifier(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(vm);
         return ptr;

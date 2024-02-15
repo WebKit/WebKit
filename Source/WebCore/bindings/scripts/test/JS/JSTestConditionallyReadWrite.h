@@ -31,7 +31,7 @@ public:
     using Base = JSDOMWrapper<TestConditionallyReadWrite>;
     static JSTestConditionallyReadWrite* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestConditionallyReadWrite>&& impl)
     {
-        Ref vm = globalObject->vm();
+        auto& vm = globalObject->vm();
         JSTestConditionallyReadWrite* ptr = new (NotNull, JSC::allocateCell<JSTestConditionallyReadWrite>(vm)) JSTestConditionallyReadWrite(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(vm);
         return ptr;

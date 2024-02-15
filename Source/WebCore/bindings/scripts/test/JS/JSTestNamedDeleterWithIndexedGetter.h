@@ -31,7 +31,7 @@ public:
     using Base = JSDOMWrapper<TestNamedDeleterWithIndexedGetter>;
     static JSTestNamedDeleterWithIndexedGetter* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestNamedDeleterWithIndexedGetter>&& impl)
     {
-        Ref vm = globalObject->vm();
+        auto& vm = globalObject->vm();
         JSTestNamedDeleterWithIndexedGetter* ptr = new (NotNull, JSC::allocateCell<JSTestNamedDeleterWithIndexedGetter>(vm)) JSTestNamedDeleterWithIndexedGetter(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(vm);
         return ptr;

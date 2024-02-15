@@ -31,7 +31,7 @@ public:
     using Base = JSDOMWrapper<TestReadOnlySetLike>;
     static JSTestReadOnlySetLike* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestReadOnlySetLike>&& impl)
     {
-        Ref vm = globalObject->vm();
+        auto& vm = globalObject->vm();
         JSTestReadOnlySetLike* ptr = new (NotNull, JSC::allocateCell<JSTestReadOnlySetLike>(vm)) JSTestReadOnlySetLike(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(vm);
         return ptr;
