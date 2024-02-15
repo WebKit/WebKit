@@ -196,8 +196,8 @@ private:
     bool convertValue(const SourceSpan&, const Type*, std::optional<ConstantValue>&);
     bool convertValueImpl(const SourceSpan&, const Type*, ConstantValue&);
 
-    template<typename TargetConstructor, typename... Arguments>
-    void allocateSimpleConstructor(ASCIILiteral, TargetConstructor, Arguments&&...);
+    template<typename TargetConstructor, typename Validator, typename... Arguments>
+    void allocateSimpleConstructor(ASCIILiteral, TargetConstructor, const Validator&, Arguments&&...);
     void allocateTextureStorageConstructor(ASCIILiteral, Types::TextureStorage::Kind);
 
     bool isModuleScope() const;
@@ -330,26 +330,43 @@ TypeChecker::TypeChecker(ShaderModule& shaderModule)
         }
     ));
 
-    allocateSimpleConstructor("vec2"_s, &TypeStore::vectorType, 2);
-    allocateSimpleConstructor("vec3"_s, &TypeStore::vectorType, 3);
-    allocateSimpleConstructor("vec4"_s, &TypeStore::vectorType, 4);
-    allocateSimpleConstructor("mat2x2"_s, &TypeStore::matrixType, 2, 2);
-    allocateSimpleConstructor("mat2x3"_s, &TypeStore::matrixType, 2, 3);
-    allocateSimpleConstructor("mat2x4"_s, &TypeStore::matrixType, 2, 4);
-    allocateSimpleConstructor("mat3x2"_s, &TypeStore::matrixType, 3, 2);
-    allocateSimpleConstructor("mat3x3"_s, &TypeStore::matrixType, 3, 3);
-    allocateSimpleConstructor("mat3x4"_s, &TypeStore::matrixType, 3, 4);
-    allocateSimpleConstructor("mat4x2"_s, &TypeStore::matrixType, 4, 2);
-    allocateSimpleConstructor("mat4x3"_s, &TypeStore::matrixType, 4, 3);
-    allocateSimpleConstructor("mat4x4"_s, &TypeStore::matrixType, 4, 4);
+    const auto& validateVector = [&](const Type* element) -> std::optional<String> {
+        if (!satisfies(element, Constraints::Scalar))
+            return { "vector element type must be a scalar type"_s };
+        return std::nullopt;
+    };
 
-    allocateSimpleConstructor("texture_1d"_s, &TypeStore::textureType, Types::Texture::Kind::Texture1d);
-    allocateSimpleConstructor("texture_2d"_s, &TypeStore::textureType, Types::Texture::Kind::Texture2d);
-    allocateSimpleConstructor("texture_2d_array"_s, &TypeStore::textureType, Types::Texture::Kind::Texture2dArray);
-    allocateSimpleConstructor("texture_3d"_s, &TypeStore::textureType, Types::Texture::Kind::Texture3d);
-    allocateSimpleConstructor("texture_cube"_s, &TypeStore::textureType, Types::Texture::Kind::TextureCube);
-    allocateSimpleConstructor("texture_cube_array"_s, &TypeStore::textureType, Types::Texture::Kind::TextureCubeArray);
-    allocateSimpleConstructor("texture_multisampled_2d"_s, &TypeStore::textureType, Types::Texture::Kind::TextureMultisampled2d);
+    allocateSimpleConstructor("vec2"_s, &TypeStore::vectorType, validateVector, 2);
+    allocateSimpleConstructor("vec3"_s, &TypeStore::vectorType, validateVector, 3);
+    allocateSimpleConstructor("vec4"_s, &TypeStore::vectorType, validateVector, 4);
+
+    const auto& validateMatrix = [&](const Type* element) -> std::optional<String> {
+        if (!satisfies(element, Constraints::Float))
+            return { "matrix element type must be a floating point type"_s };
+        return std::nullopt;
+    };
+    allocateSimpleConstructor("mat2x2"_s, &TypeStore::matrixType, validateMatrix, 2, 2);
+    allocateSimpleConstructor("mat2x3"_s, &TypeStore::matrixType, validateMatrix, 2, 3);
+    allocateSimpleConstructor("mat2x4"_s, &TypeStore::matrixType, validateMatrix, 2, 4);
+    allocateSimpleConstructor("mat3x2"_s, &TypeStore::matrixType, validateMatrix, 3, 2);
+    allocateSimpleConstructor("mat3x3"_s, &TypeStore::matrixType, validateMatrix, 3, 3);
+    allocateSimpleConstructor("mat3x4"_s, &TypeStore::matrixType, validateMatrix, 3, 4);
+    allocateSimpleConstructor("mat4x2"_s, &TypeStore::matrixType, validateMatrix, 4, 2);
+    allocateSimpleConstructor("mat4x3"_s, &TypeStore::matrixType, validateMatrix, 4, 3);
+    allocateSimpleConstructor("mat4x4"_s, &TypeStore::matrixType, validateMatrix, 4, 4);
+
+    const auto& validateTexture = [&](const Type* element) -> std::optional<String> {
+        if (!satisfies(element, Constraints::Concrete32BitNumber))
+            return { "texture sampled type must be one 'i32', 'u32' or 'f32'"_s };
+        return std::nullopt;
+    };
+    allocateSimpleConstructor("texture_1d"_s, &TypeStore::textureType, validateTexture, Types::Texture::Kind::Texture1d);
+    allocateSimpleConstructor("texture_2d"_s, &TypeStore::textureType, validateTexture, Types::Texture::Kind::Texture2d);
+    allocateSimpleConstructor("texture_2d_array"_s, &TypeStore::textureType, validateTexture, Types::Texture::Kind::Texture2dArray);
+    allocateSimpleConstructor("texture_3d"_s, &TypeStore::textureType, validateTexture, Types::Texture::Kind::Texture3d);
+    allocateSimpleConstructor("texture_cube"_s, &TypeStore::textureType, validateTexture, Types::Texture::Kind::TextureCube);
+    allocateSimpleConstructor("texture_cube_array"_s, &TypeStore::textureType, validateTexture, Types::Texture::Kind::TextureCubeArray);
+    allocateSimpleConstructor("texture_multisampled_2d"_s, &TypeStore::textureType, validateTexture, Types::Texture::Kind::TextureMultisampled2d);
 
     allocateTextureStorageConstructor("texture_storage_1d"_s, Types::TextureStorage::Kind::TextureStorage1d);
     allocateTextureStorageConstructor("texture_storage_2d"_s, Types::TextureStorage::Kind::TextureStorage2d);
@@ -2081,12 +2098,12 @@ std::optional<FailedCheck> typeCheck(ShaderModule& shaderModule)
     return TypeChecker(shaderModule).check();
 }
 
-template<typename TargetConstructor, typename... Arguments>
-void TypeChecker::allocateSimpleConstructor(ASCIILiteral name, TargetConstructor constructor, Arguments&&... arguments)
+template<typename TargetConstructor, typename Validator, typename... Arguments>
+void TypeChecker::allocateSimpleConstructor(ASCIILiteral name, TargetConstructor constructor, const Validator& validate, Arguments&&... arguments)
 {
     introduceType(AST::Identifier::make(name), m_types.typeConstructorType(
         name,
-        [this, constructor, arguments...](AST::ElaboratedTypeExpression& type) -> const Type* {
+        [this, constructor, &validate, arguments...](AST::ElaboratedTypeExpression& type) -> const Type* {
             if (type.arguments().size() != 1) {
                 typeError(InferBottom::No, type.span(), "'", type.base(), "' requires 1 template argument");
                 return m_types.bottomType();
@@ -2094,6 +2111,11 @@ void TypeChecker::allocateSimpleConstructor(ASCIILiteral name, TargetConstructor
             auto* elementType = resolve(type.arguments().first());
             if (isBottom(elementType))
                 return m_types.bottomType();
+
+            if (auto error = validate(elementType)) {
+                typeError(InferBottom::No, type.span(), *error);
+                return m_types.bottomType();
+            }
 
             return (m_types.*constructor)(arguments..., elementType);
         }
