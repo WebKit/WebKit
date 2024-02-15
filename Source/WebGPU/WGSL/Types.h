@@ -213,6 +213,7 @@ public:
 struct Function {
     WTF::Vector<const Type*> parameters;
     const Type* result;
+    bool mustUse;
 };
 
 struct Reference {

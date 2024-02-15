@@ -51,6 +51,11 @@ enum class Evaluation : uint8_t {
     Runtime = 3,
 };
 
+enum class DiscardResult : bool {
+    No,
+    Yes,
+};
+
 struct Binding {
     enum Kind : uint8_t {
         Value,
@@ -184,7 +189,7 @@ private:
     template<typename... Arguments>
     void typeError(InferBottom, const SourceSpan&, Arguments&&...);
 
-    const Type* infer(AST::Expression&, Evaluation);
+    const Type* infer(AST::Expression&, Evaluation, DiscardResult = DiscardResult::No);
     const Type* resolve(AST::Expression&);
     const Type* lookupType(const AST::Identifier&);
     void inferred(const Type*);
@@ -216,6 +221,7 @@ private:
     const Type* m_inferredType { nullptr };
     const Type* m_returnType { nullptr };
     Evaluation m_evaluation { Evaluation::Runtime };
+    DiscardResult m_discardResult { DiscardResult::No };
 
     TypeStore& m_types;
     Vector<Error> m_errors;
@@ -656,7 +662,15 @@ void TypeChecker::visitVariable(AST::Variable& variable, VariableKind variableKi
 
 void TypeChecker::visit(AST::Function& function)
 {
-    visitAttributes(function.attributes());
+    bool mustUse = false;
+    for (auto& attribute : function.attributes()) {
+        if (is<AST::MustUseAttribute>(attribute)) {
+            mustUse = true;
+            continue;
+        }
+
+        visit(attribute);
+    }
 
     Vector<const Type*> parameters;
     parameters.reserveInitialCapacity(function.parameters().size());
@@ -678,7 +692,7 @@ void TypeChecker::visit(AST::Function& function)
         Base::visit(function.body());
     }
 
-    const Type* functionType = m_types.functionType(WTFMove(parameters), m_returnType);
+    const Type* functionType = m_types.functionType(WTFMove(parameters), m_returnType, mustUse);
     introduceFunction(function.name(), functionType);
 
     m_returnType = nullptr;
@@ -795,9 +809,7 @@ void TypeChecker::visit(AST::AssignmentStatement& statement)
 
 void TypeChecker::visit(AST::CallStatement& statement)
 {
-    auto* result = infer(statement.call(), Evaluation::Runtime);
-    // FIXME: this should check if the function has a must_use attribute
-    UNUSED_PARAM(result);
+    infer(statement.call(), Evaluation::Runtime, DiscardResult::Yes);
 }
 
 void TypeChecker::visit(AST::CompoundAssignmentStatement& statement)
@@ -1247,6 +1259,9 @@ void TypeChecker::visit(AST::CallExpression& call)
                     typeError(call.span(), "funtion call has too ", errorKind, " arguments: expected ", String::number(numberOfParameters), ", found ", String::number(numberOfArguments));
                     return;
                 }
+
+                if (m_discardResult == DiscardResult::Yes && functionType.mustUse)
+                    typeError(InferBottom::No, call.span(), "ignoring return value of function '", targetName, "' annotated with @must_use");
 
                 for (unsigned i = 0; i < numberOfArguments; ++i) {
                     auto& argument = call.arguments()[i];
@@ -1730,6 +1745,9 @@ const Type* TypeChecker::chooseOverload(const char* kind, AST::Expression& expre
     auto overload = resolveOverloads(m_types, it->value.overloads, valueArguments, typeArguments);
     if (overload.has_value()) {
         ASSERT(overload->parameters.size() == callArguments.size());
+        if (m_discardResult == DiscardResult::Yes && it->value.mustUse)
+            typeError(InferBottom::No, expression.span(), "ignoring return value of builtin '", target, "'");
+
         for (unsigned i = 0; i < callArguments.size(); ++i)
             callArguments[i].m_inferredType = overload->parameters[i];
         inferred(overload->result);
@@ -1792,9 +1810,11 @@ const Type* TypeChecker::chooseOverload(const char* kind, AST::Expression& expre
     return m_types.bottomType();
 }
 
-const Type* TypeChecker::infer(AST::Expression& expression, Evaluation evaluation)
+const Type* TypeChecker::infer(AST::Expression& expression, Evaluation evaluation, DiscardResult discardResult)
 {
+    auto discardResultScope = SetForScope(m_discardResult, discardResult);
     auto evaluationScope = SetForScope(m_evaluation, evaluation);
+
     ASSERT(!m_inferredType);
     Base::visit(expression);
     ASSERT(m_inferredType);
