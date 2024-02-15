@@ -332,6 +332,11 @@ static ExceptionOr<ApplePaySessionPaymentRequest> convertAndValidate(Document& d
     }
 #endif
 
+#if ENABLE(APPLE_PAY_DISBURSEMENTS)
+    if (paymentRequest.disbursementPaymentRequest)
+        result.setDisbursementPaymentRequest(WTFMove(*paymentRequest.disbursementPaymentRequest));
+#endif
+
     // FIXME: Merge this validation into the validation we are doing above.
     constexpr OptionSet fieldsToValidate = {
         PaymentRequestValidator::Field::MerchantCapabilities,

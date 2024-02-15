@@ -37,6 +37,9 @@ enum class ApplePayMerchantCapability {
     SupportsEMV,
     SupportsCredit,
     SupportsDebit,
+#if ENABLE(APPLE_PAY_DISBURSEMENTS)
+    SupportsInstantFundsOut
+#endif
 };
 
 ExceptionOr<ApplePaySessionPaymentRequest::MerchantCapabilities> convertAndValidate(const Vector<ApplePayMerchantCapability>&);

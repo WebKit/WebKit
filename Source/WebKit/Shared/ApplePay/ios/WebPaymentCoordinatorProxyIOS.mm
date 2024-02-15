@@ -47,7 +47,16 @@ void WebPaymentCoordinatorProxy::platformCanMakePayments(CompletionHandler<void(
 
 void WebPaymentCoordinatorProxy::platformShowPaymentUI(WebPageProxyIdentifier webPageProxyID, const URL& originatingURL, const Vector<URL>& linkIconURLStrings, const WebCore::ApplePaySessionPaymentRequest& request, CompletionHandler<void(bool)>&& completionHandler)
 {
-    auto paymentRequest = platformPaymentRequest(webPageProxyID, originatingURL, linkIconURLStrings, request);
+
+    RetainPtr<PKPaymentRequest> paymentRequest;
+#if HAVE(PASSKIT_DISBURSEMENTS)
+    std::optional<ApplePayDisbursementPaymentRequest> webDisbursementPaymentRequest = request.disbursementPaymentRequest();
+    if (webDisbursementPaymentRequest) {
+        auto disbursementRequest = platformDisbursementPaymentRequest(request, originatingURL);
+        paymentRequest = RetainPtr<PKPaymentRequest>((PKPaymentRequest *)disbursementRequest);
+    } else
+#endif
+        paymentRequest = platformPaymentRequest(webPageProxyID, originatingURL, linkIconURLStrings, request);
 
     ASSERT(!m_authorizationPresenter);
     m_authorizationPresenter = m_client.paymentCoordinatorAuthorizationPresenter(*this, paymentRequest.get());
