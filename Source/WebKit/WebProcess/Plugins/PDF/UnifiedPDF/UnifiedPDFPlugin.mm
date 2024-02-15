@@ -48,6 +48,7 @@
 #include <WebCore/ChromeClient.h>
 #include <WebCore/ColorCocoa.h>
 #include <WebCore/DictionaryLookup.h>
+#include <WebCore/DictionaryPopupInfo.h>
 #include <WebCore/Editor.h>
 #include <WebCore/EditorClient.h>
 #include <WebCore/FilterOperations.h>
@@ -1998,7 +1999,7 @@ void UnifiedPDFPlugin::performContextMenuAction(ContextMenuItemTag tag, const In
         performWebSearch(selectionString());
         break;
     case ContextMenuItemTag::DictionaryLookup:
-        notImplemented();
+        searchInDictionary(m_currentSelection);
         break;
     case ContextMenuItemTag::Copy:
         performCopyEditingOperation();
@@ -2410,9 +2411,64 @@ bool UnifiedPDFPlugin::findString(const String& target, WebCore::FindOptions opt
     return true;
 }
 
-bool UnifiedPDFPlugin::performDictionaryLookupAtLocation(const FloatPoint&)
+bool UnifiedPDFPlugin::performDictionaryLookupAtLocation(const FloatPoint& rootViewPoint)
 {
+    IntPoint pluginPoint = convertFromRootViewToPlugin(roundedIntPoint(rootViewPoint));
+    IntPoint documentPoint = convertFromPluginToDocument(pluginPoint);
+    auto pageIndex = pageIndexForDocumentPoint(documentPoint);
+    if (!pageIndex)
+        return false;
+
+    auto page = m_documentLayout.pageAtIndex(*pageIndex);
+    RetainPtr lookupSelection = [page selectionForWordAtPoint:convertFromDocumentToPage(documentPoint, *pageIndex)];
+    return searchInDictionary(WTFMove(lookupSelection));
+}
+
+bool UnifiedPDFPlugin::searchInDictionary(const RetainPtr<PDFSelection>& lookupSelection)
+{
+    RetainPtr scaledString = [lookupSelection attributedStringScaled:(m_scaleFactor * m_documentLayout.scale())];
+
+    if (auto selectionBounds = selectionBoundsForFirstPageInDocumentSpace(lookupSelection))
+        return showDefinitionForAttributedString(WTFMove(scaledString), *selectionBounds);
+
     return false;
+}
+
+std::optional<IntRect> UnifiedPDFPlugin::selectionBoundsForFirstPageInDocumentSpace(const RetainPtr<PDFSelection>& selection) const
+{
+    if (!selection)
+        return std::nullopt;
+
+    for (PDFPage *page in [selection pages]) {
+        auto pageIndex = m_documentLayout.indexForPage(page);
+        if (!pageIndex)
+            continue;
+        auto rectForPage = IntRect { [selection boundsForPage:page] };
+        return convertFromPageToDocument(rectForPage, *pageIndex);
+    }
+
+    return std::nullopt;
+}
+
+bool UnifiedPDFPlugin::showDefinitionForAttributedString(RetainPtr<NSAttributedString>&& string, const IntRect& rectInDocumentSpace)
+{
+    auto rectInRootView = convertFromPluginToRootView(convertFromDocumentToPlugin(rectInDocumentSpace));
+
+    DictionaryPopupInfo dictionaryPopupInfo;
+    dictionaryPopupInfo.origin = rectInRootView.location();
+    dictionaryPopupInfo.platformData.attributedString = WebCore::AttributedString::fromNSAttributedString(string.get());
+
+    TextIndicatorData dataForSelection;
+    dataForSelection.selectionRectInRootViewCoordinates = rectInRootView;
+    dataForSelection.textBoundingRectInRootViewCoordinates = rectInRootView;
+    dataForSelection.presentationTransition = TextIndicatorPresentationTransition::FadeIn;
+    dictionaryPopupInfo.textIndicator = dataForSelection;
+
+    if (!m_frame || !m_frame->page())
+        return false;
+
+    m_frame->protectedPage()->send(Messages::WebPageProxy::DidPerformDictionaryLookup(dictionaryPopupInfo));
+    return true;
 }
 
 LookupTextResult UnifiedPDFPlugin::lookupTextAtLocation(const FloatPoint& rootViewPoint, WebHitTestResultData& data)

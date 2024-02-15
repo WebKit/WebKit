@@ -378,7 +378,7 @@ static void expandSelectionByCharacters(PDFSelection *selection, NSInteger numbe
 NSString *DictionaryLookup::stringForPDFSelection(PDFSelection *selection)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    
+
     if (!canCreateRevealItems())
         return nil;
 

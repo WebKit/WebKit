@@ -95,6 +95,7 @@
 - (PDFPoint)firstCharCenter;
 - (/*nullable*/ NSString *)html;
 - (/*nullable*/ NSData *)webArchive;
+- (NSAttributedString *)attributedStringScaled:(CGFloat)scale;
 @end
 
 #endif // HAVE(PDFKIT)
