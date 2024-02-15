@@ -266,6 +266,7 @@ class AcceleratedTimeline;
 
 struct ApplicationManifest;
 struct BoundaryPoint;
+struct CSSParserContext;
 struct ClientOrigin;
 struct FocusOptions;
 struct IntersectionObserverData;
@@ -673,6 +674,9 @@ public:
     const Style::CustomPropertyRegistry& customPropertyRegistry() const;
     const CSSCounterStyleRegistry& counterStyleRegistry() const;
     CSSCounterStyleRegistry& counterStyleRegistry();
+
+    CSSParserContext cssParserContext() const;
+    void invalidateCachedCSSParserContext();
 
     bool gotoAnchorNeededAfterStylesheetsLoad() { return m_gotoAnchorNeededAfterStylesheetsLoad; }
     void setGotoAnchorNeededAfterStylesheetsLoad(bool b) { m_gotoAnchorNeededAfterStylesheetsLoad = b; }
@@ -2583,6 +2587,8 @@ private:
 
     const std::optional<FrameIdentifier> m_frameIdentifier;
     std::optional<bool> m_cachedCookiesEnabled;
+
+    mutable std::unique_ptr<CSSParserContext> m_cachedCSSParserContext;
 };
 
 Element* eventTargetElementForDocument(Document*);

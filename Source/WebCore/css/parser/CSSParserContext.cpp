@@ -72,6 +72,11 @@ CSSParserContext::CSSParserContext(CSSParserMode mode, const URL& baseURL)
     StaticCSSValuePool::init();
 }
 
+CSSParserContext::CSSParserContext(const Document& document)
+{
+    *this = document.cssParserContext();
+}
+
 CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBaseURL, const String& charset)
     : baseURL { sheetBaseURL.isNull() ? document.baseURL() : sheetBaseURL }
     , charset { charset }

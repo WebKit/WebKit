@@ -1238,6 +1238,8 @@ void Document::setCompatibilityMode(DocumentCompatibilityMode mode)
 
     if (CheckedPtr view = renderView())
         view->updateQuirksMode();
+
+    invalidateCachedCSSParserContext();
 }
 
 String Document::compatMode() const
@@ -4145,6 +4147,8 @@ void Document::updateBaseURL()
 
     if (!m_baseURL.isValid())
         m_baseURL = URL();
+
+    invalidateCachedCSSParserContext();
 }
 
 void Document::setBaseURLOverride(const URL& url)
@@ -9915,6 +9919,18 @@ const CSSCounterStyleRegistry& Document::counterStyleRegistry() const
 CSSCounterStyleRegistry& Document::counterStyleRegistry()
 {
     return styleScope().counterStyleRegistry();
+}
+
+CSSParserContext Document::cssParserContext() const
+{
+    if (!m_cachedCSSParserContext)
+        m_cachedCSSParserContext = makeUnique<CSSParserContext>(*this, URL { }, emptyString());
+    return *m_cachedCSSParserContext;
+}
+
+void Document::invalidateCachedCSSParserContext()
+{
+    m_cachedCSSParserContext = { };
 }
 
 const FixedVector<CSSPropertyID>& Document::exposedComputedCSSPropertyIDs()

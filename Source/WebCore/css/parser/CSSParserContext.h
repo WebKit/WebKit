@@ -112,7 +112,8 @@ struct CSSParserContext {
     CSSPropertySettings propertySettings;
 
     CSSParserContext(CSSParserMode, const URL& baseURL = URL());
-    WEBCORE_EXPORT CSSParserContext(const Document&, const URL& baseURL = URL(), const String& charset = emptyString());
+    WEBCORE_EXPORT CSSParserContext(const Document&);
+    CSSParserContext(const Document&, const URL& baseURL, const String& charset = emptyString());
     ResolvedURL completeURL(const String&) const;
 
     bool operator==(const CSSParserContext&) const = default;

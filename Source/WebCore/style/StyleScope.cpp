@@ -828,6 +828,7 @@ void Scope::didChangeStyleSheetEnvironment()
             if (descendantShadowRoot.mode() != ShadowRootMode::UserAgent)
                 const_cast<ShadowRoot&>(descendantShadowRoot).styleScope().scheduleUpdate(UpdateType::ContentsOrInterpretation);
         }
+        m_document->invalidateCachedCSSParserContext();
     }
     scheduleUpdate(UpdateType::ContentsOrInterpretation);
 }
