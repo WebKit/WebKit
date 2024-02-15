@@ -738,7 +738,7 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
                 // we cannot create a Styleable with a PseudoElement.
                 if (auto* renderListItem = dynamicDowncast<RenderListItem>(element.renderer())) {
                     if (renderListItem->markerRenderer())
-                        Styleable(element, PseudoId::Marker).cancelStyleOriginatedAnimations();
+                        Styleable(element, Style::PseudoElementIdentifier { PseudoId::Marker }).cancelStyleOriginatedAnimations();
                 }
             }
 

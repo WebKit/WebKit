@@ -62,10 +62,11 @@ static bool compareStyleOriginatedAnimationOwningElementPositionsInDocumentTreeO
     //     - ::after
     //     - element children
     enum SortingIndex : uint8_t { NotPseudo, Marker, Before, FirstLetter, FirstLine, GrammarError, Highlight, WebKitScrollbar, Selection, SpellingError, After, Other };
-    auto sortingIndex = [](PseudoId pseudoId) -> SortingIndex {
-        switch (pseudoId) {
-        case PseudoId::None:
+    auto sortingIndex = [](const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier) -> SortingIndex {
+        if (!pseudoElementIdentifier)
             return NotPseudo;
+
+        switch (pseudoElementIdentifier->pseudoId) {
         case PseudoId::Marker:
             return Marker;
         case PseudoId::Before:
@@ -96,8 +97,8 @@ static bool compareStyleOriginatedAnimationOwningElementPositionsInDocumentTreeO
     auto& bReferenceElement = b.element;
 
     if (&aReferenceElement == &bReferenceElement) {
-        auto aSortingIndex = sortingIndex(a.pseudoId);
-        auto bSortingIndex = sortingIndex(b.pseudoId);
+        auto aSortingIndex = sortingIndex(a.pseudoElementIdentifier);
+        auto bSortingIndex = sortingIndex(b.pseudoElementIdentifier);
         ASSERT(aSortingIndex != bSortingIndex);
         return aSortingIndex < bSortingIndex;
     }
@@ -212,8 +213,8 @@ static std::optional<bool> compareStyleOriginatedAnimationEvents(const Animation
     if (aTarget == bTarget)
         return false;
 
-    auto aStyleable = Styleable(*checkedDowncast<Element>(aTarget), aAsDStyleOriginatedAnimationEventAnimationEvent->pseudoId());
-    auto bStyleable = Styleable(*checkedDowncast<Element>(bTarget), bAsDStyleOriginatedAnimationEventAnimationEvent->pseudoId());
+    auto aStyleable = Styleable(*checkedDowncast<Element>(aTarget), aAsDStyleOriginatedAnimationEventAnimationEvent->pseudoElementIdentifier());
+    auto bStyleable = Styleable(*checkedDowncast<Element>(bTarget), bAsDStyleOriginatedAnimationEventAnimationEvent->pseudoElementIdentifier());
     return compareStyleOriginatedAnimationOwningElementPositionsInDocumentTreeOrder(aStyleable, bStyleable);
 }
 

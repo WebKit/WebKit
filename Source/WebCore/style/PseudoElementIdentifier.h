@@ -27,6 +27,8 @@
 
 #include "RenderStyleConstants.h"
 #include <wtf/text/AtomString.h>
+#include <wtf/text/AtomStringHash.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore::Style {
 
@@ -35,6 +37,40 @@ struct PseudoElementIdentifier {
 
     // highlight name for ::highlight or view transition name for view transition pseudo elements.
     AtomString nameArgument { nullAtom() };
+
+    friend bool operator==(const PseudoElementIdentifier& a, const PseudoElementIdentifier& b) = default;
 };
 
+inline void add(Hasher& hasher, const PseudoElementIdentifier& pseudoElementIdentifier)
+{
+    add(hasher, pseudoElementIdentifier.pseudoId, pseudoElementIdentifier.nameArgument);
+}
+
+inline WTF::TextStream& operator<<(WTF::TextStream& ts, const PseudoElementIdentifier& pseudoElementIdentifier)
+{
+    ts << "::" << pseudoElementIdentifier.pseudoId;
+    if (!pseudoElementIdentifier.nameArgument.isNull())
+        ts << "(" << pseudoElementIdentifier.nameArgument << ")";
+    return ts;
+}
+
 } // namespace WebCore
+
+namespace WTF {
+
+template<>
+struct HashTraits<std::optional<WebCore::Style::PseudoElementIdentifier>> : GenericHashTraits<std::optional<WebCore::Style::PseudoElementIdentifier>> {
+    typedef std::optional<WebCore::Style::PseudoElementIdentifier> EmptyValueType;
+
+    static constexpr bool emptyValueIsZero = false;
+    static EmptyValueType emptyValue() { return WebCore::Style::PseudoElementIdentifier { WebCore::PseudoId::AfterLastInternalPseudoId, nullAtom() }; }
+};
+
+template<>
+struct DefaultHash<std::optional<WebCore::Style::PseudoElementIdentifier>> {
+    static unsigned hash(const std::optional<WebCore::Style::PseudoElementIdentifier>& data) { return computeHash(data); }
+    static bool equal(const std::optional<WebCore::Style::PseudoElementIdentifier>& a, const std::optional<WebCore::Style::PseudoElementIdentifier>& b) { return a == b; }
+    static const bool safeToCompareToEmptyOrDeleted = false;
+};
+
+} // namespace WTF

@@ -461,7 +461,7 @@ Inspector::Protocol::ErrorStringOr<std::tuple<RefPtr<JSON::ArrayOf<Inspector::Pr
         return makeUnexpected("Element for given nodeId was not connected to DOM tree."_s);
 
     Element* originalElement = element;
-    PseudoId elementPseudoId = element->pseudoId();
+    auto elementPseudoId = element->pseudoId();
     if (elementPseudoId != PseudoId::None) {
         element = downcast<PseudoElement>(*element).hostElement();
         if (!element)
@@ -470,7 +470,7 @@ Inspector::Protocol::ErrorStringOr<std::tuple<RefPtr<JSON::ArrayOf<Inspector::Pr
 
     // Matched rules.
     auto& styleResolver = element->styleResolver();
-    auto matchedRules = styleResolver.pseudoStyleRulesForElement(element, elementPseudoId, Style::Resolver::AllCSSRules);
+    auto matchedRules = styleResolver.pseudoStyleRulesForElement(element, elementPseudoId == PseudoId::None ? std::nullopt : std::optional(Style::PseudoElementIdentifier { elementPseudoId }), Style::Resolver::AllCSSRules);
     auto matchedCSSRules = buildArrayForMatchedRuleList(matchedRules, styleResolver, *element, elementPseudoId);
     RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::PseudoIdMatches>> pseudoElements;
     RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::InheritedStyleEntry>> inherited;

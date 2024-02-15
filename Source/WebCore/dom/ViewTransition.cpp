@@ -30,6 +30,7 @@
 #include "Document.h"
 #include "JSDOMPromise.h"
 #include "JSDOMPromiseDeferred.h"
+#include "PseudoElementRequest.h"
 #include "TypedElementDescendantIteratorInlines.h"
 
 namespace WebCore {
@@ -338,9 +339,23 @@ void ViewTransition::activateViewTransition()
 // https://drafts.csswg.org/css-view-transitions/#handle-transition-frame-algorithm
 void ViewTransition::handleTransitionFrame()
 {
-    bool hasActiveAnimations = false;
+    if (!m_document)
+        return;
 
-    // FIXME: Actually query the animation state.
+    RefPtr documentElement = m_document->documentElement();
+    if (!documentElement)
+        return;
+
+    bool hasActiveAnimations = documentElement->hasKeyframeEffects(Style::PseudoElementIdentifier { PseudoId::ViewTransition });
+
+    for (auto& name : namedElements().keys()) {
+        if (hasActiveAnimations)
+            break;
+        hasActiveAnimations = documentElement->hasKeyframeEffects(Style::PseudoElementIdentifier { PseudoId::ViewTransitionGroup, name })
+            || documentElement->hasKeyframeEffects(Style::PseudoElementIdentifier { PseudoId::ViewTransitionImagePair, name })
+            || documentElement->hasKeyframeEffects(Style::PseudoElementIdentifier { PseudoId::ViewTransitionNew, name })
+            || documentElement->hasKeyframeEffects(Style::PseudoElementIdentifier { PseudoId::ViewTransitionOld, name });
+    }
 
     if (!hasActiveAnimations) {
         m_phase = ViewTransitionPhase::Done;

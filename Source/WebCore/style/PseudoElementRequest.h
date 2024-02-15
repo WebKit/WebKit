@@ -38,6 +38,7 @@ public:
         : m_identifier({ pseudoId })
         , m_scrollbarState(scrollbarState)
     {
+        ASSERT(pseudoId != PseudoId::None);
     }
 
     PseudoElementRequest(PseudoId pseudoId, const AtomString& nameArgument)
@@ -49,6 +50,7 @@ public:
     PseudoElementRequest(const PseudoElementIdentifier& pseudoElementIdentifier)
         : m_identifier(pseudoElementIdentifier)
     {
+        ASSERT(pseudoElementIdentifier.pseudoId != PseudoId::None);
     }
 
     const PseudoElementIdentifier& identifier() const { return m_identifier; }

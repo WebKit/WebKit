@@ -57,7 +57,7 @@ public:
 private:
     CSSTransition(const Styleable&, const AnimatableCSSProperty&, MonotonicTime generationTime, const Animation&, const RenderStyle& oldStyle, const RenderStyle& targetStyle, const RenderStyle& reversingAdjustedStartStyle, double);
     void setTimingProperties(Seconds delay, Seconds duration);
-    Ref<StyleOriginatedAnimationEvent> createEvent(const AtomString& eventType, std::optional<Seconds> scheduledTime, double elapsedTime, PseudoId) final;
+    Ref<StyleOriginatedAnimationEvent> createEvent(const AtomString& eventType, std::optional<Seconds> scheduledTime, double elapsedTime, const std::optional<Style::PseudoElementIdentifier>&) final;
     void resolve(RenderStyle& targetStyle, const Style::ResolutionContext&, std::optional<Seconds>) final;
     void animationDidFinish() final;
     bool isCSSTransition() const final { return true; }

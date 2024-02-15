@@ -1584,7 +1584,7 @@ ExceptionOr<void> WebAnimation::commitStyles()
         return styleDeclaration->copyProperties();
     }();
 
-    auto& keyframeStack = styledElement->ensureKeyframeEffectStack(PseudoId::None);
+    auto& keyframeStack = styledElement->ensureKeyframeEffectStack({ });
 
     auto commitProperty = [&](AnimatableCSSProperty property) {
         // 1. Let partialEffectStack be a copy of the effect stack for property on target.

@@ -51,7 +51,7 @@ public:
 protected:
     
 private:
-    using HashedStyleable = std::pair<Element*, unsigned>;
+    using HashedStyleable = std::pair<Element*, std::optional<Style::PseudoElementIdentifier>>;
     HashSet<HashedStyleable> m_targetsPendingUpdate;
     Seconds m_timeOrigin;
 };

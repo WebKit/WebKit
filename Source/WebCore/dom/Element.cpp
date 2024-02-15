@@ -4004,16 +4004,22 @@ const RenderStyle* Element::existingComputedStyle() const
     return renderOrDisplayContentsStyle();
 }
 
-const RenderStyle* Element::renderOrDisplayContentsStyle(PseudoId pseudoId) const
+const RenderStyle* Element::renderOrDisplayContentsStyle() const
 {
-    if (pseudoId != PseudoId::None) {
-        if (auto* pseudoElement = beforeOrAfterPseudoElement(*this, pseudoId))
+    return renderOrDisplayContentsStyle({ });
+}
+
+const RenderStyle* Element::renderOrDisplayContentsStyle(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier) const
+{
+    if (pseudoElementIdentifier) {
+        if (auto* pseudoElement = beforeOrAfterPseudoElement(*this, pseudoElementIdentifier->pseudoId))
             return pseudoElement->renderOrDisplayContentsStyle();
 
         if (auto* style = renderOrDisplayContentsStyle()) {
-            if (auto* cachedPseudoStyle = style->getCachedPseudoStyle({ pseudoId }))
+            if (auto* cachedPseudoStyle = style->getCachedPseudoStyle(*pseudoElementIdentifier))
                 return cachedPseudoStyle;
         }
+
         return nullptr;
     }
 
@@ -4525,151 +4531,151 @@ IntersectionObserverData* Element::intersectionObserverDataIfExists()
     return hasRareData() ? elementRareData()->intersectionObserverData() : nullptr;
 }
 
-ElementAnimationRareData* Element::animationRareData(PseudoId pseudoId) const
+ElementAnimationRareData* Element::animationRareData(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier) const
 {
-    return hasRareData() ? elementRareData()->animationRareData(pseudoId) : nullptr;
+    return hasRareData() ? elementRareData()->animationRareData(pseudoElementIdentifier) : nullptr;
 }
 
-ElementAnimationRareData& Element::ensureAnimationRareData(PseudoId pseudoId)
+ElementAnimationRareData& Element::ensureAnimationRareData(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
 {
-    return ensureElementRareData().ensureAnimationRareData(pseudoId);
+    return ensureElementRareData().ensureAnimationRareData(pseudoElementIdentifier);
 }
 
-KeyframeEffectStack* Element::keyframeEffectStack(PseudoId pseudoId) const
+KeyframeEffectStack* Element::keyframeEffectStack(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier) const
 {
-    if (auto* animationData = animationRareData(pseudoId))
+    if (auto* animationData = animationRareData(pseudoElementIdentifier))
         return animationData->keyframeEffectStack();
     return nullptr;
 }
 
-KeyframeEffectStack& Element::ensureKeyframeEffectStack(PseudoId pseudoId)
+KeyframeEffectStack& Element::ensureKeyframeEffectStack(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
 {
-    return ensureAnimationRareData(pseudoId).ensureKeyframeEffectStack();
+    return ensureAnimationRareData(pseudoElementIdentifier).ensureKeyframeEffectStack();
 }
 
-bool Element::hasKeyframeEffects(PseudoId pseudoId) const
+bool Element::hasKeyframeEffects(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier) const
 {
-    if (auto* animationData = animationRareData(pseudoId)) {
+    if (auto* animationData = animationRareData(pseudoElementIdentifier)) {
         if (auto* keyframeEffectStack = animationData->keyframeEffectStack())
             return keyframeEffectStack->hasEffects();
     }
     return false;
 }
 
-const AnimationCollection* Element::animations(PseudoId pseudoId) const
+const AnimationCollection* Element::animations(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier) const
 {
-    if (auto* animationData = animationRareData(pseudoId))
+    if (auto* animationData = animationRareData(pseudoElementIdentifier))
         return &animationData->animations();
     return nullptr;
 }
 
-bool Element::hasCompletedTransitionForProperty(PseudoId pseudoId, const AnimatableCSSProperty& property) const
+bool Element::hasCompletedTransitionForProperty(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier, const AnimatableCSSProperty& property) const
 {
-    if (auto* animationData = animationRareData(pseudoId))
+    if (auto* animationData = animationRareData(pseudoElementIdentifier))
         return animationData->completedTransitionsByProperty().contains(property);
     return false;
 }
 
-bool Element::hasRunningTransitionForProperty(PseudoId pseudoId, const AnimatableCSSProperty& property) const
+bool Element::hasRunningTransitionForProperty(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier, const AnimatableCSSProperty& property) const
 {
-    if (auto* animationData = animationRareData(pseudoId))
+    if (auto* animationData = animationRareData(pseudoElementIdentifier))
         return animationData->runningTransitionsByProperty().contains(property);
     return false;
 }
 
-bool Element::hasRunningTransitions(PseudoId pseudoId) const
+bool Element::hasRunningTransitions(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier) const
 {
-    if (auto* animationData = animationRareData(pseudoId))
+    if (auto* animationData = animationRareData(pseudoElementIdentifier))
         return !animationData->runningTransitionsByProperty().isEmpty();
     return false;
 }
 
-const AnimatableCSSPropertyToTransitionMap* Element::completedTransitionsByProperty(PseudoId pseudoId) const
+const AnimatableCSSPropertyToTransitionMap* Element::completedTransitionsByProperty(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier) const
 {
-    if (auto* animationData = animationRareData(pseudoId))
+    if (auto* animationData = animationRareData(pseudoElementIdentifier))
         return &animationData->completedTransitionsByProperty();
     return nullptr;
 }
 
-const AnimatableCSSPropertyToTransitionMap* Element::runningTransitionsByProperty(PseudoId pseudoId) const
+const AnimatableCSSPropertyToTransitionMap* Element::runningTransitionsByProperty(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier) const
 {
-    if (auto* animationData = animationRareData(pseudoId))
+    if (auto* animationData = animationRareData(pseudoElementIdentifier))
         return &animationData->runningTransitionsByProperty();
     return nullptr;
 }
 
-AnimationCollection& Element::ensureAnimations(PseudoId pseudoId)
+AnimationCollection& Element::ensureAnimations(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
 {
-    return ensureAnimationRareData(pseudoId).animations();
+    return ensureAnimationRareData(pseudoElementIdentifier).animations();
 }
 
-CSSAnimationCollection& Element::animationsCreatedByMarkup(PseudoId pseudoId)
+CSSAnimationCollection& Element::animationsCreatedByMarkup(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
 {
-    return ensureAnimationRareData(pseudoId).animationsCreatedByMarkup();
+    return ensureAnimationRareData(pseudoElementIdentifier).animationsCreatedByMarkup();
 }
 
-void Element::setAnimationsCreatedByMarkup(PseudoId pseudoId, CSSAnimationCollection&& animations)
+void Element::setAnimationsCreatedByMarkup(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier, CSSAnimationCollection&& animations)
 {
-    if (animations.isEmpty() && !animationRareData(pseudoId))
+    if (animations.isEmpty() && !animationRareData(pseudoElementIdentifier))
         return;
-    ensureAnimationRareData(pseudoId).setAnimationsCreatedByMarkup(WTFMove(animations));
+    ensureAnimationRareData(pseudoElementIdentifier).setAnimationsCreatedByMarkup(WTFMove(animations));
 }
 
-AnimatableCSSPropertyToTransitionMap& Element::ensureCompletedTransitionsByProperty(PseudoId pseudoId)
+AnimatableCSSPropertyToTransitionMap& Element::ensureCompletedTransitionsByProperty(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
 {
-    return ensureAnimationRareData(pseudoId).completedTransitionsByProperty();
+    return ensureAnimationRareData(pseudoElementIdentifier).completedTransitionsByProperty();
 }
 
-AnimatableCSSPropertyToTransitionMap& Element::ensureRunningTransitionsByProperty(PseudoId pseudoId)
+AnimatableCSSPropertyToTransitionMap& Element::ensureRunningTransitionsByProperty(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
 {
-    return ensureAnimationRareData(pseudoId).runningTransitionsByProperty();
+    return ensureAnimationRareData(pseudoElementIdentifier).runningTransitionsByProperty();
 }
 
-const RenderStyle* Element::lastStyleChangeEventStyle(PseudoId pseudoId) const
+const RenderStyle* Element::lastStyleChangeEventStyle(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier) const
 {
-    if (auto* animationData = animationRareData(pseudoId))
+    if (auto* animationData = animationRareData(pseudoElementIdentifier))
         return animationData->lastStyleChangeEventStyle();
     return nullptr;
 }
 
-void Element::setLastStyleChangeEventStyle(PseudoId pseudoId, std::unique_ptr<const RenderStyle>&& style)
+void Element::setLastStyleChangeEventStyle(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier, std::unique_ptr<const RenderStyle>&& style)
 {
-    if (auto* animationData = animationRareData(pseudoId))
+    if (auto* animationData = animationRareData(pseudoElementIdentifier))
         animationData->setLastStyleChangeEventStyle(WTFMove(style));
     else if (style)
-        ensureAnimationRareData(pseudoId).setLastStyleChangeEventStyle(WTFMove(style));
+        ensureAnimationRareData(pseudoElementIdentifier).setLastStyleChangeEventStyle(WTFMove(style));
 }
 
-bool Element::hasPropertiesOverridenAfterAnimation(PseudoId pseudoId) const
+bool Element::hasPropertiesOverridenAfterAnimation(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier) const
 {
-    if (auto* animationData = animationRareData(pseudoId))
+    if (auto* animationData = animationRareData(pseudoElementIdentifier))
         return animationData->hasPropertiesOverridenAfterAnimation();
     return false;
 }
 
-void Element::setHasPropertiesOverridenAfterAnimation(PseudoId pseudoId, bool value)
+void Element::setHasPropertiesOverridenAfterAnimation(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier, bool value)
 {
-    if (auto* animationData = animationRareData(pseudoId)) {
+    if (auto* animationData = animationRareData(pseudoElementIdentifier)) {
         animationData->setHasPropertiesOverridenAfterAnimation(value);
         return;
     }
     if (value)
-        ensureAnimationRareData(pseudoId).setHasPropertiesOverridenAfterAnimation(true);
+        ensureAnimationRareData(pseudoElementIdentifier).setHasPropertiesOverridenAfterAnimation(true);
 }
 
-void Element::cssAnimationsDidUpdate(PseudoId pseudoId)
+void Element::cssAnimationsDidUpdate(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
 {
-    ensureAnimationRareData(pseudoId).cssAnimationsDidUpdate();
+    ensureAnimationRareData(pseudoElementIdentifier).cssAnimationsDidUpdate();
 }
 
-void Element::keyframesRuleDidChange(PseudoId pseudoId)
+void Element::keyframesRuleDidChange(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
 {
-    ensureAnimationRareData(pseudoId).keyframesRuleDidChange();
+    ensureAnimationRareData(pseudoElementIdentifier).keyframesRuleDidChange();
 }
 
-bool Element::hasPendingKeyframesUpdate(PseudoId pseudoId) const
+bool Element::hasPendingKeyframesUpdate(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier) const
 {
-    auto* data = animationRareData(pseudoId);
+    auto* data = animationRareData(pseudoElementIdentifier);
     return data && data->hasPendingKeyframesUpdate();
 }
 
@@ -5371,7 +5377,7 @@ Vector<RefPtr<WebAnimation>> Element::getAnimations(std::optional<GetAnimationsO
     document->updateStyleIfNeeded();
 
     Vector<RefPtr<WebAnimation>> animations;
-    if (auto* effectStack = keyframeEffectStack(PseudoId::None)) {
+    if (auto* effectStack = keyframeEffectStack({ })) {
         for (auto& effect : effectStack->sortedEffects()) {
             if (effect->animation()->isRelevant())
                 animations.append(effect->animation());
