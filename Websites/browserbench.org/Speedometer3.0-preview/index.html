@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=850" />
+        <title>Speedometer 3.0</title>
+        <link rel="stylesheet" href="resources/main.css" />
+        <link rel="icon" href="resources/favicon.png" />
+        <script src="resources/main.mjs" type="module"></script>
+    </head>
+    <body>
+        <main>
+            <section id="home">
+                <a href="#home" class="logo">
+                    <img srcset="resources/logo@2x.png 2x" src="resources/logo.png" alt="Speedometer" />
+                    <div class="version">3.0</div>
+                </a>
+                <div class="content">
+                    <p>Speedometer is a browser benchmark that measures the responsiveness of Web applications. It uses demo web applications to simulate user actions such as adding to-do items.</p>
+                    <p id="screen-size-warning">
+                        <strong>
+                            Your browser window is too small. For most accurate results, please make the view port size at least <span id="min-screen-width">850px</span> by <span id="min-screen-height">650px</span>.<br />
+                            It's currently <span id="screen-size"></span>.
+                        </strong>
+                    </p>
+                </div>
+                <div class="buttons">
+                    <div class="button-row">
+                        <button class="start-tests-button">Start Test</button>
+                    </div>
+                    <div class="button-row">
+                        <a href="#about">About Speedometer</a>
+                    </div>
+                </div>
+            </section>
+
+            <section id="running">
+                <a href="#home" class="logo">
+                    <img srcset="resources/logo@2x.png 2x" src="resources/logo.png" alt="Speedometer" />
+                    <div class="version">3.0</div>
+                </a>
+                <div id="testContainer"></div>
+                <div id="progress">
+                    <progress aria-label="Progress" id="progress-completed"></progress>
+                </div>
+                <div id="info">
+                    <div id="info-label"></div>
+                    <div id="info-progress"></div>
+                </div>
+            </section>
+
+            <section id="summary">
+                <a href="#home" class="logo">
+                    <img srcset="resources/logo@2x.png 2x" src="resources/logo.png" alt="Speedometer" />
+                    <div class="version">3.0</div>
+                </a>
+                <h1>Score</h1>
+                <div class="gauge">
+                    <div class="window"><div class="needle"></div></div>
+                </div>
+                <hr />
+                <div id="result-number"></div>
+                <div id="confidence-number"></div>
+                <div class="buttons">
+                    <div class="button-row">
+                        <button class="start-tests-button" title="Discard the current results and re-run all tests.">Test Again</button>
+                        <a class="button" href="#details" id="show-details" title="Show detailed results data.">Details</a>
+                    </div>
+                </div>
+            </section>
+
+            <section id="details">
+                <a href="#home" class="logo">
+                    <img srcset="resources/logo@2x.png 2x" src="resources/logo.png" alt="Speedometer" />
+                    <div class="version">3.0</div>
+                </a>
+                <div class="section-grid">
+                    <h1 class="section-header">Detailed Results</h1>
+                    <div class="section-content all-metric-results">
+                        <div class="aggregated-metric-result">
+                            <h2>Geomean</h2>
+                            <div id="geomean-chart"></div>
+                            <h2>Tests</h2>
+                            <div id="tests-chart"></div>
+                        </div>
+                        <br />
+                        <h2>Detailed Metrics</h2>
+                        <div id="metrics-results"></div>
+                    </div>
+                    <div class="buttons section-footer">
+                        <div class="button-row">
+                            <button class="start-tests-button" title="Discard the current results and re-run all tests.">Test Again</button>
+                            <a class="button" href="#summary" title="Go back to the simplified summary view.">Summary</a>
+                        </div>
+                        <div class="button-row export-buttons">
+                            <button id="copy-full-json" title="Copy full result metrics as json string.">Copy JSON</button>
+                            <a class="button" id="download-full-json" title="Download full result metrics as json string.">Download JSON</a>
+                            <a class="button" id="download-classic-json" title="Download backwards-compatible result metrics as json string.">Download Classic JSON</a>
+                            <a class="button" id="download-csv" title="Download all result metrics as CSV string.">Download CSV</a>
+                            <button id="copy-csv" title="Copy all result metrics as CSV string.">Copy CSV</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="about">
+                <a href="#home" class="logo">
+                    <img srcset="resources/logo@2x.png 2x" src="resources/logo.png" alt="Speedometer" />
+                    <div class="version">3.0</div>
+                </a>
+                <div class="section-grid">
+                    <h1 class="section-header">About Speedometer 3</h1>
+                    <div class="section-content">
+                        <p>Speedometer 3 is a benchmark for web browsers that measures Web application responsiveness by timing simulated user interactions on various workloads.</p>
+                        <p>
+                            The following high level user journeys are implemented in the current version. Each of these journeys has one or more workloads which test important aspects of it - for example commonly used patterns, frameworks, or
+                            technologies.
+                        </p>
+                        <ul>
+                            <li>Working with a todo list</li>
+                            <ul>
+                                <li>Measures the time to add, complete, and remove 100 todo items in a basic list.</li>
+                                <li>Each example implements the same todo application (TodoMVC) using different techniques and frameworks.</li>
+                                <li>
+                                    Workloads: <a href="resources/todomvc/vanilla-examples/javascript-es5/readme.md" target="_blank">TodoMVC-JavaScript-ES5</a>,
+                                    <a href="resources/todomvc/vanilla-examples/javascript-web-components/readme.md" target="_blank">TodoMVC-WebComponents</a>,
+                                    <a href="resources/todomvc/architecture-examples/react-complex/readme.md" target="_blank">TodoMVC-React-Complex-DOM</a>,
+                                    <a href="resources/todomvc/architecture-examples/backbone/readme.md" target="_blank">TodoMVC-Backbone</a>, <a href="resources/todomvc/architecture-examples/angular/readme.md" target="_blank">TodoMVC-Angular</a>,
+                                    <a href="resources/todomvc/architecture-examples/vue/readme.md" target="_blank">TodoMVC-Vue</a>, <a href="resources/todomvc/architecture-examples/jquery/readme.md" target="_blank">TodoMVC-jQuery</a>,
+                                    <a href="resources/todomvc/architecture-examples/preact/readme.md" target="_blank">TodoMVC-Preact</a>, <a href="resources/todomvc/architecture-examples/svelte/readme.md" target="_blank">TodoMVC-Svelte</a>,
+                                    <a href="resources/todomvc/architecture-examples/lit/readme.md" target="_blank">TodoMVC-Lit</a>
+                                </li>
+                            </ul>
+                            <li>Editing rich text</li>
+                            <ul>
+                                <li>Loading and styling text inside WYSIWYG and code editors.</li>
+                                <li>Workloads: <a href="resources/editors/readme.md" target="_blank">Editor-CodeMirror</a>, <a href="resources/editors/readme.md" target="_blank">Editor-TipTap</a></li>
+                            </ul>
+                            <li>Rendering charts</li>
+                            <ul>
+                                <li>Loading and interacting with SVG and canvas charts.</li>
+                                <li>
+                                    Workloads: <a href="resources/charts/readme.md" target="_blank">Charts-observable-plot</a>, <a href="resources/charts/readme.md" target="_blank">Charts-chartjs</a>,
+                                    <a href="resources/react-stockcharts/readme.md" target="_blank">React-Stockcharts-SVG</a>, <a href="resources/perf.webkit.org/readme.md" target="_blank">Perf-Dashboard</a>
+                                </li>
+                            </ul>
+                            <li>Reading a news site</li>
+                            <ul>
+                                <li>Navigating across pages and interacting with a typical looking news site.</li>
+                                <li>Workloads: <a href="resources/newssite/news-next/readme.md" target="_blank">NewsSite-Next</a>, <a href="resources/newssite/news-nuxt/readme.md" target="_blank">NewsSite-Nuxt</a></li>
+                            </ul>
+                        </ul>
+
+                        <p class="note"><strong>Notes about methodology</strong></p>
+                        <ul>
+                            <li>Although user-driven actions like mouse movements and keyboard input cannot be fully emulated in JavaScript, Speedometer does its best to faithfully replay a typical workload within the demo applications.</li>
+                            <li>To make the run time long enough to measure with the limited precision, we synchronously execute a large number of the operations, such as adding one hundred to-do items.</li>
+                            <li>
+                                Modern browser engines execute some work asynchronously as an optimization strategy to reduce the run time of synchronous operations. While returning control back to JavaScript execution as soon as possible is worth
+                                pursuing, the run time cost of such an asynchronous work should still be taken into a holistic measurement of web application performance. In addition, some JavaScript frameworks call into DOM APIs asynchronously as an
+                                optimization technique. Speedometer approximates the run time of this asynchronous work in the UI thread with a zero-second timer that is scheduled immediately after each execution of synchronous operations.
+                            </li>
+                            <li>Speedometer does not attempt to measure concurrent asynchronous work (e.g. in Web Workers).</li>
+                            <li>Speedometer should not be used as a way to compare the performance of different JavaScript frameworks.</li>
+                            <li>
+                                The goal of all workloads is to represent a scenario that could be found on the Web. Although all workloads strive to use patterns that are commonly used, some implementation details are Speedometer specific and should
+                                not be used as a guideline on how to implement and deploy a standalone app. For example, due to constraints within the test harness, workloads must not depend on a server infrastructure to function properly and are
+                                built as static files ahead of time.
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="buttons section-footer">
+                        <div class="button-row">
+                            <a class="button" href="#home" title="Show main section.">Home</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </body>
+</html>

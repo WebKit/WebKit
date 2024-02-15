@@ -1,0 +1,66 @@
+:root {
+    font-family: "Helvetica Neue", Helvetica, Verdana, sans-serif;
+    line-height: 1.5;
+    font-weight: 400;
+    font-size: 13px;
+
+    color: #213547;
+    background-color: #ffffff;
+
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-text-size-adjust: none; /* Note that Firefox implements this with the webkit prefix. */
+    text-size-adjust: none;
+}
+
+a {
+    font-weight: 500;
+    color: #646cff;
+    text-decoration: inherit;
+}
+
+a:hover {
+    color: #747bff;
+}
+
+body {
+    margin: 0;
+    display: flex;
+    min-width: 320px;
+    height: 100vh;
+    padding: 5px;
+    box-sizing: border-box;
+}
+
+h1 {
+    font-size: 3.2em;
+    line-height: 1.1;
+}
+
+#app {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+#editor {
+    flex: 1;
+    overflow: auto;
+    padding: 2px 5px;
+}
+
+#controls {
+    display: flex;
+    padding-bottom: 5px;
+}
+
+#controls button {
+    display: flex;
+    align-items: center;
+    margin: 0 2px;
+    padding: 2px;
+}
+
+#controls button.active {
+    color: blue;
+}

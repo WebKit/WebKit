@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- This document needs to a valid XML to be parsed by xml.dom.minidom.parse in tools/bundle-v3-scripts -->
+    <meta charset="utf-8" />
+    <title>Performance Dashboard is Loading...</title>
+
+    <link rel="prefetch" href="../data/manifest.json" />
+
+    <style>
+        html, body {
+            padding: 0;
+            margin: 0;
+        }
+
+        body {
+            font-family: 'San Francisco', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-weight: 300;
+            min-width: 50rem;
+        }
+    </style>
+
+    <script>
+        // Load indivisual JS files when bundled-scripts.js failed to load as a fallback during development.
+        function loadUnbundledScripts() {
+            var scripts = document.getElementById('unbundled-scripts').content.cloneNode(true).querySelectorAll('script');
+
+            console.log(
+`Loading ${scripts.length} JS files using the slow path for development.
+Run tools/bundle-v3-scripts to speed up the load time for production.`);
+
+            for (var i = 0; !(i >= scripts.length); i++) {
+                scripts[i].async = false;
+                document.head.appendChild(scripts[i]);
+            }
+        }
+
+        // BEGIN - Speedometer Specific Code
+        Date.now = () => +new Date('2023-05-12T08:35:00');
+
+        const fetchedPaths = [
+            "/data/manifest.json",
+            "/api/analysis-tasks-platform=55-metric=1649",
+            "/api/analysis-tasks-platform=55-metric=1407",
+            "/api/analysis-tasks-platform=55-metric=1648",
+            "/api/analysis-tasks-platform=55-metric=1974",
+            "/data/measurement-set-55-1649.json",
+            "/data/measurement-set-55-1407.json",
+            "/data/measurement-set-55-1648.json",
+            "/data/measurement-set-55-1974.json",
+            "/data/measurement-set-55-1649-1682812800000.json",
+            "/data/measurement-set-55-1407-1682812800000.json",
+            "/data/measurement-set-55-1648-1682812800000.json",
+            "/data/measurement-set-55-1974-1682812800000.json"
+        ];
+        const cachedJSONs = {};
+        var startTest;
+        let rAFCallbacks = [];
+
+        function serviceRAF()
+        {
+            const callbackList = rAFCallbacks;
+            rAFCallbacks = [];
+            for (const callback of callbackList)
+                callback();
+        }
+
+        function getChartPane()
+        {
+            const elements = document.querySelectorAll('*');
+            const pageShadow = document.querySelector('page-component').component()._shadow;
+            return pageShadow.querySelector('chart-pane').component()._shadow.querySelector('.chart-pane');
+        }
+
+        function getChartCanvas()
+        {
+            return getChartPane().querySelector('interactive-time-series-chart').component()._shadow.querySelector('canvas');
+        }
+
+        function openCharts()
+        {
+            location.hash = '/charts/?since=1678991819934\u0026paneList=((55-1649-53731881-null-(5-2.5-500))-(55-1407-null-null-(5-2.5-500))-(55-1648-null-null-(5-2.5-500))-(55-1974-null-null-(5-2.5-500)))';
+        }
+
+        function mockAPIs() {
+            RemoteAPI.sendHttpRequest = async function (path, method, contentType, content, options = {}) {
+                if (path == '/data/manifest.json') {
+                    await Promise.all(fetchedPaths.map(async (url) => {
+                        const response = await fetch('..' + url);
+                        cachedJSONs[url] = await response.text();
+                    }));
+                    const promise = new Promise((resolve) => {
+                        startTest = resolve;
+                    });
+                    const div = document.createElement('div');
+                    div.id = 'app-is-ready';
+                    document.body.appendChild(div);
+                    await promise;
+                }
+                path = path.replaceAll('\u003f', '-').replaceAll('\u0026', '-');
+                if (!cachedJSONs[path]) {
+                    alert('Unexpected fetching of ' + path)
+                }
+                return {status: 200, responseText: cachedJSONs[path]};
+            }
+
+            AsyncTask.isAvailable = () => { return false; }
+            requestAnimationFrame = (callback) => rAFCallbacks.push(callback);
+        }
+        // END - Speedometer Specific Code
+    </script>
+
+    <template id="unbundled-scripts">
+        <script src="../shared/statistics.js"></script>
+        <script src="../shared/common-remote.js"></script>
+        <script src="../shared/common-component-base.js"></script>
+
+        <script src="instrumentation.js"></script>
+        <script src="remote.js"></script>
+        <script src="privileged-api.js"></script>
+        <script src="async-task.js"></script>
+        <script src="lazily-evaluated-function.js"></script>
+        <script src="commit-set-range-bisector.js"></script>
+
+        <script src="models/time-series.js"></script>
+        <script src="models/measurement-adaptor.js"></script>
+        <script src="models/measurement-cluster.js"></script>
+        <script src="models/measurement-set.js"></script>
+        <script src="models/analysis-results.js"></script>
+        <script src="models/data-model.js"></script>
+        <script src="models/commit-log.js"></script>
+        <script src="models/platform.js"></script>
+        <script src="models/platform-group.js"></script>
+        <script src="models/builder.js"></script>
+        <script src="models/test.js"></script>
+        <script src="models/metric.js"></script>
+        <script src="models/repository.js"></script>
+        <script src="models/bug-tracker.js"></script>
+        <script src="models/bug.js"></script>
+        <script src="models/analysis-task.js"></script>
+        <script src="models/test-group.js"></script>
+        <script src="models/build-request.js"></script>
+        <script src="models/commit-set.js"></script>
+        <script src="models/triggerable.js"></script>
+        <script src="models/uploaded-file.js"></script>
+        <script src="models/manifest.js"></script>
+
+        <script src="components/base.js"></script>
+        <script src="components/spinner-icon.js"></script>
+        <script src="components/button-base.js"></script>
+        <script src="components/warning-icon.js"></script>
+        <script src="components/close-button.js"></script>
+        <script src="components/commit-log-viewer.js"></script>
+        <script src="components/owned-commit-viewer.js"></script>
+        <script src="components/editable-text.js"></script>
+        <script src="components/expand-collapse-button.js"></script>
+        <script src="components/time-series-chart.js"></script>
+        <script src="components/interactive-time-series-chart.js"></script>
+        <script src="components/dashboard-chart-status-view.js"></script>
+        <script src="components/pane-selector.js"></script>
+        <script src="components/bar-graph-group.js"></script>
+        <script src="components/results-table.js"></script>
+        <script src="components/analysis-results-viewer.js"></script>
+        <script src="components/test-group-results-viewer.js"></script>
+        <script src="components/test-group-revision-table.js"></script>
+        <script src="components/test-group-form.js"></script>
+        <script src="components/customizable-test-group-form.js"></script>
+        <script src="components/chart-styles.js"></script>
+        <script src="components/chart-status-evaluator.js"></script>
+        <script src="components/chart-revision-range.js"></script>
+        <script src="components/chart-pane-base.js"></script>
+        <script src="components/mutable-list-view.js"></script>
+        <script src="components/analysis-task-bug-list.js"></script>
+        <script src="components/ratio-bar-graph.js"></script>
+        <script src="components/custom-analysis-task-configurator.js"></script>
+        <script src="components/custom-configuration-test-group-form.js"></script>
+        <script src="components/instant-file-uploader.js"></script>
+        <script src="components/freshness-indicator.js"></script>
+        <script src="components/plus-button.js"></script>
+        <script src="components/minus-button.js"></script>
+        <script src="components/combo-box.js"></script>
+        <script src="components/repetition-type-selection.js"></script>
+
+        <script src="pages/page.js"></script>
+        <script src="pages/page-router.js"></script>
+        <script src="pages/heading.js"></script>
+        <script src="pages/toolbar.js"></script>
+        <script src="pages/page-with-heading.js"></script>
+        <script src="pages/domain-control-toolbar.js"></script>
+        <script src="pages/dashboard-toolbar.js"></script>
+        <script src="pages/dashboard-page.js"></script>
+        <script src="pages/chart-pane-status-view.js"></script>
+        <script src="pages/chart-pane.js"></script>
+        <script src="pages/charts-toolbar.js"></script>
+        <script src="pages/charts-page.js"></script>
+        <script src="pages/analysis-category-toolbar.js"></script>
+        <script src="pages/analysis-category-page.js"></script>
+        <script src="pages/analysis-task-page.js"></script>
+        <script src="pages/create-analysis-task-page.js"></script>
+        <script src="pages/build-request-queue-page.js"></script>
+        <script src="pages/summary-page.js"></script>
+        <script src="pages/test-freshness-page.js"></script>
+
+        <script src="main.js"></script>
+    </template>
+    <script src="bundled-scripts.js" onerror="loadUnbundledScripts()"></script>
+</head>
+<body>
+</body>
+</html>

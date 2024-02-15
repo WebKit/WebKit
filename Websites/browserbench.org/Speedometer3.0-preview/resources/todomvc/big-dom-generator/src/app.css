@@ -1,0 +1,508 @@
+/*
+Importing the CSS from the Spectrum CSS library.
+*/
+@import "@spectrum-css/vars/dist/spectrum-global.css";
+@import "@spectrum-css/vars/dist/spectrum-medium.css";
+@import "@spectrum-css/vars/dist/spectrum-light.css";
+@import "@spectrum-css/tokens/dist/index.css";
+@import "@spectrum-css/actionbutton/dist/index-vars.css";
+@import "@spectrum-css/clearbutton/dist/index-vars.css";
+@import "@spectrum-css/page/dist/index-vars.css";
+@import "@spectrum-css/textfield/dist/index-vars.css";
+@import "@spectrum-css/search/dist/index-vars.css";
+@import "@spectrum-css/treeview/dist/index-vars.css";
+@import "@spectrum-css/button/dist/index-vars.css";
+@import "@spectrum-css/actiongroup/dist/index-vars.css";
+@import "@spectrum-css/actionbutton/dist/index-vars.css";
+@import "@spectrum-css/menu/dist/index-vars.css";
+@import "@spectrum-css/popover/dist/index-vars.css";
+@import "@spectrum-css/divider/dist/index-vars.css";
+@import "@spectrum-css/datepicker/dist/index-vars.css";
+@import "@spectrum-css/picker/dist/index-vars.css";
+@import "@spectrum-css/pickerbutton/dist/index-vars.css";
+@import "@spectrum-css/calendar/dist/index-vars.css";
+@import "@spectrum-css/typography/dist/index-vars.css";
+@import "@spectrum-css/card/dist/index-vars.css";
+@import "@spectrum-css/progressbar/dist/index-vars.css";
+@import "@spectrum-css/stepper/dist/index-vars.css";
+@import "@spectrum-css/fieldlabel/dist/index-vars.css";
+@import "@spectrum-css/taggroup/dist/index-vars.css";
+@import "@spectrum-css/tag/dist/index-vars.css";
+@import "@spectrum-css/switch/dist/index-vars.css";
+@import "@spectrum-css/fieldgroup/dist/index-vars.css";
+@import "@spectrum-css/checkbox/dist/index-vars.css";
+@import "@spectrum-css/asset/dist/index-vars.css";
+@import "@spectrum-css/dialog/dist/index-vars.css";
+@import "@spectrum-css/radio/dist/index-vars.css";
+@import "@spectrum-css/quickaction/dist/index-vars.css";
+@import "@spectrum-css/buttongroup/dist/index-vars.css";
+@import "@spectrum-css/closebutton/dist/index-vars.css";
+@import "@spectrum-css/modal/dist/index-vars.css";
+@import "@spectrum-css/helptext/dist/index-vars.css";
+@import "@spectrum-css/table/dist/index-vars.css";
+@import "@spectrum-css/icon/dist/index-vars.css";
+@import "@spectrum-css/steplist/dist/index-vars.css";
+
+/*
+@spectrum-css overrides
+*/
+
+.spectrum-Popover.is-open {
+    z-index: 2;
+}
+
+.spectrum-Popover--bottom {
+    left: 0px;
+}
+
+.spectrum-Popover--bottom-right {
+    right: 0px;
+}
+
+.spectrum-TreeView-item,
+.spectrum-TreeView-itemLink {
+    overflow: visible;
+}
+
+[dir="ltr"] .spectrum-TreeView-itemIndicator {
+    margin-left: calc(-1 * var(--spectrum-treeview-item-affordance-size));
+}
+
+.spectrum-DatePicker-textfield {
+    --spectrum-textfield-border-color: rgb(0, 0, 0);
+    --spectrum-textfield-border-width: 1px;
+    max-width: 158px;
+    display: flex;
+}
+
+.spectrum-Stepper {
+    min-width: 100px;
+    --mod-actionbutton-icon-size: 10px;
+}
+
+.ribbon .spectrum-Stepper > .spectrum-Textfield {
+    --spectrum-textfield-border-color: rgb(0, 0, 0);
+    --spectrum-textfield-border-width: 1px;
+    min-width: 30px;
+}
+
+/*
+The visibility of closed spectrum TreeView items is set to hidden
+and the spectrum rule making the open TreeView items visible is
+.spectrum-TreeView-item.is-open > .spectrum-TreeView {
+    visibility: visible;
+}
+This can cause descendants of closed tree view items to be visible.
+Our code only closes the TreeView items at the threshold depth of
+the tree, so we unset the visibility to let the open itmes inherit
+the visibility from their parents.
+*/
+.spectrum-TreeView-item.is-open > .spectrum-TreeView {
+    visibility: unset;
+}
+
+/* 
+We've chosen some items of the side TreeView to be hidden using
+display: none instead of visibility: hidden. We unset their visibility
+and height values set by spectrum CSS.
+*/
+.display-none {
+    display: none;
+    visibility: unset !important;
+    height: auto !important;
+}
+
+/*
+Layout CSS for the UI.
+*/
+
+body {
+    max-width: 800px;
+}
+
+.main-ui {
+    display: grid;
+    grid-template-columns: 3% 22% 75%;
+    grid-template-rows: 50px 50px minmax(0, 100%);
+    height: 100vh;
+}
+
+.top-bar {
+    grid-column-start: 2;
+    grid-column-end: 4;
+    grid-row-start: 1;
+    grid-row-end: 2;
+    display: inline-flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px;
+    max-height: 50px;
+}
+
+.context-help-popover-body {
+    max-width: 150px;
+    padding: 10px;
+    top: 30px;
+}
+
+.profile-card-popover {
+    padding: 5px;
+    top: 30px;
+    width: 150px;
+}
+
+.todo-area {
+    grid-column-start: 3;
+    grid-column-end: 4;
+    grid-row-start: 3;
+    grid-row-end: 4;
+}
+
+.ribbon {
+    grid-column-start: 1;
+    grid-column-end: 4;
+    grid-row-start: 2;
+    grid-row-end: 3;
+    display: grid;
+    grid-auto-flow: column;
+    align-items: center;
+    gap: 5px;
+    margin: 5px 3px;
+    padding: 5px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    max-height: 40px;
+}
+
+.ribbon-divider {
+    height: 75%;
+}
+
+.date-picker-popover {
+    position: absolute;
+    width: 280px;
+    top: 100%;
+    left: 0px;
+}
+
+.filter-input {
+    max-width: 150px;
+}
+
+.tree-area {
+    grid-column-start: 1;
+    grid-column-end: 3;
+    grid-row-start: 3;
+    grid-row-end: 4;
+    background-color: white;
+    overflow-y: scroll;
+    padding-left: 5px;
+}
+
+.task-list-icon {
+    padding-left: 14px;
+}
+
+.show-more {
+    grid-column-start: 1;
+    grid-column-end: 2;
+    grid-row-start: 1;
+    grid-row-end: 2;
+    justify-self: start;
+    align-self: center;
+}
+
+.show-more > div > ul li:hover {
+    border-color: #db7676;
+}
+
+/* Analytics pop-over */
+/* Change color of the progress bar according to the status */
+.analytics-group [data-status="1"] > :last-child > div {
+    background-color: orangered;
+}
+
+.analytics-group [data-status="2"] > :last-child > div {
+    background-color: orange;
+}
+
+.analytics-group [data-status="3"] > :last-child > div {
+    background-color: greenyellow;
+}
+
+.analytics-group [data-status="4"] > :last-child > div {
+    background-color: green;
+}
+
+.analytics-group > div > * > div > * {
+    width: 200px;
+}
+
+/* Filter pop-over */
+.filter-group > div > div > :first-child > * {
+    max-width: 150px;
+}
+
+.filter-group > div > div > :first-child label {
+    padding-top: 1px;
+    padding-bottom: 1px;
+}
+
+.filter-group .spectrum-Stepper > label {
+    margin-left: 3px;
+    margin-right: 3px;
+    align-self: center;
+}
+
+.filter-group .spectrum-TagGroup > div {
+    padding-right: 6px;
+}
+
+.filter-group > div > div > :last-child {
+    display: flex;
+    direction: column;
+    justify-content: flex-end;
+}
+
+.filter-group .spectrum-Stepper > span > button {
+    padding-left: 3px;
+}
+
+.filter-group .spectrum-Tag > * {
+    display: inline;
+    white-space: nowrap;
+}
+
+/* Top bar */
+.top-bar-buttons {
+    position: relative;
+}
+
+.top-bar-buttons > div > div > ul li:hover {
+    border-color: #db7676;
+}
+
+/* Notifications popover */
+
+.notifications-group > div > * {
+    gap: 3px;
+}
+.notifications-group ul {
+    padding-inline-start: 0;
+    list-style-type: none;
+    margin-bottom: 0;
+    margin-top: 0;
+}
+
+.notifications-group .notifications-list > li {
+    padding-left: 0;
+    margin-bottom: 4px;
+    border-left-width: 3px;
+    border-left-style: solid;
+    border-left-color: greenyellow;
+}
+
+.notifications-group .notifications-list > li[data-priority="0"] {
+    border-left-color: red;
+}
+
+.notifications-group .notifications-list > li[data-priority="1"] {
+    border-left-color: yellow;
+}
+
+.notifications-group .notifications-list li > div > :nth-child(2) {
+    margin-left: 4px;
+}
+
+.notifications-group .notifications-list > li > div > label {
+    padding-left: 4px;
+    padding-right: 4px;
+    display: inline;
+    white-space: nowrap;
+}
+
+.notifications-group .notifications-list > li > div > :last-child {
+    font-size: 8px;
+}
+
+.notifications-group .notifications-list > li div {
+    display: grid;
+    grid-template-columns: 10% 50% 40%;
+    grid-template-rows: 1fr;
+    justify-items: start;
+    align-items: center;
+}
+
+.notifications-group .notifications-list > li div :first-child {
+    grid-column-start: 1;
+    grid-column-end: 2;
+}
+
+.notifications-group > div > :first-child > div {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 5px;
+}
+
+.notifications-group .notification-tabs > .is-active {
+    border-bottom: 2px solid #b83f45;
+}
+
+.notifications-group > div > div > button {
+    width: 96px;
+    font-size: 10px;
+    margin-left: 2px;
+}
+
+.notifications-group > div > div > button:hover {
+    color: #b83f45;
+}
+
+.notifications-group .notifications-list .completed > div > input:checked ~ label {
+    text-decoration: line-through;
+    color: #b83f45;
+}
+
+.notifications-list > li:hover {
+    background-color: lightgrey;
+    opacity: 1;
+}
+
+/* Reminder pop-over */
+
+.reminder-group > div {
+    display: flex;
+    flex-direction: column;
+    padding: 5px;
+}
+
+.reminder-group .high-priority > :checked ~ label {
+    color: red;
+}
+
+.reminder-group .high-priority:hover > :checked ~ label {
+    color: red;
+}
+
+.reminder-group [type="text"]input {
+    width: auto;
+}
+
+.reminder-group > div > * > :nth-child(3) > div,
+.reminder-group > div > * > :nth-child(4) > div {
+    grid-template-columns: 20% 80%;
+    grid-template-rows: 1fr;
+}
+
+.reminder-group .is-invalid ~ * button {
+    visibility: hidden;
+}
+
+/* Backlog pop-over */
+
+.backlog-group > div > ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.backlog-group li > div {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr 2fr;
+    grid-template-rows: 1fr;
+}
+
+.backlog-group li > div > label {
+    display: inline;
+    white-space: nowrap;
+}
+
+.backlog-group li > div > :last-child {
+    justify-self: end;
+    line-height: var(--spectrum-checkbox-line-height);
+    margin-block-start: var(--spectrum-checkbox-top-to-text);
+    margin-inline-start: var(--spectrum-checkbox-text-to-control);
+    grid-column-start: 4;
+    grid-column-end: 5;
+}
+
+.backlog-group li > div > :first-child {
+    grid-column-start: 1;
+    grid-column-end: 2;
+}
+
+.backlog-group li > div > :nth-child(2) {
+    grid-column-start: 1;
+    grid-column-end: 2;
+}
+
+.backlog-group li > div > :nth-child(3) {
+    grid-column-start: 2;
+    grid-column-end: 3;
+}
+
+.backlog-group li > div > :checked ~ label {
+    text-decoration: line-through;
+}
+
+.backlog-group li :checked ~ div > * {
+    color: white;
+}
+
+.backlog-group li :last-child button {
+    background-color: white;
+    border-color: black;
+    border-width: 1px;
+}
+
+/* Timeline pop-over */
+
+.timeline-group > div {
+    display: flex;
+    flex-direction: column;
+    padding: 5px;
+}
+
+.timeline-group > .spectrum-Popover--bottom-right.is-open {
+    transform: scale(0.8) translateX(200px);
+    margin-top: -25px;
+}
+
+.timeline-group ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.timeline-group > div > ul > li {
+    display: grid;
+    grid-template-columns: 1fr 4fr 1fr;
+    grid-template-rows: 1fr;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    align-items: center;
+}
+
+.timeline-group > div > ul > li > :nth-child(2) {
+    padding-top: calc(var(--spectrum-steplist-topPadding) / 2);
+    padding-bottom: calv(var(--spectrum-steplist-bottomPadding) / 2);
+}
+
+.timeline-group input[value=""] + div {
+    opacity: 50%;
+}
+
+.timeline-group > div > ul > li > :last-child {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    column-gap: 5px;
+}
+
+.timeline-group input[value=""] ~ div > button {
+    background-color: red;
+}
+
+.timeline-group input:not([value=""]) ~ div > :last-child {
+    visibility: hidden;
+}

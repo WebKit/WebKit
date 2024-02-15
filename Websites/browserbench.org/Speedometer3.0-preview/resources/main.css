@@ -1,0 +1,792 @@
+:root {
+    --viewport-width: 800px;
+    --viewport-height: 600px;
+    --foreground: rgb(235, 235, 235);
+    --foreground-alpha: rgba(235, 235, 235, 0.2);
+    --inactive-color: rgb(128, 128, 128);
+    --background: rgb(46, 51, 55);
+    --running-background: #f5f5f5;
+    --highlight: rgb(232, 79, 79);
+    --text-width: 650px;
+    --metrics-line-height: 25px;
+    --scrollbar-width: 10px;
+}
+
+body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: "Helvetica Neue", Helvetica, Verdana, sans-serif;
+}
+
+::selection {
+    color: var(--background);
+    background-color: var(--foreground);
+}
+
+::-webkit-scrollbar,
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-corner {
+    background-color: var(--background);
+}
+::-webkit-scrollbar,
+::-webkit-scrollbar-track {
+    background-color: var(--inactive-color);
+    border-radius: 8px;
+    width: var(--scrollbar-width);
+    height: var(--scrollbar-width);
+}
+::-webkit-scrollbar-thumb {
+    background-color: var(--foreground);
+    border-radius: 8px;
+    cursor: pointer;
+}
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--foreground);
+}
+
+thead {
+    vertical-align: bottom;
+}
+
+h1,
+button,
+.button {
+    font-family: "Futura-Medium", Futura, "Helvetica Neue", Helvetica, Verdana, sans-serif;
+}
+.button {
+    text-decoration: none;
+}
+
+code {
+    font-family: Menlo, Monaco, monospace;
+    font-size: smaller;
+}
+
+hr {
+    border: 1px solid var(--foreground);
+    width: 50%;
+    margin: 40px auto;
+}
+
+img {
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-user-drag: none;
+}
+
+.no-select {
+    user-select: none;
+}
+
+main {
+}
+
+.logo {
+    position: absolute;
+    left: -70px;
+    top: 155px;
+    width: 75px;
+    height: 406px;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.version {
+    transform: rotate(-90deg);
+    font-size: 65px;
+    font-family: Futura-Medium, Futura, Roboto, "Helvetica Neue", Helvetica, Verdana, sans-serif;
+    font-style: italic;
+    letter-spacing: -0.05em;
+    position: absolute;
+    right: 0;
+    top: -105px;
+}
+
+h1 {
+    margin-top: 30px;
+    font-size: 40px;
+    font-weight: normal;
+    color: var(--foreground);
+    text-align: center;
+}
+
+h2 {
+    font-weight: normal;
+    text-align: center;
+    color: var(--foreground);
+}
+
+h3 {
+    margin: 10px 0 6px 0;
+    font-weight: normal;
+    text-align: center;
+}
+
+p {
+    font-size: 16px;
+    line-height: 21px;
+}
+
+a {
+    color: inherit;
+}
+
+li {
+    font-size: 16px;
+    line-height: 21px;
+}
+
+li + li {
+    margin-top: 21px;
+}
+
+li + ul > li {
+    margin-top: 0;
+}
+
+li + ul {
+    margin-bottom: 21px;
+}
+
+.buttons {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+}
+
+section#home > .buttons {
+    margin-top: 80px;
+}
+
+.button-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    margin: 5px 0px;
+}
+
+button,
+.button {
+    appearance: none;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    margin: 0px;
+    padding: 0px;
+    text-align: center;
+}
+
+.button {
+    box-sizing: border-box;
+    text-decoration: none;
+}
+
+.buttons button,
+.buttons .button {
+    appearance: none;
+    border: 3px solid var(--foreground);
+    border-radius: 10px;
+    min-width: 200px;
+    padding: 5px 0px;
+    margin: 0 20px;
+    font-size: 25px;
+    color: var(--foreground);
+    background-color: transparent;
+    cursor: pointer;
+    user-select: none;
+}
+
+.buttons button:active {
+    background-color: var(--foreground);
+    color: var(--background);
+    border-color: var(--foreground) !important;
+}
+
+.buttons button:focus {
+    outline: none;
+    border-color: var(--highlight);
+}
+
+.developer-mode {
+    border-radius: 10px;
+    padding: 1rem;
+    background: #602525;
+    border: 3px solid rgba(255, 255, 255, 0.5);
+    position: fixed;
+    left: 10px;
+    top: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.developer-mode summary {
+    user-select: none;
+    cursor: pointer;
+    padding: 1rem;
+    margin: -1rem;
+}
+
+.developer-mode-content {
+    flex: 1;
+    max-height: 80vh;
+    overflow: auto;
+    margin-right: calc(0px - var(--scrollbar-width));
+    padding-right: var(--scrollbar-width);
+}
+
+.developer-mode-content ol {
+    list-style: none;
+    padding: 0;
+    margin: 1em 0 0.5em 0;
+}
+.developer-mode-content .button-bar {
+    display: flex;
+    margin-top: 5px;
+    gap: 3px;
+}
+
+.developer-mode-content li + li {
+    margin-top: 0px;
+}
+
+.developer-mode-content button {
+    background: white;
+    flex: auto;
+    padding: 4px;
+    appearance: button;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    border-radius: 10px;
+}
+.developer-mode-content .tag {
+    border-radius: 100vh;
+    color: white;
+    background: rgba(255, 255, 255, 0.1);
+}
+.developer-mode-content label {
+    width: 100%;
+    display: inline-block;
+}
+.developer-mode-content hr {
+    width: initial;
+    margin: 10px 0;
+}
+
+section {
+    display: none;
+    --padding-width: 15px;
+    --border-width: 6px;
+    position: absolute;
+    width: var(--viewport-width);
+    height: var(--viewport-height);
+    top: 50%;
+    left: 50%;
+    margin-top: calc(var(--viewport-height) / -2 - var(--padding-width) - var(--border-width));
+    margin-left: calc(var(--viewport-width) / -2 - var(--padding-width) - var(--border-width));
+    padding: var(--padding-width);
+    border: var(--border-width) solid var(--foreground);
+    border-radius: 20px;
+}
+
+section:target {
+    display: block;
+}
+
+section > p {
+    margin: 10px 20px;
+}
+
+#testContainer {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    width: var(--viewport-width);
+    height: var(--viewport-height);
+}
+
+section#home p {
+    margin: 0 auto;
+    width: 70%;
+    text-align: center;
+}
+
+section#home .content {
+    margin-top: 160px;
+    text-align: center;
+}
+
+button.show-about {
+    margin-top: 100px;
+    font-size: 16px;
+    clear: both;
+}
+
+#screen-size-warning {
+    display: none;
+}
+
+#progress {
+    position: absolute;
+    bottom: -6px;
+    left: 60px;
+    right: 60px;
+    height: 6px;
+    border-left: 6px solid var(--background);
+    border-right: 6px solid var(--background);
+}
+
+#progress-completed {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 6px;
+    width: 100%;
+    appearance: none;
+    border: none;
+    background-color: var(--inactive-color);
+}
+
+#progress-completed::-webkit-progress-value {
+    background-color: var(--foreground);
+}
+
+#progress-completed::-moz-progress-bar {
+    background-color: var(--foreground);
+}
+
+#progress .iteration-marker {
+    position: absolute;
+    width: 6px;
+    height: 100%;
+    background-color: var(--background);
+}
+
+#info {
+    position: absolute;
+    bottom: -25px;
+    left: 60px;
+    right: 60px;
+    height: 12px;
+    color: var(--inactive-color);
+    text-align: center;
+    font-size: 12px;
+}
+#info-label {
+    position: absolute;
+    left: 6px;
+}
+#info-progress {
+    position: absolute;
+    right: 6px;
+    text-align: right;
+}
+
+iframe.test-runner {
+    background: var(--running-background);
+}
+
+section#summary > #result-number,
+section#summary > #confidence-number {
+    font-family: "Futura-CondensedMedium", Futura, "Helvetica Neue", Helvetica, Verdana, sans-serif;
+}
+
+section#summary > #result-number {
+    text-align: center;
+    font-size: 145px;
+    line-height: 145px;
+}
+
+section#summary > #confidence-number {
+    text-align: center;
+    font-size: 36px;
+    line-height: 36px;
+    color: var(--inactive-color);
+}
+
+section#details {
+    --viewport-height: max(600px, 90vh);
+    --viewport-width: max(800px, 80vw);
+}
+
+section#details .results-table {
+    float: left;
+    width: 50%;
+}
+
+section#details .export-buttons {
+    justify-content: center;
+    margin-bottom: 0;
+}
+section#details .export-buttons button,
+section#details .export-buttons .button {
+    padding: 5px 10px;
+    min-width: auto;
+    font-size: 14px;
+    margin: 0 3px;
+}
+
+section#details .arithmetic-mean {
+    clear: both;
+    padding-top: 32px;
+    text-align: center;
+}
+
+section#details .arithmetic-mean > label {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+section#details button.show-about {
+    margin-top: 30px;
+}
+
+section#details h1 {
+    margin-bottom: 10px;
+}
+
+section#about .section-content > * {
+    width: var(--text-width);
+    padding-left: calc((var(--viewport-width) - var(--text-width)) / 2);
+}
+
+section#details:target {
+    display: flex;
+    flex-direction: column;
+}
+
+section#details .all-metric-results {
+    flex: auto;
+    overflow-y: auto;
+    padding: 0px 10px;
+}
+
+section#details .arithmetic-mean {
+    clear: both;
+    padding-top: 32px;
+    text-align: center;
+}
+
+section#details .arithmetic-mean > label {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+section#details h1 {
+    margin-bottom: 10px;
+}
+
+section#details .metric {
+    margin: 0px 0 10px 0;
+    display: inline-block;
+    width: 100%;
+}
+section#details .metric dd {
+    margin-left: 0;
+}
+
+.submetrics h3 {
+    font-size: medium;
+}
+.metrics-table thead .prefix {
+    text-align: center;
+}
+
+.metrics-table thead th {
+    font-weight: normal;
+    text-align: left;
+    border-bottom: 1px var(--foreground) solid;
+    padding: 0 4px 3px 0px;
+}
+.metrics-table thead th + th {
+    padding: 0 4px 3px 4px;
+}
+
+.nowrap {
+    white-space: nowrap;
+}
+
+table .number {
+    text-align: right;
+}
+
+.chart-legend {
+    display: inline;
+    padding-left: 10px;
+    vertical-align: top;
+    margin-top: 0;
+    line-height: var(--metrics-line-height);
+    border-collapse: collapse;
+}
+
+.chart-legend td {
+    padding: 0 5px 0 0;
+    max-width: calc(var(--viewport-width) * 0.22);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    direction: rtl;
+    text-align: left;
+}
+
+section#details h1 {
+    margin-bottom: 10px;
+}
+
+section#about h1 {
+    margin-top: 10px;
+    margin-bottom: 0px;
+    font-size: 25px;
+}
+
+section#about .note {
+    color: var(--inactive-color);
+}
+
+.section-grid {
+    display: grid;
+    width: 100%;
+    height: 100%;
+    grid-template-rows: auto 1fr auto;
+    grid-template-areas:
+        "header"
+        "content"
+        "footer";
+}
+
+.section-header {
+    grid-area: header;
+}
+.section-content {
+    grid-area: content;
+    overflow-y: auto;
+}
+.section-footer {
+    grid-area: footer;
+}
+
+.gauge {
+    position: relative;
+    width: 738px;
+    height: 78px;
+    background-image: -webkit-image-set(url("gauge@2x.png") 2x, url("gauge.png") 1x);
+    background-image: image-set(url("gauge@2x.png") 2x, url("gauge.png") 1x);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    margin: 0 auto;
+}
+
+.gauge > .window {
+    position: absolute;
+    left: 0;
+    top: 33px;
+    bottom: 0;
+    right: 0;
+    overflow: hidden;
+}
+
+.gauge > .window > .needle {
+    position: absolute;
+    left: 363px;
+    bottom: -88px;
+    width: 4px;
+    height: 400px;
+    background-color: rgb(247, 148, 29);
+    transform: rotate(-70deg);
+    transform-origin: 2px 400px;
+}
+
+.all-metric-results .submetrics {
+    display: none;
+    margin-left: 35px;
+}
+.all-metric-results .submetrics.visible {
+    display: block;
+}
+
+.metric-chart {
+    display: grid;
+    grid-template-columns: calc((var(--viewport-width) - 120px) / 2) 1fr;
+}
+
+.metric-chart-relative {
+    display: none;
+}
+
+.relative-charts .metric-chart-absolute {
+    display: none;
+}
+.relative-charts .metric-chart-relative {
+    display: block;
+}
+
+.details-toggle {
+    display: inline-block;
+    cursor: pointer;
+    user-select: none;
+    margin-left: -4px;
+}
+.details-toggle input {
+    display: inline-block;
+    appearance: none;
+    width: 1em;
+    height: 1em;
+    border: none;
+    background: none;
+}
+.details-toggle input:after {
+    content: "▶";
+    color: var(--foreground);
+    display: inline-block;
+    transform-origin: 50%;
+    position: relative;
+    transition: all 250ms ease;
+}
+.details-toggle input:checked:after {
+    transform: rotate(90deg);
+}
+
+/* Charts (lib/charts.js) */
+.bar-chart text,
+.scatter-plot text {
+    font-size: 11px;
+    fill: var(--foreground);
+    dominant-baseline: hanging;
+}
+.bar-chart .axis,
+.scatter-plot .axis {
+    stroke: #aaa;
+}
+.bar-chart .minMax {
+    stroke: var(--foreground);
+    stroke-width: 1;
+    stroke-opacity: 0.5;
+    stroke-dasharray: 2;
+}
+.bar-chart .mean {
+    stroke: var(--foreground);
+    stroke-width: 2;
+    stroke-opacity: 0.5;
+}
+.bar-chart .mean:hover {
+    stroke-opacity: 1;
+}
+.bar-chart g.bar {
+    fill: #8ad;
+}
+.bar-chart g.bar.large text {
+    display: none;
+}
+.bar-chart g.bar:hover {
+    filter: brightness(1.1);
+}
+.bar-chart g.bar text {
+    fill: #ddd;
+    text-anchor: middle;
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+.bar-chart g.bar:hover text {
+    display: block;
+    fill: #fff;
+    text-shadow: 0 0 5px #000;
+}
+.bar-chart .label {
+    text-anchor: end;
+    dominant-baseline: middle;
+}
+
+.scatter-plot .marker {
+    stroke-width: 0px;
+    opacity: 0.8;
+    fill: currentColor;
+    cursor: crosshair;
+}
+.scatter-plot .marker:hover {
+    opacity: 1;
+    filter: drop-shadow(0 0 2px currentColor);
+}
+.scatter-plot .percentile {
+    fill: currentColor;
+    fill-opacity: 0.3;
+    stroke-width: 0px;
+}
+.scatter-plot .percentile line {
+    stroke-width: 1px;
+}
+.scatter-plot .percentile:hover {
+    opacity: 1;
+}
+
+/* Chart colors */
+.chart .blue {
+    color: #5b9aff;
+    stroke: #5b9aff;
+}
+
+.chart .blue-light {
+    color: #5bd6ff;
+    stroke: #5bd6ff;
+}
+
+.chart .green-light {
+    color: #73d147;
+    stroke: #73d147;
+}
+
+.chart .green {
+    color: #94bc4b;
+    stroke: #94bc4b;
+}
+
+.chart .yellow {
+    color: #ded300;
+    stroke: #ded300;
+}
+
+.chart .orange {
+    color: #fe8f06;
+    stroke: #fe8f06;
+}
+
+.chart .red {
+    color: #de4040;
+    stroke: #de4040;
+}
+
+.chart .magenta {
+    color: #cd1e90;
+    stroke: #cd1e90;
+}
+
+.chart .violet {
+    color: #a41ecd;
+    stroke: #a41ecd;
+}
+
+.chart .purple {
+    color: #7b3eff;
+    stroke: #7b3eff;
+}
+
+.chart .blue-dark {
+    color: #2d4ef7;
+    stroke: #2d4ef7;
+}
+
+.chart .green-dark {
+    color: #349a58;
+    stroke: #349a58;
+}
+
+.chart .ochre {
+    color: #cc9900;
+    stroke: #cc9900;
+}
+
+.chart .rust {
+    color: #cc5200;
+    stroke: #cc5200;
+}
+
+.chart .white {
+    color: #fff;
+    stroke: #fff;
+}
