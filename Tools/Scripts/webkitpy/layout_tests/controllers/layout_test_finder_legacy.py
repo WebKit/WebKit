@@ -30,8 +30,6 @@ import errno
 import json
 import logging
 import re
-import sys
-import urllib
 
 from webkitpy.common import find_files
 from webkitpy.layout_tests.models.test import Test
@@ -176,9 +174,7 @@ class LayoutTestFinder(object):
             if "web-platform-tests" not in f:
                 expanded.append(f)
                 continue
-            m = re.search("^(?P<path>[^?#]*)(?P<variant>(?P<query>\\?[^#]*)?(?P<fragment>#.*)?)$", f)
-            f = m.group("path")
-            passed_variant = self._percent_encoded_variant(m.group("variant"))
+            f, variant_separator, passed_variant = f.partition('?')
             opened_file = fs.open_text_file_for_reading(f)
             try:
                 first_line = opened_file.readline()
@@ -186,15 +182,23 @@ class LayoutTestFinder(object):
                     expanded.append(f)
                     continue
 
-                variants = []
                 if first_line.strip() == TEMPLATED_TEST_HEADER:
+                    variants = []
                     for line in iter(opened_file.readline, ''):
                         results = re.match(r'<!--\s*META:\s*variant=(\S*)\s*-->', line)
                         if not results:
                             continue
                         variant = results.group(1)
-                        variants.append(variant)
+                        if self._is_valid_variant(variant):
+                            variants.append(variant)
+                    if variants:
+                        for variant in variants:
+                            if not passed_variant or variant.startswith(variant_separator + passed_variant):
+                                expanded.append(f + variant)
+                    else:
+                        expanded.append(f)
                 else:
+                    variants = []
                     for line in iter(opened_file.readline, ''):
                         try:
                             line = line.lstrip()
@@ -216,47 +220,20 @@ class LayoutTestFinder(object):
                             while line[end_index] not in end_chars:
                                 end_index += 1
                             variant = line[start_index:end_index]
-                            variants.append(variant)
+                            if self._is_valid_variant(variant):
+                                variants.append(line[start_index:end_index])
                         except IndexError:
                             continue
-
-                variants = [v for v in variants if self._is_valid_variant(v)]
-                if len(variants):
-                    for variant in variants:
-                        variant = self._percent_encoded_variant(variant)
-                        if not passed_variant or variant.startswith(passed_variant):
-                            expanded.append(f + variant)
-                else:
-                    expanded.append(f)
+                    if len(variants):
+                        for variant in variants:
+                            if not passed_variant or variant.startswith(variant_separator + passed_variant):
+                                expanded.append(f + variant)
+                    else:
+                        expanded.append(f)
             except UnicodeDecodeError:
                 expanded.append(f)
                 continue
         return expanded
-
-    def _percent_encoded_variant(self, variant):
-        m = re.search("^(?P<path>[^?#]*)(?P<variant>(?P<query>\\?[^#]*)?(?P<fragment>#.*)?)$", variant)
-        path, _, query, fragment = m.groups()
-        assert m.group("path") == ""
-
-        # This is all code points not in the "query percent-encode set" [URL], minus
-        # characters urllib.parse.quote never quotes.
-        safe_query = "!$%&'()*+,/:;=?@[\\]^`{|}~"
-
-        # This is all code points not in the "fragment percent-encode set" [URL], minus
-        # characters urllib.parse.quote never quotes.
-        safe_fragment = "!#$%&'()*+,/:;=?@[\\]^{|}~"
-
-        query = "" if query is None else query
-        fragment = "" if fragment is None else fragment
-
-        if sys.version_info > (3,):
-            query = urllib.parse.quote(query, safe=safe_query, encoding="utf-8")
-            fragment = urllib.parse.quote(fragment, safe=safe_fragment, encoding="utf-8")
-        else:
-            query = urllib.quote(query.encode("utf-8"), safe=safe_query).decode("ascii")
-            fragment = urllib.quote(fragment.encode("utf-8"), safe=safe_fragment).decode("ascii")
-
-        return "{}{}".format(query, fragment)
 
     def _is_valid_variant(self, variant):
         return variant == "" or (len(variant) > 1 and variant[0] in ("?", "#")) and variant != "?#"

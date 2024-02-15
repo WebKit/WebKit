@@ -399,9 +399,6 @@ class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
 <meta name="variant" content="?#">
 <meta name="variant" content="?1#a">
 <meta name="variant" content="nonsense">
-<meta name=variant content="?only open()ed, not aborted">
-<meta name=variant content="?aborted immediately after send()">
-<meta name=variant content="?call abort() after TIME_NORMAL_LOAD">
         """)
         tests_found = [t.test_path for t in finder.find_tests_by_path(find_paths)]
         self.assertEqual(
@@ -412,47 +409,9 @@ class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
                 "web-platform-tests/variant_test.html#a-m",
                 "web-platform-tests/variant_test.html#n-z",
                 "web-platform-tests/variant_test.html?1#a",
-                "web-platform-tests/variant_test.html?only%20open()ed,%20not%20aborted",
-                "web-platform-tests/variant_test.html?aborted%20immediately%20after%20send()",
-                "web-platform-tests/variant_test.html?call%20abort()%20after%20TIME_NORMAL_LOAD",
             ],
             tests_found,
         )
-
-    def test_find_template_variants_meta_passed_variants(self):
-        finder = self.finder
-
-        path = finder._port.layout_tests_dir() + "/web-platform-tests/variant_test.html"
-
-        find_paths = [
-            path + "?a b",
-            path + "?c%20d",
-            path + "#m n",
-            path + "#o%20p",
-            path + "?e%20f#q%20r",
-        ]
-
-        finder._filesystem.maybe_make_directory(finder._filesystem.dirname(path))
-        finder._filesystem.write_text_file(
-            path,
-            """<!doctype html>
-<meta name=variant content="?a b">
-<meta name=variant content="?c%20d">
-<meta name=variant content="#m n">
-<meta name=variant content="#o%20p">
-<meta name=variant content="?e f#q r">
-        """,
-        )
-        tests_found = [t.test_path for t in finder.find_tests_by_path(find_paths)]
-        self.assertEqual(
-            ['web-platform-tests/variant_test.html?a%20b',
-             'web-platform-tests/variant_test.html?c%20d',
-             'web-platform-tests/variant_test.html#m%20n',
-             'web-platform-tests/variant_test.html#o%20p',
-             'web-platform-tests/variant_test.html?e%20f#q%20r'],
-            tests_found,
-        )
-
 
     def test_find_template_variants_comment(self):
         find_paths = ["web-platform-tests"]
