@@ -67,8 +67,8 @@ static std::optional<InlineItemRange> partialRangeForDamage(const InlineItemList
         ASSERT_NOT_REACHED();
         return { };
     }
-    auto& damagedInlineItem = inlineItemList[damageStartPosition.index];
-    if (damageStartPosition.offset && (!is<InlineTextItem>(damagedInlineItem) || damageStartPosition.offset >= downcast<InlineTextItem>(damagedInlineItem).length())) {
+    auto* damagedInlineTextItem = dynamicDowncast<InlineTextItem>(inlineItemList[damageStartPosition.index]);
+    if (damageStartPosition.offset && (!damagedInlineTextItem || damageStartPosition.offset >= damagedInlineTextItem->length())) {
         ASSERT_NOT_REACHED();
         return { };
     }
@@ -78,7 +78,11 @@ static std::optional<InlineItemRange> partialRangeForDamage(const InlineItemList
 static bool isEmptyInlineContent(const InlineItemList& inlineItemList)
 {
     // Very common, pseudo before/after empty content.
-    return inlineItemList.size() == 1 && is<InlineTextItem>(inlineItemList[0]) && !downcast<InlineTextItem>(inlineItemList[0]).length();
+    if (inlineItemList.size() != 1)
+        return false;
+
+    auto* inlineTextItem = dynamicDowncast<InlineTextItem>(inlineItemList[0]);
+    return inlineTextItem && !inlineTextItem->length();
 }
 
 InlineFormattingContext::InlineFormattingContext(const ElementBox& rootBlockContainer, LayoutState& layoutState, BlockLayoutState& parentBlockLayoutState)

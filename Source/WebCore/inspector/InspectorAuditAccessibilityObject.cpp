@@ -68,7 +68,8 @@ ExceptionOr<Vector<Ref<Node>>> InspectorAuditAccessibilityObject::getElementsByC
 
     Vector<Ref<Node>> nodes;
 
-    for (Element& element : descendantsOfType<Element>(is<ContainerNode>(container) ? downcast<ContainerNode>(*container) : document)) {
+    auto* containerNode = dynamicDowncast<ContainerNode>(container);
+    for (Element& element : descendantsOfType<Element>(containerNode ? *containerNode : document)) {
         if (auto* axObject = accessibilityObjectForNode(element)) {
             if (axObject->computedRoleString() == role)
                 nodes.append(element);
@@ -275,10 +276,8 @@ ExceptionOr<RefPtr<Node>> InspectorAuditAccessibilityObject::getMouseEventNode(N
 {
     ERROR_IF_NO_ACTIVE_AUDIT();
 
-    if (auto* axObject = accessibilityObjectForNode(node)) {
-        if (is<AccessibilityNodeObject>(axObject))
-            return downcast<AccessibilityNodeObject>(axObject)->mouseButtonListener(MouseButtonListenerResultFilter::IncludeBodyElement);
-    }
+    if (auto* accessibilityNodeObject = dynamicDowncast<AccessibilityNodeObject>(accessibilityObjectForNode(node)))
+        return accessibilityNodeObject->mouseButtonListener(MouseButtonListenerResultFilter::IncludeBodyElement);
 
     return nullptr;
 }

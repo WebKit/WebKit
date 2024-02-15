@@ -44,7 +44,11 @@ static bool isBoxEligibleForNonLineBuilderMinimumWidth(const ElementBox& box)
 
 static bool isContentEligibleForNonLineBuilderMaximumWidth(const ElementBox& rootBox, const InlineItemList& inlineItemList)
 {
-    return inlineItemList.size() == 1 && inlineItemList[0].isText() && !downcast<InlineTextItem>(inlineItemList[0]).isWhitespace() && rootBox.style().textIndent() == RenderStyle::initialTextIndent();
+    if (inlineItemList.size() != 1 || rootBox.style().textIndent() != RenderStyle::initialTextIndent())
+        return false;
+
+    auto* inlineTextItem = dynamicDowncast<InlineTextItem>(inlineItemList[0]);
+    return inlineTextItem && !inlineTextItem->isWhitespace();
 }
 
 static bool isSubtreeEligibleForNonLineBuilderMinimumWidth(const ElementBox& root)
@@ -72,7 +76,7 @@ static bool mayUseContentWidthBetweenLineBreaksAsMaximumSize(const ElementBox& r
     if (!TextUtil::shouldPreserveSpacesAndTabs(rootBox))
         return false;
     for (auto& inlineItem : inlineItemList) {
-        if (inlineItem.isText() && !downcast<InlineTextItem>(inlineItem).width()) {
+        if (auto* inlineTextItem = dynamicDowncast<InlineTextItem>(inlineItem); inlineTextItem && !inlineTextItem->width()) {
             // We can't accumulate individual inline items when width depends on position (e.g. tab).
             return false;
         }
@@ -232,15 +236,14 @@ InlineLayoutUnit IntrinsicWidthHandler::simplifiedMinimumWidth(const ElementBox&
     auto maximumWidth = InlineLayoutUnit { };
 
     for (auto* child = root.firstChild(); child; child = child->nextInFlowSibling()) {
-        if (child->isInlineTextBox()) {
-            auto& inlineTextBox = downcast<InlineTextBox>(*child);
-            auto& fontCascade = inlineTextBox.style().fontCascade();
-            auto contentLength = inlineTextBox.content().length();
+        if (auto* inlineTextBox = dynamicDowncast<InlineTextBox>(*child)) {
+            auto& fontCascade = inlineTextBox->style().fontCascade();
+            auto contentLength = inlineTextBox->content().length();
             size_t index = 0;
             while (index < contentLength) {
-                auto characterLength = TextUtil::firstUserPerceivedCharacterLength(inlineTextBox, index, contentLength - index);
+                auto characterLength = TextUtil::firstUserPerceivedCharacterLength(*inlineTextBox, index, contentLength - index);
                 ASSERT(characterLength);
-                maximumWidth = std::max(maximumWidth, TextUtil::width(inlineTextBox, fontCascade, index, index + characterLength, { }, TextUtil::UseTrailingWhitespaceMeasuringOptimization::No));
+                maximumWidth = std::max(maximumWidth, TextUtil::width(*inlineTextBox, fontCascade, index, index + characterLength, { }, TextUtil::UseTrailingWhitespaceMeasuringOptimization::No));
                 index += characterLength;
             }
             continue;
