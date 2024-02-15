@@ -780,7 +780,7 @@ void RenderLayerBacking::updateBackdropFiltersGeometry()
 
     FloatRoundedRect backdropFiltersRect;
     if (renderBox->style().hasBorderRadius() && !renderBox->hasClip()) {
-        auto roundedBoxRect = renderBox->roundedBorderBoxRect();
+        auto roundedBoxRect = renderBox->borderRoundedRect();
         roundedBoxRect.move(contentOffsetInCompositingLayer());
         backdropFiltersRect = roundedBoxRect.pixelSnappedRoundedRectForPainting(deviceScaleFactor());
     } else {
