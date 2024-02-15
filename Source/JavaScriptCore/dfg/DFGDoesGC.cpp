@@ -313,7 +313,9 @@ bool doesGC(Graph& graph, Node* node)
     case HasIndexedProperty:
     case HasOwnProperty:
     case InById:
+    case InByIdMegamorphic:
     case InByVal:
+    case InByValMegamorphic:
     case HasPrivateName:
     case HasPrivateBrand:
     case InstanceOf:

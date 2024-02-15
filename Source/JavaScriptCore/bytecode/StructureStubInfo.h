@@ -707,6 +707,7 @@ private:
     RefPtr<PolymorphicAccessJITStubRoutine> m_getByValMegamorphic;
     RefPtr<PolymorphicAccessJITStubRoutine> m_getByValWithThisMegamorphic;
     RefPtr<PolymorphicAccessJITStubRoutine> m_putByValMegamorphic;
+    RefPtr<PolymorphicAccessJITStubRoutine> m_inByValMegamorphic;
     std::array<RefPtr<InlineCacheHandler>, numberOfAccessTypes> m_fallbackHandlers { };
     std::array<RefPtr<InlineCacheHandler>, numberOfAccessTypes> m_slowPathHandlers { };
 };

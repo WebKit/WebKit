@@ -1174,7 +1174,8 @@ private:
             break;
         }
 
-        case InByVal: {
+        case InByVal:
+        case InByValMegamorphic: {
             Edge& baseEdge = m_graph.child(m_node, 0);
             Edge& keyEdge = m_graph.child(m_node, 1);
             if (baseEdge.useKind() == CellUse) {

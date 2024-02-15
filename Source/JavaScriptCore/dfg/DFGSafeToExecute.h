@@ -629,7 +629,9 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case SetFunctionName:
     case NewStringObject:
     case InByVal:
+    case InByValMegamorphic:
     case InById:
+    case InByIdMegamorphic:
     case EnumeratorInByVal:
     case EnumeratorHasOwnProperty:
     case HasPrivateName:

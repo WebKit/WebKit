@@ -524,6 +524,7 @@ public:
 
     void convertToGetByIdMaybeMegamorphic(Graph&, CacheableIdentifier);
     void convertToPutByIdMaybeMegamorphic(Graph&, CacheableIdentifier);
+    void convertToInByIdMaybeMegamorphic(Graph&, CacheableIdentifier);
 
     bool mustGenerate() const
     {
@@ -886,15 +887,6 @@ public:
         m_opInfo = false;
     }
 
-    void convertToInById(CacheableIdentifier identifier)
-    {
-        ASSERT(m_op == InByVal);
-        setOpAndDefaultFlags(InById);
-        children.setChild2(Edge());
-        m_opInfo = identifier;
-        m_opInfo2 = OpInfoWrapper();
-    }
-    
     JSValue asJSValue()
     {
         return constant()->value();
@@ -1153,6 +1145,7 @@ public:
         case GetPrivateNameById:
         case DeleteById:
         case InById:
+        case InByIdMegamorphic:
         case PutById:
         case PutByIdFlush:
         case PutByIdDirect:
@@ -1182,6 +1175,7 @@ public:
         case GetPrivateNameById:
         case DeleteById:
         case InById:
+        case InByIdMegamorphic:
         case PutById:
         case PutByIdFlush:
         case PutByIdDirect:
@@ -2483,6 +2477,7 @@ public:
         case GetTypedArrayByteOffsetAsInt52:
         case GetVectorLength:
         case InByVal:
+        case InByValMegamorphic:
         case PutByValDirect:
         case PutByVal:
         case PutByValAlias:

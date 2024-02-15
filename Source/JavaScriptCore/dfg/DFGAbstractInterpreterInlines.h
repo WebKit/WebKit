@@ -4637,7 +4637,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         clobberWorld();
         break;
         
-    case InById: {
+    case InById:
+    case InByIdMegamorphic: {
         // FIXME: We can determine when the property definitely exists based on abstract
         // value information.
         clobberWorld();
@@ -4646,7 +4647,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
-    case InByVal: {
+    case InByVal:
+    case InByValMegamorphic: {
         AbstractValue& property = forNode(node->child2());
         if (JSValue constant = property.value()) {
             if (constant.isString()) {
