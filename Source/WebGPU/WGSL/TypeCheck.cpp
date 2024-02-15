@@ -531,13 +531,19 @@ void TypeChecker::visitVariable(AST::Variable& variable, VariableKind variableKi
     case AST::VariableFlavor::Let:
         if (variableKind == VariableKind::Global)
             return error("module-scope 'let' is invalid, use 'const'");
+        if (!result->isConstructible() && !std::holds_alternative<Types::Pointer>(*result))
+            return error("'", *result, "' cannot be used as the type of a 'let'");
         RELEASE_ASSERT(variable.maybeInitializer());
         break;
     case AST::VariableFlavor::Const:
         RELEASE_ASSERT(variable.maybeInitializer());
+        if (!result->isConstructible())
+            return error("'", *result, "' cannot be used as the type of a 'const'");
         break;
     case AST::VariableFlavor::Override:
         RELEASE_ASSERT(variableKind == VariableKind::Global);
+        if (!satisfies(result, Constraints::ConcreteScalar))
+            return error("'", *result, "' cannot be used as the type of an 'override'");
         break;
     case AST::VariableFlavor::Var:
         AddressSpace addressSpace;
