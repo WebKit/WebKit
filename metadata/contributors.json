@@ -2191,13 +2191,14 @@
    },
    {
       "emails" : [
+         "morningstar@apple.com",
          "dawn_flores@apple.com",
          "matteo_flores@apple.com"
       ],
       "github" : "Smackteo",
-      "name" : "Dawn Flores",
+      "name" : "Dawn Morningstar",
       "nicks" : [
-         "DawnF"
+         "Morningstar"
       ],
       "status" : "committer"
    },
