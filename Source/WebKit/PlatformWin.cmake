@@ -5,6 +5,7 @@ set(GPUProcess_OUTPUT_NAME WebKitGPUProcess)
 set(PluginProcess_OUTPUT_NAME WebKitPluginProcess)
 
 include(Headers.cmake)
+include(Platform/Curl.cmake)
 include(Platform/WC.cmake)
 
 list(APPEND WebKit_SOURCES
@@ -17,17 +18,6 @@ list(APPEND WebKit_SOURCES
 
     NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp
 
-    NetworkProcess/Cookies/curl/WebCookieManagerCurl.cpp
-
-    NetworkProcess/cache/NetworkCacheDataCurl.cpp
-    NetworkProcess/cache/NetworkCacheIOChannelCurl.cpp
-
-    NetworkProcess/curl/NetworkDataTaskCurl.cpp
-    NetworkProcess/curl/NetworkProcessCurl.cpp
-    NetworkProcess/curl/NetworkProcessMainCurl.cpp
-    NetworkProcess/curl/NetworkSessionCurl.cpp
-    NetworkProcess/curl/WebSocketTaskCurl.cpp
-
     Platform/IPC/win/ArgumentCodersWin.cpp
     Platform/IPC/win/ConnectionWin.cpp
     Platform/IPC/win/IPCSemaphoreWin.cpp
@@ -39,10 +29,6 @@ list(APPEND WebKit_SOURCES
 
     Shared/API/c/cairo/WKImageCairo.cpp
 
-    Shared/API/c/curl/WKCertificateInfoCurl.cpp
-
-    Shared/curl/WebCoreArgumentCodersCurl.cpp
-
     Shared/win/AuxiliaryProcessMainWin.cpp
     Shared/win/NativeWebKeyboardEventWin.cpp
     Shared/win/NativeWebMouseEventWin.cpp
@@ -52,9 +38,6 @@ list(APPEND WebKit_SOURCES
     Shared/win/WebEventFactory.cpp
 
     UIProcess/API/C/WKViewportAttributes.cpp
-
-    UIProcess/API/C/curl/WKProtectionSpaceCurl.cpp
-    UIProcess/API/C/curl/WKWebsiteDataStoreRefCurl.cpp
 
     UIProcess/API/C/win/WKView.cpp
 
@@ -72,7 +55,6 @@ list(APPEND WebKit_SOURCES
 
     UIProcess/Launcher/win/ProcessLauncherWin.cpp
 
-    UIProcess/WebsiteData/curl/WebsiteDataStoreCurl.cpp
     UIProcess/WebsiteData/win/WebsiteDataStoreWin.cpp
 
     UIProcess/cairo/BackingStore.cpp
@@ -93,8 +75,6 @@ list(APPEND WebKit_SOURCES
 
     WebProcess/MediaCache/WebMediaKeyStorageManager.cpp
 
-    WebProcess/WebCoreSupport/curl/WebFrameNetworkingContext.cpp
-
     WebProcess/WebCoreSupport/win/WebPopupMenuWin.cpp
 
     WebProcess/WebPage/AcceleratedSurface.cpp
@@ -111,7 +91,6 @@ list(APPEND WebKit_SOURCES
 )
 
 list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
-    "${WEBKIT_DIR}/NetworkProcess/curl"
     "${WEBKIT_DIR}/Platform/IPC/win"
     "${WEBKIT_DIR}/Platform/classifier"
     "${WEBKIT_DIR}/Platform/generic"
@@ -121,7 +100,6 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/Shared/CoordinatedGraphics/threadedcompositor"
     "${WEBKIT_DIR}/Shared/win"
     "${WEBKIT_DIR}/UIProcess/API/C/cairo"
-    "${WEBKIT_DIR}/UIProcess/API/C/curl"
     "${WEBKIT_DIR}/UIProcess/API/C/win"
     "${WEBKIT_DIR}/UIProcess/API/cpp/win"
     "${WEBKIT_DIR}/UIProcess/API/win"
@@ -134,7 +112,6 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/WebProcess/InjectedBundle/API/win"
     "${WEBKIT_DIR}/WebProcess/InjectedBundle/API/win/DOM"
     "${WEBKIT_DIR}/WebProcess/Inspector/win"
-    "${WEBKIT_DIR}/WebProcess/WebCoreSupport/curl"
     "${WEBKIT_DIR}/WebProcess/WebCoreSupport/win"
     "${WEBKIT_DIR}/WebProcess/WebPage/CoordinatedGraphics"
     "${WEBKIT_DIR}/WebProcess/WebPage/win"
@@ -173,12 +150,7 @@ endif ()
 list(APPEND WebKit_PUBLIC_FRAMEWORK_HEADERS
     Shared/API/c/cairo/WKImageCairo.h
 
-    Shared/API/c/curl/WKCertificateInfoCurl.h
-
     Shared/API/c/win/WKBaseWin.h
-
-    UIProcess/API/C/curl/WKProtectionSpaceCurl.h
-    UIProcess/API/C/curl/WKWebsiteDataStoreRefCurl.h
 
     UIProcess/API/C/win/WKView.h
 )

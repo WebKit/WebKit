@@ -1,4 +1,5 @@
 include(Headers.cmake)
+include(Platform/Curl.cmake)
 
 set(WebKit_USE_PREFIX_HEADER ON)
 
@@ -39,17 +40,6 @@ list(APPEND WebKit_SOURCES
 
     NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp
 
-    NetworkProcess/Cookies/curl/WebCookieManagerCurl.cpp
-
-    NetworkProcess/cache/NetworkCacheDataCurl.cpp
-    NetworkProcess/cache/NetworkCacheIOChannelCurl.cpp
-
-    NetworkProcess/curl/NetworkDataTaskCurl.cpp
-    NetworkProcess/curl/NetworkProcessCurl.cpp
-    NetworkProcess/curl/NetworkProcessMainCurl.cpp
-    NetworkProcess/curl/NetworkSessionCurl.cpp
-    NetworkProcess/curl/WebSocketTaskCurl.cpp
-
     Platform/IPC/unix/ArgumentCodersUnix.cpp
     Platform/IPC/unix/ConnectionUnix.cpp
     Platform/IPC/unix/IPCSemaphoreUnix.cpp
@@ -59,11 +49,7 @@ list(APPEND WebKit_SOURCES
     Platform/unix/LoggingUnix.cpp
     Platform/unix/ModuleUnix.cpp
 
-    Shared/API/c/curl/WKCertificateInfoCurl.cpp
-
     Shared/API/c/playstation/WKEventPlayStation.cpp
-
-    Shared/curl/WebCoreArgumentCodersCurl.cpp
 
     Shared/libwpe/NativeWebKeyboardEventLibWPE.cpp
     Shared/libwpe/NativeWebMouseEventLibWPE.cpp
@@ -82,9 +68,6 @@ list(APPEND WebKit_SOURCES
     UIProcess/API/C/WKUserScriptRef.cpp
     UIProcess/API/C/WKViewportAttributes.cpp
 
-    UIProcess/API/C/curl/WKProtectionSpaceCurl.cpp
-    UIProcess/API/C/curl/WKWebsiteDataStoreRefCurl.cpp
-
     UIProcess/API/C/playstation/WKContextConfigurationPlayStation.cpp
     UIProcess/API/C/playstation/WKPagePrivatePlayStation.cpp
     UIProcess/API/C/playstation/WKRunloop.cpp
@@ -93,8 +76,6 @@ list(APPEND WebKit_SOURCES
     UIProcess/CoordinatedGraphics/DrawingAreaProxyCoordinatedGraphics.cpp
 
     UIProcess/Launcher/playstation/ProcessLauncherPlayStation.cpp
-
-    UIProcess/WebsiteData/curl/WebsiteDataStoreCurl.cpp
 
     UIProcess/WebsiteData/playstation/WebsiteDataStorePlayStation.cpp
 
@@ -108,8 +89,6 @@ list(APPEND WebKit_SOURCES
     WebProcess/GPU/media/playstation/VideoLayerRemotePlayStation.cpp
 
     WebProcess/InjectedBundle/playstation/InjectedBundlePlayStation.cpp
-
-    WebProcess/WebCoreSupport/curl/WebFrameNetworkingContext.cpp
 
     WebProcess/WebPage/AcceleratedSurface.cpp
 
@@ -125,20 +104,17 @@ list(APPEND WebKit_SOURCES
 )
 
 list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
-    "${WEBKIT_DIR}/NetworkProcess/curl"
     "${WEBKIT_DIR}/Platform/IPC/unix"
     "${WEBKIT_DIR}/Platform/classifier"
     "${WEBKIT_DIR}/Platform/generic"
     "${WEBKIT_DIR}/Shared/CoordinatedGraphics"
     "${WEBKIT_DIR}/Shared/CoordinatedGraphics/threadedcompositor"
     "${WEBKIT_DIR}/Shared/libwpe"
-    "${WEBKIT_DIR}/UIProcess/API/C/curl"
     "${WEBKIT_DIR}/UIProcess/API/C/playstation"
     "${WEBKIT_DIR}/UIProcess/API/libwpe"
     "${WEBKIT_DIR}/UIProcess/API/playstation"
     "${WEBKIT_DIR}/UIProcess/CoordinatedGraphics"
     "${WEBKIT_DIR}/UIProcess/playstation"
-    "${WEBKIT_DIR}/WebProcess/WebCoreSupport/curl"
     "${WEBKIT_DIR}/WebProcess/WebPage/CoordinatedGraphics"
     "${WEBKIT_DIR}/WebProcess/WebPage/libwpe"
 )
@@ -219,13 +195,8 @@ endif ()
 
 # PlayStation specific
 list(APPEND WebKit_PUBLIC_FRAMEWORK_HEADERS
-    Shared/API/c/curl/WKCertificateInfoCurl.h
-
     Shared/API/c/playstation/WKBasePlayStation.h
     Shared/API/c/playstation/WKEventPlayStation.h
-
-    UIProcess/API/C/curl/WKProtectionSpaceCurl.h
-    UIProcess/API/C/curl/WKWebsiteDataStoreRefCurl.h
 
     UIProcess/API/C/playstation/WKContextConfigurationPlayStation.h
     UIProcess/API/C/playstation/WKPagePrivatePlayStation.h
