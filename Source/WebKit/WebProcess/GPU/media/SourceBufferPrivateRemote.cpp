@@ -179,7 +179,9 @@ void SourceBufferPrivateRemote::setActive(bool active)
 bool SourceBufferPrivateRemote::canSwitchToType(const ContentType& contentType)
 {
     bool canSwitch = false;
-    ensureOnDispatcherSync([&, contentTypeString = contentType.raw().isolatedCopy()] {
+    // FIXME: Uses a new Connection for remote playback, and not the main GPUProcessConnection's one.
+    // FIXME: m_mimeTypeCache is a main-thread only object.
+    callOnMainRunLoopAndWait([&, contentTypeString = contentType.raw().isolatedCopy()] {
         RefPtr gpuProcessConnection = m_gpuProcessConnection.get();
         if (gpuProcessConnection && isGPURunning()) {
             ContentType contentType { contentTypeString };
@@ -222,7 +224,8 @@ Ref<MediaPromise> SourceBufferPrivateRemote::removeCodedFrames(const MediaTime& 
 
 void SourceBufferPrivateRemote::evictCodedFrames(uint64_t newDataSize, uint64_t maximumBufferSize, const MediaTime& currentTime)
 {
-    ensureOnDispatcherSync([&] {
+    // FIXME: Uses a new Connection for remote playback, and not the main GPUProcessConnection's one.
+    callOnMainRunLoopAndWait([&] {
         auto gpuProcessConnection = m_gpuProcessConnection.get();
         if (!gpuProcessConnection || !isGPURunning())
             return;
@@ -521,7 +524,8 @@ void SourceBufferPrivateRemote::memoryPressure(uint64_t maximumBufferSize, const
 MediaTime SourceBufferPrivateRemote::minimumUpcomingPresentationTimeForTrackID(TrackID trackID)
 {
     MediaTime result = MediaTime::invalidTime();
-    ensureOnDispatcherSync([&] {
+    // FIXME: Uses a new Connection for remote playback, and not the main GPUProcessConnection's one.
+    callOnMainRunLoopAndWait([&] {
         auto gpuProcessConnection = m_gpuProcessConnection.get();
         if (!gpuProcessConnection || !isGPURunning())
             return;

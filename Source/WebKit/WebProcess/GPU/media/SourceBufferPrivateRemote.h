@@ -144,7 +144,7 @@ private:
     friend class MessageReceiver;
     ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
     Ref<MessageReceiver> m_receiver;
-    RemoteSourceBufferIdentifier m_remoteSourceBufferIdentifier;
+    const RemoteSourceBufferIdentifier m_remoteSourceBufferIdentifier;
     ThreadSafeWeakPtr<MediaPlayerPrivateRemote> m_mediaPlayerPrivate;
 
     std::atomic<uint64_t> m_totalTrackBufferSizeInBytes = { 0 };

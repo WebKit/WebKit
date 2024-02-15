@@ -105,9 +105,22 @@ MediaSourcePrivateRemote::~MediaSourcePrivateRemote()
 
 MediaSourcePrivate::AddStatus MediaSourcePrivateRemote::addSourceBuffer(const ContentType& contentType, bool, RefPtr<SourceBufferPrivate>& outPrivate)
 {
+    if (!isGPURunning())
+        return AddStatus::NotSupported;
+    RefPtr mediaPlayerPrivate = m_mediaPlayerPrivate.get();
+    RefPtr gpuProcessConnection = m_gpuProcessConnection.get();
+    if (!gpuProcessConnection || !mediaPlayerPrivate)
+        return AddStatus::NotSupported;
+
     AddStatus returnedStatus;
+    RemoteSourceBufferIdentifier returnedIdentifier;
+    RefPtr<SourceBufferPrivate> returnedSourceBuffer;
     DEBUG_LOG(LOGIDENTIFIER, contentType);
-    ensureOnDispatcherSync([protectedThis = Ref { *this }, this, &returnedStatus, contentTypeString = contentType.raw().isolatedCopy(), &outPrivate] {
+
+    // the sendSync() call requires us to run on the connection's dispatcher, which is the main thread.
+    // FIXME: Uses a new Connection for remote playback, and not the main GPUProcessConnection's one.
+    // FIXME: m_mimeTypeCache is a main-thread only object.
+    callOnMainRunLoopAndWait([this, &returnedStatus, &returnedIdentifier, contentTypeString = contentType.raw().isolatedCopy(), &returnedSourceBuffer, mediaPlayerPrivate, gpuProcessConnection] {
         ContentType contentType { contentTypeString };
         MediaEngineSupportParameters parameters;
         parameters.isMediaSource = true;
@@ -117,24 +130,24 @@ MediaSourcePrivate::AddStatus MediaSourcePrivateRemote::addSourceBuffer(const Co
             return;
         }
 
-        auto gpuProcessConnection = m_gpuProcessConnection.get();
-        RefPtr mediaPlayerPrivate = m_mediaPlayerPrivate.get();
-        if (!isGPURunning() || !mediaPlayerPrivate) {
-            returnedStatus = AddStatus::NotSupported;
-            return;
-        }
-
         auto sendResult = gpuProcessConnection->connection().sendSync(Messages::RemoteMediaSourceProxy::AddSourceBuffer(WTFMove(contentType)), m_identifier);
         auto [status, remoteSourceBufferIdentifier] = sendResult.takeReplyOr(AddStatus::NotSupported, std::nullopt);
 
         if (status == AddStatus::Ok) {
             ASSERT(remoteSourceBufferIdentifier.has_value());
-            auto newSourceBuffer = SourceBufferPrivateRemote::create(*gpuProcessConnection, *remoteSourceBufferIdentifier, *this, *mediaPlayerPrivate);
-            outPrivate = newSourceBuffer.copyRef();
-            m_sourceBuffers.append(WTFMove(newSourceBuffer));
+            returnedIdentifier = * remoteSourceBufferIdentifier;
+            returnedSourceBuffer = SourceBufferPrivateRemote::create(*gpuProcessConnection, *remoteSourceBufferIdentifier, *this, *mediaPlayerPrivate);
         }
         returnedStatus = status;
     });
+
+    if (returnedStatus != AddStatus::Ok)
+        return returnedStatus;
+
+    ensureOnDispatcher([protectedThis = Ref { *this }, this, sourceBuffer = returnedSourceBuffer]() mutable {
+        m_sourceBuffers.append(WTFMove(sourceBuffer));
+    });
+    outPrivate = WTFMove(returnedSourceBuffer);
     return returnedStatus;
 }
 
