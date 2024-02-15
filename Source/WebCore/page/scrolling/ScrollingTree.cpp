@@ -192,7 +192,7 @@ WheelEventHandlingResult ScrollingTree::handleWheelEvent(const PlatformWheelEven
         }
         auto node = scrollingNodeForPoint(position);
 
-        LOG_WITH_STREAM(Scrolling, stream << "ScrollingTree::handleWheelEvent found node " << (node ? node->scrollingNodeID() : 0) << " for point " << position);
+        LOG_WITH_STREAM(Scrolling, stream << "ScrollingTree::handleWheelEvent found node " << (node ? node->scrollingNodeID() : ScrollingNodeID { }) << " for point " << position);
 
         return handleWheelEventWithNode(wheelEvent, processingSteps, node.get());
     }();

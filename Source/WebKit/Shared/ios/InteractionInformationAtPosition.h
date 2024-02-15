@@ -78,7 +78,7 @@ struct InteractionInformationAtPosition {
     bool isPausedVideo { false };
     bool isElement { false };
     bool isContentEditable { false };
-    WebCore::ScrollingNodeID containerScrollingNodeID { 0 };
+    Markable<WebCore::ScrollingNodeID> containerScrollingNodeID;
 #if ENABLE(DATA_DETECTION)
     bool isDataDetectorLink { false };
 #endif

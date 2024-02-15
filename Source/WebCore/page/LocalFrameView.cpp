@@ -863,11 +863,11 @@ ScrollingNodeID LocalFrameView::scrollingNodeID() const
 {
     RenderView* renderView = this->renderView();
     if (!renderView)
-        return 0;
+        return { };
 
     RenderLayerBacking* backing = renderView->layer()->backing();
     if (!backing)
-        return 0;
+        return { };
 
     return backing->scrollingNodeIDForRole(ScrollCoordinationRole::Scrolling);
 }

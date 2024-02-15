@@ -684,7 +684,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
 
     unsigned long long layerIDForElement(Element element);
     
-    unsigned long long scrollingNodeIDForNode(optional Node? node = null);
+    sequence<unsigned long long> scrollingNodeIDForNode(optional Node? node = null);
 
     // Flags for platformLayerTreeAsText.
     const unsigned short PLATFORM_LAYER_TREE_DEBUG = 1;

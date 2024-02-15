@@ -353,7 +353,7 @@ interface UIScriptController {
 
     object propertiesOfLayerWithID(unsigned long long layerID);
     
-    DOMString scrollbarStateForScrollingNodeID(unsigned long long scrollingNodeID, boolean isVertical);
+    DOMString scrollbarStateForScrollingNodeID(unsigned long long scrollingNodeID, unsigned long long processID, boolean isVertical);
 
     undefined retrieveSpeakSelectionContent(object callback);
     readonly attribute DOMString accessibilitySpeakSelectionContent;

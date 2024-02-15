@@ -762,7 +762,7 @@ protected:
     FilterOperations m_backdropFilters;
     
 #if ENABLE(SCROLLING_THREAD)
-    ScrollingNodeID m_scrollingNodeID { 0 };
+    ScrollingNodeID m_scrollingNodeID;
 #endif
 
     BlendMode m_blendMode { BlendMode::Normal };

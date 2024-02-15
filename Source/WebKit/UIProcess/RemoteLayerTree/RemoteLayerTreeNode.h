@@ -168,7 +168,7 @@ private:
     WebCore::EventRegion m_eventRegion;
 
 #if ENABLE(SCROLLING_THREAD)
-    WebCore::ScrollingNodeID m_scrollingNodeID { 0 };
+    WebCore::ScrollingNodeID m_scrollingNodeID;
 #endif
 
     WebCore::PlatformLayerIdentifier m_actingScrollContainerID;

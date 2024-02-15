@@ -9553,11 +9553,11 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
     [_contextMenuHintContainerView setFrame:frame];
 }
 
-- (void)_updateTargetedPreviewScrollViewUsingContainerScrollingNodeID:(WebCore::ScrollingNodeID)scrollingNodeID
+- (void)_updateTargetedPreviewScrollViewUsingContainerScrollingNodeID:(std::optional<WebCore::ScrollingNodeID>)scrollingNodeID
 {
     if (scrollingNodeID) {
         if (auto* scrollingCoordinator = downcast<WebKit::RemoteScrollingCoordinatorProxyIOS>(_page->scrollingCoordinatorProxy())) {
-            if (UIScrollView *scrollViewForScrollingNode = scrollingCoordinator->scrollViewForScrollingNodeID(scrollingNodeID))
+            if (UIScrollView *scrollViewForScrollingNode = scrollingCoordinator->scrollViewForScrollingNodeID(*scrollingNodeID))
                 _scrollViewForTargetedPreview = scrollViewForScrollingNode;
         }
     }

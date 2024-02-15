@@ -441,6 +441,7 @@ def types_that_cannot_be_forward_declared():
         'WebCore::RenderingMode',
         'WebCore::RenderingPurpose',
         'WebCore::ScriptExecutionContextIdentifier',
+        'WebCore::ScrollingNodeID',
         'WebCore::ServiceWorkerOrClientData',
         'WebCore::ServiceWorkerOrClientIdentifier',
         'WebCore::SharedStringHash',

@@ -268,6 +268,7 @@ struct PromisedAttachmentInfo;
 struct RecentSearch;
 struct RemoteUserInputEventData;
 struct RunJavaScriptParameters;
+struct ScrollingNodeIDType;
 struct SerializedAttachmentData;
 struct ShareDataWithParsedURL;
 struct SleepDisablerIdentifierType;
@@ -312,7 +313,7 @@ using PlatformLayerIdentifier = ProcessQualified<ObjectIdentifier<PlatformLayerI
 using PlaybackTargetClientContextIdentifier = ObjectIdentifier<PlaybackTargetClientContextIdentifierType>;
 using PointerID = uint32_t;
 using ResourceLoaderIdentifier = AtomicObjectIdentifier<ResourceLoader>;
-using ScrollingNodeID = uint64_t;
+using ScrollingNodeID = ProcessQualified<ObjectIdentifier<ScrollingNodeIDType>>;
 using SleepDisablerIdentifier = ObjectIdentifier<SleepDisablerIdentifierType>;
 using UserMediaRequestIdentifier = ObjectIdentifier<UserMediaRequestIdentifierType>;
 
@@ -953,8 +954,8 @@ public:
 
     void scrollingNodeScrollViewWillStartPanGesture(WebCore::ScrollingNodeID);
     void scrollingNodeScrollViewDidScroll(WebCore::ScrollingNodeID);
-    void scrollingNodeScrollWillStartScroll(WebCore::ScrollingNodeID);
-    void scrollingNodeScrollDidEndScroll(WebCore::ScrollingNodeID);
+    void scrollingNodeScrollWillStartScroll(std::optional<WebCore::ScrollingNodeID>);
+    void scrollingNodeScrollDidEndScroll(std::optional<WebCore::ScrollingNodeID>);
 
     WebCore::FloatSize overrideScreenSize();
 
@@ -2332,7 +2333,7 @@ public:
     bool allowsAnyAnimationToPlay() { return m_allowsAnyAnimationToPlay; }
     void isAnyAnimationAllowedToPlayDidChange(bool anyAnimationCanPlay) { m_allowsAnyAnimationToPlay = anyAnimationCanPlay; }
 #endif
-    String scrollbarStateForScrollingNodeID(int scrollingNodeID, bool isVertical);
+    String scrollbarStateForScrollingNodeID(WebCore::ScrollingNodeID, bool isVertical);
 
 #if ENABLE(WEBXR) && !USE(OPENXR)
     PlatformXRSystem* xrSystem() const;
@@ -2782,7 +2783,7 @@ private:
 
     void handleWheelEvent(const WebWheelEvent&);
     void sendWheelEvent(WebCore::FrameIdentifier, const WebWheelEvent&, OptionSet<WebCore::WheelEventProcessingSteps>, WebCore::RectEdges<bool> rubberBandableEdges, std::optional<bool> willStartSwipe, bool wasHandledForScrolling);
-    void handleWheelEventReply(const WebWheelEvent&, WebCore::ScrollingNodeID, std::optional<WebCore::WheelScrollGestureState>, bool wasHandledForScrolling, bool wasHandledByWebProcess);
+    void handleWheelEventReply(const WebWheelEvent&, std::optional<WebCore::ScrollingNodeID>, std::optional<WebCore::WheelScrollGestureState>, bool wasHandledForScrolling, bool wasHandledByWebProcess);
 
     void cacheWheelEventScrollingAccelerationCurve(const NativeWebWheelEvent&);
     void sendWheelEventScrollingAccelerationCurveIfNecessary(const WebWheelEvent&);

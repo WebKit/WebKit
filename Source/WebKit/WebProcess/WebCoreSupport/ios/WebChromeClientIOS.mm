@@ -96,13 +96,13 @@ void WebChromeClient::didLayout(LayoutType type)
 void WebChromeClient::didStartOverflowScroll()
 {
     // FIXME: This is only relevant for legacy touch-driven overflow in the web process (see ScrollAnimatorIOS::handleTouchEvent), and should be removed.
-    protectedPage()->send(Messages::WebPageProxy::ScrollingNodeScrollWillStartScroll(0));
+    protectedPage()->send(Messages::WebPageProxy::ScrollingNodeScrollWillStartScroll(std::nullopt));
 }
 
 void WebChromeClient::didEndOverflowScroll()
 {
     // FIXME: This is only relevant for legacy touch-driven overflow in the web process (see ScrollAnimatorIOS::handleTouchEvent), and should be removed.
-    protectedPage()->send(Messages::WebPageProxy::ScrollingNodeScrollDidEndScroll(0));
+    protectedPage()->send(Messages::WebPageProxy::ScrollingNodeScrollDidEndScroll(std::nullopt));
 }
 
 bool WebChromeClient::hasStablePageScaleFactor() const

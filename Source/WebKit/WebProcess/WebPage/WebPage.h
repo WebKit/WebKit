@@ -1206,7 +1206,7 @@ public:
     void startWaitingForContextMenuToShow() { m_waitingForContextMenuToShow = true; }
 #endif
 
-    void handleWheelEvent(WebCore::FrameIdentifier, const WebWheelEvent&, const OptionSet<WebCore::WheelEventProcessingSteps>&, std::optional<bool> willStartSwipe, CompletionHandler<void(WebCore::ScrollingNodeID, std::optional<WebCore::WheelScrollGestureState>, bool handled, std::optional<WebCore::RemoteUserInputEventData>)>&&);
+    void handleWheelEvent(WebCore::FrameIdentifier, const WebWheelEvent&, const OptionSet<WebCore::WheelEventProcessingSteps>&, std::optional<bool> willStartSwipe, CompletionHandler<void(std::optional<WebCore::ScrollingNodeID>, std::optional<WebCore::WheelScrollGestureState>, bool handled, std::optional<WebCore::RemoteUserInputEventData>)>&&);
     WebCore::HandleUserInputEventResult wheelEvent(const WebCore::FrameIdentifier&, const WebWheelEvent&, OptionSet<WebCore::WheelEventProcessingSteps>);
 
     void wheelEventHandlersChanged(bool);

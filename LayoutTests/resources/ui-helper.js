@@ -909,10 +909,11 @@ window.UIHelper = class UIHelper {
             return Promise.resolve();
 
         if (internals.isUsingUISideCompositing() && (!scroller || scroller.nodeName != "SELECT")) {
+            var scrollingNodeID = internalFunctions.scrollingNodeIDForNode(scroller);
             return new Promise(resolve => {
                 testRunner.runUIScript(`(function() {
                     uiController.doAfterNextStablePresentationUpdate(function() {
-                        uiController.uiScriptComplete(uiController.scrollbarStateForScrollingNodeID(${internalFunctions.scrollingNodeIDForNode(scroller)}, ${isVertical}));
+                        uiController.uiScriptComplete(uiController.scrollbarStateForScrollingNodeID(${scrollingNodeID[0]}, ${scrollingNodeID[1]}, ${isVertical}));
                     });
                 })()`, state => {
                     resolve(state);

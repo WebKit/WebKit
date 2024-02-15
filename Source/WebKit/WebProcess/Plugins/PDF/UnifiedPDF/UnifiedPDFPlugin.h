@@ -389,7 +389,7 @@ private:
     RefPtr<WebCore::GraphicsLayer> m_layerForVerticalScrollbar;
     RefPtr<WebCore::GraphicsLayer> m_layerForScrollCorner;
 
-    WebCore::ScrollingNodeID m_scrollingNodeID { 0 };
+    WebCore::ScrollingNodeID m_scrollingNodeID;
 
     float m_scaleFactor { 1 };
     bool m_inMagnificationGesture { false };

@@ -520,7 +520,7 @@ void RenderLayerScrollableArea::setScrollOffset(const ScrollOffset& offset)
 ScrollingNodeID RenderLayerScrollableArea::scrollingNodeID() const
 {
     if (!m_layer.isComposited())
-        return 0;
+        return { };
 
     return m_layer.backing()->scrollingNodeIDForRole(ScrollCoordinationRole::Scrolling);
 }

@@ -101,7 +101,7 @@ static bool layerEventRegionContainsPoint(CALayer *layer, CGPoint localPoint)
 static ScrollingNodeID scrollingNodeIDForLayer(CALayer *layer)
 {
     auto platformCALayer = PlatformCALayer::platformCALayerForLayer((__bridge void*)layer);
-    return platformCALayer ? platformCALayer->scrollingNodeID() : 0;
+    return platformCALayer ? platformCALayer->scrollingNodeID() : ScrollingNodeID { };
 }
 
 static bool isScrolledBy(const ScrollingTree& tree, ScrollingNodeID scrollingNodeID, CALayer *hitLayer)

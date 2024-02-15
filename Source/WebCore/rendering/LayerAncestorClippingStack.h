@@ -81,7 +81,7 @@ public:
 
     struct ClippingStackEntry {
         CompositedClipData clipData;
-        ScrollingNodeID overflowScrollProxyNodeID { 0 }; // The node for repositioning the scrolling proxy layer.
+        ScrollingNodeID overflowScrollProxyNodeID; // The node for repositioning the scrolling proxy layer.
         RefPtr<GraphicsLayer> clippingLayer;
         RefPtr<GraphicsLayer> scrollingLayer; // Only present for scrolling entries.
 

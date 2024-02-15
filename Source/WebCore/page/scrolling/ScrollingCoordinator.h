@@ -146,7 +146,7 @@ public:
     // Destroy the tree, including both parented and unparented nodes.
     virtual void clearAllNodes() { }
 
-    virtual ScrollingNodeID parentOfNode(ScrollingNodeID) const { return 0; }
+    virtual ScrollingNodeID parentOfNode(ScrollingNodeID) const { return { }; }
     virtual Vector<ScrollingNodeID> childrenOfNode(ScrollingNodeID) const { return { }; }
 
     virtual void scrollBySimulatingWheelEventForTesting(ScrollingNodeID, FloatSize) { }

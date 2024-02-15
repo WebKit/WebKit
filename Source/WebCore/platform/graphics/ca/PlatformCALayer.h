@@ -278,7 +278,7 @@ public:
     virtual void setEventRegion(const EventRegion&) { }
     
 #if ENABLE(SCROLLING_THREAD)
-    virtual ScrollingNodeID scrollingNodeID() const { return 0; }
+    virtual ScrollingNodeID scrollingNodeID() const { return { }; }
     virtual void setScrollingNodeID(ScrollingNodeID) { }
 #endif
 

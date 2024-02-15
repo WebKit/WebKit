@@ -26,6 +26,7 @@ additional_forward_declaration: namespace WebCore { using DOMCacheIdentifierID =
 additional_forward_declaration: namespace WebCore { using FrameIdentifierID = ObjectIdentifier<FrameIdentifierType>; }
 additional_forward_declaration: namespace WebCore { using OpaqueOriginIdentifier = AtomicObjectIdentifier<OpaqueOriginIdentifierType>; }
 additional_forward_declaration: namespace WebCore { using PlatformLayerIdentifierID = ObjectIdentifier<PlatformLayerIdentifierType>; }
+additional_forward_declaration: namespace WebCore { using ScrollingNodeIdentifier = ObjectIdentifier<ScrollingNodeIDType>; }
 additional_forward_declaration: namespace WebCore { using SharedWorkerObjectIdentifierID = ObjectIdentifier<SharedWorkerObjectIdentifierType>; }
 additional_forward_declaration: namespace WebCore { using WebLockIdentifierID = AtomicObjectIdentifier<WebLockIdentifierType>; }
 
@@ -70,5 +71,11 @@ header: <WebCore/ProcessQualified.h>
 header: <WebCore/ProcessQualified.h>
 [Alias=class ProcessQualified<WebLockIdentifierID>, AdditionalEncoder=StreamConnectionEncoder, CustomHeader] alias WebCore::WebLockIdentifier {
     WebCore::WebLockIdentifierID object();
+    WebCore::ProcessIdentifier processIdentifier();
+};
+
+header: <WebCore/ProcessQualified.h>
+[Alias=class ProcessQualified<ScrollingNodeIdentifier>, AdditionalEncoder=StreamConnectionEncoder, CustomHeader] alias WebCore::ScrollingNodeID {
+    WebCore::ScrollingNodeIdentifier object();
     WebCore::ProcessIdentifier processIdentifier();
 };

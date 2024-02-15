@@ -268,14 +268,14 @@ void WebPageProxy::scrollingNodeScrollViewDidScroll(ScrollingNodeID nodeID)
     protectedPageClient()->scrollingNodeScrollViewDidScroll(nodeID);
 }
 
-void WebPageProxy::scrollingNodeScrollWillStartScroll(ScrollingNodeID nodeID)
+void WebPageProxy::scrollingNodeScrollWillStartScroll(std::optional<ScrollingNodeID> nodeID)
 {
-    protectedPageClient()->scrollingNodeScrollWillStartScroll(nodeID);
+    protectedPageClient()->scrollingNodeScrollWillStartScroll(nodeID.value_or(ScrollingNodeID { }));
 }
 
-void WebPageProxy::scrollingNodeScrollDidEndScroll(ScrollingNodeID nodeID)
+void WebPageProxy::scrollingNodeScrollDidEndScroll(std::optional<ScrollingNodeID> nodeID)
 {
-    protectedPageClient()->scrollingNodeScrollDidEndScroll(nodeID);
+    protectedPageClient()->scrollingNodeScrollDidEndScroll(nodeID.value_or(ScrollingNodeID { }));
 }
 
 void WebPageProxy::dynamicViewportSizeUpdate(const DynamicViewportSizeUpdate& target)

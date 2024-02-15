@@ -64,7 +64,7 @@ ScrollingNodeID RemoteScrollingCoordinatorProxy::rootScrollingNodeID() const
 {
     // FIXME: Locking
     if (!m_scrollingTree->rootNode())
-        return 0;
+        return { };
 
     return m_scrollingTree->rootNode()->scrollingNodeID();
 }

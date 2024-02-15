@@ -154,7 +154,7 @@ public:
             bool visible { false };
         } debugBorder;
 
-        WebCore::ScrollingNodeID scrollingNodeID { 0 };
+        WebCore::ScrollingNodeID scrollingNodeID;
         WebCore::EventRegion eventRegion;
     };
 

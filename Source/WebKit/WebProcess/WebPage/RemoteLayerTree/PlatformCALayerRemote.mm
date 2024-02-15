@@ -996,7 +996,7 @@ void PlatformCALayerRemote::setEventRegion(const EventRegion& eventRegion)
 #if ENABLE(SCROLLING_THREAD)
 ScrollingNodeID PlatformCALayerRemote::scrollingNodeID() const
 {
-    return m_properties.scrollingNodeID;
+    return m_properties.scrollingNodeID.value_or(ScrollingNodeID { });
 }
 
 void PlatformCALayerRemote::setScrollingNodeID(ScrollingNodeID nodeID)

@@ -44,7 +44,8 @@ namespace WebCore {
 class PlatformWheelEvent;
 class WheelEventDeltaFilter;
 struct WheelEventHandlingResult;
-using ScrollingNodeID = uint64_t;
+struct ScrollingNodeIDType;
+using ScrollingNodeID = ProcessQualified<ObjectIdentifier<ScrollingNodeIDType>>;
 enum class WheelScrollGestureState : uint8_t;
 enum class WheelEventProcessingSteps : uint8_t;
 };
@@ -74,7 +75,7 @@ public:
     void cacheWheelEventScrollingAccelerationCurve(const NativeWebWheelEvent&);
 
     void handleWheelEvent(const WebWheelEvent&, WebCore::RectEdges<bool> rubberBandableEdges);
-    void wheelEventHandlingCompleted(const WebCore::PlatformWheelEvent&, WebCore::ScrollingNodeID, std::optional<WebCore::WheelScrollGestureState>, bool wasHandled);
+    void wheelEventHandlingCompleted(const WebCore::PlatformWheelEvent&, std::optional<WebCore::ScrollingNodeID>, std::optional<WebCore::WheelScrollGestureState>, bool wasHandled);
 
     void setScrollingTree(RefPtr<RemoteScrollingTree>&&);
 

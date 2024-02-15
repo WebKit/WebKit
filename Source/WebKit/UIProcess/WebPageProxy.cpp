@@ -3592,7 +3592,7 @@ void WebPageProxy::sendWheelEvent(WebCore::FrameIdentifier frameID, const WebWhe
         sendWheelEventScrollingAccelerationCurveIfNecessary(event);
         connection->send(Messages::EventDispatcher::WheelEvent(webPageID(), event, rubberBandableEdges), 0, { }, Thread::QOS::UserInteractive);
     } else {
-        sendToProcessContainingFrame(frameID, Messages::WebPage::HandleWheelEvent(frameID, event, processingSteps, willStartSwipe), [weakThis = WeakPtr { *this }, wheelEvent = event, processingSteps, rubberBandableEdges, willStartSwipe, wasHandledForScrolling](ScrollingNodeID nodeID, std::optional<WheelScrollGestureState> gestureState, bool handled, std::optional<RemoteUserInputEventData> remoteWheelEventData) mutable {
+        sendToProcessContainingFrame(frameID, Messages::WebPage::HandleWheelEvent(frameID, event, processingSteps, willStartSwipe), [weakThis = WeakPtr { *this }, wheelEvent = event, processingSteps, rubberBandableEdges, willStartSwipe, wasHandledForScrolling](std::optional<ScrollingNodeID> nodeID, std::optional<WheelScrollGestureState> gestureState, bool handled, std::optional<RemoteUserInputEventData> remoteWheelEventData) mutable {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return;
@@ -3615,7 +3615,7 @@ void WebPageProxy::sendWheelEvent(WebCore::FrameIdentifier frameID, const WebWhe
     protectedProcess()->isResponsiveWithLazyStop();
 }
 
-void WebPageProxy::handleWheelEventReply(const WebWheelEvent& event, ScrollingNodeID nodeID, std::optional<WheelScrollGestureState> gestureState, bool wasHandledForScrolling, bool wasHandledByWebProcess)
+void WebPageProxy::handleWheelEventReply(const WebWheelEvent& event, std::optional<ScrollingNodeID> nodeID, std::optional<WheelScrollGestureState> gestureState, bool wasHandledForScrolling, bool wasHandledByWebProcess)
 {
     LOG_WITH_STREAM(WheelEvents, stream << "WebPageProxy::handleWheelEventReply " << platform(event) << " - handled for scrolling " << wasHandledForScrolling << " handled by web process " << wasHandledByWebProcess << " nodeID " << nodeID << " gesture state " << gestureState);
 
@@ -13469,12 +13469,12 @@ void WebPageProxy::adjustLayersForLayoutViewport(const FloatPoint& scrollPositio
 #endif
 }
 
-String WebPageProxy::scrollbarStateForScrollingNodeID(int scrollingNodeID, bool isVertical)
+String WebPageProxy::scrollbarStateForScrollingNodeID(ScrollingNodeID nodeID, bool isVertical)
 {
 #if ENABLE(ASYNC_SCROLLING) && PLATFORM(COCOA)
     if (!m_scrollingCoordinatorProxy)
         return ""_s;
-    return m_scrollingCoordinatorProxy->scrollbarStateForScrollingNodeID(scrollingNodeID, isVertical);
+    return m_scrollingCoordinatorProxy->scrollbarStateForScrollingNodeID(nodeID, isVertical);
 #else
     return ""_s;
 #endif

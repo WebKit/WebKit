@@ -141,7 +141,7 @@ struct FocusedElementInformation {
     bool preventScroll { false };
 
     FocusedElementInformationIdentifier identifier;
-    WebCore::ScrollingNodeID containerScrollingNodeID { 0 };
+    Markable<WebCore::ScrollingNodeID> containerScrollingNodeID;
 
     WebCore::FrameIdentifier frameID;
 };

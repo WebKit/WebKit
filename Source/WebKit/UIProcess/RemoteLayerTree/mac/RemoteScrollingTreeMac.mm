@@ -359,7 +359,7 @@ void RemoteScrollingTreeMac::receivedEventAfterDefaultHandling(const WebCore::Pl
     m_waitingForBeganEventCondition.notifyOne();
 }
 
-WheelEventHandlingResult RemoteScrollingTreeMac::handleWheelEventAfterDefaultHandling(const PlatformWheelEvent& wheelEvent, ScrollingNodeID targetNodeID, std::optional<WheelScrollGestureState> gestureState)
+WheelEventHandlingResult RemoteScrollingTreeMac::handleWheelEventAfterDefaultHandling(const PlatformWheelEvent& wheelEvent, std::optional<ScrollingNodeID> targetNodeID, std::optional<WheelScrollGestureState> gestureState)
 {
     LOG_WITH_STREAM(Scrolling, stream << "RemoteScrollingTreeMac::handleWheelEventAfterDefaultHandling - targetNodeID " << targetNodeID << " gestureState " << gestureState);
 
@@ -378,7 +378,7 @@ WheelEventHandlingResult RemoteScrollingTreeMac::handleWheelEventAfterDefaultHan
     }
 
     SetForScope disallowLatchingScope(m_allowLatching, allowLatching);
-    RefPtr<ScrollingTreeNode> targetNode = nodeForID(targetNodeID);
+    RefPtr<ScrollingTreeNode> targetNode = nodeForID(*targetNodeID);
     return handleWheelEventWithNode(wheelEvent, processingSteps, targetNode.get(), EventTargeting::NodeOnly);
 }
 
@@ -418,7 +418,7 @@ static ScrollingNodeID scrollingNodeIDForLayer(CALayer *layer)
 {
     auto* layerTreeNode = RemoteLayerTreeNode::forCALayer(layer);
     if (!layerTreeNode)
-        return 0;
+        return { };
 
     return layerTreeNode->scrollingNodeID();
 }

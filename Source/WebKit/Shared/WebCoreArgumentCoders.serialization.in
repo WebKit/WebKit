@@ -6509,6 +6509,7 @@ struct WebCore::PrewarmInformation {
     WebCore::FontCachePrewarmInformation fontCache;
 };
 
+using WebCore::ScrollingNodeID = ProcessQualified<ObjectIdentifier<WebCore::ScrollingNodeIDType>>;
 using WebCore::PlatformLayerIdentifier = ProcessQualified<ObjectIdentifier<WebCore::PlatformLayerIdentifierType>>;
 using WebCore::ScriptExecutionContextIdentifier = ProcessQualified<WTF::UUID>;
 

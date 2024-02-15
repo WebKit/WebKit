@@ -53,7 +53,7 @@ public:
     virtual void willSendEventForDefaultHandling(const WebCore::PlatformWheelEvent&) { }
     virtual void waitForEventDefaultHandlingCompletion(const WebCore::PlatformWheelEvent&) { }
     virtual void receivedEventAfterDefaultHandling(const WebCore::PlatformWheelEvent&, std::optional<WebCore::WheelScrollGestureState>) { };
-    virtual WebCore::WheelEventHandlingResult handleWheelEventAfterDefaultHandling(const WebCore::PlatformWheelEvent&, WebCore::ScrollingNodeID, std::optional<WebCore::WheelScrollGestureState>) { return WebCore::WheelEventHandlingResult::unhandled(); }
+    virtual WebCore::WheelEventHandlingResult handleWheelEventAfterDefaultHandling(const WebCore::PlatformWheelEvent&, std::optional<WebCore::ScrollingNodeID>, std::optional<WebCore::WheelScrollGestureState>) { return WebCore::WheelEventHandlingResult::unhandled(); }
 
     RemoteScrollingCoordinatorProxy* scrollingCoordinatorProxy() const;
 

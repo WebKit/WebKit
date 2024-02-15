@@ -111,7 +111,7 @@ enum class WebKit::InputType : uint8_t {
     bool preventScroll;
 
     WebKit::FocusedElementInformationIdentifier identifier;
-    WebCore::ScrollingNodeID containerScrollingNodeID;
+    Markable<WebCore::ScrollingNodeID> containerScrollingNodeID;
     WebCore::FrameIdentifier frameID;
 }
 #endif

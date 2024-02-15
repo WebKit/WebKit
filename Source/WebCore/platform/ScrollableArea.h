@@ -200,7 +200,7 @@ public:
     void invalidateScrollbars();
     bool useDarkAppearanceForScrollbars() const;
 
-    virtual ScrollingNodeID scrollingNodeID() const { return 0; }
+    virtual ScrollingNodeID scrollingNodeID() const { return { }; }
 
     WEBCORE_EXPORT ScrollAnimator& scrollAnimator() const;
     ScrollAnimator* existingScrollAnimator() const { return m_scrollAnimator.get(); }

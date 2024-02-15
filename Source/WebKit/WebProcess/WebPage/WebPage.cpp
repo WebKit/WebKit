@@ -3515,7 +3515,7 @@ void WebPage::performHitTestForMouseEvent(const WebMouseEvent& event, Completion
     completionHandler(WTFMove(hitTestResultData), modifiers, UserData(WebProcess::singleton().transformObjectsToHandles(WTFMove(userData).get()).get()));
 }
 
-void WebPage::handleWheelEvent(FrameIdentifier frameID, const WebWheelEvent& event, const OptionSet<WheelEventProcessingSteps>& processingSteps, std::optional<bool> willStartSwipe, CompletionHandler<void(WebCore::ScrollingNodeID, std::optional<WebCore::WheelScrollGestureState>, bool, std::optional<RemoteUserInputEventData>)>&& completionHandler)
+void WebPage::handleWheelEvent(FrameIdentifier frameID, const WebWheelEvent& event, const OptionSet<WheelEventProcessingSteps>& processingSteps, std::optional<bool> willStartSwipe, CompletionHandler<void(std::optional<WebCore::ScrollingNodeID>, std::optional<WebCore::WheelScrollGestureState>, bool, std::optional<RemoteUserInputEventData>)>&& completionHandler)
 {
 #if ENABLE(ASYNC_SCROLLING)
     RefPtr remoteScrollingCoordinator = dynamicDowncast<RemoteScrollingCoordinator>(scrollingCoordinator());
@@ -3533,7 +3533,7 @@ void WebPage::handleWheelEvent(FrameIdentifier frameID, const WebWheelEvent& eve
         return;
     }
 #endif
-    completionHandler(0, { }, handleWheelEventResult.wasHandled(), handleWheelEventResult.remoteUserInputEventData());
+    completionHandler({ }, { }, handleWheelEventResult.wasHandled(), handleWheelEventResult.remoteUserInputEventData());
 }
 
 HandleUserInputEventResult WebPage::wheelEvent(const FrameIdentifier& frameID, const WebWheelEvent& wheelEvent, OptionSet<WheelEventProcessingSteps> processingSteps)

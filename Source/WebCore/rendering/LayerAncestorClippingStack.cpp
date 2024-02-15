@@ -34,7 +34,7 @@
 namespace WebCore {
 
 LayerAncestorClippingStack::LayerAncestorClippingStack(Vector<CompositedClipData>&& clipDataStack)
-    : m_stack(WTF::map(WTFMove(clipDataStack), [](CompositedClipData&& clipDataEntry) { return ClippingStackEntry { WTFMove(clipDataEntry), 0, nullptr, nullptr }; }))
+    : m_stack(WTF::map(WTFMove(clipDataStack), [](CompositedClipData&& clipDataEntry) { return ClippingStackEntry { WTFMove(clipDataEntry), { }, nullptr, nullptr }; }))
 {
 }
 
@@ -67,7 +67,7 @@ void LayerAncestorClippingStack::clear(ScrollingCoordinator* scrollingCoordinato
         if (entry.overflowScrollProxyNodeID) {
             ASSERT(scrollingCoordinator);
             scrollingCoordinator->unparentChildrenAndDestroyNode(entry.overflowScrollProxyNodeID);
-            entry.overflowScrollProxyNodeID = 0;
+            entry.overflowScrollProxyNodeID = { };
         }
 
         GraphicsLayer::unparentAndClear(entry.clippingLayer);
@@ -80,7 +80,7 @@ void LayerAncestorClippingStack::detachFromScrollingCoordinator(ScrollingCoordin
     for (auto& entry : m_stack) {
         if (entry.overflowScrollProxyNodeID) {
             scrollingCoordinator.unparentChildrenAndDestroyNode(entry.overflowScrollProxyNodeID);
-            entry.overflowScrollProxyNodeID = 0;
+            entry.overflowScrollProxyNodeID = { };
         }
     }
 }
@@ -102,7 +102,7 @@ ScrollingNodeID LayerAncestorClippingStack::lastOverflowScrollProxyNodeID() cons
             return entry.overflowScrollProxyNodeID;
     }
     
-    return 0;
+    return { };
 }
 
 void LayerAncestorClippingStack::updateScrollingNodeLayers(ScrollingCoordinator& scrollingCoordinator)
@@ -125,7 +125,7 @@ bool LayerAncestorClippingStack::updateWithClipData(ScrollingCoordinator* scroll
         auto& clipDataEntry = clipDataStack[i];
         
         if (i >= stackEntryCount) {
-            m_stack.append({ WTFMove(clipDataEntry), 0, nullptr, nullptr });
+            m_stack.append({ WTFMove(clipDataEntry), { }, nullptr, nullptr });
             stackChanged = true;
             continue;
         }
@@ -138,7 +138,7 @@ bool LayerAncestorClippingStack::updateWithClipData(ScrollingCoordinator* scroll
         if (existingEntry.clipData.isOverflowScroll && !clipDataEntry.isOverflowScroll) {
             ASSERT(scrollingCoordinator);
             scrollingCoordinator->unparentChildrenAndDestroyNode(existingEntry.overflowScrollProxyNodeID);
-            existingEntry.overflowScrollProxyNodeID = 0;
+            existingEntry.overflowScrollProxyNodeID = { };
         }
         
         existingEntry.clipData = WTFMove(clipDataEntry);

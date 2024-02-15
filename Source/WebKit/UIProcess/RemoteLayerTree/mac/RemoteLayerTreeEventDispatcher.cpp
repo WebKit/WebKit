@@ -275,7 +275,7 @@ WheelEventHandlingResult RemoteLayerTreeEventDispatcher::internalHandleWheelEven
     return scrollingTree->handleWheelEvent(filteredEvent, processingSteps);
 }
 
-void RemoteLayerTreeEventDispatcher::wheelEventHandlingCompleted(const PlatformWheelEvent& wheelEvent, ScrollingNodeID scrollingNodeID, std::optional<WheelScrollGestureState> gestureState, bool wasHandled)
+void RemoteLayerTreeEventDispatcher::wheelEventHandlingCompleted(const PlatformWheelEvent& wheelEvent, std::optional<ScrollingNodeID> scrollingNodeID, std::optional<WheelScrollGestureState> gestureState, bool wasHandled)
 {
     ASSERT(isMainRunLoop());
 

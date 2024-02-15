@@ -53,7 +53,7 @@ struct WebKit::InteractionInformationAtPosition {
     bool isPausedVideo;
     bool isElement;
     bool isContentEditable;
-    WebCore::ScrollingNodeID containerScrollingNodeID;
+    Markable<WebCore::ScrollingNodeID> containerScrollingNodeID;
 #if ENABLE(DATA_DETECTION)
     bool isDataDetectorLink;
 #endif

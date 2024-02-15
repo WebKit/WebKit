@@ -386,8 +386,8 @@ messages -> WebPageProxy {
     UpdateInputContextAfterBlurringAndRefocusingElement()
     UpdateFocusedElementInformation(struct WebKit::FocusedElementInformation information)
     FocusedElementDidChangeInputMode(enum:uint8_t WebCore::InputMode mode)
-    ScrollingNodeScrollWillStartScroll(uint64_t nodeID)
-    ScrollingNodeScrollDidEndScroll(uint64_t nodeID)
+    ScrollingNodeScrollWillStartScroll(std::optional<WebCore::ScrollingNodeID> nodeID)
+    ScrollingNodeScrollDidEndScroll(std::optional<WebCore::ScrollingNodeID> nodeID)
     ShowInspectorHighlight(struct WebCore::InspectorOverlay::Highlight highlight)
     HideInspectorHighlight()
 

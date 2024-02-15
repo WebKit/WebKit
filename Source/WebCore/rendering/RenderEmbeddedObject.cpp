@@ -123,7 +123,7 @@ ScrollingNodeID RenderEmbeddedObject::scrollingNodeID() const
 {
     auto* pluginViewBase = dynamicDowncast<PluginViewBase>(widget());
     if (!pluginViewBase)
-        return false;
+        return { };
     return pluginViewBase->scrollingNodeID();
 }
 

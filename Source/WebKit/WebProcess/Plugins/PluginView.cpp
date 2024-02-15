@@ -682,7 +682,7 @@ bool PluginView::usesAsyncScrolling() const
 ScrollingNodeID PluginView::scrollingNodeID() const
 {
     if (!m_isInitialized)
-        return 0;
+        return { };
 
     return m_plugin->scrollingNodeID();
 }

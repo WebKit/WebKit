@@ -232,7 +232,7 @@ ScrollingNodeID ScrollingStateTree::insertNode(ScrollingNodeType nodeType, Scrol
         auto parent = stateNodeForID(parentID);
         if (!parent) {
             ASSERT_NOT_REACHED();
-            return 0;
+            return { };
         }
 
         ASSERT(parentID);

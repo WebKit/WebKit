@@ -834,7 +834,7 @@ ScrollingNodeID AsyncScrollingCoordinator::parentOfNode(ScrollingNodeID nodeID) 
 {
     auto scrollingNode = m_scrollingStateTree->stateNodeForID(nodeID);
     if (!scrollingNode)
-        return 0;
+        return { };
 
     return scrollingNode->parentNodeID();
 }
@@ -866,7 +866,7 @@ void AsyncScrollingCoordinator::ensureRootStateNodeForFrameView(LocalFrameView& 
     // For non-main frames, it is only possible to arrive in this function from
     // RenderLayerCompositor::updateBacking where the node has already been created.
     ASSERT(frameView.frame().isMainFrame());
-    insertNode(ScrollingNodeType::MainFrame, frameView.scrollingNodeID(), 0, 0);
+    insertNode(ScrollingNodeType::MainFrame, frameView.scrollingNodeID(), { }, 0);
 }
 
 void AsyncScrollingCoordinator::setNodeLayers(ScrollingNodeID nodeID, const NodeLayers& nodeLayers)
@@ -1020,7 +1020,7 @@ void AsyncScrollingCoordinator::setRelatedOverflowScrollingNodes(ScrollingNodeID
         if (!relatedNodes.isEmpty())
             overflowScrollProxyNode.setOverflowScrollingNode(relatedNodes[0]);
         else
-            overflowScrollProxyNode.setOverflowScrollingNode(0);
+            overflowScrollProxyNode.setOverflowScrollingNode({ });
     } else
         ASSERT_NOT_REACHED();
 }
@@ -1099,7 +1099,7 @@ ScrollingNodeID AsyncScrollingCoordinator::scrollableContainerNodeID(const Rende
     // If we're in a scrollable frame, return that.
     RefPtr frameView = renderer.frame().view();
     if (!frameView)
-        return 0;
+        return { };
 
     if (auto scrollingNodeID = frameView->scrollingNodeID())
         return scrollingNodeID;
@@ -1110,7 +1110,7 @@ ScrollingNodeID AsyncScrollingCoordinator::scrollableContainerNodeID(const Rende
             return scrollableContainerNodeID(*frameRenderer);
     }
 
-    return 0;
+    return { };
 }
 
 String AsyncScrollingCoordinator::scrollingStateTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const

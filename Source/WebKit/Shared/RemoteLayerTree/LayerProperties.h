@@ -189,7 +189,7 @@ struct LayerProperties {
     WebCore::EventRegion eventRegion;
 
 #if ENABLE(SCROLLING_THREAD)
-    WebCore::ScrollingNodeID scrollingNodeID { 0 };
+    Markable<WebCore::ScrollingNodeID> scrollingNodeID;
 #endif
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
     bool isSeparated { false };

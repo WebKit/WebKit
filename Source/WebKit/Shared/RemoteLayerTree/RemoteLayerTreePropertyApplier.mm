@@ -338,7 +338,7 @@ void RemoteLayerTreePropertyApplier::applyProperties(RemoteLayerTreeNode& node, 
 
 #if ENABLE(SCROLLING_THREAD)
     if (properties.changedProperties & LayerChange::ScrollingNodeIDChanged)
-        node.setScrollingNodeID(properties.scrollingNodeID);
+        node.setScrollingNodeID(properties.scrollingNodeID.value_or(ScrollingNodeID { }));
 #endif
 
 #if PLATFORM(IOS_FAMILY)

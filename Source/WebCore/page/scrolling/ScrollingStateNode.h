@@ -373,7 +373,7 @@ inline ScrollingNodeID ScrollingStateNode::parentNodeID() const
 {
     auto parent = m_parent.get();
     if (!parent)
-        return 0;
+        return { };
     return parent->scrollingNodeID();
 }
 

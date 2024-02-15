@@ -45,7 +45,7 @@ private:
     void cacheWheelEventScrollingAccelerationCurve(const NativeWebWheelEvent&) override;
 
     void handleWheelEvent(const WebWheelEvent&, WebCore::RectEdges<bool> rubberBandableEdges) override;
-    void wheelEventHandlingCompleted(const WebCore::PlatformWheelEvent&, WebCore::ScrollingNodeID, std::optional<WebCore::WheelScrollGestureState>, bool wasHandled) override;
+    void wheelEventHandlingCompleted(const WebCore::PlatformWheelEvent&, std::optional<WebCore::ScrollingNodeID>, std::optional<WebCore::WheelScrollGestureState>, bool wasHandled) override;
 
     bool scrollingTreeNodeRequestsScroll(WebCore::ScrollingNodeID, const WebCore::RequestedScrollData&) override;
     bool scrollingTreeNodeRequestsKeyboardScroll(WebCore::ScrollingNodeID, const WebCore::RequestedKeyboardScrollData&) override;

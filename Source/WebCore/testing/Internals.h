@@ -484,7 +484,7 @@ public:
     ExceptionOr<uint64_t> layerIDForElement(Element&);
     ExceptionOr<String> repaintRectsAsText() const;
         
-    ExceptionOr<uint64_t> scrollingNodeIDForNode(Node*);
+    ExceptionOr<Vector<uint64_t>> scrollingNodeIDForNode(Node*);
 
     enum {
         // Values need to be kept in sync with Internals.idl.
