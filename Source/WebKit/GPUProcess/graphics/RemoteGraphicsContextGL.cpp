@@ -165,12 +165,11 @@ void RemoteGraphicsContextGL::forceContextLost()
     send(Messages::RemoteGraphicsContextGLProxy::WasLost());
 }
 
-void RemoteGraphicsContextGL::createAndBindEGLImage(GCGLenum target, WebCore::GraphicsContextGL::EGLImageSource source, CompletionHandler<void(uint64_t handle, WebCore::IntSize size)>&& completionHandler)
+void RemoteGraphicsContextGL::createAndBindEGLImage(GCGLenum target, WebCore::GraphicsContextGL::EGLImageSource source, CompletionHandler<void(uint64_t handle)>&& completionHandler)
 {
     assertIsCurrent(workQueue());
-    auto attachment = m_context->createAndBindEGLImage(target, WTFMove(source));
-    auto [handle, size] = attachment.value_or(std::make_tuple(nullptr, IntSize { }));
-    completionHandler(static_cast<uint64_t>(reinterpret_cast<intptr_t>(handle)), size);
+    auto handle = m_context->createAndBindEGLImage(target, WTFMove(source));
+    completionHandler(static_cast<uint64_t>(reinterpret_cast<intptr_t>(handle)));
 }
 
 void RemoteGraphicsContextGL::reshape(int32_t width, int32_t height)

@@ -97,6 +97,7 @@ enum class PlatformXR::XRTargetRayMode : uint8_t {
 
 [Nested, RValue] struct PlatformXR::FrameData::LayerData {
 #if PLATFORM(COCOA)
+    WebCore::IntSize framebufferSize;
     std::tuple<MachSendRight, bool> colorTexture;
     std::tuple<MachSendRight, bool> depthStencilBuffer;
     std::tuple<MachSendRight, uint64_t> completionSyncEvent;

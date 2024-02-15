@@ -246,6 +246,7 @@ struct FrameData {
 
     struct LayerData {
 #if PLATFORM(COCOA)
+        WebCore::IntSize framebufferSize;
         std::tuple<MachSendRight, bool> colorTexture = { MachSendRight(), false };
         std::tuple<MachSendRight, bool> depthStencilBuffer = { MachSendRight(), false };
         std::tuple<MachSendRight, uint64_t> completionSyncEvent;

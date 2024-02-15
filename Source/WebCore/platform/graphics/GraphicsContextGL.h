@@ -1506,8 +1506,7 @@ public:
 #else
     using EGLImageSource = int;
 #endif
-    using EGLImageAttachResult = std::tuple<GCEGLImage, IntSize>;
-    virtual std::optional<EGLImageAttachResult> createAndBindEGLImage(GCGLenum, EGLImageSource) = 0;
+    virtual GCEGLImage createAndBindEGLImage(GCGLenum, EGLImageSource) = 0;
     virtual void destroyEGLImage(GCEGLImage) = 0;
 
 #if PLATFORM(COCOA)
