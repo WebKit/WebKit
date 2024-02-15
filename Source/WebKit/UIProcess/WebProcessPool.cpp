@@ -1003,6 +1003,10 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
 
     parameters.timeZoneOverride = m_configuration->timeZoneOverride();
 
+    parameters.memoryFootprintPollIntervalForTesting = m_configuration->memoryFootprintPollIntervalForTesting();
+
+    parameters.memoryFootprintNotificationThresholds = m_configuration->memoryFootprintNotificationThresholds();
+
     // Add any platform specific parameters
     platformInitializeWebProcess(process, parameters);
 

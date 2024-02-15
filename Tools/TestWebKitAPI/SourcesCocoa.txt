@@ -171,6 +171,7 @@ Tests/WebKitCocoa/MediaLoading.mm
 Tests/WebKitCocoa/MediaMutedState.mm
 Tests/WebKitCocoa/MediaSession.mm
 Tests/WebKitCocoa/MediaType.mm
+Tests/WebKitCocoa/MemoryFootprintThreshold.mm
 Tests/WebKitCocoa/MessagePortProviders.mm
 Tests/WebKitCocoa/ModalAlerts.mm
 Tests/WebKitCocoa/NSAttributedStringWebKitAdditions.mm

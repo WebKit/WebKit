@@ -1979,6 +1979,32 @@ void WebProcessProxy::didExceedInactiveMemoryLimit()
     requestTermination(ProcessTerminationReason::ExceededMemoryLimit);
 }
 
+void WebProcessProxy::didExceedMemoryFootprintThreshold(size_t footprint)
+{
+    WEBPROCESSPROXY_RELEASE_LOG(PerformanceLogging, "didExceedMemoryFootprintThreshold: WebProcess exceeded notification threshold (current footprint: %zu MB)", footprint >> 20);
+
+    RefPtr dataStore = protectedWebsiteDataStore();
+    if (!dataStore)
+        return;
+
+    String domain;
+    for (auto& page : this->pages()) {
+#if ENABLE(PUBLIC_SUFFIX_LIST)
+        String pageDomain = topPrivatelyControlledDomain(URL({ }, page->currentURL()).host().toString());
+        if (domain.isEmpty())
+            domain = WTFMove(pageDomain);
+        else if (domain != pageDomain)
+            domain = "multiple"_s;
+#endif
+    }
+
+    if (domain.isEmpty())
+        domain = "unknown"_s;
+
+    auto activeTime = totalForegroundTime() + totalBackgroundTime() + totalSuspendedTime();
+    dataStore->client().didExceedMemoryFootprintThreshold(footprint, domain, pageCount(), activeTime, throttler().currentState() == ProcessThrottleState::Foreground);
+}
+
 void WebProcessProxy::didExceedCPULimit()
 {
     Ref protectedThis { *this };

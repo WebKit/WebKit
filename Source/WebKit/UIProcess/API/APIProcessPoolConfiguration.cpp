@@ -82,6 +82,8 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::copy()
     copy->m_presentingApplicationProcessToken = this->m_presentingApplicationProcessToken;
 #endif
     copy->m_timeZoneOverride = this->m_timeZoneOverride;
+    copy->m_memoryFootprintPollIntervalForTesting = this->m_memoryFootprintPollIntervalForTesting;
+    copy->m_memoryFootprintNotificationThresholds = this->m_memoryFootprintNotificationThresholds;
     return copy;
 }
 

@@ -78,6 +78,9 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 
 @property (nonatomic, nullable, copy) NSString *timeZoneOverride WK_API_AVAILABLE(macos(13.0), ios(16.0));
 
+@property (nonatomic) NSTimeInterval memoryFootprintPollIntervalForTesting;
+@property (nonatomic, copy) NSArray<NSNumber *> *memoryFootprintNotificationThresholds WK_API_AVAILABLE(macos(WK_MAC_TBA));
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -278,6 +278,9 @@ struct WebProcessCreationParameters {
 
     HashMap<WebCore::RegistrableDomain, String> storageAccessUserAgentStringQuirksData;
     HashSet<WebCore::RegistrableDomain> storageAccessPromptQuirksDomains;
+
+    Seconds memoryFootprintPollIntervalForTesting;
+    Vector<size_t> memoryFootprintNotificationThresholds;
 };
 
 } // namespace WebKit

@@ -45,6 +45,7 @@ messages -> WebProcessProxy LegacyReceiver {
 
     DidExceedActiveMemoryLimit()
     DidExceedInactiveMemoryLimit()
+    DidExceedMemoryFootprintThreshold(size_t footprint)
     DidExceedCPULimit()
 
     StopResponsivenessTimer()

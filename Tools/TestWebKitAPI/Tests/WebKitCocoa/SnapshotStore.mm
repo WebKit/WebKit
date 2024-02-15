@@ -36,8 +36,10 @@
 #import <WebKit/WKBackForwardListItemPrivate.h>
 #import <WebKit/WKPage.h>
 #import <WebKit/WKPagePrivate.h>
+#import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
+#import <WebKit/_WKFeature.h>
 #import <wtf/RetainPtr.h>
 
 static bool didForceRepaint;
