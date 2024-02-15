@@ -26,7 +26,6 @@
 #include "config.h"
 #include "FontFace.h"
 
-#include "AllowedFonts.h"
 #include "CSSFontFaceSource.h"
 #include "CSSFontSelector.h"
 #include "CSSPrimitiveValueMappings.h"
@@ -37,6 +36,7 @@
 #include "Document.h"
 #include "DocumentInlines.h"
 #include "JSFontFace.h"
+#include "TrustedFonts.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <JavaScriptCore/ArrayBufferView.h>
 #include <JavaScriptCore/JSCInlines.h>
@@ -70,7 +70,7 @@ Ref<FontFace> FontFace::create(ScriptExecutionContext& context, const String& fa
         return result;
     }
 
-    auto fontAllowedTypes = context.settingsValues().downloadableBinaryFontAllowedTypes;
+    auto fontTrustedTypes = context.settingsValues().downloadableBinaryFontTrustedTypes;
     auto sourceConversionResult = WTF::switchOn(source,
         [&] (String& string) -> ExceptionOr<void> {
             auto* document = dynamicDowncast<Document>(context);
@@ -80,15 +80,15 @@ Ref<FontFace> FontFace::create(ScriptExecutionContext& context, const String& fa
             CSSFontFace::appendSources(result->backing(), *value, &context, false);
             return { };
         },
-        [&, fontAllowedTypes] (RefPtr<ArrayBufferView>& arrayBufferView) -> ExceptionOr<void> {
-            if (!arrayBufferView || !isFontBinaryAllowed(arrayBufferView->data(), arrayBufferView->byteLength(), fontAllowedTypes))
+        [&, fontTrustedTypes] (RefPtr<ArrayBufferView>& arrayBufferView) -> ExceptionOr<void> {
+            if (!arrayBufferView || fontBinaryParsingPolicy(arrayBufferView->data(), arrayBufferView->byteLength(), fontTrustedTypes) == FontParsingPolicy::Deny)
                 return { };
 
             dataRequiresAsynchronousLoading = populateFontFaceWithArrayBuffer(result->backing(), arrayBufferView.releaseNonNull());
             return { };
         },
-        [&, fontAllowedTypes] (RefPtr<ArrayBuffer>& arrayBuffer) -> ExceptionOr<void> {
-            if (!arrayBuffer || !isFontBinaryAllowed(arrayBuffer->data(), arrayBuffer->byteLength(), fontAllowedTypes))
+        [&, fontTrustedTypes] (RefPtr<ArrayBuffer>& arrayBuffer) -> ExceptionOr<void> {
+            if (!arrayBuffer || fontBinaryParsingPolicy(arrayBuffer->data(), arrayBuffer->byteLength(), fontTrustedTypes) == FontParsingPolicy::Deny)
                 return { };
 
             unsigned byteLength = arrayBuffer->byteLength();

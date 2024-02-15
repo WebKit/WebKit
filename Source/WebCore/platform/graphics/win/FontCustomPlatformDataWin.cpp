@@ -88,7 +88,7 @@ static String createUniqueFontName()
     return fontName;
 }
 
-RefPtr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer& buffer, const String& itemInCollection)
+RefPtr<FontCustomPlatformData> FontCustomPlatformData::create(SharedBuffer& buffer, const String& itemInCollection)
 {
     String fontName = createUniqueFontName();
     auto fontResource = renameAndActivateFont(buffer, fontName);
@@ -98,6 +98,11 @@ RefPtr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer& buffer
 
     FontPlatformData::CreationData creationData = { buffer, itemInCollection, fontResource.releaseNonNull() };
     return adoptRef(new FontCustomPlatformData(fontName, WTFMove(creationData)));
+}
+
+RefPtr<FontCustomPlatformData> FontCustomPlatformData::createMemorySafe(SharedBuffer&, const String&)
+{
+    return nullptr;
 }
 
 bool FontCustomPlatformData::supportsFormat(const String& format)

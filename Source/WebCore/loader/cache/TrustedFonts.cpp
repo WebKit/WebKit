@@ -24,7 +24,8 @@
 */
 
 #include "config.h"
-#include "AllowedFonts.h"
+#include "TrustedFonts.h"
+
 #include "Logging.h"
 
 #include <pal/crypto/CryptoDigest.h>
@@ -36,10 +37,10 @@
 
 namespace WebCore {
 
-static const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& allowedFontHashesInLockdownMode()
+static const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& trustedFontHashesInLockdownMode()
 {
-    // Set of base64 strings of the sha256 representation of each allowed font binary.
-    static NeverDestroyed<MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>> allowedFontHashes(std::initializer_list<AtomString> {
+    // Set of base64 strings of the sha256 representation of each trusted font binary.
+    static NeverDestroyed<MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>> trustedFontHashes(std::initializer_list<AtomString> {
         // custom font Ahem-10000A.ttf for testing (Tools/TestWebKitAPI/Tests/WebKitCocoa/Ahem-10000A.ttf)
         "OKCJZv9fAWEfrno3PhsS4LJwGfHZ7TqRI2lXGxNUVLk="_s,
         // fonts from app.slack.com
@@ -832,7 +833,7 @@ static const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& allowedFontHas
         // confluence
         "2W4TXu8CrouqU+yAxbOXQv7+cmCwBxTA8Qu4s3FiPao="_s /* adgs-icons.woff */ });
 
-    return allowedFontHashes;
+    return trustedFontHashes;
 }
 
 static AtomString hashForFontData(const void* data, size_t size)
@@ -843,28 +844,31 @@ static AtomString hashForFontData(const void* data, size_t size)
     return makeAtomString(base64Encoded(digest.data(), digest.size()));
 }
 
-bool isFontBinaryAllowed(const void* data, size_t size, DownloadableBinaryFontAllowedTypes allowedType)
+FontParsingPolicy fontBinaryParsingPolicy(const void* data, size_t size, DownloadableBinaryFontTrustedTypes trustedType)
 {
-    switch (allowedType) {
-    case DownloadableBinaryFontAllowedTypes::Any:
-        return true;
-    case DownloadableBinaryFontAllowedTypes::None:
-        return false;
-    case DownloadableBinaryFontAllowedTypes::Restricted: {
+    switch (trustedType) {
+    case DownloadableBinaryFontTrustedTypes::Any:
+        return FontParsingPolicy::LoadWithSystemFontParser;
+    case DownloadableBinaryFontTrustedTypes::None:
+        return FontParsingPolicy::Deny;
+    case DownloadableBinaryFontTrustedTypes::Restricted:
+    case DownloadableBinaryFontTrustedTypes::FallbackParser: {
         auto sha = hashForFontData(data, size);
-        auto allowedFontHashes = allowedFontHashesInLockdownMode().contains(sha);
-        if (!allowedFontHashes)
-            RELEASE_LOG(Fonts, "[Lockdown Mode] A font with a forbidden type has been blocked.");
-        return allowedFontHashes;
+        if (trustedFontHashesInLockdownMode().contains(sha))
+            return FontParsingPolicy::LoadWithSystemFontParser;
+        if (trustedType == DownloadableBinaryFontTrustedTypes::FallbackParser)
+            return FontParsingPolicy::LoadWithSafeFontParser;
+        RELEASE_LOG(Fonts, "[Lockdown Mode] A font with a forbidden type has been blocked.");
+        return FontParsingPolicy::Deny;
     }
     }
     ASSERT_NOT_REACHED();
-    return false;
+    return FontParsingPolicy::Deny;
 }
 
-bool isFontBinaryAllowed(std::span<const uint8_t> data, DownloadableBinaryFontAllowedTypes allowedType)
+FontParsingPolicy fontBinaryParsingPolicy(std::span<const uint8_t> data, DownloadableBinaryFontTrustedTypes trustedType)
 {
-    return isFontBinaryAllowed(data.data(), data.size(), allowedType);
+    return fontBinaryParsingPolicy(data.data(), data.size(), trustedType);
 }
 
 }; // namespace WebCore

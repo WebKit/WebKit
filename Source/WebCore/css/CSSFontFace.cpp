@@ -61,7 +61,7 @@ template<typename T> void iterateClients(WeakHashSet<CSSFontFace::Client>& clien
 
 void CSSFontFace::appendSources(CSSFontFace& fontFace, CSSValueList& srcList, ScriptExecutionContext* context, bool isInitiatingElementInUserAgentShadowTree)
 {
-    bool allowDownloading = context && (context->settingsValues().downloadableBinaryFontAllowedTypes != DownloadableBinaryFontAllowedTypes::None);
+    bool allowDownloading = context && (context->settingsValues().downloadableBinaryFontTrustedTypes != DownloadableBinaryFontTrustedTypes::None);
     for (auto& src : srcList) {
         // An item in the list either specifies a string (local font name) or a URL (remote font to download).
         if (auto local = dynamicDowncast<CSSFontFaceSrcLocalValue>(src)) {

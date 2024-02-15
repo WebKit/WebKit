@@ -26,7 +26,6 @@
 
 #pragma once
 
-#include "AllowedFonts.h"
 #include "ClipboardAccessPolicy.h"
 #include "ContentType.h"
 #include "EditableLinkBehavior.h"
@@ -42,6 +41,7 @@
 #include "TextDirection.h"
 #include "TextDirectionSubmenuInclusionBehavior.h"
 #include "Timer.h"
+#include "TrustedFonts.h"
 #include "UserInterfaceDirectionPolicy.h"
 #include <JavaScriptCore/RuntimeFlags.h>
 #include <unicode/uscript.h>

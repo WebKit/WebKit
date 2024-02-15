@@ -4171,6 +4171,21 @@ LocalStorageEnabled:
     WebCore:
       default: false
 
+LockdownFontParserEnabled:
+  type: bool
+  status: testable
+  humanReadableName: "Lockdown Mode Safe Fonts"
+  humanReadableDescription: "Try parsing Web fonts with safe font parser in Lockdown Mode"
+  exposed: [ WebKit ]
+  category: security
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 LogsPageMessagesToSystemConsoleEnabled:
   type: bool
   status: internal

@@ -327,7 +327,7 @@ enum class WebCore::EnterKeyHint : uint8_t {
     Send
 };
 
-enum class WebCore::DownloadableBinaryFontAllowedTypes : uint8_t {
+enum class WebCore::DownloadableBinaryFontTrustedTypes : uint8_t {
     Any,
     Restricted,
     None

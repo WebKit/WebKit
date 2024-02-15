@@ -1442,7 +1442,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     loader/archive/mhtml/MHTMLArchive.h
 
-    loader/cache/AllowedFonts.h
+    loader/cache/TrustedFonts.h
     loader/cache/CachedFontLoadRequest.h
     loader/cache/CachePolicy.h
     loader/cache/CachedImage.h

@@ -252,7 +252,7 @@ std::optional<Ref<FontCustomPlatformData>> ArgumentCoder<FontCustomPlatformData>
     if (!itemInCollection)
         return std::nullopt;
 
-    auto fontCustomPlatformData = createFontCustomPlatformData(fontFaceData, *itemInCollection);
+    auto fontCustomPlatformData = FontCustomPlatformData::create(fontFaceData, *itemInCollection);
     if (!fontCustomPlatformData)
         return std::nullopt;
 

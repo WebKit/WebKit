@@ -274,7 +274,7 @@ std::optional<FontPlatformData> FontPlatformData::tryMakeFontPlatformData(float 
         },
         [&] (FontPlatformSerializedCreationData& d) {
             auto fontFaceData = SharedBuffer::create(WTFMove(d.fontFaceData));
-            auto fontCustomPlatformData = createFontCustomPlatformData(fontFaceData, d.itemInCollection);
+            RefPtr fontCustomPlatformData = FontCustomPlatformData::create(fontFaceData, d.itemInCollection);
             if (!fontCustomPlatformData)
                 return true;
             auto baseFontDescriptor = fontCustomPlatformData->fontDescriptor.get();

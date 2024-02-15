@@ -31,17 +31,30 @@
 
 namespace WebCore {
 
-// This setting is used to define which types of fonts are allowed to be downloaded and loaded into the system.
+// This setting is used to define which types of fonts are trusted to be downloaded and loaded into the system
+// using the default, possibly-unsafe font parser.
 // Any: any font binary will be downloaded, no checks will be done during load.
-// Restricted: any font binary will be donwloaded but just binaries listed by WebKit will be allowed loaded. A not allowed binary will be deleted after the check is done (see CachedFont::shouldAllowCustomFont()).
+// Restricted: any font binary will be downloaded but just binaries listed by WebKit are trusted to load through the system font parser. A not allowed binary will be deleted after the check is done.
+// FallbackParser: any font binary will be downloaded. Binaries listed by WebKit are trusted to load through the system font parser. WebKit will attempt to load fonts that are not trusted with the fallback font parser, which is assumed to be safe.
 // None: No font binary will be downloaded or loaded.
-enum class DownloadableBinaryFontAllowedTypes : uint8_t {
+enum class DownloadableBinaryFontTrustedTypes : uint8_t {
     Any,
     Restricted,
+    FallbackParser,
     None
 };
 
-bool isFontBinaryAllowed(std::span<const uint8_t>, DownloadableBinaryFontAllowedTypes);
-bool isFontBinaryAllowed(const void*, size_t, DownloadableBinaryFontAllowedTypes);
+// Identifies the policy to respect for loading font binaries.
+// Deny: do not load the font binary.
+// LoadWithSystemFontParser: font can be loaded with the possibly-unsafe system font parser.
+// LoadWithSafeFontParser: font can be loaded with a safe font parser (with no fallback on the system font parser).
+enum class FontParsingPolicy : uint8_t {
+    Deny,
+    LoadWithSystemFontParser,
+    LoadWithSafeFontParser,
+};
+
+FontParsingPolicy fontBinaryParsingPolicy(std::span<const uint8_t>, DownloadableBinaryFontTrustedTypes);
+FontParsingPolicy fontBinaryParsingPolicy(const void*, size_t, DownloadableBinaryFontTrustedTypes);
 
 } // namespace WebCore

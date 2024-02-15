@@ -68,6 +68,9 @@ struct FontCustomPlatformData : public RefCounted<FontCustomPlatformData> {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(FontCustomPlatformData);
 public:
+    WEBCORE_EXPORT static RefPtr<FontCustomPlatformData> create(SharedBuffer&, const String&);
+    WEBCORE_EXPORT static RefPtr<FontCustomPlatformData> createMemorySafe(SharedBuffer&, const String&);
+
 #if PLATFORM(WIN)
     FontCustomPlatformData(const String& name, FontPlatformData::CreationData&&);
 #elif USE(CORE_TEXT)
@@ -106,7 +109,5 @@ public:
 
     RenderingResourceIdentifier m_renderingResourceIdentifier;
 };
-
-WEBCORE_EXPORT RefPtr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer&, const String&);
 
 } // namespace WebCore

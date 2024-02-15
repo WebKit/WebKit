@@ -139,7 +139,7 @@ static bool initializeFreeTypeLibrary(FT_Library& library)
     return true;
 }
 
-RefPtr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer& buffer, const String& itemInCollection)
+RefPtr<FontCustomPlatformData> FontCustomPlatformData::create(SharedBuffer& buffer, const String& itemInCollection)
 {
     static FT_Library library;
     if (!library && !initializeFreeTypeLibrary(library)) {
@@ -152,6 +152,11 @@ RefPtr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer& buffer
         return nullptr;
     FontPlatformData::CreationData creationData = { buffer, itemInCollection };
     return adoptRef(new FontCustomPlatformData(freeTypeFace, WTFMove(creationData)));
+}
+
+RefPtr<FontCustomPlatformData> FontCustomPlatformData::createMemorySafe(SharedBuffer&, const String&)
+{
+    return nullptr;
 }
 
 bool FontCustomPlatformData::supportsFormat(const String& format)

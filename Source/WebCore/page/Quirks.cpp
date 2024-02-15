@@ -26,7 +26,6 @@
 #include "config.h"
 #include "Quirks.h"
 
-#include "AllowedFonts.h"
 #include "Attr.h"
 #include "DOMTokenList.h"
 #include "DeprecatedGlobalSettings.h"
@@ -60,6 +59,7 @@
 #include "ScriptSourceCode.h"
 #include "Settings.h"
 #include "SpaceSplitString.h"
+#include "TrustedFonts.h"
 #include "UserAgent.h"
 #include "UserContentTypes.h"
 #include "UserScript.h"
@@ -1507,7 +1507,7 @@ bool Quirks::shouldEnableApplicationCacheQuirk() const
 // play.hbomax.com https://bugs.webkit.org/show_bug.cgi?id=244737
 bool Quirks::shouldEnableFontLoadingAPIQuirk() const
 {
-    if (!needsQuirks() || m_document->settings().downloadableBinaryFontAllowedTypes() == DownloadableBinaryFontAllowedTypes::Any)
+    if (!needsQuirks() || m_document->settings().downloadableBinaryFontTrustedTypes() == DownloadableBinaryFontTrustedTypes::Any)
         return false;
 
     if (!m_shouldEnableFontLoadingAPIQuirk)
