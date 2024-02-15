@@ -2781,7 +2781,7 @@ void FrameLoader::checkLoadCompleteForThisFrame()
         Ref documentLoader = *m_documentLoader;
         auto& error = documentLoader->mainDocumentError();
 
-        AXObjectCache::AXLoadingEvent loadingEvent;
+        auto loadingEvent = AXObjectCache::AXLoadingFailed;
         if (!error.isNull()) {
             FRAMELOADER_RELEASE_LOG(ResourceLoading, "checkLoadCompleteForThisFrame: Finished frame load with error (isTimeout = %d, isCancellation = %d, errorCode = %d)", error.isTimeout(), error.isCancellation(), error.errorCode());
             m_client->dispatchDidFailLoad(error);
@@ -2793,10 +2793,16 @@ void FrameLoader::checkLoadCompleteForThisFrame()
             RefPtr document = m_frame->document();
             OptionSet<DataDetectorType> types = m_frame->settings().dataDetectorTypes();
             if (document && types) {
-                auto documentLevelResults = retainPtr(DataDetection::detectContentInRange(makeRangeSelectingNodeContents(*document), types, m_client->dataDetectionReferenceDate()));
-                m_frame->dataDetectionResults().setDocumentLevelResults(documentLevelResults.get());
-                if (m_frame->isMainFrame())
-                    m_client->dispatchDidFinishDataDetection(documentLevelResults.get());
+                DataDetection::detectContentInFrame(protectedFrame().ptr(), types, m_client->dataDetectionReferenceDate(), [this, weakFrame = WeakPtr { m_frame.get() }, document](NSArray *results) {
+                    RefPtr strongFrame { weakFrame.get() };
+                    if (!strongFrame || &strongFrame->loader() != this)
+                        return;
+
+                    auto documentLevelResults = retainPtr(results);
+                    strongFrame->dataDetectionResults().setDocumentLevelResults(documentLevelResults.get());
+                    if (strongFrame->isMainFrame())
+                        m_client->dispatchDidFinishDataDetection(documentLevelResults.get());
+                });
             }
 #endif
             m_client->dispatchDidFinishLoad();

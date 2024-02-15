@@ -71,4 +71,7 @@ SOFT_LINK_FUNCTION_FOR_HEADER(PAL, DataDetectorsCore, DDScanQueryCreate, DDScanQ
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, DataDetectorsCore, DDScanQueryCreateFromString, DDScanQueryRef, (CFAllocatorRef allocator, CFStringRef string, CFRange range), (allocator, string, range))
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, DataDetectorsCore, DDScannerCopyResultsWithOptions, CFArrayRef, (DDScannerRef scanner, DDScannerCopyResultsOptions options), (scanner, options))
 SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(PAL, DataDetectorsCore, DDResultDisableURLSchemeChecking, void, (), ())
+#if HAVE(DDSCANNER_QOS_CONFIGURATION)
+SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(PAL, DataDetectorsCore, DDScannerSetQOS, void, (DDScannerRef scanner, DDQOS qos), (scanner, qos))
+#endif
 #endif // ENABLE(DATA_DETECTION)

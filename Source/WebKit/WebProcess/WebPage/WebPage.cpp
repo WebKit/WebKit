@@ -4730,22 +4730,37 @@ void WebPage::removeDataDetectedLinks(CompletionHandler<void(const DataDetection
     completionHandler({ });
 }
 
+static void detectDataInFrame(const Ref<Frame>& frame, OptionSet<WebCore::DataDetectorType> dataDetectorTypes, const std::optional<double>& dataDetectionReferenceDate, UniqueRef<DataDetectionResult>&& mainFrameResult, CompletionHandler<void(const DataDetectionResult&)>&& completionHandler)
+{
+    RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.get());
+    if (!localFrame) {
+        completionHandler(mainFrameResult.get());
+        return;
+    }
+
+    DataDetection::detectContentInFrame(localFrame.get(), dataDetectorTypes, dataDetectionReferenceDate, [localFrame, mainFrameResult = WTFMove(mainFrameResult), dataDetectionReferenceDate, completionHandler = WTFMove(completionHandler), dataDetectorTypes](NSArray *results) mutable {
+        auto retainedResults = retainPtr(results);
+
+        RefPtr protectedLocalFrame { localFrame };
+
+        protectedLocalFrame->dataDetectionResults().setDocumentLevelResults(retainedResults.get());
+        if (protectedLocalFrame->isMainFrame())
+            mainFrameResult->results = retainedResults;
+
+        RefPtr next = localFrame->tree().traverseNext();
+        if (!next) {
+            completionHandler(mainFrameResult.get());
+            return;
+        }
+
+        detectDataInFrame(Ref { *next }, dataDetectorTypes, dataDetectionReferenceDate, WTFMove(mainFrameResult), WTFMove(completionHandler));
+    });
+}
+
 void WebPage::detectDataInAllFrames(OptionSet<WebCore::DataDetectorType> dataDetectorTypes, CompletionHandler<void(const DataDetectionResult&)>&& completionHandler)
 {
-    DataDetectionResult mainFrameResult;
-    for (RefPtr frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.get());
-        if (!localFrame)
-            continue;
-        RefPtr document = localFrame->document();
-        if (!document)
-            continue;
-        auto results = retainPtr(DataDetection::detectContentInRange(makeRangeSelectingNodeContents(*document), dataDetectorTypes, m_dataDetectionReferenceDate));
-        localFrame->dataDetectionResults().setDocumentLevelResults(results.get());
-        if (localFrame->isMainFrame())
-            mainFrameResult.results = WTFMove(results);
-    }
-    completionHandler(WTFMove(mainFrameResult));
+    auto mainFrameResult = makeUniqueRef<DataDetectionResult>();
+    detectDataInFrame(m_page->protectedMainFrame().get(), dataDetectorTypes, m_dataDetectionReferenceDate, WTFMove(mainFrameResult), WTFMove(completionHandler));
 }
 
 #endif // ENABLE(DATA_DETECTION)

@@ -325,7 +325,7 @@ public:
 
     Frame& mainFrame() { return m_mainFrame.get(); }
     const Frame& mainFrame() const { return m_mainFrame.get(); }
-    Ref<Frame> protectedMainFrame() const;
+    WEBCORE_EXPORT Ref<Frame> protectedMainFrame() const;
     WEBCORE_EXPORT void setMainFrame(Ref<Frame>&&);
     const URL& mainFrameURL() const { return m_mainFrameURL; }
     WEBCORE_EXPORT void setMainFrameURL(const URL&);
