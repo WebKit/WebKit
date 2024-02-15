@@ -371,7 +371,7 @@ void WebPage::attributedSubstringForCharacterRangeAsync(const EditingRange& edit
     completionHandler(WebCore::AttributedString::fromNSAttributedString(WTFMove(attributedString)), rangeToSend);
 }
 
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN)
 
 DictionaryPopupInfo WebPage::dictionaryPopupInfoForSelectionInPDFPlugin(PDFSelection *selection, PluginView& pdfPlugin, WebCore::TextIndicatorPresentationTransition presentationTransition)
 {
@@ -922,18 +922,15 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locati
     if (RefPtr embedOrObject = dynamicDowncast<HTMLPlugInImageElement>(element)) {
         if (RefPtr pluginView = static_cast<PluginView*>(embedOrObject->pluginWidget())) {
             // FIXME: We don't have API to identify images inside PDFs based on position.
-            auto lookupResult = pluginView->lookupTextAtLocation(locationInViewCoordinates, immediateActionResult);
-            if (auto lookupText = std::get<String>(lookupResult); !lookupText.isEmpty()) {
+            if (auto [lookupText, selection] = pluginView->lookupTextAtLocation(locationInViewCoordinates, immediateActionResult); !lookupText.isEmpty()) {
                 // FIXME (144030): Focus does not seem to get set to the PDF when invoking the menu.
                 if (RefPtr pluginDocument = dynamicDowncast<PluginDocument>(element->document()))
                     pluginDocument->setFocusedElement(element.get());
 
-                auto selection = std::get<PDFSelection *>(lookupResult);
-
                 immediateActionResult.lookupText = lookupText;
                 immediateActionResult.isTextNode = true;
                 immediateActionResult.isSelected = true;
-                immediateActionResult.dictionaryPopupInfo = dictionaryPopupInfoForSelectionInPDFPlugin(selection, *pluginView, TextIndicatorPresentationTransition::FadeIn);
+                immediateActionResult.dictionaryPopupInfo = dictionaryPopupInfoForSelectionInPDFPlugin(selection.get(), *pluginView, TextIndicatorPresentationTransition::FadeIn);
             }
         }
     }

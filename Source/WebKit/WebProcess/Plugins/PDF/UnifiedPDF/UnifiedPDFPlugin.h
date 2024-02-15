@@ -43,6 +43,7 @@ enum class DelegatedScrollingMode : uint8_t;
 
 namespace WebKit {
 
+struct LookupTextResult;
 struct PDFContextMenu;
 struct PDFContextMenuItem;
 class PDFPluginPasswordField;
@@ -264,7 +265,7 @@ private:
     unsigned countFindMatches(const String& target, WebCore::FindOptions, unsigned maxMatchCount) override;
     bool findString(const String& target, WebCore::FindOptions, unsigned maxMatchCount) override;
     bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&) override;
-    std::pair<String, PDFSelection *> lookupTextAtLocation(const WebCore::FloatPoint&, WebHitTestResultData&) const override;
+    LookupTextResult lookupTextAtLocation(const WebCore::FloatPoint&, WebHitTestResultData&) override;
 
     id accessibilityHitTest(const WebCore::IntPoint&) const override;
     id accessibilityObject() const override;
@@ -345,10 +346,12 @@ private:
 
     RefPtr<WebCore::GraphicsLayer> createGraphicsLayer(const String& name, WebCore::GraphicsLayer::Type);
 
+    WebCore::IntPoint convertFromRootViewToDocument(const WebCore::IntPoint&) const;
     WebCore::IntPoint convertFromPluginToDocument(const WebCore::IntPoint&) const;
     WebCore::IntPoint convertFromDocumentToPlugin(const WebCore::IntPoint&) const;
     WebCore::IntRect convertFromDocumentToPlugin(const WebCore::IntRect&) const;
     WebCore::IntPoint convertFromDocumentToPage(const WebCore::IntPoint&, PDFDocumentLayout::PageIndex) const;
+    WebCore::IntRect convertFromPageToRootView(const WebCore::IntRect&, PDFDocumentLayout::PageIndex) const;
     WebCore::IntPoint convertFromPageToDocument(const WebCore::IntPoint&, PDFDocumentLayout::PageIndex) const;
     WebCore::IntRect convertFromPageToDocument(const WebCore::IntRect&, PDFDocumentLayout::PageIndex) const;
     WebCore::IntPoint convertFromPageToContents(const WebCore::IntPoint&, PDFDocumentLayout::PageIndex) const;

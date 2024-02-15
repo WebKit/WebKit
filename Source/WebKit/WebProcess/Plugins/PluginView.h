@@ -54,6 +54,11 @@ class WebPage;
 
 struct WebHitTestResultData;
 
+struct LookupTextResult {
+    String text;
+    RetainPtr<PDFSelection> correspondingSelection;
+};
+
 class PluginView final : public WebCore::PluginViewBase {
 public:
     static RefPtr<PluginView> create(WebCore::HTMLPlugInElement&, const URL&, const String& contentType, bool shouldUseManualLoader);
@@ -99,7 +104,7 @@ public:
     RefPtr<WebCore::FragmentedSharedBuffer> liveResourceData() const;
     bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&);
 
-    std::pair<String, PDFSelection *> lookupTextAtLocation(const WebCore::FloatPoint&, WebHitTestResultData&) const;
+    LookupTextResult lookupTextAtLocation(const WebCore::FloatPoint&, WebHitTestResultData&) const;
     WebCore::FloatRect rectForSelectionInRootView(PDFSelection *) const;
     CGFloat contentScaleFactor() const;
     

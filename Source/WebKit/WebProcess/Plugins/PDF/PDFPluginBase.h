@@ -70,6 +70,7 @@ class WebFrame;
 class WebKeyboardEvent;
 class WebMouseEvent;
 class WebWheelEvent;
+struct LookupTextResult;
 struct WebHitTestResultData;
 
 class PDFPluginBase : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<PDFPluginBase>, public WebCore::ScrollableArea, public PDFScriptEvaluator::Client {
@@ -152,7 +153,8 @@ public:
     virtual bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&) = 0;
     void performSpotlightSearch(const String& query);
     void performWebSearch(const String& query);
-    virtual std::pair<String, PDFSelection *> lookupTextAtLocation(const WebCore::FloatPoint&, WebHitTestResultData&) const = 0;
+
+    virtual LookupTextResult lookupTextAtLocation(const WebCore::FloatPoint&, WebHitTestResultData&) = 0;
 
     virtual id accessibilityHitTest(const WebCore::IntPoint&) const = 0;
     virtual id accessibilityObject() const = 0;

@@ -934,7 +934,7 @@ id PluginView::accessibilityHitTest(const WebCore::IntPoint& point) const
     return m_plugin->accessibilityHitTest(point);
 }
 
-std::pair<String, PDFSelection *> PluginView::lookupTextAtLocation(const WebCore::FloatPoint& point, WebHitTestResultData& data) const
+LookupTextResult PluginView::lookupTextAtLocation(const WebCore::FloatPoint& point, WebHitTestResultData& data) const
 {
     return m_plugin->lookupTextAtLocation(point, data);
 }

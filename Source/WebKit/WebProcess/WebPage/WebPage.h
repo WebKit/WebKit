@@ -1946,7 +1946,7 @@ private:
     void performDictionaryLookupOfCurrentSelection();
     void performDictionaryLookupForRange(WebCore::LocalFrame&, const WebCore::SimpleRange&, WebCore::TextIndicatorPresentationTransition);
     WebCore::DictionaryPopupInfo dictionaryPopupInfoForRange(WebCore::LocalFrame&, const WebCore::SimpleRange&, WebCore::TextIndicatorPresentationTransition);
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN)
     WebCore::DictionaryPopupInfo dictionaryPopupInfoForSelectionInPDFPlugin(PDFSelection *, PluginView&, WebCore::TextIndicatorPresentationTransition);
 #endif
 

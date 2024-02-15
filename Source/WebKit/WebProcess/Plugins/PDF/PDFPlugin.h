@@ -74,6 +74,7 @@ class PluginView;
 class WebFrame;
 class WebKeyboardEvent;
 class WebWheelEvent;
+struct LookupTextResult;
 struct WebHitTestResultData;
 
 class PDFPlugin final : public PDFPluginBase {
@@ -172,7 +173,7 @@ private:
     bool findString(const String& target, WebCore::FindOptions, unsigned maxMatchCount) override;
 
     bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&) override;
-    std::pair<String, PDFSelection *> lookupTextAtLocation(const WebCore::FloatPoint&, WebHitTestResultData&) const override;
+    LookupTextResult lookupTextAtLocation(const WebCore::FloatPoint&, WebHitTestResultData&) override;
 
     bool shouldCreateTransientPaintingSnapshot() const override { return true; }
     RefPtr<WebCore::ShareableBitmap> snapshot() override;

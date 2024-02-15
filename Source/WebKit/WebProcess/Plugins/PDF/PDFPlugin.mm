@@ -1442,7 +1442,7 @@ static NSPoint pointInLayoutSpaceForPointInWindowSpace(PDFLayerController* pdfLa
     return NSPointFromCGPoint(newPoint);
 }
 
-std::pair<String, PDFSelection *> PDFPlugin::lookupTextAtLocation(const WebCore::FloatPoint& locationInViewCoordinates, WebHitTestResultData& data) const
+LookupTextResult PDFPlugin::lookupTextAtLocation(const WebCore::FloatPoint& locationInViewCoordinates, WebHitTestResultData& data)
 {
     auto selection = [m_pdfLayerController currentSelection];
     if (existingSelectionContainsPoint(locationInViewCoordinates))

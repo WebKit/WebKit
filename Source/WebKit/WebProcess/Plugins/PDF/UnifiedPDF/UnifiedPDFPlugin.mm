@@ -38,6 +38,7 @@
 #include "WebEventConversion.h"
 #include "WebEventModifier.h"
 #include "WebEventType.h"
+#include "WebHitTestResultData.h"
 #include "WebMouseEvent.h"
 #include "WebPageProxyMessages.h"
 #include <CoreGraphics/CoreGraphics.h>
@@ -46,6 +47,7 @@
 #include <WebCore/Chrome.h>
 #include <WebCore/ChromeClient.h>
 #include <WebCore/ColorCocoa.h>
+#include <WebCore/DictionaryLookup.h>
 #include <WebCore/Editor.h>
 #include <WebCore/EditorClient.h>
 #include <WebCore/FilterOperations.h>
@@ -1322,6 +1324,11 @@ static WebCore::Cursor::Type toWebCoreCursorType(UnifiedPDFPlugin::PDFElementTyp
     return WebCore::Cursor::Type::Pointer;
 }
 
+IntPoint UnifiedPDFPlugin::convertFromRootViewToDocument(const IntPoint& rootViewPoint) const
+{
+    return convertFromPluginToDocument(convertFromRootViewToPlugin(rootViewPoint));
+}
+
 WebCore::IntPoint UnifiedPDFPlugin::convertFromPluginToDocument(const WebCore::IntPoint& point) const
 {
     auto transformedPoint = FloatPoint { point };
@@ -1381,6 +1388,11 @@ RetainPtr<PDFAnnotation> UnifiedPDFPlugin::annotationForRootViewPoint(const WebC
 
     auto page = m_documentLayout.pageAtIndex(pageIndex.value());
     return [page annotationAtPoint:convertFromDocumentToPage(pointInDocumentSpace, pageIndex.value())];
+}
+
+IntRect UnifiedPDFPlugin::convertFromPageToRootView(const IntRect& pageRect, PDFDocumentLayout::PageIndex pageIndex) const
+{
+    return convertFromPluginToRootView(convertFromDocumentToPlugin(convertFromPageToDocument(pageRect, pageIndex)));
 }
 
 WebCore::IntPoint UnifiedPDFPlugin::convertFromDocumentToPage(const WebCore::IntPoint& point, PDFDocumentLayout::PageIndex pageIndex) const
@@ -2252,14 +2264,29 @@ String UnifiedPDFPlugin::selectionString() const
     return m_currentSelection.get().string;
 }
 
-bool UnifiedPDFPlugin::existingSelectionContainsPoint(const FloatPoint&) const
+bool UnifiedPDFPlugin::existingSelectionContainsPoint(const FloatPoint& rootViewPoint) const
 {
-    return false;
+    auto documentPoint = convertFromRootViewToDocument(IntPoint { rootViewPoint });
+
+    auto pageIndex = pageIndexForDocumentPoint(documentPoint);
+    if (!pageIndex)
+        return false;
+
+    auto page = m_documentLayout.pageAtIndex(*pageIndex);
+    return IntRect { [m_currentSelection boundsForPage:page.get()] }.contains(convertFromDocumentToPage(documentPoint, *pageIndex));
 }
 
-FloatRect UnifiedPDFPlugin::rectForSelectionInRootView(PDFSelection *) const
+FloatRect UnifiedPDFPlugin::rectForSelectionInRootView(PDFSelection *selection) const
 {
-    return { };
+    if (!selection || !selection.pages)
+        return { };
+
+    RetainPtr page = [selection.pages firstObject];
+    auto pageIndex = m_documentLayout.indexForPage(page);
+    if (!pageIndex)
+        return { };
+
+    return convertFromPageToRootView(IntRect { [selection boundsForPage:page.get()] }, *pageIndex);
 }
 
 #pragma mark -
@@ -2343,9 +2370,52 @@ bool UnifiedPDFPlugin::performDictionaryLookupAtLocation(const FloatPoint&)
     return false;
 }
 
-std::pair<String, PDFSelection *> UnifiedPDFPlugin::lookupTextAtLocation(const FloatPoint&, WebHitTestResultData&) const
+LookupTextResult UnifiedPDFPlugin::lookupTextAtLocation(const FloatPoint& rootViewPoint, WebHitTestResultData& data)
 {
-    return { };
+    if (existingSelectionContainsPoint(rootViewPoint))
+        return { selectionString(), m_currentSelection };
+
+    auto pluginPoint = convertFromRootViewToPlugin(roundedIntPoint(rootViewPoint));
+    auto documentPoint = convertFromPluginToDocument(pluginPoint);
+    auto pageIndex = pageIndexForDocumentPoint(documentPoint);
+
+    if (!pageIndex)
+        return { { }, m_currentSelection };
+
+    auto pagePoint = convertFromDocumentToPage(documentPoint, *pageIndex);
+
+    RetainPtr page = m_documentLayout.pageAtIndex(*pageIndex);
+    RetainPtr wordSelection = [page selectionForWordAtPoint:pagePoint];
+    if (!wordSelection)
+        return { { }, nil };
+
+    RetainPtr annotationsForCurrentPage = [page annotations];
+    if (!annotationsForCurrentPage)
+        return { { }, nil };
+
+    for (PDFAnnotation *annotation in annotationsForCurrentPage.get()) {
+        if (!annotationIsExternalLink(annotation))
+            continue;
+
+        if (!IntRect { [annotation bounds] }.contains(pagePoint))
+            continue;
+
+        RetainPtr url = [annotation URL];
+        if (!url)
+            continue;
+
+        data.absoluteLinkURL = [url absoluteString];
+        data.linkLabel = [wordSelection string];
+        return { [wordSelection string], wordSelection };
+    }
+
+    NSString *lookupText = DictionaryLookup::stringForPDFSelection(wordSelection.get());
+    if (!lookupText || !lookupText.length)
+        return { { }, wordSelection };
+
+    setCurrentSelection(WTFMove(wordSelection));
+
+    return { lookupText, m_currentSelection };
 }
 
 id UnifiedPDFPlugin::accessibilityHitTest(const IntPoint&) const
