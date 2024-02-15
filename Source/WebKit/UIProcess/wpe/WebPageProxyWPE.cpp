@@ -172,4 +172,18 @@ OptionSet<WebCore::PlatformEvent::Modifier> WebPageProxy::currentStateOfModifier
 #endif
 }
 
+void WebPageProxy::callAfterNextPresentationUpdate(CompletionHandler<void()>&& callback)
+{
+    if (!hasRunningProcess() || !m_drawingArea) {
+        callback();
+        return;
+    }
+
+#if USE(COORDINATED_GRAPHICS)
+    static_cast<PageClientImpl&>(pageClient()).callAfterNextPresentationUpdate(WTFMove(callback));
+#else
+    callback();
+#endif
+}
+
 } // namespace WebKit
