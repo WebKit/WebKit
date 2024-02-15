@@ -265,11 +265,26 @@ void WebProcessPool::setMediaAccessibilityPreferences(WebProcessProxy& process)
 }
 #endif
 
+static const char* description(ProcessThrottleState state)
+{
+    switch (state) {
+    case ProcessThrottleState::Foreground: return "foreground";
+    case ProcessThrottleState::Background: return "background";
+    case ProcessThrottleState::Suspended: return "suspended";
+    }
+    return nullptr;
+}
+
 static void logProcessPoolState(const WebProcessPool& pool)
 {
     for (Ref process : pool.processes()) {
         WTF::TextStream stream;
         stream << process;
+
+        if (auto taskInfo = process->taskInfo()) {
+            stream << ", state: " << description(taskInfo->state);
+            stream << ", phys_footprint_mb: " << (taskInfo->physicalFootprint / 1048576.0) << " MB";
+        }
 
         String domain = process->optionalRegistrableDomain() ? process->optionalRegistrableDomain()->string() : "unknown"_s;
         RELEASE_LOG(Process, "WebProcessProxy %p - %" PUBLIC_LOG_STRING ", domain: %" PRIVATE_LOG_STRING, process.ptr(), stream.release().utf8().data(), domain.utf8().data());

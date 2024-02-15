@@ -37,6 +37,7 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/ProcessID.h>
+#include <wtf/Seconds.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/UniqueRef.h>
@@ -53,6 +54,8 @@ class ProcessAssertion;
 class SandboxExtensionHandle;
 
 struct AuxiliaryProcessCreationParameters;
+
+enum class ProcessThrottleState : uint8_t;
 
 using ExtensionCapabilityGrantMap = HashMap<String, ExtensionCapabilityGrant>;
 
@@ -81,6 +84,7 @@ public:
     virtual void terminate();
 
     virtual ProcessThrottler& throttler() = 0;
+    virtual const ProcessThrottler& throttler() const = 0;
 
     template<typename T> bool send(T&& message, uint64_t destinationID, OptionSet<IPC::SendOption> sendOptions = { });
 
@@ -197,6 +201,18 @@ public:
 
 #if ENABLE(EXTENSION_CAPABILITIES)
     ExtensionCapabilityGrantMap& extensionCapabilityGrants() { return m_extensionCapabilityGrants; }
+#endif
+
+#if PLATFORM(COCOA)
+    struct TaskInfo {
+        ProcessID pid;
+        ProcessThrottleState state;
+        Seconds totalUserCPUTime;
+        Seconds totalSystemCPUTime;
+        size_t physicalFootprint;
+    };
+
+    std::optional<TaskInfo> taskInfo() const;
 #endif
 
 protected:

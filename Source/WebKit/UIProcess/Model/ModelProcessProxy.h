@@ -59,6 +59,8 @@ public:
     void createModelProcessConnection(WebProcessProxy&, IPC::Connection::Handle&& connectionIdentifier, ModelProcessConnectionParameters&&);
 
     ProcessThrottler& throttler() final { return m_throttler; }
+    const ProcessThrottler& throttler() const final { return m_throttler; }
+
     void updateProcessAssertion();
 
     void terminateForTesting();

@@ -203,6 +203,7 @@ Tests/WebKitCocoa/Preferences.mm
 Tests/WebKitCocoa/PreferredAudioBufferSize.mm
 Tests/WebKitCocoa/PrepareForMoveToWindow.mm
 Tests/WebKitCocoa/PrivateClickMeasurement.mm
+Tests/WebKitCocoa/ProcessInfo.mm
 Tests/WebKitCocoa/ProcessPreWarming.mm
 Tests/WebKitCocoa/ProcessSuspendMediaBuffering.mm
 Tests/WebKitCocoa/ProcessSuspension.mm

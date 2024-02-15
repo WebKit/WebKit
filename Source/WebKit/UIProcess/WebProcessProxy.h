@@ -57,6 +57,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RobinHoodHashSet.h>
+#include <wtf/Seconds.h>
 #include <wtf/UUID.h>
 #include <wtf/WeakHashMap.h>
 #include <wtf/WeakHashSet.h>
@@ -123,6 +124,7 @@ struct WebPageCreationParameters;
 struct WebPreferencesStore;
 struct WebsiteData;
 
+enum class ProcessThrottleState : uint8_t;
 enum class RemoteWorkerType : uint8_t;
 enum class WebsiteDataType : uint32_t;
 
@@ -304,7 +306,7 @@ public:
     void setIsHoldingLockedFiles(bool);
 
     ProcessThrottler& throttler() final { return m_throttler; }
-    const ProcessThrottler& throttler() const { return m_throttler; }
+    const ProcessThrottler& throttler() const final { return m_throttler; }
 
     void isResponsive(CompletionHandler<void(bool isWebProcessResponsive)>&&);
     void isResponsiveWithLazyStop();
@@ -502,6 +504,10 @@ public:
 
     void resetState();
 
+    Seconds totalForegroundTime() const;
+    Seconds totalBackgroundTime() const;
+    Seconds totalSuspendedTime() const;
+
 protected:
     WebProcessProxy(WebProcessPool&, WebsiteDataStore*, IsPrewarmed, WebCore::CrossOriginMode, LockdownMode);
 
@@ -618,6 +624,8 @@ private:
 
     bool shouldTakeNearSuspendedAssertion() const;
     bool shouldDropNearSuspendedAssertionAfterDelay() const;
+
+    void updateRuntimeStatistics();
 
     enum class IsWeak : bool { No, Yes };
     template<typename T> class WeakOrStrongPtr {
@@ -765,6 +773,12 @@ private:
 #if ENABLE(GPU_PROCESS)
     mutable std::optional<GPUProcessPreferencesForWebProcess> m_preferencesForGPUProcess;
 #endif
+
+    ProcessThrottleState m_throttleStateForStatistics { ProcessThrottleState::Suspended };
+    MonotonicTime m_throttleStateForStatisticsTimestamp;
+    Seconds m_totalForegroundTime;
+    Seconds m_totalBackgroundTime;
+    Seconds m_totalSuspendedTime;
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const WebProcessProxy&);

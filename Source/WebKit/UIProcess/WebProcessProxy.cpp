@@ -406,6 +406,8 @@ void WebProcessProxy::setIsInProcessCache(bool value, WillShutDown willShutDown)
         RELEASE_ASSERT(m_processPool);
         m_processPool.setIsWeak(IsWeak::No);
     }
+
+    updateRuntimeStatistics();
 }
 
 void WebProcessProxy::setWebsiteDataStore(WebsiteDataStore& dataStore)
@@ -824,6 +826,8 @@ void WebProcessProxy::markIsNoLongerInPrewarmedPool()
     m_processPool.setIsWeak(IsWeak::No);
 
     send(Messages::WebProcess::MarkIsNoLongerPrewarmed(), 0);
+
+    updateRuntimeStatistics();
 }
 
 void WebProcessProxy::removeWebPage(WebPageProxy& webPage, EndsUsingDataStore endsUsingDataStore)
@@ -1749,6 +1753,10 @@ void WebProcessProxy::setThrottleStateForTesting(ProcessThrottleState state)
 
 void WebProcessProxy::didChangeThrottleState(ProcessThrottleState type)
 {
+    auto scope = makeScopeExit([this]() {
+        updateRuntimeStatistics();
+    });
+
     if (UNLIKELY(!m_areThrottleStateChangesEnabled))
         return;
     WEBPROCESSPROXY_RELEASE_LOG(ProcessSuspension, "didChangeThrottleState: type=%u", (unsigned)type);
@@ -1797,6 +1805,7 @@ void WebProcessProxy::didChangeThrottleState(ProcessThrottleState type)
 void WebProcessProxy::didDropLastAssertion()
 {
     m_backgroundResponsivenessTimer.updateState();
+    updateRuntimeStatistics();
 }
 
 void WebProcessProxy::prepareToDropLastAssertion(CompletionHandler<void()>&& completionHandler)
@@ -2573,6 +2582,65 @@ void WebProcessProxy::resetState()
 {
     m_hasCommittedAnyProvisionalLoads = false;
     m_hasCommittedAnyMeaningfulProvisionalLoads = false;
+}
+
+Seconds WebProcessProxy::totalForegroundTime() const
+{
+    if (m_throttleStateForStatistics == ProcessThrottleState::Foreground && m_throttleStateForStatisticsTimestamp)
+        return m_totalForegroundTime + (MonotonicTime::now() - m_throttleStateForStatisticsTimestamp);
+    return m_totalForegroundTime;
+}
+
+Seconds WebProcessProxy::totalBackgroundTime() const
+{
+    if (m_throttleStateForStatistics == ProcessThrottleState::Background && m_throttleStateForStatisticsTimestamp)
+        return m_totalBackgroundTime + (MonotonicTime::now() - m_throttleStateForStatisticsTimestamp);
+    return m_totalBackgroundTime;
+}
+
+Seconds WebProcessProxy::totalSuspendedTime() const
+{
+    if (m_throttleStateForStatistics == ProcessThrottleState::Suspended && m_throttleStateForStatisticsTimestamp)
+        return m_totalSuspendedTime + (MonotonicTime::now() - m_throttleStateForStatisticsTimestamp);
+    return m_totalSuspendedTime;
+}
+
+void WebProcessProxy::updateRuntimeStatistics()
+{
+    auto newState = ProcessThrottleState::Suspended;
+    auto newTimestamp = MonotonicTime { };
+
+    // We only start a new interval for foreground/background/suspended time if the process isn't
+    // prewarmed or in the process cache.
+    if (!isPrewarmed() && !isInProcessCache()) {
+        // ProcessThrottleState can be misleading, as it can claim the process is suspended even
+        // when the process is holding an assertion that actually prevents suspension. So we only
+        // transition to the suspended state if the process is actually holding no assertions
+        // (when `ProcessThrottler::isSuspended()` returns true).
+        newState = throttler().currentState();
+        if (newState == ProcessThrottleState::Suspended && !throttler().isSuspended())
+            newState = ProcessThrottleState::Background;
+
+        newTimestamp = MonotonicTime::now();
+    }
+
+    if (m_throttleStateForStatisticsTimestamp) {
+        auto delta = MonotonicTime::now() - m_throttleStateForStatisticsTimestamp;
+        switch (m_throttleStateForStatistics) {
+        case ProcessThrottleState::Suspended:
+            m_totalSuspendedTime += delta;
+            break;
+        case ProcessThrottleState::Background:
+            m_totalBackgroundTime += delta;
+            break;
+        case ProcessThrottleState::Foreground:
+            m_totalForegroundTime += delta;
+            break;
+        }
+    }
+
+    m_throttleStateForStatistics = newState;
+    m_throttleStateForStatisticsTimestamp = newTimestamp;
 }
 
 TextStream& operator<<(TextStream& ts, const WebProcessProxy& process)

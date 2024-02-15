@@ -29,8 +29,10 @@
 #import "AutomationClient.h"
 #import "CacheModel.h"
 #import "DownloadManager.h"
+#import "GPUProcessProxy.h"
 #import "LegacyDownloadClient.h"
 #import "Logging.h"
+#import "NetworkProcessProxy.h"
 #import "SandboxUtilities.h"
 #import "UIGamepadProvider.h"
 #import "WKAPICast.h"
@@ -40,6 +42,7 @@
 #import "WKWebsiteDataStoreInternal.h"
 #import "WebBackForwardCache.h"
 #import "WebNotificationManagerProxy.h"
+#import "WebPageProxy.h"
 #import "WebProcessCache.h"
 #import "WebProcessMessages.h"
 #import "WebProcessPool.h"
@@ -63,6 +66,14 @@
 #import <WebCore/WebCoreThreadSystemInterface.h>
 #import "WKGeolocationProviderIOS.h"
 #endif
+
+@interface _WKProcessInfo()
+- (instancetype)initWithTaskInfo:(const WebKit::AuxiliaryProcessProxy::TaskInfo&)info;
+@end
+
+@interface _WKWebContentProcessInfo()
+- (instancetype)initWithTaskInfo:(const WebKit::AuxiliaryProcessProxy::TaskInfo&)info process:(const WebKit::WebProcessProxy&)process;
+@end
 
 static RetainPtr<WKProcessPool>& sharedProcessPool()
 {
@@ -601,6 +612,146 @@ static RetainPtr<WKProcessPool>& sharedProcessPool()
 - (WKNotificationManagerRef)_notificationManagerForTesting
 {
     return WebKit::toAPI(_processPool->supplement<WebKit::WebNotificationManagerProxy>());
+}
+
++ (_WKProcessInfo *)_gpuProcessInfo
+{
+    RetainPtr<_WKProcessInfo> result;
+
+    if (auto gpuProcess = WebKit::GPUProcessProxy::singletonIfCreated()) {
+        if (auto taskInfo = gpuProcess->taskInfo())
+            result = adoptNS([[_WKProcessInfo alloc] initWithTaskInfo:*taskInfo]);
+    }
+
+    return result.autorelease();
+}
+
++ (NSArray<_WKProcessInfo *> *)_networkingProcessInfo
+{
+    RetainPtr result = adoptNS([NSMutableArray new]);
+
+    for (auto& networkProcess : WebKit::NetworkProcessProxy::allNetworkProcesses()) {
+        if (auto taskInfo = networkProcess->taskInfo())
+            [result addObject:adoptNS([[_WKProcessInfo alloc] initWithTaskInfo:*taskInfo]).get()];
+    }
+
+    return result.autorelease();
+}
+
++ (NSArray<_WKProcessInfo *> *)_webContentProcessInfo
+{
+    RetainPtr result = adoptNS([NSMutableArray new]);
+
+    for (auto& webProcessPool : WebKit::WebProcessPool::allProcessPools()) {
+        for (auto& webProcess : webProcessPool->processes()) {
+            if (auto taskInfo = webProcess->taskInfo())
+                [result addObject:adoptNS([[_WKWebContentProcessInfo alloc] initWithTaskInfo:*taskInfo process:webProcess.get()]).get()];
+        }
+    }
+
+    return result.autorelease();
+}
+
+@end
+
+
+@implementation _WKProcessInfo {
+    pid_t _pid;
+    _WKProcessState _state;
+    NSTimeInterval _totalUserCPUTime;
+    NSTimeInterval _totalSystemCPUTime;
+    size_t _physicalFootprint;
+}
+
+@synthesize pid = _pid;
+@synthesize state = _state;
+@synthesize totalUserCPUTime = _totalUserCPUTime;
+@synthesize totalSystemCPUTime = _totalSystemCPUTime;
+@synthesize physicalFootprint = _physicalFootprint;
+
+static _WKProcessState processStateFromThrottleState(WebKit::ProcessThrottleState state)
+{
+    switch (state) {
+    case WebKit::ProcessThrottleState::Foreground:
+        return _WKProcessStateForeground;
+    case WebKit::ProcessThrottleState::Background:
+        return _WKProcessStateBackground;
+    case WebKit::ProcessThrottleState::Suspended:
+        return _WKProcessStateSuspended;
+    default:
+        ASSERT_NOT_REACHED();
+        return _WKProcessStateForeground;
+    }
+}
+
+- (instancetype)initWithTaskInfo:(const WebKit::AuxiliaryProcessProxy::TaskInfo&)info
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _pid = info.pid;
+    _state = processStateFromThrottleState(info.state);
+    _totalUserCPUTime = info.totalUserCPUTime.seconds();
+    _totalSystemCPUTime = info.totalSystemCPUTime.seconds();
+    _physicalFootprint = info.physicalFootprint;
+
+    return self;
+}
+
+@end
+
+
+@implementation _WKWebContentProcessInfo {
+    _WKWebContentProcessState _webContentState;
+    RetainPtr<NSMutableArray<WKWebView *>> _webViews;
+    BOOL _runningServiceWorkers;
+    BOOL _runningSharedWorkers;
+    NSTimeInterval _totalForegroundTime;
+    NSTimeInterval _totalBackgroundTime;
+    NSTimeInterval _totalSuspendedTime;
+}
+
+@synthesize webContentState = _webContentState;
+@synthesize runningServiceWorkers = _runningServiceWorkers;
+@synthesize runningSharedWorkers = _runningSharedWorkers;
+@synthesize totalForegroundTime = _totalForegroundTime;
+@synthesize totalBackgroundTime = _totalBackgroundTime;
+@synthesize totalSuspendedTime = _totalSuspendedTime;
+
+- (instancetype)initWithTaskInfo:(const WebKit::AuxiliaryProcessProxy::TaskInfo&)info process:(const WebKit::WebProcessProxy&)process
+{
+    if (!(self = [super initWithTaskInfo:info]))
+        return nil;
+
+    _webContentState = _WKWebContentProcessStateActive;
+    if (process.isPrewarmed())
+        _webContentState = _WKWebContentProcessStatePrewarmed;
+    else if (process.isInProcessCache())
+        _webContentState = _WKWebContentProcessStateCached;
+
+    if (_webContentState == _WKWebContentProcessStateActive) {
+        for (auto& page : process.pages()) {
+            if (auto webView = page->cocoaView()) {
+                if (!_webViews)
+                    _webViews = adoptNS([[NSMutableArray alloc] init]);
+                [_webViews addObject:webView.get()];
+            }
+        }
+    }
+
+    _runningServiceWorkers = process.isRunningServiceWorkers();
+    _runningSharedWorkers = process.isRunningSharedWorkers();
+
+    _totalForegroundTime = process.totalForegroundTime().seconds();
+    _totalBackgroundTime = process.totalBackgroundTime().seconds();
+    _totalSuspendedTime = process.totalSuspendedTime().seconds();
+
+    return self;
+}
+
+- (NSArray<WKWebView *> *)webViews
+{
+    return _webViews.get();
 }
 
 @end
