@@ -68,8 +68,6 @@ void WebContextMenu::show()
 
     ContextMenuContextData contextMenuContextData(menuLocation, menuItems, controller.context());
 
-    // Mark the WebPage has having a shown context menu then notify the UIProcess.
-    m_page->startWaitingForContextMenuToShow();
     m_page->flushPendingEditorStateUpdate();
     m_page->send(Messages::WebPageProxy::ShowContextMenuFromFrame(frame->frameID(), contextMenuContextData, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
 }

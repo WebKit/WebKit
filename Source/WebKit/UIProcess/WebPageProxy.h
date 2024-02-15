@@ -2386,6 +2386,10 @@ public:
 
     void addConsoleMessage(WebCore::FrameIdentifier, JSC::MessageSource, JSC::MessageLevel, const String&, std::optional<WebCore::ResourceLoaderIdentifier> = std::nullopt);
 
+#if ENABLE(CONTEXT_MENUS)
+    void clearWaitingForContextMenuToShow() { m_waitingForContextMenuToShow = false; }
+#endif
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
     void platformInitialize();
@@ -3496,6 +3500,10 @@ private:
 
     RefPtr<WebPageProxy> m_pageToCloneSessionStorageFrom;
     Ref<BrowsingContextGroup> m_browsingContextGroup;
+
+#if ENABLE(CONTEXT_MENUS)
+    bool m_waitingForContextMenuToShow { false };
+#endif
 };
 
 } // namespace WebKit
