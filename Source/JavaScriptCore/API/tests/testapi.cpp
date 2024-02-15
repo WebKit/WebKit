@@ -44,9 +44,6 @@
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
-#if USE(TZONE_MALLOC)
-extern "C" void WTFTZoneInit(const char *);
-#endif
 extern "C" void configureJSCForTesting();
 extern "C" int testCAPIViaCpp(const char* filter);
 extern "C" void JSSynchronousGarbageCollectForDebugging(JSContextRef);
@@ -746,15 +743,6 @@ void TestAPI::testJSObjectSetOnGlobalObjectSubclassDefinition()
 
     check(JSEvaluateScript(context, propertyName, globalObject, nullptr, 1, nullptr) == newObject, "Setting a property on a custom global object should set the property");
 }
-
-#if USE(TZONE_MALLOC)
-void WTFTZoneInit(const char* seed)
-{
-    WTF_TZONE_INIT(seed);
-    JSC::registerTZoneTypes();
-    WTF_TZONE_REGISTRATION_DONE();
-}
-#endif
 
 void configureJSCForTesting()
 {

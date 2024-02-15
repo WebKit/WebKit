@@ -147,6 +147,7 @@
 #include <wtf/ProcessPrivilege.h>
 #include <wtf/RunLoop.h>
 #include <wtf/SystemTracing.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URLParser.h>
 #include <wtf/WTFProcess.h>
 #include <wtf/text/StringHash.h>
@@ -259,6 +260,8 @@ static const Seconds nonVisibleProcessMemoryCleanupDelay { 120_s };
 namespace WebKit {
 using namespace JSC;
 using namespace WebCore;
+
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(WebProcess);
 
 #if !PLATFORM(GTK) && !PLATFORM(WPE)
 NO_RETURN static void callExit(IPC::Connection*)

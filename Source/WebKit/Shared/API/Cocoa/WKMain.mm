@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,12 +27,18 @@
 #import "WKMain.h"
 
 #import "PCMDaemonEntryPoint.h"
+#import "RegisterTZoneTypes.h"
 #import "WebPushDaemonMain.h"
 #import "WebPushToolMain.h"
+#import <JavaScriptCore/TZoneInit.h>
 #import "XPCServiceEntryPoint.h"
 
-int WKXPCServiceMain(int argc, const char** argv)
+int WKXPCServiceMain(int argc, const char** argv, const char**, const char** darwinEnvp)
 {
+    TZoneInit(darwinEnvp);
+    WebKit::registerTZoneTypes();
+    TZoneRegisterationDone();
+
     return WebKit::XPCServiceMain(argc, argv);
 }
 
