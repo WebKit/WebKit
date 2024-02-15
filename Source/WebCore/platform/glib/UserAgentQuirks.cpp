@@ -72,7 +72,7 @@ static bool urlRequiresChromeBrowser(const String& domain, const String& baseDom
         return true;
 
     // https://webcompat.com/issues/123672
-    if (baseDomain == "apple.com"_s)
+    if (domain == "www.apple.com"_s)
         return true;
 
     return false;
