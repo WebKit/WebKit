@@ -498,11 +498,11 @@ void GStreamerMediaEndpoint::doSetRemoteDescription(const RTCSessionDescription&
 
             GRefPtr<GstWebRTCRTPTransceiver> rtcTransceiver;
             g_signal_emit_by_name(m_webrtcBin.get(), "get-transceiver", i, &rtcTransceiver.outPtr());
+            if (!rtcTransceiver)
+                continue;
+
             auto caps = capsFromSDPMedia(media);
-            if (rtcTransceiver)
-                g_object_set(rtcTransceiver.get(), "direction", direction, "codec-preferences", caps.get(), nullptr);
-            else
-                g_signal_emit_by_name(m_webrtcBin.get(), "add-transceiver", direction, caps.get(), &rtcTransceiver.outPtr());
+            g_object_set(rtcTransceiver.get(), "codec-preferences", caps.get(), nullptr);
         }
     }, [protectedThis = Ref(*this), this, initialSDP = WTFMove(initialSDP), localDescriptionSdp = WTFMove(localDescriptionSdp), localDescriptionSdpType = WTFMove(localDescriptionSdpType)](const GstSDPMessage& message) {
         if (protectedThis->isStopped())

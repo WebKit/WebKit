@@ -220,7 +220,7 @@ public:
         }
 
         if (!clientId) {
-            GST_DEBUG_OBJECT(m_src.get(), "Incoming track registration failed, track likely not ready yet.");
+            GST_WARNING_OBJECT(m_src.get(), "Incoming track registration failed, track likely not ready yet.");
             return;
         }
 
