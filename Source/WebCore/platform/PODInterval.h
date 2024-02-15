@@ -143,7 +143,11 @@ public:
             return true;
         if (other.Base::low() < Base::low())
             return false;
-        return Base::high() < other.Base::high();
+        if (Base::high() < other.Base::high())
+            return true;
+        if (other.Base::high() < Base::high())
+            return false;
+        return Base::data().get() < other.Base::data().get();
     }
 
     bool operator==(const PODInterval& other) const
