@@ -190,7 +190,7 @@ inline void InlineLevelBox::setHasContent()
 inline InlineLayoutUnit InlineLevelBox::preferredLineHeight() const
 {
     if (isPreferredLineHeightFontMetricsBased())
-        return primarymetricsOfPrimaryFont().intLineSpacing();
+        return primarymetricsOfPrimaryFont().lineSpacing().value_or(0.f);
 
     if (m_style.lineHeight.isPercentOrCalculated())
         return minimumValueForLength(m_style.lineHeight, fontSize());
