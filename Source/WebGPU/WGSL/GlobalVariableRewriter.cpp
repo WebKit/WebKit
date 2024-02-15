@@ -109,7 +109,7 @@ private:
     void insertParameters(AST::Function&, const Vector<unsigned>&);
     void insertMaterializations(AST::Function&, const UsedResources&);
     void insertLocalDefinitions(AST::Function&, const UsedPrivateGlobals&);
-    void readVariable(AST::IdentifierExpression&, const Global&);
+    const Global* readVariable(AST::IdentifierExpression&);
     void insertBeforeCurrentStatement(AST::Statement&);
     AST::Expression& bufferLengthType();
     AST::Expression& bufferLengthReferenceType();
@@ -136,6 +136,7 @@ private:
     Packing getPacking(AST::BinaryExpression&);
     Packing getPacking(AST::UnaryExpression&);
     Packing getPacking(AST::CallExpression&);
+    Packing getPacking(AST::IdentityExpression&);
     Packing packingForType(const Type*);
 
     CallGraph& m_callGraph;
@@ -383,6 +384,8 @@ Packing RewriteGlobalVariables::pack(Packing expectedPacking, AST::Expression& e
         return visitAndReplace(downcast<AST::UnaryExpression>(expression));
     case AST::NodeKind::CallExpression:
         return visitAndReplace(downcast<AST::CallExpression>(expression));
+    case AST::NodeKind::IdentityExpression:
+        return visitAndReplace(downcast<AST::IdentityExpression>(expression));
     default:
         AST::Visitor::visit(expression);
         return Packing::Unpacked;
@@ -391,21 +394,11 @@ Packing RewriteGlobalVariables::pack(Packing expectedPacking, AST::Expression& e
 
 Packing RewriteGlobalVariables::getPacking(AST::IdentifierExpression& identifier)
 {
-    auto packing = Packing::Unpacked;
-
-    auto def = m_defs.find(identifier.identifier());
-    if (def != m_defs.end())
-        return packing;
-
-    auto it = m_globals.find(identifier.identifier());
-    if (it == m_globals.end())
-        return packing;
-    readVariable(identifier, it->value);
-
-    if (it->value.resource.has_value())
+    auto* global = readVariable(identifier);
+    if (global && global->resource.has_value())
         return packingForType(identifier.inferredType());
 
-    return packing;
+    return Packing::Unpacked;
 }
 
 Packing RewriteGlobalVariables::getPacking(AST::FieldAccessExpression& expression)
@@ -453,6 +446,11 @@ Packing RewriteGlobalVariables::getPacking(AST::UnaryExpression& expression)
     return Packing::Unpacked;
 }
 
+Packing RewriteGlobalVariables::getPacking(AST::IdentityExpression& expression)
+{
+    return pack(Packing::Either, expression.expression());
+}
+
 Packing RewriteGlobalVariables::getPacking(AST::CallExpression& call)
 {
     if (is<AST::IdentifierExpression>(call.target())) {
@@ -460,7 +458,7 @@ Packing RewriteGlobalVariables::getPacking(AST::CallExpression& call)
         if (target.identifier() == "arrayLength"_s) {
             ASSERT(call.arguments().size() == 1);
             auto arrayOffset = 0;
-            const auto& getBase = [&](auto&& getBase, AST::Expression& expression) -> AST::Expression& {
+            const auto& getBase = [&](auto&& getBase, AST::Expression& expression) -> AST::IdentifierExpression& {
                 if (is<AST::IdentityExpression>(expression))
                     return getBase(getBase, downcast<AST::IdentityExpression>(expression).expression());
                 if (is<AST::UnaryExpression>(expression))
@@ -478,13 +476,12 @@ Packing RewriteGlobalVariables::getPacking(AST::CallExpression& call)
                     return getBase(getBase, base);
                 }
                 if (is<AST::IdentifierExpression>(expression))
-                    return expression;
+                    return downcast<AST::IdentifierExpression>(expression);
                 RELEASE_ASSERT_NOT_REACHED();
             };
             auto& arrayPointer = call.arguments()[0];
             auto& base = getBase(getBase, arrayPointer);
-            ASSERT(is<AST::IdentifierExpression>(base));
-            auto& identifier = downcast<AST::IdentifierExpression>(base).identifier();
+            auto& identifier = base.identifier();
             ASSERT(m_globals.contains(identifier));
             auto lengthName = makeString("__", identifier, "_ArrayLength");
             auto& length = m_callGraph.ast().astBuilder().construct<AST::IdentifierExpression>(
@@ -533,8 +530,10 @@ Packing RewriteGlobalVariables::getPacking(AST::CallExpression& call)
             elementCount.m_inferredType = m_callGraph.ast().types().u32Type();
 
             m_callGraph.ast().replace(call, elementCount);
-            visit(base); // we also need to mark the array as read
-            return getPacking(elementCount);
+            // mark both the array and array length as read
+            readVariable(base);
+            readVariable(length);
+            return Packing::Unpacked;
         }
     }
 
@@ -1976,10 +1975,19 @@ void RewriteGlobalVariables::def(const AST::Identifier& name, AST::Variable* var
     m_defs.add(name, variable);
 }
 
-void RewriteGlobalVariables::readVariable(AST::IdentifierExpression& identifier, const Global& global)
+auto RewriteGlobalVariables::readVariable(AST::IdentifierExpression& identifier) -> const Global*
 {
+    auto def = m_defs.find(identifier.identifier());
+    if (def != m_defs.end())
+        return nullptr;
+
+    auto it = m_globals.find(identifier.identifier());
+    if (it == m_globals.end())
+        return nullptr;
+
+    auto& global = it->value;
     if (global.declaration->flavor() == AST::VariableFlavor::Const)
-        return;
+        return nullptr;
 
     dataLogLnIf(shouldLogGlobalVariableRewriting, "> read global: ", identifier.identifier(), " at line:", identifier.span().line, " column: ", identifier.span().lineOffset);
     auto addResult = m_reads.add(identifier.identifier());
@@ -1989,6 +1997,8 @@ void RewriteGlobalVariables::readVariable(AST::IdentifierExpression& identifier,
         if (auto* initializer = global.declaration->maybeInitializer())
             visit(*initializer);
     }
+
+    return &global;
 }
 
 void RewriteGlobalVariables::insertBeforeCurrentStatement(AST::Statement& statement)

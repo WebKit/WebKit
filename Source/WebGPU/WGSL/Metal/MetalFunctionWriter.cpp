@@ -1650,10 +1650,9 @@ static void emitAtomicExchange(FunctionDefinitionWriter* writer, AST::CallExpres
     atomicFunction("atomic_exchange_explicit", writer, call);
 }
 
-static void emitArrayLength(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+[[noreturn]] static void emitArrayLength(FunctionDefinitionWriter*, AST::CallExpression&)
 {
-    writer->visit(call.arguments()[0]);
-    writer->stringBuilder().append(".size()");
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 static void emitDistance(FunctionDefinitionWriter* writer, AST::CallExpression& call)
