@@ -162,6 +162,12 @@ void AuthenticatorCoordinator::create(const Document& document, CredentialCreati
     }
 
     options.extensions = extensionInputs;
+    if (options.extensions && options.extensions->largeBlob) {
+        if (options.extensions->largeBlob->read || options.extensions->largeBlob->write) {
+            promise.reject(Exception { ExceptionCode::NotAllowedError, "Read and write may not be present in largeBlob for registration."_s });
+            return;
+        }
+    }
 
     // Step 4, 18-22.
     if (!m_client) {
@@ -254,6 +260,17 @@ void AuthenticatorCoordinator::discoverFromExternalSource(const Document& docume
             return;
         }
         options.extensions->appid = appid;
+    }
+
+    if (options.extensions && options.extensions->largeBlob) {
+        if (!options.extensions->largeBlob->support.isEmpty()) {
+            promise.reject(Exception { ExceptionCode::NotAllowedError, "Support should not be present in largeBlob for assertion."_s });
+            return;
+        }
+        if (options.extensions->largeBlob->read && options.extensions->largeBlob->write) {
+            promise.reject(Exception { ExceptionCode::NotAllowedError, "Both read and write may not be present together in largeBlob."_s });
+            return;
+        }
     }
 
     // Step 4, 14-19.
