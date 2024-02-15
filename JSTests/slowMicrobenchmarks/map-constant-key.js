@@ -1,4 +1,4 @@
-//@ skip if $architecture == "arm" and !$cloop
+//@ skip if $memoryLimited
 
 function assert(b) {
     if (!b)
