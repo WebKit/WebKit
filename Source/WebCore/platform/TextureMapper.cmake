@@ -144,6 +144,9 @@ if (ENABLE_WEBGL)
 endif ()
 
 if (USE_GRAPHICS_LAYER_WC)
+    list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
+        "${WEBCORE_DIR}/platform/graphics/wc"
+    )
     list(APPEND WebCore_SOURCES
         platform/graphics/texmap/TextureMapperSparseBackingStore.cpp
     )
