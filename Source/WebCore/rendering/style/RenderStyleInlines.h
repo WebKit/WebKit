@@ -635,6 +635,7 @@ inline float RenderStyle::perspective() const { return m_nonInheritedData->rareD
 inline LengthPoint RenderStyle::perspectiveOrigin() const { return m_nonInheritedData->rareData->perspectiveOrigin(); }
 inline const Length& RenderStyle::perspectiveOriginX() const { return m_nonInheritedData->rareData->perspectiveOriginX; }
 inline const Length& RenderStyle::perspectiveOriginY() const { return m_nonInheritedData->rareData->perspectiveOriginY; }
+inline PositionType RenderStyle::position() const { return m_nonInheritedData->boxData->position(); }
 inline bool RenderStyle::preserveNewline() const { return preserveNewline(whiteSpace()); }
 inline bool RenderStyle::preserves3D() const { return usedTransformStyle3D() == TransformStyle3D::Preserve3D; }
 inline QuotesData* RenderStyle::quotes() const { return m_rareInheritedData->quotes.get(); }
