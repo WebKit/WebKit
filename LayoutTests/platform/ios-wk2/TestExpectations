@@ -2405,3 +2405,5 @@ webkit.org/b/269321 webgl/1.0.3/conformance/uniforms/out-of-bounds-uniform-array
 webkit.org/b/269327 [ Release ] webrtc/audio-samplerate-change.html [ Pass Failure ]
 
 webkit.org/b/269378 [ Debug ] fast/forms/switch/click-disabled.html [ Skip ]
+
+webkit.org/b/269483 [ Debug ] http/wpt/webcodecs/h264-encoder-default-config.https.any.worker.html [ Skip ]
