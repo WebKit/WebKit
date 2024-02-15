@@ -42,6 +42,7 @@
 #import <WebCore/PlaybackSessionInterfaceAVKit.h>
 #import <WebCore/VideoPresentationInterfaceAVKit.h>
 #import <pal/spi/cocoa/AVKitSPI.h>
+#import <wtf/MonotonicTime.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
 
@@ -52,6 +53,7 @@
 static const NSTimeInterval showHideAnimationDuration = 0.1;
 static const NSTimeInterval pipHideAnimationDuration = 0.2;
 static const NSTimeInterval autoHideDelay = 4.0;
+static const Seconds bannerMinimumHideDelay = 1_s;
 
 @class WKFullscreenStackView;
 
@@ -130,6 +132,8 @@ private:
 #if ENABLE(FULLSCREEN_DISMISSAL_GESTURES)
     RetainPtr<UIStackView> _banner;
     RetainPtr<_WKInsetLabel> _bannerLabel;
+    RetainPtr<UITapGestureRecognizer> _bannerTapToDismissRecognizer;
+    MonotonicTime _bannerMinimumHideDelayTime;
 #endif
     RetainPtr<WKExtrinsicButton> _cancelButton;
     RetainPtr<WKExtrinsicButton> _pipButton;
@@ -301,6 +305,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         [_banner setAlpha:1];
     }];
 
+    _bannerMinimumHideDelayTime = MonotonicTime::now() + bannerMinimumHideDelay;
+
     [self performSelector:@selector(hideBanner) withObject:nil afterDelay:autoHideDelay];
 #endif
 }
@@ -320,6 +326,19 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }];
 #endif
 }
+
+#if ENABLE(FULLSCREEN_DISMISSAL_GESTURES)
+- (void)_bannerDismissalRecognized:(NSNotification*)notification
+{
+    auto remainingDelay = _bannerMinimumHideDelayTime - MonotonicTime::now();
+    if (remainingDelay <= 0_s) {
+        [self hideBanner];
+        return;
+    }
+
+    [self performSelector:@selector(hideBanner) withObject:nil afterDelay:remainingDelay.seconds()];
+}
+#endif
 
 - (void)videoControlsManagerDidChange
 {
@@ -581,6 +600,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [banner addArrangedSubview:_bannerLabel.get() applyingMaterialStyle:AVBackgroundViewMaterialStyleSecondary tintEffectStyle:AVBackgroundViewTintEffectStyleSecondary];
 #endif
     _banner = WTFMove(banner);
+
+    _bannerTapToDismissRecognizer = adoptNS([[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_bannerDismissalRecognized:)]);
+    [_bannerTapToDismissRecognizer setDelegate:self];
+    [_banner addGestureRecognizer:_bannerTapToDismissRecognizer.get()];
+
     [_banner setTranslatesAutoresizingMaskIntoConstraints:NO];
 
     [_animatingView addSubview:_banner.get()];
@@ -602,7 +626,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         _topConstraint.get(),
         stackViewToTopGuideConstraint,
 #if ENABLE(FULLSCREEN_DISMISSAL_GESTURES)
-        [[_banner centerYAnchor] constraintEqualToAnchor:self.view.centerYAnchor],
+        [[_banner topAnchor] constraintEqualToSystemSpacingBelowAnchor:[_stackView bottomAnchor] multiplier:3],
         [[_banner centerXAnchor] constraintEqualToAnchor:self.view.centerXAnchor],
 #endif
         [[_stackView leadingAnchor] constraintEqualToAnchor:margins.leadingAnchor],
