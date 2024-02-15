@@ -5222,6 +5222,18 @@
    },
    {
       "emails" : [
+         "marcus_plutowski@apple.com",
+         "achierius@gmail.com",
+         "marcusplutowski@gmail.com"
+      ],
+      "github" : "achierius",
+      "name" : "Marcus Plutowski",
+      "nicks" : [
+         "marcus"
+      ]
+   },
+   {
+      "emails" : [
          "bulach@chromium.org"
       ],
       "name" : "Marcus Voltis Bulach"
