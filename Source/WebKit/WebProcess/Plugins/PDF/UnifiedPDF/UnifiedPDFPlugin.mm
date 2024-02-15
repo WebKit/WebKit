@@ -1444,7 +1444,7 @@ static BOOL annotationIsExternalLink(PDFAnnotation *annotation)
     if (![annotation isKindOfClass:getPDFAnnotationLinkClass()])
         return NO;
 
-    return [annotation URL];
+    return !![annotation URL];
 }
 
 static BOOL annotationIsLinkWithDestination(PDFAnnotation *annotation)

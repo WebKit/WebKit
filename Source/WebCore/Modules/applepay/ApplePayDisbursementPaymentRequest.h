@@ -27,6 +27,7 @@
 
 #if ENABLE(APPLE_PAY_DISBURSEMENTS)
 
+#include "ExceptionOr.h"
 #include <WebCore/ApplePayLineItem.h>
 #include <wtf/WallTime.h>
 #include <wtf/text/WTFString.h>
