@@ -2004,11 +2004,15 @@ void UnifiedPDFPlugin::performCopyLinkOperation(const IntPoint& contextMenuEvent
     if (!url)
         return;
 
+#if PLATFORM(MAC)
     NSString *urlAbsoluteString = [url absoluteString];
     NSArray *types = @[ NSPasteboardTypeString, NSPasteboardTypeHTML ];
     NSArray *items = @[ [urlAbsoluteString dataUsingEncoding:NSUTF8StringEncoding], [urlAbsoluteString dataUsingEncoding:NSUTF8StringEncoding] ];
 
     writeItemsToPasteboard(NSPasteboardNameGeneral, items, types);
+#else
+    // FIXME: Implement.
+#endif
 }
 
 #pragma mark Editing Commands
