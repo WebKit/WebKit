@@ -72,6 +72,7 @@ public:
 
     Type type() const { return m_type; }
     const WebCore::IntPoint& menuLocation() const { return m_menuLocation; }
+    void setMenuLocation(WebCore::IntPoint menuLocation) { m_menuLocation = menuLocation; }
     const Vector<WebKit::WebContextMenuItemData>& menuItems() const { return m_menuItems; }
 
     const std::optional<WebHitTestResultData>& webHitTestResultData() const { return m_webHitTestResultData; }

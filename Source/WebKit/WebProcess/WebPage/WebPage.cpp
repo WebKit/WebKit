@@ -9176,23 +9176,33 @@ void WebPage::requestTextExtraction(std::optional<FloatRect>&& collectionRectInR
     completion(TextExtraction::extractItem(WTFMove(collectionRectInRootView), Ref { *corePage() }));
 }
 
-void WebPage::remoteViewCoordinatesToRootView(FrameIdentifier frameID, FloatRect rect, CompletionHandler<void(FloatRect)>&& completionHandler)
+template<typename T> void WebPage::remoteViewToRootView(WebCore::FrameIdentifier frameID, T geometry, CompletionHandler<void(T)>&& completionHandler)
 {
     RefPtr webFrame = WebProcess::singleton().webFrame(frameID);
     if (!webFrame)
-        return completionHandler(rect);
+        return completionHandler(geometry);
 
     RefPtr coreRemoteFrame = webFrame->coreRemoteFrame();
     if (!coreRemoteFrame) {
         ASSERT_NOT_REACHED();
-        return completionHandler(rect);
+        return completionHandler(geometry);
     }
 
     RefPtr view = coreRemoteFrame->view();
     if (!view)
-        return completionHandler(rect);
+        return completionHandler(geometry);
 
-    completionHandler(view->contentsToRootView(rect));
+    completionHandler(view->contentsToRootView(geometry));
+}
+
+void WebPage::remoteViewRectToRootView(FrameIdentifier frameID, FloatRect rect, CompletionHandler<void(FloatRect)>&& completionHandler)
+{
+    remoteViewToRootView(frameID, rect, WTFMove(completionHandler));
+}
+
+void WebPage::remoteViewPointToRootView(FrameIdentifier frameID, FloatPoint point, CompletionHandler<void(FloatPoint)>&& completionHandler)
+{
+    remoteViewToRootView(frameID, point, WTFMove(completionHandler));
 }
 
 } // namespace WebKit

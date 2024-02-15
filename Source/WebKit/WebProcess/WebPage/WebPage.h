@@ -2211,7 +2211,9 @@ private:
     static void setHasLaunchedWebContentProcess();
 #endif
 
-    void remoteViewCoordinatesToRootView(WebCore::FrameIdentifier, WebCore::FloatRect, CompletionHandler<void(WebCore::FloatRect)>&&);
+    template<typename T> void remoteViewToRootView(WebCore::FrameIdentifier, T, CompletionHandler<void(T)>&&);
+    void remoteViewRectToRootView(WebCore::FrameIdentifier, WebCore::FloatRect, CompletionHandler<void(WebCore::FloatRect)>&&);
+    void remoteViewPointToRootView(WebCore::FrameIdentifier, WebCore::FloatPoint, CompletionHandler<void(WebCore::FloatPoint)>&&);
 
     WebCore::PageIdentifier m_identifier;
 

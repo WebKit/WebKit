@@ -8402,7 +8402,7 @@ void WebPageProxy::setTextIndicatorFromFrame(FrameIdentifier frameID, TextIndica
 
     auto parentFrameID = rootFrameParent->frameID();
     auto textBoundingRect = indicatorData.textBoundingRectInRootViewCoordinates;
-    sendToProcessContainingFrame(parentFrameID, Messages::WebPage::RemoteViewCoordinatesToRootView(frameID, textBoundingRect), [protectedThis = Ref { *this }, indicatorData = WTFMove(indicatorData), rootFrameParent = WTFMove(rootFrameParent), lifetime](FloatRect rect) mutable {
+    sendToProcessContainingFrame(parentFrameID, Messages::WebPage::RemoteViewRectToRootView(frameID, textBoundingRect), [protectedThis = Ref { *this }, indicatorData = WTFMove(indicatorData), rootFrameParent = WTFMove(rootFrameParent), lifetime](FloatRect rect) mutable {
         indicatorData.textBoundingRectInRootViewCoordinates = rect;
         protectedThis->setTextIndicatorFromFrame(rootFrameParent->rootFrame()->frameID(), WTFMove(indicatorData), lifetime);
     });
@@ -8555,6 +8555,28 @@ void WebPageProxy::hidePopupMenu()
 }
 
 #if ENABLE(CONTEXT_MENUS)
+
+void WebPageProxy::showContextMenuFromFrame(FrameIdentifier frameID, ContextMenuContextData&& contextMenuContextData, UserData&& userData)
+{
+    RefPtr frame = WebFrameProxy::webFrame(frameID);
+    if (!frame)
+        return;
+
+    RefPtr rootFrameParent = frame->rootFrame()->parentFrame();
+    if (!rootFrameParent) {
+        showContextMenu(WTFMove(contextMenuContextData), userData);
+        return;
+    }
+
+    ASSERT(m_preferences->siteIsolationEnabled());
+
+    auto parentFrameID = rootFrameParent->frameID();
+    auto menuLocation = contextMenuContextData.menuLocation();
+    sendToProcessContainingFrame(parentFrameID, Messages::WebPage::RemoteViewPointToRootView(frameID, menuLocation), [protectedThis = Ref { *this }, contextMenuContextData = WTFMove(contextMenuContextData), userData = WTFMove(userData), rootFrameParent = WTFMove(rootFrameParent)](FloatPoint point) mutable {
+        contextMenuContextData.setMenuLocation(IntPoint(point));
+        protectedThis->showContextMenuFromFrame(rootFrameParent->rootFrame()->frameID(), WTFMove(contextMenuContextData), WTFMove(userData));
+    });
+}
 
 void WebPageProxy::showContextMenu(ContextMenuContextData&& contextMenuContextData, const UserData& userData)
 {

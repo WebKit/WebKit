@@ -2653,6 +2653,7 @@ private:
     void hidePopupMenu();
 
 #if ENABLE(CONTEXT_MENUS)
+    void showContextMenuFromFrame(WebCore::FrameIdentifier, ContextMenuContextData&&, UserData&&);
     void showContextMenu(ContextMenuContextData&&, const UserData&);
 #endif
 
