@@ -235,9 +235,10 @@ void BBQPlan::compileFunction(uint32_t functionIndex)
     auto* tierUpPointer = tierUp.get();
     auto& context = m_compilationContexts[functionIndex];
     Ref<BBQCallee> bbqCallee = BBQCallee::create(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace), WTFMove(tierUp), savedFPWidth);
+    auto* calleePtr = bbqCallee.ptr();
     m_wasmInternalFunctions[functionIndex] = compileFunction(functionIndex, bbqCallee.get(), context, m_unlinkedWasmToWasmCalls[functionIndex], tierUpPointer);
     {
-        auto linkBuffer = makeUnique<LinkBuffer>(*context.wasmEntrypointJIT, bbqCallee.ptr(), LinkBuffer::Profile::WasmBBQ, JITCompilationCanFail);
+        auto linkBuffer = makeUnique<LinkBuffer>(*context.wasmEntrypointJIT, calleePtr, LinkBuffer::Profile::WasmBBQ, JITCompilationCanFail);
         if (linkBuffer->isValid())
             m_wasmInternalFunctionLinkBuffers[functionIndex] = WTFMove(linkBuffer);
     }
@@ -251,7 +252,7 @@ void BBQPlan::compileFunction(uint32_t functionIndex)
         auto callee = JSEntrypointCallee::create();
         context.jsEntrypointJIT = makeUnique<CCallHelpers>();
         auto jsToWasmInternalFunction = createJSToWasmWrapper(*context.jsEntrypointJIT, callee.get(), nullptr, signature, &m_unlinkedWasmToWasmCalls[functionIndex], m_moduleInformation.get(), m_mode, functionIndex);
-        auto linkBuffer = makeUnique<LinkBuffer>(*context.jsEntrypointJIT, bbqCallee.ptr(), LinkBuffer::Profile::WasmBBQ, JITCompilationCanFail);
+        auto linkBuffer = makeUnique<LinkBuffer>(*context.jsEntrypointJIT, calleePtr, LinkBuffer::Profile::WasmBBQ, JITCompilationCanFail);
 
         auto result = m_jsToWasmInternalFunctions.add(functionIndex, std::tuple { WTFMove(callee), WTFMove(linkBuffer), WTFMove(jsToWasmInternalFunction) });
         ASSERT_UNUSED(result, result.isNewEntry);
