@@ -1915,8 +1915,6 @@ webkit.org/b/256758 fast/mediastream/captureStream/canvas3d.html [ Failure ]
 
 webkit.org/b/194611 http/wpt/webrtc/getUserMedia-processSwapping.html [ Failure ]
 
-webkit.org/b/261099 webrtc/video-lowercase-media-subtype.html [ Skip ]
-
 fast/mediastream/getDisplayMedia-max-constraints4.html [ Skip ]
 
 # DataChannel GstWebRTC implementation incomplete, missing stats support.
@@ -1966,7 +1964,8 @@ imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpTransceiver-headerExtens
 # GStreamerRtpReceiverBackend::getSynchronizationSources() unimplemented and also hitting srtpenc errors.
 webkit.org/b/235885 webrtc/video-addTransceiver.html [ Skip ]
 
-# GstWebRTC doesn't support transceiver direction changes.
+# GstWebRTC (< 1.24) doesn't support transceiver direction changes.
+webrtc/receiver-track-should-stay-live-even-if-receiver-is-inactive.html [ Failure ]
 webkit.org/b/193641 webkit.org/b/235885 webrtc/video-setDirection.html [ Skip ]
 webkit.org/b/235885 webrtc/direction-change.html [ Skip ]
 # This test calls pc.removeTrack() which implies a transceiver direction change.
