@@ -225,6 +225,7 @@ public:
 
 private:
     bool documentFinishedLoading() const { return m_documentFinishedLoading; }
+    bool hasBeenDestroyed() const { return m_hasBeenDestroyed; }
     uint64_t streamedBytes() const { return m_streamedBytes; }
     void ensureDataBufferLength(uint64_t);
 
