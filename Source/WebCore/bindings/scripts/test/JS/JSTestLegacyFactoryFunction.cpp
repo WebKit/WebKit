@@ -240,6 +240,7 @@ void JSTestLegacyFactoryFunction::analyzeHeap(JSCell* cell, HeapAnalyzer& analyz
 
 bool JSTestLegacyFactoryFunctionOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, const char** reason)
 {
+IGNORE_CLANG_STATIC_ANALYZER_UNCOUNTED_LOCAL_VARS_BEGIN
     auto* jsTestLegacyFactoryFunction = jsCast<JSTestLegacyFactoryFunction*>(handle.slot()->asCell());
     auto& wrapped = jsTestLegacyFactoryFunction->wrapped();
     if (!wrapped.isContextStopped() && wrapped.hasPendingActivity()) {
@@ -250,6 +251,7 @@ bool JSTestLegacyFactoryFunctionOwner::isReachableFromOpaqueRoots(JSC::Handle<JS
     UNUSED_PARAM(visitor);
     UNUSED_PARAM(reason);
     return false;
+IGNORE_CLANG_STATIC_ANALYZER_UNCOUNTED_LOCAL_VARS_END
 }
 
 void JSTestLegacyFactoryFunctionOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
