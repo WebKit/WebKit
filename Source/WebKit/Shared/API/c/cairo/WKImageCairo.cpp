@@ -34,21 +34,24 @@
 #include <WebCore/GraphicsContextCairo.h>
 #include <WebCore/ShareableBitmap.h>
 #include <cairo.h>
+#else
+#include <WebCore/NotImplemented.h>
 #endif
 
 cairo_surface_t* WKImageCreateCairoSurface(WKImageRef imageRef)
 {
-#if USE(SKIA)
-    // FIXME
-    return nullptr;
-#else
+#if USE(CAIRO)
     // We cannot pass a RefPtr through the API here, so we just leak the reference.
     return WebKit::toImpl(imageRef)->createCairoSurface().leakRef();
+#else
+    notImplemented();
+    return nullptr;
 #endif
 }
 
 WKImageRef WKImageCreateFromCairoSurface(cairo_surface_t* surface, WKImageOptions options)
 {
+#if USE(CAIRO)
     WebCore::IntSize imageSize(cairo_image_surface_get_width(surface), cairo_image_surface_get_height(surface));
     auto webImage = WebKit::WebImage::create(imageSize, WebKit::toImageOptions(options), WebCore::DestinationColorSpace::SRGB());
     if (!webImage->context())
@@ -62,4 +65,8 @@ WKImageRef WKImageCreateFromCairoSurface(cairo_surface_t* surface, WKImageOption
     cairo_fill(cr);
 
     return toAPI(webImage.leakRef());
+#else
+    notImplemented();
+    return nullptr;
+#endif
 }
