@@ -100,7 +100,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     styledElement.setInlineStyleProperty(CSSPropertyFontFamily, textAnnotation.font.familyName);
     styledElement.setInlineStyleProperty(CSSPropertyTextAlign, cssAlignmentValueForNSTextAlignment(textAnnotation.alignment));
 
-    setValue(textAnnotation.stringValue);
+    downcast<HTMLTextFormControlElement>(styledElement).setValue(textAnnotation.stringValue);
 
     return element;
 }
