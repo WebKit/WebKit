@@ -54,6 +54,10 @@
 #include "MediaElementAudioSourceOptions.h"
 #endif
 
+#if PLATFORM(VISION) && ENABLE(WEBXR)
+#include "Page.h"
+#endif
+
 namespace WebCore {
 
 #define AUDIOCONTEXT_RELEASE_LOG(fmt, ...) RELEASE_LOG(Media, "%p - AudioContext::" fmt, this, ##__VA_ARGS__)
@@ -492,7 +496,18 @@ void AudioContext::isPlayingAudioDidChange()
 
 bool AudioContext::shouldOverrideBackgroundPlaybackRestriction(PlatformMediaSession::InterruptionType interruption) const
 {
-    return m_canOverrideBackgroundPlaybackRestriction && interruption == PlatformMediaSession::InterruptionType::EnteringBackground && !destination().isConnected();
+    if (!m_canOverrideBackgroundPlaybackRestriction || interruption != PlatformMediaSession::InterruptionType::EnteringBackground)
+        return false;
+
+#if PLATFORM(VISION) && ENABLE(WEBXR)
+    if (RefPtr document = this->document()) {
+        RefPtr page = document->page();
+        if (page && page->hasActiveImmersiveSession())
+            return true;
+    }
+#endif
+
+    return !destination().isConnected();
 }
 
 void AudioContext::defaultDestinationWillBecomeConnected()

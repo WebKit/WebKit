@@ -73,8 +73,9 @@ public:
 
     // This is also needed by WebGLRenderingContextBase::makeXRCompatible() and HTMLCanvasElement::createContextWebGL().
     void ensureImmersiveXRDeviceIsSelected(CompletionHandler<void()>&&);
-    bool hasActiveImmersiveXRDevice() { return !!m_activeImmersiveDevice.get(); }
+    bool hasActiveImmersiveXRDevice() const { return !!m_activeImmersiveDevice.get(); }
 
+    bool hasActiveImmersiveSession() const;
     void sessionEnded(WebXRSession&);
 
     // For testing purpouses only.

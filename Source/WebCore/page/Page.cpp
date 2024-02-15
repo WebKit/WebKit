@@ -210,6 +210,11 @@
 #include "AccessibilityRootAtspi.h"
 #endif
 
+#if PLATFORM(IOS_FAMILY) && ENABLE(WEBXR)
+#include "NavigatorWebXR.h"
+#include "WebXRSystem.h"
+#endif
+
 namespace WebCore {
 
 static HashSet<SingleThreadWeakRef<Page>>& allPages()
@@ -4669,5 +4674,25 @@ void Page::setAccessibilityRootObject(AccessibilityRootAtspi* rootObject)
     m_accessibilityRootObject = rootObject;
 }
 #endif // USE(ATSPI)
+
+#if PLATFORM(IOS_FAMILY) && ENABLE(WEBXR)
+bool Page::hasActiveImmersiveSession() const
+{
+    for (RefPtr frame = &m_mainFrame.get(); frame; frame = frame->tree().traverseNext()) {
+        RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
+        RefPtr window = localFrame ? localFrame->window() : nullptr;
+        if (!window)
+            continue;
+
+        RefPtr navigator = window->optionalNavigator();
+        if (!navigator)
+            continue;
+
+        if (NavigatorWebXR::xr(*navigator).hasActiveImmersiveSession())
+            return true;
+    }
+    return false;
+}
+#endif // PLATFORM(IOS_FAMILY) && ENABLE(WEBXR)
 
 } // namespace WebCore

@@ -1087,6 +1087,10 @@ public:
     std::optional<std::pair<uint16_t, uint16_t>> portsForUpgradingInsecureSchemeForTesting() const;
     WEBCORE_EXPORT void setPortsForUpgradingInsecureSchemeForTesting(uint16_t upgradeFromInsecurePort, uint16_t upgradeToSecurePort);
 
+#if PLATFORM(IOS_FAMILY) && ENABLE(WEBXR)
+    WEBCORE_EXPORT bool hasActiveImmersiveSession() const;
+#endif
+
 private:
     explicit Page(PageConfiguration&&);
 
