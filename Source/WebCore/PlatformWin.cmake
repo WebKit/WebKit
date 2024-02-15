@@ -1,11 +1,14 @@
 add_definitions(/bigobj -D__STDC_CONSTANT_MACROS)
 
 include(platform/Adwaita.cmake)
-include(platform/Cairo.cmake)
 include(platform/Curl.cmake)
 include(platform/ImageDecoders.cmake)
 include(platform/OpenSSL.cmake)
 include(platform/TextureMapper.cmake)
+
+if (USE_CAIRO)
+    include(platform/Cairo.cmake)
+endif ()
 
 if (USE_DAWN)
     include(platform/Dawn.cmake)
@@ -34,7 +37,6 @@ list(APPEND WebCore_SOURCES
 
     page/win/DragControllerWin.cpp
     page/win/EventHandlerWin.cpp
-    page/win/FrameCairoWin.cpp
     page/win/FrameWin.cpp
     page/win/ResourceUsageOverlayWin.cpp
     page/win/ResourceUsageThreadWin.cpp
@@ -64,13 +66,10 @@ list(APPEND WebCore_SOURCES
     platform/graphics/win/FontCacheWin.cpp
     platform/graphics/win/FontCustomPlatformDataWin.cpp
     platform/graphics/win/FontDescriptionWin.cpp
-    platform/graphics/win/FontPlatformDataCairoWin.cpp
     platform/graphics/win/FontPlatformDataWin.cpp
     platform/graphics/win/FontWin.cpp
     platform/graphics/win/FullScreenController.cpp
     platform/graphics/win/FullScreenWindow.cpp
-    platform/graphics/win/GlyphPageTreeNodeCairoWin.cpp
-    platform/graphics/win/GraphicsContextCairoWin.cpp
     platform/graphics/win/GraphicsContextWin.cpp
     platform/graphics/win/IconWin.cpp
     platform/graphics/win/ImageAdapterWin.cpp
@@ -79,7 +78,6 @@ list(APPEND WebCore_SOURCES
     platform/graphics/win/IntSizeWin.cpp
     platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp
     platform/graphics/win/PlatformDisplayWin.cpp
-    platform/graphics/win/SimpleFontDataCairoWin.cpp
     platform/graphics/win/SimpleFontDataWin.cpp
     platform/graphics/win/SystemFontDatabaseWin.cpp
     platform/graphics/win/TransformationMatrixWin.cpp
@@ -95,7 +93,6 @@ list(APPEND WebCore_SOURCES
     platform/win/ClipboardUtilitiesWin.cpp
     platform/win/CursorWin.cpp
     platform/win/DragDataWin.cpp
-    platform/win/DragImageCairoWin.cpp
     platform/win/DragImageWin.cpp
     platform/win/GDIUtilities.cpp
     platform/win/KeyEventWin.cpp
@@ -153,6 +150,10 @@ list(APPEND WebCore_LIBRARIES
     usp10
 )
 
+list(APPEND WebCoreTestSupport_LIBRARIES
+    shlwapi
+)
+
 set(iconFiles
     Resources/missingImage.png
     Resources/missingImage@2x.png
@@ -197,6 +198,19 @@ if (ENABLE_VIDEO AND USE_MEDIA_FOUNDATION)
     list(APPEND WebCore_PRIVATE_LIBRARIES MediaFoundation)
 endif ()
 
+if (USE_CAIRO)
+    list(APPEND WebCore_SOURCES
+        page/win/FrameCairoWin.cpp
+
+        platform/graphics/win/FontPlatformDataCairoWin.cpp
+        platform/graphics/win/GlyphPageTreeNodeCairoWin.cpp
+        platform/graphics/win/GraphicsContextCairoWin.cpp
+        platform/graphics/win/SimpleFontDataCairoWin.cpp
+
+        platform/win/DragImageCairoWin.cpp
+    )
+endif ()
+
 if (USE_WOFF2)
     # The WOFF2 libraries don't compile as DLLs on Windows, so add in
     # the additional libraries WOFF2::dec requires
@@ -205,8 +219,3 @@ if (USE_WOFF2)
         WOFF2::common
     )
 endif ()
-
-list(APPEND WebCoreTestSupport_LIBRARIES
-    Cairo::Cairo
-    shlwapi
-)

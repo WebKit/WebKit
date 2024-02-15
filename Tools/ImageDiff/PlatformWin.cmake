@@ -1,1 +1,3 @@
-include(Cairo.cmake)
+if (USE_CAIRO)
+    include(Cairo.cmake)
+endif ()

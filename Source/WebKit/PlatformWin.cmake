@@ -27,8 +27,6 @@ list(APPEND WebKit_SOURCES
     Platform/win/LoggingWin.cpp
     Platform/win/ModuleWin.cpp
 
-    Shared/API/c/cairo/WKImageCairo.cpp
-
     Shared/win/AuxiliaryProcessMainWin.cpp
     Shared/win/NativeWebKeyboardEventWin.cpp
     Shared/win/NativeWebMouseEventWin.cpp
@@ -40,8 +38,6 @@ list(APPEND WebKit_SOURCES
     UIProcess/API/C/WKViewportAttributes.cpp
 
     UIProcess/API/C/win/WKView.cpp
-
-    UIProcess/Automation/cairo/WebAutomationSessionCairo.cpp
 
     UIProcess/Automation/win/WebAutomationSessionWin.cpp
 
@@ -58,8 +54,6 @@ list(APPEND WebKit_SOURCES
     UIProcess/Launcher/win/ProcessLauncherWin.cpp
 
     UIProcess/WebsiteData/win/WebsiteDataStoreWin.cpp
-
-    UIProcess/cairo/BackingStore.cpp
 
     UIProcess/win/AutomationClientWin.cpp
     UIProcess/win/PageClientImpl.cpp
@@ -102,7 +96,6 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/Shared/CoordinatedGraphics"
     "${WEBKIT_DIR}/Shared/CoordinatedGraphics/threadedcompositor"
     "${WEBKIT_DIR}/Shared/win"
-    "${WEBKIT_DIR}/UIProcess/API/C/cairo"
     "${WEBKIT_DIR}/UIProcess/API/C/win"
     "${WEBKIT_DIR}/UIProcess/API/cpp/win"
     "${WEBKIT_DIR}/UIProcess/API/win"
@@ -110,7 +103,6 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/UIProcess/Inspector/socket"
     "${WEBKIT_DIR}/UIProcess/Inspector/win"
     "${WEBKIT_DIR}/UIProcess/Plugins/win"
-    "${WEBKIT_DIR}/UIProcess/cairo"
     "${WEBKIT_DIR}/UIProcess/win"
     "${WEBKIT_DIR}/WebProcess/InjectedBundle/API/win"
     "${WEBKIT_DIR}/WebProcess/InjectedBundle/API/win/DOM"
@@ -119,6 +111,12 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/WebProcess/WebPage/CoordinatedGraphics"
     "${WEBKIT_DIR}/WebProcess/WebPage/win"
     "${WEBKIT_DIR}/win"
+)
+
+list(APPEND WebKit_PUBLIC_FRAMEWORK_HEADERS
+    Shared/API/c/win/WKBaseWin.h
+
+    UIProcess/API/C/win/WKView.h
 )
 
 list(APPEND WebKit_PRIVATE_LIBRARIES
@@ -150,10 +148,19 @@ if (ENABLE_REMOTE_INSPECTOR)
     )
 endif ()
 
-list(APPEND WebKit_PUBLIC_FRAMEWORK_HEADERS
-    Shared/API/c/cairo/WKImageCairo.h
+if (USE_CAIRO)
+    list(APPEND WebKit_SOURCES
+        Shared/API/c/cairo/WKImageCairo.cpp
 
-    Shared/API/c/win/WKBaseWin.h
+        UIProcess/Automation/cairo/WebAutomationSessionCairo.cpp
 
-    UIProcess/API/C/win/WKView.h
-)
+        UIProcess/cairo/BackingStore.cpp
+    )
+    list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
+        "${WEBKIT_DIR}/UIProcess/API/C/cairo"
+        "${WEBKIT_DIR}/UIProcess/cairo"
+    )
+    list(APPEND WebKit_PUBLIC_FRAMEWORK_HEADERS
+        Shared/API/c/cairo/WKImageCairo.h
+    )
+endif ()
