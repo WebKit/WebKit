@@ -1,3 +1,4 @@
+//@ skip if $architecture == "arm" and !$cloop
 
 var abort = $vm.abort;
 
