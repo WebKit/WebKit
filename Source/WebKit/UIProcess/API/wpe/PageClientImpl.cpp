@@ -465,4 +465,9 @@ WebKitWebResourceLoadManager* PageClientImpl::webResourceLoadManager()
     return m_view.webResourceLoadManager();
 }
 
+void PageClientImpl::callAfterNextPresentationUpdate(CompletionHandler<void()>&& callback)
+{
+    m_view.callAfterNextPresentationUpdate(WTFMove(callback));
+}
+
 } // namespace WebKit

@@ -66,6 +66,7 @@ public:
 
     void sendMessageToWebView(UserMessage&&, CompletionHandler<void(UserMessage&&)>&&);
     void setInputMethodState(std::optional<InputMethodState>&&);
+    void callAfterNextPresentationUpdate(CompletionHandler<void()>&&);
 
 private:
     // PageClient

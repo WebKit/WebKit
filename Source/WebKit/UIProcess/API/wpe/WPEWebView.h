@@ -144,6 +144,8 @@ public:
 
     void setCursor(const WebCore::Cursor&);
 
+    void callAfterNextPresentationUpdate(CompletionHandler<void()>&&);
+
 private:
 #if ENABLE(WPE_PLATFORM)
     View(struct wpe_view_backend*, WPEDisplay*, const API::PageConfiguration&);
@@ -181,6 +183,8 @@ private:
     GRefPtr<WPEView> m_wpeView;
     std::unique_ptr<WebKit::AcceleratedBackingStoreDMABuf> m_backingStore;
     uint32_t m_displayID { 0 };
+    unsigned long m_bufferRenderedID { 0 };
+    CompletionHandler<void()> m_nextPresentationUpdateCallback;
 #endif
 
 #if ENABLE(FULLSCREEN_API)

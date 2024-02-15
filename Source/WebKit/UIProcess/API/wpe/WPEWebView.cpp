@@ -30,6 +30,7 @@
 #include "APIViewClient.h"
 #include "AcceleratedBackingStoreDMABuf.h"
 #include "DrawingAreaProxy.h"
+#include "DrawingAreaProxyCoordinatedGraphics.h"
 #include "EditingRange.h"
 #include "EditorState.h"
 #include "NativeWebKeyboardEvent.h"
@@ -956,6 +957,28 @@ void View::setCursor(const WebCore::Cursor& cursor)
 #else
     UNUSED_PARAM(cursor);
 #endif
+}
+
+void View::callAfterNextPresentationUpdate(CompletionHandler<void()>&& callback)
+{
+#if ENABLE(WPE_PLATFORM)
+    if (m_wpeView) {
+        RELEASE_ASSERT(!m_nextPresentationUpdateCallback);
+        m_nextPresentationUpdateCallback = WTFMove(callback);
+        if (!m_bufferRenderedID) {
+            m_bufferRenderedID = g_signal_connect_after(m_wpeView.get(), "buffer-rendered", G_CALLBACK(+[](WPEView* view, WPEBuffer*, gpointer userData) {
+                auto& webView = *reinterpret_cast<View*>(userData);
+                if (webView.m_nextPresentationUpdateCallback)
+                    webView.m_nextPresentationUpdateCallback();
+            }), this);
+        }
+
+        return;
+    }
+#endif
+
+    RELEASE_ASSERT(m_pageProxy->drawingArea());
+    downcast<DrawingAreaProxyCoordinatedGraphics>(*m_pageProxy->drawingArea()).dispatchAfterEnsuringDrawing(WTFMove(callback));
 }
 
 } // namespace WKWPE
