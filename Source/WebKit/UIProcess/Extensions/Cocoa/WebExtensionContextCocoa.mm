@@ -80,6 +80,7 @@
 #import <WebCore/UserScript.h>
 #import <pal/spi/cocoa/NSKeyedUnarchiverSPI.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/EnumTraits.h>
 #import <wtf/FileSystem.h>
 #import <wtf/URLParser.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -3184,7 +3185,7 @@ void WebExtensionContext::loadInspectorBackgroundPage(WebInspectorUIProxy& inspe
 
     inspector.extensionController()->registerExtension(uniqueIdentifier(), uniqueIdentifier(), extension().displayName(), [this, protectedThis = Ref { *this }, inspector = Ref { inspector }, tab = Ref { tab }](Expected<RefPtr<API::InspectorExtension>, Inspector::ExtensionError> result) {
         if (!result) {
-            RELEASE_LOG_ERROR(Extensions, "Failed to register Inspector extension (error %{public}hhu)", result.error());
+            RELEASE_LOG_ERROR(Extensions, "Failed to register Inspector extension (error %{public}hhu)", enumToUnderlyingType(result.error()));
             return;
         }
 
@@ -3240,7 +3241,7 @@ void WebExtensionContext::unloadInspectorBackgroundPage(WebInspectorUIProxy& ins
 
     inspector.extensionController()->unregisterExtension(uniqueIdentifier(), [](Expected<void, Inspector::ExtensionError> result) {
         if (!result)
-            RELEASE_LOG_ERROR(Extensions, "Failed to unregister Inspector extension (error %{public}hhu)", result.error());
+            RELEASE_LOG_ERROR(Extensions, "Failed to unregister Inspector extension (error %{public}hhu)", enumToUnderlyingType(result.error()));
     });
 }
 
