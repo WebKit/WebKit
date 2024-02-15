@@ -470,6 +470,9 @@ private:
                 case NodeResultInt52:
                     type = Int64;
                     break;
+                case NodeResultBigInt64:
+                    type = Int64;
+                    break;
                 case NodeResultBoolean:
                     type = Int32;
                     break;
@@ -652,6 +655,9 @@ private:
             } else if (node->hasInt52Result()) {
                 input = strictInt52ToJSValue(lowStrictInt52(Edge(node, Int52RepUse)));
                 flushFormat = FlushedInt52;
+            } else if (node->hasBigInt64Result()) {
+                input = lowBigInt64(Edge(node, BigInt64RepUse));
+                flushFormat = FlushedBigInt64;
             } else
                 continue;
 
@@ -776,6 +782,9 @@ private:
             break;
         case Int52Rep:
             compileInt52Rep();
+            break;
+        case BigInt64Rep:
+            compileBigInt64Rep();
             break;
         case ValueToInt32:
             compileValueToInt32();
@@ -1879,6 +1888,9 @@ private:
         case Int52RepUse:
             upsilonValue = lowInt52(m_node->child1());
             break;
+        case BigInt64RepUse:
+            upsilonValue = lowBigInt64(m_node->child1());
+            break;
         case BooleanUse:
         case KnownBooleanUse:
             upsilonValue = lowBoolean(m_node->child1());
@@ -1913,6 +1925,9 @@ private:
             break;
         case NodeResultInt52:
             setInt52(phi);
+            break;
+        case NodeResultBigInt64:
+            setBigInt64(phi);
             break;
         case NodeResultBoolean:
             setBoolean(phi);
@@ -2046,7 +2061,7 @@ private:
                 m_out.appendTo(convertBooleanFalseCase, continuation);
 
                 LValue valueIsNotBooleanFalse = m_out.notEqual(value, m_out.constInt64(JSValue::ValueFalse));
-                FTL_TYPE_CHECK(jsValueValue(value), m_node->child1(), ~SpecCellCheck & ~SpecBigInt, valueIsNotBooleanFalse);
+                FTL_TYPE_CHECK(jsValueValue(value), m_node->child1(), SpecNotCellNorBigInt, valueIsNotBooleanFalse);
                 ValueFromBlock convertedFalse = m_out.anchor(m_out.constDouble(0));
                 m_out.jump(continuation);
 
@@ -2103,6 +2118,13 @@ private:
             return;
         }
             
+        case BigInt64RepUse: {
+            JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
+            LValue value = lowBigInt64(m_node->child1());
+            setJSValue(vmCall(Int64, operationInt64ToBigInt, weakPointer(globalObject), value));
+            return;
+        }
+
         default:
             DFG_CRASH(m_graph, m_node, "Bad use kind");
         }
@@ -2133,6 +2155,69 @@ private:
         }
     }
     
+    void compileBigInt64Rep()
+    {
+        switch (m_node->child1().useKind()) {
+        case HeapBigIntUse: {
+            // Initial Block
+            LBasicBlock nonZeroBlock = m_out.newBlock();
+            LBasicBlock signedBlock = m_out.newBlock();
+            LBasicBlock unsignedBlock = m_out.newBlock();
+            LBasicBlock doneBlock = m_out.newBlock();
+
+            LValue base = lowHeapBigInt(m_node->child1());
+            LValue length = m_out.load32NonNegative(base, m_heaps.JSBigInt_length);
+            speculate(BigInt64Overflow, noValue(), nullptr, m_out.above(length, m_out.constInt32(1)));
+            ValueFromBlock initialResult = m_out.anchor(m_out.zeroExt(length, Int64));
+            m_out.branch(m_out.isZero32(length), unsure(doneBlock), unsure(nonZeroBlock));
+
+            // Non Zero Block
+            LBasicBlock lastNextBlock = m_out.appendTo(nonZeroBlock, signedBlock);
+            LValue cagedDataPtr = m_out.loadPtr(base, m_heaps.JSBigInt_data);
+
+            PatchpointValue* dataPtr = m_out.patchpoint(pointerType());
+            dataPtr->appendSomeRegister(cagedDataPtr);
+            dataPtr->appendSomeRegister(length);
+            dataPtr->clobber(RegisterSetBuilder::macroClobberedGPRs());
+            dataPtr->numGPScratchRegisters = 1;
+            dataPtr->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                AllowMacroScratchRegisterUsage allowScratch(jit);
+                GPRReg resultReg = params[0].gpr();
+                GPRReg cagedDataPtrReg = params[1].gpr();
+                GPRReg lengthReg = params[2].gpr();
+                GPRReg scratch = params.gpScratch(0);
+
+                jit.cageConditionally(Gigacage::Primitive, cagedDataPtrReg, lengthReg, scratch);
+                jit.move(cagedDataPtrReg, resultReg);
+            });
+
+            LValue data = m_out.load64(TypedPointer(m_heaps.bigIntData, dataPtr));
+            LValue isSigned = m_out.notZero32(m_out.load8ZeroExt32(base, m_heaps.JSBigInt_sign));
+            m_out.branch(isSigned, unsure(signedBlock), unsure(unsignedBlock));
+
+            // Signed Block
+            m_out.appendTo(signedBlock, unsignedBlock);
+            speculate(BigInt64Overflow, noValue(), nullptr, m_out.above(data, m_out.constInt64(std::numeric_limits<int64_t>::min())));
+            ValueFromBlock signedResult = m_out.anchor(m_out.neg(data));
+            m_out.jump(doneBlock);
+
+            // Unsigned Block
+            m_out.appendTo(unsignedBlock, doneBlock);
+            speculate(BigInt64Overflow, noValue(), nullptr, m_out.above(data, m_out.constInt64(std::numeric_limits<int64_t>::max())));
+            ValueFromBlock unsignedResult = m_out.anchor(data);
+            m_out.jump(doneBlock);
+
+            // Done block
+            m_out.appendTo(doneBlock, lastNextBlock);
+            setBigInt64(m_out.phi(Int64, initialResult, signedResult, unsignedResult));
+            break;
+        }
+        default:
+            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            break;
+        }
+    }
+
     void compileValueToInt32()
     {
         switch (m_node->child1().useKind()) {
@@ -2247,6 +2332,9 @@ private:
         case FlushedInt52:
             setInt52(m_out.load64(addressFor(data->machineLocal)));
             break;
+        case FlushedBigInt64:
+            setBigInt64(m_out.load64(addressFor(data->machineLocal)));
+            break;
         default:
             if (isInt32Speculation(value.m_type))
                 setInt32(m_out.load32(payloadFor(data->machineLocal)));
@@ -2280,6 +2368,12 @@ private:
             
         case FlushedInt52: {
             LValue value = lowInt52(m_node->child1());
+            m_out.store64(value, addressFor(data->machineLocal));
+            break;
+        }
+
+        case FlushedBigInt64: {
+            LValue value = lowBigInt64(m_node->child1());
             m_out.store64(value, addressFor(data->machineLocal));
             break;
         }
@@ -2774,7 +2868,16 @@ private:
             setInt52(result);
             break;
         }
-            
+
+        case BigInt64RepUse: {
+            LValue left = lowBigInt64(m_node->child1());
+            LValue right = lowBigInt64(m_node->child2());
+            CheckValue* result = isSub ? m_out.speculateSub(left, right) : m_out.speculateAdd(left, right);
+            blessSpeculation(result, BigInt64Overflow, noValue(), nullptr, m_origin);
+            setBigInt64(m_node, result);
+            break;
+        }
+
         case DoubleRepUse: {
             LValue C1 = lowDouble(m_node->child1());
             LValue C2 = lowDouble(m_node->child2());
@@ -2878,7 +2981,19 @@ private:
             setInt52(result);
             break;
         }
-            
+
+        case BigInt64RepUse: {
+            LValue left = lowBigInt64(m_node->child1());
+            LValue right = lowBigInt64(m_node->child2());
+
+            CheckValue* result = m_out.speculateMul(left, right);
+            blessSpeculation(result, BigInt64Overflow, noValue(), nullptr, m_origin);
+            setBigInt64(m_out.mul(left, right));
+            // setBigInt64(result);
+            // TODO: setBigInt64(result); why this is not right?
+            break;
+        }
+
         case DoubleRepUse: {
             setDouble(
                 m_out.doubleMul(lowDouble(m_node->child1()), lowDouble(m_node->child2())));
@@ -2966,6 +3081,28 @@ private:
             break;
         }
 
+        case BigInt64RepUse: {
+            LValue dividend = lowBigInt64(m_node->child1());
+            LValue divisor = lowBigInt64(m_node->child2());
+
+            speculate(BigInt64Overflow, noValue(), nullptr, m_out.isZero64(divisor));
+
+            LBasicBlock unsafeBlock = m_out.newBlock();
+            LBasicBlock safeBlock = m_out.newBlock();
+
+            m_out.branch(
+                m_out.equal(dividend, m_out.constInt64(std::numeric_limits<int64_t>::min())),
+                unsure(unsafeBlock), unsure(safeBlock));
+
+            LBasicBlock lastNextBlock = m_out.appendTo(unsafeBlock, safeBlock);
+            speculate(BigInt64Overflow, noValue(), nullptr, m_out.equal(divisor, m_out.constInt64(-1)));
+            m_out.jump(safeBlock);
+
+            m_out.appendTo(safeBlock, lastNextBlock);
+            setBigInt64(m_out.div(dividend, divisor));
+            break;
+        }
+
         default:
             DFG_CRASH(m_graph, m_node, "Bad use kind");
             break;
@@ -3049,7 +3186,16 @@ private:
                 m_out.doubleMod(lowDouble(m_node->child1()), lowDouble(m_node->child2())));
             break;
         }
-            
+
+        case BigInt64RepUse: {
+            LValue dividend = lowBigInt64(m_node->child1());
+            LValue divisor = lowBigInt64(m_node->child2());
+
+            speculate(BigInt64Overflow, noValue(), nullptr, m_out.isZero64(divisor));
+            setBigInt64(m_out.mod(dividend, divisor));
+            break;
+        }
+
         default:
             DFG_CRASH(m_graph, m_node, "Bad use kind");
             break;
@@ -3205,7 +3351,81 @@ private:
     {
         if (m_node->child2().useKind() == Int32Use)
             setDouble(m_out.doublePowi(lowDouble(m_node->child1()), lowInt32(m_node->child2())));
-        else {
+        else if (m_node->isBinaryUseKind(BigInt64RepUse)) {
+            // --------------- Initial Block ---------------
+            LValue base = lowBigInt64(m_node->child1());
+            LValue exponent = lowBigInt64(m_node->child2());
+            speculate(BigInt64Overflow, noValue(), nullptr, m_out.above(exponent, m_out.constInt64(63))); // Consider 63 as max exponent.
+            LValue result = m_out.constInt64(1);
+
+            LBasicBlock loopStartBlock = m_out.newBlock();
+            LBasicBlock loopOddExponentBlock = m_out.newBlock();
+            LBasicBlock loopEvenExponentBlock = m_out.newBlock();
+            LBasicBlock doneBlock = m_out.newBlock();
+
+            ValueFromBlock baseToStart = m_out.anchor(base);
+            ValueFromBlock exponentToStart = m_out.anchor(exponent);
+            ValueFromBlock resultToStart = m_out.anchor(result);
+            ValueFromBlock resultToDone = m_out.anchor(result);
+
+            m_out.branch(m_out.isZero64(exponent), unsure(doneBlock), unsure(loopStartBlock));
+
+            // --------------- Loop Start Block ---------------
+            LBasicBlock lastNextBlock = m_out.appendTo(loopStartBlock, loopOddExponentBlock);
+
+            LValue startBase = m_out.phi(Int64, baseToStart);
+            ValueFromBlock startBaseToOdd = m_out.anchor(startBase);
+            ValueFromBlock startBaseToEven = m_out.anchor(startBase);
+
+            LValue startExponent = m_out.phi(Int64, exponentToStart);
+            ValueFromBlock startExponentToOdd = m_out.anchor(startExponent);
+            ValueFromBlock startExponentToEven = m_out.anchor(startExponent);
+
+            LValue startResult = m_out.phi(Int64, resultToStart);
+            ValueFromBlock startResultToOdd = m_out.anchor(startResult);
+            ValueFromBlock startResultToEven = m_out.anchor(startResult);
+
+            LValue isOddExponent = m_out.bitAnd(startExponent, m_out.constInt64(1));
+            m_out.branch(isOddExponent, unsure(loopOddExponentBlock), unsure(loopEvenExponentBlock));
+
+            // --------------- Loop Odd Exponent Block ---------------
+            m_out.appendTo(loopOddExponentBlock, loopEvenExponentBlock);
+
+            LValue oddBase = m_out.phi(Int64, startBaseToOdd);
+            ValueFromBlock oddBaseToEven = m_out.anchor(oddBase);
+
+            LValue oddExponent = m_out.phi(Int64, startExponentToOdd);
+            ValueFromBlock oddExponentToEven = m_out.anchor(oddExponent);
+
+            LValue oddResult = m_out.phi(Int64, startResultToOdd);
+            CheckValue* updatedOddResult = m_out.speculateMul(oddResult, oddBase);
+            blessSpeculation(updatedOddResult, BigInt64Overflow, noValue(), nullptr, m_origin);
+            ValueFromBlock oddResultToEven = m_out.anchor(updatedOddResult);
+
+            m_out.jump(loopEvenExponentBlock);
+
+            // --------------- Loop Even Exponent Block ---------------
+            m_out.appendTo(loopEvenExponentBlock, doneBlock);
+
+            LValue evenBase = m_out.phi(Int64, startBaseToEven, oddBaseToEven);
+            CheckValue* updatedEvenBase = m_out.speculateMul(evenBase, evenBase);
+            blessSpeculation(updatedEvenBase, BigInt64Overflow, noValue(), nullptr, m_origin);
+            m_out.addIncomingToPhi(startBase, m_out.anchor(updatedEvenBase));
+
+            LValue evenExponent = m_out.phi(Int64, startExponentToEven, oddExponentToEven);
+            LValue updatedEvenExponent = m_out.aShr(evenExponent, m_out.constInt64(1));
+            m_out.addIncomingToPhi(startExponent, m_out.anchor(updatedEvenExponent));
+
+            LValue evenResult = m_out.phi(Int64, startResultToEven, oddResultToEven);
+            m_out.addIncomingToPhi(startResult, m_out.anchor(evenResult));
+            ValueFromBlock evenResultToDone = m_out.anchor(evenResult);
+
+            m_out.branch(m_out.isZero64(updatedEvenExponent), unsure(doneBlock), unsure(loopStartBlock));
+
+            // --------------- Done Block ---------------
+            m_out.appendTo(doneBlock, lastNextBlock);
+            setBigInt64(m_out.phi(Int64, resultToDone, evenResultToDone));
+        } else {
             LValue base = lowDouble(m_node->child1());
             LValue exponent = lowDouble(m_node->child2());
 
@@ -3562,7 +3782,17 @@ private:
             setInt52(result);
             break;
         }
-            
+
+        case BigInt64RepUse: {
+            LValue value = lowBigInt64(m_node->child1());
+            CheckValue* result = m_out.speculateSub(m_out.int64Zero, value);
+            blessSpeculation(result, BigInt64Overflow, noValue(), nullptr, m_origin);
+            if (shouldCheckNegativeZero(m_node->arithMode()))
+                speculate(NegativeZero, noValue(), nullptr, m_out.isZero64(result));
+            setBigInt64(result);
+            break;
+        }
+
         case DoubleRepUse: {
             setDouble(m_out.doubleNeg(lowDouble(m_node->child1())));
             break;
@@ -3607,6 +3837,11 @@ private:
 
     void compileArithBitNot()
     {
+        if (m_node->child1().useKind() == BigInt64RepUse) {
+            setBigInt64(m_out.bitNot(lowBigInt64(m_node->child1())));
+            return;
+        }
+
         setInt32(m_out.bitNot(lowInt32(m_node->child1())));
     }
 
@@ -3639,6 +3874,11 @@ private:
     
     void compileArithBitAnd()
     {
+        if (m_node->child1().useKind() == BigInt64RepUse) {
+            setBigInt64(m_out.bitAnd(lowBigInt64(m_node->child1()), lowBigInt64(m_node->child2())));
+            return;
+        }
+
         setInt32(m_out.bitAnd(lowInt32(m_node->child1()), lowInt32(m_node->child2())));
     }
     
@@ -3671,6 +3911,11 @@ private:
 
     void compileArithBitOr()
     {
+        if (m_node->child1().useKind() == BigInt64RepUse) {
+            setBigInt64(m_out.bitOr(lowBigInt64(m_node->child1()), lowBigInt64(m_node->child2())));
+            return;
+        }
+
         setInt32(m_out.bitOr(lowInt32(m_node->child1()), lowInt32(m_node->child2())));
     }
     
@@ -3703,6 +3948,11 @@ private:
 
     void compileArithBitXor()
     {
+        if (m_node->child1().useKind() == BigInt64RepUse) {
+            setBigInt64(m_out.bitXor(lowBigInt64(m_node->child1()), lowBigInt64(m_node->child2())));
+            return;
+        }
+
         setInt32(m_out.bitXor(lowInt32(m_node->child1()), lowInt32(m_node->child2())));
     }
     
@@ -3742,6 +3992,54 @@ private:
 
     void compileArithBitRShift()
     {
+        if (m_node->child1().useKind() == BigInt64RepUse) {
+            LValue value = lowBigInt64(m_node->child1());
+            LValue shiftAmount = lowBigInt64(m_node->child2());
+
+            LBasicBlock negativeShiftAmountBlock = m_out.newBlock();
+            LBasicBlock positiveShiftAmountBlock = m_out.newBlock();
+            LBasicBlock doneBlock = m_out.newBlock();
+
+            // Branch according to the sign of shift amount.
+            LValue isPositive = m_out.isZero64(m_out.bitAnd(shiftAmount, m_out.constInt64(std::numeric_limits<int64_t>::min())));
+            m_out.branch(isPositive, unsure(positiveShiftAmountBlock), unsure(negativeShiftAmountBlock));
+
+            // Negative Shift Amount Block:
+            // 1. Get absolute shift amount as unsigned int64.
+            //      mask = shiftAmount >> 63
+            //      absoluteShiftAmount = (shiftAmount ^ mask) - mask
+            LBasicBlock lastNextBlock = m_out.appendTo(negativeShiftAmountBlock, positiveShiftAmountBlock);
+            LValue mask = m_out.aShr(shiftAmount, m_out.constInt64(63));
+            LValue absoluteShiftAmount = m_out.sub(m_out.bitXor(shiftAmount, mask), mask);
+            // 2. Check overflow for left shift.
+            //      overflow(absoluteShiftAmount >= clz(value))
+            PatchpointValue* clz = m_out.patchpoint(Int64);
+            clz->appendSomeRegister(value);
+            clz->clobber(RegisterSetBuilder::macroClobberedGPRs());
+            clz->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                jit.countLeadingZeros64(params[1].gpr(), params[0].gpr());
+            });
+            speculate(BigInt64Overflow, noValue(), nullptr, m_out.aboveOrEqual(absoluteShiftAmount, clz));
+            ValueFromBlock negativeShiftAmountBlockResult = m_out.anchor(m_out.shl(value, absoluteShiftAmount));
+            m_out.jump(doneBlock);
+
+            // Positive Shift Amount Block:
+            //      result = value >> min(63, shiftAmount)
+            //      min(x, y) = y ^ ((x ^ y) & -(x < y)) https://graphics.stanford.edu/~seander/bithacks.html#IntegerMinOrMax
+            m_out.appendTo(positiveShiftAmountBlock, doneBlock);
+            LValue constant63 = m_out.constInt64(63);
+            LValue bitAndLeft = m_out.bitXor(constant63, shiftAmount);
+            LValue bitAndRight = m_out.signExt32To64(m_out.neg(m_out.lessThan(constant63, shiftAmount)));
+            LValue shift = m_out.bitXor(shiftAmount, m_out.bitAnd(bitAndLeft, bitAndRight));
+            ValueFromBlock positiveShiftAmountBlockResult = m_out.anchor(m_out.aShr(value, shift));
+            m_out.jump(doneBlock);
+
+            // Done Block:
+            m_out.appendTo(doneBlock, lastNextBlock);
+            setBigInt64(m_out.phi(Int64, negativeShiftAmountBlockResult, positiveShiftAmountBlockResult));
+            return;
+        }
+
         setInt32(m_out.aShr(
             lowInt32(m_node->child1()),
             m_out.bitAnd(lowInt32(m_node->child2()), m_out.constInt32(31)))); // FIXME: I don't think that the BitAnd is useful, it is included in the semantics of shift in B3
@@ -3749,6 +4047,54 @@ private:
     
     void compileArithBitLShift()
     {
+        if (m_node->child1().useKind() == BigInt64RepUse) {
+            LValue value = lowBigInt64(m_node->child1());
+            LValue shiftAmount = lowBigInt64(m_node->child2());
+
+            LBasicBlock negativeShiftAmountBlock = m_out.newBlock();
+            LBasicBlock positiveShiftAmountBlock = m_out.newBlock();
+            LBasicBlock doneBlock = m_out.newBlock();
+
+            // Branch according to the sign of shift amount.
+            LValue isPositive = m_out.isZero64(m_out.bitAnd(shiftAmount, m_out.constInt64(std::numeric_limits<int64_t>::min())));
+            m_out.branch(isPositive, unsure(positiveShiftAmountBlock), unsure(negativeShiftAmountBlock));
+
+            // Negative Shift Amount Block:
+            // 1. Get absolute shift amount as unsigned int64.
+            //      mask = shiftAmount >> 63
+            //      absoluteShiftAmount = (shiftAmount ^ mask) - mask
+            LBasicBlock lastNextBlock = m_out.appendTo(negativeShiftAmountBlock, positiveShiftAmountBlock);
+            LValue mask = m_out.aShr(shiftAmount, m_out.constInt64(63));
+            LValue absoluteShiftAmount = m_out.sub(m_out.bitXor(shiftAmount, mask), mask);
+            // 2. Since it's a negative shift amount, we shift right.
+            //      result = value >> min(63, absoluteShiftAmount)
+            //      min(x, y) = y ^ ((x ^ y) & -(x < y)) https://graphics.stanford.edu/~seander/bithacks.html#IntegerMinOrMax
+            LValue constant63 = m_out.constInt64(63);
+            LValue bitAndLeft = m_out.bitXor(constant63, absoluteShiftAmount);
+            LValue bitAndRight = m_out.signExt32To64(m_out.neg(m_out.lessThan(constant63, absoluteShiftAmount)));
+            LValue shift = m_out.bitXor(absoluteShiftAmount, m_out.bitAnd(bitAndLeft, bitAndRight));
+            ValueFromBlock positiveShiftAmountBlockResult = m_out.anchor(m_out.aShr(value, shift));
+            m_out.jump(doneBlock);
+
+            // Positive Shift Amount Block:
+            //      overflow(absoluteShiftAmount >= clz(value))
+            m_out.appendTo(positiveShiftAmountBlock, doneBlock);
+            PatchpointValue* clz = m_out.patchpoint(Int64);
+            clz->appendSomeRegister(value);
+            clz->clobber(RegisterSetBuilder::macroClobberedGPRs());
+            clz->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                jit.countLeadingZeros64(params[1].gpr(), params[0].gpr());
+            });
+            speculate(BigInt64Overflow, noValue(), nullptr, m_out.aboveOrEqual(shiftAmount, clz));
+            ValueFromBlock negativeShiftAmountBlockResult = m_out.anchor(m_out.shl(value, shiftAmount));
+            m_out.jump(doneBlock);
+
+            // Done Block:
+            m_out.appendTo(doneBlock, lastNextBlock);
+            setBigInt64(m_out.phi(Int64, negativeShiftAmountBlockResult, positiveShiftAmountBlockResult));
+            return;
+        }
+
         setInt32(m_out.shl(
             lowInt32(m_node->child1()),
             m_out.bitAnd(lowInt32(m_node->child2()), m_out.constInt32(31)))); // FIXME: I don't think that the BitAnd is useful, it is included in the semantics of shift in B3
@@ -10627,7 +10973,8 @@ IGNORE_CLANG_WARNINGS_END
             || m_node->isBinaryUseKind(StringUse)
             || m_node->isBinaryUseKind(BigInt32Use)
             || m_node->isBinaryUseKind(HeapBigIntUse)
-            || m_node->isBinaryUseKind(AnyBigIntUse)) {
+            || m_node->isBinaryUseKind(AnyBigIntUse)
+            || m_node->isBinaryUseKind(BigInt64RepUse)) {
             compileCompareStrictEq();
             return;
         }
@@ -10773,6 +11120,13 @@ IGNORE_CLANG_WARNINGS_END
             Int52Kind kind;
             LValue left = lowWhicheverInt52(m_node->child1(), kind);
             LValue right = lowInt52(m_node->child2(), kind);
+            setBoolean(m_out.equal(left, right));
+            return;
+        }
+
+        if (m_node->isBinaryUseKind(BigInt64RepUse)) {
+            LValue left = lowBigInt64(m_node->child1());
+            LValue right = lowBigInt64(m_node->child2());
             setBoolean(m_out.equal(left, right));
             return;
         }
@@ -16887,9 +17241,9 @@ IGNORE_CLANG_WARNINGS_END
             
             m_out.appendTo(notNumberCase, continuation);
             
-            FTL_TYPE_CHECK(jsValueValue(value), edge, ~SpecCellCheck, isCell(value));
+            FTL_TYPE_CHECK(jsValueValue(value), edge, SpecNotCellNorBigInt, isCell(value));
 #if USE(BIGINT32)
-            FTL_TYPE_CHECK(jsValueValue(value), edge, ~SpecCellCheck & ~SpecBigInt, isBigInt32(value));
+            FTL_TYPE_CHECK(jsValueValue(value), edge, SpecNotCellNorBigInt, isBigInt32(value));
 #endif
             
             LValue specialResult = m_out.select(
@@ -17329,7 +17683,15 @@ IGNORE_CLANG_WARNINGS_END
             setBoolean(intFunctor(left, right));
             return;
         }
-        
+
+        if (m_node->isBinaryUseKind(BigInt64RepUse)) {
+            LValue left = lowBigInt64(m_node->child1());
+            LValue right = lowBigInt64(m_node->child2());
+            setBoolean(intFunctor(left, right));
+            return;
+        }
+
+
         if (m_node->isBinaryUseKind(DoubleRepUse)) {
             LValue left = lowDouble(m_node->child1());
             LValue right = lowDouble(m_node->child2());
@@ -20627,6 +20989,19 @@ IGNORE_CLANG_WARNINGS_END
         return m_out.int32Zero;
     }
     
+    LValue lowBigInt64(Edge edge)
+    {
+        DFG_ASSERT(m_graph, m_node, edge.useKind() == BigInt64RepUse, edge.useKind());
+
+        LoweredNodeValue value = m_bigInt64Values.get(edge.node());
+        if (isValid(value))
+            return value.value();
+
+        if (mayHaveTypeCheck(edge.useKind()))
+            terminate(Uncountable);
+        return m_out.int64Zero;
+    }
+
     enum Int52Kind { StrictInt52, Int52 };
     LValue lowInt52(Edge edge, Int52Kind kind)
     {
@@ -21309,6 +21684,7 @@ IGNORE_CLANG_WARNINGS_END
         case KnownOtherUse:
         case DoubleRepUse:
         case Int52RepUse:
+        case BigInt64RepUse:
         case KnownCellUse:
         case KnownBooleanUse:
             ASSERT(!m_interpreter.needsTypeCheck(edge));
@@ -21474,9 +21850,12 @@ IGNORE_CLANG_WARNINGS_END
         if (!m_interpreter.needsTypeCheck(edge))
             return;
         LValue nonCell = lowNotCell(edge);
-        FTL_TYPE_CHECK(jsValueValue(nonCell), edge, ~SpecCellCheck & ~SpecBigInt, isBigInt32(nonCell));
+        FTL_TYPE_CHECK(jsValueValue(nonCell), edge, SpecNotCellNorBigInt, isBigInt32(nonCell));
 #else
-        speculateNotCell(edge);
+        if (!m_interpreter.needsTypeCheck(edge))
+            return;
+        LValue result = lowJSValue(edge, ManualOperandSpeculation);
+        FTL_TYPE_CHECK(jsValueValue(result), edge, SpecNotCellNorBigInt, isCell(result));
 #endif
     }
 
@@ -22810,6 +23189,9 @@ IGNORE_CLANG_WARNINGS_END
                 
         case FlushedInt52:
             return ExitValue::inJSStackAsInt52(flush.virtualRegister());
+
+        case FlushedBigInt64:
+            return ExitValue::inJSStackAsBigInt64(flush.virtualRegister());
                 
         case FlushedDouble:
             return ExitValue::inJSStackAsDouble(flush.virtualRegister());
@@ -22861,6 +23243,10 @@ IGNORE_CLANG_WARNINGS_END
         if (isValid(value))
             return exitArgument(arguments, DataFormatStrictInt52, value.value());
         
+        value = m_bigInt64Values.get(node);
+        if (isValid(value))
+            return exitArgument(arguments, DataFormatBigInt64, value.value());
+
         value = m_booleanValues.get(node);
         if (isValid(value))
             return exitArgument(arguments, DataFormatBoolean, value.value());
@@ -22923,6 +23309,10 @@ IGNORE_CLANG_WARNINGS_END
     {
         m_int52Values.set(node, LoweredNodeValue(value, m_highBlock));
     }
+    void setBigInt64(Node* node, LValue value)
+    {
+        m_bigInt64Values.set(node, LoweredNodeValue(value, m_highBlock));
+    }
     void setStrictInt52(Node* node, LValue value)
     {
         m_strictInt52Values.set(node, LoweredNodeValue(value, m_highBlock));
@@ -22978,6 +23368,10 @@ IGNORE_CLANG_WARNINGS_END
     void setInt52(LValue value, Int52Kind kind)
     {
         setInt52(m_node, value, kind);
+    }
+    void setBigInt64(LValue value)
+    {
+        setBigInt64(m_node, value);
     }
     void setJSValue(LValue value)
     {
@@ -23250,6 +23644,7 @@ IGNORE_CLANG_WARNINGS_END
     HashMap<Node*, LoweredNodeValue> m_int32Values;
     HashMap<Node*, LoweredNodeValue> m_strictInt52Values;
     HashMap<Node*, LoweredNodeValue> m_int52Values;
+    HashMap<Node*, LoweredNodeValue> m_bigInt64Values;
     HashMap<Node*, LoweredNodeValue> m_jsValueValues;
     HashMap<Node*, LoweredNodeValue> m_booleanValues;
     HashMap<Node*, LoweredNodeValue> m_storageValues;

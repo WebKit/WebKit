@@ -236,6 +236,9 @@ inline bool operator==(Node* node, Edge edge)
     return edge.node() == node;
 }
 
+void dumpEdge(PrintStream&, Edge&);
+MAKE_PRINT_ADAPTOR(EdgeDump, Edge&, dumpEdge);
+
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)

@@ -81,7 +81,7 @@ namespace JSC { namespace DFG {
     macro(KillStack, NodeMustGenerate) \
     macro(GetStack, NodeResultJS) \
     \
-    macro(MovHint, NodeMustGenerate) \
+    macro(MovHint, NodeMustGenerate) /* Association between DFG Node value and locals for OSR exit. */ \
     macro(ZombieHint, NodeMustGenerate) \
     macro(ExitOK, NodeMustGenerate) /* Indicates that exit state is intact and it is safe to exit back to the beginning of the exit origin. */ \
     macro(Phantom, NodeMustGenerate) \
@@ -90,7 +90,7 @@ namespace JSC { namespace DFG {
     macro(Upsilon, 0) \
     macro(Phi, 0) \
     macro(Flush, NodeMustGenerate) \
-    macro(PhantomLocal, NodeMustGenerate) \
+    macro(PhantomLocal, NodeMustGenerate) /* A liveness marker for OSR that means the corresponding local variable in bytecode needs to be alive at OSR exit. */ \
     macro(ExtractFromTuple, 0) \
     \
     /* Hint that this is where bytecode thinks is a good place to OSR. Note that this */\
@@ -146,6 +146,7 @@ namespace JSC { namespace DFG {
     /* Change the representation of a value. */\
     macro(DoubleRep, NodeResultDouble) \
     macro(Int52Rep, NodeResultInt52) \
+    macro(BigInt64Rep, NodeResultBigInt64) \
     macro(ValueRep, NodeResultJS) \
     \
     /* Bogus type asserting node. Useful for testing, disappears during Fixup. */\
@@ -266,7 +267,7 @@ namespace JSC { namespace DFG {
     macro(GetByOffset, NodeResultJS) \
     macro(GetGetterSetterByOffset, NodeResultJS) \
     macro(MultiGetByOffset, NodeResultJS | NodeMustGenerate) \
-    macro(PutByOffset, NodeMustGenerate) \
+    macro(PutByOffset, NodeMustGenerate) /* PutByOffset(@o, @v, f) means o.f = v */ \
     macro(MultiPutByOffset, NodeMustGenerate) \
     macro(MultiDeleteByOffset, NodeMustGenerate | NodeResultJS) \
     macro(GetArrayLength, NodeResultInt32) \
@@ -453,7 +454,7 @@ namespace JSC { namespace DFG {
     macro(ToPrimitive, NodeResultJS | NodeMustGenerate) \
     macro(ToPropertyKey, NodeResultJS | NodeMustGenerate) \
     macro(ToString, NodeResultJS | NodeMustGenerate) \
-    macro(ToNumber, NodeResultJS | NodeMustGenerate) \
+    macro(ToNumber, NodeResultJS | NodeMustGenerate) /* JS intrinsic `isFinite` */ \
     macro(ToNumeric, NodeResultJS | NodeMustGenerate) \
     macro(ToObject, NodeResultJS | NodeMustGenerate) \
     macro(ToIntegerOrInfinity, NodeResultJS | NodeMustGenerate) \

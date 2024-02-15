@@ -108,6 +108,22 @@ public:
     ALWAYS_INLINE const T& at(Node* node, NodeFlowProjection::Kind kind) const { return const_cast<FlowMap*>(this)->at(node, kind); }
     ALWAYS_INLINE const T& at(NodeFlowProjection projection) const { return const_cast<FlowMap*>(this)->at(projection); }
 
+    // TODO
+    ALWAYS_INLINE T* atOrNull(NodeFlowProjection projection)
+    {
+        switch (projection.kind()) {
+        case NodeFlowProjection::Primary:
+            if (projection.node()->index() >= m_map.size())
+                return nullptr;
+            return &at(projection.node()->index());
+        case NodeFlowProjection::Shadow:
+            if (projection.node()->index() >= m_shadowMap.size())
+                return nullptr;
+            return &atShadow(projection.node()->index());
+        }
+        return nullptr;
+    }
+
     ALWAYS_INLINE void clear()
     {
         m_map.clear();

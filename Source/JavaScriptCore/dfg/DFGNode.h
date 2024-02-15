@@ -1594,6 +1594,11 @@ public:
         return result() == NodeResultInt52;
     }
     
+    bool hasBigInt64Result()
+    {
+        return result() == NodeResultBigInt64;
+    }
+
     bool hasNumberResult()
     {
         return result() == NodeResultNumber;
@@ -2617,6 +2622,7 @@ public:
         case ArithMul:
         case ArithDiv:
         case ArithMod:
+        case ArithPow:
         case UInt32ToNumber:
         case DoubleAsInt32:
             return true;
@@ -2880,7 +2886,12 @@ public:
         //
         return enableInt52() && isInt32OrInt52Speculation(prediction());
     }
-    
+
+    bool shouldSpeculateBigInt64()
+    {
+        return enableBigInt64() && isBigInt64Speculation(prediction());
+    }
+
     bool shouldSpeculateDouble()
     {
         return isDoubleSpeculation(prediction());
@@ -3169,7 +3180,12 @@ public:
     {
         return enableInt52() && op1->shouldSpeculateInt52() && op2->shouldSpeculateInt52();
     }
-    
+
+    static bool shouldSpeculateBigInt64(Node* op1, Node* op2)
+    {
+        return enableBigInt64() && op1->shouldSpeculateBigInt64() && op2->shouldSpeculateBigInt64();
+    }
+
     static bool shouldSpeculateNumber(Node* op1, Node* op2)
     {
         return op1->shouldSpeculateNumber() && op2->shouldSpeculateNumber();
@@ -3229,6 +3245,11 @@ public:
         return nodeCanSpeculateInt52(arithNodeFlags(), source);
     }
 
+    bool canSpeculateBigInt64(RareCaseProfilingSource source)
+    {
+        return nodeCanSpeculateBigInt64(arithNodeFlags(), source);
+    }
+
     bool canSpeculateBigInt32(RareCaseProfilingSource source)
     {
         return nodeCanSpeculateBigInt32(arithNodeFlags(), source);
@@ -3249,6 +3270,11 @@ public:
     bool canSpeculateInt52(PredictionPass pass)
     {
         return canSpeculateInt52(sourceFor(pass));
+    }
+
+    bool canSpeculateBigInt64(PredictionPass pass)
+    {
+        return canSpeculateBigInt64(sourceFor(pass));
     }
 
     bool canSpeculateBigInt32(PredictionPass pass)

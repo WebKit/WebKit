@@ -511,6 +511,7 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
         case InGPR:
         case UnboxedInt52InGPR:
         case UnboxedStrictInt52InGPR:
+        case UnboxedBigInt64InGPR:
             jit.store64(recovery.gpr(), scratch + index);
             break;
 #else
@@ -550,6 +551,28 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
     }
 
     // Now, all FPRs are also free.
+
+    // FIXME: maybe this is not right?
+    if constexpr (validateDFGDoesGC) {
+        if (Options::validateDoesGC()) {
+            // We're about to exit optimized code. So, there's no longer any optimized
+            // code running that expects no GC. We need to set this before arguments
+            // materialization below (see emitRestoreArguments()).
+
+            // Even though we set Heap::m_doesGC in compileOSRExit(), we also need
+            // to set it here because compileOSRExit() is only called on the first time
+            // we exit from this site, but all subsequent exits will take this compiled
+            // ramp without calling compileOSRExit() first.
+            DoesGCCheck check;
+            check.u.encoded = DoesGCCheck::encode(true, DoesGCCheck::Special::DFGOSRExit);
+#if USE(JSVALUE64)
+            jit.store64(CCallHelpers::TrustedImm64(check.u.encoded), vm.addressOfDoesGC());
+#else
+            jit.store32(CCallHelpers::TrustedImm32(check.u.other), &vm.addressOfDoesGC()->u.other);
+            jit.store32(CCallHelpers::TrustedImm32(check.u.nodeIndex), &vm.addressOfDoesGC()->u.nodeIndex);
+#endif
+        }
+    }
 
     // Save all state from the stack into the scratch buffer. For simplicity we
     // do this even for state that's already in the right place on the stack.
@@ -697,31 +720,30 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
             jit.boxInt52(GPRInfo::regT0, GPRInfo::regT0, GPRInfo::regT1, FPRInfo::fpRegT0);
             jit.store64(GPRInfo::regT0, scratch + index);
             break;
+
+        case UnboxedBigInt64InGPR: {
+            jit.load64(scratch + index, GPRInfo::argumentGPR1);
+            jit.setupArguments<decltype(operationInt64ToBigInt)>(CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(exit.m_codeOrigin)), GPRInfo::argumentGPR1);
+            jit.prepareCallOperation(vm);
+            jit.move(CCallHelpers::TrustedImmPtr(tagCFunction<OperationPtrTag>(operationInt64ToBigInt)), GPRInfo::nonArgGPR0);
+            jit.call(GPRInfo::nonArgGPR0, OperationPtrTag);
+            jit.store64(GPRInfo::returnValueGPR, scratch + index);
+            break;
+        }
+
+        case BigInt64DisplacedInJSStack: {
+            jit.load64(AssemblyHelpers::addressFor(recovery.virtualRegister()), GPRInfo::argumentGPR1);
+            jit.setupArguments<decltype(operationInt64ToBigInt)>(CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(exit.m_codeOrigin)), GPRInfo::argumentGPR1);
+            jit.prepareCallOperation(vm);
+            jit.move(CCallHelpers::TrustedImmPtr(tagCFunction<OperationPtrTag>(operationInt64ToBigInt)), GPRInfo::nonArgGPR0);
+            jit.call(GPRInfo::nonArgGPR0, OperationPtrTag);
+            jit.store64(GPRInfo::returnValueGPR, scratch + index);
+            break;
+        }
 #endif
 
         default:
             break;
-        }
-    }
-
-    if constexpr (validateDFGDoesGC) {
-        if (Options::validateDoesGC()) {
-            // We're about to exit optimized code. So, there's no longer any optimized
-            // code running that expects no GC. We need to set this before arguments
-            // materialization below (see emitRestoreArguments()).
-
-            // Even though we set Heap::m_doesGC in compileOSRExit(), we also need
-            // to set it here because compileOSRExit() is only called on the first time
-            // we exit from this site, but all subsequent exits will take this compiled
-            // ramp without calling compileOSRExit() first.
-            DoesGCCheck check;
-            check.u.encoded = DoesGCCheck::encode(true, DoesGCCheck::Special::DFGOSRExit);
-#if USE(JSVALUE64)
-            jit.store64(CCallHelpers::TrustedImm64(check.u.encoded), vm.addressOfDoesGC());
-#else
-            jit.store32(CCallHelpers::TrustedImm32(check.u.other), &vm.addressOfDoesGC()->u.other);
-            jit.store32(CCallHelpers::TrustedImm32(check.u.nodeIndex), &vm.addressOfDoesGC()->u.nodeIndex);
-#endif
         }
     }
     
@@ -803,6 +825,8 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
         case Int52DisplacedInJSStack:
         case UnboxedStrictInt52InGPR:
         case StrictInt52DisplacedInJSStack:
+        case UnboxedBigInt64InGPR:
+        case BigInt64DisplacedInJSStack:
             spooler.loadGPR(index * sizeof(CPURegister));
             spooler.storeGPR(operand.virtualRegister().offset() * sizeof(CPURegister));
             break;
@@ -892,7 +916,8 @@ JSC_DEFINE_JIT_OPERATION(operationDebugPrintSpeculationFailure, void, (Probe::Co
     NativeCallFrameTracer tracer(vm, callFrame);
 
     dataLog("Speculation failure in ", *codeBlock);
-    dataLog(" @ exit #", vm.osrExitIndex, " (", debugInfo->bytecodeIndex, ", ", exitKindToString(debugInfo->kind), ") with ");
+    const JSInstruction* instruction = codeBlock->instructionAt(debugInfo->bytecodeIndex);
+    dataLog(" @ exit #", vm.osrExitIndex, " (", debugInfo->bytecodeIndex, ", ", instruction->opcodeID(), ", ", exitKindToString(debugInfo->kind), ") with ");
     if (alternative) {
         dataLog(
             "executeCounter = ", alternative->jitExecuteCounter(),

@@ -241,6 +241,7 @@ public:
     int64_t asAnyInt() const;
     uint32_t asUInt32AsAnyInt() const;
     int32_t asInt32AsAnyInt() const;
+    int64_t asBigInt64() const;
     double asDouble() const;
     bool asBoolean() const;
     double asNumber() const;
@@ -268,6 +269,7 @@ public:
     bool isBigInt() const;
     bool isHeapBigInt() const;
     bool isBigInt32() const;
+    bool isBigInt64() const;
     bool isSymbol() const;
     bool isPrimitive() const;
     bool isGetterSetter() const;

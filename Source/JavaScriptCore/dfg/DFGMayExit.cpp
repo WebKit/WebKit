@@ -91,6 +91,7 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
     case Unreachable:
     case DoubleRep:
     case Int52Rep:
+    case BigInt64Rep:
     case ValueRep:
     case ExtractOSREntryLocal:
     case ExtractCatchLocal:

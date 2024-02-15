@@ -387,6 +387,7 @@ JSC_DECLARE_JIT_OPERATION(operationDateGetUTCSeconds, EncodedJSValue, (VM*, Date
 JSC_DECLARE_JIT_OPERATION(operationDateGetTimezoneOffset, EncodedJSValue, (VM*, DateInstance*));
 JSC_DECLARE_JIT_OPERATION(operationDateGetYear, EncodedJSValue, (VM*, DateInstance*));
 
+JSC_DECLARE_JIT_OPERATION(operationIsBigInt64, int64_t,  (JSGlobalObject*, JSCell*));
 JSC_DECLARE_JIT_OPERATION(operationInt64ToBigInt, EncodedJSValue, (JSGlobalObject*, int64_t));
 
 JSC_DECLARE_JIT_OPERATION(operationProcessTypeProfilerLogDFG, void, (VM*));

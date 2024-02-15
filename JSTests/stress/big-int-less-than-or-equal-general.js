@@ -8,39 +8,41 @@ function assert(v, e, m) {
         throw new Error(m);
 }
 
-assert(0n <= 0n, true, "0n <= 0n");
-assert(1n <= 1n, true, "1n <= 1n");
-assert(BigInt("-1") <= BigInt("-1"), true, "-1n <= -1n");
-assert(0n <= BigInt("-0"), true, "0n <= -0n");
-assert(BigInt("-0") <= 0n, true, "-0n <= 0n");
-assert(0n <= 1n, true, "0n <= 1n");
-assert(1n <= 0n, false, "1n <= 0n");
-assert(0n <= BigInt("-1"), false, "0n <= -1n");
-assert(BigInt("-1") <= 0n, true, "-1n <= 0n");
-assert(1n <= BigInt("-1"), false, "1n <= -1n");
-assert(BigInt("-1") <= 1n, true, "-1n <= 1n");
-assert(0x1fffffffffffff01n <= 0x1fffffffffffff02n, true, "0x1fffffffffffff01n <= 0x1fffffffffffff02n");
-assert(0x1fffffffffffff02n <= 0x1fffffffffffff01n, false, "0x1fffffffffffff02n <= 0x1fffffffffffff01n");
-assert(BigInt("-2305843009213693697") <= BigInt("-2305843009213693698"), false, "-2305843009213693697n <= -2305843009213693698n");
-assert(BigInt("-2305843009213693698") <= BigInt("-2305843009213693697"), true, "-2305843009213693698n <= -2305843009213693697n");
-assert(0x10000000000000000n <= 0n, false, "0x10000000000000000n <= 0n");
-assert(0n <= 0x10000000000000000n, true, "0n <= 0x10000000000000000n");
-assert(0x10000000000000000n <= 1n, false, "0x10000000000000000n <= 1n");
-assert(1n <= 0x10000000000000000n, true, "1n <= 0x10000000000000000n");
-assert(0x10000000000000000n <= BigInt("-1"), false, "0x10000000000000000n <= -1n");
-assert(BigInt("-1") <= 0x10000000000000000n, true, "-1n <= 0x10000000000000000n");
-assert(0x10000000000000001n <= 0n, false, "0x10000000000000001n <= 0n");
-assert(0n <= 0x10000000000000001n, true, "0n <= 0x10000000000000001n");
-assert(BigInt("-18446744073709551616") <= 0n, true, "-18446744073709551616n <= 0n");
-assert(0n <= BigInt("-18446744073709551616"), false, "0n <= -18446744073709551616n");
-assert(BigInt("-18446744073709551616") <= 1n, true, "-18446744073709551616n <= 1n");
-assert(1n <= BigInt("-18446744073709551616"), false, "1n <= -18446744073709551616n");
-assert(BigInt("-18446744073709551616") <= BigInt("-1"), true, "-18446744073709551616n <= -1n");
-assert(BigInt("-1") <= BigInt("-18446744073709551616"), false, "-1n <= -18446744073709551616n");
-assert(BigInt("-18446744073709551617") <= 0n, true, "-18446744073709551617n <= 0n");
-assert(0n <= BigInt("-18446744073709551617"), false, "0n <= -18446744073709551617n");
-assert(0x10000000000000000n <= 0x100000000n, false, "0x10000000000000000n <= 0x100000000n");
-assert(0x100000000n <= 0x10000000000000000n, true, "0x100000000n <= 0x10000000000000000n");
+for (let i = 0; i < 1e4; i++) {
+    assert(0n <= 0n, true, "0n <= 0n");
+    assert(1n <= 1n, true, "1n <= 1n");
+    assert(BigInt("-1") <= BigInt("-1"), true, "-1n <= -1n");
+    assert(0n <= BigInt("-0"), true, "0n <= -0n");
+    assert(BigInt("-0") <= 0n, true, "-0n <= 0n");
+    assert(0n <= 1n, true, "0n <= 1n");
+    assert(1n <= 0n, false, "1n <= 0n");
+    assert(0n <= BigInt("-1"), false, "0n <= -1n");
+    assert(BigInt("-1") <= 0n, true, "-1n <= 0n");
+    assert(1n <= BigInt("-1"), false, "1n <= -1n");
+    assert(BigInt("-1") <= 1n, true, "-1n <= 1n");
+    assert(0x1fffffffffffff01n <= 0x1fffffffffffff02n, true, "0x1fffffffffffff01n <= 0x1fffffffffffff02n");
+    assert(0x1fffffffffffff02n <= 0x1fffffffffffff01n, false, "0x1fffffffffffff02n <= 0x1fffffffffffff01n");
+    assert(BigInt("-2305843009213693697") <= BigInt("-2305843009213693698"), false, "-2305843009213693697n <= -2305843009213693698n");
+    assert(BigInt("-2305843009213693698") <= BigInt("-2305843009213693697"), true, "-2305843009213693698n <= -2305843009213693697n");
+    assert(0x10000000000000000n <= 0n, false, "0x10000000000000000n <= 0n");
+    assert(0n <= 0x10000000000000000n, true, "0n <= 0x10000000000000000n");
+    assert(0x10000000000000000n <= 1n, false, "0x10000000000000000n <= 1n");
+    assert(1n <= 0x10000000000000000n, true, "1n <= 0x10000000000000000n");
+    assert(0x10000000000000000n <= BigInt("-1"), false, "0x10000000000000000n <= -1n");
+    assert(BigInt("-1") <= 0x10000000000000000n, true, "-1n <= 0x10000000000000000n");
+    assert(0x10000000000000001n <= 0n, false, "0x10000000000000001n <= 0n");
+    assert(0n <= 0x10000000000000001n, true, "0n <= 0x10000000000000001n");
+    assert(BigInt("-18446744073709551616") <= 0n, true, "-18446744073709551616n <= 0n");
+    assert(0n <= BigInt("-18446744073709551616"), false, "0n <= -18446744073709551616n");
+    assert(BigInt("-18446744073709551616") <= 1n, true, "-18446744073709551616n <= 1n");
+    assert(1n <= BigInt("-18446744073709551616"), false, "1n <= -18446744073709551616n");
+    assert(BigInt("-18446744073709551616") <= BigInt("-1"), true, "-18446744073709551616n <= -1n");
+    assert(BigInt("-1") <= BigInt("-18446744073709551616"), false, "-1n <= -18446744073709551616n");
+    assert(BigInt("-18446744073709551617") <= 0n, true, "-18446744073709551617n <= 0n");
+    assert(0n <= BigInt("-18446744073709551617"), false, "0n <= -18446744073709551617n");
+    assert(0x10000000000000000n <= 0x100000000n, false, "0x10000000000000000n <= 0x100000000n");
+    assert(0x100000000n <= 0x10000000000000000n, true, "0x100000000n <= 0x10000000000000000n");
+}
 
 // BigInt - String
 

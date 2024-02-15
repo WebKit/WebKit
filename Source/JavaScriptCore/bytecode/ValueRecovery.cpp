@@ -41,6 +41,10 @@ JSValue ValueRecovery::recover(CallFrame* callFrame) const
         return jsNumber(callFrame->r(virtualRegister()).unboxedInt52());
     case StrictInt52DisplacedInJSStack:
         return jsNumber(callFrame->r(virtualRegister()).unboxedStrictInt52());
+#if USE(JSVALUE64)
+    case BigInt64DisplacedInJSStack:
+        return jsNumber(callFrame->r(virtualRegister()).unboxedBigInt64());
+#endif
     case DoubleDisplacedInJSStack:
         return jsNumber(purifyNaN(callFrame->r(virtualRegister()).unboxedDouble()));
     case CellDisplacedInJSStack:
@@ -76,6 +80,9 @@ void ValueRecovery::dumpInContext(PrintStream& out, DumpContext* context) const
     case UnboxedStrictInt52InGPR:
         out.print("strictInt52(", gpr(), ")");
         return;
+    case UnboxedBigInt64InGPR:
+        out.print("bigInt64(", gpr(), ")");
+        return;
     case UnboxedBooleanInGPR:
         out.print("bool(", gpr(), ")");
         return;
@@ -109,6 +116,9 @@ void ValueRecovery::dumpInContext(PrintStream& out, DumpContext* context) const
         return;
     case StrictInt52DisplacedInJSStack:
         out.print("*strictInt52(", virtualRegister(), ")");
+        return;
+    case BigInt64DisplacedInJSStack:
+        out.print("*bigInt64(", virtualRegister(), ")");
         return;
     case DoubleDisplacedInJSStack:
         out.print("*double(", virtualRegister(), ")");

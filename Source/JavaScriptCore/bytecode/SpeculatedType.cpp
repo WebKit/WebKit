@@ -259,6 +259,11 @@ void dumpSpeculation(PrintStream& outStream, SpeculatedType value)
             strOut.print("HeapBigInt");
         else
             isTop = false;
+
+        if (value & SpecBigInt64)
+            strOut.print("BigInt64");
+        else
+            isTop = false;
     }
     
     if (value == SpecInt32Only)
@@ -401,6 +406,8 @@ static const char* speculationToAbbreviatedString(SpeculatedType prediction)
         return "<Int32AsInt52>";
     if (isAnyInt52Speculation(prediction))
         return "<Int52Any>";
+    if (isBigInt64Speculation(prediction))
+        return "<BigInt64>";
     if (isDoubleSpeculation(prediction))
         return "<Double>";
     if (isFullNumberSpeculation(prediction))

@@ -461,6 +461,8 @@ void printInternal(PrintStream& out, Node* node)
         out.print("<Double>");
     else if (node->hasInt52Result())
         out.print("<Int52>");
+    else if (node->hasBigInt64Result())
+        out.print("<BigInt64>");
 }
 
 } // namespace WTF

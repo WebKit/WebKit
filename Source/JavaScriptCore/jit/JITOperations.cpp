@@ -104,6 +104,8 @@ ALWAYS_INLINE JSValue profiledAdd(JSGlobalObject* globalObject, JSValue op1, JSV
     arithProfile.observeLHSAndRHS(op1, op2);
     JSValue result = jsAdd(globalObject, op1, op2);
     arithProfile.observeResult(result);
+    if (result && result.isHeapBigInt())
+        arithProfile.observeOperands(op1, op2);
     return result;
 }
 
@@ -4259,7 +4261,8 @@ JSC_DEFINE_JIT_OPERATION(operationValueAddProfiledOptimize, EncodedJSValue, (JSG
     
     JSValue result = jsAdd(globalObject, op1, op2);
     arithProfile->observeResult(result);
-
+    if (result && result.isHeapBigInt())
+        arithProfile->observeOperands(op1, op2);
     return JSValue::encode(result);
 }
 
@@ -4330,6 +4333,8 @@ ALWAYS_INLINE static EncodedJSValue profiledMul(JSGlobalObject* globalObject, En
     JSValue result = jsMul(globalObject, op1, op2);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     arithProfile.observeResult(result);
+    if (result && result.isHeapBigInt())
+        arithProfile.observeOperands(op1, op2);
     return JSValue::encode(result);
 }
 
@@ -4462,6 +4467,7 @@ JSC_DEFINE_JIT_OPERATION(operationArithNegateProfiled, EncodedJSValue, (JSGlobal
         JSValue result = JSBigInt::unaryMinus(globalObject, primValue.asHeapBigInt());
         RETURN_IF_EXCEPTION(scope, { });
         arithProfile->observeResult(result);
+        arithProfile->observeOperands(primValue);
         return JSValue::encode(result);
     }
 
@@ -4506,6 +4512,7 @@ JSC_DEFINE_JIT_OPERATION(operationArithNegateProfiledOptimize, EncodedJSValue, (
         JSValue result = JSBigInt::unaryMinus(globalObject, primValue.asHeapBigInt());
         RETURN_IF_EXCEPTION(scope, { });
         arithProfile->observeResult(result);
+        arithProfile->observeOperands(primValue);
         return JSValue::encode(result);
     }
 
@@ -4571,6 +4578,8 @@ ALWAYS_INLINE static EncodedJSValue profiledSub(VM& vm, JSGlobalObject* globalOb
     JSValue result = jsSub(globalObject, op1, op2);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     arithProfile.observeResult(result);
+    if (result && result.isHeapBigInt())
+        arithProfile.observeOperands(op1, op2);
     return JSValue::encode(result);
 }
 

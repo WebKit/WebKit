@@ -45,6 +45,7 @@ enum DataFormat : uint8_t {
     DataFormatCell = 6,
     DataFormatStorage = 7,
     DataFormatBigInt32 = 8, // FIXME: https://bugs.webkit.org/show_bug.cgi?id=210957 Actually support BigInt32 DataFormat.
+    DataFormatBigInt64 = 9,
     DataFormatJS = 16,
     DataFormatJSInt32 = DataFormatJS | DataFormatInt32,
     DataFormatJSDouble = DataFormatJS | DataFormatDouble,
@@ -80,6 +81,8 @@ inline const char* dataFormatToString(DataFormat dataFormat)
         return "Storage";
     case DataFormatBigInt32:
         return "BigInt32";
+    case DataFormatBigInt64:
+        return "BigInt64";
     case DataFormatJS:
         return "JS";
     case DataFormatJSInt32:

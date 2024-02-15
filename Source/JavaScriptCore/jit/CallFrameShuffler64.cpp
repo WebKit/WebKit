@@ -53,6 +53,9 @@ DataFormat CallFrameShuffler::emitStore(
     case UnboxedStrictInt52InGPR:
         m_jit.storePtr(cachedRecovery.recovery().gpr(), address);
         return DataFormatStrictInt52;
+    case UnboxedBigInt64InGPR:
+        m_jit.storePtr(cachedRecovery.recovery().gpr(), address);
+        return DataFormatBigInt64;
     case UnboxedBooleanInGPR:
         m_jit.storePtr(cachedRecovery.recovery().gpr(), address);
         return DataFormatBoolean;

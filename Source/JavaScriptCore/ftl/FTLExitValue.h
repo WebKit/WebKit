@@ -53,6 +53,7 @@ enum ExitValueKind : uint8_t {
     ExitValueInJSStack,
     ExitValueInJSStackAsInt32,
     ExitValueInJSStackAsInt52,
+    ExitValueInJSStackAsBigInt64,
     ExitValueInJSStackAsDouble,
     ExitValueMaterializeNewObject
 };
@@ -104,6 +105,16 @@ public:
         result.m_value = WTFMove(u);
         return result;
     }
+
+    static ExitValue inJSStackAsBigInt64(VirtualRegister reg)
+    {
+        ExitValue result;
+        result.m_kind = ExitValueInJSStackAsBigInt64;
+        UnionType u;
+        u.virtualRegister = reg.offset();
+        result.m_value = WTFMove(u);
+        return result;
+    }
     
     static ExitValue inJSStackAsDouble(VirtualRegister reg)
     {
@@ -146,6 +157,7 @@ public:
         case ExitValueInJSStack:
         case ExitValueInJSStackAsInt32:
         case ExitValueInJSStackAsInt52:
+        case ExitValueInJSStackAsBigInt64:
         case ExitValueInJSStackAsDouble:
             return true;
         default:

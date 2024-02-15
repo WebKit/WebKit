@@ -575,6 +575,7 @@ private:
                 case NodeResultDouble:
                 case NodeResultInt32:
                 case NodeResultInt52:
+                case NodeResultBigInt64:
                 case NodeResultBoolean:
                     if (DFGStoreBarrierInsertionPhaseInternal::verbose)
                         dataLog("            Rejecting because of result type.\n");

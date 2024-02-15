@@ -44,6 +44,7 @@ namespace JSC { namespace FTL {
 #define FOR_EACH_ABSTRACT_HEAP(macro) \
     macro(typedArrayProperties) \
     macro(JSCellHeaderAndNamedProperties) \
+    macro(bigIntData) \
 
 #define FOR_EACH_ABSTRACT_FIELD(macro) \
     macro(ArrayBuffer_data, ArrayBuffer::offsetOfData()) \
@@ -103,6 +104,8 @@ namespace JSC { namespace FTL {
     macro(JSBoundFunction_length, JSBoundFunction::offsetOfLength()) \
     macro(JSBoundFunction_boundArgsLength, JSBoundFunction::offsetOfBoundArgsLength()) \
     macro(JSBoundFunction_canConstruct, JSBoundFunction::offsetOfCanConstruct()) \
+    macro(JSBigInt_sign, JSBigInt::offsetOfSign()) \
+    macro(JSBigInt_data, JSBigInt::offsetOfData()) \
     macro(JSCell_cellState, JSCell::cellStateOffset()) \
     macro(JSCell_header, 0) \
     macro(JSCell_indexingTypeAndMisc, JSCell::indexingTypeAndMiscOffset()) \

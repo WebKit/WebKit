@@ -441,6 +441,23 @@ public:
         return toBigUInt64Heap(bigInt.asHeapBigInt());
     }
 
+    bool isBigInt64()
+    {
+        if (m_length > 1)
+            return false;
+        if (!m_length)
+            return true;
+
+        if (m_sign) {
+            if (digit(0) > static_cast<uint64_t>(std::numeric_limits<int64_t>::min()))
+                return false;
+            return true;
+        }
+        if (digit(0) > static_cast<uint64_t>(std::numeric_limits<int64_t>::max()))
+            return false;
+        return true;
+    }
+
     static int64_t toBigInt64(JSValue bigInt)
     {
         ASSERT(bigInt.isBigInt());

@@ -14,17 +14,20 @@ function testEqualsWithMessage(a, b, e, m) {
 }
 
 // BigInt - BigInt
-testEquals(1n, 1n, true);
-testEquals(1928392129312n, 1n, false);
-testEquals(0n, 1n, false);
-testEquals(0n, 0n, true);
-testEquals(817283912931n, 817283912931n, true);
-testEquals(0xFFD817283AF9129E31n, 0xFFD817283AF9129E31n, true);
-testEquals(0xAFFD817283AF9129E31n, 0xFFD817283AF9129E31n, false);
-testEquals(4719490697266344402481n, BigInt("-4719490697266344402481"), false);
-testEquals(BigInt("-4719490697266344402481"), BigInt("4719490697266344402481"), false);
-testEquals(BigInt("-4719490697266344402481"), BigInt("-4719490697266344402481"), true);
-testEquals(BigInt("-17"), BigInt("-17"), true);
+
+for (let i = 0; i < 1e4; i++) {
+    testEquals(1n, 1n, true);
+    testEquals(1928392129312n, 1n, false);
+    testEquals(0n, 1n, false);
+    testEquals(0n, 0n, true);
+    testEquals(817283912931n, 817283912931n, true);
+    testEquals(0xFFD817283AF9129E31n, 0xFFD817283AF9129E31n, true);
+    testEquals(0xAFFD817283AF9129E31n, 0xFFD817283AF9129E31n, false);
+    testEquals(4719490697266344402481n, BigInt("-4719490697266344402481"), false);
+    testEquals(BigInt("-4719490697266344402481"), BigInt("4719490697266344402481"), false);
+    testEquals(BigInt("-4719490697266344402481"), BigInt("-4719490697266344402481"), true);
+    testEquals(BigInt("-17"), BigInt("-17"), true);
+}
 
 // BigInt - String
 

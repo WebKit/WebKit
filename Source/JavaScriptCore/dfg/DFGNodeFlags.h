@@ -34,7 +34,7 @@ namespace JSC { namespace DFG {
 
 // Entries in the NodeType enum (below) are composed of an id, a result type (possibly none)
 // and some additional informative flags (must generate, is constant, etc).
-#define NodeResultMask                   0x0007
+#define NodeResultMask                   0x000F
 #define NodeResultJS                     0x0001
 #define NodeResultNumber                 0x0002
 #define NodeResultDouble                 0x0003
@@ -42,39 +42,42 @@ namespace JSC { namespace DFG {
 #define NodeResultInt52                  0x0005
 #define NodeResultBoolean                0x0006
 #define NodeResultStorage                0x0007
+#define NodeResultBigInt64               0x0008
 
-#define NodeMustGenerate                 0x0008 // set on nodes that have side effects, and may not trivially be removed by DCE.
-#define NodeHasVarArgs                   0x0010
+#define NodeMustGenerate                 0x0010 // set on nodes that have side effects, and may not trivially be removed by DCE.
+#define NodeHasVarArgs                   0x0020
 
-#define NodeMayHaveDoubleResult          0x00020
-#define NodeMayOverflowInt52             0x00040
-#define NodeMayOverflowInt32InBaseline   0x00080
-#define NodeMayOverflowInt32InDFG        0x00100
-#define NodeMayNegZeroInBaseline         0x00200
-#define NodeMayNegZeroInDFG              0x00400
-#define NodeMayHaveBigInt32Result        0x00800
-#define NodeMayHaveHeapBigIntResult      0x01000
-#define NodeMayHaveNonNumericResult      0x02000
-#define NodeBehaviorMask                 (NodeMayHaveDoubleResult | NodeMayOverflowInt52 | NodeMayOverflowInt32InBaseline | NodeMayOverflowInt32InDFG | NodeMayNegZeroInBaseline | NodeMayNegZeroInDFG | NodeMayHaveBigInt32Result | NodeMayHaveHeapBigIntResult | NodeMayHaveNonNumericResult)
+
+#define NodeMayHaveDoubleResult          0x00040
+#define NodeMayOverflowInt52             0x00080
+#define NodeMayOverflowBigInt64          0x00100
+#define NodeMayOverflowInt32InBaseline   0x00200
+#define NodeMayOverflowInt32InDFG        0x00400
+#define NodeMayNegZeroInBaseline         0x00800
+#define NodeMayNegZeroInDFG              0x01000
+#define NodeMayHaveBigInt32Result        0x02000
+#define NodeMayHaveHeapBigIntResult      0x04000
+#define NodeMayHaveNonNumericResult      0x08000
+#define NodeBehaviorMask                 (NodeMayHaveDoubleResult | NodeMayOverflowInt52 | NodeMayOverflowBigInt64 | NodeMayOverflowInt32InBaseline | NodeMayOverflowInt32InDFG | NodeMayNegZeroInBaseline | NodeMayNegZeroInDFG | NodeMayHaveBigInt32Result | NodeMayHaveHeapBigIntResult | NodeMayHaveNonNumericResult)
 #define NodeMayHaveNonIntResult          (NodeMayHaveDoubleResult | NodeMayHaveNonNumericResult | NodeMayHaveBigInt32Result | NodeMayHaveHeapBigIntResult)
 
 #define NodeBytecodeUseBottom            0x00000
-#define NodeBytecodeUsesAsNumber         0x04000 // The result of this computation may be used in a context that observes fractional, or bigger-than-int32, results.
-#define NodeBytecodeNeedsNegZero         0x08000 // The result of this computation may be used in a context that observes -0.
-#define NodeBytecodeNeedsNaNOrInfinity   0x10000 // The result of this computation may be used in a context that observes NaN or Infinity.
-#define NodeBytecodeUsesAsOther          0x20000 // The result of this computation may be used in a context that distinguishes between NaN and other things (like undefined).
-#define NodeBytecodeUsesAsInt            0x40000 // The result of this computation is known to be used in a context that prefers, but does not require, integer values.
-#define NodeBytecodePrefersArrayIndex    0x80000 // The result of this computation is known to be used in a context that strongly prefers integer values, to the point that we should avoid using doubles if at all possible.
+#define NodeBytecodeUsesAsNumber         0x10000 // The result of this computation may be used in a context that observes fractional, or bigger-than-int32, results.
+#define NodeBytecodeNeedsNegZero         0x20000 // The result of this computation may be used in a context that observes -0.
+#define NodeBytecodeNeedsNaNOrInfinity   0x40000 // The result of this computation may be used in a context that observes NaN or Infinity.
+#define NodeBytecodeUsesAsOther          0x80000 // The result of this computation may be used in a context that distinguishes between NaN and other things (like undefined).
+#define NodeBytecodeUsesAsInt           0x100000 // The result of this computation is known to be used in a context that prefers, but does not require, integer values.
+#define NodeBytecodePrefersArrayIndex   0x200000 // The result of this computation is known to be used in a context that strongly prefers integer values, to the point that we should avoid using doubles if at all possible.
 #define NodeBytecodeUsesAsArrayIndex     (NodeBytecodeUsesAsNumber | NodeBytecodeNeedsNaNOrInfinity | NodeBytecodeUsesAsOther | NodeBytecodeUsesAsInt | NodeBytecodePrefersArrayIndex)
 #define NodeBytecodeUsesAsValue          (NodeBytecodeUsesAsNumber | NodeBytecodeNeedsNegZero | NodeBytecodeNeedsNaNOrInfinity | NodeBytecodeUsesAsOther)
 #define NodeBytecodeBackPropMask         (NodeBytecodeUsesAsNumber | NodeBytecodeNeedsNegZero | NodeBytecodeNeedsNaNOrInfinity | NodeBytecodeUsesAsOther | NodeBytecodeUsesAsInt | NodeBytecodePrefersArrayIndex)
 
 #define NodeArithFlagsMask               (NodeBehaviorMask | NodeBytecodeBackPropMask)
 
-#define NodeIsFlushed                   0x100000 // Computed by CPSRethreadingPhase, will tell you which local nodes are backwards-reachable from a Flush.
+#define NodeIsFlushed                   0x400000 // Computed by CPSRethreadingPhase, will tell you which local nodes are backwards-reachable from a Flush.
 
-#define NodeMiscFlag1                   0x200000
-#define NodeMiscFlag2                   0x400000
+#define NodeMiscFlag1                   0x800000
+#define NodeMiscFlag2                  0x1000000
 
 typedef uint32_t NodeFlags;
 
@@ -107,6 +110,11 @@ enum RareCaseProfilingSource {
 static inline bool nodeMayOverflowInt52(NodeFlags flags, RareCaseProfilingSource)
 {
     return !!(flags & NodeMayOverflowInt52);
+}
+
+static inline bool nodeMayOverflowBigInt64(NodeFlags flags, RareCaseProfilingSource)
+{
+    return !!(flags & NodeMayOverflowBigInt64);
 }
 
 static inline bool nodeMayOverflowInt32(NodeFlags flags, RareCaseProfilingSource source)
@@ -165,6 +173,17 @@ static inline bool nodeCanSpeculateInt52(NodeFlags flags, RareCaseProfilingSourc
     return true;
 }
 
+static inline bool nodeCanSpeculateBigInt64(NodeFlags flags, RareCaseProfilingSource source)
+{
+    if (nodeMayOverflowBigInt64(flags, source))
+        return false;
+
+    if (nodeMayNegZero(flags, source))
+        return bytecodeCanIgnoreNegativeZero(flags);
+
+    return true;
+}
+
 static inline bool nodeMayHaveHeapBigInt(NodeFlags flags, RareCaseProfilingSource)
 {
     return !!(flags & NodeMayHaveHeapBigIntResult);
@@ -185,6 +204,7 @@ static inline NodeFlags canonicalResultRepresentation(NodeFlags flags)
     switch (flags) {
     case NodeResultDouble:
     case NodeResultInt52:
+    case NodeResultBigInt64:
     case NodeResultStorage:
         return flags;
     default:

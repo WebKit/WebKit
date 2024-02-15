@@ -205,7 +205,10 @@ FlushFormat VariableAccessData::flushFormat()
     
     if (couldRepresentInt52Impl())
         return FlushedInt52;
-    
+
+    if (isBigInt64Speculation(prediction))
+        return FlushedBigInt64;
+
     if (isCellSpeculation(prediction))
         return FlushedCell;
     

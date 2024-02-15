@@ -191,9 +191,9 @@ bool doesGC(Graph& graph, Node* node)
     case HasStructureWithFlags:
     case MultiGetByOffset:
     case MultiDeleteByOffset:
-    case ValueRep:
     case DoubleRep:
     case Int52Rep:
+    case BigInt64Rep:
     case GetGetter:
     case GetSetter:
     case GetArrayLength:
@@ -465,6 +465,15 @@ bool doesGC(Graph& graph, Node* node)
     case GlobalIsNaN:
         return node->child1().useKind() != DoubleRepUse;
 
+    case ValueRep:
+        switch (node->child1().useKind()) {
+        case BigInt64RepUse:
+            return true;
+        default:
+            break;
+        }
+        return false;
+
     case CallNumberConstructor:
         switch (node->child1().useKind()) {
         case BigInt32Use:
@@ -500,6 +509,7 @@ bool doesGC(Graph& graph, Node* node)
         if (node->isBinaryUseKind(Int32Use)
 #if USE(JSVALUE64)
             || node->isBinaryUseKind(Int52RepUse)
+            || node->isBinaryUseKind(BigInt64RepUse)
 #endif
             || node->isBinaryUseKind(DoubleRepUse)
             || node->isBinaryUseKind(BigInt32Use)
@@ -520,6 +530,7 @@ bool doesGC(Graph& graph, Node* node)
             || node->isBinaryUseKind(Int32Use)
 #if USE(JSVALUE64)
             || node->isBinaryUseKind(Int52RepUse)
+            || node->isBinaryUseKind(BigInt64RepUse)
 #endif
             || node->isBinaryUseKind(DoubleRepUse)
             || node->isBinaryUseKind(SymbolUse)
@@ -626,6 +637,7 @@ bool doesGC(Graph& graph, Node* node)
         switch (node->child1().useKind()) {
         case Int32Use:
         case Int52RepUse:
+        case BigInt64RepUse:
         case DoubleRepUse:
             return false;
         default:

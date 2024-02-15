@@ -32,6 +32,15 @@
 
 namespace JSC { namespace DFG {
 
+void dumpEdge(PrintStream& out, Edge& edge)
+{
+    edge.dump(out);
+    out.print(", NodeFlags: ");
+    dumpNodeFlags(out, edge->flags());
+    out.print(", SpeculatedType: ");
+    dumpSpeculation(out, edge->prediction());
+}
+
 void Edge::dump(PrintStream& out) const
 {
     if (!isProved())

@@ -93,6 +93,8 @@ ASCIILiteral exitKindToString(ExitKind kind)
         return "GenericUnwind"_s;
     case BigInt32Overflow:
         return "BigInt32Overflow"_s;
+    case BigInt64Overflow:
+        return "BigInt64Overflow"_s;
     case UnexpectedResizableArrayBufferView:
         return "UnexpectedResizableArrayBufferView"_s;
     }

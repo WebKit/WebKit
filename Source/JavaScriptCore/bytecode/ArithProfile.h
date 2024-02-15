@@ -76,8 +76,9 @@ public:
         Int52Overflow    = 1 << 4,
         HeapBigInt       = 1 << 5,
         BigInt32         = 1 << 6,
+        BigInt64Overflow = 1 << 7,
     };
-    static constexpr uint32_t numBitsNeeded = 7;
+    static constexpr uint32_t numBitsNeeded = 8;
 
     ObservedResults() = default;
     explicit ObservedResults(uint8_t bits)
@@ -94,6 +95,7 @@ public:
     bool didObserveBigInt32() { return m_bits & BigInt32; }
     bool didObserveInt32Overflow() { return m_bits & Int32Overflow; }
     bool didObserveInt52Overflow() { return m_bits & Int52Overflow; }
+    bool didObserveBigInt64Overflow() { return m_bits & BigInt64Overflow; }
 
 private:
     uint8_t m_bits { 0 };
@@ -116,6 +118,7 @@ public:
     bool didObserveBigInt32() const { return observedResults().didObserveBigInt32(); }
     bool didObserveInt32Overflow() const { return observedResults().didObserveInt32Overflow(); }
     bool didObserveInt52Overflow() const { return observedResults().didObserveInt52Overflow(); }
+    bool didObserveBigInt64Overflow() const { return observedResults().didObserveBigInt64Overflow(); }
 
     void setObservedNonNegZeroDouble() { setBit(ObservedResults::NonNegZeroDouble); }
     void setObservedNegZeroDouble() { setBit(ObservedResults::NegZeroDouble); }
@@ -124,6 +127,7 @@ public:
     void setObservedBigInt32() { setBit(ObservedResults::BigInt32); }
     void setObservedInt32Overflow() { setBit(ObservedResults::Int32Overflow); }
     void setObservedInt52Overflow() { setBit(ObservedResults::Int52Overflow); }
+    void setObservedBigInt64Overflow() { setBit(ObservedResults::BigInt64Overflow); }
 
     void observeResult(JSValue value)
     {
@@ -139,9 +143,28 @@ public:
         }
         if (value && value.isHeapBigInt()) {
             m_bits |= ObservedResults::HeapBigInt;
+            if (!value.isBigInt64())
+                m_bits |= ObservedResults::BigInt64Overflow;
             return;
         }
         m_bits |= ObservedResults::NonNumeric;
+    }
+
+    template<typename Operand>
+    void observeOperands(Operand operand)
+    {
+        ASSERT(operand && operand.isHeapBigInt());
+        if (!operand.isBigInt64())
+            m_bits |= ObservedResults::BigInt64Overflow;
+    }
+
+    template<typename Operand, typename... Operands>
+    void observeOperands(Operand operand, Operands... operands)
+    {
+        ASSERT(operand && operand.isHeapBigInt());
+        if (!operand.isBigInt64())
+            m_bits |= ObservedResults::BigInt64Overflow;
+        observeOperands(operands...);
     }
 
     const void* addressOfBits() const { return &m_bits; }

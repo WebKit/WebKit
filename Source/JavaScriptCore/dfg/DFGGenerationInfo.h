@@ -96,6 +96,10 @@ public:
     {
         initGPR(node, useCount, reg, DataFormatStrictInt52);
     }
+    void initBigInt64(Node* node, uint32_t useCount, GPRReg reg, DataFormat format = DataFormatBigInt64)
+    {
+        initGPR(node, useCount, reg, format);
+    }
 #if USE(JSVALUE64)
     void initJSValue(Node* node, uint32_t useCount, GPRReg gpr, DataFormat format = DataFormatJS)
     {
@@ -359,6 +363,10 @@ public:
     void fillStrictInt52(VariableEventStreamBuilder& stream, GPRReg gpr)
     {
         fillGPR(stream, gpr, DataFormatStrictInt52);
+    }
+    void fillBigInt64(VariableEventStreamBuilder& stream, GPRReg gpr)
+    {
+        fillGPR(stream, gpr, DataFormatBigInt64);
     }
     void fillBoolean(VariableEventStreamBuilder& stream, GPRReg gpr)
     {

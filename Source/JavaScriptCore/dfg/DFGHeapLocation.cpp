@@ -166,6 +166,10 @@ void printInternal(PrintStream& out, LocationKind kind)
         out.print("IndexedPropertyInt52Loc");
         return;
 
+    case IndexedPropertyBigInt64Loc:
+        out.print("IndexedPropertyBigInt64Loc");
+        return;
+
     case IndexedPropertyJSLoc:
         out.print("IndexedPropertyJSLoc");
         return;

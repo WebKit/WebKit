@@ -1062,6 +1062,37 @@ private:
 
     Node* makeSafe(Node* node)
     {
+        switch (node->op()) {
+        // case ValueBitRShift:
+        // case ValueBitLShift:
+        case ValueAdd:
+        case ValueSub:
+        case ValuePow:
+        case ValueMul:
+        // case ValueDiv:
+        case ValueMod:
+        // case ValueBitAnd:
+        // case ValueBitXor:
+        // case ValueBitOr:
+        {
+            BinaryArithProfile* arithProfile = m_inlineStackTop->m_profiledBlock->binaryArithProfileForBytecodeIndex(m_currentIndex);
+            if (arithProfile->didObserveBigInt64Overflow())
+                node->mergeFlags(NodeMayOverflowBigInt64);
+            break;
+        }
+        // case ValueBitNot:
+        case ValueNegate:
+        case Inc:
+        case Dec: {
+            UnaryArithProfile* arithProfile = m_inlineStackTop->m_profiledBlock->unaryArithProfileForBytecodeIndex(m_currentIndex);
+            if (arithProfile->didObserveBigInt64Overflow())
+                node->mergeFlags(NodeMayOverflowBigInt64);
+            break;
+        }
+        default:
+            break;
+        }
+
         if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow))
             node->mergeFlags(NodeMayOverflowInt32InDFG);
         if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, NegativeZero))
@@ -1166,6 +1197,10 @@ private:
         if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, NegativeZero))
             node->mergeFlags(NodeMayNegZeroInDFG);
         
+        BinaryArithProfile* arithProfile = m_inlineStackTop->m_profiledBlock->binaryArithProfileForBytecodeIndex(m_currentIndex);
+        if (arithProfile->didObserveBigInt64Overflow())
+            node->mergeFlags(NodeMayOverflowBigInt64);
+
         // The main slow case counter for op_div in the old JIT counts only when
         // the operands are not numbers. We don't care about that since we already
         // have speculations in place that take care of that separately. We only
@@ -1177,8 +1212,6 @@ private:
         
         // FIXME: It might be possible to make this more granular.
         node->mergeFlags(NodeMayOverflowInt32InBaseline | NodeMayNegZeroInBaseline);
-
-        BinaryArithProfile* arithProfile = m_inlineStackTop->m_profiledBlock->binaryArithProfileForBytecodeIndex(m_currentIndex);
 
         if (arithProfile->didObserveBigInt32())
             node->mergeFlags(NodeMayHaveBigInt32Result);
@@ -6690,9 +6723,9 @@ void ByteCodeParser::parseBlock(unsigned limit)
             Node* op1 = get(bytecode.m_lhs);
             Node* op2 = get(bytecode.m_rhs);
             if (op1->hasNumberOrAnyIntResult() && op2->hasNumberOrAnyIntResult())
-                set(bytecode.m_dst, addToGraph(ArithPow, op1, op2));
+                set(bytecode.m_dst, makeSafe(addToGraph(ArithPow, op1, op2)));
             else
-                set(bytecode.m_dst, addToGraph(ValuePow, op1, op2));
+                set(bytecode.m_dst, makeSafe(addToGraph(ValuePow, op1, op2)));
             NEXT_OPCODE(op_pow);
         }
 
