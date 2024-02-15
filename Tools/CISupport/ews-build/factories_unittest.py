@@ -473,22 +473,6 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'kill-old-processes',
             'jscore-test'
         ],
-        'JSC-i386-32bits-EWS': [
-            'configure-build',
-            'check-change-relevance',
-            'validate-change',
-            'configuration',
-            'clean-up-git-repo',
-            'checkout-source',
-            'fetch-branch-references',
-            'checkout-specific-revision',
-            'show-identifier',
-            'apply-patch',
-            'checkout-pull-request',
-            'kill-old-processes',
-            'validate-change',
-            'compile-jsc'
-        ],
         'Bindings-Tests-EWS': [
             'configure-build',
             'check-change-relevance',

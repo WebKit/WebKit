@@ -320,14 +320,6 @@
       "workernames": ["igalia-jsc32-armv7-ews-02"]
     },
     {
-      "name": "JSC-i386-32bits-EWS", "shortname": "jsc-i386", "icon": "buildOnly",
-      "factory": "JSCBuildAndTestsFactory", "platform": "jsc-only",
-      "configuration": "release", "architectures": ["x86"],
-      "runTests": "false",
-      "workernames": ["igalia-jsc32-i386-ews"],
-      "remotes": "../../EWS-test-devices.json"
-    },
-    {
       "name": "Bindings-Tests-EWS", "shortname": "bindings", "icon": "testOnly",
       "factory": "BindingsFactory", "platform": "*",
       "workernames": ["ews151", "webkit-misc"]
@@ -408,7 +400,7 @@
       "type": "Try_Userpass", "name": "try", "port": 5555,
       "builderNames": [
             "Apply-WatchList-EWS", "Bindings-Tests-EWS", "GTK-Build-EWS", "iOS-17-Build-EWS", "iOS-17-Simulator-Build-EWS",
-            "JSC-ARMv7-32bits-Build-EWS", "JSC-i386-32bits-EWS", "JSC-Tests-EWS", "JSC-Tests-arm64-EWS",
+            "JSC-ARMv7-32bits-Build-EWS", "JSC-Tests-EWS", "JSC-Tests-arm64-EWS",
             "macOS-AppleSilicon-Sonoma-Debug-Build-EWS", "macOS-Monterey-Release-Build-EWS",
             "Services-EWS", "Style-EWS", "tvOS-17-Build-EWS", "tvOS-17-Simulator-Build-EWS", "watchOS-10-Build-EWS",
             "watchOS-10-Simulator-Build-EWS", "WPE-Build-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "WinCairo-EWS",
@@ -423,7 +415,7 @@
       "type": "AnyBranchScheduler", "name": "pull_request",
       "builderNames": [
             "Bindings-Tests-EWS", "GTK-Build-EWS", "iOS-17-Build-EWS", "iOS-17-Simulator-Build-EWS",
-            "JSC-ARMv7-32bits-Build-EWS", "JSC-i386-32bits-EWS", "JSC-Tests-EWS", "JSC-Tests-arm64-EWS",
+            "JSC-ARMv7-32bits-Build-EWS", "JSC-Tests-EWS", "JSC-Tests-arm64-EWS",
             "macOS-AppleSilicon-Sonoma-Debug-Build-EWS", "macOS-Monterey-Release-Build-EWS",
             "Services-EWS", "Style-EWS", "Style-EWS", "tvOS-17-Build-EWS", "tvOS-17-Simulator-Build-EWS", "watchOS-10-Build-EWS",
             "watchOS-10-Simulator-Build-EWS", "WPE-Build-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "WinCairo-EWS",
