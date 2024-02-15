@@ -198,6 +198,7 @@ private:
     bool forwardEditingCommandToEditor(const String& commandName, const String& argument) const;
     void selectAll();
     [[maybe_unused]] bool performCopyEditingOperation() const;
+    void performCopyLinkOperation(const WebCore::IntPoint& contextMenuEventRootViewPoint) const;
 
     // Context Menu
 #if ENABLE(CONTEXT_MENUS)
@@ -223,11 +224,11 @@ private:
     String titleForContextMenuItemTag(ContextMenuItemTag) const;
     bool isDisplayModeContextMenuItemTag(ContextMenuItemTag) const;
     PDFContextMenuItem separatorContextMenuItem() const;
-    Vector<PDFContextMenuItem> selectionContextMenuItems(const WebCore::IntPoint& contextMenuPoint) const;
+    Vector<PDFContextMenuItem> selectionContextMenuItems(const WebCore::IntPoint& contextMenuEventRootViewPoint) const;
     Vector<PDFContextMenuItem> displayModeContextMenuItems() const;
     Vector<PDFContextMenuItem> scaleContextMenuItems() const;
     ContextMenuItemTag toContextMenuItemTag(int tagValue) const;
-    void performContextMenuAction(ContextMenuItemTag);
+    void performContextMenuAction(ContextMenuItemTag, const WebCore::IntPoint& contextMenuEventRootViewPoint);
 
     ContextMenuItemTag contextMenuItemTagFromDisplayMode(const PDFDocumentLayout::DisplayMode&) const;
     PDFDocumentLayout::DisplayMode displayModeFromContextMenuItemTag(const ContextMenuItemTag&) const;
@@ -346,11 +347,10 @@ private:
 
     WebCore::IntPoint convertFromPluginToDocument(const WebCore::IntPoint&) const;
     WebCore::IntPoint convertFromDocumentToPlugin(const WebCore::IntPoint&) const;
-
+    WebCore::IntRect convertFromDocumentToPlugin(const WebCore::IntRect&) const;
     WebCore::IntPoint convertFromDocumentToPage(const WebCore::IntPoint&, PDFDocumentLayout::PageIndex) const;
     WebCore::IntPoint convertFromPageToDocument(const WebCore::IntPoint&, PDFDocumentLayout::PageIndex) const;
     WebCore::IntRect convertFromPageToDocument(const WebCore::IntRect&, PDFDocumentLayout::PageIndex) const;
-
     WebCore::IntPoint convertFromPageToContents(const WebCore::IntPoint&, PDFDocumentLayout::PageIndex) const;
     WebCore::IntRect convertFromPageToContents(const WebCore::IntRect&, PDFDocumentLayout::PageIndex) const;
 

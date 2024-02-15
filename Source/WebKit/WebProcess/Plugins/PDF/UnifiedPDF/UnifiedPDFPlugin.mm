@@ -1348,6 +1348,19 @@ WebCore::IntPoint UnifiedPDFPlugin::convertFromDocumentToPlugin(const WebCore::I
     return roundedIntPoint(transformedPoint);
 }
 
+IntRect UnifiedPDFPlugin::convertFromDocumentToPlugin(const IntRect& documentSpaceRect) const
+{
+    auto transformedRect = FloatRect { documentSpaceRect };
+
+    transformedRect.scale(m_documentLayout.scale());
+    auto padding = centeringOffset();
+    transformedRect.move(padding.width(), padding.height());
+    transformedRect.scale(m_scaleFactor);
+    transformedRect.moveBy(-FloatPoint { m_scrollOffset });
+
+    return roundedIntRect(transformedRect);
+}
+
 std::optional<PDFDocumentLayout::PageIndex> UnifiedPDFPlugin::pageIndexForDocumentPoint(const WebCore::IntPoint& point) const
 {
     for (PDFDocumentLayout::PageIndex index = 0; index < m_documentLayout.pageCount(); ++index) {
@@ -1385,7 +1398,7 @@ WebCore::IntPoint UnifiedPDFPlugin::convertFromPageToDocument(const WebCore::Int
 WebCore::IntRect UnifiedPDFPlugin::convertFromPageToDocument(const WebCore::IntRect& pageSpaceRect, PDFDocumentLayout::PageIndex pageIndex) const
 {
     ASSERT(pageIndex < m_documentLayout.pageCount());
-    return IntRect { m_documentLayout.pdfPageRectToDocumentRect(pageSpaceRect, pageIndex) };
+    return roundedIntRect(m_documentLayout.pdfPageRectToDocumentRect(pageSpaceRect, pageIndex));
 }
 
 WebCore::IntPoint UnifiedPDFPlugin::convertFromPageToContents(const WebCore::IntPoint& pageSpacePoint, PDFDocumentLayout::PageIndex pageIndex) const
@@ -1426,10 +1439,19 @@ static TextStream& operator<<(TextStream& ts, UnifiedPDFPlugin::PDFElementType e
 }
 #endif
 
+static BOOL annotationIsExternalLink(PDFAnnotation *annotation)
+{
+    if (![annotation isKindOfClass:getPDFAnnotationLinkClass()])
+        return NO;
+
+    return [annotation URL];
+}
+
 static BOOL annotationIsLinkWithDestination(PDFAnnotation *annotation)
 {
     if (![annotation isKindOfClass:getPDFAnnotationLinkClass()])
         return NO;
+
     return [annotation URL] || [annotation destination];
 }
 
@@ -1632,12 +1654,12 @@ bool UnifiedPDFPlugin::handleContextMenuEvent(const WebMouseEvent& event)
     if (!contextMenu)
         return false;
 
-    webPage->sendWithAsyncReply(Messages::WebPageProxy::ShowPDFContextMenu { *contextMenu, m_identifier }, [this, weakThis = WeakPtr { *this }](std::optional<int32_t>&& selectedItemTag) {
+    webPage->sendWithAsyncReply(Messages::WebPageProxy::ShowPDFContextMenu { *contextMenu, m_identifier }, [eventPosition = event.position(), this, weakThis = WeakPtr { *this }](std::optional<int32_t>&& selectedItemTag) {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
         if (selectedItemTag)
-            performContextMenuAction(toContextMenuItemTag(selectedItemTag.value()));
+            performContextMenuAction(toContextMenuItemTag(selectedItemTag.value()), eventPosition);
         stopTrackingSelection();
         repaintOnSelectionActiveStateChangeIfNeeded(ActiveStateChangeReason::HandledContextMenuEvent);
     });
@@ -1804,7 +1826,7 @@ std::optional<PDFContextMenu> UnifiedPDFPlugin::createContextMenu(const WebMouse
     };
 
     if ([m_pdfDocument allowsCopying] && m_currentSelection) {
-        menuItems.appendVector(selectionContextMenuItems(convertFromRootViewToPlugin(contextMenuEvent.position())));
+        menuItems.appendVector(selectionContextMenuItems(contextMenuEvent.position()));
         addSeparator();
     }
 
@@ -1882,7 +1904,7 @@ PDFContextMenuItem UnifiedPDFPlugin::separatorContextMenuItem() const
     return { { }, 0, enumToUnderlyingType(ContextMenuItemTag::Invalid), ContextMenuItemEnablement::Disabled, ContextMenuItemHasAction::No, ContextMenuItemIsSeparator::Yes };
 }
 
-Vector<PDFContextMenuItem> UnifiedPDFPlugin::selectionContextMenuItems(const IntPoint& contextMenuPointInPluginSpace) const
+Vector<PDFContextMenuItem> UnifiedPDFPlugin::selectionContextMenuItems(const IntPoint& contextMenuEventRootViewPoint) const
 {
     if (![m_pdfDocument allowsCopying] || !m_currentSelection)
         return { };
@@ -1895,7 +1917,7 @@ Vector<PDFContextMenuItem> UnifiedPDFPlugin::selectionContextMenuItems(const Int
         contextMenuItem(ContextMenuItemTag::Copy),
     };
 
-    if (pdfElementTypesForPluginPoint(contextMenuPointInPluginSpace).contains(PDFElementType::Link))
+    if (RetainPtr annotation = annotationForRootViewPoint(contextMenuEventRootViewPoint); annotation && annotationIsExternalLink(annotation.get()))
         items.append(contextMenuItem(ContextMenuItemTag::CopyLink));
 
     return items;
@@ -1920,7 +1942,7 @@ Vector<PDFContextMenuItem> UnifiedPDFPlugin::scaleContextMenuItems() const
     };
 }
 
-void UnifiedPDFPlugin::performContextMenuAction(ContextMenuItemTag tag)
+void UnifiedPDFPlugin::performContextMenuAction(ContextMenuItemTag tag, const IntPoint& contextMenuEventRootViewPoint)
 {
     switch (tag) {
     case ContextMenuItemTag::WebSearch:
@@ -1933,7 +1955,7 @@ void UnifiedPDFPlugin::performContextMenuAction(ContextMenuItemTag tag)
         performCopyEditingOperation();
         break;
     case ContextMenuItemTag::CopyLink:
-        notImplemented();
+        performCopyLinkOperation(contextMenuEventRootViewPoint);
         break;
     // The OpenWithPreview action is handled in the UI Process.
     case ContextMenuItemTag::OpenWithPreview: return;
@@ -1962,6 +1984,32 @@ void UnifiedPDFPlugin::performContextMenuAction(ContextMenuItemTag tag)
     }
 }
 #endif // ENABLE(CONTEXT_MENUS)
+
+void UnifiedPDFPlugin::performCopyLinkOperation(const IntPoint& contextMenuEventRootViewPoint) const
+{
+    if (![m_pdfDocument allowsCopying]) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:get_PDFKit_PDFViewCopyPermissionNotification() object:nil];
+        return;
+    }
+
+    RetainPtr annotation = annotationForRootViewPoint(contextMenuEventRootViewPoint);
+    if (!annotation)
+        return;
+
+    if (!annotationIsExternalLink(annotation.get()))
+        return;
+
+    RetainPtr url = [annotation URL];
+
+    if (!url)
+        return;
+
+    NSString *urlAbsoluteString = [url absoluteString];
+    NSArray *types = @[ NSPasteboardTypeString, NSPasteboardTypeHTML ];
+    NSArray *items = @[ [urlAbsoluteString dataUsingEncoding:NSUTF8StringEncoding], [urlAbsoluteString dataUsingEncoding:NSUTF8StringEncoding] ];
+
+    writeItemsToPasteboard(NSPasteboardNameGeneral, items, types);
+}
 
 #pragma mark Editing Commands
 
