@@ -89,24 +89,20 @@ bool AccessibilityListBoxOption::isSelectedOptionActive() const
 
 LayoutRect AccessibilityListBoxOption::elementRect() const
 {
-    LayoutRect rect;
-    if (!m_optionElement)
-        return rect;
-    
-    HTMLSelectElement* listBoxParentNode = listBoxOptionParentNode();
-    if (!listBoxParentNode)
-        return rect;
-    
-    RenderElement* listBoxRenderer = listBoxParentNode->renderer();
-    if (!listBoxRenderer)
-        return rect;
-    
-    LayoutRect parentRect = listBoxRenderer->document().axObjectCache()->getOrCreate(listBoxRenderer)->boundingBoxRect();
-    int index = listBoxOptionIndex();
-    if (index != -1)
-        rect = downcast<RenderListBox>(*listBoxRenderer).itemBoundingBoxRect(parentRect.location(), index);
-    
-    return rect;
+    auto* optionParent = listBoxOptionParentNode();
+    CheckedPtr parentRenderer = optionParent ? dynamicDowncast<RenderListBox>(optionParent->renderer()) : nullptr;
+    if (!parentRenderer)
+        return { };
+
+    auto* cache = parentRenderer->document().axObjectCache();
+    if (RefPtr axObject = cache ? cache->getOrCreate(parentRenderer.get()) : nullptr) {
+        int index = listBoxOptionIndex();
+        if (index != -1) {
+            auto parentRect = axObject->boundingBoxRect();
+            return parentRenderer->itemBoundingBoxRect(parentRect.location(), index);
+        }
+    }
+    return { };
 }
 
 bool AccessibilityListBoxOption::computeAccessibilityIsIgnored() const
