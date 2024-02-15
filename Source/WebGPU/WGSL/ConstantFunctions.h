@@ -1652,6 +1652,11 @@ CONSTANT_FUNCTION(Bitcast)
             if (!i32)
                 return { makeString("value ", String::number(*abstractInt), " cannot be represented as 'i32'") };
             value = bitwise_cast<uint32_t>(*i32);
+        } else if (auto* abstractFloat = std::get_if<double>(&argument)) {
+            auto f32 = convertFloat<float>(*abstractFloat);
+            if (!f32)
+                return { makeString("value ", String::number(*abstractFloat), " cannot be represented as 'f32'") };
+            value = bitwise_cast<uint32_t>(*f32);
         } else {
             RELEASE_ASSERT_NOT_REACHED();
             value = 0;
