@@ -45,6 +45,11 @@ using ExtensionID = WTF::String;
 using ExtensionVoidResult = Expected<void, ExtensionError>;
 using ExtensionEvaluationResult = Expected<Expected<Ref<API::SerializedScriptValue>, WebCore::ExceptionDetails>, ExtensionError>;
 
+enum class ExtensionAppearance : bool {
+    Light,
+    Dark
+};
+
 enum class ExtensionError : uint8_t {
     ContextDestroyed,
     InternalError,

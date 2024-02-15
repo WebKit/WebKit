@@ -126,6 +126,7 @@ public:
     void resetState() override;
 
     void setForcedAppearance(WebCore::InspectorFrontendClient::Appearance) override;
+    void effectiveAppearanceDidChange(WebCore::InspectorFrontendClient::Appearance);
 
     WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection() const override;
 

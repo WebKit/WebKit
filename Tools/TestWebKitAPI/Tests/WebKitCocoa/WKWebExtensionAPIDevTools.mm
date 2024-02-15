@@ -316,6 +316,52 @@ TEST(WKWebExtensionAPIDevTools, NetworkNavigatedEvent)
     [manager run];
 }
 
+TEST(WKWebExtensionAPIDevTools, PanelsThemeName)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *devToolsScript = Util::constructScript(@[
+        @"browser.test.assertEq(browser?.devtools?.panels?.themeName, 'light', 'panels.themeName should be light')",
+
+        @"browser?.devtools?.panels?.onThemeChanged.addListener((newTheme) => {",
+        @"  browser.test.assertEq(newTheme, 'dark', 'newTheme should be dark')",
+        @"  browser.test.assertEq(browser?.devtools?.panels?.themeName, 'dark', 'panels.themeName should be dark')",
+
+        @"  browser.test.notifyPass();",
+        @"})",
+
+        @"browser.test.yield('Change Theme')",
+    ]);
+
+    auto *resources = @{
+        @"background.js": @"// This script is intentionally left blank.",
+        @"devtools.html": @"<script type='module' src='devtools.js'></script>",
+        @"devtools.js": devToolsScript
+    };
+
+    // Force light mode for the app, so the switch to dark will trigger the event.
+    NSApp.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto *mainWebView = manager.get().defaultTab.mainWebView;
+
+    [mainWebView loadRequest:server.requestWithLocalhost()];
+    [mainWebView._inspector show];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Change Theme");
+
+    // Force dark mode on the inspector to tigger the theme change.
+    mainWebView._inspector.extensionHostWebView.appearance = [NSAppearance appearanceNamed:NSAppearanceNameDarkAqua];
+
+    [manager run];
+}
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(WK_WEB_EXTENSIONS) && ENABLE(INSPECTOR_EXTENSIONS)

@@ -47,12 +47,16 @@ public:
 
     NSString *themeName();
 
+    Inspector::ExtensionAppearance theme() const { return m_theme; }
+    void setTheme(Inspector::ExtensionAppearance appearance) { m_theme = appearance; }
+
     WebExtensionAPIEvent& onThemeChanged();
 #endif
 
 private:
     RefPtr<WebExtensionAPIEvent> m_onThemeChanged;
     HashMap<Inspector::ExtensionTabID, Ref<WebExtensionAPIDevToolsExtensionPanel>> m_extensionPanels;
+    Inspector::ExtensionAppearance m_theme { Inspector::ExtensionAppearance::Light };
 };
 
 } // namespace WebKit

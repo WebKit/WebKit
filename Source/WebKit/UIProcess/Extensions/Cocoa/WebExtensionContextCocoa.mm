@@ -3172,6 +3172,12 @@ void WebExtensionContext::loadInspectorBackgroundPage(WebInspectorUIProxy& inspe
                 extensionContext->inspectedPageDidNavigate(*m_inspectorExtension, url);
         }
 
+        void effectiveAppearanceDidChange(Inspector::ExtensionAppearance appearance) override
+        {
+            if (RefPtr extensionContext = m_extensionContext.get())
+                extensionContext->inspectorEffectiveAppearanceDidChange(*m_inspectorExtension, appearance);
+        }
+
         NakedPtr<API::InspectorExtension> m_inspectorExtension;
         WeakPtr<WebExtensionContext> m_extensionContext;
     };
@@ -3212,9 +3218,12 @@ void WebExtensionContext::loadInspectorBackgroundPage(WebInspectorUIProxy& inspe
         RefPtr window = tab->window();
         auto windowIdentifier = window ? std::optional(window->identifier()) : std::nullopt;
 
+        auto appearance = inspector->inspectorPage()->useDarkAppearance() ? Inspector::ExtensionAppearance::Dark : Inspector::ExtensionAppearance::Light;
+
         Ref process = webView._page->process();
         ASSERT(inspectorWebView._page->process() == process);
         process->send(Messages::WebExtensionContextProxy::AddInspectorBackgroundPageIdentifier(webView._page->webPageID(), tab->identifier(), windowIdentifier), identifier());
+        process->send(Messages::WebExtensionContextProxy::DispatchDevToolsPanelsThemeChangedEvent(appearance), identifier());
 
         [webView loadRequest:[NSURLRequest requestWithURL:inspectorBackgroundPageURL()]];
     });
@@ -3275,6 +3284,11 @@ void WebExtensionContext::inspectedPageDidNavigate(API::InspectorExtension& insp
         return;
 
     sendToProcesses(processes(inspectorExtension), Messages::WebExtensionContextProxy::DispatchDevToolsNetworkNavigatedEvent(url));
+}
+
+void WebExtensionContext::inspectorEffectiveAppearanceDidChange(API::InspectorExtension& inspectorExtension, Inspector::ExtensionAppearance appearance)
+{
+    sendToProcesses(processes(inspectorExtension), Messages::WebExtensionContextProxy::DispatchDevToolsPanelsThemeChangedEvent(appearance));
 }
 #endif // ENABLE(INSPECTOR_EXTENSIONS)
 

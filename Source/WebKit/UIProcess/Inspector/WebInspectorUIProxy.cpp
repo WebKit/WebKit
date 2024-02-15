@@ -654,6 +654,19 @@ void WebInspectorUIProxy::setForcedAppearance(InspectorFrontendClient::Appearanc
     platformSetForcedAppearance(appearance);
 }
 
+void WebInspectorUIProxy::effectiveAppearanceDidChange(InspectorFrontendClient::Appearance appearance)
+{
+#if ENABLE(INSPECTOR_EXTENSIONS)
+    if (!m_extensionController)
+        return;
+
+    ASSERT(appearance == WebCore::InspectorFrontendClient::Appearance::Dark || appearance == WebCore::InspectorFrontendClient::Appearance::Light);
+    auto extensionAppearance = appearance == WebCore::InspectorFrontendClient::Appearance::Dark ? Inspector::ExtensionAppearance::Dark : Inspector::ExtensionAppearance::Light;
+
+    m_extensionController->effectiveAppearanceDidChange(extensionAppearance);
+#endif
+}
+
 void WebInspectorUIProxy::openURLExternally(const String& url)
 {
     if (m_inspectorClient)

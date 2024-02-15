@@ -75,6 +75,7 @@ public:
     // Notifications.
     void inspectorFrontendLoaded();
     void inspectorFrontendWillClose();
+    void effectiveAppearanceDidChange(Inspector::ExtensionAppearance);
 
 private:
     explicit WebInspectorUIExtensionControllerProxy(WebPageProxy& inspectorPage);

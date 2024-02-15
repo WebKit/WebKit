@@ -149,6 +149,7 @@ private:
     void dispatchDevToolsExtensionPanelShownEvent(Inspector::ExtensionTabID, WebCore::FrameIdentifier);
     void dispatchDevToolsExtensionPanelHiddenEvent(Inspector::ExtensionTabID);
     void dispatchDevToolsNetworkNavigatedEvent(const URL&);
+    void dispatchDevToolsPanelsThemeChangedEvent(Inspector::ExtensionAppearance);
 #endif
 
     // Extension

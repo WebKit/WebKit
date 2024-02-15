@@ -45,6 +45,7 @@ messages -> WebExtensionContextProxy {
     DispatchDevToolsExtensionPanelShownEvent(Inspector::ExtensionTabID identifier, WebCore::FrameIdentifier frameIdentifier)
     DispatchDevToolsExtensionPanelHiddenEvent(Inspector::ExtensionTabID identifier)
     DispatchDevToolsNetworkNavigatedEvent(URL url)
+    DispatchDevToolsPanelsThemeChangedEvent(Inspector::ExtensionAppearance appearance)
 #endif
 
     // Extension

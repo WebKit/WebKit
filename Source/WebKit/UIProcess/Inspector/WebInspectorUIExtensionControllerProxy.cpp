@@ -309,6 +309,17 @@ void WebInspectorUIExtensionControllerProxy::inspectedPageDidNavigate(const URL&
     }
 }
 
+void WebInspectorUIExtensionControllerProxy::effectiveAppearanceDidChange(Inspector::ExtensionAppearance appearance)
+{
+    for (auto& extension : copyToVector(m_extensionAPIObjectMap.values())) {
+        auto extensionClient = extension->client();
+        if (!extensionClient)
+            continue;
+
+        extensionClient->effectiveAppearanceDidChange(appearance);
+    }
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(INSPECTOR_EXTENSIONS)

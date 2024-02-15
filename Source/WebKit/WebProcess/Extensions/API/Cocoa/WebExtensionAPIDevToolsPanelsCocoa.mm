@@ -37,6 +37,7 @@
 #import "JSWebExtensionWrapper.h"
 #import "MessageSenderInlines.h"
 #import "WebExtensionAPIEvent.h"
+#import "WebExtensionAPINamespace.h"
 #import "WebExtensionContextMessages.h"
 #import "WebProcess.h"
 
@@ -71,9 +72,13 @@ NSString *WebExtensionAPIDevToolsPanels::themeName()
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/devtools/panels/themeName
 
-    // FIXME: <https://webkit.org/b/246485> Implement.
+    switch (m_theme) {
+    case Inspector::ExtensionAppearance::Light:
+        return @"light";
 
-    return nil;
+    case Inspector::ExtensionAppearance::Dark:
+        return @"dark";
+    }
 }
 
 WebExtensionAPIEvent& WebExtensionAPIDevToolsPanels::onThemeChanged()
@@ -84,6 +89,17 @@ WebExtensionAPIEvent& WebExtensionAPIDevToolsPanels::onThemeChanged()
         m_onThemeChanged = WebExtensionAPIEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::DevToolsPanelsOnThemeChanged);
 
     return *m_onThemeChanged;
+}
+
+void WebExtensionContextProxy::dispatchDevToolsPanelsThemeChangedEvent(Inspector::ExtensionAppearance appearance)
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/devtools/panels/onThemeChanged
+
+    enumerateNamespaceObjects([&](auto& namespaceObject) {
+        auto& panels = namespaceObject.devtools().panels();
+        panels.setTheme(appearance);
+        panels.onThemeChanged().invokeListenersWithArgument(panels.themeName());
+    });
 }
 
 } // namespace WebKit

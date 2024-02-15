@@ -406,6 +406,7 @@ def types_that_cannot_be_forward_declared():
         'IPC::FontReference',
         'IPC::Semaphore',
         'IPC::Signal',
+        'Inspector::ExtensionAppearance',
         'Inspector::ExtensionTabID',
         'MachSendRight',
         'MediaTime',
@@ -741,6 +742,7 @@ def headers_for_type(type):
     special_cases = {
         'CVPixelBufferRef': ['<WebCore/CVUtilities.h>'],
         'GCGLint': ['<WebCore/GraphicsTypesGL.h>'],
+        'Inspector::ExtensionAppearance': ['"InspectorExtensionTypes.h"'],
         'Inspector::ExtensionError': ['"InspectorExtensionTypes.h"'],
         'Inspector::ExtensionTabID': ['"InspectorExtensionTypes.h"'],
         'Inspector::FrontendChannel::ConnectionType': ['<JavaScriptCore/InspectorFrontendChannel.h>'],
