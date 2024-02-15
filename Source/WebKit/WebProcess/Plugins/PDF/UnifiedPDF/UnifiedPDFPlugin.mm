@@ -368,6 +368,7 @@ void UnifiedPDFPlugin::updatePageBackgroundLayers()
 
         pageContainerLayer->setPosition(destinationRect.location());
         pageContainerLayer->setSize(destinationRect.size());
+        pageContainerLayer->setOpacity(shouldDisplayPage(i) ? 1 : 0);
 
         auto pageContentsLayer = pageContainerLayer->children()[0];
         pageContentsLayer->setSize(destinationRect.size());
@@ -444,6 +445,7 @@ void UnifiedPDFPlugin::updateLayerHierarchy()
     m_contentsLayer->setNeedsDisplay();
 
     updatePageBackgroundLayers();
+    updateSnapOffsets();
 
     didChangeSettings();
     didChangeIsInWindow();
@@ -618,10 +620,16 @@ void UnifiedPDFPlugin::paintPDFContent(GraphicsContext& context, const FloatRect
             if (!page)
                 continue;
 
+            if (!shouldDisplayPage(pageInfo.pageIndex))
+                continue;
+
             auto destinationRect = pageInfo.pageBounds;
 
             auto pageStateSaver = GraphicsContextStateSaver(context);
             context.clip(destinationRect);
+
+            if (!paintedPageContent)
+                context.fillRect(destinationRect, Color::white);
 
             // Translate the context to the bottom of pageBounds and flip, so that PDFKit operates
             // from this page's drawing origin.
@@ -630,7 +638,6 @@ void UnifiedPDFPlugin::paintPDFContent(GraphicsContext& context, const FloatRect
 
             if (!paintedPageContent) {
                 LOG_WITH_STREAM(PDF, stream << "UnifiedPDFPlugin: painting PDF page " << pageInfo.pageIndex << " into rect " << destinationRect << " with clip " << clipRect);
-                context.fillRect(destinationRect, Color::white);
                 [page drawWithBox:kPDFDisplayBoxCropBox toContext:context.platformContext()];
             }
 
@@ -790,6 +797,7 @@ void UnifiedPDFPlugin::setPageScaleFactor(double scale, std::optional<WebCore::I
     m_pageBackgroundsContainerLayer->setTransform(transform);
 
     updatePageBackgroundLayers();
+    updateSnapOffsets();
 
     if (!origin)
         origin = IntRect({ }, size()).center();
@@ -948,6 +956,8 @@ void UnifiedPDFPlugin::didChangeScrollOffset()
     if (m_activeAnnotation)
         m_activeAnnotation->updateGeometry();
 #endif
+
+    determineCurrentlySnappedPage();
 
     scheduleRenderingUpdate();
 }
@@ -1171,6 +1181,130 @@ bool UnifiedPDFPlugin::requestStopKeyboardScrollAnimation(bool immediate)
 
     auto& scrollingCoordinator = *page->scrollingCoordinator();
     return scrollingCoordinator.requestStopKeyboardScrollAnimation(*this, immediate);
+}
+
+void UnifiedPDFPlugin::populateScrollSnapIdentifiers()
+{
+    ASSERT(m_scrollSnapIdentifiers.isEmpty());
+
+    // Create fake ElementIdentifiers for each page.
+    // FIXME: Ideally we would not use DOM Element identifiers here, but scroll
+    // snap code wants them (but never uses them to look the element back up).
+    // We should consider making it generic.
+    for (PDFDocumentLayout::PageIndex i = 0; i < m_documentLayout.pageCount(); ++i)
+        m_scrollSnapIdentifiers.append(ElementIdentifier::generate());
+}
+
+PDFDocumentLayout::PageIndex UnifiedPDFPlugin::pageForScrollSnapIdentifier(ElementIdentifier scrollSnapIdentifier) const
+{
+    auto index = m_scrollSnapIdentifiers.find(scrollSnapIdentifier);
+    RELEASE_ASSERT(index != notFound);
+    return index;
+}
+
+bool UnifiedPDFPlugin::shouldUseScrollSnapping() const
+{
+    return m_documentLayout.displayMode() == PDFDocumentLayout::DisplayMode::SinglePage || m_documentLayout.displayMode() == PDFDocumentLayout::DisplayMode::TwoUp;
+}
+
+void UnifiedPDFPlugin::updateSnapOffsets()
+{
+    if (m_scrollSnapIdentifiers.isEmpty())
+        populateScrollSnapIdentifiers();
+
+    if (!shouldUseScrollSnapping()) {
+        clearSnapOffsets();
+        return;
+    }
+
+    Vector<SnapOffset<LayoutUnit>> verticalSnapOffsets;
+    Vector<LayoutRect> snapAreas;
+
+    for (PDFDocumentLayout::PageIndex i = 0; i < m_documentLayout.pageCount(); ++i) {
+        // FIXME: Factor out documentToContents from pageToContents?
+        auto destinationRect = m_documentLayout.layoutBoundsForPageAtIndex(i);
+        destinationRect.inflate(PDFDocumentLayout::pageMargin);
+        destinationRect.scale(m_documentLayout.scale() * m_scaleFactor);
+        snapAreas.append(LayoutRect { destinationRect });
+
+        bool isLargerThanViewport = destinationRect.height() > m_size.height();
+
+        verticalSnapOffsets.append(SnapOffset<LayoutUnit> {
+            LayoutUnit { destinationRect.y() },
+            ScrollSnapStop::Always,
+            isLargerThanViewport,
+            m_scrollSnapIdentifiers[i],
+            false,
+            { i },
+        });
+
+        if (isLargerThanViewport) {
+            verticalSnapOffsets.append(SnapOffset<LayoutUnit> {
+                LayoutUnit { destinationRect.maxY() - m_size.height() },
+                ScrollSnapStop::Always,
+                isLargerThanViewport,
+                m_scrollSnapIdentifiers[i],
+                false,
+                { i },
+            });
+        }
+    }
+
+    setScrollSnapOffsetInfo({
+        ScrollSnapStrictness::Mandatory,
+        { },
+        verticalSnapOffsets,
+        snapAreas,
+        m_scrollSnapIdentifiers,
+    });
+
+    determineCurrentlySnappedPage();
+}
+
+void UnifiedPDFPlugin::determineCurrentlySnappedPage()
+{
+    std::optional<PDFDocumentLayout::PageIndex> newSnappedPage;
+
+    if (shouldUseScrollSnapping() && snapOffsetsInfo() && snapOffsetsInfo()->verticalSnapOffsets.size()) {
+        std::optional<ElementIdentifier> newSnapIdentifier = snapOffsetsInfo()->verticalSnapOffsets[0].snapTargetID;
+
+        for (const auto& offsetInfo : snapOffsetsInfo()->verticalSnapOffsets) {
+            // FIXME: Can this padding be derived from something?
+            if (offsetInfo.offset > scrollPosition().y() + 10)
+                break;
+            newSnapIdentifier = offsetInfo.snapTargetID;
+        }
+
+        if (newSnapIdentifier)
+            newSnappedPage = pageForScrollSnapIdentifier(*newSnapIdentifier);
+    }
+
+    if (m_currentlySnappedPage != newSnappedPage) {
+        m_currentlySnappedPage = newSnappedPage;
+        updatePageBackgroundLayers();
+        m_contentsLayer->setNeedsDisplay();
+    }
+}
+
+bool UnifiedPDFPlugin::shouldDisplayPage(PDFDocumentLayout::PageIndex pageIndex)
+{
+    if (!shouldUseScrollSnapping())
+        return true;
+
+    if (!m_currentlySnappedPage)
+        return true;
+    auto currentlySnappedPage = *m_currentlySnappedPage;
+
+    if (pageIndex == currentlySnappedPage)
+        return true;
+
+    if (m_documentLayout.displayMode() == PDFDocumentLayout::DisplayMode::TwoUp) {
+        if (currentlySnappedPage % 2)
+            return pageIndex == currentlySnappedPage - 1;
+        return pageIndex == currentlySnappedPage + 1;
+    }
+
+    return false;
 }
 
 enum class AltKeyIsActive : bool { No, Yes };
@@ -1811,6 +1945,7 @@ void UnifiedPDFPlugin::performContextMenuAction(ContextMenuItemTag tag)
             m_documentLayout.setDisplayMode(displayModeFromContextMenuItemTag(tag));
             // FIXME: Scroll to the first page that was visible after the layout.
             updateLayout(AdjustScaleAfterLayout::Yes);
+            resnapAfterLayout();
         }
         break;
     case ContextMenuItemTag::ZoomIn:

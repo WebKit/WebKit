@@ -320,6 +320,13 @@ private:
     bool requestScrollToPosition(const WebCore::ScrollPosition&, const WebCore::ScrollPositionChangeOptions& = WebCore::ScrollPositionChangeOptions::createProgrammatic()) override;
     bool requestStartKeyboardScrollAnimation(const WebCore::KeyboardScroll& scrollData) override;
     bool requestStopKeyboardScrollAnimation(bool immediate) override;
+    void updateSnapOffsets() override;
+
+    bool shouldUseScrollSnapping() const;
+    bool shouldDisplayPage(PDFDocumentLayout::PageIndex);
+    void populateScrollSnapIdentifiers();
+    PDFDocumentLayout::PageIndex pageForScrollSnapIdentifier(ElementIdentifier) const;
+    void determineCurrentlySnappedPage();
 
     WebCore::FloatSize centeringOffset() const;
 
@@ -400,6 +407,9 @@ private:
     RefPtr<PDFPluginPasswordField> m_passwordField;
     RefPtr<PDFPluginPasswordForm> m_passwordForm;
 #endif
+
+    Vector<ElementIdentifier> m_scrollSnapIdentifiers;
+    std::optional<PDFDocumentLayout::PageIndex> m_currentlySnappedPage;
 };
 
 } // namespace WebKit
