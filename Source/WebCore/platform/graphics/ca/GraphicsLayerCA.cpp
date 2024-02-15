@@ -5041,7 +5041,13 @@ RefPtr<GraphicsLayerAsyncContentsDisplayDelegate> GraphicsLayerCA::createAsyncCo
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
 void GraphicsLayerCA::setAcceleratedEffectsAndBaseValues(AcceleratedEffects&& effects, AcceleratedEffectValues&& baseValues)
 {
+    auto hadEffectStack = !!acceleratedEffectStack();
+
     GraphicsLayer::setAcceleratedEffectsAndBaseValues(WTFMove(effects), WTFMove(baseValues));
+
+    // Nothing to do if we didn't have an accelerated stack and we still don't.
+    if (!hadEffectStack && !acceleratedEffectStack())
+        return;
 
     auto* layer = primaryLayer();
     ASSERT(layer);
