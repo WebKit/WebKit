@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "GraphicsLayer.h"
 #include "GraphicsLayerClient.h"
 #include "PageOverlay.h"
 #include <wtf/RefPtr.h>
