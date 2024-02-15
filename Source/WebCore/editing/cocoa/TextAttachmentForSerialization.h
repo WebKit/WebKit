@@ -27,7 +27,9 @@
 
 #if PLATFORM(COCOA)
 
+#include "Image.h"
 #include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -43,6 +45,26 @@ struct TextAttachmentFileWrapper {
     RetainPtr<CFDataRef> data;
     String accessibilityLabel;
 };
+
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+
+struct MultiRepresentationHEICAttachmentSingleImage {
+    RefPtr<Image> image;
+    FloatSize size;
+};
+
+struct MultiRepresentationHEICAttachmentData {
+    String identifier;
+    String description;
+    Vector<MultiRepresentationHEICAttachmentSingleImage> images;
+
+    // Not serialized.
+    // FIXME: Remove this once same-process AttributedString to NSAttributeedString conversion
+    // is removed. See https://bugs.webkit.org/show_bug.cgi?id=269384.
+    RetainPtr<CFDataRef> data;
+};
+
+#endif
 
 } // namespace WebCore
 

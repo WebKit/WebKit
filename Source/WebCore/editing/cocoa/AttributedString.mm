@@ -26,6 +26,7 @@
 #import "config.h"
 #import "AttributedString.h"
 
+#import "BitmapImage.h"
 #import "ColorCocoa.h"
 #import "Font.h"
 #import "LoaderNSURLExtras.h"
@@ -40,6 +41,10 @@
 #else
 #import <pal/ios/UIKitSoftLink.h>
 #import "UIFoundationSoftLink.h"
+#endif
+
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/AttributedStringAdditionsBefore.mm>
 #endif
 
 namespace WebCore {
@@ -158,6 +163,10 @@ inline static RetainPtr<NSParagraphStyle> reconstructStyle(const AttributedStrin
     return mutableStyle;
 }
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/AttributedStringAdditions.mm>
+#endif
+
 static RetainPtr<id> toNSObject(const AttributedString::AttributeValue& value, IdentifierToTableMap& tables, IdentifierToTableBlockMap& tableBlocks, IdentifierToListMap& lists)
 {
     return WTF::switchOn(value.value, [] (double value) -> RetainPtr<id> {
@@ -194,6 +203,10 @@ static RetainPtr<id> toNSObject(const AttributedString::AttributeValue& value, I
         if (!value.accessibilityLabel.isNull())
             ((NSTextAttachment*)textAttachment.get()).accessibilityLabel = (NSString *)value.accessibilityLabel;
         return textAttachment;
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+    }, [] (const MultiRepresentationHEICAttachmentData& value) -> RetainPtr<id> {
+        return toWebMultiRepresentationHEICAttachment(value);
+#endif
     }, [] (const RetainPtr<NSShadow>& value) -> RetainPtr<id> {
         return value;
     }, [] (const RetainPtr<NSDate>& value) -> RetainPtr<id> {
@@ -334,6 +347,12 @@ static std::optional<AttributedString::AttributeValue> extractValue(id value, Ta
     }
     if ([value isKindOfClass:PlatformNSPresentationIntent])
         return { { { RetainPtr { (NSPresentationIntent *)value } } } };
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+    if ([value isKindOfClass:PlatformWebMultiRepresentationHEICAttachment]) {
+        auto attachment = static_cast<WebMultiRepresentationHEICAttachment *>(value);
+        return { { toMultiRepresentationHEICAttachmentData(attachment) } };
+    }
+#endif
     if ([value isKindOfClass:PlatformNSTextAttachment]) {
         if ([value image] == webCoreTextAttachmentMissingPlatformImage())
             return { { TextAttachmentMissingImage() } };

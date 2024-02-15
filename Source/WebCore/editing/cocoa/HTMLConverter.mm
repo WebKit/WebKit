@@ -39,6 +39,7 @@
 #import "Document.h"
 #import "DocumentLoader.h"
 #import "Editing.h"
+#import "ElementChildIteratorInlines.h"
 #import "ElementInlines.h"
 #import "ElementRareData.h"
 #import "ElementTraversal.h"
@@ -85,6 +86,10 @@
 #import <pal/spi/ios/UIKitSPI.h>
 #endif
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/WebMultiRepresentationHEICAttachmentDeclarationsAdditions.h>
+#endif
+
 using namespace WebCore;
 using namespace HTMLNames;
 
@@ -111,6 +116,7 @@ enum {
 #else
 static RetainPtr<NSFileWrapper> fileWrapperForURL(DocumentLoader *, NSURL *);
 static RetainPtr<NSFileWrapper> fileWrapperForElement(HTMLImageElement&);
+static RetainPtr<NSTextAttachment> attachmentForElement(HTMLImageElement&);
 #endif
 
 // Additional control Unicode characters
@@ -213,7 +219,11 @@ private:
     NSDictionary* aggregatedAttributesForElementAndItsAncestors(Element&);
 
     Element* _blockLevelElementForNode(Node*);
-    
+
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+    BOOL _addMultiRepresentationHEICAttachmentForImageElement(HTMLImageElement&);
+#endif
+
     void _newParagraphForElement(Element&, NSString *tag, BOOL flag, BOOL suppressTrailingSpace);
     void _newLineForElement(Element&);
     void _newTabForElement(Element&);
@@ -1198,6 +1208,34 @@ static Class _WebMessageDocumentClass()
     return _WebMessageDocumentClass;
 }
 
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+BOOL HTMLConverter::_addMultiRepresentationHEICAttachmentForImageElement(HTMLImageElement& element)
+{
+    RefPtr image = element.image();
+    if (!image)
+        return NO;
+
+    WebMultiRepresentationHEICAttachment *attachment = image->adapter().multiRepresentationHEIC();
+    if (!attachment)
+        return NO;
+
+    NSUInteger textLength = [_attrStr length];
+
+    RetainPtr string = adoptNS([[NSString alloc] initWithFormat:@"%C", static_cast<unichar>(NSAttachmentCharacter)]);
+    NSRange rangeToReplace = NSMakeRange(textLength, 0);
+
+    [_attrStr replaceCharactersInRange:rangeToReplace withString:string.get()];
+    rangeToReplace.length = [string length];
+    if (rangeToReplace.location < _domRangeStartIndex)
+        _domRangeStartIndex += rangeToReplace.length;
+
+    [_attrStr addAttribute:NSAttachmentAttributeName value:attachment range:rangeToReplace];
+
+    _flags.isSoft = NO;
+    return YES;
+}
+#endif // ENABLE(MULTI_REPRESENTATION_HEIC)
+
 BOOL HTMLConverter::_addAttachmentForElement(Element& element, NSURL *url, BOOL needsParagraph, BOOL usePlaceholder)
 {
     BOOL retval = NO;
@@ -1738,9 +1776,13 @@ BOOL HTMLConverter::_processElement(Element& element, NSInteger depth)
         }
         retval = NO;
 #endif
-    } else if (element.hasTagName(imgTag)) {
+    } else if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(element)) {
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+        if (imageElement->isMultiRepresentationHEIC())
+            retval = !_addMultiRepresentationHEICAttachmentForImageElement(*imageElement);
+#endif
         NSString *urlString = element.imageSourceURL();
-        if (urlString && [urlString length] > 0) {
+        if (retval && urlString && [urlString length] > 0) {
             NSURL *url = element.document().completeURL(urlString);
             if (!url)
                 url = [NSURL _web_URLWithString:[urlString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] relativeToURL:_baseURL.get()];
@@ -2293,6 +2335,22 @@ static RetainPtr<NSFileWrapper> fileWrapperForElement(HTMLImageElement& element)
     return nil;
 }
 
+static RetainPtr<NSTextAttachment> attachmentForElement(HTMLImageElement& element)
+{
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+    if (element.isMultiRepresentationHEIC()) {
+        if (RefPtr image = element.image()) {
+            if (WebMultiRepresentationHEICAttachment *attachment = image->adapter().multiRepresentationHEIC())
+                return retainPtr(static_cast<NSTextAttachment *>(attachment));
+        }
+    }
+#endif
+
+    RetainPtr fileWrapper = fileWrapperForElement(element);
+    RetainPtr attachment = adoptNS([[NSTextAttachment alloc] initWithFileWrapper:fileWrapper.get()]);
+    return attachment;
+}
+
 #endif
 
 namespace WebCore {
@@ -2315,11 +2373,8 @@ AttributedString editingAttributedString(const SimpleRange& range, IncludeImages
     for (TextIterator it(range); !it.atEnd(); it.advance()) {
         auto node = it.node();
 
-        if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(node); imageElement && includeImages == IncludeImages::Yes) {
-            auto fileWrapper = fileWrapperForElement(*imageElement);
-            auto attachment = adoptNS([[NSTextAttachment alloc] initWithFileWrapper:fileWrapper.get()]);
-            [string appendAttributedString:[NSAttributedString attributedStringWithAttachment:attachment.get()]];
-        }
+        if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(node); imageElement && includeImages == IncludeImages::Yes)
+            [string appendAttributedString:[NSAttributedString attributedStringWithAttachment:attachmentForElement(*imageElement).get()]];
 
         auto currentTextLength = it.text().length();
         if (!currentTextLength)

@@ -25,8 +25,16 @@
 
 #pragma once
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/WebMultiRepresentationHEICAttachmentDeclarationsAdditions.h>
+#endif
+
 #if USE(APPKIT)
 OBJC_CLASS NSImage;
+#endif
+
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+OBJC_CLASS WebMultiRepresentationHEICAttachment;
 #endif
 
 #if USE(CG)
@@ -85,6 +93,10 @@ public:
     WEBCORE_EXPORT CFDataRef tiffRepresentation();
 #endif
 
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+    WebMultiRepresentationHEICAttachment *multiRepresentationHEIC();
+#endif
+
 #if PLATFORM(GTK)
     GRefPtr<GdkPixbuf> gdkPixbuf();
 #if USE(GTK4)
@@ -115,6 +127,9 @@ private:
 #endif
 #if USE(CG)
     mutable RetainPtr<CFDataRef> m_tiffRep; // Cached TIFF rep for all the frames. Only built lazily if someone queries for one.
+#endif
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+    mutable RetainPtr<WebMultiRepresentationHEICAttachment> m_multiRepHEIC;
 #endif
 };
 

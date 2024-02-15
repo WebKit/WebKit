@@ -142,6 +142,10 @@ public:
     WEBCORE_EXPORT bool isSystemPreviewImage() const;
 #endif
 
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+    bool isMultiRepresentationHEIC() const;
+#endif
+
     void loadDeferredImage();
 
     AtomString srcsetForBindings() const;
@@ -180,6 +184,8 @@ public:
     bool originClean(const SecurityOrigin&) const;
 
     void collectExtraStyleForPresentationalHints(MutableStyleProperties&);
+
+    Image* image() const;
 
 protected:
     HTMLImageElement(const QualifiedName&, Document&, HTMLFormElement* = nullptr);
@@ -272,8 +278,6 @@ private:
     WeakPtr<HTMLSourceElement, WeakPtrImplWithEventTargetData> m_sourceElement;
 
     Vector<MQ::MediaQueryResult> m_dynamicMediaQueryResults;
-
-    Image* image() const;
 
     friend class HTMLPictureElement;
 };

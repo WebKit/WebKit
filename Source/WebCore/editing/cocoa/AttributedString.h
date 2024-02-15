@@ -125,6 +125,9 @@ struct WEBCORE_EXPORT AttributedString {
             RetainPtr<NSDate>,
             ColorFromCGColor,
             ColorFromPlatformColor,
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+            MultiRepresentationHEICAttachmentData,
+#endif
             TextAttachmentFileWrapper,
             TextAttachmentMissingImage
         > value;

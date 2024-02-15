@@ -33,9 +33,14 @@
 #import <wtf/text/WTFString.h>
 
 #if PLATFORM(IOS_FAMILY)
+#import "UIFoundationSoftLink.h"
 #import <CoreGraphics/CoreGraphics.h>
 #import <ImageIO/ImageIO.h>
 #import <MobileCoreServices/MobileCoreServices.h>
+#endif
+
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/WebMultiRepresentationHEICAttachmentAdditions.h>
 #endif
 
 @interface WebCoreBundleFinder : NSObject
@@ -88,12 +93,34 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return data;
 }
 
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+WebMultiRepresentationHEICAttachment *ImageAdapter::multiRepresentationHEIC()
+{
+    if (m_multiRepHEIC)
+        return m_multiRepHEIC.get();
+
+    auto buffer = image().data();
+    if (!buffer)
+        return nullptr;
+
+    Vector<uint8_t> data = buffer->copyData();
+
+    RetainPtr nsData = adoptNS([[NSData alloc] initWithBytes:data.data() length:data.size()]);
+    m_multiRepHEIC = adoptNS([[PlatformWebMultiRepresentationHEICAttachment alloc] initWithData:nsData.get()]);
+
+    return m_multiRepHEIC.get();
+}
+#endif
+
 void ImageAdapter::invalidate()
 {
 #if USE(APPKIT)
     m_nsImage = nullptr;
 #endif
     m_tiffRep = nullptr;
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+    m_multiRepHEIC = nullptr;
+#endif
 }
 
 CFDataRef ImageAdapter::tiffRepresentation()

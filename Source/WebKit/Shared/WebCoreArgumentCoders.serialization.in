@@ -7495,6 +7495,7 @@ enum class WebCore::ContextMenuItemType : uint8_t {
 };
 
 #if PLATFORM(COCOA)
+
 header: <WebCore/TextAttachmentForSerialization.h>
 [CustomHeader] struct WebCore::TextAttachmentMissingImage {
 }
@@ -7507,6 +7508,23 @@ header: <WebCore/TextAttachmentForSerialization.h>
     RetainPtr<CFDataRef> data;
     String accessibilityLabel;
 }
+
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+
+[CustomHeader] struct WebCore::MultiRepresentationHEICAttachmentSingleImage {
+    RefPtr<WebCore::Image> image;
+    WebCore::FloatSize size;
+}
+
+[CustomHeader] struct WebCore::MultiRepresentationHEICAttachmentData {
+    String identifier;
+    String description;
+    Vector<WebCore::MultiRepresentationHEICAttachmentSingleImage> images;
+    [NotSerialized] RetainPtr<CFDataRef> data;
+}
+
+#endif
+
 #endif
 
 [Nested] enum class WebCore::PopupMenuStyle::Size : uint8_t {
