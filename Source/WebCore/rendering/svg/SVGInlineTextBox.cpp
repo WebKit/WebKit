@@ -2,7 +2,8 @@
  * Copyright (C) 2007 Rob Buis <buis@kde.org>
  * Copyright (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Google Inc. All rights reserved.
  * Copyright (C) 2023, 2024 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
@@ -531,17 +532,27 @@ void SVGInlineTextBox::paintDecoration(GraphicsContext& context, OptionSet<TextD
     if (decorationStyle.visibility() == Visibility::Hidden)
         return;
 
-    bool hasDecorationFill = decorationStyle.svgStyle().hasFill();
-    bool hasVisibleDecorationStroke = decorationStyle.hasVisibleStroke();
+    const SVGRenderStyle& svgDecorationStyle = decorationStyle.svgStyle();
 
-    if (hasDecorationFill) {
-        setPaintingResourceMode(RenderSVGResourceMode::ApplyToFill);
-        paintDecorationWithStyle(context, decoration, fragment, decorationRenderer);
-    }
-
-    if (hasVisibleDecorationStroke) {
-        setPaintingResourceMode(RenderSVGResourceMode::ApplyToStroke);
-        paintDecorationWithStyle(context, decoration, fragment, decorationRenderer);
+    for (auto type : RenderStyle::paintTypesForPaintOrder(renderer().style().paintOrder())) {
+        switch (type) {
+        case PaintType::Fill:
+            if (svgDecorationStyle.hasFill()) {
+                setPaintingResourceMode(RenderSVGResourceMode::ApplyToFill);
+                paintDecorationWithStyle(context, decoration, fragment, decorationRenderer);
+            }
+            break;
+        case PaintType::Stroke:
+            if (decorationStyle.hasVisibleStroke()) {
+                setPaintingResourceMode(RenderSVGResourceMode::ApplyToStroke);
+                paintDecorationWithStyle(context, decoration, fragment, decorationRenderer);
+            }
+            break;
+        case PaintType::Markers:
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+        }
     }
 }
 
