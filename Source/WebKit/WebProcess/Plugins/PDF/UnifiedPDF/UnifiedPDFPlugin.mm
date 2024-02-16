@@ -2672,11 +2672,8 @@ void UnifiedPDFPlugin::resetZoom()
 CGRect UnifiedPDFPlugin::pluginBoundsForAnnotation(RetainPtr<PDFAnnotation>& annotation) const
 {
     auto pageSpaceBounds = IntRect([annotation bounds]);
-    if (auto pageIndex = m_documentLayout.indexForPage([annotation page])) {
-        auto documentSpacePoint = convertFromPageToDocument({ pageSpaceBounds.x(), pageSpaceBounds.y() }, pageIndex.value());
-        pageSpaceBounds.scale(m_documentLayout.scale() * m_scaleFactor);
-        return { convertFromDocumentToPlugin(documentSpacePoint), pageSpaceBounds.size() };
-    }
+    if (auto pageIndex = m_documentLayout.indexForPage([annotation page]))
+        return convertFromDocumentToPlugin(convertFromPageToDocument(pageSpaceBounds, pageIndex.value()));
     ASSERT_NOT_REACHED();
     return pageSpaceBounds;
 }
