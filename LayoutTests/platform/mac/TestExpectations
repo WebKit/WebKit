@@ -2083,8 +2083,6 @@ webkit.org/b/223472 [ Release arm64 ] imported/w3c/web-platform-tests/resource-t
 
 webkit.org/b/227753 [ Debug ] fast/dom/Window/post-message-large-array-buffer-should-not-crash.html [ Pass Failure ]
 
-webkit.org/b/207125 transitions/start-transform-transition.html [ Pass Failure ]
-
 webkit.org/b/221017 media/modern-media-controls/media-controller/media-controller-click-on-video-background-should-pause-fullscreen.html [ Timeout Pass ]
 
 webkit.org/b/226600 imported/w3c/web-platform-tests/navigation-timing/test_navigate_within_document.html [ Pass Failure ]
