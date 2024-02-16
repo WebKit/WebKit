@@ -246,7 +246,7 @@ void WebProcessProxy::unblockAccessibilityServerIfNeeded()
     m_hasSentMessageToUnblockAccessibilityServer = true;
 }
 
-#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+#if PLATFORM(MAC)
 void WebProcessProxy::isAXAuthenticated(CoreIPCAuditToken&& auditToken, CompletionHandler<void(bool)>&& completionHandler)
 {
     auto authenticated = TCCAccessCheckAuditToken(get_TCC_kTCCServiceAccessibility(), auditToken.auditToken(), nullptr);
