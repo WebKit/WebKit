@@ -139,12 +139,11 @@ if (USE_CAIRO)
 
         UIProcess/Automation/cairo/WebAutomationSessionCairo.cpp
 
-        UIProcess/cairo/BackingStore.cpp
+        UIProcess/cairo/BackingStoreCairo.cpp
     )
 
     list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
         "${WEBKIT_DIR}/UIProcess/API/C/cairo"
-        "${WEBKIT_DIR}/UIProcess/cairo"
     )
 
     list(APPEND WebKit_LIBRARIES

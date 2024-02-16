@@ -153,12 +153,9 @@ if (USE_CAIRO)
         Shared/API/c/cairo/WKImageCairo.cpp
 
         UIProcess/Automation/cairo/WebAutomationSessionCairo.cpp
-
-        UIProcess/cairo/BackingStore.cpp
     )
     list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
         "${WEBKIT_DIR}/UIProcess/API/C/cairo"
-        "${WEBKIT_DIR}/UIProcess/cairo"
     )
     list(APPEND WebKit_PUBLIC_FRAMEWORK_HEADERS
         Shared/API/c/cairo/WKImageCairo.h

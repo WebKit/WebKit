@@ -68,7 +68,7 @@ BackingStore::~BackingStore()
 {
 }
 
-void BackingStore::paint(cairo_t* cr, const IntRect& rect)
+void BackingStore::paint(PlatformPaintContextPtr cr, const IntRect& rect)
 {
     cairo_save(cr);
     cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);

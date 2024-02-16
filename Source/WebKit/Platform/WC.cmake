@@ -36,6 +36,12 @@ list(APPEND WebKit_SERIALIZATION_IN_FILES
     WebProcess/WebPage/wc/WCUpdateInfo.serialization.in
 )
 
+if (USE_CAIRO)
+    list(APPEND WebKit_SOURCES
+        UIProcess/cairo/BackingStoreCairo.cpp
+    )
+endif ()
+
 if (USE_GRAPHICS_LAYER_TEXTURE_MAPPER)
     list(APPEND WebKit_SOURCES
         WebProcess/WebPage/CoordinatedGraphics/LayerTreeHostTextureMapper.cpp

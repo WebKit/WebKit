@@ -25,10 +25,10 @@
 
 #pragma once
 
-#if USE(CAIRO)
+#if USE(GRAPHICS_LAYER_WC) || (USE(CAIRO) && !PLATFORM(WPE))
 
 #include <WebCore/IntSize.h>
-#include <WebCore/RefPtrCairo.h>
+#include <WebCore/PlatformImage.h>
 #include <pal/HysteresisActivity.h>
 #include <wtf/Noncopyable.h>
 
@@ -38,6 +38,10 @@ class IntRect;
 
 namespace WebKit {
 struct UpdateInfo;
+
+#if USE(CAIRO)
+using PlatformPaintContextPtr = cairo_t*;
+#endif
 
 class BackingStore {
     WTF_MAKE_FAST_ALLOCATED;
@@ -49,7 +53,7 @@ public:
     const WebCore::IntSize& size() const { return m_size; }
     float deviceScaleFactor() const { return m_deviceScaleFactor; }
 
-    void paint(cairo_t*, const WebCore::IntRect&);
+    void paint(PlatformPaintContextPtr, const WebCore::IntRect&);
     void incorporateUpdate(UpdateInfo&&);
 
 private:
@@ -57,11 +61,11 @@ private:
 
     WebCore::IntSize m_size;
     float m_deviceScaleFactor { 1 };
-    RefPtr<cairo_surface_t> m_surface;
-    RefPtr<cairo_surface_t> m_scrollSurface;
+    WebCore::PlatformImagePtr m_surface;
+    WebCore::PlatformImagePtr m_scrollSurface;
     PAL::HysteresisActivity m_scrolledHysteresis;
 };
 
 } // namespace WebKit
 
-#endif // USE(CAIRO)
+#endif // USE(GRAPHICS_LAYER_WC) || (USE(CAIRO) && !PLATFORM(WPE))

@@ -45,7 +45,7 @@ DrawingAreaProxyWC::DrawingAreaProxyWC(WebPageProxy& webPageProxy, WebProcessPro
 {
 }
 
-void DrawingAreaProxyWC::paint(cairo_t* context, const WebCore::IntRect& rect, WebCore::Region& unpaintedRegion)
+void DrawingAreaProxyWC::paint(PlatformPaintContextPtr context, const WebCore::IntRect& rect, WebCore::Region& unpaintedRegion)
 {
     unpaintedRegion = rect;
 
