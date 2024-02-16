@@ -4068,9 +4068,18 @@ bool RenderLayerBacking::updateAcceleratedEffectsAndBaseValues()
 
     AcceleratedEffects acceleratedEffects;
     if (auto* effectStack = target->keyframeEffectStack()) {
+        auto animatesWidth = effectStack->containsProperty(CSSPropertyWidth);
+        auto animatesHeight = effectStack->containsProperty(CSSPropertyHeight);
         for (const auto& effect : effectStack->sortedEffects()) {
             if (!effect || !effect->canBeAccelerated())
                 continue;
+            if (animatesWidth || animatesHeight) {
+                auto& blendingKeyframes = effect->blendingKeyframes();
+                if (blendingKeyframes.hasWidthDependentTransform() && animatesWidth)
+                    continue;
+                if (blendingKeyframes.hasHeightDependentTransform() && animatesHeight)
+                    continue;
+            }
             auto acceleratedEffect = AcceleratedEffect::create(*effect, borderBoxRect, baseValues);
             if (!acceleratedEffect)
                 continue;
