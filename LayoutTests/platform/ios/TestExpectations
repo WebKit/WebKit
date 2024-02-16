@@ -4696,3 +4696,9 @@ webkit.org/b/268929 imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-w
 webkit.org/b/268929 imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-worker-aborted.html?aborted%20immediately%20after%20send() [ Skip ]
 webkit.org/b/268929 imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-worker-aborted.html?call%20abort()%20after%20TIME_NORMAL_LOAD [ Skip ]
 webkit.org/b/268929 imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-worker-aborted.html?only%20open()ed,%20not%20aborted [ Skip ]
+
+# web-platform-tests/svg/painting/reftests failures
+imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-002.svg [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-021.svg [ Failure ]
+imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-022.svg [ Failure ]
+imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-023.svg [ Failure ]

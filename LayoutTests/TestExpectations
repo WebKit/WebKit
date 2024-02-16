@@ -7455,3 +7455,17 @@ webkit.org/b/267951 imported/w3c/web-platform-tests/html/dom/elements/global-att
 webkit.org/b/267951 imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir-shadow-39.html [ ImageOnlyFailure ]
 webkit.org/b/267951 imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir-shadow-41.html [ ImageOnlyFailure ]
 webkit.org/b/267951 imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-N-EN.html [ ImageOnlyFailure ]
+
+# web-platform-tests/svg/painting/reftests failures
+imported/w3c/web-platform-tests/svg/painting/reftests/fallback-001.svg [ Failure ]
+imported/w3c/web-platform-tests/svg/painting/reftests/marker-implicit-subpaths.html [ Failure ]
+imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-003.svg [ Failure ]
+imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-011.svg [ Failure ]
+imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-012.svg [ Failure ]
+imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-013.svg [ Failure ]
+imported/w3c/web-platform-tests/svg/painting/reftests/marker-units-strokewidth-non-scaling-stroke.svg [ Failure ]
+imported/w3c/web-platform-tests/svg/painting/reftests/markers-orient-002.svg [ Failure ]
+imported/w3c/web-platform-tests/svg/painting/reftests/paint-context-001.svg [ Failure ]
+imported/w3c/web-platform-tests/svg/painting/reftests/paint-context-002.svg [ Failure ]
+imported/w3c/web-platform-tests/svg/painting/reftests/paintorder-text-decorations.svg [ Failure ]
+imported/w3c/web-platform-tests/svg/text/reftests/transform-dynamic-change.html [ Failure ]

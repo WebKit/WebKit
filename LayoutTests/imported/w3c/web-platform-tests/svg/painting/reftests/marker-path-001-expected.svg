@@ -8,10 +8,6 @@
     <html:link rel="author"
           title="Tavmjong Bah"
           href="http://tavmjong.free.fr"/>
-    <html:link rel="help"
-          href="https://www.w3.org/TR/SVG2/painting.html#Markers"/>
-    <html:link rel="match"  href="marker-path-001-ref.svg" />
-    <html:meta name="fuzzy" content="0-8;0-8"/>
   </g>
 
   <defs>
@@ -45,9 +41,13 @@
             fill="blue">
       <path d="M 0 0 L 10 5 L 0 10 z"/>
     </marker>
+
+    <path id="PStart" transform="matrix(2,0,0,2,0,-10)" d="M 0 0 L 10 5 L 0 10 z" fill="green"/>
+    <path id="PMid"   transform="matrix(2,0,0,2,0,-10)" d="M 0 0 L 10 5 L 0 10 z" fill="orange"/>
+    <path id="PEnd"   transform="matrix(2,0,0,2,0,-10)" d="M 0 0 L 10 5 L 0 10 z" fill="blue"/>
   </defs>
 
-  <g id="test-body-content" style="fill:none;stroke:black;stroke-width:2;marker-start:url(#Start);marker-mid:url(#Mid);marker-end:url(#End)">
+  <g id="test-body-reference" style="fill:none;stroke:black;stroke-width:2">
     <path d="m 50,120   50,0    50,0     50,0"/>
     <path d="m 50,140   50,20   50,-20   50,20"/>
 
@@ -63,6 +63,32 @@
     <path d="M 290,220 L 340,240 L 390,220 L 440,240"/>
 
     <path d="M 290,280 H 340 V 330 H 390"/>
-</g>
+
+    <g id="ref" style="stroke:none">
+      <g id="linear">
+        <use xlink:href="#PStart" transform="translate(50,120)"/>
+        <use xlink:href="#PMid"   transform="translate(100,120)"/>
+        <use xlink:href="#PMid"   transform="translate(150,120)"/>
+        <use xlink:href="#PEnd"   transform="translate(200,120)"/>
+      </g>
+      <g id="zigzag">
+        <path d="m 50,140 50,20"        style="marker-start:url(#Start)"/>
+        <path d="m 50,160 50,0 50,0"    style="marker-mid:url(#Mid)"/>
+        <path d="m 100,140 50,0 50,0"   style="marker-mid:url(#Mid)"/>
+        <path d="m 150,140 50,20"       style="marker-end:url(#End)"/>
+      </g>
+      <g id="step">
+        <path d="m 50,280 50,0"         style="marker-start:url(#Start)"/>
+        <path d="m 50,230 50,50 50,50"  style="marker-mid:url(#Mid)"/>
+        <path d="m 50,280 50,50 50,50"  style="marker-mid:url(#Mid)"/>
+        <path d="m 100,330 50,0"        style="marker-end:url(#End)"/>
+      </g>
+
+      <use xlink:href="#linear"  transform="translate(0,80)"/>
+      <use xlink:href="#zigzag"  transform="translate(0,80)"/>
+    </g>
+
+    <use xlink:href="#ref" transform="translate(240,0)"/>
+  </g>
 
 </svg>
