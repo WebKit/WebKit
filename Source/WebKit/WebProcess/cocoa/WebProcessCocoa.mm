@@ -1244,9 +1244,11 @@ void WebProcess::accessibilityPreferencesDidChange(const AccessibilityPreference
     FontCache::invalidateAllFontCaches();
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     m_imageAnimationEnabled = preferences.imageAnimationEnabled;
-    for (auto& page : m_pageMap.values())
-        page->updateImageAnimationEnabled();
 #endif
+#if ENABLE(ACCESSIBILITY_NON_BLINKING_CURSOR)
+    m_prefersNonBlinkingCursor = preferences.prefersNonBlinkingCursor;
+#endif
+    updatePageAccessibilitySettings();
 }
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
@@ -1261,6 +1263,21 @@ void WebProcess::setMediaAccessibilityPreferences(WebCore::CaptionUserPreference
     }
 }
 #endif
+
+void WebProcess::updatePageAccessibilitySettings()
+{
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL) || ENABLE(ACCESSIBILITY_NON_BLINKING_CURSOR)
+    for (auto& page : m_pageMap.values()) {
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+        page->updateImageAnimationEnabled();
+#endif
+
+#if ENABLE(ACCESSIBILITY_NON_BLINKING_CURSOR)
+        page->updatePrefersNonBlinkingCursor();
+#endif
+    }
+#endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL) || ENABLE(ACCESSIBILITY_NON_BLINKING_CURSOR)
+}
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
 void WebProcess::colorPreferencesDidChange()

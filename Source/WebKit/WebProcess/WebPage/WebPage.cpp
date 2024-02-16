@@ -1027,6 +1027,9 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     updateImageAnimationEnabled();
 #endif
+#if ENABLE(ACCESSIBILITY_NON_BLINKING_CURSOR)
+    updatePrefersNonBlinkingCursor();
+#endif
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     setLinkDecorationFilteringData(WTFMove(parameters.linkDecorationFilteringData));
     setAllowedQueryParametersForAdvancedPrivacyProtections(WTFMove(parameters.allowedQueryParametersForAdvancedPrivacyProtections));
@@ -8967,6 +8970,18 @@ void WebPage::playAllAnimations(CompletionHandler<void()>&& completionHandler)
     completionHandler();
 }
 #endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+
+#if ENABLE(ACCESSIBILITY_NON_BLINKING_CURSOR)
+void WebPage::updatePrefersNonBlinkingCursor()
+{
+    if (RefPtr page = corePage()) {
+        page->setPrefersNonBlinkingCursor(WebProcess::singleton().prefersNonBlinkingCursor());
+        page->forEachDocument([&](auto& document) {
+            document.selection().setPrefersNonBlinkingCursor(WebProcess::singleton().prefersNonBlinkingCursor());
+        });
+    }
+}
+#endif
 
 bool WebPage::isUsingUISideCompositing() const
 {

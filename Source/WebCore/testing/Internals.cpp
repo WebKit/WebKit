@@ -1134,6 +1134,19 @@ void Internals::pauseImageAnimation(HTMLImageElement& element)
 }
 #endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 
+#if ENABLE(ACCESSIBILITY_NON_BLINKING_CURSOR)
+void Internals::setPrefersNonBlinkingCursor(bool enabled)
+{
+    auto* document = contextDocument();
+    if (RefPtr page = document ? document->page() : nullptr) {
+        page->setPrefersNonBlinkingCursor(enabled);
+        page->forEachDocument([&](auto& document) {
+            document.selection().setPrefersNonBlinkingCursor(enabled);
+        });
+    }
+}
+#endif
+
 unsigned Internals::imagePendingDecodePromisesCountForTesting(HTMLImageElement& element)
 {
     return element.pendingDecodePromisesCountForTesting();
@@ -1876,11 +1889,19 @@ ExceptionOr<Ref<DOMRect>> Internals::absoluteCaretBounds()
     
 ExceptionOr<bool> Internals::isCaretBlinkingSuspended()
 {
-    Document* document = contextDocument();
-    if (!document || !document->frame())
+    auto* document = contextDocument();
+    if (!document)
         return Exception { ExceptionCode::InvalidAccessError };
     
-    return document->frame()->selection().isCaretBlinkingSuspended();
+    return isCaretBlinkingSuspended(*document);
+}
+
+ExceptionOr<bool> Internals::isCaretBlinkingSuspended(Document& document)
+{
+    if (!document.frame())
+        return Exception { ExceptionCode::InvalidAccessError };
+
+    return document.frame()->selection().isCaretBlinkingSuspended();
 }
 
 Ref<DOMRect> Internals::boundingBox(Element& element)

@@ -1973,6 +1973,13 @@ void FrameSelection::caretAnimationDidUpdate(CaretAnimator&)
     invalidateCaretRect();
 }
 
+#if ENABLE(ACCESSIBILITY_NON_BLINKING_CURSOR)
+void FrameSelection::setPrefersNonBlinkingCursor(bool enabled)
+{
+    caretAnimator().setPrefersNonBlinkingCursor(enabled);
+}
+#endif
+
 #if PLATFORM(MAC)
 void FrameSelection::caretAnimatorInvalidated(CaretAnimatorType caretType)
 {

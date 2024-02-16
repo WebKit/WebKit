@@ -2239,6 +2239,13 @@ void Page::setSystemAllowsAnimationControls(bool isAllowed)
 }
 #endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 
+#if ENABLE(ACCESSIBILITY_NON_BLINKING_CURSOR)
+void Page::setPrefersNonBlinkingCursor(bool enabled)
+{
+    m_prefersNonBlinkingCursor = enabled;
+}
+#endif
+
 void Page::suspendScriptedAnimations()
 {
     m_scriptedAnimationsSuspended = true;

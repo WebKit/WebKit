@@ -504,7 +504,13 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     DOMRect absoluteLineRectFromPoint(long x, long y);
 
     DOMRect absoluteCaretBounds();
+
+    // isCaretBlinkingSuspended() returns whether the frame selection of the context document
+    // is suspended, while the parameterized method returns the state for a particular document
+    // (such as an iFrame, for example).
     boolean isCaretBlinkingSuspended();
+    boolean isCaretBlinkingSuspended(Document document);
+    [Conditional=ACCESSIBILITY_NON_BLINKING_CURSOR] undefined setPrefersNonBlinkingCursor(boolean enabled);
 
     DOMRect boundingBox(Element element);
 

@@ -714,6 +714,11 @@ public:
     bool imageAnimationEnabled() const { return m_imageAnimationEnabled; }
     bool systemAllowsAnimationControls() const { return m_systemAllowsAnimationControls; }
 
+#if ENABLE(ACCESSIBILITY_NON_BLINKING_CURSOR)
+    WEBCORE_EXPORT void setPrefersNonBlinkingCursor(bool);
+    bool prefersNonBlinkingCursor() const { return m_prefersNonBlinkingCursor; };
+#endif
+
     void userStyleSheetLocationChanged();
     const String& userStyleSheet() const;
 
@@ -1257,6 +1262,9 @@ private:
     bool m_systemAllowsAnimationControls { false };
     // Elements containing animations that are individually playing (potentially overriding the page-wide m_imageAnimationEnabled state).
     WeakHashSet<HTMLImageElement, WeakPtrImplWithEventTargetData> m_individuallyPlayingAnimationElements;
+#if ENABLE(ACCESSIBILITY_NON_BLINKING_CURSOR)
+    bool m_prefersNonBlinkingCursor { false };
+#endif
 
     TimerThrottlingState m_timerThrottlingState { TimerThrottlingState::Disabled };
     MonotonicTime m_timerThrottlingStateLastChangedTime;

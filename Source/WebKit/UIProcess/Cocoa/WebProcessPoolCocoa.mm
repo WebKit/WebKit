@@ -248,6 +248,9 @@ static AccessibilityPreferences accessibilityPreferences()
     if (auto* functionPointer = _AXSReduceMotionAutoplayAnimatedImagesEnabledPtr())
         preferences.imageAnimationEnabled = functionPointer();
 #endif
+#if ENABLE(ACCESSIBILITY_NON_BLINKING_CURSOR)
+    preferences.prefersNonBlinkingCursor = _AXSPrefersNonBlinkingCursorIndicator();
+#endif
     return preferences;
 }
 
@@ -865,6 +868,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     if (canLoadkAXSReduceMotionAutoplayAnimatedImagesChangedNotification())
         addCFNotificationObserver(accessibilityPreferencesChangedCallback, getkAXSReduceMotionAutoplayAnimatedImagesChangedNotification());
+#endif
+#if ENABLE(ACCESSIBILITY_NON_BLINKING_CURSOR)
+    addCFNotificationObserver(accessibilityPreferencesChangedCallback, kAXSPrefersNonBlinkingCursorIndicatorDidChangeNotification);
 #endif
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
     addCFNotificationObserver(mediaAccessibilityPreferencesChangedCallback, kMAXCaptionAppearanceSettingsChangedNotification);

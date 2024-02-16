@@ -1675,6 +1675,10 @@ public:
     void isAnyAnimationAllowedToPlayDidChange(bool /* anyAnimationCanPlay */);
 #endif
 
+#if ENABLE(ACCESSIBILITY_NON_BLINKING_CURSOR)
+    void updatePrefersNonBlinkingCursor();
+#endif
+
     bool shouldSkipDecidePolicyForResponse(const WebCore::ResourceResponse&) const;
     void setSkipDecidePolicyForResponseIfPossible(bool value) { m_skipDecidePolicyForResponseIfPossible = value; }
 

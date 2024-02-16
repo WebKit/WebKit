@@ -421,6 +421,9 @@ public:
 
     bool isLockdownModeEnabled() const { return m_isLockdownModeEnabled; }
     bool imageAnimationEnabled() const { return m_imageAnimationEnabled; }
+#if ENABLE(ACCESSIBILITY_NON_BLINKING_CURSOR)
+    bool prefersNonBlinkingCursor() const { return m_prefersNonBlinkingCursor; }
+#endif
 
     void setHadMainFrameMainResourcePrivateRelayed() { m_hadMainFrameMainResourcePrivateRelayed = true; }
     bool hadMainFrameMainResourcePrivateRelayed() const { return m_hadMainFrameMainResourcePrivateRelayed; }
@@ -629,6 +632,7 @@ private:
 #endif
 
     void accessibilityPreferencesDidChange(const AccessibilityPreferences&);
+    void updatePageAccessibilitySettings();
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
     void setMediaAccessibilityPreferences(WebCore::CaptionUserPreferences::CaptionDisplayMode, const Vector<String>&);
 #endif
@@ -844,6 +848,9 @@ private:
     bool m_imageAnimationEnabled { true };
     bool m_hasEverHadAnyWebPages { false };
     bool m_hasPendingAccessibilityUnsuspension { false };
+#if ENABLE(ACCESSIBILITY_NON_BLINKING_CURSOR)
+    bool m_prefersNonBlinkingCursor { false };
+#endif
 
     HashSet<WebCore::RegistrableDomain> m_allowedFirstPartiesForCookies;
     String m_mediaKeysStorageDirectory;

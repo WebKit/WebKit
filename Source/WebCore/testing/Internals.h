@@ -319,6 +319,11 @@ public:
 
     ExceptionOr<Ref<DOMRect>> absoluteCaretBounds();
     ExceptionOr<bool> isCaretBlinkingSuspended();
+    ExceptionOr<bool> isCaretBlinkingSuspended(Document&);
+
+#if ENABLE(ACCESSIBILITY_NON_BLINKING_CURSOR)
+    void setPrefersNonBlinkingCursor(bool);
+#endif
 
     Ref<DOMRect> boundingBox(Element&);
 

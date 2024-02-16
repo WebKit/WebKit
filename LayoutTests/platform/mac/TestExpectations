@@ -2575,5 +2575,8 @@ webkit.org/b/267352 [ Monterey ] imported/w3c/web-platform-tests/mathml/relation
 
 webkit.org/b/267612 [ Ventura+ Release x86_64 ] fast/canvas/image-buffer-backend-variants.html [ Pass Failure ]
 
+# Requires (ACCESSIBILITY_NON_BLINKING_CURSOR)
+accessibility/mac/prefers-non-blinking-cursor.html [ Skip ]
+
 # Enable after rdar://120859525 is available on bots
 http/tests/media/fairplay/fps-mse-unmuxed-mpts.html [ Skip ]

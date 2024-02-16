@@ -204,6 +204,10 @@ public:
     WEBCORE_EXPORT void setCaretBlinkingSuspended(bool);
     WEBCORE_EXPORT bool isCaretBlinkingSuspended() const;
 
+#if ENABLE(ACCESSIBILITY_NON_BLINKING_CURSOR)
+    WEBCORE_EXPORT void setPrefersNonBlinkingCursor(bool);
+#endif
+
     WEBCORE_EXPORT void setFocused(bool);
     bool isFocused() const { return m_focused; }
     WEBCORE_EXPORT bool isFocusedAndActive() const;
