@@ -4212,16 +4212,11 @@ static void blendStandardProperty(const CSSPropertyBlendingClient& client, CSSPr
 
     AnimationPropertyWrapperBase* wrapper = CSSPropertyAnimationWrapperMap::singleton().wrapperForProperty(property);
     if (wrapper) {
-        // https://drafts.csswg.org/web-animations-1/#discrete
-        // The property's values cannot be meaningfully combined, thus it is not additive and
-        // interpolation swaps from Va to Vb at 50% (p=0.5).
         auto isDiscrete = !wrapper->canInterpolate(from, to, compositeOperation);
-        if (isDiscrete && wrapper->normalizesProgressForDiscreteInterpolation()) {
-            // If we want additive, we should specify progress at 0 actually and return from.
-            progress = progress < 0.5 ? 0 : 1;
-            compositeOperation = CompositeOperation::Replace;
-        }
-        wrapper->blend(destination, from, to, { progress, isDiscrete, compositeOperation, client, property, iterationCompositeOperation, currentIteration });
+        CSSPropertyBlendingContext context { progress, isDiscrete, compositeOperation, client, property, iterationCompositeOperation, currentIteration };
+        if (wrapper->normalizesProgressForDiscreteInterpolation())
+            context.normalizeProgress();
+        wrapper->blend(destination, from, to, context);
 #if !LOG_DISABLED
         wrapper->logBlend(from, to, destination, progress);
 #endif

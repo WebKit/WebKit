@@ -37,6 +37,7 @@
 #include "FloatRect.h"
 #include "KeyframeEffect.h"
 #include "LayoutSize.h"
+#include "OffsetRotation.h"
 #include "StyleOriginatedAnimation.h"
 #include "WebAnimation.h"
 #include "WebAnimationTypes.h"
@@ -290,7 +291,7 @@ AcceleratedEffect::AcceleratedEffect(const AcceleratedEffect& source, OptionSet<
     }
 }
 
-static void blend(AcceleratedEffectProperty property, AcceleratedEffectValues& output, const AcceleratedEffectValues& from, const AcceleratedEffectValues& to, const BlendingContext& blendingContext, const FloatRect& bounds)
+static void blend(AcceleratedEffectProperty property, AcceleratedEffectValues& output, const AcceleratedEffectValues& from, const AcceleratedEffectValues& to, BlendingContext& blendingContext, const FloatRect& bounds)
 {
     switch (property) {
     case AcceleratedEffectProperty::Opacity:
@@ -312,6 +313,26 @@ static void blend(AcceleratedEffectProperty property, AcceleratedEffectValues& o
     case AcceleratedEffectProperty::Scale:
         if (auto toScale = to.scale)
             output.scale = toScale->blend(from.scale.get(), blendingContext);
+        break;
+    case AcceleratedEffectProperty::OffsetAnchor:
+        output.offsetDistance = blend(from.offsetDistance, to.offsetDistance, blendingContext);
+        break;
+    case AcceleratedEffectProperty::OffsetDistance:
+        output.offsetDistance = blend(from.offsetDistance, to.offsetDistance, blendingContext);
+        break;
+    case AcceleratedEffectProperty::OffsetPath:
+        if (auto& fromOffsetPath = from.offsetPath)
+            output.offsetPath = fromOffsetPath->blend(to.offsetPath.get(), blendingContext);
+        break;
+    case AcceleratedEffectProperty::OffsetPosition:
+        output.offsetPosition = blend(from.offsetPosition, to.offsetPosition, blendingContext);
+        break;
+    case AcceleratedEffectProperty::OffsetRotate:
+        if (!from.offsetRotate.canBlend(to.offsetRotate)) {
+            blendingContext.isDiscrete = true;
+            blendingContext.normalizeProgress();
+        }
+        output.offsetRotate = from.offsetRotate.blend(to.offsetRotate, blendingContext);
         break;
     case AcceleratedEffectProperty::Invalid:
         ASSERT_NOT_REACHED();
@@ -342,7 +363,8 @@ void AcceleratedEffect::apply(Seconds currentTime, AcceleratedEffectValues& valu
     // progress which already accounts for the transition's timing function.
     if (m_animationType == WebAnimationType::CSSTransition) {
         ASSERT(m_animatedProperties.hasExactlyOneBitSet());
-        blend(*m_animatedProperties.begin(), values, m_keyframes.first().values(), m_keyframes.last().values(), { progress, false, m_compositeOperation }, bounds);
+        BlendingContext context { progress, false, m_compositeOperation };
+        blend(*m_animatedProperties.begin(), values, m_keyframes.first().values(), m_keyframes.last().values(), context, bounds);
         return;
     }
 
@@ -362,10 +384,11 @@ void AcceleratedEffect::apply(Seconds currentTime, AcceleratedEffectValues& valu
         KeyframeInterpolation::CompositionCallback composeProperty = [&](const KeyframeInterpolation::Keyframe& keyframe, CompositeOperation compositeOperation) {
             ASSERT(is<AcceleratedEffect::Keyframe>(keyframe));
             auto& acceleratedKeyframe = downcast<AcceleratedEffect::Keyframe>(keyframe);
+            BlendingContext context { 1, false, compositeOperation };
             if (acceleratedKeyframe.offset() == startKeyframe->offset())
-                blend(animatedProperty, startKeyframeValues, propertySpecificKeyframeWithZeroOffset.values(), acceleratedKeyframe.values(), { 1, false, compositeOperation }, bounds);
+                blend(animatedProperty, startKeyframeValues, propertySpecificKeyframeWithZeroOffset.values(), acceleratedKeyframe.values(), context, bounds);
             else
-                blend(animatedProperty, endKeyframeValues, propertySpecificKeyframeWithZeroOffset.values(), acceleratedKeyframe.values(), { 1, false, compositeOperation }, bounds);
+                blend(animatedProperty, endKeyframeValues, propertySpecificKeyframeWithZeroOffset.values(), acceleratedKeyframe.values(), context, bounds);
         };
 
         KeyframeInterpolation::AccumulationCallback accumulateProperty = [&](const KeyframeInterpolation::Keyframe&) {
@@ -374,7 +397,8 @@ void AcceleratedEffect::apply(Seconds currentTime, AcceleratedEffectValues& valu
 
         KeyframeInterpolation::InterpolationCallback interpolateProperty = [&](double intervalProgress, double, IterationCompositeOperation) {
             // FIXME: handle currentIteration and iterationCompositeOperation.
-            blend(animatedProperty, values, startKeyframeValues, endKeyframeValues, { intervalProgress }, bounds);
+            BlendingContext context { intervalProgress };
+            blend(animatedProperty, values, startKeyframeValues, endKeyframeValues, context, bounds);
         };
 
         KeyframeInterpolation::RequiresBlendingForAccumulativeIterationCallback requiresBlendingForAccumulativeIterationCallback = [&]() {
@@ -470,17 +494,7 @@ void AcceleratedEffect::validateFilters(const AcceleratedEffectValues& baseValue
 
 bool AcceleratedEffect::animatesTransformRelatedProperty() const
 {
-    return m_animatedProperties.containsAny({
-        AcceleratedEffectProperty::Transform,
-        AcceleratedEffectProperty::Translate,
-        AcceleratedEffectProperty::Rotate,
-        AcceleratedEffectProperty::Scale,
-        AcceleratedEffectProperty::OffsetPath,
-        AcceleratedEffectProperty::OffsetDistance,
-        AcceleratedEffectProperty::OffsetPosition,
-        AcceleratedEffectProperty::OffsetAnchor,
-        AcceleratedEffectProperty::OffsetRotate
-    });
+    return m_animatedProperties.containsAny(transformRelatedAcceleratedProperties);
 }
 
 const KeyframeInterpolation::Keyframe& AcceleratedEffect::keyframeAtIndex(size_t index) const

@@ -30,7 +30,10 @@
 
 #include "IntSize.h"
 #include "LengthFunctions.h"
+#include "MotionPath.h"
 #include "Path.h"
+#include "RenderElementInlines.h"
+#include "RenderLayerModelObject.h"
 #include "RenderStyleInlines.h"
 #include "TransformOperationData.h"
 
@@ -39,6 +42,9 @@ namespace WebCore {
 AcceleratedEffectValues::AcceleratedEffectValues(const AcceleratedEffectValues& src)
 {
     opacity = src.opacity;
+
+    transformOperationData = src.transformOperationData;
+    transformBox = src.transformBox;
 
     auto& transformOperations = transform.operations();
     auto& srcTransformOperations = src.transform.operations();
@@ -66,6 +72,10 @@ AcceleratedEffectValues::AcceleratedEffectValues(const AcceleratedEffectValues& 
 
 AcceleratedEffectValues AcceleratedEffectValues::clone() const
 {
+    std::optional<TransformOperationData> clonedTransformOperationData;
+    if (transformOperationData)
+        clonedTransformOperationData = transformOperationData;
+
     auto clonedTransformOrigin = transformOrigin;
 
     TransformOperations clonedTransform { transform.operations().map([](const auto& operation) {
@@ -103,7 +113,9 @@ AcceleratedEffectValues AcceleratedEffectValues::clone() const
 
     return {
         opacity,
+        WTFMove(clonedTransformOperationData),
         WTFMove(clonedTransformOrigin),
+        transformBox,
         WTFMove(clonedTransform),
         WTFMove(clonedTranslate),
         WTFMove(clonedScale),
@@ -128,17 +140,22 @@ static LengthPoint nonCalculatedLengthPoint(LengthPoint lengthPoint, const IntSi
     };
 }
 
-AcceleratedEffectValues::AcceleratedEffectValues(const RenderStyle& style, const IntRect& borderBoxRect)
+AcceleratedEffectValues::AcceleratedEffectValues(const RenderStyle& style, const IntRect& borderBoxRect, const RenderLayerModelObject* renderer)
 {
     opacity = style.opacity();
 
     auto borderBoxSize = borderBoxRect.size();
+
+    if (renderer)
+        transformOperationData = TransformOperationData(renderer->transformReferenceBoxRect(style), renderer);
 
     auto& transformOperations = transform.operations();
     auto& srcTransformOperations = style.transform().operations();
     transformOperations.appendContainerWithMapping(srcTransformOperations, [&](auto& srcTransformOperation) {
         return srcTransformOperation->selfOrCopyWithResolvedCalculatedValues(borderBoxSize);
     });
+
+    transformBox = style.transformBox();
 
     if (auto* srcTranslate = style.translate())
         translate = srcTranslate->selfOrCopyWithResolvedCalculatedValues(borderBoxSize);
@@ -194,7 +211,10 @@ TransformationMatrix AcceleratedEffectValues::computedTransformationMatrix(const
         scale->apply(matrix, boundingBox.size());
 
     // 6. Translate and rotate by the transform specified by offset.
-    // FIXME: implement this step to support CSS Motion Path properties.
+    if (transformOperationData && offsetPath) {
+        auto computedTransformOrigin = boundingBox.location() + floatPointForLengthPoint(transformOrigin, boundingBox.size());
+        MotionPath::applyMotionPathTransform(matrix, *transformOperationData, computedTransformOrigin, *offsetPath, offsetAnchor, offsetDistance, offsetRotate, transformBox);
+    }
 
     // 7. Multiply by each of the transform functions in transform from left to right.
     for (auto& transformOperation : transform.operations())

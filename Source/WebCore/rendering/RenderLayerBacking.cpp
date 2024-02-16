@@ -4050,10 +4050,11 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const Animation& anim
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
 bool RenderLayerBacking::updateAcceleratedEffectsAndBaseValues()
 {
-    if (!renderer().settings().acceleratedCompositedAnimationsEnabled())
+    auto& renderer = this->renderer();
+    if (!renderer.settings().acceleratedCompositedAnimationsEnabled())
         return false;
 
-    auto target = Styleable::fromRenderer(renderer());
+    auto target = Styleable::fromRenderer(renderer);
     ASSERT(target);
 
     bool hasInterpolatingEffect = false;
@@ -4061,7 +4062,7 @@ bool RenderLayerBacking::updateAcceleratedEffectsAndBaseValues()
 
     auto baseValues = [&]() -> AcceleratedEffectValues {
         if (auto* style = target->lastStyleChangeEventStyle())
-            return { *style, borderBoxRect };
+            return { *style, borderBoxRect, &renderer };
         return { };
     }();
 

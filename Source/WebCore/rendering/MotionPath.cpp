@@ -115,43 +115,49 @@ static PathTraversalState traversalStateAtDistance(const Path& path, const Lengt
     return path.traversalStateAtLength(resolvedLength);
 }
 
-void MotionPath::applyMotionPathTransform(const RenderStyle& style, const TransformOperationData& transformData, TransformationMatrix& transform)
+void MotionPath::applyMotionPathTransform(TransformationMatrix& matrix, const TransformOperationData& transformData, const FloatPoint& transformOrigin, const PathOperation& offsetPath, const LengthPoint& offsetAnchor, const Length& offsetDistance, const OffsetRotation& offsetRotate, TransformBox transformBox)
 {
-    if (!style.offsetPath())
-        return;
-
     auto& boundingBox = transformData.boundingBox;
-    auto transformOrigin = style.computeTransformOrigin(boundingBox).xy();
     auto anchor = transformOrigin;
-    if (!style.offsetAnchor().x().isAuto())
-        anchor = floatPointForLengthPoint(style.offsetAnchor(), boundingBox.size()) + boundingBox.location();
+    if (!offsetAnchor.x().isAuto())
+        anchor = floatPointForLengthPoint(offsetAnchor, boundingBox.size()) + boundingBox.location();
 
     // Shift element to the point on path specified by offset-path and offset-distance.
-    auto path = style.offsetPath()->getPath(transformData);
+    auto path = offsetPath.getPath(transformData);
     if (!path)
         return;
-    auto traversalState = traversalStateAtDistance(*path, style.offsetDistance());
-    transform.translate(traversalState.current().x(), traversalState.current().y());
+    auto traversalState = traversalStateAtDistance(*path, offsetDistance);
+    matrix.translate(traversalState.current().x(), traversalState.current().y());
 
     auto shiftToOrigin = anchor - transformOrigin;
 
     // Adjust anchor for SVG.
-    if (transformData.isSVGRenderer && style.transformBox() != TransformBox::ViewBox)
+    if (transformData.isSVGRenderer && transformBox != TransformBox::ViewBox)
         anchor += boundingBox.location();
 
     // Shift element to the anchor specified by offset-anchor.
-    transform.translate(-anchor.x(), -anchor.y());
+    matrix.translate(-anchor.x(), -anchor.y());
 
-    transform.translate(shiftToOrigin.width(), shiftToOrigin.height());
+    matrix.translate(shiftToOrigin.width(), shiftToOrigin.height());
 
     // Apply rotation.
-    auto rotation = style.offsetRotate();
+    auto& rotation = offsetRotate;
     if (rotation.hasAuto())
-        transform.rotate(traversalState.normalAngle() + rotation.angle());
+        matrix.rotate(traversalState.normalAngle() + rotation.angle());
     else
-        transform.rotate(rotation.angle());
+        matrix.rotate(rotation.angle());
 
-    transform.translate(-shiftToOrigin.width(), -shiftToOrigin.height());
+    matrix.translate(-shiftToOrigin.width(), -shiftToOrigin.height());
+}
+
+void MotionPath::applyMotionPathTransform(const RenderStyle& style, const TransformOperationData& transformData, TransformationMatrix& matrix)
+{
+    auto* offsetPath = style.offsetPath();
+    if (!offsetPath)
+        return;
+
+    auto transformOrigin = style.computeTransformOrigin(transformData.boundingBox).xy();
+    applyMotionPathTransform(matrix, transformData, transformOrigin, *offsetPath, style.offsetAnchor(), style.offsetDistance(), style.offsetRotate(), style.transformBox());
 }
 
 bool MotionPath::needsUpdateAfterContainingBlockLayout(const PathOperation& pathOperation)

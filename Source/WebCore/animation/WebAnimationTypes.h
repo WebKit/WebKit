@@ -93,7 +93,12 @@ constexpr OptionSet<AcceleratedEffectProperty> transformRelatedAcceleratedProper
     AcceleratedEffectProperty::Transform,
     AcceleratedEffectProperty::Translate,
     AcceleratedEffectProperty::Rotate,
-    AcceleratedEffectProperty::Scale
+    AcceleratedEffectProperty::Scale,
+    AcceleratedEffectProperty::OffsetAnchor,
+    AcceleratedEffectProperty::OffsetDistance,
+    AcceleratedEffectProperty::OffsetPath,
+    AcceleratedEffectProperty::OffsetPosition,
+    AcceleratedEffectProperty::OffsetRotate
 };
 
 struct CSSPropertiesBitSet {
