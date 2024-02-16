@@ -1325,7 +1325,7 @@ TEST(WKWebExtensionAPIMenus, MacSelectionContextMenuItems)
 
         @"  browser.test.assertEq(info.menuItemId, 'selection-menu-item')",
         @"  browser.test.assertEq(info.parentMenuItemId, undefined)",
-        @"  browser.test.assertEq(info.selectionText, 'Example ')",
+        @"  browser.test.assertEq(info.selectionText, 'Example')",
         @"  browser.test.assertEq(typeof info.pageUrl, 'string')",
         @"  browser.test.assertTrue(info.pageUrl.startsWith('http://localhost:'))",
         @"  browser.test.assertEq(info.frameId, 0)",

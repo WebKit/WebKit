@@ -378,8 +378,8 @@ public:
     ExceptionOr<void> invalidateControlTints();
 
     RefPtr<Range> rangeFromLocationAndLength(Element& scope, unsigned rangeLocation, unsigned rangeLength);
-    unsigned locationFromRange(Element& scope, const Range&, const Vector<String>& behaviors = { });
-    unsigned lengthFromRange(Element& scope, const Range&, const Vector<String>& behaviors = { });
+    unsigned locationFromRange(Element& scope, const Range&);
+    unsigned lengthFromRange(Element& scope, const Range&);
     String rangeAsText(const Range&);
     String rangeAsTextUsingBackwardsTextIterator(const Range&);
     Ref<Range> subrange(Range&, unsigned rangeLocation, unsigned rangeLength);
@@ -390,7 +390,7 @@ public:
         String text;
         RefPtr<Range> range;
     };
-    Vector<TextIteratorState> statesOfTextIterator(const Range&, const Vector<String>& behaviors = { });
+    Vector<TextIteratorState> statesOfTextIterator(const Range&);
 
     ExceptionOr<void> setDelegatesScrolling(bool enabled);
 
