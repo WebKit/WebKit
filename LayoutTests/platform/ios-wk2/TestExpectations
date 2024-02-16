@@ -829,7 +829,6 @@ http/tests/cookies/double-quoted-value-with-semi-colon.html
 storage/domstorage/sessionstorage/window-open.html
 transitions/cubic-bezier-overflow-transform.html
 transitions/default-timing-function.html
-transitions/extra-transition.html
 transitions/interrupt-transform-transition.html
 
 # Crashes when running all tests, but not by itself.

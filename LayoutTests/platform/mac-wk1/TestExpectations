@@ -2538,7 +2538,6 @@ imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/b
 imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/bufferedAmount-unicode.html?wss [ Pass Failure ]
 
 #webkit.org/b/248537 Batch mark expectations for Ventura test failures
-[ Ventura+ ] transitions/extra-transition.html [ Pass Failure ]
 [ Ventura+ arm64 ] svg/transforms/transformed-text-fill-pattern.html [ ImageOnlyFailure ]
 [ Ventura+ ] media/accessiblity-describes-video.html [ Crash ]
 [ Ventura+ ] media/track/track-mode.html  [ Crash ]
