@@ -64,7 +64,7 @@ public:
 
     void enqueueMessage(Connection& connection, UniqueRef<Decoder>&& message) final
     {
-        m_queue->dispatch([connection = Ref { connection }, message = WTFMove(message), receiver = m_receiver]() mutable {
+        Ref { m_queue }->dispatch([connection = Ref { connection }, message = WTFMove(message), receiver = m_receiver]() mutable {
             connection->dispatchMessageReceiverMessage(receiver.get(), WTFMove(message));
         });
     }

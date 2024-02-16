@@ -201,7 +201,7 @@ bool putJSValueForDecodedArgumentAtIndexOrArrayBufferIfUndefined(JSC::JSGlobalOb
     if (value.isUndefined()) {
         auto arrayBuffer = JSC::ArrayBuffer::create(buffer);
         if (auto* structure = globalObject->arrayBufferStructure(arrayBuffer->sharingMode()))
-            value = JSC::JSArrayBuffer::create(globalObject->vm(), structure, WTFMove(arrayBuffer));
+            value = JSC::JSArrayBuffer::create(Ref { globalObject->vm() }, structure, WTFMove(arrayBuffer));
     }
 
     array->putDirectIndex(globalObject, index, value);

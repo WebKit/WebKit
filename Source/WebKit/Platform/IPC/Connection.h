@@ -466,6 +466,7 @@ private:
     size_t incomingMessagesDispatchingBatchSize() const;
 
     Timeout timeoutRespectingIgnoreTimeoutsForTesting(Timeout) const;
+    Ref<WorkQueue> protectedConnectionQueue() const { return m_connectionQueue; }
 
 #if PLATFORM(COCOA)
     bool sendMessage(std::unique_ptr<MachMessage>);

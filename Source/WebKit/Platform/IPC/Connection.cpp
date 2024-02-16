@@ -140,7 +140,7 @@ private:
 
         void dispatch()
         {
-            connection->dispatchMessage(WTFMove(message));
+            Ref { connection }->dispatchMessage(WTFMove(message));
         }
     };
     Deque<ConnectionAndIncomingMessage> m_messagesBeingDispatched; // Only used on the main thread.
@@ -501,7 +501,7 @@ void Connection::invalidate()
 
     cancelAsyncReplyHandlers();
 
-    m_connectionQueue->dispatch([protectedThis = Ref { *this }]() mutable {
+    protectedConnectionQueue()->dispatch([protectedThis = Ref { *this }]() mutable {
         protectedThis->platformInvalidate();
     });
 }
@@ -602,9 +602,9 @@ Error Connection::sendMessage(UniqueRef<Encoder>&& encoder, OptionSet<SendOption
         };
 
         if (qos)
-            m_connectionQueue->dispatchWithQOS(WTFMove(sendOutgoingMessages), *qos);
+            protectedConnectionQueue()->dispatchWithQOS(WTFMove(sendOutgoingMessages), *qos);
         else
-            m_connectionQueue->dispatch(WTFMove(sendOutgoingMessages));
+            protectedConnectionQueue()->dispatch(WTFMove(sendOutgoingMessages));
     }
 
     return Error::NoError;
@@ -625,7 +625,7 @@ Error Connection::sendMessageWithAsyncReply(UniqueRef<Encoder>&& encoder, AsyncR
     if (auto replyHandlerToCancel = takeAsyncReplyHandler(replyID)) {
         // FIXME: Current contract is that completionHandler is called on the connection run loop.
         // This does not make sense. However, this needs a change that is done later.
-        RunLoop::main().dispatch([completionHandler = WTFMove(replyHandlerToCancel)]() mutable {
+        RunLoop::protectedMain()->dispatch([completionHandler = WTFMove(replyHandlerToCancel)]() mutable {
             completionHandler(nullptr);
         });
     }
@@ -915,7 +915,7 @@ void Connection::processIncomingMessage(UniqueRef<Decoder> message)
         Locker locker { m_incomingSyncMessageCallbackLock };
 
         for (auto& callback : m_incomingSyncMessageCallbacks.values())
-            m_incomingSyncMessageCallbackQueue->dispatch(WTFMove(callback));
+            RefPtr { m_incomingSyncMessageCallbackQueue }->dispatch(WTFMove(callback));
 
         m_incomingSyncMessageCallbacks.clear();
     }
@@ -1003,7 +1003,7 @@ void Connection::addMessageObserver(const MessageObserver& observer)
 
 void Connection::dispatchIncomingMessageForTesting(UniqueRef<Decoder>&& decoder)
 {
-    m_connectionQueue->dispatch([protectedThis = Ref { *this }, decoder = WTFMove(decoder)]() mutable {
+    protectedConnectionQueue()->dispatch([protectedThis = Ref { *this }, decoder = WTFMove(decoder)]() mutable {
         protectedThis->processIncomingMessage(WTFMove(decoder));
     });
 }
@@ -1161,7 +1161,7 @@ size_t Connection::pendingMessageCountForTesting() const
 
 void Connection::dispatchOnReceiveQueueForTesting(Function<void()>&& completionHandler)
 {
-    m_connectionQueue->dispatch(WTFMove(completionHandler));
+    protectedConnectionQueue()->dispatch(WTFMove(completionHandler));
 }
 
 void Connection::didFailToSendSyncMessage(Error)
@@ -1447,7 +1447,7 @@ void Connection::wakeUpRunLoop()
     if (!isValid())
         return;
     if (&dispatcher() == &RunLoop::main())
-        RunLoop::main().wakeUp();
+        RunLoop::protectedMain()->wakeUp();
 }
 
 template<typename F>

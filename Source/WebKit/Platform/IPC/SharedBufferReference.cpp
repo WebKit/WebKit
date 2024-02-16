@@ -64,7 +64,7 @@ auto SharedBufferReference::serializableBuffer() const -> std::optional<Serializ
         return std::nullopt;
     if (!m_size)
         return SerializableBuffer { 0, std::nullopt };
-    auto sharedMemoryBuffer = m_memory ? m_memory : SharedMemory::copyBuffer(*m_buffer);
+    auto sharedMemoryBuffer = m_memory ? m_memory : SharedMemory::copyBuffer(*m_buffer.copyRef());
     return SerializableBuffer { m_size, sharedMemoryBuffer->createHandle(SharedMemory::Protection::ReadOnly) };
 }
 #endif
@@ -74,11 +74,11 @@ RefPtr<WebCore::SharedBuffer> SharedBufferReference::unsafeBuffer() const
 #if !USE(UNIX_DOMAIN_SOCKETS)
     RELEASE_ASSERT_WITH_MESSAGE(isEmpty() || (!m_buffer && m_memory), "Must only be called on IPC's receiver side");
 
-    if (m_memory)
-        return m_memory->createSharedBuffer(m_size);
+    if (RefPtr memory = m_memory)
+        return memory->createSharedBuffer(m_size);
 #endif
-    if (m_buffer)
-        return m_buffer->makeContiguous();
+    if (RefPtr buffer = m_buffer)
+        return buffer->makeContiguous();
     return nullptr;
 }
 

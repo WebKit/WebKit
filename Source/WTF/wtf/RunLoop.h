@@ -84,6 +84,7 @@ public:
     WTF_EXPORT_PRIVATE static RunLoop& current();
     static Ref<RunLoop> protectedCurrent() { return current(); }
     WTF_EXPORT_PRIVATE static RunLoop& main();
+    static Ref<RunLoop> protectedMain() { return main(); }
 #if USE(WEB_THREAD)
     WTF_EXPORT_PRIVATE static RunLoop& web();
     WTF_EXPORT_PRIVATE static RunLoop* webIfExists();

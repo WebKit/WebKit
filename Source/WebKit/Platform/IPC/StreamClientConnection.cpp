@@ -109,18 +109,18 @@ void StreamClientConnection::setMaxBatchSize(unsigned size)
 void StreamClientConnection::open(Connection::Client& receiver, SerialFunctionDispatcher& dispatcher)
 {
     m_dedicatedConnectionClient.emplace(receiver);
-    m_connection->open(*m_dedicatedConnectionClient, dispatcher);
+    protectedConnection()->open(*m_dedicatedConnectionClient, dispatcher);
 }
 
 Error StreamClientConnection::flushSentMessages(Timeout timeout)
 {
     wakeUpServer(WakeUpServer::Yes);
-    return m_connection->flushSentMessages(WTFMove(timeout));
+    return protectedConnection()->flushSentMessages(WTFMove(timeout));
 }
 
 void StreamClientConnection::invalidate()
 {
-    m_connection->invalidate();
+    protectedConnection()->invalidate();
 }
 
 void StreamClientConnection::wakeUpServer(WakeUpServer wakeUpResult)
@@ -152,12 +152,12 @@ Connection& StreamClientConnection::connectionForTesting()
 
 void StreamClientConnection::addWorkQueueMessageReceiver(ReceiverName name, WorkQueue& workQueue, WorkQueueMessageReceiver& receiver, uint64_t destinationID)
 {
-    m_connection->addWorkQueueMessageReceiver(name, workQueue, receiver, destinationID);
+    protectedConnection()->addWorkQueueMessageReceiver(name, workQueue, receiver, destinationID);
 }
 
 void StreamClientConnection::removeWorkQueueMessageReceiver(ReceiverName name, uint64_t destinationID)
 {
-    m_connection->removeWorkQueueMessageReceiver(name, destinationID);
+    protectedConnection()->removeWorkQueueMessageReceiver(name, destinationID);
 }
 
 }

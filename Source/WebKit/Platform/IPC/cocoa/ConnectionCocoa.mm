@@ -209,7 +209,7 @@ void Connection::platformOpen()
         mach_port_mod_refs(mach_task_self(), receivePort, MACH_PORT_RIGHT_RECEIVE, -1);
     });
 
-    m_connectionQueue->dispatch([strongRef = Ref { *this }, this] {
+    protectedConnectionQueue()->dispatch([strongRef = Ref { *this }, this] {
         dispatch_resume(m_receiveSource.get());
     });
 }
