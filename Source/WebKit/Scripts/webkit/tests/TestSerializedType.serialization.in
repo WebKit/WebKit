@@ -259,6 +259,8 @@ secure_coding_headers: <pal/cocoa/DataDetectorsCoreSoftLink.h>
     OptionalArrayKey: Array<DDScannerResult>?
     DictionaryKey: Dictionary<String, Number>
     OptionalDictionaryKey: Dictionary<String, DDScannerResult>?
+    DataArrayKey: Array<Data>
+    SecTrustArrayKey: Array<SecTrustRef>
 }
 #endif
 

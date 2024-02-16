@@ -33,7 +33,6 @@
 namespace WebKit {
 
 CoreIPCDictionary::CoreIPCDictionary(NSDictionary *dictionary)
-    : m_nsDictionary(dictionary)
 {
     m_keyValuePairs.reserveInitialCapacity(dictionary.count);
 
@@ -61,79 +60,12 @@ CoreIPCDictionary::~CoreIPCDictionary() = default;
 CoreIPCDictionary::CoreIPCDictionary(ValueType&& keyValuePairs)
     : m_keyValuePairs(WTFMove(keyValuePairs)) { }
 
-bool CoreIPCDictionary::keyHasValueOfType(const String& key, IPC::NSType type) const
-{
-    createNSDictionaryIfNeeded();
-    id object = [m_nsDictionary.get() objectForKey:(NSString *)key];
-    if (!object) {
-        // Many objects have a required key that sometimes has a missing value, which is okay.
-        return true;
-    }
-
-    return IPC::typeFromObject(object) == type;
-}
-
-bool CoreIPCDictionary::keyIsMissingOrHasValueOfType(const String& key, IPC::NSType type) const
-{
-    createNSDictionaryIfNeeded();
-    id object = [m_nsDictionary.get() objectForKey:(NSString *)key];
-    if (!object)
-        return true;
-    return IPC::typeFromObject(object) == type;
-}
-
-bool CoreIPCDictionary::collectionValuesAreOfType(const String& key, IPC::NSType targetType) const
-{
-    createNSDictionaryIfNeeded();
-    NSArray *object = [m_nsDictionary.get() objectForKey:(NSString *)key];
-    if (!object)
-        return true;
-
-    if (![object isKindOfClass:NSArray.class])
-        return false;
-
-    for (id value in object) {
-        if (IPC::typeFromObject(value) != targetType)
-            return false;
-    }
-
-    return true;
-}
-
-bool CoreIPCDictionary::collectionValuesAreOfType(const String& key, IPC::NSType keyType, IPC::NSType valueType) const
-{
-    createNSDictionaryIfNeeded();
-    NSDictionary *object = [m_nsDictionary.get() objectForKey:(NSString *)key];
-    if (!object)
-        return true;
-
-    if (![object isKindOfClass:NSDictionary.class])
-        return false;
-
-    for (id key in object) {
-        if (IPC::typeFromObject(key) != keyType)
-            return false;
-        if (IPC::typeFromObject(((NSDictionary *)object)[key]) != valueType)
-            return false;
-    }
-
-    return true;
-}
-
-void CoreIPCDictionary::createNSDictionaryIfNeeded() const
-{
-    if (!m_nsDictionary) {
-        auto result = adoptNS([[NSMutableDictionary alloc] initWithCapacity:m_keyValuePairs.size()]);
-        for (auto& keyValuePair : m_keyValuePairs)
-            [result setObject:keyValuePair.value.toID().get() forKey:keyValuePair.key.toID().get()];
-        m_nsDictionary = WTFMove(result);
-    }
-}
-
 RetainPtr<id> CoreIPCDictionary::toID() const
 {
-    createNSDictionaryIfNeeded();
-    return m_nsDictionary;
+    auto result = adoptNS([[NSMutableDictionary alloc] initWithCapacity:m_keyValuePairs.size()]);
+    for (auto& keyValuePair : m_keyValuePairs)
+        [result setObject:keyValuePair.value.toID().get() forKey:keyValuePair.key.toID().get()];
+    return result;
 }
 
 } // namespace WebKit

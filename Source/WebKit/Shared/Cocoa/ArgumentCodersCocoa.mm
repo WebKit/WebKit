@@ -323,6 +323,10 @@ template<> Class getClass<PKPaymentMethod>()
 {
     return PAL::getPKPaymentMethodClass();
 }
+template<> Class getClass<PKSecureElementPass>()
+{
+    return PAL::getPKSecureElementPassClass();
+}
 #endif
 
 NSType typeFromObject(id object)
@@ -348,7 +352,7 @@ NSType typeFromObject(id object)
     if (PAL::isPassKitCoreFrameworkAvailable() && [object isKindOfClass:PAL::getPKContactClass()])
         return NSType::PKContact;
     if (PAL::isPassKitCoreFrameworkAvailable() && [object isKindOfClass:PAL::getPKPaymentMerchantSessionClass()])
-        return NSType::PKPaymentMerchantSession;
+        return NSType::SecureCoding; // FIXME: This should be NSType::PKPaymentMerchantSession.
     if (PAL::isPassKitCoreFrameworkAvailable() && [object isKindOfClass:PAL::getPKPaymentClass()])
         return NSType::PKPayment;
     if (PAL::isPassKitCoreFrameworkAvailable() && [object isKindOfClass:PAL::getPKPaymentTokenClass()])
@@ -398,8 +402,6 @@ NSType typeFromObject(id object)
         return NSType::String;
     if ([object isKindOfClass:[NSURL class]])
         return NSType::URL;
-    if ([object isKindOfClass:[NSURLProtectionSpace class]])
-        return NSType::NSURLProtectionSpace;
     // Not all CF types are toll-free-bridged to NS types.
     // Non-toll-free-bridged CF types do not conform to NSSecureCoding.
     if ([object isKindOfClass:NSClassFromString(@"__NSCFType")])
@@ -584,6 +586,19 @@ static constexpr bool haveSecureActionContext = false;
 
     // rdar://107553194, Don't reintroduce rdar://108339450
     if (allowedClasses.contains(NSMutableURLRequest.class))
+        return true;
+
+    auto isDecodingKnownProtectionSpaceMessage = [] (auto& decoder) {
+        auto messageName = decoder.messageName();
+        return messageName == IPC::MessageName::DownloadProxy_DidReceiveAuthenticationChallenge // NP -> UIP
+            || messageName == IPC::MessageName::NetworkProcessProxy_DidReceiveAuthenticationChallenge // NP -> UIP
+            || messageName == IPC::MessageName::NetworkProcessProxy_ResourceLoadDidReceiveChallenge // NP -> UIP
+            || messageName == IPC::MessageName::NetworkProcessProxy_DataTaskReceivedChallenge // NP -> UIP
+            || messageName == IPC::MessageName::AuthenticationManager_CompleteAuthenticationChallenge; // UIP -> NP
+    };
+
+    // rdar://108674269
+    if (allowedClasses.contains(NSURLProtectionSpace.class) && isDecodingKnownProtectionSpaceMessage(decoder))
         return true;
 
     if (allowedClasses.contains(NSShadow.class) // rdar://107553244

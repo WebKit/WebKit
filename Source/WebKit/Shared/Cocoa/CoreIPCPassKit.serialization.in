@@ -89,6 +89,7 @@ secure_coding_header: <pal/cocoa/PassKitSoftLink.h>
     endDateComponents: NSDateComponents
 }
 
+additional_forward_declaration: OBJC_CLASS PKSecureElementPass
 [WebKitSecureCodingClass=PAL::getPKPaymentMethodClass(), SupportWKKeyedCoder, WebKitPlatform] webkit_secure_coding PKPaymentMethod {
     type: Number
     displayName: String

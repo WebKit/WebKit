@@ -25,7 +25,6 @@
 webkit_platform_headers: "CoreIPCDictionary.h"
 
 [WebKitPlatform] class WebKit::CoreIPCDictionary {
-    [NotSerialized] RetainPtr<NSDictionary> m_nsDictionary;
     Vector<KeyValuePair<WebKit::CoreIPCNSCFObject, WebKit::CoreIPCNSCFObject>> m_keyValuePairs;
 }
 

@@ -103,11 +103,9 @@ enum class NSType : uint8_t {
     Null,
     PersonNameComponents,
     PresentationIntent,
-    SecTrustRef,
     SecureCoding,
     String,
     URL,
-    NSURLProtectionSpace,
     NSValue,
     CF,
     Unknown,
@@ -161,6 +159,7 @@ template<> Class getClass<PKPaymentToken>();
 template<> Class getClass<PKShippingMethod>();
 template<> Class getClass<PKDateComponentsRange>();
 template<> Class getClass<PKPaymentMethod>();
+template<> Class getClass<PKSecureElementPass>();
 #endif
 
 void encodeObjectWithWrapper(Encoder&, id);
@@ -190,10 +189,13 @@ static inline bool isObjectClassAllowed(id object, const HashSet<Class>& allowed
 template<typename T, typename>
 std::optional<RetainPtr<T>> decodeRequiringAllowedClasses(Decoder& decoder)
 {
+#if ASSERT_ENABLED
+    auto allowedClasses = decoder.allowedClasses();
+#endif
     auto result = decodeObjectFromWrapper(decoder, decoder.allowedClasses());
     if (!result)
         return std::nullopt;
-    ASSERT(!*result || isObjectClassAllowed((*result).get(), decoder.allowedClasses()));
+    ASSERT(!*result || isObjectClassAllowed((*result).get(), allowedClasses));
     return { *result };
 }
 
