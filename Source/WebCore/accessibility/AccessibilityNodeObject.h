@@ -231,7 +231,7 @@ private:
     void setNeedsToUpdateSubtree() override { m_subtreeDirty = true; }
 
     bool isDescendantOfElementType(const HashSet<QualifiedName>&) const;
-
+protected:
     WeakPtr<Node, WeakPtrImplWithEventTargetData> m_node;
 };
 
