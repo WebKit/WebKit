@@ -139,9 +139,8 @@ static void testInsecureContent(InsecureContentTest* test, gconstpointer)
     test->waitUntilLoadFinished();
 
     g_assert_false(test->m_insecureContentRun);
-    // Images are currently always displayed, even bypassing mixed content settings. Check
-    // https://bugs.webkit.org/show_bug.cgi?id=142469
-    g_assert_true(test->m_insecureContentDisplayed);
+    // Images should always be upgraded instead of loaded as insecure content.
+    g_assert_false(test->m_insecureContentDisplayed);
 
 #if ENABLE(2022_GLIB_API)
     webkit_network_session_set_tls_errors_policy(test->m_networkSession.get(), originalPolicy);

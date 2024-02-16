@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: [blocked] The page at https://localhost:9443/html/dom/idlharness.https.html?include=HTML.* was not allowed to display insecure content from http://invalid/.
+CONSOLE MESSAGE: [blocked] The page at https://localhost:9443/html/dom/idlharness.https.html?include=HTML.* requested insecure content from http://invalid/. This content was blocked and must be served over HTTPS.
 
 CONSOLE MESSAGE: Not allowed to request resource
 CONSOLE MESSAGE: EventSource cannot load http://invalid/ due to access control checks.

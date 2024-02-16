@@ -8,13 +8,13 @@ Blocked access to external URL https://www1.localhost:9443/worklets/resources/em
 Blocked access to external URL https://www1.localhost:9443/worklets/resources/empty-worklet-script-with-cors-header.js
 Blocked access to external URL https://www1.localhost:9443/worklets/resources/empty-worklet-script-with-cors-header.js
 Blocked access to external URL https://www1.localhost:9443/worklets/resources/empty-worklet-script-with-cors-header.js
-CONSOLE MESSAGE: [blocked] The page at https://localhost:9443/worklets/resources/addmodule-window.html was not allowed to display insecure content from http://localhost:8800/worklets/resources/empty-worklet-script-with-cors-header.js.
+CONSOLE MESSAGE: [blocked] The page at https://localhost:9443/worklets/resources/addmodule-window.html requested insecure content from http://localhost:8800/worklets/resources/empty-worklet-script-with-cors-header.js. This content was blocked and must be served over HTTPS.
 
-CONSOLE MESSAGE: [blocked] The page at https://localhost:9443/worklets/resources/addmodule-window.html was not allowed to display insecure content from http://localhost:8800/worklets/resources/empty-worklet-script-with-cors-header.js.
+CONSOLE MESSAGE: [blocked] The page at https://localhost:9443/worklets/resources/addmodule-window.html requested insecure content from http://localhost:8800/worklets/resources/empty-worklet-script-with-cors-header.js. This content was blocked and must be served over HTTPS.
 
-CONSOLE MESSAGE: [blocked] The page at https://localhost:9443/worklets/resources/addmodule-window.html was not allowed to display insecure content from http://localhost:9443/worklets/resources/empty-worklet-script-with-cors-header.js.
+CONSOLE MESSAGE: [blocked] The page at https://localhost:9443/worklets/resources/addmodule-window.html requested insecure content from http://localhost:9443/worklets/resources/empty-worklet-script-with-cors-header.js. This content was blocked and must be served over HTTPS.
 
-CONSOLE MESSAGE: [blocked] The page at https://localhost:9443/worklets/resources/addmodule-window.html was not allowed to display insecure content from http://localhost:9443/worklets/resources/empty-worklet-script-with-cors-header.js.
+CONSOLE MESSAGE: [blocked] The page at https://localhost:9443/worklets/resources/addmodule-window.html requested insecure content from http://localhost:9443/worklets/resources/empty-worklet-script-with-cors-header.js. This content was blocked and must be served over HTTPS.
 
 
 PASS A remote-origin worklet should be blocked by the script-src 'self' directive.

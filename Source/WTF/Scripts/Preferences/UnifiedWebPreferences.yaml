@@ -7001,17 +7001,17 @@ UpgradeKnownHostsToHTTPSEnabled:
 
 UpgradeMixedContentEnabled:
   type: bool
-  status: unstable
+  status: stable
   category: networking
   humanReadableName: "Upgrade upgradable mixed content"
   humanReadableDescription: "Upgrade upgradable mixed content"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 UseARKitForModel:
   type: bool

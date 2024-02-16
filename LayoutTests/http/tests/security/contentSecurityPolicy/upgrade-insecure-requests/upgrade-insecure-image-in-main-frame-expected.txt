@@ -1,1 +1,3 @@
+CONSOLE MESSAGE: The page at https://127.0.0.1:8443/security/contentSecurityPolicy/upgrade-insecure-requests/resources/frame-with-insecure-image.html requested insecure content from http://127.0.0.1:8443/security/resources/compass.jpg. This content was automatically upgraded and should be served over HTTPS.
+
 This test opens a window that loads an insecure image. We should upgrade this request and thereby avoid triggering a mixed content callback.
