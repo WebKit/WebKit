@@ -1739,16 +1739,16 @@ global _vmEntryHostFunction
 _vmEntryHostFunction:
     jmp a2, HostFunctionPtrTag
 
-# unsigned vmEntryToCSSJIT(uintptr_t, uintptr_t, uintptr_t, const void* codePtr);
 if ARM64E
-emit ".globl _vmEntryToCSSJIT"
-emit "_vmEntryToCSSJIT:"
-    functionPrologue()
-    jmp t3, CSSSelectorPtrTag
-    emit ".globl _vmEntryToCSSJITAfter"
-    emit "_vmEntryToCSSJITAfter:"
-    functionEpilogue()
-    ret
+    # unsigned vmEntryToCSSJIT(uintptr_t, uintptr_t, uintptr_t, const void* codePtr);
+    globalexport _vmEntryToCSSJIT
+    _vmEntryToCSSJIT:
+        functionPrologue()
+        jmp t3, CSSSelectorPtrTag
+    globalexport _vmEntryToCSSJITAfter
+    _vmEntryToCSSJITAfter:
+        functionEpilogue()
+        ret
 end
 
 if not (C_LOOP or C_LOOP_WIN)
@@ -1821,8 +1821,8 @@ end
 if ARM64E
     if JIT_CAGE
         # void* jitCagePtr(void* pointer, uintptr_t tag)
-        emit ".globl _jitCagePtr"
-        emit "_jitCagePtr:"
+        globalexport _jitCagePtr
+        _jitCagePtr:
             tagReturnAddress sp
             leap _g_config, t2
             jmp JSCConfigGateMapOffset + (constexpr Gate::jitCagePtr) * PtrSize[t2], NativeToJITGatePtrTag
