@@ -33,6 +33,13 @@
 #define EXPERIMENTAL_FULLSCREEN_API_HIDDEN true
 #endif
 
+// FIXME: https://bugs.webkit.org/show_bug.cgi?id=269475 - this should not be needed
+#if defined(ENABLE_WEBGPU_BY_DEFAULT) && ENABLE_WEBGPU_BY_DEFAULT
+#define Webgpu_feature_status Stable
+#else
+#define Webgpu_feature_status Preview
+#endif
+
 namespace WebKit {
 
 #if PLATFORM(IOS_FAMILY)
