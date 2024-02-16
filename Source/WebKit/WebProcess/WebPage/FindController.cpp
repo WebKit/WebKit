@@ -124,7 +124,7 @@ uint32_t FindController::replaceMatches(const Vector<uint32_t>& matchIndices, co
     return m_webPage->corePage()->replaceRangesWithText(rangesToReplace, replacementText, selectionOnly);
 }
 
-static RefPtr<LocalFrame> frameWithSelection(Page* page)
+RefPtr<LocalFrame> FindController::frameWithSelection(Page* page)
 {
     for (RefPtr<Frame> frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame.get());
@@ -228,7 +228,12 @@ void FindController::updateFindUIAfterPageScroll(bool found, const String& strin
         m_findPageOverlay->setNeedsDisplay();
     }
 
-    if (found && (!options.contains(FindOptions::ShowFindIndicator) || !selectedFrame || !updateFindIndicator(*selectedFrame, shouldShowOverlay)))
+    bool wantsFindIndicator = found && options.contains(FindOptions::ShowFindIndicator);
+    bool canShowFindIndicator = selectedFrame;
+#if ENABLE(PDF_PLUGIN)
+    canShowFindIndicator |= pluginView && !pluginView->drawsFindOverlay();
+#endif
+    if (!wantsFindIndicator || !canShowFindIndicator || !updateFindIndicator(shouldShowOverlay))
         hideFindIndicator();
 
     completionHandler(idOfFrameContainingString, WTFMove(matchRects), matchCount, m_foundStringMatchIndex, didWrap == DidWrap::Yes);
@@ -394,13 +399,12 @@ void FindController::indicateFindMatch(uint32_t matchIndex)
 
     selectFindMatch(matchIndex);
 
-    RefPtr selectedFrame = frameWithSelection(m_webPage->corePage());
-    if (!selectedFrame)
+    if (!frameWithSelection(m_webPage->corePage()))
         return;
 
     didFindString();
 
-    updateFindIndicator(*selectedFrame, !!m_findPageOverlay);
+    updateFindIndicator(!!m_findPageOverlay);
 }
 
 void FindController::hideFindUI()
@@ -427,19 +431,32 @@ void FindController::hideFindUI()
 
 #if !PLATFORM(IOS_FAMILY)
 
-bool FindController::updateFindIndicator(LocalFrame& selectedFrame, bool isShowingOverlay, bool shouldAnimate)
+bool FindController::updateFindIndicator(bool isShowingOverlay, bool shouldAnimate)
 {
     OptionSet<TextIndicatorOption> textIndicatorOptions { TextIndicatorOption::IncludeMarginIfRangeMatchesSelection };
-    if (auto selectedRange = selectedFrame.selection().selection().range(); selectedRange && ImageOverlay::isInsideOverlay(*selectedRange))
-        textIndicatorOptions.add({ TextIndicatorOption::PaintAllContent, TextIndicatorOption::PaintBackgrounds });
+    auto presentationTransition = shouldAnimate ? TextIndicatorPresentationTransition::Bounce : TextIndicatorPresentationTransition::None;
 
-    auto indicator = TextIndicator::createWithSelectionInFrame(selectedFrame, textIndicatorOptions, shouldAnimate ? TextIndicatorPresentationTransition::Bounce : TextIndicatorPresentationTransition::None);
+    auto [frame, indicator] = [&]() -> std::tuple<RefPtr<Frame>, RefPtr<TextIndicator>> {
+#if ENABLE(PDF_PLUGIN)
+        if (RefPtr pluginView = mainFramePlugIn())
+            return { m_webPage->mainFrame(), pluginView->textIndicatorForSelection(textIndicatorOptions, presentationTransition) };
+#endif
+        if (RefPtr selectedFrame = frameWithSelection(m_webPage->corePage())) {
+            if (auto selectedRange = selectedFrame->selection().selection().range(); selectedRange && ImageOverlay::isInsideOverlay(*selectedRange))
+                textIndicatorOptions.add({ TextIndicatorOption::PaintAllContent, TextIndicatorOption::PaintBackgrounds });
+
+            return { selectedFrame, TextIndicator::createWithSelectionInFrame(*selectedFrame, textIndicatorOptions, presentationTransition) };
+        }
+
+        return { };
+    }();
+
     if (!indicator)
         return false;
 
     m_findIndicatorRect = enclosingIntRect(indicator->selectionRectInRootViewCoordinates());
 #if PLATFORM(COCOA)
-    m_webPage->send(Messages::WebPageProxy::SetTextIndicatorFromFrame(selectedFrame.frameID(), indicator->data(), static_cast<uint64_t>(isShowingOverlay ? WebCore::TextIndicatorLifetime::Permanent : WebCore::TextIndicatorLifetime::Temporary)));
+    m_webPage->send(Messages::WebPageProxy::SetTextIndicatorFromFrame(frame->frameID(), indicator->data(), static_cast<uint64_t>(isShowingOverlay ? WebCore::TextIndicatorLifetime::Permanent : WebCore::TextIndicatorLifetime::Temporary)));
 #endif
     m_isShowingFindIndicator = true;
 
@@ -492,19 +509,14 @@ bool FindController::shouldHideFindIndicatorOnScroll() const
 
 void FindController::showFindIndicatorInSelection()
 {
-    Ref selectedFrame = CheckedRef(m_webPage->corePage()->focusController())->focusedOrMainFrame();
-    updateFindIndicator(selectedFrame, false);
+    updateFindIndicator(false);
 }
 
 void FindController::deviceScaleFactorDidChange()
 {
     ASSERT(isShowingOverlay());
 
-    RefPtr selectedFrame = frameWithSelection(m_webPage->corePage());
-    if (!selectedFrame)
-        return;
-
-    updateFindIndicator(*selectedFrame, true, false);
+    updateFindIndicator(true, false);
 }
 
 void FindController::redraw()
@@ -512,11 +524,7 @@ void FindController::redraw()
     if (!m_isShowingFindIndicator)
         return;
 
-    RefPtr selectedFrame = frameWithSelection(m_webPage->corePage());
-    if (!selectedFrame)
-        return;
-
-    updateFindIndicator(*selectedFrame, isShowingOverlay(), false);
+    updateFindIndicator(isShowingOverlay(), false);
 }
 
 Vector<FloatRect> FindController::rectsForTextMatchesInRect(IntRect clipRect)
@@ -621,8 +629,8 @@ void FindController::didScrollAffectingFindIndicatorPosition()
 {
     if (shouldHideFindIndicatorOnScroll())
         hideFindIndicator();
-    else if (RefPtr selectedFrame = frameWithSelection(m_webPage->corePage()))
-        updateFindIndicator(*selectedFrame, true, false);
+    else
+        updateFindIndicator(true, false);
 }
 
 bool FindController::mouseEvent(PageOverlay&, const PlatformMouseEvent& mouseEvent)

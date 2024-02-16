@@ -38,6 +38,7 @@
 #include <WebCore/PluginViewBase.h>
 #include <WebCore/ScrollTypes.h>
 #include <WebCore/ScrollableArea.h>
+#include <WebCore/TextIndicator.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/TypeTraits.h>
@@ -150,6 +151,7 @@ public:
     virtual bool findString(const String& target, WebCore::FindOptions, unsigned maxMatchCount) = 0;
     virtual Vector<WebCore::FloatRect> rectsForTextMatchesInRect(const WebCore::IntRect&) const { return { }; }
     virtual bool drawsFindOverlay() const = 0;
+    virtual RefPtr<WebCore::TextIndicator> textIndicatorForSelection(OptionSet<WebCore::TextIndicatorOption>, WebCore::TextIndicatorPresentationTransition) { return { }; }
 
     virtual bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&) = 0;
     void performSpotlightSearch(const String& query);

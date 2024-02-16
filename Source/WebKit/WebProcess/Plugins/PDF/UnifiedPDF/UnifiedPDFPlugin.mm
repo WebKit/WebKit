@@ -48,6 +48,7 @@
 #include <CoreGraphics/CoreGraphics.h>
 #include <PDFKit/PDFKit.h>
 #include <WebCore/AffineTransform.h>
+#include <WebCore/BitmapImage.h>
 #include <WebCore/Chrome.h>
 #include <WebCore/ChromeClient.h>
 #include <WebCore/ColorCocoa.h>
@@ -642,10 +643,13 @@ PDFPageCoverage UnifiedPDFPlugin::pageCoverageForRect(const FloatRect& clipRect)
     return pageCoverage;
 }
 
-void UnifiedPDFPlugin::paintPDFContent(GraphicsContext& context, const FloatRect& clipRect)
+void UnifiedPDFPlugin::paintPDFContent(GraphicsContext& context, const FloatRect& clipRect, PaintingBehavior behavior)
 {
     if (m_size.isEmpty() || documentSize().isEmpty())
         return;
+
+    bool shouldPaintBackground = behavior == PaintingBehavior::All;
+    bool shouldPaintSelection = behavior == PaintingBehavior::All;
 
     auto drawingRect = IntRect { { }, documentSize() };
     drawingRect.intersect(enclosingIntRect(clipRect));
@@ -656,7 +660,7 @@ void UnifiedPDFPlugin::paintPDFContent(GraphicsContext& context, const FloatRect
 
     bool haveSelection = false;
     bool isVisibleAndActive = false;
-    if (m_currentSelection) {
+    if (m_currentSelection && shouldPaintSelection) {
         // FIXME: Also test is m_currentSelection is not empty.
         haveSelection = true;
         if (RefPtr page = this->page())
@@ -679,7 +683,7 @@ void UnifiedPDFPlugin::paintPDFContent(GraphicsContext& context, const FloatRect
         auto documentScale = pageCoverage.pdfDocumentScale;
         auto pageDestinationRect = pageInfo.pageBounds;
 
-        {
+        if (shouldPaintBackground) {
             auto whiteBackgroundStateSaver = GraphicsContextStateSaver(context);
             context.scale(documentScale);
             context.fillRect(pageDestinationRect, Color::white);
@@ -1515,13 +1519,22 @@ WebCore::IntPoint UnifiedPDFPlugin::convertFromPageToContents(const WebCore::Int
     return convertFromDocumentToContents(WebCore::flooredIntPoint(transformedPoint));
 }
 
-WebCore::IntPoint UnifiedPDFPlugin::convertFromDocumentToContents(WebCore::IntPoint documentSpacePoint) const
+WebCore::IntPoint UnifiedPDFPlugin::convertFromDocumentToContents(const WebCore::IntPoint& documentSpacePoint) const
 {
-    documentSpacePoint.scale(m_documentLayout.scale());
-    auto padding = centeringOffset();
-    documentSpacePoint.move(padding.width(), padding.height());
-    documentSpacePoint.scale(m_scaleFactor);
-    return documentSpacePoint;
+    auto transformedPoint = FloatPoint { documentSpacePoint };
+    transformedPoint.scale(m_documentLayout.scale());
+    transformedPoint.moveBy(FloatPoint { centeringOffset() });
+    transformedPoint.scale(m_scaleFactor);
+    return roundedIntPoint(transformedPoint);
+}
+
+WebCore::IntRect UnifiedPDFPlugin::convertFromDocumentToContents(const WebCore::IntRect& documentSpaceRect) const
+{
+    auto transformedRect = FloatRect { documentSpaceRect };
+    transformedRect.scale(m_documentLayout.scale());
+    transformedRect.moveBy(FloatPoint { centeringOffset() });
+    transformedRect.scale(m_scaleFactor);
+    return roundedIntRect(transformedRect);
 }
 
 WebCore::IntPoint UnifiedPDFPlugin::offsetContentsSpacePointByPageMargins(WebCore::IntPoint pointInContentsSpace) const
@@ -2575,6 +2588,42 @@ Vector<FloatRect> UnifiedPDFPlugin::rectsForTextMatchesInRect(const IntRect&) co
     });
 }
 
+RefPtr<TextIndicator> UnifiedPDFPlugin::textIndicatorForSelection(OptionSet<WebCore::TextIndicatorOption> options, WebCore::TextIndicatorPresentationTransition transition)
+{
+    if (auto selectionBounds = selectionBoundsForFirstPageInDocumentSpace(m_currentSelection)) {
+        auto rectInDocumentCoordinates = *selectionBounds;
+        auto rectInContentsCoordinates = convertFromDocumentToContents(rectInDocumentCoordinates);
+        auto rectInRootViewCoordinates = convertFromPluginToRootView(convertFromDocumentToPlugin(rectInDocumentCoordinates));
+
+        float deviceScaleFactor = this->deviceScaleFactor();
+
+        auto buffer = ImageBuffer::create(rectInRootViewCoordinates.size(), RenderingPurpose::ShareableSnapshot, deviceScaleFactor, DestinationColorSpace::SRGB(), PixelFormat::BGRA8, { }, nullptr);
+        if (!buffer)
+            return nullptr;
+
+        auto& context = buffer->context();
+        context.translate(-rectInContentsCoordinates.location());
+        context.scale(m_scaleFactor);
+        context.translate(centeringOffset());
+        paintPDFContent(context, rectInContentsCoordinates, PaintingBehavior::PageContentsOnly);
+
+        TextIndicatorData data;
+        data.contentImage = BitmapImage::create(ImageBuffer::sinkIntoNativeImage(WTFMove(buffer)));
+        data.contentImageScaleFactor = deviceScaleFactor;
+        data.contentImageWithoutSelection = data.contentImage;
+        data.contentImageWithoutSelectionRectInRootViewCoordinates = rectInRootViewCoordinates;
+        data.selectionRectInRootViewCoordinates = rectInRootViewCoordinates;
+        data.textBoundingRectInRootViewCoordinates = rectInRootViewCoordinates;
+        data.textRectsInBoundingRectCoordinates = { FloatRect { 0, 0, static_cast<float>(rectInRootViewCoordinates.width()), static_cast<float>(rectInRootViewCoordinates.height()) } };
+        data.presentationTransition = transition;
+        data.options = options;
+
+        return TextIndicator::create(data);
+    }
+
+    return nullptr;
+}
+
 bool UnifiedPDFPlugin::performDictionaryLookupAtLocation(const FloatPoint& rootViewPoint)
 {
     IntPoint pluginPoint = convertFromRootViewToPlugin(roundedIntPoint(rootViewPoint));
@@ -2622,6 +2671,8 @@ bool UnifiedPDFPlugin::showDefinitionForAttributedString(RetainPtr<NSAttributedS
     dictionaryPopupInfo.origin = rectInRootView.location();
     dictionaryPopupInfo.platformData.attributedString = WebCore::AttributedString::fromNSAttributedString(string.get());
 
+    // FIXME: Consider merging with textIndicatorForSelection in order to get
+    // a PDF snapshot instead of an attributed string replica.
     TextIndicatorData dataForSelection;
     dataForSelection.selectionRectInRootViewCoordinates = rectInRootView;
     dataForSelection.textBoundingRectInRootViewCoordinates = rectInRootView;

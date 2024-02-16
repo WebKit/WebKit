@@ -31,6 +31,7 @@
 #include <WebCore/PluginViewBase.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/SharedBuffer.h>
+#include <WebCore/TextIndicator.h>
 #include <WebCore/Timer.h>
 #include <memory>
 #include <wtf/RunLoop.h>
@@ -101,6 +102,7 @@ public:
     bool findString(const String& target, WebCore::FindOptions, unsigned maxMatchCount);
     Vector<WebCore::FloatRect> rectsForTextMatchesInRect(const WebCore::IntRect&) const;
     bool drawsFindOverlay() const;
+    RefPtr<WebCore::TextIndicator> textIndicatorForSelection(OptionSet<WebCore::TextIndicatorOption>, WebCore::TextIndicatorPresentationTransition);
 
     String selectionString() const;
 

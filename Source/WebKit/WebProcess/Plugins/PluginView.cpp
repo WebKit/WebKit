@@ -625,6 +625,14 @@ bool PluginView::drawsFindOverlay() const
     return protectedPlugin()->drawsFindOverlay();
 }
 
+RefPtr<TextIndicator> PluginView::textIndicatorForSelection(OptionSet<WebCore::TextIndicatorOption> options, WebCore::TextIndicatorPresentationTransition transition)
+{
+    if (!m_isInitialized)
+        return { };
+
+    return protectedPlugin()->textIndicatorForSelection(options, transition);
+}
+
 String PluginView::selectionString() const
 {
     if (!m_isInitialized)

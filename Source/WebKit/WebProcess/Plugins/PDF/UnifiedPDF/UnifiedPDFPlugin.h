@@ -266,6 +266,7 @@ private:
     Vector<WebCore::FloatRect> rectsForTextMatchesInRect(const WebCore::IntRect&) const final;
     bool drawsFindOverlay() const final { return false; }
     void collectFindMatchRects(const String&, WebCore::FindOptions);
+    RefPtr<WebCore::TextIndicator> textIndicatorForSelection(OptionSet<WebCore::TextIndicatorOption>, WebCore::TextIndicatorPresentationTransition) final;
     bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&) override;
     [[maybe_unused]] bool searchInDictionary(const RetainPtr<PDFSelection>&);
     std::optional<WebCore::IntRect> selectionBoundsForFirstPageInDocumentSpace(const RetainPtr<PDFSelection>&) const;
@@ -288,7 +289,8 @@ private:
     // Package up the data needed to paint a set of pages for the given clip, for use by UnifiedPDFPlugin::paintPDFContent and async rendering.
     PDFPageCoverage pageCoverageForRect(const WebCore::FloatRect& clipRect) const;
 
-    void paintPDFContent(WebCore::GraphicsContext&, const WebCore::FloatRect& clipRect);
+    enum class PaintingBehavior : uint8_t { All, PageContentsOnly };
+    void paintPDFContent(WebCore::GraphicsContext&, const WebCore::FloatRect& clipRect, PaintingBehavior = PaintingBehavior::All);
 
     void ensureLayers();
     void updatePageBackgroundLayers();
@@ -357,14 +359,14 @@ private:
     WebCore::IntPoint convertFromPluginToDocument(const WebCore::IntPoint&) const;
     WebCore::IntPoint convertFromDocumentToPlugin(const WebCore::IntPoint&) const;
     WebCore::IntRect convertFromDocumentToPlugin(const WebCore::IntRect&) const;
+    WebCore::IntRect convertFromDocumentToContents(const WebCore::IntRect&) const;
+    WebCore::IntPoint convertFromDocumentToContents(const WebCore::IntPoint&) const;
     WebCore::IntPoint convertFromDocumentToPage(const WebCore::IntPoint&, PDFDocumentLayout::PageIndex) const;
     WebCore::IntRect convertFromPageToRootView(const WebCore::IntRect&, PDFDocumentLayout::PageIndex) const;
     WebCore::IntPoint convertFromPageToDocument(const WebCore::IntPoint&, PDFDocumentLayout::PageIndex) const;
     WebCore::IntRect convertFromPageToDocument(const WebCore::IntRect&, PDFDocumentLayout::PageIndex) const;
     WebCore::IntPoint convertFromPageToContents(const WebCore::IntPoint&, PDFDocumentLayout::PageIndex) const;
     WebCore::IntRect convertFromPageToContents(const WebCore::IntRect&, PDFDocumentLayout::PageIndex) const;
-
-    WebCore::IntPoint convertFromDocumentToContents(WebCore::IntPoint) const;
 
     WebCore::IntPoint offsetContentsSpacePointByPageMargins(WebCore::IntPoint pointInContentsSpace) const;
 

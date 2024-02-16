@@ -91,19 +91,23 @@ void FindIndicatorOverlayClientIOS::drawRect(PageOverlay& overlay, GraphicsConte
     context.drawImage(*indicatorImage, overlay.bounds());
 }
 
-bool FindController::updateFindIndicator(LocalFrame& selectedFrame, bool isShowingOverlay, bool shouldAnimate)
+bool FindController::updateFindIndicator(bool isShowingOverlay, bool shouldAnimate)
 {
+    RefPtr selectedFrame = frameWithSelection(m_webPage->corePage());
+    if (!selectedFrame)
+        return false;
+
     if (m_findIndicatorOverlay) {
         m_webPage->corePage()->pageOverlayController().uninstallPageOverlay(*m_findIndicatorOverlay, PageOverlay::FadeMode::DoNotFade);
         m_findIndicatorOverlay = nullptr;
         m_isShowingFindIndicator = false;
     }
 
-    auto textIndicator = TextIndicator::createWithSelectionInFrame(selectedFrame, findTextIndicatorOptions(selectedFrame), TextIndicatorPresentationTransition::None, FloatSize(totalHorizontalMargin, totalVerticalMargin));
+    auto textIndicator = TextIndicator::createWithSelectionInFrame(*selectedFrame, findTextIndicatorOptions(*selectedFrame), TextIndicatorPresentationTransition::None, FloatSize(totalHorizontalMargin, totalVerticalMargin));
     if (!textIndicator)
         return false;
 
-    m_findIndicatorOverlayClient = makeUnique<FindIndicatorOverlayClientIOS>(selectedFrame, textIndicator.get());
+    m_findIndicatorOverlayClient = makeUnique<FindIndicatorOverlayClientIOS>(*selectedFrame, textIndicator.get());
     m_findIndicatorRect = enclosingIntRect(textIndicator->selectionRectInRootViewCoordinates());
     m_findIndicatorOverlay = PageOverlay::create(*m_findIndicatorOverlayClient, PageOverlay::OverlayType::Document);
     m_webPage->corePage()->pageOverlayController().installPageOverlay(*m_findIndicatorOverlay, PageOverlay::FadeMode::DoNotFade);
@@ -113,7 +117,7 @@ bool FindController::updateFindIndicator(LocalFrame& selectedFrame, bool isShowi
 
     if (shouldAnimate) {
         bool isReplaced;
-        const VisibleSelection& visibleSelection = selectedFrame.selection().selection();
+        const VisibleSelection& visibleSelection = selectedFrame->selection().selection();
         FloatRect renderRect = visibleSelection.start().containerNode()->absoluteBoundingRect(&isReplaced);
         IntRect startRect = visibleSelection.visibleStart().absoluteCaretBounds();
 

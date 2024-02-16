@@ -95,7 +95,7 @@ private:
     void drawRect(WebCore::PageOverlay&, WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect) override;
 
     Vector<WebCore::FloatRect> rectsForTextMatchesInRect(WebCore::IntRect clipRect);
-    bool updateFindIndicator(WebCore::LocalFrame& selectedFrame, bool isShowingOverlay, bool shouldAnimate = true);
+    bool updateFindIndicator(bool isShowingOverlay, bool shouldAnimate = true);
 
     void updateFindUIAfterPageScroll(bool found, const String&, OptionSet<FindOptions>, unsigned maxMatchCount, WebCore::DidWrap, std::optional<WebCore::FrameIdentifier>, CompletionHandler<void(std::optional<WebCore::FrameIdentifier>, Vector<WebCore::IntRect>&&, uint32_t, int32_t, bool)>&& = [](auto&&...) { });
 
@@ -107,6 +107,8 @@ private:
     unsigned findIndicatorRadius() const;
     bool shouldHideFindIndicatorOnScroll() const;
     void didScrollAffectingFindIndicatorPosition();
+
+    RefPtr<WebCore::LocalFrame> frameWithSelection(WebCore::Page*);
 
 #if ENABLE(PDF_PLUGIN)
     PluginView* mainFramePlugIn();
