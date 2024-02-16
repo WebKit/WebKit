@@ -147,7 +147,8 @@ public:
     ContainerNode* parentNode() const;
     inline RefPtr<ContainerNode> protectedParentNode() const; // Defined in ContainerNode.h.
     static ptrdiff_t parentNodeMemoryOffset() { return OBJECT_OFFSETOF(Node, m_parentNode); }
-    inline Element* parentElement() const;
+    inline Element* parentElement() const; // Defined in ElementInlines.h.
+    inline RefPtr<Element> protectedParentElement() const; // Defined in ElementInlines.h.
     Node* previousSibling() const { return m_previous; }
     RefPtr<Node> protectedPreviousSibling() const { return m_previous; }
     static ptrdiff_t previousSiblingMemoryOffset() { return OBJECT_OFFSETOF(Node, m_previous); }

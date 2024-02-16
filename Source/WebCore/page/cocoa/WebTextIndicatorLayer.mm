@@ -238,7 +238,7 @@ static bool indicatorWantsFadeIn(const WebCore::TextIndicator& indicator)
 
 static RetainPtr<CAKeyframeAnimation> createBounceAnimation(CFTimeInterval duration)
 {
-    RetainPtr<CAKeyframeAnimation> bounceAnimation = [CAKeyframeAnimation animationWithKeyPath:@"transform"];
+    RetainPtr bounceAnimation = [CAKeyframeAnimation animationWithKeyPath:@"transform"];
     [bounceAnimation setValues:@[
         [NSValue valueWithCATransform3D:CATransform3DIdentity],
         [NSValue valueWithCATransform3D:CATransform3DMakeScale(WebCore::midBounceScale, WebCore::midBounceScale, 1)],
@@ -251,8 +251,8 @@ static RetainPtr<CAKeyframeAnimation> createBounceAnimation(CFTimeInterval durat
 
 static RetainPtr<CABasicAnimation> createContentCrossfadeAnimation(CFTimeInterval duration, WebCore::TextIndicator& textIndicator)
 {
-    RetainPtr<CABasicAnimation> crossfadeAnimation = [CABasicAnimation animationWithKeyPath:@"contents"];
-    auto contentsImage = textIndicator.contentImage()->nativeImage();
+    RetainPtr crossfadeAnimation = [CABasicAnimation animationWithKeyPath:@"contents"];
+    RefPtr contentsImage = textIndicator.protectedContentImage()->nativeImage();
     [crossfadeAnimation setToValue:(__bridge id)contentsImage->platformImage().get()];
     [crossfadeAnimation setFillMode:kCAFillModeForwards];
     [crossfadeAnimation setRemovedOnCompletion:NO];

@@ -72,8 +72,8 @@ Frame* FrameTree::parent() const
 
 void FrameTree::appendChild(Frame& child)
 {
-    ASSERT(child.page() == m_thisFrame.page());
-    child.tree().m_parent = m_thisFrame;
+    ASSERT(child.page() == m_thisFrame->page());
+    child.tree().m_parent = m_thisFrame.ptr();
     WeakPtr<Frame> oldLast = m_lastChild;
     m_lastChild = child;
 
@@ -118,6 +118,11 @@ AtomString FrameTree::generateUniqueName() const
         return top.tree().generateUniqueName();
 
     return makeAtomString("<!--frame", ++m_frameIDGenerator, "-->");
+}
+
+Ref<Frame> FrameTree::protectedThisFrame() const
+{
+    return m_thisFrame.get();
 }
 
 static bool inScope(Frame& frame, TreeScope& scope)
@@ -177,36 +182,36 @@ inline unsigned FrameTree::scopedChildCount(TreeScope* scope) const
 
 Frame* FrameTree::scopedChild(unsigned index) const
 {
-    auto* localFrame = dynamicDowncast<LocalFrame>(m_thisFrame);
+    auto* localFrame = dynamicDowncast<LocalFrame>(m_thisFrame.get());
     if (!localFrame)
         return nullptr;
-    return scopedChild(index, localFrame->document());
+    return scopedChild(index, localFrame->protectedDocument().get());
 }
 
 Frame* FrameTree::scopedChildByUniqueName(const AtomString& uniqueName) const
 {
-    auto* localFrame = dynamicDowncast<LocalFrame>(m_thisFrame);
+    auto* localFrame = dynamicDowncast<LocalFrame>(m_thisFrame.get());
     if (!localFrame)
         return nullptr;
     return scopedChild([&](auto& frameTree) {
         return frameTree.uniqueName() == uniqueName;
-    }, localFrame->document());
+    }, localFrame->protectedDocument().get());
 }
 
 Frame* FrameTree::scopedChildBySpecifiedName(const AtomString& specifiedName) const
 {
-    auto* localFrame = dynamicDowncast<LocalFrame>(m_thisFrame);
+    auto* localFrame = dynamicDowncast<LocalFrame>(m_thisFrame.get());
     if (!localFrame)
         return nullptr;
     return scopedChild([&](auto& frameTree) {
         return frameTree.specifiedName() == specifiedName;
-    }, localFrame->document());
+    }, localFrame->protectedDocument().get());
 }
 
 unsigned FrameTree::scopedChildCount() const
 {
     if (m_scopedChildCount == invalidCount) {
-        if (auto* localFrame = dynamicDowncast<LocalFrame>(m_thisFrame))
+        if (auto* localFrame = dynamicDowncast<LocalFrame>(m_thisFrame.get()))
             m_scopedChildCount = scopedChildCount(localFrame->document());
     }
     return m_scopedChildCount;
@@ -262,32 +267,33 @@ static bool isFrameFamiliarWith(Frame& frameA, Frame& frameB)
 inline Frame* FrameTree::find(const AtomString& name, const Function<const AtomString&(const FrameTree&)>& nameGetter, Frame& activeFrame) const
 {
     if (isSelfTargetFrameName(name))
-        return &m_thisFrame;
+        return m_thisFrame.ptr();
 
     if (isTopTargetFrameName(name))
         return &top();
 
     if (isParentTargetFrameName(name))
-        return parent() ? parent() : &m_thisFrame;
+        return parent() ? parent() : m_thisFrame.ptr();
 
     // Since "_blank" cannot be a frame's name, this check is an optimization, not for correctness.
     if (isBlankTargetFrameName(name))
         return nullptr;
 
     // Search subtree starting with this frame first.
-    for (auto* frame = &m_thisFrame; frame; frame = frame->tree().traverseNext(&m_thisFrame)) {
+    Ref thisFrame = m_thisFrame.get();
+    for (auto* frame = thisFrame.ptr(); frame; frame = frame->tree().traverseNext(thisFrame.ptr())) {
         if (nameGetter(frame->tree()) == name)
             return frame;
     }
 
     // Then the rest of the tree.
-    for (Frame* frame = &m_thisFrame.mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = &thisFrame->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (nameGetter(frame->tree()) == name)
             return frame;
     }
 
     // Search the entire tree of each of the other pages in this namespace.
-    RefPtr page = m_thisFrame.page();
+    RefPtr page = thisFrame->page();
     if (!page)
         return nullptr;
 
@@ -323,10 +329,10 @@ bool FrameTree::isDescendantOf(const Frame* ancestor) const
     if (!ancestor)
         return false;
 
-    if (m_thisFrame.page() != ancestor->page())
+    if (m_thisFrame->page() != ancestor->page())
         return false;
 
-    for (Frame* frame = &m_thisFrame; frame; frame = frame->tree().parent()) {
+    for (Frame* frame = m_thisFrame.ptr(); frame; frame = frame->tree().parent()) {
         if (frame == ancestor)
             return true;
     }
@@ -341,7 +347,7 @@ Frame* FrameTree::traverseNext(const Frame* stayWithin) const
         return child;
     }
 
-    if (&m_thisFrame == stayWithin)
+    if (m_thisFrame.ptr() == stayWithin)
         return nullptr;
 
     auto* sibling = nextSibling();
@@ -350,7 +356,7 @@ Frame* FrameTree::traverseNext(const Frame* stayWithin) const
         return sibling;
     }
 
-    auto* frame = &m_thisFrame;
+    auto* frame = m_thisFrame.ptr();
     while (!sibling && (!stayWithin || frame->tree().parent() != stayWithin)) {
         frame = frame->tree().parent();
         if (!frame)
@@ -368,7 +374,7 @@ Frame* FrameTree::traverseNext(const Frame* stayWithin) const
 
 Frame* FrameTree::traverseNextSkippingChildren(const Frame* stayWithin) const
 {
-    if (&m_thisFrame == stayWithin)
+    if (m_thisFrame.ptr() == stayWithin)
         return nullptr;
     if (auto* sibling = nextSibling())
         return sibling;
@@ -378,7 +384,7 @@ Frame* FrameTree::traverseNextSkippingChildren(const Frame* stayWithin) const
 Frame* FrameTree::nextAncestorSibling(const Frame* stayWithin) const
 {
     ASSERT(!nextSibling());
-    ASSERT(&m_thisFrame != stayWithin);
+    ASSERT(m_thisFrame.ptr() != stayWithin);
     for (auto* ancestor = parent(); ancestor; ancestor = ancestor->tree().parent()) {
         if (ancestor == stayWithin)
             return nullptr;
@@ -407,7 +413,7 @@ Frame* FrameTree::firstRenderedChild() const
 
 Frame* FrameTree::nextRenderedSibling() const
 {
-    auto* sibling = &m_thisFrame;
+    auto* sibling = m_thisFrame.ptr();
 
     while ((sibling = sibling->tree().nextSibling())) {
         if (auto* localSibling = dynamicDowncast<LocalFrame>(sibling); localSibling && localSibling->ownerRenderer())
@@ -425,7 +431,7 @@ Frame* FrameTree::traverseNextRendered(const Frame* stayWithin) const
         return child;
     }
 
-    if (&m_thisFrame == stayWithin)
+    if (m_thisFrame.ptr() == stayWithin)
         return nullptr;
 
     auto* sibling = nextRenderedSibling();
@@ -434,7 +440,7 @@ Frame* FrameTree::traverseNextRendered(const Frame* stayWithin) const
         return sibling;
     }
 
-    auto* frame = &m_thisFrame;
+    auto* frame = m_thisFrame.ptr();
     while (!sibling && (!stayWithin || frame->tree().parent() != stayWithin)) {
         frame = frame->tree().parent();
         if (!frame)
@@ -458,7 +464,7 @@ Frame* FrameTree::traverseNext(CanWrap canWrap, DidWrap* didWrap) const
     if (canWrap == CanWrap::Yes) {
         if (didWrap)
             *didWrap = DidWrap::Yes;
-        return &m_thisFrame.mainFrame();
+        return &m_thisFrame->mainFrame();
     }
 
     return nullptr;
@@ -497,7 +503,7 @@ Frame* FrameTree::traverseNextInPostOrder(CanWrap canWrap) const
 
 Frame* FrameTree::deepFirstChild() const
 {
-    auto* result = &m_thisFrame;
+    auto* result = m_thisFrame.ptr();
     while (auto* next = result->tree().firstChild())
         result = next;
     return result;
@@ -505,7 +511,7 @@ Frame* FrameTree::deepFirstChild() const
 
 Frame* FrameTree::deepLastChild() const
 {
-    auto* result = &m_thisFrame;
+    auto* result = m_thisFrame.ptr();
     for (auto* last = lastChild(); last; last = last->tree().lastChild())
         result = last;
 
@@ -514,14 +520,19 @@ Frame* FrameTree::deepLastChild() const
 
 Frame& FrameTree::top() const
 {
-    ASSERT(m_thisFrame.isMainFrame() || m_thisFrame.tree().parent());
-    return m_thisFrame.mainFrame();
+    ASSERT(m_thisFrame->isMainFrame() || m_thisFrame->tree().parent());
+    return m_thisFrame->mainFrame();
+}
+
+Ref<Frame> FrameTree::protectedTop() const
+{
+    return top();
 }
 
 unsigned FrameTree::depth() const
 {
     unsigned depth = 0;
-    for (auto* parent = &m_thisFrame; parent; parent = parent->tree().parent())
+    for (auto* parent = m_thisFrame.ptr(); parent; parent = parent->tree().parent())
         depth++;
     return depth;
 }
@@ -606,7 +617,7 @@ void showFrameTree(const WebCore::Frame* frame)
         return;
     }
 
-    printFrames(frame->tree().top(), frame, 0);
+    printFrames(frame->tree().protectedTop(), frame, 0);
 }
 
 #endif

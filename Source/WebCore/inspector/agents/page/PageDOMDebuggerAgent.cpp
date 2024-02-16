@@ -183,10 +183,10 @@ void PageDOMDebuggerAgent::willInsertDOMNode(Node& parent)
 
     std::optional<size_t> closestDistance;
     RefPtr<JSC::Breakpoint> closestBreakpoint;
-    Node* closestBreakpointOwner = nullptr;
+    RefPtr<Node> closestBreakpointOwner;
 
     for (auto [breakpointOwner, breakpoint] : m_domSubtreeModifiedBreakpoints) {
-        auto distance = calculateDistance(parent, *breakpointOwner);
+        auto distance = calculateDistance(parent, Ref { *breakpointOwner });
         if (!distance)
             continue;
 

@@ -184,7 +184,7 @@ static void prepareContextForQRCode(ContextMenuContext& context)
 
     RefPtr<Element> element;
     RefPtr nodeElement = dynamicDowncast<Element>(*node);
-    for (auto& lineage : lineageOfType<Element>(nodeElement ? *nodeElement : *node->parentElement())) {
+    for (auto& lineage : lineageOfType<Element>(nodeElement ? *nodeElement : *node->protectedParentElement())) {
         if (is<HTMLTableElement>(lineage) || is<HTMLCanvasElement>(lineage) || is<HTMLImageElement>(lineage) || is<SVGSVGElement>(lineage)) {
             element = &lineage;
             break;

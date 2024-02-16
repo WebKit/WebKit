@@ -423,7 +423,7 @@ bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& eve
         RefPtr widget = downcast<RenderWidget>(*renderer).widget();
         if (!widget || !widget->isLocalFrameView())
             return false;
-        if (!passWidgetMouseDownEventToWidget(downcast<RenderWidget>(renderer.get()))) // May destroy the renderer.
+        if (!passWidgetMouseDownEventToWidget(RefPtr { downcast<RenderWidget>(renderer.get()) }.get())) // May destroy the renderer.
             return false;
         m_mouseDownWasInSubframe = true;
         return true;

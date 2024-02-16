@@ -499,7 +499,7 @@ void DataTransfer::setEffectAllowed(const String&)
 {
 }
 
-void DataTransfer::setDragImage(Element&, int, int)
+void DataTransfer::setDragImage(Ref<Element>&&, int, int)
 {
 }
 
@@ -533,13 +533,13 @@ Ref<DataTransfer> DataTransfer::createForUpdatingDropTarget(const Document& docu
     return dataTransfer;
 }
 
-void DataTransfer::setDragImage(Element& element, int x, int y)
+void DataTransfer::setDragImage(Ref<Element>&& element, int x, int y)
 {
     if (!forDrag() || !canWriteData())
         return;
 
     CachedResourceHandle<CachedImage> image;
-    if (auto* imageElement = dynamicDowncast<HTMLImageElement>(element); imageElement && !imageElement->isConnected())
+    if (auto* imageElement = dynamicDowncast<HTMLImageElement>(element.get()); imageElement && !imageElement->isConnected())
         image = imageElement->cachedImage();
 
     m_dragLocation = IntPoint(x, y);
@@ -553,7 +553,10 @@ void DataTransfer::setDragImage(Element& element, int x, int y)
         m_dragImageLoader->startLoading(m_dragImage);
     }
 
-    m_dragImageElement = image ? nullptr : &element;
+    if (image)
+        m_dragImageElement = nullptr;
+    else
+        m_dragImageElement = WTFMove(element);
 
     updateDragImage();
 }

@@ -335,7 +335,7 @@ bool scrollInDirection(LocalFrame* frame, FocusDirection direction)
 {
     ASSERT(frame);
 
-    if (frame && canScrollInDirection(frame->document(), direction)) {
+    if (frame && canScrollInDirection(frame->protectedDocument().get(), direction)) {
         LayoutUnit dx;
         LayoutUnit dy;
         switch (direction) {
@@ -366,7 +366,7 @@ bool scrollInDirection(Node* container, FocusDirection direction)
 {
     ASSERT(container);
     if (is<Document>(*container))
-        return scrollInDirection(downcast<Document>(*container).frame(), direction);
+        return scrollInDirection(downcast<Document>(*container).protectedFrame().get(), direction);
 
     if (!container->renderBox())
         return false;

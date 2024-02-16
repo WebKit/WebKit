@@ -2574,24 +2574,24 @@ void LocalFrameView::textFragmentIndicatorTimerFired()
 
         constexpr auto hitType = OptionSet { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AllowVisibleChildFrameContentOnly };
         auto result = localMainFrame->eventHandler().hitTestResultAtPoint(LayoutPoint(textRects.first().center()), hitType);
-        if (!intersects(range, *result.targetNode()))
+        if (!intersects(range, *result.protectedTargetNode()))
             return;
         
         if (textRects.size() >= 2) {
             result = localMainFrame->eventHandler().hitTestResultAtPoint(LayoutPoint(textRects[1].center()), hitType);
-            if (!intersects(range, *result.targetNode()))
+            if (!intersects(range, *result.protectedTargetNode()))
                 return;
         }
         
         if (textRects.size() >= 4) {
             result = localMainFrame->eventHandler().hitTestResultAtPoint(LayoutPoint(textRects.last().center()), hitType);
-            if (!intersects(range, *result.targetNode()))
+            if (!intersects(range, *result.protectedTargetNode()))
                 return;
             result = localMainFrame->eventHandler().hitTestResultAtPoint(LayoutPoint(textRects[textRects.size() - 2].center()), hitType);
-            if (!intersects(range, *result.targetNode()))
+            if (!intersects(range, *result.protectedTargetNode()))
                 return;
         }
-        document.page()->chrome().client().setTextIndicator(textIndicator->data());
+        document.protectedPage()->chrome().client().setTextIndicator(textIndicator->data());
     }
 }
 
@@ -5758,12 +5758,14 @@ CheckedPtr<RenderView> LocalFrameView::checkedRenderView() const
 
 int LocalFrameView::mapFromLayoutToCSSUnits(LayoutUnit value) const
 {
-    return value / (m_frame->pageZoomFactor() * m_frame->frameScaleFactor());
+    Ref frame = m_frame;
+    return value / (frame->pageZoomFactor() * frame->frameScaleFactor());
 }
 
 LayoutUnit LocalFrameView::mapFromCSSToLayoutUnits(int value) const
 {
-    return LayoutUnit(value * m_frame->pageZoomFactor() * m_frame->frameScaleFactor());
+    Ref frame = m_frame;
+    return LayoutUnit(value * frame->pageZoomFactor() * frame->frameScaleFactor());
 }
 
 void LocalFrameView::didAddWidgetToRenderTree(Widget& widget)

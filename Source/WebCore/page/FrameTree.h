@@ -77,6 +77,7 @@ public:
     WEBCORE_EXPORT unsigned childCount() const;
     unsigned descendantCount() const;
     WEBCORE_EXPORT Frame& top() const;
+    Ref<Frame> protectedTop() const;
     unsigned depth() const;
 
     WEBCORE_EXPORT Frame* scopedChild(unsigned index) const;
@@ -101,7 +102,9 @@ private:
     AtomString uniqueChildName(const AtomString& requestedName) const;
     AtomString generateUniqueName() const;
 
-    Frame& m_thisFrame;
+    Ref<Frame> protectedThisFrame() const;
+
+    WeakRef<Frame> m_thisFrame;
 
     WeakPtr<Frame> m_parent;
     AtomString m_specifiedName; // The actual frame name (may be empty).

@@ -192,10 +192,12 @@ bool ResizeObserver::isReachableFromOpaqueRoots(JSC::AbstractSlotVisitor& visito
         if (auto* target = observation->target(); target && containsWebCoreOpaqueRoot(visitor, target))
             return true;
     }
+IGNORE_CLANG_STATIC_ANALYZER_UNCOUNTED_CALL_ARGS_BEGIN
     for (auto& target : m_activeObservationTargets) {
         if (containsWebCoreOpaqueRoot(visitor, target.get()))
             return true;
     }
+IGNORE_CLANG_STATIC_ANALYZER_UNCOUNTED_CALL_ARGS_END
     return !m_targetsWaitingForFirstObservation.isEmpty();
 }
 

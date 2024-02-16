@@ -67,6 +67,11 @@ inline Element* Node::parentElement() const
     return dynamicDowncast<Element>(parentNode());
 }
 
+inline RefPtr<Element> Node::protectedParentElement() const
+{
+    return parentElement();
+}
+
 inline const Element* Element::rootElement() const
 {
     if (isConnected())

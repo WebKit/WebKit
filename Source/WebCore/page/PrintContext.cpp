@@ -253,7 +253,7 @@ void PrintContext::spoolPage(GraphicsContext& ctx, int pageNumber, float width)
     ctx.translate(-pageRect.x(), -pageRect.y());
     ctx.clip(pageRect);
     frame.view()->paintContents(ctx, pageRect);
-    outputLinkedDestinations(ctx, *frame.document(), pageRect);
+    outputLinkedDestinations(ctx, *frame.protectedDocument(), pageRect);
     ctx.restore();
 }
 

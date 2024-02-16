@@ -856,7 +856,7 @@ inline std::optional<std::pair<WeakRef<MediaCanStartListener>, WeakRef<Document,
             continue;
         if (!localFrame->document())
             continue;
-        if (MediaCanStartListener* listener = localFrame->document()->takeAnyMediaCanStartListener())
+        if (MediaCanStartListener* listener = localFrame->protectedDocument()->takeAnyMediaCanStartListener())
             return { { *listener, *localFrame->document() } };
     }
     return std::nullopt;
@@ -873,7 +873,7 @@ void Page::setCanStartMedia(bool canStartMedia)
         auto listener = takeAnyMediaCanStartListener();
         if (!listener)
             break;
-        listener->first->mediaCanStart(listener->second);
+        listener->first->mediaCanStart(Ref { listener->second.get() });
     }
 }
 

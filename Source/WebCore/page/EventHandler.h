@@ -181,7 +181,8 @@ public:
     void cancelDragAndDrop(const PlatformMouseEvent&, std::unique_ptr<Pasteboard>&&, OptionSet<DragOperation>, bool draggingFiles);
     bool performDragAndDrop(const PlatformMouseEvent&, std::unique_ptr<Pasteboard>&&, OptionSet<DragOperation>, bool draggingFiles);
     void updateDragStateAfterEditDragIfNeeded(Element& rootEditableElement);
-    RefPtr<Element> draggedElement() const;
+    static Element* draggedElement();
+    static RefPtr<Element> protectedDraggedElement();
 #endif
 
     void scheduleHoverStateUpdate();

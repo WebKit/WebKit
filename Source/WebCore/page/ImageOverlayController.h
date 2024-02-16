@@ -91,6 +91,9 @@ private:
     void platformUpdateElementUnderMouse(LocalFrame&, Element* elementUnderMouse);
     bool platformHandleMouseEvent(const PlatformMouseEvent&);
 
+    RefPtr<Page> protectedPage() const;
+    RefPtr<PageOverlay> protectedOverlay() const { return m_overlay; }
+
     SingleThreadWeakPtr<Page> m_page;
     RefPtr<PageOverlay> m_overlay;
     WeakPtr<HTMLElement, WeakPtrImplWithEventTargetData> m_hostElementForSelection;
