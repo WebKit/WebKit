@@ -39,6 +39,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(WebContextMenuClient);
+
 void WebContextMenuClient::downloadURL(const URL&)
 {
     // This is handled in the UI process.

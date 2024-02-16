@@ -47,6 +47,8 @@ namespace WebKit {
 using namespace PAL;
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(RemoteMediaSessionCoordinator);
+
 Ref<RemoteMediaSessionCoordinator> RemoteMediaSessionCoordinator::create(WebPage& page, const String& identifier)
 {
     return adoptRef(*new RemoteMediaSessionCoordinator(page, identifier));

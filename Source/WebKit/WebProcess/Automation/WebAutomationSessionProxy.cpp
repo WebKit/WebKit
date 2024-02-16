@@ -70,6 +70,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(WebAutomationSessionProxy);
+
 using namespace WebCore;
 
 template <typename T>

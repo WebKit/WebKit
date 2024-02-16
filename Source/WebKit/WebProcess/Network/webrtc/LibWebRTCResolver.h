@@ -30,6 +30,7 @@
 #include "LibWebRTCDnsResolverFactory.h"
 #include "LibWebRTCResolverIdentifier.h"
 #include <WebCore/LibWebRTCMacros.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
@@ -41,7 +42,7 @@ namespace WebKit {
 class LibWebRTCSocketFactory;
 
 class LibWebRTCResolver final : public LibWebRTCDnsResolverFactory::Resolver, private webrtc::AsyncDnsResolverResult, public CanMakeWeakPtr<LibWebRTCResolver> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(LibWebRTCResolver);
 public:
     LibWebRTCResolver() : m_identifier(LibWebRTCResolverIdentifier::generate()) { }
     ~LibWebRTCResolver();

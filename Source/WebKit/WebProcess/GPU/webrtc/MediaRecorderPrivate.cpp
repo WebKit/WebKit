@@ -47,6 +47,8 @@ namespace WebKit {
 using namespace PAL;
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(MediaRecorderPrivate);
+
 class MediaRecorderPrivateGPUProcessDidCloseObserver final
     : public GPUProcessConnection::Client
     , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MediaRecorderPrivateGPUProcessDidCloseObserver> {

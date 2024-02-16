@@ -32,15 +32,18 @@
 #include "RemoteImageBufferSetProxyMessages.h"
 #include "RemoteRenderingBackendProxy.h"
 #include <wtf/SystemTracing.h>
+#include <wtf/TZoneMalloc.h>
 
 #if ENABLE(GPU_PROCESS)
 
 namespace WebKit {
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(ThreadSafeImageBufferSetFlusher);
+
 class RemoteImageBufferSetProxyFlushFence : public ThreadSafeRefCounted<RemoteImageBufferSetProxyFlushFence> {
     WTF_MAKE_NONCOPYABLE(RemoteImageBufferSetProxyFlushFence);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(RemoteImageBufferSetProxyFlushFence);
 public:
     static Ref<RemoteImageBufferSetProxyFlushFence> create(IPC::Event event, RenderingUpdateID renderingUpdateID)
     {
@@ -113,7 +116,7 @@ private:
 namespace {
 
 class RemoteImageBufferSetProxyFlusher final : public ThreadSafeImageBufferSetFlusher {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(RemoteImageBufferSetProxyFlusher);
 public:
     RemoteImageBufferSetProxyFlusher(RemoteImageBufferSetIdentifier identifier, Ref<RemoteImageBufferSetProxyFlushFence> flushState, unsigned generation)
         : m_identifier(identifier)

@@ -38,6 +38,8 @@
 
 namespace WebKit::ShapeDetection {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(RemoteFaceDetectorProxy);
+
 Ref<RemoteFaceDetectorProxy> RemoteFaceDetectorProxy::create(Ref<IPC::StreamClientConnection>&& streamClientConnection, RenderingBackendIdentifier renderingBackendIdentifier, ShapeDetectionIdentifier identifier, const WebCore::ShapeDetection::FaceDetectorOptions& faceDetectorOptions)
 {
     streamClientConnection->send(Messages::RemoteRenderingBackend::CreateRemoteFaceDetector(identifier, faceDetectorOptions), renderingBackendIdentifier, Seconds::infinity());

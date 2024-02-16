@@ -38,6 +38,8 @@
 
 namespace WebKit::ShapeDetection {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(RemoteBarcodeDetectorProxy);
+
 Ref<RemoteBarcodeDetectorProxy> RemoteBarcodeDetectorProxy::create(Ref<IPC::StreamClientConnection>&& streamClientConnection, RenderingBackendIdentifier renderingBackendIdentifier, ShapeDetectionIdentifier identifier, const WebCore::ShapeDetection::BarcodeDetectorOptions& barcodeDetectorOptions)
 {
     streamClientConnection->send(Messages::RemoteRenderingBackend::CreateRemoteBarcodeDetector(identifier, barcodeDetectorOptions), renderingBackendIdentifier, Seconds::infinity());

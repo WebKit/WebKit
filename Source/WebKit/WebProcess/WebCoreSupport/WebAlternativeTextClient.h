@@ -26,13 +26,14 @@
 #pragma once
 
 #include <WebCore/AlternativeTextClient.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class WebPage;
 
 class WebAlternativeTextClient final : public WebCore::AlternativeTextClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(WebAlternativeTextClient);
 public:
     explicit WebAlternativeTextClient(WebPage*);
     virtual ~WebAlternativeTextClient();

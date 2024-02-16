@@ -35,6 +35,8 @@
 
 namespace WebKit::WebGPU {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(RemoteShaderModuleProxy);
+
 RemoteShaderModuleProxy::RemoteShaderModuleProxy(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     : m_backing(identifier)
     , m_convertToBackingContext(convertToBackingContext)

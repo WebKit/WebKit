@@ -46,6 +46,8 @@ namespace WebKit {
 using namespace PAL;
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(UserMediaCaptureManager);
+
 UserMediaCaptureManager::UserMediaCaptureManager(WebProcess& process)
     : m_audioFactory(*this)
     , m_videoFactory(*this)

@@ -31,8 +31,11 @@
 #include "LibWebRTCCodecs.h"
 #include "WebProcess.h"
 #include <wtf/StdUnorderedMap.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
+
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(RemoteVideoCodecFactory);
 
 class RemoteVideoDecoderCallbacks : public ThreadSafeRefCounted<RemoteVideoDecoderCallbacks> {
 public:
@@ -56,7 +59,7 @@ private:
 };
 
 class RemoteVideoDecoder : public WebCore::VideoDecoder {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(RemoteVideoDecoder);
 public:
     RemoteVideoDecoder(LibWebRTCCodecs::Decoder&, Ref<RemoteVideoDecoderCallbacks>&&, uint16_t width, uint16_t height);
     ~RemoteVideoDecoder();
@@ -96,7 +99,7 @@ private:
 };
 
 class RemoteVideoEncoder : public WebCore::VideoEncoder {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(RemoteVideoEncoder);
 public:
     RemoteVideoEncoder(LibWebRTCCodecs::Encoder&, Ref<RemoteVideoEncoderCallbacks>&&);
     ~RemoteVideoEncoder();

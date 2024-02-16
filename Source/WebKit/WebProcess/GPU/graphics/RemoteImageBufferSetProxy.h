@@ -33,6 +33,7 @@
 #include "RenderingUpdateID.h"
 #include "WorkQueueMessageReceiver.h"
 #include <wtf/Lock.h>
+#include <wtf/TZoneMalloc.h>
 
 #if ENABLE(GPU_PROCESS)
 
@@ -51,7 +52,7 @@ struct BufferSetBackendHandle;
 // the code that isn't specific to being remote, and this helper belongs
 // there.
 class ThreadSafeImageBufferSetFlusher {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(ThreadSafeImageBufferSetFlusher);
     WTF_MAKE_NONCOPYABLE(ThreadSafeImageBufferSetFlusher);
 public:
     enum class FlushType {

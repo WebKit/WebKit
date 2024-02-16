@@ -41,6 +41,7 @@
 #include <WebCore/WebAudioBufferList.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WorkQueue.h>
 
 namespace WebCore {
@@ -52,7 +53,7 @@ namespace WebKit {
 class RemoteVideoFrameObjectHeapProxy;
 
 class RemoteCaptureSampleManager : public IPC::WorkQueueMessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(RemoteCaptureSampleManager);
 public:
     RemoteCaptureSampleManager();
     ~RemoteCaptureSampleManager();

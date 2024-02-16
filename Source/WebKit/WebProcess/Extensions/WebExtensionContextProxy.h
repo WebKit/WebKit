@@ -34,6 +34,7 @@
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/PageIdentifier.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
 
@@ -53,7 +54,7 @@ struct WebExtensionTabParameters;
 struct WebExtensionWindowParameters;
 
 class WebExtensionContextProxy final : public RefCounted<WebExtensionContextProxy>, public IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(WebExtensionContextProxy);
     WTF_MAKE_NONCOPYABLE(WebExtensionContextProxy);
 
 public:

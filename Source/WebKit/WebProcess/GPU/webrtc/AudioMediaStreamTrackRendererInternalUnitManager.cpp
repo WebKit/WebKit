@@ -42,11 +42,14 @@
 #include <WebCore/WebAudioBufferList.h>
 #include <mach/mach_time.h>
 #include <wtf/Deque.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(AudioMediaStreamTrackRendererInternalUnitManager);
+
 class AudioMediaStreamTrackRendererInternalUnitManager::Proxy final : public WebCore::AudioMediaStreamTrackRendererInternalUnit, public CanMakeWeakPtr<Proxy> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(AudioMediaStreamTrackRendererInternalUnitManager::Proxy);
 public:
     explicit Proxy(Client&);
     ~Proxy();

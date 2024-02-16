@@ -72,6 +72,8 @@ namespace WebKit {
 using namespace WebCore;
 using namespace HTMLNames;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(WebEditorClient);
+
 bool WebEditorClient::shouldDeleteRange(const std::optional<SimpleRange>& range)
 {
     return m_page->injectedBundleEditorClient().shouldDeleteRange(*m_page, range);

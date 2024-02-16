@@ -40,6 +40,8 @@
 namespace WebKit {
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(WebGeolocationManager);
+
 static RegistrableDomain registrableDomainForPage(WebPage& page)
 {
     auto* document = page.corePage() && dynamicDowncast<LocalFrame>(page.corePage()->mainFrame()) ? dynamicDowncast<LocalFrame>(page.corePage()->mainFrame())->document() : nullptr;

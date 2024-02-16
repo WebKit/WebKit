@@ -38,6 +38,8 @@
 
 namespace WebKit::ShapeDetection {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(RemoteTextDetectorProxy);
+
 Ref<RemoteTextDetectorProxy> RemoteTextDetectorProxy::create(Ref<IPC::StreamClientConnection>&& streamClientConnection, RenderingBackendIdentifier renderingBackendIdentifier, ShapeDetectionIdentifier identifier)
 {
     streamClientConnection->send(Messages::RemoteRenderingBackend::CreateRemoteTextDetector(identifier), renderingBackendIdentifier, Seconds::infinity());

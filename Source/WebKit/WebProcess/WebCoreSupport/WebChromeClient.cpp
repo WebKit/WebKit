@@ -161,6 +161,8 @@ namespace WebKit {
 using namespace WebCore;
 using namespace HTMLNames;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(WebChromeClient);
+
 AXRelayProcessSuspendedNotification::AXRelayProcessSuspendedNotification(Ref<WebPage> page, AutomaticallySend automaticallySend)
     : m_page(page.get())
     , m_automaticallySend(automaticallySend)

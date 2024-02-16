@@ -29,6 +29,7 @@
 
 #include <wtf/Noncopyable.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 typedef const struct OpaqueJSContext* JSContextRef;
@@ -39,7 +40,7 @@ typedef struct OpaqueJSClass* JSClassRef;
 namespace WebKit {
 
 class PDFScriptEvaluator : public RefCounted<PDFScriptEvaluator> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(PDFScriptEvaluator);
     WTF_MAKE_NONCOPYABLE(PDFScriptEvaluator);
 public:
     class Client : public CanMakeWeakPtr<Client> {

@@ -32,6 +32,7 @@
 #include "WebProcessSupplement.h"
 #include <WebCore/LegacyCDM.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace IPC {
@@ -59,7 +60,7 @@ class WebProcess;
 class RemoteLegacyCDMFactory final
     : public WebProcessSupplement
     , public CanMakeWeakPtr<RemoteLegacyCDMFactory> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(RemoteLegacyCDMFactory);
 public:
     explicit RemoteLegacyCDMFactory(WebProcess&);
     virtual ~RemoteLegacyCDMFactory();

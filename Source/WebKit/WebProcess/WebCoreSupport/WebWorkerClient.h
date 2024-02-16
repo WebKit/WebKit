@@ -30,6 +30,7 @@
 #include "RemoteVideoFrameObjectHeapProxy.h"
 #include "WebGPUIdentifier.h"
 #include <WebCore/WorkerClient.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore::WebGPU {
 class GPU;
@@ -41,7 +42,7 @@ class WebPage;
 class RemoteRenderingBackendProxy;
 
 class WebWorkerClient : public WebCore::WorkerClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(WebWorkerClient);
 public:
     // Constructed on the main thread, and then transferred to the
     // worker thread. All further operations on this object will

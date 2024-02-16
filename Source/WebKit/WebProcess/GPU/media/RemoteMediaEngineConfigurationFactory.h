@@ -32,6 +32,7 @@
 #include "WebProcessSupplement.h"
 #include <WebCore/MediaEngineConfigurationFactory.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace IPC {
@@ -47,7 +48,7 @@ class WebProcess;
 class RemoteMediaEngineConfigurationFactory final
     : public WebProcessSupplement
     , public CanMakeWeakPtr<RemoteMediaEngineConfigurationFactory> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(RemoteMediaEngineConfigurationFactory);
 public:
     explicit RemoteMediaEngineConfigurationFactory(WebProcess&);
     virtual ~RemoteMediaEngineConfigurationFactory();

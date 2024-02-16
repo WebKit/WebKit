@@ -33,6 +33,7 @@
 #include <WebCore/CAAudioStreamDescription.h>
 #include <WebCore/MediaRecorderPrivate.h>
 #include <wtf/MediaTime.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace IPC {
@@ -51,7 +52,7 @@ class MediaRecorderPrivateGPUProcessDidCloseObserver;
 class MediaRecorderPrivate final
     : public WebCore::MediaRecorderPrivate
     , public CanMakeWeakPtr<MediaRecorderPrivate> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(MediaRecorderPrivate);
 public:
     MediaRecorderPrivate(WebCore::MediaStreamPrivate&, const WebCore::MediaRecorderPrivateOptions&);
     ~MediaRecorderPrivate();

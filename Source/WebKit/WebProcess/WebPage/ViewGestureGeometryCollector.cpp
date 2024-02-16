@@ -53,6 +53,8 @@
 namespace WebKit {
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(ViewGestureGeometryCollector);
+
 #if PLATFORM(IOS_FAMILY)
 static const double minimumScaleDifferenceForZooming = 0.3;
 #endif

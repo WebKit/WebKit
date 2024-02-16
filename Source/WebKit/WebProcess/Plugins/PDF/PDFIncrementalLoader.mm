@@ -44,13 +44,15 @@
 namespace WebKit {
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(PDFIncrementalLoader);
+
 // <rdar://problem/61473378> - PDFKit asks for a "way too large" range when the PDF it is loading
 // incrementally turns out to be non-linearized.
 // We'll assume any size over 4GB is PDFKit noticing non-linearized data.
 static const uint32_t nonLinearizedPDFSentinel = std::numeric_limits<uint32_t>::max();
 
 class ByteRangeRequest : public Identified<ByteRangeRequest> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(ByteRangeRequest);
 public:
     ByteRangeRequest() = default;
     ByteRangeRequest(uint64_t position, size_t count, DataRequestCompletionHandler&& completionHandler)
