@@ -813,11 +813,6 @@ CGFloat UnifiedPDFPlugin::scaleFactor() const
     return m_scaleFactor;
 }
 
-CGSize UnifiedPDFPlugin::contentSizeRespectingZoom() const
-{
-    return { };
-}
-
 float UnifiedPDFPlugin::deviceScaleFactor() const
 {
     return PDFPluginBase::deviceScaleFactor();

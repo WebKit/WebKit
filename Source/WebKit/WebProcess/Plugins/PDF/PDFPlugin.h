@@ -119,7 +119,7 @@ public:
     WebCore::FloatRect convertFromPDFViewToScreen(const WebCore::FloatRect&) const;
 
     CGFloat scaleFactor() const override;
-    CGSize contentSizeRespectingZoom() const final;
+    CGSize contentSizeRespectingZoom() const;
 
 private:
     explicit PDFPlugin(WebCore::HTMLPlugInElement&);
