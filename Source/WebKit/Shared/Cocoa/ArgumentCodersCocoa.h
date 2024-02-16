@@ -31,6 +31,7 @@
 #if PLATFORM(COCOA)
 
 #import "WKKeyedCoder.h"
+#import <WebCore/AttributedString.h>
 #import <wtf/RetainPtr.h>
 
 #if ENABLE(DATA_DETECTION)
@@ -62,6 +63,9 @@ OBJC_CLASS PKPaymentMethod;
 OBJC_CLASS PKPaymentToken;
 OBJC_CLASS PKShippingMethod;
 #endif
+
+OBJC_CLASS PlatformColor;
+OBJC_CLASS NSShadow;
 
 namespace IPC {
 
@@ -106,6 +110,7 @@ enum class NSType : uint8_t {
     SecureCoding,
     String,
     URL,
+    NSShadow,
     NSURLProtectionSpace,
     NSValue,
     CF,
@@ -162,6 +167,9 @@ template<> Class getClass<PKDateComponentsRange>();
 template<> Class getClass<PKPaymentMethod>();
 template<> Class getClass<PKSecureElementPass>();
 #endif
+
+template<> Class getClass<PlatformColor>();
+template<> Class getClass<NSShadow>();
 
 void encodeObjectWithWrapper(Encoder&, id);
 std::optional<RetainPtr<id>> decodeObjectFromWrapper(Decoder&, const HashSet<Class>& allowedClasses);

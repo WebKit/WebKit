@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,25 +25,44 @@
 
 #pragma once
 
-#import "CoreIPCArray.h"
-#import "CoreIPCCFType.h"
-#import "CoreIPCColor.h"
-#import "CoreIPCContacts.h"
-#import "CoreIPCData.h"
-#import "CoreIPCDate.h"
-#import "CoreIPCDateComponents.h"
-#import "CoreIPCDictionary.h"
-#import "CoreIPCError.h"
-#import "CoreIPCFont.h"
-#import "CoreIPCLocale.h"
-#import "CoreIPCNSShadow.h"
-#import "CoreIPCNSValue.h"
-#import "CoreIPCNull.h"
-#import "CoreIPCNumber.h"
-#import "CoreIPCPassKit.h"
-#import "CoreIPCPersonNameComponents.h"
-#import "CoreIPCPresentationIntent.h"
-#import "CoreIPCSecureCoding.h"
-#import "CoreIPCString.h"
-#import "CoreIPCURL.h"
-#import "GeneratedWebKitSecureCoding.h"
+#if PLATFORM(COCOA)
+
+#include "ArgumentCodersCocoa.h"
+#include "CoreIPCSecureCoding.h"
+#include <WebCore/ColorCocoa.h>
+#include <wtf/RetainPtr.h>
+
+OBJC_CLASS NSShadow;
+
+namespace WebKit {
+
+class CoreIPCSecureCoding;
+
+class CoreIPCNSShadow {
+public:
+    CoreIPCNSShadow(NSShadow *);
+    CoreIPCNSShadow(const RetainPtr<NSShadow>& shadow)
+        : CoreIPCNSShadow(shadow.get())
+    {
+    }
+
+    CoreIPCNSShadow(CGSize shadowOffset, CGFloat shadowBlurRadius, RetainPtr<WebCore::CocoaColor>&& shadowColor)
+        : m_shadowOffset(shadowOffset)
+        , m_shadowBlurRadius(shadowBlurRadius)
+        , m_shadowColor(WTFMove(shadowColor))
+    {
+    }
+
+    RetainPtr<id> toID() const;
+
+private:
+    friend struct IPC::ArgumentCoder<CoreIPCNSShadow, void>;
+
+    CGSize m_shadowOffset;
+    CGFloat m_shadowBlurRadius;
+    RetainPtr<WebCore::CocoaColor> m_shadowColor;
+};
+
+} // namespace WebKit
+
+#endif // PLATFORM(COCOA)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,8 @@
 #import "test.h"
 #import <Foundation/NSValue.h>
 #import <Security/Security.h>
+#import <WebCore/AttributedString.h>
+#import <WebCore/ColorCocoa.h>
 #import <WebCore/FontCocoa.h>
 #import <limits.h>
 #import <pal/spi/cocoa/ContactsSPI.h>
@@ -44,6 +46,7 @@
 #import <pal/cocoa/ContactsSoftLink.h>
 #import <pal/cocoa/DataDetectorsCoreSoftLink.h>
 #import <pal/cocoa/PassKitSoftLink.h>
+#import <pal/ios/UIKitSoftLink.h>
 #import <pal/mac/DataDetectorsSoftLink.h>
 
 // This test makes it trivial to test round trip encoding and decoding of a particular object type.
@@ -399,6 +402,7 @@ struct ObjCHolderForTesting {
         RetainPtr<PKShippingMethod>,
         RetainPtr<PKPayment>,
 #endif
+        RetainPtr<NSShadow>,
         RetainPtr<NSValue>
     > ValueType;
 
@@ -792,39 +796,41 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 }
 #endif // USE(PASSKIT) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
 
+static void runTestNS(ObjCHolderForTesting&& holderArg)
+{
+    __block bool done = false;
+    __block ObjCHolderForTesting holder = WTFMove(holderArg);
+    auto sender = SerializationTestSender { };
+    sender.sendWithAsyncReplyWithoutUsingIPCConnection(ObjCPingBackMessage(holder), ^(ObjCHolderForTesting&& result) {
+        EXPECT_TRUE(holder == result);
+        done = true;
+    });
+
+    // The completion handler should be called synchronously, so this should be true already.
+    EXPECT_TRUE(done);
+};
+
+static void runTestCFWithExpectedResult(const CFHolderForTesting& holderArg, const CFHolderForTesting& expectedResult)
+{
+    __block bool done = false;
+    __block CFHolderForTesting holder = expectedResult;
+    auto sender = SerializationTestSender { };
+    sender.sendWithAsyncReplyWithoutUsingIPCConnection(CFPingBackMessage(holderArg), ^(CFHolderForTesting&& result) {
+        EXPECT_TRUE(holder == result);
+        done = true;
+    });
+
+    // The completion handler should be called synchronously, so this should be true already.
+    EXPECT_TRUE(done);
+};
+
+static void runTestCF(const CFHolderForTesting& holderArg)
+{
+    runTestCFWithExpectedResult(holderArg, holderArg);
+};
 
 TEST(IPCSerialization, Basic)
 {
-    auto runTestNS = [](ObjCHolderForTesting&& holderArg) {
-        __block bool done = false;
-        __block ObjCHolderForTesting holder = WTFMove(holderArg);
-        auto sender = SerializationTestSender { };
-        sender.sendWithAsyncReplyWithoutUsingIPCConnection(ObjCPingBackMessage(holder), ^(ObjCHolderForTesting&& result) {
-            EXPECT_TRUE(holder == result);
-            done = true;
-        });
-
-        // The completion handler should be called synchronously, so this should be true already.
-        EXPECT_TRUE(done);
-    };
-
-    auto runTestCFWithExpectedResult = [](const CFHolderForTesting& holderArg, const CFHolderForTesting& expectedResult) {
-        __block bool done = false;
-        __block CFHolderForTesting holder = expectedResult;
-        auto sender = SerializationTestSender { };
-        sender.sendWithAsyncReplyWithoutUsingIPCConnection(CFPingBackMessage(holderArg), ^(CFHolderForTesting&& result) {
-            EXPECT_TRUE(holder == result);
-            done = true;
-        });
-
-        // The completion handler should be called synchronously, so this should be true already.
-        EXPECT_TRUE(done);
-    };
-
-    auto runTestCF = [&] (const CFHolderForTesting& holderArg) {
-        runTestCFWithExpectedResult(holderArg, holderArg);
-    };
-
     // NSString/CFString
     runTestNS({ @"Hello world" });
     runTestCF({ CFSTR("Hello world") });
@@ -1022,6 +1028,7 @@ TEST(IPCSerialization, Basic)
     runValueTest([NSValue valueWithRange:NSMakeRange(1, 2)]);
     runValueTest([NSValue valueWithRect:NSMakeRect(1, 2, 79, 80)]);
 
+
     // SecTrust -- evaluate the trust of the cert created above
     SecTrustRef trustRef = NULL;
     auto policy = adoptCF(SecPolicyCreateBasicX509());
@@ -1172,6 +1179,22 @@ TEST(IPCSerialization, Basic)
     runTestNS({ protectionSpace2.get() });
 }
 
+TEST(IPCSerialization, NSShadow)
+{
+    auto runTestNSShadow = [&](CGSize shadowOffset, CGFloat shadowBlurRadius, PlatformColor *shadowColor) {
+        RetainPtr<NSShadow> shadow = adoptNS([[PlatformNSShadow alloc] init]);
+        [shadow setShadowOffset:shadowOffset];
+        [shadow setShadowBlurRadius:shadowBlurRadius];
+        [shadow setShadowColor:shadowColor];
+        runTestNS({ shadow.get() });
+    };
+
+    runTestNSShadow({ 5.7, 10.5 }, 0.49, nil);
+
+    RetainPtr<PlatformColor> platformColor = cocoaColor(WebCore::Color::blue);
+    runTestNSShadow({ 10.5, 5.7 }, 0.79, platformColor.get());
+}
+
 #if PLATFORM(MAC)
 
 static RetainPtr<DDScannerResult> fakeDataDetectorResultForTesting()
@@ -1216,19 +1239,6 @@ static RetainPtr<DDScannerResult> fakeDataDetectorResultForTesting()
 
 TEST(IPCSerialization, SecureCoding)
 {
-    auto runTestNS = [](ObjCHolderForTesting&& holderArg) {
-        __block bool done = false;
-        __block ObjCHolderForTesting holder = WTFMove(holderArg);
-        auto sender = SerializationTestSender { };
-        sender.sendWithAsyncReplyWithoutUsingIPCConnection(ObjCPingBackMessage(holder), ^(ObjCHolderForTesting&& result) {
-            EXPECT_TRUE(holder == result);
-            done = true;
-        });
-
-        // The completion handler should be called synchronously, so this should be true already.
-        EXPECT_TRUE(done);
-    };
-
     // DDScannerResult
     //   - Note: For now, there's no reasonable way to create anything but an empty DDScannerResult object
     auto scannerResult = fakeDataDetectorResultForTesting();

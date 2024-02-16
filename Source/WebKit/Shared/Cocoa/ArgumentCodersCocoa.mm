@@ -53,6 +53,7 @@
 #import <UIKit/UIFont.h>
 #import <UIKit/UIFontDescriptor.h>
 #import <UIKit/UIKit.h>
+#import <pal/ios/UIKitSoftLink.h>
 #endif
 
 #if ENABLE(DATA_DETECTION)
@@ -329,6 +330,16 @@ template<> Class getClass<PKSecureElementPass>()
 }
 #endif
 
+template<> Class getClass<PlatformColor>()
+{
+    return PlatformColorClass;
+}
+
+template<> Class getClass<NSShadow>()
+{
+    return PlatformNSShadow;
+}
+
 NSType typeFromObject(id object)
 {
     ASSERT(object);
@@ -366,7 +377,7 @@ NSType typeFromObject(id object)
     if (PAL::isPassKitCoreFrameworkAvailable() && [object isKindOfClass:PAL::getPKPaymentMethodClass()])
         return NSType::PKPaymentMethod;
 #endif
-    if ([object isKindOfClass:[WebCore::CocoaColor class]])
+    if ([object isKindOfClass:PlatformColorClass])
         return NSType::Color;
 #if ENABLE(DATA_DETECTION)
 #if PLATFORM(MAC)
@@ -392,6 +403,8 @@ NSType typeFromObject(id object)
         return NSType::Number;
     if ([object isKindOfClass:[NSNull class]])
         return NSType::Null;
+    if ([object isKindOfClass:PlatformNSShadow])
+        return NSType::NSShadow;
     if ([object isKindOfClass:[NSValue class]])
         return NSType::NSValue;
     if ([object isKindOfClass:[NSPersonNameComponents class]])
@@ -590,8 +603,7 @@ static constexpr bool haveSecureActionContext = false;
     if (allowedClasses.contains(NSMutableURLRequest.class))
         return true;
 
-    if (allowedClasses.contains(NSShadow.class) // rdar://107553244
-        || allowedClasses.contains(NSTextAttachment.class) // rdar://107553273
+    if (allowedClasses.contains(NSTextAttachment.class) // rdar://107553273
 #if ENABLE(APPLE_PAY)
         || (PAL::isPassKitCoreFrameworkAvailable() && PAL::getPKPaymentSetupFeatureClass() && allowedClasses.contains(PAL::getPKPaymentSetupFeatureClass())) // rdar://107553409
         || (PAL::isPassKitCoreFrameworkAvailable() && PAL::getPKPaymentMerchantSessionClass() && allowedClasses.contains(PAL::getPKPaymentMerchantSessionClass())) // rdar://107553452

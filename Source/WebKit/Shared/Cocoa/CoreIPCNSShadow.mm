@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,27 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#import "CoreIPCArray.h"
-#import "CoreIPCCFType.h"
-#import "CoreIPCColor.h"
-#import "CoreIPCContacts.h"
-#import "CoreIPCData.h"
-#import "CoreIPCDate.h"
-#import "CoreIPCDateComponents.h"
-#import "CoreIPCDictionary.h"
-#import "CoreIPCError.h"
-#import "CoreIPCFont.h"
-#import "CoreIPCLocale.h"
+#import "config.h"
 #import "CoreIPCNSShadow.h"
-#import "CoreIPCNSValue.h"
-#import "CoreIPCNull.h"
-#import "CoreIPCNumber.h"
-#import "CoreIPCPassKit.h"
-#import "CoreIPCPersonNameComponents.h"
-#import "CoreIPCPresentationIntent.h"
-#import "CoreIPCSecureCoding.h"
-#import "CoreIPCString.h"
-#import "CoreIPCURL.h"
-#import "GeneratedWebKitSecureCoding.h"
+
+#if PLATFORM(COCOA)
+
+#if USE(APPKIT)
+#import <AppKit/NSShadow.h>
+#endif
+#if PLATFORM(IOS_FAMILY)
+#import <UIKit/NSShadow.h>
+#import <pal/ios/UIKitSoftLink.h>
+#endif
+
+namespace WebKit {
+
+CoreIPCNSShadow::CoreIPCNSShadow(NSShadow *shadow)
+    : m_shadowOffset(shadow.shadowOffset)
+    , m_shadowBlurRadius(shadow.shadowBlurRadius)
+    , m_shadowColor(shadow.shadowColor)
+{
+}
+
+RetainPtr<id> CoreIPCNSShadow::toID() const
+{
+    RetainPtr<NSShadow> result = adoptNS([PlatformNSShadow new]);
+    [result setShadowOffset:m_shadowOffset];
+    [result setShadowBlurRadius:m_shadowBlurRadius];
+    [result setShadowColor:m_shadowColor.get()];
+    return result;
+}
+
+} // namespace WebKit
+
+#endif // PLATFORM(COCOA)
