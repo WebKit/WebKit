@@ -1570,6 +1570,11 @@ static void emitStorageBarrier(FunctionDefinitionWriter* writer, AST::CallExpres
     writer->stringBuilder().append("threadgroup_barrier(mem_flags::mem_device)");
 }
 
+static void emitTextureBarrier(FunctionDefinitionWriter* writer, AST::CallExpression&)
+{
+    writer->stringBuilder().append("threadgroup_barrier(mem_flags::mem_texture)");
+}
+
 static void emitWorkgroupBarrier(FunctionDefinitionWriter* writer, AST::CallExpression&)
 {
     writer->stringBuilder().append("threadgroup_barrier(mem_flags::mem_threadgroup)");
@@ -1840,6 +1845,7 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
             { "quantizeToF16", emitQuantizeToF16 },
             { "radians", emitRadians },
             { "storageBarrier", emitStorageBarrier },
+            { "textureBarrier", emitTextureBarrier },
             { "textureDimensions", emitTextureDimensions },
             { "textureGather", emitTextureGather },
             { "textureGatherCompare", emitTextureGatherCompare },
