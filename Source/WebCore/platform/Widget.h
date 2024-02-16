@@ -138,6 +138,7 @@ public:
     WEBCORE_EXPORT void removeFromParent();
     WEBCORE_EXPORT virtual void setParent(ScrollView* view);
     WEBCORE_EXPORT ScrollView* parent() const;
+    WEBCORE_EXPORT RefPtr<ScrollView> protectedParent() const;
     FrameView* root() const;
 
     virtual void handleEvent(Event&) { }

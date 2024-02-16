@@ -152,8 +152,8 @@ public:
 
     EventHandler& eventHandler() { return m_eventHandler; }
     const EventHandler& eventHandler() const { return m_eventHandler; }
-    CheckedRef<EventHandler> checkedEventHandler();
-    CheckedRef<const EventHandler> checkedEventHandler() const;
+    WEBCORE_EXPORT CheckedRef<EventHandler> checkedEventHandler();
+    WEBCORE_EXPORT CheckedRef<const EventHandler> checkedEventHandler() const;
 
     const FrameLoader& loader() const { return m_loader.get(); }
     FrameLoader& loader() { return m_loader.get(); }

@@ -82,6 +82,7 @@ public:
     void layerHostingStrategyDidChange() final;
 
     WebCore::HTMLPlugInElement& pluginElement() const { return m_pluginElement; }
+    Ref<WebCore::HTMLPlugInElement> protectedPluginElement() const;
     const URL& mainResourceURL() const { return m_mainResourceURL; }
 
     void didBeginMagnificationGesture();
@@ -175,6 +176,8 @@ private:
     void setParentVisible(bool) final;
     bool transformsAffectFrameRect() final;
     void clipRectChanged() final;
+
+    RefPtr<WebPage> protectedWebPage() const;
 
     Ref<WebCore::HTMLPlugInElement> m_pluginElement;
     Ref<PDFPluginBase> m_plugin;
