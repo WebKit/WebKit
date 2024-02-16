@@ -54,7 +54,7 @@
 }
 
 .tooltip-content {
-    z-index: var(--middleZIndex);
+    z-index: calc(var(--maxZIndex) + 1);
     position: absolute;
     -webkit-backdrop-filter: blur(10px) brightness(88%);
     backdrop-filter: blur(10px) brightness(88%);
