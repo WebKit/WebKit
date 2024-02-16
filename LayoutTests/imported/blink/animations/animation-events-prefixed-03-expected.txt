@@ -1,3 +1,3 @@
-Tests that prefixed animation events are correctly fired when using html event listeners.
-PASS: All events have been received as expected.
+
+PASS Prefixed animation events should be fired with html event listeners
 
