@@ -4089,6 +4089,7 @@ bool RenderLayerBacking::updateAcceleratedEffectsAndBaseValues()
                 continue;
             if (!hasInterpolatingEffect && effect->isRunningAccelerated())
                 hasInterpolatingEffect = true;
+            effect->setAcceleratedRepresentation(acceleratedEffect.get());
             acceleratedEffects.append(acceleratedEffect.releaseNonNull());
         }
     }

@@ -483,6 +483,7 @@ void AcceleratedEffect::validateFilters(const AcceleratedEffectValues& baseValue
             return;
         disallowedProperties.add({ property });
         m_animatedProperties.remove({ property });
+        m_disallowedProperties.add({ property });
         for (auto& keyframe : m_keyframes)
             keyframe.clearProperty(property);
     };

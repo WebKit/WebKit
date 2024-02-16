@@ -37,6 +37,7 @@
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Seconds.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -44,7 +45,7 @@ class FloatRect;
 class IntRect;
 class KeyframeEffect;
 
-class AcceleratedEffect : public RefCounted<AcceleratedEffect>, public KeyframeInterpolation {
+class AcceleratedEffect : public RefCounted<AcceleratedEffect>, public CanMakeWeakPtr<AcceleratedEffect>, public KeyframeInterpolation {
     WTF_MAKE_ISO_ALLOCATED(AcceleratedEffect);
 public:
 
@@ -95,6 +96,8 @@ public:
     std::optional<Seconds> startTime() const { return m_startTime; }
     std::optional<Seconds> holdTime() const { return m_holdTime; }
 
+    const OptionSet<AcceleratedEffectProperty>& disallowedProperties() const { return m_disallowedProperties; }
+
     bool animatesTransformRelatedProperty() const;
 
 private:
@@ -116,6 +119,7 @@ private:
     CompositeOperation m_compositeOperation { CompositeOperation::Replace };
     RefPtr<TimingFunction> m_defaultKeyframeTimingFunction;
     OptionSet<AcceleratedEffectProperty> m_animatedProperties;
+    OptionSet<AcceleratedEffectProperty> m_disallowedProperties;
     bool m_paused { false };
     double m_playbackRate { 1 };
     std::optional<Seconds> m_startTime;
