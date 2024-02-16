@@ -272,6 +272,8 @@ void GPUCanvasContextCocoa::prepareForDisplay()
     ASSERT(m_configuration->frameCount < m_configuration->renderBuffers.size());
 
     m_compositorIntegration->prepareForDisplay([&] {
+        if (m_configuration->frameCount >= m_configuration->renderBuffers.size())
+            return;
         m_layerContentsDisplayDelegate->setDisplayBuffer(m_configuration->renderBuffers[m_configuration->frameCount]);
         m_compositingResultsNeedsUpdating = false;
         m_configuration->frameCount = (m_configuration->frameCount + 1) % m_configuration->renderBuffers.size();
