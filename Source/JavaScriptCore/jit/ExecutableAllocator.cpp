@@ -436,6 +436,7 @@ static ALWAYS_INLINE JITReservation initializeJITPageReservation()
         g_jscConfig.endExecutableMemory = reservationEnd;
 
 #if !USE(SYSTEM_MALLOC) && ENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
+        static_assert(WebConfig::reservedSlotsForExecutableAllocator >= 2);
         WebConfig::g_config[0] = bitwise_cast<uintptr_t>(reservation.base);
         WebConfig::g_config[1] = bitwise_cast<uintptr_t>(reservationEnd);
 #endif

@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include <wtf/WTFConfig.h>
+#include <bmalloc/GigacageConfig.h>
 
 #include <wtf/Gigacage.h>
 #include <wtf/Lock.h>
@@ -55,6 +56,8 @@ namespace WebConfig {
 alignas(WTF::ConfigAlignment) Slot g_config[WTF::ConfigSizeToProtect / sizeof(Slot)];
 
 } // namespace WebConfig
+
+static_assert(Gigacage::startSlotOfGigacageConfig == WebConfig::reservedSlotsForExecutableAllocator + WebConfig::additionalReservedSlots);
 
 #else // not ENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
 
