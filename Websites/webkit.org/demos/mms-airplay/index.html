@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MSE/MMS + AirPlay Demo</title>
+    <meta name="supported-color-schemes" content="light dark">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { padding: 10ch; }
+        video { width: 100%; height: auto; border-radius: 1vw; }
+    </style>
+
+    <script type="text/javascript">
+        const airplayURL = './video/demo.m3u8';
+        const videoURL = './video/demo.mp4';
+        const mediaType = 'video/mp4; codecs="avc1.640028"';
+
+        // Create a video element
+        const video = document.createElement('video');
+
+        // Set video element properties for the demo
+        video.controls = true;
+        video.loop = true;
+        video.muted = true;
+        video.autoplay = true;
+
+        // Feature detect MMS and fallback to MSE
+        const MediaSource = self.ManagedMediaSource || self.MediaSource;
+        const source = new MediaSource();
+
+        // Add MSE/MMS streaming source
+        const videoSource1 = document.createElement('source');
+        videoSource1.type = 'video/mp4';
+        videoSource1.src = URL.createObjectURL(source);
+        video.src = videoSource1.src;
+        video.appendChild(videoSource1) ;
+        
+        // Add AirPlay-compatible HLS source
+        const videoSource2 = document.createElement('source');
+        videoSource2. type = 'application/x-mpegURL';
+        videoSource2.src = airplayURL;
+        video.appendChild(videoSource2);
+
+        document.addEventListener('DOMContentLoaded', async () => {
+          if (!MediaSource.isTypeSupported(mediaType)) {
+            return console.log('Media type is not supported.');
+          }
+
+          await new Promise((resolve) => {
+            source.addEventListener("sourceopen", resolve, { once: true });
+            document.body.appendChild(video);
+          });
+
+          const sourceBuffer = source.addSourceBuffer(mediaType);
+
+          async function loadSegment() {
+            const response = await fetch(videoURL);
+            const buffer = await response.arrayBuffer();
+            await new Promise((resolve) => {
+              sourceBuffer.addEventListener("updateend", resolve, { once: true });
+              sourceBuffer.appendBuffer(buffer);
+            });
+          }
+
+          if (typeof(source.onstartstreaming) !== 'undefined') {
+            source.onstartstreaming = async () => {
+              loadSegment();
+            };
+          } else loadSegment();
+        });
+    </script>
+</head>
+<body>
+</body>
+</html>
