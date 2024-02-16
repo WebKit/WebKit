@@ -34,9 +34,12 @@
 #include <skia/core/SkImage.h>
 #include <skia/core/SkStream.h>
 #include <skia/encode/SkJpegEncoder.h>
+#include <wtf/text/WTFString.h>
+
+IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
 #include <skia/encode/SkPngEncoder.h>
 #include <skia/encode/SkWebpEncoder.h>
-#include <wtf/text/WTFString.h>
+IGNORE_CLANG_WARNINGS_END
 
 namespace WebCore {
 
