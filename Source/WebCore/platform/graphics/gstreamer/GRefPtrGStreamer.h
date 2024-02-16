@@ -173,6 +173,10 @@ template<> GRefPtr<GstDevice> adoptGRef(GstDevice*);
 template<> GstDevice* refGPtr<GstDevice>(GstDevice*);
 template<> void derefGPtr<GstDevice>(GstDevice*);
 
+template<> GRefPtr<GstTracer> adoptGRef(GstTracer*);
+template<> GstTracer* refGPtr<GstTracer>(GstTracer*);
+template<> void derefGPtr<GstTracer>(GstTracer*);
+
 #if USE(GSTREAMER_GL)
 template<> GRefPtr<GstGLDisplay> adoptGRef(GstGLDisplay* ptr);
 template<> GstGLDisplay* refGPtr<GstGLDisplay>(GstGLDisplay* ptr);

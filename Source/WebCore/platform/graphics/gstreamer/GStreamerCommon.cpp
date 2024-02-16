@@ -499,6 +499,18 @@ void deinitializeGStreamer()
     teardownVideoEncoderSingleton();
 #endif
 
+    bool isLeaksTracerActive = false;
+    auto activeTracers = gst_tracing_get_active_tracers();
+    while (activeTracers) {
+        auto tracer = adoptGRef(GST_TRACER_CAST(activeTracers->data));
+        if (!isLeaksTracerActive && !g_strcmp0(G_OBJECT_TYPE_NAME(G_OBJECT(tracer.get())), "GstLeaksTracer"))
+            isLeaksTracerActive = true;
+        activeTracers = g_list_delete_link(activeTracers, activeTracers);
+    }
+
+    if (!isLeaksTracerActive)
+        return;
+
     // Make sure there is no active pipeline left. Those might trigger deadlocks during gst_deinit().
     {
         Locker locker { s_activePipelinesMapLock };

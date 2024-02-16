@@ -549,6 +549,28 @@ void derefGPtr<GstDevice>(GstDevice* ptr)
         gst_object_unref(ptr);
 }
 
+template<>
+GRefPtr<GstTracer> adoptGRef(GstTracer* ptr)
+{
+    return GRefPtr<GstTracer>(ptr, GRefPtrAdopt);
+}
+
+template<>
+GstTracer* refGPtr<GstTracer>(GstTracer* ptr)
+{
+    if (ptr)
+        gst_object_ref(GST_OBJECT_CAST(ptr));
+
+    return ptr;
+}
+
+template<>
+void derefGPtr<GstTracer>(GstTracer* ptr)
+{
+    if (ptr)
+        gst_object_unref(ptr);
+}
+
 template <> GRefPtr<WebKitVideoSink> adoptGRef(WebKitVideoSink* ptr)
 {
     ASSERT(!ptr || !g_object_is_floating(ptr));
