@@ -27,6 +27,7 @@
 #import "ShaderModule.h"
 
 #import "APIConversions.h"
+#import "ASTBuiltinAttribute.h"
 #import "ASTFunction.h"
 #import "ASTStructure.h"
 #import "ASTStructureMember.h"
@@ -429,6 +430,20 @@ static WGPUVertexFormat vertexFormatTypeForStructMember(const WGSL::Type* type)
     return vertexFormatTypeFromPrimitive(primitiveType, vectorSize);
 }
 
+void ShaderModule::populateOutputState(const String& entryPoint, WGSL::Builtin builtIn)
+{
+    switch (builtIn) {
+    case WGSL::Builtin::SampleMask:
+        populateShaderModuleState(entryPoint).usesSampleMaskInOutput = true;
+        break;
+    case WGSL::Builtin::FragDepth:
+        populateShaderModuleState(entryPoint).usesFragDepth = true;
+        break;
+    default:
+        break;
+    }
+}
+
 ShaderModule::FragmentOutputs ShaderModule::parseFragmentReturnType(const WGSL::Type& type, const String& entryPoint)
 {
     ShaderModule::FragmentOutputs fragmentOutputs;
@@ -445,18 +460,16 @@ ShaderModule::FragmentOutputs ShaderModule::parseFragmentReturnType(const WGSL::
         return fragmentOutputs;
 
     for (auto& member : returnStruct->structure.members()) {
-        if (member.builtin()) {
-            switch (*member.builtin()) {
-            case WGSL::Builtin::SampleMask:
-                populateShaderModuleState(entryPoint).usesSampleMaskInOutput = true;
-                break;
-            case WGSL::Builtin::FragDepth:
-                populateShaderModuleState(entryPoint).usesFragDepth = true;
-                break;
-            default:
-                break;
-            }
+        if (member.builtin())
+            populateOutputState(entryPoint, *member.builtin());
+
+        for (auto& attribute : member.attributes()) {
+            if (attribute.kind() != WGSL::AST::NodeKind::BuiltinAttribute)
+                continue;
+            auto& builtinAttribute = downcast<WGSL::AST::BuiltinAttribute>(attribute);
+            populateOutputState(entryPoint, builtinAttribute.builtin());
         }
+
         if (!member.location() || member.builtin())
             continue;
 

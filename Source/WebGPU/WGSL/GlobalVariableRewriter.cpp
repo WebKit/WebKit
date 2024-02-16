@@ -106,6 +106,10 @@ private:
     AST::StructureMember& createArgumentBufferEntry(unsigned binding, AST::Variable&);
     AST::StructureMember& createArgumentBufferEntry(unsigned binding, const SourceSpan&, const String& name, AST::Expression& type);
     void finalizeArgumentBufferStruct(unsigned group, Vector<std::pair<unsigned, AST::StructureMember*>>&);
+    void insertDynamicOffsetsBufferIfNeeded(const AST::Function&);
+    void insertDynamicOffsetsBufferIfNeeded(const SourceSpan&, const AST::Function&);
+    void insertParameter(const SourceSpan&, const AST::Function&, unsigned, AST::Identifier&&, AST::Expression* = nullptr, AST::ParameterRole = AST::ParameterRole::BindGroup);
+
     void insertParameters(AST::Function&, const Vector<unsigned>&);
     void insertMaterializations(AST::Function&, const UsedResources&);
     void insertLocalDefinitions(AST::Function&, const UsedPrivateGlobals&);
@@ -782,6 +786,25 @@ static size_t getRoundedSize(const AST::Variable& variable)
     return roundUpToMultipleOf(16, type ? type->size() : 0);
 }
 
+void RewriteGlobalVariables::insertParameter(const SourceSpan& span, const AST::Function& function, unsigned group, AST::Identifier&& name, AST::Expression* type, AST::ParameterRole parameterRole)
+{
+    if (!type) {
+        type = &m_callGraph.ast().astBuilder().construct<AST::IdentifierExpression>(span, argumentBufferStructName(group));
+        type->m_inferredType = m_structTypes.get(group);
+    }
+    auto& groupValue = m_callGraph.ast().astBuilder().construct<AST::AbstractIntegerLiteral>(span, group);
+    groupValue.m_inferredType = m_callGraph.ast().types().abstractIntType();
+    groupValue.setConstantValue(group);
+    auto& groupAttribute = m_callGraph.ast().astBuilder().construct<AST::GroupAttribute>(span, groupValue);
+    m_callGraph.ast().append(function.parameters(), m_callGraph.ast().astBuilder().construct<AST::Parameter>(
+        span,
+        WTFMove(name),
+        *type,
+        AST::Attribute::List { groupAttribute },
+        parameterRole
+    ));
+};
+
 std::optional<Error> RewriteGlobalVariables::visitEntryPoint(const CallGraph::EntryPoint& entryPoint)
 {
     dataLogLnIf(shouldLogGlobalVariableRewriting, "> Visiting entrypoint: ", entryPoint.function.name());
@@ -806,16 +829,22 @@ std::optional<Error> RewriteGlobalVariables::visitEntryPoint(const CallGraph::En
     }
 
     visit(entryPoint.function);
-    if (m_reads.isEmpty())
+    if (m_reads.isEmpty()) {
+        insertDynamicOffsetsBufferIfNeeded(entryPoint.function);
         return std::nullopt;
+    }
 
     auto maybeUsedGlobals = determineUsedGlobals();
-    if (!maybeUsedGlobals)
+    if (!maybeUsedGlobals) {
+        insertDynamicOffsetsBufferIfNeeded(entryPoint.function);
         return maybeUsedGlobals.error();
+    }
     auto usedGlobals = *maybeUsedGlobals;
     auto maybeGroups = m_generatedLayout ? Result<Vector<unsigned>>(insertStructs(usedGlobals.resources)) : insertStructs(*it->value, usedGlobals.resources);
-    if (!maybeGroups)
+    if (!maybeGroups) {
+        insertDynamicOffsetsBufferIfNeeded(entryPoint.function);
         return maybeGroups.error();
+    }
     insertParameters(entryPoint.function, *maybeGroups);
     insertMaterializations(entryPoint.function, usedGlobals.resources);
     insertLocalDefinitions(entryPoint.function, usedGlobals.privateGlobals);
@@ -1568,29 +1597,9 @@ Result<Vector<unsigned>> RewriteGlobalVariables::insertStructs(const PipelineLay
     return { groups };
 }
 
-void RewriteGlobalVariables::insertParameters(AST::Function& function, const Vector<unsigned>& groups)
+void RewriteGlobalVariables::insertDynamicOffsetsBufferIfNeeded(const SourceSpan& span, const AST::Function& function)
 {
-    auto span = function.span();
-    const auto& insertParameter = [&](unsigned group, AST::Identifier&& name, AST::Expression* type = nullptr, AST::ParameterRole parameterRole = AST::ParameterRole::BindGroup) {
-        if (!type) {
-            type = &m_callGraph.ast().astBuilder().construct<AST::IdentifierExpression>(span, argumentBufferStructName(group));
-            type->m_inferredType = m_structTypes.get(group);
-        }
-        auto& groupValue = m_callGraph.ast().astBuilder().construct<AST::AbstractIntegerLiteral>(span, group);
-        groupValue.m_inferredType = m_callGraph.ast().types().abstractIntType();
-        groupValue.setConstantValue(group);
-        auto& groupAttribute = m_callGraph.ast().astBuilder().construct<AST::GroupAttribute>(span, groupValue);
-        m_callGraph.ast().append(function.parameters(), m_callGraph.ast().astBuilder().construct<AST::Parameter>(
-            span,
-            WTFMove(name),
-            *type,
-            AST::Attribute::List { groupAttribute },
-            parameterRole
-        ));
-    };
-    for (auto group : groups)
-        insertParameter(group, argumentBufferParameterName(group));
-    if (!m_globalsUsingDynamicOffset.isEmpty()) {
+    if (!m_globalsUsingDynamicOffset.isEmpty() || (m_stage == ShaderStage::Fragment && m_callGraph.ast().usesFragDepth())) {
         unsigned group;
         switch (m_stage) {
         case ShaderStage::Vertex:
@@ -1607,8 +1616,21 @@ void RewriteGlobalVariables::insertParameters(AST::Function& function, const Vec
         auto& type = m_callGraph.ast().astBuilder().construct<AST::IdentifierExpression>(span, AST::Identifier::make("u32"_s));
         type.m_inferredType = m_callGraph.ast().types().pointerType(AddressSpace::Uniform, m_callGraph.ast().types().u32Type(), AccessMode::Read);
 
-        insertParameter(group, AST::Identifier::make(dynamicOffsetVariableName()), &type, AST::ParameterRole::UserDefined);
+        insertParameter(span, function, group, AST::Identifier::make(dynamicOffsetVariableName()), &type, AST::ParameterRole::UserDefined);
     }
+}
+
+void RewriteGlobalVariables::insertDynamicOffsetsBufferIfNeeded(const AST::Function& function)
+{
+    insertDynamicOffsetsBufferIfNeeded(function.span(), function);
+}
+
+void RewriteGlobalVariables::insertParameters(AST::Function& function, const Vector<unsigned>& groups)
+{
+    auto span = function.span();
+    for (auto group : groups)
+        insertParameter(span, function, group, argumentBufferParameterName(group));
+    insertDynamicOffsetsBufferIfNeeded(span, function);
 }
 
 void RewriteGlobalVariables::insertMaterializations(AST::Function& function, const UsedResources& usedResources)
