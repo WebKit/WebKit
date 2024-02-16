@@ -242,7 +242,7 @@ void* Buffer::getMappedRange(size_t offset, size_t size)
 
 NSString* Buffer::errorValidatingMapAsync(WGPUMapModeFlags mode, size_t offset, size_t rangeSize) const
 {
-#define ERROR_STRING(x) (@"GPUTexture.mapAsync: " x)
+#define ERROR_STRING(x) (@"GPUBuffer.mapAsync: " x)
     if (!isValid())
         return ERROR_STRING(@"Buffer is not valid");
 
