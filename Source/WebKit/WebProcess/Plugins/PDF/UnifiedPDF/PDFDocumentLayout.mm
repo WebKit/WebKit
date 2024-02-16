@@ -160,7 +160,8 @@ void PDFDocumentLayout::layoutSingleColumn(float availableWidth, float maxRowWid
     currentYOffset -= pageMargin.height();
     currentYOffset += documentMargin.height();
 
-    m_scale = std::max<float>(availableWidth / maxRowWidth, minScale);
+    if (m_autoSizeState == ShouldUpdateAutoSizeScale::Yes)
+        m_scale = std::max<float>(availableWidth / maxRowWidth, minScale);
     m_documentBounds = FloatRect { 0, 0, maxRowWidth, currentYOffset };
 
     LOG_WITH_STREAM(PDF, stream << "PDFDocumentLayout::layoutSingleColumn - document bounds " << m_documentBounds << " scale " << m_scale);
@@ -217,7 +218,8 @@ void PDFDocumentLayout::layoutTwoUpColumn(float availableWidth, float maxRowWidt
     currentYOffset -= pageMargin.height();
     currentYOffset += documentMargin.height();
 
-    m_scale = std::max<float>(availableWidth / maxRowWidth, minScale);
+    if (m_autoSizeState == ShouldUpdateAutoSizeScale::Yes)
+        m_scale = std::max<float>(availableWidth / maxRowWidth, minScale);
     m_documentBounds = FloatRect { 0, 0, maxRowWidth, currentYOffset };
 }
 

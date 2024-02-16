@@ -553,6 +553,11 @@ String contextMenuItemPDFActualSize()
     return WEB_UI_STRING_WITH_MNEMONIC("Actual Size", "_Actual Size", "Actual Size context menu item");
 }
 
+String contextMenuItemPDFAutoSize()
+{
+    return WEB_UI_STRING_WITH_MNEMONIC("Automatically Resize", "_Automatically Resize", "Automatically Resize context menu item");
+}
+
 String contextMenuItemPDFNextPage()
 {
     return WEB_UI_STRING_WITH_MNEMONIC("Next Page", "_Next Page", "Next Page context menu item");
@@ -564,13 +569,6 @@ String contextMenuItemPDFPreviousPage()
 }
 #endif
 
-#if ENABLE(PDFJS)
-String contextMenuItemPDFAutoSize()
-{
-    return WEB_UI_STRING_WITH_MNEMONIC("Automatically Resize", "_Automatically Resize", "Automatically Resize context menu item");
-}
-
-#endif
 #endif // ENABLE(CONTEXT_MENUS)
 
 #if !PLATFORM(COCOA)

@@ -52,6 +52,8 @@ public:
         TwoUpContinuous,
     };
 
+    enum class ShouldUpdateAutoSizeScale : bool { No, Yes };
+
     PDFDocumentLayout();
     ~PDFDocumentLayout();
 
@@ -83,6 +85,9 @@ public:
     void setDisplayMode(DisplayMode displayMode) { m_displayMode = displayMode; }
     DisplayMode displayMode() const { return m_displayMode; }
 
+    void setShouldUpdateAutoSizeScale(ShouldUpdateAutoSizeScale autoSizeState) { m_autoSizeState = autoSizeState; }
+    ShouldUpdateAutoSizeScale shouldUpdateAutoSizeScale() const { return m_autoSizeState; }
+
 private:
     void layoutPages(float availableWidth, float maxRowWidth);
 
@@ -102,6 +107,7 @@ private:
     WebCore::FloatRect m_documentBounds;
     float m_scale { 1 };
     DisplayMode m_displayMode { DisplayMode::Continuous };
+    ShouldUpdateAutoSizeScale m_autoSizeState { ShouldUpdateAutoSizeScale::Yes };
 };
 
 } // namespace WebKit

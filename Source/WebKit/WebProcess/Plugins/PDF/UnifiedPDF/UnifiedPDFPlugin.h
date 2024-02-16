@@ -205,6 +205,7 @@ private:
 #if ENABLE(CONTEXT_MENUS)
     enum class ContextMenuItemTag : int8_t {
         Invalid = -1,
+        AutoSize,
         WebSearch,
         DictionaryLookup,
         Copy,
@@ -346,6 +347,7 @@ private:
 #if ENABLE(PDF_HUD)
     void zoomIn() final;
     void zoomOut() final;
+    void resetZoom();
 #endif
 
     std::optional<PDFDocumentLayout::PageIndex> pageIndexWithHoveredAnnotation() const;

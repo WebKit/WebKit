@@ -1824,6 +1824,7 @@ PDFDocumentLayout::DisplayMode UnifiedPDFPlugin::displayModeFromContextMenuItemT
 auto UnifiedPDFPlugin::toContextMenuItemTag(int tagValue) const -> ContextMenuItemTag
 {
     static constexpr std::array regularContextMenuItemTags {
+        ContextMenuItemTag::AutoSize,
         ContextMenuItemTag::WebSearch,
         ContextMenuItemTag::DictionaryLookup,
         ContextMenuItemTag::Copy,
@@ -1896,6 +1897,8 @@ String UnifiedPDFPlugin::titleForContextMenuItemTag(ContextMenuItemTag tag) cons
     switch (tag) {
     case ContextMenuItemTag::Invalid:
         return { };
+    case ContextMenuItemTag::AutoSize:
+        return contextMenuItemPDFAutoSize();
     case ContextMenuItemTag::WebSearch:
         return contextMenuItemTagSearchWeb();
     case ContextMenuItemTag::DictionaryLookup:
@@ -1937,8 +1940,14 @@ PDFContextMenuItem UnifiedPDFPlugin::contextMenuItem(ContextMenuItemTag tag, boo
     case ContextMenuItemTag::Invalid:
         return separatorContextMenuItem();
     default: {
-        auto currentDisplayMode = contextMenuItemTagFromDisplayMode(m_documentLayout.displayMode());
-        int state = isDisplayModeContextMenuItemTag(tag) ? currentDisplayMode == tag : 0;
+        int state = 0;
+
+        if (isDisplayModeContextMenuItemTag(tag)) {
+            auto currentDisplayMode = contextMenuItemTagFromDisplayMode(m_documentLayout.displayMode());
+            state = currentDisplayMode == tag;
+        } else if (tag == ContextMenuItemTag::AutoSize)
+            state = m_documentLayout.shouldUpdateAutoSizeScale() == PDFDocumentLayout::ShouldUpdateAutoSizeScale::Yes;
+
         return { titleForContextMenuItemTag(tag), state, enumToUnderlyingType(tag), ContextMenuItemEnablement::Enabled, hasAction ? ContextMenuItemHasAction::Yes : ContextMenuItemHasAction::No, ContextMenuItemIsSeparator::No };
     }
     }
@@ -1981,6 +1990,7 @@ Vector<PDFContextMenuItem> UnifiedPDFPlugin::displayModeContextMenuItems() const
 Vector<PDFContextMenuItem> UnifiedPDFPlugin::scaleContextMenuItems() const
 {
     return {
+        { contextMenuItem(ContextMenuItemTag::AutoSize) },
         contextMenuItem(ContextMenuItemTag::ZoomIn),
         contextMenuItem(ContextMenuItemTag::ZoomOut),
         contextMenuItem(ContextMenuItemTag::ActualSize),
@@ -1999,6 +2009,13 @@ Vector<PDFContextMenuItem> UnifiedPDFPlugin::navigationContextMenuItems() const
 void UnifiedPDFPlugin::performContextMenuAction(ContextMenuItemTag tag, const IntPoint& contextMenuEventRootViewPoint)
 {
     switch (tag) {
+    case ContextMenuItemTag::AutoSize:
+        if (m_documentLayout.shouldUpdateAutoSizeScale() == PDFDocumentLayout::ShouldUpdateAutoSizeScale::No) {
+            m_documentLayout.setShouldUpdateAutoSizeScale(PDFDocumentLayout::ShouldUpdateAutoSizeScale::Yes);
+            resetZoom();
+            updateLayout();
+        }
+        break;
     case ContextMenuItemTag::WebSearch:
         performWebSearch(selectionString());
         break;
@@ -2575,12 +2592,19 @@ id UnifiedPDFPlugin::accessibilityAssociatedPluginParentForElement(Element*) con
 
 void UnifiedPDFPlugin::zoomIn()
 {
+    m_documentLayout.setShouldUpdateAutoSizeScale(PDFDocumentLayout::ShouldUpdateAutoSizeScale::No);
     m_view->setPageScaleFactor(std::clamp(m_scaleFactor * zoomIncrement, minimumZoomScale, maximumZoomScale), std::nullopt);
 }
 
 void UnifiedPDFPlugin::zoomOut()
 {
+    m_documentLayout.setShouldUpdateAutoSizeScale(PDFDocumentLayout::ShouldUpdateAutoSizeScale::No);
     m_view->setPageScaleFactor(std::clamp(m_scaleFactor / zoomIncrement, minimumZoomScale, maximumZoomScale), std::nullopt);
+}
+
+void UnifiedPDFPlugin::resetZoom()
+{
+    m_view->setPageScaleFactor(initialScale(), { });
 }
 
 #endif // ENABLE(PDF_HUD)
