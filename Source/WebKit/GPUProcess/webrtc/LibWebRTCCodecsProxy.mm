@@ -86,8 +86,11 @@ void LibWebRTCCodecsProxy::stopListeningForIPC(Ref<LibWebRTCCodecsProxy>&& refFr
         auto decoders = WTFMove(m_decoders);
         decoders.clear();
         auto encoders = WTFMove(m_encoders);
-        for (auto& encoder : encoders.values())
+        for (auto& encoder : encoders.values()) {
             webrtc::releaseLocalEncoder(encoder.webrtcEncoder);
+            while (!encoder.encodingCallbacks.isEmpty())
+                encoder.encodingCallbacks.takeFirst()(false);
+        }
     });
 }
 
