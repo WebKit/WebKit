@@ -1468,8 +1468,13 @@
 #endif
 #endif
 
+#if ENABLE(BLOCK_SET_EXCEPTION_PORTS)
+        (with-filter (require-not (webcontent-process-launched))
+            (allow mach-message-send (kernel-mig-routine thread_set_exception_ports)))
+#else
         (with-filter (require-not (lockdown-mode))
             (allow mach-message-send (kernel-mig-routine thread_set_exception_ports)))
+#endif
 
         (with-filter (lockdown-mode)
             (deny mach-message-send (with telemetry) (with message "Lockdown mode")

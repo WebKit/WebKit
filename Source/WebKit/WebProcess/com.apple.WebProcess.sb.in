@@ -2086,7 +2086,10 @@
 
 (define (kernel-mig-routines-blocked-in-lockdown-mode-avoid-telemetry) (kernel-mig-routine
     thread_info
-    thread_set_exception_ports))
+#if !ENABLE(BLOCK_SET_EXCEPTION_PORTS)
+    thread_set_exception_ports
+#endif
+))
 
 (if (and (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES") (defined? 'mach-kernel-endpoint))
     (allow mach-kernel-endpoint
@@ -2102,6 +2105,10 @@
 #else
             (allow mach-message-send (kernel-mig-routines-blocked-in-lockdown-mode))
             (allow mach-message-send (kernel-mig-routines-blocked-in-lockdown-mode-avoid-telemetry))
+#endif
+#if ENABLE(BLOCK_SET_EXCEPTION_PORTS)
+            (with-filter (require-not (webcontent-process-launched))
+                (allow mach-message-send (kernel-mig-routine thread_set_exception_ports)))
 #endif
 
             (allow mach-message-send (kernel-mig-routines-in-use))
