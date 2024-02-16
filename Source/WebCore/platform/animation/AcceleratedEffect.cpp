@@ -418,45 +418,9 @@ void AcceleratedEffect::apply(Seconds currentTime, AcceleratedEffectValues& valu
     }
 }
 
-using OptionalKeyframeIndex = std::optional<size_t>;
-
 void AcceleratedEffect::validateFilters(const AcceleratedEffectValues& baseValues, OptionSet<AcceleratedEffectProperty>& disallowedProperties)
 {
-    auto numberOfKeyframes = m_keyframes.size();
-
-    auto findKeyframePair = [&](size_t startingIndex, AcceleratedEffectProperty property) -> std::pair<OptionalKeyframeIndex, OptionalKeyframeIndex> {
-        OptionalKeyframeIndex firstKeyframeIndex;
-        for (size_t i = startingIndex; i < numberOfKeyframes; ++i) {
-            auto& keyframe = m_keyframes[i];
-            // Nothing to do for a keyframe that doesn't contain this property.
-            if (!keyframe.animatesProperty(property))
-                continue;
-
-            // If we're dealing with a keyframe with offset = 1, this can only be our last keyframe,
-            // so there will not be another keyframe pair with the provided starting index.
-            if (keyframe.offset() == 1 && !firstKeyframeIndex)
-                return { };
-
-            if (firstKeyframeIndex)
-                return { *firstKeyframeIndex, i };
-            firstKeyframeIndex = i;
-        }
-
-        if (!firstKeyframeIndex)
-            return { };
-
-        // If we get here this means we have a first keyframe but no last keyframe. Thus we
-        // create a pair with an implicit keyframe. If the starting index is 0, this means
-        // we were looking for our very first pair and the implicit keyframe is the first
-        // keyframe.
-        if (!startingIndex)
-            return { std::nullopt, *firstKeyframeIndex };
-        return { *firstKeyframeIndex, std::nullopt };
-    };
-
-    auto filterOperations = [&](OptionalKeyframeIndex index, AcceleratedEffectProperty property) -> const FilterOperations& {
-        ASSERT(!index || *index < numberOfKeyframes);
-        auto& values = index ? m_keyframes[*index].values() : baseValues;
+    auto filterOperations = [&](const AcceleratedEffectValues& values, AcceleratedEffectProperty property) -> const FilterOperations& {
         switch (property) {
         case AcceleratedEffectProperty::Filter:
             return values.filter;
@@ -468,31 +432,59 @@ void AcceleratedEffect::validateFilters(const AcceleratedEffectValues& baseValue
         }
     };
 
-    auto clearProperty = [&](AcceleratedEffectProperty property) {
+    auto isValidProperty = [&](AcceleratedEffectProperty property) {
+        // First, let's assemble the matching values.
+        Vector<const AcceleratedEffectValues*> values;
+        for (auto& keyframe : m_keyframes) {
+            if (keyframe.animatesProperty(property)) {
+                // If this is the first value we're processing and it's not the
+                // keyframe with offset 0, then we need to add the implicit 0% values.
+                if (values.isEmpty() && keyframe.offset())
+                    values.append(&baseValues);
+                values.append(&keyframe.values());
+            } else {
+                // If this is the last keyframe we'll be processing and it's not the
+                // keyframe with offset 1, then we need to add the implicit 100% values.
+                if (&keyframe == &m_keyframes.last() && keyframe.offset() == 1)
+                    values.append(&baseValues);
+            }
+        }
+
+        ASSERT(values.size() > 1);
+
+        const FilterOperations* longestFilterList = nullptr;
+        for (size_t i = 1; i < values.size(); ++i) {
+            auto& fromFilters = filterOperations(*values[i - 1], property);
+            auto& toFilters = filterOperations(*values[i], property);
+            // FIXME: we should provide the actual composite operation here.
+            if (!fromFilters.canInterpolate(toFilters, CompositeOperation::Replace))
+                return false;
+            if (!longestFilterList || fromFilters.size() > longestFilterList->size())
+                longestFilterList = &fromFilters;
+            if (!longestFilterList || toFilters.size() > longestFilterList->size())
+                longestFilterList = &toFilters;
+        }
+
+        // We need to make sure that the longest filter, if it contains a drop-shadow() operation,
+        // has it as its final operation since it will be applied by a separate CALayer property
+        // from the other filter operations and it will be applied to the layer as the last filer.
+        ASSERT(longestFilterList);
+        auto& longestFilterOperations = longestFilterList->operations();
+        for (auto& operation : longestFilterOperations) {
+            if (operation->type() == FilterOperation::Type::DropShadow && operation != longestFilterOperations.last())
+                return false;
+        }
+
+        return true;
+    };
+
+    auto validateProperty = [&](AcceleratedEffectProperty property) {
+        if (isValidProperty(property))
+            return;
         disallowedProperties.add({ property });
         m_animatedProperties.remove({ property });
         for (auto& keyframe : m_keyframes)
             keyframe.clearProperty(property);
-    };
-
-    auto validateProperty = [&](AcceleratedEffectProperty property) {
-        for (size_t i = 0; i < numberOfKeyframes;) {
-            auto indexes = findKeyframePair(i, property);
-            if (!indexes.first && !indexes.second)
-                return;
-
-            auto& fromFilters = filterOperations(indexes.first, property);
-            auto& toFilters = filterOperations(indexes.second, property);
-            // FIXME: we should provide the actual composite operation here.
-            if (!fromFilters.canInterpolate(toFilters, CompositeOperation::Replace)) {
-                clearProperty(property);
-                return;
-            }
-
-            if (!indexes.second)
-                return;
-            i = *indexes.second;
-        }
     };
 
     if (m_animatedProperties.contains(AcceleratedEffectProperty::Filter))
