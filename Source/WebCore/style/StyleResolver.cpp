@@ -216,10 +216,22 @@ void Resolver::appendAuthorStyleSheets(const Vector<RefPtr<CSSStyleSheet>>& styl
         renderView->style().fontCascade().update(&document().fontSelector());
 }
 
+KeyframesRuleMap& Resolver::userAgentKeyframes()
+{
+    static NeverDestroyed<KeyframesRuleMap> keyframes;
+    return keyframes;
+}
+
+void Resolver::addUserAgentKeyframeStyle(Ref<StyleRuleKeyframes>&& rule)
+{
+    const auto& animationName = rule->name();
+    userAgentKeyframes().set(animationName, WTFMove(rule));
+}
+
 // This is a simplified style setting function for keyframe styles
 void Resolver::addKeyframeStyle(Ref<StyleRuleKeyframes>&& rule)
 {
-    auto& animationName = rule->name();
+    const auto& animationName = rule->name();
     m_keyframesRuleMap.set(animationName, WTFMove(rule));
     document().keyframesRuleDidChange(animationName);
 }
@@ -347,7 +359,8 @@ std::unique_ptr<RenderStyle> Resolver::styleForKeyframe(const Element& element, 
 
 bool Resolver::isAnimationNameValid(const String& name)
 {
-    return m_keyframesRuleMap.find(AtomString(name)) != m_keyframesRuleMap.end();
+    return m_keyframesRuleMap.find(AtomString(name)) != m_keyframesRuleMap.end()
+        || userAgentKeyframes().find(AtomString(name)) != userAgentKeyframes().end();
 }
 
 Vector<Ref<StyleRuleKeyframe>> Resolver::keyframeRulesForName(const AtomString& animationName) const
@@ -357,9 +370,13 @@ Vector<Ref<StyleRuleKeyframe>> Resolver::keyframeRulesForName(const AtomString& 
 
     m_keyframesRuleMap.checkConsistency();
 
+    // Check author map first then check user-agent map.
     auto it = m_keyframesRuleMap.find(animationName);
-    if (it == m_keyframesRuleMap.end())
-        return { };
+    if (it == m_keyframesRuleMap.end()) {
+        it = userAgentKeyframes().find(animationName);
+        if (it == userAgentKeyframes().end())
+            return { };
+    }
 
     auto compositeOperationForKeyframe = [](Ref<StyleRuleKeyframe> keyframe) -> CompositeOperation {
         if (auto compositeOperationCSSValue = keyframe->properties().getPropertyCSSValue(CSSPropertyAnimationComposition)) {

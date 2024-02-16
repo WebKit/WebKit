@@ -81,6 +81,8 @@ struct ResolutionContext {
     bool isSVGUseTreeRoot { false };
 };
 
+using KeyframesRuleMap = HashMap<AtomString, RefPtr<StyleRuleKeyframes>>;
+
 class Resolver : public RefCounted<Resolver>, public CanMakeSingleThreadWeakPtr<Resolver> {
     WTF_MAKE_ISO_ALLOCATED(Resolver);
 public:
@@ -133,6 +135,8 @@ public:
     bool hasViewportDependentMediaQueries() const;
     std::optional<DynamicMediaQueryEvaluationChanges> evaluateDynamicMediaQueries();
 
+    static KeyframesRuleMap& userAgentKeyframes();
+    static void addUserAgentKeyframeStyle(Ref<StyleRuleKeyframes>&&);
     void addKeyframeStyle(Ref<StyleRuleKeyframes>&&);
     Vector<Ref<StyleRuleKeyframe>> keyframeRulesForName(const AtomString&) const;
 
@@ -164,7 +168,6 @@ private:
 
     ScopeRuleSets m_ruleSets;
 
-    typedef HashMap<AtomString, RefPtr<StyleRuleKeyframes>> KeyframesRuleMap;
     KeyframesRuleMap m_keyframesRuleMap;
 
     MQ::MediaQueryEvaluator m_mediaQueryEvaluator;
