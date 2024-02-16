@@ -2751,8 +2751,6 @@ compositing/repaint/copy-forward-dirty-region-purged-backbuffer.html [ Skip ]
 compositing/repaint/copy-forward-dirty-region-purged.html [ Skip ]
 compositing/repaint/copy-forward-dirty-region.html [ Skip ]
 
-css1/units/rounding.html [ Failure ]
-
 # Failing with non-English keyboard
 webkit.org/b/267251 imported/w3c/web-platform-tests/css/selectors/invalidation/user-valid-user-invalid.html [ Failure Pass ]
 
