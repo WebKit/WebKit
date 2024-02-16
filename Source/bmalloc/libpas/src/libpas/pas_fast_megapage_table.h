@@ -132,6 +132,7 @@ static inline pas_fast_megapage_kind pas_fast_megapage_table_get(
     pas_fast_megapage_table* table,
     uintptr_t begin)
 {
+    PAS_PROFILE(MEGAPAGE_GET, begin);
     return pas_fast_megapage_table_get_by_index(table, begin >> PAS_FAST_MEGAPAGE_SHIFT);
 }
 

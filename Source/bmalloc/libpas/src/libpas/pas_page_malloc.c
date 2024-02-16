@@ -131,6 +131,10 @@ pas_page_malloc_try_allocate_without_deallocating_padding(
                       do that explicitly. */
         return result;
     }
+
+    uintptr_t pages_begin = (uintptr_t)mmap_result;
+    PAS_PROFILE(PAGE_ALLOCATION, pages_begin);
+    mmap_result = (void*)pages_begin;
     
     mapped = (char*)mmap_result;
     mapped_end = mapped + mapped_size;
@@ -287,8 +291,10 @@ void pas_page_malloc_deallocate(void* ptr, size_t size)
     uintptr_t ptr_as_int;
     
     ptr_as_int = (uintptr_t)ptr;
+    PAS_PROFILE(PAGE_DEALLOCATION, ptr_as_int);
     PAS_ASSERT(pas_is_aligned(ptr_as_int, pas_page_malloc_alignment()));
     PAS_ASSERT(pas_is_aligned(size, pas_page_malloc_alignment()));
+    ptr = (void*)ptr_as_int;
     
     if (!size)
         return;

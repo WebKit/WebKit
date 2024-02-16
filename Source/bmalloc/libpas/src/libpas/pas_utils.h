@@ -183,7 +183,6 @@ PAS_BEGIN_EXTERN_C;
 
 static PAS_ALWAYS_INLINE void pas_zero_memory(void* memory, size_t size)
 {
-    PAS_PROFILE(memory, ZERO_MEMORY);
     memset(memory, 0, size);
 }
 

@@ -199,8 +199,9 @@ pas_try_reallocate(void* old_ptr,
                    void* allocate_callback_arg)
 {
     uintptr_t begin;
-    PAS_PROFILE(old_ptr, REALLOCATE);
     begin = (uintptr_t)old_ptr;
+    PAS_PROFILE(TRY_REALLOCATE, begin);
+    old_ptr = (void*)begin;
 
     switch (config.fast_megapage_kind_func(begin)) {
     case pas_small_exclusive_segregated_fast_megapage_kind: {
