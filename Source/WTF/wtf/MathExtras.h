@@ -134,8 +134,12 @@ constexpr inline float turn2deg(float t) { return t * degreesPerTurnFloat; }
 // Treat theses as conversions through the cannonical unit for angles, which is degrees.
 constexpr inline double rad2grad(double r) { return deg2grad(rad2deg(r)); }
 constexpr inline double grad2rad(double g) { return deg2rad(grad2deg(g)); }
+constexpr inline double turn2grad(double t) { return deg2grad(turn2deg(t)); }
+constexpr inline double grad2turn(double g) { return deg2turn(grad2deg(g)); }
 constexpr inline float rad2grad(float r) { return deg2grad(rad2deg(r)); }
 constexpr inline float grad2rad(float g) { return deg2rad(grad2deg(g)); }
+constexpr inline float turn2grad(float t) { return deg2grad(turn2deg(t)); }
+constexpr inline float grad2turn(float g) { return deg2turn(grad2deg(g)); }
 
 inline double roundTowardsPositiveInfinity(double value) { return std::floor(value + 0.5); }
 inline float roundTowardsPositiveInfinity(float value) { return std::floor(value + 0.5f); }
