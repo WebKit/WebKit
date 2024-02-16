@@ -168,10 +168,10 @@ static CSSPropertyID cssPropertyFromAcceleratedProperty(AcceleratedEffectPropert
     }
 }
 
-RefPtr<AcceleratedEffect> AcceleratedEffect::create(const KeyframeEffect& effect, const IntRect& borderBoxRect, const AcceleratedEffectValues& baseValues)
+RefPtr<AcceleratedEffect> AcceleratedEffect::create(const KeyframeEffect& effect, const IntRect& borderBoxRect, const AcceleratedEffectValues& baseValues, OptionSet<AcceleratedEffectProperty>& disallowedProperties)
 {
-    auto* acceleratedEffect = new AcceleratedEffect(effect, borderBoxRect);
-    acceleratedEffect->validateFilters(baseValues);
+    auto* acceleratedEffect = new AcceleratedEffect(effect, borderBoxRect, disallowedProperties);
+    acceleratedEffect->validateFilters(baseValues, disallowedProperties);
     if (acceleratedEffect->animatedProperties().isEmpty())
         return nullptr;
     return adoptRef(*acceleratedEffect);
@@ -202,7 +202,7 @@ Ref<AcceleratedEffect> AcceleratedEffect::copyWithProperties(OptionSet<Accelerat
     return adoptRef(*new AcceleratedEffect(*this, propertyFilter));
 }
 
-AcceleratedEffect::AcceleratedEffect(const KeyframeEffect& effect, const IntRect& borderBoxRect)
+AcceleratedEffect::AcceleratedEffect(const KeyframeEffect& effect, const IntRect& borderBoxRect, const OptionSet<AcceleratedEffectProperty>& disallowedProperties)
 {
     m_timing = effect.timing();
     m_compositeOperation = effect.composite();
@@ -229,6 +229,8 @@ AcceleratedEffect::AcceleratedEffect(const KeyframeEffect& effect, const IntRect
         for (auto animatedCSSProperty : srcKeyframe.properties()) {
             if (CSSPropertyAnimation::animationOfPropertyIsAccelerated(animatedCSSProperty, settings)) {
                 auto acceleratedProperty = acceleratedPropertyFromCSSProperty(animatedCSSProperty, settings);
+                if (disallowedProperties.contains(acceleratedProperty))
+                    continue;
                 animatedProperties.add(acceleratedProperty);
                 m_animatedProperties.add(acceleratedProperty);
             }
@@ -245,6 +247,8 @@ AcceleratedEffect::AcceleratedEffect(const KeyframeEffect& effect, const IntRect
 
         m_keyframes.append({ srcKeyframe.offset(), WTFMove(values), srcKeyframe.timingFunction(), srcKeyframe.compositeOperation(), WTFMove(animatedProperties) });
     }
+
+    m_animatedProperties.remove(disallowedProperties);
 }
 
 AcceleratedEffect::AcceleratedEffect(AnimationEffectTiming timing, Vector<Keyframe>&& keyframes, WebAnimationType type, CompositeOperation composite, RefPtr<TimingFunction>&& defaultKeyframeTimingFunction, OptionSet<WebCore::AcceleratedEffectProperty>&& animatedProperties, bool paused, double playbackRate, std::optional<Seconds> startTime, std::optional<Seconds> holdTime)
@@ -416,7 +420,7 @@ void AcceleratedEffect::apply(Seconds currentTime, AcceleratedEffectValues& valu
 
 using OptionalKeyframeIndex = std::optional<size_t>;
 
-void AcceleratedEffect::validateFilters(const AcceleratedEffectValues& baseValues)
+void AcceleratedEffect::validateFilters(const AcceleratedEffectValues& baseValues, OptionSet<AcceleratedEffectProperty>& disallowedProperties)
 {
     auto numberOfKeyframes = m_keyframes.size();
 
@@ -465,6 +469,7 @@ void AcceleratedEffect::validateFilters(const AcceleratedEffectValues& baseValue
     };
 
     auto clearProperty = [&](AcceleratedEffectProperty property) {
+        disallowedProperties.add({ property });
         m_animatedProperties.remove({ property });
         for (auto& keyframe : m_keyframes)
             keyframe.clearProperty(property);
