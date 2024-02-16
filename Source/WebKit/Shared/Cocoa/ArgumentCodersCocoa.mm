@@ -352,7 +352,7 @@ NSType typeFromObject(id object)
     if (PAL::isPassKitCoreFrameworkAvailable() && [object isKindOfClass:PAL::getPKContactClass()])
         return NSType::PKContact;
     if (PAL::isPassKitCoreFrameworkAvailable() && [object isKindOfClass:PAL::getPKPaymentMerchantSessionClass()])
-        return NSType::SecureCoding; // FIXME: This should be NSType::PKPaymentMerchantSession.
+        return NSType::PKPaymentMerchantSession;
     if (PAL::isPassKitCoreFrameworkAvailable() && [object isKindOfClass:PAL::getPKPaymentClass()])
         return NSType::PKPayment;
     if (PAL::isPassKitCoreFrameworkAvailable() && [object isKindOfClass:PAL::getPKPaymentTokenClass()])

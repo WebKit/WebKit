@@ -47,7 +47,7 @@ secure_coding_header: <pal/cocoa/PassKitSoftLink.h>
     initiative: String
     ampEnrollmentPinning: Data
     operationalAnalyticsIdentifier: String
-    signedFields: Array<String>
+    signedFields: Array<String>?
 }
 
 [WebKitSecureCodingClass=PAL::getPKPaymentClass(), SupportWKKeyedCoder, WebKitPlatform] webkit_secure_coding PKPayment {
