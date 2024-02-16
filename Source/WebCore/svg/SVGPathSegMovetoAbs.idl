@@ -25,6 +25,7 @@
  */
 
 [
+    LegacyNoInterfaceObject,
     Exposed=Window
 ] interface SVGPathSegMovetoAbs : SVGPathSeg {
     attribute unrestricted float x;
