@@ -46,7 +46,9 @@ class RemoteLayerWithInProcessRenderingBackingStore;
 class RemoteLayerTreeContext;
 class RemoteLayerTreeTransaction;
 class RemoteImageBufferSetProxy;
+class ThreadSafeImageBufferSetFlusher;
 
+enum class BufferInSetType : uint8_t;
 enum class SwapBuffersDisplayRequirement : uint8_t;
 
 class RemoteLayerBackingStoreCollection : public CanMakeWeakPtr<RemoteLayerBackingStoreCollection> {

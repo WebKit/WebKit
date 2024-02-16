@@ -33,6 +33,7 @@
 #import "PDFIncrementalLoader.h"
 #import "PDFKitSPI.h"
 #import "PluginView.h"
+#import "WKAccessibilityPDFDocumentObject.h"
 #import "WebEventConversion.h"
 #import "WebFrame.h"
 #import "WebLoaderStrategy.h"
@@ -104,6 +105,12 @@ PDFPluginBase::PDFPluginBase(HTMLPlugInElement& element)
     , m_incrementalPDFLoadingEnabled(element.document().settings().incrementalPDFLoadingEnabled())
 #endif
 {
+#if PLATFORM(MAC)
+    m_accessibilityDocumentObject = adoptNS([[WKAccessibilityPDFDocumentObject alloc] initWithPDFDocument:m_pdfDocument andElement:&element]);
+    [m_accessibilityDocumentObject setPDFPlugin:this];
+    if (this->isFullFramePlugin() && m_frame && m_frame->page() && m_frame->isMainFrame())
+        [m_accessibilityDocumentObject setParent:dynamic_objc_cast<NSObject>(m_frame->protectedPage()->accessibilityRemoteObject())];
+#endif
 }
 
 PDFPluginBase::~PDFPluginBase()
@@ -932,6 +939,50 @@ bool PDFPluginBase::supportsForms()
     return isFullFramePlugin();
 }
 
+bool PDFPluginBase::showContextMenuAtPoint(const IntPoint& point)
+{
+    auto* frameView = m_frame ? m_frame->coreLocalFrame()->view() : nullptr;
+    if (!frameView)
+        return false;
+    IntPoint contentsPoint = frameView->contentsToRootView(point);
+    WebMouseEvent event({ WebEventType::MouseDown, OptionSet<WebEventModifier> { }, WallTime::now() }, WebMouseEventButton::Right, 0, contentsPoint, contentsPoint, 0, 0, 0, 1, WebCore::ForceAtClick);
+    return handleContextMenuEvent(event);
+}
+
+IntPoint PDFPluginBase::convertFromPDFViewToRootView(const IntPoint& point) const
+{
+    // FIXME fix the coordinate space
+    IntPoint pointInPluginCoordinates(point.x(), size().height() - point.y());
+    return valueOrDefault(m_rootViewToPluginTransform.inverse()).mapPoint(pointInPluginCoordinates);
+}
+
+FloatRect PDFPluginBase::convertFromPDFViewToScreenForAccessibility(const FloatRect& rect) const
+{
+    return WebCore::Accessibility::retrieveValueFromMainThread<WebCore::FloatRect>([&] () -> WebCore::FloatRect {
+        FloatRect updatedRect = rect;
+        updatedRect.setLocation(convertFromPDFViewToRootView(IntPoint(updatedRect.location())));
+        RefPtr page = this->page();
+        if (!page)
+            return { };
+        return page->chrome().rootViewToScreen(enclosingIntRect(updatedRect));
+    });
+}
+
+WebCore::AXObjectCache* PDFPluginBase::axObjectCache() const
+{
+    ASSERT(isMainRunLoop());
+    if (!m_frame || !m_frame->coreLocalFrame() || !m_frame->coreLocalFrame()->document())
+        return nullptr;
+    return m_frame->coreLocalFrame()->document()->axObjectCache();
+}
+
+IntPoint PDFPluginBase::convertFromRootViewToPDFView(const IntPoint& point) const
+{
+    ASSERT(isMainRunLoop());
+    IntPoint pointInPluginCoordinates = m_rootViewToPluginTransform.mapPoint(point);
+    return IntPoint(pointInPluginCoordinates.x(), size().height() - pointInPluginCoordinates.y());
+}
+
 WebCore::IntPoint PDFPluginBase::lastKnownMousePositionInView() const
 {
     if (m_lastMouseEvent)
@@ -954,6 +1005,23 @@ void PDFPluginBase::navigateToURL(const URL& url)
         coreEvent = MouseEvent::create(eventNames().clickEvent, &frame->windowProxy(), platform(*m_lastMouseEvent), 0, 0);
 
     frame->loader().changeLocation(url, emptyAtom(), coreEvent.get(), ReferrerPolicy::NoReferrer, ShouldOpenExternalURLsPolicy::ShouldAllow);
+}
+
+id PDFPluginBase::accessibilityAssociatedPluginParentForElement(Element* element) const
+{
+    ASSERT(isMainRunLoop());
+
+#if PLATFORM(MAC)
+    if (!m_activeAnnotation)
+        return nil;
+
+    if (m_activeAnnotation->element() != element)
+        return nil;
+
+    return [m_activeAnnotation->annotation() accessibilityNode];
+#endif
+
+    return nil;
 }
 
 #if !LOG_DISABLED

@@ -109,7 +109,6 @@ public:
 
     bool showContextMenuAtPoint(const WebCore::IntPoint&);
 
-    PDFPluginAnnotation* activeAnnotation() const { return m_activeAnnotation.get(); }
     WebCore::AXObjectCache* axObjectCache() const;
 
     WebCore::IntPoint convertFromPluginToPDFView(const WebCore::IntPoint&) const;
@@ -181,7 +180,6 @@ private:
 
     id accessibilityHitTest(const WebCore::IntPoint&) const override;
     id accessibilityObject() const override;
-    id accessibilityAssociatedPluginParentForElement(WebCore::Element*) const override;
 
     NSEvent *nsEventForWebMouseEvent(const WebMouseEvent&);
 

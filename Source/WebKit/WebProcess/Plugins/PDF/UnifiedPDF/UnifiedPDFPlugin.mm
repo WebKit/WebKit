@@ -39,6 +39,7 @@
 #include "PDFPluginPasswordForm.h"
 #include "PasteboardTypes.h"
 #include "PluginView.h"
+#include "WKAccessibilityPDFDocumentObject.h"
 #include "WebEventConversion.h"
 #include "WebEventModifier.h"
 #include "WebEventType.h"
@@ -86,7 +87,7 @@
 
 @implementation WKPDFFormMutationObserver
 
-- (id)initWithPlguin:(WebKit::UnifiedPDFPlugin *)plugin
+- (id)initWithPlugin:(WebKit::UnifiedPDFPlugin *)plugin
 {
     if (!(self = [super init]))
         return nil;
@@ -120,7 +121,7 @@ Ref<UnifiedPDFPlugin> UnifiedPDFPlugin::create(HTMLPlugInElement& pluginElement)
 
 UnifiedPDFPlugin::UnifiedPDFPlugin(HTMLPlugInElement& element)
     : PDFPluginBase(element)
-    , m_pdfMutationObserver(adoptNS([[WKPDFFormMutationObserver alloc] initWithPlguin:this]))
+    , m_pdfMutationObserver(adoptNS([[WKPDFFormMutationObserver alloc] initWithPlugin:this]))
 {
     this->setVerticalScrollElasticity(ScrollElasticity::Automatic);
     this->setHorizontalScrollElasticity(ScrollElasticity::Automatic);
@@ -2734,18 +2735,28 @@ LookupTextResult UnifiedPDFPlugin::lookupTextAtLocation(const FloatPoint& rootVi
     return { lookupText, m_currentSelection };
 }
 
-id UnifiedPDFPlugin::accessibilityHitTest(const IntPoint&) const
+#if PLATFORM(MAC)
+id UnifiedPDFPlugin::accessibilityHitTestIntPoint(const WebCore::IntPoint& point) const
 {
+    auto convertedPoint =  convertFromRootViewToPDFView(point);
+    return [m_accessibilityDocumentObject accessibilityHitTest:convertedPoint];
+}
+#endif
+
+id UnifiedPDFPlugin::accessibilityHitTest(const WebCore::IntPoint& point) const
+{
+#if PLATFORM(MAC)
+    return accessibilityHitTestIntPoint(point);
+#endif
+    UNUSED_PARAM(point);
     return nil;
 }
 
 id UnifiedPDFPlugin::accessibilityObject() const
 {
-    return nil;
-}
-
-id UnifiedPDFPlugin::accessibilityAssociatedPluginParentForElement(Element*) const
-{
+#if PLATFORM(MAC)
+    return m_accessibilityDocumentObject.get();
+#endif
     return nil;
 }
 

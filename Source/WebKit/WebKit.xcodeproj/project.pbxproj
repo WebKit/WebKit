@@ -4891,6 +4891,8 @@
 		3311023E2B17B99800B21C8C /* JSWebExtensionAPIDeclarativeNetRequest.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = JSWebExtensionAPIDeclarativeNetRequest.mm; sourceTree = "<group>"; };
 		3311023F2B17B99800B21C8C /* JSWebExtensionAPIDeclarativeNetRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebExtensionAPIDeclarativeNetRequest.h; sourceTree = "<group>"; };
 		331102462B17CFE300B21C8C /* WebExtensionContextAPIDeclarativeNetRequestCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionContextAPIDeclarativeNetRequestCocoa.mm; sourceTree = "<group>"; };
+		33238F5D2B7EFD3B0014AE88 /* WKAccessibilityPDFDocumentObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKAccessibilityPDFDocumentObject.h; path = PDF/WKAccessibilityPDFDocumentObject.h; sourceTree = "<group>"; };
+		33238F5E2B7EFD6A0014AE88 /* WKAccessibilityPDFDocumentObject.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKAccessibilityPDFDocumentObject.mm; path = PDF/WKAccessibilityPDFDocumentObject.mm; sourceTree = "<group>"; };
 		3326F2612B06A1F4001A535F /* _WKWebExtensionDeclarativeNetRequestRule.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKWebExtensionDeclarativeNetRequestRule.mm; sourceTree = "<group>"; };
 		3326F2622B06A1F4001A535F /* _WKWebExtensionDeclarativeNetRequestRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKWebExtensionDeclarativeNetRequestRule.h; sourceTree = "<group>"; };
 		3326F2632B06A1F4001A535F /* _WKWebExtensionDeclarativeNetRequestTranslator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKWebExtensionDeclarativeNetRequestTranslator.h; sourceTree = "<group>"; };
@@ -15403,6 +15405,8 @@
 				2D2ADF0616362DC700197E47 /* PDFPluginTextAnnotation.mm */,
 				2DC2515E2AFE0E8F00EB4EC5 /* PDFScriptEvaluator.h */,
 				2DC2515F2AFE0E9000EB4EC5 /* PDFScriptEvaluator.mm */,
+				33238F5D2B7EFD3B0014AE88 /* WKAccessibilityPDFDocumentObject.h */,
+				33238F5E2B7EFD6A0014AE88 /* WKAccessibilityPDFDocumentObject.mm */,
 			);
 			name = PDF;
 			sourceTree = "<group>";

@@ -120,3 +120,8 @@
 - (CGPDFPageLayoutRef) pageLayout;
 @end
 #endif // ENABLE(UNIFIED_PDF)
+
+// FIXME: Move this declaration inside the !USE(APPLE_INTERNAL_SDK) block once rdar://problem/118903435 is in builds.
+@interface PDFDocument (AX)
+- (NSArray *)accessibilityChildren:(id)parent;
+@end
