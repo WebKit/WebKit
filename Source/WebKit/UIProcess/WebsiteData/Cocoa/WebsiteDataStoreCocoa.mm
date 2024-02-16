@@ -220,7 +220,16 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
 std::optional<bool> WebsiteDataStore::useNetworkLoader()
 {
 #if HAVE(NETWORK_LOADER)
-    return optionalExperimentalFeatureEnabled(WebPreferencesKey::cFNetworkNetworkLoaderEnabledKey(), std::nullopt);
+    auto isExperimentalNetworkLoaderEnabled = optionalExperimentalFeatureEnabled(WebPreferencesKey::cFNetworkNetworkLoaderEnabledKey(), std::nullopt);
+    auto isDefaultNetworkLoaderEnabled = optionalExperimentalFeatureEnabled(WebPreferencesKey::cFNetworkDefaultNetworkLoaderEnabledKey(), std::nullopt);
+    if (isExperimentalNetworkLoaderEnabled && *isExperimentalNetworkLoaderEnabled)
+        return true;
+    // Experimental loader is not explicitly enabled, and we shouldn't use the system default.
+    if (isDefaultNetworkLoaderEnabled && !*isDefaultNetworkLoaderEnabled)
+        return false;
+
+    // Both preferences are either unset, or they have their default values, so use system default.
+    return std::nullopt;
 #else
     return false;
 #endif
