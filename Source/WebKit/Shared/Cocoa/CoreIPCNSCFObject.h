@@ -104,7 +104,8 @@ using ObjectValue = std::variant<
     CoreIPCPresentationIntent,
     CoreIPCSecureCoding,
     CoreIPCString,
-    CoreIPCURL
+    CoreIPCURL,
+    CoreIPCNSURLProtectionSpace
 >;
 
 class CoreIPCNSCFObject {

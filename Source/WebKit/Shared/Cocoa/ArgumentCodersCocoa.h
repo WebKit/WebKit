@@ -106,6 +106,7 @@ enum class NSType : uint8_t {
     SecureCoding,
     String,
     URL,
+    NSURLProtectionSpace,
     NSValue,
     CF,
     Unknown,
