@@ -45,7 +45,7 @@ if 'dev' in CURRENT_HOSTNAME:
 if 'uat' in CURRENT_HOSTNAME:
     custom_suffix = '-uat'
 
-BUILD_WEBKIT_HOSTNAME = 'build.webkit.org'
+BUILD_WEBKIT_HOSTNAMES = ['build.webkit.org', 'build']
 COMMITS_INFO_URL = 'https://commits.webkit.org/'
 RESULTS_WEBKIT_URL = 'https://results.webkit.org'
 RESULTS_SERVER_API_KEY = 'RESULTS_SERVER_API_KEY'
@@ -581,7 +581,7 @@ class DownloadBuiltProduct(shell.ShellCommandNewStyle):
     @defer.inlineCallbacks
     def run(self):
         # Only try to download from S3 on the official deployment <https://webkit.org/b/230006>
-        if CURRENT_HOSTNAME != BUILD_WEBKIT_HOSTNAME:
+        if CURRENT_HOSTNAME not in BUILD_WEBKIT_HOSTNAMES:
             self.build.addStepsAfterCurrentStep([DownloadBuiltProductFromMaster()])
             defer.returnValue(SKIPPED)
 
@@ -1367,7 +1367,7 @@ class TransferToS3(master.MasterShellCommandNewStyle):
         defer.returnValue(rc)
 
     def doStepIf(self, step):
-        return CURRENT_HOSTNAME == BUILD_WEBKIT_HOSTNAME
+        return CURRENT_HOSTNAME in BUILD_WEBKIT_HOSTNAMES
 
 
 class ExtractTestResults(master.MasterShellCommandNewStyle):
