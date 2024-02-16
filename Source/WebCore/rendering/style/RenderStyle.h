@@ -426,7 +426,7 @@ public:
     inline bool hasStaticInlinePosition(bool horizontal) const;
     inline bool hasStaticBlockPosition(bool horizontal) const;
 
-    PositionType position() const;
+    PositionType position() const { return static_cast<PositionType>(m_nonInheritedFlags.position); }
     inline bool hasOutOfFlowPosition() const;
     inline bool hasInFlowPosition() const;
     inline bool hasViewportConstrainedPosition() const;
@@ -1104,7 +1104,7 @@ public:
         m_nonInheritedFlags.effectiveDisplay = m_nonInheritedFlags.originalDisplay;
     }
     void setEffectiveDisplay(DisplayType v) { m_nonInheritedFlags.effectiveDisplay = static_cast<unsigned>(v); }
-    inline void setPosition(PositionType);
+    void setPosition(PositionType v) { m_nonInheritedFlags.position = static_cast<unsigned>(v); }
     void setFloating(Float v) { m_nonInheritedFlags.floating = static_cast<unsigned>(v); }
 
     inline void setLeft(Length&&);
@@ -2193,6 +2193,7 @@ private:
         unsigned overflowX : 3; // Overflow
         unsigned overflowY : 3; // Overflow
         unsigned clear : 3; // Clear
+        unsigned position : 3; // PositionType
         unsigned unicodeBidi : 3; // UnicodeBidi
         unsigned floating : 3; // Float
         unsigned tableLayout : 1; // TableLayoutType

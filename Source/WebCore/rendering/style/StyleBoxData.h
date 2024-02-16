@@ -59,7 +59,6 @@ public:
 
     BoxSizing boxSizing() const { return static_cast<BoxSizing>(m_boxSizing); }
     BoxDecorationBreak boxDecorationBreak() const { return static_cast<BoxDecorationBreak>(m_boxDecorationBreak); }
-    PositionType position() const { return static_cast<PositionType>(m_position); }
     VerticalAlign verticalAlign() const { return static_cast<VerticalAlign>(m_verticalAlign); }
 
 private:
@@ -85,7 +84,6 @@ private:
     unsigned m_hasAutoUsedZIndex : 1;
     unsigned m_boxSizing : 1; // BoxSizing
     unsigned m_boxDecorationBreak : 1; // BoxDecorationBreak
-    unsigned m_position : 3; // PositionType
     unsigned m_verticalAlign : 4; // VerticalAlign
 };
 

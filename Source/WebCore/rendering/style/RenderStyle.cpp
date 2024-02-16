@@ -214,6 +214,7 @@ RenderStyle::RenderStyle(CreateDefaultStyleTag)
     m_nonInheritedFlags.overflowX = static_cast<unsigned>(initialOverflowX());
     m_nonInheritedFlags.overflowY = static_cast<unsigned>(initialOverflowY());
     m_nonInheritedFlags.clear = static_cast<unsigned>(initialClear());
+    m_nonInheritedFlags.position = static_cast<unsigned>(initialPosition());
     m_nonInheritedFlags.unicodeBidi = static_cast<unsigned>(initialUnicodeBidi());
     m_nonInheritedFlags.floating = static_cast<unsigned>(initialFloating());
     m_nonInheritedFlags.tableLayout = static_cast<unsigned>(initialTableLayout());
@@ -393,6 +394,7 @@ inline void RenderStyle::NonInheritedFlags::copyNonInheritedFrom(const NonInheri
     overflowX = other.overflowX;
     overflowY = other.overflowY;
     clear = other.clear;
+    position = other.position;
     unicodeBidi = other.unicodeBidi;
     floating = other.floating;
     tableLayout = other.tableLayout;
@@ -560,7 +562,7 @@ unsigned RenderStyle::hashForTextAutosizing() const
     hash ^= WTF::FloatHash<float>::hash(m_inheritedData->verticalBorderSpacing);
     hash ^= m_inheritedFlags.boxDirection;
     hash ^= m_inheritedFlags.rtlOrdering;
-    hash ^= m_nonInheritedData->boxData->m_position;
+    hash ^= m_nonInheritedFlags.position;
     hash ^= m_nonInheritedFlags.floating;
     hash ^= m_nonInheritedData->miscData->textOverflow;
     hash ^= m_rareInheritedData->textSecurity;
@@ -582,7 +584,7 @@ bool RenderStyle::equalForTextAutosizing(const RenderStyle& other) const
         && m_inheritedData->verticalBorderSpacing == other.m_inheritedData->verticalBorderSpacing
         && m_inheritedFlags.boxDirection == other.m_inheritedFlags.boxDirection
         && m_inheritedFlags.rtlOrdering == other.m_inheritedFlags.rtlOrdering
-        && m_nonInheritedData->boxData->position() == other.m_nonInheritedData->boxData->position()
+        && m_nonInheritedFlags.position == other.m_nonInheritedFlags.position
         && m_nonInheritedFlags.floating == other.m_nonInheritedFlags.floating
         && m_nonInheritedData->miscData->textOverflow == other.m_nonInheritedData->miscData->textOverflow;
 }
@@ -949,9 +951,6 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, OptionSet<Style
                 || m_nonInheritedData->boxData->maxHeight() != other.m_nonInheritedData->boxData->maxHeight())
                 return true;
 
-            if (m_nonInheritedData->boxData->position() != other.m_nonInheritedData->boxData->position())
-                return true;
-
             if (m_nonInheritedData->boxData->verticalAlign() != other.m_nonInheritedData->boxData->verticalAlign()
                 || m_nonInheritedData->boxData->verticalAlignLength() != other.m_nonInheritedData->boxData->verticalAlignLength())
                 return true;
@@ -1024,6 +1023,7 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, OptionSet<Style
 
     if (m_inheritedFlags.boxDirection != other.m_inheritedFlags.boxDirection
         || m_inheritedFlags.rtlOrdering != other.m_inheritedFlags.rtlOrdering
+        || m_nonInheritedFlags.position != other.m_nonInheritedFlags.position
         || m_nonInheritedFlags.floating != other.m_nonInheritedFlags.floating
         || m_nonInheritedFlags.originalDisplay != other.m_nonInheritedFlags.originalDisplay)
         return true;
@@ -1543,6 +1543,8 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyOverflowY);
         if (first.clear != second.clear)
             changingProperties.m_properties.set(CSSPropertyClear);
+        if (first.position != second.position)
+            changingProperties.m_properties.set(CSSPropertyPosition);
         if (first.floating != second.floating)
             changingProperties.m_properties.set(CSSPropertyFloat);
         if (first.tableLayout != second.tableLayout)
@@ -1602,8 +1604,6 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyBoxSizing);
         if (first.boxDecorationBreak() != second.boxDecorationBreak())
             changingProperties.m_properties.set(CSSPropertyWebkitBoxDecorationBreak);
-        if (first.position() != second.position())
-            changingProperties.m_properties.set(CSSPropertyPosition);
         // Non animated styles are followings.
         // usedZIndex
         // hasAutoUsedZIndex
