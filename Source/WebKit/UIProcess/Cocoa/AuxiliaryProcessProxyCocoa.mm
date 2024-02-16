@@ -80,10 +80,10 @@ void AuxiliaryProcessProxy::platformStartConnectionTerminationWatchdog()
 }
 
 #if USE(EXTENSIONKIT)
-RetainPtr<_SEExtensionProcess> AuxiliaryProcessProxy::extensionProcess() const
+std::optional<ExtensionProcess> AuxiliaryProcessProxy::extensionProcess() const
 {
     if (!m_processLauncher)
-        return nullptr;
+        return std::nullopt;
     return m_processLauncher->extensionProcess();
 }
 #endif

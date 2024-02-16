@@ -27,8 +27,26 @@
 
 #if USE(EXTENSIONKIT)
 
+#import <BrowserEngineKit/BrowserEngineKit.h>
+
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+
+NS_ASSUME_NONNULL_BEGIN
+
+@interface BEWebContentProcess (ExtensionProcess)
++(void)webContentProcessWithBundleID:(NSString *_Nullable)bundleID interruptionHandler:(void(^)(void) _Nullable)interruptionHandler completion:(void(^)(BEWebContentProcess *_Nullable process, NSError *_Nullable error))completion;
+@end
+
+@interface BENetworkingProcess (ExtensionProcess)
++(void)networkProcessWithBundleID:(NSString *_Nullable)bundleID interruptionHandler:(void(^)(void) _Nullable)interruptionHandler completion:(void(^)(BENetworkingProcess *_Nullable process, NSError *_Nullable error))completion;
+@end
+
+@interface BERenderingProcess (ExtensionProcess)
++(void)renderingProcessWithBundleID:(NSString *_Nullable)bundleID interruptionHandler:(void(^)(void) _Nullable)interruptionHandler completion:(void(^)(BERenderingProcess  *_Nullable process, NSError *_Nullable error))completion;
+@end
+
+NS_ASSUME_NONNULL_END
 
 #if __has_include(<BrowserEngineKit/BELayerHierarchy_Private.h>)
 #import <BrowserEngineKit/BELayerHierarchy_Private.h>

@@ -39,6 +39,10 @@
 #include "AssertionCapability.h"
 #endif
 
+#if USE(EXTENSIONKIT)
+#include "ExtensionProcess.h"
+#endif
+
 #if USE(RUNNINGBOARD)
 #include <wtf/RetainPtr.h>
 
@@ -47,8 +51,10 @@ OBJC_CLASS WKRBSAssertionDelegate;
 #endif // USE(RUNNINGBOARD)
 
 #if USE(EXTENSIONKIT)
-OBJC_CLASS _SEExtensionProcess;
-OBJC_PROTOCOL(_SEGrant);
+OBJC_CLASS BEWebContentProcess;
+OBJC_CLASS BENetworkingProcess;
+OBJC_CLASS BERenderingProcess;
+OBJC_PROTOCOL(BEProcessCapabilityGrant);
 #endif
 
 namespace WebKit {
@@ -72,7 +78,7 @@ class ProcessAssertion : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<
 public:
     enum class Mode : bool { Sync, Async };
 #if USE(EXTENSIONKIT)
-    static Ref<ProcessAssertion> create(RetainPtr<_SEExtensionProcess>, const String& reason, ProcessAssertionType, Mode = Mode::Async, const String& environmentIdentifier = emptyString(), CompletionHandler<void()>&& acquisisionHandler = nullptr);
+    static Ref<ProcessAssertion> create(ExtensionProcess&, const String& reason, ProcessAssertionType, Mode = Mode::Async, const String& environmentIdentifier = emptyString(), CompletionHandler<void()>&& acquisisionHandler = nullptr);
 #endif
     static Ref<ProcessAssertion> create(ProcessID, const String& reason, ProcessAssertionType, Mode = Mode::Async, const String& environmentIdentifier = emptyString(), CompletionHandler<void()>&& acquisisionHandler = nullptr);
     static Ref<ProcessAssertion> create(AuxiliaryProcessProxy&, const String& reason, ProcessAssertionType, Mode = Mode::Async, CompletionHandler<void()>&& acquisisionHandler = nullptr);
@@ -118,8 +124,8 @@ private:
 #if USE(EXTENSIONKIT)
     static Lock s_capabilityLock;
     std::optional<AssertionCapability> m_capability;
-    RetainPtr<_SEGrant> m_grant WTF_GUARDED_BY_LOCK(s_capabilityLock);
-    RetainPtr<_SEExtensionProcess> m_process;
+    RetainPtr<BEProcessCapabilityGrant> m_grant WTF_GUARDED_BY_LOCK(s_capabilityLock);
+    std::optional<ExtensionProcess> m_process;
 #endif
 };
 

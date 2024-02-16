@@ -30,19 +30,19 @@
 
 #import "ExtensionKitSPI.h"
 #import "Logging.h"
+#import <BrowserEngineKit/BrowserEngineKit.h>
 #import <wtf/CrossThreadCopier.h>
 
 namespace WebKit {
 
-static void platformInvalidate(RetainPtr<_SEGrant>&& platformGrant)
+static void platformInvalidate(BEProcessCapabilityGrant *platformGrant)
 {
     if (![platformGrant isValid])
         return;
 
 #if USE(EXTENSIONKIT)
-    NSError *error = nil;
-    if (![platformGrant invalidateWithError:&error])
-        RELEASE_LOG_ERROR(ProcessCapabilities, "Invalidating grant %{public}@ failed with error: %{public}@", platformGrant.get(), error);
+    if (![platformGrant invalidate])
+        RELEASE_LOG_ERROR(ProcessCapabilities, "Invalidating grant %{public}@ failed", platformGrant);
 #endif
 }
 
@@ -51,7 +51,7 @@ ExtensionCapabilityGrant::ExtensionCapabilityGrant(String environmentIdentifier)
 {
 }
 
-ExtensionCapabilityGrant::ExtensionCapabilityGrant(String&& environmentIdentifier, RetainPtr<_SEGrant>&& platformGrant)
+ExtensionCapabilityGrant::ExtensionCapabilityGrant(String&& environmentIdentifier, RetainPtr<BEProcessCapabilityGrant>&& platformGrant)
     : m_environmentIdentifier { WTFMove(environmentIdentifier) }
     , m_platformGrant { WTFMove(platformGrant) }
 {
@@ -84,9 +84,9 @@ bool ExtensionCapabilityGrant::isValid() const
     return false;
 }
 
-void ExtensionCapabilityGrant::setPlatformGrant(RetainPtr<_SEGrant>&& platformGrant)
+void ExtensionCapabilityGrant::setPlatformGrant(RetainPtr<BEProcessCapabilityGrant>&& platformGrant)
 {
-    platformInvalidate(std::exchange(m_platformGrant, WTFMove(platformGrant)));
+    platformInvalidate(std::exchange(m_platformGrant, WTFMove(platformGrant)).get());
 }
 
 } // namespace WebKit
