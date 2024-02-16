@@ -441,21 +441,21 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setPageIsVisible(bool visible, String
                 @"AVAudioSessionSpatialExperienceOptionSceneIdentifier" : sceneId
             } error:&error];
         }
-
-        [m_sampleBufferDisplayLayer sampleBufferRenderer].STSLabel = session.spatialTrackingLabel;
     } else {
         [session setIntendedSpatialExperience:AVAudioSessionSpatialExperienceHeadTracked options:@{
             @"AVAudioSessionSpatialExperienceOptionSoundStageSize" : @(AVAudioSessionSoundStageSizeAutomatic),
             @"AVAudioSessionSpatialExperienceOptionAnchoringStrategy" : @(AVAudioSessionAnchoringStrategyAutomatic)
         } error:&error];
-
-        [m_sampleBufferDisplayLayer sampleBufferRenderer].STSLabel = nil;
     }
 
     if (error)
         ALWAYS_LOG(error.localizedDescription.UTF8String);
 #else
     UNUSED_PARAM(sceneIdentifier);
+#endif
+
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    updateSpatialTrackingLabel();
 #endif
 }
 
@@ -922,6 +922,10 @@ void MediaPlayerPrivateMediaSourceAVFObjC::ensureLayer()
     [m_sampleBufferDisplayLayer setName:@"MediaPlayerPrivateMediaSource AVSampleBufferDisplayLayer"];
 #endif
     [m_sampleBufferDisplayLayer setVideoGravity: (m_shouldMaintainAspectRatio ? AVLayerVideoGravityResizeAspect : AVLayerVideoGravityResize)];
+
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    updateSpatialTrackingLabel();
+#endif
 
     if (!m_sampleBufferDisplayLayer) {
         ERROR_LOG(LOGIDENTIFIER, "Failed to create AVSampleBufferDisplayLayer");
@@ -1568,6 +1572,30 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setShouldMaintainAspectRatio(bool sho
 
     [CATransaction commit];
 }
+
+#if HAVE(SPATIAL_TRACKING_LABEL)
+const String& MediaPlayerPrivateMediaSourceAVFObjC::spatialTrackingLabel() const
+{
+    return m_spatialTrackingLabel;
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::setSpatialTrackingLabel(String&& spatialTrackingLabel)
+{
+    if (m_spatialTrackingLabel == spatialTrackingLabel)
+        return;
+    m_spatialTrackingLabel = spatialTrackingLabel;
+    updateSpatialTrackingLabel();
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::updateSpatialTrackingLabel()
+{
+    AVAudioSession *session = [PAL::getAVAudioSessionClass() sharedInstance];
+    if (!m_visible)
+        [m_sampleBufferDisplayLayer sampleBufferRenderer].STSLabel = session.spatialTrackingLabel;
+    else
+        [m_sampleBufferDisplayLayer sampleBufferRenderer].STSLabel = m_spatialTrackingLabel;
+}
+#endif
 
 }
 

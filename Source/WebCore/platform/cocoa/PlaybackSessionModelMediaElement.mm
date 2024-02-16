@@ -409,6 +409,19 @@ void PlaybackSessionModelMediaElement::setPlayingOnSecondScreen(bool value)
         m_mediaElement->setPlayingOnSecondScreen(value);
 }
 
+const String& PlaybackSessionModelMediaElement::spatialTrackingLabel() const
+{
+    if (m_mediaElement)
+        return m_mediaElement->spatialTrackingLabel();
+    return emptyString();
+}
+
+void PlaybackSessionModelMediaElement::setSpatialTrackingLabel(String&& spatialTrackingLabel)
+{
+    if (m_mediaElement)
+        m_mediaElement->setSpatialTrackingLabel(WTFMove(spatialTrackingLabel));
+}
+
 void PlaybackSessionModelMediaElement::sendRemoteCommand(PlatformMediaSession::RemoteControlCommandType command, const PlatformMediaSession::RemoteCommandArgument& argument)
 {
     if (m_mediaElement)

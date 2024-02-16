@@ -371,6 +371,11 @@ private:
 
     void setVideoReceiverEndpoint(const VideoReceiverEndpoint&) final { }
 
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    const String& spatialTrackingLabel() const final;
+    void setSpatialTrackingLabel(String&&) final;
+#endif
+
     RetainPtr<AVURLAsset> m_avAsset;
     RetainPtr<AVPlayer> m_avPlayer;
     RetainPtr<AVPlayerItem> m_avPlayerItem;
@@ -495,6 +500,9 @@ private:
     PlatformTimeRanges m_buffered;
     TrackID m_currentTextTrackID { 0 };
     Ref<WorkQueue> m_targetQueue { WorkQueue::main() };
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    String m_spatialTrackingLabel;
+#endif
 };
 
 }

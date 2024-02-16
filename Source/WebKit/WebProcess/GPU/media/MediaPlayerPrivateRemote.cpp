@@ -1723,6 +1723,21 @@ void MediaPlayerPrivateRemote::setShouldCheckHardwareSupport(bool value)
     connection().send(Messages::RemoteMediaPlayerProxy::SetShouldCheckHardwareSupport(value), m_id);
 }
 
+
+const String& MediaPlayerPrivateRemote::spatialTrackingLabel() const
+{
+    return m_spatialTrackingLabel;
+}
+
+void MediaPlayerPrivateRemote::setSpatialTrackingLabel(String&& spatialTrackingLabel)
+{
+    if (spatialTrackingLabel == m_spatialTrackingLabel)
+        return;
+
+    m_spatialTrackingLabel = WTFMove(spatialTrackingLabel);
+    connection().send(Messages::RemoteMediaPlayerProxy::SetSpatialTrackingLabel(m_spatialTrackingLabel), m_id);
+}
+
 void MediaPlayerPrivateRemote::commitAllTransactions(CompletionHandler<void()>&& completionHandler)
 {
     completionHandler();

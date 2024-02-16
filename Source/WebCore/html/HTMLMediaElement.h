@@ -672,6 +672,9 @@ public:
 
     LayoutRect contentBoxRect() const { return mediaPlayerContentBoxRect(); }
 
+    const String& spatialTrackingLabel() const;
+    void setSpatialTrackingLabel(String&&);
+
 protected:
     HTMLMediaElement(const QualifiedName&, Document&, bool createdByParser);
     virtual ~HTMLMediaElement();

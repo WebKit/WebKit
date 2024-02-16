@@ -1241,6 +1241,11 @@ void RemoteMediaPlayerProxy::setShouldCheckHardwareSupport(bool value)
     m_shouldCheckHardwareSupport = value;
 }
 
+void RemoteMediaPlayerProxy::setSpatialTrackingLabel(String&& spatialTrackingLabel)
+{
+    m_player->setSpatialTrackingLabel(WTFMove(spatialTrackingLabel));
+}
+
 #if !RELEASE_LOG_DISABLED
 WTFLogChannel& RemoteMediaPlayerProxy::logChannel() const
 {

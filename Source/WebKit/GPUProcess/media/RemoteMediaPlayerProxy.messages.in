@@ -144,6 +144,8 @@ messages -> RemoteMediaPlayerProxy {
     RequestHostingContextID() -> (uint32_t contextID)
 
     SetShouldCheckHardwareSupport(bool value)
+
+    SetSpatialTrackingLabel(String spatialTrackingLabel);
 }
 
 #endif

@@ -82,6 +82,9 @@ public:
     virtual void sendRemoteCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument&) { };
     virtual void setVideoReceiverEndpoint(const VideoReceiverEndpoint&) = 0;
 
+    virtual const String& spatialTrackingLabel() const { return emptyString(); }
+    virtual void setSpatialTrackingLabel(String&&) { }
+
     using ExternalPlaybackTargetType = PlaybackSessionModelExternalPlaybackTargetType;
 
     virtual double playbackStartedTime() const = 0;

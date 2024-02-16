@@ -366,6 +366,7 @@ private:
     using LayerHostingContextIDCallback = WebCore::MediaPlayer::LayerHostingContextIDCallback;
     void requestHostingContextID(LayerHostingContextIDCallback&&);
     void setShouldCheckHardwareSupport(bool);
+    void setSpatialTrackingLabel(String&&);
 
 #if !RELEASE_LOG_DISABLED
     const Logger& mediaPlayerLogger() final { return m_logger; }

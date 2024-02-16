@@ -302,6 +302,12 @@ private:
     void playerContentBoxRectChanged(const LayoutRect&) final;
     void setShouldMaintainAspectRatio(bool) final;
 
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    const String& spatialTrackingLabel() const final;
+    void setSpatialTrackingLabel(String&&) final;
+    void updateSpatialTrackingLabel();
+#endif
+
     friend class MediaSourcePrivateAVFObjC;
 
     std::optional<SeekTarget> m_pendingSeek;
@@ -367,6 +373,9 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     uint64_t m_lastConvertedSampleCount { 0 };
     ProcessIdentity m_resourceOwner;
     bool m_shouldMaintainAspectRatio { true };
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    String m_spatialTrackingLabel;
+#endif
 };
 
 String convertEnumerationToString(MediaPlayerPrivateMediaSourceAVFObjC::SeekState);

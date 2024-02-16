@@ -79,6 +79,8 @@ public:
     WEBCORE_EXPORT void setMuted(bool) final;
     WEBCORE_EXPORT void setVolume(double) final;
     WEBCORE_EXPORT void setPlayingOnSecondScreen(bool) final;
+    WEBCORE_EXPORT const String& spatialTrackingLabel() const final;
+    WEBCORE_EXPORT void setSpatialTrackingLabel(String&&) final;
     WEBCORE_EXPORT void sendRemoteCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument&) final;
     void setVideoReceiverEndpoint(const VideoReceiverEndpoint&) final { }
 

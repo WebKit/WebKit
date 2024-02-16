@@ -735,6 +735,9 @@ public:
 
     void setVideoReceiverEndpoint(const VideoReceiverEndpoint&);
 
+    const String& spatialTrackingLabel() const;
+    void setSpatialTrackingLabel(String&&);
+
 private:
     MediaPlayer(MediaPlayerClient&);
     MediaPlayer(MediaPlayerClient&, MediaPlayerEnums::MediaEngineIdentifier);

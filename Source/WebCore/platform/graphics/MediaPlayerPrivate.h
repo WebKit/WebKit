@@ -355,6 +355,9 @@ public:
 
     virtual void setVideoReceiverEndpoint(const VideoReceiverEndpoint&) { }
 
+    virtual const String& spatialTrackingLabel() const { return emptyString(); }
+    virtual void setSpatialTrackingLabel(String&&) { }
+
 protected:
     mutable PlatformTimeRanges m_seekable;
     bool m_shouldCheckHardwareSupport { false };

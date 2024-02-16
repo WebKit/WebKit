@@ -1149,6 +1149,10 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
 #endif
     }
 
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    [m_avPlayer _setSTSLabel:m_spatialTrackingLabel];
+#endif
+
     if (m_avPlayerItem)
         setAVPlayerItem(m_avPlayerItem.get());
 
@@ -3980,6 +3984,22 @@ void MediaPlayerPrivateAVFoundationObjC::audioOutputDeviceChanged()
         m_avPlayer.get().audioOutputDeviceUniqueID = deviceId;
 #endif
 }
+
+#if HAVE(SPATIAL_TRACKING_LABEL)
+const String& MediaPlayerPrivateAVFoundationObjC::spatialTrackingLabel() const
+{
+    return m_spatialTrackingLabel;
+}
+
+void MediaPlayerPrivateAVFoundationObjC::setSpatialTrackingLabel(String&& spatialTrackingLabel)
+{
+    if (m_spatialTrackingLabel == spatialTrackingLabel)
+        return;
+    m_spatialTrackingLabel = spatialTrackingLabel;
+    if (m_avPlayer)
+        [m_avPlayer _setSTSLabel:spatialTrackingLabel];
+}
+#endif
 
 NSArray* assetMetadataKeyNames()
 {

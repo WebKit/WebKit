@@ -9266,6 +9266,19 @@ String HTMLMediaElement::localizedSourceType() const
     return { };
 }
 
+const String& HTMLMediaElement::spatialTrackingLabel() const
+{
+    if (m_player)
+        return m_player->spatialTrackingLabel();
+    return emptyString();
+}
+
+void HTMLMediaElement::setSpatialTrackingLabel(String&& spatialTrackingLabel)
+{
+    if (m_player)
+        m_player->setSpatialTrackingLabel(WTFMove(spatialTrackingLabel));
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(VIDEO)

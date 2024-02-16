@@ -456,6 +456,9 @@ private:
 
     void setShouldCheckHardwareSupport(bool) final;
 
+    const String& spatialTrackingLabel() const final;
+    void setSpatialTrackingLabel(String&&) final;
+
 #if PLATFORM(COCOA)
     void pushVideoFrameMetadata(WebCore::VideoFrameMetadata&&, RemoteVideoFrameProxy::Properties&&);
 #endif
@@ -518,6 +521,7 @@ private:
 #if PLATFORM(COCOA) && !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
     bool m_hasBeenAskedToPaintGL { false };
 #endif
+    String m_spatialTrackingLabel;
 };
 
 } // namespace WebKit

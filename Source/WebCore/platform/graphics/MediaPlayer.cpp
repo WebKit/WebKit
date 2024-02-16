@@ -1932,6 +1932,16 @@ void MediaPlayer::setShouldCheckHardwareSupport(bool value)
     m_private->setShouldCheckHardwareSupport(value);
 }
 
+const String& MediaPlayer::spatialTrackingLabel() const
+{
+    return m_private->spatialTrackingLabel();
+}
+
+void MediaPlayer::setSpatialTrackingLabel(String&& spatialTrackingLabel)
+{
+    m_private->setSpatialTrackingLabel(WTFMove(spatialTrackingLabel));
+}
+
 #if !RELEASE_LOG_DISABLED
 const Logger& MediaPlayer::mediaPlayerLogger()
 {
