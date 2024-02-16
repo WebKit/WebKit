@@ -165,6 +165,9 @@ private:
     WebCore::IntRect availableContentsRect() const;
 
     WebCore::DelegatedScrollingMode scrollingMode() const;
+    bool isFullMainFramePlugin() const;
+
+    OptionSet<WebCore::TiledBackingScrollability> computeScrollability() const;
 
     void scrollbarStyleChanged(WebCore::ScrollbarStyle, bool forceUpdate) override;
     void updateScrollbars() override;

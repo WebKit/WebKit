@@ -152,8 +152,8 @@ public:
     WEBCORE_EXPORT virtual ScrollbarGutter scrollbarGutterStyle() const;
     virtual ScrollbarWidth scrollbarWidthStyle() const { return ScrollbarWidth::Auto; }
 
-    bool allowsHorizontalScrolling() const;
-    bool allowsVerticalScrolling() const;
+    WEBCORE_EXPORT bool allowsHorizontalScrolling() const;
+    WEBCORE_EXPORT bool allowsVerticalScrolling() const;
 
     WEBCORE_EXPORT String horizontalScrollbarStateForTesting() const;
     WEBCORE_EXPORT String verticalScrollbarStateForTesting() const;

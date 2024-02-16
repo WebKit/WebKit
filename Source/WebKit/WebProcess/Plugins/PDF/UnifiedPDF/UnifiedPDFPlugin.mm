@@ -318,7 +318,7 @@ void UnifiedPDFPlugin::ensureLayers()
     }
 
     if (!m_contentsLayer) {
-        m_contentsLayer = createGraphicsLayer("PDF contents"_s, GraphicsLayer::Type::TiledBacking);
+        m_contentsLayer = createGraphicsLayer("PDF contents"_s, isFullMainFramePlugin() ? GraphicsLayer::Type::PageTiledBacking : GraphicsLayer::Type::TiledBacking);
         m_contentsLayer->setAnchorPoint({ });
         m_contentsLayer->setDrawsContent(true);
         m_scrolledContentsLayer->addChild(*m_contentsLayer);
@@ -1172,6 +1172,23 @@ DelegatedScrollingMode UnifiedPDFPlugin::scrollingMode() const
 #endif
 }
 
+bool UnifiedPDFPlugin::isFullMainFramePlugin() const
+{
+    return m_frame->isMainFrame() && isFullFramePlugin();
+}
+
+OptionSet<TiledBackingScrollability> UnifiedPDFPlugin::computeScrollability() const
+{
+    OptionSet<TiledBacking::Scrollability> scrollability = TiledBacking::Scrollability::NotScrollable;
+    if (allowsHorizontalScrolling())
+        scrollability.add(TiledBacking::Scrollability::HorizontallyScrollable);
+
+    if (allowsVerticalScrolling())
+        scrollability.add(TiledBacking::Scrollability::VerticallyScrollable);
+
+    return scrollability;
+}
+
 void UnifiedPDFPlugin::scrollbarStyleChanged(WebCore::ScrollbarStyle, bool forceUpdate)
 {
     if (!forceUpdate)
@@ -1212,6 +1229,9 @@ void UnifiedPDFPlugin::updateScrollingExtents()
 
     auto& scrollingCoordinator = *page->scrollingCoordinator();
     scrollingCoordinator.setScrollingNodeScrollableAreaGeometry(m_scrollingNodeID, *this);
+
+    if (auto* tiledBacking = m_contentsLayer->tiledBacking())
+        tiledBacking->setScrollability(computeScrollability());
 
     // FIXME: Use setEventRegionToLayerBounds().
     EventRegion eventRegion;
