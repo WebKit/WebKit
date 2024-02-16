@@ -1291,7 +1291,7 @@ PDFDocumentLayout::PageIndex UnifiedPDFPlugin::pageForScrollSnapIdentifier(Eleme
 
 bool UnifiedPDFPlugin::shouldUseScrollSnapping() const
 {
-    return m_documentLayout.displayMode() == PDFDocumentLayout::DisplayMode::SinglePage || m_documentLayout.displayMode() == PDFDocumentLayout::DisplayMode::TwoUp;
+    return m_documentLayout.displayMode() == PDFDocumentLayout::DisplayMode::SinglePageDiscrete || m_documentLayout.displayMode() == PDFDocumentLayout::DisplayMode::TwoUpDiscrete;
 }
 
 void UnifiedPDFPlugin::updateSnapOffsets()
@@ -1385,7 +1385,7 @@ bool UnifiedPDFPlugin::shouldDisplayPage(PDFDocumentLayout::PageIndex pageIndex)
     if (pageIndex == currentlySnappedPage)
         return true;
 
-    if (m_documentLayout.displayMode() == PDFDocumentLayout::DisplayMode::TwoUp) {
+    if (m_documentLayout.displayMode() == PDFDocumentLayout::DisplayMode::TwoUpDiscrete) {
         if (currentlySnappedPage % 2)
             return pageIndex == currentlySnappedPage - 1;
         return pageIndex == currentlySnappedPage + 1;
@@ -1464,10 +1464,10 @@ std::optional<PDFDocumentLayout::PageIndex> UnifiedPDFPlugin::pageIndexForDocume
     return std::nullopt;
 }
 
-std::optional<PDFDocumentLayout::PageIndex> UnifiedPDFPlugin::indexForCurrentPageInView() const
+PDFDocumentLayout::PageIndex UnifiedPDFPlugin::indexForCurrentPageInView() const
 {
     auto centerInDocumentSpace = convertFromPluginToDocument(flooredIntPoint(size() / 2));
-    return pageIndexForDocumentPoint(centerInDocumentSpace);
+    return m_documentLayout.nearestPageIndexForDocumentPoint(centerInDocumentSpace);
 }
 
 RetainPtr<PDFAnnotation> UnifiedPDFPlugin::annotationForRootViewPoint(const WebCore::IntPoint& point) const
@@ -1881,9 +1881,9 @@ void UnifiedPDFPlugin::scrollToFragmentIfNeeded()
 UnifiedPDFPlugin::ContextMenuItemTag UnifiedPDFPlugin::contextMenuItemTagFromDisplayMode(const PDFDocumentLayout::DisplayMode& displayMode) const
 {
     switch (displayMode) {
-    case PDFDocumentLayout::DisplayMode::SinglePage: return ContextMenuItemTag::SinglePage;
-    case PDFDocumentLayout::DisplayMode::Continuous: return ContextMenuItemTag::SinglePageContinuous;
-    case PDFDocumentLayout::DisplayMode::TwoUp: return ContextMenuItemTag::TwoPages;
+    case PDFDocumentLayout::DisplayMode::SinglePageDiscrete: return ContextMenuItemTag::SinglePage;
+    case PDFDocumentLayout::DisplayMode::SinglePageContinuous: return ContextMenuItemTag::SinglePageContinuous;
+    case PDFDocumentLayout::DisplayMode::TwoUpDiscrete: return ContextMenuItemTag::TwoPages;
     case PDFDocumentLayout::DisplayMode::TwoUpContinuous: return ContextMenuItemTag::TwoPagesContinuous;
     }
 }
@@ -1891,13 +1891,13 @@ UnifiedPDFPlugin::ContextMenuItemTag UnifiedPDFPlugin::contextMenuItemTagFromDis
 PDFDocumentLayout::DisplayMode UnifiedPDFPlugin::displayModeFromContextMenuItemTag(const ContextMenuItemTag& tag) const
 {
     switch (tag) {
-    case ContextMenuItemTag::SinglePage: return PDFDocumentLayout::DisplayMode::SinglePage;
-    case ContextMenuItemTag::SinglePageContinuous: return PDFDocumentLayout::DisplayMode::Continuous;
-    case ContextMenuItemTag::TwoPages: return PDFDocumentLayout::DisplayMode::TwoUp;
+    case ContextMenuItemTag::SinglePage: return PDFDocumentLayout::DisplayMode::SinglePageDiscrete;
+    case ContextMenuItemTag::SinglePageContinuous: return PDFDocumentLayout::DisplayMode::SinglePageContinuous;
+    case ContextMenuItemTag::TwoPages: return PDFDocumentLayout::DisplayMode::TwoUpDiscrete;
     case ContextMenuItemTag::TwoPagesContinuous: return PDFDocumentLayout::DisplayMode::TwoUpContinuous;
     default:
         ASSERT_NOT_REACHED();
-        return PDFDocumentLayout::DisplayMode::Continuous;
+        return PDFDocumentLayout::DisplayMode::SinglePageContinuous;
     }
 }
 
@@ -2082,7 +2082,7 @@ Vector<PDFContextMenuItem> UnifiedPDFPlugin::navigationContextMenuItems() const
     auto currentPageIndex = indexForCurrentPageInView();
     return {
         contextMenuItem(ContextMenuItemTag::NextPage, currentPageIndex != m_documentLayout.pageCount() - 1),
-        contextMenuItem(ContextMenuItemTag::PreviousPage, currentPageIndex && currentPageIndex.value())
+        contextMenuItem(ContextMenuItemTag::PreviousPage, currentPageIndex && currentPageIndex)
     };
 }
 
@@ -2121,14 +2121,39 @@ void UnifiedPDFPlugin::performContextMenuAction(ContextMenuItemTag tag, const In
             resnapAfterLayout();
         }
         break;
-    case ContextMenuItemTag::NextPage:
-        if (auto currentPageIndex = indexForCurrentPageInView(); currentPageIndex < m_documentLayout.pageCount() - 1)
-            scrollToPage(currentPageIndex.value() + 1);
+    case ContextMenuItemTag::NextPage: {
+        auto currentPageIndex = indexForCurrentPageInView();
+        auto pageCount = m_documentLayout.pageCount();
+        auto pagesPerRow = m_documentLayout.pagesPerRow();
+
+        auto nextPageIsOnNextRow = [currentPageIndex, &documentLayout = m_documentLayout] {
+            if (documentLayout.isSinglePageDisplayMode())
+                return true;
+            return documentLayout.isRightPageIndex(currentPageIndex);
+        };
+
+        if (!m_documentLayout.isLastPageIndex(currentPageIndex) && nextPageIsOnNextRow())
+            scrollToPage(currentPageIndex + 1);
+        else if (pageCount > pagesPerRow && currentPageIndex < pageCount - pagesPerRow)
+            scrollToPage(currentPageIndex + pagesPerRow);
         break;
-    case ContextMenuItemTag::PreviousPage:
-        if (auto currentPageIndex = indexForCurrentPageInView(); currentPageIndex && currentPageIndex.value())
-            return scrollToPage(currentPageIndex.value() - 1);
+    }
+    case ContextMenuItemTag::PreviousPage: {
+        auto currentPageIndex = indexForCurrentPageInView();
+        auto pagesPerRow = m_documentLayout.pagesPerRow();
+
+        auto previousPageIsOnPreviousRow = [currentPageIndex, &documentLayout = m_documentLayout]  {
+            if (documentLayout.isSinglePageDisplayMode())
+                return true;
+            return documentLayout.isLeftPageIndex(currentPageIndex);
+        };
+
+        if (currentPageIndex && previousPageIsOnPreviousRow())
+            scrollToPage(currentPageIndex - 1);
+        else if (currentPageIndex > 1)
+            scrollToPage(currentPageIndex - pagesPerRow);
         break;
+    }
     case ContextMenuItemTag::ZoomIn:
         zoomIn();
         break;

@@ -42,6 +42,22 @@ static constexpr float minScale = 0.1; // Arbitrarily chosen min scale.
 PDFDocumentLayout::PDFDocumentLayout() = default;
 PDFDocumentLayout::~PDFDocumentLayout() = default;
 
+
+bool PDFDocumentLayout::isLeftPageIndex(PageIndex pageIndex) const
+{
+    return !(pageIndex % 2);
+}
+
+bool PDFDocumentLayout::isRightPageIndex(PageIndex pageIndex) const
+{
+    return pageIndex % 2;
+}
+
+bool PDFDocumentLayout::isLastPageIndex(PageIndex pageIndex) const
+{
+    return pageIndex == pageCount() - 1;
+}
+
 RetainPtr<PDFPage> PDFDocumentLayout::pageAtIndex(PageIndex index) const
 {
     return [m_pdfDocument pageAtIndex:index];
@@ -54,6 +70,47 @@ std::optional<unsigned> PDFDocumentLayout::indexForPage(RetainPtr<PDFPage> page)
             return pageIndex;
     }
     return std::nullopt;
+}
+
+PDFDocumentLayout::PageIndex PDFDocumentLayout::nearestPageIndexForDocumentPoint(WebCore::IntPoint documentSpacePoint) const
+{
+    auto pageCount = this->pageCount();
+    switch (displayMode()) {
+    case PDFDocumentLayout::DisplayMode::TwoUpDiscrete:
+    case PDFDocumentLayout::DisplayMode::TwoUpContinuous:
+        for (PDFDocumentLayout::PageIndex index = 0; index < pageCount; ++index) {
+            if (index == pageCount - 1)
+                return index;
+
+            auto currentPageBounds = layoutBoundsForPageAtIndex(index);
+            if (documentSpacePoint.y() < currentPageBounds.maxY()) {
+
+                auto pairedPageIndex =  [index, this]() {
+                    if (index % pagesPerRow())
+                        return index - 1;
+                    return index + 1;
+                }();
+
+                auto pairedPageMaxX= layoutBoundsForPageAtIndex(pairedPageIndex).maxX();
+                auto currentPageMaxX = currentPageBounds.maxX();
+                if (currentPageMaxX < pairedPageMaxX)
+                    return documentSpacePoint.x() < currentPageMaxX ? index : pairedPageIndex;
+                return documentSpacePoint.x() < pairedPageMaxX ? pairedPageIndex : index;
+            }
+        }
+        break;
+    case PDFDocumentLayout::DisplayMode::SinglePageDiscrete:
+    case PDFDocumentLayout::DisplayMode::SinglePageContinuous: {
+        for (PDFDocumentLayout::PageIndex index = 0; index < pageCount; ++index) {
+            auto pageBounds = layoutBoundsForPageAtIndex(index);
+
+            if (documentSpacePoint.y() <= pageBounds.maxY() || index == pageCount - 1)
+                return index;
+        }
+    }
+    }
+    ASSERT_NOT_REACHED();
+    return pageCount - 1;
 }
 
 void PDFDocumentLayout::updateLayout(IntSize pluginSize)
@@ -82,7 +139,7 @@ void PDFDocumentLayout::updateLayout(IntSize pluginSize)
 
     float maxRowWidth = 0;
     float currentRowWidth = 0;
-    bool isTwoUpLayout = m_displayMode == DisplayMode::TwoUp || m_displayMode == DisplayMode::TwoUpContinuous;
+    bool isTwoUpLayout = m_displayMode == DisplayMode::TwoUpDiscrete || m_displayMode == DisplayMode::TwoUpContinuous;
 
     for (PageIndex i = 0; i < pageCount; ++i) {
         auto page = pageAtIndex(i);
@@ -124,12 +181,12 @@ void PDFDocumentLayout::layoutPages(float availableWidth, float maxRowWidth)
 {
     // We always lay out in a continuous mode. We handle non-continuous mode via scroll snap.
     switch (m_displayMode) {
-    case DisplayMode::SinglePage:
-    case DisplayMode::Continuous:
+    case DisplayMode::SinglePageDiscrete:
+    case DisplayMode::SinglePageContinuous:
         layoutSingleColumn(availableWidth, maxRowWidth);
         break;
 
-    case DisplayMode::TwoUp:
+    case DisplayMode::TwoUpDiscrete:
     case DisplayMode::TwoUpContinuous:
         layoutTwoUpColumn(availableWidth, maxRowWidth);
         break;

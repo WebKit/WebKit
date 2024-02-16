@@ -46,9 +46,9 @@ public:
     using PageIndex = size_t; // This is a zero-based index.
 
     enum class DisplayMode : uint8_t {
-        SinglePage,
-        Continuous,
-        TwoUp,
+        SinglePageDiscrete,
+        SinglePageContinuous,
+        TwoUpDiscrete,
         TwoUpContinuous,
     };
 
@@ -64,8 +64,13 @@ public:
     static constexpr WebCore::FloatSize documentMargin { 6, 8 };
     static constexpr WebCore::FloatSize pageMargin { 4, 6 };
 
+    bool isLeftPageIndex(PageIndex) const;
+    bool isRightPageIndex(PageIndex) const;
+    bool isLastPageIndex(PageIndex) const;
+
     RetainPtr<PDFPage> pageAtIndex(PageIndex) const;
     std::optional<unsigned> indexForPage(RetainPtr<PDFPage>) const;
+    PDFDocumentLayout::PageIndex nearestPageIndexForDocumentPoint(WebCore::IntPoint) const;
 
     // This is not scaled by scale().
     WebCore::FloatRect layoutBoundsForPageAtIndex(PageIndex) const;
@@ -84,6 +89,10 @@ public:
 
     void setDisplayMode(DisplayMode displayMode) { m_displayMode = displayMode; }
     DisplayMode displayMode() const { return m_displayMode; }
+    bool isSinglePageDisplayMode() const { return m_displayMode == DisplayMode::SinglePageDiscrete || m_displayMode == DisplayMode::SinglePageContinuous; }
+    bool isTwoUpDisplayMode() const { return m_displayMode == DisplayMode::TwoUpDiscrete || m_displayMode == DisplayMode::TwoUpContinuous; }
+
+    unsigned pagesPerRow() const { return isSinglePageDisplayMode() ? 1 : 2; }
 
     void setShouldUpdateAutoSizeScale(ShouldUpdateAutoSizeScale autoSizeState) { m_autoSizeState = autoSizeState; }
     ShouldUpdateAutoSizeScale shouldUpdateAutoSizeScale() const { return m_autoSizeState; }
@@ -106,7 +115,7 @@ private:
     Vector<PageGeometry> m_pageGeometry;
     WebCore::FloatRect m_documentBounds;
     float m_scale { 1 };
-    DisplayMode m_displayMode { DisplayMode::Continuous };
+    DisplayMode m_displayMode { DisplayMode::SinglePageContinuous };
     ShouldUpdateAutoSizeScale m_autoSizeState { ShouldUpdateAutoSizeScale::Yes };
 };
 
