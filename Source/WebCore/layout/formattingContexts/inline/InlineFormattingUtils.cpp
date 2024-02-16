@@ -589,7 +589,7 @@ std::pair<InlineLayoutUnit, InlineLayoutUnit> InlineFormattingUtils::textEmphasi
             return { };
         }
     }
-    InlineLayoutUnit annotationSize = roundToInt(style.fontCascade().floatEmphasisMarkHeight(style.textEmphasisMarkString()));
+    auto annotationSize = style.fontCascade().floatEmphasisMarkHeight(style.textEmphasisMarkString());
     return { hasAboveTextEmphasis ? annotationSize : 0.f, hasAboveTextEmphasis ? 0.f : annotationSize };
 }
 

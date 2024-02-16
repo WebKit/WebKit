@@ -133,7 +133,7 @@ layer at (0,0) size 800x600
               text run at (14,288) width 24: "\x{FFFC}"
           RenderText {#text} at (14,312) size 24x168
             text run at (14,312) width 168: "\x{6765}\x{3066}\x{304F}\x{308C}\x{308B}\x{307E}\x{3067}"
-        RenderBlock {DIV} at (54,0) size 44x584
+        RenderBlock {DIV} at (53,0) size 45x584
           RenderText {#text} at (14,0) size 24x72
             text run at (14,0) width 72: "\x{305D}\x{306E}\x{5973}"
           RenderInline {SPAN} at (0,0) size 24x24 [color=#0000FF]
