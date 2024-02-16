@@ -83,6 +83,11 @@ void ScopeRuleSets::updateUserAgentMediaQueryStyleIfNeeded() const
     builder.addRulesFromSheet(*UserAgentStyle::mediaQueryStyleSheet);
 }
 
+RuleSet* ScopeRuleSets::dynamicViewTransitionsStyle() const
+{
+    return m_dynamicViewTransitionsStyle.get();
+}
+
 RuleSet* ScopeRuleSets::userStyle() const
 {
     if (m_usesSharedUserStyle)

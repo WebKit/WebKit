@@ -27,10 +27,14 @@
 #include "ViewTransition.h"
 
 #include "CheckVisibilityOptions.h"
+#include "ComputedStyleExtractor.h"
 #include "Document.h"
 #include "JSDOMPromise.h"
 #include "JSDOMPromiseDeferred.h"
 #include "PseudoElementRequest.h"
+#include "RenderBox.h"
+#include "StyleResolver.h"
+#include "StyleScope.h"
 #include "Styleable.h"
 #include "TypedElementDescendantIteratorInlines.h"
 
@@ -273,6 +277,12 @@ ExceptionOr<void> ViewTransition::captureOldState()
     for (auto& element : captureElements) {
         // FIXME: Fill in the rest of CapturedElement.
         CapturedElement capture;
+
+        CheckedPtr renderBox = dynamicDowncast<RenderBox>(element->renderer());
+        if (renderBox)
+            capture.oldSize = renderBox->size();
+        capture.oldProperties = copyElementBaseProperties(element.get());
+
         auto transitionName = element->computedStyle()->viewTransitionName();
         m_namedElements.add(transitionName->name, capture);
     }
@@ -365,7 +375,7 @@ void ViewTransition::handleTransitionFrame()
     }
 
     // FIXME: If transition’s initial snapshot containing block size is not equal to the snapshot containing block size, then skip the view transition for transition, and return.
-    // FIXME: Update pseudo-element styles for transition.
+    updatePseudoElementStyles();
 }
 
 // https://drafts.csswg.org/css-view-transitions/#clear-view-transition-algorithm
@@ -391,9 +401,55 @@ void ViewTransition::clearViewTransition()
 
     protectedDocument()->setHasViewTransitionPseudoElementTree(false);
     protectedDocument()->setActiveViewTransition(nullptr);
+    protectedDocument()->styleScope().clearViewTransitionStyles();
 
     if (RefPtr documentElement = protectedDocument()->documentElement())
         documentElement->invalidateStyleInternal();
+}
+
+Ref<MutableStyleProperties> ViewTransition::copyElementBaseProperties(Element& element)
+{
+    // FIXME: Transform - ComputedStyleExtractor.cpp::matrixTransformValue
+    ComputedStyleExtractor styleExtractor(&element);
+
+    CSSPropertyID transitionProperties[] = {
+        CSSPropertyWritingMode,
+        CSSPropertyDirection,
+        CSSPropertyTextOrientation,
+        CSSPropertyMixBlendMode,
+        CSSPropertyBackdropFilter,
+#if ENABLE(DARK_MODE_CSS)
+        CSSPropertyColorScheme,
+#endif
+        CSSPropertyWidth,
+        CSSPropertyHeight,
+    };
+
+    return styleExtractor.copyProperties(transitionProperties);
+}
+
+// https://drafts.csswg.org/css-view-transitions-1/#update-pseudo-element-styles
+void ViewTransition::updatePseudoElementStyles()
+{
+    auto& resolver = protectedDocument()->styleScope().resolver();
+
+    for (auto& iter : m_namedElements.map()) {
+        RefPtr<MutableStyleProperties> properties;
+        if (iter.value->newElement)
+            properties = copyElementBaseProperties(*iter.value->newElement);
+        else
+            properties = iter.value->oldProperties;
+
+        if (properties) {
+            if (!iter.value->groupStyleProperties) {
+                iter.value->groupStyleProperties = properties;
+                resolver.setViewTransitionGroupStyles(iter.key, *properties);
+            } else
+                iter.value->groupStyleProperties->mergeAndOverrideOnConflict(*properties);
+        }
+    }
+
+    protectedDocument()->styleScope().didChangeStyleSheetContents();
 }
 
 }

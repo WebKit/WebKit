@@ -99,6 +99,7 @@ ElementRuleCollector::ElementRuleCollector(const Element& element, const ScopeRu
     , m_authorStyle(ruleSets.authorStyle())
     , m_userStyle(ruleSets.userStyle())
     , m_userAgentMediaQueryStyle(ruleSets.userAgentMediaQueryStyle())
+    , m_dynamicViewTransitionsStyle(ruleSets.dynamicViewTransitionsStyle())
     , m_selectorMatchingState(selectorMatchingState)
     , m_result(makeUnique<MatchResult>(element.isLink()))
 {
@@ -429,6 +430,9 @@ void ElementRuleCollector::matchUARules()
 
     if (m_userAgentMediaQueryStyle)
         matchUARules(*m_userAgentMediaQueryStyle);
+
+    if (m_dynamicViewTransitionsStyle)
+        matchUARules(*m_dynamicViewTransitionsStyle);
 }
 
 void ElementRuleCollector::matchUARules(const RuleSet& rules)

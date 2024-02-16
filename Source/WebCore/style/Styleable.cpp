@@ -160,7 +160,7 @@ RenderElement* Styleable::renderer() const
             return correctGroup;
 
         // Go through all descendants until we find the relevant pseudo element otherwise.
-        for (auto& descendant : descendantsOfType<RenderBlockFlow>(*correctGroup)) {
+        for (auto& descendant : descendantsOfType<RenderBox>(*correctGroup)) {
             if (descendant.style().pseudoElementType() == pseudoElementIdentifier->pseudoId)
                 return &descendant;
         }
