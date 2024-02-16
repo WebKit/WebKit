@@ -228,6 +228,10 @@
     [self _scaleDownToFitHeightIfNeeded];
 }
 
+#if !PLATFORM(MACCATALYST)
+// FIXME: This platform conditional works around the fact that -isBeingPresented is sometimes NO in Catalyst, when presenting
+// a popover. This may cause a crash in the case where this size transition occurs while the popover is appearing.
+
 - (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
 {
     [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
@@ -235,6 +239,8 @@
     if (!self.isBeingPresented && !self.isBeingDismissed)
         [self dismissDatePickerAnimated:NO];
 }
+
+#endif // !PLATFORM(MACCATALYST)
 
 - (void)_scaleDownToFitHeightIfNeeded
 {
