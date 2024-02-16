@@ -1741,15 +1741,17 @@ _vmEntryHostFunction:
 
 # unsigned vmEntryToCSSJIT(uintptr_t, uintptr_t, uintptr_t, const void* codePtr);
 if ARM64E
-emit ".globl _vmEntryToCSSJIT"
-emit "_vmEntryToCSSJIT:"
+    global _vmEntryToCSSJITAfter
+end
+global _vmEntryToCSSJIT
+_vmEntryToCSSJIT:
     functionPrologue()
     jmp t3, CSSSelectorPtrTag
-    emit ".globl _vmEntryToCSSJITAfter"
-    emit "_vmEntryToCSSJITAfter:"
+if ARM64E
+    _vmEntryToCSSJITAfter:
+end
     functionEpilogue()
     ret
-end
 
 if not (C_LOOP or C_LOOP_WIN)
     # void sanitizeStackForVMImpl(VM* vm)
