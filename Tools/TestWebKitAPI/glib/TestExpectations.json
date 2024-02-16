@@ -93,6 +93,9 @@
             },
             "/webkit/WebKitWebView/notification": {
                 "expected": {"all": {"status": ["CRASH", "PASS"], "bug": "webkit.org/b/265886"}}
+            },
+            "/webkit/WebKitWebView/save": {
+                "expected": {"wpe": {"status": ["CRASH"], "bug": "webkit.org/b/269585"}}
             }
         }
     },
@@ -107,6 +110,9 @@
         "subtests": {
            "/webkit/WebKitWebInspectorServer/test-page-list": {
               "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/216646"}}
+           },
+           "/webkit/WebKitWebInspectorServer/http-test-page-lis": {
+              "expected": {"gtk": {"status": ["TIMEOUT"], "bug": "webkit.org/b/269586"}}
            }
         },
         "expected": {"all": {"slow": true}}
