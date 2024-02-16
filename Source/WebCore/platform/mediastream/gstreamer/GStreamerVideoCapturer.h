@@ -48,7 +48,8 @@ public:
     void setSinkVideoFrameCallback(SinkVideoFrameCallback&&);
 
 private:
-    bool setSize(int width, int height);
+    bool setSize(const IntSize&);
+    const IntSize& size() const { return m_size; }
     bool setFrameRate(double);
     void reconfigure();
 
@@ -60,6 +61,7 @@ private:
     std::optional<NodeAndFD> m_nodeAndFd;
     GRefPtr<GstElement> m_videoSrcMIMETypeFilter;
     std::pair<unsigned long, SinkVideoFrameCallback> m_sinkVideoFrameCallback;
+    IntSize m_size;
 };
 
 } // namespace WebCore

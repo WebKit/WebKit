@@ -153,7 +153,7 @@ void GStreamerVideoCaptureSource::settingsDidChange(OptionSet<RealtimeMediaSourc
         if (m_deviceType == CaptureDevice::DeviceType::Window || m_deviceType == CaptureDevice::DeviceType::Screen)
             ensureIntrinsicSizeMaintainsAspectRatio();
 
-        if (m_capturer->setSize(size().width(), size().height()))
+        if (m_capturer->setSize(size()))
             reconfigure = true;
     }
 
@@ -186,7 +186,7 @@ void GStreamerVideoCaptureSource::startProducingData()
     m_capturer->setupPipeline();
 
     if (m_deviceType == CaptureDevice::DeviceType::Camera)
-        m_capturer->setSize(size().width(), size().height());
+        m_capturer->setSize(size());
 
     m_capturer->setFrameRate(frameRate());
     m_capturer->reconfigure();
@@ -302,6 +302,15 @@ void GStreamerVideoCaptureSource::generatePresets()
     }
 
     setSupportedPresets(WTFMove(presets));
+}
+
+void GStreamerVideoCaptureSource::setSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate, std::optional<double> zoom)
+{
+    RealtimeVideoCaptureSource::setSizeFrameRateAndZoom(width, height, frameRate, zoom);
+    if (!width || !height)
+        return;
+
+    m_capturer->setSize({ *width, *height });
 }
 
 #undef GST_CAT_DEFAULT

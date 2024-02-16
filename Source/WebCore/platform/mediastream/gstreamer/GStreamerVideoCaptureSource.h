@@ -58,7 +58,7 @@ protected:
     void stopProducingData() override;
     bool canResizeVideoFrames() const final { return true; }
     void generatePresets() override;
-
+    void setSizeFrameRateAndZoom(std::optional<int>, std::optional<int>, std::optional<double>, std::optional<double>) override;
 
     mutable std::optional<RealtimeMediaSourceCapabilities> m_capabilities;
     mutable std::optional<RealtimeMediaSourceSettings> m_currentSettings;

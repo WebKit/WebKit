@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-CaptureSourceOrError MockRealtimeVideoSource::create(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, PageIdentifier)
+CaptureSourceOrError MockRealtimeVideoSource::create(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, PageIdentifier pageIdentifier)
 {
 #ifndef NDEBUG
     auto device = MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID(deviceID);
@@ -43,7 +43,7 @@ CaptureSourceOrError MockRealtimeVideoSource::create(String&& deviceID, AtomStri
         return CaptureSourceOrError({ "No mock camera device"_s , MediaAccessDenialReason::PermissionDenied });
 #endif
 
-    Ref<RealtimeMediaSource> source = adoptRef(*new MockRealtimeVideoSourceGStreamer(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalts)));
+    Ref<RealtimeMediaSource> source = adoptRef(*new MockRealtimeVideoSourceGStreamer(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalts), pageIdentifier));
     if (constraints) {
         if (auto error = source->applyConstraints(*constraints))
             return CaptureSourceOrError(CaptureSourceError { error->invalidConstraint });
@@ -52,8 +52,8 @@ CaptureSourceOrError MockRealtimeVideoSource::create(String&& deviceID, AtomStri
     return source;
 }
 
-MockRealtimeVideoSourceGStreamer::MockRealtimeVideoSourceGStreamer(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&& hashSalts)
-    : MockRealtimeVideoSource(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalts), { })
+MockRealtimeVideoSourceGStreamer::MockRealtimeVideoSourceGStreamer(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&& hashSalts, PageIdentifier pageIdentifier)
+    : MockRealtimeVideoSource(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalts), pageIdentifier)
 {
     ensureGStreamerInitialized();
     auto& singleton = GStreamerVideoCaptureDeviceManager::singleton();
@@ -86,7 +86,7 @@ MockRealtimeVideoSourceGStreamer::~MockRealtimeVideoSourceGStreamer()
 void MockRealtimeVideoSourceGStreamer::startProducingData()
 {
     if (deviceType() == CaptureDevice::DeviceType::Camera)
-        m_capturer->setSize(size().width(), size().height());
+        m_capturer->setSize(size());
 
     m_capturer->setFrameRate(frameRate());
     m_capturer->start();
@@ -108,7 +108,7 @@ void MockRealtimeVideoSourceGStreamer::captureEnded()
 
 void MockRealtimeVideoSourceGStreamer::updateSampleBuffer()
 {
-    auto imageBuffer = this->imageBufferInternal();
+    RefPtr imageBuffer = this->imageBufferInternal();
     if (!imageBuffer)
         return;
 
@@ -119,13 +119,23 @@ void MockRealtimeVideoSourceGStreamer::updateSampleBuffer()
     VideoFrameTimeMetadata metadata;
     metadata.captureTime = MonotonicTime::now().secondsSinceEpoch();
     auto presentationTime = MediaTime::createWithDouble((elapsedTime()).seconds());
-    auto videoFrame = VideoFrameGStreamer::createFromPixelBuffer(pixelBuffer.releaseNonNull(), VideoFrameGStreamer::CanvasContentType::Canvas2D, videoFrameRotation(), presentationTime, size(), frameRate(), false, WTFMove(metadata));
+    auto videoFrame = VideoFrameGStreamer::createFromPixelBuffer(pixelBuffer.releaseNonNull(), VideoFrameGStreamer::CanvasContentType::Canvas2D, videoFrameRotation(), presentationTime, m_capturer->size(), frameRate(), false, WTFMove(metadata));
     if (!videoFrame)
         return;
 
     // Mock GstDevice is an appsrc, see webkitMockDeviceCreateElement().
     ASSERT(GST_IS_APP_SRC(m_capturer->source()));
     gst_app_src_push_sample(GST_APP_SRC_CAST(m_capturer->source()), videoFrame->sample());
+}
+
+void MockRealtimeVideoSourceGStreamer::setSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate, std::optional<double> zoom)
+{
+    MockRealtimeVideoSource::setSizeFrameRateAndZoom(width, height, frameRate, zoom);
+
+    if (!width || !height)
+        return;
+
+    m_capturer->setSize({ *width, *height });
 }
 
 } // namespace WebCore

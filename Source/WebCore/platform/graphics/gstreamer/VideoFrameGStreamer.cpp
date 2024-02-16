@@ -303,11 +303,13 @@ RefPtr<VideoFrameGStreamer> VideoFrameGStreamer::createFromPixelBuffer(Ref<Pixel
         }
 
         auto outputBuffer = gst_sample_get_buffer(sample.get());
+        gst_buffer_add_video_meta(outputBuffer, GST_VIDEO_FRAME_FLAG_NONE, format, width, height);
         if (metadata)
             webkitGstBufferSetVideoFrameTimeMetadata(outputBuffer, *metadata);
 
         setBufferFields(outputBuffer, presentationTime, frameRate);
     } else {
+        gst_buffer_add_video_meta(buffer.get(), GST_VIDEO_FRAME_FLAG_NONE, format, width, height);
         if (metadata)
             buffer = webkitGstBufferSetVideoFrameTimeMetadata(buffer.get(), *metadata);
 

@@ -2067,8 +2067,6 @@ webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getSyn
 webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc/protocol/rtp-clockrate.html [ Skip ]
 webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpSynchronizationSource-senderCaptureTimeOffset.html [ Skip ]
 
-# GStreamerRtpSenderBackend::setParameters() unimplemented.
-webkit.org/b/215005 webkit.org/b/218787 webrtc/h264-baseline.html [ Failure Timeout ]
 webkit.org/b/215007 webrtc/h264-high.html [ Failure Timeout ]
 
 # We don't support spatial encoding yet.
