@@ -38,6 +38,7 @@ messages -> PlaybackSessionManagerProxy {
     MutedChanged(WebKit::PlaybackSessionContextIdentifier contextId, bool muted);
     VolumeChanged(WebKit::PlaybackSessionContextIdentifier contextId, double volume);
     PictureInPictureSupportedChanged(WebKit::PlaybackSessionContextIdentifier contextId, bool pictureInPictureSupported)
+    IsInWindowFullscreenActiveChanged(WebKit::PlaybackSessionContextIdentifier contextId, bool isInWindow)
     SetUpPlaybackControlsManagerWithID(WebKit::PlaybackSessionContextIdentifier contextId)
     ClearPlaybackControlsManager()
 

@@ -645,7 +645,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
     bool isPictureInPictureActive();
     void togglePictureInPicture();
-    void toggleInWindow();
+    bool isInWindowFullscreenActive() const;
+    void toggleInWindowFullscreen();
     void updateMediaPlaybackControlsManager();
 
     AVTouchBarScrubber *mediaPlaybackControlsView() const;

@@ -74,7 +74,7 @@ public:
     WEBCORE_EXPORT void selectLegibleMediaOption(uint64_t index) final;
     WEBCORE_EXPORT void toggleFullscreen() final;
     WEBCORE_EXPORT void togglePictureInPicture() final;
-    WEBCORE_EXPORT void toggleInWindow() final;
+    WEBCORE_EXPORT void toggleInWindowFullscreen() final;
     WEBCORE_EXPORT void toggleMuted() final;
     WEBCORE_EXPORT void setMuted(bool) final;
     WEBCORE_EXPORT void setVolume(double) final;
@@ -106,6 +106,7 @@ public:
     double volume() const final;
     bool isPictureInPictureSupported() const final;
     bool isPictureInPictureActive() const final;
+    bool isInWindowFullscreenActive() const final;
 
 private:
     WEBCORE_EXPORT PlaybackSessionModelMediaElement();

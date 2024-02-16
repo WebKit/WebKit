@@ -44,6 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (assign, nonatomic) BOOL prefersHomeIndicatorAutoHidden;
 @property (assign, nonatomic, getter=isPlaying) BOOL playing;
 @property (assign, nonatomic, getter=isPictureInPictureActive) BOOL pictureInPictureActive;
+@property (assign, nonatomic, getter=isinWindowFullscreenActive) BOOL inWindowFullscreenActive;
 @property (assign, nonatomic, getter=isAnimating) BOOL animating;
 
 - (id)initWithWebView:(WKWebView *)webView;

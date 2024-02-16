@@ -158,6 +158,12 @@ void PlaybackSessionInterfaceContext::volumeChanged(double volume)
         m_manager->volumeChanged(m_contextId, volume);
 }
 
+void PlaybackSessionInterfaceContext::isInWindowFullscreenActiveChanged(bool isInWindow)
+{
+    if (m_manager)
+        m_manager->isInWindowFullscreenActiveChanged(m_contextId, isInWindow);
+}
+
 #pragma mark - PlaybackSessionManager
 
 Ref<PlaybackSessionManager> PlaybackSessionManager::create(WebPage& page)
@@ -418,6 +424,11 @@ void PlaybackSessionManager::isPictureInPictureSupportedChanged(PlaybackSessionC
     m_page->send(Messages::PlaybackSessionManagerProxy::PictureInPictureSupportedChanged(contextId, supported));
 }
 
+void PlaybackSessionManager::isInWindowFullscreenActiveChanged(PlaybackSessionContextIdentifier contextId, bool inWindow)
+{
+    m_page->send(Messages::PlaybackSessionManagerProxy::IsInWindowFullscreenActiveChanged(contextId, inWindow));
+}
+
 #pragma mark Messages from PlaybackSessionManagerProxy:
 
 void PlaybackSessionManager::play(PlaybackSessionContextIdentifier contextId)
@@ -524,8 +535,7 @@ void PlaybackSessionManager::togglePictureInPicture(PlaybackSessionContextIdenti
 
 void PlaybackSessionManager::toggleInWindow(PlaybackSessionContextIdentifier contextId)
 {
-    UserGestureIndicator indicator(IsProcessingUserGesture::Yes);
-    ensureModel(contextId).toggleInWindow();
+    ensureModel(contextId).toggleInWindowFullscreen();
 }
 
 void PlaybackSessionManager::toggleMuted(PlaybackSessionContextIdentifier contextId)

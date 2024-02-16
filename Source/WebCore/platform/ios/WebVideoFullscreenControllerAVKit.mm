@@ -163,7 +163,7 @@ private:
     bool wirelessVideoPlaybackDisabled() const override;
     void toggleFullscreen() override { }
     void togglePictureInPicture() override { }
-    void toggleInWindow() override { }
+    void toggleInWindowFullscreen() override { }
     void toggleMuted() override;
     void setMuted(bool) final;
     void setVolume(double) final;

@@ -6019,9 +6019,18 @@ void WebViewImpl::togglePictureInPicture()
     [m_playbackControlsManager togglePictureInPicture];
 }
 
-void WebViewImpl::toggleInWindow()
+bool WebViewImpl::isInWindowFullscreenActive() const
 {
-    [m_playbackControlsManager toggleInWindow];
+    if (auto* interface = m_page->playbackSessionManager()->controlsManagerInterface())
+        return interface->isInWindowFullscreenActive();
+
+    return false;
+}
+
+void WebViewImpl::toggleInWindowFullscreen()
+{
+    if (auto* interface = m_page->playbackSessionManager()->controlsManagerInterface())
+        return interface->toggleInWindowFullscreen();
 }
 
 void WebViewImpl::updateMediaPlaybackControlsManager()

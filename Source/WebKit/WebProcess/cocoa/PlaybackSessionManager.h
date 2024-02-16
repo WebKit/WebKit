@@ -87,6 +87,7 @@ private:
     void mutedChanged(bool) final;
     void volumeChanged(double) final;
     void isPictureInPictureSupportedChanged(bool) final;
+    void isInWindowFullscreenActiveChanged(bool) final;
 
     PlaybackSessionInterfaceContext(PlaybackSessionManager&, PlaybackSessionContextIdentifier);
 
@@ -146,6 +147,7 @@ private:
     void mutedChanged(PlaybackSessionContextIdentifier, bool);
     void volumeChanged(PlaybackSessionContextIdentifier, double);
     void isPictureInPictureSupportedChanged(PlaybackSessionContextIdentifier, bool);
+    void isInWindowFullscreenActiveChanged(PlaybackSessionContextIdentifier, bool);
 
     // Messages from PlaybackSessionManagerProxy
     void play(PlaybackSessionContextIdentifier);

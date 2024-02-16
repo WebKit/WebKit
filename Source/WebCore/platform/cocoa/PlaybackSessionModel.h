@@ -74,7 +74,7 @@ public:
     virtual void selectLegibleMediaOption(uint64_t index) = 0;
     virtual void toggleFullscreen() = 0;
     virtual void togglePictureInPicture() = 0;
-    virtual void toggleInWindow() = 0;
+    virtual void toggleInWindowFullscreen() = 0;
     virtual void toggleMuted() = 0;
     virtual void setMuted(bool) = 0;
     virtual void setVolume(double) = 0;
@@ -112,6 +112,7 @@ public:
     virtual double volume() const = 0;
     virtual bool isPictureInPictureSupported() const = 0;
     virtual bool isPictureInPictureActive() const = 0;
+    virtual bool isInWindowFullscreenActive() const { return false; }
 
 #if !RELEASE_LOG_DISABLED
     virtual const void* logIdentifier() const { return nullptr; }
@@ -139,6 +140,7 @@ public:
     virtual void volumeChanged(double) { }
     virtual void isPictureInPictureSupportedChanged(bool) { }
     virtual void pictureInPictureActiveChanged(bool) { }
+    virtual void isInWindowFullscreenActiveChanged(bool) { }
     virtual void ensureControlsManager() { }
     virtual void modelDestroyed() { }
 };

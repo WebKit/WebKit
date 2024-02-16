@@ -256,6 +256,16 @@
     [self doesNotRecognizeSelector:_cmd];
 }
 
+- (IBAction)togglePictureInPicture:(id)sender
+{
+    [self doesNotRecognizeSelector:_cmd];
+}
+
+- (IBAction)toggleInWindowFullscreen:(id)sender
+{
+    [self doesNotRecognizeSelector:_cmd];
+}
+
 - (void)didChangeSettings
 {
     [self doesNotRecognizeSelector:_cmd];

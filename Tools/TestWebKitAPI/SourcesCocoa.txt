@@ -167,7 +167,7 @@ Tests/WebKitCocoa/LocalStoragePersistence.mm
 Tests/WebKitCocoa/LocalStorageQuirkTest.mm
 Tests/WebKitCocoa/MediaBufferingPolicy.mm
 Tests/WebKitCocoa/MediaDocument.mm
-Tests/WebKitCocoa/MediaLoading.mm
+Tests/WebKitCocoa/MediaLoading.mm @no-unify
 Tests/WebKitCocoa/MediaMutedState.mm
 Tests/WebKitCocoa/MediaSession.mm
 Tests/WebKitCocoa/MediaType.mm

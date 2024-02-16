@@ -74,6 +74,7 @@ public:
     void volumeChanged(double);
     void pictureInPictureSupportedChanged(bool);
     void pictureInPictureActiveChanged(bool);
+    void isInWindowFullscreenActiveChanged(bool);
 
     bool wirelessVideoPlaybackDisabled() const final { return m_wirelessVideoPlaybackDisabled; }
 
@@ -100,7 +101,7 @@ private:
     void selectLegibleMediaOption(uint64_t) final;
     void toggleFullscreen() final;
     void togglePictureInPicture() final;
-    void toggleInWindow() final;
+    void toggleInWindowFullscreen() final;
     void toggleMuted() final;
     void setMuted(bool) final;
     void setVolume(double) final;
@@ -132,6 +133,7 @@ private:
     double volume() const final { return m_volume; }
     bool isPictureInPictureSupported() const final { return m_pictureInPictureSupported; }
     bool isPictureInPictureActive() const final { return m_pictureInPictureActive; }
+    bool isInWindowFullscreenActive() const final { return m_isInWindowFullscreenActive; }
 
 #if !RELEASE_LOG_DISABLED
     void setLogIdentifier(const void* identifier) { m_logIdentifier = identifier; }
@@ -170,6 +172,7 @@ private:
     double m_volume { 0 };
     bool m_pictureInPictureSupported { false };
     bool m_pictureInPictureActive { false };
+    bool m_isInWindowFullscreenActive { false };
 
 #if !RELEASE_LOG_DISABLED
     const void* m_logIdentifier { nullptr };
@@ -235,6 +238,7 @@ private:
     void mutedChanged(PlaybackSessionContextIdentifier, bool muted);
     void volumeChanged(PlaybackSessionContextIdentifier, double volume);
     void pictureInPictureSupportedChanged(PlaybackSessionContextIdentifier, bool pictureInPictureSupported);
+    void isInWindowFullscreenActiveChanged(PlaybackSessionContextIdentifier, bool isInWindow);
 
     // Messages to PlaybackSessionManager
     void play(PlaybackSessionContextIdentifier);

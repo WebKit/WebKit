@@ -199,7 +199,7 @@ void PlaybackSessionModelContext::togglePictureInPicture()
         m_manager->togglePictureInPicture(m_contextId);
 }
 
-void PlaybackSessionModelContext::toggleInWindow()
+void PlaybackSessionModelContext::toggleInWindowFullscreen()
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     if (m_manager)
@@ -378,6 +378,13 @@ void PlaybackSessionModelContext::pictureInPictureActiveChanged(bool active)
     m_pictureInPictureActive = active;
     for (auto& client : m_clients)
         client.pictureInPictureActiveChanged(active);
+}
+
+void PlaybackSessionModelContext::isInWindowFullscreenActiveChanged(bool active)
+{
+    m_isInWindowFullscreenActive = active;
+    for (auto& client : m_clients)
+        client.isInWindowFullscreenActiveChanged(active);
 }
 
 #if !RELEASE_LOG_DISABLED
@@ -602,6 +609,11 @@ void PlaybackSessionManagerProxy::rateChanged(PlaybackSessionContextIdentifier c
 void PlaybackSessionManagerProxy::pictureInPictureSupportedChanged(PlaybackSessionContextIdentifier contextId, bool supported)
 {
     ensureModel(contextId).pictureInPictureSupportedChanged(supported);
+}
+
+void PlaybackSessionManagerProxy::isInWindowFullscreenActiveChanged(PlaybackSessionContextIdentifier contextId, bool active)
+{
+    ensureModel(contextId).isInWindowFullscreenActiveChanged(active);
 }
 
 void PlaybackSessionManagerProxy::handleControlledElementIDResponse(PlaybackSessionContextIdentifier contextId, String identifier) const

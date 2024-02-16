@@ -49,6 +49,9 @@ public:
     virtual ~PlaybackSessionInterfaceMac();
     PlaybackSessionModel* playbackSessionModel() const;
 
+    bool isInWindowFullscreenActive() const;
+    void toggleInWindowFullscreen();
+
     // PlaybackSessionModelClient
     void durationChanged(double) final;
     void currentTimeChanged(double /*currentTime*/, double /*anchorTime*/) final;

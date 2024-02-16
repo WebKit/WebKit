@@ -2568,7 +2568,11 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 
 - (BOOL)_isInWindowActive
 {
+#if HAVE(TOUCH_BAR) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
+    return _impl->isInWindowFullscreenActive();
+#else
     return NO;
+#endif
 }
 
 - (void)_togglePictureInPicture
@@ -2593,7 +2597,7 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 {
     THROW_IF_SUSPENDED;
 #if HAVE(TOUCH_BAR) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
-    _impl->toggleInWindow();
+    _impl->toggleInWindowFullscreen();
 #endif
 }
 

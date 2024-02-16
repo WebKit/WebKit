@@ -422,7 +422,7 @@ static RetainPtr<NSArray> mediaSelectionOptions(const Vector<MediaSelectionOptio
 - (void)toggleInWindow
 {
     if (auto* model = _playbackSessionInterfaceMac->playbackSessionModel())
-        model->toggleInWindow();
+        model->toggleInWindowFullscreen();
 }
 
 

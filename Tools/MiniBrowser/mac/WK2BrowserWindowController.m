@@ -206,6 +206,16 @@ static const int testFooterBannerHeight = 58;
     return 1;
 }
 
+- (IBAction)togglePictureInPicture:(id)sender
+{
+    [_webView _togglePictureInPicture];
+}
+
+- (IBAction)toggleInWindowFullscreen:(id)sender
+{
+    [_webView _toggleInWindow];
+}
+
 - (void)_webView:(WKWebView *)webView requestNotificationPermissionForSecurityOrigin:(WKSecurityOrigin *)securityOrigin decisionHandler:(void (^)(BOOL))decisionHandler
 {
     NSDictionary *permissions = [[NSUserDefaults standardUserDefaults] dictionaryForKey:@"NotificationPermissions"];
@@ -302,6 +312,17 @@ static BOOL areEssentiallyEqual(double a, double b)
         menuItem.state = _webView._alwaysShowsVerticalScroller ? NSControlStateValueOn : NSControlStateValueOff;
     else if (action == @selector(toggleMainThreadStalls:))
         menuItem.state = self.mainThreadStallsEnabled ? NSControlStateValueOn : NSControlStateValueOff;
+
+    [_webView _updateMediaPlaybackControlsManager];
+    if (action == @selector(togglePictureInPicture:)) {
+        menuItem.state = _webView._isPictureInPictureActive ? NSControlStateValueOn : NSControlStateValueOff;
+        return _webView._canTogglePictureInPicture;
+    }
+
+    if (action == @selector(toggleInWindowFullscreen:)) {
+        menuItem.state = _webView._isInWindowActive ? NSControlStateValueOn : NSControlStateValueOff;
+        return _webView._canToggleInWindow;
+    }
 
     if (action == @selector(setPageScale:))
         [menuItem setState:areEssentiallyEqual([_webView _pageScale], [self pageScaleForMenuItemTag:[menuItem tag]])];

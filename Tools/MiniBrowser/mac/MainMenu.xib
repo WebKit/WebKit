@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="21507" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="23028.2" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="21507"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="23028.2"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -817,6 +817,19 @@
                                     <action selector="toggleMainThreadStalls:" target="-1" id="djY-Q4-9vO"/>
                                 </connections>
                             </menuItem>
+                            <menuItem isSeparatorItem="YES" id="7we-y7-Jht"/>
+                            <menuItem title="Toggle Picture-in-Picture" id="7bx-Lc-ODh">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="togglePictureInPicture:" target="-1" id="6NA-Zd-J8d"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Toggle In-Window Fullscreen" id="4IE-QS-EOO">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="toggleInWindowFullscreen:" target="-1" id="RKY-mx-1L8"/>
+                                </connections>
+                            </menuItem>
                             <menuItem isSeparatorItem="YES" id="553"/>
                             <menuItem title="Dump Source To Console" id="566">
                                 <modifierMask key="keyEquivalentModifierMask"/>
@@ -926,5 +939,8 @@
             </connections>
         </customObject>
         <customObject id="420" customClass="NSFontManager"/>
+        <menuItem title="Item" id="Aoz-N4-aFP">
+            <modifierMask key="keyEquivalentModifierMask"/>
+        </menuItem>
     </objects>
 </document>
