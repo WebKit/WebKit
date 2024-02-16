@@ -37,6 +37,7 @@
 #include "WebPageProxyIdentifier.h"
 #include "WebPreferencesStore.h"
 #include "WebURLSchemeHandlerIdentifier.h"
+#include "WebsitePoliciesData.h"
 #include <WebCore/ActivityState.h>
 #include <WebCore/Color.h>
 #include <WebCore/ContentSecurityPolicy.h>
@@ -303,6 +304,7 @@ struct WebPageCreationParameters {
     struct SubframeProcessPageParameters {
         URL initialMainDocumentURL;
         FrameTreeCreationParameters frameTreeParameters;
+        std::optional<WebsitePoliciesData> websitePoliciesData;
     };
     std::optional<SubframeProcessPageParameters> subframeProcessPageParameters;
     std::optional<WebCore::FrameIdentifier> openerFrameIdentifier;

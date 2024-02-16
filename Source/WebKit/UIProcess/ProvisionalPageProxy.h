@@ -35,7 +35,6 @@
 #include "WebFramePolicyListenerProxy.h"
 #include "WebPageProxyIdentifier.h"
 #include "WebPageProxyMessageReceiverRegistration.h"
-#include "WebsitePoliciesData.h"
 #include <WebCore/DiagnosticLoggingClient.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/ResourceRequest.h>
@@ -73,6 +72,7 @@ struct BackForwardListItemState;
 struct FrameInfoData;
 struct NavigationActionData;
 struct URLSchemeTaskParameters;
+struct WebsitePoliciesData;
 struct WebBackForwardListCounts;
 struct WebNavigationDataStore;
 
@@ -135,6 +135,8 @@ public:
     void processDidTerminate();
 
     bool needsCookieAccessAddedInNetworkProcess() const { return m_needsCookieAccessAddedInNetworkProcess; }
+
+    WebsitePoliciesData* mainFrameWebsitePoliciesData() const { return m_mainFrameWebsitePoliciesData.get(); }
 
 private:
     RefPtr<WebFrameProxy> protectedMainFrame() const;
@@ -207,6 +209,7 @@ private:
     bool m_needsDidStartProvisionalLoad { true };
     URL m_provisionalLoadURL;
     WebPageProxyMessageReceiverRegistration m_messageReceiverRegistration;
+    std::unique_ptr<WebsitePoliciesData> m_mainFrameWebsitePoliciesData;
 
 #if PLATFORM(COCOA)
     Vector<uint8_t> m_accessibilityToken;

@@ -125,4 +125,16 @@ void WebRemoteFrameClient::dispatchDecidePolicyForNavigationAction(const Navigat
     WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(navigationAction, request, redirectResponse, formState, clientRedirectSourceForHistory, navigationID, WTFMove(hitTestResult), hasOpener, sandboxFlags, policyDecisionMode, WTFMove(function));
 }
 
+void WebRemoteFrameClient::applyWebsitePolicies(WebsitePoliciesData&& websitePolicies)
+{
+    RefPtr coreFrame = m_frame->coreRemoteFrame();
+    if (!coreFrame) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    coreFrame->setCustomUserAgent(websitePolicies.customUserAgent);
+    coreFrame->setCustomUserAgentAsSiteSpecificQuirks(websitePolicies.customUserAgentAsSiteSpecificQuirks);
+}
+
 }

@@ -76,6 +76,7 @@ class WebKeyboardEvent;
 class WebImage;
 class WebMouseEvent;
 class WebPage;
+class WebRemoteFrameClient;
 struct FrameInfoData;
 struct FrameTreeNodeData;
 struct WebsitePoliciesData;
@@ -217,6 +218,7 @@ public:
 #endif
 
     WebLocalFrameLoaderClient* localFrameLoaderClient() const;
+    WebRemoteFrameClient* remoteFrameClient() const;
     WebFrameLoaderClient* frameLoaderClient() const;
 
 #if ENABLE(APP_BOUND_DOMAINS)

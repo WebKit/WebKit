@@ -48,7 +48,7 @@ public:
 
     void setUseIconLoadingClient(bool useIconLoadingClient) { m_useIconLoadingClient = useIconLoadingClient; }
 
-    void applyToDocumentLoader(WebsitePoliciesData&&);
+    void applyWebsitePolicies(WebsitePoliciesData&&) final;
 
     std::optional<WebPageProxyIdentifier> webPageProxyID() const;
 

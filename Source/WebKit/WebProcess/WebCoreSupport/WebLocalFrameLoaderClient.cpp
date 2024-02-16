@@ -984,7 +984,7 @@ void WebLocalFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const Nav
     });
 }
 
-void WebLocalFrameLoaderClient::applyToDocumentLoader(WebsitePoliciesData&& websitePolicies)
+void WebLocalFrameLoaderClient::applyWebsitePolicies(WebsitePoliciesData&& websitePolicies)
 {
     auto* coreFrame = m_frame->coreLocalFrame();
     if (!coreFrame)

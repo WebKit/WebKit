@@ -259,4 +259,5 @@ headers: "ArgumentCoders.h"
 [Nested] struct WebKit::WebPageCreationParameters::SubframeProcessPageParameters {
     URL initialMainDocumentURL;
     WebKit::FrameTreeCreationParameters frameTreeParameters;
+    std::optional<WebKit::WebsitePoliciesData> websitePoliciesData;
 }

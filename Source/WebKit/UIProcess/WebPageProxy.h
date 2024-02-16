@@ -2390,6 +2390,8 @@ public:
     void clearWaitingForContextMenuToShow() { m_waitingForContextMenuToShow = false; }
 #endif
 
+    WebsitePoliciesData* mainFrameWebsitePoliciesData() const { return m_mainFrameWebsitePoliciesData.get(); }
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
     void platformInitialize();
@@ -3504,6 +3506,8 @@ private:
 #if ENABLE(CONTEXT_MENUS)
     bool m_waitingForContextMenuToShow { false };
 #endif
+
+    std::unique_ptr<WebsitePoliciesData> m_mainFrameWebsitePoliciesData;
 };
 
 } // namespace WebKit

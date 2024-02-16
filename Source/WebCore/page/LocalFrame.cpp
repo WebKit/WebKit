@@ -1311,6 +1311,20 @@ void LocalFrame::didAccessWindowProxyPropertyViaOpener(WindowProxyProperty prope
 
 #endif
 
+String LocalFrame::customUserAgent() const
+{
+    if (RefPtr documentLoader = loader().activeDocumentLoader())
+        return documentLoader->customUserAgent();
+    return { };
+}
+
+String LocalFrame::customUserAgentAsSiteSpecificQuirks() const
+{
+    if (RefPtr documentLoader = loader().activeDocumentLoader())
+        return documentLoader->customUserAgentAsSiteSpecificQuirks();
+    return { };
+}
+
 } // namespace WebCore
 
 #undef FRAME_RELEASE_LOG_ERROR

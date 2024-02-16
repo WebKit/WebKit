@@ -309,6 +309,9 @@ public:
 
     WEBCORE_EXPORT RefPtr<DocumentLoader> loaderForWebsitePolicies() const;
 
+    String customUserAgent() const final;
+    String customUserAgentAsSiteSpecificQuirks() const final;
+
 protected:
     void frameWasDisconnectedFromOwner() const final;
 

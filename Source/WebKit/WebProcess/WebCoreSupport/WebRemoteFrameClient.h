@@ -41,6 +41,7 @@ public:
     ~WebRemoteFrameClient();
 
     ScopeExit<Function<void()>> takeFrameInvalidator() { return WTFMove(m_frameInvalidator); }
+    void applyWebsitePolicies(WebsitePoliciesData&&) final;
 
 private:
     void frameDetached() final;

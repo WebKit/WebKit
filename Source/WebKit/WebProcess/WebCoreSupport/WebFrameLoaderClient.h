@@ -44,12 +44,17 @@ namespace WebKit {
 
 class WebFrame;
 struct NavigationActionData;
+struct WebsitePoliciesData;
 
 class WebFrameLoaderClient {
 public:
     WebFrame& webFrame() const { return m_frame.get(); }
 
     std::optional<NavigationActionData> navigationActionData(const WebCore::NavigationAction&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse, const String& clientRedirectSourceForHistory, uint64_t navigationID, std::optional<WebCore::HitTestResult>&&, bool hasOpener, WebCore::SandboxFlags) const;
+
+    virtual void applyWebsitePolicies(WebsitePoliciesData&&) = 0;
+
+    virtual ~WebFrameLoaderClient();
 
 protected:
     WebFrameLoaderClient(Ref<WebFrame>&&);

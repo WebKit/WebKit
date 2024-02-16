@@ -32,10 +32,12 @@
 #import "TestUIDelegate.h"
 #import "Utilities.h"
 #import <WebKit/WKFrameInfoPrivate.h>
+#import <WebKit/WKNavigationDelegatePrivate.h>
 #import <WebKit/WKNavigationPrivate.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
+#import <WebKit/WKWebpagePreferencesPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKFeature.h>
 #import <WebKit/_WKFrameTreeNode.h>
@@ -2417,6 +2419,212 @@ TEST(SiteIsolation, ApplicationNameForUserAgent)
         done = true;
     }];
     Util::run(&done);
+    Util::run(&receivedRequestFromSubframe);
+}
+
+TEST(SiteIsolation, WebsitePoliciesCustomUserAgent)
+{
+    auto mainframeHTML = "<iframe src='https://domain2.com/subframe'></iframe>"_s;
+    auto subframeHTML = "<script src='https://domain3.com/request_from_subframe'></script>"_s;
+    bool receivedRequestFromSubframe = false;
+    bool firstRequest = true;
+    HTTPServer server(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> Task {
+        while (1) {
+            auto request = co_await connection.awaitableReceiveHTTPRequest();
+            auto path = HTTPServer::parsePath(request);
+            if (path == "/mainframe"_s) {
+                co_await connection.awaitableSend(HTTPResponse(mainframeHTML).serialize());
+                continue;
+            }
+            if (path == "/subframe"_s) {
+                co_await connection.awaitableSend(HTTPResponse(subframeHTML).serialize());
+                continue;
+            }
+            if (path == "/request_from_subframe"_s) {
+                auto headers = String::fromUTF8(request.data(), request.size()).split("\r\n"_s);
+                auto userAgentIndex = headers.findIf([](auto& header) {
+                    return header.startsWith("User-Agent:"_s);
+                });
+                co_await connection.awaitableSend(HTTPResponse(""_s).serialize());
+                if (firstRequest)
+                    EXPECT_TRUE(headers[userAgentIndex] == "User-Agent: Custom UserAgent"_s);
+                else
+                    EXPECT_TRUE(headers[userAgentIndex] == "User-Agent: Custom UserAgent2"_s);
+                receivedRequestFromSubframe = true;
+                firstRequest = false;
+                continue;
+            }
+            EXPECT_FALSE(true);
+        }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+
+    navigationDelegate.get().decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *navigationAction, WKWebpagePreferences *preferences, void (^decisionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
+        if (navigationAction.targetFrame.mainFrame)
+            [preferences _setCustomUserAgent:@"Custom UserAgent"];
+        decisionHandler(WKNavigationActionPolicyAllow, preferences);
+    };
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    Util::run(&receivedRequestFromSubframe);
+    receivedRequestFromSubframe = false;
+
+    __block RetainPtr<WKFrameInfo> childFrameInfo;
+    __block bool done = false;
+    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
+        EXPECT_EQ(1UL, mainFrame.childFrames.count);
+        childFrameInfo = mainFrame.childFrames.firstObject.info;
+        done = true;
+    }];
+    Util::run(&done);
+    done = false;
+
+    [webView evaluateJavaScript:@"navigator.userAgent" inFrame:childFrameInfo.get() inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *) {
+        EXPECT_WK_STREQ(@"Custom UserAgent", (NSString *)result);
+        done = true;
+    }];
+    Util::run(&done);
+    done = false;
+
+    navigationDelegate.get().decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *navigationAction, WKWebpagePreferences *preferences, void (^decisionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
+        if (navigationAction.targetFrame.mainFrame)
+            [preferences _setCustomUserAgent:@"Custom UserAgent2"];
+        decisionHandler(WKNavigationActionPolicyAllow, preferences);
+    };
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain3.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    Util::run(&receivedRequestFromSubframe);
+
+    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
+        EXPECT_EQ(1UL, mainFrame.childFrames.count);
+        childFrameInfo = mainFrame.childFrames.firstObject.info;
+        done = true;
+    }];
+    Util::run(&done);
+    done = false;
+
+    [webView evaluateJavaScript:@"navigator.userAgent" inFrame:childFrameInfo.get() inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *) {
+        EXPECT_WK_STREQ(@"Custom UserAgent2", (NSString *)result);
+        done = true;
+    }];
+    Util::run(&done);
+}
+
+TEST(SiteIsolation, WebsitePoliciesCustomUserAgentDuringCrossSiteProvisionalNavigation)
+{
+    auto mainframeHTML = "<iframe id='frame' src='https://domain2.com/subframe'></iframe>"_s;
+    auto subframeHTML = "<script src='https://domain2.com/request_from_subframe'></script>"_s;
+    bool receivedRequestFromSubframe = false;
+    HTTPServer server(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> Task {
+        while (1) {
+            auto request = co_await connection.awaitableReceiveHTTPRequest();
+            auto path = HTTPServer::parsePath(request);
+            if (path == "/mainframe"_s) {
+                co_await connection.awaitableSend(HTTPResponse(mainframeHTML).serialize());
+                continue;
+            }
+            if (path == "/subframe"_s) {
+                co_await connection.awaitableSend(HTTPResponse(subframeHTML).serialize());
+                continue;
+            }
+            if (path == "/request_from_subframe"_s) {
+                auto headers = String::fromUTF8(request.data(), request.size()).split("\r\n"_s);
+                auto userAgentIndex = headers.findIf([](auto& header) {
+                    return header.startsWith("User-Agent:"_s);
+                });
+                co_await connection.awaitableSend(HTTPResponse(""_s).serialize());
+                EXPECT_TRUE(headers[userAgentIndex] == "User-Agent: Custom UserAgent"_s);
+                receivedRequestFromSubframe = true;
+                continue;
+            }
+            if (path == "/missing"_s)
+                continue;
+            EXPECT_FALSE(true);
+        }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+
+    navigationDelegate.get().decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *navigationAction, WKWebpagePreferences *preferences, void (^decisionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
+        if (navigationAction.targetFrame.mainFrame)
+            [preferences _setCustomUserAgent:@"Custom UserAgent"];
+        decisionHandler(WKNavigationActionPolicyAllow, preferences);
+    };
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    Util::run(&receivedRequestFromSubframe);
+    receivedRequestFromSubframe = false;
+
+    navigationDelegate.get().decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *navigationAction, WKWebpagePreferences *preferences, void (^decisionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
+        if (navigationAction.targetFrame.mainFrame)
+            [preferences _setCustomUserAgent:@"Custom UserAgent2"];
+        decisionHandler(WKNavigationActionPolicyAllow, preferences);
+    };
+
+    navigationDelegate.get().didStartProvisionalNavigation = ^(WKWebView *webView, WKNavigation *) {
+        [webView evaluateJavaScript:@"document.getElementById('frame').src = 'https://domain4.com/subframe';" completionHandler:nil];
+    };
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain3.com/missing"]]];
+    Util::run(&receivedRequestFromSubframe);
+}
+
+TEST(SiteIsolation, WebsitePoliciesCustomUserAgentDuringSameSiteProvisionalNavigation)
+{
+    auto mainframeHTML = "<iframe id='frame' src='https://domain2.com/subframe'></iframe>"_s;
+    auto subframeHTML = "<script src='https://domain2.com/request_from_subframe'></script>"_s;
+    bool receivedRequestFromSubframe = false;
+    HTTPServer server(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> Task {
+        while (1) {
+            auto request = co_await connection.awaitableReceiveHTTPRequest();
+            auto path = HTTPServer::parsePath(request);
+            if (path == "/mainframe"_s) {
+                co_await connection.awaitableSend(HTTPResponse(mainframeHTML).serialize());
+                continue;
+            }
+            if (path == "/subframe"_s) {
+                co_await connection.awaitableSend(HTTPResponse(subframeHTML).serialize());
+                continue;
+            }
+            if (path == "/request_from_subframe"_s) {
+                auto headers = String::fromUTF8(request.data(), request.size()).split("\r\n"_s);
+                auto userAgentIndex = headers.findIf([](auto& header) {
+                    return header.startsWith("User-Agent:"_s);
+                });
+                co_await connection.awaitableSend(HTTPResponse(""_s).serialize());
+                EXPECT_TRUE(headers[userAgentIndex] == "User-Agent: Custom UserAgent"_s);
+                receivedRequestFromSubframe = true;
+                continue;
+            }
+            if (path == "/missing"_s)
+                continue;
+            EXPECT_FALSE(true);
+        }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+
+    navigationDelegate.get().decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *navigationAction, WKWebpagePreferences *preferences, void (^decisionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
+        if (navigationAction.targetFrame.mainFrame)
+            [preferences _setCustomUserAgent:@"Custom UserAgent"];
+        decisionHandler(WKNavigationActionPolicyAllow, preferences);
+    };
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    Util::run(&receivedRequestFromSubframe);
+    receivedRequestFromSubframe = false;
+
+    navigationDelegate.get().decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *navigationAction, WKWebpagePreferences *preferences, void (^decisionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
+        if (navigationAction.targetFrame.mainFrame)
+            [preferences _setCustomUserAgent:@"Custom UserAgent2"];
+        decisionHandler(WKNavigationActionPolicyAllow, preferences);
+    };
+
+    navigationDelegate.get().didStartProvisionalNavigation = ^(WKWebView *webView, WKNavigation *) {
+        [webView evaluateJavaScript:@"document.getElementById('frame').src = 'https://domain3.com/subframe';" completionHandler:nil];
+    };
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/missing"]]];
     Util::run(&receivedRequestFromSubframe);
 }
 

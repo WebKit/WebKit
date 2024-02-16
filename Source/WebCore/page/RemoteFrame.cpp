@@ -126,4 +126,14 @@ String RemoteFrame::renderTreeAsText(size_t baseIndent, OptionSet<RenderAsTextFl
     return m_client->renderTreeAsText(baseIndent, behavior);
 }
 
+String RemoteFrame::customUserAgent() const
+{
+    return m_customUserAgent;
+}
+
+String RemoteFrame::customUserAgentAsSiteSpecificQuirks() const
+{
+    return m_customUserAgentAsSiteSpecificQuirks;
+}
+
 } // namespace WebCore

@@ -52,6 +52,8 @@ class DocumentLoader;
 namespace WebKit {
 
 struct WebsitePoliciesData {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
     static void applyToDocumentLoader(WebsitePoliciesData&&, WebCore::DocumentLoader&);
 
     HashMap<String, Vector<String>> activeContentRuleListActionPatterns;

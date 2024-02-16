@@ -178,6 +178,12 @@ WebLocalFrameLoaderClient* WebFrame::localFrameLoaderClient() const
         return static_cast<WebLocalFrameLoaderClient*>(&localFrame->loader().client());
     return nullptr;
 }
+WebRemoteFrameClient* WebFrame::remoteFrameClient() const
+{
+    if (auto* remoteFrame = dynamicDowncast<RemoteFrame>(m_coreFrame.get()))
+        return static_cast<WebRemoteFrameClient*>(&remoteFrame->client());
+    return nullptr;
+}
 
 WebFrameLoaderClient* WebFrame::frameLoaderClient() const
 {
@@ -498,7 +504,7 @@ void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyDecision&& po
         ASSERT(page());
         if (page())
             page()->setAllowsContentJavaScriptFromMostRecentNavigation(policyDecision.websitePoliciesData->allowsContentJavaScript);
-        localFrameLoaderClient()->applyToDocumentLoader(WTFMove(*policyDecision.websitePoliciesData));
+        localFrameLoaderClient()->applyWebsitePolicies(WTFMove(*policyDecision.websitePoliciesData));
     }
 
     m_policyDownloadID = policyDecision.downloadID;

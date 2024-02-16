@@ -3011,13 +3011,12 @@ String FrameLoader::userAgent(const URL& url) const
             userAgent = userAgentQuirk;
     }
 
-    if (RefPtr localFrame = dynamicDowncast<LocalFrame>(m_frame->mainFrame()); userAgent.isEmpty() && localFrame) {
-        if (RefPtr documentLoader = localFrame->loader().activeDocumentLoader()) {
-            if (m_frame->settings().needsSiteSpecificQuirks())
-                userAgent = documentLoader->customUserAgentAsSiteSpecificQuirks();
-            if (userAgent.isEmpty())
-                userAgent = documentLoader->customUserAgent();
-        }
+    if (userAgent.isEmpty()) {
+        Ref mainFrame = m_frame->mainFrame();
+        if (m_frame->settings().needsSiteSpecificQuirks())
+            userAgent = mainFrame->customUserAgentAsSiteSpecificQuirks();
+        if (userAgent.isEmpty())
+            userAgent = mainFrame->customUserAgent();
     }
 
     InspectorInstrumentation::applyUserAgentOverride(protectedFrame(), userAgent);

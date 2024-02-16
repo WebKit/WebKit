@@ -807,6 +807,10 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         for (auto& childParameters : subframeProcessPageParameters->frameTreeParameters.children)
             constructFrameTree(m_mainFrame.get(), childParameters);
         m_page->setMainFrameURL(subframeProcessPageParameters->initialMainDocumentURL);
+        if (auto websitePolicies = subframeProcessPageParameters->websitePoliciesData) {
+            if (auto* remoteMainFrameClient = m_mainFrame->remoteFrameClient())
+                remoteMainFrameClient->applyWebsitePolicies(WTFMove(*subframeProcessPageParameters->websitePoliciesData));
+        }
     }
 
     m_drawingArea->updatePreferences(parameters.store);

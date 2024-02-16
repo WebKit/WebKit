@@ -62,6 +62,8 @@ WebFrameLoaderClient::WebFrameLoaderClient(Ref<WebFrame>&& frame)
 {
 }
 
+WebFrameLoaderClient::~WebFrameLoaderClient() = default;
+
 std::optional<NavigationActionData> WebFrameLoaderClient::navigationActionData(const NavigationAction& navigationAction, const ResourceRequest& request, const ResourceResponse& redirectResponse, const String& clientRedirectSourceForHistory, uint64_t navigationID, std::optional<WebCore::HitTestResult>&& hitTestResult, bool hasOpener, SandboxFlags sandboxFlags) const
 {
     RefPtr webPage = m_frame->page();

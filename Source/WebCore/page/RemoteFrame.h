@@ -63,6 +63,11 @@ public:
 
     String renderTreeAsText(size_t baseIndent, OptionSet<RenderAsTextFlag>);
 
+    void setCustomUserAgent(const String& customUserAgent) { m_customUserAgent = customUserAgent; }
+    String customUserAgent() const final;
+    void setCustomUserAgentAsSiteSpecificQuirks(const String& customUserAgentAsSiteSpecificQuirks) { m_customUserAgentAsSiteSpecificQuirks = customUserAgentAsSiteSpecificQuirks; }
+    String customUserAgentAsSiteSpecificQuirks() const final;
+
 private:
     WEBCORE_EXPORT explicit RemoteFrame(Page&, UniqueRef<RemoteFrameClient>&&, FrameIdentifier, HTMLFrameOwnerElement*, Frame* parent, Markable<LayerHostingContextIdentifier>, Frame* opener = nullptr);
 
@@ -83,6 +88,8 @@ private:
     RefPtr<RemoteFrameView> m_view;
     UniqueRef<RemoteFrameClient> m_client;
     Markable<LayerHostingContextIdentifier> m_layerHostingContextIdentifier;
+    String m_customUserAgent;
+    String m_customUserAgentAsSiteSpecificQuirks;
     bool m_preventsParentFromBeingComplete { true };
 };
 

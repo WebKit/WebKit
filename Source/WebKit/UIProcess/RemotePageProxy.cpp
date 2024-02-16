@@ -82,7 +82,8 @@ void RemotePageProxy::injectPageIntoNewProcess()
     auto parameters = page->creationParameters(m_process, *drawingArea);
     parameters.subframeProcessPageParameters = WebPageCreationParameters::SubframeProcessPageParameters {
         URL(page->currentURL()),
-        page->mainFrame()->frameTreeCreationParameters()
+        page->mainFrame()->frameTreeCreationParameters(),
+        page->mainFrameWebsitePoliciesData() ? std::make_optional(*page->mainFrameWebsitePoliciesData()) : std::nullopt
     };
     parameters.isProcessSwap = true; // FIXME: This should be a parameter to creationParameters rather than doctoring up the parameters afterwards. <rdar://116201784>
     parameters.topContentInset = 0;
