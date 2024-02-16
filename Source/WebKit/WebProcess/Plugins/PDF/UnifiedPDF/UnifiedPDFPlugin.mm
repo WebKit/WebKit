@@ -481,6 +481,16 @@ void UnifiedPDFPlugin::updateLayerHierarchy()
     didChangeIsInWindow();
 }
 
+void UnifiedPDFPlugin::updateLayerPositions()
+{
+    TransformationMatrix transform;
+    transform.scale(m_scaleFactor);
+    auto padding = centeringOffset();
+    transform.translate(padding.width(), padding.height());
+
+    m_contentsLayer->setTransform(transform);
+    m_pageBackgroundsContainerLayer->setTransform(transform);
+}
 
 std::pair<bool, bool> UnifiedPDFPlugin::shouldShowDebugIndicators() const
 {
@@ -849,14 +859,7 @@ void UnifiedPDFPlugin::setPageScaleFactor(double scale, std::optional<WebCore::I
     if (!m_inMagnificationGesture)
         m_rootLayer->noteDeviceOrPageScaleFactorChangedIncludingDescendants();
 
-    TransformationMatrix transform;
-    transform.scale(m_scaleFactor);
-    auto padding = centeringOffset();
-    transform.translate(padding.width(), padding.height());
-
-    m_contentsLayer->setTransform(transform);
-    m_pageBackgroundsContainerLayer->setTransform(transform);
-
+    updateLayerPositions();
     updatePageBackgroundLayers();
     updateSnapOffsets();
 
@@ -929,6 +932,7 @@ void UnifiedPDFPlugin::updateLayout(AdjustScaleAfterLayout shouldAdjustScale)
     }
 
     updateLayerHierarchy();
+    updateLayerPositions();
     updateScrollingExtents();
 
     if (shouldAdjustScale == AdjustScaleAfterLayout::Yes && m_view) {

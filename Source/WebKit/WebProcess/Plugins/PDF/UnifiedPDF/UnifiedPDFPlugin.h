@@ -293,6 +293,7 @@ private:
     void ensureLayers();
     void updatePageBackgroundLayers();
     void updateLayerHierarchy();
+    void updateLayerPositions();
 
     void didChangeScrollOffset() override;
     void didChangeIsInWindow();
