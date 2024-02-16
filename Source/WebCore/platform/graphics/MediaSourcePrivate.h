@@ -95,8 +95,8 @@ public:
     virtual void setTimeFudgeFactor(const MediaTime& fudgeFactor) { m_timeFudgeFactor = fudgeFactor; }
     MediaTime timeFudgeFactor() const { return m_timeFudgeFactor; }
 
-    const MediaTime& duration() const;
-    const PlatformTimeRanges& buffered() const;
+    MediaTime duration() const;
+    PlatformTimeRanges buffered() const;
 
     bool hasFutureTime(const MediaTime& currentTime) const;
     bool hasAudio() const;

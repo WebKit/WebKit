@@ -672,7 +672,8 @@ MediaTime MediaPlayerPrivateMediaSourceAVFObjC::minTimeSeekable() const
 
 const PlatformTimeRanges& MediaPlayerPrivateMediaSourceAVFObjC::buffered() const
 {
-    return m_mediaSourcePrivate ? m_mediaSourcePrivate->buffered() : PlatformTimeRanges::emptyRanges();
+    ASSERT_NOT_REACHED();
+    return PlatformTimeRanges::emptyRanges();
 }
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::didLoadingProgress() const

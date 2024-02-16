@@ -87,7 +87,7 @@ public:
     bool isEnded() const;
     void sourceBufferDidChangeActiveState(SourceBuffer&, bool);
     MediaTime duration() const;
-    const PlatformTimeRanges& buffered() const;
+    PlatformTimeRanges buffered() const;
 
     enum class EndOfStreamError { Network, Decode };
     void streamEndedWithError(std::optional<EndOfStreamError>);

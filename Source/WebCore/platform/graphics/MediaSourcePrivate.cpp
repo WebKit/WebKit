@@ -39,7 +39,7 @@ bool MediaSourcePrivate::hasFutureTime(const MediaTime& currentTime) const
     if (currentTime >= duration())
         return false;
 
-    auto& ranges = buffered();
+    auto ranges = buffered();
     MediaTime nearest = ranges.nearest(currentTime);
     if (abs(nearest - currentTime) > timeFudgeFactor())
         return false;
@@ -73,7 +73,7 @@ RefPtr<MediaSourcePrivateClient> MediaSourcePrivate::client() const
     return m_client.get();
 }
 
-const MediaTime& MediaSourcePrivate::duration() const
+MediaTime MediaSourcePrivate::duration() const
 {
     Locker locker { m_lock };
 
@@ -163,7 +163,7 @@ void MediaSourcePrivate::bufferedChanged(const PlatformTimeRanges& buffered)
     m_buffered = buffered;
 }
 
-const PlatformTimeRanges& MediaSourcePrivate::buffered() const
+PlatformTimeRanges MediaSourcePrivate::buffered() const
 {
     Locker locker { m_lock };
 

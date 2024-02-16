@@ -300,8 +300,7 @@ void MediaPlayerPrivateGStreamerMSE::didPreroll()
 
 const PlatformTimeRanges& MediaPlayerPrivateGStreamerMSE::buffered() const
 {
-    if (m_mediaSourcePrivate)
-        return m_mediaSourcePrivate->buffered();
+    ASSERT_NOT_REACHED();
     return PlatformTimeRanges::emptyRanges();
 }
 

@@ -8033,13 +8033,11 @@ void HTMLMediaElement::mediaPlayerBufferedTimeRangesChanged()
             if (!track->shouldPurgeCuesFromUnbufferedRanges())
                 continue;
 
-            auto& buffered =
+            track->removeCuesNotInTimeRanges(
 #if ENABLE(MEDIA_SOURCE)
                 m_mediaSource ? m_mediaSource->buffered() :
 #endif
-                m_player->buffered();
-
-            track->removeCuesNotInTimeRanges(buffered);
+                m_player->buffered());
         }
     });
 }

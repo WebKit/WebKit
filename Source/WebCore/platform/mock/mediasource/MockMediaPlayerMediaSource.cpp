@@ -177,7 +177,8 @@ MediaTime MockMediaPlayerMediaSource::maxTimeSeekable() const
 
 const PlatformTimeRanges& MockMediaPlayerMediaSource::buffered() const
 {
-    return m_mediaSourcePrivate ? m_mediaSourcePrivate->buffered() : PlatformTimeRanges::emptyRanges();
+    ASSERT_NOT_REACHED();
+    return PlatformTimeRanges::emptyRanges();
 }
 
 bool MockMediaPlayerMediaSource::didLoadingProgress() const
@@ -247,7 +248,7 @@ void MockMediaPlayerMediaSource::advanceCurrentTime()
     if (!m_mediaSourcePrivate)
         return;
 
-    auto& buffered = m_mediaSourcePrivate->buffered();
+    auto buffered = m_mediaSourcePrivate->buffered();
     size_t pos = buffered.find(m_currentTime);
     if (pos == notFound)
         return;
