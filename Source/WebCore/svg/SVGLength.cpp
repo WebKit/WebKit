@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,22 +23,45 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "SVGLength.h"
 
-#include "LegacyRenderSVGResourceRadialGradient.h"
-#include "SVGElementTypeHelpers.h"
-#include "SVGRadialGradientElement.h"
+#include "SVGElement.h"
 
 namespace WebCore {
 
-inline SVGRadialGradientElement& LegacyRenderSVGResourceRadialGradient::radialGradientElement() const
+ExceptionOr<float> SVGLength::valueForBindings()
 {
-    return downcast<SVGRadialGradientElement>(LegacyRenderSVGResourceGradient::gradientElement());
+    return m_value.valueForBindings(SVGLengthContext { RefPtr { contextElement() }.get() });
 }
 
-inline Ref<SVGRadialGradientElement> LegacyRenderSVGResourceRadialGradient::protectedRadialGradientElement() const
+ExceptionOr<void> SVGLength::setValueForBindings(float value)
 {
-    return radialGradientElement();
+    if (isReadOnly())
+        return Exception { ExceptionCode::NoModificationAllowedError };
+
+    auto result = m_value.setValue(SVGLengthContext { RefPtr { contextElement() }.get() }, value);
+    if (result.hasException())
+        return result;
+
+    commitChange();
+    return result;
+}
+
+ExceptionOr<void> SVGLength::convertToSpecifiedUnits(unsigned short unitType)
+{
+    if (isReadOnly())
+        return Exception { ExceptionCode::NoModificationAllowedError };
+
+    if (unitType == SVG_LENGTHTYPE_UNKNOWN || unitType > SVG_LENGTHTYPE_PC)
+        return Exception { ExceptionCode::NotSupportedError };
+
+    auto result = m_value.convertToSpecifiedUnits(SVGLengthContext { RefPtr { contextElement() }.get() }, static_cast<SVGLengthType>(unitType));
+    if (result.hasException())
+        return result;
+
+    commitChange();
+    return result;
 }
 
 } // namespace WebCore

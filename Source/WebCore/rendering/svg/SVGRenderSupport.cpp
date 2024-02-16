@@ -388,14 +388,14 @@ inline FloatRect clipPathReferenceBox(const RenderElement& renderer, CSSBoxType 
 
 inline bool isPointInCSSClippingArea(const RenderElement& renderer, const FloatPoint& point)
 {
-    PathOperation* clipPathOperation = renderer.style().clipPath();
-    if (auto* clipPath = dynamicDowncast<ShapePathOperation>(clipPathOperation)) {
+    RefPtr clipPathOperation = renderer.style().clipPath();
+    if (auto* clipPath = dynamicDowncast<ShapePathOperation>(clipPathOperation.get())) {
         FloatRect referenceBox = clipPathReferenceBox(renderer, clipPath->referenceBox());
         if (!referenceBox.contains(point))
             return false;
         return clipPath->pathForReferenceRect(referenceBox).contains(point, clipPath->windRule());
     }
-    if (auto* clipPath = dynamicDowncast<BoxPathOperation>(clipPathOperation)) {
+    if (auto* clipPath = dynamicDowncast<BoxPathOperation>(clipPathOperation.get())) {
         FloatRect referenceBox = clipPathReferenceBox(renderer, clipPath->referenceBox());
         if (!referenceBox.contains(point))
             return false;
@@ -407,8 +407,8 @@ inline bool isPointInCSSClippingArea(const RenderElement& renderer, const FloatP
 
 void SVGRenderSupport::clipContextToCSSClippingArea(GraphicsContext& context, const RenderElement& renderer)
 {
-    PathOperation* clipPathOperation = renderer.style().clipPath();
-    if (auto* clipPath = dynamicDowncast<ShapePathOperation>(clipPathOperation)) {
+    RefPtr clipPathOperation = renderer.style().clipPath();
+    if (auto* clipPath = dynamicDowncast<ShapePathOperation>(clipPathOperation.get())) {
         auto localToParentTransform = renderer.localToParentTransform();
 
         auto referenceBox = clipPathReferenceBox(renderer, clipPath->referenceBox());
@@ -419,7 +419,7 @@ void SVGRenderSupport::clipContextToCSSClippingArea(GraphicsContext& context, co
 
         context.clipPath(path, clipPath->windRule());
     }
-    if (auto* clipPath = dynamicDowncast<BoxPathOperation>(clipPathOperation)) {
+    if (auto* clipPath = dynamicDowncast<BoxPathOperation>(clipPathOperation.get())) {
         FloatRect referenceBox = clipPathReferenceBox(renderer, clipPath->referenceBox());
         context.clipPath(clipPath->pathForReferenceRect(FloatRoundedRect { referenceBox }));
     }
@@ -431,7 +431,7 @@ bool SVGRenderSupport::pointInClippingArea(const RenderElement& renderer, const 
     RELEASE_ASSERT(!renderer.document().settings().layerBasedSVGEngineEnabled());
 #endif
 
-    PathOperation* clipPathOperation = renderer.style().clipPath();
+    RefPtr clipPathOperation = renderer.style().clipPath();
     if (is<ShapePathOperation>(clipPathOperation) || is<BoxPathOperation>(clipPathOperation))
         return isPointInCSSClippingArea(renderer, point);
 

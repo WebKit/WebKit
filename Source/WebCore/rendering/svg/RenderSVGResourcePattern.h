@@ -36,6 +36,7 @@ public:
     virtual ~RenderSVGResourcePattern();
 
     inline SVGPatternElement& patternElement() const;
+    inline Ref<SVGPatternElement> protectedPatternElement() const;
 
     bool prepareFillOperation(GraphicsContext&, const RenderLayerModelObject&, const RenderStyle&) final;
     bool prepareStrokeOperation(GraphicsContext&, const RenderLayerModelObject&, const RenderStyle&) final;

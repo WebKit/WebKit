@@ -81,8 +81,7 @@ bool LegacyRenderSVGResourceMasker::applyResource(RenderElement& renderer, const
         auto drawColorSpace = DestinationColorSpace::SRGB();
 
 #if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
-        const SVGRenderStyle& svgStyle = style().svgStyle();
-        if (svgStyle.colorInterpolation() == ColorInterpolation::LinearRGB) {
+        if (style().svgStyle().colorInterpolation() == ColorInterpolation::LinearRGB) {
 #if USE(CG)
             maskColorSpace = DestinationColorSpace::LinearSRGB();
 #endif

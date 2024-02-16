@@ -65,9 +65,7 @@ AlignmentBaseline SVGTextLayoutEngineBaseline::dominantBaselineToAlignmentBaseli
     ASSERT(textRenderer);
     ASSERT(textRenderer->parent());
 
-    const SVGRenderStyle& svgStyle = textRenderer->style().svgStyle();
-
-    DominantBaseline baseline = svgStyle.dominantBaseline();
+    DominantBaseline baseline = textRenderer->style().svgStyle().dominantBaseline();
     if (baseline == DominantBaseline::Auto) {
         if (isVerticalText)
             baseline = DominantBaseline::Central;

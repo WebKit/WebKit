@@ -110,9 +110,9 @@ void RenderSVGResourceMasker::applyMask(PaintInfo& paintInfo, const RenderLayerM
     auto maskColorSpace = DestinationColorSpace::SRGB();
     auto drawColorSpace = DestinationColorSpace::SRGB();
 
-    const auto& svgStyle = style().svgStyle();
+    Ref svgStyle = style().svgStyle();
 #if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
-    if (svgStyle.colorInterpolation() == ColorInterpolation::LinearRGB) {
+    if (svgStyle->colorInterpolation() == ColorInterpolation::LinearRGB) {
 #if USE(CG)
         maskColorSpace = DestinationColorSpace::LinearSRGB();
 #endif
@@ -136,7 +136,7 @@ void RenderSVGResourceMasker::applyMask(PaintInfo& paintInfo, const RenderLayerM
     UNUSED_PARAM(drawColorSpace);
 #endif
 
-    if (svgStyle.maskType() == MaskType::Luminance)
+    if (svgStyle->maskType() == MaskType::Luminance)
         maskImage->convertToLuminanceMask();
 
     context.setCompositeOperation(CompositeOperator::SourceOver);
@@ -160,16 +160,16 @@ FloatRect RenderSVGResourceMasker::resourceBoundingBox(const RenderObject& objec
 
     SVGVisitedRendererTracking::Scope recursionScope(recursionTracking, *this);
 
-    auto& maskElement = this->maskElement();
-    auto maskRect = maskElement.calculateMaskContentRepaintRect(repaintRectCalculation);
-    if (maskElement.maskContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
+    Ref maskElement = this->maskElement();
+    auto maskRect = maskElement->calculateMaskContentRepaintRect(repaintRectCalculation);
+    if (maskElement->maskContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
         AffineTransform contentTransform;
         contentTransform.translate(targetBoundingBox.location());
         contentTransform.scale(targetBoundingBox.size());
         maskRect = contentTransform.mapRect(maskRect);
     }
 
-    auto maskBoundaries = SVGLengthContext::resolveRectangle<SVGMaskElement>(&maskElement, maskElement.maskUnits(), targetBoundingBox);
+    auto maskBoundaries = SVGLengthContext::resolveRectangle<SVGMaskElement>(maskElement.ptr(), maskElement->maskUnits(), targetBoundingBox);
     maskRect.intersect(maskBoundaries);
     if (maskRect.isEmpty())
         return targetBoundingBox;

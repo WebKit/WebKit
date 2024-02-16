@@ -422,7 +422,7 @@ static void associateClonesWithOriginals(SVGElement& clone, SVGElement& original
     // doing transformations like removing disallowed elements or expanding elements.
     clone.setCorrespondingElement(&original);
     for (auto pair : descendantsOfType<SVGElement>(clone, original))
-        pair.first.setCorrespondingElement(&pair.second);
+        pair.first.setCorrespondingElement(Ref { pair.second }.ptr());
 }
 
 static void associateReplacementCloneWithOriginal(SVGElement& replacementClone, SVGElement& originalClone)
@@ -443,7 +443,7 @@ static void associateReplacementClonesWithOriginals(SVGElement& replacementClone
     // doing transformations like removing disallowed elements or expanding elements.
     associateReplacementCloneWithOriginal(replacementClone, originalClone);
     for (auto pair : descendantsOfType<SVGElement>(replacementClone, originalClone))
-        associateReplacementCloneWithOriginal(pair.first, pair.second);
+        associateReplacementCloneWithOriginal(Ref { pair.first }, Ref { pair.second });
 }
 
 RefPtr<SVGElement> SVGUseElement::findTarget(AtomString* targetID) const
@@ -458,7 +458,7 @@ RefPtr<SVGElement> SVGUseElement::findTarget(AtomString* targetID) const
         // The caller would use the target ID to wait for a pending resource on the wrong document.
         // If we ever want the change that and let the caller to wait on the external document,
         // we should change this function so it returns the appropriate document to go with the ID.
-        if (!targetID->isNull() && isExternalURIReference(original->href(), original->document()))
+        if (!targetID->isNull() && isExternalURIReference(original->href(), original->protectedDocument()))
             *targetID = nullAtom();
     }
     RefPtr target = dynamicDowncast<SVGElement>(targetResult.element.get());
@@ -485,7 +485,7 @@ RefPtr<SVGElement> SVGUseElement::findTarget(AtomString* targetID) const
 
 void SVGUseElement::cloneTarget(ContainerNode& container, SVGElement& target) const
 {
-    Ref targetClone = static_cast<SVGElement&>(target.cloneElementWithChildren(document()).get());
+    Ref targetClone = static_cast<SVGElement&>(target.cloneElementWithChildren(protectedDocument()).get());
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { targetClone };
     associateClonesWithOriginals(targetClone.get(), target);
     removeDisallowedElementsFromSubtree(targetClone.get());
@@ -518,7 +518,7 @@ void SVGUseElement::expandUseElementsInShadowTree() const
         // Spec: In the generated content, the 'use' will be replaced by 'g', where all attributes from the
         // 'use' element except for x, y, width, height and xlink:href are transferred to the generated 'g' element.
 
-        Ref replacementClone = SVGGElement::create(document());
+        Ref replacementClone = SVGGElement::create(protectedDocument());
         ScriptDisallowedScope::EventAllowedScope eventAllowedScope { replacementClone };
 
         cloneDataAndChildren(replacementClone.get(), originalClone);
@@ -554,7 +554,7 @@ void SVGUseElement::expandSymbolElementsInShadowTree() const
         // the generated 'svg'. If attributes width and/or height are not specified, the generated
         // 'svg' element will use values of 100% for these attributes.
 
-        Ref replacementClone = SVGSVGElement::create(document());
+        Ref replacementClone = SVGSVGElement::create(protectedDocument());
         ScriptDisallowedScope::EventAllowedScope eventAllowedScope { replacementClone };
 
         cloneDataAndChildren(replacementClone.get(), originalClone);

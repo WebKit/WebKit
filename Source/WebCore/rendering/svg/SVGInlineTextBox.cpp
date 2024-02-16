@@ -261,10 +261,8 @@ void SVGInlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
     if (hasSelection && shouldPaintSelectionHighlight) {
         selectionStyle = parentRenderer.getCachedPseudoStyle({ PseudoId::Selection });
         if (selectionStyle) {
-            const SVGRenderStyle& svgSelectionStyle = selectionStyle->svgStyle();
-
             if (!hasFill)
-                hasFill = svgSelectionStyle.hasFill();
+                hasFill = selectionStyle->svgStyle().hasFill();
             if (!hasVisibleStroke)
                 hasVisibleStroke = selectionStyle->hasVisibleStroke();
         } else
@@ -533,9 +531,7 @@ void SVGInlineTextBox::paintDecoration(GraphicsContext& context, OptionSet<TextD
     if (decorationStyle.visibility() == Visibility::Hidden)
         return;
 
-    const SVGRenderStyle& svgDecorationStyle = decorationStyle.svgStyle();
-
-    bool hasDecorationFill = svgDecorationStyle.hasFill();
+    bool hasDecorationFill = decorationStyle.svgStyle().hasFill();
     bool hasVisibleDecorationStroke = decorationStyle.hasVisibleStroke();
 
     if (hasDecorationFill) {
@@ -653,8 +649,8 @@ void SVGInlineTextBox::paintTextWithShadows(GraphicsContext& context, const Rend
         {
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
             // Optimized code path to support gradient/pattern fill/stroke on text without using temporary ImageBuffers / masking.
-            Gradient* gradient { nullptr };
-            RefPtr<Pattern> pattern { nullptr };
+            RefPtr<Gradient> gradient;
+            RefPtr<Pattern> pattern;
             if (renderer().document().settings().layerBasedSVGEngineEnabled()) {
                 auto* textRootBlock = RenderSVGText::locateRenderSVGTextAncestor(renderer());
                 ASSERT(textRootBlock);

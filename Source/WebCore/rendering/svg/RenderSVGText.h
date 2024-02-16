@@ -39,6 +39,7 @@ public:
     virtual ~RenderSVGText();
 
     SVGTextElement& textElement() const;
+    Ref<SVGTextElement> protectedTextElement() const;
 
     bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
 

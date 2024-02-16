@@ -10469,6 +10469,13 @@ CheckedPtr<RenderView> Document::checkedRenderView() const
     return m_renderView.get();
 }
 
+Ref<CSSFontSelector> Document::protectedFontSelector() const
+{
+    if (!m_fontSelector)
+        return const_cast<Document&>(*this).ensureFontSelector();
+    return *m_fontSelector;
+}
+
 } // namespace WebCore
 
 #undef DOCUMENT_RELEASE_LOG

@@ -135,11 +135,11 @@ void LegacyRenderSVGResourceContainer::markAllClientLayersForInvalidation()
     if (m_clientLayers.isEmptyIgnoringNullReferences())
         return;
 
-    auto& document = (*m_clientLayers.begin()).renderer().document();
-    if (!document.view() || document.renderTreeBeingDestroyed())
+    Ref document = (*m_clientLayers.begin()).renderer().document();
+    if (!document->view() || document->renderTreeBeingDestroyed())
         return;
 
-    auto inLayout = document.view()->layoutContext().isInLayout();
+    auto inLayout = document->view()->layoutContext().isInLayout();
     for (auto& clientLayer : m_clientLayers) {
         // FIXME: We should not get here while in layout. See webkit.org/b/208903.
         // Repaint should also be triggered through some other means.
@@ -238,7 +238,7 @@ AffineTransform LegacyRenderSVGResourceContainer::transformOnNonScalingStroke(Re
     if (!object->isRenderOrLegacyRenderSVGShape())
         return resourceTransform;
 
-    SVGGraphicsElement* element = downcast<SVGGraphicsElement>(object->node());
+    RefPtr element = downcast<SVGGraphicsElement>(object->node());
     AffineTransform transform = element->getScreenCTM(SVGLocatable::DisallowStyleUpdate);
     transform *= resourceTransform;
     return transform;

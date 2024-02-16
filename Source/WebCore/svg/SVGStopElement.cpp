@@ -90,10 +90,10 @@ Color SVGStopElement::stopColorIncludingOpacity() const
         return Color::transparentBlack;
 
     auto& style = renderer()->style();
-    auto& svgStyle = style.svgStyle();
-    auto stopColor = style.colorResolvingCurrentColor(svgStyle.stopColor());
+    Ref svgStyle = style.svgStyle();
+    auto stopColor = style.colorResolvingCurrentColor(svgStyle->stopColor());
 
-    return stopColor.colorWithAlphaMultipliedBy(svgStyle.stopOpacity());
+    return stopColor.colorWithAlphaMultipliedBy(svgStyle->stopOpacity());
 }
 
 }

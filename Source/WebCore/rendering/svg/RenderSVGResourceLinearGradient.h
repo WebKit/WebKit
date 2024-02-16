@@ -38,6 +38,7 @@ public:
     virtual ~RenderSVGResourceLinearGradient();
 
     inline SVGLinearGradientElement& linearGradientElement() const;
+    inline Ref<SVGLinearGradientElement> protectedLinearGradientElement() const;
 
     SVGUnitTypes::SVGUnitType gradientUnits() const final { return m_attributes ? m_attributes.value().gradientUnits() : SVGUnitTypes::SVG_UNIT_TYPE_UNKNOWN; }
     AffineTransform gradientTransform() const final { return m_attributes ? m_attributes.value().gradientTransform() : identity; }

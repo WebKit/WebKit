@@ -48,6 +48,11 @@ SVGPatternElement& LegacyRenderSVGResourcePattern::patternElement() const
     return downcast<SVGPatternElement>(LegacyRenderSVGResourceContainer::element());
 }
 
+Ref<SVGPatternElement> LegacyRenderSVGResourcePattern::protectedPatternElement() const
+{
+    return patternElement();
+}
+
 void LegacyRenderSVGResourcePattern::removeAllClientsFromCacheIfNeeded(bool markForInvalidation, SingleThreadWeakHashSet<RenderObject>* visitedRenderers)
 {
     m_patternMap.clear();
@@ -66,8 +71,8 @@ void LegacyRenderSVGResourcePattern::collectPatternAttributes(PatternAttributes&
     const LegacyRenderSVGResourcePattern* current = this;
 
     while (current) {
-        const SVGPatternElement& pattern = current->patternElement();
-        pattern.collectPatternAttributes(attributes);
+        Ref pattern = current->patternElement();
+        pattern->collectPatternAttributes(attributes);
 
         auto* resources = SVGResourcesCache::cachedResourcesForRenderer(*current);
         ASSERT_IMPLIES(resources && resources->linkedResource(), is<LegacyRenderSVGResourcePattern>(resources->linkedResource()));
@@ -94,7 +99,7 @@ PatternData* LegacyRenderSVGResourcePattern::buildPattern(RenderElement& rendere
     // Compute all necessary transformations to build the tile image & the pattern.
     FloatRect tileBoundaries;
     AffineTransform tileImageTransform;
-    if (!buildTileImageTransform(renderer, m_attributes, patternElement(), tileBoundaries, tileImageTransform))
+    if (!buildTileImageTransform(renderer, m_attributes, protectedPatternElement(), tileBoundaries, tileImageTransform))
         return nullptr;
 
     auto absoluteTransform = SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(renderer);
@@ -143,7 +148,7 @@ bool LegacyRenderSVGResourcePattern::applyResource(RenderElement& renderer, cons
     ASSERT(!resourceMode.isEmpty());
 
     if (m_shouldCollectPatternAttributes) {
-        patternElement().synchronizeAllAttributes();
+        protectedPatternElement()->synchronizeAllAttributes();
 
         m_attributes = PatternAttributes();
         collectPatternAttributes(m_attributes);
@@ -163,16 +168,16 @@ bool LegacyRenderSVGResourcePattern::applyResource(RenderElement& renderer, cons
     // Draw pattern
     context->save();
 
-    const SVGRenderStyle& svgStyle = style.svgStyle();
+    Ref svgStyle = style.svgStyle();
 
     if (resourceMode.contains(RenderSVGResourceMode::ApplyToFill)) {
-        context->setAlpha(svgStyle.fillOpacity());
+        context->setAlpha(svgStyle->fillOpacity());
         context->setFillPattern(*patternData->pattern);
-        context->setFillRule(svgStyle.fillRule());
+        context->setFillRule(svgStyle->fillRule());
     } else if (resourceMode.contains(RenderSVGResourceMode::ApplyToStroke)) {
-        if (svgStyle.vectorEffect() == VectorEffect::NonScalingStroke)
+        if (svgStyle->vectorEffect() == VectorEffect::NonScalingStroke)
             patternData->pattern->setPatternSpaceTransform(transformOnNonScalingStroke(&renderer, patternData->transform));
-        context->setAlpha(svgStyle.strokeOpacity());
+        context->setAlpha(svgStyle->strokeOpacity());
         context->setStrokePattern(*patternData->pattern);
         SVGRenderSupport::applyStrokeStyleToContext(*context, style, renderer);
     }

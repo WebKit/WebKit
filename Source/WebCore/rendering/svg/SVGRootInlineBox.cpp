@@ -138,7 +138,7 @@ void SVGRootInlineBox::layoutCharactersInTextBoxes(LegacyInlineFlowBox* start, S
             characterLayout.layoutInlineTextBox(*textBox);
         } else {
             // Skip generated content.
-            Node* node = child->renderer().node();
+            RefPtr node = child->renderer().node();
             if (!node)
                 continue;
 

@@ -58,9 +58,9 @@ void RenderSVGResourceMarker::invalidateMarker()
 
 FloatRect RenderSVGResourceMarker::computeViewport() const
 {
-    auto& useMarkerElement = markerElement();
-    SVGLengthContext lengthContext(&useMarkerElement);
-    return { 0, 0, useMarkerElement.markerWidth().value(lengthContext), useMarkerElement.markerHeight().value(lengthContext) };
+    Ref useMarkerElement = markerElement();
+    SVGLengthContext lengthContext(useMarkerElement.ptr());
+    return { 0, 0, useMarkerElement->markerWidth().value(lengthContext), useMarkerElement->markerHeight().value(lengthContext) };
 }
 
 bool RenderSVGResourceMarker::updateLayoutSizeIfNeeded()

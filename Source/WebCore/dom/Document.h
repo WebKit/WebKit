@@ -656,6 +656,7 @@ public:
     const CSSFontSelector* fontSelectorIfExists() const { return m_fontSelector.get(); }
     inline CSSFontSelector& fontSelector();
     inline const CSSFontSelector& fontSelector() const;
+    Ref<CSSFontSelector> protectedFontSelector() const;
 
     WEBCORE_EXPORT bool haveStylesheetsLoaded() const;
     bool isIgnoringPendingStylesheets() const { return m_ignorePendingStylesheets; }

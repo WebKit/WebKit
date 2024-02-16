@@ -50,9 +50,9 @@ void RenderSVGResourcePattern::collectPatternAttributesIfNeeded()
 
     auto attributes = PatternAttributes { };
 
-    SVGPatternElement* current = &patternElement();
+    RefPtr current = &patternElement();
 
-    patternElement().synchronizeAllAttributes();
+    current->synchronizeAllAttributes();
 
     while (current) {
         if (!current->renderer())
@@ -98,7 +98,7 @@ RefPtr<Pattern> RenderSVGResourcePattern::buildPattern(GraphicsContext& context,
     // Compute all necessary transformations to build the tile image & the pattern.
     FloatRect tileBoundaries;
     AffineTransform tileImageTransform;
-    if (!buildTileImageTransform(renderer, *m_attributes, patternElement(), tileBoundaries, tileImageTransform))
+    if (!buildTileImageTransform(renderer, *m_attributes, protectedPatternElement(), tileBoundaries, tileImageTransform))
         return nullptr;
 
     // Ignore 2D rotation, as it doesn't affect the size of the tile.

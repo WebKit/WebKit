@@ -61,8 +61,7 @@ inline SVGUseElement* associatedUseElement(SVGGraphicsElement& element)
         return useElement;
 
     if (element.isInShadowTree() && is<SVGGElement>(element)) {
-        SVGElement* correspondingElement = element.correspondingElement();
-        if (auto* useElement = dynamicDowncast<SVGUseElement>(correspondingElement))
+        if (auto* useElement = dynamicDowncast<SVGUseElement>(element.correspondingElement()))
             return useElement;
     }
 

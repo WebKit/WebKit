@@ -76,6 +76,11 @@ SVGTextElement& RenderSVGText::textElement() const
     return downcast<SVGTextElement>(RenderSVGBlock::graphicsElement());
 }
 
+Ref<SVGTextElement> RenderSVGText::protectedTextElement() const
+{
+    return textElement();
+}
+
 bool RenderSVGText::isChildAllowed(const RenderObject& child, const RenderStyle&) const
 {
     return child.isInline();
@@ -504,7 +509,7 @@ bool RenderSVGText::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
 void RenderSVGText::applyTransform(TransformationMatrix& transform, const RenderStyle& style, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> options) const
 {
     ASSERT(document().settings().layerBasedSVGEngineEnabled());
-    applySVGTransform(transform, textElement(), style, boundingBox, std::nullopt, std::nullopt, options);
+    applySVGTransform(transform, protectedTextElement(), style, boundingBox, std::nullopt, std::nullopt, options);
 }
 #endif
 
@@ -585,11 +590,11 @@ void RenderSVGText::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 FloatRect RenderSVGText::strokeBoundingBox() const
 {
     FloatRect strokeBoundaries = objectBoundingBox();
-    const SVGRenderStyle& svgStyle = style().svgStyle();
-    if (!svgStyle.hasStroke())
+    if (!style().svgStyle().hasStroke())
         return strokeBoundaries;
 
-    SVGLengthContext lengthContext(&textElement());
+    Ref textElement = this->textElement();
+    SVGLengthContext lengthContext(textElement.ptr());
     strokeBoundaries.inflate(lengthContext.valueForLength(style().strokeWidth()));
     return strokeBoundaries;
 }

@@ -31,8 +31,9 @@ inline SVGMarkerElement& RenderSVGResourceMarker::markerElement() const
 
 FloatPoint RenderSVGResourceMarker::referencePoint() const
 {
-    SVGLengthContext lengthContext(&markerElement());
-    return { markerElement().refX().value(lengthContext), markerElement().refY().value(lengthContext) };
+    Ref markerElement = this->markerElement();
+    SVGLengthContext lengthContext(markerElement.ptr());
+    return { markerElement->refX().value(lengthContext), markerElement->refY().value(lengthContext) };
 }
 
 std::optional<float> RenderSVGResourceMarker::angle() const

@@ -2988,6 +2988,7 @@ svg/SVGGraphicsElement.cpp
 svg/SVGHKernElement.cpp
 svg/SVGImageElement.cpp
 svg/SVGImageLoader.cpp
+svg/SVGLength.cpp
 svg/SVGLengthContext.cpp
 svg/SVGLengthList.cpp
 svg/SVGLengthValue.cpp

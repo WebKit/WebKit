@@ -44,6 +44,7 @@ class LegacyRenderSVGResourcePattern final : public LegacyRenderSVGResourceConta
 public:
     LegacyRenderSVGResourcePattern(SVGPatternElement&, RenderStyle&&);
     SVGPatternElement& patternElement() const;
+    Ref<SVGPatternElement> protectedPatternElement() const;
 
     void removeAllClientsFromCacheIfNeeded(bool markForInvalidation, SingleThreadWeakHashSet<RenderObject>* visitedRenderers) override;
     void removeClientFromCache(RenderElement&, bool markForInvalidation = true) override;

@@ -68,7 +68,7 @@ bool SVGAnimateElementBase::hasInvalidCSSAttributeType() const
         return false;
 
     if (!m_hasInvalidCSSAttributeType)
-        m_hasInvalidCSSAttributeType = hasValidAttributeName() && attributeType() == AttributeType::CSS && !isTargetAttributeCSSProperty(targetElement(), attributeName());
+        m_hasInvalidCSSAttributeType = hasValidAttributeName() && attributeType() == AttributeType::CSS && !isTargetAttributeCSSProperty(protectedTargetElement().get(), attributeName());
 
     return m_hasInvalidCSSAttributeType.value();
 }
@@ -78,7 +78,7 @@ bool SVGAnimateElementBase::isDiscreteAnimator() const
     if (!hasValidAttributeType())
         return false;
 
-    auto* animator = this->animator();
+    RefPtr animator = this->animator();
     return animator && animator->isDiscrete();
 }
 
@@ -177,7 +177,7 @@ void SVGAnimateElementBase::applyResultsToTarget()
         return;
 
     if (RefPtr animator = this->animator())
-        animator->apply(*targetElement());
+        animator->apply(*protectedTargetElement());
 }
 
 void SVGAnimateElementBase::stopAnimation(SVGElement* targetElement)
@@ -196,7 +196,7 @@ std::optional<float> SVGAnimateElementBase::calculateDistance(const String& from
         return { };
 
     if (RefPtr animator = this->animator())
-        return animator->calculateDistance(*targetElement(), fromString, toString);
+        return animator->calculateDistance(*protectedTargetElement(), fromString, toString);
 
     return { };
 }

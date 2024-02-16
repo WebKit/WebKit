@@ -83,7 +83,7 @@ void SMILTimeContainer::notifyIntervalsChanged()
 
 Seconds SMILTimeContainer::animationFrameDelay() const
 {
-    auto* page = m_ownerSVGElement->document().page();
+    RefPtr page = m_ownerSVGElement->document().page();
     if (!page)
         return SMILAnimationFrameDelay;
     return page->isLowPowerModeEnabled() ? SMILAnimationFrameThrottledDelay : SMILAnimationFrameDelay;
@@ -217,7 +217,7 @@ void SMILTimeContainer::updateDocumentOrderIndexes()
 {
     unsigned timingElementCount = 0;
 
-    for (Ref smilElement : descendantsOfType<SVGSMILElement>(m_ownerSVGElement))
+    for (Ref smilElement : descendantsOfType<SVGSMILElement>(Ref { m_ownerSVGElement.get() }))
         smilElement->setDocumentOrderIndex(timingElementCount++);
 
     m_documentOrderIndexesDirty = false;

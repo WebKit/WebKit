@@ -124,13 +124,13 @@ public:
 private:
     inline void prepareFillOperation(const RenderLayerModelObject& renderer, const RenderStyle& style, const Color& fillColor) const
     {
-        const auto& svgStyle = style.svgStyle();
+        Ref svgStyle = style.svgStyle();
         if (renderer.view().frameView().paintBehavior().contains(PaintBehavior::RenderingSVGClipOrMask)) {
             m_context.setAlpha(1);
-            m_context.setFillRule(svgStyle.clipRule());
+            m_context.setFillRule(svgStyle->clipRule());
         } else {
-            m_context.setAlpha(svgStyle.fillOpacity());
-            m_context.setFillRule(svgStyle.fillRule());
+            m_context.setAlpha(svgStyle->fillOpacity());
+            m_context.setFillRule(svgStyle->fillRule());
         }
 
         m_context.setFillColor(style.colorByApplyingColorFilter(fillColor));
@@ -138,8 +138,7 @@ private:
 
     inline void prepareStrokeOperation(const RenderLayerModelObject& renderer, const RenderStyle& style, const Color& strokeColor) const
     {
-        const auto& svgStyle = style.svgStyle();
-        m_context.setAlpha(svgStyle.strokeOpacity());
+        m_context.setAlpha(style.svgStyle().strokeOpacity());
         m_context.setStrokeColor(style.colorByApplyingColorFilter(strokeColor));
         SVGRenderSupport::applyStrokeStyleToContext(m_context, style, renderer);
     }
@@ -147,10 +146,10 @@ private:
     template<Operation op>
     static inline Color resolveColorFromStyle(const RenderStyle& style)
     {
-        const auto& svgStyle = style.svgStyle();
+        Ref svgStyle = style.svgStyle();
         if (op == Operation::Fill)
-            return resolveColorFromStyle(style, svgStyle.fillPaintType(), svgStyle.fillPaintColor(), svgStyle.visitedLinkFillPaintType(), svgStyle.visitedLinkFillPaintColor());
-        return resolveColorFromStyle(style, svgStyle.strokePaintType(), svgStyle.strokePaintColor(), svgStyle.visitedLinkStrokePaintType(), svgStyle.visitedLinkStrokePaintColor());
+            return resolveColorFromStyle(style, svgStyle->fillPaintType(), svgStyle->fillPaintColor(), svgStyle->visitedLinkFillPaintType(), svgStyle->visitedLinkFillPaintColor());
+        return resolveColorFromStyle(style, svgStyle->strokePaintType(), svgStyle->strokePaintColor(), svgStyle->visitedLinkStrokePaintType(), svgStyle->visitedLinkStrokePaintColor());
     }
 
     static inline Color resolveColorFromStyle(const RenderStyle& style, SVGPaintType paintType, const StyleColor& paintColor, SVGPaintType visitedLinkPaintType, const StyleColor& visitedLinkPaintColor)
@@ -180,8 +179,8 @@ private:
             return true;
         if (!renderer.parent())
             return false;
-        const auto& parentSVGStyle = renderer.parent()->style().svgStyle();
-        color = renderer.style().colorResolvingCurrentColor(op == Operation::Fill ? parentSVGStyle.fillPaintColor() : parentSVGStyle.strokePaintColor());
+        Ref parentSVGStyle = renderer.parent()->style().svgStyle();
+        color = renderer.style().colorResolvingCurrentColor(op == Operation::Fill ? parentSVGStyle->fillPaintColor() : parentSVGStyle->strokePaintColor());
         return true;
     }
 

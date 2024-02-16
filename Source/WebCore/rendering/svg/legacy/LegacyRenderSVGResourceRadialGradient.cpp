@@ -39,27 +39,27 @@ LegacyRenderSVGResourceRadialGradient::~LegacyRenderSVGResourceRadialGradient() 
 bool LegacyRenderSVGResourceRadialGradient::collectGradientAttributes()
 {
     m_attributes = RadialGradientAttributes();
-    return radialGradientElement().collectGradientAttributes(m_attributes);
+    return protectedRadialGradientElement()->collectGradientAttributes(m_attributes);
 }
 
 FloatPoint LegacyRenderSVGResourceRadialGradient::centerPoint(const RadialGradientAttributes& attributes) const
 {
-    return SVGLengthContext::resolvePoint(&radialGradientElement(), attributes.gradientUnits(), attributes.cx(), attributes.cy());
+    return SVGLengthContext::resolvePoint(protectedRadialGradientElement().ptr(), attributes.gradientUnits(), attributes.cx(), attributes.cy());
 }
 
 FloatPoint LegacyRenderSVGResourceRadialGradient::focalPoint(const RadialGradientAttributes& attributes) const
 {
-    return SVGLengthContext::resolvePoint(&radialGradientElement(), attributes.gradientUnits(), attributes.fx(), attributes.fy());
+    return SVGLengthContext::resolvePoint(protectedRadialGradientElement().ptr(), attributes.gradientUnits(), attributes.fx(), attributes.fy());
 }
 
 float LegacyRenderSVGResourceRadialGradient::radius(const RadialGradientAttributes& attributes) const
 {
-    return SVGLengthContext::resolveLength(&radialGradientElement(), attributes.gradientUnits(), attributes.r());
+    return SVGLengthContext::resolveLength(protectedRadialGradientElement().ptr(), attributes.gradientUnits(), attributes.r());
 }
 
 float LegacyRenderSVGResourceRadialGradient::focalRadius(const RadialGradientAttributes& attributes) const
 {
-    return SVGLengthContext::resolveLength(&radialGradientElement(), attributes.gradientUnits(), attributes.fr());
+    return SVGLengthContext::resolveLength(protectedRadialGradientElement().ptr(), attributes.gradientUnits(), attributes.fr());
 }
 
 Ref<Gradient> LegacyRenderSVGResourceRadialGradient::buildGradient(const RenderStyle& style) const

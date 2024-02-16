@@ -124,8 +124,7 @@ void SVGRenderingContext::prepareToRenderSVGContent(RenderElement& renderer, Pai
         }
     }
 
-    PathOperation* clipPathOperation = style.clipPath();
-    bool hasCSSClipping = is<ShapePathOperation>(clipPathOperation) || is<BoxPathOperation>(clipPathOperation);
+    bool hasCSSClipping = is<ShapePathOperation>(style.clipPath()) || is<BoxPathOperation>(style.clipPath());
     if (hasCSSClipping)
         SVGRenderSupport::clipContextToCSSClippingArea(m_paintInfo->context(), renderer);
 

@@ -179,13 +179,13 @@ void SVGResourcesCache::clientStyleChanged(RenderElement& renderer, StyleDiffere
         if (oldStyle->appleColorFilter() != newStyle.appleColorFilter())
             return true;
 
-        auto& oldSVGStyle = oldStyle->svgStyle();
-        auto& newSVGStyle = newStyle.svgStyle();
+        Ref oldSVGStyle = oldStyle->svgStyle();
+        Ref newSVGStyle = newStyle.svgStyle();
 
-        if (oldSVGStyle.fillPaintUri() != newSVGStyle.fillPaintUri())
+        if (oldSVGStyle->fillPaintUri() != newSVGStyle->fillPaintUri())
             return true;
 
-        if (oldSVGStyle.strokePaintUri() != newSVGStyle.strokePaintUri())
+        if (oldSVGStyle->strokePaintUri() != newSVGStyle->strokePaintUri())
             return true;
 
         return false;

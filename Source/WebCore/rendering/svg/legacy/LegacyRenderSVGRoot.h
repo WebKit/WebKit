@@ -40,6 +40,7 @@ public:
     virtual ~LegacyRenderSVGRoot();
 
     SVGSVGElement& svgSVGElement() const;
+    Ref<SVGSVGElement> protectedSVGSVGElement() const;
 
     bool isEmbeddedThroughSVGImage() const;
     bool isEmbeddedThroughFrameContainingSVGDocument() const;

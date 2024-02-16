@@ -167,9 +167,9 @@ void RenderSVGResourceClipper::applyMaskClipping(PaintInfo& paintInfo, const Ren
     // - masker/filter not applied when rendering the children
     // - fill is set to the initial fill paint server (solid, black)
     // - stroke is set to the initial stroke paint server (none)
-    auto& frameView = view().frameView();
-    auto oldBehavior = frameView.paintBehavior();
-    frameView.setPaintBehavior(oldBehavior | PaintBehavior::RenderingSVGClipOrMask);
+    Ref frameView = view().frameView();
+    auto oldBehavior = frameView->paintBehavior();
+    frameView->setPaintBehavior(oldBehavior | PaintBehavior::RenderingSVGClipOrMask);
 
     if (!compositedMask || flattenCompositingLayers) {
         pushTransparencyLayer = true;
@@ -183,7 +183,7 @@ void RenderSVGResourceClipper::applyMaskClipping(PaintInfo& paintInfo, const Ren
 
     if (pushTransparencyLayer)
         context.endTransparencyLayer();
-    frameView.setPaintBehavior(oldBehavior);
+    frameView->setPaintBehavior(oldBehavior);
 }
 
 bool RenderSVGResourceClipper::hitTestClipContent(const FloatRect& objectBoundingBox, const LayoutPoint& nodeAtPoint)

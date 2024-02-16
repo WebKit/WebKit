@@ -224,7 +224,7 @@ bool RenderSVGModelObject::checkIntersection(RenderElement* renderer, const Floa
         return false;
     if (!isGraphicsElement(*renderer))
         return false;
-    auto* svgElement = downcast<SVGGraphicsElement>(renderer->element());
+    RefPtr svgElement = downcast<SVGGraphicsElement>(renderer->element());
     auto ctm = svgElement->getCTM(SVGLocatable::DisallowStyleUpdate);
     // FIXME: [SVG] checkEnclosure implementation is inconsistent
     // https://bugs.webkit.org/show_bug.cgi?id=262709
@@ -237,7 +237,7 @@ bool RenderSVGModelObject::checkEnclosure(RenderElement* renderer, const FloatRe
         return false;
     if (!isGraphicsElement(*renderer))
         return false;
-    auto* svgElement = downcast<SVGGraphicsElement>(renderer->element());
+    RefPtr svgElement = downcast<SVGGraphicsElement>(renderer->element());
     auto ctm = svgElement->getCTM(SVGLocatable::DisallowStyleUpdate);
     // FIXME: [SVG] checkEnclosure implementation is inconsistent
     // https://bugs.webkit.org/show_bug.cgi?id=262709
@@ -277,14 +277,14 @@ Path RenderSVGModelObject::computeClipPath(AffineTransform& transform) const
     if (layer()->isTransformed())
         transform.multiply(layer()->currentTransform(RenderStyle::individualTransformOperations()).toAffineTransform());
 
-    if (auto* useElement = dynamicDowncast<SVGUseElement>(element())) {
-        if (auto* clipChildRenderer = useElement->rendererClipChild())
+    if (RefPtr useElement = dynamicDowncast<SVGUseElement>(element())) {
+        if (CheckedPtr clipChildRenderer = useElement->rendererClipChild())
             transform.multiply(downcast<RenderLayerModelObject>(*clipChildRenderer).checkedLayer()->currentTransform(RenderStyle::individualTransformOperations()).toAffineTransform());
-        if (auto clipChild = useElement->clipChild())
+        if (RefPtr clipChild = useElement->clipChild())
             return pathFromGraphicsElement(*clipChild);
     }
 
-    return pathFromGraphicsElement(downcast<SVGGraphicsElement>(element()));
+    return pathFromGraphicsElement(Ref { downcast<SVGGraphicsElement>(element()) });
 }
 
 } // namespace WebCore

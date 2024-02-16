@@ -50,8 +50,8 @@ public:
 
         ~Scope()
         {
-            if (m_element)
-                m_tracking.removeUnique(*m_element);
+            if (RefPtr element = m_element.get())
+                m_tracking.removeUnique(*element);
         }
 
     private:

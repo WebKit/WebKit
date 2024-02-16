@@ -61,16 +61,17 @@ void RenderSVGRect::updateShapeFromElement()
     m_strokeBoundingBox = std::nullopt;
     m_approximateStrokeBoundingBox = std::nullopt;
 
-    SVGLengthContext lengthContext(&rectElement());
+    Ref rectElement = this->rectElement();
+    SVGLengthContext lengthContext(rectElement.ptr());
     FloatSize boundingBoxSize(lengthContext.valueForLength(style().width(), SVGLengthMode::Width), lengthContext.valueForLength(style().height(), SVGLengthMode::Height));
 
     // Spec: "A negative value is illegal. A value of zero disables rendering of the element."
     if (boundingBoxSize.isEmpty())
         return;
 
-    auto& svgStyle = style().svgStyle();
-    if (lengthContext.valueForLength(svgStyle.rx(), SVGLengthMode::Width) > 0
-        || lengthContext.valueForLength(svgStyle.ry(), SVGLengthMode::Height) > 0)
+    Ref svgStyle = style().svgStyle();
+    if (lengthContext.valueForLength(svgStyle->rx(), SVGLengthMode::Width) > 0
+        || lengthContext.valueForLength(svgStyle->ry(), SVGLengthMode::Height) > 0)
         m_shapeType = ShapeType::RoundedRectangle;
     else
         m_shapeType = ShapeType::Rectangle;
@@ -81,17 +82,17 @@ void RenderSVGRect::updateShapeFromElement()
         return;
     }
 
-    m_fillBoundingBox = FloatRect(FloatPoint(lengthContext.valueForLength(svgStyle.x(), SVGLengthMode::Width),
-        lengthContext.valueForLength(svgStyle.y(), SVGLengthMode::Height)),
+    m_fillBoundingBox = FloatRect(FloatPoint(lengthContext.valueForLength(svgStyle->x(), SVGLengthMode::Width),
+        lengthContext.valueForLength(svgStyle->y(), SVGLengthMode::Height)),
         boundingBoxSize);
 
     auto strokeBoundingBox = m_fillBoundingBox;
-    if (svgStyle.hasStroke())
+    if (svgStyle->hasStroke())
         strokeBoundingBox.inflate(this->strokeWidth() / 2);
 
 #if USE(CG)
     // CoreGraphics can inflate the stroke by 1px when drawing a rectangle with antialiasing disabled at non-integer coordinates, we need to compensate.
-    if (svgStyle.shapeRendering() == ShapeRendering::CrispEdges)
+    if (svgStyle->shapeRendering() == ShapeRendering::CrispEdges)
         strokeBoundingBox.inflate(1);
 #endif
 

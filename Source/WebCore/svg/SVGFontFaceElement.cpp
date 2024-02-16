@@ -84,16 +84,16 @@ void SVGFontFaceElement::attributeChanged(const QualifiedName& name, const AtomS
     if (propertyId > 0) {
         // FIXME: Parse using the @font-face descriptor grammars, not the property grammars.
         Ref fontFaceRule = m_fontFaceRule;
-        auto& properties = fontFaceRule->mutableProperties();
-        bool valueChanged = properties.setProperty(propertyId, newValue);
+        Ref properties = fontFaceRule->mutableProperties();
+        bool valueChanged = properties->setProperty(propertyId, newValue);
 
         if (valueChanged) {
             // The above parser is designed for the font-face properties, not descriptors, and the properties accept the global keywords, but descriptors don't.
             // Rather than invasively modifying the parser for the properties to have a special mode, we can simply detect the error condition after-the-fact and
             // avoid it explicitly.
-            if (auto parsedValue = properties.propertyAsValueID(propertyId)) {
+            if (auto parsedValue = properties->propertyAsValueID(propertyId)) {
                 if (isCSSWideKeyword(*parsedValue))
-                    properties.removeProperty(propertyId);
+                    properties->removeProperty(propertyId);
             }
         }
 
@@ -279,7 +279,7 @@ void SVGFontFaceElement::rebuildFontFace()
     }
 
     // we currently ignore all but the first src element, alternatively we could concat them
-    auto srcElement = childrenOfType<SVGFontFaceSrcElement>(*this).first();
+    RefPtr srcElement = childrenOfType<SVGFontFaceSrcElement>(*this).first();
 
     m_fontElement = dynamicDowncast<SVGFontElement>(*parentNode());
     bool describesParentFont = !!m_fontElement;
