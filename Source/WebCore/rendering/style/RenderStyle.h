@@ -2193,7 +2193,6 @@ private:
         unsigned overflowX : 3; // Overflow
         unsigned overflowY : 3; // Overflow
         unsigned clear : 3; // Clear
-        unsigned position : 3; // PositionType
         unsigned unicodeBidi : 3; // UnicodeBidi
         unsigned floating : 3; // Float
         unsigned tableLayout : 1; // TableLayoutType

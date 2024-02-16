@@ -1543,8 +1543,6 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyOverflowY);
         if (first.clear != second.clear)
             changingProperties.m_properties.set(CSSPropertyClear);
-        if (first.position != second.position)
-            changingProperties.m_properties.set(CSSPropertyPosition);
         if (first.floating != second.floating)
             changingProperties.m_properties.set(CSSPropertyFloat);
         if (first.tableLayout != second.tableLayout)
@@ -1604,6 +1602,8 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyBoxSizing);
         if (first.boxDecorationBreak() != second.boxDecorationBreak())
             changingProperties.m_properties.set(CSSPropertyWebkitBoxDecorationBreak);
+        if (first.position() != second.position())
+            changingProperties.m_properties.set(CSSPropertyPosition);
         // Non animated styles are followings.
         // usedZIndex
         // hasAutoUsedZIndex
