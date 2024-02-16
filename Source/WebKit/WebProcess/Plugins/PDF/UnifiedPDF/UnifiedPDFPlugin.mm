@@ -30,6 +30,7 @@
 
 #include "AsyncPDFRenderer.h"
 #include "FindController.h"
+#include "MessageSenderInlines.h"
 #include "PDFContextMenu.h"
 #include "PDFKitSPI.h"
 #include "PDFPageCoverage.h"
