@@ -278,7 +278,7 @@ private:
 
     id accessibilityHitTest(const WebCore::IntPoint&) const override;
     id accessibilityObject() const override;
-    id accessibilityHitTestIntPoint(const WebCore::IntPoint&) const;
+    id accessibilityAssociatedPluginParentForElement(WebCore::Element*) const override;
 
     void paint(WebCore::GraphicsContext&, const WebCore::IntRect&) override;
 

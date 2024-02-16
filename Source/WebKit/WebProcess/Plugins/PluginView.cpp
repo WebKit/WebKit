@@ -937,7 +937,7 @@ bool PluginView::isBeingDestroyed() const
 
 RetainPtr<PDFDocument> PluginView::pdfDocumentForPrinting() const
 {
-    return m_plugin->pdfDocument();
+    return m_plugin->pdfDocumentForPrinting();
 }
 
 WebCore::FloatSize PluginView::pdfDocumentSizeForPrinting() const

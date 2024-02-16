@@ -2556,20 +2556,19 @@ LookupTextResult UnifiedPDFPlugin::lookupTextAtLocation(const FloatPoint& rootVi
     return { lookupText, m_currentSelection };
 }
 
-id UnifiedPDFPlugin::accessibilityHitTestIntPoint(const WebCore::IntPoint& point) const
+id UnifiedPDFPlugin::accessibilityHitTest(const IntPoint&) const
 {
-    auto convertedPoint =  convertFromRootViewToPDFView(point);
-    return [m_accessibilityDocumentObject accessibilityHitTest:convertedPoint];
-}
-
-id UnifiedPDFPlugin::accessibilityHitTest(const WebCore::IntPoint& point) const
-{
-    return accessibilityHitTestIntPoint(point);
+    return nil;
 }
 
 id UnifiedPDFPlugin::accessibilityObject() const
 {
-    return m_accessibilityDocumentObject.get();
+    return nil;
+}
+
+id UnifiedPDFPlugin::accessibilityAssociatedPluginParentForElement(Element*) const
+{
+    return nil;
 }
 
 #if ENABLE(PDF_HUD)

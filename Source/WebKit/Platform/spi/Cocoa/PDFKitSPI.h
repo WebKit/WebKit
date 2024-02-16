@@ -116,13 +116,6 @@
 - (PDFDestination *)namedDestination:(NSString *)name;
 @end
 
-@interface PDFDocument ()
-- (NSArray *)accessibilityChildren:(id)parent;
-- (NSArray *)accessibilityVisibleChildren:(NSArray<PDFPage *>*)visiblePages;
-- (void)resetAccessibilityTree;
-- (NSArray *)accessibilityPageElements;
-@end
-
 @interface PDFPage (IPI)
 - (CGPDFPageLayoutRef) pageLayout;
 @end
