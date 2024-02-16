@@ -51,6 +51,12 @@
 #import <wtf/StdLibExtras.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebAuthenticatorCoordinatorProxyAdditions.h>)
+#import <WebKitAdditions/WebAuthenticatorCoordinatorProxyAdditions.h>
+#else
+#define AUTHENTICATOR_COORDINATOR_ADDITIONS
+#endif
+
 #import "AuthenticationServicesCoreSoftLink.h"
 #if HAVE(WEB_AUTHN_AS_MODERN)
 #import "AuthenticationServicesSoftLink.h"
@@ -210,6 +216,9 @@ RetainPtr<NSArray> WebAuthenticatorCoordinatorProxy::requestsForRegisteration(co
     RetainPtr<ASPublicKeyCredentialClientData> clientData = adoptNS([allocASPublicKeyCredentialClientDataInstance() initWithChallenge:toNSData(options.challenge).get() origin:callerOrigin.toString()]);
     if (includePlatformRequest) {
         RetainPtr request = adoptNS([[allocASAuthorizationPlatformPublicKeyCredentialProviderInstance() initWithRelyingPartyIdentifier:*options.rp.id] createCredentialRegistrationRequestWithClientData:clientData.get() name:options.user.name userID:toNSData(options.user.id).get()]);
+
+        AUTHENTICATOR_COORDINATOR_ADDITIONS
+
         // Platform credentials may only support enterprise attestation.
         if (options.attestation == AttestationConveyancePreference::Enterprise)
             request.get().attestationPreference = toAttestationConveyancePreference(options.attestation).get();
@@ -282,7 +291,7 @@ RetainPtr<NSArray> WebAuthenticatorCoordinatorProxy::requestsForAssertion(const 
         [requests addObject:request.leakRef()];
     }
 
-    if (!m_isConditionalAssertion && ([crossPlatformAllowedCredentials count] || ![platformAllowedCredentials count])) {
+    if (!m_isConditionalMediation && ([crossPlatformAllowedCredentials count] || ![platformAllowedCredentials count])) {
         RetainPtr provider = adoptNS([allocASAuthorizationSecurityKeyPublicKeyCredentialProviderInstance() initWithRelyingPartyIdentifier:options.rpId]);
         RetainPtr<ASAuthorizationSecurityKeyPublicKeyCredentialAssertionRequest> request;
         if ([provider respondsToSelector:@selector(createCredentialAssertionRequestWithClientData:)])
@@ -303,7 +312,7 @@ void WebAuthenticatorCoordinatorProxy::pauseConditionalAssertion()
     if (m_paused)
         return;
     m_paused = true;
-    if (m_isConditionalAssertion)
+    if (m_isConditionalMediation)
         [m_controller cancel];
 }
 
@@ -311,7 +320,7 @@ void WebAuthenticatorCoordinatorProxy::unpauseConditionalAssertion()
 {
     if (!m_paused)
         return;
-    if (m_controller && m_isConditionalAssertion)
+    if (m_controller && m_isConditionalMediation)
         [m_controller performAutoFillAssistedRequests];
 
     m_paused = false;
@@ -332,7 +341,7 @@ void WebAuthenticatorCoordinatorProxy::performRequest(WebAuthenticationRequestDa
         return;
     }
 #if HAVE(WEB_AUTHN_AS_MODERN)
-    m_isConditionalAssertion = requestData.mediation == MediationRequirement::Conditional;
+    m_isConditionalMediation = requestData.mediation == MediationRequirement::Conditional;
     auto controller = constructASController(requestData);
     if (!controller) {
         handler(WebCore::AuthenticatorResponseData { }, AuthenticatorAttachment::Platform, { ExceptionCode::NotAllowedError, @"" });
@@ -397,7 +406,7 @@ void WebAuthenticatorCoordinatorProxy::performRequest(WebAuthenticationRequestDa
                     weakThis->m_completionHandler(response, attachment, exceptionData);
                     weakThis->m_delegate.clear();
                     weakThis->m_controller.clear();
-                    weakThis->m_isConditionalAssertion = false;
+                    weakThis->m_isConditionalMediation = false;
                 }
             }
         });
@@ -405,7 +414,7 @@ void WebAuthenticatorCoordinatorProxy::performRequest(WebAuthenticationRequestDa
 
     m_controller.get().presentationContextProvider = (id<ASAuthorizationControllerPresentationContextProviding>)m_delegate.get();
     m_controller.get().delegate = (id<ASAuthorizationControllerDelegate>)m_delegate.get();
-    if (requestData.mediation && *requestData.mediation == MediationRequirement::Conditional)
+    if (requestData.mediation && *requestData.mediation == MediationRequirement::Conditional && std::holds_alternative<PublicKeyCredentialRequestOptions>(requestData.options))
         [m_controller performAutoFillAssistedRequests];
     else
         [m_controller performRequests];
