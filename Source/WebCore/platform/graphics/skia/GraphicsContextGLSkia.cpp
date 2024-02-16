@@ -27,10 +27,10 @@
 #include "GraphicsContextGL.h"
 
 #if ENABLE(WEBGL) && USE(SKIA)
+#include "BitmapImage.h"
 #include "GLContext.h"
 #include "GraphicsContextGLImageExtractor.h"
 #include "Image.h"
-#include "ImageSource.h"
 #include "NotImplemented.h"
 #include "PixelBuffer.h"
 #include "PlatformDisplay.h"
@@ -53,14 +53,14 @@ bool GraphicsContextGLImageExtractor::extractImage(bool premultiplyAlpha, bool i
     RefPtr<NativeImage> decodedImage;
     bool hasAlpha = !m_image->currentFrameKnownToBeOpaque();
     if ((ignoreGammaAndColorProfile || (hasAlpha && !premultiplyAlpha)) && m_image->data()) {
-        auto source = ImageSource::create(nullptr, AlphaOption::NotPremultiplied, ignoreGammaAndColorProfile ? GammaAndColorProfileOption::Ignored : GammaAndColorProfileOption::Applied);
-        source->setData(m_image->data(), true);
-        if (!source->frameCount())
+        auto image = BitmapImage::create(nullptr, AlphaOption::NotPremultiplied, ignoreGammaAndColorProfile ? GammaAndColorProfileOption::Ignored : GammaAndColorProfileOption::Applied);
+        image->setData(m_image->data(), true);
+        if (!image->frameCount())
             return false;
 
-        decodedImage = source->createFrameImageAtIndex(0);
+        decodedImage = image->currentNativeImage();
     } else
-        decodedImage = m_image->nativeImageForCurrentFrame();
+        decodedImage = m_image->currentNativeImage();
 
     if (!decodedImage)
         return false;
