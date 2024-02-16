@@ -42,12 +42,6 @@ class Revert(Command):
     help = 'Revert provided list of commits and create a pull-request with this revert commit'
     REVERT_TITLE_TEMPLATE = 'Unreviewed, reverting {}'
     REVERT_TITLE_RE = re.compile(r'^Unreviewed, reverting {}'.format(Commit.IDENTIFIER_RE.pattern))
-    RES = [
-        re.compile(r'<?rdar://problem/(?P<id>\d+)>?'),
-        re.compile(r'<?radar://problem/(?P<id>\d+)>?'),
-        re.compile(r'<?rdar:\/\/(?P<id>\d+)>?'),
-        re.compile(r'<?radar:\/\/(?P<id>\d+)>?'),
-    ]
 
     @classmethod
     def parser(cls, parser, loggers=None):
@@ -100,6 +94,10 @@ class Revert(Command):
 
         issue = Tracker.from_string(args.issue)
         commit_bugs_list = list(commit_bugs)
+        if not issue.title:
+            sys.stderr.write('Could not fetch {} from link. Please verify that the issue exists.\n'.format(issue.tracker.NAME))
+            return None
+
         if not issue and Tracker.instance() and getattr(args, 'update_issue', True):
             if getattr(Tracker.instance(), 'credentials', None):
                 Tracker.instance().credentials(required=True, validate=True)
@@ -172,20 +170,14 @@ class Revert(Command):
             return None, None
 
         revert_radar_link, revert_bug_link = None, None
-        if isinstance(revert_issue.tracker, radar.Tracker):
-            revert_radar_link = revert_issue.link
-            refs = [i for i in revert_issue.references if isinstance(i.tracker, bugzilla.Tracker)]
-            if refs:
-                revert_bug_link = refs[0].link
-        else:
-            revert_bug_link = revert_issue.link
-            for bug in CommitProgram.bug_urls(revert_issue):
-                for regex in cls.RES:
-                    if regex.match(bug):
-                        revert_radar_link = bug
-                        break
-                if revert_radar_link:
-                    break
+        for issue_url in CommitProgram.bug_urls(revert_issue):
+            issue = Tracker.from_string(issue_url)
+            if not issue:
+                continue
+            if isinstance(issue.tracker, radar.Tracker):
+                revert_radar_link = issue_url
+            if isinstance(issue.tracker, bugzilla.Tracker):
+                revert_bug_link = issue_url
 
         # FIXME: Add support for radar-based repositories
         if revert_issue.redacted or isinstance(revert_issue.tracker, radar.Tracker):
