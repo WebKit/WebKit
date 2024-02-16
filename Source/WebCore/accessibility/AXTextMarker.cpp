@@ -268,6 +268,13 @@ AXTextMarkerRange::AXTextMarkerRange(const AXTextMarker& start, const AXTextMark
     m_end = reverse ? start : end;
 }
 
+AXTextMarkerRange::AXTextMarkerRange(AXTextMarker&& start, AXTextMarker&& end)
+{
+    bool reverse = is_gt(partialOrder(start, end));
+    m_start = reverse ? WTFMove(end) : WTFMove(start);
+    m_end = reverse ? WTFMove(start) : WTFMove(end);
+}
+
 AXTextMarkerRange::AXTextMarkerRange(AXID treeID, AXID objectID, unsigned start, unsigned end)
 {
     if (start > end)
@@ -330,9 +337,10 @@ std::optional<AXTextMarkerRange> AXTextMarkerRange::intersectionWith(const AXTex
         if (startOffset > endOffset)
             return std::nullopt;
 
-        auto startMarker = AXTextMarker({ m_start.treeID(), m_start.objectID(), nullptr, startOffset, Position::PositionIsOffsetInAnchor, Affinity::Downstream, 0, startOffset });
-        auto endMarker = AXTextMarker({ m_start.treeID(), m_start.objectID(), nullptr, endOffset, Position::PositionIsOffsetInAnchor, Affinity::Downstream, 0, endOffset });
-        return { { startMarker, endMarker } };
+        return { {
+            AXTextMarker({ m_start.treeID(), m_start.objectID(), nullptr, startOffset, Position::PositionIsOffsetInAnchor, Affinity::Downstream, 0, startOffset }),
+            AXTextMarker({ m_start.treeID(), m_start.objectID(), nullptr, endOffset, Position::PositionIsOffsetInAnchor, Affinity::Downstream, 0, endOffset })
+        } };
     }
 
     return Accessibility::retrieveValueFromMainThread<std::optional<AXTextMarkerRange>>([this, &other] () -> std::optional<AXTextMarkerRange> {
@@ -449,6 +457,8 @@ static AXIsolatedObject* findObjectWithRuns(AXIsolatedObject& start, AXDirection
     }
 
     for (auto* stopObject = root->parentObjectUnignored(); startObject && startObject != stopObject; startObject = startObject->parentObjectUnignored()) {
+        if (stopAtID && stopAtID->isValid() && startObject->objectID() == *stopAtID)
+            return nullptr;
         // Only append the children after/before the previous element, so that the search does not check elements that are
         // already behind/ahead of start element.
         AXCoreObject::AccessibilityChildrenVector searchStack;
@@ -475,6 +485,65 @@ static AXIsolatedObject* findObjectWithRuns(AXIsolatedObject& start, AXDirection
         previousObject = startObject;
     }
     return nullptr;
+}
+
+AXTextRunLineID AXTextMarker::lineID() const
+{
+    if (!isValid())
+        return { };
+    if (!isInTextLeaf())
+        return toTextLeafMarker().lineID();
+
+    const auto* runs = this->runs();
+    size_t runIndex = runs->indexForOffset(offset());
+    return runIndex != notFound ? runs->lineID(runIndex) : AXTextRunLineID();
+}
+
+int AXTextMarker::lineIndex() const
+{
+    if (!isValid())
+        return -1;
+    if (!isInTextLeaf())
+        return toTextLeafMarker().lineIndex();
+
+    AXTextMarker startMarker;
+    RefPtr object = isolatedObject();
+    if (object->isTextControl())
+        startMarker = { object->treeID(), object->objectID(), 0 };
+    else if (auto* editableAncestor = object->editableAncestor())
+        startMarker = { editableAncestor->treeID(), editableAncestor->objectID(), 0 };
+    else if (RefPtr tree = std::get<RefPtr<AXIsolatedTree>>(axTreeForID(treeID())))
+        startMarker = tree->firstMarker();
+    else
+        return -1;
+
+    auto currentLineID = startMarker.lineID();
+    auto targetLineID = lineID();
+    if (currentLineID == targetLineID)
+        return 0;
+
+    auto currentMarker = WTFMove(startMarker);
+    if (!currentMarker.atLineEnd()) {
+        // Start from a line end, so that subsequent calls to nextLineEnd() yield a new line.
+        // Otherwise if we started from the middle of a line, we would count the the first line twice.
+        auto nextLineEndMarker = currentMarker.nextLineEnd();
+        RELEASE_ASSERT(nextLineEndMarker.lineID() == currentMarker.lineID());
+        currentMarker = WTFMove(nextLineEndMarker);
+    }
+
+    unsigned index = 0;
+    while (currentLineID && currentLineID != targetLineID) {
+        currentMarker = currentMarker.nextLineEnd();
+        currentLineID = currentMarker.lineID();
+        ++index;
+    }
+    return index;
+}
+
+bool AXTextMarker::atLineBoundaryForDirection(AXDirection direction) const
+{
+    auto adjacentMarker = findMarker(direction);
+    return adjacentMarker.lineID() != lineID();
 }
 
 unsigned AXTextMarker::offsetFromRoot() const
@@ -599,25 +668,13 @@ AXTextMarker AXTextMarker::findMarker(AXDirection direction, std::optional<AXID>
     if (!isValid())
         return { };
     if (!isInTextLeaf())
-        return toTextLeafMarker().findMarker(direction);
+        return toTextLeafMarker().findMarker(direction, stopAtID);
 
-    size_t runIndex = runs()->indexForOffset(offset());
-    RELEASE_ASSERT(runIndex != notFound);
-    auto hasMoreTextInCurrentRun = [&] {
-        if (direction == AXDirection::Next)
-            return offset() < runs()->at(runIndex).text.length();
-        return offset() > 0;
-    };
-    bool hasAnotherRun = runIndex + 1 < runs()->size();
-    // The next run should not have empty text, because we're going to return a position containing offset() + 1, which would be wrong.
-    RELEASE_ASSERT(direction == AXDirection::Previous || !hasAnotherRun || runs()->runLength(runIndex + 1) > 0);
-    // Checking for the presence of another run is only relevant for moving AXDirection::Next, as just checking that offset() > 0 is sufficient for AXDirection::Previous.
-    if (hasMoreTextInCurrentRun() || (direction == AXDirection::Next && hasAnotherRun)) {
-        // Return an offset to the next character in the current run.
+    if ((direction == AXDirection::Next && offset() < runs()->totalLength()) || (direction == AXDirection::Previous && offset() > 0))
         return { treeID(), objectID(), direction == AXDirection::Next ? offset() + 1 : offset() - 1 };
-    }
+
     // offset() pointed to the last character in the given object's runs, so let's traverse to find the next object with runs.
-    if (RefPtr object = findObjectWithRuns(*this->isolatedObject(), direction, stopAtID)) {
+    if (RefPtr object = findObjectWithRuns(*isolatedObject(), direction, stopAtID)) {
         RELEASE_ASSERT(direction == AXDirection::Next ? object->textRuns()->runLength(0) : object->textRuns()->lastRunLength());
         return { object->treeID(), object->objectID(), direction == AXDirection::Next ? 0 : object->textRuns()->lastRunLength() };
     }
@@ -633,6 +690,17 @@ AXTextMarker AXTextMarker::findMarker(AXDirection direction, AXTextUnit textUnit
         return toTextLeafMarker().findMarker(direction, textUnit, boundary);
 
     if (textUnit == AXTextUnit::Line) {
+        // If, for example, we are asked to find the next line end, and are at the very end of a line already,
+        // we need the end position of the next line instead. Determine this by checking the next or previous marker.
+        auto adjacentMarker = findMarker(direction);
+        if (adjacentMarker.lineID() != lineID()) {
+            bool findOnNextLine = (direction == AXDirection::Previous && boundary == AXTextUnitBoundary::Start)
+                || (direction == AXDirection::Next && boundary == AXTextUnitBoundary::End);
+
+            if (findOnNextLine)
+                return adjacentMarker.findMarker(direction, textUnit, boundary);
+        }
+
         size_t runIndex = runs()->indexForOffset(offset());
         RELEASE_ASSERT(runIndex != notFound);
         RefPtr currentObject = isolatedObject();
@@ -712,8 +780,12 @@ AXTextMarkerRange AXTextMarker::lineRange(LineRangeType type) const
     if (!isValid())
         return { { }, { } };
 
-    if (type == LineRangeType::Current)
-        return { findMarker(AXDirection::Previous, AXTextUnit::Line, AXTextUnitBoundary::Start), findMarker(AXDirection::Next, AXTextUnit::Line, AXTextUnitBoundary::End) };
+    if (type == LineRangeType::Current) {
+        auto startMarker = atLineStart() ? *this : previousLineStart();
+        auto endMarker = atLineEnd() ? *this : nextLineEnd();
+
+        return { WTFMove(startMarker), WTFMove(endMarker) };
+    }
     // FIXME: The other types aren't implemented yet.
     RELEASE_ASSERT_NOT_REACHED();
 }

@@ -31,14 +31,17 @@ namespace WebCore {
 class RenderBlock;
 
 struct AXTextRunLineID {
+    // Do not dereference, for comparison to other AXTextRunLineIDs only.
     void* containingBlock { nullptr };
     size_t lineIndex { 0 };
 
+    AXTextRunLineID() = default;
     AXTextRunLineID(void* containingBlock, size_t lineIndex)
         : containingBlock(containingBlock)
         , lineIndex(lineIndex)
     { }
     bool operator==(const AXTextRunLineID&) const = default;
+    operator bool() const { return containingBlock; }
     String debugDescription() const
     {
         TextStream stream;
@@ -108,6 +111,7 @@ struct AXTextRuns {
     unsigned runLengthSumTo(size_t index) const;
 
     size_t indexForOffset(unsigned textOffset) const;
+    AXTextRunLineID lineIDForOffset(unsigned textOffset) const;
     AXTextRunLineID lineID(size_t index) const
     {
         RELEASE_ASSERT(index < runs.size());

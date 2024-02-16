@@ -53,6 +53,12 @@ size_t AXTextRuns::indexForOffset(unsigned textOffset) const
     return notFound;
 }
 
+AXTextRunLineID AXTextRuns::lineIDForOffset(unsigned textOffset) const
+{
+    size_t runIndex = indexForOffset(textOffset);
+    return runIndex == notFound ? AXTextRunLineID() : lineID(runIndex);
+}
+
 unsigned AXTextRuns::runLengthSumTo(size_t index) const
 {
     unsigned length = 0;

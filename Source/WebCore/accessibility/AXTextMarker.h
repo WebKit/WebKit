@@ -40,7 +40,7 @@ enum class AXTextUnit : uint8_t {
     Sentence,
     Word,
 };
-enum class AXTextUnitBoundary : bool { Start, End, };
+enum class AXTextUnitBoundary : bool { Start, End };
 
 enum class LineRangeType : uint8_t {
     Current,
@@ -171,6 +171,9 @@ public:
     AXTextMarker findMarker(AXDirection, std::optional<AXID> = std::nullopt) const;
     // Starting from this text marker, creates a new position for the given direction and text unit type.
     AXTextMarker findMarker(AXDirection, AXTextUnit, AXTextUnitBoundary) const;
+    AXTextMarker previousLineStart() const { return findMarker(AXDirection::Previous, AXTextUnit::Line, AXTextUnitBoundary::Start); };
+    AXTextMarker nextLineEnd() const { return findMarker(AXDirection::Next, AXTextUnit::Line, AXTextUnitBoundary::End); };
+
     // Creates a range for the line this marker points to.
     AXTextMarkerRange lineRange(LineRangeType) const;
     // Given a character offset relative to this marker, find the next marker the offset points to.
@@ -184,11 +187,20 @@ public:
     AXTextMarker findLast() const { return findLastBefore(std::nullopt); }
     // Determines partial order by traversing forward and backwards to try the other marker.
     std::partial_ordering partialOrderByTraversal(const AXTextMarker&) const;
+    // The index of the line this text marker is on relative to the nearest editable ancestor (or start of the page if there are no editable ancestors).
+    // Returns -1 if the line couldn't be computed (i.e. because `this` is invalid).
+    int lineIndex() const;
 #endif // ENABLE(AX_THREAD_TEXT_APIS)
 
 private:
 #if ENABLE(AX_THREAD_TEXT_APIS)
     const AXTextRuns* runs() const;
+    // After resolving this marker to a text leaf, what line does the offset point to?
+    AXTextRunLineID lineID() const;
+    // Are we at the start or end of a line?
+    bool atLineBoundaryForDirection(AXDirection) const;
+    bool atLineStart() const { return atLineBoundaryForDirection(AXDirection::Previous); }
+    bool atLineEnd() const { return atLineBoundaryForDirection(AXDirection::Next); }
 #endif // ENABLE(AX_THREAD_TEXT_APIS)
 
     TextMarkerData m_data;
@@ -201,6 +213,7 @@ public:
     AXTextMarkerRange(const VisiblePositionRange&);
     AXTextMarkerRange(const std::optional<SimpleRange>&);
     AXTextMarkerRange(const AXTextMarker&, const AXTextMarker&);
+    AXTextMarkerRange(AXTextMarker&&, AXTextMarker&&);
 #if PLATFORM(MAC)
     AXTextMarkerRange(AXTextMarkerRangeRef);
 #endif
