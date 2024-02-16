@@ -489,7 +489,7 @@ void wgpuDeviceCreateComputePipelineAsyncWithBlock(WGPUDevice device, WGPUComput
 
 WGPUPipelineLayout wgpuDeviceCreatePipelineLayout(WGPUDevice device, const WGPUPipelineLayoutDescriptor* descriptor)
 {
-    return WebGPU::releaseToAPI(WebGPU::fromAPI(device).createPipelineLayout(*descriptor));
+    return WebGPU::releaseToAPI(WebGPU::fromAPI(device).createPipelineLayout(*descriptor, !descriptor->bindGroupLayouts));
 }
 
 WGPUQuerySet wgpuDeviceCreateQuerySet(WGPUDevice device, const WGPUQuerySetDescriptor* descriptor)
