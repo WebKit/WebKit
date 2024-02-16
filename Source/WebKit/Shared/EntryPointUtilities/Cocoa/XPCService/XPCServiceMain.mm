@@ -43,6 +43,10 @@
 #import <wtf/spi/darwin/SandboxSPI.h>
 #import <wtf/spi/darwin/XPCSPI.h>
 
+#if __has_include(<WebKitAdditions/DyldCallbackAdditions.h>)
+#import <WebKitAdditions/DyldCallbackAdditions.h>
+#endif
+
 namespace WebKit {
 
 static void setAppleLanguagesPreference()
@@ -146,6 +150,10 @@ void XPCServiceEventHandler(xpc_connection_t peer)
         if (!strcmp(messageName, "bootstrap")) {
             bool disableLogging = xpc_dictionary_get_bool(event, "disable-logging");
             initializeLogd(disableLogging);
+
+#if __has_include(<WebKitAdditions/DyldCallbackAdditions.h>)
+            register_for_dlsym_callbacks();
+#endif
 
 #if PLATFORM(IOS_FAMILY)
             auto containerEnvironmentVariables = xpc_dictionary_get_value(event, "ContainerEnvironmentVariables");
