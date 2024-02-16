@@ -134,6 +134,8 @@ public:
 
     BEXPORT void init(const char* seed);
 
+    BEXPORT bool isReady();
+
     BINLINE static TZoneHeapManager& getInstance()
     {
         if (!theTZoneHeapManager)
@@ -202,6 +204,7 @@ private:
 #define BTZONE_INIT(seed) bmalloc::api::TZoneHeapManager::getInstance().init(seed)
 #define BTZONE_REGISTER_TYPES(begin, end) bmalloc::api::TZoneHeapManager::getInstance().registerTZoneTypes(begin, end)
 #define BTZONE_REGISTRATION_DONE() bmalloc::api::TZoneHeapManager::getInstance().closeRegistration()
+#define BTZONE_IS_READY() bmalloc::api::TZoneHeapManager::getInstance().isReady()
 
 } } // namespace bmalloc::api
 
@@ -210,6 +213,7 @@ private:
 #define BTZONE_INIT(seed)
 #define BTZONE_REGISTER_TYPES(begin, end)
 #define BTZONE_REGISTRATION_DONE()
+#define BTZONE_IS_READY() true
 
 #endif // BUSE(LIBPAS) -> so end of !BUSE(LIBPAS)
 

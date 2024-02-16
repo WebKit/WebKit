@@ -41,9 +41,6 @@
 #include "JSScriptRefPrivate.h"
 #include "JSStringRefPrivate.h"
 #include "JSWeakPrivate.h"
-#if USE(TZONE_MALLOC)
-#include <_simple.h>
-#endif
 #if !OS(WINDOWS)
 #include <libgen.h>
 #endif
@@ -80,10 +77,6 @@
 
 #if JSC_OBJC_API_ENABLED
 void testObjectiveCAPI(const char*);
-#endif
-
-#if USE(TZONE_MALLOC)
-void WTFTZoneInit(const char*);
 #endif
 
 void configureJSCForTesting(void);
@@ -1437,13 +1430,7 @@ static bool samplingProfilerTest(void)
     return false;
 }
 
-#if USE(TZONE_MALLOC)
-#define TZONE_EXTRA_MAIN_ARGS , const char** envp, const char **darwinEnvp
-#else
-#define TZONE_EXTRA_MAIN_ARGS
-#endif
-
-int main(int argc, char* argv[] TZONE_EXTRA_MAIN_ARGS)
+int main(int argc, char* argv[])
 {
 #if OS(WINDOWS)
     // Cygwin calls SetErrorMode(SEM_FAILCRITICALERRORS), which we will inherit. This is bad for
@@ -1452,11 +1439,6 @@ int main(int argc, char* argv[] TZONE_EXTRA_MAIN_ARGS)
     SetErrorMode(0);
 #endif
 
-#if USE(TZONE_MALLOC)
-    UNUSED_PARAM(envp);
-    const char* boothash = _simple_getenv(darwinEnvp, "executable_boothash");
-    WTFTZoneInit(boothash);
-#endif
     configureJSCForTesting();
 
 #if !OS(WINDOWS)

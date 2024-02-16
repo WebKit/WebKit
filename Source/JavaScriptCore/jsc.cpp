@@ -3417,7 +3417,7 @@ int main(int argc, char** argv WTF_TZONE_EXTRA_MAIN_ARGS)
 #endif
 
 #if USE(TZONE_MALLOC)
-    const char* boothash = _simple_getenv(darwinEnvp, "executable_boothash");
+    const char* boothash = GET_TZONE_SEED_FROM_ENV(darwinEnvp);
     WTF_TZONE_INIT(boothash);
 #endif
 

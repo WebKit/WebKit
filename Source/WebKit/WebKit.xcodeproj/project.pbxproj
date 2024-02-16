@@ -1558,6 +1558,7 @@
 		637281A321ADC744009E0DE6 /* WKDownloadProgress.mm in Sources */ = {isa = PBXBuildFile; fileRef = 637281A121ADC744009E0DE6 /* WKDownloadProgress.mm */; };
 		63C32C261E9810D900699BD0 /* _WKGeolocationPosition.h in Headers */ = {isa = PBXBuildFile; fileRef = 63C32C241E9810D900699BD0 /* _WKGeolocationPosition.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		63C32C281E98119000699BD0 /* _WKGeolocationPositionInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 63C32C271E98119000699BD0 /* _WKGeolocationPositionInternal.h */; };
+		65F85BC32B7DC92700D0AC74 /* RegisterTZoneTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 65FE73BE2B7DC62C00C5CDAF /* RegisterTZoneTypes.h */; };
 		6A5080BF1F0EDAAA00E617C5 /* WKWindowFeaturesPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 6A5080BE1F0EDAAA00E617C5 /* WKWindowFeaturesPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6BD05865220CE8C2000BED5C /* PrivateClickMeasurementManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 6BD05863220CE8C2000BED5C /* PrivateClickMeasurementManager.h */; };
 		6BE969C11E54D452008B7483 /* corePrediction_model in Resources */ = {isa = PBXBuildFile; fileRef = 6BE969C01E54D452008B7483 /* corePrediction_model */; };
@@ -6267,6 +6268,8 @@
 		63FABE191E970D65003011D5 /* _WKGeolocationCoreLocationProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKGeolocationCoreLocationProvider.h; sourceTree = "<group>"; };
 		6546A82913000164000CEB1C /* InjectedBundlePageResourceLoadClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundlePageResourceLoadClient.cpp; sourceTree = "<group>"; };
 		6546A82A13000164000CEB1C /* InjectedBundlePageResourceLoadClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundlePageResourceLoadClient.h; sourceTree = "<group>"; };
+		65FE73BD2B7DC62C00C5CDAF /* RegisterTZoneTypes.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RegisterTZoneTypes.cpp; sourceTree = "<group>"; };
+		65FE73BE2B7DC62C00C5CDAF /* RegisterTZoneTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RegisterTZoneTypes.h; sourceTree = "<group>"; };
 		6A5080BE1F0EDAAA00E617C5 /* WKWindowFeaturesPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKWindowFeaturesPrivate.h; sourceTree = "<group>"; };
 		6BD05863220CE8C2000BED5C /* PrivateClickMeasurementManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrivateClickMeasurementManager.h; sourceTree = "<group>"; };
 		6BD05864220CE8C2000BED5C /* PrivateClickMeasurementManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PrivateClickMeasurementManager.cpp; sourceTree = "<group>"; };
@@ -14679,6 +14682,8 @@
 				7AE42B432954E8C200B20510 /* APIURLResponse.serialization.in */,
 				F6113E24126CE1820057D0A7 /* APIUserContentURLPattern.h */,
 				FA9AFA652B224DE400953DC5 /* APIUserContentURLPattern.serialization.in */,
+				65FE73BD2B7DC62C00C5CDAF /* RegisterTZoneTypes.cpp */,
+				65FE73BE2B7DC62C00C5CDAF /* RegisterTZoneTypes.h */,
 			);
 			path = API;
 			sourceTree = "<group>";
@@ -16305,6 +16310,7 @@
 				7BE9326327F5C75A00D5FEFB /* ReceiverMatcher.h in Headers */,
 				950FECF4285027200002DE4E /* RecurringPaymentRequest.h in Headers */,
 				57FD318222B3515E008D0E8B /* RedirectSOAuthorizationSession.h in Headers */,
+				65F85BC32B7DC92700D0AC74 /* RegisterTZoneTypes.h in Headers */,
 				71E29A342B20610C0010F3C9 /* RemoteAcceleratedEffectStack.h in Headers */,
 				9B1229D223FF2BCC008CA751 /* RemoteAudioDestinationIdentifier.h in Headers */,
 				9B1229CD23FF25F2008CA751 /* RemoteAudioDestinationManager.h in Headers */,

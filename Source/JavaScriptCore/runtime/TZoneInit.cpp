@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,39 +20,33 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#include "config.h"
+#include "TZoneInit.h"
 
-#include <wtf/Platform.h>
+#include "RegisterTZoneTypes.h"
+#include <wtf/TZoneMalloc.h>
+#include <wtf/TZoneMallocInitialization.h>
 
-#if USE(SYSTEM_MALLOC) || !USE(TZONE_MALLOC)
+using namespace JSC;
 
-#define WTF_TZONE_EXTRA_MAIN_ARGS
-#define WTF_TZONE_EXTRA_MAIN_PARAMS
-#define WTF_TZONE_INIT(seed)
-#define WTF_TZONE_REGISTRATION_DONE()
-#define WTF_TZONE_IS_READY() true
-
-#else
-
-#include <bmalloc/TZoneHeapManager.h>
-
-#if USE(DARWIN_TZONE_SEED)
-#include <WebKitAdditions/TZoneAdditions.h>
-#else
-#define GET_TZONE_SEED_FROM_ENV(x) nullptr
+void TZoneInit([[maybe_unused]] const char** darwinEnvp)
+{
+#if USE(TZONE_MALLOC)
+    const char* boothash = GET_TZONE_SEED_FROM_ENV(darwinEnvp);
+    WTF_TZONE_INIT(boothash);
+    JSC::registerTZoneTypes();
 #endif
+}
 
-#if !BUSE(TZONE)
-#error "TZones enabled in WTF, but not enabled in bmalloc"
-#endif
+void TZoneRegisterTypes([[maybe_unused]] const TzoneBmallocType* begin, [[maybe_unused]] const TzoneBmallocType* end)
+{
+    WTF_TZONE_REGISTER_TYPES(begin, end);
+}
 
-#define WTF_TZONE_EXTRA_MAIN_ARGS , [[maybe_unused]] const char**, [[maybe_unused]] const char** darwinEnvp
-#define WTF_TZONE_EXTRA_MAIN_PARAMS , nullptr, darwinEnvp
-#define WTF_TZONE_INIT(seed) BTZONE_INIT(seed)
-#define WTF_TZONE_REGISTRATION_DONE() BTZONE_REGISTRATION_DONE()
-#define WTF_TZONE_IS_READY() BTZONE_IS_READY()
-
-#endif
+void TZoneRegisterationDone()
+{
+    WTF_TZONE_REGISTRATION_DONE();
+}

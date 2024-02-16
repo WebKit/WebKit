@@ -27,10 +27,17 @@
 
 #if BUSE(TZONE)
 
+#include "BPlatform.h"
 #include "Sizes.h"
 #include "VMAllocate.h"
 #include "bmalloc.h"
 #include "bmalloc_heap_inlines.h"
+
+#if BOS(DARWIN)
+#include <sys/sysctl.h>
+#include <sys/time.h>
+#include <sys/types.h>
+#endif
 
 namespace bmalloc { namespace api {
 
@@ -67,9 +74,11 @@ void TZoneHeapManager::init(const char* seed)
     RELEASE_BASSERT(m_state == TZoneHeapManager::Uninitialized);
 
     if (verbose)
-        fprintf(stderr, "TZoneHeapManager(seed: %s)\n", seed ? seed : "<null>");
+        fprintf(stderr, "TZoneHeapManager::init(seed: %s)", seed ? seed : "<null>");
 
     if (seed && seed[0]) {
+        if (verbose)
+            fprintf(stderr, " using provided seed");
         // Convert seed string to hex values.
         enum { HighNibble, LowNibble } currentNibble = HighNibble;
         unsigned char currentByte = 0;
@@ -86,11 +95,62 @@ void TZoneHeapManager::init(const char* seed)
             }
         }
     } else {
+#if BOS(DARWIN)
+        if (verbose)
+            fprintf(stderr, " using boot time");
+
+#define MIB_SIZE 2
+
+        int mib[MIB_SIZE];
+        size_t size;
+
+        struct timeval bootTime;
+        mib[0] = CTL_KERN;
+        mib[1] = KERN_BOOTTIME;
+        size = sizeof(bootTime);
+        int result = sysctl(mib, MIB_SIZE, &bootTime, &size, nullptr, 0);
+        BUNUSED(result);
+        BASSERT(!result);
+
+        if (verbose)
+            fprintf(stderr, "boottime: { tv_sec: 0x%lx  tv_usec: )x%x }", bootTime.tv_sec, bootTime.tv_usec);
+
+        // Convert bootTime to hex values.
+        unsigned i = CC_SHA1_DIGEST_LENGTH;
+        for (size_t byteCount = 0; i && byteCount < sizeof(bootTime.tv_usec); ++byteCount, --i) {
+            m_tzoneKey.seed[i - 1] = bootTime.tv_usec & 0xff;
+            bootTime.tv_usec >>= 8;
+        }
+
+        for (size_t byteCount = 0; i && byteCount < sizeof(bootTime.tv_sec); ++byteCount, --i) {
+            m_tzoneKey.seed[i - 1] = bootTime.tv_sec & 0xff;
+            bootTime.tv_sec >>= 8;
+        }
+
+        for (; i; --i)
+            m_tzoneKey.seed[i - 1] = 0;
+#else // OS(DARWIN) => !OS(DARWIN)
+        if (verbose)
+            fprintf(stderr, " using static seed");
+
         const unsigned char defaultSeed[CC_SHA1_DIGEST_LENGTH] = { "DefaultSeed\x12\x34\x56\x78\x9a\xbc\xde\xf0" };
         memcpy(m_tzoneKey.seed, defaultSeed, CC_SHA1_DIGEST_LENGTH);
+#endif // OS(DARWIN) => !OS(DARWIN)
+    }
+
+    if (verbose) {
+        fprintf(stderr, "\n    tzone seed: {");
+        for (unsigned i = 0; i < CC_SHA1_DIGEST_LENGTH; ++i)
+            fprintf(stderr, " %x",  m_tzoneKey.seed[i]);
+        fprintf(stderr, " }\n");
     }
 
     m_state = TZoneHeapManager::Seeded;
+}
+
+bool TZoneHeapManager::isReady()
+{
+    return m_state == TZoneHeapManager::TypesRegistered;
 }
 
 void TZoneHeapManager::initTypenameTemplate()
@@ -239,8 +299,12 @@ pas_heap_ref* TZoneHeapManager::heapRefForTZoneType(bmalloc_type* classType)
 
     if (m_heapRefsBySizeAndAlignment.contains(typeSizeAlign))
         bucketsForSize = m_heapRefsBySizeAndAlignment.get(typeSizeAlign);
-    else
+    else if (m_typeCountBySizeAndAlignment.contains(typeSizeAlign))
         bucketsForSize = populateBucketsForSizeClass(lock, typeSizeAlign);
+    else {
+        // This typically means classType wasn't registered.
+        RELEASE_BASSERT_NOT_REACHED();
+    }
 
     unsigned bucket = tzoneBucketForKey(lock, classType, bucketsForSize->numberOfBuckets);
 

@@ -53,4 +53,20 @@
 
 #endif
 
+#if !USE(WK_TZONE_MALLOC)
 
+#define WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(typeName)WTF_MAKE_FAST_ALLOCATED
+#define WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(typeName) struct WTFIsoMallocSemicolonifier##typeName { }
+#define WTF_MAKE_WK_TZONE_ALLOCATED_IMPL_NESTED(typeName, type) truct WTFIsoMallocSemicolonifier##typeName { }
+#define WTF_MAKE_WK_TZONE_ALLOCATED_IMPL_TEMPLATE(typeName) struct WTFIsoMallocSemicolonifier##typeName { }
+#define WTF_MAKE_WK_TZONE_ALLOCATED_IMPL_NESTED_TEMPLATE(typeName, type) struct WTFIsoMallocSemicolonifier##typeName { }
+
+#else
+
+#define WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(typeName) WTF_MAKE_TZONE_ALLOCATED_INLINE(typeName)
+#define WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(typeName) WTF_MAKE_TZONE_ALLOCATED_IMPL(typeName)
+#define WTF_MAKE_WK_TZONE_ALLOCATED_IMPL_NESTED(typeName, type) WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(typeName, type)
+#define WTF_MAKE_WK_TZONE_ALLOCATED_IMPL_TEMPLATE(typeName) WTF_MAKE_TZONE_ALLOCATED_IMPL_TEMPLATE(typeName)
+#define WTF_MAKE_WK_TZONE_ALLOCATED_IMPL_NESTED_TEMPLATE(typeName, type) WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED_TEMPLATE(typeName, type)
+
+#endif

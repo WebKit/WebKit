@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,39 +20,34 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
 #pragma once
 
-#include <wtf/Platform.h>
+#include "JSExportMacros.h"
 
-#if USE(SYSTEM_MALLOC) || !USE(TZONE_MALLOC)
-
-#define WTF_TZONE_EXTRA_MAIN_ARGS
-#define WTF_TZONE_EXTRA_MAIN_PARAMS
-#define WTF_TZONE_INIT(seed)
-#define WTF_TZONE_REGISTRATION_DONE()
-#define WTF_TZONE_IS_READY() true
-
-#else
-
-#include <bmalloc/TZoneHeapManager.h>
-
-#if USE(DARWIN_TZONE_SEED)
-#include <WebKitAdditions/TZoneAdditions.h>
-#else
-#define GET_TZONE_SEED_FROM_ENV(x) nullptr
+#ifdef __cplusplus
+extern "C" {
 #endif
 
-#if !BUSE(TZONE)
-#error "TZones enabled in WTF, but not enabled in bmalloc"
+// The definition here of TzoneBmallocType matches bmalloc_type in bmalloc/bmalloc_type.h.
+// It is provided here so that we don't violate layering in the API file.
+struct TzoneBmallocType;
+typedef struct TzoneBmallocType TzoneBmallocType;
+
+struct TzoneBmallocType {
+    unsigned size;
+    unsigned alignment;
+    const char* name;
+};
+
+JS_EXPORT_PRIVATE void TZoneInit(const char** darwinEnvp);
+JS_EXPORT_PRIVATE void TZoneRegisterTypes(const TzoneBmallocType* begin, const TzoneBmallocType* end);
+JS_EXPORT_PRIVATE void TZoneRegisterationDone(void);
+
+#ifdef __cplusplus
+}
 #endif
 
-#define WTF_TZONE_EXTRA_MAIN_ARGS , [[maybe_unused]] const char**, [[maybe_unused]] const char** darwinEnvp
-#define WTF_TZONE_EXTRA_MAIN_PARAMS , nullptr, darwinEnvp
-#define WTF_TZONE_INIT(seed) BTZONE_INIT(seed)
-#define WTF_TZONE_REGISTRATION_DONE() BTZONE_REGISTRATION_DONE()
-#define WTF_TZONE_IS_READY() BTZONE_IS_READY()
 
-#endif
