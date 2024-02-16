@@ -63,6 +63,9 @@ class FontDescription;
 class GlyphPage;
 
 struct GlyphData;
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+struct MultiRepresentationHEICMetrics;
+#endif
 
 enum FontVariant : uint8_t { AutoVariant, NormalVariant, SmallCapsVariant, EmphasisMarkVariant, BrokenIdeographVariant };
 enum Pitch : uint8_t { UnknownPitch, FixedPitch, VariablePitch };
@@ -212,6 +215,9 @@ public:
     bool supportsAllSmallCaps() const;
     bool supportsPetiteCaps() const;
     bool supportsAllPetiteCaps() const;
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+    MultiRepresentationHEICMetrics metricsForMultiRepresentationHEIC() const;
+#endif
 #endif
 
     bool canRenderCombiningCharacterSequence(StringView) const;

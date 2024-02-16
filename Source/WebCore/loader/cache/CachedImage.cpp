@@ -29,6 +29,7 @@
 #include "CachedResourceClient.h"
 #include "CachedResourceClientWalker.h"
 #include "CachedResourceLoader.h"
+#include "Font.h"
 #include "FrameLoader.h"
 #include "FrameLoaderTypes.h"
 #include "LocalFrame.h"
@@ -37,6 +38,7 @@
 #include "MIMETypeRegistry.h"
 #include "MemoryCache.h"
 #include "RenderElement.h"
+#include "RenderImage.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGImage.h"
 #include "SecurityOrigin.h"
@@ -52,6 +54,10 @@
 
 #if USE(CG)
 #include "PDFDocumentImage.h"
+#endif
+
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+#include "MultiRepresentationHEICMetrics.h"
 #endif
 
 namespace WebCore {
@@ -313,6 +319,13 @@ FloatSize CachedImage::imageSizeForRenderer(const RenderElement* renderer, SizeT
     RefPtr image = m_image;
     if (!image)
         return { };
+
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+    if (CheckedPtr renderImage = dynamicDowncast<RenderImage>(renderer); renderImage && renderImage->isMultiRepresentationHEIC()) {
+        auto metrics = renderImage->style().fontCascade().primaryFont().metricsForMultiRepresentationHEIC();
+        return metrics.size();
+    }
+#endif
 
     if (image->drawsSVGImage() && sizeType == UsedSize)
         return m_svgImageCache->imageSizeForRenderer(renderer);
