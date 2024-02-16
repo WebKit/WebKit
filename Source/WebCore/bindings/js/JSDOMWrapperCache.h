@@ -209,7 +209,7 @@ template<typename DOMClass> inline void setSubclassStructureIfNeeded(JSC::JSGlob
 
     using WrapperClass = typename JSDOMWrapperConverterTraits<DOMClass>::WrapperClass;
 
-    Ref vm = lexicalGlobalObject->vm();
+    JSC::VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     auto* functionGlobalObject = JSC::getFunctionRealm(lexicalGlobalObject, newTarget);

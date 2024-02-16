@@ -51,7 +51,7 @@ public:
     
     static JSC::JSValue call(JSC::JSGlobalObject* lexicalGlobalObject, JSC::JSValue functionObject, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args, NakedPtr<JSC::Exception>& returnedException)
     {
-        Ref vm = JSC::getVM(lexicalGlobalObject);
+        JSC::VM& vm = JSC::getVM(lexicalGlobalObject);
         auto scope = DECLARE_CATCH_SCOPE(vm);
         JSC::JSValue returnValue;
         {
@@ -64,7 +64,7 @@ public:
 
     static JSC::JSValue evaluate(JSC::JSGlobalObject* lexicalGlobalObject, const JSC::SourceCode& source, JSC::JSValue thisValue, NakedPtr<JSC::Exception>& returnedException)
     {
-        Ref vm = JSC::getVM(lexicalGlobalObject);
+        JSC::VM& vm = JSC::getVM(lexicalGlobalObject);
         auto scope = DECLARE_CATCH_SCOPE(vm);
         JSC::JSValue returnValue;
         {
@@ -83,7 +83,7 @@ public:
 
     static JSC::JSValue profiledCall(JSC::JSGlobalObject* lexicalGlobalObject, JSC::ProfilingReason reason, JSC::JSValue functionObject, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args, NakedPtr<JSC::Exception>& returnedException)
     {
-        Ref vm = JSC::getVM(lexicalGlobalObject);
+        JSC::VM& vm = JSC::getVM(lexicalGlobalObject);
         auto scope = DECLARE_CATCH_SCOPE(vm);
         JSC::JSValue returnValue;
         {
@@ -96,7 +96,7 @@ public:
 
     static JSC::JSValue profiledEvaluate(JSC::JSGlobalObject* lexicalGlobalObject, JSC::ProfilingReason reason, const JSC::SourceCode& source, JSC::JSValue thisValue, NakedPtr<JSC::Exception>& returnedException)
     {
-        Ref vm = JSC::getVM(lexicalGlobalObject);
+        JSC::VM& vm = JSC::getVM(lexicalGlobalObject);
         auto scope = DECLARE_CATCH_SCOPE(vm);
         JSC::JSValue returnValue;
         {
@@ -133,7 +133,7 @@ public:
 
     static JSC::JSValue linkAndEvaluateModule(JSC::JSGlobalObject& lexicalGlobalObject, const JSC::Identifier& moduleKey, JSC::JSValue scriptFetcher, NakedPtr<JSC::Exception>& returnedException)
     {
-        Ref vm = JSC::getVM(&lexicalGlobalObject);
+        JSC::VM& vm = JSC::getVM(&lexicalGlobalObject);
         auto scope = DECLARE_CATCH_SCOPE(vm);
         JSC::JSValue returnValue;
         {
@@ -141,7 +141,7 @@ public:
             returnValue = JSC::linkAndEvaluateModule(&lexicalGlobalObject, moduleKey, scriptFetcher);
             if (UNLIKELY(scope.exception())) {
                 returnedException = scope.exception();
-                if (!vm->hasPendingTerminationException())
+                if (!vm.hasPendingTerminationException())
                     scope.clearException();
                 return JSC::jsUndefined();
             }
@@ -162,7 +162,7 @@ private:
 
     ~JSExecState()
     {
-        Ref vm = currentState()->vm();
+        JSC::VM& vm = currentState()->vm();
         auto scope = DECLARE_THROW_SCOPE(vm);
         scope.assertNoExceptionExceptTermination();
 
@@ -174,7 +174,7 @@ private:
         if (didExitJavaScript) {
             didLeaveScriptContext(lexicalGlobalObject);
             // We need to clear any exceptions from microtask drain.
-            if (!vm->hasPendingTerminationException())
+            if (!vm.hasPendingTerminationException())
                 scope.clearException();
         }
     }

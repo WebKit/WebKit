@@ -46,7 +46,7 @@ auto DOMPromise::whenSettled(std::function<void()>&& callback) -> IsCallbackRegi
 auto DOMPromise::whenPromiseIsSettled(JSDOMGlobalObject* globalObject, JSC::JSObject* promise, Function<void()>&& callback) -> IsCallbackRegistered
 {
     auto& lexicalGlobalObject = *globalObject;
-    Ref vm = lexicalGlobalObject.vm();
+    auto& vm = lexicalGlobalObject.vm();
     JSLockHolder lock(vm);
     auto* handler = JSC::JSNativeStdFunction::create(vm, globalObject, 1, String { }, [callback = WTFMove(callback)] (JSGlobalObject*, CallFrame*) mutable {
         callback();
@@ -54,10 +54,10 @@ auto DOMPromise::whenPromiseIsSettled(JSDOMGlobalObject* globalObject, JSC::JSOb
     });
 
     auto scope = DECLARE_THROW_SCOPE(vm);
-    const JSC::Identifier& privateName = vm->propertyNames->builtinNames().thenPrivateName();
+    const JSC::Identifier& privateName = vm.propertyNames->builtinNames().thenPrivateName();
     auto thenFunction = promise->get(&lexicalGlobalObject, privateName);
 
-    EXCEPTION_ASSERT(!scope.exception() || vm->hasPendingTerminationException());
+    EXCEPTION_ASSERT(!scope.exception() || vm.hasPendingTerminationException());
     if (scope.exception())
         return IsCallbackRegistered::No;
 
@@ -72,7 +72,7 @@ auto DOMPromise::whenPromiseIsSettled(JSDOMGlobalObject* globalObject, JSC::JSOb
     ASSERT(callData.type != JSC::CallData::Type::None);
     call(&lexicalGlobalObject, thenFunction, callData, promise, arguments);
 
-    EXCEPTION_ASSERT(!scope.exception() || vm->hasPendingTerminationException());
+    EXCEPTION_ASSERT(!scope.exception() || vm.hasPendingTerminationException());
     return scope.exception() ? IsCallbackRegistered::No : IsCallbackRegistered::Yes;
 }
 

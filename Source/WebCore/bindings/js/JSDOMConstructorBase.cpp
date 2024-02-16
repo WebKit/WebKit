@@ -32,7 +32,7 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSDOMConstructorBase);
 
 JSC_DEFINE_HOST_FUNCTION(callThrowTypeErrorForJSDOMConstructor, (JSGlobalObject* globalObject, CallFrame*))
 {
-    Ref vm = globalObject->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     throwTypeError(globalObject, scope, "Constructor requires 'new' operator"_s);
     return JSValue::encode(jsNull());
@@ -40,7 +40,7 @@ JSC_DEFINE_HOST_FUNCTION(callThrowTypeErrorForJSDOMConstructor, (JSGlobalObject*
 
 JSC_DEFINE_HOST_FUNCTION(callThrowTypeErrorForJSDOMConstructorNotConstructable, (JSC::JSGlobalObject* globalObject, JSC::CallFrame*))
 {
-    Ref vm = globalObject->vm();
+    JSC::VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSC::throwTypeError(globalObject, scope, "Illegal constructor"_s);
     return JSC::JSValue::encode(JSC::jsNull());

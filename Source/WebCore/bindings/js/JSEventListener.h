@@ -112,7 +112,7 @@ inline JSC::JSValue windowEventHandlerAttribute(LocalDOMWindow& window, const At
 
 inline JSC::JSValue windowEventHandlerAttribute(HTMLElement& element, const AtomString& eventType, DOMWrapperWorld& isolatedWorld)
 {
-    if (RefPtr domWindow = element.document().domWindow())
+    if (auto* domWindow = element.document().domWindow())
         return eventHandlerAttribute(*domWindow, eventType, isolatedWorld);
     return JSC::jsNull();
 }
@@ -126,7 +126,7 @@ inline void setWindowEventHandlerAttribute(LocalDOMWindow& window, const AtomStr
 template<typename JSMaybeErrorEventListener>
 inline void setWindowEventHandlerAttribute(HTMLElement& element, const AtomString& eventType, JSC::JSValue listener, JSC::JSObject& jsEventTarget)
 {
-    if (RefPtr domWindow = element.document().domWindow())
+    if (auto* domWindow = element.document().domWindow())
         domWindow->setAttributeEventListener<JSMaybeErrorEventListener>(eventType, listener, *jsEventTarget.globalObject());
 }
 
@@ -137,8 +137,8 @@ inline JSC::JSObject* JSEventListener::ensureJSFunction(ScriptExecutionContext& 
     if (UNLIKELY(!m_isolatedWorld))
         return nullptr;
 
-    Ref vm = m_isolatedWorld->vm();
-    Ref protectedThis { *this };
+    JSC::VM& vm = m_isolatedWorld->vm();
+    Ref protect = const_cast<JSEventListener&>(*this);
     JSC::EnsureStillAliveScope protectedWrapper(m_wrapper.get());
 
     if (!m_isInitialized) {
@@ -148,7 +148,7 @@ inline JSC::JSObject* JSEventListener::ensureJSFunction(ScriptExecutionContext& 
             m_jsFunction = JSC::Weak<JSC::JSObject>(function);
             // When JSFunction is initialized, initializeJSFunction must ensure that m_wrapper should be initialized too.
             ASSERT(m_wrapper);
-            vm->writeBarrier(m_wrapper.get(), function);
+            vm.writeBarrier(m_wrapper.get(), function);
             m_isInitialized = true;
         }
     }

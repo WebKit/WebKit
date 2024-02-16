@@ -35,7 +35,7 @@ inline bool shouldAllowAccessToDOMWindow(JSC::JSGlobalObject* lexicalGlobalObjec
 {
     if (LIKELY(lexicalGlobalObject == &target))
         return true;
-    return shouldAllowAccessToDOMWindow(lexicalGlobalObject, target.protectedWrapped(), reportingOption);
+    return shouldAllowAccessToDOMWindow(lexicalGlobalObject, target.wrapped(), reportingOption);
 }
 
 } // namespace BindingSecurity

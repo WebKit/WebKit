@@ -60,11 +60,6 @@ Frame::~Frame()
     m_navigationScheduler->cancel();
 }
 
-RefPtr<DOMWindow> Frame::protectedWindow() const
-{
-    return virtualWindow();
-}
-
 std::optional<PageIdentifier> Frame::pageID() const
 {
     if (auto* page = this->page())

@@ -64,7 +64,7 @@ using namespace JSC;
 
 static bool get(JSGlobalObject& lexicalGlobalObject, JSValue object, const String& keyPathElement, JSValue& result)
 {
-    Ref vm = lexicalGlobalObject.vm();
+    VM& vm = lexicalGlobalObject.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (object.isString() && keyPathElement == "length"_s) {
@@ -142,8 +142,8 @@ JSValue toJS(JSGlobalObject& lexicalGlobalObject, JSGlobalObject& globalObject, 
         return jsUndefined();
     }
 
-    Ref vm = lexicalGlobalObject.vm();
-    Locker<JSLock> locker(vm->apiLock());
+    VM& vm = lexicalGlobalObject.vm();
+    Locker<JSLock> locker(vm.apiLock());
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     switch (key->type()) {
@@ -170,7 +170,7 @@ JSValue toJS(JSGlobalObject& lexicalGlobalObject, JSGlobalObject& globalObject, 
         if (!structure)
             return jsNull();
 
-        return JSArrayBuffer::create(vm, structure, WTFMove(arrayBuffer));
+        return JSArrayBuffer::create(lexicalGlobalObject.vm(), structure, WTFMove(arrayBuffer));
     }
     case IndexedDB::KeyType::String:
         return jsStringWithCache(vm, key->string());
@@ -195,7 +195,7 @@ static const size_t maximumDepth = 2000;
 
 static RefPtr<IDBKey> createIDBKeyFromValue(JSGlobalObject& lexicalGlobalObject, JSValue value, Vector<JSArray*>& stack)
 {
-    Ref vm = lexicalGlobalObject.vm();
+    VM& vm = lexicalGlobalObject.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (value.isNumber() && !std::isnan(value.asNumber()))
@@ -292,13 +292,12 @@ static JSValue ensureNthValueOnKeyPath(JSGlobalObject& lexicalGlobalObject, JSVa
     JSValue currentValue(rootValue);
 
     ASSERT(index <= keyPathElements.size());
-    Ref vm = lexicalGlobalObject.vm();
-    for (size_t i = 0; i < index; ++i) {
+    for (size_t i = 0; i < index; i++) {
         JSValue parentValue(currentValue);
         const String& keyPathElement = keyPathElements[i];
         if (!get(lexicalGlobalObject, parentValue, keyPathElement, currentValue)) {
             JSObject* object = constructEmptyObject(&lexicalGlobalObject);
-            if (!set(vm, parentValue, keyPathElement, JSValue(object)))
+            if (!set(lexicalGlobalObject.vm(), parentValue, keyPathElement, JSValue(object)))
                 return jsUndefined();
             currentValue = JSValue(object);
         }
@@ -404,13 +403,12 @@ static JSValue deserializeIDBValueToJSValue(JSGlobalObject& lexicalGlobalObject,
     if (data.isEmpty())
         return jsNull();
 
-    Ref serializedValue = SerializedScriptValue::createFromWireBytes(Vector<uint8_t>(data));
+    auto serializedValue = SerializedScriptValue::createFromWireBytes(Vector<uint8_t>(data));
 
-    Ref apiLock = lexicalGlobalObject.vm().apiLock();
-    apiLock->lock();
+    lexicalGlobalObject.vm().apiLock().lock();
     Vector<RefPtr<MessagePort>> messagePorts;
     JSValue result = serializedValue->deserialize(lexicalGlobalObject, &globalObject, messagePorts, value.blobURLs(), value.blobFilePaths(), SerializationErrorMode::NonThrowing);
-    apiLock->unlock();
+    lexicalGlobalObject.vm().apiLock().unlock();
 
     return result;
 }
@@ -446,7 +444,7 @@ static IndexKey::Data createKeyPathArray(JSGlobalObject& lexicalGlobalObject, JS
         if (objectStoreKeyPath && std::holds_alternative<String>(objectStoreKeyPath.value()) && IDBKeyPath(string) == objectStoreKeyPath.value())
             return objectStoreKey;
 
-        RefPtr idbKey = internalCreateIDBKeyFromScriptValueAndKeyPath(lexicalGlobalObject, value, string);
+        auto idbKey = internalCreateIDBKeyFromScriptValueAndKeyPath(lexicalGlobalObject, value, string);
         if (!idbKey)
             return nullptr;
 
@@ -491,8 +489,7 @@ IndexIDToIndexKeyMap generateIndexKeyMapForValueIsolatedCopy(JSC::JSGlobalObject
     if (!indexCount)
         return IndexIDToIndexKeyMap { };
 
-    Ref vm = lexicalGlobalObject.vm();
-    JSLockHolder locker(vm);
+    JSLockHolder locker(lexicalGlobalObject.vm());
     auto jsValue = deserializeIDBValueToJSValue(lexicalGlobalObject, value);
     if (jsValue.isUndefinedOrNull())
         return IndexIDToIndexKeyMap { };
@@ -519,10 +516,9 @@ std::optional<JSC::JSValue> deserializeIDBValueWithKeyInjection(JSGlobalObject& 
     if (jsValue.isUndefined() || !keyPath || !std::holds_alternative<String>(keyPath.value()) || !isIDBKeyPathValid(keyPath.value()))
         return jsValue;
 
-    Ref vm = lexicalGlobalObject.vm();
-    JSLockHolder locker(vm);
+    JSLockHolder locker(lexicalGlobalObject.vm());
     if (!injectIDBKeyIntoScriptValue(lexicalGlobalObject, key, jsValue, keyPath.value())) {
-        auto throwScope = DECLARE_THROW_SCOPE(vm);
+        auto throwScope = DECLARE_THROW_SCOPE(lexicalGlobalObject.vm());
         propagateException(lexicalGlobalObject, throwScope, Exception(ExceptionCode::UnknownError, "Cannot inject key into script value"_s));
         return std::nullopt;
     }
@@ -563,18 +559,17 @@ private:
             return;
 
         ASSERT(!m_globalObject);
-        Ref vm = JSC::VM::create();
-        m_vm = vm.copyRef();
-        vm->heap.acquireAccess();
-        JSVMClientData::initNormalWorld(vm.ptr(), WorkerThreadType::Worklet);
+        m_vm = JSC::VM::create();
+        m_vm->heap.acquireAccess();
+        JSVMClientData::initNormalWorld(m_vm.get(), WorkerThreadType::Worklet);
 
-        JSC::JSLockHolder locker(vm.ptr());
-        m_globalObject.set(vm, JSIDBSerializationGlobalObject::create(vm, JSIDBSerializationGlobalObject::createStructure(vm, JSC::jsNull()), normalWorld(vm)));
+        JSC::JSLockHolder locker(m_vm.get());
+        m_globalObject.set(*m_vm, JSIDBSerializationGlobalObject::create(*m_vm, JSIDBSerializationGlobalObject::createStructure(*m_vm, JSC::jsNull()), normalWorld(*m_vm)));
     }
 
     RefPtr<JSC::VM> m_vm;
     JSC::Strong<JSIDBSerializationGlobalObject> m_globalObject;
-    Thread& m_thread; // FIXME: Should use a smart pointer.
+    Thread& m_thread;
 };
 
 void callOnIDBSerializationThreadAndWait(Function<void(JSC::JSGlobalObject&)>&& function)

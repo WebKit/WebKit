@@ -37,7 +37,7 @@ using namespace JSC;
 
 JSC::EncodedJSValue constructJSExtendableMessageEvent(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame& callFrame)
 {
-    Ref vm = lexicalGlobalObject->vm();
+    VM& vm = lexicalGlobalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
 
@@ -81,7 +81,7 @@ JSValue JSExtendableMessageEvent::data(JSGlobalObject& lexicalGlobalObject) cons
         result = jsNull();
 
     // Save the result so we don't have to deserialize the value again.
-    m_data.set(Ref { lexicalGlobalObject.vm() }, this, result);
+    m_data.set(lexicalGlobalObject.vm(), this, result);
     return result;
 }
 

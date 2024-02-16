@@ -35,7 +35,7 @@ namespace WebCore {
 
 static ExceptionOr<JSC::JSValue> invokeWritableStreamFunction(JSC::JSGlobalObject& globalObject, const JSC::Identifier& identifier, const JSC::MarkedArgumentBuffer& arguments)
 {
-    Ref vm = globalObject.vm();
+    JSC::VM& vm = globalObject.vm();
     JSC::JSLockHolder lock(vm);
 
     auto scope = DECLARE_CATCH_SCOPE(vm);
@@ -54,8 +54,7 @@ static ExceptionOr<JSC::JSValue> invokeWritableStreamFunction(JSC::JSGlobalObjec
 
 ExceptionOr<Ref<InternalWritableStream>> InternalWritableStream::createFromUnderlyingSink(JSDOMGlobalObject& globalObject, JSC::JSValue underlyingSink, JSC::JSValue strategy)
 {
-    Ref vm = globalObject.vm();
-    auto* clientData = static_cast<JSVMClientData*>(vm->clientData);
+    auto* clientData = static_cast<JSVMClientData*>(globalObject.vm().clientData);
     auto& privateName = clientData->builtinFunctions().writableStreamInternalsBuiltins().createInternalWritableStreamFromUnderlyingSinkPrivateName();
 
     JSC::MarkedArgumentBuffer arguments;
@@ -82,10 +81,9 @@ bool InternalWritableStream::locked() const
     if (!globalObject)
         return false;
 
-    Ref vm = globalObject->vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_CATCH_SCOPE(globalObject->vm());
 
-    auto* clientData = static_cast<JSVMClientData*>(vm->clientData);
+    auto* clientData = static_cast<JSVMClientData*>(globalObject->vm().clientData);
     auto& privateName = clientData->builtinFunctions().writableStreamInternalsBuiltins().isWritableStreamLockedPrivateName();
 
     JSC::MarkedArgumentBuffer arguments;
@@ -105,10 +103,9 @@ void InternalWritableStream::lock()
     if (!globalObject)
         return;
 
-    Ref vm = globalObject->vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_CATCH_SCOPE(globalObject->vm());
 
-    auto* clientData = static_cast<JSVMClientData*>(vm->clientData);
+    auto* clientData = static_cast<JSVMClientData*>(globalObject->vm().clientData);
     auto& privateName = clientData->builtinFunctions().writableStreamInternalsBuiltins().acquireWritableStreamDefaultWriterPrivateName();
 
     JSC::MarkedArgumentBuffer arguments;
@@ -122,8 +119,7 @@ void InternalWritableStream::lock()
 
 JSC::JSValue InternalWritableStream::abortForBindings(JSC::JSGlobalObject& globalObject, JSC::JSValue reason)
 {
-    Ref vm = globalObject.vm();
-    auto* clientData = static_cast<JSVMClientData*>(vm->clientData);
+    auto* clientData = static_cast<JSVMClientData*>(globalObject.vm().clientData);
     auto& privateName = clientData->builtinFunctions().writableStreamInternalsBuiltins().writableStreamAbortForBindingsPrivateName();
 
     JSC::MarkedArgumentBuffer arguments;
@@ -140,8 +136,7 @@ JSC::JSValue InternalWritableStream::abortForBindings(JSC::JSGlobalObject& globa
 
 JSC::JSValue InternalWritableStream::closeForBindings(JSC::JSGlobalObject& globalObject)
 {
-    Ref vm = globalObject.vm();
-    auto* clientData = static_cast<JSVMClientData*>(vm->clientData);
+    auto* clientData = static_cast<JSVMClientData*>(globalObject.vm().clientData);
     auto& privateName = clientData->builtinFunctions().writableStreamInternalsBuiltins().writableStreamCloseForBindingsPrivateName();
 
     JSC::MarkedArgumentBuffer arguments;
@@ -161,10 +156,9 @@ void InternalWritableStream::closeIfPossible()
     if (!globalObject)
         return;
 
-    Ref vm = globalObject->vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_CATCH_SCOPE(globalObject->vm());
 
-    auto* clientData = static_cast<JSVMClientData*>(vm->clientData);
+    auto* clientData = static_cast<JSVMClientData*>(globalObject->vm().clientData);
     auto& privateName = clientData->builtinFunctions().writableStreamInternalsBuiltins().writableStreamCloseIfPossiblePrivateName();
 
     JSC::MarkedArgumentBuffer arguments;
@@ -178,8 +172,7 @@ void InternalWritableStream::closeIfPossible()
 
 JSC::JSValue InternalWritableStream::getWriter(JSC::JSGlobalObject& globalObject)
 {
-    Ref vm = globalObject.vm();
-    auto* clientData = static_cast<JSVMClientData*>(vm->clientData);
+    auto* clientData = static_cast<JSVMClientData*>(globalObject.vm().clientData);
     auto& privateName = clientData->builtinFunctions().writableStreamInternalsBuiltins().acquireWritableStreamDefaultWriterPrivateName();
 
     JSC::MarkedArgumentBuffer arguments;

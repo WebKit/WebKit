@@ -50,10 +50,10 @@ static bool isVisibleNamedProperty(JSC::JSGlobalObject& lexicalGlobalObject, JSC
     if (propertyName.isSymbol())
         return false;
 
-    Ref impl = thisObject.wrapped();
+    auto& impl = thisObject.wrapped();
 
     // 1. If P is not a supported property name of O, then return false.
-    if (!impl->isSupportedPropertyName(propertyNameToString(propertyName)))
+    if (!impl.isSupportedPropertyName(propertyNameToString(propertyName)))
         return false;
     
     // 2. If O has an own property named P, then return false.

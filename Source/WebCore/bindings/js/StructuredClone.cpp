@@ -73,7 +73,7 @@ JSC_DEFINE_HOST_FUNCTION(structuredCloneForStream, (JSGlobalObject* globalObject
     ASSERT(callFrame);
     ASSERT(callFrame->argumentCount());
 
-    Ref vm = globalObject->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue value = callFrame->uncheckedArgument(0);

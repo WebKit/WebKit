@@ -155,7 +155,7 @@ void JSDOMWindowBase::updateDocument()
     // Reaching here, the attributes of "document" property should be never changed.
     ASSERT(m_wrapped->document());
     JSGlobalObject* lexicalGlobalObject = this;
-    Ref vm = lexicalGlobalObject->vm();
+    VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     bool shouldThrowReadOnlyError = false;
@@ -172,17 +172,17 @@ Document* JSDOMWindowBase::scriptExecutionContext() const
 
 void JSDOMWindowBase::printErrorMessage(const String& message) const
 {
-    printErrorMessageForFrame(wrapped().protectedFrame().get(), message);
+    printErrorMessageForFrame(wrapped().frame(), message);
 }
 
 bool JSDOMWindowBase::supportsRichSourceInfo(const JSGlobalObject* object)
 {
     const JSDOMWindowBase* thisObject = static_cast<const JSDOMWindowBase*>(object);
-    RefPtr frame = thisObject->wrapped().frame();
+    auto* frame = thisObject->wrapped().frame();
     if (!frame)
         return false;
 
-    RefPtr page = frame->page();
+    Page* page = frame->page();
     if (!page)
         return false;
 
@@ -207,17 +207,17 @@ bool JSDOMWindowBase::shouldInterruptScript(const JSGlobalObject* object)
 {
     const JSDOMWindowBase* thisObject = static_cast<const JSDOMWindowBase*>(object);
     ASSERT(thisObject->wrapped().frame());
-    RefPtr page = thisObject->wrapped().frame()->page();
-    return shouldInterruptScriptToPreventInfiniteRecursionWhenClosingPage(page.get());
+    Page* page = thisObject->wrapped().frame()->page();
+    return shouldInterruptScriptToPreventInfiniteRecursionWhenClosingPage(page);
 }
 
 bool JSDOMWindowBase::shouldInterruptScriptBeforeTimeout(const JSGlobalObject* object)
 {
     const JSDOMWindowBase* thisObject = static_cast<const JSDOMWindowBase*>(object);
     ASSERT(thisObject->wrapped().frame());
-    RefPtr page = thisObject->wrapped().frame()->page();
+    Page* page = thisObject->wrapped().frame()->page();
 
-    if (shouldInterruptScriptToPreventInfiniteRecursionWhenClosingPage(page.get()))
+    if (shouldInterruptScriptToPreventInfiniteRecursionWhenClosingPage(page))
         return true;
 
 #if PLATFORM(IOS_FAMILY)
@@ -231,7 +231,7 @@ bool JSDOMWindowBase::shouldInterruptScriptBeforeTimeout(const JSGlobalObject* o
 RuntimeFlags JSDOMWindowBase::javaScriptRuntimeFlags(const JSGlobalObject* object)
 {
     const JSDOMWindowBase* thisObject = static_cast<const JSDOMWindowBase*>(object);
-    RefPtr frame = thisObject->wrapped().frame();
+    auto* frame = thisObject->wrapped().frame();
     if (!frame)
         return RuntimeFlags();
     return frame->settings().javaScriptRuntimeFlags();
@@ -241,14 +241,14 @@ void JSDOMWindowBase::queueMicrotaskToEventLoop(JSGlobalObject& object, Ref<JSC:
 {
     JSDOMWindowBase& thisObject = static_cast<JSDOMWindowBase&>(object);
 
-    Ref callback = JSMicrotaskCallback::create(thisObject, WTFMove(task));
-    RefPtr objectScriptExecutionContext = thisObject.scriptExecutionContext();
-    CheckedRef eventLoop = objectScriptExecutionContext->eventLoop();
+    auto callback = JSMicrotaskCallback::create(thisObject, WTFMove(task));
+    auto* objectScriptExecutionContext = thisObject.scriptExecutionContext();
+    auto& eventLoop = objectScriptExecutionContext->eventLoop();
     // Propagating media only user gesture for Fetch API's promise chain.
     auto userGestureToken = UserGestureIndicator::currentUserGesture();
     if (userGestureToken && (!userGestureToken->isPropagatedFromFetch() || !objectScriptExecutionContext->settingsValues().userGesturePromisePropagationEnabled))
         userGestureToken = nullptr;
-    eventLoop->queueMicrotask([callback = WTFMove(callback), userGestureToken = WTFMove(userGestureToken)]() mutable {
+    eventLoop.queueMicrotask([callback = WTFMove(callback), userGestureToken = WTFMove(userGestureToken)]() mutable {
         if (!userGestureToken) {
             callback->call();
             return;
@@ -262,7 +262,7 @@ void JSDOMWindowBase::queueMicrotaskToEventLoop(JSGlobalObject& object, Ref<JSC:
 JSC::JSObject* JSDOMWindowBase::currentScriptExecutionOwner(JSGlobalObject* object)
 {
     JSDOMWindowBase* thisObject = static_cast<JSDOMWindowBase*>(object);
-    return jsCast<JSObject*>(toJS(thisObject, thisObject, thisObject->wrapped().protectedDocument().get()));
+    return jsCast<JSObject*>(toJS(thisObject, thisObject, thisObject->wrapped().document()));
 }
 
 JSC::ScriptExecutionStatus JSDOMWindowBase::scriptExecutionStatus(JSC::JSGlobalObject*, JSC::JSObject* owner)
@@ -357,8 +357,8 @@ LocalDOMWindow& legacyActiveDOMWindowForAccessor(JSGlobalObject& fallbackGlobalO
 
 void JSDOMWindowBase::fireFrameClearedWatchpointsForWindow(LocalDOMWindow* window)
 {
-    Ref vm = commonVM();
-    JSVMClientData* clientData = static_cast<JSVMClientData*>(vm->clientData);
+    JSC::VM& vm = commonVM();
+    JSVMClientData* clientData = static_cast<JSVMClientData*>(vm.clientData);
     Vector<Ref<DOMWrapperWorld>> wrapperWorlds;
     clientData->getAllWorlds(wrapperWorlds);
     for (unsigned i = 0; i < wrapperWorlds.size(); ++i) {

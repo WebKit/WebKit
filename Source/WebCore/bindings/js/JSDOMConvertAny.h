@@ -72,7 +72,7 @@ template<> struct VariadicConverter<IDLAny> {
 
     static std::optional<Item> convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
     {
-        Ref vm = JSC::getVM(&lexicalGlobalObject);
+        auto& vm = JSC::getVM(&lexicalGlobalObject);
         auto scope = DECLARE_THROW_SCOPE(vm);
 
         auto result = Converter<IDLAny>::convert(lexicalGlobalObject, value);

@@ -45,8 +45,8 @@ const ClassInfo JSDOMWindowProperties::s_info = { "WindowProperties"_s, &Base::s
 // https://html.spec.whatwg.org/multipage/window-object.html#dom-window-nameditem
 static bool jsDOMWindowPropertiesGetOwnPropertySlotNamedItemGetter(JSDOMWindowProperties* thisObject, LocalDOMWindow& window, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, PropertySlot& slot)
 {
-    if (RefPtr frame = window.frame()) {
-        if (RefPtr scopedChild = dynamicDowncast<LocalFrame>(frame->tree().scopedChildBySpecifiedName(propertyNameToAtomString(propertyName)))) {
+    if (auto* frame = window.frame()) {
+        if (auto* scopedChild = dynamicDowncast<LocalFrame>(frame->tree().scopedChildBySpecifiedName(propertyNameToAtomString(propertyName)))) {
             slot.setValue(thisObject, enumToUnderlyingType(PropertyAttribute::DontEnum), toJS(lexicalGlobalObject, scopedChild->document()->domWindow()));
             return true;
         }
@@ -56,12 +56,13 @@ static bool jsDOMWindowPropertiesGetOwnPropertySlotNamedItemGetter(JSDOMWindowPr
         return false;
 
     // Allow shortcuts like 'Image1' instead of document.images.Image1
-    if (RefPtr htmlDocument = dynamicDowncast<HTMLDocument>(window.document())) {
+    auto* document = window.document();
+    if (auto* htmlDocument = dynamicDowncast<HTMLDocument>(document)) {
         AtomString atomPropertyName = propertyName.publicName();
         if (!atomPropertyName.isEmpty() && htmlDocument->hasWindowNamedItem(atomPropertyName)) {
             JSValue namedItem;
             if (UNLIKELY(htmlDocument->windowNamedItemContainsMultipleElements(atomPropertyName))) {
-                Ref collection = htmlDocument->windowNamedItems(atomPropertyName);
+                Ref<HTMLCollection> collection = document->windowNamedItems(atomPropertyName);
                 ASSERT(collection->length() > 1);
                 namedItem = toJS(lexicalGlobalObject, thisObject->globalObject(), collection);
             } else
@@ -76,7 +77,7 @@ static bool jsDOMWindowPropertiesGetOwnPropertySlotNamedItemGetter(JSDOMWindowPr
 
 void JSDOMWindowProperties::finishCreation(JSGlobalObject& globalObject)
 {
-    Ref vm = globalObject.vm();
+    VM& vm = globalObject.vm();
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
@@ -99,13 +100,13 @@ bool JSDOMWindowProperties::getOwnPropertySlot(JSObject* object, JSGlobalObject*
     if (!jsWindow)
         return false;
 
-    Ref window = jsWindow->wrapped();
+    auto& window = jsWindow->wrapped();
     return jsDOMWindowPropertiesGetOwnPropertySlotNamedItemGetter(thisObject, window, lexicalGlobalObject, propertyName, slot);
 }
 
 bool JSDOMWindowProperties::getOwnPropertySlotByIndex(JSObject* object, JSGlobalObject* lexicalGlobalObject, unsigned index, PropertySlot& slot)
 {
-    Ref vm = lexicalGlobalObject->vm();
+    VM& vm = lexicalGlobalObject->vm();
     return getOwnPropertySlot(object, lexicalGlobalObject, Identifier::from(vm, index), slot);
 }
 
@@ -131,8 +132,7 @@ bool JSDOMWindowProperties::isExtensible(JSObject*, JSGlobalObject*)
 
 bool JSDOMWindowProperties::defineOwnProperty(JSObject*, JSGlobalObject* lexicalGlobalObject, PropertyName, const PropertyDescriptor&, bool shouldThrow)
 {
-    Ref vm = lexicalGlobalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
+    auto scope = DECLARE_THROW_SCOPE(lexicalGlobalObject->vm());
     return typeError(lexicalGlobalObject, scope, shouldThrow, "Defining a property on a WindowProperties object is not allowed."_s);
 }
 

@@ -36,13 +36,12 @@ DOMGuardedObject::DOMGuardedObject(JSDOMGlobalObject& globalObject, JSCell& guar
     , m_guarded(&guarded)
     , m_globalObject(&globalObject)
 {
-    Ref vm = globalObject.vm();
-    if (vm->heap.mutatorShouldBeFenced()) {
+    if (globalObject.vm().heap.mutatorShouldBeFenced()) {
         Locker locker { globalObject.gcLock() };
         globalObject.guardedObjects().add(this);
     } else
         globalObject.guardedObjects(NoLockingNecessary).add(this);
-    vm->writeBarrier(&globalObject, &guarded);
+    globalObject.vm().writeBarrier(&globalObject, &guarded);
 }
 
 DOMGuardedObject::~DOMGuardedObject()

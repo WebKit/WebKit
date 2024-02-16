@@ -203,7 +203,7 @@ template<typename JSIterator, typename IteratorValue> EnableIfSet<typename JSIte
 
 template<typename JSIterator> JSC::JSValue iteratorForEach(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, typename JSIterator::Wrapper& thisObject)
 {
-    Ref vm = JSC::getVM(&lexicalGlobalObject);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSC::JSValue callback = callFrame.argument(0);
     JSC::JSValue thisValue = callFrame.argument(1);
@@ -250,7 +250,7 @@ JSC::JSValue JSDOMIteratorBase<JSWrapper, IteratorTraits>::next(JSC::JSGlobalObj
 template<typename JSWrapper, typename IteratorTraits>
 JSC::EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSDOMIteratorPrototype<JSWrapper, IteratorTraits>::next(JSC::JSGlobalObject* globalObject, JSC::CallFrame* callFrame)
 {
-    Ref vm = globalObject->vm();
+    JSC::VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     auto iterator = JSC::jsDynamicCast<JSDOMIteratorBase<JSWrapper, IteratorTraits>*>(callFrame->thisValue());

@@ -47,7 +47,7 @@ public:
 
     virtual ~WebAssemblyCachedScriptSourceProvider()
     {
-        CachedResourceHandle { m_cachedScript }->removeClient(*this);
+        m_cachedScript->removeClient(*this);
     }
 
     unsigned hash() const final { return m_cachedScript->scriptHash(); }
@@ -60,7 +60,7 @@ public:
             return nullptr;
 
         if (!m_buffer->isContiguous())
-            m_buffer = Ref { *m_buffer }->makeContiguous();
+            m_buffer = m_buffer->makeContiguous();
 
         return downcast<SharedBuffer>(*m_buffer).data();
     }
@@ -83,7 +83,7 @@ private:
         , m_cachedScript(cachedScript)
         , m_buffer(nullptr)
     {
-        CachedResourceHandle { m_cachedScript }->addClient(*this);
+        m_cachedScript->addClient(*this);
     }
 
     CachedResourceHandle<CachedScript> m_cachedScript;

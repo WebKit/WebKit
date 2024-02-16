@@ -54,22 +54,22 @@ JSValue toJS(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObjec
 
 EncodedJSValue constructJSWebAnimation(JSGlobalObject* lexicalGlobalObject, CallFrame& callFrame)
 {
-    Ref vm = lexicalGlobalObject->vm();
+    VM& vm = lexicalGlobalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     auto* jsConstructor = jsCast<JSDOMConstructorBase*>(callFrame.jsCallee());
     ASSERT(jsConstructor);
-    RefPtr context = jsConstructor->scriptExecutionContext();
+    auto* context = jsConstructor->scriptExecutionContext();
     if (UNLIKELY(!context))
         return throwConstructorScriptExecutionContextUnavailableError(*lexicalGlobalObject, throwScope, "Animation");
     auto& document = downcast<Document>(*context);
-    RefPtr effect = convert<IDLNullable<IDLInterface<AnimationEffect>>>(*lexicalGlobalObject, callFrame.argument(0), [](JSGlobalObject& lexicalGlobalObject, ThrowScope& scope) {
+    auto effect = convert<IDLNullable<IDLInterface<AnimationEffect>>>(*lexicalGlobalObject, callFrame.argument(0), [](JSGlobalObject& lexicalGlobalObject, ThrowScope& scope) {
         throwArgumentTypeError(lexicalGlobalObject, scope, 0, "effect", "Animation", nullptr, "AnimationEffect");
     });
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
     if (callFrame.argument(1).isUndefined()) {
-        Ref object = WebAnimation::create(document, WTFMove(effect));
+        auto object = WebAnimation::create(document, WTFMove(effect));
         return JSValue::encode(toJSNewlyCreated<IDLInterface<WebAnimation>>(*lexicalGlobalObject, *jsConstructor->globalObject(), WTFMove(object)));
     }
 
@@ -77,7 +77,7 @@ EncodedJSValue constructJSWebAnimation(JSGlobalObject* lexicalGlobalObject, Call
         throwArgumentTypeError(lexicalGlobalObject, scope, 1, "timeline", "Animation", nullptr, "AnimationTimeline");
     });
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    Ref object = WebAnimation::create(document, WTFMove(effect), WTFMove(timeline));
+    auto object = WebAnimation::create(document, WTFMove(effect), WTFMove(timeline));
     return JSValue::encode(toJSNewlyCreated<IDLInterface<WebAnimation>>(*lexicalGlobalObject, *jsConstructor->globalObject(), WTFMove(object)));
 }
 

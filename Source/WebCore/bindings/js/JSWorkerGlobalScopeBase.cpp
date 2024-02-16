@@ -149,8 +149,8 @@ void JSWorkerGlobalScopeBase::queueMicrotaskToEventLoop(JSGlobalObject& object, 
     JSWorkerGlobalScopeBase& thisObject = static_cast<JSWorkerGlobalScopeBase&>(object);
 
     auto callback = JSMicrotaskCallback::create(thisObject, WTFMove(task));
-    Ref context = thisObject.wrapped();
-    context->checkedEventLoop()->queueMicrotask([callback = WTFMove(callback)]() mutable {
+    auto& context = thisObject.wrapped();
+    context.eventLoop().queueMicrotask([callback = WTFMove(callback)]() mutable {
         callback->call();
     });
 }

@@ -48,10 +48,10 @@ bool JSRemoteDOMWindow::getOwnPropertySlot(JSObject* object, JSGlobalObject* lex
 
 bool JSRemoteDOMWindow::getOwnPropertySlotByIndex(JSObject* object, JSGlobalObject* lexicalGlobalObject, unsigned index, PropertySlot& slot)
 {
-    Ref vm = lexicalGlobalObject->vm();
+    VM& vm = lexicalGlobalObject->vm();
     auto* thisObject = jsCast<JSRemoteDOMWindow*>(object);
-    Ref window = thisObject->wrapped();
-    RefPtr frame = window->frame();
+    auto& window = thisObject->wrapped();
+    auto* frame = window.frame();
 
     // Indexed getters take precendence over regular properties, so caching would be invalid.
     slot.disableCaching();
@@ -60,7 +60,7 @@ bool JSRemoteDOMWindow::getOwnPropertySlotByIndex(JSObject* object, JSGlobalObje
     if (frame && index < frame->tree().childCount()) {
         // FIXME: <rdar://118263337> This should work also if it's a RemoteFrame, it should just return a RemoteDOMWindow.
         // JSLocalDOMWindow::getOwnPropertySlotByIndex uses scopedChild. Investigate the difference.
-        if (RefPtr child = dynamicDowncast<LocalFrame>(frame->tree().child(index))) {
+        if (auto* child = dynamicDowncast<LocalFrame>(frame->tree().child(index))) {
             slot.setValue(thisObject, enumToUnderlyingType(JSC::PropertyAttribute::ReadOnly), toJS(lexicalGlobalObject, child->document()->domWindow()));
             return true;
         }
@@ -69,12 +69,12 @@ bool JSRemoteDOMWindow::getOwnPropertySlotByIndex(JSObject* object, JSGlobalObje
     // FIXME: <rdar://118263337> Make this more like JSLocalDOMWindow::getOwnPropertySlotByIndex and share code when possible.
     // There is some missing functionality here, and it is likely important.
 
-    return jsLocalDOMWindowGetOwnPropertySlotRestrictedAccess<DOMWindowType::Remote>(thisObject, thisObject->protectedWrapped(), *lexicalGlobalObject, Identifier::from(vm, index), slot, String());
+    return jsLocalDOMWindowGetOwnPropertySlotRestrictedAccess<DOMWindowType::Remote>(thisObject, thisObject->wrapped(), *lexicalGlobalObject, Identifier::from(vm, index), slot, String());
 }
 
 bool JSRemoteDOMWindow::put(JSCell* cell, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
-    Ref vm = lexicalGlobalObject->vm();
+    VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     auto* thisObject = jsCast<JSRemoteDOMWindow*>(cell);
@@ -102,7 +102,7 @@ bool JSRemoteDOMWindow::putByIndex(JSCell*, JSGlobalObject*, unsigned, JSValue, 
 
 bool JSRemoteDOMWindow::deleteProperty(JSCell*, JSGlobalObject* lexicalGlobalObject, PropertyName, DeletePropertySlot&)
 {
-    Ref vm = lexicalGlobalObject->vm();
+    VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     throwSecurityError(*lexicalGlobalObject, scope, String());
@@ -111,7 +111,7 @@ bool JSRemoteDOMWindow::deleteProperty(JSCell*, JSGlobalObject* lexicalGlobalObj
 
 bool JSRemoteDOMWindow::deletePropertyByIndex(JSCell*, JSGlobalObject* lexicalGlobalObject, unsigned)
 {
-    Ref vm = lexicalGlobalObject->vm();
+    VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     throwSecurityError(*lexicalGlobalObject, scope, String());
@@ -128,7 +128,7 @@ void JSRemoteDOMWindow::getOwnPropertyNames(JSObject*, JSGlobalObject* lexicalGl
 
 bool JSRemoteDOMWindow::defineOwnProperty(JSC::JSObject*, JSC::JSGlobalObject* lexicalGlobalObject, JSC::PropertyName, const JSC::PropertyDescriptor&, bool)
 {
-    Ref vm = lexicalGlobalObject->vm();
+    VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     throwSecurityError(*lexicalGlobalObject, scope, String());

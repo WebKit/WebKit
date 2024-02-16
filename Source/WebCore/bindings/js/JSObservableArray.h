@@ -55,7 +55,7 @@ public:
 
     static JSObservableArray* create(JSGlobalObject* lexicalGlobalObject, Ref<ObservableArray>&& array)
     {
-        Ref vm = lexicalGlobalObject->vm();
+        VM& vm = lexicalGlobalObject->vm();
         // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
         // We need to pass in the right global object for "array".
         Structure* domStructure = WebCore::deprecatedGetDOMStructure<JSObservableArray>(lexicalGlobalObject);

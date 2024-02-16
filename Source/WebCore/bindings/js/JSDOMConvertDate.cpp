@@ -39,13 +39,13 @@ WallTime valueToDate(JSC::JSGlobalObject& lexicalGlobalObject, JSValue value)
 {
     double milliseconds = std::numeric_limits<double>::quiet_NaN();
 
-    Ref vm = lexicalGlobalObject.vm();
+    auto& vm = lexicalGlobalObject.vm();
     if (value.inherits<DateInstance>())
         milliseconds = jsCast<DateInstance*>(value)->internalNumber();
     else if (value.isNumber())
         milliseconds = value.asNumber();
     else if (value.isString())
-        milliseconds = vm->dateCache.parseDate(&lexicalGlobalObject, vm, value.getString(&lexicalGlobalObject));
+        milliseconds = vm.dateCache.parseDate(&lexicalGlobalObject, vm, value.getString(&lexicalGlobalObject));
 
     return WallTime::fromRawSeconds(Seconds::fromMilliseconds(milliseconds).value());
 }

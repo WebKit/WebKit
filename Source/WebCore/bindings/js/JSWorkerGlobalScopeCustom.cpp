@@ -57,7 +57,7 @@ DEFINE_VISIT_ADDITIONAL_CHILDREN(JSWorkerGlobalScope);
 
 JSValue JSWorkerGlobalScope::queueMicrotask(JSGlobalObject& lexicalGlobalObject, CallFrame& callFrame)
 {
-    Ref vm = lexicalGlobalObject.vm();
+    VM& vm = lexicalGlobalObject.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (UNLIKELY(callFrame.argumentCount() < 1))

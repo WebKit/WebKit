@@ -36,7 +36,7 @@ using namespace JSC;
 
 JSValue JSReadableStreamSource::start(JSGlobalObject& lexicalGlobalObject, CallFrame& callFrame, Ref<DeferredPromise>&& promise)
 {
-    Ref vm = lexicalGlobalObject.vm();
+    VM& vm = lexicalGlobalObject.vm();
     
     // FIXME: Why is it ok to ASSERT the argument count here?
     ASSERT(callFrame.argumentCount());
@@ -45,14 +45,14 @@ JSValue JSReadableStreamSource::start(JSGlobalObject& lexicalGlobalObject, CallF
 
     m_controller.set(vm, this, controller);
 
-    protectedWrapped()->start(ReadableStreamDefaultController(controller), WTFMove(promise));
+    wrapped().start(ReadableStreamDefaultController(controller), WTFMove(promise));
 
     return jsUndefined();
 }
 
 JSValue JSReadableStreamSource::pull(JSGlobalObject&, CallFrame&, Ref<DeferredPromise>&& promise)
 {
-    protectedWrapped()->pull(WTFMove(promise));
+    wrapped().pull(WTFMove(promise));
     return jsUndefined();
 }
 

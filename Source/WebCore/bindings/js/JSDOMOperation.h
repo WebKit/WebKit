@@ -48,8 +48,7 @@ public:
     template<Operation operation, CastedThisErrorBehavior shouldThrow = CastedThisErrorBehavior::Throw>
     static JSC::EncodedJSValue call(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, const char* operationName)
     {
-        Ref vm = JSC::getVM(&lexicalGlobalObject);
-        auto throwScope = DECLARE_THROW_SCOPE(vm);
+        auto throwScope = DECLARE_THROW_SCOPE(JSC::getVM(&lexicalGlobalObject));
         
         auto* thisObject = cast(lexicalGlobalObject, callFrame);
         if constexpr (shouldThrow != CastedThisErrorBehavior::Assert) {

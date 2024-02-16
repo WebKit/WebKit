@@ -59,8 +59,8 @@ struct ResolutionContext;
 class WebAnimation : public RefCounted<WebAnimation>, public EventTarget, public ActiveDOMObject {
     WTF_MAKE_ISO_ALLOCATED(WebAnimation);
 public:
-    static Ref<WebAnimation> create(Document&, RefPtr<AnimationEffect>&&);
-    static Ref<WebAnimation> create(Document&, RefPtr<AnimationEffect>&&, AnimationTimeline*);
+    static Ref<WebAnimation> create(Document&, AnimationEffect*);
+    static Ref<WebAnimation> create(Document&, AnimationEffect*, AnimationTimeline*);
     ~WebAnimation();
 
     WEBCORE_EXPORT static HashSet<WebAnimation*>& instances();

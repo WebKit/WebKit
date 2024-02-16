@@ -46,7 +46,7 @@ DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, eventListenerCounter, ("JSL
 struct JSLazyEventListener::CreationArguments {
     const QualifiedName& attributeName;
     const AtomString& attributeValue;
-    WeakRef<Document, WeakPtrImplWithEventTargetData> document;
+    Document& document;
     WeakPtr<ContainerNode, WeakPtrImplWithEventTargetData> node;
     JSObject* wrapper;
     bool shouldUseSVGEventName;
@@ -76,7 +76,7 @@ JSLazyEventListener::JSLazyEventListener(CreationArguments&& arguments, const UR
     , m_sourceURL(sourceURL)
     , m_sourcePosition(convertZeroToOne(sourcePosition))
     , m_originalNode(WTFMove(arguments.node))
-    , m_sourceTaintedOrigin(JSC::computeNewSourceTaintedOriginFromStack(arguments.document->vm(), arguments.document->vm().topCallFrame))
+    , m_sourceTaintedOrigin(JSC::computeNewSourceTaintedOriginFromStack(arguments.document.vm(), arguments.document.vm().topCallFrame))
 {
 #ifndef NDEBUG
     eventListenerCounter.increment();
@@ -124,7 +124,7 @@ JSObject* JSLazyEventListener::initializeJSFunction(ScriptExecutionContext& exec
     if (!document->frame())
         return nullptr;
 
-    RefPtr element = dynamicDowncast<Element>(m_originalNode.get());
+    RefPtr element =  dynamicDowncast<Element>(m_originalNode.get());
     if (!document->checkedContentSecurityPolicy()->allowInlineEventHandlers(m_sourceURL.string(), m_sourcePosition.m_line, m_code, element.get()))
         return nullptr;
 
@@ -148,7 +148,7 @@ JSObject* JSLazyEventListener::initializeJSFunction(ScriptExecutionContext& exec
     if (!globalObject)
         return nullptr;
 
-    Ref vm = globalObject->vm();
+    VM& vm = globalObject->vm();
     JSLockHolder lock(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
     JSGlobalObject* lexicalGlobalObject = globalObject;
@@ -173,11 +173,11 @@ JSObject* JSLazyEventListener::initializeJSFunction(ScriptExecutionContext& exec
 
     JSFunction* listenerAsFunction = jsCast<JSFunction*>(jsFunction);
 
-    if (RefPtr originalNode = m_originalNode.get()) {
+    if (m_originalNode) {
         if (!wrapper()) {
             // Ensure that 'node' has a JavaScript wrapper to mark the event listener we're creating.
             // FIXME: Should pass the global object associated with the node
-            setWrapperWhenInitializingJSFunction(vm, asObject(toJS(lexicalGlobalObject, globalObject, *originalNode)));
+            setWrapperWhenInitializingJSFunction(vm, asObject(toJS(lexicalGlobalObject, globalObject, *m_originalNode)));
         }
 
         // Add the event's home element to the scope
@@ -196,11 +196,11 @@ RefPtr<JSLazyEventListener> JSLazyEventListener::create(CreationArguments&& argu
     // FIXME: We should be able to provide source information for frameless documents too (e.g. for importing nodes from XMLHttpRequest.responseXML).
     TextPosition position;
     URL sourceURL;
-    if (RefPtr frame = arguments.document->frame()) {
-        if (!frame->checkedScript()->canExecuteScripts(ReasonForCallingCanExecuteScripts::AboutToCreateEventListener))
+    if (auto* frame = arguments.document.frame()) {
+        if (!frame->script().canExecuteScripts(ReasonForCallingCanExecuteScripts::AboutToCreateEventListener))
             return nullptr;
         position = frame->script().eventHandlerPosition();
-        sourceURL = arguments.document->url();
+        sourceURL = arguments.document.url();
     }
 
     return adoptRef(*new JSLazyEventListener(WTFMove(arguments), sourceURL, position));

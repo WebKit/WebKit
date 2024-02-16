@@ -38,7 +38,7 @@ void addValueIterableMethods(JSC::JSGlobalObject& globalObject, JSC::JSObject& p
 
     JSC::JSGlobalObject* lexicalGlobalObject = &globalObject;
     ASSERT(lexicalGlobalObject);
-    Ref vm = lexicalGlobalObject->vm();
+    JSC::VM& vm = lexicalGlobalObject->vm();
 
     auto copyProperty = [&] (const JSC::Identifier& arrayIdentifier, const JSC::Identifier& otherIdentifier, unsigned attributes = 0) {
         JSC::JSValue value = arrayPrototype->getDirect(vm, arrayIdentifier);
@@ -46,10 +46,10 @@ void addValueIterableMethods(JSC::JSGlobalObject& globalObject, JSC::JSObject& p
         prototype.putDirect(vm, otherIdentifier, value, attributes);
     };
 
-    copyProperty(vm->propertyNames->builtinNames().entriesPrivateName(), vm->propertyNames->builtinNames().entriesPublicName());
-    copyProperty(vm->propertyNames->builtinNames().forEachPrivateName(), vm->propertyNames->builtinNames().forEachPublicName());
-    copyProperty(vm->propertyNames->builtinNames().keysPrivateName(), vm->propertyNames->builtinNames().keysPublicName());
-    copyProperty(vm->propertyNames->builtinNames().valuesPrivateName(), vm->propertyNames->builtinNames().valuesPublicName());
+    copyProperty(vm.propertyNames->builtinNames().entriesPrivateName(), vm.propertyNames->builtinNames().entriesPublicName());
+    copyProperty(vm.propertyNames->builtinNames().forEachPrivateName(), vm.propertyNames->builtinNames().forEachPublicName());
+    copyProperty(vm.propertyNames->builtinNames().keysPrivateName(), vm.propertyNames->builtinNames().keysPublicName());
+    copyProperty(vm.propertyNames->builtinNames().valuesPrivateName(), vm.propertyNames->builtinNames().valuesPublicName());
 }
 
 }

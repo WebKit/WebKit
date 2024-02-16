@@ -56,11 +56,11 @@ JSObject* cachedDocumentWrapper(JSGlobalObject& lexicalGlobalObject, JSDOMGlobal
     if (auto* wrapper = getCachedWrapper(globalObject.world(), document))
         return wrapper;
 
-    RefPtr window = document.domWindow();
+    auto* window = document.domWindow();
     if (!window)
         return nullptr;
 
-    auto* documentGlobalObject = toJSDOMGlobalObject<JSLocalDOMWindow>(Ref { lexicalGlobalObject.vm() }, toJS(&lexicalGlobalObject, *window));
+    auto* documentGlobalObject = toJSDOMGlobalObject<JSLocalDOMWindow>(lexicalGlobalObject.vm(), toJS(&lexicalGlobalObject, *window));
     if (!documentGlobalObject)
         return nullptr;
 
@@ -74,14 +74,14 @@ void reportMemoryForDocumentIfFrameless(JSGlobalObject& lexicalGlobalObject, Doc
     if (document.frame())
         return;
 
-    Ref vm = lexicalGlobalObject.vm();
+    VM& vm = lexicalGlobalObject.vm();
     size_t memoryCost = 0;
     for (Node* node = &document; node; node = NodeTraversal::next(*node))
         memoryCost += node->approximateMemoryCost();
 
     // FIXME: Adopt reportExtraMemoryVisited, and switch to reportExtraMemoryAllocated.
     // https://bugs.webkit.org/show_bug.cgi?id=142595
-    vm->heap.deprecatedReportExtraMemory(memoryCost);
+    vm.heap.deprecatedReportExtraMemory(memoryCost);
 }
 
 JSValue toJSNewlyCreated(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, Ref<Document>&& document)
@@ -98,7 +98,7 @@ JSValue toJS(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObjec
 
 void setAdoptedStyleSheetsOnTreeScope(TreeScope& treeScope, JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
 {
-    Ref vm = JSC::getVM(&lexicalGlobalObject);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto nativeValue = convert<IDLFrozenArray<IDLInterface<CSSStyleSheet>>>(lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, void());
@@ -109,7 +109,7 @@ void setAdoptedStyleSheetsOnTreeScope(TreeScope& treeScope, JSC::JSGlobalObject&
 
 void JSDocument::setAdoptedStyleSheets(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
 {
-    setAdoptedStyleSheetsOnTreeScope(protectedWrapped(), lexicalGlobalObject, value);
+    setAdoptedStyleSheetsOnTreeScope(wrapped(), lexicalGlobalObject, value);
 }
 
 template<typename Visitor>

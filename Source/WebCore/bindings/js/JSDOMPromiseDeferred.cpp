@@ -58,7 +58,7 @@ void DeferredPromise::callFunction(JSGlobalObject& lexicalGlobalObject, ResolveM
     if (shouldIgnoreRequestToFulfill())
         return;
 
-    Ref vm = lexicalGlobalObject.vm();
+    JSC::VM& vm = lexicalGlobalObject.vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     auto handleExceptionIfNeeded = makeScopeExit([&] {
@@ -67,9 +67,9 @@ void DeferredPromise::callFunction(JSGlobalObject& lexicalGlobalObject, ResolveM
     });
 
     if (activeDOMObjectsAreSuspended() || !ScriptDisallowedScope::isScriptAllowedInMainThread()) {
-        JSC::Strong<JSC::Unknown, ShouldStrongDestructorGrabLock::Yes> strongResolution(vm, resolution);
+        JSC::Strong<JSC::Unknown, ShouldStrongDestructorGrabLock::Yes> strongResolution(lexicalGlobalObject.vm(), resolution);
         ASSERT(!activeDOMObjectsAreSuspended() || scriptExecutionContext()->eventLoop().isSuspended());
-        protectedScriptExecutionContext()->checkedEventLoop()->queueTask(TaskSource::Networking, [this, protectedThis = Ref { *this }, mode, strongResolution = WTFMove(strongResolution)]() mutable {
+        scriptExecutionContext()->eventLoop().queueTask(TaskSource::Networking, [this, protectedThis = Ref { *this }, mode, strongResolution = WTFMove(strongResolution)]() mutable {
             if (shouldIgnoreRequestToFulfill())
                 return;
 
@@ -104,7 +104,7 @@ void DeferredPromise::whenSettled(Function<void()>&& callback)
         return;
 
     if (activeDOMObjectsAreSuspended()) {
-        protectedScriptExecutionContext()->checkedEventLoop()->queueTask(TaskSource::Networking, [this, protectedThis = Ref { *this }, callback = WTFMove(callback)]() mutable {
+        scriptExecutionContext()->eventLoop().queueTask(TaskSource::Networking, [this, protectedThis = Ref { *this }, callback = WTFMove(callback)]() mutable {
             whenSettled(WTFMove(callback));
         });
         return;
@@ -112,7 +112,7 @@ void DeferredPromise::whenSettled(Function<void()>&& callback)
 
     {
         auto* globalObject = this->globalObject();
-        Ref vm = globalObject->vm();
+        auto& vm = globalObject->vm();
         JSC::JSLockHolder locker(vm);
         auto scope = DECLARE_CATCH_SCOPE(vm);
         DOMPromise::whenPromiseIsSettled(globalObject, deferred(), WTFMove(callback));
@@ -149,11 +149,11 @@ void DeferredPromise::reject(Exception exception, RejectAsHandled rejectAsHandle
     if (shouldIgnoreRequestToFulfill())
         return;
 
-    Ref protectedThis { *this };
+    Ref protectedThis(*this);
     ASSERT(deferred());
     ASSERT(m_globalObject);
     auto& lexicalGlobalObject = *m_globalObject;
-    Ref vm = lexicalGlobalObject.vm();
+    JSC::VM& vm = lexicalGlobalObject.vm();
     JSC::JSLockHolder locker(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
@@ -184,11 +184,11 @@ void DeferredPromise::reject(ExceptionCode ec, const String& message, RejectAsHa
     if (shouldIgnoreRequestToFulfill())
         return;
 
-    Ref protectedThis { *this };
+    Ref protectedThis(*this);
     ASSERT(deferred());
     ASSERT(m_globalObject);
     auto& lexicalGlobalObject = *m_globalObject;
-    Ref vm = lexicalGlobalObject.vm();
+    JSC::VM& vm = lexicalGlobalObject.vm();
     JSC::JSLockHolder locker(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
@@ -223,7 +223,7 @@ void DeferredPromise::reject(const JSC::PrivateName& privateName, RejectAsHandle
     ASSERT(m_globalObject);
     JSC::JSGlobalObject* lexicalGlobalObject = m_globalObject.get();
     JSC::JSLockHolder locker(lexicalGlobalObject);
-    reject(*lexicalGlobalObject, JSC::Symbol::create(Ref { lexicalGlobalObject->vm() }, privateName.uid()), rejectAsHandled);
+    reject(*lexicalGlobalObject, JSC::Symbol::create(lexicalGlobalObject->vm(), privateName.uid()), rejectAsHandled);
 }
 
 void rejectPromiseWithExceptionIfAny(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, JSPromise& promise, JSC::CatchScope& catchScope)
@@ -243,11 +243,11 @@ void rejectPromiseWithExceptionIfAny(JSC::JSGlobalObject& lexicalGlobalObject, J
 JSC::EncodedJSValue createRejectedPromiseWithTypeError(JSC::JSGlobalObject& lexicalGlobalObject, const String& errorMessage, RejectedPromiseWithTypeErrorCause cause)
 {
     auto& globalObject = lexicalGlobalObject;
-    Ref vm = lexicalGlobalObject.vm();
+    auto& vm = lexicalGlobalObject.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     auto promiseConstructor = globalObject.promiseConstructor();
-    auto rejectFunction = promiseConstructor->get(&lexicalGlobalObject, vm->propertyNames->builtinNames().rejectPrivateName());
+    auto rejectFunction = promiseConstructor->get(&lexicalGlobalObject, vm.propertyNames->builtinNames().rejectPrivateName());
     RETURN_IF_EXCEPTION(scope, { });
     auto* rejectionValue = static_cast<ErrorInstance*>(createTypeError(&lexicalGlobalObject, errorMessage));
     if (cause == RejectedPromiseWithTypeErrorCause::NativeGetter)
@@ -294,21 +294,19 @@ void fulfillPromiseWithArrayBuffer(Ref<DeferredPromise>&& promise, const void* d
 
 bool DeferredPromise::handleTerminationExceptionIfNeeded(CatchScope& scope, JSDOMGlobalObject& lexicalGlobalObject)
 {
-    RefPtr globalScope = dynamicDowncast<WorkerGlobalScope>(*lexicalGlobalObject.scriptExecutionContext());
-    if (!globalScope)
-        return false;
-
     auto* exception = scope.exception();
-    Ref vm = scope.vm();
+    VM& vm = scope.vm();
 
-    CheckedPtr scriptController = globalScope->script();
-    bool terminatorCausedException = vm->isTerminationException(exception);
-    if (terminatorCausedException || (scriptController && scriptController->isTerminatingExecution())) {
-        scriptController->forbidExecution();
-        m_needsAbort = true;
-        return true;
+    auto& scriptExecutionContext = *lexicalGlobalObject.scriptExecutionContext();
+    if (auto* globalScope = dynamicDowncast<WorkerGlobalScope>(scriptExecutionContext)) {
+        auto* scriptController = globalScope->script();
+        bool terminatorCausedException = vm.isTerminationException(exception);
+        if (terminatorCausedException || (scriptController && scriptController->isTerminatingExecution())) {
+            scriptController->forbidExecution();
+            m_needsAbort = true;
+            return true;
+        }
     }
-
     return false;
 }
 

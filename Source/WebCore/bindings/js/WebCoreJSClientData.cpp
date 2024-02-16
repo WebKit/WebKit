@@ -141,7 +141,7 @@ JSVMClientData::~JSVMClientData()
         client.willDestroyVM();
     });
 
-    ASSERT(m_worldSet.contains(*m_normalWorld));
+    ASSERT(m_worldSet.contains(m_normalWorld.get()));
     ASSERT(m_worldSet.size() == 1);
     ASSERT(m_normalWorld->hasOneRef());
     m_normalWorld = nullptr;
@@ -159,26 +159,26 @@ void JSVMClientData::getAllWorlds(Vector<Ref<DOMWrapperWorld>>& worlds)
     // is ready to start evaluating JavaScript. For example, Web Inspector waits for the main world
     // change to clear any injected scripts and debugger/breakpoint state.
 
-    Ref mainNormalWorld = mainThreadNormalWorld();
+    auto& mainNormalWorld = mainThreadNormalWorld();
 
     // Add main normal world.
-    if (m_worldSet.contains(mainNormalWorld))
+    if (m_worldSet.contains(&mainNormalWorld))
         worlds.append(mainNormalWorld);
 
     // Add other normal worlds.
-    for (auto& world : m_worldSet) {
+    for (auto* world : m_worldSet) {
         if (world->type() != DOMWrapperWorld::Type::Normal)
             continue;
-        if (world.ptr() == mainNormalWorld.ptr())
+        if (world == &mainNormalWorld)
             continue;
-        worlds.append(world.get());
+        worlds.append(*world);
     }
 
     // Add non-normal worlds.
-    for (auto& world : m_worldSet) {
+    for (auto* world : m_worldSet) {
         if (world->type() == DOMWrapperWorld::Type::Normal)
             continue;
-        worlds.append(world.get());
+        worlds.append(*world);
     }
 }
 
@@ -205,7 +205,7 @@ String JSVMClientData::overrideSourceURL(const JSC::StackFrame& frame, const Str
     if (!globalObject->inherits<JSDOMWindowBase>())
         return nullString();
 
-    RefPtr document = jsCast<const JSDOMWindowBase*>(globalObject)->wrapped().document();
+    auto* document = jsCast<const JSDOMWindowBase*>(globalObject)->wrapped().document();
     if (!document)
         return nullString();
 

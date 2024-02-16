@@ -70,7 +70,7 @@ public:
             return;
 
         if (!m_buffer->isContiguous())
-            m_buffer = RefPtr { m_buffer }->makeContiguous();
+            m_buffer = m_buffer->makeContiguous();
     }
 
     void unlockUnderlyingBuffer() final

@@ -123,7 +123,7 @@ inline JSC::JSValue DOMPromiseProxy<IDLType>::resolvePromise(JSC::JSGlobalObject
     }
 
     // DeferredPromise can fail construction during worker abrupt termination.
-    RefPtr deferredPromise = DeferredPromise::create(globalObject, DeferredPromise::Mode::RetainPromiseOnResolve);
+    auto deferredPromise = DeferredPromise::create(globalObject, DeferredPromise::Mode::RetainPromiseOnResolve);
     if (!deferredPromise)
         return JSC::jsUndefined();
 
@@ -229,7 +229,7 @@ inline JSC::JSValue DOMPromiseProxy<IDLUndefined>::promise(JSC::JSGlobalObject& 
     }
 
     // DeferredPromise can fail construction during worker abrupt termination.
-    RefPtr deferredPromise = DeferredPromise::create(globalObject, DeferredPromise::Mode::RetainPromiseOnResolve);
+    auto deferredPromise = DeferredPromise::create(globalObject, DeferredPromise::Mode::RetainPromiseOnResolve);
     if (!deferredPromise)
         return JSC::jsUndefined();
 
@@ -301,7 +301,7 @@ inline JSC::JSValue DOMPromiseProxyWithResolveCallback<IDLType>::promise(JSC::JS
     }
 
     // DeferredPromise can fail construction during worker abrupt termination.
-    RefPtr deferredPromise = DeferredPromise::create(globalObject, DeferredPromise::Mode::RetainPromiseOnResolve);
+    auto deferredPromise = DeferredPromise::create(globalObject, DeferredPromise::Mode::RetainPromiseOnResolve);
     if (!deferredPromise)
         return JSC::jsUndefined();
 

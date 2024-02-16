@@ -120,14 +120,14 @@ public:
 
     void rememberWorld(DOMWrapperWorld& world)
     {
-        ASSERT(!m_worldSet.contains(world));
-        m_worldSet.add(world);
+        ASSERT(!m_worldSet.contains(&world));
+        m_worldSet.add(&world);
     }
 
     void forgetWorld(DOMWrapperWorld& world)
     {
-        ASSERT(m_worldSet.contains(world));
-        m_worldSet.remove(world);
+        ASSERT(m_worldSet.contains(&world));
+        m_worldSet.remove(&world);
     }
 
     virtual String overrideSourceURL(const JSC::StackFrame&, const String& originalSourceURL) const;
@@ -158,7 +158,7 @@ public:
     void addClient(Client& client) { m_clients.add(client); }
 
 private:
-    HashSet<SingleThreadWeakRef<DOMWrapperWorld>> m_worldSet;
+    HashSet<DOMWrapperWorld*> m_worldSet;
     RefPtr<DOMWrapperWorld> m_normalWorld;
 
     JSBuiltinFunctions m_builtinFunctions;

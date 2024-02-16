@@ -189,8 +189,8 @@ private:
 
     Ref<LocalFrame> protectedFrame() const;
 
-    WeakRef<LocalFrame> m_frame;
-    const URL* m_sourceURL { nullptr }; // FIXME: We shouldn't use a raw pointer here.
+    LocalFrame& m_frame;
+    const URL* m_sourceURL { nullptr };
 
     bool m_paused;
     bool m_willReplaceWithResultOfExecutingJavascriptURL { false };

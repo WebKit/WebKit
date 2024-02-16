@@ -52,7 +52,7 @@ EncodedJSValue constructJSHTMLElement(JSGlobalObject* lexicalGlobalObject, CallF
     auto* jsConstructor = jsCast<JSDOMConstructorBase*>(callFrame.jsCallee());
     ASSERT(jsConstructor);
 
-    RefPtr context = jsConstructor->scriptExecutionContext();
+    auto* context = jsConstructor->scriptExecutionContext();
     if (!context)
         return throwConstructorScriptExecutionContextUnavailableError(*lexicalGlobalObject, scope, "HTMLElement");
     ASSERT(context->isDocument());
@@ -114,19 +114,19 @@ EncodedJSValue constructJSHTMLElement(JSGlobalObject* lexicalGlobalObject, CallF
 
 JSScope* JSHTMLElement::pushEventHandlerScope(JSGlobalObject* lexicalGlobalObject, JSScope* scope) const
 {
-    Ref element = wrapped();
+    HTMLElement& element = wrapped();
 
     // The document is put on first, fall back to searching it only after the element and form.
     // FIXME: This probably may use the wrong global object. If this is called from a native
     // function, then it would be correct but not optimal since the native function would *know*
     // the global object. But, it may be that globalObject() is more correct.
     // https://bugs.webkit.org/show_bug.cgi?id=134932
-    Ref vm = lexicalGlobalObject->vm();
+    VM& vm = lexicalGlobalObject->vm();
     
-    scope = JSWithScope::create(vm, lexicalGlobalObject, scope, asObject(toJS(lexicalGlobalObject, globalObject(), element->document())));
+    scope = JSWithScope::create(vm, lexicalGlobalObject, scope, asObject(toJS(lexicalGlobalObject, globalObject(), element.document())));
 
     // The form is next, searched before the document, but after the element itself.
-    if (auto* formAssociated = element->asFormAssociatedElement()) {
+    if (auto* formAssociated = element.asFormAssociatedElement()) {
         if (RefPtr form = formAssociated->form())
             scope = JSWithScope::create(vm, lexicalGlobalObject, scope, asObject(toJS(lexicalGlobalObject, globalObject(), *form)));
     }

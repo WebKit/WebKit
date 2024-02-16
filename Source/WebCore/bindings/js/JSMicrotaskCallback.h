@@ -41,7 +41,7 @@ public:
     void call()
     {
         auto protectedThis { Ref { *this } };
-        Ref vm = m_globalObject->vm();
+        JSC::VM& vm = m_globalObject->vm();
         JSC::JSLockHolder lock(vm);
         JSExecState::runTask(m_globalObject.get(), m_task);
     }

@@ -44,7 +44,7 @@ template<typename T> struct Converter<IDLEnumeration<T>> : DefaultConverter<IDLE
     template<typename ExceptionThrower = DefaultExceptionThrower>
     static T convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
     {
-        Ref vm = JSC::getVM(&lexicalGlobalObject);
+        auto& vm = JSC::getVM(&lexicalGlobalObject);
         auto throwScope = DECLARE_THROW_SCOPE(vm);
 
         auto result = parseEnumeration<T>(lexicalGlobalObject, value);
