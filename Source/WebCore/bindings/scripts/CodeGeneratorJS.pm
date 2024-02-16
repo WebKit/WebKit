@@ -5233,7 +5233,6 @@ sub GenerateImplementation
     if (ShouldGenerateWrapperOwnerCode($hasParent, $interface) && !GetCustomIsReachable($interface)) {
         push(@implContent, "bool JS${interfaceName}Owner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, const char** reason)\n");
         push(@implContent, "{\n");
-        my $ignoresClangSmartPointerWarnings = 0;
         # All ActiveDOMObjects implement hasPendingActivity(), but not all of them
         # increment their C++ reference counts when hasPendingActivity() becomes
         # true. As a result, ActiveDOMObjects can be prematurely destroyed before
@@ -5243,9 +5242,7 @@ sub GenerateImplementation
         # check just above the (GetGenerateIsReachable($interface) eq "Impl") check below.
         my $emittedJSCast = 0;
         if ($codeGenerator->InheritsExtendedAttribute($interface, "ActiveDOMObject")) {
-            $ignoresClangSmartPointerWarnings = 1;
-            push(@implContent, "IGNORE_CLANG_STATIC_ANALYZER_UNCOUNTED_LOCAL_VARS_BEGIN\n");
-            push(@implContent, "    auto* js${interfaceName} = jsCast<JS${interfaceName}*>(handle.slot()->asCell());\n");
+            push(@implContent, "    SUPPRESS_UNCOUNTED_LOCAL auto* js${interfaceName} = jsCast<JS${interfaceName}*>(handle.slot()->asCell());\n");
             $emittedJSCast = 1;
             push(@implContent, "    auto& wrapped = js${interfaceName}->wrapped();\n");
             push(@implContent, "    if (!wrapped.isContextStopped() && wrapped.hasPendingActivity()) {\n");
@@ -5341,7 +5338,6 @@ sub GenerateImplementation
             push(@implContent, "    UNUSED_PARAM(reason);\n");
             push(@implContent, "    return false;\n");
         }
-        push(@implContent, "IGNORE_CLANG_STATIC_ANALYZER_UNCOUNTED_LOCAL_VARS_END\n") if $ignoresClangSmartPointerWarnings;
         push(@implContent, "}\n\n");
     }
 

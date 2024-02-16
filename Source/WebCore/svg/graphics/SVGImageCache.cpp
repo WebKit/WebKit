@@ -76,10 +76,8 @@ RefPtr<SVGImage> SVGImageCache::protectedSVGImage() const
 
 FloatSize SVGImageCache::imageSizeForRenderer(const RenderObject* renderer) const
 {
-IGNORE_CLANG_STATIC_ANALYZER_UNCOUNTED_LOCAL_VARS_BEGIN
-    auto* image = findImageForRenderer(renderer);
+    SUPPRESS_UNCOUNTED_LOCAL auto* image = findImageForRenderer(renderer);
     return image ? image->size() : m_svgImage->size();
-IGNORE_CLANG_STATIC_ANALYZER_UNCOUNTED_LOCAL_VARS_END
 }
 
 // FIXME: This doesn't take into account the animation timeline so animations will not

@@ -204,8 +204,7 @@ void SVGElement::removedFromAncestor(RemovalType removalType, ContainerNode& old
 
 SVGSVGElement* SVGElement::ownerSVGElement() const
 {
-IGNORE_CLANG_STATIC_ANALYZER_UNCOUNTED_LOCAL_VARS_BEGIN
-    auto* node = parentNode();
+    SUPPRESS_UNCOUNTED_LOCAL auto* node = parentNode();
     while (node) {
         if (auto* svg = dynamicDowncast<SVGSVGElement>(*node))
             return svg;
@@ -214,7 +213,6 @@ IGNORE_CLANG_STATIC_ANALYZER_UNCOUNTED_LOCAL_VARS_BEGIN
     }
 
     return nullptr;
-IGNORE_CLANG_STATIC_ANALYZER_UNCOUNTED_LOCAL_VARS_END
 }
 
 SVGElement* SVGElement::viewportElement() const
@@ -305,14 +303,12 @@ SVGElement* SVGElement::correspondingElement() const
 
 RefPtr<SVGUseElement> SVGElement::correspondingUseElement() const
 {
-IGNORE_CLANG_STATIC_ANALYZER_UNCOUNTED_LOCAL_VARS_BEGIN
-    auto* root = containingShadowRoot();
+    SUPPRESS_UNCOUNTED_LOCAL auto* root = containingShadowRoot();
     if (!root)
         return nullptr;
     if (root->mode() != ShadowRootMode::UserAgent)
         return nullptr;
     return dynamicDowncast<SVGUseElement>(root->host());
-IGNORE_CLANG_STATIC_ANALYZER_UNCOUNTED_LOCAL_VARS_END
 }
 
 void SVGElement::setCorrespondingElement(SVGElement* correspondingElement)

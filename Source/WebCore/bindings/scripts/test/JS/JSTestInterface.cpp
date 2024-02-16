@@ -1202,8 +1202,7 @@ void JSTestInterface::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 
 bool JSTestInterfaceOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, const char** reason)
 {
-IGNORE_CLANG_STATIC_ANALYZER_UNCOUNTED_LOCAL_VARS_BEGIN
-    auto* jsTestInterface = jsCast<JSTestInterface*>(handle.slot()->asCell());
+    SUPPRESS_UNCOUNTED_LOCAL auto* jsTestInterface = jsCast<JSTestInterface*>(handle.slot()->asCell());
     auto& wrapped = jsTestInterface->wrapped();
     if (!wrapped.isContextStopped() && wrapped.hasPendingActivity()) {
         if (UNLIKELY(reason))
@@ -1213,7 +1212,6 @@ IGNORE_CLANG_STATIC_ANALYZER_UNCOUNTED_LOCAL_VARS_BEGIN
     UNUSED_PARAM(visitor);
     UNUSED_PARAM(reason);
     return false;
-IGNORE_CLANG_STATIC_ANALYZER_UNCOUNTED_LOCAL_VARS_END
 }
 
 void JSTestInterfaceOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)

@@ -180,8 +180,7 @@ TEST(WTF_FixedVector, Move)
     vec1[2] = 2;
 
     FixedVector<unsigned> vec2(WTFMove(vec1));
-    IGNORE_CLANG_STATIC_ANALYZER_USE_AFTER_MOVE_ATTRIBUTE
-    EXPECT_EQ(0U, vec1.size());
+    SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(0U, vec1.size());
     EXPECT_EQ(3U, vec2.size());
     for (unsigned i = 0; i < vec2.size(); ++i)
         EXPECT_EQ(i, vec2[i]);
@@ -196,8 +195,7 @@ TEST(WTF_FixedVector, MoveAssign)
 
     FixedVector<unsigned> vec2;
     vec2 = WTFMove(vec1);
-    IGNORE_CLANG_STATIC_ANALYZER_USE_AFTER_MOVE_ATTRIBUTE
-    EXPECT_EQ(0U, vec1.size());
+    SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(0U, vec1.size());
     EXPECT_EQ(3U, vec2.size());
     for (unsigned i = 0; i < vec2.size(); ++i)
         EXPECT_EQ(i, vec2[i]);
@@ -208,8 +206,7 @@ TEST(WTF_FixedVector, MoveVector)
     auto vec1 = Vector<MoveOnly>::from(MoveOnly(0), MoveOnly(1), MoveOnly(2), MoveOnly(3));
     EXPECT_EQ(4U, vec1.size());
     FixedVector<MoveOnly> vec2(WTFMove(vec1));
-    IGNORE_CLANG_STATIC_ANALYZER_USE_AFTER_MOVE_ATTRIBUTE
-    EXPECT_EQ(0U, vec1.size());
+    SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(0U, vec1.size());
     EXPECT_EQ(4U, vec2.size());
     for (unsigned index = 0; index < vec2.size(); ++index)
         EXPECT_EQ(index, vec2[index].value());
@@ -222,8 +219,7 @@ TEST(WTF_FixedVector, MoveAssignVector)
         auto vec1 = Vector<MoveOnly>::from(MoveOnly(0), MoveOnly(1), MoveOnly(2), MoveOnly(3));
         EXPECT_EQ(4U, vec1.size());
         vec2 = WTFMove(vec1);
-        IGNORE_CLANG_STATIC_ANALYZER_USE_AFTER_MOVE_ATTRIBUTE
-        EXPECT_EQ(0U, vec1.size());
+        SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(0U, vec1.size());
     }
     EXPECT_EQ(4U, vec2.size());
     for (unsigned index = 0; index < vec2.size(); ++index)

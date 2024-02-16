@@ -77,8 +77,7 @@ TEST(WTF_CompactRefPtr, Basic)
     {
         CompactRefPtr<AlignedRefLogger> p1 = &a;
         CompactRefPtr<AlignedRefLogger> p2 = WTFMove(p1);
-        IGNORE_CLANG_STATIC_ANALYZER_USE_AFTER_MOVE_ATTRIBUTE
-        EXPECT_EQ(nullptr, p1.get());
+        SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
@@ -86,8 +85,7 @@ TEST(WTF_CompactRefPtr, Basic)
     {
         CompactRefPtr<AlignedRefLogger> p1 = &a;
         CompactRefPtr<AlignedRefLogger> p2(WTFMove(p1));
-        IGNORE_CLANG_STATIC_ANALYZER_USE_AFTER_MOVE_ATTRIBUTE
-        EXPECT_EQ(nullptr, p1.get());
+        SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
@@ -103,8 +101,7 @@ TEST(WTF_CompactRefPtr, Basic)
     {
         CompactRefPtr<DerivedAlignedRefLogger> p1 = &a;
         CompactRefPtr<AlignedRefLogger> p2 = WTFMove(p1);
-        IGNORE_CLANG_STATIC_ANALYZER_USE_AFTER_MOVE_ATTRIBUTE
-        EXPECT_EQ(nullptr, p1.get());
+        SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
@@ -220,8 +217,7 @@ TEST(WTF_CompactRefPtr, Assignment)
         log() << "| ";
         p1 = WTFMove(p2);
         EXPECT_EQ(&b, p1.get());
-        IGNORE_CLANG_STATIC_ANALYZER_USE_AFTER_MOVE_ATTRIBUTE
-        EXPECT_EQ(nullptr, p2.get());
+        SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, p2.get());
         log() << "| ";
     }
     EXPECT_STREQ("ref(a) ref(b) | deref(a) | deref(b) ", takeLogStr().c_str());
@@ -267,8 +263,7 @@ TEST(WTF_CompactRefPtr, Assignment)
         log() << "| ";
         p1 = WTFMove(p2);
         EXPECT_EQ(&c, p1.get());
-        IGNORE_CLANG_STATIC_ANALYZER_USE_AFTER_MOVE_ATTRIBUTE
-        EXPECT_EQ(nullptr, p2.get());
+        SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, p2.get());
         log() << "| ";
     }
     EXPECT_STREQ("ref(a) ref(c) | deref(a) | deref(c) ", takeLogStr().c_str());
@@ -356,8 +351,7 @@ TEST(WTF_CompactRefPtr, Release)
     {
         CompactRefPtr<AlignedRefLogger> p1 = &a;
         CompactRefPtr<AlignedRefLogger> p2 = WTFMove(p1);
-        IGNORE_CLANG_STATIC_ANALYZER_USE_AFTER_MOVE_ATTRIBUTE
-        EXPECT_EQ(nullptr, p1.get());
+        SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
@@ -365,8 +359,7 @@ TEST(WTF_CompactRefPtr, Release)
     {
         CompactRefPtr<AlignedRefLogger> p1 = &a;
         CompactRefPtr<AlignedRefLogger> p2(WTFMove(p1));
-        IGNORE_CLANG_STATIC_ANALYZER_USE_AFTER_MOVE_ATTRIBUTE
-        EXPECT_EQ(nullptr, p1.get());
+        SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
@@ -374,8 +367,7 @@ TEST(WTF_CompactRefPtr, Release)
     {
         CompactRefPtr<DerivedAlignedRefLogger> p1 = &a;
         CompactRefPtr<AlignedRefLogger> p2 = WTFMove(p1);
-        IGNORE_CLANG_STATIC_ANALYZER_USE_AFTER_MOVE_ATTRIBUTE
-        EXPECT_EQ(nullptr, p1.get());
+        SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
@@ -388,8 +380,7 @@ TEST(WTF_CompactRefPtr, Release)
         log() << "| ";
         p1 = WTFMove(p2);
         EXPECT_EQ(&b, p1.get());
-        IGNORE_CLANG_STATIC_ANALYZER_USE_AFTER_MOVE_ATTRIBUTE
-        EXPECT_EQ(nullptr, p2.get());
+        SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, p2.get());
         log() << "| ";
     }
     EXPECT_STREQ("ref(a) ref(b) | deref(a) | deref(b) ", takeLogStr().c_str());
@@ -402,8 +393,7 @@ TEST(WTF_CompactRefPtr, Release)
         log() << "| ";
         p1 = WTFMove(p2);
         EXPECT_EQ(&c, p1.get());
-        IGNORE_CLANG_STATIC_ANALYZER_USE_AFTER_MOVE_ATTRIBUTE
-        EXPECT_EQ(nullptr, p2.get());
+        SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, p2.get());
         log() << "| ";
     }
     EXPECT_STREQ("ref(a) ref(c) | deref(a) | deref(c) ", takeLogStr().c_str());
@@ -549,8 +539,7 @@ TEST(WTF_CompactRefPtr, AssignBeforeDeref)
         a.slotToCheck = nullptr;
         b.slotToCheck = nullptr;
         EXPECT_EQ(&b, p1.get());
-        IGNORE_CLANG_STATIC_ANALYZER_USE_AFTER_MOVE_ATTRIBUTE
-        EXPECT_EQ(nullptr, p2.get());
+        SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, p2.get());
         log() << "| ";
     }
     EXPECT_STREQ("ref(a) ref(b) | slot=b deref(a) | deref(b) ", takeLogStr().c_str());

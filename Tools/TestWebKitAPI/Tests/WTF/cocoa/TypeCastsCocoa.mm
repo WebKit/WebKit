@@ -66,15 +66,13 @@ TEST(TypeCastsCocoa, bridge_cast)
 
         auto objectCF = bridge_cast(WTFMove(objectNS));
         auto objectCFPtr = reinterpret_cast<uintptr_t>(objectCF.get());
-        IGNORE_CLANG_STATIC_ANALYZER_USE_AFTER_MOVE_ATTRIBUTE
-        EXPECT_EQ(nil, objectNS.get());
+        SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nil, objectNS.get());
         EXPECT_EQ(objectNSPtr, objectCFPtr);
         EXPECT_EQ(1L, CFGetRetainCount((CFTypeRef)objectCFPtr));
 
         objectNS = bridge_cast(WTFMove(objectCF));
         objectNSPtr = reinterpret_cast<uintptr_t>(objectNS.get());
-        IGNORE_CLANG_STATIC_ANALYZER_USE_AFTER_MOVE_ATTRIBUTE
-        EXPECT_EQ(NULL, objectCF.get());
+        SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(NULL, objectCF.get());
         EXPECT_EQ(objectCFPtr, objectNSPtr);
         EXPECT_EQ(1L, CFGetRetainCount((CFTypeRef)objectNSPtr));
     }
@@ -86,15 +84,13 @@ TEST(TypeCastsCocoa, bridge_cast)
 
         auto objectNS = bridge_cast(WTFMove(objectCF));
         auto objectNSPtr = reinterpret_cast<uintptr_t>(objectNS.get());
-        IGNORE_CLANG_STATIC_ANALYZER_USE_AFTER_MOVE_ATTRIBUTE
-        EXPECT_EQ(NULL, objectCF.get());
+        SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(NULL, objectCF.get());
         EXPECT_EQ(objectCFPtr, objectNSPtr);
         EXPECT_EQ(1L, CFGetRetainCount((CFTypeRef)objectNSPtr));
 
         objectCF = bridge_cast(WTFMove(objectNS));
         objectCFPtr = reinterpret_cast<uintptr_t>(objectCF.get());
-        IGNORE_CLANG_STATIC_ANALYZER_USE_AFTER_MOVE_ATTRIBUTE
-        EXPECT_EQ(nil, objectNS.get());
+        SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nil, objectNS.get());
         EXPECT_EQ(objectNSPtr, objectCFPtr);
         EXPECT_EQ(1L, CFGetRetainCount((CFTypeRef)objectCFPtr));
     }
@@ -105,8 +101,7 @@ TEST(TypeCastsCocoa, bridge_id_cast)
     @autoreleasepool {
         RetainPtr<CFTypeRef> objectCF;
         auto objectID = bridge_id_cast(WTFMove(objectCF));
-        IGNORE_CLANG_STATIC_ANALYZER_USE_AFTER_MOVE_ATTRIBUTE
-        EXPECT_EQ(NULL, objectCF.get());
+        SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(NULL, objectCF.get());
         EXPECT_EQ(nil, objectID.get());
     }
 
@@ -120,8 +115,7 @@ TEST(TypeCastsCocoa, bridge_id_cast)
         AUTORELEASEPOOL_FOR_ARC_DEBUG {
             objectIDPtr = reinterpret_cast<uintptr_t>(objectID.get());
         }
-        IGNORE_CLANG_STATIC_ANALYZER_USE_AFTER_MOVE_ATTRIBUTE
-        EXPECT_EQ(NULL, objectCF.get());
+        SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(NULL, objectCF.get());
         EXPECT_EQ(objectCFPtr, objectIDPtr);
         EXPECT_EQ(1L, CFGetRetainCount((CFTypeRef)objectIDPtr));
     }
@@ -231,8 +225,7 @@ TEST(TypeCastsCocoa, dynamic_objc_cast_RetainPtr)
     @autoreleasepool {
         RetainPtr<NSString> object;
         auto objectCast = dynamic_objc_cast<NSString>(WTFMove(object));
-        IGNORE_CLANG_STATIC_ANALYZER_USE_AFTER_MOVE_ATTRIBUTE
-        EXPECT_EQ(nil, object.get());
+        SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nil, object.get());
         EXPECT_EQ(nil, objectCast.get());
     }
 
@@ -250,8 +243,7 @@ TEST(TypeCastsCocoa, dynamic_objc_cast_RetainPtr)
             objectCast = dynamic_objc_cast<NSString>(WTFMove(object));
             objectCastPtr = reinterpret_cast<uintptr_t>(objectCast.get());
         }
-        IGNORE_CLANG_STATIC_ANALYZER_USE_AFTER_MOVE_ATTRIBUTE
-        EXPECT_EQ(nil, object.get());
+        SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nil, object.get());
         EXPECT_EQ(objectPtr, objectCastPtr);
         EXPECT_EQ(1L, CFGetRetainCount((CFTypeRef)objectCastPtr));
 
@@ -267,8 +259,7 @@ TEST(TypeCastsCocoa, dynamic_objc_cast_RetainPtr)
             objectCast2 = dynamic_objc_cast<NSObject>(WTFMove(object));
             objectCastPtr2 = reinterpret_cast<uintptr_t>(objectCast2.get());
         }
-        IGNORE_CLANG_STATIC_ANALYZER_USE_AFTER_MOVE_ATTRIBUTE
-        EXPECT_EQ(nil, object.get());
+        SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nil, object.get());
         EXPECT_EQ(objectPtr, objectCastPtr2);
         EXPECT_EQ(1L, CFGetRetainCount((CFTypeRef)objectCastPtr2));
 
@@ -302,8 +293,7 @@ TEST(TypeCastsCocoa, dynamic_objc_cast_RetainPtr)
         AUTORELEASEPOOL_FOR_ARC_DEBUG {
             objectCastPtr = reinterpret_cast<uintptr_t>(objectCast.get());
         }
-        IGNORE_CLANG_STATIC_ANALYZER_USE_AFTER_MOVE_ATTRIBUTE
-        EXPECT_EQ(nil, object.get());
+        SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nil, object.get());
         EXPECT_EQ(objectPtr, objectCastPtr);
         EXPECT_EQ(1L, CFGetRetainCount((CFTypeRef)objectCastPtr));
     }
@@ -323,8 +313,7 @@ TEST(TypeCastsCocoa, dynamic_objc_cast_RetainPtr)
             objectCast = dynamic_objc_cast<NSObject>(WTFMove(object));
             objectCastPtr = reinterpret_cast<uintptr_t>(objectCast.get());
         }
-        IGNORE_CLANG_STATIC_ANALYZER_USE_AFTER_MOVE_ATTRIBUTE
-        EXPECT_EQ(nil, object.get());
+        SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nil, object.get());
         EXPECT_EQ(objectPtr, objectCastPtr);
         EXPECT_EQ(1L, CFGetRetainCount((CFTypeRef)objectCastPtr));
 

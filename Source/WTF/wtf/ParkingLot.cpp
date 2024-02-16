@@ -46,9 +46,7 @@ template<typename... Types>
 static void dataLogForCurrentThread(const Types&... values)
 {
     StringPrintStream stream;
-IGNORE_CLANG_STATIC_ANALYZER_UNCOUNTED_CALL_ARGS_BEGIN
-    stream.print(Thread::current());
-IGNORE_CLANG_STATIC_ANALYZER_UNCOUNTED_CALL_ARGS_END
+    SUPPRESS_UNCOUNTED_ARG stream.print(Thread::current());
     stream.print(values...);
     dataLog(stream.toString());
 }
