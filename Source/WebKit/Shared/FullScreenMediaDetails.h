@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,16 +25,19 @@
 
 #pragma once
 
-#import <wtf/SoftLinking.h>
+#include <WebCore/FloatSize.h>
+#include <WebCore/SharedMemory.h>
 
-SOFT_LINK_LIBRARY_FOR_HEADER(WebKit, WebKitSwift)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKGroupSessionObserver)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKSLinearMediaPlayer)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKSLinearMediaTimeRange)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKSPreviewWindowController)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKTextExtractionContainerItem)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKTextExtractionTextItem)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKTextExtractionScrollableItem)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKTextExtractionEditableItem)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKTextExtractionInteractiveItem)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKTextExtractionImageItem)
+namespace WebKit {
+
+struct FullScreenMediaDetails {
+    enum class Type : uint8_t { None, Video, Image };
+
+    Type type { Type::None };
+    WebCore::FloatSize videoDimensions { };
+
+    String mimeType { };
+    std::optional<WebCore::SharedMemory::Handle> imageHandle { std::nullopt };
+};
+
+}

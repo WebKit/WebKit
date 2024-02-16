@@ -43,6 +43,7 @@
 #include <WebCore/LocalFrame.h>
 #include <WebCore/LocalFrameView.h>
 #include <WebCore/Quirks.h>
+#include <WebCore/RenderImage.h>
 #include <WebCore/RenderLayerBacking.h>
 #include <WebCore/RenderView.h>
 #include <WebCore/Settings.h>
@@ -210,10 +211,9 @@ void WebFullScreenManager::enterFullScreenForElement(WebCore::Element* element, 
 
     setElement(*element);
 
-    bool isVideoElement = false;
-#if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
-    isVideoElement = is<HTMLVideoElement>(element);
 
+    FullScreenMediaDetails mediaDetails;
+#if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     if (m_page->videoPresentationManager().videoElementInPictureInPicture() && m_element->document().quirks().blocksEnteringStandardFullscreenFromPictureInPictureQuirk())
         return;
 
@@ -221,21 +221,67 @@ void WebFullScreenManager::enterFullScreenForElement(WebCore::Element* element, 
         currentPlaybackControlsElement->prepareForVideoFullscreenStandby();
 #endif
 
+#if PLATFORM(VISION) && ENABLE(QUICKLOOK_FULLSCREEN)
+    CheckedPtr renderImage = dynamicDowncast<RenderImage>(element->renderer());
+    if (renderImage) {
+        auto getImageResourceHandle = [&]() -> std::optional<SharedMemory::Handle> {
+            if (!renderImage->cachedImage() || renderImage->cachedImage()->errorOccurred())
+                return std::nullopt;
+
+            auto* image = renderImage->cachedImage()->image();
+            if (!image || !image->isBitmapImage())
+                return std::nullopt;
+
+            auto* buffer = renderImage->cachedImage()->resourceBuffer();
+            if (!buffer)
+                return std::nullopt;
+
+            auto sharedMemoryBuffer = SharedMemory::copyBuffer(*buffer);
+            if (!sharedMemoryBuffer)
+                return std::nullopt;
+
+            return sharedMemoryBuffer->createHandle(SharedMemory::Protection::ReadOnly);
+        };
+
+        auto getImageMIMEType = [&]() -> String {
+            if (auto* cachedImage = renderImage->cachedImage()) {
+                if (auto* image = cachedImage->image())
+                    return image->mimeType();
+            }
+            return emptyString();
+        };
+
+        mediaDetails = {
+            FullScreenMediaDetails::Type::Image,
+            { },
+            getImageMIMEType(),
+            getImageResourceHandle()
+        };
+    }
+#endif
+
     m_initialFrame = screenRectOfContents(m_element.get());
 
-    FloatSize videoDimensions;
 #if ENABLE(VIDEO)
     updateMainVideoElement();
-    if (m_mainVideoElement)
-        videoDimensions = FloatSize(m_mainVideoElement->videoWidth(), m_mainVideoElement->videoHeight());
+
+#if PLATFORM(VISION)
+    if (m_mainVideoElement && is<HTMLVideoElement>(element)) {
+        mediaDetails = {
+            FullScreenMediaDetails::Type::Video,
+            FloatSize(m_mainVideoElement->videoWidth(), m_mainVideoElement->videoHeight())
+        };
+    }
 #endif
-    m_page->injectedBundleFullScreenClient().enterFullScreenForElement(m_page.ptr(), element, m_element->document().quirks().blocksReturnToFullscreenFromPictureInPictureQuirk(), isVideoElement, videoDimensions, mode);
+
+    m_page->injectedBundleFullScreenClient().enterFullScreenForElement(m_page.ptr(), element, m_element->document().quirks().blocksReturnToFullscreenFromPictureInPictureQuirk(), mode, WTFMove(mediaDetails));
 
     if (mode == WebCore::HTMLMediaElementEnums::VideoFullscreenModeInWindow) {
         willEnterFullScreen(mode);
         didEnterFullScreen();
         m_inWindowFullScreenMode = true;
     }
+#endif
 }
 
 void WebFullScreenManager::exitFullScreenForElement(WebCore::Element* element)

@@ -157,6 +157,7 @@ def types_that_must_be_moved():
         'std::optional<WebKit::SandboxExtension::Handle>',
         'std::optional<Vector<WebKit::SandboxExtension::Handle>>',
         'WebKit::NetworkSessionCreationParameters',
+        'WebKit::FullScreenMediaDetails',
         'WebKit::GPUProcessCreationParameters',
         'WebKit::ModelProcessCreationParameters',
         'WebKit::NetworkProcessCreationParameters',

@@ -61,6 +61,12 @@
 
 #if PLATFORM(VISION)
 #import "MRUIKitSPI.h"
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+#import "MediaPermissionUtilities.h"
+#import "WKSPreviewWindowController.h"
+#import <pal/ios/QuickLookSoftLink.h>
+#import "WebKitSwiftSoftLink.h"
+#endif // QUICKLOOK_FULLSCREEN
 #endif
 
 #if !HAVE(URL_FORMATTING)
@@ -695,6 +701,16 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
 - (void)placeholderWillMoveToSuperview:(UIView *)superview;
 @end
 
+#if PLATFORM(VISION) && ENABLE(QUICKLOOK_FULLSCREEN)
+@interface WKFullScreenWindowController (WKSPreviewWindowControllerDelegate) <WKSPreviewWindowControllerDelegate>
+- (void)previewWindowControllerDidClose;
+@end
+
+@interface WKFullScreenWindowController (QLPreviewItemDataProvider) <QLPreviewItemDataProvider>
+- (NSData *)provideDataForItem:(QLItem *)item;
+@end
+#endif
+
 #pragma mark -
 
 @interface WKFullScreenPlaceholderView : UIView
@@ -746,6 +762,9 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
 #if PLATFORM(VISION)
     RetainPtr<UIWindow> _lastKnownParentWindow;
     RetainPtr<WKFullScreenParentWindowState> _parentWindowState;
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+    RetainPtr<WKSPreviewWindowController> _previewWindowController;
+#endif // QUICKLOOK_FULLSCREEN
 #endif
 
     std::unique_ptr<WebKit::VideoPresentationManagerProxy::VideoInPictureInPictureDidChangeObserver> _pipObserver;
@@ -1790,6 +1809,12 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
     UIWindow *outWindow = enter ? _lastKnownParentWindow.get() : _window.get();
     WKFullScreenParentWindowState *originalState = _parentWindowState.get();
 
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+    bool isImageElement = self._manager && self._manager->isImageElement();
+#else
+    bool isImageElement = false;
+#endif
+
     inWindow.transform3D = CATransform3DTranslate(originalState.transform3D, 0, 0, kIncomingWindowZOffset);
 
     MRUIStage *stage = UIApplication.sharedApplication.mrui_activeStage;
@@ -1828,8 +1853,8 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
         } completion:nil];
     }
 
-    auto completion = makeBlockPtr([controller = retainPtr(controller), inWindow = retainPtr(inWindow), originalState = retainPtr(originalState), enter, completionHandler = WTFMove(completionHandler)] (BOOL finished) mutable {
-        WebKit::resizeScene([inWindow windowScene], [inWindow bounds].size, [controller, inWindow, originalState, enter, completionHandler = WTFMove(completionHandler)]() mutable {
+    auto completion = makeBlockPtr([controller = retainPtr(controller), inWindow = retainPtr(inWindow), originalState = retainPtr(originalState), enter, isImageElement, completionHandler = WTFMove(completionHandler)] (BOOL finished) mutable {
+        WebKit::resizeScene([inWindow windowScene], [inWindow bounds].size, [controller, inWindow, originalState, enter, isImageElement, completionHandler = WTFMove(completionHandler)]() mutable {
             Class inWindowClass = enter ? [UIWindow class] : [originalState windowClass];
             object_setClass(inWindow.get(), inWindowClass);
 
@@ -1854,17 +1879,37 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
                 [controller->_fullscreenViewController dismissViewControllerAnimated:NO completion:nil];
             }
 
-            scene.mrui_placement.preferredChromeOptions = [originalState sceneChromeOptions];
+            if (enter && isImageElement)
+                scene.mrui_placement.preferredChromeOptions = RSSSceneChromeOptionsNone;
+            else
+                scene.mrui_placement.preferredChromeOptions = [originalState sceneChromeOptions];
 
             completionHandler();
         });
     });
 
+    CGFloat inWindowAlpha = 1;
+#if PLATFORM(VISION) && ENABLE(QUICKLOOK_FULLSCREEN)
+    auto* manager = self._manager;
+    if (manager && manager->isImageElement()) {
+        if (enter) {
+            inWindowAlpha = 0;
+            auto item = adoptNS([PAL::allocQLItemInstance() initWithDataProvider:self contentType:[UTType typeWithMIMEType:manager->imageMIMEType()].identifier previewTitle:WebKit::applicationVisibleName()]);
+            _previewWindowController = [WebKit::allocWKSPreviewWindowControllerInstance() initWithItem:item.get()];
+            [_previewWindowController setDelegate:self];
+            [_previewWindowController presentWindow];
+        } else if (_previewWindowController) {
+            [_previewWindowController setDelegate:nil];
+            _previewWindowController = nil;
+        }
+    }
+#endif
+
     [UIView animateWithDuration:kIncomingWindowFadeDuration delay:kIncomingWindowFadeDelay options:UIViewAnimationOptionCurveEaseInOut animations:^{
         if (!enter)
             [self _setOrnamentsHidden:NO];
 
-        inWindow.alpha = 1;
+        inWindow.alpha = inWindowAlpha;
     } completion:completion.get()];
 }
 
@@ -1886,7 +1931,12 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
 {
 #if PLATFORM(VISION)
     UIWindowScene *scene = [_window windowScene];
-    scene.mrui_placement.preferredChromeOptions = [_parentWindowState sceneChromeOptions];
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+    if (self._manager && self._manager->isImageElement())
+        scene.mrui_placement.preferredChromeOptions = RSSSceneChromeOptionsNone;
+    else
+#endif // QUICKLOOK_FULLSCREEN
+        scene.mrui_placement.preferredChromeOptions = [_parentWindowState sceneChromeOptions];
 #endif
 }
 
@@ -1899,6 +1949,29 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
 }
 
 @end
+
+#if PLATFORM(VISION) && ENABLE(QUICKLOOK_FULLSCREEN)
+
+@implementation WKFullScreenWindowController (WKSPreviewWindowControllerDelegate)
+- (void)previewWindowControllerDidClose
+{
+    [self requestExitFullScreen];
+}
+@end
+
+@implementation WKFullScreenWindowController (QLPreviewItemDataProvider)
+- (NSData *)provideDataForItem:(QLItem *)item
+{
+    if (auto* manager = self._manager) {
+        if (manager->imageBuffer().has_value())
+            return manager->imageBuffer().value()->createNSData().autorelease();
+    }
+
+    return nil;
+}
+@end
+
+#endif
 
 #if !RELEASE_LOG_DISABLED
 @implementation WKFullScreenWindowController (Logging)

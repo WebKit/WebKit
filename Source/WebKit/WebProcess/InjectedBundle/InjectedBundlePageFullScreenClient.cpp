@@ -52,13 +52,13 @@ bool InjectedBundlePageFullScreenClient::supportsFullScreen(WebPage *page, bool 
     return supports;
 }
 
-void InjectedBundlePageFullScreenClient::enterFullScreenForElement(WebPage *page, WebCore::Element *element, bool blocksReturnToFullscreenFromPictureInPicture, bool isVideoElement, FloatSize videoDimensions, WebCore::HTMLMediaElementEnums::VideoFullscreenMode mode)
+void InjectedBundlePageFullScreenClient::enterFullScreenForElement(WebPage* page, WebCore::Element* element, bool blocksReturnToFullscreenFromPictureInPicture, WebCore::HTMLMediaElementEnums::VideoFullscreenMode mode, FullScreenMediaDetails&& mediaDetails)
 {
     if (m_client.enterFullScreenForElement) {
         RefPtr<InjectedBundleNodeHandle> nodeHandle = InjectedBundleNodeHandle::getOrCreate(element);
         m_client.enterFullScreenForElement(toAPI(page), toAPI(nodeHandle.get()));
     } else if (mode != WebCore::HTMLMediaElementEnums::VideoFullscreenModeInWindow)
-        page->send(Messages::WebFullScreenManagerProxy::EnterFullScreen(blocksReturnToFullscreenFromPictureInPicture, isVideoElement, videoDimensions));
+        page->send(Messages::WebFullScreenManagerProxy::EnterFullScreen(blocksReturnToFullscreenFromPictureInPicture, WTFMove(mediaDetails)));
 }
 
 void InjectedBundlePageFullScreenClient::exitFullScreenForElement(WebPage *page, WebCore::Element *element, bool isInInWindowFullScreenMode)

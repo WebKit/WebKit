@@ -27,6 +27,7 @@
 
 #if ENABLE(FULLSCREEN_API)
 
+#include "FullScreenMediaDetails.h"
 #include "MessageReceiver.h"
 #include <WebCore/HTMLMediaElement.h>
 #include <wtf/CompletionHandler.h>
@@ -77,7 +78,12 @@ public:
     bool isFullScreen();
     bool blocksReturnToFullscreenFromPictureInPicture() const;
 #if PLATFORM(VISION)
-    bool isVideoElement() const;
+    bool isVideoElement() const { return m_isVideoElement; }
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+    bool isImageElement() const { return m_imageBuffer.has_value(); }
+    const String& imageMIMEType() const { return m_imageMIMEType; }
+    const std::optional<Ref<WebCore::SharedBuffer>>& imageBuffer() const { return m_imageBuffer; }
+#endif // QUICKLOOK_FULLSCREEN
 #endif
     void close();
 
@@ -105,7 +111,7 @@ public:
 
 private:
     void supportsFullScreen(bool withKeyboard, CompletionHandler<void(bool)>&&);
-    void enterFullScreen(bool blocksReturnToFullscreenFromPictureInPicture, bool isVideoElement, WebCore::FloatSize videoDimensions);
+    void enterFullScreen(bool blocksReturnToFullscreenFromPictureInPicture, FullScreenMediaDetails&&);
     void exitFullScreen();
     void beganEnterFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame);
     void beganExitFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame);
@@ -127,6 +133,10 @@ private:
     bool m_blocksReturnToFullscreenFromPictureInPicture { false };
 #if PLATFORM(VISION)
     bool m_isVideoElement { false };
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+    String m_imageMIMEType;
+    std::optional<Ref<WebCore::SharedBuffer>> m_imageBuffer;
+#endif // QUICKLOOK_FULLSCREEN
 #endif
     Vector<CompletionHandler<void()>> m_closeCompletionHandlers;
 

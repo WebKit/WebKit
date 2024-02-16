@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,18 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import <Foundation/Foundation.h>
 
-#import <wtf/SoftLinking.h>
+#if defined(TARGET_OS_VISION) && TARGET_OS_VISION
 
-SOFT_LINK_LIBRARY_FOR_HEADER(WebKit, WebKitSwift)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKGroupSessionObserver)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKSLinearMediaPlayer)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKSLinearMediaTimeRange)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKSPreviewWindowController)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKTextExtractionContainerItem)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKTextExtractionTextItem)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKTextExtractionScrollableItem)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKTextExtractionEditableItem)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKTextExtractionInteractiveItem)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKTextExtractionImageItem)
+NS_ASSUME_NONNULL_BEGIN
+
+@class QLItem;
+@class WKSPreviewWindowController;
+
+@protocol WKSPreviewWindowControllerDelegate <NSObject>
+- (void)previewWindowControllerDidClose;
+@end
+
+@interface WKSPreviewWindowController : NSObject
+@property (nonatomic, weak, nullable) id <WKSPreviewWindowControllerDelegate> delegate;
+
+- (instancetype)initWithItem:(QLItem *)item NS_DESIGNATED_INITIALIZER;
+- (void)presentWindow;
+- (void)dismissWindow;
+@end
+
+NS_ASSUME_NONNULL_END
+
+#endif

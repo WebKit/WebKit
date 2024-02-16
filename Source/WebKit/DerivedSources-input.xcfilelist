@@ -281,6 +281,7 @@ $(PROJECT_DIR)/Shared/FontInfo.serialization.in
 $(PROJECT_DIR)/Shared/FrameInfoData.serialization.in
 $(PROJECT_DIR)/Shared/FrameTreeCreationParameters.serialization.in
 $(PROJECT_DIR)/Shared/FrameTreeNodeData.serialization.in
+$(PROJECT_DIR)/Shared/FullScreenMediaDetails.serialization.in
 $(PROJECT_DIR)/Shared/GPUProcessConnectionParameters.serialization.in
 $(PROJECT_DIR)/Shared/GPUProcessPreferencesForWebProcess.serialization.in
 $(PROJECT_DIR)/Shared/Gamepad/GamepadData.serialization.in
