@@ -80,6 +80,7 @@ public:
     WEBCORE_EXPORT void setVolume(double) final;
     WEBCORE_EXPORT void setPlayingOnSecondScreen(bool) final;
     WEBCORE_EXPORT void sendRemoteCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument&) final;
+    void setVideoReceiverEndpoint(const VideoReceiverEndpoint&) final { }
 
     double duration() const final;
     double currentTime() const final;

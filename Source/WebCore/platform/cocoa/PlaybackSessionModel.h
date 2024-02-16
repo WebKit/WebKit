@@ -28,6 +28,7 @@
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
 #include "PlatformMediaSession.h"
+#include "VideoReceiverEndpoint.h"
 #include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
@@ -79,6 +80,7 @@ public:
     virtual void setVolume(double) = 0;
     virtual void setPlayingOnSecondScreen(bool) = 0;
     virtual void sendRemoteCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument&) { };
+    virtual void setVideoReceiverEndpoint(const VideoReceiverEndpoint&) = 0;
 
     using ExternalPlaybackTargetType = PlaybackSessionModelExternalPlaybackTargetType;
 

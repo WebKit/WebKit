@@ -41,6 +41,7 @@
 #include "SecurityOriginData.h"
 #include "Timer.h"
 #include "VideoPlaybackQualityMetrics.h"
+#include "VideoReceiverEndpoint.h"
 #include <JavaScriptCore/Forward.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Function.h>
@@ -731,6 +732,8 @@ public:
     bool requiresRemotePlayback() const { return m_requiresRemotePlayback; }
 
     void setResourceOwner(const ProcessIdentity&);
+
+    void setVideoReceiverEndpoint(const VideoReceiverEndpoint&);
 
 private:
     MediaPlayer(MediaPlayerClient&);

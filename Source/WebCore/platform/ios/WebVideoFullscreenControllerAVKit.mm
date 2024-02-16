@@ -168,6 +168,7 @@ private:
     void setMuted(bool) final;
     void setVolume(double) final;
     void setPlayingOnSecondScreen(bool) final;
+    void setVideoReceiverEndpoint(const VideoReceiverEndpoint&) final { }
 
     // PlaybackSessionModelClient
     void durationChanged(double) override;

@@ -25,9 +25,9 @@
 
 #import "config.h"
 
-#import "HandleXPCEndpointMessages.h"
 #import "Logging.h"
 #import "WKCrashReporter.h"
+#import "XPCEndpointMessages.h"
 #import "XPCServiceEntryPoint.h"
 #import <CoreFoundation/CoreFoundation.h>
 #import <mach/mach.h>
@@ -212,7 +212,7 @@ void XPCServiceEventHandler(xpc_connection_t peer)
             return;
         }
 
-        handleXPCEndpointMessages(event, messageName);
+        handleXPCEndpointMessage(event, messageName);
     });
 
     xpc_connection_resume(peer);

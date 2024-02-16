@@ -63,7 +63,7 @@ private:
     bool frontBufferMayBeVolatile() const final;
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
-    DynamicContentScalingResourceCache ensureDynamicContentScalingResourceCache();
+    WebCore::DynamicContentScalingResourceCache ensureDynamicContentScalingResourceCache();
 #endif
 
     struct Buffer {

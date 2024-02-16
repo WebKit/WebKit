@@ -32,7 +32,9 @@
 #import "PlaybackSessionInterfaceLMK.h"
 #import "PlaybackSessionManagerMessages.h"
 #import "PlaybackSessionManagerProxyMessages.h"
+#import "VideoReceiverEndpointMessage.h"
 #import "WebPageProxy.h"
+#import "WebProcessPool.h"
 #import "WebProcessProxy.h"
 #import <WebCore/NullPlaybackSessionInterface.h>
 #import <WebCore/PlaybackSessionInterfaceAVKit.h>
@@ -66,6 +68,12 @@ void PlaybackSessionModelContext::sendRemoteCommand(WebCore::PlatformMediaSessio
 {
     if (m_manager)
         m_manager->sendRemoteCommand(m_contextId, command, argument);
+}
+
+void PlaybackSessionModelContext::setVideoReceiverEndpoint(const WebCore::VideoReceiverEndpoint& endpoint)
+{
+    if (m_manager)
+        m_manager->setVideoReceiverEndpoint(m_contextId, endpoint);
 }
 
 void PlaybackSessionModelContext::play()
@@ -720,6 +728,35 @@ void PlaybackSessionManagerProxy::sendRemoteCommand(PlaybackSessionContextIdenti
 {
     if (m_page)
         m_page->send(Messages::PlaybackSessionManager::SendRemoteCommand(contextId, command, argument));
+}
+
+void PlaybackSessionManagerProxy::setVideoReceiverEndpoint(PlaybackSessionContextIdentifier contextId, const WebCore::VideoReceiverEndpoint& endpoint)
+{
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    auto interface = controlsManagerInterface();
+    if (!interface || !interface->playerIdentifier())
+        return;
+
+    WebCore::MediaPlayerIdentifier playerIdentifier = *interface->playerIdentifier();
+
+    Ref process = m_page->protectedProcess();
+    WebCore::ProcessIdentifier processIdentifier = process->coreProcessIdentifier();
+
+    Ref gpuProcess = process->processPool().ensureProtectedGPUProcess();
+    RefPtr connection = gpuProcess->protectedConnection();
+    if (!connection)
+        return;
+
+    OSObjectPtr xpcConnection = connection->xpcConnection();
+    if (!xpcConnection)
+        return;
+
+    VideoReceiverEndpointMessage endpointMessage(WTFMove(processIdentifier), WTFMove(playerIdentifier), endpoint);
+    xpc_connection_send_message(xpcConnection.get(), endpointMessage.encode().get());
+#else
+    UNUSED_PARAM(contextId);
+    UNUSED_PARAM(endpoint);
+#endif
 }
 
 bool PlaybackSessionManagerProxy::wirelessVideoPlaybackDisabled()

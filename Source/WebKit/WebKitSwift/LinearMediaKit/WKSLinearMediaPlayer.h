@@ -74,6 +74,7 @@ API_AVAILABLE(visionos(1.0))
 - (void)linearMediaPlayer:(WKSLinearMediaPlayer *)player setTimeResolverResolution:(NSTimeInterval)resolution;
 - (void)linearMediaPlayer:(WKSLinearMediaPlayer *)player setThumbnailSize:(CGSize)size;
 - (void)linearMediaPlayer:(WKSLinearMediaPlayer *)player seekThumbnailToTime:(NSTimeInterval)time;
+- (void)linearMediaPlayer:(WKSLinearMediaPlayer *)player setVideoReceiverEndpoint:(xpc_object_t)videoReceiverEndpoint;
 @end
 
 API_AVAILABLE(visionos(1.0))

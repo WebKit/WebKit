@@ -113,7 +113,7 @@ private:
     bool promptWithSCContentSharingSession(DisplayCapturePromptType);
     bool promptWithSCContentSharingPicker(DisplayCapturePromptType);
 
-    bool promptingInProgress() const { return !!m_completionHandler; }
+    bool promptingInProgress() const;
 
     void cleanupSessionSource(ScreenCaptureSessionSource&);
 

@@ -163,6 +163,12 @@
         model->toggleFullscreen();
 }
 
+- (void)linearMediaPlayer:(WKSLinearMediaPlayer *)player setVideoReceiverEndpoint:(xpc_object_t)videoReceiverEndpoint
+{
+    if (auto model = _model.get())
+        model->setVideoReceiverEndpoint(videoReceiverEndpoint);
+}
+
 @end
 
 namespace WebKit {

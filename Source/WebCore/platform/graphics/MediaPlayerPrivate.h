@@ -353,6 +353,8 @@ public:
     virtual void setShouldCheckHardwareSupport(bool value) { m_shouldCheckHardwareSupport = value; }
     bool shouldCheckHardwareSupport() const { return m_shouldCheckHardwareSupport; }
 
+    virtual void setVideoReceiverEndpoint(const VideoReceiverEndpoint&) { }
+
 protected:
     mutable PlatformTimeRanges m_seekable;
     bool m_shouldCheckHardwareSupport { false };

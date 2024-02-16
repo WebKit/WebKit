@@ -93,15 +93,20 @@ namespace WebKit {
 // work in the GPUProcess.
 constexpr Seconds minimumLifetimeBeforeIdleExit { 5_s };
 
-GPUProcess::GPUProcess(AuxiliaryProcessInitializationParameters&& parameters)
+GPUProcess::GPUProcess()
     : m_idleExitTimer(*this, &GPUProcess::tryExitIfUnused)
 {
-    initialize(WTFMove(parameters));
     RELEASE_LOG(Process, "%p - GPUProcess::GPUProcess:", this);
 }
 
 GPUProcess::~GPUProcess()
 {
+}
+
+GPUProcess& GPUProcess::singleton()
+{
+    static NeverDestroyed<GPUProcess> gpuProcess;
+    return gpuProcess.get();
 }
 
 void GPUProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)

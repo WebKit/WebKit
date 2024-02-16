@@ -554,6 +554,10 @@ extension WKSLinearMediaPlayer: @retroactive Playable {
     public func setIsMuted(_ value: Bool) {
         delegate?.linearMediaPlayer?(self, setMuted: value)
     }
+
+    public func setVideoReceiverEndpoint(_ endpoint: xpc_object_t) {
+        delegate?.linearMediaPlayer?(self, setVideoReceiverEndpoint: endpoint)
+    }
 }
 
 #endif // canImport(LinearMediaKit)

@@ -74,8 +74,10 @@ class RemoteAudioSessionProxyManager;
 class GPUProcess : public AuxiliaryProcess, public ThreadSafeRefCounted<GPUProcess> {
     WTF_MAKE_NONCOPYABLE(GPUProcess);
 public:
-    explicit GPUProcess(AuxiliaryProcessInitializationParameters&&);
+    GPUProcess();
     ~GPUProcess();
+
+    static GPUProcess& singleton();
     static constexpr WebCore::AuxiliaryProcessType processType = WebCore::AuxiliaryProcessType::GPU;
 
     void removeGPUConnectionToWebProcess(GPUConnectionToWebProcess&);

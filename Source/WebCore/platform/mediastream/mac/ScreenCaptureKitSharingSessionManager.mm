@@ -28,11 +28,13 @@
 
 #if HAVE(SCREEN_CAPTURE_KIT)
 
+#import "CaptureDevice.h"
 #import "Logging.h"
 #import "PlatformMediaSessionManager.h"
 #import "ScreenCaptureKitCaptureSource.h"
 #import <pal/spi/mac/ScreenCaptureKitSPI.h>
 #import <wtf/cocoa/Entitlements.h>
+#import <wtf/text/StringToIntegerConversion.h>
 
 #if HAVE(SC_CONTENT_SHARING_PICKER)
 #import <ScreenCaptureKit/SCContentSharingPicker.h>
@@ -48,19 +50,17 @@
 @end
 #endif
 
-using namespace WebCore;
-
 @interface WebDisplayMediaPromptHelper : NSObject <SCContentSharingSessionProtocol
 #if HAVE(SC_CONTENT_SHARING_PICKER)
     , SCContentSharingPickerObserver
 #endif
     > {
-    WeakPtr<ScreenCaptureKitSharingSessionManager> _callback;
+    WeakPtr<WebCore::ScreenCaptureKitSharingSessionManager> _callback;
     Vector<RetainPtr<SCContentSharingSession>> _sessions;
     BOOL _observingPicker;
 }
 
-- (instancetype)initWithCallback:(ScreenCaptureKitSharingSessionManager*)callback;
+- (instancetype)initWithCallback:(WebCore::ScreenCaptureKitSharingSessionManager*)callback;
 - (void)disconnect;
 - (void)startObservingSession:(SCContentSharingSession *)session;
 - (void)stopObservingSession:(SCContentSharingSession *)session;
@@ -77,7 +77,7 @@ using namespace WebCore;
 @end
 
 @implementation WebDisplayMediaPromptHelper
-- (instancetype)initWithCallback:(ScreenCaptureKitSharingSessionManager*)callback
+- (instancetype)initWithCallback:(WebCore::ScreenCaptureKitSharingSessionManager*)callback
 {
     self = [super init];
     if (self) {
@@ -480,6 +480,11 @@ bool ScreenCaptureKitSharingSessionManager::promptWithSCContentSharingPicker(Dis
 #endif
 }
 
+bool ScreenCaptureKitSharingSessionManager::promptingInProgress() const
+{
+    return !!m_completionHandler;
+}
+
 void ScreenCaptureKitSharingSessionManager::contentSharingPickerFailedWithError(NSError* error)
 {
 #if HAVE(SC_CONTENT_SHARING_PICKER)
@@ -635,6 +640,6 @@ void ScreenCaptureSessionSource::streamDidEnd()
     m_observer->sessionStreamDidEnd(m_stream.get());
 }
 
-};
+} // namespace WebCore
 
 #endif // HAVE(SCREEN_CAPTURE_KIT)
