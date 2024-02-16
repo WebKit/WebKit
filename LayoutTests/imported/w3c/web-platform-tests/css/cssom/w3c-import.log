@@ -140,6 +140,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-logical-enumeration.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-margins-roundtrip.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-property-order.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-pseudo-with-argument.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-pseudo.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-resolved-colors.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-resolved-min-max-clamping.html
