@@ -173,7 +173,7 @@ class VulkanSecondaryCommandBuffer : public priv::CommandBuffer
 
     void memoryBarrier(VkPipelineStageFlags srcStageMask,
                        VkPipelineStageFlags dstStageMask,
-                       const VkMemoryBarrier *memoryBarrier);
+                       const VkMemoryBarrier &memoryBarrier);
 
     void nextSubpass(VkSubpassContents subpassContents);
 
@@ -519,7 +519,7 @@ ANGLE_INLINE void VulkanSecondaryCommandBuffer::pipelineBarrier(
 
 ANGLE_INLINE void VulkanSecondaryCommandBuffer::memoryBarrier(VkPipelineStageFlags srcStageMask,
                                                               VkPipelineStageFlags dstStageMask,
-                                                              const VkMemoryBarrier *memoryBarrier)
+                                                              const VkMemoryBarrier &memoryBarrier)
 {
     onRecordCommand();
     CommandBuffer::memoryBarrier(srcStageMask, dstStageMask, memoryBarrier);

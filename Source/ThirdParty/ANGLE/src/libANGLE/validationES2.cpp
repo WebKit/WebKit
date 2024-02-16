@@ -474,6 +474,7 @@ bool ValidateES2CopyTexImageParameters(const Context *context,
                 break;
             case GL_LUMINANCE_ALPHA:
             case GL_RGBA:
+            case GL_BGRA_EXT:
                 if (colorbufferFormat != GL_RGBA4 && colorbufferFormat != GL_RGB5_A1 &&
                     colorbufferFormat != GL_RGBA8_OES && colorbufferFormat != GL_RGBA32F &&
                     colorbufferFormat != GL_BGRA8_EXT && colorbufferFormat != GL_BGR5_A1_ANGLEX &&
@@ -548,6 +549,7 @@ bool ValidateES2CopyTexImageParameters(const Context *context,
                 break;
             case GL_LUMINANCE_ALPHA:
             case GL_RGBA:
+            case GL_BGRA_EXT:
                 if (colorbufferFormat != GL_RGBA4 && colorbufferFormat != GL_RGB5_A1 &&
                     colorbufferFormat != GL_BGRA8_EXT && colorbufferFormat != GL_RGBA8_OES &&
                     colorbufferFormat != GL_BGR5_A1_ANGLEX && colorbufferFormat != GL_RGBA16F &&

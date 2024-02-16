@@ -804,6 +804,31 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
     // Folding should only be able to generate warnings.
     ASSERT(mDiagnostics.numErrors() == 0);
 
+    // gl_ClipDistance and gl_CullDistance built-in arrays have unique semantics.
+    // They are pre-declared as unsized and must be sized by the shader either
+    // redeclaring them or indexing them only with integral constant expressions.
+    // The translator treats them as having the maximum allowed size and this pass
+    // detects the actual sizes resizing the variables if needed.
+    if (parseContext.isExtensionEnabled(TExtension::ANGLE_clip_cull_distance) ||
+        parseContext.isExtensionEnabled(TExtension::EXT_clip_cull_distance) ||
+        parseContext.isExtensionEnabled(TExtension::APPLE_clip_distance))
+    {
+        bool isClipDistanceUsed = false;
+        if (!ValidateClipCullDistance(
+                root, &mDiagnostics, mResources.MaxCullDistances,
+                mResources.MaxCombinedClipAndCullDistances, &mClipDistanceSize, &mCullDistanceSize,
+                &mClipDistanceRedeclared, &mCullDistanceRedeclared, &isClipDistanceUsed))
+        {
+            return false;
+        }
+        mMetadataFlags[MetadataFlags::HasClipDistance] = isClipDistanceUsed;
+
+        if (!resizeClipAndCullDistanceBuiltins(root))
+        {
+            return false;
+        }
+    }
+
     // Validate no barrier() after return before prunning it in |PruneNoOps()| below.
     if (mShaderType == GL_TESS_CONTROL_SHADER && !ValidateBarrierFunctionCall(root, &mDiagnostics))
     {
@@ -904,26 +929,6 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
                          IsWebGLBasedSpec(mShaderSpec), &mDiagnostics))
     {
         return false;
-    }
-
-    if (parseContext.isExtensionEnabled(TExtension::ANGLE_clip_cull_distance) ||
-        parseContext.isExtensionEnabled(TExtension::EXT_clip_cull_distance) ||
-        parseContext.isExtensionEnabled(TExtension::APPLE_clip_distance))
-    {
-        bool isClipDistanceUsed = false;
-        if (!ValidateClipCullDistance(
-                root, &mDiagnostics, mResources.MaxCullDistances,
-                mResources.MaxCombinedClipAndCullDistances, &mClipDistanceSize, &mCullDistanceSize,
-                &mClipDistanceRedeclared, &mCullDistanceRedeclared, &isClipDistanceUsed))
-        {
-            return false;
-        }
-        mMetadataFlags[MetadataFlags::HasClipDistance] = isClipDistanceUsed;
-
-        if (!resizeClipAndCullDistanceBuiltins(root))
-        {
-            return false;
-        }
     }
 
     // Clamping uniform array bounds needs to happen after validateLimitations pass.

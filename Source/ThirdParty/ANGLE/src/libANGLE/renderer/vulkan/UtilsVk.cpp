@@ -3097,7 +3097,7 @@ angle::Result UtilsVk::stencilBlitResolveNoShaderExport(ContextVk *contextVk,
     memoryBarrier.dstAccessMask   = VK_ACCESS_TRANSFER_READ_BIT;
 
     commandBuffer->memoryBarrier(VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
-                                 VK_PIPELINE_STAGE_TRANSFER_BIT, &memoryBarrier);
+                                 VK_PIPELINE_STAGE_TRANSFER_BIT, memoryBarrier);
 
     // Copy the resulting buffer into dst.
     VkBufferImageCopy region           = {};
@@ -3453,7 +3453,7 @@ angle::Result UtilsVk::copyImageBits(ContextVk *contextVk,
     memoryBarrier.dstAccessMask   = VK_ACCESS_SHADER_READ_BIT;
 
     commandBuffer->memoryBarrier(VK_PIPELINE_STAGE_TRANSFER_BIT,
-                                 VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, &memoryBarrier);
+                                 VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, memoryBarrier);
 
     // Set up ConvertVertex shader to convert between the formats.  Only the following three cases
     // are possible:
@@ -3553,7 +3553,7 @@ angle::Result UtilsVk::copyImageBits(ContextVk *contextVk,
     memoryBarrier.dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
 
     commandBuffer->memoryBarrier(VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
-                                 VK_PIPELINE_STAGE_TRANSFER_BIT, &memoryBarrier);
+                                 VK_PIPELINE_STAGE_TRANSFER_BIT, memoryBarrier);
 
     // Copy buffer into dst.  It's completely packed.
     VkBufferImageCopy dstRegion               = {};

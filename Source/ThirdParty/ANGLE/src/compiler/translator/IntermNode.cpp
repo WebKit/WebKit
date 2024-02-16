@@ -237,7 +237,7 @@ TIntermNode *TIntermConstantUnion::getChildNode(size_t index) const
 
 size_t TIntermLoop::getChildCount() const
 {
-    return (mInit ? 1 : 0) + (mCond ? 1 : 0) + (mExpr ? 1 : 0) + (mBody ? 1 : 0);
+    return (mInit ? 1 : 0) + (mCond ? 1 : 0) + (mExpr ? 1 : 0) + 1;
 }
 
 TIntermNode *TIntermLoop::getChildNode(size_t index) const
@@ -259,11 +259,9 @@ TIntermNode *TIntermLoop::getChildNode(size_t index) const
         children[childIndex] = mExpr;
         ++childIndex;
     }
-    if (mBody)
-    {
-        children[childIndex] = mBody;
-        ++childIndex;
-    }
+    children[childIndex] = mBody;
+    ++childIndex;
+
     ASSERT(index < childIndex);
     return children[index];
 }
@@ -355,7 +353,11 @@ TIntermNode *TIntermUnary::getChildNode(size_t index) const
 
 bool TIntermUnary::replaceChildNode(TIntermNode *original, TIntermNode *replacement)
 {
-    ASSERT(original->getAsTyped()->getType() == replacement->getAsTyped()->getType());
+    // gl_ClipDistance and gl_CullDistance arrays may be replaced with an adjusted
+    // array size. Allow mismatching types for the length() operation in this case.
+    ASSERT(original->getAsTyped()->getType() == replacement->getAsTyped()->getType() ||
+           (mOp == EOpArrayLength && (original->getAsTyped()->getQualifier() == EvqClipDistance ||
+                                      original->getAsTyped()->getQualifier() == EvqCullDistance)));
     REPLACE_IF_IS(mOperand, TIntermTyped, original, replacement);
     return false;
 }
@@ -1597,7 +1599,7 @@ TIntermLoop::TIntermLoop(TLoopType type,
                          TIntermTyped *cond,
                          TIntermTyped *expr,
                          TIntermBlock *body)
-    : mType(type), mInit(init), mCond(cond), mExpr(expr), mBody(body)
+    : mType(type), mInit(init), mCond(cond), mExpr(expr), mBody(EnsureBody(body))
 {
     // Declaration nodes with no children can appear if all the declarators just added constants to
     // the symbol table instead of generating code. They're no-ops so don't add them to the tree.
@@ -1613,7 +1615,7 @@ TIntermLoop::TIntermLoop(const TIntermLoop &node)
                   node.mInit ? node.mInit->deepCopy() : nullptr,
                   node.mCond ? node.mCond->deepCopy() : nullptr,
                   node.mExpr ? node.mExpr->deepCopy() : nullptr,
-                  node.mBody ? node.mBody->deepCopy() : nullptr)
+                  node.mBody->deepCopy())
 {}
 
 TIntermIfElse::TIntermIfElse(TIntermTyped *cond, TIntermBlock *trueB, TIntermBlock *falseB)
@@ -2280,7 +2282,10 @@ TIntermTyped *TIntermUnary::fold(TDiagnostics *diagnostics)
     if (mOp == EOpArrayLength)
     {
         // The size of runtime-sized arrays may only be determined at runtime.
-        if (mOperand->hasSideEffects() || mOperand->getType().isUnsizedArray())
+        // This operation is folded for clip/cull distance arrays in RemoveArrayLengthMethod.
+        if (mOperand->hasSideEffects() || mOperand->getType().isUnsizedArray() ||
+            mOperand->getQualifier() == EvqClipDistance ||
+            mOperand->getQualifier() == EvqCullDistance)
         {
             return this;
         }

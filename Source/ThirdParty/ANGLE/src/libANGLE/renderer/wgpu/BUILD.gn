@@ -4,6 +4,7 @@
 #
 # This file houses the build configuration for the ANGLE Wgpu back-end.
 
+import("//third_party/dawn/scripts/dawn_features.gni")
 import("../../../../gni/angle.gni")
 import("wgpu_sources.gni")
 
@@ -17,4 +18,12 @@ angle_source_set("angle_wgpu_backend") {
   sources = wgpu_backend_sources
 
   public_deps = [ "$angle_root:libANGLE_headers" ]
+
+  deps = [
+    "//third_party/dawn/include/dawn:cpp_headers",
+    "//third_party/dawn/include/dawn:headers",
+    "//third_party/dawn/src/dawn:cpp",
+    "//third_party/dawn/src/dawn:proc",
+    "//third_party/dawn/src/dawn/native",
+  ]
 }

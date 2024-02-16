@@ -306,7 +306,7 @@ class CommandBuffer : public WrappedObject<CommandBuffer, VkCommandBuffer>
 
     void memoryBarrier(VkPipelineStageFlags srcStageMask,
                        VkPipelineStageFlags dstStageMask,
-                       const VkMemoryBarrier *memoryBarrier);
+                       const VkMemoryBarrier &memoryBarrier);
 
     void pipelineBarrier(VkPipelineStageFlags srcStageMask,
                          VkPipelineStageFlags dstStageMask,
@@ -785,10 +785,10 @@ ANGLE_INLINE void CommandBuffer::nextSubpass(VkSubpassContents subpassContents)
 
 ANGLE_INLINE void CommandBuffer::memoryBarrier(VkPipelineStageFlags srcStageMask,
                                                VkPipelineStageFlags dstStageMask,
-                                               const VkMemoryBarrier *memoryBarrier)
+                                               const VkMemoryBarrier &memoryBarrier)
 {
     ASSERT(valid());
-    vkCmdPipelineBarrier(mHandle, srcStageMask, dstStageMask, 0, 1, memoryBarrier, 0, nullptr, 0,
+    vkCmdPipelineBarrier(mHandle, srcStageMask, dstStageMask, 0, 1, &memoryBarrier, 0, nullptr, 0,
                          nullptr);
 }
 

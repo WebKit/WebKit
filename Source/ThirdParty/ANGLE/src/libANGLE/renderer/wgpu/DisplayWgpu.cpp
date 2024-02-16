@@ -14,11 +14,14 @@
 #include "libANGLE/Display.h"
 #include "libANGLE/renderer/wgpu/ContextWgpu.h"
 #include "libANGLE/renderer/wgpu/DeviceWgpu.h"
+#include "libANGLE/renderer/wgpu/DisplayWgpu_api.h"
 #include "libANGLE/renderer/wgpu/ImageWgpu.h"
 #include "libANGLE/renderer/wgpu/SurfaceWgpu.h"
 
 namespace rx
 {
+
+static wgpu::AdapterType adapterType = wgpu::AdapterType::Unknown;
 
 DisplayWgpu::DisplayWgpu(const egl::DisplayState &state) : DisplayImpl(state) {}
 
@@ -26,6 +29,12 @@ DisplayWgpu::~DisplayWgpu() {}
 
 egl::Error DisplayWgpu::initialize(egl::Display *display)
 {
+    egl::Error create_device_err = createWgpuDevice();
+    if (create_device_err.isError())
+    {
+        return create_device_err;
+    }
+    mQueue = mDevice.GetQueue();
     return egl::NoError();
 }
 
@@ -234,6 +243,45 @@ void DisplayWgpu::generateExtensions(egl::DisplayExtensions *outExtensions) cons
 void DisplayWgpu::generateCaps(egl::Caps *outCaps) const
 {
     outCaps->textureNPOT = true;
+}
+
+egl::Error DisplayWgpu::createWgpuDevice()
+{
+    WGPUInstanceDescriptor instanceDescriptor{};
+    instanceDescriptor.features.timedWaitAnyEnable = true;
+    mInstance = std::make_unique<dawn::native::Instance>(&instanceDescriptor);
+
+    // Get an adapter for the backend to use, and create the device.
+    auto adapters = mInstance->EnumerateAdapters();
+    wgpu::DawnAdapterPropertiesPowerPreference power_props{};
+    wgpu::AdapterProperties adapterProperties{};
+    adapterProperties.nextInChain = &power_props;
+
+    auto isAdapterType = [&adapterProperties](const auto &adapter) -> bool {
+        // picks the first adapter when adapterType is unknown.
+        if (adapterType == wgpu::AdapterType::Unknown)
+        {
+            return true;
+        }
+        adapter.GetProperties(&adapterProperties);
+        return adapterProperties.adapterType == adapterType;
+    };
+
+    auto preferredAdapter = std::find_if(adapters.begin(), adapters.end(), isAdapterType);
+    if (preferredAdapter == adapters.end())
+    {
+        fprintf(stderr, "Failed to find an adapter! Please try another adapter type.\n");
+        return egl::EglNotInitialized();
+    }
+
+    WGPUDeviceDescriptor deviceDesc = {};
+    mDevice = wgpu::Device::Acquire(preferredAdapter->CreateDevice(&deviceDesc));
+    return egl::NoError();
+}
+
+DisplayImpl *CreateWgpuDisplay(const egl::DisplayState &state)
+{
+    return new DisplayWgpu(state);
 }
 
 }  // namespace rx

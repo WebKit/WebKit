@@ -42,7 +42,9 @@ constexpr size_t kStagingBufferSize = 1024 * 16;
 
 constexpr VkImageCreateFlags kVkImageCreateFlagsNone = 0;
 
-constexpr VkFilter kDefaultYCbCrChromaFilter = VK_FILTER_NEAREST;
+// Most likely initial chroma filter mode given GL_TEXTURE_EXTERNAL_OES default
+// min & mag filters are linear.
+constexpr VkFilter kDefaultYCbCrChromaFilter = VK_FILTER_LINEAR;
 
 constexpr VkPipelineStageFlags kSwapchainAcquireImageWaitStageFlags =
     VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT |          // First use is a blit command.
@@ -2113,6 +2115,7 @@ class ImageHelper final : public Resource, public angle::Subject
     bool hasEmulatedDepthChannel() const;
     bool hasEmulatedStencilChannel() const;
     bool hasEmulatedImageFormat() const { return mActualFormatID != mIntendedFormatID; }
+    bool hasInefficientlyEmulatedImageFormat() const;
     GLint getSamples() const { return mSamples; }
 
     ImageSerial getImageSerial() const

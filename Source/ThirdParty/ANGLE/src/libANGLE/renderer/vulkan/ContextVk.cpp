@@ -7387,7 +7387,7 @@ angle::Result ContextVk::updateActiveTextures(const gl::Context *context, gl::Co
             ANGLE_TRY(textureVk->ensureMutable(this));
         }
 
-        if (image.hasEmulatedImageFormat())
+        if (image.hasInefficientlyEmulatedImageFormat())
         {
             ANGLE_VK_PERF_WARNING(
                 this, GL_DEBUG_SEVERITY_LOW,
@@ -7564,7 +7564,7 @@ angle::Result ContextVk::flushImpl(const vk::Semaphore *signalSemaphore,
                  : 0);
 
         mOutsideRenderPassCommands->getCommandBuffer().memoryBarrier(
-            bufferWriteStages, VK_PIPELINE_STAGE_HOST_BIT, &memoryBarrier);
+            bufferWriteStages, VK_PIPELINE_STAGE_HOST_BIT, memoryBarrier);
         mIsAnyHostVisibleBufferWritten = false;
     }
 
@@ -8009,7 +8009,7 @@ angle::Result ContextVk::syncExternalMemory()
     memoryBarrier.dstAccessMask   = VK_ACCESS_MEMORY_READ_BIT | VK_ACCESS_MEMORY_WRITE_BIT;
 
     mOutsideRenderPassCommands->getCommandBuffer().memoryBarrier(
-        VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, &memoryBarrier);
+        VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, memoryBarrier);
     return angle::Result::Continue;
 }
 

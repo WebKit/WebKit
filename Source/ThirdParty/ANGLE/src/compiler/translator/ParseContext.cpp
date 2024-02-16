@@ -1019,6 +1019,13 @@ bool TParseContext::checkConstructorArguments(const TSourceLoc &line,
                       "constructor");
                 return false;
             }
+            if (argTyped->getBasicType() == EbtInterfaceBlock)
+            {
+                error(line,
+                      "an interface block cannot be used as a constructor argument for this type",
+                      "constructor");
+                return false;
+            }
             if (argTyped->getType().isArray())
             {
                 error(line, "constructing from a non-dereferenced array", "constructor");
@@ -2896,7 +2903,7 @@ TIntermNode *TParseContext::addLoop(TLoopType type,
                (typedCond->getBasicType() == EbtBool && !typedCond->isArray() &&
                 !typedCond->isVector()));
 
-        node = new TIntermLoop(type, init, typedCond, expr, EnsureBlock(body));
+        node = new TIntermLoop(type, init, typedCond, expr, EnsureLoopBodyBlock(body));
         node->setLine(line);
         return node;
     }
@@ -2919,7 +2926,7 @@ TIntermNode *TParseContext::addLoop(TLoopType type,
 
     TIntermBinary *conditionInit = new TIntermBinary(EOpAssign, declarator->getLeft()->deepCopy(),
                                                      declarator->getRight()->deepCopy());
-    TIntermLoop *loop = new TIntermLoop(type, init, conditionInit, expr, EnsureBlock(body));
+    TIntermLoop *loop = new TIntermLoop(type, init, conditionInit, expr, EnsureLoopBodyBlock(body));
     block->appendStatement(loop);
     loop->setLine(line);
     block->setLine(line);

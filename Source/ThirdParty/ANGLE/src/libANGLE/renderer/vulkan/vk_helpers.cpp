@@ -4102,6 +4102,9 @@ DynamicQueryPool::~DynamicQueryPool() = default;
 
 angle::Result DynamicQueryPool::init(ContextVk *contextVk, VkQueryType type, uint32_t poolSize)
 {
+    // SecondaryCommandBuffer's ResetQueryPoolParams would like the query index to fit in 24 bits.
+    ASSERT(poolSize < (1 << 24));
+
     ANGLE_TRY(initEntryPool(contextVk, poolSize));
     mQueryType = type;
     return angle::Result::Continue;
@@ -6736,7 +6739,7 @@ void ImageHelper::barrierImpl(Context *context,
         memoryBarrier.dstAccessMask   = transition.dstAccessMask;
 
         commandBuffer->memoryBarrier(transition.srcStageMask, transition.dstStageMask,
-                                     &memoryBarrier);
+                                     memoryBarrier);
         return;
     }
 
@@ -10459,6 +10462,17 @@ bool ImageHelper::hasEmulatedDepthChannel() const
 bool ImageHelper::hasEmulatedStencilChannel() const
 {
     return getIntendedFormat().stencilBits == 0 && getActualFormat().stencilBits > 0;
+}
+
+bool ImageHelper::hasInefficientlyEmulatedImageFormat() const
+{
+    if (hasEmulatedImageFormat())
+    {
+        // ETC2 compression is compatible with ETC1
+        return !(mIntendedFormatID == angle::FormatID::ETC1_R8G8B8_UNORM_BLOCK &&
+                 mActualFormatID == angle::FormatID::ETC2_R8G8B8_UNORM_BLOCK);
+    }
+    return false;
 }
 
 VkColorComponentFlags ImageHelper::getEmulatedChannelsMask() const

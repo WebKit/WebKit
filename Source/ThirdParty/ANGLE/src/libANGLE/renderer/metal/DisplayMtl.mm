@@ -432,7 +432,7 @@ ExternalImageSiblingImpl *DisplayMtl::createExternalImageSibling(const gl::Conte
     switch (target)
     {
         case EGL_METAL_TEXTURE_ANGLE:
-            return new TextureImageSiblingMtl(buffer);
+            return new TextureImageSiblingMtl(buffer, attribs);
 
         default:
             UNREACHABLE();
@@ -692,16 +692,11 @@ egl::Error DisplayMtl::validateImageClientBuffer(const gl::Context *context,
     switch (target)
     {
         case EGL_METAL_TEXTURE_ANGLE:
-            if (!TextureImageSiblingMtl::ValidateClientBuffer(this, clientBuffer))
-            {
-                return egl::EglBadAttribute();
-            }
-            break;
+            return TextureImageSiblingMtl::ValidateClientBuffer(this, clientBuffer, attribs);
         default:
             UNREACHABLE();
             return egl::EglBadAttribute();
     }
-    return egl::NoError();
 }
 
 gl::Caps DisplayMtl::getNativeCaps() const

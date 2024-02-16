@@ -15,6 +15,7 @@ wgpu_backend_sources = [
   "DeviceWgpu.h",
   "DisplayWgpu.cpp",
   "DisplayWgpu.h",
+  "DisplayWgpu_api.h",
   "FenceNVWgpu.cpp",
   "FenceNVWgpu.h",
   "FramebufferWgpu.cpp",

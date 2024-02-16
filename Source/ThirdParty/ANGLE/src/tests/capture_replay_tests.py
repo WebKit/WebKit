@@ -53,7 +53,7 @@ SUBPROCESS_TIMEOUT = 600  # in seconds
 DEFAULT_RESULT_FILE = "results.txt"
 DEFAULT_LOG_LEVEL = "info"
 DEFAULT_MAX_JOBS = 8
-DEFAULT_MAX_NINJA_JOBS = 3
+DEFAULT_MAX_NINJA_JOBS = 1
 REPLAY_BINARY = "capture_replay_tests"
 if sys.platform == "win32":
     REPLAY_BINARY += ".exe"

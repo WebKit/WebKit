@@ -21,6 +21,7 @@
 #include "libANGLE/Surface.h"
 #include "libANGLE/renderer/gl/ContextGL.h"
 #include "libANGLE/renderer/gl/RendererGL.h"
+#include "libANGLE/renderer/gl/glx/DisplayGLX_api.h"
 #include "libANGLE/renderer/gl/glx/PbufferSurfaceGLX.h"
 #include "libANGLE/renderer/gl/glx/PixmapSurfaceGLX.h"
 #include "libANGLE/renderer/gl/glx/WindowSurfaceGLX.h"
@@ -956,6 +957,11 @@ RendererGL *DisplayGLX::getRenderer() const
 bool DisplayGLX::isX11() const
 {
     return true;
+}
+
+DisplayImpl *CreateGLXDisplay(const egl::DisplayState &state)
+{
+    return new DisplayGLX(state);
 }
 
 }  // namespace rx

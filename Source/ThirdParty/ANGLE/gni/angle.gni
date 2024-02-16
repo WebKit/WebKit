@@ -205,7 +205,9 @@ declare_args() {
   angle_enable_cl_passthrough = angle_enable_cl
 
   # Disable WGPU backend.
-  angle_enable_wgpu = !is_official_build
+  # anglebug.com/8541
+  angle_enable_wgpu =
+      !is_official_build && !(is_android || is_fuchsia || is_win)
 }
 
 declare_args() {

@@ -3500,6 +3500,15 @@ bool ValidateCreateImage(const ValidationContext *val,
                     return false;
                 }
                 break;
+            case EGL_METAL_TEXTURE_ARRAY_SLICE_ANGLE:
+                if (!displayExtensions.mtlTextureClientBuffer)
+                {
+                    val->setError(EGL_BAD_ATTRIBUTE,
+                                  "EGL_METAL_TEXTURE_ARRAY_SLICE_ANGLE cannot be used without "
+                                  "EGL_ANGLE_metal_texture_client_buffer support.");
+                    return false;
+                }
+                break;
 
             case EGL_WIDTH:
             case EGL_HEIGHT:

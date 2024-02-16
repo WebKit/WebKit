@@ -59,8 +59,9 @@ template("angle_trace_libs") {
     _trace_counter = 1
   }
 
-  if (is_android && is_component_build) {
-    _cr_suffix = ".cr"
+  # TODO(crbug.com/324916799): Remove once .cr is no more.
+  if (is_android) {
+    _cr_suffix = string_replace(shlib_extension, ".so", "")
   } else {
     _cr_suffix = ""
   }

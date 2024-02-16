@@ -263,15 +263,6 @@ angle::Result HardwareBufferImageSiblingVkAndroid::initImpl(DisplayVk *displayVk
         vk::AddToPNextChain(&bufferFormatProperties, &bufferFormatResolveProperties);
     }
 
-    VkAndroidHardwareBufferFormatProperties2ANDROID bufferFormatProperties2 = {};
-    if (renderer->getFeatures().supportsFormatFeatureFlags2.enabled)
-    {
-        bufferFormatProperties2.sType =
-            VK_STRUCTURE_TYPE_ANDROID_HARDWARE_BUFFER_FORMAT_PROPERTIES_2_ANDROID;
-        bufferFormatProperties2.pNext = nullptr;
-        vk::AddToPNextChain(&bufferFormatProperties, &bufferFormatProperties2);
-    }
-
     VkDevice device = renderer->getDevice();
     ANGLE_VK_TRY(displayVk, vkGetAndroidHardwareBufferPropertiesANDROID(device, hardwareBuffer,
                                                                         &bufferProperties));

@@ -61,8 +61,7 @@ class AggregateAssignArraysInSSBOsTraverser : public TIntermTraverser
             new TIntermBinary(EOpIndexDirect, node->getRight(), indexSymbolNode->deepCopy());
         auto *assign = new TIntermBinary(TOperator::EOpAssign, indexedLeft, indexedRight);
         forLoopBody->appendStatement(assign);
-        auto *forLoop =
-            new TIntermLoop(ELoopFor, indexInit, cond, indexIncrement, EnsureBlock(forLoopBody));
+        auto *forLoop = new TIntermLoop(ELoopFor, indexInit, cond, indexIncrement, forLoopBody);
         queueReplacement(forLoop, OriginalNode::IS_DROPPED);
         return false;
     }

@@ -15,6 +15,8 @@
 
 #include <CoreFoundation/CoreFoundation.h>
 #include <Metal/Metal.h>
+#include <gmock/gmock.h>
+#include <span>
 
 namespace angle
 {
@@ -25,66 +27,68 @@ constexpr char kBaseExt[]                     = "EGL_KHR_image_base";
 constexpr char kDeviceMtlExt[]                = "EGL_ANGLE_device_metal";
 constexpr char kEGLMtlImageNativeTextureExt[] = "EGL_ANGLE_metal_texture_client_buffer";
 constexpr EGLint kDefaultAttribs[]            = {
-               EGL_NONE,
+    EGL_NONE,
 };
-}  // anonymous namespace
 
-class ScopeMetalTextureRef : angle::NonCopyable
+template <typename T>
+class ScopedMetalObjectRef : angle::NonCopyable
 {
   public:
-    explicit ScopeMetalTextureRef(id<MTLTexture> &&surface) : mSurface(surface) {}
+    ScopedMetalObjectRef() = default;
 
-    ~ScopeMetalTextureRef()
+    explicit ScopedMetalObjectRef(T &&surface) : mObject(surface) {}
+
+    ~ScopedMetalObjectRef()
     {
-        if (mSurface)
+        if (mObject)
         {
             release();
-            mSurface = nullptr;
+            mObject = nil;
         }
     }
 
-    id<MTLTexture> get() const { return mSurface; }
+    T get() const { return mObject; }
 
-    // auto cast to MTLTexture
-    operator id<MTLTexture>() const { return mSurface; }
-    ScopeMetalTextureRef(const ScopeMetalTextureRef &other)
+    // auto cast to T
+    operator T() const { return mObject; }
+    ScopedMetalObjectRef(const ScopedMetalObjectRef &other)
     {
-        if (mSurface)
+        if (mObject)
         {
             release();
         }
-        mSurface = other.mSurface;
+        mObject = other.mObject;
     }
 
-    explicit ScopeMetalTextureRef(ScopeMetalTextureRef &&other)
+    explicit ScopedMetalObjectRef(ScopedMetalObjectRef &&other)
     {
-        if (mSurface)
+        if (mObject)
         {
             release();
         }
-        mSurface       = other.mSurface;
-        other.mSurface = nil;
+        mObject       = other.mObject;
+        other.mObject = nil;
     }
 
-    ScopeMetalTextureRef &operator=(ScopeMetalTextureRef &&other)
+    ScopedMetalObjectRef &operator=(ScopedMetalObjectRef &&other)
     {
-        if (mSurface)
+        if (mObject)
         {
             release();
         }
-        mSurface       = other.mSurface;
-        other.mSurface = nil;
+        mObject       = other.mObject;
+        other.mObject = nil;
 
         return *this;
     }
 
-    ScopeMetalTextureRef &operator=(const ScopeMetalTextureRef &other)
+    ScopedMetalObjectRef &operator=(const ScopedMetalObjectRef &other)
     {
-        if (mSurface)
+        if (mObject)
         {
             release();
         }
-        mSurface = other.mSurface;
+        mObject = other.mObject;
 
         return *this;
     }
@@ -93,17 +97,24 @@ class ScopeMetalTextureRef : angle::NonCopyable
     void release()
     {
 #if !__has_feature(objc_arc)
-        [mSurface release];
+        [mObject release];
 #endif
     }
 
-    id<MTLTexture> mSurface = nil;
+    T mObject = nil;
 };
 
-ScopeMetalTextureRef CreateMetalTexture2D(id<MTLDevice> deviceMtl,
-                                          int width,
-                                          int height,
-                                          MTLPixelFormat format)
+using ScopedMetalTextureRef      = ScopedMetalObjectRef<id<MTLTexture>>;
+using ScopedMetalBufferRef       = ScopedMetalObjectRef<id<MTLBuffer>>;
+using ScopedMetalCommandQueueRef = ScopedMetalObjectRef<id<MTLCommandQueue>>;
+
+}  // anonymous namespace
+
+ScopedMetalTextureRef CreateMetalTexture2D(id<MTLDevice> deviceMtl,
+                                           int width,
+                                           int height,
+                                           MTLPixelFormat format,
+                                           int arrayLength)
 {
     @autoreleasepool
     {
@@ -112,8 +123,12 @@ ScopeMetalTextureRef CreateMetalTexture2D(id<MTLDevice> deviceMtl,
                                                                                        height:width
                                                                                     mipmapped:NO];
         desc.usage                 = MTLTextureUsageShaderRead | MTLTextureUsageRenderTarget;
-
-        ScopeMetalTextureRef re([deviceMtl newTextureWithDescriptor:desc]);
+        if (arrayLength)
+        {
+            desc.arrayLength = arrayLength;
+            desc.textureType = MTLTextureType2DArray;
+        }
+        ScopedMetalTextureRef re([deviceMtl newTextureWithDescriptor:desc]);
         return re;
     }
 }
@@ -180,20 +195,60 @@ class ImageTestMetal : public ANGLETest<>
         return (__bridge id<MTLDevice>)reinterpret_cast<void *>(device);
     }
 
-    ScopeMetalTextureRef createMtlTexture2D(int width, int height, MTLPixelFormat format)
+    ScopedMetalTextureRef createMtlTexture2D(int width, int height, MTLPixelFormat format)
     {
         id<MTLDevice> device = getMtlDevice();
 
-        return CreateMetalTexture2D(device, width, height, format);
+        return CreateMetalTexture2D(device, width, height, format, 0);
     }
 
+    ScopedMetalTextureRef createMtlTexture2DArray(int width,
+                                                  int height,
+                                                  int arrayLength,
+                                                  MTLPixelFormat format)
+    {
+        id<MTLDevice> device = getMtlDevice();
+
+        return CreateMetalTexture2D(device, width, height, format, arrayLength);
+    }
+    void getTextureSliceBytes(id<MTLTexture> texture,
+                              unsigned bytesPerRow,
+                              MTLRegion region,
+                              unsigned mipmapLevel,
+                              unsigned slice,
+                              std::span<uint8_t> sliceImage)
+    {
+        @autoreleasepool
+        {
+            id<MTLDevice> device = texture.device;
+            ScopedMetalBufferRef readBuffer([device
+                newBufferWithLength:sliceImage.size()
+                            options:MTLResourceStorageModeShared]);
+            ScopedMetalCommandQueueRef commandQueue([device newCommandQueue]);
+            id<MTLCommandBuffer> commandBuffer    = [commandQueue commandBuffer];
+            id<MTLBlitCommandEncoder> blitEncoder = [commandBuffer blitCommandEncoder];
+            [blitEncoder copyFromTexture:texture
+                             sourceSlice:slice
+                             sourceLevel:mipmapLevel
+                            sourceOrigin:region.origin
+                              sourceSize:region.size
+                                toBuffer:readBuffer
+                       destinationOffset:0
+                  destinationBytesPerRow:bytesPerRow
+                destinationBytesPerImage:sliceImage.size()];
+            [blitEncoder endEncoding];
+            [commandBuffer commit];
+            [commandBuffer waitUntilCompleted];
+            memcpy(sliceImage.data(), readBuffer.get().contents, sliceImage.size());
+        }
+    }
     void sourceMetalTarget2D_helper(GLubyte data[4],
                                     const EGLint *attribs,
                                     EGLImageKHR *imageOut,
                                     GLuint *textureOut);
 
     void verifyResultsTexture(GLuint texture,
-                              GLubyte data[4],
+                              const GLubyte data[4],
                               GLenum textureTarget,
                               GLuint program,
                               GLuint textureUniform)
@@ -209,7 +264,7 @@ class ImageTestMetal : public ANGLETest<>
         EXPECT_PIXEL_NEAR(0, 0, data[0], data[1], data[2], data[3], 1.0);
     }
 
-    void verifyResults2D(GLuint texture, GLubyte data[4])
+    void verifyResults2D(GLuint texture, const GLubyte data[4])
     {
         verifyResultsTexture(texture, data, GL_TEXTURE_2D, mTextureProgram,
                              mTextureUniformLocation);
@@ -222,6 +277,18 @@ class ImageTestMetal : public ANGLETest<>
                       "destType should be the same size as a size_t");
         size_t sourceSizeT = static_cast<size_t>(source);
         return reinterpret_cast<destType>(sourceSizeT);
+    }
+
+    void drawColorQuad(GLColor color)
+    {
+        ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+        glUseProgram(program);
+        GLint colorUniformLocation =
+            glGetUniformLocation(program, angle::essl1_shaders::ColorUniform());
+        ASSERT_NE(colorUniformLocation, -1);
+        glUniform4fv(colorUniformLocation, 1, color.toNormalizedVector().data());
+        drawQuad(program, essl1_shaders::PositionAttrib(), 0);
+        glUseProgram(0);
     }
 
     bool hasImageNativeMetalTextureExt() const
@@ -265,7 +332,7 @@ void ImageTestMetal::sourceMetalTarget2D_helper(GLubyte data[4],
     EGLWindow *window = getEGLWindow();
 
     // Create MTLTexture
-    ScopeMetalTextureRef textureMtl = createMtlTexture2D(1, 1, MTLPixelFormatRGBA8Unorm);
+    ScopedMetalTextureRef textureMtl = createMtlTexture2D(1, 1, MTLPixelFormatRGBA8Unorm);
 
     // Create image
     EGLImageKHR image =
@@ -350,6 +417,272 @@ TEST_P(ImageTestMetal, SourceMetal2DTargetTextureRespecifySize)
     glDeleteTextures(1, &texTarget);
 }
 
+// Tests that OpenGL can sample from a texture bound with Metal texture slice.
+TEST_P(ImageTestMetal, SourceMetalTarget2DArray)
+{
+    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt());
+    ANGLE_SKIP_TEST_IF(!hasImageNativeMetalTextureExt());
+    ScopedMetalTextureRef textureMtl = createMtlTexture2DArray(1, 1, 3, MTLPixelFormatRGBA8Unorm);
+
+    GLubyte data0[4] = {93, 83, 75, 128};
+    [textureMtl.get() replaceRegion:MTLRegionMake2D(0, 0, 1, 1)
+                        mipmapLevel:0
+                              slice:0
+                          withBytes:data0
+                        bytesPerRow:4
+                      bytesPerImage:4];
+    GLubyte data1[4] = {7, 51, 197, 231};
+    [textureMtl.get() replaceRegion:MTLRegionMake2D(0, 0, 1, 1)
+                        mipmapLevel:0
+                              slice:1
+                          withBytes:data1
+                        bytesPerRow:4
+                      bytesPerImage:4];
+    GLubyte data2[4] = {33, 51, 44, 33};
+    [textureMtl.get() replaceRegion:MTLRegionMake2D(0, 0, 1, 1)
+                        mipmapLevel:0
+                              slice:2
+                          withBytes:data2
+                        bytesPerRow:4
+                      bytesPerImage:4];
+
+    EGLDisplay display = getEGLWindow()->getDisplay();
+    EGLImageKHR image0 =
+        eglCreateImageKHR(display, EGL_NO_CONTEXT, EGL_METAL_TEXTURE_ANGLE,
+                          reinterpret_cast<EGLClientBuffer>(textureMtl.get()), nullptr);
+    ASSERT_EGL_SUCCESS();
+    const EGLint attribs1[] = {EGL_METAL_TEXTURE_ARRAY_SLICE_ANGLE, 1, EGL_NONE};
+    EGLImageKHR image1 =
+        eglCreateImageKHR(display, EGL_NO_CONTEXT, EGL_METAL_TEXTURE_ANGLE,
+                          reinterpret_cast<EGLClientBuffer>(textureMtl.get()), attribs1);
+    ASSERT_EGL_SUCCESS();
+    const EGLint attribs2[] = {EGL_METAL_TEXTURE_ARRAY_SLICE_ANGLE, 2, EGL_NONE};
+    EGLImageKHR image2 =
+        eglCreateImageKHR(display, EGL_NO_CONTEXT, EGL_METAL_TEXTURE_ANGLE,
+                          reinterpret_cast<EGLClientBuffer>(textureMtl.get()), attribs2);
+    ASSERT_EGL_SUCCESS();
+
+    GLTexture targetTexture;
+    glBindTexture(GL_TEXTURE_2D, targetTexture);
+    glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, image0);
+    verifyResults2D(targetTexture, data0);
+    glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, image1);
+    verifyResults2D(targetTexture, data1);
+    glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, image2);
+    verifyResults2D(targetTexture, data2);
+    eglDestroyImageKHR(display, image0);
+    eglDestroyImageKHR(display, image1);
+    eglDestroyImageKHR(display, image2);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_EGL_SUCCESS();
+}
+
+// Test that bound slice to EGLImage is not affected by releasing the source texture.
+TEST_P(ImageTestMetal, SourceMetalTarget2DArrayReleasedSourceOk)
+{
+    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt());
+    ANGLE_SKIP_TEST_IF(!hasImageNativeMetalTextureExt());
+    ScopedMetalTextureRef textureMtl = createMtlTexture2DArray(1, 1, 3, MTLPixelFormatRGBA8Unorm);
+
+    GLubyte data1[4] = {7, 51, 197, 231};
+    [textureMtl.get() replaceRegion:MTLRegionMake2D(0, 0, 1, 1)
+                        mipmapLevel:0
+                              slice:1
+                          withBytes:data1
+                        bytesPerRow:4
+                      bytesPerImage:4];
+
+    EGLDisplay display      = getEGLWindow()->getDisplay();
+    const EGLint attribs1[] = {EGL_METAL_TEXTURE_ARRAY_SLICE_ANGLE, 1, EGL_NONE};
+    EGLImageKHR image1 =
+        eglCreateImageKHR(display, EGL_NO_CONTEXT, EGL_METAL_TEXTURE_ANGLE,
+                          reinterpret_cast<EGLClientBuffer>(textureMtl.get()), attribs1);
+    ASSERT_EGL_SUCCESS();
+    // This is being tested: release the source texture but the slice keeps working.
+    textureMtl = {};
+    GLTexture targetTexture;
+    glBindTexture(GL_TEXTURE_2D, targetTexture);
+    glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, image1);
+    verifyResults2D(targetTexture, data1);
+    eglDestroyImageKHR(display, image1);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_EGL_SUCCESS();
+}
+
+// Tests that OpenGL can draw to a texture bound with Metal texture.
+TEST_P(ImageTestMetal, DrawMetalTarget2D)
+{
+    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt());
+    ANGLE_SKIP_TEST_IF(!hasImageNativeMetalTextureExt());
+
+    EGLDisplay display = getEGLWindow()->getDisplay();
+
+    ScopedMetalTextureRef textureMtl = createMtlTexture2D(1, 1, MTLPixelFormatRGBA8Unorm);
+    [textureMtl.get() replaceRegion:MTLRegionMake2D(0, 0, 1, 1)
+                        mipmapLevel:0
+                              slice:0
+                          withBytes:GLColor::red.data()
+                        bytesPerRow:4
+                      bytesPerImage:4];
+
+    EGLImageKHR image =
+        eglCreateImageKHR(display, EGL_NO_CONTEXT, EGL_METAL_TEXTURE_ANGLE,
+                          reinterpret_cast<EGLClientBuffer>(textureMtl.get()), nullptr);
+    ASSERT_EGL_SUCCESS();
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, image);
+
+    GLFramebuffer targetFbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, targetFbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    glViewport(0, 0, 1, 1);
+    drawColorQuad(GLColor::magenta);
+    EXPECT_GL_NO_ERROR();
+    eglDestroyImageKHR(display, image);
+    eglWaitUntilWorkScheduledANGLE(display);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_EGL_SUCCESS();
+
+    GLColor result;
+    getTextureSliceBytes(textureMtl.get(), 4, MTLRegionMake2D(0, 0, 1, 1), 0, 0,
+                         {result.data(), 4});
+    EXPECT_EQ(result, GLColor::magenta);
+}
+
+// Tests that OpenGL can draw to a texture bound with Metal texture slice.
+TEST_P(ImageTestMetal, DrawMetalTarget2DArray)
+{
+    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt());
+    ANGLE_SKIP_TEST_IF(!hasImageNativeMetalTextureExt());
+
+    EGLDisplay display = getEGLWindow()->getDisplay();
+
+    ScopedMetalTextureRef textureMtl = createMtlTexture2DArray(1, 1, 2, MTLPixelFormatRGBA8Unorm);
+    [textureMtl.get() replaceRegion:MTLRegionMake2D(0, 0, 1, 1)
+                        mipmapLevel:0
+                              slice:0
+                          withBytes:GLColor::red.data()
+                        bytesPerRow:4
+                      bytesPerImage:4];
+    [textureMtl.get() replaceRegion:MTLRegionMake2D(0, 0, 1, 1)
+                        mipmapLevel:0
+                              slice:1
+                          withBytes:GLColor::red.data()
+                        bytesPerRow:4
+                      bytesPerImage:4];
+
+    const EGLint attribs[] = {EGL_METAL_TEXTURE_ARRAY_SLICE_ANGLE, 1, EGL_NONE};
+    EGLImageKHR image =
+        eglCreateImageKHR(display, EGL_NO_CONTEXT, EGL_METAL_TEXTURE_ANGLE,
+                          reinterpret_cast<EGLClientBuffer>(textureMtl.get()), attribs);
+    ASSERT_EGL_SUCCESS();
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, image);
+    EXPECT_GL_NO_ERROR();
+    GLFramebuffer targetFbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, targetFbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    glViewport(0, 0, 1, 1);
+    drawColorQuad(GLColor::magenta);
+    EXPECT_GL_NO_ERROR();
+    eglDestroyImageKHR(display, image);
+    eglWaitUntilWorkScheduledANGLE(display);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_EGL_SUCCESS();
+
+    GLColor result;
+    getTextureSliceBytes(textureMtl.get(), 4, MTLRegionMake2D(0, 0, 1, 1), 0, 1,
+                         {result.data(), 4});
+    EXPECT_EQ(result, GLColor::magenta);
+}
+
+// Tests that OpenGL can blit to a texture bound with Metal texture slice.
+TEST_P(ImageTestMetal, BlitMetalTarget2DArray)
+{
+    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt());
+    ANGLE_SKIP_TEST_IF(!hasImageNativeMetalTextureExt());
+
+    EGLDisplay display = getEGLWindow()->getDisplay();
+
+    GLTexture colorBuffer;
+    glBindTexture(GL_TEXTURE_2D, colorBuffer);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 2, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, GLColor::green.data());
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 1, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE,
+                    GLColor::yellow.data());
+    EXPECT_GL_NO_ERROR();
+
+    GLFramebuffer sourceFbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, sourceFbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorBuffer, 0);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    ScopedMetalTextureRef textureMtl = createMtlTexture2DArray(1, 1, 2, MTLPixelFormatRGBA8Unorm);
+    [textureMtl.get() replaceRegion:MTLRegionMake2D(0, 0, 1, 1)
+                        mipmapLevel:0
+                              slice:0
+                          withBytes:GLColor::red.data()
+                        bytesPerRow:4
+                      bytesPerImage:4];
+    [textureMtl.get() replaceRegion:MTLRegionMake2D(0, 0, 1, 1)
+                        mipmapLevel:0
+                              slice:1
+                          withBytes:GLColor::red.data()
+                        bytesPerRow:4
+                      bytesPerImage:4];
+
+    for (int slice = 0; slice < 2; ++slice)
+    {
+        const EGLint attribs[] = {EGL_METAL_TEXTURE_ARRAY_SLICE_ANGLE, slice, EGL_NONE};
+        EGLImageKHR image =
+            eglCreateImageKHR(display, EGL_NO_CONTEXT, EGL_METAL_TEXTURE_ANGLE,
+                              reinterpret_cast<EGLClientBuffer>(textureMtl.get()), attribs);
+        ASSERT_EGL_SUCCESS();
+
+        GLTexture texture;
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, image);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        verifyResults2D(texture, GLColor::red.data());
+        EXPECT_GL_NO_ERROR();
+
+        GLFramebuffer targetFbo;
+        glBindFramebuffer(GL_FRAMEBUFFER, targetFbo);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+        EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+        glBindFramebuffer(GL_READ_FRAMEBUFFER_ANGLE, sourceFbo);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER_ANGLE, targetFbo);
+        glBlitFramebufferANGLE(slice, 0, slice + 1, 1, 0, 0, 1, 1, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+        EXPECT_GL_NO_ERROR();
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        verifyResults2D(texture, slice == 0 ? GLColor::green.data() : GLColor::yellow.data());
+        eglDestroyImageKHR(display, image);
+        EXPECT_GL_NO_ERROR();
+        EXPECT_EGL_SUCCESS();
+    }
+    eglWaitUntilWorkScheduledANGLE(display);
+    EXPECT_EGL_SUCCESS();
+
+    GLColor result;
+    getTextureSliceBytes(textureMtl.get(), 4, MTLRegionMake2D(0, 0, 1, 1), 0, 0,
+                         {result.data(), 4});
+    EXPECT_EQ(result, GLColor::green);
+    getTextureSliceBytes(textureMtl.get(), 4, MTLRegionMake2D(0, 0, 1, 1), 0, 1,
+                         {result.data(), 4});
+    EXPECT_EQ(result, GLColor::yellow);
+}
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
 ANGLE_INSTANTIATE_TEST(ImageTestMetal, ES2_METAL(), ES3_METAL());

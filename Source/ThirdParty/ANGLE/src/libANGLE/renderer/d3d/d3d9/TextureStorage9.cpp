@@ -92,6 +92,12 @@ int TextureStorage9::getLevelCount() const
     return static_cast<int>(mMipLevels) - mTopLevel;
 }
 
+bool TextureStorage9::isMultiplanar(const gl::Context *context)
+{
+    // D3D9 does not support multiplanar formats yet.
+    return false;
+}
+
 angle::Result TextureStorage9::setData(const gl::Context *context,
                                        const gl::ImageIndex &index,
                                        ImageD3D *image,
@@ -254,9 +260,9 @@ angle::Result TextureStorage9_2D::getBaseTexture(const gl::Context *context,
 
         IDirect3DDevice9 *device = mRenderer->getDevice();
         HRESULT result           = device->CreateTexture(static_cast<unsigned int>(mTextureWidth),
-                                               static_cast<unsigned int>(mTextureHeight),
-                                               static_cast<unsigned int>(mMipLevels), getUsage(),
-                                               mTextureFormat, getPool(), &mTexture, nullptr);
+                                                         static_cast<unsigned int>(mTextureHeight),
+                                                         static_cast<unsigned int>(mMipLevels), getUsage(),
+                                                         mTextureFormat, getPool(), &mTexture, nullptr);
         ANGLE_TRY_HR(GetImplAs<Context9>(context), result, "Failed to create 2D storage texture");
     }
 

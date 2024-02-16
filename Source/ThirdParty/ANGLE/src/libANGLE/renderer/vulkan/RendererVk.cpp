@@ -290,8 +290,8 @@ constexpr const char *kSkippedMessages[] = {
     "VUID-VkImportMemoryWin32HandleInfoKHR-handleType-00658",
     // https://anglebug.com/8497
     "VUID-vkCmdEndDebugUtilsLabelEXT-commandBuffer-01912",
-    // https://anglebug.com/8516
-    "VUID-VkGraphicsPipelineCreateInfo-dynamicRendering-06576",
+    // https://anglebug.com/8522
+    "VUID-VkPipelineVertexInputStateCreateInfo-pNext-pNext",
 };
 
 // Validation messages that should be ignored only when VK_EXT_primitive_topology_list_restart is
@@ -4671,7 +4671,6 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
     //
     // - ARM drivers
     // - Imagination drivers
-    // - Virtio-GPU Venus atop MESA ANV and RADV drivers
     //
     // The following drivers are instead known to _not_ include said state, and hit the cache at
     // draw time.
@@ -4687,8 +4686,7 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
     const bool libraryBlobsAreReusedByMonolithicPipelines = !isARM && !isPowerVR;
     ANGLE_FEATURE_CONDITION(&mFeatures, warmUpPipelineCacheAtLink,
                             libraryBlobsAreReusedByMonolithicPipelines && !isQualcommProprietary &&
-                                !(IsLinux() && isIntel) && !(IsChromeOS() && isSwiftShader) &&
-                                !isVenus);
+                                !(IsLinux() && isIntel) && !(IsChromeOS() && isSwiftShader));
 
     // On SwiftShader, no data is retrieved from the pipeline cache, so there is no reason to
     // serialize it or put it in the blob cache.
@@ -4842,7 +4840,7 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
 
     // Intel and AMD mesa drivers need depthBiasConstantFactor to be doubled to align with GL.
     ANGLE_FEATURE_CONDITION(&mFeatures, doubleDepthBiasConstantFactor,
-                            (isIntel && !IsWindows()) || isRADV);
+                            (isIntel && !IsWindows()) || isRADV || isNvidia);
 
     // Required to pass android.media.codec.cts.EncodeDecodeTest
     // https://issuetracker.google.com/246218584

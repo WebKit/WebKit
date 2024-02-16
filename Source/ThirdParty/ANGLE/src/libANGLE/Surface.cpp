@@ -554,7 +554,8 @@ Error Surface::bindTexImage(gl::Context *context, gl::Texture *texture, EGLint b
 {
     ASSERT(!mTexture);
     ANGLE_TRY(mImplementation->bindTexImage(context, texture, buffer));
-    if (auto *previousSurface = texture->getBoundSurface())
+    Surface *previousSurface = texture->getBoundSurface();
+    if (previousSurface != nullptr)
     {
         ANGLE_TRY(previousSurface->releaseTexImage(context, buffer));
     }

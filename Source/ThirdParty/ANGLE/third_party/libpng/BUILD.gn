@@ -4,8 +4,14 @@
 
 config("libpng_config") {
   include_dirs = [ "src" ]
+  cflags = []
   if (is_clang) {
-    cflags = [ "-Wno-tautological-constant-out-of-range-compare" ]
+    cflags += [ "-Wno-tautological-constant-out-of-range-compare" ]
+  }
+  if (is_apple) {
+    # TODO(crbug.com/41492875): this can be removed once libpng is updated to include
+    # https://github.com/pnggroup/libpng/commit/893b8113f04d408cc6177c6de19c9889a48faa24
+    cflags += [ "-fno-define-target-os-macros" ]
   }
 }
 

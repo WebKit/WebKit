@@ -34,6 +34,7 @@ bool ValidES3CopyConversion(GLenum textureFormat, GLenum framebufferFormat)
             switch (framebufferFormat)
             {
                 case GL_BGRA_EXT:
+                case GL_RGBA:
                     return true;
                 default:
                     break;

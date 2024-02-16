@@ -89,6 +89,10 @@
 b/273271471 WIN INTEL VULKAN : ShaderAlgorithmTest.rgb_to_hsl_vertex_shader/* = SKIP
 7770 PIXEL6 VULKAN : VertexAttributeTestES31.MismatchingSignsChangingAttributeType/* = SKIP
 7770 PIXEL6 VULKAN : VertexAttributeTestES31.MismatchingSignsChangingProgramType/* = SKIP
+8537 WIN NVIDIA GLES : PbufferTest.BindTexImageOverwriteNoCrashOnReleaseTexImage/* = SKIP
+8537 WIN NVIDIA OPENGL : PbufferTest.BindTexImageOverwriteNoCrashOnReleaseTexImage/* = SKIP
+8537 WIN NVIDIA GLES : PbufferTest.UseAsFramebufferColorThenDeferredDestroy/* = SKIP
+8537 WIN NVIDIA OPENGL : PbufferTest.UseAsFramebufferColorThenDeferredDestroy/* = SKIP
 
 234602034 WIN INTEL D3D9 : ImageTest.SourceCubeAndSameTargetTextureWithEachCubeFace/* = SKIP
 234602034 WIN NVIDIA D3D9 : ImageTest.SourceCubeAndSameTargetTextureWithEachCubeFace/* = SKIP
@@ -572,6 +576,9 @@ b/308668391 PIXEL4ORXL VULKAN : ImageTest.SourceYUVAHBTargetExternalRGBSampleNoD
 7295 PIXEL4ORXL VULKAN : StateChangeTestES3.StencilReferenceAndCompareMask/* = SKIP
 
 3647 PIXEL4ORXL VULKAN : EGLPrintEGLinfoTest.PrintGLESCapabilities/* = SKIP
+
+8537 PIXEL4ORXL GLES : PbufferTest.BindTexImageOverwriteReleasesOrphanedPbuffer/* = SKIP
+8537 PIXEL4ORXL GLES : PbufferTest.BindTexImageOverwrite/* = SKIP
 
 // Pixel 6 expectations.
 6931 PIXEL6 VULKAN : BlitFramebufferTest.OOBWrite/* = SKIP

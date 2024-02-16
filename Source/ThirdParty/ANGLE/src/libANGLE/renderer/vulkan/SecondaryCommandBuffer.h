@@ -44,9 +44,9 @@ using SecondaryCommandBlockAllocator  = DedicatedCommandBlockAllocator;
 namespace priv
 {
 
-// NOTE: Please keep command-related enums, structs, functions
-//  and other code dealing with commands in alphabetical order
-//  This simplifies searching and updating commands.
+// NOTE: Please keep command-related enums, structs, functions and other code dealing with commands
+// in alphabetical order.
+// This simplifies searching and updating commands.
 enum class CommandID : uint16_t
 {
     // Invalid cmd used to mark end of sequence of commands
@@ -120,488 +120,6 @@ enum class CommandID : uint16_t
     WriteTimestamp,
 };
 
-#define VERIFY_4_BYTE_ALIGNMENT(StructName) \
-    static_assert((sizeof(StructName) % 4) == 0, "Check StructName alignment");
-
-// Structs to encapsulate parameters for different commands
-// This makes it easy to know the size of params & to copy params
-// TODO: Could optimize the size of some of these structs through bit-packing
-//  and customizing sizing based on limited parameter sets used by ANGLE
-struct BeginQueryParams
-{
-    VkQueryPool queryPool;
-    uint32_t query;
-    VkQueryControlFlags flags;
-};
-VERIFY_4_BYTE_ALIGNMENT(BeginQueryParams)
-
-struct BeginTransformFeedbackParams
-{
-    uint32_t bufferCount;
-};
-VERIFY_4_BYTE_ALIGNMENT(BeginTransformFeedbackParams)
-
-struct BindDescriptorSetParams
-{
-    VkPipelineLayout layout;
-    VkPipelineBindPoint pipelineBindPoint;
-    uint32_t firstSet;
-    uint32_t descriptorSetCount;
-    uint32_t dynamicOffsetCount;
-};
-VERIFY_4_BYTE_ALIGNMENT(BindDescriptorSetParams)
-
-struct BindIndexBufferParams
-{
-    VkBuffer buffer;
-    VkDeviceSize offset;
-    VkIndexType indexType;
-};
-VERIFY_4_BYTE_ALIGNMENT(BindIndexBufferParams)
-
-struct BindPipelineParams
-{
-    VkPipeline pipeline;
-};
-VERIFY_4_BYTE_ALIGNMENT(BindPipelineParams)
-
-struct BindTransformFeedbackBuffersParams
-{
-    // ANGLE always has firstBinding of 0 so not storing that currently
-    uint32_t bindingCount;
-};
-VERIFY_4_BYTE_ALIGNMENT(BindTransformFeedbackBuffersParams)
-
-using BindVertexBuffersParams  = BindTransformFeedbackBuffersParams;
-using BindVertexBuffers2Params = BindVertexBuffersParams;
-
-struct BlitImageParams
-{
-    VkImage srcImage;
-    VkImage dstImage;
-    VkFilter filter;
-    VkImageBlit region;
-};
-VERIFY_4_BYTE_ALIGNMENT(BlitImageParams)
-
-struct BufferBarrierParams
-{
-    VkPipelineStageFlags srcStageMask;
-    VkPipelineStageFlags dstStageMask;
-    VkBufferMemoryBarrier bufferMemoryBarrier;
-};
-VERIFY_4_BYTE_ALIGNMENT(BufferBarrierParams)
-
-struct ClearAttachmentsParams
-{
-    uint32_t attachmentCount;
-    VkClearRect rect;
-};
-VERIFY_4_BYTE_ALIGNMENT(ClearAttachmentsParams)
-
-struct ClearColorImageParams
-{
-    VkImage image;
-    VkImageLayout imageLayout;
-    VkClearColorValue color;
-    VkImageSubresourceRange range;
-};
-VERIFY_4_BYTE_ALIGNMENT(ClearColorImageParams)
-
-struct ClearDepthStencilImageParams
-{
-    VkImage image;
-    VkImageLayout imageLayout;
-    VkClearDepthStencilValue depthStencil;
-    VkImageSubresourceRange range;
-};
-VERIFY_4_BYTE_ALIGNMENT(ClearDepthStencilImageParams)
-
-struct CopyBufferParams
-{
-    VkBuffer srcBuffer;
-    VkBuffer destBuffer;
-    uint32_t regionCount;
-};
-VERIFY_4_BYTE_ALIGNMENT(CopyBufferParams)
-
-struct CopyBufferToImageParams
-{
-    VkBuffer srcBuffer;
-    VkImage dstImage;
-    VkImageLayout dstImageLayout;
-    VkBufferImageCopy region;
-};
-VERIFY_4_BYTE_ALIGNMENT(CopyBufferToImageParams)
-
-struct CopyImageParams
-{
-    VkImage srcImage;
-    VkImageLayout srcImageLayout;
-    VkImage dstImage;
-    VkImageLayout dstImageLayout;
-    VkImageCopy region;
-};
-VERIFY_4_BYTE_ALIGNMENT(CopyImageParams)
-
-struct CopyImageToBufferParams
-{
-    VkImage srcImage;
-    VkImageLayout srcImageLayout;
-    VkBuffer dstBuffer;
-    VkBufferImageCopy region;
-};
-VERIFY_4_BYTE_ALIGNMENT(CopyImageToBufferParams)
-
-// This is a common struct used by both begin & insert DebugUtilsLabelEXT() functions
-struct DebugUtilsLabelParams
-{
-    float color[4];
-};
-VERIFY_4_BYTE_ALIGNMENT(DebugUtilsLabelParams)
-
-struct DispatchParams
-{
-    uint32_t groupCountX;
-    uint32_t groupCountY;
-    uint32_t groupCountZ;
-};
-VERIFY_4_BYTE_ALIGNMENT(DispatchParams)
-
-struct DispatchIndirectParams
-{
-    VkBuffer buffer;
-    VkDeviceSize offset;
-};
-VERIFY_4_BYTE_ALIGNMENT(DispatchIndirectParams)
-
-struct DrawParams
-{
-    uint32_t vertexCount;
-    uint32_t firstVertex;
-};
-VERIFY_4_BYTE_ALIGNMENT(DrawParams)
-
-struct DrawIndexedParams
-{
-    uint32_t indexCount;
-};
-VERIFY_4_BYTE_ALIGNMENT(DrawIndexedParams)
-
-struct DrawIndexedBaseVertexParams
-{
-    uint32_t indexCount;
-    uint32_t vertexOffset;
-};
-VERIFY_4_BYTE_ALIGNMENT(DrawIndexedBaseVertexParams)
-
-struct DrawIndexedIndirectParams
-{
-    VkBuffer buffer;
-    VkDeviceSize offset;
-    uint32_t drawCount;
-    uint32_t stride;
-};
-VERIFY_4_BYTE_ALIGNMENT(DrawIndexedIndirectParams)
-
-struct DrawIndexedInstancedParams
-{
-    uint32_t indexCount;
-    uint32_t instanceCount;
-};
-VERIFY_4_BYTE_ALIGNMENT(DrawIndexedInstancedParams)
-
-struct DrawIndexedInstancedBaseVertexParams
-{
-    uint32_t indexCount;
-    uint32_t instanceCount;
-    uint32_t vertexOffset;
-};
-VERIFY_4_BYTE_ALIGNMENT(DrawIndexedInstancedBaseVertexParams)
-
-struct DrawIndexedInstancedBaseVertexBaseInstanceParams
-{
-    uint32_t indexCount;
-    uint32_t instanceCount;
-    uint32_t firstIndex;
-    int32_t vertexOffset;
-    uint32_t firstInstance;
-};
-VERIFY_4_BYTE_ALIGNMENT(DrawIndexedInstancedBaseVertexBaseInstanceParams)
-
-struct DrawIndirectParams
-{
-    VkBuffer buffer;
-    VkDeviceSize offset;
-    uint32_t drawCount;
-    uint32_t stride;
-};
-VERIFY_4_BYTE_ALIGNMENT(DrawIndirectParams)
-
-struct DrawInstancedParams
-{
-    uint32_t vertexCount;
-    uint32_t instanceCount;
-    uint32_t firstVertex;
-};
-VERIFY_4_BYTE_ALIGNMENT(DrawInstancedParams)
-
-struct DrawInstancedBaseInstanceParams
-{
-    uint32_t vertexCount;
-    uint32_t instanceCount;
-    uint32_t firstVertex;
-    uint32_t firstInstance;
-};
-VERIFY_4_BYTE_ALIGNMENT(DrawInstancedBaseInstanceParams)
-
-// A special struct used with commands that don't have params
-struct EmptyParams
-{};
-
-struct EndQueryParams
-{
-    VkQueryPool queryPool;
-    uint32_t query;
-};
-VERIFY_4_BYTE_ALIGNMENT(EndQueryParams)
-
-struct EndTransformFeedbackParams
-{
-    uint32_t bufferCount;
-};
-VERIFY_4_BYTE_ALIGNMENT(EndTransformFeedbackParams)
-
-struct FillBufferParams
-{
-    VkBuffer dstBuffer;
-    VkDeviceSize dstOffset;
-    VkDeviceSize size;
-    uint32_t data;
-};
-VERIFY_4_BYTE_ALIGNMENT(FillBufferParams)
-
-struct ImageBarrierParams
-{
-    VkPipelineStageFlags srcStageMask;
-    VkPipelineStageFlags dstStageMask;
-    VkImageMemoryBarrier imageMemoryBarrier;
-};
-VERIFY_4_BYTE_ALIGNMENT(ImageBarrierParams)
-
-struct MemoryBarrierParams
-{
-    VkPipelineStageFlags srcStageMask;
-    VkPipelineStageFlags dstStageMask;
-    VkMemoryBarrier memoryBarrier;
-};
-VERIFY_4_BYTE_ALIGNMENT(MemoryBarrierParams)
-
-struct NextSubpassParams
-{
-    VkSubpassContents subpassContents;
-};
-VERIFY_4_BYTE_ALIGNMENT(NextSubpassParams)
-
-struct PipelineBarrierParams
-{
-    VkPipelineStageFlags srcStageMask;
-    VkPipelineStageFlags dstStageMask;
-    VkDependencyFlags dependencyFlags;
-    uint32_t memoryBarrierCount;
-    uint32_t bufferMemoryBarrierCount;
-    uint32_t imageMemoryBarrierCount;
-};
-VERIFY_4_BYTE_ALIGNMENT(PipelineBarrierParams)
-
-struct PushConstantsParams
-{
-    VkPipelineLayout layout;
-    VkShaderStageFlags flag;
-    uint32_t offset;
-    uint32_t size;
-};
-VERIFY_4_BYTE_ALIGNMENT(PushConstantsParams)
-
-struct ResetEventParams
-{
-    VkEvent event;
-    VkPipelineStageFlags stageMask;
-};
-VERIFY_4_BYTE_ALIGNMENT(ResetEventParams)
-
-struct ResetQueryPoolParams
-{
-    VkQueryPool queryPool;
-    uint32_t firstQuery;
-    uint32_t queryCount;
-};
-VERIFY_4_BYTE_ALIGNMENT(ResetQueryPoolParams)
-
-struct ResolveImageParams
-{
-    VkImage srcImage;
-    VkImage dstImage;
-    VkImageResolve region;
-};
-VERIFY_4_BYTE_ALIGNMENT(ResolveImageParams)
-
-struct SetBlendConstantsParams
-{
-    float blendConstants[4];
-};
-VERIFY_4_BYTE_ALIGNMENT(SetBlendConstantsParams)
-
-struct SetCullModeParams
-{
-    VkCullModeFlags cullMode;
-};
-VERIFY_4_BYTE_ALIGNMENT(SetCullModeParams)
-
-struct SetDepthBiasParams
-{
-    float depthBiasConstantFactor;
-    float depthBiasClamp;
-    float depthBiasSlopeFactor;
-};
-VERIFY_4_BYTE_ALIGNMENT(SetDepthBiasParams)
-
-struct SetDepthBiasEnableParams
-{
-    VkBool32 depthBiasEnable;
-};
-VERIFY_4_BYTE_ALIGNMENT(SetDepthBiasEnableParams)
-
-struct SetDepthCompareOpParams
-{
-    VkCompareOp depthCompareOp;
-};
-VERIFY_4_BYTE_ALIGNMENT(SetDepthCompareOpParams)
-
-struct SetDepthTestEnableParams
-{
-    VkBool32 depthTestEnable;
-};
-VERIFY_4_BYTE_ALIGNMENT(SetDepthTestEnableParams)
-
-struct SetDepthWriteEnableParams
-{
-    VkBool32 depthWriteEnable;
-};
-VERIFY_4_BYTE_ALIGNMENT(SetDepthWriteEnableParams)
-
-struct SetEventParams
-{
-    VkEvent event;
-    VkPipelineStageFlags stageMask;
-};
-VERIFY_4_BYTE_ALIGNMENT(SetEventParams)
-
-struct SetFragmentShadingRateParams
-{
-    uint16_t fragmentWidth;
-    uint16_t fragmentHeight;
-};
-VERIFY_4_BYTE_ALIGNMENT(SetFragmentShadingRateParams)
-
-struct SetFrontFaceParams
-{
-    VkFrontFace frontFace;
-};
-VERIFY_4_BYTE_ALIGNMENT(SetFrontFaceParams)
-
-struct SetLineWidthParams
-{
-    float lineWidth;
-};
-VERIFY_4_BYTE_ALIGNMENT(SetLineWidthParams)
-
-struct SetLogicOpParams
-{
-    VkLogicOp logicOp;
-};
-VERIFY_4_BYTE_ALIGNMENT(SetLogicOpParams)
-
-struct SetPrimitiveRestartEnableParams
-{
-    VkBool32 primitiveRestartEnable;
-};
-VERIFY_4_BYTE_ALIGNMENT(SetPrimitiveRestartEnableParams)
-
-struct SetRasterizerDiscardEnableParams
-{
-    VkBool32 rasterizerDiscardEnable;
-};
-VERIFY_4_BYTE_ALIGNMENT(SetRasterizerDiscardEnableParams)
-
-struct SetScissorParams
-{
-    VkRect2D scissor;
-};
-VERIFY_4_BYTE_ALIGNMENT(SetScissorParams)
-
-struct SetStencilCompareMaskParams
-{
-    uint16_t compareFrontMask;
-    uint16_t compareBackMask;
-};
-VERIFY_4_BYTE_ALIGNMENT(SetStencilCompareMaskParams)
-
-struct SetStencilOpParams
-{
-    uint32_t faceMask : 4;
-    uint32_t failOp : 3;
-    uint32_t passOp : 3;
-    uint32_t depthFailOp : 3;
-    uint32_t compareOp : 3;
-};
-VERIFY_4_BYTE_ALIGNMENT(SetStencilOpParams)
-
-struct SetStencilReferenceParams
-{
-    uint16_t frontReference;
-    uint16_t backReference;
-};
-VERIFY_4_BYTE_ALIGNMENT(SetStencilReferenceParams)
-
-struct SetStencilTestEnableParams
-{
-    VkBool32 stencilTestEnable;
-};
-VERIFY_4_BYTE_ALIGNMENT(SetStencilTestEnableParams)
-
-struct SetStencilWriteMaskParams
-{
-    uint16_t writeFrontMask;
-    uint16_t writeBackMask;
-};
-VERIFY_4_BYTE_ALIGNMENT(SetStencilWriteMaskParams)
-
-struct SetViewportParams
-{
-    VkViewport viewport;
-};
-VERIFY_4_BYTE_ALIGNMENT(SetViewportParams)
-
-struct WaitEventsParams
-{
-    uint32_t eventCount;
-    VkPipelineStageFlags srcStageMask;
-    VkPipelineStageFlags dstStageMask;
-    uint32_t memoryBarrierCount;
-    uint32_t bufferMemoryBarrierCount;
-    uint32_t imageMemoryBarrierCount;
-};
-VERIFY_4_BYTE_ALIGNMENT(WaitEventsParams)
-
-struct WriteTimestampParams
-{
-    VkPipelineStageFlagBits pipelineStage;
-    VkQueryPool queryPool;
-    uint32_t query;
-};
-VERIFY_4_BYTE_ALIGNMENT(WriteTimestampParams)
-
 // Header for every cmd in custom cmd buffer
 struct CommandHeader
 {
@@ -609,6 +127,624 @@ struct CommandHeader
     uint16_t size;
 };
 static_assert(sizeof(CommandHeader) == 4, "Check CommandHeader size");
+
+#define VERIFY_8_BYTE_ALIGNMENT(StructName) \
+    static_assert((sizeof(StructName) % 8) == 0, "Check " #StructName " alignment");
+
+ANGLE_ENABLE_STRUCT_PADDING_WARNINGS
+
+// Structs to encapsulate parameters for different commands.  This makes it easy to know the size of
+// params & to copy params.  Each struct must be prefixed by a CommandHeader (which is 4 bytes) and
+// must be aligned to 8 bytes.
+struct BeginQueryParams
+{
+    CommandHeader header;
+
+    uint32_t query;
+    VkQueryPool queryPool;
+};
+VERIFY_8_BYTE_ALIGNMENT(BeginQueryParams)
+
+struct BeginTransformFeedbackParams
+{
+    CommandHeader header;
+
+    uint32_t bufferCount;
+};
+VERIFY_8_BYTE_ALIGNMENT(BeginTransformFeedbackParams)
+
+struct BindDescriptorSetParams
+{
+    CommandHeader header;
+
+    VkPipelineBindPoint pipelineBindPoint : 8;
+    uint32_t firstSet : 8;
+    uint32_t descriptorSetCount : 8;
+    uint32_t dynamicOffsetCount : 8;
+
+    VkPipelineLayout layout;
+};
+VERIFY_8_BYTE_ALIGNMENT(BindDescriptorSetParams)
+
+struct BindIndexBufferParams
+{
+    CommandHeader header;
+
+    VkIndexType indexType;
+    VkBuffer buffer;
+    VkDeviceSize offset;
+};
+VERIFY_8_BYTE_ALIGNMENT(BindIndexBufferParams)
+
+struct BindPipelineParams
+{
+    CommandHeader header;
+
+    uint32_t padding;
+    VkPipeline pipeline;
+};
+VERIFY_8_BYTE_ALIGNMENT(BindPipelineParams)
+
+struct BindTransformFeedbackBuffersParams
+{
+    CommandHeader header;
+
+    // ANGLE always has firstBinding of 0 so not storing that currently
+    uint32_t bindingCount;
+};
+VERIFY_8_BYTE_ALIGNMENT(BindTransformFeedbackBuffersParams)
+
+using BindVertexBuffersParams  = BindTransformFeedbackBuffersParams;
+using BindVertexBuffers2Params = BindVertexBuffersParams;
+
+struct BlitImageParams
+{
+    CommandHeader header;
+
+    VkFilter filter;
+    VkImage srcImage;
+    VkImage dstImage;
+    VkImageBlit region;
+};
+VERIFY_8_BYTE_ALIGNMENT(BlitImageParams)
+
+struct BufferBarrierParams
+{
+    CommandHeader header;
+
+    uint32_t padding;
+    VkBufferMemoryBarrier bufferMemoryBarrier;
+};
+VERIFY_8_BYTE_ALIGNMENT(BufferBarrierParams)
+
+struct ClearAttachmentsParams
+{
+    CommandHeader header;
+
+    uint32_t attachmentCount;
+    VkClearRect rect;
+};
+VERIFY_8_BYTE_ALIGNMENT(ClearAttachmentsParams)
+
+struct ClearColorImageParams
+{
+    CommandHeader header;
+
+    VkImageLayout imageLayout;
+    VkImage image;
+    VkClearColorValue color;
+    VkImageSubresourceRange range;
+    uint32_t padding;
+};
+VERIFY_8_BYTE_ALIGNMENT(ClearColorImageParams)
+
+struct ClearDepthStencilImageParams
+{
+    CommandHeader header;
+
+    VkImageLayout imageLayout;
+    VkImage image;
+    VkClearDepthStencilValue depthStencil;
+    VkImageSubresourceRange range;
+    uint32_t padding;
+};
+VERIFY_8_BYTE_ALIGNMENT(ClearDepthStencilImageParams)
+
+struct CopyBufferParams
+{
+    CommandHeader header;
+
+    uint32_t regionCount;
+    VkBuffer srcBuffer;
+    VkBuffer destBuffer;
+};
+VERIFY_8_BYTE_ALIGNMENT(CopyBufferParams)
+
+struct CopyBufferToImageParams
+{
+    CommandHeader header;
+
+    VkImageLayout dstImageLayout;
+    VkBuffer srcBuffer;
+    VkImage dstImage;
+    VkBufferImageCopy region;
+};
+VERIFY_8_BYTE_ALIGNMENT(CopyBufferToImageParams)
+
+struct CopyImageParams
+{
+    CommandHeader header;
+
+    VkImageCopy region;
+    VkImageLayout srcImageLayout;
+    VkImageLayout dstImageLayout;
+    VkImage srcImage;
+    VkImage dstImage;
+};
+VERIFY_8_BYTE_ALIGNMENT(CopyImageParams)
+
+struct CopyImageToBufferParams
+{
+    CommandHeader header;
+
+    VkImageLayout srcImageLayout;
+    VkImage srcImage;
+    VkBuffer dstBuffer;
+    VkBufferImageCopy region;
+};
+VERIFY_8_BYTE_ALIGNMENT(CopyImageToBufferParams)
+
+// This is a common struct used by both begin & insert DebugUtilsLabelEXT() functions
+struct DebugUtilsLabelParams
+{
+    CommandHeader header;
+
+    uint32_t padding;
+    float color[4];
+};
+VERIFY_8_BYTE_ALIGNMENT(DebugUtilsLabelParams)
+
+struct DispatchParams
+{
+    CommandHeader header;
+
+    uint32_t groupCountX;
+    uint32_t groupCountY;
+    uint32_t groupCountZ;
+};
+VERIFY_8_BYTE_ALIGNMENT(DispatchParams)
+
+struct DispatchIndirectParams
+{
+    CommandHeader header;
+
+    uint32_t padding;
+    VkBuffer buffer;
+    VkDeviceSize offset;
+};
+VERIFY_8_BYTE_ALIGNMENT(DispatchIndirectParams)
+
+struct DrawParams
+{
+    CommandHeader header;
+
+    uint32_t padding;
+    uint32_t vertexCount;
+    uint32_t firstVertex;
+};
+VERIFY_8_BYTE_ALIGNMENT(DrawParams)
+
+struct DrawIndexedParams
+{
+    CommandHeader header;
+
+    uint32_t indexCount;
+};
+VERIFY_8_BYTE_ALIGNMENT(DrawIndexedParams)
+
+struct DrawIndexedBaseVertexParams
+{
+    CommandHeader header;
+
+    uint32_t padding;
+    uint32_t indexCount;
+    uint32_t vertexOffset;
+};
+VERIFY_8_BYTE_ALIGNMENT(DrawIndexedBaseVertexParams)
+
+struct DrawIndexedIndirectParams
+{
+    CommandHeader header;
+
+    uint32_t padding;
+    uint32_t drawCount;
+    uint32_t stride;
+    VkBuffer buffer;
+    VkDeviceSize offset;
+};
+VERIFY_8_BYTE_ALIGNMENT(DrawIndexedIndirectParams)
+
+struct DrawIndexedInstancedParams
+{
+    CommandHeader header;
+
+    uint32_t padding;
+    uint32_t indexCount;
+    uint32_t instanceCount;
+};
+VERIFY_8_BYTE_ALIGNMENT(DrawIndexedInstancedParams)
+
+struct DrawIndexedInstancedBaseVertexParams
+{
+    CommandHeader header;
+
+    uint32_t indexCount;
+    uint32_t instanceCount;
+    uint32_t vertexOffset;
+};
+VERIFY_8_BYTE_ALIGNMENT(DrawIndexedInstancedBaseVertexParams)
+
+struct DrawIndexedInstancedBaseVertexBaseInstanceParams
+{
+    CommandHeader header;
+
+    uint32_t indexCount;
+    uint32_t instanceCount;
+    uint32_t firstIndex;
+    int32_t vertexOffset;
+    uint32_t firstInstance;
+};
+VERIFY_8_BYTE_ALIGNMENT(DrawIndexedInstancedBaseVertexBaseInstanceParams)
+
+struct DrawIndirectParams
+{
+    CommandHeader header;
+
+    uint32_t padding;
+    uint32_t drawCount;
+    uint32_t stride;
+    VkBuffer buffer;
+    VkDeviceSize offset;
+};
+VERIFY_8_BYTE_ALIGNMENT(DrawIndirectParams)
+
+struct DrawInstancedParams
+{
+    CommandHeader header;
+
+    uint32_t vertexCount;
+    uint32_t instanceCount;
+    uint32_t firstVertex;
+};
+VERIFY_8_BYTE_ALIGNMENT(DrawInstancedParams)
+
+struct DrawInstancedBaseInstanceParams
+{
+    CommandHeader header;
+
+    uint32_t padding;
+    uint32_t vertexCount;
+    uint32_t instanceCount;
+    uint32_t firstVertex;
+    uint32_t firstInstance;
+};
+VERIFY_8_BYTE_ALIGNMENT(DrawInstancedBaseInstanceParams)
+
+// A special struct used with commands that don't have params
+struct EmptyParams
+{
+    CommandHeader header;
+    uint32_t padding;
+};
+VERIFY_8_BYTE_ALIGNMENT(EmptyParams)
+
+struct EndQueryParams
+{
+    CommandHeader header;
+
+    uint32_t query;
+    VkQueryPool queryPool;
+};
+VERIFY_8_BYTE_ALIGNMENT(EndQueryParams)
+
+struct EndTransformFeedbackParams
+{
+    CommandHeader header;
+
+    uint32_t bufferCount;
+};
+VERIFY_8_BYTE_ALIGNMENT(EndTransformFeedbackParams)
+
+struct FillBufferParams
+{
+    CommandHeader header;
+
+    uint32_t data;
+    VkBuffer dstBuffer;
+    VkDeviceSize dstOffset;
+    VkDeviceSize size;
+};
+VERIFY_8_BYTE_ALIGNMENT(FillBufferParams)
+
+struct ImageBarrierParams
+{
+    CommandHeader header;
+
+    uint32_t padding;
+    VkPipelineStageFlags srcStageMask;
+    VkPipelineStageFlags dstStageMask;
+};
+VERIFY_8_BYTE_ALIGNMENT(ImageBarrierParams)
+
+struct MemoryBarrierParams
+{
+    CommandHeader header;
+
+    uint32_t padding;
+    VkPipelineStageFlags srcStageMask;
+    VkPipelineStageFlags dstStageMask;
+};
+VERIFY_8_BYTE_ALIGNMENT(MemoryBarrierParams)
+
+struct PipelineBarrierParams
+{
+    CommandHeader header;
+
+    VkPipelineStageFlags srcStageMask;
+    VkPipelineStageFlags dstStageMask;
+    VkDependencyFlags dependencyFlags;
+    uint32_t memoryBarrierCount;
+    uint32_t imageMemoryBarrierCount;
+};
+VERIFY_8_BYTE_ALIGNMENT(PipelineBarrierParams)
+
+struct PushConstantsParams
+{
+    CommandHeader header;
+
+    VkShaderStageFlags flag;
+    VkPipelineLayout layout;
+    uint32_t offset;
+    uint32_t size;
+};
+VERIFY_8_BYTE_ALIGNMENT(PushConstantsParams)
+
+struct ResetEventParams
+{
+    CommandHeader header;
+
+    VkPipelineStageFlags stageMask;
+    VkEvent event;
+};
+VERIFY_8_BYTE_ALIGNMENT(ResetEventParams)
+
+struct ResetQueryPoolParams
+{
+    CommandHeader header;
+
+    uint32_t firstQuery : 24;
+    uint32_t queryCount : 8;
+    VkQueryPool queryPool;
+};
+VERIFY_8_BYTE_ALIGNMENT(ResetQueryPoolParams)
+
+struct ResolveImageParams
+{
+    CommandHeader header;
+
+    VkImageResolve region;
+    VkImage srcImage;
+    VkImage dstImage;
+};
+VERIFY_8_BYTE_ALIGNMENT(ResolveImageParams)
+
+struct SetBlendConstantsParams
+{
+    CommandHeader header;
+
+    uint32_t padding;
+    float blendConstants[4];
+};
+VERIFY_8_BYTE_ALIGNMENT(SetBlendConstantsParams)
+
+struct SetCullModeParams
+{
+    CommandHeader header;
+
+    VkCullModeFlags cullMode;
+};
+VERIFY_8_BYTE_ALIGNMENT(SetCullModeParams)
+
+struct SetDepthBiasParams
+{
+    CommandHeader header;
+
+    float depthBiasConstantFactor;
+    float depthBiasClamp;
+    float depthBiasSlopeFactor;
+};
+VERIFY_8_BYTE_ALIGNMENT(SetDepthBiasParams)
+
+struct SetDepthBiasEnableParams
+{
+    CommandHeader header;
+
+    VkBool32 depthBiasEnable;
+};
+VERIFY_8_BYTE_ALIGNMENT(SetDepthBiasEnableParams)
+
+struct SetDepthCompareOpParams
+{
+    CommandHeader header;
+
+    VkCompareOp depthCompareOp;
+};
+VERIFY_8_BYTE_ALIGNMENT(SetDepthCompareOpParams)
+
+struct SetDepthTestEnableParams
+{
+    CommandHeader header;
+
+    VkBool32 depthTestEnable;
+};
+VERIFY_8_BYTE_ALIGNMENT(SetDepthTestEnableParams)
+
+struct SetDepthWriteEnableParams
+{
+    CommandHeader header;
+
+    VkBool32 depthWriteEnable;
+};
+VERIFY_8_BYTE_ALIGNMENT(SetDepthWriteEnableParams)
+
+struct SetEventParams
+{
+    CommandHeader header;
+
+    VkPipelineStageFlags stageMask;
+    VkEvent event;
+};
+VERIFY_8_BYTE_ALIGNMENT(SetEventParams)
+
+struct SetFragmentShadingRateParams
+{
+    CommandHeader header;
+
+    uint16_t fragmentWidth;
+    uint16_t fragmentHeight;
+};
+VERIFY_8_BYTE_ALIGNMENT(SetFragmentShadingRateParams)
+
+struct SetFrontFaceParams
+{
+    CommandHeader header;
+
+    VkFrontFace frontFace;
+};
+VERIFY_8_BYTE_ALIGNMENT(SetFrontFaceParams)
+
+struct SetLineWidthParams
+{
+    CommandHeader header;
+
+    float lineWidth;
+};
+VERIFY_8_BYTE_ALIGNMENT(SetLineWidthParams)
+
+struct SetLogicOpParams
+{
+    CommandHeader header;
+
+    VkLogicOp logicOp;
+};
+VERIFY_8_BYTE_ALIGNMENT(SetLogicOpParams)
+
+struct SetPrimitiveRestartEnableParams
+{
+    CommandHeader header;
+
+    VkBool32 primitiveRestartEnable;
+};
+VERIFY_8_BYTE_ALIGNMENT(SetPrimitiveRestartEnableParams)
+
+struct SetRasterizerDiscardEnableParams
+{
+    CommandHeader header;
+
+    VkBool32 rasterizerDiscardEnable;
+};
+VERIFY_8_BYTE_ALIGNMENT(SetRasterizerDiscardEnableParams)
+
+struct SetScissorParams
+{
+    CommandHeader header;
+
+    uint32_t padding;
+    VkRect2D scissor;
+};
+VERIFY_8_BYTE_ALIGNMENT(SetScissorParams)
+
+struct SetStencilCompareMaskParams
+{
+    CommandHeader header;
+
+    uint16_t compareFrontMask;
+    uint16_t compareBackMask;
+};
+VERIFY_8_BYTE_ALIGNMENT(SetStencilCompareMaskParams)
+
+struct SetStencilOpParams
+{
+    CommandHeader header;
+
+    uint32_t faceMask : 4;
+    uint32_t failOp : 3;
+    uint32_t passOp : 3;
+    uint32_t depthFailOp : 3;
+    uint32_t compareOp : 3;
+    uint32_t padding : 16;
+};
+VERIFY_8_BYTE_ALIGNMENT(SetStencilOpParams)
+
+struct SetStencilReferenceParams
+{
+    CommandHeader header;
+
+    uint16_t frontReference;
+    uint16_t backReference;
+};
+VERIFY_8_BYTE_ALIGNMENT(SetStencilReferenceParams)
+
+struct SetStencilTestEnableParams
+{
+    CommandHeader header;
+
+    VkBool32 stencilTestEnable;
+};
+VERIFY_8_BYTE_ALIGNMENT(SetStencilTestEnableParams)
+
+struct SetStencilWriteMaskParams
+{
+    CommandHeader header;
+
+    uint16_t writeFrontMask;
+    uint16_t writeBackMask;
+};
+VERIFY_8_BYTE_ALIGNMENT(SetStencilWriteMaskParams)
+
+struct SetViewportParams
+{
+    CommandHeader header;
+
+    uint32_t padding;
+    VkViewport viewport;
+};
+VERIFY_8_BYTE_ALIGNMENT(SetViewportParams)
+
+struct WaitEventsParams
+{
+    CommandHeader header;
+
+    uint32_t eventCount;
+    VkPipelineStageFlags srcStageMask;
+    VkPipelineStageFlags dstStageMask;
+    uint32_t memoryBarrierCount;
+    uint32_t imageMemoryBarrierCount;
+};
+VERIFY_8_BYTE_ALIGNMENT(WaitEventsParams)
+
+struct WriteTimestampParams
+{
+    CommandHeader header;
+
+    uint32_t query;
+    VkQueryPool queryPool;
+};
+VERIFY_8_BYTE_ALIGNMENT(WriteTimestampParams)
+
+#undef VERIFY_8_BYTE_ALIGNMENT
+
+ANGLE_DISABLE_STRUCT_PADDING_WARNINGS
 
 template <typename DestT, typename T>
 ANGLE_INLINE DestT *Offset(T *ptr, size_t bytes)
@@ -800,7 +936,7 @@ class SecondaryCommandBuffer final : angle::NonCopyable
 
     void memoryBarrier(VkPipelineStageFlags srcStageMask,
                        VkPipelineStageFlags dstStageMask,
-                       const VkMemoryBarrier *memoryBarrier);
+                       const VkMemoryBarrier &memoryBarrier);
 
     void nextSubpass(VkSubpassContents subpassContents);
 
@@ -948,70 +1084,90 @@ class SecondaryCommandBuffer final : angle::NonCopyable
   private:
     void commonDebugUtilsLabel(CommandID cmd, const VkDebugUtilsLabelEXT &label);
     template <class StructType>
-    ANGLE_INLINE StructType *commonInit(CommandID cmdID, size_t allocationSize, uint8_t *header)
+    ANGLE_INLINE StructType *commonInit(CommandID cmdID,
+                                        size_t allocationSize,
+                                        uint8_t *commandMemory)
     {
         ASSERT(mIsOpen);
         ASSERT(allocationSize <= std::numeric_limits<uint16_t>::max());
 
-        auto commandHeader  = reinterpret_cast<CommandHeader *>(header);
-        commandHeader->id   = cmdID;
-        commandHeader->size = static_cast<uint16_t>(allocationSize);
+        StructType *command  = reinterpret_cast<StructType *>(commandMemory);
+        command->header.id   = cmdID;
+        command->header.size = static_cast<uint16_t>(allocationSize);
 
-        return Offset<StructType>(commandHeader, sizeof(CommandHeader));
+        return command;
     }
 
     // Allocate and initialize memory for given commandID & variable param size, setting
-    // variableDataPtr to the byte following fixed cmd data where variable-sized ptr data will
+    // variableDataOut to the byte following fixed cmd data where variable-sized ptr data will
     // be written and returning a pointer to the start of the command's parameter data
     template <class StructType>
     ANGLE_INLINE StructType *initCommand(CommandID cmdID,
                                          size_t variableSize,
-                                         uint8_t **variableDataPtr)
+                                         uint8_t **variableDataOut)
     {
-        constexpr size_t fixedAllocationSize = sizeof(StructType) + sizeof(CommandHeader);
+        constexpr size_t fixedAllocationSize = sizeof(StructType);
         const size_t allocationSize          = fixedAllocationSize + variableSize;
 
         // Make sure we have enough room to mark follow-on header "Invalid"
         const size_t requiredSize = allocationSize + sizeof(CommandHeader);
-        uint8_t *header           = nullptr;
+        uint8_t *commandMemory    = nullptr;
 
-        mCommandAllocator.onNewVariableSizedCommand(requiredSize, allocationSize, &header);
-        StructType *const result = commonInit<StructType>(cmdID, allocationSize, header);
-        *variableDataPtr         = Offset<uint8_t>(header, fixedAllocationSize);
-        return result;
+        mCommandAllocator.onNewVariableSizedCommand(requiredSize, allocationSize, &commandMemory);
+        StructType *command = commonInit<StructType>(cmdID, allocationSize, commandMemory);
+        *variableDataOut    = Offset<uint8_t>(commandMemory, fixedAllocationSize);
+        return command;
     }
 
     // Initialize a command that doesn't have variable-sized ptr data
     template <class StructType>
     ANGLE_INLINE StructType *initCommand(CommandID cmdID)
     {
-        constexpr size_t paramSize =
-            std::is_same<StructType, EmptyParams>::value ? 0 : sizeof(StructType);
-        constexpr size_t allocationSize = paramSize + sizeof(CommandHeader);
+        constexpr size_t allocationSize = sizeof(StructType);
 
         // Make sure we have enough room to mark follow-on header "Invalid"
         const size_t requiredSize = allocationSize + sizeof(CommandHeader);
-        uint8_t *header           = nullptr;
-        mCommandAllocator.onNewCommand(requiredSize, allocationSize, &header);
+        uint8_t *commandMemory    = nullptr;
+        mCommandAllocator.onNewCommand(requiredSize, allocationSize, &commandMemory);
 
-        return commonInit<StructType>(cmdID, allocationSize, header);
+        return commonInit<StructType>(cmdID, allocationSize, commandMemory);
     }
 
-    // Return a ptr to the parameter type
+    // Return a pointer to the parameter type.  Note that every param struct has the header as its
+    // first member, so in fact the parameter type pointer is identical to the header pointer.
     template <class StructType>
     const StructType *getParamPtr(const CommandHeader *header) const
     {
-        return reinterpret_cast<const StructType *>(reinterpret_cast<const uint8_t *>(header) +
-                                                    sizeof(CommandHeader));
+        return reinterpret_cast<const StructType *>(header);
     }
-    // Copy sizeInBytes data from paramData to writePointer & return writePointer plus sizeInBytes.
-    template <class PtrType>
-    ANGLE_INLINE uint8_t *storePointerParameter(uint8_t *writePointer,
-                                                const PtrType *paramData,
-                                                size_t sizeInBytes)
+    struct ArrayParamSize
     {
-        memcpy(writePointer, paramData, sizeInBytes);
-        return writePointer + sizeInBytes;
+        // Given an array of N elements of type T, N*sizeof(T) bytes need to be copied, but due to
+        // alignment requirements, roundUp(size, 8) bytes need to be allocated for the array.
+        size_t copyBytes;
+        size_t allocateBytes;
+    };
+    template <class T>
+    ANGLE_INLINE ArrayParamSize calculateArrayParameterSize(size_t count)
+    {
+        ArrayParamSize size;
+        size.copyBytes     = sizeof(T) * count;
+        size.allocateBytes = roundUpPow2<size_t>(size.copyBytes, 8u);
+        return size;
+    }
+    // Copy size.copyBytes data from paramData to writePointer and return writePointer plus
+    // size.allocateBytes.
+    template <class T>
+    ANGLE_INLINE uint8_t *storeArrayParameter(uint8_t *writePointer,
+                                              const T *data,
+                                              const ArrayParamSize &size)
+    {
+        // See |PointerParamSize|.  The size should always be calculated with
+        // |calculatePointerParameterSize|, and that satisfies this condition.
+        ASSERT(size.allocateBytes == roundUpPow2<size_t>(size.copyBytes, 8u));
+
+        memcpy(writePointer, data, size.copyBytes);
+        return writePointer + size.allocateBytes;
     }
 
     // Flag to indicate that commandBuffer is open for new commands. Initially open.
@@ -1040,15 +1196,15 @@ ANGLE_INLINE void SecondaryCommandBuffer::commonDebugUtilsLabel(CommandID cmd,
                                                                 const VkDebugUtilsLabelEXT &label)
 {
     uint8_t *writePtr;
-    const size_t stringSize        = strlen(label.pLabelName) + 1;
-    const size_t alignedStringSize = roundUpPow2<size_t>(stringSize, 4);
+    const ArrayParamSize stringSize =
+        calculateArrayParameterSize<char>(strlen(label.pLabelName) + 1);
     DebugUtilsLabelParams *paramStruct =
-        initCommand<DebugUtilsLabelParams>(cmd, alignedStringSize, &writePtr);
+        initCommand<DebugUtilsLabelParams>(cmd, stringSize.allocateBytes, &writePtr);
     paramStruct->color[0] = label.color[0];
     paramStruct->color[1] = label.color[1];
     paramStruct->color[2] = label.color[2];
     paramStruct->color[3] = label.color[3];
-    storePointerParameter(writePtr, label.pLabelName, stringSize);
+    storeArrayParameter(writePtr, label.pLabelName, stringSize);
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::beginDebugUtilsLabelEXT(const VkDebugUtilsLabelEXT &label)
@@ -1060,10 +1216,10 @@ ANGLE_INLINE void SecondaryCommandBuffer::beginQuery(const QueryPool &queryPool,
                                                      uint32_t query,
                                                      VkQueryControlFlags flags)
 {
+    ASSERT(flags == 0);
     BeginQueryParams *paramStruct = initCommand<BeginQueryParams>(CommandID::BeginQuery);
     paramStruct->queryPool        = queryPool.getHandle();
     paramStruct->query            = query;
-    paramStruct->flags            = flags;
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::beginTransformFeedback(
@@ -1074,13 +1230,14 @@ ANGLE_INLINE void SecondaryCommandBuffer::beginTransformFeedback(
 {
     ASSERT(firstCounterBuffer == 0);
     uint8_t *writePtr;
-    size_t bufferSize                         = bufferCount * sizeof(VkBuffer);
-    size_t offsetSize                         = bufferCount * sizeof(VkDeviceSize);
+    const ArrayParamSize bufferSize = calculateArrayParameterSize<VkBuffer>(bufferCount);
+    const ArrayParamSize offsetSize = calculateArrayParameterSize<VkDeviceSize>(bufferCount);
     BeginTransformFeedbackParams *paramStruct = initCommand<BeginTransformFeedbackParams>(
-        CommandID::BeginTransformFeedback, bufferSize + offsetSize, &writePtr);
+        CommandID::BeginTransformFeedback, bufferSize.allocateBytes + offsetSize.allocateBytes,
+        &writePtr);
     paramStruct->bufferCount = bufferCount;
-    writePtr                 = storePointerParameter(writePtr, counterBuffers, bufferSize);
-    storePointerParameter(writePtr, counterBufferOffsets, offsetSize);
+    writePtr                 = storeArrayParameter(writePtr, counterBuffers, bufferSize);
+    storeArrayParameter(writePtr, counterBufferOffsets, offsetSize);
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::bindComputePipeline(const Pipeline &pipeline)
@@ -1098,22 +1255,24 @@ ANGLE_INLINE void SecondaryCommandBuffer::bindDescriptorSets(const PipelineLayou
                                                              uint32_t dynamicOffsetCount,
                                                              const uint32_t *dynamicOffsets)
 {
-    size_t descSize   = descriptorSetCount * sizeof(VkDescriptorSet);
-    size_t offsetSize = dynamicOffsetCount * sizeof(uint32_t);
+    const ArrayParamSize descSize =
+        calculateArrayParameterSize<VkDescriptorSet>(descriptorSetCount);
+    const ArrayParamSize offsetSize = calculateArrayParameterSize<uint32_t>(dynamicOffsetCount);
     uint8_t *writePtr;
     BindDescriptorSetParams *paramStruct = initCommand<BindDescriptorSetParams>(
-        CommandID::BindDescriptorSets, descSize + offsetSize, &writePtr);
+        CommandID::BindDescriptorSets, descSize.allocateBytes + offsetSize.allocateBytes,
+        &writePtr);
     // Copy params into memory
-    paramStruct->layout             = layout.getHandle();
-    paramStruct->pipelineBindPoint  = pipelineBindPoint;
-    paramStruct->firstSet           = ToUnderlying(firstSet);
-    paramStruct->descriptorSetCount = descriptorSetCount;
-    paramStruct->dynamicOffsetCount = dynamicOffsetCount;
+    paramStruct->layout = layout.getHandle();
+    SetBitField(paramStruct->pipelineBindPoint, pipelineBindPoint);
+    SetBitField(paramStruct->firstSet, ToUnderlying(firstSet));
+    SetBitField(paramStruct->descriptorSetCount, descriptorSetCount);
+    SetBitField(paramStruct->dynamicOffsetCount, dynamicOffsetCount);
     // Copy variable sized data
-    writePtr = storePointerParameter(writePtr, descriptorSets, descSize);
-    if (offsetSize)
+    writePtr = storeArrayParameter(writePtr, descriptorSets, descSize);
+    if (dynamicOffsetCount > 0)
     {
-        storePointerParameter(writePtr, dynamicOffsets, offsetSize);
+        storeArrayParameter(writePtr, dynamicOffsets, offsetSize);
     }
 }
 
@@ -1143,18 +1302,19 @@ ANGLE_INLINE void SecondaryCommandBuffer::bindTransformFeedbackBuffers(uint32_t 
 {
     ASSERT(firstBinding == 0);
     uint8_t *writePtr;
-    size_t buffersSize = bindingCount * sizeof(VkBuffer);
-    size_t offsetsSize = bindingCount * sizeof(VkDeviceSize);
-    size_t sizesSize   = offsetsSize;
+    const ArrayParamSize buffersSize = calculateArrayParameterSize<VkBuffer>(bindingCount);
+    const ArrayParamSize offsetsSize = calculateArrayParameterSize<VkDeviceSize>(bindingCount);
+    const ArrayParamSize sizesSize   = offsetsSize;
     BindTransformFeedbackBuffersParams *paramStruct =
-        initCommand<BindTransformFeedbackBuffersParams>(CommandID::BindTransformFeedbackBuffers,
-                                                        buffersSize + offsetsSize + sizesSize,
-                                                        &writePtr);
+        initCommand<BindTransformFeedbackBuffersParams>(
+            CommandID::BindTransformFeedbackBuffers,
+            buffersSize.allocateBytes + offsetsSize.allocateBytes + sizesSize.allocateBytes,
+            &writePtr);
     // Copy params
     paramStruct->bindingCount = bindingCount;
-    writePtr                  = storePointerParameter(writePtr, buffers, buffersSize);
-    writePtr                  = storePointerParameter(writePtr, offsets, offsetsSize);
-    storePointerParameter(writePtr, sizes, sizesSize);
+    writePtr                  = storeArrayParameter(writePtr, buffers, buffersSize);
+    writePtr                  = storeArrayParameter(writePtr, offsets, offsetsSize);
+    storeArrayParameter(writePtr, sizes, sizesSize);
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::bindVertexBuffers(uint32_t firstBinding,
@@ -1164,14 +1324,15 @@ ANGLE_INLINE void SecondaryCommandBuffer::bindVertexBuffers(uint32_t firstBindin
 {
     ASSERT(firstBinding == 0);
     uint8_t *writePtr;
-    size_t buffersSize                   = bindingCount * sizeof(VkBuffer);
-    size_t offsetsSize                   = bindingCount * sizeof(VkDeviceSize);
+    const ArrayParamSize buffersSize     = calculateArrayParameterSize<VkBuffer>(bindingCount);
+    const ArrayParamSize offsetsSize     = calculateArrayParameterSize<VkDeviceSize>(bindingCount);
     BindVertexBuffersParams *paramStruct = initCommand<BindVertexBuffersParams>(
-        CommandID::BindVertexBuffers, buffersSize + offsetsSize, &writePtr);
+        CommandID::BindVertexBuffers, buffersSize.allocateBytes + offsetsSize.allocateBytes,
+        &writePtr);
     // Copy params
     paramStruct->bindingCount = bindingCount;
-    writePtr                  = storePointerParameter(writePtr, buffers, buffersSize);
-    storePointerParameter(writePtr, offsets, offsetsSize);
+    writePtr                  = storeArrayParameter(writePtr, buffers, buffersSize);
+    storeArrayParameter(writePtr, offsets, offsetsSize);
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::bindVertexBuffers2(uint32_t firstBinding,
@@ -1184,16 +1345,18 @@ ANGLE_INLINE void SecondaryCommandBuffer::bindVertexBuffers2(uint32_t firstBindi
     ASSERT(firstBinding == 0);
     ASSERT(sizes == nullptr);
     uint8_t *writePtr;
-    size_t buffersSize                    = bindingCount * sizeof(VkBuffer);
-    size_t offsetsSize                    = bindingCount * sizeof(VkDeviceSize);
-    size_t stridesSize                    = bindingCount * sizeof(VkDeviceSize);
+    const ArrayParamSize buffersSize      = calculateArrayParameterSize<VkBuffer>(bindingCount);
+    const ArrayParamSize offsetsSize      = calculateArrayParameterSize<VkDeviceSize>(bindingCount);
+    const ArrayParamSize stridesSize      = offsetsSize;
     BindVertexBuffers2Params *paramStruct = initCommand<BindVertexBuffers2Params>(
-        CommandID::BindVertexBuffers2, buffersSize + offsetsSize + stridesSize, &writePtr);
+        CommandID::BindVertexBuffers2,
+        buffersSize.allocateBytes + offsetsSize.allocateBytes + stridesSize.allocateBytes,
+        &writePtr);
     // Copy params
     paramStruct->bindingCount = bindingCount;
-    writePtr                  = storePointerParameter(writePtr, buffers, buffersSize);
-    writePtr                  = storePointerParameter(writePtr, offsets, offsetsSize);
-    storePointerParameter(writePtr, strides, stridesSize);
+    writePtr                  = storeArrayParameter(writePtr, buffers, buffersSize);
+    writePtr                  = storeArrayParameter(writePtr, offsets, offsetsSize);
+    storeArrayParameter(writePtr, strides, stridesSize);
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::blitImage(const Image &srcImage,
@@ -1220,9 +1383,11 @@ ANGLE_INLINE void SecondaryCommandBuffer::bufferBarrier(
     VkPipelineStageFlags dstStageMask,
     const VkBufferMemoryBarrier *bufferMemoryBarrier)
 {
+    // Used only during queue family ownership transfers
+    ASSERT(srcStageMask == VK_PIPELINE_STAGE_ALL_COMMANDS_BIT);
+    ASSERT(dstStageMask == VK_PIPELINE_STAGE_ALL_COMMANDS_BIT);
+
     BufferBarrierParams *paramStruct = initCommand<BufferBarrierParams>(CommandID::BufferBarrier);
-    paramStruct->srcStageMask        = srcStageMask;
-    paramStruct->dstStageMask        = dstStageMask;
     paramStruct->bufferMemoryBarrier = *bufferMemoryBarrier;
 }
 
@@ -1233,13 +1398,14 @@ ANGLE_INLINE void SecondaryCommandBuffer::clearAttachments(uint32_t attachmentCo
 {
     ASSERT(rectCount == 1);
     uint8_t *writePtr;
-    size_t attachSize = attachmentCount * sizeof(VkClearAttachment);
-    ClearAttachmentsParams *paramStruct =
-        initCommand<ClearAttachmentsParams>(CommandID::ClearAttachments, attachSize, &writePtr);
+    const ArrayParamSize attachmentSize =
+        calculateArrayParameterSize<VkClearAttachment>(attachmentCount);
+    ClearAttachmentsParams *paramStruct = initCommand<ClearAttachmentsParams>(
+        CommandID::ClearAttachments, attachmentSize.allocateBytes, &writePtr);
     paramStruct->attachmentCount = attachmentCount;
     paramStruct->rect            = rects[0];
     // Copy variable sized data
-    storePointerParameter(writePtr, attachments, attachSize);
+    storeArrayParameter(writePtr, attachments, attachmentSize);
 
     mCommandTracker.onClearAttachments();
 }
@@ -1281,14 +1447,14 @@ ANGLE_INLINE void SecondaryCommandBuffer::copyBuffer(const Buffer &srcBuffer,
                                                      const VkBufferCopy *regions)
 {
     uint8_t *writePtr;
-    size_t regionSize = regionCount * sizeof(VkBufferCopy);
+    const ArrayParamSize regionSize = calculateArrayParameterSize<VkBufferCopy>(regionCount);
     CopyBufferParams *paramStruct =
-        initCommand<CopyBufferParams>(CommandID::CopyBuffer, regionSize, &writePtr);
+        initCommand<CopyBufferParams>(CommandID::CopyBuffer, regionSize.allocateBytes, &writePtr);
     paramStruct->srcBuffer   = srcBuffer.getHandle();
     paramStruct->destBuffer  = destBuffer.getHandle();
     paramStruct->regionCount = regionCount;
     // Copy variable sized data
-    storePointerParameter(writePtr, regions, regionSize);
+    storeArrayParameter(writePtr, regions, regionSize);
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::copyBufferToImage(VkBuffer srcBuffer,
@@ -1504,13 +1670,15 @@ ANGLE_INLINE void SecondaryCommandBuffer::endTransformFeedback(
 {
     ASSERT(firstCounterBuffer == 0);
     uint8_t *writePtr;
-    size_t bufferSize                       = counterBufferCount * sizeof(VkBuffer);
-    size_t offsetSize                       = counterBufferCount * sizeof(VkDeviceSize);
+    const ArrayParamSize buffersSize = calculateArrayParameterSize<VkBuffer>(counterBufferCount);
+    const ArrayParamSize offsetsSize =
+        calculateArrayParameterSize<VkDeviceSize>(counterBufferCount);
     EndTransformFeedbackParams *paramStruct = initCommand<EndTransformFeedbackParams>(
-        CommandID::EndTransformFeedback, bufferSize + offsetSize, &writePtr);
+        CommandID::EndTransformFeedback, buffersSize.allocateBytes + offsetsSize.allocateBytes,
+        &writePtr);
     paramStruct->bufferCount = counterBufferCount;
-    writePtr                 = storePointerParameter(writePtr, counterBuffers, bufferSize);
-    storePointerParameter(writePtr, counterBufferOffsets, offsetSize);
+    writePtr                 = storeArrayParameter(writePtr, counterBuffers, buffersSize);
+    storeArrayParameter(writePtr, counterBufferOffsets, offsetsSize);
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::fillBuffer(const Buffer &dstBuffer,
@@ -1530,11 +1698,15 @@ ANGLE_INLINE void SecondaryCommandBuffer::imageBarrier(
     VkPipelineStageFlags dstStageMask,
     const VkImageMemoryBarrier &imageMemoryBarrier)
 {
-    ImageBarrierParams *paramStruct = initCommand<ImageBarrierParams>(CommandID::ImageBarrier);
     ASSERT(imageMemoryBarrier.pNext == nullptr);
-    paramStruct->srcStageMask       = srcStageMask;
-    paramStruct->dstStageMask       = dstStageMask;
-    paramStruct->imageMemoryBarrier = imageMemoryBarrier;
+
+    uint8_t *writePtr;
+    const ArrayParamSize imgBarrierSize = calculateArrayParameterSize<VkImageMemoryBarrier>(1);
+    ImageBarrierParams *paramStruct     = initCommand<ImageBarrierParams>(
+        CommandID::ImageBarrier, imgBarrierSize.allocateBytes, &writePtr);
+    paramStruct->srcStageMask = srcStageMask;
+    paramStruct->dstStageMask = dstStageMask;
+    storeArrayParameter(writePtr, &imageMemoryBarrier, imgBarrierSize);
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::insertDebugUtilsLabelEXT(
@@ -1545,18 +1717,23 @@ ANGLE_INLINE void SecondaryCommandBuffer::insertDebugUtilsLabelEXT(
 
 ANGLE_INLINE void SecondaryCommandBuffer::memoryBarrier(VkPipelineStageFlags srcStageMask,
                                                         VkPipelineStageFlags dstStageMask,
-                                                        const VkMemoryBarrier *memoryBarrier)
+                                                        const VkMemoryBarrier &memoryBarrier)
 {
-    MemoryBarrierParams *paramStruct = initCommand<MemoryBarrierParams>(CommandID::MemoryBarrier);
-    paramStruct->srcStageMask        = srcStageMask;
-    paramStruct->dstStageMask        = dstStageMask;
-    paramStruct->memoryBarrier       = *memoryBarrier;
+    ASSERT(memoryBarrier.pNext == nullptr);
+
+    uint8_t *writePtr;
+    const ArrayParamSize memBarrierSize = calculateArrayParameterSize<VkMemoryBarrier>(1);
+    MemoryBarrierParams *paramStruct    = initCommand<MemoryBarrierParams>(
+        CommandID::MemoryBarrier, memBarrierSize.allocateBytes, &writePtr);
+    paramStruct->srcStageMask = srcStageMask;
+    paramStruct->dstStageMask = dstStageMask;
+    storeArrayParameter(writePtr, &memoryBarrier, memBarrierSize);
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::nextSubpass(VkSubpassContents subpassContents)
 {
-    NextSubpassParams *paramStruct = initCommand<NextSubpassParams>(CommandID::NextSubpass);
-    paramStruct->subpassContents   = subpassContents;
+    ASSERT(subpassContents == VK_SUBPASS_CONTENTS_INLINE);
+    initCommand<EmptyParams>(CommandID::NextSubpass);
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::pipelineBarrier(
@@ -1570,30 +1747,32 @@ ANGLE_INLINE void SecondaryCommandBuffer::pipelineBarrier(
     uint32_t imageMemoryBarrierCount,
     const VkImageMemoryBarrier *imageMemoryBarriers)
 {
+    // Other than for QFOT (where bufferBarrier() is used), ANGLE doesn't use buffer barriers.
+    // Memory barriers are used instead.
+    ASSERT(bufferMemoryBarrierCount == 0);
+    ASSERT(bufferMemoryBarriers == nullptr);
+
     uint8_t *writePtr;
-    size_t memBarrierSize              = memoryBarrierCount * sizeof(VkMemoryBarrier);
-    size_t buffBarrierSize             = bufferMemoryBarrierCount * sizeof(VkBufferMemoryBarrier);
-    size_t imgBarrierSize              = imageMemoryBarrierCount * sizeof(VkImageMemoryBarrier);
+    const ArrayParamSize memBarrierSize =
+        calculateArrayParameterSize<VkMemoryBarrier>(memoryBarrierCount);
+    const ArrayParamSize imgBarrierSize =
+        calculateArrayParameterSize<VkImageMemoryBarrier>(imageMemoryBarrierCount);
     PipelineBarrierParams *paramStruct = initCommand<PipelineBarrierParams>(
-        CommandID::PipelineBarrier, memBarrierSize + buffBarrierSize + imgBarrierSize, &writePtr);
-    paramStruct->srcStageMask             = srcStageMask;
-    paramStruct->dstStageMask             = dstStageMask;
-    paramStruct->dependencyFlags          = dependencyFlags;
-    paramStruct->memoryBarrierCount       = memoryBarrierCount;
-    paramStruct->bufferMemoryBarrierCount = bufferMemoryBarrierCount;
-    paramStruct->imageMemoryBarrierCount  = imageMemoryBarrierCount;
+        CommandID::PipelineBarrier, memBarrierSize.allocateBytes + imgBarrierSize.allocateBytes,
+        &writePtr);
+    paramStruct->srcStageMask            = srcStageMask;
+    paramStruct->dstStageMask            = dstStageMask;
+    paramStruct->dependencyFlags         = dependencyFlags;
+    paramStruct->memoryBarrierCount      = memoryBarrierCount;
+    paramStruct->imageMemoryBarrierCount = imageMemoryBarrierCount;
     // Copy variable sized data
-    if (memBarrierSize)
+    if (memoryBarrierCount > 0)
     {
-        writePtr = storePointerParameter(writePtr, memoryBarriers, memBarrierSize);
+        writePtr = storeArrayParameter(writePtr, memoryBarriers, memBarrierSize);
     }
-    if (buffBarrierSize)
+    if (imageMemoryBarrierCount > 0)
     {
-        writePtr = storePointerParameter(writePtr, bufferMemoryBarriers, buffBarrierSize);
-    }
-    if (imgBarrierSize)
-    {
-        storePointerParameter(writePtr, imageMemoryBarriers, imgBarrierSize);
+        storeArrayParameter(writePtr, imageMemoryBarriers, imgBarrierSize);
     }
 }
 
@@ -1605,14 +1784,15 @@ ANGLE_INLINE void SecondaryCommandBuffer::pushConstants(const PipelineLayout &la
 {
     ASSERT(size == static_cast<size_t>(size));
     uint8_t *writePtr;
+    const ArrayParamSize dataSize    = calculateArrayParameterSize<uint8_t>(size);
     PushConstantsParams *paramStruct = initCommand<PushConstantsParams>(
-        CommandID::PushConstants, static_cast<size_t>(size), &writePtr);
+        CommandID::PushConstants, dataSize.allocateBytes, &writePtr);
     paramStruct->layout = layout.getHandle();
     paramStruct->flag   = flag;
     paramStruct->offset = offset;
     paramStruct->size   = size;
     // Copy variable sized data
-    storePointerParameter(writePtr, data, static_cast<size_t>(size));
+    storeArrayParameter(writePtr, data, dataSize);
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::resetEvent(VkEvent event, VkPipelineStageFlags stageMask)
@@ -1628,9 +1808,9 @@ ANGLE_INLINE void SecondaryCommandBuffer::resetQueryPool(const QueryPool &queryP
 {
     ResetQueryPoolParams *paramStruct =
         initCommand<ResetQueryPoolParams>(CommandID::ResetQueryPool);
-    paramStruct->queryPool  = queryPool.getHandle();
-    paramStruct->firstQuery = firstQuery;
-    paramStruct->queryCount = queryCount;
+    paramStruct->queryPool = queryPool.getHandle();
+    SetBitField(paramStruct->firstQuery, firstQuery);
+    SetBitField(paramStruct->queryCount, queryCount);
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::resolveImage(const Image &srcImage,
@@ -1846,36 +2026,42 @@ ANGLE_INLINE void SecondaryCommandBuffer::waitEvents(
     uint32_t imageMemoryBarrierCount,
     const VkImageMemoryBarrier *imageMemoryBarriers)
 {
+    // Other than for QFOT (where bufferBarrier() is used), ANGLE doesn't use buffer barriers.
+    // Memory barriers are used instead.
+    ASSERT(bufferMemoryBarrierCount == 0);
+    ASSERT(bufferMemoryBarriers == nullptr);
+
     uint8_t *writePtr;
-    size_t eventSize              = eventCount * sizeof(VkEvent);
-    size_t memBarrierSize         = memoryBarrierCount * sizeof(VkMemoryBarrier);
-    size_t buffBarrierSize        = bufferMemoryBarrierCount * sizeof(VkBufferMemoryBarrier);
-    size_t imgBarrierSize         = imageMemoryBarrierCount * sizeof(VkImageMemoryBarrier);
+    const ArrayParamSize eventSize = calculateArrayParameterSize<VkEvent>(eventCount);
+    const ArrayParamSize memBarrierSize =
+        calculateArrayParameterSize<VkMemoryBarrier>(memoryBarrierCount);
+    const ArrayParamSize imgBarrierSize =
+        calculateArrayParameterSize<VkImageMemoryBarrier>(imageMemoryBarrierCount);
     WaitEventsParams *paramStruct = initCommand<WaitEventsParams>(
-        CommandID::WaitEvents, eventSize + memBarrierSize + buffBarrierSize + imgBarrierSize,
+        CommandID::WaitEvents,
+        eventSize.allocateBytes + memBarrierSize.allocateBytes + imgBarrierSize.allocateBytes,
         &writePtr);
-    paramStruct->eventCount               = eventCount;
-    paramStruct->srcStageMask             = srcStageMask;
-    paramStruct->dstStageMask             = dstStageMask;
-    paramStruct->memoryBarrierCount       = memoryBarrierCount;
-    paramStruct->bufferMemoryBarrierCount = bufferMemoryBarrierCount;
-    paramStruct->imageMemoryBarrierCount  = imageMemoryBarrierCount;
+    paramStruct->eventCount              = eventCount;
+    paramStruct->srcStageMask            = srcStageMask;
+    paramStruct->dstStageMask            = dstStageMask;
+    paramStruct->memoryBarrierCount      = memoryBarrierCount;
+    paramStruct->imageMemoryBarrierCount = imageMemoryBarrierCount;
     // Copy variable sized data
-    writePtr = storePointerParameter(writePtr, events, eventSize);
-    writePtr = storePointerParameter(writePtr, memoryBarriers, memBarrierSize);
-    writePtr = storePointerParameter(writePtr, bufferMemoryBarriers, buffBarrierSize);
-    storePointerParameter(writePtr, imageMemoryBarriers, imgBarrierSize);
+    writePtr = storeArrayParameter(writePtr, events, eventSize);
+    writePtr = storeArrayParameter(writePtr, memoryBarriers, memBarrierSize);
+    storeArrayParameter(writePtr, imageMemoryBarriers, imgBarrierSize);
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::writeTimestamp(VkPipelineStageFlagBits pipelineStage,
                                                          const QueryPool &queryPool,
                                                          uint32_t query)
 {
+    ASSERT(pipelineStage == VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT);
+
     WriteTimestampParams *paramStruct =
         initCommand<WriteTimestampParams>(CommandID::WriteTimestamp);
-    paramStruct->pipelineStage = pipelineStage;
-    paramStruct->queryPool     = queryPool.getHandle();
-    paramStruct->query         = query;
+    paramStruct->queryPool = queryPool.getHandle();
+    paramStruct->query     = query;
 }
 }  // namespace priv
 }  // namespace vk
