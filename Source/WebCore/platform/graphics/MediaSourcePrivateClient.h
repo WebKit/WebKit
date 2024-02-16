@@ -38,7 +38,7 @@ namespace WebCore {
 
 class MediaSourcePrivate;
 
-class MediaSourcePrivateClient : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MediaSourcePrivateClient, WTF::DestructionThread::Main> {
+class MediaSourcePrivateClient : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MediaSourcePrivateClient> {
 public:
     virtual ~MediaSourcePrivateClient() = default;
 
@@ -48,6 +48,7 @@ public:
 
 #if !RELEASE_LOG_DISABLED
     virtual void setLogIdentifier(const void*) = 0;
+    virtual const Logger* logger() const { return nullptr; }
 #endif
 
     enum class RendererType { Audio, Video };

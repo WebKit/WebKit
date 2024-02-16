@@ -50,7 +50,10 @@ public:
 
     virtual unsigned length() const;
     virtual bool contains(TrackBase&) const;
+    virtual bool contains(TrackID) const;
     virtual void remove(TrackBase&, bool scheduleEvent = true);
+    virtual void remove(TrackID, bool scheduleEvent = true);
+    virtual RefPtr<TrackBase> find(TrackID) const;
 
     // EventTarget
     EventTargetInterface eventTargetInterface() const override = 0;

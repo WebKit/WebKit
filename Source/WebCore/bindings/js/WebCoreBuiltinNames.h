@@ -301,6 +301,7 @@ namespace WebCore {
     macro(MediaRecorderErrorEvent) \
     macro(MediaSessionCoordinator) \
     macro(MediaSource) \
+    macro(MediaSourceHandle) \
     macro(MediaStream) \
     macro(MediaStreamAudioDestinationNode) \
     macro(MediaStreamAudioSourceNode) \

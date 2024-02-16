@@ -417,6 +417,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/mediasource/ManagedMediaSource.idl \
     $(WebCore)/Modules/mediasource/ManagedSourceBuffer.idl \
     $(WebCore)/Modules/mediasource/MediaSource.idl \
+    $(WebCore)/Modules/mediasource/MediaSourceHandle.idl \
     $(WebCore)/Modules/mediasource/SourceBuffer.idl \
     $(WebCore)/Modules/mediasource/SourceBufferList.idl \
     $(WebCore)/Modules/mediasource/TextTrack+MediaSource.idl \

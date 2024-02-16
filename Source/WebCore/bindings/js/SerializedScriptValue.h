@@ -40,6 +40,9 @@
 #if ENABLE(MEDIA_STREAM)
 #include "MediaStreamTrackDataHolder.h"
 #endif
+#if ENABLE(MEDIA_SOURCE_IN_WORKERS)
+#include "MediaSourceHandle.h"
+#endif
 
 #if ENABLE(WEB_CODECS)
 #include "WebCodecsAudioData.h"
@@ -129,6 +132,9 @@ private:
 #if ENABLE(WEB_RTC)
         , Vector<std::unique_ptr<DetachedRTCDataChannel>>&& = { }
 #endif
+#if ENABLE(MEDIA_SOURCE_IN_WORKERS)
+        , Vector<RefPtr<DetachedMediaSourceHandle>>&& = { }
+#endif
 #if ENABLE(WEB_CODECS)
         , Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>>&& = { }
         , Vector<WebCodecsVideoFrameData>&& = { }
@@ -148,6 +154,9 @@ private:
         , Vector<RefPtr<MessagePort>>&& = { }
 #if ENABLE(WEB_RTC)
         , Vector<std::unique_ptr<DetachedRTCDataChannel>>&& = { }
+#endif
+#if ENABLE(MEDIA_SOURCE_IN_WORKERS)
+        , Vector<RefPtr<DetachedMediaSourceHandle>>&& = { }
 #endif
 #if ENABLE(WEBASSEMBLY)
         , std::unique_ptr<WasmModuleArray> = nullptr
@@ -177,6 +186,9 @@ private:
         Vector<RefPtr<WebCodecsEncodedAudioChunkStorage>> serializedAudioChunks;
         Vector<WebCodecsVideoFrameData> serializedVideoFrames { };
         Vector<WebCodecsAudioInternalData> serializedAudioData { };
+#endif
+#if ENABLE(MEDIA_SOURCE_IN_WORKERS)
+        Vector<RefPtr<DetachedMediaSourceHandle>> detachedMediaSourceHandles { };
 #endif
 #if ENABLE(MEDIA_STREAM)
         Vector<std::unique_ptr<MediaStreamTrackDataHolder>> serializedMediaStreamTracks { };

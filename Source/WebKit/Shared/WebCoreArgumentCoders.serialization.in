@@ -7197,6 +7197,9 @@ headers: <JavaScriptCore/WasmModule.h> <WebCore/ImageBitmap.h> <WebCore/MessageP
     [NotSerialized] Vector<WebCore::WebCodecsVideoFrameData> serializedVideoFrames;
     [NotSerialized] Vector<WebCore::WebCodecsAudioInternalData> serializedAudioData;
 #endif
+#if ENABLE(MEDIA_SOURCE_IN_WORKERS)
+    [NotSerialized] Vector<RefPtr<WebCore::DetachedMediaSourceHandle>> detachedMediaSourceHandles;
+#endif
 #if ENABLE(MEDIA_STREAM)
     [NotSerialized] Vector<std::unique_ptr<WebCore::MediaStreamTrackDataHolder>> serializedMediaStreamTracks;
 #endif

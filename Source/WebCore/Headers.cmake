@@ -464,6 +464,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/mediasession/MediaMetadataInit.h
     Modules/mediasession/MediaSessionAction.h
 
+    Modules/mediasource/MediaSourceHandle.h
     Modules/mediasource/SampleMap.h
 
     Modules/mediastream/DetachedRTCDataChannel.h

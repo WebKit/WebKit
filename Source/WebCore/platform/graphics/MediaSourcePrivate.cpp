@@ -28,6 +28,7 @@
 
 #if ENABLE(MEDIA_SOURCE)
 
+#include "MediaSource.h"
 #include "MediaSourcePrivateClient.h"
 #include "PlatformTimeRanges.h"
 #include "SourceBufferPrivate.h"
@@ -61,7 +62,8 @@ MediaSourcePrivate::MediaSourcePrivate(MediaSourcePrivateClient& client)
 }
 
 MediaSourcePrivate::MediaSourcePrivate(MediaSourcePrivateClient& client, RefCountedSerialFunctionDispatcher& dispatcher)
-    : m_dispatcher(dispatcher)
+    : m_readyState(MediaSourceReadyState::Closed)
+    , m_dispatcher(dispatcher)
     , m_client(client)
 {
 }
@@ -168,6 +170,75 @@ PlatformTimeRanges MediaSourcePrivate::buffered() const
     Locker locker { m_lock };
 
     return m_buffered;
+}
+
+PlatformTimeRanges MediaSourcePrivate::seekable() const
+{
+    MediaTime duration;
+    PlatformTimeRanges buffered;
+    PlatformTimeRanges liveSeekable;
+    {
+        Locker locker { m_lock };
+        duration = m_duration;
+        buffered = m_buffered;
+        liveSeekable = m_liveSeekable;
+    }
+
+    // 6. HTMLMediaElement Extensions, seekable
+    // W3C Editor's Draft 16 September 2016
+    // https://rawgit.com/w3c/media-source/45627646344eea0170dd1cbc5a3d508ca751abb8/media-source-respec.html#htmlmediaelement-extensions
+
+    // ↳ If duration equals NaN:
+    // Return an empty TimeRanges object.
+    if (duration.isInvalid())
+        return PlatformTimeRanges::emptyRanges();
+
+    // ↳ If duration equals positive Infinity:
+    if (duration.isPositiveInfinite()) {
+        // If live seekable range is not empty:
+        if (liveSeekable.length()) {
+            // Let union ranges be the union of live seekable range and the HTMLMediaElement.buffered attribute.
+            buffered.unionWith(liveSeekable);
+            // Return a single range with a start time equal to the earliest start time in union ranges
+            // and an end time equal to the highest end time in union ranges and abort these steps.
+            buffered.add(buffered.start(0), buffered.maximumBufferedTime());
+            return buffered;
+        }
+
+        // If the HTMLMediaElement.buffered attribute returns an empty TimeRanges object, then return
+        // an empty TimeRanges object and abort these steps.
+        if (!buffered.length())
+            return PlatformTimeRanges::emptyRanges();
+
+        // Return a single range with a start time of 0 and an end time equal to the highest end time
+        // reported by the HTMLMediaElement.buffered attribute.
+        return PlatformTimeRanges { MediaTime::zeroTime(), buffered.maximumBufferedTime() };
+    }
+
+    // ↳ Otherwise:
+    // Return a single range with a start time of 0 and an end time equal to duration.
+    return PlatformTimeRanges { MediaTime::zeroTime(), duration };
+}
+
+void MediaSourcePrivate::setLiveSeekableRange(const PlatformTimeRanges& ranges)
+{
+    Locker locker { m_lock };
+
+    m_liveSeekable = ranges;
+}
+
+void MediaSourcePrivate::clearLiveSeekableRange()
+{
+    Locker locker { m_lock };
+
+    m_liveSeekable.clear();
+}
+
+const PlatformTimeRanges& MediaSourcePrivate::liveSeekableRange() const
+{
+    Locker locker { m_lock };
+
+    return m_liveSeekable;
 }
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)

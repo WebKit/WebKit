@@ -839,10 +839,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDeviceOrientationEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDeviceOrientationEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDeviceOrientationOrMotionPermissionState.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDeviceOrientationOrMotionPermissionState.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDigitalIdentity.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDigitalIdentity.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDigitalCredentialRequestOptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDigitalCredentialRequestOptions.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDigitalIdentity.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDigitalIdentity.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDistanceModelType.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDistanceModelType.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocument+CSSOMView.cpp
@@ -1873,6 +1873,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaSettingsRange.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaSettingsRange.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaSource.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaSource.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaSourceHandle.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaSourceHandle.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaStream.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaStream.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaStreamAudioDestinationNode.cpp

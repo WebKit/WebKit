@@ -40,7 +40,7 @@ namespace WebCore {
 using TrackID = uint64_t;
 
 class WEBCORE_EXPORT TrackPrivateBase
-    : public ThreadSafeRefCounted<TrackPrivateBase, WTF::DestructionThread::Main>
+    : public ThreadSafeRefCounted<TrackPrivateBase>
 #if !RELEASE_LOG_DISABLED
     , public LoggerHelper
 #endif

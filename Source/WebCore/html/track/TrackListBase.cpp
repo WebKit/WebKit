@@ -60,6 +60,22 @@ unsigned TrackListBase::length() const
     return m_inbandTracks.size();
 }
 
+RefPtr<TrackBase> TrackListBase::find(TrackID trackID) const
+{
+    size_t index = m_inbandTracks.findIf([&](auto& value) {
+        return value->trackId() == trackID;
+    });
+    if (index == notFound)
+        return nullptr;
+    return m_inbandTracks[index];
+}
+
+void TrackListBase::remove(TrackID trackID, bool scheduleEvent)
+{
+    if (RefPtr track = find(trackID))
+        remove(*track, scheduleEvent);
+}
+
 void TrackListBase::remove(TrackBase& track, bool scheduleEvent)
 {
     size_t index = m_inbandTracks.find(&track);
@@ -80,6 +96,11 @@ void TrackListBase::remove(TrackBase& track, bool scheduleEvent)
 bool TrackListBase::contains(TrackBase& track) const
 {
     return m_inbandTracks.find(&track) != notFound;
+}
+
+bool TrackListBase::contains(TrackID trackID) const
+{
+    return find(trackID);
 }
 
 void TrackListBase::scheduleTrackEvent(const AtomString& eventName, Ref<TrackBase>&& track)

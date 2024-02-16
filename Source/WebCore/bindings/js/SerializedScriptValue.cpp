@@ -54,6 +54,7 @@
 #include "JSIDBSerializationGlobalObject.h"
 #include "JSImageBitmap.h"
 #include "JSImageData.h"
+#include "JSMediaSourceHandle.h"
 #include "JSMediaStreamTrack.h"
 #include "JSMessagePort.h"
 #include "JSNavigator.h"
@@ -240,6 +241,9 @@ enum SerializationTag {
 #if ENABLE(MEDIA_STREAM)
     MediaStreamTrackTag = 60,
 #endif
+#if ENABLE(MEDIA_SOURCE_IN_WORKERS)
+    MediaSourceHandleTransferTag = 61,
+#endif
     ErrorTag = 255
 };
 
@@ -338,6 +342,9 @@ static const char* name(SerializationTag tag)
 #endif
 #if ENABLE(MEDIA_STREAM)
     case MediaStreamTrackTag: return "MediaStreamTrackTag";
+#endif
+#if ENABLE(MEDIA_SOURCE_IN_WORKERS)
+    case MediaSourceHandleTransferTag: return "MediaSourceHandleTransferTag";
 #endif
     case ErrorTag: return "ErrorTag";
     }
@@ -478,6 +485,9 @@ static bool isTypeExposedToGlobalObject(JSC::JSGlobalObject& globalObject, Seria
 #endif
 #if ENABLE(MEDIA_STREAM)
     case MediaStreamTrackTag:
+#endif
+#if ENABLE(MEDIA_SOURCE_IN_WORKERS)
+    case MediaSourceHandleTransferTag:
 #endif
         break;
     }
@@ -775,6 +785,7 @@ static_assert(TerminatorTag > MAX_ARRAY_INDEX);
  *    | DOMExceptionTag <message:String> <name:String>
  *    | WebCodecsEncodedVideoChunkTag <identifier:uint32_t>
  *    | MediaStreamTrackTag <identifier:uint32_t>
+ *    | MediaSourceHandleTransferTag <identifier:uint32_t>
  *
  * Inside certificate, data is serialized in this format as per spec:
  *
@@ -1006,6 +1017,9 @@ public:
 #if ENABLE(WEB_RTC)
             const Vector<Ref<RTCDataChannel>>& rtcDataChannels,
 #endif
+#if ENABLE(MEDIA_SOURCE_IN_WORKERS)
+            const Vector<Ref<MediaSourceHandle>>& mediaSourceHandles,
+#endif
 #if ENABLE(WEB_CODECS)
             Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>>& serializedVideoChunks,
             Vector<RefPtr<WebCodecsVideoFrame>>& serializedVideoFrames,
@@ -1035,6 +1049,9 @@ public:
             inMemoryMessagePorts,
 #if ENABLE(WEB_RTC)
             rtcDataChannels,
+#endif
+#if ENABLE(MEDIA_SOURCE_IN_WORKERS)
+            mediaSourceHandles,
 #endif
 #if ENABLE(WEB_CODECS)
             serializedVideoChunks,
@@ -1093,6 +1110,9 @@ private:
 #if ENABLE(WEB_RTC)
             const Vector<Ref<RTCDataChannel>>& rtcDataChannels,
 #endif
+#if ENABLE(MEDIA_SOURCE_IN_WORKERS)
+            const Vector<Ref<MediaSourceHandle>>& mediaSourceHandles,
+#endif
 #if ENABLE(WEB_CODECS)
             Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>>& serializedVideoChunks,
             Vector<RefPtr<WebCodecsVideoFrame>>& serializedVideoFrames,
@@ -1141,6 +1161,9 @@ private:
 #endif
 #if ENABLE(WEB_RTC)
         fillTransferMap(rtcDataChannels, m_transferredRTCDataChannels);
+#endif
+#if ENABLE(MEDIA_SOURCE_IN_WORKERS)
+        fillTransferMap(mediaSourceHandles, m_transferredMediaSourceHandles);
 #endif
     }
 
@@ -1691,6 +1714,19 @@ private:
         write(static_cast<uint32_t>(index));
     }
 #endif
+#if ENABLE(MEDIA_SOURCE_IN_WORKERS)
+    void dumpMediaSourceHandle(JSObject* obj, SerializationReturnCode& code)
+    {
+        auto index = m_transferredMediaSourceHandles.find(obj);
+        if (index != m_transferredMediaSourceHandles.end()) {
+            write(MediaSourceHandleTransferTag);
+            write(index->value);
+            return;
+        }
+
+        code = SerializationReturnCode::DataCloneError;
+    }
+#endif
 
     void dumpDOMException(JSObject* obj, SerializationReturnCode& code)
     {
@@ -1986,6 +2022,9 @@ private:
 #if ENABLE(WEB_RTC)
                     { },
 #endif
+#if ENABLE(MEDIA_SOURCE_IN_WORKERS)
+                    { },
+#endif
 #if ENABLE(WEB_CODECS)
                     dummyVideoChunks,
                     dummyVideoFrames,
@@ -2116,6 +2155,12 @@ private:
                 if (m_forStorage == SerializationForStorage::Yes)
                     return false;
                 dumpMediaStreamTrack(obj);
+                return true;
+            }
+#endif
+#if ENABLE(MEDIA_SOURCE_IN_WORKERS)
+            if (obj->inherits<JSMediaSourceHandle>()) {
+                dumpMediaSourceHandle(obj, code);
                 return true;
             }
 #endif
@@ -2604,6 +2649,9 @@ private:
 #if ENABLE(WEB_RTC)
     ObjectPoolMap m_transferredRTCDataChannels;
 #endif
+#if ENABLE(MEDIA_SOURCE_IN_WORKERS)
+    ObjectPoolMap m_transferredMediaSourceHandles;
+#endif
     typedef HashMap<RefPtr<UniquedStringImpl>, uint32_t, IdentifierRepHash> StringConstantPool;
     StringConstantPool m_constantPool;
     using ImageDataPool = HashMap<Ref<ImageData>, uint32_t>;
@@ -2931,6 +2979,9 @@ public:
 #if ENABLE(WEB_RTC)
         , Vector<std::unique_ptr<DetachedRTCDataChannel>>&& detachedRTCDataChannels
 #endif
+#if ENABLE(MEDIA_SOURCE_IN_WORKERS)
+        , Vector<RefPtr<DetachedMediaSourceHandle>>&& detachedMediaSourceHandles
+#endif
         , ArrayBufferContentsArray* arrayBufferContentsArray, const Vector<uint8_t>& buffer, const Vector<String>& blobURLs, const Vector<String> blobFilePaths, ArrayBufferContentsArray* sharedBuffers
 #if ENABLE(WEBASSEMBLY)
         , WasmModuleArray* wasmModules
@@ -2957,6 +3008,9 @@ public:
             , inMemoryMessagePorts
 #if ENABLE(WEB_RTC)
             , WTFMove(detachedRTCDataChannels)
+#endif
+#if ENABLE(MEDIA_SOURCE_IN_WORKERS)
+            , WTFMove(detachedMediaSourceHandles)
 #endif
 #if ENABLE(WEBASSEMBLY)
             , wasmModules
@@ -2986,6 +3040,9 @@ public:
             , inMemoryMessagePorts
 #if ENABLE(WEB_RTC)
             , deserializer.takeDetachedRTCDataChannels()
+#endif
+#if ENABLE(MEDIA_SOURCE_IN_WORKERS)
+            , deserializer.takeDetachedMediaSourceHandles()
 #endif
 #if ENABLE(WEBASSEMBLY)
             , wasmModules
@@ -3053,6 +3110,9 @@ private:
 #if ENABLE(WEB_RTC)
         , Vector<std::unique_ptr<DetachedRTCDataChannel>>&& detachedRTCDataChannels = { }
 #endif
+#if ENABLE(MEDIA_SOURCE_IN_WORKERS)
+        , Vector<RefPtr<DetachedMediaSourceHandle>>&& detachedMediaSourceHandles = { }
+#endif
 #if ENABLE(WEBASSEMBLY)
         , WasmModuleArray* wasmModules = nullptr
         , WasmMemoryHandleArray* wasmMemoryHandles = nullptr
@@ -3089,6 +3149,10 @@ private:
         , m_detachedRTCDataChannels(WTFMove(detachedRTCDataChannels))
         , m_rtcDataChannels(m_detachedRTCDataChannels.size())
 #endif
+#if ENABLE(MEDIA_SOURCE_IN_WORKERS)
+        , m_detachedMediaSourceHandles(WTFMove(detachedMediaSourceHandles))
+        , m_mediaSourceHandles(m_detachedMediaSourceHandles.size())
+#endif
 #if ENABLE(WEBASSEMBLY)
         , m_wasmModules(wasmModules)
         , m_wasmMemoryHandles(wasmMemoryHandles)
@@ -3120,6 +3184,9 @@ private:
         , const Vector<RefPtr<MessagePort>>& inMemoryMessagePorts
 #if ENABLE(WEB_RTC)
         , Vector<std::unique_ptr<DetachedRTCDataChannel>>&& detachedRTCDataChannels
+#endif
+#if ENABLE(MEDIA_SOURCE_IN_WORKERS)
+        , Vector<RefPtr<DetachedMediaSourceHandle>>&& detachedMediaSourceHandles
 #endif
 #if ENABLE(WEBASSEMBLY)
         , WasmModuleArray* wasmModules
@@ -3159,6 +3226,10 @@ private:
 #if ENABLE(WEB_RTC)
         , m_detachedRTCDataChannels(WTFMove(detachedRTCDataChannels))
         , m_rtcDataChannels(m_detachedRTCDataChannels.size())
+#endif
+#if ENABLE(MEDIA_SOURCE_IN_WORKERS)
+        , m_detachedMediaSourceHandles(WTFMove(detachedMediaSourceHandles))
+        , m_mediaSourceHandles(m_detachedMediaSourceHandles.size())
 #endif
 #if ENABLE(WEBASSEMBLY)
         , m_wasmModules(wasmModules)
@@ -3200,6 +3271,9 @@ private:
 #endif
 #if ENABLE(MEDIA_STREAM)
     Vector<std::unique_ptr<MediaStreamTrackDataHolder>> takeSerializedMediaStreamTracks() { return std::exchange(m_serializedMediaStreamTracks, { }); }
+#endif
+#if ENABLE(MEDIA_SOURCE_IN_WORKERS)
+    Vector<RefPtr<DetachedMediaSourceHandle>> takeDetachedMediaSourceHandles() { return std::exchange(m_detachedMediaSourceHandles, { }); }
 #endif
 
     bool isValid() const { return m_version <= CurrentVersion; }
@@ -4482,6 +4556,23 @@ private:
     }
 #endif
 
+#if ENABLE(MEDIA_SOURCE_IN_WORKERS)
+    JSValue readMediaSourceHandle()
+    {
+        uint32_t index;
+        bool indexSuccessfullyRead = read(index);
+        if (!indexSuccessfullyRead || index >= m_detachedMediaSourceHandles.size()) {
+            fail();
+            return JSValue();
+        }
+
+        if (!m_mediaSourceHandles[index])
+            m_mediaSourceHandles[index] = MediaSourceHandle::create(std::exchange(m_detachedMediaSourceHandles.at(index), { }).releaseNonNull());
+
+        return getJSValue(m_mediaSourceHandles[index].get());
+    }
+#endif
+
     JSValue readImageBitmap()
     {
         uint8_t rawFlags;
@@ -5130,6 +5221,10 @@ private:
         case MediaStreamTrackTag:
             return readMediaStreamTrack();
 #endif
+#if ENABLE(MEDIA_SOURCE_IN_WORKERS)
+        case MediaSourceHandleTransferTag:
+            return readMediaSourceHandle();
+#endif
         case DOMExceptionTag:
             return readDOMException();
 
@@ -5174,6 +5269,10 @@ private:
 #if ENABLE(WEB_RTC)
     Vector<std::unique_ptr<DetachedRTCDataChannel>> m_detachedRTCDataChannels;
     Vector<RefPtr<RTCDataChannel>> m_rtcDataChannels;
+#endif
+#if ENABLE(MEDIA_SOURCE_IN_WORKERS)
+    Vector<RefPtr<DetachedMediaSourceHandle>> m_detachedMediaSourceHandles;
+    Vector<RefPtr<MediaSourceHandle>> m_mediaSourceHandles;
 #endif
 #if ENABLE(WEBASSEMBLY)
     WasmModuleArray* const m_wasmModules;
@@ -5450,6 +5549,9 @@ void validateSerializedResult(CloneSerializer& serializer, SerializationReturnCo
 #if ENABLE(WEB_RTC)
     Vector<std::unique_ptr<DetachedRTCDataChannel>> detachedRTCDataChannels;
 #endif
+#if ENABLE(MEDIA_SOURCE_IN_WORKERS)
+    Vector<RefPtr<DetachedMediaSourceHandle>> detachedMediaSourceHandles;
+#endif
 #if ENABLE(WEBASSEMBLY)
     WasmModuleArray* wasmModules = nullptr;
     WasmMemoryHandleArray* wasmMemoryHandles = nullptr;
@@ -5470,6 +5572,10 @@ void validateSerializedResult(CloneSerializer& serializer, SerializationReturnCo
 #if ENABLE(WEB_RTC)
         , WTFMove(detachedRTCDataChannels)
 #endif
+#if ENABLE(MEDIA_SOURCE_IN_WORKERS)
+        , WTFMove(detachedMediaSourceHandles)
+#endif
+
 #if ENABLE(WEBASSEMBLY)
         , wasmModules
         , wasmMemoryHandles
@@ -5540,6 +5646,9 @@ SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer, std::uniq
 #if ENABLE(WEB_RTC)
     , Vector<std::unique_ptr<DetachedRTCDataChannel>>&& detachedRTCDataChannels
 #endif
+#if ENABLE(MEDIA_SOURCE_IN_WORKERS)
+    , Vector<RefPtr<DetachedMediaSourceHandle>>&& detachedMediaSourceHandles
+#endif
 #if ENABLE(WEB_CODECS)
     , Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>>&& serializedVideoChunks
     , Vector<WebCodecsVideoFrameData>&& serializedVideoFrames
@@ -5562,6 +5671,9 @@ SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer, std::uniq
         , .serializedVideoFrames = WTFMove(serializedVideoFrames)
         , .serializedAudioData = WTFMove(serializedAudioData)
 #endif
+#if ENABLE(MEDIA_SOURCE_IN_WORKERS)
+        , .detachedMediaSourceHandles = WTFMove(detachedMediaSourceHandles)
+#endif
 #if ENABLE(MEDIA_STREAM)
         , .serializedMediaStreamTracks = WTFMove(serializedMediaStreamTracks)
 #endif
@@ -5578,6 +5690,9 @@ SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer, Vector<UR
         , Vector<RefPtr<MessagePort>>&& inMemoryMessagePorts
 #if ENABLE(WEB_RTC)
         , Vector<std::unique_ptr<DetachedRTCDataChannel>>&& detachedRTCDataChannels
+#endif
+#if ENABLE(MEDIA_SOURCE_IN_WORKERS)
+        , Vector<RefPtr<DetachedMediaSourceHandle>>&& detachedMediaSourceHandles
 #endif
 #if ENABLE(WEBASSEMBLY)
         , std::unique_ptr<WasmModuleArray> wasmModulesArray
@@ -5604,6 +5719,9 @@ SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer, Vector<UR
         , .serializedAudioChunks = WTFMove(serializedAudioChunks)
         , .serializedVideoFrames = WTFMove(serializedVideoFrames)
         , .serializedAudioData = WTFMove(serializedAudioData)
+#endif
+#if ENABLE(MEDIA_SOURCE_IN_WORKERS)
+        , .detachedMediaSourceHandles = WTFMove(detachedMediaSourceHandles)
 #endif
 #if ENABLE(MEDIA_STREAM)
         , .serializedMediaStreamTracks = WTFMove(serializedMediaStreamTracks)
@@ -5811,6 +5929,21 @@ static bool canDetachMediaStreamTracks(const Vector<Ref<MediaStreamTrack>>& trac
 }
 #endif
 
+#if ENABLE(MEDIA_SOURCE_IN_WORKERS)
+static bool canDetachMediaSourceHandles(const Vector<Ref<MediaSourceHandle>>& handles)
+{
+    HashSet<MediaSourceHandle*> visited;
+    for (auto& handle : handles) {
+        if (!handle->canDetach())
+            return false;
+        // Check the return value of add, we should not encounter duplicates.
+        if (!visited.add(handle.ptr()))
+            return false;
+    }
+    return true;
+}
+#endif
+
 RefPtr<SerializedScriptValue> SerializedScriptValue::create(JSC::JSGlobalObject& globalObject, JSC::JSValue value, SerializationForStorage forStorage, SerializationErrorMode throwExceptions, SerializationContext serializationContext)
 {
     Vector<RefPtr<MessagePort>> dummyPorts;
@@ -5835,6 +5968,9 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
 #endif
 #if ENABLE(WEB_RTC)
     Vector<Ref<RTCDataChannel>> dataChannels;
+#endif
+#if ENABLE(MEDIA_SOURCE_IN_WORKERS)
+    Vector<Ref<MediaSourceHandle>> mediaSourceHandles;
 #endif
 #if ENABLE(WEB_CODECS)
     Vector<Ref<WebCodecsVideoFrame>> transferredVideoFrames;
@@ -5891,6 +6027,15 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
         }
 #endif
 
+#if ENABLE(MEDIA_SOURCE_IN_WORKERS)
+        if (auto handle = JSMediaSourceHandle::toWrapped(vm, transferable.get())) {
+            if (handle->isDetached())
+                return Exception { ExceptionCode::DataCloneError };
+            mediaSourceHandles.append(*handle);
+            continue;
+        }
+#endif
+
 #if ENABLE(WEB_CODECS)
         if (auto videoFrame = JSWebCodecsVideoFrame::toWrapped(vm, transferable.get())) {
             if (videoFrame->isDetached())
@@ -5928,6 +6073,10 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
     if (!canDetachRTCDataChannels(dataChannels))
         return Exception { ExceptionCode::DataCloneError };
 #endif
+#if ENABLE(MEDIA_SOURCE_IN_WORKERS)
+    if (!canDetachMediaSourceHandles(mediaSourceHandles))
+        return Exception { ExceptionCode::DataCloneError };
+#endif
 #if ENABLE(MEDIA_STREAM)
     if (!canDetachMediaStreamTracks(transferredMediaStreamTracks))
         return Exception { ExceptionCode::DataCloneError };
@@ -5961,6 +6110,9 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
         inMemoryMessagePorts,
 #if ENABLE(WEB_RTC)
         dataChannels,
+#endif
+#if ENABLE(MEDIA_SOURCE_IN_WORKERS)
+        mediaSourceHandles,
 #endif
 #if ENABLE(WEB_CODECS)
         serializedVideoChunks,
@@ -6002,6 +6154,12 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
         detachedRTCDataChannels.append(channel->detach());
 #endif
 
+#if ENABLE(MEDIA_SOURCE_IN_WORKERS)
+    Vector<RefPtr<DetachedMediaSourceHandle>> detachedMediaSourceHandles;
+    for (auto& handle : mediaSourceHandles)
+        detachedMediaSourceHandles.append(handle->detach());
+#endif
+
 #if ENABLE(WEB_CODECS)
     auto serializedVideoFrameData = map(serializedVideoFrames, [](auto& frame) -> WebCodecsVideoFrameData { return frame->data(); });
     for (auto& videoFrame : transferredVideoFrames)
@@ -6026,6 +6184,9 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
                 , WTFMove(inMemoryMessagePorts)
 #if ENABLE(WEB_RTC)
                 , WTFMove(detachedRTCDataChannels)
+#endif
+#if ENABLE(MEDIA_SOURCE_IN_WORKERS)
+                , WTFMove(detachedMediaSourceHandles)
 #endif
 #if ENABLE(WEBASSEMBLY)
                 , makeUnique<WasmModuleArray>(wasmModules)
@@ -6097,6 +6258,9 @@ JSValue SerializedScriptValue::deserialize(JSGlobalObject& lexicalGlobalObject, 
         , m_internals.inMemoryMessagePorts
 #if ENABLE(WEB_RTC)
         , WTFMove(m_internals.detachedRTCDataChannels)
+#endif
+#if ENABLE(MEDIA_SOURCE_IN_WORKERS)
+        , WTFMove(m_internals.detachedMediaSourceHandles)
 #endif
         , m_internals.arrayBufferContentsArray.get(), m_internals.data, blobURLs, blobFilePaths, m_internals.sharedBufferContentsArray.get()
 #if ENABLE(WEBASSEMBLY)

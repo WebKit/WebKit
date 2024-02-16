@@ -73,12 +73,12 @@ void ManagedMediaSource::elementDetached()
 
 void ManagedMediaSource::setStreaming(bool streaming)
 {
-    assertIsCurrent(m_dispatcher);
-
     if (m_streaming == streaming)
         return;
     ALWAYS_LOG(LOGIDENTIFIER, streaming);
     m_streaming = streaming;
+    if (m_private)
+        m_private->setStreaming(streaming);
     if (streaming) {
         scheduleEvent(eventNames().startstreamingEvent);
         if (m_streamingAllowed) {
@@ -130,48 +130,48 @@ bool ManagedMediaSource::isBuffered(const PlatformTimeRanges& ranges) const
 
 void ManagedMediaSource::ensurePrefsRead()
 {
-    assertIsCurrent(m_dispatcher);
+    ASSERT(scriptExecutionContext());
 
     if (m_lowThreshold && m_highThreshold)
         return;
-    m_lowThreshold = settings().managedMediaSourceLowThreshold();
-    m_highThreshold = settings().managedMediaSourceHighThreshold();
+    m_lowThreshold = scriptExecutionContext()->settingsValues().managedMediaSourceLowThreshold;
+    m_highThreshold = scriptExecutionContext()->settingsValues().managedMediaSourceHighThreshold;
 }
 
 void ManagedMediaSource::monitorSourceBuffers()
 {
-    ensureWeakOnDispatcher([this] {
-        MediaSource::monitorSourceBuffers();
+    MediaSource::monitorSourceBuffers();
 
-        if (!activeSourceBuffers() || !activeSourceBuffers()->length()) {
+    if (!activeSourceBuffers() || !activeSourceBuffers()->length()) {
+        setStreaming(true);
+        return;
+    }
+    auto currentTime = this->currentTime();
+
+    ensurePrefsRead();
+
+    auto limitAhead = [&] (double upper) {
+        MediaTime aheadTime = currentTime + MediaTime::createWithDouble(upper);
+        return isEnded() ? std::min(duration(), aheadTime) : aheadTime;
+    };
+    if (!m_streaming) {
+        PlatformTimeRanges neededBufferedRange { currentTime, std::max(currentTime, limitAhead(*m_lowThreshold)) };
+        if (!isBuffered(neededBufferedRange))
             setStreaming(true);
-            return;
-        }
-        auto currentTime = this->currentTime();
+        return;
+    }
 
-        ensurePrefsRead();
-
-        auto limitAhead = [&] (double upper) {
-            MediaTime aheadTime = currentTime + MediaTime::createWithDouble(upper);
-            return isEnded() ? std::min(duration(), aheadTime) : aheadTime;
-        };
-        if (!m_streaming) {
-            PlatformTimeRanges neededBufferedRange { currentTime, std::max(currentTime, limitAhead(*m_lowThreshold)) };
-            if (!isBuffered(neededBufferedRange))
-                setStreaming(true);
-            return;
-        }
-
-        PlatformTimeRanges neededBufferedRange { currentTime, limitAhead(*m_highThreshold) };
-        if (isBuffered(neededBufferedRange))
-            setStreaming(false);
-    });
+    PlatformTimeRanges neededBufferedRange { currentTime, limitAhead(*m_highThreshold) };
+    if (isBuffered(neededBufferedRange))
+        setStreaming(false);
 }
 
 void ManagedMediaSource::streamingTimerFired()
 {
     ALWAYS_LOG(LOGIDENTIFIER, "Disabling streaming due to policy ", *m_highThreshold);
     m_streamingAllowed = false;
+    if (m_private)
+        m_private->setStreamingAllowed(false);
     notifyElementUpdateMediaState();
 }
 

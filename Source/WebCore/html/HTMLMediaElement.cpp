@@ -164,8 +164,13 @@
 #endif
 
 #if ENABLE(MEDIA_SOURCE)
+#include "MediaSource.h"
+#include "MediaSourceInterfaceMainThread.h"
+#if ENABLE(MEDIA_SOURCE_IN_WORKERS)
+#include "MediaSourceHandle.h"
+#include "MediaSourceInterfaceWorker.h"
+#endif
 #include "LocalDOMWindow.h"
-#include "ManagedMediaSource.h"
 #include "SourceBufferList.h"
 #endif
 
@@ -1476,7 +1481,12 @@ void HTMLMediaElement::selectMediaResource()
                 [this](RefPtr<MediaStream> stream) { m_mediaStreamSrcObject = stream; },
 #endif
 #if ENABLE(MEDIA_SOURCE)
-                [this](RefPtr<MediaSource> source) { m_mediaSource = source; },
+                [this](RefPtr<MediaSource> source) { m_mediaSource = MediaSourceInterfaceMainThread::create(source.releaseNonNull()); },
+#endif
+#if ENABLE(MEDIA_SOURCE_IN_WORKERS)
+                [this](RefPtr<MediaSourceHandle> handle) {
+                    m_mediaSource = MediaSourceInterfaceWorker::create(handle.releaseNonNull());
+                },
 #endif
                 [this](RefPtr<Blob> blob) { m_blob = blob; }
             );
@@ -1650,21 +1660,23 @@ void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentT
 
     bool loadAttempted = false;
 #if ENABLE(MEDIA_SOURCE)
-    if (!m_mediaSource && url.protocolIs(mediaSourceBlobProtocol) && !m_remotePlaybackConfiguration)
-        m_mediaSource = MediaSource::lookup(url.string());
+    if (!m_mediaSource && url.protocolIs(mediaSourceBlobProtocol) && !m_remotePlaybackConfiguration) {
+        if (RefPtr mediaSource = MediaSource::lookup(url.string()))
+            m_mediaSource = MediaSourceInterfaceMainThread::create(mediaSource.releaseNonNull());
+    }
 
     if (m_mediaSource) {
         loadAttempted = true;
 
         ALWAYS_LOG(LOGIDENTIFIER, "loading MSE blob");
-        if (!m_mediaSource->attachToElement(*this)) {
+        if (!m_mediaSource->attachToElement(WeakPtr { *this })) {
             // Forget our reference to the MediaSource, so we leave it alone
             // while processing remainder of load failure.
             m_mediaSource = nullptr;
             mediaLoadingFailed(MediaPlayer::NetworkState::FormatError);
-        } else if (RefPtr mediaSource = m_mediaSource; !player->load(url, contentType, *mediaSource)) {
+        } else if (RefPtr mediaSource = m_mediaSource; !mediaSource->client() || !player->load(url, contentType, *mediaSource->client())) {
             // We have to detach the MediaSource before we forget the reference to it.
-            mediaSource->detachFromElement(*this);
+            mediaSource->detachFromElement();
             m_mediaSource = nullptr;
             mediaLoadingFailed(MediaPlayer::NetworkState::FormatError);
         }
@@ -4205,7 +4217,7 @@ bool HTMLMediaElement::hasMediaSource() const
 bool HTMLMediaElement::hasManagedMediaSource() const
 {
 #if ENABLE(MEDIA_SOURCE)
-    return is<ManagedMediaSource>(m_mediaSource);
+    return m_mediaSource && m_mediaSource->isManaged();
 #else
     return false;
 #endif
@@ -4215,15 +4227,10 @@ bool HTMLMediaElement::hasManagedMediaSource() const
 
 void HTMLMediaElement::detachMediaSource()
 {
-    if (!m_mediaSource)
-        return;
-
-    {
-        RefPtr mediaSource = m_mediaSource;
-        mediaSource->detachFromElement(*this);
+    if (RefPtr mediaSource = std::exchange(m_mediaSource, { })) {
+        mediaSource->detachFromElement();
         mediaSource->setAsSrcObject(false);
     }
-    m_mediaSource = nullptr;
 }
 
 bool HTMLMediaElement::deferredMediaSourceOpenCanProgress() const
@@ -4697,6 +4704,14 @@ void HTMLMediaElement::removeAudioTrack(Ref<AudioTrack>&& track)
     m_audioTracks->remove(track.get());
 }
 
+void HTMLMediaElement::removeAudioTrack(TrackID trackID)
+{
+    if (!m_audioTracks)
+        return;
+    if (RefPtr track = m_audioTracks->find(trackID))
+        removeAudioTrack(downcast<AudioTrack>(*track));
+}
+
 void HTMLMediaElement::removeTextTrack(TextTrack& track, bool scheduleEvent)
 {
     if (!m_textTracks || !m_textTracks->contains(track))
@@ -4710,12 +4725,28 @@ void HTMLMediaElement::removeTextTrack(TextTrack& track, bool scheduleEvent)
         textTracks->remove(track, scheduleEvent);
 }
 
+void HTMLMediaElement::removeTextTrack(TrackID trackID, bool scheduleEvent)
+{
+    if (!m_textTracks)
+        return;
+    if (RefPtr track = m_audioTracks->find(trackID))
+        removeTextTrack(downcast<TextTrack>(*track), scheduleEvent);
+}
+
 void HTMLMediaElement::removeVideoTrack(Ref<VideoTrack>&& track)
 {
     if (!m_videoTracks || !m_videoTracks->contains(track))
         return;
     track->clearClient(*this);
     RefPtr { m_videoTracks }->remove(track);
+}
+
+void HTMLMediaElement::removeVideoTrack(TrackID trackID)
+{
+    if (!m_videoTracks)
+        return;
+    if (RefPtr track = m_audioTracks->find(trackID))
+        removeVideoTrack(downcast<VideoTrack>(*track));
 }
 
 void HTMLMediaElement::forgetResourceSpecificTracks()
@@ -8721,14 +8752,7 @@ MediaProducerMediaStateFlags HTMLMediaElement::mediaState() const
 #endif
 
 #if ENABLE(MEDIA_SOURCE)
-    bool streaming = false;
-    RefPtr managedMediasource = dynamicDowncast<ManagedMediaSource>(m_mediaSource);
-    streaming |= managedMediasource && managedMediasource->streamingAllowed() && managedMediasource->streaming();
-    if (!managedMediasource) {
-        // We can assume that if we have active source buffers, later networking activity (such as stream or XHR requests) will be media related.
-        streaming |= m_mediaSource && m_mediaSource->activeSourceBuffers() && m_mediaSource->activeSourceBuffers()->length();
-    }
-    if (streaming)
+    if (m_mediaSource && m_mediaSource->isStreamingContent())
         state.add(MediaProducerMediaState::HasStreamingActivity);
 #endif
 

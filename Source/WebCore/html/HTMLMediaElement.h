@@ -101,6 +101,8 @@ class MediaKeys;
 class MediaResourceLoader;
 class MediaSession;
 class MediaSource;
+class MediaSourceHandle;
+class MediaSourceInterfaceProxy;
 class MediaStream;
 class RenderMedia;
 class ScriptController;
@@ -133,6 +135,9 @@ using MediaProvider = std::optional < std::variant <
 #endif
 #if ENABLE(MEDIA_SOURCE)
     RefPtr<MediaSource>,
+#endif
+#if ENABLE(MEDIA_SOURCE_IN_WORKERS)
+    RefPtr<MediaSourceHandle>,
 #endif
     RefPtr<Blob>>>;
 
@@ -377,8 +382,11 @@ public:
     void addTextTrack(Ref<TextTrack>&&);
     void addVideoTrack(Ref<VideoTrack>&&);
     void removeAudioTrack(Ref<AudioTrack>&&);
+    void removeAudioTrack(TrackID);
     void removeTextTrack(TextTrack&, bool scheduleEvent = true);
+    void removeTextTrack(TrackID, bool scheduleEvent = true);
     void removeVideoTrack(Ref<VideoTrack>&&);
+    void removeVideoTrack(TrackID);
     void forgetResourceSpecificTracks();
     void closeCaptionTracksChanged();
     void notifyMediaPlayerOfTextTrackChanges();
@@ -1148,7 +1156,7 @@ private:
     int m_processingMediaPlayerCallback { 0 };
 
 #if ENABLE(MEDIA_SOURCE)
-    RefPtr<MediaSource> m_mediaSource;
+    RefPtr<MediaSourceInterfaceProxy> m_mediaSource;
     unsigned m_droppedVideoFrames { 0 };
 #endif
 

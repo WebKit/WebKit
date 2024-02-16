@@ -87,7 +87,6 @@ void SourceBufferPrivate::removedFromMediaSource()
 void SourceBufferPrivate::setClient(SourceBufferPrivateClient& client)
 {
     // Called on SourceBufferClient creation, immediately after SourceBufferPrivate creation.
-    ASSERT(isMainThread());
     m_client = client;
 }
 

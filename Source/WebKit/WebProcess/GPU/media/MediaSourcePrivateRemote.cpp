@@ -83,7 +83,7 @@ MediaSourcePrivateRemote::MediaSourcePrivateRemote(GPUProcessConnection& gpuProc
     , m_mimeTypeCache(mimeTypeCache)
     , m_mediaPlayerPrivate(mediaPlayerPrivate)
 #if !RELEASE_LOG_DISABLED
-    , m_logger(mediaPlayerPrivate.mediaPlayerLogger())
+    , m_logger(client.logger() ? *client.logger() : mediaPlayerPrivate.mediaPlayerLogger())
     , m_logIdentifier(mediaPlayerPrivate.mediaPlayerLogIdentifier())
 #endif
 {
@@ -204,13 +204,13 @@ void MediaSourcePrivateRemote::unmarkEndOfStream()
 
 MediaPlayer::ReadyState MediaSourcePrivateRemote::mediaPlayerReadyState() const
 {
-    return m_readyState;
+    return m_mediaPlayerReadyState;
 }
 
 void MediaSourcePrivateRemote::setMediaPlayerReadyState(MediaPlayer::ReadyState readyState)
 {
     // Call from MediaSource's dispatcher.
-    m_readyState = readyState;
+    m_mediaPlayerReadyState = readyState;
     ensureOnDispatcher([protectedThis = Ref { *this }, this, readyState] {
         auto gpuProcessConnection = m_gpuProcessConnection.get();
         if (!isGPURunning())
@@ -269,7 +269,7 @@ void MediaSourcePrivateRemote::MessageReceiver::mediaSourcePrivateShuttingDown(C
 
     if (RefPtr parent = m_parent.get()) {
         parent->m_shutdown = true;
-        parent->m_readyState = MediaPlayer::ReadyState::HaveNothing;
+        parent->m_mediaPlayerReadyState = MediaPlayer::ReadyState::HaveNothing;
         for (auto& sourceBuffer : parent->m_sourceBuffers)
             downcast<SourceBufferPrivateRemote>(sourceBuffer)->disconnect();
     };

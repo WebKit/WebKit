@@ -115,7 +115,7 @@ private:
     RemoteMediaPlayerMIMETypeCache& m_mimeTypeCache;
     ThreadSafeWeakPtr<MediaPlayerPrivateRemote> m_mediaPlayerPrivate;
     std::atomic<bool> m_shutdown { false };
-    std::atomic<WebCore::MediaPlayer::ReadyState> m_readyState { WebCore::MediaPlayer::ReadyState::HaveNothing };
+    std::atomic<WebCore::MediaPlayer::ReadyState> m_mediaPlayerReadyState { WebCore::MediaPlayer::ReadyState::HaveNothing };
 
 #if !RELEASE_LOG_DISABLED
     const char* logClassName() const override { return "MediaSourcePrivateRemote"; }

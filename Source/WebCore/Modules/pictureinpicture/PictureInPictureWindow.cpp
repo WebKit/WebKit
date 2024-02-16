@@ -29,6 +29,7 @@
 
 #if ENABLE(PICTURE_IN_PICTURE_API)
 
+#include "Event.h"
 #include "EventNames.h"
 #include <wtf/IsoMallocInlines.h>
 
