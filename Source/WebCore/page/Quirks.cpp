@@ -1486,22 +1486,10 @@ bool Quirks::allowLayeredFullscreenVideos() const
 }
 #endif
 
-// mail.google.com rdar://97351877
 bool Quirks::shouldEnableApplicationCacheQuirk() const
 {
-#if PLATFORM(IOS_FAMILY)
-    if (!needsQuirks())
-        return false;
-
-    if (!m_shouldEnableApplicationCacheQuirk) {
-        auto domain = m_document->securityOrigin().domain().convertToASCIILowercase();
-        m_shouldEnableApplicationCacheQuirk = domain.endsWith("mail.google.com"_s);
-    }
-
-    return m_shouldEnableApplicationCacheQuirk.value();
-#else
+    // FIXME: Remove this when deleting ApplicationCache APIs.
     return false;
-#endif
 }
 
 // play.hbomax.com https://bugs.webkit.org/show_bug.cgi?id=244737
