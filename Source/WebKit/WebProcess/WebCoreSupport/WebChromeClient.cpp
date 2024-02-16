@@ -1640,7 +1640,7 @@ void WebChromeClient::imageOrMediaDocumentSizeChanged(const IntSize& newSize)
 
 void WebChromeClient::didInvalidateDocumentMarkerRects()
 {
-    protectedPage()->findController().didInvalidateDocumentMarkerRects();
+    protectedPage()->findController().didInvalidateFindRects();
 }
 
 void WebChromeClient::hasStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDomain&& topFrameDomain, LocalFrame& frame, CompletionHandler<void(bool)>&& completionHandler)

@@ -318,7 +318,7 @@ WebCore::FloatRect PDFDocumentLayout::pdfPageRectToDocumentRect(const WebCore::F
     auto matrix = toPageTransform(pageGeometry);
     auto mappedRect = matrix.inverse().value_or(AffineTransform { }).mapRect(pageSpaceRect);
 
-    mappedRect.setY(pageGeometry.layoutBounds.height() - mappedRect.y());
+    mappedRect.setY(pageGeometry.layoutBounds.height() - mappedRect.y() - mappedRect.height());
     mappedRect.moveBy(pageGeometry.layoutBounds.location());
 
     return mappedRect;

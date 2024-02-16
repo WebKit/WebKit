@@ -171,6 +171,7 @@ private:
 
     unsigned countFindMatches(const String& target, WebCore::FindOptions, unsigned maxMatchCount) override;
     bool findString(const String& target, WebCore::FindOptions, unsigned maxMatchCount) override;
+    bool drawsFindOverlay() const final { return true; }
 
     bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&) override;
     LookupTextResult lookupTextAtLocation(const WebCore::FloatPoint&, WebHitTestResultData&) override;

@@ -265,8 +265,11 @@ private:
     String selectionString() const override;
     bool existingSelectionContainsPoint(const WebCore::FloatPoint&) const override;
     WebCore::FloatRect rectForSelectionInRootView(PDFSelection *) const override;
-    unsigned countFindMatches(const String& target, WebCore::FindOptions, unsigned maxMatchCount) override;
-    bool findString(const String& target, WebCore::FindOptions, unsigned maxMatchCount) override;
+    unsigned countFindMatches(const String&, WebCore::FindOptions, unsigned maxMatchCount) override;
+    bool findString(const String&, WebCore::FindOptions, unsigned maxMatchCount) override;
+    Vector<WebCore::FloatRect> rectsForTextMatchesInRect(const WebCore::IntRect&) const final;
+    bool drawsFindOverlay() const final { return false; }
+    void collectFindMatchRects(const String&, WebCore::FindOptions);
     bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&) override;
     [[maybe_unused]] bool searchInDictionary(const RetainPtr<PDFSelection>&);
     std::optional<WebCore::IntRect> selectionBoundsForFirstPageInDocumentSpace(const RetainPtr<PDFSelection>&) const;
@@ -425,6 +428,8 @@ private:
 
     Vector<WebCore::ElementIdentifier> m_scrollSnapIdentifiers;
     std::optional<PDFDocumentLayout::PageIndex> m_currentlySnappedPage;
+
+    Vector<WebCore::FloatRect> m_findMatchRectsInDocumentCoordinates;
 };
 
 } // namespace WebKit

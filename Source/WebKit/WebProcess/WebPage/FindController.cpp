@@ -88,7 +88,7 @@ void FindController::countStringMatches(const String& string, OptionSet<FindOpti
 
     unsigned matchCount;
 #if ENABLE(PDF_PLUGIN)
-    if (auto* pluginView = mainFramePlugIn())
+    if (RefPtr pluginView = mainFramePlugIn())
         matchCount = pluginView->countFindMatches(string, core(options), maxMatchCount + 1);
     else
 #endif
@@ -141,7 +141,7 @@ void FindController::updateFindUIAfterPageScroll(bool found, const String& strin
     RefPtr selectedFrame = frameWithSelection(m_webPage->corePage());
 
 #if ENABLE(PDF_PLUGIN)
-    auto* pluginView = mainFramePlugIn();
+    RefPtr pluginView = mainFramePlugIn();
 #endif
 
     bool shouldShowOverlay = false;
@@ -181,7 +181,7 @@ void FindController::updateFindUIAfterPageScroll(bool found, const String& strin
             if (pluginView) {
                 if (!shouldDetermineMatchIndex)
                     matchCount = pluginView->countFindMatches(string, core(options), maxMatchCount + 1);
-                shouldShowOverlay = false;
+                shouldShowOverlay = !pluginView->drawsFindOverlay();
             } else
 #endif
             {
@@ -249,7 +249,7 @@ void FindController::findStringIncludingImages(const String& string, OptionSet<F
 void FindController::findString(const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, CompletionHandler<void(std::optional<FrameIdentifier>, Vector<IntRect>&&, uint32_t, int32_t, bool)>&& completionHandler)
 {
 #if ENABLE(PDF_PLUGIN)
-    auto* pluginView = mainFramePlugIn();
+    RefPtr pluginView = mainFramePlugIn();
 #endif
 
     WebCore::FindOptions coreOptions = core(options);
@@ -410,7 +410,7 @@ void FindController::hideFindUI()
         m_webPage->corePage()->pageOverlayController().uninstallPageOverlay(*findPageOverlay, PageOverlay::FadeMode::Fade);
 
 #if ENABLE(PDF_PLUGIN)
-    if (auto* pluginView = mainFramePlugIn())
+    if (RefPtr pluginView = mainFramePlugIn())
         pluginView->findString(emptyString(), { }, 0);
     else
 #endif
@@ -521,6 +521,11 @@ void FindController::redraw()
 
 Vector<FloatRect> FindController::rectsForTextMatchesInRect(IntRect clipRect)
 {
+#if ENABLE(PDF_PLUGIN)
+    if (RefPtr pluginView = mainFramePlugIn())
+        return pluginView->rectsForTextMatchesInRect(clipRect);
+#endif
+
     Vector<FloatRect> rects;
     RefPtr mainFrameView = m_webPage->corePage()->mainFrame().virtualView();
     for (RefPtr frame = &m_webPage->corePage()->mainFrame(); frame; frame = frame->tree().traverseNext()) {
@@ -628,7 +633,7 @@ bool FindController::mouseEvent(PageOverlay&, const PlatformMouseEvent& mouseEve
     return false;
 }
 
-void FindController::didInvalidateDocumentMarkerRects()
+void FindController::didInvalidateFindRects()
 {
     if (m_findPageOverlay)
         m_findPageOverlay->setNeedsDisplay();

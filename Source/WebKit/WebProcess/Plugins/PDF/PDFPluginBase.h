@@ -149,6 +149,8 @@ public:
 
     virtual unsigned countFindMatches(const String& target, WebCore::FindOptions, unsigned maxMatchCount) = 0;
     virtual bool findString(const String& target, WebCore::FindOptions, unsigned maxMatchCount) = 0;
+    virtual Vector<WebCore::FloatRect> rectsForTextMatchesInRect(const WebCore::IntRect&) const { return { }; }
+    virtual bool drawsFindOverlay() const = 0;
 
     virtual bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&) = 0;
     void performSpotlightSearch(const String& query);

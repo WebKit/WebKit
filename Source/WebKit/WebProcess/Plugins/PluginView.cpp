@@ -595,6 +595,22 @@ bool PluginView::findString(const String& target, WebCore::FindOptions options, 
     return m_plugin->findString(target, options, maxMatchCount);
 }
 
+Vector<FloatRect> PluginView::rectsForTextMatchesInRect(const IntRect& clipRect) const
+{
+    if (!m_isInitialized)
+        return { };
+
+    return protectedPlugin()->rectsForTextMatchesInRect(clipRect);
+}
+
+bool PluginView::drawsFindOverlay() const
+{
+    if (!m_isInitialized)
+        return false;
+
+    return protectedPlugin()->drawsFindOverlay();
+}
+
 String PluginView::selectionString() const
 {
     if (!m_isInitialized)

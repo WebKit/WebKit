@@ -28,6 +28,7 @@
 
 #if ENABLE(UNIFIED_PDF)
 
+#include "FindController.h"
 #include "PDFContextMenu.h"
 #include "PDFKitSPI.h"
 #include "PDFPluginAnnotation.h"
@@ -961,6 +962,9 @@ void UnifiedPDFPlugin::didChangeScrollOffset()
 #endif
 
     determineCurrentlySnappedPage();
+
+    // FIXME: Make the overlay scroll with the tiles instead of repainting constantly.
+    m_frame->protectedPage()->findController().didInvalidateFindRects();
 
     scheduleRenderingUpdate();
 }
@@ -2348,11 +2352,26 @@ unsigned UnifiedPDFPlugin::countFindMatches(const String& target, WebCore::FindO
     return [[m_pdfDocument findString:target withOptions:nsOptions] count];
 }
 
+static NSStringCompareOptions compareOptionsForFindOptions(WebCore::FindOptions options)
+{
+    bool searchForward = !options.contains(WebCore::Backwards);
+    bool isCaseSensitive = !options.contains(WebCore::CaseInsensitive);
+
+    NSStringCompareOptions compareOptions = 0;
+    if (!searchForward)
+        compareOptions |= NSBackwardsSearch;
+    if (!isCaseSensitive)
+        compareOptions |= NSCaseInsensitiveSearch;
+
+    return compareOptions;
+}
+
 bool UnifiedPDFPlugin::findString(const String& target, WebCore::FindOptions options, unsigned maxMatchCount)
 {
     if (target.isEmpty()) {
         m_lastFindString = target;
         setCurrentSelection(nullptr);
+        m_findMatchRectsInDocumentCoordinates.clear();
         return false;
     }
 
@@ -2363,22 +2382,16 @@ bool UnifiedPDFPlugin::findString(const String& target, WebCore::FindOptions opt
         return !target.isEmpty() && (!maxMatchCount || countFindMatches(target, options, maxMatchCount));
     }
 
-    bool searchForward = !options.contains(WebCore::Backwards);
-    bool isCaseSensitive = !options.contains(WebCore::CaseInsensitive);
     bool wrapSearch = options.contains(WebCore::WrapAround);
+    auto compareOptions = compareOptionsForFindOptions(options);
 
-    auto nextMatchForString = [&]() -> PDFSelection * {
+    auto nextMatchForString = [&]() -> RetainPtr<PDFSelection> {
         if (!target.length())
             return nullptr;
-        NSStringCompareOptions options = 0;
-        if (!searchForward)
-            options |= NSBackwardsSearch;
-        if (!isCaseSensitive)
-            options |= NSCaseInsensitiveSearch;
-        PDFSelection *foundSelection = [m_pdfDocument findString:target fromSelection:m_currentSelection.get() withOptions:options];
+        RetainPtr foundSelection = [m_pdfDocument findString:target fromSelection:m_currentSelection.get() withOptions:compareOptions];
         if (!foundSelection && wrapSearch) {
             auto emptySelection = adoptNS([allocPDFSelectionInstance() initWithDocument:m_pdfDocument.get()]);
-            foundSelection = [m_pdfDocument findString:target fromSelection:emptySelection.get() withOptions:options];
+            foundSelection = [m_pdfDocument findString:target fromSelection:emptySelection.get() withOptions:compareOptions];
         }
         return foundSelection;
     };
@@ -2386,6 +2399,8 @@ bool UnifiedPDFPlugin::findString(const String& target, WebCore::FindOptions opt
     if (m_lastFindString != target) {
         setCurrentSelection(nullptr);
         m_lastFindString = target;
+
+        collectFindMatchRects(target, options);
     }
 
     RetainPtr selection = nextMatchForString();
@@ -2409,6 +2424,28 @@ bool UnifiedPDFPlugin::findString(const String& target, WebCore::FindOptions opt
 
     setCurrentSelection(WTFMove(selection));
     return true;
+}
+
+void UnifiedPDFPlugin::collectFindMatchRects(const String& target, WebCore::FindOptions options)
+{
+    m_findMatchRectsInDocumentCoordinates.clear();
+
+    RetainPtr foundSelections = [m_pdfDocument findString:target withOptions:compareOptionsForFindOptions(options)];
+    for (PDFSelection *selection in foundSelections.get()) {
+        for (PDFPage *page in selection.pages) {
+            auto bounds = IntRect([selection boundsForPage:page]);
+            m_findMatchRectsInDocumentCoordinates.append(convertFromPageToDocument(bounds, *m_documentLayout.indexForPage(page)));
+        }
+    }
+
+    m_frame->protectedPage()->findController().didInvalidateFindRects();
+}
+
+Vector<FloatRect> UnifiedPDFPlugin::rectsForTextMatchesInRect(const IntRect&) const
+{
+    return m_findMatchRectsInDocumentCoordinates.map([&](FloatRect rect) {
+        return FloatRect { convertFromDocumentToPlugin(enclosingIntRect(rect)) };
+    });
 }
 
 bool UnifiedPDFPlugin::performDictionaryLookupAtLocation(const FloatPoint& rootViewPoint)
@@ -2554,11 +2591,6 @@ CGRect UnifiedPDFPlugin::pluginBoundsForAnnotation(RetainPtr<PDFAnnotation>& ann
     auto pageSpaceBounds = IntRect([annotation bounds]);
     if (auto pageIndex = m_documentLayout.indexForPage([annotation page])) {
         auto documentSpacePoint = convertFromPageToDocument({ pageSpaceBounds.x(), pageSpaceBounds.y() }, pageIndex.value());
-
-        // The origin of an annotation in page space and document space are opposite
-        // in the Y axis so we need to perform a flip
-        documentSpacePoint.setY(documentSpacePoint.y() - pageSpaceBounds.height());
-
         pageSpaceBounds.scale(m_documentLayout.scale() * m_scaleFactor);
         return { convertFromDocumentToPlugin(documentSpacePoint), pageSpaceBounds.size() };
     }

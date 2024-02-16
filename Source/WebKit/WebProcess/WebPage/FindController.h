@@ -83,7 +83,7 @@ public:
     bool isShowingOverlay() const { return m_isShowingFindIndicator && m_findPageOverlay; }
 
     void deviceScaleFactorDidChange();
-    void didInvalidateDocumentMarkerRects();
+    void didInvalidateFindRects();
 
     void redraw();
 
