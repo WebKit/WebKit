@@ -1290,6 +1290,22 @@ CheckedRef<FrameSelection> LocalFrame::checkedSelection() const
     return document()->selection();
 }
 
+void LocalFrame::storageAccessExceptionReceivedForDomain(const RegistrableDomain& domain)
+{
+    m_storageAccessExceptionDomains.add(domain);
+}
+
+bool LocalFrame::requestSkipUserActivationCheckForStorageAccess(const RegistrableDomain& domain)
+{
+    auto iter = m_storageAccessExceptionDomains.find(domain);
+    if (iter == m_storageAccessExceptionDomains.end())
+        return false;
+
+    // We only allow the domain to skip check once.
+    m_storageAccessExceptionDomains.remove(iter);
+    return true;
+}
+
 #if ENABLE(WINDOW_PROXY_PROPERTY_ACCESS_NOTIFICATION)
 
 void LocalFrame::didAccessWindowProxyPropertyViaOpener(WindowProxyProperty property)

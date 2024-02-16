@@ -164,7 +164,9 @@ std::optional<StorageAccessQuickResult> DocumentStorageAccess::requestStorageAcc
     if (document->sandboxFlags() != SandboxNone && document->isSandboxed(SandboxStorageAccessByUserActivation))
         return StorageAccessQuickResult::Reject;
 
-    if (!UserGestureIndicator::processingUserGesture())
+    RegistrableDomain domain { securityOrigin.data() };
+    bool userActivationCheckSkipped = frame->requestSkipUserActivationCheckForStorageAccess(domain);
+    if (!userActivationCheckSkipped && !UserGestureIndicator::processingUserGesture())
         return StorageAccessQuickResult::Reject;
 
     return std::nullopt;
@@ -212,8 +214,9 @@ void DocumentStorageAccess::requestStorageAccess(Ref<DeferredPromise>&& promise)
             shouldPreserveUserGesture = result.promptWasShown == StorageAccessPromptWasShown::No;
         }
 
+        auto document = protectedDocument();
         if (shouldPreserveUserGesture) {
-            protectedDocument()->eventLoop().queueMicrotask([this, weakThis] {
+            document->eventLoop().queueMicrotask([this, weakThis] {
                 if (weakThis)
                     enableTemporaryTimeUserGesture();
             });
@@ -223,9 +226,14 @@ void DocumentStorageAccess::requestStorageAccess(Ref<DeferredPromise>&& promise)
         case StorageAccessWasGranted::Yes:
             promise->resolve();
             break;
-        case StorageAccessWasGranted::YesWithException:
+        case StorageAccessWasGranted::YesWithException: {
             promise->reject(ExceptionCode::NoModificationAllowedError);
+            if (RefPtr frame = document->frame()) {
+                RegistrableDomain domain { document->securityOrigin().data() };
+                frame->storageAccessExceptionReceivedForDomain(domain);
+            }
             break;
+        }
         case StorageAccessWasGranted::No:
             if (result.promptWasShown == StorageAccessPromptWasShown::Yes)
                 setWasExplicitlyDeniedFrameSpecificStorageAccess();

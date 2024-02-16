@@ -1,6 +1,15 @@
 <html>
 <head>
     <script>
+        var storageAccessRequestedForClick = false;
+        function bodyClicked() {
+            if (storageAccessRequestedForClick)
+                return;
+
+            storageAccessRequestedForClick = true;
+            performStorageAccessRequest();
+        }
+
         function messageToTop(message) {
             top.postMessage(message, "http://127.0.0.1:8000");
         }
@@ -15,11 +24,18 @@
                 }
 
                 messageToTop(error.name);
-                if (!window.location.hash && error.name == "NoModificationAllowedError") 
+                if (error.name == "NoModificationAllowedError" && location.hash != "#reload") {
+                    location.hash = "reload";
                     location.reload();
+                }
             });
+        }
+
+        if (location.hash == "#reload") {
+            storageAccessRequestedForClick = true;
+            performStorageAccessRequest();
         }
     </script>
 </head>
-<body onclick="performStorageAccessRequest()">
+<body onclick="bodyClicked()"></body>
 </html>

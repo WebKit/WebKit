@@ -308,6 +308,8 @@ public:
 #endif
 
     WEBCORE_EXPORT RefPtr<DocumentLoader> loaderForWebsitePolicies() const;
+    void storageAccessExceptionReceivedForDomain(const RegistrableDomain&);
+    bool requestSkipUserActivationCheckForStorageAccess(const RegistrableDomain&);
 
     String customUserAgent() const final;
     String customUserAgentAsSiteSpecificQuirks() const final;
@@ -383,6 +385,7 @@ private:
     FloatSize m_overrideScreenSize;
 
     UniqueRef<EventHandler> m_eventHandler;
+    HashSet<RegistrableDomain> m_storageAccessExceptionDomains;
 };
 
 inline LocalFrameView* LocalFrame::view() const

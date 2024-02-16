@@ -19,7 +19,7 @@
             setEnableFeature(false, finishJSTest);
         }
 
-        function receiveMessage(event) {
+        function messageReceived(event) {
             if (event.origin !== "http://localhost:8000") {
                 testFailed("Unexpected origin: " + event.origin);
                 endTest();
@@ -33,6 +33,12 @@
 
             if (event.data == "Done") {
                 testPassed("requestStorageAccess result: Granted");
+                endTest();
+                return;
+            }
+
+            if (event.data == "None") {
+                testFailed("requestStorageAccess result: Denied");
                 endTest();
                 return;
             }
@@ -59,18 +65,16 @@
         }
 
         function frameLoaded() {
-            if (!testStarted) {
-                setEnableFeature(true, function() {
-                    activateElement("TheIframeThatRequestsStorageAccess");
-                });
+            if (testStarted)
                 return;
-            }
 
             testStarted = true;
-            activateElement("TheIframeThatRequestsStorageAccess");
+            setEnableFeature(true, function() {
+                activateElement("TheIframeThatRequestsStorageAccess");
+            });
         }
 
-        window.addEventListener("message", receiveMessage, false);
+        window.addEventListener("message", messageReceived, false);
         if (window.testRunner)
             testRunner.setRequestStorageAccessThrowsExceptionUntilReload(true);
     </script>
