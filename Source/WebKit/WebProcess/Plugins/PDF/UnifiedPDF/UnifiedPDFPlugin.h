@@ -58,15 +58,20 @@ enum class WebEventType : uint8_t;
 enum class WebMouseEventButton : int8_t;
 enum class WebEventModifier : uint8_t;
 
+enum class ShouldRepaint : bool { No, Yes };
+
 class AnnotationTrackingState {
 public:
-    void startAnnotationTracking(RetainPtr<PDFAnnotation>&&, WebEventType, WebMouseEventButton);
-    void finishAnnotationTracking(WebEventType, WebMouseEventButton);
+    ShouldRepaint startAnnotationTracking(RetainPtr<PDFAnnotation>&&, WebEventType, WebMouseEventButton);
+    ShouldRepaint finishAnnotationTracking(WebEventType, WebMouseEventButton);
+
     PDFAnnotation *trackedAnnotation() const { return m_trackedAnnotation.get(); }
     bool isBeingHovered() const;
+
 private:
     void handleMouseDraggedOffTrackedAnnotation();
     void resetAnnotationTrackingState();
+
     RetainPtr<PDFAnnotation> m_trackedAnnotation;
     bool m_isBeingHovered { false };
 };
@@ -353,9 +358,16 @@ private:
     std::optional<PDFDocumentLayout::PageIndex> pageIndexWithHoveredAnnotation() const;
     void paintHoveredAnnotationOnPage(PDFDocumentLayout::PageIndex, WebCore::GraphicsContext&, const WebCore::FloatRect& clipRect);
 
+    WebCore::FloatRect documentRectForAnnotation(PDFAnnotation *) const;
+
     void followLinkAnnotation(PDFAnnotation *);
 
+    void startTrackingAnnotation(RetainPtr<PDFAnnotation>&&, WebEventType, WebMouseEventButton);
+    void finishTrackingAnnotation(WebEventType, WebMouseEventButton);
+
     RefPtr<WebCore::GraphicsLayer> createGraphicsLayer(const String& name, WebCore::GraphicsLayer::Type);
+
+    void setPDFChangedInDocumentRect(const WebCore::FloatRect&);
 
     WebCore::IntPoint convertFromRootViewToDocument(const WebCore::IntPoint&) const;
     WebCore::IntPoint convertFromPluginToDocument(const WebCore::IntPoint&) const;

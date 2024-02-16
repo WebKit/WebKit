@@ -101,6 +101,8 @@ public:
     void teardown();
     bool paintTilesForPaintingRect(WebCore::GraphicsContext&, float pageScaleFactor, const WebCore::FloatRect& paintingRect);
 
+    void invalidateTilesForPaintingRect(float pageScaleFactor, const WebCore::FloatRect& paintingRect);
+
     void setShowDebugBorders(bool);
 
     void layoutConfigurationChanged();

@@ -304,6 +304,23 @@ bool AsyncPDFRenderer::paintTilesForPaintingRect(GraphicsContext& context, float
     return paintedATile;
 }
 
+void AsyncPDFRenderer::invalidateTilesForPaintingRect(float pageScaleFactor, const FloatRect& paintingRect)
+{
+    auto scaleTransform = tileToPaintingTransform(pageScaleFactor);
+
+    m_rendereredTiles.removeIf([&](auto& entry) {
+        auto& tileInfo = entry.key;
+        auto& bufferAndClip = entry.value;
+
+        auto tileClipInPaintingCoordinates = scaleTransform.mapRect(bufferAndClip.tileClip);
+        bool result = paintingRect.intersects(tileClipInPaintingCoordinates);
+        if (result)
+            LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::invalidateTilesForPaintingRect " << paintingRect << " - removing tile " << tileInfo);
+
+        return result;
+    });
+}
+
 TextStream& operator<<(TextStream& ts, const TileForGrid& tileInfo)
 {
     ts << "[" << tileInfo.gridIndex << ":" << tileInfo.tileIndex << "]";
