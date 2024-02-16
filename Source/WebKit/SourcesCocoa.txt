@@ -697,6 +697,7 @@ WebProcess/Plugins/PDF/PDFPluginTextAnnotation.mm
 WebProcess/Plugins/PDF/PDFScriptEvaluator.mm
 WebProcess/Plugins/PDF/UnifiedPDF/AsyncPDFRenderer.mm
 WebProcess/Plugins/PDF/UnifiedPDF/PDFDocumentLayout.mm
+WebProcess/Plugins/PDF/UnifiedPDF/PDFPageCoverage.mm
 WebProcess/Plugins/PDF/UnifiedPDF/UnifiedPDFPlugin.mm
 
 WebProcess/WebCoreSupport/WebCaptionPreferencesDelegate.cpp

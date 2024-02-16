@@ -28,9 +28,11 @@
 
 #if ENABLE(UNIFIED_PDF)
 
+#include "AsyncPDFRenderer.h"
 #include "FindController.h"
 #include "PDFContextMenu.h"
 #include "PDFKitSPI.h"
+#include "PDFPageCoverage.h"
 #include "PDFPluginAnnotation.h"
 #include "PDFPluginPasswordField.h"
 #include "PDFPluginPasswordForm.h"
@@ -142,6 +144,9 @@ static String mutationObserverNotificationString()
 
 void UnifiedPDFPlugin::teardown()
 {
+    if (RefPtr asyncRenderer = asyncRendererIfExists())
+        asyncRenderer->teardown();
+
     PDFPluginBase::teardown();
 
     if (m_rootLayer)
@@ -153,6 +158,7 @@ void UnifiedPDFPlugin::teardown()
         scrollingCoordinator->unparentChildrenAndDestroyNode(m_scrollingNodeID);
         m_frame->coreLocalFrame()->protectedView()->removePluginScrollableAreaForScrollingNodeID(m_scrollingNodeID);
     }
+
     [[NSNotificationCenter defaultCenter] removeObserver:m_pdfMutationObserver.get() name:mutationObserverNotificationString() object:m_pdfDocument.get()];
     m_pdfMutationObserver = nullptr;
 }
@@ -160,6 +166,20 @@ void UnifiedPDFPlugin::teardown()
 GraphicsLayer* UnifiedPDFPlugin::graphicsLayer() const
 {
     return m_rootLayer.get();
+}
+
+Ref<AsyncPDFRenderer> UnifiedPDFPlugin::asyncRenderer()
+{
+    if (m_asyncRenderer)
+        return *m_asyncRenderer;
+
+    m_asyncRenderer = AsyncPDFRenderer::create(*this);
+    return *m_asyncRenderer;
+}
+
+RefPtr<AsyncPDFRenderer> UnifiedPDFPlugin::asyncRendererIfExists() const
+{
+    return m_asyncRenderer;
 }
 
 void UnifiedPDFPlugin::installPDFDocument()
@@ -302,6 +322,9 @@ void UnifiedPDFPlugin::ensureLayers()
         m_contentsLayer->setAnchorPoint({ });
         m_contentsLayer->setDrawsContent(true);
         m_scrolledContentsLayer->addChild(*m_contentsLayer);
+
+        // This is the call that enables async rendering.
+        asyncRenderer()->setupWithLayer(*m_contentsLayer);
     }
 
     if (!m_overflowControlsContainer) {
@@ -448,11 +471,25 @@ void UnifiedPDFPlugin::updateLayerHierarchy()
     m_contentsLayer->setSize(documentSize());
     m_contentsLayer->setNeedsDisplay();
 
+    if (RefPtr asyncRenderer = asyncRendererIfExists())
+        asyncRenderer->layoutConfigurationChanged();
+
     updatePageBackgroundLayers();
     updateSnapOffsets();
 
     didChangeSettings();
     didChangeIsInWindow();
+}
+
+
+std::pair<bool, bool> UnifiedPDFPlugin::shouldShowDebugIndicators() const
+{
+    RefPtr page = this->page();
+    if (!page)
+        return { };
+
+    auto& settings = page->settings();
+    return std::make_pair<bool>(settings.showDebugBorders(), settings.showRepaintCounter());
 }
 
 void UnifiedPDFPlugin::didChangeSettings()
@@ -461,9 +498,7 @@ void UnifiedPDFPlugin::didChangeSettings()
     if (!page)
         return;
 
-    Settings& settings = page->settings();
-    bool showDebugBorders = settings.showDebugBorders();
-    bool showRepaintCounter = settings.showRepaintCounter();
+    auto [showDebugBorders, showRepaintCounter] = shouldShowDebugIndicators();
 
     auto propagateSettingsToLayer = [&] (GraphicsLayer& layer) {
         layer.setShowDebugBorder(showDebugBorders);
@@ -489,6 +524,9 @@ void UnifiedPDFPlugin::didChangeSettings()
 
     if (m_layerForScrollCorner)
         propagateSettingsToLayer(*m_layerForScrollCorner);
+
+    if (RefPtr asyncRenderer = asyncRendererIfExists())
+        asyncRenderer->setShowDebugBorders(showDebugBorders);
 }
 
 void UnifiedPDFPlugin::notifyFlushRequired(const GraphicsLayer*)
@@ -568,7 +606,8 @@ PDFPageCoverage UnifiedPDFPlugin::pageCoverageForRect(const FloatRect& clipRect)
 
     auto pageCoverage = PDFPageCoverage { };
     pageCoverage.deviceScaleFactor = deviceScaleFactor();
-    pageCoverage.documentScale = scale;
+    pageCoverage.pdfDocumentScale = scale;
+    pageCoverage.pageScaleFactor = m_scaleFactor;
 
     auto drawingRect = IntRect { { }, documentSize() };
     drawingRect.intersect(enclosingIntRect(clipRect));
@@ -602,7 +641,8 @@ void UnifiedPDFPlugin::paintPDFContent(GraphicsContext& context, const FloatRect
 
     auto stateSaver = GraphicsContextStateSaver(context);
 
-    bool paintedPageContent = false; // This will be set by a future async rendering commit.
+    auto [showDebugBorders, showRepaintCounter] = shouldShowDebugIndicators();
+
     bool haveSelection = false;
     bool isVisibleAndActive = false;
     if (m_currentSelection) {
@@ -613,44 +653,66 @@ void UnifiedPDFPlugin::paintPDFContent(GraphicsContext& context, const FloatRect
     }
 
     auto pageWithAnnotation = pageIndexWithHoveredAnnotation();
+    auto pageCoverage = pageCoverageForRect(clipRect);
 
-    if (!paintedPageContent || haveSelection || pageWithAnnotation) {
-        auto pageCoverage = pageCoverageForRect(clipRect);
-        auto scale = pageCoverage.documentScale;
-        context.scale(scale);
+    LOG_WITH_STREAM(PDF, stream << "UnifiedPDFPlugin: paintPDFContent " << pageCoverage);
 
-        for (auto& pageInfo : pageCoverage.pages) {
-            auto page = m_documentLayout.pageAtIndex(pageInfo.pageIndex);
-            if (!page)
-                continue;
+    for (auto& pageInfo : pageCoverage.pages) {
+        auto page = m_documentLayout.pageAtIndex(pageInfo.pageIndex);
+        if (!page)
+            continue;
 
-            if (!shouldDisplayPage(pageInfo.pageIndex))
-                continue;
+        if (!shouldDisplayPage(pageInfo.pageIndex))
+            continue;
 
-            auto destinationRect = pageInfo.pageBounds;
+        auto documentScale = pageCoverage.pdfDocumentScale;
+        auto pageDestinationRect = pageInfo.pageBounds;
+
+        {
+            auto whiteBackgroundStateSaver = GraphicsContextStateSaver(context);
+            context.scale(documentScale);
+            context.fillRect(pageDestinationRect, Color::white);
+        }
+
+        RefPtr asyncRenderer = asyncRendererIfExists();
+        if (asyncRenderer) {
+            auto pageBoundsInDocumentCoordinates = AffineTransform::makeScale(FloatSize { documentScale, documentScale }).mapRect(pageDestinationRect);
 
             auto pageStateSaver = GraphicsContextStateSaver(context);
-            context.clip(destinationRect);
+            context.clip(pageBoundsInDocumentCoordinates);
 
-            if (!paintedPageContent)
-                context.fillRect(destinationRect, Color::white);
+            bool paintedPageContent = asyncRenderer->paintTilesForPaintingRect(context, m_scaleFactor, pageBoundsInDocumentCoordinates);
+            LOG_WITH_STREAM(PDFAsyncRendering, stream << "UnifiedPDFPlugin::paintPDFContent - painting tiles for page " << pageInfo.pageIndex << " dest rect " << pageBoundsInDocumentCoordinates << " clip " << clipRect << " - painted cached tile " << paintedPageContent);
 
-            // Translate the context to the bottom of pageBounds and flip, so that PDFKit operates
-            // from this page's drawing origin.
-            context.translate(destinationRect.minXMaxYCorner());
-            context.scale({ 1, -1 });
-
-            if (!paintedPageContent) {
-                LOG_WITH_STREAM(PDF, stream << "UnifiedPDFPlugin: painting PDF page " << pageInfo.pageIndex << " into rect " << destinationRect << " with clip " << clipRect);
-                [page drawWithBox:kPDFDisplayBoxCropBox toContext:context.platformContext()];
-            }
-
-            if (haveSelection)
-                [m_currentSelection drawForPage:page.get() withBox:kCGPDFCropBox active:isVisibleAndActive inContext:context.platformContext()];
-
-            if (pageWithAnnotation && *pageWithAnnotation == pageInfo.pageIndex)
-                paintHoveredAnnotationOnPage(pageInfo.pageIndex, context, clipRect);
+            if (!paintedPageContent && showDebugBorders)
+                context.fillRect(pageBoundsInDocumentCoordinates, Color::yellow.colorWithAlphaByte(128));
         }
+
+        bool currentPageHasAnnotation = pageWithAnnotation && *pageWithAnnotation == pageInfo.pageIndex;
+        if (asyncRenderer && !haveSelection && !currentPageHasAnnotation)
+            continue;
+
+        auto pageStateSaver = GraphicsContextStateSaver(context);
+        context.scale(documentScale);
+        context.clip(pageDestinationRect);
+
+        // Translate the context to the bottom of pageBounds and flip, so that PDFKit operates
+        // from this page's drawing origin.
+        context.translate(pageDestinationRect.minXMaxYCorner());
+        context.scale({ 1, -1 });
+
+        if (!asyncRenderer) {
+            LOG_WITH_STREAM(PDF, stream << "UnifiedPDFPlugin: painting PDF page " << pageInfo.pageIndex << " into rect " << pageDestinationRect << " with clip " << clipRect);
+            [page drawWithBox:kPDFDisplayBoxCropBox toContext:context.platformContext()];
+        }
+
+        // FIXME: Need to apply a rotation transform here for correct rendering in rotated pages.
+
+        if (haveSelection)
+            [m_currentSelection drawForPage:page.get() withBox:kCGPDFCropBox active:isVisibleAndActive inContext:context.platformContext()];
+
+        if (currentPageHasAnnotation)
+            paintHoveredAnnotationOnPage(pageInfo.pageIndex, context, clipRect);
     }
 }
 
@@ -802,6 +864,9 @@ void UnifiedPDFPlugin::setPageScaleFactor(double scale, std::optional<WebCore::I
 
     updatePageBackgroundLayers();
     updateSnapOffsets();
+
+    if (RefPtr asyncRenderer = asyncRendererIfExists())
+        asyncRenderer->layoutConfigurationChanged();
 
     if (!origin)
         origin = IntRect({ }, size()).center();

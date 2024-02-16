@@ -3271,6 +3271,8 @@
 		0F931C1A18C5711900DBB8D4 /* ScrollingTreeScrollingNodeDelegateIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingTreeScrollingNodeDelegateIOS.h; sourceTree = "<group>"; };
 		0F931C1B18C5711900DBA7C3 /* ScrollingTreeOverflowScrollingNodeIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollingTreeOverflowScrollingNodeIOS.mm; sourceTree = "<group>"; };
 		0F931C1B18C5711900DBB8D4 /* ScrollingTreeScrollingNodeDelegateIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollingTreeScrollingNodeDelegateIOS.mm; sourceTree = "<group>"; };
+		0F9B0BC22B7DB9BF0003E962 /* PDFPageCoverage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PDFPageCoverage.h; sourceTree = "<group>"; };
+		0F9B0BC32B7DB9BF0003E962 /* PDFPageCoverage.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PDFPageCoverage.mm; sourceTree = "<group>"; };
 		0F9FA7DA26CEFAD100872684 /* MediaKeySystemPermissionRequestManagerProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MediaKeySystemPermissionRequestManagerProxy.cpp; sourceTree = "<group>"; };
 		0F9FA7DB26CEFADA00872684 /* MediaKeySystemPermissionRequestProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MediaKeySystemPermissionRequestProxy.cpp; sourceTree = "<group>"; };
 		0FA7467E27BB611800B5FF5A /* ImageBufferBackendHandleSharing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageBufferBackendHandleSharing.h; sourceTree = "<group>"; };
@@ -8610,6 +8612,8 @@
 				0F23ADDF2B7D240C00E6199B /* AsyncPDFRenderer.mm */,
 				0F3D56732AC651390086D64E /* PDFDocumentLayout.h */,
 				0F3D56722AC651390086D64E /* PDFDocumentLayout.mm */,
+				0F9B0BC22B7DB9BF0003E962 /* PDFPageCoverage.h */,
+				0F9B0BC32B7DB9BF0003E962 /* PDFPageCoverage.mm */,
 				0FFACF042AC2453300ED8DB6 /* UnifiedPDFPlugin.h */,
 				0FFACF032AC2453300ED8DB6 /* UnifiedPDFPlugin.mm */,
 			);

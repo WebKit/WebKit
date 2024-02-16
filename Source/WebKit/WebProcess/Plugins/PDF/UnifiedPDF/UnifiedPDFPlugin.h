@@ -43,13 +43,17 @@ enum class DelegatedScrollingMode : uint8_t;
 
 namespace WebKit {
 
-struct LookupTextResult;
-struct PDFContextMenu;
-struct PDFContextMenuItem;
+class AsyncPDFRenderer;
 class PDFPluginPasswordField;
 class PDFPluginPasswordForm;
 class WebFrame;
 class WebMouseEvent;
+
+struct LookupTextResult;
+struct PDFContextMenu;
+struct PDFContextMenuItem;
+struct PDFPageCoverage;
+
 enum class WebEventType : uint8_t;
 enum class WebMouseEventButton : int8_t;
 enum class WebEventModifier : uint8_t;
@@ -70,17 +74,6 @@ private:
 enum class AnnotationSearchDirection : bool {
     Forward,
     Backward
-};
-
-struct PerPageInfo {
-    PDFDocumentLayout::PageIndex pageIndex { 0 };
-    WebCore::FloatRect pageBounds;
-};
-
-struct PDFPageCoverage {
-    Vector<PerPageInfo> pages;
-    float deviceScaleFactor { 1 };
-    float documentScale { 1 };
 };
 
 class UnifiedPDFPlugin final : public PDFPluginBase, public WebCore::GraphicsLayerClient {
@@ -381,9 +374,14 @@ private:
 
     bool isTaggedPDF() const;
 
+    std::pair<bool, bool> shouldShowDebugIndicators() const;
+
 #if PLATFORM(MAC)
     void createPasswordEntryForm();
 #endif
+
+    Ref<AsyncPDFRenderer> asyncRenderer();
+    RefPtr<AsyncPDFRenderer> asyncRendererIfExists() const;
 
     PDFDocumentLayout m_documentLayout;
     RefPtr<WebCore::GraphicsLayer> m_rootLayer;
@@ -432,6 +430,8 @@ private:
     std::optional<PDFDocumentLayout::PageIndex> m_currentlySnappedPage;
 
     Vector<WebCore::FloatRect> m_findMatchRectsInDocumentCoordinates;
+
+    RefPtr<AsyncPDFRenderer> m_asyncRenderer;
 };
 
 } // namespace WebKit
