@@ -32,7 +32,7 @@
 namespace WebKit::WebGPU {
 
 class DowncastConvertToBackingContext final : public ConvertToBackingContext {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(DowncastConvertToBackingContext);
 public:
     static Ref<DowncastConvertToBackingContext> create()
     {

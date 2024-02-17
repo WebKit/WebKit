@@ -40,6 +40,9 @@
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
 
 namespace WebKit {
+
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(RemoteCaptureSampleManager);
+
 using namespace WebCore;
 
 RemoteCaptureSampleManager::RemoteCaptureSampleManager()

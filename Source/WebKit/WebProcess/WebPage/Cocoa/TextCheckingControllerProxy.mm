@@ -55,6 +55,8 @@ typedef NS_ENUM(NSInteger, NSSpellingState) {
 namespace WebKit {
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(TextCheckingControllerProxy);
+
 TextCheckingControllerProxy::TextCheckingControllerProxy(WebPage& page)
     : m_page(page)
 {

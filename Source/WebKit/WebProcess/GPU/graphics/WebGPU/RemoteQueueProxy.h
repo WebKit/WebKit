@@ -37,7 +37,7 @@ namespace WebKit::WebGPU {
 class ConvertToBackingContext;
 
 class RemoteQueueProxy final : public WebCore::WebGPU::Queue {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(RemoteQueueProxy);
 public:
     static Ref<RemoteQueueProxy> create(RemoteAdapterProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     {

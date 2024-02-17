@@ -35,6 +35,7 @@
 #include <wtf/HashCountedSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -49,7 +50,7 @@ class StorageAreaImpl;
 class StorageNamespaceImpl;
 
 class StorageAreaMap final : public IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(StorageAreaMap);
 public:
     StorageAreaMap(StorageNamespaceImpl&, Ref<const WebCore::SecurityOrigin>&&);
     ~StorageAreaMap();

@@ -35,6 +35,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(MomentumEventDispatcher);
+
 static constexpr Seconds deltaHistoryMaximumAge = 500_ms;
 static constexpr Seconds deltaHistoryMaximumInterval = 150_ms;
 static constexpr WebCore::FramesPerSecond idealCurveFrameRate = 60;

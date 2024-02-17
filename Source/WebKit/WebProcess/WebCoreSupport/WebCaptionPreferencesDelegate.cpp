@@ -33,6 +33,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(WebCaptionPreferencesDelegate);
+
 void WebCaptionPreferencesDelegate::setDisplayMode(WebCore::CaptionUserPreferences::CaptionDisplayMode displayMode)
 {
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::SetCaptionDisplayMode(displayMode), 0);

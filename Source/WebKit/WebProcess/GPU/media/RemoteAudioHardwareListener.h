@@ -31,6 +31,7 @@
 #include "MessageReceiver.h"
 #include "RemoteAudioHardwareListenerIdentifier.h"
 #include <WebCore/AudioHardwareListener.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace IPC {
 class Connection;
@@ -46,7 +47,7 @@ class RemoteAudioHardwareListener final
     , private GPUProcessConnection::Client
     , private IPC::MessageReceiver
     , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteAudioHardwareListener> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(RemoteAudioHardwareListener);
 public:
     static Ref<RemoteAudioHardwareListener> create(WebCore::AudioHardwareListener::Client&);
     ~RemoteAudioHardwareListener();

@@ -33,6 +33,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(WebPageInspectorTargetController);
+
 WebPageInspectorTargetController::WebPageInspectorTargetController(WebPage& page)
     : m_page(page)
     , m_pageTarget(page)

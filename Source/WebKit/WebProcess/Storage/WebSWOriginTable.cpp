@@ -32,6 +32,8 @@
 namespace WebKit {
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(WebSWOriginTable);
+
 bool WebSWOriginTable::contains(const SecurityOriginData& origin) const
 {
     return m_serviceWorkerOriginTable.contains(computeSharedStringHash(origin.toString()));

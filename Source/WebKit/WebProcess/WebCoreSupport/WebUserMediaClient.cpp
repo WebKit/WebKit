@@ -30,6 +30,8 @@
 namespace WebKit {
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(WebUserMediaClient);
+
 WebUserMediaClient::WebUserMediaClient(WebPage& page)
     : m_page(page)
 {

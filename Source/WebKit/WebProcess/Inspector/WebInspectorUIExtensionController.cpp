@@ -43,6 +43,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(WebInspectorUIExtensionController);
+
 WebInspectorUIExtensionController::WebInspectorUIExtensionController(WebCore::InspectorFrontendClient& inspectorFrontend, WebCore::PageIdentifier pageIdentifier)
     : m_frontendClient(inspectorFrontend)
     , m_inspectorPageIdentifier(pageIdentifier)

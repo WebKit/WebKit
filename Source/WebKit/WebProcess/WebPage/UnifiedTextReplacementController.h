@@ -34,6 +34,7 @@
 #include <WebCore/Range.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UUID.h>
 #include <wtf/WeakPtr.h>
 
@@ -42,7 +43,7 @@ namespace WebKit {
 class WebPage;
 
 class UnifiedTextReplacementController final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(UnifiedTextReplacementController);
     WTF_MAKE_NONCOPYABLE(UnifiedTextReplacementController);
 
 public:

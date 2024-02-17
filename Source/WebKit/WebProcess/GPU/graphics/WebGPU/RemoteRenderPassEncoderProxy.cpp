@@ -33,6 +33,8 @@
 
 namespace WebKit::WebGPU {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(RemoteRenderPassEncoderProxy);
+
 RemoteRenderPassEncoderProxy::RemoteRenderPassEncoderProxy(RemoteCommandEncoderProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     : m_backing(identifier)
     , m_convertToBackingContext(convertToBackingContext)

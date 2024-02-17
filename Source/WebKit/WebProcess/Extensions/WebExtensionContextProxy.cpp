@@ -39,6 +39,8 @@ namespace WebKit {
 
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(WebExtensionContextProxy);
+
 void WebExtensionContextProxy::addFrameWithExtensionContent(WebFrame& frame)
 {
     m_extensionContentFrames.add(frame);

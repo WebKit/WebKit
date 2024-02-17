@@ -38,6 +38,8 @@
 namespace WebKit {
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(LibWebRTCNetworkManager);
+
 LibWebRTCNetworkManager* LibWebRTCNetworkManager::getOrCreate(WebCore::ScriptExecutionContextIdentifier identifier)
 {
     RefPtr document = Document::allDocumentsMap().get(identifier);

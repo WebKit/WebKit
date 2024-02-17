@@ -34,6 +34,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(WebScreenOrientationManager);
+
 WebScreenOrientationManager::WebScreenOrientationManager(WebPage& page)
     : m_page(page)
 {

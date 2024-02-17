@@ -38,6 +38,8 @@ namespace WebKit {
 
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(RemoteRemoteCommandListener);
+
 Ref<RemoteRemoteCommandListener> RemoteRemoteCommandListener::create(RemoteCommandListenerClient& client)
 {
     return adoptRef(*new RemoteRemoteCommandListener(client));

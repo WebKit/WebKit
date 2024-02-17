@@ -35,6 +35,8 @@ namespace WebKit {
 
 using namespace Inspector;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(WebPageInspectorTarget);
+
 WebPageInspectorTarget::WebPageInspectorTarget(WebPage& page)
     : m_page(page)
 {

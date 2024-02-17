@@ -33,6 +33,8 @@
 namespace WebKit {
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(WebDragClient);
+
 void WebDragClient::willPerformDragDestinationAction(DragDestinationAction action, const DragData&)
 {
     if (action == DragDestinationAction::Load)

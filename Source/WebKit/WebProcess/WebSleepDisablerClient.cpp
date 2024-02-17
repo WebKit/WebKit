@@ -33,6 +33,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(WebSleepDisablerClient);
+
 void WebSleepDisablerClient::didCreateSleepDisabler(WebCore::SleepDisablerIdentifier identifier, const String& reason, bool display, std::optional<WebCore::PageIdentifier> pageID)
 {
     if (auto* webPage = pageID ? WebProcess::singleton().webPage(*pageID) : nullptr)

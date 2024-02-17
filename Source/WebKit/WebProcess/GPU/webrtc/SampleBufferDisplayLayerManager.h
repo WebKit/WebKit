@@ -29,11 +29,12 @@
 
 #include "SampleBufferDisplayLayer.h"
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class SampleBufferDisplayLayerManager : public CanMakeWeakPtr<SampleBufferDisplayLayerManager> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(SampleBufferDisplayLayerManager);
 public:
     SampleBufferDisplayLayerManager() = default;
     ~SampleBufferDisplayLayerManager() = default;

@@ -51,6 +51,8 @@
 namespace WebKit {
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(WebFoundTextRangeController);
+
 WebFoundTextRangeController::WebFoundTextRangeController(WebPage& webPage)
     : m_webPage(webPage)
 {

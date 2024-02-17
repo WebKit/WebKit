@@ -54,6 +54,9 @@ ALLOW_COMMA_END
 namespace WebKit {
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(SharedVideoFrameWriter);
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(SharedVideoFrameReader);
+
 SharedVideoFrameWriter::SharedVideoFrameWriter()
     : m_semaphore(makeUniqueRef<IPC::Semaphore>())
 {

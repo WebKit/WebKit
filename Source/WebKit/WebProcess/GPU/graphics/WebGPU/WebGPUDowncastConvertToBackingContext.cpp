@@ -55,6 +55,8 @@
 
 namespace WebKit::WebGPU {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(DowncastConvertToBackingContext);
+
 WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const WebCore::WebGPU::Adapter& adapter)
 {
     return static_cast<const RemoteAdapterProxy&>(adapter).backing();

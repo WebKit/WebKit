@@ -36,6 +36,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(AudioSessionRoutingArbitrator);
+
 using namespace WebCore;
 
 AudioSessionRoutingArbitrator::AudioSessionRoutingArbitrator(WebProcess& process)
