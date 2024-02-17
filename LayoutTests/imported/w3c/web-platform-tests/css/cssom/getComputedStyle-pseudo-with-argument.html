@@ -3,6 +3,7 @@
 <title>CSSOM: Handling pseudo-elements with arguments</title>
 <script src=/resources/testharness.js></script>
 <script src=/resources/testharnessreport.js></script>
+<link rel=help href=https://drafts.csswg.org/cssom/#dom-window-getcomputedstyle>
 <style>
 #pseudo-invalid::highlight(name) {
   color: rgb(0, 128, 0);
@@ -25,6 +26,10 @@
 [
   "::before(test)",
   "::highlight",
+  "::highlight(",
+  "::highlight()",
+  "::highlight(1)",
+  "::highlight($)",
   "::highlight (name)",
   "::highlight(name)a",
   "::view-transition-group(*)",
@@ -38,7 +43,9 @@
 [
   "::highlight(name)",
   "::highlight(\nname",
-  "::highlight(name\t"
+  "::highlight(name\t",
+  "::highlight( name ",
+  "::highlight( n\\61me )"
 ].forEach(parsablePseudoIdentifier => {
   test(() => {
     const li = document.querySelector('li');

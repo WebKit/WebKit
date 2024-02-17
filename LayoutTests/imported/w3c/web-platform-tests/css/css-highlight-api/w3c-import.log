@@ -16,6 +16,7 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-highlight-api/Highlight-iteration-with-modifications.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-highlight-api/Highlight-iteration.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-highlight-api/Highlight-multiple-type-attribute.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-highlight-api/Highlight-setlike-tampered-Set-prototype.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-highlight-api/Highlight-setlike.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-highlight-api/Highlight-type-attribute.tentative.html
@@ -23,6 +24,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-highlight-api/HighlightRegistry-iteration.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-highlight-api/HighlightRegistry-maplike-tampered-Map-prototype.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-highlight-api/HighlightRegistry-maplike.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-highlight-api/highlight-priority-painting-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-highlight-api/highlight-priority-painting-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-highlight-api/highlight-priority-painting.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-highlight-api/highlight-priority.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-highlight-api/highlight-pseudo-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-highlight-api/highlight-pseudo-from-font-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-highlight-api/highlight-pseudo-parsing.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-highlight-api/historical.window.js
 /LayoutTests/imported/w3c/web-platform-tests/css/css-highlight-api/idlharness.window.js
