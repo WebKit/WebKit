@@ -136,6 +136,7 @@ function runTransitionTest(expected, callback)
 
   function startTest(expected, callback, maxTime)
   {
+    document.body.offsetHeight; // Force style recalc
     if (callback)
       callback();
     

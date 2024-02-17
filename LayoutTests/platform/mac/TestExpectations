@@ -2087,8 +2087,6 @@ webkit.org/b/221017 media/modern-media-controls/media-controller/media-controlle
 
 webkit.org/b/226600 imported/w3c/web-platform-tests/navigation-timing/test_navigate_within_document.html [ Pass Failure ]
 
-webkit.org/b/228002 transitions/transition-end-event-nested.html [ Pass Failure ]
-
 webkit.org/b/227877 imported/w3c/web-platform-tests/navigation-timing/test_timing_attributes_order.html [ Pass Failure ]
 
 webkit.org/b/222385 imported/w3c/web-platform-tests/xhr/event-upload-progress-crossorigin.any.worker.html [ Pass Failure ]
