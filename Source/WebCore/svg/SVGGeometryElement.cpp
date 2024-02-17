@@ -76,7 +76,7 @@ ExceptionOr<Ref<SVGPoint>> SVGGeometryElement::getPointAtLength(float distance) 
     auto* renderer = this->renderer();
     // Spec: If current element is a non-rendered element, throw an InvalidStateError.
     if (!renderer)
-        return Exception { ExceptionCode::InvalidStateError, "The current element is a non-rendered element."_s };
+        return Exception { ExceptionCode::InvalidStateError };
 
     // Spec: Return a newly created, detached SVGPoint object.
     if (CheckedPtr renderSVGShape = dynamicDowncast<LegacyRenderSVGShape>(renderer))

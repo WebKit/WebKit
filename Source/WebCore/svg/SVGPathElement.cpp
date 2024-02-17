@@ -180,14 +180,8 @@ float SVGPathElement::getTotalLength() const
 
 ExceptionOr<Ref<SVGPoint>> SVGPathElement::getPointAtLength(float distance) const
 {
-    protectedDocument()->updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
-
     // Spec: Clamp distance to [0, length].
     distance = clampTo<float>(distance, 0, getTotalLength());
-
-    // Spec: If current element is a non-rendered element, throw an InvalidStateError.
-    if (!renderer())
-        return Exception { ExceptionCode::InvalidStateError, "The current element is a non-rendered element."_s };
 
     // Spec: Return a newly created, detached SVGPoint object.
     return SVGPoint::create(getPointAtLengthOfSVGPathByteStream(pathByteStream(), distance));
