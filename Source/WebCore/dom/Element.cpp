@@ -70,6 +70,7 @@
 #include "HTMLDialogElement.h"
 #include "HTMLDocument.h"
 #include "HTMLHtmlElement.h"
+#include "HTMLInputElement.h"
 #include "HTMLLabelElement.h"
 #include "HTMLNameCollection.h"
 #include "HTMLObjectElement.h"
@@ -2546,18 +2547,16 @@ void Element::parserSetAttributes(std::span<const Attribute> attributes)
             m_elementData = sharedObjectPool->cachedShareableElementDataWithAttributes(attributes);
         else
             m_elementData = ShareableElementData::createWithAttributes(attributes);
-
     }
 
-    parserDidSetAttributes();
+    if (auto* inputElement = dynamicDowncast<HTMLInputElement>(*this)) {
+        DelayedUpdateValidityScope delayedUpdateValidityScope(*inputElement);
+        inputElement->parserInitializeInputType();
+    }
 
     // Use attributes instead of m_elementData because attributeChanged might modify m_elementData.
     for (const auto& attribute : attributes)
-        notifyAttributeChanged(attribute.name(), nullAtom(), attribute.value(), AttributeModificationReason::Directly);
-}
-
-void Element::parserDidSetAttributes()
-{
+        notifyAttributeChanged(attribute.name(), nullAtom(), attribute.value(), AttributeModificationReason::Parser);
 }
 
 void Element::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
