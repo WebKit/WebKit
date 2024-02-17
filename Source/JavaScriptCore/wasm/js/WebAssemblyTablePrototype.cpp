@@ -183,7 +183,10 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyTableProtoFuncType, (JSGlobalObject* globalO
 
     JSWebAssemblyTable* table = getTable(globalObject, vm, callFrame->thisValue());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(table->type(globalObject)));
+    JSObject* typeDescriptor = table->type(globalObject);
+    if (!typeDescriptor)
+        return throwVMTypeError(globalObject, throwScope, "WebAssembly.Table.prototype.type unable to produce type descriptor for the given table"_s);
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(typeDescriptor));
 }
 
 WebAssemblyTablePrototype* WebAssemblyTablePrototype::create(VM& vm, JSGlobalObject*, Structure* structure)

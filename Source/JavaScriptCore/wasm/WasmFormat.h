@@ -89,21 +89,6 @@ inline bool isValueType(Type type)
     return false;
 }
 
-inline JSString* typeToString(VM& vm, TypeKind type)
-{
-#define TYPE_CASE(macroName, value, b3, inc, wasmName, ...) \
-    case TypeKind::macroName: \
-        return jsNontrivialString(vm, #wasmName""_s); \
-
-    switch (type) {
-        FOR_EACH_WASM_TYPE(TYPE_CASE)
-    }
-
-#undef TYPE_CASE
-
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
 inline bool isRefType(Type type)
 {
     if (Options::useWebAssemblyTypedFunctionReferences())
@@ -207,6 +192,31 @@ inline bool isStructref(Type type)
     if (!Options::useWebAssemblyGC())
         return false;
     return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Structref);
+}
+
+inline JSString* typeToJSAPIString(VM& vm, Type type)
+{
+    switch (type.kind) {
+    case TypeKind::I32:
+        return jsNontrivialString(vm, "i32"_s);
+    case TypeKind::I64:
+        return jsNontrivialString(vm, "i64"_s);
+    case TypeKind::F32:
+        return jsNontrivialString(vm, "f32"_s);
+    case TypeKind::F64:
+        return jsNontrivialString(vm, "f64"_s);
+    case TypeKind::V128:
+        return jsNontrivialString(vm, "v128"_s);
+    default: {
+        if (isFuncref(type) && type.isNullable())
+            return jsNontrivialString(vm, "funcref"_s);
+        if (isExternref(type) && type.isNullable())
+            return jsNontrivialString(vm, "externref"_s);
+        // Some Wasm reference types are currently unrepresentable for the JS API.
+        return nullptr;
+    }
+    }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 inline Type funcrefType()

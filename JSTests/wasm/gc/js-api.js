@@ -3,6 +3,15 @@
 import * as assert from "../assert.js";
 import { compile, instantiate } from "./wast-wrapper.js";
 
+function module(bytes, valid = true) {
+  let buffer = new ArrayBuffer(bytes.length);
+  let view = new Uint8Array(buffer);
+  for (let i = 0; i < bytes.length; ++i) {
+    view[i] = bytes.charCodeAt(i);
+  }
+  return new WebAssembly.Module(buffer);
+}
+
 function runWasmGCObjectTests(obj) {
   assert.eq(obj.foo, undefined);
   assert.eq(obj["foo"], undefined);
@@ -431,6 +440,34 @@ function testGlobal() {
     m.exports.g1.value = null;
     m.exports.g2.value = null;
   }
+
+  // Test type descriptor
+  {
+    let m = instantiate(`
+      (module
+        (type (struct (field f32)))
+        (global (export "g") (mut (ref null 0)) (struct.new 0 (f32.const 0.25))))
+    `);
+    assert.throws(
+      () => m.exports.g.type(),
+      TypeError,
+      "WebAssembly.Global.prototype.type unable to produce type descriptor for the given global"
+    )
+  }
+
+  {
+    let m = instantiate(`
+      (module
+        (global (export "g") (ref func) (ref.func 0))
+        (func)
+      )
+    `);
+    assert.throws(
+      () => m.exports.g.type(),
+      TypeError,
+      "WebAssembly.Global.prototype.type unable to produce type descriptor for the given global"
+    )
+  }
 }
 
 function testTable() {
@@ -449,6 +486,49 @@ function testTable() {
       )
     `);
     assert.eq(m.exports.t.get(0)(m.exports.g.value), 42);
+  }
+
+  // Test type descriptor
+  {
+    let m = instantiate(`
+      (module
+        (type (struct (field f32)))
+        (table (export "t") 10 (ref null 0))
+      )
+    `);
+    assert.throws(
+      () => m.exports.t.type(),
+      TypeError,
+      "WebAssembly.Table.prototype.type unable to produce type descriptor for the given table"
+    )
+  }
+
+  {
+    let m = instantiate(`
+      (module
+        (type (struct))
+        (table (export "t") 10 (ref 0) (struct.new 0))
+      )
+    `);
+    assert.throws(
+      () => m.exports.t.type(),
+      TypeError,
+      "WebAssembly.Table.prototype.type unable to produce type descriptor for the given table"
+    )
+  }
+
+  {
+    let m = instantiate(`
+      (module
+        (table (export "t") 10 (ref func) (ref.func 0))
+        (func)
+      )
+    `);
+    assert.throws(
+      () => m.exports.t.type(),
+      TypeError,
+      "WebAssembly.Table.prototype.type unable to produce type descriptor for the given table"
+    )
   }
 }
 
@@ -636,6 +716,37 @@ function testImport() {
   }
 }
 
+function testTag() {
+  {
+    /*
+     * (module
+     *   (type (struct (field f32)))
+     *   (tag (export "t") (param (ref null 0)))
+     * )
+     */
+    let m = new WebAssembly.Instance(module('\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x0a\x02\x5f\x01\x7d\x00\x60\x01\x63\x00\x00\x0d\x03\x01\x00\x01\x07\x05\x01\x01\x74\x04\x00'));
+    assert.throws(
+      () => m.exports.t.type(),
+      TypeError,
+      "WebAssembly.Tag.prototype.type unable to produce type descriptor for the given tag"
+    )
+  }
+
+  {
+    /*
+     * (module
+     *   (tag (export "t") (param (ref func)))
+     * )
+     */
+    let m = new WebAssembly.Instance(module('\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x06\x01\x60\x01\x64\x70\x00\x0d\x03\x01\x00\x00\x07\x05\x01\x01\x74\x04\x00'));
+    assert.throws(
+      () => m.exports.t.type(),
+      TypeError,
+      "WebAssembly.Tag.prototype.type unable to produce type descriptor for the given tag"
+    )
+  }
+}
+
 testArray();
 testStruct();
 testI31();
@@ -644,3 +755,4 @@ testCastFailure();
 testGlobal();
 testTable();
 testImport();
+testTag();
