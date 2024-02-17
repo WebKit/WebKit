@@ -37,6 +37,7 @@
 #import <mach/task.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/NSKeyedUnarchiverSPI.h>
+#import <pal/spi/cocoa/NotifySPI.h>
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/cocoa/SoftLinking.h>
@@ -57,6 +58,9 @@
 SOFT_LINK_LIBRARY_OPTIONAL(libAccessibility)
 SOFT_LINK_OPTIONAL(libAccessibility, _AXSUpdateWebAccessibilitySettings, void, (), ());
 #endif
+
+SOFT_LINK_SYSTEM_LIBRARY(libsystem_notify)
+SOFT_LINK_OPTIONAL(libsystem_notify, notify_set_options, void, __cdecl, (uint32_t));
 
 namespace WebKit {
 
@@ -288,5 +292,21 @@ void AuxiliaryProcess::consumeAudioComponentRegistrations(const IPC::SharedBuffe
         RELEASE_LOG_ERROR(Process, "Could not apply AudioComponent registrations, err(%ld)", static_cast<long>(err));
 }
 #endif
+
+void AuxiliaryProcess::setNotifyOptions()
+{
+    uint32_t opts = 0;
+#if ENABLE(NOTIFY_FILTERING)
+    opts |= NOTIFY_OPT_DISPATCH | NOTIFY_OPT_REGEN | NOTIFY_OPT_FILTERED;
+#endif
+#if ENABLE(NOTIFY_BLOCKING)
+    opts |= NOTIFY_OPT_LOOPBACK;
+#endif
+    if (!opts)
+        return;
+    if (!notify_set_optionsPtr())
+        return
+    notify_set_optionsPtr()(opts);
+}
 
 } // namespace WebKit

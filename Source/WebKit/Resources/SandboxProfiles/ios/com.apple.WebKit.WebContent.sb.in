@@ -517,18 +517,20 @@
 (allow ipc-posix-shm-read*
     (ipc-posix-name "apple.shm.notification_center"))
 
-(with-filter (webcontent-process-launched)
-    (apply-message-filter
-        (deny mach-message-send)
-        (deny mach-message-send (with no-report) (message-number 1023))
-        (allow mach-message-send (with telemetry-backtrace) (notifyd-message-numbers))))
-
+#if ENABLE(NOTIFY_BLOCKING)
 (with-filter (state-flag "EnableExperimentalSandbox")
     (allow mach-lookup (global-name "com.apple.system.notification_center")
         (apply-message-filter
             (deny mach-message-send)
             (deny mach-message-send (with no-report) (message-number 1023))
-            (allow mach-message-send (with report) (with telemetry) (notifyd-message-numbers)))))
+            (deny mach-message-send (with telemetry-backtrace) (notifyd-message-numbers)))))
+(with-filter (require-not (state-flag "EnableExperimentalSandbox"))
+    (allow mach-lookup (global-name "com.apple.system.notification_center")
+        (apply-message-filter
+            (deny mach-message-send)
+            (deny mach-message-send (with no-report) (message-number 1023))
+            (allow mach-message-send (with report) (with telemetry-backtrace) (notifyd-message-numbers)))))
+#endif
 
 (managed-configuration-read-public)
 

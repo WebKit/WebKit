@@ -42,7 +42,6 @@
 #import <pal/crypto/CryptoDigest.h>
 #import <pal/spi/cocoa/CoreServicesSPI.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
-#import <pal/spi/cocoa/NotifySPI.h>
 #import <pal/spi/mac/QuarantineSPI.h>
 #import <pwd.h>
 #import <stdlib.h>
@@ -69,11 +68,6 @@
 SOFT_LINK_SYSTEM_LIBRARY(libsystem_info)
 SOFT_LINK_OPTIONAL(libsystem_info, mbr_close_connections, int, (), ());
 SOFT_LINK_OPTIONAL(libsystem_info, lookup_close_connections, int, (), ());
-
-#if ENABLE(NOTIFY_FILTERING)
-SOFT_LINK_SYSTEM_LIBRARY(libsystem_notify)
-SOFT_LINK_OPTIONAL(libsystem_notify, notify_set_options, void, __cdecl, (uint32_t));
-#endif
 
 SOFT_LINK_FRAMEWORK_IN_UMBRELLA(ApplicationServices, HIServices)
 SOFT_LINK_OPTIONAL(HIServices, HIS_XPC_ResetMessageConnection, void, (), ())
@@ -189,14 +183,6 @@ static OSStatus enableSandboxStyleFileQuarantine()
     return qtn_proc_apply_to_self(quarantineProperties);
 #else
     return false;
-#endif
-}
-
-static void setNotifyOptions()
-{
-#if ENABLE(NOTIFY_FILTERING)
-    if (notify_set_optionsPtr())
-        notify_set_optionsPtr()(NOTIFY_OPT_DISPATCH | NOTIFY_OPT_REGEN | NOTIFY_OPT_FILTERED);
 #endif
 }
 
@@ -520,7 +506,7 @@ static bool tryApplyCachedSandbox(const SandboxInfo& info)
     ASSERT(static_cast<void *>(sandboxDataPtr + profile.size) <= static_cast<void *>(cachedSandboxContents.data() + cachedSandboxContents.size()));
     profile.data = sandboxDataPtr;
 
-    setNotifyOptions();
+    AuxiliaryProcess::setNotifyOptions();
 
     if (sandbox_apply(&profile)) {
         WTFLogAlways("%s: Could not apply cached sandbox: %s\n", getprogname(), safeStrerror(errno).data());
@@ -561,7 +547,7 @@ static bool compileAndApplySandboxSlowCase(const String& profileOrProfilePath, b
     CString temp = isProfilePath ? FileSystem::fileSystemRepresentation(profileOrProfilePath) : profileOrProfilePath.utf8();
     uint64_t flags = isProfilePath ? SANDBOX_NAMED_EXTERNAL : 0;
 
-    setNotifyOptions();
+    AuxiliaryProcess::setNotifyOptions();
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (sandbox_init_with_parameters(temp.data(), flags, parameters.namedParameterArray(), &errorBuf)) {
@@ -624,7 +610,7 @@ static bool applySandbox(const AuxiliaryProcessInitializationParameters& paramet
     if (!sandboxProfile)
         return compileAndApplySandboxSlowCase(profileOrProfilePath, isProfilePath, sandboxInitializationParameters);
 
-    setNotifyOptions();
+    AuxiliaryProcess::setNotifyOptions();
     
     if (sandbox_apply(sandboxProfile.get())) {
         WTFLogAlways("%s: Could not apply compiled sandbox: %s\n", getprogname(), safeStrerror(errno).data());
