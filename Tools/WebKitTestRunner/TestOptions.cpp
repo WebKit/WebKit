@@ -119,7 +119,6 @@ const TestFeatures& TestOptions::defaults()
             { "PageVisibilityBasedProcessSuppressionEnabled", false },
             { "PeerConnectionVideoScalingAdaptationDisabled", true },
             { "PDFJSViewerEnabled", false },
-            { "PluginsEnabled", true },
             { "PushAPIEnabled", true },
             { "RequiresUserGestureForAudioPlayback", false },
             { "RequiresUserGestureForMediaPlayback", false },

@@ -879,12 +879,11 @@ public:
 
 - (BOOL)arePlugInsEnabled
 {
-    return [self _boolValueForKey: WebKitPluginsEnabledPreferenceKey];
+    return NO;
 }
 
 - (void)setPlugInsEnabled:(BOOL)flag
 {
-    [self _setBoolValue: flag forKey: WebKitPluginsEnabledPreferenceKey];
 }
 
 - (BOOL)allowsAnimatedImages

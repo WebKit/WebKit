@@ -1697,8 +1697,7 @@ ObjectContentType WebLocalFrameLoaderClient::objectContentType(const URL& url, c
         return ObjectContentType::Image;
 
     if (RefPtr webPage = m_frame->page()) {
-        auto allowedPluginTypes = webFrame().coreLocalFrame()->arePluginsEnabled()
-            ? PluginData::AllPlugins : PluginData::OnlyApplicationPlugins;
+        auto allowedPluginTypes = PluginData::OnlyApplicationPlugins;
         if (webPage->corePage()->pluginData().supportsMimeType(mimeType, allowedPluginTypes))
             return ObjectContentType::PlugIn;
     }

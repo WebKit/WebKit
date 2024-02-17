@@ -75,7 +75,6 @@ TEST(WebKit, WKPreferencesDefaults)
     EXPECT_TRUE(WKPreferencesGetJavaScriptEnabled(preference));
     EXPECT_TRUE(WKPreferencesGetLoadsImagesAutomatically(preference));
     EXPECT_TRUE(WKPreferencesGetLocalStorageEnabled(preference));
-    EXPECT_TRUE(WKPreferencesGetPluginsEnabled(preference));
     EXPECT_FALSE(WKPreferencesGetShouldPrintBackgrounds(preference));
     EXPECT_TRUE(WKPreferencesGetJavaScriptCanOpenWindowsAutomatically(preference));
     EXPECT_TRUE(WKPreferencesGetHyperlinkAuditingEnabled(preference));

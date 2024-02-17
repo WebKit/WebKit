@@ -51,7 +51,6 @@ Ref<WebPreferences> WebPreferences::createWithLegacyDefaults(const String& ident
     auto preferences = WebPreferences::create(identifier, keyPrefix, globalDebugKeyPrefix);
     // FIXME: The registerDefault...ValueForKey machinery is unnecessarily heavyweight and complicated.
     // We can just compute different defaults for modern and legacy APIs in WebPreferencesDefinitions.h macros.
-    preferences->registerDefaultBoolValueForKey(WebPreferencesKey::pluginsEnabledKey(), true);
     preferences->registerDefaultUInt32ValueForKey(WebPreferencesKey::storageBlockingPolicyKey(), static_cast<uint32_t>(WebCore::StorageBlockingPolicy::AllowAll));
     return preferences;
 }

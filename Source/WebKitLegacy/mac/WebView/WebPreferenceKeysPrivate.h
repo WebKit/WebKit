@@ -57,7 +57,6 @@
 #define WebKitAllowTopNavigationToDataURLsPreferenceKey @"WebKitAllowTopNavigationToDataURLs"
 #define WebKitNeedsStorageAccessFromFileURLsQuirkKey @"WebKitNeedsStorageAccessFromFileURLsQuirk"
 #define WebKitJavaScriptCanOpenWindowsAutomaticallyPreferenceKey @"WebKitJavaScriptCanOpenWindowsAutomatically"
-#define WebKitPluginsEnabledPreferenceKey @"WebKitPluginsEnabled"
 #define WebKitDatabasesEnabledPreferenceKey @"WebKitDatabasesEnabledPreferenceKey"
 #define WebKitLocalStorageEnabledPreferenceKey @"WebKitLocalStorageEnabledPreferenceKey"
 #define WebKitAllowAnimatedImagesPreferenceKey @"WebKitAllowAnimatedImagesPreferenceKey"

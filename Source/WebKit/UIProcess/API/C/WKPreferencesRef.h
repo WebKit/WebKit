@@ -95,9 +95,9 @@ WK_EXPORT bool WKPreferencesGetDatabasesEnabled(WKPreferencesRef preferences);
 WK_EXPORT void WKPreferencesSetXSSAuditorEnabled(WKPreferencesRef preferences, bool xssAuditorEnabled) WK_C_API_DEPRECATED;
 WK_EXPORT bool WKPreferencesGetXSSAuditorEnabled(WKPreferencesRef preferences) WK_C_API_DEPRECATED;
 
-// Defaults to true.
-WK_EXPORT void WKPreferencesSetPluginsEnabled(WKPreferencesRef preferences, bool pluginsEnabled);
-WK_EXPORT bool WKPreferencesGetPluginsEnabled(WKPreferencesRef preferences);
+// Defaults to false.
+WK_EXPORT void WKPreferencesSetPluginsEnabled(WKPreferencesRef preferences, bool pluginsEnabled) WK_C_API_DEPRECATED;
+WK_EXPORT bool WKPreferencesGetPluginsEnabled(WKPreferencesRef preferences) WK_C_API_DEPRECATED;
 
 // Deprecated; Does nothing, always returns false.
 WK_EXPORT void WKPreferencesSetJavaEnabled(WKPreferencesRef preferences, bool javaEnabled) WK_C_API_DEPRECATED;

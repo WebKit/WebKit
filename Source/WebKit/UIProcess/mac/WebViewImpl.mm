@@ -1159,7 +1159,7 @@ WebViewImpl::WebViewImpl(NSView <WebViewImplDelegate> *view, WKWebView *outerWeb
     : m_view(view)
     , m_pageClient(makeUniqueWithoutRefCountedCheck<PageClientImpl>(view, outerWebView))
     , m_page(processPool.createWebPage(*m_pageClient, WTFMove(configuration)))
-    , m_needsViewFrameInWindowCoordinates(m_page->preferences().pluginsEnabled())
+    , m_needsViewFrameInWindowCoordinates(false)
     , m_intrinsicContentSize(CGSizeMake(NSViewNoIntrinsicMetric, NSViewNoIntrinsicMetric))
     , m_layoutStrategy([WKViewLayoutStrategy layoutStrategyWithPage:m_page.get() view:view viewImpl:*this mode:kWKLayoutModeViewSize])
     , m_undoTarget(adoptNS([[WKEditorUndoTarget alloc] init]))
@@ -3296,7 +3296,7 @@ void WebViewImpl::handleAcceptedCandidate(NSTextCheckingResult *acceptedCandidat
 
 void WebViewImpl::preferencesDidChange()
 {
-    BOOL needsViewFrameInWindowCoordinates = m_page->preferences().pluginsEnabled();
+    BOOL needsViewFrameInWindowCoordinates = false;
 
     if (!!needsViewFrameInWindowCoordinates == !!m_needsViewFrameInWindowCoordinates)
         return;

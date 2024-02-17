@@ -121,11 +121,6 @@ RenderWidget* Frame::ownerRenderer() const
     return downcast<RenderWidget>(object);
 }
 
-bool Frame::arePluginsEnabled()
-{
-    return settings().arePluginsEnabled();
-}
-
 RefPtr<FrameView> Frame::protectedVirtualView() const
 {
     return virtualView();

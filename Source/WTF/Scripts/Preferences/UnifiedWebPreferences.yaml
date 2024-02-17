@@ -5320,19 +5320,6 @@ PitchCorrectionAlgorithm:
     WebCore:
       default: MediaPlayerEnums::PitchCorrectionAlgorithm::BestAllAround
 
-PluginsEnabled:
-  type: bool
-  status: embedder
-  webcoreGetter: arePluginsEnabled
-  webcoreOnChange: pluginsEnabledChanged
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-    WebCore:
-      default: false
-
 PopoverAttributeEnabled:
   type: bool
   status: stable

@@ -823,11 +823,6 @@ void HTMLElement::setTranslate(bool enable)
 
 bool HTMLElement::rendererIsEverNeeded()
 {
-    if (hasTagName(noembedTag)) {
-        RefPtr frame { document().frame() };
-        if (frame && frame->arePluginsEnabled())
-            return false;
-    }
     return StyledElement::rendererIsEverNeeded();
 }
 

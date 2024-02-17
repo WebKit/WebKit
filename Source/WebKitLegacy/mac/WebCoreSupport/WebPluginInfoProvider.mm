@@ -66,11 +66,7 @@ Vector<WebCore::PluginInfo> WebPluginInfoProvider::pluginInfo(WebCore::Page& pag
     if (!localMainFrame)
         return plugins;
 
-    if (!localMainFrame->arePluginsEnabled())
-        return plugins;
-
-    for (WebPluginPackage *plugin in [WebPluginDatabase sharedDatabase].plugins)
-        plugins.append(plugin.pluginInfo);
+    return plugins;
 
     END_BLOCK_OBJC_EXCEPTIONS
 

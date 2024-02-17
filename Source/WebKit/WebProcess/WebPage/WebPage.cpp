@@ -7188,9 +7188,6 @@ bool WebPage::canShowMIMEType(const String& mimeType, const Function<bool(const 
     if (!mimeType.isNull() && m_mimeTypesWithCustomContentProviders.contains(mimeType))
         return true;
 
-    if (corePage()->mainFrame().arePluginsEnabled() && pluginsSupport(mimeType, PluginData::AllPlugins))
-        return true;
-
     // We can use application plugins even if plugins aren't enabled.
     if (pluginsSupport(mimeType, PluginData::OnlyApplicationPlugins))
         return true;

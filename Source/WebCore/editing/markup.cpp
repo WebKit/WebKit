@@ -196,7 +196,6 @@ Ref<Page> createPageForSanitizingWebContent()
 #endif
     page->settings().setScriptEnabled(false);
     page->settings().setHTMLParserScriptingFlagPolicy(HTMLParserScriptingFlagPolicy::Enabled);
-    page->settings().setPluginsEnabled(false);
     page->settings().setAcceleratedCompositingEnabled(false);
     page->settings().setLinkPreloadEnabled(false);
 

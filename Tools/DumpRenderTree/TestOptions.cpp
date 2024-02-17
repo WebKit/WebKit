@@ -160,7 +160,6 @@ const TestFeatures& TestOptions::defaults()
             { "NeedsStorageAccessFromFileURLsQuirk", false },
             { "OverscrollBehaviorEnabled", true },
             { "PerformanceNavigationTimingAPIEnabled", true },
-            { "PluginsEnabled", true },
             { "PrivateClickMeasurementEnabled", false },
             { "RequestIdleCallbackEnabled", false },
             { "SelectionAcrossShadowBoundariesEnabled", true },

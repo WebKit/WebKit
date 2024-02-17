@@ -177,14 +177,13 @@ bool WKPreferencesGetDatabasesEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->databasesEnabled();
 }
 
-void WKPreferencesSetPluginsEnabled(WKPreferencesRef preferencesRef, bool pluginsEnabled)
+void WKPreferencesSetPluginsEnabled(WKPreferencesRef, bool)
 {
-    toImpl(preferencesRef)->setPluginsEnabled(pluginsEnabled);
 }
 
-bool WKPreferencesGetPluginsEnabled(WKPreferencesRef preferencesRef)
+bool WKPreferencesGetPluginsEnabled(WKPreferencesRef)
 {
-    return toImpl(preferencesRef)->pluginsEnabled();
+    return false;
 }
 
 void WKPreferencesSetJavaScriptCanOpenWindowsAutomatically(WKPreferencesRef preferencesRef, bool javaScriptCanOpenWindowsAutomatically)

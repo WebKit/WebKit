@@ -38,7 +38,6 @@ TEST(Copying, WKPreferences)
     [a setJavaScriptCanOpenWindowsAutomatically:YES];
 #else
     [a setJavaScriptCanOpenWindowsAutomatically:NO];
-    [a setPlugInsEnabled:YES];
     [a setTabFocusesLinks:YES];
 #endif
 
@@ -50,7 +49,6 @@ TEST(Copying, WKPreferences)
     EXPECT_EQ([a shouldPrintBackgrounds], [b shouldPrintBackgrounds]);
 #if PLATFORM(MAC)
     EXPECT_EQ([a javaEnabled], [b javaEnabled]);
-    EXPECT_EQ([a plugInsEnabled], NO);
     EXPECT_EQ([a tabFocusesLinks], [b tabFocusesLinks]);
 #endif
 
@@ -62,7 +60,6 @@ TEST(Copying, WKPreferences)
     [b setJavaScriptCanOpenWindowsAutomatically:NO];
 #else
     [b setJavaScriptCanOpenWindowsAutomatically:YES];
-    [b setPlugInsEnabled:NO];
     [b setTabFocusesLinks:NO];
 #endif
 
@@ -72,7 +69,6 @@ TEST(Copying, WKPreferences)
     EXPECT_NE([a javaScriptCanOpenWindowsAutomatically], [b javaScriptCanOpenWindowsAutomatically]);
     EXPECT_NE([a shouldPrintBackgrounds], [b shouldPrintBackgrounds]);
 #if PLATFORM(MAC)
-    EXPECT_EQ([a plugInsEnabled], [b plugInsEnabled]);
     EXPECT_NE([a tabFocusesLinks], [b tabFocusesLinks]);
 #endif
 

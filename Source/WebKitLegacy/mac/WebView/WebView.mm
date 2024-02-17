@@ -2173,7 +2173,7 @@ static NSMutableSet *knownPluginMIMETypes()
 
 - (BOOL)_viewClass:(Class *)vClass andRepresentationClass:(Class *)rClass forMIMEType:(NSString *)MIMEType
 {
-    if ([[self class] _viewClass:vClass andRepresentationClass:rClass forMIMEType:MIMEType allowingPlugins:[_private->preferences arePlugInsEnabled]])
+    if ([[self class] _viewClass:vClass andRepresentationClass:rClass forMIMEType:MIMEType allowingPlugins:NO])
         return YES;
 #if !PLATFORM(IOS_FAMILY)
     if (_private->pluginDatabase) {
@@ -5116,40 +5116,16 @@ IGNORE_WARNINGS_END
 
 - (BOOL)_canShowMIMEType:(NSString *)MIMEType
 {
-    return [[self class] _canShowMIMEType:MIMEType allowingPlugins:[_private->preferences arePlugInsEnabled]];
+    return [[self class] _canShowMIMEType:MIMEType allowingPlugins:NO];
 }
 
 - (WebBasePluginPackage *)_pluginForMIMEType:(NSString *)MIMEType
 {
-    if (![_private->preferences arePlugInsEnabled])
-        return nil;
-
-    WebBasePluginPackage *pluginPackage = [[WebPluginDatabase sharedDatabase] pluginForMIMEType:MIMEType];
-    if (pluginPackage)
-        return pluginPackage;
-
-#if !PLATFORM(IOS_FAMILY)
-    if (_private->pluginDatabase)
-        return [_private->pluginDatabase pluginForMIMEType:MIMEType];
-#endif
-
     return nil;
 }
 
 - (WebBasePluginPackage *)_pluginForExtension:(NSString *)extension
 {
-    if (![_private->preferences arePlugInsEnabled])
-        return nil;
-
-    WebBasePluginPackage *pluginPackage = [[WebPluginDatabase sharedDatabase] pluginForExtension:extension];
-    if (pluginPackage)
-        return pluginPackage;
-
-#if !PLATFORM(IOS_FAMILY)
-    if (_private->pluginDatabase)
-        return [_private->pluginDatabase pluginForExtension:extension];
-#endif
-
     return nil;
 }
 
@@ -5176,17 +5152,6 @@ IGNORE_WARNINGS_END
 
 - (BOOL)_isMIMETypeRegisteredAsPlugin:(NSString *)MIMEType
 {
-    if (![_private->preferences arePlugInsEnabled])
-        return NO;
-
-    if ([[WebPluginDatabase sharedDatabase] isMIMETypeRegistered:MIMEType])
-        return YES;
-
-#if !PLATFORM(IOS_FAMILY)
-    if (_private->pluginDatabase && [_private->pluginDatabase isMIMETypeRegistered:MIMEType])
-        return YES;
-#endif
-
     return NO;
 }
 

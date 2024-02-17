@@ -481,7 +481,6 @@ void WebInspectorFrontendClient::save(Vector<InspectorFrontendClient::SaveData>&
     [preferences setLoadsImagesAutomatically:YES];
     [preferences setMinimumFontSize:0];
     [preferences setMinimumLogicalFontSize:9];
-    [preferences setPlugInsEnabled:NO];
     [preferences setTabsToLinks:NO];
     [preferences setUserStyleSheetEnabled:NO];
     [preferences setAllowFileAccessFromFileURLs:YES];
