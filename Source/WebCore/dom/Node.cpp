@@ -1026,7 +1026,7 @@ unsigned Node::computeNodeIndex() const
 }
 
 template<unsigned type>
-bool shouldInvalidateNodeListCachesForAttr(const unsigned nodeListCounts[], const QualifiedName& attrName)
+bool shouldInvalidateNodeListCachesForAttr(const unsigned* nodeListCounts, const QualifiedName& attrName)
 {
     if constexpr (type >= numNodeListInvalidationTypes)
         return false;
@@ -1039,15 +1039,13 @@ bool shouldInvalidateNodeListCachesForAttr(const unsigned nodeListCounts[], cons
 
 inline bool Document::shouldInvalidateNodeListAndCollectionCaches() const
 {
-    for (int type = 0; type < numNodeListInvalidationTypes; ++type) {
-        if (m_nodeListAndCollectionCounts[type])
-            return true;
-    }
-    return false;
+    return m_nodeListAndCollectionCountForAttributeChangeInvalidation || m_nodeListAndCollectionCounts[static_cast<unsigned>(NodeListInvalidationType::DoNotInvalidateOnAttributeChanges)];
 }
 
 inline bool Document::shouldInvalidateNodeListAndCollectionCachesForAttribute(const QualifiedName& attrName) const
 {
+    if (!m_nodeListAndCollectionCountForAttributeChangeInvalidation)
+        return false;
     return shouldInvalidateNodeListCachesForAttr<enumToUnderlyingType(NodeListInvalidationType::DoNotInvalidateOnAttributeChanges) + 1>(m_nodeListAndCollectionCounts, attrName);
 }
 

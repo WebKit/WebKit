@@ -5735,7 +5735,10 @@ void Document::setCSSTarget(Element* newTarget)
 
 void Document::registerNodeListForInvalidation(LiveNodeList& list)
 {
-    m_nodeListAndCollectionCounts[static_cast<unsigned>(list.invalidationType())]++;
+    unsigned index = static_cast<unsigned>(list.invalidationType());
+    ++m_nodeListAndCollectionCounts[index];
+    if (index != static_cast<unsigned>(NodeListInvalidationType::DoNotInvalidateOnAttributeChanges))
+        ++m_nodeListAndCollectionCountForAttributeChangeInvalidation;
     if (!list.isRootedAtTreeScope())
         return;
     ASSERT(!list.isRegisteredForInvalidationAtDocument());
@@ -5745,7 +5748,10 @@ void Document::registerNodeListForInvalidation(LiveNodeList& list)
 
 void Document::unregisterNodeListForInvalidation(LiveNodeList& list)
 {
-    m_nodeListAndCollectionCounts[static_cast<unsigned>(list.invalidationType())]--;
+    unsigned index = static_cast<unsigned>(list.invalidationType());
+    --m_nodeListAndCollectionCounts[index];
+    if (index != static_cast<unsigned>(NodeListInvalidationType::DoNotInvalidateOnAttributeChanges))
+        --m_nodeListAndCollectionCountForAttributeChangeInvalidation;
     if (!list.isRegisteredForInvalidationAtDocument())
         return;
 
@@ -5756,15 +5762,21 @@ void Document::unregisterNodeListForInvalidation(LiveNodeList& list)
 
 void Document::registerCollection(HTMLCollection& collection)
 {
-    m_nodeListAndCollectionCounts[static_cast<unsigned>(collection.invalidationType())]++;
+    unsigned index = static_cast<unsigned>(collection.invalidationType());
+    ++m_nodeListAndCollectionCounts[index];
+    if (index != static_cast<unsigned>(NodeListInvalidationType::DoNotInvalidateOnAttributeChanges))
+        ++m_nodeListAndCollectionCountForAttributeChangeInvalidation;
     if (collection.isRootedAtTreeScope())
         m_collectionsInvalidatedAtDocument.add(&collection);
 }
 
 void Document::unregisterCollection(HTMLCollection& collection)
 {
-    ASSERT(m_nodeListAndCollectionCounts[static_cast<unsigned>(collection.invalidationType())]);
-    m_nodeListAndCollectionCounts[static_cast<unsigned>(collection.invalidationType())]--;
+    unsigned index = static_cast<unsigned>(collection.invalidationType());
+    ASSERT(m_nodeListAndCollectionCounts[index]);
+    --m_nodeListAndCollectionCounts[index];
+    if (index != static_cast<unsigned>(NodeListInvalidationType::DoNotInvalidateOnAttributeChanges))
+        --m_nodeListAndCollectionCountForAttributeChangeInvalidation;
     if (!collection.isRootedAtTreeScope())
         return;
 
@@ -5774,14 +5786,18 @@ void Document::unregisterCollection(HTMLCollection& collection)
 void Document::collectionCachedIdNameMap(const HTMLCollection& collection)
 {
     ASSERT_UNUSED(collection, collection.hasNamedElementCache());
-    m_nodeListAndCollectionCounts[static_cast<unsigned>(NodeListInvalidationType::InvalidateOnIdNameAttrChange)]++;
+    unsigned index = static_cast<unsigned>(NodeListInvalidationType::InvalidateOnIdNameAttrChange);
+    ++m_nodeListAndCollectionCounts[index];
+    ++m_nodeListAndCollectionCountForAttributeChangeInvalidation;
 }
 
 void Document::collectionWillClearIdNameMap(const HTMLCollection& collection)
 {
+    unsigned index = static_cast<unsigned>(NodeListInvalidationType::InvalidateOnIdNameAttrChange);
     ASSERT_UNUSED(collection, collection.hasNamedElementCache());
-    ASSERT(m_nodeListAndCollectionCounts[static_cast<unsigned>(NodeListInvalidationType::InvalidateOnIdNameAttrChange)]);
-    m_nodeListAndCollectionCounts[static_cast<unsigned>(NodeListInvalidationType::InvalidateOnIdNameAttrChange)]--;
+    ASSERT(m_nodeListAndCollectionCounts[index]);
+    --m_nodeListAndCollectionCounts[index];
+    --m_nodeListAndCollectionCountForAttributeChangeInvalidation;
 }
 
 void Document::attachNodeIterator(NodeIterator& iterator)

@@ -124,19 +124,38 @@ static auto accessVisibleNamedProperty(JSC::JSGlobalObject& lexicalGlobalObject,
     if (propertyName.isSymbol())
         return std::nullopt;
 
+    auto& vm = lexicalGlobalObject.vm();
+    JSC::PropertySlot slot { &thisObject, JSC::PropertySlot::InternalMethodType::VMInquiry, &vm };
+
+    if constexpr (overrideBuiltins == LegacyOverrideBuiltIns::No) {
+        // We have a fast path for "length" here. Many interfaces implementing this have "length" property on its [[Prototype]].
+        // Because VMInquiry is non-observable, let's first try this and skip itemAccessor for "length".
+        if (propertyName == vm.propertyNames->length) {
+            if (JSC::JSObject::getOwnPropertySlot(&thisObject, &lexicalGlobalObject, propertyName, slot))
+                return std::nullopt;
+
+            auto prototype = thisObject.getPrototypeDirect();
+            if (prototype.isObject() && JSC::asObject(prototype)->getPropertySlot(&lexicalGlobalObject, propertyName, slot))
+                return std::nullopt;
+
+            return itemAccessor(thisObject, propertyName);
+        }
+    }
+
     // 1. If P is not a supported property name of O, then return false.
     auto result = itemAccessor(thisObject, propertyName);
     if (!result)
         return std::nullopt;
 
     // 2. If O has an own property named P, then return false.
-    JSC::PropertySlot slot { &thisObject, JSC::PropertySlot::InternalMethodType::VMInquiry, &lexicalGlobalObject.vm() };
     if (JSC::JSObject::getOwnPropertySlot(&thisObject, &lexicalGlobalObject, propertyName, slot))
         return std::nullopt;
 
     // 3. If O implements an interface that has the [LegacyOverrideBuiltIns] extended attribute, then return true.
-    if (overrideBuiltins == LegacyOverrideBuiltIns::Yes && !worldForDOMObject(thisObject).shouldDisableLegacyOverrideBuiltInsBehavior())
-        return result;
+    if constexpr (overrideBuiltins == LegacyOverrideBuiltIns::Yes) {
+        if (!worldForDOMObject(thisObject).shouldDisableLegacyOverrideBuiltInsBehavior())
+            return result;
+    }
 
     // 4. Initialize prototype to be the value of the internal [[Prototype]] property of O.
     // 5. While prototype is not null:
