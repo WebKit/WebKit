@@ -1041,12 +1041,12 @@ Node::InsertedIntoAncestorResult SVGElement::insertedIntoAncestor(InsertionType 
     else if (RefPtr parentElement = dynamicDowncast<SVGElement>(parentNode()); parentElement && &parentOfInsertedTree == parentNode())
         parentElement->updateRelativeLengthsInformationForChild(hasRelativeLengths(), *this);
 
+    hideNonce();
+
     if (needsPendingResourceHandling() && insertionType.connectedToDocument && !isInShadowTree()) {
         if (treeScopeForSVGReferences().isIdOfPendingSVGResource(getIdAttribute()))
             return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
     }
-
-    hideNonce();
 
     return InsertedIntoAncestorResult::Done;
 }
