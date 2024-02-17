@@ -30,7 +30,6 @@
 #if ENABLE(VIDEO) && USE(MEDIA_FOUNDATION)
 
 #include "CachedResourceLoader.h"
-#include "CairoOperations.h"
 #include "GraphicsContext.h"
 #include "HWndDC.h"
 #include "HostWindow.h"
@@ -2794,53 +2793,6 @@ HRESULT MediaPlayerPrivateMediaFoundation::Direct3DPresenter::presentSample(IMFS
         }
     }
     return hr;
-}
-
-void MediaPlayerPrivateMediaFoundation::Direct3DPresenter::paintCurrentFrame(WebCore::GraphicsContext& context, const WebCore::FloatRect& destRect)
-{
-    UINT width = m_destRect.right - m_destRect.left;
-    UINT height = m_destRect.bottom - m_destRect.top;
-
-    if (!width || !height)
-        return;
-
-    Locker locker { m_lock };
-
-    if (!m_memSurface)
-        return;
-
-    D3DLOCKED_RECT lockedRect;
-    if (SUCCEEDED(m_memSurface->LockRect(&lockedRect, nullptr, D3DLOCK_READONLY))) {
-        void* data = lockedRect.pBits;
-        int pitch = lockedRect.Pitch;
-        D3DFORMAT format = D3DFMT_UNKNOWN;
-        D3DSURFACE_DESC desc;
-        if (SUCCEEDED(m_memSurface->GetDesc(&desc)))
-            format = desc.Format;
-
-        cairo_format_t cairoFormat = CAIRO_FORMAT_INVALID;
-
-        switch (format) {
-        case D3DFMT_A8R8G8B8:
-            cairoFormat = CAIRO_FORMAT_ARGB32;
-            break;
-        case D3DFMT_X8R8G8B8:
-            cairoFormat = CAIRO_FORMAT_RGB24;
-            break;
-        default:
-            break;
-        }
-
-        ASSERT(cairoFormat != CAIRO_FORMAT_INVALID);
-
-        if (cairoFormat != CAIRO_FORMAT_INVALID) {
-            auto surface = adoptRef(cairo_image_surface_create_for_data(static_cast<unsigned char*>(data), cairoFormat, width, height, pitch));
-            auto image = NativeImage::create(WTFMove(surface));
-            FloatRect srcRect(0, 0, width, height);
-            context.drawNativeImage(*image, destRect, srcRect);
-        }
-        m_memSurface->UnlockRect();
-    }
 }
 
 HRESULT MediaPlayerPrivateMediaFoundation::Direct3DPresenter::initializeD3D()

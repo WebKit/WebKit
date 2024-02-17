@@ -29,11 +29,8 @@
 #if PLATFORM(WIN)
 
 #include "BitmapImage.h"
-#include "GraphicsContextCairo.h"
 #include "SharedBuffer.h"
 #include "WebCoreBundleWin.h"
-#include <cairo-win32.h>
-#include <cairo.h>
 #include <windows.h>
 #include <wtf/text/WTFString.h>
 
@@ -49,24 +46,6 @@ Ref<Image> ImageAdapter::loadPlatformResource(const char *name)
     return img;
 }
 
-RefPtr<NativeImage> ImageAdapter::nativeImageOfHBITMAP(HBITMAP bmp)
-{
-    DIBSECTION dibSection;
-    if (!GetObject(bmp, sizeof(DIBSECTION), &dibSection))
-        return nullptr;
-
-    ASSERT(dibSection.dsBm.bmBitsPixel == 32);
-    if (dibSection.dsBm.bmBitsPixel != 32)
-        return nullptr;
-
-    ASSERT(dibSection.dsBm.bmBits);
-    if (!dibSection.dsBm.bmBits)
-        return nullptr;
-
-    auto surface = adoptRef(cairo_win32_surface_create_with_dib(CAIRO_FORMAT_ARGB32, dibSection.dsBm.bmWidth, dibSection.dsBm.bmHeight));
-    return NativeImage::create(WTFMove(surface));
-}
-
 void ImageAdapter::invalidate()
 {
 }
@@ -74,39 +53,6 @@ void ImageAdapter::invalidate()
 bool ImageAdapter::getHBITMAP(HBITMAP bmp)
 {
     return getHBITMAPOfSize(bmp, 0);
-}
-
-bool ImageAdapter::getHBITMAPOfSize(HBITMAP bmp, const IntSize* size)
-{
-    ASSERT(bmp);
-
-    BITMAP bmpInfo;
-    GetObject(bmp, sizeof(BITMAP), &bmpInfo);
-
-    // If this is a 32bpp bitmap, which it always should be, we'll clear it so alpha-wise it will be visible
-    if (bmpInfo.bmBitsPixel == 32 && bmpInfo.bmBits) {
-        int bufferSize = bmpInfo.bmWidthBytes * bmpInfo.bmHeight;
-        memset(bmpInfo.bmBits, 255, bufferSize);
-    }
-
-    unsigned char* bmpdata = (unsigned char*)bmpInfo.bmBits + bmpInfo.bmWidthBytes*(bmpInfo.bmHeight - 1);
-
-    auto platformImage = adoptRef(cairo_image_surface_create_for_data(bmpdata, CAIRO_FORMAT_ARGB32, bmpInfo.bmWidth, bmpInfo.bmHeight, -bmpInfo.bmWidthBytes));
-
-    GraphicsContextCairo gc(platformImage.get());
-
-    auto imageSize = image().size();
-    auto destinationRect = FloatRect(0.0f, 0.0f, bmpInfo.bmWidth, bmpInfo.bmHeight);
-
-    if (auto nativeImage = size ? nativeImageOfSize(*size) : nullptr) {
-        auto sourceRect = FloatRect { { }, *size };
-        gc.drawNativeImage(*nativeImage, destinationRect, sourceRect, { CompositeOperator::Copy });
-        return true;
-    }
-
-    auto sourceRect = FloatRect { { }, imageSize };
-    gc.drawImage(image(), destinationRect, sourceRect, { CompositeOperator::Copy });
-    return true;
 }
 
 } // namespace WebCore

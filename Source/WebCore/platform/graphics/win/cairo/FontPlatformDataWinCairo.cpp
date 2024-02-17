@@ -27,6 +27,8 @@
 #include "config.h"
 #include "FontPlatformData.h"
 
+#if PLATFORM(WIN) && USE(CAIRO)
+
 #include "HWndDC.h"
 #include "SharedBuffer.h"
 #include <cairo-dwrite.h>
@@ -90,8 +92,8 @@ void FontPlatformData::platformDataInit(HFONT font, float size, WCHAR* faceName)
 
     static cairo_font_options_t* fontOptions = nullptr;
     if (!fontOptions) {
-       fontOptions = cairo_font_options_create();
-       cairo_font_options_set_antialias(fontOptions, CAIRO_ANTIALIAS_SUBPIXEL);
+        fontOptions = cairo_font_options_create();
+        cairo_font_options_set_antialias(fontOptions, CAIRO_ANTIALIAS_SUBPIXEL);
     }
 
     m_scaledFont = adoptRef(cairo_scaled_font_create(fontFace, &sizeMatrix, &ctm, fontOptions));
@@ -119,7 +121,7 @@ FontPlatformData::FontPlatformData(GDIObject<HFONT> font, cairo_font_face_t* fon
 
     if (syntheticOblique()) {
         static const float syntheticObliqueSkew = -tanf(14 * acosf(0) / 90);
-        cairo_matrix_t skew = {1, 0, syntheticObliqueSkew, 1, 0, 0};
+        cairo_matrix_t skew = { 1, 0, syntheticObliqueSkew, 1, 0, 0 };
         cairo_matrix_multiply(&fontMatrix, &skew, &fontMatrix);
     }
 
@@ -160,4 +162,6 @@ String FontPlatformData::familyName() const
     return faceName;
 }
 
-}
+} // namespace WebCore
+
+#endif // PLATFORM(WIN) && USE(CAIRO)

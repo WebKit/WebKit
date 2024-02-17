@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -50,17 +50,17 @@ GDIObject<HBITMAP> allocImage(HDC dc, IntSize size, GraphicsContextCairo** targe
     LPVOID bits;
     auto hbmp = adoptGDIObject(::CreateDIBSection(dc, &bmpInfo, DIB_RGB_COLORS, &bits, 0, 0));
 
-    // At this point, we have a Cairo surface that points to a Windows DIB.  The DIB interprets
+    // At this point, we have a Cairo surface that points to a Windows DIB. The DIB interprets
     // with the opposite meaning of positive Y axis, so everything we draw into this cairo
     // context is going to be upside down.
     if (!targetRef)
         return hbmp;
 
     cairo_surface_t* bitmapContext = cairo_image_surface_create_for_data((unsigned char*)bits,
-                                               CAIRO_FORMAT_ARGB32,
-                                               bmpInfo.bmiHeader.biWidth,
-                                               bmpInfo.bmiHeader.biHeight,
-                                               bmpInfo.bmiHeader.biWidth * 4);
+        CAIRO_FORMAT_ARGB32,
+        bmpInfo.bmiHeader.biWidth,
+        bmpInfo.bmiHeader.biHeight,
+        bmpInfo.bmiHeader.biWidth * 4);
 
     if (!bitmapContext)
         return GDIObject<HBITMAP>();
@@ -68,7 +68,7 @@ GDIObject<HBITMAP> allocImage(HDC dc, IntSize size, GraphicsContextCairo** targe
     cairo_t* cr = cairo_create(bitmapContext);
     cairo_surface_destroy(bitmapContext);
 
-    // At this point, we have a Cairo surface that points to a Windows DIB.  The DIB interprets
+    // At this point, we have a Cairo surface that points to a Windows DIB. The DIB interprets
     // with the opposite meaning of positive Y axis, so everything we draw into this cairo
     // context is going to be upside down.
     //
@@ -90,19 +90,19 @@ static cairo_surface_t* createCairoContextFromBitmap(HBITMAP bitmap)
     GetObject(bitmap, sizeof(info), &info);
     ASSERT(info.bmBitsPixel == 32);
 
-    // At this point, we have a Cairo surface that points to a Windows BITMAP.  The BITMAP
+    // At this point, we have a Cairo surface that points to a Windows BITMAP. The BITMAP
     // has the opposite meaning of positive Y axis, so everything we draw into this cairo
     // context is going to be upside down.
     return cairo_image_surface_create_for_data((unsigned char*)info.bmBits,
-                                               CAIRO_FORMAT_ARGB32,
-                                               info.bmWidth,
-                                               info.bmHeight,
-                                               info.bmWidthBytes);
+        CAIRO_FORMAT_ARGB32,
+        info.bmWidth,
+        info.bmHeight,
+        info.bmWidthBytes);
 }
 
 DragImageRef scaleDragImage(DragImageRef imageRef, FloatSize scale)
 {
-    // FIXME: due to the way drag images are done on windows we need 
+    // FIXME: due to the way drag images are done on windows we need
     // to preprocess the alpha channel <rdar://problem/5015946>
     if (!imageRef)
         return 0;
@@ -140,7 +140,7 @@ DragImageRef scaleDragImage(DragImageRef imageRef, FloatSize scale)
 
     return hbmp.leak();
 }
-    
+
 DragImageRef createDragImageFromImage(Image* img, ImageOrientation)
 {
     HWndDC dc(0);
@@ -168,5 +168,5 @@ DragImageRef createDragImageFromImage(Image* img, ImageOrientation)
 
     return hbmp.leak();
 }
-    
+
 }

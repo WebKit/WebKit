@@ -31,10 +31,17 @@
 #include "FrameSelection.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
+#include "NotImplemented.h"
 #include "PrintContext.h"
 #include "RenderObject.h"
 
 namespace WebCore {
+
+GDIObject<HBITMAP> imageFromRect(const LocalFrame*, IntRect&)
+{
+    notImplemented();
+    return GDIObject<HBITMAP>();
+}
 
 void computePageRectsForFrame(LocalFrame* frame, const IntRect& printRect, float headerHeight, float footerHeight, float userScaleFactor, Vector<IntRect>& outPages, int& outPageHeight)
 {

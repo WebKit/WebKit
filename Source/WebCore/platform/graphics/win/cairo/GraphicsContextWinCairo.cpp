@@ -20,23 +20,23 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
 #include "GraphicsContext.h"
+
+#if PLATFORM(WIN) && USE(CAIRO)
 
 #include "AffineTransform.h"
 #include "DIBPixelData.h"
 #include "GraphicsContextCairo.h"
 #include "Path.h"
 #include "RefPtrCairo.h"
-
 #include <cairo-win32.h>
 
 namespace WebCore {
 
-#if PLATFORM(WIN)
 static RefPtr<cairo_t> createCairoContextWithHDC(HDC hdc)
 {
     // Put the HDC In advanced mode so it will honor affine transforms.
@@ -53,10 +53,10 @@ static RefPtr<cairo_t> createCairoContextWithHDC(HDC hdc)
         ASSERT(info.bmBitsPixel == 32);
 
         surface = cairo_image_surface_create_for_data((unsigned char*)info.bmBits,
-                                               CAIRO_FORMAT_ARGB32,
-                                               info.bmWidth,
-                                               info.bmHeight,
-                                               info.bmWidthBytes);
+            CAIRO_FORMAT_ARGB32,
+            info.bmWidth,
+            info.bmHeight,
+            info.bmWidthBytes);
     }
 
     auto context = adoptRef(cairo_create(surface));
@@ -74,7 +74,6 @@ GraphicsContextCairo::GraphicsContextCairo(GraphicsContextCairo* platformContext
     : GraphicsContextCairo(platformContext->cr())
 {
 }
-#endif
 
 static void setRGBABitmapAlpha(unsigned char* bytes, size_t length, unsigned char level)
 {
@@ -87,10 +86,10 @@ static void drawBitmapToContext(GraphicsContextCairo& platformContext, const DIB
     // Need to make a cairo_surface_t out of the bitmap's pixel buffer and then draw
     // it into our context.
     cairo_surface_t* surface = cairo_image_surface_create_for_data(pixelData.buffer(),
-                                                                   CAIRO_FORMAT_ARGB32,
-                                                                   pixelData.size().width(),
-                                                                   pixelData.size().height(),
-                                                                   pixelData.bytesPerRow());
+        CAIRO_FORMAT_ARGB32,
+        pixelData.size().width(),
+        pixelData.size().height(),
+        pixelData.bytesPerRow());
 
     // Flip the target surface so that when we set the srcImage as
     // the surface it will draw right-side-up.
@@ -104,7 +103,7 @@ static void drawBitmapToContext(GraphicsContextCairo& platformContext, const DIB
         cairo_paint_with_alpha(cr, platformContext.layers().last());
     else
         cairo_paint(cr);
-     
+
     // Delete all our junk.
     cairo_surface_destroy(surface);
     cairo_restore(cr);
@@ -134,4 +133,6 @@ void GraphicsContext::releaseWindowsContext(HDC hdc, const IntRect& dstRect, boo
     ::DeleteDC(hdc);
 }
 
-}
+} // namespace WebCore
+
+#endif // PLATFORM(WIN) && USE(CAIRO)

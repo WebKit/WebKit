@@ -79,4 +79,4 @@ HDC GraphicsContext::getWindowsContext(const IntRect& dstRect, bool supportAlpha
     return bitmapDC.leak();
 }
 
-}
+} // namespace WebCore

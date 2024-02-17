@@ -70,6 +70,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/win/FontWin.cpp
     platform/graphics/win/FullScreenController.cpp
     platform/graphics/win/FullScreenWindow.cpp
+    platform/graphics/win/GlyphPageTreeNodeWin.cpp
     platform/graphics/win/GraphicsContextWin.cpp
     platform/graphics/win/IconWin.cpp
     platform/graphics/win/ImageAdapterWin.cpp
@@ -200,14 +201,14 @@ endif ()
 
 if (USE_CAIRO)
     list(APPEND WebCore_SOURCES
-        page/win/FrameCairoWin.cpp
+        platform/graphics/win/cairo/FontCacheWinCairo.cpp
+        platform/graphics/win/cairo/FontCustomPlatformDataWinCairo.cpp
+        platform/graphics/win/cairo/FontPlatformDataWinCairo.cpp
+        platform/graphics/win/cairo/GraphicsContextWinCairo.cpp
+        platform/graphics/win/cairo/ImageAdapterWinCairo.cpp
+        platform/graphics/win/cairo/MediaPlayerPrivateMediaFoundationCairo.cpp
 
-        platform/graphics/win/FontPlatformDataCairoWin.cpp
-        platform/graphics/win/GlyphPageTreeNodeCairoWin.cpp
-        platform/graphics/win/GraphicsContextCairoWin.cpp
-        platform/graphics/win/SimpleFontDataCairoWin.cpp
-
-        platform/win/DragImageCairoWin.cpp
+        platform/win/cairo/DragImageWinCairo.cpp
     )
 endif ()
 
