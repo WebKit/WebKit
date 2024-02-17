@@ -43,10 +43,13 @@ OBJC_CLASS AVAsset;
 OBJC_CLASS AVSampleBufferAudioRenderer;
 OBJC_CLASS AVSampleBufferDisplayLayer;
 OBJC_CLASS AVSampleBufferRenderSynchronizer;
+OBJC_CLASS AVSampleBufferVideoRenderer;
+OBJC_PROTOCOL(WebSampleBufferVideoRendering);
 
 typedef struct OpaqueCMTimebase* CMTimebaseRef;
 typedef struct __CVBuffer *CVPixelBufferRef;
 typedef struct __CVBuffer *CVOpenGLTextureRef;
+typedef struct OpaqueFigVideoTarget *FigVideoTargetRef;
 
 namespace WebCore {
 
@@ -115,8 +118,9 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
     MediaTime currentTime() const override;
     bool currentTimeMayProgress() const override;
-    AVSampleBufferDisplayLayer* sampleBufferDisplayLayer() const { return m_sampleBufferDisplayLayer.get(); }
-    WebCoreDecompressionSession* decompressionSession() const { return m_decompressionSession.get(); }
+    AVSampleBufferDisplayLayer *sampleBufferDisplayLayer() const { return m_sampleBufferDisplayLayer.get(); }
+    WebCoreDecompressionSession *decompressionSession() const { return m_decompressionSession.get(); }
+    WebSampleBufferVideoRendering *sampleBufferVideoRenderer() const;
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     RetainPtr<PlatformLayer> createVideoFullscreenLayer() override;
@@ -156,6 +160,10 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     const Vector<ContentType>& mediaContentTypesRequiringHardwareSupport() const;
 
     void needsVideoLayerChanged();
+
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    void setVideoReceiverEndpoint(const VideoReceiverEndpoint&) final;
+#endif
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
@@ -278,6 +286,8 @@ private:
     void destroyLayer();
     void ensureDecompressionSession();
     void destroyDecompressionSession();
+    void ensureVideoRenderer();
+    void destroyVideoRenderer();
 
     bool shouldBePlaying() const;
 
@@ -297,6 +307,7 @@ private:
     MediaTime clampTimeToLastSeekTime(const MediaTime&) const;
 
     bool shouldEnsureLayer() const;
+    bool shouldEnsureVideoRenderer() const;
 
     void setShouldDisableHDR(bool) final;
     void playerContentBoxRectChanged(const LayoutRect&) final;
@@ -317,6 +328,7 @@ private:
     RefPtr<MediaSourcePrivateAVFObjC> m_mediaSourcePrivate;
     RetainPtr<AVAsset> m_asset;
     RetainPtr<AVSampleBufferDisplayLayer> m_sampleBufferDisplayLayer;
+    RetainPtr<AVSampleBufferVideoRenderer> m_sampleBufferVideoRenderer;
 
     struct AudioRendererProperties {
         bool hasAudibleSample { false };
@@ -375,6 +387,9 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     bool m_shouldMaintainAspectRatio { true };
 #if HAVE(SPATIAL_TRACKING_LABEL)
     String m_spatialTrackingLabel;
+#endif
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    RetainPtr<FigVideoTargetRef> m_videoTarget;
 #endif
 };
 

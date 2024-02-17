@@ -53,9 +53,9 @@ public:
     const String& sessionId() const override { return m_sessionId; }
 
     // SourceBufferPrivateAVFObjCErrorClient
-    void layerDidReceiveError(AVSampleBufferDisplayLayer *, NSError *, bool& shouldIgnore) override;
+    void videoRendererDidReceiveError(WebSampleBufferVideoRendering *, NSError *, bool& shouldIgnore) override;
 ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
-    void rendererDidReceiveError(AVSampleBufferAudioRenderer *, NSError *, bool& shouldIgnore) override;
+    void audioRendererDidReceiveError(AVSampleBufferAudioRenderer *, NSError *, bool& shouldIgnore) override;
 ALLOW_NEW_API_WITHOUT_GUARDS_END
 
     void addSourceBuffer(SourceBufferPrivateAVFObjC*);

@@ -207,6 +207,7 @@ WKSLinearMediaPlayer *PlaybackSessionInterfaceLMK::linearMediaPlayer() const
 void PlaybackSessionInterfaceLMK::durationChanged(double duration)
 {
     [m_player setDuration:duration];
+    [m_player setCanTogglePlayback:YES];
 }
 
 void PlaybackSessionInterfaceLMK::currentTimeChanged(double currentTime, double)

@@ -25,7 +25,6 @@
 
 #import <objc/runtime.h>
 #import <wtf/Platform.h>
-#import <wtf/SoftLinking.h>
 
 #if HAVE(AVCONTENTKEYSESSION)
 #import <AVFoundation/AVContentKeySession.h>
@@ -383,6 +382,20 @@ NS_ASSUME_NONNULL_BEGIN
 NS_ASSUME_NONNULL_END
 
 #endif // __has_include(<AVFoundation/AVSampleBufferAudioRenderer.h>)
+
+#if __has_include(<AVFoundation/AVSampleBufferVideoRenderer_Private.h>)
+#import <AVFoundation/AVSampleBufferVideoRenderer_Private.h>
+#elif __has_include(<AVFoundation/AVSampleBufferVideoRenderer.h>)
+#import <AVFoundation/AVSampleBufferVideoRenderer.h>
+NS_ASSUME_NONNULL_BEGIN
+@interface AVSampleBufferVideoRenderer (SPI)
+- (AVVideoPerformanceMetrics *)videoPerformanceMetrics;
+- (void)prerollDecodeWithCompletionHandler:(void (^)(BOOL success))block;
+@property (nonatomic) BOOL preventsDisplaySleepDuringVideoPlayback;
+@property (nonatomic) BOOL preventsAutomaticBackgroundingDuringVideoPlayback;
+@end
+NS_ASSUME_NONNULL_END
+#endif
 
 #if USE(APPLE_INTERNAL_SDK) || HAVE(BROWSER_ENGINE_SUPPORTING_API)
 #import <AVFoundation/AVVideoPerformanceMetrics.h>

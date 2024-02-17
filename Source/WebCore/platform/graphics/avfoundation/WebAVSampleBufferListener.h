@@ -33,17 +33,18 @@ OBJC_CLASS AVSampleBufferAudioRenderer;
 OBJC_CLASS AVSampleBufferDisplayLayer;
 OBJC_CLASS NSError;
 OBJC_CLASS WebAVSampleBufferListenerPrivate;
+OBJC_PROTOCOL(WebSampleBufferVideoRendering);
 
 namespace WebCore {
 
 class WebAVSampleBufferListenerClient : public CanMakeWeakPtr<WebAVSampleBufferListenerClient> {
 public:
     virtual ~WebAVSampleBufferListenerClient() = default;
-    virtual void layerDidReceiveError(AVSampleBufferDisplayLayer*, NSError*) { }
-    virtual void layerRequiresFlushToResumeDecodingChanged(AVSampleBufferDisplayLayer*, bool) { }
-    virtual void layerReadyForDisplayChanged(AVSampleBufferDisplayLayer*, bool) { }
-    virtual void rendererDidReceiveError(AVSampleBufferAudioRenderer*, NSError*) { }
-    virtual void rendererWasAutomaticallyFlushed(AVSampleBufferAudioRenderer*, const CMTime&) { }
+    virtual void videoRendererDidReceiveError(WebSampleBufferVideoRendering *, NSError *) { }
+    virtual void videoRendererRequiresFlushToResumeDecodingChanged(WebSampleBufferVideoRendering *, bool) { }
+    virtual void videoRendererReadyForDisplayChanged(WebSampleBufferVideoRendering *, bool) { }
+    virtual void audioRendererDidReceiveError(AVSampleBufferAudioRenderer *, NSError *) { }
+    virtual void audioRendererWasAutomaticallyFlushed(AVSampleBufferAudioRenderer *, const CMTime&) { }
     virtual void outputObscuredDueToInsufficientExternalProtectionChanged(bool) { }
 };
 
@@ -51,10 +52,10 @@ class WebAVSampleBufferListener final : public ThreadSafeRefCounted<WebAVSampleB
 public:
     static Ref<WebAVSampleBufferListener> create(WebAVSampleBufferListenerClient& client) { return adoptRef(*new WebAVSampleBufferListener(client)); }
     void invalidate();
-    void beginObservingLayer(AVSampleBufferDisplayLayer*);
-    void stopObservingLayer(AVSampleBufferDisplayLayer*);
-    void beginObservingRenderer(AVSampleBufferAudioRenderer*);
-    void stopObservingRenderer(AVSampleBufferAudioRenderer*);
+    void beginObservingVideoRenderer(WebSampleBufferVideoRendering *);
+    void stopObservingVideoRenderer(WebSampleBufferVideoRendering *);
+    void beginObservingAudioRenderer(AVSampleBufferAudioRenderer *);
+    void stopObservingAudioRenderer(AVSampleBufferAudioRenderer *);
 private:
     explicit WebAVSampleBufferListener(WebAVSampleBufferListenerClient&);
     RetainPtr<WebAVSampleBufferListenerPrivate> m_private;

@@ -244,9 +244,9 @@ private:
 
     // WebAVSampleBufferListenerParent
     // Methods are called on the WebMResourceClient's WorkQueue
-    void layerDidReceiveError(AVSampleBufferDisplayLayer*, NSError*) final;
-    void rendererDidReceiveError(AVSampleBufferAudioRenderer*, NSError*) final;
-    void layerReadyForDisplayChanged(AVSampleBufferDisplayLayer*, bool isReadyForDisplay) final;
+    void videoRendererDidReceiveError(WebSampleBufferVideoRendering *, NSError *) final;
+    void audioRendererDidReceiveError(AVSampleBufferAudioRenderer *, NSError *) final;
+    void videoRendererReadyForDisplayChanged(WebSampleBufferVideoRendering *, bool isReadyForDisplay) final;
 
     const Logger& logger() const final { return m_logger.get(); }
     const char* logClassName() const final { return "MediaPlayerPrivateWebM"; }
@@ -274,7 +274,7 @@ private:
     StdUnorderedMap<TrackID, UniqueRef<TrackBuffer>> m_trackBufferMap;
     PlatformTimeRanges m_buffered;
 
-    RefPtr<VideoMediaSampleRenderer> m_videoLayer;
+    RefPtr<VideoMediaSampleRenderer> m_videoRenderer;
     StdUnorderedMap<TrackID, RetainPtr<AVSampleBufferAudioRenderer>> m_audioRenderers;
     Ref<SourceBufferParserWebM> m_parser;
     const Ref<WTF::WorkQueue> m_appendQueue;

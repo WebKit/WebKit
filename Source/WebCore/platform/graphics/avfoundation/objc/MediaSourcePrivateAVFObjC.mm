@@ -189,10 +189,10 @@ void MediaSourcePrivateAVFObjC::hasSelectedVideoChanged(SourceBufferPrivateAVFOb
         setSourceBufferWithSelectedVideo(&sourceBuffer);
 }
 
-void MediaSourcePrivateAVFObjC::setVideoLayer(AVSampleBufferDisplayLayer* layer)
+void MediaSourcePrivateAVFObjC::setVideoRenderer(WebSampleBufferVideoRendering *renderer)
 {
     if (m_sourceBufferWithSelectedVideo)
-        m_sourceBufferWithSelectedVideo->setVideoLayer(layer);
+        m_sourceBufferWithSelectedVideo->setVideoRenderer(renderer);
 }
 
 void MediaSourcePrivateAVFObjC::setDecompressionSession(WebCoreDecompressionSession* decompressionSession)
@@ -252,14 +252,14 @@ void MediaSourcePrivateAVFObjC::outputObscuredDueToInsufficientExternalProtectio
 void MediaSourcePrivateAVFObjC::setSourceBufferWithSelectedVideo(SourceBufferPrivateAVFObjC* sourceBuffer)
 {
     if (m_sourceBufferWithSelectedVideo) {
-        m_sourceBufferWithSelectedVideo->setVideoLayer(nullptr);
+        m_sourceBufferWithSelectedVideo->setVideoRenderer(nullptr);
         m_sourceBufferWithSelectedVideo->setDecompressionSession(nullptr);
     }
 
     m_sourceBufferWithSelectedVideo = sourceBuffer;
 
     if (auto player = platformPlayer(); m_sourceBufferWithSelectedVideo && player) {
-        m_sourceBufferWithSelectedVideo->setVideoLayer(player->sampleBufferDisplayLayer());
+        m_sourceBufferWithSelectedVideo->setVideoRenderer(player->sampleBufferVideoRenderer());
         m_sourceBufferWithSelectedVideo->setDecompressionSession(player->decompressionSession());
     }
 }

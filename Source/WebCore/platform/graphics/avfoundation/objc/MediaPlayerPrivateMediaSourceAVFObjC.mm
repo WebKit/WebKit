@@ -47,6 +47,7 @@
 #import "VideoFrameCV.h"
 #import "VideoLayerManagerObjC.h"
 #import "WebCoreDecompressionSession.h"
+#import "WebSampleBufferVideoRendering.h"
 #import <AVFoundation/AVFoundation.h>
 #import <CoreMedia/CMTime.h>
 #import <QuartzCore/CALayer.h>
@@ -64,6 +65,7 @@
 #import "CoreVideoSoftLink.h"
 #import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
+#import <pal/cocoa/MediaToolboxSoftLink.h>
 
 @interface AVSampleBufferDisplayLayer (Staging_100128644)
 @property (assign, nonatomic) BOOL preventsAutomaticBackgroundingDuringVideoPlayback;
@@ -292,7 +294,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::load(const URL&, const ContentType&, 
     ALWAYS_LOG(LOGIDENTIFIER);
 
     m_mediaSourcePrivate = MediaSourcePrivateAVFObjC::create(*this, client);
-    m_mediaSourcePrivate->setVideoLayer(m_sampleBufferDisplayLayer.get());
+    m_mediaSourcePrivate->setVideoRenderer(sampleBufferVideoRenderer());
     m_mediaSourcePrivate->setDecompressionSession(m_decompressionSession.get());
 
     acceleratedRenderingStateChanged();
@@ -817,6 +819,19 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::shouldEnsureLayer() const
 #endif
 }
 
+bool MediaPlayerPrivateMediaSourceAVFObjC::shouldEnsureVideoRenderer() const
+{
+    if (!shouldEnsureLayer())
+        return false;
+
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    if (m_videoTarget)
+        return true;
+#endif
+
+    return false;
+}
+
 void MediaPlayerPrivateMediaSourceAVFObjC::setPresentationSize(const IntSize& newSize)
 {
     if (!m_sampleBufferDisplayLayer && !newSize.isEmpty())
@@ -836,12 +851,22 @@ void MediaPlayerPrivateMediaSourceAVFObjC::acceleratedRenderingStateChanged()
 
 void MediaPlayerPrivateMediaSourceAVFObjC::updateDisplayLayerAndDecompressionSession()
 {
+    if (shouldEnsureVideoRenderer()) {
+        destroyDecompressionSession();
+        destroyLayer();
+        ensureVideoRenderer();
+        return;
+    }
+
     if (shouldEnsureLayer()) {
         destroyDecompressionSession();
+        destroyVideoRenderer();
         ensureLayer();
         return;
     }
+
     destroyLayer();
+    destroyVideoRenderer();
     ensureDecompressionSession();
 }
 
@@ -890,7 +915,7 @@ std::optional<VideoPlaybackQualityMetrics> MediaPlayerPrivateMediaSourceAVFObjC:
         };
     }
 
-    auto metrics = [m_sampleBufferDisplayLayer videoPerformanceMetrics];
+    auto metrics = [sampleBufferVideoRenderer() videoPerformanceMetrics];
     if (!metrics)
         return std::nullopt;
 
@@ -955,7 +980,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::ensureLayer()
         [m_sampleBufferDisplayLayer setToneMapToStandardDynamicRange:player->shouldDisableHDR()];
 
     if (m_mediaSourcePrivate)
-        m_mediaSourcePrivate->setVideoLayer(m_sampleBufferDisplayLayer.get());
+        m_mediaSourcePrivate->setVideoRenderer(m_sampleBufferDisplayLayer.get());
     if (player) {
         m_videoLayerManager->setVideoLayer(m_sampleBufferDisplayLayer.get(), player->presentationSize());
         player->renderingModeChanged();
@@ -971,12 +996,71 @@ void MediaPlayerPrivateMediaSourceAVFObjC::destroyLayer()
     [m_synchronizer removeRenderer:m_sampleBufferDisplayLayer.get() atTime:currentTime completionHandler:nil];
 
     if (m_mediaSourcePrivate)
-        m_mediaSourcePrivate->setVideoLayer(nullptr);
+        m_mediaSourcePrivate->setVideoRenderer(nullptr);
     m_videoLayerManager->didDestroyVideoLayer();
     m_sampleBufferDisplayLayer = nullptr;
     setHasAvailableVideoFrame(false);
     if (auto player = m_player.get())
         player->renderingModeChanged();
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::ensureVideoRenderer()
+{
+#if HAVE(AVSAMPLEBUFFERVIDEORENDERER)
+    if (m_sampleBufferVideoRenderer)
+        return;
+
+    m_sampleBufferVideoRenderer = adoptNS([PAL::allocAVSampleBufferVideoRendererInstance() init]);
+
+    if (!m_sampleBufferVideoRenderer) {
+        ERROR_LOG(LOGIDENTIFIER, "Failed to create AVSampleBufferVideoRenderer");
+        if (m_mediaSourcePrivate)
+            m_mediaSourcePrivate->failedToCreateRenderer(MediaSourcePrivateAVFObjC::RendererType::Video);
+        setNetworkState(MediaPlayer::NetworkState::DecodeError);
+        return;
+    }
+
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    [m_sampleBufferVideoRenderer addVideoTarget:m_videoTarget.get()];
+#endif
+
+    [m_sampleBufferVideoRenderer setPreventsDisplaySleepDuringVideoPlayback:NO];
+    [m_sampleBufferVideoRenderer setPreventsAutomaticBackgroundingDuringVideoPlayback:NO];
+
+    @try {
+        [m_synchronizer addRenderer:m_sampleBufferVideoRenderer.get()];
+    } @catch(NSException *exception) {
+        ERROR_LOG(LOGIDENTIFIER, "-[AVSampleBufferRenderSynchronizer addRenderer:] threw an exception: ", exception.name, ", reason : ", exception.reason);
+        ASSERT_NOT_REACHED();
+
+        setNetworkState(MediaPlayer::NetworkState::DecodeError);
+        return;
+    }
+
+    if (m_mediaSourcePrivate)
+        m_mediaSourcePrivate->setVideoRenderer(m_sampleBufferVideoRenderer.get());
+    if (auto player = m_player.get())
+        player->renderingModeChanged();
+#endif // HAVE(AVSAMPLEBUFFERVIDEORENDERER)
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::destroyVideoRenderer()
+{
+#if HAVE(AVSAMPLEBUFFERVIDEORENDERER)
+    if (!m_sampleBufferVideoRenderer)
+        return;
+
+    CMTime currentTime = PAL::CMTimebaseGetTime([m_synchronizer timebase]);
+    [m_synchronizer removeRenderer:m_sampleBufferVideoRenderer.get() atTime:currentTime completionHandler:nil];
+
+    if (m_mediaSourcePrivate)
+        m_mediaSourcePrivate->setVideoRenderer(nullptr);
+    m_videoLayerManager->didDestroyVideoLayer();
+    m_sampleBufferVideoRenderer = nullptr;
+    setHasAvailableVideoFrame(false);
+    if (auto player = m_player.get())
+        player->renderingModeChanged();
+#endif // HAVE(AVSAMPLEBUFFERVIDEORENDERER)
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::ensureDecompressionSession()
@@ -1594,6 +1678,34 @@ void MediaPlayerPrivateMediaSourceAVFObjC::updateSpatialTrackingLabel()
         [m_sampleBufferDisplayLayer sampleBufferRenderer].STSLabel = session.spatialTrackingLabel;
     else
         [m_sampleBufferDisplayLayer sampleBufferRenderer].STSLabel = m_spatialTrackingLabel;
+}
+#endif
+
+WebSampleBufferVideoRendering *MediaPlayerPrivateMediaSourceAVFObjC::sampleBufferVideoRenderer() const
+{
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    if (m_videoTarget)
+        return m_sampleBufferVideoRenderer.get();
+#endif
+    return m_sampleBufferDisplayLayer.get();
+}
+
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+void MediaPlayerPrivateMediaSourceAVFObjC::setVideoReceiverEndpoint(const VideoReceiverEndpoint& endpoint)
+{
+    if (!endpoint) {
+        m_videoTarget = nullptr;
+        updateDisplayLayerAndDecompressionSession();
+        return;
+    }
+
+    FigVideoTargetRef videoTarget;
+    OSStatus status = FigVideoTargetCreateWithVideoReceiverEndpointID(kCFAllocatorDefault, endpoint.get(), nullptr, &videoTarget);
+    if (status != noErr)
+        return;
+
+    m_videoTarget = adoptCF(videoTarget);
+    updateDisplayLayerAndDecompressionSession();
 }
 #endif
 

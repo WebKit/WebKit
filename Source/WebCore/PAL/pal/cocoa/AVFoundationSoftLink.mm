@@ -100,6 +100,7 @@ SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL_WITH_EXPORT(PAL, AVFoundation, AVContentKeyS
 SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL_WITH_EXPORT(PAL, AVFoundation, AVDelegatingPlaybackCoordinator, PAL_EXPORT)
 SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL_WITH_EXPORT(PAL, AVFoundation, AVSampleBufferAudioRenderer, PAL_EXPORT)
 SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL_WITH_EXPORT(PAL, AVFoundation, AVSampleBufferDisplayLayer, PAL_EXPORT)
+SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL_WITH_EXPORT(PAL, AVFoundation, AVSampleBufferVideoRenderer, PAL_EXPORT)
 SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL_WITH_EXPORT(PAL, AVFoundation, AVSampleBufferRenderSynchronizer, PAL_EXPORT)
 SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL_WITH_EXPORT(PAL, AVFoundation, AVStreamDataParser, PAL_EXPORT)
 
@@ -186,6 +187,8 @@ SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVSampleBufferDispl
 SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVSampleBufferDisplayLayerFailedToDecodeNotificationErrorKey, NSString*, PAL_EXPORT)
 SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVSampleBufferAudioRendererWasFlushedAutomaticallyNotification, NSString*, PAL_EXPORT)
 SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVSampleBufferAudioRendererFlushTimeKey, NSString*, PAL_EXPORT)
+SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVSampleBufferVideoRendererDidFailToDecodeNotification, NSString *, PAL_EXPORT)
+SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVSampleBufferVideoRendererRequiresFlushToResumeDecodingDidChangeNotification, NSString *, PAL_EXPORT)
 SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVSpeechSynthesisAvailableVoicesDidChangeNotification, NSString *, PAL_EXPORT)
 SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVStreamDataParserContentKeyRequestProtocolVersionsKey, NSString *, PAL_EXPORT)
 SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVStreamingKeyDeliveryContentKeyType, NSString *, PAL_EXPORT)

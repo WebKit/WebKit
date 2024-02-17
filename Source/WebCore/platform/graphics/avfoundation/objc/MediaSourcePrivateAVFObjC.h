@@ -40,6 +40,7 @@ OBJC_CLASS AVSampleBufferDisplayLayer;
 OBJC_CLASS AVStreamDataParser;
 OBJC_CLASS NSError;
 OBJC_CLASS NSObject;
+OBJC_PROTOCOL(WebSampleBufferVideoRendering);
 typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
 
 namespace WebCore {
@@ -80,7 +81,7 @@ public:
     FloatSize naturalSize() const;
 
     void hasSelectedVideoChanged(SourceBufferPrivateAVFObjC&);
-    void setVideoLayer(AVSampleBufferDisplayLayer*);
+    void setVideoRenderer(WebSampleBufferVideoRendering *);
     void setDecompressionSession(WebCoreDecompressionSession*);
 
     void flushActiveSourceBuffersIfNeeded();

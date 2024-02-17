@@ -26,6 +26,7 @@
 #import "config.h"
 #import "WebAVSampleBufferListener.h"
 
+#import "WebSampleBufferVideoRendering.h"
 #import <Foundation/Foundation.h>
 #import <Foundation/NSObject.h>
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
@@ -52,20 +53,35 @@ static NSString * const outputObscuredDueToInsufficientExternalProtectionKeyPath
 static void* errorContext = &errorContext;
 static void* outputObscuredDueToInsufficientExternalProtectionContext = &outputObscuredDueToInsufficientExternalProtectionContext;
 
+namespace WebCore {
+static bool isSampleBufferVideoRenderer(id object)
+{
+    if (dynamic_objc_cast<AVSampleBufferDisplayLayer>(object, PAL::getAVSampleBufferDisplayLayerClass()))
+        return true;
+
+#if HAVE(AVSAMPLEBUFFERVIDEORENDERER)
+    if (dynamic_objc_cast<AVSampleBufferVideoRenderer>(object, PAL::getAVSampleBufferVideoRendererClass()))
+        return true;
+#endif
+
+    return false;
+}
+}
+
 @interface WebAVSampleBufferListenerPrivate : NSObject {
     WeakPtr<WebCore::WebAVSampleBufferListenerClient> _client WTF_GUARDED_BY_CAPABILITY(mainThread);
-    Vector<RetainPtr<AVSampleBufferDisplayLayer>> _layers;
-    Vector<RetainPtr<AVSampleBufferAudioRenderer>> _renderers;
+    Vector<RetainPtr<WebSampleBufferVideoRendering>> _videoRenderers;
+    Vector<RetainPtr<AVSampleBufferAudioRenderer>> _audioRenderers;
 }
 
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
 - (instancetype)initWithClient:(WebCore::WebAVSampleBufferListenerClient &)client NS_DESIGNATED_INITIALIZER;
 - (void)invalidate;
-- (void)beginObservingLayer:(AVSampleBufferDisplayLayer *)layer;
-- (void)stopObservingLayer:(AVSampleBufferDisplayLayer *)layer;
-- (void)beginObservingRenderer:(AVSampleBufferAudioRenderer *)renderer;
-- (void)stopObservingRenderer:(AVSampleBufferAudioRenderer *)renderer;
+- (void)beginObservingVideoRenderer:(WebSampleBufferVideoRendering *)renderer;
+- (void)stopObservingVideoRenderer:(WebSampleBufferVideoRendering *)renderer;
+- (void)beginObservingAudioRenderer:(AVSampleBufferAudioRenderer *)renderer;
+- (void)stopObservingAudioRenderer:(AVSampleBufferAudioRenderer *)renderer;
 
 @end
 
@@ -87,73 +103,78 @@ static void* outputObscuredDueToInsufficientExternalProtectionContext = &outputO
 
     _client = nullptr;
 
-    for (auto& layer : _layers) {
-        [layer removeObserver:self forKeyPath:errorKeyPath];
-        [layer removeObserver:self forKeyPath:outputObscuredDueToInsufficientExternalProtectionKeyPath];
-    }
-    _layers.clear();
-
-    for (auto& renderer : _renderers)
+    for (auto& renderer : _videoRenderers) {
         [renderer removeObserver:self forKeyPath:errorKeyPath];
-    _renderers.clear();
+        [renderer removeObserver:self forKeyPath:outputObscuredDueToInsufficientExternalProtectionKeyPath];
+    }
+    _videoRenderers.clear();
+
+    for (auto& renderer : _audioRenderers)
+        [renderer removeObserver:self forKeyPath:errorKeyPath];
+    _audioRenderers.clear();
 
     [NSNotificationCenter.defaultCenter removeObserver:self];
 }
 
-- (void)beginObservingLayer:(AVSampleBufferDisplayLayer *)layer
+- (void)beginObservingVideoRenderer:(WebSampleBufferVideoRendering *)renderer
 {
     ASSERT(isMainThread());
-    ASSERT(!_layers.contains(layer));
+    ASSERT(!_videoRenderers.contains(renderer));
 
-    _layers.append(layer);
-    [layer addObserver:self forKeyPath:errorKeyPath options:NSKeyValueObservingOptionNew context:errorContext];
-    [layer addObserver:self forKeyPath:outputObscuredDueToInsufficientExternalProtectionKeyPath options:NSKeyValueObservingOptionNew context:outputObscuredDueToInsufficientExternalProtectionContext];
-    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(layerFailedToDecode:) name:AVSampleBufferDisplayLayerFailedToDecodeNotification object:layer];
-    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(layerRequiresFlushToResumeDecodingChanged:) name:AVSampleBufferDisplayLayerRequiresFlushToResumeDecodingDidChangeNotification object:layer];
+    _videoRenderers.append(renderer);
+    [renderer addObserver:self forKeyPath:errorKeyPath options:NSKeyValueObservingOptionNew context:errorContext];
+    [renderer addObserver:self forKeyPath:outputObscuredDueToInsufficientExternalProtectionKeyPath options:NSKeyValueObservingOptionNew context:outputObscuredDueToInsufficientExternalProtectionContext];
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(layerFailedToDecode:) name:AVSampleBufferDisplayLayerFailedToDecodeNotification object:renderer];
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(layerFailedToDecode:) name:AVSampleBufferVideoRendererDidFailToDecodeNotification object:renderer];
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(layerRequiresFlushToResumeDecodingChanged:) name:AVSampleBufferDisplayLayerRequiresFlushToResumeDecodingDidChangeNotification object:renderer];
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(layerRequiresFlushToResumeDecodingChanged:) name:AVSampleBufferVideoRendererRequiresFlushToResumeDecodingDidChangeNotification object:renderer];
+
 #if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_READYFORDISPLAY)
     // FIXME (117934497): Remove staging code once -[AVSampleBufferDisplayLayer isReadyForDisplay] is available in SDKs used by WebKit builders
     if (PAL::canLoad_AVFoundation_AVSampleBufferDisplayLayerReadyForDisplayDidChangeNotification())
-        [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(layerReadyForDisplayChanged:) name:AVSampleBufferDisplayLayerReadyForDisplayDidChangeNotification object:layer];
+        [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(layerReadyForDisplayChanged:) name:AVSampleBufferDisplayLayerReadyForDisplayDidChangeNotification object:renderer];
 #endif
 }
 
-- (void)stopObservingLayer:(AVSampleBufferDisplayLayer *)layer
+- (void)stopObservingVideoRenderer:(WebSampleBufferVideoRendering *)renderer
 {
     ASSERT(isMainThread());
-    ASSERT(_layers.contains(layer));
+    ASSERT(_videoRenderers.contains(renderer));
 
-    [layer removeObserver:self forKeyPath:errorKeyPath];
-    [layer removeObserver:self forKeyPath:outputObscuredDueToInsufficientExternalProtectionKeyPath];
-    _layers.remove(_layers.find(layer));
+    [renderer removeObserver:self forKeyPath:errorKeyPath];
+    [renderer removeObserver:self forKeyPath:outputObscuredDueToInsufficientExternalProtectionKeyPath];
+    _videoRenderers.remove(_videoRenderers.find(renderer));
 
-    [NSNotificationCenter.defaultCenter removeObserver:self name:AVSampleBufferDisplayLayerFailedToDecodeNotification object:layer];
-    [NSNotificationCenter.defaultCenter removeObserver:self name:AVSampleBufferDisplayLayerRequiresFlushToResumeDecodingDidChangeNotification object:layer];
+    [NSNotificationCenter.defaultCenter removeObserver:self name:AVSampleBufferDisplayLayerFailedToDecodeNotification object:renderer];
+    [NSNotificationCenter.defaultCenter removeObserver:self name:AVSampleBufferVideoRendererDidFailToDecodeNotification object:renderer];
+    [NSNotificationCenter.defaultCenter removeObserver:self name:AVSampleBufferDisplayLayerRequiresFlushToResumeDecodingDidChangeNotification object:renderer];
+    [NSNotificationCenter.defaultCenter removeObserver:self name:AVSampleBufferVideoRendererRequiresFlushToResumeDecodingDidChangeNotification object:renderer];
 #if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_READYFORDISPLAY)
     // FIXME (117934497): Remove staging code once -[AVSampleBufferDisplayLayer isReadyForDisplay] is available in SDKs used by WebKit builders
     if (PAL::canLoad_AVFoundation_AVSampleBufferDisplayLayerReadyForDisplayDidChangeNotification())
-        [NSNotificationCenter.defaultCenter removeObserver:self name:AVSampleBufferDisplayLayerReadyForDisplayDidChangeNotification object:layer];
+        [NSNotificationCenter.defaultCenter removeObserver:self name:AVSampleBufferDisplayLayerReadyForDisplayDidChangeNotification object:renderer];
 #endif
 }
 
-- (void)beginObservingRenderer:(AVSampleBufferAudioRenderer *)renderer
+- (void)beginObservingAudioRenderer:(AVSampleBufferAudioRenderer *)renderer
 {
     ASSERT(isMainThread());
-    ASSERT(!_renderers.contains(renderer));
+    ASSERT(!_audioRenderers.contains(renderer));
 
-    _renderers.append(renderer);
+    _audioRenderers.append(renderer);
     [renderer addObserver:self forKeyPath:errorKeyPath options:NSKeyValueObservingOptionNew context:errorContext];
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(audioRendererWasAutomaticallyFlushed:) name:AVSampleBufferAudioRendererWasFlushedAutomaticallyNotification object:renderer];
 }
 
-- (void)stopObservingRenderer:(AVSampleBufferAudioRenderer *)renderer
+- (void)stopObservingAudioRenderer:(AVSampleBufferAudioRenderer *)renderer
 {
     ASSERT(isMainThread());
-    ASSERT(_renderers.contains(renderer));
+    ASSERT(_audioRenderers.contains(renderer));
 
     [renderer removeObserver:self forKeyPath:errorKeyPath];
     [NSNotificationCenter.defaultCenter removeObserver:self name:AVSampleBufferAudioRendererWasFlushedAutomaticallyNotification object:renderer];
 
-    _renderers.remove(_renderers.find(renderer));
+    _audioRenderers.remove(_audioRenderers.find(renderer));
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void*)context
@@ -163,13 +184,13 @@ static void* outputObscuredDueToInsufficientExternalProtectionContext = &outputO
         if (!error)
             return;
 
-        if ([object isKindOfClass:PAL::getAVSampleBufferDisplayLayerClass()]) {
-            RetainPtr layer = (AVSampleBufferDisplayLayer *)object;
+        if (WebCore::isSampleBufferVideoRenderer(object)) {
+            RetainPtr renderer = (WebSampleBufferVideoRendering *)object;
 
-            ensureOnMainThread([self, protectedSelf = RetainPtr { self }, layer = WTFMove(layer), error = WTFMove(error)] {
-                ASSERT(_layers.contains(layer.get()));
+            ensureOnMainThread([self, protectedSelf = RetainPtr { self }, renderer = WTFMove(renderer), error = WTFMove(error)] {
+                ASSERT(_videoRenderers.contains(renderer.get()));
                 if (auto client = _client.get())
-                    client->layerDidReceiveError(layer.get(), error.get());
+                    client->videoRendererDidReceiveError(renderer.get(), error.get());
             });
             return;
         }
@@ -178,9 +199,9 @@ static void* outputObscuredDueToInsufficientExternalProtectionContext = &outputO
             RetainPtr renderer = (AVSampleBufferAudioRenderer *)object;
 
             ensureOnMainThread([self, protectedSelf = RetainPtr { self }, renderer = WTFMove(renderer), error = WTFMove(error)] {
-                ASSERT(_renderers.contains(renderer.get()));
+                ASSERT(_audioRenderers.contains(renderer.get()));
                 if (auto client = _client.get())
-                    client->rendererDidReceiveError(renderer.get(), error.get());
+                    client->audioRendererDidReceiveError(renderer.get(), error.get());
             });
             return;
         }
@@ -190,11 +211,11 @@ static void* outputObscuredDueToInsufficientExternalProtectionContext = &outputO
     }
 
     if (context == outputObscuredDueToInsufficientExternalProtectionContext) {
-        RetainPtr layer = dynamic_objc_cast<AVSampleBufferDisplayLayer>(object, PAL::getAVSampleBufferDisplayLayerClass());
+        RetainPtr renderer = WebCore::isSampleBufferVideoRenderer(object) ? (WebSampleBufferVideoRendering *)object : nil;
         BOOL isObscured = [[change valueForKey:NSKeyValueChangeNewKey] boolValue];
 
-        ensureOnMainThread([self, protectedSelf = RetainPtr { self }, layer = WTFMove(layer), isObscured] {
-            ASSERT(_layers.contains(layer.get()));
+        ensureOnMainThread([self, protectedSelf = RetainPtr { self }, renderer = WTFMove(renderer), isObscured] {
+            ASSERT(_videoRenderers.contains(renderer.get()));
             if (auto client = _client.get())
                 client->outputObscuredDueToInsufficientExternalProtectionChanged(isObscured);
         });
@@ -206,27 +227,27 @@ static void* outputObscuredDueToInsufficientExternalProtectionContext = &outputO
 
 - (void)layerFailedToDecode:(NSNotification *)notification
 {
-    RetainPtr layer = dynamic_objc_cast<AVSampleBufferDisplayLayer>(notification.object, PAL::getAVSampleBufferDisplayLayerClass());
+    RetainPtr renderer = WebCore::isSampleBufferVideoRenderer(notification.object) ? (WebSampleBufferVideoRendering *)notification.object : nil;
     RetainPtr error = dynamic_objc_cast<NSError>([notification.userInfo valueForKey:AVSampleBufferDisplayLayerFailedToDecodeNotificationErrorKey]);
 
-    ensureOnMainThread([self, protectedSelf = RetainPtr { self }, layer = WTFMove(layer), error = WTFMove(error)] {
-        if (!_layers.contains(layer.get()))
+    ensureOnMainThread([self, protectedSelf = RetainPtr { self }, renderer = WTFMove(renderer), error = WTFMove(error)] {
+        if (!_videoRenderers.contains(renderer.get()))
             return;
         if (auto client = _client.get())
-            client->layerDidReceiveError(layer.get(), error.get());
+            client->videoRendererDidReceiveError(renderer.get(), error.get());
     });
 }
 
 - (void)layerRequiresFlushToResumeDecodingChanged:(NSNotification *)notification
 {
-    RetainPtr layer = dynamic_objc_cast<AVSampleBufferDisplayLayer>(notification.object, PAL::getAVSampleBufferDisplayLayerClass());
-    BOOL requiresFlush = [layer requiresFlushToResumeDecoding];
+    RetainPtr renderer = WebCore::isSampleBufferVideoRenderer(notification.object) ? (WebSampleBufferVideoRendering *)notification.object : nil;
+    BOOL requiresFlush = [renderer requiresFlushToResumeDecoding];
 
-    ensureOnMainThread([self, protectedSelf = RetainPtr { self }, layer = WTFMove(layer), requiresFlush] {
-        if (!_layers.contains(layer.get()))
+    ensureOnMainThread([self, protectedSelf = RetainPtr { self }, renderer = WTFMove(renderer), requiresFlush] {
+        if (!_videoRenderers.contains(renderer.get()))
             return;
         if (auto client = _client.get())
-            client->layerRequiresFlushToResumeDecodingChanged(layer.get(), requiresFlush);
+            client->videoRendererRequiresFlushToResumeDecodingChanged(renderer.get(), requiresFlush);
     });
 }
 
@@ -234,13 +255,16 @@ static void* outputObscuredDueToInsufficientExternalProtectionContext = &outputO
 - (void)layerReadyForDisplayChanged:(NSNotification *)notification
 {
     RetainPtr layer = dynamic_objc_cast<AVSampleBufferDisplayLayer>(notification.object, PAL::getAVSampleBufferDisplayLayerClass());
+    if (!layer)
+        return;
+
     BOOL isReadyForDisplay = [layer isReadyForDisplay];
 
     ensureOnMainThread([self, protectedSelf = RetainPtr { self }, layer = WTFMove(layer), isReadyForDisplay] {
-        if (!_layers.contains(layer.get()))
+        if (!_videoRenderers.contains(layer.get()))
             return;
         if (auto client = _client.get())
-            client->layerReadyForDisplayChanged(layer.get(), isReadyForDisplay);
+            client->videoRendererReadyForDisplayChanged(layer.get(), isReadyForDisplay);
     });
 }
 #endif
@@ -251,10 +275,10 @@ static void* outputObscuredDueToInsufficientExternalProtectionContext = &outputO
     CMTime flushTime = [[notification.userInfo valueForKey:AVSampleBufferAudioRendererFlushTimeKey] CMTimeValue];
 
     ensureOnMainThread([self, protectedSelf = RetainPtr { self }, renderer = WTFMove(renderer), flushTime] {
-        if (!_renderers.contains(renderer.get()))
+        if (!_audioRenderers.contains(renderer.get()))
             return;
         if (auto client = _client.get())
-            client->rendererWasAutomaticallyFlushed(renderer.get(), flushTime);
+            client->audioRendererWasAutomaticallyFlushed(renderer.get(), flushTime);
     });
 }
 
@@ -272,24 +296,24 @@ void WebAVSampleBufferListener::invalidate()
     [m_private invalidate];
 }
 
-void WebAVSampleBufferListener::beginObservingLayer(AVSampleBufferDisplayLayer* layer)
+void WebAVSampleBufferListener::beginObservingVideoRenderer(WebSampleBufferVideoRendering *renderer)
 {
-    [m_private beginObservingLayer:layer];
+    [m_private beginObservingVideoRenderer:renderer];
 }
 
-void WebAVSampleBufferListener::stopObservingLayer(AVSampleBufferDisplayLayer* layer)
+void WebAVSampleBufferListener::stopObservingVideoRenderer(WebSampleBufferVideoRendering *renderer)
 {
-    [m_private stopObservingLayer:layer];
+    [m_private stopObservingVideoRenderer:renderer];
 }
 
-void WebAVSampleBufferListener::beginObservingRenderer(AVSampleBufferAudioRenderer* renderer)
+void WebAVSampleBufferListener::beginObservingAudioRenderer(AVSampleBufferAudioRenderer* renderer)
 {
-    [m_private beginObservingRenderer:renderer];
+    [m_private beginObservingAudioRenderer:renderer];
 }
 
-void WebAVSampleBufferListener::stopObservingRenderer(AVSampleBufferAudioRenderer* renderer)
+void WebAVSampleBufferListener::stopObservingAudioRenderer(AVSampleBufferAudioRenderer* renderer)
 {
-    [m_private stopObservingRenderer:renderer];
+    [m_private stopObservingAudioRenderer:renderer];
 }
 
 } // namespace WebCore
