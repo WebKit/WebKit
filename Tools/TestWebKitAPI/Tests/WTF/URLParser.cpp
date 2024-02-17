@@ -424,7 +424,7 @@ TEST_F(WTF_URLParser, Basic)
     checkURL("data:image/png;base64,encoded-data-follows-here"_s, { "data"_s, ""_s, ""_s, ""_s, 0, "image/png;base64,encoded-data-follows-here"_s, ""_s, ""_s, "data:image/png;base64,encoded-data-follows-here"_s });
     checkURL("data:image/png;base64,encoded/data-with-slash"_s, { "data"_s, ""_s, ""_s, ""_s, 0, "image/png;base64,encoded/data-with-slash"_s, ""_s, ""_s, "data:image/png;base64,encoded/data-with-slash"_s });
     checkURL("about:~"_s, { "about"_s, ""_s, ""_s, ""_s, 0, "~"_s, ""_s, ""_s, "about:~"_s });
-    checkURL("https://@test@test@example:800\\path@end"_s, { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "https://@test@test@example:800\\path@end"_s });
+    checkURL("https://@test@test@example:800\\path@end"_s, { "https"_s, "@test@test"_s, ""_s, "example"_s, 800, "/path@end"_s, ""_s, ""_s, "https://%40test%40test@example:800/path@end"_s });
     checkURL("http://www.example.com/#a\nb\rc\td"_s, { "http"_s, ""_s, ""_s, "www.example.com"_s, 0, "/"_s, ""_s, "abcd"_s, "http://www.example.com/#abcd"_s });
     checkURL("http://[A:b:c:DE:fF:0:1:aC]/"_s, { "http"_s, ""_s, ""_s, "[a:b:c:de:ff:0:1:ac]"_s, 0, "/"_s, ""_s, ""_s, "http://[a:b:c:de:ff:0:1:ac]/"_s });
     checkURL("http:////////user:@webkit.org:99?foo"_s, { "http"_s, "user"_s, ""_s, "webkit.org"_s, 99, "/"_s, "foo"_s, ""_s, "http://user@webkit.org:99/?foo"_s });
@@ -602,7 +602,7 @@ TEST_F(WTF_URLParser, ParseRelative)
     checkRelativeURL("foo:/"_s, "http://example.org/foo/bar"_s, { "foo"_s, ""_s, ""_s, ""_s, 0, "/"_s, ""_s, ""_s, "foo:/"_s });
     checkRelativeURL("://:0/"_s, "http://webkit.org/"_s, { "http"_s, ""_s, ""_s, "webkit.org"_s, 0, "/://:0/"_s, ""_s, ""_s, "http://webkit.org/://:0/"_s });
     checkRelativeURL(String(), "http://webkit.org/"_s, { "http"_s, ""_s, ""_s, "webkit.org"_s, 0, "/"_s, ""_s, ""_s, "http://webkit.org/"_s });
-    checkRelativeURL("https://@test@test@example:800\\path@end"_s, "http://doesnotmatter/"_s, { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "https://@test@test@example:800\\path@end"_s });
+    checkRelativeURL("https://@test@test@example:800\\path@end"_s, "http://doesnotmatter/"_s, { "https"_s, "@test@test"_s, ""_s, "example"_s, 800, "/path@end"_s, ""_s, ""_s, "https://%40test%40test@example:800/path@end"_s });
     checkRelativeURL("http://f:0/c"_s, "http://example.org/foo/bar"_s, { "http"_s, ""_s, ""_s, "f"_s, 0, "/c"_s, ""_s, ""_s, "http://f:0/c"_s });
     checkRelativeURL(String(), "http://host/#fragment"_s, { "http"_s, ""_s, ""_s, "host"_s, 0, "/"_s, ""_s, ""_s, "http://host/"_s });
     checkRelativeURL(""_s, "http://host/#fragment"_s, { "http"_s, ""_s, ""_s, "host"_s, 0, "/"_s, ""_s, ""_s, "http://host/"_s });

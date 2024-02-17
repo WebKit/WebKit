@@ -126,4 +126,7 @@ PASS Parsing: <file://­/p> without base
 PASS Parsing: <file://%C2%AD/p> without base
 PASS Parsing: <file://xn--/p> without base
 PASS Parsing: <> without base
+PASS Parsing: <///abcdef/../> against <file:///>
+PASS Parsing: </\//\/a/../> against <file:///>
+PASS Parsing: <//a/../> against <file:///>
 
