@@ -69,6 +69,8 @@
 
     // Non-standard: We are the only browser to support this now that Blink dropped it (http://crbug.com/688943).
     [CEReactions=Needed, Reflect] attribute DOMString webkitdropzone;
+
+    [Conditional=WRITING_SUGGESTIONS, CEReactions=Needed] attribute boolean writingsuggestions;
 };
 
 HTMLElement includes GlobalEventHandlers;

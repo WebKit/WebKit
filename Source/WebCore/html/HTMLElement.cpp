@@ -731,6 +731,16 @@ void HTMLElement::setSpellcheck(bool enable)
     setAttributeWithoutSynchronization(spellcheckAttr, enable ? trueAtom() : falseAtom());
 }
 
+bool HTMLElement::writingsuggestions() const
+{
+    return isWritingSuggestionsEnabled();
+}
+
+void HTMLElement::setWritingsuggestions(bool enable)
+{
+    setAttributeWithoutSynchronization(writingsuggestionsAttr, enable ? trueAtom() : falseAtom());
+}
+
 void HTMLElement::effectiveSpellcheckAttributeChanged(bool newValue)
 {
     for (auto it = descendantsOfType<HTMLElement>(*this).begin(); it;) {

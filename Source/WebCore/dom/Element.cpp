@@ -80,8 +80,10 @@
 #include "HTMLScriptElement.h"
 #include "HTMLSelectElement.h"
 #include "HTMLTemplateElement.h"
+#include "HTMLTextAreaElement.h"
 #include "IdChangeInvalidation.h"
 #include "IdTargetObserverRegistry.h"
+#include "InputType.h"
 #include "InspectorInstrumentation.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSLazyEventListener.h"
@@ -4749,6 +4751,53 @@ bool Element::isSpellCheckingEnabled() const
         if (equalLettersIgnoringASCIICase(value, "false"_s))
             return false;
     }
+    return true;
+}
+
+bool Element::isWritingSuggestionsEnabled() const
+{
+    // If none of the following conditions are true, then return `false`.
+
+    // `element` is an `input` element whose `type` attribute is in either the
+    // `Text`, `Search`, `URL`, `Email` state and is `mutable`.
+    auto isEligibleInputElement = [&] {
+        RefPtr input = dynamicDowncast<HTMLInputElement>(*this);
+        if (!input)
+            return false;
+
+        return !input->isDisabledFormControl() && input->supportsWritingSuggestions();
+    };
+
+    // `element` is a `textarea` element that is `mutable`.
+    auto isEligibleTextArea = [&] {
+        RefPtr textArea = dynamicDowncast<HTMLTextAreaElement>(*this);
+        if (!textArea)
+            return false;
+
+        return !textArea->isDisabledFormControl();
+    };
+
+    // `element` is an `editing host` or is `editable`.
+
+    if (!isEligibleInputElement() && !isEligibleTextArea() && !hasEditableStyle())
+        return false;
+
+    // If `element` has an 'inclusive ancestor' with a `writingsuggestions` content attribute that's
+    // not in the `default` state and the nearest such ancestor's `writingsuggestions` content attribute
+    // is in the `false` state, then return `false`.
+
+    for (auto* ancestor = this; ancestor; ancestor = ancestor->parentElementInComposedTree()) {
+        auto& value = ancestor->attributeWithoutSynchronization(HTMLNames::writingsuggestionsAttr);
+
+        if (value.isNull())
+            continue;
+        if (value.isEmpty() || equalLettersIgnoringASCIICase(value, "true"_s))
+            return true;
+        if (equalLettersIgnoringASCIICase(value, "false"_s))
+            return false;
+    }
+
+    // Otherwise, return `true`.
     return true;
 }
 

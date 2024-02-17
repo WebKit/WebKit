@@ -8326,6 +8326,21 @@ WriteRichTextDataWhenCopyingOrDragging:
     WebCore:
       default: true
 
+WritingSuggestionsAttributeEnabled:
+  type: bool
+  status: stable
+  category: dom
+  humanReadableName: "Writing Suggestions"
+  humanReadableDescription: "Enable the writingsuggestions attribute"
+  condition: ENABLE(WRITING_SUGGESTIONS)
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+
 ZoomOnDoubleTapWhenRoot:
   type: bool
   status: internal

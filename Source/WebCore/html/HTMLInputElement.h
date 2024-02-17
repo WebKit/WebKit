@@ -157,6 +157,7 @@ public:
     // isTextField && !isPasswordField.
     WEBCORE_EXPORT bool isText() const;
     bool isTextType() const;
+    bool supportsWritingSuggestions() const;
     WEBCORE_EXPORT bool isEmailField() const;
     WEBCORE_EXPORT bool isFileUpload() const;
     bool isImageButton() const;

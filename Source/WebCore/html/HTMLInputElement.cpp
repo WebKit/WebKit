@@ -1039,6 +1039,18 @@ bool HTMLInputElement::isTextType() const
     return m_inputType->isTextType();
 }
 
+bool HTMLInputElement::supportsWritingSuggestions() const
+{
+    static constexpr OptionSet<InputType::Type> allowedTypes = {
+        InputType::Type::Text,
+        InputType::Type::Search,
+        InputType::Type::URL,
+        InputType::Type::Email,
+    };
+
+    return allowedTypes.contains(m_inputType->type());
+}
+
 void HTMLInputElement::setDefaultCheckedState(bool isDefaultChecked)
 {
     if (m_isDefaultChecked == isDefaultChecked)

@@ -75,6 +75,8 @@ TextStream& operator<<(TextStream& ts, const EditorState& editorState)
             ts.dumpProperty("enclosingListType", enumToUnderlyingType(editorState.postLayoutData->enclosingListType));
         if (editorState.postLayoutData->baseWritingDirection != WebCore::WritingDirection::Natural)
             ts.dumpProperty("baseWritingDirection", static_cast<uint8_t>(editorState.postLayoutData->baseWritingDirection));
+        if (editorState.postLayoutData->canEnableWritingSuggestions)
+            ts.dumpProperty("canEnableWritingSuggestions", editorState.postLayoutData->canEnableWritingSuggestions);
 #endif // PLATFORM(COCOA)
 #if PLATFORM(IOS_FAMILY)
         if (editorState.postLayoutData->markedText.length())

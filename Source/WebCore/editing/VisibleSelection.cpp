@@ -687,6 +687,21 @@ bool VisibleSelection::isInPasswordField() const
     return textControl && textControl->isPasswordField();
 }
 
+bool VisibleSelection::canEnableWritingSuggestions() const
+{
+    RefPtr containerNode = start().containerNode();
+    if (!containerNode)
+        return false;
+
+    if (RefPtr element = dynamicDowncast<Element>(containerNode.get()))
+        return element->isWritingSuggestionsEnabled();
+
+    if (RefPtr element = containerNode->parentElement())
+        return element->isWritingSuggestionsEnabled();
+
+    return false;
+}
+
 bool VisibleSelection::isInAutoFilledAndViewableField() const
 {
     if (RefPtr input = dynamicDowncast<HTMLInputElement>(enclosingTextFormControl(start())))

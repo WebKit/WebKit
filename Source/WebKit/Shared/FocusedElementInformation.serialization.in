@@ -104,6 +104,7 @@ enum class WebKit::InputType : uint8_t {
     bool hasEverBeenPasswordField;
     bool shouldSynthesizeKeyEventsForEditing;
     bool isSpellCheckingEnabled;
+    bool isWritingSuggestionsEnabled;
     bool shouldAvoidResizingWhenInputViewBoundsChange;
     bool shouldAvoidScrollingWhenFocusedContentIsVisible;
     bool shouldUseLegacySelectPopoverDismissalBehaviorInDataActivation;

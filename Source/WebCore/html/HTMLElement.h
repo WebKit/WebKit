@@ -84,6 +84,9 @@ public:
     WEBCORE_EXPORT bool spellcheck() const;
     WEBCORE_EXPORT void setSpellcheck(bool);
 
+    WEBCORE_EXPORT bool writingsuggestions() const;
+    WEBCORE_EXPORT void setWritingsuggestions(bool);
+
     WEBCORE_EXPORT bool translate() const;
     WEBCORE_EXPORT void setTranslate(bool);
 

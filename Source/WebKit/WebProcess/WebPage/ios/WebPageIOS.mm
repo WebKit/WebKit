@@ -3550,6 +3550,8 @@ std::optional<FocusedElementInformation> WebPage::focusedElementInformation()
     if (htmlElement)
         information.isSpellCheckingEnabled = htmlElement->spellcheck();
 
+    information.isWritingSuggestionsEnabled = focusedElement->isWritingSuggestionsEnabled();
+
     if (RefPtr formControlElement = dynamicDowncast<HTMLFormControlElement>(focusedElement))
         information.isFocusingWithValidationMessage = formControlElement->isFocusingWithValidationMessage();
 

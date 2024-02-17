@@ -629,6 +629,7 @@ public:
 #endif
 
     bool isSpellCheckingEnabled() const;
+    WEBCORE_EXPORT bool isWritingSuggestionsEnabled() const;
 
     inline bool hasID() const;
     inline bool hasClass() const;

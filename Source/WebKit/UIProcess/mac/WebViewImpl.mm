@@ -3210,8 +3210,6 @@ void WebViewImpl::requestCandidatesForSelectionIfNeeded()
 std::optional<EditorState::PostLayoutData> WebViewImpl::postLayoutDataForContentEditable()
 {
     const EditorState& editorState = m_page->editorState();
-    if (!editorState.isContentEditable)
-        return std::nullopt;
 
     // FIXME: It's pretty lame that we have to depend on the most recent EditorState having post layout data,
     // and that we just bail if it is missing.
@@ -5195,6 +5193,14 @@ void WebViewImpl::setMarkedText(id string, NSRange selectedRange, NSRange replac
 #if HAVE(INLINE_PREDICTIONS)
 bool WebViewImpl::allowsInlinePredictions() const
 {
+    const EditorState& editorState = m_page->editorState();
+
+    if (editorState.hasPostLayoutData() && editorState.postLayoutData->canEnableWritingSuggestions)
+        return NSSpellChecker.isAutomaticInlineCompletionEnabled;
+
+    if (!editorState.isContentEditable)
+        return false;
+
     if (!inlinePredictionsEnabled() && !m_page->preferences().inlinePredictionsInAllEditableElementsEnabled())
         return false;
 
