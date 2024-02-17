@@ -1495,12 +1495,23 @@ struct WebCore::AuthenticatorResponseData {
     String support;
     std::optional<bool> read;
     std::optional<WebCore::BufferSource> write;
-}
+};
+
+[Nested] struct WebCore::AuthenticationExtensionsClientInputs::PRFValues {
+    WebCore::BufferSource first;
+    std::optional<WebCore::BufferSource> second;
+};
+
+[Nested] struct WebCore::AuthenticationExtensionsClientInputs::PRFInputs {
+    std::optional<WebCore::AuthenticationExtensionsClientInputs::PRFValues> eval;
+    std::optional<Vector<KeyValuePair<String, WebCore::AuthenticationExtensionsClientInputs::PRFValues>>> evalByCredential;
+};
 
 [LegacyPopulateFromEmptyConstructor] struct WebCore::AuthenticationExtensionsClientInputs {
     String appid;
     [NotSerialized] bool credProps;
     std::optional<WebCore::AuthenticationExtensionsClientInputs::LargeBlobInputs> largeBlob;
+    std::optional<WebCore::AuthenticationExtensionsClientInputs::PRFInputs> prf;
 }
 
 [Nested] struct WebCore::AuthenticationExtensionsClientOutputs::CredentialPropertiesOutput {
@@ -1513,10 +1524,21 @@ struct WebCore::AuthenticatorResponseData {
     std::optional<bool> written;
 };
 
+[Nested] struct WebCore::AuthenticationExtensionsClientOutputs::PRFValues {
+    RefPtr<JSC::ArrayBuffer> first;
+    RefPtr<JSC::ArrayBuffer> second;
+};
+
+[Nested] struct WebCore::AuthenticationExtensionsClientOutputs::PRFOutputs {
+    std::optional<bool> enabled;
+    std::optional<WebCore::AuthenticationExtensionsClientOutputs::PRFValues> results;
+};
+
 struct WebCore::AuthenticationExtensionsClientOutputs {
     std::optional<bool> appid;
     std::optional<WebCore::AuthenticationExtensionsClientOutputs::CredentialPropertiesOutput> credProps;
     std::optional<WebCore::AuthenticationExtensionsClientOutputs::LargeBlobOutputs> largeBlob;
+    std::optional<WebCore::AuthenticationExtensionsClientOutputs::PRFOutputs> prf;
 }
 
 [Nested] struct WebCore::PublicKeyCredentialCreationOptions::Parameters {

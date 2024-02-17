@@ -153,12 +153,14 @@ void AuthenticatorCoordinator::create(const Document& document, CredentialCreati
     AuthenticationExtensionsClientInputs extensionInputs = {
         String(),
         false,
+        std::nullopt,
         std::nullopt
     };
 
     if (auto extensions = options.extensions) {
         extensionInputs.credProps = extensions->credProps;
         extensionInputs.largeBlob = extensions->largeBlob;
+        extensionInputs.prf = extensions->prf;
     }
 
     options.extensions = extensionInputs;
