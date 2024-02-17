@@ -2400,3 +2400,18 @@ webkit.org/b/269327 [ Release ] webrtc/audio-samplerate-change.html [ Pass Failu
 webkit.org/b/269378 [ Debug ] fast/forms/switch/click-disabled.html [ Skip ]
 
 webkit.org/b/269483 [ Debug ] http/wpt/webcodecs/h264-encoder-default-config.https.any.worker.html [ Skip ]
+
+# Failure on the CFNetwork HTTP stack, fixed in the unified HTTP stack
+http/tests/inspector/network/resource-request-headers.html [ Failure ]
+imported/w3c/web-platform-tests/cookie-store/change_eventhandler_for_http_cookie_and_set_cookie_headers.https.window.html [ Failure ]
+imported/w3c/web-platform-tests/cookies/name/name-ctl.html [ Failure ]
+imported/w3c/web-platform-tests/cookies/value/value-ctl.html [ Failure ]
+
+# Unified HTTP stack: rdar://122693432 (\r\r\n shouldn't be treated as 2 new lines)
+imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/header-parsing.https.html [ Failure ]
+
+# Unified HTTP stack: rdar://122480508 (Accept status code fewer than 3 digits)
+imported/w3c/web-platform-tests/fetch/h1-parsing/status-code.window.html [ Failure ]
+
+# Unified HTTP stack: rdar://122480510 (Reject lone CR before message-body)
+imported/w3c/web-platform-tests/fetch/h1-parsing/lone-cr.window.html [ Failure ]
