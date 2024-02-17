@@ -46,7 +46,7 @@ Ref<PushSubscriptionChangeEvent> PushSubscriptionChangeEvent::create(const AtomS
 }
 
 PushSubscriptionChangeEvent::PushSubscriptionChangeEvent(const AtomString& type, ExtendableEventInit&& eventInit, RefPtr<PushSubscription>&& newSubscription, RefPtr<PushSubscription>&& oldSubscription, IsTrusted isTrusted)
-    : ExtendableEvent(type, WTFMove(eventInit), isTrusted)
+    : ExtendableEvent(EventInterfaceType::PushSubscriptionChangeEvent, type, WTFMove(eventInit), isTrusted)
     , m_newSubscription(WTFMove(newSubscription))
     , m_oldSubscription(WTFMove(oldSubscription))
 {

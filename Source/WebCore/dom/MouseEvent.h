@@ -58,7 +58,7 @@ public:
         int screenX, int screenY, int clientX, int clientY, OptionSet<Modifier>, MouseButton, unsigned short buttons,
         SyntheticClickType, EventTarget* relatedTarget);
 
-    static Ref<MouseEvent> createForBindings() { return adoptRef(*new MouseEvent); }
+    static Ref<MouseEvent> createForBindings();
 
     static Ref<MouseEvent> create(const AtomString& eventType, const MouseEventInit&);
 
@@ -89,17 +89,17 @@ public:
     unsigned which() const final;
 
 protected:
-    MouseEvent(const AtomString& type, CanBubble, IsCancelable, IsComposed, MonotonicTime timestamp, RefPtr<WindowProxy>&&, int detail,
+    MouseEvent(enum EventInterfaceType, const AtomString& type, CanBubble, IsCancelable, IsComposed, MonotonicTime timestamp, RefPtr<WindowProxy>&&, int detail,
         const IntPoint& screenLocation, const IntPoint& windowLocation, double movementX, double movementY, OptionSet<Modifier>, MouseButton, unsigned short buttons,
         EventTarget* relatedTarget, double force, SyntheticClickType, IsSimulated, IsTrusted);
 
-    MouseEvent(const AtomString& type, CanBubble, IsCancelable, IsComposed, RefPtr<WindowProxy>&&, int detail,
+    MouseEvent(enum EventInterfaceType, const AtomString& type, CanBubble, IsCancelable, IsComposed, RefPtr<WindowProxy>&&, int detail,
         const IntPoint& screenLocation, const IntPoint& clientLocation, double movementX, double movementY, OptionSet<Modifier>, MouseButton, unsigned short buttons,
         SyntheticClickType, EventTarget* relatedTarget);
 
-    MouseEvent(const AtomString& type, const MouseEventInit&);
+    MouseEvent(enum EventInterfaceType, const AtomString& type, const MouseEventInit&);
 
-    MouseEvent();
+    MouseEvent(enum EventInterfaceType);
 
 private:
     bool isMouseEvent() const final;

@@ -42,7 +42,7 @@ Ref<PictureInPictureEvent> PictureInPictureEvent::create(const AtomString& type,
 }
 
 PictureInPictureEvent::PictureInPictureEvent(const AtomString& type, Init&& init, IsTrusted isTrusted)
-    : Event(type, init, isTrusted)
+    : Event(EventInterfaceType::PictureInPictureEvent, type, init, isTrusted)
     , m_pictureInPictureWindow(init.pictureInPictureWindow.releaseNonNull())
 {
 }

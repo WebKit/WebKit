@@ -42,7 +42,7 @@ Ref<CookieChangeEvent> CookieChangeEvent::create(const AtomString& type, CookieC
 }
 
 CookieChangeEvent::CookieChangeEvent(const AtomString& type, CookieChangeEventInit&& eventInitDict, IsTrusted isTrusted)
-    : Event(type, eventInitDict, isTrusted)
+    : Event(EventInterfaceType::CookieChangeEvent, type, eventInitDict, isTrusted)
     , m_changed(WTFMove(eventInitDict.changed))
     , m_deleted(WTFMove(eventInitDict.deleted))
 { }

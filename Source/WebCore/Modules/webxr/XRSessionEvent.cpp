@@ -41,7 +41,7 @@ Ref<XRSessionEvent> XRSessionEvent::create(const AtomString& type, const Init& i
 }
 
 XRSessionEvent::XRSessionEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
-    : Event(type, initializer, isTrusted)
+    : Event(EventInterfaceType::XRSessionEvent, type, initializer, isTrusted)
     , m_session(initializer.session)
 {
     ASSERT(m_session);

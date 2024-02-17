@@ -36,15 +36,20 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(PopStateEvent);
 
+PopStateEvent::PopStateEvent()
+    : Event(EventInterfaceType::PopStateEvent)
+{
+}
+
 PopStateEvent::PopStateEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
-    : Event(type, initializer, isTrusted)
+    : Event(EventInterfaceType::PopStateEvent, type, initializer, isTrusted)
     , m_state(initializer.state)
     , m_hasUAVisualTransition(initializer.hasUAVisualTransition)
 {
 }
 
 PopStateEvent::PopStateEvent(RefPtr<SerializedScriptValue>&& serializedState, History* history)
-    : Event(eventNames().popstateEvent, CanBubble::No, IsCancelable::No)
+    : Event(EventInterfaceType::PopStateEvent, eventNames().popstateEvent, CanBubble::No, IsCancelable::No)
     , m_serializedState(WTFMove(serializedState))
     , m_history(history)
 {

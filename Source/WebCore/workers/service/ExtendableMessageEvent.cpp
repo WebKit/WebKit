@@ -40,7 +40,7 @@ Ref<ExtendableMessageEvent> ExtendableMessageEvent::create(Vector<RefPtr<Message
 }
 
 ExtendableMessageEvent::ExtendableMessageEvent(JSC::JSGlobalObject& state, const AtomString& type, const Init& init, IsTrusted isTrusted)
-    : ExtendableEvent(type, init, isTrusted)
+    : ExtendableEvent(EventInterfaceType::ExtendableMessageEvent, type, init, isTrusted)
     , m_data(SerializedScriptValue::create(state, init.data, SerializationForStorage::No, SerializationErrorMode::NonThrowing))
     , m_origin(init.origin)
     , m_lastEventId(init.lastEventId)
@@ -50,7 +50,7 @@ ExtendableMessageEvent::ExtendableMessageEvent(JSC::JSGlobalObject& state, const
 }
 
 ExtendableMessageEvent::ExtendableMessageEvent(RefPtr<SerializedScriptValue>&& data, const String& origin, const String& lastEventId, std::optional<ExtendableMessageEventSource>&& source, Vector<RefPtr<MessagePort>>&& ports)
-    : ExtendableEvent(eventNames().messageEvent, CanBubble::No, IsCancelable::No)
+    : ExtendableEvent(EventInterfaceType::ExtendableMessageEvent, eventNames().messageEvent, CanBubble::No, IsCancelable::No)
     , m_data(WTFMove(data))
     , m_origin(origin)
     , m_lastEventId(lastEventId)

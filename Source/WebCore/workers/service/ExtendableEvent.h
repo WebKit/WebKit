@@ -38,7 +38,7 @@ class ExtendableEvent : public Event, public CanMakeWeakPtr<ExtendableEvent> {
 public:
     static Ref<ExtendableEvent> create(const AtomString& type, const ExtendableEventInit& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
-        return adoptRef(*new ExtendableEvent(type, initializer, isTrusted));
+        return adoptRef(*new ExtendableEvent(EventInterfaceType::ExtendableEvent, type, initializer, isTrusted));
     }
 
     ~ExtendableEvent();
@@ -51,8 +51,8 @@ public:
     WEBCORE_EXPORT void whenAllExtendLifetimePromisesAreSettled(Function<void(HashSet<Ref<DOMPromise>>&&)>&&);
 
 protected:
-    WEBCORE_EXPORT ExtendableEvent(const AtomString&, const ExtendableEventInit&, IsTrusted);
-    ExtendableEvent(const AtomString&, CanBubble, IsCancelable);
+    WEBCORE_EXPORT ExtendableEvent(enum EventInterfaceType, const AtomString&, const ExtendableEventInit&, IsTrusted);
+    ExtendableEvent(enum EventInterfaceType, const AtomString&, CanBubble, IsCancelable);
 
     void addExtendLifetimePromise(Ref<DOMPromise>&&);
 

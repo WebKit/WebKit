@@ -33,7 +33,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(NavigateEvent);
 
 NavigateEvent::NavigateEvent(const AtomString& type, const NavigateEvent::Init& init)
-    : Event(type, CanBubble::No, IsCancelable::No)
+    : Event(EventInterfaceType::NavigateEvent, type, CanBubble::No, IsCancelable::No)
     , m_navigationType(init.navigationType)
     , m_destination(init.destination)
     , m_signal(init.signal)

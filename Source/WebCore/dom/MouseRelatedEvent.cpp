@@ -38,10 +38,21 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(MouseRelatedEvent);
 
-MouseRelatedEvent::MouseRelatedEvent(const AtomString& eventType, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed,
+// FIXME: Remove this variant.
+MouseRelatedEvent::MouseRelatedEvent()
+    : UIEventWithKeyState(EventInterfaceType::Invalid)
+{
+}
+
+MouseRelatedEvent::MouseRelatedEvent(enum EventInterfaceType eventInterface)
+    : UIEventWithKeyState(eventInterface)
+{
+}
+
+MouseRelatedEvent::MouseRelatedEvent(enum EventInterfaceType eventInterface, const AtomString& eventType, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed,
     MonotonicTime timestamp, RefPtr<WindowProxy>&& view, int detail,
     const IntPoint& screenLocation, const IntPoint& windowLocation, double movementX, double movementY, OptionSet<Modifier> modifiers, IsSimulated isSimulated, IsTrusted isTrusted)
-    : UIEventWithKeyState(eventType, canBubble, isCancelable, isComposed, timestamp, WTFMove(view), detail, modifiers, isTrusted)
+    : UIEventWithKeyState(eventInterface, eventType, canBubble, isCancelable, isComposed, timestamp, WTFMove(view), detail, modifiers, isTrusted)
     , m_screenLocation(screenLocation)
     , m_movementX(movementX)
     , m_movementY(movementY)
@@ -50,20 +61,42 @@ MouseRelatedEvent::MouseRelatedEvent(const AtomString& eventType, CanBubble canB
     init(m_isSimulated, windowLocation);
 }
 
-MouseRelatedEvent::MouseRelatedEvent(const AtomString& type, IsCancelable isCancelable, MonotonicTime timestamp, RefPtr<WindowProxy>&& view, const IntPoint& globalLocation, OptionSet<Modifier> modifiers)
-    : MouseRelatedEvent(type, CanBubble::Yes, isCancelable, IsComposed::Yes, timestamp,
+// FIXME: Remove this variant.
+MouseRelatedEvent::MouseRelatedEvent(const AtomString& eventType, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed,
+    MonotonicTime timestamp, RefPtr<WindowProxy>&& view, int detail,
+    const IntPoint& screenLocation, const IntPoint& windowLocation, double movementX, double movementY, OptionSet<Modifier> modifiers, IsSimulated isSimulated, IsTrusted isTrusted)
+    : MouseRelatedEvent(EventInterfaceType::Invalid, eventType, canBubble, isCancelable, isComposed, timestamp, WTFMove(view), detail, screenLocation, windowLocation,
+        movementX, movementY, modifiers, isSimulated, isTrusted)
+{
+}
+
+MouseRelatedEvent::MouseRelatedEvent(enum EventInterfaceType eventInterface, const AtomString& type, IsCancelable isCancelable, MonotonicTime timestamp, RefPtr<WindowProxy>&& view, const IntPoint& globalLocation, OptionSet<Modifier> modifiers)
+    : MouseRelatedEvent(eventInterface, type, CanBubble::Yes, isCancelable, IsComposed::Yes, timestamp,
         WTFMove(view), 0, globalLocation, globalLocation /* Converted in init */, 0, 0, modifiers, IsSimulated::No)
 {
 }
 
-MouseRelatedEvent::MouseRelatedEvent(const AtomString& eventType, const MouseRelatedEventInit& initializer, IsTrusted isTrusted)
-    : UIEventWithKeyState(eventType, initializer)
+// FIXME: Remove this variant.
+MouseRelatedEvent::MouseRelatedEvent(const AtomString& type, IsCancelable isCancelable, MonotonicTime timestamp, RefPtr<WindowProxy>&& view, const IntPoint& globalLocation, OptionSet<Modifier> modifiers)
+    : MouseRelatedEvent(EventInterfaceType::Invalid, type, CanBubble::Yes, isCancelable, IsComposed::Yes, timestamp,
+        WTFMove(view), 0, globalLocation, globalLocation /* Converted in init */, 0, 0, modifiers, IsSimulated::No)
+{
+}
+
+MouseRelatedEvent::MouseRelatedEvent(enum EventInterfaceType eventInterface, const AtomString& eventType, const MouseRelatedEventInit& initializer, IsTrusted isTrusted)
+    : UIEventWithKeyState(eventInterface, eventType, initializer)
     , m_screenLocation(IntPoint(initializer.screenX, initializer.screenY))
     , m_movementX(initializer.movementX)
     , m_movementY(initializer.movementY)
 {
     ASSERT_UNUSED(isTrusted, isTrusted == IsTrusted::No);
     init(false, IntPoint(0, 0));
+}
+
+// FIXME: Remove this variant.
+MouseRelatedEvent::MouseRelatedEvent(const AtomString& eventType, const MouseRelatedEventInit& initializer, IsTrusted isTrusted)
+    : MouseRelatedEvent(EventInterfaceType::Invalid, eventType, initializer, isTrusted)
+{
 }
 
 static inline bool isMoveEventType(const AtomString& eventType)

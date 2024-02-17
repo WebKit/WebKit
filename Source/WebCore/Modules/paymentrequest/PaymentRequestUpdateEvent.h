@@ -40,7 +40,7 @@ class PaymentRequestUpdateEvent : public Event {
 public:
     template <typename... Args> static Ref<PaymentRequestUpdateEvent> create(Args&&... args)
     {
-        return adoptRef(*new PaymentRequestUpdateEvent(std::forward<Args>(args)...));
+        return adoptRef(*new PaymentRequestUpdateEvent(EventInterfaceType::PaymentRequestUpdateEvent, std::forward<Args>(args)...));
     }
     ~PaymentRequestUpdateEvent();
     ExceptionOr<void> updateWith(Ref<DOMPromise>&&);
@@ -48,8 +48,8 @@ public:
     bool didCallUpdateWith() const { return m_waitForUpdate; }
 
 protected:
-    explicit PaymentRequestUpdateEvent(const AtomString& type);
-    PaymentRequestUpdateEvent(const AtomString& type, const PaymentRequestUpdateEventInit&);
+    explicit PaymentRequestUpdateEvent(enum EventInterfaceType, const AtomString& type);
+    PaymentRequestUpdateEvent(enum EventInterfaceType, const AtomString& type, const PaymentRequestUpdateEventInit&);
 
     // Event
     EventInterface eventInterface() const override;

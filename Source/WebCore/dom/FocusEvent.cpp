@@ -43,14 +43,19 @@ bool FocusEvent::isFocusEvent() const
     return true;
 }
 
+FocusEvent::FocusEvent()
+    : UIEvent(EventInterfaceType::FocusEvent)
+{
+}
+
 FocusEvent::FocusEvent(const AtomString& type, CanBubble canBubble, IsCancelable isCancelable, RefPtr<WindowProxy>&& view, int detail, RefPtr<EventTarget>&& relatedTarget)
-    : UIEvent(type, canBubble, isCancelable, IsComposed::Yes, WTFMove(view), detail)
+    : UIEvent(EventInterfaceType::FocusEvent, type, canBubble, isCancelable, IsComposed::Yes, WTFMove(view), detail)
     , m_relatedTarget(WTFMove(relatedTarget))
 {
 }
 
 FocusEvent::FocusEvent(const AtomString& type, const Init& initializer)
-    : UIEvent(type, initializer)
+    : UIEvent(EventInterfaceType::FocusEvent, type, initializer)
     , m_relatedTarget(initializer.relatedTarget)
 {
 }

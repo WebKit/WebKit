@@ -33,13 +33,13 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(CSSAnimationEvent);
 
 CSSAnimationEvent::CSSAnimationEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
-    : StyleOriginatedAnimationEvent(type, initializer, isTrusted, initializer.elapsedTime, initializer.pseudoElement)
+    : StyleOriginatedAnimationEvent(EventInterfaceType::CSSAnimationEvent, type, initializer, isTrusted, initializer.elapsedTime, initializer.pseudoElement)
     , m_animationName(initializer.animationName)
 {
 }
 
 CSSAnimationEvent::CSSAnimationEvent(const AtomString& type, WebAnimation* animation, std::optional<Seconds> scheduledTime, double elapsedTime, const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier, const String& animationName)
-    : StyleOriginatedAnimationEvent(type, animation, scheduledTime, elapsedTime, pseudoElementIdentifier)
+    : StyleOriginatedAnimationEvent(EventInterfaceType::CSSAnimationEvent, type, animation, scheduledTime, elapsedTime, pseudoElementIdentifier)
     , m_animationName(animationName)
 {
 }

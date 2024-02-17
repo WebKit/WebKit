@@ -34,15 +34,15 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(StyleOriginatedAnimationEvent);
 
-StyleOriginatedAnimationEvent::StyleOriginatedAnimationEvent(const AtomString& type, WebAnimation* animation, std::optional<Seconds> scheduledTime, double elapsedTime, const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
-    : AnimationEventBase(type, animation, scheduledTime)
+StyleOriginatedAnimationEvent::StyleOriginatedAnimationEvent(enum EventInterfaceType eventInterface, const AtomString& type, WebAnimation* animation, std::optional<Seconds> scheduledTime, double elapsedTime, const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
+    : AnimationEventBase(eventInterface, type, animation, scheduledTime)
     , m_elapsedTime(elapsedTime)
     , m_pseudoElementIdentifier(pseudoElementIdentifier)
 {
 }
 
-StyleOriginatedAnimationEvent::StyleOriginatedAnimationEvent(const AtomString& type, const EventInit& init, IsTrusted isTrusted, double elapsedTime, const String& pseudoElement)
-    : AnimationEventBase(type, init, isTrusted)
+StyleOriginatedAnimationEvent::StyleOriginatedAnimationEvent(enum EventInterfaceType eventInterface, const AtomString& type, const EventInit& init, IsTrusted isTrusted, double elapsedTime, const String& pseudoElement)
+    : AnimationEventBase(eventInterface, type, init, isTrusted)
     , m_elapsedTime(elapsedTime)
     , m_pseudoElement(pseudoElement)
 {

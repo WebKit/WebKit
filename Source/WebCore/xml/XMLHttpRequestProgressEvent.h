@@ -45,7 +45,7 @@ public:
 
 private:
     XMLHttpRequestProgressEvent(const AtomString& type, bool lengthComputable, unsigned long long loaded, unsigned long long total)
-        : ProgressEvent(type, lengthComputable, loaded, total)
+        : ProgressEvent(EventInterfaceType::XMLHttpRequestProgressEvent, type, lengthComputable, loaded, total)
     {
     }
 };

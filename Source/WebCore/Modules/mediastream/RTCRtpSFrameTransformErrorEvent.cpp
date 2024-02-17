@@ -47,7 +47,7 @@ Ref<RTCRtpSFrameTransformErrorEvent> RTCRtpSFrameTransformErrorEvent::create(con
 }
 
 RTCRtpSFrameTransformErrorEvent::RTCRtpSFrameTransformErrorEvent(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, Type errorType)
-    : Event(type, canBubble, cancelable)
+    : Event(EventInterfaceType::RTCRtpSFrameTransformErrorEvent, type, canBubble, cancelable)
     , m_errorType(errorType)
 {
 }
