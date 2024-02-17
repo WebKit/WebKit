@@ -113,6 +113,7 @@ private:
     OptionSet<DocumentMarker::Type> removeMarkersFromList(MarkerMap::iterator, OptionSet<DocumentMarker::Type>, const Function<FilterMarkerResult(const RenderedDocumentMarker&)>& filterFunction = nullptr);
 
     void fadeAnimationTimerFired();
+    void unifiedTextReplacementAnimationTimerFired();
 
     Ref<Document> protectedDocument() const;
 
@@ -122,6 +123,7 @@ private:
     WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
 
     Timer m_fadeAnimationTimer;
+    Timer m_unifiedTextReplacementAnimationTimer;
 };
 
 WEBCORE_EXPORT void addMarker(const SimpleRange&, DocumentMarker::Type, const DocumentMarker::Data& = { });

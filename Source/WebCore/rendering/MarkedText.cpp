@@ -215,7 +215,7 @@ Vector<MarkedText> MarkedText::collectForDocumentMarkers(const RenderText& rende
             return MarkedText::Type::Correction;
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
         case DocumentMarker::Type::UnifiedTextReplacement:
-            return MarkedText::Type::Correction;
+            return MarkedText::Type::UnifiedTextReplacement;
 #endif
         case DocumentMarker::Type::TextMatch:
             return MarkedText::Type::TextMatch;

@@ -43,7 +43,8 @@
 namespace WebCore {
 
 constexpr Seconds markerFadeAnimationDuration = 200_ms;
-constexpr double markerFadeAnimationFrameRate = 30;
+
+constexpr double markerAnimationFrameRate = 30;
 
 inline bool DocumentMarkerController::possiblyHasMarkers(OptionSet<DocumentMarker::Type> types) const
 {
@@ -53,6 +54,7 @@ inline bool DocumentMarkerController::possiblyHasMarkers(OptionSet<DocumentMarke
 DocumentMarkerController::DocumentMarkerController(Document& document)
     : m_document(document)
     , m_fadeAnimationTimer(*this, &DocumentMarkerController::fadeAnimationTimerFired)
+    , m_unifiedTextReplacementAnimationTimer(*this, &DocumentMarkerController::unifiedTextReplacementAnimationTimerFired)
 {
 }
 
@@ -63,6 +65,7 @@ void DocumentMarkerController::detach()
     m_markers.clear();
     m_possiblyExistingMarkerTypes = { };
     m_fadeAnimationTimer.stop();
+    m_unifiedTextReplacementAnimationTimer.stop();
 }
 
 auto DocumentMarkerController::collectTextRanges(const SimpleRange& range) -> Vector<TextRange>
@@ -333,6 +336,13 @@ void DocumentMarkerController::addMarker(Node& node, DocumentMarker&& newMarker)
     if (CheckedPtr renderer = node.renderer())
         renderer->repaint();
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    if (newMarker.type() == DocumentMarker::Type::UnifiedTextReplacement) {
+        if (!m_unifiedTextReplacementAnimationTimer.isActive())
+            m_unifiedTextReplacementAnimationTimer.startRepeating(1_s / markerAnimationFrameRate);
+    }
+#endif
+
     invalidateRectsForMarkersInNode(node);
 }
 
@@ -564,6 +574,11 @@ void DocumentMarkerController::removeMarkers(OptionSet<DocumentMarker::Type> typ
     for (auto& node : copyToVector(m_markers.keys()))
         removedMarkerTypes = removedMarkerTypes & removeMarkersFromList(m_markers.find(node), types, filter);
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    if (removedMarkerTypes.contains(DocumentMarker::Type::UnifiedTextReplacement))
+        m_unifiedTextReplacementAnimationTimer.stop();
+#endif
+
     m_possiblyExistingMarkerTypes.remove(removedMarkerTypes);
 }
 
@@ -708,7 +723,18 @@ void DocumentMarkerController::dismissMarkers(OptionSet<DocumentMarker::Type> ty
     });
 
     if (requiresAnimation && !m_fadeAnimationTimer.isActive())
-        m_fadeAnimationTimer.startRepeating(1_s / markerFadeAnimationFrameRate);
+        m_fadeAnimationTimer.startRepeating(1_s / markerAnimationFrameRate);
+}
+
+void DocumentMarkerController::unifiedTextReplacementAnimationTimerFired()
+{
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    forEachOfTypes({ DocumentMarker::Type::UnifiedTextReplacement }, [](Node& node, RenderedDocumentMarker&) {
+        if (CheckedPtr renderer = node.renderer())
+            renderer->repaint();
+        return false;
+    });
+#endif
 }
 
 void DocumentMarkerController::fadeAnimationTimerFired()

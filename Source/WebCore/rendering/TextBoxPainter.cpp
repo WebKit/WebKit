@@ -53,6 +53,10 @@
 #include "TextPaintStyle.h"
 #include "TextPainter.h"
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#include "GraphicsContextCG.h"
+#endif
+
 namespace WebCore {
 
 static FloatRect calculateDocumentMarkerBounds(const InlineIterator::TextBoxIterator&, const MarkedText&);
@@ -1034,14 +1038,32 @@ FloatRect LegacyTextBoxPainter::calculateUnionOfAllDocumentMarkerBounds(const Le
     return result;
 }
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/TextBoxPainterAdditions.cpp>
+#else
+static void drawUnifiedTextReplacementUnderline(GraphicsContext&, const FloatRect&, IntSize) { }
+#endif
+
+#endif // ENABLE(UNIFIED_TEXT_REPLACEMENT)
+
 template<typename TextBoxPath>
 void TextBoxPainter<TextBoxPath>::paintPlatformDocumentMarker(const MarkedText& markedText)
 {
-    // Never print spelling/grammar markers (5327887)
+    // Never print document markers (rdar://5327887)
     if (m_document.printing())
         return;
 
     auto bounds = calculateDocumentMarkerBounds(makeIterator(), markedText);
+    bounds.moveBy(m_paintRect.location());
+
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    if (markedText.type == MarkedText::Type::UnifiedTextReplacement) {
+        drawUnifiedTextReplacementUnderline(m_paintInfo.context(), bounds,  m_renderer.frame().view()->size());
+        return;
+    }
+#endif
 
     auto lineStyleMode = [&] {
         switch (markedText.type) {
@@ -1068,7 +1090,6 @@ void TextBoxPainter<TextBoxPath>::paintPlatformDocumentMarker(const MarkedText& 
     if (auto* marker = markedText.marker)
         lineStyleColor = lineStyleColor.colorWithAlphaMultipliedBy(marker->opacity());
 
-    bounds.moveBy(m_paintRect.location());
     m_paintInfo.context().drawDotsForDocumentMarker(bounds, { lineStyleMode, lineStyleColor });
 }
 
