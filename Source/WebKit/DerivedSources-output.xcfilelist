@@ -135,6 +135,12 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/ModelProcessConnectionMessageReceive
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/ModelProcessConnectionMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/ModelProcessMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/ModelProcessMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/ModelProcessModelPlayerManagerProxyMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/ModelProcessModelPlayerManagerProxyMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/ModelProcessModelPlayerMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/ModelProcessModelPlayerMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/ModelProcessModelPlayerProxyMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/ModelProcessModelPlayerProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/ModelProcessProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/ModelProcessProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/NPObjectMessageReceiverMessageReceiver.cpp

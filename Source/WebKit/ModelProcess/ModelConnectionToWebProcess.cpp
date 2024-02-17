@@ -37,6 +37,10 @@
 #include "ModelProcessConnectionMessages.h"
 #include "ModelProcessConnectionParameters.h"
 #include "ModelProcessMessages.h"
+#include "ModelProcessModelPlayerManagerProxy.h"
+#include "ModelProcessModelPlayerManagerProxyMessages.h"
+#include "ModelProcessModelPlayerProxy.h"
+#include "ModelProcessModelPlayerProxyMessages.h"
 #include "ModelProcessProxyMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
@@ -58,7 +62,8 @@ Ref<ModelConnectionToWebProcess> ModelConnectionToWebProcess::create(ModelProces
 }
 
 ModelConnectionToWebProcess::ModelConnectionToWebProcess(ModelProcess& modelProcess, WebCore::ProcessIdentifier webProcessIdentifier, PAL::SessionID sessionID, IPC::Connection::Handle&& connectionHandle, ModelProcessConnectionParameters&& parameters)
-    : m_connection(IPC::Connection::createClientConnection(IPC::Connection::Identifier { WTFMove(connectionHandle) }))
+    : m_modelProcessModelPlayerManagerProxy(makeUniqueRef<ModelProcessModelPlayerManagerProxy>(*this))
+    , m_connection(IPC::Connection::createClientConnection(IPC::Connection::Identifier { WTFMove(connectionHandle) }))
     , m_modelProcess(modelProcess)
     , m_webProcessIdentifier(webProcessIdentifier)
     , m_webProcessIdentity(WTFMove(parameters.webProcessIdentity))
@@ -172,6 +177,15 @@ void ModelConnectionToWebProcess::lowMemoryHandler(Critical critical, Synchronou
 
 bool ModelConnectionToWebProcess::dispatchMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
+    if (decoder.messageReceiverName() == Messages::ModelProcessModelPlayerManagerProxy::messageReceiverName()) {
+        modelProcessModelPlayerManagerProxy().didReceiveMessageFromWebProcess(connection, decoder);
+        return true;
+    }
+    if (decoder.messageReceiverName() == Messages::ModelProcessModelPlayerProxy::messageReceiverName()) {
+        modelProcessModelPlayerManagerProxy().didReceivePlayerMessage(connection, decoder);
+        return true;
+    }
+
 #if ENABLE(IPC_TESTING_API)
     if (decoder.messageReceiverName() == Messages::IPCTester::messageReceiverName()) {
         m_ipcTester.didReceiveMessage(connection, decoder);

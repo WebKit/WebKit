@@ -226,6 +226,7 @@ MESSAGE_RECEIVERS = \
 	WebProcess/Inspector/RemoteWebInspectorUI \
 	WebProcess/MediaSession/RemoteMediaSessionCoordinator \
 	WebProcess/Model/ModelProcessConnection \
+	WebProcess/Model/ModelProcessModelPlayer \
 	WebProcess/Network/WebSocketChannel \
 	WebProcess/Network/NetworkProcessConnection \
 	WebProcess/Network/WebResourceLoader \
@@ -326,6 +327,8 @@ MESSAGE_RECEIVERS = \
 	GPUProcess/media/RemoteSourceBufferProxy \
 	ModelProcess/ModelConnectionToWebProcess \
 	ModelProcess/ModelProcess \
+	ModelProcess/ModelProcessModelPlayerManagerProxy \
+	ModelProcess/ModelProcessModelPlayerProxy \
 	webpushd/PushClientConnection \
 #
 
