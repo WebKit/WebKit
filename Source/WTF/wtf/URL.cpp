@@ -820,6 +820,11 @@ String encodeWithURLEscapeSequences(const String& input)
     return percentEncodeCharacters(input, URLParser::isInUserInfoEncodeSet);
 }
 
+String percentEncodeFragmentDirectiveSpecialCharacters(const String& input)
+{
+    return percentEncodeCharacters(input, URLParser::isSpecialCharacterForFragmentDirective);
+}
+
 static bool protocolIsInternal(StringView string, ASCIILiteral protocolLiteral)
 {
     assertProtocolIsGood(protocolLiteral);

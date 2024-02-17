@@ -4370,15 +4370,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _page->insertionPointColorDidChange();
 }
 
-#if ENABLE(APP_HIGHLIGHTS)
-
-- (BOOL)shouldAllowAppHighlightCreation
+- (BOOL)shouldAllowHighlightLinkCreation
 {
     auto editorState = _page->editorState();
     return editorState.selectionIsRange && !editorState.isContentEditable && !editorState.selectionIsRangeInsideImageOverlay;
 }
-
-#endif // ENABLE(APP_HIGHLIGHTS)
 
 - (BOOL)canPerformAction:(SEL)action withSender:(id)sender
 {
@@ -11180,6 +11176,9 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
     if (auto menu = self.appHighlightMenu)
         [builder insertChildMenu:menu atEndOfMenuForIdentifier:UIMenuRoot];
 #endif
+
+    if (auto menu = self.scrollToTextFragmentGenerationMenu)
+        [builder insertSiblingMenu:menu afterMenuForIdentifier:UIMenuStandardEdit];
 }
 
 - (UIMenu *)menuWithInlineAction:(NSString *)title image:(UIImage *)image identifier:(NSString *)identifier handler:(Function<void(WKContentView *)>&&)handler
@@ -11195,7 +11194,7 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 
 - (UIMenu *)appHighlightMenu
 {
-    if (!_page->preferences().appHighlightsEnabled() || !_page->editorState().selectionIsRange || !self.shouldAllowAppHighlightCreation)
+    if (!_page->preferences().appHighlightsEnabled() || !_page->editorState().selectionIsRange || !self.shouldAllowHighlightLinkCreation)
         return nil;
 
     bool isVisible = _page->appHighlightsVisibility();
@@ -11206,6 +11205,16 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 }
 
 #endif // ENABLE(APP_HIGHLIGHTS)
+
+- (UIMenu *)scrollToTextFragmentGenerationMenu
+{
+    if (!_page->preferences().scrollToTextFragmentGenerationEnabled() || !_page->editorState().selectionIsRange || !self.shouldAllowHighlightLinkCreation)
+        return nil;
+
+    return [self menuWithInlineAction:WebCore::contextMenuItemTagCopyLinkToHighlight() image:nil identifier:@"WKActionScrollToTextFragmentGeneration" handler:[](WKContentView *view) mutable {
+        view->_page->copyLinkToHighlight();
+    }];
+}
 
 - (void)setContinuousSpellCheckingEnabled:(BOOL)enabled
 {

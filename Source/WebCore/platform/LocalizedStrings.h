@@ -62,6 +62,7 @@ namespace WebCore {
     WEBCORE_EXPORT String contextMenuItemTagAddHighlightToCurrentQuickNote();
     WEBCORE_EXPORT String contextMenuItemTagAddHighlightToNewQuickNote();
 #endif
+    WEBCORE_EXPORT String contextMenuItemTagCopyLinkToHighlight();
 
 #if ENABLE(CONTEXT_MENUS)
     WEBCORE_EXPORT String contextMenuItemTagOpenLinkInNewWindow();

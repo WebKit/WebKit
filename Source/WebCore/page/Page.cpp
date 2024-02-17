@@ -70,6 +70,7 @@
 #include "FilterRenderingMode.h"
 #include "FocusController.h"
 #include "FontCache.h"
+#include "FragmentDirectiveGenerator.h"
 #include "FrameLoader.h"
 #include "FrameSelection.h"
 #include "FrameTree.h"
@@ -4229,6 +4230,15 @@ bool Page::shouldDisableCorsForRequestTo(const URL& url) const
     return WTF::anyOf(m_corsDisablingPatterns, [&] (const auto& pattern) {
         return pattern.matches(url);
     });
+}
+
+const URL Page::fragmentDirectiveURLForSelectedText()
+{
+    if (auto range = CheckedRef(focusController())->focusedOrMainFrame().selection().selection().range()) {
+        FragmentDirectiveGenerator fragmentDirectiveGenerator(range.value());
+        return fragmentDirectiveGenerator.urlWithFragment();
+    }
+    return URL();
 }
 
 void Page::revealCurrentSelection()

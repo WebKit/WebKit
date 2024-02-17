@@ -487,6 +487,8 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     CollapseSelectionInFrame(WebCore::FrameIdentifier frameID)
 #endif
 
+    CopyLinkToHighlight()
+
 #if PLATFORM(COCOA)
     WindowAndViewFramesChanged(struct WebKit::ViewWindowCoordinates coordinates)
     SetMainFrameIsScrollable(bool isScrollable)

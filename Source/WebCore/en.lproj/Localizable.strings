@@ -394,6 +394,9 @@
 /* Title for Copy Link button */
 "Copy Link (ActionSheet)" = "Copy Link";
 
+/* Copy link to highlight context menu item */
+"Copy Link to Highlight" = "Copy Link to Highlight";
+
 /* Title for Copy Subject */
 "Copy Subject" = "Copy Subject";
 

@@ -66,6 +66,7 @@ public:
 
     static const UIDNA& internationalDomainNameTranscoder();
     static bool isInUserInfoEncodeSet(UChar);
+    static bool isSpecialCharacterForFragmentDirective(UChar);
 
     static std::optional<uint16_t> defaultPortForProtocol(StringView);
     WTF_EXPORT_PRIVATE static std::optional<String> formURLDecode(StringView input);

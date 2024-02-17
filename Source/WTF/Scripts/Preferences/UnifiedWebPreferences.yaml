@@ -5936,6 +5936,20 @@ ScrollToTextFragmentEnabled:
       default: true
     WebCore:
       default: true
+      
+ScrollToTextFragmentGenerationEnabled:
+  type: bool
+  status: unstable
+  category: dom
+  humanReadableName: "Scroll To Text Fragment Generation"
+  humanReadableDescription: "Enable Scroll To Text Fragment Generation Menu"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
 
 ScrollToTextFragmentIndicatorEnabled:
   type: bool

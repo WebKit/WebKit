@@ -4326,6 +4326,14 @@ void WebPage::getSelectionAsWebArchiveData(CompletionHandler<void(const std::opt
     callback(dataBuffer);
 }
 
+void WebPage::copyLinkToHighlight()
+{
+    auto url = m_page->fragmentDirectiveURLForSelectedText();
+    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
+    if (url.isValid())
+        frame->editor().copyURL(url, { });
+}
+
 void WebPage::getSelectionOrContentsAsString(CompletionHandler<void(const String&)>&& callback)
 {
     RefPtr focusedOrMainFrame = WebFrame::fromCoreFrame(CheckedRef(m_page->focusController())->focusedOrMainFrame());

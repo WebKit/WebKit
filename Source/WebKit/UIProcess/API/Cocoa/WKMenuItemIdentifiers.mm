@@ -29,6 +29,7 @@
 NSString * const _WKMenuItemIdentifierCopy = @"WKMenuItemIdentifierCopy";
 NSString * const _WKMenuItemIdentifierCopyImage = @"WKMenuItemIdentifierCopyImage";
 NSString * const _WKMenuItemIdentifierCopyLink = @"WKMenuItemIdentifierCopyLink";
+NSString * const _WKMenuItemIdentifierCopyLinkToHighlight = @"WKMenuItemIdentifierCopyLinkToHighlight";
 NSString * const _WKMenuItemIdentifierCopyMediaLink = @"WKMenuItemIdentifierCopyMediaLink";
 NSString * const _WKMenuItemIdentifierDownloadImage = @"WKMenuItemIdentifierDownloadImage";
 NSString * const _WKMenuItemIdentifierDownloadLinkedFile = @"WKMenuItemIdentifierDownloadLinkedFile";

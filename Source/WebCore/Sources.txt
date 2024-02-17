@@ -1114,6 +1114,7 @@ dom/EventTargetConcrete.cpp
 dom/ExtensionStyleSheets.cpp
 dom/FocusEvent.cpp
 dom/FormDataEvent.cpp
+dom/FragmentDirectiveGenerator.cpp
 dom/FragmentDirectiveRangeFinder.cpp
 dom/FragmentDirectiveParser.cpp
 dom/FullscreenManager.cpp

@@ -30,6 +30,7 @@
 WK_EXTERN NSString * const _WKMenuItemIdentifierCopy WK_API_AVAILABLE(macos(10.12), ios(10.0));
 WK_EXTERN NSString * const _WKMenuItemIdentifierCopyImage WK_API_AVAILABLE(macos(10.12), ios(10.0));
 WK_EXTERN NSString * const _WKMenuItemIdentifierCopyLink WK_API_AVAILABLE(macos(10.12), ios(10.0));
+WK_EXTERN NSString * const _WKMenuItemIdentifierCopyLinkToHighlight WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 WK_EXTERN NSString * const _WKMenuItemIdentifierCopyMediaLink WK_API_AVAILABLE(macos(10.14), ios(12.0));
 WK_EXTERN NSString * const _WKMenuItemIdentifierDownloadImage WK_API_AVAILABLE(macos(10.12), ios(10.0));
 WK_EXTERN NSString * const _WKMenuItemIdentifierDownloadLinkedFile WK_API_AVAILABLE(macos(10.12), ios(10.0));

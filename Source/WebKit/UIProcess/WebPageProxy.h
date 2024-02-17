@@ -2166,6 +2166,8 @@ public:
 
     void syncIfMockDevicesEnabledChanged();
 
+    void copyLinkToHighlight();
+
 #if ENABLE(APP_HIGHLIGHTS)
     void createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighlight, WebCore::HighlightRequestOriginatedInApp);
     void storeAppHighlight(const WebCore::AppHighlight&);

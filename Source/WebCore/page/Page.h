@@ -434,6 +434,8 @@ public:
 
     WEBCORE_EXPORT void revealCurrentSelection();
 
+    WEBCORE_EXPORT const URL fragmentDirectiveURLForSelectedText();
+
     WEBCORE_EXPORT std::optional<SimpleRange> rangeOfString(const String&, const std::optional<SimpleRange>& searchRange, FindOptions);
 
     WEBCORE_EXPORT unsigned countFindMatches(const String&, FindOptions, unsigned maxMatchCount);
