@@ -442,4 +442,9 @@ String ScrollingCoordinator::synchronousScrollingReasonsAsText() const
     return String();
 }
 
+FrameIdentifier ScrollingCoordinator::mainFrameIdentifier() const
+{
+    return m_page->mainFrame().frameID();
+}
+
 } // namespace WebCore

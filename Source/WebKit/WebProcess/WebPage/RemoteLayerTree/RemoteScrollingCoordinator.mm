@@ -110,6 +110,7 @@ RemoteScrollingCoordinatorTransaction RemoteScrollingCoordinator::buildTransacti
     return {
         scrollingStateTree()->commit(LayerRepresentation::PlatformLayerIDRepresentation),
         std::exchange(m_clearScrollLatchingInNextTransaction, false),
+        { },
         RemoteScrollingCoordinatorTransaction::FromDeserialization::No
     };
 }

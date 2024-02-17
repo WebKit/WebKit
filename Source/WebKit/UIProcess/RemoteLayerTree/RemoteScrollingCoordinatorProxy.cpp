@@ -81,7 +81,7 @@ const RemoteLayerTreeHost* RemoteScrollingCoordinatorProxy::layerTreeHost() cons
     return &remoteDrawingArea.remoteLayerTreeHost();
 }
 
-std::optional<RequestedScrollData> RemoteScrollingCoordinatorProxy::commitScrollingTreeState(const RemoteScrollingCoordinatorTransaction& transaction)
+std::optional<RequestedScrollData> RemoteScrollingCoordinatorProxy::commitScrollingTreeState(const RemoteScrollingCoordinatorTransaction& transaction, std::optional<LayerHostingContextIdentifier> identifier)
 {
     m_requestedScroll = { };
 
@@ -93,9 +93,12 @@ std::optional<RequestedScrollData> RemoteScrollingCoordinatorProxy::commitScroll
         return { };
     }
 
+    stateTree->setRootFrameIdentifier(transaction.rootFrameIdentifier());
+
     ASSERT(stateTree);
     connectStateNodeLayers(*stateTree, *layerTreeHost);
-    bool succeeded = m_scrollingTree->commitTreeState(WTFMove(stateTree));
+    bool succeeded = m_scrollingTree->commitTreeState(WTFMove(stateTree), identifier);
+
     MESSAGE_CHECK_WITH_RETURN_VALUE(succeeded, std::nullopt);
 
     establishLayerTreeScrollingRelations(*layerTreeHost);

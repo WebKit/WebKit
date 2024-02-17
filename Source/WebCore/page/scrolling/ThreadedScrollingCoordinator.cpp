@@ -65,6 +65,7 @@ void ThreadedScrollingCoordinator::commitTreeStateIfNeeded()
     LOG_WITH_STREAM(ScrollingTree, stream << "ThreadedScrollingCoordinator::commitTreeState: state tree " << scrollingStateTreeAsText(debugScrollingStateTreeAsTextBehaviors));
 
     auto stateTree = scrollingStateTree()->commit(LayerRepresentation::PlatformLayerRepresentation);
+    stateTree->setRootFrameIdentifier(page()->mainFrame().frameID());
     scrollingTree()->commitTreeState(WTFMove(stateTree));
 }
 

@@ -60,6 +60,7 @@ static void nodeWasReattachedRecursive(ScrollingStateNode& node)
 
 ScrollingStateTree::ScrollingStateTree(AsyncScrollingCoordinator* scrollingCoordinator)
     : m_scrollingCoordinator(scrollingCoordinator)
+    , m_rootFrameIdentifier(FrameIdentifier { })
 {
 }
 
@@ -220,12 +221,12 @@ ScrollingNodeID ScrollingStateTree::insertNode(ScrollingNodeType nodeType, Scrol
 
     RefPtr<ScrollingStateNode> newNode;
     if (!parentID) {
-        RELEASE_ASSERT(nodeType == ScrollingNodeType::MainFrame);
+        RELEASE_ASSERT(nodeType == ScrollingNodeType::MainFrame || nodeType == ScrollingNodeType::Subframe);
         ASSERT(!childIndex || childIndex == notFound);
         // If we're resetting the root node, we should clear the HashMap and destroy the current children.
         clear();
 
-        setRootStateNode(ScrollingStateFrameScrollingNode::create(*this, ScrollingNodeType::MainFrame, newNodeID));
+        setRootStateNode(ScrollingStateFrameScrollingNode::create(*this, nodeType, newNodeID));
         newNode = rootStateNode();
         m_hasNewRootStateNode = true;
     } else {

@@ -28,6 +28,8 @@
 #if ENABLE(ASYNC_SCROLLING)
 
 #include "EventTrackingRegions.h"
+#include "FrameIdentifier.h"
+#include "LayerHostingContextIdentifier.h"
 #include "PageIdentifier.h"
 #include "PlatformWheelEvent.h"
 #include "RectEdges.h"
@@ -53,6 +55,7 @@ class ScrollingTreeNode;
 class ScrollingTreeOverflowScrollProxyNode;
 class ScrollingTreePositionedNode;
 class ScrollingTreeScrollingNode;
+class ScrollingTreeFrameHostingNode;
 enum class EventListenerRegionType : uint8_t;
 
 using FramesPerSecond = unsigned;
@@ -102,8 +105,9 @@ public:
     WEBCORE_EXPORT bool hasNodeWithActiveScrollAnimations();
 
     virtual void invalidate() { }
-    WEBCORE_EXPORT bool commitTreeState(std::unique_ptr<ScrollingStateTree>&&);
-    
+    WEBCORE_EXPORT bool commitTreeState(std::unique_ptr<ScrollingStateTree>&&, std::optional<LayerHostingContextIdentifier> = std::nullopt);
+    bool commitTreeStateInternal(std::unique_ptr<ScrollingStateTree>&&, std::optional<LayerHostingContextIdentifier>) WTF_REQUIRES_LOCK(m_treeLock);
+
     WEBCORE_EXPORT virtual void applyLayerPositions();
     WEBCORE_EXPORT void applyLayerPositionsAfterCommit();
 
@@ -250,6 +254,10 @@ public:
     WEBCORE_EXPORT virtual void scrollingTreeNodeScrollbarVisibilityDidChange(ScrollingNodeID, ScrollbarOrientation, bool) { };
     WEBCORE_EXPORT virtual void scrollingTreeNodeScrollbarMinimumThumbLengthDidChange(WebCore::ScrollingNodeID, ScrollbarOrientation, int) { };
 
+    void addScrollingNodeToHostedSubtreeMap(WebCore::LayerHostingContextIdentifier, Ref<ScrollingTreeFrameHostingNode>);
+    void removeNode(ScrollingNodeID);
+    void removeFrameHostingNode(LayerHostingContextIdentifier);
+
 protected:
     WEBCORE_EXPORT WheelEventHandlingResult handleWheelEventWithNode(const PlatformWheelEvent&, OptionSet<WheelEventProcessingSteps>, ScrollingTreeNode*, EventTargeting = EventTargeting::Propagate);
 
@@ -296,6 +304,8 @@ private:
     using ScrollingTreeNodeMap = HashMap<ScrollingNodeID, RefPtr<ScrollingTreeNode>>;
     ScrollingTreeNodeMap m_nodeMap;
 
+    HashMap<FrameIdentifier, HashSet<Ref<ScrollingTreeNode>>> m_nodeMapPerFrame;
+
     ScrollingTreeLatchingController m_latchingController;
     ScrollingTreeGestureState m_gestureState;
 
@@ -333,6 +343,9 @@ private:
 
     Lock m_lastWheelEventTimeLock;
     MonotonicTime m_lastWheelEventTime WTF_GUARDED_BY_LOCK(m_lastWheelEventTimeLock);
+
+    HashMap<LayerHostingContextIdentifier, Vector<std::unique_ptr<ScrollingStateTree>>> m_hostedSubtreesNeedingPairing;
+    HashMap<LayerHostingContextIdentifier, Ref<ScrollingTreeFrameHostingNode>> m_hostedSubtrees;
 
 protected:
     bool m_allowLatching { true };

@@ -390,6 +390,7 @@ void RemoteLayerTreeDrawingArea::updateRendering()
 #if ENABLE(ASYNC_SCROLLING)
         if (webPage->scrollingCoordinator())
             scrollingTransaction = downcast<RemoteScrollingCoordinator>(*webPage->scrollingCoordinator()).buildTransaction();
+        scrollingTransaction.setFrameIdentifier(rootLayer.frameID);
 #endif
 
         return { WTFMove(layerTransaction), WTFMove(scrollingTransaction) };

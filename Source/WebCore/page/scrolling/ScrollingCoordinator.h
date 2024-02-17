@@ -26,6 +26,7 @@
 #pragma once
 
 #include "EventTrackingRegions.h"
+#include "FrameIdentifier.h"
 #include "LayerHostingContextIdentifier.h"
 #include "LayoutRect.h"
 #include "PlatformWheelEvent.h"
@@ -211,6 +212,7 @@ public:
     WEBCORE_EXPORT virtual void setMouseIsOverScrollbar(Scrollbar*, bool) { }
     WEBCORE_EXPORT virtual void setScrollbarEnabled(Scrollbar&) { }
     WEBCORE_EXPORT virtual void setLayerHostingContextIdentifierForFrameHostingNode(ScrollingNodeID, std::optional<LayerHostingContextIdentifier>) { }
+    FrameIdentifier mainFrameIdentifier() const;
 
 protected:
     explicit ScrollingCoordinator(Page*);

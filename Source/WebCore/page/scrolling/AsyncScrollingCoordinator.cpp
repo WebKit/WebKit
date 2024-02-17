@@ -801,6 +801,9 @@ void AsyncScrollingCoordinator::scrollableAreaScrollbarLayerDidChange(Scrollable
 ScrollingNodeID AsyncScrollingCoordinator::createNode(ScrollingNodeType nodeType, ScrollingNodeID newNodeID)
 {
     LOG_WITH_STREAM(ScrollingTree, stream << "AsyncScrollingCoordinator::createNode " << nodeType << " node " << newNodeID);
+    // TODO: rdar://123052250 Need a better way to fix scrolling tree in iframe process
+    if ((!m_scrollingStateTree->rootStateNode() && nodeType == ScrollingNodeType::Subframe) || (m_scrollingStateTree->rootStateNode() && m_scrollingStateTree->rootStateNode()->scrollingNodeID() == newNodeID))
+        return m_scrollingStateTree->insertNode(nodeType, newNodeID, { }, 0);
     return m_scrollingStateTree->createUnparentedNode(nodeType, newNodeID);
 }
 
