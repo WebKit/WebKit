@@ -2584,3 +2584,5 @@ imported/w3c/web-platform-tests/svg/painting/reftests/percentage-attribute.svg [
 imported/w3c/web-platform-tests/svg/painting/reftests/percentage.svg [ ImageOnlyFailure ]
 
 webkit.org/b/269598 [ Debug ] workers/wasm-hashset.html [ Skip ]
+
+webkit.org/b/269619 [ Sonoma+ ] tables/mozilla/bugs/bug2479-2.html [ Failure ]
