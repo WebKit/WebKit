@@ -4,7 +4,7 @@
  * Copyright (C) 2008 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2008 Dirk Schulze <krit@webkit.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2024 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -115,13 +115,13 @@ RenderPtr<RenderElement> SVGRadialGradientElement::createElementRenderer(RenderS
 
 static void setGradientAttributes(SVGGradientElement& element, RadialGradientAttributes& attributes, bool isRadial = true)
 {
-    if (!attributes.hasSpreadMethod() && element.hasAttribute(SVGNames::spreadMethodAttr))
+    if (!attributes.hasSpreadMethod() && element.isAnimatedAttribute(SVGNames::spreadMethodAttr))
         attributes.setSpreadMethod(element.spreadMethod());
 
-    if (!attributes.hasGradientUnits() && element.hasAttribute(SVGNames::gradientUnitsAttr))
+    if (!attributes.hasGradientUnits() && element.isAnimatedAttribute(SVGNames::gradientUnitsAttr))
         attributes.setGradientUnits(element.gradientUnits());
 
-    if (!attributes.hasGradientTransform() && element.hasAttribute(SVGNames::gradientTransformAttr))
+    if (!attributes.hasGradientTransform() && element.isAnimatedAttribute(SVGNames::gradientTransformAttr))
         attributes.setGradientTransform(element.gradientTransform().concatenate());
 
     if (!attributes.hasStops())
@@ -130,22 +130,22 @@ static void setGradientAttributes(SVGGradientElement& element, RadialGradientAtt
     if (isRadial) {
         SVGRadialGradientElement& radial = downcast<SVGRadialGradientElement>(element);
 
-        if (!attributes.hasCx() && element.hasAttribute(SVGNames::cxAttr))
+        if (!attributes.hasCx() && element.isAnimatedAttribute(SVGNames::cxAttr))
             attributes.setCx(radial.cx());
 
-        if (!attributes.hasCy() && element.hasAttribute(SVGNames::cyAttr))
+        if (!attributes.hasCy() && element.isAnimatedAttribute(SVGNames::cyAttr))
             attributes.setCy(radial.cy());
 
-        if (!attributes.hasR() && element.hasAttribute(SVGNames::rAttr))
+        if (!attributes.hasR() && element.isAnimatedAttribute(SVGNames::rAttr))
             attributes.setR(radial.r());
 
-        if (!attributes.hasFx() && element.hasAttribute(SVGNames::fxAttr))
+        if (!attributes.hasFx() && element.isAnimatedAttribute(SVGNames::fxAttr))
             attributes.setFx(radial.fx());
 
-        if (!attributes.hasFy() && element.hasAttribute(SVGNames::fyAttr))
+        if (!attributes.hasFy() && element.isAnimatedAttribute(SVGNames::fyAttr))
             attributes.setFy(radial.fy());
 
-        if (!attributes.hasFr() && element.hasAttribute(SVGNames::frAttr))
+        if (!attributes.hasFr() && element.isAnimatedAttribute(SVGNames::frAttr))
             attributes.setFr(radial.fr());
     }
 }
