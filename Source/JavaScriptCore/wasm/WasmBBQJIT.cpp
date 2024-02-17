@@ -60,6 +60,7 @@
 #include "WasmThunks.h"
 #include "WasmTypeDefinition.h"
 #include <bit>
+#include <cmath>
 #include <wtf/Assertions.h>
 #include <wtf/Compiler.h>
 #include <wtf/HashFunctions.h>
@@ -1717,8 +1718,10 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addF32Sub(Value lhs, Value rhs, Value& 
         ),
         BLOCK(
             if (rhs.isConst()) {
-                // Add a negative if rhs is a constant.
-                emitMoveConst(Value::fromF32(-rhs.asF32()), Location::fromFPR(wasmScratchFPR));
+                // If rhs is a constant, it will be expressed as a positive
+                // value and so needs to be negated unless it is NaN
+                auto floatVal = std::isnan(rhs.asF32()) ? rhs.asF32() : -rhs.asF32();
+                emitMoveConst(Value::fromF32(floatVal), Location::fromFPR(wasmScratchFPR));
                 m_jit.addFloat(lhsLocation.asFPR(), wasmScratchFPR, resultLocation.asFPR());
             } else {
                 emitMoveConst(lhs, Location::fromFPR(wasmScratchFPR));
@@ -1738,8 +1741,10 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addF64Sub(Value lhs, Value rhs, Value& 
         ),
         BLOCK(
             if (rhs.isConst()) {
-                // Add a negative if rhs is a constant.
-                emitMoveConst(Value::fromF64(-rhs.asF64()), Location::fromFPR(wasmScratchFPR));
+                // If rhs is a constant, it will be expressed as a positive
+                // value and so needs to be negated unless it is NaN
+                auto floatVal = std::isnan(rhs.asF64()) ? rhs.asF64() : -rhs.asF64();
+                emitMoveConst(Value::fromF64(floatVal), Location::fromFPR(wasmScratchFPR));
                 m_jit.addDouble(lhsLocation.asFPR(), wasmScratchFPR, resultLocation.asFPR());
             } else {
                 emitMoveConst(lhs, Location::fromFPR(wasmScratchFPR));
