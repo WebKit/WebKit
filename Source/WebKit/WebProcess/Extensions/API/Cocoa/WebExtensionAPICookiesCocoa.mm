@@ -408,7 +408,7 @@ WebExtensionAPIEvent& WebExtensionAPICookies::onChanged()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/cookies/onChanged
 
     if (!m_onChanged)
-        m_onChanged = WebExtensionAPIEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::CookiesOnChanged);
+        m_onChanged = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::CookiesOnChanged);
 
     return *m_onChanged;
 }

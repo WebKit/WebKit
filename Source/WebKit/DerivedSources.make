@@ -863,6 +863,8 @@ EXTENSION_INTERFACES = \
     WebExtensionAPITest \
     WebExtensionAPIWebNavigation \
     WebExtensionAPIWebNavigationEvent \
+    WebExtensionAPIWebPageNamespace \
+    WebExtensionAPIWebPageRuntime \
     WebExtensionAPIWebRequest \
     WebExtensionAPIWebRequestEvent \
     WebExtensionAPIWindows \

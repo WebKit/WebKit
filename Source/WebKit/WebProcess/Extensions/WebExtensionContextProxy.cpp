@@ -31,6 +31,7 @@
 #include "JSWebExtensionAPINamespace.h"
 #include "JSWebExtensionWrapper.h"
 #include "WebExtensionAPINamespace.h"
+#include "WebExtensionControllerProxy.h"
 #include "WebFrame.h"
 #include "WebPage.h"
 #include "WebProcess.h"
@@ -38,6 +39,11 @@
 namespace WebKit {
 
 using namespace WebCore;
+
+WebExtensionControllerProxy* WebExtensionContextProxy::extensionControllerProxy() const
+{
+    return m_extensionControllerProxy.get();
+}
 
 void WebExtensionContextProxy::addFrameWithExtensionContent(WebFrame& frame)
 {

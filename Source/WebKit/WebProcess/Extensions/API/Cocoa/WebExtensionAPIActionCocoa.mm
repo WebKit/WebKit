@@ -550,7 +550,7 @@ WebExtensionAPIEvent& WebExtensionAPIAction::onClicked()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/action/onClicked
 
     if (!m_onClicked)
-        m_onClicked = WebExtensionAPIEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::ActionOnClicked);
+        m_onClicked = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::ActionOnClicked);
 
     return *m_onClicked;
 }

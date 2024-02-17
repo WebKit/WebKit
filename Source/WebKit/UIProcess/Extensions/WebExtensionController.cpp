@@ -79,6 +79,7 @@ WebExtensionControllerParameters WebExtensionController::parameters() const
     WebExtensionControllerParameters parameters;
 
     parameters.identifier = identifier();
+    parameters.testingMode = inTestingMode();
     parameters.contextParameters = WTF::map(extensionContexts(), [](auto& context) {
         return context->parameters();
     });

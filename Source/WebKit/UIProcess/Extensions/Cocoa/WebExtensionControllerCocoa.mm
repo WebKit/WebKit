@@ -439,6 +439,16 @@ RefPtr<WebExtensionContext> WebExtensionController::extensionContext(const WebEx
     return nullptr;
 }
 
+RefPtr<WebExtensionContext> WebExtensionController::extensionContext(const UniqueIdentifier& uniqueIdentifier) const
+{
+    for (Ref context : m_extensionContexts) {
+        if (context->uniqueIdentifier() == uniqueIdentifier)
+            return context.ptr();
+    }
+
+    return nullptr;
+}
+
 RefPtr<WebExtensionContext> WebExtensionController::extensionContext(const URL& url) const
 {
     return m_extensionContextBaseURLMap.get(url.protocolHostAndPort());

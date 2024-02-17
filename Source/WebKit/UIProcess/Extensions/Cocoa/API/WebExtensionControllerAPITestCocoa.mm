@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,25 +28,21 @@
 #endif
 
 #import "config.h"
-#import "WebExtensionContext.h"
+#import "WebExtensionController.h"
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #import "Logging.h"
-#import "WebExtensionController.h"
 #import "_WKWebExtensionControllerDelegatePrivate.h"
 #import "_WKWebExtensionControllerInternal.h"
 
 namespace WebKit {
 
-void WebExtensionContext::testResult(bool result, String message, String sourceURL, unsigned lineNumber)
+void WebExtensionController::testResult(bool result, String message, String sourceURL, unsigned lineNumber)
 {
-    if (!isLoaded())
-        return;
-
-    auto delegate = extensionController()->delegate();
-    if ([delegate respondsToSelector:@selector(_webExtensionController:recordTestAssertionResult:withMessage:andSourceURL:lineNumber:forExtensionContext:)]) {
-        [delegate _webExtensionController:extensionController()->wrapper() recordTestAssertionResult:result withMessage:message andSourceURL:sourceURL lineNumber:lineNumber forExtensionContext:wrapper()];
+    auto delegate = this->delegate();
+    if ([delegate respondsToSelector:@selector(_webExtensionController:recordTestAssertionResult:withMessage:andSourceURL:lineNumber:)]) {
+        [delegate _webExtensionController:wrapper() recordTestAssertionResult:result withMessage:message andSourceURL:sourceURL lineNumber:lineNumber];
         return;
     }
 
@@ -61,14 +57,11 @@ void WebExtensionContext::testResult(bool result, String message, String sourceU
     RELEASE_LOG_ERROR(Extensions, "Test assertion failed: %{public}@ (%{public}@:%{public}u)", (NSString *)message, (NSString *)sourceURL, lineNumber);
 }
 
-void WebExtensionContext::testEqual(bool result, String expectedValue, String actualValue, String message, String sourceURL, unsigned lineNumber)
+void WebExtensionController::testEqual(bool result, String expectedValue, String actualValue, String message, String sourceURL, unsigned lineNumber)
 {
-    if (!isLoaded())
-        return;
-
-    auto delegate = extensionController()->delegate();
-    if ([delegate respondsToSelector:@selector(_webExtensionController:recordTestEqualityResult:expectedValue:actualValue:withMessage:andSourceURL:lineNumber:forExtensionContext:)]) {
-        [delegate _webExtensionController:extensionController()->wrapper() recordTestEqualityResult:result expectedValue:expectedValue actualValue:actualValue withMessage:message andSourceURL:sourceURL lineNumber:lineNumber forExtensionContext:wrapper()];
+    auto delegate = this->delegate();
+    if ([delegate respondsToSelector:@selector(_webExtensionController:recordTestEqualityResult:expectedValue:actualValue:withMessage:andSourceURL:lineNumber:)]) {
+        [delegate _webExtensionController:wrapper() recordTestEqualityResult:result expectedValue:expectedValue actualValue:actualValue withMessage:message andSourceURL:sourceURL lineNumber:lineNumber];
         return;
     }
 
@@ -83,14 +76,11 @@ void WebExtensionContext::testEqual(bool result, String expectedValue, String ac
     RELEASE_LOG_ERROR(Extensions, "Test equality failed: %{public}@: %{public}@ !== %{public}@ (%{public}@:%{public}u)", (NSString *)message, (NSString *)expectedValue, (NSString *)actualValue, (NSString *)sourceURL, lineNumber);
 }
 
-void WebExtensionContext::testMessage(String message, String sourceURL, unsigned lineNumber)
+void WebExtensionController::testMessage(String message, String sourceURL, unsigned lineNumber)
 {
-    if (!isLoaded())
-        return;
-
-    auto delegate = extensionController()->delegate();
-    if ([delegate respondsToSelector:@selector(_webExtensionController:recordTestMessage:andSourceURL:lineNumber:forExtensionContext:)]) {
-        [delegate _webExtensionController:extensionController()->wrapper() recordTestMessage:message andSourceURL:sourceURL lineNumber:lineNumber forExtensionContext:wrapper()];
+    auto delegate = this->delegate();
+    if ([delegate respondsToSelector:@selector(_webExtensionController:recordTestMessage:andSourceURL:lineNumber:)]) {
+        [delegate _webExtensionController:wrapper() recordTestMessage:message andSourceURL:sourceURL lineNumber:lineNumber];
         return;
     }
 
@@ -100,14 +90,11 @@ void WebExtensionContext::testMessage(String message, String sourceURL, unsigned
     RELEASE_LOG_INFO(Extensions, "Test message: %{public}@ (%{public}@:%{public}u)", (NSString *)message, (NSString *)sourceURL, lineNumber);
 }
 
-void WebExtensionContext::testYielded(String message, String sourceURL, unsigned lineNumber)
+void WebExtensionController::testYielded(String message, String sourceURL, unsigned lineNumber)
 {
-    if (!isLoaded())
-        return;
-
-    auto delegate = extensionController()->delegate();
-    if ([delegate respondsToSelector:@selector(_webExtensionController:recordTestYieldedWithMessage:andSourceURL:lineNumber:forExtensionContext:)]) {
-        [delegate _webExtensionController:extensionController()->wrapper() recordTestYieldedWithMessage:message andSourceURL:sourceURL lineNumber:lineNumber forExtensionContext:wrapper()];
+    auto delegate = this->delegate();
+    if ([delegate respondsToSelector:@selector(_webExtensionController:recordTestYieldedWithMessage:andSourceURL:lineNumber:)]) {
+        [delegate _webExtensionController:wrapper() recordTestYieldedWithMessage:message andSourceURL:sourceURL lineNumber:lineNumber];
         return;
     }
 
@@ -117,14 +104,11 @@ void WebExtensionContext::testYielded(String message, String sourceURL, unsigned
     RELEASE_LOG_INFO(Extensions, "Test yielded: %{public}@ (%{public}@:%{public}u)", (NSString *)message, (NSString *)sourceURL, lineNumber);
 }
 
-void WebExtensionContext::testFinished(bool result, String message, String sourceURL, unsigned lineNumber)
+void WebExtensionController::testFinished(bool result, String message, String sourceURL, unsigned lineNumber)
 {
-    if (!isLoaded())
-        return;
-
-    auto delegate = extensionController()->delegate();
-    if ([delegate respondsToSelector:@selector(_webExtensionController:recordTestFinishedWithResult:message:andSourceURL:lineNumber:forExtensionContext:)]) {
-        [delegate _webExtensionController:extensionController()->wrapper() recordTestFinishedWithResult:result message:message andSourceURL:sourceURL lineNumber:lineNumber forExtensionContext:wrapper()];
+    auto delegate = this->delegate();
+    if ([delegate respondsToSelector:@selector(_webExtensionController:recordTestFinishedWithResult:message:andSourceURL:lineNumber:)]) {
+        [delegate _webExtensionController:wrapper() recordTestFinishedWithResult:result message:message andSourceURL:sourceURL lineNumber:lineNumber];
         return;
     }
 

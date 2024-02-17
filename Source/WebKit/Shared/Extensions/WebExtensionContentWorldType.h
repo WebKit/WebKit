@@ -35,6 +35,7 @@ enum class WebExtensionContentWorldType : uint8_t {
     Main,
     ContentScript,
     Native,
+    WebPage,
 };
 
 inline String toDebugString(WebExtensionContentWorldType contentWorldType)
@@ -46,6 +47,8 @@ inline String toDebugString(WebExtensionContentWorldType contentWorldType)
         return "content script"_s;
     case WebExtensionContentWorldType::Native:
         return "native"_s;
+    case WebExtensionContentWorldType::WebPage:
+        return "web page"_s;
     }
 }
 

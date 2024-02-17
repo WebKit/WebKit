@@ -37,36 +37,47 @@
 namespace WebKit {
 
 class WebExtensionAPIRuntime;
+class WebExtensionAPIWebPageRuntime;
 
 class WebExtensionAPIObject {
 public:
-    enum class ForMainWorld : bool { No, Yes };
+    WebExtensionAPIObject(WebExtensionContentWorldType contentWorldType)
+        : m_contentWorldType(contentWorldType)
+    {
+        // This should only be called when creating a namespace object for web pages.
+        ASSERT(contentWorldType == WebExtensionContentWorldType::WebPage);
+    }
 
-    WebExtensionAPIObject(ForMainWorld forMainWorld, WebExtensionContextProxy& context)
-        : m_forMainWorld(forMainWorld)
+    WebExtensionAPIObject(WebExtensionContentWorldType contentWorldType, WebExtensionContextProxy& context)
+        : m_contentWorldType(contentWorldType)
         , m_extensionContext(&context)
     {
     }
 
-    WebExtensionAPIObject(ForMainWorld forMainWorld, WebExtensionAPIRuntimeBase& runtime, WebExtensionContextProxy& context)
-        : m_forMainWorld(forMainWorld)
+    WebExtensionAPIObject(WebExtensionContentWorldType contentWorldType, WebExtensionAPIRuntimeBase& runtime, WebExtensionContextProxy& context)
+        : m_contentWorldType(contentWorldType)
         , m_runtime(&runtime)
         , m_extensionContext(&context)
     {
     }
 
+    WebExtensionAPIObject(const WebExtensionAPIObject& parentObject)
+        : m_contentWorldType(parentObject.contentWorldType())
+        , m_runtime(&parentObject.runtime())
+        , m_extensionContext(parentObject.m_extensionContext) // Using parentObject.extensionContext() is not safe for APIWebPage objects.
+    {
+    }
+
     virtual ~WebExtensionAPIObject() = default;
 
-    ForMainWorld forMainWorld() const { return m_forMainWorld; }
-    bool isForMainWorld() const { return m_forMainWorld == ForMainWorld::Yes; }
+    bool isForMainWorld() const { return m_contentWorldType == WebExtensionContentWorldType::Main; }
+    WebExtensionContentWorldType contentWorldType() const { return m_contentWorldType; }
 
-    WebExtensionContentWorldType contentWorldType() const { return isForMainWorld() ? WebExtensionContentWorldType::Main : WebExtensionContentWorldType::ContentScript; }
-
-    virtual WebExtensionAPIRuntimeBase& runtime() { return *m_runtime; }
-    WebExtensionContextProxy& extensionContext() { return *m_extensionContext; }
+    virtual WebExtensionAPIRuntimeBase& runtime() const { return *m_runtime; }
+    WebExtensionContextProxy& extensionContext() const { return *m_extensionContext; }
 
 private:
-    ForMainWorld m_forMainWorld = ForMainWorld::Yes;
+    WebExtensionContentWorldType m_contentWorldType { WebExtensionContentWorldType::Main };
     RefPtr<WebExtensionAPIRuntimeBase> m_runtime;
     RefPtr<WebExtensionContextProxy> m_extensionContext;
 };
@@ -75,8 +86,6 @@ private:
 
 #define WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(ImplClass, ScriptClass) \
 public: \
-    using ForMainWorld = WebExtensionAPIObject::ForMainWorld; \
-\
     template<typename... Args> \
     static Ref<ImplClass> create(Args&&... args) \
     { \
@@ -84,13 +93,23 @@ public: \
     } \
 \
 private: \
-    explicit ImplClass(ForMainWorld forMainWorld, WebExtensionContextProxy& context) \
-        : WebExtensionAPIObject(forMainWorld, context) \
+    explicit ImplClass(WebExtensionContentWorldType contentWorldType) \
+        : WebExtensionAPIObject(contentWorldType) \
     { \
     } \
 \
-    explicit ImplClass(ForMainWorld forMainWorld, WebExtensionAPIRuntimeBase& runtime, WebExtensionContextProxy& context) \
-        : WebExtensionAPIObject(forMainWorld, runtime, context) \
+    explicit ImplClass(WebExtensionContentWorldType contentWorldType, WebExtensionContextProxy& context) \
+        : WebExtensionAPIObject(contentWorldType, context) \
+    { \
+    } \
+\
+    explicit ImplClass(WebExtensionContentWorldType contentWorldType, WebExtensionAPIRuntimeBase& runtime, WebExtensionContextProxy& context) \
+        : WebExtensionAPIObject(contentWorldType, runtime, context) \
+    { \
+    } \
+\
+    explicit ImplClass(const WebExtensionAPIObject& parentObject) \
+        : WebExtensionAPIObject(parentObject) \
     { \
     } \
 \

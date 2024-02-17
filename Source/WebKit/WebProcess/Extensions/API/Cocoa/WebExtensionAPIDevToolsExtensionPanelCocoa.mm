@@ -45,7 +45,7 @@ WebExtensionAPIEvent& WebExtensionAPIDevToolsExtensionPanel::onShown()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/devtools/panels/ExtensionPanel
 
     if (!m_onShown)
-        m_onShown = WebExtensionAPIEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::DevToolsExtensionPanelOnShown);
+        m_onShown = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::DevToolsExtensionPanelOnShown);
 
     return *m_onShown;
 }
@@ -55,7 +55,7 @@ WebExtensionAPIEvent& WebExtensionAPIDevToolsExtensionPanel::onHidden()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/devtools/panels/ExtensionPanel
 
     if (!m_onHidden)
-        m_onHidden = WebExtensionAPIEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::DevToolsExtensionPanelOnHidden);
+        m_onHidden = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::DevToolsExtensionPanelOnHidden);
 
     return *m_onHidden;
 }

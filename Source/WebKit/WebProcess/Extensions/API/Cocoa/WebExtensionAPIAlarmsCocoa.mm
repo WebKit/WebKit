@@ -173,7 +173,7 @@ WebExtensionAPIEvent& WebExtensionAPIAlarms::onAlarm()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/alarms/onAlarm
 
     if (!m_onAlarm)
-        m_onAlarm = WebExtensionAPIEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::AlarmsOnAlarm);
+        m_onAlarm = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::AlarmsOnAlarm);
 
     return *m_onAlarm;
 }

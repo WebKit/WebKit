@@ -73,6 +73,10 @@ void WebExtensionContext::portPostMessage(WebExtensionContentWorldType targetCon
         if (auto nativePort = m_nativePortMap.get(channelIdentifier))
             nativePort->receiveMessage(parseJSON(messageJSON, JSONOptions::FragmentsAllowed), std::nullopt);
         return;
+
+    case WebExtensionContentWorldType::WebPage:
+        sendToProcesses(processes(type, WebExtensionContentWorldType::WebPage), Messages::WebExtensionContextProxy::DispatchPortMessageEvent(sendingPageProxyIdentifier, channelIdentifier, messageJSON));
+        return;
     }
 }
 
@@ -202,6 +206,10 @@ void WebExtensionContext::firePortDisconnectEventIfNeeded(WebExtensionContentWor
     case WebExtensionContentWorldType::Native:
         if (auto nativePort = m_nativePortMap.get(channelIdentifier))
             nativePort->reportDisconnection(std::nullopt);
+        return;
+
+    case WebExtensionContentWorldType::WebPage:
+        sendToProcesses(processes(type, WebExtensionContentWorldType::WebPage), Messages::WebExtensionContextProxy::DispatchPortDisconnectEvent(channelIdentifier));
         return;
     }
 }

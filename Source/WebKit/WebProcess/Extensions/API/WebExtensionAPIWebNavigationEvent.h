@@ -64,8 +64,8 @@ public:
     }
 
 private:
-    explicit WebExtensionAPIWebNavigationEvent(ForMainWorld forMainWorld, WebExtensionAPIRuntimeBase& runtime, WebExtensionContextProxy& context, WebExtensionEventListenerType type)
-        : WebExtensionAPIObject(forMainWorld, runtime, context)
+    explicit WebExtensionAPIWebNavigationEvent(const WebExtensionAPIObject& parentObject, WebExtensionEventListenerType type)
+        : WebExtensionAPIObject(parentObject)
         , m_type(type)
     {
     }

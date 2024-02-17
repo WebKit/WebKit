@@ -270,6 +270,16 @@ static inline NSSet *toAPI(const HashSet<Ref<T>>& inputSet)
         [context->wrapper() didChangeTabProperties:properties forTab:changedTab];
 }
 
+- (BOOL)_inTestingMode
+{
+    return _webExtensionController->inTestingMode();
+}
+
+- (void)_setTestingMode:(BOOL)testingMode
+{
+    _webExtensionController->setTestingMode(testingMode);
+}
+
 #pragma mark WKObject protocol implementation
 
 - (API::Object&)_apiObject
@@ -387,6 +397,15 @@ static inline NSSet *toAPI(const HashSet<Ref<T>>& inputSet)
 }
 
 - (void)didChangeTabProperties:(_WKWebExtensionTabChangedProperties)properties forTab:(id<_WKWebExtensionTab>)changedTab
+{
+}
+
+- (BOOL)_inTestingMode
+{
+    return NO;
+}
+
+- (void)_setTestingMode:(BOOL)testingMode
 {
 }
 

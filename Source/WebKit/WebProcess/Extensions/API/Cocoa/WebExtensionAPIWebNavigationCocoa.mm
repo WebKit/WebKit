@@ -139,7 +139,7 @@ WebExtensionAPIWebNavigationEvent& WebExtensionAPIWebNavigation::onBeforeNavigat
     // Documentation: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/webNavigation/onBeforeNavigate
 
     if (!m_onBeforeNavigateEvent)
-        m_onBeforeNavigateEvent = WebExtensionAPIWebNavigationEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::WebNavigationOnBeforeNavigate);
+        m_onBeforeNavigateEvent = WebExtensionAPIWebNavigationEvent::create(*this, WebExtensionEventListenerType::WebNavigationOnBeforeNavigate);
 
     return *m_onBeforeNavigateEvent;
 }
@@ -149,7 +149,7 @@ WebExtensionAPIWebNavigationEvent& WebExtensionAPIWebNavigation::onCommitted()
     // Documentation: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/webNavigation/onCommitted
 
     if (!m_onCommittedEvent)
-        m_onCommittedEvent = WebExtensionAPIWebNavigationEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::WebNavigationOnCommitted);
+        m_onCommittedEvent = WebExtensionAPIWebNavigationEvent::create(*this, WebExtensionEventListenerType::WebNavigationOnCommitted);
 
     return *m_onCommittedEvent;
 }
@@ -159,7 +159,7 @@ WebExtensionAPIWebNavigationEvent& WebExtensionAPIWebNavigation::onDOMContentLoa
     // Documentation: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/webNavigation/onDOMContentLoaded
 
     if (!m_onDOMContentLoadedEvent)
-        m_onDOMContentLoadedEvent = WebExtensionAPIWebNavigationEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::WebNavigationOnDOMContentLoaded);
+        m_onDOMContentLoadedEvent = WebExtensionAPIWebNavigationEvent::create(*this, WebExtensionEventListenerType::WebNavigationOnDOMContentLoaded);
 
     return *m_onDOMContentLoadedEvent;
 }
@@ -169,7 +169,7 @@ WebExtensionAPIWebNavigationEvent& WebExtensionAPIWebNavigation::onCompleted()
     // Documentation: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/webNavigation/onCompleted
 
     if (!m_onCompletedEvent)
-        m_onCompletedEvent = WebExtensionAPIWebNavigationEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::WebNavigationOnCompleted);
+        m_onCompletedEvent = WebExtensionAPIWebNavigationEvent::create(*this, WebExtensionEventListenerType::WebNavigationOnCompleted);
 
     return *m_onCompletedEvent;
 }
@@ -179,7 +179,7 @@ WebExtensionAPIWebNavigationEvent& WebExtensionAPIWebNavigation::onErrorOccurred
     // Documentation: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/webNavigation/onErrorOccurred
 
     if (!m_onErrorOccurredEvent)
-        m_onErrorOccurredEvent = WebExtensionAPIWebNavigationEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::WebNavigationOnErrorOccurred);
+        m_onErrorOccurredEvent = WebExtensionAPIWebNavigationEvent::create(*this, WebExtensionEventListenerType::WebNavigationOnErrorOccurred);
 
     return *m_onErrorOccurredEvent;
 }

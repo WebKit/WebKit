@@ -68,6 +68,16 @@ WebExtensionMatchPattern::URLSchemeSet& WebExtensionMatchPattern::supportedSchem
     return schemes;
 }
 
+bool WebExtensionMatchPattern::patternsMatchURL(const MatchPatternSet& matchPatterns, URL& url)
+{
+    for (auto& matchPattern : matchPatterns) {
+        if (matchPattern->matchesURL(url))
+            return true;
+    }
+
+    return false;
+}
+
 static HashMap<String, RefPtr<WebExtensionMatchPattern>>& patternCache()
 {
     static MainThreadNeverDestroyed<HashMap<String, RefPtr<WebExtensionMatchPattern>>> cache;
@@ -119,7 +129,7 @@ Ref<WebExtensionMatchPattern> WebExtensionMatchPattern::allHostsAndSchemesMatchP
     return getOrCreate(allHostsAndSchemesPattern).releaseNonNull();
 }
 
-bool WebExtensionMatchPattern::patternsMatchAllHosts(HashSet<Ref<WebExtensionMatchPattern>>& patterns)
+bool WebExtensionMatchPattern::patternsMatchAllHosts(const MatchPatternSet& patterns)
 {
     for (auto& pattern : patterns) {
         if (pattern->matchesAllHosts())

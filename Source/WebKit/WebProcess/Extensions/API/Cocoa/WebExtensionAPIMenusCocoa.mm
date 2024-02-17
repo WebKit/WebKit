@@ -418,7 +418,7 @@ WebExtensionAPIEvent& WebExtensionAPIMenus::onClicked()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/menus/onClicked
 
     if (!m_onClicked)
-        m_onClicked = WebExtensionAPIEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::MenusOnClicked);
+        m_onClicked = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::MenusOnClicked);
 
     return *m_onClicked;
 }

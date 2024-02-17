@@ -54,7 +54,7 @@ WebExtensionAPIStorageArea& WebExtensionAPIStorage::local()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/storage/local
 
     if (!m_local)
-        m_local = WebExtensionAPIStorageArea::create(forMainWorld(), runtime(), extensionContext(), WebExtensionDataType::Local);
+        m_local = WebExtensionAPIStorageArea::create(*this, WebExtensionDataType::Local);
 
     return *m_local;
 }
@@ -64,7 +64,7 @@ WebExtensionAPIStorageArea& WebExtensionAPIStorage::session()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/storage/session
 
     if (!m_session)
-        m_session = WebExtensionAPIStorageArea::create(forMainWorld(), runtime(), extensionContext(), WebExtensionDataType::Session);
+        m_session = WebExtensionAPIStorageArea::create(*this, WebExtensionDataType::Session);
 
     return *m_session;
 }
@@ -74,7 +74,7 @@ WebExtensionAPIStorageArea& WebExtensionAPIStorage::sync()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/storage/sync
 
     if (!m_sync)
-        m_sync = WebExtensionAPIStorageArea::create(forMainWorld(), runtime(), extensionContext(), WebExtensionDataType::Sync);
+        m_sync = WebExtensionAPIStorageArea::create(*this, WebExtensionDataType::Sync);
 
     return *m_sync;
 }
@@ -99,7 +99,7 @@ WebExtensionAPIEvent& WebExtensionAPIStorage::onChanged()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/storage/onChanged
 
     if (!m_onChanged)
-        m_onChanged = WebExtensionAPIEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::StorageOnChanged);
+        m_onChanged = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::StorageOnChanged);
 
     return *m_onChanged;
 }
@@ -111,7 +111,7 @@ void WebExtensionContextProxy::dispatchStorageChangedEvent(const String& onChang
     enumerateFramesAndNamespaceObjects([&](WebFrame&, auto& namespaceObject) {
         namespaceObject.storage().onChanged().invokeListenersWithArgument(onChangedData);
         namespaceObject.storage().storageAreaForType(dataType).onChanged().invokeListenersWithArgument(onChangedData);
-    }, toDOMWorld(contentWorldType));
+    }, toDOMWrapperWorld(contentWorldType));
 }
 
 } // namespace WebKit

@@ -52,22 +52,23 @@ public:
         return result && result->isValid() ? WTFMove(result) : nullptr;
     }
 
+    using URLSchemeSet = HashSet<String>;
+    using MatchPatternSet = HashSet<Ref<WebExtensionMatchPattern>>;
+
     static RefPtr<WebExtensionMatchPattern> getOrCreate(const String& pattern);
     static RefPtr<WebExtensionMatchPattern> getOrCreate(const String& scheme, const String& host, const String& path);
 
     static Ref<WebExtensionMatchPattern> allURLsMatchPattern();
     static Ref<WebExtensionMatchPattern> allHostsAndSchemesMatchPattern();
 
-    static bool patternsMatchAllHosts(HashSet<Ref<WebExtensionMatchPattern>>&);
+    static bool patternsMatchAllHosts(const MatchPatternSet&);
+    static bool patternsMatchURL(const MatchPatternSet&, URL&);
 
     explicit WebExtensionMatchPattern() { }
     explicit WebExtensionMatchPattern(const String& pattern, NSError **outError = nullptr);
     explicit WebExtensionMatchPattern(const String& scheme, const String& host, const String& path, NSError **outError = nullptr);
 
     ~WebExtensionMatchPattern() { }
-
-    using URLSchemeSet = HashSet<String>;
-    using MatchPatternSet = HashSet<Ref<WebExtensionMatchPattern>>;
 
     enum class Options : uint8_t {
         IgnoreSchemes        = 1 << 0, // Ignore the scheme component when matching.

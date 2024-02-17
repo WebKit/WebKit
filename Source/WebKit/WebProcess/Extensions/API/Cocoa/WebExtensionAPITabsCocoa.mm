@@ -1004,7 +1004,7 @@ RefPtr<WebExtensionAPIPort> WebExtensionAPITabs::connect(WebFrame& frame, JSCont
         frame.url(),
     };
 
-    auto port = WebExtensionAPIPort::create(forMainWorld(), runtime(), extensionContext(), *frame.page(), WebExtensionContentWorldType::ContentScript, resolvedName);
+    auto port = WebExtensionAPIPort::create(*this, *frame.page(), WebExtensionContentWorldType::ContentScript, resolvedName);
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::TabsConnect(tabIdentifer.value(), port->channelIdentifier(), resolvedName, targetFrameIdentifier, senderParameters), [=, globalContext = JSRetainPtr { JSContextGetGlobalContext(context) }, protectedThis = Ref { *this }](WebExtensionTab::Error error) {
         if (!error)
@@ -1088,7 +1088,7 @@ WebExtensionAPIEvent& WebExtensionAPITabs::onActivated()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/onActivated
 
     if (!m_onActivated)
-        m_onActivated = WebExtensionAPIEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::TabsOnActivated);
+        m_onActivated = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::TabsOnActivated);
 
     return *m_onActivated;
 }
@@ -1098,7 +1098,7 @@ WebExtensionAPIEvent& WebExtensionAPITabs::onAttached()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/onAttached
 
     if (!m_onAttached)
-        m_onAttached = WebExtensionAPIEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::TabsOnAttached);
+        m_onAttached = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::TabsOnAttached);
 
     return *m_onAttached;
 }
@@ -1108,7 +1108,7 @@ WebExtensionAPIEvent& WebExtensionAPITabs::onCreated()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/onCreated
 
     if (!m_onCreated)
-        m_onCreated = WebExtensionAPIEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::TabsOnCreated);
+        m_onCreated = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::TabsOnCreated);
 
     return *m_onCreated;
 }
@@ -1118,7 +1118,7 @@ WebExtensionAPIEvent& WebExtensionAPITabs::onDetached()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/onDetached
 
     if (!m_onDetached)
-        m_onDetached = WebExtensionAPIEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::TabsOnDetached);
+        m_onDetached = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::TabsOnDetached);
 
     return *m_onDetached;
 }
@@ -1128,7 +1128,7 @@ WebExtensionAPIEvent& WebExtensionAPITabs::onHighlighted()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/onHighlighted
 
     if (!m_onHighlighted)
-        m_onHighlighted = WebExtensionAPIEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::TabsOnHighlighted);
+        m_onHighlighted = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::TabsOnHighlighted);
 
     return *m_onHighlighted;
 }
@@ -1138,7 +1138,7 @@ WebExtensionAPIEvent& WebExtensionAPITabs::onMoved()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/onMoved
 
     if (!m_onMoved)
-        m_onMoved = WebExtensionAPIEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::TabsOnMoved);
+        m_onMoved = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::TabsOnMoved);
 
     return *m_onMoved;
 }
@@ -1148,7 +1148,7 @@ WebExtensionAPIEvent& WebExtensionAPITabs::onRemoved()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/onRemoved
 
     if (!m_onRemoved)
-        m_onRemoved = WebExtensionAPIEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::TabsOnRemoved);
+        m_onRemoved = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::TabsOnRemoved);
 
     return *m_onRemoved;
 }
@@ -1158,7 +1158,7 @@ WebExtensionAPIEvent& WebExtensionAPITabs::onReplaced()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/onReplaced
 
     if (!m_onReplaced)
-        m_onReplaced = WebExtensionAPIEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::TabsOnReplaced);
+        m_onReplaced = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::TabsOnReplaced);
 
     return *m_onReplaced;
 }
@@ -1168,7 +1168,7 @@ WebExtensionAPIEvent& WebExtensionAPITabs::onUpdated()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/onUpdated
 
     if (!m_onUpdated)
-        m_onUpdated = WebExtensionAPIEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::TabsOnUpdated);
+        m_onUpdated = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::TabsOnUpdated);
 
     return *m_onUpdated;
 }

@@ -53,6 +53,8 @@
     readonly attribute WebExtensionAPIEvent onConnect;
     readonly attribute WebExtensionAPIEvent onMessage;
 
+    [MainWorldOnly] readonly attribute WebExtensionAPIEvent onConnectExternal;
+    [MainWorldOnly] readonly attribute WebExtensionAPIEvent onMessageExternal;
     [MainWorldOnly] readonly attribute WebExtensionAPIEvent onStartup;
     [MainWorldOnly] readonly attribute WebExtensionAPIEvent onInstalled;
 

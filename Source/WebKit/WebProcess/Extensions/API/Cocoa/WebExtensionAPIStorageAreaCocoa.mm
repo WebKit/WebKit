@@ -247,7 +247,7 @@ WebExtensionAPIEvent& WebExtensionAPIStorageArea::onChanged()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/storage/StorageArea/onChanged
 
     if (!m_onChanged)
-        m_onChanged = WebExtensionAPIEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::StorageOnChanged);
+        m_onChanged = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::StorageOnChanged);
 
     return *m_onChanged;
 }

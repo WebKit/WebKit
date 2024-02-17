@@ -104,6 +104,8 @@ messages -> WebExtensionContext {
     RuntimeConnect(String extensionID, WebKit::WebExtensionPortChannelIdentifier channelIdentifier, String name, struct WebKit::WebExtensionMessageSenderParameters senderParameters) -> (std::optional<String> error);
     RuntimeSendNativeMessage(String applicationID, String messageJSON) -> (std::optional<String> replyJSON, std::optional<String> error);
     RuntimeConnectNative(String applicationID, WebKit::WebExtensionPortChannelIdentifier channelIdentifier) -> (std::optional<String> error);
+    RuntimeWebPageSendMessage(String extensionID, String messageJSON, struct WebKit::WebExtensionMessageSenderParameters senderParameters) -> (std::optional<String> replyJSON, std::optional<String> error);
+    RuntimeWebPageConnect(String extensionID, WebKit::WebExtensionPortChannelIdentifier channelIdentifier, String name, struct WebKit::WebExtensionMessageSenderParameters senderParameters) -> (std::optional<String> error);
 
     // Scripting APIs
     ScriptingExecuteScript(WebKit::WebExtensionScriptInjectionParameters parameters) -> (std::optional<Vector<WebKit::WebExtensionScriptInjectionResultParameters>> results, WebKit::WebExtensionDynamicScripts::Error error);
@@ -143,13 +145,6 @@ messages -> WebExtensionContext {
     TabsExecuteScript(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier, WebKit::WebExtensionScriptInjectionParameters parameters) -> (std::optional<Vector<WebKit::WebExtensionScriptInjectionResultParameters>> results, WebKit::WebExtensionTab::Error error);
     TabsInsertCSS(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier, WebKit::WebExtensionScriptInjectionParameters parameters) -> (WebKit::WebExtensionTab::Error error);
     TabsRemoveCSS(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier, WebKit::WebExtensionScriptInjectionParameters parameters) -> (WebKit::WebExtensionTab::Error error);
-
-    // Test APIs
-    TestResult(bool result, String message, String sourceURL, unsigned lineNumber);
-    TestEqual(bool result, String expected, String actual, String message, String sourceURL, unsigned lineNumber);
-    TestMessage(String message, String sourceURL, unsigned lineNumber);
-    TestYielded(String message, String sourceURL, unsigned lineNumber);
-    TestFinished(bool result, String message, String sourceURL, unsigned lineNumber);
 
     // WebNavigation APIs
     WebNavigationGetAllFrames(WebKit::WebExtensionTabIdentifier tabIdentifier) -> (std::optional<Vector<WebKit::WebExtensionFrameParameters>> allFrameParameters, std::optional<String> error)

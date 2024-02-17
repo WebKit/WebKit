@@ -98,6 +98,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIWebNavigation.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIWebNavigation.mm
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIWebNavigationEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIWebNavigationEvent.mm
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIWebPageNamespace.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIWebPageNamespace.mm
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIWebPageRuntime.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIWebPageRuntime.mm
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIWebRequest.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIWebRequest.mm
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIWebRequestEvent.h

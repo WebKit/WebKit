@@ -28,39 +28,50 @@
 #endif
 
 #import "config.h"
-#import "WebExtensionAPIDevToolsNetwork.h"
+#import "WebExtensionAPIWebPageNamespace.h"
 
-#if ENABLE(WK_WEB_EXTENSIONS) && ENABLE(INSPECTOR_EXTENSIONS)
+#if ENABLE(WK_WEB_EXTENSIONS)
 
-#import "CocoaHelpers.h"
-#import "JSWebExtensionWrapper.h"
-#import "MessageSenderInlines.h"
-#import "WebExtensionAPIEvent.h"
 #import "WebExtensionAPINamespace.h"
+#import "WebExtensionAPIRuntime.h"
+#import "WebExtensionAPITest.h"
+#import "WebExtensionContextProxy.h"
+#import "WebExtensionControllerProxy.h"
 
 namespace WebKit {
 
-WebExtensionAPIEvent& WebExtensionAPIDevToolsNetwork::onNavigated()
+bool WebExtensionAPIWebPageNamespace::isPropertyAllowed(const ASCIILiteral& name, WebPage& page)
 {
-    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/devtools/network/onNavigated
+    if (name == "test"_s) {
+        if (RefPtr extensionController = page.webExtensionControllerProxy())
+            return extensionController->inTestingMode();
+        return false;
+    }
 
-    if (!m_onNavigated)
-        m_onNavigated = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::DevToolsNetworkOnNavigated);
-
-    return *m_onNavigated;
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
-void WebExtensionContextProxy::dispatchDevToolsNetworkNavigatedEvent(const URL& url)
+WebExtensionAPIWebPageRuntime& WebExtensionAPIWebPageNamespace::runtime() const
 {
-    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/devtools/network/onNavigated
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime
 
-    NSString *urlString = url.string();
+    if (!m_runtime)
+        m_runtime = WebExtensionAPIWebPageRuntime::create(contentWorldType());
 
-    enumerateNamespaceObjects([&](auto& namespaceObject) {
-        namespaceObject.devtools().network().onNavigated().invokeListenersWithArgument(urlString);
-    });
+    return *m_runtime;
+}
+
+WebExtensionAPITest& WebExtensionAPIWebPageNamespace::test()
+{
+    // Documentation: None (Testing Only)
+
+    if (!m_test)
+        m_test = WebExtensionAPITest::create(contentWorldType());
+
+    return *m_test;
 }
 
 } // namespace WebKit
 
-#endif // ENABLE(WK_WEB_EXTENSIONS) && ENABLE(INSPECTOR_EXTENSIONS)
+#endif // ENABLE(WK_WEB_EXTENSIONS)

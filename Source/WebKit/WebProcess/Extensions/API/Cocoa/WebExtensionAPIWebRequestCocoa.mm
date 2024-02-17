@@ -43,7 +43,7 @@ WebExtensionAPIWebRequestEvent& WebExtensionAPIWebRequest::onBeforeRequest()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/webRequest/onBeforeRequest
 
     if (!m_onBeforeRequestEvent)
-        m_onBeforeRequestEvent = WebExtensionAPIWebRequestEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::WebRequestOnBeforeRequest);
+        m_onBeforeRequestEvent = WebExtensionAPIWebRequestEvent::create(*this, WebExtensionEventListenerType::WebRequestOnBeforeRequest);
 
     return *m_onBeforeRequestEvent;
 }
@@ -53,7 +53,7 @@ WebExtensionAPIWebRequestEvent& WebExtensionAPIWebRequest::onBeforeSendHeaders()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/webRequest/onBeforeSendHeaders
 
     if (!m_onBeforeSendHeadersEvent)
-        m_onBeforeSendHeadersEvent = WebExtensionAPIWebRequestEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::WebRequestOnBeforeSendHeaders);
+        m_onBeforeSendHeadersEvent = WebExtensionAPIWebRequestEvent::create(*this, WebExtensionEventListenerType::WebRequestOnBeforeSendHeaders);
 
     return *m_onBeforeSendHeadersEvent;
 }
@@ -63,7 +63,7 @@ WebExtensionAPIWebRequestEvent& WebExtensionAPIWebRequest::onSendHeaders()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/webRequest/onSendHeaders
 
     if (!m_onSendHeadersEvent)
-        m_onSendHeadersEvent = WebExtensionAPIWebRequestEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::WebRequestOnSendHeaders);
+        m_onSendHeadersEvent = WebExtensionAPIWebRequestEvent::create(*this, WebExtensionEventListenerType::WebRequestOnSendHeaders);
 
     return *m_onSendHeadersEvent;
 }
@@ -73,7 +73,7 @@ WebExtensionAPIWebRequestEvent& WebExtensionAPIWebRequest::onHeadersReceived()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/webRequest/onHeadersReceived
 
     if (!m_onHeadersReceivedEvent)
-        m_onHeadersReceivedEvent = WebExtensionAPIWebRequestEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::WebRequestOnHeadersReceived);
+        m_onHeadersReceivedEvent = WebExtensionAPIWebRequestEvent::create(*this, WebExtensionEventListenerType::WebRequestOnHeadersReceived);
 
     return *m_onHeadersReceivedEvent;
 }
@@ -83,7 +83,7 @@ WebExtensionAPIWebRequestEvent& WebExtensionAPIWebRequest::onAuthRequired()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/webRequest/onAuthRequired
 
     if (!m_onAuthRequiredEvent)
-        m_onAuthRequiredEvent = WebExtensionAPIWebRequestEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::WebRequestOnAuthRequired);
+        m_onAuthRequiredEvent = WebExtensionAPIWebRequestEvent::create(*this, WebExtensionEventListenerType::WebRequestOnAuthRequired);
 
     return *m_onAuthRequiredEvent;
 }
@@ -93,7 +93,7 @@ WebExtensionAPIWebRequestEvent& WebExtensionAPIWebRequest::onBeforeRedirect()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/webRequest/onBeforeRedirect
 
     if (!m_onBeforeRedirectEvent)
-        m_onBeforeRedirectEvent = WebExtensionAPIWebRequestEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::WebRequestOnBeforeRedirect);
+        m_onBeforeRedirectEvent = WebExtensionAPIWebRequestEvent::create(*this, WebExtensionEventListenerType::WebRequestOnBeforeRedirect);
 
     return *m_onBeforeRedirectEvent;
 }
@@ -103,7 +103,7 @@ WebExtensionAPIWebRequestEvent& WebExtensionAPIWebRequest::onResponseStarted()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/webRequest/onResponseStarted
 
     if (!m_onResponseStartedEvent)
-        m_onResponseStartedEvent = WebExtensionAPIWebRequestEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::WebRequestOnResponseStarted);
+        m_onResponseStartedEvent = WebExtensionAPIWebRequestEvent::create(*this, WebExtensionEventListenerType::WebRequestOnResponseStarted);
 
     return *m_onResponseStartedEvent;
 }
@@ -113,7 +113,7 @@ WebExtensionAPIWebRequestEvent& WebExtensionAPIWebRequest::onCompleted()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/webRequest/onCompleted
 
     if (!m_onCompletedEvent)
-        m_onCompletedEvent = WebExtensionAPIWebRequestEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::WebRequestOnCompleted);
+        m_onCompletedEvent = WebExtensionAPIWebRequestEvent::create(*this, WebExtensionEventListenerType::WebRequestOnCompleted);
 
     return *m_onCompletedEvent;
 }
@@ -123,7 +123,7 @@ WebExtensionAPIWebRequestEvent& WebExtensionAPIWebRequest::onErrorOccurred()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/webRequest/onErrorOccurred
 
     if (!m_onErrorOccurredEvent)
-        m_onErrorOccurredEvent = WebExtensionAPIWebRequestEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::WebRequestOnErrorOccurred);
+        m_onErrorOccurredEvent = WebExtensionAPIWebRequestEvent::create(*this, WebExtensionEventListenerType::WebRequestOnErrorOccurred);
 
     return *m_onErrorOccurredEvent;
 }

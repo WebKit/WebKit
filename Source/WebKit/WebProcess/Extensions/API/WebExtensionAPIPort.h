@@ -80,8 +80,8 @@ public:
 private:
     friend class WebExtensionContextProxy;
 
-    explicit WebExtensionAPIPort(ForMainWorld forMainWorld, WebExtensionAPIRuntimeBase& runtime, WebExtensionContextProxy& context, WebPage& page, WebExtensionContentWorldType targetContentWorldType, const String& name)
-        : WebExtensionAPIObject(forMainWorld, runtime, context)
+    explicit WebExtensionAPIPort(const WebExtensionAPIObject& parentObject, WebPage& page, WebExtensionContentWorldType targetContentWorldType, const String& name)
+        : WebExtensionAPIObject(parentObject)
         , m_targetContentWorldType(targetContentWorldType)
         , m_owningPageProxyIdentifier(page.webPageProxyIdentifier())
         , m_channelIdentifier(WebExtensionPortChannelIdentifier::generate())
@@ -90,8 +90,18 @@ private:
         add();
     }
 
-    explicit WebExtensionAPIPort(ForMainWorld forMainWorld, WebExtensionAPIRuntimeBase& runtime, WebExtensionContextProxy& context, WebPage& page, WebExtensionContentWorldType targetContentWorldType, const String& name, const WebExtensionMessageSenderParameters& senderParameters)
-        : WebExtensionAPIObject(forMainWorld, runtime, context)
+    explicit WebExtensionAPIPort(WebExtensionContentWorldType contentWorldType, WebExtensionAPIRuntimeBase& runtime, WebExtensionContextProxy& context, WebPage& page, WebExtensionContentWorldType targetContentWorldType, const String& name)
+        : WebExtensionAPIObject(contentWorldType, runtime, context)
+        , m_targetContentWorldType(targetContentWorldType)
+        , m_owningPageProxyIdentifier(page.webPageProxyIdentifier())
+        , m_channelIdentifier(WebExtensionPortChannelIdentifier::generate())
+        , m_name(name)
+    {
+        add();
+    }
+
+    explicit WebExtensionAPIPort(const WebExtensionAPIObject& parentObject, WebPage& page, WebExtensionContentWorldType targetContentWorldType, const String& name, const WebExtensionMessageSenderParameters& senderParameters)
+        : WebExtensionAPIObject(parentObject)
         , m_targetContentWorldType(targetContentWorldType)
         , m_owningPageProxyIdentifier(page.webPageProxyIdentifier())
         , m_channelIdentifier(WebExtensionPortChannelIdentifier::generate())
@@ -101,8 +111,8 @@ private:
         add();
     }
 
-    explicit WebExtensionAPIPort(ForMainWorld forMainWorld, WebExtensionAPIRuntimeBase& runtime, WebExtensionContextProxy& context, WebPage& page, WebExtensionContentWorldType targetContentWorldType, WebExtensionPortChannelIdentifier channelIdentifier, const String& name, const WebExtensionMessageSenderParameters& senderParameters)
-        : WebExtensionAPIObject(forMainWorld, runtime, context)
+    explicit WebExtensionAPIPort(const WebExtensionAPIObject& parentObject, WebPage& page, WebExtensionContentWorldType targetContentWorldType, WebExtensionPortChannelIdentifier channelIdentifier, const String& name, const WebExtensionMessageSenderParameters& senderParameters)
+        : WebExtensionAPIObject(parentObject)
         , m_targetContentWorldType(targetContentWorldType)
         , m_owningPageProxyIdentifier(page.webPageProxyIdentifier())
         , m_channelIdentifier(channelIdentifier)

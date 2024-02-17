@@ -28,6 +28,7 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #include "JSWebExtensionAPIRuntime.h"
+#include "JSWebExtensionAPIWebPageRuntime.h"
 #include "WebExtensionAPIEvent.h"
 #include "WebExtensionAPIObject.h"
 
@@ -59,7 +60,7 @@ class WebExtensionAPIRuntime : public WebExtensionAPIObject, public WebExtension
     WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIRuntime, runtime);
 
 public:
-    WebExtensionAPIRuntime& runtime() final { return *this; }
+    WebExtensionAPIRuntime& runtime() const final { return const_cast<WebExtensionAPIRuntime&>(*this); }
 
 #if PLATFORM(COCOA)
     bool isPropertyAllowed(const ASCIILiteral& propertyName, WebPage&);
@@ -89,14 +90,32 @@ public:
     WebExtensionAPIEvent& onInstalled();
     WebExtensionAPIEvent& onMessage();
     WebExtensionAPIEvent& onStartup();
+    WebExtensionAPIEvent& onConnectExternal();
+    WebExtensionAPIEvent& onMessageExternal();
 
 private:
+    friend class WebExtensionAPIWebPageRuntime;
+
     static bool parseConnectOptions(NSDictionary *, std::optional<String>& name, NSString *sourceKey, NSString **outExceptionString);
 
     RefPtr<WebExtensionAPIEvent> m_onConnect;
     RefPtr<WebExtensionAPIEvent> m_onInstalled;
     RefPtr<WebExtensionAPIEvent> m_onMessage;
     RefPtr<WebExtensionAPIEvent> m_onStartup;
+    RefPtr<WebExtensionAPIEvent> m_onConnectExternal;
+    RefPtr<WebExtensionAPIEvent> m_onMessageExternal;
+#endif
+};
+
+class WebExtensionAPIWebPageRuntime : public WebExtensionAPIObject, public WebExtensionAPIRuntimeBase {
+    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIWebPageRuntime, webPageRuntime);
+
+public:
+    WebExtensionAPIWebPageRuntime& runtime() const final { return const_cast<WebExtensionAPIWebPageRuntime&>(*this); }
+
+#if PLATFORM(COCOA)
+    void sendMessage(WebFrame&, NSString *extensionID, NSString *messageJSON, NSDictionary *options, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    RefPtr<WebExtensionAPIPort> connect(WebFrame&, JSContextRef, NSString *extensionID, NSDictionary *options, NSString **outExceptionString);
 #endif
 };
 

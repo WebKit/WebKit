@@ -45,6 +45,7 @@ namespace WebKit {
 
 class WebExtensionAPINamespace;
 class WebExtensionAPIStorage;
+class WebExtensionControllerProxy;
 class WebExtensionMatchPattern;
 class WebFrame;
 
@@ -58,7 +59,7 @@ class WebExtensionContextProxy final : public RefCounted<WebExtensionContextProx
 
 public:
     static RefPtr<WebExtensionContextProxy> get(WebExtensionContextIdentifier);
-    static Ref<WebExtensionContextProxy> getOrCreate(const WebExtensionContextParameters&, WebPage* = nullptr);
+    static Ref<WebExtensionContextProxy> getOrCreate(const WebExtensionContextParameters&, WebExtensionControllerProxy&, WebPage* = nullptr);
 
     ~WebExtensionContextProxy();
 
@@ -68,6 +69,7 @@ public:
     using WeakPageTabWindowMap = WeakHashMap<WebPage, TabWindowIdentifierPair>;
 
     WebExtensionContextIdentifier identifier() { return m_identifier; }
+    WebExtensionControllerProxy* extensionControllerProxy() const;
 
     bool operator==(const WebExtensionContextProxy& other) const { return (this == &other); }
 
@@ -85,7 +87,7 @@ public:
 
     bool inTestingMode() { return m_testingMode; }
 
-    WebCore::DOMWrapperWorld& toDOMWorld(WebExtensionContentWorldType);
+    WebCore::DOMWrapperWorld& toDOMWrapperWorld(WebExtensionContentWorldType);
 
     static WebCore::DOMWrapperWorld& mainWorld() { return WebCore::mainThreadNormalWorld(); }
 
@@ -168,8 +170,8 @@ private:
     void dispatchPortDisconnectEvent(WebExtensionPortChannelIdentifier);
 
     // Runtime
-    void internalDispatchRuntimeMessageEvent(WebCore::DOMWrapperWorld&, const String& messageJSON, std::optional<WebExtensionFrameIdentifier>, const WebExtensionMessageSenderParameters&, CompletionHandler<void(std::optional<String> replyJSON)>&&);
-    void internalDispatchRuntimeConnectEvent(WebCore::DOMWrapperWorld&, WebExtensionPortChannelIdentifier, const String& name, std::optional<WebExtensionFrameIdentifier>, const WebExtensionMessageSenderParameters&, CompletionHandler<void(size_t firedEventCount)>&&);
+    void internalDispatchRuntimeMessageEvent(WebExtensionContentWorldType, const String& messageJSON, std::optional<WebExtensionFrameIdentifier>, const WebExtensionMessageSenderParameters&, CompletionHandler<void(std::optional<String> replyJSON)>&&);
+    void internalDispatchRuntimeConnectEvent(WebExtensionContentWorldType, WebExtensionPortChannelIdentifier, const String& name, std::optional<WebExtensionFrameIdentifier>, const WebExtensionMessageSenderParameters&, CompletionHandler<void(size_t firedEventCount)>&&);
     void dispatchRuntimeMessageEvent(WebExtensionContentWorldType, const String& messageJSON, std::optional<WebExtensionFrameIdentifier>, const WebExtensionMessageSenderParameters&, CompletionHandler<void(std::optional<String> replyJSON)>&&);
     void dispatchRuntimeConnectEvent(WebExtensionContentWorldType, WebExtensionPortChannelIdentifier, const String& name, std::optional<WebExtensionFrameIdentifier>, const WebExtensionMessageSenderParameters&, CompletionHandler<void(size_t firedEventCount)>&&);
     void dispatchRuntimeInstalledEvent(WebExtensionContext::InstallReason, String previousVersion);
@@ -207,6 +209,7 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     WebExtensionContextIdentifier m_identifier;
+    WeakPtr<WebExtensionControllerProxy> m_extensionControllerProxy;
     URL m_baseURL;
     String m_uniqueIdentifier;
     RetainPtr<_WKWebExtensionLocalization> m_localization;

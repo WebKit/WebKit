@@ -701,6 +701,8 @@ private:
     void runtimeConnect(const String& extensionID, WebExtensionPortChannelIdentifier, const String& name, const WebExtensionMessageSenderParameters&, CompletionHandler<void(std::optional<String> error)>&&);
     void runtimeSendNativeMessage(const String& applicationID, const String& messageJSON, CompletionHandler<void(std::optional<String> replyJSON, std::optional<String> error)>&&);
     void runtimeConnectNative(const String& applicationID, WebExtensionPortChannelIdentifier, CompletionHandler<void(std::optional<String> error)>&&);
+    void runtimeWebPageSendMessage(const String& extensionID, const String& messageJSON, const WebExtensionMessageSenderParameters&, CompletionHandler<void(std::optional<String> replyJSON, std::optional<String> error)>&&);
+    void runtimeWebPageConnect(const String& extensionID, WebExtensionPortChannelIdentifier, const String& name, const WebExtensionMessageSenderParameters&, CompletionHandler<void(WebExtensionTab::Error)>&&);
     void fireRuntimeStartupEventIfNeeded();
     void fireRuntimeInstalledEventIfNeeded();
 
@@ -753,13 +755,6 @@ private:
     void fireTabsActivatedEventIfNeeded(WebExtensionTabIdentifier previousActiveTabIdentifier, WebExtensionTabIdentifier newActiveTabIdentifier, WebExtensionWindowIdentifier);
     void fireTabsHighlightedEventIfNeeded(Vector<WebExtensionTabIdentifier>, WebExtensionWindowIdentifier);
     void fireTabsRemovedEventIfNeeded(WebExtensionTabIdentifier, WebExtensionWindowIdentifier, WindowIsClosing);
-
-    // Test APIs
-    void testResult(bool result, String message, String sourceURL, unsigned lineNumber);
-    void testEqual(bool result, String expected, String actual, String message, String sourceURL, unsigned lineNumber);
-    void testMessage(String message, String sourceURL, unsigned lineNumber);
-    void testYielded(String message, String sourceURL, unsigned lineNumber);
-    void testFinished(bool result, String message, String sourceURL, unsigned lineNumber);
 
     // WebNavigation APIs
     void webNavigationGetFrame(WebExtensionTabIdentifier, WebExtensionFrameIdentifier, CompletionHandler<void(std::optional<WebExtensionFrameParameters>, std::optional<String> error)>&&);

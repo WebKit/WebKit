@@ -58,7 +58,7 @@ void WebExtensionAPIDevToolsPanels::createPanel(WebPage& page, NSString *title, 
             return;
         }
 
-        Ref extensionPanel = WebExtensionAPIDevToolsExtensionPanel::create(forMainWorld(), runtime(), extensionContext());
+        Ref extensionPanel = WebExtensionAPIDevToolsExtensionPanel::create(*this);
         m_extensionPanels.set(result.value(), extensionPanel);
 
         auto globalContext = callback->globalContext();
@@ -86,7 +86,7 @@ WebExtensionAPIEvent& WebExtensionAPIDevToolsPanels::onThemeChanged()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/devtools/panels/onThemeChanged
 
     if (!m_onThemeChanged)
-        m_onThemeChanged = WebExtensionAPIEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::DevToolsPanelsOnThemeChanged);
+        m_onThemeChanged = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::DevToolsPanelsOnThemeChanged);
 
     return *m_onThemeChanged;
 }

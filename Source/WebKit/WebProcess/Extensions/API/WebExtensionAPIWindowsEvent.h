@@ -61,8 +61,8 @@ public:
     }
 
 private:
-    explicit WebExtensionAPIWindowsEvent(ForMainWorld forMainWorld, WebExtensionAPIRuntimeBase& runtime, WebExtensionContextProxy& context, WebExtensionEventListenerType type)
-        : WebExtensionAPIObject(forMainWorld, runtime, context)
+    explicit WebExtensionAPIWindowsEvent(const WebExtensionAPIObject& parentObject, WebExtensionEventListenerType type)
+        : WebExtensionAPIObject(parentObject)
         , m_type(type)
     {
     }

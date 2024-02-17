@@ -79,7 +79,7 @@ WebExtensionAPIAction& WebExtensionAPINamespace::action()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/action
 
     if (!m_action)
-        m_action = WebExtensionAPIAction::create(forMainWorld(), runtime(), extensionContext());
+        m_action = WebExtensionAPIAction::create(*this);
 
     return *m_action;
 }
@@ -89,7 +89,7 @@ WebExtensionAPIAlarms& WebExtensionAPINamespace::alarms()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/alarms
 
     if (!m_alarms)
-        m_alarms = WebExtensionAPIAlarms::create(forMainWorld(), runtime(), extensionContext());
+        m_alarms = WebExtensionAPIAlarms::create(*this);
 
     return *m_alarms;
 }
@@ -99,7 +99,7 @@ WebExtensionAPICommands& WebExtensionAPINamespace::commands()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/commands
 
     if (!m_commands)
-        m_commands = WebExtensionAPICommands::create(forMainWorld(), runtime(), extensionContext());
+        m_commands = WebExtensionAPICommands::create(*this);
 
     return *m_commands;
 }
@@ -109,7 +109,7 @@ WebExtensionAPICookies& WebExtensionAPINamespace::cookies()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/cookies
 
     if (!m_cookies)
-        m_cookies = WebExtensionAPICookies::create(forMainWorld(), runtime(), extensionContext());
+        m_cookies = WebExtensionAPICookies::create(*this);
 
     return *m_cookies;
 }
@@ -119,7 +119,7 @@ WebExtensionAPIDeclarativeNetRequest& WebExtensionAPINamespace::declarativeNetRe
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/declarativeNetRequest
 
     if (!m_declarativeNetRequest)
-        m_declarativeNetRequest = WebExtensionAPIDeclarativeNetRequest::create(forMainWorld(), runtime(), extensionContext());
+        m_declarativeNetRequest = WebExtensionAPIDeclarativeNetRequest::create(*this);
 
     return *m_declarativeNetRequest;
 }
@@ -130,7 +130,7 @@ WebExtensionAPIDevTools& WebExtensionAPINamespace::devtools()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/devtools
 
     if (!m_devtools)
-        m_devtools = WebExtensionAPIDevTools::create(forMainWorld(), runtime(), extensionContext());
+        m_devtools = WebExtensionAPIDevTools::create(*this);
 
     return *m_devtools;
 }
@@ -141,7 +141,7 @@ WebExtensionAPIExtension& WebExtensionAPINamespace::extension()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/extension
 
     if (!m_extension)
-        m_extension = WebExtensionAPIExtension::create(forMainWorld(), runtime(), extensionContext());
+        m_extension = WebExtensionAPIExtension::create(*this);
 
     return *m_extension;
 }
@@ -151,7 +151,7 @@ WebExtensionAPILocalization& WebExtensionAPINamespace::i18n()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/i18n
 
     if (!m_i18n)
-        m_i18n = WebExtensionAPILocalization::create(forMainWorld(), runtime(), extensionContext());
+        m_i18n = WebExtensionAPILocalization::create(*this);
 
     return *m_i18n;
 }
@@ -161,7 +161,7 @@ WebExtensionAPIMenus& WebExtensionAPINamespace::menus()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/menus
 
     if (!m_menus)
-        m_menus = WebExtensionAPIMenus::create(forMainWorld(), runtime(), extensionContext());
+        m_menus = WebExtensionAPIMenus::create(*this);
 
     return *m_menus;
 }
@@ -171,7 +171,7 @@ WebExtensionAPINotifications& WebExtensionAPINamespace::notifications()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/notifications
 
     if (!m_notifications)
-        m_notifications = WebExtensionAPINotifications::create(forMainWorld(), runtime(), extensionContext());
+        m_notifications = WebExtensionAPINotifications::create(*this);
 
     return *m_notifications;
 }
@@ -181,17 +181,17 @@ WebExtensionAPIPermissions& WebExtensionAPINamespace::permissions()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/permissions
 
     if (!m_permissions)
-        m_permissions = WebExtensionAPIPermissions::create(forMainWorld(), runtime(), extensionContext());
+        m_permissions = WebExtensionAPIPermissions::create(*this);
 
     return *m_permissions;
 }
 
-WebExtensionAPIRuntime& WebExtensionAPINamespace::runtime()
+WebExtensionAPIRuntime& WebExtensionAPINamespace::runtime() const
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime
 
     if (!m_runtime)
-        m_runtime = WebExtensionAPIRuntime::create(forMainWorld(), extensionContext());
+        m_runtime = WebExtensionAPIRuntime::create(contentWorldType(), extensionContext());
 
     return *m_runtime;
 }
@@ -201,7 +201,7 @@ WebExtensionAPIScripting& WebExtensionAPINamespace::scripting()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/scripting
 
     if (!m_scripting)
-        m_scripting = WebExtensionAPIScripting::create(forMainWorld(), runtime(), extensionContext());
+        m_scripting = WebExtensionAPIScripting::create(*this);
 
     return *m_scripting;
 }
@@ -211,7 +211,7 @@ WebExtensionAPIStorage& WebExtensionAPINamespace::storage()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/storage
 
     if (!m_storage)
-        m_storage = WebExtensionAPIStorage::create(forMainWorld(), runtime(), extensionContext());
+        m_storage = WebExtensionAPIStorage::create(*this);
 
     return *m_storage;
 }
@@ -221,7 +221,7 @@ WebExtensionAPITabs& WebExtensionAPINamespace::tabs()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs
 
     if (!m_tabs)
-        m_tabs = WebExtensionAPITabs::create(forMainWorld(), runtime(), extensionContext());
+        m_tabs = WebExtensionAPITabs::create(*this);
 
     return *m_tabs;
 }
@@ -231,7 +231,7 @@ WebExtensionAPITest& WebExtensionAPINamespace::test()
     // Documentation: None (Testing Only)
 
     if (!m_test)
-        m_test = WebExtensionAPITest::create(forMainWorld(), runtime(), extensionContext());
+        m_test = WebExtensionAPITest::create(*this);
 
     return *m_test;
 }
@@ -241,7 +241,7 @@ WebExtensionAPIWindows& WebExtensionAPINamespace::windows()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/windows
 
     if (!m_windows)
-        m_windows = WebExtensionAPIWindows::create(forMainWorld(), runtime(), extensionContext());
+        m_windows = WebExtensionAPIWindows::create(*this);
 
     return *m_windows;
 }
@@ -251,7 +251,7 @@ WebExtensionAPIWebNavigation& WebExtensionAPINamespace::webNavigation()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/webNavigation
 
     if (!m_webNavigation)
-        m_webNavigation = WebExtensionAPIWebNavigation::create(forMainWorld(), runtime(), extensionContext());
+        m_webNavigation = WebExtensionAPIWebNavigation::create(*this);
 
     return *m_webNavigation;
 }
@@ -261,7 +261,7 @@ WebExtensionAPIWebRequest& WebExtensionAPINamespace::webRequest()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/webRequest
 
     if (!m_webRequest)
-        m_webRequest = WebExtensionAPIWebRequest::create(forMainWorld(), runtime(), extensionContext());
+        m_webRequest = WebExtensionAPIWebRequest::create(*this);
 
     return *m_webRequest;
 }

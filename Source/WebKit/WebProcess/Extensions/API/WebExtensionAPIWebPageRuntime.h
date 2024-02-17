@@ -23,44 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if !__has_feature(objc_arc)
-#error This file requires ARC. Add the "-fobjc-arc" compiler flag for this file.
-#endif
+#pragma once
 
-#import "config.h"
-#import "WebExtensionAPIDevToolsNetwork.h"
-
-#if ENABLE(WK_WEB_EXTENSIONS) && ENABLE(INSPECTOR_EXTENSIONS)
-
-#import "CocoaHelpers.h"
-#import "JSWebExtensionWrapper.h"
-#import "MessageSenderInlines.h"
-#import "WebExtensionAPIEvent.h"
-#import "WebExtensionAPINamespace.h"
+#if ENABLE(WK_WEB_EXTENSIONS)
 
 namespace WebKit {
 
-WebExtensionAPIEvent& WebExtensionAPIDevToolsNetwork::onNavigated()
-{
-    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/devtools/network/onNavigated
-
-    if (!m_onNavigated)
-        m_onNavigated = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::DevToolsNetworkOnNavigated);
-
-    return *m_onNavigated;
-}
-
-void WebExtensionContextProxy::dispatchDevToolsNetworkNavigatedEvent(const URL& url)
-{
-    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/devtools/network/onNavigated
-
-    NSString *urlString = url.string();
-
-    enumerateNamespaceObjects([&](auto& namespaceObject) {
-        namespaceObject.devtools().network().onNavigated().invokeListenersWithArgument(urlString);
-    });
-}
+// FIXME: Remove once JSWebExtensionAPIWebPageNamespace.mm doesn't auto include it.
 
 } // namespace WebKit
 
-#endif // ENABLE(WK_WEB_EXTENSIONS) && ENABLE(INSPECTOR_EXTENSIONS)
+#endif // ENABLE(WK_WEB_EXTENSIONS)

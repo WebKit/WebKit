@@ -122,6 +122,7 @@ using ReplyCompletionHandlerSignature = void(std::optional<String> replyJSON, st
 void WebExtensionContext::runtimeSendMessage(const String& extensionID, const String& messageJSON, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<ReplyCompletionHandlerSignature>&& completionHandler)
 {
     if (!extensionID.isEmpty() && uniqueIdentifier() != extensionID) {
+        // FIXME: <https://webkit.org/b/id269299> Add support for externally_connectable:ids.
         completionHandler(std::nullopt, toErrorString(@"runtime.sendMessage()", @"extensionID", @"cross-extension messaging is not supported"));
         return;
     }
@@ -152,6 +153,7 @@ void WebExtensionContext::runtimeConnect(const String& extensionID, WebExtension
     addPorts(sourceContentWorldType, channelIdentifier, 1);
 
     if (!extensionID.isEmpty() && uniqueIdentifier() != extensionID) {
+        // FIXME: <https://webkit.org/b/id269299> Add support for externally_connectable:ids.
         completionHandler(toErrorString(@"runtime.connect()", @"extensionID", @"cross-extension messaging is not supported"));
         return;
     }
@@ -242,6 +244,97 @@ void WebExtensionContext::runtimeConnectNative(const String& applicationID, WebE
         protectedThis->firePortDisconnectEventIfNeeded(sourceContentWorldType, targetContentWorldType, channelIdentifier);
         protectedThis->clearQueuedPortMessages(targetContentWorldType, channelIdentifier);
     }).get()];
+}
+
+void WebExtensionContext::runtimeWebPageSendMessage(const String& extensionID, const String& messageJSON, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<ReplyCompletionHandlerSignature>&& completionHandler)
+{
+    RefPtr destinationExtension = extensionController()->extensionContext(extensionID);
+    if (!destinationExtension) {
+        completionHandler(std::nullopt, @"extension not found, but do not report this error");
+        return;
+    }
+
+    RefPtr tab = getTab(senderParameters.pageProxyIdentifier);
+    if (!tab) {
+        completionHandler(std::nullopt, @"tab not found");
+        return;
+    }
+
+    WebExtensionMessageSenderParameters completeSenderParameters = senderParameters;
+    completeSenderParameters.tabParameters = tab->parameters();
+
+    auto url = completeSenderParameters.url;
+    auto validMatchPatterns = destinationExtension->extension().externallyConnectableMatchPatterns();
+    if (!hasPermission(url, tab.get()) || !WebExtensionMatchPattern::patternsMatchURL(validMatchPatterns, url)) {
+        completionHandler(std::nullopt, @"extension does not have access to this page, but do not reprort this error");
+        return;
+    }
+
+    auto mainWorldProcesses = processes(WebExtensionEventListenerType::RuntimeOnMessageExternal, WebExtensionContentWorldType::Main);
+    if (mainWorldProcesses.isEmpty()) {
+        completionHandler(std::nullopt, std::nullopt);
+        return;
+    }
+
+    auto callbackAggregator = EagerCallbackAggregator<ReplyCompletionHandlerSignature>::create(WTFMove(completionHandler), std::nullopt, std::nullopt);
+
+    for (auto& process : mainWorldProcesses) {
+        process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeMessageEvent(WebExtensionContentWorldType::Main, messageJSON, std::nullopt, completeSenderParameters), [callbackAggregator](std::optional<String> replyJSON) {
+            callbackAggregator.get()(replyJSON, std::nullopt);
+        }, identifier());
+    }
+}
+
+void WebExtensionContext::runtimeWebPageConnect(const String& extensionID, WebExtensionPortChannelIdentifier channelIdentifier, const String& name, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(WebExtensionTab::Error)>&& completionHandler)
+{
+    RefPtr destinationExtension = extensionController()->extensionContext(extensionID);
+    if (!destinationExtension) {
+        completionHandler(@"extension not found, but do not report this error");
+        return;
+    }
+
+    RefPtr tab = getTab(senderParameters.pageProxyIdentifier);
+    if (!tab) {
+        completionHandler(@"tab not found");
+        return;
+    }
+
+    WebExtensionMessageSenderParameters completeSenderParameters = senderParameters;
+    completeSenderParameters.tabParameters = tab->parameters();
+
+    auto url = completeSenderParameters.url;
+    auto validMatchPatterns = destinationExtension->extension().externallyConnectableMatchPatterns();
+    if (!hasPermission(url, tab.get()) || !WebExtensionMatchPattern::patternsMatchURL(validMatchPatterns, url)) {
+        completionHandler(@"extension does not have access to this page, but do not reprort this error");
+        return;
+    }
+
+    constexpr auto sourceContentWorldType = WebExtensionContentWorldType::WebPage;
+    constexpr auto targetContentWorldType = WebExtensionContentWorldType::Main;
+
+    // Add 1 for the starting port here so disconnect will balance with a decrement.
+    addPorts(sourceContentWorldType, channelIdentifier, 1);
+
+    auto mainWorldProcesses = processes(WebExtensionEventListenerType::RuntimeOnConnectExternal, targetContentWorldType);
+    if (mainWorldProcesses.isEmpty()) {
+        completionHandler(toErrorString(@"runtime.connect()", nil, @"no runtime.onConnectExternal listeners found"));
+        return;
+    }
+
+    size_t handledCount = 0;
+    size_t totalExpected = mainWorldProcesses.size();
+
+    for (auto& process : mainWorldProcesses) {
+        process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeConnectEvent(targetContentWorldType, channelIdentifier, name, std::nullopt, completeSenderParameters), [=, &handledCount, protectedThis = Ref { *this }](size_t firedEventCount) mutable {
+            protectedThis->addPorts(targetContentWorldType, channelIdentifier, firedEventCount);
+            protectedThis->fireQueuedPortMessageEventsIfNeeded(process, targetContentWorldType, channelIdentifier);
+            protectedThis->firePortDisconnectEventIfNeeded(sourceContentWorldType, targetContentWorldType, channelIdentifier);
+            if (++handledCount >= totalExpected)
+                protectedThis->clearQueuedPortMessages(targetContentWorldType, channelIdentifier);
+        }, identifier());
+    }
+
+    completionHandler(std::nullopt);
 }
 
 void WebExtensionContext::fireRuntimeStartupEventIfNeeded()

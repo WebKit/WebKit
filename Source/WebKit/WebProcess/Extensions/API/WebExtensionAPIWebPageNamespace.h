@@ -23,44 +23,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if !__has_feature(objc_arc)
-#error This file requires ARC. Add the "-fobjc-arc" compiler flag for this file.
-#endif
+#pragma once
 
-#import "config.h"
-#import "WebExtensionAPIDevToolsNetwork.h"
+#if ENABLE(WK_WEB_EXTENSIONS)
 
-#if ENABLE(WK_WEB_EXTENSIONS) && ENABLE(INSPECTOR_EXTENSIONS)
-
-#import "CocoaHelpers.h"
-#import "JSWebExtensionWrapper.h"
-#import "MessageSenderInlines.h"
-#import "WebExtensionAPIEvent.h"
-#import "WebExtensionAPINamespace.h"
+#include "JSWebExtensionAPIWebPageNamespace.h"
+#include "JSWebExtensionWrappable.h"
+#include "WebExtensionAPIObject.h"
 
 namespace WebKit {
 
-WebExtensionAPIEvent& WebExtensionAPIDevToolsNetwork::onNavigated()
-{
-    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/devtools/network/onNavigated
+class WebExtensionAPITest;
+class WebExtensionAPIWebPageRuntime;
+class WebPage;
 
-    if (!m_onNavigated)
-        m_onNavigated = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::DevToolsNetworkOnNavigated);
+class WebExtensionAPIWebPageNamespace : public WebExtensionAPIObject, public JSWebExtensionWrappable {
+    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIWebPageNamespace, webPageNamespace);
 
-    return *m_onNavigated;
-}
+public:
+#if PLATFORM(COCOA)
+    bool isPropertyAllowed(const ASCIILiteral& propertyName, WebPage&);
 
-void WebExtensionContextProxy::dispatchDevToolsNetworkNavigatedEvent(const URL& url)
-{
-    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/devtools/network/onNavigated
+    WebExtensionAPIWebPageRuntime& runtime() const;
+    WebExtensionAPITest& test();
 
-    NSString *urlString = url.string();
-
-    enumerateNamespaceObjects([&](auto& namespaceObject) {
-        namespaceObject.devtools().network().onNavigated().invokeListenersWithArgument(urlString);
-    });
-}
+private:
+    mutable RefPtr<WebExtensionAPIWebPageRuntime> m_runtime;
+    RefPtr<WebExtensionAPITest> m_test;
+#endif
+};
 
 } // namespace WebKit
 
-#endif // ENABLE(WK_WEB_EXTENSIONS) && ENABLE(INSPECTOR_EXTENSIONS)
+#endif // ENABLE(WK_WEB_EXTENSIONS)

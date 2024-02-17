@@ -39,6 +39,7 @@
 #import "WebExtensionAPINamespace.h"
 #import "WebExtensionAPIRuntime.h"
 #import "WebExtensionContextMessages.h"
+#import "WebExtensionControllerProxy.h"
 #import "WebExtensionUtilities.h"
 #import "WebProcess.h"
 
@@ -190,7 +191,7 @@ WebExtensionAPIEvent& WebExtensionAPIPort::onMessage()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/Port#onmessage
 
     if (!m_onMessage)
-        m_onMessage = WebExtensionAPIEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::PortOnMessage);
+        m_onMessage = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::PortOnMessage);
 
     return *m_onMessage;
 }
@@ -200,7 +201,7 @@ WebExtensionAPIEvent& WebExtensionAPIPort::onDisconnect()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/Port#ondisconnect
 
     if (!m_onDisconnect)
-        m_onDisconnect = WebExtensionAPIEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::PortOnDisconnect);
+        m_onDisconnect = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::PortOnDisconnect);
 
     return *m_onDisconnect;
 }
