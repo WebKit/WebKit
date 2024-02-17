@@ -58,6 +58,10 @@
 #include <WebCore/SubstituteData.h>
 #include <wtf/CompletionHandler.h>
 
+#if ENABLE(QUICKLOOK_SANDBOX_RESTRICTIONS)
+#include <wtf/spi/darwin/SandboxSPI.h>
+#endif
+
 #define WEBRESOURCELOADER_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - [webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 ", durationSeconds=%.3f] WebResourceLoader::" fmt, this, m_trackingParameters.pageID.toUInt64(), m_trackingParameters.frameID.object().toUInt64(), m_trackingParameters.resourceID.toUInt64(), timeSinceLoadStart().value(), ##__VA_ARGS__)
 
 namespace WebKit {
@@ -158,6 +162,13 @@ void WebResourceLoader::didReceiveResponse(ResourceResponse&& response, PrivateR
     WEBRESOURCELOADER_RELEASE_LOG("didReceiveResponse: (httpStatusCode=%d)", response.httpStatusCode());
 
     Ref<WebResourceLoader> protectedThis(*this);
+
+#if ENABLE(QUICKLOOK_SANDBOX_RESTRICTIONS)
+    if (!response.isQuickLook()) {
+        auto auditToken = WebProcess::singleton().auditTokenForSelf();
+        sandbox_enable_state_flag("BlockQuickLookSandboxResources", *auditToken);
+    }
+#endif
 
     if (metrics) {
         metrics->workerStart = m_workerStart;

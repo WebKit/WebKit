@@ -1148,10 +1148,21 @@
 (allow syscall-unix (syscall-unix-only-in-use-during-launch))
 #endif
 
-(with-filter (require-not (state-flag "EnableExperimentalSandbox"))
+
+#if ENABLE(QUICKLOOK_SANDBOX_RESTRICTIONS)
+(with-filter (require-not (state-flag "BlockQuickLookSandboxResources"))
+    (allow syscall-unix
+        (syscall-unix-rarely-in-use)
+        (syscall-unix-rarely-in-use-blocked-in-lockdown-mode)))
+(with-filter (state-flag "BlockQuickLookSandboxResources")
     (allow syscall-unix (with report) (with telemetry-backtrace)
         (syscall-unix-rarely-in-use)
         (syscall-unix-rarely-in-use-blocked-in-lockdown-mode)))
+#else
+(allow syscall-unix
+    (syscall-unix-rarely-in-use)
+    (syscall-unix-rarely-in-use-blocked-in-lockdown-mode)))
+#endif
 
 (deny syscall-unix (with no-report) (syscall-number
     SYS_connect
