@@ -7407,16 +7407,16 @@ ViewGestureDebuggingEnabled:
 ViewTransitionsEnabled:
   type: bool
   category: animation
-  status: stable
+  status: testable
   humanReadableName: "View Transitions"
   humanReadableDescription: "Enable the View Transitions API"
   defaultValue:
     WebKitLegacy:
-      default: true
+      default: false
     WebKit:
-      default: true
+      default: false
     WebCore:
-      default: true
+      default: false
 
 VisibleDebugOverlayRegions:
   type: uint32_t
