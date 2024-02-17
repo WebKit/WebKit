@@ -163,6 +163,12 @@
         model->toggleFullscreen();
 }
 
+- (void)linearMediaPlayer:(WKSLinearMediaPlayer *)player didExitFullscreenWithError:(NSError * _Nullable)error
+{
+    if (auto model = _model.get())
+        model->setVideoReceiverEndpoint(nullptr);
+}
+
 - (void)linearMediaPlayer:(WKSLinearMediaPlayer *)player setVideoReceiverEndpoint:(xpc_object_t)videoReceiverEndpoint
 {
     if (auto model = _model.get())
@@ -185,11 +191,11 @@ PlaybackSessionInterfaceLMK::PlaybackSessionInterfaceLMK(PlaybackSessionModel& m
     , m_player { adoptNS([allocWKSLinearMediaPlayerInstance() init]) }
     , m_playerDelegate { adoptNS([[WKLinearMediaPlayerDelegate alloc] initWithModel:model]) }
 {
+    [m_player setDelegate:m_playerDelegate.get()];
 }
 
 PlaybackSessionInterfaceLMK::~PlaybackSessionInterfaceLMK()
 {
-    ASSERT(isUIThread());
     invalidate();
 }
 

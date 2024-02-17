@@ -229,7 +229,7 @@ extension WKSLinearMediaPlayer: @retroactive Playable {
     }
 
     public var captionLayerPublisher: AnyPublisher<CALayer?, Never> {
-        publisher(for: \.captionLayer).eraseToAnyPublisher()
+        Just(nil).eraseToAnyPublisher()
     }
 
     public var captionContentInsetsPublisher: AnyPublisher<UIEdgeInsets, Never> {
@@ -504,7 +504,12 @@ extension WKSLinearMediaPlayer: @retroactive Playable {
     }
 
     public func makeDefaultEntity() -> Entity? {
-        ContentType.makeDefaultEntity(player: AVPlayer())
+#if canImport(LinearMediaKit, _version: 205)
+        if let captionLayer = captionLayer {
+            return ContentType.makeEntity(captionLayer: captionLayer)
+        }
+#endif
+        return nil
     }
 
     public func setTimeResolverInterval(_ interval: TimeInterval) {

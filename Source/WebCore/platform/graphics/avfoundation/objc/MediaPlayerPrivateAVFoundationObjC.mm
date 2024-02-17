@@ -4001,6 +4001,43 @@ void MediaPlayerPrivateAVFoundationObjC::setSpatialTrackingLabel(String&& spatia
 }
 #endif
 
+void MediaPlayerPrivateAVFoundationObjC::setVideoReceiverEndpoint(const VideoReceiverEndpoint& endpoint)
+{
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    assertIsMainThread();
+
+    if (!endpoint) {
+        clearVideoReceiverEndpoint();
+        return;
+    }
+
+    FigVideoTargetRef videoTarget;
+    OSStatus status = FigVideoTargetCreateWithVideoReceiverEndpointID(kCFAllocatorDefault, endpoint.get(), nullptr, &videoTarget);
+    if (status != noErr)
+        return;
+
+    m_videoTarget = adoptCF(videoTarget);
+    [m_avPlayer addVideoTarget:m_videoTarget.get()];
+    [m_videoLayer setPlayer:nil];
+#else
+    UNUSED_PARAM(endpoint);
+#endif
+}
+
+void MediaPlayerPrivateAVFoundationObjC::clearVideoReceiverEndpoint()
+{
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    assertIsMainThread();
+
+    RetainPtr videoTarget = std::exchange(m_videoTarget, nullptr);
+    if (!videoTarget)
+        return;
+
+    [m_videoLayer setPlayer:m_avPlayer.get()];
+    [m_avPlayer removeVideoTarget:videoTarget.get()];
+#endif
+}
+
 NSArray* assetMetadataKeyNames()
 {
     static NSArray* keys = [[NSArray alloc] initWithObjects:

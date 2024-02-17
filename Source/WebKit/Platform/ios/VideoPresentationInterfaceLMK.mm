@@ -63,13 +63,16 @@ void VideoPresentationInterfaceLMK::setupFullscreen(UIView& videoView, const Flo
 
 void VideoPresentationInterfaceLMK::setupPlayerViewController()
 {
-    if (!m_playerViewController)
-        m_playerViewController = [linearMediaPlayer() makeViewController];
+    if (m_playerViewController)
+        return;
 
     linearMediaPlayer().allowFullScreenFromInline = YES;
     linearMediaPlayer().contentType = WKSLinearMediaContentTypePlanar;
     linearMediaPlayer().presentationMode = WKSLinearMediaPresentationModeInline;
+    linearMediaPlayer().captionLayer = captionsLayer();
     linearMediaPlayer().videoLayer = [m_playerLayerView playerLayer];
+
+    m_playerViewController = [linearMediaPlayer() makeViewController];
 }
 
 void VideoPresentationInterfaceLMK::invalidatePlayerViewController()

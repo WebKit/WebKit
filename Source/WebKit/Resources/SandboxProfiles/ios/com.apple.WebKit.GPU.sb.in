@@ -103,6 +103,9 @@
            (global-name "com.apple.coremedia.capturesession")      ; Actually for video capture
            (global-name "com.apple.coremedia.capturesource")       ; Also for video capture (<rdar://problem/15794291>).
            (global-name "com.apple.coremedia.cpe.xpc") ; Needed for HDR playback.
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+           (global-name "com.apple.coremedia.videotarget.xpc") ; Needed for FigVideoTarget
+#endif
            (global-name "com.apple.coremedia.remotequeue"))
     (allow mach-lookup
 #if HAVE(REFACTORED_MEDIASERVERD)
