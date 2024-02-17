@@ -42,6 +42,7 @@
 #include <skia/core/SkRegion.h>
 #include <skia/core/SkTileMode.h>
 #include <skia/effects/SkDashPathEffect.h>
+#include <skia/effects/SkImageFilters.h>
 #include <wtf/MathExtras.h>
 
 #if USE(THEME_ADWAITA)
@@ -304,6 +305,21 @@ SkPaint GraphicsContextSkia::createFillPaint(std::optional<Color> fillColor) con
             color = color.colorWithAlphaMultipliedBy(globalAlpha);
         auto [r, g, b, a] = color.toColorTypeLossy<SRGBA<uint8_t>>().resolved();
         paint.setColor(SkColorSetARGB(a, r, g, b));
+    }
+
+    // Outset shadow
+    // FIXME: Don't add the effect if the shadow is inset
+    if (hasDropShadow()) {
+        const auto shadow = dropShadow();
+        ASSERT(shadow);
+
+        const auto sigma = shadow->radius / 2.0;
+        auto globalAlpha = state.alpha();
+        auto shadowColor = shadow->color;
+        if (globalAlpha < 1)
+            shadowColor = shadowColor.colorWithAlphaMultipliedBy(globalAlpha);
+        auto [r, g, b, a] = shadowColor.toColorTypeLossy<SRGBA<uint8_t>>().resolved();
+        paint.setImageFilter(SkImageFilters::DropShadow(shadow->offset.width(), shadow->offset.height(), sigma, sigma, SkColorSetARGB(a, r, g, b), nullptr));
     }
 
     return paint;
