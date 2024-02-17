@@ -9,17 +9,17 @@ div {
 
 #overflowHidden {
     overflow: hidden;
-    background: white;
+    background: purple;
 }
 
 #transformed {
-    -webkit-transform: rotate(0deg) translate3d(0, 0, 0);
-    -webkit-transition: -webkit-transform linear 1ms;
-    background: black;
+    transform: rotate(0deg) translate3d(0, 0, 0);
+    transition: transform linear 0s;
+    background: green;
 }
 
 #transformed:hover {
-    -webkit-transform: rotate(45deg) translate3d(0, 0, 0);
+    transform: rotate(45deg) translate3d(0, 0, 0);
 }
 </style>
 </head>
@@ -30,21 +30,14 @@ div {
     <div id="transformed"></div>
 </div>
 <script>
-    function transitionFinished() {
-        if (window.testRunner)
-            window.testRunner.notifyDone();
-    }
-
     if (!window.eventSender)
         alert("To manually test, hover over the green div. The overflow should be properly clipped.");
 
-    if (window.testRunner)
-      window.testRunner.waitUntilDone();
-
+    document.body.offsetTop; // Force layout. The mouse is not tracked before first layout.
     var transformed = document.getElementById("transformed");
     transformed.parentNode.setAttribute("id", "overflowHidden");
-    transformed.addEventListener("webkitTransitionEnd", transitionFinished, true);
-    eventSender.mouseMoveTo(transformed.offsetLeft + 10, transformed.offsetTop + 10);
+    eventSender.mouseMoveTo(transformed.offsetLeft + 50, transformed.offsetTop + 50);
+    document.body.offsetTop; // Update layout for hovered state.
 </script>
 </body>
 </html>
