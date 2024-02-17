@@ -6990,7 +6990,6 @@ void SpeculativeJIT::compileInByValMegamorphic(Node* node)
     GPRReg scratch3GPR = scratch3.gpr();
     GPRReg scratch4GPR = scratch4.gpr();
 
-    speculateObject(m_graph.child(node, 0), baseGPR);
     speculateString(m_graph.child(node, 1), subscriptGPR);
 
     JumpList slowCases;
