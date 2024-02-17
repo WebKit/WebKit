@@ -1320,6 +1320,14 @@ def generate_serialized_type_info(serialized_types, serialized_enums, headers, u
     result.extend(output_sorted_headers(sorted(header_set)))
 
     result.append('')
+    for using_statement in using_statements:
+        if using_statement.condition is not None:
+            result.append('#if ' + using_statement.condition)
+        result.append('static_assert(std::is_same_v<' + using_statement.name + ', ' + using_statement.alias + '>);')
+        if using_statement.condition is not None:
+            result.append('#endif')
+
+    result.append('')
     result.append('#if ENABLE(IPC_TESTING_API)')
     result.append('')
     result.append('namespace WebKit {')

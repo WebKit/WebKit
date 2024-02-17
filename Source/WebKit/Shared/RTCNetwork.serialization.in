@@ -80,7 +80,7 @@ enum class webrtc::WebKitEncodedVideoRotation : uint8_t {
     kVideoRotation_270
 };
 
-using WebKitEncodedFrameTiming = webrtc::EncodedImage::Timing
+using webrtc::WebKitEncodedFrameTiming = webrtc::EncodedImage::Timing
 
 [Nested] struct webrtc::EncodedImage::Timing {
     uint8_t flags
