@@ -37,6 +37,7 @@
 #include "CommonAtomStrings.h"
 #include "Document.h"
 #include "MutableCSSSelector.h"
+#include "PseudoElementIdentifier.h"
 #include "SelectorPseudoTypeMap.h"
 #include <memory>
 #include <wtf/OptionSet.h>
@@ -1205,6 +1206,74 @@ CSSSelectorList CSSSelectorParser::resolveNestingParent(const CSSSelectorList& n
 
     auto final = CSSSelectorList { WTFMove(result) };
     return final;
+}
+
+static std::optional<Style::PseudoElementIdentifier> pseudoElementIdentifierFor(CSSSelectorPseudoElement type)
+{
+    auto pseudoId = CSSSelector::pseudoId(type);
+    if (pseudoId == PseudoId::None)
+        return { };
+    return Style::PseudoElementIdentifier { pseudoId };
+}
+
+// FIXME: As we add more pseudo elements with arguments we should perhaps consolidate with
+// CSSSelectorParser::consumePseudo(), though note that this is not particularly straightforward as
+// the requirements for attribute values are different. E.g., ::highlight(*) needs to fail here.
+std::pair<bool, std::optional<Style::PseudoElementIdentifier>> CSSSelectorParser::parsePseudoElement(const String& input, const CSSSelectorParserContext& context)
+{
+    auto tokenizer = CSSTokenizer { input };
+    auto range = tokenizer.tokenRange();
+    auto token = range.consume();
+    if (token.type() != ColonToken)
+        return { };
+    token = range.consume();
+    if (token.type() == IdentToken) {
+        if (!range.atEnd())
+            return { };
+        auto pseudoClassOrElement = findPseudoClassAndCompatibilityElementName(token.value());
+        if (!pseudoClassOrElement.compatibilityPseudoElement)
+            return { };
+        ASSERT(CSSSelector::isPseudoElementEnabled(*pseudoClassOrElement.compatibilityPseudoElement, token.value(), context));
+        return { true, pseudoElementIdentifierFor(*pseudoClassOrElement.compatibilityPseudoElement) };
+    }
+    if (token.type() != ColonToken)
+        return { };
+    token = range.peek();
+    if ((token.type() != IdentToken && token.type() != FunctionToken))
+        return { };
+    auto pseudoElement = CSSSelector::parsePseudoElementName(token.value(), context);
+    if (!pseudoElement)
+        return { };
+    if (token.type() == IdentToken) {
+        range.consume();
+        if (!range.atEnd() || CSSSelector::pseudoElementRequiresArgument(*pseudoElement))
+            return { };
+        return { true, pseudoElementIdentifierFor(*pseudoElement) };
+    }
+    ASSERT(token.type() == FunctionToken);
+    auto block = range.consumeBlock();
+    if (!range.atEnd())
+        return { };
+    block.consumeWhitespace();
+    switch (*pseudoElement) {
+    case CSSSelector::PseudoElement::Highlight: {
+        auto& ident = block.consumeIncludingWhitespace();
+        if (ident.type() != IdentToken || !block.atEnd())
+            return { };
+        return { true, Style::PseudoElementIdentifier { PseudoId::Highlight, ident.value().toAtomString() } };
+    }
+    case CSSSelector::PseudoElement::ViewTransitionGroup:
+    case CSSSelector::PseudoElement::ViewTransitionImagePair:
+    case CSSSelector::PseudoElement::ViewTransitionOld:
+    case CSSSelector::PseudoElement::ViewTransitionNew: {
+        auto& ident = block.consumeIncludingWhitespace();
+        if (ident.type() != IdentToken || !isValidCustomIdentifier(ident.id()) || !block.atEnd())
+            return { };
+        return { true, Style::PseudoElementIdentifier { CSSSelector::pseudoId(*pseudoElement), ident.value().toAtomString() } };
+    }
+    default:
+        return { };
+    }
 }
 
 } // namespace WebCore

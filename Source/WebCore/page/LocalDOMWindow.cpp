@@ -32,7 +32,7 @@
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSRule.h"
 #include "CSSRuleList.h"
-#include "CSSSelectorParserContext.h"
+#include "CSSSelectorParser.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "ComposedTreeIterator.h"
@@ -1616,7 +1616,7 @@ Ref<CSSStyleDeclaration> LocalDOMWindow::getComputedStyle(Element& element, cons
     if (!pseudoElt.startsWith(':'))
         return CSSComputedStyleDeclaration::create(element, std::nullopt);
 
-    auto [pseudoElementIsParsable, pseudoElementIdentifier] = CSSSelector::parsePseudoElement(pseudoElt, CSSSelectorParserContext { element.protectedDocument() });
+    auto [pseudoElementIsParsable, pseudoElementIdentifier] = CSSSelectorParser::parsePseudoElement(pseudoElt, CSSSelectorParserContext { element.protectedDocument() });
     if (!pseudoElementIsParsable)
         return CSSComputedStyleDeclaration::createEmpty(element);
     return CSSComputedStyleDeclaration::create(element, pseudoElementIdentifier);
@@ -1629,7 +1629,7 @@ RefPtr<CSSRuleList> LocalDOMWindow::getMatchedCSSRules(Element* element, const S
 
     // FIXME: This parser context won't get the right settings without a document.
     auto parserContext = document() ? CSSSelectorParserContext { *protectedDocument() } : CSSSelectorParserContext { CSSParserContext { HTMLStandardMode } };
-    auto [pseudoElementIsParsable, pseudoElementIdentifier] = CSSSelector::parsePseudoElement(pseudoElement, parserContext);
+    auto [pseudoElementIsParsable, pseudoElementIdentifier] = CSSSelectorParser::parsePseudoElement(pseudoElement, parserContext);
     if (!(pseudoElementIsParsable || (pseudoElementIdentifier && !pseudoElementIdentifier->nameArgument.isNull())) && !pseudoElement.isEmpty())
         return nullptr;
     auto pseudoId = pseudoElementIdentifier ? pseudoElementIdentifier->pseudoId : PseudoId::None;
