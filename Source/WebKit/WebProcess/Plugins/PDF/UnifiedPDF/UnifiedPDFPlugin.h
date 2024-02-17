@@ -58,18 +58,21 @@ enum class WebEventType : uint8_t;
 enum class WebMouseEventButton : int8_t;
 enum class WebEventModifier : uint8_t;
 
-enum class ShouldRepaint : bool { No, Yes };
+enum class RepaintRequirement : uint8_t {
+    PDFContent      = 1 << 0,
+    Selection       = 1 << 1,
+    HoverOverlay    = 1 << 2
+};
 
 class AnnotationTrackingState {
 public:
-    ShouldRepaint startAnnotationTracking(RetainPtr<PDFAnnotation>&&, WebEventType, WebMouseEventButton);
-    ShouldRepaint finishAnnotationTracking(WebEventType, WebMouseEventButton);
+    OptionSet<RepaintRequirement> startAnnotationTracking(RetainPtr<PDFAnnotation>&&, WebEventType, WebMouseEventButton);
+    OptionSet<RepaintRequirement> finishAnnotationTracking(WebEventType, WebMouseEventButton);
 
     PDFAnnotation *trackedAnnotation() const { return m_trackedAnnotation.get(); }
     bool isBeingHovered() const;
 
 private:
-    void handleMouseDraggedOffTrackedAnnotation();
     void resetAnnotationTrackingState();
 
     RetainPtr<PDFAnnotation> m_trackedAnnotation;
@@ -107,6 +110,8 @@ public:
     RetainPtr<PDFAnnotation> nextTextAnnotation(AnnotationSearchDirection) const;
     void handlePDFActionForAnnotation(PDFAnnotation *, unsigned currentPageIndex);
 #endif
+    enum class IsAnnotationCommit : bool { No, Yes };
+    static OptionSet<RepaintRequirement> repaintRequirementsForAnnotation(PDFAnnotation *, IsAnnotationCommit = IsAnnotationCommit::No);
 
     void attemptToUnlockPDF(const String& password) final;
     void windowActivityDidChange() final;
@@ -363,11 +368,11 @@ private:
     void followLinkAnnotation(PDFAnnotation *);
 
     void startTrackingAnnotation(RetainPtr<PDFAnnotation>&&, WebEventType, WebMouseEventButton);
-    void finishTrackingAnnotation(WebEventType, WebMouseEventButton);
+    void finishTrackingAnnotation(WebEventType, WebMouseEventButton, OptionSet<RepaintRequirement> = { });
 
     RefPtr<WebCore::GraphicsLayer> createGraphicsLayer(const String& name, WebCore::GraphicsLayer::Type);
 
-    void setPDFChangedInDocumentRect(const WebCore::FloatRect&);
+    void setNeedsRepaintInDocumentRect(OptionSet<RepaintRequirement>, const WebCore::FloatRect&);
 
     WebCore::IntPoint convertFromRootViewToDocument(const WebCore::IntPoint&) const;
     WebCore::IntPoint convertFromPluginToDocument(const WebCore::IntPoint&) const;

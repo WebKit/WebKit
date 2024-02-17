@@ -278,16 +278,21 @@ RefPtr<GraphicsLayer> UnifiedPDFPlugin::createGraphicsLayer(const String& name, 
     return graphicsLayer;
 }
 
-void UnifiedPDFPlugin::setPDFChangedInDocumentRect(const FloatRect& rectInDocumentCoordinates)
+void UnifiedPDFPlugin::setNeedsRepaintInDocumentRect(OptionSet<RepaintRequirement> repaintRequirements, const FloatRect& rectInDocumentCoordinates)
 {
-    auto paintintRect = rectInDocumentCoordinates;
+    if (!repaintRequirements)
+        return;
+
+    auto paintingRect = rectInDocumentCoordinates;
     // FIXME: Use some flavor of convertFromDocumentToContents() once we untangle the coordinate systems.
-    paintintRect.scale(m_documentLayout.scale());
+    paintingRect.scale(m_documentLayout.scale());
 
-    if (RefPtr asyncRenderer = asyncRendererIfExists())
-        asyncRenderer->invalidateTilesForPaintingRect(m_scaleFactor, paintintRect);
+    if (repaintRequirements.contains(RepaintRequirement::PDFContent)) {
+        if (RefPtr asyncRenderer = asyncRendererIfExists())
+            asyncRenderer->invalidateTilesForPaintingRect(m_scaleFactor, paintingRect);
+    }
 
-    RefPtr { m_contentsLayer }->setNeedsDisplayInRect(paintintRect);
+    RefPtr { m_contentsLayer }->setNeedsDisplayInRect(paintingRect);
 }
 
 void UnifiedPDFPlugin::scheduleRenderingUpdate()
@@ -1692,7 +1697,7 @@ bool UnifiedPDFPlugin::handleMouseEvent(const WebMouseEvent& event)
 
             RetainPtr annotationUnderMouse = annotationForRootViewPoint(event.position());
             if (auto* currentTrackedAnnotation = m_annotationTrackingState.trackedAnnotation(); (currentTrackedAnnotation && currentTrackedAnnotation != annotationUnderMouse) || (currentTrackedAnnotation && !m_annotationTrackingState.isBeingHovered()))
-                finishTrackingAnnotation(mouseEventType, mouseEventButton);
+                finishTrackingAnnotation(mouseEventType, mouseEventButton, RepaintRequirement::HoverOverlay);
 
             if (!m_annotationTrackingState.trackedAnnotation() && annotationUnderMouse && [annotationUnderMouse isKindOfClass:getPDFAnnotationTextWidgetClass()])
                 startTrackingAnnotation(WTFMove(annotationUnderMouse), mouseEventType, mouseEventButton);
@@ -1702,7 +1707,7 @@ bool UnifiedPDFPlugin::handleMouseEvent(const WebMouseEvent& event)
         case WebMouseEventButton::Left: {
             if (RetainPtr trackedAnnotation = m_annotationTrackingState.trackedAnnotation(); trackedAnnotation && trackedAnnotation != annotationForRootViewPoint(event.position())) {
                 notifyCursorChanged(toWebCoreCursorType({ }));
-                finishTrackingAnnotation(mouseEventType, mouseEventButton);
+                finishTrackingAnnotation(mouseEventType, mouseEventButton, RepaintRequirement::HoverOverlay);
                 return true;
             }
 
@@ -1820,6 +1825,25 @@ void UnifiedPDFPlugin::followLinkAnnotation(PDFAnnotation *annotation)
         scrollToPDFDestination(destination);
 }
 
+OptionSet<RepaintRequirement> UnifiedPDFPlugin::repaintRequirementsForAnnotation(PDFAnnotation *annotation, IsAnnotationCommit isAnnotationCommit)
+{
+    if ([annotation isKindOfClass:getPDFAnnotationButtonWidgetClass()])
+        return RepaintRequirement::PDFContent;
+
+    if ([annotation isKindOfClass:getPDFAnnotationPopupClass()])
+        return RepaintRequirement::PDFContent;
+
+    if ([annotation isKindOfClass:getPDFAnnotationTextClass()])
+        return RepaintRequirement::PDFContent;
+
+    if ([annotation isKindOfClass:getPDFAnnotationTextWidgetClass()])
+        return isAnnotationCommit == IsAnnotationCommit::Yes ? RepaintRequirement::PDFContent : RepaintRequirement::HoverOverlay;
+
+    // No visual feedback for getPDFAnnotationLinkClass at this time.
+
+    return { };
+}
+
 WebCore::FloatRect UnifiedPDFPlugin::documentRectForAnnotation(PDFAnnotation *annotation) const
 {
     if (!annotation)
@@ -1835,21 +1859,18 @@ WebCore::FloatRect UnifiedPDFPlugin::documentRectForAnnotation(PDFAnnotation *an
 
 void UnifiedPDFPlugin::startTrackingAnnotation(RetainPtr<PDFAnnotation>&& annotation, WebEventType mouseEventType, WebMouseEventButton mouseEventButton)
 {
-    // FIXME: We need to distinguish betwene annoation changes that affect PDF tiles, and those that are just painted overlays.
-    auto repaint = m_annotationTrackingState.startAnnotationTracking(WTFMove(annotation), mouseEventType, mouseEventButton);
-    if (repaint == ShouldRepaint::Yes) {
+    auto repaintRequirements = m_annotationTrackingState.startAnnotationTracking(WTFMove(annotation), mouseEventType, mouseEventButton);
+    if (repaintRequirements) {
         auto annotationRect = documentRectForAnnotation(m_annotationTrackingState.trackedAnnotation());
-        setPDFChangedInDocumentRect(annotationRect);
+        setNeedsRepaintInDocumentRect(repaintRequirements, annotationRect);
     }
 }
 
-void UnifiedPDFPlugin::finishTrackingAnnotation(WebEventType mouseEventType, WebMouseEventButton mouseEventButton)
+void UnifiedPDFPlugin::finishTrackingAnnotation(WebEventType mouseEventType, WebMouseEventButton mouseEventButton, OptionSet<RepaintRequirement> repaintRequirements)
 {
-    // FIXME: We need to distinguish betwene annoation changes that affect PDF tiles, and those that are just painted overlays.
     auto annotationRect = documentRectForAnnotation(m_annotationTrackingState.trackedAnnotation());
-    auto repaint = m_annotationTrackingState.finishAnnotationTracking(mouseEventType, mouseEventButton);
-    if (repaint == ShouldRepaint::Yes)
-        setPDFChangedInDocumentRect(annotationRect);
+    repaintRequirements.add(m_annotationTrackingState.finishAnnotationTracking(mouseEventType, mouseEventButton));
+    setNeedsRepaintInDocumentRect(repaintRequirements, annotationRect);
 }
 
 void UnifiedPDFPlugin::scrollToPDFDestination(PDFDestination *destination)
@@ -2921,24 +2942,23 @@ void UnifiedPDFPlugin::setActiveAnnotation(RetainPtr<PDFAnnotation>&& annotation
     if (!supportsForms())
         return;
 
-    if (m_activeAnnotation)
+    if (m_activeAnnotation) {
         m_activeAnnotation->commit();
 
+        auto annotationRect = documentRectForAnnotation(m_activeAnnotation->annotation());
+        setNeedsRepaintInDocumentRect(repaintRequirementsForAnnotation(m_activeAnnotation->annotation(), IsAnnotationCommit::Yes), annotationRect);
+    }
+
     if (annotation) {
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        if ([annotation isKindOfClass:getPDFAnnotationTextWidgetClass()] && static_cast<PDFAnnotationTextWidget *>(annotation).isReadOnly) {
+        if ([annotation isKindOfClass:getPDFAnnotationTextWidgetClass()] && [annotation isReadOnly]) {
             m_activeAnnotation = nullptr;
             return;
         }
-ALLOW_DEPRECATED_DECLARATIONS_END
 
-        auto activeAnnotation = PDFPluginAnnotation::create(annotation.get(), this);
-        m_activeAnnotation = activeAnnotation.get();
-        activeAnnotation->attach(m_annotationContainer.get());
+        m_activeAnnotation = PDFPluginAnnotation::create(annotation.get(), this);
+        m_activeAnnotation->attach(m_annotationContainer.get());
     } else
         m_activeAnnotation = nullptr;
-
-    updateLayerHierarchy();
 #endif
 }
 
@@ -3009,62 +3029,56 @@ void UnifiedPDFPlugin::handlePDFActionForAnnotation(PDFAnnotation *annotation, u
 }
 #endif
 
-ShouldRepaint AnnotationTrackingState::startAnnotationTracking(RetainPtr<PDFAnnotation>&& annotation, WebEventType mouseEventType, WebMouseEventButton mouseEventButton)
+OptionSet<RepaintRequirement> AnnotationTrackingState::startAnnotationTracking(RetainPtr<PDFAnnotation>&& annotation, WebEventType mouseEventType, WebMouseEventButton mouseEventButton)
 {
     ASSERT(!m_trackedAnnotation);
     m_trackedAnnotation = WTFMove(annotation);
 
-    auto needsRepaint = ShouldRepaint::No;
+    auto repaintRequirements = OptionSet<RepaintRequirement> { };
 
     if ([m_trackedAnnotation isKindOfClass:getPDFAnnotationButtonWidgetClass()]) {
         [m_trackedAnnotation setHighlighted:YES];
-        needsRepaint = ShouldRepaint::Yes;
+        repaintRequirements.add(UnifiedPDFPlugin::repaintRequirementsForAnnotation(m_trackedAnnotation.get()));
     }
 
     if (mouseEventType == WebEventType::MouseMove && mouseEventButton == WebMouseEventButton::None) {
         if (!m_isBeingHovered)
-            needsRepaint = ShouldRepaint::Yes;
+            repaintRequirements.add(RepaintRequirement::HoverOverlay);
+
         m_isBeingHovered = true;
     }
 
-    return needsRepaint;
+    return repaintRequirements;
 }
 
-ShouldRepaint AnnotationTrackingState::finishAnnotationTracking(WebEventType mouseEventType, WebMouseEventButton mouseEventButton)
+OptionSet<RepaintRequirement> AnnotationTrackingState::finishAnnotationTracking(WebEventType mouseEventType, WebMouseEventButton mouseEventButton)
 {
     ASSERT(m_trackedAnnotation);
-    auto needsRepaint = ShouldRepaint::No;
+    auto repaintRequirements = OptionSet<RepaintRequirement> { };
 
     if (mouseEventType == WebEventType::MouseUp && mouseEventButton == WebMouseEventButton::Left) {
         if ([m_trackedAnnotation isHighlighted]) {
             [m_trackedAnnotation setHighlighted:NO];
-
-            needsRepaint = ShouldRepaint::Yes;
+            repaintRequirements.add(UnifiedPDFPlugin::repaintRequirementsForAnnotation(m_trackedAnnotation.get()));
         }
 
         if ([m_trackedAnnotation isKindOfClass:getPDFAnnotationButtonWidgetClass()] && [m_trackedAnnotation widgetControlType] != kPDFWidgetPushButtonControl) {
             auto currentButtonState = [m_trackedAnnotation buttonWidgetState];
             if (currentButtonState == PDFWidgetCellState::kPDFWidgetOnState && [m_trackedAnnotation allowsToggleToOff]) {
                 [m_trackedAnnotation setButtonWidgetState:PDFWidgetCellState::kPDFWidgetOffState];
-                needsRepaint = ShouldRepaint::Yes;
+                repaintRequirements.add(RepaintRequirement::PDFContent);
             } else if (currentButtonState == PDFWidgetCellState::kPDFWidgetOffState) {
                 [m_trackedAnnotation setButtonWidgetState:PDFWidgetCellState::kPDFWidgetOnState];
-                needsRepaint = ShouldRepaint::Yes;
+                repaintRequirements.add(RepaintRequirement::PDFContent);
             }
         }
     } else if (mouseEventType == WebEventType::MouseMove && mouseEventButton == WebMouseEventButton::Left) {
-        handleMouseDraggedOffTrackedAnnotation();
-        needsRepaint = ShouldRepaint::Yes;
+        [m_trackedAnnotation setHighlighted:NO];
+        repaintRequirements.add(UnifiedPDFPlugin::repaintRequirementsForAnnotation(m_trackedAnnotation.get()));
     }
 
     resetAnnotationTrackingState();
-    return needsRepaint;
-}
-
-void AnnotationTrackingState::handleMouseDraggedOffTrackedAnnotation()
-{
-    ASSERT(m_trackedAnnotation);
-    [m_trackedAnnotation setHighlighted:NO];
+    return repaintRequirements;
 }
 
 bool AnnotationTrackingState::isBeingHovered() const
