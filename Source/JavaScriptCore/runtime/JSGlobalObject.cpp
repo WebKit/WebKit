@@ -537,7 +537,7 @@ JSC_DEFINE_HOST_FUNCTION(signpostStart, (JSGlobalObject* globalObject, CallFrame
     RETURN_IF_EXCEPTION(scope, EncodedJSValue());
 
     ++activeJSGlobalObjectSignpostIntervalCount;
-    os_signpost_interval_begin(WTFSignpostLogHandle(), os_signpost_id_make_with_pointer(WTFSignpostLogHandle(), globalObject), "JSGlobalObject signpost", "%" PUBLIC_LOG_STRING, message.ascii().data());
+    WTFBeginSignpostAlways(globalObject, JSCJSGlobalObject, "%" PUBLIC_LOG_STRING, message.ascii().data());
 
     return JSValue::encode(jsUndefined());
 }
@@ -550,7 +550,7 @@ JSC_DEFINE_HOST_FUNCTION(signpostStop, (JSGlobalObject* globalObject, CallFrame*
     auto message = asSignpostString(globalObject, callFrame->argument(0));
     RETURN_IF_EXCEPTION(scope, EncodedJSValue());
 
-    os_signpost_interval_end(WTFSignpostLogHandle(), os_signpost_id_make_with_pointer(WTFSignpostLogHandle(), globalObject), "JSGlobalObject signpost", "%" PUBLIC_LOG_STRING, message.ascii().data());
+    WTFEndSignpostAlways(globalObject, JSCJSGlobalObject, "%" PUBLIC_LOG_STRING, message.ascii().data());
     --activeJSGlobalObjectSignpostIntervalCount;
 
     return JSValue::encode(jsUndefined());
