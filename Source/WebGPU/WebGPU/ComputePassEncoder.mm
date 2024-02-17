@@ -82,11 +82,11 @@ struct EntryUsageData {
     uint32_t bindGroup;
 };
 using EntryMap = HashMap<uint64_t, EntryUsageData, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>;
-using EntryMapContainer = HashMap<void*, EntryMap>;
+using EntryMapContainer = HashMap<const void*, EntryMap>;
 struct BindGroupId {
     uint32_t bindGroup { 0 };
 };
-static bool addResourceToActiveResources(id<MTLResource> mtlResource, OptionSet<BindGroupEntryUsage> initialUsage, EntryMapContainer& usagesForResource, BindGroupId bindGroup, uint32_t baseMipLevel = 0, uint32_t baseArrayLayer = 0, WGPUTextureAspect aspect = WGPUTextureAspect_DepthOnly)
+static bool addResourceToActiveResources(const void* resourceAddress, id<MTLResource> mtlResource, OptionSet<BindGroupEntryUsage> initialUsage, EntryMapContainer& usagesForResource, BindGroupId bindGroup, uint32_t baseMipLevel = 0, uint32_t baseArrayLayer = 0, WGPUTextureAspect aspect = WGPUTextureAspect_DepthOnly)
 {
     if (isTextureBindGroupEntryUsage(initialUsage)) {
         ASSERT([mtlResource conformsToProtocol:@protocol(MTLTexture)]);
@@ -105,9 +105,8 @@ static bool addResourceToActiveResources(id<MTLResource> mtlResource, OptionSet<
 
     auto mapKey = BindGroup::makeEntryMapKey(baseMipLevel, baseArrayLayer, aspect);
     EntryUsage resourceUsage = initialUsage;
-    auto* mtlResourceAddr = (__bridge void*)mtlResource;
     EntryMap* entryMap = nullptr;
-    if (auto it = usagesForResource.find(mtlResourceAddr); it != usagesForResource.end()) {
+    if (auto it = usagesForResource.find(resourceAddress); it != usagesForResource.end()) {
         entryMap = &it->value;
         if (auto innerIt = it->value.find(mapKey); innerIt != it->value.end()) {
             auto existingUsage = innerIt->value.usage;
@@ -126,7 +125,7 @@ static bool addResourceToActiveResources(id<MTLResource> mtlResource, OptionSet<
     if (!entryMap) {
         EntryMap entryMap;
         entryMap.set(mapKey, EntryUsageData { .usage = resourceUsage, .bindGroup = bindGroup.bindGroup });
-        usagesForResource.set(mtlResourceAddr, entryMap);
+        usagesForResource.set(resourceAddress, entryMap);
     }
 
     return true;
@@ -136,27 +135,27 @@ static bool addResourceToActiveResources(const TextureView& texture, OptionSet<B
 {
     WGPUTextureAspect textureAspect = texture.aspect();
     if (textureAspect != WGPUTextureAspect_All)
-        return addResourceToActiveResources(texture.parentTexture(), resourceUsage, usagesForResource, bindGroup, texture.baseMipLevel(), texture.baseArrayLayer(), textureAspect);
+        return addResourceToActiveResources(&texture.apiParentTexture(), texture.parentTexture(), resourceUsage, usagesForResource, bindGroup, texture.baseMipLevel(), texture.baseArrayLayer(), textureAspect);
 
-    return addResourceToActiveResources(texture.parentTexture(), resourceUsage, usagesForResource, bindGroup, texture.baseMipLevel(), texture.baseArrayLayer(), WGPUTextureAspect_DepthOnly) && addResourceToActiveResources(texture.parentTexture(), resourceUsage, usagesForResource, bindGroup, texture.baseMipLevel(), texture.baseArrayLayer(), WGPUTextureAspect_StencilOnly);
+    return addResourceToActiveResources(&texture.apiParentTexture(), texture.parentTexture(), resourceUsage, usagesForResource, bindGroup, texture.baseMipLevel(), texture.baseArrayLayer(), WGPUTextureAspect_DepthOnly) && addResourceToActiveResources(&texture.apiParentTexture(), texture.parentTexture(), resourceUsage, usagesForResource, bindGroup, texture.baseMipLevel(), texture.baseArrayLayer(), WGPUTextureAspect_StencilOnly);
 }
 
 static bool addResourceToActiveResources(const BindGroupEntryUsageData::Resource& resource, id<MTLResource> mtlResource, OptionSet<BindGroupEntryUsage> resourceUsage, BindGroupId bindGroup, EntryMapContainer& usagesForResource)
 {
-    return WTF::switchOn(resource, [&](const WeakPtr<const Buffer>& buffer) {
+    return WTF::switchOn(resource, [&](const RefPtr<const Buffer>& buffer) {
         if (buffer.get())
-            return addResourceToActiveResources(buffer->buffer(), resourceUsage, usagesForResource, bindGroup);
-        return false;
-    }, [&](const WeakPtr<const TextureView>& textureView) {
+            return addResourceToActiveResources(buffer.get(), buffer->buffer(), resourceUsage, usagesForResource, bindGroup);
+        return true;
+    }, [&](const RefPtr<const TextureView>& textureView) {
         if (textureView.get())
             return addResourceToActiveResources(*textureView.get(), resourceUsage, bindGroup, usagesForResource);
-        return false;
-    }, [&](const WeakPtr<const ExternalTexture>&) {
-        return addResourceToActiveResources(mtlResource, resourceUsage, usagesForResource, bindGroup);
+        return true;
+    }, [&](const RefPtr<const ExternalTexture>& externalTexture) {
+        return addResourceToActiveResources(externalTexture.get(), mtlResource, resourceUsage, usagesForResource, bindGroup);
     });
 }
 
-void ComputePassEncoder::executePreDispatchCommands(id<MTLBuffer> indirectBuffer)
+void ComputePassEncoder::executePreDispatchCommands(const Buffer* indirectBuffer)
 {
     if (!m_pipeline) {
         makeInvalid(@"pipeline is not set prior to dispatch");
@@ -169,9 +168,9 @@ void ComputePassEncoder::executePreDispatchCommands(id<MTLBuffer> indirectBuffer
     }
     [m_computeCommandEncoder setComputePipelineState:m_pipeline->computePipelineState()];
 
-    HashMap<void*, EntryMap> usagesForResource;
+    EntryMapContainer usagesForResource;
     if (indirectBuffer)
-        addResourceToActiveResources(indirectBuffer, BindGroupEntryUsage::Input, usagesForResource, BindGroupId { INT32_MAX });
+        addResourceToActiveResources(indirectBuffer, indirectBuffer->buffer(), BindGroupEntryUsage::Input, usagesForResource, BindGroupId { INT32_MAX });
 
     auto& pipelineLayout = m_pipeline->pipelineLayout();
     auto pipelineLayoutCount = pipelineLayout.numberOfBindGroupLayouts();
@@ -299,7 +298,7 @@ void ComputePassEncoder::dispatchIndirect(const Buffer& indirectBuffer, uint64_t
         return;
 
     if (id<MTLBuffer> dispatchBuffer = runPredispatchIndirectCallValidation(indirectBuffer, indirectOffset)) {
-        executePreDispatchCommands(indirectBuffer.buffer());
+        executePreDispatchCommands(&indirectBuffer);
         [m_computeCommandEncoder dispatchThreadgroupsWithIndirectBuffer:dispatchBuffer indirectBufferOffset:0 threadsPerThreadgroup:m_threadsPerThreadgroup];
     } else
         makeInvalid(@"GPUComputePassEncoder.dispatchWorkgroupsIndirect: Unable to validate dispatch size");
@@ -399,13 +398,13 @@ void ComputePassEncoder::pushDebugGroup(String&& groupLabel)
 
 static void setCommandEncoder(const BindGroupEntryUsageData::Resource& resource, CommandEncoder& parentEncoder)
 {
-    WTF::switchOn(resource, [&](const WeakPtr<const Buffer>& buffer) {
+    WTF::switchOn(resource, [&](const RefPtr<const Buffer>& buffer) {
         if (buffer)
             buffer->setCommandEncoder(parentEncoder);
-        }, [&](const WeakPtr<const TextureView>& textureView) {
+        }, [&](const RefPtr<const TextureView>& textureView) {
             if (textureView)
                 textureView->setCommandEncoder(parentEncoder);
-        }, [](const WeakPtr<const ExternalTexture>&) {
+        }, [](const RefPtr<const ExternalTexture>&) {
     });
 }
 

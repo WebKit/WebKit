@@ -854,7 +854,7 @@ static BindGroupEntryUsage usageForBuffer(WGPUBufferBindingType bufferBindingTyp
 
 static BindGroupEntryUsageData makeBindGroupEntryUsageData(BindGroupEntryUsage usage, uint32_t bindingIndex, auto& resource)
 {
-    return BindGroupEntryUsageData { .usage = usage, .binding = bindingIndex, .resource = resource };
+    return BindGroupEntryUsageData { .usage = usage, .binding = bindingIndex, .resource = &resource };
 }
 
 Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor)

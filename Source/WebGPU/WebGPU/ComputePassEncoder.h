@@ -83,7 +83,7 @@ private:
     bool validatePopDebugGroup() const;
 
     void makeInvalid(NSString* = nil);
-    void executePreDispatchCommands(id<MTLBuffer> = nil);
+    void executePreDispatchCommands(const Buffer* = nullptr);
     id<MTLBuffer> runPredispatchIndirectCallValidation(const Buffer&, uint64_t);
 
     id<MTLComputeCommandEncoder> m_computeCommandEncoder { nil };

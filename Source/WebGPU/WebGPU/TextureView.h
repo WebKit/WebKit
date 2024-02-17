@@ -83,6 +83,7 @@ public:
     bool isDestroyed() const;
     void destroy();
     void setCommandEncoder(CommandEncoder&) const;
+    const Texture& apiParentTexture() const { return m_parentTexture; }
 
 private:
     TextureView(id<MTLTexture>, const WGPUTextureViewDescriptor&, const std::optional<WGPUExtent3D>&, Texture&, Device&);

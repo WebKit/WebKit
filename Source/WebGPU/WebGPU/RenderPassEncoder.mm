@@ -223,7 +223,7 @@ static void setViewportMinMaxDepthIntoBuffer(auto& fragmentDynamicOffsets, float
     fragmentDynamicOffsets[1] = bitwise_cast<destType>(maxDepth);
 }
 
-void RenderPassEncoder::addResourceToActiveResources(id<MTLResource> mtlResource, OptionSet<BindGroupEntryUsage> initialUsage, uint32_t baseMipLevel, uint32_t baseArrayLayer, WGPUTextureAspect aspect)
+void RenderPassEncoder::addResourceToActiveResources(const void* resourceAddress, id<MTLResource> mtlResource, OptionSet<BindGroupEntryUsage> initialUsage, uint32_t baseMipLevel, uint32_t baseArrayLayer, WGPUTextureAspect aspect)
 {
     if (!mtlResource)
         return;
@@ -245,53 +245,52 @@ void RenderPassEncoder::addResourceToActiveResources(id<MTLResource> mtlResource
 
     auto mapKey = BindGroup::makeEntryMapKey(baseMipLevel, baseArrayLayer, aspect);
     EntryUsage resourceUsage = initialUsage;
-    auto* mtlResourceAddr = (__bridge void*)mtlResource;
     EntryMap* entryMap = nullptr;
-    if (auto it = m_usagesForResource.find(mtlResourceAddr); it != m_usagesForResource.end()) {
+    if (auto it = m_usagesForResource.find(resourceAddress); it != m_usagesForResource.end()) {
         entryMap = &it->value;
         if (auto innerIt = it->value.find(mapKey); innerIt != it->value.end())
             resourceUsage.add(innerIt->value);
     }
 
     if (!BindGroup::allowedUsage(resourceUsage)) {
-        makeInvalid([NSString stringWithFormat:@"Bind group has incompatible usage list: %@ for %p", BindGroup::usageName(resourceUsage), mtlResourceAddr]);
+        makeInvalid([NSString stringWithFormat:@"Bind group has incompatible usage list: %@ for %p", BindGroup::usageName(resourceUsage), resourceAddress]);
         return;
     }
     if (!entryMap) {
         EntryMap entryMap;
         entryMap.set(mapKey, resourceUsage);
-        m_usagesForResource.set(mtlResourceAddr, entryMap);
+        m_usagesForResource.set(resourceAddress, entryMap);
     } else
         entryMap->set(mapKey, resourceUsage);
 }
 
 void RenderPassEncoder::addResourceToActiveResources(const TextureView& texture, OptionSet<BindGroupEntryUsage> resourceUsage, WGPUTextureAspect textureAspect)
 {
-    addResourceToActiveResources(texture.parentTexture(), resourceUsage, texture.baseMipLevel(), texture.baseArrayLayer(), textureAspect);
+    addResourceToActiveResources(&texture.apiParentTexture(), texture.parentTexture(), resourceUsage, texture.baseMipLevel(), texture.baseArrayLayer(), textureAspect);
 }
 
 void RenderPassEncoder::addResourceToActiveResources(const TextureView& texture, OptionSet<BindGroupEntryUsage> resourceUsage)
 {
     WGPUTextureAspect textureAspect = texture.aspect();
     if (textureAspect != WGPUTextureAspect_All) {
-        addResourceToActiveResources(texture.parentTexture(), resourceUsage, texture.baseMipLevel(), texture.baseArrayLayer(), textureAspect);
+        addResourceToActiveResources(&texture.apiParentTexture(), texture.parentTexture(), resourceUsage, texture.baseMipLevel(), texture.baseArrayLayer(), textureAspect);
         return;
     }
 
-    addResourceToActiveResources(texture.parentTexture(), resourceUsage, texture.baseMipLevel(), texture.baseArrayLayer(), WGPUTextureAspect_DepthOnly);
-    addResourceToActiveResources(texture.parentTexture(), resourceUsage, texture.baseMipLevel(), texture.baseArrayLayer(), WGPUTextureAspect_StencilOnly);
+    addResourceToActiveResources(&texture.apiParentTexture(), texture.parentTexture(), resourceUsage, texture.baseMipLevel(), texture.baseArrayLayer(), WGPUTextureAspect_DepthOnly);
+    addResourceToActiveResources(&texture.apiParentTexture(), texture.parentTexture(), resourceUsage, texture.baseMipLevel(), texture.baseArrayLayer(), WGPUTextureAspect_StencilOnly);
 }
 
 void RenderPassEncoder::addResourceToActiveResources(const BindGroupEntryUsageData::Resource& resource, id<MTLResource> mtlResource, OptionSet<BindGroupEntryUsage> resourceUsage)
 {
-    WTF::switchOn(resource, [&](const WeakPtr<const Buffer>& buffer) {
+    WTF::switchOn(resource, [&](const RefPtr<const Buffer>& buffer) {
         if (buffer.get())
-            addResourceToActiveResources(buffer->buffer(), resourceUsage);
-        }, [&](const WeakPtr<const TextureView>& textureView) {
+            addResourceToActiveResources(buffer.get(), buffer->buffer(), resourceUsage);
+        }, [&](const RefPtr<const TextureView>& textureView) {
             if (textureView.get())
                 addResourceToActiveResources(*textureView.get(), resourceUsage);
-        }, [&](const WeakPtr<const ExternalTexture>&) {
-            addResourceToActiveResources(mtlResource, resourceUsage);
+        }, [&](const RefPtr<const ExternalTexture>& externalTexture) {
+            addResourceToActiveResources(externalTexture.get(), mtlResource, resourceUsage);
     });
 }
 
@@ -421,7 +420,7 @@ bool RenderPassEncoder::issuedDrawCall() const
     return m_drawCount;
 }
 
-bool RenderPassEncoder::executePreDrawCommands(id<MTLBuffer> indirectBuffer)
+bool RenderPassEncoder::executePreDrawCommands(const Buffer* indirectBuffer)
 {
     if (!m_pipeline) {
         makeInvalid(@"Missing pipeline before draw command");
@@ -434,7 +433,7 @@ bool RenderPassEncoder::executePreDrawCommands(id<MTLBuffer> indirectBuffer)
     }
 
     if (indirectBuffer)
-        addResourceToActiveResources(indirectBuffer, BindGroupEntryUsage::Input);
+        addResourceToActiveResources(indirectBuffer, indirectBuffer->buffer(), BindGroupEntryUsage::Input);
     if (NSString* error = errorValidatingAndBindingBuffers()) {
         makeInvalid(error);
         return false;
@@ -574,7 +573,7 @@ void RenderPassEncoder::drawIndexedIndirect(const Buffer& indirectBuffer, uint64
         return;
     }
 
-    if (!executePreDrawCommands(indirectBuffer.buffer()))
+    if (!executePreDrawCommands(&indirectBuffer))
         return;
     [m_renderCommandEncoder drawIndexedPrimitives:m_primitiveType indexType:m_indexType indexBuffer:indexBuffer indexBufferOffset:m_indexBufferOffset indirectBuffer:indirectBuffer.buffer() indirectBufferOffset:indirectOffset];
 }
@@ -599,7 +598,7 @@ void RenderPassEncoder::drawIndirect(const Buffer& indirectBuffer, uint64_t indi
         return;
     }
 
-    if (!executePreDrawCommands(indirectBuffer.buffer()))
+    if (!executePreDrawCommands(&indirectBuffer))
         return;
     [m_renderCommandEncoder drawPrimitives:m_primitiveType indirectBuffer:indirectBuffer.buffer() indirectBufferOffset:indirectOffset];
 }
@@ -659,13 +658,13 @@ void RenderPassEncoder::endPass()
 
 void RenderPassEncoder::setCommandEncoder(const BindGroupEntryUsageData::Resource& resource)
 {
-    WTF::switchOn(resource, [&](const WeakPtr<const Buffer>& buffer) {
+    WTF::switchOn(resource, [&](const RefPtr<const Buffer>& buffer) {
         if (buffer)
             buffer->setCommandEncoder(m_parentEncoder);
-        }, [&](const WeakPtr<const TextureView>& textureView) {
+        }, [&](const RefPtr<const TextureView>& textureView) {
             if (textureView)
                 textureView->setCommandEncoder(m_parentEncoder);
-        }, [&](const WeakPtr<const ExternalTexture>& externalTexture) {
+        }, [&](const RefPtr<const ExternalTexture>& externalTexture) {
             if (externalTexture)
                 externalTexture->setCommandEncoder(m_parentEncoder);
     });
@@ -871,7 +870,7 @@ void RenderPassEncoder::setIndexBuffer(const Buffer& buffer, WGPUIndexFormat for
     m_indexType = format == WGPUIndexFormat_Uint32 ? MTLIndexTypeUInt32 : MTLIndexTypeUInt16;
     m_indexBufferOffset = offset;
     UNUSED_PARAM(size);
-    addResourceToActiveResources(buffer.buffer(), BindGroupEntryUsage::Input);
+    addResourceToActiveResources(&buffer, buffer.buffer(), BindGroupEntryUsage::Input);
 }
 
 void RenderPassEncoder::setPipeline(const RenderPipeline& pipeline)
@@ -961,7 +960,7 @@ void RenderPassEncoder::setVertexBuffer(uint32_t slot, const Buffer* optionalBuf
         makeInvalid(@"setVertexBuffer: buffer length is invalid");
         return;
     }
-    addResourceToActiveResources(mtlBuffer, BindGroupEntryUsage::Input);
+    addResourceToActiveResources(&buffer, mtlBuffer, BindGroupEntryUsage::Input);
 }
 
 void RenderPassEncoder::setViewport(float x, float y, float width, float height, float minDepth, float maxDepth)

@@ -33,6 +33,7 @@
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
 #import <wtf/Vector.h>
+#import <wtf/WeakPtr.h>
 
 namespace WebGPU {
 class RenderPipeline;

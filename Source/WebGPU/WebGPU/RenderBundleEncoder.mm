@@ -239,7 +239,7 @@ void RenderBundleEncoder::addResource(RenderBundle::ResourcesContainer* resource
 
 void RenderBundleEncoder::addResource(RenderBundle::ResourcesContainer* container, id<MTLResource> mtlResource, MTLRenderStages stage)
 {
-    WeakPtr<const Buffer> placeholderBuffer = nullptr;
+    RefPtr<const Buffer> placeholderBuffer;
     addResource(container, mtlResource, stage, placeholderBuffer);
 }
 
@@ -559,7 +559,7 @@ void RenderBundleEncoder::drawIndexedIndirect(const Buffer& indirectBuffer, uint
             return;
 
         ASSERT(m_indexBufferOffset == contents->indexStart);
-        addResource(m_resources, indirectBuffer.buffer(), MTLRenderStageVertex, indirectBuffer);
+        addResource(m_resources, indirectBuffer.buffer(), MTLRenderStageVertex, &indirectBuffer);
         [icbCommand drawIndexedPrimitives:m_primitiveType indexCount:contents->indexCount indexType:m_indexType indexBuffer:indexBuffer indexBufferOffset:m_indexBufferOffset instanceCount:contents->instanceCount baseVertex:contents->baseVertex baseInstance:contents->baseInstance];
     } else {
         if (!isValidToUseWith(indirectBuffer, *this)) {
@@ -607,7 +607,7 @@ void RenderBundleEncoder::drawIndirect(const Buffer& indirectBuffer, uint64_t in
         if (!contents || !contents->instanceCount || !contents->vertexCount)
             return;
 
-        addResource(m_resources, indirectBuffer.buffer(), MTLRenderStageVertex, indirectBuffer);
+        addResource(m_resources, indirectBuffer.buffer(), MTLRenderStageVertex, &indirectBuffer);
         [icbCommand drawPrimitives:m_primitiveType vertexStart:contents->vertexStart vertexCount:contents->vertexCount instanceCount:contents->instanceCount baseInstance:contents->baseInstance];
     } else {
         m_icbDescriptor.commandTypes |= MTLIndirectCommandTypeDraw;
@@ -907,7 +907,7 @@ void RenderBundleEncoder::setIndexBuffer(const Buffer& buffer, WGPUIndexFormat f
         return;
     }
 
-    addResource(m_resources, indexBuffer, MTLRenderStageVertex, buffer);
+    addResource(m_resources, indexBuffer, MTLRenderStageVertex, &buffer);
 }
 
 bool RenderBundleEncoder::icbNeedsToBeSplit(const RenderPipeline& a, const RenderPipeline& b)
@@ -1038,7 +1038,7 @@ void RenderBundleEncoder::setVertexBuffer(uint32_t slot, const Buffer* optionalB
 
         auto& buffer = *optionalBuffer;
         m_utilizedBufferIndices.add(slot, size);
-        addResource(m_resources, buffer.buffer(), MTLRenderStageVertex, buffer);
+        addResource(m_resources, buffer.buffer(), MTLRenderStageVertex, &buffer);
         m_vertexBuffers[slot] = { .buffer = buffer.buffer(), .offset = offset, .dynamicOffsetCount = 0, .dynamicOffsets = nullptr, .size = size };
         if (m_renderPassEncoder)
             buffer.setCommandEncoder(m_renderPassEncoder->parentEncoder());
