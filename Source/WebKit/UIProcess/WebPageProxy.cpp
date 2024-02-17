@@ -5348,8 +5348,8 @@ void WebPageProxy::findString(const String& string, OptionSet<FindOptions> optio
     {
         Ref callbackAggregator = FindStringCallbackAggregator::create(*this, string, options, maxMatchCount, std::forward<decltype(completionHandler)>(completionHandler));
         forEachWebContentProcess([&](auto& webProcess, auto pageID) {
-            webProcess.sendWithAsyncReply(std::forward<M>(message), [callbackAggregator](std::optional<FrameIdentifier> frameID, Vector<IntRect>&&, uint32_t, int32_t, bool didWrap) {
-                callbackAggregator->foundString(frameID, didWrap);
+            webProcess.sendWithAsyncReply(std::forward<M>(message), [callbackAggregator](std::optional<FrameIdentifier> frameID, Vector<IntRect>&&, uint32_t matchCount, int32_t, bool didWrap) {
+                callbackAggregator->foundString(frameID, matchCount, didWrap);
             }, pageID);
         });
     };

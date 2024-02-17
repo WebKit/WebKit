@@ -40,11 +40,12 @@ Ref<FindStringCallbackAggregator> FindStringCallbackAggregator::create(WebPagePr
     return adoptRef(*new FindStringCallbackAggregator(page, string, options, maxMatchCount, WTFMove(completionHandler)));
 }
 
-void FindStringCallbackAggregator::foundString(std::optional<FrameIdentifier> frameID, bool didWrap)
+void FindStringCallbackAggregator::foundString(std::optional<FrameIdentifier> frameID, uint32_t matchCount, bool didWrap)
 {
     if (!frameID)
         return;
 
+    m_matchCount += matchCount;
     m_matches.set(*frameID, didWrap);
 }
 
@@ -98,7 +99,7 @@ FindStringCallbackAggregator::~FindStringCallbackAggregator()
     } while (frameContainingMatch && frameContainingMatch != focusedFrame);
 
     auto message = Messages::WebPage::FindString(m_string, m_options, m_maxMatchCount);
-    auto completionHandler = [protectedPage = Ref { *protectedPage }, string = m_string, completionHandler = WTFMove(m_completionHandler)](std::optional<FrameIdentifier> frameID, Vector<IntRect>&& matchRects, uint32_t matchCount, int32_t matchIndex, bool didWrap) mutable {
+    auto completionHandler = [protectedPage = Ref { *protectedPage }, string = m_string, matchCount = m_matchCount, completionHandler = WTFMove(m_completionHandler)](std::optional<FrameIdentifier> frameID, Vector<IntRect>&& matchRects, uint32_t, int32_t matchIndex, bool didWrap) mutable {
         if (!frameID)
             protectedPage->findClient().didFailToFindString(protectedPage.ptr(), string);
         else

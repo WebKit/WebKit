@@ -328,6 +328,7 @@ Tests/WebKitCocoa/WKWebViewDoesNotLogDuringInitialization.mm
 Tests/WebKitCocoa/WKWebViewEditActions.mm
 Tests/WebKitCocoa/WKWebViewEvaluateJavaScript.mm
 Tests/WebKitCocoa/WKWebViewFindString.mm
+Tests/WebKitCocoa/WKWebViewFindStringFindDelegate.mm
 Tests/WebKitCocoa/WKWebViewFirstResponderTests.mm
 Tests/WebKitCocoa/WKWebViewGetContents.mm
 Tests/WebKitCocoa/WKWebViewInspection.mm

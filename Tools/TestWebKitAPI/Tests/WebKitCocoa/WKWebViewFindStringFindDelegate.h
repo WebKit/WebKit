@@ -23,37 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import <WebKit/_WKFindDelegate.h>
 
-#include <WebCore/FrameIdentifier.h>
-#include <wtf/CompletionHandler.h>
-
-namespace WebKit {
-
-class WebFrameProxy;
-class WebPageProxy;
-
-enum class FindOptions : uint16_t;
-
-class FindStringCallbackAggregator : public RefCounted<FindStringCallbackAggregator> {
-public:
-    static Ref<FindStringCallbackAggregator> create(WebPageProxy&, const String&, OptionSet<FindOptions>, unsigned maxMatchCount, CompletionHandler<void(bool)>&&);
-    void foundString(std::optional<WebCore::FrameIdentifier>, uint32_t matchCount, bool didWrap);
-    ~FindStringCallbackAggregator();
-
-private:
-    FindStringCallbackAggregator(WebPageProxy&, const String&, OptionSet<FindOptions>, unsigned maxMatchCount, CompletionHandler<void(bool)>&&);
-
-    RefPtr<WebFrameProxy> incrementFrame(WebFrameProxy&);
-    bool shouldTargetFrame(WebFrameProxy&, WebFrameProxy& focusedFrame, bool didWrap);
-
-    WeakPtr<WebPageProxy> m_page;
-    String m_string;
-    OptionSet<FindOptions> m_options;
-    unsigned m_maxMatchCount;
-    uint32_t m_matchCount { 0 };
-    CompletionHandler<void(bool)> m_completionHandler;
-    HashMap<WebCore::FrameIdentifier, bool> m_matches;
-};
-
-} // namespace WebKit
+@interface WKWebViewFindStringFindDelegate : NSObject <_WKFindDelegate>
+@property (nonatomic, readonly) NSString *findString;
+@property (nonatomic, readonly) NSUInteger matchesCount;
+@property (nonatomic, readonly) NSInteger matchIndex;
+@property (nonatomic, readonly) BOOL didFail;
+@end

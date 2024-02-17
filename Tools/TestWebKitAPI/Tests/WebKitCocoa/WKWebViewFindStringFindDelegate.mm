@@ -23,37 +23,42 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
+#import "WKWebViewFindStringFindDelegate.h"
 
-#include <WebCore/FrameIdentifier.h>
-#include <wtf/CompletionHandler.h>
+#import "DeprecatedGlobalValues.h"
 
-namespace WebKit {
+@implementation WKWebViewFindStringFindDelegate {
+    RetainPtr<NSString> _findString;
+}
 
-class WebFrameProxy;
-class WebPageProxy;
+- (NSString *)findString
+{
+    return _findString.get();
+}
 
-enum class FindOptions : uint16_t;
+- (void)_webView:(WKWebView *)webView didCountMatches:(NSUInteger)matches forString:(NSString *)string
+{
+    _findString = string;
+    _matchesCount = matches;
+    _didFail = NO;
+    isDone = YES;
+}
 
-class FindStringCallbackAggregator : public RefCounted<FindStringCallbackAggregator> {
-public:
-    static Ref<FindStringCallbackAggregator> create(WebPageProxy&, const String&, OptionSet<FindOptions>, unsigned maxMatchCount, CompletionHandler<void(bool)>&&);
-    void foundString(std::optional<WebCore::FrameIdentifier>, uint32_t matchCount, bool didWrap);
-    ~FindStringCallbackAggregator();
+- (void)_webView:(WKWebView *)webView didFindMatches:(NSUInteger)matches forString:(NSString *)string withMatchIndex:(NSInteger)matchIndex
+{
+    _findString = string;
+    _matchesCount = matches;
+    _matchIndex = matchIndex;
+    _didFail = NO;
+    isDone = YES;
+}
 
-private:
-    FindStringCallbackAggregator(WebPageProxy&, const String&, OptionSet<FindOptions>, unsigned maxMatchCount, CompletionHandler<void(bool)>&&);
+- (void)_webView:(WKWebView *)webView didFailToFindString:(NSString *)string
+{
+    _findString = string;
+    _didFail = YES;
+    isDone = YES;
+}
 
-    RefPtr<WebFrameProxy> incrementFrame(WebFrameProxy&);
-    bool shouldTargetFrame(WebFrameProxy&, WebFrameProxy& focusedFrame, bool didWrap);
-
-    WeakPtr<WebPageProxy> m_page;
-    String m_string;
-    OptionSet<FindOptions> m_options;
-    unsigned m_maxMatchCount;
-    uint32_t m_matchCount { 0 };
-    CompletionHandler<void(bool)> m_completionHandler;
-    HashMap<WebCore::FrameIdentifier, bool> m_matches;
-};
-
-} // namespace WebKit
+@end

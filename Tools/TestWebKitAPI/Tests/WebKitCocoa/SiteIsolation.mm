@@ -31,6 +31,7 @@
 #import "TestNavigationDelegate.h"
 #import "TestUIDelegate.h"
 #import "Utilities.h"
+#import "WKWebViewFindStringFindDelegate.h"
 #import <WebKit/WKFrameInfoPrivate.h>
 #import <WebKit/WKNavigationDelegatePrivate.h>
 #import <WebKit/WKNavigationPrivate.h>
@@ -2261,6 +2262,33 @@ TEST(SiteIsolation, FindStringSelectionSameOriginFrameBeforeWrap)
     findConfiguration.get().backwards = YES;
     for (auto it = selectionOffsetsForFrames.rbegin() + 1; it != selectionOffsetsForFrames.rend(); ++it)
         findStringAndValidateResults(webView.get(), *it);
+}
+
+TEST(SiteIsolation, FindStringMatchCount)
+{
+    auto mainframeHTML = "<p>Hello world</p>"
+        "<iframe src='https://domain2.com/subframe'></iframe>"
+        "<iframe src='https://domain3.com/subframe'></iframe>"_s;
+    HTTPServer server({
+        { "/mainframe"_s, { mainframeHTML } },
+        { "/subframe"_s, { "<p>Hello world</p>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    auto findConfiguration = adoptNS([[WKFindConfiguration alloc] init]);
+    auto findDelegate = adoptNS([[WKWebViewFindStringFindDelegate alloc] init]);
+    [webView _setFindDelegate:findDelegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    __block bool done = false;
+    [webView findString:@"Hello world" withConfiguration:findConfiguration.get() completionHandler:^(WKFindResult *result) {
+        EXPECT_TRUE(result.matchFound);
+        done = true;
+    }];
+    Util::run(&done);
+
+    EXPECT_EQ(3ul, [findDelegate matchesCount]);
 }
 
 #if PLATFORM(MAC)
