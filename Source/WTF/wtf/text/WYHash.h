@@ -56,30 +56,38 @@
 
 #include <wtf/Int128.h>
 #include <wtf/UnalignedAccess.h>
-#include <wtf/text/StringHasher.h>
+#include <wtf/text/HasherHelpers.h>
 
 namespace WTF {
+
+class StreamingWYHash;
 
 // https://github.com/wangyi-fudan/wyhash
 class WYHash {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static constexpr bool forceConvertInRead = false;
-    static constexpr unsigned flagCount = StringHasher::flagCount;
-    static constexpr unsigned maskHash = StringHasher::maskHash;
     static constexpr uint64_t secret[4] = { 0xa0761d6478bd642full, 0xe7037ed1a0b428dbull, 0x8ebc6af09c88c6e3ull, 0x589965cc75374cc3ull };
-    using DefaultConverter = StringHasher::DefaultConverter;
+    using DefaultConverter = HasherHelpers::DefaultConverter;
+
+    friend class StringHasher;
 
     WYHash() = default;
 
     template<typename T, typename Converter = DefaultConverter>
+    ALWAYS_INLINE static constexpr unsigned computeHash(const T* data, unsigned characterCount)
+    {
+        return HasherHelpers::finalize(computeHashImpl<T, Converter>(data, characterCount));
+    }
+
+    template<typename T, typename Converter = DefaultConverter>
     ALWAYS_INLINE static constexpr unsigned computeHashAndMaskTop8Bits(const T* data, unsigned characterCount)
     {
-        return StringHasher::avoidZero(computeHashImpl<T, Converter>(data, characterCount) & StringHasher::maskHash);
+        return HasherHelpers::finalizeAndMaskTop8Bits(computeHashImpl<T, Converter>(data, characterCount));
     }
 
 private:
-    friend class StringHasher;
+    friend class StreamingWYHash;
 
     ALWAYS_INLINE static constexpr uint64_t wyrot(uint64_t x)
     {

@@ -405,11 +405,13 @@ set(WTF_PUBLIC_HEADERS
     text/EscapedFormsForJSON.h
     text/ExternalStringImpl.h
     text/FastCharacterComparison.h
+    text/HasherHelpers.h
     text/IntegerToStringConversion.h
     text/LChar.h
     text/LineEnding.h
     text/NullTextBreakIterator.h
     text/OrdinalNumber.h
+    text/StreamingWYHash.h
     text/StringBuffer.h
     text/StringBuilder.h
     text/StringBuilderInternals.h

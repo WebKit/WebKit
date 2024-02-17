@@ -28,7 +28,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/URL.h>
 #include <wtf/text/AtomString.h>
-#include <wtf/text/SuperFastHash.h>
+#include <wtf/text/StreamingWYHash.h>
 
 namespace WTF {
 
@@ -69,7 +69,7 @@ public:
     }
 
 private:
-    SuperFastHash m_underlyingHasher;
+    StreamingWYHash m_underlyingHasher;
 };
 
 template<typename UnsignedInteger> std::enable_if_t<std::is_unsigned<UnsignedInteger>::value && sizeof(UnsignedInteger) == sizeof(uint64_t), void> add(Hasher& hasher, UnsignedInteger integer)

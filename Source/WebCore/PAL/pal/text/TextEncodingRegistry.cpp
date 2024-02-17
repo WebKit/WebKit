@@ -72,7 +72,7 @@ struct TextEncodingNameHash {
     // http://burtleburtle.net/bob/hash/doobs.html
     static unsigned hash(const char* s)
     {
-        unsigned h = WTF::stringHashingStartValue;
+        unsigned h = WTF::SuperFastHash::stringHashingStartValue;
         for (;;) {
             char c = *s++;
             if (!c) {

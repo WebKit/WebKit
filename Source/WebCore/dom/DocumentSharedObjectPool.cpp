@@ -30,6 +30,7 @@
 #include "Element.h"
 #include "ElementData.h"
 #include <wtf/UnalignedAccess.h>
+#include <wtf/text/WYHash.h>
 
 namespace WebCore {
 
@@ -62,7 +63,7 @@ ALWAYS_INLINE bool equalAttributes(const uint8_t* a, const uint8_t* b, unsigned 
 struct DocumentSharedObjectPool::ShareableElementDataHash {
     static unsigned hash(const Ref<ShareableElementData>& data)
     {
-        return computeHash(std::span<const Attribute> { data->m_attributeArray, data->length() });
+        return WYHash::computeHash(reinterpret_cast<const uint8_t*>(data->m_attributeArray), data->length() * sizeof(Attribute));
     }
     static bool equal(const Ref<ShareableElementData>& a, const Ref<ShareableElementData>& b)
     {
@@ -76,7 +77,7 @@ struct DocumentSharedObjectPool::ShareableElementDataHash {
 struct AttributeSpanTranslator {
     static unsigned hash(std::span<const Attribute> attributes)
     {
-        return computeHash(attributes);
+        return WYHash::computeHash(reinterpret_cast<const uint8_t*>(attributes.data()), attributes.size() * sizeof(Attribute));
     }
 
     static bool equal(const Ref<ShareableElementData>& a, std::span<const Attribute> b)

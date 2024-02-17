@@ -45,9 +45,7 @@ struct HashableActionList {
         , state(Valid)
     {
         std::sort(actions.begin(), actions.end());
-        SuperFastHash hasher;
-        hasher.addCharactersAssumingAligned(reinterpret_cast<const UChar*>(actions.data()), actions.size() * sizeof(uint64_t) / sizeof(UChar));
-        hash = hasher.hash();
+        hash = WYHash::computeHash(reinterpret_cast<const UChar*>(actions.data()), actions.size() * sizeof(uint64_t) / sizeof(UChar));
     }
 
     bool isEmptyValue() const { return state == Empty; }
