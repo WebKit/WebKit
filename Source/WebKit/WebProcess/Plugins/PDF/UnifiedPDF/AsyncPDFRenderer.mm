@@ -309,13 +309,12 @@ void AsyncPDFRenderer::invalidateTilesForPaintingRect(float pageScaleFactor, con
     auto scaleTransform = tileToPaintingTransform(pageScaleFactor);
 
     m_rendereredTiles.removeIf([&](auto& entry) {
-        auto& tileInfo = entry.key;
         auto& bufferAndClip = entry.value;
 
         auto tileClipInPaintingCoordinates = scaleTransform.mapRect(bufferAndClip.tileClip);
         bool result = paintingRect.intersects(tileClipInPaintingCoordinates);
         if (result)
-            LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::invalidateTilesForPaintingRect " << paintingRect << " - removing tile " << tileInfo);
+            LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::invalidateTilesForPaintingRect " << paintingRect << " - removing tile " << entry.key);
 
         return result;
     });
