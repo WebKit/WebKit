@@ -80,7 +80,7 @@ messages -> WebProcessProxy LegacyReceiver {
 
     SystemBeep()
     
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     IsAXAuthenticated(struct WebKit::CoreIPCAuditToken auditToken) -> (bool authenticated) Synchronous
 #endif
 

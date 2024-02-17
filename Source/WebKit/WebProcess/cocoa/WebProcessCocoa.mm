@@ -161,8 +161,11 @@
 #import <WebCore/DisplayConfigurationMonitor.h>
 #import <WebCore/ScrollbarThemeMac.h>
 #import <pal/spi/cf/CoreTextSPI.h>
-#import <pal/spi/mac/HIServicesSPI.h>
 #import <pal/spi/mac/NSScrollerImpSPI.h>
+#endif
+
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+#import <pal/spi/mac/HIServicesSPI.h>
 #endif
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
@@ -196,7 +199,7 @@ SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE(WebKit, UIKit, _UIApplicationCatalystRequ
 #define WEBPROCESS_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [sessionID=%" PRIu64 "] WebProcess::" fmt, this, RELEASE_LOG_SESSION_ID, ##__VA_ARGS__)
 #define WEBPROCESS_RELEASE_LOG_ERROR(channel, fmt, ...) RELEASE_LOG_ERROR(channel, "%p - [sessionID=%" PRIu64 "] WebProcess::" fmt, this, RELEASE_LOG_SESSION_ID, ##__VA_ARGS__)
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
 SOFT_LINK_FRAMEWORK_IN_UMBRELLA(ApplicationServices, HIServices)
 SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE(WebKit, HIServices, _AXSetAuditTokenIsAuthenticatedCallback, void, (AXAuditTokenIsAuthenticatedCallback callback), (callback))
 #endif
@@ -268,7 +271,7 @@ static void preventAppKitFromContactingLaunchServices(NSApplication*, SEL)
 #endif
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
 static Boolean isAXAuthenticatedCallback(audit_token_t auditToken)
 {
     bool authenticated = false;
@@ -550,7 +553,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     WebCore::CaptionUserPreferencesMediaAF::setCaptionPreferencesDelegate(makeUnique<WebCaptionPreferencesDelegate>());
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     if (canLoad_HIServices__AXSetAuditTokenIsAuthenticatedCallback())
         softLink_HIServices__AXSetAuditTokenIsAuthenticatedCallback(isAXAuthenticatedCallback);
 #endif
