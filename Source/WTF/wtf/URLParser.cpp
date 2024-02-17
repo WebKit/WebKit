@@ -1480,7 +1480,8 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
         case State::Host:
             do {
                 LOG_STATE("Host");
-                if (*c == '/' || *c == '?' || *c == '#') {
+                bool isSlash = *c == '/' || (m_urlIsSpecial && *c == '\\');
+                if (isSlash || *c == '?' || *c == '#') {
                     if (parseHostAndPort(CodePointIterator<CharacterType>(authorityOrHostBegin, c)) == HostParsingResult::InvalidHost) {
                         failure();
                         return;

@@ -126,4 +126,7 @@ PASS Parsing: <file://­/p> against <about:blank>
 PASS Parsing: <file://%C2%AD/p> against <about:blank>
 PASS Parsing: <file://xn--/p> against <about:blank>
 PASS Parsing: <> against <about:blank>
+PASS Parsing: <///abcdef/../> against <file:///>
+PASS Parsing: </\//\/a/../> against <file:///>
+PASS Parsing: <//a/../> against <file:///>
 

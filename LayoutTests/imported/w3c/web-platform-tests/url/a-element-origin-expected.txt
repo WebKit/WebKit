@@ -49,6 +49,8 @@ PASS Parsing origin: <http://foo.com:b@d/> against <http://example.org/foo/bar>
 PASS Parsing origin: <http://foo.com/\@> against <http://example.org/foo/bar>
 PASS Parsing origin: <http:\\foo.com\> against <http://example.org/foo/bar>
 PASS Parsing origin: <http:\\a\b:c\d@foo.com\> against <http://example.org/foo/bar>
+PASS Parsing origin: <http://a:b@c\> against <about:blank>
+PASS Parsing origin: <ws://a@b\c> against <about:blank>
 PASS Parsing origin: <foo:/> against <http://example.org/foo/bar>
 PASS Parsing origin: <foo:/bar.com/> against <http://example.org/foo/bar>
 PASS Parsing origin: <foo://///////> against <http://example.org/foo/bar>
