@@ -42,8 +42,7 @@
 namespace WebCore {
 
 class ImageFrame {
-    friend class BitmapImageSource;
-    friend class NativeImageSource;
+    friend class ImageSource;
 public:
     enum class Caching { Metadata, MetadataAndImage };
 
@@ -66,9 +65,7 @@ public:
     bool isPartial() const { return m_decodingStatus == DecodingStatus::Partial; }
     bool isComplete() const { return m_decodingStatus == DecodingStatus::Complete; }
 
-    void setSize(const IntSize& size) { m_size = size; }
-    IntSize size() const { return m_size; }
-
+    IntSize size() const;
     unsigned frameBytes() const { return hasNativeImage() ? (size().area() * sizeof(uint32_t)).value() : 0; }
     SubsamplingLevel subsamplingLevel() const { return m_subsamplingLevel; }
 
@@ -90,6 +87,8 @@ public:
     bool hasFullSizeNativeImage(const std::optional<SubsamplingLevel>& = { }) const;
     bool hasDecodedNativeImageCompatibleWithOptions(const std::optional<SubsamplingLevel>&, const DecodingOptions&) const;
     bool hasMetadata() const { return !size().isEmpty(); }
+
+    Color singlePixelSolidColor() const;
 
 private:
     DecodingStatus m_decodingStatus { DecodingStatus::Invalid };

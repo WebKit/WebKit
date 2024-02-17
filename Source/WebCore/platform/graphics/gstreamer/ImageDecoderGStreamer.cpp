@@ -182,6 +182,18 @@ RepetitionCount ImageDecoderGStreamer::repetitionCount() const
     return frameCount() > 1 ? RepetitionCountInfinite : RepetitionCountNone;
 }
 
+String ImageDecoderGStreamer::uti() const
+{
+    notImplemented();
+    return { };
+}
+
+ImageDecoder::FrameMetadata ImageDecoderGStreamer::frameMetadataAtIndex(size_t) const
+{
+    notImplemented();
+    return { };
+}
+
 Seconds ImageDecoderGStreamer::frameDurationAtIndex(size_t index) const
 {
     auto* sampleData = sampleAtIndex(index);

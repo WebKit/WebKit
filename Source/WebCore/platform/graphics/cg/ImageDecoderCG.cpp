@@ -439,29 +439,21 @@ bool ImageDecoderCG::frameIsCompleteAtIndex(size_t index) const
     return CGImageSourceGetStatusAtIndex(m_nativeDecoder.get(), index) == kCGImageStatusComplete;
 }
 
-ImageOrientation ImageDecoderCG::frameOrientationAtIndex(size_t index) const
+ImageDecoder::FrameMetadata ImageDecoderCG::frameMetadataAtIndex(size_t index) const
 {
     RetainPtr<CFDictionaryRef> properties = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_nativeDecoder.get(), index, imageSourceOptions().get()));
     if (!properties)
-        return ImageOrientation::Orientation::None;
-
-    return orientationFromProperties(properties.get());
-}
-
-std::optional<IntSize> ImageDecoderCG::densityCorrectedSizeAtIndex(size_t index) const
-{
-    RetainPtr<CFDictionaryRef> properties = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_nativeDecoder.get(), index, imageSourceOptions().get()));
-    if (!properties)
-        return std::nullopt;
-
+        return { };
+    
+    auto orientation = orientationFromProperties(properties.get());
     if (!mayHaveDensityCorrectedSize(properties.get()))
-        return std::nullopt;
+        return { orientation, std::nullopt };
 
     auto propertiesWithMetadata = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_nativeDecoder.get(), index, createImageSourceMetadataOptions().get()));
     if (!propertiesWithMetadata)
-        return std::nullopt;
+        return { orientation, std::nullopt };
     
-    return densityCorrectedSizeFromProperties(propertiesWithMetadata.get());
+    return { orientation, densityCorrectedSizeFromProperties(propertiesWithMetadata.get()) };
 }
 
 Seconds ImageDecoderCG::frameDurationAtIndex(size_t index) const
@@ -495,6 +487,11 @@ Seconds ImageDecoderCG::frameDurationAtIndex(size_t index) const
     if (duration < 11_ms)
         return 100_ms;
     return duration;
+}
+
+bool ImageDecoderCG::frameAllowSubsamplingAtIndex(size_t) const
+{
+    return true;
 }
 
 bool ImageDecoderCG::frameHasAlphaAtIndex(size_t index) const

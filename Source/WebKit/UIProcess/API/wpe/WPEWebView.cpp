@@ -936,7 +936,7 @@ void View::setCursor(const WebCore::Cursor& cursor)
 #if USE(CAIRO)
     ASSERT(cursor.type() == WebCore::Cursor::Type::Custom);
     auto image = cursor.image();
-    auto nativeImage = image->currentNativeImage();
+    auto nativeImage = image->nativeImageForCurrentFrame();
     if (!nativeImage)
         return;
 

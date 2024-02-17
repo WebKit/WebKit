@@ -57,6 +57,11 @@ public:
         Video,
     };
 
+    struct FrameMetadata {
+        ImageOrientation orientation;
+        std::optional<IntSize> densityCorrectedSize;
+    };
+
     static bool supportsMediaType(MediaType);
 
 #if ENABLE(GPU_PROCESS)
@@ -91,11 +96,11 @@ public:
 
     virtual IntSize frameSizeAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default) const = 0;
     virtual bool frameIsCompleteAtIndex(size_t) const = 0;
-    virtual ImageOrientation frameOrientationAtIndex(size_t) const { return ImageOrientation::Orientation::None; }
-    virtual std::optional<IntSize> densityCorrectedSizeAtIndex(size_t) const { return std::nullopt; }
+    virtual FrameMetadata frameMetadataAtIndex(size_t) const = 0;
 
     virtual Seconds frameDurationAtIndex(size_t) const = 0;
     virtual bool frameHasAlphaAtIndex(size_t) const = 0;
+    virtual bool frameAllowSubsamplingAtIndex(size_t) const = 0;
     virtual unsigned frameBytesAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default) const = 0;
 
     virtual PlatformImagePtr createFrameImageAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default, const DecodingOptions& = DecodingOptions(DecodingMode::Synchronous)) = 0;

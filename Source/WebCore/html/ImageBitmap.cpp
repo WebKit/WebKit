@@ -703,6 +703,7 @@ public:
 
     void didDraw(const Image&) override { }
 
+    bool canDestroyDecodedData(const Image&) override { return true; }
     void imageFrameAvailable(const Image&, ImageAnimatingState, const IntRect* = nullptr, DecodingStatus = DecodingStatus::Invalid) override { }
     void changedInRect(const Image&, const IntRect* = nullptr) override { }
     void scheduleRenderingUpdate(const Image&) override { }

@@ -147,8 +147,9 @@ public:
     void setIgnoreGammaAndColorProfile(bool flag) { m_ignoreGammaAndColorProfile = flag; }
     bool ignoresGammaAndColorProfile() const { return m_ignoreGammaAndColorProfile; }
 
-    ImageOrientation frameOrientationAtIndex(size_t) const final { return m_orientation; }
-    std::optional<IntSize> densityCorrectedSizeAtIndex(size_t) const final { return m_densityCorrectedSize; }
+    ImageDecoder::FrameMetadata frameMetadataAtIndex(size_t) const override { return { m_orientation, m_densityCorrectedSize }; }
+
+    bool frameAllowSubsamplingAtIndex(size_t) const override { return false; }
 
     enum { ICCColorProfileHeaderLength = 128 };
 

@@ -63,7 +63,7 @@ static GRefPtr<GdkCursor> createCustomCursor(Image* image, const IntPoint& hotSp
     IntPoint effectiveHotSpot = determineHotSpot(image, hotSpot);
     return adoptGRef(gdk_cursor_new_from_texture(texture.get(), effectiveHotSpot.x(), effectiveHotSpot.y(), fallbackCursor().get()));
 #else
-    auto nativeImage = image->currentNativeImage();
+    auto nativeImage = image->nativeImageForCurrentFrame();
     if (!nativeImage)
         return nullptr;
 

@@ -77,16 +77,16 @@ RefPtr<NativeImage> NativeImage::createTransient(PlatformImagePtr&& image, Rende
     return create(WTFMove(transientImage), identifier);
 }
 
-std::optional<Color> NativeImage::singlePixelSolidColor() const
+Color NativeImage::singlePixelSolidColor() const
 {
     if (size() != IntSize(1, 1))
-        return std::nullopt;
+        return Color();
 
     unsigned char pixel[4]; // RGBA
     auto bitmapContext = adoptCF(CGBitmapContextCreate(pixel, 1, 1, 8, sizeof(pixel), sRGBColorSpaceRef(), static_cast<uint32_t>(kCGImageAlphaPremultipliedLast) | static_cast<uint32_t>(kCGBitmapByteOrder32Big)));
 
     if (!bitmapContext)
-        return std::nullopt;
+        return Color();
 
     CGContextSetBlendMode(bitmapContext.get(), kCGBlendModeCopy);
     CGContextDrawImage(bitmapContext.get(), CGRectMake(0, 0, 1, 1), platformImage().get());

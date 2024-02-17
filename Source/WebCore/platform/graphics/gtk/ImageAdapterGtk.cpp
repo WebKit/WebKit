@@ -56,7 +56,7 @@ void ImageAdapter::invalidate()
 
 GRefPtr<GdkPixbuf> ImageAdapter::gdkPixbuf()
 {
-    RefPtr nativeImage = image().currentNativeImage();
+    auto nativeImage = image().nativeImageForCurrentFrame();
     if (!nativeImage)
         return nullptr;
 
@@ -67,7 +67,7 @@ GRefPtr<GdkPixbuf> ImageAdapter::gdkPixbuf()
 #if USE(GTK4)
 GRefPtr<GdkTexture> ImageAdapter::gdkTexture()
 {
-    RefPtr nativeImage = image().currentNativeImage();
+    auto nativeImage = image().nativeImageForCurrentFrame();
     if (!nativeImage)
         return nullptr;
 

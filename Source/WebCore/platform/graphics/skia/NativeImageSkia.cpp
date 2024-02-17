@@ -50,13 +50,13 @@ DestinationColorSpace PlatformImageNativeImageBackend::colorSpace() const
     return DestinationColorSpace::SRGB();
 }
 
-std::optional<Color> NativeImage::singlePixelSolidColor() const
+Color NativeImage::singlePixelSolidColor() const
 {
     if (size() != IntSize(1, 1))
-        return std::nullopt;
+        return Color();
 
     notImplemented();
-    return std::nullopt;
+    return Color();
 }
 
 void NativeImage::draw(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions options)

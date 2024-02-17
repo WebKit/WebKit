@@ -181,7 +181,7 @@ void Image::fillWithSolidColor(GraphicsContext& ctxt, const FloatRect& dstRect, 
 
 void Image::drawPattern(GraphicsContext& ctxt, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options)
 {
-    RefPtr tileImage = currentPreTransformedNativeImage(options.orientation());
+    auto tileImage = preTransformedNativeImageForCurrentFrame(options.orientation() == ImageOrientation::Orientation::FromImage);
     if (!tileImage)
         return;
 
@@ -193,12 +193,13 @@ void Image::drawPattern(GraphicsContext& ctxt, const FloatRect& destRect, const 
 
 ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, const FloatRect& destRect, const FloatPoint& srcPoint, const FloatSize& scaledTileSize, const FloatSize& spacing, ImagePaintingOptions options)
 {
-    if (auto color = singlePixelSolidColor()) {
-        fillWithSolidColor(ctxt, destRect, *color, options.compositeOperator());
+    Color color = singlePixelSolidColor();
+    if (color.isValid()) {
+        fillWithSolidColor(ctxt, destRect, color, options.compositeOperator());
         return ImageDrawResult::DidDraw;
     }
 
-    ASSERT_IMPLIES(isBitmapImage(), !hasSolidColor());
+    ASSERT(!isBitmapImage() || notSolidColor());
 
     FloatSize intrinsicTileSize = size();
     if (hasRelativeWidth())
@@ -296,8 +297,9 @@ ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, const FloatRect& destRec
 // FIXME: Merge with the other drawTiled eventually, since we need a combination of both for some things.
 ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, const FloatRect& dstRect, const FloatRect& srcRect, const FloatSize& tileScaleFactor, TileRule hRule, TileRule vRule, ImagePaintingOptions options)
 {    
-    if (auto color = singlePixelSolidColor()) {
-        fillWithSolidColor(ctxt, dstRect, *color, options.compositeOperator());
+    Color color = singlePixelSolidColor();
+    if (color.isValid()) {
+        fillWithSolidColor(ctxt, dstRect, color, options.compositeOperator());
         return ImageDrawResult::DidDraw;
     }
 

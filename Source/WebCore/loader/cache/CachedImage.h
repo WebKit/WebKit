@@ -160,6 +160,7 @@ private:
         void decodedSizeChanged(const Image&, long long delta) final;
         void didDraw(const Image&) final;
 
+        bool canDestroyDecodedData(const Image&) final;
         void imageFrameAvailable(const Image&, ImageAnimatingState, const IntRect* changeRect = nullptr, DecodingStatus = DecodingStatus::Invalid) final;
         void changedInRect(const Image&, const IntRect*) final;
         void scheduleRenderingUpdate(const Image&) final;
@@ -173,6 +174,7 @@ private:
     void encodedDataStatusChanged(const Image&, EncodedDataStatus);
     void decodedSizeChanged(const Image&, long long delta);
     void didDraw(const Image&);
+    bool canDestroyDecodedData(const Image&);
     void imageFrameAvailable(const Image&, ImageAnimatingState, const IntRect* changeRect = nullptr, DecodingStatus = DecodingStatus::Invalid);
     void changedInRect(const Image&, const IntRect*);
     void scheduleRenderingUpdate(const Image&);

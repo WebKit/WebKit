@@ -546,6 +546,11 @@ bool ImageDecoderAVFObjC::frameIsCompleteAtIndex(size_t index) const
     return sampleIsComplete(*sampleData);
 }
 
+ImageDecoder::FrameMetadata ImageDecoderAVFObjC::frameMetadataAtIndex(size_t) const
+{
+    return { };
+}
+
 Seconds ImageDecoderAVFObjC::frameDurationAtIndex(size_t index) const
 {
     auto* sampleData = sampleAtIndex(index);
@@ -570,6 +575,11 @@ Vector<ImageDecoder::FrameInfo> ImageDecoderAVFObjC::frameInfos() const
         auto& imageSample = static_cast<ImageDecoderAVFObjCSample&>(sample.second.get());
         return ImageDecoder::FrameInfo { imageSample.hasAlpha(), Seconds(imageSample.duration().toDouble()) };
     });
+}
+
+bool ImageDecoderAVFObjC::frameAllowSubsamplingAtIndex(size_t index) const
+{
+    return index <= m_sampleData.size();
 }
 
 unsigned ImageDecoderAVFObjC::frameBytesAtIndex(size_t index, SubsamplingLevel subsamplingLevel) const

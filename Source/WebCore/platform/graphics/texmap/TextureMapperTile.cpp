@@ -64,7 +64,7 @@ void TextureMapperTile::updateContents(Image* image, const IntRect& dirtyRect)
         m_texture = BitmapTexture::create(targetRect.size(), flags);
     }
 
-    auto nativeImage = image->currentNativeImage();
+    auto nativeImage = image->nativeImageForCurrentFrame();
     m_texture->updateContents(nativeImage.get(), targetRect, sourceOffset);
 }
 

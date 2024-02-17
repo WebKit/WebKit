@@ -51,7 +51,7 @@ public:
 
     WEBCORE_EXPORT IntSize size() const;
     bool hasAlpha() const;
-    std::optional<Color> singlePixelSolidColor() const;
+    Color singlePixelSolidColor() const;
     WEBCORE_EXPORT DestinationColorSpace colorSpace() const;
 
     void draw(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions);

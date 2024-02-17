@@ -171,7 +171,7 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutio
         if (!init.timestamp)
             return Exception { ExceptionCode::TypeError,  "timestamp is not provided"_s };
 
-        auto image = imageElement->cachedImage()->image()->currentNativeImage();
+        auto image = imageElement->cachedImage()->image()->nativeImageForCurrentFrame();
         if (!image)
             return Exception { ExceptionCode::InvalidStateError,  "Image element has no video frame"_s };
 
@@ -181,7 +181,7 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutio
         if (!init.timestamp)
             return Exception { ExceptionCode::TypeError,  "timestamp is not provided"_s };
 
-        auto image = imageElement->cachedImage()->image()->currentNativeImage();
+        auto image = imageElement->cachedImage()->image()->nativeImageForCurrentFrame();
         if (!image)
             return Exception { ExceptionCode::InvalidStateError,  "Image element has no video frame"_s };
 
@@ -191,7 +191,7 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutio
         if (!init.timestamp)
             return Exception { ExceptionCode::TypeError,  "timestamp is not provided"_s };
 
-        auto image = cssImage->image()->image()->currentNativeImage();
+        auto image = cssImage->image()->image()->nativeImageForCurrentFrame();
         if (!image)
             return Exception { ExceptionCode::InvalidStateError,  "CSS Image has no video frame"_s };
 

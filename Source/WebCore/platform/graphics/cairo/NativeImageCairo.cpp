@@ -51,14 +51,14 @@ DestinationColorSpace PlatformImageNativeImageBackend::colorSpace() const
     return DestinationColorSpace::SRGB();
 }
 
-std::optional<Color> NativeImage::singlePixelSolidColor() const
+Color NativeImage::singlePixelSolidColor() const
 {
     if (size() != IntSize(1, 1))
-        return std::nullopt;
+        return Color();
 
     auto platformImage = this->platformImage().get();
     if (cairo_surface_get_type(platformImage) != CAIRO_SURFACE_TYPE_IMAGE)
-        return std::nullopt;
+        return Color();
 
     unsigned* pixel = reinterpret_cast_ptr<unsigned*>(cairo_image_surface_get_data(platformImage));
     return unpremultiplied(asSRGBA(PackedColor::ARGB { *pixel }));

@@ -30,11 +30,11 @@
 
 #if ENABLE(WEBGL) && USE(CAIRO)
 
-#include "BitmapImage.h"
 #include "CairoUtilities.h"
 #include "GraphicsContext.h"
 #include "GraphicsContextGLImageExtractor.h"
 #include "Image.h"
+#include "ImageSource.h"
 #include "PixelBuffer.h"
 #include "RefPtrCairo.h"
 #include <cairo.h>
@@ -50,16 +50,16 @@ bool GraphicsContextGLImageExtractor::extractImage(bool premultiplyAlpha, bool i
     // We need this to stay in scope because the native image is just a shallow copy of the data.
     AlphaOption alphaOption = premultiplyAlpha ? AlphaOption::Premultiplied : AlphaOption::NotPremultiplied;
     GammaAndColorProfileOption gammaAndColorProfileOption = ignoreGammaAndColorProfile ? GammaAndColorProfileOption::Ignored : GammaAndColorProfileOption::Applied;
-    auto image = BitmapImage::create(nullptr, alphaOption, gammaAndColorProfileOption);
+    auto source = ImageSource::create(nullptr, alphaOption, gammaAndColorProfileOption);
     m_alphaOp = AlphaOp::DoNothing;
 
     if (m_image->data()) {
-        image->setData(m_image->data(), true);
-        if (!image->frameCount())
+        source->setData(m_image->data(), true);
+        if (!source->frameCount())
             return false;
-        m_imageSurface = image->currentNativeImage()->platformImage();
+        m_imageSurface = source->createFrameImageAtIndex(0)->platformImage();
     } else {
-        m_imageSurface = m_image->currentNativeImage()->platformImage();
+        m_imageSurface = m_image->nativeImageForCurrentFrame()->platformImage();
         // 1. For texImage2D with HTMLVideoElment input, assume no PremultiplyAlpha had been applied and the alpha value is 0xFF for each pixel,
         // which is true at present and may be changed in the future and needs adjustment accordingly.
         // 2. For texImage2D with HTMLCanvasElement input in which Alpha is already Premultiplied in this port, 
