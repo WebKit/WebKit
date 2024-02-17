@@ -85,8 +85,8 @@ ScriptElement::ScriptElement(Element& element, bool parserInserted, bool already
 
 void ScriptElement::didFinishInsertingNode()
 {
-    ASSERT(m_parserInserted == ParserInserted::No);
-    prepareScript(); // FIXME: Provide a real starting line number here.
+    if (m_parserInserted == ParserInserted::No)
+        prepareScript(); // FIXME: Provide a real starting line number here.
 }
 
 void ScriptElement::childrenChanged(const ContainerNode::ChildChange& childChange)

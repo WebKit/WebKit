@@ -1031,12 +1031,12 @@ Node::InsertedIntoAncestorResult SVGElement::insertedIntoAncestor(InsertionType 
     StyledElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
     updateRelativeLengthsInformation();
 
+    hideNonce();
+
     if (needsPendingResourceHandling() && insertionType.connectedToDocument && !isInShadowTree()) {
         if (treeScopeForSVGReferences().isIdOfPendingSVGResource(getIdAttribute()))
             return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
     }
-
-    hideNonce();
 
     return InsertedIntoAncestorResult::Done;
 }
