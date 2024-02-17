@@ -2102,7 +2102,12 @@ Document* AccessibilityObject::document() const
 
     return frameView->frame().document();
 }
-    
+
+RefPtr<Document> AccessibilityObject::protectedDocument() const
+{
+    return document();
+}
+
 Page* AccessibilityObject::page() const
 {
     Document* document = this->document();

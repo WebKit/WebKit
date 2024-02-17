@@ -468,6 +468,7 @@ public:
 #endif
     Page* page() const override;
     Document* document() const override;
+    RefPtr<Document> protectedDocument() const;
     LocalFrameView* documentFrameView() const override;
     LocalFrame* frame() const;
     LocalFrame* mainFrame() const;

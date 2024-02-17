@@ -52,9 +52,10 @@ TextMarkerData::TextMarkerData(AXObjectCache& cache, Node* nodeParam, const Visi
 
 TextMarkerData::TextMarkerData(AXObjectCache& cache, const CharacterOffset& characterOffset, bool ignoredParam)
 {
-    initializeAXIDs(cache, characterOffset.node);
+    RefPtr characterOffsetNode = characterOffset.node;
+    initializeAXIDs(cache, characterOffsetNode.get());
 
-    node = characterOffset.node;
+    node = characterOffsetNode.get();
     auto visiblePosition = cache.visiblePositionFromCharacterOffset(characterOffset);
     auto position = visiblePosition.deepEquivalent();
     offset = !visiblePosition.isNull() ? std::max(position.deprecatedEditingOffset(), 0) : 0;
@@ -121,12 +122,12 @@ void AXTextMarker::setNodeIfNeeded() const
     if (!object)
         return;
 
-    WeakPtr node = object->node();
+    RefPtr node = object->node();
     if (!node)
         return;
 
     const_cast<AXTextMarker*>(this)->m_data.node = node.get();
-    cache->setNodeInUse(node.get());
+    cache->setNodeInUse(*node);
 }
 
 AXTextMarker::operator VisiblePosition() const
@@ -152,14 +153,14 @@ AXTextMarker::operator CharacterOffset() const
     if (!cache)
         return { };
 
-    if (m_data.node) {
+    if (RefPtr node = m_data.node) {
         // Make sure that this node is still in cache->m_textMarkerNodes. Since this method can be called as a result of a dispatch from the AX thread, the Node may have gone away in a previous main loop cycle.
-        if (!cache->isNodeInUse(m_data.node))
+        if (!cache->isNodeInUse(*node))
             return { };
     } else
         setNodeIfNeeded();
 
-    CharacterOffset result(m_data.node, m_data.characterStart, m_data.characterOffset);
+    CharacterOffset result(RefPtr { m_data.node }.get(), m_data.characterStart, m_data.characterOffset);
     // When we are at a line wrap and the VisiblePosition is upstream, it means the text marker is at the end of the previous line.
     // We use the previous CharacterOffset so that it will match the Range.
     if (m_data.affinity == Affinity::Upstream)
@@ -190,7 +191,7 @@ std::optional<BoundaryPoint> AXTextMarker::boundaryPoint() const
         return std::nullopt;
 
     int offset = characterOffset.startIndex + characterOffset.offset;
-    WeakPtr node = characterOffset.node;
+    RefPtr node = characterOffset.node;
     ASSERT(node);
     if (AccessibilityObject::replacedNodeNeedsCharacter(node.get()) || (node && node->hasTagName(HTMLNames::brTag)))
         node = nodeAndOffsetForReplacedNode(*node, offset, characterOffset.offset);

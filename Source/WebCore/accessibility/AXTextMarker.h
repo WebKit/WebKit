@@ -52,7 +52,7 @@ struct TextMarkerData {
     unsigned treeID;
     unsigned objectID;
 
-    Node* node;
+    Node* node; // FIXME: This should use a smart pointer.
     unsigned offset;
     Position::AnchorType anchorType;
     Affinity affinity;
