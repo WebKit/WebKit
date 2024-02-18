@@ -264,8 +264,6 @@ bool TrackPrivateBaseGStreamer::getTag(GstTagList* tags, const gchar* tagName, S
 
 void TrackPrivateBaseGStreamer::notifyTrackOfTagsChanged()
 {
-    TrackPrivateBaseClient* client = m_owner->client();
-
     GRefPtr<GstTagList> tags;
     {
         Locker locker { m_tagMutex };
@@ -277,8 +275,11 @@ void TrackPrivateBaseGStreamer::notifyTrackOfTagsChanged()
 
     tagsChanged(GRefPtr<GstTagList>(tags));
 
-    if (getTag(tags.get(), GST_TAG_TITLE, m_label) && client)
-        client->labelChanged(m_label);
+    if (getTag(tags.get(), GST_TAG_TITLE, m_label)) {
+        m_owner->notifyMainThreadClient([&](auto& client) {
+            client.labelChanged(m_label);
+        });
+    }
 
     AtomString language;
     if (!getLanguageCode(tags.get(), language))
@@ -288,8 +289,9 @@ void TrackPrivateBaseGStreamer::notifyTrackOfTagsChanged()
         return;
 
     m_language = language;
-    if (client)
-        client->languageChanged(m_language);
+    m_owner->notifyMainThreadClient([&](auto& client) {
+        client.languageChanged(m_language);
+    });
 }
 
 void TrackPrivateBaseGStreamer::notifyTrackOfStreamChanged()

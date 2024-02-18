@@ -68,14 +68,15 @@ AudioTrack::AudioTrack(ScriptExecutionContext* context, AudioTrackPrivate& track
     , m_enabled(trackPrivate.enabled())
     , m_configuration(AudioTrackConfiguration::create())
 {
-    m_private->setClient(*this);
+    addClientToTrackPrivateBase(*this, trackPrivate);
+
     updateKindFromPrivate();
     updateConfigurationFromPrivate();
 }
 
 AudioTrack::~AudioTrack()
 {
-    m_private->clearClient();
+    removeClientFromTrackPrivateBase(Ref { m_private });
 }
 
 void AudioTrack::setPrivate(AudioTrackPrivate& trackPrivate)
@@ -83,10 +84,11 @@ void AudioTrack::setPrivate(AudioTrackPrivate& trackPrivate)
     if (m_private.ptr() == &trackPrivate)
         return;
 
-    m_private->clearClient();
+    removeClientFromTrackPrivateBase(Ref { m_private });
     m_private = trackPrivate;
     m_private->setEnabled(m_enabled);
-    m_private->setClient(*this);
+    addClientToTrackPrivateBase(*this, trackPrivate);
+
 #if !RELEASE_LOG_DISABLED
     m_private->setLogger(logger(), logIdentifier());
 #endif

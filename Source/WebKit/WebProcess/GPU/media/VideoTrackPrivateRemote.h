@@ -51,8 +51,8 @@ public:
     using VideoTrackKind = WebCore::VideoTrackPrivate::Kind;
     VideoTrackKind kind() const final { return m_kind; }
     WebCore::TrackID id() const final { return m_id; }
-    AtomString label() const final { return m_label; }
-    AtomString language() const final { return m_language; }
+    AtomString label() const final { return AtomString { m_label }; }
+    AtomString language() const final { return AtomString { m_language }; }
     int trackIndex() const final { return m_trackIndex; }
     MediaTime startTimeVariance() const final { return m_startTimeVariance; }
 
@@ -63,8 +63,8 @@ private:
 
     ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
     VideoTrackKind m_kind { VideoTrackKind::None };
-    AtomString m_label;
-    AtomString m_language;
+    String m_label;
+    String m_language;
     int m_trackIndex { -1 };
     MediaTime m_startTimeVariance { MediaTime::zeroTime() };
     WebCore::TrackID m_id;

@@ -38,17 +38,15 @@ struct AudioInfo;
 
 class AudioTrackPrivate : public TrackPrivateBase {
 public:
-    void setClient(AudioTrackPrivateClient& client) { m_client = client; }
-    void clearClient() { m_client = nullptr; }
-    AudioTrackPrivateClient* client() const override { return m_client.get(); }
-
     virtual void setEnabled(bool enabled)
     {
         if (m_enabled == enabled)
             return;
         m_enabled = enabled;
-        if (m_client)
-            m_client->enabledChanged(enabled);
+        notifyClients([enabled](auto& client) {
+            ASSERT(is<AudioTrackPrivateClient>(client));
+            downcast<AudioTrackPrivateClient>(client).enabledChanged(enabled);
+        });
         if (m_enabledChangedCallback)
             m_enabledChangedCallback(*this, m_enabled);
     }
@@ -69,8 +67,10 @@ public:
         if (configuration == m_configuration)
             return;
         m_configuration = WTFMove(configuration);
-        if (m_client)
-            m_client->configurationChanged(m_configuration);
+        notifyClients([configuration = m_configuration](auto& client) {
+            ASSERT(is<AudioTrackPrivateClient>(client));
+            downcast<AudioTrackPrivateClient>(client).configurationChanged(configuration);
+        });
     }
 
     virtual void setFormatDescription(Ref<AudioInfo>&&) { }
@@ -92,7 +92,6 @@ protected:
     AudioTrackPrivate() = default;
 
 private:
-    WeakPtr<AudioTrackPrivateClient> m_client;
     bool m_enabled { false };
     PlatformAudioTrackConfiguration m_configuration;
     EnabledChangedCallback m_enabledChangedCallback;

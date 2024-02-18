@@ -45,13 +45,16 @@ RemoteAudioTrackProxy::RemoteAudioTrackProxy(GPUConnectionToWebProcess& connecti
     , m_id(trackPrivate.id())
     , m_mediaPlayerIdentifier(mediaPlayerIdentifier)
 {
-    m_trackPrivate->setClient(*this);
+    m_clientId = trackPrivate.addClient([](auto&& task) {
+        ensureOnMainThread(WTFMove(task));
+    }, *this);
+
     m_connectionToWebProcess->connection().send(Messages::MediaPlayerPrivateRemote::AddRemoteAudioTrack(configuration()), m_mediaPlayerIdentifier);
 }
 
 RemoteAudioTrackProxy::~RemoteAudioTrackProxy()
 {
-    m_trackPrivate->clearClient();
+    m_trackPrivate->removeClient(m_clientId);
 }
 
 AudioTrackPrivateRemoteConfiguration RemoteAudioTrackProxy::configuration()

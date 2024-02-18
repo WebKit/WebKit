@@ -93,6 +93,7 @@ private:
     Ref<WebCore::InbandTextTrackPrivate> m_trackPrivate;
     WebCore::TrackID m_id;
     WebCore::MediaPlayerIdentifier m_mediaPlayerIdentifier;
+    size_t m_clientId { 0 };
 };
 
 } // namespace WebKit

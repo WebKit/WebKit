@@ -80,7 +80,9 @@ void InbandTextTrackPrivateGStreamer::tagsChanged(GRefPtr<GstTagList>&& tags)
             m_trackID = *trackID;
             GST_DEBUG_OBJECT(objectForLogging(), "Text track ID set from container-specific-track-id tag %" G_GUINT64_FORMAT, *m_trackID);
             m_stringId = AtomString::number(static_cast<unsigned long long>(*m_trackID));
-            client()->idChanged(*m_trackID);
+            notifyClients([trackID = *m_trackID](auto& client) {
+                client.idChanged(trackID);
+            });
         }
     }
 }
@@ -122,7 +124,11 @@ void InbandTextTrackPrivateGStreamer::notifyTrackOfSample()
 
         GST_INFO("Track %d parsing sample: %.*s", m_index, static_cast<int>(mappedBuffer.size()),
             reinterpret_cast<char*>(mappedBuffer.data()));
-        client()->parseWebVTTCueData(mappedBuffer.data(), mappedBuffer.size());
+        ASSERT(isMainThread());
+        ASSERT(!hasClients() || hasOneClient());
+        notifyMainThreadClient([&](auto& client) {
+            downcast<InbandTextTrackPrivateClient>(client).parseWebVTTCueData(mappedBuffer.data(), mappedBuffer.size());
+        });
     }
 }
 

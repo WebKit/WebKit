@@ -334,7 +334,7 @@ Ref<InbandGenericCue> InbandTextTrackPrivateAVF::processCueAttributes(CFAttribut
 
 void InbandTextTrackPrivateAVF::processCue(CFArrayRef attributedStrings, CFArrayRef nativeSamples, const MediaTime& time)
 {
-    if (!client())
+    if (!hasClients())
         return;
 
     processAttributedStrings(attributedStrings, time);
@@ -343,6 +343,7 @@ void InbandTextTrackPrivateAVF::processCue(CFArrayRef attributedStrings, CFArray
 
 void InbandTextTrackPrivateAVF::processAttributedStrings(CFArrayRef attributedStrings, const MediaTime& time)
 {
+    ASSERT(isMainThread());
     CFIndex count = attributedStrings ? CFArrayGetCount(attributedStrings) : 0;
 
     if (count)
@@ -396,7 +397,9 @@ void InbandTextTrackPrivateAVF::processAttributedStrings(CFArrayRef attributedSt
 
                     INFO_LOG(LOGIDENTIFIER, "updating cue ", cueData.get());
 
-                    client()->updateGenericCue(cueData);
+                    notifyMainThreadClient([&](auto& client) {
+                        downcast<InbandTextTrackPrivateClient>(client).updateGenericCue(cueData);
+                    });
                 } else {
                     // We have to assume that the implicit duration is invalid for cues delivered during a seek because the AVF decode pipeline may not
                     // see every cue, so DO NOT update cue duration while seeking.
@@ -417,7 +420,9 @@ void InbandTextTrackPrivateAVF::processAttributedStrings(CFArrayRef attributedSt
     for (auto& cueData : arrivingCues) {
         m_cues.append(cueData.get());
         INFO_LOG(LOGIDENTIFIER, "adding cue ", cueData.get());
-        client()->addGenericCue(cueData);
+        notifyMainThreadClient([&](auto& client) {
+            downcast<InbandTextTrackPrivateClient>(client).addGenericCue(cueData);
+        });
     }
 
     m_pendingCueStatus = seeking() ? DeliveredDuringSeek : Valid;
@@ -440,7 +445,7 @@ void InbandTextTrackPrivateAVF::disconnect()
 
 void InbandTextTrackPrivateAVF::removeCompletedCues()
 {
-    if (client()) {
+    if (hasClients()) {
         long currentCue = m_cues.size() - 1;
         for (; currentCue >= 0; --currentCue) {
             auto& cue = m_cues[currentCue];
@@ -465,10 +470,10 @@ void InbandTextTrackPrivateAVF::resetCueValues()
     if (m_currentCueEndTime && m_cues.size())
         INFO_LOG(LOGIDENTIFIER, "flushing data for cues: start = ", m_currentCueStartTime);
 
-    if (auto* client = this->client()) {
+    notifyMainThreadClient([&](auto& client) {
         for (auto& cue : m_cues)
-            client->removeGenericCue(cue);
-    }
+            downcast<InbandTextTrackPrivateClient>(client).removeGenericCue(cue);
+    });
 
     m_cues.shrink(0);
     m_pendingCueStatus = None;
@@ -492,6 +497,7 @@ void InbandTextTrackPrivateAVF::setMode(InbandTextTrackPrivate::Mode newMode)
 
 void InbandTextTrackPrivateAVF::processNativeSamples(CFArrayRef nativeSamples, const MediaTime& presentationTime)
 {
+    ASSERT(isMainThread());
     using namespace PAL;
 
     if (!nativeSamples)
@@ -552,14 +558,18 @@ void InbandTextTrackPrivateAVF::processNativeSamples(CFArrayRef nativeSamples, c
                 auto header = makeString(StringView { CFDataGetBytePtr(webvttHeaderData), length }, "\n\n");
 
                 INFO_LOG(LOGIDENTIFIER, "VTT header ", header);
-                client()->parseWebVTTFileHeader(WTFMove(header));
+                notifyMainThreadClient([&](auto& client) {
+                    downcast<InbandTextTrackPrivateClient>(client).parseWebVTTFileHeader(WTFMove(header));
+                });
                 m_haveReportedVTTHeader = true;
             } while (0);
 
             if (type == ISOWebVTTCue::boxTypeName()) {
                 ISOWebVTTCue cueData = ISOWebVTTCue(presentationTime, duration);
                 cueData.read(view);
-                client()->parseWebVTTCueData(WTFMove(cueData));
+                notifyMainThreadClient([&](auto& client) {
+                    downcast<InbandTextTrackPrivateClient>(client).parseWebVTTCueData(WTFMove(cueData));
+                });
             }
 
             m_sampleInputBuffer.remove(0, (size_t)boxLength);

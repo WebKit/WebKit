@@ -60,14 +60,14 @@ VideoTrack::VideoTrack(ScriptExecutionContext* context, VideoTrackPrivate& track
     , m_configuration(VideoTrackConfiguration::create())
     , m_selected(trackPrivate.selected())
 {
-    m_private->setClient(*this);
+    addClientToTrackPrivateBase(*this, trackPrivate);
     updateKindFromPrivate();
     updateConfigurationFromPrivate();
 }
 
 VideoTrack::~VideoTrack()
 {
-    m_private->clearClient();
+    removeClientFromTrackPrivateBase(Ref { m_private });
 }
 
 void VideoTrack::setPrivate(VideoTrackPrivate& trackPrivate)
@@ -75,9 +75,9 @@ void VideoTrack::setPrivate(VideoTrackPrivate& trackPrivate)
     if (m_private.ptr() == &trackPrivate)
         return;
 
-    m_private->clearClient();
+    removeClientFromTrackPrivateBase(Ref { m_private });
     m_private = trackPrivate;
-    m_private->setClient(*this);
+    addClientToTrackPrivateBase(*this, trackPrivate);
 #if !RELEASE_LOG_DISABLED
     m_private->setLogger(logger(), logIdentifier());
 #endif

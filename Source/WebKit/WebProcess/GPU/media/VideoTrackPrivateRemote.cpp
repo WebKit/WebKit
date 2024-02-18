@@ -33,6 +33,7 @@
 #include "MediaPlayerPrivateRemote.h"
 #include "RemoteMediaPlayerProxyMessages.h"
 #include "VideoTrackPrivateRemoteConfiguration.h"
+#include <wtf/CrossThreadCopier.h>
 
 namespace WebKit {
 
@@ -60,22 +61,29 @@ void VideoTrackPrivateRemote::updateConfiguration(VideoTrackPrivateRemoteConfigu
 {
     if (configuration.trackId != m_id) {
         m_id = configuration.trackId;
-        if (client())
-            client()->idChanged(m_id);
+        notifyClients([id = m_id](auto& client) {
+            client.idChanged(id);
+        });
     }
 
     if (configuration.label != m_label) {
         auto changed = !m_label.isEmpty();
         m_label = configuration.label;
-        if (changed && client())
-            client()->labelChanged(m_label);
+        if (changed && hasClients()) {
+            notifyClients([label = crossThreadCopy(m_label)](auto& client) {
+                client.labelChanged(AtomString { label });
+            });
+        }
     }
 
     if (configuration.language != m_language) {
         auto changed = !m_language.isEmpty();
         m_language = configuration.language;
-        if (changed && client())
-            client()->languageChanged(m_language);
+        if (changed && hasClients()) {
+            notifyClients([language = crossThreadCopy(m_language)](auto& client) {
+                client.languageChanged(AtomString { language });
+            });
+        }
     }
 
     m_trackIndex = configuration.trackIndex;

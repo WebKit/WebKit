@@ -56,27 +56,35 @@ InbandMetadataTextTrackPrivateAVF::~InbandMetadataTextTrackPrivateAVF() = defaul
 
 void InbandMetadataTextTrackPrivateAVF::addDataCue(const MediaTime& start, const MediaTime& end, Ref<SerializedPlatformDataCue>&& cueData, const String& type)
 {
+    ASSERT(isMainThread());
     ASSERT(cueFormat() == CueFormat::Data);
     ASSERT(start >= MediaTime::zeroTime());
 
-    if (!client())
+    if (!hasClients())
         return;
+    ASSERT(hasOneClient());
 
     m_currentCueStartTime = start;
     if (end.isPositiveInfinite())
         m_incompleteCues.append(IncompleteMetaDataCue { cueData.ptr(), start });
-    client()->addDataCue(start, end, WTFMove(cueData), type);
+    notifyMainThreadClient([&](auto& client) {
+        downcast<InbandTextTrackPrivateClient>(client).addDataCue(start, end, WTFMove(cueData), type);
+    });
 }
 
 void InbandMetadataTextTrackPrivateAVF::updatePendingCueEndTimes(const MediaTime& time)
 {
+    ASSERT(isMainThread());
     ASSERT(time >= MediaTime::zeroTime());
 
     if (time >= m_currentCueStartTime) {
-        if (client()) {
+        if (hasClients()) {
+            ASSERT(hasOneClient());
             for (auto& partialCue : m_incompleteCues) {
                 INFO_LOG(LOGIDENTIFIER, "updating cue: start = ", partialCue.startTime, ", end = ", time);
-                client()->updateDataCue(partialCue.startTime, time, *partialCue.cueData);
+                notifyMainThreadClient([&](auto& client) {
+                    downcast<InbandTextTrackPrivateClient>(client).updateDataCue(partialCue.startTime, time, *partialCue.cueData);
+                });
             }
         }
     } else
@@ -90,12 +98,17 @@ void InbandMetadataTextTrackPrivateAVF::updatePendingCueEndTimes(const MediaTime
 
 void InbandMetadataTextTrackPrivateAVF::flushPartialCues()
 {
+    ASSERT(isMainThread());
     if (m_currentCueStartTime && m_incompleteCues.size())
         INFO_LOG(LOGIDENTIFIER, "flushing incomplete data for cues: start = ", m_currentCueStartTime);
 
-    if (client()) {
-        for (auto& partialCue : m_incompleteCues)
-            client()->removeDataCue(partialCue.startTime, MediaTime::positiveInfiniteTime(), *partialCue.cueData);
+    if (hasClients()) {
+        ASSERT(hasOneClient());
+        for (auto& partialCue : m_incompleteCues) {
+            notifyMainThreadClient([&](TrackPrivateBaseClient& client) {
+                downcast<InbandTextTrackPrivateClient>(client).removeDataCue(partialCue.startTime, MediaTime::positiveInfiniteTime(), *partialCue.cueData);
+            });
+        }
     }
 
     m_incompleteCues.shrink(0);

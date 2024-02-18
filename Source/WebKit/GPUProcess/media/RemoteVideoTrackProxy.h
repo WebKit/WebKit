@@ -85,6 +85,7 @@ private:
     WebCore::TrackID m_id;
     WebCore::MediaPlayerIdentifier m_mediaPlayerIdentifier;
     bool m_selected { false };
+    size_t m_clientRegistrationId { 0 };
 };
 
 } // namespace WebKit

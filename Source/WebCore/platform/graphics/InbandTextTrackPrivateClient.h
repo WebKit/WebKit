@@ -46,6 +46,8 @@ class InbandTextTrackPrivateClient : public TrackPrivateBaseClient {
 public:
     virtual ~InbandTextTrackPrivateClient() = default;
 
+    constexpr Type type() const final { return Type::Text; }
+
     virtual void addDataCue(const MediaTime& start, const MediaTime& end, const void*, unsigned) = 0;
 
 #if ENABLE(DATACUE_VALUE)
@@ -64,5 +66,9 @@ public:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::InbandTextTrackPrivateClient)
+static bool isType(const WebCore::TrackPrivateBaseClient& track) { return track.type() == WebCore::TrackPrivateBaseClient::Type::Text; }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(VIDEO)

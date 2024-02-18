@@ -47,7 +47,7 @@ struct AudioTrackPrivateRemoteConfiguration;
 
 class RemoteAudioTrackProxy final
     : public ThreadSafeRefCounted<RemoteAudioTrackProxy, WTF::DestructionThread::Main>
-    , private WebCore::AudioTrackPrivateClient {
+    , public WebCore::AudioTrackPrivateClient {
 public:
     static Ref<RemoteAudioTrackProxy> create(GPUConnectionToWebProcess& connectionToWebProcess, WebCore::AudioTrackPrivate& trackPrivate, WebCore::MediaPlayerIdentifier mediaPlayerIdentifier)
     {
@@ -85,6 +85,7 @@ private:
     WebCore::TrackID m_id;
     WebCore::MediaPlayerIdentifier m_mediaPlayerIdentifier;
     bool m_enabled { false };
+    size_t m_clientId { 0 };
 };
 
 } // namespace WebKit

@@ -47,14 +47,21 @@ public:
 
     void addDataCue(const MediaTime& start, const MediaTime& end, const void* data, unsigned length)
     {
+        ASSERT(isMainThread());
         ASSERT(cueFormat() == CueFormat::Data);
-        client()->addDataCue(start, end, data, length);
+
+        notifyMainThreadClient([&](auto& client) {
+            downcast<InbandTextTrackPrivateClient>(client).addDataCue(start, end, data, length);
+        });
     }
 
     void addGenericCue(InbandGenericCue& data)
     {
+        ASSERT(isMainThread());
         ASSERT(cueFormat() == CueFormat::Generic);
-        client()->addGenericCue(data);
+        notifyMainThreadClient([&](auto& client) {
+            downcast<InbandTextTrackPrivateClient>(client).addGenericCue(data);
+        });
     }
 
 private:
