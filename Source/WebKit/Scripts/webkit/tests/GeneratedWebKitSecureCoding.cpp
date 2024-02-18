@@ -126,14 +126,12 @@ CoreIPCAVOutputContext::CoreIPCAVOutputContext(AVOutputContext *object)
 {
     auto dictionary = dictionaryForWebKitSecureCodingType(object);
     m_AVOutputContextSerializationKeyContextID = (NSString *)[dictionary objectForKey:@"AVOutputContextSerializationKeyContextID"];
-    if (!m_AVOutputContextSerializationKeyContextID || IPC::typeFromObject(m_AVOutputContextSerializationKeyContextID.get()) != IPC::NSType::String) {
+    if (![m_AVOutputContextSerializationKeyContextID isKindOfClass:IPC::getClass<NSString>()])
         m_AVOutputContextSerializationKeyContextID = nullptr;
-    }
 
     m_AVOutputContextSerializationKeyContextType = (NSString *)[dictionary objectForKey:@"AVOutputContextSerializationKeyContextType"];
-    if (!m_AVOutputContextSerializationKeyContextType || IPC::typeFromObject(m_AVOutputContextSerializationKeyContextType.get()) != IPC::NSType::String) {
+    if (![m_AVOutputContextSerializationKeyContextType isKindOfClass:IPC::getClass<NSString>()])
         m_AVOutputContextSerializationKeyContextType = nullptr;
-    }
 
 }
 
@@ -175,39 +173,32 @@ CoreIPCNSSomeFoundationType::CoreIPCNSSomeFoundationType(NSSomeFoundationType *o
 {
     auto dictionary = dictionaryForWebKitSecureCodingType(object);
     m_StringKey = (NSString *)[dictionary objectForKey:@"StringKey"];
-    if (!m_StringKey || IPC::typeFromObject(m_StringKey.get()) != IPC::NSType::String) {
+    if (![m_StringKey isKindOfClass:IPC::getClass<NSString>()])
         m_StringKey = nullptr;
-    }
 
     m_NumberKey = (NSNumber *)[dictionary objectForKey:@"NumberKey"];
-    if (!m_NumberKey || IPC::typeFromObject(m_NumberKey.get()) != IPC::NSType::Number) {
+    if (![m_NumberKey isKindOfClass:IPC::getClass<NSNumber>()])
         m_NumberKey = nullptr;
-    }
 
     m_OptionalNumberKey = (NSNumber *)[dictionary objectForKey:@"OptionalNumberKey"];
-    if (m_OptionalNumberKey && IPC::typeFromObject(m_OptionalNumberKey.get()) != IPC::NSType::Number) {
+    if (![m_OptionalNumberKey isKindOfClass:IPC::getClass<NSNumber>()])
         m_OptionalNumberKey = nullptr;
-    }
 
     m_ArrayKey = (NSArray *)[dictionary objectForKey:@"ArrayKey"];
-    if (!m_ArrayKey || IPC::typeFromObject(m_ArrayKey.get()) != IPC::NSType::Array) {
+    if (![m_ArrayKey isKindOfClass:IPC::getClass<NSArray>()])
         m_ArrayKey = nullptr;
-    }
 
     m_OptionalArrayKey = (NSArray *)[dictionary objectForKey:@"OptionalArrayKey"];
-    if (m_OptionalArrayKey && IPC::typeFromObject(m_OptionalArrayKey.get()) != IPC::NSType::Array) {
+    if (![m_OptionalArrayKey isKindOfClass:IPC::getClass<NSArray>()])
         m_OptionalArrayKey = nullptr;
-    }
 
     m_DictionaryKey = (NSDictionary *)[dictionary objectForKey:@"DictionaryKey"];
-    if (!m_DictionaryKey || IPC::typeFromObject(m_DictionaryKey.get()) != IPC::NSType::Dictionary) {
+    if (![m_DictionaryKey isKindOfClass:IPC::getClass<NSDictionary>()])
         m_DictionaryKey = nullptr;
-    }
 
     m_OptionalDictionaryKey = (NSDictionary *)[dictionary objectForKey:@"OptionalDictionaryKey"];
-    if (m_OptionalDictionaryKey && IPC::typeFromObject(m_OptionalDictionaryKey.get()) != IPC::NSType::Dictionary) {
+    if (![m_OptionalDictionaryKey isKindOfClass:IPC::getClass<NSDictionary>()])
         m_OptionalDictionaryKey = nullptr;
-    }
 
 }
 
@@ -260,19 +251,16 @@ CoreIPCDDScannerResult::CoreIPCDDScannerResult(DDScannerResult *object)
 {
     auto dictionary = dictionaryForWebKitSecureCodingType(object);
     m_StringKey = (NSString *)[dictionary objectForKey:@"StringKey"];
-    if (!m_StringKey || IPC::typeFromObject(m_StringKey.get()) != IPC::NSType::String) {
+    if (![m_StringKey isKindOfClass:IPC::getClass<NSString>()])
         m_StringKey = nullptr;
-    }
 
     m_NumberKey = (NSNumber *)[dictionary objectForKey:@"NumberKey"];
-    if (!m_NumberKey || IPC::typeFromObject(m_NumberKey.get()) != IPC::NSType::Number) {
+    if (![m_NumberKey isKindOfClass:IPC::getClass<NSNumber>()])
         m_NumberKey = nullptr;
-    }
 
     m_OptionalNumberKey = (NSNumber *)[dictionary objectForKey:@"OptionalNumberKey"];
-    if (m_OptionalNumberKey && IPC::typeFromObject(m_OptionalNumberKey.get()) != IPC::NSType::Number) {
+    if (![m_OptionalNumberKey isKindOfClass:IPC::getClass<NSNumber>()])
         m_OptionalNumberKey = nullptr;
-    }
 
     m_ArrayKey = vectorFromArray<DDScannerResult>((NSArray *)[dictionary objectForKey:@"ArrayKey"]);
     m_OptionalArrayKey = optionalVectorFromArray<DDScannerResult>((NSArray *)[dictionary objectForKey:@"OptionalArrayKey"]);

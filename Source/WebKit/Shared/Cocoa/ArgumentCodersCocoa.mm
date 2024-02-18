@@ -345,48 +345,8 @@ NSType typeFromObject(id object)
     ASSERT(object);
 
     // Specific classes handled.
-#if USE(AVFOUNDATION)
-    if (PAL::isAVFoundationFrameworkAvailable() && [object isKindOfClass:PAL::getAVOutputContextClass()])
-        return NSType::AVOutputContext;
-#endif
     if ([object isKindOfClass:[NSArray class]])
         return NSType::Array;
-#if USE(PASSKIT)
-    if ([object isKindOfClass:[NSDateComponents class]])
-        return NSType::NSDateComponents;
-    if (PAL::isContactsFrameworkAvailable() && [object isKindOfClass:PAL::getCNContactClass()])
-        return NSType::CNContact;
-    if (PAL::isContactsFrameworkAvailable() && [object isKindOfClass:PAL::getCNPhoneNumberClass()])
-        return NSType::CNPhoneNumber;
-    if (PAL::isContactsFrameworkAvailable() && [object isKindOfClass:PAL::getCNPostalAddressClass()])
-        return NSType::CNPostalAddress;
-    if (PAL::isPassKitCoreFrameworkAvailable() && [object isKindOfClass:PAL::getPKContactClass()])
-        return NSType::PKContact;
-    if (PAL::isPassKitCoreFrameworkAvailable() && [object isKindOfClass:PAL::getPKPaymentMerchantSessionClass()])
-        return NSType::PKPaymentMerchantSession;
-    if (PAL::isPassKitCoreFrameworkAvailable() && [object isKindOfClass:PAL::getPKPaymentClass()])
-        return NSType::PKPayment;
-    if (PAL::isPassKitCoreFrameworkAvailable() && [object isKindOfClass:PAL::getPKPaymentTokenClass()])
-        return NSType::PKPaymentToken;
-    if (PAL::isPassKitCoreFrameworkAvailable() && [object isKindOfClass:PAL::getPKSecureElementPassClass()])
-        return NSType::PKSecureElementPass;
-    if (PAL::isPassKitCoreFrameworkAvailable() && [object isKindOfClass:PAL::getPKShippingMethodClass()])
-        return NSType::PKShippingMethod;
-    if (PAL::isPassKitCoreFrameworkAvailable() && [object isKindOfClass:PAL::getPKDateComponentsRangeClass()])
-        return NSType::PKDateComponentsRange;
-    if (PAL::isPassKitCoreFrameworkAvailable() && [object isKindOfClass:PAL::getPKPaymentMethodClass()])
-        return NSType::PKPaymentMethod;
-#endif
-    if ([object isKindOfClass:PlatformColorClass])
-        return NSType::Color;
-#if ENABLE(DATA_DETECTION)
-#if PLATFORM(MAC)
-    if (PAL::isDataDetectorsFrameworkAvailable() && [object isKindOfClass:PAL::getWKDDActionContextClass()])
-        return NSType::DDActionContext;
-#endif
-    if (PAL::isDataDetectorsCoreFrameworkAvailable() && [object isKindOfClass:PAL::getDDScannerResultClass()])
-        return NSType::DDScannerResult;
-#endif
     if ([object isKindOfClass:[NSData class]])
         return NSType::Data;
     if ([object isKindOfClass:[NSDate class]])
@@ -403,20 +363,12 @@ NSType typeFromObject(id object)
         return NSType::Number;
     if ([object isKindOfClass:[NSNull class]])
         return NSType::Null;
-    if ([object isKindOfClass:PlatformNSShadow])
-        return NSType::NSShadow;
     if ([object isKindOfClass:[NSValue class]])
         return NSType::NSValue;
-    if ([object isKindOfClass:[NSPersonNameComponents class]])
-        return NSType::PersonNameComponents;
-    if ([object isKindOfClass:[NSPresentationIntent class]])
-        return NSType::PresentationIntent;
     if ([object isKindOfClass:[NSString class]])
         return NSType::String;
     if ([object isKindOfClass:[NSURL class]])
         return NSType::URL;
-    if ([object isKindOfClass:[NSURLProtectionSpace class]])
-        return NSType::NSURLProtectionSpace;
     // Not all CF types are toll-free-bridged to NS types.
     // Non-toll-free-bridged CF types do not conform to NSSecureCoding.
     if ([object isKindOfClass:NSClassFromString(@"__NSCFType")])
@@ -682,6 +634,130 @@ template<> std::optional<RetainPtr<id>> decodeObjectDirectlyRequiringAllowedClas
     }
 }
 
+// This method helps us bridge the gap between classic NSSecureCoding types and new WebKit coding types
+// as we get more and more support in various classes.
+// The eventual goal is to remove the CoreIPCSecureCoding wrapper altogether, but for now this runtime
+// fork in behavior is necessary.
+//
+// FIXME: This isn't needed on all OSes. Some of them we can compile it so we just release assert that
+// conformsToWebKitSecureCoding is true and only use a wrapper.
+template <typename WebKitSecureCodingWrapper, typename ObjCType> std::optional<std::variant<WebKit::CoreIPCSecureCoding, WebKitSecureCodingWrapper>> secureCodingOrWrapper(ObjCType object)
+{
+    if (!object)
+        return std::nullopt;
+    if (WebKit::CoreIPCSecureCoding::conformsToWebKitSecureCoding(object))
+        return WebKitSecureCodingWrapper(object);
+    if (WebKit::CoreIPCSecureCoding::conformsToSecureCoding(object))
+        return WebKit::CoreIPCSecureCoding(object);
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+template<typename WebKitSecureCodingWrapper> std::optional<RetainPtr<id>> decodeSecureCodingOrWrapper(IPC::Decoder& decoder)
+{
+    auto result = decoder.decode<std::optional<std::variant<WebKit::CoreIPCSecureCoding, WebKitSecureCodingWrapper>>>();
+    if (!result)
+        return std::nullopt;
+    if (!*result)
+        return nullptr;
+    return WTF::switchOn(**result, [] (const auto& wrapper) {
+        return wrapper.toID();
+    });
+}
+
+#if ENABLE(DATA_DETECTION)
+template<> void encodeObjectDirectly<DDScannerResult>(IPC::Encoder& encoder, DDScannerResult *instance)
+{
+    encoder << secureCodingOrWrapper<WebKit::CoreIPCDDScannerResult>(instance);
+}
+template<> std::optional<RetainPtr<id>> decodeObjectDirectlyRequiringAllowedClasses<DDScannerResult>(IPC::Decoder& decoder)
+{
+    return decodeSecureCodingOrWrapper<WebKit::CoreIPCDDScannerResult>(decoder);
+}
+#if PLATFORM(MAC)
+template<> void encodeObjectDirectly<WKDDActionContext>(IPC::Encoder& encoder, WKDDActionContext *instance)
+{
+    encoder << secureCodingOrWrapper<WebKit::CoreIPCDDActionContext>(instance);
+}
+template<> std::optional<RetainPtr<id>> decodeObjectDirectlyRequiringAllowedClasses<WKDDActionContext>(IPC::Decoder& decoder)
+{
+    return decodeSecureCodingOrWrapper<WebKit::CoreIPCDDActionContext>(decoder);
+}
+#endif
+#endif
+
+#define ENCODE_WITH_COREIPC_WRAPPER_NAMED(c, wrapper) \
+template<> void encodeObjectDirectly<c>(IPC::Encoder& encoder, c *instance) \
+{ \
+    encoder << (instance ? std::optional(WebKit::wrapper(instance)) : std::nullopt); \
+} \
+template<> std::optional<RetainPtr<id>> decodeObjectDirectlyRequiringAllowedClasses<c>(IPC::Decoder& decoder) \
+{ \
+    auto result = decoder.decode<std::optional<WebKit::wrapper>>(); \
+    if (!result) \
+        return std::nullopt; \
+    return *result ? (*result)->toID() : nullptr; \
+}
+
+#define ENCODE_WITH_COREIPC_WRAPPER(c) ENCODE_WITH_COREIPC_WRAPPER_NAMED(c, CoreIPC##c)
+
+#define ENCODE_AS_SECURE_CODING(c) \
+template<> void encodeObjectDirectly<c>(IPC::Encoder& encoder, c *instance) \
+{ \
+    encoder << (instance ? std::optional(WebKit::CoreIPCSecureCoding(instance)) : std::nullopt); \
+} \
+template<> std::optional<RetainPtr<id>> decodeObjectDirectlyRequiringAllowedClasses<c>(IPC::Decoder& decoder) \
+{ \
+    auto result = decoder.decode<std::optional<WebKit::CoreIPCSecureCoding>>(); \
+    if (!result) \
+        return std::nullopt; \
+    return *result ? (*result)->toID() : nullptr; \
+}
+
+#if USE(AVFOUNDATION)
+ENCODE_WITH_COREIPC_WRAPPER(AVOutputContext);
+#endif
+#if USE(PASSKIT)
+ENCODE_WITH_COREIPC_WRAPPER(PKPaymentMethod);
+ENCODE_WITH_COREIPC_WRAPPER(PKPaymentMerchantSession);
+ENCODE_WITH_COREIPC_WRAPPER(PKContact);
+ENCODE_WITH_COREIPC_WRAPPER(PKPayment);
+ENCODE_WITH_COREIPC_WRAPPER(PKPaymentToken);
+ENCODE_WITH_COREIPC_WRAPPER(PKShippingMethod);
+ENCODE_WITH_COREIPC_WRAPPER(PKDateComponentsRange);
+ENCODE_WITH_COREIPC_WRAPPER(CNContact);
+ENCODE_WITH_COREIPC_WRAPPER(CNPhoneNumber);
+ENCODE_WITH_COREIPC_WRAPPER(CNPostalAddress);
+#endif
+ENCODE_WITH_COREIPC_WRAPPER(NSURLProtectionSpace);
+ENCODE_WITH_COREIPC_WRAPPER(NSShadow);
+ENCODE_WITH_COREIPC_WRAPPER(NSValue);
+ENCODE_WITH_COREIPC_WRAPPER_NAMED(NSPersonNameComponents, CoreIPCPersonNameComponents);
+ENCODE_WITH_COREIPC_WRAPPER_NAMED(NSDateComponents, CoreIPCDateComponents);
+ENCODE_WITH_COREIPC_WRAPPER_NAMED(PlatformColor, CoreIPCColor);
+ENCODE_WITH_COREIPC_WRAPPER_NAMED(NSData, CoreIPCData);
+ENCODE_WITH_COREIPC_WRAPPER_NAMED(NSURL, CoreIPCURL);
+ENCODE_WITH_COREIPC_WRAPPER_NAMED(NSNull, CoreIPCNull);
+ENCODE_WITH_COREIPC_WRAPPER_NAMED(WebCore::CocoaFont, CoreIPCFont);
+ENCODE_WITH_COREIPC_WRAPPER_NAMED(NSDate, CoreIPCDate);
+ENCODE_WITH_COREIPC_WRAPPER_NAMED(NSArray, CoreIPCArray);
+ENCODE_WITH_COREIPC_WRAPPER_NAMED(NSError, CoreIPCError);
+ENCODE_WITH_COREIPC_WRAPPER_NAMED(NSLocale, CoreIPCLocale);
+ENCODE_WITH_COREIPC_WRAPPER_NAMED(NSNumber, CoreIPCNumber);
+ENCODE_WITH_COREIPC_WRAPPER_NAMED(NSString, CoreIPCString);
+ENCODE_WITH_COREIPC_WRAPPER_NAMED(NSDictionary, CoreIPCDictionary);
+ENCODE_WITH_COREIPC_WRAPPER_NAMED(NSPresentationIntent, CoreIPCPresentationIntent);
+
+ENCODE_AS_SECURE_CODING(NSURLRequest);
+ENCODE_AS_SECURE_CODING(NSURLCredential);
+ENCODE_AS_SECURE_CODING(NSParagraphStyle);
+#if USE(PASSKIT)
+ENCODE_AS_SECURE_CODING(PKSecureElementPass);
+#endif
+
+#undef ENCODE_WITH_COREIPC_WRAPPER
+#undef ENCODE_WITH_COREIPC_WRAPPER_NAMED
+#undef ENCODE_AS_SECURE_CODING
+
 #pragma mark - CF
 
 template<> void encodeObjectDirectly<CFTypeRef>(Encoder& encoder, CFTypeRef cf)
@@ -701,22 +777,6 @@ template<> std::optional<RetainPtr<id>> decodeObjectDirectlyRequiringAllowedClas
         return std::nullopt;
 
     return static_cast<id>(result->get());
-}
-
-#pragma mark - Wrapper Encoder / Decoder Entry Points
-
-void encodeObjectWithWrapper(Encoder& encoder, id object)
-{
-    encoder << WebKit::CoreIPCNSCFObject(object);
-}
-
-std::optional<RetainPtr<id>> decodeObjectFromWrapper(Decoder& decoder, const HashSet<Class>& allowedClasses)
-{
-    std::optional<WebKit::CoreIPCNSCFObject> result = decoder.decodeWithAllowedClasses<WebKit::CoreIPCNSCFObject>(allowedClasses);
-    if (!result)
-        return std::nullopt;
-
-    return result->toID();
 }
 
 } // namespace IPC

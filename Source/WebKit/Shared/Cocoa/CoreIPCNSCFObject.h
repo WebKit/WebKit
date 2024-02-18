@@ -67,31 +67,9 @@ class CoreIPNSCURLProtectionSpace;
 
 using ObjectValue = std::variant<
     std::nullptr_t,
-#if USE(AVFOUNDATION)
-    CoreIPCAVOutputContext,
-#endif
     CoreIPCArray,
     CoreIPCCFType,
-#if USE(PASSKIT)
-    CoreIPCCNContact,
-    CoreIPCCNPhoneNumber,
-    CoreIPCCNPostalAddress,
-    CoreIPCDateComponents,
-    CoreIPCPKContact,
-    CoreIPCPKPaymentMerchantSession,
-    CoreIPCPKPayment,
-    CoreIPCPKPaymentToken,
-    CoreIPCPKShippingMethod,
-    CoreIPCPKDateComponentsRange,
-    CoreIPCPKPaymentMethod,
-#endif
     CoreIPCColor,
-#if ENABLE(DATA_DETECTION)
-#if PLATFORM(MAC)
-    CoreIPCDDActionContext,
-#endif
-    CoreIPCDDScannerResult,
-#endif
     CoreIPCData,
     CoreIPCDate,
     CoreIPCDictionary,
@@ -102,12 +80,9 @@ using ObjectValue = std::variant<
     CoreIPCNSValue,
     CoreIPCNumber,
     CoreIPCNull,
-    CoreIPCPersonNameComponents,
-    CoreIPCPresentationIntent,
     CoreIPCSecureCoding,
     CoreIPCString,
-    CoreIPCURL,
-    CoreIPCNSURLProtectionSpace
+    CoreIPCURL
 >;
 
 class CoreIPCNSCFObject {

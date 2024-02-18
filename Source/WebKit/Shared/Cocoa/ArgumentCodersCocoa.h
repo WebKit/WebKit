@@ -72,31 +72,8 @@ namespace IPC {
 #ifdef __OBJC__
 
 enum class NSType : uint8_t {
-#if USE(AVFOUNDATION)
-    AVOutputContext,
-#endif
     Array,
-#if USE(PASSKIT)
-    CNContact,
-    CNPhoneNumber,
-    CNPostalAddress,
-    NSDateComponents,
-    PKContact,
-    PKPaymentMerchantSession,
-    PKPayment,
-    PKPaymentToken,
-    PKSecureElementPass,
-    PKShippingMethod,
-    PKDateComponentsRange,
-    PKPaymentMethod,
-#endif
     Color,
-#if ENABLE(DATA_DETECTION)
-#if PLATFORM(MAC)
-    DDActionContext,
-#endif
-    DDScannerResult,
-#endif
     Data,
     Date,
     Error,
@@ -105,13 +82,9 @@ enum class NSType : uint8_t {
     Locale,
     Number,
     Null,
-    PersonNameComponents,
-    PresentationIntent,
     SecureCoding,
     String,
     URL,
-    NSShadow,
-    NSURLProtectionSpace,
     NSValue,
     CF,
     Unknown,
@@ -171,9 +144,6 @@ template<> Class getClass<PKSecureElementPass>();
 template<> Class getClass<PlatformColor>();
 template<> Class getClass<NSShadow>();
 
-void encodeObjectWithWrapper(Encoder&, id);
-std::optional<RetainPtr<id>> decodeObjectFromWrapper(Decoder&, const HashSet<Class>& allowedClasses);
-
 template<typename T> void encodeObjectDirectly(Encoder&, T *);
 template<typename T> void encodeObjectDirectly(Encoder&, T);
 template<typename T> void encodeObjectDirectly(StreamConnectionEncoder&, T *);
@@ -201,7 +171,7 @@ std::optional<RetainPtr<T>> decodeRequiringAllowedClasses(Decoder& decoder)
 #if ASSERT_ENABLED
     auto allowedClasses = decoder.allowedClasses();
 #endif
-    auto result = decodeObjectFromWrapper(decoder, decoder.allowedClasses());
+    auto result = decodeObjectDirectlyRequiringAllowedClasses<T>(decoder);
     if (!result)
         return std::nullopt;
     ASSERT(!*result || isObjectClassAllowed((*result).get(), allowedClasses));
@@ -211,7 +181,7 @@ std::optional<RetainPtr<T>> decodeRequiringAllowedClasses(Decoder& decoder)
 template<typename T, typename>
 std::optional<T> decodeRequiringAllowedClasses(Decoder& decoder)
 {
-    auto result = decodeObjectFromWrapper(decoder, decoder.allowedClasses());
+    auto result = decodeObjectDirectlyRequiringAllowedClasses<T>(decoder);
     if (!result)
         return std::nullopt;
     ASSERT(!*result || isObjectClassAllowed((*result).get(), decoder.allowedClasses()));
@@ -222,7 +192,7 @@ template<typename T> struct ArgumentCoder<T *> {
     template<typename U = T, typename = IsObjCObject<U>>
     static void encode(Encoder& encoder, U *object)
     {
-        encodeObjectWithWrapper(encoder, object);
+        encodeObjectDirectly<U>(encoder, object);
     }
 };
 
