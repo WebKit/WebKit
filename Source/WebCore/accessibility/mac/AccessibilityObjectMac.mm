@@ -26,6 +26,7 @@
 #import "config.h"
 #import "AccessibilityObject.h"
 
+#import "AXRemoteFrame.h"
 #import "AccessibilityLabel.h"
 #import "AccessibilityList.h"
 #import "ColorCocoa.h"
@@ -51,6 +52,7 @@
 #import "WebAccessibilityObjectWrapperMac.h"
 #import "Widget.h"
 
+#import <pal/spi/cocoa/NSAccessibilitySPI.h>
 #import <pal/spi/mac/NSSpellCheckerSPI.h>
 
 namespace WebCore {
@@ -749,6 +751,29 @@ RetainPtr<NSAttributedString> attributedStringCreate(Node* node, StringView text
     return result;
 }
 
+std::span<const uint8_t> AXRemoteFrame::generateRemoteToken() const
+{
+    if (auto* parent = parentObject()) {
+        // We use the parent's wrapper so that the remote frame acts as a pass through for the remote token bridge.
+        NSData *data = [NSAccessibilityRemoteUIElement remoteTokenForLocalUIElement:parent->wrapper()];
+        return std::span(static_cast<const uint8_t*>([data bytes]), [data length]);
+    }
+
+    return std::span<const uint8_t> { };
+}
+
+void AXRemoteFrame::initializePlatformElementWithRemoteToken(std::span<const uint8_t> token, int processIdentifier)
+{
+    m_processIdentifier = processIdentifier;
+    if ([wrapper() respondsToSelector:@selector(accessibilitySetPresenterProcessIdentifier:)])
+        [(id)wrapper() accessibilitySetPresenterProcessIdentifier:processIdentifier];
+    NSData *tokenData = [NSData dataWithBytes:token.data() length:token.size()];
+    m_remoteFramePlatformElement = adoptNS([[NSAccessibilityRemoteUIElement alloc] initWithRemoteToken:tokenData]);
+
+    if (auto* cache = axObjectCache())
+        cache->onRemoteFrameInitialized(*this);
+}
+
 namespace Accessibility {
 
 PlatformRoleMap createPlatformRoleMap()
@@ -891,6 +916,7 @@ PlatformRoleMap createPlatformRoleMap()
         { AccessibilityRole::Superscript, NSAccessibilityGroupRole },
         { AccessibilityRole::Model, NSAccessibilityGroupRole },
         { AccessibilityRole::Suggestion, NSAccessibilityGroupRole },
+        { AccessibilityRole::RemoteFrame, NSAccessibilityGroupRole },
     };
     PlatformRoleMap roleMap;
     for (auto& role : roles)

@@ -170,6 +170,8 @@ public:
     void remoteProcessDidTerminate();
     std::optional<WebCore::PageIdentifier> webPageIDInCurrentProcess();
     void notifyParentOfLoadCompletion(WebProcessProxy&);
+    void removeRemotePagesForSuspension();
+    void bindAccessibilityFrameWithData(std::span<const uint8_t>);
 
     bool isFocused() const;
 

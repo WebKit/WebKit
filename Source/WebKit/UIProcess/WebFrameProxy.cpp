@@ -45,6 +45,7 @@
 #include "WebPageProxy.h"
 #include "WebPageProxyMessages.h"
 #include "WebPasteboardProxy.h"
+#include "WebProcessMessages.h"
 #include "WebProcessPool.h"
 #include "WebsiteDataStore.h"
 #include "WebsitePoliciesData.h"
@@ -182,6 +183,14 @@ void WebFrameProxy::navigateServiceWorkerClient(WebCore::ScriptExecutionContextI
             return;
         }
     });
+}
+
+void WebFrameProxy::bindAccessibilityFrameWithData(std::span<const uint8_t> data)
+{
+    if (!m_page)
+        return;
+
+    m_page->send(Messages::WebProcess::BindAccessibilityFrameWithData(m_frameID, data));
 }
 
 void WebFrameProxy::loadURL(const URL& url, const String& referrer)

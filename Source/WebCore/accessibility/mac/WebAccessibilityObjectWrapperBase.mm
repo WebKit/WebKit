@@ -32,6 +32,7 @@
 #import "AXCoreObject.h"
 #import "AXIsolatedObject.h"
 #import "AXObjectCache.h"
+#import "AXRemoteFrame.h"
 #import "AccessibilityARIAGridRow.h"
 #import "AccessibilityList.h"
 #import "AccessibilityListBox.h"
@@ -265,13 +266,13 @@ NSArray *makeNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVector& c
             return nil;
 
         auto wrapper = child->wrapper();
-
         // We want to return the attachment view instead of the object representing the attachment,
         // otherwise, we get palindrome errors in the AX hierarchy.
         if (child->isAttachment()) {
             if (id attachmentView = wrapper.attachmentView)
                 return attachmentView;
-        }
+        } else if (child->isRemoteFrame())
+            return child->remoteFramePlatformElement().get();
 
         return wrapper;
     }).autorelease();
@@ -389,7 +390,7 @@ NSArray *makeNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVector& c
 - (BOOL)isIsolatedObject
 {
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    auto* backingObject = self.axBackingObject;
+    RefPtr backingObject = dynamicDowncast<AccessibilityObject>(self.baseUpdateBackingStore);
     return backingObject && backingObject->isAXIsolatedObjectInstance();
 #else
     return NO;
@@ -523,7 +524,7 @@ static void convertPathToScreenSpaceFunction(PathConversionInfo& conversion, con
 
 - (CGRect)convertRectToSpace:(const WebCore::FloatRect&)rect space:(AccessibilityConversionSpace)space
 {
-    auto* backingObject = self.axBackingObject;
+    RefPtr backingObject = dynamicDowncast<AccessibilityObject>(self.baseUpdateBackingStore);
     if (!backingObject)
         return CGRectZero;
 

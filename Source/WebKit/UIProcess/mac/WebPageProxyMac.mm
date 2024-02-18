@@ -306,12 +306,12 @@ void WebPageProxy::didPerformDictionaryLookup(const DictionaryPopupInfo& diction
     protectedPageClient()->didPerformDictionaryLookup(dictionaryPopupInfo);
 }
 
-void WebPageProxy::registerWebProcessAccessibilityToken(std::span<const uint8_t> data)
+void WebPageProxy::registerWebProcessAccessibilityToken(std::span<const uint8_t> data, FrameIdentifier frameID)
 {
     if (!hasRunningProcess())
         return;
     
-    protectedPageClient()->accessibilityWebProcessTokenReceived(data);
+    protectedPageClient()->accessibilityWebProcessTokenReceived(data, frameID, messageSenderConnection()->remoteProcessID());
 }    
 
 void WebPageProxy::makeFirstResponder()

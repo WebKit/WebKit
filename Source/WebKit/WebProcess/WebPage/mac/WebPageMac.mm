@@ -123,16 +123,12 @@ void WebPage::platformInitializeAccessibility()
     // Currently, it is also needed to allocate and initialize an NSApplication object.
     [NSApplication _accessibilityInitialize];
 
-    auto mockAccessibilityElement = adoptNS([[WKAccessibilityWebPageObject alloc] init]);
-
     // Get the pid for the starting process.
     pid_t pid = WebCore::presentingApplicationPID();
-    if ([mockAccessibilityElement respondsToSelector:@selector(accessibilitySetPresenterProcessIdentifier:)])
-        [(id)mockAccessibilityElement.get() accessibilitySetPresenterProcessIdentifier:pid];
-    [mockAccessibilityElement setWebPage:this];
-    m_mockAccessibilityElement = WTFMove(mockAccessibilityElement);
-
-    accessibilityTransferRemoteToken(accessibilityRemoteTokenData());
+    createMockAccessibilityElement(pid);
+    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+    if (localMainFrame)
+        accessibilityTransferRemoteToken(accessibilityRemoteTokenData(), localMainFrame->frameID());
 
     // Close Mach connection to Launch Services.
 #if HAVE(LS_SERVER_CONNECTION_STATUS_RELEASE_NOTIFICATIONS_MASK)
@@ -144,9 +140,20 @@ void WebPage::platformInitializeAccessibility()
     WebProcess::singleton().revokeLaunchServicesSandboxExtension();
 }
 
+void WebPage::createMockAccessibilityElement(pid_t pid)
+{
+    auto mockAccessibilityElement = adoptNS([[WKAccessibilityWebPageObject alloc] init]);
+
+    if ([mockAccessibilityElement respondsToSelector:@selector(accessibilitySetPresenterProcessIdentifier:)])
+        [(id)mockAccessibilityElement.get() accessibilitySetPresenterProcessIdentifier:pid];
+    [mockAccessibilityElement setWebPage:this];
+    m_mockAccessibilityElement = WTFMove(mockAccessibilityElement);
+}
+
 void WebPage::platformReinitialize()
 {
-    accessibilityTransferRemoteToken(accessibilityRemoteTokenData());
+    Ref frame = m_page->focusController().focusedOrMainFrame();
+    accessibilityTransferRemoteToken(accessibilityRemoteTokenData(), frame->frameID());
 }
 
 RetainPtr<NSData> WebPage::accessibilityRemoteTokenData() const
@@ -469,12 +476,27 @@ bool WebPage::performNonEditingBehaviorForSelector(const String& selector, Keybo
     return didPerformAction;
 }
 
+void WebPage::updateRemotePageAccessibilityOffset(WebCore::FrameIdentifier frameID, WebCore::IntPoint offset)
+{
+    [accessibilityRemoteObject() setRemoteFrameOffset:offset];
+}
+
+void WebPage::registerRemoteFrameAccessibilityTokens(pid_t pid, std::span<const uint8_t> elementToken)
+{
+    NSData *elementTokenData = [NSData dataWithBytes:elementToken.data() length:elementToken.size()];
+    auto remoteElement = elementTokenData.length ? adoptNS([[NSAccessibilityRemoteUIElement alloc] initWithRemoteToken:elementTokenData]) : nil;
+
+    createMockAccessibilityElement(pid);
+    [accessibilityRemoteObject() setRemoteParent:remoteElement.get()];
+}
+
 void WebPage::registerUIProcessAccessibilityTokens(std::span<const uint8_t> elementToken, std::span<const uint8_t> windowToken)
 {
     NSData *elementTokenData = [NSData dataWithBytes:elementToken.data() length:elementToken.size()];
     NSData *windowTokenData = [NSData dataWithBytes:windowToken.data() length:windowToken.size()];
     auto remoteElement = elementTokenData.length ? adoptNS([[NSAccessibilityRemoteUIElement alloc] initWithRemoteToken:elementTokenData]) : nil;
     auto remoteWindow = windowTokenData.length ? adoptNS([[NSAccessibilityRemoteUIElement alloc] initWithRemoteToken:windowTokenData]) : nil;
+
     [remoteElement setWindowUIElement:remoteWindow.get()];
     [remoteElement setTopLevelUIElement:remoteWindow.get()];
 
@@ -514,6 +536,11 @@ void WebPage::getDataSelectionForPasteboard(const String pasteboardType, Complet
 WKAccessibilityWebPageObject* WebPage::accessibilityRemoteObject()
 {
     return m_mockAccessibilityElement.get();
+}
+
+WebCore::IntPoint WebPage::accessibilityRemoteFrameOffset()
+{
+    return [m_mockAccessibilityElement accessibilityRemoteFrameOffset];
 }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)

@@ -104,6 +104,7 @@ enum class AXPropertyName : uint16_t {
     HasHighlighting,
     HasItalicFont,
     HasPlainText,
+    HasRemoteFrameChild,
     HasUnderline,
     HeaderContainer,
     HeadingLevel,
@@ -201,6 +202,8 @@ enum class AXPropertyName : uint16_t {
     PreventKeyboardDOMEventDispatch,
     RadioButtonGroup,
     RelativeFrame,
+    RemoteFrameOffset,
+    RemoteFramePlatformElement,
     RoleValue,
     RolePlatformString,
     RoleDescription,
@@ -257,6 +260,7 @@ using AXPropertyNameSet = HashSet<AXPropertyName, IntHash<AXPropertyName>, WTF::
 using AXPropertyValueVariant = std::variant<std::nullptr_t, AXID, String, bool, int, unsigned, double, float, uint64_t, AccessibilityButtonState, Color, URL, LayoutRect, FloatPoint, FloatRect, IntPoint, IntRect, std::pair<unsigned, unsigned>, Vector<AccessibilityText>, Vector<AXID>, Vector<std::pair<AXID, AXID>>, Vector<String>, Path, OptionSet<AXAncestorFlag>, InsideLink, Vector<Vector<AXID>>, CharacterRange, std::pair<AXID, CharacterRange>
 #if PLATFORM(COCOA)
     , RetainPtr<NSAttributedString>
+    , RetainPtr<id>
 #endif
 #if ENABLE(AX_THREAD_TEXT_APIS)
     , AXTextRuns
@@ -397,6 +401,7 @@ private:
     void createEmptyContent(AccessibilityObject&);
     constexpr bool isUpdatingSubtree() const { return m_rootOfSubtreeBeingUpdated; }
     constexpr void updatingSubtree(AccessibilityObject* axObject) { m_rootOfSubtreeBeingUpdated = axObject; }
+    RefPtr<AXIsolatedObject> retrieveObjectForIDFromMainThread(const AXID) const;
 
     enum class AttachWrapper : bool { OnMainThread, OnAXThread };
     struct NodeChange {
@@ -495,6 +500,30 @@ inline AXObjectCache* AXIsolatedTree::axObjectCache() const
 inline RefPtr<AXIsolatedTree> AXIsolatedTree::treeForPageID(std::optional<PageIdentifier> pageID)
 {
     return pageID ? treeForPageID(*pageID) : nullptr;
+}
+
+template<typename U>
+inline Vector<RefPtr<AXCoreObject>> AXIsolatedTree::objectsForIDs(const U& axIDs)
+{
+    ASSERT(!isMainThread());
+
+    Vector<RefPtr<AXCoreObject>> result;
+    result.reserveInitialCapacity(axIDs.size());
+    for (const auto& axID : axIDs) {
+        RefPtr object = objectForID(axID);
+        if (object) {
+            result.append(WTFMove(object));
+            continue;
+        }
+
+        object = retrieveObjectForIDFromMainThread(axID);
+        if (object) {
+            m_readerThreadNodeMap.add(axID, *object);
+            result.append(WTFMove(object));
+        }
+    }
+    result.shrinkToFit();
+    return result;
 }
 
 } // namespace WebCore

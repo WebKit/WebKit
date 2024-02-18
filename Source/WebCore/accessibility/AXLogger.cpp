@@ -883,6 +883,9 @@ void streamAXCoreObject(TextStream& stream, const AXCoreObject& object, const Op
     if (options & AXStreamOptions::Role)
         stream.dumpProperty("role", object.roleValue());
 
+    if (object.renderer())
+        stream.dumpProperty("renderName", object.renderer()->renderName());
+
     if (options & AXStreamOptions::ParentID) {
         auto* parent = object.parentObjectUnignored();
         stream.dumpProperty("parentID", parent ? parent->objectID() : AXID());

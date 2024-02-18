@@ -96,6 +96,44 @@ String WebRemoteFrameClient::renderTreeAsText(size_t baseIndent, OptionSet<Rende
     return result;
 }
 
+void WebRemoteFrameClient::unbindRemoteAccessibilityFrames(int processIdentifier)
+{
+#if PLATFORM(COCOA)
+    // Make sure AppKit system knows about our remote UI process status now.
+    if (RefPtr page = m_frame->page())
+        page->accessibilityManageRemoteElementStatus(false, processIdentifier);
+#else
+    UNUSED_PARAM(processIdentifier);
+#endif
+}
+
+void WebRemoteFrameClient::updateRemoteFrameAccessibilityOffset(WebCore::FrameIdentifier frameID, WebCore::IntPoint offset)
+{
+    if (RefPtr page = m_frame->page())
+        page->send(Messages::WebPageProxy::UpdateRemoteFrameAccessibilityOffset(frameID, offset));
+}
+
+void WebRemoteFrameClient::bindRemoteAccessibilityFrames(int processIdentifier, WebCore::FrameIdentifier frameID, const std::span<const uint8_t> dataToken, CompletionHandler<void(std::span<const uint8_t>, int)>&& completionHandler)
+{
+    RefPtr page = m_frame->page();
+    if (!page) {
+        completionHandler(std::span<const uint8_t> { }, 0);
+        return;
+    }
+
+    auto sendResult = page->sendSync(Messages::WebPageProxy::BindRemoteAccessibilityFrames(processIdentifier, frameID, dataToken));
+    if (!sendResult.succeeded())
+        return;
+
+    auto [resultToken, processIdentifierResult] = sendResult.takeReply();
+
+    // Make sure AppKit system knows about our remote UI process status now.
+#if PLATFORM(COCOA)
+    page->accessibilityManageRemoteElementStatus(true, processIdentifierResult);
+#endif
+    completionHandler(resultToken, processIdentifierResult);
+}
+
 void WebRemoteFrameClient::broadcastFrameRemovalToOtherProcesses()
 {
     WebFrameLoaderClient::broadcastFrameRemovalToOtherProcesses();

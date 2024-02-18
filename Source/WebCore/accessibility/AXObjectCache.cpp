@@ -34,6 +34,7 @@
 #include "AXIsolatedObject.h"
 #include "AXIsolatedTree.h"
 #include "AXLogger.h"
+#include "AXRemoteFrame.h"
 #include "AXTextMarker.h"
 #include "AccessibilityARIAGrid.h"
 #include "AccessibilityARIAGridCell.h"
@@ -1055,7 +1056,10 @@ AccessibilityObject* AXObjectCache::create(AccessibilityRole role)
         break;            
     case AccessibilityRole::TableHeaderContainer:
         obj = AccessibilityTableHeaderContainer::create();
-        break;   
+        break;
+    case AccessibilityRole::RemoteFrame:
+        obj = AXRemoteFrame::create();
+        break;
     case AccessibilityRole::SliderThumb:
         obj = AccessibilitySliderThumb::create();
         break;
@@ -1348,6 +1352,15 @@ void AXObjectCache::handleRecomputeCellSlots(AccessibilityTable& axTable)
     axTable.setCellSlotsDirty();
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     updateIsolatedTree(axTable, AXCellSlotsChanged);
+#endif
+}
+
+void AXObjectCache::onRemoteFrameInitialized(AXRemoteFrame& remoteFrame)
+{
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    updateIsolatedTree(remoteFrame, AXPropertyName::RemoteFramePlatformElement);
+#else
+    UNUSED_PARAM(remoteFrame);
 #endif
 }
 

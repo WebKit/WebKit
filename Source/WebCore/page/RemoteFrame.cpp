@@ -100,6 +100,21 @@ void RemoteFrame::broadcastFrameRemovalToOtherProcesses()
     m_client->broadcastFrameRemovalToOtherProcesses();
 }
 
+void RemoteFrame::updateRemoteFrameAccessibilityOffset(IntPoint offset)
+{
+    m_client->updateRemoteFrameAccessibilityOffset(frameID(), offset);
+}
+
+void RemoteFrame::unbindRemoteAccessibilityFrames(int processIdentifier)
+{
+    m_client->unbindRemoteAccessibilityFrames(processIdentifier);
+}
+
+void RemoteFrame::bindRemoteAccessibilityFrames(int processIdentifier, std::span<const uint8_t> dataToken, CompletionHandler<void(const std::span<const uint8_t>, int)>&& completionHandler)
+{
+    return m_client->bindRemoteAccessibilityFrames(processIdentifier, frameID(), dataToken, WTFMove(completionHandler));
+}
+
 FrameView* RemoteFrame::virtualView() const
 {
     return m_view.get();

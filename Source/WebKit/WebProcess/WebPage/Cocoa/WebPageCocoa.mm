@@ -77,6 +77,7 @@
 #import <WebCore/UTIRegistry.h>
 #import <WebCore/UTIUtilities.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
+#import <pal/spi/cocoa/NSAccessibilitySPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
 
@@ -404,10 +405,51 @@ void WebPage::clearDictationAlternatives(Vector<DictationContext>&& contexts)
     }, DocumentMarker::Type::DictationAlternatives);
 }
 
-void WebPage::accessibilityTransferRemoteToken(RetainPtr<NSData> remoteToken)
+void WebPage::accessibilityTransferRemoteToken(RetainPtr<NSData> remoteToken, FrameIdentifier frameID)
 {
     std::span dataToken(reinterpret_cast<const uint8_t*>([remoteToken bytes]), [remoteToken length]);
-    send(Messages::WebPageProxy::RegisterWebProcessAccessibilityToken(dataToken));
+    send(Messages::WebPageProxy::RegisterWebProcessAccessibilityToken(dataToken, frameID));
+}
+
+void WebPage::accessibilityManageRemoteElementStatus(bool registerStatus, int processIdentifier)
+{
+#if PLATFORM(MAC)
+    if (registerStatus)
+        [NSAccessibilityRemoteUIElement registerRemoteUIProcessIdentifier:processIdentifier];
+    else
+        [NSAccessibilityRemoteUIElement unregisterRemoteUIProcessIdentifier:processIdentifier];
+#else
+    UNUSED_PARAM(registerStatus);
+    UNUSED_PARAM(processIdentifier);
+#endif
+}
+
+void WebPage::bindRemoteAccessibilityFrames(int processIdentifier, WebCore::FrameIdentifier frameID, std::span<const uint8_t> dataToken, CompletionHandler<void(std::span<const uint8_t>, int)>&& completionHandler)
+{
+    RefPtr webFrame = WebProcess::singleton().webFrame(frameID);
+    if (!webFrame) {
+        ASSERT_NOT_REACHED();
+        return completionHandler({ }, 0);
+    }
+
+    RefPtr coreLocalFrame = webFrame->coreLocalFrame();
+    if (!coreLocalFrame) {
+        ASSERT_NOT_REACHED();
+        return completionHandler({ }, 0);
+    }
+
+    auto* renderer = coreLocalFrame->contentRenderer();
+    if (!renderer) {
+        ASSERT_NOT_REACHED();
+        return completionHandler({ }, 0);
+    }
+
+    registerRemoteFrameAccessibilityTokens(processIdentifier, dataToken);
+
+    // Get our remote token data and send back to the RemoteFrame.
+    auto remoteToken = accessibilityRemoteTokenData();
+    std::span remoteDataToken(reinterpret_cast<const uint8_t*>([remoteToken bytes]), [remoteToken length]);
+    completionHandler(remoteDataToken, getpid());
 }
 
 #if ENABLE(APPLE_PAY)

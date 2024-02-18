@@ -216,6 +216,16 @@ void WebProcess::platformSetCacheModel(CacheModel)
 {
 }
 
+void WebProcess::bindAccessibilityFrameWithData(WebCore::FrameIdentifier frameID, std::span<const uint8_t> data)
+{
+    if (!m_accessibilityRemoteFrameTokenCache)
+        m_accessibilityRemoteFrameTokenCache = adoptNS([[NSMutableDictionary alloc] init]);
+
+    auto frameInt = frameID.object().toUInt64();
+    NSData *nsData = [NSData dataWithBytes:data.data() length:data.size()];
+    [m_accessibilityRemoteFrameTokenCache setObject:nsData forKey:@(frameInt)];
+}
+
 id WebProcess::accessibilityFocusedUIElement()
 {
     auto retrieveFocusedUIElementFromMainThread = [] () {

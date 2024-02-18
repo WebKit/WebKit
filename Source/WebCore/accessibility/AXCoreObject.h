@@ -205,6 +205,7 @@ enum class AccessibilityRole {
     ProgressIndicator,
     RadioButton,
     RadioGroup,
+    RemoteFrame,
     RowHeader,
     Row,
     RowGroup,
@@ -442,6 +443,8 @@ ALWAYS_INLINE String accessibilityRoleToString(AccessibilityRole role)
         return "RadioButton"_s;
     case AccessibilityRole::RadioGroup:
         return "RadioGroup"_s;
+    case AccessibilityRole::RemoteFrame:
+        return "RemoteFrame"_s;
     case AccessibilityRole::RowHeader:
         return "RowHeader"_s;
     case AccessibilityRole::Row:
@@ -815,6 +818,7 @@ public:
     virtual bool isAccessibilityARIAGridRowInstance() const = 0;
     virtual bool isAccessibilityARIAGridCellInstance() const = 0;
     virtual bool isAXIsolatedObjectInstance() const = 0;
+    virtual bool isAXRemoteFrame() const = 0;
 
     bool isHeading() const { return roleValue() == AccessibilityRole::Heading; }
     virtual bool isLink() const = 0;
@@ -919,6 +923,12 @@ public:
     bool isTreeGrid() const { return roleValue() == AccessibilityRole::TreeGrid; }
     bool isTreeItem() const { return roleValue() == AccessibilityRole::TreeItem; }
     bool isScrollbar() const { return roleValue() == AccessibilityRole::ScrollBar; }
+    bool isRemoteFrame() const { return roleValue() == AccessibilityRole::RemoteFrame; }
+#if PLATFORM(COCOA)
+    virtual RetainPtr<id> remoteFramePlatformElement() const = 0;
+#endif
+    virtual bool hasRemoteFrameChild() const = 0;
+
     bool isButton() const;
     virtual bool isMeter() const = 0;
 
@@ -1159,6 +1169,8 @@ public:
     // Viewport-relative means that when the page scrolls, the portion of the page in the viewport changes, and thus
     // any viewport-relative rects do too (since they are either closer to or farther from the viewport origin after the scroll).
     virtual FloatPoint screenRelativePosition() const = 0;
+    // This is the amount that the RemoteFrame is offset from its containing parent.
+    virtual IntPoint remoteFrameOffset() const = 0;
 
     virtual FloatRect convertFrameToSpace(const FloatRect&, AccessibilityConversionSpace) const = 0;
 #if PLATFORM(COCOA)

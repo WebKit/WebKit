@@ -66,6 +66,9 @@
 #include <WebCore/ScreenProperties.h>
 #include <dispatch/dispatch.h>
 #include <wtf/MachSendRight.h>
+
+OBJC_CLASS NSMutableDictionary;
+
 #endif
 
 #if PLATFORM(GTK)
@@ -87,6 +90,7 @@
 #if USE(RUNNINGBOARD)
 #include "WebSQLiteDatabaseTracker.h"
 #endif
+
 
 namespace API {
 class Object;
@@ -515,6 +519,7 @@ private:
     void platformSetCacheModel(CacheModel);
 
     void setEnhancedAccessibility(bool);
+    void bindAccessibilityFrameWithData(WebCore::FrameIdentifier, std::span<const uint8_t>);
 
     void startMemorySampler(SandboxExtension::Handle&&, const String&, const double);
     void stopMemorySampler();
@@ -831,6 +836,7 @@ private:
 #if PLATFORM(COCOA)
     HashCountedSet<String> m_pendingPasteboardWriteCounts;
     std::optional<audit_token_t> m_auditTokenForSelf;
+    RetainPtr<NSMutableDictionary> m_accessibilityRemoteFrameTokenCache;
 #endif
 
 #if ENABLE(GPU_PROCESS)

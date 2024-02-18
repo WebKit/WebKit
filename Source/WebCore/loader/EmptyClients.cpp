@@ -1085,6 +1085,11 @@ RemoteAXObjectRef EmptyFrameLoaderClient::accessibilityRemoteObject()
     return nullptr;
 }
 
+IntPoint EmptyFrameLoaderClient::accessibilityRemoteFrameOffset()
+{
+    return { };
+}
+
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 void EmptyFrameLoaderClient::setAXIsolatedTreeRoot(WebCore::AXCoreObject*)
 {

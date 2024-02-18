@@ -47,6 +47,7 @@ class TextStream;
 
 namespace WebCore {
 
+class AXRemoteFrame;
 class AccessibilityTable;
 class AccessibilityTableCell;
 class Document;
@@ -246,6 +247,7 @@ public:
     void deferNodeAddedOrRemoved(Node*);
     void handleScrolledToAnchor(const Node* anchorNode);
     void onScrollbarUpdate(ScrollView*);
+    void onRemoteFrameInitialized(AXRemoteFrame&);
 
     bool isRetrievingCurrentModalNode() { return m_isRetrievingCurrentModalNode; }
     Node* modalNode();

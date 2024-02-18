@@ -30,6 +30,7 @@
 
 namespace WebCore {
 
+class DataSegment;
 class FrameLoadRequest;
 class IntSize;
 class SecurityOriginData;
@@ -48,6 +49,9 @@ public:
     virtual String renderTreeAsText(size_t baseIndent, OptionSet<RenderAsTextFlag>) = 0;
     virtual void broadcastFrameRemovalToOtherProcesses() = 0;
     virtual void closePage() = 0;
+    virtual void bindRemoteAccessibilityFrames(int processIdentifier, FrameIdentifier target, const std::span<const uint8_t> dataToken, CompletionHandler<void(const std::span<const uint8_t>, int)>&&) = 0;
+    virtual void updateRemoteFrameAccessibilityOffset(FrameIdentifier target, IntPoint) = 0;
+    virtual void unbindRemoteAccessibilityFrames(int) = 0;
     virtual void focus() = 0;
     virtual void unfocus() = 0;
     virtual ~RemoteFrameClient() { }

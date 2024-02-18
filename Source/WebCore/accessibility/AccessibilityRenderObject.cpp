@@ -2413,7 +2413,7 @@ void AccessibilityRenderObject::addAttachmentChildren()
 
     // LocalFrameView's need to be inserted into the AX hierarchy when encountered.
     Widget* widget = widgetForAttachmentView();
-    if (!widget || !widget->isLocalFrameView())
+    if (!widget || !(widget->isLocalFrameView() || widget->isRemoteFrameView()))
         return;
     
     addChild(axObjectCache()->getOrCreate(widget));
@@ -2568,7 +2568,7 @@ void AccessibilityRenderObject::addChildren()
         auto owners = object.owners();
         if (owners.size() && !owners.contains(this))
             return;
-        
+
         addChild(&object);
     };
 

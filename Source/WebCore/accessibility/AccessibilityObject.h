@@ -102,6 +102,7 @@ public:
     virtual bool isAccessibilityNodeObject() const { return false; }
     bool isAccessibilityRenderObject() const override { return false; }
     virtual bool isAccessibilityScrollbar() const { return false; }
+    bool isAXRemoteFrame() const override { return false; }
     virtual bool isAccessibilityScrollViewInstance() const { return false; }
     virtual bool isAccessibilitySVGRoot() const { return false; }
     bool isAccessibilityTableInstance() const override { return false; }
@@ -462,10 +463,14 @@ public:
     Widget* widgetForAttachmentView() const override { return nullptr; }
     bool isPlugin() const override { return false; }
 
+    IntPoint remoteFrameOffset() const override;
 #if PLATFORM(COCOA)
     RemoteAXObjectRef remoteParentObject() const override;
     FloatRect convertRectToPlatformSpace(const FloatRect&, AccessibilityConversionSpace) const override;
+    RetainPtr<id> remoteFramePlatformElement() const override { return nil; }
 #endif
+    bool hasRemoteFrameChild() const override { return false; }
+
     Page* page() const override;
     Document* document() const override;
     RefPtr<Document> protectedDocument() const;

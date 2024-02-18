@@ -243,12 +243,15 @@ void WebPage::platformInitializeAccessibility()
     m_mockAccessibilityElement = adoptNS([[WKAccessibilityWebPageObject alloc] init]);
     [m_mockAccessibilityElement setWebPage:this];
 
-    accessibilityTransferRemoteToken(accessibilityRemoteTokenData());
+    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+    if (localMainFrame)
+        accessibilityTransferRemoteToken(accessibilityRemoteTokenData(), localMainFrame->frameID());
 }
 
 void WebPage::platformReinitialize()
 {
-    accessibilityTransferRemoteToken(accessibilityRemoteTokenData());
+    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
+    accessibilityTransferRemoteToken(accessibilityRemoteTokenData(), frame->frameID());
 }
 
 RetainPtr<NSData> WebPage::accessibilityRemoteTokenData() const
@@ -644,6 +647,16 @@ NSObject *WebPage::accessibilityObjectForMainFramePlugin()
     return nil;
 }
     
+void WebPage::updateRemotePageAccessibilityOffset(WebCore::FrameIdentifier, WebCore::IntPoint)
+{
+    // FIXME: Implement
+}
+
+void WebPage::registerRemoteFrameAccessibilityTokens(pid_t, std::span<const uint8_t>)
+{
+    // FIXME: Implement
+}
+
 void WebPage::registerUIProcessAccessibilityTokens(std::span<const uint8_t> elementToken, std::span<const uint8_t>)
 {
     NSData *elementTokenData = [NSData dataWithBytes:elementToken.data() length:elementToken.size()];
@@ -660,6 +673,12 @@ void WebPage::getDataSelectionForPasteboard(const String, CompletionHandler<void
 {
     notImplemented();
     completionHandler({ });
+}
+
+WebCore::IntPoint WebPage::accessibilityRemoteFrameOffset()
+{
+    notImplemented();
+    return { };
 }
 
 WKAccessibilityWebPageObject* WebPage::accessibilityRemoteObject()

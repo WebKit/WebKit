@@ -63,6 +63,8 @@ void AXIsolatedObject::initializePlatformProperties(const Ref<const Accessibilit
         }
     }
 
+    setProperty(AXPropertyName::RemoteFramePlatformElement, object->remoteFramePlatformElement());
+
     // Cache the StringValue only if it differs from the AttributedText.
     auto value = object->stringValue();
     if (!attributedText || value != String([attributedText string]))
@@ -203,6 +205,11 @@ unsigned AXIsolatedObject::textLength() const
     if (auto attributedText = propertyValue<RetainPtr<NSAttributedString>>(AXPropertyName::AttributedText))
         return [attributedText length];
     return 0;
+}
+
+RetainPtr<id> AXIsolatedObject::remoteFramePlatformElement() const
+{
+    return propertyValue<RetainPtr<id>>(AXPropertyName::RemoteFramePlatformElement);
 }
 
 RetainPtr<NSAttributedString> AXIsolatedObject::attributedStringForTextMarkerRange(AXTextMarkerRange&& markerRange, SpellCheck spellCheck) const

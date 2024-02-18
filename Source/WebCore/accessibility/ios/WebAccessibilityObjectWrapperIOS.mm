@@ -1112,6 +1112,7 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
     case AccessibilityRole::Ignored:
     case AccessibilityRole::LineBreak:
     case AccessibilityRole::Presentational:
+    case AccessibilityRole::RemoteFrame:
     case AccessibilityRole::Unknown:
         return false;
     }

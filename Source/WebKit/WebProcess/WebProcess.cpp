@@ -1571,6 +1571,10 @@ void WebProcess::updateCPUMonitorState(CPUMonitorUpdateReason)
 {
 }
 
+void WebProcess::bindAccessibilityFrameWithData(WebCore::FrameIdentifier, std::span<const uint8_t>)
+{
+}
+
 #endif
 
 void WebProcess::pageActivityStateDidChange(PageIdentifier, OptionSet<WebCore::ActivityState> changed)

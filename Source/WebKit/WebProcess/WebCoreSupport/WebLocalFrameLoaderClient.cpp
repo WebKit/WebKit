@@ -1806,6 +1806,12 @@ void WebLocalFrameLoaderClient::dispatchWillDestroyGlobalObjectForDOMWindowExten
 
 #if PLATFORM(COCOA)
     
+WebCore::IntPoint WebLocalFrameLoaderClient::accessibilityRemoteFrameOffset()
+{
+    RefPtr webPage = m_frame->page();
+    return webPage ? webPage->accessibilityRemoteFrameOffset() : IntPoint();
+}
+
 RemoteAXObjectRef WebLocalFrameLoaderClient::accessibilityRemoteObject()
 {
     RefPtr webPage = m_frame->page();
