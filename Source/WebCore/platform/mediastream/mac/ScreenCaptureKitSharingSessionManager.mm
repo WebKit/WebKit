@@ -527,7 +527,7 @@ void ScreenCaptureKitSharingSessionManager::cancelPendingSessionForDevice(const 
     ASSERT(isMainThread());
 
     if (m_pendingContentFilter.get() != device) {
-        RELEASE_LOG_ERROR(WebRTC, "ScreenCaptureKitSharingSessionManager::createSessionSourceForDevice - unknown capture device.");
+        RELEASE_LOG_ERROR(WebRTC, "ScreenCaptureKitSharingSessionManager::cancelPendingSessionForDevice - unknown capture device.");
         return;
     }
 
@@ -535,19 +535,25 @@ void ScreenCaptureKitSharingSessionManager::cancelPendingSessionForDevice(const 
     cancelPicking();
 }
 
-RefPtr<ScreenCaptureSessionSource> ScreenCaptureKitSharingSessionManager::createSessionSourceForDevice(WeakPtr<ScreenCaptureSessionSource::Observer> observer, const CaptureDevice& device, SCStreamConfiguration* configuration, SCStreamDelegate* delegate)
+RetainPtr<SCContentFilter> ScreenCaptureKitSharingSessionManager::contentFilterFromCaptureDevice(const CaptureDevice& device)
 {
     ASSERT(isMainThread());
 
     if (m_pendingContentFilter.get() != device) {
-        RELEASE_LOG_ERROR(WebRTC, "ScreenCaptureKitSharingSessionManager::createSessionSourceForDevice - unknown capture device.");
+        RELEASE_LOG_ERROR(WebRTC, "ScreenCaptureKitSharingSessionManager::contentFilterFromCaptureDevice - unknown capture device.");
         return nullptr;
     }
+    return std::exchange(m_pendingContentFilter, { });
+}
+
+RefPtr<ScreenCaptureSessionSource> ScreenCaptureKitSharingSessionManager::createSessionSourceForDevice(WeakPtr<ScreenCaptureSessionSource::Observer> observer, SCContentFilter* contentFilter, SCStreamConfiguration* configuration, SCStreamDelegate* delegate)
+{
+    ASSERT(isMainThread());
 
     RetainPtr<SCStream> stream;
 #if HAVE(SC_CONTENT_SHARING_PICKER)
     if (useSCContentSharingPicker())
-        stream = adoptNS([PAL::allocSCStreamInstance() initWithFilter:m_pendingContentFilter.get() configuration:configuration delegate:(id<SCStreamDelegate> _Nullable)delegate]);
+        stream = adoptNS([PAL::allocSCStreamInstance() initWithFilter:contentFilter configuration:configuration delegate:(id<SCStreamDelegate> _Nullable)delegate]);
     else
 #endif
         stream = adoptNS([PAL::allocSCStreamInstance() initWithSharingSession:m_pendingSession.get() captureOutputProperties:configuration delegate:(id<SCStreamDelegate> _Nullable)delegate]);
@@ -564,7 +570,7 @@ RefPtr<ScreenCaptureSessionSource> ScreenCaptureKitSharingSessionManager::create
         cleanupSessionSource(source);
     };
 
-    auto newSession = ScreenCaptureSessionSource::create(WTFMove(observer), WTFMove(stream), WTFMove(m_pendingContentFilter), WTFMove(m_pendingSession), WTFMove(cleanupFunction));
+    auto newSession = ScreenCaptureSessionSource::create(WTFMove(observer), WTFMove(stream), contentFilter, WTFMove(m_pendingSession), WTFMove(cleanupFunction));
     m_activeSources.append(newSession);
 
     return newSession;
