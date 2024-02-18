@@ -28,7 +28,7 @@
 #include "SQLValue.h"
 #include "SQLiteDatabase.h"
 #include <span>
-#include <wtf/CheckedRef.h>
+#include <wtf/WeakRef.h>
 
 struct sqlite3_stmt;
 
@@ -93,7 +93,7 @@ private:
     template<typename T, typename... Args> bool bindImpl(int i, T first, Args&&... args);
     template<typename T> bool bindImpl(int, T);
 
-    CheckedRef<SQLiteDatabase> m_database;
+    WeakRef<SQLiteDatabase> m_database;
     sqlite3_stmt* m_statement;
 };
 
