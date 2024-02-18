@@ -1188,23 +1188,26 @@ void InlineDisplayContentBuilder::applyRubyOverhang(InlineDisplay::Boxes& displa
                     formattingContext.geometryForBox(*layoutBox.associatedRubyAnnotationBox()).moveHorizontally(LayoutUnit { -shiftValue });
             }
         };
-        if (beforeOverhang)
-            moveBoxRangeToVisualLeft(rubyBaseStart, displayBoxes.size() - 1, beforeOverhang);
+        auto hasJustifiedAdjacentAfterContent = [&] {
+            if (startEndPair.end() == displayBoxes.size())
+                return false;
+            auto& afterRubyBaseDisplayBox = displayBoxes[startEndPair.end()];
+            if (afterRubyBaseDisplayBox.layoutBox().isRubyBase()) {
+                // Adjacent content is also a ruby base.
+                return false;
+            }
+            return !!afterRubyBaseDisplayBox.expansion().horizontalExpansion;
+        }();
+
+        if (beforeOverhang) {
+            // When "before" adjacent content slightly pulls the rest of the content on the line leftward, justify content should stay intact.
+            moveBoxRangeToVisualLeft(rubyBaseStart, hasJustifiedAdjacentAfterContent ? startEndPair.end() : displayBoxes.size() - 1, beforeOverhang);
+        }
         if (afterOverhang) {
-            auto hasJustifiedAdjacentAfterContent = [&] {
-                if (startEndPair.end() == displayBoxes.size())
-                    return false;
-                auto& afterRubyBaseDisplayBox = displayBoxes[startEndPair.end()];
-                if (afterRubyBaseDisplayBox.layoutBox().isRubyBase()) {
-                    // Adjacent content is also a ruby base.
-                    return false;
-                }
-                return !!afterRubyBaseDisplayBox.expansion().horizontalExpansion;
-            };
             // Normally we shift all the "after" boxes to the left here as one monolithic content
             // but in case of justified alignment we can only move the adjacent run under the annotation
             // and expand the justified space to keep the rest of the runs stationary.
-            if (hasJustifiedAdjacentAfterContent()) {
+            if (hasJustifiedAdjacentAfterContent) {
                 auto& afterRubyBaseDisplayBox = displayBoxes[startEndPair.end()];
                 auto expansion = afterRubyBaseDisplayBox.expansion();
                 auto inflateValue = afterOverhang + beforeOverhang;
