@@ -66,11 +66,6 @@ VTTRegion::VTTRegion(ScriptExecutionContext& context)
 
 VTTRegion::~VTTRegion() = default;
 
-void VTTRegion::setTrack(TextTrack* track)
-{
-    m_track = track;
-}
-
 void VTTRegion::setId(const String& id)
 {
     m_id = id;

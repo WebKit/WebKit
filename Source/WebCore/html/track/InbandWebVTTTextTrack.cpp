@@ -99,10 +99,8 @@ void InbandWebVTTTextTrack::newCuesParsed()
     
 void InbandWebVTTTextTrack::newRegionsParsed()
 {
-    for (auto& region : parser().takeRegions()) {
-        region->setTrack(this);
+    for (auto& region : parser().takeRegions())
         regions()->add(WTFMove(region));
-    }
 }
 
 void InbandWebVTTTextTrack::newStyleSheetsParsed()

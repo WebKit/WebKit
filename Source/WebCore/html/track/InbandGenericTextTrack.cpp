@@ -259,10 +259,8 @@ void InbandGenericTextTrack::newCuesParsed()
 
 void InbandGenericTextTrack::newRegionsParsed()
 {
-    for (auto& region : parser().takeRegions()) {
-        region->setTrack(this);
+    for (auto& region : parser().takeRegions())
         regions()->add(WTFMove(region));
-    }
 }
 
 void InbandGenericTextTrack::newStyleSheetsParsed()

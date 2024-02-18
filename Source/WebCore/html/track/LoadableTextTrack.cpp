@@ -129,10 +129,8 @@ void LoadableTextTrack::cueLoadingCompleted(TextTrackLoader& loader, bool loadin
 void LoadableTextTrack::newRegionsAvailable(TextTrackLoader& loader)
 {
     ASSERT_UNUSED(loader, m_loader.get() == &loader);
-    for (auto& newRegion : m_loader->getNewRegions()) {
-        newRegion->setTrack(this);
+    for (auto& newRegion : m_loader->getNewRegions())
         regions()->add(WTFMove(newRegion));
-    }
 }
 
 void LoadableTextTrack::newStyleSheetsAvailable(TextTrackLoader& loader)
