@@ -1742,6 +1742,7 @@ $(PROJECT_DIR)/inspector/InspectorAuditAccessibilityObject.idl
 $(PROJECT_DIR)/inspector/InspectorAuditDOMObject.idl
 $(PROJECT_DIR)/inspector/InspectorAuditResourcesObject.idl
 $(PROJECT_DIR)/inspector/InspectorFrontendHost.idl
+$(PROJECT_DIR)/inspector/RTCLogsCallback.idl
 $(PROJECT_DIR)/loader/COEPInheritenceViolationReportBody.idl
 $(PROJECT_DIR)/loader/CORPViolationReportBody.idl
 $(PROJECT_DIR)/loader/appcache/DOMApplicationCache.idl

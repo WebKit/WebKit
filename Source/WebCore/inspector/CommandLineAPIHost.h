@@ -46,6 +46,10 @@ class EventTarget;
 class JSDOMGlobalObject;
 class Storage;
 
+#if ENABLE(WEB_RTC)
+class RTCLogsCallback;
+#endif
+
 struct EventListenerInfo;
 
 class CommandLineAPIHost : public RefCounted<CommandLineAPIHost> {
@@ -82,6 +86,10 @@ public:
 
     using EventListenersRecord = Vector<KeyValuePair<String, Vector<ListenerEntry>>>;
     EventListenersRecord getEventListeners(JSC::JSGlobalObject&, EventTarget&);
+
+#if ENABLE(WEB_RTC)
+    void gatherRTCLogs(JSC::JSGlobalObject&, RefPtr<RTCLogsCallback>&&);
+#endif
 
     String databaseId(Database&);
     String storageId(Storage&);

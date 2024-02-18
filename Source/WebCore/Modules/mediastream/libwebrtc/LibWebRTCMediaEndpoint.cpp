@@ -785,10 +785,16 @@ public:
     {
     }
 
-    String toJSONString() const { return String::fromLatin1(m_stats.ToJson().c_str()); }
+    String toJSONString() const
+    {
+        if (m_jsonString.isNull())
+            m_jsonString = String::fromLatin1(m_stats.ToJson().c_str());
+        return m_jsonString;
+    }
 
 private:
     const webrtc::RTCStats& m_stats;
+    mutable String m_jsonString;
 };
 
 void LibWebRTCMediaEndpoint::OnStatsDelivered(const rtc::scoped_refptr<const webrtc::RTCStatsReport>& report)
@@ -805,16 +811,15 @@ void LibWebRTCMediaEndpoint::OnStatsDelivered(const rtc::scoped_refptr<const web
         }
 
         for (auto iterator = report->begin(); iterator != report->end(); ++iterator) {
+            RTCStatsLogger statsLogger { *iterator };
+            if (m_isGatheringRTCLogs)
+                m_peerConnectionBackend.provideStatLogs(statsLogger.toJSONString());
+
             if (logger().willLog(logChannel(), WTFLogLevel::Debug)) {
                 // Stats are very verbose, let's only display them in inspector console in verbose mode.
-                logger().debug(LogWebRTC,
-                    Logger::LogSiteIdentifier("LibWebRTCMediaEndpoint", "OnStatsDelivered", logIdentifier()),
-                    RTCStatsLogger { *iterator });
-            } else {
-                logger().logAlways(LogWebRTCStats,
-                    Logger::LogSiteIdentifier("LibWebRTCMediaEndpoint", "OnStatsDelivered", logIdentifier()),
-                    RTCStatsLogger { *iterator });
-            }
+                logger().debug(LogWebRTC, Logger::LogSiteIdentifier("LibWebRTCMediaEndpoint", "OnStatsDelivered", logIdentifier()), statsLogger);
+            } else
+                logger().logAlways(LogWebRTCStats, Logger::LogSiteIdentifier("LibWebRTCMediaEndpoint", "OnStatsDelivered", logIdentifier()), statsLogger);
         }
     });
 #else
@@ -844,6 +849,9 @@ WTFLogChannel& LibWebRTCMediaEndpoint::logChannel() const
 
 Seconds LibWebRTCMediaEndpoint::statsLogInterval(int64_t reportTimestamp) const
 {
+    if (m_isGatheringRTCLogs)
+        return 1_s;
+
     if (logger().willLog(logChannel(), WTFLogLevel::Info))
         return 2_s;
 
@@ -853,6 +861,17 @@ Seconds LibWebRTCMediaEndpoint::statsLogInterval(int64_t reportTimestamp) const
     return 4_s;
 }
 #endif
+
+void LibWebRTCMediaEndpoint::startRTCLogs()
+{
+    m_isGatheringRTCLogs = true;
+    startLoggingStats();
+}
+
+void LibWebRTCMediaEndpoint::stopRTCLogs()
+{
+    m_isGatheringRTCLogs = false;
+}
 
 } // namespace WebCore
 

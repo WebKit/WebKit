@@ -281,6 +281,10 @@ struct EventTrackingRegions;
 struct SystemPreviewInfo;
 #endif
 
+#if ENABLE(WEB_RTC)
+class RTCPeerConnection;
+#endif
+
 template<typename> class ExceptionOr;
 
 enum class CollectionType : uint8_t;
@@ -858,6 +862,8 @@ public:
 #if ENABLE(WEB_RTC)
     RTCNetworkManager* rtcNetworkManager() { return m_rtcNetworkManager.get(); }
     WEBCORE_EXPORT void setRTCNetworkManager(Ref<RTCNetworkManager>&&);
+    void startGatheringRTCLogs(Function<void(String&& logType, String&& logMessage, String&& logLevel, RefPtr<RTCPeerConnection>&&)>&&);
+    void stopGatheringRTCLogs();
 #endif
 
     bool canNavigate(Frame* targetFrame, const URL& destinationURL = URL());

@@ -4078,6 +4078,7 @@ JSPushSubscriptionOptions.cpp
 JSPushSubscriptionOptionsInit.cpp
 JSRedEyeReduction.cpp
 JSRTCAnswerOptions.cpp
+JSRTCLogsCallback.cpp
 JSRTCCertificate.cpp
 JSRTCConfiguration.cpp
 JSRTCDTMFSender.cpp

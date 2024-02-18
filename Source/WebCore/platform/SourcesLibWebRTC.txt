@@ -43,5 +43,6 @@ platform/libwebrtc/LibWebRTCVPXVideoEncoder.cpp
 
 platform/mediastream/libwebrtc/LibWebRTCAudioModule.cpp
 platform/mediastream/libwebrtc/LibWebRTCDTMFSenderBackend.cpp
+platform/mediastream/libwebrtc/LibWebRTCLogSink.cpp
 platform/mediastream/libwebrtc/LibWebRTCProvider.cpp
 platform/mediastream/libwebrtc/VideoFrameLibWebRTC.cpp

@@ -1090,6 +1090,16 @@ WTFLogChannel& RTCPeerConnection::logChannel() const
 }
 #endif
 
+void RTCPeerConnection::startGatheringStatLogs(Function<void(String&&)>&& callback)
+{
+    m_backend->startGatheringStatLogs(WTFMove(callback));
+}
+
+void RTCPeerConnection::stopGatheringStatLogs()
+{
+    m_backend->stopGatheringStatLogs();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_RTC)

@@ -122,6 +122,9 @@ public:
 
     bool isNegotiationNeeded(uint32_t) const;
 
+    void startRTCLogs();
+    void stopRTCLogs();
+
 private:
     LibWebRTCMediaEndpoint(LibWebRTCPeerConnectionBackend&, LibWebRTCProvider&);
 
@@ -201,6 +204,7 @@ private:
     Ref<const Logger> m_logger;
     const void* m_logIdentifier;
 #endif
+    bool m_isGatheringRTCLogs { false };
 };
 
 } // namespace WebCore

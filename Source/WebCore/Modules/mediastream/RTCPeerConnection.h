@@ -208,6 +208,9 @@ public:
     WTFLogChannel& logChannel() const final;
 #endif
 
+    void startGatheringStatLogs(Function<void(String&&)>&&);
+    void stopGatheringStatLogs();
+
 private:
     RTCPeerConnection(Document&);
 

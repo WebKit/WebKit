@@ -98,6 +98,11 @@ private:
 private:
     bool isLocalDescriptionSet() const final { return m_isLocalDescriptionSet; }
 
+    void startGatheringStatLogs(Function<void(String&&)>&&) final;
+    void stopGatheringStatLogs() final;
+    void provideStatLogs(String&&);
+    friend class RtcEventLogOutput;
+
     template<typename T>
     ExceptionOr<Ref<RTCRtpTransceiver>> addTransceiverFromTrackOrKind(T&& trackOrKind, const RTCRtpTransceiverInit&);
 
@@ -114,6 +119,8 @@ private:
 
     Vector<std::unique_ptr<webrtc::IceCandidateInterface>> m_pendingCandidates;
     Vector<Ref<RTCRtpReceiver>> m_pendingReceivers;
+
+    Function<void(String&&)> m_rtcStatsLogCallback;
 };
 
 } // namespace WebCore

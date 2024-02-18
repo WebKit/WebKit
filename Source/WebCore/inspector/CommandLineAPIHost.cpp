@@ -47,9 +47,15 @@
 #include <JavaScriptCore/InspectorAgent.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSLock.h>
+#include <JavaScriptCore/ObjectConstructor.h>
 #include <wtf/JSONValues.h>
 #include <wtf/RefPtr.h>
 #include <wtf/StdLibExtras.h>
+
+#if ENABLE(WEB_RTC)
+#include "JSRTCPeerConnection.h"
+#include "RTCLogsCallback.h"
+#endif
 
 namespace WebCore {
 
@@ -135,6 +141,27 @@ CommandLineAPIHost::EventListenersRecord CommandLineAPIHost::getEventListeners(J
 
     return result;
 }
+
+#if ENABLE(WEB_RTC)
+void CommandLineAPIHost::gatherRTCLogs(JSGlobalObject& globalObject, RefPtr<RTCLogsCallback>&& callback)
+{
+    RefPtr document = dynamicDowncast<Document>(jsCast<JSDOMGlobalObject*>(&globalObject)->scriptExecutionContext());
+    if (!document)
+        return;
+
+    if (!callback) {
+        document->stopGatheringRTCLogs();
+        return;
+    }
+
+    document->startGatheringRTCLogs([callback = callback.releaseNonNull()] (auto&& logType, auto&& logMessage, auto&& logLevel, auto&& connection) mutable {
+        ASSERT(!logType.isNull());
+        ASSERT(!logMessage.isNull());
+
+        callback->handleEvent({ WTFMove(logType), WTFMove(logMessage), WTFMove(logLevel), WTFMove(connection) });
+    });
+}
+#endif
 
 void CommandLineAPIHost::clearConsoleMessages()
 {
