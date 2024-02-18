@@ -49,7 +49,7 @@
 #import <wtf/text/StringHash.h>
 
 #if PLATFORM(IOS_FAMILY)
-#import <UIKit/UIColor.h>
+#import <WebCore/UIFoundationSoftLink.h>
 #import <UIKit/UIFont.h>
 #import <UIKit/UIFontDescriptor.h>
 #import <UIKit/UIKit.h>
@@ -334,6 +334,13 @@ template<> Class getClass<PlatformColor>()
 {
     return PlatformColorClass;
 }
+
+#if PLATFORM(IOS_FAMILY)
+template<> Class getClass<PlatformNSColor>()
+{
+    return PlatformNSColorClass;
+}
+#endif
 
 template<> Class getClass<NSShadow>()
 {
@@ -734,6 +741,9 @@ ENCODE_WITH_COREIPC_WRAPPER(NSValue);
 ENCODE_WITH_COREIPC_WRAPPER_NAMED(NSPersonNameComponents, CoreIPCPersonNameComponents);
 ENCODE_WITH_COREIPC_WRAPPER_NAMED(NSDateComponents, CoreIPCDateComponents);
 ENCODE_WITH_COREIPC_WRAPPER_NAMED(PlatformColor, CoreIPCColor);
+#if PLATFORM(IOS_FAMILY)
+ENCODE_WITH_COREIPC_WRAPPER_NAMED(PlatformNSColor, CoreIPCColor);
+#endif
 ENCODE_WITH_COREIPC_WRAPPER_NAMED(NSData, CoreIPCData);
 ENCODE_WITH_COREIPC_WRAPPER_NAMED(NSURL, CoreIPCURL);
 ENCODE_WITH_COREIPC_WRAPPER_NAMED(NSNull, CoreIPCNull);

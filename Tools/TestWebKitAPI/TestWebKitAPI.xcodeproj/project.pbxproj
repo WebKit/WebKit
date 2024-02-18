@@ -252,6 +252,7 @@
 		41E67A8525D16E83007B0A4C /* STUNMessageParsingTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41E67A8425D16E83007B0A4C /* STUNMessageParsingTest.cpp */; };
 		41EBA9F228ABA06700953013 /* ImageRotationSessionVT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41EBA9F128ABA06500953013 /* ImageRotationSessionVT.cpp */; };
 		44077BB123144B5000179E2D /* DataDetectorsTestIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 44077BB0231449D200179E2D /* DataDetectorsTestIOS.mm */; };
+		441A29E12B7EE84B00010BED /* CocoaColorTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 441A29D92B7EE84B00010BED /* CocoaColorTests.mm */; };
 		4433A396208044140091ED57 /* SynchronousTimeoutTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4433A395208044130091ED57 /* SynchronousTimeoutTests.mm */; };
 		44449DC12718B4B700E821B5 /* OSObjectPtrCocoaARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 44449DBF2718B4B600E821B5 /* OSObjectPtrCocoaARC.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		44449DC22718B4B700E821B5 /* OSObjectPtrCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 44449DC02718B4B700E821B5 /* OSObjectPtrCocoa.mm */; };
@@ -2380,6 +2381,7 @@
 		41E9EE1A28B4DBF8006A2298 /* PermissionsAPI.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PermissionsAPI.mm; sourceTree = "<group>"; };
 		41EBA9F128ABA06500953013 /* ImageRotationSessionVT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageRotationSessionVT.cpp; sourceTree = "<group>"; };
 		44077BB0231449D200179E2D /* DataDetectorsTestIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DataDetectorsTestIOS.mm; sourceTree = "<group>"; };
+		441A29D92B7EE84B00010BED /* CocoaColorTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CocoaColorTests.mm; sourceTree = "<group>"; };
 		442BBF681C91CAD90017087F /* RefLogger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RefLogger.cpp; sourceTree = "<group>"; };
 		4433A395208044130091ED57 /* SynchronousTimeoutTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SynchronousTimeoutTests.mm; sourceTree = "<group>"; };
 		44449DBF2718B4B600E821B5 /* OSObjectPtrCocoaARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OSObjectPtrCocoaARC.mm; sourceTree = "<group>"; };
@@ -5785,6 +5787,7 @@
 			children = (
 				7BE875FB2919457B00B15289 /* AudioStreamDescriptionCocoa.mm */,
 				0711DF51226A95FB003DD2F7 /* AVFoundationSoftLinkTest.mm */,
+				441A29D92B7EE84B00010BED /* CocoaColorTests.mm */,
 				31F865E526701E73003BFC6D /* CoreCryptoSPI.h */,
 				510A667A27D2FC7A00D22629 /* CoreMediaUtilities.mm */,
 				751B05D51F8EAC1A0028A09E /* DatabaseTrackerTest.mm */,
@@ -6466,6 +6469,7 @@
 				7CCE7EE51A411AE600447C4C /* CloseThenTerminate.cpp in Sources */,
 				F43CAB1D278A326500C8D0A2 /* CloseWhileCommittingLoad.mm in Sources */,
 				6B306106218A372900F5A802 /* ClosingWebView.mm in Sources */,
+				441A29E12B7EE84B00010BED /* CocoaColorTests.mm in Sources */,
 				E51A740E2B0442180047FEB1 /* ColorInputTests.mm in Sources */,
 				7C3965061CDD74F90094DBB8 /* ColorTests.cpp in Sources */,
 				1C9EB8411E380DA1005C6442 /* ComplexTextController.cpp in Sources */,

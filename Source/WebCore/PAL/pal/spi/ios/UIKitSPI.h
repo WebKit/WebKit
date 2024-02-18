@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@ WTF_EXTERN_C_END
 
 #if USE(APPLE_INTERNAL_SDK)
 
+#import <UIKit/NSColor.h>
 #import <UIKit/NSParagraphStyle_Private.h>
 #import <UIKit/NSTextAlternatives.h>
 #import <UIKit/NSTextAttachment_Private.h>
@@ -137,6 +138,11 @@ static const UIUserInterfaceIdiom UIUserInterfaceIdiomWatch = (UIUserInterfaceId
 
 @end
 
+@interface NSColor : UIColor
++ (id)colorWithCalibratedRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha;
++ (id)colorWithCalibratedWhite:(CGFloat)white alpha:(CGFloat)alpha;
+@end
+
 @interface UIFont ()
 
 + (UIFont *)fontWithFamilyName:(NSString *)familyName traits:(UIFontTrait)traits size:(CGFloat)fontSize;
@@ -220,10 +226,6 @@ typedef NS_ENUM(NSUInteger, NSTextTabType) {
     NSCenterTabStopType,
     NSDecimalTabStopType
 };
-
-@interface NSColor : UIColor
-+ (id)colorWithCalibratedRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha;
-@end
 
 @interface NSTextTab ()
 - (id)initWithType:(NSTextTabType)type location:(CGFloat)loc;

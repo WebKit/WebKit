@@ -42,6 +42,7 @@
 #import <wtf/spi/cocoa/SecuritySPI.h>
 #import <wtf/text/Base64.h>
 
+#import <WebCore/UIFoundationSoftLink.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
 #import <pal/cocoa/ContactsSoftLink.h>
 #import <pal/cocoa/DataDetectorsCoreSoftLink.h>
@@ -402,6 +403,10 @@ struct ObjCHolderForTesting {
         RetainPtr<PKShippingMethod>,
         RetainPtr<PKPayment>,
 #endif
+        RetainPtr<PlatformColor>,
+#if PLATFORM(IOS_FAMILY)
+        RetainPtr<PlatformNSColor>,
+#endif
         RetainPtr<NSShadow>,
         RetainPtr<NSValue>
     > ValueType;
@@ -517,6 +522,57 @@ static BOOL wkSecureCoding_isEqual(id a, SEL, id b)
 }
 #endif // USE(PASSKIT) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
 
+static BOOL wkCocoaPlatformColor_isEqual(id mySelf, SEL, id otherColor)
+{
+    // Loosely based on -[NSColor isEqual:] from AppKit on macOS.
+    if (mySelf == otherColor)
+        return YES;
+
+    if (!otherColor)
+        return NO;
+
+    if (![otherColor isKindOfClass:PlatformColorClass])
+        return NO;
+
+    WebCore::Color mySelfWebCoreColor = WebCore::colorFromCocoaColor(mySelf);
+    WebCore::Color otherWebCoreColor = WebCore::colorFromCocoaColor(otherColor);
+    if (!mySelfWebCoreColor.isValid() || !otherWebCoreColor.isValid())
+        return NO;
+
+    return (mySelfWebCoreColor == otherWebCoreColor) ? YES : NO;
+}
+
+static BOOL wkNSShadow_isEqual(NSShadow *mySelf, SEL selector, id other)
+{
+    // Based on -[NSShadow isEqual:] from UIFoundation.
+    if (mySelf == other)
+        return YES;
+
+    if (!other)
+        return NO;
+
+    NSShadow *otherShadow = (NSShadow *)other;
+    if (object_getClass(mySelf) == PlatformNSShadow && object_getClass(otherShadow) == PlatformNSShadow) {
+        if (mySelf.shadowOffset.width != otherShadow.shadowOffset.width
+            || mySelf.shadowOffset.height != otherShadow.shadowOffset.height
+            || mySelf.shadowBlurRadius != otherShadow.shadowBlurRadius) {
+            return NO;
+        }
+        return wkCocoaPlatformColor_isEqual(mySelf.shadowColor, selector, otherShadow.shadowColor);
+    }
+
+    if (![other isKindOfClass:PlatformNSShadow])
+        return NO;
+
+    if (!NSEqualSizes(mySelf.shadowOffset, otherShadow.shadowOffset)
+        || mySelf.shadowBlurRadius != otherShadow.shadowBlurRadius) {
+        return NO;
+    }
+
+    return wkCocoaPlatformColor_isEqual(mySelf.shadowColor, selector, otherShadow.shadowColor);
+}
+
+
 inline bool operator==(const ObjCHolderForTesting& a, const ObjCHolderForTesting& b)
 {
     static dispatch_once_t onceToken;
@@ -541,6 +597,13 @@ inline bool operator==(const ObjCHolderForTesting& a, const ObjCHolderForTesting
 #if ENABLE(DATA_DETECTION) && PLATFORM(MAC)
         class_addMethod(PAL::getWKDDActionContextClass(), @selector(isEqual:), (IMP)wkDDActionContext_isEqual, "v@:@");
 #endif
+#if USE(APPKIT)
+        class_replaceMethod(PlatformColorClass, @selector(isEqual:), (IMP)wkCocoaPlatformColor_isEqual, "v@:@");
+#endif
+#if PLATFORM(IOS_FAMILY)
+        class_addMethod(PlatformColorClass, @selector(isEqual:), (IMP)wkCocoaPlatformColor_isEqual, "v@:@");
+#endif
+        class_replaceMethod(PlatformNSShadow, @selector(isEqual:), (IMP)wkNSShadow_isEqual, "v@:@");
     });
 
     id aObject = a.valueAsID();
@@ -551,6 +614,10 @@ inline bool operator==(const ObjCHolderForTesting& a, const ObjCHolderForTesting
 
     EXPECT_TRUE(aObject != nil);
     EXPECT_TRUE(bObject != nil);
+
+    // There are too many PlatformColor subclasses to replace every -isEqual: method.
+    if ([aObject isKindOfClass:PlatformColorClass])
+        return wkCocoaPlatformColor_isEqual(aObject, @selector(isEqual:), bObject);
 
     return [aObject isEqual:bObject];
 }
@@ -1181,18 +1248,66 @@ TEST(IPCSerialization, Basic)
 
 TEST(IPCSerialization, NSShadow)
 {
-    auto runTestNSShadow = [&](CGSize shadowOffset, CGFloat shadowBlurRadius, PlatformColor *shadowColor) {
-        RetainPtr<NSShadow> shadow = adoptNS([[PlatformNSShadow alloc] init]);
+    auto runTestNSShadow = [&](CGSize shadowOffset, CGFloat shadowBlurRadius, id shadowColor) {
+        RetainPtr<NSShadow> shadow = adoptNS([PlatformNSShadow new]);
         [shadow setShadowOffset:shadowOffset];
         [shadow setShadowBlurRadius:shadowBlurRadius];
         [shadow setShadowColor:shadowColor];
-        runTestNS({ shadow.get() });
+        runTestNS({ shadow });
     };
 
-    runTestNSShadow({ 5.7, 10.5 }, 0.49, nil);
+    @autoreleasepool {
+        runTestNSShadow({ 5.9, 10.1 }, 0.49, nil);
 
-    RetainPtr<PlatformColor> platformColor = cocoaColor(WebCore::Color::blue);
-    runTestNSShadow({ 10.5, 5.7 }, 0.79, platformColor.get());
+        RetainPtr<PlatformColor> colorFromWebCoreColor = cocoaColor(WebCore::Color::blue);
+        runTestNSShadow({ 10.2, 5.8 }, 0.59, colorFromWebCoreColor.get());
+
+        auto sRGBColorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
+        constexpr CGFloat testComponents[4] = { 1, .75, .5, .25 };
+        auto cgColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), testComponents));
+        RetainPtr<PlatformColor> colorFromCGColor = [PlatformColorClass colorWithCGColor:cgColor.get()];
+        runTestNSShadow({ 10.3, 5.7 }, 0.69, colorFromCGColor.get());
+
+        RetainPtr<PlatformColor> platformColor = [PlatformColorClass colorWithRed:0.2 green:0.4 blue:0.6 alpha:0.8];
+        runTestNSShadow({ 10.4, 5.6 }, 0.79, platformColor.get());
+
+        RetainPtr<PlatformNSColor> calibratedColor = [PlatformNSColorClass colorWithCalibratedRed:0.2 green:0.4 blue:0.6 alpha:0.8];
+        runTestNSShadow({ 10.5, 5.5 }, 0.89, calibratedColor.get());
+    }
+}
+
+TEST(IPCSerialization, Platform_CocoaColor)
+{
+    @autoreleasepool {
+        RetainPtr<PlatformColor> colorWithWhiteAlpha = [PlatformColorClass colorWithWhite:0.3 alpha:0.7];
+        runTestNS({ colorWithWhiteAlpha });
+
+        RetainPtr<PlatformColor> colorWithHueSaturationBrightnessAlpha = [PlatformColorClass colorWithHue:0.2 saturation:0.4 brightness:0.6 alpha:0.8];
+        runTestNS({ colorWithHueSaturationBrightnessAlpha });
+
+        RetainPtr<PlatformColor> colorWithRedGreenBlueAlpha = [PlatformColorClass colorWithRed:0.2 green:0.4 blue:0.6 alpha:0.8];
+        runTestNS({ colorWithRedGreenBlueAlpha });
+
+        RetainPtr<PlatformColor> colorWithDisplayP3RedGreenBlueAlpha = [PlatformColorClass colorWithDisplayP3Red:0.2 green:0.4 blue:0.6 alpha:0.8];
+        runTestNS({ colorWithDisplayP3RedGreenBlueAlpha });
+
+        auto sRGBColorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
+        constexpr CGFloat testComponents[4] = { 1, .75, .5, .25 };
+        auto cgColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), testComponents));
+        RetainPtr<PlatformColor> colorWithCGColor = [PlatformColorClass colorWithCGColor:cgColor.get()];
+        runTestNS({ colorWithCGColor });
+    }
+}
+
+TEST(IPCSerialization, Platform_NSColor_calibrated)
+{
+    @autoreleasepool {
+        RetainPtr<PlatformNSColor> colorWithCalibratedRedGreenBlueAlpha = [PlatformNSColorClass colorWithCalibratedRed:0.2 green:0.4 blue:0.6 alpha:0.8];
+        runTestNS({ colorWithCalibratedRedGreenBlueAlpha });
+
+        RetainPtr<PlatformNSColor> colorWithCalibratedWhiteAlpha = [PlatformNSColorClass colorWithCalibratedWhite:0.3 alpha:0.7];
+        runTestNS({ colorWithCalibratedWhiteAlpha });
+    }
 }
 
 #if PLATFORM(MAC)

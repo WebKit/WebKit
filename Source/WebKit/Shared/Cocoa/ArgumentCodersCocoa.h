@@ -65,6 +65,9 @@ OBJC_CLASS PKShippingMethod;
 #endif
 
 OBJC_CLASS PlatformColor;
+#if PLATFORM(IOS_FAMILY)
+OBJC_CLASS PlatformNSColor;
+#endif
 OBJC_CLASS NSShadow;
 
 namespace IPC {
@@ -142,6 +145,9 @@ template<> Class getClass<PKSecureElementPass>();
 #endif
 
 template<> Class getClass<PlatformColor>();
+#if PLATFORM(IOS_FAMILY)
+template<> Class getClass<PlatformNSColor>();
+#endif
 template<> Class getClass<NSShadow>();
 
 template<typename T> void encodeObjectDirectly(Encoder&, T *);

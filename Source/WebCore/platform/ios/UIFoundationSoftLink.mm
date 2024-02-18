@@ -33,7 +33,7 @@
 // FIXME: Remove SOFT_LINK_PRIVATE_FRAMEWORK(UIFoundation) and move symbols from NSAttributedStringSPI.h to here.
 SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE(WebCore, UIFoundation)
 
-SOFT_LINK_CLASS_FOR_SOURCE(WebCore, UIFoundation, NSColor)
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(WebCore, UIFoundation, NSColor, WEBCORE_EXPORT)
 SOFT_LINK_CLASS_FOR_SOURCE(WebCore, UIFoundation, NSTextAttachment)
 SOFT_LINK_CLASS_FOR_SOURCE(WebCore, UIFoundation, NSMutableParagraphStyle)
 SOFT_LINK_CLASS_FOR_SOURCE(WebCore, UIFoundation, NSTextList)

@@ -38,7 +38,8 @@
 #define PlatformFont                    NSFont
 #define PlatformFontClass               NSFont.class
 #define PlatformImageClass              NSImage
-#define PlatformNSColorClass            NSColor
+#define PlatformNSColor                 NSColor
+#define PlatformNSColorClass            NSColor.class
 #define PlatformNSParagraphStyle        NSParagraphStyle.class
 #define PlatformNSPresentationIntent    NSPresentationIntent.class
 #define PlatformNSShadow                NSShadow.class
@@ -53,7 +54,8 @@
 #define PlatformFont                    UIFont
 #define PlatformFontClass               PAL::getUIFontClass()
 #define PlatformImageClass              PAL::getUIImageClass()
-#define PlatformNSColorClass            getNSColorClass()
+#define PlatformNSColor                 NSColor
+#define PlatformNSColorClass            WebCore::getNSColorClass()
 #define PlatformNSParagraphStyle        PAL::getNSParagraphStyleClass()
 #define PlatformNSPresentationIntent    PAL::getNSPresentationIntentClass()
 #define PlatformNSShadow                PAL::getNSShadowClass()
@@ -72,6 +74,9 @@ OBJC_CLASS NSPresentationIntent;
 OBJC_CLASS NSShadow;
 OBJC_CLASS NSTextAttachment;
 OBJC_CLASS PlatformColor;
+#if PLATFORM(IOS_FAMILY)
+OBJC_CLASS PlatformNSColor;
+#endif
 
 namespace WebCore {
 
