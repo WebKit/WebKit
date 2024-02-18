@@ -29,7 +29,6 @@
 #include "MessageReceiverMap.h"
 #include "ProcessLauncher.h"
 #include "ProcessThrottler.h"
-#include "ProcessThrottlerClient.h"
 #include "ResponsivenessTimer.h"
 #include <WebCore/ProcessIdentifier.h>
 #include <memory>
@@ -61,7 +60,6 @@ class AuxiliaryProcessProxy
     , public ResponsivenessTimer::Client
     , private ProcessLauncher::Client
     , public IPC::Connection::Client
-    , public ProcessThrottlerClient
     , public CanMakeThreadSafeCheckedPtr {
     WTF_MAKE_NONCOPYABLE(AuxiliaryProcessProxy);
 
@@ -198,6 +196,15 @@ public:
 #if ENABLE(EXTENSION_CAPABILITIES)
     ExtensionCapabilityGrantMap& extensionCapabilityGrants() { return m_extensionCapabilityGrants; }
 #endif
+
+    enum ResumeReason : bool { ForegroundActivity, BackgroundActivity };
+    virtual void sendPrepareToSuspend(IsSuspensionImminent, double remainingRunTime, CompletionHandler<void()>&&) = 0;
+    virtual void sendProcessDidResume(ResumeReason) = 0;
+    virtual void didChangeThrottleState(ProcessThrottleState) { };
+    virtual ASCIILiteral clientName() const = 0;
+    virtual String environmentIdentifier() const { return emptyString(); }
+    virtual void prepareToDropLastAssertion(CompletionHandler<void()>&& completionHandler) { completionHandler(); }
+    virtual void didDropLastAssertion() { }
 
 protected:
     // ProcessLauncher::Client

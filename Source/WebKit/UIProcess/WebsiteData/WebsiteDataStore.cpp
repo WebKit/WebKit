@@ -1673,7 +1673,7 @@ void WebsiteDataStore::sendNetworkProcessWillSuspendImminentlyForTesting()
 
 void WebsiteDataStore::sendNetworkProcessDidResume()
 {
-    protectedNetworkProcess()->sendProcessDidResume(ProcessThrottlerClient::ResumeReason::ForegroundActivity);
+    protectedNetworkProcess()->sendProcessDidResume(AuxiliaryProcessProxy::ResumeReason::ForegroundActivity);
 }
 
 bool WebsiteDataStore::trackingPreventionEnabled() const

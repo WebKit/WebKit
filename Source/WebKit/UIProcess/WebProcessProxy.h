@@ -34,7 +34,6 @@
 #include "ProcessLauncher.h"
 #include "ProcessTerminationReason.h"
 #include "ProcessThrottler.h"
-#include "ProcessThrottlerClient.h"
 #include "RemoteWorkerInitializationData.h"
 #include "ResponsivenessTimer.h"
 #include "SpeechRecognitionServer.h"
