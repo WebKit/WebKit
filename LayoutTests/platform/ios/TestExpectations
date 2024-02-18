@@ -2486,7 +2486,6 @@ media/video-webkit-playsinline.html
 
 webkit.org/b/103926 media/track/opera
 
-webkit.org/b/35297 media/video-display-aspect-ratio.html [ Pass Failure ]
 webkit.org/b/112659 media/video-playing-and-pause.html [ Skip ]
 
 webkit.org/b/112492 media/track/track-prefer-captions.html

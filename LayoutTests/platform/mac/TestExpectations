@@ -712,7 +712,6 @@ webkit.org/b/137368 media/video-controls-no-scripting.html [ Pass Failure ]
 
 ## --- Start flaky media tests ---
 webkit.org/b/34331 http/tests/media/video-referer.html [ Pass Timeout ]
-webkit.org/b/35297 media/video-display-aspect-ratio.html [ Pass Failure ]
 webkit.org/b/82976 media/W3C/video/networkState/networkState_during_progress.html [ Pass Failure ]
 webkit.org/b/85525 media/video-played-reset.html [ Pass Failure ]
 webkit.org/b/112659 media/video-playing-and-pause.html [ Failure Timeout ]
