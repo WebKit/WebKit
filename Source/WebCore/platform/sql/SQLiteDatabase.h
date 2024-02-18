@@ -28,7 +28,7 @@
 
 #include <functional>
 #include <sqlite3.h>
-#include <wtf/CheckedRef.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/Expected.h>
 #include <wtf/Lock.h>
 #include <wtf/OptionSet.h>
