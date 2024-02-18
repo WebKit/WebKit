@@ -330,23 +330,24 @@ float underlineOffsetForTextBoxPainting(const InlineIterator::InlineBox& inlineB
 
 float overlineOffsetForTextBoxPainting(const InlineIterator::InlineBox& inlineBox, const RenderStyle& style)
 {
-    auto writingMode = style.writingMode();
-    if (isHorizontalWritingMode(writingMode))
-        return { };
-
     if (!style.textDecorationsInEffect().contains(TextDecorationLine::Underline))
         return { };
 
-    auto underlinePosition = style.textUnderlinePosition();
-    // If 'right' causes the underline to be drawn on the "over" side of the text, then an overline also switches sides and is drawn on the "under" side.
-    // If 'left' causes the underline to be drawn on the "over" side of the text, then an overline also switches sides and is drawn on the "under" side.
-    auto overBecomesUnder = (underlinePosition == TextUnderlinePosition::Left && writingMode == WritingMode::SidewaysLr)
-        || (underlinePosition == TextUnderlinePosition::Right && (writingMode == WritingMode::VerticalLr || writingMode == WritingMode::VerticalRl || writingMode == WritingMode::SidewaysRl));
-
-    if (!overBecomesUnder)
+    if (style.isHorizontalWritingMode())
         return { };
 
-    return inlineBoxContentBoxHeight(inlineBox);
+    auto underlinePosition = style.textUnderlinePosition();
+    auto overBecomesUnder = [&] {
+        auto typographicMode = style.typographicMode();
+        // If 'right' causes the underline to be drawn on the "over" side of the text, then an overline also switches sides and is drawn on the "under" side.
+        if (underlinePosition == TextUnderlinePosition::Right)
+            return typographicMode == TypographicMode::Vertical || style.blockFlowDirection() == BlockFlowDirection::RightToLeft;
+        // If 'left' causes the underline to be drawn on the "over" side of the text, then an overline also switches sides and is drawn on the "under" side.
+        if (underlinePosition == TextUnderlinePosition::Left)
+            return typographicMode == TypographicMode::Horizontal && style.blockFlowDirection() == BlockFlowDirection::LeftToRight;
+        return false;
+    };
+    return overBecomesUnder() ? inlineBoxContentBoxHeight(inlineBox) : 0.f;
 }
 
 }
