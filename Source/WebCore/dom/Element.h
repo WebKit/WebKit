@@ -620,6 +620,8 @@ public:
     void clearPopoverData();
     bool isPopoverShowing() const;
 
+    virtual void handleInvokeInternal(const AtomString&) { }
+
     ExceptionOr<void> setPointerCapture(int32_t);
     ExceptionOr<void> releasePointerCapture(int32_t);
     bool hasPointerCapture(int32_t);

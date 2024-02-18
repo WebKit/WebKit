@@ -410,7 +410,7 @@ void HTMLFormControlElement::handlePopoverTargetAction() const
         target->showPopover(this);
 }
 
-RefPtr<HTMLElement> HTMLFormControlElement::invokeTargetElement() const
+RefPtr<Element> HTMLFormControlElement::invokeTargetElement() const
 {
     auto canInvoke = [](const HTMLFormControlElement& element) -> bool {
         if (!element.document().settings().invokerAttributesEnabled())
@@ -423,7 +423,7 @@ RefPtr<HTMLElement> HTMLFormControlElement::invokeTargetElement() const
     if (!canInvoke(*this))
         return nullptr;
 
-    return dynamicDowncast<HTMLElement>(getElementAttribute(invoketargetAttr));
+    return getElementAttribute(invoketargetAttr);
 }
 
 const AtomString& HTMLFormControlElement::invokeAction() const
