@@ -720,6 +720,9 @@ webkit.org/b/219225 http/tests/inspector/dom/disconnect-dom-tree-after-main-fram
 # fullscreen isn't supported yet
 http/tests/inspector/dom/didFireEvent.html [ Skip ]
 
+# Libwebrtc log test
+http/tests/inspector/gatherWebInspectorRTCLogs.html [ Skip ]
+
 http/tests/inspector/network/eventsource-type.html [ Failure ]
 http/tests/inspector/network/fetch-response-body.html [ Failure ]
 http/tests/inspector/network/har/har-page-aggressive-gc.html [ Failure ]
