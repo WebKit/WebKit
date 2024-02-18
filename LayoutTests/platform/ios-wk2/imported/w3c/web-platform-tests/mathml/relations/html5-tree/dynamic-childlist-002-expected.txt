@@ -23,7 +23,7 @@ PASS Appending and removing children to mtable
 PASS Appending and removing children to mtext
 FAIL Appending and removing children to munder assert_approx_equals: block position (child 0) expected 0 +/- 1 but got 3
 FAIL Appending and removing children to munderover assert_approx_equals: block position (child 0) expected 0 +/- 1 but got 7
-FAIL Appending and removing children to semantics assert_approx_equals: block position (child 0) expected -33359776 +/- 1 but got -33359796
+FAIL Appending and removing children to semantics assert_approx_equals: block position (child 0) expected -33431774 +/- 1 but got -33431794
 maction:
 mfrac:
 mmultiscripts:

@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderInline {A} at (0,0) size 21x16 [color=#0000EE]
+      RenderInline {A} at (0,0) size 21x17 [color=#0000EE]
         RenderImage {IMG} at (0,0) size 21x21 [bgcolor=#008000]
-      RenderText {#text} at (21,1) size 4x16
+      RenderText {#text} at (21,1) size 4x17
         text run at (21,1) width 4: " "
       RenderImage {IMG} at (24,0) size 22x21 [bgcolor=#008000]
-      RenderText {#text} at (45,1) size 290x16
+      RenderText {#text} at (45,1) size 290x17
         text run at (45,1) width 290: " The two green blocks should line up vertically."

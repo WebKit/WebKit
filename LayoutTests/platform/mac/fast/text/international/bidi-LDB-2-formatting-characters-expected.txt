@@ -36,7 +36,7 @@ layer at (0,0) size 800x589
         RenderText {#text} at (0,0) size 287x18
           text run at (0,0) width 287: "In each box, all the lines should be the same."
       RenderBlock (anonymous) at (0,160) size 784x238
-        RenderBlock {DIV} at (3,7) size 100x170 [border: (1px solid #008000)]
+        RenderBlock {DIV} at (3,7) size 100x171 [border: (1px solid #008000)]
           RenderBlock {P} at (4,4) size 92x18
             RenderText {#text} at (0,0) size 92x18
               text run at (0,0) width 92: "ABCDEFGHI"
@@ -82,9 +82,9 @@ layer at (0,0) size 800x589
               text run at (0,0) width 33 RTL: "\x{202C}CBA"
               text run at (32,0) width 32: "\x{202D}DEF"
               text run at (63,0) width 29 RTL: "\x{202E}IHG"
-        RenderText {#text} at (105,82) size 5x18
+        RenderText {#text} at (105,82) size 5x19
           text run at (105,82) width 5: " "
-        RenderBlock {DIV} at (112,50) size 35x84 [border: (1px solid #008000)]
+        RenderBlock {DIV} at (112,50) size 35x85 [border: (1px solid #008000)]
           RenderTable {TABLE} at (4,4) size 27x19
             RenderTableSection {TBODY} at (0,0) size 27x19
               RenderTableRow {TR} at (0,0) size 27x19
@@ -107,7 +107,7 @@ layer at (0,0) size 800x589
           RenderBlock {P} at (4,61) size 27x19
             RenderText {#text} at (0,1) size 27x18
               text run at (0,1) width 27: "\x{202D}\x{5D2}\x{5D1}\x{5D0}\x{202C}"
-        RenderText {#text} at (149,82) size 5x18
+        RenderText {#text} at (149,82) size 5x19
           text run at (149,82) width 5: " "
         RenderBlock {DIV} at (156,60) size 101x65 [border: (1px solid #008000)]
           RenderTable {TABLE} at (4,4) size 92x19
@@ -156,7 +156,7 @@ layer at (0,0) size 800x589
               text run at (0,1) width 31 RTL: " \x{5D0}\x{5D1}\x{5D2}"
               text run at (30,1) width 34: "ABC"
               text run at (63,1) width 29 RTL: "\x{5D3}\x{5D4}\x{5D5} "
-        RenderText {#text} at (259,82) size 5x18
+        RenderText {#text} at (259,82) size 5x19
           text run at (259,82) width 5: " "
         RenderBlock {DIV} at (266,3) size 166x179 [border: (1px solid #008000)]
           RenderTable {TABLE} at (4,4) size 158x19
@@ -277,9 +277,9 @@ layer at (0,0) size 800x589
               text run at (0,1) width 31 RTL: " \x{5D0}\x{5D1}\x{5D2}"
               text run at (30,1) width 96: "\x{202D}ABC \x{5D5}\x{5D4}\x{5D3}\x{202C} DEF"
               text run at (125,1) width 32 RTL: "\x{5D6}\x{5D7}\x{5D8} "
-        RenderText {#text} at (434,82) size 5x18
+        RenderText {#text} at (434,82) size 5x19
           text run at (434,82) width 5: " "
-        RenderBlock {DIV} at (441,69) size 198x46 [border: (1px solid #008000)]
+        RenderBlock {DIV} at (441,69) size 198x47 [border: (1px solid #008000)]
           RenderTable {TABLE} at (4,4) size 190x19
             RenderTableSection {TBODY} at (0,0) size 190x19
               RenderTableRow {TR} at (0,0) size 190x19
@@ -360,7 +360,7 @@ layer at (0,0) size 800x589
               text run at (91,1) width 72: " DEF GHI "
               text run at (162,1) width 28 RTL: "\x{5D6}\x{5D7}\x{5D8}"
         RenderText {#text} at (0,0) size 0x0
-        RenderBR {BR} at (641,82) size 1x18
+        RenderBR {BR} at (641,82) size 1x19
         RenderBlock {DIV} at (3,188) size 198x46 [border: (1px solid #008000)]
           RenderTable {TABLE} at (4,4) size 190x19
             RenderTableSection {TBODY} at (0,0) size 190x19
@@ -439,8 +439,8 @@ layer at (0,0) size 800x589
               text run at (0,1) width 126 RTL: "\x{5D0}\x{5D1}\x{5D2} \x{202E}ABC \x{5D3}\x{5D4}\x{5D5} DEF"
               text run at (125,1) width 38: "\x{202C} GHI "
               text run at (162,1) width 28 RTL: "\x{5D6}\x{5D7}\x{5D8}"
-        RenderText {#text} at (203,201) size 5x18
-          text run at (203,201) width 5: " "
+        RenderText {#text} at (203,200) size 5x19
+          text run at (203,200) width 5: " "
         RenderBlock {DIV} at (210,188) size 198x46 [border: (1px solid #008000)]
           RenderTable {TABLE} at (4,4) size 190x19
             RenderTableSection {TBODY} at (0,0) size 190x19

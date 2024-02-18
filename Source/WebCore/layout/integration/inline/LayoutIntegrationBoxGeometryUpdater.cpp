@@ -279,7 +279,7 @@ void BoxGeometryUpdater::updateLayoutBoxDimensions(const RenderBox& renderBox, s
     }();
     if (hasNonSyntheticBaseline) {
         auto baseline = renderBox.baselinePosition(AlphabeticBaseline, false /* firstLine */, blockFlowDirection == BlockFlowDirection::TopToBottom || blockFlowDirection == BlockFlowDirection::BottomToTop ? HorizontalLine : VerticalLine, PositionOnContainingLine);
-        layoutBox.setBaselineForIntegration(roundToInt(baseline));
+        layoutBox.setBaselineForIntegration(baseline);
     }
 
     if (auto* shapeOutsideInfo = renderBox.shapeOutsideInfo())

@@ -31,7 +31,7 @@ layer at (0,0) size 800x600
                 text run at (2,2) width 273: "This status update contains information on"
                 text run at (2,22) width 231: "MailNews, XML/DOM, XPToolkit,"
                 text run at (2,42) width 293: "Architecture, Bidi, Necko/Imglib, and more..."
-      RenderBlock (anonymous) at (0,118) size 784x42
+      RenderBlock (anonymous) at (0,118) size 784x43
         RenderBR {BR} at (0,0) size 0x19
         RenderButton {INPUT} at (0,21) size 63x20 [color=#FFFFFF] [bgcolor=#007AFF] [border: (1px solid #FFFFFF)]
           RenderBlock (anonymous) at (12,3) size 39x14

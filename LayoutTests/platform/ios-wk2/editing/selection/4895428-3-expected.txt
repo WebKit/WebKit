@@ -12,13 +12,13 @@ layer at (0,0) size 800x600
         RenderInline {B} at (0,0) size 662x19
           RenderText {#text} at (57,40) size 662x19
             text run at (57,40) width 662: "To run manually, select everything from 'foo' though 'baz', then mouse down inside the text field."
-      RenderBlock {DIV} at (0,76) size 784x61
+      RenderBlock {DIV} at (0,76) size 784x62
         RenderBlock {DIV} at (0,0) size 784x20
           RenderText {#text} at (0,0) size 22x19
             text run at (0,0) width 22: "foo"
-        RenderBlock (anonymous) at (0,20) size 784x21
+        RenderBlock (anonymous) at (0,20) size 784x22
           RenderTextControl {INPUT} at (0,0) size 155x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
-        RenderBlock {DIV} at (0,41) size 784x20
+        RenderBlock {DIV} at (0,41) size 784x21
           RenderText {#text} at (0,0) size 23x19
             text run at (0,0) width 23: "baz"
 layer at (15,107) size 141x14

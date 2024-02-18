@@ -31,8 +31,8 @@ layer at (0,0) size 800x600 layerType: foreground only
 layer at (10,10) size 620x301
   RenderBlock (positioned) {DIV} at (10,10) size 620x301
     RenderBlock {DIV} at (10,10) size 600x151
-      RenderText {#text} at (0,14) size 598x137
-        text run at (0,14) width 598: "This header should be centered"
+      RenderText {#text} at (0,13) size 598x138
+        text run at (0,13) width 598: "This header should be centered"
         text run at (0,95) width 312: "in the grid lines."
     RenderBlock {DIV} at (10,160) size 600x131
       RenderText {#text} at (0,34) size 103x14

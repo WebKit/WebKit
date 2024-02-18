@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x58
-  RenderBlock {HTML} at (0,0) size 800x58
-    RenderBody {BODY} at (8,8) size 784x42
+  RenderBlock {HTML} at (0,0) size 800x59
+    RenderBody {BODY} at (8,8) size 784x43
       RenderBlock {DIV} at (0,0) size 784x20
         RenderText {#text} at (0,0) size 692x19
           text run at (0,0) width 692: "When the caret reaches the edge of the input box, on the next input if must jump to the center of the control."
-      RenderBlock (anonymous) at (0,20) size 784x22
+      RenderBlock (anonymous) at (0,20) size 784x23
         RenderTextControl {INPUT} at (0,1) size 85x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0

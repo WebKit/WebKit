@@ -70,7 +70,7 @@ layer at (0,0) size 800x792
         RenderText {#text} at (0,0) size 350x25
           text run at (0,0) width 350: "Submit Results"
       RenderBlock {FORM} at (0,549) size 784x39
-        RenderBlock {P} at (0,0) size 784x38
+        RenderBlock {P} at (0,0) size 784x39
           RenderText {#text} at (0,0) size 640x17
             text run at (0,0) width 640: "How does your browser fare on this test?"
           RenderMenuList {SELECT} at (0,17) size 234x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]

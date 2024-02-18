@@ -1,10 +1,10 @@
 layer at (0,0) size 800x1521
   RenderView at (0,0) size 800x600
 layer at (8,8) size 784x1513
-  RenderBlock {HTML} at (8,8) size 784x1513 [bgcolor=#008000] [border: (16px solid #00FF00)]
-    RenderTable at (16,16) size 752x1481
-      RenderTableSection (anonymous) at (0,0) size 752x1481
-        RenderTableRow (anonymous) at (0,0) size 752x1481
+  RenderBlock {HTML} at (8,8) size 784x1514 [bgcolor=#008000] [border: (16px solid #00FF00)]
+    RenderTable at (16,16) size 752x1482
+      RenderTableSection (anonymous) at (0,0) size 752x1482
+        RenderTableRow (anonymous) at (0,0) size 752x1482
           RenderTableCell {HEAD} at (0,0) size 268x466 [color=#FFFFFF] [bgcolor=#FF0000] [border: (5px solid #FFFFFF)] [r=0 c=0 rs=1 cs=1]
             RenderBlock {META} at (21,37) size 226x2 [border: (1px dotted #FFFFFF)]
             RenderBlock {META} at (21,55) size 226x2 [border: (1px dotted #FFFFFF)]
@@ -35,7 +35,7 @@ layer at (8,8) size 784x1513
                 text run at (1,201) width 206: "color: white; background: red; }"
                 text run at (1,221) width 150: "BODY { color: yellow;"
                 text run at (1,241) width 124: "background: teal; }"
-          RenderTableCell {BODY} at (268,41) size 484x1440 [color=#FFFF00] [bgcolor=#008080] [border: (5px solid #FFFF00)] [r=0 c=1 rs=1 cs=1]
+          RenderTableCell {BODY} at (268,41) size 484x1441 [color=#FFFF00] [bgcolor=#008080] [border: (5px solid #FFFF00)] [r=0 c=1 rs=1 cs=1]
             RenderBlock {H1} at (21,53) size 442x78 [border: (1px dotted #FFFF00)]
               RenderText {#text} at (1,2) size 152x36
                 text run at (1,2) width 152: "Rendering "
@@ -131,8 +131,8 @@ layer at (8,8) size 784x1513
             RenderBlock {H2} at (21,1118) size 442x32 [border: (1px dotted #FFFF00)]
               RenderText {#text} at (1,2) size 156x28
                 text run at (1,2) width 156: "Submit Results"
-            RenderBlock {FORM} at (21,1174) size 442x97 [border: (1px dotted #FFFF00)]
-              RenderBlock {P} at (1,17) size 440x63
+            RenderBlock {FORM} at (21,1174) size 442x98 [border: (1px dotted #FFFF00)]
+              RenderBlock {P} at (1,17) size 440x64
                 RenderText {#text} at (0,0) size 263x19
                   text run at (0,0) width 263: "How does your browser fare on this test?"
                 RenderMenuList {SELECT} at (0,21) size 440x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
@@ -151,13 +151,13 @@ layer at (8,8) size 784x1513
                     RenderText at (0,0) size 40x14
                       text run at (0,0) width 40: "Submit"
                 RenderText {#text} at (0,0) size 0x0
-            RenderBlock {P} at (21,1305) size 442x22 [border: (1px dotted #FFFF00)]
+            RenderBlock {P} at (21,1305) size 442x23 [border: (1px dotted #FFFF00)]
               RenderInline {A} at (0,0) size 162x19 [color=#0000EE]
                 RenderText {#text} at (1,1) size 162x19
                   text run at (1,1) width 162: "Up to the Evil Tests Page"
               RenderText {#text} at (162,1) size 5x19
                 text run at (162,1) width 5: "."
-            RenderBlock {P} at (21,1343) size 442x22 [border: (1px dotted #FFFF00)]
+            RenderBlock {P} at (21,1343) size 442x23 [border: (1px dotted #FFFF00)]
               RenderText {#text} at (1,1) size 177x19
                 text run at (1,1) width 177: "This page is maintained by "
               RenderInline {A} at (0,0) size 79x19 [color=#0000EE]
@@ -170,10 +170,10 @@ layer at (8,8) size 784x1513
                   text run at (264,1) width 125: "py8ieh@bath.ac.uk"
               RenderText {#text} at (388,1) size 10x19
                 text run at (388,1) width 10: ")."
-            RenderBlock {P} at (21,1381) size 442x22 [border: (1px dotted #FFFF00)]
+            RenderBlock {P} at (21,1381) size 442x23 [border: (1px dotted #FFFF00)]
               RenderText {#text} at (1,1) size 172x19
                 text run at (1,1) width 172: "Last updated in June 1999."
 layer at (392,1301) size 141x14
   RenderBlock {DIV} at (6,3) size 143x15
 layer at (313,1352) size 442x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (21,1287) size 442x2 [color=#808080] [border: (1px dotted #808080)]
+  RenderBlock {HR} at (21,1287) size 442x3 [color=#808080] [border: (1px dotted #808080)]

@@ -86,7 +86,7 @@ layer at (0,0) size 785x1205
               RenderText {#text} at (20,1) size 14x20
                 text run at (20,2) width 14: "fr"
             RenderTableCell {TD} at (57,199) size 710x27 [border: (1px solid #EEEEEE)] [r=5 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,6) size 215x18
+              RenderText {#text} at (2,6) size 215x19
                 text run at (2,6) width 215: "quelqu'un l\x{2019}amour t'appelles\x{2011}tu 3"
               RenderInline {SUP} at (0,0) size 23x15
                 RenderText {#text} at (216,2) size 23x15
@@ -179,7 +179,7 @@ layer at (0,0) size 785x1205
               RenderText {#text} at (20,1) size 14x20
                 text run at (20,2) width 14: "fr"
             RenderTableCell {TD} at (57,199) size 710x27 [border: (1px solid #EEEEEE)] [r=5 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,6) size 232x18
+              RenderText {#text} at (2,6) size 232x19
                 text run at (2,6) width 232: "Quelqu'un l\x{2019}Amour t'Appelles\x{2011}Tu 3"
               RenderInline {SUP} at (0,0) size 23x15
                 RenderText {#text} at (233,2) size 23x15
@@ -288,7 +288,7 @@ layer at (0,0) size 785x1205
               RenderText {#text} at (20,1) size 14x20
                 text run at (20,2) width 14: "fr"
             RenderTableCell {TD} at (57,199) size 710x27 [border: (1px solid #EEEEEE)] [r=5 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,6) size 233x18
+              RenderText {#text} at (2,6) size 233x19
                 text run at (2,6) width 233: "Quelqu'un L\x{2019}amour T'appelles\x{2011}Tu 3"
               RenderInline {SUP} at (0,0) size 23x15
                 RenderText {#text} at (234,2) size 23x15

@@ -25,16 +25,16 @@ layer at (0,0) size 785x1121
           RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,26) size 769x3
       RenderBlock (anonymous) at (0,35) size 769x45
-        RenderInline {SPAN} at (0,0) size 114x41
-          RenderInline {SPAN} at (0,0) size 114x41
+        RenderInline {SPAN} at (0,0) size 114x42
+          RenderInline {SPAN} at (0,0) size 114x42
             RenderText {#text} at (0,0) size 0x0
-            RenderInline {SPAN} at (0,0) size 114x17
+            RenderInline {SPAN} at (0,0) size 114x18
               RenderText {#text} at (0,0) size 0x0
               RenderImage {IMG} at (0,0) size 57x21
-              RenderText {#text} at (57,1) size 57x17
-                text run at (57,1) width 5: " "
-                text run at (61,1) width 53: "Names"
-              RenderBR {BR} at (113,1) size 1x17
+              RenderText {#text} at (57,0) size 57x18
+                text run at (57,0) width 5: " "
+                text run at (61,0) width 53: "Names"
+              RenderBR {BR} at (113,0) size 1x18
             RenderText {#text} at (0,0) size 0x0
             RenderInline {SPAN} at (0,0) size 106x15
               RenderText {#text} at (0,0) size 0x0
@@ -46,7 +46,7 @@ layer at (0,0) size 785x1121
         RenderInline {SPAN} at (0,0) size 597x65
           RenderInline {SPAN} at (0,0) size 597x65
             RenderText {#text} at (0,0) size 0x0
-            RenderImage {IMG} at (0,1) size 67x20
+            RenderImage {IMG} at (0,0) size 67x21
             RenderText {#text} at (67,2) size 4x15
               text run at (67,2) width 4: " "
             RenderInline {SPAN} at (0,0) size 83x17
@@ -58,16 +58,16 @@ layer at (0,0) size 785x1121
           RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,167) size 769x3
       RenderBlock (anonymous) at (0,176) size 769x42
-        RenderInline {SPAN} at (0,0) size 125x41
-          RenderInline {SPAN} at (0,0) size 125x41
+        RenderInline {SPAN} at (0,0) size 125x42
+          RenderInline {SPAN} at (0,0) size 125x42
             RenderText {#text} at (0,0) size 0x0
-            RenderInline {SPAN} at (0,0) size 125x17
+            RenderInline {SPAN} at (0,0) size 125x18
               RenderText {#text} at (0,0) size 0x0
               RenderImage {IMG} at (0,0) size 62x21
-              RenderText {#text} at (62,1) size 63x17
-                text run at (62,1) width 5: " "
-                text run at (66,1) width 59: "Phones"
-              RenderBR {BR} at (124,1) size 1x17
+              RenderText {#text} at (62,0) size 63x18
+                text run at (62,0) width 5: " "
+                text run at (66,0) width 59: "Phones"
+              RenderBR {BR} at (124,0) size 1x18
             RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,277) size 769x0
         RenderInline {SPAN} at (0,0) size 0x0
@@ -76,19 +76,19 @@ layer at (0,0) size 785x1121
           RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,284) size 769x3
       RenderBlock (anonymous) at (0,292) size 769x22
-        RenderInline {SPAN} at (0,0) size 136x15
-          RenderInline {SPAN} at (0,0) size 136x15
+        RenderInline {SPAN} at (0,0) size 136x16
+          RenderInline {SPAN} at (0,0) size 136x16
             RenderText {#text} at (0,0) size 0x0
-            RenderInline {SPAN} at (0,0) size 136x17
+            RenderInline {SPAN} at (0,0) size 136x18
               RenderText {#text} at (0,0) size 0x0
               RenderImage {IMG} at (0,0) size 68x21
-              RenderText {#text} at (68,1) size 68x17
-                text run at (68,1) width 5: " "
-                text run at (72,1) width 64: "Itinerary"
+              RenderText {#text} at (68,0) size 68x18
+                text run at (68,0) width 5: " "
+                text run at (72,0) width 64: "Itinerary"
             RenderText {#text} at (0,0) size 0x0
-            RenderInline {SPAN} at (0,0) size 0x15
+            RenderInline {SPAN} at (0,0) size 0x16
               RenderText {#text} at (0,0) size 0x0
-              RenderInline {SPAN} at (0,0) size 0x15
+              RenderInline {SPAN} at (0,0) size 0x16
                 RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,313) size 769x61
         RenderTable {TABLE} at (0,0) size 584x60
@@ -356,17 +356,17 @@ layer at (0,0) size 785x1121
       RenderBlock (anonymous) at (0,932) size 769x3
       RenderBlock (anonymous) at (0,941) size 769x51
         RenderInline {SPAN} at (0,0) size 201x48
-          RenderInline {SPAN} at (0,0) size 0x15
-            RenderInline {SPAN} at (0,0) size 0x15
+          RenderInline {SPAN} at (0,0) size 0x16
+            RenderInline {SPAN} at (0,0) size 0x16
             RenderText {#text} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
-          RenderInline {SPAN} at (0,0) size 98x17
+          RenderInline {SPAN} at (0,0) size 98x18
             RenderText {#text} at (0,0) size 0x0
             RenderImage {IMG} at (0,0) size 20x20
-            RenderText {#text} at (20,0) size 78x17
+            RenderText {#text} at (20,0) size 78x18
               text run at (20,0) width 5: " "
               text run at (24,0) width 74: "Remarks:"
-            RenderBR {BR} at (97,0) size 1x17
+            RenderBR {BR} at (97,0) size 1x18
           RenderText {#text} at (0,0) size 0x0
           RenderBR {BR} at (0,20) size 0x15
           RenderInline {SPAN} at (0,0) size 201x15
@@ -377,33 +377,33 @@ layer at (0,0) size 785x1121
           RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,997) size 769x3
       RenderBlock (anonymous) at (0,1006) size 769x22
-        RenderInline {SPAN} at (0,0) size 184x15
-          RenderInline {SPAN} at (0,0) size 184x17
+        RenderInline {SPAN} at (0,0) size 184x16
+          RenderInline {SPAN} at (0,0) size 184x18
             RenderText {#text} at (0,0) size 0x0
             RenderImage {IMG} at (0,0) size 68x21
-            RenderText {#text} at (68,1) size 5x17
-              text run at (68,1) width 5: " "
-            RenderInline {B} at (0,0) size 112x17
-              RenderText {#text} at (72,1) size 112x17
-                text run at (72,1) width 112: "Web Bookings"
+            RenderText {#text} at (68,0) size 5x18
+              text run at (68,0) width 5: " "
+            RenderInline {B} at (0,0) size 112x18
+              RenderText {#text} at (72,0) size 112x18
+                text run at (72,0) width 112: "Web Bookings"
             RenderText {#text} at (0,0) size 0x0
-            RenderInline {SPAN} at (0,0) size 0x17
-              RenderBR {BR} at (183,1) size 1x17
+            RenderInline {SPAN} at (0,0) size 0x18
+              RenderBR {BR} at (183,0) size 1x18
               RenderInline {SPAN} at (0,0) size 0x14
             RenderText {#text} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,1034) size 769x2
       RenderBlock (anonymous) at (0,1042) size 769x21
-        RenderInline {SPAN} at (0,0) size 279x15
-          RenderInline {SPAN} at (0,0) size 279x15
+        RenderInline {SPAN} at (0,0) size 279x16
+          RenderInline {SPAN} at (0,0) size 279x16
             RenderText {#text} at (0,0) size 0x0
-            RenderInline {SPAN} at (0,0) size 279x17
+            RenderInline {SPAN} at (0,0) size 279x18
               RenderText {#text} at (0,0) size 0x0
               RenderImage {IMG} at (0,0) size 20x20
-              RenderText {#text} at (20,0) size 259x17
+              RenderText {#text} at (20,0) size 259x18
                 text run at (20,0) width 5: " "
                 text run at (24,0) width 255: "Remarks and Service Information"
-              RenderBR {BR} at (278,0) size 1x17
+              RenderBR {BR} at (278,0) size 1x18
             RenderText {#text} at (0,0) size 0x0
             RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,1069) size 769x31

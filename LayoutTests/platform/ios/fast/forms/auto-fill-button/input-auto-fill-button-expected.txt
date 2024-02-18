@@ -6,7 +6,7 @@ layer at (0,0) size 800x600 isolatesBlending
       RenderBlock {P} at (0,0) size 784x20
         RenderText {#text} at (0,0) size 503x19
           text run at (0,0) width 503: "This tests that the AutoFill button renders. It can only be tested in the test tool."
-      RenderBlock {DIV} at (0,36) size 784x23
+      RenderBlock {DIV} at (0,36) size 784x24
         RenderTextControl {INPUT} at (0,2) size 155x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
           RenderFlexibleBox {DIV} at (6,-1) size 143x22
             RenderBlock {DIV} at (0,3) size 115x15

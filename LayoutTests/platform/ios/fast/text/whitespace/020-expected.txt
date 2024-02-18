@@ -21,8 +21,8 @@ layer at (0,0) size 800x600
             RenderInline {A} at (0,0) size 150x19 [color=#0000EE]
               RenderText {#text} at (11,22) size 135x19
                 text run at (11,22) width 135: "1-800-las-flores.com"
-              RenderInline {SUB} at (0,0) size 16x15
-                RenderText {#text} at (145,29) size 16x15
+              RenderInline {SUB} at (0,0) size 16x16
+                RenderText {#text} at (145,29) size 16x16
                   text run at (145,29) width 16: "sm"
             RenderText {#text} at (160,22) size 21x19
               text run at (160,22) width 21: "     "
