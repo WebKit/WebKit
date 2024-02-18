@@ -69,6 +69,9 @@ bool InvokeEvent::isInvokeEvent() const
 RefPtr<Element> InvokeEvent::invoker() const
 {
     auto* invoker = m_invoker.get();
+    if (!invoker)
+        return nullptr;
+
     if (RefPtr target = dynamicDowncast<Node>(currentTarget())) {
         auto& treeScope = target->treeScope();
         auto node = treeScope.retargetToScope(*invoker);
