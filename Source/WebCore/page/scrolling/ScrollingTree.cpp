@@ -320,11 +320,15 @@ void ScrollingTree::setOverlayScrollbarsEnabled(bool enabled)
 
 void ScrollingTree::removeNode(ScrollingNodeID nodeID)
 {
+
     m_latchingController.nodeWasRemoved(nodeID);
     if (auto node = m_nodeMap.take(nodeID)) {
-        auto nodeList = m_nodeMapPerFrame.find(node->frameIdentifier());
-        if (nodeList != m_nodeMapPerFrame.end())
-            nodeList->value.remove(*node);
+        {
+            Locker locker { m_frameIDMapLock };
+            auto nodeList = m_nodeMapPerFrame.find(node->frameIdentifier());
+            if (nodeList != m_nodeMapPerFrame.end())
+                nodeList->value.remove(nodeID);
+        }
         node->willBeDestroyed();
     }
 }
@@ -407,9 +411,12 @@ bool ScrollingTree::commitTreeStateInternal(std::unique_ptr<ScrollingStateTree>&
         return scrollingNode->frameIdentifier() == commitState.frameId;
     });
 
-    auto nodesForFrame = m_nodeMapPerFrame.get(commitState.frameId);
-    for (auto& nodes : nodesForFrame)
-        commitState.unvisitedNodes.add(nodes->scrollingNodeID());
+    {
+        Locker locker { m_frameIDMapLock };
+        auto nodesForFrame = m_nodeMapPerFrame.get(commitState.frameId);
+        for (auto& nodeID : nodesForFrame)
+            commitState.unvisitedNodes.add(nodeID);
+    }
 
     bool succeeded = updateTreeFromStateNodeRecursive(rootNode.get(), commitState);
     if (!succeeded)
@@ -470,8 +477,12 @@ bool ScrollingTree::updateTreeFromStateNodeRecursive(const ScrollingStateNode* s
             m_rootNode = downcast<ScrollingTreeFrameScrollingNode>(node.get());
             removeAllNodes();
         }
+
         m_nodeMap.set(nodeID, node.get());
-        m_nodeMapPerFrame.ensure(state.frameId, [] { return HashSet<Ref<ScrollingTreeNode>> { }; }).iterator->value.add(*node);
+        {
+            Locker locker { m_frameIDMapLock };
+            m_nodeMapPerFrame.ensure(state.frameId, [] { return HashSet<ScrollingNodeID> { }; }).iterator->value.add(node->scrollingNodeID());
+        }
         node->setFrameIdentifier(state.frameId);
     }
 
@@ -540,12 +551,15 @@ bool ScrollingTree::updateTreeFromStateNodeRecursive(const ScrollingStateNode* s
 
 void ScrollingTree::removeAllNodes()
 {
-    m_nodeMapPerFrame.clear();
     auto nodes = std::exchange(m_nodeMap, { });
     for (auto iter : nodes)
         iter.value->willBeDestroyed();
 
     m_nodeMap.clear();
+    {
+        Locker locker { m_frameIDMapLock };
+        m_nodeMapPerFrame.clear();
+    }
 }
 
 void ScrollingTree::applyLayerPositionsAfterCommit()
@@ -1006,6 +1020,17 @@ Seconds ScrollingTree::maxAllowableRenderingUpdateDurationForSynchronization()
 void ScrollingTree::addScrollingNodeToHostedSubtreeMap(LayerHostingContextIdentifier identifier, Ref<ScrollingTreeFrameHostingNode> node)
 {
     m_hostedSubtrees.set(identifier, node);
+}
+
+std::optional<FrameIdentifier> ScrollingTree::frameIDForScrollingNodeID(ScrollingNodeID scrollingNodeID)
+{
+    Locker locker { m_frameIDMapLock };
+
+    for (auto& pair : m_nodeMapPerFrame) {
+        if (pair.value.contains(scrollingNodeID))
+            return pair.key;
+    }
+    return std::nullopt;
 }
 
 String ScrollingTree::scrollingTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior> behavior)

@@ -38,6 +38,7 @@
 #include "Logging.h"
 #include "Page.h"
 #include "PerformanceLoggingClient.h"
+#include "RemoteFrame.h"
 #include "RenderLayerCompositor.h"
 #include "RenderView.h"
 #include "ScrollAnimator.h"
@@ -479,14 +480,13 @@ void AsyncScrollingCoordinator::scheduleRenderingUpdate()
         page->scheduleRenderingUpdate(RenderingUpdateStep::ScrollingTreeUpdate);
 }
 
-LocalFrameView* AsyncScrollingCoordinator::frameViewForScrollingNode(ScrollingNodeID scrollingNodeID) const
+LocalFrameView* AsyncScrollingCoordinator::frameViewForScrollingNode(LocalFrame& rootFrame, ScrollingNodeID scrollingNodeID) const
 {
-    if (!m_scrollingStateTree->rootStateNode())
-        return nullptr;
-    
-    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(page()->mainFrame());
-    if (scrollingNodeID == m_scrollingStateTree->rootStateNode()->scrollingNodeID())
-        return localMainFrame ? localMainFrame->view() : nullptr;
+    ASSERT(rootFrame.isRootFrame());
+    if (scrollingNodeID == m_scrollingStateTree->rootStateNode()->scrollingNodeID()) {
+        if (rootFrame.view() && rootFrame.view()->scrollingNodeID() == scrollingNodeID)
+            return rootFrame.view();
+    }
 
     RefPtr stateNode = m_scrollingStateTree->stateNodeForID(scrollingNodeID);
     if (!stateNode)
@@ -500,13 +500,10 @@ LocalFrameView* AsyncScrollingCoordinator::frameViewForScrollingNode(ScrollingNo
     if (!parentNode)
         return nullptr;
 
-    if (!localMainFrame)
-        return nullptr;
-
     // Walk the frame tree to find the matching LocalFrameView. This is not ideal, but avoids back pointers to LocalFrameViews
     // from ScrollingTreeStateNodes.
-    for (auto* frame = &page()->mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+    for (RefPtr<Frame> frame = &rootFrame; frame; frame = frame->tree().traverseNext()) {
+        auto* localFrame = dynamicDowncast<LocalFrame>(frame.get());
         if (!localFrame)
             continue;
         if (auto* view = localFrame->view()) {
@@ -515,6 +512,17 @@ LocalFrameView* AsyncScrollingCoordinator::frameViewForScrollingNode(ScrollingNo
         }
     }
 
+    return nullptr;
+}
+
+LocalFrameView* AsyncScrollingCoordinator::frameViewForScrollingNode(ScrollingNodeID scrollingNodeID) const
+{
+    if (!m_scrollingStateTree->rootStateNode() || !page())
+        return nullptr;
+    for (const auto& rootFrame : page()->rootFrames()) {
+        if (RefPtr frameView = frameViewForScrollingNode(rootFrame.get(), scrollingNodeID))
+            return frameView.get();
+    }
     return nullptr;
 }
 

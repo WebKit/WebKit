@@ -2394,6 +2394,10 @@ public:
 
     WebsitePoliciesData* mainFrameWebsitePoliciesData() const { return m_mainFrameWebsitePoliciesData.get(); }
 
+#if ENABLE(ASYNC_SCROLLING) && PLATFORM(COCOA)
+    void sendScrollPositionChangedForNode(std::optional<WebCore::FrameIdentifier>, WebCore::ScrollingNodeID, const WebCore::FloatPoint& scrollPosition, std::optional<WebCore::FloatPoint> layoutViewportOrigin, bool syncLayerPosition, bool isLastUpdate);
+#endif
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
     void platformInitialize();

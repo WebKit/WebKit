@@ -250,6 +250,7 @@
 #endif
 
 #if ENABLE(ASYNC_SCROLLING) && PLATFORM(COCOA)
+#include "RemoteScrollingCoordinatorMessages.h"
 #include "RemoteScrollingCoordinatorProxy.h"
 #endif
 
@@ -13784,6 +13785,19 @@ void WebPageProxy::addConsoleMessage(FrameIdentifier frameID, MessageSource mess
 {
     send(Messages::WebPage::AddConsoleMessage { frameID, messageSource, messageLevel, message, coreIdentifier });
 }
+
+#if ENABLE(ASYNC_SCROLLING) && PLATFORM(COCOA)
+void WebPageProxy::sendScrollPositionChangedForNode(std::optional<WebCore::FrameIdentifier> frameID, ScrollingNodeID nodeID, const FloatPoint& scrollPosition, std::optional<FloatPoint> layoutViewportOrigin, bool syncLayerPosition, bool isLastUpdate)
+{
+    sendToProcessContainingFrame(frameID, Messages::RemoteScrollingCoordinator::ScrollPositionChangedForNode(nodeID, scrollPosition, layoutViewportOrigin, syncLayerPosition), [weakThis = WeakPtr { *m_scrollingCoordinatorProxy }, isLastUpdate] {
+        if (!weakThis)
+            return;
+
+        if (isLastUpdate)
+            weakThis->receivedLastScrollingTreeNodeDidScrollReply();
+    });
+}
+#endif
 
 } // namespace WebKit
 

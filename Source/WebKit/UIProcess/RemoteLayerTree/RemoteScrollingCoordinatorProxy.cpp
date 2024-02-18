@@ -215,13 +215,7 @@ void RemoteScrollingCoordinatorProxy::sendScrollingTreeNodeDidScroll()
         bool isLastUpdate = i == scrollUpdates.size() - 1;
 
         LOG_WITH_STREAM(Scrolling, stream << "RemoteScrollingCoordinatorProxy::sendScrollingTreeNodeDidScroll - node " << update.nodeID << " scroll position " << update.scrollPosition << " isLastUpdate " << isLastUpdate);
-        m_webPageProxy.sendWithAsyncReply(Messages::RemoteScrollingCoordinator::ScrollPositionChangedForNode(update.nodeID, update.scrollPosition, update.layoutViewportOrigin, update.updateLayerPositionAction == ScrollingLayerPositionAction::Sync), [weakThis = WeakPtr { *this }, isLastUpdate] {
-            if (!weakThis)
-                return;
-
-            if (isLastUpdate)
-                weakThis->receivedLastScrollingTreeNodeDidScrollReply();
-        });
+        m_webPageProxy.sendScrollPositionChangedForNode(scrollingTree()->frameIDForScrollingNodeID(update.nodeID), update.nodeID, update.scrollPosition, update.layoutViewportOrigin, update.updateLayerPositionAction == ScrollingLayerPositionAction::Sync, isLastUpdate);
         m_waitingForDidScrollReply = true;
     }
 }

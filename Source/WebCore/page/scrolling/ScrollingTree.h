@@ -258,6 +258,8 @@ public:
     void removeNode(ScrollingNodeID);
     void removeFrameHostingNode(LayerHostingContextIdentifier);
 
+    WEBCORE_EXPORT std::optional<FrameIdentifier> frameIDForScrollingNodeID(ScrollingNodeID);
+
 protected:
     WEBCORE_EXPORT WheelEventHandlingResult handleWheelEventWithNode(const PlatformWheelEvent&, OptionSet<WheelEventProcessingSteps>, ScrollingTreeNode*, EventTargeting = EventTargeting::Propagate);
 
@@ -304,7 +306,8 @@ private:
     using ScrollingTreeNodeMap = HashMap<ScrollingNodeID, RefPtr<ScrollingTreeNode>>;
     ScrollingTreeNodeMap m_nodeMap;
 
-    HashMap<FrameIdentifier, HashSet<Ref<ScrollingTreeNode>>> m_nodeMapPerFrame;
+    Lock m_frameIDMapLock;
+    HashMap<FrameIdentifier, HashSet<ScrollingNodeID>> m_nodeMapPerFrame WTF_GUARDED_BY_LOCK(m_frameIDMapLock);
 
     ScrollingTreeLatchingController m_latchingController;
     ScrollingTreeGestureState m_gestureState;
