@@ -42,7 +42,6 @@ namespace WebKit {
 
 class AuxiliaryProcessProxy;
 class ProcessThrottler;
-class ProcessThrottlerClient;
 
 enum UserObservablePageCounterType { };
 using UserObservablePageCounter = RefCounter<UserObservablePageCounterType>;
@@ -107,11 +106,14 @@ private:
 
 class ProcessThrottler : public CanMakeWeakPtr<ProcessThrottler> {
 public:
-    ProcessThrottler(ProcessThrottlerClient&, bool shouldTakeUIBackgroundAssertion);
+    ProcessThrottler(AuxiliaryProcessProxy&, bool shouldTakeUIBackgroundAssertion);
     ~ProcessThrottler();
 
     using Activity = ProcessThrottlerActivity;
     using ActivityVariant = std::variant<std::nullptr_t, UniqueRef<Activity>>;
+
+    void ref();
+    void deref();
 
     using ForegroundActivity = Activity;
     UniqueRef<Activity> foregroundActivity(ASCIILiteral name);
@@ -171,9 +173,10 @@ private:
 
     class ProcessAssertionCache;
 
+    Ref<AuxiliaryProcessProxy> protectedProcess() const;
+
     UniqueRef<ProcessAssertionCache> m_assertionCache;
-    ProcessThrottlerClient& m_process;
-    WeakPtr<AuxiliaryProcessProxy> m_processProxy;
+    WeakRef<AuxiliaryProcessProxy> m_process;
     RefPtr<ProcessAssertion> m_assertion;
     RefPtr<ProcessAssertion> m_assertionToClearAfterPrepareToDropLastAssertion;
     RunLoop::Timer m_prepareToSuspendTimeoutTimer;
@@ -188,6 +191,7 @@ private:
     const bool m_shouldTakeUIBackgroundAssertion { false };
     bool m_shouldTakeNearSuspendedAssertion { true };
     bool m_allowsActivities { true };
+    bool m_isConnectedToProcess { false };
 };
 
 inline auto ProcessThrottler::foregroundActivity(ASCIILiteral name) -> UniqueRef<Activity>

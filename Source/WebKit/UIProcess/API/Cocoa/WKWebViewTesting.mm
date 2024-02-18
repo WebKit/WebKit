@@ -335,7 +335,7 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 - (void)_processDidResumeForTesting
 {
     if (_page)
-        _page->process().sendProcessDidResume(WebKit::ProcessThrottlerClient::ResumeReason::ForegroundActivity);
+        _page->process().sendProcessDidResume(WebKit::AuxiliaryProcessProxy::ResumeReason::ForegroundActivity);
 }
 
 - (void)_setThrottleStateForTesting:(int)value

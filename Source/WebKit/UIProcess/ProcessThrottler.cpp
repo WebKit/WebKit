@@ -28,7 +28,6 @@
 
 #include "AuxiliaryProcessProxy.h"
 #include "Logging.h"
-#include "ProcessThrottlerClient.h"
 #include <optional>
 #include <wtf/CheckedRef.h>
 #include <wtf/CompletionHandler.h>
@@ -40,7 +39,7 @@
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
-#define PROCESSTHROTTLER_RELEASE_LOG(msg, ...) RELEASE_LOG(ProcessSuspension, "%p - [PID=%d] ProcessThrottler::" msg, this, m_processProxy ? m_processProxy->processID() : 0, ##__VA_ARGS__)
+#define PROCESSTHROTTLER_RELEASE_LOG(msg, ...) RELEASE_LOG(ProcessSuspension, "%p - [PID=%d] ProcessThrottler::" msg, this, m_process->processID(), ##__VA_ARGS__)
 
 namespace WebKit {
     
@@ -118,7 +117,7 @@ static uint64_t generatePrepareToSuspendRequestID()
     return ++prepareToSuspendRequestID;
 }
 
-ProcessThrottler::ProcessThrottler(ProcessThrottlerClient& process, bool shouldTakeUIBackgroundAssertion)
+ProcessThrottler::ProcessThrottler(AuxiliaryProcessProxy& process, bool shouldTakeUIBackgroundAssertion)
     : m_assertionCache(makeUniqueRef<ProcessAssertionCache>())
     , m_process(process)
     , m_prepareToSuspendTimeoutTimer(RunLoop::main(), this, &ProcessThrottler::prepareToSuspendTimeoutTimerFired)
@@ -226,7 +225,7 @@ String ProcessThrottler::assertionName(ProcessAssertionType type) const
         return "Unknown"_s;
     }();
 
-    return makeString(m_process.clientName(), " ", typeString, " Assertion");
+    return makeString(m_process->clientName(), " ", typeString, " Assertion");
 }
 
 ProcessAssertionType ProcessThrottler::assertionTypeForState(ProcessThrottleState state)
@@ -252,31 +251,32 @@ void ProcessThrottler::setThrottleState(ProcessThrottleState newState)
     if (m_assertion && m_assertion->isValid() && m_assertion->type() == newType)
         return;
 
-    if (!m_processProxy)
+    if (!m_isConnectedToProcess)
         return;
 
+    Ref process = m_process.get();
     PROCESSTHROTTLER_RELEASE_LOG("setThrottleState: Updating process assertion type to %u (foregroundActivities=%u, backgroundActivities=%u)", WTF::enumToUnderlyingType(newType), m_foregroundActivities.computeSize(), m_backgroundActivities.computeSize());
 
     // Keep the previous assertion active until the new assertion is taken asynchronously.
-    auto previousAssertion = std::exchange(m_assertion, nullptr);
+    RefPtr previousAssertion = std::exchange(m_assertion, nullptr);
     if (previousAssertion)
         m_assertionCache->add(*previousAssertion);
 
     m_assertion = m_assertionCache->tryTake(newType);
     if (!m_assertion) {
         if (m_shouldTakeUIBackgroundAssertion) {
-            auto assertion = ProcessAndUIAssertion::create(*m_processProxy, assertionName(newType), newType, ProcessAssertion::Mode::Async, [previousAssertion = WTFMove(previousAssertion)] { });
+            Ref assertion = ProcessAndUIAssertion::create(process, assertionName(newType), newType, ProcessAssertion::Mode::Async, [previousAssertion = WTFMove(previousAssertion)] { });
             assertion->setUIAssertionExpirationHandler([weakThis = WeakPtr { *this }] {
                 if (weakThis)
                     weakThis->uiAssertionWillExpireImminently();
             });
             m_assertion = WTFMove(assertion);
         } else
-            m_assertion = ProcessAssertion::create(*m_processProxy, assertionName(newType), newType, ProcessAssertion::Mode::Async, [previousAssertion = WTFMove(previousAssertion)] { });
+            m_assertion = ProcessAssertion::create(process, assertionName(newType), newType, ProcessAssertion::Mode::Async, [previousAssertion = WTFMove(previousAssertion)] { });
     }
     m_assertion->setInvalidationHandler([weakThis = WeakPtr { *this }] {
-        if (weakThis)
-            weakThis->assertionWasInvalidated();
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->assertionWasInvalidated();
     });
 
     if (isHoldingNearSuspendedAssertion()) {
@@ -287,12 +287,24 @@ void ProcessThrottler::setThrottleState(ProcessThrottleState newState)
     } else
         m_dropNearSuspendedAssertionTimer.stop();
 
-    m_process.didChangeThrottleState(newState);
+    protectedProcess()->didChangeThrottleState(newState);
+}
+
+void ProcessThrottler::ref()
+{
+    // Forward ref-counting to our owner.
+    m_process->ref();
+}
+
+void ProcessThrottler::deref()
+{
+    // Forward ref-counting to our owner.
+    m_process->deref();
 }
 
 void ProcessThrottler::updateThrottleStateIfNeeded()
 {
-    if (!m_processProxy)
+    if (!m_isConnectedToProcess)
         return;
 
     if (shouldBeRunnable()) {
@@ -301,7 +313,7 @@ void ProcessThrottler::updateThrottleStateIfNeeded()
                 PROCESSTHROTTLER_RELEASE_LOG("updateThrottleStateIfNeeded: sending ProcessDidResume IPC because the process was suspended");
             else
                 PROCESSTHROTTLER_RELEASE_LOG("updateThrottleStateIfNeeded: sending ProcessDidResume IPC because the WebProcess is still processing request to suspend=%" PRIu64, *m_pendingRequestToSuspendID);
-            m_process.sendProcessDidResume(expectedThrottleState() == ProcessThrottleState::Foreground ? ProcessThrottlerClient::ResumeReason::ForegroundActivity : ProcessThrottlerClient::ResumeReason::BackgroundActivity);
+            protectedProcess()->sendProcessDidResume(expectedThrottleState() == ProcessThrottleState::Foreground ? AuxiliaryProcessProxy::ResumeReason::ForegroundActivity : AuxiliaryProcessProxy::ResumeReason::BackgroundActivity);
             clearPendingRequestToSuspend();
         }
     } else {
@@ -323,7 +335,7 @@ void ProcessThrottler::didConnectToProcess(AuxiliaryProcessProxy& process)
     PROCESSTHROTTLER_RELEASE_LOG("didConnectToProcess");
     RELEASE_ASSERT(!m_assertion);
 
-    m_processProxy = WeakPtr { process };
+    m_isConnectedToProcess = true;
     updateThrottleStateNow();
     RELEASE_ASSERT(m_assertion || (m_state == ProcessThrottleState::Suspended && !m_shouldTakeNearSuspendedAssertion));
 }
@@ -334,7 +346,7 @@ void ProcessThrottler::didDisconnectFromProcess()
 
     m_dropNearSuspendedAssertionTimer.stop();
     clearPendingRequestToSuspend();
-    m_processProxy = nullptr;
+    m_isConnectedToProcess = false;
     m_assertion = nullptr;
 }
     
@@ -381,10 +393,12 @@ void ProcessThrottler::sendPrepareToSuspendIPC(IsSuspensionImminent isSuspension
         PROCESSTHROTTLER_RELEASE_LOG("sendPrepareToSuspendIPC: Not sending PrepareToSuspend(isSuspensionImminent=%d) IPC because there is already one in flight (%" PRIu64 ")", isSuspensionImminent == IsSuspensionImminent::Yes, *m_pendingRequestToSuspendID);
     } else {
         m_pendingRequestToSuspendID = generatePrepareToSuspendRequestID();
-        double remainingRunTime = ProcessAssertion::remainingRunTimeInSeconds(m_processProxy ? m_processProxy->processID() : 0);
+        Ref process = m_process.get();
+        double remainingRunTime = ProcessAssertion::remainingRunTimeInSeconds(process->processID());
         PROCESSTHROTTLER_RELEASE_LOG("sendPrepareToSuspendIPC: Sending PrepareToSuspend(%" PRIu64 ", isSuspensionImminent=%d) IPC, remainingRunTime=%fs", *m_pendingRequestToSuspendID, isSuspensionImminent == IsSuspensionImminent::Yes, remainingRunTime);
-        m_process.sendPrepareToSuspend(isSuspensionImminent, remainingRunTime, [this, weakThis = WeakPtr { *this }, requestToSuspendID = *m_pendingRequestToSuspendID]() mutable {
-            if (weakThis && m_pendingRequestToSuspendID && *m_pendingRequestToSuspendID == requestToSuspendID)
+        process->sendPrepareToSuspend(isSuspensionImminent, remainingRunTime, [this, weakThis = WeakPtr { *this }, requestToSuspendID = *m_pendingRequestToSuspendID]() mutable {
+            RefPtr protectedThis = weakThis.get();
+            if (protectedThis && m_pendingRequestToSuspendID && *m_pendingRequestToSuspendID == requestToSuspendID)
                 processReadyToSuspend();
         });
     }
@@ -445,7 +459,7 @@ void ProcessThrottler::setShouldTakeNearSuspendedAssertion(bool shouldTakeNearSu
 {
     m_shouldTakeNearSuspendedAssertion = shouldTakeNearSuspendedAssertion;
     if (shouldTakeNearSuspendedAssertion) {
-        if (!m_assertion && m_processProxy) {
+        if (!m_assertion && m_isConnectedToProcess) {
             PROCESSTHROTTLER_RELEASE_LOG("setShouldTakeNearSuspendedAssertion: Taking near-suspended assertion");
             setThrottleState(ProcessThrottleState::Suspended);
         }
@@ -488,15 +502,21 @@ void ProcessThrottler::clearAssertion()
         m_prepareToDropLastAssertionTimeoutTimer.startOneShot(10_s);
 
     m_assertionToClearAfterPrepareToDropLastAssertion = std::exchange(m_assertion, nullptr);
-    m_process.prepareToDropLastAssertion([this, weakThis = WeakPtr { *this }] {
-        if (!weakThis)
+    protectedProcess()->prepareToDropLastAssertion([this, weakThis = WeakPtr { *this }] {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
         PROCESSTHROTTLER_RELEASE_LOG("clearAssertion: Releasing near-suspended assertion");
         m_prepareToDropLastAssertionTimeoutTimer.stop();
         m_assertionToClearAfterPrepareToDropLastAssertion = nullptr;
         if (!m_assertion)
-            m_process.didDropLastAssertion();
+            protectedProcess()->didDropLastAssertion();
     });
+}
+
+Ref<AuxiliaryProcessProxy> ProcessThrottler::protectedProcess() const
+{
+    return m_process.get();
 }
 
 PageAllowedToRunInTheBackgroundCounter::Token ProcessThrottler::pageAllowedToRunInTheBackgroundToken()
@@ -520,7 +540,7 @@ void ProcessThrottler::numberOfPagesAllowedToRunInTheBackgroundChanged()
 
 bool ProcessThrottler::isSuspended() const
 {
-    return m_processProxy && !m_assertion;
+    return m_isConnectedToProcess && !m_assertion;
 }
 
 ProcessThrottlerTimedActivity::ProcessThrottlerTimedActivity(Seconds timeout, ProcessThrottler::ActivityVariant&& activity)
@@ -556,7 +576,7 @@ void ProcessThrottlerTimedActivity::updateTimer()
         m_timer.startOneShot(m_timeout);
 }
 
-#define PROCESSTHROTTLER_ACTIVITY_RELEASE_LOG(msg, ...) RELEASE_LOG(ProcessSuspension, "%p - [PID=%d, throttler=%p] ProcessThrottler::Activity::" msg, this, (m_throttler && m_throttler->m_processProxy) ? m_throttler->m_processProxy->processID() : 0, m_throttler.get(), ##__VA_ARGS__)
+#define PROCESSTHROTTLER_ACTIVITY_RELEASE_LOG(msg, ...) RELEASE_LOG(ProcessSuspension, "%p - [PID=%d, throttler=%p] ProcessThrottler::Activity::" msg, this, m_throttler ? m_throttler->m_process->processID() : 0, m_throttler.get(), ##__VA_ARGS__)
 
 ProcessThrottlerActivity::ProcessThrottlerActivity(ProcessThrottler& throttler, ASCIILiteral name, ProcessThrottlerActivityType type)
     : m_throttler(&throttler)
@@ -581,7 +601,7 @@ void ProcessThrottlerActivity::invalidate()
         PROCESSTHROTTLER_ACTIVITY_RELEASE_LOG("invalidate: Ending %" PUBLIC_LOG_STRING " activity / '%" PUBLIC_LOG_STRING "'",
             m_type == ProcessThrottlerActivityType::Foreground ? "foreground" : "background", m_name.characters());
     }
-    m_throttler->removeActivity(*this);
+    Ref { *m_throttler }->removeActivity(*this);
     m_throttler = nullptr;
 }
 

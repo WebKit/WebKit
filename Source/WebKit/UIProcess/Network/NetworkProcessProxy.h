@@ -33,7 +33,6 @@
 #include "NetworkResourceLoadIdentifier.h"
 #include "ProcessLauncher.h"
 #include "ProcessThrottler.h"
-#include "ProcessThrottlerClient.h"
 #include "QuotaIncreaseRequestIdentifier.h"
 #include "UserContentControllerIdentifier.h"
 #include "WebsiteDataStore.h"
