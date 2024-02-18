@@ -141,24 +141,6 @@ private:
     void didEndMagnificationGesture() override;
     void setPageScaleFactor(double scale, std::optional<WebCore::IntPoint> origin) final;
 
-    /*
-        Unified PDF Plugin coordinate spaces, in depth order:
-
-        - "root view": same as the rest of WebKit.
-
-        - "plugin": the space of the plugin element (origin at the top left,
-            ignoring all internal transforms).
-
-        - "contents": the space of the contents layer, with scrolling subtracted
-            out and page scale multiplied in; the painting space.
-
-        - "document": the space that the PDF pages are laid down in, with
-            PDFDocumentLayout's width-fitting scale divided out; includes margins.
-
-        - "page": the space of each actual PDFPage, as used by PDFKit; origin at
-            the bottom left of the crop box; page rotation multiplied in.
-    */
-
     WebCore::IntSize documentSize() const;
     WebCore::IntSize contentsSize() const override;
     unsigned firstPageHeight() const override;
@@ -259,10 +241,10 @@ private:
     };
 
     SelectionGranularity selectionGranularityForMouseEvent(const WebMouseEvent&) const;
-    void beginTrackingSelection(PDFDocumentLayout::PageIndex, const WebCore::IntPoint& pagePoint, const WebMouseEvent&);
+    void beginTrackingSelection(PDFDocumentLayout::PageIndex, const WebCore::FloatPoint& pagePoint, const WebMouseEvent&);
     void extendCurrentSelectionIfNeeded();
     void updateCurrentSelectionForContextMenuEventIfNeeded();
-    void continueTrackingSelection(PDFDocumentLayout::PageIndex, const WebCore::IntPoint& pagePoint);
+    void continueTrackingSelection(PDFDocumentLayout::PageIndex, const WebCore::FloatPoint& pagePoint);
     void stopTrackingSelection();
     void setCurrentSelection(RetainPtr<PDFSelection>&&);
     void repaintOnSelectionActiveStateChangeIfNeeded(ActiveStateChangeReason);
@@ -279,8 +261,8 @@ private:
     RefPtr<WebCore::TextIndicator> textIndicatorForSelection(OptionSet<WebCore::TextIndicatorOption>, WebCore::TextIndicatorPresentationTransition) final;
     bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&) override;
     [[maybe_unused]] bool searchInDictionary(const RetainPtr<PDFSelection>&);
-    std::optional<WebCore::IntRect> selectionBoundsForFirstPageInDocumentSpace(const RetainPtr<PDFSelection>&) const;
-    bool showDefinitionForAttributedString(RetainPtr<NSAttributedString>&&, const WebCore::IntRect& rectInDocumentSpace);
+    std::optional<WebCore::FloatRect> selectionBoundsForFirstPageInDocumentSpace(const RetainPtr<PDFSelection>&) const;
+    bool showDefinitionForAttributedString(RetainPtr<NSAttributedString>&&, const WebCore::FloatRect& rectInDocumentSpace);
     LookupTextResult lookupTextAtLocation(const WebCore::FloatPoint&, WebHitTestResultData&) override;
 
     id accessibilityHitTest(const WebCore::IntPoint&) const override;
@@ -335,7 +317,7 @@ private:
     void createScrollingNodeIfNecessary();
 
     void scrollToPDFDestination(PDFDestination *);
-    void scrollToPointInPage(WebCore::IntPoint pointInPDFPageSpace, PDFDocumentLayout::PageIndex);
+    void scrollToPointInPage(WebCore::FloatPoint pointInPDFPageSpace, PDFDocumentLayout::PageIndex);
     void scrollToPage(PDFDocumentLayout::PageIndex);
     void scrollToFragmentIfNeeded();
 
@@ -374,22 +356,41 @@ private:
 
     void setNeedsRepaintInDocumentRect(OptionSet<RepaintRequirement>, const WebCore::FloatRect&);
 
-    WebCore::IntPoint convertFromRootViewToDocument(const WebCore::IntPoint&) const;
-    WebCore::IntPoint convertFromPluginToDocument(const WebCore::IntPoint&) const;
-    WebCore::IntPoint convertFromDocumentToPlugin(const WebCore::IntPoint&) const;
-    WebCore::IntRect convertFromDocumentToPlugin(const WebCore::IntRect&) const;
-    WebCore::IntRect convertFromDocumentToContents(const WebCore::IntRect&) const;
-    WebCore::IntPoint convertFromDocumentToContents(const WebCore::IntPoint&) const;
-    WebCore::IntPoint convertFromDocumentToPage(const WebCore::IntPoint&, PDFDocumentLayout::PageIndex) const;
-    WebCore::IntRect convertFromPageToRootView(const WebCore::IntRect&, PDFDocumentLayout::PageIndex) const;
-    WebCore::IntPoint convertFromPageToDocument(const WebCore::IntPoint&, PDFDocumentLayout::PageIndex) const;
-    WebCore::IntRect convertFromPageToDocument(const WebCore::IntRect&, PDFDocumentLayout::PageIndex) const;
-    WebCore::IntPoint convertFromPageToContents(const WebCore::IntPoint&, PDFDocumentLayout::PageIndex) const;
-    WebCore::IntRect convertFromPageToContents(const WebCore::IntRect&, PDFDocumentLayout::PageIndex) const;
+    /*
+        Unified PDF Plugin coordinate spaces, in depth order:
 
-    WebCore::IntPoint offsetContentsSpacePointByPageMargins(WebCore::IntPoint pointInContentsSpace) const;
+        - "root view": same as the rest of WebKit.
 
-    std::optional<PDFDocumentLayout::PageIndex> pageIndexForDocumentPoint(const WebCore::IntPoint&) const;
+        - "plugin": the space of the plugin element (origin at the top left,
+            ignoring all internal transforms).
+
+        - "contents": the space of the contents layer, with scrolling subtracted
+            out and page scale multiplied in; the painting space.
+
+        - "document": the space that the PDF pages are laid down in, with
+            PDFDocumentLayout's width-fitting scale divided out; includes margins.
+
+        - "page": the space of each actual PDFPage, as used by PDFKit; origin at
+            the bottom left of the crop box; page rotation multiplied in.
+    */
+
+    enum class CoordinateSpace : uint8_t {
+        PDFPage,
+        PDFDocumentLayout,
+        Contents, // aka "ScaledDocument" aka "Painting"
+        ScrolledContents,
+        Plugin
+    };
+
+    // "Up" is inside-out.
+    template <typename T>
+    T convertUp(CoordinateSpace sourceSpace, CoordinateSpace destinationSpace, T sourceValue, std::optional<PDFDocumentLayout::PageIndex> pageIndex = { }) const;
+
+    // "Down" is outside-in.
+    template <typename T>
+    T convertDown(CoordinateSpace sourceSpace, CoordinateSpace destinationSpace, T sourceValue, std::optional<PDFDocumentLayout::PageIndex> = { }) const;
+
+    std::optional<PDFDocumentLayout::PageIndex> pageIndexForDocumentPoint(const WebCore::FloatPoint&) const;
     PDFDocumentLayout::PageIndex indexForCurrentPageInView() const;
 
     RetainPtr<PDFAnnotation> annotationForRootViewPoint(const WebCore::IntPoint&) const;
@@ -436,9 +437,9 @@ private:
         bool lastHandledEventWasContextMenuEvent { false };
         SelectionGranularity granularity { SelectionGranularity::Character };
         PDFDocumentLayout::PageIndex startPageIndex;
-        WebCore::IntPoint startPagePoint;
+        WebCore::FloatPoint startPagePoint;
         RetainPtr<PDFSelection> selectionToExtendWith;
-        WebCore::IntRect marqueeSelectionRect;
+        WebCore::FloatRect marqueeSelectionRect;
     };
     SelectionTrackingData m_selectionTrackingData;
     RetainPtr<PDFSelection> m_currentSelection;

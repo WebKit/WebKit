@@ -283,16 +283,13 @@ void UnifiedPDFPlugin::setNeedsRepaintInDocumentRect(OptionSet<RepaintRequiremen
     if (!repaintRequirements)
         return;
 
-    auto paintingRect = rectInDocumentCoordinates;
-    // FIXME: Use some flavor of convertFromDocumentToContents() once we untangle the coordinate systems.
-    paintingRect.scale(m_documentLayout.scale());
-
+    auto contentsRect = convertUp(CoordinateSpace::PDFDocumentLayout, CoordinateSpace::Contents, rectInDocumentCoordinates);
     if (repaintRequirements.contains(RepaintRequirement::PDFContent)) {
         if (RefPtr asyncRenderer = asyncRendererIfExists())
-            asyncRenderer->invalidateTilesForPaintingRect(m_scaleFactor, paintingRect);
+            asyncRenderer->invalidateTilesForPaintingRect(m_scaleFactor, contentsRect);
     }
 
-    RefPtr { m_contentsLayer }->setNeedsDisplayInRect(paintingRect);
+    RefPtr { m_contentsLayer }->setNeedsDisplayInRect(contentsRect);
 }
 
 void UnifiedPDFPlugin::scheduleRenderingUpdate()
@@ -765,7 +762,7 @@ void UnifiedPDFPlugin::paintHoveredAnnotationOnPage(PDFDocumentLayout::PageIndex
     if (pageIndex != indexOfPaintedPage)
         return;
 
-    // FIXME: Share code with contentsRectForAnnotation().
+    // FIXME: Share code with documentRectForAnnotation().
     auto annotationRect = FloatRect { [trackedAnnotation bounds] };
     context.fillRect(annotationRect, textAnnotationHoverColor());
 }
@@ -1261,7 +1258,6 @@ void UnifiedPDFPlugin::updateScrollingExtents()
     if (auto* tiledBacking = m_contentsLayer->tiledBacking())
         tiledBacking->setScrollability(computeScrollability());
 
-    // FIXME: Use setEventRegionToLayerBounds().
     EventRegion eventRegion;
     auto eventRegionContext = eventRegion.makeContext();
     eventRegionContext.unite(FloatRoundedRect(FloatRect({ }, size())), *m_element->renderer(), m_element->renderer()->style());
@@ -1437,51 +1433,7 @@ static WebCore::Cursor::Type toWebCoreCursorType(UnifiedPDFPlugin::PDFElementTyp
     return WebCore::Cursor::Type::Pointer;
 }
 
-IntPoint UnifiedPDFPlugin::convertFromRootViewToDocument(const IntPoint& rootViewPoint) const
-{
-    return convertFromPluginToDocument(convertFromRootViewToPlugin(rootViewPoint));
-}
-
-WebCore::IntPoint UnifiedPDFPlugin::convertFromPluginToDocument(const WebCore::IntPoint& point) const
-{
-    auto transformedPoint = FloatPoint { point };
-    transformedPoint.moveBy(FloatPoint(m_scrollOffset));
-
-    transformedPoint.scale(1.0f / m_scaleFactor);
-    auto padding = centeringOffset();
-    transformedPoint.move(-padding.width(), -padding.height());
-    transformedPoint.scale(1.0f / m_documentLayout.scale());
-
-    return roundedIntPoint(transformedPoint);
-}
-
-WebCore::IntPoint UnifiedPDFPlugin::convertFromDocumentToPlugin(const WebCore::IntPoint& point) const
-{
-    auto transformedPoint = FloatPoint { point };
-
-    transformedPoint.scale(m_documentLayout.scale());
-    auto padding = centeringOffset();
-    transformedPoint.move(padding.width(), padding.height());
-    transformedPoint.scale(m_scaleFactor);
-    transformedPoint.moveBy(-FloatPoint(m_scrollOffset));
-
-    return roundedIntPoint(transformedPoint);
-}
-
-IntRect UnifiedPDFPlugin::convertFromDocumentToPlugin(const IntRect& documentSpaceRect) const
-{
-    auto transformedRect = FloatRect { documentSpaceRect };
-
-    transformedRect.scale(m_documentLayout.scale());
-    auto padding = centeringOffset();
-    transformedRect.move(padding.width(), padding.height());
-    transformedRect.scale(m_scaleFactor);
-    transformedRect.moveBy(-FloatPoint { m_scrollOffset });
-
-    return roundedIntRect(transformedRect);
-}
-
-std::optional<PDFDocumentLayout::PageIndex> UnifiedPDFPlugin::pageIndexForDocumentPoint(const WebCore::IntPoint& point) const
+std::optional<PDFDocumentLayout::PageIndex> UnifiedPDFPlugin::pageIndexForDocumentPoint(const FloatPoint& point) const
 {
     for (PDFDocumentLayout::PageIndex index = 0; index < m_documentLayout.pageCount(); ++index) {
         auto pageBounds = m_documentLayout.layoutBoundsForPageAtIndex(index);
@@ -1489,86 +1441,118 @@ std::optional<PDFDocumentLayout::PageIndex> UnifiedPDFPlugin::pageIndexForDocume
             return index;
     }
 
-    return std::nullopt;
+    return { };
 }
 
 PDFDocumentLayout::PageIndex UnifiedPDFPlugin::indexForCurrentPageInView() const
 {
-    auto centerInDocumentSpace = convertFromPluginToDocument(flooredIntPoint(size() / 2));
+    auto centerInDocumentSpace = convertDown(CoordinateSpace::Plugin, CoordinateSpace::PDFDocumentLayout, FloatPoint { flooredIntPoint(size() / 2) });
     return m_documentLayout.nearestPageIndexForDocumentPoint(centerInDocumentSpace);
 }
 
-RetainPtr<PDFAnnotation> UnifiedPDFPlugin::annotationForRootViewPoint(const WebCore::IntPoint& point) const
+RetainPtr<PDFAnnotation> UnifiedPDFPlugin::annotationForRootViewPoint(const IntPoint& point) const
 {
-    auto pointInDocumentSpace = convertFromPluginToDocument(convertFromRootViewToPlugin(point));
+    auto pointInDocumentSpace = convertDown(CoordinateSpace::Plugin, CoordinateSpace::PDFDocumentLayout, FloatPoint { convertFromRootViewToPlugin(point) });
     auto pageIndex = pageIndexForDocumentPoint(pointInDocumentSpace);
     if (!pageIndex)
         return nullptr;
 
     auto page = m_documentLayout.pageAtIndex(pageIndex.value());
-    return [page annotationAtPoint:convertFromDocumentToPage(pointInDocumentSpace, pageIndex.value())];
+    return [page annotationAtPoint:convertDown(CoordinateSpace::PDFDocumentLayout, CoordinateSpace::PDFPage, pointInDocumentSpace, pageIndex.value())];
 }
 
-IntRect UnifiedPDFPlugin::convertFromPageToRootView(const IntRect& pageRect, PDFDocumentLayout::PageIndex pageIndex) const
+template <typename T>
+T UnifiedPDFPlugin::convertUp(CoordinateSpace sourceSpace, CoordinateSpace destinationSpace, T sourceValue, std::optional<PDFDocumentLayout::PageIndex> pageIndex) const
 {
-    return convertFromPluginToRootView(convertFromDocumentToPlugin(convertFromPageToDocument(pageRect, pageIndex)));
+    static_assert(std::is_same<T, FloatPoint>::value || std::is_same<T, FloatRect>::value, "Coordinate conversion should use float types");
+    auto mappedValue = sourceValue;
+
+    switch (sourceSpace) {
+    case CoordinateSpace::PDFPage:
+        if (destinationSpace == CoordinateSpace::PDFPage)
+            return mappedValue;
+
+        ASSERT(pageIndex);
+        ASSERT(*pageIndex < m_documentLayout.pageCount());
+        mappedValue = m_documentLayout.pdfPageToDocument(mappedValue, *pageIndex);
+        FALLTHROUGH;
+
+    case CoordinateSpace::PDFDocumentLayout:
+        if (destinationSpace == CoordinateSpace::PDFDocumentLayout)
+            return mappedValue;
+
+        mappedValue.scale(m_documentLayout.scale());
+        FALLTHROUGH;
+
+    case CoordinateSpace::Contents:
+        if (destinationSpace == CoordinateSpace::Contents)
+            return mappedValue;
+
+        mappedValue.move(centeringOffset());
+        mappedValue.scale(m_scaleFactor);
+        FALLTHROUGH;
+
+    case CoordinateSpace::ScrolledContents:
+        if (destinationSpace == CoordinateSpace::ScrolledContents)
+            return mappedValue;
+
+        mappedValue.moveBy(-WebCore::FloatPoint { m_scrollOffset });
+        FALLTHROUGH;
+
+    case CoordinateSpace::Plugin:
+        if (destinationSpace == CoordinateSpace::Plugin)
+            return mappedValue;
+    }
+
+    ASSERT_NOT_REACHED();
+    return mappedValue;
 }
 
-WebCore::IntPoint UnifiedPDFPlugin::convertFromDocumentToPage(const WebCore::IntPoint& point, PDFDocumentLayout::PageIndex pageIndex) const
+template <typename T>
+T UnifiedPDFPlugin::convertDown(CoordinateSpace sourceSpace, CoordinateSpace destinationSpace, T sourceValue, std::optional<PDFDocumentLayout::PageIndex> pageIndex) const
 {
-    ASSERT(pageIndex < m_documentLayout.pageCount());
-    return roundedIntPoint(m_documentLayout.documentPointToPDFPagePoint(point, pageIndex));
-}
+    static_assert(std::is_same<T, FloatPoint>::value || std::is_same<T, FloatRect>::value, "Coordinate conversion should use float types");
+    auto mappedValue = sourceValue;
 
-WebCore::IntPoint UnifiedPDFPlugin::convertFromPageToDocument(const WebCore::IntPoint& pageSpacePoint, PDFDocumentLayout::PageIndex pageIndex) const
-{
-    ASSERT(pageIndex < m_documentLayout.pageCount());
-    return roundedIntPoint(m_documentLayout.pdfPagePointToDocumentPoint(pageSpacePoint, pageIndex));
-}
+    switch (sourceSpace) {
+    case CoordinateSpace::Plugin:
+        if (destinationSpace == CoordinateSpace::Plugin)
+            return mappedValue;
 
-WebCore::IntRect UnifiedPDFPlugin::convertFromPageToDocument(const WebCore::IntRect& pageSpaceRect, PDFDocumentLayout::PageIndex pageIndex) const
-{
-    ASSERT(pageIndex < m_documentLayout.pageCount());
-    return roundedIntRect(m_documentLayout.pdfPageRectToDocumentRect(pageSpaceRect, pageIndex));
-}
+        mappedValue.moveBy(WebCore::FloatPoint { m_scrollOffset });
+        FALLTHROUGH;
 
-WebCore::IntPoint UnifiedPDFPlugin::convertFromPageToContents(const WebCore::IntPoint& pageSpacePoint, PDFDocumentLayout::PageIndex pageIndex) const
-{
-    FloatPoint transformedPoint = convertFromPageToDocument(pageSpacePoint, pageIndex);
-    return convertFromDocumentToContents(WebCore::flooredIntPoint(transformedPoint));
-}
+    case CoordinateSpace::ScrolledContents:
+        if (destinationSpace == CoordinateSpace::ScrolledContents)
+            return mappedValue;
 
-WebCore::IntPoint UnifiedPDFPlugin::convertFromDocumentToContents(const WebCore::IntPoint& documentSpacePoint) const
-{
-    auto transformedPoint = FloatPoint { documentSpacePoint };
-    transformedPoint.scale(m_documentLayout.scale());
-    transformedPoint.moveBy(FloatPoint { centeringOffset() });
-    transformedPoint.scale(m_scaleFactor);
-    return roundedIntPoint(transformedPoint);
-}
+        mappedValue.scale(1 / m_scaleFactor);
+        mappedValue.move(-centeringOffset());
+        FALLTHROUGH;
 
-WebCore::IntRect UnifiedPDFPlugin::convertFromDocumentToContents(const WebCore::IntRect& documentSpaceRect) const
-{
-    auto transformedRect = FloatRect { documentSpaceRect };
-    transformedRect.scale(m_documentLayout.scale());
-    transformedRect.moveBy(FloatPoint { centeringOffset() });
-    transformedRect.scale(m_scaleFactor);
-    return roundedIntRect(transformedRect);
-}
+    case CoordinateSpace::Contents:
+        if (destinationSpace == CoordinateSpace::Contents)
+            return mappedValue;
 
-WebCore::IntPoint UnifiedPDFPlugin::offsetContentsSpacePointByPageMargins(WebCore::IntPoint pointInContentsSpace) const
-{
-    return WebCore::flooredIntPoint(pointInContentsSpace - m_documentLayout.pageMargin.scaled(this->scaleFactor() * documentFittingScale()));
-}
+        mappedValue.scale(1 / m_documentLayout.scale());
+        FALLTHROUGH;
 
-WebCore::IntRect UnifiedPDFPlugin::convertFromPageToContents(const WebCore::IntRect& pageSpaceRect, PDFDocumentLayout::PageIndex pageIndex) const
-{
-    auto transformedRect = convertFromPageToDocument(pageSpaceRect, pageIndex);
-    transformedRect.scale(m_documentLayout.scale());
-    auto padding = centeringOffset();
-    transformedRect.move(padding.width(), padding.height());
-    transformedRect.scale(m_scaleFactor);
-    return transformedRect;
+    case CoordinateSpace::PDFDocumentLayout:
+        if (destinationSpace == CoordinateSpace::PDFDocumentLayout)
+            return mappedValue;
+
+        ASSERT(pageIndex);
+        ASSERT(*pageIndex < m_documentLayout.pageCount());
+        mappedValue = m_documentLayout.documentToPDFPage(mappedValue, *pageIndex);
+        FALLTHROUGH;
+
+    case CoordinateSpace::PDFPage:
+        if (destinationSpace == CoordinateSpace::PDFPage)
+            return mappedValue;
+    }
+
+    ASSERT_NOT_REACHED();
+    return mappedValue;
 }
 
 #if !LOG_DISABLED
@@ -1605,16 +1589,16 @@ static BOOL annotationIsLinkWithDestination(PDFAnnotation *annotation)
     return [annotation URL] || [annotation destination];
 }
 
-auto UnifiedPDFPlugin::pdfElementTypesForPluginPoint(const WebCore::IntPoint& point) const -> PDFElementTypes
+auto UnifiedPDFPlugin::pdfElementTypesForPluginPoint(const IntPoint& point) const -> PDFElementTypes
 {
-    auto pointInDocumentSpace = convertFromPluginToDocument(point);
+    auto pointInDocumentSpace = convertDown<FloatPoint>(CoordinateSpace::Plugin, CoordinateSpace::PDFDocumentLayout, point);
     auto hitPageIndex = pageIndexForDocumentPoint(pointInDocumentSpace);
     if (!hitPageIndex || *hitPageIndex >= m_documentLayout.pageCount())
         return { };
 
     auto pageIndex = *hitPageIndex;
-    auto page = m_documentLayout.pageAtIndex(pageIndex);
-    auto pointInPDFPageSpace = convertFromDocumentToPage(pointInDocumentSpace, pageIndex);
+    RetainPtr page = m_documentLayout.pageAtIndex(pageIndex);
+    auto pointInPDFPageSpace = convertDown(CoordinateSpace::PDFDocumentLayout, CoordinateSpace::PDFPage, pointInDocumentSpace, pageIndex);
 
     PDFElementTypes pdfElementTypes { PDFElementType::Page };
 
@@ -1671,12 +1655,12 @@ bool UnifiedPDFPlugin::handleMouseEvent(const WebMouseEvent& event)
 {
     m_lastMouseEvent = event;
 
-    auto pointInDocumentSpace = convertFromPluginToDocument(lastKnownMousePositionInView());
+    auto pointInDocumentSpace = convertDown<FloatPoint>(CoordinateSpace::Plugin, CoordinateSpace::PDFDocumentLayout, lastKnownMousePositionInView());
     auto pageIndex = pageIndexForDocumentPoint(pointInDocumentSpace);
     if (!pageIndex)
         return false;
 
-    auto pointInPageSpace = convertFromDocumentToPage(pointInDocumentSpace, *pageIndex);
+    auto pointInPageSpace = convertDown(CoordinateSpace::PDFDocumentLayout, CoordinateSpace::PDFPage, pointInDocumentSpace, *pageIndex);
 
     auto mouseEventButton = event.button();
     auto mouseEventType = event.type();
@@ -1853,8 +1837,8 @@ WebCore::FloatRect UnifiedPDFPlugin::documentRectForAnnotation(PDFAnnotation *an
     if (pageIndex == NSNotFound)
         return { };
 
-    auto annotationPageBounds = [annotation bounds];
-    return convertFromPageToDocument(enclosingIntRect(annotationPageBounds), pageIndex);
+    auto annotationPageBounds = FloatRect { [annotation bounds] };
+    return convertUp(CoordinateSpace::PDFPage, CoordinateSpace::PDFDocumentLayout, annotationPageBounds, pageIndex);
 }
 
 void UnifiedPDFPlugin::startTrackingAnnotation(RetainPtr<PDFAnnotation>&& annotation, WebEventType mouseEventType, WebMouseEventButton mouseEventButton)
@@ -1884,20 +1868,22 @@ void UnifiedPDFPlugin::scrollToPDFDestination(PDFDestination *destination)
     if (pointInPDFPageSpace.y == unspecifiedValue)
         pointInPDFPageSpace.y = heightForPage(pageIndex);
 
-    scrollToPointInPage(roundedIntPoint(pointInPDFPageSpace), pageIndex);
+    scrollToPointInPage(pointInPDFPageSpace, pageIndex);
 }
 
-void UnifiedPDFPlugin::scrollToPointInPage(IntPoint pointInPDFPageSpace, PDFDocumentLayout::PageIndex pageIndex)
+void UnifiedPDFPlugin::scrollToPointInPage(FloatPoint pointInPDFPageSpace, PDFDocumentLayout::PageIndex pageIndex)
 {
-    auto pointInContentsSpace = convertFromPageToContents(pointInPDFPageSpace, pageIndex);
-    scrollToPositionWithoutAnimation(offsetContentsSpacePointByPageMargins(pointInContentsSpace));
+    auto pointInContentsSpace = convertUp(CoordinateSpace::PDFPage, CoordinateSpace::ScrolledContents, pointInPDFPageSpace, pageIndex);
+    scrollToPositionWithoutAnimation(roundedIntPoint(pointInContentsSpace));
 }
 
 void UnifiedPDFPlugin::scrollToPage(PDFDocumentLayout::PageIndex pageIndex)
 {
     ASSERT(pageIndex < m_documentLayout.pageCount());
-    auto pointInContentsSpace = convertFromDocumentToContents(WebCore::flooredIntPoint(m_documentLayout.layoutBoundsForPageAtIndex(pageIndex).location()));
-    scrollToPositionWithoutAnimation(offsetContentsSpacePointByPageMargins(pointInContentsSpace));
+
+    auto pageBounds = m_documentLayout.layoutBoundsForPageAtIndex(pageIndex);
+    auto boundsInScrolledContents = convertUp(CoordinateSpace::PDFDocumentLayout, CoordinateSpace::ScrolledContents, pageBounds);
+    scrollToPositionWithoutAnimation(boundsInScrolledContents.location());
 }
 
 void UnifiedPDFPlugin::scrollToFragmentIfNeeded()
@@ -2398,7 +2384,7 @@ void UnifiedPDFPlugin::extendCurrentSelectionIfNeeded()
     setCurrentSelection(WTFMove(selection));
 }
 
-void UnifiedPDFPlugin::beginTrackingSelection(PDFDocumentLayout::PageIndex pageIndex, const WebCore::IntPoint& pagePoint, const WebMouseEvent& event)
+void UnifiedPDFPlugin::beginTrackingSelection(PDFDocumentLayout::PageIndex pageIndex, const WebCore::FloatPoint& pagePoint, const WebMouseEvent& event)
 {
     auto modifiers = event.modifiers();
 
@@ -2426,18 +2412,18 @@ void UnifiedPDFPlugin::beginTrackingSelection(PDFDocumentLayout::PageIndex pageI
 void UnifiedPDFPlugin::updateCurrentSelectionForContextMenuEventIfNeeded()
 {
     auto page = m_documentLayout.pageAtIndex(m_selectionTrackingData.startPageIndex);
-    if (!m_currentSelection || !(IntRect([m_currentSelection boundsForPage:page.get()]).contains(m_selectionTrackingData.startPagePoint)))
+    if (!m_currentSelection || !(FloatRect([m_currentSelection boundsForPage:page.get()]).contains(m_selectionTrackingData.startPagePoint)))
         setCurrentSelection([page selectionForWordAtPoint:m_selectionTrackingData.startPagePoint]);
 }
 
-static IntRect computeMarqueeSelectionRect(const WebCore::IntPoint& point1, const WebCore::IntPoint& point2)
+static FloatRect computeMarqueeSelectionRect(const WebCore::FloatPoint& point1, const WebCore::FloatPoint& point2)
 {
-    auto marqueeRectLocation { point1.shrunkTo(point2) };
-    IntSize marqueeRectSize { point1 - point2 };
+    auto marqueeRectLocation = point1.shrunkTo(point2);
+    auto marqueeRectSize = FloatSize { point1 - point2 };
     return { marqueeRectLocation.x(), marqueeRectLocation.y(), std::abs(marqueeRectSize.width()), std::abs(marqueeRectSize.height()) };
 }
 
-void UnifiedPDFPlugin::continueTrackingSelection(PDFDocumentLayout::PageIndex pageIndex, const WebCore::IntPoint& pagePoint)
+void UnifiedPDFPlugin::continueTrackingSelection(PDFDocumentLayout::PageIndex pageIndex, const WebCore::FloatPoint& pagePoint)
 {
     if (m_selectionTrackingData.shouldMakeMarqueeSelection) {
         if (m_selectionTrackingData.startPageIndex != pageIndex)
@@ -2514,14 +2500,15 @@ String UnifiedPDFPlugin::selectionString() const
 
 bool UnifiedPDFPlugin::existingSelectionContainsPoint(const FloatPoint& rootViewPoint) const
 {
-    auto documentPoint = convertFromRootViewToDocument(IntPoint { rootViewPoint });
-
+    auto pluginPoint = convertFromRootViewToPlugin(roundedIntPoint(rootViewPoint));
+    auto documentPoint = convertDown(CoordinateSpace::Plugin, CoordinateSpace::PDFDocumentLayout, FloatPoint { pluginPoint });
     auto pageIndex = pageIndexForDocumentPoint(documentPoint);
     if (!pageIndex)
         return false;
 
-    auto page = m_documentLayout.pageAtIndex(*pageIndex);
-    return IntRect { [m_currentSelection boundsForPage:page.get()] }.contains(convertFromDocumentToPage(documentPoint, *pageIndex));
+    RetainPtr page = m_documentLayout.pageAtIndex(*pageIndex);
+    auto pagePoint = convertDown(CoordinateSpace::PDFDocumentLayout, CoordinateSpace::PDFPage, documentPoint, *pageIndex);
+    return FloatRect { [m_currentSelection boundsForPage:page.get()] }.contains(pagePoint);
 }
 
 FloatRect UnifiedPDFPlugin::rectForSelectionInRootView(PDFSelection *selection) const
@@ -2534,7 +2521,8 @@ FloatRect UnifiedPDFPlugin::rectForSelectionInRootView(PDFSelection *selection) 
     if (!pageIndex)
         return { };
 
-    return convertFromPageToRootView(IntRect { [selection boundsForPage:page.get()] }, *pageIndex);
+    auto pluginRect = convertUp(CoordinateSpace::PDFPage, CoordinateSpace::Plugin, FloatRect { [selection boundsForPage:page.get()] }, *pageIndex);
+    return convertFromPluginToRootView(enclosingIntRect(pluginRect));
 }
 
 #pragma mark -
@@ -2542,7 +2530,6 @@ FloatRect UnifiedPDFPlugin::rectForSelectionInRootView(PDFSelection *selection) 
 unsigned UnifiedPDFPlugin::countFindMatches(const String& target, WebCore::FindOptions options, unsigned maxMatchCount)
 {
     // FIXME: Why is it OK to ignore the passed-in maximum match count?
-
     if (!target.length())
         return 0;
 
@@ -2613,12 +2600,10 @@ bool UnifiedPDFPlugin::findString(const String& target, WebCore::FindOptions opt
     if (!firstPageIndex)
         return false;
 
-    auto selectionContentsSpaceBounds = convertFromPageToContents(IntRect { [selection boundsForPage:firstPageForSelection.get()] }, firstPageIndex.value());
-    selectionContentsSpaceBounds.setY(selectionContentsSpaceBounds.location().y() - selectionContentsSpaceBounds.size().height());
+    auto selectionScrolledContentsSpaceBounds = convertUp(CoordinateSpace::PDFPage, CoordinateSpace::ScrolledContents, FloatRect { [selection boundsForPage:firstPageForSelection.get()] }, *firstPageIndex);
     auto currentScrollPositionY = scrollPosition().y();
-
-    if (selectionContentsSpaceBounds.y() < currentScrollPositionY || selectionContentsSpaceBounds.y() > currentScrollPositionY + size().height())
-        scrollToPositionWithoutAnimation(selectionContentsSpaceBounds.location());
+    if (selectionScrolledContentsSpaceBounds.y() < currentScrollPositionY || selectionScrolledContentsSpaceBounds.y() > currentScrollPositionY + size().height())
+        scrollToPositionWithoutAnimation(selectionScrolledContentsSpaceBounds.location());
 
     setCurrentSelection(WTFMove(selection));
     return true;
@@ -2631,8 +2616,13 @@ void UnifiedPDFPlugin::collectFindMatchRects(const String& target, WebCore::Find
     RetainPtr foundSelections = [m_pdfDocument findString:target withOptions:compareOptionsForFindOptions(options)];
     for (PDFSelection *selection in foundSelections.get()) {
         for (PDFPage *page in selection.pages) {
-            auto bounds = IntRect([selection boundsForPage:page]);
-            m_findMatchRectsInDocumentCoordinates.append(convertFromPageToDocument(bounds, *m_documentLayout.indexForPage(page)));
+            auto pageIndex = m_documentLayout.indexForPage(page);
+            if (!pageIndex)
+                continue;
+
+            auto bounds = FloatRect { [selection boundsForPage:page] };
+            auto boundsInDocumentSpace = convertUp(CoordinateSpace::PDFPage, CoordinateSpace::PDFDocumentLayout, bounds, *pageIndex);
+            m_findMatchRectsInDocumentCoordinates.append(boundsInDocumentSpace);
         }
     }
 
@@ -2642,56 +2632,58 @@ void UnifiedPDFPlugin::collectFindMatchRects(const String& target, WebCore::Find
 Vector<FloatRect> UnifiedPDFPlugin::rectsForTextMatchesInRect(const IntRect&) const
 {
     return m_findMatchRectsInDocumentCoordinates.map([&](FloatRect rect) {
-        return FloatRect { convertFromDocumentToPlugin(enclosingIntRect(rect)) };
+        return convertUp(CoordinateSpace::PDFDocumentLayout, CoordinateSpace::Plugin, rect);
     });
 }
 
 RefPtr<TextIndicator> UnifiedPDFPlugin::textIndicatorForSelection(OptionSet<WebCore::TextIndicatorOption> options, WebCore::TextIndicatorPresentationTransition transition)
 {
-    if (auto selectionBounds = selectionBoundsForFirstPageInDocumentSpace(m_currentSelection)) {
-        auto rectInDocumentCoordinates = *selectionBounds;
-        auto rectInContentsCoordinates = convertFromDocumentToContents(rectInDocumentCoordinates);
-        auto rectInRootViewCoordinates = convertFromPluginToRootView(convertFromDocumentToPlugin(rectInDocumentCoordinates));
+    auto selectionBounds = selectionBoundsForFirstPageInDocumentSpace(m_currentSelection);
+    if (!selectionBounds)
+        return nullptr;
 
-        float deviceScaleFactor = this->deviceScaleFactor();
+    auto rectInDocumentCoordinates = *selectionBounds;
+    auto rectInContentsCoordinates = convertUp(CoordinateSpace::PDFDocumentLayout, CoordinateSpace::Contents, rectInDocumentCoordinates);
+    auto rectInPluginCoordinates = convertUp(CoordinateSpace::Contents, CoordinateSpace::Plugin, rectInContentsCoordinates);
+    auto rectInRootViewCoordinates = convertFromPluginToRootView(enclosingIntRect(rectInPluginCoordinates));
 
-        auto buffer = ImageBuffer::create(rectInRootViewCoordinates.size(), RenderingPurpose::ShareableSnapshot, deviceScaleFactor, DestinationColorSpace::SRGB(), PixelFormat::BGRA8, { }, nullptr);
-        if (!buffer)
-            return nullptr;
+    float deviceScaleFactor = this->deviceScaleFactor();
 
-        auto& context = buffer->context();
-        context.translate(-rectInContentsCoordinates.location());
-        context.scale(m_scaleFactor);
-        context.translate(centeringOffset());
-        paintPDFContent(context, rectInContentsCoordinates, PaintingBehavior::PageContentsOnly);
+    auto buffer = ImageBuffer::create(rectInRootViewCoordinates.size(), RenderingPurpose::ShareableSnapshot, deviceScaleFactor, DestinationColorSpace::SRGB(), PixelFormat::BGRA8, { }, nullptr);
+    if (!buffer)
+        return nullptr;
 
-        TextIndicatorData data;
-        data.contentImage = BitmapImage::create(ImageBuffer::sinkIntoNativeImage(WTFMove(buffer)));
-        data.contentImageScaleFactor = deviceScaleFactor;
-        data.contentImageWithoutSelection = data.contentImage;
-        data.contentImageWithoutSelectionRectInRootViewCoordinates = rectInRootViewCoordinates;
-        data.selectionRectInRootViewCoordinates = rectInRootViewCoordinates;
-        data.textBoundingRectInRootViewCoordinates = rectInRootViewCoordinates;
-        data.textRectsInBoundingRectCoordinates = { FloatRect { 0, 0, static_cast<float>(rectInRootViewCoordinates.width()), static_cast<float>(rectInRootViewCoordinates.height()) } };
-        data.presentationTransition = transition;
-        data.options = options;
+    auto& context = buffer->context();
+    context.translate(-rectInContentsCoordinates.location());
+    context.scale(m_scaleFactor);
+    context.translate(centeringOffset());
+    paintPDFContent(context, rectInContentsCoordinates, PaintingBehavior::PageContentsOnly);
 
-        return TextIndicator::create(data);
-    }
+    TextIndicatorData data;
+    data.contentImage = BitmapImage::create(ImageBuffer::sinkIntoNativeImage(WTFMove(buffer)));
+    data.contentImageScaleFactor = deviceScaleFactor;
+    data.contentImageWithoutSelection = data.contentImage;
+    data.contentImageWithoutSelectionRectInRootViewCoordinates = rectInRootViewCoordinates;
+    data.selectionRectInRootViewCoordinates = rectInRootViewCoordinates;
+    data.textBoundingRectInRootViewCoordinates = rectInRootViewCoordinates;
+    data.textRectsInBoundingRectCoordinates = { FloatRect { 0, 0, static_cast<float>(rectInRootViewCoordinates.width()), static_cast<float>(rectInRootViewCoordinates.height()) } };
+    data.presentationTransition = transition;
+    data.options = options;
 
-    return nullptr;
+    return TextIndicator::create(data);
 }
 
 bool UnifiedPDFPlugin::performDictionaryLookupAtLocation(const FloatPoint& rootViewPoint)
 {
-    IntPoint pluginPoint = convertFromRootViewToPlugin(roundedIntPoint(rootViewPoint));
-    IntPoint documentPoint = convertFromPluginToDocument(pluginPoint);
+    auto pluginPoint = convertFromRootViewToPlugin(roundedIntPoint(rootViewPoint));
+    auto documentPoint = convertDown(CoordinateSpace::Plugin, CoordinateSpace::PDFDocumentLayout, FloatPoint { pluginPoint });
     auto pageIndex = pageIndexForDocumentPoint(documentPoint);
     if (!pageIndex)
         return false;
 
-    auto page = m_documentLayout.pageAtIndex(*pageIndex);
-    RetainPtr lookupSelection = [page selectionForWordAtPoint:convertFromDocumentToPage(documentPoint, *pageIndex)];
+    RetainPtr page = m_documentLayout.pageAtIndex(*pageIndex);
+    auto pagePoint = convertDown(CoordinateSpace::PDFDocumentLayout, CoordinateSpace::PDFPage, documentPoint, *pageIndex);
+    RetainPtr lookupSelection = [page selectionForWordAtPoint:pagePoint];
     return searchInDictionary(WTFMove(lookupSelection));
 }
 
@@ -2705,25 +2697,26 @@ bool UnifiedPDFPlugin::searchInDictionary(const RetainPtr<PDFSelection>& lookupS
     return false;
 }
 
-std::optional<IntRect> UnifiedPDFPlugin::selectionBoundsForFirstPageInDocumentSpace(const RetainPtr<PDFSelection>& selection) const
+std::optional<FloatRect> UnifiedPDFPlugin::selectionBoundsForFirstPageInDocumentSpace(const RetainPtr<PDFSelection>& selection) const
 {
     if (!selection)
-        return std::nullopt;
+        return { };
 
     for (PDFPage *page in [selection pages]) {
         auto pageIndex = m_documentLayout.indexForPage(page);
         if (!pageIndex)
             continue;
-        auto rectForPage = IntRect { [selection boundsForPage:page] };
-        return convertFromPageToDocument(rectForPage, *pageIndex);
+        auto rectForPage = FloatRect { [selection boundsForPage:page] };
+        return convertUp(CoordinateSpace::PDFPage, CoordinateSpace::PDFDocumentLayout, rectForPage, *pageIndex);
     }
 
-    return std::nullopt;
+    return { };
 }
 
-bool UnifiedPDFPlugin::showDefinitionForAttributedString(RetainPtr<NSAttributedString>&& string, const IntRect& rectInDocumentSpace)
+bool UnifiedPDFPlugin::showDefinitionForAttributedString(RetainPtr<NSAttributedString>&& string, const FloatRect& rectInDocumentSpace)
 {
-    auto rectInRootView = convertFromPluginToRootView(convertFromDocumentToPlugin(rectInDocumentSpace));
+    auto pluginRect = convertUp(CoordinateSpace::PDFDocumentLayout, CoordinateSpace::Plugin, rectInDocumentSpace);
+    auto rectInRootView = convertFromPluginToRootView(enclosingIntRect(pluginRect));
 
     DictionaryPopupInfo dictionaryPopupInfo;
     dictionaryPopupInfo.origin = rectInRootView.location();
@@ -2750,14 +2743,13 @@ LookupTextResult UnifiedPDFPlugin::lookupTextAtLocation(const FloatPoint& rootVi
         return { selectionString(), m_currentSelection };
 
     auto pluginPoint = convertFromRootViewToPlugin(roundedIntPoint(rootViewPoint));
-    auto documentPoint = convertFromPluginToDocument(pluginPoint);
+    auto documentPoint = convertDown(CoordinateSpace::Plugin, CoordinateSpace::PDFDocumentLayout, FloatPoint { pluginPoint });
     auto pageIndex = pageIndexForDocumentPoint(documentPoint);
 
     if (!pageIndex)
         return { { }, m_currentSelection };
 
-    auto pagePoint = convertFromDocumentToPage(documentPoint, *pageIndex);
-
+    auto pagePoint = convertDown(CoordinateSpace::PDFDocumentLayout, CoordinateSpace::PDFPage, documentPoint, *pageIndex);
     RetainPtr page = m_documentLayout.pageAtIndex(*pageIndex);
     RetainPtr wordSelection = [page selectionForWordAtPoint:pagePoint];
     if (!wordSelection)
@@ -2771,7 +2763,7 @@ LookupTextResult UnifiedPDFPlugin::lookupTextAtLocation(const FloatPoint& rootVi
         if (!annotationIsExternalLink(annotation))
             continue;
 
-        if (!IntRect { [annotation bounds] }.contains(pagePoint))
+        if (!FloatRect { [annotation bounds] }.contains(pagePoint))
             continue;
 
         RetainPtr url = [annotation URL];
@@ -2840,9 +2832,10 @@ void UnifiedPDFPlugin::resetZoom()
 
 CGRect UnifiedPDFPlugin::pluginBoundsForAnnotation(RetainPtr<PDFAnnotation>& annotation) const
 {
-    auto pageSpaceBounds = IntRect([annotation bounds]);
+    auto pageSpaceBounds = FloatRect { [annotation bounds] };
     if (auto pageIndex = m_documentLayout.indexForPage([annotation page]))
-        return convertFromDocumentToPlugin(convertFromPageToDocument(pageSpaceBounds, pageIndex.value()));
+        return convertUp(CoordinateSpace::PDFPage, CoordinateSpace::Plugin, pageSpaceBounds, pageIndex.value());
+
     ASSERT_NOT_REACHED();
     return pageSpaceBounds;
 }

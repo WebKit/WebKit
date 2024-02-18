@@ -70,16 +70,18 @@ public:
 
     RetainPtr<PDFPage> pageAtIndex(PageIndex) const;
     std::optional<unsigned> indexForPage(RetainPtr<PDFPage>) const;
-    PDFDocumentLayout::PageIndex nearestPageIndexForDocumentPoint(WebCore::IntPoint) const;
+    PDFDocumentLayout::PageIndex nearestPageIndexForDocumentPoint(WebCore::FloatPoint) const;
 
     // This is not scaled by scale().
     WebCore::FloatRect layoutBoundsForPageAtIndex(PageIndex) const;
     // Returns 0, 90, 180, 270.
     WebCore::IntDegrees rotationForPageAtIndex(PageIndex) const;
 
-    WebCore::FloatPoint documentPointToPDFPagePoint(WebCore::FloatPoint documentPoint, PageIndex) const;
-    WebCore::FloatPoint pdfPagePointToDocumentPoint(WebCore::FloatPoint pagePoint, PageIndex) const;
-    WebCore::FloatRect pdfPageRectToDocumentRect(WebCore::FloatRect pageRect, PageIndex) const;
+    WebCore::FloatPoint documentToPDFPage(WebCore::FloatPoint documentPoint, PageIndex) const;
+    WebCore::FloatRect documentToPDFPage(WebCore::FloatRect documentRect, PageIndex) const;
+
+    WebCore::FloatPoint pdfPageToDocument(WebCore::FloatPoint pagePoint, PageIndex) const;
+    WebCore::FloatRect pdfPageToDocument(WebCore::FloatRect pageRect, PageIndex) const;
 
     // This is the scale that scales the largest page or pair of pages up or down to fit the available width.
     float scale() const { return m_scale; }
