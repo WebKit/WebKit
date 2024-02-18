@@ -735,6 +735,10 @@
 (allow mach-lookup
     (global-name "com.apple.audio.AudioSession"))
 
+;; See <rdar://118049196>
+(allow mach-lookup
+    (xpc-service-name "com.apple.audio.AudioConverterService"))
+
 #if !ENABLE(CFPREFS_DIRECT_MODE)
 (allow mach-lookup
     (global-name "com.apple.cfprefsd.agent"))
