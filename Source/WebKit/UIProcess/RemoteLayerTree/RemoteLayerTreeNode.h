@@ -110,6 +110,8 @@ public:
     Markable<WebCore::LayerHostingContextIdentifier> remoteContextHostingIdentifier() const { return m_remoteContextHostingIdentifier; }
     Markable<WebCore::LayerHostingContextIdentifier> remoteContextHostedIdentifier() const { return m_remoteContextHostedIdentifier; }
     void setRemoteContextHostedIdentifier(WebCore::LayerHostingContextIdentifier identifier) { m_remoteContextHostedIdentifier = identifier; }
+    void addToHostingNode(RemoteLayerTreeNode&);
+    void removeFromHostingNode();
 
     // A cached CAIOSurface object to retain CA render resources.
     struct CachedContentsBuffer {
