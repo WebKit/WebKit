@@ -85,8 +85,7 @@ TEST(WKWebExtensionAPIDevTools, Basics)
     [manager loadAndRun];
 }
 
-// FIXME: Re-enable this test once webkit.org/b/269402 is resolved.
-TEST(WKWebExtensionAPIDevTools, DISABLED_CreatePanel)
+TEST(WKWebExtensionAPIDevTools, CreatePanel)
 {
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
@@ -102,8 +101,6 @@ TEST(WKWebExtensionAPIDevTools, DISABLED_CreatePanel)
         @"  browser.test.assertEq(typeof panelWindow, 'object', 'panelWindow should be an object')",
 
         @"  cachedPanelWindow = panelWindow",
-
-        @"  browser.test.yield('Panel Shown')",
         @"})",
 
         @"panel?.onHidden.addListener(() => {",
@@ -119,7 +116,9 @@ TEST(WKWebExtensionAPIDevTools, DISABLED_CreatePanel)
     auto *panelScript = Util::constructScript(@[
         @"window.notifyHidden = () => {",
         @"  browser.test.yield('Panel Hidden')",
-        @"}"
+        @"}",
+
+        @"browser.test.yield('Panel Loaded')",
     ]);
 
     auto *iconSVG = @"<svg width='16' height='16' xmlns='http://www.w3.org/2000/svg'><circle cx='8' cy='8' r='8' fill='red' /></svg>";
@@ -150,7 +149,7 @@ TEST(WKWebExtensionAPIDevTools, DISABLED_CreatePanel)
 
     [manager run];
 
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Panel Shown");
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Panel Loaded");
 
     [manager.get().defaultTab.mainWebView._inspector showResources];
 
