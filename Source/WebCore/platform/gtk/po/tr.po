@@ -1,28 +1,28 @@
 # Turkish translation for webkit.
-# Copyright (C) 2014-2023 webkit's COPYRIGHT HOLDER
+# Copyright (C) 2014-2024 webkit's COPYRIGHT HOLDER
 # This file is distributed under the same license as the webkit package.
 #
 # Elif Aydurmuş <elifaydrms@hotmail.com>, 2014.
 # Furkan Usta <furkan.usta@ug.bilkent.edu.tr>, 2015.
 # Gökhan Gurbetoğlu <ggurbet@gmail.com>, 2014, 2015.
 # Muhammet Kara <muhammetk@gmail.com>, 2014, 2015, 2016.
-# Sabri Ünal <libreajans@gmail.com>, 2014, 2023.
+# Sabri Ünal <libreajans@gmail.com>, 2014, 2023, 2024.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: webkit HEAD\n"
 "Report-Msgid-Bugs-To: https://bugs.webkit.org/enter_bug.cgi?"
 "product=WebKit&component=WebKitGTK\n"
-"POT-Creation-Date: 2023-08-11 15:33+0000\n"
-"PO-Revision-Date: 2023-08-12 02:06+0300\n"
+"POT-Creation-Date: 2024-02-18 15:34+0000\n"
+"PO-Revision-Date: 2024-02-18 23:52+0300\n"
 "Last-Translator: Sabri Ünal <libreajans@gmail.com>\n"
-"Language-Team: Türkçe <gnome-turk@gnome.org>\n"
+"Language-Team: Türkçe <takim@gnome.org.tr>\n"
 "Language: tr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 3.2.2\n"
+"X-Generator: Poedit 3.4.2\n"
 
 #: ../LocalizedStringsGtk.cpp:43
 msgid "Copy Link Loc_ation"
@@ -403,736 +403,764 @@ msgid "Inspect _Element"
 msgstr "_Ögeyi İncele"
 
 #: ../../LocalizedStrings.cpp:509
-msgid "_Automatically Resize"
-msgstr "_Kendiliğinden Yeniden Boyutlandır"
+msgid "Swap characters"
+msgstr "Karakterleri değiştir"
 
-#: ../../LocalizedStrings.cpp:514
-msgid "_Zoom In"
-msgstr "_Yakınlaştır"
+#: ../../LocalizedStrings.cpp:516
+msgid "Open with Preview"
+msgstr "Önizleme ile Aç"
 
-#: ../../LocalizedStrings.cpp:519
-msgid "_Zoom Out"
-msgstr "_Uzaklaştır"
-
-#: ../../LocalizedStrings.cpp:524
-msgid "_Actual Size"
-msgstr "_Gerçek Boyut"
-
-#: ../../LocalizedStrings.cpp:529
+#: ../../LocalizedStrings.cpp:523
 msgid "_Single Page"
 msgstr "_Tek Sayfa"
 
-#: ../../LocalizedStrings.cpp:534
+#: ../../LocalizedStrings.cpp:528
 msgid "_Single Page Continuous"
 msgstr "Kesintisiz _Tek Sayfa"
 
-#: ../../LocalizedStrings.cpp:539
+#: ../../LocalizedStrings.cpp:533
 msgid "_Two Pages"
 msgstr "_İki Sayfa"
 
-#: ../../LocalizedStrings.cpp:544
+#: ../../LocalizedStrings.cpp:538
 msgid "_Two Pages Continuous"
 msgstr "Kesintisiz _İki Sayfa"
 
-#: ../../LocalizedStrings.cpp:549
+#: ../../LocalizedStrings.cpp:543
+msgid "_Zoom In"
+msgstr "_Yakınlaştır"
+
+#: ../../LocalizedStrings.cpp:548
+msgid "_Zoom Out"
+msgstr "_Uzaklaştır"
+
+#: ../../LocalizedStrings.cpp:553
+msgid "_Actual Size"
+msgstr "_Gerçek Boyut"
+
+#: ../../LocalizedStrings.cpp:558
+msgid "_Automatically Resize"
+msgstr "_Kendiliğinden Yeniden Boyutlandır"
+
+#: ../../LocalizedStrings.cpp:563
 msgid "_Next Page"
 msgstr "S_onraki Sayfa"
 
-#: ../../LocalizedStrings.cpp:554
+#: ../../LocalizedStrings.cpp:568
 msgid "_Previous Page"
 msgstr "_Önceki Sayfa"
 
 #. Also exposed to DOM.
-#: ../../LocalizedStrings.cpp:563
+#: ../../LocalizedStrings.cpp:578
 msgid "Portable Document Format"
 msgstr "Taşınabilir Belge Biçimi"
 
-#: ../../LocalizedStrings.cpp:571
+#: ../../LocalizedStrings.cpp:586
 msgid "No recent searches"
 msgstr "Son aramalar boş"
 
-#: ../../LocalizedStrings.cpp:576
+#: ../../LocalizedStrings.cpp:591
 msgid "Recent Searches"
 msgstr "Son Aramalar"
 
-#: ../../LocalizedStrings.cpp:581
+#: ../../LocalizedStrings.cpp:596
 msgid "Clear Recent Searches"
 msgstr "Son Aramaları Temizle"
 
-#: ../../LocalizedStrings.cpp:588
+#: ../../LocalizedStrings.cpp:603
 msgid "HTML content"
 msgstr "HTML içeriği"
 
-#: ../../LocalizedStrings.cpp:593
+#: ../../LocalizedStrings.cpp:608
 msgid "link"
 msgstr "bağlantı"
 
-#: ../../LocalizedStrings.cpp:598
+#: ../../LocalizedStrings.cpp:613
 msgid "list marker"
 msgstr "liste işaretçisi"
 
-#: ../../LocalizedStrings.cpp:603
+#: ../../LocalizedStrings.cpp:618
 msgid "image map"
 msgstr "resim haritası"
 
-#: ../../LocalizedStrings.cpp:608
+#: ../../LocalizedStrings.cpp:623
 msgid "heading"
 msgstr "başlık"
 
-#: ../../LocalizedStrings.cpp:613
+#: ../../LocalizedStrings.cpp:628
 msgid "color well"
 msgstr "renk çarkı"
 
-#: ../../LocalizedStrings.cpp:618
+#: ../../LocalizedStrings.cpp:633
 msgid "definition"
 msgstr "tanım"
 
-#: ../../LocalizedStrings.cpp:623
+#: ../../LocalizedStrings.cpp:638
 msgid "description list"
 msgstr "açıklama listesi"
 
-#: ../../LocalizedStrings.cpp:628
+#: ../../LocalizedStrings.cpp:643
 msgid "term"
 msgstr "terim"
 
-#: ../../LocalizedStrings.cpp:633
+#: ../../LocalizedStrings.cpp:648
 msgid "description"
 msgstr "açıklama"
 
-#: ../../LocalizedStrings.cpp:638
+#: ../../LocalizedStrings.cpp:653
 msgid "details"
 msgstr "ayrıntılar"
 
-#: ../../LocalizedStrings.cpp:643
+#: ../../LocalizedStrings.cpp:658
 msgid "summary"
 msgstr "özet"
 
-#: ../../LocalizedStrings.cpp:648
+#: ../../LocalizedStrings.cpp:663
 msgid "footer"
 msgstr "altbilgi"
 
-#: ../../LocalizedStrings.cpp:653
+#: ../../LocalizedStrings.cpp:668
 msgid "suggestion"
 msgstr "öneri"
 
-#: ../../LocalizedStrings.cpp:658
+#: ../../LocalizedStrings.cpp:673
 msgid "file upload button"
 msgstr "dosya yükleme düğmesi"
 
-#: ../../LocalizedStrings.cpp:663
+#: ../../LocalizedStrings.cpp:678
 msgid "output"
 msgstr "çıktı"
 
-#: ../../LocalizedStrings.cpp:668
+#: ../../LocalizedStrings.cpp:683
 msgid "attachment"
 msgstr "ek"
 
-#: ../../LocalizedStrings.cpp:673
+#: ../../LocalizedStrings.cpp:688
 msgid "cancel"
 msgstr "iptal"
 
-#: ../../LocalizedStrings.cpp:678
+#: ../../LocalizedStrings.cpp:693
 msgid "feed"
 msgstr "besleme"
 
-#: ../../LocalizedStrings.cpp:683
+#: ../../LocalizedStrings.cpp:698
 msgid "figure"
 msgstr "şekil"
 
-#: ../../LocalizedStrings.cpp:688
+#: ../../LocalizedStrings.cpp:703
 msgid "email field"
 msgstr "e-posta alanı"
 
-#: ../../LocalizedStrings.cpp:693
+#: ../../LocalizedStrings.cpp:708
 msgid "telephone number field"
 msgstr "telefon numarası alanı"
 
-#: ../../LocalizedStrings.cpp:698
+#: ../../LocalizedStrings.cpp:713
 msgid "URL field"
 msgstr "URL alanı"
 
-#: ../../LocalizedStrings.cpp:703
+#: ../../LocalizedStrings.cpp:718
 msgid "date field"
 msgstr "tarih alanı"
 
-#: ../../LocalizedStrings.cpp:708
+#: ../../LocalizedStrings.cpp:723
 msgid "time field"
 msgstr "saat alanı"
 
-#: ../../LocalizedStrings.cpp:713
+#: ../../LocalizedStrings.cpp:728
 msgid "month"
 msgstr "ay"
 
-#: ../../LocalizedStrings.cpp:718
+#: ../../LocalizedStrings.cpp:733
 msgid "day"
 msgstr "gün"
 
-#: ../../LocalizedStrings.cpp:723
+#: ../../LocalizedStrings.cpp:738
 msgid "year"
 msgstr "yıl"
 
-#: ../../LocalizedStrings.cpp:728
+#: ../../LocalizedStrings.cpp:743
 msgid "date and time field"
 msgstr "tarih ve saat alanı"
 
-#: ../../LocalizedStrings.cpp:733
+#: ../../LocalizedStrings.cpp:748
 msgid "month and year field"
 msgstr "ay ve yıl alanı"
 
-#: ../../LocalizedStrings.cpp:738
+#: ../../LocalizedStrings.cpp:753
 msgid "number field"
 msgstr "sayı alanı"
 
-#: ../../LocalizedStrings.cpp:743
+#: ../../LocalizedStrings.cpp:758
 msgid "week and year field"
 msgstr "hafta ve yıl alanı"
 
-#: ../../LocalizedStrings.cpp:749
+#: ../../LocalizedStrings.cpp:764
 msgid "alert"
 msgstr "uyarı"
 
-#: ../../LocalizedStrings.cpp:751
+#: ../../LocalizedStrings.cpp:766
 msgid "web alert dialog"
 msgstr "web uyarı iletişim kutusu"
 
-#: ../../LocalizedStrings.cpp:753
+#: ../../LocalizedStrings.cpp:768
 msgid "web dialog"
 msgstr "web iletişim kutusu"
 
-#: ../../LocalizedStrings.cpp:755
+#: ../../LocalizedStrings.cpp:770
 msgid "log"
 msgstr "günlük"
 
-#: ../../LocalizedStrings.cpp:757
+#: ../../LocalizedStrings.cpp:772
 msgid "marquee"
 msgstr "kayan yazı"
 
-#: ../../LocalizedStrings.cpp:759
+#: ../../LocalizedStrings.cpp:774
 msgid "application status"
 msgstr "uygulama durumu"
 
-#: ../../LocalizedStrings.cpp:761
+#: ../../LocalizedStrings.cpp:776
 msgid "timer"
 msgstr "zamanlayıcı"
 
-#: ../../LocalizedStrings.cpp:763
+#: ../../LocalizedStrings.cpp:778
 msgid "document"
 msgstr "belge"
 
-#: ../../LocalizedStrings.cpp:765
+#: ../../LocalizedStrings.cpp:780
 msgid "article"
 msgstr "makale"
 
-#: ../../LocalizedStrings.cpp:767
+#: ../../LocalizedStrings.cpp:782
 msgid "note"
 msgstr "not"
 
-#: ../../LocalizedStrings.cpp:769
+#: ../../LocalizedStrings.cpp:784
 msgid "web application"
 msgstr "web uygulaması"
 
-#: ../../LocalizedStrings.cpp:771
+#: ../../LocalizedStrings.cpp:786
 msgid "banner"
 msgstr "afiş"
 
-#: ../../LocalizedStrings.cpp:773
+#: ../../LocalizedStrings.cpp:788
 msgid "complementary"
 msgstr "tamamlayıcı içerik"
 
-#: ../../LocalizedStrings.cpp:775
+#: ../../LocalizedStrings.cpp:790
 msgid "content information"
 msgstr "içerik bilgisi"
 
-#: ../../LocalizedStrings.cpp:777
+#: ../../LocalizedStrings.cpp:792
 msgid "main"
 msgstr "ana"
 
-#: ../../LocalizedStrings.cpp:779
+#: ../../LocalizedStrings.cpp:794
 msgid "navigation"
 msgstr "gezinim"
 
-#: ../../LocalizedStrings.cpp:781
+#: ../../LocalizedStrings.cpp:796
 msgid "region"
 msgstr "bölge"
 
-#: ../../LocalizedStrings.cpp:783
+#: ../../LocalizedStrings.cpp:798
 msgid "search"
 msgstr "arama"
 
-#: ../../LocalizedStrings.cpp:785
+#: ../../LocalizedStrings.cpp:800
 msgid "tooltip"
 msgstr "araç ipucu"
 
-#: ../../LocalizedStrings.cpp:787
+#: ../../LocalizedStrings.cpp:802
 msgid "tab panel"
 msgstr "sekme paneli"
 
-#: ../../LocalizedStrings.cpp:789
+#: ../../LocalizedStrings.cpp:804
 msgid "math"
 msgstr "matematik"
 
-#: ../../LocalizedStrings.cpp:795
+#: ../../LocalizedStrings.cpp:810
 msgid "separator"
 msgstr "ayraç"
 
-#: ../../LocalizedStrings.cpp:800
+#: ../../LocalizedStrings.cpp:815
 msgid "highlighted"
 msgstr "vurgulanmış"
 
-#: ../../LocalizedStrings.cpp:805
+#: ../../LocalizedStrings.cpp:820
 msgid "press"
 msgstr "bas"
 
-#: ../../LocalizedStrings.cpp:810
+#: ../../LocalizedStrings.cpp:825
 msgid "select"
 msgstr "seç"
 
-#: ../../LocalizedStrings.cpp:815
+#: ../../LocalizedStrings.cpp:830
 msgid "activate"
 msgstr "etkinleştir"
 
-#: ../../LocalizedStrings.cpp:820
+#: ../../LocalizedStrings.cpp:835
 msgid "uncheck"
 msgstr "işareti kaldır"
 
-#: ../../LocalizedStrings.cpp:825
+#: ../../LocalizedStrings.cpp:840
 msgid "check"
 msgstr "işaretle"
 
-#: ../../LocalizedStrings.cpp:830
+#: ../../LocalizedStrings.cpp:845
 msgid "jump"
 msgstr "atla"
 
-#: ../../LocalizedStrings.cpp:854
+#: ../../LocalizedStrings.cpp:869
 msgid "Apple Pay"
 msgstr "Apple Pay"
 
-#: ../../LocalizedStrings.cpp:859
+#: ../../LocalizedStrings.cpp:874
 msgid "Buy with Apple Pay"
 msgstr "Apple Pay ile satın al"
 
-#: ../../LocalizedStrings.cpp:864
+#: ../../LocalizedStrings.cpp:879
 msgid "Set up with Apple Pay"
 msgstr "Apple Pay ile kur"
 
-#: ../../LocalizedStrings.cpp:869
+#: ../../LocalizedStrings.cpp:884
 msgid "Donate with Apple Pay"
 msgstr "Apple Pay ile bağış yap"
 
-#: ../../LocalizedStrings.cpp:874
+#: ../../LocalizedStrings.cpp:889
 msgid "Check out with Apple Pay"
 msgstr "Apple Pay ile sepete ekle"
 
-#: ../../LocalizedStrings.cpp:879
+#: ../../LocalizedStrings.cpp:894
 msgid "Book with Apple Pay"
 msgstr "Apple Pay ile rezervasyon yap"
 
-#: ../../LocalizedStrings.cpp:884
+#: ../../LocalizedStrings.cpp:899
 msgid "Subscribe with Apple Pay"
 msgstr "Apple Pay ile abone ol"
 
-#: ../../LocalizedStrings.cpp:890
+#: ../../LocalizedStrings.cpp:905
 msgid "Reload with Apple Pay"
 msgstr "Apple Pay ile yeniden yükle"
 
-#: ../../LocalizedStrings.cpp:894
+#: ../../LocalizedStrings.cpp:909
 msgid "Add money with Apple Pay"
 msgstr "Apple Pay ile para ekle"
 
-#: ../../LocalizedStrings.cpp:898
+#: ../../LocalizedStrings.cpp:913
 msgid "Top up with Apple Pay"
 msgstr "Apple Pay ile yükleme yap"
 
-#: ../../LocalizedStrings.cpp:902
+#: ../../LocalizedStrings.cpp:917
 msgid "Order with Apple Pay"
 msgstr "Apple Pay ile sipariş ver"
 
-#: ../../LocalizedStrings.cpp:906
+#: ../../LocalizedStrings.cpp:921
 msgid "Rent with Apple Pay"
 msgstr "Apple Pay ile kirala"
 
-#: ../../LocalizedStrings.cpp:910
+#: ../../LocalizedStrings.cpp:925
 msgid "Support with Apple Pay"
 msgstr "Apple Pay ile destekle"
 
-#: ../../LocalizedStrings.cpp:914
+#: ../../LocalizedStrings.cpp:929
 msgid "Contribute with Apple Pay"
 msgstr "Apple Pay ile katkıda bulun"
 
-#: ../../LocalizedStrings.cpp:918
+#: ../../LocalizedStrings.cpp:933
 msgid "Tip with Apple Pay"
 msgstr "Apple Pay ile bahşiş ver"
 
-#: ../../LocalizedStrings.cpp:925
+#: ../../LocalizedStrings.cpp:940
 msgid "password AutoFill"
 msgstr "parola otomatik doldurma"
 
-#: ../../LocalizedStrings.cpp:930
+#: ../../LocalizedStrings.cpp:945
 msgid "contact info AutoFill"
 msgstr "iletişim bilgisi otomatik doldurma"
 
-#: ../../LocalizedStrings.cpp:935
+#: ../../LocalizedStrings.cpp:950
 msgid "strong password AutoFill"
 msgstr "güçlü parola otomatik doldurma"
 
-#: ../../LocalizedStrings.cpp:940
+#: ../../LocalizedStrings.cpp:955
 msgid "credit card AutoFill"
 msgstr "kredi kartı otomatik doldurma"
 
-#: ../../LocalizedStrings.cpp:945
+#: ../../LocalizedStrings.cpp:960
 msgid "loading AutoFill"
 msgstr "yükleniyor otomatik doldurma"
 
-#: ../../LocalizedStrings.cpp:950
+#: ../../LocalizedStrings.cpp:965
 msgid "Strong Password"
 msgstr "Güçlü Parola"
 
-#: ../../LocalizedStrings.cpp:955
+#: ../../LocalizedStrings.cpp:970
+msgid "Processing page"
+msgstr "Sayfa işleniyor"
+
+#: ../../LocalizedStrings.cpp:975
 msgid "Missing Plug-in"
 msgstr "Eksik Eklenti"
 
-#: ../../LocalizedStrings.cpp:960
+#: ../../LocalizedStrings.cpp:980
 msgid "Plug-in Failure"
 msgstr "Eklenti Hatası"
 
-#: ../../LocalizedStrings.cpp:965
+#: ../../LocalizedStrings.cpp:985
 msgctxt ""
 "Label text to be used if plugin is blocked by a page's Content Security "
 "Policy"
 msgid "Blocked Plug-in"
 msgstr "Engellenmiş Eklendi"
 
-#: ../../LocalizedStrings.cpp:970
+#: ../../LocalizedStrings.cpp:990
 msgctxt ""
 "Label text to be used when an insecure plug-in version was blocked from "
 "loading"
 msgid "Blocked Plug-in"
 msgstr "Engellenmiş Eklendi"
 
-#: ../../LocalizedStrings.cpp:975
+#: ../../LocalizedStrings.cpp:995
 msgctxt ""
 "Label text to be used when an unsupported plug-in was blocked from loading"
 msgid "Unsupported Plug-in"
 msgstr "Desteklenmeyen Eklendi"
 
-#: ../../LocalizedStrings.cpp:980
+#: ../../LocalizedStrings.cpp:1000
 msgctxt ""
 "Label text to be used when a plug-in was blocked from loading because it was "
 "too small"
 msgid "Plug-In too small"
 msgstr "Eklenti çok küçük"
 
-#: ../../LocalizedStrings.cpp:990
+#: ../../LocalizedStrings.cpp:1010
 msgctxt "Unknown filesize FTP directory listing item"
 msgid "Unknown"
 msgstr "Bilinmiyor"
 
-#: ../../LocalizedStrings.cpp:1019
+#: ../../LocalizedStrings.cpp:1039
 msgid "Loading…"
 msgstr "Yükleniyor…"
 
-#: ../../LocalizedStrings.cpp:1024
+#: ../../LocalizedStrings.cpp:1044
 msgid "Live Broadcast"
 msgstr "Canlı Yayın"
 
-#: ../../LocalizedStrings.cpp:1030
+#: ../../LocalizedStrings.cpp:1050
 msgid "audio playback"
 msgstr "ses oynatma"
 
-#: ../../LocalizedStrings.cpp:1032
+#: ../../LocalizedStrings.cpp:1052
 msgid "video playback"
 msgstr "video oynatma"
 
-#: ../../LocalizedStrings.cpp:1034
+#: ../../LocalizedStrings.cpp:1054
 msgid "mute"
 msgstr "sesi kapat"
 
-#: ../../LocalizedStrings.cpp:1036
+#: ../../LocalizedStrings.cpp:1056
 msgid "unmute"
 msgstr "sesi aç"
 
-#: ../../LocalizedStrings.cpp:1038
+#: ../../LocalizedStrings.cpp:1058
 msgid "play"
 msgstr "oynat"
 
-#: ../../LocalizedStrings.cpp:1040
+#: ../../LocalizedStrings.cpp:1060
 msgid "pause"
 msgstr "duraklat"
 
-#: ../../LocalizedStrings.cpp:1042
+#: ../../LocalizedStrings.cpp:1062
 msgid "movie time"
 msgstr "film süresi"
 
-#: ../../LocalizedStrings.cpp:1044
+#: ../../LocalizedStrings.cpp:1064
 msgid "timeline slider thumb"
 msgstr "zaman çizgisi kaydırma düğmesi"
 
-#: ../../LocalizedStrings.cpp:1046
+#: ../../LocalizedStrings.cpp:1066
 msgid "back 30 seconds"
 msgstr "30 saniye geri"
 
-#: ../../LocalizedStrings.cpp:1048
+#: ../../LocalizedStrings.cpp:1068
 msgid "return to real time"
 msgstr "gerçek zamana dön"
 
-#: ../../LocalizedStrings.cpp:1050
+#: ../../LocalizedStrings.cpp:1070
 msgid "elapsed time"
 msgstr "geçen süre"
 
-#: ../../LocalizedStrings.cpp:1052
+#: ../../LocalizedStrings.cpp:1072
 msgid "remaining time"
 msgstr "kalan süre"
 
-#: ../../LocalizedStrings.cpp:1054
+#: ../../LocalizedStrings.cpp:1074
 msgid "status"
 msgstr "durum"
 
-#: ../../LocalizedStrings.cpp:1056
+#: ../../LocalizedStrings.cpp:1076
 msgid "enter full screen"
 msgstr "tam ekrana geç"
 
-#: ../../LocalizedStrings.cpp:1058
+#: ../../LocalizedStrings.cpp:1078
 msgid "exit full screen"
 msgstr "tam ekrandan çık"
 
-#: ../../LocalizedStrings.cpp:1060
+#: ../../LocalizedStrings.cpp:1080
 msgid "fast forward"
 msgstr "hızlı ileri"
 
-#: ../../LocalizedStrings.cpp:1062
+#: ../../LocalizedStrings.cpp:1082
 msgid "fast reverse"
 msgstr "hızlı geri"
 
-#: ../../LocalizedStrings.cpp:1064
+#: ../../LocalizedStrings.cpp:1084
 msgid "show closed captions"
 msgstr "alt yazıları göster"
 
-#: ../../LocalizedStrings.cpp:1066
+#: ../../LocalizedStrings.cpp:1086
 msgid "hide closed captions"
 msgstr "alt yazıları gizle"
 
-#: ../../LocalizedStrings.cpp:1079
+#: ../../LocalizedStrings.cpp:1099
 msgid "audio element playback controls and status display"
 msgstr "ses ögesi yürütme denetimleri ve durum göstergesi"
 
-#: ../../LocalizedStrings.cpp:1081
+#: ../../LocalizedStrings.cpp:1101
 msgid "video element playback controls and status display"
 msgstr "video ögesi yürütme denetimleri ve durum göstergesi"
 
-#: ../../LocalizedStrings.cpp:1083
+#: ../../LocalizedStrings.cpp:1103
 msgid "mute audio tracks"
 msgstr "ses parçalarını sessize al"
 
-#: ../../LocalizedStrings.cpp:1085
+#: ../../LocalizedStrings.cpp:1105
 msgid "unmute audio tracks"
 msgstr "ses parçalarının sesini aç"
 
-#: ../../LocalizedStrings.cpp:1087
+#: ../../LocalizedStrings.cpp:1107
 msgid "begin playback"
 msgstr "oynatmayı başlat"
 
-#: ../../LocalizedStrings.cpp:1089
+#: ../../LocalizedStrings.cpp:1109
 msgid "pause playback"
 msgstr "oynatmayı duraklat"
 
-#: ../../LocalizedStrings.cpp:1091
+#: ../../LocalizedStrings.cpp:1111
 msgid "movie time scrubber"
 msgstr "film zamanı serbest kaydırma"
 
-#: ../../LocalizedStrings.cpp:1093
+#: ../../LocalizedStrings.cpp:1113
 msgid "movie time scrubber thumb"
 msgstr "film zamanı serbest kaydırma düğmesi"
 
-#: ../../LocalizedStrings.cpp:1095
+#: ../../LocalizedStrings.cpp:1115
 msgid "seek movie back 30 seconds"
 msgstr "filmi 30 saniye geri sar"
 
-#: ../../LocalizedStrings.cpp:1097
+#: ../../LocalizedStrings.cpp:1117
 msgid "resume real time streaming"
 msgstr "gerçek zamanlı arışa dön"
 
-#: ../../LocalizedStrings.cpp:1099
+#: ../../LocalizedStrings.cpp:1119
 msgid "current movie time in seconds"
 msgstr "saniye cinsinden filmin şu anki zamanı"
 
-#: ../../LocalizedStrings.cpp:1101
+#: ../../LocalizedStrings.cpp:1121
 msgid "number of seconds of movie remaining"
 msgstr "filmin saniye cinsinden kalan süresi"
 
-#: ../../LocalizedStrings.cpp:1103
+#: ../../LocalizedStrings.cpp:1123
 msgid "current movie status"
 msgstr "filmin şu anki durumu"
 
-#: ../../LocalizedStrings.cpp:1105
+#: ../../LocalizedStrings.cpp:1125
 msgid "seek quickly back"
 msgstr "hızlı geri sar"
 
-#: ../../LocalizedStrings.cpp:1107
+#: ../../LocalizedStrings.cpp:1127
 msgid "seek quickly forward"
 msgstr "hızlı ileri sar"
 
-#: ../../LocalizedStrings.cpp:1109
+#: ../../LocalizedStrings.cpp:1129
 msgid "Play movie in full screen mode"
 msgstr "Filmi tam ekran kipinde oynat"
 
-#: ../../LocalizedStrings.cpp:1111
+#: ../../LocalizedStrings.cpp:1131
 msgid "start displaying closed captions"
 msgstr "alt yazıları göstermeye başla"
 
-#: ../../LocalizedStrings.cpp:1113
+#: ../../LocalizedStrings.cpp:1133
 msgid "stop displaying closed captions"
 msgstr "alt yazıları göstermeyi durdur"
 
-#: ../../LocalizedStrings.cpp:1126
+#: ../../LocalizedStrings.cpp:1146
 msgid "indefinite time"
 msgstr "belirsiz süre"
 
-#: ../../LocalizedStrings.cpp:1145
+#: ../../LocalizedStrings.cpp:1165
 msgid "Fill out this field"
 msgstr "Bu alanı doldur"
 
-#: ../../LocalizedStrings.cpp:1150
+#: ../../LocalizedStrings.cpp:1170
 msgid "Select this checkbox"
 msgstr "Bu onay kutusunu seç"
 
-#: ../../LocalizedStrings.cpp:1155
+#: ../../LocalizedStrings.cpp:1175
 msgid "Select a file"
 msgstr "Dosya seç"
 
-#: ../../LocalizedStrings.cpp:1165
+#: ../../LocalizedStrings.cpp:1185
 msgid "Select one of these options"
 msgstr "Bu seçeneklerden birini seç"
 
-#: ../../LocalizedStrings.cpp:1170
+#: ../../LocalizedStrings.cpp:1190
 msgid "Select an item in the list"
 msgstr "Listeden bir öge seçin"
 
-#: ../../LocalizedStrings.cpp:1175
+#: ../../LocalizedStrings.cpp:1195
+msgid "Tap this switch"
+msgstr "Bu düğmeye dokunun"
+
+#: ../../LocalizedStrings.cpp:1200
 msgid "Invalid value"
 msgstr "Geçersiz değer"
 
-#: ../../LocalizedStrings.cpp:1180
+#: ../../LocalizedStrings.cpp:1205
 msgid "Enter an email address"
 msgstr "E-posta adresi girin"
 
-#: ../../LocalizedStrings.cpp:1190
+#: ../../LocalizedStrings.cpp:1215
 msgid "Enter a URL"
 msgstr "URL girin"
 
-#: ../../LocalizedStrings.cpp:1195
+#: ../../LocalizedStrings.cpp:1220
 msgid "Match the requested format"
 msgstr "İstenen biçimi eşleştir"
 
-#: ../../LocalizedStrings.cpp:1232
+#: ../../LocalizedStrings.cpp:1257
 msgid "range underflow"
 msgstr "aralık aşağı taşması"
 
-#: ../../LocalizedStrings.cpp:1244
+#: ../../LocalizedStrings.cpp:1269
 msgid "range overflow"
 msgstr "aralık taşması"
 
-#: ../../LocalizedStrings.cpp:1250
+#: ../../LocalizedStrings.cpp:1275
 msgid "Enter a valid value"
 msgstr "Geçerli bir değer girin"
 
-#: ../../LocalizedStrings.cpp:1255
+#: ../../LocalizedStrings.cpp:1280
 msgid "Enter a number"
 msgstr "Bir sayı girin"
 
-#: ../../LocalizedStrings.cpp:1260
+#: ../../LocalizedStrings.cpp:1285
 msgid "Click to Exit Full Screen"
 msgstr "Tam Ekrandan Çıkmak İçin Tıklayın"
 
-#: ../../LocalizedStrings.cpp:1267
+#: ../../LocalizedStrings.cpp:1292
 msgctxt "Menu item label for a audio/text track that has no other name."
 msgid "Unknown"
 msgstr "Bilinmiyor"
 
-#: ../../LocalizedStrings.cpp:1272
+#: ../../LocalizedStrings.cpp:1297
 msgctxt ""
 "Menu item label for the track that represents disabling closed captions."
 msgid "Off"
 msgstr "Kapalı"
 
-#: ../../LocalizedStrings.cpp:1277
+#: ../../LocalizedStrings.cpp:1302
 msgctxt "Menu item label for automatic track selection behavior."
 msgid "Auto (Recommended)"
 msgstr "Otomatik (Önerilen)"
 
-#: ../../LocalizedStrings.cpp:1411
+#: ../../LocalizedStrings.cpp:1436
 msgid "Show Media Stats"
 msgstr "Ortam İstatistiklerini Göster"
 
-#: ../../LocalizedStrings.cpp:1418
+#: ../../LocalizedStrings.cpp:1443
 msgid "Snapshotted Plug-In"
 msgstr "Anlık Görüntülü Eklenti"
 
-#: ../../LocalizedStrings.cpp:1423
+#: ../../LocalizedStrings.cpp:1448
 msgid "Click to restart"
 msgstr "Yeniden başlatmak için tıklayın"
 
-#: ../../LocalizedStrings.cpp:1428
+#: ../../LocalizedStrings.cpp:1453
 msgid "Show in blocked plug-in"
 msgstr "Engellenmiş eklentiler içinde göster"
 
-#: ../../LocalizedStrings.cpp:1440
-msgid "<application> WebCrypto Master Key"
-msgstr "<application> WebCrypto Ana Anahtarı"
-
-#: ../../LocalizedStrings.cpp:1446
+#: ../../LocalizedStrings.cpp:1465
 msgid "Used to encrypt WebCrypto keys in persistent storage, such as IndexedDB"
 msgstr ""
 "IndexedDB gibi kalıcı depolamada WebCrypto anahtarlarını şifrelemek için "
 "kullanılır"
 
-#: ../../LocalizedStrings.cpp:1455
+#: ../../LocalizedStrings.cpp:1474
 msgctxt "Title of the OK button for the number pad in zoomed form controls."
 msgid "OK"
 msgstr "Tamam"
 
-#: ../../LocalizedStrings.cpp:1460
+#: ../../LocalizedStrings.cpp:1479
 msgid "Cancel"
 msgstr "İptal"
 
-#: ../../LocalizedStrings.cpp:1465
+#: ../../LocalizedStrings.cpp:1484
 msgid "Hide"
 msgstr "Gizle"
 
-#: ../../LocalizedStrings.cpp:1470
+#: ../../LocalizedStrings.cpp:1489
 msgid "Go"
 msgstr "Git"
 
-#: ../../LocalizedStrings.cpp:1475
+#: ../../LocalizedStrings.cpp:1494
 msgid "Search"
 msgstr "Arama"
 
-#: ../../LocalizedStrings.cpp:1480
+#: ../../LocalizedStrings.cpp:1499
 msgctxt "Set button below date picker"
 msgid "Set"
 msgstr "Ayarla"
 
-#: ../../LocalizedStrings.cpp:1485
+#: ../../LocalizedStrings.cpp:1504
 msgctxt "Day label in date picker"
 msgid "DAY"
 msgstr "GÜN"
 
-#: ../../LocalizedStrings.cpp:1490
+#: ../../LocalizedStrings.cpp:1509
 msgctxt "Month label in date picker"
 msgid "MONTH"
 msgstr "AY"
 
-#: ../../LocalizedStrings.cpp:1495
+#: ../../LocalizedStrings.cpp:1514
 msgctxt "Year label in date picker"
 msgid "YEAR"
 msgstr "YIL"
 
-#: ../../LocalizedStrings.cpp:1503
+#: ../../LocalizedStrings.cpp:1522
 msgid "Unacceptable TLS certificate"
 msgstr "Kabul edilemez TLS sertifikası"
 
-#: ../../LocalizedStrings.cpp:1522
+#: ../../LocalizedStrings.cpp:1541
 msgid "Continue with Touch ID."
 msgstr "Touch ID ile devam et."
+
+#: ../../LocalizedStrings.cpp:1547
+msgid "This document is password protected."
+msgstr "Bu belge parola korumalıdır."
+
+#: ../../LocalizedStrings.cpp:1552
+msgid "Please enter the password below."
+msgstr "Lütfen parolayı aşağıya giriniz."
+
+#: ../../LocalizedStrings.cpp:1557
+msgid "Invalid Password"
+msgstr "Geçersiz Parola"
+
+#: ../../LocalizedStrings.cpp:1562
+msgid "Copy Link to Highlight"
+msgstr "Bağlantıyı Vurgulamak için Kopyala"
 
 #: ../../network/soup/NetworkStorageSessionSoup.cpp:241
 msgid "WebKitGTK password"
@@ -1415,7 +1443,7 @@ msgid "Plug-in handled load"
 msgstr "Eklenti yükü ele aldı"
 
 #: ../../../../WebKit/Shared/WebErrors.cpp:95
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:2441
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:2509
 msgid "Load request cancelled"
 msgstr "Yükleme isteği iptal edildi"
 
@@ -1426,6 +1454,14 @@ msgstr "Dosya yok"
 #: ../../../../WebKit/Shared/WebErrors.cpp:106
 msgid "HTTPS Upgrade redirect loop detected"
 msgstr "HTTPS Yükseltme yönlendirme döngüsü algılandı"
+
+#: ../../../../WebKit/Shared/WebErrors.cpp:111
+msgid ""
+"Navigation failed because the request was for an HTTP URL with HTTPS-Only "
+"enabled"
+msgstr ""
+"Gezinti, istek HTTPS-Sadece etkinleştirilmiş bir HTTP URL'si olduğundan "
+"başarısız oldu"
 
 #: ../../../../WebKit/Shared/gtk/WebErrorsGtk.cpp:38
 msgid "Invalid page range"
@@ -1449,109 +1485,113 @@ msgstr "%s sayfası bir site simgesine sahip değil"
 msgid "Unknown favicon for page %s"
 msgstr "%s sayfası için bilinmeyen site simgesi"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:651
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:254
+msgid "Failed to create texture"
+msgstr "Doku oluşturulamadı"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:647
 msgid "Enable JavaScript"
 msgstr "JavaScript'i Etkinleştir"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:652
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:648
 msgid "Enable JavaScript."
 msgstr "JavaScript'i Etkinleştir."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:666
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:662
 msgid "Auto load images"
 msgstr "Resimleri otomatik yükle"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:667
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:663
 msgid "Load images automatically."
 msgstr "Resimleri otomatik olarak yükle."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:681
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:677
 msgid "Load icons ignoring image load setting"
 msgstr "Simgeleri resim yükleme ayalarını göz ardı ederek yükle"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:682
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:678
 msgid "Whether to load site icons ignoring image load setting."
 msgstr ""
 "Site simgeleri yüklenirken resim yükleme ayarlarının ihmal edilip edilmemesi."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:699
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:692
 msgid "Enable offline web application cache"
 msgstr "Çevrimdışı web uygulama önbelleğini etkinleştir"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:700
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:693
 msgid "Whether to enable offline web application cache."
 msgstr ""
 "Çevrimdışı web uygulama önbelleğinin etkinleştirilip etkinleştirilmeyeceği."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:716
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:709
 msgid "Enable HTML5 local storage"
 msgstr "HTML5 yerel depolamayı etkinleştir"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:717
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:710
 msgid "Whether to enable HTML5 Local Storage support."
 msgstr "HTML5 yerel depolama desteğinin etkinleştirilp etkinleştirilmeyeceği."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:729
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:722
 msgid "Enable HTML5 database"
 msgstr "HTML5 veritabanını etkinleştir"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:730
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:723
 msgid "Whether to enable HTML5 database support."
 msgstr "HTML5 veri tabanı desteğinin etkinleştirilip etkinleştirilmeyeceği."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:746
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:739
 msgid "Enable XSS auditor"
 msgstr "XSS denetimini etkinleştir"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:747
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:740
 msgid "Whether to enable the XSS auditor."
 msgstr "XSS denetiminin etkinleştirilip etkinleştirilmeyeceği."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:761
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:754
 msgid "Enable frame flattening"
 msgstr "Çerçeve düzleştirmeyi etkinleştir"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:762
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:755
 msgid "Whether to enable frame flattening."
 msgstr "Çerçeve düzleştirmenin etkinleştirip etkinleştirilmeyeceği."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:776
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:769
 msgid "Enable plugins"
 msgstr "Eklentileri etkinleştir"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:777
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:770
 msgid "Enable embedded plugin objects."
 msgstr "Gömülü eklenti nesnelerini etkinleştir."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:791
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:784
 msgid "Enable Java"
 msgstr "Java'yı Etkinleştir"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:792
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:785
 msgid "Whether Java support should be enabled."
 msgstr "Java desteğinin etkinleştirilip etkinleştirilmeyeceği."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:806
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:799
 msgid "JavaScript can open windows automatically"
 msgstr "JavaScript otomatik olarak pencereleri açabilir"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:807
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:800
 msgid "Whether JavaScript can open windows automatically."
 msgstr "JavaScript'in otomatik olarak penceleri açıp açamayacağı."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:822
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:815
 msgid "Enable hyperlink auditing"
 msgstr "Bağ denetimini etkinleştir"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:823
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:816
 msgid "Whether <a ping> should be able to send pings."
 msgstr "<a ping>'in ping gönderip gönderemeyeceği."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:835
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:828
 msgid "Default font family"
 msgstr "Öntanımlı yazı tipi ailesi"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:836
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:829
 msgid ""
 "The font family to use as the default for content that does not specify a "
 "font."
@@ -1559,94 +1599,94 @@ msgstr ""
 "Belirli bir yazı tipi belirtmeyen içerikler için kullanılacak öntanımlı yazı "
 "tipi ailesi."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:849
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:842
 msgid "Monospace font family"
 msgstr "Eş aralıklı yazı tipi ailesi"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:850
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:843
 msgid "The font family used as the default for content using monospace font."
 msgstr ""
 "Eş aralıklı yazı tipi kullanan içerikler için kullanılacak öntanımlı yazı "
 "tipi ailesi."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:862
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:855
 msgid "Serif font family"
 msgstr "Çıkıntılı (motifli) yazı tipi ailesi"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:863
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:856
 msgid "The font family used as the default for content using serif font."
 msgstr ""
 "Çıkıntılı (motifli) yazı tipi kullanan içerikler için kullanılacak öntanımlı "
 "yazı tipi ailesi."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:875
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:868
 msgid "Sans-serif font family"
 msgstr "Çıkıntısız (motifsiz) yazı tipi ailesi"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:876
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:869
 msgid "The font family used as the default for content using sans-serif font."
 msgstr ""
 "Çıkıntısız (motifsiz) yazı tipi kullanan içerikler için öntanımlı yazı tipi "
 "ailesi."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:888
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:881
 msgid "Cursive font family"
 msgstr "Bitişik el yazısı yazı tipi ailesi"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:889
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:882
 msgid "The font family used as the default for content using cursive font."
 msgstr ""
 "El yazısı yazı tipi kullanan içerikler için kullanılacak öntanımlı yazı tipi."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:901
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:894
 msgid "Fantasy font family"
 msgstr "Fantezi yazı tipi ailesi"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:902
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:895
 msgid "The font family used as the default for content using fantasy font."
 msgstr ""
 "Fantezi yazı tipini kullanan içerikler için kullanılacak öntanımlı yazı tipi."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:914
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:907
 msgid "Pictograph font family"
 msgstr "Piktogram yazı tipi ailesi"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:915
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:908
 msgid "The font family used as the default for content using pictograph font."
 msgstr ""
 "Piktogram yazı tipi ailesi kullanan içerikler için kullanılacak öntanımlı "
 "yazı tipi."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:928
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:921
 msgid "Default font size"
 msgstr "Öntanımlı yazı tipi boyutu"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:929
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:922
 msgid "The default font size used to display text."
 msgstr "Metin görüntelemek için kullanılan öntanımlı yazı tipi boyutu."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:942
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:935
 msgid "Default monospace font size"
 msgstr "Öntanımlı eşaralıklı yazı tipi boyutu"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:943
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:936
 msgid "The default font size used to display monospace text."
 msgstr ""
 "Eşaralıklı metinleri görüntelemek için kullanılan öntanımlı yazı tipi boyutu."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:957
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:950
 msgid "Minimum font size"
 msgstr "En küçük yazı tipi boyutu"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:958
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:951
 msgid "The minimum font size used to display text."
 msgstr "Metin görüntülemek için kullanılan en küçük yazı tipi boyutu."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:970
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:963
 msgid "Default charset"
 msgstr "Öntanımlı karakter kümesi"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:971
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:964
 msgid ""
 "The default text charset used when interpreting content with unspecified "
 "charset."
@@ -1654,253 +1694,253 @@ msgstr ""
 "Karakter kümesi belirsiz içeriği yorumlarken kullanılan öntanımlı metin "
 "karakter kümesi."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:987
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:980
 msgid "Enable private browsing"
 msgstr "Gizli gezinmeyi etkinleştir"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:988
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:981
 msgid "Whether to enable private browsing"
 msgstr "Gizli gezinmenin etkinleştirilip etkinleştirilmeyeceği"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1001
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:994
 msgid "Enable developer extras"
 msgstr "Geliştirici ekstralarını etkinleştir"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1002
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:995
 msgid "Whether to enable developer extras"
 msgstr "Geliştirici ekstralarının etkinleştirilip etkinleştirilmeyeceği"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1014
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1007
 msgid "Enable resizable text areas"
 msgstr "Yeniden boyutlandırılabilir metin alanlarını etkinleştir"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1015
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1008
 msgid "Whether to enable resizable text areas"
 msgstr ""
 "Yeniden boyutlandırılabilir metin alanlarının etkinleştirilip "
 "etkinleştirilmeyeceği"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1030
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1023
 msgid "Enable tabs to links"
 msgstr "Bağlantı sekmelerini etkinleştir"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1031
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1024
 msgid "Whether to enable tabs to links"
 msgstr "Bağlantı sekmelerinin etkinleştirilip etkinleştirilmeyeceği"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1044
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1037
 msgid "Enable DNS prefetching"
 msgstr "DNS önyüklemeyi etkinleştir"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1045
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1038
 msgid "Whether to enable DNS prefetching"
 msgstr "DNS önyüklemenin etkinleştirilip etkinleştirilmeyeceği"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1057
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1050
 msgid "Enable Caret Browsing"
 msgstr "Klavyeyle Gözatma'yı Etkinleştir"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1058
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1051
 msgid "Whether to enable accessibility enhanced keyboard navigation"
 msgstr ""
 "Gelişmiş erişilebilirlik klavye gezintisinin etkinleştirilip "
 "etkinleştirilmeyeceği"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1073
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1066
 msgid "Enable Fullscreen"
 msgstr "Tam Ekranı Etkinleştir"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1074
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1067
 msgid "Whether to enable the Javascript Fullscreen API"
 msgstr "Javascript Tam Ekran API'ının etkinleştirilip etkinleştirilmeyeceği"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1086
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1079
 msgid "Print Backgrounds"
 msgstr "Arka Planlarını Yazdır"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1087
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1080
 msgid "Whether background images should be drawn during printing"
 msgstr ""
 "Arka plan görüntülerinin yazdırma sırasında gösterilip gösterilmeyeceği"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1103
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1096
 msgid "Enable WebAudio"
 msgstr "WebAudio'yu Etkinleştir"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1104
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1097
 msgid "Whether WebAudio content should be handled"
 msgstr "WebAudio içeriğinin ele alınıp alınmayacağı"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1117
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1110
 msgid "Enable WebGL"
 msgstr "WebGL Etkinleştir"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1118
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1111
 msgid "Whether WebGL content should be rendered"
 msgstr "WebGL içeriğinin ekranda gösterilip gösterilmeyeceği"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1135
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1128
 msgid "Allow modal dialogs"
 msgstr "Kalıcı iletişim pencerelerine izin ver"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1136
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1129
 msgid "Whether it is possible to create modal dialogs"
 msgstr "Kalıcı iletişim pencerelerinin oluşturulabilmesi"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1151
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1144
 msgid "Zoom Text Only"
 msgstr "Yalnızca Metni Yakınlaştır"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1152
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1145
 msgid "Whether zoom level of web view changes only the text size"
 msgstr ""
 "Web görünümünün yakınlaştırma düzeyinin sadece metin boyutunu değiştirip "
 "değiştirmeyeceği"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1166
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1159
 msgid "JavaScript can access clipboard"
 msgstr "JavaScript panoya erişebilir"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1167
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1160
 msgid "Whether JavaScript can access Clipboard"
 msgstr "JavaScript'in Panoya erişip erişemeyeceği"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1183
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1176
 msgid "Media playback requires user gesture"
 msgstr "Ortam yürütmesi kullanıcı hareketi gerektirir"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1184
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1177
 msgid "Whether media playback requires user gesture"
 msgstr "Ortam yürütmesinin kullanıcı hareketi gerektirip gerektirmeyeceği"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1198
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1191
 msgid "Media playback allows inline"
 msgstr "Ortam yürütme satıriçine izin verir"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1199
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1192
 msgid "Whether media playback allows inline"
 msgstr "Ortam yürütmenin satıriçine izin verip vermemesi"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1213
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1206
 msgid "Draw compositing indicators"
 msgstr "Kompozisyon belirteçlerini çiz"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1214
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1207
 msgid "Whether to draw compositing borders and repaint counters"
 msgstr ""
 "Kompozisyon kenarlıklarının çizilmesi ve sayaçların yeniden boyanıp "
 "boyanmaması"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1231
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1224
 msgid "Enable Site Specific Quirks"
 msgstr "Siteye Özgü Özellikleri Etkinleştir"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1232
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1225
 msgid "Enables the site-specific compatibility workarounds"
 msgstr "Siteye özgü uyumluluk çözümlerini etkinleştirir"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1252
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1245
 msgid "Enable page cache"
 msgstr "Sayfa önbelleğini etkinleştir"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1253
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1246
 msgid "Whether the page cache should be used"
 msgstr "Sayfa önbelleğinin kullanılıp kullanılmayacağı"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1272
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1265
 msgid "User agent string"
 msgstr "Kullanıcı aracısı dizgesi"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1273
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1266
 msgid "The user agent string"
 msgstr "Kullanıcı aracısı dizgesi"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1285
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1278
 msgid "Enable smooth scrolling"
 msgstr "Yumuşak kaydırmayı etkinleştir"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1286
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1279
 msgid "Whether to enable smooth scrolling"
 msgstr "Yumuşak kaydırmanın etkinleştirilip etkinleştirilmeyeceği"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1306
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1299
 msgid "Enable accelerated 2D canvas"
 msgstr "Hızlandırılmış 2B tuvali etkinleştir"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1307
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1300
 msgid "Whether to enable accelerated 2D canvas"
 msgstr "Hızlandırılmış 2B tuvalin etkinleştirilip etkinleştirilmeyeceği"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1323
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1316
 msgid "Write console messages on stdout"
 msgstr "Uçbirim (konsol) iletilerini standart çıkışa yaz"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1324
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1317
 msgid "Whether to write console messages on stdout"
 msgstr ""
 "Uçbirim iletilerinin standart çıkış birimi üzerinde yazılıp yazılmaması"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1342
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1335
 msgid "Enable MediaStream"
 msgstr "MediaStream'i Etkinleştir"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1343
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1336
 msgid "Whether MediaStream content should be handled"
 msgstr "MediaStream içeriğinin işlenip işlenmeyeceği"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1358
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1351
 msgid "Enable mock capture devices"
 msgstr "Sahte yakalama aygıtını etkinleştir"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1359
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1352
 msgid "Whether we expose mock capture devices or not"
 msgstr "Sahte yakalama aygıtının gösterilip gösterilmeyeceği"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1378
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1371
 msgid "Enable Spatial Navigation"
 msgstr "Uzamsal Gezinmeyi Etkinleştir"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1379
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1372
 msgid "Whether to enable Spatial Navigation support."
 msgstr "Uzamsal Gezinme desteğinin etkinleştirilip etkinleştirilmeyeceği."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1397
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1390
 msgid "Enable MediaSource"
 msgstr "MediaSource'u Etkinleştir"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1398
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1391
 msgid "Whether MediaSource should be enabled."
 msgstr "MediaSource'un etkinleştirilip etkinleştirilmeyeceği."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1417
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1410
 msgid "Enable EncryptedMedia"
 msgstr "EncryptedMedia Etkinleştir"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1418
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1411
 msgid "Whether EncryptedMedia should be enabled."
 msgstr "EncryptedMedia'nın etkinleştirilip etkinleştirilmeyeceği."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1439
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1432
 msgid "Enable MediaCapabilities"
 msgstr "MediaCapabilities'i etkinleştir"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1440
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1433
 msgid "Whether MediaCapabilities should be enabled."
 msgstr "MediaCapabilities'ın etkinleştirilip etkinleştirilmeyeceği."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1458
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1451
 msgid "Allow file access from file URLs"
 msgstr "Dosya adreslerinden (URL) dosya erişimine izin ver"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1459
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1452
 msgid "Whether file access is allowed from file URLs."
 msgstr "Dosya adreslerinden (URL) dosya erişimine izin verilip verilmeyeceği."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1478
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1471
 msgid "Allow universal access from the context of file scheme URLs"
 msgstr "Dosya şema URL'lerinin bağlamından evrensel erişime izin ver"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1479
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1472
 msgid ""
 "Whether or not universal access is allowed from the context of file scheme "
 "URLs"
@@ -1908,91 +1948,92 @@ msgstr ""
 "Dosya şema URL'lerinin bağlamından evrensel erişime izin verilip "
 "verilmeyeceği"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1496
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1489
 msgid "Allow top frame navigation to data URLs"
 msgstr "Veri URL'leri için üst çerçeve gezintisine izin ver"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1497
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1490
 msgid "Whether or not top frame navigation is allowed to data URLs"
 msgstr "Veri URL'leri için üst çerçeve gezintisine izin verilip verilmeyeceği"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1518
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1511
 msgid "Hardware Acceleration Policy"
 msgstr "Donanım Hızlandırma İlkesi"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1519
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1512
 msgid "The policy to decide how to enable and disable hardware acceleration"
 msgstr ""
 "Donanım hızlandırmanın nasıl etkinleştirilip devre dışı bırakılacağına karar "
 "veren politika"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1534
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1527
 msgid "Enable back-forward navigation gestures"
 msgstr "Geri-ileri gezinme hareketlerini etkinleştir"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1535
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1528
 msgid "Whether horizontal swipe gesture will trigger back-forward navigation"
 msgstr ""
 "Yatay kaydırma hareketinin ileri-geri gezinmeyi tetikleyip tetiklemeyeceği"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1552
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1545
 msgid "Enable JavaScript Markup"
 msgstr "JavaScript İşaretlemeyi Etkinleştir"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1553
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1546
 msgid "Enable JavaScript in document markup."
 msgstr "Belge işaretlemede JavaScript'i etkinleştir."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1569
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1562
 msgid "Enable media"
 msgstr "Ortamı etkinleştir"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1570
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1563
 msgid "Whether media content should be handled"
 msgstr "Ortam içeriğinin işlenip işlenmeyeceği"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1585
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1578
 msgid "Media content types requiring hardware support"
 msgstr "Donanım desteği gerektiren ortam içerik türleri"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1586
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1579
 msgid "List of media content types requiring hardware support."
 msgstr "Donanım desteği gerektiren ortam içeriği türlerinin listesi."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1604
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1597
 msgid "Enable WebRTC"
 msgstr "WebRTC Etkinleştir"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1605
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1598
 msgid "Whether WebRTC content should be handled"
 msgstr "WebRTC içeriğinin ele alınıp alınmayacağı"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1623
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1616
 msgid "Disable web security"
 msgstr "Web güvenliğini devre dışı bırak"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1624
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1617
 msgid "Whether web security should be disabled."
 msgstr "Web güvenliğinin devre dışı bırakılıp bırakılmayacağı."
 
 #: ../../../../WebKit/UIProcess/API/glib/WebKitWebResource.cpp:358
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:5151
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:5260
 #: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebExtension.cpp:281
-#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:943
+#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:951
 msgid "Operation was cancelled"
 msgstr "İşlem iptal edildi"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteData.cpp:203
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteData.cpp:199
 msgid "Local files"
 msgstr "Yerel dosyalar"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:4913
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:5017
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:5046
 msgid "There was an error creating the snapshot"
 msgstr "Anlık görüntü oluşturulurken bir hata oluştu"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:5157
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:5266
 #: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebExtension.cpp:287
-#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:949
+#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:957
 #, c-format
 msgid "Message %s was not handled"
 msgstr "%s iletisi işlenmedi"
@@ -2061,7 +2102,7 @@ msgstr "Sayfada Kal"
 msgid "Leave Page"
 msgstr "Sayfadan Ayrıl"
 
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebViewBase.cpp:2602
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebViewBase.cpp:2702
 msgid "Website running in fullscreen mode"
 msgstr "Tam ekran kipinde çalışan web sitesi"
 
@@ -2079,7 +2120,7 @@ msgid "Web Inspector"
 msgstr "Web Denetçisi"
 
 #. TRANSLATORS: the default action for a desktop notification created by a website.
-#: ../../../../WebKit/UIProcess/Notifications/glib/NotificationService.cpp:391
+#: ../../../../WebKit/UIProcess/Notifications/glib/NotificationService.cpp:403
 msgid "Acknowledge"
 msgstr "Onayla"
 
