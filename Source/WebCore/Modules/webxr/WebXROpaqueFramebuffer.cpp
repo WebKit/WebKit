@@ -107,6 +107,7 @@ WebXROpaqueFramebuffer::~WebXROpaqueFramebuffer()
 #if PLATFORM(COCOA)
         for (auto& layer : m_displayAttachments)
             layer.release(*gl);
+        m_drawRasterizationRateMap.release(*gl);
 #endif
         m_drawAttachments.release(*gl);
         m_resolveAttachments.release(*gl);
@@ -118,6 +119,7 @@ WebXROpaqueFramebuffer::~WebXROpaqueFramebuffer()
 #if PLATFORM(COCOA)
         for (auto& layer : m_displayAttachments)
             layer.leakObject();
+        m_drawRasterizationRateMap.leakObject();
 #endif
         m_drawAttachments.leakObject();
         m_resolveAttachments.leakObject();
@@ -175,6 +177,7 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::FrameData::LayerData& 
     m_renderingFrameIndex = data.renderingFrameIndex;
 
 #else
+    m_framebufferSize = data.framebufferSize;
     m_colorTexture = data.opaqueTexture;
 #endif
 
@@ -232,8 +235,6 @@ void WebXROpaqueFramebuffer::endFrame()
         m_displayAttachments[layer].colorBuffer.destroyImage(*gl);
         m_displayAttachments[layer].depthStencilBuffer.destroyImage(*gl);
     }
-
-    gl->disableFoveation();
 #else
     // FIXME: We have to call finish rather than flush because we only want to disconnect
     // the IOSurface and signal the DeviceProxy when we know the content has been rendered.
@@ -241,6 +242,7 @@ void WebXROpaqueFramebuffer::endFrame()
     // the endFrame call.
     gl->finish();
 #endif
+
 }
 
 void WebXROpaqueFramebuffer::resolveMSAAFramebuffer(GraphicsContextGL& gl)
@@ -282,22 +284,20 @@ void WebXROpaqueFramebuffer::blitSharedToLayered(GraphicsContextGL& gl)
 #if PLATFORM(COCOA)
     ensure(gl, m_displayFBO);
 
-    PlatformGLObject readFBO = m_resolvedFBO ? m_resolvedFBO : m_drawFramebuffer->object();
+    // FIXME(djg): m_resolvedFBO should be 0 is !m_attributes.antialias
+    PlatformGLObject readFBO = (m_resolvedFBO && m_attributes.antialias) ? m_resolvedFBO : m_drawFramebuffer->object();
     ASSERT(readFBO, "readFBO shouldn't be the default framebuffer");
     PlatformGLObject drawFBO = m_displayFBO;
     ASSERT(drawFBO, "drawFBO shouldn't be the default framebuffer");
 
     IntSize size = displayFramebufferSize();
+    IntSize physicalSize = m_leftPhysicalSize;
+    IntRect viewport = m_leftViewport;
 
-    bool needsMSAAresolve = m_attributes.antialias;
     if (m_attributes.antialias)
+        resolveMSAAFramebuffer(gl);
 
     for (int layer = 0; layer < 2; ++layer) {
-        if (needsMSAAresolve) {
-            needsMSAAresolve = false;
-            resolveMSAAFramebuffer(gl);
-        }
-
         gl.bindFramebuffer(GL::READ_FRAMEBUFFER, readFBO);
         gl.bindFramebuffer(GL::DRAW_FRAMEBUFFER, drawFBO);
 
@@ -310,7 +310,13 @@ void WebXROpaqueFramebuffer::blitSharedToLayered(GraphicsContextGL& gl)
         }
         ASSERT(gl.checkFramebufferStatus(GL::DRAW_FRAMEBUFFER) == GL::FRAMEBUFFER_COMPLETE);
 
-        gl.blitFramebuffer(layer * size.width(), 0, (layer + 1) * size.width(), size.height(), 0, 0, size.width(), size.height(), buffers, GL::NEAREST);
+        int horizontalOffset = viewport.x() / static_cast<double>(m_screenSize.width()) * physicalSize.width();
+        int verticalOffset = viewport.y() / static_cast<double>(m_screenSize.height()) * physicalSize.height();
+        int adjustedWidth = viewport.width() / static_cast<double>(m_screenSize.width()) * physicalSize.width();
+        int adjustedHeight = viewport.height() / static_cast<double>(m_screenSize.height()) * physicalSize.height();
+        gl.blitFramebuffer(layer * size.width() + horizontalOffset, verticalOffset, layer * size.width() + horizontalOffset + adjustedWidth, verticalOffset + adjustedHeight, 0, 0, adjustedWidth, adjustedHeight, buffers, GL::NEAREST);
+        physicalSize = m_rightPhysicalSize;
+        viewport = m_rightViewport;
     }
 #else
     UNUSED_PARAM(gl);
@@ -344,6 +350,7 @@ IntSize WebXROpaqueFramebuffer::drawFramebufferSize() const
 
 IntRect WebXROpaqueFramebuffer::drawViewport(PlatformXR::Eye eye) const
 {
+#if PLATFORM(COCOA)
     switch (eye) {
     case PlatformXR::Eye::None:
         return IntRect(IntPoint::zero(), drawFramebufferSize());
@@ -352,16 +359,35 @@ IntRect WebXROpaqueFramebuffer::drawViewport(PlatformXR::Eye eye) const
     case PlatformXR::Eye::Right:
         return m_rightViewport;
     }
+#else
+    UNUSED_PARAM(eye);
+    return IntRect(IntPoint::zero(), drawFramebufferSize());
+#endif
 }
 
+#if PLATFORM(COCOA)
+static PlatformXR::Layout displayLayout(const PlatformXR::FrameData::LayerSetupData& data)
+{
+    return data.horizontalSamples[0].size() ? PlatformXR::Layout::Layered : PlatformXR::Layout::Shared;
+}
+#endif
+
+static IntSize toIntSize(const auto& size)
+{
+    return IntSize(size[0], size[1]);
+}
+
+#if PLATFORM(COCOA)
 bool WebXROpaqueFramebuffer::setupFramebuffer(GraphicsContextGL& gl, const PlatformXR::FrameData::LayerSetupData& data)
 {
+    auto framebufferSize = data.framebufferSize;
+    bool framebufferResize = m_framebufferSize != framebufferSize || m_displayLayout != displayLayout(data);
+    bool foveationChange = !data.horizontalSamples[0].empty() && !data.verticalSamples.empty() && !data.horizontalSamples[1].empty();
 
-    bool framebufferResize = m_framebufferSize != data.framebufferSize || m_displayLayout != data.displayLayout;
-    bool foveationChange = !data.horizontalSamples.empty() && !data.verticalSamples.empty();
-
-    m_framebufferSize = data.framebufferSize;
-    m_displayLayout = data.displayLayout;
+    m_framebufferSize = framebufferSize;
+    m_displayLayout = displayLayout(data);
+    m_leftPhysicalSize = data.physicalSize;
+    m_rightPhysicalSize = data.physicalSize;
 
     const bool layeredLayout = m_displayLayout == PlatformXR::Layout::Layered;
     const bool needsIntermediateResolve = m_attributes.antialias && layeredLayout;
@@ -373,13 +399,12 @@ bool WebXROpaqueFramebuffer::setupFramebuffer(GraphicsContextGL& gl, const Platf
 
     // Calculate viewports of each eye
     if (foveationChange) {
-        if (!gl.createFoveation(PlatformXR::Layout::Shared, data.physicalSize, data.screenSize, data.horizontalSamples, data.verticalSamples))
-            return false;
-        gl.enableFoveation(PlatformXR::Layout::Shared);
+        PlatformGLObject map = gl.createRasterizationRateMapForFixedFoveation(PlatformXR::Layout::Shared, data.physicalSize, data.framebufferSize, data.horizontalSamples[0], data.horizontalSamples[1], data.verticalSamples);
+        m_drawRasterizationRateMap.adopt(gl, map);
     }
 
-    m_leftViewport = calculateViewportShared(PlatformXR::Eye::Left, foveationChange);
-    m_rightViewport = calculateViewportShared(PlatformXR::Eye::Right, foveationChange);
+    m_leftViewport = calculateViewportShared(PlatformXR::Eye::Left, foveationChange, data.viewports[0], data.viewports[1]);
+    m_rightViewport = calculateViewportShared(PlatformXR::Eye::Right, foveationChange, data.viewports[0], data.viewports[1]);
 
     // Intermediate resolve target
     if (framebufferResize && needsIntermediateResolve) {
@@ -398,14 +423,16 @@ bool WebXROpaqueFramebuffer::setupFramebuffer(GraphicsContextGL& gl, const Platf
     if (framebufferResize) {
         // FIXME: We always allocate a new drawing target
         allocateAttachments(gl, m_drawAttachments, sampleCount, size);
-
-        gl.bindFramebuffer(GL::FRAMEBUFFER, m_drawFramebuffer->object());
-        bindAttachments(gl, m_drawAttachments);
-        ASSERT(gl.checkFramebufferStatus(GL::FRAMEBUFFER) == GL::FRAMEBUFFER_COMPLETE);
     }
+
+    gl.bindFramebuffer(GL::FRAMEBUFFER, m_drawFramebuffer->object());
+    bindAttachments(gl, m_drawAttachments);
+    gl.framebufferMTLRasterizationRateMapANGLE(GL::FRAMEBUFFER, m_drawRasterizationRateMap);
+    ASSERT(gl.checkFramebufferStatus(GL::FRAMEBUFFER) == GL::FRAMEBUFFER_COMPLETE);
 
     return gl.checkFramebufferStatus(GL::FRAMEBUFFER) == GL::FRAMEBUFFER_COMPLETE;
 }
+#endif
 
 void WebXROpaqueFramebuffer::allocateRenderbufferStorage(GraphicsContextGL& gl, GCGLOwnedRenderbuffer& buffer, GCGLsizei samples, GCGLenum internalFormat, IntSize size)
 {
@@ -432,7 +459,7 @@ void WebXROpaqueFramebuffer::bindAttachments(GraphicsContextGL& gl, WebXRAttachm
     gl.framebufferRenderbuffer(GL::FRAMEBUFFER, GL::DEPTH_STENCIL_ATTACHMENT, GL::RENDERBUFFER, attachments.depthStencilBuffer);
 }
 
-IntRect WebXROpaqueFramebuffer::calculateViewportShared(PlatformXR::Eye eye, bool isFoveated)
+IntRect WebXROpaqueFramebuffer::calculateViewportShared(PlatformXR::Eye eye, bool isFoveated, const IntRect& leftViewport, const IntRect& rightViewport)
 {
 #if !PLATFORM(VISION)
     RELEASE_ASSERT(!isFoveated, "Foveated rendering is not supported");
@@ -444,17 +471,13 @@ IntRect WebXROpaqueFramebuffer::calculateViewportShared(PlatformXR::Eye eye, boo
         return IntRect();
 
     case PlatformXR::Eye::Left:
-        if (isFoveated)
-            return IntRect(0, 0, 4064, 2767);
-        else
-            return IntRect(0, 0, m_framebufferSize.width(), m_framebufferSize.height());
+        return isFoveated ? leftViewport : IntRect(0, 0, m_framebufferSize.width(), m_framebufferSize.height());
 
     case PlatformXR::Eye::Right:
-        if (isFoveated)
-            return IntRect(4096, 0, 4064, 2767);
-        else
-            return IntRect(m_framebufferSize.width(), 0, m_framebufferSize.width(), m_framebufferSize.height());
+        return isFoveated ? IntRect(leftViewport.width() + rightViewport.x(), rightViewport.y(), rightViewport.width(), rightViewport.height()) : IntRect(m_framebufferSize.width(), 0, m_framebufferSize.width(), m_framebufferSize.height());
     }
+
+    return IntRect();
 }
 
 void WebXRExternalRenderbuffer::destroyImage(GraphicsContextGL& gl)

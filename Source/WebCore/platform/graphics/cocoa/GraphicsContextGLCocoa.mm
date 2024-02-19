@@ -672,11 +672,16 @@ GCEGLImage GraphicsContextGLCocoa::createAndBindEGLImage(GCGLenum target, GCGLen
         return nullptr;
 
     // Create an EGLImage out of the MTLTexture
+#if PLATFORM(IOS_FAMILY_SIMULATOR)
+    UNUSED_VARIABLE(internalFormat);
+    const EGLint attributes[] = { EGL_METAL_TEXTURE_ARRAY_SLICE_ANGLE, layer, EGL_NONE };
+#else
     const EGLint attributes[] = {
         EGL_METAL_TEXTURE_ARRAY_SLICE_ANGLE, layer,
         EGL_TEXTURE_INTERNAL_FORMAT_ANGLE, static_cast<EGLint>(internalFormat),
         EGL_NONE
     };
+#endif
     auto eglImage = EGL_CreateImageKHR(platformDisplay(), EGL_NO_CONTEXT, EGL_METAL_TEXTURE_ANGLE, reinterpret_cast<EGLClientBuffer>(texture.get()), attributes);
     if (!eglImage)
         return nullptr;
@@ -753,7 +758,11 @@ bool GraphicsContextGLCocoa::enableRequiredWebXRExtensionsImpl()
         && enableExtension("GL_ANGLE_rasterization_rate_map_metal"_s)
         && enableExtension("GL_EXT_sRGB"_s)
         && enableExtension("GL_OES_EGL_image"_s)
-        && enableExtension("GL_OES_rgb8_rgba8"_s);
+        && enableExtension("GL_OES_rgb8_rgba8"_s)
+#if !PLATFORM(IOS_FAMILY_SIMULATOR)
+        && enableExtension("GL_ANGLE_variable_rasterization_rate_metal"_s)
+#endif
+        && enableExtension("GL_NV_framebuffer_blit"_s);
 }
 #endif
 

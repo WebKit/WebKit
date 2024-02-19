@@ -64,7 +64,6 @@ std::optional<FrameData::LayerData> OpenXRLayerProjection::startFrame()
         return std::nullopt;
 
     return FrameData::LayerData {
-        .displayLayout = PlatformXR::Layout::Shared,
         .framebufferSize = m_swapchain->size(),
         .opaqueTexture = *texture
     };

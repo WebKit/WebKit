@@ -98,24 +98,29 @@ public:
 private:
     WebXROpaqueFramebuffer(PlatformXR::LayerHandle, Ref<WebGLFramebuffer>&&, WebGLRenderingContextBase&, Attributes&&, IntSize);
 
+#if PLATFORM(COCOA)
     bool setupFramebuffer(GraphicsContextGL&, const PlatformXR::FrameData::LayerSetupData&);
+#endif
     void allocateRenderbufferStorage(GraphicsContextGL&, GCGLOwnedRenderbuffer&, GCGLsizei, GCGLenum, IntSize);
     void allocateAttachments(GraphicsContextGL&, WebXRAttachments&, GCGLsizei, IntSize);
     void bindAttachments(GraphicsContextGL&, WebXRAttachments&);
     void resolveMSAAFramebuffer(GraphicsContextGL&);
     void blitShared(GraphicsContextGL&);
     void blitSharedToLayered(GraphicsContextGL&);
-    IntRect calculateViewportShared(PlatformXR::Eye, bool);
+    IntRect calculateViewportShared(PlatformXR::Eye, bool, const IntRect&, const IntRect&);
 
     PlatformXR::LayerHandle m_handle;
     Ref<WebGLFramebuffer> m_drawFramebuffer;
     WebGLRenderingContextBase& m_context;
     Attributes m_attributes;
-    PlatformXR::Layout m_displayLayout = PlatformXR::Layout::Shared;
+    PlatformXR::Layout m_displayLayout = PlatformXR::Layout::Layered;
     IntSize m_framebufferSize;
 #if PLATFORM(COCOA)
     IntRect m_leftViewport;
     IntRect m_rightViewport;
+    IntSize m_leftPhysicalSize;
+    IntSize m_rightPhysicalSize;
+    IntSize m_screenSize;
 #endif
     WebXRAttachments m_drawAttachments;
     WebXRAttachments m_resolveAttachments;
@@ -124,6 +129,8 @@ private:
 #if PLATFORM(COCOA)
     std::array<WebXRExternalAttachments, 2> m_displayAttachments;
     MachSendRight m_completionSyncEvent;
+    using GCGLOwnedRasterizationRateMap = GCGLOwned<PlatformGLObject, &GraphicsContextGL::deleteRasterizationRateMap>;
+    GCGLOwnedRasterizationRateMap m_drawRasterizationRateMap;
     uint64_t m_renderingFrameIndex { ~0u };
     bool m_usingFoveation { false };
 #else

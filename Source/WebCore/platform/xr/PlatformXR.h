@@ -251,12 +251,13 @@ struct FrameData {
 
 #if PLATFORM(COCOA)
     struct LayerSetupData {
+        WTF_MAKE_FAST_ALLOCATED;
+    public:
         Layout displayLayout;
         WebCore::IntSize framebufferSize;
         WebCore::IntSize physicalSize;
-        WebCore::IntSize screenSize;
         std::array<WebCore::IntRect, 2> viewports;
-        std::span<const float> horizontalSamples;
+        std::array<std::span<const float>, 2> horizontalSamples;
         std::span<const float> verticalSamples;
         MachSendRight completionSyncEvent;
     };
@@ -264,11 +265,12 @@ struct FrameData {
 
     struct LayerData {
 #if PLATFORM(COCOA)
-        std::optional<LayerSetupData> layerSetup = { std::nullopt };
+        std::unique_ptr<LayerSetupData> layerSetup;
         std::tuple<MachSendRight, bool> colorTexture = { MachSendRight(), false };
         std::tuple<MachSendRight, bool> depthStencilBuffer = { MachSendRight(), false };
         uint64_t renderingFrameIndex { 0 };
 #else
+        WebCore::IntSize framebufferSize;
         PlatformGLObject opaqueTexture { 0 };
 #endif
     };

@@ -196,6 +196,7 @@ unsigned WebXRWebGLLayer::framebufferWidth() const
 {
     if (m_framebuffer)
         return m_framebuffer->drawFramebufferSize().width();
+
     return WTF::switchOn(m_context,
         [&](const RefPtr<WebGLRenderingContextBase>& baseContext) {
             return baseContext->drawingBufferWidth();
@@ -206,6 +207,7 @@ unsigned WebXRWebGLLayer::framebufferHeight() const
 {
     if (m_framebuffer)
         return m_framebuffer->drawFramebufferSize().height();
+
     return WTF::switchOn(m_context,
         [&](const RefPtr<WebGLRenderingContextBase>& baseContext) {
             return baseContext->drawingBufferHeight();
@@ -228,19 +230,19 @@ ExceptionOr<RefPtr<WebXRViewport>> WebXRWebGLLayer::getViewport(WebXRView& view)
 
     auto& viewportData = view.eye() == XREye::Right ? m_rightViewportData : m_leftViewportData;
 
+    // FIXME(djg): Mike, we can't just delete this code...
     // 6. If the viewport modifiable flag is true and view’s requested viewport scale is not equal to current viewport scale:
     //   6.1 Set current viewport scale to requested viewport scale.
     //   6.2 Compute the scaled viewport.
-    if (m_framebuffer->supportsDynamicViewportScaling() && view.isViewportModifiable() && view.requestedViewportScale() != viewportData.currentScale) {
-        viewportData.currentScale = view.requestedViewportScale();
-        m_viewportsDirty = true;
-    }
+    // if (m_framebuffer->supportsDynamicViewportScaling() && view.isViewportModifiable() && view.requestedViewportScale() != viewportData.currentScale) {
+    //     viewportData.currentScale = view.requestedViewportScale();
+    //     m_viewportsDirty = true;
+    // }
 
     // 7. Set the view’s viewport modifiable flag to false.
     view.setViewportModifiable(false);
 
-    if (m_viewportsDirty)
-        computeViewports();
+    computeViewports();
 
     // 8. Let viewport be the XRViewport from the list of viewport objects associated with view.
     // 9. Return viewport.
@@ -302,7 +304,6 @@ PlatformXR::Device::Layer WebXRWebGLLayer::endFrame()
 
 void WebXRWebGLLayer::canvasResized(CanvasBase&)
 {
-    m_viewportsDirty = true;
 }
 
 // https://immersive-web.github.io/webxr/#xrview-obtain-a-scaled-viewport
@@ -325,10 +326,10 @@ void WebXRWebGLLayer::computeViewports()
         viewport = m_framebuffer->drawViewport(PlatformXR::Eye::Right);
         viewport.setSize(roundDown(viewport.size(), scale));
         m_rightViewportData.viewport->updateViewport(viewport);
-    } else
-        m_leftViewportData.viewport->updateViewport(m_framebuffer->drawViewport(PlatformXR::Eye::None));
-
-    m_viewportsDirty = false;
+    } else {
+        auto viewport = m_framebuffer ? m_framebuffer->drawViewport(PlatformXR::Eye::None) : IntRect(0, 0, framebufferWidth(), framebufferHeight());
+        m_leftViewportData.viewport->updateViewport(viewport);
+    }
 }
 
 } // namespace WebCore

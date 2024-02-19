@@ -161,6 +161,7 @@ void SimulatedXRDevice::frameTimerFired()
         });
 #else
         data.layers.add(layer.key, PlatformXR::FrameData::LayerData {
+            .framebufferSize = IntSize(0, 0),
             .opaqueTexture = layer.value
         });
 #endif
