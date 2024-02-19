@@ -54,27 +54,14 @@ Ref<PathSkia> PathSkia::create(const PathStream& stream)
     return pathSkia;
 }
 
-Ref<PathSkia> PathSkia::create(SkPath&& platformPath, RefPtr<PathStream>&& elementsStream)
-{
-    return adoptRef(*new PathSkia(WTFMove(platformPath), WTFMove(elementsStream)));
-}
-
-PathSkia::PathSkia()
-    : m_elementsStream(PathStream::create())
-{
-}
-
-PathSkia::PathSkia(SkPath&& platformPath, RefPtr<PathStream>&& elementsStream)
-    : m_platformPath(WTFMove(platformPath))
-    , m_elementsStream(WTFMove(elementsStream))
+PathSkia::PathSkia(const SkPath& platformPath)
+    : m_platformPath(platformPath)
 {
 }
 
 Ref<PathImpl> PathSkia::copy() const
 {
-    SkPath platformPathCopy = m_platformPath;
-    auto elementsStream = m_elementsStream ? RefPtr<PathImpl> { m_elementsStream->copy() } : nullptr;
-    return PathSkia::create(WTFMove(platformPathCopy), downcast<PathStream>(WTFMove(elementsStream)));
+    return adoptRef(*new PathSkia(m_platformPath));
 }
 
 PlatformPathPtr PathSkia::platformPath() const
@@ -85,30 +72,22 @@ PlatformPathPtr PathSkia::platformPath() const
 void PathSkia::add(PathMoveTo moveTo)
 {
     m_platformPath.moveTo(SkFloatToScalar(moveTo.point.x()), SkFloatToScalar(moveTo.point.y()));
-    if (m_elementsStream)
-        m_elementsStream->add(moveTo);
 }
 
 void PathSkia::add(PathLineTo lineTo)
 {
     m_platformPath.lineTo(SkFloatToScalar(lineTo.point.x()), SkFloatToScalar(lineTo.point.y()));
-    if (m_elementsStream)
-        m_elementsStream->add(lineTo);
 }
 
 void PathSkia::add(PathQuadCurveTo quadTo)
 {
     m_platformPath.quadTo(SkFloatToScalar(quadTo.controlPoint.x()), SkFloatToScalar(quadTo.controlPoint.y()), SkFloatToScalar(quadTo.endPoint.x()), SkFloatToScalar(quadTo.endPoint.y()));
-    if (m_elementsStream)
-        m_elementsStream->add(quadTo);
 }
 
 void PathSkia::add(PathBezierCurveTo cubicTo)
 {
     m_platformPath.cubicTo(SkFloatToScalar(cubicTo.controlPoint1.x()), SkFloatToScalar(cubicTo.controlPoint1.y()), SkFloatToScalar(cubicTo.controlPoint2.x()), SkFloatToScalar(cubicTo.controlPoint2.y()),
         SkFloatToScalar(cubicTo.endPoint.x()), SkFloatToScalar(cubicTo.endPoint.y()));
-    if (m_elementsStream)
-        m_elementsStream->add(cubicTo);
 }
 
 void PathSkia::add(PathArcTo)
@@ -153,9 +132,6 @@ void PathSkia::add(PathArc arc)
         m_platformPath.addOval(oval, sweepDegrees > 0 ? SkPathDirection::kCW : SkPathDirection::kCCW, static_cast<unsigned>(startIndex));
     } else
         m_platformPath.arcTo(oval, startDegrees, sweepDegrees, false);
-
-    if (m_elementsStream)
-        m_elementsStream->add(arc);
 }
 
 void PathSkia::add(PathClosedArc closedArc)
@@ -172,15 +148,11 @@ void PathSkia::add(PathEllipse)
 void PathSkia::add(PathEllipseInRect ellipseInRect)
 {
     m_platformPath.addOval(ellipseInRect.rect);
-    if (m_elementsStream)
-        m_elementsStream->add(ellipseInRect);
 }
 
 void PathSkia::add(PathRect rect)
 {
     m_platformPath.addRect(rect.rect);
-    if (m_elementsStream)
-        m_elementsStream->addLinesForRect(rect.rect);
 }
 
 void PathSkia::add(PathRoundedRect roundedRect)
@@ -191,14 +163,11 @@ void PathSkia::add(PathRoundedRect roundedRect)
 void PathSkia::add(PathCloseSubpath)
 {
     m_platformPath.close();
-    if (m_elementsStream)
-        m_elementsStream->add(PathCloseSubpath { });
 }
 
 void PathSkia::addPath(const PathSkia& path, const AffineTransform& transform)
 {
     m_platformPath.addPath(*path.platformPath(), transform);
-    m_elementsStream = nullptr;
 }
 
 void PathSkia::applySegments(const PathSegmentApplier&) const
@@ -208,9 +177,6 @@ void PathSkia::applySegments(const PathSegmentApplier&) const
 
 bool PathSkia::applyElements(const PathElementApplier& applier) const
 {
-    if (m_elementsStream && m_elementsStream->applyElements(applier))
-        return true;
-
     auto convertPoints = [](FloatPoint dst[], const SkPoint src[], int count) {
         for (int i = 0; i < count; i++) {
             dst[i].setX(SkScalarToFloat(src[i].fX));
@@ -313,15 +279,12 @@ bool PathSkia::strokeContains(const FloatPoint&, const Function<void(GraphicsCon
 
 FloatRect PathSkia::fastBoundingRect() const
 {
-    if (m_elementsStream)
-        return m_elementsStream->fastBoundingRect();
-
-    return boundingRect();
+    return m_platformPath.getBounds();
 }
 
 FloatRect PathSkia::boundingRect() const
 {
-    return m_platformPath.getBounds();
+    return m_platformPath.computeTightBounds();
 }
 
 FloatRect PathSkia::strokeBoundingRect(const Function<void(GraphicsContext&)>&) const
