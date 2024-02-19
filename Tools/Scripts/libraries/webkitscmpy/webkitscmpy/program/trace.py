@@ -121,6 +121,8 @@ class Relationship(object):
                 secondary = match.group('secondary')
                 if secondary:
                     secondary = UNPACK_SECONDARY_RE.match(secondary).groups()[0]
+                if secondary and Commit.HASH_RE.match(secondary):
+                    primary, secondary = secondary, primary
                 return type, [ref.rstrip() for ref in [primary, secondary] if ref]
         return None, []
 
