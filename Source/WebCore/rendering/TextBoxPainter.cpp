@@ -563,7 +563,7 @@ static inline float computedAutoTextDecorationThickness(const RenderStyle& style
 
 static inline float computedLinethroughCenter(const RenderStyle& styleToUse, float textDecorationThickness, float autoTextDecorationThickness)
 {
-    auto center = 2 * styleToUse.metricsOfPrimaryFont().ascent().value_or(0) / 3 + autoTextDecorationThickness / 2;
+    auto center = 2 * styleToUse.metricsOfPrimaryFont().ascent() / 3 + autoTextDecorationThickness / 2;
     return center - textDecorationThickness / 2;
 }
 

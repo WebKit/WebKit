@@ -210,7 +210,7 @@ Path InspectorOverlayLabel::draw(GraphicsContext& context, float maximumLineWidt
 
     auto font = systemFont();
     float lineHeight = font.metricsOfPrimaryFont().height();
-    float lineDescent = font.metricsOfPrimaryFont().descent().value_or(0);
+    float lineDescent = font.metricsOfPrimaryFont().descent();
 
     Vector<ComputedContentRun> computedContentRuns;
 

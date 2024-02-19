@@ -119,7 +119,7 @@ void Font::initCharWidths()
         m_avgCharWidth = m_fontMetrics.xHeight().value_or(0);
 
     if (m_maxCharWidth <= 0.f)
-        m_maxCharWidth = std::max(m_avgCharWidth, m_fontMetrics.ascent().value_or(0));
+        m_maxCharWidth = std::max(m_avgCharWidth, m_fontMetrics.ascent());
 }
 
 void Font::platformGlyphInit()
@@ -167,9 +167,9 @@ void Font::platformGlyphInit()
         m_fontMetrics.setIdeogramWidth(platformData().size());
 
     m_spaceWidth = widthForGlyph(m_spaceGlyph, SyntheticBoldInclusion::Exclude); // spaceWidth() handles adding in the synthetic bold.
-    auto amountToAdjustLineGap = std::min(m_fontMetrics.lineGap().value_or(0), 0.0f);
-    m_fontMetrics.setLineGap(m_fontMetrics.lineGap().value_or(0) - amountToAdjustLineGap);
-    m_fontMetrics.setLineSpacing(m_fontMetrics.lineSpacing().value_or(0) - amountToAdjustLineGap);
+    auto amountToAdjustLineGap = std::min(m_fontMetrics.lineGap(), 0.0f);
+    m_fontMetrics.setLineGap(m_fontMetrics.lineGap() - amountToAdjustLineGap);
+    m_fontMetrics.setLineSpacing(m_fontMetrics.lineSpacing() - amountToAdjustLineGap);
     determinePitch();
 }
 

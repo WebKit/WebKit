@@ -47,17 +47,17 @@ public:
 
     float height(FontBaseline baselineType = AlphabeticBaseline) const
     {
-        return ascent(baselineType).value_or(0) + descent(baselineType).value_or(0);
+        return ascent(baselineType) + descent(baselineType);
     }
     int intHeight(FontBaseline baselineType = AlphabeticBaseline) const
     {
         return intAscent(baselineType) + intDescent(baselineType);
     }
 
-    Markable<float, FontMetrics::MarkableTraits> ascent(FontBaseline baselineType = AlphabeticBaseline) const
+    float ascent(FontBaseline baselineType = AlphabeticBaseline) const
     {
         if (baselineType == AlphabeticBaseline)
-            return m_ascent;
+            return m_ascent.value_or(0.f);
         return height() / 2;
     }
     int intAscent(FontBaseline baselineType = AlphabeticBaseline) const
@@ -72,10 +72,10 @@ public:
         m_intAscent = std::max(static_cast<int>(lroundf(ascent)), 0);
     }
 
-    Markable<float, FontMetrics::MarkableTraits> descent(FontBaseline baselineType = AlphabeticBaseline) const
+    float descent(FontBaseline baselineType = AlphabeticBaseline) const
     {
         if (baselineType == AlphabeticBaseline)
-            return m_descent;
+            return m_descent.value_or(0.f);
         return height() / 2;
     }
     int intDescent(FontBaseline baselineType = AlphabeticBaseline) const
@@ -90,7 +90,7 @@ public:
         m_intDescent = lroundf(descent);
     }
 
-    Markable<float, FontMetrics::MarkableTraits> lineGap() const { return m_lineGap; }
+    float lineGap() const { return m_lineGap.value_or(0.f); }
     int intLineGap() const { return m_intLineGap; }
     void setLineGap(float lineGap)
     {
@@ -98,7 +98,7 @@ public:
         m_intLineGap = lroundf(lineGap);
     }
 
-    Markable<float, FontMetrics::MarkableTraits> lineSpacing() const { return m_lineSpacing; }
+    float lineSpacing() const { return m_lineSpacing.value_or(0.f); }
     int intLineSpacing() const { return m_intLineSpacing; }
     void setLineSpacing(float lineSpacing)
     {

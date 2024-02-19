@@ -265,7 +265,7 @@ static GlyphOverflow computedVisualOverflowForDecorations(const RenderStyle& lin
     if (decoration & TextDecorationLine::LineThrough) {
         FloatRect rect(FloatPoint(), FloatSize(1, strokeThickness));
         float autoTextDecorationThickness = TextDecorationThickness::createWithAuto().resolve(lineStyle.computedFontSize(), lineStyle.metricsOfPrimaryFont());
-        auto center = 2 * lineStyle.metricsOfPrimaryFont().ascent().value_or(0) / 3 + autoTextDecorationThickness / 2;
+        auto center = 2 * lineStyle.metricsOfPrimaryFont().ascent() / 3 + autoTextDecorationThickness / 2;
         rect.move(0, center - strokeThickness / 2);
         if (decorationStyle == TextDecorationStyle::Wavy) {
             FloatBoxExtent wavyExpansion;

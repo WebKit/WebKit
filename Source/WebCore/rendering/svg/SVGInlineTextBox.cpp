@@ -120,7 +120,7 @@ FloatRect SVGInlineTextBox::selectionRectForTextFragment(const SVGTextFragment& 
     if (scalingFactor != 1)
         textOrigin.scale(scalingFactor);
 
-    textOrigin.move(0, -scaledFontMetrics.ascent().value_or(0));
+    textOrigin.move(0, -scaledFontMetrics.ascent());
 
     LayoutRect selectionRect { textOrigin, LayoutSize(0, LayoutUnit(fragment.height * scalingFactor)) };
     TextRun run = constructTextRun(style, fragment);
@@ -484,7 +484,7 @@ static inline float positionOffsetForDecoration(OptionSet<TextDecorationLine> de
 {
     // FIXME: For SVG Fonts we need to use the attributes defined in the <font-face> if specified.
     // Compatible with Batik/Opera.
-    const float ascent = fontMetrics.ascent().value_or(0);
+    const float ascent = fontMetrics.ascent();
     if (decoration == TextDecorationLine::Underline)
         return ascent + thickness * 1.5f;
     if (decoration == TextDecorationLine::Overline)
@@ -585,7 +585,7 @@ void SVGInlineTextBox::paintDecorationWithStyle(GraphicsContext& context, Option
         context.scale(1 / scalingFactor);
     }
 
-    decorationOrigin.move(0, -scaledFontMetrics.ascent().value_or(0) + positionOffsetForDecoration(decoration, scaledFontMetrics, thickness));
+    decorationOrigin.move(0, -scaledFontMetrics.ascent() + positionOffsetForDecoration(decoration, scaledFontMetrics, thickness));
 
     Path path;
     path.addRect(FloatRect(decorationOrigin, FloatSize(width, thickness)));
@@ -626,7 +626,7 @@ void SVGInlineTextBox::paintTextWithShadows(GraphicsContext& context, const Rend
         textSize.scale(scalingFactor);
     }
 
-    FloatRect shadowRect(FloatPoint(textOrigin.x(), textOrigin.y() - scaledFont.metricsOfPrimaryFont().ascent().value_or(0)), textSize);
+    FloatRect shadowRect(FloatPoint(textOrigin.x(), textOrigin.y() - scaledFont.metricsOfPrimaryFont().ascent()), textSize);
 
     GraphicsContext* usedContext = &context;
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
@@ -758,7 +758,7 @@ FloatRect SVGInlineTextBox::calculateBoundaries() const
     float scalingFactor = renderer().scalingFactor();
     ASSERT(scalingFactor);
 
-    float baseline = renderer().scaledFont().metricsOfPrimaryFont().ascent().value_or(0) / scalingFactor;
+    float baseline = renderer().scaledFont().metricsOfPrimaryFont().ascent() / scalingFactor;
 
     AffineTransform fragmentTransform;
     unsigned textFragmentsSize = m_textFragments.size();
@@ -793,7 +793,7 @@ bool SVGInlineTextBox::nodeAtPoint(const HitTestRequest& request, HitTestResult&
                 float scalingFactor = renderer().scalingFactor();
                 ASSERT(scalingFactor);
                 
-                float baseline = renderer().scaledFont().metricsOfPrimaryFont().ascent().value_or(0) / scalingFactor;
+                float baseline = renderer().scaledFont().metricsOfPrimaryFont().ascent() / scalingFactor;
 
                 AffineTransform fragmentTransform;
                 for (auto& fragment : m_textFragments) {
