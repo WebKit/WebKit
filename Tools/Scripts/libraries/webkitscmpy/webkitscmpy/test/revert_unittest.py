@@ -64,7 +64,8 @@ class TestRevert(testing.PathTestCase):
 
         self.assertEqual(
             captured.stdout.getvalue(),
-            "Enter issue URL or reason for the revert: \n"
+            "This issue will track the revert and should not be the issue of the commit(s) to be reverted.\n"
+            "Enter issue URL or title of new issue (reason for the revert): \n"
             "Created the local development branch 'eng/Example-feature-1'\n"
             "Created 'PR 1 | Unreviewed, reverting 5@main'!\n"
             "https://github.example.com/WebKit/WebKit/pull/1\n",
@@ -100,20 +101,22 @@ class TestRevert(testing.PathTestCase):
             ),
         ), mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA)]):
             result = program.main(
-                args=('revert', 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc', '-v'),
+                args=('revert', 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc', '--no-pr', '-v'),
                 path=self.path,
             )
             self.assertEqual(0, result)
             self.assertDictEqual(repo.modified, dict())
             self.assertDictEqual(repo.staged, dict())
             self.assertEqual(True, 'Unreviewed, reverting 5@main' in repo.head.message)
-            result = program.main(args=('pull-request', '-v', '--no-history'), path=self.path)
+            with MockTerminal.input('{}/show_bug.cgi?id=2'.format(self.BUGZILLA)):
+                result = program.main(args=('pull-request', '-v', '--no-history'), path=self.path)
             self.assertEqual(0, result)
             self.assertEqual(local.Git(self.path).remote().pull_requests.get(1).draft, False)
 
         self.assertEqual(
             captured.stdout.getvalue(),
-            "Enter issue URL or reason for the revert: \n"
+            "This issue will track the revert and should not be the issue of the commit(s) to be reverted.\n"
+            "Enter issue URL or title of new issue (reason for the revert): \n"
             "Created the local development branch 'eng/Example-feature-1'\n"
             "Created 'PR 1 | Unreviewed, reverting 5@main'!\n"
             "https://github.example.com/WebKit/WebKit/pull/1\n",
@@ -138,7 +141,7 @@ class TestRevert(testing.PathTestCase):
         )
 
     def test_args(self):
-        with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub() as remote, mocks.local.Git(
+        with MockTerminal.input('{}/show_bug.cgi?id=2'.format(self.BUGZILLA)), OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub() as remote, mocks.local.Git(
             self.path, remote='https://{}'.format(remote.remote),
             remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
         ) as repo, bmocks.Bugzilla(
@@ -150,14 +153,15 @@ class TestRevert(testing.PathTestCase):
             ),
         ), mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA)]):
             result = program.main(
-                args=('revert', 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc', '--issue', '{}/show_bug.cgi?id=2'.format(self.BUGZILLA), '-v'),
+                args=('revert', 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc', '--issue', '{}/show_bug.cgi?id=2'.format(self.BUGZILLA), '-v', '--no-pr'),
                 path=self.path,
             )
             self.assertEqual(0, result)
             self.assertDictEqual(repo.modified, dict())
             self.assertDictEqual(repo.staged, dict())
             self.assertEqual(True, 'Unreviewed, reverting 5@main' in repo.head.message)
-            result = program.main(args=('pull-request', '-v', '--no-history'), path=self.path)
+            with MockTerminal.input('{}/show_bug.cgi?id=2'.format(self.BUGZILLA)):
+                result = program.main(args=('pull-request', '-v', '--no-history'), path=self.path)
             self.assertEqual(0, result)
             self.assertEqual(local.Git(self.path).remote().pull_requests.get(1).draft, False)
 
@@ -224,19 +228,21 @@ index 05e8751..0bf3c85 100644
             ),
         ), mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA)]):
             result = program.main(
-                args=('revert', 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc', '-v', '--pr'),
+                args=('revert', 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc', '-v'),
                 path=self.path,
             )
             self.assertEqual(0, result)
-            result = program.main(
-                args=('pull-request', '-v', '--no-history'),
-                path=self.path,
-            )
+            with MockTerminal.input('{}/show_bug.cgi?id=2'.format(self.BUGZILLA)):
+                result = program.main(
+                    args=('pull-request', '-v', '--no-history'),
+                    path=self.path,
+                )
             self.assertEqual(0, result)
 
         self.assertEqual(
             captured.stdout.getvalue(),
-            "Enter issue URL or reason for the revert: \n"
+            "This issue will track the revert and should not be the issue of the commit(s) to be reverted.\n"
+            "Enter issue URL or title of new issue (reason for the revert): \n"
             "Created the local development branch 'eng/Example-feature-1'\n"
             "Created 'PR 1 | Unreviewed, reverting 5@main'!\n"
             "https://github.example.com/WebKit/WebKit/pull/1\n"
@@ -272,3 +278,30 @@ index 05e8751..0bf3c85 100644
                 "Updating pull-request for 'eng/Example-feature-1'..."
             ],
         )
+
+    def test_pr(self):
+        with MockTerminal.input('{}/show_bug.cgi?id=2'.format(self.BUGZILLA)), OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub() as remote, mocks.local.Git(
+            self.path, remote='https://{}'.format(remote.remote),
+            remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
+        ) as repo, bmocks.Bugzilla(
+            self.BUGZILLA.split('://')[-1],
+            issues=bmocks.ISSUES,
+            environment=Environment(
+                BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+                BUGS_EXAMPLE_COM_PASSWORD='password',
+            ),
+        ), mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA)]):
+            result = program.main(
+                args=('revert', 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc', '--issue', '{}/show_bug.cgi?id=2'.format(self.BUGZILLA), '-v'),
+                path=self.path,
+            )
+            self.assertEqual(0, result)
+            self.assertDictEqual(repo.modified, dict())
+            self.assertDictEqual(repo.staged, dict())
+            self.assertEqual(True, 'Unreviewed, reverting 5@main' in repo.head.message)
+            self.assertEqual(
+                captured.stdout.getvalue(),
+                "Created the local development branch 'eng/Example-feature-1'\n"
+                "Created 'PR 1 | Unreviewed, reverting 5@main'!\n"
+                "https://github.example.com/WebKit/WebKit/pull/1\n"
+            )
