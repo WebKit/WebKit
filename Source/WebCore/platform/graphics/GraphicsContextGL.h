@@ -1697,7 +1697,7 @@ private:
 
 WEBCORE_EXPORT RefPtr<GraphicsContextGL> createWebProcessGraphicsContextGL(const GraphicsContextGLAttributes&, SerialFunctionDispatcher* = nullptr);
 
-template<void(GraphicsContextGL::*destroyFunc)(PlatformGLObject)>
+template<typename Object, void(GraphicsContextGL::*destroyFunc)(Object)>
 class GCGLOwned {
     WTF_MAKE_NONCOPYABLE(GCGLOwned);
 
@@ -1714,25 +1714,26 @@ public:
         ASSERT(!m_object); // Clients should call release() explicitly.
     }
 
-    operator PlatformGLObject() const { return m_object; }
+    operator Object() const { return m_object; }
 
-    PlatformGLObject leakObject() { return std::exchange(m_object, 0); }
+    Object leakObject() { return std::exchange(m_object, { }); }
 
-    void adopt(GraphicsContextGL& gl, PlatformGLObject object)
+    void adopt(GraphicsContextGL& gl, Object object)
     {
         if (m_object)
             (gl.*destroyFunc)(m_object);
         m_object = object;
     }
 
-    void release(GraphicsContextGL& gl) { adopt(gl, 0); }
+    void release(GraphicsContextGL& gl) { adopt(gl, { }); }
 private:
-    PlatformGLObject m_object { 0 };
+    Object m_object { };
 };
 
-using GCGLOwnedFramebuffer = GCGLOwned<&GraphicsContextGL::deleteFramebuffer>;
-using GCGLOwnedRenderbuffer = GCGLOwned<&GraphicsContextGL::deleteRenderbuffer>;
-using GCGLOwnedTexture = GCGLOwned<&GraphicsContextGL::deleteTexture>;
+using GCGLOwnedFramebuffer = GCGLOwned<PlatformGLObject, &GraphicsContextGL::deleteFramebuffer>;
+using GCGLOwnedRenderbuffer = GCGLOwned<PlatformGLObject, &GraphicsContextGL::deleteRenderbuffer>;
+using GCGLOwnedTexture = GCGLOwned<PlatformGLObject, &GraphicsContextGL::deleteTexture>;
+using GCEGLOwnedImage = GCGLOwned<GCEGLImage, &GraphicsContextGL::destroyEGLImage>;
 
 } // namespace WebCore
 

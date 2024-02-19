@@ -295,6 +295,7 @@ void ARKitCoordinator::renderLoop(Box<RenderState> active)
 
             // FIXME: rdar://77858090 (Need to transmit color space information)
             frameData.layers.set(defaultLayerHandle(), PlatformXR::FrameData::LayerData {
+                .displayLayout = PlatformXR::Layout::Shared,
                 .framebufferSize = IntSize(colorTexture.width, colorTexture.height),
                 .colorTexture = WTFMove(colorTextureSendRight),
                 .completionSyncEvent = { MachSendRight(completionPort), renderingFrameIndex }

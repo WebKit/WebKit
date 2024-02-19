@@ -22,6 +22,11 @@
 
 #if ENABLE(WEBXR)
 
+enum class PlatformXR::Layout : uint8_t {
+    Shared,
+    Layered,
+};
+
 enum class PlatformXR::SessionFeature : uint8_t {
     ReferenceSpaceTypeViewer,
     ReferenceSpaceTypeLocal,
@@ -96,8 +101,9 @@ enum class PlatformXR::XRTargetRayMode : uint8_t {
 };
 
 [Nested, RValue] struct PlatformXR::FrameData::LayerData {
-#if PLATFORM(COCOA)
+    PlatformXR::Layout displayLayout;
     WebCore::IntSize framebufferSize;
+#if PLATFORM(COCOA)
     std::tuple<MachSendRight, bool> colorTexture;
     std::tuple<MachSendRight, bool> depthStencilBuffer;
     std::tuple<MachSendRight, uint64_t> completionSyncEvent;

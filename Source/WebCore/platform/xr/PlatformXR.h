@@ -45,6 +45,11 @@ class SecurityOriginData;
 
 namespace PlatformXR {
 
+enum class Layout : uint8_t {
+    Shared,
+    Layered,
+};
+
 enum class SessionMode : uint8_t {
     Inline,
     ImmersiveVr,
@@ -245,8 +250,9 @@ struct FrameData {
     };
 
     struct LayerData {
-#if PLATFORM(COCOA)
+        Layout displayLayout;
         WebCore::IntSize framebufferSize;
+#if PLATFORM(COCOA)
         std::tuple<MachSendRight, bool> colorTexture = { MachSendRight(), false };
         std::tuple<MachSendRight, bool> depthStencilBuffer = { MachSendRight(), false };
         std::tuple<MachSendRight, uint64_t> completionSyncEvent;
