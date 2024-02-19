@@ -36,7 +36,7 @@ class InstallHooks(Command):
     help = 'Re-install all hooks from this repository into this checkout'
 
     REMOTE_RE = re.compile(r'(?P<protcol>[^@:]+://)?(?P<user>[^:@]+@)?(?P<host>[^:/@]+)(/|:)(?P<path>[^\.]+[^\./])(\.git)?/?')
-    VERSION_RE = re.compile(r'^VERSION\s+=\s+\'(?P<number>\d+(\.\d+)*)\'$')
+    VERSION_RE = re.compile(r'^VERSION\s*=\s*[\'"](?P<number>\d+(\.\d+)*)[\'"]$')
     MODES = ('default', 'publish', 'no-radar')
 
     @classmethod
