@@ -84,7 +84,7 @@ class SearchView {
                         onElementMount: element => {
                             element.onclick = () => {
                                 for (let i = 0; i < self.ref.state.children.length; ++i) {
-                                    if (child.test !== self.ref.state.children[i].test && child.suite !== self.ref.state.children[i].suite)
+                                    if (child.test !== self.ref.state.children[i].test || child.suite !== self.ref.state.children[i].suite)
                                         continue;
                                     self.ref.state.children.splice(i, 1);
                                     break;
@@ -100,7 +100,7 @@ class SearchView {
                                     // This shouldn't be possible, just keep the current params if it happens.
                                     if (i >= params.test.length)
                                         break;
-                                    if (params.suite[i] !== child.suite && params.test[i] !== child.test)
+                                    if (params.suite[i] !== child.suite || params.test[i] !== child.test)
                                         continue;
                                     params.suite.splice(i, 1);
                                     params.test.splice(i, 1);
