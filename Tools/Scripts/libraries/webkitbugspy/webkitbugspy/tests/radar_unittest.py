@@ -392,7 +392,7 @@ What version of 'WebKit Text' should the bug be associated with?:
             self.assertEqual(tracker.issue(1).redacted, radar.Tracker.Redaction(True, "matches 'component:Text'"))
             self.assertEqual(tracker.issue(2).redacted, False)
             tracker.issue(1).close(original=tracker.issue(2))
-            self.assertEqual(tracker.issue(2).redacted, radar.Tracker.Redaction(True, "matches 'component:Text'"))
+            self.assertEqual(tracker.issue(2).redacted, radar.Tracker.Redaction(True, "is related to rdar://1 which matches 'component:Text'"))
 
     def test_redacted_original(self):
         with wkmocks.Environment(RADAR_USERNAME='tcontributor'), mocks.Radar(issues=mocks.ISSUES, projects=mocks.PROJECTS):
@@ -400,7 +400,7 @@ What version of 'WebKit Text' should the bug be associated with?:
             self.assertEqual(tracker.issue(1).redacted, radar.Tracker.Redaction(True, "matches 'component:Text'"))
             self.assertEqual(tracker.issue(2).redacted, False)
             tracker.issue(2).close(original=tracker.issue(1))
-            self.assertEqual(tracker.issue(2).redacted, radar.Tracker.Redaction(True, "matches 'component:Text'"))
+            self.assertEqual(tracker.issue(2).redacted, radar.Tracker.Redaction(True, "is related to rdar://1 which matches 'component:Text'"))
 
     def test_redaction_exception(self):
         with wkmocks.Environment(RADAR_USERNAME='tcontributor'), mocks.Radar(issues=mocks.ISSUES, projects=mocks.PROJECTS):
