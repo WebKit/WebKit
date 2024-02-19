@@ -27,7 +27,7 @@
 #include "CryptoAlgorithmAESKW.h"
 
 #include "CryptoKeyAES.h"
-#include "WebCoreSwift-Swift.h"
+#include "PALSwift.h"
 #include <CommonCrypto/CommonCrypto.h>
 
 namespace WebCore {

@@ -32,40 +32,43 @@
 namespace PAL {
 
 struct CryptoDigestContext {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
     int algorithm;
     gcry_md_hd_t md;
 };
 
 CryptoDigest::CryptoDigest()
-    : m_context(new CryptoDigestContext)
+    : m_context(WTF::makeUnique<CryptoDigestContext>())
 {
 }
 
 CryptoDigest::~CryptoDigest() = default;
 
-std::unique_ptr<CryptoDigest> CryptoDigest::create(CryptoDigest::Algorithm algorithm)
+static int getGcryptAlgorithm(CryptoDigest::Algorithm algorithm)
 {
-    int gcryptAlgorithm;
-
     switch (algorithm) {
     case CryptoDigest::Algorithm::SHA_1:
-        gcryptAlgorithm = GCRY_MD_SHA1;
-        break;
+        return GCRY_MD_SHA1;
     case CryptoDigest::Algorithm::SHA_224:
-        gcryptAlgorithm = GCRY_MD_SHA224;
-        break;
+        return GCRY_MD_SHA224;
     case CryptoDigest::Algorithm::SHA_256:
-        gcryptAlgorithm = GCRY_MD_SHA256;
-        break;
+        return GCRY_MD_SHA256;
     case CryptoDigest::Algorithm::SHA_384:
-        gcryptAlgorithm = GCRY_MD_SHA384;
-        break;
+        return GCRY_MD_SHA384;
     case CryptoDigest::Algorithm::SHA_512:
-        gcryptAlgorithm = GCRY_MD_SHA512;
-        break;
+        return GCRY_MD_SHA512;
     }
+    RELEASE_ASSERT_NOT_REACHED();
+    return GCRY_MD_SHA256;
 
-    std::unique_ptr<CryptoDigest> digest(new CryptoDigest);
+}
+
+std::unique_ptr<CryptoDigest> CryptoDigest::create(CryptoDigest::Algorithm algorithm)
+{
+    int gcryptAlgorithm = getGcryptAlgorithm(algorithm);
+
+    std::unique_ptr<CryptoDigest> digest = WTF::makeUnique<CryptoDigest>();
     digest->m_context->algorithm = gcryptAlgorithm;
 
     gcry_md_open(&digest->m_context->md, gcryptAlgorithm, 0);
@@ -91,4 +94,24 @@ Vector<uint8_t> CryptoDigest::computeHash()
     return result;
 }
 
+std::optional<Vector<uint8_t>> CryptoDigest::computeHash(CryptoDigest::Algorithm algo, const Vector<uint8_t>& input, bool)
+{
+    std::unique_ptr<CryptoDigest> digest = WTF::makeUnique<CryptoDigest>();
+    auto gcryptAlgorithm = getGcryptAlgorithm(algo);
+    digest->m_context->algorithm = gcryptAlgorithm;
+
+    gcry_md_open(&digest->m_context->md, gcryptAlgorithm, 0);
+    if (!digest->m_context->md)
+        return { };
+
+    size_t digestLen = gcry_md_get_algo_dlen(gcryptAlgorithm);
+
+    gcry_md_write(digest->m_context->md, input.data(), input.size());
+    gcry_md_final(digest->m_context->md);
+    Vector<uint8_t> result { gcry_md_read(digest->m_context->md, 0), digestLen };
+    gcry_md_close(digest->m_context->md);
+
+    return result;
+
+}
 } // namespace PAL

@@ -19,6 +19,8 @@ var expectedDigest = "374d794a95cdcfd8b35993185fef9ba368f160d8daf432d08ba9f1ed1e
 crypto.subtle.digest("sha-512", message).then(function(result){
     digest = result;
     shouldBe("bytesToHexString(digest)", "expectedDigest");
+    return crypto.subtle.digest("sha-512", new Uint8Array(0));
+}).then(function(result) {
     finishJSTest();
 });
 

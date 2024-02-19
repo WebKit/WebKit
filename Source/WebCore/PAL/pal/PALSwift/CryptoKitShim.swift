@@ -35,8 +35,12 @@ public enum ErrorCodes: Int {
     case invalidArgument = 4
     case tooBigArguments = 5
     case decryptionFailed = 6
+    case hashingFailed = 7
 }
 
+private final class Utils {
+    static let zeroArray = [UInt8](repeating: 0, count: 0)
+}
 @objc(WebCryptoAesGcm)
 public final class AesGcm: NSObject {
 
@@ -64,9 +68,8 @@ public final class AesGcm: NSObject {
             }
             let nonce = try AES.GCM.Nonce(data: UnsafeBufferPointer(start: iv, count: Int(ivSize)))
             var message = UnsafeBufferPointer(start: plainText, count: Int(plainTextSize))
-            let zeroArray = [UInt8](repeating: 0, count: 0)
             if plainTextSize == 0 {
-                zeroArray.withUnsafeBufferPointer { ptr in
+                Utils.zeroArray.withUnsafeBufferPointer { ptr in
                     message = ptr
                 }
             }
@@ -184,3 +187,109 @@ public final class AesKw: NSObject {
         return rv
     }
 }  // AesKw
+
+@objc(WebCryptoDigestSize)
+public enum DigestSize: Int {
+    case sha1 = 20
+    case sha256 = 32
+    case sha384 = 48
+    case sha512 = 64
+}
+
+@objc(WebCryptoDigest)
+public final class Digest: NSObject {
+    @objc public static func sha1(
+        _ data: UnsafePointer<UInt8>, dataSize: UInt, digest: UnsafeMutablePointer<UInt8>,
+        digestSize: UInt
+    ) -> ErrorCodes {
+        guard
+            checkInputs(dataSize: dataSize, digestSize: digestSize, Insecure.SHA1.self) == .success
+                && digestSize == Insecure.SHA1.byteCount
+        else {
+            return .invalidArgument
+        }
+        var d = UnsafeMutableRawBufferPointer(start: digest, count: Int(digestSize))
+        return Self.digest(
+            data: UnsafeBufferPointer(start: data, count: Int(dataSize)),
+            out: &d,
+            Insecure.SHA1.self
+        )
+    }
+    @objc public static func sha256(
+        _ data: UnsafePointer<UInt8>, dataSize: UInt, digest: UnsafeMutablePointer<UInt8>,
+        digestSize: UInt
+    ) -> ErrorCodes {
+        guard
+            checkInputs(dataSize: dataSize, digestSize: digestSize, SHA256.self) == .success
+                && digestSize == SHA256.byteCount
+        else {
+            return .invalidArgument
+        }
+        var d = UnsafeMutableRawBufferPointer(start: digest, count: Int(digestSize))
+        return Self.digest(
+            data: UnsafeBufferPointer(start: data, count: Int(dataSize)), out: &d, SHA256.self)
+    }
+    @objc public static func sha384(
+        _ data: UnsafePointer<UInt8>, dataSize: UInt, digest: UnsafeMutablePointer<UInt8>,
+        digestSize: UInt
+    ) -> ErrorCodes {
+        guard
+            checkInputs(dataSize: dataSize, digestSize: digestSize, SHA384.self) == .success
+                && digestSize == SHA384.byteCount
+        else {
+            return .invalidArgument
+        }
+
+        var d = UnsafeMutableRawBufferPointer(start: digest, count: Int(digestSize))
+        return Self.digest(
+            data: UnsafeBufferPointer(start: data, count: Int(dataSize)), out: &d, SHA384.self)
+    }
+    @objc public static func sha512(
+        _ data: UnsafePointer<UInt8>, dataSize: UInt, digest: UnsafeMutablePointer<UInt8>,
+        digestSize: UInt
+    ) -> ErrorCodes {
+        guard
+            checkInputs(dataSize: dataSize, digestSize: digestSize, SHA512.self) == .success
+                && digestSize == SHA512.byteCount
+        else {
+            return .invalidArgument
+        }
+
+        var d = UnsafeMutableRawBufferPointer(start: digest, count: Int(digestSize))
+        return Self.digest(
+            data: UnsafeBufferPointer(start: data, count: Int(dataSize)), out: &d, SHA512.self)
+    }
+    private static func digest<T: HashFunction>(
+        data: UnsafeBufferPointer<UInt8>, out: inout UnsafeMutableRawBufferPointer, _: T.Type
+    ) -> ErrorCodes {
+        var hasher = T()
+        var inputData = data
+        if data.count == 0 {
+            Utils.zeroArray.withUnsafeBufferPointer { buf in
+                inputData = buf
+            }
+        }
+        hasher.update(
+            bufferPointer: UnsafeRawBufferPointer(
+                start: inputData.baseAddress, count: inputData.count))
+        let result = hasher.finalize()
+        return result.withUnsafeBytes { buf in
+            if buf.count != out.count {
+                return ErrorCodes.hashingFailed
+            }
+            out.copyBytes(from: buf)
+            return .success
+        }
+    }
+    private static func checkInputs<T: HashFunction>(dataSize: UInt, digestSize: UInt, _: T.Type)
+        -> ErrorCodes
+    {
+        if dataSize > Int.max
+            || digestSize == 0
+            || digestSize > Int.max
+        {
+            return .invalidArgument
+        }
+        return .success
+    }
+}
