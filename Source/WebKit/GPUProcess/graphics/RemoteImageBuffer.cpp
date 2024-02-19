@@ -43,6 +43,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(RemoteImageBuffer);
+
 Ref<RemoteImageBuffer> RemoteImageBuffer::create(Ref<WebCore::ImageBuffer> imageBuffer, RemoteRenderingBackend& backend)
 {
     auto instance = adoptRef(*new RemoteImageBuffer(WTFMove(imageBuffer), backend));

@@ -35,6 +35,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(RemoteCommandBuffer);
+
 RemoteCommandBuffer::RemoteCommandBuffer(WebCore::WebGPU::CommandBuffer& commandBuffer, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     : m_backing(commandBuffer)
     , m_objectHeap(objectHeap)

@@ -36,6 +36,7 @@
 #include <WebCore/ShareableBitmap.h>
 #include <wtf/Lock.h>
 #include <wtf/Logger.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
@@ -47,7 +48,7 @@ struct RemoteMediaPlayerProxyConfiguration;
 class RemoteMediaPlayerManagerProxy
     : public IPC::MessageReceiver
 {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(RemoteMediaPlayerManagerProxy);
 public:
     explicit RemoteMediaPlayerManagerProxy(GPUConnectionToWebProcess&);
     ~RemoteMediaPlayerManagerProxy();

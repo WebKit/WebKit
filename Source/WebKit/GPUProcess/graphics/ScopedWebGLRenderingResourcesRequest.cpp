@@ -36,6 +36,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(ScopedWebGLRenderingResourcesRequest);
+
 std::atomic<unsigned> ScopedWebGLRenderingResourcesRequest::s_requests;
 #if !USE(GRAPHICS_LAYER_WC)
 static constexpr Seconds freeWebGLRenderingResourcesTimeout = 1_s;

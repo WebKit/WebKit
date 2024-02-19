@@ -35,6 +35,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(RemoteRenderPassEncoder);
+
 RemoteRenderPassEncoder::RemoteRenderPassEncoder(WebCore::WebGPU::RenderPassEncoder& renderPassEncoder, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     : m_backing(renderPassEncoder)
     , m_objectHeap(objectHeap)

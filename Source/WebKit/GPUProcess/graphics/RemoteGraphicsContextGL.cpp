@@ -47,6 +47,8 @@ namespace WebKit {
 
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(RemoteGraphicsContextGL);
+
 namespace {
 template<typename S, int I, typename T>
 Vector<S> vectorCopyCast(const T& arrayReference)

@@ -29,6 +29,7 @@
 
 #include <WebCore/DisplayListResourceHeap.h>
 #include <WebCore/RenderingResourceIdentifier.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class ImageBuffer;
@@ -38,6 +39,7 @@ namespace WebKit {
 class RemoteRenderingBackend;
 
 class RemoteResourceCache {
+    WTF_MAKE_WK_TZONE_ALLOCATED(RemoteResourceCache);
 public:
     RemoteResourceCache() = default;
 

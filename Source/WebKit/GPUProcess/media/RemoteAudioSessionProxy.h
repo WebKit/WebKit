@@ -31,6 +31,7 @@
 #include "RemoteAudioSessionConfiguration.h"
 #include <WebCore/AudioSession.h>
 #include <WebCore/ProcessIdentifier.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace IPC {
@@ -44,7 +45,7 @@ class RemoteAudioSessionProxyManager;
 
 class RemoteAudioSessionProxy
     : public IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(RemoteAudioSessionProxy);
 public:
     static UniqueRef<RemoteAudioSessionProxy> create(GPUConnectionToWebProcess&);
     virtual ~RemoteAudioSessionProxy();

@@ -40,6 +40,7 @@
 #include <wtf/Function.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/MonotonicTime.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 #if PLATFORM(MAC)
@@ -72,6 +73,7 @@ struct GPUProcessSessionParameters;
 class RemoteAudioSessionProxyManager;
 
 class GPUProcess : public AuxiliaryProcess, public ThreadSafeRefCounted<GPUProcess> {
+    WTF_MAKE_WK_TZONE_ALLOCATED(GPUProcess);
     WTF_MAKE_NONCOPYABLE(GPUProcess);
 public:
     GPUProcess();

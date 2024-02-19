@@ -34,6 +34,7 @@
 #include <memory>
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 
 #if PLATFORM(COCOA)
 #include "SharedCARingBuffer.h"
@@ -54,7 +55,7 @@ class GPUConnectionToWebProcess;
 class RemoteAudioDestination;
 
 class RemoteAudioDestinationManager : private IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(RemoteAudioDestinationManager);
     WTF_MAKE_NONCOPYABLE(RemoteAudioDestinationManager);
 public:
     RemoteAudioDestinationManager(GPUConnectionToWebProcess&);

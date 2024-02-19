@@ -50,6 +50,7 @@
 #include <WebCore/ProcessIdentity.h>
 #include <WebCore/RenderingResourceIdentifier.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WTF {
 enum class Critical : bool;
@@ -89,6 +90,7 @@ class ObjectHeap;
 }
 
 class RemoteRenderingBackend : private IPC::MessageSender, public IPC::StreamMessageReceiver {
+    WTF_MAKE_WK_TZONE_ALLOCATED(RemoteRenderingBackend);
 public:
     static Ref<RemoteRenderingBackend> create(GPUConnectionToWebProcess&, RemoteRenderingBackendCreationParameters&&, Ref<IPC::StreamServerConnection>&&);
     virtual ~RemoteRenderingBackend();

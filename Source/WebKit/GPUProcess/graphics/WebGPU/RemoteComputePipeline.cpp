@@ -37,6 +37,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(RemoteComputePipeline);
+
 RemoteComputePipeline::RemoteComputePipeline(WebCore::WebGPU::ComputePipeline& computePipeline, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     : m_backing(computePipeline)
     , m_objectHeap(objectHeap)

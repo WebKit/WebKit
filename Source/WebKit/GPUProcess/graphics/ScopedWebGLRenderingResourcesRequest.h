@@ -30,10 +30,12 @@
 #include "ScopedRenderingResourcesRequest.h"
 #include <atomic>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class ScopedWebGLRenderingResourcesRequest {
+    WTF_MAKE_WK_TZONE_ALLOCATED(ScopedWebGLRenderingResourcesRequest);
 public:
     ScopedWebGLRenderingResourcesRequest() = default;
     ScopedWebGLRenderingResourcesRequest(ScopedWebGLRenderingResourcesRequest&& other)

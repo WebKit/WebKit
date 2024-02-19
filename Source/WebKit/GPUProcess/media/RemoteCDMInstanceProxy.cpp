@@ -39,6 +39,8 @@ namespace WebKit {
 
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(RemoteCDMInstanceProxy);
+
 std::unique_ptr<RemoteCDMInstanceProxy> RemoteCDMInstanceProxy::create(RemoteCDMProxy& cdm, Ref<CDMInstance>&& priv, RemoteCDMInstanceIdentifier identifier)
 {
     auto configuration = makeUniqueRefWithoutFastMallocCheck<RemoteCDMInstanceConfiguration, RemoteCDMInstanceConfiguration&&>({

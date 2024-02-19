@@ -38,6 +38,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(RemoteSampleBufferDisplayLayerManager);
+
 RemoteSampleBufferDisplayLayerManager::RemoteSampleBufferDisplayLayerManager(GPUConnectionToWebProcess& gpuConnectionToWebProcess)
     : m_connectionToWebProcess(gpuConnectionToWebProcess)
     , m_connection(gpuConnectionToWebProcess.connection())

@@ -41,6 +41,8 @@ namespace WebKit {
 
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(RemoteMediaSourceProxy);
+
 RemoteMediaSourceProxy::RemoteMediaSourceProxy(GPUConnectionToWebProcess& connectionToWebProcess, RemoteMediaSourceIdentifier identifier, bool webMParserEnabled, RemoteMediaPlayerProxy& remoteMediaPlayerProxy)
     : m_connectionToWebProcess(connectionToWebProcess)
     , m_identifier(identifier)

@@ -47,12 +47,14 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(RemoteAudioMediaStreamTrackRendererInternalUnitManager);
+
 class RemoteAudioMediaStreamTrackRendererInternalUnitManager::Unit
     : public CanMakeWeakPtr<RemoteAudioMediaStreamTrackRendererInternalUnitManager::Unit>
     , public WebCore::CoreAudioSpeakerSamplesProducer
     , public WebCore::AudioSession::InterruptionObserver
     , private WebCore::AudioMediaStreamTrackRendererInternalUnit::Client {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(RemoteAudioMediaStreamTrackRendererInternalUnitManager);
 public:
     Unit(AudioMediaStreamTrackRendererInternalUnitIdentifier, Ref<IPC::Connection>&&, bool shouldRegisterAsSpeakerSamplesProducer, CompletionHandler<void(std::optional<WebCore::CAAudioStreamDescription>, size_t)>&&);
     ~Unit();

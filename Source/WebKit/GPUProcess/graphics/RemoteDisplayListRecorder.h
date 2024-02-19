@@ -36,6 +36,7 @@
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/RenderingResourceIdentifier.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
@@ -45,6 +46,7 @@ class RemoteResourceCache;
 class SharedVideoFrameReader;
 
 class RemoteDisplayListRecorder : public IPC::StreamMessageReceiver, public CanMakeWeakPtr<RemoteDisplayListRecorder> {
+    WTF_MAKE_WK_TZONE_ALLOCATED(RemoteDisplayListRecorder);
 public:
     static Ref<RemoteDisplayListRecorder> create(WebCore::ImageBuffer& imageBuffer, WebCore::RenderingResourceIdentifier imageBufferIdentifier, RemoteRenderingBackend& renderingBackend)
     {

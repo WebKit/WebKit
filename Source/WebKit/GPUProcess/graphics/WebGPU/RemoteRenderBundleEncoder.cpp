@@ -37,6 +37,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(RemoteRenderBundleEncoder);
+
 RemoteRenderBundleEncoder::RemoteRenderBundleEncoder(WebCore::WebGPU::RenderBundleEncoder& renderBundleEncoder, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     : m_backing(renderBundleEncoder)
     , m_objectHeap(objectHeap)

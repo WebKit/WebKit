@@ -29,6 +29,7 @@
 
 #include "MessageReceiver.h"
 #include <WebCore/MediaSessionHelperIOS.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
@@ -37,7 +38,7 @@ class GPUConnectionToWebProcess;
 class RemoteMediaSessionHelperProxy
     : public WebCore::MediaSessionHelperClient
     , public IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED();
+    WTF_MAKE_WK_TZONE_ALLOCATED(RemoteMediaSessionHelperProxy);
 public:
     RemoteMediaSessionHelperProxy(GPUConnectionToWebProcess&);
     virtual ~RemoteMediaSessionHelperProxy();

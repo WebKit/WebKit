@@ -34,6 +34,7 @@
 #include "RemoteCDMInstanceIdentifier.h"
 #include "RemoteCDMInstanceSessionIdentifier.h"
 #include <WebCore/CDMPrivate.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
 
@@ -45,7 +46,7 @@ class RemoteCDMProxy;
 struct RemoteCDMConfiguration;
 
 class RemoteCDMFactoryProxy final : public IPC::MessageReceiver, WebCore::CDMPrivateClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(RemoteCDMFactoryProxy);
 public:
     RemoteCDMFactoryProxy(GPUConnectionToWebProcess&);
     virtual ~RemoteCDMFactoryProxy();

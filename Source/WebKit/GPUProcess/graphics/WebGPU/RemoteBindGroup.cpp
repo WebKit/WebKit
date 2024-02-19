@@ -35,6 +35,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(RemoteBindGroup);
+
 RemoteBindGroup::RemoteBindGroup(WebCore::WebGPU::BindGroup& bindGroup, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     : m_backing(bindGroup)
     , m_objectHeap(objectHeap)

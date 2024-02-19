@@ -41,6 +41,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(RemoteAdapter);
+
 RemoteAdapter::RemoteAdapter(GPUConnectionToWebProcess& gpuConnectionToWebProcess, WebCore::WebGPU::Adapter& adapter, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     : m_backing(adapter)
     , m_objectHeap(objectHeap)

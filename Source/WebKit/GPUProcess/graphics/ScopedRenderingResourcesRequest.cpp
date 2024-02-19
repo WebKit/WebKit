@@ -28,6 +28,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(ScopedRenderingResourcesRequest);
+
 std::atomic<unsigned> ScopedRenderingResourcesRequest::s_requests;
 
 #if !PLATFORM(COCOA)
