@@ -196,7 +196,7 @@ class Revert(Command):
 
         env = os.environ
         env['COMMIT_MESSAGE_TITLE'] = cls.REVERT_TITLE_TEMPLATE.format(string_utils.join(commit_identifiers))
-        env['COMMIT_MESSAGE_REVERT'] = '{}\n{}\n\n{}\n\n'.format(revert_bug_link or 'Include a Bugzilla link (OOPS!).', revert_radar_link or 'Include a Radar link (OOPS!).', revert_issue.title)
+        env['COMMIT_MESSAGE_REVERT'] = '{}\n{}\n\n{}\n\n'.format(revert_bug_link or 'Include a Bugzilla link (OOPS!).', revert_radar_link or 'Include a Radar link (OOPS!).', revert_reason)
         env['COMMIT_MESSAGE_REVERT'] += 'Reverted {}:\n{}'.format('changes' if len(commit_identifiers) > 1 else 'change', reverted_changeset)
         return commit_identifiers, revert_reason
 
