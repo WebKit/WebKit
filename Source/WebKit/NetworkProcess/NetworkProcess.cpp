@@ -176,6 +176,7 @@ NetworkProcess::NetworkProcess(AuxiliaryProcessInitializationParameters&& parame
             webProcessConnection->setOnLineState(isOnLine);
     });
 
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** NetworkProcess[" << this << "]::constructor -> base class AuxiliaryProcess::initialize");
     initialize(WTFMove(parameters));
 }
 

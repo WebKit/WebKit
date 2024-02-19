@@ -29,6 +29,7 @@
 #include "Document.h"
 #include "FrameDestructionObserverInlines.h"
 #include "HTMLFrameOwnerElement.h"
+#include "Page.h"
 #include "RemoteDOMWindow.h"
 #include "RemoteFrameClient.h"
 #include "RemoteFrameView.h"
@@ -37,23 +38,26 @@ namespace WebCore {
 
 Ref<RemoteFrame> RemoteFrame::createMainFrame(Page& page, UniqueRef<RemoteFrameClient>&& client, FrameIdentifier identifier, Frame* opener)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** RemoteFrame::createMainFrame(pageID=" << page.identifier() << ", frameId=" << identifier << ", opener=" << opener << ")");
     return adoptRef(*new RemoteFrame(page, WTFMove(client), identifier, nullptr, nullptr, std::nullopt, opener));
 }
 
 Ref<RemoteFrame> RemoteFrame::createSubframe(Page& page, UniqueRef<RemoteFrameClient>&& client, FrameIdentifier identifier, Frame& parent)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** RemoteFrame::createSubframe(pageID=" << page.identifier() << ", frameId=" << identifier << ")");
     return adoptRef(*new RemoteFrame(page, WTFMove(client), identifier, nullptr, &parent, std::nullopt));
 }
 
 Ref<RemoteFrame> RemoteFrame::createSubframeWithContentsInAnotherProcess(Page& page, UniqueRef<RemoteFrameClient>&& client, FrameIdentifier identifier, HTMLFrameOwnerElement& ownerElement, std::optional<LayerHostingContextIdentifier> layerHostingContextIdentifier)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** RemoteFrame::createSubframeWithContentsInAnotherProcess(pageID=" << page.identifier() << ", frameId=" << identifier << ", layerHostingContextId=" << layerHostingContextIdentifier << ")");
     return adoptRef(*new RemoteFrame(page, WTFMove(client), identifier, &ownerElement, ownerElement.document().frame(), layerHostingContextIdentifier));
 }
 
 RemoteFrame::RemoteFrame(Page& page, UniqueRef<RemoteFrameClient>&& client, FrameIdentifier frameID, HTMLFrameOwnerElement* ownerElement, Frame* parent, Markable<LayerHostingContextIdentifier> layerHostingContextIdentifier, Frame* opener)
     : Frame(page, frameID, FrameType::Remote, ownerElement, parent)
     , m_window(RemoteDOMWindow::create(*this, GlobalWindowIdentifier { Process::identifier(), WindowIdentifier::generate() }))
-    , m_opener(opener)
+    , m_opener(opener, this, "RemoteFrame::m_opener"_s)
     , m_client(WTFMove(client))
     , m_layerHostingContextIdentifier(layerHostingContextIdentifier)
 {

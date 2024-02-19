@@ -164,7 +164,9 @@ void AuxiliaryProcessProxy::connect()
     m_processStart = MonotonicTime::now();
     ProcessLauncher::LaunchOptions launchOptions;
     getLaunchOptions(launchOptions);
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** AuxiliaryProcessProxy[" << this << " core/ProcID=" << coreProcessIdentifier() << "/" << processID() << "]::connect() -> ProcessLauncher::create()...");
     m_processLauncher = ProcessLauncher::create(this, WTFMove(launchOptions));
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** AuxiliaryProcessProxy[" << this << " core/ProcID=" << coreProcessIdentifier() << "/" << processID() << "]::connect() -> ProcessLauncher::create() done");
 }
 
 void AuxiliaryProcessProxy::terminate()

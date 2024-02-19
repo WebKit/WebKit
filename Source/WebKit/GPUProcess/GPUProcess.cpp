@@ -96,6 +96,7 @@ constexpr Seconds minimumLifetimeBeforeIdleExit { 5_s };
 GPUProcess::GPUProcess()
     : m_idleExitTimer(*this, &GPUProcess::tryExitIfUnused)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** GPUProcess[" << this << "]::constructor -> base class AuxiliaryProcess::initialize");
     RELEASE_LOG(Process, "%p - GPUProcess::GPUProcess:", this);
 }
 

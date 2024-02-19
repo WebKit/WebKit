@@ -57,6 +57,7 @@ RemoteLayerTreeNode::RemoteLayerTreeNode(WebCore::PlatformLayerIdentifier layerI
 {
     initializeLayer();
     [m_layer setDelegate:[WebActionDisablingCALayerDelegate shared]];
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** RemoteLayerTreeNode[" << this << "]::constructor(layerID=" << layerID << ", layerHostingContextId=" << hostIdentifier << ")");
 }
 
 #if PLATFORM(IOS_FAMILY)

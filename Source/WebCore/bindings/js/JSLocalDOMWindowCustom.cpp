@@ -57,6 +57,7 @@
 #include <JavaScriptCore/JSFunction.h>
 #include <JavaScriptCore/Lookup.h>
 #include <JavaScriptCore/Structure.h>
+#include <wtf/TrackingRefPtr.h>
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
 #include "JSWebKitNamespace.h"
@@ -460,6 +461,7 @@ public:
     explicit DialogHandler(JSGlobalObject& lexicalGlobalObject, CallFrame& callFrame)
         : m_globalObject(lexicalGlobalObject)
         , m_callFrame(callFrame)
+        , m_frame(this, "DialogHandler::m_frame"_s)
     {
     }
 
@@ -469,7 +471,7 @@ public:
 private:
     JSGlobalObject& m_globalObject;
     CallFrame& m_callFrame;
-    RefPtr<LocalFrame> m_frame;
+    WTF::TrackingRefPtr<LocalFrame> m_frame;
 };
 
 inline void DialogHandler::dialogCreated(LocalDOMWindow& dialog)

@@ -284,9 +284,6 @@ void WTFReportBacktraceWithPrefix(const char* prefix)
     WTFReportBacktraceWithPrefixAndPrintStream(out, prefix);
 }
 
-static constexpr int kDefaultFramesToShow = 31;
-static constexpr int kDefaultFramesToSkip = 2;
-
 void WTFReportBacktraceWithStackDepth(int framesToShow)
 {
     WTFReportBacktraceWithPrefixAndStackDepth("", framesToShow);
@@ -306,14 +303,16 @@ void WTFReportBacktraceWithPrefixAndStackDepth(const char* prefix, int framesToS
         out.print("%sno stacktrace available", prefix);
 }
 
-void WTFReportBacktraceWithPrefixAndPrintStream(PrintStream& out, const char* prefix)
+void WTFReportBacktraceWithPrefixAndPrintStream(PrintStream& out, const char* prefix, int toShow, int toSkip)
 {
     void* samples[kDefaultFramesToShow + kDefaultFramesToSkip];
-    int frames = kDefaultFramesToShow + kDefaultFramesToSkip;
+    if (toShow + toSkip > kDefaultFramesToShow + kDefaultFramesToSkip)
+        toShow = kDefaultFramesToShow + kDefaultFramesToSkip - toSkip;
+    int frames = toShow + toSkip;
 
     WTFGetBacktrace(samples, &frames);
-    if (frames > kDefaultFramesToSkip)
-        WTFPrintBacktraceWithPrefixAndPrintStream(out, samples + kDefaultFramesToSkip, frames - kDefaultFramesToSkip, prefix);
+    if (frames > toSkip)
+        WTFPrintBacktraceWithPrefixAndPrintStream(out, samples + toSkip, frames - toSkip, prefix);
     else
         out.print("%sno stacktrace available", prefix);
 }

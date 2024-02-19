@@ -89,6 +89,7 @@ ProvisionalPageProxy::ProvisionalPageProxy(WebPageProxy& page, Ref<WebProcessPro
 #endif
 #endif
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** ProvisionalPageProxy[" << this << " pageID=" << m_page->identifier() << " page's webPageID=" << m_page->webPageID() << " webPageID=" << m_webPageID << " core/procID=" << m_process->coreProcessIdentifier() << "/" << m_process->processID() << " requestURL=" << m_request.url().string() << (m_isServerRedirect ? " serverRedirect" : "") << ((m_processSwapRequestedByClient == ProcessSwapRequestedByClient::Yes) ? " processSwapRequestedByClient" : "") << "]::constructor");
     PROVISIONALPAGEPROXY_RELEASE_LOG(ProcessSwapping, "ProvisionalPageProxy: suspendedPage=%p", suspendedPage.get());
 
     m_messageReceiverRegistration.startReceivingMessages(m_process, m_webPageID, *this);
@@ -112,6 +113,7 @@ ProvisionalPageProxy::ProvisionalPageProxy(WebPageProxy& page, Ref<WebProcessPro
         m_remotePageProxyState = suspendedPage->takeRemotePageProxyState();
     }
 
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** ProvisionalPageProxy[" << this << " pageID=" << m_page->identifier() << " pages' webPageID=" << m_page->webPageID() << " webPageID=" << m_webPageID << "]::constructor -> initializeWebPage()");
     initializeWebPage(websitePolicies);
 }
 
@@ -195,6 +197,7 @@ void ProvisionalPageProxy::cancel()
 
 void ProvisionalPageProxy::initializeWebPage(RefPtr<API::WebsitePolicies>&& websitePolicies)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** ProvisionalPageProxy[" << this << " pageId=" << m_page->webPageID() << "]::initializeWebPage - procSwap=" << page().preferences().processSwapOnCrossSiteWindowOpenEnabled() << " siteIsol=" << page().preferences().siteIsolationEnabled() << " -> createDrawingAreaProxy...");
     m_drawingArea = m_page->pageClient().createDrawingAreaProxy(m_process.copyRef());
 
     bool sendPageCreationParameters { true };
@@ -216,6 +219,7 @@ void ProvisionalPageProxy::initializeWebPage(RefPtr<API::WebsitePolicies>&& webs
                 registerWithInspectorController = false; // FIXME: <rdar://121240770> This is a hack. There seems to be a bug in our interaction with WebPageInspectorController.
         }
         if (existingRemotePageProxy) {
+            ALWAYS_LOG_WITH_STREAM(stream << "**GS** ProvisionalPageProxy[" << this << " pageId=" << m_page->webPageID() << "]::initializeWebPage - procSwap=" << page().preferences().processSwapOnCrossSiteWindowOpenEnabled() << " siteIsol=" << page().preferences().siteIsolationEnabled() << " navDom=" << navigationDomain.string() << " taken existingRemote pageID=" << existingRemotePageProxy->pageID() << " -> send TransitionFrameToLocal");
             ASSERT(existingRemotePageProxy->process().processID() == m_process->processID());
             m_webPageID = existingRemotePageProxy->pageID();
             m_mainFrame = existingRemotePageProxy->page()->mainFrame();
@@ -227,16 +231,20 @@ void ProvisionalPageProxy::initializeWebPage(RefPtr<API::WebsitePolicies>&& webs
             m_process->send(Messages::WebPage::TransitionFrameToLocal(localFrameCreationParameters, m_page->mainFrame()->frameID()), m_webPageID);
             sendPageCreationParameters = false;
         } else if (RefPtr existingRemotePageProxy = openerPage ? openerPage->remotePageProxyForRegistrableDomain(navigationDomain) : nullptr) {
+            ALWAYS_LOG_WITH_STREAM(stream << "**GS** ProvisionalPageProxy[" << this << " pageId=" << m_page->webPageID() << "]::initializeWebPage - procSwap=" << page().preferences().processSwapOnCrossSiteWindowOpenEnabled() << " siteIsol=" << page().preferences().siteIsolationEnabled() << " navDom=" << navigationDomain.string() << " opener existingRemote pageID=" << existingRemotePageProxy->pageID());
             ASSERT(existingRemotePageProxy->process().processID() == m_process->processID());
             openerPage->addOpenedRemotePageProxy(m_page->identifier(), existingRemotePageProxy.releaseNonNull());
             m_needsCookieAccessAddedInNetworkProcess = true;
         } else if (openerPage) {
+            ALWAYS_LOG_WITH_STREAM(stream << "**GS** ProvisionalPageProxy[" << this << " pageId=" << m_page->webPageID() << "]::initializeWebPage - procSwap=" << page().preferences().processSwapOnCrossSiteWindowOpenEnabled() << " siteIsol=" << page().preferences().siteIsolationEnabled() << " navDom=" << navigationDomain.string() << " opener");
             auto remotePageProxy = RemotePageProxy::create(*openerPage, m_process, navigationDomain);
             remotePageProxy->injectPageIntoNewProcess();
             openerPage->addOpenedRemotePageProxy(m_page->identifier(), WTFMove(remotePageProxy));
-        }
+        } else
+            ALWAYS_LOG_WITH_STREAM(stream << "**GS** ProvisionalPageProxy[" << this << " pageId=" << m_page->webPageID() << "]::initializeWebPage - procSwap=" << page().preferences().processSwapOnCrossSiteWindowOpenEnabled() << " siteIsol=" << page().preferences().siteIsolationEnabled() << " navDom=" << navigationDomain.string() << " else?");
         m_needsDidStartProvisionalLoad = false;
-    }
+    } else
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** ProvisionalPageProxy[" << this << " pageId=" << m_page->webPageID() << "]::initializeWebPage - procSwap=" << page().preferences().processSwapOnCrossSiteWindowOpenEnabled() << " siteIsol=" << page().preferences().siteIsolationEnabled());
 
     parameters.isProcessSwap = true;
     if (sendPageCreationParameters) {
@@ -325,6 +333,8 @@ void ProvisionalPageProxy::didCreateMainFrame(FrameIdentifier frameID)
 
     RefPtr<WebFrameProxy> previousMainFrame = m_page->mainFrame();
     if (m_page->openerFrame() && (page().preferences().processSwapOnCrossSiteWindowOpenEnabled() || page().preferences().siteIsolationEnabled())) {
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** ProvisionalPageProxy[" << this << " pageId=" << m_page->webPageID() << "]::didCreateMainFrame - openerFrame -> procSwap=" << page().preferences().processSwapOnCrossSiteWindowOpenEnabled() << " siteIsol=" << page().preferences().siteIsolationEnabled());
+
         ASSERT(m_page->mainFrame()->frameID() == frameID);
         m_mainFrame = m_page->mainFrame();
     } else
@@ -346,9 +356,10 @@ void ProvisionalPageProxy::didCreateMainFrame(FrameIdentifier frameID)
     if (m_isServerRedirect) {
         // FIXME: When <rdar://116203552> is fixed we should not need this case here
         // because main frame redirect messages won't come from the web content process.
-        if (m_page->preferences().siteIsolationEnabled() && !m_mainFrame->frameLoadState().provisionalURL().isEmpty())
+        if (m_page->preferences().siteIsolationEnabled() && !m_mainFrame->frameLoadState().provisionalURL().isEmpty()) {
+            ALWAYS_LOG_WITH_STREAM(stream << "**GS** ProvisionalPageProxy[" << this << " pageId=" << m_page->webPageID() << "]::didCreateMainFrame - m_isServerRedirect -> procSwap=" << page().preferences().processSwapOnCrossSiteWindowOpenEnabled() << " siteIsol=" << page().preferences().siteIsolationEnabled());
             m_mainFrame->frameLoadState().didReceiveServerRedirectForProvisionalLoad(m_request.url());
-        else
+        } else
             m_mainFrame->frameLoadState().didStartProvisionalLoad(m_request.url());
         m_page->didReceiveServerRedirectForProvisionalLoadForFrameShared(m_process.copyRef(), m_mainFrame->frameID(), m_navigationID, WTFMove(m_request), { });
     } else if (previousMainFrame && !previousMainFrame->provisionalURL().isEmpty()) {
@@ -412,6 +423,7 @@ void ProvisionalPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameI
     PROVISIONALPAGEPROXY_RELEASE_LOG(ProcessSwapping, "didCommitLoadForFrame: frameID=%" PRIu64, frameID.object().toUInt64());
     auto page = protectedPage();
     if (page->preferences().processSwapOnCrossSiteWindowOpenEnabled() || page->preferences().siteIsolationEnabled()) {
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** ProvisionalPageProxy[" << this << " pageId=" << m_page->webPageID() << "]::didCreateMainFrame - m_isServerRedirect -> procSwap=" << page->preferences().processSwapOnCrossSiteWindowOpenEnabled() << " siteIsol=" << page->preferences().siteIsolationEnabled() << "...");
         RefPtr openerFrame = m_page->openerFrame();
         if (RefPtr openerPage = openerFrame ? openerFrame->page() : nullptr) {
             RegistrableDomain openerDomain(openerFrame->url());
@@ -419,6 +431,7 @@ void ProvisionalPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameI
             if (openerDomain == openedDomain)
                 openerPage->removeOpenedRemotePageProxy(page->identifier());
             else {
+                ALWAYS_LOG_WITH_STREAM(stream << "**GS** ProvisionalPageProxy[" << this << " pageId=" << m_page->webPageID() << "]::didCreateMainFrame - m_isServerRedirect -> procSwap=" << page->preferences().processSwapOnCrossSiteWindowOpenEnabled() << " siteIsol=" << page->preferences().siteIsolationEnabled() << " openerDom=" << openerDomain.string() << " openedDom=" << openedDomain.string() << ", send WebPage::DidCommitLoadInAnotherProcess(frameID=" << page->mainFrame()->frameID() << ") and then page->setRemotePageProxyInOpenerProcess(RemotePageProxy::create())");
                 page->send(Messages::WebPage::DidCommitLoadInAnotherProcess(page->mainFrame()->frameID(), std::nullopt));
                 page->setRemotePageProxyInOpenerProcess(RemotePageProxy::create(page, openerPage->protectedProcess(), openerDomain, &page->messageReceiverRegistration()));
                 page->mainFrame()->setProcess(m_process.get());

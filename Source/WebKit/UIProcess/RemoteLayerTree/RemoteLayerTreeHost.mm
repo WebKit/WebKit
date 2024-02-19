@@ -59,6 +59,7 @@ using namespace WebCore;
 RemoteLayerTreeHost::RemoteLayerTreeHost(RemoteLayerTreeDrawingAreaProxy& drawingArea)
     : m_drawingArea(drawingArea)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** RemoteLayerTreeHost[" << this << " drawingArea[" << &drawingArea << "] proxy pageID=" << drawingArea.page().identifier() << "]::constructor");
 }
 
 RemoteLayerTreeHost::~RemoteLayerTreeHost()
@@ -141,6 +142,8 @@ bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& tran
     if (!m_drawingArea)
         return false;
 
+    if (transaction.createdLayers().size())
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** RemoteLayerTreeHost[" << this << " drawingArea[" << m_drawingArea.get() << "] proxy pageID=" << m_drawingArea->page().identifier() << "]::updateLayerTree() -> createLayer() x" << transaction.createdLayers().size());
     for (const auto& createdLayer : transaction.createdLayers())
         createLayer(createdLayer);
 
@@ -220,6 +223,8 @@ bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& tran
     for (const auto& layerAndClone : clonesToUpdate)
         layerForID(layerAndClone.layerID).contents = layerForID(layerAndClone.cloneLayerID).contents;
 
+    if (transaction.destroyedLayers().size())
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** RemoteLayerTreeHost[" << this << " drawingArea[" << m_drawingArea.get() << "] proxy pageID=" << m_drawingArea->page().identifier() << "]::updateLayerTree() -> layerWillBeRemoved() for: " << transaction.destroyedLayers());
     for (auto& destroyedLayer : transaction.destroyedLayers())
         layerWillBeRemoved(transaction.processIdentifier(), destroyedLayer);
 
@@ -338,6 +343,7 @@ void RemoteLayerTreeHost::detachFromDrawingArea()
 
 void RemoteLayerTreeHost::clearLayers()
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** RemoteLayerTreeHost[" << this << " drawingArea[" << m_drawingArea.get() << "] proxy pageID=" << (m_drawingArea ? m_drawingArea->page().identifier() : WebPageProxy::Identifier()) << "]::clearLayers()");
     for (auto& keyAndNode : m_nodes) {
         m_animationDelegates.remove(keyAndNode.key);
         keyAndNode.value->detachFromParent();
@@ -453,6 +459,7 @@ std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteL
 
 void RemoteLayerTreeHost::detachRootLayer()
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** RemoteLayerTreeHost[" << this << " drawingArea[" << m_drawingArea.get() << "] proxy pageID=" << m_drawingArea->page().identifier() << "]::detachRootLayer()");
     if (!m_rootNode)
         return;
     m_rootNode->detachFromParent();
@@ -501,6 +508,7 @@ MonotonicTime RemoteLayerTreeHost::animationCurrentTime() const
 void RemoteLayerTreeHost::remotePageProcessCrashed(WebCore::ProcessIdentifier processIdentifier)
 {
     for (auto layerID : m_hostedLayersInProcess.take(processIdentifier)) {
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** RemoteLayerTreeHost[" << this << " drawingArea[" << m_drawingArea.get() << "] proxy pageID=" << m_drawingArea->page().identifier() << "]::remotePageProcessCrashed(" << processIdentifier << ") -> layerWillBeRemoved(layerID=" << layerID << ")");
         [layerForID(layerID) removeFromSuperlayer];
         layerWillBeRemoved(processIdentifier, layerID);
     }

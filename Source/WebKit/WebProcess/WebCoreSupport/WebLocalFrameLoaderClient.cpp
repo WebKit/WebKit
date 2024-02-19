@@ -629,6 +629,7 @@ void WebLocalFrameLoaderClient::dispatchDidCommitLoad(std::optional<HasInsecureC
 #endif
 
     // Notify the UIProcess.
+    ALWAYS_LOG_WITH_STREAM(stream << "WebLocalFrameLoaderClient[" << this << "]::dispatchDidCommitLoad() -> webPage[" << webPage.get() << " pageId=" << webPage->identifier() << "]->send WebPageProxy::DidCommitLoadForFrame(frameID=" << m_frame->frameID() << ")");
     webPage->send(Messages::WebPageProxy::DidCommitLoadForFrame(m_frame->frameID(), m_frame->info(), documentLoader->request(), documentLoader->navigationID(), documentLoader->response().mimeType(), m_frameHasCustomContentProvider, m_frame->coreLocalFrame()->loader().loadType(), certificateInfo, usedLegacyTLS, wasPrivateRelayed, m_frame->coreLocalFrame()->document()->isPluginDocument(), *hasInsecureContent, documentLoader->mouseEventPolicy(), UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
     webPage->didCommitLoad(m_frame.ptr());
 }
@@ -1620,6 +1621,7 @@ RefPtr<LocalFrame> WebLocalFrameLoaderClient::createFrame(const AtomString& name
 {
     RefPtr webPage = m_frame->page();
     ASSERT(webPage);
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebLocalFrameLoaderClient[" << this << "]::createFrame(name=" << name << ") -> WebFrame::createSubframe(pageID=" << webPage->identifier() << ", parentFrameID=" << m_frame->frameID() << ")");
     auto subframe = WebFrame::createSubframe(*webPage, m_frame, name, ownerElement);
     auto* coreSubframe = subframe->coreLocalFrame();
     if (!coreSubframe)
@@ -2028,6 +2030,7 @@ void WebLocalFrameLoaderClient::didAccessWindowProxyPropertyViaOpener(WebCore::S
     if (!page)
         return;
 
+    ALWAYS_LOG_WITH_STREAM(stream << "WebLocalFrameLoaderClient[" << this << "]::didAccessWindowProxyPropertyViaOpenerForFrame() -> page[" << page.get() << " pageID=" << page->identifier() << "].send WebPageProxy::DidAccessWindowProxyPropertyViaOpenerForFrame(" << m_frame->frameID() << ")");
     page->send(Messages::WebPageProxy::DidAccessWindowProxyPropertyViaOpenerForFrame(m_frame->frameID(), WTFMove(parentOrigin), property));
 }
 

@@ -70,6 +70,7 @@
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
 #import <wtf/FileSystem.h>
 #import <wtf/SoftLinking.h>
+#import <wtf/TrackingRef.h>
 #import <wtf/URLParser.h>
 
 #if PLATFORM(MAC)
@@ -172,7 +173,7 @@ static FragmentAndResources createFragment(LocalFrame& frame, NSAttributedString
 class DeferredLoadingScope {
 public:
     DeferredLoadingScope(LocalFrame& frame)
-        : m_frame(frame)
+        : m_frame(frame, this, "DeferredLoadingScope::m_frame"_s)
         , m_cachedResourceLoader(frame.document()->cachedResourceLoader())
     {
         if (!frame.page()->defersLoading()) {
@@ -195,7 +196,7 @@ public:
     }
 
 private:
-    Ref<LocalFrame> m_frame;
+    WTF::TrackingRef<LocalFrame> m_frame;
     Ref<CachedResourceLoader> m_cachedResourceLoader;
     bool m_didEnabledDeferredLoading { false };
     bool m_didDisableImage { false };

@@ -43,7 +43,7 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
-#include <wtf/RefPtr.h>
+#include <wtf/TrackingRefPtr.h>
 #include <wtf/WeakRef.h>
 
 #if PLATFORM(COCOA)
@@ -648,7 +648,7 @@ private:
     RefPtr<Element> m_capturingMouseEventsElement;
     RefPtr<Element> m_elementUnderMouse;
     RefPtr<Element> m_lastElementUnderMouse;
-    RefPtr<LocalFrame> m_lastMouseMoveEventSubframe;
+    WTF::TrackingRefPtr<LocalFrame> m_lastMouseMoveEventSubframe;
     SingleThreadWeakPtr<Scrollbar> m_lastScrollbarUnderMouse;
     Cursor m_currentMouseCursor;
 

@@ -27,7 +27,7 @@
 
 #include "Frame.h"
 #include "LayerHostingContextIdentifier.h"
-#include <wtf/RefPtr.h>
+#include <wtf/TrackingRefPtr.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/UniqueRef.h>
 
@@ -88,7 +88,7 @@ private:
     FrameLoaderClient& loaderClient() final;
 
     Ref<RemoteDOMWindow> m_window;
-    RefPtr<Frame> m_opener;
+    WTF::TrackingRefPtr<Frame, WTF::DowncastTrackingTester<Frame, LocalFrame>> m_opener;
     RefPtr<RemoteFrameView> m_view;
     UniqueRef<RemoteFrameClient> m_client;
     Markable<LayerHostingContextIdentifier> m_layerHostingContextIdentifier;

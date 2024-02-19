@@ -3106,22 +3106,30 @@ void Document::destroyRenderTree()
     if (this == &topDocument())
         clearAXObjectCache();
 
+    ALWAYS_LOG_WITH_STREAM(stream << "Document[" << this << "]::destroyRenderTree() -> documentWillBecomeInactive()");
     documentWillBecomeInactive();
 
-    if (RefPtr view = this->view())
+    if (RefPtr view = this->view()) {
+        ALWAYS_LOG_WITH_STREAM(stream << "Document[" << this << "]::destroyRenderTree() -> view[" << view.get() << "]->willDestroyRenderTree()");
         view->willDestroyRenderTree();
+    }
 
     m_pendingRenderTreeUpdate = { };
     m_initialContainingBlockStyle = { };
 
-    if (RefPtr documentElement = m_documentElement)
+    if (RefPtr documentElement = m_documentElement) {
+        ALWAYS_LOG_WITH_STREAM(stream << "Document[" << this << "]::destroyRenderTree() -> RenderTreeUpdater::tearDownRenderers(m_documentElement[" << documentElement.get() << "])");
         RenderTreeUpdater::tearDownRenderers(*documentElement);
+    }
 
+    ALWAYS_LOG_WITH_STREAM(stream << "Document[" << this << "]::destroyRenderTree() -> clearChildNeedsStyleRecalc()");
     clearChildNeedsStyleRecalc();
 
+    ALWAYS_LOG_WITH_STREAM(stream << "Document[" << this << "]::destroyRenderTree() -> unscheduleStyleRecalc()");
     unscheduleStyleRecalc();
 
     // FIXME: RenderObject::view() uses m_renderView and we can't null it before destruction is completed
+    ALWAYS_LOG_WITH_STREAM(stream << "Document[" << this << "]::destroyRenderTree() -> m_renderView->destroy() amd ->release()");
     {
         RenderTreeBuilder builder(*m_renderView);
         // FIXME: This is a workaround for leftover content (see webkit.org/b/182547).
@@ -3131,18 +3139,23 @@ void Document::destroyRenderTree()
     }
     m_renderView.release();
 
+    ALWAYS_LOG_WITH_STREAM(stream << "Document[" << this << "]::destroyRenderTree() -> Node::setRenderer(0)");
     Node::setRenderer(nullptr);
 
 #if ENABLE(TEXT_AUTOSIZING)
     m_textAutoSizing = nullptr;
 #endif
 
-    if (RefPtr view = this->view())
+    if (RefPtr view = this->view()) {
+        ALWAYS_LOG_WITH_STREAM(stream << "Document[" << this << "]::destroyRenderTree() -> view[" << view.get() << "]->didDestroyRenderTree()");
         view->didDestroyRenderTree();
+    }
+    ALWAYS_LOG_WITH_STREAM(stream << "Document[" << this << "]::destroyRenderTree() - done");
 }
 
 void Document::willBeRemovedFromFrame()
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "Document[" << this << "]::willBeRemovedFromFrame()");
     if (m_hasPreparedForDestruction)
         return;
 
@@ -3151,13 +3164,16 @@ void Document::willBeRemovedFromFrame()
         rtcNetworkManager->unregisterMDNSNames();
 #endif
 
+    ALWAYS_LOG_WITH_STREAM(stream << "Document[" << this << "]::willBeRemovedFromFrame() -> setActiveServiceWorker(0)");
     setActiveServiceWorker(nullptr);
+    ALWAYS_LOG_WITH_STREAM(stream << "Document[" << this << "]::willBeRemovedFromFrame() -> setServiceWorkerConnection(0)");
     setServiceWorkerConnection(nullptr);
 
 #if ENABLE(IOS_TOUCH_EVENTS)
     clearTouchEventHandlersAndListeners();
 #endif
 
+    ALWAYS_LOG_WITH_STREAM(stream << "Document[" << this << "]::willBeRemovedFromFrame() -> protectedUndoManager()->removeAllItems()");
     protectedUndoManager()->removeAllItems();
 
     m_textManipulationController = nullptr; // Free nodes kept alive by TextManipulationController.
@@ -3170,35 +3186,50 @@ void Document::willBeRemovedFromFrame()
 
     {
         NavigationDisabler navigationDisabler(m_frame.get());
+        ALWAYS_LOG_WITH_STREAM(stream << "Document[" << this << "]::willBeRemovedFromFrame() -> disconnectDescendantFrames()");
         disconnectDescendantFrames();
     }
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!m_frame || !m_frame->tree().childCount());
 
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
-    if (m_domWindow && m_frame)
+    if (m_domWindow && m_frame) {
+        ALWAYS_LOG_WITH_STREAM(stream << "Document[" << this << "]::willBeRemovedFromFrame() - m_domWindow && m_frame -> protectedWindow()->willDetachDocumentFromFrame()");
         protectedWindow()->willDetachDocumentFromFrame();
+    }
 
+    ALWAYS_LOG_WITH_STREAM(stream << "Document[" << this << "]::willBeRemovedFromFrame() -> styleScope().clearResolver()");
     styleScope().clearResolver();
 
-    if (hasLivingRenderTree())
+    if (hasLivingRenderTree()) {
+        ALWAYS_LOG_WITH_STREAM(stream << "Document[" << this << "]::willBeRemovedFromFrame() - hasLivingRenderTree() -> destroyRenderTree()");
         destroyRenderTree();
+    }
 
-    if (auto* pluginDocument = dynamicDowncast<PluginDocument>(*this))
+    if (auto* pluginDocument = dynamicDowncast<PluginDocument>(*this)) {
+        ALWAYS_LOG_WITH_STREAM(stream << "Document[" << this << "]::willBeRemovedFromFrame() - pluginDocument -> pluginDocument->detachFromPluginElement()");
         pluginDocument->detachFromPluginElement();
+    }
 
     if (RefPtrAllowingPartiallyDestroyed<Page> page = this->page()) {
 #if ENABLE(POINTER_LOCK)
+        ALWAYS_LOG_WITH_STREAM(stream << "Document[" << this << "]::willBeRemovedFromFrame() - page -> page->pointerLockController().documentDetached()");
         page->pointerLockController().documentDetached(*this);
 #endif
-        if (auto* imageOverlayController = page->imageOverlayControllerIfExists())
+        if (auto* imageOverlayController = page->imageOverlayControllerIfExists()) {
+            ALWAYS_LOG_WITH_STREAM(stream << "Document[" << this << "]::willBeRemovedFromFrame() - page->imageOverlayControllerIfExists() -> imageOverlayController->documentDetached()");
             imageOverlayController->documentDetached(*this);
-        if (auto* validationMessageClient = page->validationMessageClient())
+        }
+        if (auto* validationMessageClient = page->validationMessageClient()) {
+            ALWAYS_LOG_WITH_STREAM(stream << "Document[" << this << "]::willBeRemovedFromFrame() - page->validationMessageClient() -> validationMessageClient->documentDetached()");
             validationMessageClient->documentDetached(*this);
+        }
     }
 
+    ALWAYS_LOG_WITH_STREAM(stream << "Document[" << this << "]::willBeRemovedFromFrame() -> InspectorInstrumentation::documentDetached()");
     InspectorInstrumentation::documentDetached(*this);
 
+    ALWAYS_LOG_WITH_STREAM(stream << "Document[" << this << "]::willBeRemovedFromFrame() -> commonTeardown()");
     commonTeardown();
 
 #if ENABLE(TOUCH_EVENTS)
@@ -3206,11 +3237,15 @@ void Document::willBeRemovedFromFrame()
         protectedParentDocument()->didRemoveEventTargetNode(*this);
 #endif
 
-    if (m_wheelEventTargets && m_wheelEventTargets->size() && parentDocument())
+    if (m_wheelEventTargets && m_wheelEventTargets->size() && parentDocument()) {
+        ALWAYS_LOG_WITH_STREAM(stream << "Document[" << this << "]::willBeRemovedFromFrame() -> protectedParentDocument()->didRemoveEventTargetNode()");
         protectedParentDocument()->didRemoveEventTargetNode(*this);
+    }
 
-    if (RefPtr mediaQueryMatcher = m_mediaQueryMatcher)
+    if (RefPtr mediaQueryMatcher = m_mediaQueryMatcher) {
+        ALWAYS_LOG_WITH_STREAM(stream << "Document[" << this << "]::willBeRemovedFromFrame() -> mediaQueryMatcher->documentDestroyed()");
         mediaQueryMatcher->documentDestroyed();
+    }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     if (!m_clientToIDMap.isEmpty() && page()) {
@@ -3219,24 +3254,31 @@ void Document::willBeRemovedFromFrame()
     }
 #endif
 
+    ALWAYS_LOG_WITH_STREAM(stream << "Document[" << this << "]::willBeRemovedFromFrame() -> protectedCachedResourceLoader()->stopUnusedPreloadsTimer()");
     protectedCachedResourceLoader()->stopUnusedPreloadsTimer();
 
     if (page() && !m_mediaState.isEmpty()) {
+        ALWAYS_LOG_WITH_STREAM(stream << "Document[" << this << "]::willBeRemovedFromFrame() -> m_mediaState = MediaProducer::IsNotPlaying; protectedPage()->updateIsPlayingMedia()");
         m_mediaState = MediaProducer::IsNotPlaying;
         protectedPage()->updateIsPlayingMedia();
     }
 
+    ALWAYS_LOG_WITH_STREAM(stream << "Document[" << this << "]::willBeRemovedFromFrame() -> selection().willBeRemovedFromFrame()");
     selection().willBeRemovedFromFrame();
     if (CheckedPtr editor = m_editor.get())
         editor->clear();
+    ALWAYS_LOG_WITH_STREAM(stream << "Document[" << this << "]::willBeRemovedFromFrame() -> detachFromFrame()");
     detachFromFrame();
 
 #if ENABLE(CSS_PAINTING_API)
-    for (auto& scope : m_paintWorkletGlobalScopes.values())
+    for (auto& scope : m_paintWorkletGlobalScopes.values()) {
+        ALWAYS_LOG_WITH_STREAM(stream << "Document[" << this << "]::willBeRemovedFromFrame() -> scope->prepareForDestruction()");
         scope->prepareForDestruction();
+    }
     m_paintWorkletGlobalScopes.clear();
 #endif
 
+    ALWAYS_LOG_WITH_STREAM(stream << "Document[" << this << "]::willBeRemovedFromFrame() - m_hasPreparedForDestruction = true");
     m_hasPreparedForDestruction = true;
 
     // Note that m_backForwardCacheState can be Document::AboutToEnterBackForwardCache if our frame

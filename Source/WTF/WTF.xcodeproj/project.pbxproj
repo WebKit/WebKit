@@ -113,6 +113,9 @@
 		65072B162B6D7FAA0065065C /* TZoneMallocInitialization.h in Headers */ = {isa = PBXBuildFile; fileRef = 65072B152B6D7FAA0065065C /* TZoneMallocInitialization.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		70A993FE1AD7151300FA615B /* SymbolRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70A993FC1AD7151300FA615B /* SymbolRegistry.cpp */; };
 		70ECA60D1B02426800449739 /* AtomStringImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70ECA60A1B02426800449739 /* AtomStringImpl.cpp */; };
+		741A66E92B81F68E004ED035 /* TrackingRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 741A66E62B81F68E004ED035 /* TrackingRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		741A66EA2B81F68E004ED035 /* TrackableRefCounted.h in Headers */ = {isa = PBXBuildFile; fileRef = 741A66E72B81F68E004ED035 /* TrackableRefCounted.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		741A66EB2B81F68E004ED035 /* TrackingRefPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 741A66E82B81F68E004ED035 /* TrackingRefPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7A05093F1FB9DCC500B33FB8 /* JSONValues.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A05093E1FB9DCC500B33FB8 /* JSONValues.cpp */; };
 		7A6EBA3420746C34004F9C44 /* MachSendRight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A6EBA3320746C34004F9C44 /* MachSendRight.cpp */; };
 		7AAF9CA42AC4C39100E73DD3 /* PlatformEnableGlib.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AAF9CA32AC4C39100E73DD3 /* PlatformEnableGlib.h */; };
@@ -1238,6 +1241,9 @@
 		70ECA60A1B02426800449739 /* AtomStringImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AtomStringImpl.cpp; sourceTree = "<group>"; };
 		70ECA60B1B02426800449739 /* SymbolImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SymbolImpl.h; sourceTree = "<group>"; };
 		70ECA60C1B02426800449739 /* UniquedStringImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UniquedStringImpl.h; sourceTree = "<group>"; };
+		741A66E62B81F68E004ED035 /* TrackingRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TrackingRef.h; sourceTree = "<group>"; };
+		741A66E72B81F68E004ED035 /* TrackableRefCounted.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TrackableRefCounted.h; sourceTree = "<group>"; };
+		741A66E82B81F68E004ED035 /* TrackingRefPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TrackingRefPtr.h; sourceTree = "<group>"; };
 		79038E05224B05A7004C0738 /* SpanningTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpanningTree.h; sourceTree = "<group>"; };
 		7936D6A91C99F8AE000D1AED /* SmallSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmallSet.h; sourceTree = "<group>"; };
 		793BFADD9CED44B8B9FBCA16 /* StdUnorderedMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StdUnorderedMap.h; sourceTree = "<group>"; };
@@ -2423,6 +2429,9 @@
 				0F7075F31FBF537A00489AF0 /* TimingScope.h */,
 				553071C91C40427200384898 /* TinyLRUCache.h */,
 				0FED67B51B22D4D80066CE15 /* TinyPtrSet.h */,
+				741A66E72B81F68E004ED035 /* TrackableRefCounted.h */,
+				741A66E62B81F68E004ED035 /* TrackingRef.h */,
+				741A66E82B81F68E004ED035 /* TrackingRefPtr.h */,
 				E3538D4D276220880075DA50 /* TrailingArray.h */,
 				521CC6B324A277C2004377D6 /* TranslatedProcess.cpp */,
 				2D1F2F462498F73300C63A83 /* TranslatedProcess.h */,
@@ -3459,6 +3468,9 @@
 				DD3DC95A27A4BF8E007E5B61 /* TinyLRUCache.h in Headers */,
 				DD3DC98F27A4BF8E007E5B61 /* TinyPtrSet.h in Headers */,
 				DDF3073827C086CD006A526F /* TollFreeBridging.h in Headers */,
+				741A66EA2B81F68E004ED035 /* TrackableRefCounted.h in Headers */,
+				741A66E92B81F68E004ED035 /* TrackingRef.h in Headers */,
+				741A66EB2B81F68E004ED035 /* TrackingRefPtr.h in Headers */,
 				DD3DC8A827A4BF8E007E5B61 /* TrailingArray.h in Headers */,
 				DD3DC97127A4BF8E007E5B61 /* TranslatedProcess.h in Headers */,
 				DD3DC87627A4BF8E007E5B61 /* TriState.h in Headers */,

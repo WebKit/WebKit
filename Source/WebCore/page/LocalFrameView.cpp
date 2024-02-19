@@ -191,7 +191,7 @@ Pagination::Mode paginationModeForRenderStyle(const RenderStyle& style)
 }
 
 LocalFrameView::LocalFrameView(LocalFrame& frame)
-    : m_frame(frame)
+    : m_frame(frame, this, "LocalFrameView::m_frame"_s)
     , m_layoutContext(*this)
     , m_updateEmbeddedObjectsTimer(*this, &LocalFrameView::updateEmbeddedObjectsTimerFired)
     , m_updateWidgetPositionsTimer(*this, &LocalFrameView::updateWidgetPositionsTimerFired)
@@ -223,6 +223,7 @@ LocalFrameView::LocalFrameView(LocalFrame& frame)
 
 Ref<LocalFrameView> LocalFrameView::create(LocalFrame& frame)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** LocalFrameView::create(LocalFrame[" << &frame << " pageID=" << frame.pageID() << " frameID=" << frame.frameID() << "])");
     Ref<LocalFrameView> view = adoptRef(*new LocalFrameView(frame));
     if (frame.page() && frame.page()->isVisible())
         view->show();
@@ -231,6 +232,7 @@ Ref<LocalFrameView> LocalFrameView::create(LocalFrame& frame)
 
 Ref<LocalFrameView> LocalFrameView::create(LocalFrame& frame, const IntSize& initialSize)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** LocalFrameView::create(LocalFrame[" << &frame << " pageID=" << frame.pageID() << " frameID=" << frame.frameID() << "], " << initialSize << ")");
     Ref<LocalFrameView> view = adoptRef(*new LocalFrameView(frame));
     view->Widget::setFrameRect(IntRect(view->location(), initialSize));
     if (frame.page() && frame.page()->isVisible())
@@ -240,6 +242,7 @@ Ref<LocalFrameView> LocalFrameView::create(LocalFrame& frame, const IntSize& ini
 
 LocalFrameView::~LocalFrameView()
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** LocalFrameView[" << this << " pageID=" << m_frame->pageID() << " frame[" << m_frame.ptr() << "]ID=" << m_frame->frameID() << "]::~LocalFrameView()");
     removeFromAXObjectCache();
     resetScrollbars();
 
@@ -345,6 +348,7 @@ void LocalFrameView::init()
 
 void LocalFrameView::prepareForDetach()
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** LocalFrameView[" << this << "]::prepareForDetach()");
     detachCustomScrollbars();
     // When the view is no longer associated with a frame, it needs to be removed from the ax object cache
     // right now, otherwise it won't be able to reach the topDocument()'s axObject cache later.
@@ -5738,12 +5742,12 @@ ScrollBehaviorForFixedElements LocalFrameView::scrollBehaviorForFixedElements() 
 
 LocalFrame& LocalFrameView::frame() const
 {
-    return m_frame;
+    return m_frame.get();
 }
 
 Ref<LocalFrame> LocalFrameView::protectedFrame() const
 {
-    return m_frame;
+    return m_frame.getRef();
 }
 
 RenderView* LocalFrameView::renderView() const
@@ -5758,13 +5762,13 @@ CheckedPtr<RenderView> LocalFrameView::checkedRenderView() const
 
 int LocalFrameView::mapFromLayoutToCSSUnits(LayoutUnit value) const
 {
-    Ref frame = m_frame;
+    Ref frame = m_frame.getRef();
     return value / (frame->pageZoomFactor() * frame->frameScaleFactor());
 }
 
 LayoutUnit LocalFrameView::mapFromCSSToLayoutUnits(int value) const
 {
-    Ref frame = m_frame;
+    Ref frame = m_frame.getRef();
     return LayoutUnit(value * frame->pageZoomFactor() * frame->frameScaleFactor());
 }
 

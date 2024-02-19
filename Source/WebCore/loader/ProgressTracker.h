@@ -32,7 +32,7 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/RefPtr.h>
+#include <wtf/TrackingRefPtr.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakRef.h>
 
@@ -76,7 +76,7 @@ private:
 
     SingleThreadWeakRef<Page> m_page;
     UniqueRef<ProgressTrackerClient> m_client;
-    RefPtr<LocalFrame> m_originatingProgressFrame;
+    WTF::TrackingRefPtr<LocalFrame> m_originatingProgressFrame;
     HashMap<ResourceLoaderIdentifier, std::unique_ptr<ProgressItem>> m_progressItems;
     Timer m_progressHeartbeatTimer;
 

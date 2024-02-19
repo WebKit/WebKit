@@ -28,7 +28,7 @@
 #include "LocalDOMWindow.h"
 #include <wtf/CheckedRef.h>
 #include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
+#include <wtf/TrackingRefPtr.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -60,7 +60,7 @@ private:
 
     WeakPtr<LocalDOMWindow, WeakPtrImplWithEventTargetData> m_window;
     Ref<DOMWrapperWorld> m_world;
-    RefPtr<LocalFrame> m_disconnectedFrame;
+    WTF::TrackingRefPtr<LocalFrame> m_disconnectedFrame;
     bool m_wasDetached;
 };
 

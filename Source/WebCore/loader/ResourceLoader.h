@@ -38,6 +38,7 @@
 #include "ResourceResponse.h"
 #include "SharedBuffer.h"
 #include <wtf/Forward.h>
+#include <wtf/TrackingRefPtr.h>
 #include <wtf/WeakPtr.h>
 
 #if ENABLE(CONTENT_EXTENSIONS)
@@ -186,7 +187,7 @@ protected:
     virtual void willSendRequestInternal(ResourceRequest&&, const ResourceResponse& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&&);
 
     RefPtr<ResourceHandle> m_handle;
-    RefPtr<LocalFrame> m_frame;
+    WTF::TrackingRefPtr<LocalFrame> m_frame;
     RefPtr<DocumentLoader> m_documentLoader;
     ResourceResponse m_response;
     ResourceLoadTiming m_loadTiming;

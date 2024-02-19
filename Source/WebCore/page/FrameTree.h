@@ -20,6 +20,7 @@
 #pragma once
 
 #include <wtf/Forward.h>
+#include <wtf/TrackingRefPtr.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/AtomString.h>
 
@@ -110,9 +111,9 @@ private:
     AtomString m_specifiedName; // The actual frame name (may be empty).
     AtomString m_uniqueName;
 
-    RefPtr<Frame> m_nextSibling;
+    WTF::TrackingRefPtr<Frame, WTF::DowncastTrackingTester<Frame, LocalFrame>> m_nextSibling;
     WeakPtr<Frame> m_previousSibling;
-    RefPtr<Frame> m_firstChild;
+    WTF::TrackingRefPtr<Frame, WTF::DowncastTrackingTester<Frame, LocalFrame>> m_firstChild;
     WeakPtr<Frame> m_lastChild;
     mutable unsigned m_scopedChildCount { invalidCount };
     mutable uint64_t m_frameIDGenerator { 0 };

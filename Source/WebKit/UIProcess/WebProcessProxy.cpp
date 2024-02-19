@@ -310,6 +310,7 @@ WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore* 
     , m_routingArbitrator(makeUniqueRef<AudioSessionRoutingArbitratorProxy>(*this))
 #endif
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebProcessProxy[" << this << " core/ProcID=" << coreProcessIdentifier() << "/" << processID() << "]::constructor");
     RELEASE_ASSERT(isMainThreadOrCheckDisabled());
     WEBPROCESSPROXY_RELEASE_LOG(Process, "constructor:");
 
@@ -741,6 +742,7 @@ void WebProcessProxy::setThirdPartyCookieBlockingMode(ThirdPartyCookieBlockingMo
 
 Ref<WebPageProxy> WebProcessProxy::createWebPage(PageClient& pageClient, Ref<API::PageConfiguration>&& pageConfiguration)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebProcessProxy[" << this << "]::createWebPage() -> WebPageProxy::create()");
     Ref webPage = WebPageProxy::create(pageClient, *this, WTFMove(pageConfiguration));
 
     addExistingWebPage(webPage.get(), BeginsUsingDataStore::Yes);

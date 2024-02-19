@@ -238,7 +238,9 @@ WTF_EXPORT_PRIVATE void WTFReportBacktraceWithStackDepth(int);
 WTF_EXPORT_PRIVATE void WTFReportBacktraceWithPrefixAndStackDepth(const char*, int);
 WTF_EXPORT_PRIVATE void WTFReportBacktrace(void);
 #ifdef __cplusplus
-WTF_EXPORT_PRIVATE void WTFReportBacktraceWithPrefixAndPrintStream(WTF::PrintStream&, const char*);
+static constexpr int kDefaultFramesToShow = 31;
+static constexpr int kDefaultFramesToSkip = 2;
+WTF_EXPORT_PRIVATE void WTFReportBacktraceWithPrefixAndPrintStream(WTF::PrintStream&, const char*, int toShow = kDefaultFramesToShow, int toSkip = kDefaultFramesToSkip);
 WTF_EXPORT_PRIVATE void WTFPrintBacktraceWithPrefixAndPrintStream(WTF::PrintStream&, void** stack, int size, const char* prefix);
 #endif
 WTF_EXPORT_PRIVATE void WTFPrintBacktrace(void** stack, int size);

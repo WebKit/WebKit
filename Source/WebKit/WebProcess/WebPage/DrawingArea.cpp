@@ -281,6 +281,7 @@ void DrawingArea::setShouldScaleViewToFitDocument(bool shouldScaleView)
         return;
 
     m_shouldScaleViewToFitDocument = shouldScaleView;
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** DrawingArea[" << this << "]::setShouldScaleViewToFitDocument() -> triggerRenderingUpdate()");
     triggerRenderingUpdate();
 }
 

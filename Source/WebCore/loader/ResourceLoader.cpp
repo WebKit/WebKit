@@ -84,15 +84,17 @@ namespace WebCore {
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ResourceLoader);
 
 ResourceLoader::ResourceLoader(LocalFrame& frame, ResourceLoaderOptions options)
-    : m_frame { &frame }
+    : m_frame { &frame, this, "ResourceLoader::m_frame"_s }
     , m_documentLoader { frame.loader().activeDocumentLoader() }
     , m_defersLoading { options.defersLoadingPolicy == DefersLoadingPolicy::AllowDefersLoading && frame.page()->defersLoading() }
     , m_options { options }
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** ResourceLoader[" << this << " pageID=" << (m_frame ? m_frame->pageID() : PageIdentifier()) << " frameID=" << (m_frame ? m_frame->frameID() : FrameIdentifier()) << "]::constructor");
 }
 
 ResourceLoader::~ResourceLoader()
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** ResourceLoader[" << this << " pageID=" << (m_frame ? m_frame->pageID() : PageIdentifier()) << " frameID=" << (m_frame ? m_frame->frameID() : FrameIdentifier()) << "]::~ResourceLoader()");
     ASSERT(m_reachedTerminalState);
 }
 
@@ -117,6 +119,7 @@ void ResourceLoader::releaseResources()
     // has been deallocated and also to avoid reentering this method.
     Ref protectedThis { *this };
 
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** ResourceLoader[" << this << " pageID=" << (m_frame ? m_frame->pageID() : PageIdentifier()) << " frameID=" << (m_frame ? m_frame->frameID() : FrameIdentifier()) << "]::releaseResources -> m_frame=0 was " << m_frame.get());
     m_frame = nullptr;
     m_documentLoader = nullptr;
     
@@ -935,7 +938,7 @@ bool ResourceLoader::isPDFJSResourceLoad() const
 
 RefPtr<LocalFrame> ResourceLoader::protectedFrame() const
 {
-    return m_frame;
+    return m_frame.getRefPtr();
 }
 
 } // namespace WebCore

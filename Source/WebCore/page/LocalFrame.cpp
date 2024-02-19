@@ -167,8 +167,11 @@ LocalFrame::LocalFrame(Page& page, UniqueRef<LocalFrameLoaderClient>&& frameLoad
     ProcessWarming::initializeNames();
     StaticCSSValuePool::init();
 
-    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame()); localMainFrame && parent)
+    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame()); localMainFrame && parent) {
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** LocalFrame[" << this << " pageID=" << page.identifier() << " frameId=" << identifier << " parentFrameId=" << (parent ? parent->frameID() : FrameIdentifier()) << "]::constructor(opener=" << opener << ") -> localMainFrame[" << localMainFrame << "]->selfOnlyRef()");
         localMainFrame->selfOnlyRef();
+    } else
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** LocalFrame[" << this << " pageID=" << page.identifier() << " frameId=" << identifier << " parentFrameId=" << (parent ? parent->frameID() : FrameIdentifier()) << "]::constructor(opener=" << opener << ") - no localMainFrame -> no selfOnlyRef()");
 
 #ifndef NDEBUG
     frameCounter.increment();
@@ -178,8 +181,11 @@ LocalFrame::LocalFrame(Page& page, UniqueRef<LocalFrameLoaderClient>&& frameLoad
     if (LocalFrame* parent = dynamicDowncast<LocalFrame>(tree().parent()); parent && parent->activeDOMObjectsAndAnimationsSuspended())
         suspendActiveDOMObjectsAndAnimations();
 
-    if (isRootFrame())
+    if (isRootFrame()) {
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** LocalFrame[" << this << " pageID=" << page.identifier() << " frameId=" << identifier << " parentFrameId=" << (parent ? parent->frameID() : FrameIdentifier()) << "]::constructor(opener=" << opener << ") -> addRootFrame(*this)");
         page.addRootFrame(*this);
+    } else
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** LocalFrame[" << this << " pageID=" << page.identifier() << " frameId=" << identifier << " parentFrameId=" << (parent ? parent->frameID() : FrameIdentifier()) << "]::constructor(opener=" << opener << ") - not a root frame");
 
     setOpener(opener);
 }
@@ -191,21 +197,25 @@ void LocalFrame::init()
 
 Ref<LocalFrame> LocalFrame::createMainFrame(Page& page, UniqueRef<LocalFrameLoaderClient>&& client, FrameIdentifier identifier, Frame* opener)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** LocalFrame::createMainFrame(pageID=" << page.identifier() << ", frameId=" << identifier << ")");
     return adoptRef(*new LocalFrame(page, WTFMove(client), identifier, nullptr, nullptr, opener));
 }
 
 Ref<LocalFrame> LocalFrame::createSubframe(Page& page, UniqueRef<LocalFrameLoaderClient>&& client, FrameIdentifier identifier, HTMLFrameOwnerElement& ownerElement)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** LocalFrame::createSubframe(pageID=" << page.identifier() << ", frameId=" << identifier << ")");
     return adoptRef(*new LocalFrame(page, WTFMove(client), identifier, &ownerElement, ownerElement.document().frame(), nullptr));
 }
 
 Ref<LocalFrame> LocalFrame::createSubframeHostedInAnotherProcess(Page& page, UniqueRef<LocalFrameLoaderClient>&& client, FrameIdentifier identifier, Frame& parent)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** LocalFrame::createSubframeHostedInAnotherProcess(pageID=" << page.identifier() << ", frameId=" << identifier << ")");
     return adoptRef(*new LocalFrame(page, WTFMove(client), identifier, nullptr, &parent, nullptr));
 }
 
 LocalFrame::~LocalFrame()
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** LocalFrame[" << this << " pageID=" << pageID() << " frameId=" << frameID() << "]::~LocalFrame() -> setView(0)");
     setView(nullptr);
 
     CheckedRef loader = this->loader();
@@ -227,13 +237,22 @@ LocalFrame::~LocalFrame()
         destructionObserver->frameDestroyed();
 
     auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
-    if (!isMainFrame() && localMainFrame)
+    if (!isMainFrame() && localMainFrame) {
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** LocalFrame[" << this << " pageID=" << pageID() << " frameId=" << frameID() << "]::~LocalFrame() -> localMainFrame" << localMainFrame << "->selfOnlyDeref()");
         localMainFrame->selfOnlyDeref();
+    } else
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** LocalFrame[" << this << " pageID=" << pageID() << " frameId=" << frameID() << "]::~LocalFrame() - no localMainFrame -> no selfOnlyDeref()");
 
     if (isRootFrame()) {
-        if (auto* page = this->page())
-            page->removeRootFrame(*this);
+        if (auto* page = this->page()) {
+            if (page->rootFrames().contains(this)) {
+                ALWAYS_LOG_WITH_STREAM(stream << "**GS** LocalFrame[" << this << " pageID=" << pageID() << " frameId=" << frameID() << "]::~LocalFrame() -> page[" << page << "]->removeRootFrame(" << this << ")");
+                page->removeRootFrame(*this);
+            }
+        }
     }
+
+    RELEASE_ASSERT(!m_crashOnDestruction);
 }
 
 bool LocalFrame::isRootFrame() const
@@ -253,31 +272,42 @@ void LocalFrame::removeDestructionObserver(FrameDestructionObserver& observer)
 
 void LocalFrame::setView(RefPtr<LocalFrameView>&& view)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** LocalFrame[" << this << " pageID=" << pageID() << " frameId=" << frameID() << "]::setView(" << view.get() << ") - m_view was " << m_view.get());
     // We the custom scroll bars as early as possible to prevent m_doc->detach()
     // from messing with the view such that its scroll bars won't be torn down.
     // FIXME: We should revisit this.
-    if (RefPtr view = m_view)
+    if (RefPtr view = m_view) {
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** LocalFrame[" << this << " pageID=" << pageID() << " frameId=" << frameID() << "]::setView(" << view.get() << ") - m_view[" << m_view.get() << "]->prepareForDetach()");
         view->prepareForDetach();
+    }
 
     // Prepare for destruction now, so any unload event handlers get run and the LocalDOMWindow is
     // notified. If we wait until the view is destroyed, then things won't be hooked up enough for
     // these calls to work.
-    if (!view && m_doc && m_doc->backForwardCacheState() != Document::InBackForwardCache)
+    if (!view && m_doc && m_doc->backForwardCacheState() != Document::InBackForwardCache) {
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** LocalFrame[" << this << " pageID=" << pageID() << " frameId=" << frameID() << "]::setView(" << view.get() << ") - !view && m_doc && m_doc->backForwardCacheState() != Document::InBackForwardCache -> doc[" << document() << "]->willBeRemovedFromFrame()");
         protectedDocument()->willBeRemovedFromFrame();
+    }
     
-    if (RefPtr view = m_view)
+    if (RefPtr view = m_view) {
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** LocalFrame[" << this << " pageID=" << pageID() << " frameId=" << frameID() << "]::setView(" << view.get() << ") - m_view[" << m_view.get() << "]->checkedLayoutContext()[" << view->checkedLayoutContext().ptr() << "]->unscheduleLayout()");
         view->checkedLayoutContext()->unscheduleLayout();
+    }
     
     m_eventHandler->clear();
 
     RELEASE_ASSERT(!m_doc || !m_doc->hasLivingRenderTree());
 
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** LocalFrame[" << this << " pageID=" << pageID() << " frameId=" << frameID() << "]::setView(" << view.get() << ") -> m_view[was " << m_view.get() << "] = view[" << view.get() << "]");
     m_view = WTFMove(view);
     
     // Only one form submission is allowed per view of a part.
     // Since this part may be getting reused as a result of being
     // pulled from the back/forward cache, reset this flag.
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** LocalFrame[" << this << " pageID=" << pageID() << " frameId=" << frameID() << "]::setView(" << view.get() << ") -> checkedLoader()[" << checkedLoader().ptr() << "]->resetMultipleFormSubmissionProtection()");
     checkedLoader()->resetMultipleFormSubmissionProtection();
+
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** LocalFrame[" << this << " pageID=" << pageID() << " frameId=" << frameID() << "]::setView(" << view.get() << ") done");
 }
 
 CheckedRef<Editor> LocalFrame::checkedEditor()
@@ -292,6 +322,7 @@ CheckedRef<const Editor> LocalFrame::checkedEditor() const
 
 void LocalFrame::setDocument(RefPtr<Document>&& newDocument)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** LocalFrame[" << this << " pageID=" << pageID() << " frameId=" << frameID() << "]::setDocument(" << newDocument.get() << ")");
     ASSERT(!newDocument || newDocument->frame() == this);
 
     if (m_documentIsBeingReplaced)
@@ -920,6 +951,7 @@ void LocalFrame::createView(const IntSize& viewportSize, const std::optional<Col
     bool useFixedLayout, ScrollbarMode horizontalScrollbarMode, bool horizontalLock,
     ScrollbarMode verticalScrollbarMode, bool verticalLock)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** LocalFrame[" << this << " pageID=" << pageID() << " frameId=" << frameID() << "]::createView()");
     ASSERT(page());
 
     bool isRootFrame = this->isRootFrame();
@@ -970,6 +1002,7 @@ DOMWindow* LocalFrame::virtualWindow() const
 
 void LocalFrame::disconnectView()
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** LocalFrame[" << this << " pageID=" << pageID() << " frameId=" << frameID() << "]::disconnectView()");
     setView(nullptr);
 }
 
@@ -1168,22 +1201,30 @@ void LocalFrame::setOverrideScreenSize(FloatSize&& screenSize)
 void LocalFrame::selfOnlyRef()
 {
     ASSERT(isMainFrame());
-    if (m_selfOnlyRefCount++)
+    if (m_selfOnlyRefCount++) {
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** LocalFrame[" << this << " pageID=" << pageID() << " frameId=" << frameID() << "]::~selfOnlyRef() - ++m_selfOnlyRefCount=" << m_selfOnlyRefCount << " -> don't touch refCount=" << refCount());
         return;
+    }
 
     ref();
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** LocalFrame[" << this << " pageID=" << pageID() << " frameId=" << frameID() << "]::~selfOnlyRef() - ++m_selfOnlyRefCount=" << m_selfOnlyRefCount << " -> ref() -> refCount=" << refCount());
 }
 
 void LocalFrame::selfOnlyDeref()
 {
     ASSERT(isMainFrame());
     ASSERT(m_selfOnlyRefCount);
-    if (--m_selfOnlyRefCount)
+    if (--m_selfOnlyRefCount) {
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** LocalFrame[" << this << " pageID=" << pageID() << " frameId=" << frameID() << "]::~selfOnlyDeref() - --m_selfOnlyRefCount=" << m_selfOnlyRefCount << " -> don't touch refCount=" << refCount());
         return;
+    }
 
-    if (hasOneRef())
+    if (hasOneRef()) {
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** LocalFrame[" << this << " pageID=" << pageID() << " frameId=" << frameID() << "]::~selfOnlyDeref() - --m_selfOnlyRefCount=" << m_selfOnlyRefCount << ", refCount=" << refCount() << " -> dropChildren()");
         dropChildren();
+    }
 
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** LocalFrame[" << this << " pageID=" << pageID() << " frameId=" << frameID() << "]::~selfOnlyDeref() - --m_selfOnlyRefCount=" << m_selfOnlyRefCount << ", refCount=" << refCount() << " -> deref()");
     deref();
 }
 
@@ -1310,6 +1351,7 @@ bool LocalFrame::requestSkipUserActivationCheckForStorageAccess(const Registrabl
 
 void LocalFrame::didAccessWindowProxyPropertyViaOpener(WindowProxyProperty property)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** LocalFrame[" << this << " pageID=" << pageID() << " frameId=" << frameID() << "]::didAccessWindowProxyPropertyViaOpener()");
     if (m_accessedWindowProxyPropertiesViaOpener.contains(property))
         return;
     m_accessedWindowProxyPropertiesViaOpener.add(property);

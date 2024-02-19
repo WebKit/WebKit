@@ -68,6 +68,7 @@ RemoteScrollingCoordinator::~RemoteScrollingCoordinator()
 
 void RemoteScrollingCoordinator::scheduleTreeStateCommit()
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** RemoteScrollingCoordinator[" << this << "]::scheduleTreeStateCommit() -> WebPage[" << m_webPage.get() << "]->DrawingArea[" << m_webPage->drawingArea() << "]->triggerRenderingUpdate()");
     m_webPage->drawingArea()->triggerRenderingUpdate();
 }
 

@@ -241,7 +241,7 @@ public:
 private:
     WebFrame(WebPage&, WebCore::FrameIdentifier);
 
-    void setLayerHostingContextIdentifier(WebCore::LayerHostingContextIdentifier identifier) { m_layerHostingContextIdentifier = identifier; }
+    void setLayerHostingContextIdentifier(WebCore::LayerHostingContextIdentifier identifier);
 
     inline WebCore::DocumentLoader* policySourceDocumentLoader() const;
 

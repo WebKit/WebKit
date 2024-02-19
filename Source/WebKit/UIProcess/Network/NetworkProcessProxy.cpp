@@ -239,6 +239,7 @@ NetworkProcessProxy::NetworkProcessProxy()
     , m_backgroundActivityToPreventSuspension(m_throttler.backgroundActivity("Prevent suspension"_s))
 #endif
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** NetworkProcessProxy[" << this << " core/ProcID=" << coreProcessIdentifier() << "/" << processID() << "]::constructor");
     RELEASE_LOG(Process, "%p - NetworkProcessProxy::NetworkProcessProxy", this);
 
     connect();

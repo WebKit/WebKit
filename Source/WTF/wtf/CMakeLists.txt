@@ -312,6 +312,9 @@ set(WTF_PUBLIC_HEADERS
     TimingScope.h
     TinyLRUCache.h
     TinyPtrSet.h
+    TrackableRefCounted.h
+    TrackingRef.h
+    TrackingRefPtr.h
     TrailingArray.h
     TranslatedProcess.h
     TriState.h

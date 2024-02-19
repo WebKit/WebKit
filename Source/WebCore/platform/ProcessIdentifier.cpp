@@ -36,6 +36,7 @@ static std::optional<ProcessIdentifier> globalIdentifier;
 void setIdentifier(ProcessIdentifier processIdentifier)
 {
     ASSERT(isUIThread());
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** Process::setIdentifier(" << processIdentifier << ") was " << globalIdentifier);
     globalIdentifier = processIdentifier;
 }
 
@@ -44,7 +45,7 @@ ProcessIdentifier identifier()
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
         if (!globalIdentifier)
-            globalIdentifier = ProcessIdentifier::generate();
+            globalIdentifier = ProcessIdentifier(uint64_t(getpid()));
     });
 
     return *globalIdentifier;

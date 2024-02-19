@@ -39,6 +39,8 @@ namespace WebCore {
 FrameTree::FrameTree(Frame& thisFrame, Frame* parentFrame)
     : m_thisFrame(thisFrame)
     , m_parent(parentFrame)
+    , m_nextSibling(this, "FrameTree::m_nextSibling"_s)
+    , m_firstChild(this, "FrameTree::m_firstChild"_s)
 {
 }
 
@@ -91,11 +93,11 @@ void FrameTree::appendChild(Frame& child)
 void FrameTree::removeChild(Frame& child)
 {
     WeakPtr<Frame>& newLocationForPrevious = m_lastChild == &child ? m_lastChild : child.tree().m_nextSibling->tree().m_previousSibling;
-    RefPtr<Frame>& newLocationForNext = m_firstChild == &child ? m_firstChild : child.tree().m_previousSibling->tree().m_nextSibling;
+    auto& newLocationForNext = m_firstChild.get() == &child ? m_firstChild : child.tree().m_previousSibling->tree().m_nextSibling;
 
     child.tree().m_parent = nullptr;
     newLocationForPrevious = std::exchange(child.tree().m_previousSibling, nullptr);
-    newLocationForNext = WTFMove(child.tree().m_nextSibling);
+    newLocationForNext = child.tree().m_nextSibling.extractRefPtr();
 
     m_scopedChildCount = invalidCount;
 }
