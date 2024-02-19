@@ -755,7 +755,7 @@ WI.CSSKeywordCompletions._propertyKeywordMap = {
         "baseline", "middle", "sub", "super", "text-top", "text-bottom", "top", "bottom", "-webkit-baseline-middle"
     ],
     "text-indent": [
-        "-webkit-each-line", "-webkit-hanging"
+        "each-line", "hanging"
     ],
     "clip": [
         "auto", "rect()"
