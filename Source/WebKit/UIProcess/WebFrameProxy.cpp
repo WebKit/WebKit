@@ -114,6 +114,11 @@ WebPageProxy* WebFrameProxy::page() const
     return m_page.get();
 }
 
+RefPtr<WebPageProxy> WebFrameProxy::protectedPage() const
+{
+    return m_page.get();
+}
+
 std::unique_ptr<ProvisionalFrameProxy> WebFrameProxy::takeProvisionalFrame()
 {
     return std::exchange(m_provisionalFrame, nullptr);
@@ -162,7 +167,7 @@ void WebFrameProxy::navigateServiceWorkerClient(WebCore::ScriptExecutionContextI
         return;
     }
 
-    m_page->sendWithAsyncReply(Messages::WebPage::NavigateServiceWorkerClient { documentIdentifier, url }, [this, protectedThis = Ref { *this }, url, callback = WTFMove(callback)](auto result) mutable {
+    protectedPage()->sendWithAsyncReply(Messages::WebPage::NavigateServiceWorkerClient { documentIdentifier, url }, [this, protectedThis = Ref { *this }, url, callback = WTFMove(callback)](auto result) mutable {
         switch (result) {
         case WebCore::ScheduleLocationChangeResult::Stopped:
             callback({ }, { });
@@ -195,19 +200,15 @@ void WebFrameProxy::bindAccessibilityFrameWithData(std::span<const uint8_t> data
 
 void WebFrameProxy::loadURL(const URL& url, const String& referrer)
 {
-    if (!m_page)
-        return;
-
-    m_page->send(Messages::WebPage::LoadURLInFrame(url, referrer, m_frameID));
+    if (RefPtr page = m_page.get())
+        page->send(Messages::WebPage::LoadURLInFrame(url, referrer, m_frameID));
 }
 
 void WebFrameProxy::loadData(std::span<const uint8_t> data, const String& type, const String& encodingName, const URL& baseURL)
 {
     ASSERT(!isMainFrame());
-    if (!m_page)
-        return;
-
-    m_page->send(Messages::WebPage::LoadDataInFrame(data, type, encodingName, baseURL, m_frameID));
+    if (RefPtr page = m_page.get())
+        page->send(Messages::WebPage::LoadDataInFrame(data, type, encodingName, baseURL, m_frameID));
 }
     
 bool WebFrameProxy::canProvideSource() const
@@ -313,23 +314,26 @@ WebFramePolicyListenerProxy& WebFrameProxy::setUpPolicyListenerProxy(CompletionH
 
 void WebFrameProxy::getWebArchive(CompletionHandler<void(API::Data*)>&& callback)
 {
-    if (!m_page)
-        return callback(nullptr);
-    m_page->getWebArchiveOfFrame(this, WTFMove(callback));
+    if (RefPtr page = m_page.get())
+        page->getWebArchiveOfFrame(this, WTFMove(callback));
+    else
+        callback(nullptr);
 }
 
 void WebFrameProxy::getMainResourceData(CompletionHandler<void(API::Data*)>&& callback)
 {
-    if (!m_page)
-        return callback(nullptr);
-    m_page->getMainResourceDataOfFrame(this, WTFMove(callback));
+    if (RefPtr page = m_page.get())
+        page->getMainResourceDataOfFrame(this, WTFMove(callback));
+    else
+        callback(nullptr);
 }
 
 void WebFrameProxy::getResourceData(API::URL* resourceURL, CompletionHandler<void(API::Data*)>&& callback)
 {
-    if (!m_page)
-        return callback(nullptr);
-    m_page->getResourceDataFromFrame(*this, resourceURL, WTFMove(callback));
+    if (RefPtr page = m_page.get())
+        page->getResourceDataFromFrame(*this, resourceURL, WTFMove(callback));
+    else
+        callback(nullptr);
 }
 
 void WebFrameProxy::setUnreachableURL(const URL& unreachableURL)
@@ -356,7 +360,7 @@ bool WebFrameProxy::didHandleContentFilterUnblockNavigation(const ResourceReques
         return false;
     }
 
-    RefPtr<WebPageProxy> page { m_page.get() };
+    RefPtr page = m_page.get();
     ASSERT(page);
     m_contentFilterUnblockHandler.requestUnblockAsync([page](bool unblocked) {
         if (unblocked)
@@ -369,17 +373,15 @@ bool WebFrameProxy::didHandleContentFilterUnblockNavigation(const ResourceReques
 #if PLATFORM(GTK)
 void WebFrameProxy::collapseSelection()
 {
-    if (!m_page)
-        return;
-
-    m_page->send(Messages::WebPage::CollapseSelectionInFrame(m_frameID));
+    if (RefPtr page = m_page.get())
+        page->send(Messages::WebPage::CollapseSelectionInFrame(m_frameID));
 }
 #endif
 
 void WebFrameProxy::disconnect()
 {
-    if (m_parentFrame)
-        m_parentFrame->m_childFrames.remove(*this);
+    if (RefPtr parentFrame = m_parentFrame.get())
+        parentFrame->m_childFrames.remove(*this);
 }
 
 void WebFrameProxy::didCreateSubframe(WebCore::FrameIdentifier frameID, const String& frameName)
@@ -390,15 +392,15 @@ void WebFrameProxy::didCreateSubframe(WebCore::FrameIdentifier frameID, const St
     if (WebFrameProxy::webFrame(frameID))
         return;
 
-    MESSAGE_CHECK(m_process, m_page);
+    RefPtr page = m_page.get();
+    MESSAGE_CHECK(m_process, page);
     MESSAGE_CHECK(m_process, WebFrameProxy::canCreateFrame(frameID));
     MESSAGE_CHECK(m_process, frameID.processIdentifier() == m_process->coreProcessIdentifier());
 
-    auto child = WebFrameProxy::create(*m_page, m_process, frameID);
+    Ref child = WebFrameProxy::create(*page, protectedProcess(), frameID);
     child->m_parentFrame = *this;
     child->m_frameName = frameName;
-    if (m_page)
-        m_page->createRemoteSubframesInOtherProcesses(child, frameName);
+    page->createRemoteSubframesInOtherProcesses(child, frameName);
     m_childFrames.add(WTFMove(child));
 }
 
@@ -416,19 +418,20 @@ void WebFrameProxy::prepareForProvisionalNavigationInProcess(WebProcessProxy& pr
 
     RegistrableDomain navigationDomain(navigation.currentRequest().url());
     if (!m_provisionalFrame || navigation.currentRequestIsCrossSiteRedirect()) {
+        RefPtr page = m_page.get();
         // FIXME: Main resource (of main or subframe) request redirects should go straight from the network to UI process so we don't need to make the processes for each domain in a redirect chain. <rdar://116202119>
-        RefPtr remotePageProxy = m_page->remotePageProxyForRegistrableDomain(navigationDomain);
-        RegistrableDomain mainFrameDomain(m_page->mainFrame()->url());
+        RefPtr remotePageProxy = page->remotePageProxyForRegistrableDomain(navigationDomain);
+        RegistrableDomain mainFrameDomain(page->mainFrame()->url());
 
         if (remotePageProxy)
             ASSERT(remotePageProxy->process().coreProcessIdentifier() == process.coreProcessIdentifier());
         else if (navigationDomain != mainFrameDomain) {
-            remotePageProxy = RemotePageProxy::create(*m_page, process, navigationDomain);
+            remotePageProxy = RemotePageProxy::create(*page, process, navigationDomain);
             remotePageProxy->injectPageIntoNewProcess();
         }
 
         m_provisionalFrame = makeUnique<ProvisionalFrameProxy>(*this, process, WTFMove(remotePageProxy));
-        page()->websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(process.coreProcessIdentifier(), mainFrameDomain, LoadedWebArchive::No), WTFMove(completionHandler));
+        page->websiteDataStore().protectedNetworkProcess()->sendWithAsyncReply(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(process.coreProcessIdentifier(), mainFrameDomain, LoadedWebArchive::No), WTFMove(completionHandler));
     }
 
     if (m_process->processID() != process.processID()) {
@@ -446,16 +449,16 @@ void WebFrameProxy::commitProvisionalFrame(FrameIdentifier frameID, FrameInfoDat
 {
     ASSERT(m_page);
     if (m_provisionalFrame) {
-        m_process->send(Messages::WebPage::DidCommitLoadInAnotherProcess(frameID, m_provisionalFrame->layerHostingContextIdentifier()), m_page->webPageID());
+        protectedProcess()->send(Messages::WebPage::DidCommitLoadInAnotherProcess(frameID, m_provisionalFrame->layerHostingContextIdentifier()), m_page->webPageID());
         m_process = m_provisionalFrame->process();
-        if (m_remotePageProxy)
-            m_remotePageProxy->removeFrame(*this);
+        if (RefPtr remotePageProxy = m_remotePageProxy)
+            remotePageProxy->removeFrame(*this);
         m_remotePageProxy = m_provisionalFrame->takeRemotePageProxy();
-        if (m_remotePageProxy)
-            m_remotePageProxy->addFrame(*this);
+        if (RefPtr remotePageProxy = m_remotePageProxy)
+            remotePageProxy->addFrame(*this);
         m_provisionalFrame = nullptr;
     }
-    m_page->didCommitLoadForFrame(frameID, WTFMove(frameInfo), WTFMove(request), navigationID, mimeType, frameHasCustomContentProvider, frameLoadType, certificateInfo, usedLegacyTLS, privateRelayed, containsPluginDocument, hasInsecureContent, mouseEventPolicy, userData);
+    protectedPage()->didCommitLoadForFrame(frameID, WTFMove(frameInfo), WTFMove(request), navigationID, mimeType, frameHasCustomContentProvider, frameLoadType, certificateInfo, usedLegacyTLS, privateRelayed, containsPluginDocument, hasInsecureContent, mouseEventPolicy, userData);
 }
 
 void WebFrameProxy::getFrameInfo(CompletionHandler<void(FrameTreeNodeData&&)>&& completionHandler)
@@ -477,24 +480,26 @@ void WebFrameProxy::getFrameInfo(CompletionHandler<void(FrameTreeNodeData&&)>&& 
                 WTFMove(nonEmptyChildFrameData)
             });
         }
+
     private:
         FrameInfoCallbackAggregator(CompletionHandler<void(FrameTreeNodeData&&)>&& completionHandler, size_t childCount)
             : m_completionHandler(WTFMove(completionHandler))
             , m_childFrameData(childCount, { }) { }
+
         CompletionHandler<void(FrameTreeNodeData&&)> m_completionHandler;
         FrameInfoData m_currentFrameData;
         Vector<std::optional<FrameTreeNodeData>> m_childFrameData;
     };
 
-    auto aggregator = FrameInfoCallbackAggregator::create(WTFMove(completionHandler), m_childFrames.size());
-    m_process->sendWithAsyncReply(Messages::WebPage::GetFrameInfo(m_frameID), [aggregator] (std::optional<FrameInfoData>&& info) {
+    Ref aggregator = FrameInfoCallbackAggregator::create(WTFMove(completionHandler), m_childFrames.size());
+    protectedProcess()->sendWithAsyncReply(Messages::WebPage::GetFrameInfo(m_frameID), [aggregator] (std::optional<FrameInfoData>&& info) {
         if (info)
             aggregator->setCurrentFrameData(WTFMove(*info));
     }, m_page->webPageID());
 
     bool isSiteIsolationEnabled = page() && page()->preferences().siteIsolationEnabled();
     size_t index = 0;
-    for (auto& childFrame : m_childFrames) {
+    for (Ref childFrame : m_childFrames) {
         childFrame->getFrameInfo([aggregator, index = index++, frameID = this->frameID(), isSiteIsolationEnabled] (FrameTreeNodeData&& data) {
             if (!data.info.frameID)
                 return; // No WebFrame with the requested frameID in the WebProcess.
@@ -522,25 +527,22 @@ FrameTreeCreationParameters WebFrameProxy::frameTreeCreationParameters() const
     };
 }
 
-RefPtr<RemotePageProxy> WebFrameProxy::remotePageProxy()
+RemotePageProxy* WebFrameProxy::remotePageProxy() const
 {
-    return m_remotePageProxy;
+    return m_remotePageProxy.get();
 }
 
 bool WebFrameProxy::isFocused() const
 {
     auto* webPage = page();
-    if (!webPage)
-        return false;
-
-    return webPage->focusedFrame() == this;
+    return webPage && webPage->focusedFrame() == this;
 }
 
 void WebFrameProxy::remoteProcessDidTerminate()
 {
     if (m_frameLoadState.state() == FrameLoadState::State::Finished)
         return;
-    notifyParentOfLoadCompletion(m_process);
+    notifyParentOfLoadCompletion(protectedProcess());
 }
 
 void WebFrameProxy::notifyParentOfLoadCompletion(WebProcessProxy& childFrameProcess)
@@ -569,11 +571,11 @@ std::optional<WebCore::PageIdentifier> WebFrameProxy::webPageIDInCurrentProcess(
 auto WebFrameProxy::traverseNext() const -> TraversalResult
 {
     if (RefPtr child = firstChild())
-        return { child, DidWrap::No };
+        return { WTFMove(child), DidWrap::No };
 
     RefPtr sibling = nextSibling();
     if (sibling)
-        return { sibling.get(), DidWrap::No };
+        return { WTFMove(sibling), DidWrap::No };
 
     RefPtr frame = this;
     while (!sibling) {
@@ -584,19 +586,19 @@ auto WebFrameProxy::traverseNext() const -> TraversalResult
     }
 
     if (frame)
-        return { sibling.get(), DidWrap::No };
+        return { WTFMove(sibling), DidWrap::No };
 
     return { };
 }
 
 auto WebFrameProxy::traverseNext(CanWrap canWrap) const -> TraversalResult
 {
-    if (RefPtr result = traverseNext().frame)
-        return { result, DidWrap::No };
+    if (RefPtr frame = traverseNext().frame)
+        return { WTFMove(frame), DidWrap::No };
 
     if (canWrap == CanWrap::Yes) {
         if (m_page)
-            return { m_page->mainFrame(), DidWrap::Yes };
+            return { m_page->protectedMainFrame(), DidWrap::Yes };
     }
     return { };
 }
@@ -604,16 +606,16 @@ auto WebFrameProxy::traverseNext(CanWrap canWrap) const -> TraversalResult
 auto WebFrameProxy::traversePrevious(CanWrap canWrap) -> TraversalResult
 {
     if (RefPtr previousSibling = this->previousSibling())
-        return { previousSibling->deepLastChild(), DidWrap::No };
+        return { RefPtr { previousSibling->deepLastChild() }, DidWrap::No };
     if (RefPtr parent = parentFrame())
-        return { parent, DidWrap::No };
+        return { WTFMove(parent), DidWrap::No };
 
     if (canWrap == CanWrap::Yes)
-        return { deepLastChild(), DidWrap::Yes };
+        return { RefPtr { deepLastChild() }, DidWrap::Yes };
     return { };
 }
 
-RefPtr<WebFrameProxy> WebFrameProxy::deepLastChild()
+WebFrameProxy* WebFrameProxy::deepLastChild()
 {
     RefPtr result = this;
     for (RefPtr last = lastChild(); last; last = last->lastChild())
@@ -621,21 +623,21 @@ RefPtr<WebFrameProxy> WebFrameProxy::deepLastChild()
     return result.get();
 }
 
-RefPtr<WebFrameProxy> WebFrameProxy::firstChild() const
+WebFrameProxy* WebFrameProxy::firstChild() const
 {
     if (m_childFrames.isEmpty())
         return nullptr;
     return m_childFrames.first().ptr();
 }
 
-RefPtr<WebFrameProxy> WebFrameProxy::lastChild() const
+WebFrameProxy* WebFrameProxy::lastChild() const
 {
     if (m_childFrames.isEmpty())
         return nullptr;
     return m_childFrames.last().ptr();
 }
 
-RefPtr<WebFrameProxy> WebFrameProxy::nextSibling() const
+WebFrameProxy* WebFrameProxy::nextSibling() const
 {
     if (!m_parentFrame)
         return nullptr;
@@ -651,7 +653,7 @@ RefPtr<WebFrameProxy> WebFrameProxy::nextSibling() const
     return (++it)->ptr();
 }
 
-RefPtr<WebFrameProxy> WebFrameProxy::previousSibling() const
+WebFrameProxy* WebFrameProxy::previousSibling() const
 {
     if (!m_parentFrame)
         return nullptr;
@@ -667,7 +669,7 @@ RefPtr<WebFrameProxy> WebFrameProxy::previousSibling() const
     return (--it)->ptr();
 }
 
-Ref<WebFrameProxy> WebFrameProxy::rootFrame()
+WebFrameProxy& WebFrameProxy::rootFrame()
 {
     Ref rootFrame = *this;
     while (rootFrame->m_parentFrame && rootFrame->m_parentFrame->m_process == m_process)

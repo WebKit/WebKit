@@ -862,6 +862,11 @@ PAL::SessionID WebPageProxy::sessionID() const
     return m_websiteDataStore->sessionID();
 }
 
+RefPtr<WebFrameProxy> WebPageProxy::protectedMainFrame() const
+{
+    return m_mainFrame;
+}
+
 DrawingAreaProxy* WebPageProxy::provisionalDrawingArea() const
 {
     if (m_provisionalPage && m_provisionalPage->drawingArea())
@@ -8409,7 +8414,7 @@ void WebPageProxy::setTextIndicatorFromFrame(FrameIdentifier frameID, TextIndica
     if (!frame)
         return;
 
-    RefPtr rootFrameParent = frame->rootFrame()->parentFrame();
+    RefPtr rootFrameParent = frame->rootFrame().parentFrame();
     if (!rootFrameParent) {
         setTextIndicator(WTFMove(indicatorData), lifetime);
         return;
@@ -8421,7 +8426,7 @@ void WebPageProxy::setTextIndicatorFromFrame(FrameIdentifier frameID, TextIndica
     auto textBoundingRect = indicatorData.textBoundingRectInRootViewCoordinates;
     sendToProcessContainingFrame(parentFrameID, Messages::WebPage::RemoteViewRectToRootView(frameID, textBoundingRect), [protectedThis = Ref { *this }, indicatorData = WTFMove(indicatorData), rootFrameParent = WTFMove(rootFrameParent), lifetime](FloatRect rect) mutable {
         indicatorData.textBoundingRectInRootViewCoordinates = rect;
-        protectedThis->setTextIndicatorFromFrame(rootFrameParent->rootFrame()->frameID(), WTFMove(indicatorData), lifetime);
+        protectedThis->setTextIndicatorFromFrame(rootFrameParent->rootFrame().frameID(), WTFMove(indicatorData), lifetime);
     });
 }
 
@@ -8579,7 +8584,7 @@ void WebPageProxy::showContextMenuFromFrame(FrameIdentifier frameID, ContextMenu
     if (!frame)
         return;
 
-    RefPtr rootFrameParent = frame->rootFrame()->parentFrame();
+    RefPtr rootFrameParent = frame->rootFrame().parentFrame();
     if (!rootFrameParent) {
         showContextMenu(WTFMove(contextMenuContextData), userData);
         return;
@@ -8591,7 +8596,7 @@ void WebPageProxy::showContextMenuFromFrame(FrameIdentifier frameID, ContextMenu
     auto menuLocation = contextMenuContextData.menuLocation();
     sendToProcessContainingFrame(parentFrameID, Messages::WebPage::RemoteViewPointToRootView(frameID, menuLocation), [protectedThis = Ref { *this }, contextMenuContextData = WTFMove(contextMenuContextData), userData = WTFMove(userData), rootFrameParent = WTFMove(rootFrameParent)](FloatPoint point) mutable {
         contextMenuContextData.setMenuLocation(IntPoint(point));
-        protectedThis->showContextMenuFromFrame(rootFrameParent->rootFrame()->frameID(), WTFMove(contextMenuContextData), WTFMove(userData));
+        protectedThis->showContextMenuFromFrame(rootFrameParent->rootFrame().frameID(), WTFMove(contextMenuContextData), WTFMove(userData));
     });
 }
 

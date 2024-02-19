@@ -86,6 +86,7 @@ public:
 
     WebCore::FrameIdentifier frameID() const { return m_frameID; }
     WebPageProxy* page() const;
+    RefPtr<WebPageProxy> protectedPage() const;
 
     bool pageIsClosed() const { return !m_page; } // Needs to be thread-safe.
 
@@ -160,13 +161,13 @@ public:
     FrameTreeCreationParameters frameTreeCreationParameters() const;
 
     WebFrameProxy* parentFrame() const { return m_parentFrame.get(); }
-    Ref<WebFrameProxy> rootFrame();
+    WebFrameProxy& rootFrame();
     WebProcessProxy& process() const { return m_process.get(); }
     Ref<WebProcessProxy> protectedProcess() const { return process(); }
     void setProcess(WebProcessProxy& process) { m_process = process; }
     ProvisionalFrameProxy* provisionalFrame() { return m_provisionalFrame.get(); }
     std::unique_ptr<ProvisionalFrameProxy> takeProvisionalFrame();
-    RefPtr<RemotePageProxy> remotePageProxy();
+    RemotePageProxy* remotePageProxy() const;
     void remoteProcessDidTerminate();
     std::optional<WebCore::PageIdentifier> webPageIDInCurrentProcess();
     void notifyParentOfLoadCompletion(WebProcessProxy&);
@@ -188,11 +189,11 @@ private:
 
     std::optional<WebCore::PageIdentifier> pageIdentifier() const;
 
-    RefPtr<WebFrameProxy> deepLastChild();
-    RefPtr<WebFrameProxy> firstChild() const;
-    RefPtr<WebFrameProxy> lastChild() const;
-    RefPtr<WebFrameProxy> nextSibling() const;
-    RefPtr<WebFrameProxy> previousSibling() const;
+    WebFrameProxy* deepLastChild();
+    WebFrameProxy* firstChild() const;
+    WebFrameProxy* lastChild() const;
+    WebFrameProxy* nextSibling() const;
+    WebFrameProxy* previousSibling() const;
 
     WeakPtr<WebPageProxy> m_page;
     Ref<WebProcessProxy> m_process;

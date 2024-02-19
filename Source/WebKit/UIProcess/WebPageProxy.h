@@ -569,6 +569,7 @@ public:
     PAL::SessionID sessionID() const;
 
     WebFrameProxy* mainFrame() const { return m_mainFrame.get(); }
+    RefPtr<WebFrameProxy> protectedMainFrame() const;
     WebFrameProxy* openerFrame() const { return m_openerFrame.get(); }
     WebPageProxy* openerPage() const;
     WebFrameProxy* focusedFrame() const { return m_focusedFrame.get(); }
