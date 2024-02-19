@@ -75,7 +75,7 @@ void WebExtensionContextProxy::dispatchDevToolsExtensionPanelShownEvent(Inspecto
 
         for (auto& listener : extensionPanel->onShown().listeners()) {
             auto globalContext = listener->globalContext();
-            auto *windowObject = toWindowObject(globalContext, *frame);
+            auto *windowObject = toWindowObject(globalContext, *frame) ?: NSNull.null;
             listener->call(windowObject);
         }
     });

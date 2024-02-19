@@ -49,7 +49,7 @@ namespace WebKit {
 static NSString * const permissionsKey = @"permissions";
 static NSString * const originsKey = @"origins";
 
-void WebExtensionContext::permissionsGetAll(CompletionHandler<void(Vector<String>, Vector<String>)>&& completionHandler)
+void WebExtensionContext::permissionsGetAll(CompletionHandler<void(Vector<String>&&, Vector<String>&&)>&& completionHandler)
 {
     Vector<String> permissions, origins;
 
@@ -59,18 +59,17 @@ void WebExtensionContext::permissionsGetAll(CompletionHandler<void(Vector<String
     for (auto& matchPattern : currentPermissionMatchPatterns())
         origins.append(matchPattern->string());
 
-    completionHandler(permissions, origins);
+    completionHandler(WTFMove(permissions), WTFMove(origins));
 }
 
 void WebExtensionContext::permissionsContains(HashSet<String> permissions, HashSet<String> origins, CompletionHandler<void(bool)>&& completionHandler)
 {
-    MatchPatternSet matchPatterns = toPatterns(origins);
-    hasPermissions(permissions, matchPatterns) ? completionHandler(true) : completionHandler(false);
+    completionHandler(hasPermissions(permissions, toPatterns(origins)));
 }
 
 void WebExtensionContext::permissionsRequest(HashSet<String> permissions, HashSet<String> origins, CompletionHandler<void(bool)>&& completionHandler)
 {
-    MatchPatternSet matchPatterns = toPatterns(origins);
+    auto matchPatterns = toPatterns(origins);
 
     // If there is nothing to grant, return true. This matches Chrome and Firefox.
     if (!permissions.size() && !origins.size()) {
@@ -92,7 +91,7 @@ void WebExtensionContext::permissionsRequest(HashSet<String> permissions, HashSe
         m_requestedOptionalAccessToAllHosts = YES;
 
     __block MatchPatternSet grantedPatterns;
-    __block PermissionsSet grantedPermissions = permissions;
+    __block PermissionsSet grantedPermissions;
     auto delegate = extensionController()->delegate();
 
     auto originsCompletionHandler = ^(NSSet<_WKWebExtensionMatchPattern *> *allowedOrigins) {
@@ -114,6 +113,7 @@ void WebExtensionContext::permissionsRequest(HashSet<String> permissions, HashSe
 
         grantPermissionMatchPatterns(WTFMove(grantedPatterns));
         grantPermissions(WTFMove(grantedPermissions));
+
         completionHandler(true);
     };
 
@@ -126,10 +126,12 @@ void WebExtensionContext::permissionsRequest(HashSet<String> permissions, HashSe
 
         for (_WKWebExtensionPermission permission in allowedPermissions) {
             // Allowed permission doesn't match the permissions requested.
-            if (!grantedPermissions.contains(permission)) {
+            if (!permissions.contains(permission)) {
                 completionHandler(false);
                 return;
             }
+
+            grantedPermissions.add(permission);
         }
 
         if ([delegate respondsToSelector:@selector(webExtensionController:promptForPermissionMatchPatterns:inTab:forExtensionContext:completionHandler:)]) {
@@ -148,14 +150,15 @@ void WebExtensionContext::permissionsRequest(HashSet<String> permissions, HashSe
 
 void WebExtensionContext::permissionsRemove(HashSet<String> permissions, HashSet<String> origins, CompletionHandler<void(bool)>&& completionHandler)
 {
-    MatchPatternSet matchPatterns = toPatterns(origins);
+    auto matchPatterns = toPatterns(origins);
     bool removingAllHostsPattern = WebExtensionMatchPattern::patternsMatchAllHosts(matchPatterns);
     if (removingAllHostsPattern && m_requestedOptionalAccessToAllHosts)
         m_requestedOptionalAccessToAllHosts = false;
 
     removeGrantedPermissions(permissions);
     removeGrantedPermissionMatchPatterns(matchPatterns, EqualityOnly::No);
-    completionHandler(true);
+
+    completionHandler(!hasPermissions(permissions, matchPatterns));
 }
 
 void WebExtensionContext::firePermissionsEventListenerIfNecessary(WebExtensionEventListenerType type, const PermissionsSet& permissions, const MatchPatternSet& matchPatterns)

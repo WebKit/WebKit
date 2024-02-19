@@ -89,13 +89,13 @@ void WebExtensionAPIWebNavigation::getAllFrames(NSDictionary *details, Ref<WebEx
     if (!isValid(tabIdentifier, outExceptionString))
         return;
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::WebNavigationGetAllFrames(tabIdentifier.value()), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<Vector<WebExtensionFrameParameters>> results, std::optional<String> error) {
-        if (error) {
-            callback->reportError(error.value());
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::WebNavigationGetAllFrames(tabIdentifier.value()), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<Vector<WebExtensionFrameParameters>, WebExtensionError>&& result) {
+        if (!result) {
+            callback->reportError(result.error());
             return;
         }
 
-        callback->call(results ? toWebAPI(results.value()) : nil);
+        callback->call(toWebAPI(result.value()));
     }, extensionContext().identifier());
 }
 
@@ -124,13 +124,13 @@ void WebExtensionAPIWebNavigation::getFrame(NSDictionary *details, Ref<WebExtens
         return;
     }
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::WebNavigationGetFrame(tabIdentifier.value(), frameIdentifier.value()), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<WebExtensionFrameParameters> frameInfo, std::optional<String> error) {
-        if (error) {
-            callback->reportError(error.value());
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::WebNavigationGetFrame(tabIdentifier.value(), frameIdentifier.value()), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<std::optional<WebExtensionFrameParameters>, WebExtensionError>&& result) {
+        if (!result) {
+            callback->reportError(result.error());
             return;
         }
 
-        callback->call(frameInfo ? toWebAPI(frameInfo.value()) : nil);
+        callback->call(toWebAPI(result.value()));
     }, extensionContext().identifier());
 }
 

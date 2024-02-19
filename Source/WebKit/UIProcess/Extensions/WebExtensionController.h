@@ -253,7 +253,7 @@ void WebExtensionController::sendToAllProcesses(const T& message, const ObjectId
 {
     for (auto& process : allProcesses()) {
         if (process.canSendMessage())
-            process.send(T(message), destinationID.toUInt64());
+            process.send(T(message), destinationID);
     }
 }
 

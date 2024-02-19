@@ -75,7 +75,7 @@ private:
 };
 
 NSArray *toWebAPI(const Vector<WebExtensionScriptInjectionResultParameters>&, bool returnExecutionResultOnly);
-NSArray *toWebAPI(const Vector<WebExtensionRegisteredScriptParameters>&);
+NSDictionary *toWebAPI(const WebExtensionRegisteredScriptParameters&);
 NSString *toWebAPI(WebExtension::InjectionTime);
 
 } // namespace WebKit

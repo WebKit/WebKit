@@ -44,9 +44,9 @@ void WebExtensionContext::alarmsCreate(const String& name, Seconds initialInterv
     }));
 }
 
-void WebExtensionContext::alarmsGet(const String& name, CompletionHandler<void(std::optional<WebExtensionAlarmParameters>)>&& completionHandler)
+void WebExtensionContext::alarmsGet(const String& name, CompletionHandler<void(std::optional<WebExtensionAlarmParameters>&&)>&& completionHandler)
 {
-    if (auto* alarm = m_alarmMap.get(name))
+    if (RefPtr alarm = m_alarmMap.get(name))
         completionHandler(alarm->parameters());
     else
         completionHandler(std::nullopt);

@@ -535,7 +535,7 @@ TEST(WKWebExtensionAPIWindows, CreateIncognitoWithoutPrivateAccess)
         @"};",
 
         @"const window = await browser.windows.create(windowOptions);",
-        @"browser.test.assertEq(window, undefined, 'The window should be created but undefined without access');",
+        @"browser.test.assertEq(window, null, 'The window should be created but null without access');",
 
         @"browser.test.notifyPass();"
     ]);

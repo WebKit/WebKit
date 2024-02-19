@@ -56,22 +56,22 @@ static bool isAncestorOrSelf(WebExtensionContext& context, const String& potenti
     return false;
 }
 
-void WebExtensionContext::menusCreate(const WebExtensionMenuItemParameters& parameters, CompletionHandler<void(std::optional<String>)>&& completionHandler)
+void WebExtensionContext::menusCreate(const WebExtensionMenuItemParameters& parameters, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"menus.create()";
 
     if (m_menuItems.contains(parameters.identifier)) {
-        completionHandler(toErrorString(apiName, nil, @"identifier is already used"));
+        completionHandler(toWebExtensionError(apiName, nil, @"identifier is already used"));
         return;
     }
 
     if (parameters.parentIdentifier && !m_menuItems.contains(parameters.parentIdentifier.value())) {
-        completionHandler(toErrorString(apiName, nil, @"parent menu item not found"));
+        completionHandler(toWebExtensionError(apiName, nil, @"parent menu item not found"));
         return;
     }
 
     if (parameters.parentIdentifier && isAncestorOrSelf(*this, parameters.parentIdentifier.value(), parameters.identifier)) {
-        completionHandler(toErrorString(apiName, nil, @"parent menu item cannot be another ancestor"));
+        completionHandler(toWebExtensionError(apiName, nil, @"parent menu item cannot be another ancestor"));
         return;
     }
 
@@ -82,16 +82,16 @@ void WebExtensionContext::menusCreate(const WebExtensionMenuItemParameters& para
     if (!parameters.parentIdentifier)
         m_mainMenuItems.append(menuItem);
 
-    completionHandler(std::nullopt);
+    completionHandler({ });
 }
 
-void WebExtensionContext::menusUpdate(const String& identifier, const WebExtensionMenuItemParameters& parameters, CompletionHandler<void(std::optional<String>)>&& completionHandler)
+void WebExtensionContext::menusUpdate(const String& identifier, const WebExtensionMenuItemParameters& parameters, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"menus.update()";
 
     RefPtr menuItem = this->menuItem(identifier);
     if (!menuItem) {
-        completionHandler(toErrorString(apiName, nil, @"menu item not found"));
+        completionHandler(toWebExtensionError(apiName, nil, @"menu item not found"));
         return;
     }
 
@@ -101,25 +101,25 @@ void WebExtensionContext::menusUpdate(const String& identifier, const WebExtensi
     }
 
     if (parameters.parentIdentifier && !m_menuItems.contains(parameters.parentIdentifier.value())) {
-        completionHandler(toErrorString(apiName, nil, @"parent menu item not found"));
+        completionHandler(toWebExtensionError(apiName, nil, @"parent menu item not found"));
         return;
     }
 
     if (parameters.parentIdentifier && isAncestorOrSelf(*this, parameters.parentIdentifier.value(), !parameters.identifier.isEmpty() ? parameters.identifier : identifier)) {
-        completionHandler(toErrorString(apiName, nil, @"parent menu item cannot be itself or another ancestor"));
+        completionHandler(toWebExtensionError(apiName, nil, @"parent menu item cannot be itself or another ancestor"));
         return;
     }
 
     menuItem->update(parameters);
 
-    completionHandler(std::nullopt);
+    completionHandler({ });
 }
 
-void WebExtensionContext::menusRemove(const String& identifier, CompletionHandler<void(std::optional<String>)>&& completionHandler)
+void WebExtensionContext::menusRemove(const String& identifier, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     RefPtr menuItem = this->menuItem(identifier);
     if (!menuItem) {
-        completionHandler(toErrorString(@"menus.remove()", nil, @"menu item not found"));
+        completionHandler(toWebExtensionError(@"menus.remove()", nil, @"menu item not found"));
         return;
     }
 
@@ -136,20 +136,20 @@ void WebExtensionContext::menusRemove(const String& identifier, CompletionHandle
 
     removeRecursive(*menuItem);
 
-    completionHandler(std::nullopt);
+    completionHandler({ });
 }
 
-void WebExtensionContext::menusRemoveAll(CompletionHandler<void(std::optional<String>)>&& completionHandler)
+void WebExtensionContext::menusRemoveAll(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     m_menuItems.clear();
     m_mainMenuItems.clear();
 
-    completionHandler(std::nullopt);
+    completionHandler({ });
 }
 
 void WebExtensionContext::fireMenusClickedEventIfNeeded(const WebExtensionMenuItem& menuItem, bool wasChecked, const WebExtensionMenuItemContextParameters& contextParameters)
 {
-    auto tab = contextParameters.tabIdentifier ? getTab(contextParameters.tabIdentifier.value()) : nullptr;
+    RefPtr tab = contextParameters.tabIdentifier ? getTab(contextParameters.tabIdentifier.value()) : nullptr;
 
     constexpr auto type = WebExtensionEventListenerType::MenusOnClicked;
     wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [&] {

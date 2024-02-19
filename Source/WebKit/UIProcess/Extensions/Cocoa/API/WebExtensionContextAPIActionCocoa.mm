@@ -39,257 +39,216 @@
 
 namespace WebKit {
 
-static RefPtr<WebExtensionAction> getActionWithIdentifiers(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, WebExtensionContext& context, NSString *apiName, std::optional<String>& error)
+static Expected<Ref<WebExtensionAction>, WebExtensionError> getActionWithIdentifiers(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, WebExtensionContext& context, NSString *apiName)
 {
-    RefPtr<WebExtensionAction> action;
-
     if (windowIdentifier) {
-        auto window = context.getWindow(windowIdentifier.value());
-        if (!window) {
-            error = toErrorString(apiName, nil, @"window not found");
-            return nullptr;
-        }
+        RefPtr window = context.getWindow(windowIdentifier.value());
+        if (!window)
+            return toWebExtensionError(apiName, nil, @"window not found");
 
-        return context.getAction(window.get()).ptr();
+        return context.getAction(window.get());
     }
 
     if (tabIdentifier) {
-        auto tab = context.getTab(tabIdentifier.value());
-        if (!tab) {
-            error = toErrorString(apiName, nil, @"tab not found");
-            return nullptr;
-        }
+        RefPtr tab = context.getTab(tabIdentifier.value());
+        if (!tab)
+            return toWebExtensionError(apiName, nil, @"tab not found");
 
-        return context.getAction(tab.get()).ptr();
+        return context.getAction(tab.get());
     }
 
-    return &context.defaultAction();
+    return Ref { context.defaultAction() };
 }
 
-static RefPtr<WebExtensionAction> getOrCreateActionWithIdentifiers(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, WebExtensionContext& context, NSString *apiName, std::optional<String>& error)
+static Expected<Ref<WebExtensionAction>, WebExtensionError> getOrCreateActionWithIdentifiers(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, WebExtensionContext& context, NSString *apiName)
 {
-    RefPtr<WebExtensionAction> action;
-
     if (windowIdentifier) {
-        auto window = context.getWindow(windowIdentifier.value());
-        if (!window) {
-            error = toErrorString(apiName, nil, @"window not found");
-            return nullptr;
-        }
+        RefPtr window = context.getWindow(windowIdentifier.value());
+        if (!window)
+            return toWebExtensionError(apiName, nil, @"window not found");
 
-        return context.getOrCreateAction(window.get()).ptr();
+        return context.getOrCreateAction(window.get());
     }
 
     if (tabIdentifier) {
-        auto tab = context.getTab(tabIdentifier.value());
-        if (!tab) {
-            error = toErrorString(apiName, nil, @"tab not found");
-            return nullptr;
-        }
+        RefPtr tab = context.getTab(tabIdentifier.value());
+        if (!tab)
+            return toWebExtensionError(apiName, nil, @"tab not found");
 
-        return context.getOrCreateAction(tab.get()).ptr();
+        return context.getOrCreateAction(tab.get());
     }
 
-    return &context.defaultAction();
+    return Ref { context.defaultAction() };
 }
 
-void WebExtensionContext::actionGetTitle(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, CompletionHandler<void(std::optional<String>, std::optional<String>)>&& completionHandler)
+void WebExtensionContext::actionGetTitle(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, CompletionHandler<void(Expected<String, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"action.getTitle()";
 
-    std::optional<String> error;
-    auto action = getActionWithIdentifiers(windowIdentifier, tabIdentifier, *this, apiName, error);
-    if (error) {
-        completionHandler(std::nullopt, error);
+    auto action = getActionWithIdentifiers(windowIdentifier, tabIdentifier, *this, apiName);
+    if (!action) {
+        completionHandler(makeUnexpected(action.error()));
         return;
     }
 
-    ASSERT(action);
-
-    completionHandler(action->label(WebExtensionAction::FallbackWhenEmpty::No), std::nullopt);
+    completionHandler(action.value()->label(WebExtensionAction::FallbackWhenEmpty::No));
 }
 
-void WebExtensionContext::actionSetTitle(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, const String& title, CompletionHandler<void(std::optional<String>)>&& completionHandler)
+void WebExtensionContext::actionSetTitle(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, const String& title, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"action.setTitle()";
 
-    std::optional<String> error;
-    auto action = getOrCreateActionWithIdentifiers(windowIdentifier, tabIdentifier, *this, apiName, error);
-    if (error) {
-        completionHandler(error);
+    auto action = getOrCreateActionWithIdentifiers(windowIdentifier, tabIdentifier, *this, apiName);
+    if (!action) {
+        completionHandler(makeUnexpected(action.error()));
         return;
     }
 
-    ASSERT(action);
+    action.value()->setLabel(title);
 
-    action->setLabel(title);
-
-    completionHandler(std::nullopt);
+    completionHandler({ });
 }
 
-void WebExtensionContext::actionSetIcon(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, const String& iconDictionaryJSON, CompletionHandler<void(std::optional<String>)>&& completionHandler)
+void WebExtensionContext::actionSetIcon(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, const String& iconDictionaryJSON, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"action.setIcon()";
 
-    std::optional<String> error;
-    auto action = getOrCreateActionWithIdentifiers(windowIdentifier, tabIdentifier, *this, apiName, error);
-    if (error) {
-        completionHandler(error);
+    auto action = getOrCreateActionWithIdentifiers(windowIdentifier, tabIdentifier, *this, apiName);
+    if (!action) {
+        completionHandler(makeUnexpected(action.error()));
         return;
     }
 
-    ASSERT(action);
+    action.value()->setIconsDictionary(parseJSON(iconDictionaryJSON));
 
-    action->setIconsDictionary(parseJSON(iconDictionaryJSON));
-
-    completionHandler(std::nullopt);
+    completionHandler({ });
 }
 
-void WebExtensionContext::actionGetPopup(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, CompletionHandler<void(std::optional<String>, std::optional<String>)>&& completionHandler)
+void WebExtensionContext::actionGetPopup(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, CompletionHandler<void(Expected<String, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"action.getPopup()";
 
-    std::optional<String> error;
-    auto action = getActionWithIdentifiers(windowIdentifier, tabIdentifier, *this, apiName, error);
-    if (error) {
-        completionHandler(std::nullopt, error);
+    auto action = getActionWithIdentifiers(windowIdentifier, tabIdentifier, *this, apiName);
+    if (!action) {
+        completionHandler(makeUnexpected(action.error()));
         return;
     }
 
-    ASSERT(action);
-
-    completionHandler(action->popupPath(), std::nullopt);
+    completionHandler(action.value()->popupPath());
 }
 
-void WebExtensionContext::actionSetPopup(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, const String& popupPath, CompletionHandler<void(std::optional<String>)>&& completionHandler)
+void WebExtensionContext::actionSetPopup(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, const String& popupPath, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"action.setPopup()";
 
-    std::optional<String> error;
-    auto action = getOrCreateActionWithIdentifiers(windowIdentifier, tabIdentifier, *this, apiName, error);
-    if (error) {
-        completionHandler(error);
+    auto action = getOrCreateActionWithIdentifiers(windowIdentifier, tabIdentifier, *this, apiName);
+    if (!action) {
+        completionHandler(makeUnexpected(action.error()));
         return;
     }
 
-    ASSERT(action);
+    action.value()->setPopupPath(popupPath);
 
-    action->setPopupPath(popupPath);
-
-    completionHandler(std::nullopt);
+    completionHandler({ });
 }
 
-void WebExtensionContext::actionOpenPopup(WebPageProxyIdentifier identifier, std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, CompletionHandler<void(std::optional<String>)>&& completionHandler)
+void WebExtensionContext::actionOpenPopup(WebPageProxyIdentifier identifier, std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"action.openPopup()";
 
     if (!defaultAction().canProgrammaticallyPresentPopup()) {
-        completionHandler(toErrorString(apiName, nil, @"it is not implemented"));
+        completionHandler(toWebExtensionError(apiName, nil, @"it is not implemented"));
         return;
     }
 
     if (windowIdentifier) {
-        auto window = getWindow(windowIdentifier.value());
+        RefPtr window = getWindow(windowIdentifier.value());
         if (!window) {
-            completionHandler(toErrorString(apiName, nil, @"window not found"));
+            completionHandler(toWebExtensionError(apiName, nil, @"window not found"));
             return;
         }
 
-        if (auto activeTab = window->activeTab()) {
+        if (RefPtr activeTab = window->activeTab()) {
             if (getAction(activeTab.get())->presentsPopup())
                 performAction(activeTab.get(), UserTriggered::No);
 
-            completionHandler(std::nullopt);
+            completionHandler({ });
             return;
         }
     }
 
     if (tabIdentifier) {
-        auto tab = getTab(tabIdentifier.value());
+        RefPtr tab = getTab(tabIdentifier.value());
         if (!tab) {
-            completionHandler(toErrorString(apiName, nil, @"tab not found"));
+            completionHandler(toWebExtensionError(apiName, nil, @"tab not found"));
             return;
         }
 
         if (getAction(tab.get())->presentsPopup())
             performAction(tab.get(), UserTriggered::No);
 
-        completionHandler(std::nullopt);
+        completionHandler({ });
         return;
     }
 
     if (defaultAction().presentsPopup())
         performAction(nullptr, UserTriggered::No);
 
-    completionHandler(std::nullopt);
+    completionHandler({ });
 }
 
-void WebExtensionContext::actionGetBadgeText(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, CompletionHandler<void(std::optional<String>, std::optional<String>)>&& completionHandler)
+void WebExtensionContext::actionGetBadgeText(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, CompletionHandler<void(Expected<String, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"action.getBadgeText()";
 
-    std::optional<String> error;
-    auto action = getActionWithIdentifiers(windowIdentifier, tabIdentifier, *this, apiName, error);
-    if (error) {
-        completionHandler(std::nullopt, error);
+    auto action = getActionWithIdentifiers(windowIdentifier, tabIdentifier, *this, apiName);
+    if (!action) {
+        completionHandler(makeUnexpected(action.error()));
         return;
     }
 
-    ASSERT(action);
-
-    completionHandler(action->badgeText(), std::nullopt);
+    completionHandler(action.value()->badgeText());
 }
 
-void WebExtensionContext::actionSetBadgeText(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, const String& text, CompletionHandler<void(std::optional<String>)>&& completionHandler)
+void WebExtensionContext::actionSetBadgeText(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, const String& text, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"action.setBadgeText()";
 
-    std::optional<String> error;
-    auto action = getOrCreateActionWithIdentifiers(windowIdentifier, tabIdentifier, *this, apiName, error);
-    if (error) {
-        completionHandler(error);
+    auto action = getOrCreateActionWithIdentifiers(windowIdentifier, tabIdentifier, *this, apiName);
+    if (!action) {
+        completionHandler(makeUnexpected(action.error()));
         return;
     }
 
-    ASSERT(action);
+    action.value()->setBadgeText(text);
 
-    action->setBadgeText(text);
-
-    completionHandler(std::nullopt);
+    completionHandler({ });
 }
 
-void WebExtensionContext::actionGetEnabled(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, CompletionHandler<void(std::optional<bool>, std::optional<String>)>&& completionHandler)
+void WebExtensionContext::actionGetEnabled(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, CompletionHandler<void(Expected<bool, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"action.isEnabled()";
 
-    std::optional<String> error;
-    auto action = getActionWithIdentifiers(windowIdentifier, tabIdentifier, *this, apiName, error);
-    if (error) {
-        completionHandler(std::nullopt, error);
+    auto action = getActionWithIdentifiers(windowIdentifier, tabIdentifier, *this, apiName);
+    if (!action) {
+        completionHandler(makeUnexpected(action.error()));
         return;
     }
 
-    ASSERT(action);
-
-    completionHandler(action->isEnabled(), std::nullopt);
+    completionHandler(action.value()->isEnabled());
 }
 
-void WebExtensionContext::actionSetEnabled(std::optional<WebExtensionTabIdentifier> tabIdentifier, bool enabled, CompletionHandler<void(std::optional<String>)>&& completionHandler)
+void WebExtensionContext::actionSetEnabled(std::optional<WebExtensionTabIdentifier> tabIdentifier, bool enabled, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
-    static NSString * const apiName = enabled ? @"action.enable()" : @"action.disable()";
-
-    std::optional<String> error;
-    auto action = getOrCreateActionWithIdentifiers(std::nullopt, tabIdentifier, *this, apiName, error);
-    if (error) {
-        completionHandler(error);
+    auto action = getOrCreateActionWithIdentifiers(std::nullopt, tabIdentifier, *this, enabled ? @"action.enable()" : @"action.disable()");
+    if (!action) {
+        completionHandler(makeUnexpected(action.error()));
         return;
     }
 
-    ASSERT(action);
+    action.value()->setEnabled(enabled);
 
-    action->setEnabled(enabled);
-
-    completionHandler(std::nullopt);
+    completionHandler({ });
 }
 
 void WebExtensionContext::fireActionClickedEventIfNeeded(WebExtensionTab* tab)

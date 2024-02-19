@@ -216,28 +216,28 @@ void WebExtensionAPIRuntime::getBackgroundPage(Ref<WebExtensionCallbackHandler>&
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/getBackgroundPage
 
     if (auto backgroundPage = extensionContext().backgroundPage()) {
-        callback->call(toWindowObject(callback->globalContext(), *backgroundPage));
+        callback->call(toWindowObject(callback->globalContext(), *backgroundPage) ?: NSNull.null);
         return;
     }
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::RuntimeGetBackgroundPage(), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<WebCore::PageIdentifier> pageIdentifier, std::optional<String> error) {
-        if (error) {
-            callback->reportError(error.value());
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::RuntimeGetBackgroundPage(), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<std::optional<WebCore::PageIdentifier>, WebExtensionError>&& result) {
+        if (!result) {
+            callback->reportError(result.error());
             return;
         }
 
-        if (!pageIdentifier) {
+        if (!result.value()) {
             callback->call(NSNull.null);
             return;
         }
 
-        auto* page = WebProcess::singleton().webPage(pageIdentifier.value());
+        RefPtr page = WebProcess::singleton().webPage(result.value().value());
         if (!page) {
             callback->call(NSNull.null);
             return;
         }
 
-        callback->call(toWindowObject(callback->globalContext(), *page));
+        callback->call(toWindowObject(callback->globalContext(), *page) ?: NSNull.null);
     }, extensionContext().identifier());
 }
 
@@ -268,9 +268,9 @@ void WebExtensionAPIRuntime::openOptionsPage(Ref<WebExtensionCallbackHandler>&& 
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/openOptionsPage
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::RuntimeOpenOptionsPage(), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<String> error) {
-        if (error) {
-            callback->reportError(error.value());
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::RuntimeOpenOptionsPage(), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<void, WebExtensionError>&& result) {
+        if (!result) {
+            callback->reportError(result.error());
             return;
         }
 
@@ -314,18 +314,13 @@ void WebExtensionAPIRuntime::sendMessage(WebFrame& frame, NSString *extensionID,
         frame.url(),
     };
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::RuntimeSendMessage(extensionID, messageJSON, senderParameters), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<String> replyJSON, std::optional<String> error) {
-        if (error) {
-            callback->reportError(error.value());
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::RuntimeSendMessage(extensionID, messageJSON, senderParameters), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<String, WebExtensionError>&& result) {
+        if (!result) {
+            callback->reportError(result.error());
             return;
         }
 
-        if (!replyJSON) {
-            callback->call();
-            return;
-        }
-
-        callback->call(parseJSON(replyJSON.value(), { JSONOptions::FragmentsAllowed }));
+        callback->call(parseJSON(result.value(), JSONOptions::FragmentsAllowed));
     }, extensionContext().identifier());
 }
 
@@ -350,11 +345,11 @@ RefPtr<WebExtensionAPIPort> WebExtensionAPIRuntime::connect(WebFrame& frame, JSC
 
     auto port = WebExtensionAPIPort::create(*this, *frame.page(), WebExtensionContentWorldType::Main, resolvedName);
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::RuntimeConnect(extensionID, port->channelIdentifier(), resolvedName, senderParameters), [=, globalContext = JSRetainPtr { JSContextGetGlobalContext(context) }, protectedThis = Ref { *this }](WebExtensionTab::Error error) {
-        if (!error)
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::RuntimeConnect(extensionID, port->channelIdentifier(), resolvedName, senderParameters), [=, globalContext = JSRetainPtr { JSContextGetGlobalContext(context) }, protectedThis = Ref { *this }](Expected<void, WebExtensionError>&& result) {
+        if (result)
             return;
 
-        port->setError(protectedThis->runtime().reportError(error.value(), globalContext.get()));
+        port->setError(protectedThis->runtime().reportError(result.error(), globalContext.get()));
         port->disconnect();
     }, extensionContext().identifier());
 
@@ -365,18 +360,13 @@ void WebExtensionAPIRuntime::sendNativeMessage(WebFrame& frame, NSString *applic
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/sendNativeMessage
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::RuntimeSendNativeMessage(applicationID, messageJSON), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<String> replyJSON, std::optional<String> error) {
-        if (error) {
-            callback->reportError(error.value());
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::RuntimeSendNativeMessage(applicationID, messageJSON), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<String, WebExtensionError>&& result) {
+        if (!result) {
+            callback->reportError(result.error());
             return;
         }
 
-        if (!replyJSON) {
-            callback->call();
-            return;
-        }
-
-        callback->call(parseJSON(replyJSON.value(), { JSONOptions::FragmentsAllowed }));
+        callback->call(parseJSON(result.value(), JSONOptions::FragmentsAllowed));
     }, extensionContext().identifier());
 }
 
@@ -386,11 +376,11 @@ RefPtr<WebExtensionAPIPort> WebExtensionAPIRuntime::connectNative(WebFrame& fram
 
     auto port = WebExtensionAPIPort::create(*this, *frame.page(), WebExtensionContentWorldType::Native, applicationID);
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::RuntimeConnectNative(applicationID, port->channelIdentifier()), [=, globalContext = JSRetainPtr { JSContextGetGlobalContext(context) }, protectedThis = Ref { *this }](WebExtensionTab::Error error) {
-        if (!error)
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::RuntimeConnectNative(applicationID, port->channelIdentifier()), [=, globalContext = JSRetainPtr { JSContextGetGlobalContext(context) }, protectedThis = Ref { *this }](Expected<void, WebExtensionError>&& result) {
+        if (result)
             return;
 
-        port->setError(protectedThis->runtime().reportError(error.value(), globalContext.get()));
+        port->setError(protectedThis->runtime().reportError(result.error(), globalContext.get()));
         port->disconnect();
     }, extensionContext().identifier());
 
@@ -425,19 +415,13 @@ void WebExtensionAPIWebPageRuntime::sendMessage(WebFrame& frame, NSString *exten
         return;
     }
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::RuntimeWebPageSendMessage(extensionID, messageJSON, senderParameters), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<String> replyJSON, std::optional<String> error) {
-        if (error) {
-            // FIXME: <https://webkit.org/b/269539> Return after a random delay.
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::RuntimeWebPageSendMessage(extensionID, messageJSON, senderParameters), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<String, WebExtensionError>&& result) {
+        if (!result) {
             callback->call();
             return;
         }
 
-        if (!replyJSON) {
-            callback->call();
-            return;
-        }
-
-        callback->call(parseJSON(replyJSON.value(), { JSONOptions::FragmentsAllowed }));
+        callback->call(parseJSON(result.value(), JSONOptions::FragmentsAllowed));
     }, destinationExtensionContext->identifier());
 }
 
@@ -463,17 +447,17 @@ RefPtr<WebExtensionAPIPort> WebExtensionAPIWebPageRuntime::connect(WebFrame& fra
     Ref page = *frame.page();
     RefPtr destinationExtensionContext = page->webExtensionControllerProxy()->extensionContext(extensionID);
     if (!destinationExtensionContext) {
-        // FIXME: <https://webkit.org/b/269539> Return after a random delay.
+        // FIXME: <https://webkit.org/b/269539> Return a port that disconnects after a random delay.
         return nullptr;
     }
 
     Ref port = WebExtensionAPIPort::create(contentWorldType(), runtime(), *destinationExtensionContext, page, WebExtensionContentWorldType::Main, resolvedName);
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::RuntimeWebPageConnect(extensionID, port->channelIdentifier(), resolvedName, senderParameters), [=, globalContext = JSRetainPtr { JSContextGetGlobalContext(context) }, protectedThis = Ref { *this }](WebExtensionTab::Error error) {
-        if (!error)
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::RuntimeWebPageConnect(extensionID, port->channelIdentifier(), resolvedName, senderParameters), [=, globalContext = JSRetainPtr { JSContextGetGlobalContext(context) }, protectedThis = Ref { *this }](Expected<void, WebExtensionError>&& result) {
+        if (result)
             return;
 
-        // FIXME: <https://webkit.org/b/269539> Disconnect the port after a random delay.
+        port->setError(protectedThis->runtime().reportError(result.error(), globalContext.get()));
         port->disconnect();
     }, destinationExtensionContext->identifier());
 
@@ -562,9 +546,9 @@ NSDictionary *toWebAPI(const WebExtensionMessageSenderParameters& parameters)
     return [result copy];
 }
 
-void WebExtensionContextProxy::internalDispatchRuntimeMessageEvent(WebExtensionContentWorldType contentWorldType, const String& messageJSON, std::optional<WebExtensionFrameIdentifier> frameIdentifier, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(std::optional<String> replyJSON)>&& completionHandler)
+void WebExtensionContextProxy::internalDispatchRuntimeMessageEvent(WebExtensionContentWorldType contentWorldType, const String& messageJSON, std::optional<WebExtensionFrameIdentifier> frameIdentifier, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(String&& replyJSON)>&& completionHandler)
 {
-    id message = parseJSON(messageJSON, { JSONOptions::FragmentsAllowed });
+    id message = parseJSON(messageJSON, JSONOptions::FragmentsAllowed);
     auto *senderInfo = toWebAPI(senderParameters);
     auto sourceContentWorldType = senderParameters.contentWorldType;
 
@@ -573,12 +557,12 @@ void WebExtensionContextProxy::internalDispatchRuntimeMessageEvent(WebExtensionC
         if (JSValue *value = dynamic_objc_cast<JSValue>(replyMessage))
             replyMessageJSON = value._toJSONString;
         else
-            replyMessageJSON = encodeJSONString(replyMessage, { JSONOptions::FragmentsAllowed });
+            replyMessageJSON = encodeJSONString(replyMessage, JSONOptions::FragmentsAllowed);
 
         if (replyMessageJSON.length > webExtensionMaxMessageLength)
             replyMessageJSON = nil;
 
-        completionHandler(replyMessageJSON ? std::optional(String(replyMessageJSON)) : std::nullopt);
+        completionHandler(replyMessageJSON);
     }, nil);
 
     // This ObjC wrapper is need for the inner reply block, which is required to be a compiled block.
@@ -635,7 +619,7 @@ void WebExtensionContextProxy::internalDispatchRuntimeMessageEvent(WebExtensionC
         callbackAggregator.get()(nil);
 }
 
-void WebExtensionContextProxy::dispatchRuntimeMessageEvent(WebExtensionContentWorldType contentWorldType, const String& messageJSON, std::optional<WebExtensionFrameIdentifier> frameIdentifier, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(std::optional<String> replyJSON)>&& completionHandler)
+void WebExtensionContextProxy::dispatchRuntimeMessageEvent(WebExtensionContentWorldType contentWorldType, const String& messageJSON, std::optional<WebExtensionFrameIdentifier> frameIdentifier, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(String&& replyJSON)>&& completionHandler)
 {
     switch (contentWorldType) {
     case WebExtensionContentWorldType::Main:

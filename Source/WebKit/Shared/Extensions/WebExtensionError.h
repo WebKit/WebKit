@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,22 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#pragma once
+
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-messages -> WebExtensionController {
+#include <wtf/text/WTFString.h>
 
-    DidStartProvisionalLoadForFrame(WebKit::WebPageProxyIdentifier pageID, WebKit::WebExtensionFrameIdentifier frameID, WebKit::WebExtensionFrameIdentifier parentFrameID, URL targetURL, WallTime timestamp)
-    DidCommitLoadForFrame(WebKit::WebPageProxyIdentifier pageID, WebKit::WebExtensionFrameIdentifier frameID, WebKit::WebExtensionFrameIdentifier parentFrameID, URL targetURL, WallTime timestamp)
-    DidFinishLoadForFrame(WebKit::WebPageProxyIdentifier pageID, WebKit::WebExtensionFrameIdentifier frameID, WebKit::WebExtensionFrameIdentifier parentFrameID, URL targetURL, WallTime timestamp)
-    DidFailLoadForFrame(WebKit::WebPageProxyIdentifier pageID, WebKit::WebExtensionFrameIdentifier frameID, WebKit::WebExtensionFrameIdentifier parentFrameID, URL targetURL, WallTime timestamp)
+namespace WebKit {
 
-    // Test APIs
-    TestResult(bool result, String message, String sourceURL, unsigned lineNumber)
-    TestEqual(bool result, String expected, String actual, String message, String sourceURL, unsigned lineNumber)
-    TestMessage(String message, String sourceURL, unsigned lineNumber)
-    TestYielded(String message, String sourceURL, unsigned lineNumber)
-    TestFinished(bool result, String message, String sourceURL, unsigned lineNumber)
+using WebExtensionError = String;
 
-}
+} // namespace WTF
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

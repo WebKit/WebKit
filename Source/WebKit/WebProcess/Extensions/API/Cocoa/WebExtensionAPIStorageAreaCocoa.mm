@@ -103,18 +103,19 @@ void WebExtensionAPIStorageArea::get(WebPage& page, id items, Ref<WebExtensionCa
         keysVector = { key };
     }
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::StorageGet(page.webPageProxyIdentifier(), m_type, keysVector), [&, keysWithDefaultValues, protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<String> dataJSON, WebKit::WebExtensionContext::ErrorString error) {
-        if (error)
-            callback->reportError(error.value());
-        else {
-            NSDictionary *data = parseJSON(dataJSON.value());
-            NSDictionary<NSString *, id> *deserializedData = mapObjects(data, ^id(NSString *key, NSString *jsonString) {
-                return parseJSON(jsonString, { JSONOptions::FragmentsAllowed });
-            });
-
-            deserializedData = keysWithDefaultValues ? mergeDictionaries(deserializedData, keysWithDefaultValues) : deserializedData;
-            callback->call(deserializedData);
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::StorageGet(page.webPageProxyIdentifier(), m_type, keysVector), [&, keysWithDefaultValues, protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<String, WebExtensionError>&& result) {
+        if (!result) {
+            callback->reportError(result.error());
+            return;
         }
+
+        NSDictionary *data = parseJSON(result.value());
+        NSDictionary<NSString *, id> *deserializedData = mapObjects(data, ^id(NSString *key, NSString *jsonString) {
+            return parseJSON(jsonString, JSONOptions::FragmentsAllowed);
+        });
+
+        deserializedData = keysWithDefaultValues ? mergeDictionaries(deserializedData, keysWithDefaultValues) : deserializedData;
+        callback->call(deserializedData);
     }, extensionContext().identifier());
 }
 
@@ -134,11 +135,11 @@ void WebExtensionAPIStorageArea::getBytesInUse(WebPage& page, id keys, Ref<WebEx
     else if (NSString *key = dynamic_objc_cast<NSString>(keys))
         keysVector = { key };
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::StorageGetBytesInUse(page.webPageProxyIdentifier(), m_type, keysVector), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<size_t> size, WebKit::WebExtensionContext::ErrorString error) {
-        if (error)
-            callback->reportError(error.value());
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::StorageGetBytesInUse(page.webPageProxyIdentifier(), m_type, keysVector), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<size_t, WebExtensionError>&& result) {
+        if (!result)
+            callback->reportError(result.error());
         else
-            callback->call(@(size.value()));
+            callback->call(@(result.value()));
     }, extensionContext().identifier());
 }
 
@@ -178,9 +179,9 @@ void WebExtensionAPIStorageArea::set(WebPage& page, NSDictionary *items, Ref<Web
         return;
     }
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::StorageSet(page.webPageProxyIdentifier(), m_type, encodeJSONString(serializedData)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](WebKit::WebExtensionContext::ErrorString error) {
-        if (error)
-            callback->reportError(error.value());
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::StorageSet(page.webPageProxyIdentifier(), m_type, encodeJSONString(serializedData)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<void, WebExtensionError>&& result) {
+        if (!result)
+            callback->reportError(result.error());
         else
             callback->call();
     }, extensionContext().identifier());
@@ -195,9 +196,9 @@ void WebExtensionAPIStorageArea::remove(WebPage& page, id keys, Ref<WebExtension
 
     Vector<String> keysVector = [keys isKindOfClass:NSArray.class] ? makeVector<String>((NSArray *)keys) : Vector<String> { keys };
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::StorageRemove(page.webPageProxyIdentifier(), m_type, keysVector), [protectedThis = Ref { *this }, callback = WTFMove(callback)](WebKit::WebExtensionContext::ErrorString error) {
-        if (error)
-            callback->reportError(error.value());
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::StorageRemove(page.webPageProxyIdentifier(), m_type, keysVector), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<void, WebExtensionError>&& result) {
+        if (!result)
+            callback->reportError(result.error());
         else
             callback->call();
     }, extensionContext().identifier());
@@ -205,9 +206,9 @@ void WebExtensionAPIStorageArea::remove(WebPage& page, id keys, Ref<WebExtension
 
 void WebExtensionAPIStorageArea::clear(WebPage& page, Ref<WebExtensionCallbackHandler>&& callback)
 {
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::StorageClear(page.webPageProxyIdentifier(), m_type), [protectedThis = Ref { *this }, callback = WTFMove(callback)](WebKit::WebExtensionContext::ErrorString error) {
-        if (error)
-            callback->reportError(error.value());
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::StorageClear(page.webPageProxyIdentifier(), m_type), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<void, WebExtensionError>&& result) {
+        if (!result)
+            callback->reportError(result.error());
         else
             callback->call();
     }, extensionContext().identifier());
@@ -234,9 +235,9 @@ void WebExtensionAPIStorageArea::setAccessLevel(WebPage& page, NSDictionary *acc
 
     WebExtensionStorageAccessLevel accessLevel = [accessLevelString isEqualToString:accessLevelTrustedContexts] ? WebExtensionStorageAccessLevel::TrustedContexts : WebExtensionStorageAccessLevel::TrustedAndUntrustedContexts;
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::StorageSetAccessLevel(page.webPageProxyIdentifier(), m_type, accessLevel), [protectedThis = Ref { *this }, callback = WTFMove(callback)](WebKit::WebExtensionContext::ErrorString error) {
-        if (error)
-            callback->reportError(error.value());
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::StorageSetAccessLevel(page.webPageProxyIdentifier(), m_type, accessLevel), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<void, WebExtensionError>&& result) {
+        if (!result)
+            callback->reportError(result.error());
         else
             callback->call();
     }, extensionContext().identifier());

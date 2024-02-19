@@ -38,21 +38,21 @@
 
 namespace WebKit {
 
-void WebExtensionContext::devToolsPanelsCreate(WebPageProxyIdentifier webPageProxyIdentifier, const String& title, const String& iconPath, const String& pagePath, CompletionHandler<void(Expected<Inspector::ExtensionTabID, String>)>&& completionHandler)
+void WebExtensionContext::devToolsPanelsCreate(WebPageProxyIdentifier webPageProxyIdentifier, const String& title, const String& iconPath, const String& pagePath, CompletionHandler<void(Expected<Inspector::ExtensionTabID, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"devtools.panels.create()";
 
     RefPtr extension = inspectorExtension(webPageProxyIdentifier);
     if (!extension) {
         RELEASE_LOG_ERROR(Extensions, "Inspector extension not found for page %llu", webPageProxyIdentifier.toUInt64());
-        completionHandler(makeUnexpected(toErrorString(apiName, nil, @"Web Inspector not found")));
+        completionHandler(toWebExtensionError(apiName, nil, @"Web Inspector not found"));
         return;
     }
 
-    extension->createTab(title, { baseURL(), iconPath }, { baseURL(), pagePath }, [completionHandler = WTFMove(completionHandler)](Expected<Inspector::ExtensionTabID, Inspector::ExtensionError> result) mutable {
+    extension->createTab(title, { baseURL(), iconPath }, { baseURL(), pagePath }, [completionHandler = WTFMove(completionHandler)](Expected<Inspector::ExtensionTabID, Inspector::ExtensionError>&& result) mutable {
         if (!result) {
             RELEASE_LOG_ERROR(Extensions, "Inspector could not create panel (%{public}@)", (NSString *)extensionErrorToString(result.error()));
-            completionHandler(makeUnexpected(toErrorString(apiName, nil, @"Web Inspector could not create the panel")));
+            completionHandler(toWebExtensionError(apiName, nil, @"Web Inspector could not create the panel"));
             return;
         }
 

@@ -1592,13 +1592,13 @@ void WebExtensionContext::forgetTab(WebExtensionTabIdentifier identifier) const
 
 void WebExtensionContext::openNewTab(const WebExtensionTabParameters& parameters, CompletionHandler<void(RefPtr<WebExtensionTab>)>&& completionHandler)
 {
-    tabsCreate(std::nullopt, parameters, [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](std::optional<WebExtensionTabParameters> newTabParameters, WebExtensionTab::Error) mutable {
-        if (!newTabParameters || !newTabParameters.value().identifier) {
+    tabsCreate(std::nullopt, parameters, [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](Expected<std::optional<WebExtensionTabParameters>, WebExtensionError>&& result) mutable {
+        if (!result || !result.value()) {
             completionHandler(nullptr);
             return;
         }
 
-        completionHandler(getTab(newTabParameters.value().identifier.value()));
+        completionHandler(getTab(result.value()->identifier.value()));
     });
 }
 

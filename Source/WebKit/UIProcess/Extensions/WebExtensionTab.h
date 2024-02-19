@@ -28,6 +28,7 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #include "CocoaImage.h"
+#include "WebExtensionError.h"
 #include "WebExtensionEventListenerType.h"
 #include "WebExtensionTabIdentifier.h"
 #include "WebPageProxyIdentifier.h"
@@ -98,7 +99,6 @@ public:
     enum class AssumeWindowMatches : bool { No, Yes };
     enum class MainWebViewOnly : bool { No, Yes };
 
-    using Error = std::optional<String>;
     using WebProcessProxySet = HashSet<Ref<WebProcessProxy>>;
 
     WebExtensionTabIdentifier identifier() const { return m_identifier; }
@@ -128,7 +128,7 @@ public:
     size_t index() const;
 
     RefPtr<WebExtensionTab> parentTab() const;
-    void setParentTab(RefPtr<WebExtensionTab>, CompletionHandler<void(Error)>&&);
+    void setParentTab(RefPtr<WebExtensionTab>, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
 
     WKWebView *mainWebView() const;
     NSArray *webViews() const;
@@ -143,18 +143,18 @@ public:
     bool isSelected() const;
     bool isPrivate() const;
 
-    void pin(CompletionHandler<void(Error)>&&);
-    void unpin(CompletionHandler<void(Error)>&&);
+    void pin(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
+    void unpin(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
 
     bool isPinned() const;
 
-    void toggleReaderMode(CompletionHandler<void(Error)>&&);
+    void toggleReaderMode(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
 
     bool isReaderModeAvailable() const;
     bool isShowingReaderMode() const;
 
-    void mute(CompletionHandler<void(Error)>&&);
-    void unmute(CompletionHandler<void(Error)>&&);
+    void mute(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
+    void unmute(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
 
     bool isAudible() const;
     bool isMuted() const;
@@ -162,31 +162,31 @@ public:
     CGSize size() const;
 
     double zoomFactor() const;
-    void setZoomFactor(double, CompletionHandler<void(Error)>&&);
+    void setZoomFactor(double, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
 
     URL url() const;
     URL pendingURL() const;
 
     bool isLoadingComplete() const;
 
-    void detectWebpageLocale(CompletionHandler<void(NSLocale *, Error)>&&);
-    void captureVisibleWebpage(CompletionHandler<void(CocoaImage *, Error)>&&);
+    void detectWebpageLocale(CompletionHandler<void(Expected<NSLocale *, WebExtensionError>&&)>&&);
+    void captureVisibleWebpage(CompletionHandler<void(Expected<CocoaImage *, WebExtensionError>&&)>&&);
 
-    void loadURL(URL, CompletionHandler<void(Error)>&&);
+    void loadURL(URL, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
 
-    void reload(CompletionHandler<void(Error)>&&);
-    void reloadFromOrigin(CompletionHandler<void(Error)>&&);
+    void reload(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
+    void reloadFromOrigin(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
 
-    void goBack(CompletionHandler<void(Error)>&&);
-    void goForward(CompletionHandler<void(Error)>&&);
+    void goBack(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
+    void goForward(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
 
-    void activate(CompletionHandler<void(Error)>&&);
-    void select(CompletionHandler<void(Error)>&&);
-    void deselect(CompletionHandler<void(Error)>&&);
+    void activate(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
+    void select(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
+    void deselect(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
 
-    void duplicate(const WebExtensionTabParameters&, CompletionHandler<void(RefPtr<WebExtensionTab>, Error)>&&);
+    void duplicate(const WebExtensionTabParameters&, CompletionHandler<void(Expected<RefPtr<WebExtensionTab>, WebExtensionError>&&)>&&);
 
-    void close(CompletionHandler<void(Error)>&&);
+    void close(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
 
     bool shouldGrantTabPermissionsOnUserGesture() const;
 

@@ -29,12 +29,16 @@
 
 namespace WebKit {
 
-// MARK: Declarative Net Request constants.
+// MARK: Message Passing
+/// This matches the maximum message length enforced by Chromium in its `MessageFromJSONString()` function.
+constexpr size_t webExtensionMaxMessageLength = 1024 * 1024 * 64;
+
+// MARK: Declarative Net Request
 static constexpr size_t webExtensionDeclarativeNetRequestMaximumNumberOfStaticRulesets = 100;
 static constexpr size_t webExtensionDeclarativeNetRequestMaximumNumberOfEnabledRulesets = 50;
 static constexpr size_t webExtensionDeclarativeNetRequestMaximumNumberOfDynamicAndSessionRules = 5000;
 
-// MARK: Storage constants.
+// MARK: Storage
 static constexpr double webExtensionUnlimitedStorageQuotaBytes = std::numeric_limits<double>::max();
 
 static constexpr size_t webExtensionStorageAreaLocalQuotaBytes = 5 * 1024 * 1024;

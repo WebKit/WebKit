@@ -170,9 +170,9 @@ private:
     void dispatchPortDisconnectEvent(WebExtensionPortChannelIdentifier);
 
     // Runtime
-    void internalDispatchRuntimeMessageEvent(WebExtensionContentWorldType, const String& messageJSON, std::optional<WebExtensionFrameIdentifier>, const WebExtensionMessageSenderParameters&, CompletionHandler<void(std::optional<String> replyJSON)>&&);
+    void internalDispatchRuntimeMessageEvent(WebExtensionContentWorldType, const String& messageJSON, std::optional<WebExtensionFrameIdentifier>, const WebExtensionMessageSenderParameters&, CompletionHandler<void(String&& replyJSON)>&&);
     void internalDispatchRuntimeConnectEvent(WebExtensionContentWorldType, WebExtensionPortChannelIdentifier, const String& name, std::optional<WebExtensionFrameIdentifier>, const WebExtensionMessageSenderParameters&, CompletionHandler<void(size_t firedEventCount)>&&);
-    void dispatchRuntimeMessageEvent(WebExtensionContentWorldType, const String& messageJSON, std::optional<WebExtensionFrameIdentifier>, const WebExtensionMessageSenderParameters&, CompletionHandler<void(std::optional<String> replyJSON)>&&);
+    void dispatchRuntimeMessageEvent(WebExtensionContentWorldType, const String& messageJSON, std::optional<WebExtensionFrameIdentifier>, const WebExtensionMessageSenderParameters&, CompletionHandler<void(String&& replyJSON)>&&);
     void dispatchRuntimeConnectEvent(WebExtensionContentWorldType, WebExtensionPortChannelIdentifier, const String& name, std::optional<WebExtensionFrameIdentifier>, const WebExtensionMessageSenderParameters&, CompletionHandler<void(size_t firedEventCount)>&&);
     void dispatchRuntimeInstalledEvent(WebExtensionContext::InstallReason, String previousVersion);
     void dispatchRuntimeStartupEvent();

@@ -72,7 +72,7 @@ void WebExtensionAPIDevToolsInspectedWindow::eval(WebPage& page, NSString *expre
         }
     }
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::DevToolsInspectedWindowEval(page.webPageProxyIdentifier(), expression, frameURL), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<Expected<std::span<const uint8_t>, WebCore::ExceptionDetails>, String> result) mutable {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::DevToolsInspectedWindowEval(page.webPageProxyIdentifier(), expression, frameURL), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<Expected<std::span<const uint8_t>, WebCore::ExceptionDetails>, WebExtensionError>&& result) mutable {
         if (!result) {
             callback->reportError(result.error());
             return;

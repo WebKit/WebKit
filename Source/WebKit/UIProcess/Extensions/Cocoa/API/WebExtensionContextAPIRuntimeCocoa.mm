@@ -46,17 +46,19 @@
 
 namespace WebKit {
 
-void WebExtensionContext::runtimeGetBackgroundPage(CompletionHandler<void(std::optional<WebCore::PageIdentifier>, std::optional<String> error)>&& completionHandler)
+void WebExtensionContext::runtimeGetBackgroundPage(CompletionHandler<void(Expected<std::optional<WebCore::PageIdentifier>, WebExtensionError>&&)>&& completionHandler)
 {
     wakeUpBackgroundContentIfNecessary([completionHandler = WTFMove(completionHandler), this, protectedThis = Ref { *this }]() mutable {
-        completionHandler(backgroundPageIdentifier(), std::nullopt);
+        completionHandler(backgroundPageIdentifier());
     });
 }
 
-void WebExtensionContext::runtimeOpenOptionsPage(CompletionHandler<void(std::optional<String> error)>&& completionHandler)
+void WebExtensionContext::runtimeOpenOptionsPage(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
+    static NSString * const apiName = @"runtime.openOptionsPage()";
+
     if (!optionsPageURL().isValid()) {
-        completionHandler(toErrorString(@"runtime.openOptionsPage()", nil, @"no options page is specified in the manifest"));
+        completionHandler(toWebExtensionError(apiName, nil, @"no options page is specified in the manifest"));
         return;
     }
 
@@ -65,7 +67,7 @@ void WebExtensionContext::runtimeOpenOptionsPage(CompletionHandler<void(std::opt
     bool respondsToOpenOptionsPage = [delegate respondsToSelector:@selector(webExtensionController:openOptionsPageForExtensionContext:completionHandler:)];
     bool respondsToOpenNewTab = [delegate respondsToSelector:@selector(webExtensionController:openNewTabWithOptions:forExtensionContext:completionHandler:)];
     if (!respondsToOpenOptionsPage && !respondsToOpenNewTab) {
-        completionHandler(toErrorString(@"runtime.openOptionsPage()", nil, @"it is not implemented"));
+        completionHandler(toWebExtensionError(apiName, nil, @"it is not implemented"));
         return;
     }
 
@@ -73,11 +75,11 @@ void WebExtensionContext::runtimeOpenOptionsPage(CompletionHandler<void(std::opt
         [delegate webExtensionController:extensionController()->wrapper() openOptionsPageForExtensionContext:wrapper() completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
             if (error) {
                 RELEASE_LOG_ERROR(Extensions, "Error opening options page: %{private}@", error);
-                completionHandler(error.localizedDescription);
+                completionHandler(toWebExtensionError(apiName, nil, error.localizedDescription));
                 return;
             }
 
-            completionHandler(std::nullopt);
+            completionHandler({ });
         }).get()];
 
         return;
@@ -97,18 +99,18 @@ void WebExtensionContext::runtimeOpenOptionsPage(CompletionHandler<void(std::opt
     [delegate webExtensionController:extensionController()->wrapper() openNewTabWithOptions:creationOptions forExtensionContext:wrapper() completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler)](id<_WKWebExtensionTab> newTab, NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error opening options page in new tab: %{private}@", error);
-            completionHandler(error.localizedDescription);
+            completionHandler(toWebExtensionError(apiName, nil, error.localizedDescription));
             return;
         }
 
         if (!newTab) {
-            completionHandler(toErrorString(@"runtime.openOptionsPage()", nil, @"the options page cound not be opened"));
+            completionHandler(toWebExtensionError(apiName, nil, @"the options page cound not be opened"));
             return;
         }
 
         THROW_UNLESS([newTab conformsToProtocol:@protocol(_WKWebExtensionTab)], @"Object returned by webExtensionController:openNewTabWithOptions:forExtensionContext:completionHandler: does not conform to the _WKWebExtensionTab protocol");
 
-        completionHandler(std::nullopt);
+        completionHandler({ });
     }).get()];
 }
 
@@ -117,56 +119,58 @@ void WebExtensionContext::runtimeReload()
     reload();
 }
 
-using ReplyCompletionHandlerSignature = void(std::optional<String> replyJSON, std::optional<String> error);
-
-void WebExtensionContext::runtimeSendMessage(const String& extensionID, const String& messageJSON, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<ReplyCompletionHandlerSignature>&& completionHandler)
+void WebExtensionContext::runtimeSendMessage(const String& extensionID, const String& messageJSON, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(Expected<String, WebExtensionError>&&)>&& completionHandler)
 {
+    static NSString * const apiName = @"runtime.sendMessage()";
+
     if (!extensionID.isEmpty() && uniqueIdentifier() != extensionID) {
         // FIXME: <https://webkit.org/b/id269299> Add support for externally_connectable:ids.
-        completionHandler(std::nullopt, toErrorString(@"runtime.sendMessage()", @"extensionID", @"cross-extension messaging is not supported"));
+        completionHandler(toWebExtensionError(apiName, @"extensionID", @"cross-extension messaging is not supported"));
         return;
     }
 
     WebExtensionMessageSenderParameters completeSenderParameters = senderParameters;
-    if (auto tab = getTab(senderParameters.pageProxyIdentifier))
+    if (RefPtr tab = getTab(senderParameters.pageProxyIdentifier))
         completeSenderParameters.tabParameters = tab->parameters();
 
     auto mainWorldProcesses = processes(WebExtensionEventListenerType::RuntimeOnMessage, WebExtensionContentWorldType::Main);
     if (mainWorldProcesses.isEmpty()) {
-        completionHandler(std::nullopt, std::nullopt);
+        completionHandler({ });
         return;
     }
 
-    auto callbackAggregator = EagerCallbackAggregator<ReplyCompletionHandlerSignature>::create(WTFMove(completionHandler), std::nullopt, std::nullopt);
+    auto callbackAggregator = EagerCallbackAggregator<void(Expected<String, WebExtensionError>)>::create(WTFMove(completionHandler), { });
 
     for (auto& process : mainWorldProcesses) {
-        process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeMessageEvent(WebExtensionContentWorldType::Main, messageJSON, std::nullopt, completeSenderParameters), [callbackAggregator](std::optional<String> replyJSON) {
-            callbackAggregator.get()(replyJSON, std::nullopt);
+        process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeMessageEvent(WebExtensionContentWorldType::Main, messageJSON, std::nullopt, completeSenderParameters), [callbackAggregator](String&& replyJSON) {
+            callbackAggregator.get()(WTFMove(replyJSON));
         }, identifier());
     }
 }
 
-void WebExtensionContext::runtimeConnect(const String& extensionID, WebExtensionPortChannelIdentifier channelIdentifier, const String& name, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(WebExtensionTab::Error)>&& completionHandler)
+void WebExtensionContext::runtimeConnect(const String& extensionID, WebExtensionPortChannelIdentifier channelIdentifier, const String& name, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
+    static NSString * const apiName = @"runtime.connect()";
+
     // Add 1 for the starting port here so disconnect will balance with a decrement.
     const auto sourceContentWorldType = senderParameters.contentWorldType;
     addPorts(sourceContentWorldType, channelIdentifier, 1);
 
     if (!extensionID.isEmpty() && uniqueIdentifier() != extensionID) {
         // FIXME: <https://webkit.org/b/id269299> Add support for externally_connectable:ids.
-        completionHandler(toErrorString(@"runtime.connect()", @"extensionID", @"cross-extension messaging is not supported"));
+        completionHandler(toWebExtensionError(apiName, @"extensionID", @"cross-extension messaging is not supported"));
         return;
     }
 
     WebExtensionMessageSenderParameters completeSenderParameters = senderParameters;
-    if (auto tab = getTab(senderParameters.pageProxyIdentifier))
+    if (RefPtr tab = getTab(senderParameters.pageProxyIdentifier))
         completeSenderParameters.tabParameters = tab->parameters();
 
     constexpr auto targetContentWorldType = WebExtensionContentWorldType::Main;
 
     auto mainWorldProcesses = processes(WebExtensionEventListenerType::RuntimeOnConnect, targetContentWorldType);
     if (mainWorldProcesses.isEmpty()) {
-        completionHandler(toErrorString(@"runtime.connect()", nil, @"no runtime.onConnect listeners found"));
+        completionHandler(toWebExtensionError(apiName, nil, @"no runtime.onConnect listeners found"));
         return;
     }
 
@@ -183,17 +187,19 @@ void WebExtensionContext::runtimeConnect(const String& extensionID, WebExtension
         }, identifier());
     }
 
-    completionHandler(std::nullopt);
+    completionHandler({ });
 }
 
-void WebExtensionContext::runtimeSendNativeMessage(const String& applicationID, const String& messageJSON, CompletionHandler<void(std::optional<String> replyJSON, std::optional<String> error)>&& completionHandler)
+void WebExtensionContext::runtimeSendNativeMessage(const String& applicationID, const String& messageJSON, CompletionHandler<void(Expected<String, WebExtensionError>&&)>&& completionHandler)
 {
-    id message = parseJSON(messageJSON, { JSONOptions::FragmentsAllowed });
+    static NSString * const apiName = @"runtime.sendNativeMessage()";
+
+    id message = parseJSON(messageJSON, JSONOptions::FragmentsAllowed);
 
     auto delegate = extensionController()->delegate();
     if (![delegate respondsToSelector:@selector(webExtensionController:sendMessage:toApplicationIdentifier:forExtensionContext:replyHandler:)]) {
         // FIXME: <https://webkit.org/b/262081> Implement default native messaging with NSExtension.
-        completionHandler(std::nullopt, toErrorString(@"runtime.sendNativeMessage()", nil, @"native messaging is not supported"));
+        completionHandler(toWebExtensionError(apiName, nil, @"native messaging is not supported"));
         return;
     }
 
@@ -201,19 +207,21 @@ void WebExtensionContext::runtimeSendNativeMessage(const String& applicationID, 
 
     [delegate webExtensionController:extensionController()->wrapper() sendMessage:message toApplicationIdentifier:applicationIdentifier forExtensionContext:wrapper() replyHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler)] (id replyMessage, NSError *error) mutable {
         if (error) {
-            completionHandler(std::nullopt, error.localizedDescription);
+            completionHandler(toWebExtensionError(apiName, nil, error.localizedDescription));
             return;
         }
 
         if (replyMessage)
-            THROW_UNLESS(isValidJSONObject(replyMessage, { JSONOptions::FragmentsAllowed }), @"Reply message is not JSON-serializable");
+            THROW_UNLESS(isValidJSONObject(replyMessage, JSONOptions::FragmentsAllowed), @"reply message is not JSON-serializable");
 
-        completionHandler(encodeJSONString(replyMessage, { JSONOptions::FragmentsAllowed }), std::nullopt);
+        completionHandler(String(encodeJSONString(replyMessage, JSONOptions::FragmentsAllowed)));
     }).get()];
 }
 
-void WebExtensionContext::runtimeConnectNative(const String& applicationID, WebExtensionPortChannelIdentifier channelIdentifier, CompletionHandler<void(std::optional<String> error)>&& completionHandler)
+void WebExtensionContext::runtimeConnectNative(const String& applicationID, WebExtensionPortChannelIdentifier channelIdentifier, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
+    static NSString * const apiName = @"runtime.connectNative()";
+
     // Add 1 for the starting port here so disconnect will balance with a decrement.
     constexpr auto sourceContentWorldType = WebExtensionContentWorldType::Main;
     addPorts(sourceContentWorldType, channelIdentifier, 1);
@@ -224,13 +232,14 @@ void WebExtensionContext::runtimeConnectNative(const String& applicationID, WebE
     auto delegate = extensionController()->delegate();
     if (![delegate respondsToSelector:@selector(webExtensionController:connectUsingMessagePort:forExtensionContext:completionHandler:)]) {
         // FIXME: <https://webkit.org/b/262081> Implement default native messaging with NSExtension.
-        completionHandler(toErrorString(@"runtime.connectNative()", nil, @"native messaging is not supported"));
+        completionHandler(toWebExtensionError(apiName, nil, @"native messaging is not supported"));
         return;
     }
 
     [delegate webExtensionController:extensionController()->wrapper() connectUsingMessagePort:nativePort->wrapper() forExtensionContext:wrapper() completionHandler:makeBlockPtr([=, completionHandler = WTFMove(completionHandler), protectedThis = Ref { *this }] (NSError *error) mutable {
         if (error) {
-            completionHandler(error.localizedDescription);
+            completionHandler(toWebExtensionError(apiName, nil, error.localizedDescription));
+
             nativePort->disconnect(toWebExtensionMessagePortError(error));
             protectedThis->clearQueuedPortMessages(targetContentWorldType, channelIdentifier);
             return;
@@ -238,7 +247,7 @@ void WebExtensionContext::runtimeConnectNative(const String& applicationID, WebE
 
         protectedThis->addNativePort(nativePort);
 
-        completionHandler(std::nullopt);
+        completionHandler({ });
 
         protectedThis->sendQueuedNativePortMessagesIfNeeded(channelIdentifier);
         protectedThis->firePortDisconnectEventIfNeeded(sourceContentWorldType, targetContentWorldType, channelIdentifier);
@@ -246,17 +255,19 @@ void WebExtensionContext::runtimeConnectNative(const String& applicationID, WebE
     }).get()];
 }
 
-void WebExtensionContext::runtimeWebPageSendMessage(const String& extensionID, const String& messageJSON, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<ReplyCompletionHandlerSignature>&& completionHandler)
+void WebExtensionContext::runtimeWebPageSendMessage(const String& extensionID, const String& messageJSON, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(Expected<String, WebExtensionError>&&)>&& completionHandler)
 {
     RefPtr destinationExtension = extensionController()->extensionContext(extensionID);
     if (!destinationExtension) {
-        completionHandler(std::nullopt, @"extension not found, but do not report this error");
+        // FIXME: <https://webkit.org/b/269539> Return after a random delay.
+        completionHandler({ });
         return;
     }
 
     RefPtr tab = getTab(senderParameters.pageProxyIdentifier);
     if (!tab) {
-        completionHandler(std::nullopt, @"tab not found");
+        // FIXME: <https://webkit.org/b/269539> Return after a random delay.
+        completionHandler({ });
         return;
     }
 
@@ -266,36 +277,47 @@ void WebExtensionContext::runtimeWebPageSendMessage(const String& extensionID, c
     auto url = completeSenderParameters.url;
     auto validMatchPatterns = destinationExtension->extension().externallyConnectableMatchPatterns();
     if (!hasPermission(url, tab.get()) || !WebExtensionMatchPattern::patternsMatchURL(validMatchPatterns, url)) {
-        completionHandler(std::nullopt, @"extension does not have access to this page, but do not reprort this error");
+        // FIXME: <https://webkit.org/b/269539> Return after a random delay.
+        completionHandler({ });
         return;
     }
 
     auto mainWorldProcesses = processes(WebExtensionEventListenerType::RuntimeOnMessageExternal, WebExtensionContentWorldType::Main);
     if (mainWorldProcesses.isEmpty()) {
-        completionHandler(std::nullopt, std::nullopt);
+        completionHandler({ });
         return;
     }
 
-    auto callbackAggregator = EagerCallbackAggregator<ReplyCompletionHandlerSignature>::create(WTFMove(completionHandler), std::nullopt, std::nullopt);
+    auto callbackAggregator = EagerCallbackAggregator<void(Expected<String, WebExtensionError>)>::create(WTFMove(completionHandler), { });
 
     for (auto& process : mainWorldProcesses) {
-        process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeMessageEvent(WebExtensionContentWorldType::Main, messageJSON, std::nullopt, completeSenderParameters), [callbackAggregator](std::optional<String> replyJSON) {
-            callbackAggregator.get()(replyJSON, std::nullopt);
+        process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeMessageEvent(WebExtensionContentWorldType::Main, messageJSON, std::nullopt, completeSenderParameters), [callbackAggregator](String&& replyJSON) {
+            callbackAggregator.get()(WTFMove(replyJSON));
         }, identifier());
     }
 }
 
-void WebExtensionContext::runtimeWebPageConnect(const String& extensionID, WebExtensionPortChannelIdentifier channelIdentifier, const String& name, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(WebExtensionTab::Error)>&& completionHandler)
+void WebExtensionContext::runtimeWebPageConnect(const String& extensionID, WebExtensionPortChannelIdentifier channelIdentifier, const String& name, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
+    static NSString * const apiName = @"runtime.connect()";
+    constexpr auto sourceContentWorldType = WebExtensionContentWorldType::WebPage;
+    constexpr auto targetContentWorldType = WebExtensionContentWorldType::Main;
+
     RefPtr destinationExtension = extensionController()->extensionContext(extensionID);
     if (!destinationExtension) {
-        completionHandler(@"extension not found, but do not report this error");
+        // FIXME: <https://webkit.org/b/269539> Return after a random delay.
+        completionHandler({ });
+        firePortDisconnectEventIfNeeded(sourceContentWorldType, targetContentWorldType, channelIdentifier);
+        clearQueuedPortMessages(targetContentWorldType, channelIdentifier);
         return;
     }
 
     RefPtr tab = getTab(senderParameters.pageProxyIdentifier);
     if (!tab) {
-        completionHandler(@"tab not found");
+        // FIXME: <https://webkit.org/b/269539> Return after a random delay.
+        completionHandler({ });
+        firePortDisconnectEventIfNeeded(sourceContentWorldType, targetContentWorldType, channelIdentifier);
+        clearQueuedPortMessages(targetContentWorldType, channelIdentifier);
         return;
     }
 
@@ -305,19 +327,19 @@ void WebExtensionContext::runtimeWebPageConnect(const String& extensionID, WebEx
     auto url = completeSenderParameters.url;
     auto validMatchPatterns = destinationExtension->extension().externallyConnectableMatchPatterns();
     if (!hasPermission(url, tab.get()) || !WebExtensionMatchPattern::patternsMatchURL(validMatchPatterns, url)) {
-        completionHandler(@"extension does not have access to this page, but do not reprort this error");
+        // FIXME: <https://webkit.org/b/269539> Return after a random delay.
+        completionHandler({ });
+        firePortDisconnectEventIfNeeded(sourceContentWorldType, targetContentWorldType, channelIdentifier);
+        clearQueuedPortMessages(targetContentWorldType, channelIdentifier);
         return;
     }
-
-    constexpr auto sourceContentWorldType = WebExtensionContentWorldType::WebPage;
-    constexpr auto targetContentWorldType = WebExtensionContentWorldType::Main;
 
     // Add 1 for the starting port here so disconnect will balance with a decrement.
     addPorts(sourceContentWorldType, channelIdentifier, 1);
 
     auto mainWorldProcesses = processes(WebExtensionEventListenerType::RuntimeOnConnectExternal, targetContentWorldType);
     if (mainWorldProcesses.isEmpty()) {
-        completionHandler(toErrorString(@"runtime.connect()", nil, @"no runtime.onConnectExternal listeners found"));
+        completionHandler(toWebExtensionError(apiName, nil, @"no runtime.onConnectExternal listeners found"));
         return;
     }
 
@@ -334,7 +356,7 @@ void WebExtensionContext::runtimeWebPageConnect(const String& extensionID, WebEx
         }, identifier());
     }
 
-    completionHandler(std::nullopt);
+    completionHandler({ });
 }
 
 void WebExtensionContext::fireRuntimeStartupEventIfNeeded()

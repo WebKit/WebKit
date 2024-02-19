@@ -112,45 +112,39 @@ NSArray *toWebAPI(const Vector<WebExtensionScriptInjectionResultParameters>& par
         if (parameters.error)
             result[@"error"] = parameters.error.value();
 
-        [results addObject:result];
+        [results addObject:[result copy]];
     }
 
     return [results copy];
 }
 
-NSArray *toWebAPI(const Vector<WebExtensionRegisteredScriptParameters>& parametersVector)
+NSDictionary *toWebAPI(const WebExtensionRegisteredScriptParameters& parameters)
 {
-    NSMutableArray *results = [NSMutableArray arrayWithCapacity:parametersVector.size()];
+    NSMutableDictionary *result = [NSMutableDictionary dictionaryWithCapacity:9];
 
-    for (auto& parameters : parametersVector) {
-        NSMutableDictionary *result = [NSMutableDictionary dictionary];
+    ASSERT(parameters.allFrames);
+    ASSERT(parameters.matchPatterns);
+    ASSERT(parameters.persistent);
+    ASSERT(parameters.injectionTime);
+    ASSERT(parameters.world);
 
-        ASSERT(parameters.allFrames);
-        ASSERT(parameters.matchPatterns);
-        ASSERT(parameters.persistent);
-        ASSERT(parameters.injectionTime);
-        ASSERT(parameters.world);
+    result[allFramesKey] = parameters.allFrames.value() ? @YES : @NO;
+    result[idKey] = parameters.identifier;
+    result[matchesKey] = createNSArray(parameters.matchPatterns.value()).get();
+    result[persistAcrossSessionsKey] = parameters.persistent.value() ? @YES : @NO;
+    result[runAtKey] = toWebAPI(parameters.injectionTime.value());
+    result[worldKey] = parameters.world.value() == WebExtensionContentWorldType::Main ? mainWorld : isolatedWorld;
 
-        result[allFramesKey] = parameters.allFrames.value() ? @YES : @NO;
-        result[idKey] = parameters.identifier;
-        result[matchesKey] = createNSArray(parameters.matchPatterns.value()).get();
-        result[persistAcrossSessionsKey] = parameters.persistent.value() ? @YES : @NO;
-        result[runAtKey] = toWebAPI(parameters.injectionTime.value());
-        result[worldKey] = parameters.world.value() == WebExtensionContentWorldType::Main ? mainWorld : isolatedWorld;
+    if (parameters.css)
+        result[cssKey] = createNSArray(parameters.css.value()).get();
 
-        if (parameters.css)
-            result[cssKey] = createNSArray(parameters.css.value()).get();
+    if (parameters.js)
+        result[jsKey] = createNSArray(parameters.js.value()).get();
 
-        if (parameters.js)
-            result[jsKey] = createNSArray(parameters.js.value()).get();
+    if (parameters.excludeMatchPatterns)
+        result[excludeMatchesKey] = createNSArray(parameters.excludeMatchPatterns.value()).get();
 
-        if (parameters.excludeMatchPatterns)
-            result[excludeMatchesKey] = createNSArray(parameters.excludeMatchPatterns.value()).get();
-
-        [results addObject:result];
-    }
-
-    return [results copy];
+    return [result copy];
 }
 
 NSString *toWebAPI(WebExtension::InjectionTime injectionTime)
@@ -186,12 +180,12 @@ void WebExtensionAPIScripting::executeScript(NSDictionary *script, Ref<WebExtens
     parseTargetInjectionOptions(script[targetKey], parameters, outExceptionString);
     parseScriptInjectionOptions(script, parameters, outExceptionString);
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingExecuteScript(WTFMove(parameters)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<Vector<WebKit::WebExtensionScriptInjectionResultParameters>> results, Error error) {
-        if (error)
-            callback->reportError(error.value());
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingExecuteScript(WTFMove(parameters)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<Vector<WebKit::WebExtensionScriptInjectionResultParameters>, WebExtensionError>&& result) {
+        if (!result)
+            callback->reportError(result.error());
         else
-            callback->call(toWebAPI(results.value(), false));
-    }, extensionContext().identifier().toUInt64());
+            callback->call(toWebAPI(result.value(), false));
+    }, extensionContext().identifier());
 }
 
 void WebExtensionAPIScripting::insertCSS(NSDictionary *cssInfo, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
@@ -205,12 +199,12 @@ void WebExtensionAPIScripting::insertCSS(NSDictionary *cssInfo, Ref<WebExtension
     parseTargetInjectionOptions(cssInfo[targetKey], parameters, outExceptionString);
     parseCSSInjectionOptions(cssInfo, parameters);
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingInsertCSS(WTFMove(parameters)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Error error) {
-        if (error)
-            callback->reportError(error.value());
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingInsertCSS(WTFMove(parameters)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<void, WebExtensionError>&& result) {
+        if (!result)
+            callback->reportError(result.error());
         else
             callback->call();
-    }, extensionContext().identifier().toUInt64());
+    }, extensionContext().identifier());
 }
 
 void WebExtensionAPIScripting::removeCSS(NSDictionary *cssInfo, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
@@ -224,12 +218,12 @@ void WebExtensionAPIScripting::removeCSS(NSDictionary *cssInfo, Ref<WebExtension
     parseTargetInjectionOptions(cssInfo[targetKey], parameters, outExceptionString);
     parseCSSInjectionOptions(cssInfo, parameters);
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingRemoveCSS(WTFMove(parameters)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Error error) {
-        if (error)
-            callback->reportError(error.value());
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingRemoveCSS(WTFMove(parameters)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<void, WebExtensionError>&& result) {
+        if (!result)
+            callback->reportError(result.error());
         else
             callback->call();
-    }, extensionContext().identifier().toUInt64());
+    }, extensionContext().identifier());
 }
 
 void WebExtensionAPIScripting::registerContentScripts(NSObject *details, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
@@ -244,12 +238,12 @@ void WebExtensionAPIScripting::registerContentScripts(NSObject *details, Ref<Web
     Vector<WebExtensionRegisteredScriptParameters> parameters;
     parseRegisteredContentScripts(scripts, FirstTimeRegistration::Yes, parameters);
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingRegisterContentScripts(WTFMove(parameters)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Error error) {
-        if (error)
-            callback->reportError(error.value());
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingRegisterContentScripts(WTFMove(parameters)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<void, WebExtensionError>&& result) {
+        if (!result)
+            callback->reportError(result.error());
         else
             callback->call();
-    }, extensionContext().identifier().toUInt64());
+    }, extensionContext().identifier());
 }
 
 void WebExtensionAPIScripting::getRegisteredContentScripts(NSDictionary *filter, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
@@ -261,10 +255,14 @@ void WebExtensionAPIScripting::getRegisteredContentScripts(NSDictionary *filter,
 
     Vector<String> scriptIDs = makeVector<String>(filter[idsKey]);
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingGetRegisteredScripts(WTFMove(scriptIDs)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](const Vector<WebExtensionRegisteredScriptParameters>& scripts) {
-        callback->call(toWebAPI(scripts));
-    }, extensionContext().identifier().toUInt64());
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingGetRegisteredScripts(WTFMove(scriptIDs)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<Vector<WebExtensionRegisteredScriptParameters>, WebExtensionError>&& result) {
+        if (!result)
+            callback->reportError(result.error());
+        else
+            callback->call(toWebAPI(result.value()));
+    }, extensionContext().identifier());
 }
+
 void WebExtensionAPIScripting::updateContentScripts(NSObject *details, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/scripting/updateContentScripts
@@ -277,13 +275,14 @@ void WebExtensionAPIScripting::updateContentScripts(NSObject *details, Ref<WebEx
     Vector<WebExtensionRegisteredScriptParameters> parameters;
     parseRegisteredContentScripts(scripts, FirstTimeRegistration::No, parameters);
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingUpdateRegisteredScripts(WTFMove(parameters)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Error error) {
-        if (error)
-            callback->reportError(error.value());
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingUpdateRegisteredScripts(WTFMove(parameters)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<void, WebExtensionError>&& result) {
+        if (!result)
+            callback->reportError(result.error());
         else
             callback->call();
-    }, extensionContext().identifier().toUInt64());
+    }, extensionContext().identifier());
 }
+
 void WebExtensionAPIScripting::unregisterContentScripts(NSDictionary *filter, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/scripting/unregisterContentScripts
@@ -293,12 +292,12 @@ void WebExtensionAPIScripting::unregisterContentScripts(NSDictionary *filter, Re
 
     Vector<String> scriptIDs = makeVector<String>(filter[idsKey]);
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingUnregisterContentScripts(WTFMove(scriptIDs)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Error error) {
-        if (error)
-            callback->reportError(error.value());
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingUnregisterContentScripts(WTFMove(scriptIDs)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<void, WebExtensionError>&& result) {
+        if (!result)
+            callback->reportError(result.error());
         else
             callback->call();
-    }, extensionContext().identifier().toUInt64());
+    }, extensionContext().identifier());
 }
 
 bool WebExtensionAPIScripting::validateScript(NSDictionary *script, NSString **outExceptionString)
@@ -325,7 +324,7 @@ bool WebExtensionAPIScripting::validateScript(NSDictionary *script, NSString **o
 
     if (NSArray *arguments = script[argsKey] ?: script[argumentsKey]) {
         auto *key = script[argsKey] ? argsKey : argumentsKey;
-        if (!isValidJSONObject(arguments, { JSONOptions::FragmentsAllowed })) {
+        if (!isValidJSONObject(arguments, JSONOptions::FragmentsAllowed)) {
             *outExceptionString = toErrorString(nil, key, @"it is not JSON-serializable");
             return false;
         }
@@ -550,7 +549,7 @@ void WebExtensionAPIScripting::parseScriptInjectionOptions(NSDictionary *script,
 
     if (NSArray *arguments = script[argsKey] ?: script[argumentsKey]) {
         auto *key = script[argsKey] ? argsKey : argumentsKey;
-        auto *data = encodeJSONData(arguments, { JSONOptions::FragmentsAllowed });
+        auto *data = encodeJSONData(arguments, JSONOptions::FragmentsAllowed);
         if (!data) {
             *outExceptionString = toErrorString(nil, key, @"it is not JSON-serializable");
             return;

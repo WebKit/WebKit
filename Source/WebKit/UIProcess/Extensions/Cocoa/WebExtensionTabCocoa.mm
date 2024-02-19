@@ -298,21 +298,23 @@ RefPtr<WebExtensionTab> WebExtensionTab::parentTab() const
     return m_extensionContext->getOrCreateTab(parentTab);
 }
 
-void WebExtensionTab::setParentTab(RefPtr<WebExtensionTab> parentTab, CompletionHandler<void(Error)>&& completionHandler)
+void WebExtensionTab::setParentTab(RefPtr<WebExtensionTab> parentTab, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
+    static NSString * const apiName = @"tabs.update()";
+
     if (!isValid() || !m_respondsToSetParentTab) {
-        completionHandler(toErrorString(@"tabs.update()", nil, @"it is not implemented for 'openerTabId'"));
+        completionHandler(toWebExtensionError(apiName, nil, @"it is not implemented for 'openerTabId'"));
         return;
     }
 
     [m_delegate setParentTab:(parentTab ? parentTab->delegate() : nil) forWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for setParentTab: %{private}@", error);
-            completionHandler(error.localizedDescription);
+            completionHandler(toWebExtensionError(apiName, nil, error.localizedDescription));
             return;
         }
 
-        completionHandler(std::nullopt);
+        completionHandler({ });
     }).get()];
 }
 
@@ -393,39 +395,43 @@ bool WebExtensionTab::isSelected() const
     return [m_delegate isSelectedForWebExtensionContext:m_extensionContext->wrapper()];
 }
 
-void WebExtensionTab::pin(CompletionHandler<void(Error)>&& completionHandler)
+void WebExtensionTab::pin(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
+    static NSString * const apiName = @"tabs.update()";
+
     if (!isValid() || !m_respondsToPin) {
-        completionHandler(toErrorString(@"tabs.update()", nil, @"it is not implemented for 'pinned' set to `true`"));
+        completionHandler(toWebExtensionError(apiName, nil, @"it is not implemented for 'pinned' set to `true`"));
         return;
     }
 
     [m_delegate pinForWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for pin: %{private}@", error);
-            completionHandler(error.localizedDescription);
+            completionHandler(toWebExtensionError(apiName, nil, error.localizedDescription));
             return;
         }
 
-        completionHandler(std::nullopt);
+        completionHandler({ });
     }).get()];
 }
 
-void WebExtensionTab::unpin(CompletionHandler<void(Error)>&& completionHandler)
+void WebExtensionTab::unpin(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
+    static NSString * const apiName = @"tabs.update()";
+
     if (!isValid() || !m_respondsToUnpin) {
-        completionHandler(toErrorString(@"tabs.update()", nil, @"it is not implemented for 'pinned' set to `false`"));
+        completionHandler(toWebExtensionError(apiName, nil, @"it is not implemented for 'pinned' set to `false`"));
         return;
     }
 
     [m_delegate unpinForWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for unpin: %{private}@", error);
-            completionHandler(error.localizedDescription);
+            completionHandler(toWebExtensionError(apiName, nil, error.localizedDescription));
             return;
         }
 
-        completionHandler(std::nullopt);
+        completionHandler({ });
     }).get()];
 }
 
@@ -456,21 +462,23 @@ bool WebExtensionTab::isPrivate() const
     return m_private;
 }
 
-void WebExtensionTab::toggleReaderMode(CompletionHandler<void(Error)>&& completionHandler)
+void WebExtensionTab::toggleReaderMode(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
+    static NSString * const apiName = @"tabs.toggleReaderMode()";
+
     if (!isValid() || !m_respondsToToggleReaderMode) {
-        completionHandler(toErrorString(@"tabs.toggleReaderMode()", nil, @"it is not implemented"));
+        completionHandler(toWebExtensionError(apiName, nil, @"it is not implemented"));
         return;
     }
 
     [m_delegate toggleReaderModeForWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for toggleReaderMode: %{private}@", error);
-            completionHandler(error.localizedDescription);
+            completionHandler(toWebExtensionError(apiName, nil, error.localizedDescription));
             return;
         }
 
-        completionHandler(std::nullopt);
+        completionHandler({ });
     }).get()];
 }
 
@@ -490,39 +498,43 @@ bool WebExtensionTab::isShowingReaderMode() const
     return [m_delegate isShowingReaderModeForWebExtensionContext:m_extensionContext->wrapper()];
 }
 
-void WebExtensionTab::mute(CompletionHandler<void(Error)>&& completionHandler)
+void WebExtensionTab::mute(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
+    static NSString * const apiName = @"tabs.update()";
+
     if (!isValid() || !m_respondsToMute) {
-        completionHandler(toErrorString(@"tabs.update()", nil, @"it is not implemented for 'muted' set to `true`"));
+        completionHandler(toWebExtensionError(apiName, nil, @"it is not implemented for 'muted' set to `true`"));
         return;
     }
 
     [m_delegate muteForWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for mute: %{private}@", error);
-            completionHandler(error.localizedDescription);
+            completionHandler(toWebExtensionError(apiName, nil, error.localizedDescription));
             return;
         }
 
-        completionHandler(std::nullopt);
+        completionHandler({ });
     }).get()];
 }
 
-void WebExtensionTab::unmute(CompletionHandler<void(Error)>&& completionHandler)
+void WebExtensionTab::unmute(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
+    static NSString * const apiName = @"tabs.update()";
+
     if (!isValid() || !m_respondsToUnmute) {
-        completionHandler(toErrorString(@"tabs.update()", nil, @"it is not implemented for 'muted' set to `false`"));
+        completionHandler(toWebExtensionError(apiName, nil, @"it is not implemented for 'muted' set to `false`"));
         return;
     }
 
     [m_delegate unmuteForWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for unmute: %{private}@", error);
-            completionHandler(error.localizedDescription);
+            completionHandler(toWebExtensionError(apiName, nil, error.localizedDescription));
             return;
         }
 
-        completionHandler(std::nullopt);
+        completionHandler({ });
     }).get()];
 }
 
@@ -558,22 +570,24 @@ double WebExtensionTab::zoomFactor() const
     return [m_delegate zoomFactorForWebExtensionContext:m_extensionContext->wrapper()];
 }
 
-void WebExtensionTab::setZoomFactor(double zoomFactor, CompletionHandler<void(Error)>&& completionHandler)
+void WebExtensionTab::setZoomFactor(double zoomFactor, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
+    static NSString * const apiName = @"tabs.setZoom()";
+
     if (!isValid() || !m_respondsToSetZoomFactor) {
         mainWebView().pageZoom = zoomFactor;
-        completionHandler(std::nullopt);
+        completionHandler({ });
         return;
     }
 
     [m_delegate setZoomFactor:zoomFactor forWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for setZoomFactor: %{private}@", error);
-            completionHandler(error.localizedDescription);
+            completionHandler(toWebExtensionError(apiName, nil, error.localizedDescription));
             return;
         }
 
-        completionHandler(std::nullopt);
+        completionHandler({ });
     }).get()];
 }
 
@@ -607,44 +621,48 @@ bool WebExtensionTab::isLoadingComplete() const
     return [m_delegate isLoadingCompleteForWebExtensionContext:m_extensionContext->wrapper()];
 }
 
-void WebExtensionTab::detectWebpageLocale(CompletionHandler<void(NSLocale *, Error)>&& completionHandler)
+void WebExtensionTab::detectWebpageLocale(CompletionHandler<void(Expected<NSLocale *, WebExtensionError>&&)>&& completionHandler)
 {
+    static NSString * const apiName = @"tabs.detectLanguage()";
+
     if (!isValid() || !m_respondsToDetectWebpageLocale) {
-        completionHandler(nil, toErrorString(@"tabs.detectLanguage()", nil, @"it is not implemented"));
+        completionHandler(toWebExtensionError(apiName, nil, @"it is not implemented"));
         return;
     }
 
     [m_delegate detectWebpageLocaleForWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSLocale *locale, NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for detectWebpageLocale: %{private}@", error);
-            completionHandler(nil, error.localizedDescription);
+            completionHandler(toWebExtensionError(apiName, nil, error.localizedDescription));
             return;
         }
 
         THROW_UNLESS(!locale || [locale isKindOfClass:NSLocale.class], @"Object passed to completionHandler of detectWebpageLocaleForWebExtensionContext:completionHandler: is not an NSLocale");
-        completionHandler(locale, std::nullopt);
+        completionHandler(locale);
     }).get()];
 }
 
-void WebExtensionTab::captureVisibleWebpage(CompletionHandler<void(CocoaImage *, Error)>&& completionHandler)
+void WebExtensionTab::captureVisibleWebpage(CompletionHandler<void(Expected<CocoaImage *, WebExtensionError>&&)>&& completionHandler)
 {
+    static NSString * const apiName = @"tabs.captureVisibleTab()";
+
     bool delegateIsUnavailable = !isValid() || !m_respondsToCaptureVisibleWebpage;
     WKWebView *mainWebView = delegateIsUnavailable ? this->mainWebView() : nil;
 
     if (delegateIsUnavailable && !mainWebView) {
-        completionHandler(nil, toErrorString(@"tabs.captureVisibleTab()", nil, @"capture is unavailable for this tab"));
+        completionHandler(toWebExtensionError(apiName, nil, @"capture is unavailable for this tab"));
         return;
     }
 
     auto internalCompletionHandler = makeBlockPtr([completionHandler = WTFMove(completionHandler)](CocoaImage *image, NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for captureVisibleWebpage: %{private}@", error);
-            completionHandler(nil, error.localizedDescription);
+            completionHandler(toWebExtensionError(apiName, nil, error.localizedDescription));
             return;
         }
 
         THROW_UNLESS(!image || [image isKindOfClass:[CocoaImage class]], @"Object passed to completionHandler of captureVisibleWebpageForWebExtensionContext:completionHandler: is not an image");
-        completionHandler(image, std::nullopt);
+        completionHandler(image);
     });
 
     if (delegateIsUnavailable) {
@@ -663,156 +681,172 @@ void WebExtensionTab::captureVisibleWebpage(CompletionHandler<void(CocoaImage *,
     [m_delegate captureVisibleWebpageForWebExtensionContext:m_extensionContext->wrapper() completionHandler:internalCompletionHandler.get()];
 }
 
-void WebExtensionTab::loadURL(URL url, CompletionHandler<void(Error)>&& completionHandler)
+void WebExtensionTab::loadURL(URL url, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
+    static NSString * const apiName = @"tabs.update()";
+
     if (!isValid() || !m_respondsToLoadURL) {
         [mainWebView() loadRequest:[NSURLRequest requestWithURL:url]];
-        completionHandler(std::nullopt);
+        completionHandler({ });
         return;
     }
 
     [m_delegate loadURL:url forWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for loadURL: %{private}@", error);
-            completionHandler(error.localizedDescription);
+            completionHandler(toWebExtensionError(apiName, nil, error.localizedDescription));
             return;
         }
 
-        completionHandler(std::nullopt);
+        completionHandler({ });
     }).get()];
 }
 
-void WebExtensionTab::reload(CompletionHandler<void(Error)>&& completionHandler)
+void WebExtensionTab::reload(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
+    static NSString * const apiName = @"tabs.reload()";
+
     if (!isValid() || !m_respondsToReload) {
         [mainWebView() reload];
-        completionHandler(std::nullopt);
+        completionHandler({ });
         return;
     }
 
     [m_delegate reloadForWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for reload: %{private}@", error);
-            completionHandler(error.localizedDescription);
+            completionHandler(toWebExtensionError(apiName, nil, error.localizedDescription));
             return;
         }
 
-        completionHandler(std::nullopt);
+        completionHandler({ });
     }).get()];
 }
 
-void WebExtensionTab::reloadFromOrigin(CompletionHandler<void(Error)>&& completionHandler)
+void WebExtensionTab::reloadFromOrigin(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
+    static NSString * const apiName = @"tabs.reload()";
+
     if (!isValid() || !m_respondsToReloadFromOrigin) {
         [mainWebView() reloadFromOrigin];
-        completionHandler(std::nullopt);
+        completionHandler({ });
         return;
     }
 
     [m_delegate reloadFromOriginForWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for reloadFromOrigin: %{private}@", error);
-            completionHandler(error.localizedDescription);
+            completionHandler(toWebExtensionError(apiName, nil, error.localizedDescription));
             return;
         }
 
-        completionHandler(std::nullopt);
+        completionHandler({ });
     }).get()];
 }
 
-void WebExtensionTab::goBack(CompletionHandler<void(Error)>&& completionHandler)
+void WebExtensionTab::goBack(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
+    static NSString * const apiName = @"tabs.goBack()";
+
     if (!isValid() || !m_respondsToGoBack) {
         [mainWebView() goBack];
-        completionHandler(std::nullopt);
+        completionHandler({ });
         return;
     }
 
     [m_delegate goBackForWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for goBack: %{private}@", error);
-            completionHandler(error.localizedDescription);
+            completionHandler(toWebExtensionError(apiName, nil, error.localizedDescription));
             return;
         }
 
-        completionHandler(std::nullopt);
+        completionHandler({ });
     }).get()];
 }
 
-void WebExtensionTab::goForward(CompletionHandler<void(Error)>&& completionHandler)
+void WebExtensionTab::goForward(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
+    static NSString * const apiName = @"tabs.goForward()";
+
     if (!isValid() || !m_respondsToGoForward) {
         [mainWebView() goForward];
-        completionHandler(std::nullopt);
+        completionHandler({ });
         return;
     }
 
     [m_delegate goForwardForWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for goForward: %{private}@", error);
-            completionHandler(error.localizedDescription);
+            completionHandler(toWebExtensionError(apiName, nil, error.localizedDescription));
             return;
         }
 
-        completionHandler(std::nullopt);
+        completionHandler({ });
     }).get()];
 }
 
-void WebExtensionTab::activate(CompletionHandler<void(Error)>&& completionHandler)
+void WebExtensionTab::activate(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
+    static NSString * const apiName = @"tabs.update()";
+
     if (!isValid() || !m_respondsToActivate) {
-        completionHandler(toErrorString(@"tabs.update()", nil, @"it is not implemented for 'active' set to `true`"));
+        completionHandler(toWebExtensionError(apiName, nil, @"it is not implemented for 'active' set to `true`"));
         return;
     }
 
     [m_delegate activateForWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for activate: %{private}@", error);
-            completionHandler(error.localizedDescription);
+            completionHandler(toWebExtensionError(apiName, nil, error.localizedDescription));
             return;
         }
 
-        completionHandler(std::nullopt);
+        completionHandler({ });
     }).get()];
 }
 
-void WebExtensionTab::select(CompletionHandler<void(Error)>&& completionHandler)
+void WebExtensionTab::select(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
+    static NSString * const apiName = @"tabs.update()";
+
     if (!isValid() || !m_respondsToSelect) {
-        completionHandler(toErrorString(@"tabs.update()", nil, @"it is not implemented for 'highlighted' or 'selected' set to `true`"));
+        completionHandler(toWebExtensionError(apiName, nil, @"it is not implemented for 'highlighted' or 'selected' set to `true`"));
         return;
     }
 
     [m_delegate selectForWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for select: %{private}@", error);
-            completionHandler(error.localizedDescription);
+            completionHandler(toWebExtensionError(apiName, nil, error.localizedDescription));
             return;
         }
 
-        completionHandler(std::nullopt);
+        completionHandler({ });
     }).get()];
 }
 
-void WebExtensionTab::deselect(CompletionHandler<void(Error)>&& completionHandler)
+void WebExtensionTab::deselect(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
+    static NSString * const apiName = @"tabs.update()";
+
     if (!isValid() || !m_respondsToDeselect) {
-        completionHandler(toErrorString(@"tabs.update()", nil, @"it is not implemented for 'highlighted' or 'selected' set to `false`"));
+        completionHandler(toWebExtensionError(apiName, nil, @"it is not implemented for 'highlighted' or 'selected' set to `false`"));
         return;
     }
 
     [m_delegate deselectForWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for deselect: %{private}@", error);
-            completionHandler(error.localizedDescription);
+            completionHandler(toWebExtensionError(apiName, nil, error.localizedDescription));
             return;
         }
 
-        completionHandler(std::nullopt);
+        completionHandler({ });
     }).get()];
 }
 
-void WebExtensionTab::duplicate(const WebExtensionTabParameters& parameters, CompletionHandler<void(RefPtr<WebExtensionTab>, Error)>&& completionHandler)
+void WebExtensionTab::duplicate(const WebExtensionTabParameters& parameters, CompletionHandler<void(Expected<RefPtr<WebExtensionTab>, WebExtensionError>&&)>&& completionHandler)
 {
     ASSERT(!parameters.audible);
     ASSERT(!parameters.loading);
@@ -826,8 +860,10 @@ void WebExtensionTab::duplicate(const WebExtensionTabParameters& parameters, Com
     ASSERT(!parameters.title);
     ASSERT(!parameters.url);
 
+    static NSString * const apiName = @"tabs.duplicate()";
+
     if (!isValid() || !m_respondsToDuplicate) {
-        completionHandler(nullptr, toErrorString(@"tabs.duplicate()", nil, @"it is not implemented"));
+        completionHandler(toWebExtensionError(apiName, nil, @"it is not implemented"));
         return;
     }
 
@@ -848,35 +884,37 @@ void WebExtensionTab::duplicate(const WebExtensionTabParameters& parameters, Com
     [m_delegate duplicateForWebExtensionContext:m_extensionContext->wrapper() withOptions:duplicateOptions completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](id<_WKWebExtensionTab> duplicatedTab, NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for duplicate: %{private}@", error);
-            completionHandler(nullptr, error.localizedDescription);
+            completionHandler(toWebExtensionError(apiName, nil, error.localizedDescription));
             return;
         }
 
         if (!duplicatedTab) {
-            completionHandler(nullptr, std::nullopt);
+            completionHandler({ });
             return;
         }
 
         THROW_UNLESS([duplicatedTab conformsToProtocol:@protocol(_WKWebExtensionTab)], @"Object passed to completionHandler of duplicateForWebExtensionContext:withOptions:completionHandler: does not conform to the _WKWebExtensionTab protocol");
-        completionHandler(m_extensionContext->getOrCreateTab(duplicatedTab), std::nullopt);
+        completionHandler(RefPtr { m_extensionContext->getOrCreateTab(duplicatedTab).ptr() });
     }).get()];
 }
 
-void WebExtensionTab::close(CompletionHandler<void(Error)>&& completionHandler)
+void WebExtensionTab::close(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
+    static NSString * const apiName = @"tabs.remove()";
+
     if (!isValid() || !m_respondsToClose) {
-        completionHandler(toErrorString(@"tabs.remove()", nil, @"it is not implemented"));
+        completionHandler(toWebExtensionError(apiName, nil, @"it is not implemented"));
         return;
     }
 
     [m_delegate closeForWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for tab close: %{private}@", error);
-            completionHandler(error.localizedDescription);
+            completionHandler(toWebExtensionError(apiName, nil, error.localizedDescription));
             return;
         }
 
-        completionHandler(std::nullopt);
+        completionHandler({ });
     }).get()];
 }
 

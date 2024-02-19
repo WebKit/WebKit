@@ -137,16 +137,6 @@ static inline NSDictionary *toWebAPI(const WebExtensionCookieParameters& cookieP
     return [result copy];
 }
 
-static inline NSArray *toWebAPI(const Vector<WebExtensionCookieParameters>& cookies)
-{
-    auto *result = [NSMutableArray arrayWithCapacity:cookies.size()];
-
-    for (auto& cookieParameters : cookies)
-        [result addObject:toWebAPI(cookieParameters)];
-
-    return [result copy];
-}
-
 static inline NSArray *toWebAPI(const HashMap<PAL::SessionID, Vector<WebExtensionTabIdentifier>>& stores)
 {
     auto *result = [NSMutableArray arrayWithCapacity:stores.size()];
@@ -220,18 +210,13 @@ void WebExtensionAPICookies::get(NSDictionary *details, Ref<WebExtensionCallback
 
     auto [sessionID, name, url] = WTFMove(parsedDetails.value());
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::CookiesGet(sessionID, name, url), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<WebExtensionCookieParameters> cookieParameters, WebExtensionContext::ErrorString error) {
-        if (error) {
-            callback->reportError(error.value());
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::CookiesGet(sessionID, name, url), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<std::optional<WebExtensionCookieParameters>, WebExtensionError>&& result) {
+        if (!result) {
+            callback->reportError(result.error());
             return;
         }
 
-        if (!cookieParameters) {
-            callback->call(NSNull.null);
-            return;
-        }
-
-        callback->call(toWebAPI(cookieParameters.value()));
+        callback->call(toWebAPI(result.value()));
     }, extensionContext().identifier());
 }
 
@@ -287,13 +272,13 @@ void WebExtensionAPICookies::getAll(NSDictionary *details, Ref<WebExtensionCallb
     if (details[sessionKey])
         filterParameters.session = objectForKey<NSNumber>(details, sessionKey).boolValue;
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::CookiesGetAll(sessionID, url, WTFMove(filterParameters)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](const Vector<WebExtensionCookieParameters>& cookies, WebExtensionContext::ErrorString error) {
-        if (error) {
-            callback->reportError(error.value());
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::CookiesGetAll(sessionID, url, WTFMove(filterParameters)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<Vector<WebExtensionCookieParameters>, WebExtensionError>&& result) {
+        if (!result) {
+            callback->reportError(result.error());
             return;
         }
 
-        callback->call(toWebAPI(cookies));
+        callback->call(toWebAPI(result.value()));
     }, extensionContext().identifier());
 }
 
@@ -349,18 +334,13 @@ void WebExtensionAPICookies::set(NSDictionary *details, Ref<WebExtensionCallback
         }
     }
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::CookiesSet(sessionID, cookieParameters), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<WebExtensionCookieParameters> cookieParameters, WebExtensionContext::ErrorString error) {
-        if (error) {
-            callback->reportError(error.value());
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::CookiesSet(sessionID, cookieParameters), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<std::optional<WebExtensionCookieParameters>, WebExtensionError>&& result) {
+        if (!result) {
+            callback->reportError(result.error());
             return;
         }
 
-        if (!cookieParameters) {
-            callback->call(NSNull.null);
-            return;
-        }
-
-        callback->call(toWebAPI(cookieParameters.value()));
+        callback->call(toWebAPI(result.value()));
     }, extensionContext().identifier());
 }
 
@@ -374,18 +354,13 @@ void WebExtensionAPICookies::remove(NSDictionary *details, Ref<WebExtensionCallb
 
     auto [sessionID, name, url] = WTFMove(parsedDetails.value());
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::CookiesRemove(sessionID, name, url), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<WebExtensionCookieParameters> cookieParameters, WebExtensionContext::ErrorString error) {
-        if (error) {
-            callback->reportError(error.value());
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::CookiesRemove(sessionID, name, url), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<std::optional<WebExtensionCookieParameters>, WebExtensionError>&& result) {
+        if (!result) {
+            callback->reportError(result.error());
             return;
         }
 
-        if (!cookieParameters) {
-            callback->call(NSNull.null);
-            return;
-        }
-
-        callback->call(toWebAPI(cookieParameters.value()));
+        callback->call(toWebAPI(result.value()));
     }, extensionContext().identifier());
 }
 
@@ -393,13 +368,13 @@ void WebExtensionAPICookies::getAllCookieStores(Ref<WebExtensionCallbackHandler>
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/cookies/getAllCookieStores
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::CookiesGetAllCookieStores(), [protectedThis = Ref { *this }, callback = WTFMove(callback)](const HashMap<PAL::SessionID, Vector<WebExtensionTabIdentifier>>& cookieStores, WebExtensionContext::ErrorString error) {
-        if (error) {
-            callback->reportError(error.value());
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::CookiesGetAllCookieStores(), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<HashMap<PAL::SessionID, Vector<WebExtensionTabIdentifier>>, WebExtensionError>&& result) {
+        if (!result) {
+            callback->reportError(result.error());
             return;
         }
 
-        callback->call(toWebAPI(cookieStores));
+        callback->call(toWebAPI(result.value()));
     }, extensionContext().identifier());
 }
 
