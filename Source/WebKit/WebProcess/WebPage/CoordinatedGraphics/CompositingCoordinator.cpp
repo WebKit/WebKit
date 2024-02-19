@@ -47,6 +47,8 @@
 
 #if USE(CAIRO)
 #include <WebCore/NicosiaPaintingEngine.h>
+#elif USE(SKIA)
+#include <WebCore/SkiaAcceleratedBufferPool.h>
 #endif
 
 #if USE(GLIB_EVENT_LOOP)
@@ -56,6 +58,19 @@
 namespace WebKit {
 using namespace WebCore;
 
+#if USE(SKIA)
+static bool skiaForceUseCpuRendering()
+{
+    static std::optional<bool> forceUseCpuRendering;
+    if (!forceUseCpuRendering.has_value()) {
+        const char* enableCPURendering = getenv("WEBKIT_SKIA_ENABLE_CPU_RENDERING");
+        forceUseCpuRendering = enableCPURendering && strcmp(enableCPURendering, "0");
+    }
+
+    return forceUseCpuRendering.value();
+}
+#endif
+
 CompositingCoordinator::CompositingCoordinator(WebPage& page, CompositingCoordinator::Client& client)
     : m_page(page)
     , m_client(client)
@@ -63,6 +78,11 @@ CompositingCoordinator::CompositingCoordinator(WebPage& page, CompositingCoordin
     , m_paintingEngine(Nicosia::PaintingEngine::create())
 #endif
 {
+#if USE(SKIA)
+    if (!skiaForceUseCpuRendering())
+        m_skiaAcceleratedBufferPool = makeUnique<SkiaAcceleratedBufferPool>();
+#endif
+
     m_nicosia.scene = Nicosia::Scene::create();
     m_nicosia.sceneIntegration = Nicosia::SceneIntegration::create(*m_nicosia.scene, *this);
 
@@ -88,6 +108,10 @@ void CompositingCoordinator::invalidate()
 
     m_rootLayer = nullptr;
     purgeBackingStores();
+
+#if USE(SKIA)
+    m_skiaAcceleratedBufferPool = nullptr;
+#endif
 }
 
 void CompositingCoordinator::setRootCompositingLayer(GraphicsLayer* graphicsLayer)

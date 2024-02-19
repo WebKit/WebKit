@@ -25,6 +25,7 @@
 #include "GraphicsContextSkia.h"
 #include "NicosiaBuffer.h"
 #include "PlatformDisplay.h"
+#include "SkiaAcceleratedBufferPool.h"
 #include <skia/core/SkCanvas.h>
 #include <skia/core/SkColorSpace.h>
 #include <skia/gpu/GrBackendSurface.h>
@@ -38,102 +39,6 @@
 #include <wtf/Vector.h>
 
 namespace WebCore {
-
-class AcceleratedBufferPool {
-    WTF_MAKE_FAST_ALLOCATED();
-public:
-    static AcceleratedBufferPool& singleton()
-    {
-        static std::unique_ptr<AcceleratedBufferPool> pool = makeUnique<AcceleratedBufferPool>();
-        return *pool;
-    }
-
-    AcceleratedBufferPool()
-        : m_releaseUnusedBuffersTimer(RunLoop::main(), this, &AcceleratedBufferPool::releaseUnusedBuffersTimerFired)
-    {
-    }
-
-    ~AcceleratedBufferPool()
-    {
-        if (m_buffers.isEmpty())
-            return;
-
-        auto* glContext = PlatformDisplay::sharedDisplayForCompositing().skiaGLContext();
-        GLContext::ScopedGLContextCurrent scopedCurrent(*glContext);
-        m_buffers.clear();
-    }
-
-    Ref<Nicosia::Buffer> acquireBuffer(const IntSize& size, bool supportsAlpha)
-    {
-        Entry* selectedEntry = std::find_if(m_buffers.begin(), m_buffers.end(), [&](Entry& entry) {
-            return entry.m_buffer->refCount() == 1 && entry.m_buffer->size() == size && entry.m_buffer->supportsAlpha() == supportsAlpha;
-        });
-
-        if (selectedEntry == m_buffers.end()) {
-            m_buffers.append(Entry(createAcceleratedBuffer(size, supportsAlpha)));
-            selectedEntry = &m_buffers.last();
-        }
-
-        scheduleReleaseUnusedBuffers();
-        selectedEntry->markIsInUse();
-        return selectedEntry->m_buffer.copyRef();
-    }
-
-private:
-    struct Entry {
-        explicit Entry(Ref<Nicosia::Buffer>&& buffer)
-            : m_buffer(WTFMove(buffer))
-        {
-        }
-
-        void markIsInUse() { m_lastUsedTime = MonotonicTime::now(); }
-        bool canBeReleased (MonotonicTime minUsedTime) const { return m_lastUsedTime < minUsedTime && m_buffer->refCount() == 1; }
-
-        Ref<Nicosia::Buffer> m_buffer;
-        MonotonicTime m_lastUsedTime;
-    };
-
-    Ref<Nicosia::Buffer> createAcceleratedBuffer(const IntSize& size, bool supportsAlpha)
-    {
-        auto* grContext = PlatformDisplay::sharedDisplayForCompositing().skiaGrContext();
-        auto imageInfo = SkImageInfo::MakeN32Premul(size.width(), size.height());
-        auto surface = SkSurfaces::RenderTarget(grContext, skgpu::Budgeted::kNo, imageInfo, 0, kTopLeft_GrSurfaceOrigin, nullptr);
-        return Nicosia::AcceleratedBuffer::create(WTFMove(surface), supportsAlpha ? Nicosia::Buffer::SupportsAlpha : Nicosia::Buffer::NoFlags);
-    }
-
-    void scheduleReleaseUnusedBuffers()
-    {
-        if (m_releaseUnusedBuffersTimer.isActive())
-            return;
-
-        static const Seconds releaseUnusedBuffersTimerInterval { 500_ms };
-        m_releaseUnusedBuffersTimer.startOneShot(releaseUnusedBuffersTimerInterval);
-    }
-
-    void releaseUnusedBuffersTimerFired()
-    {
-        if (m_buffers.isEmpty())
-            return;
-
-        // Delete entries, which have been unused in releaseUnusedSecondsTolerance.
-        static const Seconds releaseUnusedSecondsTolerance { 3_s };
-        MonotonicTime minUsedTime = MonotonicTime::now() - releaseUnusedSecondsTolerance;
-
-        {
-            auto* glContext = PlatformDisplay::sharedDisplayForCompositing().skiaGLContext();
-            GLContext::ScopedGLContextCurrent scopedCurrent(*glContext);
-            m_buffers.removeAllMatching([&minUsedTime](const Entry& entry) {
-                return entry.canBeReleased(minUsedTime);
-            });
-        }
-
-        if (!m_buffers.isEmpty())
-            scheduleReleaseUnusedBuffers();
-    }
-
-    Vector<Entry> m_buffers;
-    RunLoop::Timer m_releaseUnusedBuffersTimer;
-};
 
 Ref<Nicosia::Buffer> CoordinatedGraphicsLayer::paintTile(const IntRect& tileRect, const IntRect& mappedTileRect, float contentsScale)
 {
@@ -156,17 +61,16 @@ Ref<Nicosia::Buffer> CoordinatedGraphicsLayer::paintTile(const IntRect& tileRect
         buffer.completePainting();
     };
 
-    static const char* enableCPURendering = getenv("WEBKIT_SKIA_ENABLE_CPU_RENDERING");
-    if (enableCPURendering && strcmp(enableCPURendering, "0")) {
-        auto buffer = Nicosia::UnacceleratedBuffer::create(tileRect.size(), contentsOpaque() ? Nicosia::Buffer::NoFlags : Nicosia::Buffer::SupportsAlpha);
+    if (auto* acceleratedBufferPool = m_coordinator->skiaAcceleratedBufferPool()) {
+        auto* glContext = PlatformDisplay::sharedDisplayForCompositing().skiaGLContext();
+        RELEASE_ASSERT(glContext);
+        GLContext::ScopedGLContextCurrent scopedCurrent(*glContext);
+        auto buffer = acceleratedBufferPool->acquireBuffer(tileRect.size(), !contentsOpaque());
         paintBuffer(buffer.get());
         return buffer;
     }
 
-    auto* glContext = PlatformDisplay::sharedDisplayForCompositing().skiaGLContext();
-    RELEASE_ASSERT(glContext);
-    GLContext::ScopedGLContextCurrent scopedCurrent(*glContext);
-    auto buffer = AcceleratedBufferPool::singleton().acquireBuffer(tileRect.size(), !contentsOpaque());
+    auto buffer = Nicosia::UnacceleratedBuffer::create(tileRect.size(), contentsOpaque() ? Nicosia::Buffer::NoFlags : Nicosia::Buffer::SupportsAlpha);
     paintBuffer(buffer.get());
     return buffer;
 }

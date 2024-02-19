@@ -40,6 +40,7 @@
 #if USE(SKIA)
 namespace WebCore {
 class BitmapTexture;
+class SkiaAcceleratedBufferPool;
 }
 #endif
 
@@ -60,6 +61,8 @@ public:
     virtual void attachLayer(CoordinatedGraphicsLayer*) = 0;
 #if USE(CAIRO)
     virtual Nicosia::PaintingEngine& paintingEngine() = 0;
+#elif USE(SKIA)
+    virtual SkiaAcceleratedBufferPool* skiaAcceleratedBufferPool() const = 0;
 #endif
     virtual RefPtr<Nicosia::ImageBackingStore> imageBackingStore(uint64_t, Function<RefPtr<Nicosia::Buffer>()>) = 0;
 };
