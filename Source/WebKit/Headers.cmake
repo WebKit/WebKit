@@ -21,6 +21,7 @@ set(WebKit_PUBLIC_FRAMEWORK_HEADERS
     Shared/API/c/WKPageLoadTypes.h
     Shared/API/c/WKPageVisibilityTypes.h
     Shared/API/c/WKPluginInformation.h
+    Shared/API/c/WKRegisterTZoneTypes.h
     Shared/API/c/WKSecurityOriginRef.h
     Shared/API/c/WKSerializedScriptValue.h
     Shared/API/c/WKString.h

@@ -270,7 +270,6 @@ Shared/API/APIDictionary.cpp
 Shared/API/APIError.cpp
 Shared/API/APIObject.cpp
 Shared/API/APIURLRequest.cpp
-Shared/API/RegisterTZoneTypes.cpp
 
 Shared/API/c/WKArray.cpp
 Shared/API/c/WKCertificateInfo.cpp
@@ -286,6 +285,7 @@ Shared/API/c/WKMutableArray.cpp
 Shared/API/c/WKMutableDictionary.cpp
 Shared/API/c/WKNumber.cpp
 Shared/API/c/WKPluginInformation.cpp
+Shared/API/c/WKRegisterTZoneTypes.cpp
 Shared/API/c/WKRenderLayer.cpp
 Shared/API/c/WKRenderObject.cpp
 Shared/API/c/WKSecurityOriginRef.cpp

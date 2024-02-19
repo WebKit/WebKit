@@ -27,7 +27,7 @@
 #import "WKMain.h"
 
 #import "PCMDaemonEntryPoint.h"
-#import "RegisterTZoneTypes.h"
+#import "WKRegisterTZoneTypes.h"
 #import "WebPushDaemonMain.h"
 #import "WebPushToolMain.h"
 #import <JavaScriptCore/TZoneInit.h>
@@ -36,7 +36,7 @@
 int WKXPCServiceMain(int argc, const char** argv, const char**, const char** darwinEnvp)
 {
     TZoneInit(darwinEnvp);
-    WebKit::registerTZoneTypes();
+    WKRegisterTZoneTypes();
     TZoneRegisterationDone();
 
     return WebKit::XPCServiceMain(argc, argv);

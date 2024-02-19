@@ -28,8 +28,14 @@
 
 #pragma once
 
-namespace WebKit {
+#include <WebKit/WKBase.h>
 
-void registerTZoneTypes();
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-} // namespace WebKit
+WK_EXPORT void WKRegisterTZoneTypes(void);
+
+#ifdef __cplusplus
+}
+#endif

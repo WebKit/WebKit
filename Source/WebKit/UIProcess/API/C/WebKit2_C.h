@@ -55,6 +55,7 @@
 #include <WebKit/WKPageConfigurationRef.h>
 #include <WebKit/WKPageGroup.h>
 #include <WebKit/WKPreferencesRef.h>
+#include <WebKit/WKRegisterTZoneTypes.h>
 #include <WebKit/WKString.h>
 #include <WebKit/WKURL.h>
 #include <WebKit/WKURLRequest.h>

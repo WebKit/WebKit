@@ -27,22 +27,18 @@
  */
 
 #include "config.h"
-#include "RegisterTZoneTypes.h"
+#include "WKRegisterTZoneTypes.h"
 
 #include <wtf/TZoneMalloc.h>
-
-namespace WebKit {
 
 #if USE(WK_TZONE_MALLOC)
 extern const bmalloc::api::TZoneAnnotation startOfTZoneTypes __asm("section$start$__DATA_CONST$__tzone_descs");
 extern const bmalloc::api::TZoneAnnotation endOfTZoneTypes __asm("section$end$__DATA_CONST$__tzone_descs");
 
-void registerTZoneTypes()
+void WKRegisterTZoneTypes()
 {
     WTF_TZONE_REGISTER_TYPES(&startOfTZoneTypes, &endOfTZoneTypes);
 }
 #else
-void registerTZoneTypes() { }
+void WKRegisterTZoneTypes() { }
 #endif
-
-} // namespace WebKit
