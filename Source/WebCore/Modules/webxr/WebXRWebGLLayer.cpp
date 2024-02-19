@@ -195,7 +195,7 @@ const WebGLFramebuffer* WebXRWebGLLayer::framebuffer() const
 unsigned WebXRWebGLLayer::framebufferWidth() const
 {
     if (m_framebuffer)
-        return m_framebuffer->width();
+        return m_framebuffer->drawFramebufferSize().width();
     return WTF::switchOn(m_context,
         [&](const RefPtr<WebGLRenderingContextBase>& baseContext) {
             return baseContext->drawingBufferWidth();
@@ -205,7 +205,7 @@ unsigned WebXRWebGLLayer::framebufferWidth() const
 unsigned WebXRWebGLLayer::framebufferHeight() const
 {
     if (m_framebuffer)
-        return m_framebuffer->height();
+        return m_framebuffer->drawFramebufferSize().height();
     return WTF::switchOn(m_context,
         [&](const RefPtr<WebGLRenderingContextBase>& baseContext) {
             return baseContext->drawingBufferHeight();
