@@ -44,10 +44,15 @@ static int s_uniqueId = 0;
 static bool isValidBCP47LanguageTag(const String&);
 
 #if !RELEASE_LOG_DISABLED
-static RefPtr<Logger>& nullLogger()
+static Ref<Logger> nullLogger(TrackBase& track)
 {
-    static NeverDestroyed<RefPtr<Logger>> logger;
-    return logger;
+    static std::once_flag onceKey;
+    static LazyNeverDestroyed<Ref<Logger>> logger;
+    std::call_once(onceKey, [&] {
+        logger.construct(Logger::create(&track));
+        logger.get()->setEnabled(&track, false);
+    });
+    return logger.get();
 }
 #endif
 
@@ -66,12 +71,7 @@ TrackBase::TrackBase(ScriptExecutionContext* context, Type type, const std::opti
     m_type = type;
 
 #if !RELEASE_LOG_DISABLED
-    if (!nullLogger().get()) {
-        nullLogger() = Logger::create(this);
-        nullLogger()->setEnabled(this, false);
-    }
-
-    m_logger = nullLogger().get();
+    m_logger = nullLogger(*this);
 #endif
 }
 

@@ -92,6 +92,9 @@ imported/w3c/web-platform-tests/payment-request/payment-request-abort-method.htt
 imported/w3c/web-platform-tests/payment-request/payment-request-show-method.https.html [ WontFix ]
 imported/w3c/web-platform-tests/payment-request/rejects_if_not_active.https.html [ WontFix ]
 
+imported/w3c/web-platform-tests/media-source/dedicated-worker/ [ Pass ]
+# Test has non deterministic output as it measures how many main thread loops it takes to execute action in worker.
+imported/w3c/web-platform-tests/media-source/dedicated-worker/mediasource-worker-play-terminate-worker.html [ Pass Failure ]
 http/tests/security/contentSecurityPolicy/manifest-src-allowed.html [ Pass ]
 http/tests/security/contentSecurityPolicy/manifest-src-blocked.html [ Pass ]
 http/wpt/content-security-policy/sandbox-manifest-blocked.html [ Pass ]

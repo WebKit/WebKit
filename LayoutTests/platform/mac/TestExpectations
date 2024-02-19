@@ -833,6 +833,7 @@ platform/mac/fast/text/systemFont.html [ Pass Failure ]
 ## --- Start W3C Imported Media Source Tests
 # Failing Media Source tests
 imported/w3c/web-platform-tests/media-source/ [ Pass ]
+imported/w3c/web-platform-tests/media-source/dedicated-worker/ [ Skip ]
 webkit.org/b/161725 imported/w3c/web-platform-tests/media-source/URL-createObjectURL-revoke.html [ Skip ]
 webkit.org/b/161725 imported/w3c/web-platform-tests/media-source/mediasource-append-buffer.html [ Skip ]
 webkit.org/b/161725 imported/w3c/web-platform-tests/media-source/mediasource-appendbuffer-quota-exceeded.html [ Skip ]

@@ -675,6 +675,8 @@ public:
     const String& spatialTrackingLabel() const;
     void setSpatialTrackingLabel(String&&);
 
+    void mediaSourceWasDetached();
+
 protected:
     HTMLMediaElement(const QualifiedName&, Document&, bool createdByParser);
     virtual ~HTMLMediaElement();

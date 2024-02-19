@@ -207,6 +207,16 @@ MediaSource::MediaSource(ScriptExecutionContext& context)
 MediaSource::~MediaSource()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
+#if ENABLE(MEDIA_SOURCE_IN_WORKERS)
+    if (!isMainThread()) {
+        // When deleted on a worker; the HTMLMediaElement wouldn't have started the deletion.
+        // We need to manually detach ourselves and notify the HTMLMediaElement.
+        ensureWeakOnHTMLMediaElementContext([](auto& mediaElement) {
+            mediaElement.mediaSourceWasDetached();
+        });
+        detachFromElement();
+    }
+#endif
     ASSERT(isClosed());
 }
 
@@ -249,13 +259,16 @@ void MediaSource::setPrivateAndOpen(Ref<MediaSourcePrivate>&& mediaSourcePrivate
         return;
     }
 
+    // ↳ Otherwise
+    // 1. Set the MediaSource's [[has ever been attached]] internal slot to true.
 #if ENABLE(MEDIA_SOURCE_IN_WORKERS)
-    if (m_handle)
+    if (m_handle) {
+        m_handle->setHasEverBeenAssignedAsSrcObject();
         m_handle->mediaSourceDidOpen(*m_private);
+    }
 #endif
 
-    // ↳ Otherwise
-    // 1. Set the media element's delaying-the-load-event-flag to false.
+    // 2. Set the media element's delaying-the-load-event-flag to false.
     ensureWeakOnHTMLMediaElementContext([](auto& mediaElement) {
         mediaElement.setShouldDelayLoadEvent(false);
     });
@@ -1145,10 +1158,6 @@ bool MediaSource::attachToElement(WeakPtr<HTMLMediaElement>&& element)
     ASSERT(isClosed());
 
     m_mediaElement = WTFMove(element);
-#if ENABLE(MEDIA_SOURCE_IN_WORKERS)
-    if (m_handle)
-        m_handle->setHasEverBeenAssignedAsSrcObject();
-#endif
     return true;
 }
 
