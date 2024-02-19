@@ -122,6 +122,7 @@ private:
     Ref<const RuleSet> m_authorStyle;
     RefPtr<const RuleSet> m_userStyle;
     RefPtr<const RuleSet> m_userAgentMediaQueryStyle;
+    RefPtr<const RuleSet> m_dynamicViewTransitionsStyle;
     SelectorMatchingState* m_selectorMatchingState;
 
     bool m_shouldIncludeEmptyRules { false };

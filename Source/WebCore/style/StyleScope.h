@@ -65,6 +65,7 @@ namespace Style {
 
 class CustomPropertyRegistry;
 class Resolver;
+class RuleSet;
 
 class Scope : public CanMakeWeakPtr<Scope>, public CanMakeCheckedPtr {
     WTF_MAKE_FAST_ALLOCATED;
@@ -128,6 +129,8 @@ public:
     Resolver* resolverIfExists() { return m_resolver.get(); }
     void clearResolver();
     void releaseMemory();
+
+    void clearViewTransitionStyles();
 
     const Document& document() const { return m_document; }
     Document& document() { return m_document; }
@@ -210,6 +213,8 @@ private:
 
     Vector<RefPtr<StyleSheet>> m_styleSheetsForStyleSheetList;
     Vector<RefPtr<CSSStyleSheet>> m_activeStyleSheets;
+
+    mutable RefPtr<RuleSet> m_dynamicViewTransitionsStyle;
 
     Timer m_pendingUpdateTimer;
 

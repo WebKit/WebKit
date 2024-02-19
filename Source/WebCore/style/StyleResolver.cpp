@@ -61,6 +61,7 @@
 #include "RenderView.h"
 #include "ResolvedStyle.h"
 #include "RuleSet.h"
+#include "RuleSetBuilder.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGElement.h"
 #include "SVGFontFaceElement.h"
@@ -629,7 +630,7 @@ void Resolver::applyMatchedProperties(State& state, const MatchResult& matchResu
     auto hasUsableEntry = cacheEntry && MatchedDeclarationsCache::isCacheable(element, style, parentStyle);
     if (hasUsableEntry) {
         // We can build up the style by copying non-inherited properties from an earlier style object built using the same exact
-        // style declarations. We then only need to apply the inherited properties, if any, as their values can depend on the 
+        // style declarations. We then only need to apply the inherited properties, if any, as their values can depend on the
         // element context. This is fast and saves memory by reusing the style data structures.
         style.copyNonInheritedFrom(*cacheEntry->renderStyle);
 
@@ -717,6 +718,28 @@ bool Resolver::hasViewportDependentMediaQueries() const
 std::optional<DynamicMediaQueryEvaluationChanges> Resolver::evaluateDynamicMediaQueries()
 {
     return m_ruleSets.evaluateDynamicMediaQueryRules(m_mediaQueryEvaluator);
+}
+
+
+void Resolver::setViewTransitionGroupStyles(const AtomString& name, Ref<MutableStyleProperties> properties)
+{
+    if (!m_document)
+        return;
+
+    auto* viewTransitionsStyle = m_ruleSets.dynamicViewTransitionsStyle();
+    RuleSetBuilder builder(*viewTransitionsStyle, mediaQueryEvaluator(), this);
+    CSSSelectorParserContext context(*m_document.get());
+
+    MutableCSSSelectorList selectorList;
+    selectorList.append(MutableCSSSelector::parsePseudoClassSelector("root"_s, context));
+    auto groupSelector = MutableCSSSelector::parsePseudoElementSelector("view-transition-group"_s, context);
+    groupSelector->setArgumentList({ { name } });
+
+    selectorList.first()->appendTagHistory(CSSSelector::Relation::Subselector, WTFMove(groupSelector));
+
+    auto styleRule = StyleRule::create(WTFMove(properties), true, CSSSelectorList(WTFMove(selectorList)));
+
+    builder.addStyleRule(styleRule);
 }
 
 } // namespace Style

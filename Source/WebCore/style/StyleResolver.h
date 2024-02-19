@@ -118,6 +118,8 @@ public:
     std::unique_ptr<RenderStyle> styleForKeyframe(const Element&, const RenderStyle& elementStyle, const ResolutionContext&, const StyleRuleKeyframe&, BlendingKeyframe&);
     bool isAnimationNameValid(const String&);
 
+    void setViewTransitionGroupStyles(const AtomString&, Ref<MutableStyleProperties>);
+
     // These methods will give back the set of rules that matched for a given element (or a pseudo-element).
     enum CSSRuleFilter {
         UAAndUserCSSRules   = 1 << 1,
