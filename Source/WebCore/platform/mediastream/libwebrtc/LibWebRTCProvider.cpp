@@ -30,6 +30,7 @@
 
 #include "ContentType.h"
 #include "LibWebRTCAudioModule.h"
+#include "LibWebRTCUtils.h"
 #include "Logging.h"
 #include "MediaCapabilitiesDecodingInfo.h"
 #include "MediaCapabilitiesEncodingInfo.h"
@@ -424,11 +425,6 @@ static inline std::optional<cricket::MediaType> typeFromKind(const String& kind)
     if (kind == "video"_s)
         return cricket::MediaType::MEDIA_TYPE_VIDEO;
     return { };
-}
-
-static inline String fromStdString(const std::string& value)
-{
-    return String::fromUTF8(value.data(), value.length());
 }
 
 static inline std::optional<uint16_t> toChannels(absl::optional<int> numChannels)
