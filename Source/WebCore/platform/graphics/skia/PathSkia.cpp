@@ -30,6 +30,7 @@
 #include "GraphicsContextSkia.h"
 #include "NotImplemented.h"
 #include "PathStream.h"
+#include <skia/core/SkPathUtils.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
@@ -268,13 +269,19 @@ bool PathSkia::contains(const FloatPoint& point, WindRule windRule) const
     return m_platformPath.contains(x, y);
 }
 
-bool PathSkia::strokeContains(const FloatPoint&, const Function<void(GraphicsContext&)>&) const
+bool PathSkia::strokeContains(const FloatPoint& point, const Function<void(GraphicsContext&)>& strokeStyleApplier) const
 {
-    if (isEmpty())
+    if (isEmpty() || !std::isfinite(point.x()) || !std::isfinite(point.y()))
         return false;
 
-    notImplemented();
-    return false;
+    GraphicsContextSkia graphicsContext(SkSurfaces::Null(1, 1));
+    strokeStyleApplier(graphicsContext);
+
+    // FIXME: Compute stroke precision.
+    SkPaint paint = graphicsContext.createStrokeStylePaint();
+    SkPath strokePath;
+    skpathutils::FillPathWithPaint(m_platformPath, paint, &strokePath, nullptr);
+    return strokePath.contains(SkScalar(point.x()), SkScalar(point.y()));
 }
 
 FloatRect PathSkia::fastBoundingRect() const

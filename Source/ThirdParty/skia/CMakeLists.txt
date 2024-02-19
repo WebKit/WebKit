@@ -602,6 +602,7 @@ add_library(Skia STATIC
     src/image/SkRescaleAndReadPixels.cpp
     src/image/SkSurface.cpp
     src/image/SkSurface_Base.cpp
+    src/image/SkSurface_Null.cpp
     src/image/SkSurface_Raster.cpp
 
     src/effects/Sk1DPathEffect.cpp

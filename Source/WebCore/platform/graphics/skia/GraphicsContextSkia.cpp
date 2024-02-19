@@ -41,7 +41,6 @@
 #include <skia/core/SkRRect.h>
 #include <skia/core/SkRegion.h>
 #include <skia/core/SkTileMode.h>
-#include <skia/effects/SkDashPathEffect.h>
 #include <skia/effects/SkImageFilters.h>
 #include <wtf/MathExtras.h>
 
@@ -325,19 +324,24 @@ SkPaint GraphicsContextSkia::createFillPaint(std::optional<Color> fillColor) con
     return paint;
 }
 
+SkPaint GraphicsContextSkia::createStrokeStylePaint() const
+{
+    SkPaint paint;
+    paint.setStyle(SkPaint::kStroke_Style);
+    paint.setStrokeCap(m_skiaState.m_stroke.cap);
+    paint.setStrokeJoin(m_skiaState.m_stroke.join);
+    paint.setStrokeMiter(m_skiaState.m_stroke.miter);
+    paint.setStrokeWidth(SkFloatToScalar(state().strokeThickness()));
+    paint.setPathEffect(m_skiaState.m_stroke.dash);
+    return paint;
+}
+
 SkPaint GraphicsContextSkia::createStrokePaint(std::optional<Color> strokeColor) const
 {
     const auto& state = this->state();
 
-    SkPaint paint;
+    SkPaint paint = createStrokeStylePaint();
     paint.setAntiAlias(true);
-    paint.setStyle(SkPaint::kStroke_Style);
-
-    // Additional state information from SkiaState
-    paint.setStrokeCap(m_skiaState.m_stroke.cap);
-    paint.setStrokeJoin(m_skiaState.m_stroke.join);
-    paint.setStrokeMiter(m_skiaState.m_stroke.miter);
-    paint.setStrokeWidth(SkFloatToScalar(state.strokeThickness()));
 
     if (auto strokePattern = state.strokeBrush().pattern())
         paint.setShader(strokePattern->createPlatformPattern({ }));
@@ -347,9 +351,6 @@ SkPaint GraphicsContextSkia::createStrokePaint(std::optional<Color> strokeColor)
         auto [r, g, b, a] = strokeColor.value_or(state.strokeBrush().color()).toColorTypeLossy<SRGBA<uint8_t>>().resolved();
         paint.setColor(SkColorSetARGB(a, r, g, b));
     }
-
-    if (!m_skiaState.m_dash.array.isEmpty())
-        paint.setPathEffect(SkDashPathEffect::Make(m_skiaState.m_dash.array.data(), m_skiaState.m_dash.array.size(), m_skiaState.m_dash.offset));
 
     return paint;
 }
@@ -555,8 +556,12 @@ void GraphicsContextSkia::setLineDash(const DashArray& dashArray, float dashOffs
 {
     ASSERT(!(dashArray.size() % 2));
 
-    m_skiaState.m_dash.array = dashArray;
-    m_skiaState.m_dash.offset = dashOffset;
+    if (dashArray.isEmpty()) {
+        m_skiaState.m_stroke.dash = nullptr;
+        return;
+    }
+
+    m_skiaState.m_stroke.dash = SkDashPathEffect::Make(dashArray.data(), dashArray.size(), dashOffset);
 }
 
 void GraphicsContextSkia::setLineJoin(LineJoin lineJoin)
