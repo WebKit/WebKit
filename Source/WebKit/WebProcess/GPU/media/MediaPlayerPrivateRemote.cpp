@@ -432,7 +432,7 @@ void MediaPlayerPrivateRemote::readyStateChanged(RemoteMediaPlayerState&& state,
 
     updateCachedState(WTFMove(state));
     setReadyState(readyState);
-
+    checkAcceleratedRenderingState();
 }
 
 void MediaPlayerPrivateRemote::volumeChanged(double volume)
@@ -574,7 +574,17 @@ bool MediaPlayerPrivateRemote::supportsAcceleratedRendering() const
 void MediaPlayerPrivateRemote::acceleratedRenderingStateChanged()
 {
     if (auto player = m_player.get()) {
+        m_renderingCanBeAccelerated = player->renderingCanBeAccelerated();
         connection().send(Messages::RemoteMediaPlayerProxy::AcceleratedRenderingStateChanged(player->renderingCanBeAccelerated()), m_id);
+    }
+}
+
+void MediaPlayerPrivateRemote::checkAcceleratedRenderingState()
+{
+    if (auto player = m_player.get()) {
+        bool renderingCanBeAccelerated = player->renderingCanBeAccelerated();
+        if (m_renderingCanBeAccelerated != renderingCanBeAccelerated)
+            acceleratedRenderingStateChanged();
     }
 }
 
@@ -583,8 +593,9 @@ void MediaPlayerPrivateRemote::updateConfiguration(RemoteMediaPlayerConfiguratio
     bool oldSupportsAcceleraterRendering = supportsAcceleratedRendering();
     m_configuration = WTFMove(configuration);
     // player->renderingCanBeAccelerated() result is dependent on m_configuration.supportsAcceleratedRendering value.
-    if (RefPtr player = m_player.get(); player && oldSupportsAcceleraterRendering != supportsAcceleratedRendering())
-        player->renderingModeChanged();
+    if (oldSupportsAcceleraterRendering != supportsAcceleratedRendering())
+        renderingModeChanged();
+    checkAcceleratedRenderingState();
 }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -1021,8 +1032,7 @@ void MediaPlayerPrivateRemote::setVideoFullscreenLayer(PlatformLayer* videoFulls
     m_videoLayerManager->setVideoFullscreenLayer(videoFullscreenLayer, WTFMove(completionHandler), nullptr);
 #endif
     // A Fullscreen layer has been set, this could update the value returned by player->renderingCanBeAccelerated().
-    if (RefPtr player = m_player.get())
-        player->renderingModeChanged();
+    checkAcceleratedRenderingState();
 }
 
 void MediaPlayerPrivateRemote::updateVideoFullscreenInlineImage()

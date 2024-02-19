@@ -362,6 +362,7 @@ private:
 
     bool supportsAcceleratedRendering() const final;
     void acceleratedRenderingStateChanged() final;
+    void checkAcceleratedRenderingState();
 
     void setShouldMaintainAspectRatio(bool) final;
 
@@ -507,6 +508,7 @@ private:
     std::atomic<bool> m_seeking { false };
     bool m_isCurrentPlaybackTargetWireless { false };
     bool m_waitingForKey { false };
+    bool m_renderingCanBeAccelerated { false };
     std::optional<bool> m_shouldMaintainAspectRatio;
     std::optional<bool> m_pageIsVisible;
     RefPtr<RemoteVideoFrameProxy> m_videoFrameForCurrentTime;
