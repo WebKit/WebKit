@@ -1,0 +1,5 @@
+
+PASS Check cues from resources/alignment.vtt
+PASS Check cues from resources/alignment-ltr.vtt
+PASS Check cues from resources/alignment-bad.vtt
+
