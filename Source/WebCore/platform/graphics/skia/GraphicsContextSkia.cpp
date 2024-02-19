@@ -339,11 +339,9 @@ SkPaint GraphicsContextSkia::createStrokePaint(std::optional<Color> strokeColor)
     paint.setStrokeMiter(m_skiaState.m_stroke.miter);
     paint.setStrokeWidth(SkFloatToScalar(state.strokeThickness()));
 
-    if (auto strokePattern = state.strokeBrush().pattern()) {
-        // FIXME: Implement stroke patterns.
-        UNUSED_PARAM(strokePattern);
-        notImplemented();
-    } else if (auto strokeGradient = state.strokeBrush().gradient())
+    if (auto strokePattern = state.strokeBrush().pattern())
+        paint.setShader(strokePattern->createPlatformPattern({ }));
+    else if (auto strokeGradient = state.strokeBrush().gradient())
         paint.setShader(strokeGradient->shader(state.alpha(), state.strokeBrush().gradientSpaceTransform()));
     else {
         auto [r, g, b, a] = strokeColor.value_or(state.strokeBrush().color()).toColorTypeLossy<SRGBA<uint8_t>>().resolved();
