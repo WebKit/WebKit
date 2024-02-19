@@ -102,31 +102,35 @@ void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChain
         1,
         &effectiveFormat,
     };
-    WGPUTextureViewDescriptor wgpuTextureViewDescriptor = {
-        nullptr,
-        descriptor.label,
-        effectiveFormat,
-        WGPUTextureViewDimension_2D,
-        0,
-        1,
-        0,
-        1,
-        WGPUTextureAspect_All,
-    };
     MTLTextureDescriptor *textureDescriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:Texture::pixelFormat(effectiveFormat) width:width height:height mipmapped:NO];
     textureDescriptor.usage = Texture::usage(descriptor.usage, effectiveFormat);
+    bool needsLuminanceClampFunction = false;
     for (IOSurface *iosurface in m_ioSurfaces) {
+        RefPtr<Texture> parentLuminanceClampTexture;
+        if (textureDescriptor.pixelFormat == MTLPixelFormatRGBA16Float) {
+            auto existingUsage = textureDescriptor.usage;
+            textureDescriptor.usage |= MTLTextureUsageShaderRead;
+            id<MTLTexture> luminanceClampTexture = [device.device() newTextureWithDescriptor:textureDescriptor];
+            luminanceClampTexture.label = fromAPI(descriptor.label);
+            auto viewFormats = Vector<WGPUTextureFormat> { Texture::pixelFormat(effectiveFormat) };
+            parentLuminanceClampTexture = Texture::create(luminanceClampTexture, wgpuTextureDescriptor, WTFMove(viewFormats), device);
+            parentLuminanceClampTexture->makeCanvasBacking();
+            textureDescriptor.pixelFormat = MTLPixelFormatBGRA8Unorm;
+            textureDescriptor.usage = existingUsage | MTLTextureUsageShaderWrite;
+            needsLuminanceClampFunction = true;
+        }
+
         id<MTLTexture> texture = [device.device() newTextureWithDescriptor:textureDescriptor iosurface:bridge_cast(iosurface) plane:0];
         texture.label = fromAPI(descriptor.label);
         auto viewFormats = Vector<WGPUTextureFormat> { Texture::pixelFormat(effectiveFormat) };
         auto parentTexture = Texture::create(texture, wgpuTextureDescriptor, WTFMove(viewFormats), device);
         parentTexture->makeCanvasBacking();
-        m_renderBuffers.append({ parentTexture, TextureView::create(texture, wgpuTextureViewDescriptor, { { width, height, 1 } }, parentTexture, device) });
+        m_renderBuffers.append({ parentTexture, parentLuminanceClampTexture });
     }
     ASSERT(m_ioSurfaces.count == m_renderBuffers.size());
 
     if (!allowedFormat(descriptor.format)) {
-        device.generateAValidationError("Requested texture format BGRA8UnormStorage is not enabled"_s);
+        device.generateAValidationError([NSString stringWithFormat:@"Requested texture format %s is not a valid context format", Texture::formatToString(descriptor.format)]);
         return;
     }
 
@@ -146,6 +150,44 @@ void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChain
         device.generateAValidationError("Requested storage format but BGRA8UnormStorage is not enabled"_s);
         return;
     }
+
+    if (needsLuminanceClampFunction) {
+        NSError *error = nil;
+        MTLCompileOptions* options = [MTLCompileOptions new];
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        options.fastMathEnabled = YES;
+        ALLOW_DEPRECATED_DECLARATIONS_END
+        id<MTLDevice> device = m_device->device();
+        /* NOLINT */ id<MTLLibrary> library = [device newLibraryWithSource:@R"(
+    using namespace metal;
+    constant float3x3 rgbToYCbCr = float3x3(
+        float3(0.2126, 0.7152, 0.0722),
+        float3(-0.1146, -0.3854, 0.5),
+        float3(0.5, -0.4542, -0.0458));
+    constant float3x3 yCbCrToRGB = float3x3(
+        float3(1, 0, 1.5748),
+        float3(1, -0.1873, -0.4681),
+        float3(1, 1.8556, 0));
+    kernel void luminanceClamp(texture2d<float, access::read>  inTexture  [[texture(0)]],
+        texture2d<float, access::write> outTexture [[texture(1)]],
+        uint2 gid [[thread_position_in_grid]])
+    {
+        if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height())
+            return;
+
+        float4 inColor  = inTexture.read(gid);
+        float3 yCbCr = rgbToYCbCr * inColor.rgb;
+        yCbCr.x = clamp(yCbCr.x, 0., 1.);
+        float3 outColor = yCbCrToRGB * yCbCr;
+        outTexture.write(float4(outColor, 1), gid);
+    })" /* NOLINT */ options:options error:&error];
+        if (error) {
+            WTFLogAlways("%@", error);
+            return;
+        }
+        m_luminanceClampFunction = [library newFunctionWithName:@"luminanceClamp"];
+        m_computePipelineState = [device newComputePipelineStateWithFunction:m_luminanceClampFunction error:&error];
+    }
 }
 
 void PresentationContextIOSurface::unconfigure()
@@ -159,6 +201,29 @@ void PresentationContextIOSurface::unconfigure()
 void PresentationContextIOSurface::present()
 {
     ASSERT(m_ioSurfaces.count == m_renderBuffers.size());
+    auto& textureRefPtr = m_renderBuffers[m_currentIndex].luminanceClampTexture;
+    if (Texture* texturePtr = textureRefPtr.get()) {
+        MTLCommandBufferDescriptor *descriptor = [MTLCommandBufferDescriptor new];
+        descriptor.errorOptions = MTLCommandBufferErrorOptionEncoderExecutionStatus;
+        id<MTLCommandBuffer> commandBuffer = m_device->getQueue().commandBufferWithDescriptor(descriptor);
+        MTLComputePassDescriptor* computeDescriptor = [MTLComputePassDescriptor new];
+        computeDescriptor.dispatchType = MTLDispatchTypeSerial;
+
+        id<MTLComputeCommandEncoder> computeEncoder = [commandBuffer computeCommandEncoderWithDescriptor:computeDescriptor];
+        [computeEncoder setComputePipelineState:m_computePipelineState];
+        id<MTLTexture> inputTexture = texturePtr->texture();
+        [computeEncoder setTexture:inputTexture atIndex:0];
+        [computeEncoder setTexture:m_renderBuffers[m_currentIndex].texture->texture() atIndex:1];
+        auto threadgroupSize = MTLSizeMake(16, 16, 1);
+
+        MTLSize threadgroupCount;
+        threadgroupCount.width  = (inputTexture.width  + threadgroupSize.width -  1) / threadgroupSize.width;
+        threadgroupCount.height = (inputTexture.height + threadgroupSize.height - 1) / threadgroupSize.height;
+        threadgroupCount.depth = 1;
+        [computeEncoder dispatchThreadgroups:threadgroupCount threadsPerThreadgroup:threadgroupSize];
+        [computeEncoder endEncoding];
+        m_device->getQueue().commitMTLCommandBuffer(commandBuffer);
+    }
     m_currentIndex = (m_currentIndex + 1) % m_renderBuffers.size();
 }
 
@@ -167,6 +232,11 @@ Texture* PresentationContextIOSurface::getCurrentTexture()
     if (m_ioSurfaces.count != m_renderBuffers.size() || m_renderBuffers.size() <= m_currentIndex)
         return nullptr;
 
+    auto& texturePtr = m_renderBuffers[m_currentIndex].luminanceClampTexture;
+    if (texturePtr.get()) {
+        texturePtr->recreateIfNeeded();
+        return texturePtr.get();
+    }
     auto& texture = m_renderBuffers[m_currentIndex].texture;
     texture->recreateIfNeeded();
     return texture.ptr();
@@ -174,10 +244,8 @@ Texture* PresentationContextIOSurface::getCurrentTexture()
 
 TextureView* PresentationContextIOSurface::getCurrentTextureView()
 {
-    if (m_ioSurfaces.count != m_renderBuffers.size() || m_renderBuffers.size() <= m_currentIndex)
-        return nullptr;
-
-    return m_renderBuffers[m_currentIndex].textureView.ptr();
+    RELEASE_ASSERT_NOT_REACHED();
+    return nullptr;
 }
 
 } // namespace WebGPU

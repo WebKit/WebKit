@@ -58,11 +58,13 @@ private:
     NSArray<IOSurface *> *m_ioSurfaces { nil };
     struct RenderBuffer {
         Ref<Texture> texture;
-        Ref<TextureView> textureView;
+        RefPtr<Texture> luminanceClampTexture;
     };
     Vector<RenderBuffer> m_renderBuffers;
     RefPtr<Device> m_device;
     size_t m_currentIndex { 0 };
+    id<MTLFunction> m_luminanceClampFunction;
+    id<MTLComputePipelineState> m_computePipelineState;
 };
 
 } // namespace WebGPU
