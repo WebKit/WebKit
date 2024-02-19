@@ -761,12 +761,7 @@ end
 macro doReturn()
     restoreCalleeSavesUsedByWasm()
     restoreCallerPCAndCFR()
-    if ARM64E
-        leap _g_config, ws0
-        jmp JSCConfigGateMapOffset + (constexpr Gate::returnFromLLInt) * PtrSize[ws0], NativeToJITGatePtrTag
-    else
-        ret
-    end
+    ret
 end
 
 # Entry point
@@ -777,6 +772,17 @@ op(wasm_function_prologue, macro ()
     end
 
     wasmPrologue()
+
+    if ARM64E
+        call _wasm_function_prologue_return_thru_returnFromLLInt
+        pop lr, cfr
+        leap _g_config, ws0
+        jmp JSCConfigGateMapOffset + (constexpr Gate::returnFromLLInt) * PtrSize[ws0], NativeToJITGatePtrTag
+        break
+_wasm_function_prologue_return_thru_returnFromLLInt:
+        push cfr, lr
+    end
+
     wasmNextInstruction()
 end)
 

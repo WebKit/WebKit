@@ -704,6 +704,12 @@ end
 #         end
 #     )
 #
+# LLIntSlowPaths.h
+# extern "C" __attribute__((__used__)) __attribute__((visibility("hidden"))) void cProbeCallbackFunction(uint64_t);
+# LLIntSlowPaths.cpp:
+# extern "C" void cProbeCallbackFunction(uint64_t arg0) {}
+#
+
 if X86_64 or ARM64 or ARM64E or ARMv7
     macro probe(action)
         # save all the registers that the LLInt may use.
