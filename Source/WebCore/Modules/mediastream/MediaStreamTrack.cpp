@@ -382,7 +382,7 @@ static MediaConstraints createMediaConstraints(const std::optional<MediaTrackCon
 void MediaStreamTrack::applyConstraints(const std::optional<MediaTrackConstraints>& constraints, DOMPromiseDeferred<void>&& promise)
 {
     if (m_ended) {
-        promise.reject(Exception { ExceptionCode::InvalidAccessError, "Track has ended"_s });
+        promise.resolve();
         return;
     }
 
