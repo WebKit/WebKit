@@ -616,7 +616,7 @@ void GraphicsContextGLCocoa::destroyPbufferAndDetachIOSurface(void* handle)
     WebCore::destroyPbufferAndDetachIOSurface(m_displayObj, handle);
 }
 
-GCEGLImage GraphicsContextGLCocoa::createAndBindEGLImage(GCGLenum target, EGLImageSource source)
+GCEGLImage GraphicsContextGLCocoa::createAndBindEGLImage(GCGLenum target, EGLImageSource source, GCGLint layer)
 {
     EGLDeviceEXT eglDevice = EGL_NO_DEVICE_EXT;
     if (!EGL_QueryDisplayAttribEXT(platformDisplay(), EGL_DEVICE_EXT, reinterpret_cast<EGLAttrib*>(&eglDevice)))
@@ -665,8 +665,8 @@ GCEGLImage GraphicsContextGLCocoa::createAndBindEGLImage(GCGLenum target, EGLIma
         return nullptr;
 
     // Create an EGLImage out of the MTLTexture
-    constexpr EGLint emptyAttributes[] = { EGL_NONE };
-    auto eglImage = EGL_CreateImageKHR(platformDisplay(), EGL_NO_CONTEXT, EGL_METAL_TEXTURE_ANGLE, reinterpret_cast<EGLClientBuffer>(texture.get()), emptyAttributes);
+    const EGLint attributes[] = { EGL_METAL_TEXTURE_ARRAY_SLICE_ANGLE, layer, EGL_NONE };
+    auto eglImage = EGL_CreateImageKHR(platformDisplay(), EGL_NO_CONTEXT, EGL_METAL_TEXTURE_ANGLE, reinterpret_cast<EGLClientBuffer>(texture.get()), attributes);
     if (!eglImage)
         return nullptr;
 

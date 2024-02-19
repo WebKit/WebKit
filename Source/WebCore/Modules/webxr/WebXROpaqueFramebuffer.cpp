@@ -58,7 +58,7 @@ static GCEGLImage createAndBindCompositorTexture(GL& gl, GCGLenum target, GCGLOw
     gl.texParameteri(target, GL::TEXTURE_WRAP_S, GL::CLAMP_TO_EDGE);
     gl.texParameteri(target, GL::TEXTURE_WRAP_T, GL::CLAMP_TO_EDGE);
 
-    auto image = gl.createAndBindEGLImage(target, source);
+    auto image = gl.createAndBindEGLImage(target, source, 0);
     if (!image)
         texture.release(gl);
 
@@ -73,7 +73,7 @@ static GCEGLImage createAndBindCompositorBuffer(GL& gl, GCGLOwnedRenderbuffer& b
     buffer.adopt(gl, object);
     gl.bindRenderbuffer(GL::RENDERBUFFER, buffer);
 
-    auto image = gl.createAndBindEGLImage(GL::RENDERBUFFER, source);
+    auto image = gl.createAndBindEGLImage(GL::RENDERBUFFER, source, 0);
     if (!image)
         buffer.release(gl);
 

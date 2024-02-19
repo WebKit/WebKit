@@ -68,7 +68,7 @@ public:
     void* createPbufferAndAttachIOSurface(GCGLenum target, PbufferAttachmentUsage, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height, GCGLenum type, IOSurfaceRef, GCGLuint plane);
     void destroyPbufferAndDetachIOSurface(void* handle);
 
-    GCEGLImage createAndBindEGLImage(GCGLenum, EGLImageSource) final;
+    GCEGLImage createAndBindEGLImage(GCGLenum, EGLImageSource, GCGLint) final;
 
     RetainPtr<id> newSharedEventWithMachPort(mach_port_t);
     GCEGLSync createEGLSync(ExternalEGLSyncEvent) final;
