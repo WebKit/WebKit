@@ -774,6 +774,11 @@ TextStream& operator<<(TextStream& stream, AXObjectCache::AXNotification notific
     case AXObjectCache::AXNotification::AXTextCompositionChanged:
         stream << "AXTextCompositionChanged";
         break;
+#if ENABLE(AX_THREAD_TEXT_APIS)
+    case AXObjectCache::AXNotification::AXTextRunsChanged:
+        stream << "AXTextRunsChanged";
+        break;
+#endif
     case AXObjectCache::AXNotification::AXTextSecurityChanged:
         stream << "AXTextSecurityChanged";
         break;

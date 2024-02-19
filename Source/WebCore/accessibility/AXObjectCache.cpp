@@ -1371,6 +1371,13 @@ void AXObjectCache::handleRowspanChanged(AccessibilityTableCell& axCell)
 }
 #endif
 
+#if ENABLE(AX_THREAD_TEXT_APIS)
+void AXObjectCache::onTextRunsChanged(const RenderObject& renderer)
+{
+    postNotification(const_cast<RenderObject*>(&renderer), AXTextRunsChanged);
+}
+#endif
+
 void AXObjectCache::handleMenuOpened(Node* node)
 {
     if (!node || !node->renderer() || !nodeHasRole(node, "menu"_s))
@@ -4393,6 +4400,11 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
         case AXTextCompositionChanged:
             tree->queueNodeUpdate(notification.first->objectID(), { AXPropertyName::TextInputMarkedTextMarkerRange });
             break;
+#if ENABLE(AX_THREAD_TEXT_APIS)
+        case AXTextRunsChanged:
+            tree->queueNodeUpdate(notification.first->objectID(), { AXPropertyName::TextRuns });
+            break;
+#endif
         case AXURLChanged:
             tree->queueNodeUpdate(notification.first->objectID(), { { AXPropertyName::URL, AXPropertyName::InternalLinkElement } });
             break;

@@ -4038,6 +4038,11 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
         else if (!renderer.isOutOfFlowPositioned())
             renderer.clearNeedsLayout();
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE) && ENABLE(AX_THREAD_TEXT_APIS)
+        if (auto* cache = document().existingAXObjectCache())
+            cache->onTextRunsChanged(renderer);
+#endif
+
         if (CheckedPtr renderCombineText = dynamicDowncast<RenderCombineText>(renderer)) {
             renderCombineText->combineTextIfNeeded();
             continue;

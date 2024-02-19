@@ -218,7 +218,9 @@ public:
 #if PLATFORM(MAC)
     void onSelectedTextChanged(const VisiblePositionRange&);
 #endif
-
+#if ENABLE(AX_THREAD_TEXT_APIS)
+    void onTextRunsChanged(const RenderObject&);
+#endif
     void updateLoadingProgress(double);
     void loadingFinished() { updateLoadingProgress(1); }
     double loadingProgress() const { return m_loadingProgress; }
@@ -428,6 +430,9 @@ public:
         AXSortDirectionChanged,
         AXTextChanged,
         AXTextCompositionChanged,
+#if ENABLE(AX_THREAD_TEXT_APIS)
+        AXTextRunsChanged,
+#endif
         AXTextSecurityChanged,
         AXElementBusyChanged,
         AXDraggingStarted,
