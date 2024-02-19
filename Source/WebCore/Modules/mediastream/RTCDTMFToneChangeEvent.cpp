@@ -46,13 +46,13 @@ Ref<RTCDTMFToneChangeEvent> RTCDTMFToneChangeEvent::create(const AtomString& typ
 }
 
 RTCDTMFToneChangeEvent::RTCDTMFToneChangeEvent(const String& tone)
-    : Event(EventInterfaceType::RTCDTMFToneChangeEvent, eventNames().tonechangeEvent, CanBubble::No, IsCancelable::No)
+    : Event(eventNames().tonechangeEvent, CanBubble::No, IsCancelable::No)
     , m_tone(tone)
 {
 }
 
 RTCDTMFToneChangeEvent::RTCDTMFToneChangeEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
-    : Event(EventInterfaceType::RTCDTMFToneChangeEvent, type, initializer, isTrusted)
+    : Event(type, initializer, isTrusted)
     , m_tone(initializer.tone)
 {
 }

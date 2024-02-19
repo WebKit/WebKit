@@ -248,7 +248,7 @@ bool SharingResolver::canShareStyleWithElement(const Context& context, const Sty
     if (candidateElement.matchesDefaultPseudoClass() != element.matchesDefaultPseudoClass())
         return false;
 
-    if (candidateElement.hasKeyframeEffects(std::nullopt))
+    if (candidateElement.hasKeyframeEffects(PseudoId::None))
         return false;
 
     // Turn off style sharing for elements that can gain layers for reasons outside of the style system.

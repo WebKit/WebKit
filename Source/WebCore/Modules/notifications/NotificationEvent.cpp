@@ -48,7 +48,7 @@ Ref<NotificationEvent> NotificationEvent::create(const AtomString& type, Notific
 }
 
 NotificationEvent::NotificationEvent(const AtomString& type, NotificationEventInit&& eventInit, Notification* notification, const String& action, IsTrusted isTrusted)
-    : ExtendableEvent(EventInterfaceType::NotificationEvent, type, WTFMove(eventInit), isTrusted)
+    : ExtendableEvent(type, WTFMove(eventInit), isTrusted)
     , m_notification(notification)
     , m_action(action)
 {

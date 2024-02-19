@@ -37,11 +37,11 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(SpeechSynthesisEvent);
 
 Ref<SpeechSynthesisEvent> SpeechSynthesisEvent::create(const AtomString& type, const SpeechSynthesisEventInit& initializer)
 {
-    return adoptRef(*new SpeechSynthesisEvent(EventInterfaceType::SpeechSynthesisEvent, type, initializer));
+    return adoptRef(*new SpeechSynthesisEvent(type, initializer));
 }
 
-SpeechSynthesisEvent::SpeechSynthesisEvent(enum EventInterfaceType eventInterface, const AtomString& type, const SpeechSynthesisEventInit& initializer)
-    : Event(eventInterface, type, CanBubble::No, IsCancelable::No)
+SpeechSynthesisEvent::SpeechSynthesisEvent(const AtomString& type, const SpeechSynthesisEventInit& initializer)
+    : Event(type, CanBubble::No, IsCancelable::No)
     , m_utterance(initializer.utterance)
     , m_charIndex(initializer.charIndex)
     , m_charLength(initializer.charLength)

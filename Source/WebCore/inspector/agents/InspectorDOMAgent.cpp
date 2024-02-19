@@ -571,14 +571,14 @@ void InspectorDOMAgent::discardBindings()
 
 static Element* elementToPushForStyleable(const Styleable& styleable)
 {
-    auto* element = &styleable.element;
     // FIXME: We want to get rid of PseudoElement.
-    if (styleable.pseudoElementIdentifier) {
-        if (styleable.pseudoElementIdentifier->pseudoId == PseudoId::Before)
-            return element->beforePseudoElement();
-        if (styleable.pseudoElementIdentifier->pseudoId == PseudoId::After)
-            return element->afterPseudoElement();
-    }
+    auto* element = &styleable.element;
+
+    if (styleable.pseudoId == PseudoId::Before)
+        element = element->beforePseudoElement();
+    else if (styleable.pseudoId == PseudoId::After)
+        element = element->afterPseudoElement();
+
     return element;
 }
 
@@ -702,9 +702,8 @@ Ref<Inspector::Protocol::DOM::Styleable> InspectorDOMAgent::pushStyleablePathToF
         .setNodeId(nodeId)
         .release();
 
-    // FIXME: This should support PseudoElementIdentifier name argument.
-    if (styleable.pseudoElementIdentifier) {
-        if (auto pseudoId = InspectorCSSAgent::protocolValueForPseudoId(styleable.pseudoElementIdentifier->pseudoId))
+    if (styleable.pseudoId != PseudoId::None) {
+        if (auto pseudoId = InspectorCSSAgent::protocolValueForPseudoId(styleable.pseudoId))
             protocolStyleable->setPseudoId(*pseudoId);
     }
 

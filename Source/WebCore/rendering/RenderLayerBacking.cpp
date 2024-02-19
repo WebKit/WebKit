@@ -1412,12 +1412,6 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
 
     auto primaryLayerPosition = primaryGraphicsLayerRect.location();
 
-    // If our content is being used in a view-transition, then all positioning
-    // is handled using a synthesized 'transform' property on the wrapping
-    // ::view-transition-new element.
-    if (renderer().hasViewTransition())
-        primaryLayerPosition = { };
-
     // FIXME: reflections should force transform-style to be flat in the style: https://bugs.webkit.org/show_bug.cgi?id=106959
     bool preserves3D = style.preserves3D() && !renderer().hasReflection();
 

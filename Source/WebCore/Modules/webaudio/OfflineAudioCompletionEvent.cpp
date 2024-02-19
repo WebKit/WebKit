@@ -51,13 +51,13 @@ Ref<OfflineAudioCompletionEvent> OfflineAudioCompletionEvent::create(const AtomS
 }
 
 OfflineAudioCompletionEvent::OfflineAudioCompletionEvent(Ref<AudioBuffer>&& renderedBuffer)
-    : Event(EventInterfaceType::OfflineAudioCompletionEvent, eventNames().completeEvent, CanBubble::Yes, IsCancelable::No)
+    : Event(eventNames().completeEvent, CanBubble::Yes, IsCancelable::No)
     , m_renderedBuffer(WTFMove(renderedBuffer))
 {
 }
 
 OfflineAudioCompletionEvent::OfflineAudioCompletionEvent(const AtomString& eventType, OfflineAudioCompletionEventInit&& init)
-    : Event(EventInterfaceType::OfflineAudioCompletionEvent, eventType, init, IsTrusted::No)
+    : Event(eventType, init, IsTrusted::No)
     , m_renderedBuffer(init.renderedBuffer.releaseNonNull())
 {
 }

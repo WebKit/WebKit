@@ -1,7 +1,0 @@
-A green 10px offset underline 4px thick
-A blue 20px offset underline 2px thick
-
-PASS getComputedStyle() for root element
-PASS getComputedStyle() for root highlight applied to div
-PASS getComputedStyle() for div specific highlight
-

@@ -36,13 +36,13 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebKitMediaKeyNeededEvent);
 
 WebKitMediaKeyNeededEvent::WebKitMediaKeyNeededEvent(const AtomString& type, Uint8Array* initData)
-    : Event(EventInterfaceType::WebKitMediaKeyNeededEvent, type, CanBubble::No, IsCancelable::No)
+    : Event(type, CanBubble::No, IsCancelable::No)
     , m_initData(initData)
 {
 }
 
 WebKitMediaKeyNeededEvent::WebKitMediaKeyNeededEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
-    : Event(EventInterfaceType::WebKitMediaKeyNeededEvent, type, initializer, isTrusted)
+    : Event(type, initializer, isTrusted)
     , m_initData(initializer.initData)
 {
 }

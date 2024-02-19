@@ -36,7 +36,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(ApplePayPaymentAuthorizedEvent);
 
 ApplePayPaymentAuthorizedEvent::ApplePayPaymentAuthorizedEvent(const AtomString& type, unsigned version, const Payment& payment)
-    : Event(EventInterfaceType::ApplePayPaymentAuthorizedEvent, type, CanBubble::No, IsCancelable::No)
+    : Event(type, CanBubble::No, IsCancelable::No)
     , m_payment(payment.toApplePayPayment(version))
 {
 }

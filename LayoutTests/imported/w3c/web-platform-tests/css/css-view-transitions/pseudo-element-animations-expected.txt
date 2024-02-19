@@ -1,3 +1,0 @@
-
-PASS CSS Animations on view transitions are canceled and restarted when the view transition starts and ends.
-

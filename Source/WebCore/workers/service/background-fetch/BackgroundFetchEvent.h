@@ -43,7 +43,7 @@ public:
     RefPtr<BackgroundFetchRegistration> registration() const;
 
 protected:
-    BackgroundFetchEvent(enum EventInterfaceType, const AtomString&, ExtendableEventInit&&, RefPtr<BackgroundFetchRegistration>&&, IsTrusted);
+    BackgroundFetchEvent(const AtomString&, ExtendableEventInit&&, RefPtr<BackgroundFetchRegistration>&&, IsTrusted);
 
 private:
     RefPtr<BackgroundFetchRegistration> m_registration;

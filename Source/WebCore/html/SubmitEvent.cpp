@@ -45,12 +45,12 @@ Ref<SubmitEvent> SubmitEvent::create(RefPtr<HTMLElement>&& submitter)
 }
 
 SubmitEvent::SubmitEvent(const AtomString& type, Init&& init)
-    : Event(EventInterfaceType::SubmitEvent, type, init, IsTrusted::No)
+    : Event(type, init, IsTrusted::No)
     , m_submitter(WTFMove(init.submitter))
 { }
 
 SubmitEvent::SubmitEvent(RefPtr<HTMLElement>&& submitter)
-    : Event(EventInterfaceType::SubmitEvent, eventNames().submitEvent, CanBubble::Yes, IsCancelable::Yes)
+    : Event(eventNames().submitEvent, CanBubble::Yes, IsCancelable::Yes)
     , m_submitter(WTFMove(submitter))
 { }
 

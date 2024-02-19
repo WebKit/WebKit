@@ -6,7 +6,7 @@ PASS Originating element container for ::after
 PASS Originating element container for ::marker
 PASS Originating element container for ::first-line
 PASS Originating element container for ::first-letter
-PASS Originating element container  for ::highlight
+FAIL Originating element container  for ::highlight assert_equals: expected "20px" but got ""
 PASS Originating element container for outer ::first-line
 PASS Originating element container for outer ::first-letter
 PASS Originating element container for ::backdrop

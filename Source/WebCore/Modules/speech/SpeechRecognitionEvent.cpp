@@ -44,14 +44,14 @@ Ref<SpeechRecognitionEvent> SpeechRecognitionEvent::create(const AtomString& typ
 }
 
 SpeechRecognitionEvent::SpeechRecognitionEvent(const AtomString& type, Init&& init, IsTrusted isTrusted)
-    : Event(EventInterfaceType::SpeechRecognitionEvent, type, init, isTrusted)
+    : Event(type, init, isTrusted)
     , m_resultIndex(init.resultIndex)
     , m_results(WTFMove(init.results))
 {
 }
 
 SpeechRecognitionEvent::SpeechRecognitionEvent(const AtomString& type, uint64_t resultIndex, RefPtr<SpeechRecognitionResultList>&& results)
-    : Event(EventInterfaceType::SpeechRecognitionEvent, type, Event::CanBubble::No, Event::IsCancelable::No)
+    : Event(type, Event::CanBubble::No, Event::IsCancelable::No)
     , m_resultIndex(resultIndex)
     , m_results(WTFMove(results))
 {

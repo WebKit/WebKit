@@ -48,7 +48,6 @@
 #include "ProcessingInstruction.h"
 #include "RenderBoxInlines.h"
 #include "RenderView.h"
-#include "RuleSet.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGStyleElement.h"
 #include "Settings.h"
@@ -115,11 +114,6 @@ void Scope::createDocumentResolver()
 
     m_resolver = Resolver::create(m_document, Resolver::ScopeType::Document);
 
-    if (!m_dynamicViewTransitionsStyle)
-        m_dynamicViewTransitionsStyle = RuleSet::create();
-
-    m_resolver->ruleSets().setDynamicViewTransitionsStyle(m_dynamicViewTransitionsStyle.get());
-
     m_document->fontSelector().buildStarted();
 
     m_resolver->ruleSets().initializeUserStyle();
@@ -180,12 +174,6 @@ void Scope::clearResolver()
     m_resolver = nullptr;
     customPropertyRegistry().clearRegisteredFromStylesheets();
     counterStyleRegistry().clearAuthorCounterStyles();
-}
-
-void Scope::clearViewTransitionStyles()
-{
-    clearResolver();
-    m_dynamicViewTransitionsStyle = nullptr;
 }
 
 void Scope::releaseMemory()

@@ -56,7 +56,7 @@ public:
     unsigned short attrChange() const { return m_attrChange; }
 
 private:
-    MutationEvent();
+    MutationEvent() = default;
     MutationEvent(const AtomString& type, CanBubble, IsCancelable, Node* relatedNode, const String& prevValue, const String& newValue);
 
     EventInterface eventInterface() const final;

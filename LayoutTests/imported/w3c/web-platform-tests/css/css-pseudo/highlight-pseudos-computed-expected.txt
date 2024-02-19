@@ -31,7 +31,7 @@ PASS getComputedStyle() for ::grammar-error(foo) should return an empty CSSStyle
 PASS getComputedStyle() for ::grammar-error() should return an empty CSSStyleDeclaration
 PASS getComputedStyle() for :::grammar-error should return an empty CSSStyleDeclaration
 PASS getComputedStyle() for ::grammar-error. should return an empty CSSStyleDeclaration
-PASS getComputedStyle() for ::highlight(foo)
+FAIL getComputedStyle() for ::highlight(foo) assert_equals: Background color is green. expected "rgb(0, 128, 0)" but got ""
 PASS getComputedStyle() for ::highlight(foo): should return an empty CSSStyleDeclaration
 PASS getComputedStyle() for ::highlight(foo)) should return an empty CSSStyleDeclaration
 PASS getComputedStyle() for ::highlight(foo)( should return an empty CSSStyleDeclaration
@@ -39,5 +39,5 @@ PASS getComputedStyle() for ::highlight(foo)(foo) should return an empty CSSStyl
 PASS getComputedStyle() for ::highlight(foo)() should return an empty CSSStyleDeclaration
 PASS getComputedStyle() for :::highlight(foo) should return an empty CSSStyleDeclaration
 PASS getComputedStyle() for ::highlight(foo). should return an empty CSSStyleDeclaration
-PASS Different getComputedStyle() for ::highlight(bar) and same element
+FAIL Different getComputedStyle() for ::highlight(bar) and same element assert_equals: Background color is blue. expected "rgb(0, 0, 255)" but got ""
 

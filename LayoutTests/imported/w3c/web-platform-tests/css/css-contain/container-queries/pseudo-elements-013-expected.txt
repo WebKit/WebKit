@@ -1,5 +1,5 @@
 
-PASS Initial text-decoration-thickness for highlight pseudo
-PASS text-decoration-thickness for highlight pseudo depending on container
-PASS text-decoration-thickness for highlight pseudo depending on container only defined in a query
+FAIL Initial text-decoration-thickness for highlight pseudo assert_equals: expected "0px" but got ""
+FAIL text-decoration-thickness for highlight pseudo depending on container assert_equals: expected "30px" but got ""
+FAIL text-decoration-thickness for highlight pseudo depending on container only defined in a query assert_equals: expected "30px" but got ""
 

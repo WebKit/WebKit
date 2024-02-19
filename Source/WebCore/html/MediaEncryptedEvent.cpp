@@ -39,7 +39,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(MediaEncryptedEvent);
 
 MediaEncryptedEvent::MediaEncryptedEvent(const AtomString& type, const MediaEncryptedEventInit& initializer, IsTrusted isTrusted)
-    : Event(EventInterfaceType::MediaEncryptedEvent, type, initializer, isTrusted)
+    : Event(type, initializer, isTrusted)
     , m_initDataType(initializer.initDataType)
     , m_initData(initializer.initData)
 {

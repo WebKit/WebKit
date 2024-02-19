@@ -7,6 +7,6 @@ PASS getComputedStyle() for ::spelling-error at #target1
 PASS getComputedStyle() for ::spelling-error at #target2
 PASS getComputedStyle() for ::grammar-error at #target1
 PASS getComputedStyle() for ::grammar-error at #target2
-PASS getComputedStyle() for ::highlight(foo) at #target1
-PASS getComputedStyle() for ::highlight(foo) at #target2
+FAIL getComputedStyle() for ::highlight(foo) at #target1 assert_equals: Color is lime. expected "rgb(0, 255, 0)" but got ""
+FAIL getComputedStyle() for ::highlight(foo) at #target2 assert_equals: Color is lime. expected "rgb(0, 255, 0)" but got ""
 

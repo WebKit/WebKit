@@ -529,7 +529,7 @@ static inline ExceptionOr<void> processPropertyIndexedKeyframes(JSGlobalObject& 
 
 ExceptionOr<Ref<KeyframeEffect>> KeyframeEffect::create(JSGlobalObject& lexicalGlobalObject, Document& document, Element* target, Strong<JSObject>&& keyframes, std::optional<std::variant<double, KeyframeEffectOptions>>&& options)
 {
-    auto keyframeEffect = adoptRef(*new KeyframeEffect(target, { }));
+    auto keyframeEffect = adoptRef(*new KeyframeEffect(target, PseudoId::None));
     keyframeEffect->m_document = document;
 
     if (options) {
@@ -573,20 +573,20 @@ ExceptionOr<Ref<KeyframeEffect>> KeyframeEffect::create(JSGlobalObject& lexicalG
 
 Ref<KeyframeEffect> KeyframeEffect::create(Ref<KeyframeEffect>&& source)
 {
-    auto keyframeEffect = adoptRef(*new KeyframeEffect(nullptr, { }));
+    auto keyframeEffect = adoptRef(*new KeyframeEffect(nullptr, PseudoId::None));
     keyframeEffect->copyPropertiesFromSource(WTFMove(source));
     return keyframeEffect;
 }
 
-Ref<KeyframeEffect> KeyframeEffect::create(const Element& target, const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
+Ref<KeyframeEffect> KeyframeEffect::create(const Element& target, PseudoId pseudoId)
 {
-    return adoptRef(*new KeyframeEffect(const_cast<Element*>(&target), pseudoElementIdentifier));
+    return adoptRef(*new KeyframeEffect(const_cast<Element*>(&target), pseudoId));
 }
 
-KeyframeEffect::KeyframeEffect(Element* target, const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
+KeyframeEffect::KeyframeEffect(Element* target, PseudoId pseudoId)
     : m_keyframesName(makeAtomString("keyframe-effect-"_s, WTF::UUID::createVersion4Weak()))
     , m_target(target)
-    , m_pseudoElementIdentifier(pseudoElementIdentifier)
+    , m_pseudoId(pseudoId)
 {
     if (m_target)
         m_document = m_target->document();
@@ -595,7 +595,7 @@ KeyframeEffect::KeyframeEffect(Element* target, const std::optional<Style::Pseud
 void KeyframeEffect::copyPropertiesFromSource(Ref<KeyframeEffect>&& source)
 {
     m_target = source->m_target;
-    m_pseudoElementIdentifier = source->m_pseudoElementIdentifier;
+    m_pseudoId = source->m_pseudoId;
     m_document = source->m_document;
     m_compositeOperation = source->m_compositeOperation;
     m_iterationCompositeOperation = source->m_iterationCompositeOperation;
@@ -659,7 +659,8 @@ auto KeyframeEffect::getKeyframes() -> Vector<ComputedKeyframe>
     auto* lastStyleChangeEventStyle = targetStyleable()->lastStyleChangeEventStyle();
     auto& elementStyle = lastStyleChangeEventStyle ? *lastStyleChangeEventStyle : currentStyle();
 
-    ComputedStyleExtractor computedStyleExtractor { target, false, m_pseudoElementIdentifier };
+    auto pseudoElementIdentifier = m_pseudoId == PseudoId::None ? std::nullopt : std::optional(Style::PseudoElementIdentifier { m_pseudoId });
+    ComputedStyleExtractor computedStyleExtractor { target, false, pseudoElementIdentifier };
 
     BlendingKeyframes computedBlendingKeyframes(m_blendingKeyframes.animationName());
     computedBlendingKeyframes.copyKeyframes(m_blendingKeyframes);
@@ -693,10 +694,10 @@ auto KeyframeEffect::getKeyframes() -> Vector<ComputedKeyframe>
 
     auto styleProperties = MutableStyleProperties::create();
     if (m_animationType == WebAnimationType::CSSAnimation) {
-        auto matchingRules = m_target->styleResolver().pseudoStyleRulesForElement(target, m_pseudoElementIdentifier, Style::Resolver::AllCSSRules);
+        auto matchingRules = m_target->styleResolver().pseudoStyleRulesForElement(target, m_pseudoId, Style::Resolver::AllCSSRules);
         for (auto& matchedRule : matchingRules)
             styleProperties->mergeAndOverrideOnConflict(matchedRule->properties());
-        if (auto* target = dynamicDowncast<StyledElement>(m_target.get()); target && !m_pseudoElementIdentifier) {
+        if (auto* target = dynamicDowncast<StyledElement>(m_target.get()); target && m_pseudoId == PseudoId::None) {
             if (auto* inlineProperties = target->inlineStyle())
                 styleProperties->mergeAndOverrideOnConflict(*inlineProperties);
         }
@@ -1195,13 +1196,13 @@ void KeyframeEffect::setAnimation(WebAnimation* animation)
 const std::optional<const Styleable> KeyframeEffect::targetStyleable() const
 {
     if (m_target)
-        return Styleable(*m_target, m_pseudoElementIdentifier);
+        return Styleable(*m_target, m_pseudoId);
     return std::nullopt;
 }
 
 bool KeyframeEffect::targetsPseudoElement() const
 {
-    return m_target.get() && m_pseudoElementIdentifier;
+    return m_target.get() && m_pseudoId != PseudoId::None;
 }
 
 void KeyframeEffect::setTarget(RefPtr<Element>&& newTarget)
@@ -1224,22 +1225,22 @@ const String KeyframeEffect::pseudoElement() const
     // The target pseudo-selector. null if this effect has no effect target or if the effect target is an element (i.e. not a pseudo-element).
     // When the effect target is a pseudo-element, this specifies the pseudo-element selector (e.g. ::before).
     if (targetsPseudoElement())
-        return pseudoElementIdentifierAsString(m_pseudoElementIdentifier);
+        return pseudoIdAsString(m_pseudoId);
     return { };
 }
 
 ExceptionOr<void> KeyframeEffect::setPseudoElement(const String& pseudoElement)
 {
     // https://drafts.csswg.org/web-animations-1/#dom-keyframeeffect-pseudoelement
-    auto [parsed, pseudoElementIdentifier] = pseudoElementIdentifierFromString(pseudoElement, document());
-    if (!parsed)
+    auto pseudoId = pseudoIdFromString(pseudoElement);
+    if (!pseudoId)
         return Exception { ExceptionCode::SyntaxError, "Parsing pseudo-element selector failed"_s };
 
-    if (m_pseudoElementIdentifier == pseudoElementIdentifier)
+    if (*pseudoId == m_pseudoId)
         return { };
 
     auto& previousTargetStyleable = targetStyleable();
-    m_pseudoElementIdentifier = pseudoElementIdentifier;
+    m_pseudoId = *pseudoId;
     didChangeTargetStyleable(previousTargetStyleable);
 
     return { };
@@ -1316,7 +1317,7 @@ bool KeyframeEffect::isCurrentlyAffectingProperty(CSSPropertyID property, Accele
     if (!m_blendingKeyframes.properties().contains(property))
         return false;
 
-    if (m_pseudoElementIdentifier && m_pseudoElementIdentifier->pseudoId == PseudoId::Marker && !Style::isValidMarkerStyleProperty(property))
+    if (m_pseudoId == PseudoId::Marker && !Style::isValidMarkerStyleProperty(property))
         return false;
 
     return m_phaseAtLastApplication == AnimationEffectPhase::Active;
@@ -1947,7 +1948,7 @@ void KeyframeEffect::applyPendingAcceleratedActions()
             renderer->animationFinished(m_blendingKeyframes.animationName());
 
         ASSERT(m_target);
-        auto* effectStack = m_target->keyframeEffectStack(m_pseudoElementIdentifier);
+        auto* effectStack = m_target->keyframeEffectStack(m_pseudoId);
         ASSERT(effectStack);
 
         if ((m_blendingKeyframes.hasWidthDependentTransform() && effectStack->containsProperty(CSSPropertyWidth))
@@ -1963,7 +1964,7 @@ void KeyframeEffect::applyPendingAcceleratedActions()
         // We need to resolve all animations up to this point to ensure any forward-filling
         // effect is accounted for when computing the "from" value for the accelerated animation.
         auto underlyingStyle = [&]() {
-            if (auto* lastStyleChangeEventStyle = m_target->lastStyleChangeEventStyle(m_pseudoElementIdentifier))
+            if (auto* lastStyleChangeEventStyle = m_target->lastStyleChangeEventStyle(m_pseudoId))
                 return RenderStyle::clonePtr(*lastStyleChangeEventStyle);
             return RenderStyle::clonePtr(renderer->style());
         }();
@@ -2285,9 +2286,7 @@ bool KeyframeEffect::ticksContinuouslyWhileActive() const
     if (doesNotAffectStyles)
         return false;
 
-    auto targetHasDisplayContents = [&]() {
-        return m_target && !m_pseudoElementIdentifier && m_target->hasDisplayContents();
-    };
+    auto targetHasDisplayContents = [&]() { return m_target && m_pseudoId == PseudoId::None && m_target->hasDisplayContents(); };
     if (!renderer() && !targetHasDisplayContents())
         return false;
 
@@ -2478,7 +2477,7 @@ void KeyframeEffect::computeHasAcceleratedPropertyOverriddenByCascadeProperty()
         return;
 
     ASSERT(m_target);
-    auto* effectStack = m_target->keyframeEffectStack(m_pseudoElementIdentifier);
+    auto* effectStack = m_target->keyframeEffectStack(m_pseudoId);
     if (!effectStack)
         return;
 
@@ -2564,7 +2563,7 @@ void KeyframeEffect::abilityToBeAcceleratedDidChange()
         return;
 
     ASSERT(m_target);
-    if (auto* effectStack = m_target->keyframeEffectStack(m_pseudoElementIdentifier))
+    if (auto* effectStack = m_target->keyframeEffectStack(m_pseudoId))
         effectStack->effectAbilityToBeAcceleratedDidChange(*this);
 }
 
@@ -2695,7 +2694,7 @@ KeyframeEffect::StackMembershipMutationScope::StackMembershipMutationScope(Keyfr
     ASSERT(effect);
     if (m_effect->m_target) {
         m_originalTarget = m_effect->m_target;
-        m_originalPseudoElementIdentifier = m_effect->m_pseudoElementIdentifier;
+        m_originalPseudoId = m_effect->m_pseudoId;
     }
 }
 
@@ -2703,7 +2702,7 @@ KeyframeEffect::StackMembershipMutationScope::~StackMembershipMutationScope()
 {
     auto originalTargetStyleable = [&]() -> const std::optional<const Styleable> {
         if (m_originalTarget)
-            return Styleable(*m_originalTarget, m_originalPseudoElementIdentifier);
+            return Styleable(*m_originalTarget, m_originalPseudoId);
         return std::nullopt;
     }();
 

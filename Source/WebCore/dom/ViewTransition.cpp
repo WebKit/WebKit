@@ -26,18 +26,10 @@
 #include "config.h"
 #include "ViewTransition.h"
 
-#include "CSSTransformListValue.h"
 #include "CheckVisibilityOptions.h"
-#include "ComputedStyleExtractor.h"
 #include "Document.h"
-#include "FrameSnapshotting.h"
 #include "JSDOMPromise.h"
 #include "JSDOMPromiseDeferred.h"
-#include "PseudoElementRequest.h"
-#include "RenderBox.h"
-#include "StyleResolver.h"
-#include "StyleScope.h"
-#include "Styleable.h"
 #include "TypedElementDescendantIteratorInlines.h"
 
 namespace WebCore {
@@ -279,18 +271,8 @@ ExceptionOr<void> ViewTransition::captureOldState()
     for (auto& element : captureElements) {
         // FIXME: Fill in the rest of CapturedElement.
         CapturedElement capture;
-
-        CheckedPtr renderBox = dynamicDowncast<RenderBox>(element->renderer());
-        if (renderBox)
-            capture.oldSize = renderBox->size();
-        capture.oldProperties = copyElementBaseProperties(element.get());
-        if (m_document->frame())
-            capture.oldImage = snapshotNode(*m_document->frame(), element.get(), { { }, PixelFormat::BGRA8, DestinationColorSpace::SRGB() });
-
         auto transitionName = element->computedStyle()->viewTransitionName();
         m_namedElements.add(transitionName->name, capture);
-
-        element->invalidateStyleAndLayerComposition();
     }
     return { };
 }
@@ -356,23 +338,9 @@ void ViewTransition::activateViewTransition()
 // https://drafts.csswg.org/css-view-transitions/#handle-transition-frame-algorithm
 void ViewTransition::handleTransitionFrame()
 {
-    if (!m_document)
-        return;
+    bool hasActiveAnimations = false;
 
-    RefPtr documentElement = m_document->documentElement();
-    if (!documentElement)
-        return;
-
-    bool hasActiveAnimations = documentElement->hasKeyframeEffects(Style::PseudoElementIdentifier { PseudoId::ViewTransition });
-
-    for (auto& name : namedElements().keys()) {
-        if (hasActiveAnimations)
-            break;
-        hasActiveAnimations = documentElement->hasKeyframeEffects(Style::PseudoElementIdentifier { PseudoId::ViewTransitionGroup, name })
-            || documentElement->hasKeyframeEffects(Style::PseudoElementIdentifier { PseudoId::ViewTransitionImagePair, name })
-            || documentElement->hasKeyframeEffects(Style::PseudoElementIdentifier { PseudoId::ViewTransitionNew, name })
-            || documentElement->hasKeyframeEffects(Style::PseudoElementIdentifier { PseudoId::ViewTransitionOld, name });
-    }
+    // FIXME: Actually query the animation state.
 
     if (!hasActiveAnimations) {
         m_phase = ViewTransitionPhase::Done;
@@ -381,7 +349,7 @@ void ViewTransition::handleTransitionFrame()
     }
 
     // FIXME: If transition’s initial snapshot containing block size is not equal to the snapshot containing block size, then skip the view transition for transition, and return.
-    updatePseudoElementStyles();
+    // FIXME: Update pseudo-element styles for transition.
 }
 
 // https://drafts.csswg.org/css-view-transitions/#clear-view-transition-algorithm
@@ -394,88 +362,11 @@ void ViewTransition::clearViewTransition()
 
     // FIXME: Implement step 3.
 
-    // End animations on pseudo-elements so they can run again.
-    if (RefPtr documentElement = m_document->documentElement()) {
-        Styleable(*documentElement, Style::PseudoElementIdentifier { PseudoId::ViewTransition }).cancelStyleOriginatedAnimations();
-        for (auto& name : namedElements().keys()) {
-            Styleable(*documentElement, Style::PseudoElementIdentifier { PseudoId::ViewTransitionGroup, name }).cancelStyleOriginatedAnimations();
-            Styleable(*documentElement, Style::PseudoElementIdentifier { PseudoId::ViewTransitionImagePair, name }).cancelStyleOriginatedAnimations();
-            Styleable(*documentElement, Style::PseudoElementIdentifier { PseudoId::ViewTransitionNew, name }).cancelStyleOriginatedAnimations();
-            Styleable(*documentElement, Style::PseudoElementIdentifier { PseudoId::ViewTransitionOld, name }).cancelStyleOriginatedAnimations();
-        }
-    }
-
     protectedDocument()->setHasViewTransitionPseudoElementTree(false);
     protectedDocument()->setActiveViewTransition(nullptr);
-    protectedDocument()->styleScope().clearViewTransitionStyles();
 
     if (RefPtr documentElement = protectedDocument()->documentElement())
         documentElement->invalidateStyleInternal();
-}
-
-Ref<MutableStyleProperties> ViewTransition::copyElementBaseProperties(Element& element)
-{
-    ComputedStyleExtractor styleExtractor(&element);
-
-    CSSPropertyID transitionProperties[] = {
-        CSSPropertyWritingMode,
-        CSSPropertyDirection,
-        CSSPropertyTextOrientation,
-        CSSPropertyMixBlendMode,
-        CSSPropertyBackdropFilter,
-#if ENABLE(DARK_MODE_CSS)
-        CSSPropertyColorScheme,
-#endif
-        CSSPropertyWidth,
-        CSSPropertyHeight,
-    };
-
-    Ref props = styleExtractor.copyProperties(transitionProperties);
-
-    TransformationMatrix transform;
-    auto* renderer = element.renderer();
-    RenderElement* container = nullptr;
-    while (renderer && !renderer->isRenderView()) {
-        container = renderer->container();
-        if (!container)
-            break;
-        LayoutSize containerOffset = renderer->offsetFromContainer(*container, LayoutPoint());
-        TransformationMatrix localTransform;
-        renderer->getTransformFromContainer(nullptr, containerOffset, localTransform);
-        transform.multiply(localTransform);
-        renderer = container;
-    }
-
-    if (element.renderer()) {
-        Ref transformListValue = CSSTransformListValue::create(ComputedStyleExtractor::matrixTransformValue(transform, element.renderer()->style()));
-        props->setProperty(CSSPropertyTransform, WTFMove(transformListValue));
-    }
-
-    return props;
-}
-
-// https://drafts.csswg.org/css-view-transitions-1/#update-pseudo-element-styles
-void ViewTransition::updatePseudoElementStyles()
-{
-    auto& resolver = protectedDocument()->styleScope().resolver();
-
-    for (auto& iter : m_namedElements.map()) {
-        RefPtr<MutableStyleProperties> properties;
-        if (iter.value->newElement)
-            properties = copyElementBaseProperties(*iter.value->newElement);
-        else
-            properties = iter.value->oldProperties;
-
-        if (properties) {
-            if (!iter.value->groupStyleProperties) {
-                iter.value->groupStyleProperties = properties;
-                resolver.setViewTransitionGroupStyles(iter.key, *properties);
-            } else
-                iter.value->groupStyleProperties->mergeAndOverrideOnConflict(*properties);
-        }
-    }
-
-    protectedDocument()->styleScope().didChangeStyleSheetContents();
 }
 
 }

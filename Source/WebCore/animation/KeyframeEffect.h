@@ -64,7 +64,7 @@ class KeyframeEffect final : public AnimationEffect, public CSSPropertyBlendingC
 public:
     static ExceptionOr<Ref<KeyframeEffect>> create(JSC::JSGlobalObject&, Document&, Element*, JSC::Strong<JSC::JSObject>&&, std::optional<std::variant<double, KeyframeEffectOptions>>&&);
     static Ref<KeyframeEffect> create(Ref<KeyframeEffect>&&);
-    static Ref<KeyframeEffect> create(const Element&, const std::optional<Style::PseudoElementIdentifier>&);
+    static Ref<KeyframeEffect> create(const Element&, PseudoId);
 
     struct BasePropertyIndexedKeyframe {
         std::variant<std::nullptr_t, Vector<std::optional<double>>, double> offset = Vector<std::optional<double>>();
@@ -194,7 +194,7 @@ public:
 #endif
 
 private:
-    KeyframeEffect(Element*, const std::optional<Style::PseudoElementIdentifier>&);
+    KeyframeEffect(Element*, PseudoId);
 
     enum class AcceleratedAction : uint8_t { Play, Pause, UpdateProperties, TransformChange, Stop };
     enum class AcceleratedProperties : uint8_t { None, Some, All };
@@ -254,7 +254,7 @@ private:
     private:
         KeyframeEffect* m_effect;
         RefPtr<Element> m_originalTarget;
-        std::optional<Style::PseudoElementIdentifier> m_originalPseudoElementIdentifier;
+        PseudoId m_originalPseudoId;
     };
 
     bool threadedAnimationResolutionEnabled() const;
@@ -291,7 +291,7 @@ private:
     Vector<ParsedKeyframe> m_parsedKeyframes;
     Vector<AcceleratedAction> m_pendingAcceleratedActions;
     RefPtr<Element> m_target;
-    std::optional<Style::PseudoElementIdentifier> m_pseudoElementIdentifier { };
+    PseudoId m_pseudoId { PseudoId::None };
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
     WeakPtr<AcceleratedEffect> m_acceleratedRepresentation;

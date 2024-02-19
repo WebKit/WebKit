@@ -59,7 +59,7 @@ public:
     bool hasUAVisualTransition() const { return m_hasUAVisualTransition; }
 
 private:
-    PopStateEvent();
+    PopStateEvent() = default;
     PopStateEvent(const AtomString&, const Init&, IsTrusted);
     PopStateEvent(RefPtr<SerializedScriptValue>&&, History*);
 

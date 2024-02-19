@@ -76,7 +76,7 @@ protected:
 
     void initialize(const RenderStyle* oldStyle, const RenderStyle& newStyle, const Style::ResolutionContext&);
     virtual void syncPropertiesWithBackingAnimation();
-    virtual Ref<StyleOriginatedAnimationEvent> createEvent(const AtomString& eventType, std::optional<Seconds> scheduledTime, double elapsedTime, const std::optional<Style::PseudoElementIdentifier>&) = 0;
+    virtual Ref<StyleOriginatedAnimationEvent> createEvent(const AtomString& eventType, std::optional<Seconds> scheduledTime, double elapsedTime, PseudoId) = 0;
 
     enum class ShouldFireEvents : uint8_t { No, YesForCSSAnimation, YesForCSSTransition };
     ShouldFireEvents shouldFireDOMEvents() const;
@@ -95,7 +95,7 @@ private:
     AnimationEffectPhase m_previousPhase { AnimationEffectPhase::Idle };
 
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_owningElement;
-    std::optional<Style::PseudoElementIdentifier> m_owningPseudoElementIdentifier;
+    PseudoId m_owningPseudoId;
     Ref<Animation> m_backingAnimation;
     double m_previousIteration;
 };

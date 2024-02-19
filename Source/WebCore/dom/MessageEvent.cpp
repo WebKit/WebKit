@@ -40,13 +40,10 @@ using namespace JSC;
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(MessageEvent);
 
-MessageEvent::MessageEvent()
-    : Event(EventInterfaceType::MessageEvent)
-{
-}
+MessageEvent::MessageEvent() = default;
 
 inline MessageEvent::MessageEvent(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
-    : Event(EventInterfaceType::MessageEvent, type, initializer, isTrusted)
+    : Event(type, initializer, isTrusted)
     , m_data(JSValueTag { })
     , m_origin(initializer.origin)
     , m_lastEventId(initializer.lastEventId)
@@ -57,7 +54,7 @@ inline MessageEvent::MessageEvent(const AtomString& type, Init&& initializer, Is
 }
 
 inline MessageEvent::MessageEvent(const AtomString& type, DataType&& data, const String& origin, const String& lastEventId, std::optional<MessageEventSource>&& source, Vector<RefPtr<MessagePort>>&& ports)
-    : Event(EventInterfaceType::MessageEvent, type, CanBubble::No, IsCancelable::No)
+    : Event(type, CanBubble::No, IsCancelable::No)
     , m_data(WTFMove(data))
     , m_origin(origin)
     , m_lastEventId(lastEventId)

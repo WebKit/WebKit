@@ -48,7 +48,7 @@ public:
     virtual EventInterface eventInterface() const { return SpeechSynthesisEventInterfaceType; }
 
 protected:
-    SpeechSynthesisEvent(enum EventInterfaceType, const AtomString& type, const SpeechSynthesisEventInit&);
+    SpeechSynthesisEvent(const AtomString& type, const SpeechSynthesisEventInit&);
 
 private:
     RefPtr<SpeechSynthesisUtterance> m_utterance;

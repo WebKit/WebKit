@@ -3853,9 +3853,6 @@ webkit.org/b/186667 compositing/repaint/iframes/composited-iframe-with-fixed-bac
 # Probably categorized under the wrong bug.
 webkit.org/b/212202 compositing/fixed-with-main-thread-scrolling.html [ Timeout ]
 
-imported/w3c/web-platform-tests/css/css-view-transitions/backdrop-filter-captured.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/element-stops-grouping-after-animation.html [ ImageOnlyFailure ]
-
 # End: Common failures between GTK and WPE.
 
 #////////////////////////////////////////////////////////////////////////////////////////

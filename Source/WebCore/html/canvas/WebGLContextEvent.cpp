@@ -35,13 +35,13 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLContextEvent);
 
 WebGLContextEvent::WebGLContextEvent(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, const String& statusMessage)
-    : Event(EventInterfaceType::WebGLContextEvent, type, canBubble, cancelable)
+    : Event(type, canBubble, cancelable)
     , m_statusMessage(statusMessage)
 {
 }
 
 WebGLContextEvent::WebGLContextEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
-    : Event(EventInterfaceType::WebGLContextEvent, type, initializer, isTrusted)
+    : Event(type, initializer, isTrusted)
     , m_statusMessage(initializer.statusMessage)
 {
 }

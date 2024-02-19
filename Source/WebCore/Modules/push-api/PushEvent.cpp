@@ -73,7 +73,7 @@ static inline RefPtr<PushMessageData> pushMessageDataFromOptionalVector(std::opt
 }
 
 PushEvent::PushEvent(const AtomString& type, ExtendableEventInit&& eventInit, std::optional<Vector<uint8_t>>&& data, IsTrusted isTrusted)
-    : ExtendableEvent(EventInterfaceType::PushEvent, type, WTFMove(eventInit), isTrusted)
+    : ExtendableEvent(type, WTFMove(eventInit), isTrusted)
     , m_data(pushMessageDataFromOptionalVector(WTFMove(data)))
 {
 }

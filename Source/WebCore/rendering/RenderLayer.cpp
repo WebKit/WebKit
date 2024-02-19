@@ -146,7 +146,6 @@
 #include "TransformOperationData.h"
 #include "TransformationMatrix.h"
 #include "TranslateTransformOperation.h"
-#include "ViewTransition.h"
 #include "WheelEventTestMonitor.h"
 #include <stdio.h>
 #include <wtf/HexNumber.h>
@@ -575,8 +574,6 @@ static bool canCreateStackingContext(const RenderLayer& layer)
         || renderer.hasBackdropFilter()
         || renderer.hasBlendMode()
         || renderer.isTransparent()
-        || renderer.hasViewTransition()
-        || renderer.isViewTransitionPseudo()
         || renderer.isPositioned() // Note that this only creates stacking context in conjunction with explicit z-index.
         || renderer.hasReflection()
         || renderer.style().hasIsolation()
@@ -602,7 +599,7 @@ bool RenderLayer::shouldBeNormalFlowOnly() const
 
 bool RenderLayer::shouldBeCSSStackingContext() const
 {
-    return !renderer().style().hasAutoUsedZIndex() || renderer().shouldApplyLayoutOrPaintContainment() || renderer().hasViewTransition() || renderer().isViewTransitionPseudo() || isRenderViewLayer();
+    return !renderer().style().hasAutoUsedZIndex() || renderer().shouldApplyLayoutOrPaintContainment() || isRenderViewLayer();
 }
 
 bool RenderLayer::computeCanBeBackdropRoot() const
@@ -616,7 +613,6 @@ bool RenderLayer::computeCanBeBackdropRoot() const
         || renderer().hasFilter()
         || renderer().hasBlendMode()
         || renderer().hasMask()
-        || renderer().hasViewTransition()
         || renderer().isDocumentElementRenderer()
         || (renderer().style().willChange() && renderer().style().willChange()->canBeBackdropRoot());
 }

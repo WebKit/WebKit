@@ -45,13 +45,13 @@ Ref<MediaStreamTrackEvent> MediaStreamTrackEvent::create(const AtomString& type,
 }
 
 MediaStreamTrackEvent::MediaStreamTrackEvent(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, RefPtr<MediaStreamTrack>&& track)
-    : Event(EventInterfaceType::MediaStreamTrackEvent, type, canBubble, cancelable)
+    : Event(type, canBubble, cancelable)
     , m_track(WTFMove(track))
 {
 }
 
 MediaStreamTrackEvent::MediaStreamTrackEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
-    : Event(EventInterfaceType::MediaStreamTrackEvent, type, initializer, isTrusted)
+    : Event(type, initializer, isTrusted)
     , m_track(initializer.track)
 {
 }

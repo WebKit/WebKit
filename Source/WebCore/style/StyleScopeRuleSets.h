@@ -60,7 +60,6 @@ public:
 
     bool isAuthorStyleDefined() const { return m_isAuthorStyleDefined; }
     RuleSet* userAgentMediaQueryStyle() const;
-    RuleSet* dynamicViewTransitionsStyle() const;
     RuleSet& authorStyle() const { return *m_authorStyle; }
     RuleSet* userStyle() const;
     RuleSet* styleForCascadeLevel(CascadeLevel);
@@ -94,11 +93,6 @@ public:
 
     RuleFeatureSet& mutableFeatures();
 
-    void setDynamicViewTransitionsStyle(RuleSet* ruleSet)
-    {
-        m_dynamicViewTransitionsStyle = ruleSet;
-    }
-
     bool& isInvalidatingStyleWithRuleSets() { return m_isInvalidatingStyleWithRuleSets; }
 
     bool hasMatchingUserOrAuthorStyle(const Function<bool(RuleSet&)>&);
@@ -110,7 +104,6 @@ private:
 
     RefPtr<RuleSet> m_authorStyle;
     mutable RefPtr<RuleSet> m_userAgentMediaQueryStyle;
-    mutable RefPtr<RuleSet> m_dynamicViewTransitionsStyle;
     RefPtr<RuleSet> m_userStyle;
 
     Resolver& m_styleResolver;

@@ -26,7 +26,6 @@
 #pragma once
 
 #include "KeyframeEffectStack.h"
-#include "PseudoElementIdentifier.h"
 #include "WebAnimationTypes.h"
 
 namespace WebCore {
@@ -41,10 +40,10 @@ class ElementAnimationRareData {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ElementAnimationRareData);
     WTF_MAKE_NONCOPYABLE(ElementAnimationRareData);
 public:
-    explicit ElementAnimationRareData(const std::optional<Style::PseudoElementIdentifier>&);
+    explicit ElementAnimationRareData(PseudoId);
     ~ElementAnimationRareData();
 
-    const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier() { return m_pseudoElementIdentifier; }
+    PseudoId pseudoId() const { return m_pseudoId; }
 
     KeyframeEffectStack* keyframeEffectStack() { return m_keyframeEffectStack.get(); }
     KeyframeEffectStack& ensureKeyframeEffectStack();
@@ -69,7 +68,7 @@ private:
     CSSAnimationCollection m_animationsCreatedByMarkup;
     AnimatableCSSPropertyToTransitionMap m_completedTransitionsByProperty;
     AnimatableCSSPropertyToTransitionMap m_runningTransitionsByProperty;
-    std::optional<Style::PseudoElementIdentifier> m_pseudoElementIdentifier { };
+    PseudoId m_pseudoId;
     bool m_hasPendingKeyframesUpdate { false };
     bool m_hasPropertiesOverridenAfterAnimation { false };
 };

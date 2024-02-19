@@ -34,29 +34,29 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(StyleOriginatedAnimationEvent);
 
-StyleOriginatedAnimationEvent::StyleOriginatedAnimationEvent(enum EventInterfaceType eventInterface, const AtomString& type, WebAnimation* animation, std::optional<Seconds> scheduledTime, double elapsedTime, const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
-    : AnimationEventBase(eventInterface, type, animation, scheduledTime)
+StyleOriginatedAnimationEvent::StyleOriginatedAnimationEvent(const AtomString& type, WebAnimation* animation, std::optional<Seconds> scheduledTime, double elapsedTime, PseudoId pseudoId)
+    : AnimationEventBase(type, animation, scheduledTime)
     , m_elapsedTime(elapsedTime)
-    , m_pseudoElementIdentifier(pseudoElementIdentifier)
+    , m_pseudoId(pseudoId)
 {
 }
 
-StyleOriginatedAnimationEvent::StyleOriginatedAnimationEvent(enum EventInterfaceType eventInterface, const AtomString& type, const EventInit& init, IsTrusted isTrusted, double elapsedTime, const String& pseudoElement)
-    : AnimationEventBase(eventInterface, type, init, isTrusted)
+StyleOriginatedAnimationEvent::StyleOriginatedAnimationEvent(const AtomString& type, const EventInit& init, IsTrusted isTrusted, double elapsedTime, const String& pseudoElement)
+    : AnimationEventBase(type, init, isTrusted)
     , m_elapsedTime(elapsedTime)
     , m_pseudoElement(pseudoElement)
 {
-    auto* node = dynamicDowncast<Node>(target());
-    auto [parsed, pseudoElementIdentifier] = pseudoElementIdentifierFromString(m_pseudoElement, node ? &node->document() : nullptr);
-    m_pseudoElementIdentifier = parsed ? pseudoElementIdentifier : std::nullopt;
+    auto pseudoId = pseudoIdFromString(m_pseudoElement);
+    if (pseudoId)
+        m_pseudoId = *pseudoId;
 }
 
 StyleOriginatedAnimationEvent::~StyleOriginatedAnimationEvent() = default;
 
 const String& StyleOriginatedAnimationEvent::pseudoElement()
 {
-    if (m_pseudoElementIdentifier && m_pseudoElement.isNull())
-        m_pseudoElement = pseudoElementIdentifierAsString(m_pseudoElementIdentifier);
+    if (m_pseudoElement.isNull())
+        m_pseudoElement = pseudoIdAsString(m_pseudoId);
     return m_pseudoElement;
 }
 

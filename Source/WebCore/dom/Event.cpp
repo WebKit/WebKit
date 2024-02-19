@@ -41,7 +41,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(Event);
 
-ALWAYS_INLINE Event::Event(MonotonicTime createTime, enum EventInterfaceType eventInterface, const AtomString& type, IsTrusted isTrusted, CanBubble canBubble, IsCancelable cancelable, IsComposed composed)
+ALWAYS_INLINE Event::Event(MonotonicTime createTime, const AtomString& type, IsTrusted isTrusted, CanBubble canBubble, IsCancelable cancelable, IsComposed composed)
     : m_isInitialized { !type.isNull() }
     , m_canBubble { canBubble == CanBubble::Yes }
     , m_cancelable { cancelable == IsCancelable::Yes }
@@ -55,31 +55,30 @@ ALWAYS_INLINE Event::Event(MonotonicTime createTime, enum EventInterfaceType eve
     , m_isExecutingPassiveEventListener { false }
     , m_currentTargetIsInShadowTree { false }
     , m_eventPhase { NONE }
-    , m_eventInterface(enumToUnderlyingType(eventInterface))
     , m_type { type }
     , m_createTime { createTime }
 {
-    ASSERT(m_eventInterface == enumToUnderlyingType(eventInterface));
 }
 
-Event::Event(enum EventInterfaceType eventInterface, IsTrusted isTrusted)
-    : Event { MonotonicTime::now(), eventInterface, { }, isTrusted, CanBubble::No, IsCancelable::No, IsComposed::No }
+Event::Event(IsTrusted isTrusted)
+    : Event { MonotonicTime::now(), { }, isTrusted, CanBubble::No, IsCancelable::No, IsComposed::No }
 {
 }
 
-Event::Event(enum EventInterfaceType eventInterface, const AtomString& eventType, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed)
-    : Event { MonotonicTime::now(), eventInterface, eventType, IsTrusted::Yes, canBubble, isCancelable, isComposed }
+Event::Event(const AtomString& eventType, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed)
+    : Event { MonotonicTime::now(), eventType, IsTrusted::Yes, canBubble, isCancelable, isComposed }
 {
     ASSERT(!eventType.isNull());
 }
 
-Event::Event(enum EventInterfaceType eventInterface, const AtomString& eventType, CanBubble canBubble, IsCancelable cancelable, IsComposed composed, MonotonicTime timestamp, IsTrusted isTrusted)
-    : Event(timestamp, eventInterface, eventType, isTrusted, canBubble, cancelable, composed)
+Event::Event(const AtomString& eventType, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed, MonotonicTime timestamp, IsTrusted isTrusted)
+    : Event { timestamp, eventType, isTrusted, canBubble, isCancelable, isComposed }
 {
+    ASSERT(!eventType.isNull());
 }
 
-Event::Event(enum EventInterfaceType eventInterface, const AtomString& eventType, const EventInit& initializer, IsTrusted isTrusted)
-    : Event { MonotonicTime::now(), eventInterface, eventType, isTrusted,
+Event::Event(const AtomString& eventType, const EventInit& initializer, IsTrusted isTrusted)
+    : Event { MonotonicTime::now(), eventType, isTrusted,
         initializer.bubbles ? CanBubble::Yes : CanBubble::No,
         initializer.cancelable ? IsCancelable::Yes : IsCancelable::No,
         initializer.composed ? IsComposed::Yes : IsComposed::No }
@@ -92,17 +91,17 @@ Event::~Event() = default;
 
 Ref<Event> Event::create(const AtomString& type, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed)
 {
-    return adoptRef(*new Event(EventInterfaceType::Event, type, canBubble, isCancelable, isComposed));
+    return adoptRef(*new Event(type, canBubble, isCancelable, isComposed));
 }
 
 Ref<Event> Event::createForBindings()
 {
-    return adoptRef(*new Event(EventInterfaceType::Event));
+    return adoptRef(*new Event);
 }
 
 Ref<Event> Event::create(const AtomString& type, const EventInit& initializer, IsTrusted isTrusted)
 {
-    return adoptRef(*new Event(EventInterfaceType::Event, type, initializer, isTrusted));
+    return adoptRef(*new Event(type, initializer, isTrusted));
 }
 
 void Event::initEvent(const AtomString& eventTypeArg, bool canBubbleArg, bool cancelableArg)

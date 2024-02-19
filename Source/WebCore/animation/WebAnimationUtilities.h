@@ -58,8 +58,8 @@ const auto timeEpsilon = Seconds::fromMilliseconds(0.001);
 
 bool compareAnimationsByCompositeOrder(const WebAnimation&, const WebAnimation&);
 bool compareAnimationEventsByCompositeOrder(const AnimationEventBase&, const AnimationEventBase&);
-String pseudoElementIdentifierAsString(const std::optional<Style::PseudoElementIdentifier>&);
-std::pair<bool, std::optional<Style::PseudoElementIdentifier>> pseudoElementIdentifierFromString(const String&, Document*);
+String pseudoIdAsString(PseudoId);
+std::optional<PseudoId> pseudoIdFromString(const String&);
 AtomString animatablePropertyAsString(AnimatableCSSProperty);
 
 } // namespace WebCore

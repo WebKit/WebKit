@@ -47,7 +47,7 @@ Ref<RTCPeerConnectionIceErrorEvent> RTCPeerConnectionIceErrorEvent::create(const
 }
 
 RTCPeerConnectionIceErrorEvent::RTCPeerConnectionIceErrorEvent(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, String&& address, std::optional<uint16_t> port, String&& url, uint16_t errorCode, String&& errorText)
-    : Event(EventInterfaceType::RTCPeerConnectionIceErrorEvent, type, canBubble, cancelable)
+    : Event(type, canBubble, cancelable)
     , m_address(WTFMove(address))
     , m_port(port)
     , m_url(WTFMove(url))

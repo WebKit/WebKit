@@ -66,19 +66,18 @@ public:
 
 private:
     HashChangeEvent()
-        : Event(EventInterfaceType::HashChangeEvent)
     {
     }
 
     HashChangeEvent(const String& oldURL, const String& newURL)
-        : Event(EventInterfaceType::HashChangeEvent, eventNames().hashchangeEvent, CanBubble::No, IsCancelable::No)
+        : Event(eventNames().hashchangeEvent, CanBubble::No, IsCancelable::No)
         , m_oldURL(oldURL)
         , m_newURL(newURL)
     {
     }
 
     HashChangeEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
-        : Event(EventInterfaceType::HashChangeEvent, type, initializer, isTrusted)
+        : Event(type, initializer, isTrusted)
         , m_oldURL(initializer.oldURL)
         , m_newURL(initializer.newURL)
     {

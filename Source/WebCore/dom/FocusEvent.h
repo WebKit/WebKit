@@ -58,7 +58,7 @@ public:
     EventTarget* relatedTarget() const final { return m_relatedTarget.get(); }
 
 private:
-    FocusEvent();
+    FocusEvent() = default;
     FocusEvent(const AtomString& type, CanBubble, IsCancelable, RefPtr<WindowProxy>&&, int, RefPtr<EventTarget>&&);
     FocusEvent(const AtomString& type, const Init&);
 

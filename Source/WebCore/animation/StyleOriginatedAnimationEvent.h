@@ -26,7 +26,7 @@
 #pragma once
 
 #include "AnimationEventBase.h"
-#include "PseudoElementIdentifier.h"
+#include "RenderStyleConstants.h"
 
 namespace WebCore {
 
@@ -37,16 +37,16 @@ public:
 
     double elapsedTime() const { return m_elapsedTime; }
     const String& pseudoElement();
-    const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier() const { return m_pseudoElementIdentifier; }
+    PseudoId pseudoId() const { return m_pseudoId; }
 
 protected:
-    StyleOriginatedAnimationEvent(enum EventInterfaceType, const AtomString& type, WebAnimation*, std::optional<Seconds> scheduledTime, double, const std::optional<Style::PseudoElementIdentifier>&);
-    StyleOriginatedAnimationEvent(enum EventInterfaceType, const AtomString&, const EventInit&, IsTrusted, double, const String&);
+    StyleOriginatedAnimationEvent(const AtomString& type, WebAnimation*, std::optional<Seconds> scheduledTime, double, PseudoId);
+    StyleOriginatedAnimationEvent(const AtomString&, const EventInit&, IsTrusted, double, const String&);
 
 private:
     double m_elapsedTime;
     String m_pseudoElement;
-    std::optional<Style::PseudoElementIdentifier> m_pseudoElementIdentifier { };
+    PseudoId m_pseudoId { PseudoId::None };
 };
 
 } // namespace WebCore

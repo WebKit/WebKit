@@ -32,16 +32,16 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(ProgressEvent);
 
-ProgressEvent::ProgressEvent(enum EventInterfaceType eventInterface, const AtomString& type, const Init& initializer, IsTrusted isTrusted)
-    : Event(eventInterface, type, initializer, isTrusted)
+ProgressEvent::ProgressEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
+    : Event(type, initializer, isTrusted)
     , m_lengthComputable(initializer.lengthComputable)
     , m_loaded(initializer.loaded)
     , m_total(initializer.total)
 {
 }
 
-ProgressEvent::ProgressEvent(enum EventInterfaceType eventInterface, const AtomString& type, bool lengthComputable, unsigned long long loaded, unsigned long long total)
-    : Event(eventInterface, type, CanBubble::No, IsCancelable::No)
+ProgressEvent::ProgressEvent(const AtomString& type, bool lengthComputable, unsigned long long loaded, unsigned long long total)
+    : Event(type, CanBubble::No, IsCancelable::No)
     , m_lengthComputable(lengthComputable)
     , m_loaded(loaded)
     , m_total(total)

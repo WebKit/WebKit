@@ -51,7 +51,7 @@ public:
     String action() const { return m_action; }
 
 private:
-    InvokeEvent();
+    InvokeEvent() = default;
     InvokeEvent(const AtomString& type, const Init&, IsTrusted = IsTrusted::No);
 
     EventInterface eventInterface() const final;

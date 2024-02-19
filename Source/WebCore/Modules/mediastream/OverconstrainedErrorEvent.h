@@ -60,12 +60,12 @@ public:
 
 private:
     explicit OverconstrainedErrorEvent(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, OverconstrainedError* error)
-        : Event(EventInterfaceType::OverconstrainedErrorEvent, type, canBubble, cancelable)
+        : Event(type, canBubble, cancelable)
         , m_error(error)
     {
     }
     OverconstrainedErrorEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
-        : Event(EventInterfaceType::OverconstrainedErrorEvent, type, initializer, isTrusted)
+        : Event(type, initializer, isTrusted)
         , m_error(initializer.error)
     {
     }

@@ -28,9 +28,7 @@
 #include "Document.h"
 #include "Element.h"
 #include "ExceptionOr.h"
-#include "ImageBuffer.h"
 #include "JSValueInWrappedObject.h"
-#include "MutableStyleProperties.h"
 #include "ViewTransitionUpdateCallback.h"
 #include <wtf/CheckedRef.h>
 #include <wtf/Ref.h>
@@ -53,17 +51,19 @@ struct CapturedElement {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     // FIXME: Add the following:
-    RefPtr<ImageBuffer> oldImage;
-    LayoutSize oldSize;
-    RefPtr<MutableStyleProperties> oldProperties;
+    // old image (2d bitmap)
+    // old width / height
     // old transform
+    // old writing mode
+    // old direction
+    // old text-orientation
+    // old mix-blend-mode
     WeakPtr<Element, WeakPtrImplWithEventTargetData> newElement;
-
-    RefPtr<MutableStyleProperties> groupStyleProperties;
 
     // FIXME: Also handle these:
     // group keyframes
     // group animation name rule
+    // group styles rule
     // image pair isolation rule
     // image animation name rule
 };
@@ -92,29 +92,12 @@ public:
         return m_keys;
     }
 
-    auto& map() const
-    {
-        return m_map;
-    }
-
-    auto& map()
-    {
-        return m_map;
-    }
-
     bool isEmpty() const
     {
         return m_keys.isEmpty();
     }
 
     CapturedElement* find(const AtomString& key)
-    {
-        if (auto it = m_map.find(key); it != m_map.end())
-            return &it->value;
-        return nullptr;
-    }
-
-    const CapturedElement* find(const AtomString& key) const
     {
         if (auto it = m_map.find(key); it != m_map.end())
             return &it->value;
@@ -154,10 +137,6 @@ public:
 
 private:
     ViewTransition(Document&, RefPtr<ViewTransitionUpdateCallback>&&);
-
-    Ref<MutableStyleProperties> copyElementBaseProperties(Element&);
-
-    void updatePseudoElementStyles();
 
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
 

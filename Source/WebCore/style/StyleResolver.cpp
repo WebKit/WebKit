@@ -61,7 +61,6 @@
 #include "RenderView.h"
 #include "ResolvedStyle.h"
 #include "RuleSet.h"
-#include "RuleSetBuilder.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGElement.h"
 #include "SVGFontFaceElement.h"
@@ -336,10 +335,7 @@ std::unique_ptr<RenderStyle> Resolver::styleForKeyframe(const Element& element, 
     state.setParentStyle(RenderStyle::clonePtr(context.parentStyle ? *context.parentStyle : elementStyle));
 
     ElementRuleCollector collector(element, m_ruleSets, context.selectorMatchingState);
-
-    if (elementStyle.pseudoElementType() != PseudoId::None)
-        collector.setPseudoElementRequest(Style::PseudoElementIdentifier { elementStyle.pseudoElementType(), elementStyle.pseudoElementNameArgument() });
-
+    collector.setPseudoElementRequest({ elementStyle.pseudoElementType() });
     if (hasRevert) {
         // In the animation origin, 'revert' rolls back the cascaded value to the user level.
         // Therefore, we need to collect UA and user rules.
@@ -352,7 +348,7 @@ std::unique_ptr<RenderStyle> Resolver::styleForKeyframe(const Element& element, 
     builder.state().setIsBuildingKeyframeStyle();
     builder.applyAllProperties();
 
-    Adjuster adjuster(document(), *state.parentStyle(), nullptr, elementStyle.pseudoElementType() == PseudoId::None ? &element : nullptr);
+    Adjuster adjuster(document(), *state.parentStyle(), nullptr, nullptr);
     adjuster.adjust(*state.style(), state.userAgentAppearanceStyle());
 
     return state.takeStyle();
@@ -491,8 +487,7 @@ std::optional<ResolvedStyle> Resolver::styleForPseudoElement(const Element& elem
     }
 
     ElementRuleCollector collector(element, m_ruleSets, context.selectorMatchingState);
-    if (pseudoElementRequest.pseudoId() != PseudoId::None)
-        collector.setPseudoElementRequest(pseudoElementRequest);
+    collector.setPseudoElementRequest(pseudoElementRequest);
     collector.setMedium(m_mediaQueryEvaluator);
     collector.matchUARules();
 
@@ -566,10 +561,10 @@ std::unique_ptr<RenderStyle> Resolver::defaultStyleForElement(const Element* ele
 
 Vector<RefPtr<const StyleRule>> Resolver::styleRulesForElement(const Element* element, unsigned rulesToInclude)
 {
-    return pseudoStyleRulesForElement(element, { }, rulesToInclude);
+    return pseudoStyleRulesForElement(element, PseudoId::None, rulesToInclude);
 }
 
-Vector<RefPtr<const StyleRule>> Resolver::pseudoStyleRulesForElement(const Element* element, const std::optional<Style::PseudoElementRequest>& pseudoElementIdentifier, unsigned rulesToInclude)
+Vector<RefPtr<const StyleRule>> Resolver::pseudoStyleRulesForElement(const Element* element, PseudoId pseudoId, unsigned rulesToInclude)
 {
     if (!element)
         return { };
@@ -578,8 +573,7 @@ Vector<RefPtr<const StyleRule>> Resolver::pseudoStyleRulesForElement(const Eleme
 
     ElementRuleCollector collector(*element, m_ruleSets, nullptr);
     collector.setMode(SelectorChecker::Mode::CollectingRules);
-    if (pseudoElementIdentifier)
-        collector.setPseudoElementRequest(*pseudoElementIdentifier);
+    collector.setPseudoElementRequest({ pseudoId });
     collector.setMedium(m_mediaQueryEvaluator);
     collector.setIncludeEmptyRules(rulesToInclude & EmptyCSSRules);
 
@@ -635,7 +629,7 @@ void Resolver::applyMatchedProperties(State& state, const MatchResult& matchResu
     auto hasUsableEntry = cacheEntry && MatchedDeclarationsCache::isCacheable(element, style, parentStyle);
     if (hasUsableEntry) {
         // We can build up the style by copying non-inherited properties from an earlier style object built using the same exact
-        // style declarations. We then only need to apply the inherited properties, if any, as their values can depend on the
+        // style declarations. We then only need to apply the inherited properties, if any, as their values can depend on the 
         // element context. This is fast and saves memory by reusing the style data structures.
         style.copyNonInheritedFrom(*cacheEntry->renderStyle);
 
@@ -723,28 +717,6 @@ bool Resolver::hasViewportDependentMediaQueries() const
 std::optional<DynamicMediaQueryEvaluationChanges> Resolver::evaluateDynamicMediaQueries()
 {
     return m_ruleSets.evaluateDynamicMediaQueryRules(m_mediaQueryEvaluator);
-}
-
-
-void Resolver::setViewTransitionGroupStyles(const AtomString& name, Ref<MutableStyleProperties> properties)
-{
-    if (!m_document)
-        return;
-
-    auto* viewTransitionsStyle = m_ruleSets.dynamicViewTransitionsStyle();
-    RuleSetBuilder builder(*viewTransitionsStyle, mediaQueryEvaluator(), this);
-    CSSSelectorParserContext context(*m_document.get());
-
-    MutableCSSSelectorList selectorList;
-    selectorList.append(MutableCSSSelector::parsePseudoClassSelector("root"_s, context));
-    auto groupSelector = MutableCSSSelector::parsePseudoElementSelector("view-transition-group"_s, context);
-    groupSelector->setArgumentList({ { name } });
-
-    selectorList.first()->appendTagHistory(CSSSelector::Relation::Subselector, WTFMove(groupSelector));
-
-    auto styleRule = StyleRule::create(WTFMove(properties), true, CSSSelectorList(WTFMove(selectorList)));
-
-    builder.addStyleRule(styleRule);
 }
 
 } // namespace Style

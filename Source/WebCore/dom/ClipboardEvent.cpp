@@ -31,13 +31,13 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(ClipboardEvent);
 
 ClipboardEvent::ClipboardEvent(const AtomString& type, Ref<DataTransfer>&& dataTransfer)
-    : Event(EventInterfaceType::ClipboardEvent, type, CanBubble::Yes, IsCancelable::Yes, IsComposed::Yes)
+    : Event(type, CanBubble::Yes, IsCancelable::Yes, IsComposed::Yes)
     , m_clipboardData(WTFMove(dataTransfer))
 {
 }
 
 ClipboardEvent::ClipboardEvent(const AtomString& type, const Init& init)
-    : Event(EventInterfaceType::ClipboardEvent, type, init, IsTrusted::No)
+    : Event(type, init, IsTrusted::No)
     , m_clipboardData(init.clipboardData)
 {
 }

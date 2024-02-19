@@ -38,27 +38,12 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(DeviceMotionEvent);
 DeviceMotionEvent::~DeviceMotionEvent() = default;
 
 DeviceMotionEvent::DeviceMotionEvent()
-#if ENABLE(DEVICE_ORIENTATION)
-    : Event(EventInterfaceType::DeviceMotionEvent)
-#else
-    // FIXME: ENABLE(DEVICE_ORIENTATION) seems to be in a strange state where
-    // it is half-guarded by #ifdefs. DeviceMotionEvent.idl is guarded
-    // but DeviceMotionEvent.cpp itself is required by unguarded code.
-    : Event(EventInterfaceType::Event)
-#endif
-    , m_deviceMotionData(DeviceMotionData::create())
+    : m_deviceMotionData(DeviceMotionData::create())
 {
 }
 
 DeviceMotionEvent::DeviceMotionEvent(const AtomString& eventType, DeviceMotionData* deviceMotionData)
-#if ENABLE(DEVICE_ORIENTATION)
-    : Event(EventInterfaceType::DeviceMotionEvent, eventType, CanBubble::No, IsCancelable::No)
-#else
-    // FIXME: ENABLE(DEVICE_ORIENTATION) seems to be in a strange state where
-    // it is half-guarded by #ifdefs. DeviceMotionEvent.idl is guarded
-    // but DeviceMotionEvent.cpp itself is required by unguarded code.
-    : Event(EventInterfaceType::Event, eventType, CanBubble::No, IsCancelable::No)
-#endif
+    : Event(eventType, CanBubble::No, IsCancelable::No)
     , m_deviceMotionData(deviceMotionData)
 {
 }

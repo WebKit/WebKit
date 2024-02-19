@@ -41,21 +41,21 @@ using WebCore::eventNames;
 
 Class kitClass(WebCore::Event* impl)
 {
-    switch (impl->interfaceType()) {
-    case WebCore::EventInterfaceType::KeyboardEvent:
+    switch (impl->eventInterface()) {
+    case WebCore::KeyboardEventInterfaceType:
         return [DOMKeyboardEvent class];
-    case WebCore::EventInterfaceType::MouseEvent:
+    case WebCore::MouseEventInterfaceType:
         return [DOMMouseEvent class];
-    case WebCore::EventInterfaceType::MutationEvent:
+    case WebCore::MutationEventInterfaceType:
         return [DOMMutationEvent class];
-    case WebCore::EventInterfaceType::OverflowEvent:
+    case WebCore::OverflowEventInterfaceType:
         return [DOMOverflowEvent class];
-    case WebCore::EventInterfaceType::ProgressEvent:
-    case WebCore::EventInterfaceType::XMLHttpRequestProgressEvent:
+    case WebCore::ProgressEventInterfaceType:
+    case WebCore::XMLHttpRequestProgressEventInterfaceType:
         return [DOMProgressEvent class];
-    case WebCore::EventInterfaceType::TextEvent:
+    case WebCore::TextEventInterfaceType:
         return [DOMTextEvent class];
-    case WebCore::EventInterfaceType::WheelEvent:
+    case WebCore::WheelEventInterfaceType:
         return [DOMWheelEvent class];
     default:
         if (impl->isUIEvent())

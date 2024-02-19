@@ -34,15 +34,14 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(OverflowEvent);
 
 OverflowEvent::OverflowEvent()
-    : Event(EventInterfaceType::OverflowEvent)
-    , m_orient(VERTICAL)
+    : m_orient(VERTICAL)
     , m_horizontalOverflow(false)
     , m_verticalOverflow(false)
 {
 }
 
 OverflowEvent::OverflowEvent(bool horizontalOverflowChanged, bool horizontalOverflow, bool verticalOverflowChanged, bool verticalOverflow)
-    : Event(EventInterfaceType::OverflowEvent, eventNames().overflowchangedEvent, CanBubble::No, IsCancelable::No)
+    : Event(eventNames().overflowchangedEvent, CanBubble::No, IsCancelable::No)
     , m_horizontalOverflow(horizontalOverflow)
     , m_verticalOverflow(verticalOverflow)
 {
@@ -57,7 +56,7 @@ OverflowEvent::OverflowEvent(bool horizontalOverflowChanged, bool horizontalOver
 }
 
 OverflowEvent::OverflowEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
-    : Event(EventInterfaceType::OverflowEvent, type, initializer, isTrusted)
+    : Event(type, initializer, isTrusted)
     , m_orient(initializer.orient)
     , m_horizontalOverflow(initializer.horizontalOverflow)
     , m_verticalOverflow(initializer.verticalOverflow)

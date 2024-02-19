@@ -32,7 +32,7 @@
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSRule.h"
 #include "CSSRuleList.h"
-#include "CSSSelectorParser.h"
+#include "CSSSelectorParserContext.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "ComposedTreeIterator.h"
@@ -1616,10 +1616,12 @@ Ref<CSSStyleDeclaration> LocalDOMWindow::getComputedStyle(Element& element, cons
     if (!pseudoElt.startsWith(':'))
         return CSSComputedStyleDeclaration::create(element, std::nullopt);
 
-    auto [pseudoElementIsParsable, pseudoElementIdentifier] = CSSSelectorParser::parsePseudoElement(pseudoElt, CSSSelectorParserContext { element.protectedDocument() });
-    if (!pseudoElementIsParsable)
+    // FIXME: This does not work for pseudo-elements that take arguments (webkit.org/b/264103).
+    auto pseudoId = CSSSelector::parsePseudoElement(pseudoElt, CSSSelectorParserContext { element.protectedDocument() });
+    if (!pseudoId)
         return CSSComputedStyleDeclaration::createEmpty(element);
-    return CSSComputedStyleDeclaration::create(element, pseudoElementIdentifier);
+    // FIXME: CSSSelector::parsePseudoElement should never return PseudoId::None.
+    return CSSComputedStyleDeclaration::create(element, pseudoId == PseudoId::None ? std::nullopt : std::optional(Style::PseudoElementIdentifier { *pseudoId }));
 }
 
 RefPtr<CSSRuleList> LocalDOMWindow::getMatchedCSSRules(Element* element, const String& pseudoElement, bool authorOnly) const
@@ -1629,10 +1631,10 @@ RefPtr<CSSRuleList> LocalDOMWindow::getMatchedCSSRules(Element* element, const S
 
     // FIXME: This parser context won't get the right settings without a document.
     auto parserContext = document() ? CSSSelectorParserContext { *protectedDocument() } : CSSSelectorParserContext { CSSParserContext { HTMLStandardMode } };
-    auto [pseudoElementIsParsable, pseudoElementIdentifier] = CSSSelectorParser::parsePseudoElement(pseudoElement, parserContext);
-    if (!(pseudoElementIsParsable || (pseudoElementIdentifier && !pseudoElementIdentifier->nameArgument.isNull())) && !pseudoElement.isEmpty())
+    auto optionalPseudoId = CSSSelector::parsePseudoElement(pseudoElement, parserContext);
+    if (!optionalPseudoId && !pseudoElement.isEmpty())
         return nullptr;
-    auto pseudoId = pseudoElementIdentifier ? pseudoElementIdentifier->pseudoId : PseudoId::None;
+    auto pseudoId = optionalPseudoId ? *optionalPseudoId : PseudoId::None;
 
     RefPtr frame = this->frame();
     frame->protectedDocument()->styleScope().flushPendingUpdate();

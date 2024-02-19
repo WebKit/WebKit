@@ -42,7 +42,7 @@ Ref<XRReferenceSpaceEvent> XRReferenceSpaceEvent::create(const AtomString& type,
 }
 
 XRReferenceSpaceEvent::XRReferenceSpaceEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
-    : Event(EventInterfaceType::XRReferenceSpaceEvent, type, initializer, isTrusted)
+    : Event(type, initializer, isTrusted)
     , m_referenceSpace(initializer.referenceSpace)
     , m_transform(initializer.transform)
 {

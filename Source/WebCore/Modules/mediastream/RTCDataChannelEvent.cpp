@@ -46,13 +46,13 @@ Ref<RTCDataChannelEvent> RTCDataChannelEvent::create(const AtomString& type, Ini
 }
 
 RTCDataChannelEvent::RTCDataChannelEvent(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, Ref<RTCDataChannel>&& channel)
-    : Event(EventInterfaceType::RTCDataChannelEvent, type, canBubble, cancelable)
+    : Event(type, canBubble, cancelable)
     , m_channel(WTFMove(channel))
 {
 }
 
 RTCDataChannelEvent::RTCDataChannelEvent(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
-    : Event(EventInterfaceType::RTCDataChannelEvent, type, initializer, isTrusted)
+    : Event(type, initializer, isTrusted)
     , m_channel(initializer.channel.releaseNonNull())
 {
 }

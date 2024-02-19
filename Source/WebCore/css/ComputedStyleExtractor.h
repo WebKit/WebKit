@@ -40,7 +40,6 @@ class RenderStyle;
 class ShadowData;
 class StyleColor;
 class StylePropertyShorthand;
-class TransformationMatrix;
 class TransformOperation;
 
 struct PropertyValue;
@@ -82,7 +81,6 @@ public:
     static Ref<CSSValue> valueForFilter(const RenderStyle&, const FilterOperations&, AdjustPixelValuesForComputedStyle = AdjustPixelValuesForComputedStyle::Yes);
 
     static Ref<CSSPrimitiveValue> currentColorOrValidColor(const RenderStyle&, const StyleColor&);
-    static Ref<CSSFunctionValue> matrixTransformValue(const TransformationMatrix&, const RenderStyle&);
 
     static bool updateStyleIfNeededForProperty(Element&, CSSPropertyID);
 

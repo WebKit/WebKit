@@ -1,6 +1,6 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_equals: group expected "rgb(255, 0, 0)" but got "rgba(0, 0, 0, 0)"
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_equals: group expected "rgb(255, 0, 0)" but got ""
 
-Harness Error (FAIL), message = Unhandled rejection: assert_equals: group expected "rgb(255, 0, 0)" but got "rgba(0, 0, 0, 0)"
+Harness Error (FAIL), message = Unhandled rejection: assert_equals: group expected "rgb(255, 0, 0)" but got ""
 
 PASS style inheritance of pseudo elements
 

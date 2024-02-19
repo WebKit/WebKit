@@ -34,7 +34,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(BeforeTextInsertedEvent);
 
 BeforeTextInsertedEvent::BeforeTextInsertedEvent(const String& text)
-    : Event(EventInterfaceType::Event, eventNames().webkitBeforeTextInsertedEvent, CanBubble::No, IsCancelable::Yes), m_text(text)
+    : Event(eventNames().webkitBeforeTextInsertedEvent, CanBubble::No, IsCancelable::Yes), m_text(text)
 {
 }
 

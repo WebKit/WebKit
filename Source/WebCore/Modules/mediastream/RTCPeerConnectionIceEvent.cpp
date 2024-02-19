@@ -47,7 +47,7 @@ Ref<RTCPeerConnectionIceEvent> RTCPeerConnectionIceEvent::create(const AtomStrin
 }
 
 RTCPeerConnectionIceEvent::RTCPeerConnectionIceEvent(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, RefPtr<RTCIceCandidate>&& candidate, String&& serverURL)
-    : Event(EventInterfaceType::RTCPeerConnectionIceEvent, type, canBubble, cancelable)
+    : Event(type, canBubble, cancelable)
     , m_candidate(WTFMove(candidate))
     , m_url(WTFMove(serverURL))
 {

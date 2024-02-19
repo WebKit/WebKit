@@ -26,10 +26,8 @@
 #pragma once
 
 #include "Element.h"
-#include "ElementRuleCollector.h"
 #include "KeyframeEffectStack.h"
 #include "PseudoElement.h"
-#include "PseudoElementIdentifier.h"
 #include "RenderStyleConstants.h"
 #include "WebAnimationTypes.h"
 
@@ -42,27 +40,27 @@ class WebAnimation;
 
 struct Styleable {
     Element& element;
-    std::optional<Style::PseudoElementIdentifier> pseudoElementIdentifier;
+    PseudoId pseudoId;
 
-    Styleable(Element& element, const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
+    Styleable(Element& element, PseudoId pseudoId)
         : element(element)
-        , pseudoElementIdentifier(pseudoElementIdentifier)
+        , pseudoId(pseudoId)
     {
+        ASSERT(!is<PseudoElement>(element));
     }
 
     static const Styleable fromElement(Element& element)
     {
         if (auto* pseudoElement = dynamicDowncast<PseudoElement>(element))
-            return Styleable(*pseudoElement->hostElement(), Style::PseudoElementIdentifier { element.pseudoId() });
-        ASSERT(element.pseudoId() == PseudoId::None);
-        return Styleable(element, std::nullopt);
+            return Styleable(*pseudoElement->hostElement(), element.pseudoId());
+        return Styleable(element, element.pseudoId());
     }
 
     static const std::optional<const Styleable> fromRenderer(const RenderElement&);
 
     bool operator==(const Styleable& other) const
     {
-        return (&element == &other.element && pseudoElementIdentifier == other.pseudoElementIdentifier);
+        return (&element == &other.element && pseudoId == other.pseudoId);
     }
 
     RenderElement* renderer() const;
@@ -82,92 +80,92 @@ struct Styleable {
 
     KeyframeEffectStack* keyframeEffectStack() const
     {
-        return element.keyframeEffectStack(pseudoElementIdentifier);
+        return element.keyframeEffectStack(pseudoId);
     }
 
     KeyframeEffectStack& ensureKeyframeEffectStack() const
     {
-        return element.ensureKeyframeEffectStack(pseudoElementIdentifier);
+        return element.ensureKeyframeEffectStack(pseudoId);
     }
 
     bool hasKeyframeEffects() const
     {
-        return element.hasKeyframeEffects(pseudoElementIdentifier);
+        return element.hasKeyframeEffects(pseudoId);
     }
 
     OptionSet<AnimationImpact> applyKeyframeEffects(RenderStyle& targetStyle, HashSet<AnimatableCSSProperty>& affectedProperties, const RenderStyle* previousLastStyleChangeEventStyle, const Style::ResolutionContext& resolutionContext) const
     {
-        return element.ensureKeyframeEffectStack(pseudoElementIdentifier).applyKeyframeEffects(targetStyle, affectedProperties, previousLastStyleChangeEventStyle, resolutionContext);
+        return element.ensureKeyframeEffectStack(pseudoId).applyKeyframeEffects(targetStyle, affectedProperties, previousLastStyleChangeEventStyle, resolutionContext);
     }
 
     const AnimationCollection* animations() const
     {
-        return element.animations(pseudoElementIdentifier);
+        return element.animations(pseudoId);
     }
 
     bool hasCompletedTransitionForProperty(const AnimatableCSSProperty& property) const
     {
-        return element.hasCompletedTransitionForProperty(pseudoElementIdentifier, property);
+        return element.hasCompletedTransitionForProperty(pseudoId, property);
     }
 
     bool hasRunningTransitionForProperty(const AnimatableCSSProperty& property) const
     {
-        return element.hasRunningTransitionForProperty(pseudoElementIdentifier, property);
+        return element.hasRunningTransitionForProperty(pseudoId, property);
     }
 
     bool hasRunningTransitions() const
     {
-        return element.hasRunningTransitions(pseudoElementIdentifier);
+        return element.hasRunningTransitions(pseudoId);
     }
 
     AnimationCollection& ensureAnimations() const
     {
-        return element.ensureAnimations(pseudoElementIdentifier);
+        return element.ensureAnimations(pseudoId);
     }
 
     AnimatableCSSPropertyToTransitionMap& ensureCompletedTransitionsByProperty() const
     {
-        return element.ensureCompletedTransitionsByProperty(pseudoElementIdentifier);
+        return element.ensureCompletedTransitionsByProperty(pseudoId);
     }
 
     AnimatableCSSPropertyToTransitionMap& ensureRunningTransitionsByProperty() const
     {
-        return element.ensureRunningTransitionsByProperty(pseudoElementIdentifier);
+        return element.ensureRunningTransitionsByProperty(pseudoId);
     }
 
     CSSAnimationCollection& animationsCreatedByMarkup() const
     {
-        return element.animationsCreatedByMarkup(pseudoElementIdentifier);
+        return element.animationsCreatedByMarkup(pseudoId);
     }
 
     void setAnimationsCreatedByMarkup(CSSAnimationCollection&& collection) const
     {
-        element.setAnimationsCreatedByMarkup(pseudoElementIdentifier, WTFMove(collection));
+        element.setAnimationsCreatedByMarkup(pseudoId, WTFMove(collection));
     }
 
     const RenderStyle* lastStyleChangeEventStyle() const
     {
-        return element.lastStyleChangeEventStyle(pseudoElementIdentifier);
+        return element.lastStyleChangeEventStyle(pseudoId);
     }
 
     void setLastStyleChangeEventStyle(std::unique_ptr<const RenderStyle>&& style) const
     {
-        element.setLastStyleChangeEventStyle(pseudoElementIdentifier, WTFMove(style));
+        element.setLastStyleChangeEventStyle(pseudoId, WTFMove(style));
     }
 
     bool hasPropertiesOverridenAfterAnimation() const
     {
-        return element.hasPropertiesOverridenAfterAnimation(pseudoElementIdentifier);
+        return element.hasPropertiesOverridenAfterAnimation(pseudoId);
     }
 
     void setHasPropertiesOverridenAfterAnimation(bool value) const
     {
-        element.setHasPropertiesOverridenAfterAnimation(pseudoElementIdentifier, value);
+        element.setHasPropertiesOverridenAfterAnimation(pseudoId, value);
     }
 
     void keyframesRuleDidChange() const
     {
-        element.keyframesRuleDidChange(pseudoElementIdentifier);
+        element.keyframesRuleDidChange(pseudoId);
     }
 
     void queryContainerDidChange() const;

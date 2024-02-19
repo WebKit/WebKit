@@ -38,6 +38,8 @@ Ref<StorageEvent> StorageEvent::createForBindings()
     return adoptRef(*new StorageEvent);
 }
 
+StorageEvent::StorageEvent() = default;
+
 StorageEvent::~StorageEvent() = default;
 
 Ref<StorageEvent> StorageEvent::create(const AtomString& type, const String& key, const String& oldValue, const String& newValue, const String& url, Storage* storageArea)
@@ -50,13 +52,8 @@ Ref<StorageEvent> StorageEvent::create(const AtomString& type, const Init& initi
     return adoptRef(*new StorageEvent(type, initializer, isTrusted));
 }
 
-StorageEvent::StorageEvent()
-    : Event(EventInterfaceType::StorageEvent)
-{
-}
-
 StorageEvent::StorageEvent(const AtomString& type, const String& key, const String& oldValue, const String& newValue, const String& url, Storage* storageArea)
-    : Event(EventInterfaceType::StorageEvent, type, CanBubble::No, IsCancelable::No)
+    : Event(type, CanBubble::No, IsCancelable::No)
     , m_key(key)
     , m_oldValue(oldValue)
     , m_newValue(newValue)
@@ -66,7 +63,7 @@ StorageEvent::StorageEvent(const AtomString& type, const String& key, const Stri
 }
 
 StorageEvent::StorageEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
-    : Event(EventInterfaceType::StorageEvent, type, initializer, isTrusted)
+    : Event(type, initializer, isTrusted)
     , m_key(initializer.key)
     , m_oldValue(initializer.oldValue)
     , m_newValue(initializer.newValue)

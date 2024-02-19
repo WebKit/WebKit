@@ -76,12 +76,11 @@ public:
 
 private:
     SecurityPolicyViolationEvent()
-        : Event(EventInterfaceType::SecurityPolicyViolationEvent)
     {
     }
 
     SecurityPolicyViolationEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
-        : Event(EventInterfaceType::SecurityPolicyViolationEvent, type, initializer, isTrusted)
+        : Event(type, initializer, isTrusted)
         , m_documentURI(initializer.documentURI)
         , m_referrer(initializer.referrer)
         , m_blockedURI(initializer.blockedURI)

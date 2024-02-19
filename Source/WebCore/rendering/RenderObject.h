@@ -169,7 +169,6 @@ public:
         VTTCue,
         Video,
         View,
-        ViewTransitionCapture,
 #if ENABLE(MATHML)
         MathMLBlock,
         MathMLFenced,
@@ -255,7 +254,6 @@ public:
         IsImage = 1 << 0,
         IsMedia = 1 << 1,
         IsWidget = 1 << 2,
-        IsViewTransitionCapture = 1 << 3,
     };
 
     enum class SVGModelObjectFlag : uint8_t {
@@ -476,7 +474,6 @@ public:
     bool isRenderSearchField() const { return type() == Type::SearchField; }
     bool isRenderTextControlInnerBlock() const { return type() == Type::TextControlInnerBlock; }
     bool isRenderVideo() const { return type() == Type::Video; }
-    bool isRenderViewTransitionCapture() const { return isRenderReplaced() && m_typeSpecificFlags.replacedFlags().contains(ReplacedFlag::IsViewTransitionCapture); }
     bool isRenderWidget() const { return isRenderReplaced() && m_typeSpecificFlags.replacedFlags().contains(ReplacedFlag::IsWidget); }
     bool isRenderHTMLCanvas() const { return type() == Type::HTMLCanvas; }
 #if ENABLE(ATTACHMENT_ELEMENT)
