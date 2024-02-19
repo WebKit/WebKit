@@ -29,6 +29,7 @@
 
 #include "LibWebRTCMacros.h"
 #include "LibWebRTCProvider.h"
+#include "LibWebRTCUtils.h"
 #include "RTCCertificate.h"
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
@@ -44,11 +45,6 @@ ALLOW_UNUSED_PARAMETERS_END
 namespace WebCore {
 
 namespace LibWebRTCCertificateGenerator {
-
-static inline String fromStdString(const std::string& value)
-{
-    return String::fromUTF8(value.data(), value.length());
-}
 
 class RTCCertificateGeneratorCallbackWrapper : public ThreadSafeRefCounted<RTCCertificateGeneratorCallbackWrapper, WTF::DestructionThread::Main> {
 public:
