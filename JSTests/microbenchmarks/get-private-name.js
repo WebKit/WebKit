@@ -1,5 +1,5 @@
 //@ $skipModes << :lockdown if $buildType == "debug"
-//@ skip if $architecture == "arm" and !$cloop
+//@ skip if $memoryLimited
 
 function assert(b, m = "Assertion failed") {
     if (!b)

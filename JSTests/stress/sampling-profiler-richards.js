@@ -1,6 +1,6 @@
 //@ skip if not $jitTests
 //@ skip if $architecture == "x86"
-//@ skip if $architecture == "arm"
+//@ skip if $memoryLimited
 //@ runDefault("--collectContinuously=1", "--useSamplingProfiler=1", "--collectExtraSamplingProfilerData=1")
 
 "use strict";

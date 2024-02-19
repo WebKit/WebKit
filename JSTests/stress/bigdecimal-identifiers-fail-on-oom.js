@@ -1,4 +1,4 @@
-//@ skip if $architecture == "arm" or $memoryLimited
+//@ skip if $memoryLimited
 
 function foo() {
     let m = new WebAssembly.Memory({initial: 1000});
