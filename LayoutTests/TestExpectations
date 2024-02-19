@@ -458,6 +458,20 @@ imported/w3c/web-platform-tests/server-timing/test_server_timing.https.html [ Sk
 imported/w3c/web-platform-tests/server-timing/navigation_timing_idl.html [ Skip ]
 imported/w3c/web-platform-tests/server-timing/navigation_timing_idl.https.html [ Skip ]
 
+# These need test devlopment to populate clientDataJSON in AuthenticatorResponseData
+webkit.org/b/269751 http/wpt/webauthn/ctap-hid-success.https.html [ Crash ]
+webkit.org/b/269751 http/wpt/webauthn/idl.https.html [ Crash ]
+webkit.org/b/269751 http/wpt/webauthn/public-key-credential-create-success-ccid.https.html [ Crash ]
+webkit.org/b/269751 http/wpt/webauthn/public-key-credential-create-success-hid.https.html [ Crash ]
+webkit.org/b/269751 http/wpt/webauthn/public-key-credential-create-success-nfc.https.html [ Crash ]
+webkit.org/b/269751 http/wpt/webauthn/public-key-credential-create-success-u2f.https.html [ Crash ]
+webkit.org/b/269751 http/wpt/webauthn/public-key-credential-cross-origin.https.html [ Crash ]
+webkit.org/b/269751 http/wpt/webauthn/public-key-credential-get-success-ccid.https.html [ Crash ]
+webkit.org/b/269751 http/wpt/webauthn/public-key-credential-get-success-hid.https.html [ Crash ]
+webkit.org/b/269751 http/wpt/webauthn/public-key-credential-get-success-nfc.https.html [ Crash ]
+webkit.org/b/269751 http/wpt/webauthn/public-key-credential-get-success-u2f.https.html [ Crash ]
+webkit.org/b/269751 http/wpt/webauthn/public-key-credential-same-origin-with-ancestors.https.html [ Crash ]
+
 # Console log lines may appear in a different order so we silence them.
 http/tests/security/cookie-module.html [ DumpJSConsoleLogInStdErr ]
 http/tests/security/cookie-module-import-propagate.html [ DumpJSConsoleLogInStdErr ]
