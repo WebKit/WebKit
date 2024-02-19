@@ -554,6 +554,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/Cocoa/CoreIPCDateComponents.serialization.in \
 	Shared/Cocoa/CoreIPCDictionary.serialization.in \
 	Shared/Cocoa/CoreIPCError.serialization.in \
+	Shared/Cocoa/CoreIPCCVPixelBufferRef.serialization.in \
 	Shared/Cocoa/CoreIPCFont.serialization.in \
 	Shared/Cocoa/CoreIPCLocale.serialization.in \
 	Shared/Cocoa/CoreIPCNSCFObject.serialization.in \

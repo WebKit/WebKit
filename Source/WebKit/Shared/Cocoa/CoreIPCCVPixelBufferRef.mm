@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,56 +24,36 @@
  */
 
 #import "config.h"
-#import "WebCoreArgumentCoders.h"
+#import "CoreIPCCVPixelBufferRef.h"
 
-#import "ArgumentCodersCocoa.h"
-#import <CoreText/CoreText.h>
-#import <WebCore/AttributedString.h>
-#import <WebCore/DataDetectorElementInfo.h>
-#import <WebCore/DictionaryPopupInfo.h>
-#import <WebCore/Font.h>
-#import <WebCore/FontAttributes.h>
-#import <WebCore/FontCustomPlatformData.h>
-#import <WebCore/ResourceRequest.h>
-#import <WebCore/SharedMemory.h>
-#import <WebCore/TextRecognitionResult.h>
-#import <pal/spi/cf/CoreTextSPI.h>
+#import <WebCore/IOSurface.h>
 
-#if PLATFORM(IOS_FAMILY)
-#import <UIKit/UIFont.h>
-#endif
-
-#if ENABLE(WIRELESS_PLAYBACK_TARGET)
-#import <WebCore/MediaPlaybackTargetContext.h>
-#import <objc/runtime.h>
-#endif
-
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/WebCoreArgumentCodersCocoaAdditions.mm>
-#endif
-
-#if USE(AVFOUNDATION)
-#import <wtf/MachSendRight.h>
-#endif
-
-#if ENABLE(APPLE_PAY)
-#import <pal/cocoa/PassKitSoftLink.h>
-#endif
-
-#if ENABLE(WIRELESS_PLAYBACK_TARGET)
-#import <pal/cocoa/AVFoundationSoftLink.h>
-#endif
-
-#if ENABLE(DATA_DETECTION)
-#import <pal/cocoa/DataDetectorsCoreSoftLink.h>
-#endif
-
-#if USE(AVFOUNDATION)
 #import <WebCore/CoreVideoSoftLink.h>
-#endif
 
-#import <pal/cocoa/VisionKitCoreSoftLink.h>
+namespace WebKit {
+using namespace WebCore;
+MachSendRight CoreIPCCVPixelBufferRef::sendRightFromPixelBuffer(const RetainPtr<CVPixelBufferRef>& pixelBuffer)
+{
+    auto surface = CVPixelBufferGetIOSurface(pixelBuffer.get());
+    return MachSendRight::adopt(IOSurfaceCreateMachPort(surface));
+}
 
-namespace IPC {
+RetainPtr<CVPixelBufferRef> CoreIPCCVPixelBufferRef::toCF() const
+{
+    RetainPtr<CVPixelBufferRef> pixelBuffer;
+    if (!m_sendRight)
+        return pixelBuffer;
+    {
+        auto surface = adoptCF(IOSurfaceLookupFromMachPort(m_sendRight.sendRight()));
+        if (!surface)
+            return nullptr;
+        CVPixelBufferRef rawBuffer = nullptr;
+        auto status = CVPixelBufferCreateWithIOSurface(kCFAllocatorDefault, surface.get(), nullptr, &rawBuffer);
+        if (status != noErr || !rawBuffer)
+            return nullptr;
+        pixelBuffer = adoptCF(rawBuffer);
+    }
+    return pixelBuffer;
+}
 
-} // namespace IPC
+} // namespace WebKit

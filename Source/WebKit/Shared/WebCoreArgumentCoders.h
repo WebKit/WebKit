@@ -156,17 +156,7 @@ template<> struct ArgumentCoder<WebCore::CurlProxySettings> {
 };
 #endif
 
-#if USE(AVFOUNDATION)
-
-template<> struct ArgumentCoder<RetainPtr<CVPixelBufferRef>> {
-    static void encode(Encoder&, const RetainPtr<CVPixelBufferRef>&);
-    static std::optional<RetainPtr<CVPixelBufferRef>> decode(Decoder&);
-};
-
-#endif
-
 } // namespace IPC
-
 namespace WTF {
 
 #if USE(CURL)

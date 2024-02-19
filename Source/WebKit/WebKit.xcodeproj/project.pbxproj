@@ -1338,8 +1338,10 @@
 		526C5722284ADCBC00E08955 /* CtapCcidDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 526C5720284ADCBC00E08955 /* CtapCcidDriver.h */; };
 		526C5723284ADCBC00E08955 /* CtapCcidDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 526C5721284ADCBC00E08955 /* CtapCcidDriver.cpp */; };
 		5272D4C91E735F0900EB4290 /* WKProtectionSpaceNS.h in Headers */ = {isa = PBXBuildFile; fileRef = 5272D4C71E735F0900EB4290 /* WKProtectionSpaceNS.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		527DA5E32B698159004E6A68 /* CoreIPCCVPixelBufferRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 527DA5E22B697DC0004E6A68 /* CoreIPCCVPixelBufferRef.h */; };
 		528C37C1195CBB1A00D8B9CC /* WKBackForwardListPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9F28101958F478008CAC72 /* WKBackForwardListPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52A69BEA286CFFAC00893E8F /* CryptoTokenKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52A69BE9286CFFAC00893E8F /* CryptoTokenKit.framework */; };
+		52B060F92B745E4D009B1666 /* CoreIPCCVPixelBufferRef.mm in Sources */ = {isa = PBXBuildFile; fileRef = 52B060F82B745E00009B1666 /* CoreIPCCVPixelBufferRef.mm */; };
 		52C3C26528651F860005BE6E /* WKBrowsingContextHandlePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 52C3C26428651F860005BE6E /* WKBrowsingContextHandlePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52CDC5C42731DA0D00A3E3EB /* VirtualAuthenticatorConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 52CDC5BD2731DA0C00A3E3EB /* VirtualAuthenticatorConfiguration.h */; };
 		52CDC5C52731DA0D00A3E3EB /* VirtualService.mm in Sources */ = {isa = PBXBuildFile; fileRef = 52CDC5BE2731DA0C00A3E3EB /* VirtualService.mm */; };
@@ -5752,7 +5754,10 @@
 		5272D4C71E735F0900EB4290 /* WKProtectionSpaceNS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKProtectionSpaceNS.h; path = mac/WKProtectionSpaceNS.h; sourceTree = "<group>"; };
 		5272D4C81E735F0900EB4290 /* WKProtectionSpaceNS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKProtectionSpaceNS.mm; path = mac/WKProtectionSpaceNS.mm; sourceTree = "<group>"; };
 		527D1AEC2AD0A5BB00D145E5 /* WebUserContentControllerDataTypes.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebUserContentControllerDataTypes.serialization.in; sourceTree = "<group>"; };
+		527DA5E22B697DC0004E6A68 /* CoreIPCCVPixelBufferRef.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreIPCCVPixelBufferRef.h; sourceTree = "<group>"; };
+		527DA5E42B69815F004E6A68 /* CoreIPCCVPixelBufferRef.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = CoreIPCCVPixelBufferRef.serialization.in; sourceTree = "<group>"; };
 		52A69BE9286CFFAC00893E8F /* CryptoTokenKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CryptoTokenKit.framework; path = System/Library/Frameworks/CryptoTokenKit.framework; sourceTree = SDKROOT; };
+		52B060F82B745E00009B1666 /* CoreIPCCVPixelBufferRef.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CoreIPCCVPixelBufferRef.mm; sourceTree = "<group>"; };
 		52C05BA72874996C00D80C59 /* MockCcidService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockCcidService.h; sourceTree = "<group>"; };
 		52C05BA82874996C00D80C59 /* MockCcidService.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = MockCcidService.mm; sourceTree = "<group>"; };
 		52C3C26428651F860005BE6E /* WKBrowsingContextHandlePrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKBrowsingContextHandlePrivate.h; sourceTree = "<group>"; };
@@ -11541,6 +11546,9 @@
 				5157AE002B23C33500C0E095 /* CoreIPCContacts.h */,
 				5157ADFF2B23C33500C0E095 /* CoreIPCContacts.mm */,
 				5157ADFA2B23B8FB00C0E095 /* CoreIPCContacts.serialization.in */,
+				527DA5E22B697DC0004E6A68 /* CoreIPCCVPixelBufferRef.h */,
+				52B060F82B745E00009B1666 /* CoreIPCCVPixelBufferRef.mm */,
+				527DA5E42B69815F004E6A68 /* CoreIPCCVPixelBufferRef.serialization.in */,
 				F48C81E32AE0BA6E00073850 /* CoreIPCData.h */,
 				F48C81E52AE0E1DF00073850 /* CoreIPCData.serialization.in */,
 				F49EE2202AE87F41003E3C34 /* CoreIPCDate.h */,
@@ -15966,6 +15974,7 @@
 				519F6F7C2B2D77E300559CB3 /* CoreIPCCFURL.h in Headers */,
 				5197FAE82AFD33CF009180C5 /* CoreIPCColor.h in Headers */,
 				5157AE022B23C33500C0E095 /* CoreIPCContacts.h in Headers */,
+				527DA5E32B698159004E6A68 /* CoreIPCCVPixelBufferRef.h in Headers */,
 				F48C81E42AE0BA8E00073850 /* CoreIPCData.h in Headers */,
 				F49EE2212AE87F41003E3C34 /* CoreIPCDate.h in Headers */,
 				518198902B7585EB0084E292 /* CoreIPCDateComponents.h in Headers */,
@@ -18943,6 +18952,7 @@
 				FA1ED3F42B76B93700C90F3B /* CoreIPCCFType.mm in Sources */,
 				519F6F7F2B2D7A4500559CB3 /* CoreIPCCFURL.mm in Sources */,
 				5157AE032B23C34700C0E095 /* CoreIPCContacts.mm in Sources */,
+				52B060F92B745E4D009B1666 /* CoreIPCCVPixelBufferRef.mm in Sources */,
 				518198912B7585F80084E292 /* CoreIPCDateComponents.mm in Sources */,
 				5187BDEE2B005E16008A6EE5 /* CoreIPCDictionary.mm in Sources */,
 				F4ABDB662B01C68F00C5471A /* CoreIPCError.mm in Sources */,

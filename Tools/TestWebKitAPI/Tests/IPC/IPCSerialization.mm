@@ -30,11 +30,14 @@
 #import "Encoder.h"
 #import "MessageSenderInlines.h"
 #import "test.h"
+#import <CoreVideo/CoreVideo.h>
 #import <Foundation/NSValue.h>
 #import <Security/Security.h>
 #import <WebCore/AttributedString.h>
+#import <WebCore/CVUtilities.h>
 #import <WebCore/ColorCocoa.h>
 #import <WebCore/FontCocoa.h>
+#import <WebCore/IOSurface.h>
 #import <limits.h>
 #import <pal/spi/cocoa/ContactsSPI.h>
 #import <wtf/RetainPtr.h>
@@ -74,7 +77,7 @@ private:
 
 bool SerializationTestSender::performSendWithAsyncReplyWithoutUsingIPCConnection(UniqueRef<IPC::Encoder>&& encoder, CompletionHandler<void(IPC::Decoder*)>&& completionHandler) const
 {
-    auto decoder = IPC::Decoder::create({ encoder->buffer(), encoder->bufferSize() }, { });
+    auto decoder = IPC::Decoder::create({ encoder->buffer(), encoder->bufferSize() }, encoder->releaseAttachments());
     ASSERT(decoder);
 
     completionHandler(decoder.get());
@@ -108,6 +111,7 @@ struct CFHolderForTesting {
         RetainPtr<CFNumberRef>,
         RetainPtr<CFStringRef>,
         RetainPtr<CFURLRef>,
+        RetainPtr<CVPixelBufferRef>,
         RetainPtr<CGColorRef>,
         RetainPtr<CGColorSpaceRef>,
         RetainPtr<SecCertificateRef>,
@@ -141,6 +145,22 @@ std::optional<CFHolderForTesting> CFHolderForTesting::decode(IPC::Decoder& decod
     return { {
         WTFMove(*value)
     } };
+}
+
+static bool cvPixelBufferRefsEqual(CVPixelBufferRef pixelBuffer1, CVPixelBufferRef pixelBuffer2)
+{
+    CVPixelBufferLockBaseAddress(pixelBuffer1, 0);
+    CVPixelBufferLockBaseAddress(pixelBuffer2, 0);
+    size_t pixelBuffer1Size = CVPixelBufferGetDataSize(pixelBuffer1);
+    size_t pixelBuffer2Size = CVPixelBufferGetDataSize(pixelBuffer2);
+    if (pixelBuffer1Size != pixelBuffer2Size)
+        return false;
+    auto base1 = CVPixelBufferGetBaseAddress(pixelBuffer1);
+    auto base2 = CVPixelBufferGetBaseAddress(pixelBuffer2);
+    bool areEqual = !memcmp(base1, base2, pixelBuffer1Size);
+    CVPixelBufferUnlockBaseAddress(pixelBuffer1, 0);
+    CVPixelBufferUnlockBaseAddress(pixelBuffer2, 0);
+    return areEqual;
 }
 
 static bool secTrustRefsEqual(SecTrustRef trust1, SecTrustRef trust2)
@@ -246,6 +266,8 @@ CFHolderForTesting cfHolder(CFTypeRef type)
         return { (CFStringRef)type };
     if (typeID == CFURLGetTypeID())
         return { (CFURLRef)type };
+    if (typeID == CVPixelBufferGetTypeID())
+        return { (CVPixelBufferRef)type };
     if (typeID == CGColorSpaceGetTypeID())
         return { (CGColorSpaceRef)type };
     if (typeID == CGColorGetTypeID())
@@ -292,6 +314,10 @@ inline bool operator==(const CFHolderForTesting& a, const CFHolderForTesting& b)
 
     auto aTypeID = CFGetTypeID(aObject);
     auto bTypeID = CFGetTypeID(bObject);
+
+    if (aTypeID == CVPixelBufferGetTypeID() && bTypeID == CVPixelBufferGetTypeID())
+        return cvPixelBufferRefsEqual((CVPixelBufferRef)aObject, (CVPixelBufferRef)bObject);
+
     if (aTypeID == SecTrustGetTypeID() && bTypeID == SecTrustGetTypeID())
         return secTrustRefsEqual((SecTrustRef)aObject, (SecTrustRef)bObject);
 
@@ -831,6 +857,12 @@ static void runTestCF(const CFHolderForTesting& holderArg)
 
 TEST(IPCSerialization, Basic)
 {
+    // CVPixelBuffer
+    auto s1 = WebCore::IOSurface::create(nullptr, { 5, 5 }, WebCore::DestinationColorSpace::SRGB());
+    auto pixelBuffer = WebCore::createCVPixelBuffer(s1->surface());
+
+    runTestCF({ pixelBuffer->get() });
+
     // NSString/CFString
     runTestNS({ @"Hello world" });
     runTestCF({ CFSTR("Hello world") });

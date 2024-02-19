@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,57 +23,44 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WebCoreArgumentCoders.h"
+#pragma once
 
-#import "ArgumentCodersCocoa.h"
-#import <CoreText/CoreText.h>
-#import <WebCore/AttributedString.h>
-#import <WebCore/DataDetectorElementInfo.h>
-#import <WebCore/DictionaryPopupInfo.h>
-#import <WebCore/Font.h>
-#import <WebCore/FontAttributes.h>
-#import <WebCore/FontCustomPlatformData.h>
-#import <WebCore/ResourceRequest.h>
-#import <WebCore/SharedMemory.h>
-#import <WebCore/TextRecognitionResult.h>
-#import <pal/spi/cf/CoreTextSPI.h>
+#if PLATFORM(COCOA)
 
-#if PLATFORM(IOS_FAMILY)
-#import <UIKit/UIFont.h>
-#endif
+#include "ArgumentCodersCocoa.h"
+#include <mach/mach.h>
+#include <wtf/MachSendRight.h>
+#include <wtf/RetainPtr.h>
 
-#if ENABLE(WIRELESS_PLAYBACK_TARGET)
-#import <WebCore/MediaPlaybackTargetContext.h>
-#import <objc/runtime.h>
-#endif
+namespace WebKit {
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/WebCoreArgumentCodersCocoaAdditions.mm>
-#endif
+class CoreIPCCVPixelBufferRef {
+public:
+    CoreIPCCVPixelBufferRef(const RetainPtr<CVPixelBufferRef>& pixelBuffer)
+        : m_sendRight(sendRightFromPixelBuffer(pixelBuffer))
+    {
+    }
 
-#if USE(AVFOUNDATION)
-#import <wtf/MachSendRight.h>
-#endif
+    CoreIPCCVPixelBufferRef(RetainPtr<CVPixelBufferRef>&& pixelBuffer)
+        : m_sendRight(sendRightFromPixelBuffer(pixelBuffer))
+    {
+    }
 
-#if ENABLE(APPLE_PAY)
-#import <pal/cocoa/PassKitSoftLink.h>
-#endif
+    CoreIPCCVPixelBufferRef(MachSendRight&& sendRight)
+        : m_sendRight(WTFMove(sendRight))
+    {
+    }
 
-#if ENABLE(WIRELESS_PLAYBACK_TARGET)
-#import <pal/cocoa/AVFoundationSoftLink.h>
-#endif
+    RetainPtr<CVPixelBufferRef> toCF() const;
 
-#if ENABLE(DATA_DETECTION)
-#import <pal/cocoa/DataDetectorsCoreSoftLink.h>
-#endif
+private:
+    friend struct IPC::ArgumentCoder<CoreIPCCVPixelBufferRef, void>;
 
-#if USE(AVFOUNDATION)
-#import <WebCore/CoreVideoSoftLink.h>
-#endif
+    MachSendRight sendRightFromPixelBuffer(const RetainPtr<CVPixelBufferRef>&);
 
-#import <pal/cocoa/VisionKitCoreSoftLink.h>
+    MachSendRight m_sendRight;
+};
 
-namespace IPC {
+} // namespace WebKit
 
-} // namespace IPC
+#endif // PLATFORM(COCOA)

@@ -72,6 +72,10 @@ additional_forward_declaration: typedef struct __SecKeychainItem *SecKeychainIte
 
 #endif
 
+additional_forward_declaration: typedef struct __CVBuffer *CVPixelBufferRef
+[WebKitPlatform, CustomHeader,  AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->toCF()] CVPixelBufferRef wrapped by WebKit::CoreIPCCVPixelBufferRef {
+}
+
 additional_forward_declaration: typedef struct __SecTrust *SecTrustRef
 [WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createSecTrust()] SecTrustRef wrapped by WebKit::CoreIPCSecTrust {
 }
