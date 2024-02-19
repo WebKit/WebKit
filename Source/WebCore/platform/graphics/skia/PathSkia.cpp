@@ -195,9 +195,10 @@ void PathSkia::add(PathCloseSubpath)
         m_elementsStream->add(PathCloseSubpath { });
 }
 
-void PathSkia::addPath(const PathSkia&, const AffineTransform&)
+void PathSkia::addPath(const PathSkia& path, const AffineTransform& transform)
 {
-    notImplemented();
+    m_platformPath.addPath(*path.platformPath(), transform);
+    m_elementsStream = nullptr;
 }
 
 void PathSkia::applySegments(const PathSegmentApplier&) const
