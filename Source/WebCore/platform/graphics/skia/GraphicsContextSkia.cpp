@@ -343,11 +343,9 @@ SkPaint GraphicsContextSkia::createStrokePaint(std::optional<Color> strokeColor)
         // FIXME: Implement stroke patterns.
         UNUSED_PARAM(strokePattern);
         notImplemented();
-    } else if (auto strokeGradient = state.strokeBrush().gradient()) {
-        // FIXME: Implement stroke gradients.
-        UNUSED_PARAM(strokeGradient);
-        notImplemented();
-    } else {
+    } else if (auto strokeGradient = state.strokeBrush().gradient())
+        paint.setShader(strokeGradient->shader(state.alpha(), state.strokeBrush().gradientSpaceTransform()));
+    else {
         auto [r, g, b, a] = strokeColor.value_or(state.strokeBrush().color()).toColorTypeLossy<SRGBA<uint8_t>>().resolved();
         paint.setColor(SkColorSetARGB(a, r, g, b));
     }
