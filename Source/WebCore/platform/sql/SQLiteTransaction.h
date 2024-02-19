@@ -26,9 +26,9 @@
 #ifndef SQLiteTransaction_h
 #define SQLiteTransaction_h
 
+#include <wtf/CheckedRef.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/WeakRef.h>
 
 namespace WebCore {
 
@@ -51,7 +51,7 @@ public:
     SQLiteDatabase& database() const { return m_db.get(); }
 
 private:
-    WeakRef<SQLiteDatabase> m_db;
+    CheckedRef<SQLiteDatabase> m_db;
     bool m_inProgress;
     bool m_readOnly;
 };
