@@ -1,2 +1,1 @@
-CONSOLE MESSAGE: Navigator.getGamepads() will be removed from insecure contexts in a future release
-Test that accessing navigator.getGamepads from an insecure context logs a warning
+Test that calling navigator.getGamepads no longer generates a console message in insecure contexts
