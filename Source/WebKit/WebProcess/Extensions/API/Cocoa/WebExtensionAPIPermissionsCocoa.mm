@@ -30,6 +30,8 @@
 #import "config.h"
 #import "WebExtensionAPIPermissions.h"
 
+#if ENABLE(WK_WEB_EXTENSIONS)
+
 #import "CocoaHelpers.h"
 #import "Logging.h"
 #import "MessageSenderInlines.h"
@@ -39,8 +41,6 @@
 #import "WebExtensionUtilities.h"
 #import "WebProcess.h"
 #import <wtf/cocoa/VectorCocoa.h>
-
-#if ENABLE(WK_WEB_EXTENSIONS)
 
 namespace WebKit {
 

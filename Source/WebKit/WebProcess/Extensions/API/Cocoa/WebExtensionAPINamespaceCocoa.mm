@@ -28,11 +28,13 @@
 #endif
 
 #import "config.h"
-#import "CocoaHelpers.h"
 #import "WebExtensionAPINamespace.h"
-#import <WebKit/_WKWebExtensionPermission.h>
 
 #if ENABLE(WK_WEB_EXTENSIONS)
+
+#import "CocoaHelpers.h"
+#import "WebExtensionControllerProxy.h"
+#import <WebKit/_WKWebExtensionPermission.h>
 
 namespace WebKit {
 

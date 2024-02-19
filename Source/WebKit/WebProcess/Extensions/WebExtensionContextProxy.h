@@ -85,7 +85,7 @@ public:
 
     bool isSessionStorageAllowedInContentScripts() { return m_isSessionStorageAllowedInContentScripts; }
 
-    bool inTestingMode() { return m_testingMode; }
+    bool inTestingMode() const;
 
     WebCore::DOMWrapperWorld& toDOMWrapperWorld(WebExtensionContentWorldType);
 
@@ -215,7 +215,6 @@ private:
     RetainPtr<_WKWebExtensionLocalization> m_localization;
     RetainPtr<NSDictionary> m_manifest;
     double m_manifestVersion { 0 };
-    bool m_testingMode { false };
     bool m_isSessionStorageAllowedInContentScripts { false };
     RefPtr<WebCore::DOMWrapperWorld> m_contentScriptWorld;
     WeakFrameSet m_extensionContentFrames;

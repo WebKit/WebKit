@@ -46,7 +46,6 @@ struct WebExtensionContextParameters {
     Ref<API::Data> manifestJSON;
 
     double manifestVersion { 0 };
-    bool testingMode { false };
     bool isSessionStorageAllowedInContentScripts { false };
 
     std::optional<WebCore::PageIdentifier> backgroundPageIdentifier;

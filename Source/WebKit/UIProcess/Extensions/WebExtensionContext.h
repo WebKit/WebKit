@@ -422,8 +422,7 @@ public:
     bool hasActiveUserGesture(WebExtensionTab&) const;
     void clearUserGesture(WebExtensionTab&);
 
-    bool inTestingMode() const { return m_testingMode; }
-    void setTestingMode(bool);
+    bool inTestingMode() const;
 
     URL backgroundContentURL();
     WKWebView *backgroundWebView() const { return m_backgroundWebView.get(); }
@@ -810,11 +809,6 @@ private:
 
     bool m_requestedOptionalAccessToAllHosts { false };
     bool m_hasAccessInPrivateBrowsing { false };
-#ifdef NDEBUG
-    bool m_testingMode { false };
-#else
-    bool m_testingMode { true };
-#endif
 
     VoidCompletionHandlerVector m_actionsToPerformAfterBackgroundContentLoads;
     EventListenerTypeCountedSet m_backgroundContentEventListeners;

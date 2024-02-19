@@ -66,6 +66,11 @@ std::optional<WebExtensionTabIdentifier> WebExtensionContextProxy::tabIdentifier
     return std::nullopt;
 }
 
+bool WebExtensionContextProxy::inTestingMode() const
+{
+    return m_extensionControllerProxy && m_extensionControllerProxy->inTestingMode();
+}
+
 RefPtr<WebPage> WebExtensionContextProxy::backgroundPage() const
 {
     return m_backgroundPage.get();

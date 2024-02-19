@@ -30,6 +30,7 @@
 
 #include "WebExtensionContextParameters.h"
 #include "WebExtensionContextProxyMessages.h"
+#include "WebExtensionController.h"
 #include "WebPageProxy.h"
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
@@ -65,7 +66,6 @@ WebExtensionContextParameters WebExtensionContext::parameters() const
         extension().serializeLocalization(),
         extension().serializeManifest(),
         extension().manifestVersion(),
-        inTestingMode(),
         isSessionStorageAllowedInContentScripts(),
         backgroundPageIdentifier(),
 #if ENABLE(INSPECTOR_EXTENSIONS)
@@ -74,6 +74,11 @@ WebExtensionContextParameters WebExtensionContext::parameters() const
         popupPageIdentifiers(),
         tabPageIdentifiers()
     };
+}
+
+bool WebExtensionContext::inTestingMode() const
+{
+    return m_extensionController && m_extensionController->inTestingMode();
 }
 
 const WebExtensionContext::UserContentControllerProxySet& WebExtensionContext::userContentControllers() const

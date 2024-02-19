@@ -80,7 +80,6 @@ Ref<WebExtensionContextProxy> WebExtensionContextProxy::getOrCreate(const WebExt
         context.m_localization = parseLocalization(parameters.localizationJSON.get(), parameters.baseURL);
         context.m_manifest = parseJSON(parameters.manifestJSON.get());
         context.m_manifestVersion = parameters.manifestVersion;
-        context.m_testingMode = parameters.testingMode;
         context.m_isSessionStorageAllowedInContentScripts = parameters.isSessionStorageAllowedInContentScripts;
 
         if (parameters.backgroundPageIdentifier) {

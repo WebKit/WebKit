@@ -32,7 +32,6 @@ struct WebKit::WebExtensionContextParameters {
     Ref<API::Data> manifestJSON;
 
     double manifestVersion;
-    bool testingMode;
     bool isSessionStorageAllowedInContentScripts;
 
     std::optional<WebCore::PageIdentifier> backgroundPageIdentifier;

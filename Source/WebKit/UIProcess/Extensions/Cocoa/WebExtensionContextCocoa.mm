@@ -2480,15 +2480,6 @@ void WebExtensionContext::clearUserGesture(WebExtensionTab& tab)
     tab.setTemporaryPermissionMatchPattern(nullptr);
 }
 
-void WebExtensionContext::setTestingMode(bool testingMode)
-{
-    ASSERT(!isLoaded());
-    if (isLoaded())
-        return;
-
-    m_testingMode = testingMode;
-}
-
 std::optional<WebCore::PageIdentifier> WebExtensionContext::backgroundPageIdentifier() const
 {
     if (!m_backgroundWebView || extension().backgroundContentIsServiceWorker())

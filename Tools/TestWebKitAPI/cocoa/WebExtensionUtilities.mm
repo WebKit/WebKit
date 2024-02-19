@@ -63,7 +63,6 @@
     _controller = [[_WKWebExtensionController alloc] initWithConfiguration:configuration ?: _WKWebExtensionControllerConfiguration.nonPersistentConfiguration];
 
     _controller._testingMode = YES;
-    _context._testingMode = YES;
 
     // This should always be self. If you need the delegate, use the controllerDelegate property.
     // Delegate method calls will be forwarded to the controllerDelegate.
