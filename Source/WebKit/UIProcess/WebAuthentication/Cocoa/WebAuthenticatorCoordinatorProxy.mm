@@ -233,7 +233,7 @@ RetainPtr<NSArray> WebAuthenticatorCoordinatorProxy::requestsForRegisteration(co
             request.get().attestationPreference = toAttestationConveyancePreference(options.attestation).get();
         if (options.authenticatorSelection)
             request.get().userVerificationPreference = toASUserVerificationPreference(options.authenticatorSelection->userVerification).get();
-        if (options.extensions->largeBlob) {
+        if (options.extensions && options.extensions->largeBlob) {
             // These are satisfied by validation in AuthenticatorCoordinator.
             ASSERT(!options.extensions->largeBlob->read && !options.extensions->largeBlob->write);
             request.get().largeBlob = adoptNS([allocASAuthorizationPublicKeyCredentialLargeBlobRegistrationInputInstance() initWithSupportRequirement:toASAuthorizationPublicKeyCredentialLargeBlobSupportRequirement(options.extensions->largeBlob->support)]).get();
@@ -288,7 +288,7 @@ RetainPtr<NSArray> WebAuthenticatorCoordinatorProxy::requestsForAssertion(const 
         RetainPtr request = adoptNS([[allocASAuthorizationPlatformPublicKeyCredentialProviderInstance() initWithRelyingPartyIdentifier:options.rpId] createCredentialAssertionRequestWithClientData:clientData.get()]);
         if (platformAllowedCredentials)
             request.get().allowedCredentials = platformAllowedCredentials.get();
-        if (options.extensions->largeBlob) {
+        if (options.extensions && options.extensions->largeBlob) {
             // These are satisfied by validation in AuthenticatorCoordinator.
             ASSERT(!options.extensions->largeBlob->support);
             ASSERT(!(options.extensions->largeBlob->read && options.extensions->largeBlob->write));
