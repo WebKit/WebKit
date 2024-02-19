@@ -1223,28 +1223,23 @@ const String KeyframeEffect::pseudoElement() const
 
     // The target pseudo-selector. null if this effect has no effect target or if the effect target is an element (i.e. not a pseudo-element).
     // When the effect target is a pseudo-element, this specifies the pseudo-element selector (e.g. ::before).
-    // FIXME: This needs proper serialization for name arguments.
     if (targetsPseudoElement())
-        return pseudoIdAsString(m_pseudoElementIdentifier->pseudoId);
+        return pseudoElementIdentifierAsString(m_pseudoElementIdentifier);
     return { };
 }
 
 ExceptionOr<void> KeyframeEffect::setPseudoElement(const String& pseudoElement)
 {
     // https://drafts.csswg.org/web-animations-1/#dom-keyframeeffect-pseudoelement
-    // FIXME: This needs proper conversion for name arguments.
-    auto pseudoId = pseudoIdFromString(pseudoElement);
-    if (!pseudoId)
+    auto [parsed, pseudoElementIdentifier] = pseudoElementIdentifierFromString(pseudoElement, document());
+    if (!parsed)
         return Exception { ExceptionCode::SyntaxError, "Parsing pseudo-element selector failed"_s };
 
-    if (!m_pseudoElementIdentifier && pseudoId == PseudoId::None)
-        return { };
-
-    if (m_pseudoElementIdentifier && *pseudoId == m_pseudoElementIdentifier->pseudoId)
+    if (m_pseudoElementIdentifier == pseudoElementIdentifier)
         return { };
 
     auto& previousTargetStyleable = targetStyleable();
-    m_pseudoElementIdentifier = pseudoId == PseudoId::None ? std::nullopt : std::optional(Style::PseudoElementIdentifier { *pseudoId });
+    m_pseudoElementIdentifier = pseudoElementIdentifier;
     didChangeTargetStyleable(previousTargetStyleable);
 
     return { };

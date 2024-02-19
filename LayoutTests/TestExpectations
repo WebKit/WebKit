@@ -7018,13 +7018,12 @@ imported/w3c/web-platform-tests/css/css-view-transitions/old-content-with-overfl
 imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-rendering-invalidation.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/snapshot-containing-block-static.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/span-with-overflowing-text-hidden.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/web-animations-api.html [ ImageOnlyFailure ]
 
 # Timeouts
 imported/w3c/web-platform-tests/css/css-view-transitions/iframe-transition.sub.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-get-computed-style.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-computed-style-stays-in-sync-with-new-element.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-view-transitions/web-animations-api.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-view-transitions/web-animation-pseudo-incorrect-name.html [ Skip ]
 
 # Flakes
 imported/w3c/web-platform-tests/css/css-view-transitions/synchronous-callback-skipped-before-run.html [ Failure Pass ]

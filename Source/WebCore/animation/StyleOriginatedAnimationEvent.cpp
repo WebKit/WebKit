@@ -46,19 +46,17 @@ StyleOriginatedAnimationEvent::StyleOriginatedAnimationEvent(enum EventInterface
     , m_elapsedTime(elapsedTime)
     , m_pseudoElement(pseudoElement)
 {
-    // FIXME: This should work with the pseudo-element name argument.
-    auto pseudoId = pseudoIdFromString(m_pseudoElement);
-    if (pseudoId && *pseudoId != PseudoId::None)
-        m_pseudoElementIdentifier = { *pseudoId };
+    auto* node = dynamicDowncast<Node>(target());
+    auto [parsed, pseudoElementIdentifier] = pseudoElementIdentifierFromString(m_pseudoElement, node ? &node->document() : nullptr);
+    m_pseudoElementIdentifier = parsed ? pseudoElementIdentifier : std::nullopt;
 }
 
 StyleOriginatedAnimationEvent::~StyleOriginatedAnimationEvent() = default;
 
 const String& StyleOriginatedAnimationEvent::pseudoElement()
 {
-    // FIXME: This doesn't work with the pseudo-element name argument.
     if (m_pseudoElementIdentifier && m_pseudoElement.isNull())
-        m_pseudoElement = pseudoIdAsString(m_pseudoElementIdentifier->pseudoId);
+        m_pseudoElement = pseudoElementIdentifierAsString(m_pseudoElementIdentifier);
     return m_pseudoElement;
 }
 
