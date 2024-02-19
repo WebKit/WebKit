@@ -36,9 +36,38 @@ RenderViewTransitionCapture::RenderViewTransitionCapture(Type type, Document& do
     : RenderReplaced(type, document, WTFMove(style), { }, ReplacedFlag::IsViewTransitionCapture)
 { }
 
-void RenderViewTransitionCapture::setImage(const LayoutSize& size)
+void RenderViewTransitionCapture::setImage(RefPtr<ImageBuffer> oldImage, const LayoutSize& size)
 {
     setIntrinsicSize(size);
+    m_oldImage = oldImage;
+}
+
+void RenderViewTransitionCapture::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
+{
+    auto& context = paintInfo.context();
+
+    LayoutRect contentBoxRect = this->contentBoxRect();
+
+    if (context.detectingContentfulPaint())
+        return;
+
+    contentBoxRect.moveBy(paintOffset);
+    LayoutRect replacedContentRect = this->replacedContentRect();
+    replacedContentRect.moveBy(paintOffset);
+
+    // Not allowed to overflow the content box.
+    bool clip = !contentBoxRect.contains(replacedContentRect);
+    GraphicsContextStateSaver stateSaver(paintInfo.context(), clip);
+    if (clip)
+        paintInfo.context().clip(snappedIntRect(contentBoxRect));
+
+    if (paintInfo.phase == PaintPhase::Foreground)
+        page().addRelevantRepaintedObject(*this, intersection(replacedContentRect, contentBoxRect));
+
+    InterpolationQualityMaintainer interpolationMaintainer(context, ImageQualityController::interpolationQualityFromStyle(style()));
+    if (m_oldImage)
+        context.drawImageBuffer(*m_oldImage, snappedIntRect(replacedContentRect), { context.compositeOperation() });
+
 }
 
 } // namespace WebCore

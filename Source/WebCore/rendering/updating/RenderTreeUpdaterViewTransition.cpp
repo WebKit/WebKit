@@ -81,7 +81,7 @@ void RenderTreeUpdater::ViewTransition::updatePseudoElementTree(RenderElement& d
         newViewTransitionRoot->initializeStyle();
         documentElementRenderer.view().setViewTransitionRoot(*newViewTransitionRoot.get());
         viewTransitionRoot = newViewTransitionRoot.get();
-        m_updater.m_builder.attach(documentElementRenderer, WTFMove(newViewTransitionRoot));
+        m_updater.m_builder.attach(*documentElementRenderer.parent(), WTFMove(newViewTransitionRoot));
     }
 
     // No groups. The map is constant during the duration of the transition, so we don't need to handle deletions.
@@ -103,6 +103,7 @@ void RenderTreeUpdater::ViewTransition::updatePseudoElementTree(RenderElement& d
             buildPseudoElementGroup(name, documentElementRenderer, currentGroup);
             currentGroup = currentGroup ? currentGroup->previousSibling() : documentElementRenderer.view().viewTransitionRoot()->firstChild();
         }
+
         currentGroup = currentGroup ? currentGroup->nextSibling() : nullptr;
     }
 
@@ -126,7 +127,7 @@ void RenderTreeUpdater::ViewTransition::buildPseudoElementGroup(const AtomString
             RenderPtr<RenderViewTransitionCapture> rendererViewTransition = WebCore::createRenderer<RenderViewTransitionCapture>(RenderObject::Type::ViewTransitionCapture, document, WTFMove(newStyle));
 
             if (const auto* capturedElement = document->activeViewTransition()->namedElements().find(name))
-                rendererViewTransition->setImage(capturedElement->oldSize);
+                rendererViewTransition->setImage(pseudoId == PseudoId::ViewTransitionOld ? capturedElement->oldImage : nullptr, capturedElement->oldSize);
 
             renderer = WTFMove(rendererViewTransition);
         } else
@@ -172,7 +173,7 @@ void RenderTreeUpdater::ViewTransition::updatePseudoElementGroup(const RenderSty
             RenderPtr<RenderViewTransitionCapture> rendererViewTransition = WebCore::createRenderer<RenderViewTransitionCapture>(RenderObject::Type::ViewTransitionCapture, documentElementRenderer.document(), WTFMove(newStyle));
 
             if (const auto* capturedElement = documentElementRenderer.document().activeViewTransition()->namedElements().find(name))
-                rendererViewTransition->setImage(capturedElement->oldSize);
+                rendererViewTransition->setImage(pseudoId == PseudoId::ViewTransitionOld ? capturedElement->oldImage : nullptr, capturedElement->oldSize);
 
             renderer = WTFMove(rendererViewTransition);
         } else

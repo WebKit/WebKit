@@ -28,6 +28,7 @@
 #include "Document.h"
 #include "Element.h"
 #include "ExceptionOr.h"
+#include "ImageBuffer.h"
 #include "JSValueInWrappedObject.h"
 #include "MutableStyleProperties.h"
 #include "ViewTransitionUpdateCallback.h"
@@ -52,7 +53,7 @@ struct CapturedElement {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     // FIXME: Add the following:
-    // old image (2d bitmap)
+    RefPtr<ImageBuffer> oldImage;
     LayoutSize oldSize;
     RefPtr<MutableStyleProperties> oldProperties;
     // old transform

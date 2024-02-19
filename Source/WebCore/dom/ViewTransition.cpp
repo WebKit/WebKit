@@ -29,6 +29,7 @@
 #include "CheckVisibilityOptions.h"
 #include "ComputedStyleExtractor.h"
 #include "Document.h"
+#include "FrameSnapshotting.h"
 #include "JSDOMPromise.h"
 #include "JSDOMPromiseDeferred.h"
 #include "PseudoElementRequest.h"
@@ -282,9 +283,13 @@ ExceptionOr<void> ViewTransition::captureOldState()
         if (renderBox)
             capture.oldSize = renderBox->size();
         capture.oldProperties = copyElementBaseProperties(element.get());
+        if (m_document->frame())
+            capture.oldImage = snapshotNode(*m_document->frame(), element.get(), { { }, PixelFormat::BGRA8, DestinationColorSpace::SRGB() });
 
         auto transitionName = element->computedStyle()->viewTransitionName();
         m_namedElements.add(transitionName->name, capture);
+
+        element->invalidateStyleAndLayerComposition();
     }
     return { };
 }
