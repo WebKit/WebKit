@@ -109,7 +109,7 @@ private:
         SkiaState() = default;
 
         struct {
-            SkScalar miter { 0 };
+            SkScalar miter { SkFloatToScalar(4) };
             SkPaint::Cap cap { SkPaint::kButt_Cap };
             SkPaint::Join join { SkPaint::kMiter_Join };
         } m_stroke;
