@@ -323,65 +323,69 @@ TEST(WKWebExtensionAPIScripting, InsertAndRemoveCSS)
         @"const blueValue = 'rgb(0, 0, 255)'",
         @"const transparentValue = 'rgba(0, 0, 0, 0)'",
 
-        @"const tabs = await browser.tabs.query({ active: true, currentWindow: true })",
-        @"const tabId = tabs[0].id",
+        @"browser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {",
+        @"  if (tab.status !== 'complete')",
+        @"    return",
 
-        @"function getBackgroundColor() { return window.getComputedStyle(document.body).getPropertyValue('background-color') }",
-        @"function getFontSize() { return window.getComputedStyle(document.body).getPropertyValue('font-size') }",
+        @"  function getBackgroundColor() { return window.getComputedStyle(document.body).getPropertyValue('background-color') }",
+        @"  function getFontSize() { return window.getComputedStyle(document.body).getPropertyValue('font-size') }",
 
-        @"await browser.scripting.insertCSS( { target: { tabId: tabId, allFrames: false }, files: [ 'backgroundColor.css' ] })",
-        @"let results = await browser.scripting.executeScript( { target: { tabId: tabId, allFrames: true }, func: getBackgroundColor })",
-        @"browser.test.assertEq(results[0].result, pinkValue)",
-        @"browser.test.assertEq(results[1].result, blueValue)",
+        @"  await browser.scripting.insertCSS( { target: { tabId: tabId, allFrames: false }, files: [ 'backgroundColor.css' ] })",
+        @"  let results = await browser.scripting.executeScript( { target: { tabId: tabId, allFrames: true }, func: getBackgroundColor })",
+        @"  browser.test.assertEq(results[0].result, pinkValue)",
+        @"  browser.test.assertEq(results[1].result, blueValue)",
 
-        @"await browser.scripting.removeCSS( { target: { tabId: tabId, allFrames: false }, files: [ 'backgroundColor.css' ] })",
-        @"results = await browser.scripting.executeScript( { target: { tabId: tabId, allFrames: true }, func: getBackgroundColor })",
-        @"browser.test.assertEq(results[0].result, transparentValue)",
-        @"browser.test.assertEq(results[1].result, blueValue)",
+        @"  await browser.scripting.removeCSS( { target: { tabId: tabId, allFrames: false }, files: [ 'backgroundColor.css' ] })",
+        @"  results = await browser.scripting.executeScript( { target: { tabId: tabId, allFrames: true }, func: getBackgroundColor })",
+        @"  browser.test.assertEq(results[0].result, transparentValue)",
+        @"  browser.test.assertEq(results[1].result, blueValue)",
 
-        @"await browser.scripting.insertCSS( { target: { tabId: tabId, allFrames: false }, css: 'body { background-color: pink !important }' })",
-        @"results = await browser.scripting.executeScript( { target: { tabId: tabId, allFrames: true }, func: getBackgroundColor })",
-        @"browser.test.assertEq(results[0].result, pinkValue)",
-        @"browser.test.assertEq(results[1].result, blueValue)",
+        @"  await browser.scripting.insertCSS( { target: { tabId: tabId, allFrames: false }, css: 'body { background-color: pink !important }' })",
+        @"  results = await browser.scripting.executeScript( { target: { tabId: tabId, allFrames: true }, func: getBackgroundColor })",
+        @"  browser.test.assertEq(results[0].result, pinkValue)",
+        @"  browser.test.assertEq(results[1].result, blueValue)",
 
-        @"await browser.scripting.removeCSS( { target: { tabId: tabId, allFrames: false }, css: 'body { background-color: pink !important }' })",
-        @"results = await browser.scripting.executeScript( { target: { tabId: tabId, allFrames: true }, func: getBackgroundColor })",
-        @"browser.test.assertEq(results[0].result, transparentValue)",
-        @"browser.test.assertEq(results[1].result, blueValue)",
+        @"  await browser.scripting.removeCSS( { target: { tabId: tabId, allFrames: false }, css: 'body { background-color: pink !important }' })",
+        @"  results = await browser.scripting.executeScript( { target: { tabId: tabId, allFrames: true }, func: getBackgroundColor })",
+        @"  browser.test.assertEq(results[0].result, transparentValue)",
+        @"  browser.test.assertEq(results[1].result, blueValue)",
 
-        @"await browser.scripting.insertCSS( { target: { tabId: tabId, allFrames: true }, files: [ 'backgroundColor.css' ] })",
-        @"results = await browser.scripting.executeScript( { target: { tabId: tabId, allFrames: true }, func: getBackgroundColor })",
-        @"browser.test.assertEq(results[0].result, pinkValue)",
-        @"browser.test.assertEq(results[1].result, pinkValue)",
+        @"  await browser.scripting.insertCSS( { target: { tabId: tabId, allFrames: true }, files: [ 'backgroundColor.css' ] })",
+        @"  results = await browser.scripting.executeScript( { target: { tabId: tabId, allFrames: true }, func: getBackgroundColor })",
+        @"  browser.test.assertEq(results[0].result, pinkValue)",
+        @"  browser.test.assertEq(results[1].result, pinkValue)",
 
-        @"await browser.scripting.removeCSS( { target: { tabId: tabId, allFrames: true }, files: [ 'backgroundColor.css' ] })",
-        @"results = await browser.scripting.executeScript( { target: { tabId: tabId, allFrames: true }, func: getBackgroundColor })",
-        @"browser.test.assertEq(results[0].result, transparentValue)",
-        @"browser.test.assertEq(results[1].result, blueValue)",
+        @"  await browser.scripting.removeCSS( { target: { tabId: tabId, allFrames: true }, files: [ 'backgroundColor.css' ] })",
+        @"  results = await browser.scripting.executeScript( { target: { tabId: tabId, allFrames: true }, func: getBackgroundColor })",
+        @"  browser.test.assertEq(results[0].result, transparentValue)",
+        @"  browser.test.assertEq(results[1].result, blueValue)",
 
-        // Storing original font size.
-        @"results = await browser.scripting.executeScript( { target: { tabId: tabId, allFrames: false }, func: getFontSize })",
-        @"let originalFontSize = results[0].result",
+        //   Storing original font size.
+        @"  results = await browser.scripting.executeScript( { target: { tabId: tabId, allFrames: false }, func: getFontSize })",
+        @"  let originalFontSize = results[0].result",
 
-        @"await browser.scripting.insertCSS( { target: { tabId: tabId, allFrames: true }, files: [ 'backgroundColor.css', 'fontSize.css' ] })",
-        @"results = await browser.scripting.executeScript( { target: { tabId: tabId, allFrames: true }, func: getBackgroundColor })",
-        @"browser.test.assertEq(results[0].result, pinkValue)",
-        @"browser.test.assertEq(results[1].result, pinkValue)",
+        @"  await browser.scripting.insertCSS( { target: { tabId: tabId, allFrames: true }, files: [ 'backgroundColor.css', 'fontSize.css' ] })",
+        @"  results = await browser.scripting.executeScript( { target: { tabId: tabId, allFrames: true }, func: getBackgroundColor })",
+        @"  browser.test.assertEq(results[0].result, pinkValue)",
+        @"  browser.test.assertEq(results[1].result, pinkValue)",
 
-        @"results = await browser.scripting.executeScript( { target: { tabId: tabId, allFrames: true }, func: getFontSize })",
-        @"browser.test.assertEq(results[0].result, '104px')",
-        @"browser.test.assertEq(results[1].result, '104px')",
+        @"  results = await browser.scripting.executeScript( { target: { tabId: tabId, allFrames: true }, func: getFontSize })",
+        @"  browser.test.assertEq(results[0].result, '104px')",
+        @"  browser.test.assertEq(results[1].result, '104px')",
 
-        @"await browser.scripting.removeCSS( { target: { tabId: tabId, allFrames: true }, files: [ 'backgroundColor.css', 'fontSize.css' ] })",
-        @"results = await browser.scripting.executeScript( { target: { tabId: tabId, allFrames: true }, func: getBackgroundColor })",
-        @"browser.test.assertEq(results[0].result, transparentValue)",
-        @"browser.test.assertEq(results[1].result, blueValue)",
+        @"  await browser.scripting.removeCSS( { target: { tabId: tabId, allFrames: true }, files: [ 'backgroundColor.css', 'fontSize.css' ] })",
+        @"  results = await browser.scripting.executeScript( { target: { tabId: tabId, allFrames: true }, func: getBackgroundColor })",
+        @"  browser.test.assertEq(results[0].result, transparentValue)",
+        @"  browser.test.assertEq(results[1].result, blueValue)",
 
-        @"results = await browser.scripting.executeScript( { target: { tabId: tabId, allFrames: true }, func: getFontSize })",
-        @"browser.test.assertEq(results[0].result, originalFontSize)",
-        @"browser.test.assertEq(results[1].result, originalFontSize)",
+        @"  results = await browser.scripting.executeScript( { target: { tabId: tabId, allFrames: true }, func: getFontSize })",
+        @"  browser.test.assertEq(results[0].result, originalFontSize)",
+        @"  browser.test.assertEq(results[1].result, originalFontSize)",
 
-        @"browser.test.notifyPass()"
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"browser.test.yield('Load Tab')",
     ]);
 
     static auto *backgroundColor = @"body { background-color: pink !important }";
@@ -401,9 +405,14 @@ TEST(WKWebExtensionAPIScripting, InsertAndRemoveCSS)
 
     auto *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithScheme:url.scheme host:url.host path:@"/*"];
     [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
 
     [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager run];
 }
 
 TEST(WKWebExtensionAPIScripting, InsertAndRemoveCSSWithFrameIds)
@@ -418,37 +427,41 @@ TEST(WKWebExtensionAPIScripting, InsertAndRemoveCSSWithFrameIds)
         @"const blueValue = 'rgb(0, 0, 255)'",
         @"const transparentValue = 'rgba(0, 0, 0, 0)'",
 
-        @"const tabs = await browser.tabs.query({ active: true, currentWindow: true })",
-        @"const tabId = tabs[0].id",
+        @"browser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {",
+        @"  if (tab.status !== 'complete')",
+        @"    return",
 
-        @"function getBackgroundColor() { return window.getComputedStyle(document.body).getPropertyValue('background-color') }",
-        @"function getFontSize() { return window.getComputedStyle(document.body).getPropertyValue('font-size') }",
+        @"  function getBackgroundColor() { return window.getComputedStyle(document.body).getPropertyValue('background-color') }",
+        @"  function getFontSize() { return window.getComputedStyle(document.body).getPropertyValue('font-size') }",
 
-        @"function logMessage() { console.log('Logging message') }",
+        @"  function logMessage() { console.log('Logging message') }",
 
-        @"await browser.scripting.insertCSS( { target: { tabId: tabId, frameIds: [ 0 ] }, files: [ 'backgroundColor.css' ] })",
-        @"let results = await browser.scripting.executeScript( { target: { tabId: tabId, allFrames: true }, func: getBackgroundColor })",
-        @"browser.test.assertEq(results[0].result, pinkValue)",
-        @"browser.test.assertEq(results[1].result, blueValue)",
+        @"  await browser.scripting.insertCSS( { target: { tabId: tabId, frameIds: [ 0 ] }, files: [ 'backgroundColor.css' ] })",
+        @"  let results = await browser.scripting.executeScript( { target: { tabId: tabId, allFrames: true }, func: getBackgroundColor })",
+        @"  browser.test.assertEq(results[0].result, pinkValue)",
+        @"  browser.test.assertEq(results[1].result, blueValue)",
 
-        @"await browser.scripting.removeCSS( { target: { tabId: tabId, frameIds: [ 0 ] }, files: [ 'backgroundColor.css' ] })",
-        @"results = await browser.scripting.executeScript( { target: { tabId: tabId, allFrames: true }, func: getBackgroundColor })",
-        @"browser.test.assertEq(results[0].result, transparentValue)",
-        @"browser.test.assertEq(results[1].result, blueValue)",
+        @"  await browser.scripting.removeCSS( { target: { tabId: tabId, frameIds: [ 0 ] }, files: [ 'backgroundColor.css' ] })",
+        @"  results = await browser.scripting.executeScript( { target: { tabId: tabId, allFrames: true }, func: getBackgroundColor })",
+        @"  browser.test.assertEq(results[0].result, transparentValue)",
+        @"  browser.test.assertEq(results[1].result, blueValue)",
 
-        @"await browser.scripting.insertCSS( { target: { tabId: tabId, frameIds: [ 0 ] }, css: 'body { background-color: pink !important }' })",
-        @"results = await browser.scripting.executeScript( { target: { tabId: tabId, allFrames: true }, func: getBackgroundColor })",
-        @"browser.test.assertEq(results[0].result, pinkValue)",
-        @"browser.test.assertEq(results[1].result, blueValue)",
+        @"  await browser.scripting.insertCSS( { target: { tabId: tabId, frameIds: [ 0 ] }, css: 'body { background-color: pink !important }' })",
+        @"  results = await browser.scripting.executeScript( { target: { tabId: tabId, allFrames: true }, func: getBackgroundColor })",
+        @"  browser.test.assertEq(results[0].result, pinkValue)",
+        @"  browser.test.assertEq(results[1].result, blueValue)",
 
-        @"await browser.scripting.removeCSS( { target: { tabId: tabId, frameIds: [ 0 ] }, css: 'body { background-color: pink !important }' })",
-        @"results = await browser.scripting.executeScript( { target: { tabId: tabId, allFrames: true }, func: getBackgroundColor })",
-        @"browser.test.assertEq(results[0].result, transparentValue)",
-        @"browser.test.assertEq(results[1].result, blueValue)",
+        @"  await browser.scripting.removeCSS( { target: { tabId: tabId, frameIds: [ 0 ] }, css: 'body { background-color: pink !important }' })",
+        @"  results = await browser.scripting.executeScript( { target: { tabId: tabId, allFrames: true }, func: getBackgroundColor })",
+        @"  browser.test.assertEq(results[0].result, transparentValue)",
+        @"  browser.test.assertEq(results[1].result, blueValue)",
 
         // FIXME: <https://webkit.org/b/262491> Test with subframe once there's support for style injections for specific frame Ids.
 
-        @"browser.test.notifyPass()"
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"browser.test.yield('Load Tab')",
     ]);
 
     static auto *backgroundColor = @"body { background-color: pink !important }";
@@ -468,9 +481,14 @@ TEST(WKWebExtensionAPIScripting, InsertAndRemoveCSSWithFrameIds)
 
     auto *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithScheme:url.scheme host:url.host path:@"/*"];
     [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
 
     [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager run];
 }
 
 TEST(WKWebExtensionAPIScripting, World)
