@@ -96,31 +96,13 @@ void PathSkia::add(PathArcTo)
     notImplemented();
 }
 
-void PathSkia::add(PathArc arc)
+void PathSkia::addEllipse(const FloatPoint& center, float radiusX, float radiusY, float startAngle, float endAngle)
 {
-    auto x = SkFloatToScalar(arc.center.x());
-    auto y = SkFloatToScalar(arc.center.y());
-    auto radius = SkFloatToScalar(arc.radius);
-    SkRect oval = { x - radius, y - radius, x + radius, y + radius };
-
-    const float twoPI = 2 * piFloat;
-    auto startAngle = fmodf(arc.startAngle, twoPI);
-    if (startAngle < 0) {
-        startAngle += twoPI;
-        if (startAngle >= twoPI)
-            startAngle -= twoPI;
-    }
-    float delta = startAngle - arc.startAngle;
-    auto endAngle = arc.endAngle + delta;
-    if (arc.direction == RotationDirection::Clockwise && endAngle - startAngle >= twoPI)
-        endAngle = startAngle + twoPI;
-    else if (arc.direction == RotationDirection::Counterclockwise && startAngle - endAngle >= twoPI)
-        endAngle = startAngle - twoPI;
-    else if (arc.direction == RotationDirection::Clockwise && startAngle > endAngle)
-        endAngle = startAngle + (twoPI - fmodf(startAngle - endAngle, twoPI));
-    else if (arc.direction == RotationDirection::Counterclockwise && startAngle < endAngle)
-        endAngle = startAngle - (twoPI - fmodf(endAngle - startAngle, twoPI));
-
+    auto x = SkFloatToScalar(center.x());
+    auto y = SkFloatToScalar(center.y());
+    auto radiusXScalar = SkFloatToScalar(radiusX);
+    auto radiusYScalar = SkFloatToScalar(radiusY);
+    SkRect oval = { x - radiusXScalar, y - radiusYScalar, x + radiusXScalar, y + radiusYScalar };
     auto sweepAngle = endAngle - startAngle;
     SkScalar startDegrees = SkFloatToScalar(startAngle * 180 / piFloat);
     SkScalar sweepDegrees = SkFloatToScalar(sweepAngle * 180 / piFloat);
@@ -135,15 +117,30 @@ void PathSkia::add(PathArc arc)
         m_platformPath.arcTo(oval, startDegrees, sweepDegrees, false);
 }
 
+void PathSkia::add(PathArc arc)
+{
+    addEllipse(arc.center, arc.radius, arc.radius, arc.startAngle, arc.endAngle);
+}
+
 void PathSkia::add(PathClosedArc closedArc)
 {
     add(closedArc.arc);
     add(PathCloseSubpath());
 }
 
-void PathSkia::add(PathEllipse)
+void PathSkia::add(PathEllipse ellipse)
 {
-    notImplemented();
+    if (!ellipse.rotation) {
+        addEllipse(ellipse.center, ellipse.radiusX, ellipse.radiusY, ellipse.startAngle, ellipse.endAngle);
+        return;
+    }
+
+    AffineTransform transform;
+    transform.translate(ellipse.center.x(), ellipse.center.y()).rotateRadians(ellipse.rotation);
+    auto inverseTransform = transform.inverse().value();
+    m_platformPath.transform(inverseTransform, nullptr);
+    addEllipse({ }, ellipse.radiusX, ellipse.radiusY, ellipse.startAngle, ellipse.endAngle);
+    m_platformPath.transform(transform);
 }
 
 void PathSkia::add(PathEllipseInRect ellipseInRect)

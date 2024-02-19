@@ -85,6 +85,8 @@ private:
     FloatRect fastBoundingRect() const final;
     FloatRect boundingRect() const final;
 
+    void addEllipse(const FloatPoint&, float radiusX, float radiusY, float startAngle, float endAngle);
+
     SkPath m_platformPath;
 };
 
