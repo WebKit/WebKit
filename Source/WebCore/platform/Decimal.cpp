@@ -36,6 +36,7 @@
 #include <float.h>
 
 #include <wtf/Assertions.h>
+#include <wtf/Int128.h>
 #include <wtf/MathExtras.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/text/StringBuilder.h>
@@ -43,12 +44,6 @@
 namespace WebCore {
 
 namespace DecimalPrivate {
-
-static int const ExponentMax = 1023;
-static int const ExponentMin = -1023;
-static int const Precision = 18;
-
-static const uint64_t MaxCoefficient = UINT64_C(0XDE0B6B3A763FFFF); // 999999999999999999 == 18 9's
 
 // This class handles Decimal special values.
 class SpecialValueHandler {
@@ -124,70 +119,6 @@ Decimal SpecialValueHandler::value() const
     }
 }
 
-// This class is used for 128 bit unsigned integer arithmetic.
-class UInt128 {
-public:
-    UInt128(uint64_t low, uint64_t high)
-        : m_high(high), m_low(low)
-    {
-    }
-
-    UInt128& operator/=(uint32_t);
-
-    uint64_t high() const { return m_high; }
-    uint64_t low() const { return m_low; }
-
-    static UInt128 multiply(uint64_t u, uint64_t v) { return UInt128(u * v, multiplyHigh(u, v)); }
-
-private:
-    static uint32_t highUInt32(uint64_t x) { return static_cast<uint32_t>(x >> 32); }
-    static uint32_t lowUInt32(uint64_t x) { return static_cast<uint32_t>(x & ((static_cast<uint64_t>(1) << 32) - 1)); }
-    static uint64_t makeUInt64(uint32_t low, uint32_t high) { return low | (static_cast<uint64_t>(high) << 32); }
-
-    static uint64_t multiplyHigh(uint64_t, uint64_t);
-
-    uint64_t m_high;
-    uint64_t m_low;
-};
-
-UInt128& UInt128::operator/=(const uint32_t divisor)
-{
-    ASSERT(divisor);
-
-    if (!m_high) {
-        m_low /= divisor;
-        return *this;
-    }
-
-    uint32_t dividend[4];
-    dividend[0] = lowUInt32(m_low);
-    dividend[1] = highUInt32(m_low);
-    dividend[2] = lowUInt32(m_high);
-    dividend[3] = highUInt32(m_high);
-
-    uint32_t quotient[4];
-    uint32_t remainder = 0;
-    for (int i = 3; i >= 0; --i) {
-        const uint64_t work = makeUInt64(dividend[i], remainder);
-        remainder = static_cast<uint32_t>(work % divisor);
-        quotient[i] = static_cast<uint32_t>(work / divisor);
-    }
-    m_low = makeUInt64(quotient[0], quotient[1]);
-    m_high = makeUInt64(quotient[2], quotient[3]);
-    return *this;
-}
-
-// Returns high 64bit of 128bit product.
-uint64_t UInt128::multiplyHigh(uint64_t u, uint64_t v)
-{
-    const uint64_t uLow = lowUInt32(u);
-    const uint64_t uHigh = highUInt32(u);
-    const uint64_t vLow = lowUInt32(v);
-    const uint64_t vHigh = highUInt32(v);
-    const uint64_t partialProduct = uHigh * vLow + highUInt32(uLow * vLow);
-    return uHigh * vHigh + highUInt32(partialProduct) + highUInt32(uLow * vHigh + lowUInt32(partialProduct));
-}
-
 static int countDigits(uint64_t x)
 {
     int numberOfDigits = 0;
@@ -212,7 +143,7 @@ static uint64_t scaleDown(uint64_t x, int n)
 static uint64_t scaleUp(uint64_t x, int n)
 {
     ASSERT(n >= 0);
-    ASSERT(n < Precision);
+    ASSERT(n < Decimal::Precision);
 
     uint64_t y = 1;
     uint64_t z = 10;
@@ -231,69 +162,6 @@ static uint64_t scaleUp(uint64_t x, int n)
 } // namespace DecimalPrivate
 
 using namespace DecimalPrivate;
-
-Decimal::EncodedData::EncodedData(Sign sign, FormatClass formatClass)
-    : m_coefficient(0)
-    , m_exponent(0)
-    , m_formatClass(formatClass)
-    , m_sign(sign)
-{
-}
-
-Decimal::EncodedData::EncodedData(Sign sign, int exponent, uint64_t coefficient)
-    : m_formatClass(coefficient ? ClassNormal : ClassZero)
-    , m_sign(sign)
-{
-    if (exponent >= ExponentMin && exponent <= ExponentMax) {
-        while (coefficient > MaxCoefficient) {
-            coefficient /= 10;
-            ++exponent;
-        }
-    }
-
-    if (exponent > ExponentMax) {
-        m_coefficient = 0;
-        m_exponent = 0;
-        m_formatClass = ClassInfinity;
-        return;
-    }
-
-    if (exponent < ExponentMin) {
-        m_coefficient = 0;
-        m_exponent = 0;
-        m_formatClass = ClassZero;
-        return;
-    }
-
-    m_coefficient = coefficient;
-    m_exponent = static_cast<int16_t>(exponent);
-}
-
-Decimal::Decimal(int32_t i32)
-    : m_data(i32 < 0 ? Negative : Positive, 0, i32 < 0 ? static_cast<uint64_t>(-static_cast<int64_t>(i32)) : static_cast<uint64_t>(i32))
-{
-}
-
-Decimal::Decimal(Sign sign, int exponent, uint64_t coefficient)
-    : m_data(sign, exponent, coefficient)
-{
-}
-
-Decimal::Decimal(const EncodedData& data)
-    : m_data(data)
-{
-}
-
-Decimal::Decimal(const Decimal& other)
-    : m_data(other.m_data)
-{
-}
-
-Decimal& Decimal::operator=(const Decimal& other)
-{
-    m_data = other.m_data;
-    return *this;
-}
 
 Decimal& Decimal::operator+=(const Decimal& other)
 {
@@ -418,12 +286,12 @@ Decimal Decimal::operator*(const Decimal& rhs) const
         const uint64_t lhsCoefficient = lhs.m_data.coefficient();
         const uint64_t rhsCoefficient = rhs.m_data.coefficient();
         int resultExponent = lhs.exponent() + rhs.exponent();
-        UInt128 work(UInt128::multiply(lhsCoefficient, rhsCoefficient));
-        while (work.high()) {
+        UInt128 work = static_cast<UInt128>(lhsCoefficient) * static_cast<UInt128>(rhsCoefficient);
+        while (work >> 64) {
             work /= 10;
             ++resultExponent;
         }
-        return Decimal(resultSign, resultExponent, work.low());
+        return Decimal(resultSign, resultExponent, static_cast<uint64_t>(work));
     }
 
     case SpecialValueHandler::BothInfinity:
@@ -503,11 +371,6 @@ Decimal Decimal::operator/(const Decimal& rhs) const
         ++result;
 
     return Decimal(resultSign, resultExponent, result);
-}
-
-bool Decimal::operator==(const Decimal& rhs) const
-{
-    return m_data == rhs.m_data || compareTo(rhs).isZero();
 }
 
 bool Decimal::operator!=(const Decimal& rhs) const
@@ -677,9 +540,9 @@ Decimal Decimal::floor() const
 Decimal Decimal::fromDouble(double doubleValue)
 {
     if (std::isfinite(doubleValue)) {
-        // FIXME: Change fromString to take a StringView instead of a String and then
-        // use a fixed size stack buffer instead of allocating and deallocating a string.
-        return fromString(String::number(doubleValue));
+        NumberToStringBuffer buffer;
+        auto* result = numberToString(doubleValue, buffer);
+        return fromString(StringView(result, strlen(result)));
     }
 
     if (std::isinf(doubleValue))
@@ -881,16 +744,6 @@ Decimal Decimal::fromString(StringView str)
     return nan();
 }
 
-Decimal Decimal::infinity(const Sign sign)
-{
-    return Decimal(EncodedData(sign, EncodedData::ClassInfinity));
-}
-
-Decimal Decimal::nan()
-{
-    return Decimal(EncodedData(Positive, EncodedData::ClassNaN));
-}
-
 Decimal Decimal::remainder(const Decimal& rhs) const
 {
     const Decimal quotient = *this / rhs;
@@ -1012,11 +865,6 @@ String Decimal::toString() const
             builder.append(adjustedExponent < 0 ? "e" : "e+", adjustedExponent);
     }
     return builder.toString();
-}
-
-Decimal Decimal::zero(Sign sign)
-{
-    return Decimal(EncodedData(sign, EncodedData::ClassZero));
 }
 
 } // namespace WebCore

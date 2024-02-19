@@ -192,6 +192,7 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/ColorTests.cpp
         Tests/WebCore/ComplexTextController.cpp
         Tests/WebCore/ContextMenuAction.cpp
+        Tests/WebCore/Decimal.cpp
         Tests/WebCore/FileMonitor.cpp
         Tests/WebCore/FloatPointTests.cpp
         Tests/WebCore/FloatRectTests.cpp

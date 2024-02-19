@@ -73,7 +73,7 @@ Decimal parseToDecimalForNumberType(StringView string, const Decimal& fallbackVa
         return fallbackValue;
 
     // Numbers are considered finite IEEE 754 Double-precision floating point values.
-    const Decimal doubleMax = Decimal::fromDouble(std::numeric_limits<double>::max());
+    const Decimal doubleMax = Decimal::doubleMax();
     if (value < -doubleMax || value > doubleMax)
         return fallbackValue;
 
