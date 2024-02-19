@@ -2004,3 +2004,7 @@ webkit.org/b/269639 http/tests/site-isolation/window-properties.html [ Skip ]
 webkit.org/b/268398 [ Sonoma+ ] compositing/plugins/pdf/pdf-in-iframe-scrolling-tree-after-back.html [ Pass Failure ]
 
 webkit.org/b/269581 http/tests/site-isolation/mouse-events/context-menu-event-twice.html [ Skip ]
+
+# webkit.org/b/123266095  (REGRESSION (274957@main) [ Monterrey+ Debug ] 2x imported/w3c/web-platform-tests/css/css-view-transitions tests are constant crash)
+[ Monterey+ Debug ] imported/w3c/web-platform-tests/css/css-view-transitions/new-content-captures-different-size.html [ Skip ]
+[ Monterey+ Debug ] imported/w3c/web-platform-tests/css/css-view-transitions/old-content-captures-different-size.html [ Skip ]
