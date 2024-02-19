@@ -30,13 +30,16 @@ namespace WTF {
 #if CPU(NEEDS_ALIGNED_ACCESS)
 
 #define COMPARE_2CHARS(address, char1, char2) \
-(((address)[0] == char1) && ((address)[1] == char2))
+(((address)[0] == char1) & ((address)[1] == char2))
 #define COMPARE_4CHARS(address, char1, char2, char3, char4) \
-    (COMPARE_2CHARS(address, char1, char2) && COMPARE_2CHARS((address) + 2, char3, char4))
+    (COMPARE_2CHARS(address, char1, char2) & COMPARE_2CHARS((address) + 2, char3, char4))
+#define COMPARE_8CHARS(address, char1, char2, char3, char4, char5, char6, char7, char8) \
+    (COMPARE_4CHARS(address, char1, char2, char3, char4) & COMPARE_4CHARS((address) + 4, char5, char6, char7, char8))
+
 #define COMPARE_2UCHARS(address, char1, char2) \
-    (((address)[0] == char1) && ((address)[1] == char2))
+    (((address)[0] == char1) & ((address)[1] == char2))
 #define COMPARE_4UCHARS(address, char1, char2, char3, char4) \
-    (COMPARE_2UCHARS(address, char1, char2) && COMPARE_2UCHARS((address) + 2, char3, char4))
+    (COMPARE_2UCHARS(address, char1, char2) & COMPARE_2UCHARS((address) + 2, char3, char4))
 
 #else // CPU(NEEDS_ALIGNED_ACCESS)
 
@@ -46,10 +49,13 @@ namespace WTF {
 ((((uint16_t)(a)) << 8) + (uint16_t)(b))
 #define CHARQUAD_TOUINT32(a, b, c, d) \
     ((((uint32_t)(CHARPAIR_TOUINT16(a, b))) << 16) + CHARPAIR_TOUINT16(c, d))
+#define CHAROCTET_TOUINT64(a, b, c, d, e, f, g, h) \
+    ((((uint64_t)(CHARQUAD_TOUINT32(a, b, c, d))) << 32) + CHARQUAD_TOUINT32(e, f, g, h))
+
 #define UCHARPAIR_TOUINT32(a, b) \
     ((((uint32_t)(a)) << 16) + (uint32_t)(b))
 #define UCHARQUAD_TOUINT64(a, b, c, d) \
-    ((((uint64_t)(UCHARQUAD_TOUINT64(a, b))) << 32) + UCHARPAIR_TOUINT32(c, d))
+    ((((uint64_t)(UCHARPAIR_TOUINT32(a, b))) << 32) + UCHARPAIR_TOUINT32(c, d))
 
 #else // CPU(BIG_ENDIAN)
 
@@ -57,6 +63,9 @@ namespace WTF {
 ((((uint16_t)(b)) << 8) + (uint16_t)(a))
 #define CHARQUAD_TOUINT32(a, b, c, d) \
     ((((uint32_t)(CHARPAIR_TOUINT16(c, d))) << 16) + CHARPAIR_TOUINT16(a, b))
+#define CHAROCTET_TOUINT64(a, b, c, d, e, f, g, h) \
+    ((((uint64_t)(CHARQUAD_TOUINT32(e, f, g, h))) << 32) + CHARQUAD_TOUINT32(a, b, c, d))
+
 #define UCHARPAIR_TOUINT32(a, b) \
     ((((uint32_t)(b)) << 16) + (uint32_t)(a))
 #define UCHARQUAD_TOUINT64(a, b, c, d) \
@@ -64,50 +73,85 @@ namespace WTF {
 
 #endif // CPU(BIG_ENDIAN)
 
-
 #define COMPARE_2CHARS(address, char1, char2) \
     ((reinterpret_cast_ptr<const uint16_t*>(address))[0] == CHARPAIR_TOUINT16(char1, char2))
 #define COMPARE_2UCHARS(address, char1, char2) \
     ((reinterpret_cast_ptr<const uint32_t*>(address))[0] == UCHARPAIR_TOUINT32(char1, char2))
 
-#if CPU(X86_64)
+#if CPU(X86_64) || CPU(ARM64)
 
 #define COMPARE_4CHARS(address, char1, char2, char3, char4) \
     ((reinterpret_cast_ptr<const uint32_t*>(address))[0] == CHARQUAD_TOUINT32(char1, char2, char3, char4))
 #define COMPARE_4UCHARS(address, char1, char2, char3, char4) \
     ((reinterpret_cast_ptr<const uint64_t*>(address))[0] == UCHARQUAD_TOUINT64(char1, char2, char3, char4))
 
-#else // CPU(X86_64)
+#define COMPARE_8CHARS(address, char1, char2, char3, char4, char5, char6, char7, char8) \
+    ((reinterpret_cast_ptr<const uint64_t*>(address))[0] == CHAROCTET_TOUINT64(char1, char2, char3, char4, char5, char6, char7, char8))
+
+#else // CPU(X86_64) || CPU(ARM64)
 
 #define COMPARE_4CHARS(address, char1, char2, char3, char4) \
-    (COMPARE_2CHARS(address, char1, char2) && COMPARE_2CHARS((address) + 2, char3, char4))
+    (COMPARE_2CHARS(address, char1, char2) & COMPARE_2CHARS((address) + 2, char3, char4))
 #define COMPARE_4UCHARS(address, char1, char2, char3, char4) \
-    (COMPARE_2UCHARS(address, char1, char2) && COMPARE_2UCHARS((address) + 2, char3, char4))
+    (COMPARE_2UCHARS(address, char1, char2) & COMPARE_2UCHARS((address) + 2, char3, char4))
 
-#endif // CPU(X86_64)
+#define COMPARE_8CHARS(address, char1, char2, char3, char4, char5, char6, char7, char8) \
+    (COMPARE_4CHARS(address, char1, char2, char3, char4) & COMPARE_4CHARS((address) + 4, char5, char6, char7, char8))
+
+#endif // CPU(X86_64) || CPU(ARM64)
 
 #endif // CPU(NEEDS_ALIGNED_ACCESS)
 
 #define COMPARE_3CHARS(address, char1, char2, char3) \
-    (COMPARE_2CHARS(address, char1, char2) && ((address)[2] == (char3)))
+    (COMPARE_2CHARS(address, char1, char2) & ((address)[2] == (char3)))
 #define COMPARE_3UCHARS(address, char1, char2, char3) \
-    (COMPARE_2UCHARS(address, char1, char2) && ((address)[2] == (char3)))
+    (COMPARE_2UCHARS(address, char1, char2) & ((address)[2] == (char3)))
 #define COMPARE_5CHARS(address, char1, char2, char3, char4, char5) \
-    (COMPARE_4CHARS(address, char1, char2, char3, char4) && ((address)[4] == (char5)))
+    (COMPARE_4CHARS(address, char1, char2, char3, char4) & ((address)[4] == (char5)))
 #define COMPARE_5UCHARS(address, char1, char2, char3, char4, char5) \
-    (COMPARE_4UCHARS(address, char1, char2, char3, char4) && ((address)[4] == (char5)))
+    (COMPARE_4UCHARS(address, char1, char2, char3, char4) & ((address)[4] == (char5)))
 #define COMPARE_6CHARS(address, char1, char2, char3, char4, char5, char6) \
-    (COMPARE_4CHARS(address, char1, char2, char3, char4) && COMPARE_2CHARS(address + 4, char5, char6))
+    (COMPARE_4CHARS(address, char1, char2, char3, char4) & COMPARE_2CHARS(address + 4, char5, char6))
 #define COMPARE_6UCHARS(address, char1, char2, char3, char4, char5, char6) \
-    (COMPARE_4UCHARS(address, char1, char2, char3, char4) && COMPARE_2UCHARS(address + 4, char5, char6))
+    (COMPARE_4UCHARS(address, char1, char2, char3, char4) & COMPARE_2UCHARS(address + 4, char5, char6))
 #define COMPARE_7CHARS(address, char1, char2, char3, char4, char5, char6, char7) \
-    (COMPARE_4CHARS(address, char1, char2, char3, char4) && COMPARE_4CHARS(address + 3, char4, char5, char6, char7))
+    (COMPARE_4CHARS(address, char1, char2, char3, char4) & COMPARE_4CHARS(address + 3, char4, char5, char6, char7))
 #define COMPARE_7UCHARS(address, char1, char2, char3, char4, char5, char6, char7) \
-    (COMPARE_4UCHARS(address, char1, char2, char3, char4) && COMPARE_4UCHARS(address + 3, char4, char5, char6, char7))
-#define COMPARE_8CHARS(address, char1, char2, char3, char4, char5, char6, char7, char8) \
-    (COMPARE_4CHARS(address, char1, char2, char3, char4) && COMPARE_4CHARS(address + 4, char5, char6, char7, char8))
+    (COMPARE_4UCHARS(address, char1, char2, char3, char4) & COMPARE_4UCHARS(address + 3, char4, char5, char6, char7))
 #define COMPARE_8UCHARS(address, char1, char2, char3, char4, char5, char6, char7, char8) \
-    (COMPARE_4UCHARS(address, char1, char2, char3, char4) && COMPARE_4UCHARS(address + 4, char5, char6, char7, char8))
+    (COMPARE_4UCHARS(address, char1, char2, char3, char4) & COMPARE_4UCHARS(address + 4, char5, char6, char7, char8))
+#define COMPARE_9CHARS(address, char1, char2, char3, char4, char5, char6, char7, char8, char9) \
+    (COMPARE_8CHARS(address, char1, char2, char3, char4, char5, char6, char7, char8) & ((address)[8] == (char9)))
+#define COMPARE_9UCHARS(address, char1, char2, char3, char4, char5, char6, char7, char8, char9) \
+    (COMPARE_8UCHARS(address, char1, char2, char3, char4, char5, char6, char7, char8) & ((address)[8] == (char9)))
+#define COMPARE_10CHARS(address, char1, char2, char3, char4, char5, char6, char7, char8, char9, char10) \
+    (COMPARE_8CHARS(address, char1, char2, char3, char4, char5, char6, char7, char8) & COMPARE_2CHARS(address + 8, char9, char10))
+#define COMPARE_10UCHARS(address, char1, char2, char3, char4, char5, char6, char7, char8, char9, char10) \
+    (COMPARE_8UCHARS(address, char1, char2, char3, char4, char5, char6, char7, char8) & COMPARE_2UCHARS(address + 8, char9, char10))
+#define COMPARE_11CHARS(address, char1, char2, char3, char4, char5, char6, char7, char8, char9, char10, char11) \
+    (COMPARE_8CHARS(address, char1, char2, char3, char4, char5, char6, char7, char8) & COMPARE_4CHARS(address + 7, char8, char9, char10, char11))
+#define COMPARE_11UCHARS(address, char1, char2, char3, char4, char5, char6, char7, char8, char9, char10, char11) \
+    (COMPARE_8UCHARS(address, char1, char2, char3, char4, char5, char6, char7, char8) & COMPARE_4UCHARS(address + 7, char8, char9, char10, char11))
+#define COMPARE_12CHARS(address, char1, char2, char3, char4, char5, char6, char7, char8, char9, char10, char11, char12) \
+    (COMPARE_8CHARS(address, char1, char2, char3, char4, char5, char6, char7, char8) & COMPARE_4CHARS(address + 8, char9, char10, char11, char12))
+#define COMPARE_12UCHARS(address, char1, char2, char3, char4, char5, char6, char7, char8, char9, char10, char11, char12) \
+    (COMPARE_8UCHARS(address, char1, char2, char3, char4, char5, char6, char7, char8) & COMPARE_4UCHARS(address + 8, char9, char10, char11, char12))
+#define COMPARE_13CHARS(address, char1, char2, char3, char4, char5, char6, char7, char8, char9, char10, char11, char12, char13) \
+    (COMPARE_8CHARS(address, char1, char2, char3, char4, char5, char6, char7, char8) & COMPARE_8CHARS(address + 5, char6, char7, char8, char9, char10, char11, char12, char13))
+#define COMPARE_13UCHARS(address, char1, char2, char3, char4, char5, char6, char7, char8, char9, char10, char11, char12, char13) \
+    (COMPARE_8UCHARS(address, char1, char2, char3, char4, char5, char6, char7, char8) & COMPARE_8UCHARS(address + 5, char6, char7, char8, char9, char10, char11, char12, char13))
+#define COMPARE_14CHARS(address, char1, char2, char3, char4, char5, char6, char7, char8, char9, char10, char11, char12, char13, char14) \
+    (COMPARE_8CHARS(address, char1, char2, char3, char4, char5, char6, char7, char8) & COMPARE_8CHARS(address + 6, char7, char8, char9, char10, char11, char12, char13, char14))
+#define COMPARE_14UCHARS(address, char1, char2, char3, char4, char5, char6, char7, char8, char9, char10, char11, char12, char13, char14) \
+    (COMPARE_8UCHARS(address, char1, char2, char3, char4, char5, char6, char7, char8) & COMPARE_8UCHARS(address + 6, char7, char8, char9, char10, char11, char12, char13, char14))
+#define COMPARE_15CHARS(address, char1, char2, char3, char4, char5, char6, char7, char8, char9, char10, char11, char12, char13, char14, char15) \
+    (COMPARE_8CHARS(address, char1, char2, char3, char4, char5, char6, char7, char8) & COMPARE_8CHARS(address + 7, char8, char9, char10, char11, char12, char13, char14, char15))
+#define COMPARE_15UCHARS(address, char1, char2, char3, char4, char5, char6, char7, char8, char9, char10, char11, char12, char13, char14, char15) \
+    (COMPARE_8UCHARS(address, char1, char2, char3, char4, char5, char6, char7, char8) & COMPARE_8UCHARS(address + 7, char8, char9, char10, char11, char12, char13, char14, char15))
+#define COMPARE_16CHARS(address, char1, char2, char3, char4, char5, char6, char7, char8, char9, char10, char11, char12, char13, char14, char15, char16) \
+    (COMPARE_8CHARS(address, char1, char2, char3, char4, char5, char6, char7, char8) & COMPARE_8CHARS(address + 8, char9, char10, char11, char12, char13, char14, char15, char16))
+#define COMPARE_16UCHARS(address, char1, char2, char3, char4, char5, char6, char7, char8, char9, char10, char11, char12, char13, char14, char15, char16) \
+    (COMPARE_8UCHARS(address, char1, char2, char3, char4, char5, char6, char7, char8) & COMPARE_8UCHARS(address + 8, char9, char10, char11, char12, char13, char14, char15, char16))
 
 template<typename CharacterType>
 ALWAYS_INLINE static bool compareCharacters(const CharacterType* source, char c0, char c1)
@@ -172,6 +216,78 @@ ALWAYS_INLINE static bool compareCharacters(const CharacterType* source, char c0
         return COMPARE_8UCHARS(source, c0, c1, c2, c3, c4, c5, c6, c7);
 }
 
+template<typename CharacterType>
+ALWAYS_INLINE static bool compareCharacters(const CharacterType* source, char c0, char c1, char c2, char c3, char c4, char c5, char c6, char c7, char c8)
+{
+    if constexpr (sizeof(CharacterType) == 1)
+        return COMPARE_9CHARS(source, c0, c1, c2, c3, c4, c5, c6, c7, c8);
+    else
+        return COMPARE_9UCHARS(source, c0, c1, c2, c3, c4, c5, c6, c7, c8);
+}
+
+template<typename CharacterType>
+ALWAYS_INLINE static bool compareCharacters(const CharacterType* source, char c0, char c1, char c2, char c3, char c4, char c5, char c6, char c7, char c8, char c9)
+{
+    if constexpr (sizeof(CharacterType) == 1)
+        return COMPARE_10CHARS(source, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9);
+    else
+        return COMPARE_10UCHARS(source, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9);
+}
+
+template<typename CharacterType>
+ALWAYS_INLINE static bool compareCharacters(const CharacterType* source, char c0, char c1, char c2, char c3, char c4, char c5, char c6, char c7, char c8, char c9, char c10)
+{
+    if constexpr (sizeof(CharacterType) == 1)
+        return COMPARE_11CHARS(source, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10);
+    else
+        return COMPARE_11UCHARS(source, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10);
+}
+
+template<typename CharacterType>
+ALWAYS_INLINE static bool compareCharacters(const CharacterType* source, char c0, char c1, char c2, char c3, char c4, char c5, char c6, char c7, char c8, char c9, char c10, char c11)
+{
+    if constexpr (sizeof(CharacterType) == 1)
+        return COMPARE_12CHARS(source, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11);
+    else
+        return COMPARE_12UCHARS(source, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11);
+}
+
+template<typename CharacterType>
+ALWAYS_INLINE static bool compareCharacters(const CharacterType* source, char c0, char c1, char c2, char c3, char c4, char c5, char c6, char c7, char c8, char c9, char c10, char c11, char c12)
+{
+    if constexpr (sizeof(CharacterType) == 1)
+        return COMPARE_13CHARS(source, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12);
+    else
+        return COMPARE_13UCHARS(source, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12);
+}
+
+template<typename CharacterType>
+ALWAYS_INLINE static bool compareCharacters(const CharacterType* source, char c0, char c1, char c2, char c3, char c4, char c5, char c6, char c7, char c8, char c9, char c10, char c11, char c12, char c13)
+{
+    if constexpr (sizeof(CharacterType) == 1)
+        return COMPARE_14CHARS(source, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13);
+    else
+        return COMPARE_14UCHARS(source, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13);
+}
+
+template<typename CharacterType>
+ALWAYS_INLINE static bool compareCharacters(const CharacterType* source, char c0, char c1, char c2, char c3, char c4, char c5, char c6, char c7, char c8, char c9, char c10, char c11, char c12, char c13, char c14)
+{
+    if constexpr (sizeof(CharacterType) == 1)
+        return COMPARE_15CHARS(source, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14);
+    else
+        return COMPARE_15UCHARS(source, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14);
+}
+
+template<typename CharacterType>
+ALWAYS_INLINE static bool compareCharacters(const CharacterType* source, char c0, char c1, char c2, char c3, char c4, char c5, char c6, char c7, char c8, char c9, char c10, char c11, char c12, char c13, char c14, char c15)
+{
+    if constexpr (sizeof(CharacterType) == 1)
+        return COMPARE_16CHARS(source, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, c15);
+    else
+        return COMPARE_16UCHARS(source, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, c15);
+}
+
 #undef COMPARE_2CHARS
 #undef COMPARE_2UCHARS
 #undef COMPARE_3CHARS
@@ -186,8 +302,25 @@ ALWAYS_INLINE static bool compareCharacters(const CharacterType* source, char c0
 #undef COMPARE_7UCHARS
 #undef COMPARE_8CHARS
 #undef COMPARE_8UCHARS
+#undef COMPARE_9CHARS
+#undef COMPARE_9UCHARS
+#undef COMPARE_10CHARS
+#undef COMPARE_10UCHARS
+#undef COMPARE_11CHARS
+#undef COMPARE_11UCHARS
+#undef COMPARE_12CHARS
+#undef COMPARE_12UCHARS
+#undef COMPARE_13CHARS
+#undef COMPARE_13UCHARS
+#undef COMPARE_14CHARS
+#undef COMPARE_14UCHARS
+#undef COMPARE_15CHARS
+#undef COMPARE_15UCHARS
+#undef COMPARE_16CHARS
+#undef COMPARE_16UCHARS
 #undef CHARPAIR_TOUINT16
 #undef CHARQUAD_TOUINT32
+#undef CHAROCTET_TOUINT64
 #undef UCHARPAIR_TOUINT32
 #undef UCHARQUAD_TOUINT64
 

@@ -1120,6 +1120,8 @@ sub printNodeNameHeaderFile
     }
     print F "} // namespace AttributeNames\n";
     print F "\n";
+    print F "NodeName findNodeName(Namespace, std::span<const LChar>);\n";
+    print F "NodeName findNodeName(Namespace, std::span<const UChar>);\n";
     print F "NodeName findNodeName(Namespace, const String&);\n";
     print F "ElementName findHTMLElementName(std::span<const LChar>);\n";
     print F "ElementName findHTMLElementName(std::span<const UChar>);\n";
@@ -1250,6 +1252,16 @@ sub printNodeNameCppFile
     print F "    default:\n";
     print F "        return NodeName::Unknown;\n";
     print F "    }\n";
+    print F "}\n";
+    print F "\n";
+    print F "NodeName findNodeName(Namespace ns, std::span<const LChar> buffer)\n";
+    print F "{\n";
+    print F "    return findNodeNameFromBuffer(ns, buffer);\n";
+    print F "}\n";
+    print F "\n";
+    print F "NodeName findNodeName(Namespace ns, std::span<const UChar> buffer)\n";
+    print F "{\n";
+    print F "    return findNodeNameFromBuffer(ns, buffer);\n";
     print F "}\n";
     print F "\n";
     print F "NodeName findNodeName(Namespace ns, const String& name)\n";
@@ -1384,7 +1396,7 @@ sub generateFindNameForLength
                 print F "${indent}if (buffer[$currentIndex] == '$letter') {\n";
             } else {
                 my $bufferStart = $currentIndex > 0 ? "buffer.data() + $currentIndex" : "buffer.data()";
-                if ($lengthToCompare <= 8) {
+                if ($lengthToCompare <= 16) {
                     print F "${indent}if (compareCharacters($bufferStart";
                     for (my $index = $currentIndex; $index < $length; $index = $index + 1) {
                         my $letter = substr($string, $index, 1);
