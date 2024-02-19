@@ -211,7 +211,14 @@ bool MediaPlayerPrivateGStreamerMSE::doSeek(const SeekTarget& target, float rate
             if (!audioSinkPerformsAsyncStateChanges) {
                 // If audio-only pipeline's sink is not performing async state changes
                 // we must simulate preroll right away as otherwise nothing will trigger it.
+                bool mustPreventPositionReset = m_isWaitingForPreroll && m_isSeeking;
+                if (mustPreventPositionReset)
+                    m_cachedPosition = currentTime();
                 didPreroll();
+                if (mustPreventPositionReset) {
+                    propagateReadyStateToPlayer();
+                    invalidateCachedPosition();
+                }
             }
         }
     });
