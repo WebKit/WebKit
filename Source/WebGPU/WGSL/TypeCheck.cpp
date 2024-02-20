@@ -1047,21 +1047,27 @@ void TypeChecker::visit(AST::FieldAccessExpression& access)
 
 void TypeChecker::visit(AST::IndexAccessExpression& access)
 {
-    const auto& constantAccess = [&]<typename T>() {
+    const auto& constantAccess = [&]<typename T>(std::optional<unsigned> typeSize) {
         auto constantBase = access.base().constantValue();
         auto constantIndex = access.index().constantValue();
-        bool isConstant = constantBase && constantIndex;
 
-        if (!isConstant)
+        if (!constantIndex)
             return;
 
-        auto constant = std::get<T>(*constantBase);
+        auto size = typeSize.value_or(0);
+        if (!size && constantBase)
+            size = std::get<T>(*constantBase).upperBound();
+        if (!size)
+            return;
+
         auto index = constantIndex->integerValue();
-        auto size = constant.upperBound();
-        if (index < 0 || static_cast<size_t>(index) >= size)
+        if (index < 0 || static_cast<size_t>(index) >= size) {
             typeError(InferBottom::No, access.span(), "index ", String::number(index), " is out of bounds [0..", String::number(size - 1), "]");
-        else
-            access.setConstantValue(constant[index]);
+            return;
+        }
+
+        if (constantBase)
+            access.setConstantValue(std::get<T>(*constantBase)[index]);
     };
 
     const auto& accessImpl = [&](const Type* base) -> const Type* {
@@ -1072,13 +1078,16 @@ void TypeChecker::visit(AST::IndexAccessExpression& access)
         const Type* result = nullptr;
         if (auto* array = std::get_if<Types::Array>(base)) {
             result = array->element;
-            constantAccess.operator()<ConstantArray>();
+            std::optional<unsigned> size;
+            if (auto* constantSize = std::get_if<unsigned>(&array->size))
+                size = *constantSize;
+            constantAccess.operator()<ConstantArray>(size);
         } else if (auto* vector = std::get_if<Types::Vector>(base)) {
             result = vector->element;
-            constantAccess.operator()<ConstantVector>();
+            constantAccess.operator()<ConstantVector>(vector->size);
         } else if (auto* matrix = std::get_if<Types::Matrix>(base)) {
             result = m_types.vectorType(matrix->rows, matrix->element);
-            constantAccess.operator()<ConstantMatrix>();
+            constantAccess.operator()<ConstantMatrix>(matrix->columns);
         }
 
         if (!result) {
