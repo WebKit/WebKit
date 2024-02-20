@@ -1394,11 +1394,12 @@ void TypeChecker::visit(AST::CallExpression& call)
                 return;
             }
             for (auto& argument : call.arguments()) {
-                if (!elementType) {
-                    elementType = infer(argument, m_evaluation);
+                auto* argumentType = infer(argument, m_evaluation);
+                if (auto* reference = std::get_if<Types::Reference>(argumentType))
+                    argumentType = reference->element;
 
-                    if (auto* reference = std::get_if<Types::Reference>(elementType))
-                        elementType = reference->element;
+                if (!elementType) {
+                    elementType = argumentType;
 
                     if (!elementType->isConstructible()) {
                         typeError(array.span(), "'", *elementType, "' cannot be used as an element type of an array");
@@ -1407,7 +1408,6 @@ void TypeChecker::visit(AST::CallExpression& call)
 
                     continue;
                 }
-                auto* argumentType = infer(argument, m_evaluation);
                 if (unify(elementType, argumentType))
                     continue;
                 if (unify(argumentType, elementType)) {
