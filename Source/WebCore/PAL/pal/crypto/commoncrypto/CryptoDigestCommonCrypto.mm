@@ -26,116 +26,106 @@
 #include "config.h"
 #include "CryptoDigest.h"
 
+#include "PALSwift.h"
 #include <CommonCrypto/CommonCrypto.h>
 
 namespace PAL {
 
 struct CryptoDigestContext {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
     CryptoDigest::Algorithm algorithm;
-    void* ccContext;
+    std::variant<
+        std::unique_ptr<CC_SHA1_CTX>,
+        std::unique_ptr<CC_SHA256_CTX>,
+        std::unique_ptr<CC_SHA512_CTX>
+    > ccContext;
 };
 
 inline CC_SHA1_CTX* toSHA1Context(CryptoDigestContext* context)
 {
     ASSERT(context->algorithm == CryptoDigest::Algorithm::SHA_1);
-    return static_cast<CC_SHA1_CTX*>(context->ccContext);
+    return static_cast<CC_SHA1_CTX*>(std::get<std::unique_ptr<CC_SHA1_CTX>>(context->ccContext).get());
 }
 inline CC_SHA256_CTX* toSHA224Context(CryptoDigestContext* context)
 {
     ASSERT(context->algorithm == CryptoDigest::Algorithm::SHA_224);
-    return static_cast<CC_SHA256_CTX*>(context->ccContext);
+    return static_cast<CC_SHA256_CTX*>(std::get<std::unique_ptr<CC_SHA256_CTX>>(context->ccContext).get());
 }
 inline CC_SHA256_CTX* toSHA256Context(CryptoDigestContext* context)
 {
     ASSERT(context->algorithm == CryptoDigest::Algorithm::SHA_256);
-    return static_cast<CC_SHA256_CTX*>(context->ccContext);
+    return static_cast<CC_SHA256_CTX*>(std::get<std::unique_ptr<CC_SHA256_CTX>>(context->ccContext).get());
 }
 inline CC_SHA512_CTX* toSHA384Context(CryptoDigestContext* context)
 {
     ASSERT(context->algorithm == CryptoDigest::Algorithm::SHA_384);
-    return static_cast<CC_SHA512_CTX*>(context->ccContext);
+    return static_cast<CC_SHA512_CTX*>(std::get<std::unique_ptr<CC_SHA512_CTX>>(context->ccContext).get());
 }
 inline CC_SHA512_CTX* toSHA512Context(CryptoDigestContext* context)
 {
     ASSERT(context->algorithm == CryptoDigest::Algorithm::SHA_512);
-    return static_cast<CC_SHA512_CTX*>(context->ccContext);
+    return static_cast<CC_SHA512_CTX*>(std::get<std::unique_ptr<CC_SHA512_CTX>>(context->ccContext).get());
 }
 
 CryptoDigest::CryptoDigest()
-    : m_context(new CryptoDigestContext)
+    : m_context(WTF::makeUnique<CryptoDigestContext>())
 {
 }
 
 CryptoDigest::~CryptoDigest()
 {
-    switch (m_context->algorithm) {
-    case CryptoDigest::Algorithm::SHA_1:
-        delete toSHA1Context(m_context.get());
-        return;
-    case CryptoDigest::Algorithm::SHA_224:
-        delete toSHA224Context(m_context.get());
-        return;
-    case CryptoDigest::Algorithm::SHA_256:
-        delete toSHA256Context(m_context.get());
-        return;
-    case CryptoDigest::Algorithm::SHA_384:
-        delete toSHA384Context(m_context.get());
-        return;
-    case CryptoDigest::Algorithm::SHA_512:
-        delete toSHA512Context(m_context.get());
-        return;
-    }
 }
 
 
-std::unique_ptr<CryptoDigest> CryptoDigest::create(CryptoDigest::Algorithm algorithm)
+static std::variant<std::unique_ptr<CC_SHA1_CTX>, std::unique_ptr<CC_SHA256_CTX>, std::unique_ptr<CC_SHA512_CTX>> createCryptoDigest(CryptoDigest::Algorithm algorithm)
 {
-    std::unique_ptr<CryptoDigest> digest(new CryptoDigest);
-    digest->m_context->algorithm = algorithm;
-
     switch (algorithm) {
     case CryptoDigest::Algorithm::SHA_1: {
-        CC_SHA1_CTX* context = new CC_SHA1_CTX;
-        digest->m_context->ccContext = context;
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        CC_SHA1_Init(context);
-ALLOW_DEPRECATED_DECLARATIONS_END
-        return digest;
+        std::unique_ptr<CC_SHA1_CTX> context = WTF::makeUniqueWithoutFastMallocCheck<CC_SHA1_CTX>();
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        CC_SHA1_Init(context.get());
+        ALLOW_DEPRECATED_DECLARATIONS_END
+        return context;
     }
     case CryptoDigest::Algorithm::SHA_224: {
-        CC_SHA256_CTX* context = new CC_SHA256_CTX;
-        digest->m_context->ccContext = context;
-        CC_SHA224_Init(context);
-        return digest;
+        std::unique_ptr<CC_SHA256_CTX> context = WTF::makeUniqueWithoutFastMallocCheck<CC_SHA256_CTX>();
+        CC_SHA224_Init(context.get());
+        return context;
     }
     case CryptoDigest::Algorithm::SHA_256: {
-        CC_SHA256_CTX* context = new CC_SHA256_CTX;
-        digest->m_context->ccContext = context;
-        CC_SHA256_Init(context);
-        return digest;
+        std::unique_ptr<CC_SHA256_CTX> context = WTF::makeUniqueWithoutFastMallocCheck<CC_SHA256_CTX>();
+        CC_SHA256_Init(context.get());
+        return context;
     }
     case CryptoDigest::Algorithm::SHA_384: {
-        CC_SHA512_CTX* context = new CC_SHA512_CTX;
-        digest->m_context->ccContext = context;
-        CC_SHA384_Init(context);
-        return digest;
+        std::unique_ptr<CC_SHA512_CTX> context = WTF::makeUniqueWithoutFastMallocCheck<CC_SHA512_CTX>();
+        CC_SHA384_Init(context.get());
+        return context;
     }
     case CryptoDigest::Algorithm::SHA_512: {
-        CC_SHA512_CTX* context = new CC_SHA512_CTX;
-        digest->m_context->ccContext = context;
-        CC_SHA512_Init(context);
-        return digest;
+        std::unique_ptr<CC_SHA512_CTX> context = WTF::makeUniqueWithoutFastMallocCheck<CC_SHA512_CTX>();
+        CC_SHA512_Init(context.get());
+        return context;
     }
     }
+}
+
+std::unique_ptr<CryptoDigest> CryptoDigest::create(CryptoDigest::Algorithm algorithm)
+{
+    std::unique_ptr<CryptoDigest> digest = WTF::makeUnique<CryptoDigest>();
+    ASSERT(digest->m_context);
+    digest->m_context->algorithm = algorithm;
+    digest->m_context->ccContext = createCryptoDigest(algorithm);
+    return digest;
 }
 
 void CryptoDigest::addBytes(const void* input, size_t length)
 {
     switch (m_context->algorithm) {
     case CryptoDigest::Algorithm::SHA_1:
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         CC_SHA1_Update(toSHA1Context(m_context.get()), input, length);
-ALLOW_DEPRECATED_DECLARATIONS_END
+        ALLOW_DEPRECATED_DECLARATIONS_END
         return;
     case CryptoDigest::Algorithm::SHA_224:
         CC_SHA224_Update(toSHA224Context(m_context.get()), input, length);
@@ -158,9 +148,9 @@ Vector<uint8_t> CryptoDigest::computeHash()
     switch (m_context->algorithm) {
     case CryptoDigest::Algorithm::SHA_1:
         result.grow(CC_SHA1_DIGEST_LENGTH);
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         CC_SHA1_Final(result.data(), toSHA1Context(m_context.get()));
-ALLOW_DEPRECATED_DECLARATIONS_END
+        ALLOW_DEPRECATED_DECLARATIONS_END
         break;
     case CryptoDigest::Algorithm::SHA_224:
         result.grow(CC_SHA224_DIGEST_LENGTH);
@@ -197,4 +187,42 @@ String CryptoDigest::toHexString()
     return String::fromUTF8(result);
 }
 
+std::optional<Vector<uint8_t>> CryptoDigest::computeHash(CryptoDigest::Algorithm algo, const Vector<uint8_t>& data, bool useCryptoKit)
+{
+    if (useCryptoKit) {
+        Vector<uint8_t> digest;
+        switch (algo) {
+        case CryptoDigest::Algorithm::SHA_1:
+            digest.grow(WebCryptoDigestSizeSha1);
+            if (WebCryptoErrorCodesSuccess != [WebCryptoDigest sha1:data.data() dataSize:data.size() digest:digest.data() digestSize:digest.size()])
+                return std::nullopt;
+            break;
+        case CryptoDigest::Algorithm::SHA_256:
+            digest.grow(WebCryptoDigestSizeSha256);
+            if (WebCryptoErrorCodesSuccess != [WebCryptoDigest sha256:data.data() dataSize:data.size() digest:digest.data() digestSize:digest.size()])
+                return std::nullopt;
+            break;
+        case CryptoDigest::Algorithm::SHA_384:
+            digest.grow(WebCryptoDigestSizeSha384);
+            if (WebCryptoErrorCodesSuccess != [WebCryptoDigest sha384:data.data() dataSize:data.size() digest:digest.data() digestSize:digest.size()])
+                return std::nullopt;
+            break;
+        case CryptoDigest::Algorithm::SHA_512:
+            digest.grow(WebCryptoDigestSizeSha512);
+            if (WebCryptoErrorCodesSuccess != [WebCryptoDigest sha512:data.data() dataSize:data.size() digest:digest.data() digestSize:digest.size()])
+                return std::nullopt;
+            break;
+        case CryptoDigest::Algorithm::SHA_224:
+            RELEASE_ASSERT_NOT_REACHED();
+            return std::nullopt;
+        }
+        return digest;
+    }
+    std::unique_ptr<CryptoDigest> digest = WTF::makeUnique<CryptoDigest>();
+    ASSERT(digest->m_context);
+    digest->m_context->algorithm = algo;
+    digest->m_context->ccContext = createCryptoDigest(algo);
+    digest->addBytes(data.data(), data.size());
+    return digest->computeHash();
+}
 } // namespace PAL

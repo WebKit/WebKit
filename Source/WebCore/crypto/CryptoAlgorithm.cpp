@@ -116,4 +116,19 @@ void CryptoAlgorithm::dispatchOperationInWorkQueue(WorkQueue& workQueue, ScriptE
     dispatchAlgorithmOperation(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback), WTFMove(operation));
 }
 
+void CryptoAlgorithm::dispatchDigest(WorkQueue& workQueue, ScriptExecutionContext& context, VectorCallback&& callback, ExceptionCallback&&exceptionCallback, Vector<uint8_t>&& message, PAL::CryptoDigest::Algorithm algo)
+{
+    bool useCryptoKit = context.settingsValues().cryptoKitEnabled;
+    workQueue.dispatch([message = WTFMove(message), callback = WTFMove(callback), contextIdentifier = context.identifier(), exceptionCallback = WTFMove(exceptionCallback), useCryptoKit, algo]() mutable {
+        auto result = PAL::CryptoDigest::computeHash(algo, message, useCryptoKit);
+        ScriptExecutionContext::postTaskTo(contextIdentifier, [callback = WTFMove(callback), result = WTFMove(result), exceptionCallback = WTFMove(exceptionCallback)](auto&) mutable {
+            if (!result.has_value()) {
+                exceptionCallback(ExceptionCode::OperationError);
+                return;
+            }
+            callback(WTFMove(result.value()));
+        });
+    });
+}
+
 } // namespace WebCore
