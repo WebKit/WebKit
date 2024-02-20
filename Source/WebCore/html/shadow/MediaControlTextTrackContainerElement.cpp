@@ -87,7 +87,7 @@ RenderPtr<RenderElement> MediaControlTextTrackContainerElement::createElementRen
 
 static bool compareCueIntervalForDisplay(const CueInterval& one, const CueInterval& two)
 {
-    return one.data()->isPositionedAbove(two.data().get());
+    return one.data()->isPositionedAbove(two.data());
 };
 
 void MediaControlTextTrackContainerElement::updateDisplay()
@@ -156,7 +156,7 @@ void MediaControlTextTrackContainerElement::updateDisplay()
         removeChildren();
 
     activeCues.removeAllMatching([] (CueInterval& cueInterval) {
-        RefPtr cue = cueInterval.data().get();
+        RefPtr cue = cueInterval.data();
         return !cue->track()
             || !cue->track()->isRendered()
             || cue->track()->mode() == TextTrack::Mode::Disabled
@@ -256,7 +256,7 @@ void MediaControlTextTrackContainerElement::updateActiveCuesFontSize()
     m_fontSize = lroundf(100 * fontScale);
 
     for (auto& activeCue : m_mediaElement->currentlyActiveCues()) {
-        RefPtr cue = activeCue.data().get();
+        RefPtr cue = activeCue.data();
         if (cue->isRenderable())
             cue->setFontSize(m_fontSize, m_fontSizeIsImportant);
     }

@@ -1725,7 +1725,7 @@ void HTMLMediaElement::mediaSourceWasDetached()
 
 struct HTMLMediaElement::CueData {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
-    PODIntervalTree<MediaTime, WeakPtr<TextTrackCue, WeakPtrImplWithEventTargetData>> cueTree;
+    PODIntervalTree<MediaTime, TextTrackCue*> cueTree;
     CueList currentlyActiveCues;
 };
 
@@ -1755,7 +1755,7 @@ static bool eventTimeCueCompare(const std::pair<MediaTime, RefPtr<TextTrackCue>>
 
 static bool compareCueInterval(const CueInterval& one, const CueInterval& two)
 {
-    return RefPtr { one.data().get() }->isOrderedBefore(RefPtr { two.data().get() }.get());
+    return RefPtr { one.data() }->isOrderedBefore(RefPtr { two.data() }.get());
 }
 
 static bool compareCueIntervalEndTime(const CueInterval& one, const CueInterval& two)
@@ -1791,7 +1791,7 @@ void HTMLMediaElement::updateActiveTextTrackCues(const MediaTime& movieTime)
     // The user agent must synchronously unset [the text track cue active] flag
     // whenever ... the media element's readyState is changed back to HAVE_NOTHING.
     if (m_readyState != HAVE_NOTHING && m_player) {
-        for (auto& cue : m_cueData->cueTree.allOverlaps({ movieTime, movieTime, WeakPtr<TextTrackCue, WeakPtrImplWithEventTargetData>() })) {
+        for (auto& cue : m_cueData->cueTree.allOverlaps({ movieTime, movieTime })) {
             if (cue.low() <= movieTime && cue.high() > movieTime)
                 currentCues.append(cue);
         }
@@ -1819,7 +1819,7 @@ void HTMLMediaElement::updateActiveTextTrackCues(const MediaTime& movieTime)
     // end times are less than or equal to the current playback position.
     // Otherwise, let missed cues be an empty list.
     if (lastTime >= MediaTime::zeroTime() && m_lastSeekTime < movieTime) {
-        for (auto& cue : m_cueData->cueTree.allOverlaps({ lastTime, movieTime, WeakPtr<TextTrackCue, WeakPtrImplWithEventTargetData>() })) {
+        for (auto& cue : m_cueData->cueTree.allOverlaps({ lastTime, movieTime })) {
             // Consider cues that may have been missed since the last seek time.
             if (cue.low() > std::max(m_lastSeekTime, lastTime) && cue.high() < movieTime)
                 missedCues.append(cue);
@@ -1854,7 +1854,7 @@ void HTMLMediaElement::updateActiveTextTrackCues(const MediaTime& movieTime)
             activeSetChanged = true;
 
     for (size_t i = 0; i < currentCuesSize; ++i) {
-        RefPtr cue = currentCues[i].data().get();
+        RefPtr cue = currentCues[i].data();
         cue->updateDisplayTree(movieTime);
         if (!cue->isActive())
             activeSetChanged = true;
@@ -1914,7 +1914,7 @@ void HTMLMediaElement::updateActiveTextTrackCues(const MediaTime& movieTime)
     for (size_t i = 0; i < missedCuesSize; ++i) {
         // 9 - For each text track cue in missed cues, prepare an event named enter
         // for the TextTrackCue object with the text track cue start time.
-        eventTasks.append({ missedCues[i].data()->startMediaTime(), missedCues[i].data().get() });
+        eventTasks.append({ missedCues[i].data()->startMediaTime(), missedCues[i].data() });
 
         // 10 - For each text track [...] in missed cues, prepare an event
         // named exit for the TextTrackCue object with the  with the later of
@@ -1926,7 +1926,7 @@ void HTMLMediaElement::updateActiveTextTrackCues(const MediaTime& movieTime)
         // affect sorting events before dispatch either, because the exit
         // event has the same time as the enter event.
         if (missedCues[i].data()->startMediaTime() < missedCues[i].data()->endMediaTime())
-            eventTasks.append({ missedCues[i].data()->endMediaTime(), missedCues[i].data().get() });
+            eventTasks.append({ missedCues[i].data()->endMediaTime(), missedCues[i].data() });
     }
 
     for (size_t i = 0; i < previousCuesSize; ++i) {
@@ -1934,7 +1934,7 @@ void HTMLMediaElement::updateActiveTextTrackCues(const MediaTime& movieTime)
         // track cue active flag set prepare an event named exit for the
         // TextTrackCue object with the text track cue end time.
         if (!currentCues.contains(previousCues[i]))
-            eventTasks.append({ previousCues[i].data()->endMediaTime(), previousCues[i].data().get() });
+            eventTasks.append({ previousCues[i].data()->endMediaTime(), previousCues[i].data() });
     }
 
     for (size_t i = 0; i < currentCuesSize; ++i) {
@@ -1942,7 +1942,7 @@ void HTMLMediaElement::updateActiveTextTrackCues(const MediaTime& movieTime)
         // text track cue active flag set, prepare an event named enter for the
         // TextTrackCue object with the text track cue start time.
         if (!previousCues.contains(currentCues[i]))
-            eventTasks.append({ currentCues[i].data()->startMediaTime(), currentCues[i].data().get() });
+            eventTasks.append({ currentCues[i].data()->startMediaTime(), currentCues[i].data() });
     }
 
     // 12 - Sort the tasks in events in ascending time order (tasks with earlier
