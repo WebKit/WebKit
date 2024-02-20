@@ -110,7 +110,7 @@ void WorkerOrWorkletThread::runEventLoop()
 {
     // Does not return until terminated.
     if (is<WorkerDedicatedRunLoop>(m_runLoop.get()))
-        downcast<WorkerDedicatedRunLoop>(m_runLoop.get()).run(m_globalScope.get());
+        downcast<WorkerDedicatedRunLoop>(m_runLoop.get()).run(RefPtr { m_globalScope }.get());
 }
 
 void WorkerOrWorkletThread::workerOrWorkletThread()
