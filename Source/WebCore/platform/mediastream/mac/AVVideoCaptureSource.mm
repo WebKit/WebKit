@@ -685,10 +685,10 @@ auto AVVideoCaptureSource::getPhotoCapabilities() -> Ref<PhotoCapabilitiesNative
     PhotoCapabilities photoCapabilities;
 
     auto height = capabilities.height();
-    photoCapabilities.imageHeight = { height.longRange().max, height.longRange().min, 1 };
+    photoCapabilities.imageHeight = { height.max(), height.min(), 1 };
 
     auto width = capabilities.width();
-    photoCapabilities.imageWidth = { width.longRange().max, width.longRange().min, 1 };
+    photoCapabilities.imageWidth = { width.max(), width.min(), 1 };
 
     m_photoCapabilities = WTFMove(photoCapabilities);
 

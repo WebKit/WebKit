@@ -119,7 +119,7 @@ public:
     template<typename RangeType>
     double fitnessDistance(const RangeType& range) const
     {
-        return fitnessDistance(range.min, range.max);
+        return fitnessDistance(range.min(), range.max());
     }
 
     double fitnessDistance(ValueType rangeMin, ValueType rangeMax) const
@@ -233,7 +233,7 @@ public:
     template<typename RangeType>
     ValueType valueForCapabilityRange(ValueType current, const RangeType& range) const
     {
-        return valueForCapabilityRange(current, range.min, range.max);
+        return valueForCapabilityRange(current, range.min(), range.max());
     }
 
     ValueType valueForCapabilityRange(ValueType current, ValueType capabilityMin, ValueType capabilityMax) const
