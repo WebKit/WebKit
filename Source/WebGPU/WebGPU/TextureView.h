@@ -95,7 +95,7 @@ private:
     const std::optional<WGPUExtent3D> m_renderExtent;
 
     const Ref<Device> m_device;
-    Texture& m_parentTexture;
+    Ref<Texture> m_parentTexture;
     mutable WeakPtr<CommandEncoder> m_commandEncoder;
 };
 

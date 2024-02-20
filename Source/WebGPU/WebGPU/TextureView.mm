@@ -56,47 +56,47 @@ void TextureView::setLabel(String&& label)
 
 id<MTLTexture> TextureView::parentTexture() const
 {
-    return m_parentTexture.texture();
+    return m_parentTexture->texture();
 }
 
 bool TextureView::previouslyCleared() const
 {
-    return m_parentTexture.previouslyCleared(m_texture.parentRelativeLevel, m_texture.parentRelativeSlice);
+    return m_parentTexture->previouslyCleared(m_texture.parentRelativeLevel, m_texture.parentRelativeSlice);
 }
 
 void TextureView::setPreviouslyCleared()
 {
-    m_parentTexture.setPreviouslyCleared(m_texture.parentRelativeLevel, m_texture.parentRelativeSlice);
+    m_parentTexture->setPreviouslyCleared(m_texture.parentRelativeLevel, m_texture.parentRelativeSlice);
 }
 
 uint32_t TextureView::width() const
 {
-    return m_parentTexture.physicalMiplevelSpecificTextureExtent(baseMipLevel()).width;
+    return m_parentTexture->physicalMiplevelSpecificTextureExtent(baseMipLevel()).width;
 }
 
 uint32_t TextureView::height() const
 {
-    return m_parentTexture.physicalMiplevelSpecificTextureExtent(baseMipLevel()).height;
+    return m_parentTexture->physicalMiplevelSpecificTextureExtent(baseMipLevel()).height;
 }
 
 uint32_t TextureView::depthOrArrayLayers() const
 {
-    return m_parentTexture.physicalMiplevelSpecificTextureExtent(baseMipLevel()).depthOrArrayLayers;
+    return m_parentTexture->physicalMiplevelSpecificTextureExtent(baseMipLevel()).depthOrArrayLayers;
 }
 
 WGPUTextureUsageFlags TextureView::usage() const
 {
-    return m_parentTexture.usage();
+    return m_parentTexture->usage();
 }
 
 uint32_t TextureView::sampleCount() const
 {
-    return m_parentTexture.sampleCount();
+    return m_parentTexture->sampleCount();
 }
 
 WGPUTextureFormat TextureView::parentFormat() const
 {
-    return m_parentTexture.format();
+    return m_parentTexture->format();
 }
 
 WGPUTextureFormat TextureView::format() const
@@ -106,7 +106,7 @@ WGPUTextureFormat TextureView::format() const
 
 uint32_t TextureView::parentMipLevelCount() const
 {
-    return m_parentTexture.mipLevelCount();
+    return m_parentTexture->mipLevelCount();
 }
 
 uint32_t TextureView::mipLevelCount() const
@@ -141,7 +141,7 @@ WGPUTextureViewDimension TextureView::dimension() const
 
 bool TextureView::isDestroyed() const
 {
-    return m_parentTexture.isDestroyed();
+    return m_parentTexture->isDestroyed();
 }
 
 bool TextureView::isValid() const
