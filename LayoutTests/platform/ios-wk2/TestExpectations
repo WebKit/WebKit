@@ -2364,8 +2364,6 @@ webkit.org/b/263044 [ Debug ] imported/w3c/web-platform-tests/webrtc-stats/suppo
 
 webkit.org/b/268422 fast/events/ios/keyboard-should-not-trigger-resize.html [ Pass Failure ]
 
-webkit.org/b/268555 [ Debug ] http/wpt/webcodecs/h264-encoder-default-config.https.any.html [ Skip ]
-
 webkit.org/b/268557 [ Debug ] imported/w3c/web-platform-tests/html/dom/elements/global-attributes/the-anchor-attribute-003-crash.tentative.html [ Skip ]
 
 # webkit.org/b/268581 (18 webgl/1.0.3/conformance/textures/* tests are consistently/flakily timing out.)
@@ -2395,8 +2393,6 @@ webkit.org/b/269086 [ Release ] imported/w3c/web-platform-tests/feature-policy/f
 webkit.org/b/269116 imported/w3c/web-platform-tests/css/css-flexbox/negative-overflow-002.html [ Failure ]
 
 webkit.org/b/269321 webgl/1.0.3/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Timeout ]
-
-webkit.org/b/269483 [ Debug ] http/wpt/webcodecs/h264-encoder-default-config.https.any.worker.html [ Skip ]
 
 # webkit.org/b/123266095  (REGRESSION (274957@main) [ iOS Debug ] 2x imported/w3c/web-platform-tests/css/css-view-transitions tests are constant crash)
 [ Debug ] imported/w3c/web-platform-tests/css/css-view-transitions/new-content-captures-different-size.html [ Skip ]
