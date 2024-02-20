@@ -1964,15 +1964,13 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
 
 #if PLATFORM(BROADCOM) || USE(WESTEROS_SINK) || PLATFORM(AMLOGIC) || PLATFORM(REALTEK)
         if (currentState <= GST_STATE_READY && newState >= GST_STATE_READY) {
-            // If we didn't create an audio sink, store a reference to the created one.
-            if (!m_audioSink) {
-                // Detect an audio sink element.
-                GstElement* element = GST_ELEMENT(GST_MESSAGE_SRC(message));
-                if (GST_OBJECT_FLAG_IS_SET(element, GST_ELEMENT_FLAG_SINK)) {
-                    const gchar* klassStr = gst_element_get_metadata(element, "klass");
-                    if (strstr(klassStr, "Sink") && strstr(klassStr, "Audio"))
-                        m_audioSink = element;
-                }
+            // Detect an audio sink element and store reference to it if it supersedes what we currently have.
+            GstElement* element = GST_ELEMENT(GST_MESSAGE_SRC(message));
+            if (GST_OBJECT_FLAG_IS_SET(element, GST_ELEMENT_FLAG_SINK)) {
+                const gchar* klassStr = gst_element_get_metadata(element, "klass");
+                if (g_strrstr(klassStr, "Sink") && g_strrstr(klassStr, "Audio")
+                    && (!m_audioSink || (m_audioSink.get() != element && GST_STATE(m_audioSink.get()) == GST_STATE_NULL)))
+                    m_audioSink = element;
             }
         }
 #endif
