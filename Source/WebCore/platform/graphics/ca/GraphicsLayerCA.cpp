@@ -1036,15 +1036,15 @@ bool GraphicsLayerCA::animationIsRunning(const String& animationName) const
 
 static bool timingFunctionIsCubicTimingFunctionWithYValueOutOfRange(const TimingFunction* timingFunction)
 {
-    if (!is<CubicBezierTimingFunction>(timingFunction))
+    auto* cubicBezierTimingFunction = dynamicDowncast<CubicBezierTimingFunction>(timingFunction);
+    if (!cubicBezierTimingFunction)
         return false;
 
     auto yValueIsOutOfRange = [](double y) -> bool {
         return y < 0 || y > 1;
     };
 
-    auto& cubicBezierTimingFunction = downcast<CubicBezierTimingFunction>(*timingFunction);
-    return yValueIsOutOfRange(cubicBezierTimingFunction.y1()) || yValueIsOutOfRange(cubicBezierTimingFunction.y2());
+    return yValueIsOutOfRange(cubicBezierTimingFunction->y1()) || yValueIsOutOfRange(cubicBezierTimingFunction->y2());
 }
 
 static bool keyframeValueListHasSingleIntervalWithLinearOrEquivalentTimingFunction(const KeyframeValueList& valueList)
@@ -1056,12 +1056,13 @@ static bool keyframeValueListHasSingleIntervalWithLinearOrEquivalentTimingFuncti
     if (!timingFunction)
         return true;
 
-    if (is<LinearTimingFunction>(timingFunction)) {
+    if (is<LinearTimingFunction>(*timingFunction)) {
         ASSERT(LinearTimingFunction::identity() == *timingFunction);
         return true;
     }
 
-    return is<CubicBezierTimingFunction>(timingFunction) && downcast<CubicBezierTimingFunction>(*timingFunction).isLinear();
+    auto* cubicBezierTimingFunction = dynamicDowncast<CubicBezierTimingFunction>(*timingFunction);
+    return cubicBezierTimingFunction && cubicBezierTimingFunction->isLinear();
 }
 
 static bool animationCanBeAccelerated(const KeyframeValueList& valueList, const Animation* anim)
