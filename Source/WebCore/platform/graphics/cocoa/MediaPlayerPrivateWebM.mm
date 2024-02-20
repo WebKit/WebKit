@@ -1562,6 +1562,8 @@ void MediaPlayerPrivateWebM::destroyAudioRenderers()
         destroyAudioRenderer(renderer);
     }
     m_audioRenderers.clear();
+    if (auto player = m_player.get())
+        player->renderingModeChanged();
 }
 
 void MediaPlayerPrivateWebM::clearTracks()
