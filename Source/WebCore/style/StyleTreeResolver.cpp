@@ -706,11 +706,25 @@ std::unique_ptr<RenderStyle> TreeResolver::resolveStartingStyle(const ResolvedSt
     // We now resolve the starting style by applying all rules (including @starting-style ones) again.
     // We could compute it along with the primary style and include it in MatchedPropertiesCache but it is not
     // clear this would be benefitial as it is typically only used once.
-    auto startingStyle = RenderStyle::clonePtr(*resolvedStyle.style);
+
+    auto& parentAfterChangeStyle = [&]() -> const RenderStyle& {
+        if (auto* parentElement = !styleable.pseudoElementIdentifier ? parent().element : &styleable.element) {
+            // "Starting style inherits from the parent’s after-change style just like after-change style does."
+            if (auto* afterChangeStyle = parentElement->lastStyleChangeEventStyle(styleable.pseudoElementIdentifier))
+                return *afterChangeStyle;
+        }
+        return *resolutionContext.parentStyle;
+    }();
+
+    auto startingStyle = RenderStyle::createPtr();
+    startingStyle->inheritFrom(parentAfterChangeStyle);
+
+    if (styleable.pseudoElementIdentifier)
+        startingStyle->setPseudoElementType(styleable.pseudoElementIdentifier->pseudoId);
 
     auto builderContext = BuilderContext {
         m_document,
-        *resolutionContext.parentStyle,
+        parentAfterChangeStyle,
         resolutionContext.documentElementStyle,
         &styleable.element
     };
@@ -728,7 +742,7 @@ std::unique_ptr<RenderStyle> TreeResolver::resolveStartingStyle(const ResolvedSt
     if (startingStyle->display() == DisplayType::None)
         return nullptr;
 
-    Adjuster adjuster(m_document, *resolutionContext.parentStyle, resolutionContext.parentBoxStyle, !styleable.pseudoElementIdentifier ? &styleable.element : nullptr);
+    Adjuster adjuster(m_document, parentAfterChangeStyle, resolutionContext.parentBoxStyle, styleable.pseudoElementIdentifier ? &styleable.element : nullptr);
     adjuster.adjust(*startingStyle, nullptr);
 
     return startingStyle;
