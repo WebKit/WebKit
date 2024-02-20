@@ -109,10 +109,11 @@ static ConstantValue zeroValue(const Type* type)
                 result.elements[i] = value;
             return result;
         },
-        [&](const Types::Struct&) -> ConstantValue {
-            // FIXME: this is valid and needs to be implemented, but we don't
-            // yet have ConstantStruct
-            RELEASE_ASSERT_NOT_REACHED();
+        [&](const Types::Struct& structType) -> ConstantValue {
+            HashMap<String, ConstantValue> constantFields;
+            for (auto& [key, type] : structType.fields)
+                constantFields.set(key, zeroValue(type));
+            return ConstantStruct { WTFMove(constantFields) };
         },
         [&](const Types::PrimitiveStruct&) -> ConstantValue {
             // Primitive structs can't be zero initialized

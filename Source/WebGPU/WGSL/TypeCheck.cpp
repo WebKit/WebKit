@@ -1001,6 +1001,10 @@ void TypeChecker::visit(AST::FieldAccessExpression& access)
                 typeError(access.span(), "struct '", *baseType, "' does not have a member called '", access.fieldName(), "'");
                 return nullptr;
             }
+            if (auto constant = access.base().constantValue()) {
+                auto& constantStruct = std::get<ConstantStruct>(*constant);
+                access.setConstantValue(constantStruct.fields.get(access.fieldName().id()));
+            }
             return it->value;
         }
 
@@ -1205,6 +1209,8 @@ void TypeChecker::visit(AST::CallExpression& call)
                         return;
                     }
 
+                    HashMap<String, ConstantValue> constantFields;
+                    bool isConstant = true;
                     for (unsigned i = 0; i < numberOfArguments; ++i) {
                         auto& argument = call.arguments()[i];
                         auto& member = structType->structure.members()[i];
@@ -1216,8 +1222,19 @@ void TypeChecker::visit(AST::CallExpression& call)
                         }
                         argument.m_inferredType = fieldType;
                         auto& value = argument.m_constantValue;
-                        if (value.has_value())
-                            convertValue(argument.span(), argument.inferredType(), value);
+                        if (value.has_value()) {
+                            if (convertValue(argument.span(), argument.inferredType(), value))
+                                constantFields.set(member.name(), *value);
+                            else
+                                isConstant = false;
+                        }
+                    }
+                    if (isConstant) {
+
+                        if (numberOfArguments)
+                            setConstantValue(call, targetBinding->type, ConstantStruct { WTFMove(constantFields) });
+                        else
+                            setConstantValue(call, targetBinding->type, zeroValue(targetBinding->type));
                     }
                     inferred(targetBinding->type);
                     return;
@@ -2077,9 +2094,15 @@ bool TypeChecker::convertValueImpl(const SourceSpan& span, const Type* type, Con
             }
             return true;
         },
-        [&](const Types::Struct&) -> bool {
-            // FIXME: this should be supported
-            RELEASE_ASSERT_NOT_REACHED();
+        [&](const Types::Struct& structType) -> bool {
+            auto& constantStruct = std::get<ConstantStruct>(value);
+            for (auto& [key, type] : structType.fields) {
+                auto it = constantStruct.fields.find(key);
+                RELEASE_ASSERT(it != constantStruct.fields.end());
+                if (!convertValueImpl(span, type, it->value))
+                    return false;
+            }
+            return true;
         },
         [&](const Types::PrimitiveStruct& primitiveStruct) -> bool {
             auto& constantStruct = std::get<ConstantStruct>(value);
