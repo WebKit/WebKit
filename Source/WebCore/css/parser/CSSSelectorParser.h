@@ -44,6 +44,12 @@ class CSSSelectorList;
 class StyleSheetContents;
 class StyleRule;
 
+namespace Style {
+
+struct PseudoElementIdentifier;
+
+}
+
 class CSSSelectorParser {
 public:
     CSSSelectorParser(const CSSSelectorParserContext&, StyleSheetContents*, CSSParserEnum::IsNestedContext = CSSParserEnum::IsNestedContext::No);
@@ -55,7 +61,7 @@ public:
 
     static bool supportsComplexSelector(CSSParserTokenRange, const CSSSelectorParserContext&, CSSParserEnum::IsNestedContext);
     static CSSSelectorList resolveNestingParent(const CSSSelectorList& nestedSelectorList, const CSSSelectorList* parentResolvedSelectorList);
-    static std::optional<PseudoId> parsePseudoElement(const String&, const CSSSelectorParserContext&);
+    static std::pair<bool, std::optional<Style::PseudoElementIdentifier>> parsePseudoElement(const String&, const CSSSelectorParserContext&);
 
 private:
     template<typename ConsumeSelector> MutableCSSSelectorList consumeSelectorList(CSSParserTokenRange&, ConsumeSelector&&);

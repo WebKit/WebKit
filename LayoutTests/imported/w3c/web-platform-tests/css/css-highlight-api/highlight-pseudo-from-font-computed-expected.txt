@@ -1,7 +1,7 @@
 A green 10px offset underline 4px thick
 A blue 20px offset underline 2px thick
 
-FAIL getComputedStyle() for root element assert_equals: Text underline offset is 8px. expected "8px" but got ""
-FAIL getComputedStyle() for root highlight applied to div assert_equals: Text underline offset is 10px. expected "10px" but got ""
-FAIL getComputedStyle() for div specific highlight assert_equals: Text underline offset is 20px. expected "20px" but got ""
+PASS getComputedStyle() for root element
+PASS getComputedStyle() for root highlight applied to div
+PASS getComputedStyle() for div specific highlight
 

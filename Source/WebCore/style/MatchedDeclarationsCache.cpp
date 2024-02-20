@@ -65,6 +65,11 @@ bool MatchedDeclarationsCache::isCacheable(const Element& element, const RenderS
     // Document::setWritingMode/DirectionSetOnDocumentElement. We can't skip the applying by caching.
     if (&element == element.document().documentElement())
         return false;
+    // FIXME: Without the following early return we hit the final assert in
+    // Element::resolvePseudoElementStyle(). Making matchedPseudoElementIds
+    // PseudoElementIdentifier-aware might be a possible solution.
+    if (!style.pseudoElementNameArgument().isNull())
+        return false;
     // content:attr() value depends on the element it is being applied to.
     if (style.hasAttrContent() || (style.pseudoElementType() != PseudoId::None && parentStyle.hasAttrContent()))
         return false;

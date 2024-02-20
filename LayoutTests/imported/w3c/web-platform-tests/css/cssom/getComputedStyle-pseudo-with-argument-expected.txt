@@ -1,7 +1,7 @@
 Item
 
 PASS This pseudo-element should not parse: ::before(test)
-FAIL This pseudo-element should not parse: ::highlight assert_equals: expected 0 but got 418
+PASS This pseudo-element should not parse: ::highlight
 PASS This pseudo-element should not parse: ::highlight(
 PASS This pseudo-element should not parse: ::highlight()
 PASS This pseudo-element should not parse: ::highlight(1)
@@ -9,10 +9,10 @@ PASS This pseudo-element should not parse: ::highlight($)
 PASS This pseudo-element should not parse: ::highlight (name)
 PASS This pseudo-element should not parse: ::highlight(name)a
 PASS This pseudo-element should not parse: ::view-transition-group(*)
-FAIL This pseudo-element should parse: ::highlight(name) assert_true: expected true got false
-FAIL This pseudo-element should parse: ::highlight(
-name assert_true: expected true got false
-FAIL This pseudo-element should parse: ::highlight(name	 assert_true: expected true got false
-FAIL This pseudo-element should parse: ::highlight( name  assert_true: expected true got false
-FAIL This pseudo-element should parse: ::highlight( n\61me ) assert_true: expected true got false
+PASS This pseudo-element should parse: ::highlight(name)
+PASS This pseudo-element should parse: ::highlight(
+name
+PASS This pseudo-element should parse: ::highlight(name	
+PASS This pseudo-element should parse: ::highlight( name
+PASS This pseudo-element should parse: ::highlight( n\61me )
 
