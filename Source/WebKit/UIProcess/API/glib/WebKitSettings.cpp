@@ -3747,8 +3747,6 @@ void webkit_settings_set_hardware_acceleration_policy(WebKitSettings* settings, 
         }
         break;
     case WEBKIT_HARDWARE_ACCELERATION_POLICY_NEVER:
-        if (HardwareAccelerationManager::singleton().forceHardwareAcceleration())
-            return;
         if (priv->preferences->acceleratedCompositingEnabled()) {
             priv->preferences->setAcceleratedCompositingEnabled(false);
             changed = true;

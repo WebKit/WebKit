@@ -55,16 +55,22 @@ layer at (27,155) size 366x18
   RenderBlock {DIV} at (0,0) size 366x18
     RenderText {#text} at (0,0) size 360x17
       text run at (0,0) width 360: "1234567890123456789012345678901234567890"
+layer at (197,12) size 16x16
+  RenderBlock {DIV} at (186,1) size 16x16 [bgcolor=#000000]
 layer at (197,36) size 16x16
   RenderBlock {DIV} at (186,1) size 16x16 [bgcolor=#000000]
 layer at (11,60) size 16x16
   RenderBlock {DIV} at (0,1) size 16x16 [bgcolor=#000000]
+layer at (213,60) size 16x16
+  RenderBlock {DIV} at (202,1) size 16x16 [bgcolor=#000000]
 layer at (11,84) size 16x16
   RenderBlock {DIV} at (0,1) size 16x16 [bgcolor=#000000]
 layer at (213,84) size 16x16
   RenderBlock {DIV} at (202,1) size 16x16 [bgcolor=#000000]
 layer at (11,108) size 16x16
   RenderBlock {DIV} at (0,1) size 16x16 [bgcolor=#000000]
+layer at (213,108) size 16x16
+  RenderBlock {DIV} at (202,1) size 16x16 [bgcolor=#000000]
 layer at (11,132) size 16x16
   RenderBlock {DIV} at (0,1) size 16x16 [bgcolor=#000000]
 layer at (213,132) size 16x16

@@ -1066,8 +1066,6 @@ webkit.org/b/206223 imported/mozilla/svg/svg-integration/clipPath-html-05.xhtml
 # IsLoggedIn is an experimental feature (Introduced in r250944)
 http/tests/is-logged-in/ [ Skip ]
 
-webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--cover--height.html [ Pass ]
-
 webkit.org/b/206872 platform/gtk/scrollbars/main-frame-scrollbar-horizontal-wheel-scroll.html [ ImageOnlyFailure ]
 
 webkit.org/b/208182 fast/repaint/backgroundSizeRepaint.html [ ImageOnlyFailure Pass ]
@@ -2486,3 +2484,8 @@ imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/mask-and-n
 
 fast/dom/no-scroll-when-command-click-fragment-URL.html [ Skip ]
 compositing/repaint/copy-forward-dirty-region-purged-backbuffer.html [ ImageOnlyFailure ]
+
+compositing/overflow/dynamic-composited-scrolling-status.html [ Failure ]
+http/tests/security/svg-image-with-cached-remote-image.html [ ImageOnlyFailure ]
+fast/scrolling/gtk/repeated-mouse-wheel-smooth.html [ Timeout ]
+compositing/repaint/copy-forward-dirty-region.html [ ImageOnlyFailure ]

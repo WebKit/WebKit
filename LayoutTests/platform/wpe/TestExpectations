@@ -235,7 +235,6 @@ webkit.org/b/226521 [ Debug ] imported/w3c/web-platform-tests/html/semantics/emb
 
 # Nicosia
 webkit.org/b/213228 fast/viewport/viewport-1.html [ Crash Timeout Pass ]
-webkit.org/b/213228 fast/viewport/scroll-delegates-switch-on-page-with-no-composition-mode-asserts.html [ Pass Crash ]
 
 # We don't yet support EXIF-based resolution
 webkit.org/b/217821 imported/w3c/web-platform-tests/density-size-correction/ [ Skip ]
@@ -1195,8 +1194,6 @@ webkit.org/b/134758 svg/custom/composited-svg-with-opacity.html [ ImageOnlyFailu
 Bug(WPE) svg/text/select-text-svgfont.html [ Failure ]
 Bug(WPE) svg/zoom/page/zoom-zoom-coords.xhtml [ Failure ]
 
-webkit.org/b/180134 webanimations/opacity-animation-no-longer-composited-upon-completion.html [ Failure ]
-
 webkit.org/b/186100 css3/color-filters/color-filter-ignore-semantic.html [ ImageOnlyFailure ]
 
 webkit.org/b/188433 svg/custom/href-svg-namespace-static.svg [ ImageOnlyFailure ]
@@ -1224,11 +1221,6 @@ webkit.org/b/188509 fast/dom/Window/window-resize-update-scrollbars.html [ Timeo
 webkit.org/b/188658 fast/shadow-dom/trusted-event-scoped-flags.html [ Failure ]
 
 webkit.org/b/188659 fast/masking/clip-path-selection.html [ Failure ]
-
-webkit.org/b/261887 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-3b.html [ ImageOnlyFailure ]
-webkit.org/b/261887 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-3c.html [ ImageOnlyFailure ]
-webkit.org/b/261887 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-3d.html [ ImageOnlyFailure ]
-webkit.org/b/261887 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-3e.html [ ImageOnlyFailure ]
 
 webkit.org/b/188660 fast/loader/local-CSS-from-local.html [ Failure ]
 webkit.org/b/188660 fast/loader/local-JavaScript-from-local.html [ Failure ]
@@ -1317,9 +1309,6 @@ webkit.org/b/251107 webgl/2.0.0/conformance/textures/video/tex-2d-rgb-rgb-unsign
 webkit.org/b/212080 mathml/presentation/href-enter.html [ ImageOnlyFailure ]
 webkit.org/b/212080 mathml/presentation/href-style.html [ ImageOnlyFailure ]
 
-webkit.org/b/212133 css3/filters/blur-various-radii.html [ ImageOnlyFailure ]
-webkit.org/b/212134 css3/filters/should-not-have-compositing-layer.html [ Failure ]
-
 webkit.org/b/212147 http/tests/xmlhttprequest/url-with-credentials.html [ Failure ]
 
 webkit.org/b/178591 http/tests/navigation/keyboard-events-during-provisional-navigation.html [ Failure ]
@@ -1333,7 +1322,6 @@ webkit.org/b/212155 imported/mozilla/svg/dynamic-small-object-scaled-up-01.svg [
 webkit.org/b/212155 imported/mozilla/svg/pattern-scale-01a.svg [ ImageOnlyFailure ]
 webkit.org/b/212155 imported/mozilla/svg/pattern-scale-01b.svg [ ImageOnlyFailure ]
 webkit.org/b/212155 imported/mozilla/svg/pattern-scale-01c.svg [ ImageOnlyFailure ]
-webkit.org/b/212155 imported/mozilla/svg/stroke-width-percentage-02a.svg [ ImageOnlyFailure ]
 webkit.org/b/212155 imported/mozilla/svg/svg-integration/clipPath-html-02.xhtml [ ImageOnlyFailure ]
 webkit.org/b/212155 imported/mozilla/svg/svg-integration/clipPath-html-05.xhtml [ ImageOnlyFailure ]
 webkit.org/b/212155 imported/mozilla/svg/symbol-01.svg [ ImageOnlyFailure ]
@@ -1440,8 +1428,6 @@ imported/w3c/web-platform-tests/editing/run/undo-redo-after-mutation.html [ Fail
 
 imported/w3c/web-platform-tests/pointerevents/touch-action-with-swipe-dir-change.html?touch [ Crash ]
 
-imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-color-animation-with-blur.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/wide--cover--width.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-images/gradients-with-transparent.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip/clip-rect-scroll.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-position/position-fixed-scroll-nested-fixed.html [ ImageOnlyFailure ]
@@ -1547,12 +1533,8 @@ webkit.org/b/261024 webgl/1.0.x/conformance/reading/read-pixels-test.html [ Pass
 #webkit.org/b/261024 webrtc/vp9.html [ Failure Pass Timeout ]
 
 imported/w3c/web-platform-tests/css/filter-effects/background-image-blur-repaint.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/filter-effects/effect-reference-rename-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/filter-effects/svg-mutation-function-to-url.html [ ImageOnlyFailure ]
 
 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-plus-filter.html [ ImageOnlyFailure ]
-
-imported/w3c/web-platform-tests/css/filter-effects/drop-shadow-currentcolor-dynamic-001.html [ ImageOnlyFailure ]
 
 fast/canvas/font-family-system-ui-canvas.html [ Skip ]
 
@@ -1643,41 +1625,21 @@ webrtc/captureCanvas-webrtc-with-video-scaling-adaptation.html [ Failure Timeout
 webkit.org/b/268917 [ Debug ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletprocessor-promises.https.html [ Pass Crash ]
 webkit.org/b/268917 [ Debug ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletglobalscope-sample-rate.https.html [ Pass Crash ]
 
-compositing/backing/backface-visibility-in-transformed.html [ Failure ]
-compositing/backing/backface-visibility.html [ Failure ]
-compositing/canvas/accelerated-canvas-compositing.html [ Failure ]
-compositing/canvas/hidpi-canvas-backing-store-invalidation-2.html [ Failure ]
-compositing/canvas/hidpi-canvas-backing-store-invalidation.html [ Failure ]
-compositing/canvas/hidpi-canvas-backing-store.html [ Failure ]
 compositing/filters/opacity-change-on-filtered-paints-into-ancestor.html [ ImageOnlyFailure ]
 compositing/geometry/composited-in-columns.html [ Failure ]
 compositing/geometry/limit-layer-bounds-transformed-overflow.html [ Failure ]
-compositing/layer-creation/fixed-position-no-content.html [ Failure ]
-compositing/layer-creation/fixed-position-transformed-outside-view.html [ Failure ]
-compositing/layer-creation/no-compositing-for-sticky.html [ Failure ]
 compositing/layer-creation/overflow-scroll-overlap.html [ Failure ]
 compositing/layer-creation/overlap-animation-container.html [ Failure ]
 compositing/layer-creation/scroll-partial-update.html [ Failure ]
 compositing/overflow/content-gains-scrollbars.html [ Failure ]
-compositing/overflow/overflow-auto-with-touch-no-overflow.html [ Failure ]
-compositing/overflow/overflow-hidden-with-touch.html [ Failure ]
-compositing/overflow/overflow-overlay-with-touch-no-overflow.html [ Failure ]
-compositing/overflow/overflow-scroll-with-touch-no-overflow.html [ Failure ]
 compositing/overflow/overflow-scrollbar-layer-positions.html [ Failure ]
 compositing/overflow/overflow-scrollbar-layers.html [ Failure ]
-compositing/overflow/overflow-visible-with-touch.html [ Failure ]
-compositing/overflow/subpixel-overflow.html [ Failure ]
-compositing/repaint/composite-and-scale-change.html [ Failure ]
 compositing/rtl/rtl-iframe-absolute.html [ Failure ]
 compositing/rtl/rtl-iframe-relative.html [ Failure ]
 compositing/rtl/rtl-overflow-scrolling.html [ Failure ]
 compositing/tile-coverage-subpixel-empty-rect.html [ Failure ]
-compositing/tiling/tiled-drawing-async-frame-scrolling.html [ Failure ]
 compositing/tiling/tiled-layers-limit-contents-scale.html [ Failure ]
-compositing/transforms/perspective-with-scrolling.html [ ImageOnlyFailure ]
 compositing/video/video-object-fit.html [ Failure ]
-compositing/video/video-poster.html [ Failure ]
-compositing/visibility/root-visibility-toggle.html [ Failure ]
 compositing/visible-rect/2d-transformed.html [ Failure ]
 compositing/visible-rect/3d-transform-style.html [ Failure ]
 compositing/visible-rect/3d-transformed.html [ Failure ]
