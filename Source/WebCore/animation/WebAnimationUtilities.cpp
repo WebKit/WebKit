@@ -296,24 +296,22 @@ bool compareAnimationEventsByCompositeOrder(const AnimationEventBase& a, const A
 }
 
 // FIXME: This should be owned by CSSSelector.
-String pseudoIdAsString(PseudoId pseudoId)
+// FIXME: Generate this function.
+String pseudoElementIdentifierAsString(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
 {
+    if (!pseudoElementIdentifier)
+        return emptyString();
     static NeverDestroyed<const String> after(MAKE_STATIC_STRING_IMPL("::after"));
     static NeverDestroyed<const String> before(MAKE_STATIC_STRING_IMPL("::before"));
     static NeverDestroyed<const String> firstLetter(MAKE_STATIC_STRING_IMPL("::first-letter"));
     static NeverDestroyed<const String> firstLine(MAKE_STATIC_STRING_IMPL("::first-line"));
     static NeverDestroyed<const String> grammarError(MAKE_STATIC_STRING_IMPL("::grammar-error"));
-    static NeverDestroyed<const String> highlight(MAKE_STATIC_STRING_IMPL("::highlight"));
     static NeverDestroyed<const String> marker(MAKE_STATIC_STRING_IMPL("::marker"));
     static NeverDestroyed<const String> selection(MAKE_STATIC_STRING_IMPL("::selection"));
     static NeverDestroyed<const String> spellingError(MAKE_STATIC_STRING_IMPL("::spelling-error"));
     static NeverDestroyed<const String> viewTransition(MAKE_STATIC_STRING_IMPL("::view-transition"));
-    static NeverDestroyed<const String> viewTransitionGroup(MAKE_STATIC_STRING_IMPL("::view-transition-group"));
-    static NeverDestroyed<const String> viewTransitionImagePair(MAKE_STATIC_STRING_IMPL("::view-transition-image-pair"));
-    static NeverDestroyed<const String> viewTransitionOld(MAKE_STATIC_STRING_IMPL("::view-transition-old"));
-    static NeverDestroyed<const String> viewTransitionNew(MAKE_STATIC_STRING_IMPL("::view-transition-new"));
     static NeverDestroyed<const String> webkitScrollbar(MAKE_STATIC_STRING_IMPL("::-webkit-scrollbar"));
-    switch (pseudoId) {
+    switch (pseudoElementIdentifier->pseudoId) {
     case PseudoId::After:
         return after;
     case PseudoId::Before:
@@ -325,7 +323,7 @@ String pseudoIdAsString(PseudoId pseudoId)
     case PseudoId::GrammarError:
         return grammarError;
     case PseudoId::Highlight:
-        return highlight;
+        return makeString("::highlight"_s, '(', pseudoElementIdentifier->nameArgument, ')');
     case PseudoId::Marker:
         return marker;
     case PseudoId::Selection:
@@ -335,13 +333,13 @@ String pseudoIdAsString(PseudoId pseudoId)
     case PseudoId::ViewTransition:
         return viewTransition;
     case PseudoId::ViewTransitionGroup:
-        return viewTransitionGroup;
+        return makeString("::view-transition-group"_s, '(', pseudoElementIdentifier->nameArgument, ')');
     case PseudoId::ViewTransitionImagePair:
-        return viewTransitionImagePair;
+        return makeString("::view-transition-image-pair"_s, '(', pseudoElementIdentifier->nameArgument, ')');
     case PseudoId::ViewTransitionOld:
-        return viewTransitionOld;
+        return makeString("::view-transition-old"_s, '(', pseudoElementIdentifier->nameArgument, ')');
     case PseudoId::ViewTransitionNew:
-        return viewTransitionNew;
+        return makeString("::view-transition-new"_s, '(', pseudoElementIdentifier->nameArgument, ')');
     case PseudoId::WebKitScrollbar:
         return webkitScrollbar;
     default:
@@ -349,20 +347,16 @@ String pseudoIdAsString(PseudoId pseudoId)
     }
 }
 
-std::optional<PseudoId> pseudoIdFromString(const String& pseudoElement)
+// bool represents whether parsing was successful, std::optional<Style::PseudoElementIdentifier> is the result of the parsing when successful.
+std::pair<bool, std::optional<Style::PseudoElementIdentifier>> pseudoElementIdentifierFromString(const String& pseudoElement, Document* document)
 {
     // https://drafts.csswg.org/web-animations-1/#dom-keyframeeffect-pseudoelement
     if (pseudoElement.isNull())
-        return PseudoId::None;
+        return { true, std::nullopt };
 
-    // FIXME: This parserContext should include a document to get the proper settings.
-    CSSSelectorParserContext parserContext { CSSParserContext { HTMLStandardMode } };
-    auto [pseudoElementIsParsable, pseudoElementIdentifier] = CSSSelectorParser::parsePseudoElement(pseudoElement, parserContext);
-    if (!pseudoElementIsParsable || (pseudoElementIdentifier && !pseudoElementIdentifier->nameArgument.isNull()))
-        return { };
-    if (!pseudoElementIdentifier)
-        return PseudoId::None;
-    return pseudoElementIdentifier->pseudoId;
+    // FIXME: We should always have a document for accurate settings.
+    auto parserContext = document ? CSSSelectorParserContext { *document } : CSSSelectorParserContext { CSSParserContext { HTMLStandardMode } };
+    return CSSSelectorParser::parsePseudoElement(pseudoElement, parserContext);
 }
 
 AtomString animatablePropertyAsString(AnimatableCSSProperty property)
