@@ -611,7 +611,7 @@ public:
         // bit_rate_scale
         // cpb_size_scale
         reader.ConsumeBits(8);
-        for (size_t cptr = 0; cptr < cpb_cnt_minus1; ++cptr) {
+        for (size_t cptr = 0; cptr <= cpb_cnt_minus1; ++cptr) {
             // bit_rate_value_minus1
             reader.ReadExponentialGolomb();
             // cpb_size_value_minus1
