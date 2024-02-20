@@ -1100,8 +1100,6 @@ webkit.org/b/138697 fast/events/overflow-scroll-fake-mouse-move.html [ Pass Fail
 
 webkit.org/b/82747 fast/events/scroll-div-with-prevent-default-in-subframe.html [ Failure ]
 
-webkit.org/b/112533 media/auto-play-in-sandbox-with-allow-scripts.html [ Pass Timeout ]
-
 webkit.org/b/139778 fullscreen/exit-full-screen-iframe.html [ Skip ]
 
 webkit.org/b/139778 fullscreen/enter-fullscreen-main-frame-window-open-iframe.html [ Skip ]
