@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+    <script>
+async function doTest(test, isVideo, badConstraints)
+{
+    const stream = await navigator.mediaDevices.getUserMedia({ video: isVideo, audio: !isVideo });
+    const track = stream.getTracks()[0];
+
+    await track.applyConstraints(badConstraints).then(() => {
+    }, e => {
+        assert_equals(e.name, "OverconstrainedError");
+    });
+}
+
+promise_test(async (t) => {
+    return doTest(t, true, { frameRate: { exact: 10000000 } });
+}, "applyConstraints with a frameRate constraint that is too high");
+
+promise_test(async (t) => {
+    return doTest(t, true, { frameRate: { exact: -1 } });
+}, "applyConstraints with a frameRate constraint that is too low");
+
+promise_test(async (t) => {
+    return doTest(t, true, { zoom: { exact: 10000000 } });
+}, "applyConstraints with a zoom constraint that is too high");
+
+promise_test(async (t) => {
+    return doTest(t, true, { zoom: { exact: -1 } });
+}, "applyConstraints with a zoom constraint that is too low");
+
+promise_test(async (t) => {
+    return doTest(t, false, { sampleRate: { exact: 10000000 } });
+}, "applyConstraints with a sampleRate constraint that is too high");
+
+promise_test(async (t) => {
+    return doTest(t, false, { sampleRate: { exact: -1 } });
+}, "applyConstraints with a sampleRate constraint that is too low");
+    </script>
+</body>
+</html>

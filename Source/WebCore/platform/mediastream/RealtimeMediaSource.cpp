@@ -510,7 +510,7 @@ std::optional<MediaConstraintType> RealtimeMediaSource::hasInvalidSizeFrameRateA
         if (std::isinf(constraintDistance)) {
 #if !RELEASE_LOG_DISABLED
             auto range = capabilities.frameRate();
-            ERROR_LOG_IF(m_logger, LOGIDENTIFIER, "RealtimeMediaSource::supportsSizeFrameRateAndZoom failed frame rate constraint, capabilities are [%d, %d]", range.longRange().min, range.longRange().max);
+            ERROR_LOG_IF(m_logger, LOGIDENTIFIER, "RealtimeMediaSource::supportsSizeFrameRateAndZoom failed frame rate constraint, capabilities are [", range.doubleRange().min, ", ", range.doubleRange().max, "]");
 #endif
             return MediaConstraintType::FrameRate;
         }
@@ -528,7 +528,7 @@ std::optional<MediaConstraintType> RealtimeMediaSource::hasInvalidSizeFrameRateA
         if (std::isinf(constraintDistance)) {
 #if !RELEASE_LOG_DISABLED
             auto range = capabilities.zoom();
-            ERROR_LOG_IF(m_logger, LOGIDENTIFIER, "RealtimeMediaSource::supportsSizeFrameRateAndZoom failed zoom constraint, capabilities are [%d, %d]", range.longRange().min, range.longRange().max);
+            ERROR_LOG_IF(m_logger, LOGIDENTIFIER, "RealtimeMediaSource::supportsSizeFrameRateAndZoom failed zoom constraint, capabilities are [", range.doubleRange().min, ", ", range.doubleRange().max, "]");
 #endif
             return MediaConstraintType::Zoom;
         }
