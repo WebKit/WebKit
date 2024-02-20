@@ -154,8 +154,10 @@ static BuilderOp convert_n_way_op_to_immediate(BuilderOp op, int slots, int32_t*
         return immOp;
     }
 
-    // Most immediate ops only support a single slot.
-    if (slots == 1) {
+    // Most immediate ops only directly support a single slot. However, it's still faster to execute
+    // `add_imm_int, add_imm_int` instead of `splat_2_ints, add_2_ints`, so we allow those
+    // conversions as well.
+    if (slots <= 2) {
         if (is_immediate_op(immOp)) {
             return immOp;
         }
@@ -1164,7 +1166,7 @@ void Builder::swizzle(int consumedSlots, SkSpan<const int8_t> components) {
         --numElements;
     }
 
-    // A completely empty swizzle is a no-op.
+    // A completely empty swizzle is a discard.
     if (numElements == 0) {
         this->discard_stack(consumedSlots);
         return;
@@ -1534,7 +1536,7 @@ void Program::appendImmediateBinaryOp(TArray<Stage>* pipeline, SkArenaAlloc* all
                                       ProgramOp baseStage,
                                       SkRPOffset dst, int32_t value, int numSlots) const {
     SkASSERT(is_immediate_op((BuilderOp)baseStage));
-    SkASSERT(numSlots == 1 || is_multi_slot_immediate_op((BuilderOp)baseStage));
+    int slotsPerStage = is_multi_slot_immediate_op((BuilderOp)baseStage) ? 4 : 1;
 
     SkRasterPipeline_ConstantCtx ctx;
     ctx.dst = dst;
@@ -1542,12 +1544,12 @@ void Program::appendImmediateBinaryOp(TArray<Stage>* pipeline, SkArenaAlloc* all
 
     SkASSERT(numSlots >= 0);
     while (numSlots > 0) {
-        int currentSlots = std::min(numSlots, 4);
+        int currentSlots = std::min(numSlots, slotsPerStage);
         auto stage = (ProgramOp)((int)baseStage - (currentSlots - 1));
         pipeline->push_back({stage, SkRPCtxUtils::Pack(ctx, alloc)});
 
-        ctx.dst += 4 * SkOpts::raster_pipeline_highp_stride * sizeof(float);
-        numSlots -= 4;
+        ctx.dst += slotsPerStage * SkOpts::raster_pipeline_highp_stride * sizeof(float);
+        numSlots -= slotsPerStage;
     }
 }
 
@@ -2008,7 +2010,21 @@ void Program::makeStages(TArray<Stage>* pipeline,
                 pipeline->push_back({(ProgramOp)inst.fOp, dst});
                 break;
             }
-            case BuilderOp::swizzle_1:
+            case BuilderOp::swizzle_1: {
+                // A single-component swizzle just copies a slot and shrinks the stack; we can
+                // slightly improve codegen by making that simplification here.
+                int offset = inst.fImmB;
+                SkASSERT(offset >= 0 && offset <= 15);
+                float* dst = tempStackPtr - (inst.fImmA * N);
+                float* src = dst + (offset * N);
+                if (src != dst) {
+                    this->appendCopySlotsUnmasked(pipeline, alloc,
+                                                  OffsetFromBase(dst),
+                                                  OffsetFromBase(src),
+                                                  /*numSlots=*/1);
+                }
+                break;
+            }
             case BuilderOp::swizzle_2:
             case BuilderOp::swizzle_3:
             case BuilderOp::swizzle_4: {

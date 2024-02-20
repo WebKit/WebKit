@@ -8,6 +8,7 @@
 #include "bench/Benchmark.h"
 #include "tools/flags/CommandLineFlags.h"
 #include "tools/testrunners/benchmark/target/BenchmarkTarget.h"
+#include "tools/testrunners/common/TestRunner.h"
 
 static DEFINE_int(maxCalibrationAttempts,
                   3,
@@ -15,7 +16,7 @@ static DEFINE_int(maxCalibrationAttempts,
                   "benchmark.");
 static DEFINE_double(overheadGoal,
                      0.0001,
-                     "Loop until timer overhead is at most this fraction of our measurments.");
+                     "Loop until timer overhead is at most this fraction of our measurements.");
 static DEFINE_int(overheadLoops, 100000, "Loops to estimate timer overhead.");
 
 // Defined in BazelBenchmarkTestRunner.cpp.
@@ -28,7 +29,7 @@ public:
     RasterBenchmarkTarget(std::unique_ptr<SurfaceManager> surfaceManager, Benchmark* benchmark)
             : BenchmarkTarget(std::move(surfaceManager), benchmark) {}
 
-    Benchmark::Backend getBackend() const override { return Benchmark::kRaster_Backend; }
+    Benchmark::Backend getBackend() const override { return Benchmark::Backend::kRaster; }
 
     // Based on nanobench's setup_cpu_bench():
     // https://skia.googlesource.com/skia/+/a063eaeaf1e09e4d6f42e0f44a5723622a46d21c/bench/nanobench.cpp#466.
@@ -48,10 +49,10 @@ public:
         int round = 0;
         while (bench_plus_overhead < overhead) {
             if (round++ == FLAGS_maxCalibrationAttempts) {
-                SkDebugf("Warning: Cannot estimate loops for %s (%s vs. %s); skipping.\n",
-                         fBenchmark->getUniqueName(),
-                         humanize(bench_plus_overhead).c_str(),
-                         humanize(overhead).c_str());
+                TestRunner::Log("Warning: Cannot estimate loops for %s (%s vs. %s); skipping.",
+                                fBenchmark->getUniqueName(),
+                                humanize(bench_plus_overhead).c_str(),
+                                humanize(overhead).c_str());
                 return std::make_tuple(0, false);
             }
             bench_plus_overhead = time(1);
@@ -85,7 +86,22 @@ class NonRenderingBenchmarkTarget : public RasterBenchmarkTarget {
 public:
     NonRenderingBenchmarkTarget(Benchmark* benchmark) : RasterBenchmarkTarget(nullptr, benchmark) {}
 
-    Benchmark::Backend getBackend() const override { return Benchmark::kNonRendering_Backend; }
+    Benchmark::Backend getBackend() const override { return Benchmark::Backend::kNonRendering; }
+
+    SurfaceManager::CpuOrGpu isCpuOrGpuBound() const override {
+        return SurfaceManager::CpuOrGpu::kCPU;
+    }
+
+    std::map<std::string, std::string> getKeyValuePairs(std::string cpuName,
+                                                        std::string gpuName) const override {
+        if (cpuName == "") {
+            return std::map<std::string, std::string>();
+        }
+        return {
+                {"cpu_or_gpu", "CPU"},
+                {"cpu_or_gpu_value", cpuName},
+        };
+    }
 };
 
 std::unique_ptr<BenchmarkTarget> BenchmarkTarget::FromConfig(std::string surfaceConfig,

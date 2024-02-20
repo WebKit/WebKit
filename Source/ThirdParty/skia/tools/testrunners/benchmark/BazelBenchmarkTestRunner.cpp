@@ -24,11 +24,19 @@
 #include "tools/Stats.h"
 #include "tools/flags/CommandLineFlags.h"
 #include "tools/testrunners/benchmark/target/BenchmarkTarget.h"
+#include "tools/testrunners/common/TestRunner.h"
 #include "tools/testrunners/common/compilation_mode_keys/CompilationModeKeys.h"
 #include "tools/testrunners/common/surface_manager/SurfaceManager.h"
 #include "tools/timer/Timer.h"
 
 #include <cinttypes>
+#include <sstream>
+
+static DEFINE_string(skip, "", "Space-separated list of test cases (regexps) to skip.");
+static DEFINE_string(
+        match,
+        "",
+        "Space-separated list of test cases (regexps) to run. Will run all tests if omitted.");
 
 // TODO(lovisolo): Should we check that this is a valid Git hash?
 static DEFINE_string(
@@ -139,103 +147,40 @@ static DEFINE_bool2(verbose, v, false, "Enable verbose output from the test runn
                                      "Ignored by this test runner.",
                                      nullptr);
 
-// TODO(lovisolo): Move these flag validation utilities under //tools/testrunners.
-
-static void validate_string_flag_nonempty(std::string name, CommandLineFlags::StringArray flag) {
-    if (flag.size() == 0) {
-        SK_ABORT("Flag %s cannot be empty.\n", name.c_str());
-    }
-}
-
-static void validate_string_flag_single_value(std::string name,
-                                              CommandLineFlags::StringArray flag) {
-    if (flag.size() > 1) {
-        SK_ABORT("Flag %s takes one single value, got: %d.\n", name.c_str(), flag.size());
-    }
-}
-
-static void validate_string_flag_even(std::string name, CommandLineFlags::StringArray flag) {
-    if (flag.size() % 2 == 1) {
-        SK_ABORT(
-                "Flag %s takes an even number of arguments, got: %d.\n", name.c_str(), flag.size());
-    }
-}
-
-static void validate_int_flag_greater_or_equal(std::string name, int flag, int min) {
-    if (flag < min) {
-        SK_ABORT("Flag %s must be greater or equal than %d, got: %d.\n", name.c_str(), min, flag);
-    }
-}
-
-static void validate_flags_all_or_none(std::map<std::string, bool> flags) {
-    std::string names;
-    unsigned int numFlagsSet = 0;
-    for (auto const& [name, isSet] : flags) {
-        if (names == "") {
-            names = name;
-        } else {
-            names += ", " + name;
-        }
-        if (isSet) {
-            numFlagsSet++;
-        }
-    }
-    if (numFlagsSet != flags.size() && numFlagsSet != 0) {
-        SK_ABORT("Either all or none of the following flags must be set: %s.\n", names.c_str());
-    }
-}
-
-static void validate_flags_exactly_one(std::map<std::string, bool> flags) {
-    std::string names;
-    unsigned int numFlagsSet = 0;
-    for (auto const& [name, isSet] : flags) {
-        if (names == "") {
-            names = name;
-        } else {
-            names += ", " + name;
-        }
-        if (isSet) {
-            numFlagsSet++;
-        }
-    }
-    if (numFlagsSet != 1) {
-        SK_ABORT("Exactly one of the following flags must be set: %s.\n", names.c_str());
-    }
-}
-
 static void validate_flags(bool isBazelTest) {
-    validate_flags_all_or_none(
+    TestRunner::FlagValidators::AllOrNone(
             {{"--issue", FLAGS_issue.size() > 0}, {"--patchset", FLAGS_patchset.size() > 0}});
-    validate_string_flag_single_value("--issue", FLAGS_issue);
-    validate_string_flag_single_value("--patchset", FLAGS_patchset);
-    validate_string_flag_even("--key", FLAGS_key);
-    validate_string_flag_even("--links", FLAGS_links);
+    TestRunner::FlagValidators::StringAtMostOne("--issue", FLAGS_issue);
+    TestRunner::FlagValidators::StringAtMostOne("--patchset", FLAGS_patchset);
+    TestRunner::FlagValidators::StringEven("--key", FLAGS_key);
+    TestRunner::FlagValidators::StringEven("--links", FLAGS_links);
 
     if (!isBazelTest) {
-        validate_string_flag_nonempty("--outputDir", FLAGS_outputDir);
+        TestRunner::FlagValidators::StringNonEmpty("--outputDir", FLAGS_outputDir);
     }
-    validate_string_flag_single_value("--outputDir", FLAGS_outputDir);
+    TestRunner::FlagValidators::StringAtMostOne("--outputDir", FLAGS_outputDir);
 
-    validate_string_flag_nonempty("--surfaceConfig", FLAGS_surfaceConfig);
-    validate_string_flag_single_value("--surfaceConfig", FLAGS_surfaceConfig);
+    TestRunner::FlagValidators::StringNonEmpty("--surfaceConfig", FLAGS_surfaceConfig);
+    TestRunner::FlagValidators::StringAtMostOne("--surfaceConfig", FLAGS_surfaceConfig);
 
-    validate_string_flag_single_value("--cpuName", FLAGS_cpuName);
-    validate_string_flag_single_value("--gpuName", FLAGS_gpuName);
+    TestRunner::FlagValidators::StringAtMostOne("--cpuName", FLAGS_cpuName);
+    TestRunner::FlagValidators::StringAtMostOne("--gpuName", FLAGS_gpuName);
 
-    validate_flags_exactly_one(
+    TestRunner::FlagValidators::ExactlyOne(
             {{"--loops", FLAGS_loops != 0}, {"--autoTuneLoops", FLAGS_autoTuneLoops}});
     if (!FLAGS_autoTuneLoops) {
-        validate_int_flag_greater_or_equal("--loops", FLAGS_loops, 1);
+        TestRunner::FlagValidators::IntGreaterOrEqual("--loops", FLAGS_loops, 1);
     }
 
-    validate_int_flag_greater_or_equal("--autoTuneLoopsMax", FLAGS_autoTuneLoopsMax, 1);
+    TestRunner::FlagValidators::IntGreaterOrEqual("--autoTuneLoopsMax", FLAGS_autoTuneLoopsMax, 1);
 
-    validate_flags_exactly_one({{"--samples", FLAGS_samples != 0}, {"--ms", FLAGS_ms != 0}});
+    TestRunner::FlagValidators::ExactlyOne(
+            {{"--samples", FLAGS_samples != 0}, {"--ms", FLAGS_ms != 0}});
     if (FLAGS_ms == 0) {
-        validate_int_flag_greater_or_equal("--samples", FLAGS_samples, 1);
+        TestRunner::FlagValidators::IntGreaterOrEqual("--samples", FLAGS_samples, 1);
     }
     if (FLAGS_samples == 0) {
-        validate_int_flag_greater_or_equal("--ms", FLAGS_ms, 1);
+        TestRunner::FlagValidators::IntGreaterOrEqual("--ms", FLAGS_ms, 1);
     }
 }
 
@@ -410,9 +355,9 @@ static int sample_benchmark(BenchmarkTarget* target,
         }
         *loops = autoTunedLoops;
         if (*loops > FLAGS_autoTuneLoopsMax) {
-            SkDebugf(
+            TestRunner::Log(
                     "Warning: Clamping loops from %d to %d (per the --autoTuneLoopsMax flag) for "
-                    "benchmark \"%s\".\n",
+                    "benchmark \"%s\".",
                     *loops,
                     FLAGS_autoTuneLoopsMax,
                     target->getBenchmark()->getUniqueName());
@@ -459,7 +404,7 @@ static int sample_benchmark(BenchmarkTarget* target,
 // Based on
 // https://skia.googlesource.com/skia/+/a063eaeaf1e09e4d6f42e0f44a5723622a46d21c/bench/nanobench.cpp#432.
 static void maybe_write_png(BenchmarkTarget* target, std::string outputDir) {
-    if (target->getBackend() == Benchmark::kNonRendering_Backend) {
+    if (target->getBackend() == Benchmark::Backend::kNonRendering) {
         return;
     }
 
@@ -474,26 +419,26 @@ static void maybe_write_png(BenchmarkTarget* target, std::string outputDir) {
     SkBitmap bmp;
     bmp.allocPixels(target->getCanvas()->imageInfo());
     if (!target->getCanvas()->readPixels(bmp, 0, 0)) {
-        SkDebugf("Warning: Could not read canvas pixels for benchmark \"%s\".\n",
-                 target->getBenchmark()->getUniqueName());
+        TestRunner::Log("Warning: Could not read canvas pixels for benchmark \"%s\".",
+                        target->getBenchmark()->getUniqueName());
         return;
     }
 
     SkFILEWStream stream(filename.c_str());
     if (!stream.isValid()) {
-        SkDebugf("Warning: Could not write file \"%s\".\n", filename.c_str());
+        TestRunner::Log("Warning: Could not write file \"%s\".", filename.c_str());
         return;
     }
     if (!SkPngEncoder::Encode(&stream, bmp.pixmap(), {})) {
-        SkDebugf("Warning: Could not encode pixels from benchmark \"%s\" as PNG.\n",
-                 target->getBenchmark()->getUniqueName());
+        TestRunner::Log("Warning: Could not encode pixels from benchmark \"%s\" as PNG.",
+                        target->getBenchmark()->getUniqueName());
         return;
     }
 
     if (FLAGS_verbose) {
-        SkDebugf("PNG for benchmark \"%s\" written to: %s",
-                 target->getBenchmark()->getUniqueName(),
-                 filename.c_str());
+        TestRunner::Log("PNG for benchmark \"%s\" written to: %s",
+                        target->getBenchmark()->getUniqueName(),
+                        filename.c_str());
     }
 }
 
@@ -519,22 +464,21 @@ static void print_benchmark_stats(Stats* stats,
                                   std::string surfaceConfig,
                                   int loops) {
     if (!FLAGS_autoTuneLoops) {
-        SkDebugf("%4d/%-4dMB\t%s\t%s ",
-                 sk_tools::getCurrResidentSetSizeMB(),
-                 sk_tools::getMaxResidentSetSizeMB(),
-                 target->getBenchmark()->getUniqueName(),
-                 surfaceConfig.c_str());
-        SkDebugf("\n");
+        TestRunner::Log("%4d/%-4dMB\t%s\t%s",
+                        sk_tools::getCurrResidentSetSizeMB(),
+                        sk_tools::getMaxResidentSetSizeMB(),
+                        target->getBenchmark()->getUniqueName(),
+                        surfaceConfig.c_str());
     } else if (FLAGS_quiet) {
         const char* mark = " ";
         const double stddev_percent = sk_ieee_double_divide(100 * sqrt(stats->var), stats->mean);
         if (stddev_percent > 5) mark = "?";
         if (stddev_percent > 10) mark = "!";
-        SkDebugf("%10.2f %s\t%s\t%s\n",
-                 stats->median * 1e3,
-                 mark,
-                 target->getBenchmark()->getUniqueName(),
-                 surfaceConfig.c_str());
+        TestRunner::Log("%10.2f %s\t%s\t%s",
+                        stats->median * 1e3,
+                        mark,
+                        target->getBenchmark()->getUniqueName(),
+                        surfaceConfig.c_str());
     } else if (FLAGS_csv) {
         const double stddev_percent = sk_ieee_double_divide(100 * sqrt(stats->var), stats->mean);
         SkDebugf("%g,%g,%g,%g,%g,%s,%s\n",
@@ -547,49 +491,37 @@ static void print_benchmark_stats(Stats* stats,
                  target->getBenchmark()->getUniqueName());
     } else {
         const double stddev_percent = sk_ieee_double_divide(100 * sqrt(stats->var), stats->mean);
-        SkDebugf("%4d/%-4dMB\t%d\t%s\t%s\t%s\t%s\t%.0f%%\t%s\t%s\t%s\n",
-                 sk_tools::getCurrResidentSetSizeMB(),
-                 sk_tools::getMaxResidentSetSizeMB(),
-                 loops,
-                 HUMANIZE(stats->min),
-                 HUMANIZE(stats->median),
-                 HUMANIZE(stats->mean),
-                 HUMANIZE(stats->max),
-                 stddev_percent,
-                 FLAGS_ms ? to_string(samples->size()).c_str() : stats->plot.c_str(),
-                 surfaceConfig.c_str(),
-                 target->getBenchmark()->getUniqueName());
+        TestRunner::Log("%4d/%-4dMB\t%d\t%s\t%s\t%s\t%s\t%.0f%%\t%s\t%s\t%s",
+                        sk_tools::getCurrResidentSetSizeMB(),
+                        sk_tools::getMaxResidentSetSizeMB(),
+                        loops,
+                        HUMANIZE(stats->min),
+                        HUMANIZE(stats->median),
+                        HUMANIZE(stats->mean),
+                        HUMANIZE(stats->max),
+                        stddev_percent,
+                        FLAGS_ms ? to_string(samples->size()).c_str() : stats->plot.c_str(),
+                        surfaceConfig.c_str(),
+                        target->getBenchmark()->getUniqueName());
     }
 
     target->printStats();
 
     if (FLAGS_verbose) {
-        SkDebugf("Samples:  ");
+        std::ostringstream oss;
+        oss << "Samples: ";
         for (int j = 0; j < samples->size(); j++) {
-            SkDebugf("%s  ", HUMANIZE((*samples)[j]));
+            oss << HUMANIZE((*samples)[j]) << "  ";
         }
-        SkDebugf("%s\n", target->getBenchmark()->getUniqueName());
+        oss << target->getBenchmark()->getUniqueName();
+        TestRunner::Log("%s", oss.str().c_str());
     }
 }
 
 // Based on
 // https://skia.googlesource.com/skia/+/a063eaeaf1e09e4d6f42e0f44a5723622a46d21c/bench/nanobench.cpp#1337.
 int main(int argc, char** argv) {
-#ifdef SK_BUILD_FOR_ANDROID
-    extern bool gSkDebugToStdOut;  // If true, sends SkDebugf to stdout as well.
-    gSkDebugToStdOut = true;
-#endif
-
-    // Print command-line for debugging purposes.
-    if (argc < 2) {
-        SkDebugf("Benchmark runner invoked with no arguments.\n");
-    } else {
-        SkDebugf("Benchmark runner invoked with arguments:");
-        for (int i = 1; i < argc; i++) {
-            SkDebugf(" %s", argv[i]);
-        }
-        SkDebugf("\n");
-    }
+    TestRunner::InitAndLogCmdlineArgs(argc, argv);
 
     // When running under Bazel (e.g. "bazel test //path/to:test"), we'll store output files in
     // $TEST_UNDECLARED_OUTPUTS_DIR unless overridden via the --outputDir flag.
@@ -624,10 +556,10 @@ int main(int argc, char** argv) {
     if (FLAGS_gitHash.size() == 1) {
         jsonWriter.addGitHash(FLAGS_gitHash[0]);
     } else {
-        SkDebugf(
+        TestRunner::Log(
                 "Warning: No --gitHash flag was specified. Perf ingestion ignores JSON files that "
                 "do not specify a Git hash. This is fine for local debugging, but CI tasks should "
-                "always set the --gitHash flag.\n");
+                "always set the --gitHash flag.");
     }
     if (FLAGS_issue.size() == 1 && FLAGS_patchset.size() == 1) {
         jsonWriter.addChangelistInfo(FLAGS_issue[0], FLAGS_patchset[0]);
@@ -655,34 +587,45 @@ int main(int argc, char** argv) {
     }
 
     int runs = 0;
+    bool missingCpuOrGpuWarningLogged = false;
     for (auto benchmarkFactory : BenchRegistry::Range()) {
         std::unique_ptr<Benchmark> benchmark(benchmarkFactory(nullptr));
+
+        if (!TestRunner::ShouldRunTestCase(benchmark->getUniqueName(), FLAGS_match, FLAGS_skip)) {
+            TestRunner::Log("Skipping %s", benchmark->getName());
+            continue;
+        }
 
         benchmark->delayedSetup();
 
         std::unique_ptr<BenchmarkTarget> target =
                 BenchmarkTarget::FromConfig(surfaceConfig, benchmark.get());
-
-        // Print warning about missing cpu_or_gpu key if necessary.
-        if (target->isCpuOrGpuBound() == SurfaceManager::CpuOrGpu::kCPU && cpuName == "") {
-            SkDebugf(
-                    "Warning: The surface is CPU-bound, but flag --cpuName was not provided. "
-                    "Perf traces will omit keys \"cpu_or_gpu\" and \"cpu_or_gpu_value\".\n");
-        }
-        if (target->isCpuOrGpuBound() == SurfaceManager::CpuOrGpu::kGPU && gpuName == "") {
-            SkDebugf(
-                    "Warning: The surface is GPU-bound, but flag --gpuName was not provided. "
-                    "Perf traces will omit keys \"cpu_or_gpu\" and \"cpu_or_gpu_value\".\n");
-        }
+        SkASSERT_RELEASE(target);
 
         if (benchmark->isSuitableFor(target->getBackend())) {
+            // Print warning about missing cpu_or_gpu key if necessary.
+            if (target->isCpuOrGpuBound() == SurfaceManager::CpuOrGpu::kCPU && cpuName == "" &&
+                !missingCpuOrGpuWarningLogged) {
+                TestRunner::Log(
+                        "Warning: The surface is CPU-bound, but flag --cpuName was not provided. "
+                        "Perf traces will omit keys \"cpu_or_gpu\" and \"cpu_or_gpu_value\".");
+                missingCpuOrGpuWarningLogged = true;
+            }
+            if (target->isCpuOrGpuBound() == SurfaceManager::CpuOrGpu::kGPU && gpuName == "" &&
+                !missingCpuOrGpuWarningLogged) {
+                TestRunner::Log(
+                        "Warning: The surface is GPU-bound, but flag --gpuName was not provided. "
+                        "Perf traces will omit keys \"cpu_or_gpu\" and \"cpu_or_gpu_value\".");
+                missingCpuOrGpuWarningLogged = true;
+            }
+
             // Run benchmark and collect samples.
             int loops;
             skia_private::TArray<double> samples;
             skia_private::TArray<SkString> statKeys;
             skia_private::TArray<double> statValues;
             if (!sample_benchmark(target.get(), &loops, &samples, &statKeys, &statValues)) {
-                // Sampling failed. A warning has alredy been printed.
+                // Sampling failed. A warning has already been printed.
                 pool.drain();
                 continue;
             }
@@ -775,6 +718,12 @@ int main(int argc, char** argv) {
             }
 
             pool.drain();
+        } else {
+            if (FLAGS_verbose) {
+                TestRunner::Log("Skipping \"%s\" because backend \"%s\" was unsuitable.\n",
+                                target->getBenchmark()->getUniqueName(),
+                                surfaceConfig.c_str());
+            }
         }
     }
 
@@ -797,8 +746,8 @@ int main(int argc, char** argv) {
                     },
     });
 
-    SkDebugf("JSON file written to: %s\n", jsonPath.c_str());
-    SkDebugf("PNGs (if any) written to: %s\n", outputDir.c_str());
+    TestRunner::Log("JSON file written to: %s", jsonPath.c_str());
+    TestRunner::Log("PNGs (if any) written to: %s", outputDir.c_str());
 
     return 0;
 }

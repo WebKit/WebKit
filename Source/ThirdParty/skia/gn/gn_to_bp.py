@@ -351,48 +351,6 @@ cc_defaults {
     ],
 }
 
-cc_test {
-    name: "skia_dm",
-    cpp_std: "gnu++17",
-
-    defaults: [
-        "skia_gm_srcs",
-        "skia_test_minus_gm_srcs",
-        "skia_tool_deps",
-    ],
-
-    local_include_dirs: [
-        $dm_includes
-    ],
-
-    srcs: [
-        $dm_srcs
-    ],
-
-    shared_libs: [
-        "libbinder",
-        "libutils",
-    ],
-}
-
-cc_test {
-    name: "skia_nanobench",
-    cpp_std: "gnu++17",
-
-    defaults: [
-        "skia_gm_srcs",
-        "skia_tool_deps"
-    ],
-
-    local_include_dirs: [
-        $nanobench_includes
-    ],
-
-    srcs: [
-        $nanobench_srcs
-    ],
-}
-
 cc_library_shared {
     name: "libskqp_jni",
     sdk_version: "$skqp_sdk_version",
@@ -680,7 +638,8 @@ gn_to_bp_utils.GrabDependentValues(js_skqp, '//:libskqp_jni', 'cflags_cc',
 gn_to_bp_utils.GrabDependentValues(js_skqp, '//:libskqp_jni', 'defines',
                                    skqp_defines, None)
 
-skqp_defines.add("GRAPHITE_TEST_UTILS")
+skqp_defines.add("GR_TEST_UTILS=1")
+skqp_defines.add("GRAPHITE_TEST_UTILS=1")
 skqp_defines.add("SK_ALLOW_STATIC_GLOBAL_INITIALIZERS=1")
 skqp_defines.add("SK_BUILD_FOR_SKQP")
 skqp_defines.add("SK_ENABLE_DUMP_GPU")

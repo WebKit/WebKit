@@ -25,6 +25,7 @@ class Caps;
 class DrawContext;
 class Recorder;
 class Rect;
+class Renderer;
 class Shape;
 class TextureProxy;
 class Transform;
@@ -42,7 +43,7 @@ class Transform;
  */
 class PathAtlas {
 public:
-    PathAtlas(uint32_t width, uint32_t height);
+    PathAtlas(Recorder* recorder, uint32_t width, uint32_t height);
     virtual ~PathAtlas();
 
     using MaskAndOrigin = std::pair<CoverageMaskShape, SkIPoint>;
@@ -55,7 +56,9 @@ public:
      * Returns an empty result if a the shape cannot fit in the atlas. Otherwise, returns the
      * CoverageMaskShape (including the texture proxy) for sampling the eventually-rendered coverage
      * mask and the device-space origin the mask should be drawn at (e.g. its recorded draw should
-     * be an integer translation matrix).
+     * be an integer translation matrix), and the Renderer that should be used to draw that shape.
+     * The Renderer should have single-channel coverage, require AA bounds outsetting, and have a
+     * single renderStep.
      *
      * The bounds of the atlas entry is laid out with a 1 pixel outset from the given dimensions.
      * The returned shape's UV origin accounts for the padding, and its mask size does not include
@@ -75,11 +78,11 @@ public:
      * The stroke-and-fill style is drawn as a single combined coverage mask containing the stroke
      * and the fill.
      */
-    std::optional<MaskAndOrigin> addShape(Recorder*,
-                                          const Rect& transformedShapeBounds,
-                                          const Shape& shape,
-                                          const Transform& localToDevice,
-                                          const SkStrokeRec& style);
+    std::pair<const Renderer*, std::optional<MaskAndOrigin>> addShape(
+            const Rect& transformedShapeBounds,
+            const Shape& shape,
+            const Transform& localToDevice,
+            const SkStrokeRec& style);
 
     /**
      * Returns true if a path coverage mask with the given device-space bounds is sufficiently
@@ -99,12 +102,14 @@ protected:
     // The 'transform' has been adjusted to draw the Shape into a logical image from (0,0) to
     // 'maskSize'. The actual rendering into the returned TextureProxy will need to be further
     // translated by the value written to 'outPos', which is the responsibility of subclasses.
-    virtual const TextureProxy* onAddShape(Recorder* recorder,
-                                           const Shape&,
+    virtual const TextureProxy* onAddShape(const Shape&,
                                            const Transform& transform,
                                            const SkStrokeRec&,
                                            skvx::half2 maskSize,
                                            skvx::half2* outPos) = 0;
+
+    // The Recorder that created and owns this Atlas.
+    Recorder* fRecorder;
 
     uint32_t fWidth;
     uint32_t fHeight;
@@ -126,9 +131,8 @@ class DispatchGroup;
 class ComputePathAtlas : public PathAtlas {
 public:
     // Returns the currently preferred ComputePathAtlas implementation.
-    static std::unique_ptr<ComputePathAtlas> CreateDefault();
+    static std::unique_ptr<ComputePathAtlas> CreateDefault(Recorder*);
 
-    ComputePathAtlas();
     virtual std::unique_ptr<DispatchGroup> recordDispatches(Recorder*) const = 0;
 
     // Clear all scheduled atlas draws and free up atlas allocations, if necessary. After this call
@@ -138,16 +142,17 @@ public:
     void reset();
 
 protected:
+    explicit ComputePathAtlas(Recorder*);
+
     const TextureProxy* texture() const { return fTexture.get(); }
-    const TextureProxy* addRect(Recorder* recorder,
-                                skvx::half2 maskSize,
+    const TextureProxy* addRect(skvx::half2 maskSize,
                                 SkIPoint16* outPos);
     bool isSuitableForAtlasing(const Rect& transformedShapeBounds) const override;
 
     virtual void onReset() = 0;
 
 private:
-    bool initializeTextureIfNeeded(Recorder*);
+    bool initializeTextureIfNeeded();
 
     skgpu::RectanizerSkyline fRectanizer;
 

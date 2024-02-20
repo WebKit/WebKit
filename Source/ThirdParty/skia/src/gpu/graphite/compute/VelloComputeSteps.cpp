@@ -115,14 +115,15 @@ VelloBboxClearStep::VelloBboxClearStep()
                   BUFFER_BINDING(PathBBoxes,    Storage, None),
           }) {}
 
-// Pathseg
-VelloPathsegStep::VelloPathsegStep()
+// Flatten
+VelloFlattenStep::VelloFlattenStep()
         : VelloStep({
                   BUFFER_BINDING(ConfigUniform, Uniform, None),
                   BUFFER_BINDING(Scene,         Storage, None),
                   BUFFER_BINDING(TagMonoid,     Storage, None),
                   BUFFER_BINDING(PathBBoxes,    Storage, None),
-                  BUFFER_BINDING(Cubics,        Storage, None),
+                  BUFFER_BINDING(BumpAlloc,     Storage, Clear),
+                  BUFFER_BINDING(Lines,         Storage, None),
           }) {}
 
 // DrawReduce
@@ -174,7 +175,7 @@ VelloBinningStep::VelloBinningStep()
                   BUFFER_BINDING(PathBBoxes,    Storage, None),
                   BUFFER_BINDING(ClipBBoxes,    Storage, None),
                   BUFFER_BINDING(DrawBBoxes,    Storage, None),
-                  BUFFER_BINDING(BumpAlloc,     Storage, Clear),
+                  BUFFER_BINDING(BumpAlloc,     Storage, None),
                   BUFFER_BINDING(InfoBinData,   Storage, None),
                   BUFFER_BINDING(BinHeader,     Storage, None),
           }) {}
@@ -190,23 +191,21 @@ VelloTileAllocStep::VelloTileAllocStep()
                   BUFFER_BINDING(Tile,          Storage, None),
           }) {}
 
-// PathCoarseFull
-VelloPathCoarseFullStep::VelloPathCoarseFullStep()
+// PathCountSetup
+VelloPathCountSetupStep::VelloPathCountSetupStep()
         : VelloStep({
-                  BUFFER_BINDING(ConfigUniform, Uniform, None),
-                  BUFFER_BINDING(Scene,         Storage, None),
-                  BUFFER_BINDING(Cubics,        Storage, None),
-                  BUFFER_BINDING(Path,          Storage, None),
                   BUFFER_BINDING(BumpAlloc,     Storage, None),
-                  BUFFER_BINDING(Tile,          Storage, None),
-                  BUFFER_BINDING(Segments,      Storage, None),
+                  BUFFER_BINDING(IndirectCount, Storage, None),
           }) {}
 
-// Backdrop
-VelloBackdropStep::VelloBackdropStep()
+// PathCount
+VelloPathCountStep::VelloPathCountStep()
         : VelloStep({
-                  BUFFER_BINDING(ConfigUniform, Uniform, None),
+                  BUFFER_BINDING(BumpAlloc,     Storage, None),
+                  BUFFER_BINDING(Lines,         Storage, None),
+                  BUFFER_BINDING(Path,          Storage, None),
                   BUFFER_BINDING(Tile,          Storage, None),
+                  BUFFER_BINDING(SegmentCounts, Storage, None),
           }) {}
 
 // BackdropDyn
@@ -231,36 +230,93 @@ VelloCoarseStep::VelloCoarseStep()
                   BUFFER_BINDING(PTCL,          Storage, None),
           }) {}
 
-// Fine
-VelloFineStep::VelloFineStep(SkColorType targetFormat)
+// PathTilingSetup
+VelloPathTilingSetupStep::VelloPathTilingSetupStep()
         : VelloStep({
-                  BUFFER_BINDING(ConfigUniform, Uniform, None),
-                  BUFFER_BINDING(Segments,      Storage, None),
-                  BUFFER_BINDING(PTCL,          Storage, None),
-                  BUFFER_BINDING(InfoBinData,   Storage, None),
-                  {
-                          /*type=*/ResourceType::kWriteOnlyStorageTexture,
-                          /*flow=*/DataFlow::kShared,
-                          /*policy=*/ResourcePolicy::kNone,
-                          /*slot=*/kVelloSlot_OutputImage,
-                  },
-                  {
-                          /*type=*/ResourceType::kReadOnlyTexture,
-                          /*flow=*/DataFlow::kShared,
-                          /*policy=*/ResourcePolicy::kNone,
-                          /*slot=*/kVelloSlot_GradientImage,
-                  },
-                  {
-                          /*type=*/ResourceType::kReadOnlyTexture,
-                          /*flow=*/DataFlow::kShared,
-                          /*policy=*/ResourcePolicy::kNone,
-                          /*slot=*/kVelloSlot_ImageAtlas,
-                  },
-          })
-        , fTargetFormat(targetFormat) {}
+                  BUFFER_BINDING(BumpAlloc,     Storage, None),
+                  BUFFER_BINDING(IndirectCount, Storage, None),
+          }) {}
 
-std::tuple<SkISize, SkColorType> VelloFineStep::calculateTextureParameters(int index, const ResourceDesc&) const {
-    return {{}, index == 4 ? fTargetFormat : kRGBA_8888_SkColorType};
+// PathTiling
+VelloPathTilingStep::VelloPathTilingStep()
+        : VelloStep({
+                  BUFFER_BINDING(BumpAlloc,     Storage, None),
+                  BUFFER_BINDING(SegmentCounts, Storage, None),
+                  BUFFER_BINDING(Lines, Storage, None),
+                  BUFFER_BINDING(Path, Storage, None),
+                  BUFFER_BINDING(Tile, Storage, None),
+                  BUFFER_BINDING(Segments, Storage, None),
+          }) {}
+
+// Fine
+VelloFineAreaStep::VelloFineAreaStep(SkColorType targetFormat)
+        : VelloFineStep(targetFormat,
+                        {
+                                BUFFER_BINDING(ConfigUniform, Uniform,         None),
+                                BUFFER_BINDING(Segments,      ReadOnlyStorage, None),
+                                BUFFER_BINDING(PTCL,          ReadOnlyStorage, None),
+                                BUFFER_BINDING(InfoBinData,   ReadOnlyStorage, None),
+                                {
+                                        /*type=*/ResourceType::kWriteOnlyStorageTexture,
+                                        /*flow=*/DataFlow::kShared,
+                                        /*policy=*/ResourcePolicy::kNone,
+                                        /*slot=*/kVelloSlot_OutputImage,
+                                },
+                                {
+                                        /*type=*/ResourceType::kReadOnlyTexture,
+                                        /*flow=*/DataFlow::kShared,
+                                        /*policy=*/ResourcePolicy::kNone,
+                                        /*slot=*/kVelloSlot_GradientImage,
+                                },
+                                {
+                                        /*type=*/ResourceType::kReadOnlyTexture,
+                                        /*flow=*/DataFlow::kShared,
+                                        /*policy=*/ResourcePolicy::kNone,
+                                        /*slot=*/kVelloSlot_ImageAtlas,
+                                },
+                        }) {}
+
+VelloFineMsaa16Step::VelloFineMsaa16Step(SkColorType targetFormat)
+        : VelloFineStep(targetFormat,
+                        {
+                                BUFFER_BINDING(ConfigUniform, Uniform, None),
+                                BUFFER_BINDING(Segments,      ReadOnlyStorage, None),
+                                BUFFER_BINDING(PTCL,          ReadOnlyStorage, None),
+                                BUFFER_BINDING(InfoBinData,   ReadOnlyStorage, None),
+                                {
+                                        /*type=*/ResourceType::kWriteOnlyStorageTexture,
+                                        /*flow=*/DataFlow::kShared,
+                                        /*policy=*/ResourcePolicy::kNone,
+                                        /*slot=*/kVelloSlot_OutputImage,
+                                },
+                                {
+                                        /*type=*/ResourceType::kReadOnlyTexture,
+                                        /*flow=*/DataFlow::kShared,
+                                        /*policy=*/ResourcePolicy::kNone,
+                                        /*slot=*/kVelloSlot_GradientImage,
+                                },
+                                {
+                                        /*type=*/ResourceType::kReadOnlyTexture,
+                                        /*flow=*/DataFlow::kShared,
+                                        /*policy=*/ResourcePolicy::kNone,
+                                        /*slot=*/kVelloSlot_ImageAtlas,
+                                },
+                                BUFFER_BINDING(MaskLUT, ReadOnlyStorage, Mapped),
+                        })
+        , fMaskLut(vello_cpp::build_mask_lut_16()) {}
+
+size_t VelloFineMsaa16Step::calculateBufferSize(int resourceIndex, const ResourceDesc&) const {
+    SkASSERT(resourceIndex == 7);
+    return 64 * 64 * 2;
+}
+
+void VelloFineMsaa16Step::prepareStorageBuffer(int resourceIndex,
+                                               const ResourceDesc&,
+                                               void* buffer,
+                                               size_t bufferSize) const {
+    SkASSERT(resourceIndex == 7);
+    SkASSERT(fMaskLut.size() == bufferSize);
+    memcpy(buffer, fMaskLut.data(), fMaskLut.size());
 }
 
 }  // namespace skgpu::graphite

@@ -694,9 +694,6 @@ public:
     explicit FilterResult(sk_sp<SkSpecialImage> image)
             : FilterResult(std::move(image), LayerSpace<SkIPoint>({0, 0})) {}
 
-    FilterResult(std::pair<sk_sp<SkSpecialImage>, LayerSpace<SkIPoint>> imageAndOrigin)
-            : FilterResult(std::move(std::get<0>(imageAndOrigin)), std::get<1>(imageAndOrigin)) {}
-
     FilterResult(sk_sp<SkSpecialImage> image, const LayerSpace<SkIPoint>& origin)
             : fImage(std::move(image))
             , fSamplingOptions(kDefaultSampling)
@@ -813,13 +810,21 @@ public:
 private:
     friend class ::FilterResultTestAccess; // For testing draw() and asShader()
 
+    class AutoSurface;
+
     // Renders this FilterResult into a new, but visually equivalent, image that fills 'dstBounds',
     // has default sampling, no color filter, and a transform that translates by only 'dstBounds's
-    // top-left corner. 'dstBounds' is intersected with 'fLayerBounds' unless 'preserveTransparency'
+    // top-left corner. 'dstBounds' is intersected with 'fLayerBounds' unless 'preserveDstBounds'
     // is true.
-    std::pair<sk_sp<SkSpecialImage>, LayerSpace<SkIPoint>>
-    resolve(const Context& ctx, LayerSpace<SkIRect> dstBounds,
-            bool preserveTransparency=false) const;
+    FilterResult resolve(const Context& ctx, LayerSpace<SkIRect> dstBounds,
+                         bool preserveDstBounds=false) const;
+    // Returns a decal-tiled subset view of this FilterResult, requiring that this has an integer
+    // translation equivalent to 'knownOrigin'. If 'clampSrcIfDisjoint' is true and the image bounds
+    // do not overlap with dstBounds, the closest edge/corner pixels of the image will be extracted,
+    // assuming it will be tiled with kClamp.
+    FilterResult subset(const LayerSpace<SkIPoint>& knownOrigin,
+                        const LayerSpace<SkIRect>& subsetBounds,
+                        bool clampSrcIfDisjoint=false) const;
 
     enum class BoundsAnalysis : int {
         // The image can be drawn directly, without needing to apply tiling, or handling how any
@@ -847,15 +852,23 @@ private:
     };
     SK_DECL_BITMASK_OPS_FRIENDS(BoundsAnalysis)
 
+    enum class BoundsScope : int {
+        kDeferred,        // The bounds analysis won't be used for any rendering yet
+        kCanDrawDirectly, // The rendering may draw the image directly if analysis allows it
+        kShaderOnly       // The rendering will always use a filling shader, e.g. drawPaint()
+    };
+
     // Determine what effects are visible based on the target 'dstBounds' and extra transform that
     // will be applied when this FilterResult is drawn. These are not LayerSpace because the
     // 'xtraTransform' may be either a within-layer transform, or a layer-to-device space transform.
     // The 'dstBounds' should be in the same coordinate space that 'xtraTransform' maps to. When
     // that is the identity matrix, 'dstBounds' is in layer space.
     SkEnumBitMask<BoundsAnalysis> analyzeBounds(const SkMatrix& xtraTransform,
-                                                const SkIRect& dstBounds) const;
-    SkEnumBitMask<BoundsAnalysis> analyzeBounds(const LayerSpace<SkIRect>& dstBounds) const {
-        return this->analyzeBounds(SkMatrix::I(), SkIRect(dstBounds));
+                                                const SkIRect& dstBounds,
+                                                BoundsScope scope = BoundsScope::kDeferred) const;
+    SkEnumBitMask<BoundsAnalysis> analyzeBounds(const LayerSpace<SkIRect>& dstBounds,
+                                                BoundsScope scope = BoundsScope::kDeferred) const {
+        return this->analyzeBounds(SkMatrix::I(), SkIRect(dstBounds), scope);
     }
 
     // Return an equivalent FilterResult such that its backing image dimensions have been reduced

@@ -51,10 +51,14 @@ decl_shader!(CLIP_REDUCE, clip_reduce);
 decl_shader!(COARSE, coarse);
 decl_shader!(DRAW_LEAF, draw_leaf);
 decl_shader!(DRAW_REDUCE, draw_reduce);
-decl_shader!(FINE, fine);
-decl_shader!(PATH_COARSE, path_coarse);
-decl_shader!(PATH_COARSE_FULL, path_coarse_full);
-decl_shader!(PATHSEG, pathseg);
+decl_shader!(FINE_AREA, fine_area);
+decl_shader!(FINE_MSAA8, fine_msaa8);
+decl_shader!(FINE_MSAA16, fine_msaa16);
+decl_shader!(FLATTEN, flatten);
+decl_shader!(PATH_COUNT, path_count);
+decl_shader!(PATH_COUNT_SETUP, path_count_setup);
+decl_shader!(PATH_TILING, path_tiling);
+decl_shader!(PATH_TILING_SETUP, path_tiling_setup);
 decl_shader!(PATHTAG_REDUCE, pathtag_reduce);
 decl_shader!(PATHTAG_REDUCE2, pathtag_reduce2);
 decl_shader!(PATHTAG_SCAN1, pathtag_scan1);
@@ -73,10 +77,14 @@ pub(crate) fn shader(stage: ffi::ShaderStage) -> &'static Shader {
         ffi::ShaderStage::Coarse => &COARSE,
         ffi::ShaderStage::DrawLeaf => &DRAW_LEAF,
         ffi::ShaderStage::DrawReduce => &DRAW_REDUCE,
-        ffi::ShaderStage::Fine => &FINE,
-        ffi::ShaderStage::PathCoarse => &PATH_COARSE,
-        ffi::ShaderStage::PathCoarseFull => &PATH_COARSE_FULL,
-        ffi::ShaderStage::Pathseg => &PATHSEG,
+        ffi::ShaderStage::FineArea => &FINE_AREA,
+        ffi::ShaderStage::FineMsaa8 => &FINE_MSAA8,
+        ffi::ShaderStage::FineMsaa16 => &FINE_MSAA16,
+        ffi::ShaderStage::Flatten => &FLATTEN,
+        ffi::ShaderStage::PathCount => &PATH_COUNT,
+        ffi::ShaderStage::PathCountSetup => &PATH_COUNT_SETUP,
+        ffi::ShaderStage::PathTiling => &PATH_TILING,
+        ffi::ShaderStage::PathTilingSetup => &PATH_TILING_SETUP,
         ffi::ShaderStage::PathtagReduce => &PATHTAG_REDUCE,
         ffi::ShaderStage::PathtagReduce2 => &PATHTAG_REDUCE2,
         ffi::ShaderStage::PathtagScan1 => &PATHTAG_SCAN1,

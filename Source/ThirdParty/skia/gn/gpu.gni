@@ -59,7 +59,6 @@ _include = get_path_info("../include", "abspath")
 #  //include/gpu/ganesh:ganesh_hdrs
 skia_gpu_public = [
   "$_include/gpu/GpuTypes.h",
-  "$_include/gpu/GrBackendDrawableInfo.h",
   "$_include/gpu/GrBackendSemaphore.h",
   "$_include/gpu/GrBackendSurface.h",
   "$_include/gpu/GrContextOptions.h",
@@ -754,6 +753,7 @@ skia_skgpu_v1_sources = [
 #  //include/gpu/vk:shared_public_hdrs
 #  //include/gpu/ganesh/vk:public_hdrs
 skia_gpu_vk_public = [
+  "$_include/gpu/ganesh/vk/GrBackendDrawableInfo.h",
   "$_include/gpu/ganesh/vk/GrVkBackendSemaphore.h",
   "$_include/gpu/ganesh/vk/GrVkBackendSurface.h",
   "$_include/gpu/ganesh/vk/GrVkDirectContext.h",
@@ -1050,6 +1050,7 @@ skia_shared_gpu_sources = [
   "$_src/gpu/SkRenderEngineAbortf.h",
   "$_src/gpu/Swizzle.cpp",
   "$_src/gpu/Swizzle.h",
+  "$_src/gpu/SwizzlePriv.h",
   "$_src/gpu/TiledTextureUtils.cpp",
   "$_src/gpu/TiledTextureUtils.h",
   "$_src/gpu/tessellate/AffineMatrix.h",

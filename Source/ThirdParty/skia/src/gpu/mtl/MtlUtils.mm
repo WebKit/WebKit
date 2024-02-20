@@ -149,10 +149,4 @@ size_t MtlFormatBytesPerBlock(MTLPixelFormat mtlFormat) {
     }
 }
 
-#ifdef SK_BUILD_FOR_IOS
-bool MtlIsAppInBackground() {
-    return [NSThread isMainThread] &&
-           ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground);
-}
-#endif
 } // namespace skgpu

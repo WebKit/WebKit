@@ -60,6 +60,11 @@ private:
     SkDEBUGCODE(int fLayers = 0;)
 };
 
+enum class VelloAaConfig {
+    kAnalyticArea,
+    kMSAA16,
+};
+
 class VelloRenderer final {
 public:
     explicit VelloRenderer(const Caps*);
@@ -72,6 +77,9 @@ public:
 
         // The background color used during blending.
         SkColor4f fBaseColor;
+
+        // The antialiasing method.
+        VelloAaConfig fAaConfig;
     };
 
     // Run the full pipeline which supports compositing colors with different blend styles. Does
@@ -84,8 +92,7 @@ public:
 
 private:
     // Pipelines
-    VelloBackdropStep fBackdrop;
-    VelloBackdropDynStep fBackdropDyn;
+    VelloBackdropDynStep fBackdrop;
     VelloBboxClearStep fBboxClear;
     VelloBinningStep fBinning;
     VelloClipLeafStep fClipLeaf;
@@ -93,15 +100,21 @@ private:
     VelloCoarseStep fCoarse;
     VelloDrawLeafStep fDrawLeaf;
     VelloDrawReduceStep fDrawReduce;
-    VelloFineStep fFine;
-    VelloPathCoarseFullStep fPathCoarseFull;
-    VelloPathsegStep fPathseg;
+    VelloFlattenStep fFlatten;
+    VelloPathCountStep fPathCount;
+    VelloPathCountSetupStep fPathCountSetup;
+    VelloPathTilingStep fPathTiling;
+    VelloPathTilingSetupStep fPathTilingSetup;
     VelloPathtagReduceStep fPathtagReduce;
     VelloPathtagReduce2Step fPathtagReduce2;
     VelloPathtagScan1Step fPathtagScan1;
     VelloPathtagScanLargeStep fPathtagScanLarge;
     VelloPathtagScanSmallStep fPathtagScanSmall;
     VelloTileAllocStep fTileAlloc;
+
+    // Fine rasterization stage variants:
+    VelloFineAreaStep fFineArea;
+    VelloFineMsaa16Step fFineMsaa16;
 
     // The full renderer uses an image atlas and a gradient ramp texture for image composition and
     // gradient fills, respectively. These are currently unused, so we allocate and reuse two 1x1

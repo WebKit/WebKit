@@ -14,6 +14,7 @@
 #include "src/gpu/graphite/RasterPathAtlas.h"
 #include "src/gpu/graphite/RecorderPriv.h"
 #include "src/gpu/graphite/RendererProvider.h"
+#include "src/gpu/graphite/SmallPathAtlas.h"
 #include "src/gpu/graphite/TextureProxy.h"
 #include "src/gpu/graphite/text/TextAtlasManager.h"
 
@@ -30,18 +31,25 @@ AtlasProvider::PathAtlasFlagsBitMask AtlasProvider::QueryPathAtlasSupport(const 
 
 AtlasProvider::AtlasProvider(Recorder* recorder)
         : fTextAtlasManager(std::make_unique<TextAtlasManager>(recorder))
-        , fRasterPathAtlas(std::make_unique<RasterPathAtlas>())
-        , fPathAtlasFlags(QueryPathAtlasSupport(recorder->priv().caps())) {}
+        , fRasterPathAtlas(std::make_unique<RasterPathAtlas>(recorder))
+        , fSmallPathAtlas(std::make_unique<SmallPathAtlas>(recorder))
+        , fPathAtlasFlags(QueryPathAtlasSupport(recorder->priv().caps())) {
+    fSmallPathAtlas->initAtlas();
+}
 
-std::unique_ptr<ComputePathAtlas> AtlasProvider::createComputePathAtlas() const {
+std::unique_ptr<ComputePathAtlas> AtlasProvider::createComputePathAtlas(Recorder* recorder) const {
     if (this->isAvailable(PathAtlasFlags::kCompute)) {
-        return ComputePathAtlas::CreateDefault();
+        return ComputePathAtlas::CreateDefault(recorder);
     }
     return nullptr;
 }
 
 RasterPathAtlas* AtlasProvider::getRasterPathAtlas() const {
     return fRasterPathAtlas.get();
+}
+
+SmallPathAtlas* AtlasProvider::getSmallPathAtlas() const {
+    return fSmallPathAtlas.get();
 }
 
 sk_sp<TextureProxy> AtlasProvider::getAtlasTexture(Recorder* recorder,
@@ -89,13 +97,17 @@ void AtlasProvider::clearTexturePool() {
     fTexturePool.clear();
 }
 
-void AtlasProvider::recordUploads(DrawContext* dc, Recorder* recorder) {
-    if (!dc->recordTextUploads(fTextAtlasManager.get())) {
+void AtlasProvider::recordUploads(DrawContext* dc) {
+    if (!fTextAtlasManager->recordUploads(dc)) {
         SKGPU_LOG_E("TextAtlasManager uploads have failed -- may see invalid results.");
     }
 
     if (fRasterPathAtlas) {
-        fRasterPathAtlas->recordUploads(dc, recorder);
+        fRasterPathAtlas->recordUploads(dc);
+    }
+
+    if (fSmallPathAtlas) {
+        fSmallPathAtlas->recordUploads(dc);
     }
 }
 

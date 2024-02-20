@@ -52,13 +52,13 @@ public:
         return fView.proxy()->backingStoreDimensions();
     }
 
-    sk_sp<SkSpecialImage> onMakeSubset(const SkIRect& subset) const override {
+    sk_sp<SkSpecialImage> onMakeBackingStoreSubset(const SkIRect& subset) const override {
         return SkSpecialImages::MakeDeferredFromGpu(
                 fContext, subset, this->uniqueID(), fView, this->colorInfo(), this->props());
     }
 
     sk_sp<SkImage> asImage() const override {
-        fView.proxy()->priv().exactify(true);
+        fView.proxy()->priv().exactify();
         return sk_make_sp<SkImage_Ganesh>(
                 sk_ref_sp(fContext), this->uniqueID(), fView, this->colorInfo());
     }

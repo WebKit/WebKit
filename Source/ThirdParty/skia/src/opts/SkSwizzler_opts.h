@@ -9,18 +9,69 @@
 #define SkSwizzler_opts_DEFINED
 
 #include "include/private/SkColorData.h"
+#include "src/base/SkUtils.h"
 #include "src/base/SkVx.h"
+#include "src/core/SkSwizzlePriv.h"
+
 #include <algorithm>
 #include <cmath>
 #include <utility>
 
-#if SK_CPU_SSE_LEVEL >= SK_CPU_SSE_LEVEL_SSSE3
+#if SK_CPU_SSE_LEVEL >= SK_CPU_SSE_LEVEL_SSE1
     #include <immintrin.h>
 #elif defined(SK_ARM_HAS_NEON)
     #include <arm_neon.h>
 #endif
 
 namespace SK_OPTS_NS {
+
+static inline float SkReciprocalAlphaTimes255_portable(float a) {
+    return a != 0 ? 255.0f / a : 0.0f;
+}
+
+static inline float SkReciprocalAlpha_portable(float a) {
+    return a != 0 ? 1.0f / a : 0.0f;
+}
+
+#if defined(SK_ARM_HAS_NEON)
+// -- NEON -- Harden against timing attacks
+// For neon, the portable versions create branchless code.
+static inline float SkReciprocalAlphaTimes255(float a) {
+    return SkReciprocalAlphaTimes255_portable(a);
+}
+
+static inline float SkReciprocalAlpha(float a) {
+    return SkReciprocalAlpha_portable(a);
+}
+#elif SK_CPU_SSE_LEVEL >= SK_CPU_SSE_LEVEL_SSE1 && (defined(__clang__) || !defined(_MSC_VER))
+// -- SSE -- Harden against timing attacks -- MSVC is not supported.
+using F4 = __m128;
+
+SK_NO_SANITIZE("float-divide-by-zero")
+static inline float SkReciprocalAlphaTimes255(float a) {
+    SkASSERT(0 <= a && a <= 255);
+    F4 vA{a, a, a, a};
+    auto q = F4{255.0f} / vA;
+    return _mm_and_ps(sk_bit_cast<__m128>(vA != F4{0.0f}), q)[0];
+}
+
+SK_NO_SANITIZE("float-divide-by-zero")
+static inline float SkReciprocalAlpha(float a) {
+    SkASSERT(0 <= a && a <= 1);
+    F4 vA{a, a, a, a};
+    auto q = F4{1.0f} / vA;
+    return _mm_and_ps(sk_bit_cast<__m128>(vA != F4{0.0f}), q)[0];
+}
+#else
+// -- Portable -- *Not* hardened against timing attacks
+static inline float SkReciprocalAlphaTimes255(float a) {
+    return SkReciprocalAlphaTimes255_portable(a);
+}
+
+static inline float SkReciprocalAlpha(float a) {
+    return SkReciprocalAlpha_portable(a);
+}
+#endif
 
 static void RGBA_to_rgbA_portable(uint32_t* dst, const uint32_t* src, int count) {
     for (int i = 0; i < count; i++) {
@@ -38,22 +89,64 @@ static void RGBA_to_rgbA_portable(uint32_t* dst, const uint32_t* src, int count)
     }
 }
 
-static uint32_t rgbA_to_CCCA(float c00, float c08, float c16, float a) {
-    // Doing the math for an original color b resulting in a premul color x,
-    //   x = ⌊(b * a + 127) / 255⌋,
-    //   x ≤ (b * a + 127) / 255 < x + 1,
-    //   255 * x ≤ b * a + 127 < 255 * (x + 1),
-    //   255 * x - 127 ≤ b * a < 255 * (x + 1) - 127,
-    //   255 * x - 127 ≤ b * a < 255 * x + 128,
-    //   (255 * x - 127) / a ≤ b < (255 * x + 128) / a.
-    // So, given a premul value x < a, the original color b can be in the above range.
-    // We can pick the middle of that range as
-    //   b = 255 * x / a
-    //   b = x * (255 / a)
-    const float reciprocalA = SkReciprocalAlphaTimes255(a);
-    auto unpremul = [reciprocalA](float c) {
-        return (uint32_t)std::min(255.0f, (c * reciprocalA + 0.5f));
-    };
+// RP uses the following rounding routines in store_8888. There are three different
+// styles of rounding:
+//   1) +0.5 and floor - used by scalar and ARMv7
+//   2) round to even for sure - ARMv8
+//   3) round to even maybe - intel. The rounding on intel depends on MXCSR which
+//                            defaults to round to even.
+//
+// Note: that vrndns_f32 is the single float version of vcvtnq_u32_f32.
+
+static inline uint32_t pixel_round_as_RP(float n) {
+#if defined(SK_ARM_HAS_NEON) && defined(SK_CPU_ARM64)
+    return vrndns_f32(n);
+#elif defined(SK_ARM_HAS_NEON) && !defined(SK_CPU_ARM64)
+    float32x4_t vN{n + 0.5f};
+    return vcvtq_u32_f32(vN)[0];
+#elif SK_CPU_SSE_LEVEL >= SK_CPU_SSE_LEVEL_SSE2 && (defined(__clang__) || !defined(_MSC_VER))
+    return _mm_cvtps_epi32(__m128{n})[0];
+#else
+    return (uint32_t)(n + 0.5f);
+#endif
+}
+
+// Doing the math for an original color b resulting in a premul color x,
+//   x = ⌊(b * a + 127) / 255⌋,
+//   x ≤ (b * a + 127) / 255 < x + 1,
+//   255 * x ≤ b * a + 127 < 255 * (x + 1),
+//   255 * x - 127 ≤ b * a < 255 * (x + 1) - 127,
+//   255 * x - 127 ≤ b * a < 255 * x + 128,
+//   (255 * x - 127) / a ≤ b < (255 * x + 128) / a.
+// So, given a premul value x < a, the original color b can be in the above range.
+// We can pick the middle of that range as
+//   b = 255 * x / a
+//   b = x * (255 / a)
+static inline uint32_t unpremul_quick(float reciprocalA, float c) {
+    return (uint32_t)std::min(255.0f, (c * reciprocalA + 0.5f));
+}
+
+// Similar to unpremul but simulates Raster Pipeline by normalizing the pixel on the interval
+// [0, 1] and uses round-to-even in most cases instead of round-up.
+static inline uint32_t unpremul_simulating_RP(float reciprocalA, float c) {
+    const float normalizedC = c * (1.0f / 255.0f);
+    const float answer = std::min(255.0f, normalizedC * reciprocalA * 255.0f);
+    return pixel_round_as_RP(answer);
+}
+
+static inline uint32_t rgbA_to_CCCA(float c00, float c08, float c16, float a) {
+    #if defined(SK_USE_FAST_UNPREMUL_324099025)
+        const float reciprocalA = SkReciprocalAlphaTimes255(a);
+        auto unpremul = [reciprocalA](float c) {
+            return unpremul_quick(reciprocalA, c);
+        };
+    #else
+        const float normalizedA = a * (1.0f / 255.0f);
+        const float reciprocalA = SkReciprocalAlpha(normalizedA);
+        auto unpremul = [reciprocalA](float c) {
+            return unpremul_simulating_RP(reciprocalA, c);
+        };
+    #endif
 
     return (uint32_t) a << 24
         | unpremul(c16) << 16

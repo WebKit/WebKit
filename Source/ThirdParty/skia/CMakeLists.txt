@@ -165,7 +165,6 @@ add_library(Skia STATIC
     src/core/SkBitmapProcState.cpp
     src/core/SkBitmapProcState_matrixProcs.cpp
     src/core/SkBitmapProcState_opts.cpp
-    src/core/SkBitmapProcState_opts_hsw.cpp
     src/core/SkBitmapProcState_opts_ssse3.cpp
     src/core/SkBlendMode.cpp
     src/core/SkBlendModeBlender.cpp
