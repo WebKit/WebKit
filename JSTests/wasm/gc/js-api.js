@@ -530,6 +530,62 @@ function testTable() {
       "WebAssembly.Table.prototype.type unable to produce type descriptor for the given table"
     )
   }
+
+  {
+    let m = instantiate(`
+      (module
+        (type (struct))
+        (table (export "t") 10 (ref 0) (struct.new 0))
+      )
+    `);
+    assert.throws(
+      () => m.exports.t.set(1),
+      TypeError,
+      "WebAssembly.Table.prototype.set requires the second argument for non-defaultable table type"
+    );
+    assert.throws(
+      () => m.exports.t.grow(1),
+      TypeError,
+      "WebAssembly.Table.prototype.grow requires the second argument for non-defaultable table type"
+    );
+  }
+
+  {
+    let m = instantiate(`
+      (module
+        (table (export "t") 10 (ref func) (ref.func 0))
+        (func)
+      )
+    `);
+    assert.throws(
+      () => m.exports.t.set(1),
+      TypeError,
+      "WebAssembly.Table.prototype.set requires the second argument for non-defaultable table type"
+    );
+    assert.throws(
+      () => m.exports.t.grow(1),
+      TypeError,
+      "WebAssembly.Table.prototype.grow requires the second argument for non-defaultable table type"
+    );
+  }
+
+  {
+    let m = instantiate(`
+      (module
+        (table (export "t") 10 (ref null i31) (ref.i31 (i32.const 42)))
+      )
+    `);
+    let origSize = m.exports.t.length;
+    for (let i = 0; i < origSize; i++)
+      assert.eq(m.exports.t.get(i), 42);
+    m.exports.t.grow(5);
+    for (let i = 0; i < origSize; i++)
+      assert.eq(m.exports.t.get(i), 42);
+    for (let i = origSize; i < origSize + 5; i++)
+      assert.eq(m.exports.t.get(i), null);
+    m.exports.t.set(1);
+    assert.eq(m.exports.t.get(1), null);
+  }
 }
 
 function testImport() {
