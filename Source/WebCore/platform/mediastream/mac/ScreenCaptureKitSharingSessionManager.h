@@ -104,6 +104,7 @@ public:
     void cancelPendingSessionForDevice(const CaptureDevice&);
 
     WEBCORE_EXPORT void promptForGetDisplayMedia(DisplayCapturePromptType, CompletionHandler<void(std::optional<CaptureDevice>)>&&);
+    WEBCORE_EXPORT void cancelGetDisplayMediaPrompt();
 
 private:
     void cleanupAllSessions();
@@ -119,7 +120,6 @@ private:
     WeakPtr<ScreenCaptureSessionSource> findActiveSource(SCContentSharingSession*);
 
     Vector<WeakPtr<ScreenCaptureSessionSource>> m_activeSources;
-    Vector<std::tuple<RetainPtr<SCContentFilter>, RetainPtr<SCContentSharingSession>>> m_pendingSessions;
 
     RetainPtr<SCContentSharingSession> m_pendingSession;
     RetainPtr<SCContentFilter> m_pendingContentFilter;

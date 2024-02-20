@@ -60,6 +60,7 @@ messages -> GPUProcess LegacyReceiver {
 
 #if HAVE(SCREEN_CAPTURE_KIT)
     PromptForGetDisplayMedia(enum:uint8_t WebCore::DisplayCapturePromptType type) -> (std::optional<WebCore::CaptureDevice> device)
+    CancelGetDisplayMediaPrompt()
 #endif
 
 #if ENABLE(VIDEO)
