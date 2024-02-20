@@ -89,7 +89,7 @@ unsigned UIScriptContext::prepareForAsyncTask(JSValueRef callback, CallbackType 
     return callbackID;
 }
 
-void UIScriptContext::asyncTaskComplete(unsigned callbackID)
+void UIScriptContext::asyncTaskComplete(unsigned callbackID, std::initializer_list<JSValueRef> arguments)
 {
     Task task = m_callbacks.take(callbackID);
     ASSERT(task.callback);
@@ -100,7 +100,7 @@ void UIScriptContext::asyncTaskComplete(unsigned callbackID)
     m_currentScriptCallbackID = task.parentScriptCallbackID;
 
     exception = nullptr;
-    JSObjectCallAsFunction(m_context.get(), callbackObject, JSContextGetGlobalObject(m_context.get()), 0, nullptr, &exception);
+    JSObjectCallAsFunction(m_context.get(), callbackObject, JSContextGetGlobalObject(m_context.get()), arguments.size(), arguments.size() ? arguments.begin() : nullptr, &exception);
     JSValueUnprotect(m_context.get(), task.callback);
     
     tryToCompleteUIScriptForCurrentParentCallback();

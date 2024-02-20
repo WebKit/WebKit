@@ -2140,6 +2140,18 @@ window.UIHelper = class UIHelper {
     {
         return new Promise(resolve => testRunner.getSelectedTextInChromeInputField(resolve));
     }
+
+    static requestTextExtraction()
+    {
+        if (!this.isWebKit2())
+            return Promise.resolve();
+
+        return new Promise(resolve => {
+            testRunner.runUIScript(`(() => {
+                uiController.requestTextExtraction(result => uiController.uiScriptComplete(result));
+            })()`, resolve);
+        });
+    }
 }
 
 UIHelper.EventStreamBuilder = class {

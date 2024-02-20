@@ -193,6 +193,7 @@ const TestFeatures& TestOptions::defaults()
             { "showsScrollIndicators", true },
             { "longPressActionsEnabled", true },
             { "enhancedWindowingEnabled", false },
+            { "textExtractionEnabled", false },
         };
         features.doubleTestRunnerFeatures = {
             { "contentInset.top", 0 },
@@ -263,6 +264,7 @@ const std::unordered_map<std::string, TestHeaderKeyType>& TestOptions::keyTypeMa
         { "showsScrollIndicators", TestHeaderKeyType::BoolTestRunner },
         { "longPressActionsEnabled", TestHeaderKeyType::BoolTestRunner },
         { "enhancedWindowingEnabled", TestHeaderKeyType::BoolTestRunner },
+        { "textExtractionEnabled", TestHeaderKeyType::BoolTestRunner },
     
         { "contentInset.top", TestHeaderKeyType::DoubleTestRunner },
         { "obscuredInset.top", TestHeaderKeyType::DoubleTestRunner },

@@ -6180,18 +6180,24 @@ header: <WebCore/RenderTreeAsText.h>
 };
 
 header: <WebCore/TextExtractionTypes.h>
+[CustomHeader] struct WebCore::TextExtraction::Editable {
+    String label;
+    String placeholder;
+    bool isSecure;
+    bool isFocused;
+};
+
+header: <WebCore/TextExtractionTypes.h>
 [CustomHeader] struct WebCore::TextExtraction::TextItemData {
+    Vector<std::pair<URL, WebCore::CharacterRange>> links;
+    std::optional<WebCore::CharacterRange> selectedRange;
     String content;
+    std::optional<WebCore::TextExtraction::Editable> editable;
 };
 
 header: <WebCore/TextExtractionTypes.h>
 [CustomHeader] struct WebCore::TextExtraction::ScrollableItemData {
     WebCore::FloatSize contentSize;
-};
-
-header: <WebCore/TextExtractionTypes.h>
-[CustomHeader] struct WebCore::TextExtraction::EditableItemData {
-    bool isFocused;
 };
 
 header: <WebCore/TextExtractionTypes.h>
@@ -6201,26 +6207,21 @@ header: <WebCore/TextExtractionTypes.h>
 };
 
 header: <WebCore/TextExtractionTypes.h>
-[CustomHeader] struct WebCore::TextExtraction::InteractiveItemData {
-    bool isEnabled;
-};
-
-header: <WebCore/TextExtractionTypes.h>
 [CustomHeader] enum class WebCore::TextExtraction::ContainerType : uint8_t {
     Root,
     ViewportConstrained,
-    Link,
     List,
     ListItem,
     BlockQuote,
     Article,
     Section,
-    Nav
+    Nav,
+    Button
 };
 
 header: <WebCore/TextExtractionTypes.h>
 [CustomHeader] struct WebCore::TextExtraction::Item {
-    std::variant<WebCore::TextExtraction::ContainerType, WebCore::TextExtraction::TextItemData, WebCore::TextExtraction::ScrollableItemData, WebCore::TextExtraction::EditableItemData, WebCore::TextExtraction::ImageItemData, WebCore::TextExtraction::InteractiveItemData> data;
+    std::variant<WebCore::TextExtraction::ContainerType, WebCore::TextExtraction::TextItemData, WebCore::TextExtraction::ScrollableItemData, WebCore::TextExtraction::ImageItemData> data;
     WebCore::FloatRect rectInRootView;
     Vector<WebCore::TextExtraction::Item> children;
 };

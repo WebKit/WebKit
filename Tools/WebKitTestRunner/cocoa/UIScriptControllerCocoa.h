@@ -87,6 +87,8 @@ private:
 #endif
 
     void setSpellCheckerResults(JSValueRef) final;
+
+    void requestTextExtraction(JSValueRef callback) final;
 };
 
 } // namespace WTR

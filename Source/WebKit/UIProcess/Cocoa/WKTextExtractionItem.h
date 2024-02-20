@@ -31,39 +31,54 @@
 typedef NS_ENUM(NSInteger, WKTextExtractionContainer) {
     WKTextExtractionContainerRoot,
     WKTextExtractionContainerViewportConstrained,
-    WKTextExtractionContainerLink,
     WKTextExtractionContainerList,
     WKTextExtractionContainerListItem,
     WKTextExtractionContainerBlockQuote,
     WKTextExtractionContainerArticle,
     WKTextExtractionContainerSection,
-    WKTextExtractionContainerNav
+    WKTextExtractionContainerNav,
+    WKTextExtractionContainerButton
 };
 
 @interface WKTextExtractionItem : NSObject
-@property (nonatomic, strong) NSArray<WKTextExtractionItem *> *children;
+@property (nonatomic, readonly) NSArray<WKTextExtractionItem *> *children;
+@property (nonatomic, readonly) CGRect rectInRootView;
 @end
 
 @interface WKTextExtractionContainerItem : WKTextExtractionItem
-- (instancetype)initWithContainer:(WKTextExtractionContainer)container rectInRootView:(CGRect)rectInRootView;
+- (instancetype)initWithContainer:(WKTextExtractionContainer)container rectInRootView:(CGRect)rectInRootView children:(NSArray<WKTextExtractionItem *> *)children;
+@property (nonatomic, readonly) WKTextExtractionContainer container;
+@end
+
+@interface WKTextExtractionLink : NSObject
+- (instancetype)initWithURL:(NSURL *)url range:(NSRange)range;
+@property (nonatomic, readonly) NSURL *url;
+@property (nonatomic, readonly) NSRange range;
+@end
+
+@interface WKTextExtractionEditable : NSObject
+- (instancetype)initWithLabel:(NSString *)label placeholder:(NSString *)placeholder isSecure:(BOOL)isSecure isFocused:(BOOL)isFocused;
+@property (nonatomic, readonly) NSString *label;
+@property (nonatomic, readonly) NSString *placeholder;
+@property (nonatomic, readonly, getter=isSecure) BOOL secure;
+@property (nonatomic, readonly, getter=isFocused) BOOL focused;
 @end
 
 @interface WKTextExtractionTextItem : WKTextExtractionItem
-- (instancetype)initWithContent:(NSString *)content rectInRootView:(CGRect)rectInRootView;
+- (instancetype)initWithContent:(NSString *)content selectedRange:(NSRange)selectedRange links:(NSArray<WKTextExtractionLink *> *)links editable:(WKTextExtractionEditable *)editable rectInRootView:(CGRect)rectInRootView children:(NSArray<WKTextExtractionItem *> *)children;
+@property (nonatomic, readonly) NSString *content;
+@property (nonatomic, readonly) NSRange selectedRange;
+@property (nonatomic, readonly) NSArray<WKTextExtractionLink *> *links;
+@property (nonatomic, readonly) WKTextExtractionEditable *editable;
 @end
 
 @interface WKTextExtractionScrollableItem : WKTextExtractionItem
-- (instancetype)initWithContentSize:(CGSize)contentSize rectInRootView:(CGRect)rectInRootView;
-@end
-
-@interface WKTextExtractionEditableItem : WKTextExtractionItem
-- (instancetype)initWithIsFocused:(BOOL)isFocused rectInRootView:(CGRect)rectInRootView;
-@end
-
-@interface WKTextExtractionInteractiveItem : WKTextExtractionItem
-- (instancetype)initWithIsEnabled:(BOOL)isEnabled rectInRootView:(CGRect)rectInRootView;
+- (instancetype)initWithContentSize:(CGSize)contentSize rectInRootView:(CGRect)rectInRootView children:(NSArray<WKTextExtractionItem *> *)children;
+@property (nonatomic, readonly) CGSize contentSize;
 @end
 
 @interface WKTextExtractionImageItem : WKTextExtractionItem
-- (instancetype)initWithName:(NSString *)name altText:(NSString *)altText rectInRootView:(CGRect)rectInRootView;
+- (instancetype)initWithName:(NSString *)name altText:(NSString *)altText rectInRootView:(CGRect)rectInRootView children:(NSArray<WKTextExtractionItem *> *)children;
+@property (nonatomic, readonly) NSString *name;
+@property (nonatomic, readonly) NSString *altText;
 @end

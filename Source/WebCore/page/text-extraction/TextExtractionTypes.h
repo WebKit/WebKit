@@ -25,23 +25,31 @@
 
 #pragma once
 
+#include "CharacterRange.h"
 #include "FloatRect.h"
 #include "FloatSize.h"
 #include <wtf/Forward.h>
+#include <wtf/URL.h>
 
 namespace WebCore {
 namespace TextExtraction {
 
+struct Editable {
+    String label;
+    String placeholder;
+    bool isSecure { false };
+    bool isFocused { false };
+};
+
 struct TextItemData {
+    Vector<std::pair<URL, CharacterRange>> links;
+    std::optional<CharacterRange> selectedRange;
     String content;
+    std::optional<Editable> editable;
 };
 
 struct ScrollableItemData {
     FloatSize contentSize;
-};
-
-struct EditableItemData {
-    bool isFocused { false };
 };
 
 struct ImageItemData {
@@ -49,23 +57,19 @@ struct ImageItemData {
     String altText;
 };
 
-struct InteractiveItemData {
-    bool isEnabled { false };
-};
-
 enum class ContainerType : uint8_t {
     Root,
     ViewportConstrained,
-    Link,
     List,
     ListItem,
     BlockQuote,
     Article,
     Section,
     Nav,
+    Button,
 };
 
-using ItemData = std::variant<ContainerType, TextItemData, ScrollableItemData, EditableItemData, ImageItemData, InteractiveItemData>;
+using ItemData = std::variant<ContainerType, TextItemData, ScrollableItemData, ImageItemData>;
 
 struct Item {
     ItemData data;

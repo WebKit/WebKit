@@ -406,6 +406,9 @@ public:
     virtual uint64_t currentImageAnalysisRequestID() const { return 0; }
     virtual void installFakeMachineReadableCodeResultsForImageAnalysis() { }
 
+    // Text Extraction
+    virtual void requestTextExtraction(JSValueRef) { notImplemented(); }
+
 protected:
     explicit UIScriptController(UIScriptContext&);
     

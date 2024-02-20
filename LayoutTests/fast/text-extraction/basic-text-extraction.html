@@ -1,0 +1,35 @@
+<!-- webkit-test-runner [ textExtractionEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+    white-space: pre-wrap;
+}
+</style>
+<script src="../../resources/ui-helper.js"></script>
+</head>
+<body>
+<div>Hello <a href="https://apple.com">world</a></div>
+<input placeholder="Email" value="foo@bar.net" />
+<ul>
+    <li>Plain text in list item</li>
+    <li><a href="https://example.com">Link in list item</a></li>
+    <li><img src="../images/resources/green-256x256.jpg" alt="Green square" /></li>
+</ul>
+<div contenteditable="true">This is an editable area: <a href="https://webkit.org">WebKit</a> <a href="https://webkit.org/downloads">downloads</a>.</div>
+<script>
+addEventListener("load", async () => {
+    document.querySelector("input").setSelectionRange(4, 7);
+
+    if (!window.testRunner)
+        return;
+
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    document.body.textContent = await UIHelper.requestTextExtraction();
+    testRunner.notifyDone();
+});
+</script>
+</body>
+</html>

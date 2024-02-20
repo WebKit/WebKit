@@ -25,11 +25,12 @@ import Foundation
 
 @available(iOS 17.0, macOS 12.0, *)
 @objc(WKTextExtractionItem) public class WKTextExtractionItem: NSObject {
-    public let rectInRootView: CGRect
-    @objc public var children: [WKTextExtractionItem] = []
+    @objc public let rectInRootView: CGRect
+    @objc public let children: [WKTextExtractionItem]
 
-    @objc public init(with rectInRootView: CGRect) {
+    public init(with rectInRootView: CGRect, children: [WKTextExtractionItem]) {
         self.rectInRootView = rectInRootView
+        self.children = children
     }
 }
 
@@ -37,73 +38,85 @@ import Foundation
 @objc public enum WKTextExtractionContainer: Int {
     case root
     case viewportConstrained
-    case link
     case list
     case listItem
     case blockQuote
     case article
     case section
     case nav
+    case button
 }
 
 @available(iOS 17.0, macOS 12.0, *)
 @objc(WKTextExtractionContainerItem) public class WKTextExtractionContainerItem: WKTextExtractionItem {
-    public let container: WKTextExtractionContainer
+    @objc public let container: WKTextExtractionContainer
 
-    @objc public init(container: WKTextExtractionContainer, rectInRootView: CGRect) {
+    @objc public init(container: WKTextExtractionContainer, rectInRootView: CGRect, children: [WKTextExtractionItem]) {
         self.container = container
-        super.init(with: rectInRootView)
+        super.init(with: rectInRootView, children: children)
+    }
+}
+
+@available(iOS 17.0, macOS 12.0, *)
+@objc(WKTextExtractionEditable) public class WKTextExtractionEditable: NSObject {
+    @objc public let label: String
+    @objc public let placeholder: String
+    @objc public let isSecure: Bool
+    @objc public let isFocused: Bool
+
+    @objc public init(label: String, placeholder: String, isSecure: Bool, isFocused: Bool) {
+        self.label = label
+        self.placeholder = placeholder
+        self.isSecure = isSecure
+        self.isFocused = isFocused
+    }
+}
+
+@available(iOS 17.0, macOS 12.0, *)
+@objc(WKTextExtractionLink) public class WKTextExtractionLink: NSObject {
+    @objc public let url: NSURL
+    @objc public let range: NSRange
+
+    @objc(initWithURL:range:) public init(url: NSURL, range: NSRange) {
+        self.url = url
+        self.range = range
     }
 }
 
 @available(iOS 17.0, macOS 12.0, *)
 @objc(WKTextExtractionTextItem) public class WKTextExtractionTextItem: WKTextExtractionItem {
-    public let content: String
+    @objc public let content: String
+    @objc public let selectedRange: NSRange
+    @objc public let links: [WKTextExtractionLink]
+    @objc public let editable: WKTextExtractionEditable?
 
-    @objc public init(content: String, rectInRootView: CGRect) {
+    @objc public init(content: String, selectedRange: NSRange, links: [WKTextExtractionLink], editable: WKTextExtractionEditable?, rectInRootView: CGRect, children: [WKTextExtractionItem]) {
         self.content = content
-        super.init(with: rectInRootView)
+        self.selectedRange = selectedRange
+        self.links = links
+        self.editable = editable
+        super.init(with: rectInRootView, children: children)
     }
 }
 
 @available(iOS 17.0, macOS 12.0, *)
 @objc(WKTextExtractionScrollableItem) public class WKTextExtractionScrollableItem: WKTextExtractionItem {
-    public let contentSize: CGSize
+    @objc public let contentSize: CGSize
 
-    @objc public init(contentSize: CGSize, rectInRootView: CGRect) {
+    @objc public init(contentSize: CGSize, rectInRootView: CGRect, children: [WKTextExtractionItem]) {
         self.contentSize = contentSize
-        super.init(with: rectInRootView)
-    }
-}
-
-@available(iOS 17.0, macOS 12.0, *)
-@objc(WKTextExtractionEditableItem) public class WKTextExtractionEditableItem: WKTextExtractionItem {
-    public let isFocused: Bool
-
-    @objc public init(isFocused: Bool = false, rectInRootView: CGRect) {
-        self.isFocused = isFocused
-        super.init(with: rectInRootView)
-    }
-}
-
-@available(iOS 17.0, macOS 12.0, *)
-@objc(WKTextExtractionInteractiveItem) public class WKTextExtractionInteractiveItem: WKTextExtractionItem {
-    public let isEnabled: Bool
-
-    @objc public init(isEnabled: Bool = false, rectInRootView: CGRect) {
-        self.isEnabled = isEnabled
-        super.init(with: rectInRootView)
+        super.init(with: rectInRootView, children: children)
     }
 }
 
 @available(iOS 17.0, macOS 12.0, *)
 @objc(WKTextExtractionImageItem) public class WKTextExtractionImageItem: WKTextExtractionItem {
-    public let name: String
-    public let altText: String
+    @objc public let name: String
+    @objc public let altText: String
 
-    @objc public init(name: String, altText: String, rectInRootView: CGRect) {
+    @objc public init(name: String, altText: String, rectInRootView: CGRect, children: [WKTextExtractionItem]) {
         self.name = name
         self.altText = altText
-        super.init(with: rectInRootView)
+        super.init(with: rectInRootView, children: children)
     }
 }

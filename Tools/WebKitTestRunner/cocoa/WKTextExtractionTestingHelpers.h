@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,16 +25,16 @@
 
 #pragma once
 
-#import <wtf/SoftLinking.h>
+#import <WebKit/WebKit.h>
 
-SOFT_LINK_LIBRARY_FOR_HEADER(WebKit, WebKitSwift)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKGroupSessionObserver)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKSLinearMediaPlayer)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKSLinearMediaTimeRange)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKSPreviewWindowController)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKTextExtractionContainerItem)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKTextExtractionEditable)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKTextExtractionLink)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKTextExtractionTextItem)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKTextExtractionScrollableItem)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKTextExtractionImageItem)
+@class WKTextExtractionItem;
+
+@interface WKWebView (TextExtractionTesting)
+- (void)_requestTextExtraction:(CGRect)bounds completionHandler:(void(^)(WKTextExtractionItem *))completionHandler;
+@end
+
+namespace WTR {
+
+NSString *recursiveDescription(WKTextExtractionItem *);
+
+}

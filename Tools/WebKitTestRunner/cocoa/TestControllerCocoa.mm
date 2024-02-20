@@ -41,6 +41,7 @@
 #import <WebKit/WKContextConfigurationRef.h>
 #import <WebKit/WKContextPrivate.h>
 #import <WebKit/WKImageCG.h>
+#import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKPreferencesRefPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKStringCF.h>
@@ -454,7 +455,10 @@ void TestController::cocoaResetStateToConsistentValues(const TestOptions& option
         [platformView _setGrammarCheckingEnabledForTesting:YES];
         [platformView resetInteractionCallbacks];
         [platformView _resetNavigationGestureStateForTesting];
-        [platformView.configuration.preferences setTextInteractionEnabled:options.textInteractionEnabled()];
+
+        auto configuration = platformView.configuration;
+        configuration.preferences.textInteractionEnabled = options.textInteractionEnabled();
+        configuration.preferences._textExtractionEnabled = options.textExtractionEnabled();
     }
 
     [LayoutTestSpellChecker uninstallAndReset];
