@@ -2019,3 +2019,5 @@ webkit.org/b/269581 http/tests/site-isolation/mouse-events/context-menu-event-tw
 # webkit.org/b/269798 REGRESSION (274409@main): [ macOS wk2 ] 2 tests in http/tests/navigation/ping-attribute are flaky
 [ Monterey+ ] http/tests/navigation/ping-attribute/area-cross-origin-from-https.html [ Pass Failure ]
 [ Monterey+ ] http/tests/navigation/ping-attribute/area-cross-origin-from-https-UpgradeMixedContent.html [ Pass Failure ]
+
+webkit.org/b/269814 [ Monterey+ ] media/media-source/media-source-seek-complete.html [ Pass Timeout ]
