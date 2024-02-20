@@ -438,11 +438,6 @@ end
 # Exception handling
 
 macro ipintException(exception)
-    # move PL, sp
-    # loadi Wasm::IPIntCallee::m_localSizeToAlloc[ws0], PM
-    # mulq SlotSize, PM
-    # addq PM, sp
-    # restoreCallerPCAndCFR()
     storei constexpr Wasm::ExceptionType::%exception%, ArgumentCountIncludingThis + PayloadOffset[cfr]
     jmp _wasm_throw_from_slow_path_trampoline
 end
@@ -624,6 +619,20 @@ elsif X86_64
 end
 end
 
+macro checkStackOverflow(callee, scratch)
+    loadi Wasm::IPIntCallee::m_maxFrameSizeInV128[callee], scratch
+    lshiftp 4, scratch
+    subp cfr, scratch, scratch
+
+    bpa scratch, cfr, .stackOverflow
+    bpbeq Wasm::Instance::m_softStackLimit[wasmInstance], scratch, .stackHeightOK
+
+.stackOverflow:
+    ipintException(StackOverflow)
+
+.stackHeightOK:
+end
+
 global _ipint_entry
 _ipint_entry:
 if WEBASSEMBLY and (ARM64 or ARM64E or X86_64)
@@ -631,6 +640,8 @@ if WEBASSEMBLY and (ARM64 or ARM64E or X86_64)
     saveIPIntRegisters()
     storep wasmInstance, CodeBlock[cfr]
     getIPIntCallee()
+
+    checkStackOverflow(ws0, csr3)
 
     # Allocate space for locals and rethrow values
     if ARM64 or ARM64E
@@ -714,6 +725,8 @@ if WEBASSEMBLY and (ARM64 or ARM64E or X86_64)
     saveIPIntRegisters()
     storep wasmInstance, CodeBlock[cfr]
     getIPIntCallee()
+
+    checkStackOverflow(ws0, csr3)
 
     # Allocate space for locals and rethrow values
     if ARM64 or ARM64E

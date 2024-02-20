@@ -201,6 +201,7 @@ IPIntCallee::IPIntCallee(FunctionIPIntMetadataGenerator& generator, size_t index
     , m_numRethrowSlotsToAlloc(generator.m_numAlignedRethrowSlots)
     , m_numLocals(generator.m_numLocals)
     , m_numArgumentsOnStack(generator.m_numArgumentsOnStack)
+    , m_maxFrameSizeInV128(generator.m_maxFrameSizeInV128)
     , m_tierUpCounter(WTFMove(generator.m_tierUpCounter))
 {
     if (size_t count = generator.m_exceptionHandlers.size()) {

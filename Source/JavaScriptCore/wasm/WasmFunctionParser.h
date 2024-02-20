@@ -160,7 +160,12 @@ public:
 
     uint32_t getStackHeightInValues() const
     {
-        uint32_t result = m_expressionStack.size();
+        return m_expressionStack.size() + getControlEntryStackHeightInValues();
+    }
+
+    uint32_t getControlEntryStackHeightInValues() const
+    {
+        uint32_t result = 0;
         for (const ControlEntry& entry : m_controlStack)
             result += entry.enclosedExpressionStack.size();
         return result;

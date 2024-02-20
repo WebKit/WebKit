@@ -109,10 +109,11 @@ struct IPIntControlType {
     {
     }
 
-    IPIntControlType(BlockSignature signature, BlockType blockType, CatchKind catchKind = CatchKind::Catch)
+    IPIntControlType(BlockSignature signature, uint32_t stackSize, BlockType blockType, CatchKind catchKind = CatchKind::Catch)
         : m_signature(signature)
         , m_blockType(blockType)
         , m_catchKind(catchKind)
+        , m_stackSize(stackSize)
     { }
 
     static bool isIf(const IPIntControlType& control) { return control.blockType() == BlockType::If; }
@@ -134,6 +135,7 @@ struct IPIntControlType {
     BlockType blockType() const { return m_blockType; }
     CatchKind catchKind() const { return m_catchKind; }
     BlockSignature signature() const { return m_signature; }
+    unsigned stackSize() const { return m_stackSize; }
 
     Type branchTargetType(unsigned i) const
     {
@@ -160,6 +162,7 @@ private:
     int32_t m_pc { -1 };
     int32_t m_mc { -1 };
     int32_t m_pcEnd { -1 };
+    uint32_t m_stackSize { 0 };
     uint32_t m_tryDepth { 0 };
 };
 
@@ -491,13 +494,26 @@ public:
     }
     void didPopValueFromStack(ExpressionType, String) { }
     void willParseOpcode() { }
-    void didParseOpcode() { }
+    void didParseOpcode()
+    {
+        if (!m_parser->unreachableBlocks())
+            ASSERT(m_parser->getStackHeightInValues() == m_stackSize.value());
+    }
     void dump(const ControlStack&, const Stack*);
 
     void convertTryToCatch(ControlType& tryBlock, CatchKind);
 
+    ALWAYS_INLINE void changeStackSize(int delta)
+    {
+        m_stackSize += delta;
+        if (delta > 0)
+            m_maxStackSize = std::max(m_maxStackSize, m_stackSize.value());
+    }
+
     static constexpr bool tierSupportsSIMD = true;
 private:
+    Checked<uint32_t> m_stackSize { 0 };
+    uint32_t m_maxStackSize { 0 };
     Checked<uint32_t> m_tryDepth { 0 };
     uint32_t m_maxTryDepth { 0 };
     FunctionParser<IPIntGenerator>* m_parser { nullptr };
@@ -511,7 +527,8 @@ private:
     bool m_usesSIMD { false };
 };
 
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addDrop(ExpressionType) { return { }; }
+// use if (true) to avoid warnings.
+#define IPINT_UNIMPLEMENTED { if (true) { CRASH(); } return { }; }
 
 IPIntGenerator::IPIntGenerator(ModuleInformation& info, unsigned functionIndex, const TypeDefinition&, const uint8_t* bytecode, const uint32_t bytecode_len)
     : m_info(info)
@@ -520,30 +537,36 @@ IPIntGenerator::IPIntGenerator(ModuleInformation& info, unsigned functionIndex, 
     UNUSED_PARAM(info);
 }
 
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addDrop(ExpressionType)
+{
+    changeStackSize(-1);
+    return { };
+}
+
 Value IPIntGenerator::addConstant(Type type, uint64_t value)
 {
+    changeStackSize(1);
     m_metadata->addLEB128ConstantAndLengthForType(type, value, getCurrentInstructionLength());
     return { };
 }
 
 // SIMD
 
-// Implementation status: UNIMPLEMENTED
-
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addSIMDLoad(ExpressionType, uint32_t, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addSIMDStore(ExpressionType, ExpressionType, uint32_t) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addSIMDSplat(SIMDLane, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addSIMDShuffle(v128_t, ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addSIMDShift(SIMDLaneOperation, SIMDInfo, ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addSIMDExtmul(SIMDLaneOperation, SIMDInfo, ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addSIMDLoadSplat(SIMDLaneOperation, ExpressionType, uint32_t, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addSIMDLoadLane(SIMDLaneOperation, ExpressionType, ExpressionType, uint32_t, uint8_t, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addSIMDStoreLane(SIMDLaneOperation, ExpressionType, ExpressionType, uint32_t, uint8_t) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addSIMDLoadExtend(SIMDLaneOperation, ExpressionType, uint32_t, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addSIMDLoadPad(SIMDLaneOperation, ExpressionType, uint32_t, ExpressionType&) { return { }; }
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addSIMDLoad(ExpressionType, uint32_t, ExpressionType&) IPINT_UNIMPLEMENTED
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addSIMDStore(ExpressionType, ExpressionType, uint32_t) IPINT_UNIMPLEMENTED
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addSIMDSplat(SIMDLane, ExpressionType, ExpressionType&) IPINT_UNIMPLEMENTED
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addSIMDShuffle(v128_t, ExpressionType, ExpressionType, ExpressionType&) IPINT_UNIMPLEMENTED
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addSIMDShift(SIMDLaneOperation, SIMDInfo, ExpressionType, ExpressionType, ExpressionType&) IPINT_UNIMPLEMENTED
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addSIMDExtmul(SIMDLaneOperation, SIMDInfo, ExpressionType, ExpressionType, ExpressionType&) IPINT_UNIMPLEMENTED
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addSIMDLoadSplat(SIMDLaneOperation, ExpressionType, uint32_t, ExpressionType&) IPINT_UNIMPLEMENTED
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addSIMDLoadLane(SIMDLaneOperation, ExpressionType, ExpressionType, uint32_t, uint8_t, ExpressionType&) IPINT_UNIMPLEMENTED
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addSIMDStoreLane(SIMDLaneOperation, ExpressionType, ExpressionType, uint32_t, uint8_t) IPINT_UNIMPLEMENTED
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addSIMDLoadExtend(SIMDLaneOperation, ExpressionType, uint32_t, ExpressionType&) IPINT_UNIMPLEMENTED
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addSIMDLoadPad(SIMDLaneOperation, ExpressionType, uint32_t, ExpressionType&) IPINT_UNIMPLEMENTED
 
 IPIntGenerator::ExpressionType IPIntGenerator::addConstant(v128_t value)
 {
+    changeStackSize(1);
     m_metadata->addLEB128V128Constant(value, getCurrentInstructionLength());
     return { };
 }
@@ -552,45 +575,60 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addExtractLane(SIMDInfo, uint8_
 {
     return { };
 }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addReplaceLane(SIMDInfo, uint8_t, ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addSIMDI_V(SIMDLaneOperation, SIMDInfo, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addSIMDV_V(SIMDLaneOperation, SIMDInfo, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addSIMDBitwiseSelect(ExpressionType, ExpressionType, ExpressionType, ExpressionType&) { return { }; }
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addReplaceLane(SIMDInfo, uint8_t, ExpressionType, ExpressionType, ExpressionType&) IPINT_UNIMPLEMENTED
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addSIMDI_V(SIMDLaneOperation, SIMDInfo, ExpressionType, ExpressionType&) IPINT_UNIMPLEMENTED
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addSIMDV_V(SIMDLaneOperation, SIMDInfo, ExpressionType, ExpressionType&) IPINT_UNIMPLEMENTED
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addSIMDBitwiseSelect(ExpressionType, ExpressionType, ExpressionType, ExpressionType&) IPINT_UNIMPLEMENTED
 #if ENABLE(B3_JIT)
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addSIMDRelOp(SIMDLaneOperation, SIMDInfo, ExpressionType, ExpressionType, B3::Air::Arg, ExpressionType&) { return { }; }
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addSIMDRelOp(SIMDLaneOperation, SIMDInfo, ExpressionType, ExpressionType, B3::Air::Arg, ExpressionType&) IPINT_UNIMPLEMENTED
 #endif
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addSIMDV_VV(SIMDLaneOperation, SIMDInfo, ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addSIMDRelaxedFMA(SIMDLaneOperation, SIMDInfo, ExpressionType, ExpressionType, ExpressionType, ExpressionType&) { return { }; }
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addSIMDV_VV(SIMDLaneOperation, SIMDInfo, ExpressionType, ExpressionType, ExpressionType&) IPINT_UNIMPLEMENTED
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addSIMDRelaxedFMA(SIMDLaneOperation, SIMDInfo, ExpressionType, ExpressionType, ExpressionType, ExpressionType&) IPINT_UNIMPLEMENTED
 
 // References
 
-// Implementation status: UNIMPLEMENTED
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addRefIsNull(ExpressionType, ExpressionType&)
+{
+    return { };
+}
 
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addRefIsNull(ExpressionType, ExpressionType&) { return { }; }
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addRefFunc(uint32_t index, ExpressionType&)
 {
+    changeStackSize(1);
     m_metadata->addLEB128ConstantInt32AndLength(index, getCurrentInstructionLength());
     return { };
 }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addRefAsNonNull(ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addRefEq(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addRefAsNonNull(ExpressionType, ExpressionType&)
+{
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addRefEq(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
 
 // Tables
-
-// Implementation status: UNIMPLEMENTED
 
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addTableGet(unsigned index, ExpressionType, ExpressionType&)
 {
     m_metadata->addLEB128ConstantInt32AndLength(index, getCurrentInstructionLength());
     return { };
 }
+
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addTableSet(unsigned index, ExpressionType, ExpressionType)
 {
+    changeStackSize(-2);
     m_metadata->addLEB128ConstantInt32AndLength(index, getCurrentInstructionLength());
     return { };
 }
+
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addTableInit(unsigned elementIndex, unsigned tableIndex, ExpressionType, ExpressionType, ExpressionType)
 {
+    changeStackSize(-3);
     auto size = m_metadata->m_metadata.size();
     m_metadata->addBlankSpace(9);
     auto tableInitData = m_metadata->m_metadata.data() + size;
@@ -599,28 +637,37 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addTableInit(unsigned elementIn
     WRITE_TO_METADATA(tableInitData + 8, getCurrentInstructionLength(), uint8_t);
     return { };
 }
+
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addElemDrop(unsigned elementIndex)
 {
     m_metadata->addLEB128ConstantInt32AndLength(elementIndex, getCurrentInstructionLength());
     return { };
 }
+
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addTableSize(unsigned tableIndex, ExpressionType&)
 {
+    changeStackSize(1);
     m_metadata->addLEB128ConstantInt32AndLength(tableIndex, getCurrentInstructionLength());
     return { };
 }
+
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addTableGrow(unsigned tableIndex, ExpressionType, ExpressionType, ExpressionType&)
 {
+    changeStackSize(-1);
     m_metadata->addLEB128ConstantInt32AndLength(tableIndex, getCurrentInstructionLength());
     return { };
 }
+
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addTableFill(unsigned tableIndex, ExpressionType, ExpressionType, ExpressionType)
 {
+    changeStackSize(-3);
     m_metadata->addLEB128ConstantInt32AndLength(tableIndex, getCurrentInstructionLength());
     return { };
 }
+
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addTableCopy(unsigned dstTableIndex, unsigned srcTableIndex, ExpressionType, ExpressionType, ExpressionType)
 {
+    changeStackSize(-3);
     auto size = m_metadata->m_metadata.size();
     m_metadata->addBlankSpace(9);
     auto tableInitData = m_metadata->m_metadata.data() + size;
@@ -631,8 +678,6 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addTableCopy(unsigned dstTableI
 }
 
 // Locals and Globals
-
-// Implementation status: UNIMPLEMENTED
 
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addArguments(const TypeDefinition &signature)
 {
@@ -680,17 +725,21 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addLocal(Type, uint32_t count)
 
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::getLocal(uint32_t index, ExpressionType&)
 {
+    changeStackSize(1);
     m_metadata->addCondensedLocalIndexAndLength(index, getCurrentInstructionLength());
     return { };
 }
+
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::setLocal(uint32_t index, ExpressionType)
 {
+    changeStackSize(-1);
     m_metadata->addCondensedLocalIndexAndLength(index, getCurrentInstructionLength());
     return { };
 }
 
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::getGlobal(uint32_t index, ExpressionType&)
 {
+    changeStackSize(1);
     auto size = m_metadata->m_metadata.size();
     m_metadata->addBlankSpace(8);
     WRITE_TO_METADATA(m_metadata->m_metadata.data() + size, index, uint32_t);
@@ -706,8 +755,10 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::getGlobal(uint32_t index, Expre
     }
     return { };
 }
+
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::setGlobal(uint32_t index, ExpressionType)
 {
+    changeStackSize(-1);
     auto size = m_metadata->m_metadata.size();
     m_metadata->addBlankSpace(8);
     WRITE_TO_METADATA(m_metadata->m_metadata.data() + size, index, uint32_t);
@@ -730,40 +781,53 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::setGlobal(uint32_t index, Expre
 
 // Loads and Stores
 
-// Implementation status: DONE.
-
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::load(LoadOpType, ExpressionType, ExpressionType&, uint32_t offset)
 {
     m_metadata->addLEB128ConstantInt32AndLength(offset, getCurrentInstructionLength());
     return { };
 }
+
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::store(StoreOpType, ExpressionType, ExpressionType, uint32_t offset)
 {
+    changeStackSize(-2);
     m_metadata->addLEB128ConstantInt32AndLength(offset, getCurrentInstructionLength());
     return { };
 }
 
 // Memories
 
-// Implementation status: DONE.
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addGrowMemory(ExpressionType, ExpressionType&)
+{
+    return { };
+}
 
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addGrowMemory(ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCurrentMemory(ExpressionType&) { return { }; }
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCurrentMemory(ExpressionType&)
+{
+    changeStackSize(1);
+    return { };
+}
+
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addMemoryFill(ExpressionType, ExpressionType, ExpressionType)
 {
+    changeStackSize(-3);
     m_metadata->addLength(getCurrentInstructionLength());
     return { };
 }
+
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addMemoryCopy(ExpressionType, ExpressionType, ExpressionType)
 {
+    changeStackSize(-3);
     m_metadata->addLength(getCurrentInstructionLength());
     return { };
 }
+
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addMemoryInit(unsigned dataIndex, ExpressionType, ExpressionType, ExpressionType)
 {
+    changeStackSize(-3);
     m_metadata->addLEB128ConstantInt32AndLength(dataIndex, getCurrentInstructionLength());
     return { };
 }
+
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addDataDrop(unsigned dataIndex)
 {
     m_metadata->addLEB128ConstantInt32AndLength(dataIndex, getCurrentInstructionLength());
@@ -771,8 +835,6 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addDataDrop(unsigned dataIndex)
 }
 
 // Atomics
-
-// Implementation status: DONE.
 
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::atomicLoad(ExtAtomicOpType, Type, ExpressionType, ExpressionType&, uint32_t offset)
 {
@@ -782,30 +844,35 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::atomicLoad(ExtAtomicOpType, Typ
 
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::atomicStore(ExtAtomicOpType, Type, ExpressionType, ExpressionType, uint32_t offset)
 {
+    changeStackSize(-2);
     m_metadata->addLEB128ConstantInt32AndLength(offset, getCurrentInstructionLength());
     return { };
 }
 
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::atomicBinaryRMW(ExtAtomicOpType, Type, ExpressionType, ExpressionType, ExpressionType&, uint32_t offset)
 {
+    changeStackSize(-1);
     m_metadata->addLEB128ConstantInt32AndLength(offset, getCurrentInstructionLength());
     return { };
 }
 
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::atomicCompareExchange(ExtAtomicOpType, Type, ExpressionType, ExpressionType, ExpressionType, ExpressionType&, uint32_t offset)
 {
+    changeStackSize(-2);
     m_metadata->addLEB128ConstantInt32AndLength(offset, getCurrentInstructionLength());
     return { };
 }
 
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::atomicWait(ExtAtomicOpType, ExpressionType, ExpressionType, ExpressionType, ExpressionType&, uint32_t offset)
 {
+    changeStackSize(-2);
     m_metadata->addLEB128ConstantInt32AndLength(offset, getCurrentInstructionLength());
     return { };
 }
 
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::atomicNotify(ExtAtomicOpType, ExpressionType, ExpressionType, ExpressionType&, uint32_t offset)
 {
+    changeStackSize(-1);
     m_metadata->addLEB128ConstantInt32AndLength(offset, getCurrentInstructionLength());
     return { };
 }
@@ -818,28 +885,28 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::atomicFence(ExtAtomicOpType, ui
 
 // GC
 
-// Implementation status: UNIMPLEMENTED
-
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addRefI31(ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI31GetS(ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI31GetU(ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addArrayNew(uint32_t, ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addArrayNewData(uint32_t, uint32_t, ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addArrayNewElem(uint32_t, uint32_t, ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addArrayNewFixed(uint32_t, Vector<ExpressionType>&, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addArrayNewDefault(uint32_t, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addArrayGet(ExtGCOpType, uint32_t, ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addArraySet(uint32_t, ExpressionType, ExpressionType, ExpressionType) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addArrayLen(ExpressionType, ExpressionType&) { return { }; }
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addRefI31(ExpressionType, ExpressionType&) IPINT_UNIMPLEMENTED
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI31GetS(ExpressionType, ExpressionType&) IPINT_UNIMPLEMENTED
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI31GetU(ExpressionType, ExpressionType&) IPINT_UNIMPLEMENTED
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addArrayNew(uint32_t, ExpressionType, ExpressionType, ExpressionType&) IPINT_UNIMPLEMENTED
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addArrayNewData(uint32_t, uint32_t, ExpressionType, ExpressionType, ExpressionType&) IPINT_UNIMPLEMENTED
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addArrayNewElem(uint32_t, uint32_t, ExpressionType, ExpressionType, ExpressionType&) IPINT_UNIMPLEMENTED
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addArrayNewFixed(uint32_t, Vector<ExpressionType>&, ExpressionType&) IPINT_UNIMPLEMENTED
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addArrayNewDefault(uint32_t, ExpressionType, ExpressionType&) IPINT_UNIMPLEMENTED
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addArrayGet(ExtGCOpType, uint32_t, ExpressionType, ExpressionType, ExpressionType&) IPINT_UNIMPLEMENTED
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addArraySet(uint32_t, ExpressionType, ExpressionType, ExpressionType) IPINT_UNIMPLEMENTED
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addArrayLen(ExpressionType, ExpressionType&) IPINT_UNIMPLEMENTED
 
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addArrayFill(uint32_t typeIndex, ExpressionType, ExpressionType, ExpressionType, ExpressionType)
 {
+    changeStackSize(-4);
     m_metadata->addLEB128ConstantInt32AndLength(typeIndex, getCurrentInstructionLength());
     return { };
 }
 
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addArrayCopy(uint32_t dstArrayIndex, ExpressionType, ExpressionType, uint32_t srcArrayIndex, ExpressionType, ExpressionType, ExpressionType)
 {
+    changeStackSize(-5);
     auto size = m_metadata->m_metadata.size();
     m_metadata->addBlankSpace(9);
     auto arrayCopyData = m_metadata->m_metadata.data() + size;
@@ -851,6 +918,7 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addArrayCopy(uint32_t dstArrayI
 
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addArrayInitElem(uint32_t dstArrayIndex, ExpressionType, ExpressionType, uint32_t srcElementIndex, ExpressionType, ExpressionType)
 {
+    changeStackSize(-4);
     auto size = m_metadata->m_metadata.size();
     m_metadata->addBlankSpace(9);
     auto arrayInitElemData = m_metadata->m_metadata.data() + size;
@@ -862,6 +930,7 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addArrayInitElem(uint32_t dstAr
 
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addArrayInitData(uint32_t dstArrayIndex, ExpressionType, ExpressionType, uint32_t srcDataIndex, ExpressionType, ExpressionType)
 {
+    changeStackSize(-4);
     auto size = m_metadata->m_metadata.size();
     m_metadata->addBlankSpace(9);
     auto arrayInitDataData = m_metadata->m_metadata.data() + size;
@@ -871,169 +940,671 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addArrayInitData(uint32_t dstAr
     return { };
 }
 
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addStructNew(uint32_t, Vector<ExpressionType>&, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addStructNewDefault(uint32_t, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addStructGet(ExtGCOpType, ExpressionType, const StructType&, uint32_t, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addStructSet(ExpressionType, const StructType&, uint32_t, ExpressionType) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addRefTest(ExpressionType, bool, int32_t, bool, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addRefCast(ExpressionType, bool, int32_t, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addAnyConvertExtern(ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addExternConvertAny(ExpressionType, ExpressionType&) { return { }; }
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addStructNew(uint32_t, Vector<ExpressionType>&, ExpressionType&) IPINT_UNIMPLEMENTED
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addStructNewDefault(uint32_t, ExpressionType&) IPINT_UNIMPLEMENTED
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addStructGet(ExtGCOpType, ExpressionType, const StructType&, uint32_t, ExpressionType&) IPINT_UNIMPLEMENTED
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addStructSet(ExpressionType, const StructType&, uint32_t, ExpressionType) IPINT_UNIMPLEMENTED
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addRefTest(ExpressionType, bool, int32_t, bool, ExpressionType&) IPINT_UNIMPLEMENTED
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addRefCast(ExpressionType, bool, int32_t, ExpressionType&) IPINT_UNIMPLEMENTED
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addAnyConvertExtern(ExpressionType, ExpressionType&) IPINT_UNIMPLEMENTED
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addExternConvertAny(ExpressionType, ExpressionType&) IPINT_UNIMPLEMENTED
 
 // Integer Arithmetic
 
-// Implementation status: No need for metadata, DONE.
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32Add(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
 
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32Add(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64Add(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32Sub(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64Sub(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32Mul(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64Mul(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32DivS(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32DivU(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64DivS(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64DivU(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32RemS(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32RemU(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64RemS(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64RemU(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64Add(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32Sub(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64Sub(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32Mul(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64Mul(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32DivS(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32DivU(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64DivS(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64DivU(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32RemS(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32RemU(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64RemS(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64RemU(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
 
 // Bitwise Operations
 
-// Implementation status: No need for metadata, DONE.
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32And(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
 
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32And(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64And(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32Xor(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64Xor(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32Or(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64Or(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32Shl(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32ShrU(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32ShrS(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64Shl(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64ShrU(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64ShrS(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32Rotl(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64Rotl(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32Rotr(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64Rotr(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32Popcnt(ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64Popcnt(ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32Clz(ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64Clz(ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32Ctz(ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64Ctz(ExpressionType, ExpressionType&) { return { }; }
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64And(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32Xor(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64Xor(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32Or(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64Or(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32Shl(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32ShrU(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32ShrS(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64Shl(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64ShrU(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64ShrS(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32Rotl(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64Rotl(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32Rotr(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64Rotr(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32Popcnt(ExpressionType, ExpressionType&)
+{
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64Popcnt(ExpressionType, ExpressionType&)
+{
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32Clz(ExpressionType, ExpressionType&)
+{
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64Clz(ExpressionType, ExpressionType&)
+{
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32Ctz(ExpressionType, ExpressionType&)
+{
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64Ctz(ExpressionType, ExpressionType&)
+{
+    return { };
+}
 
 // Floating-Point Arithmetic
 
-// Implementation status: No need for metadata, DONE.
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32Add(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
 
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32Add(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF64Add(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32Sub(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF64Sub(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32Mul(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF64Mul(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32Div(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF64Div(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF64Add(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32Sub(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF64Sub(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32Mul(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF64Mul(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32Div(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF64Div(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
 
 // Other Floating-Point Instructions
 
-// Implementation status: No need for metadata, DONE.
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32Min(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
 
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32Min(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32Max(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF64Min(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF64Max(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32Nearest(ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF64Nearest(ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32Floor(ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF64Floor(ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32Ceil(ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF64Ceil(ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32Copysign(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF64Copysign(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32Sqrt(ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF64Sqrt(ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32Neg(ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF64Neg(ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32Abs(ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF64Abs(ExpressionType, ExpressionType&) { return { }; }
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32Max(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF64Min(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF64Max(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32Nearest(ExpressionType, ExpressionType&)
+{
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF64Nearest(ExpressionType, ExpressionType&)
+{
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32Floor(ExpressionType, ExpressionType&)
+{
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF64Floor(ExpressionType, ExpressionType&)
+{
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32Ceil(ExpressionType, ExpressionType&)
+{
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF64Ceil(ExpressionType, ExpressionType&)
+{
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32Copysign(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF64Copysign(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32Sqrt(ExpressionType, ExpressionType&)
+{
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF64Sqrt(ExpressionType, ExpressionType&)
+{
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32Neg(ExpressionType, ExpressionType&)
+{
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF64Neg(ExpressionType, ExpressionType&)
+{
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32Abs(ExpressionType, ExpressionType&)
+{
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF64Abs(ExpressionType, ExpressionType&)
+{
+    return { };
+}
 
 // Integer Comparisons
 
-// Implementation status: No need for metadata, DONE.
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32Eq(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
 
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32Eq(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32Ne(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32LtS(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32LtU(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32LeS(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32LeU(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32GtS(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32GtU(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32GeU(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32GeS(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32Eqz(ExpressionType, ExpressionType&) { return { }; }
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32Ne(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
 
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64Eq(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64Ne(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64GtS(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64GtU(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64GeS(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64GeU(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64LtS(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64LtU(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64LeS(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64LeU(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64Eqz(ExpressionType, ExpressionType&) { return { }; }
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32LtS(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32LtU(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32LeS(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32LeU(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32GtS(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32GtU(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32GeU(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32GeS(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32Eqz(ExpressionType, ExpressionType&)
+{
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64Eq(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64Ne(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64GtS(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64GtU(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64GeS(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64GeU(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64LtS(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64LtU(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64LeS(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64LeU(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64Eqz(ExpressionType, ExpressionType&)
+{
+    return { };
+}
 
 // Floating-Point Comparisons
 
-// Implementation status: No need for metadata, DONE.
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32Eq(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
 
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32Eq(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32Ne(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32Lt(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32Le(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32Gt(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32Ge(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32Ne(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
 
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF64Eq(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF64Ne(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF64Lt(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF64Le(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF64Gt(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF64Ge(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32Lt(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32Le(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32Gt(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32Ge(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF64Eq(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF64Ne(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF64Lt(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF64Le(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF64Gt(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF64Ge(ExpressionType, ExpressionType, ExpressionType&)
+{
+    changeStackSize(-1);
+    return { };
+}
 
 // Integer Extension
 
-// Implementation status: UNIMPLEMENTED
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64ExtendSI32(ExpressionType, ExpressionType&)
+{
+    return { };
+}
 
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64ExtendSI32(ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64ExtendUI32(ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32Extend8S(ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32Extend16S(ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64Extend8S(ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64Extend16S(ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64Extend32S(ExpressionType, ExpressionType&) { return { }; }
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64ExtendUI32(ExpressionType, ExpressionType&)
+{
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32Extend8S(ExpressionType, ExpressionType&)
+{
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32Extend16S(ExpressionType, ExpressionType&)
+{
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64Extend8S(ExpressionType, ExpressionType&)
+{
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64Extend16S(ExpressionType, ExpressionType&)
+{
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64Extend32S(ExpressionType, ExpressionType&)
+{
+    return { };
+}
 
 // Truncation
 
-// Implementation status: UNIMPLEMENTED
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF64Trunc(ExpressionType, ExpressionType&)
+{
+    return { };
+}
 
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF64Trunc(ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32Trunc(ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32TruncSF64(ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32TruncSF32(ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32TruncUF64(ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32TruncUF32(ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64TruncSF64(ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64TruncSF32(ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64TruncUF64(ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64TruncUF32(ExpressionType, ExpressionType&) { return { }; }
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32Trunc(ExpressionType, ExpressionType&)
+{
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32TruncSF64(ExpressionType, ExpressionType&)
+{
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32TruncSF32(ExpressionType, ExpressionType&)
+{
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32TruncUF64(ExpressionType, ExpressionType&)
+{
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32TruncUF32(ExpressionType, ExpressionType&)
+{
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64TruncSF64(ExpressionType, ExpressionType&)
+{
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64TruncSF32(ExpressionType, ExpressionType&)
+{
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64TruncUF64(ExpressionType, ExpressionType&)
+{
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64TruncUF32(ExpressionType, ExpressionType&)
+{
+    return { };
+}
 
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::truncSaturated(Ext1OpType, ExpressionType, ExpressionType&, Type, Type)
 {
@@ -1043,35 +1614,91 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::truncSaturated(Ext1OpType, Expr
 
 // Conversions
 
-// Implementation status: UNIMPLEMENTED
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32WrapI64(ExpressionType, ExpressionType&)
+{
+    return { };
+}
 
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32WrapI64(ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32DemoteF64(ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF64PromoteF32(ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32ReinterpretI32(ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32ReinterpretF32(ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF64ReinterpretI64(ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64ReinterpretF64(ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32ConvertSI32(ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32ConvertUI32(ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32ConvertSI64(ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32ConvertUI64(ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF64ConvertSI32(ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF64ConvertUI32(ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF64ConvertSI64(ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF64ConvertUI64(ExpressionType, ExpressionType&) { return { }; }
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32DemoteF64(ExpressionType, ExpressionType&)
+{
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF64PromoteF32(ExpressionType, ExpressionType&)
+{
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32ReinterpretI32(ExpressionType, ExpressionType&)
+{
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32ReinterpretF32(ExpressionType, ExpressionType&)
+{
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF64ReinterpretI64(ExpressionType, ExpressionType&)
+{
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64ReinterpretF64(ExpressionType, ExpressionType&)
+{
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32ConvertSI32(ExpressionType, ExpressionType&)
+{
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32ConvertUI32(ExpressionType, ExpressionType&)
+{
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32ConvertSI64(ExpressionType, ExpressionType&)
+{
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32ConvertUI64(ExpressionType, ExpressionType&)
+{
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF64ConvertSI32(ExpressionType, ExpressionType&)
+{
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF64ConvertUI32(ExpressionType, ExpressionType&)
+{
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF64ConvertSI64(ExpressionType, ExpressionType&)
+{
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF64ConvertUI64(ExpressionType, ExpressionType&)
+{
+    return { };
+}
 
 // Control Flow Blocks
 
-// Implementation status: UNIMPLEMENTED
-
 IPIntGenerator::ControlType WARN_UNUSED_RETURN IPIntGenerator::addTopLevel(BlockSignature signature)
 {
-    return ControlType(signature, BlockType::TopLevel);
+    return ControlType(signature, 0, BlockType::TopLevel);
 }
 
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addSelect(ExpressionType, ExpressionType, ExpressionType, ExpressionType&)
 {
+    changeStackSize(-2);
     m_metadata->addRawValue(getCurrentInstructionLength());
     return { };
 }
@@ -1093,7 +1720,7 @@ inline void IPIntGenerator::condenseControlFlowInstructions()
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addBlock(BlockSignature signature, Stack& oldStack, ControlType& block, Stack& newStack)
 {
     splitStack(signature, oldStack, newStack);
-    block = ControlType(signature, BlockType::Block);
+    block = ControlType(signature, m_stackSize.value() - newStack.size(), BlockType::Block);
 
     // Allocate space in metadata
     m_metadata->m_repeatedControlFlowInstructionMetadataOffsets.append(m_metadata->m_metadata.size());
@@ -1105,7 +1732,7 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addBlock(BlockSignature signatu
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addLoop(BlockSignature signature, Stack& oldStack, ControlType& block, Stack& newStack, uint32_t loopIndex)
 {
     splitStack(signature, oldStack, newStack);
-    block = ControlType(signature, BlockType::Loop);
+    block = ControlType(signature, m_stackSize.value() - newStack.size(), BlockType::Loop);
     block.m_pendingOffset = -1; // no need to update!
 
     // Allocate space in metadata
@@ -1117,8 +1744,8 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addLoop(BlockSignature signatur
 
     // Loop OSR
 
-    unsigned numOSREntryDataValues = m_parser->getStackHeightInValues();
-    numOSREntryDataValues += newStack.size();
+    ASSERT(m_parser->getStackHeightInValues() + newStack.size() == m_stackSize.value());
+    unsigned numOSREntryDataValues = m_stackSize.value();
 
     // Note the +1: we do this to avoid having 0 as a key in the map, since the current map can't handle 0 as a key
     m_metadata->tierUpCounter().add(m_parser->currentOpcodeStartingOffset() - m_metadata->m_bytecodeOffset + 1, IPIntTierUpCounter::OSREntryData { loopIndex, numOSREntryDataValues, m_tryDepth });
@@ -1129,7 +1756,8 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addLoop(BlockSignature signatur
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addIf(ExpressionType, BlockSignature signature, Stack& oldStack, ControlType& block, Stack& newStack)
 {
     splitStack(signature, oldStack, newStack);
-    block = ControlType(signature, BlockType::If);
+    changeStackSize(-1);
+    block = ControlType(signature, m_stackSize.value() - newStack.size(), BlockType::If);
     block.m_pendingOffset = m_metadata->m_metadata.size();
     // 4B PC of else
     // 4B MC of else
@@ -1151,6 +1779,11 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addElse(ControlType& block, Sta
 
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addElseToUnreachable(ControlType& block)
 {
+    const FunctionSignature& signature = *block.signature();
+    ASSERT(block.stackSize() == m_parser->getControlEntryStackHeightInValues());
+    m_stackSize = block.stackSize();
+    changeStackSize(signature.argumentCount());
+
     // New PC
     // size - 1 for index of last element
     // - bytecodeOffset since we index starting there in IPInt
@@ -1160,13 +1793,13 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addElseToUnreachable(ControlTyp
         // Edge case: if ... end with no else: don't actually add in this metadata or else IPInt tries to read the else
         // New MC
         WRITE_TO_METADATA(m_metadata->m_metadata.data() + block.m_pendingOffset + 4, m_metadata->m_metadata.size(), uint32_t);
-        block = ControlType(block.signature(), BlockType::Block);
+        block = ControlType(block.signature(), block.stackSize(), BlockType::Block);
         block.m_pendingOffset = -1;
         return { };
     }
     // New MC
     WRITE_TO_METADATA(m_metadata->m_metadata.data() + block.m_pendingOffset + 4, m_metadata->m_metadata.size() + 8, uint32_t);
-    block = ControlType(block.signature(), BlockType::Block);
+    block = ControlType(block.signature(), block.stackSize(), BlockType::Block);
     block.m_pendingOffset = m_metadata->m_metadata.size();
     m_metadata->addBlankSpace(8);
     return { };
@@ -1180,7 +1813,7 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addTry(BlockSignature signature
     m_maxTryDepth = std::max(m_maxTryDepth, m_tryDepth.value());
 
     splitStack(signature, oldStack, newStack);
-    block = ControlType(signature, BlockType::Try);
+    block = ControlType(signature, m_stackSize.value() - newStack.size(), BlockType::Try);
     block.m_pc = m_parser->currentOpcodeStartingOffset() - m_metadata->m_bytecodeOffset;
     block.m_tryDepth = m_tryDepth;
 
@@ -1196,7 +1829,7 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addTry(BlockSignature signature
 void IPIntGenerator::convertTryToCatch(ControlType& tryBlock, CatchKind catchKind)
 {
     ASSERT(ControlType::isTry(tryBlock));
-    ControlType catchBlock = ControlType(tryBlock.signature(), BlockType::Catch, catchKind);
+    ControlType catchBlock = ControlType(tryBlock.signature(), tryBlock.stackSize(), BlockType::Catch, catchKind);
     catchBlock.m_pc = tryBlock.m_pc;
     catchBlock.m_pcEnd = m_parser->currentOpcodeStartingOffset() - m_metadata->m_bytecodeOffset;
     catchBlock.m_tryDepth = tryBlock.m_tryDepth;
@@ -1219,6 +1852,10 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCatchToUnreachable(unsigned 
     for (unsigned i = 0; i < signature.argumentCount(); i++)
         results.append(Value { });
 
+    ASSERT(block.stackSize() == m_parser->getControlEntryStackHeightInValues());
+    m_stackSize = block.stackSize();
+    changeStackSize(signature.argumentCount());
+
     // FIXME: If this is actually unreachable we shouldn't need metadata.
     block.m_awaitingUpdate.append(m_metadata->m_metadata.size());
     m_metadata->addBlankSpace(8);
@@ -1236,7 +1873,7 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCatchToUnreachable(unsigned 
     auto size = m_metadata->m_metadata.size();
     m_metadata->addBlankSpace(4);
     // IPInt stack entries are 16 bytes to keep the stack aligned. With the exception of locals, which are only 8 bytes.
-    uint32_t stackSizeInV128 = results.size() + m_parser->getStackHeightInValues() + roundUpToMultipleOf<2>(m_metadata->m_numLocals) / 2;
+    uint32_t stackSizeInV128 = m_stackSize.value() + roundUpToMultipleOf<2>(m_metadata->m_numLocals) / 2;
     m_catchSPMetadataOffsets.append(size);
     WRITE_TO_METADATA(m_metadata->m_metadata.data() + size, stackSizeInV128, uint32_t);
 
@@ -1255,6 +1892,9 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCatchAllToUnreachable(Contro
     else
         block.m_catchKind = CatchKind::CatchAll;
 
+    ASSERT(block.stackSize() == m_parser->getControlEntryStackHeightInValues());
+    m_stackSize = block.stackSize();
+
     // FIXME: If this is actually unreachable we shouldn't need metadata.
     block.m_awaitingUpdate.append(m_metadata->m_metadata.size());
     m_metadata->addBlankSpace(8);
@@ -1272,7 +1912,7 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCatchAllToUnreachable(Contro
     auto size = m_metadata->m_metadata.size();
     m_metadata->addBlankSpace(4);
     // IPInt stack entries are 16 bytes to keep the stack aligned. With the exception of locals, which are only 8 bytes.
-    uint32_t stackSizeInV128 = m_parser->getStackHeightInValues() + roundUpToMultipleOf<2>(m_metadata->m_numLocals) / 2;
+    uint32_t stackSizeInV128 = m_stackSize.value() + roundUpToMultipleOf<2>(m_metadata->m_numLocals) / 2;
     m_catchSPMetadataOffsets.append(size);
     WRITE_TO_METADATA(m_metadata->m_metadata.data() + size, stackSizeInV128, uint32_t);
 
@@ -1283,6 +1923,7 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addDelegate(ControlType& target
 {
     return addDelegateToUnreachable(target, data);
 }
+
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addDelegateToUnreachable(ControlType& target, ControlType& data)
 {
     // FIXME: If this is actually unreachable we shouldn't need metadata.
@@ -1328,11 +1969,16 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addRethrow(unsigned, ControlTyp
 
 // Control Flow Branches
 
-// Implementation status: UNIMPLEMENTED
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addReturn(const ControlType&, const Stack&)
+{
+    return { };
+}
 
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addReturn(const ControlType&, const Stack&) { return { }; }
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addBranch(ControlType& block, ExpressionType, const Stack& stack)
 {
+    if (m_parser->currentOpcode() == OpType::BrIf)
+        changeStackSize(-1);
+
     auto size = m_metadata->m_metadata.size();
     block.m_awaitingUpdate.append(size);
     m_metadata->addBlankSpace(13);
@@ -1341,8 +1987,9 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addBranch(ControlType& block, E
     WRITE_TO_METADATA(m_metadata->m_metadata.data() + size + 12, getCurrentInstructionLength(), uint8_t);
     return { };
 }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addBranchNull(ControlType&, ExpressionType, Stack&, bool, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addBranchCast(ControlType&, ExpressionType, Stack&, bool, int32_t, bool) { return { }; }
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addBranchNull(ControlType&, ExpressionType, Stack&, bool, ExpressionType&) IPINT_UNIMPLEMENTED
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addBranchCast(ControlType&, ExpressionType, Stack&, bool, int32_t, bool) IPINT_UNIMPLEMENTED
+
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addSwitch(ExpressionType, const Vector<ControlType*>& jumps, ControlType& defaultJump, const Stack& stack)
 {
     auto size = m_metadata->m_metadata.size();
@@ -1381,6 +2028,8 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addEndToUnreachable(ControlEntr
     for (unsigned i = 0; i < signature.returnCount(); i ++)
         entry.enclosedExpressionStack.constructAndAppend(signature.returnType(i), Value { });
     auto block = entry.controlData;
+    m_stackSize = block.stackSize();
+    changeStackSize(signature.returnCount());
 
     if (ControlType::isTry(block) || ControlType::isAnyCatch(block))
         --m_tryDepth;
@@ -1455,8 +2104,6 @@ auto IPIntGenerator::endTopLevel(BlockSignature signature, const Stack& expressi
 }
 
 // Calls
-
-// Implementation status: UNIMPLEMENTED
 
 void IPIntGenerator::addCallCommonData(const FunctionSignature& signature)
 {
@@ -1555,6 +2202,7 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCall(uint32_t index, const T
     const FunctionSignature& signature = *type.as<FunctionSignature>();
     for (unsigned i = 0; i < signature.returnCount(); i ++)
         results.append(Value { });
+    changeStackSize(signature.returnCount() - signature.argumentCount());
 
     // Function index:
     // 1B for instruction length
@@ -1573,6 +2221,8 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCallIndirect(unsigned tableI
     const FunctionSignature& signature = *type.as<FunctionSignature>();
     for (unsigned i = 0; i < signature.returnCount(); i ++)
         results.append(Value { });
+    const unsigned callIndex = 1;
+    changeStackSize(signature.returnCount() - signature.argumentCount() - callIndex);
 
     // Function index:
     // 1B for length
@@ -1594,15 +2244,22 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCallRef(const TypeDefinition
     const FunctionSignature& signature = *type.as<FunctionSignature>();
     for (unsigned i = 0; i < signature.returnCount(); i ++)
         results.append(Value { });
+    const unsigned callRef = 1;
+    changeStackSize(signature.returnCount() - signature.argumentCount() - callRef);
     return { };
 }
 
 // Traps
 
-// Implementation status: UNIMPLEMENTED
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addUnreachable()
+{
+    return { };
+}
 
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addUnreachable() { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCrash() { return { }; }
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCrash()
+{
+    return { };
+}
 
 // Finalize
 
@@ -1613,6 +2270,10 @@ std::unique_ptr<FunctionIPIntMetadataGenerator> IPIntGenerator::finalize()
         for (uint32_t catchSPOffset : m_catchSPMetadataOffsets)
             *reinterpret_cast_ptr<uint32_t*>(m_metadata->m_metadata.data() + catchSPOffset) += m_metadata->m_numAlignedRethrowSlots;
     }
+
+    m_metadata->m_maxFrameSizeInV128 = roundUpToMultipleOf<2>(m_metadata->m_numLocals) / 2;
+    m_metadata->m_maxFrameSizeInV128 += m_metadata->m_numAlignedRethrowSlots / 2;
+    m_metadata->m_maxFrameSizeInV128 += m_maxStackSize;
 
     return WTFMove(m_metadata);
 }

@@ -441,6 +441,7 @@ public:
     unsigned m_numRethrowSlotsToAlloc;
     unsigned m_numLocals;
     unsigned m_numArgumentsOnStack;
+    unsigned m_maxFrameSizeInV128;
 
     IPIntTierUpCounter m_tierUpCounter;
 };
