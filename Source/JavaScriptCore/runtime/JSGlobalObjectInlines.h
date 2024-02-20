@@ -377,6 +377,18 @@ inline JSObject* JSGlobalObject::arrayBufferConstructor(ArrayBufferSharingMode s
     return nullptr;
 }
 
+inline GetterSetter* JSGlobalObject::arrayBufferSpeciesGetterSetter(ArrayBufferSharingMode sharingMode) const
+{
+    switch (sharingMode) {
+    case ArrayBufferSharingMode::Default:
+        return m_arrayBufferSpeciesGetterSetter.get();
+    case ArrayBufferSharingMode::Shared:
+        return m_sharedArrayBufferSpeciesGetterSetter.get();
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return nullptr;
+}
+
 inline void JSGlobalObject::createRareDataIfNeeded()
 {
     if (m_rareData)

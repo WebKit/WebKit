@@ -35,7 +35,7 @@ class WeakObjectRefConstructor final : public InternalFunction {
 public:
     using Base = InternalFunction;
 
-    static WeakObjectRefConstructor* create(VM& vm, Structure* structure, WeakObjectRefPrototype* prototype, GetterSetter*)
+    static WeakObjectRefConstructor* create(VM& vm, Structure* structure, WeakObjectRefPrototype* prototype)
     {
         WeakObjectRefConstructor* constructor = new (NotNull, allocateCell<WeakObjectRefConstructor>(vm)) WeakObjectRefConstructor(vm, structure);
         constructor->finishCreation(vm, prototype);

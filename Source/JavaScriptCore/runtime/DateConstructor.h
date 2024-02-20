@@ -32,7 +32,7 @@ public:
     typedef InternalFunction Base;
     static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
-    static DateConstructor* create(VM& vm, Structure* structure, DatePrototype* datePrototype, GetterSetter*)
+    static DateConstructor* create(VM& vm, Structure* structure, DatePrototype* datePrototype)
     {
         DateConstructor* constructor = new (NotNull, allocateCell<DateConstructor>(vm)) DateConstructor(vm, structure);
         constructor->finishCreation(vm, datePrototype);

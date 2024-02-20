@@ -32,7 +32,7 @@ public:
     using Base = InternalFunction;
     static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesPut;
 
-    static ErrorConstructor* create(VM& vm, Structure* structure, ErrorPrototype* errorPrototype, GetterSetter*)
+    static ErrorConstructor* create(VM& vm, Structure* structure, ErrorPrototype* errorPrototype)
     {
         ErrorConstructor* constructor = new (NotNull, allocateCell<ErrorConstructor>(vm)) ErrorConstructor(vm, structure);
         constructor->finishCreation(vm, errorPrototype);

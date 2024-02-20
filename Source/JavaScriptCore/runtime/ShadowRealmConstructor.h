@@ -38,7 +38,7 @@ public:
     typedef InternalFunction Base;
     static constexpr unsigned StructureFlags = Base::StructureFlags;
 
-    static ShadowRealmConstructor* create(VM& vm, Structure* structure, ShadowRealmPrototype* shadowRealmPrototype, GetterSetter*)
+    static ShadowRealmConstructor* create(VM& vm, Structure* structure, ShadowRealmPrototype* shadowRealmPrototype)
     {
         ShadowRealmConstructor* constructor = new (NotNull, allocateCell<ShadowRealmConstructor>(vm)) ShadowRealmConstructor(vm, structure);
         constructor->finishCreation(vm, shadowRealmPrototype);

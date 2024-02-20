@@ -32,7 +32,7 @@ public:
     using Base = JSFunction;
     static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
-    static StringConstructor* create(VM&, Structure*, StringPrototype*, GetterSetter*);
+    static StringConstructor* create(VM&, Structure*, StringPrototype*);
 
     DECLARE_INFO;
 

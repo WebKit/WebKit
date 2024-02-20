@@ -36,10 +36,10 @@ class MapConstructor final : public InternalFunction {
 public:
     typedef InternalFunction Base;
 
-    static MapConstructor* create(VM& vm, Structure* structure, MapPrototype* mapPrototype, GetterSetter* speciesSymbol)
+    static MapConstructor* create(VM& vm, Structure* structure, MapPrototype* mapPrototype)
     {
         MapConstructor* constructor = new (NotNull, allocateCell<MapConstructor>(vm)) MapConstructor(vm, structure);
-        constructor->finishCreation(vm, mapPrototype, speciesSymbol);
+        constructor->finishCreation(vm, mapPrototype);
         return constructor;
     }
 
@@ -50,7 +50,7 @@ public:
 private:
     MapConstructor(VM&, Structure*);
 
-    void finishCreation(VM&, MapPrototype*, GetterSetter* speciesSymbol);
+    void finishCreation(VM&, MapPrototype*);
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(MapConstructor, InternalFunction);
 

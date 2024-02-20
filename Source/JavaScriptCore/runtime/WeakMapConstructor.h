@@ -36,7 +36,7 @@ class WeakMapConstructor final : public InternalFunction {
 public:
     typedef InternalFunction Base;
 
-    static WeakMapConstructor* create(VM& vm, Structure* structure, WeakMapPrototype* prototype, GetterSetter*)
+    static WeakMapConstructor* create(VM& vm, Structure* structure, WeakMapPrototype* prototype)
     {
         WeakMapConstructor* constructor = new (NotNull, allocateCell<WeakMapConstructor>(vm)) WeakMapConstructor(vm, structure);
         constructor->finishCreation(vm, prototype);
