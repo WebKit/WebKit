@@ -1874,23 +1874,6 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncIterator, (JSGlobalObject* globalObject,
 
 enum class NormalizationForm { NFC, NFD, NFKC, NFKD };
 
-static constexpr bool normalizationAffects8Bit(NormalizationForm form)
-{
-    switch (form) {
-    case NormalizationForm::NFC:
-        return false;
-    case NormalizationForm::NFD:
-        return true;
-    case NormalizationForm::NFKC:
-        return false;
-    case NormalizationForm::NFKD:
-        return true;
-    default:
-        ASSERT_NOT_REACHED();
-    }
-    return true;
-}
-
 static const UNormalizer2* normalizer(NormalizationForm form)
 {
     UErrorCode status = U_ZERO_ERROR;
@@ -1923,7 +1906,10 @@ static JSValue normalize(JSGlobalObject* globalObject, JSString* string, Normali
     RETURN_IF_EXCEPTION(scope, { });
 
     StringView view = viewWithString.view;
-    if (view.is8Bit() && (!normalizationAffects8Bit(form) || charactersAreAllASCII(view.characters8(), view.length())))
+    // Latin-1 characters (U+0000..U+00FF) are left unaffected by NFC.
+    // ASCII characters (U+0000..U+007F) are left unaffected by all of the Normalization Forms
+    // https://unicode.org/reports/tr15/#Description_Norm
+    if (view.is8Bit() && (form == NormalizationForm::NFC || charactersAreAllASCII(view.characters8(), view.length())))
         RELEASE_AND_RETURN(scope, string);
 
     const UNormalizer2* normalizer = JSC::normalizer(form);
