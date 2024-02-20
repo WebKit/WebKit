@@ -38,8 +38,13 @@
 
 namespace WebKit {
 
+#if PLATFORM(COCOA)
 Seconds WebProcessCache::cachedProcessLifetime { 30_min };
 Seconds WebProcessCache::clearingDelayAfterApplicationResignsActive { 5_min };
+#else
+Seconds WebProcessCache::cachedProcessLifetime { 5_min };
+Seconds WebProcessCache::clearingDelayAfterApplicationResignsActive = cachedProcessLifetime;
+#endif
 static Seconds cachedProcessSuspensionDelay { 30_s };
 
 void WebProcessCache::setCachedProcessSuspensionDelayForTesting(Seconds delay)
