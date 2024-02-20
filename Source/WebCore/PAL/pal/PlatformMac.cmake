@@ -192,7 +192,7 @@ list(APPEND PAL_SOURCES
     cocoa/VisionKitCoreSoftLink.mm
     cocoa/WebPrivacySoftLink.mm
 
-    crypto/commoncrypto/CryptoDigestCommonCrypto.mm
+    crypto/commoncrypto/CryptoDigestCommonCrypto.cpp
 
     mac/DataDetectorsSoftLink.mm
     mac/LookupSoftLink.mm

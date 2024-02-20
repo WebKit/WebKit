@@ -35,7 +35,6 @@ struct CryptoDigestContext;
 
 class CryptoDigest {
     WTF_MAKE_NONCOPYABLE(CryptoDigest);
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     enum class Algorithm {
         SHA_1,
@@ -50,10 +49,10 @@ public:
     PAL_EXPORT void addBytes(const void* input, size_t length);
     PAL_EXPORT Vector<uint8_t> computeHash();
     PAL_EXPORT String toHexString();
-    PAL_EXPORT static std::optional<Vector<uint8_t>> computeHash(Algorithm, const Vector<uint8_t>&, bool);
-    PAL_EXPORT CryptoDigest();
 
 private:
+    CryptoDigest();
+
     std::unique_ptr<CryptoDigestContext> m_context;
 };
 

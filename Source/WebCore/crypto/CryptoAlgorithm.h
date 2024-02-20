@@ -31,7 +31,6 @@
 #include "CryptoKeyUsage.h"
 #include "ExceptionOr.h"
 #include "JsonWebKey.h"
-#include <pal/crypto/CryptoDigest.h>
 #include <variant>
 #include <wtf/Function.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -78,7 +77,6 @@ public:
 
     static void dispatchOperationInWorkQueue(WorkQueue&, ScriptExecutionContext&, VectorCallback&&, ExceptionCallback&&, Function<ExceptionOr<Vector<uint8_t>>()>&&);
     static void dispatchOperationInWorkQueue(WorkQueue&, ScriptExecutionContext&, BoolCallback&&, ExceptionCallback&&, Function<ExceptionOr<bool>()>&&);
-    static void dispatchDigest(WorkQueue&, ScriptExecutionContext&, VectorCallback&&, ExceptionCallback&&, Vector<uint8_t>&& message, PAL::CryptoDigest::Algorithm);
 };
 
 } // namespace WebCore

@@ -111,28 +111,29 @@ CryptoDigest::~CryptoDigest()
 {
 }
 
-static std::unique_ptr<CryptoDigestContext> createCryptoDigest(CryptoDigest::Algorithm algorithm)
-{
-    switch (algorithm) {
-    case CryptoDigest::Algorithm::SHA_1:
-        return CryptoDigestContextImpl<SHA_CTX, SHA1Functions>::create();
-    case CryptoDigest::Algorithm::SHA_224:
-        return CryptoDigestContextImpl<SHA256_CTX, SHA224Functions>::create();
-    case CryptoDigest::Algorithm::SHA_256:
-        return CryptoDigestContextImpl<SHA256_CTX, SHA256Functions>::create();
-    case CryptoDigest::Algorithm::SHA_384:
-        return CryptoDigestContextImpl<SHA512_CTX, SHA384Functions>::create();
-    case CryptoDigest::Algorithm::SHA_512:
-        return CryptoDigestContextImpl<SHA512_CTX, SHA512Functions>::create();
-    }
-    return nullptr;
-}
-
 std::unique_ptr<CryptoDigest> CryptoDigest::create(CryptoDigest::Algorithm algorithm)
 {
-    std::unique_ptr<CryptoDigest> digest = WTF::makeUnique<CryptoDigest>();
-    digest->m_context = createCryptoDigest(algorithm);
-    return digest;
+    std::unique_ptr<CryptoDigest> digest(new CryptoDigest);
+
+    switch (algorithm) {
+    case CryptoDigest::Algorithm::SHA_1:
+        digest->m_context = CryptoDigestContextImpl<SHA_CTX, SHA1Functions>::create();
+        return digest;
+    case CryptoDigest::Algorithm::SHA_224:
+        digest->m_context = CryptoDigestContextImpl<SHA256_CTX, SHA224Functions>::create();
+        return digest;
+    case CryptoDigest::Algorithm::SHA_256:
+        digest->m_context = CryptoDigestContextImpl<SHA256_CTX, SHA256Functions>::create();
+        return digest;
+    case CryptoDigest::Algorithm::SHA_384:
+        digest->m_context = CryptoDigestContextImpl<SHA512_CTX, SHA384Functions>::create();
+        return digest;
+    case CryptoDigest::Algorithm::SHA_512:
+        digest->m_context = CryptoDigestContextImpl<SHA512_CTX, SHA512Functions>::create();
+        return digest;
+    }
+
+    return nullptr;
 }
 
 void CryptoDigest::addBytes(const void* input, size_t length)
@@ -145,18 +146,6 @@ Vector<uint8_t> CryptoDigest::computeHash()
 {
     ASSERT(m_context);
     return m_context->computeHash();
-}
-
-std::optional<Vector<uint8_t>> CryptoDigest::computeHash(CryptoDigest::Algorithm algo, const Vector<uint8_t>& data, bool)
-{
-    std::unique_ptr<CryptoDigest> digest = WTF::makeUnique<CryptoDigest>();
-    if (!digest)
-        return { };
-    digest->m_context = createCryptoDigest(algo);
-    if (!digest->m_context)
-        return { };
-    digest->m_context->addBytes(data.data(), data.size());
-    return digest->m_context->computeHash();
 }
 
 } // namespace PAL
