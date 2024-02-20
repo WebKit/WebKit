@@ -28,12 +28,25 @@
 #if defined(TARGET_OS_VISION) && TARGET_OS_VISION
 
 #import <UIKit/UIKit.h>
-#import <WebKitSwift/WKSLinearMediaTypes.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 @class LMPlayableViewController;
 @class WKSLinearMediaPlayer;
+@class WKSLinearMediaTimeRange;
+@class WKSLinearMediaTrack;
+
+typedef NS_ENUM(NSInteger, WKSLinearMediaContentMode);
+typedef NS_ENUM(NSInteger, WKSLinearMediaContentType);
+typedef NS_ENUM(NSInteger, WKSLinearMediaPresentationMode);
+typedef NS_ENUM(NSInteger, WKSLinearMediaViewingMode);
+
+typedef NS_OPTIONS(NSInteger, WKSLinearMediaFullscreenBehaviors) {
+    WKSLinearMediaFullscreenBehaviorsSceneResize = 1 << 0,
+    WKSLinearMediaFullscreenBehaviorsSceneSizeRestrictions = 1 << 1,
+    WKSLinearMediaFullscreenBehaviorsSceneChromeOptions = 1 << 2,
+    WKSLinearMediaFullscreenBehaviorsHostContentInline = 1 << 3,
+};
 
 API_AVAILABLE(visionos(1.0))
 @protocol WKSLinearMediaPlayerDelegate <NSObject>

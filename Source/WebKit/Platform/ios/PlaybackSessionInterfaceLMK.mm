@@ -28,10 +28,11 @@
 
 #if ENABLE(LINEAR_MEDIA_PLAYER)
 
+#import "WKSLinearMediaPlayer.h"
+#import "WKSLinearMediaTypes.h"
 #import <WebCore/MediaSelectionOption.h>
 #import <WebCore/PlaybackSessionModel.h>
 #import <WebCore/TimeRanges.h>
-#import <WebKitSwift/WebKitSwift.h>
 #import <wtf/OSObjectPtr.h>
 #import <wtf/WeakPtr.h>
 
