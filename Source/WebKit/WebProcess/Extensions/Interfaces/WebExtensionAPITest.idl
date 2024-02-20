@@ -73,7 +73,4 @@
     // Asserts the function does not thow an exception and the result promise is resolved.
     [NeedsScriptContext] any assertSafeResolve(any function, [Optional] DOMString message);
 
-    // FIXME: Temporary Event for bring-up. Remove this.
-    readonly attribute WebExtensionAPIEvent testEvent;
-    void fireTestEvent();
 };

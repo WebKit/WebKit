@@ -336,19 +336,6 @@ JSValue *WebExtensionAPITest::assertSafeResolve(JSContextRef context, JSValue *f
     return assertResolves(context, result, message);
 }
 
-WebExtensionAPIEvent& WebExtensionAPITest::testEvent()
-{
-    if (!m_event)
-        m_event = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::ActionOnClicked);
-
-    return *m_event;
-}
-
-void WebExtensionAPITest::fireTestEvent()
-{
-    testEvent().invokeListeners();
-}
-
 } // namespace WebKit
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

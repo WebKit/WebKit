@@ -66,13 +66,6 @@ public:
     JSValue *assertSafe(JSContextRef, JSValue *function, NSString *message);
 
     JSValue *assertSafeResolve(JSContextRef, JSValue *function, NSString *message);
-
-    WebExtensionAPIEvent& testEvent();
-    void fireTestEvent();
-
-private:
-    RefPtr<WebExtensionAPIWebNavigationEvent> m_webNavigationEvent;
-    RefPtr<WebExtensionAPIEvent> m_event;
 #endif
 };
 
