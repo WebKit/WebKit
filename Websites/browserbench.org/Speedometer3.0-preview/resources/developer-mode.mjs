@@ -88,7 +88,6 @@ export function createUIForIterationCount() {
     return label;
 }
 
-
 export function createUIForSuites() {
     const control = document.createElement("nav");
     const ol = document.createElement("ol");
@@ -186,14 +185,14 @@ export function createUIForSuites() {
 
 function createUIForRun() {
     let button = document.createElement("button");
-    button.textContent = `Start Test`;
+    button.textContent = "Start Test";
     button.onclick = (event) => {
         globalThis.benchmarkClient.start();
-    }
+    };
     let buttons = document.createElement("div");
     buttons.className = "button-bar";
     buttons.appendChild(button);
-    return buttons
+    return buttons;
 }
 
 function updateURL() {

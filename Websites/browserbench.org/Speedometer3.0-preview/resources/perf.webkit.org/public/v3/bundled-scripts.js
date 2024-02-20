@@ -73,7 +73,7 @@ function allocatePreviousNodeForSegmentation(values,segmentCount)
 {var previousNode=new Array(values.length);for(var i=0;i<values.length;i++)
 previousNode[i]=new Array(segmentCount+1);return previousNode;}
 function findOptimalSegmentationInternal(cost,previousNode,values,costMatrix,segmentCount)
-{cost[0]=[0];previousNode[0]=[-1];for(var segmentStart=0;segmentStart<values.length;segmentStart++){var costOfOptimalSegmentationThatEndAtCurrentStart=cost[segmentStart];for(var k=0;k<segmentCount;k++){var noSegmentationOfLenghtKEndsAtCurrentStart=previousNode[segmentStart][k]===undefined;if(noSegmentationOfLenghtKEndsAtCurrentStart)
+{cost[0]=new Float32Array([0]);previousNode[0]=[-1];for(var segmentStart=0;segmentStart<values.length;segmentStart++){var costOfOptimalSegmentationThatEndAtCurrentStart=cost[segmentStart];for(var k=0;k<segmentCount;k++){var noSegmentationOfLenghtKEndsAtCurrentStart=previousNode[segmentStart][k]===undefined;if(noSegmentationOfLenghtKEndsAtCurrentStart)
 continue;for(var segmentEnd=segmentStart+1;segmentEnd<values.length;segmentEnd++){var costOfOptimalSegmentationOfLengthK=costOfOptimalSegmentationThatEndAtCurrentStart[k];var costOfCurrentSegment=costMatrix.costBetween(segmentStart,segmentEnd);var totalCost=costOfOptimalSegmentationOfLengthK+costOfCurrentSegment;if(previousNode[segmentEnd][k+1]===undefined||totalCost<cost[segmentEnd][k+1]){cost[segmentEnd][k+1]=totalCost;previousNode[segmentEnd][k+1]=segmentStart;}}}}}
 function findOptimalSegmentation(values,costMatrix,segmentCount){var cost=allocateCostUpperTriangularForSegmentation(values,segmentCount);var previousNode=allocatePreviousNodeForSegmentation(values,segmentCount);findOptimalSegmentationInternal(cost,previousNode,values,costMatrix,segmentCount);if(Statistics.debuggingSegmentation){console.log('findOptimalSegmentation with',segmentCount,'segments');for(var end=0;end<values.length;end++){for(var k=0;k<=segmentCount;k++){var start=previousNode[end][k];if(start===undefined)
 continue;console.log(`C(segment=[${start}, ${end + 1}], segmentCount=${k})=${cost[end][k]}`);}}}
@@ -674,7 +674,7 @@ addMetric(metric){this._metrics.push(metric);}
 isHidden(){return this._hidden;}}
 if(typeof module!='undefined')
 module.exports.Test=Test;class Metric extends LabeledObject{constructor(id,object)
-{super(id,object);this._aggregatorName=object.aggregator;object.test.addMetric(this);this._test=object.test;this._platforms=[];const suffix=this.name().match('([A-z][a-z]+|FrameRate)$')[0];this._unit={'FrameRate':'fps','Runs':'/s','Time':'ms','Duration':'ms','Malloc':'B','Heap':'B','Allocations':'B','Size':'B','Score':'pt','Power':'W',}[suffix];}
+{super(id,object);this._aggregatorName=object.aggregator;object.test.addMetric(this);this._test=object.test;this._platforms=[];const suffix=this.name().match('([A-Z][a-z]+|FrameRate)$')[0];this._unit={'FrameRate':'fps','Runs':'/s','Time':'ms','Duration':'ms','Malloc':'B','Heap':'B','Allocations':'B','Size':'B','Score':'pt','Power':'W',}[suffix];}
 aggregatorName(){return this._aggregatorName;}
 test(){return this._test;}
 platforms(){return this._platforms;}

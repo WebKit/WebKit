@@ -331,20 +331,42 @@ class MainBenchmarkClient {
 
     _showSection(hash) {
         if (this._isRunning) {
-            window.location.hash = "#running";
+            this._setLocationHash("#running");
             return;
         } else if (this._hasResults) {
             if (hash !== "#summary" && hash !== "#details") {
-                window.location.hash = "#summary";
+                this._setLocationHash("#summary");
                 return;
             }
-        } else {
-            if (hash !== "#home" && hash !== "#about") {
-                window.location.hash = "#home";
-                return;
-            }
+        } else if (hash !== "#home" && hash !== "") {
+            // Redirect invalid views to #home directly.
+            this._setLocationHash("#home");
+            return;
         }
-        window.location.hash = hash || "#home";
+        this._setLocationHash(hash);
+    }
+
+    _setLocationHash(hash) {
+        if (hash === "#home" || hash === "") {
+            if (window.location.hash !== hash)
+                window.location.hash = "#home";
+            hash = "#home";
+            this._removeLocationHash();
+        } else {
+            window.location.hash = hash;
+        }
+        this._updateDocumentTitle(hash);
+    }
+
+    _updateDocumentTitle(hash) {
+        const maybeSection = document.querySelector(hash);
+        const sectionTitle = maybeSection?.getAttribute("data-title") ?? "";
+        document.title = `Speedometer 3 ${sectionTitle}`.trimEnd();
+    }
+
+    _removeLocationHash() {
+        const location = window.location;
+        window.history.pushState("", document.title, location.pathname + location.search);
     }
 }
 

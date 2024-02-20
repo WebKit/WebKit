@@ -597,7 +597,7 @@ var Statistics = new (function () {
 
     function findOptimalSegmentationInternal(cost, previousNode, values, costMatrix, segmentCount)
     {
-        cost[0] = [0]; // The cost of segmenting single value is always 0.
+        cost[0] = new Float32Array([0]); // The cost of segmenting single value is always 0.
         previousNode[0] = [-1];
         for (var segmentStart = 0; segmentStart < values.length; segmentStart++) {
             var costOfOptimalSegmentationThatEndAtCurrentStart = cost[segmentStart];

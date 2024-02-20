@@ -10,7 +10,7 @@
     "scripts": {
         "ng": "ng",
         "dev": "ng serve",
-        "build": "ng build --base-href /resources/todomvc/architecture-examples/angular/dist/",
+        "build": "ng build --source-map=true",
         "watch": "ng build --watch --configuration development",
         "test": "ng test"
     },

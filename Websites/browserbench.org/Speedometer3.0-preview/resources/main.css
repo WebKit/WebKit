@@ -287,7 +287,9 @@ section {
     border-radius: 20px;
 }
 
-section:target {
+section:target,
+section.visible,
+body:not(body:has(section:target)) #home {
     display: block;
 }
 
@@ -531,7 +533,8 @@ section#details h1 {
     margin-bottom: 10px;
 }
 
-section#about h1 {
+section#about h1,
+section#instructions h1 {
     margin-top: 10px;
     margin-bottom: 0px;
     font-size: 25px;

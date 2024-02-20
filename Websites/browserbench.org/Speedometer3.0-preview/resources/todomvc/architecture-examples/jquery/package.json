@@ -2,6 +2,7 @@
   "name": "todomvc-jquery",
   "private": true,
   "scripts": {
+    "dev": "http-server . -p 7001 -c-1 --cors",
     "build": "node scripts/build.js",
     "serve": "http-server ./dist -p 7002 -c-1 --cors"
   },
