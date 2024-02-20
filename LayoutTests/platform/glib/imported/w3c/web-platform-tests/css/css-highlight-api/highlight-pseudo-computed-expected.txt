@@ -4,7 +4,7 @@ FAIL Different getComputedStyle() for ::highlight(bar) and same element assert_e
 PASS getComputedStyle() for ::highlight(foo): should not return a style.
 PASS getComputedStyle() for ::highlight(foo)) should not return a style.
 PASS getComputedStyle() for ::highlight(foo)( should not return a style.
-FAIL getComputedStyle() for ::highlight should not return a style. assert_equals: Invalid pseudo identifiers should not return a style. expected 0 but got 418
+FAIL getComputedStyle() for ::highlight should not return a style. assert_equals: Invalid pseudo identifiers should not return a style. expected 0 but got 417
 PASS getComputedStyle() for ::highlight(foo)(foo) should not return a style.
 PASS getComputedStyle() for ::highlight(foo)() should not return a style.
 PASS getComputedStyle() for :::highlight(foo) should not return a style.
