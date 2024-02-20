@@ -141,7 +141,8 @@ void AccessibilityObject::setLastPresentedTextPrediction(Node& previousCompositi
         m_lastPresentedTextPrediction = { text, location };
 
     if (state == CompositionState::Ended && !lastPresentedTextPrediction().text.isEmpty()) {
-        String previousCompositionNodeText = previousCompositionNode.isTextNode() ? dynamicDowncast<Text>(previousCompositionNode)->wholeText() : String();
+        auto* nodeText = dynamicDowncast<Text>(previousCompositionNode);
+        String previousCompositionNodeText = nodeText ? nodeText->wholeText() : String();
         size_t wordStart = 0;
 
         // Find the location of the complete word being predicted by iterating backwards through the text to find whitespace.
