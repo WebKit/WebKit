@@ -62,7 +62,7 @@ public:
     bool matchesAnyAuthorRules();
 
     void setMode(SelectorChecker::Mode mode) { m_mode = mode; }
-    void setPseudoElementRequest(const PseudoElementRequest& request) { m_pseudoElementRequest = request; }
+    void setPseudoElementRequest(const std::optional<PseudoElementRequest>& request) { m_pseudoElementRequest = request; }
     void setMedium(const MQ::MediaQueryEvaluator& medium) { m_isPrintStyle = medium.isPrintMedia(); }
 
     bool hasAnyMatchingRules(const RuleSet&);
@@ -127,7 +127,7 @@ private:
 
     bool m_shouldIncludeEmptyRules { false };
     bool m_isPrintStyle { false };
-    PseudoElementRequest m_pseudoElementRequest { PseudoId::None };
+    std::optional<PseudoElementRequest> m_pseudoElementRequest { };
     SelectorChecker::Mode m_mode { SelectorChecker::Mode::ResolvingStyle };
 
     Vector<MatchedRule, 64> m_matchedRules;

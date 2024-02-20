@@ -2742,9 +2742,8 @@ RenderElement* ComputedStyleExtractor::styledRenderer() const
 {
     if (!m_element)
         return nullptr;
-    // FIXME: Styleable should use PseudoElementIdentifier (webkit.org/b/268064).
     if (m_pseudoElementIdentifier)
-        return Styleable(*m_element, m_pseudoElementIdentifier->pseudoId).renderer();
+        return Styleable(*m_element, m_pseudoElementIdentifier).renderer();
     if (m_element->hasDisplayContents())
         return nullptr;
     return m_element->renderer();
@@ -2759,7 +2758,7 @@ static inline bool hasValidStyleForProperty(Element& element, CSSPropertyID prop
     if (!element.document().childNeedsStyleRecalc())
         return true;
 
-    if (auto* keyframeEffectStack = Styleable(element, PseudoId::None).keyframeEffectStack()) {
+    if (auto* keyframeEffectStack = Styleable(element, { }).keyframeEffectStack()) {
         if (keyframeEffectStack->containsProperty(propertyID))
             return false;
     }

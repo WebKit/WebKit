@@ -34,10 +34,10 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(StyleOriginatedAnimationEvent);
 
-StyleOriginatedAnimationEvent::StyleOriginatedAnimationEvent(const AtomString& type, WebAnimation* animation, std::optional<Seconds> scheduledTime, double elapsedTime, PseudoId pseudoId)
+StyleOriginatedAnimationEvent::StyleOriginatedAnimationEvent(const AtomString& type, WebAnimation* animation, std::optional<Seconds> scheduledTime, double elapsedTime, const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
     : AnimationEventBase(type, animation, scheduledTime)
     , m_elapsedTime(elapsedTime)
-    , m_pseudoId(pseudoId)
+    , m_pseudoElementIdentifier(pseudoElementIdentifier)
 {
 }
 
@@ -46,17 +46,19 @@ StyleOriginatedAnimationEvent::StyleOriginatedAnimationEvent(const AtomString& t
     , m_elapsedTime(elapsedTime)
     , m_pseudoElement(pseudoElement)
 {
+    // FIXME: This should work with the pseudo-element name argument.
     auto pseudoId = pseudoIdFromString(m_pseudoElement);
-    if (pseudoId)
-        m_pseudoId = *pseudoId;
+    if (pseudoId && *pseudoId != PseudoId::None)
+        m_pseudoElementIdentifier = { *pseudoId };
 }
 
 StyleOriginatedAnimationEvent::~StyleOriginatedAnimationEvent() = default;
 
 const String& StyleOriginatedAnimationEvent::pseudoElement()
 {
-    if (m_pseudoElement.isNull())
-        m_pseudoElement = pseudoIdAsString(m_pseudoId);
+    // FIXME: This doesn't work with the pseudo-element name argument.
+    if (m_pseudoElementIdentifier && m_pseudoElement.isNull())
+        m_pseudoElement = pseudoIdAsString(m_pseudoElementIdentifier->pseudoId);
     return m_pseudoElement;
 }
 

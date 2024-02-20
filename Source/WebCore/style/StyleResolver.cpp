@@ -336,7 +336,10 @@ std::unique_ptr<RenderStyle> Resolver::styleForKeyframe(const Element& element, 
     state.setParentStyle(RenderStyle::clonePtr(context.parentStyle ? *context.parentStyle : elementStyle));
 
     ElementRuleCollector collector(element, m_ruleSets, context.selectorMatchingState);
-    collector.setPseudoElementRequest({ elementStyle.pseudoElementType() });
+
+    if (elementStyle.pseudoElementType() != PseudoId::None)
+        collector.setPseudoElementRequest(Style::PseudoElementIdentifier { elementStyle.pseudoElementType(), elementStyle.pseudoElementNameArgument() });
+
     if (hasRevert) {
         // In the animation origin, 'revert' rolls back the cascaded value to the user level.
         // Therefore, we need to collect UA and user rules.
@@ -349,7 +352,7 @@ std::unique_ptr<RenderStyle> Resolver::styleForKeyframe(const Element& element, 
     builder.state().setIsBuildingKeyframeStyle();
     builder.applyAllProperties();
 
-    Adjuster adjuster(document(), *state.parentStyle(), nullptr, nullptr);
+    Adjuster adjuster(document(), *state.parentStyle(), nullptr, elementStyle.pseudoElementType() == PseudoId::None ? &element : nullptr);
     adjuster.adjust(*state.style(), state.userAgentAppearanceStyle());
 
     return state.takeStyle();
@@ -488,7 +491,8 @@ std::optional<ResolvedStyle> Resolver::styleForPseudoElement(const Element& elem
     }
 
     ElementRuleCollector collector(element, m_ruleSets, context.selectorMatchingState);
-    collector.setPseudoElementRequest(pseudoElementRequest);
+    if (pseudoElementRequest.pseudoId() != PseudoId::None)
+        collector.setPseudoElementRequest(pseudoElementRequest);
     collector.setMedium(m_mediaQueryEvaluator);
     collector.matchUARules();
 
@@ -562,10 +566,10 @@ std::unique_ptr<RenderStyle> Resolver::defaultStyleForElement(const Element* ele
 
 Vector<RefPtr<const StyleRule>> Resolver::styleRulesForElement(const Element* element, unsigned rulesToInclude)
 {
-    return pseudoStyleRulesForElement(element, PseudoId::None, rulesToInclude);
+    return pseudoStyleRulesForElement(element, { }, rulesToInclude);
 }
 
-Vector<RefPtr<const StyleRule>> Resolver::pseudoStyleRulesForElement(const Element* element, PseudoId pseudoId, unsigned rulesToInclude)
+Vector<RefPtr<const StyleRule>> Resolver::pseudoStyleRulesForElement(const Element* element, const std::optional<Style::PseudoElementRequest>& pseudoElementIdentifier, unsigned rulesToInclude)
 {
     if (!element)
         return { };
@@ -574,7 +578,8 @@ Vector<RefPtr<const StyleRule>> Resolver::pseudoStyleRulesForElement(const Eleme
 
     ElementRuleCollector collector(*element, m_ruleSets, nullptr);
     collector.setMode(SelectorChecker::Mode::CollectingRules);
-    collector.setPseudoElementRequest({ pseudoId });
+    if (pseudoElementIdentifier)
+        collector.setPseudoElementRequest(*pseudoElementIdentifier);
     collector.setMedium(m_mediaQueryEvaluator);
     collector.setIncludeEmptyRules(rulesToInclude & EmptyCSSRules);
 

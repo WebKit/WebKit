@@ -54,13 +54,11 @@ AcceleratedTimeline::AcceleratedTimeline(Document& document)
 void AcceleratedTimeline::updateEffectStacks()
 {
     auto targetsPendingUpdate = std::exchange(m_targetsPendingUpdate, { });
-    for (auto hashedStyleable : targetsPendingUpdate) {
-        auto* element = hashedStyleable.first;
+    for (auto [element, pseudoElementIdentifier] : targetsPendingUpdate) {
         if (!element)
             continue;
 
-        auto pseudoId = static_cast<PseudoId>(hashedStyleable.second);
-        Styleable target { *element, pseudoId };
+        Styleable target { *element, pseudoElementIdentifier };
 
         auto* renderer = dynamicDowncast<RenderLayerModelObject>(target.renderer());
         if (!renderer || !renderer->isComposited())
@@ -74,7 +72,7 @@ void AcceleratedTimeline::updateEffectStacks()
 
 void AcceleratedTimeline::updateEffectStackForTarget(const Styleable& target)
 {
-    m_targetsPendingUpdate.add({ &target.element, enumToUnderlyingType(target.pseudoId) });
+    m_targetsPendingUpdate.add({ &target.element, target.pseudoElementIdentifier });
 }
 
 } // namespace WebCore

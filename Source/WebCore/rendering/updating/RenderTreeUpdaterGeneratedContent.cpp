@@ -89,7 +89,7 @@ static bool elementIsTargetedByKeyframeEffectRequiringPseudoElement(const Elemen
         return elementIsTargetedByKeyframeEffectRequiringPseudoElement(pseudoElement->hostElement(), pseudoId);
 
     if (element) {
-        if (auto* stack = element->keyframeEffectStack(pseudoId))
+        if (auto* stack = element->keyframeEffectStack(pseudoId == PseudoId::None ? std::nullopt : std::optional(Style::PseudoElementIdentifier { pseudoId })))
             return stack->requiresPseudoElement();
     }
 

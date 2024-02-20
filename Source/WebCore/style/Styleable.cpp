@@ -42,6 +42,8 @@
 #include "KeyframeEffect.h"
 #include "KeyframeEffectStack.h"
 #include "Quirks.h"
+#include "RenderChildIterator.h"
+#include "RenderDescendantIterator.h"
 #include "RenderElement.h"
 #include "RenderListItem.h"
 #include "RenderListMarker.h"
@@ -63,7 +65,7 @@ const std::optional<const Styleable> Styleable::fromRenderer(const RenderElement
     case PseudoId::Backdrop:
         for (auto& topLayerElement : renderer.document().topLayerElements()) {
             if (topLayerElement->renderer() && topLayerElement->renderer()->backdropRenderer() == &renderer)
-                return Styleable(topLayerElement.get(), PseudoId::Backdrop);
+                return Styleable(topLayerElement.get(), Style::PseudoElementIdentifier { PseudoId::Backdrop });
         }
         break;
     case PseudoId::Marker: {
@@ -71,11 +73,22 @@ const std::optional<const Styleable> Styleable::fromRenderer(const RenderElement
         while (ancestor) {
             auto* renderListItem = dynamicDowncast<RenderListItem>(ancestor);
             if (renderListItem && ancestor->element() && renderListItem->markerRenderer() == &renderer)
-                return Styleable(*ancestor->element(), PseudoId::Marker);
+                return Styleable(*ancestor->element(), Style::PseudoElementIdentifier { PseudoId::Marker });
             ancestor = ancestor->parent();
         }
         break;
     }
+    case PseudoId::ViewTransitionGroup:
+    case PseudoId::ViewTransitionImagePair:
+    case PseudoId::ViewTransitionNew:
+    case PseudoId::ViewTransitionOld:
+        if (auto* documentElement = renderer.document().documentElement())
+            return Styleable(*documentElement, Style::PseudoElementIdentifier { renderer.style().pseudoElementType(), renderer.style().pseudoElementNameArgument() });
+        break;
+    case PseudoId::ViewTransition:
+        if (auto* documentElement = renderer.document().documentElement())
+            return Styleable(*documentElement, Style::PseudoElementIdentifier { PseudoId::ViewTransition });
+        break;
     case PseudoId::After:
     case PseudoId::Before:
     case PseudoId::None:
@@ -91,7 +104,10 @@ const std::optional<const Styleable> Styleable::fromRenderer(const RenderElement
 
 RenderElement* Styleable::renderer() const
 {
-    switch (pseudoId) {
+    if (!pseudoElementIdentifier)
+        return element.renderer();
+
+    switch (pseudoElementIdentifier->pseudoId) {
     case PseudoId::After:
         if (auto* afterPseudoElement = element.afterPseudoElement())
             return afterPseudoElement->renderer();
@@ -111,8 +127,45 @@ RenderElement* Styleable::renderer() const
                 return markerRenderer;
         }
         break;
-    case PseudoId::None:
-        return element.renderer();
+    case PseudoId::ViewTransition:
+        if (element.renderer())
+            return element.renderer()->view().viewTransitionRoot().get();
+        break;
+    case PseudoId::ViewTransitionGroup:
+    case PseudoId::ViewTransitionImagePair:
+    case PseudoId::ViewTransitionNew:
+    case PseudoId::ViewTransitionOld: {
+        if (!element.renderer())
+            return nullptr;
+
+        WeakPtr viewTransitionRoot = element.renderer()->view().viewTransitionRoot();
+        if (!viewTransitionRoot)
+            return nullptr;
+
+        // Find the right ::view-transition-group().
+        RenderBlockFlow* correctGroup = nullptr;
+        for (auto& group : childrenOfType<RenderBlockFlow>(*viewTransitionRoot.get())) {
+            if (group.style().pseudoElementNameArgument() == pseudoElementIdentifier->nameArgument) {
+                correctGroup = &group;
+                break;
+            }
+        }
+
+        // If we can't find the correct group, return nullptr.
+        if (!correctGroup)
+            return nullptr;
+
+        // Return early if we're looking for ::view-transition-group().
+        if (pseudoElementIdentifier->pseudoId == PseudoId::ViewTransitionGroup)
+            return correctGroup;
+
+        // Go through all descendants until we find the relevant pseudo element otherwise.
+        for (auto& descendant : descendantsOfType<RenderBox>(*correctGroup)) {
+            if (descendant.style().pseudoElementType() == pseudoElementIdentifier->pseudoId)
+                return &descendant;
+        }
+        break;
+    }
     default:
         return nullptr;
     }
@@ -309,7 +362,7 @@ void Styleable::updateCSSAnimations(const RenderStyle* currentStyle, const Rende
 
     auto* currentAnimationList = newStyle.animations();
     auto* previousAnimationList = keyframeEffectStack.cssAnimationList();
-    if (!element.hasPendingKeyframesUpdate(pseudoId) && previousAnimationList && !previousAnimationList->isEmpty() && newStyle.hasAnimations() && *(previousAnimationList) == *(newStyle.animations()) && !animationListContainsNewlyValidAnimation(*newStyle.animations()))
+    if (!element.hasPendingKeyframesUpdate(pseudoElementIdentifier) && previousAnimationList && !previousAnimationList->isEmpty() && newStyle.hasAnimations() && *(previousAnimationList) == *(newStyle.animations()) && !animationListContainsNewlyValidAnimation(*newStyle.animations()))
         return;
 
     CSSAnimationCollection newAnimations;
@@ -374,7 +427,7 @@ void Styleable::updateCSSAnimations(const RenderStyle* currentStyle, const Rende
 
     keyframeEffectStack.setCSSAnimationList(currentAnimationList);
 
-    element.cssAnimationsDidUpdate(pseudoId);
+    element.cssAnimationsDidUpdate(pseudoElementIdentifier);
 }
 
 static KeyframeEffect* keyframeEffectForElementAndProperty(const Styleable& styleable, const AnimatableCSSProperty& property)
@@ -721,11 +774,11 @@ void Styleable::updateCSSTransitions(const RenderStyle& currentStyle, const Rend
             }
         }
 
-        if (auto* properties = element.runningTransitionsByProperty(pseudoId)) {
+        if (auto* properties = element.runningTransitionsByProperty(pseudoElementIdentifier)) {
             for (const auto& [property, transition] : *properties)
                 addProperty(property);
         }
-        if (auto* properties = element.completedTransitionsByProperty(pseudoId)) {
+        if (auto* properties = element.completedTransitionsByProperty(pseudoElementIdentifier)) {
             for (const auto& [property, transition] : *properties)
                 addProperty(property);
         }
