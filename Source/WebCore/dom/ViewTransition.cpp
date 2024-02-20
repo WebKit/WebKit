@@ -388,6 +388,17 @@ void ViewTransition::clearViewTransition()
 
     // FIXME: Implement step 3.
 
+    // End animations on pseudo-elements so they can run again.
+    if (RefPtr documentElement = m_document->documentElement()) {
+        Styleable(*documentElement, Style::PseudoElementIdentifier { PseudoId::ViewTransition }).cancelStyleOriginatedAnimations();
+        for (auto& name : namedElements().keys()) {
+            Styleable(*documentElement, Style::PseudoElementIdentifier { PseudoId::ViewTransitionGroup, name }).cancelStyleOriginatedAnimations();
+            Styleable(*documentElement, Style::PseudoElementIdentifier { PseudoId::ViewTransitionImagePair, name }).cancelStyleOriginatedAnimations();
+            Styleable(*documentElement, Style::PseudoElementIdentifier { PseudoId::ViewTransitionNew, name }).cancelStyleOriginatedAnimations();
+            Styleable(*documentElement, Style::PseudoElementIdentifier { PseudoId::ViewTransitionOld, name }).cancelStyleOriginatedAnimations();
+        }
+    }
+
     protectedDocument()->setHasViewTransitionPseudoElementTree(false);
     protectedDocument()->setActiveViewTransition(nullptr);
     protectedDocument()->styleScope().clearViewTransitionStyles();
