@@ -4960,8 +4960,19 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest&& requ
     context.contextAfter = makeString(rangeOfInterestInSelection.end, contextAfterEnd);
     if (auto compositionVisiblePositionRange = makeVisiblePositionRange(compositionRange); intersects(rangeOfInterest, compositionVisiblePositionRange)) {
         context.markedText = makeString(compositionVisiblePositionRange.start, compositionVisiblePositionRange.end);
-        context.selectedRangeInMarkedText.location = distanceBetweenPositions(rangeOfInterestInSelection.start, compositionVisiblePositionRange.start);
-        context.selectedRangeInMarkedText.length = [context.selectedText.string length];
+        auto markedTextLength = context.markedText.string.length();
+
+        ptrdiff_t distanceToSelectionStart = distanceBetweenPositions(rangeOfInterestInSelection.start, compositionVisiblePositionRange.start);
+        ptrdiff_t distanceToSelectionEnd = distanceToSelectionStart + [context.selectedText.string length];
+
+        distanceToSelectionStart = clampTo<ptrdiff_t>(distanceToSelectionStart, 0, markedTextLength);
+        distanceToSelectionEnd = clampTo<ptrdiff_t>(distanceToSelectionEnd, 0, markedTextLength);
+        RELEASE_ASSERT(distanceToSelectionStart <= distanceToSelectionEnd);
+
+        context.selectedRangeInMarkedText = {
+            static_cast<uint64_t>(distanceToSelectionStart),
+            static_cast<uint64_t>(distanceToSelectionEnd - distanceToSelectionStart)
+        };
     }
 
     auto characterRectsForRange = [](const SimpleRange& range, unsigned startOffset) {
