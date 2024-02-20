@@ -83,7 +83,7 @@ void RemoteCommandEncoder::beginComputePass(const std::optional<WebGPU::ComputeP
             return;
     }
 
-    auto computePassEncoder = m_backing->beginComputePass(*convertedDescriptor);
+    auto computePassEncoder = m_backing->beginComputePass(convertedDescriptor);
     auto computeRenderPassEncoder = RemoteComputePassEncoder::create(computePassEncoder, m_objectHeap, m_streamConnection.copyRef(), identifier);
     m_objectHeap.addObject(identifier, computeRenderPassEncoder);
 }
