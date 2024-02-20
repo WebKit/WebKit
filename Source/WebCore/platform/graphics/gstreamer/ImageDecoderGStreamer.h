@@ -35,13 +35,15 @@ namespace WebCore {
 class ContentType;
 class ImageDecoderGStreamerSample;
 
+void teardownGStreamerImageDecoders();
+
 class ImageDecoderGStreamer final : public ImageDecoder {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(ImageDecoderGStreamer);
 public:
     static RefPtr<ImageDecoderGStreamer> create(FragmentedSharedBuffer&, const String& mimeType, AlphaOption, GammaAndColorProfileOption);
     ImageDecoderGStreamer(FragmentedSharedBuffer&, const String& mimeType, AlphaOption, GammaAndColorProfileOption);
-    virtual ~ImageDecoderGStreamer() = default;
+    ~ImageDecoderGStreamer();
 
     static bool supportsMediaType(MediaType type) { return type == MediaType::Video; }
     static bool supportsContainerType(const String&);
@@ -73,6 +75,8 @@ public:
     void setData(const FragmentedSharedBuffer&, bool allDataReceived) final;
     bool isAllDataReceived() const final { return m_eos; }
     void clearFrameBufferCache(size_t) final;
+
+    void tearDown();
 
 private:
     void pushEncodedData(const FragmentedSharedBuffer&);

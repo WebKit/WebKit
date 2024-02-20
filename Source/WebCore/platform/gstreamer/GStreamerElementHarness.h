@@ -61,7 +61,7 @@ public:
         Stream(GRefPtr<GstPad>&&, RefPtr<GStreamerElementHarness>&&);
 
         GstFlowReturn chainSample(GRefPtr<GstSample>&&);
-        bool sinkEvent(GstEvent*);
+        bool sinkEvent(GRefPtr<GstEvent>&&);
 
         GRefPtr<GstPad> m_pad;
         RefPtr<GStreamerElementHarness> m_downstreamHarness;
@@ -111,7 +111,7 @@ private:
     GstFlowReturn pushBufferFull(GRefPtr<GstBuffer>&&);
 
     bool srcQuery(GstPad*, GstObject*, GstQuery*);
-    bool srcEvent(GstEvent*);
+    bool srcEvent(GRefPtr<GstEvent>&&);
 
     void pushStickyEvents(GRefPtr<GstCaps>&&, std::optional<const GstSegment*>&& = { });
     void pushSegmentEvent(std::optional<const GstSegment*>&& = { });

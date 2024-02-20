@@ -38,6 +38,17 @@ namespace WebCore {
 GST_DEBUG_CATEGORY(webkit_image_decoder_debug);
 #define GST_CAT_DEFAULT webkit_image_decoder_debug
 
+static Lock s_decoderLock;
+static Vector<RefPtr<ImageDecoderGStreamer>> s_imageDecoders;
+
+void teardownGStreamerImageDecoders()
+{
+    Locker lock { s_decoderLock };
+    for (auto& decoder : s_imageDecoders)
+        decoder->tearDown();
+    s_imageDecoders.clear();
+}
+
 class ImageDecoderGStreamerSample final : public MediaSampleGStreamer {
 public:
     static Ref<ImageDecoderGStreamerSample> create(GRefPtr<GstSample>&& sample, const FloatSize& presentationSize)
@@ -51,7 +62,11 @@ public:
             return nullptr;
         return m_image->image().nativeImage()->platformImage();
     }
-    void dropImage() { m_image = nullptr; }
+    void dropImage()
+    {
+        m_image = nullptr;
+        m_frame = nullptr;
+    }
 
     SampleFlags flags() const override
     {
@@ -62,7 +77,7 @@ private:
     ImageDecoderGStreamerSample(GRefPtr<GstSample>&& sample, const FloatSize& presentationSize)
         : MediaSampleGStreamer(WTFMove(sample), presentationSize, { })
     {
-        m_frame = VideoFrameGStreamer::createWrappedSample(platformSample().sample.gstSample);
+        m_frame = VideoFrameGStreamer::create(GRefPtr(platformSample().sample.gstSample), presentationSize);
         m_image = m_frame->convertToImage();
     }
 
@@ -83,7 +98,12 @@ ImageDecoderGStreamerSample* toSample(Iterator iter)
 
 RefPtr<ImageDecoderGStreamer> ImageDecoderGStreamer::create(FragmentedSharedBuffer& data, const String& mimeType, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
 {
-    return adoptRef(*new ImageDecoderGStreamer(data, mimeType, alphaOption, gammaAndColorProfileOption));
+    RefPtr decoder = adoptRef(*new ImageDecoderGStreamer(data, mimeType, alphaOption, gammaAndColorProfileOption));
+    {
+        Locker lock { s_decoderLock };
+        s_imageDecoders.append(decoder);
+    }
+    return decoder;
 }
 
 ImageDecoderGStreamer::ImageDecoderGStreamer(FragmentedSharedBuffer& data, const String& mimeType, AlphaOption, GammaAndColorProfileOption)
@@ -121,11 +141,23 @@ ImageDecoderGStreamer::ImageDecoderGStreamer(FragmentedSharedBuffer& data, const
         configureVideoDecoderForHarnessing(element);
         m_decoderHarness = GStreamerElementHarness::create(WTFMove(element), [this](auto&, auto&& outputSample) {
             storeDecodedSample(WTFMove(outputSample));
-        }, { });
+        });
         return m_decoderHarness;
     });
 
     pushEncodedData(data);
+}
+
+ImageDecoderGStreamer::~ImageDecoderGStreamer()
+{
+    tearDown();
+}
+
+void ImageDecoderGStreamer::tearDown()
+{
+    m_sampleData.clear();
+    m_decoderHarness = nullptr;
+    m_parserHarness = nullptr;
 }
 
 bool ImageDecoderGStreamer::supportsContainerType(const String& type)
@@ -316,7 +348,7 @@ void ImageDecoderGStreamer::pushEncodedData(const FragmentedSharedBuffer& shared
         }
     }
 
-    m_decoderHarness->flush();
+    m_decoderHarness->reset();
 }
 
 #undef GST_CAT_DEFAULT
