@@ -1925,6 +1925,8 @@
 		A182D5B51BE6BD250087A7CC /* AccessibilityIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = A182D5B31BE6BD250087A7CC /* AccessibilityIOS.h */; };
 		A183494224EF467800BDC9A8 /* SharedBufferReference.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CC5DB9121488E16006CB8A8 /* SharedBufferReference.h */; };
 		A188D2E52B6B0F4E00E65A08 /* WKVisibilityPropagationView.h in Headers */ = {isa = PBXBuildFile; fileRef = A188D2E22B6B0F4E00E65A08 /* WKVisibilityPropagationView.h */; };
+		A192C25B2B844600004B8B20 /* WKSLinearMediaPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = A14F9B742B68CA6B00AD9C56 /* WKSLinearMediaPlayer.h */; };
+		A192C25C2B844A31004B8B20 /* WKSLinearMediaTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = A14F9B612B686DD200AD9C56 /* WKSLinearMediaTypes.h */; };
 		A19DD3C01D07D16800AC823B /* _WKWebViewPrintFormatterInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = A19DD3BF1D07D16800AC823B /* _WKWebViewPrintFormatterInternal.h */; };
 		A1A4FE5A18DCE9FA00B5EA8A /* _WKDownload.h in Headers */ = {isa = PBXBuildFile; fileRef = A1A4FE5718DCE9FA00B5EA8A /* _WKDownload.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A1A4FE5C18DCE9FA00B5EA8A /* _WKDownloadInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = A1A4FE5918DCE9FA00B5EA8A /* _WKDownloadInternal.h */; };
@@ -17219,6 +17221,8 @@
 				BCDDB32B124EC2AB0048D13C /* WKSharedAPICast.h in Headers */,
 				1DB01943211CF002009FB3E8 /* WKShareSheet.h in Headers */,
 				513E462D1AD837560016234A /* WKSharingServicePickerDelegate.h in Headers */,
+				A192C25B2B844600004B8B20 /* WKSLinearMediaPlayer.h in Headers */,
+				A192C25C2B844A31004B8B20 /* WKSLinearMediaTypes.h in Headers */,
 				93F549B41E3174B7000E7239 /* WKSnapshotConfiguration.h in Headers */,
 				DF7A231C291B088D00B98DF3 /* WKSnapshotConfigurationPrivate.h in Headers */,
 				57FD318722B35170008D0E8B /* WKSOAuthorizationDelegate.h in Headers */,

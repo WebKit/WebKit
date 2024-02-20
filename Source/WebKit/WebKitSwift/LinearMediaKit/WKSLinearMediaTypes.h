@@ -60,13 +60,6 @@ typedef NS_ENUM(NSInteger, WKSLinearMediaViewingMode) {
     WKSLinearMediaViewingModeSpatial
 };
 
-typedef NS_OPTIONS(NSInteger, WKSLinearMediaFullscreenBehaviors) {
-    WKSLinearMediaFullscreenBehaviorsSceneResize = 1 << 0,
-    WKSLinearMediaFullscreenBehaviorsSceneSizeRestrictions = 1 << 1,
-    WKSLinearMediaFullscreenBehaviorsSceneChromeOptions = 1 << 2,
-    WKSLinearMediaFullscreenBehaviorsHostContentInline = 1 << 3,
-};
-
 API_AVAILABLE(visionos(1.0))
 @interface WKSLinearMediaTimeRange : NSObject
 + (instancetype)new NS_UNAVAILABLE;

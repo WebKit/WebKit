@@ -990,10 +990,9 @@
 #define ENABLE_EXTENSION_CAPABILITIES 1
 #endif
 
-// FIXME: Re-enable once rdar://122200702 is resolved.
 #if !defined(ENABLE_LINEAR_MEDIA_PLAYER) \
     && USE(LINEARMEDIAKIT)
-#define ENABLE_LINEAR_MEDIA_PLAYER 0
+#define ENABLE_LINEAR_MEDIA_PLAYER 1
 #endif
 
 #if !defined(ENABLE_WRITING_SUGGESTIONS) \

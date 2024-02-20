@@ -29,9 +29,10 @@
 #if ENABLE(LINEAR_MEDIA_PLAYER)
 
 #import "PlaybackSessionInterfaceLMK.h"
+#import "WKSLinearMediaPlayer.h"
+#import "WKSLinearMediaTypes.h"
 #import <UIKit/UIKit.h>
 #import <WebCore/WebAVPlayerLayerView.h>
-#import <WebKitSwift/WebKitSwift.h>
 #import <pal/spi/vision/LinearMediaKitSPI.h>
 
 namespace WebKit {
