@@ -150,7 +150,7 @@ function testBadOffset() {
           (i32.const 0)
           (array.get_u 0)))`)),
                   WebAssembly.RuntimeError,
-                  "Offset + array length would exceed the size of a data segment");
+                  "Out of bounds or failed to allocate in array.new_data");
     assert.throws(() => check(instantiate(`
       (module
         (memory (export "memory") 1)
@@ -163,7 +163,7 @@ function testBadOffset() {
           (i32.const 0)
           (array.get_u 0)))`)),
                   WebAssembly.RuntimeError,
-                  "Offset + array length would exceed the size of a data segment");
+                  "Out of bounds or failed to allocate in array.new_data");
 }
 
 function testOffsets() {
@@ -211,7 +211,7 @@ function testReadOutOfBounds() {
             (i32.const 0)
             (array.get` + suffix + ` 0)))`)).exports.f(),
                   WebAssembly.RuntimeError,
-                    "Offset + array length would exceed the size of a data segment")
+                    "Out of bounds or failed to allocate in array.new_data")
     };
     // Test {i8, i16, i32, i64}
     for (const type of [8, 16, 32, 64]) {
@@ -243,28 +243,28 @@ function testInt32Overflow() {
     let maxUint32 = 0xffffffff;
     assert.throws(() => instantiate(f(1, maxUint32)),
                   WebAssembly.RuntimeError,
-                  "Offset + array length would exceed the size of a data segment");
+                  "Out of bounds or failed to allocate in array.new_data");
     assert.throws(() => instantiate(f(2, maxUint32)),
                   WebAssembly.RuntimeError,
-                  "Offset + array length would exceed the size of a data segment");
+                  "Out of bounds or failed to allocate in array.new_data");
     assert.throws(() => instantiate(f(2, maxUint32 - 1)),
                   WebAssembly.RuntimeError,
-                  "Offset + array length would exceed the size of a data segment");
+                  "Out of bounds or failed to allocate in array.new_data");
     assert.throws(() => instantiate(f(10, maxUint32)),
                   WebAssembly.RuntimeError,
-                  "Offset + array length would exceed the size of a data segment");
+                  "Out of bounds or failed to allocate in array.new_data");
     assert.throws(() => instantiate(f(maxUint32, maxUint32)),
                   WebAssembly.RuntimeError,
-                  "Offset + array length would exceed the size of a data segment");
+                  "Out of bounds or failed to allocate in array.new_data");
     assert.throws(() => instantiate(f(maxUint32 - 4, 5)),
                   WebAssembly.RuntimeError,
-                  "Offset + array length would exceed the size of a data segment");
+                  "Out of bounds or failed to allocate in array.new_data");
     assert.throws(() => instantiate(f(maxUint32, 1)),
                   WebAssembly.RuntimeError,
-                  "Offset + array length would exceed the size of a data segment");
+                  "Out of bounds or failed to allocate in array.new_data");
     assert.throws(() => instantiate(f(maxUint32 - 1, 2)),
                   WebAssembly.RuntimeError,
-                  "Offset + array length would exceed the size of a data segment");
+                  "Out of bounds or failed to allocate in array.new_data");
     // Check for overflow when multiplying element size by array size
     f = (offset, len) => instantiate(`
       (module
@@ -280,10 +280,10 @@ function testInt32Overflow() {
     let badArraySize = 0x40000000;
     assert.throws(() => instantiate(f(0, badArraySize)),
                   WebAssembly.RuntimeError,
-                  "Offset + array length would exceed the size of a data segment");
+                  "Out of bounds or failed to allocate in array.new_data");
     assert.throws(() => instantiate(f(1, badArraySize - 1)),
                   WebAssembly.RuntimeError,
-                  "Offset + array length would exceed the size of a data segment");
+                  "Out of bounds or failed to allocate in array.new_data");
 }
 
 
@@ -308,7 +308,7 @@ function testZeroLengthArray() {
     // zero-length array from zero-length data segment; non-zero offset; should throw
     m = f("", 3);
     assert.throws(() => instantiate(m).exports.f(),
-                  WebAssembly.RuntimeError, "Offset + array length would exceed the size of a data segment");
+                  WebAssembly.RuntimeError, "Out of bounds or failed to allocate in array.new_data");
     // zero-length array from non-zero-length data segment; non-zero offset
     m = f("xyz", 1);
     assert.eq(instantiate(m).exports.f(), 0);
@@ -318,7 +318,7 @@ function testZeroLengthArray() {
     assert.eq(instantiate(m).exports.f(), 0);
     // zero-length array from non-zero-length data segment; offset > length; should throw
     m = f("xyz", 4);
-    assert.throws(() => instantiate(m).exports.f(), WebAssembly.RuntimeError, "Offset + array length would exceed the size of a data segment");
+    assert.throws(() => instantiate(m).exports.f(), WebAssembly.RuntimeError, "Out of bounds or failed to allocate in array.new_data");
 }
 
 function testSingletonArray() {
@@ -332,7 +332,7 @@ function testSingletonArray() {
           (i32.const 1)
           (array.new_data 0 0)
           (array.len)))`);
-    let msg = "Offset + array length would exceed the size of a data segment";
+    let msg = "Out of bounds or failed to allocate in array.new_data";
     // singleton array from 0-length data segment -- should throw
     var m = f("", 0);
     assertFails(m, msg);

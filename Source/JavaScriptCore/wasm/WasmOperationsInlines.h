@@ -56,10 +56,10 @@ JSWebAssemblyArray* fillArray(Instance* instance, Wasm::FieldType fieldType, uin
 
     FixedVector<T> values(size);
     if (!size)
-        return JSWebAssemblyArray::create(vm, globalObject->webAssemblyArrayStructure(), fieldType, size, WTFMove(values), rtt);
+        return JSWebAssemblyArray::tryCreate(vm, globalObject->webAssemblyArrayStructure(), fieldType, size, WTFMove(values), rtt);
 
     values.fill(static_cast<T>(value));
-    return JSWebAssemblyArray::create(vm, globalObject->webAssemblyArrayStructure(), fieldType, size, WTFMove(values), rtt);
+    return JSWebAssemblyArray::tryCreate(vm, globalObject->webAssemblyArrayStructure(), fieldType, size, WTFMove(values), rtt);
 }
 
 inline EncodedJSValue arrayNew(Instance* instance, uint32_t typeIndex, uint32_t size, EncodedJSValue encValue)
@@ -103,7 +103,7 @@ inline EncodedJSValue arrayNew(Instance* instance, uint32_t typeIndex, uint32_t 
         RELEASE_ASSERT_NOT_REACHED();
     }
     ASSERT(array);
-    return JSValue::encode(JSValue(array));
+    return JSValue::encode(array ? JSValue(array) : jsNull());
 }
 
 inline EncodedJSValue arrayNew(Instance* instance, uint32_t typeIndex, uint32_t size, v128_t value)
@@ -125,7 +125,8 @@ inline EncodedJSValue arrayNew(Instance* instance, uint32_t typeIndex, uint32_t 
 
     FixedVector<v128_t> values(size);
     values.fill(value);
-    return JSValue::encode(JSValue(JSWebAssemblyArray::create(vm, globalObject->webAssemblyArrayStructure(), fieldType, size, WTFMove(values), rtt)));
+    JSObject* array = JSWebAssemblyArray::tryCreate(vm, globalObject->webAssemblyArrayStructure(), fieldType, size, WTFMove(values), rtt);
+    return JSValue::encode(array ? JSValue(array) : jsNull());
 }
 
 template <typename T>
@@ -136,14 +137,14 @@ JSWebAssemblyArray* copyElementsInReverse(Instance* instance, Wasm::FieldType fi
 
     FixedVector<T> values(size);
     if (!size)
-        return JSWebAssemblyArray::create(vm, globalObject->webAssemblyArrayStructure(), fieldType, size, WTFMove(values), rtt);
+        return JSWebAssemblyArray::tryCreate(vm, globalObject->webAssemblyArrayStructure(), fieldType, size, WTFMove(values), rtt);
 
     ASSERT(arguments);
     for (int srcIndex = size - 1; srcIndex >= 0; srcIndex--) {
         unsigned dstIndex = size - srcIndex - 1;
         values[dstIndex] = static_cast<T>(arguments[srcIndex]);
     }
-    return JSWebAssemblyArray::create(vm, globalObject->webAssemblyArrayStructure(), fieldType, size, WTFMove(values), rtt);
+    return JSWebAssemblyArray::tryCreate(vm, globalObject->webAssemblyArrayStructure(), fieldType, size, WTFMove(values), rtt);
 }
 
 // Expects arguments in reverse order
@@ -178,8 +179,7 @@ inline EncodedJSValue arrayNewFixed(Instance* instance, uint32_t typeIndex, uint
     default:
         RELEASE_ASSERT_NOT_REACHED();
     }
-    ASSERT(array);
-    return JSValue::encode(JSValue(array));
+    return JSValue::encode(array ? JSValue(array) : jsNull());
 }
 
 template<typename T>
@@ -189,9 +189,9 @@ EncodedJSValue createArrayValue(Instance* instance, FieldType fieldType, size_t 
     JSGlobalObject* globalObject = jsInstance->globalObject();
     VM& vm = globalObject->vm();
 
-    JSWebAssemblyArray* array = JSWebAssemblyArray::create(vm, globalObject->webAssemblyArrayStructure(), fieldType, arraySize, WTFMove(tempValues), rtt);
+    JSWebAssemblyArray* array = JSWebAssemblyArray::tryCreate(vm, globalObject->webAssemblyArrayStructure(), fieldType, arraySize, WTFMove(tempValues), rtt);
 
-    return JSValue::encode(JSValue(array));
+    return JSValue::encode(array ? JSValue(array) : jsNull());
 }
 
 template<typename T>
@@ -476,8 +476,9 @@ inline EncodedJSValue structNew(Instance* instance, uint32_t typeIndex, bool use
     const StructType& structType = *structTypeDefinition.as<StructType>();
     auto structRTT = instance->module().moduleInformation().rtts[typeIndex];
 
-    JSWebAssemblyStruct* structValue = JSWebAssemblyStruct::create(globalObject, globalObject->webAssemblyStructStructure(), jsInstance, typeIndex, structRTT);
-    RELEASE_ASSERT(structValue);
+    JSWebAssemblyStruct* structValue = JSWebAssemblyStruct::tryCreate(globalObject, globalObject->webAssemblyStructStructure(), jsInstance, typeIndex, structRTT);
+    if (UNLIKELY(!structValue))
+        return JSValue::encode(jsNull());
     if (static_cast<Wasm::UseDefaultValue>(useDefault) == Wasm::UseDefaultValue::Yes) {
         for (unsigned i = 0; i < structType.fieldCount(); ++i) {
             if (structType.field(i).type.unpacked() == Wasm::Types::V128) {

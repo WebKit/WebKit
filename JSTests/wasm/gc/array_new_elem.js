@@ -257,32 +257,31 @@ function testInt32Overflow() {
           (array.len)))`).exports.f();
     let maxUint32 = 0xffffffff;
     assert.throws(() => instantiate(f(0, maxUint32)),
-                  WebAssembly.RuntimeError, "Offset + array length would exceed the length of an element segment");
+                  WebAssembly.RuntimeError, "Out of bounds or failed to allocate in array.new_elem");
     assert.throws(() => instantiate(f(1, maxUint32)),
                   WebAssembly.RuntimeError,
-                  "Offset + array length would exceed the length of an element segment");
+                  "Out of bounds or failed to allocate in array.new_elem");
     assert.throws(() => instantiate(f(2, maxUint32)),
                   WebAssembly.RuntimeError,
-                  "Offset + array length would exceed the length of an element segment");
+                  "Out of bounds or failed to allocate in array.new_elem");
     assert.throws(() => instantiate(f(2, maxUint32 - 1)),
                   WebAssembly.RuntimeError,
-                  "Offset + array length would exceed the length of an element segment");
+                  "Out of bounds or failed to allocate in array.new_elem");
     assert.throws(() => instantiate(f(10, maxUint32)),
                   WebAssembly.RuntimeError,
-                  "Offset + array length would exceed the length of an element segment");
+                  "Out of bounds or failed to allocate in array.new_elem");
     assert.throws(() => instantiate(f(maxUint32, maxUint32)),
                   WebAssembly.RuntimeError,
-                  "Offset + array length would exceed the length of an element segment");
+                  "Out of bounds or failed to allocate in array.new_elem");
     assert.throws(() => instantiate(f(maxUint32 - 4, 5)),
                   WebAssembly.RuntimeError,
-                  "Offset + array length would exceed the length of an element segment");
+                  "Out of bounds or failed to allocate in array.new_elem");
     assert.throws(() => instantiate(f(maxUint32, 1)),
                   WebAssembly.RuntimeError,
-                  "Offset + array length would exceed the length of an element segment");
+                  "Out of bounds or failed to allocate in array.new_elem");
     assert.throws(() => instantiate(f(maxUint32 - 1, 2)),
                   WebAssembly.RuntimeError,
-                  "Offset + array length would exceed the length of an element segment");
-
+                  "Out of bounds or failed to allocate in array.new_elem");
 }
 
 // Creating a zero-length array should work, as long as the element segment offset is valid
@@ -306,7 +305,7 @@ function testZeroLengthArray() {
     // zero-length array from zero-length element segment; non-zero offset; should throw
     m = f("", 3);
     assert.throws(() => instantiate(m).exports.f(),
-                  WebAssembly.RuntimeError, "Offset + array length would exceed the length of an element segment");
+                  WebAssembly.RuntimeError, "Out of bounds or failed to allocate in array.new_elem");
     // zero-length array from non-zero-length data segment; non-zero offset
     m = f("(ref.func $f) (ref.func $f)", 1);
     assert.eq(instantiate(m).exports.f(), 0);
@@ -316,7 +315,7 @@ function testZeroLengthArray() {
     assert.eq(instantiate(m).exports.f(), 0);
     // zero-length array from non-zero-length element segment; offset > length; should throw
     m = f("(ref.func $f) (ref.func $f) (ref.func $f)", 4);
-    assert.throws(() => instantiate(m).exports.f(), WebAssembly.RuntimeError, "Offset + array length would exceed the length of an element segment");
+    assert.throws(() => instantiate(m).exports.f(), WebAssembly.RuntimeError, "Out of bounds or failed to allocate in array.new_elem");
 }
 
 function testArrayNewCanonElemSubtype() {
@@ -629,8 +628,8 @@ function testAllElementSegmentKinds() {
     assert.throws(
       () => { m.exports.test(0) },
       WebAssembly.RuntimeError,
-      "Offset + array length would exceed the length of an element segment (evaluating 'm.exports.test(0)')"
-    )
+      "Out of bounds or failed to allocate in array.new_elem"
+    );
 
     m = instantiate(`
     (module

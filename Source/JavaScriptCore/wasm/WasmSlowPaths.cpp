@@ -531,7 +531,10 @@ WASM_SLOW_PATH_DECL(struct_new)
     ASSERT(instruction.m_typeIndex < instance->module().moduleInformation().typeCount());
 
     ASSERT(!instruction.m_firstValue.isConstant());
-    WASM_RETURN(Wasm::structNew(instance, instruction.m_typeIndex, instruction.m_useDefault, instruction.m_useDefault ? nullptr : reinterpret_cast<uint64_t*>(&callFrame->r(instruction.m_firstValue))));
+    EncodedJSValue result = Wasm::structNew(instance, instruction.m_typeIndex, instruction.m_useDefault, instruction.m_useDefault ? nullptr : reinterpret_cast<uint64_t*>(&callFrame->r(instruction.m_firstValue)));
+    if (JSValue::decode(result).isNull())
+        WASM_THROW(Wasm::ExceptionType::BadStructNew);
+    WASM_RETURN(result);
 }
 
 WASM_SLOW_PATH_DECL(struct_get)
@@ -866,9 +869,9 @@ WASM_SLOW_PATH_DECL(call_builtin)
         uint32_t offset = takeGPR().unboxedUInt32();
 
         EncodedJSValue result = Wasm::arrayNewData(instance, typeIndex, dataSegmentIndex, arraySize, offset);
-        // arrayNewData returns false iff the segment access is out of bounds
+        // arrayNewData returns false iff the segment access is out of bounds or allocation failed
         if (JSValue::decode(result).isNull())
-            WASM_THROW(Wasm::ExceptionType::OutOfBoundsDataSegmentAccess);
+            WASM_THROW(Wasm::ExceptionType::BadArrayNewInitData);
         gprStart[0] = static_cast<EncodedJSValue>(result);
         WASM_END();
     }
@@ -879,9 +882,9 @@ WASM_SLOW_PATH_DECL(call_builtin)
         uint32_t offset = takeGPR().unboxedUInt32();
 
         EncodedJSValue result = Wasm::arrayNewElem(instance, typeIndex, elemSegmentIndex, arraySize, offset);
-        // arrayNewElem returns null iff the segment access is out of bounds
+        // arrayNewElem returns null iff the segment access is out of bounds or allocation failed
         if (JSValue::decode(result).isNull())
-            WASM_THROW(Wasm::ExceptionType::OutOfBoundsElementSegmentAccess);
+            WASM_THROW(Wasm::ExceptionType::BadArrayNewInitElem);
         gprStart[0] = static_cast<EncodedJSValue>(result);
         WASM_END();
     }

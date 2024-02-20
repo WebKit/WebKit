@@ -2992,6 +2992,8 @@ auto B3IRGenerator::addArrayNew(uint32_t typeIndex, ExpressionType size, Express
 
     result = pushArrayNew(typeIndex, initValue, size);
 
+    emitArrayNullCheck(get(result), ExceptionType::BadArrayNew);
+
     return { };
 }
 
@@ -3002,12 +3004,8 @@ Variable* B3IRGenerator::pushArrayNewFromSegment(arraySegmentOperation operation
         m_currentBlock->appendNew<Const32Value>(m_proc, origin(), segmentIndex),
         get(arraySize), get(offset));
 
-    // Check for null return value (indicating that this access is out of bounds for the segment)
-    CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
-        m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), resultValue, m_currentBlock->appendNew<Const64Value>(m_proc, origin(), JSValue::encode(jsNull()))));
-    check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
-        this->emitExceptionCheck(jit, exceptionType);
-    });
+    // Indicates out of bounds for the segment or allocation failure.
+    emitArrayNullCheck(resultValue, exceptionType);
 
     return push(resultValue);
 }
@@ -3020,19 +3018,21 @@ auto B3IRGenerator::addArrayNewDefault(uint32_t typeIndex, ExpressionType size, 
     result = push(callWasmOperation(m_currentBlock, toB3Type(resultType), operationWasmArrayNewEmpty,
         instanceValue(), m_currentBlock->appendNew<Const32Value>(m_proc, origin(), typeIndex), get(size)));
 
+    emitArrayNullCheck(get(result), ExceptionType::BadArrayNew);
+
     return { };
 }
 
 auto B3IRGenerator::addArrayNewData(uint32_t typeIndex, uint32_t dataIndex, ExpressionType arraySize, ExpressionType offset, ExpressionType& result) -> PartialResult
 {
-    result = pushArrayNewFromSegment(operationWasmArrayNewData, typeIndex, dataIndex, arraySize, offset, ExceptionType::OutOfBoundsDataSegmentAccess);
+    result = pushArrayNewFromSegment(operationWasmArrayNewData, typeIndex, dataIndex, arraySize, offset, ExceptionType::BadArrayNewInitData);
 
     return { };
 }
 
 auto B3IRGenerator::addArrayNewElem(uint32_t typeIndex, uint32_t elemSegmentIndex, ExpressionType arraySize, ExpressionType offset, ExpressionType& result) -> PartialResult
 {
-    result = pushArrayNewFromSegment(operationWasmArrayNewElem, typeIndex, elemSegmentIndex, arraySize, offset, ExceptionType::OutOfBoundsElementSegmentAccess);
+    result = pushArrayNewFromSegment(operationWasmArrayNewElem, typeIndex, elemSegmentIndex, arraySize, offset, ExceptionType::BadArrayNewInitElem);
     return { };
 }
 
@@ -3050,9 +3050,7 @@ auto B3IRGenerator::addArrayNewFixed(uint32_t typeIndex, Vector<ExpressionType>&
         instanceValue(), m_currentBlock->appendNew<Const32Value>(m_proc, origin(), typeIndex),
         m_currentBlock->appendNew<Const32Value>(m_proc, origin(), args.size()));
 
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=264454
-    // Ensure array is non-null
-    emitArrayNullCheck(arrayValue, ExceptionType::NullArraySet);
+    emitArrayNullCheck(arrayValue, ExceptionType::BadArrayNew);
 
     for (uint32_t i = 0; i < args.size(); ++i) {
         // Emit the array set code -- note that this omits the bounds check, since
@@ -3326,6 +3324,14 @@ auto B3IRGenerator::addStructNew(uint32_t typeIndex, Vector<ExpressionType>& arg
         instanceValue(),
         m_currentBlock->appendNew<Const32Value>(m_proc, origin(), typeIndex));
 
+    {
+        CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
+            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), structValue, m_currentBlock->appendNew<Const64Value>(m_proc, origin(), JSValue::encode(jsNull()))));
+        check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            this->emitExceptionCheck(jit, ExceptionType::BadStructNew);
+        });
+    }
+
     const auto& structType = *m_info.typeSignatures[typeIndex]->expand().template as<StructType>();
     for (uint32_t i = 0; i < args.size(); ++i)
         emitStructSet(structValue, i, structType, get(args[i]));
@@ -3344,6 +3350,14 @@ auto B3IRGenerator::addStructNewDefault(uint32_t typeIndex, ExpressionType& resu
     Value* structValue = callWasmOperation(m_currentBlock, toB3Type(type), operationWasmStructNewEmpty,
         instanceValue(),
         m_currentBlock->appendNew<Const32Value>(m_proc, origin(), typeIndex));
+
+    {
+        CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
+            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), structValue, m_currentBlock->appendNew<Const64Value>(m_proc, origin(), JSValue::encode(jsNull()))));
+        check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            this->emitExceptionCheck(jit, ExceptionType::BadStructNew);
+        });
+    }
 
     const auto& structType = *m_info.typeSignatures[typeIndex]->expand().template as<StructType>();
     for (StructFieldCount i = 0; i < structType.fieldCount(); ++i) {

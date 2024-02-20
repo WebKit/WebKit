@@ -54,7 +54,10 @@ namespace Wasm {
     macro(OutOfBoundsArrayCopy, "Out of bounds array.copy"_s) \
     macro(OutOfBoundsArrayInitElem, "Out of bounds array.init_elem"_s) \
     macro(OutOfBoundsArrayInitData, "Out of bounds array.init_data"_s) \
+    macro(BadStructNew, "Failed to allocate new struct"_s) \
     macro(BadArrayNew, "Failed to allocate new array"_s) \
+    macro(BadArrayNewInitElem, "Out of bounds or failed to allocate in array.new_elem"_s) \
+    macro(BadArrayNewInitData, "Out of bounds or failed to allocate in array.new_data"_s) \
     macro(NullArrayGet, "array.get to a null reference"_s) \
     macro(NullArraySet, "array.set to a null reference"_s) \
     macro(NullArrayLen, "array.len to a null reference"_s) \
@@ -116,7 +119,10 @@ ALWAYS_INLINE bool isTypeErrorExceptionType(ExceptionType type)
     case ExceptionType::OutOfBoundsArrayCopy:
     case ExceptionType::OutOfBoundsArrayInitElem:
     case ExceptionType::OutOfBoundsArrayInitData:
+    case ExceptionType::BadStructNew:
     case ExceptionType::BadArrayNew:
+    case ExceptionType::BadArrayNewInitElem:
+    case ExceptionType::BadArrayNewInitData:
     case ExceptionType::NullArrayGet:
     case ExceptionType::NullArraySet:
     case ExceptionType::NullArrayLen:

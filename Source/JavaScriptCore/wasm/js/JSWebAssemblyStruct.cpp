@@ -50,13 +50,16 @@ JSWebAssemblyStruct::JSWebAssemblyStruct(VM& vm, Structure* structure, Ref<const
 {
 }
 
-JSWebAssemblyStruct* JSWebAssemblyStruct::create(JSGlobalObject* globalObject, Structure* structure, JSWebAssemblyInstance* instance, uint32_t typeIndex, RefPtr<const Wasm::RTT> rtt)
+JSWebAssemblyStruct* JSWebAssemblyStruct::tryCreate(JSGlobalObject* globalObject, Structure* structure, JSWebAssemblyInstance* instance, uint32_t typeIndex, RefPtr<const Wasm::RTT> rtt)
 {
     VM& vm = globalObject->vm();
 
     Ref<const Wasm::TypeDefinition> type = instance->instance().module().moduleInformation().typeSignatures[typeIndex]->expand();
 
-    auto* structValue = new (NotNull, allocateCell<JSWebAssemblyStruct>(vm)) JSWebAssemblyStruct(vm, structure, Ref { type }, rtt);
+    void* buffer = tryAllocateCell<JSWebAssemblyStruct>(vm);
+    if (UNLIKELY(!buffer))
+        return nullptr;
+    auto* structValue = new (NotNull, buffer) JSWebAssemblyStruct(vm, structure, Ref { type }, rtt);
     structValue->finishCreation(vm);
     return structValue;
 }

@@ -49,14 +49,22 @@ public:
     using UnexpectedResult = Unexpected<ErrorType>;
     using CallType = CallLinkInfo::CallType;
 
+    enum InvalidTag { InvalidConstExpr };
+
     // Represents values that a constant expression may evaluate to.
     // If a constant expression allocates an object, it should be put in a Strong handle.
     struct ConstExprValue {
         enum ConstExprValueType : uint8_t {
+            Invalid,
             Numeric,
             Vector,
             Object,
         };
+
+        ConstExprValue(InvalidTag)
+            : m_type(ConstExprValueType::Invalid)
+            , m_bits(0)
+        { }
 
         ConstExprValue()
             : m_type(ConstExprValueType::Numeric)
@@ -77,6 +85,11 @@ public:
             : m_type(ConstExprValueType::Object)
             , m_object(object)
         { }
+
+        bool isInvalid()
+        {
+            return m_type == ConstExprValueType::Invalid;
+        }
 
         uint64_t getValue()
         {
@@ -294,6 +307,8 @@ public:
             obj = arrayNew(m_instance.get(), typeIndex, size, value.getVector());
         else
             obj = arrayNew(m_instance.get(), typeIndex, size, value.getValue());
+        if (UNLIKELY(!obj))
+            return ConstExprValue(InvalidConstExpr);
         return ConstExprValue(Strong<JSObject>(vm, JSValue::decode(obj).getObject()));
     }
 
@@ -301,8 +316,10 @@ public:
     {
         WASM_PARSER_FAIL_IF(!Options::useWebAssemblyGC(), "Wasm GC is not enabled");
 
-        if (m_mode == Mode::Evaluate)
+        if (m_mode == Mode::Evaluate) {
             result = createNewArray(typeIndex, static_cast<uint32_t>(size.getValue()), value);
+            WASM_PARSER_FAIL_IF(result.isInvalid(), "Failed to allocate new array");
+        }
 
         return { };
     }
@@ -321,6 +338,7 @@ public:
             if (elementType == Wasm::Types::V128)
                 initValue = { vectorAllZeros() };
             result = createNewArray(typeIndex, static_cast<uint32_t>(size.getValue()), initValue);
+            WASM_PARSER_FAIL_IF(result.isInvalid(), "Failed to allocate new array");
         }
 
         return { };
@@ -334,11 +352,13 @@ public:
             auto* arrayType = m_info.typeSignatures[typeIndex]->expand().as<ArrayType>();
             if (arrayType->elementType().type.unpacked().isV128()) {
                 result = createNewArray(typeIndex, args.size(), { vectorAllZeros() });
+                WASM_PARSER_FAIL_IF(result.isInvalid(), "Failed to allocate new array");
                 JSWebAssemblyArray* arrayObject = jsCast<JSWebAssemblyArray*>(JSValue::decode(result.getValue()));
                 for (size_t i = 0; i < args.size(); i++)
                     arrayObject->set(i, args[i].getVector());
             } else {
                 result = createNewArray(typeIndex, args.size(), { });
+                WASM_PARSER_FAIL_IF(result.isInvalid(), "Failed to allocate new array");
                 JSWebAssemblyArray* arrayObject = jsCast<JSWebAssemblyArray*>(JSValue::decode(result.getValue()));
                 for (size_t i = 0; i < args.size(); i++)
                     arrayObject->set(i, args[i].getValue());
@@ -362,6 +382,8 @@ public:
     {
         VM& vm = m_instance->vm();
         EncodedJSValue obj = structNew(m_instance.get(), typeIndex, static_cast<bool>(UseDefaultValue::Yes), nullptr);
+        if (UNLIKELY(!obj))
+            return ConstExprValue(InvalidConstExpr);
         return ConstExprValue(Strong<JSObject>(vm, JSValue::decode(obj).getObject()));
     }
 
@@ -370,8 +392,10 @@ public:
     {
         WASM_PARSER_FAIL_IF(!Options::useWebAssemblyGC(), "Wasm GC is not enabled");
 
-        if (m_mode == Mode::Evaluate)
+        if (m_mode == Mode::Evaluate) {
             result = createNewStruct(typeIndex);
+            WASM_PARSER_FAIL_IF(result.isInvalid(), "Failed to allocate new struct");
+        }
 
         return { };
     }
@@ -382,6 +406,7 @@ public:
 
         if (m_mode == Mode::Evaluate) {
             result = createNewStruct(typeIndex);
+            WASM_PARSER_FAIL_IF(result.isInvalid(), "Failed to allocate new struct");
             JSWebAssemblyStruct* structObject = jsCast<JSWebAssemblyStruct*>(JSValue::decode(result.getValue()));
             for (size_t i = 0; i < args.size(); i++) {
                 if (args[i].type() == ConstExprValue::Vector)

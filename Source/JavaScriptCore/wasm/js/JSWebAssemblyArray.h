@@ -54,12 +54,14 @@ public:
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     template <typename ElementType>
-    static JSWebAssemblyArray* create(VM& vm, Structure* structure, Wasm::FieldType elementType, size_t size, FixedVector<ElementType>&& payload, RefPtr<const Wasm::RTT> rtt)
+    static JSWebAssemblyArray* tryCreate(VM& vm, Structure* structure, Wasm::FieldType elementType, size_t size, FixedVector<ElementType>&& payload, RefPtr<const Wasm::RTT> rtt)
     {
-        JSWebAssemblyArray* array = new (NotNull, allocateCell<JSWebAssemblyArray>(vm)) JSWebAssemblyArray(vm, structure, elementType, size, WTFMove(payload), rtt);
+        void* buffer = tryAllocateCell<JSWebAssemblyArray>(vm);
+        if (UNLIKELY(!buffer))
+            return nullptr;
+        JSWebAssemblyArray* array = new (NotNull, buffer) JSWebAssemblyArray(vm, structure, elementType, size, WTFMove(payload), rtt);
         array->finishCreation(vm);
         return array;
-
     }
 
     DECLARE_VISIT_CHILDREN;
