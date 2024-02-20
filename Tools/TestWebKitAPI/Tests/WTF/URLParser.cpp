@@ -143,20 +143,19 @@ static void checkRelativeURL(StringView urlString, StringView baseURL, const Exp
     }
 }
 
-static void checkURLDifferences(StringView urlString, const ExpectedParts& partsNew, const ExpectedParts& partsOld, TestTabs testTabs = TestTabs::Yes)
+static void checkURLDifferences(StringView urlString, const ExpectedParts& parts, TestTabs testTabs = TestTabs::Yes)
 {
-    UNUSED_PARAM(partsOld); // FIXME: Remove all the old expected parts.
     URL url { urlString.toString() };
     
-    EXPECT_TRUE(eq(partsNew.protocol, url.protocol()));
-    EXPECT_TRUE(eq(partsNew.user, url.user()));
-    EXPECT_TRUE(eq(partsNew.password, url.password()));
-    EXPECT_TRUE(eq(partsNew.host, url.host()));
-    EXPECT_EQ(partsNew.port, url.port().value_or(0));
-    EXPECT_TRUE(eq(partsNew.path, url.path()));
-    EXPECT_TRUE(eq(partsNew.query, url.query()));
-    EXPECT_TRUE(eq(partsNew.fragment, url.fragmentIdentifier()));
-    EXPECT_TRUE(eq(partsNew.string, url.string()));
+    EXPECT_TRUE(eq(parts.protocol, url.protocol()));
+    EXPECT_TRUE(eq(parts.user, url.user()));
+    EXPECT_TRUE(eq(parts.password, url.password()));
+    EXPECT_TRUE(eq(parts.host, url.host()));
+    EXPECT_EQ(parts.port, url.port().value_or(0));
+    EXPECT_TRUE(eq(parts.path, url.path()));
+    EXPECT_TRUE(eq(parts.query, url.query()));
+    EXPECT_TRUE(eq(parts.fragment, url.fragmentIdentifier()));
+    EXPECT_TRUE(eq(parts.string, url.string()));
     
     EXPECT_TRUE(WTF::URLParser::internalValuesConsistent(url));
     
@@ -166,26 +165,24 @@ static void checkURLDifferences(StringView urlString, const ExpectedParts& parts
     for (size_t i = 0; i < urlString.length(); ++i) {
         String urlStringWithTab = insertTabAtLocation(urlString, i);
         checkURLDifferences(urlStringWithTab,
-            partsNew.isInvalid() ? invalidParts(urlStringWithTab) : partsNew,
-            partsOld.isInvalid() ? invalidParts(urlStringWithTab) : partsOld,
+            parts.isInvalid() ? invalidParts(urlStringWithTab) : parts,
             TestTabs::No);
     }
 }
 
-static void checkRelativeURLDifferences(StringView urlString, StringView baseURLString, const ExpectedParts& partsNew, const ExpectedParts& partsOld, TestTabs testTabs = TestTabs::Yes)
+static void checkRelativeURLDifferences(StringView urlString, StringView baseURLString, const ExpectedParts& parts, TestTabs testTabs = TestTabs::Yes)
 {
-    UNUSED_PARAM(partsOld); // FIXME: Remove all the old expected parts.
     auto url = URL(URL(baseURLString.toString()), urlString.toString());
     
-    EXPECT_TRUE(eq(partsNew.protocol, url.protocol()));
-    EXPECT_TRUE(eq(partsNew.user, url.user()));
-    EXPECT_TRUE(eq(partsNew.password, url.password()));
-    EXPECT_TRUE(eq(partsNew.host, url.host()));
-    EXPECT_EQ(partsNew.port, url.port().value_or(0));
-    EXPECT_TRUE(eq(partsNew.path, url.path()));
-    EXPECT_TRUE(eq(partsNew.query, url.query()));
-    EXPECT_TRUE(eq(partsNew.fragment, url.fragmentIdentifier()));
-    EXPECT_TRUE(eq(partsNew.string, url.string()));
+    EXPECT_TRUE(eq(parts.protocol, url.protocol()));
+    EXPECT_TRUE(eq(parts.user, url.user()));
+    EXPECT_TRUE(eq(parts.password, url.password()));
+    EXPECT_TRUE(eq(parts.host, url.host()));
+    EXPECT_EQ(parts.port, url.port().value_or(0));
+    EXPECT_TRUE(eq(parts.path, url.path()));
+    EXPECT_TRUE(eq(parts.query, url.query()));
+    EXPECT_TRUE(eq(parts.fragment, url.fragmentIdentifier()));
+    EXPECT_TRUE(eq(parts.string, url.string()));
     
     EXPECT_TRUE(WTF::URLParser::internalValuesConsistent(url));
     
@@ -195,8 +192,7 @@ static void checkRelativeURLDifferences(StringView urlString, StringView baseURL
     for (size_t i = 0; i < urlString.length(); ++i) {
         String urlStringWithTab = insertTabAtLocation(urlString, i);
         checkRelativeURLDifferences(urlStringWithTab, baseURLString,
-            partsNew.isInvalid() ? invalidParts(urlStringWithTab) : partsNew,
-            partsOld.isInvalid() ? invalidParts(urlStringWithTab) : partsOld,
+            parts.isInvalid() ? invalidParts(urlStringWithTab) : parts,
             TestTabs::No);
     }
 }
@@ -434,57 +430,43 @@ TEST_F(WTF_URLParser, Basic)
     checkURL("http:/\\user:@webkit.org:99?foo"_s, { "http"_s, "user"_s, ""_s, "webkit.org"_s, 99, "/"_s, "foo"_s, ""_s, "http://user@webkit.org:99/?foo"_s });
     checkURL("http://127.0.0.1"_s, { "http"_s, ""_s, ""_s, "127.0.0.1"_s, 0, "/"_s, ""_s, ""_s, "http://127.0.0.1/"_s });
     checkURLDifferences("http://127.0.0.1."_s,
-        { "http"_s, ""_s, ""_s, "127.0.0.1"_s, 0, "/"_s, ""_s, ""_s, "http://127.0.0.1/"_s },
-        { "http"_s, ""_s, ""_s, "127.0.0.1."_s, 0, "/"_s, ""_s, ""_s, "http://127.0.0.1./"_s });
+        { "http"_s, ""_s, ""_s, "127.0.0.1"_s, 0, "/"_s, ""_s, ""_s, "http://127.0.0.1/"_s });
     checkURLDifferences("http://127.0.0.1./"_s,
-        { "http"_s, ""_s, ""_s, "127.0.0.1"_s, 0, "/"_s, ""_s, ""_s, "http://127.0.0.1/"_s },
-        { "http"_s, ""_s, ""_s, "127.0.0.1."_s, 0, "/"_s, ""_s, ""_s, "http://127.0.0.1./"_s });
+        { "http"_s, ""_s, ""_s, "127.0.0.1"_s, 0, "/"_s, ""_s, ""_s, "http://127.0.0.1/"_s });
     checkURL("http://127.0.0.1../"_s, { "http"_s, ""_s, ""_s, "127.0.0.1.."_s, 0, "/"_s, ""_s, ""_s, "http://127.0.0.1../"_s });
     checkURLDifferences("http://0x100.0/"_s,
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://0x100.0/"_s },
-        { "http"_s, ""_s, ""_s, "0x100.0"_s, 0, "/"_s, ""_s, ""_s, "http://0x100.0/"_s });
+        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://0x100.0/"_s });
     checkURLDifferences("http://0.0.0x100.0/"_s,
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://0.0.0x100.0/"_s },
-        { "http"_s, ""_s, ""_s, "0.0.0x100.0"_s, 0, "/"_s, ""_s, ""_s, "http://0.0.0x100.0/"_s });
+        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://0.0.0x100.0/"_s });
     checkURLDifferences("http://0.0.0.0x100/"_s,
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://0.0.0.0x100/"_s },
-        { "http"_s, ""_s, ""_s, "0.0.0.0x100"_s, 0, "/"_s, ""_s, ""_s, "http://0.0.0.0x100/"_s });
+        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://0.0.0.0x100/"_s });
     checkURL("http://host:123?"_s, { "http"_s, ""_s, ""_s, "host"_s, 123, "/"_s, ""_s, ""_s, "http://host:123/?"_s });
     checkURL("http://host:123?query"_s, { "http"_s, ""_s, ""_s, "host"_s, 123, "/"_s, "query"_s, ""_s, "http://host:123/?query"_s });
     checkURL("http://host:123#"_s, { "http"_s, ""_s, ""_s, "host"_s, 123, "/"_s, ""_s, ""_s, "http://host:123/#"_s });
     checkURL("http://host:123#fragment"_s, { "http"_s, ""_s, ""_s, "host"_s, 123, "/"_s, ""_s, "fragment"_s, "http://host:123/#fragment"_s });
     checkURLDifferences("foo:////"_s,
-        { "foo"_s, ""_s, ""_s, ""_s, 0, "//"_s, ""_s, ""_s, "foo:////"_s },
-        { "foo"_s, ""_s, ""_s, ""_s, 0, "////"_s, ""_s, ""_s, "foo:////"_s });
+        { "foo"_s, ""_s, ""_s, ""_s, 0, "//"_s, ""_s, ""_s, "foo:////"_s });
     checkURLDifferences("foo:///?"_s,
-        { "foo"_s, ""_s, ""_s, ""_s, 0, "/"_s, ""_s, ""_s, "foo:///?"_s },
-        { "foo"_s, ""_s, ""_s, ""_s, 0, "///"_s, ""_s, ""_s, "foo:///?"_s });
+        { "foo"_s, ""_s, ""_s, ""_s, 0, "/"_s, ""_s, ""_s, "foo:///?"_s });
     checkURLDifferences("foo:///#"_s,
-        { "foo"_s, ""_s, ""_s, ""_s, 0, "/"_s, ""_s, ""_s, "foo:///#"_s },
-        { "foo"_s, ""_s, ""_s, ""_s, 0, "///"_s, ""_s, ""_s, "foo:///#"_s });
+        { "foo"_s, ""_s, ""_s, ""_s, 0, "/"_s, ""_s, ""_s, "foo:///#"_s });
     checkURLDifferences("foo:///"_s,
-        { "foo"_s, ""_s, ""_s, ""_s, 0, "/"_s, ""_s, ""_s, "foo:///"_s },
-        { "foo"_s, ""_s, ""_s, ""_s, 0, "///"_s, ""_s, ""_s, "foo:///"_s });
+        { "foo"_s, ""_s, ""_s, ""_s, 0, "/"_s, ""_s, ""_s, "foo:///"_s });
     checkURLDifferences("foo://?"_s,
-        { "foo"_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "foo://?"_s },
-        { "foo"_s, ""_s, ""_s, ""_s, 0, "//"_s, ""_s, ""_s, "foo://?"_s });
+        { "foo"_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "foo://?"_s });
     checkURLDifferences("foo://#"_s,
-        { "foo"_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "foo://#"_s },
-        { "foo"_s, ""_s, ""_s, ""_s, 0, "//"_s, ""_s, ""_s, "foo://#"_s });
+        { "foo"_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "foo://#"_s });
     checkURLDifferences("foo://"_s,
-        { "foo"_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "foo://"_s },
-        { "foo"_s, ""_s, ""_s, ""_s, 0, "//"_s, ""_s, ""_s, "foo://"_s });
+        { "foo"_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "foo://"_s });
     checkURL("foo:/?"_s, { "foo"_s, ""_s, ""_s, ""_s, 0, "/"_s, ""_s, ""_s, "foo:/?"_s });
     checkURL("foo:/#"_s, { "foo"_s, ""_s, ""_s, ""_s, 0, "/"_s, ""_s, ""_s, "foo:/#"_s });
     checkURL("foo:/"_s, { "foo"_s, ""_s, ""_s, ""_s, 0, "/"_s, ""_s, ""_s, "foo:/"_s });
     checkURL("foo:?"_s, { "foo"_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "foo:?"_s });
     checkURL("foo:#"_s, { "foo"_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "foo:#"_s });
     checkURLDifferences("A://"_s,
-        { "a"_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "a://"_s },
-        { "a"_s, ""_s, ""_s, ""_s, 0, "//"_s, ""_s, ""_s, "a://"_s });
+        { "a"_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "a://"_s });
     checkURLDifferences("aA://"_s,
-        { "aa"_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "aa://"_s },
-        { "aa"_s, ""_s, ""_s, ""_s, 0, "//"_s, ""_s, ""_s, "aa://"_s });
+        { "aa"_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "aa://"_s });
     checkURL(utf16String(u"foo://host/#ПП\u0007 a</"), { "foo"_s, ""_s, ""_s, "host"_s, 0, "/"_s, ""_s, "%D0%9F%D0%9F%07%20a%3C/"_s, "foo://host/#%D0%9F%D0%9F%07%20a%3C/"_s });
     checkURL(utf16String(u"foo://host/#\u0007 a</"), { "foo"_s, ""_s, ""_s, "host"_s, 0, "/"_s, ""_s, "%07%20a%3C/"_s, "foo://host/#%07%20a%3C/"_s });
     checkURL(utf16String(u"http://host?ß😍#ß😍"), { "http"_s, ""_s, ""_s, "host"_s, 0, "/"_s, "%C3%9F%F0%9F%98%8D"_s, "%C3%9F%F0%9F%98%8D"_s, "http://host/?%C3%9F%F0%9F%98%8D#%C3%9F%F0%9F%98%8D"_s }, testTabsValueForSurrogatePairs);
@@ -544,8 +526,7 @@ TEST_F(WTF_URLParser, ParseRelative)
     checkRelativeURL("test"_s, "file:///path1/path2"_s, { "file"_s, ""_s, ""_s, ""_s, 0, "/path1/test"_s, ""_s, ""_s, "file:///path1/test"_s });
     checkRelativeURL(utf16String(u"http://www.foo。bar.com"), "http://other.com/"_s, { "http"_s, ""_s, ""_s, "www.foo.bar.com"_s, 0, "/"_s, ""_s, ""_s, "http://www.foo.bar.com/"_s });
     checkRelativeURLDifferences(utf16String(u"sc://ñ.test/"), "about:blank"_s,
-        { "sc"_s, ""_s, ""_s, "%C3%B1.test"_s, 0, "/"_s, ""_s, ""_s, "sc://%C3%B1.test/"_s },
-        { "sc"_s, ""_s, ""_s, "xn--ida.test"_s, 0, "/"_s, ""_s, ""_s, "sc://xn--ida.test/"_s });
+        { "sc"_s, ""_s, ""_s, "%C3%B1.test"_s, 0, "/"_s, ""_s, ""_s, "sc://%C3%B1.test/"_s });
     checkRelativeURL("#fragment"_s, "http://host/path"_s, { "http"_s, ""_s, ""_s, "host"_s, 0, "/path"_s, ""_s, "fragment"_s, "http://host/path#fragment"_s });
     checkRelativeURL("#fragment"_s, "file:///path"_s, { "file"_s, ""_s, ""_s, ""_s, 0, "/path"_s, ""_s, "fragment"_s, "file:///path#fragment"_s });
     checkRelativeURL("#fragment"_s, "file:///path#old"_s, { "file"_s, ""_s, ""_s, ""_s, 0, "/path"_s, ""_s, "fragment"_s, "file:///path#fragment"_s });
@@ -610,8 +591,7 @@ TEST_F(WTF_URLParser, ParseRelative)
     checkRelativeURL("  "_s, "http://host/path?query#fra#gment"_s, { "http"_s, ""_s, ""_s, "host"_s, 0, "/path"_s, "query"_s, ""_s, "http://host/path?query"_s });
     checkRelativeURL(" \a "_s, "http://host/#fragment"_s, { "http"_s, ""_s, ""_s, "host"_s, 0, "/"_s, ""_s, ""_s, "http://host/"_s });
     checkRelativeURLDifferences("foo://"_s, "http://example.org/foo/bar"_s,
-        { "foo"_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "foo://"_s },
-        { "foo"_s, ""_s, ""_s, ""_s, 0, "//"_s, ""_s, ""_s, "foo://"_s });
+        { "foo"_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "foo://"_s });
     checkRelativeURL(utf16String(u"#β"), "http://example.org/foo/bar"_s, { "http"_s, ""_s, ""_s, "example.org"_s, 0, "/foo/bar"_s, ""_s, "%CE%B2"_s, "http://example.org/foo/bar#%CE%B2"_s });
     checkRelativeURL("index.html"_s, "applewebdata://Host/"_s, { "applewebdata"_s, ""_s, ""_s, "Host"_s, 0, "/index.html"_s, ""_s, ""_s, "applewebdata://Host/index.html"_s });
     checkRelativeURL("index.html"_s, "applewebdata://Host"_s, { "applewebdata"_s, ""_s, ""_s, "Host"_s, 0, "/index.html"_s, ""_s, ""_s, "applewebdata://Host/index.html"_s });
@@ -640,175 +620,121 @@ TEST_F(WTF_URLParser, ParseRelative)
 TEST_F(WTF_URLParser, ParserDifferences)
 {
     checkURLDifferences("http://127.0.1"_s,
-        { "http"_s, ""_s, ""_s, "127.0.0.1"_s, 0, "/"_s, ""_s, ""_s, "http://127.0.0.1/"_s },
-        { "http"_s, ""_s, ""_s, "127.0.1"_s, 0, "/"_s, ""_s, ""_s, "http://127.0.1/"_s });
+        { "http"_s, ""_s, ""_s, "127.0.0.1"_s, 0, "/"_s, ""_s, ""_s, "http://127.0.0.1/"_s });
     checkURLDifferences("http://011.11.0X11.0x011"_s,
-        { "http"_s, ""_s, ""_s, "9.11.17.17"_s, 0, "/"_s, ""_s, ""_s, "http://9.11.17.17/"_s },
-        { "http"_s, ""_s, ""_s, "011.11.0x11.0x011"_s, 0, "/"_s, ""_s, ""_s, "http://011.11.0x11.0x011/"_s });
+        { "http"_s, ""_s, ""_s, "9.11.17.17"_s, 0, "/"_s, ""_s, ""_s, "http://9.11.17.17/"_s });
     checkURLDifferences("http://[1234:0078:90AB:CdEf:0123:0007:89AB:0000]"_s,
-        { "http"_s, ""_s, ""_s, "[1234:78:90ab:cdef:123:7:89ab:0]"_s, 0, "/"_s, ""_s, ""_s, "http://[1234:78:90ab:cdef:123:7:89ab:0]/"_s },
-        { "http"_s, ""_s, ""_s, "[1234:0078:90ab:cdef:0123:0007:89ab:0000]"_s, 0, "/"_s, ""_s, ""_s, "http://[1234:0078:90ab:cdef:0123:0007:89ab:0000]/"_s });
+        { "http"_s, ""_s, ""_s, "[1234:78:90ab:cdef:123:7:89ab:0]"_s, 0, "/"_s, ""_s, ""_s, "http://[1234:78:90ab:cdef:123:7:89ab:0]/"_s });
     checkURLDifferences("http://[0:f:0:0:f:f:0:0]"_s,
-        { "http"_s, ""_s, ""_s, "[0:f::f:f:0:0]"_s, 0, "/"_s, ""_s, ""_s, "http://[0:f::f:f:0:0]/"_s },
-        { "http"_s, ""_s, ""_s, "[0:f:0:0:f:f:0:0]"_s, 0, "/"_s, ""_s, ""_s, "http://[0:f:0:0:f:f:0:0]/"_s });
+        { "http"_s, ""_s, ""_s, "[0:f::f:f:0:0]"_s, 0, "/"_s, ""_s, ""_s, "http://[0:f::f:f:0:0]/"_s });
     checkURLDifferences("http://[0:f:0:0:f:0:0:0]"_s,
-        { "http"_s, ""_s, ""_s, "[0:f:0:0:f::]"_s, 0, "/"_s, ""_s, ""_s, "http://[0:f:0:0:f::]/"_s },
-        { "http"_s, ""_s, ""_s, "[0:f:0:0:f:0:0:0]"_s, 0, "/"_s, ""_s, ""_s, "http://[0:f:0:0:f:0:0:0]/"_s });
+        { "http"_s, ""_s, ""_s, "[0:f:0:0:f::]"_s, 0, "/"_s, ""_s, ""_s, "http://[0:f:0:0:f::]/"_s });
     checkURLDifferences("http://[0:0:f:0:0:f:0:0]"_s,
-        { "http"_s, ""_s, ""_s, "[::f:0:0:f:0:0]"_s, 0, "/"_s, ""_s, ""_s, "http://[::f:0:0:f:0:0]/"_s },
-        { "http"_s, ""_s, ""_s, "[0:0:f:0:0:f:0:0]"_s, 0, "/"_s, ""_s, ""_s, "http://[0:0:f:0:0:f:0:0]/"_s });
+        { "http"_s, ""_s, ""_s, "[::f:0:0:f:0:0]"_s, 0, "/"_s, ""_s, ""_s, "http://[::f:0:0:f:0:0]/"_s });
     checkURLDifferences("http://[a:0:0:0:b:c::d]"_s,
-        { "http"_s, ""_s, ""_s, "[a::b:c:0:d]"_s, 0, "/"_s, ""_s, ""_s, "http://[a::b:c:0:d]/"_s },
-        { "http"_s, ""_s, ""_s, "[a:0:0:0:b:c::d]"_s, 0, "/"_s, ""_s, ""_s, "http://[a:0:0:0:b:c::d]/"_s });
+        { "http"_s, ""_s, ""_s, "[a::b:c:0:d]"_s, 0, "/"_s, ""_s, ""_s, "http://[a::b:c:0:d]/"_s });
     checkURLDifferences("http://[::7f00:0001]/"_s,
-        { "http"_s, ""_s, ""_s, "[::7f00:1]"_s, 0, "/"_s, ""_s, ""_s, "http://[::7f00:1]/"_s },
-        { "http"_s, ""_s, ""_s, "[::7f00:0001]"_s, 0, "/"_s, ""_s, ""_s, "http://[::7f00:0001]/"_s });
+        { "http"_s, ""_s, ""_s, "[::7f00:1]"_s, 0, "/"_s, ""_s, ""_s, "http://[::7f00:1]/"_s });
     checkURLDifferences("http://[::7f00:00]/"_s,
-        { "http"_s, ""_s, ""_s, "[::7f00:0]"_s, 0, "/"_s, ""_s, ""_s, "http://[::7f00:0]/"_s },
-        { "http"_s, ""_s, ""_s, "[::7f00:00]"_s, 0, "/"_s, ""_s, ""_s, "http://[::7f00:00]/"_s });
+        { "http"_s, ""_s, ""_s, "[::7f00:0]"_s, 0, "/"_s, ""_s, ""_s, "http://[::7f00:0]/"_s });
     checkURLDifferences("http://[::0:7f00:0001]/"_s,
-        { "http"_s, ""_s, ""_s, "[::7f00:1]"_s, 0, "/"_s, ""_s, ""_s, "http://[::7f00:1]/"_s },
-        { "http"_s, ""_s, ""_s, "[::0:7f00:0001]"_s, 0, "/"_s, ""_s, ""_s, "http://[::0:7f00:0001]/"_s });
+        { "http"_s, ""_s, ""_s, "[::7f00:1]"_s, 0, "/"_s, ""_s, ""_s, "http://[::7f00:1]/"_s });
     checkURLDifferences("http://127.00.0.1/"_s,
-        { "http"_s, ""_s, ""_s, "127.0.0.1"_s, 0, "/"_s, ""_s, ""_s, "http://127.0.0.1/"_s },
-        { "http"_s, ""_s, ""_s, "127.00.0.1"_s, 0, "/"_s, ""_s, ""_s, "http://127.00.0.1/"_s });
+        { "http"_s, ""_s, ""_s, "127.0.0.1"_s, 0, "/"_s, ""_s, ""_s, "http://127.0.0.1/"_s });
     checkURLDifferences("http://127.0.0.01/"_s,
-        { "http"_s, ""_s, ""_s, "127.0.0.1"_s, 0, "/"_s, ""_s, ""_s, "http://127.0.0.1/"_s },
-        { "http"_s, ""_s, ""_s, "127.0.0.01"_s, 0, "/"_s, ""_s, ""_s, "http://127.0.0.01/"_s });
+        { "http"_s, ""_s, ""_s, "127.0.0.1"_s, 0, "/"_s, ""_s, ""_s, "http://127.0.0.1/"_s });
     checkURLDifferences("http://example.com/path1/.%2e"_s,
-        { "http"_s, ""_s, ""_s, "example.com"_s, 0, "/"_s, ""_s, ""_s, "http://example.com/"_s },
-        { "http"_s, ""_s, ""_s, "example.com"_s, 0, "/path1/.%2e"_s, ""_s, ""_s, "http://example.com/path1/.%2e"_s });
+        { "http"_s, ""_s, ""_s, "example.com"_s, 0, "/"_s, ""_s, ""_s, "http://example.com/"_s });
     checkURLDifferences("http://example.com/path1/.%2E"_s,
-        { "http"_s, ""_s, ""_s, "example.com"_s, 0, "/"_s, ""_s, ""_s, "http://example.com/"_s },
-        { "http"_s, ""_s, ""_s, "example.com"_s, 0, "/path1/.%2E"_s, ""_s, ""_s, "http://example.com/path1/.%2E"_s });
+        { "http"_s, ""_s, ""_s, "example.com"_s, 0, "/"_s, ""_s, ""_s, "http://example.com/"_s });
     checkURLDifferences("http://example.com/path1/.%2E/"_s,
-        { "http"_s, ""_s, ""_s, "example.com"_s, 0, "/"_s, ""_s, ""_s, "http://example.com/"_s },
-        { "http"_s, ""_s, ""_s, "example.com"_s, 0, "/path1/.%2E/"_s, ""_s, ""_s, "http://example.com/path1/.%2E/"_s });
+        { "http"_s, ""_s, ""_s, "example.com"_s, 0, "/"_s, ""_s, ""_s, "http://example.com/"_s });
     checkURLDifferences("http://example.com/path1/%2e."_s,
-        { "http"_s, ""_s, ""_s, "example.com"_s, 0, "/"_s, ""_s, ""_s, "http://example.com/"_s },
-        { "http"_s, ""_s, ""_s, "example.com"_s, 0, "/path1/%2e."_s, ""_s, ""_s, "http://example.com/path1/%2e."_s });
+        { "http"_s, ""_s, ""_s, "example.com"_s, 0, "/"_s, ""_s, ""_s, "http://example.com/"_s });
     checkURLDifferences("http://example.com/path1/%2E%2e"_s,
-        { "http"_s, ""_s, ""_s, "example.com"_s, 0, "/"_s, ""_s, ""_s, "http://example.com/"_s },
-        { "http"_s, ""_s, ""_s, "example.com"_s, 0, "/path1/%2E%2e"_s, ""_s, ""_s, "http://example.com/path1/%2E%2e"_s });
+        { "http"_s, ""_s, ""_s, "example.com"_s, 0, "/"_s, ""_s, ""_s, "http://example.com/"_s });
     checkURLDifferences("http://example.com/path1/%2e"_s,
-        { "http"_s, ""_s, ""_s, "example.com"_s, 0, "/path1/"_s, ""_s, ""_s, "http://example.com/path1/"_s },
-        { "http"_s, ""_s, ""_s, "example.com"_s, 0, "/path1/%2e"_s, ""_s, ""_s, "http://example.com/path1/%2e"_s });
+        { "http"_s, ""_s, ""_s, "example.com"_s, 0, "/path1/"_s, ""_s, ""_s, "http://example.com/path1/"_s });
     checkURLDifferences("http://example.com/path1/%2E"_s,
-        { "http"_s, ""_s, ""_s, "example.com"_s, 0, "/path1/"_s, ""_s, ""_s, "http://example.com/path1/"_s },
-        { "http"_s, ""_s, ""_s, "example.com"_s, 0, "/path1/%2E"_s, ""_s, ""_s, "http://example.com/path1/%2E"_s });
+        { "http"_s, ""_s, ""_s, "example.com"_s, 0, "/path1/"_s, ""_s, ""_s, "http://example.com/path1/"_s });
     checkURLDifferences("http://example.com/path1/%2E/"_s,
-        { "http"_s, ""_s, ""_s, "example.com"_s, 0, "/path1/"_s, ""_s, ""_s, "http://example.com/path1/"_s },
-        { "http"_s, ""_s, ""_s, "example.com"_s, 0, "/path1/%2E/"_s, ""_s, ""_s, "http://example.com/path1/%2E/"_s });
+        { "http"_s, ""_s, ""_s, "example.com"_s, 0, "/path1/"_s, ""_s, ""_s, "http://example.com/path1/"_s });
     checkURLDifferences("http://example.com/path1/path2/%2e?query"_s,
-        { "http"_s, ""_s, ""_s, "example.com"_s, 0, "/path1/path2/"_s, "query"_s, ""_s, "http://example.com/path1/path2/?query"_s },
-        { "http"_s, ""_s, ""_s, "example.com"_s, 0, "/path1/path2/%2e"_s, "query"_s, ""_s, "http://example.com/path1/path2/%2e?query"_s });
+        { "http"_s, ""_s, ""_s, "example.com"_s, 0, "/path1/path2/"_s, "query"_s, ""_s, "http://example.com/path1/path2/?query"_s });
     checkURLDifferences("http://example.com/path1/path2/%2e%2e?query"_s,
-        { "http"_s, ""_s, ""_s, "example.com"_s, 0, "/path1/"_s, "query"_s, ""_s, "http://example.com/path1/?query"_s },
-        { "http"_s, ""_s, ""_s, "example.com"_s, 0, "/path1/path2/%2e%2e"_s, "query"_s, ""_s, "http://example.com/path1/path2/%2e%2e?query"_s });
+        { "http"_s, ""_s, ""_s, "example.com"_s, 0, "/path1/"_s, "query"_s, ""_s, "http://example.com/path1/?query"_s });
     checkURLDifferences("http://example.com/path1/path2/%2e#fragment"_s,
-        { "http"_s, ""_s, ""_s, "example.com"_s, 0, "/path1/path2/"_s, ""_s, "fragment"_s, "http://example.com/path1/path2/#fragment"_s },
-        { "http"_s, ""_s, ""_s, "example.com"_s, 0, "/path1/path2/%2e"_s, ""_s, "fragment"_s, "http://example.com/path1/path2/%2e#fragment"_s });
+        { "http"_s, ""_s, ""_s, "example.com"_s, 0, "/path1/path2/"_s, ""_s, "fragment"_s, "http://example.com/path1/path2/#fragment"_s });
     checkURLDifferences("http://example.com/path1/path2/%2e%2e#fragment"_s,
-        { "http"_s, ""_s, ""_s, "example.com"_s, 0, "/path1/"_s, ""_s, "fragment"_s, "http://example.com/path1/#fragment"_s },
-        { "http"_s, ""_s, ""_s, "example.com"_s, 0, "/path1/path2/%2e%2e"_s, ""_s, "fragment"_s, "http://example.com/path1/path2/%2e%2e#fragment"_s });
+        { "http"_s, ""_s, ""_s, "example.com"_s, 0, "/path1/"_s, ""_s, "fragment"_s, "http://example.com/path1/#fragment"_s });
     checkURL("http://example.com/path1/path2/A%2e%2e#fragment"_s, { "http"_s, ""_s, ""_s, "example.com"_s, 0, "/path1/path2/A%2e%2e"_s, ""_s, "fragment"_s, "http://example.com/path1/path2/A%2e%2e#fragment"_s });
     checkURLDifferences("file://[0:a:0:0:b:c:0:0]/path"_s,
-        { "file"_s, ""_s, ""_s, "[0:a::b:c:0:0]"_s, 0, "/path"_s, ""_s, ""_s, "file://[0:a::b:c:0:0]/path"_s },
-        { "file"_s, ""_s, ""_s, "[0:a:0:0:b:c:0:0]"_s, 0, "/path"_s, ""_s, ""_s, "file://[0:a:0:0:b:c:0:0]/path"_s });
+        { "file"_s, ""_s, ""_s, "[0:a::b:c:0:0]"_s, 0, "/path"_s, ""_s, ""_s, "file://[0:a::b:c:0:0]/path"_s });
     checkURLDifferences("http://"_s,
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://"_s },
-        { "http"_s, ""_s, ""_s, ""_s, 0, "/"_s, ""_s, ""_s, "http:/"_s });
+        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://"_s });
     checkRelativeURLDifferences("//"_s, "https://www.webkit.org/path"_s,
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "//"_s },
-        { "https"_s, ""_s, ""_s, ""_s, 0, "/"_s, ""_s, ""_s, "https:/"_s });
+        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "//"_s });
     checkURLDifferences("http://127.0.0.1:65536/path"_s,
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://127.0.0.1:65536/path"_s },
-        { "http"_s, ""_s, ""_s, "127.0.0.1"_s, 0, "/path"_s, ""_s, ""_s, "http://127.0.0.1:65536/path"_s });
+        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://127.0.0.1:65536/path"_s });
     checkURLDifferences("http://host:65536"_s,
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://host:65536"_s },
-        { "http"_s, ""_s, ""_s, "host"_s, 0, "/"_s, ""_s, ""_s, "http://host:65536/"_s });
+        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://host:65536"_s });
     checkURLDifferences("http://127.0.0.1:65536"_s,
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://127.0.0.1:65536"_s },
-        { "http"_s, ""_s, ""_s, "127.0.0.1"_s, 0, "/"_s, ""_s, ""_s, "http://127.0.0.1:65536/"_s });
+        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://127.0.0.1:65536"_s });
     checkURLDifferences("http://[0:f::f:f:0:0]:65536"_s,
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://[0:f::f:f:0:0]:65536"_s },
-        { "http"_s, ""_s, ""_s, "[0:f::f:f:0:0]"_s, 0, "/"_s, ""_s, ""_s, "http://[0:f::f:f:0:0]:65536/"_s });
+        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://[0:f::f:f:0:0]:65536"_s });
     checkRelativeURLDifferences(":foo.com\\"_s, "notspecial://example.org/foo/bar"_s,
-        { "notspecial"_s, ""_s, ""_s, "example.org"_s, 0, "/foo/:foo.com\\"_s, ""_s, ""_s, "notspecial://example.org/foo/:foo.com\\"_s },
-        { "notspecial"_s, ""_s, ""_s, "example.org"_s, 0, "/foo/:foo.com/"_s, ""_s, ""_s, "notspecial://example.org/foo/:foo.com/"_s });
+        { "notspecial"_s, ""_s, ""_s, "example.org"_s, 0, "/foo/:foo.com\\"_s, ""_s, ""_s, "notspecial://example.org/foo/:foo.com\\"_s });
     checkURL("sc://pa"_s, { "sc"_s, ""_s, ""_s, "pa"_s, 0, ""_s, ""_s, ""_s, "sc://pa"_s });
     checkRelativeURLDifferences("notspecial:\\\\foo.com\\"_s, "http://example.org/foo/bar"_s,
-        { "notspecial"_s, ""_s, ""_s, ""_s, 0, "\\\\foo.com\\"_s, ""_s, ""_s, "notspecial:\\\\foo.com\\"_s },
-        { "notspecial"_s, ""_s, ""_s, "foo.com"_s, 0, "/"_s, ""_s, ""_s, "notspecial://foo.com/"_s });
+        { "notspecial"_s, ""_s, ""_s, ""_s, 0, "\\\\foo.com\\"_s, ""_s, ""_s, "notspecial:\\\\foo.com\\"_s });
     checkRelativeURLDifferences("notspecial:\\\\foo.com/"_s, "http://example.org/foo/bar"_s,
-        { "notspecial"_s, ""_s, ""_s, ""_s, 0, "\\\\foo.com/"_s, ""_s, ""_s, "notspecial:\\\\foo.com/"_s },
-        { "notspecial"_s, ""_s, ""_s, "foo.com"_s, 0, "/"_s, ""_s, ""_s, "notspecial://foo.com/"_s });
+        { "notspecial"_s, ""_s, ""_s, ""_s, 0, "\\\\foo.com/"_s, ""_s, ""_s, "notspecial:\\\\foo.com/"_s });
     checkRelativeURLDifferences("notspecial:\\\\foo.com"_s, "http://example.org/foo/bar"_s,
-        { "notspecial"_s, ""_s, ""_s, ""_s, 0, "\\\\foo.com"_s, ""_s, ""_s, "notspecial:\\\\foo.com"_s },
-        { "notspecial"_s, ""_s, ""_s, "foo.com"_s, 0, ""_s, ""_s, ""_s, "notspecial://foo.com"_s });
+        { "notspecial"_s, ""_s, ""_s, ""_s, 0, "\\\\foo.com"_s, ""_s, ""_s, "notspecial:\\\\foo.com"_s });
     checkURLDifferences("file://notuser:notpassword@test"_s,
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "file://notuser:notpassword@test"_s },
-        { "file"_s, "notuser"_s, "notpassword"_s, "test"_s, 0, "/"_s, ""_s, ""_s, "file://notuser:notpassword@test/"_s });
+        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "file://notuser:notpassword@test"_s });
     checkURLDifferences("file://notuser:notpassword@test/"_s,
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "file://notuser:notpassword@test/"_s },
-        { "file"_s, "notuser"_s, "notpassword"_s, "test"_s, 0, "/"_s, ""_s, ""_s, "file://notuser:notpassword@test/"_s });
+        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "file://notuser:notpassword@test/"_s });
     checkRelativeURLDifferences("http:/"_s, "about:blank"_s,
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http:/"_s },
-        { "http"_s, ""_s, ""_s, ""_s, 0, "/"_s, ""_s, ""_s, "http:/"_s });
+        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http:/"_s });
     checkRelativeURL("http:"_s, "about:blank"_s, { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http:"_s });
     checkRelativeURLDifferences("http:/"_s, "http://host"_s,
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http:/"_s },
-        { "http"_s, ""_s, ""_s, ""_s, 0, "/"_s, ""_s, ""_s, "http:/"_s });
+        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http:/"_s });
     checkURLDifferences("http:/"_s,
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http:/"_s },
-        { "http"_s, ""_s, ""_s, ""_s, 0, "/"_s, ""_s, ""_s, "http:/"_s });
+        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http:/"_s });
     checkURL("http:"_s, { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http:"_s });
     checkRelativeURLDifferences("http:/example.com/"_s, "http://example.org/foo/bar"_s,
-        { "http"_s, ""_s, ""_s, "example.org"_s, 0, "/example.com/"_s, ""_s, ""_s, "http://example.org/example.com/"_s },
-        { "http"_s, ""_s, ""_s, "example.com"_s, 0, "/"_s, ""_s, ""_s, "http://example.com/"_s });
+        { "http"_s, ""_s, ""_s, "example.org"_s, 0, "/example.com/"_s, ""_s, ""_s, "http://example.org/example.com/"_s });
 
     // This behavior matches Chrome and Firefox, but not WebKit using URL::parse.
     // The behavior of URL::parse is clearly wrong because reparsing file://path would make path the host.
     // The spec is unclear.
     checkURLDifferences("file:path"_s,
-        { "file"_s, ""_s, ""_s, ""_s, 0, "/path"_s, ""_s, ""_s, "file:///path"_s },
-        { "file"_s, ""_s, ""_s, ""_s, 0, "path"_s, ""_s, ""_s, "file://path"_s });
+        { "file"_s, ""_s, ""_s, ""_s, 0, "/path"_s, ""_s, ""_s, "file:///path"_s });
     checkURLDifferences("file:pAtH"_s,
-        { "file"_s, ""_s, ""_s, ""_s, 0, "/pAtH"_s, ""_s, ""_s, "file:///pAtH"_s },
-        { "file"_s, ""_s, ""_s, ""_s, 0, "pAtH"_s, ""_s, ""_s, "file://pAtH"_s });
+        { "file"_s, ""_s, ""_s, ""_s, 0, "/pAtH"_s, ""_s, ""_s, "file:///pAtH"_s });
     checkURLDifferences("file:pAtH/"_s,
-        { "file"_s, ""_s, ""_s, ""_s, 0, "/pAtH/"_s, ""_s, ""_s, "file:///pAtH/"_s },
-        { "file"_s, ""_s, ""_s, ""_s, 0, "pAtH/"_s, ""_s, ""_s, "file://pAtH/"_s });
+        { "file"_s, ""_s, ""_s, ""_s, 0, "/pAtH/"_s, ""_s, ""_s, "file:///pAtH/"_s });
     checkURLDifferences("http://example.com%A0"_s,
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://example.com%A0"_s },
-        { "http"_s, ""_s, ""_s, "example.com%a0"_s, 0, "/"_s, ""_s, ""_s, "http://example.com%a0/"_s });
+        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://example.com%A0"_s });
     checkURLDifferences("http://%E2%98%83"_s,
-        { "http"_s, ""_s, ""_s, "xn--n3h"_s, 0, "/"_s, ""_s, ""_s, "http://xn--n3h/"_s },
-        { "http"_s, ""_s, ""_s, "%e2%98%83"_s, 0, "/"_s, ""_s, ""_s, "http://%e2%98%83/"_s });
+        { "http"_s, ""_s, ""_s, "xn--n3h"_s, 0, "/"_s, ""_s, ""_s, "http://xn--n3h/"_s });
     checkURLDifferences("http://host%73"_s,
-        { "http"_s, ""_s, ""_s, "hosts"_s, 0, "/"_s, ""_s, ""_s, "http://hosts/"_s },
-        { "http"_s, ""_s, ""_s, "host%73"_s, 0, "/"_s, ""_s, ""_s, "http://host%73/"_s });
+        { "http"_s, ""_s, ""_s, "hosts"_s, 0, "/"_s, ""_s, ""_s, "http://hosts/"_s });
     checkURLDifferences("http://host%53"_s,
-        { "http"_s, ""_s, ""_s, "hosts"_s, 0, "/"_s, ""_s, ""_s, "http://hosts/"_s },
-        { "http"_s, ""_s, ""_s, "host%53"_s, 0, "/"_s, ""_s, ""_s, "http://host%53/"_s });
+        { "http"_s, ""_s, ""_s, "hosts"_s, 0, "/"_s, ""_s, ""_s, "http://hosts/"_s });
     checkURLDifferences("http://%"_s,
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://%"_s },
-        { "http"_s, ""_s, ""_s, "%"_s, 0, "/"_s, ""_s, ""_s, "http://%/"_s });
+        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://%"_s });
     checkURLDifferences("http://%7"_s,
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://%7"_s },
-        { "http"_s, ""_s, ""_s, "%7"_s, 0, "/"_s, ""_s, ""_s, "http://%7/"_s });
+        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://%7"_s });
     checkURLDifferences("http://%7s"_s,
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://%7s"_s },
-        { "http"_s, ""_s, ""_s, "%7s"_s, 0, "/"_s, ""_s, ""_s, "http://%7s/"_s });
+        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://%7s"_s });
     checkURLDifferences("http://%73"_s,
-        { "http"_s, ""_s, ""_s, "s"_s, 0, "/"_s, ""_s, ""_s, "http://s/"_s },
-        { "http"_s, ""_s, ""_s, "%73"_s, 0, "/"_s, ""_s, ""_s, "http://%73/"_s });
+        { "http"_s, ""_s, ""_s, "s"_s, 0, "/"_s, ""_s, ""_s, "http://s/"_s });
     checkURLDifferences("http://abcdefg%"_s,
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://abcdefg%"_s },
-        { "http"_s, ""_s, ""_s, "abcdefg%"_s, 0, "/"_s, ""_s, ""_s, "http://abcdefg%/"_s });
+        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://abcdefg%"_s });
     checkURLDifferences("http://abcd%7Xefg"_s,
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://abcd%7Xefg"_s },
-        { "http"_s, ""_s, ""_s, "abcd%7xefg"_s, 0, "/"_s, ""_s, ""_s, "http://abcd%7xefg/"_s });
+        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://abcd%7Xefg"_s });
     checkURL(StringView::fromLatin1("ws://äAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"), { "ws"_s, ""_s, ""_s, "xn--aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-rsb254a"_s, 0, "/"_s, ""_s, ""_s, "ws://xn--aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-rsb254a/"_s }, TestTabs::No);
     checkURL(StringView::fromLatin1("ws://äAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"), { "ws"_s, ""_s, ""_s, "xn--aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-stb515a"_s, 0, "/"_s, ""_s, ""_s, "ws://xn--aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-stb515a/"_s }, TestTabs::No);
     checkURL(StringView::fromLatin1("ws://&äAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"), { "ws"_s, ""_s, ""_s, "xn--&aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-ssb254a"_s, 0, "/"_s, ""_s, ""_s, "ws://xn--&aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-ssb254a/"_s }, TestTabs::No);
@@ -816,262 +742,181 @@ TEST_F(WTF_URLParser, ParserDifferences)
 
     // URLParser matches Chrome and the spec, but not URL::parse or Firefox.
     checkURLDifferences(utf16String(u"http://０Ｘｃ０．０２５０．０１"),
-        { "http"_s, ""_s, ""_s, "192.168.0.1"_s, 0, "/"_s, ""_s, ""_s, "http://192.168.0.1/"_s },
-        { "http"_s, ""_s, ""_s, "0xc0.0250.01"_s, 0, "/"_s, ""_s, ""_s, "http://0xc0.0250.01/"_s });
+        { "http"_s, ""_s, ""_s, "192.168.0.1"_s, 0, "/"_s, ""_s, ""_s, "http://192.168.0.1/"_s });
 
     checkURL("http://host/path%2e.%2E"_s, { "http"_s, ""_s, ""_s, "host"_s, 0, "/path%2e.%2E"_s, ""_s, ""_s, "http://host/path%2e.%2E"_s });
 
     checkRelativeURLDifferences(utf16String(u"http://foo:💩@example.com/bar"), "http://other.com/"_s,
-        { "http"_s, "foo"_s, utf16String(u"💩"), "example.com"_s, 0, "/bar"_s, ""_s, ""_s, "http://foo:%F0%9F%92%A9@example.com/bar"_s },
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, utf16String(u"http://foo:💩@example.com/bar") }, testTabsValueForSurrogatePairs);
+        { "http"_s, "foo"_s, utf16String(u"💩"), "example.com"_s, 0, "/bar"_s, ""_s, ""_s, "http://foo:%F0%9F%92%A9@example.com/bar"_s }, testTabsValueForSurrogatePairs);
     checkRelativeURLDifferences("http://&a:foo(b]c@d:2/"_s, "http://example.org/foo/bar"_s,
-        { "http"_s, "&a"_s, "foo(b]c"_s, "d"_s, 2, "/"_s, ""_s, ""_s, "http://&a:foo(b%5Dc@d:2/"_s },
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://&a:foo(b]c@d:2/"_s });
+        { "http"_s, "&a"_s, "foo(b]c"_s, "d"_s, 2, "/"_s, ""_s, ""_s, "http://&a:foo(b%5Dc@d:2/"_s });
     checkRelativeURLDifferences("http://`{}:`{}@h/`{}?`{}"_s, "http://doesnotmatter/"_s,
-        { "http"_s, "`{}"_s, "`{}"_s, "h"_s, 0, "/%60%7B%7D"_s, "`{}"_s, ""_s, "http://%60%7B%7D:%60%7B%7D@h/%60%7B%7D?`{}"_s },
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://`{}:`{}@h/`{}?`{}"_s });
+        { "http"_s, "`{}"_s, "`{}"_s, "h"_s, 0, "/%60%7B%7D"_s, "`{}"_s, ""_s, "http://%60%7B%7D:%60%7B%7D@h/%60%7B%7D?`{}"_s });
     checkURLDifferences("http://[0:f::f::f]"_s,
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://[0:f::f::f]"_s },
-        { "http"_s, ""_s, ""_s, "[0:f::f::f]"_s, 0, "/"_s, ""_s, ""_s, "http://[0:f::f::f]/"_s });
+        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://[0:f::f::f]"_s });
     checkURLDifferences("http://123"_s,
-        { "http"_s, ""_s, ""_s, "0.0.0.123"_s, 0, "/"_s, ""_s, ""_s, "http://0.0.0.123/"_s },
-        { "http"_s, ""_s, ""_s, "123"_s, 0, "/"_s, ""_s, ""_s, "http://123/"_s });
+        { "http"_s, ""_s, ""_s, "0.0.0.123"_s, 0, "/"_s, ""_s, ""_s, "http://0.0.0.123/"_s });
     checkURLDifferences("http://123.234/"_s,
-        { "http"_s, ""_s, ""_s, "123.0.0.234"_s, 0, "/"_s, ""_s, ""_s, "http://123.0.0.234/"_s },
-        { "http"_s, ""_s, ""_s, "123.234"_s, 0, "/"_s, ""_s, ""_s, "http://123.234/"_s });
+        { "http"_s, ""_s, ""_s, "123.0.0.234"_s, 0, "/"_s, ""_s, ""_s, "http://123.0.0.234/"_s });
     checkURLDifferences("http://123.234.012"_s,
-        { "http"_s, ""_s, ""_s, "123.234.0.10"_s, 0, "/"_s, ""_s, ""_s, "http://123.234.0.10/"_s },
-        { "http"_s, ""_s, ""_s, "123.234.012"_s, 0, "/"_s, ""_s, ""_s, "http://123.234.012/"_s });
+        { "http"_s, ""_s, ""_s, "123.234.0.10"_s, 0, "/"_s, ""_s, ""_s, "http://123.234.0.10/"_s });
     checkURLDifferences("http://123.234.12"_s,
-        { "http"_s, ""_s, ""_s, "123.234.0.12"_s, 0, "/"_s, ""_s, ""_s, "http://123.234.0.12/"_s },
-        { "http"_s, ""_s, ""_s, "123.234.12"_s, 0, "/"_s, ""_s, ""_s, "http://123.234.12/"_s });
+        { "http"_s, ""_s, ""_s, "123.234.0.12"_s, 0, "/"_s, ""_s, ""_s, "http://123.234.0.12/"_s });
     checkRelativeURLDifferences("file:c:\\foo\\bar.html"_s, "file:///tmp/mock/path"_s,
-        { "file"_s, ""_s, ""_s, ""_s, 0, "/c:/foo/bar.html"_s, ""_s, ""_s, "file:///c:/foo/bar.html"_s },
-        { "file"_s, ""_s, ""_s, ""_s, 0, "/tmp/mock/c:/foo/bar.html"_s, ""_s, ""_s, "file:///tmp/mock/c:/foo/bar.html"_s });
+        { "file"_s, ""_s, ""_s, ""_s, 0, "/c:/foo/bar.html"_s, ""_s, ""_s, "file:///c:/foo/bar.html"_s });
     checkRelativeURLDifferences("  File:c|////foo\\bar.html"_s, "file:///tmp/mock/path"_s,
-        { "file"_s, ""_s, ""_s, ""_s, 0, "/c:////foo/bar.html"_s, ""_s, ""_s, "file:///c:////foo/bar.html"_s },
-        { "file"_s, ""_s, ""_s, ""_s, 0, "/tmp/mock/c|////foo/bar.html"_s, ""_s, ""_s, "file:///tmp/mock/c|////foo/bar.html"_s });
+        { "file"_s, ""_s, ""_s, ""_s, 0, "/c:////foo/bar.html"_s, ""_s, ""_s, "file:///c:////foo/bar.html"_s });
     checkRelativeURLDifferences("  Fil\t\n\te\n\t\n:\t\n\tc\t\n\t|\n\t\n/\t\n\t/\n\t\n//foo\\bar.html"_s, "file:///tmp/mock/path"_s,
-        { "file"_s, ""_s, ""_s, ""_s, 0, "/c:////foo/bar.html"_s, ""_s, ""_s, "file:///c:////foo/bar.html"_s },
-        { "file"_s, ""_s, ""_s, ""_s, 0, "/tmp/mock/c|////foo/bar.html"_s, ""_s, ""_s, "file:///tmp/mock/c|////foo/bar.html"_s });
+        { "file"_s, ""_s, ""_s, ""_s, 0, "/c:////foo/bar.html"_s, ""_s, ""_s, "file:///c:////foo/bar.html"_s });
     checkRelativeURLDifferences("C|/foo/bar"_s, "file:///tmp/mock/path"_s,
-        { "file"_s, ""_s, ""_s, ""_s, 0, "/C:/foo/bar"_s, ""_s, ""_s, "file:///C:/foo/bar"_s },
-        { "file"_s, ""_s, ""_s, ""_s, 0, "/tmp/mock/C|/foo/bar"_s, ""_s, ""_s, "file:///tmp/mock/C|/foo/bar"_s });
+        { "file"_s, ""_s, ""_s, ""_s, 0, "/C:/foo/bar"_s, ""_s, ""_s, "file:///C:/foo/bar"_s });
     checkRelativeURLDifferences("/C|/foo/bar"_s, "file:///tmp/mock/path"_s,
-        { "file"_s, ""_s, ""_s, ""_s, 0, "/C:/foo/bar"_s, ""_s, ""_s, "file:///C:/foo/bar"_s },
-        { "file"_s, ""_s, ""_s, ""_s, 0, "/C|/foo/bar"_s, ""_s, ""_s, "file:///C|/foo/bar"_s });
+        { "file"_s, ""_s, ""_s, ""_s, 0, "/C:/foo/bar"_s, ""_s, ""_s, "file:///C:/foo/bar"_s });
     checkRelativeURLDifferences("https://@test@test@example:800/"_s, "http://doesnotmatter/"_s,
-        { "https"_s, "@test@test"_s, ""_s, "example"_s, 800, "/"_s, ""_s, ""_s, "https://%40test%40test@example:800/"_s },
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "https://@test@test@example:800/"_s });
+        { "https"_s, "@test@test"_s, ""_s, "example"_s, 800, "/"_s, ""_s, ""_s, "https://%40test%40test@example:800/"_s });
     checkRelativeURLDifferences("https://@test@test@example:800/path@end"_s, "http://doesnotmatter/"_s,
-        { "https"_s, "@test@test"_s, ""_s, "example"_s, 800, "/path@end"_s, ""_s, ""_s, "https://%40test%40test@example:800/path@end"_s },
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "https://@test@test@example:800/path@end"_s });
+        { "https"_s, "@test@test"_s, ""_s, "example"_s, 800, "/path@end"_s, ""_s, ""_s, "https://%40test%40test@example:800/path@end"_s });
     checkURLDifferences("notspecial://@test@test@example:800/path@end"_s,
-        { "notspecial"_s, "@test@test"_s, ""_s, "example"_s, 800, "/path@end"_s, ""_s, ""_s, "notspecial://%40test%40test@example:800/path@end"_s },
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "notspecial://@test@test@example:800/path@end"_s });
+        { "notspecial"_s, "@test@test"_s, ""_s, "example"_s, 800, "/path@end"_s, ""_s, ""_s, "notspecial://%40test%40test@example:800/path@end"_s });
     checkURLDifferences("notspecial://@test@test@example:800\\path@end"_s,
-        { "notspecial"_s, "@test@test@example"_s, "800\\path"_s, "end"_s, 0, ""_s, ""_s, ""_s, "notspecial://%40test%40test%40example:800%5Cpath@end"_s },
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "notspecial://@test@test@example:800\\path@end"_s });
+        { "notspecial"_s, "@test@test@example"_s, "800\\path"_s, "end"_s, 0, ""_s, ""_s, ""_s, "notspecial://%40test%40test%40example:800%5Cpath@end"_s });
     checkURLDifferences("http://%48OsT"_s,
-        { "http"_s, ""_s, ""_s, "host"_s, 0, "/"_s, ""_s, ""_s, "http://host/"_s },
-        { "http"_s, ""_s, ""_s, "%48ost"_s, 0, "/"_s, ""_s, ""_s, "http://%48ost/"_s });
+        { "http"_s, ""_s, ""_s, "host"_s, 0, "/"_s, ""_s, ""_s, "http://host/"_s });
     checkURLDifferences("http://h%4FsT"_s,
-        { "http"_s, ""_s, ""_s, "host"_s, 0, "/"_s, ""_s, ""_s, "http://host/"_s },
-        { "http"_s, ""_s, ""_s, "h%4fst"_s, 0, "/"_s, ""_s, ""_s, "http://h%4fst/"_s });
+        { "http"_s, ""_s, ""_s, "host"_s, 0, "/"_s, ""_s, ""_s, "http://host/"_s });
     checkURLDifferences("http://h%4fsT"_s,
-        { "http"_s, ""_s, ""_s, "host"_s, 0, "/"_s, ""_s, ""_s, "http://host/"_s },
-        { "http"_s, ""_s, ""_s, "h%4fst"_s, 0, "/"_s, ""_s, ""_s, "http://h%4fst/"_s });
+        { "http"_s, ""_s, ""_s, "host"_s, 0, "/"_s, ""_s, ""_s, "http://host/"_s });
     checkURLDifferences("http://h%6fsT"_s,
-        { "http"_s, ""_s, ""_s, "host"_s, 0, "/"_s, ""_s, ""_s, "http://host/"_s },
-        { "http"_s, ""_s, ""_s, "h%6fst"_s, 0, "/"_s, ""_s, ""_s, "http://h%6fst/"_s });
+        { "http"_s, ""_s, ""_s, "host"_s, 0, "/"_s, ""_s, ""_s, "http://host/"_s });
     checkURLDifferences("http://host/`"_s,
-        { "http"_s, ""_s, ""_s, "host"_s, 0, "/%60"_s, ""_s, ""_s, "http://host/%60"_s },
-        { "http"_s, ""_s, ""_s, "host"_s, 0, "/`"_s, ""_s, ""_s, "http://host/`"_s });
+        { "http"_s, ""_s, ""_s, "host"_s, 0, "/%60"_s, ""_s, ""_s, "http://host/%60"_s });
     checkURLDifferences("http://://"_s,
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://://"_s },
-        { "http"_s, ""_s, ""_s, ""_s, 0, "//"_s, ""_s, ""_s, "http://://"_s });
+        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://://"_s });
     checkURLDifferences("http://:123?"_s,
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://:123?"_s },
-        { "http"_s, ""_s, ""_s, ""_s, 123, "/"_s, ""_s, ""_s, "http://:123/?"_s });
+        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://:123?"_s });
     checkURLDifferences("http:/:"_s,
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http:/:"_s },
-        { "http"_s, ""_s, ""_s, ""_s, 0, "/"_s, ""_s, ""_s, "http://:/"_s });
+        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http:/:"_s });
     checkURLDifferences("asdf://:"_s,
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "asdf://:"_s },
-        { "asdf"_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "asdf://:"_s });
+        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "asdf://:"_s });
     checkURLDifferences("http://:"_s,
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://:"_s },
-        { "http"_s, ""_s, ""_s, ""_s, 0, "/"_s, ""_s, ""_s, "http://:/"_s });
+        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://:"_s });
     checkURLDifferences("http:##foo"_s,
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http:##foo"_s },
-        { "http"_s, ""_s, ""_s, ""_s, 0, "/"_s, ""_s, "#foo"_s, "http:/##foo"_s });
+        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http:##foo"_s });
     checkURLDifferences("http:??bar"_s,
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http:??bar"_s },
-        { "http"_s, ""_s, ""_s, ""_s, 0, "/"_s, "?bar"_s, ""_s, "http:/??bar"_s });
+        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http:??bar"_s });
     checkURL("asdf:##foo"_s, { "asdf"_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, "#foo"_s, "asdf:##foo"_s });
     checkURL("asdf:??bar"_s, { "asdf"_s, ""_s, ""_s, ""_s, 0, ""_s, "?bar"_s, ""_s, "asdf:??bar"_s });
     checkRelativeURLDifferences("//C|/foo/bar"_s, "file:///tmp/mock/path"_s,
-        { "file"_s, ""_s, ""_s, ""_s, 0, "/C:/foo/bar"_s, ""_s, ""_s, "file:///C:/foo/bar"_s },
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "//C|/foo/bar"_s });
+        { "file"_s, ""_s, ""_s, ""_s, 0, "/C:/foo/bar"_s, ""_s, ""_s, "file:///C:/foo/bar"_s });
     checkRelativeURLDifferences("//C:/foo/bar"_s, "file:///tmp/mock/path"_s,
-        { "file"_s, ""_s, ""_s, ""_s, 0, "/C:/foo/bar"_s, ""_s, ""_s, "file:///C:/foo/bar"_s },
-        { "file"_s, ""_s, ""_s, "c"_s, 0, "/foo/bar"_s, ""_s, ""_s, "file://c/foo/bar"_s });
+        { "file"_s, ""_s, ""_s, ""_s, 0, "/C:/foo/bar"_s, ""_s, ""_s, "file:///C:/foo/bar"_s });
     checkRelativeURLDifferences("//C|?foo/bar"_s, "file:///tmp/mock/path"_s,
-        { "file"_s, ""_s, ""_s, ""_s, 0, "/C:/"_s, "foo/bar"_s, ""_s, "file:///C:/?foo/bar"_s },
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "//C|?foo/bar"_s });
+        { "file"_s, ""_s, ""_s, ""_s, 0, "/C:/"_s, "foo/bar"_s, ""_s, "file:///C:/?foo/bar"_s });
     checkRelativeURLDifferences("//C|#foo/bar"_s, "file:///tmp/mock/path"_s,
-        { "file"_s, ""_s, ""_s, ""_s, 0, "/C:/"_s, ""_s, "foo/bar"_s, "file:///C:/#foo/bar"_s },
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "//C|#foo/bar"_s });
+        { "file"_s, ""_s, ""_s, ""_s, 0, "/C:/"_s, ""_s, "foo/bar"_s, "file:///C:/#foo/bar"_s });
     checkURLDifferences("http://0xFFFFFfFF/"_s,
-        { "http"_s, ""_s, ""_s, "255.255.255.255"_s, 0, "/"_s, ""_s, ""_s, "http://255.255.255.255/"_s },
-        { "http"_s, ""_s, ""_s, "0xffffffff"_s, 0, "/"_s, ""_s, ""_s, "http://0xffffffff/"_s });
+        { "http"_s, ""_s, ""_s, "255.255.255.255"_s, 0, "/"_s, ""_s, ""_s, "http://255.255.255.255/"_s });
     checkURLDifferences("http://0000000000000000037777777777/"_s,
-        { "http"_s, ""_s, ""_s, "255.255.255.255"_s, 0, "/"_s, ""_s, ""_s, "http://255.255.255.255/"_s },
-        { "http"_s, ""_s, ""_s, "0000000000000000037777777777"_s, 0, "/"_s, ""_s, ""_s, "http://0000000000000000037777777777/"_s });
+        { "http"_s, ""_s, ""_s, "255.255.255.255"_s, 0, "/"_s, ""_s, ""_s, "http://255.255.255.255/"_s });
     checkURLDifferences("http://4294967295/"_s,
-        { "http"_s, ""_s, ""_s, "255.255.255.255"_s, 0, "/"_s, ""_s, ""_s, "http://255.255.255.255/"_s },
-        { "http"_s, ""_s, ""_s, "4294967295"_s, 0, "/"_s, ""_s, ""_s, "http://4294967295/"_s });
+        { "http"_s, ""_s, ""_s, "255.255.255.255"_s, 0, "/"_s, ""_s, ""_s, "http://255.255.255.255/"_s });
     checkURLDifferences("http://256/"_s,
-        { "http"_s, ""_s, ""_s, "0.0.1.0"_s, 0, "/"_s, ""_s, ""_s, "http://0.0.1.0/"_s },
-        { "http"_s, ""_s, ""_s, "256"_s, 0, "/"_s, ""_s, ""_s, "http://256/"_s });
+        { "http"_s, ""_s, ""_s, "0.0.1.0"_s, 0, "/"_s, ""_s, ""_s, "http://0.0.1.0/"_s });
     checkURLDifferences("http://256./"_s,
-        { "http"_s, ""_s, ""_s, "0.0.1.0"_s, 0, "/"_s, ""_s, ""_s, "http://0.0.1.0/"_s },
-        { "http"_s, ""_s, ""_s, "256."_s, 0, "/"_s, ""_s, ""_s, "http://256./"_s });
+        { "http"_s, ""_s, ""_s, "0.0.1.0"_s, 0, "/"_s, ""_s, ""_s, "http://0.0.1.0/"_s });
     checkURLDifferences("http://123.256/"_s,
-        { "http"_s, ""_s, ""_s, "123.0.1.0"_s, 0, "/"_s, ""_s, ""_s, "http://123.0.1.0/"_s },
-        { "http"_s, ""_s, ""_s, "123.256"_s, 0, "/"_s, ""_s, ""_s, "http://123.256/"_s });
+        { "http"_s, ""_s, ""_s, "123.0.1.0"_s, 0, "/"_s, ""_s, ""_s, "http://123.0.1.0/"_s });
     checkURLDifferences("http://127.%.0.1/"_s,
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://127.%.0.1/"_s },
-        { "http"_s, ""_s, ""_s, "127.%.0.1"_s, 0, "/"_s, ""_s, ""_s, "http://127.%.0.1/"_s });
+        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://127.%.0.1/"_s });
     checkURLDifferences("http://[1:2:3:4:5:6:7:8:]/"_s,
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://[1:2:3:4:5:6:7:8:]/"_s },
-        { "http"_s, ""_s, ""_s, "[1:2:3:4:5:6:7:8:]"_s, 0, "/"_s, ""_s, ""_s, "http://[1:2:3:4:5:6:7:8:]/"_s });
+        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://[1:2:3:4:5:6:7:8:]/"_s });
     checkURLDifferences("http://[:2:3:4:5:6:7:8:]/"_s,
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://[:2:3:4:5:6:7:8:]/"_s },
-        { "http"_s, ""_s, ""_s, "[:2:3:4:5:6:7:8:]"_s, 0, "/"_s, ""_s, ""_s, "http://[:2:3:4:5:6:7:8:]/"_s });
+        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://[:2:3:4:5:6:7:8:]/"_s });
     checkURLDifferences("http://[1:2:3:4:5:6:7::]/"_s,
-        { "http"_s, ""_s, ""_s, "[1:2:3:4:5:6:7:0]"_s, 0, "/"_s, ""_s, ""_s, "http://[1:2:3:4:5:6:7:0]/"_s },
-        { "http"_s, ""_s, ""_s, "[1:2:3:4:5:6:7::]"_s, 0, "/"_s, ""_s, ""_s, "http://[1:2:3:4:5:6:7::]/"_s });
+        { "http"_s, ""_s, ""_s, "[1:2:3:4:5:6:7:0]"_s, 0, "/"_s, ""_s, ""_s, "http://[1:2:3:4:5:6:7:0]/"_s });
     checkURLDifferences("http://[1:2:3:4:5:6:7:::]/"_s,
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://[1:2:3:4:5:6:7:::]/"_s },
-        { "http"_s, ""_s, ""_s, "[1:2:3:4:5:6:7:::]"_s, 0, "/"_s, ""_s, ""_s, "http://[1:2:3:4:5:6:7:::]/"_s });
+        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://[1:2:3:4:5:6:7:::]/"_s });
     checkURLDifferences("http://127.0.0.1~/"_s,
-        { "http"_s, ""_s, ""_s, "127.0.0.1~"_s, 0, "/"_s, ""_s, ""_s, "http://127.0.0.1~/"_s },
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://127.0.0.1~/"_s });
+        { "http"_s, ""_s, ""_s, "127.0.0.1~"_s, 0, "/"_s, ""_s, ""_s, "http://127.0.0.1~/"_s });
     checkURLDifferences("http://127.0.1~/"_s,
-        { "http"_s, ""_s, ""_s, "127.0.1~"_s, 0, "/"_s, ""_s, ""_s, "http://127.0.1~/"_s },
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://127.0.1~/"_s });
+        { "http"_s, ""_s, ""_s, "127.0.1~"_s, 0, "/"_s, ""_s, ""_s, "http://127.0.1~/"_s });
     checkURLDifferences("http://127.0.1./"_s,
-        { "http"_s, ""_s, ""_s, "127.0.0.1"_s, 0, "/"_s, ""_s, ""_s, "http://127.0.0.1/"_s },
-        { "http"_s, ""_s, ""_s, "127.0.1."_s, 0, "/"_s, ""_s, ""_s, "http://127.0.1./"_s });
+        { "http"_s, ""_s, ""_s, "127.0.0.1"_s, 0, "/"_s, ""_s, ""_s, "http://127.0.0.1/"_s });
     checkURLDifferences("http://127.0.1.~/"_s,
-        { "http"_s, ""_s, ""_s, "127.0.1.~"_s, 0, "/"_s, ""_s, ""_s, "http://127.0.1.~/"_s },
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://127.0.1.~/"_s });
+        { "http"_s, ""_s, ""_s, "127.0.1.~"_s, 0, "/"_s, ""_s, ""_s, "http://127.0.1.~/"_s });
     checkURLDifferences("http://127.0.1.~"_s,
-        { "http"_s, ""_s, ""_s, "127.0.1.~"_s, 0, "/"_s, ""_s, ""_s, "http://127.0.1.~/"_s },
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://127.0.1.~"_s });
+        { "http"_s, ""_s, ""_s, "127.0.1.~"_s, 0, "/"_s, ""_s, ""_s, "http://127.0.1.~/"_s });
     checkRelativeURLDifferences("http://f:000/c"_s, "http://example.org/foo/bar"_s,
-        { "http"_s, ""_s, ""_s, "f"_s, 0, "/c"_s, ""_s, ""_s, "http://f:0/c"_s },
-        { "http"_s, ""_s, ""_s, "f"_s, 0, "/c"_s, ""_s, ""_s, "http://f:000/c"_s });
+        { "http"_s, ""_s, ""_s, "f"_s, 0, "/c"_s, ""_s, ""_s, "http://f:0/c"_s });
     checkRelativeURLDifferences("http://f:010/c"_s, "http://example.org/foo/bar"_s,
-        { "http"_s, ""_s, ""_s, "f"_s, 10, "/c"_s, ""_s, ""_s, "http://f:10/c"_s },
-        { "http"_s, ""_s, ""_s, "f"_s, 10, "/c"_s, ""_s, ""_s, "http://f:010/c"_s });
+        { "http"_s, ""_s, ""_s, "f"_s, 10, "/c"_s, ""_s, ""_s, "http://f:10/c"_s });
     checkURL("notspecial://HoSt"_s, { "notspecial"_s, ""_s, ""_s, "HoSt"_s, 0, ""_s, ""_s, ""_s, "notspecial://HoSt"_s });
     checkURL("notspecial://H%6FSt"_s, { "notspecial"_s, ""_s, ""_s, "H%6FSt"_s, 0, ""_s, ""_s, ""_s, "notspecial://H%6FSt"_s });
     checkURL("notspecial://H%4fSt"_s, { "notspecial"_s, ""_s, ""_s, "H%4fSt"_s, 0, ""_s, ""_s, ""_s, "notspecial://H%4fSt"_s });
     checkURLDifferences(utf16String(u"notspecial://H😍ßt"),
-        { "notspecial"_s, ""_s, ""_s, "H%F0%9F%98%8D%C3%9Ft"_s, 0, ""_s, ""_s, ""_s, "notspecial://H%F0%9F%98%8D%C3%9Ft"_s },
-        { "notspecial"_s, ""_s, ""_s, "xn--hsst-qc83c"_s, 0, ""_s, ""_s, ""_s, "notspecial://xn--hsst-qc83c"_s }, testTabsValueForSurrogatePairs);
+        { "notspecial"_s, ""_s, ""_s, "H%F0%9F%98%8D%C3%9Ft"_s, 0, ""_s, ""_s, ""_s, "notspecial://H%F0%9F%98%8D%C3%9Ft"_s }, testTabsValueForSurrogatePairs);
     checkURLDifferences("http://[ffff:aaaa:cccc:eeee:bbbb:dddd:255.255.255.255]/"_s,
-        { "http"_s, ""_s, ""_s, "[ffff:aaaa:cccc:eeee:bbbb:dddd:ffff:ffff]"_s, 0, "/"_s, ""_s, ""_s, "http://[ffff:aaaa:cccc:eeee:bbbb:dddd:ffff:ffff]/"_s },
-        { "http"_s, ""_s, ""_s, "[ffff:aaaa:cccc:eeee:bbbb:dddd:255.255.255.255]"_s, 0, "/"_s, ""_s, ""_s, "http://[ffff:aaaa:cccc:eeee:bbbb:dddd:255.255.255.255]/"_s }, TestTabs::No);
+        { "http"_s, ""_s, ""_s, "[ffff:aaaa:cccc:eeee:bbbb:dddd:ffff:ffff]"_s, 0, "/"_s, ""_s, ""_s, "http://[ffff:aaaa:cccc:eeee:bbbb:dddd:ffff:ffff]/"_s }, TestTabs::No);
     checkURLDifferences("http://[::123.234.12.210]/"_s,
-        { "http"_s, ""_s, ""_s, "[::7bea:cd2]"_s, 0, "/"_s, ""_s, ""_s, "http://[::7bea:cd2]/"_s },
-        { "http"_s, ""_s, ""_s, "[::123.234.12.210]"_s, 0, "/"_s, ""_s, ""_s, "http://[::123.234.12.210]/"_s });
+        { "http"_s, ""_s, ""_s, "[::7bea:cd2]"_s, 0, "/"_s, ""_s, ""_s, "http://[::7bea:cd2]/"_s });
     checkURLDifferences("http://[::a:255.255.255.255]/"_s,
-        { "http"_s, ""_s, ""_s, "[::a:ffff:ffff]"_s, 0, "/"_s, ""_s, ""_s, "http://[::a:ffff:ffff]/"_s },
-        { "http"_s, ""_s, ""_s, "[::a:255.255.255.255]"_s, 0, "/"_s, ""_s, ""_s, "http://[::a:255.255.255.255]/"_s });
+        { "http"_s, ""_s, ""_s, "[::a:ffff:ffff]"_s, 0, "/"_s, ""_s, ""_s, "http://[::a:ffff:ffff]/"_s });
     checkURLDifferences("http://[::0.00.255.255]/"_s,
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://[::0.00.255.255]/"_s },
-        { "http"_s, ""_s, ""_s, "[::0.00.255.255]"_s, 0, "/"_s, ""_s, ""_s, "http://[::0.00.255.255]/"_s });
+        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://[::0.00.255.255]/"_s });
     checkURLDifferences("http://[::0.0.255.255]/"_s,
-        { "http"_s, ""_s, ""_s, "[::ffff]"_s, 0, "/"_s, ""_s, ""_s, "http://[::ffff]/"_s },
-        { "http"_s, ""_s, ""_s, "[::0.0.255.255]"_s, 0, "/"_s, ""_s, ""_s, "http://[::0.0.255.255]/"_s });
+        { "http"_s, ""_s, ""_s, "[::ffff]"_s, 0, "/"_s, ""_s, ""_s, "http://[::ffff]/"_s });
     checkURLDifferences("http://[::0:1.0.255.255]/"_s,
-        { "http"_s, ""_s, ""_s, "[::100:ffff]"_s, 0, "/"_s, ""_s, ""_s, "http://[::100:ffff]/"_s },
-        { "http"_s, ""_s, ""_s, "[::0:1.0.255.255]"_s, 0, "/"_s, ""_s, ""_s, "http://[::0:1.0.255.255]/"_s });
+        { "http"_s, ""_s, ""_s, "[::100:ffff]"_s, 0, "/"_s, ""_s, ""_s, "http://[::100:ffff]/"_s });
     checkURLDifferences("http://[::A:1.0.255.255]/"_s,
-        { "http"_s, ""_s, ""_s, "[::a:100:ffff]"_s, 0, "/"_s, ""_s, ""_s, "http://[::a:100:ffff]/"_s },
-        { "http"_s, ""_s, ""_s, "[::a:1.0.255.255]"_s, 0, "/"_s, ""_s, ""_s, "http://[::a:1.0.255.255]/"_s });
+        { "http"_s, ""_s, ""_s, "[::a:100:ffff]"_s, 0, "/"_s, ""_s, ""_s, "http://[::a:100:ffff]/"_s });
     checkURLDifferences("http://[:127.0.0.1]"_s,
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://[:127.0.0.1]"_s },
-        { "http"_s, ""_s, ""_s, "[:127.0.0.1]"_s, 0, "/"_s, ""_s, ""_s, "http://[:127.0.0.1]/"_s });
+        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://[:127.0.0.1]"_s });
     checkURLDifferences("http://[127.0.0.1]"_s,
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://[127.0.0.1]"_s },
-        { "http"_s, ""_s, ""_s, "[127.0.0.1]"_s, 0, "/"_s, ""_s, ""_s, "http://[127.0.0.1]/"_s });
+        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://[127.0.0.1]"_s });
     checkURLDifferences("http://[a:b:c:d:e:f:127.0.0.1]"_s,
-        { "http"_s, ""_s, ""_s, "[a:b:c:d:e:f:7f00:1]"_s, 0, "/"_s, ""_s, ""_s, "http://[a:b:c:d:e:f:7f00:1]/"_s },
-        { "http"_s, ""_s, ""_s, "[a:b:c:d:e:f:127.0.0.1]"_s, 0, "/"_s, ""_s, ""_s, "http://[a:b:c:d:e:f:127.0.0.1]/"_s });
+        { "http"_s, ""_s, ""_s, "[a:b:c:d:e:f:7f00:1]"_s, 0, "/"_s, ""_s, ""_s, "http://[a:b:c:d:e:f:7f00:1]/"_s });
     checkURLDifferences("http://[a:b:c:d:e:f:127.0.0.101]"_s,
-        { "http"_s, ""_s, ""_s, "[a:b:c:d:e:f:7f00:65]"_s, 0, "/"_s, ""_s, ""_s, "http://[a:b:c:d:e:f:7f00:65]/"_s },
-        { "http"_s, ""_s, ""_s, "[a:b:c:d:e:f:127.0.0.101]"_s, 0, "/"_s, ""_s, ""_s, "http://[a:b:c:d:e:f:127.0.0.101]/"_s });
+        { "http"_s, ""_s, ""_s, "[a:b:c:d:e:f:7f00:65]"_s, 0, "/"_s, ""_s, ""_s, "http://[a:b:c:d:e:f:7f00:65]/"_s });
     checkURLDifferences("http://[::a:b:c:d:e:f:127.0.0.1]"_s,
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://[::a:b:c:d:e:f:127.0.0.1]"_s },
-        { "http"_s, ""_s, ""_s, "[::a:b:c:d:e:f:127.0.0.1]"_s, 0, "/"_s, ""_s, ""_s, "http://[::a:b:c:d:e:f:127.0.0.1]/"_s });
+        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://[::a:b:c:d:e:f:127.0.0.1]"_s });
     checkURLDifferences("http://[a:b::c:d:e:f:127.0.0.1]"_s,
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://[a:b::c:d:e:f:127.0.0.1]"_s },
-        { "http"_s, ""_s, ""_s, "[a:b::c:d:e:f:127.0.0.1]"_s, 0, "/"_s, ""_s, ""_s, "http://[a:b::c:d:e:f:127.0.0.1]/"_s });
+        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://[a:b::c:d:e:f:127.0.0.1]"_s });
     checkURLDifferences("http://[a:b:c:d:e:127.0.0.1]"_s,
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://[a:b:c:d:e:127.0.0.1]"_s },
-        { "http"_s, ""_s, ""_s, "[a:b:c:d:e:127.0.0.1]"_s, 0, "/"_s, ""_s, ""_s, "http://[a:b:c:d:e:127.0.0.1]/"_s });
+        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://[a:b:c:d:e:127.0.0.1]"_s });
     checkURLDifferences("http://[a:b:c:d:e:f:127.0.0.0.1]"_s,
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://[a:b:c:d:e:f:127.0.0.0.1]"_s },
-        { "http"_s, ""_s, ""_s, "[a:b:c:d:e:f:127.0.0.0.1]"_s, 0, "/"_s, ""_s, ""_s, "http://[a:b:c:d:e:f:127.0.0.0.1]/"_s });
+        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://[a:b:c:d:e:f:127.0.0.0.1]"_s });
     checkURLDifferences("http://[a:b:c:d:e:f:127.0.1]"_s,
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://[a:b:c:d:e:f:127.0.1]"_s },
-        { "http"_s, ""_s, ""_s, "[a:b:c:d:e:f:127.0.1]"_s, 0, "/"_s, ""_s, ""_s, "http://[a:b:c:d:e:f:127.0.1]/"_s });
+        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://[a:b:c:d:e:f:127.0.1]"_s });
     checkURLDifferences("http://[a:b:c:d:e:f:127.0.0.011]"_s, // Chrome treats this as octal, Firefox and the spec fail
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://[a:b:c:d:e:f:127.0.0.011]"_s },
-        { "http"_s, ""_s, ""_s, "[a:b:c:d:e:f:127.0.0.011]"_s, 0, "/"_s, ""_s, ""_s, "http://[a:b:c:d:e:f:127.0.0.011]/"_s });
+        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://[a:b:c:d:e:f:127.0.0.011]"_s });
     checkURLDifferences("http://[a:b:c:d:e:f:127.0.00.1]"_s,
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://[a:b:c:d:e:f:127.0.00.1]"_s },
-        { "http"_s, ""_s, ""_s, "[a:b:c:d:e:f:127.0.00.1]"_s, 0, "/"_s, ""_s, ""_s, "http://[a:b:c:d:e:f:127.0.00.1]/"_s });
+        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://[a:b:c:d:e:f:127.0.00.1]"_s });
     checkURLDifferences("http://[a:b:c:d:e:f:127.0.0.1.]"_s,
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://[a:b:c:d:e:f:127.0.0.1.]"_s },
-        { "http"_s, ""_s, ""_s, "[a:b:c:d:e:f:127.0.0.1.]"_s, 0, "/"_s, ""_s, ""_s, "http://[a:b:c:d:e:f:127.0.0.1.]/"_s });
+        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://[a:b:c:d:e:f:127.0.0.1.]"_s });
     checkURLDifferences("http://[a:b:c:d:e:f:127.0..0.1]"_s,
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://[a:b:c:d:e:f:127.0..0.1]"_s },
-        { "http"_s, ""_s, ""_s, "[a:b:c:d:e:f:127.0..0.1]"_s, 0, "/"_s, ""_s, ""_s, "http://[a:b:c:d:e:f:127.0..0.1]/"_s });
+        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://[a:b:c:d:e:f:127.0..0.1]"_s });
     checkURLDifferences("http://[a:b:c:d:e:f::127.0.0.1]"_s,
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://[a:b:c:d:e:f::127.0.0.1]"_s },
-        { "http"_s, ""_s, ""_s, "[a:b:c:d:e:f::127.0.0.1]"_s, 0, "/"_s, ""_s, ""_s, "http://[a:b:c:d:e:f::127.0.0.1]/"_s });
+        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://[a:b:c:d:e:f::127.0.0.1]"_s });
     checkURLDifferences("http://[a:b:c:d:e::127.0.0.1]"_s,
-        { "http"_s, ""_s, ""_s, "[a:b:c:d:e:0:7f00:1]"_s, 0, "/"_s, ""_s, ""_s, "http://[a:b:c:d:e:0:7f00:1]/"_s },
-        { "http"_s, ""_s, ""_s, "[a:b:c:d:e::127.0.0.1]"_s, 0, "/"_s, ""_s, ""_s, "http://[a:b:c:d:e::127.0.0.1]/"_s });
+        { "http"_s, ""_s, ""_s, "[a:b:c:d:e:0:7f00:1]"_s, 0, "/"_s, ""_s, ""_s, "http://[a:b:c:d:e:0:7f00:1]/"_s });
     checkURLDifferences("http://[a:b:c:d::e:127.0.0.1]"_s,
-        { "http"_s, ""_s, ""_s, "[a:b:c:d:0:e:7f00:1]"_s, 0, "/"_s, ""_s, ""_s, "http://[a:b:c:d:0:e:7f00:1]/"_s },
-        { "http"_s, ""_s, ""_s, "[a:b:c:d::e:127.0.0.1]"_s, 0, "/"_s, ""_s, ""_s, "http://[a:b:c:d::e:127.0.0.1]/"_s });
+        { "http"_s, ""_s, ""_s, "[a:b:c:d:0:e:7f00:1]"_s, 0, "/"_s, ""_s, ""_s, "http://[a:b:c:d:0:e:7f00:1]/"_s });
     checkURLDifferences("http://[a:b:c:d:e:f::127.0.0.]"_s,
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://[a:b:c:d:e:f::127.0.0.]"_s },
-        { "http"_s, ""_s, ""_s, "[a:b:c:d:e:f::127.0.0.]"_s, 0, "/"_s, ""_s, ""_s, "http://[a:b:c:d:e:f::127.0.0.]/"_s });
+        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://[a:b:c:d:e:f::127.0.0.]"_s });
     checkURLDifferences("http://[a:b:c:d:e:f::127.0.0.256]"_s,
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://[a:b:c:d:e:f::127.0.0.256]"_s },
-        { "http"_s, ""_s, ""_s, "[a:b:c:d:e:f::127.0.0.256]"_s, 0, "/"_s, ""_s, ""_s, "http://[a:b:c:d:e:f::127.0.0.256]/"_s });
-    checkURLDifferences("http://123456"_s, { "http"_s, ""_s, ""_s, "0.1.226.64"_s, 0, "/"_s, ""_s, ""_s, "http://0.1.226.64/"_s }, { "http"_s, ""_s, ""_s, "123456"_s, 0, "/"_s, ""_s, ""_s, "http://123456/"_s });
+        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://[a:b:c:d:e:f::127.0.0.256]"_s });
+    checkURLDifferences("http://123456"_s, { "http"_s, ""_s, ""_s, "0.1.226.64"_s, 0, "/"_s, ""_s, ""_s, "http://0.1.226.64/"_s });
     checkURL("asdf://123456"_s, { "asdf"_s, ""_s, ""_s, "123456"_s, 0, ""_s, ""_s, ""_s, "asdf://123456"_s });
     checkURLDifferences("http://[0:0:0:0:a:b:c:d]"_s,
-        { "http"_s, ""_s, ""_s, "[::a:b:c:d]"_s, 0, "/"_s, ""_s, ""_s, "http://[::a:b:c:d]/"_s },
-        { "http"_s, ""_s, ""_s, "[0:0:0:0:a:b:c:d]"_s, 0, "/"_s, ""_s, ""_s, "http://[0:0:0:0:a:b:c:d]/"_s });
+        { "http"_s, ""_s, ""_s, "[::a:b:c:d]"_s, 0, "/"_s, ""_s, ""_s, "http://[::a:b:c:d]/"_s });
     checkURLDifferences("asdf://[0:0:0:0:a:b:c:d]"_s,
-        { "asdf"_s, ""_s, ""_s, "[::a:b:c:d]"_s, 0, ""_s, ""_s, ""_s, "asdf://[::a:b:c:d]"_s },
-        { "asdf"_s, ""_s, ""_s, "[0:0:0:0:a:b:c:d]"_s, 0, ""_s, ""_s, ""_s, "asdf://[0:0:0:0:a:b:c:d]"_s }, TestTabs::No);
+        { "asdf"_s, ""_s, ""_s, "[::a:b:c:d]"_s, 0, ""_s, ""_s, ""_s, "asdf://[::a:b:c:d]"_s }, TestTabs::No);
     shouldFail("a://%:a"_s);
     checkURL("a://%:/"_s, { "a"_s, ""_s, ""_s, "%"_s, 0, "/"_s, ""_s, ""_s, "a://%/"_s });
     checkURL("a://%:"_s, { "a"_s, ""_s, ""_s, "%"_s, 0, ""_s, ""_s, ""_s, "a://%"_s });
     checkURL("a://%:1/"_s, { "a"_s, ""_s, ""_s, "%"_s, 1, "/"_s, ""_s, ""_s, "a://%:1/"_s });
     checkURLDifferences("http://%:"_s,
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://%:"_s },
-        { "http"_s, ""_s, ""_s, "%"_s, 0, "/"_s, ""_s, ""_s, "http://%/"_s });
+        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "http://%:"_s });
     checkURL("a://123456"_s, { "a"_s, ""_s, ""_s, "123456"_s, 0, ""_s, ""_s, ""_s, "a://123456"_s });
     checkURL("a://123456:7"_s, { "a"_s, ""_s, ""_s, "123456"_s, 7, ""_s, ""_s, ""_s, "a://123456:7"_s });
     checkURL("a://123456:7/"_s, { "a"_s, ""_s, ""_s, "123456"_s, 7, "/"_s, ""_s, ""_s, "a://123456:7/"_s });
@@ -1079,48 +924,36 @@ TEST_F(WTF_URLParser, ParserDifferences)
     checkURL("a://A:2"_s, { "a"_s, ""_s, ""_s, "A"_s, 2, ""_s, ""_s, ""_s, "a://A:2"_s });
     checkURL("a://A:2/"_s, { "a"_s, ""_s, ""_s, "A"_s, 2, "/"_s, ""_s, ""_s, "a://A:2/"_s });
     checkURLDifferences(StringView::fromLatin1(reinterpret_cast<const char*>(u8"asd://ß")),
-        { "asd"_s, ""_s, ""_s, "%C3%83%C2%9F"_s, 0, ""_s, ""_s, ""_s, "asd://%C3%83%C2%9F"_s },
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "about:blank"_s }, TestTabs::No);
+        { "asd"_s, ""_s, ""_s, "%C3%83%C2%9F"_s, 0, ""_s, ""_s, ""_s, "asd://%C3%83%C2%9F"_s }, TestTabs::No);
     checkURLDifferences(StringView::fromLatin1(reinterpret_cast<const char*>(u8"asd://ß:4")),
-        { "asd"_s, ""_s, ""_s, "%C3%83%C2%9F"_s, 4, ""_s, ""_s, ""_s, "asd://%C3%83%C2%9F:4"_s },
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "about:blank"_s }, TestTabs::No);
+        { "asd"_s, ""_s, ""_s, "%C3%83%C2%9F"_s, 4, ""_s, ""_s, ""_s, "asd://%C3%83%C2%9F:4"_s }, TestTabs::No);
     checkURLDifferences(StringView::fromLatin1(reinterpret_cast<const char*>(u8"asd://ß:4/")),
-        { "asd"_s, ""_s, ""_s, "%C3%83%C2%9F"_s, 4, "/"_s, ""_s, ""_s, "asd://%C3%83%C2%9F:4/"_s },
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "about:blank"_s }, TestTabs::No);
+        { "asd"_s, ""_s, ""_s, "%C3%83%C2%9F"_s, 4, "/"_s, ""_s, ""_s, "asd://%C3%83%C2%9F:4/"_s }, TestTabs::No);
     checkURLDifferences("a://[A::b]:4"_s,
-        { "a"_s, ""_s, ""_s, "[a::b]"_s, 4, ""_s, ""_s, ""_s, "a://[a::b]:4"_s },
-        { "a"_s, ""_s, ""_s, "[A::b]"_s, 4, ""_s, ""_s, ""_s, "a://[A::b]:4"_s });
+        { "a"_s, ""_s, ""_s, "[a::b]"_s, 4, ""_s, ""_s, ""_s, "a://[a::b]:4"_s });
     shouldFail("http://[~]"_s);
     shouldFail("a://[~]"_s);
     checkRelativeURLDifferences("a://b"_s, "//[aBc]"_s,
-        { "a"_s, ""_s, ""_s, "b"_s, 0, ""_s, ""_s, ""_s, "a://b"_s },
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "a://b"_s });
+        { "a"_s, ""_s, ""_s, "b"_s, 0, ""_s, ""_s, ""_s, "a://b"_s });
     checkURL(utf16String(u"http://öbb.at"), { "http"_s, ""_s, ""_s, "xn--bb-eka.at"_s, 0, "/"_s, ""_s, ""_s, "http://xn--bb-eka.at/"_s });
     checkURL(utf16String(u"http://ÖBB.at"), { "http"_s, ""_s, ""_s, "xn--bb-eka.at"_s, 0, "/"_s, ""_s, ""_s, "http://xn--bb-eka.at/"_s });
     checkURL(utf16String(u"http://√.com"), { "http"_s, ""_s, ""_s, "xn--19g.com"_s, 0, "/"_s, ""_s, ""_s, "http://xn--19g.com/"_s });
     checkURLDifferences(utf16String(u"http://faß.de"),
-        { "http"_s, ""_s, ""_s, "xn--fa-hia.de"_s, 0, "/"_s, ""_s, ""_s, "http://xn--fa-hia.de/"_s },
-        { "http"_s, ""_s, ""_s, "fass.de"_s, 0, "/"_s, ""_s, ""_s, "http://fass.de/"_s });
+        { "http"_s, ""_s, ""_s, "xn--fa-hia.de"_s, 0, "/"_s, ""_s, ""_s, "http://xn--fa-hia.de/"_s });
     checkURL(utf16String(u"http://ԛәлп.com"), { "http"_s, ""_s, ""_s, "xn--k1ai47bhi.com"_s, 0, "/"_s, ""_s, ""_s, "http://xn--k1ai47bhi.com/"_s });
     checkURLDifferences(utf16String(u"http://Ⱥbby.com"),
-        { "http"_s, ""_s, ""_s, "xn--bby-iy0b.com"_s, 0, "/"_s, ""_s, ""_s, "http://xn--bby-iy0b.com/"_s },
-        { "http"_s, ""_s, ""_s, "xn--bby-spb.com"_s, 0, "/"_s, ""_s, ""_s, "http://xn--bby-spb.com/"_s });
+        { "http"_s, ""_s, ""_s, "xn--bby-iy0b.com"_s, 0, "/"_s, ""_s, ""_s, "http://xn--bby-iy0b.com/"_s });
     checkURLDifferences(utf16String(u"http://\u2132"),
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, utf16String(u"http://Ⅎ") },
-        { "http"_s, ""_s, ""_s, "xn--f3g"_s, 0, "/"_s, ""_s, ""_s, "http://xn--f3g/"_s });
+        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, utf16String(u"http://Ⅎ") });
     checkURLDifferences(utf16String(u"http://\u05D9\u05B4\u05D5\u05D0\u05B8/"),
-        { "http"_s, ""_s, ""_s, "xn--cdbi5etas"_s, 0, "/"_s, ""_s, ""_s, "http://xn--cdbi5etas/"_s },
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "about:blank"_s }, TestTabs::No);
+        { "http"_s, ""_s, ""_s, "xn--cdbi5etas"_s, 0, "/"_s, ""_s, ""_s, "http://xn--cdbi5etas/"_s }, TestTabs::No);
     checkURLDifferences(utf16String(u"http://bidirectional\u0786\u07AE\u0782\u07B0\u0795\u07A9\u0793\u07A6\u0783\u07AA/"),
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, utf16String(u"http://bidirectionalކޮންޕީޓަރު/") },
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, "about:blank"_s }, TestTabs::No);
+        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, utf16String(u"http://bidirectionalކޮންޕީޓަރު/") }, TestTabs::No);
     checkURLDifferences(utf16String(u"http://contextj\u200D"),
-        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, utf16String(u"http://contextj\u200D") },
-        { "http"_s, ""_s, ""_s, "contextj"_s, 0, "/"_s, ""_s, ""_s, "http://contextj/"_s });
+        { ""_s, ""_s, ""_s, ""_s, 0, ""_s, ""_s, ""_s, utf16String(u"http://contextj\u200D") });
     checkURL(utf16String(u"http://contexto\u30FB"), { "http"_s, ""_s, ""_s, "xn--contexto-wg5g"_s, 0, "/"_s, ""_s, ""_s, "http://xn--contexto-wg5g/"_s });
     checkURLDifferences(utf16String(u"http://\u321D\u321E/"),
-        { "http"_s, ""_s, ""_s, "xn--()()-bs0sc174agx4b"_s, 0, "/"_s, ""_s, ""_s, "http://xn--()()-bs0sc174agx4b/"_s },
-        { "http"_s, ""_s, ""_s, "xn--5mkc"_s, 0, "/"_s, ""_s, ""_s, "http://xn--5mkc/"_s });
+        { "http"_s, ""_s, ""_s, "xn--()()-bs0sc174agx4b"_s, 0, "/"_s, ""_s, ""_s, "http://xn--()()-bs0sc174agx4b/"_s });
 }
 
 TEST_F(WTF_URLParser, DefaultPort)
@@ -1138,11 +971,9 @@ TEST_F(WTF_URLParser, DefaultPort)
     checkURL("ftp://host:21\t/"_s, { "ftp"_s, ""_s, ""_s, "host"_s, 0, "/"_s, ""_s, ""_s, "ftp://host/"_s });
     checkURL("ftp://host:22/"_s, { "ftp"_s, ""_s, ""_s, "host"_s, 22, "/"_s, ""_s, ""_s, "ftp://host:22/"_s });
     checkURLDifferences("ftp://host:21"_s,
-        { "ftp"_s, ""_s, ""_s, "host"_s, 0, "/"_s, ""_s, ""_s, "ftp://host/"_s },
-        { "ftp"_s, ""_s, ""_s, "host"_s, 0, ""_s, ""_s, ""_s, "ftp://host"_s });
+        { "ftp"_s, ""_s, ""_s, "host"_s, 0, "/"_s, ""_s, ""_s, "ftp://host/"_s });
     checkURLDifferences("ftp://host:22"_s,
-        { "ftp"_s, ""_s, ""_s, "host"_s, 22, "/"_s, ""_s, ""_s, "ftp://host:22/"_s },
-        { "ftp"_s, ""_s, ""_s, "host"_s, 22, ""_s, ""_s, ""_s, "ftp://host:22"_s });
+        { "ftp"_s, ""_s, ""_s, "host"_s, 22, "/"_s, ""_s, ""_s, "ftp://host:22/"_s });
     
     checkURL("gOpHeR://host:70/"_s, { "gopher"_s, ""_s, ""_s, "host"_s, 70, "/"_s, ""_s, ""_s, "gopher://host:70/"_s });
     checkURL("gopher://host:70/"_s, { "gopher"_s, ""_s, ""_s, "host"_s, 70, "/"_s, ""_s, ""_s, "gopher://host:70/"_s });
@@ -1165,22 +996,18 @@ TEST_F(WTF_URLParser, DefaultPort)
     checkURL("ws://host:81/"_s, { "ws"_s, ""_s, ""_s, "host"_s, 81, "/"_s, ""_s, ""_s, "ws://host:81/"_s });
     // URLParser matches Chrome and Firefox, but not URL::parse
     checkURLDifferences("ws://host:80"_s,
-        { "ws"_s, ""_s, ""_s, "host"_s, 0, "/"_s, ""_s, ""_s, "ws://host/"_s },
-        { "ws"_s, ""_s, ""_s, "host"_s, 0, ""_s, ""_s, ""_s, "ws://host"_s });
+        { "ws"_s, ""_s, ""_s, "host"_s, 0, "/"_s, ""_s, ""_s, "ws://host/"_s });
     checkURLDifferences("ws://host:81"_s,
-        { "ws"_s, ""_s, ""_s, "host"_s, 81, "/"_s, ""_s, ""_s, "ws://host:81/"_s },
-        { "ws"_s, ""_s, ""_s, "host"_s, 81, ""_s, ""_s, ""_s, "ws://host:81"_s });
+        { "ws"_s, ""_s, ""_s, "host"_s, 81, "/"_s, ""_s, ""_s, "ws://host:81/"_s });
     
     checkURL("WsS://host:443/"_s, { "wss"_s, ""_s, ""_s, "host"_s, 0, "/"_s, ""_s, ""_s, "wss://host/"_s });
     checkURL("wss://host:443/"_s, { "wss"_s, ""_s, ""_s, "host"_s, 0, "/"_s, ""_s, ""_s, "wss://host/"_s });
     checkURL("wss://host:444/"_s, { "wss"_s, ""_s, ""_s, "host"_s, 444, "/"_s, ""_s, ""_s, "wss://host:444/"_s });
     // URLParser matches Chrome and Firefox, but not URL::parse
     checkURLDifferences("wss://host:443"_s,
-        { "wss"_s, ""_s, ""_s, "host"_s, 0, "/"_s, ""_s, ""_s, "wss://host/"_s },
-        { "wss"_s, ""_s, ""_s, "host"_s, 0, ""_s, ""_s, ""_s, "wss://host"_s });
+        { "wss"_s, ""_s, ""_s, "host"_s, 0, "/"_s, ""_s, ""_s, "wss://host/"_s });
     checkURLDifferences("wss://host:444"_s,
-        { "wss"_s, ""_s, ""_s, "host"_s, 444, "/"_s, ""_s, ""_s, "wss://host:444/"_s },
-        { "wss"_s, ""_s, ""_s, "host"_s, 444, ""_s, ""_s, ""_s, "wss://host:444"_s });
+        { "wss"_s, ""_s, ""_s, "host"_s, 444, "/"_s, ""_s, ""_s, "wss://host:444/"_s });
 
     checkURL("fTpS://host:990/"_s, { "ftps"_s, ""_s, ""_s, "host"_s, 990, "/"_s, ""_s, ""_s, "ftps://host:990/"_s });
     checkURL("ftps://host:990/"_s, { "ftps"_s, ""_s, ""_s, "host"_s, 990, "/"_s, ""_s, ""_s, "ftps://host:990/"_s });
@@ -1289,20 +1116,15 @@ TEST_F(WTF_URLParser, AdditionalTests)
     
     // URLParser matches Chrome and Firefox but not URL::parse.
     checkURLDifferences(utf16String<12>({'h', 't', 't', 'p', ':', '/', '/', 'w', '/', surrogateBegin, invalidSurrogateEnd}),
-        { "http"_s, ""_s, ""_s, "w"_s, 0, "/%EF%BF%BDA"_s, ""_s, ""_s, "http://w/%EF%BF%BDA"_s },
-        { "http"_s, ""_s, ""_s, "w"_s, 0, "/%ED%A0%80A"_s, ""_s, ""_s, "http://w/%ED%A0%80A"_s });
+        { "http"_s, ""_s, ""_s, "w"_s, 0, "/%EF%BF%BDA"_s, ""_s, ""_s, "http://w/%EF%BF%BDA"_s });
     checkURLDifferences(utf16String<13>({'h', 't', 't', 'p', ':', '/', '/', 'w', '/', '?', surrogateBegin, invalidSurrogateEnd, '\0'}),
-        { "http"_s, ""_s, ""_s, "w"_s, 0, "/"_s, "%EF%BF%BDA"_s, ""_s, "http://w/?%EF%BF%BDA"_s },
-        { "http"_s, ""_s, ""_s, "w"_s, 0, "/"_s, "%ED%A0%80A"_s, ""_s, "http://w/?%ED%A0%80A"_s });
+        { "http"_s, ""_s, ""_s, "w"_s, 0, "/"_s, "%EF%BF%BDA"_s, ""_s, "http://w/?%EF%BF%BDA"_s });
     checkURLDifferences(utf16String<11>({'h', 't', 't', 'p', ':', '/', '/', 'w', '/', surrogateBegin, '\0'}),
-        { "http"_s, ""_s, ""_s, "w"_s, 0, "/%EF%BF%BD"_s, ""_s, ""_s, "http://w/%EF%BF%BD"_s },
-        { "http"_s, ""_s, ""_s, "w"_s, 0, "/%ED%A0%80"_s, ""_s, ""_s, "http://w/%ED%A0%80"_s });
+        { "http"_s, ""_s, ""_s, "w"_s, 0, "/%EF%BF%BD"_s, ""_s, ""_s, "http://w/%EF%BF%BD"_s });
     checkURLDifferences(utf16String<12>({'h', 't', 't', 'p', ':', '/', '/', 'w', '/', '?', surrogateBegin, '\0'}),
-        { "http"_s, ""_s, ""_s, "w"_s, 0, "/"_s, "%EF%BF%BD"_s, ""_s, "http://w/?%EF%BF%BD"_s },
-        { "http"_s, ""_s, ""_s, "w"_s, 0, "/"_s, "%ED%A0%80"_s, ""_s, "http://w/?%ED%A0%80"_s });
+        { "http"_s, ""_s, ""_s, "w"_s, 0, "/"_s, "%EF%BF%BD"_s, ""_s, "http://w/?%EF%BF%BD"_s });
     checkURLDifferences(utf16String<13>({'h', 't', 't', 'p', ':', '/', '/', 'w', '/', '?', surrogateBegin, ' ', '\0'}),
-        { "http"_s, ""_s, ""_s, "w"_s, 0, "/"_s, "%EF%BF%BD"_s, ""_s, "http://w/?%EF%BF%BD"_s },
-        { "http"_s, ""_s, ""_s, "w"_s, 0, "/"_s, "%ED%A0%80"_s, ""_s, "http://w/?%ED%A0%80"_s });
+        { "http"_s, ""_s, ""_s, "w"_s, 0, "/"_s, "%EF%BF%BD"_s, ""_s, "http://w/?%EF%BF%BD"_s });
 }
 
 } // namespace TestWebKitAPI
