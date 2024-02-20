@@ -59,7 +59,7 @@ private:
     void retargetTouchLists(const TouchEvent&);
 #endif
 
-    Vector<EventContext, 16> m_path;
+    Vector<EventContext, 32> m_path;
 };
 
 inline Node* EventPath::eventTargetRespectingTargetRules(Node& referenceNode)
