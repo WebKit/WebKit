@@ -57,9 +57,6 @@ EXCLUDED_SOURCE_FILE_NAMES_YES[sdk=xr*] = *;
 
 CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
 
-// For simulator builds, entitlements are added to a special __entitlements section on the binary rather than the signature.
-CODE_SIGN_ENTITLEMENTS[sdk=*simulator] = Shared/AuxiliaryProcessExtensions/AuxiliaryProcessExtension.entitlements;
-
 WK_PROCESSED_XCENT_FILE=$(TEMP_FILE_DIR)/$(FULL_PRODUCT_NAME).entitlements
 WK_LIBRARY_VALIDATION_CODE_SIGN_FLAGS = --entitlements $(WK_PROCESSED_XCENT_FILE);
 

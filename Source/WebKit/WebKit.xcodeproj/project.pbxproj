@@ -7914,6 +7914,9 @@
 		E36D701D27B718EF006531B7 /* WebAttachmentElementClient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebAttachmentElementClient.cpp; sourceTree = "<group>"; };
 		E36FF00127F36FBD004BE21A /* SandboxStateVariables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SandboxStateVariables.h; sourceTree = "<group>"; };
 		E36FF00227F36FBD004BE21A /* preferences.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = preferences.sb; sourceTree = "<group>"; };
+		E37A2F1A2B8523300087F394 /* NetworkingProcessExtension.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = NetworkingProcessExtension.entitlements; sourceTree = "<group>"; };
+		E37A2F1B2B8523B10087F394 /* WebContentProcessExtension.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = WebContentProcessExtension.entitlements; sourceTree = "<group>"; };
+		E37A2F1C2B8523B10087F394 /* GPUProcessExtension.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = GPUProcessExtension.entitlements; sourceTree = "<group>"; };
 		E3816B3B27E24639005EAFC0 /* WebMockContentFilterManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebMockContentFilterManager.cpp; path = Network/WebMockContentFilterManager.cpp; sourceTree = "<group>"; };
 		E3816B3C27E24639005EAFC0 /* WebMockContentFilterManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebMockContentFilterManager.h; path = Network/WebMockContentFilterManager.h; sourceTree = "<group>"; };
 		E3866AE42397400400F88FE9 /* WebDeviceOrientationUpdateProviderProxy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebDeviceOrientationUpdateProviderProxy.mm; path = ios/WebDeviceOrientationUpdateProviderProxy.mm; sourceTree = "<group>"; };
@@ -12636,11 +12639,14 @@
 				5C139DB829DB847E00D5117B /* AuxiliaryProcessExtensionBridge.mm */,
 				5C139DB529DB847D00D5117B /* com.apple.WebKit.appexpt */,
 				5C139DB629DB847E00D5117B /* GPUExtension-Info.plist */,
+				E37A2F1C2B8523B10087F394 /* GPUProcessExtension.entitlements */,
 				E3B9B5D62AB65822008568FE /* GPUProcessExtension.swift */,
 				5C139DB729DB847E00D5117B /* NetworkingExtension-Info.plist */,
+				E37A2F1A2B8523300087F394 /* NetworkingProcessExtension.entitlements */,
 				E3B9B5D42AB65795008568FE /* NetworkingProcessExtension.swift */,
 				5C139DB029DB847C00D5117B /* WebContentExtension-CaptivePortal-Info.plist */,
 				5C139DB129DB847D00D5117B /* WebContentExtension-Info.plist */,
+				E37A2F1B2B8523B10087F394 /* WebContentProcessExtension.entitlements */,
 				5C139DB929DB847E00D5117B /* WebContentProcessExtension.swift */,
 			);
 			path = AuxiliaryProcessExtensions;

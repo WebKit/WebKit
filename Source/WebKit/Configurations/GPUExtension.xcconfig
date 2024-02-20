@@ -28,3 +28,6 @@ INFOPLIST_KEY_CFBundleDisplayName = GPUExtension;
 PRODUCT_BUNDLE_IDENTIFIER = com.apple.WebKit.GPU;
 EXECUTABLE_NAME = $(PRODUCT_BUNDLE_IDENTIFIER);
 PRODUCT_BUNDLE_NAME = GPUExtension;
+
+// For simulator builds, entitlements are added to a special __entitlements section on the binary rather than the signature.
+CODE_SIGN_ENTITLEMENTS[sdk=*simulator] = Shared/AuxiliaryProcessExtensions/GPUProcessExtension.entitlements;
