@@ -47,11 +47,13 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(OriginStorageManager);
+
 static constexpr auto originFileName = "origin"_s;
 enum class OriginStorageManager::StorageBucketMode : bool { BestEffort, Persistent };
 
 class OriginStorageManager::StorageBucket {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(OriginStorageManager::StorageBucket);
 public:
     enum class StorageType : uint8_t {
         FileSystem,

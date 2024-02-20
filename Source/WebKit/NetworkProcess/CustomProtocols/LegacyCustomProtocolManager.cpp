@@ -36,6 +36,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(LegacyCustomProtocolManager);
+
 ASCIILiteral LegacyCustomProtocolManager::supplementName()
 {
     return "LegacyCustomProtocolManager"_s;

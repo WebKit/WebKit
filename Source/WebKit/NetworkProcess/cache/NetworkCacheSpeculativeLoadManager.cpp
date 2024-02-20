@@ -49,6 +49,8 @@ namespace NetworkCache {
 
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(SpeculativeLoadManager);
+
 static const Seconds preloadedEntryLifetime { 10_s };
 
 #if !LOG_DISABLED
@@ -127,7 +129,7 @@ static bool responseNeedsRevalidation(const ResourceResponse& response, WallTime
 }
 
 class SpeculativeLoadManager::ExpiringEntry {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(SpeculativeLoadManager::ExpiringEntry);
 public:
     explicit ExpiringEntry(WTF::Function<void()>&& expirationHandler)
         : m_lifetimeTimer(WTFMove(expirationHandler))
@@ -140,7 +142,7 @@ private:
 };
 
 class SpeculativeLoadManager::PreloadedEntry : private ExpiringEntry {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(SpeculativeLoadManager::PreloadedEntry);
 public:
     PreloadedEntry(std::unique_ptr<Entry> entry, std::optional<ResourceRequest>&& speculativeValidationRequest, WTF::Function<void()>&& lifetimeReachedHandler)
         : ExpiringEntry(WTFMove(lifetimeReachedHandler))

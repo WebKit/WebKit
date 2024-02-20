@@ -34,6 +34,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(NetworkBroadcastChannelRegistry);
+
 #define REGISTRY_MESSAGE_CHECK(assertion) REGISTRY_MESSAGE_CHECK_COMPLETION(assertion, (void)0)
 #define REGISTRY_MESSAGE_CHECK_COMPLETION(assertion, completion) do { \
     ASSERT(assertion); \

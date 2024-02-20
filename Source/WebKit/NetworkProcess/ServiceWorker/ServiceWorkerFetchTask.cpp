@@ -52,6 +52,8 @@ namespace WebKit {
 
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(ServiceWorkerFetchTask);
+
 Ref<ServiceWorkerFetchTask> ServiceWorkerFetchTask::create(WebSWServerConnection& connection, NetworkResourceLoader& loader, WebCore::ResourceRequest&& request, WebCore::SWServerConnectionIdentifier connectionIdentifier, WebCore::ServiceWorkerIdentifier workerIdentifier, WebCore::SWServerRegistration& registration, NetworkSession* session, bool isWorkerReady)
 {
     return adoptRef(*new ServiceWorkerFetchTask(connection, loader, WTFMove(request), connectionIdentifier, workerIdentifier, registration, session, isWorkerReady));

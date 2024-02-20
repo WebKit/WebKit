@@ -36,6 +36,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(NetworkRTCProvider);
+
 static inline bool isEnabled(CFDictionaryRef proxy, CFStringRef key)
 {
     auto enabled = static_cast<CFNumberRef>(CFDictionaryGetValue(proxy, key));

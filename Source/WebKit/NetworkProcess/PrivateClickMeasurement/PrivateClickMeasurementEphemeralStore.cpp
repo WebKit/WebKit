@@ -32,6 +32,8 @@
 
 namespace WebKit::PCM {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(EphemeralStore);
+
 EphemeralStore::EphemeralStore() = default;
 EphemeralStore::~EphemeralStore() = default;
 

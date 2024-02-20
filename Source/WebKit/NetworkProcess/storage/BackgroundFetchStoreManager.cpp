@@ -39,6 +39,8 @@ namespace WebKit {
 
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(BackgroundFetchStoreManager);
+
 static constexpr auto fetchSuffix = "-backgroundfetch"_s;
 
 static bool shouldUseFileMapping(uint64_t fileSize)

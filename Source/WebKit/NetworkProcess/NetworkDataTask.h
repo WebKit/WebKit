@@ -36,6 +36,7 @@
 #include <WebCore/StoredCredentialsPolicy.h>
 #include <pal/SessionID.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -60,6 +61,7 @@ using ChallengeCompletionHandler = CompletionHandler<void(AuthenticationChalleng
 using ResponseCompletionHandler = CompletionHandler<void(WebCore::PolicyAction)>;
 
 class NetworkDataTaskClient : public CanMakeWeakPtr<NetworkDataTaskClient> {
+    WTF_MAKE_WK_TZONE_ALLOCATED(NetworkDataTaskClient);
 public:
     virtual void willPerformHTTPRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, RedirectCompletionHandler&&) = 0;
     virtual void didReceiveChallenge(WebCore::AuthenticationChallenge&&, NegotiatedLegacyTLS, ChallengeCompletionHandler&&) = 0;
@@ -87,6 +89,7 @@ public:
 };
 
 class NetworkDataTask : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<NetworkDataTask, WTF::DestructionThread::Main> {
+    WTF_MAKE_WK_TZONE_ALLOCATED(NetworkDataTask);
 public:
     static Ref<NetworkDataTask> create(NetworkSession&, NetworkDataTaskClient&, const NetworkLoadParameters&);
 

@@ -28,11 +28,13 @@
 #include "CacheStorageRecord.h"
 #include "CacheStorageStore.h"
 #include "NetworkCacheKey.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
 class CacheStorageMemoryStore final : public CacheStorageStore {
+    WTF_MAKE_WK_TZONE_ALLOCATED(CacheStorageMemoryStore);
 public:
     static Ref<CacheStorageMemoryStore> create();
 

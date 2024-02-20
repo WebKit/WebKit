@@ -34,6 +34,7 @@
 #include "NetworkDataTask.h"
 #include <WebCore/FileStreamClient.h>
 #include <wtf/FileSystem.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class AsyncFileStream;
@@ -47,6 +48,7 @@ namespace WebKit {
 class NetworkProcess;
 
 class NetworkDataTaskBlob final : public NetworkDataTask, public WebCore::FileStreamClient {
+    WTF_MAKE_WK_TZONE_ALLOCATED(NetworkDataTaskBlob);
 public:
     static Ref<NetworkDataTask> create(NetworkSession& session, NetworkDataTaskClient& client, const WebCore::ResourceRequest& request, const Vector<RefPtr<WebCore::BlobDataFileReference>>& fileReferences, const RefPtr<WebCore::SecurityOrigin>& topOrigin)
     {

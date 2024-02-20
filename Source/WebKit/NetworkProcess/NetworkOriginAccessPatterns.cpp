@@ -31,6 +31,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(NetworkOriginAccessPatterns);
+
 void NetworkOriginAccessPatterns::allowAccessTo(const WebCore::UserContentURLPattern& pattern)
 {
     ASSERT(RunLoop::isMain());

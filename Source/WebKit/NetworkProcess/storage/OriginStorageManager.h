@@ -28,6 +28,7 @@
 #include "Connection.h"
 #include "OriginQuotaManager.h"
 #include "WebsiteDataType.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -53,7 +54,7 @@ enum class UnifiedOriginStorageLevel : uint8_t;
 enum class WebsiteDataType : uint32_t;
 
 class OriginStorageManager : public CanMakeWeakPtr<OriginStorageManager> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(OriginStorageManager);
 public:
     static String originFileIdentifier();
 

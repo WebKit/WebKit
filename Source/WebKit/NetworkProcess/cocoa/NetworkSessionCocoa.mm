@@ -1206,6 +1206,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(NetworkSessionCocoa);
+
 #if ASSERT_ENABLED
 static bool sessionsCreated = false;
 #endif
@@ -1964,7 +1966,7 @@ void NetworkSessionCocoa::addWebPageNetworkParameters(WebPageProxyIdentifier pag
 // Make NetworkLoad's redirection and challenge handling code pass everything to the NetworkLoadClient
 // and use NetworkLoad and a new NetworkLoadClient instead of BlobDataTaskClient and WKURLSessionTaskDelegate.
 class NetworkSessionCocoa::BlobDataTaskClient final : public NetworkDataTaskClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(NetworkSessionCocoa::BlobDataTaskClient);
 public:
     BlobDataTaskClient(WebCore::ResourceRequest&& request, const std::optional<WebCore::SecurityOriginData>& topOrigin, NetworkSessionCocoa& session, IPC::Connection* connection, DataTaskIdentifier identifier)
         : m_task(NetworkDataTaskBlob::create(session, *this, request, session.blobRegistry().filesInBlob(request.url(), topOrigin), topOrigin ? topOrigin->securityOrigin().ptr() : nullptr))

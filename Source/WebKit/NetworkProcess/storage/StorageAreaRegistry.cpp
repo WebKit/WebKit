@@ -30,6 +30,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(StorageAreaRegistry);
+
 StorageAreaRegistry::StorageAreaRegistry() = default;
 
 void StorageAreaRegistry::registerStorageArea(StorageAreaIdentifier identifier, StorageAreaBase& storageArea)

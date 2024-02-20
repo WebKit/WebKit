@@ -29,6 +29,7 @@
 
 #include "NetworkRTCProvider.h"
 #include <Network/Network.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace rtc {
@@ -38,7 +39,7 @@ class SocketAddress;
 namespace WebKit {
 
 class NetworkRTCTCPSocketCocoa final : public NetworkRTCProvider::Socket, public CanMakeWeakPtr<NetworkRTCTCPSocketCocoa> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(NetworkRTCTCPSocketCocoa);
 public:
     static std::unique_ptr<NetworkRTCProvider::Socket> createClientTCPSocket(WebCore::LibWebRTCSocketIdentifier, NetworkRTCProvider&, const rtc::SocketAddress&, int options, const String& attributedBundleIdentifier, bool isFirstParty, bool isRelayDisabled, const WebCore::RegistrableDomain&, Ref<IPC::Connection>&&);
 

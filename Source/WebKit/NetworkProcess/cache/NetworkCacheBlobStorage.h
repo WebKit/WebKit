@@ -29,6 +29,7 @@
 #include "NetworkCacheData.h"
 #include "NetworkCacheKey.h"
 #include <wtf/SHA1.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 namespace NetworkCache {
@@ -36,6 +37,7 @@ namespace NetworkCache {
 // BlobStorage deduplicates the data using SHA1 hash computed over the blob bytes.
 class BlobStorage {
     WTF_MAKE_NONCOPYABLE(BlobStorage);
+    WTF_MAKE_WK_TZONE_ALLOCATED(BlobStorage);
 public:
     BlobStorage(const String& blobDirectoryPath, Salt);
 

@@ -32,6 +32,7 @@
 #include <WebCore/NetworkLoadMetrics.h>
 #include <WebCore/PrivateClickMeasurement.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS NSHTTPCookieStorage;
 OBJC_CLASS NSURLSessionDataTask;
@@ -50,6 +51,7 @@ class NetworkSessionCocoa;
 struct SessionWrapper;
 
 class NetworkDataTaskCocoa final : public NetworkDataTask, public NetworkTaskCocoa {
+    WTF_MAKE_WK_TZONE_ALLOCATED(NetworkDataTaskCocoa);
 public:
     static Ref<NetworkDataTask> create(NetworkSession& session, NetworkDataTaskClient& client, const NetworkLoadParameters& parameters)
     {

@@ -28,6 +28,7 @@
 #include <span>
 #include <wtf/FileSystem.h>
 #include <wtf/SHA1.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -53,6 +54,7 @@ namespace WebKit {
 namespace NetworkCache {
 
 class Data {
+    WTF_MAKE_WK_TZONE_ALLOCATED(Data);
 public:
     Data() { }
     Data(const uint8_t*, size_t);

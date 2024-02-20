@@ -27,10 +27,12 @@
 
 #include <WebCore/LoaderStrategy.h>
 #include <WebCore/PlatformStrategies.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class NetworkProcessPlatformStrategies : public WebCore::PlatformStrategies {
+    WTF_MAKE_WK_TZONE_ALLOCATED(NetworkProcessPlatformStrategies);
 public:
     static void initialize();
     

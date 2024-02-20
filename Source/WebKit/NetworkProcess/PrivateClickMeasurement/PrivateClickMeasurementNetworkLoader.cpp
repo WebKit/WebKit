@@ -32,6 +32,8 @@
 
 namespace WebKit::PCM {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(NetworkLoader);
+
 #if !PLATFORM(COCOA)
 void NetworkLoader::start(URL&&, RefPtr<JSON::Object>&&, WebCore::PrivateClickMeasurement::PcmDataCarried, Callback&& completionHandler)
 {

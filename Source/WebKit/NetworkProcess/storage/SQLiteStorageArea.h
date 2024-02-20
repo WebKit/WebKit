@@ -26,6 +26,7 @@
 #pragma once
 
 #include "StorageAreaBase.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class SQLiteDatabase;
@@ -37,6 +38,7 @@ class SQLiteTransaction;
 namespace WebKit {
 
 class SQLiteStorageArea final : public StorageAreaBase {
+    WTF_MAKE_WK_TZONE_ALLOCATED(SQLiteStorageArea);
 public:
     SQLiteStorageArea(unsigned quota, const WebCore::ClientOrigin&, const String& path, Ref<WorkQueue>&&);
     ~SQLiteStorageArea();

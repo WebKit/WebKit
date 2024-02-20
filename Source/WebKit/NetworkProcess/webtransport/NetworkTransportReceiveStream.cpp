@@ -30,6 +30,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(NetworkTransportReceiveStream);
+
 NetworkTransportReceiveStream::NetworkTransportReceiveStream(NetworkTransportSession& session)
     : m_session(session) { }
 

@@ -30,6 +30,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(FileSystemStorageHandleRegistry);
+
 FileSystemStorageHandleRegistry::FileSystemStorageHandleRegistry() = default;
 
 void FileSystemStorageHandleRegistry::registerHandle(WebCore::FileSystemHandleIdentifier identifier, FileSystemStorageHandle& handle)

@@ -34,6 +34,8 @@
 
 namespace WebKit::WebPushD {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(Connection);
+
 Connection::Connection(CString&& machServiceName, NetworkNotificationManager& manager, WebPushDaemonConnectionConfiguration&& configuration)
     : Daemon::ConnectionToMachService<ConnectionTraits>(WTFMove(machServiceName))
     , m_notificationManager(manager)

@@ -27,6 +27,7 @@
 
 #include <WebCore/PrivateClickMeasurement.h>
 #include <WebCore/RegistrableDomain.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class CertificateInfo;
@@ -45,6 +46,7 @@ class PrivateClickMeasurementManager;
 namespace PCM {
 
 class ManagerInterface {
+    WTF_MAKE_WK_TZONE_ALLOCATED(ManagerInterface);
 public:
     virtual ~ManagerInterface() { };
 

@@ -37,6 +37,7 @@
 #include <WebCore/ResourceLoaderIdentifier.h>
 #include <WebCore/SecurityContext.h>
 #include <wtf/Seconds.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace IPC {
 class Decoder;
@@ -46,6 +47,7 @@ class Encoder;
 namespace WebKit {
 
 class NetworkResourceLoadParameters : public NetworkLoadParameters {
+    WTF_MAKE_WK_TZONE_ALLOCATED(NetworkResourceLoadParameters);
 public:
     NetworkResourceLoadParameters() = default;
     NetworkResourceLoadParameters(

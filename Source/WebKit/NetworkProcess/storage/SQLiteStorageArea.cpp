@@ -37,6 +37,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(SQLiteStorageArea);
+
 constexpr Seconds transactionDuration { 500_ms };
 constexpr unsigned maximumSizeForValuesKeptInMemory { 1 * KB };
 constexpr auto createItemTableStatementAlternative = "CREATE TABLE IF NOT EXISTS ItemTable (key TEXT UNIQUE ON CONFLICT REPLACE, value BLOB NOT NULL ON CONFLICT FAIL)"_s;

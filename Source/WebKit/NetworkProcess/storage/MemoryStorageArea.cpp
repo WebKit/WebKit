@@ -28,6 +28,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(MemoryStorageArea);
+
 MemoryStorageArea::MemoryStorageArea(const WebCore::ClientOrigin& origin, StorageAreaBase::StorageType type)
     : StorageAreaBase(WebCore::StorageMap::noQuota, origin)
     , m_map(WebCore::StorageMap(WebCore::StorageMap::noQuota))

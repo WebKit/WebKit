@@ -27,12 +27,14 @@
 
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
 class NetworkSchemeRegistry : public RefCounted<NetworkSchemeRegistry> {
+    WTF_MAKE_WK_TZONE_ALLOCATED(NetworkSchemeRegistry);
 public:
     static Ref<NetworkSchemeRegistry> create() { return adoptRef(*new NetworkSchemeRegistry); }
 

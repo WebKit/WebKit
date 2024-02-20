@@ -56,6 +56,8 @@
 namespace WebKit {
 namespace NetworkCache {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(Cache);
+
 using namespace FileSystem;
 
 static const AtomString& resourceType()

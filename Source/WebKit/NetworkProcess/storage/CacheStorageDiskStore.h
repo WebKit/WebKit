@@ -28,12 +28,14 @@
 #include "CacheStorageStore.h"
 #include "NetworkCacheKey.h"
 #include <wtf/FileSystem.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
 class CacheStorageDiskStore final : public CacheStorageStore {
+    WTF_MAKE_WK_TZONE_ALLOCATED(CacheStorageDiskStore);
 public:
     static Ref<CacheStorageDiskStore> create(const String& cacheName, const String& path, Ref<WorkQueue>&&);
 

@@ -33,6 +33,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(RTCDataChannelRemoteManagerProxy);
+
 RTCDataChannelRemoteManagerProxy::RTCDataChannelRemoteManagerProxy()
     : m_queue(WorkQueue::create("RTCDataChannelRemoteManagerProxy"))
 {

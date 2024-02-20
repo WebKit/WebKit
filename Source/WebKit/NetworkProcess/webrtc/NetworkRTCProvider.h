@@ -37,6 +37,8 @@
 #include <wtf/FunctionDispatcher.h>
 #include <wtf/HashMap.h>
 #include <wtf/StdMap.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/text/WTFString.h>
@@ -76,6 +78,7 @@ struct SocketComparator {
 };
 
 class NetworkRTCProvider : private FunctionDispatcher, private IPC::MessageReceiver, public ThreadSafeRefCounted<NetworkRTCProvider, WTF::DestructionThread::MainRunLoop> {
+    WTF_MAKE_WK_TZONE_ALLOCATED(NetworkRTCProvider);
 public:
     static Ref<NetworkRTCProvider> create(NetworkConnectionToWebProcess& connection)
     {
@@ -88,6 +91,7 @@ public:
     void didReceiveNetworkRTCMonitorMessage(IPC::Connection& connection, IPC::Decoder& decoder) { m_rtcMonitor.didReceiveMessage(connection, decoder); }
 
     class Socket {
+        WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(Socket);
     public:
         virtual ~Socket() = default;
 

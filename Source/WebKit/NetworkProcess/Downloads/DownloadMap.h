@@ -28,6 +28,7 @@
 #include "DownloadID.h"
 #include "ProcessAssertion.h"
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
@@ -38,6 +39,7 @@ typedef HashMap<DownloadID, std::unique_ptr<Download>> DownloadMap;
 #else
 
 class DownloadMap {
+    WTF_MAKE_WK_TZONE_ALLOCATED(DownloadMap);
 public:
     typedef HashMap<DownloadID, std::unique_ptr<Download>> DownloadMapType;
 

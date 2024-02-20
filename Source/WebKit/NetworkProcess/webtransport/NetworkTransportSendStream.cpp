@@ -28,6 +28,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(NetworkTransportSendStream);
+
 void NetworkTransportSendStream::sendBytes(std::span<const uint8_t>, bool)
 {
     // FIXME: Implement.

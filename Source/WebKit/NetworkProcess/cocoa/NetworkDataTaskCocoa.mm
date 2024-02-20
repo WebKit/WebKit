@@ -63,6 +63,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(NetworkDataTaskCocoa);
+
 #if HAVE(SYSTEM_SUPPORT_FOR_ADVANCED_PRIVACY_PROTECTIONS)
 
 inline static bool shouldBlockTrackersForThirdPartyCloaking(NSURLRequest *request)

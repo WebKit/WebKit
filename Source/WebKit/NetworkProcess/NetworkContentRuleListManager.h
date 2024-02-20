@@ -30,6 +30,7 @@
 #include "UserContentControllerIdentifier.h"
 #include "WebCompiledContentRuleListData.h"
 #include <WebCore/ContentExtensionsBackend.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
 
 namespace IPC {
@@ -42,6 +43,7 @@ namespace WebKit {
 class NetworkProcess;
 
 class NetworkContentRuleListManager {
+    WTF_MAKE_WK_TZONE_ALLOCATED(NetworkContentRuleListManager);
 public:
     NetworkContentRuleListManager(NetworkProcess&);
     ~NetworkContentRuleListManager();

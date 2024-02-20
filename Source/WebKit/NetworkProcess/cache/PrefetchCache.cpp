@@ -30,6 +30,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(PrefetchCache);
+
 PrefetchCache::Entry::Entry(WebCore::ResourceResponse&& response, PrivateRelayed privateRelayed, RefPtr<WebCore::FragmentedSharedBuffer>&& buffer)
     : response(WTFMove(response))
     , privateRelayed(privateRelayed)

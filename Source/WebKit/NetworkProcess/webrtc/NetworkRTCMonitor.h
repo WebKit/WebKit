@@ -29,6 +29,7 @@
 
 #include "RTCNetwork.h"
 #include <WebCore/LibWebRTCMacros.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 ALLOW_COMMA_BEGIN
@@ -49,6 +50,7 @@ namespace WebKit {
 class NetworkRTCProvider;
 
 class NetworkRTCMonitor final : public CanMakeWeakPtr<NetworkRTCMonitor> {
+    WTF_MAKE_WK_TZONE_ALLOCATED(NetworkRTCMonitor);
 public:
     explicit NetworkRTCMonitor(NetworkRTCProvider& rtcProvider) : m_rtcProvider(rtcProvider) { }
     ~NetworkRTCMonitor();

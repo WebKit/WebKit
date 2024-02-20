@@ -39,6 +39,7 @@
 #include <wtf/Hasher.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Seconds.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/text/WTFString.h>
 
@@ -151,6 +152,7 @@ enum class CacheOption : uint8_t {
 };
 
 class Cache : public RefCounted<Cache> {
+    WTF_MAKE_WK_TZONE_ALLOCATED(Cache);
 public:
     ~Cache();
     static RefPtr<Cache> open(NetworkProcess&, const String& cachePath, OptionSet<CacheOption>, PAL::SessionID);

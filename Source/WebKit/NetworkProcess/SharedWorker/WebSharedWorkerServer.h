@@ -33,6 +33,7 @@
 #include <WebCore/SharedWorkerObjectIdentifier.h>
 #include <WebCore/TransferredMessagePort.h>
 #include <wtf/CheckedPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace PAL {
@@ -55,7 +56,7 @@ class WebSharedWorkerServerConnection;
 class WebSharedWorkerServerToContextConnection;
 
 class WebSharedWorkerServer : public CanMakeWeakPtr<WebSharedWorkerServer> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(WebSharedWorkerServer);
 public:
     explicit WebSharedWorkerServer(NetworkSession&);
     ~WebSharedWorkerServer();

@@ -46,7 +46,10 @@ namespace WebKit {
 
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(NetworkRTCUDPSocketCocoa);
+
 class NetworkRTCUDPSocketCocoaConnections : public ThreadSafeRefCounted<NetworkRTCUDPSocketCocoaConnections> {
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(NetworkRTCUDPSocketCocoaConnections);
 public:
     static Ref<NetworkRTCUDPSocketCocoaConnections> create(WebCore::LibWebRTCSocketIdentifier identifier, NetworkRTCProvider& provider, const rtc::SocketAddress& address, Ref<IPC::Connection>&& connection, String&& attributedBundleIdentifier, bool isFirstParty, bool isRelayDisabled, const WebCore::RegistrableDomain& domain) { return adoptRef(*new NetworkRTCUDPSocketCocoaConnections(identifier, provider, address, WTFMove(connection), WTFMove(attributedBundleIdentifier), isFirstParty, isRelayDisabled, domain)); }
 
@@ -56,6 +59,7 @@ public:
     void setListeningPort(int);
 
     class ConnectionStateTracker : public ThreadSafeRefCounted<ConnectionStateTracker> {
+        WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(ConnectionStateTracker);
     public:
         static Ref<ConnectionStateTracker> create() { return adoptRef(*new ConnectionStateTracker()); }
         void markAsStopped() { m_isStopped = true; }

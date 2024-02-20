@@ -33,6 +33,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(FileSystemStorageHandle);
+
 #if OS(WINDOWS)
 constexpr char pathSeparator = '\\';
 #else

@@ -32,6 +32,8 @@
 namespace WebKit {
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(NetworkProcessPlatformStrategies);
+
 void NetworkProcessPlatformStrategies::initialize()
 {
     static NeverDestroyed<NetworkProcessPlatformStrategies> platformStrategies;

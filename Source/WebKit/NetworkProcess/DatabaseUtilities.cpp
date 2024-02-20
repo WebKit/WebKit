@@ -36,6 +36,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(DatabaseUtilities);
+
 DatabaseUtilities::DatabaseUtilities(String&& storageFilePath)
     : m_storageFilePath(WTFMove(storageFilePath))
     , m_transaction(m_database)

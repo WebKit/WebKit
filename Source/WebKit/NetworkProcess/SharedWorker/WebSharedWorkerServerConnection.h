@@ -32,6 +32,7 @@
 #include <WebCore/TransferredMessagePort.h>
 #include <WebCore/WorkerInitializationData.h>
 #include <pal/SessionID.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class ResourceError;
@@ -50,7 +51,7 @@ class WebSharedWorkerServerToContextConnection;
 class NetworkSession;
 
 class WebSharedWorkerServerConnection : public IPC::MessageSender, public IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(WebSharedWorkerServerConnection);
 public:
     WebSharedWorkerServerConnection(NetworkProcess&, WebSharedWorkerServer&, IPC::Connection&, WebCore::ProcessIdentifier);
     ~WebSharedWorkerServerConnection();

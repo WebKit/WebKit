@@ -29,6 +29,7 @@
 #include <WebCore/SQLiteTransaction.h>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/Scope.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class PrivateClickMeasurement;
@@ -43,6 +44,7 @@ enum class PrivateClickMeasurementAttributionType : bool;
 using TableAndIndexPair = std::pair<String, std::optional<String>>;
 
 class DatabaseUtilities {
+    WTF_MAKE_WK_TZONE_ALLOCATED(DatabaseUtilities);
 protected:
     DatabaseUtilities(String&& storageFilePath);
     ~DatabaseUtilities();

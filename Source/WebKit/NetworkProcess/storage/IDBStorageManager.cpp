@@ -35,6 +35,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(IDBStorageManager);
+
 static bool migrateOriginDataImpl(const String& oldOriginDirectory, const String& newOriginDirectory, Function<String(const String&)>&& createFileNameFunction)
 {
     if (oldOriginDirectory.isEmpty() || !FileSystem::fileExists(oldOriginDirectory))

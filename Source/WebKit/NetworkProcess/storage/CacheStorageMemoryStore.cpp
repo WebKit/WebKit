@@ -30,6 +30,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(CacheStorageMemoryStore);
+
 Ref<CacheStorageMemoryStore> CacheStorageMemoryStore::create()
 {
     return adoptRef(*new CacheStorageMemoryStore);

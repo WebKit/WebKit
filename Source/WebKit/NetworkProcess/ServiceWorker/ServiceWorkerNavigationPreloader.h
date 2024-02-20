@@ -31,6 +31,7 @@
 #include "NetworkLoadParameters.h"
 #include <WebCore/NavigationPreloadState.h>
 #include <wtf/CheckedPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -45,7 +46,7 @@ class NetworkLoad;
 class NetworkSession;
 
 class ServiceWorkerNavigationPreloader final : public NetworkLoadClient, public CanMakeWeakPtr<ServiceWorkerNavigationPreloader>, public CanMakeCheckedPtr {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(ServiceWorkerNavigationPreloader);
 public:
     ServiceWorkerNavigationPreloader(NetworkSession&, NetworkLoadParameters&&, const WebCore::NavigationPreloadState&, bool shouldCaptureExtraNetworkLoadMetrics);
     ~ServiceWorkerNavigationPreloader();
