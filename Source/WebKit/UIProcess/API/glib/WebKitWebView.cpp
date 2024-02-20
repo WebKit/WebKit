@@ -2235,19 +2235,16 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * @web_view: the #WebKitWebView on which the signal is emitted
      * @event: the #WebKitInsecureContentEvent
      *
-     * This signal is emitted when insecure content has been detected
-     * in a page loaded through a secure connection. This typically
-     * means that a external resource from an unstrusted source has
-     * been run or displayed, resulting in a mix of HTTPS and
-     * non-HTTPS content.
+     * Prior to 2.46, this signal was emitted when insecure content was
+     * loaded in a secure content. Since 2.46, this signal is generally
+     * no longer emitted.
      *
-     * You can check the @event parameter to know exactly which kind
-     * of event has been detected (see #WebKitInsecureContentEvent).
+     * Deprecated: 2.46
      */
     signals[INSECURE_CONTENT_DETECTED] =
         g_signal_new("insecure-content-detected",
             G_TYPE_FROM_CLASS(webViewClass),
-            G_SIGNAL_RUN_LAST,
+            static_cast<GSignalFlags>(G_SIGNAL_RUN_LAST | G_SIGNAL_DEPRECATED),
             G_STRUCT_OFFSET(WebKitWebViewClass, insecure_content_detected),
             0, 0,
             g_cclosure_marshal_VOID__ENUM,

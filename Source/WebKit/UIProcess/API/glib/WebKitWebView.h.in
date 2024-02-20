@@ -175,8 +175,11 @@ typedef enum {
  * detected by trying to display any kind of resource (e.g. an image)
  * from an untrusted source.
  *
- * Enum values used to denote the different events which can trigger
- * the detection of insecure content.
+ * Enum values previously used to denote the different events which can trigger
+ * the detection of insecure content. Since 2.46, WebKit generally no longer
+ * loads insecure content in secure contexts.
+ *
+ * Deprecated: 2.46
  */
 typedef enum {
     WEBKIT_INSECURE_CONTENT_RUN,
