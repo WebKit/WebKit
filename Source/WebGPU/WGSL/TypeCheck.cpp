@@ -1709,8 +1709,31 @@ const Type* TypeChecker::vectorFieldAccess(const Types::Vector& vector, AST::Fie
         return nullptr;
     }
 
+    const auto& constAccess = [&](const ConstantVector& vector, char field) -> ConstantValue {
+        switch (field) {
+        case 'r':
+        case 'x':
+            return vector.elements[0];
+        case 'g':
+        case 'y':
+            return vector.elements[1];
+        case 'b':
+        case 'z':
+            return vector.elements[2];
+        case 'a':
+        case 'w':
+            return vector.elements[3];
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        };
+    };
+
+    const auto& constantValue = access.base().constantValue();
+
     switch (length) {
     case 1:
+        if (constantValue)
+            access.setConstantValue(constAccess(std::get<ConstantVector>(*constantValue), fieldName[0]));
         return vector.element;
     case 2:
     case 3:
@@ -1721,6 +1744,13 @@ const Type* TypeChecker::vectorFieldAccess(const Types::Vector& vector, AST::Fie
         return nullptr;
     }
 
+    if (constantValue) {
+        const auto& vector = std::get<ConstantVector>(*constantValue);
+        ConstantVector result(length);
+        for (unsigned i = 0; i < length; ++i)
+            result.elements[i] = constAccess(vector, fieldName[i]);
+        access.setConstantValue(result);
+    }
     return m_types.vectorType(length, vector.element);
 }
 
