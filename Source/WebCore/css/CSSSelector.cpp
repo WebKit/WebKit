@@ -27,14 +27,10 @@
 #include "CSSSelector.h"
 
 #include "CSSMarkup.h"
-#include "CSSParserTokenRange.h"
 #include "CSSSelectorInlines.h"
 #include "CSSSelectorList.h"
-#include "CSSSelectorParserContext.h"
-#include "CSSTokenizer.h"
 #include "CommonAtomStrings.h"
 #include "HTMLNames.h"
-#include "MutableCSSSelector.h"
 #include "SelectorPseudoTypeMap.h"
 #include <memory>
 #include <queue>
@@ -334,35 +330,6 @@ std::optional<CSSSelector::PseudoElement> CSSSelector::parsePseudoElementName(St
         return std::nullopt;
 
     return *type;
-}
-
-// FIXME: We should eventually deduplicate this with CSSSelectorParser::consumePseudo() somehow.
-std::optional<PseudoId> CSSSelector::parsePseudoElement(const String& input, const CSSSelectorParserContext& context)
-{
-    // FIXME: Add support for FunctionToken (webkit.org/b/264103).
-    auto tokenizer = CSSTokenizer { input };
-    auto range = tokenizer.tokenRange();
-    auto token = range.consume();
-    if (token.type() != ColonToken)
-        return std::nullopt;
-    token = range.consume();
-    if (token.type() == IdentToken) {
-        if (!range.atEnd())
-            return std::nullopt;
-        auto pseudoClassOrElement = findPseudoClassAndCompatibilityElementName(token.value());
-        if (!pseudoClassOrElement.compatibilityPseudoElement)
-            return std::nullopt;
-        ASSERT(CSSSelector::isPseudoElementEnabled(*pseudoClassOrElement.compatibilityPseudoElement, token.value(), context));
-        return pseudoId(*pseudoClassOrElement.compatibilityPseudoElement);
-    }
-    if (token.type() != ColonToken)
-        return std::nullopt;
-    token = range.consume();
-    if (token.type() != IdentToken || !range.atEnd())
-        return std::nullopt;
-    if (auto pseudoElement = parsePseudoElementName(token.value(), context))
-        return pseudoId(*pseudoElement);
-    return std::nullopt;
 }
 
 const CSSSelector* CSSSelector::firstInCompound() const

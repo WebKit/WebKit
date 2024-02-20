@@ -1207,4 +1207,34 @@ CSSSelectorList CSSSelectorParser::resolveNestingParent(const CSSSelectorList& n
     return final;
 }
 
+// FIXME: It's probably worth investigating if more logic can be shared with
+// CSSSelectorParser::consumePseudo(), though note that the requirements are subtly different.
+std::optional<PseudoId> CSSSelectorParser::parsePseudoElement(const String& input, const CSSSelectorParserContext& context)
+{
+    // FIXME: Add support for FunctionToken (webkit.org/b/264103).
+    auto tokenizer = CSSTokenizer { input };
+    auto range = tokenizer.tokenRange();
+    auto token = range.consume();
+    if (token.type() != ColonToken)
+        return std::nullopt;
+    token = range.consume();
+    if (token.type() == IdentToken) {
+        if (!range.atEnd())
+            return std::nullopt;
+        auto pseudoClassOrElement = findPseudoClassAndCompatibilityElementName(token.value());
+        if (!pseudoClassOrElement.compatibilityPseudoElement)
+            return std::nullopt;
+        ASSERT(CSSSelector::isPseudoElementEnabled(*pseudoClassOrElement.compatibilityPseudoElement, token.value(), context));
+        return CSSSelector::pseudoId(*pseudoClassOrElement.compatibilityPseudoElement);
+    }
+    if (token.type() != ColonToken)
+        return std::nullopt;
+    token = range.consume();
+    if (token.type() != IdentToken || !range.atEnd())
+        return std::nullopt;
+    if (auto pseudoElement = CSSSelector::parsePseudoElementName(token.value(), context))
+        return CSSSelector::pseudoId(*pseudoElement);
+    return std::nullopt;
+}
+
 } // namespace WebCore

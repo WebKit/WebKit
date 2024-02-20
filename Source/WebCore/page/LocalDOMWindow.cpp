@@ -32,7 +32,7 @@
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSRule.h"
 #include "CSSRuleList.h"
-#include "CSSSelectorParserContext.h"
+#include "CSSSelectorParser.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "ComposedTreeIterator.h"
@@ -1617,10 +1617,10 @@ Ref<CSSStyleDeclaration> LocalDOMWindow::getComputedStyle(Element& element, cons
         return CSSComputedStyleDeclaration::create(element, std::nullopt);
 
     // FIXME: This does not work for pseudo-elements that take arguments (webkit.org/b/264103).
-    auto pseudoId = CSSSelector::parsePseudoElement(pseudoElt, CSSSelectorParserContext { element.protectedDocument() });
+    auto pseudoId = CSSSelectorParser::parsePseudoElement(pseudoElt, CSSSelectorParserContext { element.protectedDocument() });
     if (!pseudoId)
         return CSSComputedStyleDeclaration::createEmpty(element);
-    // FIXME: CSSSelector::parsePseudoElement should never return PseudoId::None.
+    // FIXME: CSSSelectorParser::parsePseudoElement should never return PseudoId::None.
     return CSSComputedStyleDeclaration::create(element, pseudoId == PseudoId::None ? std::nullopt : std::optional(Style::PseudoElementIdentifier { *pseudoId }));
 }
 
@@ -1631,7 +1631,7 @@ RefPtr<CSSRuleList> LocalDOMWindow::getMatchedCSSRules(Element* element, const S
 
     // FIXME: This parser context won't get the right settings without a document.
     auto parserContext = document() ? CSSSelectorParserContext { *protectedDocument() } : CSSSelectorParserContext { CSSParserContext { HTMLStandardMode } };
-    auto optionalPseudoId = CSSSelector::parsePseudoElement(pseudoElement, parserContext);
+    auto optionalPseudoId = CSSSelectorParser::parsePseudoElement(pseudoElement, parserContext);
     if (!optionalPseudoId && !pseudoElement.isEmpty())
         return nullptr;
     auto pseudoId = optionalPseudoId ? *optionalPseudoId : PseudoId::None;

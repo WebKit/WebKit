@@ -34,8 +34,7 @@
 #include "CSSAnimationEvent.h"
 #include "CSSParserContext.h"
 #include "CSSPropertyNames.h"
-#include "CSSSelector.h"
-#include "CSSSelectorParserContext.h"
+#include "CSSSelectorParser.h"
 #include "CSSTransition.h"
 #include "CSSTransitionEvent.h"
 #include "Element.h"
@@ -346,7 +345,7 @@ std::optional<PseudoId> pseudoIdFromString(const String& pseudoElement)
 
     // FIXME: This parserContext should include a document to get the proper settings.
     CSSSelectorParserContext parserContext { CSSParserContext { HTMLStandardMode } };
-    return CSSSelector::parsePseudoElement(pseudoElement, parserContext);
+    return CSSSelectorParser::parsePseudoElement(pseudoElement, parserContext);
 }
 
 AtomString animatablePropertyAsString(AnimatableCSSProperty property)

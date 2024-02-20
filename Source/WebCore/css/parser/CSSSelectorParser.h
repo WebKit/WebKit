@@ -55,6 +55,7 @@ public:
 
     static bool supportsComplexSelector(CSSParserTokenRange, const CSSSelectorParserContext&, CSSParserEnum::IsNestedContext);
     static CSSSelectorList resolveNestingParent(const CSSSelectorList& nestedSelectorList, const CSSSelectorList* parentResolvedSelectorList);
+    static std::optional<PseudoId> parsePseudoElement(const String&, const CSSSelectorParserContext&);
 
 private:
     template<typename ConsumeSelector> MutableCSSSelectorList consumeSelectorList(CSSParserTokenRange&, ConsumeSelector&&);
