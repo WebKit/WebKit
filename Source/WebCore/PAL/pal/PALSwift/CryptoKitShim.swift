@@ -26,7 +26,6 @@
 import CryptoKit
 import Foundation
 
-@objc(WebCryptoErrorCodes)
 public enum ErrorCodes: Int {
     case success = 0
     case wrongTagSize = 1
@@ -38,13 +37,12 @@ public enum ErrorCodes: Int {
     case hashingFailed = 7
 }
 
-private final class Utils {
+private class Utils {
     static let zeroArray = [UInt8](repeating: 0, count: 0)
 }
-@objc(WebCryptoAesGcm)
-public final class AesGcm: NSObject {
 
-    @objc public static func encrypt(
+public class AesGcm {
+    public static func encrypt(
         _ key: UnsafePointer<UInt8>,
         keySize: UInt,
         iv: UnsafePointer<UInt8>,
@@ -100,23 +98,21 @@ public final class AesGcm: NSObject {
     }
 }
 
-@objc(WebCryptoAesKwReturnValue)
-public final class AesKwReturnValue: NSObject {
-    @objc public var errCode: ErrorCodes = ErrorCodes.success
-    @objc public var outputSize: UInt64 = 0
+public struct AesKwRV {
+    public var errCode: ErrorCodes = ErrorCodes.success
+    public var outputSize: UInt64 = 0
 }
 
-@objc(WebCryptoAesKw)
-public final class AesKw: NSObject {
-    @objc public static func wrap(
+public class AesKw {
+    public static func wrap(
         _ key: UnsafePointer<UInt8>,
         keySize: UInt,
         data: UnsafePointer<UInt8>,
         dataSize: UInt,
         cipherText: UnsafeMutablePointer<UInt8>,
         cipherTextSize: UInt64
-    ) -> AesKwReturnValue {
-        let rv = AesKwReturnValue()
+    ) -> AesKwRV {
+        var rv = AesKwRV()
         rv.errCode = .success
         if keySize > Int.max
             || dataSize > Int.max
@@ -146,15 +142,15 @@ public final class AesKw: NSObject {
         return rv
     }
 
-    @objc public static func unwrap(
+    public static func unwrap(
         _ key: UnsafePointer<UInt8>,
         keySize: UInt,
         cipherText: UnsafePointer<UInt8>,
         cipherTextSize: UInt,
         data: UnsafeMutablePointer<UInt8>,
         dataSize: UInt64
-    ) -> AesKwReturnValue {
-        let rv = AesKwReturnValue()
+    ) -> AesKwRV {
+        var rv = AesKwRV()
         rv.errCode = ErrorCodes.success
         if keySize > Int.max
             || dataSize > Int.max
@@ -188,7 +184,6 @@ public final class AesKw: NSObject {
     }
 }  // AesKw
 
-@objc(WebCryptoDigestSize)
 public enum DigestSize: Int {
     case sha1 = 20
     case sha256 = 32
@@ -196,9 +191,8 @@ public enum DigestSize: Int {
     case sha512 = 64
 }
 
-@objc(WebCryptoDigest)
-public final class Digest: NSObject {
-    @objc public static func sha1(
+public class Digest {
+    public static func sha1(
         _ data: UnsafePointer<UInt8>, dataSize: UInt, digest: UnsafeMutablePointer<UInt8>,
         digestSize: UInt
     ) -> ErrorCodes {
@@ -215,7 +209,7 @@ public final class Digest: NSObject {
             Insecure.SHA1.self
         )
     }
-    @objc public static func sha256(
+    public static func sha256(
         _ data: UnsafePointer<UInt8>, dataSize: UInt, digest: UnsafeMutablePointer<UInt8>,
         digestSize: UInt
     ) -> ErrorCodes {
@@ -229,7 +223,7 @@ public final class Digest: NSObject {
         return Self.digest(
             data: UnsafeBufferPointer(start: data, count: Int(dataSize)), out: &d, SHA256.self)
     }
-    @objc public static func sha384(
+    public static func sha384(
         _ data: UnsafePointer<UInt8>, dataSize: UInt, digest: UnsafeMutablePointer<UInt8>,
         digestSize: UInt
     ) -> ErrorCodes {
@@ -244,7 +238,7 @@ public final class Digest: NSObject {
         return Self.digest(
             data: UnsafeBufferPointer(start: data, count: Int(dataSize)), out: &d, SHA384.self)
     }
-    @objc public static func sha512(
+    public static func sha512(
         _ data: UnsafePointer<UInt8>, dataSize: UInt, digest: UnsafeMutablePointer<UInt8>,
         digestSize: UInt
     ) -> ErrorCodes {

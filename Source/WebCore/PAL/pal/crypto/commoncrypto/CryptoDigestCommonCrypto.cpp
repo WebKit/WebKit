@@ -26,8 +26,10 @@
 #include "config.h"
 #include "CryptoDigest.h"
 
-#include "PALSwift.h"
 #include <CommonCrypto/CommonCrypto.h>
+#if HAVE(SWIFT_CPP_INTEROP)
+#include "PALSwift.h"
+#endif
 
 namespace PAL {
 
@@ -187,29 +189,30 @@ String CryptoDigest::toHexString()
     return String::fromUTF8(result);
 }
 
+#if HAVE(SWIFT_CPP_INTEROP)
 std::optional<Vector<uint8_t>> CryptoDigest::computeHash(CryptoDigest::Algorithm algo, const Vector<uint8_t>& data, bool useCryptoKit)
 {
     if (useCryptoKit) {
         Vector<uint8_t> digest;
         switch (algo) {
         case CryptoDigest::Algorithm::SHA_1:
-            digest.grow(WebCryptoDigestSizeSha1);
-            if (WebCryptoErrorCodesSuccess != [WebCryptoDigest sha1:data.data() dataSize:data.size() digest:digest.data() digestSize:digest.size()])
+            digest.grow(PAL::DigestSize::sha1().getRawValue());
+            if (!PAL::Digest::sha1(data.data(), data.size(), digest.data(), digest.size()).isSuccess())
                 return std::nullopt;
             break;
         case CryptoDigest::Algorithm::SHA_256:
-            digest.grow(WebCryptoDigestSizeSha256);
-            if (WebCryptoErrorCodesSuccess != [WebCryptoDigest sha256:data.data() dataSize:data.size() digest:digest.data() digestSize:digest.size()])
+            digest.grow(PAL::DigestSize::sha256().getRawValue());
+            if (!PAL::Digest::sha256(data.data(), data.size(), digest.data(), digest.size()).isSuccess())
                 return std::nullopt;
             break;
         case CryptoDigest::Algorithm::SHA_384:
-            digest.grow(WebCryptoDigestSizeSha384);
-            if (WebCryptoErrorCodesSuccess != [WebCryptoDigest sha384:data.data() dataSize:data.size() digest:digest.data() digestSize:digest.size()])
+            digest.grow(PAL::DigestSize::sha384().getRawValue());
+            if (!PAL::Digest::sha384(data.data(), data.size(), digest.data(), digest.size()).isSuccess())
                 return std::nullopt;
             break;
         case CryptoDigest::Algorithm::SHA_512:
-            digest.grow(WebCryptoDigestSizeSha512);
-            if (WebCryptoErrorCodesSuccess != [WebCryptoDigest sha512:data.data() dataSize:data.size() digest:digest.data() digestSize:digest.size()])
+            digest.grow(PAL::DigestSize::sha512().getRawValue());
+            if (!PAL::Digest::sha512(data.data(), data.size(), digest.data(), digest.size()).isSuccess())
                 return std::nullopt;
             break;
         case CryptoDigest::Algorithm::SHA_224:
@@ -218,6 +221,11 @@ std::optional<Vector<uint8_t>> CryptoDigest::computeHash(CryptoDigest::Algorithm
         }
         return digest;
     }
+#else
+std::optional<Vector<uint8_t>> CryptoDigest::computeHash(CryptoDigest::Algorithm algo, const Vector<uint8_t>& data, bool)
+{
+#endif
+
     std::unique_ptr<CryptoDigest> digest = WTF::makeUnique<CryptoDigest>();
     ASSERT(digest->m_context);
     digest->m_context->algorithm = algo;
