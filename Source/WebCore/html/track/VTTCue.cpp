@@ -1444,17 +1444,17 @@ void VTTCue::prepareToSpeak(SpeechSynthesis& speechSynthesis, double rate, doubl
         return;
     }
 
-    auto& track = *this->track();
+    Ref track = *this->track();
     m_speechSynthesis = &speechSynthesis;
-    m_speechUtterance = SpeechSynthesisUtterance::create(*track.scriptExecutionContext(), m_content, [protectedThis = Ref { *this }, completion = WTFMove(completion)](const SpeechSynthesisUtterance&) {
+    m_speechUtterance = SpeechSynthesisUtterance::create(Ref { *track->scriptExecutionContext() }, m_content, [protectedThis = Ref { *this }, completion = WTFMove(completion)](const SpeechSynthesisUtterance&) {
         protectedThis->m_speechUtterance = nullptr;
         protectedThis->m_speechSynthesis = nullptr;
         completion(protectedThis.get());
     });
 
-    auto trackLanguage = track.validBCP47Language();
+    auto trackLanguage = track->validBCP47Language();
     if (trackLanguage.isEmpty())
-        trackLanguage = track.language();
+        trackLanguage = track->language();
 
     m_speechUtterance->setLang(trackLanguage);
     m_speechUtterance->setVolume(volume);

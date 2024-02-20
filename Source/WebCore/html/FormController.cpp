@@ -255,7 +255,7 @@ Vector<AtomString> FormController::formElementsState(const Document& document) c
         // FIXME: We should be saving the state of form controls in shadow trees, too.
         FormKeyGenerator keyGenerator;
         for (auto& element : descendantsOfType<Element>(document)) {
-            auto* control = const_cast<Element&>(element).asValidatedFormListedElement();
+            RefPtr control = const_cast<Element&>(element).asValidatedFormListedElement();
             if (!control || !control->isCandidateForSavingAndRestoringState())
                 continue;
 
@@ -263,7 +263,7 @@ Vector<AtomString> FormController::formElementsState(const Document& document) c
             auto& vector = formKeyToControlsMap.ensure(formKey, [] {
                 return Vector<Ref<const ValidatedFormListedElement>> { };
             }).iterator->value;
-            vector.append(*control);
+            vector.append(control.releaseNonNull());
         }
     }
 

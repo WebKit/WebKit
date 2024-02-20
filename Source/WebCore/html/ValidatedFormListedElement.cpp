@@ -252,7 +252,7 @@ void ValidatedFormListedElement::updateValidity()
     bool newIsValid = this->computeValidity();
 
     if (newIsValid != m_isValid) {
-        HTMLElement& element = asHTMLElement();
+        SUPPRESS_UNCOUNTED_LOCAL auto& element = asHTMLElement();
         Style::PseudoClassChangeInvalidation styleInvalidation(element, {
             { CSSSelector::PseudoClass::Valid, newIsValid },
             { CSSSelector::PseudoClass::Invalid, !newIsValid },

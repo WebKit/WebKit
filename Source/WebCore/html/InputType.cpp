@@ -689,7 +689,7 @@ void InputType::dispatchSimulatedClickIfActive(KeyboardEvent& event) const
 {
     ASSERT(element());
     if (element()->active())
-        element()->dispatchSimulatedClick(&event);
+        protectedElement()->dispatchSimulatedClick(&event);
     event.setDefaultHandled();
 }
 
@@ -739,7 +739,7 @@ void InputType::handleBlurEvent()
 bool InputType::accessKeyAction(bool)
 {
     ASSERT(element());
-    element()->focus({ SelectionRestorationMode::SelectAll });
+    protectedElement()->focus({ SelectionRestorationMode::SelectAll });
     return false;
 }
 
@@ -797,41 +797,41 @@ bool InputType::storesValueSeparateFromAttribute()
 
 void InputType::setValue(const String& sanitizedValue, bool valueChanged, TextFieldEventBehavior eventBehavior, TextControlSetValueSelection)
 {
-    ASSERT(element());
+    RefPtr element = this->element();
+    ASSERT(element);
     if (!valueChanged) {
-        element()->setValueInternal(sanitizedValue, eventBehavior);
+        element->setValueInternal(sanitizedValue, eventBehavior);
         return;
     }
 
-    bool wasInRange = isInRange(element()->value());
+    bool wasInRange = isInRange(element->value());
     bool inRange = isInRange(sanitizedValue);
 
-    auto oldDirection = element()->directionalityIfDirIsAuto();
+    auto oldDirection = element->directionalityIfDirIsAuto();
 
     std::optional<Style::PseudoClassChangeInvalidation> styleInvalidation;
     if (wasInRange != inRange)
-        emplace(styleInvalidation, *element(), { { CSSSelector::PseudoClass::InRange, inRange }, { CSSSelector::PseudoClass::OutOfRange, !inRange } });
+        emplace(styleInvalidation, *element, { { CSSSelector::PseudoClass::InRange, inRange }, { CSSSelector::PseudoClass::OutOfRange, !inRange } });
 
-    element()->setValueInternal(sanitizedValue, eventBehavior);
+    element->setValueInternal(sanitizedValue, eventBehavior);
 
-    if (oldDirection.value_or(TextDirection::LTR) != element()->directionalityIfDirIsAuto().value_or(TextDirection::LTR))
-        element()->invalidateStyleInternal();
+    if (oldDirection.value_or(TextDirection::LTR) != element->directionalityIfDirIsAuto().value_or(TextDirection::LTR))
+        element->invalidateStyleInternal();
 
     switch (eventBehavior) {
     case DispatchChangeEvent:
-        element()->dispatchFormControlChangeEvent();
+        element->dispatchFormControlChangeEvent();
         break;
     case DispatchInputAndChangeEvent:
-        element()->dispatchFormControlInputEvent();
-        if (auto element = this->element())
-            element->dispatchFormControlChangeEvent();
+        element->dispatchFormControlInputEvent();
+        element->dispatchFormControlChangeEvent();
         break;
     case DispatchNoEvent:
         break;
     }
 
-    if (auto* cache = element()->document().existingAXObjectCache())
-        cache->valueChanged(element());
+    if (CheckedPtr cache = element->document().existingAXObjectCache())
+        cache->valueChanged(element.get());
 }
 
 String InputType::localizeValue(const String& proposedValue) const

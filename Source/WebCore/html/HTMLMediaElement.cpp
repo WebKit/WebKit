@@ -4795,7 +4795,7 @@ MediaElementAudioSourceNode* HTMLMediaElement::audioSourceNode()
 }
 #endif
 
-ExceptionOr<TextTrack&> HTMLMediaElement::addTextTrack(const AtomString& kind, const AtomString& label, const AtomString& language)
+ExceptionOr<Ref<TextTrack>> HTMLMediaElement::addTextTrack(const AtomString& kind, const AtomString& label, const AtomString& language)
 {
     // 4.8.10.12.4 Text track API
     // The addTextTrack(kind, label, language) method of media elements, when invoked, must run the following steps:
@@ -4811,24 +4811,23 @@ ExceptionOr<TextTrack&> HTMLMediaElement::addTextTrack(const AtomString& kind, c
     // 5. Create a new text track corresponding to the new object, and set its text track kind to kind, its text
     // track label to label, its text track language to language...
     Ref track = TextTrack::create(protectedDocument().ptr(), kind, emptyAtom(), label, language);
-    auto& trackReference = track.get();
 #if !RELEASE_LOG_DISABLED
-    trackReference.setLogger(protectedLogger(), logIdentifier());
+    track->setLogger(protectedLogger(), logIdentifier());
 #endif
 
     // Note, due to side effects when changing track parameters, we have to
     // first append the track to the text track list.
 
     // 6. Add the new text track to the media element's list of text tracks.
-    addTextTrack(WTFMove(track));
+    addTextTrack(track.copyRef());
 
     // ... its text track readiness state to the text track loaded state ...
-    trackReference.setReadinessState(TextTrack::Loaded);
+    track->setReadinessState(TextTrack::Loaded);
 
     // ... its text track mode to the text track hidden mode, and its text track list of cues to an empty list ...
-    trackReference.setMode(TextTrack::Mode::Hidden);
+    track->setMode(TextTrack::Mode::Hidden);
 
-    return trackReference;
+    return track;
 }
 
 AudioTrackList& HTMLMediaElement::ensureAudioTracks()
@@ -5168,11 +5167,11 @@ void HTMLMediaElement::setSelectedTextTrack(TextTrack* trackToSelect)
             return;
 
         for (int i = 0, length = trackList->length(); i < length; ++i) {
-            auto& track = *trackList->item(i);
-            if (&track != trackToSelect)
-                track.setMode(TextTrack::Mode::Disabled);
+            Ref track = *trackList->item(i);
+            if (track.ptr() != trackToSelect)
+                track->setMode(TextTrack::Mode::Disabled);
             else
-                track.setMode(TextTrack::Mode::Showing);
+                track->setMode(TextTrack::Mode::Showing);
         }
     }
 

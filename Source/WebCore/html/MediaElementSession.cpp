@@ -378,14 +378,14 @@ Expected<void, MediaPlaybackDenialReason> MediaElementSession::playbackStateChan
         return makeUnexpected(MediaPlaybackDenialReason::InvalidState);
     }
 
-    auto& document = m_element.document();
-    auto* page = document.page();
+    Ref document = m_element.document();
+    RefPtr page = document->page();
     if (!page || page->mediaPlaybackIsSuspended()) {
         ALWAYS_LOG(LOGIDENTIFIER, "Returning FALSE because media playback is suspended");
         return makeUnexpected(MediaPlaybackDenialReason::PageConsentRequired);
     }
 
-    if (document.isMediaDocument() && !document.ownerElement())
+    if (document->isMediaDocument() && !document->ownerElement())
         return { };
 
     if (pageExplicitlyAllowsElementToAutoplayInline(m_element))
@@ -401,32 +401,32 @@ Expected<void, MediaPlaybackDenialReason> MediaElementSession::playbackStateChan
 
 #if ENABLE(MEDIA_STREAM)
     if (m_element.hasMediaStreamSrcObject()) {
-        if (document.isCapturing())
+        if (document->isCapturing())
             return { };
-        if (document.mediaState() & MediaProducerMediaState::IsPlayingAudio)
+        if (document->mediaState() & MediaProducerMediaState::IsPlayingAudio)
             return { };
     }
 #endif
 
     // FIXME: Why are we checking top-level document only for PerDocumentAutoplayBehavior?
-    const auto& topDocument = document.topDocument();
-    if (topDocument.quirks().requiresUserGestureToPauseInPictureInPicture()
+    Ref topDocument = document->topDocument();
+    if (topDocument->quirks().requiresUserGestureToPauseInPictureInPicture()
         && m_element.fullscreenMode() & HTMLMediaElementEnums::VideoFullscreenModePictureInPicture
         && !m_element.paused() && state == MediaPlaybackState::Paused
-        && !document.processingUserGestureForMedia()) {
+        && !document->processingUserGestureForMedia()) {
         ALWAYS_LOG(LOGIDENTIFIER, "Returning FALSE because a quirk requires a user gesture to pause while in Picture-in-Picture");
         return makeUnexpected(MediaPlaybackDenialReason::UserGestureRequired);
     }
 
-    if (topDocument.mediaState() & MediaProducerMediaState::HasUserInteractedWithMediaElement && topDocument.quirks().needsPerDocumentAutoplayBehavior())
+    if (topDocument->mediaState() & MediaProducerMediaState::HasUserInteractedWithMediaElement && topDocument->quirks().needsPerDocumentAutoplayBehavior())
         return { };
 
-    if (m_restrictions & RequireUserGestureForVideoRateChange && m_element.isVideo() && !document.processingUserGestureForMedia()) {
+    if (m_restrictions & RequireUserGestureForVideoRateChange && m_element.isVideo() && !document->processingUserGestureForMedia()) {
         ALWAYS_LOG(LOGIDENTIFIER, "Returning FALSE because a user gesture is required for video rate change restriction");
         return makeUnexpected(MediaPlaybackDenialReason::UserGestureRequired);
     }
 
-    if (m_restrictions & RequireUserGestureForAudioRateChange && (!m_element.isVideo() || m_element.hasAudio()) && !m_element.muted() && m_element.volume() && !document.processingUserGestureForMedia()) {
+    if (m_restrictions & RequireUserGestureForAudioRateChange && (!m_element.isVideo() || m_element.hasAudio()) && !m_element.muted() && m_element.volume() && !document->processingUserGestureForMedia()) {
         ALWAYS_LOG(LOGIDENTIFIER, "Returning FALSE because a user gesture is required for audio rate change restriction");
         return makeUnexpected(MediaPlaybackDenialReason::UserGestureRequired);
     }
@@ -436,7 +436,7 @@ Expected<void, MediaPlaybackDenialReason> MediaElementSession::playbackStateChan
         return makeUnexpected(MediaPlaybackDenialReason::UserGestureRequired);
     }
 
-    if (m_restrictions & RequireUserGestureForVideoDueToLowPowerMode && m_element.isVideo() && !document.processingUserGestureForMedia()) {
+    if (m_restrictions & RequireUserGestureForVideoDueToLowPowerMode && m_element.isVideo() && !document->processingUserGestureForMedia()) {
         ALWAYS_LOG(LOGIDENTIFIER, "Returning FALSE because of video low power mode restriction");
         return makeUnexpected(MediaPlaybackDenialReason::UserGestureRequired);
     }
@@ -446,10 +446,10 @@ Expected<void, MediaPlaybackDenialReason> MediaElementSession::playbackStateChan
 
 bool MediaElementSession::autoplayPermitted() const
 {
-    const Document& document = m_element.document();
-    if (document.backForwardCacheState() != Document::NotInBackForwardCache)
+    Ref document = m_element.document();
+    if (document->backForwardCacheState() != Document::NotInBackForwardCache)
         return false;
-    if (document.activeDOMObjectsAreSuspended())
+    if (document->activeDOMObjectsAreSuspended())
         return false;
 
     if (!hasBehaviorRestriction(MediaElementSession::InvisibleAutoplayNotPermitted))
@@ -459,7 +459,7 @@ bool MediaElementSession::autoplayPermitted() const
     if ((!m_element.isVideo() || m_element.hasAudio()) && !m_element.muted() && m_element.volume())
         return true;
 
-    auto* renderer = m_element.renderer();
+    CheckedPtr renderer = m_element.renderer();
     if (!renderer) {
         ALWAYS_LOG(LOGIDENTIFIER, "Returning FALSE because element has no renderer");
         return false;
@@ -626,7 +626,7 @@ bool MediaElementSession::canShowControlsManager(PlaybackControlsPurpose purpose
 #if ENABLE(FULLSCREEN_API)
     // Elements which are not descendants of the current fullscreen element cannot be main content.
     if (CheckedPtr fullsreenManager = m_element.document().fullscreenManagerIfExists()) {
-        auto* fullscreenElement = fullsreenManager->currentFullscreenElement();
+        RefPtr fullscreenElement = fullsreenManager->currentFullscreenElement();
         if (fullscreenElement && !m_element.isDescendantOf(*fullscreenElement)) {
             INFO_LOG(LOGIDENTIFIER, "returning FALSE: outside of full screen");
             return false;
@@ -696,13 +696,13 @@ void MediaElementSession::showPlaybackTargetPicker()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    auto& document = m_element.document();
-    if (m_restrictions & RequireUserGestureToShowPlaybackTargetPicker && !document.processingUserGestureForMedia()) {
+    Ref document = m_element.document();
+    if (m_restrictions & RequireUserGestureToShowPlaybackTargetPicker && !document->processingUserGestureForMedia()) {
         ALWAYS_LOG(LOGIDENTIFIER, "returning early because of permissions");
         return;
     }
 
-    if (!document.page()) {
+    if (!document->page()) {
         ALWAYS_LOG(LOGIDENTIFIER, "returning early because page is NULL");
         return;
     }
@@ -715,7 +715,7 @@ void MediaElementSession::showPlaybackTargetPicker()
 #endif
 
     auto& audioSession = AudioSession::sharedSession();
-    document.showPlaybackTargetPicker(*this, is<HTMLVideoElement>(m_element), audioSession.routeSharingPolicy(), audioSession.routingContextUID());
+    document->showPlaybackTargetPicker(*this, is<HTMLVideoElement>(m_element), audioSession.routeSharingPolicy(), audioSession.routingContextUID());
 }
 
 bool MediaElementSession::hasWirelessPlaybackTargets() const
@@ -939,7 +939,7 @@ void MediaElementSession::resumeBuffering()
 
 bool MediaElementSession::bufferingSuspended() const
 {
-    if (auto* page = m_element.document().page())
+    if (RefPtr page = m_element.document().page())
         return page->mediaBufferingIsSuspended();
     return true;
 }
@@ -958,59 +958,56 @@ bool MediaElementSession::requiresPlaybackTargetRouteMonitoring() const
 
 static bool isElementMainContentForPurposesOfAutoplay(const HTMLMediaElement& element, bool shouldHitTestMainFrame)
 {
-    Document& document = element.document();
-    if (!document.hasLivingRenderTree() || document.activeDOMObjectsAreStopped() || element.isSuspended() || !element.hasAudio() || !element.hasVideo())
+    Ref document = element.document();
+    if (!document->hasLivingRenderTree() || document->activeDOMObjectsAreStopped() || element.isSuspended() || !element.hasAudio() || !element.hasVideo())
         return false;
 
     // Elements which have not yet been laid out, or which are not yet in the DOM, cannot be main content.
-    auto* renderer = element.renderer();
-    if (!renderer)
-        return false;
+    {
+        CheckedPtr renderer = element.renderer();
+        if (!renderer)
+            return false;
 
-    if (!isElementLargeEnoughForMainContent(element, MediaSessionMainContentPurpose::Autoplay))
-        return false;
+        if (!isElementLargeEnoughForMainContent(element, MediaSessionMainContentPurpose::Autoplay))
+            return false;
 
-    // Elements which are hidden by style, or have been scrolled out of view, cannot be main content.
-    // But elements which have audio & video and are already playing should not stop playing because
-    // they are scrolled off the page.
-    if (renderer->style().visibility() != Visibility::Visible)
-        return false;
-    if (renderer->visibleInViewportState() != VisibleInViewportState::Yes && !element.isPlaying())
-        return false;
+        // Elements which are hidden by style, or have been scrolled out of view, cannot be main content.
+        // But elements which have audio & video and are already playing should not stop playing because
+        // they are scrolled off the page.
+        if (renderer->style().visibility() != Visibility::Visible)
+            return false;
+        if (renderer->visibleInViewportState() != VisibleInViewportState::Yes && !element.isPlaying())
+            return false;
+    }
 
     // Main content elements must be in the main frame.
-    if (!document.frame() || !document.frame()->isMainFrame())
+    if (!document->frame() || !document->frame()->isMainFrame())
         return false;
 
-    auto* localFrame = dynamicDowncast<LocalFrame>(document.frame()->mainFrame());
-    if (!localFrame)
+    RefPtr mainFrame = dynamicDowncast<LocalFrame>(document->frame()->mainFrame());
+    if (!mainFrame)
         return false;
 
-    auto& mainFrame = *localFrame;
-    if (!mainFrame.view() || !mainFrame.view()->renderView())
+    if (!mainFrame->view() || !mainFrame->view()->renderView())
         return false;
 
     if (!shouldHitTestMainFrame)
         return true;
 
-    if (!mainFrame.document())
+    if (!mainFrame->document())
         return false;
 
     // Hit test the area of the main frame where the element appears, to determine if the element is being obscured.
     // Elements which are obscured by other elements cannot be main content.
     IntRect rectRelativeToView = element.boundingBoxInRootViewCoordinates();
-    ScrollPosition scrollPosition = mainFrame.view()->documentScrollPositionRelativeToViewOrigin();
+    ScrollPosition scrollPosition = mainFrame->view()->documentScrollPositionRelativeToViewOrigin();
     IntRect rectRelativeToTopDocument(rectRelativeToView.location() + scrollPosition, rectRelativeToView.size());
     OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AllowChildFrameContent, HitTestRequest::Type::IgnoreClipping, HitTestRequest::Type::DisallowUserAgentShadowContent };
     HitTestResult result(rectRelativeToTopDocument.center());
 
-    mainFrame.document()->hitTest(hitType, result);
+    mainFrame->protectedDocument()->hitTest(hitType, result);
     result.setToNonUserAgentShadowAncestor();
-    RefPtr<Element> hitElement = result.targetElement();
-    if (hitElement != &element)
-        return false;
-
-    return true;
+    return result.targetElement() == &element;
 }
 
 static bool isElementRectMostlyInMainFrame(const HTMLMediaElement& element)
@@ -1040,7 +1037,7 @@ static bool isElementRectMostlyInMainFrame(const HTMLMediaElement& element)
 static bool isElementLargeRelativeToMainFrame(const HTMLMediaElement& element)
 {
     static const double minimumPercentageOfMainFrameAreaForMainContent = 0.9;
-    auto* renderer = element.renderer();
+    CheckedPtr renderer = element.renderer();
     if (!renderer)
         return false;
 
@@ -1065,7 +1062,7 @@ static bool isElementLargeEnoughForMainContent(const HTMLMediaElement& element, 
     static const double minimumAspectRatio = .5; // Slightly smaller than 9:16.
 
     // Elements which have not yet been laid out, or which are not yet in the DOM, cannot be main content.
-    auto* renderer = element.renderer();
+    CheckedPtr renderer = element.renderer();
     if (!renderer)
         return false;
 
@@ -1127,13 +1124,13 @@ bool MediaElementSession::allowsPlaybackControlsForAutoplayingAudio() const
 static bool isDocumentPlayingSeveralMediaStreamsAndCapturing(Document& document)
 {
     // We restrict to capturing document for now, until we have a good way to state to the UIProcess application that audio rendering is muted from here.
-    auto* page = document.page();
+    RefPtr page = document.page();
     return document.activeMediaElementsWithMediaStreamCount() > 1 && page && MediaProducer::isCapturing(page->mediaState());
 }
 
 static bool processRemoteControlCommandIfPlayingMediaStreams(Document& document, PlatformMediaSession::RemoteControlCommandType commandType)
 {
-    auto* page = document.page();
+    RefPtr page = document.page();
     if (!page)
         return false;
 
@@ -1168,7 +1165,7 @@ static bool processRemoteControlCommandIfPlayingMediaStreams(Document& document,
 
 void MediaElementSession::didReceiveRemoteControlCommand(RemoteControlCommandType commandType, const RemoteCommandArgument& argument)
 {
-    auto* session = mediaSession();
+    RefPtr session = mediaSession();
     if (!session || !session->hasActiveActionHandlers()) {
 #if ENABLE(MEDIA_STREAM)
         if (processRemoteControlCommandIfPlayingMediaStreams(m_element.document(), commandType))
@@ -1238,7 +1235,7 @@ void MediaElementSession::didReceiveRemoteControlCommand(RemoteControlCommandTyp
 
 std::optional<NowPlayingInfo> MediaElementSession::nowPlayingInfo() const
 {
-    auto* page = m_element.document().page();
+    RefPtr page = m_element.document().page();
 
 #if ENABLE(MEDIA_SESSION)
     auto* session = mediaSession();
@@ -1276,8 +1273,7 @@ std::optional<NowPlayingInfo> MediaElementSession::nowPlayingInfo() const
     }
     if (currentPosition)
         currentTime = *currentPosition;
-    auto* sessionMetadata = session ? session->metadata() : nullptr;
-    if (sessionMetadata) {
+    if (RefPtr sessionMetadata = session ? session->metadata() : nullptr) {
         std::optional<NowPlayingInfoArtwork> artwork;
         if (sessionMetadata->artworkImage()) {
             ASSERT(sessionMetadata->artworkImage()->data(), "An image must always have associated data");
@@ -1292,8 +1288,8 @@ std::optional<NowPlayingInfo> MediaElementSession::nowPlayingInfo() const
 
 void MediaElementSession::updateMediaUsageIfChanged()
 {
-    auto& document = m_element.document();
-    auto* page = document.page();
+    Ref document = m_element.document();
+    RefPtr page = document->page();
     if (!page || page->sessionID().isEphemeral())
         return;
 
@@ -1305,14 +1301,14 @@ void MediaElementSession::updateMediaUsageIfChanged()
 
     bool isOutsideOfFullscreen = false;
 #if ENABLE(FULLSCREEN_API)
-    if (CheckedPtr fullscreenManager = document.fullscreenManagerIfExists()) {
-        if (auto* fullscreenElement = document.fullscreenManager().currentFullscreenElement())
+    if (CheckedPtr fullscreenManager = document->fullscreenManagerIfExists()) {
+        if (RefPtr fullscreenElement = document->fullscreenManager().currentFullscreenElement())
             isOutsideOfFullscreen = m_element.isDescendantOf(*fullscreenElement);
     }
 #endif
     bool isAudio = client().presentationType() == MediaType::Audio;
     bool isVideo = client().presentationType() == MediaType::Video;
-    bool processingUserGesture = document.processingUserGestureForMedia();
+    bool processingUserGesture = document->processingUserGestureForMedia();
     bool isPlaying = m_element.isPlaying();
 
     MediaUsageInfo usage = {
@@ -1325,7 +1321,7 @@ void MediaElementSession::updateMediaUsageIfChanged()
         m_element.inActiveDocument(),
         m_element.isFullscreen(),
         m_element.muted(),
-        document.isMediaDocument() && (document.frame() && document.frame()->isMainFrame()),
+        document->isMediaDocument() && (document->frame() && document->frame()->isMainFrame()),
         isVideo,
         isAudio,
         m_element.hasVideo(),
@@ -1336,7 +1332,7 @@ void MediaElementSession::updateMediaUsageIfChanged()
         isElementRectMostlyInMainFrame(m_element),
         !!playbackStateChangePermitted(MediaPlaybackState::Playing),
         page->mediaPlaybackIsSuspended(),
-        document.isMediaDocument() && !document.ownerElement(),
+        document->isMediaDocument() && !document->ownerElement(),
         pageExplicitlyAllowsElementToAutoplayInline(m_element),
         requiresFullscreenForVideoPlayback() && !fullscreenPermitted(),
         isVideo && hasBehaviorRestriction(RequireUserGestureForVideoRateChange) && !processingUserGesture,
@@ -1385,7 +1381,7 @@ MediaSession* MediaElementSession::mediaSession() const
     auto* window = m_element.document().domWindow();
     if (!window)
         return nullptr;
-    return &NavigatorMediaSession::mediaSession(window->navigator());
+    return &NavigatorMediaSession::mediaSession(window->protectedNavigator());
 #else
     return nullptr;
 #endif

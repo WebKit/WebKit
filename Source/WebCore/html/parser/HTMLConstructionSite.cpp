@@ -798,9 +798,9 @@ RefPtr<HTMLElement> HTMLConstructionSite::createHTMLElementOrFindCustomElementIn
     // have to pass the current form element.  We should rework form association
     // to occur after construction to allow better code sharing here.
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/tree-construction.html#create-an-element-for-the-token
-    Document& ownerDocument = ownerDocumentForCurrentNode();
-    bool insideTemplateElement = !ownerDocument.frame();
-    auto element = HTMLElementFactory::createKnownElement(token.tagName(), ownerDocument, insideTemplateElement ? nullptr : form(), true);
+    Ref ownerDocument = ownerDocumentForCurrentNode();
+    bool insideTemplateElement = !ownerDocument->frame();
+    RefPtr element = HTMLElementFactory::createKnownElement(token.tagName(), ownerDocument, insideTemplateElement ? nullptr : form(), true);
     if (UNLIKELY(!element)) {
         if (auto* elementInterface = findCustomElementInterface(ownerDocument, token.name())) {
             if (!m_isParsingFragment) {

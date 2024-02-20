@@ -411,7 +411,7 @@ std::optional<URL> HTMLAnchorElement::attributionDestinationURLForPCM() const
     if (destinationURL.isValid() && destinationURL.protocolIsInHTTPFamily())
         return destinationURL;
 
-    document().addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "attributiondestination could not be converted to a valid HTTP-family URL."_s);
+    protectedDocument()->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "attributiondestination could not be converted to a valid HTTP-family URL."_s);
     return std::nullopt;
 }
 
@@ -429,7 +429,7 @@ std::optional<RegistrableDomain> HTMLAnchorElement::mainDocumentRegistrableDomai
         }
     }
 
-    document().addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "Could not find a main document to use as source site for Private Click Measurement."_s);
+    protectedDocument()->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "Could not find a main document to use as source site for Private Click Measurement."_s);
     return std::nullopt;
 }
 
@@ -441,7 +441,7 @@ std::optional<PCM::EphemeralNonce> HTMLAnchorElement::attributionSourceNonceForP
 
     auto ephemeralNonce = PCM::EphemeralNonce { attributionSourceNonceAttr };
     if (!ephemeralNonce.isValid()) {
-        document().addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "attributionsourcenonce was not valid."_s);
+        protectedDocument()->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "attributionsourcenonce was not valid."_s);
         return std::nullopt;
     }
 
@@ -515,24 +515,24 @@ std::optional<PrivateClickMeasurement> HTMLAnchorElement::parsePrivateClickMeasu
     auto attributionDestinationAttr = attributeWithoutSynchronization(attributiondestinationAttr);
 
     if (!hasAttributionSourceIDAttr || !hasAttributionDestinationAttr || attributionSourceIDAttr.isEmpty() || attributionDestinationAttr.isEmpty()) {
-        document().addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "Both attributionsourceid and attributiondestination need to be set for Private Click Measurement to work."_s);
+        protectedDocument()->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "Both attributionsourceid and attributiondestination need to be set for Private Click Measurement to work."_s);
         return std::nullopt;
     }
 
     auto attributionSourceID = parseHTMLNonNegativeInteger(attributionSourceIDAttr);
     if (!attributionSourceID) {
-        document().addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "attributionsourceid is not a non-negative integer which is required for Private Click Measurement."_s);
+        protectedDocument()->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "attributionsourceid is not a non-negative integer which is required for Private Click Measurement."_s);
         return std::nullopt;
     }
     
     if (attributionSourceID.value() > std::numeric_limits<uint8_t>::max()) {
-        document().addConsoleMessage(MessageSource::Other, MessageLevel::Warning, makeString("attributionsourceid must have a non-negative value less than or equal to ", std::numeric_limits<uint8_t>::max(), " for Private Click Measurement."));
+        protectedDocument()->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, makeString("attributionsourceid must have a non-negative value less than or equal to ", std::numeric_limits<uint8_t>::max(), " for Private Click Measurement."));
         return std::nullopt;
     }
 
     URL destinationURL { attributionDestinationAttr };
     if (!destinationURL.isValid() || !destinationURL.protocolIsInHTTPFamily()) {
-        document().addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "attributiondestination could not be converted to a valid HTTP-family URL."_s);
+        protectedDocument()->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "attributiondestination could not be converted to a valid HTTP-family URL."_s);
         return std::nullopt;
     }
 
@@ -544,12 +544,12 @@ std::optional<PrivateClickMeasurement> HTMLAnchorElement::parsePrivateClickMeasu
     if (auto mainDocument = localFrame->document())
         mainDocumentRegistrableDomain = RegistrableDomain { mainDocument->url() };
     else {
-        document().addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "Could not find a main document to use as source site for Private Click Measurement."_s);
+        protectedDocument()->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "Could not find a main document to use as source site for Private Click Measurement."_s);
         return std::nullopt;
     }
 
     if (mainDocumentRegistrableDomain.matches(destinationURL)) {
-        document().addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "attributiondestination can not be the same site as the current website."_s);
+        protectedDocument()->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "attributiondestination can not be the same site as the current website."_s);
         return std::nullopt;
     }
 
@@ -578,7 +578,8 @@ void HTMLAnchorElement::handleClick(Event& event)
 {
     event.setDefaultHandled();
 
-    RefPtr frame { document().frame() };
+    Ref document = this->document();
+    RefPtr frame { document->frame() };
     if (!frame)
         return;
 
@@ -588,11 +589,11 @@ void HTMLAnchorElement::handleClick(Event& event)
     StringBuilder url;
     url.append(attributeWithoutSynchronization(hrefAttr).string().trim(isASCIIWhitespace));
     appendServerMapMousePosition(url, event);
-    URL completedURL = document().completeURL(url.toString());
+    URL completedURL = document->completeURL(url.toString());
 
 #if ENABLE(DATA_DETECTION) && PLATFORM(IOS_FAMILY)
     if (DataDetection::canPresentDataDetectorsUIForElement(*this)) {
-        if (auto* page = document().page()) {
+        if (RefPtr page = document->page()) {
             if (page->chrome().client().showDataDetectorsUIForElement(*this, event))
                 return;
         }
@@ -600,28 +601,28 @@ void HTMLAnchorElement::handleClick(Event& event)
 #endif
 
     AtomString downloadAttribute;
-    if (document().settings().downloadAttributeEnabled()) {
+    if (document->settings().downloadAttributeEnabled()) {
         // Ignore the download attribute completely if the href URL is cross origin.
-        bool isSameOrigin = completedURL.protocolIsData() || document().securityOrigin().canRequest(completedURL, OriginAccessPatternsForWebProcess::singleton());
+        bool isSameOrigin = completedURL.protocolIsData() || document->protectedSecurityOrigin()->canRequest(completedURL, OriginAccessPatternsForWebProcess::singleton());
         if (isSameOrigin)
             downloadAttribute = AtomString { ResourceResponse::sanitizeSuggestedFilename(attributeWithoutSynchronization(downloadAttr)) };
         else if (hasAttributeWithoutSynchronization(downloadAttr))
-            document().addConsoleMessage(MessageSource::Security, MessageLevel::Warning, "The download attribute on anchor was ignored because its href URL has a different security origin."_s);
+            protectedDocument()->addConsoleMessage(MessageSource::Security, MessageLevel::Warning, "The download attribute on anchor was ignored because its href URL has a different security origin."_s);
     }
 
     SystemPreviewInfo systemPreviewInfo;
 #if USE(SYSTEM_PREVIEW)
-    systemPreviewInfo.isPreview = isSystemPreviewLink() && document().settings().systemPreviewEnabled();
+    systemPreviewInfo.isPreview = isSystemPreviewLink() && document->settings().systemPreviewEnabled();
 
     if (systemPreviewInfo.isPreview) {
         systemPreviewInfo.element.elementIdentifier = identifier();
-        systemPreviewInfo.element.documentIdentifier = document().identifier();
-        systemPreviewInfo.element.webPageIdentifier = valueOrDefault(document().pageID());
+        systemPreviewInfo.element.documentIdentifier = document->identifier();
+        systemPreviewInfo.element.webPageIdentifier = valueOrDefault(document->pageID());
         if (auto* child = firstElementChild())
             systemPreviewInfo.previewRect = child->boundsInRootViewSpace();
 
-        if (auto* page = document().page())
-            page->beginSystemPreview(completedURL, document().topOrigin().data(), WTFMove(systemPreviewInfo), [keepBlobAlive = URLKeepingBlobAlive(completedURL, document().topOrigin().data())] { });
+        if (RefPtr page = document->page())
+            page->beginSystemPreview(completedURL, document->topOrigin().data(), WTFMove(systemPreviewInfo), [keepBlobAlive = URLKeepingBlobAlive(completedURL, document->topOrigin().data())] { });
         return;
     }
 #endif
@@ -638,12 +639,12 @@ void HTMLAnchorElement::handleClick(Event& event)
     // Thus, URLs should be empty for now.
     ASSERT(!privateClickMeasurement || (privateClickMeasurement->attributionReportClickSourceURL().isNull() && privateClickMeasurement->attributionReportClickDestinationURL().isNull()));
     
-    frame->loader().changeLocation(completedURL, effectiveTarget, &event, referrerPolicy, document().shouldOpenExternalURLsPolicyToPropagate(), newFrameOpenerPolicy, downloadAttribute, WTFMove(privateClickMeasurement));
+    frame->checkedLoader()->changeLocation(completedURL, effectiveTarget, &event, referrerPolicy, document->shouldOpenExternalURLsPolicyToPropagate(), newFrameOpenerPolicy, downloadAttribute, WTFMove(privateClickMeasurement));
 
     sendPings(completedURL);
 
     // Preconnect to the link's target for improved page load time.
-    if (completedURL.protocolIsInHTTPFamily() && document().settings().linkPreconnectEnabled() && ((frame->isMainFrame() && isSelfTargetFrameName(effectiveTarget)) || isBlankTargetFrameName(effectiveTarget))) {
+    if (completedURL.protocolIsInHTTPFamily() && document->settings().linkPreconnectEnabled() && ((frame->isMainFrame() && isSelfTargetFrameName(effectiveTarget)) || isBlankTargetFrameName(effectiveTarget))) {
         auto storageCredentialsPolicy = frame->page() && frame->page()->canUseCredentialStorage() ? StoredCredentialsPolicy::Use : StoredCredentialsPolicy::DoNotUse;
         platformStrategies()->loaderStrategy()->preconnectTo(frame->loader(), completedURL, storageCredentialsPolicy, LoaderStrategy::ShouldPreconnectAsFirstParty::Yes, nullptr);
     }

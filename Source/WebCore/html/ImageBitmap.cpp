@@ -417,7 +417,7 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
         return;
     }
 
-    auto imageForRenderer = cachedImage->imageForRenderer(renderer);
+    RefPtr imageForRenderer = cachedImage->imageForRenderer(renderer);
     if (!imageForRenderer) {
         completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create ImageBitmap from image that can't be rendered"_s });
         return;
@@ -525,7 +525,7 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
         return;
     }
 
-    auto imageForRender = canvas.copiedImage();
+    RefPtr imageForRender = canvas.copiedImage();
     if (!imageForRender) {
         completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create ImageBitmap from canvas that can't be rendered"_s });
         return;
@@ -663,7 +663,7 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
         return;
     }
 
-    auto imageForRender = BitmapImage::create(existingImageBitmap->buffer()->copyNativeImage());
+    RefPtr imageForRender = BitmapImage::create(existingImageBitmap->buffer()->copyNativeImage());
 
     FloatRect destRect(FloatPoint(), outputSize);
     bitmapData->context().drawImage(*imageForRender, destRect, sourceRectangle.releaseReturnValue(), { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(ImageOrientation::Orientation::None) });
@@ -870,7 +870,7 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     }
 
     auto outputSize = outputSizeForSourceRectangle(sourceRectangle.returnValue(), options);
-    auto bitmapData = createImageBuffer(scriptExecutionContext, outputSize, bufferRenderingMode, toDestinationColorSpace(imageData->colorSpace()));
+    RefPtr bitmapData = createImageBuffer(scriptExecutionContext, outputSize, bufferRenderingMode, toDestinationColorSpace(imageData->colorSpace()));
 
     const bool originClean = true;
     if (!bitmapData) {
@@ -892,7 +892,7 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
 
     // 6.3. Set imageBitmap's bitmap data to image's image data, cropped to the
     //      source rectangle with formatting.
-    auto tempBitmapData = createImageBuffer(scriptExecutionContext, imageData->size(), bufferRenderingMode, toDestinationColorSpace(imageData->colorSpace()));
+    RefPtr tempBitmapData = createImageBuffer(scriptExecutionContext, imageData->size(), bufferRenderingMode, toDestinationColorSpace(imageData->colorSpace()));
     if (!tempBitmapData) {
         completionHandler(createBlankImageBuffer(scriptExecutionContext, true));
         return;
@@ -902,7 +902,7 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     bitmapData->context().drawImageBuffer(*tempBitmapData, destRect, sourceRectangle.releaseReturnValue(), { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(ImageOrientation::Orientation::None) });
 
     // 6.4.1. Resolve p with ImageBitmap.
-    auto imageBitmap = create(bitmapData.releaseNonNull(), originClean, premultiplyAlpha);
+    Ref imageBitmap = create(bitmapData.releaseNonNull(), originClean, premultiplyAlpha);
 
     // The result is implicitly origin-clean, and alpha premultiplication has already been handled.
     completionHandler(WTFMove(imageBitmap));

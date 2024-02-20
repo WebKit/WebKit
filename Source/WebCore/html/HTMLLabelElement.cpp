@@ -123,14 +123,14 @@ void HTMLLabelElement::setHovered(bool over, Style::InvalidationScope invalidati
 
 bool HTMLLabelElement::isEventTargetedAtInteractiveDescendants(Event& event) const
 {
-    auto* node = dynamicDowncast<Node>(*event.target());
+    RefPtr node = dynamicDowncast<Node>(*event.target());
     if (!node)
         return false;
 
-    if (!containsIncludingShadowDOM(node))
+    if (!containsIncludingShadowDOM(node.get()))
         return false;
 
-    for (const auto* it = node; it && it != this; it = it->parentElementInComposedTree()) {
+    for (const auto* it = node.get(); it && it != this; it = it->parentElementInComposedTree()) {
         auto* element = dynamicDowncast<HTMLElement>(*it);
         if (element && element->isInteractiveContent())
             return true;

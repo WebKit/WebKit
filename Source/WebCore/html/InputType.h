@@ -411,6 +411,7 @@ protected:
     }
 
     HTMLInputElement* element() const { return m_element.get(); }
+    RefPtr<HTMLInputElement> protectedElement() const { return m_element.get(); }
     Chrome* chrome() const;
     Decimal parseToNumberOrNaN(const String&) const;
 

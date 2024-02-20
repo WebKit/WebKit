@@ -272,10 +272,8 @@ bool CanvasRenderingContext2DBase::hasDeferredOperations() const
 void CanvasRenderingContext2DBase::flushDeferredOperations()
 {
     m_hasDeferredOperations = false;
-    auto* buffer = canvasBase().buffer();
-    if (!buffer)
-        return;
-    buffer->flushDrawingContextAsync();
+    if (RefPtr buffer = canvasBase().buffer())
+        buffer->flushDrawingContextAsync();
 }
 
 void CanvasRenderingContext2DBase::reset()
@@ -2077,11 +2075,11 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(C
     if (cachedImage.image()->drawsSVGImage())
         originClean = false;
 
-    auto* image = cachedImage.imageForRenderer(renderer);
+    RefPtr image = cachedImage.imageForRenderer(renderer);
     if (!image)
         return Exception { ExceptionCode::InvalidStateError };
 
-    auto nativeImage = image->nativeImage();
+    RefPtr nativeImage = image->nativeImage();
     if (!nativeImage)
         return Exception { ExceptionCode::InvalidStateError };
 
@@ -2090,7 +2088,7 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(C
 
 ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(HTMLImageElement& imageElement, bool repeatX, bool repeatY)
 {
-    auto* cachedImage = imageElement.cachedImage();
+    CachedResourceHandle cachedImage = imageElement.cachedImage();
     
     // If the image loading hasn't started or the image is not complete, it is not fully decodable.
     if (!cachedImage || !imageElement.complete())
@@ -2112,7 +2110,7 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(H
 
 ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(SVGImageElement& imageElement, bool repeatX, bool repeatY)
 {
-    auto* cachedImage = imageElement.cachedImage();
+    CachedResourceHandle cachedImage = imageElement.cachedImage();
 
     // The image loading hasn't started.
     if (!cachedImage)

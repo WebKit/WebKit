@@ -88,12 +88,12 @@ ImageDrawResult CustomPaintImage::doCustomPaint(GraphicsContext& destContext, co
     ASSERT(!m_element->needsLayout());
     ASSERT(!m_element->element()->document().needsStyleRecalc());
 
-    JSCSSPaintCallback& callback = static_cast<JSCSSPaintCallback&>(m_paintDefinition->paintCallback.get());
-    auto* scriptExecutionContext = callback.scriptExecutionContext();
+    Ref callback = static_cast<JSCSSPaintCallback&>(m_paintDefinition->paintCallback.get());
+    RefPtr scriptExecutionContext = callback->scriptExecutionContext();
     if (!scriptExecutionContext)
         return ImageDrawResult::DidNothing;
 
-    auto canvas = CustomPaintCanvas::create(*scriptExecutionContext, destSize.width(), destSize.height());
+    Ref canvas = CustomPaintCanvas::create(*scriptExecutionContext, destSize.width(), destSize.height());
     RefPtr context = canvas->getContext();
 
     HashMap<AtomString, RefPtr<CSSValue>> propertyValues;
@@ -120,7 +120,7 @@ ImageDrawResult CustomPaintImage::doCustomPaint(GraphicsContext& destContext, co
         return ImageDrawResult::DidNothing;
     }
 
-    auto result = callback.handleEvent(WTFMove(thisObject), *context, size, propertyMap, m_arguments);
+    auto result = callback->handleEvent(WTFMove(thisObject), *context, size, propertyMap, m_arguments);
     if (result.type() != CallbackResultType::Success)
         return ImageDrawResult::DidNothing;
 

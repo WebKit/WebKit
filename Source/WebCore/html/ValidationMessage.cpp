@@ -134,7 +134,7 @@ void ValidationMessage::setMessageDOMAndStartTimer()
     m_messageHeading->removeChildren();
     m_messageBody->removeChildren();
 
-    auto& document = m_messageHeading->document();
+    Ref document = m_messageHeading->document();
     auto lines = StringView(m_message).split('\n');
     auto it = lines.begin();
     if (it != lines.end()) {
@@ -147,7 +147,7 @@ void ValidationMessage::setMessageDOMAndStartTimer()
         }
     }
 
-    int magnification = document.page() ? document.page()->settings().validationMessageTimerMagnification() : -1;
+    int magnification = document->page() ? document->page()->settings().validationMessageTimerMagnification() : -1;
     if (magnification <= 0)
         m_timer = nullptr;
     else {

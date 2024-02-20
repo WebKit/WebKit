@@ -622,7 +622,7 @@ void WebGLRenderingContextBase::addActivityStateChangeObserverIfNecessary()
     if (!canvas)
         return;
 
-    auto* page = canvas->document().page();
+    RefPtr page = canvas->document().page();
     if (!page)
         return;
 
@@ -630,16 +630,14 @@ void WebGLRenderingContextBase::addActivityStateChangeObserverIfNecessary()
 
     // We won't get a state change right away, so
     // make sure the context knows if it visible or not.
-    m_context->setContextVisibility(page->isVisible());
+    protectedGraphicsContextGL()->setContextVisibility(page->isVisible());
 }
 
 void WebGLRenderingContextBase::removeActivityStateChangeObserver()
 {
     auto* canvas = htmlCanvas();
-    if (canvas) {
-        if (auto* page = canvas->document().page())
-            page->removeActivityStateChangeObserver(*this);
-    }
+    if (RefPtr page = canvas ? canvas->document().page() : nullptr)
+        page->removeActivityStateChangeObserver(*this);
 }
 
 WebGLRenderingContextBase::~WebGLRenderingContextBase()
@@ -5317,11 +5315,11 @@ void WebGLRenderingContextBase::scheduleTaskToDispatchContextLostEvent()
 
 void WebGLRenderingContextBase::maybeRestoreContextSoon(Seconds timeout)
 {
-    auto scriptExecutionContext = canvasBase().scriptExecutionContext();
+    RefPtr scriptExecutionContext = canvasBase().scriptExecutionContext();
     if (!scriptExecutionContext)
         return;
 
-    m_restoreTimer = scriptExecutionContext->eventLoop().scheduleTask(timeout, TaskSource::WebGL, [weakThis = WeakPtr { *this }] {
+    m_restoreTimer = scriptExecutionContext->checkedEventLoop()->scheduleTask(timeout, TaskSource::WebGL, [weakThis = WeakPtr { *this }] {
         if (RefPtr protectedThis = weakThis.get()) {
             protectedThis->m_restoreTimer = nullptr;
             protectedThis->maybeRestoreContext();
@@ -5337,7 +5335,7 @@ void WebGLRenderingContextBase::maybeRestoreContext()
         return;
     }
 
-    auto scriptExecutionContext = canvasBase().scriptExecutionContext();
+    RefPtr scriptExecutionContext = canvasBase().scriptExecutionContext();
     if (!scriptExecutionContext)
         return;
 
@@ -5360,7 +5358,7 @@ void WebGLRenderingContextBase::maybeRestoreContext()
             // Notify the render layer to reconfigure the structure of the backing. This causes the backing to
             // start using the new layer contents display delegate from the new context.
             if (auto* htmlCanvas = this->htmlCanvas()) {
-                RenderBox* renderBox = htmlCanvas->renderBox();
+                CheckedPtr renderBox = htmlCanvas->renderBox();
                 if (renderBox && renderBox->hasAcceleratedCompositing())
                     renderBox->contentChanged(CanvasChanged);
             }

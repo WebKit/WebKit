@@ -116,9 +116,8 @@ HTMLFormElement::~HTMLFormElement()
 
     m_defaultButton = nullptr;
     for (auto& weakElement : m_listedElements) {
-        RefPtr element { weakElement.get() };
-        ASSERT(element);
-        auto* listedElement = element->asFormListedElement();
+        ASSERT(weakElement);
+        RefPtr listedElement = weakElement->asFormListedElement();
         ASSERT(listedElement);
         listedElement->formWillBeDestroyed();
     }

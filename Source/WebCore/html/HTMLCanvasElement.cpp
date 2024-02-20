@@ -292,14 +292,14 @@ ExceptionOr<std::optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::
         auto attributes = convert<IDLDictionary<WebGLContextAttributes>>(state, arguments.isEmpty() ? JSC::jsUndefined() : (arguments[0].isObject() ? arguments[0].get() : JSC::jsNull()));
         RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
 
-        auto context = createContextWebGL(toWebGLVersion(contextId), WTFMove(attributes));
+        RefPtr context = createContextWebGL(toWebGLVersion(contextId), WTFMove(attributes));
         if (!context)
             return std::optional<RenderingContext> { std::nullopt };
 
         if (auto* webGLContext = dynamicDowncast<WebGLRenderingContext>(*context))
             return std::optional<RenderingContext> { RefPtr { webGLContext } };
 
-        return std::optional<RenderingContext> { RefPtr { &downcast<WebGL2RenderingContext>(*context) } };
+        return std::optional<RenderingContext> { downcast<WebGL2RenderingContext>(WTFMove(context)) };
     }
 #endif
 

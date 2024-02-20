@@ -134,13 +134,13 @@ std::optional<std::variant<RefPtr<WindowProxy>, RefPtr<Element>, RefPtr<HTMLColl
         return std::variant<RefPtr<WindowProxy>, RefPtr<Element>, RefPtr<HTMLCollection>> { RefPtr<HTMLCollection> { WTFMove(collection) } };
     }
 
-    auto& element = *documentNamedItem(name);
-    if (auto* iframe = dynamicDowncast<HTMLIFrameElement>(element); UNLIKELY(iframe)) {
+    Ref element = *documentNamedItem(name);
+    if (auto* iframe = dynamicDowncast<HTMLIFrameElement>(element.get()); UNLIKELY(iframe)) {
         if (RefPtr domWindow = iframe->contentWindow())
             return std::variant<RefPtr<WindowProxy>, RefPtr<Element>, RefPtr<HTMLCollection>> { WTFMove(domWindow) };
     }
 
-    return std::variant<RefPtr<WindowProxy>, RefPtr<Element>, RefPtr<HTMLCollection>> { RefPtr<Element> { &element } };
+    return std::variant<RefPtr<WindowProxy>, RefPtr<Element>, RefPtr<HTMLCollection>> { RefPtr<Element> { WTFMove(element) } };
 }
 
 bool HTMLDocument::isSupportedPropertyName(const AtomString& name) const

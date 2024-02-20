@@ -770,6 +770,11 @@ Navigator& LocalDOMWindow::navigator()
     return *m_navigator;
 }
 
+Ref<Navigator> LocalDOMWindow::protectedNavigator()
+{
+    return navigator();
+}
+
 Performance& LocalDOMWindow::performance() const
 {
     if (!m_performance) {

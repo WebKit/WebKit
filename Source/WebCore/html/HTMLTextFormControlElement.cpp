@@ -493,14 +493,14 @@ TextFieldSelectionDirection HTMLTextFormControlElement::computeSelectionDirectio
     return selection.isDirectional() ? (selection.isBaseFirst() ? SelectionHasForwardDirection : SelectionHasBackwardDirection) : SelectionHasNoDirection;
 }
 
-static void setContainerAndOffsetForRange(Node* node, unsigned offset, Node*& containerNode, unsigned& offsetInContainer)
+static void setContainerAndOffsetForRange(Node& node, unsigned offset, RefPtr<Node>& containerNode, unsigned& offsetInContainer)
 {
-    if (node->isTextNode()) {
-        containerNode = node;
+    if (node.isTextNode()) {
+        containerNode = &node;
         offsetInContainer = offset;
     } else {
-        containerNode = node->parentNode();
-        offsetInContainer = node->computeNodeIndex() + offset;
+        containerNode = node.parentNode();
+        offsetInContainer = node.computeNodeIndex() + offset;
     }
 }
 
@@ -521,8 +521,8 @@ std::optional<SimpleRange> HTMLTextFormControlElement::selection() const
         return SimpleRange { { *innerText, 0 }, { *innerText, 0 } };
 
     unsigned offset = 0;
-    Node* startNode = nullptr;
-    Node* endNode = nullptr;
+    RefPtr<Node> startNode;
+    RefPtr<Node> endNode;
     for (RefPtr<Node> node = innerText->firstChild(); node; node = NodeTraversal::next(*node, innerText.get())) {
         ASSERT(!node->firstChild());
         ASSERT(node->isTextNode() || node->hasTagName(brTag));
@@ -533,10 +533,10 @@ std::optional<SimpleRange> HTMLTextFormControlElement::selection() const
         }();
 
         if (offset <= start && start <= offset + length)
-            setContainerAndOffsetForRange(node.get(), start - offset, startNode, start);
+            setContainerAndOffsetForRange(*node, start - offset, startNode, start);
 
         if (offset <= end && end <= offset + length) {
-            setContainerAndOffsetForRange(node.get(), end - offset, endNode, end);
+            setContainerAndOffsetForRange(*node, end - offset, endNode, end);
             break;
         }
 
@@ -546,7 +546,7 @@ std::optional<SimpleRange> HTMLTextFormControlElement::selection() const
     if (!startNode || !endNode)
         return std::nullopt;
 
-    return SimpleRange { { *startNode, start }, { *endNode, end } };
+    return SimpleRange { { startNode.releaseNonNull(), start }, { endNode.releaseNonNull(), end } };
 }
 
 void HTMLTextFormControlElement::restoreCachedSelection(SelectionRevealMode revealMode, const AXTextStateChangeIntent& intent)

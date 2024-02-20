@@ -157,10 +157,10 @@ bool HTMLSelectElement::hasPlaceholderLabelOption() const
 
     int listIndex = optionToListIndex(0);
     ASSERT(listIndex >= 0);
-    if (listIndex < 0)
+    if (listIndex)
         return false;
-    HTMLOptionElement& option = downcast<HTMLOptionElement>(*listItems()[listIndex]);
-    return !listIndex && option.value().isEmpty();
+    Ref option = downcast<HTMLOptionElement>(*listItems()[listIndex]);
+    return option->value().isEmpty();
 }
 
 String HTMLSelectElement::validationMessage() const
@@ -1647,8 +1647,7 @@ void HTMLSelectElement::accessKeySetSelectedIndex(int index)
     auto& items = listItems();
     int listIndex = optionToListIndex(index);
     if (listIndex >= 0) {
-        auto& element = *items[listIndex];
-        if (RefPtr option = dynamicDowncast<HTMLOptionElement>(element)) {
+        if (RefPtr option = dynamicDowncast<HTMLOptionElement>(*items[listIndex])) {
             if (option->selected())
                 option->setSelectedState(false);
             else
