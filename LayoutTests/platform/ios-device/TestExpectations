@@ -100,8 +100,6 @@ media/video-played-reset.html [ Failure ]
 media/track/track-cues-pause-on-exit.html [ Skip ]
 media/video-played-ranges-1.html [ Skip ]
 
-media/invalid-media-url-crash.html [ Crash ]
-
 svg/custom/pattern-reference.svg [ Crash ]
 
 quicklook/numbers.html [ ImageOnlyFailure ]

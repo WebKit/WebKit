@@ -3346,8 +3346,6 @@ imported/w3c/web-platform-tests/cookies/name/name-ctl.html [ Failure ]
 
 webkit.org/b/228778 mhtml [ ImageOnlyFailure Pass ]
 
-webkit.org/b/229057 media/event-attributes.html [ Pass Failure ]
-
 webkit.org/b/229062 fast/forms/caps-lock-indicator-width.html [ Crash ]
 
 # Test is a flaky timeout. The test is also skipped in iOS and Windows.
