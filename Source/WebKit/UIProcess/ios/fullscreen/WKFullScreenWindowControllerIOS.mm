@@ -1853,6 +1853,9 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
 
                 for (MRUIPlatterOrnament *ornament in [originalState ornamentProperties])
                     ornament.offset2D = [[[originalState ornamentProperties] objectForKey:ornament] offset2D];
+
+                // Dismiss the fullscreen view controller on exit to ensure hit-test redirection does not occur.
+                [controller->_fullscreenViewController dismissViewControllerAnimated:NO completion:nil];
             }
 
             scene.mrui_placement.preferredChromeOptions = [originalState sceneChromeOptions];
