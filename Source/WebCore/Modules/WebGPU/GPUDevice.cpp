@@ -114,18 +114,18 @@ Ref<GPUQueue> GPUDevice::queue() const
 
 void GPUDevice::addBufferToUnmap(GPUBuffer& buffer)
 {
-    m_buffersToUnmap.add(&buffer);
+    m_buffersToUnmap.add(buffer);
 }
 
 void GPUDevice::removeBufferToUnmap(GPUBuffer& buffer)
 {
-    m_buffersToUnmap.remove(&buffer);
+    m_buffersToUnmap.remove(buffer);
 }
 
 void GPUDevice::destroy(ScriptExecutionContext& scriptExecutionContext)
 {
     for (auto& buffer : m_buffersToUnmap)
-        buffer->destroy(scriptExecutionContext);
+        buffer.destroy(scriptExecutionContext);
 
     m_buffersToUnmap.clear();
 

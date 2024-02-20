@@ -40,13 +40,14 @@
 #include <wtf/RangeSet.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class GPUDevice;
 
-class GPUBuffer : public RefCounted<GPUBuffer> {
+class GPUBuffer : public RefCounted<GPUBuffer>, public CanMakeWeakPtr<GPUBuffer> {
 public:
     static Ref<GPUBuffer> create(Ref<WebGPU::Buffer>&& backing, size_t bufferSize, GPUBufferUsageFlags usage, bool mappedAtCreation, GPUDevice& device)
     {

@@ -41,6 +41,7 @@
 #include <wtf/IsoMalloc.h>
 #include <wtf/Ref.h>
 #include <wtf/WeakHashMap.h>
+#include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -156,7 +157,7 @@ private:
     Ref<WebGPU::Device> m_backing;
     Ref<GPUQueue> m_queue;
     Ref<GPUPipelineLayout> m_autoPipelineLayout;
-    HashSet<GPUBuffer*> m_buffersToUnmap;
+    WeakHashSet<GPUBuffer> m_buffersToUnmap;
     GPUExternalTexture* externalTextureForDescriptor(const GPUExternalTextureDescriptor&);
 
     WeakHashMap<HTMLVideoElement, WeakPtr<GPUExternalTexture>> m_videoElementToExternalTextureMap;
