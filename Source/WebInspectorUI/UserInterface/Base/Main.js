@@ -299,7 +299,7 @@ WI.contentLoaded = function()
     WI.detailsSidebar.addEventListener(WI.Sidebar.Event.CollapsedStateDidChange, WI._sidebarSizeDidChange, WI);
     WI.detailsSidebar.addEventListener(WI.MultiSidebar.Event.MultipleSidebarsVisibleChanged, WI._sidebarSizeDidChange, WI);
     WI.detailsSidebar.canMoveToBottom = true;
-    
+
     WI.searchKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl | WI.KeyboardShortcut.Modifier.Shift, "F", WI._focusSearchField);
     WI._findKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl, "F", WI._find);
     WI.saveKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl, "S", WI._save);
@@ -569,7 +569,7 @@ WI.contentLoaded = function()
     WI.tabBar.addEventListener(WI.TabBar.Event.TabBarItemAdded, WI._rememberOpenTabs, WI);
     WI.tabBar.addEventListener(WI.TabBar.Event.TabBarItemRemoved, WI._rememberOpenTabs, WI);
     WI.tabBar.addEventListener(WI.TabBar.Event.TabBarItemsReordered, WI._rememberOpenTabs, WI);
-    
+
     WI._updateLayoutMode();
     WI.settings.enableNarrowLayoutMode.addEventListener(WI.Setting.Event.Changed, WI._updateLayoutMode, WI);
 
@@ -1201,11 +1201,10 @@ WI.hideSplitConsole = function()
 
 WI.showConsoleTab = function(requestedScope, options = {})
 {
-    requestedScope = requestedScope || WI.LogContentView.Scopes.All;
-
     WI.hideSplitConsole();
 
-    WI.consoleContentView.scopeBar.item(requestedScope).selected = true;
+    if (requestedScope)
+        WI.consoleContentView.scopeBar.item(requestedScope).selected = true;
 
     const cookie = null;
     WI.showRepresentedObject(WI._consoleRepresentedObject, cookie, options);
@@ -1852,16 +1851,16 @@ WI._windowResized = function(event)
 WI._updateLayoutMode = function()
 {
     let computedMode = WI.LayoutMode.Default;
-    
+
     if (WI.settings.enableNarrowLayoutMode.value && window.innerWidth < WI.NarrowLayoutMaximumWidth)
         computedMode = WI.LayoutMode.Narrow;
-    
+
     if (WI.layoutMode !== computedMode) {
         WI.layoutMode = computedMode;
         document.body.classList.toggle("narrow", WI.layoutMode === WI.LayoutMode.Narrow);
         WI.detailsSidebar.updateLayout(WI.View.LayoutReason.Resize);
     }
-    
+
     WI._tabBrowserSizeDidChange();
 };
 
