@@ -43,6 +43,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/PrintStream.h>
+#include <wtf/RecursiveLockAdapter.h>
 #include <wtf/Scope.h>
 #include <wtf/glib/GThreadSafeWeakPtr.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -76,6 +77,7 @@
 #endif
 
 #if ENABLE(VIDEO)
+#include "ImageDecoderGStreamer.h"
 #include "VideoEncoderPrivateGStreamer.h"
 #include "WebKitWebSourceGStreamer.h"
 #endif
@@ -461,7 +463,9 @@ void registerWebKitGStreamerVideoEncoder()
         GStreamerRegistryScanner::singleton().refresh();
 }
 
-static Lock s_activePipelinesMapLock;
+// We use a recursive lock because the removal of a pipeline can trigger the removal of another one,
+// from the same thread, specially when using chained element harnesses.
+static RecursiveLock s_activePipelinesMapLock;
 static HashMap<String, GRefPtr<GstElement>>& activePipelinesMap()
 {
     static NeverDestroyed<HashMap<String, GRefPtr<GstElement>>> activePipelines;
@@ -497,6 +501,7 @@ void deinitializeGStreamer()
     teardownGStreamerRegistryScanner();
 #if ENABLE(VIDEO)
     teardownVideoEncoderSingleton();
+    teardownGStreamerImageDecoders();
 #endif
 
     bool isLeaksTracerActive = false;
