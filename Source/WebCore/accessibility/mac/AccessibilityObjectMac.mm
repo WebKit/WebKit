@@ -221,7 +221,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return "AXContentSeparator"_s;
     if (role == AccessibilityRole::ToggleButton)
         return NSAccessibilityToggleSubrole;
-    if (role == AccessibilityRole::Footer)
+    if (tagName() == HTMLNames::footerTag && role == AccessibilityRole::Generic)
         return "AXFooter"_s;
     if (role == AccessibilityRole::SpinButtonPart) {
         if (isIncrementor())
@@ -435,8 +435,10 @@ String AccessibilityObject::rolePlatformDescription() const
             return AXDetailsText();
         case AccessibilityRole::Feed:
             return AXFeedText();
-        case AccessibilityRole::Footer:
-            return AXFooterRoleDescriptionText();
+        case AccessibilityRole::Generic:
+            if (tagName() == HTMLNames::footerTag)
+                return AXFooterRoleDescriptionText();
+            break;
         case AccessibilityRole::Mark:
             return AXMarkText();
         case AccessibilityRole::Video:

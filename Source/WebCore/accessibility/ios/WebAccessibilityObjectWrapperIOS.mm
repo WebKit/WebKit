@@ -1255,7 +1255,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
         title = ""_s;
 
     // Footer is not considered a landmark, but we want the role description.
-    if (backingObject->roleValue() == AccessibilityRole::Footer)
+    if (backingObject->tagName() ==  HTMLNames::footerTag && backingObject->roleValue() == AccessibilityRole::Generic)
         landmarkDescription = AXFooterRoleDescriptionText();
 
     NSMutableString *result = [NSMutableString string];

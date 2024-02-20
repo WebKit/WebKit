@@ -478,12 +478,12 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRoleFromNode(Tr
     }
 
     // http://webkit.org/b/190138 Footers should become contentInfo's if scoped to body (and consequently become a landmark).
-    // It should remain a footer if scoped to main, sectioning elements (article, aside, nav, section) or root sectioning element (blockquote, details, dialog, fieldset, figure, td).
+    // It should remain a footer if scoped to main, sectioning elements (article, aside, nav, section).
     // https://w3c.github.io/html-aam/#el-footer
     if (node->hasTagName(footerTag)) {
-        if (!isDescendantOfElementType({ articleTag, asideTag, navTag, sectionTag, mainTag, blockquoteTag, detailsTag, dialogTag, fieldsetTag, figureTag, tdTag }))
+        if (!isDescendantOfElementType({ articleTag, asideTag, mainTag, navTag, sectionTag }))
             return AccessibilityRole::LandmarkContentInfo;
-        return AccessibilityRole::Footer;
+        return AccessibilityRole::Generic;
     }
 
     if (node->hasTagName(timeTag))

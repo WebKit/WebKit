@@ -52,7 +52,7 @@
           shouldBe("body.childAtIndex(6).childAtIndex(0).subrole", "'AXSubrole: '");
           shouldBe("body.childAtIndex(6).childAtIndex(1).domIdentifier", "'article_footer'");
           shouldBe("body.childAtIndex(6).childAtIndex(1).role", "'AXRole: AXGroup'");
-          shouldBe("body.childAtIndex(6).childAtIndex(1).subrole", "'AXSubrole: AXFooter'");
+          shouldBe("body.childAtIndex(6).childAtIndex(1).subrole", "'AXSubrole: '");
 
           // When a header and footer are inside a section, they should not be landmarks.
           shouldBe("body.childAtIndex(7).domIdentifier", "'section_header'");
@@ -61,8 +61,7 @@
 
           shouldBe("body.childAtIndex(8).domIdentifier", "'section_footer'");
           shouldBe("body.childAtIndex(8).role", "'AXRole: AXGroup'");
-          // FIXME: AXSubrole of the footer should be empty.
-          shouldBe("body.childAtIndex(8).subrole", "'AXSubrole: AXFooter'");
+          shouldBe("body.childAtIndex(8).subrole", "'AXSubrole: '");
 
           // When a header and footer are inside a main, they should not be landmarks.
           shouldBe("body.childAtIndex(9).domIdentifier", "'main'");
@@ -71,8 +70,7 @@
           shouldBe("body.childAtIndex(9).childAtIndex(0).subrole", "'AXSubrole: '");
           shouldBe("body.childAtIndex(9).childAtIndex(1).domIdentifier", "'main_footer'");
           shouldBe("body.childAtIndex(9).childAtIndex(1).role", "'AXRole: AXGroup'");
-          // FIXME: AXSubrole of the footer should be empty.
-          shouldBe("body.childAtIndex(9).childAtIndex(1).subrole", "'AXSubrole: AXFooter'");
+          shouldBe("body.childAtIndex(9).childAtIndex(1).subrole", "'AXSubrole: '");
     }
 
 </script>

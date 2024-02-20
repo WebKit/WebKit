@@ -56,16 +56,16 @@
           shouldBe("contentinfo.roleDescription", "'AXRoleDescription: content information'");
 
           shouldBe("footer2.role", "'AXRole: AXGroup'");
-          shouldBe("footer2.subrole", "'AXSubrole: AXFooter'");
-          shouldBe("footer2.roleDescription", "'AXRoleDescription: footer'");
+          shouldBe("footer2.subrole", "'AXSubrole: '");
+          shouldBe("footer2.roleDescription", "'AXRoleDescription: group'");
 
           shouldBe("footer3.role", "'AXRole: AXGroup'");
-          shouldBe("footer3.subrole", "'AXSubrole: AXFooter'");
-          shouldBe("footer3.roleDescription", "'AXRoleDescription: footer'");
+          shouldBe("footer3.subrole", "'AXSubrole: AXLandmarkContentInfo'");
+          shouldBe("footer3.roleDescription", "'AXRoleDescription: content information'");
 
           shouldBe("footer4.role", "'AXRole: AXGroup'");
-          shouldBe("footer4.subrole", "'AXSubrole: AXFooter'");
-          shouldBe("footer4.roleDescription", "'AXRoleDescription: footer'");
+          shouldBe("footer4.subrole", "'AXSubrole: AXLandmarkContentInfo'");
+          shouldBe("footer4.roleDescription", "'AXRoleDescription: content information'");
 
           document.getElementById("content").style.visibility = "hidden";
     }
