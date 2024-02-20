@@ -125,6 +125,7 @@ OSStatus AudioSampleDataConverter::convert(const AudioBufferList& inputBuffer, A
 
 OSStatus AudioSampleDataConverter::Converter::initialize(const AudioStreamBasicDescription& inputDescription, const AudioStreamBasicDescription& outputDescription)
 {
+    DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
     if (m_audioConverter) {
         PAL::AudioConverterDispose(m_audioConverter);
         m_audioConverter = nullptr;
