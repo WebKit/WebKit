@@ -37,6 +37,7 @@
 #include "AccessibilitySpinButton.h"
 #include "AccessibilityTable.h"
 #include "CachedImage.h"
+#include "ComposedTreeIterator.h"
 #include "DocumentSVG.h"
 #include "Editing.h"
 #include "Editor.h"
@@ -1431,6 +1432,18 @@ AXTextRuns AccessibilityRenderObject::textRuns()
     if (auto* renderLineBreak = dynamicDowncast<RenderLineBreak>(renderer())) {
         auto box = InlineIterator::boxFor(*renderLineBreak);
         return { renderLineBreak->containingBlock(), { AXTextRun(box->lineIndex(), makeString('\n').isolatedCopy()) } };
+    }
+
+    if (RefPtr inputElement = dynamicDowncast<HTMLInputElement>(node())) {
+        // The text within input elements is not actually part of the accessibility tree, meaning we need to do a bit of extra work to expose that text here.
+        for (const auto& node : composedTreeDescendants(*inputElement)) {
+            if (!node.isTextNode())
+                continue;
+            auto* renderer = node.renderer();
+            auto* containingBlock = renderer ? renderer->containingBlock() : nullptr;
+            return containingBlock ? AXTextRuns(containingBlock, { AXTextRun(0, inputElement->value().isolatedCopy()) }) : AXTextRuns();
+        }
+        return { };
     }
 
     WeakPtr renderText = dynamicDowncast<RenderText>(renderer());

@@ -59,6 +59,8 @@ public:
     ProcessID processID() const final { return tree()->processID(); }
     String dbg() const final;
 
+    AccessibilityRole roleValue() const final { return static_cast<AccessibilityRole>(intAttributeValue(AXPropertyName::RoleValue)); }
+
     void attachPlatformWrapper(AccessibilityObjectWrapper*);
     bool isDetached() const final;
     bool isTable() const final { return boolAttributeValue(AXPropertyName::IsTable); }
@@ -66,6 +68,7 @@ public:
 
     const AccessibilityChildrenVector& children(bool updateChildrenIfNeeded = true) final;
     AXCoreObject* sibling(AXDirection) const;
+    AXCoreObject* siblingOrParent(AXDirection) const;
     AXIsolatedObject* parentObject() const final { return parentObjectUnignored(); }
     AXIsolatedObject* parentObjectUnignored() const final;
     AXIsolatedObject* editableAncestor() final { return Accessibility::editableAncestor(*this); };
@@ -271,7 +274,6 @@ private:
     String expandedTextValue() const final { return stringAttributeValue(AXPropertyName::ExpandedTextValue); }
     bool supportsExpandedTextValue() const final { return boolAttributeValue(AXPropertyName::SupportsExpandedTextValue); }
     SRGBA<uint8_t> colorValue() const final;
-    AccessibilityRole roleValue() const final { return static_cast<AccessibilityRole>(intAttributeValue(AXPropertyName::RoleValue)); }
     String rolePlatformString() const final { return stringAttributeValue(AXPropertyName::RolePlatformString); }
     String roleDescription() const final { return stringAttributeValue(AXPropertyName::RoleDescription); }
     String subrolePlatformString() const final { return stringAttributeValue(AXPropertyName::SubrolePlatformString); }

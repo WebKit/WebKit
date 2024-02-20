@@ -587,6 +587,12 @@ AXCoreObject* AXIsolatedObject::sibling(AXDirection direction) const
     return indexOfThis > 0 ? siblings[indexOfThis - 1].get() : nullptr;
 }
 
+AXCoreObject* AXIsolatedObject::siblingOrParent(AXDirection direction) const
+{
+    auto* sibling = this->sibling(direction);
+    return sibling ? sibling : parentObjectUnignored();
+}
+
 bool AXIsolatedObject::isDetachedFromParent()
 {
     if (parent().isValid())
@@ -1402,6 +1408,11 @@ String AXIsolatedObject::identifierAttribute() const
 
 CharacterRange AXIsolatedObject::doAXRangeForLine(unsigned lineIndex) const
 {
+#if ENABLE(AX_THREAD_TEXT_APIS)
+    if (AXObjectCache::useAXThreadTextApis())
+        return AXTextMarker { treeID(), objectID(), 0 }.rangeForLine(lineIndex);
+#endif
+
     return Accessibility::retrieveValueFromMainThread<CharacterRange>([&lineIndex, this] () -> CharacterRange {
         if (auto* object = associatedAXObject())
             return object->doAXRangeForLine(lineIndex);

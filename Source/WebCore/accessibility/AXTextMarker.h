@@ -163,16 +163,16 @@ public:
     void setNodeIfNeeded() const;
 
 #if ENABLE(AX_THREAD_TEXT_APIS)
-    AXTextMarker toTextLeafMarker() const;
-    // True if this marker points to a leaf node (no children) with non-empty text runs.
-    bool isInTextLeaf() const;
+    AXTextMarker toTextRunMarker(std::optional<AXID> stopAtID = std::nullopt) const;
+    // True if this marker points to an object with non-empty text runs.
+    bool isInTextRun() const;
 
     // Find the next or previous marker, optionally stopping at the given ID and returning an invalid marker.
     AXTextMarker findMarker(AXDirection, std::optional<AXID> = std::nullopt) const;
     // Starting from this text marker, creates a new position for the given direction and text unit type.
-    AXTextMarker findMarker(AXDirection, AXTextUnit, AXTextUnitBoundary) const;
-    AXTextMarker previousLineStart() const { return findMarker(AXDirection::Previous, AXTextUnit::Line, AXTextUnitBoundary::Start); };
-    AXTextMarker nextLineEnd() const { return findMarker(AXDirection::Next, AXTextUnit::Line, AXTextUnitBoundary::End); };
+    AXTextMarker findMarker(AXDirection, AXTextUnit, AXTextUnitBoundary, std::optional<AXID> stopAtID = std::nullopt) const;
+    AXTextMarker previousLineStart(std::optional<AXID> stopAtID = std::nullopt) const { return findMarker(AXDirection::Previous, AXTextUnit::Line, AXTextUnitBoundary::Start, stopAtID); }
+    AXTextMarker nextLineEnd(std::optional<AXID> stopAtID = std::nullopt) const { return findMarker(AXDirection::Next, AXTextUnit::Line, AXTextUnitBoundary::End, stopAtID); }
 
     // Creates a range for the line this marker points to.
     AXTextMarkerRange lineRange(LineRangeType) const;
@@ -190,12 +190,14 @@ public:
     // The index of the line this text marker is on relative to the nearest editable ancestor (or start of the page if there are no editable ancestors).
     // Returns -1 if the line couldn't be computed (i.e. because `this` is invalid).
     int lineIndex() const;
+    // The location and length of the line that is `lineIndex` lines away from the start of this marker.
+    CharacterRange rangeForLine(unsigned lineIndex) const;
 #endif // ENABLE(AX_THREAD_TEXT_APIS)
 
 private:
 #if ENABLE(AX_THREAD_TEXT_APIS)
     const AXTextRuns* runs() const;
-    // After resolving this marker to a text leaf, what line does the offset point to?
+    // After resolving this marker to a text-run marker, what line does the offset point to?
     AXTextRunLineID lineID() const;
     // Are we at the start or end of a line?
     bool atLineBoundaryForDirection(AXDirection) const;
