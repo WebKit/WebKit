@@ -753,10 +753,6 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     }
 #endif
 
-#if PLATFORM(MAC)
-    SandboxExtension::consumePermanently(parameters.renderServerMachExtensionHandle);
-#endif
-
 #if HAVE(STATIC_FONT_REGISTRY)
     if (parameters.fontMachExtensionHandles.size())
         WebProcess::singleton().switchFromStaticFontRegistryToUserFontRegistry(WTFMove(parameters.fontMachExtensionHandles));
