@@ -74,17 +74,13 @@ void InbandTextTrackPrivateGStreamer::tagsChanged(GRefPtr<GstTagList>&& tags)
     if (!tags)
         return;
 
-    GUniqueOutPtr<char> trackIDString;
-    if (gst_tag_list_get_string(tags.get(), "container-specific-track-id", &trackIDString.outPtr())) {
-        if (auto trackID = WTF::parseInteger<TrackID>(StringView { trackIDString.get(), static_cast<unsigned>(strlen(trackIDString.get())) })) {
-            m_trackID = *trackID;
-            GST_DEBUG_OBJECT(objectForLogging(), "Text track ID set from container-specific-track-id tag %" G_GUINT64_FORMAT, *m_trackID);
-            m_stringId = AtomString::number(static_cast<unsigned long long>(*m_trackID));
-            notifyClients([trackID = *m_trackID](auto& client) {
-                client.idChanged(trackID);
-            });
-        }
-    }
+    if (!updateTrackIDFromTags(tags))
+        return;
+
+    GST_DEBUG_OBJECT(objectForLogging(), "Text track ID set from container-specific-track-id tag %" G_GUINT64_FORMAT, *m_trackID);
+    notifyClients([trackID = *m_trackID](auto& client) {
+        client.idChanged(trackID);
+    });
 }
 
 void InbandTextTrackPrivateGStreamer::handleSample(GRefPtr<GstSample> sample)
@@ -102,7 +98,7 @@ void InbandTextTrackPrivateGStreamer::handleSample(GRefPtr<GstSample> sample)
 
 void InbandTextTrackPrivateGStreamer::notifyTrackOfSample()
 {
-    Vector<GRefPtr<GstSample> > samples;
+    Vector<GRefPtr<GstSample>> samples;
     {
         Locker locker { m_sampleMutex };
         m_pendingSamples.swap(samples);

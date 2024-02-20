@@ -74,7 +74,6 @@ private:
     AudioTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivateGStreamer>, unsigned index, GstStream*);
 
     WeakPtr<MediaPlayerPrivateGStreamer> m_player;
-    std::optional<TrackID> m_trackID;
 };
 
 } // namespace WebCore

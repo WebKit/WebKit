@@ -73,7 +73,6 @@ private:
     Vector<GRefPtr<GstSample>> m_pendingSamples WTF_GUARDED_BY_LOCK(m_sampleMutex);
     Kind m_kind;
     Lock m_sampleMutex;
-    std::optional<TrackID> m_trackID;
 };
 
 } // namespace WebCore
