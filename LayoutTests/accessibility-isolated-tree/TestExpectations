@@ -7,16 +7,14 @@ accessibility/mac/resolved-text-editing.html [ Crash Pass ]
 accessibility/aria-combobox-no-owns.html [ Timeout ]
 accessibility/frame-disconnect-textmarker-cache-crash.html [ Timeout ]
 
+# Fails due to children() for an owned objects' parent still containing that object.
+accessibility/element-reflection-ariaowns.html [ Timeout ]
+
 # Text failures
 #
 # Potentially caused by: https://github.com/WebKit/WebKit/commit/2517a540e6f5a2037c6843102f3a9cb753f2f9f0
 accessibility/content-editable-set-inner-text-generates-axvalue-notification.html [ Failure Pass ]
 accessibility/dynamically-ignored-canvas.html [ Failure ]
-accessibility/element-reflection-ariacontrols.html [ Failure ]
-accessibility/element-reflection-ariadetails.html [ Failure ]
-accessibility/element-reflection-ariaerrormessage.html [ Failure ]
-accessibility/element-reflection-ariaflowto.html [ Failure ]
-accessibility/element-reflection-ariaowns.html [ Failure ]
 accessibility/frame-disconnect-textmarker-cache-crash.html [ Failure ]
 accessibility/image-link-inline-cont.html [ Failure ]
 accessibility/keyevents-for-actions-mimic-real-key-events.html [ Failure ]
@@ -24,6 +22,7 @@ accessibility/keyevents-posted-for-increment-actions.html [ Failure ]
 accessibility/mac/area-with-aria-label.html [ Failure ]
 accessibility/mac/document-attributes.html [ Failure ]
 accessibility/mac/focus-setting-selection-syncronizing-not-clearing.html [ Failure ]
+# Fails because of (1) stale focus ID for the iFrame and (2) iFrame #2 being ignored.
 accessibility/mac/frame-with-title.html [ Failure ]
 accessibility/mac/press-action-not-exposed-for-event-delegation.html [ Failure ]
 accessibility/mac/pseudo-element-text-markers.html [ Failure ]

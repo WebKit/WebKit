@@ -14,83 +14,81 @@
 <x-custom></x-custom>
 
 <script>
-  class XTab extends HTMLElement {
+class XTab extends HTMLElement {
     constructor() {
-      super();
-      this.attachShadow({ mode: "open" });
-      let tab = document.createElement("div");
-      tab.id = "innertab";
-      tab.role = "tab";
-      tab.textContent = "Tab 3";
-      tab.ariaControlsElements = [panel3];
-      this.shadowRoot.appendChild(tab);
+        super();
+        this.attachShadow({ mode: "open" });
+        let tab = document.createElement("div");
+        tab.id = "innertab";
+        tab.role = "tab";
+        tab.textContent = "Tab 3";
+        tab.ariaControlsElements = [panel3];
+        this.shadowRoot.appendChild(tab);
     }
-  }
-  customElements.define("x-tab", XTab);
+}
+customElements.define("x-tab", XTab);
 
-  class XCustom extends HTMLElement {
+class XCustom extends HTMLElement {
     constructor() {
-      super();
-      this.attachShadow({ mode: "open" });
-      let panel = document.createElement("div");
-      panel.id = "panel5";
-      panel.textContent = "Fifth panel";
-      let tab = document.createElement("div");
-      tab.id = "tab5";
-      tab.role = "tab";
-      tab.textContent = "Tab 5";
-      this.shadowRoot.appendChild(panel);
-      this.shadowRoot.appendChild(tab);
-      tab.ariaControlsElements = [panel];
-      document.body.appendChild(panel);
+        super();
+        this.attachShadow({ mode: "open" });
+        let panel = document.createElement("div");
+        panel.id = "panel5";
+        panel.textContent = "Fifth panel";
+        let tab = document.createElement("div");
+        tab.id = "tab5";
+        tab.role = "tab";
+        tab.textContent = "Tab 5";
+        this.shadowRoot.appendChild(panel);
+        this.shadowRoot.appendChild(tab);
+        tab.ariaControlsElements = [panel];
+        document.body.appendChild(panel);
     }
-  }
-  customElements.define("x-custom", XCustom);
+}
+customElements.define("x-custom", XCustom);
 
-description("Checks that element reflection is exposed to the a11y tree for 'ariaControlsElements'");
-if (!window.accessibilityController) {
-    debug("This test requires accessibilityController");
-} else {
+var output = "Checks that element reflection is exposed to the a11y tree for 'ariaControlsElements'\n";
+if (window.accessibilityController) {
     window.jsTestIsAsync = true
     tab1.ariaControlsElements = [panel1];
 
-    var output = "";
     var axPanel1, axTab1, wrapper, axPanel2, axTab2, axPanel3, axTab3, axPanel4, axTab4, axPanel5, axTab5;
-    setTimeout(function() {
-        axPanel1 = accessibilityController.accessibleElementById("panel1");
-        axTab1 = accessibilityController.accessibleElementById("tab1");
-        output += expect("axTab1.ariaControlsElementAtIndex(0).isEqual(axPanel1)", "true");
+    axPanel1 = accessibilityController.accessibleElementById("panel1");
+    axTab1 = accessibilityController.accessibleElementById("tab1");
+    output += expect("axTab1.ariaControlsElementAtIndex(0).isEqual(axPanel1)", "true");
 
-        tab2.ariaControlsElements = [document.getElementsByClassName("panel")[0]];
-        setTimeout(function() {
-            wrapper = accessibilityController.accessibleElementById("wrapper");
-            axPanel2 = wrapper.childAtIndex(0);
-            axTab2 = accessibilityController.accessibleElementById("tab2");
-            output += expect("axTab2.ariaControlsElementAtIndex(0).isEqual(axPanel2)", "true");
-            tab2.setAttribute("aria-controls", "panel1");
+    tab2.ariaControlsElements = [document.getElementsByClassName("panel")[0]];
+    setTimeout(async function() {
+        wrapper = accessibilityController.accessibleElementById("wrapper");
+        axPanel2 = wrapper.childAtIndex(0);
+        axTab2 = accessibilityController.accessibleElementById("tab2");
+        output += expect("axTab2.ariaControlsElementAtIndex(0).isEqual(axPanel2)", "true");
+        tab2.setAttribute("aria-controls", "panel1");
 
-            output += expect("axTab2.ariaControlsElementAtIndex(0).isEqual(axPanel1)", "true");
-            axPanel3 = accessibilityController.accessibleElementById("panel3");
-            axTab3 = accessibilityController.accessibleElementById("innertab");
-            output += expect("axTab3.ariaControlsElementAtIndex(0).isEqual(axPanel3)", "true");
+        await waitFor(() => axTab2.ariaControlsElementAtIndex(0).isEqual(axPanel1));
+        output += expect("axTab2.ariaControlsElementAtIndex(0).isEqual(axPanel1)", "true");
+        axPanel3 = accessibilityController.accessibleElementById("panel3");
+        axTab3 = accessibilityController.accessibleElementById("innertab");
+        output += expect("axTab3.ariaControlsElementAtIndex(0).isEqual(axPanel3)", "true");
 
-            tab2.ariaControlsElements = [panel1, document.getElementsByClassName("panel")[0], panel3];
-            output += expect("axTab2.ariaControlsElementAtIndex(0).isEqual(axPanel1)", "true");
-            output += expect("axTab2.ariaControlsElementAtIndex(1).isEqual(axPanel2)", "true");
-            output += expect("axTab2.ariaControlsElementAtIndex(2).isEqual(axPanel3)", "true");
+        tab2.ariaControlsElements = [panel1, document.getElementsByClassName("panel")[0], panel3];
+        await waitFor(() => axTab2.ariaControlsElementAtIndex(1) != null);
+        output += expect("axTab2.ariaControlsElementAtIndex(0).isEqual(axPanel1)", "true");
+        output += expect("axTab2.ariaControlsElementAtIndex(1).isEqual(axPanel2)", "true");
+        output += expect("axTab2.ariaControlsElementAtIndex(2).isEqual(axPanel3)", "true");
 
-            tab4.ariaControlsElements = [panel4];
-            panel4.id = "panel4-new";
-            axPanel4 = accessibilityController.accessibleElementById("panel4-new");
-            axTab4 = accessibilityController.accessibleElementById("tab4");
-            output += expect("axTab4.ariaControlsElementAtIndex(0).isEqual(axPanel4)", "true");
+        tab4.ariaControlsElements = [panel4];
+        panel4.id = "panel4-new";
+        axPanel4 = accessibilityController.accessibleElementById("panel4-new");
+        axTab4 = accessibilityController.accessibleElementById("tab4");
+        await waitFor(() => axTab4.ariaControlsElementAtIndex(0) != null);
+        output += expect("axTab4.ariaControlsElementAtIndex(0).isEqual(axPanel4)", "true");
 
-            axPanel5 = accessibilityController.accessibleElementById("panel5");
-            axTab5 = accessibilityController.accessibleElementById("tab5");
-            output += expect("axTab5.ariaControlsElementAtIndex(0).isEqual(axPanel5)", "true");
-            debug(output);
-            finishJSTest();
-        }, 0);
+        axPanel5 = accessibilityController.accessibleElementById("panel5");
+        axTab5 = accessibilityController.accessibleElementById("tab5");
+        output += expect("axTab5.ariaControlsElementAtIndex(0).isEqual(axPanel5)", "true");
+        debug(output);
+        finishJSTest();
     }, 0);
 }
 </script>
