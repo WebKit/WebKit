@@ -6224,6 +6224,12 @@
     "imported/w3c/web-platform-tests/webmessaging/broadcastchannel/opaque-origin.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpParameters-codec.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpReceiver-jitterBufferTarget-stats.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpSynchronizationSource-captureTimestamp.html": [
         "slow"
     ],

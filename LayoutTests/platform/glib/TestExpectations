@@ -1965,6 +1965,7 @@ webkit.org/b/219825 webrtc/sframe-keys.html [ Skip ]
 webkit.org/b/229055 http/wpt/webrtc/sframe-transform-error.html [ Skip ]
 http/wpt/webrtc/video-script-transform-simulcast.html [ Skip ]
 
+imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpReceiver-jitterBufferTarget-stats.html [ Pass Failure ]
 imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpTransceiver-headerExtensionControl.html [ Pass Failure ]
 
 # GStreamerRtpReceiverBackend::getSynchronizationSources() unimplemented and also hitting srtpenc errors.
@@ -2004,7 +2005,6 @@ webkit.org/b/235885 fast/mediastream/RTCPeerConnection-media-setup-two-dialogs.h
 webkit.org/b/235885 fast/mediastream/RTCPeerConnection-onnegotiationneeded.html [ Skip ] # Timeout.
 webkit.org/b/235885 fast/mediastream/RTCPeerConnection-remotely-assigned-transceiver-mid.html [ Pass Failure Timeout ]
 webkit.org/b/235885 fast/mediastream/RTCPeerConnection-setLocalDescription-offer.html [ Failure ]
-webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpParameters-maxFramerate.html [ Failure ]
 webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc-priority/RTCRtpParameters-encodings.html [ Failure ]
 webkit.org/b/235885 imported/w3c/web-platform-tests/mst-content-hint/RTCRtpSendParameters-degradationPreference.html [ Failure ]
 webkit.org/b/235885 webrtc/addTransceiver-then-addTrack.html [ Failure ]
