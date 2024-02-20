@@ -291,14 +291,20 @@ FloatRect PathSkia::boundingRect() const
     return m_platformPath.computeTightBounds();
 }
 
-FloatRect PathSkia::strokeBoundingRect(const Function<void(GraphicsContext&)>&) const
+FloatRect PathSkia::strokeBoundingRect(const Function<void(GraphicsContext&)>& strokeStyleApplier) const
 {
     if (isEmpty())
         return { };
 
-    // FIXME: Respect stroke style!
-    notImplemented();
-    return m_platformPath.getBounds();
+    GraphicsContextSkia graphicsContext(SkSurfaces::Null(1, 1));
+    strokeStyleApplier(graphicsContext);
+
+    // Skia stroke resolution scale for reduced-precision requirements.
+    constexpr float strokePrecision = 0.3f;
+    SkPaint paint = graphicsContext.createStrokeStylePaint();
+    SkPath strokePath;
+    skpathutils::FillPathWithPaint(m_platformPath, paint, &strokePath, nullptr, strokePrecision);
+    return strokePath.computeTightBounds();
 }
 
 } // namespace WebCore
