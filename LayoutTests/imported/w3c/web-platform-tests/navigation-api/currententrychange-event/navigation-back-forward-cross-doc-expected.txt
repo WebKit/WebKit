@@ -1,6 +1,4 @@
 
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT currententrychange does not fire for cross-document navigation.back() and navigation.forward() Test timed out
+FAIL currententrychange does not fire for cross-document navigation.back() and navigation.forward() assert_equals: expected 2 but got 3
 

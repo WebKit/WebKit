@@ -11,7 +11,7 @@
   readonly attribute boolean canGoBack;
   readonly attribute boolean canGoForward;
 
-  [ReturnsPromisePair] NavigationResult navigate(USVString url, optional NavigationNavigateOptions options = {});
+  [ReturnsPromisePair,CallWith=CurrentScriptExecutionContext] NavigationResult navigate(USVString url, optional NavigationNavigateOptions options = {});
   [ReturnsPromisePair] NavigationResult reload(optional NavigationReloadOptions options = {});
 
   [ReturnsPromisePair] NavigationResult traverseTo(DOMString key, optional NavigationOptions options = {});

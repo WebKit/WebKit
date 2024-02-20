@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: SyntaxError: Invalid URL
+CONSOLE MESSAGE: Unhandled Promise Rejection: SyntaxError: Invalid URL
 
 
 PASS currententrychange does not fire when navigating away from the initial about:blank

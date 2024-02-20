@@ -1,4 +1,6 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: SyntaxError: Invalid URL
+CONSOLE MESSAGE: Unhandled Promise Rejection: SyntaxError: Invalid URL
 
 
-FAIL navigate() from <iframe> with src="" but still on initial about:blank works null is not an object (evaluating 'i.contentWindow.navigation.currentEntry.url')
+FAIL navigate() from <iframe> with src="" but still on initial about:blank works assert_equals: expected "/common/blank.html" but got "/navigation-api/navigation-methods/navigate-from-initial-about-blank-src.html"
 

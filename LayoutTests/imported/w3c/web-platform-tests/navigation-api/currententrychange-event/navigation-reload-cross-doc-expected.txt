@@ -1,6 +1,4 @@
 
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT currententrychange does not fire for cross-document navigation.reload() Test timed out
+PASS currententrychange does not fire for cross-document navigation.reload()
 

@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "DOMPromiseProxy.h"
 #include "EventTarget.h"
 #include "JSDOMPromise.h"
 #include "LocalDOMWindowProperty.h"
@@ -84,7 +83,7 @@ public:
 
     void initializeEntries(const Ref<HistoryItem>& currentItem, Vector<Ref<HistoryItem>> &items);
 
-    Result navigate(const String& url, NavigateOptions&&, Ref<DeferredPromise>&&, Ref<DeferredPromise>&&);
+    Result navigate(ScriptExecutionContext&, const String& url, NavigateOptions&&, Ref<DeferredPromise>&&, Ref<DeferredPromise>&&);
 
     Result reload(ReloadOptions&&, Ref<DeferredPromise>&&, Ref<DeferredPromise>&&);
 
@@ -103,6 +102,8 @@ private:
     void derefEventTarget() final { deref(); }
 
     bool hasEntriesAndEventsDisabled() const;
+    Result performTraversal(NavigationHistoryEntry&, Ref<DeferredPromise> committed, Ref<DeferredPromise> finished);
+    std::optional<Ref<NavigationHistoryEntry>> findEntryByKey(const String& key);
 
     std::optional<size_t> m_currentEntryIndex;
     RefPtr<NavigationTransition> m_transition;

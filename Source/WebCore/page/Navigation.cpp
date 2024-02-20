@@ -27,11 +27,16 @@
 #include "Navigation.h"
 
 #include "Exception.h"
+#include "FrameLoadRequest.h"
+#include "FrameLoader.h"
 #include "HistoryItem.h"
 #include "JSNavigationHistoryEntry.h"
+#include "MessagePort.h"
 #include "NavigationCurrentEntryChangeEvent.h"
+#include "ScriptExecutionContext.h"
 #include "SerializedScriptValue.h"
 #include <optional>
+#include <wtf/Assertions.h>
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -101,19 +106,33 @@ EventTargetInterface Navigation::eventTargetInterface() const
     return NavigationEventTargetInterfaceType;
 }
 
-Navigation::Result Navigation::navigate(const String& /* url */, NavigateOptions&&, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished)
+// https://html.spec.whatwg.org/multipage/nav-history-apis.html#navigation-api-early-error-result
+static Navigation::Result createErrorResult(Ref<DeferredPromise> committed, Ref<DeferredPromise> finished, Exception&& exception)
 {
-    // FIXME: keep track of promises to resolve later.
-    Ref entry = NavigationHistoryEntry::create(scriptExecutionContext(), { });
+    ASSERT(committed->globalObject() == finished->globalObject());
     auto globalObject = committed->globalObject();
-    Navigation::Result result = { DOMPromise::create(*globalObject, *JSC::jsCast<JSC::JSPromise*>(committed->promise())), DOMPromise::create(*globalObject, *JSC::jsCast<JSC::JSPromise*>(finished->promise())) };
-    committed->resolve<IDLInterface<NavigationHistoryEntry>>(entry.get());
-    finished->resolve<IDLInterface<NavigationHistoryEntry>>(entry.get());
+    Navigation::Result result = {
+        DOMPromise::create(*globalObject, *JSC::jsCast<JSC::JSPromise*>(committed->promise())),
+        DOMPromise::create(*globalObject, *JSC::jsCast<JSC::JSPromise*>(finished->promise()))
+    };
+
+    committed->reject(exception);
+    finished->reject(exception);
+
     return result;
 }
 
+static Navigation::Result createErrorResult(Ref<DeferredPromise> committed, Ref<DeferredPromise> finished, ExceptionCode exceptionCode, const String& errorMessage)
+{
+    return createErrorResult(committed, finished, Exception { exceptionCode, errorMessage });
+}
+
+// https://html.spec.whatwg.org/multipage/nav-history-apis.html#dom-navigation-reload
 Navigation::Result Navigation::reload(ReloadOptions&&, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished)
 {
+    // FIXME: Only a stub to reload for testing.
+    window()->frame()->loader().reload();
+
     // FIXME: keep track of promises to resolve later.
     Ref entry = NavigationHistoryEntry::create(scriptExecutionContext(), { });
     auto globalObject = committed->globalObject();
@@ -123,10 +142,40 @@ Navigation::Result Navigation::reload(ReloadOptions&&, Ref<DeferredPromise>&& co
     return result;
 }
 
-Navigation::Result Navigation::traverseTo(const String& /* key */, Options&&, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished)
+// https://html.spec.whatwg.org/multipage/nav-history-apis.html#dom-navigation-navigate
+Navigation::Result Navigation::navigate(ScriptExecutionContext& scriptExecutionContext, const String& url, NavigateOptions&& options, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished)
 {
+    auto currentURL = scriptExecutionContext.url();
+    auto newURL = URL { currentURL, url };
+
+    if (!newURL.isValid())
+        return createErrorResult(committed, finished, ExceptionCode::SyntaxError, "Invalid URL"_s);
+
+    if (options.history == HistoryBehavior::Auto) {
+        if (newURL.protocolIsJavaScript() || currentURL.isAboutBlank())
+            options.history = HistoryBehavior::Replace;
+        else
+            options.history = HistoryBehavior::Push;
+    }
+
+    if (options.history == HistoryBehavior::Push && newURL.protocolIsJavaScript())
+        return createErrorResult(committed, finished, ExceptionCode::NotSupportedError, "A \"push\" navigation was explicitly requested, but only a \"replace\" navigation is possible when navigating to a javascript: URL."_s);
+
+    if (options.state) {
+        Vector<RefPtr<MessagePort>> dummyPorts;
+        auto serializeResult = SerializedScriptValue::create(*scriptExecutionContext.globalObject(), options.state, { }, dummyPorts, SerializationForStorage::Yes);
+        if (serializeResult.hasException())
+            return createErrorResult(committed, finished, serializeResult.releaseException());
+    }
+
+    if (!window()->frame() || !window()->frame()->document())
+        return createErrorResult(committed, finished, ExceptionCode::InvalidStateError, "Invalid state"_s);
+
+    // FIXME: This is not a proper Navigation API initiated traversal, just a simple load for now.
+    window()->frame()->loader().load(FrameLoadRequest(*window()->frame(), newURL));
+
     // FIXME: keep track of promises to resolve later.
-    Ref entry = NavigationHistoryEntry::create(scriptExecutionContext(), { });
+    Ref entry = NavigationHistoryEntry::create(&scriptExecutionContext, newURL);
     auto globalObject = committed->globalObject();
     Navigation::Result result = { DOMPromise::create(*globalObject, *JSC::jsCast<JSC::JSPromise*>(committed->promise())), DOMPromise::create(*globalObject, *JSC::jsCast<JSC::JSPromise*>(finished->promise())) };
     committed->resolve<IDLInterface<NavigationHistoryEntry>>(entry.get());
@@ -134,26 +183,67 @@ Navigation::Result Navigation::traverseTo(const String& /* key */, Options&&, Re
     return result;
 }
 
+// https://html.spec.whatwg.org/multipage/nav-history-apis.html#performing-a-navigation-api-traversal
+Navigation::Result Navigation::performTraversal(NavigationHistoryEntry& entry, Ref<DeferredPromise> committed, Ref<DeferredPromise> finished)
+{
+    // FIXME: This is just a stub that loads a URL for now.
+    window()->frame()->loader().load(FrameLoadRequest(*window()->frame(), URL(entry.url())));
+
+    // FIXME: keep track of promises to resolve later.
+    auto globalObject = committed->globalObject();
+    Navigation::Result result = { DOMPromise::create(*globalObject, *JSC::jsCast<JSC::JSPromise*>(committed->promise())), DOMPromise::create(*globalObject, *JSC::jsCast<JSC::JSPromise*>(finished->promise())) };
+    committed->resolve<IDLInterface<NavigationHistoryEntry>>(entry);
+    finished->resolve<IDLInterface<NavigationHistoryEntry>>(entry);
+    return result;
+}
+
+std::optional<Ref<NavigationHistoryEntry>> Navigation::findEntryByKey(const String& key)
+{
+    auto entryIndex = m_entries.findIf([&key](const Ref<NavigationHistoryEntry> entry) {
+        return entry->key() == key;
+    });
+
+    if (entryIndex == notFound)
+        return std::nullopt;
+
+    return m_entries[entryIndex];
+}
+
+// https://html.spec.whatwg.org/multipage/nav-history-apis.html#dom-navigation-traverseto
+Navigation::Result Navigation::traverseTo(const String& key, Options&&, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished)
+{
+    auto current = currentEntry();
+    if (current && current->key() == key) {
+        auto globalObject = committed->globalObject();
+        Navigation::Result result = { DOMPromise::create(*globalObject, *JSC::jsCast<JSC::JSPromise*>(committed->promise())), DOMPromise::create(*globalObject, *JSC::jsCast<JSC::JSPromise*>(finished->promise())) };
+        committed->resolve<IDLInterface<NavigationHistoryEntry>>(*current);
+        finished->resolve<IDLInterface<NavigationHistoryEntry>>(*current);
+        return result;
+    }
+
+    auto entry = findEntryByKey(key);
+    if (!entry)
+        return createErrorResult(committed, finished, ExceptionCode::InvalidStateError, "Invalid key"_s);
+
+    return performTraversal(*entry, committed, finished);
+}
+
+// https://html.spec.whatwg.org/multipage/nav-history-apis.html#dom-navigation-back
 Navigation::Result Navigation::back(Options&&, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished)
 {
-    // FIXME: keep track of promises to resolve later.
-    Ref entry = NavigationHistoryEntry::create(scriptExecutionContext(), { });
-    auto globalObject = committed->globalObject();
-    Navigation::Result result = { DOMPromise::create(*globalObject, *JSC::jsCast<JSC::JSPromise*>(committed->promise())), DOMPromise::create(*globalObject, *JSC::jsCast<JSC::JSPromise*>(finished->promise())) };
-    committed->resolve<IDLInterface<NavigationHistoryEntry>>(entry.get());
-    finished->resolve<IDLInterface<NavigationHistoryEntry>>(entry.get());
-    return result;
+    if (!m_currentEntryIndex.value_or(0))
+        return createErrorResult(committed, finished, ExceptionCode::InvalidStateError, "Cannot go back"_s);
+
+    return performTraversal(m_entries[m_currentEntryIndex.value() - 1], committed, finished);
 }
 
+// https://html.spec.whatwg.org/multipage/nav-history-apis.html#dom-navigation-forward
 Navigation::Result Navigation::forward(Options&&, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished)
 {
-    // FIXME: keep track of promises to resolve later.
-    Ref entry = NavigationHistoryEntry::create(scriptExecutionContext(), { });
-    auto globalObject = committed->globalObject();
-    Navigation::Result result = { DOMPromise::create(*globalObject, *JSC::jsCast<JSC::JSPromise*>(committed->promise())), DOMPromise::create(*globalObject, *JSC::jsCast<JSC::JSPromise*>(finished->promise())) };
-    committed->resolve<IDLInterface<NavigationHistoryEntry>>(entry.get());
-    finished->resolve<IDLInterface<NavigationHistoryEntry>>(entry.get());
-    return result;
+    if (!m_currentEntryIndex || m_currentEntryIndex.value() == m_entries.size())
+        return createErrorResult(committed, finished, ExceptionCode::InvalidStateError, "Cannot go forward"_s);
+
+    return performTraversal(m_entries[m_currentEntryIndex.value() + 1], committed, finished);
 }
 
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#dom-navigation-updatecurrententry
