@@ -31,6 +31,7 @@
 #include "ReadableStreamSource.h"
 #include "RealtimeMediaSource.h"
 #include "WebCodecsVideoFrame.h"
+#include <wtf/IsoMalloc.h>
 
 namespace JSC {
 class JSGlobaObject;
