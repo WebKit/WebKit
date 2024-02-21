@@ -133,6 +133,12 @@ struct OverriddenLayoutParameters {
     CGSize maximumUnobscuredSize { CGSizeZero };
 };
 
+struct OverriddenZoomScaleParameters {
+    CGFloat minimumZoomScale { 1 };
+    CGFloat maximumZoomScale { 1 };
+    BOOL allowUserScaling { YES };
+};
+
 // This holds state that should be reset when the web process exits.
 struct PerWebProcessState {
     CGFloat viewportMetaTagWidth { WebCore::ViewportArguments::ValueAuto };
@@ -248,6 +254,7 @@ struct PerWebProcessState {
     PerWebProcessState _perProcessState;
 
     std::optional<OverriddenLayoutParameters> _overriddenLayoutParameters;
+    std::optional<OverriddenZoomScaleParameters> _overriddenZoomScaleParameters;
     CGRect _inputViewBoundsInWindow;
 
     BOOL _fastClickingIsDisabled;

@@ -212,6 +212,8 @@ enum class TapHandlingResult : uint8_t;
 - (void)_resetUnobscuredSafeAreaInsets;
 - (void)_resetObscuredInsets;
 
+- (void)_overrideZoomScaleParametersWithMinimumZoomScale:(CGFloat)minimumZoomScale maximumZoomScale:(CGFloat)maximumZoomScale allowUserScaling:(BOOL)allowUserScaling;
+- (void)_clearOverrideZoomScaleParameters;
 @end
 
 _WKTapHandlingResult wkTapHandlingResult(WebKit::TapHandlingResult);
