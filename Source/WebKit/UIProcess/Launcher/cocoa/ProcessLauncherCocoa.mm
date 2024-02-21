@@ -174,7 +174,8 @@ void ProcessLauncher::launchProcess()
 #if USE(EXTENSIONKIT)
     auto handler = [](ThreadSafeWeakPtr<ProcessLauncher> weakProcessLauncher, _SEExtensionProcess* process, ASCIILiteral name, NSError* error)
     {
-        if (!weakProcessLauncher.get()) {
+        RefPtr launcher = weakProcessLauncher.get();
+        if (!launcher) {
             [process invalidate];
             return;
         }
@@ -210,8 +211,7 @@ void ProcessLauncher::launchProcess()
 
         callOnMainRunLoop([weakProcessLauncher, name, process = retainPtr(process), launchGrant = WTFMove(launchGrant)] () mutable {
             RefPtr launcher = weakProcessLauncher.get();
-            // If m_client is null, the Process launcher has been invalidated, and we should not proceed with the launch.
-            if (!launcher || !launcher->m_client) {
+            if (!launcher) {
                 [process invalidate];
                 return;
             }
