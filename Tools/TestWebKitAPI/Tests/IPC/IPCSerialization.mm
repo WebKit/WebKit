@@ -213,6 +213,7 @@ static bool secTrustRefsEqual(SecTrustRef trust1, SecTrustRef trust2)
     if (!equal)
         return false;
 
+#if HAVE(SECTRUST_COPYPROPERTIES)
     array1 = SecTrustCopyProperties(trust1);
     array2 = SecTrustCopyProperties(trust2);
     EXPECT_TRUE(array1);
@@ -223,6 +224,7 @@ static bool secTrustRefsEqual(SecTrustRef trust1, SecTrustRef trust2)
     EXPECT_TRUE(equal);
     if (!equal)
         return false;
+#endif
 
     Boolean bool1, bool2;
     EXPECT_TRUE(SecTrustGetNetworkFetchAllowed(trust1, &bool1) == errSecSuccess);

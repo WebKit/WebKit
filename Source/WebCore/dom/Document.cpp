@@ -656,7 +656,9 @@ Document::Document(LocalFrame* frame, const Settings& settings, const URL& url, 
     ASSERT(!m_markers);
     ASSERT(!m_scriptRunner);
     ASSERT(!m_moduleLoader);
+#if ENABLE(FULLSCREEN_API)
     ASSERT(!m_fullscreenManager);
+#endif
     ASSERT(!m_fontSelector);
     ASSERT(!m_fontLoader);
     ASSERT(!m_undoManager);
