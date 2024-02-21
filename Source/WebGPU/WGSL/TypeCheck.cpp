@@ -1201,6 +1201,11 @@ void TypeChecker::visit(AST::CallExpression& call)
             target.m_inferredType = targetBinding->type;
             if (targetBinding->kind == Binding::Type) {
                 if (auto* structType = std::get_if<Types::Struct>(targetBinding->type)) {
+                    if (!targetBinding->type->isConstructible()) {
+                        typeError(call.span(), "struct is not constructible");
+                        return;
+                    }
+
                     auto numberOfArguments = call.arguments().size();
                     auto numberOfFields = structType->fields.size();
                     if (numberOfArguments && numberOfArguments != numberOfFields) {
