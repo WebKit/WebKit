@@ -88,7 +88,6 @@ void CallsiteCollection::updateCallsitesToCallUs(const AbstractLocker& calleeGro
     WTF::storeStoreFence(); // This probably isn't necessary but it's good to be paranoid.
 
     calleeGroup.m_wasmIndirectCallEntryPoints[functionIndex] = entrypoint;
-    calleeGroup.m_wasmIndirectCallWasmCallees[functionIndex] = nullptr;
 
     for (auto& callsite : m_callsites[functionIndex]) {
         dataLogLnIf(WasmCallsiteCollectionInternal::verbose, "Repatching call at: ", RawPointer(callsite.m_callLocation.dataLocation()), " to ", RawPointer(entrypoint.taggedPtr()));

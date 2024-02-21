@@ -1216,9 +1216,6 @@ media/modern-media-controls/media-documents/background-color-and-centering.html 
 
 webkit.org/b/178083 media/media-source/media-source-paint-to-canvas.html [ Failure ]
 
-webkit.org/b/175102 workers/wasm-hashset-many.html [ Skip ]
-webkit.org/b/175102 workers/wasm-hashset-many-2.html [ Skip ]
-
 webkit.org/b/175193 fast/images/async-image-body-background-image.html [ Pass Timeout ]
 
 webkit.org/b/173010 [ Debug ] js/slow-stress/Int32Array-alloc-huge.html [ Pass Timeout ]
@@ -2575,4 +2572,3 @@ imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-023.svg [ Fail
 imported/w3c/web-platform-tests/svg/painting/reftests/percentage-attribute.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/painting/reftests/percentage.svg [ ImageOnlyFailure ]
 
-webkit.org/b/269598 [ Debug ] workers/wasm-hashset.html [ Skip ]
