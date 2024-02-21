@@ -10181,6 +10181,9 @@ void Document::prepareCanvasesForDisplayOrFlushIfNeeded()
         auto* context = weakContext.get();
         if (!context)
             continue;
+
+        context->setIsInPreparationForDisplayOrFlush(false);
+
         // Some canvas contexts hold memory that should be periodically freed.
         if (context->hasDeferredOperations())
             context->flushDeferredOperations();
@@ -10193,25 +10196,21 @@ void Document::prepareCanvasesForDisplayOrFlushIfNeeded()
     }
 }
 
-void Document::addCanvasNeedingPreparationForDisplayOrFlush(CanvasBase& canvas)
+void Document::addCanvasNeedingPreparationForDisplayOrFlush(CanvasRenderingContext& context)
 {
-    auto* context = canvas.renderingContext();
-    if (!context)
-        return;
-    if (context->hasDeferredOperations() || context->needsPreparationForDisplay()) {
+    if (context.hasDeferredOperations() || context.needsPreparationForDisplay()) {
         bool shouldSchedule = m_canvasContextsToPrepare.isEmptyIgnoringNullReferences();
-        m_canvasContextsToPrepare.add(*context);
+        m_canvasContextsToPrepare.add(context);
+        context.setIsInPreparationForDisplayOrFlush(true);
         if (shouldSchedule)
             scheduleRenderingUpdate(RenderingUpdateStep::PrepareCanvasesForDisplayOrFlush);
     }
 }
 
-void Document::removeCanvasNeedingPreparationForDisplayOrFlush(CanvasBase& canvas)
+void Document::removeCanvasNeedingPreparationForDisplayOrFlush(CanvasRenderingContext& context)
 {
-    auto* context = canvas.renderingContext();
-    if (!context)
-        return;
-    m_canvasContextsToPrepare.remove(*context);
+    m_canvasContextsToPrepare.remove(context);
+    context.setIsInPreparationForDisplayOrFlush(false);
 }
 
 void Document::updateSleepDisablerIfNeeded()

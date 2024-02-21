@@ -1865,8 +1865,8 @@ public:
     const String& fragmentDirective() const { return m_fragmentDirective; }
 
     void prepareCanvasesForDisplayOrFlushIfNeeded();
-    void addCanvasNeedingPreparationForDisplayOrFlush(CanvasBase&);
-    void removeCanvasNeedingPreparationForDisplayOrFlush(CanvasBase&);
+    void addCanvasNeedingPreparationForDisplayOrFlush(CanvasRenderingContext&);
+    void removeCanvasNeedingPreparationForDisplayOrFlush(CanvasRenderingContext&);
 
     bool contains(const Node& node) const { return this == &node.treeScope() && node.isConnected(); }
     bool contains(const Node* node) const { return node && contains(*node); }
