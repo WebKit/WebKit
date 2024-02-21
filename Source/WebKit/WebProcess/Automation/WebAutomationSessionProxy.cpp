@@ -622,8 +622,8 @@ static WebCore::Element* containerElementForElement(WebCore::Element& element)
         return nullptr;
     }
 
-    if (is<WebCore::HTMLOptGroupElement>(element)) {
-        if (auto* parentElement = downcast<WebCore::HTMLOptGroupElement>(element).ownerSelectElement())
+    if (RefPtr optgroup = dynamicDowncast<WebCore::HTMLOptGroupElement>(element)) {
+        if (auto* parentElement = optgroup->ownerSelectElement())
             return parentElement;
 
         return nullptr;
@@ -868,23 +868,22 @@ void WebAutomationSessionProxy::setFilesForInputFileUpload(WebCore::PageIdentifi
         return;
     }
 
-    WebCore::Element* coreElement = elementForNodeHandle(*frame, nodeHandle);
-    if (!coreElement || !is<WebCore::HTMLInputElement>(coreElement) || !downcast<WebCore::HTMLInputElement>(*coreElement).isFileUpload()) {
+    RefPtr inputElement = dynamicDowncast<WebCore::HTMLInputElement>(elementForNodeHandle(*frame, nodeHandle));
+    if (!inputElement || !inputElement->isFileUpload()) {
         String nodeNotFoundErrorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::NodeNotFound);
         completionHandler(nodeNotFoundErrorType);
         return;
     }
 
-    auto& inputElement = downcast<WebCore::HTMLInputElement>(*coreElement);
     Vector<Ref<WebCore::File>> fileObjects;
-    if (inputElement.multiple()) {
-        if (auto* files = inputElement.files())
+    if (inputElement->multiple()) {
+        if (auto* files = inputElement->files())
             fileObjects.appendVector(files->files());
     }
     fileObjects.appendContainerWithMapping(filenames, [&](auto& path) {
-        return WebCore::File::create(&inputElement.document(), path);
+        return WebCore::File::create(&inputElement->document(), path);
     });
-    inputElement.setFiles(WebCore::FileList::create(WTFMove(fileObjects)));
+    inputElement->setFiles(WebCore::FileList::create(WTFMove(fileObjects)));
 
     completionHandler(std::nullopt);
 }

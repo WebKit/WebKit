@@ -464,20 +464,19 @@ String AccessibilityObject::rolePlatformDescription() const
         return AXHeadingText();
 
     if ([axRole isEqualToString:NSAccessibilityTextFieldRole]) {
-        auto* node = this->node();
-        if (is<HTMLInputElement>(node)) {
-            auto& input = downcast<HTMLInputElement>(*node);
-            if (input.isEmailField())
+        if (RefPtr input = dynamicDowncast<HTMLInputElement>(node())) {
+            if (input->isEmailField())
                 return AXEmailFieldText();
-            if (input.isTelephoneField())
+            if (input->isTelephoneField())
                 return AXTelephoneFieldText();
-            if (input.isURLField())
+            if (input->isURLField())
                 return AXURLFieldText();
-            if (input.isNumberField())
+            if (input->isNumberField())
                 return AXNumberFieldText();
 
             // These input types are not enabled on mac yet, we check the type attribute for now.
-            auto& type = input.attributeWithoutSynchronization(HTMLNames::typeAttr);
+            // FIXME: "date", "time", and "datetime-local" are enabled on macOS.
+            auto& type = input->attributeWithoutSynchronization(HTMLNames::typeAttr);
             if (equalLettersIgnoringASCIICase(type, "date"_s))
                 return AXDateFieldText();
             if (equalLettersIgnoringASCIICase(type, "time"_s))
@@ -625,11 +624,15 @@ static void attributedStringSetExpandedText(NSMutableAttributedString *attrStrin
 
 static void attributedStringSetElement(NSMutableAttributedString *attrString, NSString *attribute, AccessibilityObject* object, const NSRange& range)
 {
-    if (!attributedStringContainsRange(attrString, range) || !is<AccessibilityRenderObject>(object))
+    if (!attributedStringContainsRange(attrString, range))
+        return;
+
+    auto* renderObject = dynamicDowncast<AccessibilityRenderObject>(object);
+    if (!renderObject)
         return;
 
     // Make a serializable AX object.
-    auto* renderer = downcast<AccessibilityRenderObject>(*object).renderer();
+    auto* renderer = renderObject->renderer();
     if (!renderer)
         return;
 
