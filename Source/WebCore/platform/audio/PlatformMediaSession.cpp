@@ -164,13 +164,22 @@ void PlatformMediaSession::setState(State state)
     PlatformMediaSessionManager::sharedManager().sessionStateChanged(*this);
 }
 
+PlatformMediaSession::InterruptionType PlatformMediaSession::interruptionType() const
+{
+    if (!m_interruptionStack.size())
+        return InterruptionType::NoInterruption;
+
+    return m_interruptionStack.last();
+}
+
 void PlatformMediaSession::beginInterruption(InterruptionType type)
 {
-    ALWAYS_LOG(LOGIDENTIFIER, "state = ", m_state, ", interruption type = ", type, ", interruption count = ", m_interruptionCount);
+    ASSERT(type != InterruptionType::NoInterruption);
 
-    // When interruptions are overridden, m_interruptionType doesn't get set.
-    // Give nested interruptions a chance when the previous interruptions were overridden.
-    if (++m_interruptionCount > 1 && m_interruptionType != InterruptionType::NoInterruption)
+    m_interruptionStack.append(type);
+    ALWAYS_LOG(LOGIDENTIFIER, "state = ", m_state, ", interruption count = ", interruptionCount(), ", type = ", type);
+
+    if (interruptionCount() > 1)
         return;
 
     if (client().shouldOverrideBackgroundPlaybackRestriction(type)) {
@@ -181,29 +190,27 @@ void PlatformMediaSession::beginInterruption(InterruptionType type)
     m_stateToRestore = state();
     m_notifyingClient = true;
     setState(State::Interrupted);
-    m_interruptionType = type;
     client().suspendPlayback();
     m_notifyingClient = false;
 }
 
 void PlatformMediaSession::endInterruption(OptionSet<EndInterruptionFlags> flags)
 {
-    ALWAYS_LOG(LOGIDENTIFIER, "flags = ", (int)flags.toRaw(), ", stateToRestore = ", m_stateToRestore, ", interruption count = ", m_interruptionCount);
-
-    if (!m_interruptionCount) {
+    if (!interruptionCount()) {
         ALWAYS_LOG(LOGIDENTIFIER, "!! ignoring spurious interruption end !!");
         return;
     }
 
-    if (--m_interruptionCount)
+    m_interruptionStack.removeLast();
+    ALWAYS_LOG(LOGIDENTIFIER, "flags = ", (int)flags.toRaw(), ", interruption count = ", interruptionCount(), ", type = ", interruptionType());
+
+    if (interruptionCount())
         return;
 
-    if (m_interruptionType == InterruptionType::NoInterruption)
-        return;
+    ALWAYS_LOG(LOGIDENTIFIER, "restoring state ", m_stateToRestore);
 
     State stateToRestore = m_stateToRestore;
     m_stateToRestore = State::Idle;
-    m_interruptionType = InterruptionType::NoInterruption;
     setState(stateToRestore);
 
     if (stateToRestore == State::Autoplaying)
@@ -358,16 +365,17 @@ void PlatformMediaSession::isPlayingToWirelessPlaybackTargetChanged(bool isWirel
 
     m_isPlayingToWirelessPlaybackTarget = isWireless;
 
-    // Save and restore the interruption count so it doesn't get out of sync if beginInterruption is called because
-    // if we in the background.
-    int interruptionCount = m_interruptionCount;
     PlatformMediaSessionManager::sharedManager().sessionIsPlayingToWirelessPlaybackTargetChanged(*this);
-    m_interruptionCount = interruptionCount;
 }
 
 PlatformMediaSession::DisplayType PlatformMediaSession::displayType() const
 {
     return m_client.displayType();
+}
+
+bool PlatformMediaSession::blockedBySystemInterruption() const
+{
+    return interruptionCount() > 1 && interruptionType() == PlatformMediaSession::InterruptionType::SystemInterruption;
 }
 
 bool PlatformMediaSession::activeAudioSessionRequired() const

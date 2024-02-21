@@ -5877,6 +5877,12 @@ bool HTMLMediaElement::couldPlayIfEnoughData() const
     if (pausedForUserInteraction())
         return false;
 
+    if (!canProduceAudio() || PlatformMediaSessionManager::sharedManager().hasActiveAudioSession())
+        return true;
+
+    if (mediaSession().activeAudioSessionRequired() && mediaSession().blockedBySystemInterruption())
+        return false;
+
     return true;
 }
 

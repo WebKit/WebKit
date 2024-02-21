@@ -139,7 +139,7 @@ public:
 
     using InterruptionType = PlatformMediaSessionInterruptionType;
 
-    InterruptionType interruptionType() const { return m_interruptionType; }
+    InterruptionType interruptionType() const;
 
     using EndInterruptionFlags = PlatformMediaSessionEndInterruptionFlags;
 
@@ -198,6 +198,7 @@ public:
     virtual bool requiresPlaybackTargetRouteMonitoring() const { return false; }
 #endif
 
+    bool blockedBySystemInterruption() const;
     bool activeAudioSessionRequired() const;
     bool canProduceAudio() const;
     bool hasMediaStreamSource() const;
@@ -241,12 +242,13 @@ protected:
 
 private:
     bool processClientWillPausePlayback(DelayCallingUpdateNowPlaying);
+    size_t interruptionCount() const { return m_interruptionStack.size(); }
 
     PlatformMediaSessionClient& m_client;
     MediaSessionIdentifier m_mediaSessionIdentifier;
     State m_state { State::Idle };
     State m_stateToRestore { State::Idle };
-    InterruptionType m_interruptionType { InterruptionType::NoInterruption };
+    Vector<InterruptionType> m_interruptionStack;
     int m_interruptionCount { 0 };
     bool m_active { false };
     bool m_notifyingClient { false };
