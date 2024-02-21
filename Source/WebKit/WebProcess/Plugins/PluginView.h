@@ -164,6 +164,7 @@ private:
 
     bool usesAsyncScrolling() const final;
     WebCore::ScrollingNodeID scrollingNodeID() const final;
+    void willAttachScrollingNode() final;
     void didAttachScrollingNode() final;
 
     // WebCore::Widget

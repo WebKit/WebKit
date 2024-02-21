@@ -725,6 +725,14 @@ ScrollingNodeID PluginView::scrollingNodeID() const
     return protectedPlugin()->scrollingNodeID();
 }
 
+void PluginView::willAttachScrollingNode()
+{
+    if (!m_isInitialized)
+        return;
+
+    return protectedPlugin()->willAttachScrollingNode();
+}
+
 void PluginView::didAttachScrollingNode()
 {
     if (!m_isInitialized)

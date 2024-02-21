@@ -2678,16 +2678,23 @@ bool RenderLayerCompositor::attachWidgetContentLayers(RenderWidget& renderer)
         if (auto* contentsLayer = backing->layerForContents()) {
             addContentsLayerChildIfNecessary(*contentsLayer);
 
-            if (isLayerForPluginWithScrollCoordinatedContents(*layer)) {
-                if (auto pluginHostingNodeID = backing->scrollingNodeIDForRole(ScrollCoordinationRole::PluginHosting)) {
-                    auto* renderEmbeddedObject = dynamicDowncast<RenderEmbeddedObject>(renderer);
-                    if (auto pluginScrollingNodeID = renderEmbeddedObject->scrollingNodeID()) {
-                        if (auto* scrollingCoordinator = this->scrollingCoordinator()) {
-                            scrollingCoordinator->insertNode(ScrollingNodeType::PluginScrolling, pluginScrollingNodeID, pluginHostingNodeID, 0);
-                            renderEmbeddedObject->didAttachScrollingNode();
-                        }
-                    }
-                }
+            if (!isLayerForPluginWithScrollCoordinatedContents(*layer))
+                return true;
+
+            auto* scrollingCoordinator = this->scrollingCoordinator();
+            if (!scrollingCoordinator)
+                return true;
+
+            auto pluginHostingNodeID = backing->scrollingNodeIDForRole(ScrollCoordinationRole::PluginHosting);
+            if (!pluginHostingNodeID)
+                return true;
+
+            CheckedPtr renderEmbeddedObject = dynamicDowncast<RenderEmbeddedObject>(renderer);
+            renderEmbeddedObject->willAttachScrollingNode();
+
+            if (auto pluginScrollingNodeID = renderEmbeddedObject->scrollingNodeID()) {
+                scrollingCoordinator->insertNode(ScrollingNodeType::PluginScrolling, pluginScrollingNodeID, pluginHostingNodeID, 0);
+                renderEmbeddedObject->didAttachScrollingNode();
             }
 
             return true;

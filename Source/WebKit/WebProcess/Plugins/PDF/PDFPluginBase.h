@@ -192,6 +192,7 @@ public:
     WebCore::Scrollbar* verticalScrollbar() const override { return m_verticalScrollbar.get(); }
     void setScrollOffset(const WebCore::ScrollOffset&) final;
 
+    virtual void willAttachScrollingNode() { }
     virtual void didAttachScrollingNode() { }
     virtual void didChangeSettings() { }
 

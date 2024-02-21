@@ -127,6 +127,14 @@ ScrollingNodeID RenderEmbeddedObject::scrollingNodeID() const
     return pluginViewBase->scrollingNodeID();
 }
 
+void RenderEmbeddedObject::willAttachScrollingNode()
+{
+    auto* pluginViewBase = dynamicDowncast<PluginViewBase>(widget());
+    if (!pluginViewBase)
+        return;
+    pluginViewBase->willAttachScrollingNode();
+}
+
 void RenderEmbeddedObject::didAttachScrollingNode()
 {
     auto* pluginViewBase = dynamicDowncast<PluginViewBase>(widget());

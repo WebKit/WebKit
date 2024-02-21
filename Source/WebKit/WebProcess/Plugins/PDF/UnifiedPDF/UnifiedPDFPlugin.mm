@@ -421,6 +421,11 @@ void UnifiedPDFPlugin::updatePageBackgroundLayers()
     m_pageBackgroundsContainerLayer->setChildren(WTFMove(pageContainerLayers));
 }
 
+void UnifiedPDFPlugin::willAttachScrollingNode()
+{
+    createScrollingNodeIfNecessary();
+}
+
 void UnifiedPDFPlugin::didAttachScrollingNode()
 {
     m_didAttachScrollingTreeNode = true;
@@ -437,9 +442,6 @@ void UnifiedPDFPlugin::didSameDocumentNavigationForFrame(WebFrame& frame)
 
 ScrollingNodeID UnifiedPDFPlugin::scrollingNodeID() const
 {
-    if (!m_scrollingNodeID)
-        const_cast<UnifiedPDFPlugin*>(this)->createScrollingNodeIfNecessary();
-
     return m_scrollingNodeID;
 }
 
@@ -461,14 +463,27 @@ void UnifiedPDFPlugin::createScrollingNodeIfNecessary()
 
 #if ENABLE(SCROLLING_THREAD)
     m_scrollContainerLayer->setScrollingNodeID(m_scrollingNodeID);
+
+    if (auto* layer = layerForHorizontalScrollbar())
+        layer->setScrollingNodeID(m_scrollingNodeID);
+
+    if (auto* layer = layerForVerticalScrollbar())
+        layer->setScrollingNodeID(m_scrollingNodeID);
+
+    if (auto* layer = layerForScrollCorner())
+        layer->setScrollingNodeID(m_scrollingNodeID);
 #endif
 
     m_frame->coreLocalFrame()->protectedView()->setPluginScrollableAreaForScrollingNodeID(m_scrollingNodeID, *this);
+
+    scrollingCoordinator->setScrollingNodeScrollableAreaGeometry(m_scrollingNodeID, *this);
 
     WebCore::ScrollingCoordinator::NodeLayers nodeLayers;
     nodeLayers.layer = m_rootLayer.get();
     nodeLayers.scrollContainerLayer = m_scrollContainerLayer.get();
     nodeLayers.scrolledContentsLayer = m_scrolledContentsLayer.get();
+    nodeLayers.horizontalScrollbarLayer = layerForHorizontalScrollbar();
+    nodeLayers.verticalScrollbarLayer = layerForVerticalScrollbar();
 
     scrollingCoordinator->setNodeLayers(m_scrollingNodeID, nodeLayers);
 }
