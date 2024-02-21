@@ -526,6 +526,10 @@ set(webrtc_SOURCES
     Source/third_party/boringssl/src/tool/transport_common.cc
     Source/third_party/boringssl/src/util/fipstools/acvp/modulewrapper/main.cc
     Source/third_party/boringssl/src/util/fipstools/acvp/modulewrapper/modulewrapper.cc
+    Source/third_party/crc32c/src/src/crc32c_arm64.cc
+    Source/third_party/crc32c/src/src/crc32c.cc
+    Source/third_party/crc32c/src/src/crc32c_portable.cc
+    Source/third_party/crc32c/src/src/crc32c_sse42.cc
     Source/third_party/libyuv/source/compare.cc
     Source/third_party/libyuv/source/compare_common.cc
     Source/third_party/libyuv/source/compare_gcc.cc
@@ -1471,6 +1475,79 @@ set(webrtc_SOURCES
     Source/webrtc/modules/video_coding/video_coding_impl.cc
     Source/webrtc/modules/video_coding/video_receiver2.cc
     Source/webrtc/modules/video_coding/video_receiver.cc
+    Source/webrtc/net/dcsctp/common/handover_testing.cc
+    Source/webrtc/net/dcsctp/fuzzers/dcsctp_fuzzers.cc
+    Source/webrtc/net/dcsctp/packet/chunk/abort_chunk.cc
+    Source/webrtc/net/dcsctp/packet/chunk/chunk.cc
+    Source/webrtc/net/dcsctp/packet/chunk/cookie_ack_chunk.cc
+    Source/webrtc/net/dcsctp/packet/chunk/cookie_echo_chunk.cc
+    Source/webrtc/net/dcsctp/packet/chunk/data_chunk.cc
+    Source/webrtc/net/dcsctp/packet/chunk/error_chunk.cc
+    Source/webrtc/net/dcsctp/packet/chunk/forward_tsn_chunk.cc
+    Source/webrtc/net/dcsctp/packet/chunk/heartbeat_ack_chunk.cc
+    Source/webrtc/net/dcsctp/packet/chunk/heartbeat_request_chunk.cc
+    Source/webrtc/net/dcsctp/packet/chunk/idata_chunk.cc
+    Source/webrtc/net/dcsctp/packet/chunk/iforward_tsn_chunk.cc
+    Source/webrtc/net/dcsctp/packet/chunk/init_ack_chunk.cc
+    Source/webrtc/net/dcsctp/packet/chunk/init_chunk.cc
+    Source/webrtc/net/dcsctp/packet/chunk/reconfig_chunk.cc
+    Source/webrtc/net/dcsctp/packet/chunk/sack_chunk.cc
+    Source/webrtc/net/dcsctp/packet/chunk/shutdown_ack_chunk.cc
+    Source/webrtc/net/dcsctp/packet/chunk/shutdown_chunk.cc
+    Source/webrtc/net/dcsctp/packet/chunk/shutdown_complete_chunk.cc
+    Source/webrtc/net/dcsctp/packet/chunk_validators.cc
+    Source/webrtc/net/dcsctp/packet/crc32c.cc
+    Source/webrtc/net/dcsctp/packet/error_cause/cookie_received_while_shutting_down_cause.cc
+    Source/webrtc/net/dcsctp/packet/error_cause/error_cause.cc
+    Source/webrtc/net/dcsctp/packet/error_cause/invalid_mandatory_parameter_cause.cc
+    Source/webrtc/net/dcsctp/packet/error_cause/invalid_stream_identifier_cause.cc
+    Source/webrtc/net/dcsctp/packet/error_cause/missing_mandatory_parameter_cause.cc
+    Source/webrtc/net/dcsctp/packet/error_cause/no_user_data_cause.cc
+    Source/webrtc/net/dcsctp/packet/error_cause/out_of_resource_error_cause.cc
+    Source/webrtc/net/dcsctp/packet/error_cause/protocol_violation_cause.cc
+    Source/webrtc/net/dcsctp/packet/error_cause/restart_of_an_association_with_new_address_cause.cc
+    Source/webrtc/net/dcsctp/packet/error_cause/stale_cookie_error_cause.cc
+    Source/webrtc/net/dcsctp/packet/error_cause/unrecognized_chunk_type_cause.cc
+    Source/webrtc/net/dcsctp/packet/error_cause/unrecognized_parameter_cause.cc
+    Source/webrtc/net/dcsctp/packet/error_cause/unresolvable_address_cause.cc
+    Source/webrtc/net/dcsctp/packet/error_cause/user_initiated_abort_cause.cc
+    Source/webrtc/net/dcsctp/packet/parameter/add_incoming_streams_request_parameter.cc
+    Source/webrtc/net/dcsctp/packet/parameter/add_outgoing_streams_request_parameter.cc
+    Source/webrtc/net/dcsctp/packet/parameter/forward_tsn_supported_parameter.cc
+    Source/webrtc/net/dcsctp/packet/parameter/heartbeat_info_parameter.cc
+    Source/webrtc/net/dcsctp/packet/parameter/incoming_ssn_reset_request_parameter.cc
+    Source/webrtc/net/dcsctp/packet/parameter/outgoing_ssn_reset_request_parameter.cc
+    Source/webrtc/net/dcsctp/packet/parameter/parameter.cc
+    Source/webrtc/net/dcsctp/packet/parameter/reconfiguration_response_parameter.cc
+    Source/webrtc/net/dcsctp/packet/parameter/ssn_tsn_reset_request_parameter.cc
+    Source/webrtc/net/dcsctp/packet/parameter/state_cookie_parameter.cc
+    Source/webrtc/net/dcsctp/packet/parameter/supported_extensions_parameter.cc
+    Source/webrtc/net/dcsctp/packet/parameter/zero_checksum_acceptable_chunk_parameter.cc
+    Source/webrtc/net/dcsctp/packet/sctp_packet.cc
+    Source/webrtc/net/dcsctp/packet/tlv_trait.cc
+    Source/webrtc/net/dcsctp/public/dcsctp_handover_state.cc
+    Source/webrtc/net/dcsctp/public/dcsctp_socket_factory.cc
+    Source/webrtc/net/dcsctp/public/text_pcap_packet_observer.cc
+    Source/webrtc/net/dcsctp/rx/data_tracker.cc
+    Source/webrtc/net/dcsctp/rx/interleaved_reassembly_streams.cc
+    Source/webrtc/net/dcsctp/rx/reassembly_queue.cc
+    Source/webrtc/net/dcsctp/rx/traditional_reassembly_streams.cc
+    Source/webrtc/net/dcsctp/socket/callback_deferrer.cc
+    Source/webrtc/net/dcsctp/socket/dcsctp_socket.cc
+    Source/webrtc/net/dcsctp/socket/heartbeat_handler.cc
+    Source/webrtc/net/dcsctp/socket/packet_sender.cc
+    Source/webrtc/net/dcsctp/socket/state_cookie.cc
+    Source/webrtc/net/dcsctp/socket/stream_reset_handler.cc
+    Source/webrtc/net/dcsctp/socket/transmission_control_block.cc
+    Source/webrtc/net/dcsctp/testing/data_generator.cc
+    Source/webrtc/net/dcsctp/timer/task_queue_timeout.cc
+    Source/webrtc/net/dcsctp/timer/timer.cc
+    Source/webrtc/net/dcsctp/tx/outstanding_data.cc
+    Source/webrtc/net/dcsctp/tx/retransmission_error_counter.cc
+    Source/webrtc/net/dcsctp/tx/retransmission_queue.cc
+    Source/webrtc/net/dcsctp/tx/retransmission_timeout.cc
+    Source/webrtc/net/dcsctp/tx/rr_send_queue.cc
+    Source/webrtc/net/dcsctp/tx/stream_scheduler.cc
     Source/webrtc/p2p/base/async_stun_tcp_socket.cc
     Source/webrtc/p2p/base/basic_async_resolver_factory.cc
     Source/webrtc/p2p/base/basic_ice_controller.cc
@@ -2106,6 +2183,7 @@ target_compile_definitions(webrtc PRIVATE
   WEBRTC_CODEC_ISAC
   WEBRTC_CODEC_OPUS
   WEBRTC_CODEC_RED
+  WEBRTC_HAVE_DCSCTP
   WEBRTC_HAVE_SCTP
   WEBRTC_INCLUDE_INTERNAL_AUDIO_DEVICE
   WEBRTC_INTELLIGIBILITY_ENHANCER=0
@@ -2158,6 +2236,8 @@ set(webrtc_INCLUDE_DIRECTORIES PRIVATE
     Source/third_party/abseil-cpp
     Source/third_party/abseil-cpp/absl/types
     Source/third_party/boringssl/src/include
+    Source/third_party/crc32c/config
+    Source/third_party/crc32c/src/include
     Source/third_party/libsrtp/config
     Source/third_party/libsrtp/crypto/include
     Source/third_party/libsrtp/include
