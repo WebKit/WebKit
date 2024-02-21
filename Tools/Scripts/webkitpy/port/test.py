@@ -530,12 +530,6 @@ class TestPort(Port):
     def web_platform_test_server_base_h2_url(self, localhost_only=False):
         return "https://localhost:9000/"
 
-    def _path_to_lighttpd(self):
-        return "/usr/sbin/lighttpd"
-
-    def _path_to_lighttpd_modules(self):
-        return "/usr/lib/lighttpd"
-
     def _path_to_apache(self):
         return "/usr/sbin/httpd"
 

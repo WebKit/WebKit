@@ -26,7 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""Base class with common routines between the Apache, Lighttpd, and websocket servers."""
+"""Base class with common routines between the Apache and websocket servers."""
 
 import errno
 import json
