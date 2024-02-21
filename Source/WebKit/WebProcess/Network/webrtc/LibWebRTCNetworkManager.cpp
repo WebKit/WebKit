@@ -124,7 +124,11 @@ void LibWebRTCNetworkManager::StopUpdating()
 
 webrtc::MdnsResponderInterface* LibWebRTCNetworkManager::GetMdnsResponder() const
 {
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    return nullptr;
+#else
     return m_useMDNSCandidates ? const_cast<LibWebRTCNetworkManager*>(this) : nullptr;
+#endif
 }
 
 void LibWebRTCNetworkManager::networksChanged(const Vector<RTCNetwork>& networks, const RTCNetwork::IPAddress& ipv4, const RTCNetwork::IPAddress& ipv6)
