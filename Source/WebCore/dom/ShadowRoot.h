@@ -46,7 +46,7 @@ namespace Style {
 class Scope;
 }
 
-class ShadowRoot final : public CanMakeCheckedPtr, public DocumentFragment, public TreeScope {
+class ShadowRoot final : public DocumentFragment, public TreeScope {
     WTF_MAKE_ISO_ALLOCATED(ShadowRoot);
 public:
 
@@ -67,15 +67,8 @@ public:
 
     virtual ~ShadowRoot();
 
-    // Resolve ambiguity for CanMakeCheckedPtr.
-    using CanMakeCheckedPtr::incrementPtrCount;
-    using CanMakeCheckedPtr::decrementPtrCount;
-#if CHECKED_POINTER_DEBUG
-    using CanMakeCheckedPtr::registerCheckedPtr;
-    using CanMakeCheckedPtr::copyCheckedPtr;
-    using CanMakeCheckedPtr::moveCheckedPtr;
-    using CanMakeCheckedPtr::unregisterCheckedPtr;
-#endif // CHECKED_POINTER_DEBUG
+    using DocumentFragment::ref;
+    using DocumentFragment::deref;
 
     using TreeScope::getElementById;
     using TreeScope::rootNode;

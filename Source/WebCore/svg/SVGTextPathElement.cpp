@@ -151,7 +151,7 @@ void SVGTextPathElement::buildPendingResource()
     auto target = SVGURIReference::targetElementFromIRIString(href(), treeScopeForSVGReferences());
     if (!target.element) {
         // Do not register as pending if we are already pending this resource.
-        CheckedRef treeScope = treeScopeForSVGReferences();
+        Ref treeScope = treeScopeForSVGReferences();
         if (treeScope->isPendingSVGResource(*this, target.identifier))
             return;
 

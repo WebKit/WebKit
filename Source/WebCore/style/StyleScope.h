@@ -206,7 +206,7 @@ private:
     using MediaQueryViewportState = std::tuple<IntSize, float, bool>;
     static MediaQueryViewportState mediaQueryViewportStateForDocument(const Document&);
 
-    CheckedRef<Document> m_document;
+    Document& m_document; // FIXME: Use a smart pointer.
     ShadowRoot* m_shadowRoot { nullptr };
 
     RefPtr<Resolver> m_resolver;

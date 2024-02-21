@@ -402,8 +402,7 @@ private:
 };
 
 class Document
-    : public CanMakeCheckedPtr
-    , public ContainerNode
+    : public ContainerNode
     , public TreeScope
     , public ScriptExecutionContext
     , public FontSelectorClient
@@ -422,16 +421,6 @@ public:
     static Ref<Document> create(Document&);
 
     virtual ~Document();
-
-    // Resolve ambiguity for CanMakeCheckedPtr.
-    using CanMakeCheckedPtr::incrementPtrCount;
-    using CanMakeCheckedPtr::decrementPtrCount;
-#if CHECKED_POINTER_DEBUG
-    using CanMakeCheckedPtr::registerCheckedPtr;
-    using CanMakeCheckedPtr::copyCheckedPtr;
-    using CanMakeCheckedPtr::moveCheckedPtr;
-    using CanMakeCheckedPtr::unregisterCheckedPtr;
-#endif // CHECKED_POINTER_DEBUG
 
     // Nodes belonging to this document increase referencingNodeCount -
     // these are enough to keep the document from being destroyed, but
@@ -459,7 +448,7 @@ public:
 
     void removedLastRef();
 
-    using DocumentsMap = HashMap<ScriptExecutionContextIdentifier, CheckedRef<Document>>;
+    using DocumentsMap = HashMap<ScriptExecutionContextIdentifier, WeakRef<Document, WeakPtrImplWithEventTargetData>>;
     WEBCORE_EXPORT static DocumentsMap::ValuesIteratorRange allDocuments();
     WEBCORE_EXPORT static DocumentsMap& allDocumentsMap();
 

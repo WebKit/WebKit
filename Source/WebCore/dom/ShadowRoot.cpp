@@ -49,7 +49,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(ShadowRoot);
 
-struct SameSizeAsShadowRoot : public DocumentFragment, public CanMakeCheckedPtr, public TreeScope {
+struct SameSizeAsShadowRoot : public DocumentFragment, public TreeScope {
     uint8_t flagsAndModes[3];
     WeakPtr<Element, WeakPtrImplWithEventTargetData> host;
     void* styleSheetList;

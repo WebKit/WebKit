@@ -77,7 +77,7 @@ struct Condition {
 enum class EvaluationResult : uint8_t { False, True, Unknown };
 
 struct FeatureEvaluationContext {
-    CheckedRef<const Document> document;
+    WeakRef<const Document, WeakPtrImplWithEventTargetData> document;
     CSSToLengthConversionData conversionData { };
     CheckedPtr<const RenderElement> renderer { };
 };

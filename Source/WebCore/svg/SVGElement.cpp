@@ -1065,7 +1065,7 @@ void SVGElement::buildPendingResourcesIfNeeded()
     if (!needsPendingResourceHandling() || !isConnected() || isInShadowTree())
         return;
 
-    CheckedRef treeScope = treeScopeForSVGReferences();
+    Ref treeScope = treeScopeForSVGReferences();
     auto resourceId = getIdAttribute();
     if (!treeScope->isIdOfPendingSVGResource(resourceId))
         return;

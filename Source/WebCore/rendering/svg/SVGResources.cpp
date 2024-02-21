@@ -207,7 +207,7 @@ std::unique_ptr<SVGResources> SVGResources::buildCachedResources(const RenderEle
 
     Ref element = downcast<SVGElement>(*renderer.element());
 
-    CheckedRef treeScope = element->treeScopeForSVGReferences();
+    Ref treeScope = element->treeScopeForSVGReferences();
     Ref document = treeScope->documentScope();
 
     const AtomString& tagName = element->localName();
