@@ -67,6 +67,7 @@ const TestFeatures& TestOptions::defaults()
             // These are non-experimental WebPreference values that must always be set as they
             // differ from the default set in the WebPreferences*.yaml configuration.
             { "AllowsInlineMediaPlayback", true },
+            { "CSSUnprefixedBackdropFilterEnabled", true },
             { "CanvasUsesAcceleratedDrawing", true },
             { "ColorFilterEnabled", true },
             { "CustomPasteboardDataEnabled", true },
