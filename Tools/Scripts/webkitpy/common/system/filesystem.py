@@ -47,8 +47,9 @@ class FileSystem(object):
 
     Unless otherwise noted, all paths are allowed to be either absolute
     or relative."""
-    sep = os.sep
-    pardir = os.pardir
+    def __init__(self):
+        self.sep = os.sep
+        self.pardir = os.pardir
 
     def abspath(self, path):
         # FIXME: This gross hack is needed while we transition from Cygwin to native Windows, because we
@@ -269,7 +270,7 @@ class FileSystem(object):
     def relpath(self, path, start='.'):
         return os.path.relpath(path, start)
 
-    def remove(self, path, osremove=os.remove):
+    def remove(self, path, osremove=None):
         """On Windows, if a process was recently killed and it held on to a
         file, the OS will hold on to the file for a short while.  This makes
         attempts to delete the file fail.  To work around that, this method
@@ -278,6 +279,9 @@ class FileSystem(object):
             WinOSError = WindowsError
         except NameError:
             WinOSError = OSError
+
+        if osremove is None:
+            osremove = os.remove
 
         retry_timeout_sec = 3.0
         sleep_interval = 0.1

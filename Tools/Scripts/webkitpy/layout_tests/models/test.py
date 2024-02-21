@@ -41,10 +41,10 @@ class Test(object):
     expected_checksum_path = attr.ib(default=None, type=str)
     expected_audio_path = attr.ib(default=None, type=str)
     reference_files = attr.ib(default=None, type=list)
-    is_http_test = attr.ib(default=None, type=bool)
-    is_websocket_test = attr.ib(default=None, type=bool)
-    is_wpt_test = attr.ib(default=None, type=bool)
-    is_wpt_crash_test = attr.ib(default=None, type=bool)
+    is_http_test = attr.ib(default=False, type=bool)
+    is_websocket_test = attr.ib(default=False, type=bool)
+    is_wpt_test = attr.ib(default=False, type=bool)
+    is_wpt_crash_test = attr.ib(default=False, type=bool)
 
     @property
     def needs_http_server(self):

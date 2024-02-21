@@ -107,8 +107,8 @@ class TestList(object):
 #
 # These numbers may need to be updated whenever we add or delete tests.
 #
-TOTAL_TESTS = 84
-TOTAL_SKIPS = 11
+TOTAL_TESTS = 88
+TOTAL_SKIPS = 12
 TOTAL_RETRIES = 13
 
 UNEXPECTED_PASSES = 6
@@ -245,6 +245,10 @@ layer at (0,0) size 800x34
     tests.add('platform/test-mac-leopard/http/test.html')
     tests.add('platform/test-win-7sp0/http/test.html')
 
+    tests.add('overridden/test.html')
+    tests.add('platform/test-mac-leopard/overridden/test.html')
+    tests.add('platform/test-win-7sp0/overridden/test.html')
+
     # For --no-http tests, test that platform specific HTTP tests are properly skipped.
     tests.add('platform/test-snow-leopard/http/test.html')
     tests.add('platform/test-snow-leopard/websocket/test.html')
@@ -269,6 +273,8 @@ layer at (0,0) size 800x34
     tests.add('imported/w3c/web-platform-tests/some/new.html',
         expected_text=None, actual_text='ok', actual_image=None, actual_checksum=None)
     tests.add('imported/w3c/web-platform-tests/some/test-pass-crash.html',
+        expected_text=None, actual_text='some output', actual_image=None, actual_checksum=None, is_wpt_crash_test=True)
+    tests.add('imported/w3c/web-platform-tests/some/test-pass-crash.tentative.html',
         expected_text=None, actual_text='some output', actual_image=None, actual_checksum=None, is_wpt_crash_test=True)
     tests.add('imported/w3c/web-platform-tests/some/test-timeout-crash.html',
         expected_text=None, actual_text=None, actual_image=None, actual_checksum=None, timeout=True, is_wpt_crash_test=True)
