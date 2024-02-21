@@ -65,7 +65,7 @@ TEST(WKWebExtensionAPIStorage, Errors)
         @"browser.test.assertThrows(() => browser?.storage?.local?.set(), /A required argument is missing/i)",
         @"browser.test.assertThrows(() => browser?.storage?.local?.set([]), /'items' value is invalid, because an object is expected/i)",
         @"browser.test.assertThrows(() => browser?.storage?.local?.set({ 'key': () => { 'function' } }), /it is not JSON-serializable/i)",
-        @"browser.test.assertThrows(() => browser?.storage?.local?.set({ 'key': 'a'.repeat(8193) }), /exceeded maximum size for a single item/i)",
+        @"browser.test.assertThrows(() => browser?.storage?.sync?.set({ 'key': 'a'.repeat(8193) }), /exceeded maximum size for a single item/i)",
 
         @"browser.test.assertThrows(() => browser?.storage?.local?.remove(), /A required argument is missing/i)",
         @"browser.test.assertThrows(() => browser?.storage?.local?.remove({}), /'keys' value is invalid, because a string or an array of strings is expected, but an object was provided/i)",
@@ -214,6 +214,10 @@ TEST(WKWebExtensionAPIStorage, Set)
 
         @"result = await browser?.storage?.local?.get('array')",
         @"browser.test.assertDeepEq(updatedArray, result?.array)",
+
+        // Ensure there isn't a maximum item quota if the storageArea isn't sync.
+        @"await browser.storage?.local?.clear()",
+        @"browser.test.assertSafeResolve(() => browser.storage?.local?.set({ 'key': 'a'.repeat(8193) }))",
 
         @"browser.test.notifyPass()",
     ]);
