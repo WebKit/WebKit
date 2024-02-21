@@ -4405,15 +4405,7 @@ void ForInNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
     generator.emitNode(base.get(), m_expr);
     RefPtr<RegisterID> local = this->tryGetBoundLocal(generator);
 
-
-    std::optional<Variable> baseVariable;
-    if (m_expr->isResolveNode())
-        baseVariable = generator.variable(static_cast<ResolveNode*>(m_expr)->identifier());
-    else if (m_expr->isThisNode()) {
-        // After generator.ensureThis (which must be invoked in |base|'s materialization), we can ensure that |this| is in local this-register.
-        ASSERT(base);
-        baseVariable = generator.variable(generator.propertyNames().builtinNames().thisPrivateName(), ThisResolutionType::Local);
-    }
+    std::optional<Variable> baseVariable = generator.tryResolveVariable(m_expr);
 
     int profilerStartOffset = m_statement->startOffset();
     int profilerEndOffset = m_statement->endOffset() + (m_statement->isBlock() ? 1 : 0);

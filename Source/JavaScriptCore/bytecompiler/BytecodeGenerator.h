@@ -948,6 +948,8 @@ namespace JSC {
         void pushClassHeadLexicalScope(VariableEnvironment&);
         void popClassHeadLexicalScope(VariableEnvironment&);
 
+        std::optional<Variable> tryResolveVariable(ExpressionNode*);
+
     private:
         static constexpr int CurrentLexicalScopeIndex = -2;
         static constexpr int OutermostLexicalScopeIndex = -1;

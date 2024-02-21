@@ -1629,6 +1629,8 @@ namespace JSC {
         void setNext(CommaNode* next) { m_next = next; }
         CommaNode* next() { return m_next; }
 
+        ExpressionNode* expr() const { return m_expr; }
+
     private:
         bool isCommaNode() const final { return true; }
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = nullptr) final;

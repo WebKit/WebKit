@@ -2487,6 +2487,28 @@ void BytecodeGenerator::createVariable(
     }
 }
 
+std::optional<Variable> BytecodeGenerator::tryResolveVariable(ExpressionNode* expr)
+{
+    if (expr->isResolveNode())
+        return variable(static_cast<ResolveNode*>(expr)->identifier());
+
+    if (expr->isAssignResolveNode())
+        return variable(static_cast<AssignResolveNode*>(expr)->identifier());
+
+    if (expr->isThisNode()) {
+        // After generator.ensureThis (which must be invoked in |base|'s materialization), we can ensure that |this| is in local this-register.
+        return variable(propertyNames().builtinNames().thisPrivateName(), ThisResolutionType::Local);
+    }
+
+    if (expr->isCommaNode()) {
+        CommaNode* node = static_cast<CommaNode*>(expr);
+        for (; node->next(); node = node->next()) { }
+        return tryResolveVariable(node->expr());
+    }
+
+    return std::nullopt;
+}
+
 RegisterID* BytecodeGenerator::emitOverridesHasInstance(RegisterID* dst, RegisterID* constructor, RegisterID* hasInstanceValue)
 {
     OpOverridesHasInstance::emit(this, dst, constructor, hasInstanceValue);
