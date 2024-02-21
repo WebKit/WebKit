@@ -88,6 +88,8 @@ void JSPromiseConstructor::finishCreation(VM& vm, JSPromisePrototype* promisePro
 
     if (Options::usePromiseWithResolversMethod())
         JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().withResolversPublicName(), promiseConstructorWithResolversCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    if (Options::usePromiseTryMethod())
+        JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->tryKeyword, promiseConstructorTryCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 
 void JSPromiseConstructor::addOwnInternalSlots(VM& vm, JSGlobalObject* globalObject)

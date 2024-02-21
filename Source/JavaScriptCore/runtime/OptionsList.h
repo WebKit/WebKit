@@ -589,6 +589,7 @@ bool canUseHandlerIC();
     v(Bool, useImportAttributes, true, Normal, "Enable import attributes.") \
     v(Bool, useIntlDurationFormat, true, Normal, "Expose the Intl DurationFormat.") \
     v(Bool, usePromiseWithResolversMethod, true, Normal, "Expose the Promise.withResolvers() method.") \
+    v(Bool, usePromiseTryMethod, false, Normal, "Expose the Promise.try() method.") \
     v(Bool, useResizableArrayBuffer, true, Normal, "Expose ResizableArrayBuffer feature.") \
     v(Bool, useSharedArrayBuffer, false, Normal, nullptr) \
     v(Bool, useShadowRealm, false, Normal, "Expose the ShadowRealm object.") \

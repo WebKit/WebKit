@@ -368,6 +368,28 @@ function resolve(value)
     return @promiseResolve(this, value);
 }
 
+function try(callback /*, ...args */)
+{
+    "use strict";
+
+    if (!@isObject(this))
+        @throwTypeError("|this| is not an object");
+
+    var args = [];
+    for (var i = 1; i < arguments.length; i++)
+        @putByValDirect(args, i - 1, arguments[i]);
+
+    var promiseCapability = @newPromiseCapability(this);
+    try {
+        var value = callback.@apply(@undefined, args);
+        promiseCapability.resolve.@call(@undefined, value);
+    } catch (error) {
+        promiseCapability.reject.@call(@undefined, error);
+    }
+
+    return promiseCapability.promise;
+}
+
 function withResolvers()
 {
     "use strict";
