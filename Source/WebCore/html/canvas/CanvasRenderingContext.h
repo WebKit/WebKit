@@ -112,6 +112,9 @@ public:
     virtual DestinationColorSpace colorSpace() const;
     virtual OptionSet<ImageBufferOptions> adjustImageBufferOptionsForTesting(OptionSet<ImageBufferOptions> bufferOptions) { return bufferOptions; }
 
+    void setIsInPreparationForDisplayOrFlush(bool flag) { m_isInPreparationForDisplayOrFlush = flag; }
+    bool isInPreparationForDisplayOrFlush() const { return m_isInPreparationForDisplayOrFlush; }
+
 protected:
     explicit CanvasRenderingContext(CanvasBase&);
     bool taintsOrigin(const CanvasPattern*);
@@ -131,6 +134,7 @@ protected:
     void checkOrigin(const URL&);
     void checkOrigin(const CSSStyleImageValue&);
 
+    bool m_isInPreparationForDisplayOrFlush { false };
     bool m_hasActiveInspectorCanvasCallTracer { false };
 
 private:
