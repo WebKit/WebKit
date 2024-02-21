@@ -45,10 +45,10 @@ static void swizzledPresentViewController(UIViewController *, SEL, UIViewControl
     });
 }
 
-@interface FullscreenOverriddenLayoutParametersWebView : TestWKWebView
+@interface FullscreenLayoutParametersWebView : TestWKWebView
 @end
 
-@implementation FullscreenOverriddenLayoutParametersWebView {
+@implementation FullscreenLayoutParametersWebView {
     std::unique_ptr<InstanceMethodSwizzler> _viewControllerPresentationSwizzler;
     bool _doneEnteringFullscreen;
     bool _doneExitingFullscreen;
@@ -115,7 +115,7 @@ TEST(Fullscreen, OverriddenLayoutParameters)
 {
     auto configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
     configuration.preferences.elementFullscreenEnabled = YES;
-    auto webView = adoptNS([[FullscreenOverriddenLayoutParametersWebView alloc] initWithFrame:CGRectMake(0, 0, 390, 800) configuration:configuration]);
+    auto webView = adoptNS([[FullscreenLayoutParametersWebView alloc] initWithFrame:CGRectMake(0, 0, 390, 800) configuration:configuration]);
     [webView synchronouslyLoadTestPageNamed:@"element-fullscreen"];
 
     auto layoutSize = CGSizeMake(390, 745);
@@ -126,6 +126,42 @@ TEST(Fullscreen, OverriddenLayoutParameters)
 
     EXPECT_TRUE(CGSizeEqualToSize([webView _minimumUnobscuredSizeOverride], layoutSize));
     EXPECT_TRUE(CGSizeEqualToSize([webView _maximumUnobscuredSizeOverride], layoutSize));
+}
+
+TEST(Fullscreen, ResizeEventOrder)
+{
+    auto configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    configuration.preferences.elementFullscreenEnabled = YES;
+    auto webView = adoptNS([[FullscreenLayoutParametersWebView alloc] initWithFrame:CGRectMake(0, 0, 390, 800) configuration:configuration]);
+    [webView synchronouslyLoadTestPageNamed:@"element-fullscreen"];
+
+    [webView waitForNextPresentationUpdate];
+
+    bool hasFullscreenChanged = false;
+    bool hasResized = false;
+
+    [webView objectByEvaluatingJavaScript:@(R"script(
+        hasFullscreenChanged = false;
+
+        document.addEventListener('fullscreenchange', () => {
+            hasFullscreenChanged = true;
+            webkit.messageHandlers.testHandler.postMessage('fullscreen-changed');
+        });
+
+        window.addEventListener('resize', () => {
+            if (!hasFullscreenChanged)
+                webkit.messageHandlers.testHandler.postMessage('fail');
+            webkit.messageHandlers.testHandler.postMessage('resize');
+        });)script")];
+
+    [webView performAfterReceivingMessage:@"fullscreen-changed" action:[&] { hasFullscreenChanged = true; }];
+    [webView performAfterReceivingMessage:@"resize" action:[&] { hasResized = true; }];
+    [webView performAfterReceivingMessage:@"fail" action:[] { FAIL(); }];
+
+    [webView enterFullscreen];
+
+    Util::run(&hasFullscreenChanged);
+    Util::run(&hasResized);
 }
 
 } // namespace TestWebKitAPI

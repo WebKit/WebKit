@@ -5022,12 +5022,26 @@ void Document::updateViewportUnitsOnResize()
 
 void Document::setNeedsDOMWindowResizeEvent()
 {
+#if ENABLE(FULLSCREEN_API)
+    if (CheckedPtr fullscreenManager = fullscreenManagerIfExists(); fullscreenManager && fullscreenManager->isAnimatingFullscreen()) {
+        fullscreenManager->addPendingScheduledResize(FullscreenManager::ResizeType::DOMWindow);
+        return;
+    }
+#endif
+
     m_needsDOMWindowResizeEvent = true;
     scheduleRenderingUpdate(RenderingUpdateStep::Resize);
 }
 
 void Document::setNeedsVisualViewportResize()
 {
+#if ENABLE(FULLSCREEN_API)
+    if (CheckedPtr fullscreenManager = fullscreenManagerIfExists(); fullscreenManager && fullscreenManager->isAnimatingFullscreen()) {
+        fullscreenManager->addPendingScheduledResize(FullscreenManager::ResizeType::VisualViewport);
+        return;
+    }
+#endif
+
     m_needsVisualViewportResizeEvent = true;
     scheduleRenderingUpdate(RenderingUpdateStep::Resize);
 }
