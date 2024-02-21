@@ -125,37 +125,8 @@ PKAutomaticReloadPaymentSummaryItem *platformAutomaticReloadSummaryItem(const Ap
 
 #endif // HAVE(PASSKIT_AUTOMATIC_RELOAD_SUMMARY_ITEM)
 
-#if HAVE(PASSKIT_DISBURSEMENTS)
-
-PKDisbursementSummaryItem *platformDisbursementSummaryItem(const ApplePayLineItem& lineItem)
-{
-    ASSERT(lineItem.disbursementLineItemType == ApplePayLineItem::DisbursementLineItemType::Disbursement);
-    PKDisbursementSummaryItem *summaryItem = [PAL::getPKDisbursementSummaryItemClass() summaryItemWithLabel:lineItem.label amount:toDecimalNumber(lineItem.amount)];
-    return summaryItem;
-}
-
-PKInstantFundsOutFeeSummaryItem *platformInstantFundsOutFeeSummaryItem(const ApplePayLineItem& lineItem)
-{
-    ASSERT(lineItem.disbursementLineItemType == ApplePayLineItem::DisbursementLineItemType::InstantFundsOutFee);
-    PKInstantFundsOutFeeSummaryItem *summaryItem = [PAL::getPKInstantFundsOutFeeSummaryItemClass() summaryItemWithLabel:lineItem.label amount:toDecimalNumber(lineItem.amount)];
-    return summaryItem;
-}
-
-#endif // HAVE(PASSKIT_DISBURSEMENTS)
-
 PKPaymentSummaryItem *platformSummaryItem(const ApplePayLineItem& lineItem)
 {
-#if HAVE(PASSKIT_DISBURSEMENTS)
-    if (lineItem.disbursementLineItemType.has_value()) {
-        switch (lineItem.disbursementLineItemType.value()) {
-        case ApplePayLineItem::DisbursementLineItemType::Disbursement:
-            return platformDisbursementSummaryItem(lineItem);
-        case ApplePayLineItem::DisbursementLineItemType::InstantFundsOutFee:
-            return platformInstantFundsOutFeeSummaryItem(lineItem);
-        }
-    }
-#endif // HAVE(PASSKIT_DISBURSEMENTS)
-
     switch (lineItem.paymentTiming) {
     case ApplePayPaymentTiming::Immediate:
         break;
@@ -178,19 +149,6 @@ PKPaymentSummaryItem *platformSummaryItem(const ApplePayLineItem& lineItem)
 
     return [PAL::getPKPaymentSummaryItemClass() summaryItemWithLabel:lineItem.label amount:toDecimalNumber(lineItem.amount) type:toPKPaymentSummaryItemType(lineItem.type)];
 }
-
-#if HAVE(PASSKIT_DISBURSEMENTS)
-// Disbursement Requests have a unique quirk: the total doesn't actually matter, we need to disregard any totals (this is a separate method to avoid confusion rather than making the total in `platformSummaryItems` optional
-NSArray *platformDisbursementSummaryItems(const Vector<ApplePayLineItem>& lineItems)
-{
-    NSMutableArray *paymentSummaryItems = [NSMutableArray arrayWithCapacity:lineItems.size()];
-    for (auto& lineItem : lineItems) {
-        if (PKPaymentSummaryItem *summaryItem = platformSummaryItem(lineItem))
-            [paymentSummaryItems addObject:summaryItem];
-    }
-    return adoptNS([paymentSummaryItems copy]).autorelease();
-}
-#endif // HAVE(PASSKIT_DISBURSEMENTS)
 
 NSArray *platformSummaryItems(const ApplePayLineItem& total, const Vector<ApplePayLineItem>& lineItems)
 {

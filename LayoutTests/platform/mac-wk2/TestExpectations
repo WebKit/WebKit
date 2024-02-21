@@ -67,7 +67,6 @@ fast/visual-viewport/rubberbanding-viewport-rects-header-footer.html  [ Pass ]
 
 webkit.org/b/229423 [ BigSur Debug arm64 ] http/tests/paymentrequest/payment-response-reference-cycle-leak.https.html [ Pass Crash ]
 
-http/tests/paymentrequest/ApplePayModifier-disbursementPaymentRequest.https.html [ Skip ]
 http/tests/paymentrequest [ Pass ]
 http/tests/inspector/paymentrequest [ Pass ]
 imported/w3c/web-platform-tests/payment-request [ Pass ]

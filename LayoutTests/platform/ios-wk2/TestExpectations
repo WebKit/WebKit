@@ -84,7 +84,6 @@ accessibility/ios-simulator/image-overlay-elements.html [ Pass ]
 http/tests/ssl/applepay [ Pass ]
 webkit.org/b/212975 http/tests/ssl/applepay/PaymentRequest.https.html [ Pass Timeout ]
 
-http/tests/paymentrequest/ApplePayModifier-disbursementPaymentRequest.https.html [ Skip ]
 http/tests/paymentrequest [ Pass ]
 imported/w3c/web-platform-tests/payment-request [ Pass ]
 webkit.org/b/175611 imported/w3c/web-platform-tests/payment-request/allowpaymentrequest/allowpaymentrequest-attribute-cross-origin-bc-containers.https.html [ Skip ]

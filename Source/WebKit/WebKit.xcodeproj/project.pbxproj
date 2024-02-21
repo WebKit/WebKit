@@ -1071,7 +1071,6 @@
 		41F898F028ED69470070549C /* LibWebRTCCodecs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4172198A23B6128200AE5686 /* LibWebRTCCodecs.cpp */; };
 		41FAF5F51E3C0649001AE678 /* WebRTCResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FAF5F41E3C0641001AE678 /* WebRTCResolver.h */; };
 		41FAF5F81E3C1021001AE678 /* LibWebRTCResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FAF5F61E3C0B47001AE678 /* LibWebRTCResolver.h */; };
-		42057BEC2AD435E0001B963B /* DisbursementPaymentRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 42057BE92AD433C6001B963B /* DisbursementPaymentRequest.h */; };
 		441379612964F10A003C34C6 /* CacheStoragePolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = 4413795F2964F0C2003C34C6 /* CacheStoragePolicy.h */; };
 		442E7BEB27B4586900C69AC1 /* RevealItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 442E7BEA27B4581300C69AC1 /* RevealItem.h */; };
 		4459984222833E8700E61373 /* SyntheticEditingCommandType.h in Headers */ = {isa = PBXBuildFile; fileRef = 4459984122833E6000E61373 /* SyntheticEditingCommandType.h */; };
@@ -5245,8 +5244,6 @@
 		41FFD2DA275A560B00501BBF /* ServiceWorkerDownloadTask.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerDownloadTask.cpp; sourceTree = "<group>"; };
 		41FFD2DB275A560C00501BBF /* ServiceWorkerDownloadTask.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerDownloadTask.h; sourceTree = "<group>"; };
 		41FFD2DC275A6A9400501BBF /* ServiceWorkerDownloadTask.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ServiceWorkerDownloadTask.messages.in; sourceTree = "<group>"; };
-		42057BE92AD433C6001B963B /* DisbursementPaymentRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DisbursementPaymentRequest.h; sourceTree = "<group>"; };
-		4253D3732AD4394700EE168C /* DisbursementPaymentRequestCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DisbursementPaymentRequestCocoa.mm; sourceTree = "<group>"; };
 		44122266296A89820057E1A5 /* SameDocumentNavigationType.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = SameDocumentNavigationType.serialization.in; sourceTree = "<group>"; };
 		4413795F2964F0C2003C34C6 /* CacheStoragePolicy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CacheStoragePolicy.h; sourceTree = "<group>"; };
 		441379602964F0C2003C34C6 /* CacheStoragePolicy.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = CacheStoragePolicy.serialization.in; sourceTree = "<group>"; };
@@ -9280,7 +9277,6 @@
 				5C53DCDF24465BF900A93124 /* ApplePayPaymentSetupFeaturesWebKit.h */,
 				950FECF0285026EA0002DE4E /* AutomaticReloadPaymentRequest.h */,
 				74C2F54029AC9C44006C5F97 /* DeferredPaymentRequest.h */,
-				42057BE92AD433C6001B963B /* DisbursementPaymentRequest.h */,
 				86AA525129366FFC0065399E /* PaymentSetupConfiguration.serialization.in */,
 				5C53DCDE24465BF900A93124 /* PaymentSetupConfigurationWebKit.h */,
 				950FECF32850271F0002DE4E /* PaymentTokenContext.h */,
@@ -9297,7 +9293,6 @@
 			children = (
 				950FECF8285027440002DE4E /* AutomaticReloadPaymentRequestCocoa.mm */,
 				74C2F54229AC9CBF006C5F97 /* DeferredPaymentRequestCocoa.mm */,
-				4253D3732AD4394700EE168C /* DisbursementPaymentRequestCocoa.mm */,
 				5C53DCE024465BF900A93124 /* PaymentSetupConfigurationCocoa.mm */,
 				950FECF6285027430002DE4E /* PaymentTokenContextCocoa.mm */,
 				950FECF7285027430002DE4E /* RecurringPaymentRequestCocoa.mm */,
@@ -16029,7 +16024,6 @@
 				2D0C56FD229F1DEA00BD33E7 /* DeviceManagementSoftLink.h in Headers */,
 				2DAADA8F2298C21000E36B0C /* DeviceManagementSPI.h in Headers */,
 				83891B6C1A68C30B0030F386 /* DiagnosticLoggingClient.h in Headers */,
-				42057BEC2AD435E0001B963B /* DisbursementPaymentRequest.h in Headers */,
 				7AFA6F6D2A9F58440055322A /* DisplayLink.h in Headers */,
 				0F189CAC24749F2F00E58D81 /* DisplayLinkObserverID.h in Headers */,
 				7AFA6F6E2A9F584A0055322A /* DisplayLinkProcessProxyClient.h in Headers */,
