@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ViewTransition.h"
 
+#include "CSSTransformListValue.h"
 #include "CheckVisibilityOptions.h"
 #include "ComputedStyleExtractor.h"
 #include "Document.h"
@@ -409,7 +410,6 @@ void ViewTransition::clearViewTransition()
 
 Ref<MutableStyleProperties> ViewTransition::copyElementBaseProperties(Element& element)
 {
-    // FIXME: Transform - ComputedStyleExtractor.cpp::matrixTransformValue
     ComputedStyleExtractor styleExtractor(&element);
 
     CSSPropertyID transitionProperties[] = {
@@ -425,7 +425,28 @@ Ref<MutableStyleProperties> ViewTransition::copyElementBaseProperties(Element& e
         CSSPropertyHeight,
     };
 
-    return styleExtractor.copyProperties(transitionProperties);
+    Ref<MutableStyleProperties> props = styleExtractor.copyProperties(transitionProperties);
+
+    TransformationMatrix transform;
+    auto* renderer = element.renderer();
+    RenderElement* container = nullptr;
+    while (renderer && !renderer->isRenderView()) {
+        container = renderer->container();
+        if (!container)
+            break;
+        LayoutSize containerOffset = renderer->offsetFromContainer(*container, LayoutPoint());
+        TransformationMatrix localTransform;
+        renderer->getTransformFromContainer(nullptr, containerOffset, localTransform);
+        transform.multiply(localTransform);
+        renderer = container;
+    }
+
+    if (element.renderer()) {
+        Ref<CSSValue> transformListValue = CSSTransformListValue::create(ComputedStyleExtractor::matrixTransformValue(transform, element.renderer()->style()));
+        props->setProperty(CSSPropertyTransform, WTFMove(transformListValue));
+    }
+
+    return props;
 }
 
 // https://drafts.csswg.org/css-view-transitions-1/#update-pseudo-element-styles
