@@ -35,7 +35,7 @@
 
 namespace WebKit {
 
-static void platformInvalidate(BEProcessCapabilityGrant *platformGrant)
+static void platformInvalidate(id<BEProcessCapabilityGrant> platformGrant)
 {
     if (![platformGrant isValid])
         return;
