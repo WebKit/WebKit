@@ -2414,7 +2414,7 @@ void LocalDOMWindow::removeAllEventListeners()
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
-    if (RefPtr document = this->document())
+    if (RefPtrAllowingPartiallyDestroyed<Document> document = this->document())
         document->didRemoveEventTargetNode(*document);
 #endif
 
