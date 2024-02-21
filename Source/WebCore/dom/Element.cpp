@@ -4141,8 +4141,7 @@ const RenderStyle& Element::resolvePseudoElementStyle(const Style::PseudoElement
         style->inheritFrom(*parentStyle);
         // FIXME: RenderStyle should switch to use PseudoElementIdentifier.
         style->setPseudoElementType(pseudoElementIdentifier.pseudoId);
-        if (!pseudoElementIdentifier.nameArgument.isNull())
-            style->setPseudoElementNameArgument(pseudoElementIdentifier.nameArgument);
+        style->setPseudoElementNameArgument(pseudoElementIdentifier.nameArgument);
     }
 
     auto* computedStyle = style.get();

@@ -471,7 +471,8 @@ inline void RenderStyle::setPseudoElementNameArgument(const AtomString& identifi
         || pseudoElementType() == PseudoId::ViewTransitionImagePair
         || pseudoElementType() == PseudoId::ViewTransitionNew
         || pseudoElementType() == PseudoId::ViewTransitionOld
-        || pseudoElementType() == PseudoId::Highlight);
+        || pseudoElementType() == PseudoId::Highlight
+        || identifier.isNull());
     SET_NESTED(m_nonInheritedData, rareData, pseudoElementNameArgument, identifier);
 }
 
