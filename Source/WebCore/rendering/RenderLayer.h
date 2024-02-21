@@ -837,8 +837,6 @@ public:
     void establishesTopLayerWillChange();
     void establishesTopLayerDidChange();
 
-    RenderLayer* enclosingSVGRootLayer() const;
-
     bool isBitmapOnly() const;
 
     enum ViewportConstrainedNotCompositedReason {
