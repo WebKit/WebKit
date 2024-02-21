@@ -123,11 +123,10 @@ WI.ScopeBar = class ScopeBar extends WI.NavigationItem
                     this._element.appendChild(item.element);
                 else
                     nonExclusiveItems.push(item);
-
-                item.addEventListener(WI.ScopeBarItem.Event.SelectionChanged, this._itemSelectionDidChange, this);
             }
 
             this._multipleItem = new WI.MultipleScopeBarItem(nonExclusiveItems);
+            this._multipleItem.addEventListener(WI.ScopeBarItem.Event.SelectionChanged, this._multipleItemSelectionDidChange, this);
             this._element.appendChild(this._multipleItem.element);
         } else {
             for (var item of this._items) {
@@ -146,8 +145,18 @@ WI.ScopeBar = class ScopeBar extends WI.NavigationItem
         }
     }
 
+    _multipleItemSelectionDidChange(event)
+    {
+        this.dispatchEventToListeners(WI.ScopeBar.Event.SelectionChanged);
+    }
+
     _itemSelectionDidChange(event)
     {
+        if (this._ignoreItemSelectedEvent)
+            return;
+
+        this._ignoreItemSelectedEvent = true;
+
         var sender = event.target;
         var item;
 
@@ -159,7 +168,7 @@ WI.ScopeBar = class ScopeBar extends WI.NavigationItem
                     item.selected = false;
             }
         } else {
-            let replacesCurrentSelection = this._shouldGroupNonExclusiveItems || !event.data.extendSelection;
+            let replacesCurrentSelection = !event.data.extendSelection;
             for (var i = 0; i < this._items.length; ++i) {
                 item = this._items[i];
                 if (item.exclusive && item !== sender && sender.selected)
@@ -177,6 +186,8 @@ WI.ScopeBar = class ScopeBar extends WI.NavigationItem
         }
 
         this.dispatchEventToListeners(WI.ScopeBar.Event.SelectionChanged);
+
+        this._ignoreItemSelectedEvent = false;
     }
 
     _handleKeyDown(event)
