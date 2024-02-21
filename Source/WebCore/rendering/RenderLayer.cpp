@@ -2844,7 +2844,12 @@ void RenderLayer::paintSVGResourceLayer(GraphicsContext& context, const AffineTr
 
     auto localPaintDirtyRect = LayoutRect::infiniteRect();
 
-    auto* rootPaintingLayer = enclosingSVGRootLayer();
+    auto* rootPaintingLayer = [&] () {
+        auto* curr = parent();
+        while (curr && !(curr->renderer().isAnonymous() && is<RenderSVGViewportContainer>(curr->renderer())))
+            curr = curr->parent();
+        return curr;
+    }();
     ASSERT(rootPaintingLayer);
 
     LayerPaintingInfo paintingInfo(rootPaintingLayer, localPaintDirtyRect, PaintBehavior::Normal, LayoutSize());
@@ -4046,14 +4051,6 @@ RenderLayer* RenderLayer::enclosingFragmentedFlowAncestor() const
             return nullptr;
         }
     }
-    return curr;
-}
-
-RenderLayer* RenderLayer::enclosingSVGRootLayer() const
-{
-    auto* curr = parent();
-    while (curr && !curr->renderer().isRenderSVGRoot())
-        curr = curr->parent();
     return curr;
 }
 

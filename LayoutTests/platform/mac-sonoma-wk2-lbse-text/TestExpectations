@@ -360,7 +360,6 @@ svg/W3C-SVG-1.1/pservers-grad-06-b.svg                                      [ Fa
 svg/custom/js-late-pattern-creation.svg                                     [ Failure ]
 svg/custom/nested-pattern-boundingBoxModeContent.svg                        [ Failure ]
 svg/custom/pattern-content-inheritance-cycle.svg                            [ ImageOnlyFailure ]
-svg/custom/pattern-userSpaceOnUse-userToBaseTransform.xhtml                 [ ImageOnlyFailure ]
 svg/custom/stroked-pattern.svg                                              [ Failure ]
 svg/transforms/text-with-pattern-inside-transformed-html.xhtml              [ Failure ]
 svg/transforms/text-with-pattern-with-svg-transform.svg                     [ Failure ]
