@@ -536,6 +536,11 @@ class SVNTest(SCMTest):
             return changelog_entry.replace('DATE_HERE', date.today().isoformat())
 
     def setUp(self):
+        try:
+            subprocess.check_output(["which", "svn"])
+        except subprocess.CalledProcessError:
+            self.skipTest("svn not installed")
+
         SVNTestRepository.setup(self)
         os.chdir(self.svn_checkout_path)
         self.scm = detect_scm_system(self.svn_checkout_path)
@@ -910,6 +915,30 @@ class GitTest(SCMTest):
         self.assertNotRegex(patch, b'third')
         self.assertNotRegex(patch, b'unicorn')
 
+    def test_create_patch_merge_base_without_commit_message(self):
+        write_into_file_at_path('foo_file', 'bar')
+        run_command(['git', 'add', 'foo_file'])
+        scm = self.tracking_scm
+        scm.commit_locally_with_message('a new commit')
+
+        patch = scm.create_patch(commit_message=False)
+        lines = patch.splitlines()
+        self.assertNotIn(b'+foo', lines)
+        self.assertIn(b'-foo', lines)
+        self.assertIn(b'+bar', lines)
+
+    def test_create_patch_merge_base_with_commit_message(self):
+        write_into_file_at_path('foo_file', 'bar')
+        run_command(['git', 'add', 'foo_file'])
+        scm = self.tracking_scm
+        scm.commit_locally_with_message('a new commit')
+
+        patch = scm.create_patch(commit_message=True)
+        lines = patch.splitlines()
+        self.assertNotIn(b'+foo', lines)
+        self.assertIn(b'-foo', lines)
+        self.assertIn(b'+bar', lines)
+
     def test_orderfile(self):
         os.mkdir("Tools")
         os.mkdir("Source")
@@ -1010,6 +1039,11 @@ class GitSVNTest(SCMTest):
 
     def setUp(self):
         self.original_dir = os.getcwd()
+
+        try:
+            subprocess.check_output(["which", "svn"])
+        except subprocess.CalledProcessError:
+            self.skipTest("svn not installed")
 
         SVNTestRepository.setup(self)
         self._setup_git_checkout()
