@@ -78,8 +78,8 @@ public :
             auto needsLayout = [&] {
                 if (renderer.needsLayout())
                     return true;
-                if (is<RenderBlockFlow>(renderer) && downcast<RenderBlockFlow>(renderer).modernLineLayout())
-                    return downcast<RenderBlockFlow>(renderer).modernLineLayout()->hasDetachedContent();
+                if (auto* renderBlockFlow = dynamicDowncast<RenderBlockFlow>(renderer); renderBlockFlow && renderBlockFlow->modernLineLayout())
+                    return renderBlockFlow->modernLineLayout()->hasDetachedContent();
                 return false;
             };
 
