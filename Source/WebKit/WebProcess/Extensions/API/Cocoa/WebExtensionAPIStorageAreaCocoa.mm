@@ -174,8 +174,8 @@ void WebExtensionAPIStorageArea::set(WebPage& page, NSDictionary *items, Ref<Web
         return;
     }
 
-    if (anyItemsExceedQuota(serializedData, webExtensionStorageAreaSyncQuotaBytesPerItem, &keyWithError)) {
-        *outExceptionString = toErrorString(nil, [NSString stringWithFormat:@"items[`%@`]", keyWithError], @"exceeded maximum size for a single item");
+    if (m_type == WebExtensionDataType::Sync && anyItemsExceedQuota(serializedData, webExtensionStorageAreaSyncQuotaBytesPerItem, &keyWithError)) {
+        *outExceptionString = toErrorString(nil, [NSString stringWithFormat:@"items[`%@`]", keyWithError], @"it exceeded maximum size for a single item");
         return;
     }
 
