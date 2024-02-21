@@ -31,8 +31,10 @@
 namespace WGSL {
 
 class CallGraph;
+class ShaderModule;
+
 struct PipelineLayout;
 
-std::optional<Error> rewriteGlobalVariables(CallGraph&, const HashMap<String, std::optional<PipelineLayout>>&);
+std::optional<Error> rewriteGlobalVariables(CallGraph&, const HashMap<String, std::optional<PipelineLayout>>&, const ShaderModule&);
 
 } // namespace WGSL

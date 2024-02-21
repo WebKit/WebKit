@@ -104,7 +104,7 @@ inline std::variant<PrepareResult, Error> prepareImpl(ShaderModule& shaderModule
         RUN_PASS(rewritePointers, callGraph);
         RUN_PASS(insertBoundsChecks, shaderModule);
         RUN_PASS(rewriteEntryPoints, callGraph);
-        CHECK_PASS(rewriteGlobalVariables, callGraph, pipelineLayouts);
+        CHECK_PASS(rewriteGlobalVariables, callGraph, pipelineLayouts, shaderModule);
 
         dumpASTAtEndIfNeeded(shaderModule);
 

@@ -43,10 +43,11 @@ constexpr bool shouldLogGlobalVariableRewriting = false;
 
 class RewriteGlobalVariables : public AST::Visitor {
 public:
-    RewriteGlobalVariables(CallGraph& callGraph, const HashMap<String, std::optional<PipelineLayout>>& pipelineLayouts)
+    RewriteGlobalVariables(CallGraph& callGraph, const HashMap<String, std::optional<PipelineLayout>>& pipelineLayouts, const Configuration& configuration)
         : AST::Visitor()
         , m_callGraph(callGraph)
         , m_pipelineLayouts(pipelineLayouts)
+        , m_configuration(configuration)
     {
     }
 
@@ -95,7 +96,7 @@ private:
 
     void def(const AST::Identifier&, AST::Variable*);
 
-    void collectGlobals();
+    std::optional<Error> collectGlobals();
     std::optional<Error> visitEntryPoint(const CallGraph::EntryPoint&);
     void visitCallee(const CallGraph::Callee&);
     Result<UsedGlobals> determineUsedGlobals();
@@ -158,19 +159,21 @@ private:
     unsigned m_currentStatementIndex { 0 };
     Vector<Insertion> m_pendingInsertions;
     HashMap<const Types::Struct*, const Type*> m_packedStructTypes;
-    ShaderStage m_stage;
+    ShaderStage m_stage { ShaderStage::Vertex };
     const HashMap<String, std::optional<PipelineLayout>>& m_pipelineLayouts;
     HashMap<AST::Variable*, AST::Variable*> m_bufferLengthMap;
     AST::Expression* m_bufferLengthType { nullptr };
     AST::Expression* m_bufferLengthReferenceType { nullptr };
     HashMap<std::pair<unsigned, unsigned>, unsigned> m_globalsUsingDynamicOffset;
+    const Configuration& m_configuration;
 };
 
 std::optional<Error> RewriteGlobalVariables::run()
 {
     dataLogLnIf(shouldLogGlobalVariableRewriting, "BEGIN: GlobalVariableRewriter");
 
-    collectGlobals();
+    if (auto error = collectGlobals())
+        return error;
     for (auto& entryPoint : m_callGraph.entrypoints()) {
         auto maybeError = visitEntryPoint(entryPoint);
         if (maybeError.has_value())
@@ -551,7 +554,19 @@ Packing RewriteGlobalVariables::packingForType(const Type* type)
     return type->packing();
 }
 
-void RewriteGlobalVariables::collectGlobals()
+static unsigned buffersForStage(const Configuration& configuration, ShaderStage stage)
+{
+    switch (stage) {
+    case ShaderStage::Compute:
+        return configuration.maxBuffersForComputeStage;
+    case ShaderStage::Vertex:
+        return configuration.maxBuffersPlusVertexBuffersForVertexStage;
+    case ShaderStage::Fragment:
+        return configuration.maxBuffersForFragmentStage;
+    }
+}
+
+std::optional<Error> RewriteGlobalVariables::collectGlobals()
 {
     Vector<std::tuple<AST::Variable*, unsigned>> bufferLengths;
     // we can't use a range-based for loop here since we might create new structs
@@ -565,6 +580,11 @@ void RewriteGlobalVariables::collectGlobals()
         std::optional<Global::Resource> resource;
         if (globalVar.group().has_value()) {
             RELEASE_ASSERT(globalVar.binding().has_value());
+            unsigned bufferIndex = *globalVar.group();
+            auto buffersCountForStage = buffersForStage(m_configuration, m_stage);
+            if (bufferIndex >= buffersCountForStage)
+                return Error(makeString("global has buffer index ", String::number(bufferIndex), " which exceeds the max allowed buffer index ", String::number(buffersCountForStage), " for this stage"), SourceSpan::empty());
+
             resource = { *globalVar.group(), *globalVar.binding() };
         }
 
@@ -616,6 +636,8 @@ void RewriteGlobalVariables::collectGlobals()
             it->value.append({ binding, name });
         }
     }
+
+    return std::nullopt;
 }
 
 AST::Expression& RewriteGlobalVariables::bufferLengthType()
@@ -2043,9 +2065,9 @@ AST::Identifier RewriteGlobalVariables::dynamicOffsetVariableName()
     return AST::Identifier::make(makeString("__DynamicOffsets"));
 }
 
-std::optional<Error> rewriteGlobalVariables(CallGraph& callGraph, const HashMap<String, std::optional<PipelineLayout>>& pipelineLayouts)
+std::optional<Error> rewriteGlobalVariables(CallGraph& callGraph, const HashMap<String, std::optional<PipelineLayout>>& pipelineLayouts, const ShaderModule& shaderModule)
 {
-    return RewriteGlobalVariables(callGraph, pipelineLayouts).run();
+    return RewriteGlobalVariables(callGraph, pipelineLayouts, shaderModule.configuration()).run();
 }
 
 } // namespace WGSL
