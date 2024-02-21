@@ -186,13 +186,16 @@
     (home-subpath "/Library/Caches")
     (home-subpath "/Library/Containers")
     (home-subpath "/Library/WebKit")
-    (subpath (param "DARWIN_USER_TEMP_DIR"))
     (subpath "/Library/Frameworks")
     (subpath "/Library/KerberosPlugins")
     (subpath "/System/Library/Frameworks")
     (subpath "/System/Library/KerberosPlugins")
     (subpath "/System/Library/PrivateFrameworks")
     (subpath "/usr/lib"))
+
+(if (positive? (string-length (param "DARWIN_USER_TEMP_DIR")))
+    (allow file-map-executable
+        (subpath (param "DARWIN_USER_TEMP_DIR"))))
 
 (allow file-read-metadata
     (literal "/etc")
@@ -381,9 +384,11 @@
 (read-only-and-issue-extensions (extension "com.apple.app-sandbox.read"))
 (read-write-and-issue-extensions (extension "com.apple.app-sandbox.read-write"))
 
-(allow file-read* file-write* (subpath (param "DARWIN_USER_CACHE_DIR")))
+(if (positive? (string-length (param "DARWIN_USER_CACHE_DIR")))
+    (allow file-read* file-write* (subpath (param "DARWIN_USER_CACHE_DIR"))))
 
-(allow file-read* file-write* (subpath (param "DARWIN_USER_TEMP_DIR")))
+(if (positive? (string-length (param "DARWIN_USER_TEMP_DIR")))
+    (allow file-read* file-write* (subpath (param "DARWIN_USER_TEMP_DIR"))))
 
 ;; IOKit user clients
 (allow IOKIT_OPEN_USER_CLIENT
