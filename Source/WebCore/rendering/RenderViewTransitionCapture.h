@@ -34,13 +34,14 @@ class RenderViewTransitionCapture : public RenderReplaced {
 public:
     RenderViewTransitionCapture(Type, Document&, RenderStyle&&);
 
-    // FIXME: This should be setting the actual image, as well as the instrinsic
-    // size
-    void setImage(const LayoutSize&);
+    void setImage(RefPtr<ImageBuffer>, const LayoutSize&);
+
+    void paintReplaced(PaintInfo&, const LayoutPoint& paintOffset) override;
 
 private:
     ASCIILiteral renderName() const override { return style().pseudoElementType() == PseudoId::ViewTransitionNew ? "RenderViewTransitionNew"_s : "RenderViewTransitionOld"_s; }
 
+    RefPtr<ImageBuffer> m_oldImage;
 };
 
 } // namespace WebCore

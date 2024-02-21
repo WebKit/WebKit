@@ -3876,6 +3876,9 @@ imported/w3c/web-platform-tests/css/filter-effects/effect-reference-rename-002.h
 imported/w3c/web-platform-tests/css/filter-effects/svg-mutation-function-to-url.html [ ImageOnlyFailure ]
 webkit.org/b/180134 webanimations/opacity-animation-no-longer-composited-upon-completion.html [ Failure ]
 
+imported/w3c/web-platform-tests/css/css-view-transitions/backdrop-filter-captured.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/element-stops-grouping-after-animation.html [ ImageOnlyFailure ]
+
 # End: Common failures between GTK and WPE.
 
 #////////////////////////////////////////////////////////////////////////////////////////

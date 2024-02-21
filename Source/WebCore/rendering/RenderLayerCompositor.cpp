@@ -73,6 +73,7 @@
 #include "TiledBacking.h"
 #include "TransformState.h"
 #include "TranslateTransformOperation.h"
+#include "ViewTransition.h"
 #include "WillChangeData.h"
 #include <wtf/HexNumber.h>
 #include <wtf/MemoryPressureHandler.h>
@@ -1399,6 +1400,28 @@ void RenderLayerCompositor::traverseUnchangedSubtree(RenderLayer* ancestorLayer,
     ASSERT(!layer.needsCompositingRequirementsTraversal());
 }
 
+void RenderLayerCompositor::collectViewTransitionNewContentLayers(RenderLayer& layer, Vector<Ref<GraphicsLayer>>& childList)
+{
+    if (layer.renderer().style().pseudoElementType() != PseudoId::ViewTransitionNew)
+        return;
+
+    RefPtr activeViewTransition = layer.renderer().document().activeViewTransition();
+    if (!activeViewTransition)
+        return;
+
+    auto* capturedElement = activeViewTransition->namedElements().find(layer.renderer().style().pseudoElementNameArgument());
+    if (!capturedElement || !capturedElement->newElement)
+        return;
+
+    auto* capturedRenderer = capturedElement->newElement->renderer();
+    if (!capturedRenderer || !capturedRenderer->hasLayer())
+        return;
+
+    auto& modelObject = downcast<RenderLayerModelObject>(*capturedRenderer);
+    if (RenderLayerBacking* backing = modelObject.layer()->backing())
+        childList.append(*backing->childForSuperlayers());
+}
+
 void RenderLayerCompositor::updateBackingAndHierarchy(RenderLayer& layer, Vector<Ref<GraphicsLayer>>& childLayersOfEnclosingLayer, UpdateBackingTraversalState& traversalState, ScrollingTreeState& scrollingTreeState, OptionSet<UpdateLevel> updateLevel)
 {
     layer.updateDescendantDependentFlags();
@@ -1520,6 +1543,8 @@ void RenderLayerCompositor::updateBackingAndHierarchy(RenderLayer& layer, Vector
             if (auto* renderWidget = dynamicDowncast<RenderWidget>(layer.renderer()))
                 attachedWidgetContents = attachWidgetContentLayers(*renderWidget);
 
+            collectViewTransitionNewContentLayers(layer, childList);
+
             if (!attachedWidgetContents) {
                 // If the layer has a clipping layer the overflow controls layers will be siblings of the clipping layer.
                 // Otherwise, the overflow control layers are normal children.
@@ -1533,7 +1558,8 @@ void RenderLayerCompositor::updateBackingAndHierarchy(RenderLayer& layer, Vector
             }
         }
 
-        childLayersOfEnclosingLayer.append(*layerBacking->childForSuperlayers());
+        if (!layer.renderer().hasViewTransition())
+            childLayersOfEnclosingLayer.append(*layerBacking->childForSuperlayers());
 
         if (layerBacking->hasAncestorClippingLayers() && layerBacking->ancestorClippingStack()->hasAnyScrollingLayers())
             traversalState.layersClippedByScrollers->append(&layer);
@@ -2864,6 +2890,7 @@ bool RenderLayerCompositor::requiresCompositingLayer(const RenderLayer& layer, R
         || requiresCompositingForFilters(renderer)
         || requiresCompositingForWillChange(renderer)
         || requiresCompositingForBackfaceVisibility(renderer)
+        || requiresCompositingForViewTransition(renderer)
         || requiresCompositingForVideo(renderer)
         || requiresCompositingForModel(renderer)
         || requiresCompositingForFrame(renderer, queryData)
@@ -2938,6 +2965,7 @@ bool RenderLayerCompositor::requiresOwnBackingStore(const RenderLayer& layer, co
         || requiresCompositingForFilters(renderer)
         || requiresCompositingForWillChange(renderer)
         || requiresCompositingForBackfaceVisibility(renderer)
+        || requiresCompositingForViewTransition(renderer)
         || requiresCompositingForVideo(renderer)
         || requiresCompositingForModel(renderer)
         || requiresCompositingForFrame(renderer, queryData)
@@ -3453,6 +3481,11 @@ bool RenderLayerCompositor::requiresCompositingForBackfaceVisibility(RenderLayer
         return true;
 
     return false;
+}
+
+bool RenderLayerCompositor::requiresCompositingForViewTransition(RenderLayerModelObject& renderer) const
+{
+    return renderer.hasViewTransition() || renderer.isViewTransitionPseudo();
 }
 
 bool RenderLayerCompositor::requiresCompositingForVideo(RenderLayerModelObject& renderer) const
