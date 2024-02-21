@@ -634,7 +634,7 @@ bool LocalFrame::requestDOMPasteAccess(DOMPasteAccessCategory pasteAccessCategor
         if (!client)
             return false;
 
-        auto response = client->requestDOMPasteAccess(pasteAccessCategory, m_doc->originIdentifierForPasteboard());
+        auto response = client->requestDOMPasteAccess(pasteAccessCategory, frameID(), m_doc->originIdentifierForPasteboard());
         gestureToken->didRequestDOMPasteAccess(response);
         switch (response) {
         case DOMPasteAccessResponse::GrantedForCommand:

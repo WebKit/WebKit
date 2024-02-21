@@ -99,7 +99,7 @@ private:
     void registerRedoStep(WebCore::UndoStep&) final;
     void clearUndoRedoOperations() final;
 
-    WebCore::DOMPasteAccessResponse requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, const String& originIdentifier) final;
+    WebCore::DOMPasteAccessResponse requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, WebCore::FrameIdentifier, const String& originIdentifier) final;
 
     bool canCopyCut(WebCore::LocalFrame*, bool defaultValue) const final;
     bool canPaste(WebCore::LocalFrame*, bool defaultValue) const final;

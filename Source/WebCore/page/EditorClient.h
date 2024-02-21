@@ -27,6 +27,7 @@
 #pragma once
 
 #include "EditorInsertAction.h"
+#include "FrameIdentifier.h"
 #include "SerializedAttachmentData.h"
 #include "TextAffinity.h"
 #include "TextChecking.h"
@@ -110,7 +111,7 @@ public:
     virtual void requestCandidatesForSelection(const VisibleSelection&) { }
     virtual void handleAcceptedCandidateWithSoftSpaces(TextCheckingResult) { }
 
-    virtual DOMPasteAccessResponse requestDOMPasteAccess(DOMPasteAccessCategory, const String& originIdentifier) = 0;
+    virtual DOMPasteAccessResponse requestDOMPasteAccess(DOMPasteAccessCategory, FrameIdentifier, const String& originIdentifier) = 0;
 
     // Notify an input method that a composition was voluntarily discarded by WebCore, so that it could clean up too.
     // This function is not called when a composition is closed per a request from an input method.

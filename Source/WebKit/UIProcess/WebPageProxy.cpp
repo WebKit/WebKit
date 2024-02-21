@@ -8192,9 +8192,32 @@ void WebPageProxy::setIsNeverRichlyEditableForTouchBar(bool isNeverRichlyEditabl
 
 #endif
 
-void WebPageProxy::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory pasteAccessCategory, const WebCore::IntRect& elementRect, const String& originIdentifier, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&& completionHandler)
+void WebPageProxy::requestDOMPasteAccess(DOMPasteAccessCategory pasteAccessCategory, FrameIdentifier frameID, const IntRect& elementRect, const String& originIdentifier, CompletionHandler<void(DOMPasteAccessResponse)>&& completionHandler)
 {
     MESSAGE_CHECK_COMPLETION(m_process, !originIdentifier.isEmpty(), completionHandler(DOMPasteAccessResponse::DeniedForGesture));
+
+    if (auto origin = SecurityOrigin::createFromString(originIdentifier); !origin->isOpaque()) {
+        RefPtr frame = WebFrameProxy::webFrame(frameID);
+        MESSAGE_CHECK_COMPLETION(m_process, frame && frame->page() == this, completionHandler(DOMPasteAccessResponse::DeniedForGesture));
+
+        auto originFromFrame = SecurityOrigin::create(frame->url());
+        MESSAGE_CHECK_COMPLETION(m_process, origin->isSameOriginDomain(originFromFrame), completionHandler(DOMPasteAccessResponse::DeniedForGesture));
+
+        static constexpr auto recentlyRequestedDOMPasteOriginDelay = 1_s;
+        static constexpr auto recentlyRequestedDOMPasteOriginLimit = 10;
+
+        auto currentTime = ApproximateTime::now();
+        m_recentlyRequestedDOMPasteOrigins.removeAllMatching([&](auto& identifierAndTimestamp) {
+            auto& [identifier, lastRequestTime] = identifierAndTimestamp;
+            return identifier == originIdentifier || currentTime - lastRequestTime > recentlyRequestedDOMPasteOriginDelay;
+        });
+        m_recentlyRequestedDOMPasteOrigins.append({ originIdentifier, currentTime });
+
+        if (m_recentlyRequestedDOMPasteOrigins.size() > recentlyRequestedDOMPasteOriginLimit) {
+            completionHandler(DOMPasteAccessResponse::DeniedForGesture);
+            return;
+        }
+    }
 
     m_pageClient->requestDOMPasteAccess(pasteAccessCategory, elementRect, originIdentifier, WTFMove(completionHandler));
 }
@@ -9516,6 +9539,8 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 #endif
     internals().firstLayerTreeTransactionIdAfterDidCommitLoad = { };
 #endif
+
+    m_recentlyRequestedDOMPasteOrigins = { };
 
     if (m_drawingArea) {
 #if PLATFORM(COCOA)
