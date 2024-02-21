@@ -288,6 +288,8 @@ struct Type : public std::variant<
     bool hasCreationFixedFootprint() const;
     bool containsRuntimeArray() const;
     bool containsOverrideArray() const;
+    bool isSampler() const;
+    bool isTexture() const;
 };
 
 using ConversionRank = Markable<unsigned, IntegralMarkableTraits<unsigned, std::numeric_limits<unsigned>::max()>>;

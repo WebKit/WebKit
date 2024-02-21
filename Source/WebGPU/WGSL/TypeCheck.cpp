@@ -676,14 +676,24 @@ void TypeChecker::visit(AST::Function& function)
     parameters.reserveInitialCapacity(function.parameters().size());
     for (auto& parameter : function.parameters()) {
         visitAttributes(parameter.attributes());
-        parameters.append(resolve(parameter.typeName()));
+        auto* parameterType = resolve(parameter.typeName());
+        if (!parameterType->isConstructible() && !std::holds_alternative<Types::Pointer>(*parameterType) && !parameterType->isTexture() && !parameterType->isSampler()) {
+            typeError(InferBottom::No, parameter.span(), "type of function parameter must be constructible or a pointer, sampler or texture");
+            parameterType = m_types.bottomType();
+        }
+        parameters.append(parameterType);
     }
 
     visitAttributes(function.returnAttributes());
-    if (function.maybeReturnType())
-        m_returnType = resolve(*function.maybeReturnType());
-    else
+    if (!function.maybeReturnType())
         m_returnType = m_types.voidType();
+    else {
+        m_returnType = resolve(*function.maybeReturnType());
+        if (!m_returnType->isConstructible()) {
+            m_returnType = m_types.bottomType();
+            typeError(InferBottom::No, function.maybeReturnType()->span(), "function return type must be a constructible type");
+        }
+    }
 
     {
         ContextScope functionContext(this);
