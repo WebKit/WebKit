@@ -159,6 +159,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         case GetTypedArrayByteOffsetAsInt52:
         case GetVectorLength:
         case InByVal:
+        case InByValMegamorphic:
         case PutByValDirect:
         case PutByVal:
         case PutByValAlias:
@@ -773,9 +774,11 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case ToPrimitive:
     case ToPropertyKey:
     case InByVal:
+    case InByValMegamorphic:
     case EnumeratorInByVal:
     case EnumeratorHasOwnProperty:
     case InById:
+    case InByIdMegamorphic:
     case HasPrivateName:
     case HasPrivateBrand:
     case HasOwnProperty:

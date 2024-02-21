@@ -264,6 +264,8 @@ inline CapabilityLevel canCompile(Node* node)
     case Unreachable:
     case InByVal:
     case InById:
+    case InByValMegamorphic:
+    case InByIdMegamorphic:
     case HasPrivateName:
     case HasPrivateBrand:
     case HasOwnProperty:

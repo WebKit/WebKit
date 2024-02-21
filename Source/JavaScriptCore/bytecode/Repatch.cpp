@@ -1284,6 +1284,13 @@ inline CodePtr<CFunctionPtrTag> appropriateInByGaveUpFunction(InByKind kind)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+// Mainly used to transition from megamorphic case to generic case.
+void repatchInBySlowPathCall(CodeBlock* codeBlock, StructureStubInfo& stubInfo, InByKind kind)
+{
+    resetInBy(codeBlock, stubInfo, kind);
+    repatchSlowPathCall(codeBlock, stubInfo, appropriateInByGaveUpFunction(kind));
+}
+
 static InlineCacheAction tryCacheInBy(
     JSGlobalObject* globalObject, CodeBlock* codeBlock, JSObject* base, CacheableIdentifier propertyName,
     bool wasFound, const PropertySlot& slot, StructureStubInfo& stubInfo, InByKind kind)
@@ -1388,7 +1395,10 @@ static InlineCacheAction tryCacheInBy(
     }
 
     fireWatchpointsAndClearStubIfNeeded(vm, stubInfo, codeBlock, result);
-    
+
+    if (result.generatedMegamorphicCode())
+        return PromoteToMegamorphic;
+
     return result.shouldGiveUpNow() ? GiveUpOnCache : RetryCacheLater;
 }
 
@@ -1396,9 +1406,28 @@ void repatchInBy(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSObject* b
 {
     SuperSamplerScope superSamplerScope(false);
 
-    if (tryCacheInBy(globalObject, codeBlock, baseObject, propertyName, wasFound, slot, stubInfo, kind) == GiveUpOnCache) {
+    switch (tryCacheInBy(globalObject, codeBlock, baseObject, propertyName, wasFound, slot, stubInfo, kind)) {
+    case PromoteToMegamorphic: {
+        switch (kind) {
+        case InByKind::ById:
+            repatchSlowPathCall(codeBlock, stubInfo, operationInByIdMegamorphic);
+            break;
+        case InByKind::ByVal:
+            repatchSlowPathCall(codeBlock, stubInfo, operationInByValMegamorphic);
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+        break;
+    }
+    case GiveUpOnCache:
         LOG_IC((ICEvent::InReplaceWithGeneric, baseObject->classInfo(), Identifier::fromUid(globalObject->vm(), propertyName.uid())));
         repatchSlowPathCall(codeBlock, stubInfo, appropriateInByGaveUpFunction(kind));
+        break;
+    case RetryCacheLater:
+    case AttemptToCache:
+        break;
     }
 }
 

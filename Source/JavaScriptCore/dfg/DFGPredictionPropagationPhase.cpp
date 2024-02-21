@@ -1383,7 +1383,9 @@ private:
         case EnumeratorInByVal:
         case EnumeratorHasOwnProperty:
         case InByVal:
+        case InByValMegamorphic:
         case InById:
+        case InByIdMegamorphic:
         case HasPrivateName:
         case HasPrivateBrand:
         case HasOwnProperty:

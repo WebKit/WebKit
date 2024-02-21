@@ -112,6 +112,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AccessCase);
     macro(IntrinsicGetter) \
     macro(InHit) \
     macro(InMiss) \
+    macro(InMegamorphic) \
     macro(ArrayLength) \
     macro(StringLength) \
     macro(DirectArgumentsLength) \
@@ -202,7 +203,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AccessCase);
     macro(IndexedResizableTypedArrayFloat64InHit) \
     macro(IndexedStringInHit) \
     macro(IndexedNoIndexingInMiss) \
-
+    macro(IndexedMegamorphicIn) \
 
 class AccessCase : public ThreadSafeRefCounted<AccessCase> {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(AccessCase);
@@ -320,7 +321,6 @@ public:
 
     bool requiresIdentifierNameMatch() const;
     bool requiresInt32PropertyCheck() const;
-    bool needsScratchFPR() const;
 
     UniquedStringImpl* uid() const { return m_identifier.uid(); }
     CacheableIdentifier identifier() const { return m_identifier; }

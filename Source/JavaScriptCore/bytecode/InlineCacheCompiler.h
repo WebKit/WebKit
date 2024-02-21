@@ -210,6 +210,11 @@ inline bool canUseMegamorphicGetById(VM& vm, UniquedStringImpl* uid)
     return !parseIndex(*uid) && uid != vm.propertyNames->length && uid != vm.propertyNames->name && uid != vm.propertyNames->prototype && uid != vm.propertyNames->underscoreProto;
 }
 
+inline bool canUseMegamorphicInById(VM& vm, UniquedStringImpl* uid)
+{
+    return canUseMegamorphicGetById(vm, uid);
+}
+
 inline bool canUseMegamorphicPutById(VM& vm, UniquedStringImpl* uid)
 {
     return !parseIndex(*uid) && uid != vm.propertyNames->underscoreProto;

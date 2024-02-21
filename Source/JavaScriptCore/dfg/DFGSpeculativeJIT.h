@@ -716,7 +716,9 @@ public:
     void compileGetByIdMegamorphic(Node*);
     void compileGetByIdWithThisMegamorphic(Node*);
     void compileInById(Node*);
+    void compileInByIdMegamorphic(Node*);
     void compileInByVal(Node*);
+    void compileInByValMegamorphic(Node*);
     void compileHasPrivate(Node*, AccessType);
     void compileHasPrivateName(Node*);
     void compileHasPrivateBrand(Node*);
