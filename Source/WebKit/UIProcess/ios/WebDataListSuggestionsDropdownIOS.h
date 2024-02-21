@@ -53,7 +53,7 @@ OBJC_CLASS WKContentView;
 namespace WebKit {
 
 class WebDataListSuggestionsDropdownIOS : public WebDataListSuggestionsDropdown {
-    WTF_MAKE_WK_TZONE_ALLOCATED(RevealFocusedElementDeferrer);
+    WTF_MAKE_WK_TZONE_ALLOCATED(WebDataListSuggestionsDropdownIOS);
 public:
     static Ref<WebDataListSuggestionsDropdownIOS> create(WebPageProxy&, WKContentView *);
 

@@ -28,14 +28,14 @@
 #if ENABLE(MEDIA_USAGE)
 
 #include "MediaUsageManager.h"
-#include <wtf/TZoneMalloc.h>
+#include <wtf/TZoneMallocInlines.h>
 
 OBJC_CLASS USVideoUsage;
 
 namespace WebKit {
 
 class MediaUsageManagerCocoa : public MediaUsageManager {
-    WTF_MAKE_WK_TZONE_ALLOCATED(MediaUsageManagerCocoa);
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(MediaUsageManagerCocoa);
 public:
     MediaUsageManagerCocoa() = default;
     virtual ~MediaUsageManagerCocoa();

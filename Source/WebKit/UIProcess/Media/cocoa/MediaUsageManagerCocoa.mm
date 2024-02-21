@@ -45,8 +45,6 @@ NS_ASSUME_NONNULL_END
 namespace WebKit {
 using namespace WebCore;
 
-WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(MediaUsageManagerCocoa);
-
 static bool usageTrackingAvailable()
 {
     static bool available;

@@ -39,11 +39,11 @@
 
 #include <bmalloc/TZoneHeapManager.h>
 
-#if USE(DARWIN_TZONE_SEED)
-#include <WebKitAdditions/TZoneAdditions.h>
-#else
+//#if USE(DARWIN_TZONE_SEED)
+//#include <WebKitAdditions/TZoneAdditions.h>
+//#else
 #define GET_TZONE_SEED_FROM_ENV(x) nullptr
-#endif
+//#endif
 
 #if !BUSE(TZONE)
 #error "TZones enabled in WTF, but not enabled in bmalloc"

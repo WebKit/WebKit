@@ -33,7 +33,7 @@
 namespace WebKit {
 
 class FullscreenTouchSecheuristic {
-    WTF_MAKE_WK_TZONE_ALLOCATED(FullscreenTouchSecheuristic);
+    WTF_MAKE_WK_TZONE_ALLOCATED_EXPORT(FullscreenTouchSecheuristic, WK_EXPORT);
 public:
     WK_EXPORT double scoreOfNextTouch(CGPoint location);
     WK_EXPORT double scoreOfNextTouch(CGPoint location, const Seconds& deltaTime);

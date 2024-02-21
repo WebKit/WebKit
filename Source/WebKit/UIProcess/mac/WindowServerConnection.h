@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#pragma once
+
 #include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
