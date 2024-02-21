@@ -117,7 +117,7 @@ public:
     {
     }
 
-    virtual void didExceedMemoryFootprintThreshold(size_t footprint, const String& domain, unsigned pageCount, Seconds processLifetime, bool inForeground)
+    virtual void didExceedMemoryFootprintThreshold(size_t, const String&, unsigned, Seconds, bool)
     {
     }
 };
