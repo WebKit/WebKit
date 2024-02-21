@@ -1222,12 +1222,11 @@ void TypeChecker::visit(AST::CallExpression& call)
                         }
                         argument.m_inferredType = fieldType;
                         auto& value = argument.m_constantValue;
-                        if (value.has_value()) {
-                            if (convertValue(argument.span(), argument.inferredType(), value))
-                                constantFields.set(member.name(), *value);
-                            else
-                                isConstant = false;
+                        if (value.has_value() && convertValue(argument.span(), argument.inferredType(), value)) {
+                            constantFields.set(member.name(), *value);
+                            continue;
                         }
+                        isConstant = false;
                     }
                     if (isConstant) {
 
