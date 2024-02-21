@@ -33,6 +33,8 @@
 
 namespace WebCore::WebGPU {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(CommandBufferImpl);
+
 CommandBufferImpl::CommandBufferImpl(WebGPUPtr<WGPUCommandBuffer>&& commandBuffer, ConvertToBackingContext& convertToBackingContext)
     : m_backing(WTFMove(commandBuffer))
     , m_convertToBackingContext(convertToBackingContext)

@@ -326,7 +326,7 @@
 #if CPU(ARM64) && OS(DARWIN)
 // Only MacroAssemblerARM64 is known to build.
 // Building with TZONE_MALLOC currently disabled for all platforms.
-#define USE_TZONE_MALLOC 0
+#define USE_TZONE_MALLOC 1
 #else
 #define USE_TZONE_MALLOC 0
 #endif
@@ -342,6 +342,15 @@
 #define USE_WK_TZONE_MALLOC 1
 #else
 #define USE_WK_TZONE_MALLOC 0
+#endif
+#endif
+
+#if !defined(USE_WC_TZONE_MALLOC)
+#if USE(TZONE_MALLOC)
+// Separately control the use of TZone allocation in WebKit
+#define USE_WC_TZONE_MALLOC 1
+#else
+#define USE_WC_TZONE_MALLOC 0
 #endif
 #endif
 

@@ -33,13 +33,14 @@
 #include "WebGPUTextureDimension.h"
 #include "WebGPUTextureFormat.h"
 #include <WebGPU/WebGPU.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore::WebGPU {
 
 class ConvertToBackingContext;
 
 class TextureImpl final : public Texture {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(TextureImpl);
 public:
     static Ref<TextureImpl> create(WebGPUPtr<WGPUTexture>&& texture, TextureFormat format, TextureDimension dimension, ConvertToBackingContext& convertToBackingContext)
     {

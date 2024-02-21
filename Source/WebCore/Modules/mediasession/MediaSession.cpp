@@ -47,6 +47,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(MediaSession);
+
 static const void* nextLogIdentifier()
 {
     static uint64_t logIdentifier = cryptographicallyRandomNumber<uint32_t>();

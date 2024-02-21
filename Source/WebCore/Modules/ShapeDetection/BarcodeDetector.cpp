@@ -41,6 +41,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(BarcodeDetector);
+
 ExceptionOr<Ref<BarcodeDetector>> BarcodeDetector::create(ScriptExecutionContext& scriptExecutionContext, const BarcodeDetectorOptions& barcodeDetectorOptions)
 {
     if (RefPtr document = dynamicDowncast<Document>(scriptExecutionContext)) {

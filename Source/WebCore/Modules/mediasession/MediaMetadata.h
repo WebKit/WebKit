@@ -32,6 +32,7 @@
 #include "MediaMetadataInit.h"
 #include "MediaSession.h"
 #include <wtf/Function.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
@@ -45,7 +46,7 @@ struct MediaImage;
 using MediaSessionMetadata = MediaMetadataInit;
 
 class ArtworkImageLoader final : public CachedImageClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(ArtworkImageLoader);
 public:
     using ArtworkImageLoaderCallback = Function<void(Image*)>;
     // The callback will only be called upon success or explicit failure to retrieve the image. If the operation is interrupted following the

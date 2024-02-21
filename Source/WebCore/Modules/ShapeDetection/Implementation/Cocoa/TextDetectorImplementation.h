@@ -28,11 +28,12 @@
 #if HAVE(SHAPE_DETECTION_API_IMPLEMENTATION) && HAVE(VISION)
 
 #include "TextDetectorInterface.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore::ShapeDetection {
 
 class TextDetectorImpl final : public TextDetector {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(TextDetectorImpl);
 public:
     static Ref<TextDetectorImpl> create()
     {

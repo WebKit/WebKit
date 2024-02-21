@@ -42,6 +42,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(StyleFilterImage);
+
 // MARK: - StyleFilterImage
 
 StyleFilterImage::StyleFilterImage(RefPtr<StyleImage>&& image, FilterOperations&& filterOperations)

@@ -39,6 +39,8 @@
 namespace WebCore {
 namespace IDBServer {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(SQLiteIDBCursor);
+
 static const size_t prefetchLimit = 256;
 static const size_t prefetchSizeLimit = 1 * MB;
 

@@ -31,6 +31,7 @@
 #include "CachedResourceHandle.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -38,6 +39,7 @@ class CachedResourceLoader;
 class ResourceRequest;
 
 class ApplicationCacheResourceLoader final : public RefCounted<ApplicationCacheResourceLoader>, private CachedRawResourceClient {
+    WTF_MAKE_WK_TZONE_ALLOCATED(ApplicationCacheResourceLoader);
 public:
     enum class Error { Abort, NetworkError, CannotCreateResource, NotFound, NotOK, RedirectForbidden };
     using ResourceOrError = Expected<RefPtr<ApplicationCacheResource>, Error>;

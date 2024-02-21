@@ -36,6 +36,8 @@
 namespace WebCore {
 namespace IDBServer {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(SQLiteIDBTransaction);
+
 SQLiteIDBTransaction::SQLiteIDBTransaction(SQLiteIDBBackingStore& backingStore, const IDBTransactionInfo& info)
     : m_info(info)
     , m_backingStore(backingStore)

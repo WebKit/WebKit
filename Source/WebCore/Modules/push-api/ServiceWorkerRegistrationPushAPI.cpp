@@ -33,6 +33,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(ServiceWorkerRegistrationPushAPI);
+
 ServiceWorkerRegistrationPushAPI::ServiceWorkerRegistrationPushAPI(ServiceWorkerRegistration& serviceWorkerRegistration)
     : m_serviceWorkerRegistration(serviceWorkerRegistration)
 {

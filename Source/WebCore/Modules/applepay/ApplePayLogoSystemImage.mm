@@ -36,6 +36,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(ApplePayLogoSystemImage);
+
 static NSBundle *passKitBundle()
 {
     static NSBundle *passKitBundle;

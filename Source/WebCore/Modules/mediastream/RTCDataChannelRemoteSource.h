@@ -31,12 +31,13 @@
 #include "RTCDataChannelIdentifier.h"
 #include "RTCDataChannelRemoteSourceConnection.h"
 #include "RTCError.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {
 
 class RTCDataChannelRemoteSource : public RTCDataChannelHandlerClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(RTCDataChannelRemoteSource);
 public:
     WEBCORE_EXPORT RTCDataChannelRemoteSource(RTCDataChannelIdentifier, UniqueRef<RTCDataChannelHandler>&&, Ref<RTCDataChannelRemoteSourceConnection>&&);
     ~RTCDataChannelRemoteSource();

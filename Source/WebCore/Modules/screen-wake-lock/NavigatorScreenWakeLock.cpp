@@ -31,6 +31,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(NavigatorScreenWakeLock);
+
 NavigatorScreenWakeLock::NavigatorScreenWakeLock(Navigator& navigator)
     : m_navigator(navigator)
 {

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "IDBCursorInfo.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -36,7 +37,7 @@ class IDBResourceIdentifier;
 namespace IDBServer {
 
 class MemoryCursor {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(MemoryCursor);
 public:
     virtual ~MemoryCursor();
 

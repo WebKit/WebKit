@@ -27,11 +27,12 @@
 
 #include "SpeechRecognitionConnectionClientIdentifier.h"
 #include "SpeechRecognitionRequestInfo.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 class SpeechRecognitionRequest : public CanMakeWeakPtr<SpeechRecognitionRequest> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(SpeechRecognitionRequest);
 public:
     WEBCORE_EXPORT explicit SpeechRecognitionRequest(SpeechRecognitionRequestInfo&&);
 

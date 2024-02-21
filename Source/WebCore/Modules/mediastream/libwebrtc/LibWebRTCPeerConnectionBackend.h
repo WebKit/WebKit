@@ -28,6 +28,7 @@
 
 #include "PeerConnectionBackend.h"
 #include "RealtimeMediaSource.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace webrtc {
 class IceCandidateInterface;
@@ -51,7 +52,7 @@ class RealtimeOutgoingAudioSource;
 class RealtimeOutgoingVideoSource;
 
 class LibWebRTCPeerConnectionBackend final : public PeerConnectionBackend {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(LibWebRTCPeerConnectionBackend);
 public:
     LibWebRTCPeerConnectionBackend(RTCPeerConnection&, LibWebRTCProvider&);
     ~LibWebRTCPeerConnectionBackend();

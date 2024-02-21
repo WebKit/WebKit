@@ -30,13 +30,14 @@
 #include "WebGPUPtr.h"
 #include "WebGPURenderPassEncoder.h"
 #include <WebGPU/WebGPU.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore::WebGPU {
 
 class ConvertToBackingContext;
 
 class RenderPassEncoderImpl final : public RenderPassEncoder {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(RenderPassEncoderImpl);
 public:
     static Ref<RenderPassEncoderImpl> create(WebGPUPtr<WGPURenderPassEncoder>&& renderPassEncoder, ConvertToBackingContext& convertToBackingContext)
     {

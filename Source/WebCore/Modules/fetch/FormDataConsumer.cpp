@@ -32,6 +32,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(FormDataConsumer);
+
 FormDataConsumer::FormDataConsumer(const FormData& formData, ScriptExecutionContext& context, Callback&& callback)
     : m_formData(formData.copy())
     , m_context(&context)

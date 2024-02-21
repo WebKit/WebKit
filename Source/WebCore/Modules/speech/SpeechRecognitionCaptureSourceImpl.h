@@ -30,6 +30,7 @@
 #include "RealtimeMediaSource.h"
 #include "SpeechRecognitionConnectionClientIdentifier.h"
 #include <wtf/Lock.h>
+#include <wtf/TZoneMalloc.h>
 
 #if PLATFORM(COCOA)
 #include "AudioSampleDataSource.h"
@@ -49,7 +50,7 @@ enum class SpeechRecognitionUpdateType : uint8_t;
 class SpeechRecognitionCaptureSourceImpl
     : public RealtimeMediaSource::Observer
     , public RealtimeMediaSource::AudioSampleObserver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(SpeechRecognitionCaptureSourceImpl);
 public:
     using DataCallback = Function<void(const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t)>;
     using StateUpdateCallback = Function<void(const SpeechRecognitionUpdate&)>;

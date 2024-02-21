@@ -27,6 +27,7 @@
 
 #include "ScriptElementCachedScriptFetcher.h"
 #include <wtf/CheckedRef.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashCountedSet.h>
 #include <wtf/text/WTFString.h>
 
@@ -41,6 +42,7 @@ struct LoadableScriptError;
 enum class LoadableScriptErrorType : uint8_t;
 
 class LoadableScript : public ScriptElementCachedScriptFetcher {
+    WTF_MAKE_WK_TZONE_ALLOCATED(LoadableScript);
 public:
     using ConsoleMessage = LoadableScriptConsoleMessage;
     using Error = LoadableScriptError;

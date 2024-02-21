@@ -38,6 +38,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(LocalDOMWindowSpeechSynthesis);
+
 LocalDOMWindowSpeechSynthesis::LocalDOMWindowSpeechSynthesis(LocalDOMWindow* window)
     : LocalDOMWindowProperty(window)
 {

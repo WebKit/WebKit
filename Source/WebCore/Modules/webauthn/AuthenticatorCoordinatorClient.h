@@ -30,6 +30,7 @@
 #include "AuthenticatorCoordinator.h"
 #include "ExceptionData.h"
 #include <wtf/CompletionHandler.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebAuthn {
@@ -55,7 +56,7 @@ using RequestCompletionHandler = CompletionHandler<void(WebCore::AuthenticatorRe
 using QueryCompletionHandler = CompletionHandler<void(bool)>;
 
 class AuthenticatorCoordinatorClient : public CanMakeWeakPtr<AuthenticatorCoordinatorClient> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(AuthenticatorCoordinatorClient);
     WTF_MAKE_NONCOPYABLE(AuthenticatorCoordinatorClient);
 public:
     AuthenticatorCoordinatorClient() = default;

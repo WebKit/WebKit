@@ -30,6 +30,7 @@
 #include "ApplePaySessionPaymentRequest.h"
 #include <wtf/Expected.h>
 #include <wtf/Function.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
 
@@ -54,7 +55,7 @@ struct ApplePayShippingMethodUpdate;
 struct ExceptionDetails;
 
 class PaymentCoordinator : public CanMakeWeakPtr<PaymentCoordinator> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(PaymentCoordinator);
 public:
     WEBCORE_EXPORT explicit PaymentCoordinator(UniqueRef<PaymentCoordinatorClient>&&);
     WEBCORE_EXPORT ~PaymentCoordinator();

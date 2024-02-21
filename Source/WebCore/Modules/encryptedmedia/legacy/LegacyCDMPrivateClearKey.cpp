@@ -36,6 +36,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(LegacyCDMPrivateClearKey);
+
 bool LegacyCDMPrivateClearKey::supportsKeySystem(const String& keySystem)
 {
     if (!equalLettersIgnoringASCIICase(keySystem, "org.w3c.clearkey"_s))

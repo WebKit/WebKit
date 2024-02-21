@@ -445,6 +445,9 @@
 #endif
 
 namespace WebKit {
+
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(WebPage);
+
 using namespace JSC;
 using namespace WebCore;
 

@@ -31,6 +31,7 @@
 #include "RTCRtpScriptTransform.h"
 #include "RTCRtpTransformBackend.h"
 #include <wtf/FastMalloc.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -38,7 +39,7 @@ class RTCRtpReceiver;
 class RTCRtpSender;
 
 class RTCRtpTransform  {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(RTCRtpTransform);
 public:
     using Internal = std::variant<RefPtr<RTCRtpSFrameTransform>, RefPtr<RTCRtpScriptTransform>>;
     static std::unique_ptr<RTCRtpTransform> from(std::optional<Internal>&&);

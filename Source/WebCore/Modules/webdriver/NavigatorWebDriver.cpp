@@ -33,6 +33,8 @@
 namespace WebCore {
 using namespace JSC;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(NavigatorWebDriver);
+
 NavigatorWebDriver::NavigatorWebDriver() = default;
 
 NavigatorWebDriver::~NavigatorWebDriver() = default;

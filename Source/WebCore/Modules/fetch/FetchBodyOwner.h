@@ -38,6 +38,7 @@
 #include "FetchLoaderClient.h"
 #include "ResourceError.h"
 #include "SharedBuffer.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 

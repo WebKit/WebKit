@@ -29,13 +29,14 @@
 
 #include "Page.h"
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class NotificationClient;
 
 class NotificationController : public Supplement<Page> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(NotificationController);
 public:
     explicit NotificationController(NotificationClient*);
     ~NotificationController();

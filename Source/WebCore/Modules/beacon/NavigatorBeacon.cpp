@@ -40,6 +40,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(NavigatorBeacon);
+
 NavigatorBeacon::NavigatorBeacon(Navigator& navigator)
     : m_navigator(navigator)
 {

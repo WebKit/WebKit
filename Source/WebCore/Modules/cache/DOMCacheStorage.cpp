@@ -150,7 +150,7 @@ Ref<DOMCache> DOMCacheStorage::findCacheOrCreate(DOMCacheEngine::CacheInfo&& inf
 }
 
 class ConnectionStorageLock {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(ConnectionStorageLock);
 
 public:
     ConnectionStorageLock(Ref<CacheStorageConnection>&& connection, const ClientOrigin& origin)

@@ -30,10 +30,12 @@
 #include "CachedResourceHandle.h"
 #include "FilterOperations.h"
 #include "StyleGeneratedImage.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class StyleFilterImage final : public StyleGeneratedImage, private CachedImageClient {
+    WTF_MAKE_WK_TZONE_ALLOCATED(StyleFilterImage);
 public:
     static Ref<StyleFilterImage> create(RefPtr<StyleImage> image, FilterOperations filterOperations)
     {

@@ -43,6 +43,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(AppHighlightRangeData);
+
 std::optional<AppHighlightRangeData> AppHighlightRangeData::create(const FragmentedSharedBuffer& buffer)
 {
     auto contiguousBuffer = buffer.makeContiguous();

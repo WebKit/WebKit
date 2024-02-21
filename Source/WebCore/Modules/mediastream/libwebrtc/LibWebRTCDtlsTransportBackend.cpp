@@ -34,6 +34,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(LibWebRTCDtlsTransportBackend);
+
 static inline RTCDtlsTransportState toRTCDtlsTransportState(webrtc::DtlsTransportState state)
 {
     switch (state) {

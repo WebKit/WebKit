@@ -34,6 +34,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(ClipboardItemPasteboardDataSource);
+
 ClipboardItemPasteboardDataSource::ClipboardItemPasteboardDataSource(ClipboardItem& item, const PasteboardItemInfo& info)
     : ClipboardItemDataSource(item)
     , m_types(info.webSafeTypesByFidelity)

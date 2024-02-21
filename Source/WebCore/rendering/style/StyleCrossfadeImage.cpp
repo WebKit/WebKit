@@ -38,6 +38,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(StyleCrossfadeImage);
+
 StyleCrossfadeImage::StyleCrossfadeImage(RefPtr<StyleImage>&& from, RefPtr<StyleImage>&& to, double percentage, bool isPrefixed)
     : StyleGeneratedImage { Type::CrossfadeImage, StyleCrossfadeImage::isFixedSize }
     , m_from { WTFMove(from) }

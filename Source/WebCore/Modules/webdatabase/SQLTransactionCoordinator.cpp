@@ -41,6 +41,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(SQLTransactionCoordinator);
+
 static String getDatabaseIdentifier(SQLTransaction& transaction)
 {
     return transaction.database().securityOrigin().databaseIdentifier();

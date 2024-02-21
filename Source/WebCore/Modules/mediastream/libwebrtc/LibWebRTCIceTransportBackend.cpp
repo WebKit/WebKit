@@ -42,6 +42,8 @@ ALLOW_UNUSED_PARAMETERS_END
 
 namespace WebCore {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(LibWebRTCIceTransportBackend);
+
 static inline RTCIceTransportState toRTCIceTransportState(webrtc::IceTransportState state)
 {
     switch (state) {

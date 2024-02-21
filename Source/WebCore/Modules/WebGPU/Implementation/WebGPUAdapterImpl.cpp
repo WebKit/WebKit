@@ -35,6 +35,8 @@
 
 namespace WebCore::WebGPU {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(AdapterImpl);
+
 static String adapterName(WGPUAdapter adapter)
 {
     WGPUAdapterProperties properties;

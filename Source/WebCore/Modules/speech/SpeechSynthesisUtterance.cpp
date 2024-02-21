@@ -37,6 +37,7 @@
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(SpeechSynthesisUtterance);
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(SpeechSynthesisUtteranceActivity);
     
 Ref<SpeechSynthesisUtterance> SpeechSynthesisUtterance::create(ScriptExecutionContext& context, const String& text)
 {

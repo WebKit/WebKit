@@ -37,6 +37,8 @@
 
 namespace WebCore::WebGPU {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(ComputePassEncoderImpl);
+
 ComputePassEncoderImpl::ComputePassEncoderImpl(WebGPUPtr<WGPUComputePassEncoder>&& computePassEncoder, ConvertToBackingContext& convertToBackingContext)
     : m_backing(WTFMove(computePassEncoder))
     , m_convertToBackingContext(convertToBackingContext)

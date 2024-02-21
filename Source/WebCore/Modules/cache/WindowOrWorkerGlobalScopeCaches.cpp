@@ -40,7 +40,7 @@
 namespace WebCore {
 
 class DOMWindowCaches : public Supplement<LocalDOMWindow>, public LocalDOMWindowProperty {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(DOMWindowCaches);
 public:
     explicit DOMWindowCaches(LocalDOMWindow&);
     virtual ~DOMWindowCaches() = default;
@@ -55,7 +55,7 @@ private:
 };
 
 class WorkerGlobalScopeCaches : public Supplement<WorkerGlobalScope> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(WorkerGlobalScopeCaches);
 public:
     explicit WorkerGlobalScopeCaches(WorkerGlobalScope&);
     virtual ~WorkerGlobalScopeCaches() = default;

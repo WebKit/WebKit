@@ -44,6 +44,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(FetchResponseLoader, FetchResponse::Loader);
+
 // https://fetch.spec.whatwg.org/#null-body-status
 static inline bool isNullBodyStatus(int status)
 {

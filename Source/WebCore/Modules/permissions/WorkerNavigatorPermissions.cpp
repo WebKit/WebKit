@@ -31,6 +31,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(WorkerNavigatorPermissions);
+
 WorkerNavigatorPermissions::WorkerNavigatorPermissions(WorkerNavigator& navigator)
     : m_navigator(navigator)
 {

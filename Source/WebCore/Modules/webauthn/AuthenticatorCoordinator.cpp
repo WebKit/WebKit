@@ -52,6 +52,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(AuthenticatorCoordinator);
+
 namespace AuthenticatorCoordinatorInternal {
 
 static bool needsAppIdQuirks(const String& host, const String& appId)

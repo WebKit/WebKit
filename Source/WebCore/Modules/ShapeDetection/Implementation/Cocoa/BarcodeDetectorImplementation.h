@@ -31,13 +31,14 @@
 #include <wtf/HashFunctions.h>
 #include <wtf/HashSet.h>
 #include <wtf/HashTraits.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore::ShapeDetection {
 
 struct BarcodeDetectorOptions;
 
 class BarcodeDetectorImpl final : public BarcodeDetector {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(BarcodeDetectorImpl);
 public:
     static Ref<BarcodeDetectorImpl> create(const BarcodeDetectorOptions& barcodeDetectorOptions)
     {

@@ -38,6 +38,8 @@ ALLOW_UNUSED_PARAMETERS_END
 
 namespace WebCore {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(LibWebRTCSctpTransportBackend);
+
 static inline RTCSctpTransportState toRTCSctpTransportState(webrtc::SctpTransportState state)
 {
     switch (state) {

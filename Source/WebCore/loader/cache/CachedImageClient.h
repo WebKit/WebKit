@@ -24,6 +24,7 @@
 
 #include "CachedResourceClient.h"
 #include "ImageTypes.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -34,6 +35,7 @@ class IntRect;
 enum class VisibleInViewportState { Unknown, Yes, No };
 
 class CachedImageClient : public CachedResourceClient {
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(CachedImageClient);
 public:
     virtual ~CachedImageClient() = default;
     static CachedResourceClientType expectedType() { return ImageType; }

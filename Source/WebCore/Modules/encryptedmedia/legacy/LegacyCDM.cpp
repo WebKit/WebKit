@@ -43,6 +43,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(LegacyCDM);
+
 struct LegacyCDMFactory {
     CreateCDM constructor;
     CDMSupportsKeySystem supportsKeySystem;

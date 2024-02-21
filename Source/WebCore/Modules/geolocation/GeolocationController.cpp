@@ -34,6 +34,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(GeolocationController);
+
 GeolocationController::GeolocationController(Page& page, GeolocationClient& client)
     : m_page(page)
     , m_client(client)

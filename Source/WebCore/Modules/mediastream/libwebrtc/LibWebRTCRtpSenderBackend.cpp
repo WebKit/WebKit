@@ -40,6 +40,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(LibWebRTCRtpSenderBackend);
+
 LibWebRTCRtpSenderBackend::LibWebRTCRtpSenderBackend(LibWebRTCPeerConnectionBackend& backend, rtc::scoped_refptr<webrtc::RtpSenderInterface>&& rtcSender)
     : m_peerConnectionBackend(backend)
     , m_rtcSender(WTFMove(rtcSender))

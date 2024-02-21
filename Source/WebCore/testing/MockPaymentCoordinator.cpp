@@ -50,6 +50,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(MockPaymentCoordinator);
+
 MockPaymentCoordinator::MockPaymentCoordinator(Page& page)
     : m_page { page }
 {

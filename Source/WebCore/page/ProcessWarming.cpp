@@ -35,6 +35,7 @@
 #include "MathMLNames.h"
 #include "MediaQueryFeatures.h"
 #include "QualifiedName.h"
+#include "RegisterTZoneTypes.h"
 #include "SVGNames.h"
 #include "TagName.h"
 #include "TelephoneNumberDetector.h"
@@ -66,6 +67,10 @@ void ProcessWarming::initializeNames()
 
 void ProcessWarming::prewarmGlobally()
 {
+    TZoneInit();
+    WebCore::registerTZoneTypes();
+    TZoneRegisterationDone();
+
     initializeNames();
     
     // Prewarms user agent stylesheet.

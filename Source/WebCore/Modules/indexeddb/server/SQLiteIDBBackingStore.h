@@ -35,6 +35,7 @@
 #include <JavaScriptCore/Strong.h>
 #include <pal/SessionID.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -49,7 +50,7 @@ enum class IsSchemaUpgraded : bool { No, Yes };
 class SQLiteIDBCursor;
 
 class SQLiteIDBBackingStore final : public IDBBackingStore {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(SQLiteIDBBackingStore);
 public:
     WEBCORE_EXPORT SQLiteIDBBackingStore(const IDBDatabaseIdentifier&, const String& databaseDirectory);
     WEBCORE_EXPORT ~SQLiteIDBBackingStore() final;

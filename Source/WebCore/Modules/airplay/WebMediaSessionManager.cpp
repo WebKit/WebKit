@@ -100,7 +100,7 @@ String mediaProducerStateString(MediaProducerMediaStateFlags flags)
 
 class WebMediaSessionLogger {
     WTF_MAKE_NONCOPYABLE(WebMediaSessionLogger);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(WebMediaSessionLogger);
 public:
 
     static std::unique_ptr<WebMediaSessionLogger> create(WebMediaSessionManager& manager)

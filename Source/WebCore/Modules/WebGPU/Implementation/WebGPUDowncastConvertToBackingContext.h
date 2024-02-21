@@ -28,11 +28,12 @@
 #if HAVE(WEBGPU_IMPLEMENTATION)
 
 #include "WebGPUConvertToBackingContext.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore::WebGPU {
 
 class DowncastConvertToBackingContext final : public ConvertToBackingContext {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(DowncastConvertToBackingContext);
 public:
     static Ref<DowncastConvertToBackingContext> create()
     {

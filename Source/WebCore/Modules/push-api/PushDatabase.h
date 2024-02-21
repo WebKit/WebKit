@@ -35,6 +35,7 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/UUID.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
@@ -77,7 +78,7 @@ struct PushTopics {
 };
 
 class PushDatabase {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(PushDatabase);
 public:
     using CreationHandler = CompletionHandler<void(std::unique_ptr<PushDatabase>&&)>;
 

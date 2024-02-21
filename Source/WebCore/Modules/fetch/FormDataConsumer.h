@@ -30,6 +30,7 @@
 #include <span>
 #include <wtf/FastMalloc.h>
 #include <wtf/Function.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/WorkQueue.h>
 
@@ -40,7 +41,7 @@ class FormData;
 class ScriptExecutionContext;
 
 class FormDataConsumer : public CanMakeWeakPtr<FormDataConsumer> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(FormDataConsumer);
 public:
     using Callback = Function<void(ExceptionOr<std::span<const uint8_t>>)>;
     FormDataConsumer(const FormData&, ScriptExecutionContext&, Callback&&);

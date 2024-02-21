@@ -35,6 +35,7 @@
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(MediaStreamTrackProcessor);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(MediaStreamTrackProcessorVideoFrameObserver, MediaStreamTrackProcessor::VideoFrameObserver);
 
 ExceptionOr<Ref<MediaStreamTrackProcessor>> MediaStreamTrackProcessor::create(ScriptExecutionContext& context, Init&& init)
 {

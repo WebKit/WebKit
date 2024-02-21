@@ -40,6 +40,7 @@
 #include <WebGPU/WebGPUExt.h>
 #include <cstdint>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore::WebGPU {
 
@@ -98,7 +99,7 @@ enum class VertexFormat : uint8_t;
 enum class VertexStepMode : uint8_t;
 
 class ConvertToBackingContext : public RefCounted<ConvertToBackingContext> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(ConvertToBackingContext);
 public:
     virtual ~ConvertToBackingContext() = default;
 

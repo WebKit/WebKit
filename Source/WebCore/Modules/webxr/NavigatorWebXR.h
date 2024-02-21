@@ -29,6 +29,7 @@
 
 #include "Supplementable.h"
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -37,7 +38,7 @@ class ScriptExecutionContext;
 class WebXRSystem;
 
 class NavigatorWebXR final : public Supplement<Navigator> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(NavigatorWebXR);
 public:
     WEBCORE_EXPORT static WebXRSystem& xr(Navigator&);
 

@@ -32,6 +32,8 @@
 #include <wtf/Condition.h>
 #include <wtf/Forward.h>
 #include <wtf/Lock.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -66,7 +68,7 @@ private:
 };
 
 class DatabaseTask {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(DatabaseTask);
 public:
     virtual ~DatabaseTask();
 
@@ -98,6 +100,7 @@ private:
 };
 
 class DatabaseOpenTask final : public DatabaseTask {
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(DatabaseOpenTask);
 public:
     DatabaseOpenTask(Database&, bool setVersionInNewDatabase, DatabaseTaskSynchronizer&, ExceptionOr<void>& result);
 
@@ -125,6 +128,7 @@ private:
 };
 
 class DatabaseTransactionTask final : public DatabaseTask {
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(DatabaseTransactionTask);
 public:
     explicit DatabaseTransactionTask(RefPtr<SQLTransaction>&&);
     virtual ~DatabaseTransactionTask();

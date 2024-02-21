@@ -29,6 +29,7 @@
 #include "AudioParam.h"
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -40,7 +41,7 @@ class AudioNodeInput;
 
 class AudioNodeOutput {
     WTF_MAKE_NONCOPYABLE(AudioNodeOutput);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(AudioNodeOutput);
 public:
     // It's OK to pass 0 for numberOfChannels in which case setNumberOfChannels() must be called later on.
     AudioNodeOutput(AudioNode*, unsigned numberOfChannels);

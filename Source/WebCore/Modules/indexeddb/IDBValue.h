@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ThreadSafeDataBuffer.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -33,7 +34,7 @@ namespace WebCore {
 class SerializedScriptValue;
 
 class IDBValue {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(IDBValue);
 public:
     WEBCORE_EXPORT IDBValue();
     IDBValue(const SerializedScriptValue&);

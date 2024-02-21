@@ -30,13 +30,14 @@
 #include "WebGPUPtr.h"
 #include "WebGPUSampler.h"
 #include <WebGPU/WebGPU.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore::WebGPU {
 
 class ConvertToBackingContext;
 
 class SamplerImpl final : public Sampler {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(SamplerImpl);
 public:
     static Ref<SamplerImpl> create(WebGPUPtr<WGPUSampler>&& sampler, ConvertToBackingContext& convertToBackingContext)
     {

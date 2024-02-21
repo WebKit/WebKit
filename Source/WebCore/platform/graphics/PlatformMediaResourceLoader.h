@@ -35,6 +35,7 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WorkQueue.h>
 
@@ -61,7 +62,8 @@ public:
 };
 
 class PlatformMediaResourceLoader : public ThreadSafeRefCounted<PlatformMediaResourceLoader, WTF::DestructionThread::Main> {
-    WTF_MAKE_NONCOPYABLE(PlatformMediaResourceLoader); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(PlatformMediaResourceLoader);
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(PlatformMediaResourceLoader);
 public:
     enum LoadOption {
         BufferData = 1 << 0,
@@ -83,7 +85,8 @@ protected:
 };
 
 class PlatformMediaResource : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<PlatformMediaResource> {
-    WTF_MAKE_NONCOPYABLE(PlatformMediaResource); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(PlatformMediaResource);
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(PlatformMediaResource);
 public:
     // Called on the main thread.
     PlatformMediaResource() = default;

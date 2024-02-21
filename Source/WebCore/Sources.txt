@@ -1993,6 +1993,7 @@ page/ResizeObservation.cpp
 page/ResizeObserver.cpp
 page/ResourceUsageOverlay.cpp
 page/ResourceUsageThread.cpp
+page/RegisterTZoneTypes.cpp
 page/Screen.cpp
 page/ScreenOrientation.cpp
 page/ScrollBehavior.cpp

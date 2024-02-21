@@ -43,6 +43,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(MediaResource);
+
 static bool shouldRecordResponsesForTesting = false;
 
 void MediaResourceLoader::recordResponsesForTesting()

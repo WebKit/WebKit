@@ -32,6 +32,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -45,6 +46,7 @@ struct ApplePayShippingContactUpdate;
 struct ApplePayShippingMethodUpdate;
 
 class PaymentCoordinatorClient {
+    WTF_MAKE_WK_TZONE_ALLOCATED(PaymentCoordinatorClient);
 public:
     bool supportsVersion(unsigned version) const;
 

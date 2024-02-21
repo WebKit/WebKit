@@ -35,6 +35,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(NavigatorCredentials);
+
 NavigatorCredentials::NavigatorCredentials() = default;
 
 NavigatorCredentials::~NavigatorCredentials() = default;

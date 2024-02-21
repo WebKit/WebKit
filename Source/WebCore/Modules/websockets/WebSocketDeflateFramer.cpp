@@ -34,13 +34,16 @@
 #include "WebSocketExtensionProcessor.h"
 #include "WebSocketFrame.h"
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(WebSocketDeflateFramer);
+
 class WebSocketExtensionDeflateFrame final : public WebSocketExtensionProcessor {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(WebSocketExtensionDeflateFrame);
 public:
     explicit WebSocketExtensionDeflateFrame(WebSocketDeflateFramer&);
 

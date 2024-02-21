@@ -30,13 +30,14 @@
 #include "WebGPUPtr.h"
 #include "WebGPUTextureView.h"
 #include <WebGPU/WebGPU.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore::WebGPU {
 
 class ConvertToBackingContext;
 
 class TextureViewImpl final : public TextureView {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(TextureViewImpl);
 public:
     static Ref<TextureViewImpl> create(WebGPUPtr<WGPUTextureView>&& textureView, ConvertToBackingContext& convertToBackingContext)
     {

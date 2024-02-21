@@ -31,6 +31,7 @@
 #include "JSDOMPromiseDeferredForward.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -40,6 +41,7 @@ struct DetectedBarcode;
 class ScriptExecutionContext;
 
 class BarcodeDetector : public RefCounted<BarcodeDetector> {
+    WTF_MAKE_WK_TZONE_ALLOCATED(BarcodeDetector);
 public:
     static ExceptionOr<Ref<BarcodeDetector>> create(ScriptExecutionContext&, const BarcodeDetectorOptions&);
 

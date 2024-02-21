@@ -33,6 +33,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Deque.h>
 #include <wtf/Function.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 class GraphicsContext;
@@ -45,7 +46,7 @@ namespace WebCore::WebGPU {
 class ConvertToBackingContext;
 
 class GPUImpl final : public GPU, public RefCounted<GPUImpl> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(GPUImpl);
 public:
     static Ref<GPUImpl> create(WebGPUPtr<WGPUInstance>&& instance, ConvertToBackingContext& convertToBackingContext)
     {

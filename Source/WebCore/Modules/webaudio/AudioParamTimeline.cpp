@@ -38,6 +38,9 @@
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioParamTimeline);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(AudioParamTimelineParamEvent, AudioParamTimeline::ParamEvent);
+
 static void fillWithValue(float* values, float value, unsigned endFrame, unsigned& writeIndex)
 {
     if (writeIndex < endFrame) {

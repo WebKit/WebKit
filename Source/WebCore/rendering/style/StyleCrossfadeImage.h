@@ -29,12 +29,14 @@
 #include "CachedImageClient.h"
 #include "CachedResourceHandle.h"
 #include "StyleGeneratedImage.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 struct BlendingContext;
 
 class StyleCrossfadeImage final : public StyleGeneratedImage, private CachedImageClient {
+    WTF_MAKE_WK_TZONE_ALLOCATED(StyleCrossfadeImage);
 public:
     static Ref<StyleCrossfadeImage> create(RefPtr<StyleImage> from, RefPtr<StyleImage> to, double percentage, bool isPrefixed)
     {

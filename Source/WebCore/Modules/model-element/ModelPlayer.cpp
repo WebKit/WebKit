@@ -28,6 +28,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(ModelPlayer);
+
 ModelPlayer::~ModelPlayer() = default;
 
 bool ModelPlayer::supportsMouseInteraction()

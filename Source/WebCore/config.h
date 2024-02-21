@@ -45,6 +45,7 @@
 #undef new
 #undef delete
 #include <wtf/FastMalloc.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #include <ciso646>
 

@@ -42,6 +42,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(RealtimeAnalyser);
+
 RealtimeAnalyser::RealtimeAnalyser(NoiseInjectionPolicy policy)
     : m_inputBuffer(InputBufferSize)
     , m_downmixBus(AudioBus::create(1, AudioUtilities::renderQuantumSize))

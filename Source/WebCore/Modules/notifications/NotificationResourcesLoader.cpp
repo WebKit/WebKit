@@ -37,6 +37,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(NotificationResourcesLoader);
+
 // 2.5. Resources
 // https://notifications.spec.whatwg.org/#resources
 

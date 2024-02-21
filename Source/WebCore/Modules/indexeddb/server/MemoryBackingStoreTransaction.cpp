@@ -37,6 +37,8 @@
 namespace WebCore {
 namespace IDBServer {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(MemoryBackingStoreTransaction);
+
 std::unique_ptr<MemoryBackingStoreTransaction> MemoryBackingStoreTransaction::create(MemoryIDBBackingStore& backingStore, const IDBTransactionInfo& info)
 {
     return makeUnique<MemoryBackingStoreTransaction>(backingStore, info);

@@ -33,6 +33,8 @@
 namespace WebCore {
 namespace IDBServer {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(MemoryCursor);
+
 static Lock cursorMapLock;
 static HashMap<IDBResourceIdentifier, MemoryCursor*>& cursorMap() WTF_REQUIRES_LOCK(cursorMapLock)
 {

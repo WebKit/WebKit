@@ -32,6 +32,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(DelayProcessor);
+
 DelayProcessor::DelayProcessor(BaseAudioContext& context, float sampleRate, unsigned numberOfChannels, double maxDelayTime)
     : AudioDSPKernelProcessor(sampleRate, numberOfChannels)
     , m_delayTime(AudioParam::create(context, "delayTime"_s, 0.0, 0.0, maxDelayTime, AutomationRate::ARate))

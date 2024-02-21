@@ -33,6 +33,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(WakeLockManager);
+
 WakeLockManager::WakeLockManager(Document& document)
     : m_document(document)
 {

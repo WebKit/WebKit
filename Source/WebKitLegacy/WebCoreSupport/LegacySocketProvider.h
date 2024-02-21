@@ -26,8 +26,10 @@
 #pragma once
 
 #include <WebCore/SocketProvider.h>
+#include <wtf/TZoneMalloc.h>
 
 class LegacySocketProvider final : public WebCore::SocketProvider {
+    WTF_MAKE_WK_TZONE_ALLOCATED(LegacySocketProvider);
 public:
     static Ref<LegacySocketProvider> create() { return adoptRef(*new LegacySocketProvider); }
 private:

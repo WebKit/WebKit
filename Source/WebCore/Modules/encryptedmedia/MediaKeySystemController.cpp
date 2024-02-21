@@ -37,6 +37,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(MediaKeySystemController);
+
 ASCIILiteral MediaKeySystemController::supplementName()
 {
     return "MediaKeySystemController"_s;

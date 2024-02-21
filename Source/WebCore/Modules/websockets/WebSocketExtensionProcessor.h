@@ -31,11 +31,13 @@
 #pragma once
 
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class WebSocketExtensionProcessor {
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(WebSocketExtensionProcessor);
 public:
     virtual ~WebSocketExtensionProcessor() = default;
 

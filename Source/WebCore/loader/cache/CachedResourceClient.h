@@ -25,6 +25,7 @@
 #pragma once
 
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
 
@@ -35,6 +36,7 @@ class NetworkLoadMetrics;
 
 class WEBCORE_EXPORT CachedResourceClient : public CanMakeSingleThreadWeakPtr<CachedResourceClient> {
     WTF_MAKE_NONCOPYABLE(CachedResourceClient);
+    WTF_MAKE_WK_TZONE_ALLOCATED(CachedResourceClient);
 public:
     enum CachedResourceClientType {
         BaseResourceType,

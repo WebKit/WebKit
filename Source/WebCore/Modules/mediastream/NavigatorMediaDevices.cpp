@@ -40,6 +40,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(NavigatorMediaDevices);
+
 NavigatorMediaDevices::NavigatorMediaDevices(LocalDOMWindow* window)
     : LocalDOMWindowProperty(window)
 {

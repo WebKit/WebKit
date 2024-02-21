@@ -35,6 +35,8 @@
 namespace WebCore {
 namespace IDBServer {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(IndexValueStore);
+
 IndexValueStore::IndexValueStore(bool unique)
     : m_unique(unique)
 {

@@ -33,6 +33,7 @@
 #include "WebGPUTextureFormat.h"
 #include <IOSurface/IOSurfaceRef.h>
 #include <WebGPU/WebGPU.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore::WebGPU {
 
@@ -40,7 +41,7 @@ class ConvertToBackingContext;
 class TextureImpl;
 
 class PresentationContextImpl final : public PresentationContext {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(PresentationContextImpl);
 public:
     static Ref<PresentationContextImpl> create(WebGPUPtr<WGPUSurface>&& surface, ConvertToBackingContext& convertToBackingContext)
     {

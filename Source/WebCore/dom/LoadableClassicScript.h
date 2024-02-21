@@ -31,6 +31,7 @@
 #include "LoadableScript.h"
 #include "LoadableScriptError.h"
 #include "ReferrerPolicy.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TypeCasts.h>
 
 namespace WebCore {
@@ -41,6 +42,7 @@ class WeakPtrImplWithEventTargetData;
 // from purging its data buffer. This class holds a client until this class is
 // destroyed in order to guarantee that the data buffer will not be purged.
 class LoadableNonModuleScriptBase : public LoadableScript, protected CachedResourceClient {
+    WTF_MAKE_WK_TZONE_ALLOCATED(LoadableNonModuleScriptBase);
 public:
     virtual ~LoadableNonModuleScriptBase();
 
@@ -73,6 +75,7 @@ protected:
 
 
 class LoadableClassicScript final : public LoadableNonModuleScriptBase {
+    WTF_MAKE_WK_TZONE_ALLOCATED(LoadableClassicScript);
 public:
     static Ref<LoadableClassicScript> create(const AtomString& nonce, const AtomString& integrity, ReferrerPolicy, RequestPriority, const AtomString& crossOriginMode, const String& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree, bool isAsync);
 

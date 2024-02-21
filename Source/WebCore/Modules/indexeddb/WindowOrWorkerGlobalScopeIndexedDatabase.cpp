@@ -40,7 +40,7 @@
 namespace WebCore {
 
 class DOMWindowIndexedDatabase : public LocalDOMWindowProperty, public Supplement<LocalDOMWindow> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(DOMWindowIndexedDatabase);
 public:
     explicit DOMWindowIndexedDatabase(LocalDOMWindow&);
     virtual ~DOMWindowIndexedDatabase() = default;
@@ -55,7 +55,7 @@ private:
 };
 
 class WorkerGlobalScopeIndexedDatabase : public Supplement<WorkerGlobalScope> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(WorkerGlobalScopeIndexedDatabase);
 public:
     explicit WorkerGlobalScopeIndexedDatabase(IDBClient::IDBConnectionProxy&);
     virtual ~WorkerGlobalScopeIndexedDatabase() = default;

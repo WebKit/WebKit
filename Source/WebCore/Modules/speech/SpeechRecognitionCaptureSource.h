@@ -27,6 +27,7 @@
 
 #include "SpeechRecognitionCaptureSourceImpl.h"
 #include "SpeechRecognitionConnectionClientIdentifier.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WTF {
 class MediaTime;
@@ -40,7 +41,7 @@ class SpeechRecognitionCaptureSourceImpl;
 class SpeechRecognitionUpdate;
 
 class SpeechRecognitionCaptureSource {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(SpeechRecognitionCaptureSource);
 public:
     SpeechRecognitionCaptureSource() = default;
     ~SpeechRecognitionCaptureSource() = default;

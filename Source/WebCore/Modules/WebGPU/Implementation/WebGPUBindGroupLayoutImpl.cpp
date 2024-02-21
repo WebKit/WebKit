@@ -33,6 +33,8 @@
 
 namespace WebCore::WebGPU {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(BindGroupLayoutImpl);
+
 BindGroupLayoutImpl::BindGroupLayoutImpl(WebGPUPtr<WGPUBindGroupLayout>&& bindGroupLayout, ConvertToBackingContext& convertToBackingContext)
     : m_backing(WTFMove(bindGroupLayout))
     , m_convertToBackingContext(convertToBackingContext)

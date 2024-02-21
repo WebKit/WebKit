@@ -32,6 +32,8 @@
 
 #include "WebSocketDeflater.h"
 #include "WebSocketExtensionProcessor.h"
+#include <wtf/TZoneMalloc.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -41,7 +43,7 @@ class WebSocketExtensionProcessor;
 struct WebSocketFrame;
 
 class DeflateResultHolder {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(DeflateResultHolder);
 public:
     explicit DeflateResultHolder(WebSocketDeflateFramer&);
     WEBCORE_EXPORT ~DeflateResultHolder();
@@ -58,7 +60,7 @@ private:
 };
 
 class InflateResultHolder {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(InflateResultHolder);
 public:
     explicit InflateResultHolder(WebSocketDeflateFramer&);
     WEBCORE_EXPORT ~InflateResultHolder();
@@ -75,6 +77,7 @@ private:
 };
 
 class WebSocketDeflateFramer {
+    WTF_MAKE_WK_TZONE_ALLOCATED(WebSocketDeflateFramer);
 public:
     WEBCORE_EXPORT std::unique_ptr<WebSocketExtensionProcessor> createExtensionProcessor();
 

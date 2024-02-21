@@ -48,6 +48,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(AppHighlightStorage);
+
 #if ENABLE(APP_HIGHLIGHTS)
 
 static constexpr unsigned textPreviewLength = 500;

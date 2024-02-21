@@ -34,6 +34,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(NavigatorGeolocation);
+
 NavigatorGeolocation::NavigatorGeolocation(Navigator& navigator)
     : m_navigator(navigator)
 {

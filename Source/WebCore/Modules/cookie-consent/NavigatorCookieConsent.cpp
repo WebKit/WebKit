@@ -37,6 +37,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(NavigatorCookieConsent);
+
 void NavigatorCookieConsent::requestCookieConsent(Navigator& navigator, RequestCookieConsentOptions&& options, Ref<DeferredPromise>&& promise)
 {
     from(navigator).requestCookieConsent(WTFMove(options), WTFMove(promise));

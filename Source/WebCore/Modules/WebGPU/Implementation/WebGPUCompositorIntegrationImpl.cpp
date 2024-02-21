@@ -38,6 +38,8 @@
 
 namespace WebCore::WebGPU {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(CompositorIntegrationImpl);
+
 CompositorIntegrationImpl::CompositorIntegrationImpl(ConvertToBackingContext& convertToBackingContext)
     : m_convertToBackingContext(convertToBackingContext)
 {

@@ -29,6 +29,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(CachedResourceClient);
+
 CachedResourceClient::CachedResourceClient() = default;
 
 CachedResourceClient::~CachedResourceClient()

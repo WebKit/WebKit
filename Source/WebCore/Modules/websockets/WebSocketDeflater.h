@@ -30,6 +30,7 @@
 
 #pragma once
 
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 
 struct z_stream_s;
@@ -38,7 +39,7 @@ typedef z_stream_s z_stream;
 namespace WebCore {
 
 class WebSocketDeflater {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(WebSocketDeflater);
 public:
     enum ContextTakeOverMode {
         DoNotTakeOverContext,
@@ -63,7 +64,7 @@ private:
 };
 
 class WebSocketInflater {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(WebSocketInflater);
 public:
     explicit WebSocketInflater(int windowBits = 15);
     WEBCORE_EXPORT ~WebSocketInflater();

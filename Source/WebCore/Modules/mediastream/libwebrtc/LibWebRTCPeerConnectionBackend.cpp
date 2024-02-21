@@ -52,6 +52,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(LibWebRTCPeerConnectionBackend);
+
 static std::unique_ptr<PeerConnectionBackend> createLibWebRTCPeerConnectionBackend(RTCPeerConnection& peerConnection)
 {
     if (!LibWebRTCProvider::webRTCAvailable()) {

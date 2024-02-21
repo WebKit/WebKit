@@ -35,6 +35,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(AsyncAudioDecoder);
+
 AsyncAudioDecoder::AsyncAudioDecoder()
     : m_runLoop(RunLoop::create("Audio Decoder", ThreadType::Audio))
 {

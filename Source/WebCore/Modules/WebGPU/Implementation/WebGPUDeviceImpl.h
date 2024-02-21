@@ -32,6 +32,7 @@
 #include "WebGPUQueueImpl.h"
 #include <WebGPU/WebGPU.h>
 #include <wtf/Deque.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore::WebGPU {
 
@@ -39,7 +40,7 @@ class ConvertToBackingContext;
 enum class DeviceLostReason : uint8_t;
 
 class DeviceImpl final : public Device {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(DeviceImpl);
 public:
     static Ref<DeviceImpl> create(WebGPUPtr<WGPUDevice>&& device, Ref<SupportedFeatures>&& features, Ref<SupportedLimits>&& limits, ConvertToBackingContext& convertToBackingContext)
     {

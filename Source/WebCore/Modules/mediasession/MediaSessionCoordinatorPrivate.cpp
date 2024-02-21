@@ -33,6 +33,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(MediaSessionCoordinator);
+
 void MediaSessionCoordinatorPrivate::setLogger(const Logger& logger, const void* logIdentifier)
 {
     m_logger = &logger;

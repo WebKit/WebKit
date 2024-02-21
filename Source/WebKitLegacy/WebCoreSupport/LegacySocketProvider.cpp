@@ -29,6 +29,8 @@
 #import <WebCore/WebTransportSession.h>
 #import <wtf/CompletionHandler.h>
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(LegacySocketProvider);
+
 RefPtr<WebCore::ThreadableWebSocketChannel> LegacySocketProvider::createWebSocketChannel(WebCore::Document& document, WebCore::WebSocketChannelClient& client)
 {
     return WebCore::WebSocketChannel::create(document, client, *this);

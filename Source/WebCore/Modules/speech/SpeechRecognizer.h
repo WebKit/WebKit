@@ -28,6 +28,7 @@
 #include "SpeechRecognitionCaptureSource.h"
 #include "SpeechRecognitionConnectionClientIdentifier.h"
 #include "SpeechRecognitionError.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/UniqueRef.h>
 
 #if HAVE(SPEECHRECOGNIZER)
@@ -42,7 +43,7 @@ class SpeechRecognitionRequest;
 class SpeechRecognitionUpdate;
 
 class SpeechRecognizer : public CanMakeWeakPtr<SpeechRecognizer> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(SpeechRecognizer);
 public:
     using DelegateCallback = Function<void(const SpeechRecognitionUpdate&)>;
     WEBCORE_EXPORT explicit SpeechRecognizer(DelegateCallback&&, UniqueRef<SpeechRecognitionRequest>&&);
