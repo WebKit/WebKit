@@ -34,6 +34,7 @@
 #include "ImageBuffer.h"
 #include "IntRect.h"
 #include "NotImplemented.h"
+#include <skia/core/SkColorFilter.h>
 #include <skia/core/SkImage.h>
 #include <skia/core/SkPath.h>
 #include <skia/core/SkPathEffect.h>
@@ -230,6 +231,7 @@ void GraphicsContextSkia::drawNativeImageInternal(NativeImage& nativeImage, cons
     auto normalizedDestRect = normalizeRect(destRect);
     SkPaint paint = createFillPaint();
     paint.setBlendMode(toSkiaBlendMode(options.compositeOperator(), options.blendMode()));
+    paint.setImageFilter(createDropShadowFilterIfNeeded(ShadowStyle::Outset));
     canvas().drawImageRect(image, normalizedSrcRect, normalizedDestRect, toSkSamplingOptions(m_state.imageInterpolationQuality()), &paint, { });
 }
 
@@ -264,16 +266,19 @@ void GraphicsContextSkia::fillPath(const Path& path)
     if (path.isEmpty())
         return;
 
+    SkPaint paint = createFillPaint();
+    paint.setImageFilter(createDropShadowFilterIfNeeded(ShadowStyle::Outset));
+
     auto fillRule = toSkiaFillType(state().fillRule());
     auto& skiaPath= *path.platformPath();
     if (skiaPath.getFillType() == fillRule) {
-        canvas().drawPath(skiaPath, createFillPaint());
+        canvas().drawPath(skiaPath, paint);
         return;
     }
 
     auto skiaPathCopy = skiaPath;
     skiaPathCopy.setFillType(fillRule);
-    canvas().drawPath(skiaPathCopy, createFillPaint());
+    canvas().drawPath(skiaPathCopy, paint);
 }
 
 void GraphicsContextSkia::strokePath(const Path& path)
@@ -282,6 +287,42 @@ void GraphicsContextSkia::strokePath(const Path& path)
         return;
 
     canvas().drawPath(*path.platformPath(), createStrokePaint());
+}
+
+sk_sp<SkImageFilter> GraphicsContextSkia::createDropShadowFilterIfNeeded(ShadowStyle shadowStyle) const
+{
+    // FIXME: this does not handle state.shadowsIgnoreTransforms()
+
+    if (!hasDropShadow())
+        return nullptr;
+
+    const auto& shadow = dropShadow();
+    ASSERT(shadow);
+
+    const FloatSize& offset = shadow->offset;
+    auto shadowColor = shadow->color;
+
+    if (!shadowColor.isVisible() || (!offset.width() && !offset.height() && !shadow->radius))
+        return nullptr;
+
+    const auto& state = this->state();
+
+    const auto sigma = shadow->radius / 2.0;
+    auto globalAlpha = state.alpha();
+    if (globalAlpha < 1)
+        shadowColor = shadowColor.colorWithAlphaMultipliedBy(globalAlpha);
+    auto [r, g, b, a] = shadowColor.toColorTypeLossy<SRGBA<uint8_t>>().resolved();
+
+    switch (shadowStyle) {
+    case ShadowStyle::Outset:
+        return SkImageFilters::DropShadow(offset.width(), offset.height(), sigma, sigma, SkColorSetARGB(a, r, g, b), nullptr);
+    case ShadowStyle::Inset: {
+        auto dropShadow = SkImageFilters::DropShadowOnly(offset.width(), offset.height(), sigma, sigma, SK_ColorBLACK, nullptr);
+        return SkImageFilters::ColorFilter(SkColorFilters::Blend(SkColorSetARGB(a, r, g, b), SkBlendMode::kSrcIn), dropShadow);
+    }
+    }
+
+    return nullptr;
 }
 
 SkPaint GraphicsContextSkia::createFillPaint(std::optional<Color> fillColor) const
@@ -304,21 +345,6 @@ SkPaint GraphicsContextSkia::createFillPaint(std::optional<Color> fillColor) con
             color = color.colorWithAlphaMultipliedBy(globalAlpha);
         auto [r, g, b, a] = color.toColorTypeLossy<SRGBA<uint8_t>>().resolved();
         paint.setColor(SkColorSetARGB(a, r, g, b));
-    }
-
-    // Outset shadow
-    // FIXME: Don't add the effect if the shadow is inset
-    if (hasDropShadow()) {
-        const auto shadow = dropShadow();
-        ASSERT(shadow);
-
-        const auto sigma = shadow->radius / 2.0;
-        auto globalAlpha = state.alpha();
-        auto shadowColor = shadow->color;
-        if (globalAlpha < 1)
-            shadowColor = shadowColor.colorWithAlphaMultipliedBy(globalAlpha);
-        auto [r, g, b, a] = shadowColor.toColorTypeLossy<SRGBA<uint8_t>>().resolved();
-        paint.setImageFilter(SkImageFilters::DropShadow(shadow->offset.width(), shadow->offset.height(), sigma, sigma, SkColorSetARGB(a, r, g, b), nullptr));
     }
 
     return paint;
@@ -357,12 +383,16 @@ SkPaint GraphicsContextSkia::createStrokePaint(std::optional<Color> strokeColor)
 
 void GraphicsContextSkia::fillRect(const FloatRect& boundaries)
 {
-    canvas().drawRect(boundaries, createFillPaint());
+    SkPaint paint = createFillPaint();
+    paint.setImageFilter(createDropShadowFilterIfNeeded(ShadowStyle::Outset));
+    canvas().drawRect(boundaries, paint);
 }
 
 void GraphicsContextSkia::fillRect(const FloatRect& boundaries, const Color& fillColor)
 {
-    canvas().drawRect(boundaries, createFillPaint(fillColor));
+    SkPaint paint = createFillPaint(fillColor);
+    paint.setImageFilter(createDropShadowFilterIfNeeded(ShadowStyle::Outset));
+    canvas().drawRect(boundaries, paint);
 }
 
 void GraphicsContextSkia::fillRect(const FloatRect&, Gradient&, const AffineTransform&)
@@ -620,14 +650,29 @@ void GraphicsContextSkia::fillRoundedRectImpl(const FloatRoundedRect& rect, cons
         { SkFloatToScalar(radii.bottomLeft().width()), SkFloatToScalar(radii.bottomLeft().height()) },
         { SkFloatToScalar(radii.bottomRight().width()), SkFloatToScalar(radii.bottomRight().height()) } };
     skRect.setRectRadii(rect.rect(), skRadii);
-    canvas().drawRRect(skRect, createFillPaint(color));
+
+    SkPaint paint = createFillPaint(color);
+    paint.setImageFilter(createDropShadowFilterIfNeeded(ShadowStyle::Outset));
+    canvas().drawRRect(skRect, paint);
 }
 
-void GraphicsContextSkia::fillRectWithRoundedHole(const FloatRect&, const FloatRoundedRect&, const Color& color)
+void GraphicsContextSkia::fillRectWithRoundedHole(const FloatRect& outerRect, const FloatRoundedRect& innerRRect, const Color& color)
 {
     if (!color.isValid())
         return;
-    notImplemented();
+
+    auto innerSkRect = SkRRect::MakeEmpty();
+    const auto& radii = innerRRect.radii();
+    SkVector skRadii[4] = {
+        { SkFloatToScalar(radii.topLeft().width()), SkFloatToScalar(radii.topLeft().height()) },
+        { SkFloatToScalar(radii.topRight().width()), SkFloatToScalar(radii.topRight().height()) },
+        { SkFloatToScalar(radii.bottomLeft().width()), SkFloatToScalar(radii.bottomLeft().height()) },
+        { SkFloatToScalar(radii.bottomRight().width()), SkFloatToScalar(radii.bottomRight().height()) } };
+    innerSkRect.setRectRadii(innerRRect.rect(), skRadii);
+
+    SkPaint paint = createFillPaint(color);
+    paint.setImageFilter(createDropShadowFilterIfNeeded(ShadowStyle::Inset));
+    canvas().drawDRRect(SkRRect::MakeRect(outerRect), innerSkRect, paint);
 }
 
 void GraphicsContextSkia::drawPattern(NativeImage& nativeImage, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options)

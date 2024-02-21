@@ -51,7 +51,9 @@ void FontCascade::drawGlyphs(GraphicsContext& graphicsContext, const Font& font,
     }
     auto blob = builder.make();
     auto* canvas = graphicsContext.platformContext();
-    canvas->drawTextBlob(blob, SkFloatToScalar(position.x()), SkFloatToScalar(position.y()), static_cast<GraphicsContextSkia*>(&graphicsContext)->createFillPaint());
+    SkPaint paint = static_cast<GraphicsContextSkia*>(&graphicsContext)->createFillPaint();
+    paint.setImageFilter(static_cast<GraphicsContextSkia*>(&graphicsContext)->createDropShadowFilterIfNeeded(GraphicsContextSkia::ShadowStyle::Outset));
+    canvas->drawTextBlob(blob, SkFloatToScalar(position.x()), SkFloatToScalar(position.y()), paint);
 }
 
 bool FontCascade::canReturnFallbackFontsForComplexText()

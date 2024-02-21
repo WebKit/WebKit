@@ -99,6 +99,9 @@ public:
 
     RenderingMode renderingMode() const final;
 
+    enum class ShadowStyle : uint8_t { Outset, Inset };
+    sk_sp<SkImageFilter> createDropShadowFilterIfNeeded(ShadowStyle) const;
+
     SkPaint createFillPaint(std::optional<Color> fillColor = std::nullopt) const;
     SkPaint createStrokeStylePaint() const;
     SkPaint createStrokePaint(std::optional<Color> strokeColor = std::nullopt) const;
