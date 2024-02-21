@@ -126,7 +126,7 @@ template<typename, typename> class PODInterval;
 class RemotePlayback;
 #endif
 
-using CueInterval = PODInterval<MediaTime, WeakPtr<TextTrackCue, WeakPtrImplWithEventTargetData>>;
+using CueInterval = PODInterval<MediaTime, TextTrackCue*>;
 using CueList = Vector<CueInterval>;
 
 using MediaProvider = std::optional < std::variant <
