@@ -207,6 +207,8 @@ WKSLinearMediaPlayer *PlaybackSessionInterfaceLMK::linearMediaPlayer() const
 
 void PlaybackSessionInterfaceLMK::durationChanged(double duration)
 {
+    [m_player setStartTime:0];
+    [m_player setEndTime:duration];
     [m_player setDuration:duration];
     [m_player setCanTogglePlayback:YES];
 }
@@ -214,6 +216,7 @@ void PlaybackSessionInterfaceLMK::durationChanged(double duration)
 void PlaybackSessionInterfaceLMK::currentTimeChanged(double currentTime, double)
 {
     [m_player setCurrentTime:currentTime];
+    [m_player setRemainingTime:std::max([m_player duration] - currentTime, 0.0)];
 }
 
 void PlaybackSessionInterfaceLMK::rateChanged(OptionSet<PlaybackSessionModel::PlaybackState> playbackState, double playbackRate, double)
