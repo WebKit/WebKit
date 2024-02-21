@@ -76,6 +76,7 @@ class TestRevert(testing.PathTestCase):
             [line for line in log if 'Mock process' not in line], [
                 "Creating the local development branch 'eng/Example-feature-1'...",
                 'Reverted 5@main',
+                'Automatically relating issues...',
                 "Rebasing 'eng/Example-feature-1' on 'main'...",
                 "Rebased 'eng/Example-feature-1' on 'main!'",
                 'Running pre-PR checks...',
@@ -127,6 +128,7 @@ class TestRevert(testing.PathTestCase):
             [line for line in log if 'Mock process' not in line], [
                 "Creating the local development branch 'eng/Example-feature-1'...",
                 'Reverted 5@main',
+                'Automatically relating issues...',
                 'Using committed changes...',
                 "Rebasing 'eng/Example-feature-1' on 'main'...",
                 "Rebased 'eng/Example-feature-1' on 'main!'",
@@ -177,6 +179,7 @@ class TestRevert(testing.PathTestCase):
             [line for line in log if 'Mock process' not in line], [
                 "Creating the local development branch 'eng/Example-feature-1'...",
                 'Reverted 5@main',
+                'Automatically relating issues...',
                 'Using committed changes...',
                 "Rebasing 'eng/Example-feature-1' on 'main'...",
                 "Rebased 'eng/Example-feature-1' on 'main!'",
@@ -255,6 +258,7 @@ index 05e8751..0bf3c85 100644
             [line for line in log if 'Mock process' not in line], [
                 "Creating the local development branch 'eng/Example-feature-1'...",
                 'Reverted 5@main',
+                'Automatically relating issues...',
                 "Rebasing 'eng/Example-feature-1' on 'main'...",
                 "Rebased 'eng/Example-feature-1' on 'main!'",
                 'Running pre-PR checks...',
