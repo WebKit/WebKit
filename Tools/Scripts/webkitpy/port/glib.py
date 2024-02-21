@@ -67,9 +67,6 @@ class GLibPort(Port):
     def _built_executables_path(self, *path):
         return self._build_path(*(('bin',) + path))
 
-    def _built_libraries_path(self, *path):
-        return self._build_path(*(('lib',) + path))
-
     def _prepend_to_env_value(self, new_value, current_value):
         if len(current_value) > 0:
             return new_value + ":" + current_value

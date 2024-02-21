@@ -91,12 +91,6 @@ def configuration_options():
     ]
 
 
-def _builder_options(builder_name):
-    configuration = "Debug" if re.search(r"[d|D](ebu|b)g", builder_name) else "Release"
-    is_webkit2 = builder_name.find("WK2") != -1
-    return optparse.Values({'builder_name': builder_name, 'configuration': configuration, 'webkit_test_runner': is_webkit2})
-
-
 class PortFactory(object):
     # Order matters.  For port classes that have a port_name with a
     # common prefix, the more specific port class should be listed

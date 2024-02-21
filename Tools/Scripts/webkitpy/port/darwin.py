@@ -82,9 +82,6 @@ class DarwinPort(ApplePort):
         _log.info("%s total leaks found for a total of %s." % (total_leaks, total_bytes_string))
         _log.info("%s unique leaks found." % unique_leaks)
 
-    def _path_to_webcore_library(self):
-        return self._build_path('WebCore.framework/Versions/A/WebCore')
-
     def show_results_html_file(self, results_filename):
         # We don't use self._run_script() because we don't want to wait for the script
         # to exit and we want the output to show up on stdout in case there are errors
@@ -249,17 +246,6 @@ class DarwinPort(ApplePort):
             return _path_to_test
 
         return _image_diff_in_build_path
-
-    def make_command(self):
-        return self.xcrun_find('make', '/usr/bin/make')
-
-    def xcrun_find(self, command, fallback=None):
-        fallback = fallback or command
-        try:
-            return self._executive.run_command(['xcrun', '--sdk', self.SDK, '-find', command]).rstrip()
-        except ScriptError:
-            _log.warn("xcrun failed; falling back to '%s'." % fallback)
-            return fallback
 
     @memoized
     def _plist_data_from_bundle(self, app_bundle, entry):
