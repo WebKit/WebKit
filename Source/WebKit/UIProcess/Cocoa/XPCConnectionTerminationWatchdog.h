@@ -28,6 +28,7 @@
 #include <wtf/OSObjectPtr.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Seconds.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/spi/darwin/XPCSPI.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -44,6 +45,7 @@ class ProcessAndUIAssertion;
 // 2) On iOS, make the process runnable for the duration of the watchdog
 //    to ensure it has a chance to terminate cleanly.
 class XPCConnectionTerminationWatchdog {
+    WTF_MAKE_WK_TZONE_ALLOCATED(XPCConnectionTerminationWatchdog);
 public:
     static void startConnectionTerminationWatchdog(AuxiliaryProcessProxy&, Seconds interval);
 

@@ -33,6 +33,8 @@
 namespace WebKit {
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(ScrollingTreeFrameScrollingNodeRemoteMac);
+
 ScrollingTreeFrameScrollingNodeRemoteMac::ScrollingTreeFrameScrollingNodeRemoteMac(ScrollingTree& tree, ScrollingNodeType nodeType, ScrollingNodeID nodeID)
     : ScrollingTreeFrameScrollingNodeMac(tree, nodeType, nodeID)
 {

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "RemoteLayerTreeDrawingAreaProxy.h"
+#include <wtf/TZoneMalloc.h>
 
 #if PLATFORM(IOS_FAMILY)
 
@@ -34,6 +35,7 @@ OBJC_CLASS WKDisplayLinkHandler;
 namespace WebKit {
 
 class RemoteLayerTreeDrawingAreaProxyIOS final : public RemoteLayerTreeDrawingAreaProxy {
+    WTF_MAKE_WK_TZONE_ALLOCATED(RemoteLayerTreeDrawingAreaProxyIOS);
 public:
     RemoteLayerTreeDrawingAreaProxyIOS(WebPageProxy&, WebProcessProxy&);
     virtual ~RemoteLayerTreeDrawingAreaProxyIOS();

@@ -37,6 +37,8 @@
 namespace WebKit {
 using namespace fido;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(NfcConnection);
+
 namespace {
 inline bool compareVersion(NSData *data, const uint8_t version[], size_t versionSize)
 {

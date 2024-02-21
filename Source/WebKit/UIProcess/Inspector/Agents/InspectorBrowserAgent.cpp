@@ -40,6 +40,8 @@ namespace WebKit {
 
 using namespace Inspector;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(InspectorBrowserAgent);
+
 InspectorBrowserAgent::InspectorBrowserAgent(WebPageAgentContext& context)
     : InspectorAgentBase("Browser"_s, context)
     , m_frontendDispatcher(makeUnique<Inspector::BrowserFrontendDispatcher>(context.frontendRouter))

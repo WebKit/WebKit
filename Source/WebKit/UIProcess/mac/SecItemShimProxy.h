@@ -29,6 +29,7 @@
 
 #include "Connection.h"
 #include "WorkQueueMessageReceiver.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
@@ -36,7 +37,8 @@ class SecItemRequestData;
 class SecItemResponseData;
 
 class SecItemShimProxy final : private IPC::MessageReceiver {
-WTF_MAKE_NONCOPYABLE(SecItemShimProxy);
+    WTF_MAKE_NONCOPYABLE(SecItemShimProxy);
+    WTF_MAKE_WK_TZONE_ALLOCATED(SecItemShimProxy);
 public:
     static SecItemShimProxy& singleton();
 

@@ -31,6 +31,7 @@
 
 #import "APIWebAuthenticationPanelClient.h"
 #import <wtf/RetainPtr.h>
+#import <wtf/TZoneMalloc.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/WeakPtr.h>
 
@@ -40,6 +41,7 @@
 namespace WebKit {
 
 class WebAuthenticationPanelClient final : public API::WebAuthenticationPanelClient, public CanMakeWeakPtr<WebAuthenticationPanelClient> {
+    WTF_MAKE_WK_TZONE_ALLOCATED(WebAuthenticationPanelClient);
 public:
     WebAuthenticationPanelClient(_WKWebAuthenticationPanel *, id <_WKWebAuthenticationPanelDelegate>);
 

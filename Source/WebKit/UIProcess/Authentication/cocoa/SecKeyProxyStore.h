@@ -29,6 +29,7 @@
 
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 OBJC_CLASS SecKeyProxy;
@@ -40,6 +41,7 @@ class Credential;
 namespace WebKit {
 
 class SecKeyProxyStore : public RefCounted<SecKeyProxyStore>, public CanMakeWeakPtr<SecKeyProxyStore> {
+    WTF_MAKE_WK_TZONE_ALLOCATED(SecKeyProxyStore);
 public:
     static Ref<SecKeyProxyStore> create() { return adoptRef(* new SecKeyProxyStore()); }
 

@@ -49,13 +49,15 @@
 namespace WebKit {
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(RemoteLayerTreeDrawingAreaProxyMac);
+
 static NSString * const transientZoomAnimationKey = @"wkTransientZoomScale";
 static NSString * const transientZoomCommitAnimationKey = @"wkTransientZoomCommit";
 static NSString * const transientZoomScrollPositionOverrideAnimationKey = @"wkScrollPositionOverride";
 
 class RemoteLayerTreeDisplayLinkClient final : public DisplayLink::Client {
 public:
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(RemoteLayerTreeDisplayLinkClient);
 public:
     explicit RemoteLayerTreeDisplayLinkClient(WebPageProxyIdentifier pageID)
         : m_pageIdentifier(pageID)

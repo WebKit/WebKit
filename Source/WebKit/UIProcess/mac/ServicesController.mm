@@ -38,6 +38,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(ServicesController);
+
 ServicesController& ServicesController::singleton()
 {
     static NeverDestroyed<ServicesController> sharedController;

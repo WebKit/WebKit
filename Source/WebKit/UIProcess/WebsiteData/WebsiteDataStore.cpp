@@ -98,6 +98,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(WebsiteDataStore);
+
 static bool allowsWebsiteDataRecordsForAllOrigins;
 void WebsiteDataStore::allowWebsiteDataRecordsForAllOrigins()
 {

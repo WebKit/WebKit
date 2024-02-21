@@ -36,6 +36,8 @@ namespace WebKit {
 using namespace apdu;
 using namespace fido;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(CtapNfcDriver);
+
 CtapNfcDriver::CtapNfcDriver(Ref<NfcConnection>&& connection)
     : CtapDriver(WebCore::AuthenticatorTransport::Nfc)
     , m_connection(WTFMove(connection))

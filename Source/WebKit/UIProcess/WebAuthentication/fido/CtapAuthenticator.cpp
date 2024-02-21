@@ -50,6 +50,8 @@ namespace WebKit {
 using namespace WebCore;
 using namespace fido;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(CtapAuthenticator);
+
 using UVAvailability = AuthenticatorSupportedOptions::UserVerificationAvailability;
 
 namespace {

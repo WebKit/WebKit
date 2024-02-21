@@ -30,6 +30,8 @@
 #include <WebCore/ScrollingConstraints.h>
 #include <WebCore/ScrollingCoordinatorTypes.h>
 #include <WebCore/ScrollingTree.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <WebCore/WheelEventTestMonitor.h>
 #include <wtf/WeakPtr.h>
 
@@ -42,6 +44,7 @@ namespace WebKit {
 class RemoteScrollingCoordinatorProxy;
 
 class RemoteScrollingTree : public WebCore::ScrollingTree {
+    WTF_MAKE_WK_TZONE_ALLOCATED(RemoteScrollingTree);
 public:
     static Ref<RemoteScrollingTree> create(RemoteScrollingCoordinatorProxy&);
     virtual ~RemoteScrollingTree();
@@ -91,6 +94,7 @@ protected:
 };
 
 class RemoteLayerTreeHitTestLocker {
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(RemoteScrollingTree);
 public:
     RemoteLayerTreeHitTestLocker(RemoteScrollingTree& scrollingTree)
         : m_scrollingTree(scrollingTree)

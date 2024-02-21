@@ -34,6 +34,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(WebExtensionCommand);
+
 WebExtensionCommand::WebExtensionCommand(WebExtensionContext& extensionContext, const WebExtension::CommandData& data)
     : m_extensionContext(extensionContext)
     , m_identifier(data.identifier)

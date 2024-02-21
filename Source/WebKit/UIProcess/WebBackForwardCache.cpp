@@ -38,6 +38,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(WebBackForwardCache);
+
 WebBackForwardCache::WebBackForwardCache(WebProcessPool& processPool)
     : m_processPool(processPool)
 {

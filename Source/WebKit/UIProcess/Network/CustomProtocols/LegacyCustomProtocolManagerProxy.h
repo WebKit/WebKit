@@ -28,6 +28,7 @@
 #include "LegacyCustomProtocolID.h"
 #include "MessageReceiver.h"
 #include <wtf/CheckedRef.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 #if PLATFORM(COCOA)
@@ -48,6 +49,7 @@ enum class CacheStoragePolicy : uint8_t;
 class NetworkProcessProxy;
 
 class LegacyCustomProtocolManagerProxy : public IPC::MessageReceiver {
+    WTF_MAKE_WK_TZONE_ALLOCATED(LegacyCustomProtocolManagerProxy);
 public:
     LegacyCustomProtocolManagerProxy(NetworkProcessProxy&);
     ~LegacyCustomProtocolManagerProxy();

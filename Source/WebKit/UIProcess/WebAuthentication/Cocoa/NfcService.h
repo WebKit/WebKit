@@ -29,6 +29,7 @@
 
 #include "FidoService.h"
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS NFReaderSession;
 
@@ -37,6 +38,7 @@ namespace WebKit {
 class NfcConnection;
 
 class NfcService : public FidoService {
+    WTF_MAKE_WK_TZONE_ALLOCATED(NfcService);
 public:
     explicit NfcService(Observer&);
     ~NfcService();

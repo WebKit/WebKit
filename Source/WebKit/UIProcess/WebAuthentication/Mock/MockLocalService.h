@@ -29,10 +29,12 @@
 
 #include "LocalService.h"
 #include <WebCore/MockWebAuthenticationConfiguration.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class MockLocalService final : public LocalService {
+    WTF_MAKE_WK_TZONE_ALLOCATED(MockLocalService);
 public:
     MockLocalService(Observer&, const WebCore::MockWebAuthenticationConfiguration&);
 

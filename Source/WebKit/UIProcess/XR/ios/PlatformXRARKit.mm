@@ -40,6 +40,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(ARKitCoordinator);
+
 struct ARKitCoordinator::RenderState {
     RetainPtr<id<WKARPresentationSession>> presentationSession;
     PlatformXR::Device::RequestFrameCallback onFrameUpdate;

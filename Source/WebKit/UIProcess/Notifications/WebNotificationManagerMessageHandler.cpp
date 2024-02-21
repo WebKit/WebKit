@@ -34,6 +34,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(WebNotificationManagerMessageHandler);
+
 WebNotificationManagerMessageHandler::WebNotificationManagerMessageHandler(WebPageProxy& webPageProxy)
     : m_webPageProxy(webPageProxy)
 {

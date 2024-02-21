@@ -80,6 +80,8 @@ using namespace WebCore;
 using namespace WebAuthn;
 using CBOR = cbor::CBORValue;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(LocalAuthenticator);
+
 namespace LocalAuthenticatorInternal {
 
 // Credential ID is currently SHA-1 of the corresponding public key.

@@ -29,13 +29,15 @@
 
 #import <UIKit/UIKit.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/TZoneMalloc.h>
 
 @class WKCompactContextMenuPresenterButton;
 
 namespace WebKit {
 
 class CompactContextMenuPresenter {
-    WTF_MAKE_NONCOPYABLE(CompactContextMenuPresenter); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(CompactContextMenuPresenter);
+    WTF_MAKE_WK_TZONE_ALLOCATED(CompactContextMenuPresenter);
 public:
     CompactContextMenuPresenter(UIView *rootView, id<UIContextMenuInteractionDelegate>);
     ~CompactContextMenuPresenter();

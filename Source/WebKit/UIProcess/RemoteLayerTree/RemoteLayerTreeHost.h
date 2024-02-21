@@ -32,6 +32,7 @@
 #include <WebCore/ProcessIdentifier.h>
 #include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS CAAnimation;
 OBJC_CLASS WKAnimationDelegate;
@@ -42,7 +43,7 @@ class RemoteLayerTreeDrawingAreaProxy;
 class WebPageProxy;
 
 class RemoteLayerTreeHost {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(RemoteLayerTreeHost);
 public:
     explicit RemoteLayerTreeHost(RemoteLayerTreeDrawingAreaProxy&);
     ~RemoteLayerTreeHost();

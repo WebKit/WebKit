@@ -55,6 +55,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(CcidService);
+
 CcidService::CcidService(Observer& observer)
     : FidoService(observer)
     , m_restartTimer(RunLoop::main(), this, &CcidService::platformStartDiscovery)

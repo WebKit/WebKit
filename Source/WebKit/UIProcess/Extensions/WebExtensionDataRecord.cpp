@@ -32,6 +32,9 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(WebExtensionDataRecord);
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(WebExtensionDataRecordHolder);
+
 WebExtensionDataRecord::WebExtensionDataRecord(const String& displayName, const String& uniqueIdentifier)
     : m_displayName(displayName)
     , m_uniqueIdentifier(uniqueIdentifier)

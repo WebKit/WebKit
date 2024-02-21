@@ -29,6 +29,7 @@
 
 #include "CtapDriver.h"
 #include "NfcConnection.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebKit {
@@ -36,6 +37,7 @@ namespace WebKit {
 // The following implements the CTAP NFC protocol:
 // https://fidoalliance.org/specs/fido-v2.0-ps-20190130/fido-client-to-authenticator-protocol-v2.0-ps-20190130.html#nfc
 class CtapNfcDriver : public CtapDriver {
+    WTF_MAKE_WK_TZONE_ALLOCATED(CtapNfcDriver);
 public:
     explicit CtapNfcDriver(Ref<NfcConnection>&&);
 

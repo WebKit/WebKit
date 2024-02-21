@@ -30,6 +30,7 @@
 #include <wtf/Identified.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -49,6 +50,7 @@ class WebFrameProxy;
 struct FrameInfoData;
 
 class WebScriptMessageHandler : public RefCounted<WebScriptMessageHandler>, public Identified<WebScriptMessageHandler>  {
+    WTF_MAKE_WK_TZONE_ALLOCATED(WebScriptMessageHandler);
 public:
     class Client {
     public:

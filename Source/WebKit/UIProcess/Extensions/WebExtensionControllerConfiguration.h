@@ -32,6 +32,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Markable.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UUID.h>
 
 OBJC_CLASS WKWebViewConfiguration;
@@ -41,6 +42,7 @@ namespace WebKit {
 
 class WebExtensionControllerConfiguration : public API::ObjectImpl<API::Object::Type::WebExtensionControllerConfiguration> {
     WTF_MAKE_NONCOPYABLE(WebExtensionControllerConfiguration);
+    WTF_MAKE_WK_TZONE_ALLOCATED(WebExtensionControllerConfiguration);
 
 public:
     enum class IsPersistent : bool { No, Yes };

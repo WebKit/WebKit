@@ -38,6 +38,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(SecItemShimProxy);
+
 #define MESSAGE_CHECK_COMPLETION(assertion, connection, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, &connection, completion)
 
 // We received these dictionaries over IPC so they shouldn't contain any "in-memory" objects (rdar://104253249).

@@ -28,10 +28,12 @@
 #if !PLATFORM(IOS_FAMILY)
 
 #include "DrawingAreaProxy.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class TiledCoreAnimationDrawingAreaProxy final : public DrawingAreaProxy {
+    WTF_MAKE_WK_TZONE_ALLOCATED(TiledCoreAnimationDrawingAreaProxy);
 public:
     TiledCoreAnimationDrawingAreaProxy(WebPageProxy&, WebProcessProxy&);
     virtual ~TiledCoreAnimationDrawingAreaProxy();

@@ -32,6 +32,7 @@
 #include <WebCore/NotificationData.h>
 #include <wtf/Identified.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -42,6 +43,7 @@ struct NotificationData;
 namespace WebKit {
 
 class WebNotification : public API::ObjectImpl<API::Object::Type::Notification>, public Identified<WebNotification> {
+    WTF_MAKE_WK_TZONE_ALLOCATED(WebNotification);
 public:
     static Ref<WebNotification> createNonPersistent(const WebCore::NotificationData& data, WebPageProxyIdentifier pageIdentifier, IPC::Connection& sourceConnection)
     {

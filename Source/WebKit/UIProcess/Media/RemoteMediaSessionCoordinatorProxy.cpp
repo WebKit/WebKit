@@ -47,6 +47,8 @@ extern WTFLogChannel LogMedia;
 namespace WebKit {
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(RemoteMediaSessionCoordinatorProxy);
+
 Ref<RemoteMediaSessionCoordinatorProxy> RemoteMediaSessionCoordinatorProxy::create(WebPageProxy& webPageProxy, Ref<MediaSessionCoordinatorProxyPrivate>&& privateCoordinator)
 {
     return adoptRef(*new RemoteMediaSessionCoordinatorProxy(webPageProxy, WTFMove(privateCoordinator)));

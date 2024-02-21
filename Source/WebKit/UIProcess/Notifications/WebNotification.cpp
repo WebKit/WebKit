@@ -31,6 +31,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(WebNotification);
+
 WebNotification::WebNotification(const WebCore::NotificationData& data, WebPageProxyIdentifier pageIdentifier, const std::optional<WTF::UUID>& dataStoreIdentifier, IPC::Connection* sourceConnection)
     : m_data(data)
     , m_origin(API::SecurityOrigin::createFromString(data.originString))

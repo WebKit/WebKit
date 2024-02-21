@@ -33,6 +33,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(ServiceWorkerNotificationHandler);
+
 ServiceWorkerNotificationHandler& ServiceWorkerNotificationHandler::singleton()
 {
     ASSERT(isMainRunLoop());

@@ -28,6 +28,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import <wtf/RetainPtr.h>
+#import <wtf/TZoneMalloc.h>
 #import <wtf/WeakHashSet.h>
 
 OBJC_CLASS NSSet;
@@ -38,7 +39,7 @@ namespace WebKit {
 class WebPageProxy;
 
 class EndowmentStateTracker {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(EndowmentStateTracker);
 public:
     static EndowmentStateTracker& singleton();
 

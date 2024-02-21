@@ -65,6 +65,7 @@
 #include <wtf/ListHashSet.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URLHash.h>
 #include <wtf/UUID.h>
 #include <wtf/WeakHashCountedSet.h>
@@ -127,6 +128,7 @@ enum class WebExtensionContextInstallReason : uint8_t {
 
 class WebExtensionContext : public API::ObjectImpl<API::Object::Type::WebExtensionContext>, public IPC::MessageReceiver {
     WTF_MAKE_NONCOPYABLE(WebExtensionContext);
+    WTF_MAKE_WK_TZONE_ALLOCATED(WebExtensionContext);
 
 public:
     template<typename... Args>

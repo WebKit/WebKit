@@ -31,6 +31,8 @@
 #import "APIUIClient.h"
 #import <WebCore/PlatformViewController.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/TZoneMalloc.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/WeakPtr.h>
 
@@ -53,7 +55,7 @@ namespace WebKit {
 enum class TapHandlingResult : uint8_t;
 
 class UIDelegate : public CanMakeWeakPtr<UIDelegate> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(UIDelegate);
 public:
     explicit UIDelegate(WKWebView *);
     ~UIDelegate();
@@ -69,6 +71,7 @@ public:
 private:
 #if ENABLE(CONTEXT_MENUS)
     class ContextMenuClient : public API::ContextMenuClient {
+        WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(ContextMenuClient);
     public:
         explicit ContextMenuClient(UIDelegate&);
         ~ContextMenuClient();
@@ -82,6 +85,7 @@ private:
 #endif
 
     class UIClient : public API::UIClient, public CanMakeWeakPtr<UIClient> {
+        WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(UIClient);
     public:
         explicit UIClient(UIDelegate&);
         ~UIClient();

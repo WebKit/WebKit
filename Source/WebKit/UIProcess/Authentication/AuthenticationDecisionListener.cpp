@@ -36,6 +36,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(AuthenticationDecisionListener);
+
 AuthenticationDecisionListener::AuthenticationDecisionListener(CompletionHandler<void(AuthenticationChallengeDisposition, const WebCore::Credential&)>&& completionHandler)
     : m_completionHandler(WTFMove(completionHandler))
 {

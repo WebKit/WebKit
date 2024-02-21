@@ -36,6 +36,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(WebExtensionMenuItem);
+
 bool WebExtensionMenuItem::operator==(const WebExtensionMenuItem& other) const
 {
     return this == &other || (m_extensionContext == other.m_extensionContext && m_identifier == other.m_identifier);

@@ -50,6 +50,8 @@ namespace WebKit {
 
 class WebPageProxy;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(WebExtensionURLSchemeHandler);
+
 constexpr NSInteger noPermissionErrorCode = NSURLErrorNoPermissionsToReadFile;
 
 WebExtensionURLSchemeHandler::WebExtensionURLSchemeHandler(WebExtensionController& controller)

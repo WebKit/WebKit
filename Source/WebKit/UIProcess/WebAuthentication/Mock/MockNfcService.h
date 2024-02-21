@@ -29,12 +29,14 @@
 
 #include "NfcService.h"
 #include <WebCore/MockWebAuthenticationConfiguration.h>
+#include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS NSData;
 
 namespace WebKit {
 
 class MockNfcService final : public NfcService {
+    WTF_MAKE_WK_TZONE_ALLOCATED(MockNfcService);
 public:
     MockNfcService(Observer&, const WebCore::MockWebAuthenticationConfiguration&);
 

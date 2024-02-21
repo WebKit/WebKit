@@ -30,6 +30,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(WebExtensionControllerConfiguration);
+
 WebExtensionControllerConfiguration::WebExtensionControllerConfiguration(IsPersistent persistent)
     : m_storageDirectory(persistent == IsPersistent::Yes ? createStorageDirectoryPath() : nullString())
 {

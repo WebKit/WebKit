@@ -26,12 +26,14 @@
 #pragma once
 
 #include "NotificationManagerMessageHandler.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class WebPageProxy;
 
 class WebNotificationManagerMessageHandler : public NotificationManagerMessageHandler {
+    WTF_MAKE_WK_TZONE_ALLOCATED(WebNotificationManagerMessageHandler);
     friend class WebPageProxy;
 private:
     explicit WebNotificationManagerMessageHandler(WebPageProxy&);

@@ -47,6 +47,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(LegacyDownloadClient);
+
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
 LegacyDownloadClient::LegacyDownloadClient(id <_WKDownloadDelegate> delegate)

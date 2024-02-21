@@ -33,6 +33,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(MockHidService);
+
 MockHidService::MockHidService(Observer& observer, const WebCore::MockWebAuthenticationConfiguration& configuration)
     : HidService(observer)
     , m_configuration(configuration)

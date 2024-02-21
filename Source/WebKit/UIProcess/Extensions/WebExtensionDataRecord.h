@@ -31,6 +31,7 @@
 #include "WebExtensionDataType.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 OBJC_CLASS _WKWebExtensionDataRecord;
@@ -39,6 +40,7 @@ namespace WebKit {
 
 class WebExtensionDataRecord : public API::ObjectImpl<API::Object::Type::WebExtensionDataRecord> {
     WTF_MAKE_NONCOPYABLE(WebExtensionDataRecord);
+    WTF_MAKE_WK_TZONE_ALLOCATED(WebExtensionDataRecord);
 
 public:
     template<typename... Args>
@@ -76,7 +78,7 @@ private:
 
 class WebExtensionDataRecordHolder : public RefCounted<WebExtensionDataRecordHolder> {
     WTF_MAKE_NONCOPYABLE(WebExtensionDataRecordHolder);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(WebExtensionDataRecordHolder);
 
 public:
     template<typename... Args>

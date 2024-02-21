@@ -34,6 +34,8 @@ namespace WebKit {
 
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(WebExtensionAlarm);
+
 void WebExtensionAlarm::schedule()
 {
     m_parameters.nextScheduledTime = MonotonicTime::now() + initialInterval();

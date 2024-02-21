@@ -40,6 +40,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMalloc.h>
 
 #if ENABLE(REMOTE_INSPECTOR)
 #include <JavaScriptCore/RemoteAutomationTarget.h>
@@ -84,6 +85,7 @@ class WebPageProxy;
 class WebProcessPool;
 
 class AutomationCommandError {
+    WTF_MAKE_WK_TZONE_ALLOCATED(AutomationCommandError);
 public:
     Inspector::Protocol::Automation::ErrorMessage type;
     std::optional<String> message { std::nullopt };

@@ -29,13 +29,14 @@
 
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
+#import <wtf/TZoneMalloc.h>
 
 OBJC_CLASS RBSProcessMonitor;
 
 namespace WebKit {
 
 class ProcessStateMonitor : public CanMakeWeakPtr<ProcessStateMonitor> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(ProcessStateMonitor);
 public:
     ProcessStateMonitor(Function<void(bool)>&& becomeSuspendedHandler);
     ~ProcessStateMonitor();

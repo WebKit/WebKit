@@ -36,6 +36,7 @@
 #include "WebExtensionScriptInjectionResultParameters.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMallocInlines.h>
 
 OBJC_CLASS WKWebView;
 OBJC_CLASS WKFrameInfo;
@@ -60,7 +61,7 @@ using UserStyleSheetVector = Vector<Ref<API::UserStyleSheet>>;
 
 class WebExtensionRegisteredScript : public RefCounted<WebExtensionRegisteredScript> {
     WTF_MAKE_NONCOPYABLE(WebExtensionRegisteredScript);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(WebExtensionRegisteredScript);
 
 public:
     template<typename... Args>

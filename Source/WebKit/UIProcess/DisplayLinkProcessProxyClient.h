@@ -30,6 +30,7 @@
 #if HAVE(DISPLAY_LINK)
 
 #include "Connection.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
@@ -37,7 +38,7 @@ class WebProcessProxy;
 
 class DisplayLinkProcessProxyClient final : public DisplayLink::Client {
 public:
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(DisplayLinkProcessProxyClient);
 public:
     DisplayLinkProcessProxyClient() = default;
     ~DisplayLinkProcessProxyClient() = default;

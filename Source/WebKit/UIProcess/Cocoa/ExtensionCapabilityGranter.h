@@ -31,6 +31,7 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
@@ -43,7 +44,7 @@ class WebPageProxy;
 class WebProcessProxy;
 
 class ExtensionCapabilityGranter : public CanMakeWeakPtr<ExtensionCapabilityGranter> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(ExtensionCapabilityGranter);
     WTF_MAKE_NONCOPYABLE(ExtensionCapabilityGranter);
 public:
     struct Client : public CanMakeCheckedPtr {

@@ -30,6 +30,7 @@
 #include <OpenGL/CGLTypes.h>
 #include <WebCore/Timer.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashSet.h>
 
 namespace WebKit {
@@ -37,6 +38,7 @@ namespace WebKit {
 class WebProcessProxy;
 
 class HighPerformanceGPUManager {
+    WTF_MAKE_WK_TZONE_ALLOCATED(HighPerformanceGPUManager);
     friend NeverDestroyed<HighPerformanceGPUManager>;
 public:
     static HighPerformanceGPUManager& singleton();

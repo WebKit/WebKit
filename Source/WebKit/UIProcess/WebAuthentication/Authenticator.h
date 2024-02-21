@@ -33,6 +33,7 @@
 #include <WebCore/ExceptionData.h>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/spi/cocoa/SecuritySPI.h>
 
@@ -45,6 +46,7 @@ class AuthenticatorAssertionResponse;
 namespace WebKit {
 
 class Authenticator : public RefCounted<Authenticator>, public CanMakeWeakPtr<Authenticator> {
+    WTF_MAKE_WK_TZONE_ALLOCATED(Authenticator);
 public:
     using Respond = std::variant<Ref<WebCore::AuthenticatorResponse>, WebCore::ExceptionData>;
 

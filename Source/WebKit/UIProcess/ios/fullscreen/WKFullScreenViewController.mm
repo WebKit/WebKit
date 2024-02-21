@@ -44,6 +44,7 @@
 #import <pal/spi/cocoa/AVKitSPI.h>
 #import <wtf/MonotonicTime.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/WeakObjCPtr.h>
 
 #if PLATFORM(VISION)
@@ -58,6 +59,7 @@ static const Seconds bannerMinimumHideDelay = 1_s;
 @class WKFullscreenStackView;
 
 class WKFullScreenViewControllerPlaybackSessionModelClient : WebCore::PlaybackSessionModelClient {
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(WKFullScreenViewControllerPlaybackSessionModelClient);
 public:
     void setParent(WKFullScreenViewController *parent) { m_parent = parent; }
 

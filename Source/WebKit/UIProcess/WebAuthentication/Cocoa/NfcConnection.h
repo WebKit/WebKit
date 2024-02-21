@@ -30,6 +30,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 OBJC_CLASS NFReaderSession;
@@ -41,6 +42,7 @@ namespace WebKit {
 class NfcService;
 
 class NfcConnection : public RefCounted<NfcConnection>, public CanMakeWeakPtr<NfcConnection> {
+    WTF_MAKE_WK_TZONE_ALLOCATED(NfcConnection);
 public:
     static Ref<NfcConnection> create(RetainPtr<NFReaderSession>&&, NfcService&);
     ~NfcConnection();

@@ -33,6 +33,7 @@
 #include <WebCore/FloatPoint.h>
 #include <WebCore/IntPoint.h>
 #include <WebCore/IntSize.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashMap.h>
 
 namespace WebKit {
@@ -44,6 +45,7 @@ class RemoteScrollingCoordinatorProxy;
 class RemoteScrollingCoordinatorTransaction;
 
 class RemoteLayerTreeDrawingAreaProxy : public DrawingAreaProxy {
+    WTF_MAKE_WK_TZONE_ALLOCATED(RemoteLayerTreeDrawingAreaProxy);
 public:
     RemoteLayerTreeDrawingAreaProxy(WebPageProxy&, WebProcessProxy&);
     virtual ~RemoteLayerTreeDrawingAreaProxy();

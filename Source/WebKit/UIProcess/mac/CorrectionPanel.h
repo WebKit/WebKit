@@ -33,12 +33,14 @@
 #import <AppKit/NSSpellChecker.h>
 #import <WebCore/AlternativeTextClient.h>
 #import <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class WebViewImpl;
 
 class CorrectionPanel {
+    WTF_MAKE_WK_TZONE_ALLOCATED(CorrectionPanel);
 public:
     CorrectionPanel();
     ~CorrectionPanel();

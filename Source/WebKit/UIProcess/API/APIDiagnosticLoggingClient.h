@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 enum DiagnosticLoggingResultType : uint8_t;

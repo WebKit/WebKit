@@ -37,6 +37,8 @@
 namespace WebKit {
 using namespace fido;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(CtapHidDriver);
+
 CtapHidDriver::Worker::Worker(UniqueRef<HidConnection>&& connection)
     : m_connection(WTFMove(connection))
 {

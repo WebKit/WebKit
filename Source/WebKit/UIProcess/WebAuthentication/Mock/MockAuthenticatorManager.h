@@ -29,10 +29,12 @@
 
 #include "AuthenticatorManager.h"
 #include <WebCore/MockWebAuthenticationConfiguration.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class MockAuthenticatorManager final : public AuthenticatorManager {
+    WTF_MAKE_WK_TZONE_ALLOCATED(MockAuthenticatorManager);
 public:
     explicit MockAuthenticatorManager(WebCore::MockWebAuthenticationConfiguration&&);
 

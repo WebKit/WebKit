@@ -35,6 +35,8 @@ namespace WebKit {
 
 struct VirtualCredential;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(VirtualAuthenticatorManager);
+
 VirtualAuthenticatorManager::VirtualAuthenticatorManager()
     : AuthenticatorManager()
 {

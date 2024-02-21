@@ -40,7 +40,7 @@
 #undef new
 #undef delete
 #include <wtf/FastMalloc.h>
-
+#include <wtf/TZoneMallocInlines.h>
 #endif
 
 // ENABLE_WEBDRIVER_ACTIONS_API represents whether mouse, keyboard, touch or wheel interactions are defined

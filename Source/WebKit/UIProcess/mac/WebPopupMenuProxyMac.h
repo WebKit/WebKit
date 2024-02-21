@@ -30,6 +30,7 @@
 
 #include "WebPopupMenuProxy.h"
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS NSPopUpButtonCell;
 OBJC_CLASS WKView;
@@ -39,6 +40,7 @@ namespace WebKit {
 class WebPageProxy;
 
 class WebPopupMenuProxyMac : public WebPopupMenuProxy {
+    WTF_MAKE_WK_TZONE_ALLOCATED(WebPopupMenuProxyMac);
 public:
     static Ref<WebPopupMenuProxyMac> create(NSView *webView, WebPopupMenuProxy::Client& client)
     {

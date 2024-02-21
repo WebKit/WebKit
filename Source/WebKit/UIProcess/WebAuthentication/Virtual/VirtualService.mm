@@ -43,6 +43,8 @@ namespace WebKit {
 using namespace fido;
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(VirtualService);
+
 VirtualService::VirtualService(Observer& observer, Vector<std::pair<String, VirtualAuthenticatorConfiguration>>& authenticators)
     : AuthenticatorTransportService(observer), m_authenticators(authenticators)
 {

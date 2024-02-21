@@ -36,6 +36,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(WebURLSchemeHandlerCocoa);
+
 Ref<WebURLSchemeHandlerCocoa> WebURLSchemeHandlerCocoa::create(id <WKURLSchemeHandler> apiHandler)
 {
     return adoptRef(*new WebURLSchemeHandlerCocoa(apiHandler));

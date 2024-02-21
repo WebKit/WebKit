@@ -30,6 +30,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 OBJC_CLASS TKSmartCard;
@@ -40,6 +41,7 @@ class CcidService;
 using DataReceivedCallback = Function<void(Vector<uint8_t>&&)>;
 
 class CcidConnection : public RefCounted<CcidConnection>, public CanMakeWeakPtr<CcidConnection> {
+    WTF_MAKE_WK_TZONE_ALLOCATED(CcidConnection);
 public:
     static Ref<CcidConnection> create(RetainPtr<TKSmartCard>&&, CcidService&);
     ~CcidConnection();

@@ -37,6 +37,8 @@
 namespace WebKit {
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(AuthenticatorPresenterCoordinator);
+
 AuthenticatorPresenterCoordinator::AuthenticatorPresenterCoordinator(const AuthenticatorManager& manager, const String& rpId, const TransportSet& transports, ClientDataType type, const String& username)
     : m_manager(manager)
 {

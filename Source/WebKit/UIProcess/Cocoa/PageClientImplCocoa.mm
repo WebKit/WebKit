@@ -37,6 +37,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(PageClientImplCocoa);
+
 PageClientImplCocoa::PageClientImplCocoa(WKWebView *webView)
     : m_webView { webView }
     , m_alternativeTextUIController { makeUnique<WebCore::AlternativeTextUIController>() }

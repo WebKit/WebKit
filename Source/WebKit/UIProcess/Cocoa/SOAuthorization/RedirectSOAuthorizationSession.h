@@ -28,10 +28,12 @@
 #if HAVE(APP_SSO)
 
 #include "NavigationSOAuthorizationSession.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class RedirectSOAuthorizationSession final : public NavigationSOAuthorizationSession {
+    WTF_MAKE_WK_TZONE_ALLOCATED(RedirectSOAuthorizationSession);
 public:
     using Callback = CompletionHandler<void(bool)>;
 

@@ -31,6 +31,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -42,7 +43,7 @@ namespace WebKit {
 class WebPageProxy;
 
 class MediaKeySystemPermissionRequestManagerProxy : public CanMakeWeakPtr<MediaKeySystemPermissionRequestManagerProxy> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(MediaKeySystemPermissionRequestManagerProxy);
 public:
     explicit MediaKeySystemPermissionRequestManagerProxy(WebPageProxy&);
     ~MediaKeySystemPermissionRequestManagerProxy();

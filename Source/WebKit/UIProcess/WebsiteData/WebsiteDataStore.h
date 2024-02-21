@@ -48,6 +48,7 @@
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
@@ -120,6 +121,7 @@ struct WebsiteDataRecord;
 struct WebsiteDataStoreParameters;
 
 class WebsiteDataStore : public API::ObjectImpl<API::Object::Type::WebsiteDataStore>, public Identified<WebsiteDataStore>, public CanMakeWeakPtr<WebsiteDataStore> {
+    WTF_MAKE_WK_TZONE_ALLOCATED(WebsiteDataStore);
 public:
     static Ref<WebsiteDataStore> defaultDataStore();
     static bool defaultDataStoreExists();

@@ -254,7 +254,7 @@ Ref<WebProcessProxy> WebProcessProxy::createForRemoteWorkers(RemoteWorkerType wo
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
 class UIProxyForCapture final : public UserMediaCaptureManagerProxy::ConnectionProxy {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(UIProxyForCapture);
 public:
     explicit UIProxyForCapture(WebProcessProxy& process)
         : m_process(process)

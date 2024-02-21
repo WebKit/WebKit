@@ -46,6 +46,8 @@
 namespace WebKit {
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(SuspendedPageProxy);
+
 static const Seconds suspensionTimeout { 10_s };
 
 static WeakHashSet<SuspendedPageProxy>& allSuspendedPages()

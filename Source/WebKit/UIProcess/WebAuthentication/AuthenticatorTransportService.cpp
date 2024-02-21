@@ -40,6 +40,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(AuthenticatorTransportService);
+
 UniqueRef<AuthenticatorTransportService> AuthenticatorTransportService::create(WebCore::AuthenticatorTransport transport, Observer& observer)
 {
     switch (transport) {

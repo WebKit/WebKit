@@ -30,6 +30,7 @@
 #include "MessageReceiver.h"
 #include "MessageSender.h"
 #include <WebCore/RealtimeMediaSourceIdentifier.h>
+#include <wtf/TZoneMalloc.h>
 
 #if PLATFORM(COCOA)
 #include "SharedCARingBuffer.h"
@@ -48,7 +49,7 @@ namespace WebKit {
 class SpeechRecognitionRemoteRealtimeMediaSource;
 
 class SpeechRecognitionRemoteRealtimeMediaSourceManager final : public IPC::MessageReceiver, public IPC::MessageSender {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(SpeechRecognitionRemoteRealtimeMediaSourceManager);
 public:
     explicit SpeechRecognitionRemoteRealtimeMediaSourceManager(Ref<IPC::Connection>&&);
     void addSource(SpeechRecognitionRemoteRealtimeMediaSource&, const WebCore::CaptureDevice&);

@@ -32,12 +32,13 @@
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
 
 class CtapDriver : public CanMakeWeakPtr<CtapDriver> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(CtapDriver);
     WTF_MAKE_NONCOPYABLE(CtapDriver);
 public:
     using ResponseCallback = Function<void(Vector<uint8_t>&&)>;

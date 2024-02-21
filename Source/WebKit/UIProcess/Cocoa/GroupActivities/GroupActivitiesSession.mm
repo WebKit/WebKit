@@ -32,6 +32,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(GroupActivitiesSession);
+
 Ref<GroupActivitiesSession> GroupActivitiesSession::create(RetainPtr<WKGroupSession>&& session)
 {
     return adoptRef(*new GroupActivitiesSession(WTFMove(session)));

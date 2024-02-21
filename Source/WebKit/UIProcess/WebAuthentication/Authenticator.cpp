@@ -32,6 +32,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(Authenticator);
+
 void Authenticator::handleRequest(const WebAuthenticationRequestData& data)
 {
     m_pendingRequestData = data;

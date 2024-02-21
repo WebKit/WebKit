@@ -27,10 +27,12 @@
 
 #include "UserMediaPermissionRequestProxy.h"
 #include <WebCore/SecurityOrigin.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class UserMediaPermissionRequestProxyMac final : public UserMediaPermissionRequestProxy {
+    WTF_MAKE_WK_TZONE_ALLOCATED(UserMediaPermissionRequestProxyMac);
 public:
     ~UserMediaPermissionRequestProxyMac() final;
 

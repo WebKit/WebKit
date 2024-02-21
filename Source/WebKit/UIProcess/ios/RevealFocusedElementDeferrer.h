@@ -29,6 +29,7 @@
 
 #import <wtf/OptionSet.h>
 #import <wtf/RefCounted.h>
+#import <wtf/TZoneMalloc.h>
 #import <wtf/WeakObjCPtr.h>
 
 @class WKContentView;
@@ -42,6 +43,7 @@ enum class RevealFocusedElementDeferralReason : uint8_t {
 };
 
 class RevealFocusedElementDeferrer final : public RefCounted<RevealFocusedElementDeferrer> {
+    WTF_MAKE_WK_TZONE_ALLOCATED(RevealFocusedElementDeferrer);
 public:
     static Ref<RevealFocusedElementDeferrer> create(WKContentView *, OptionSet<RevealFocusedElementDeferralReason>);
     void fulfill(RevealFocusedElementDeferralReason);

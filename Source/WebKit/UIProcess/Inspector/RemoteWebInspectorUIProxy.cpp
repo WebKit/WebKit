@@ -44,6 +44,8 @@
 namespace WebKit {
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(RemoteWebInspectorUIProxy);
+
 RemoteWebInspectorUIProxy::RemoteWebInspectorUIProxy()
     : m_debuggableInfo(API::DebuggableInfo::create(DebuggableInfoData::empty()))
 {

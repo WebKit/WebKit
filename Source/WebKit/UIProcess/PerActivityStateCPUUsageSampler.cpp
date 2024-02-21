@@ -36,6 +36,8 @@
 namespace WebKit {
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(PerActivityStateCPUUsageSampler);
+
 static const Seconds loggingInterval { 60_min };
 
 PerActivityStateCPUUsageSampler::PerActivityStateCPUUsageSampler(WebProcessPool& processPool)

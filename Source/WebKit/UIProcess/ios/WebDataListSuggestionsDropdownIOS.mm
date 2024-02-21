@@ -96,6 +96,8 @@ static NSString * const suggestionCellReuseIdentifier = @"WKDataListSuggestionCe
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(RevealFocusedElementDeferrer);
+
 Ref<WebDataListSuggestionsDropdownIOS> WebDataListSuggestionsDropdownIOS::create(WebPageProxy& page, WKContentView *view)
 {
     return adoptRef(*new WebDataListSuggestionsDropdownIOS(page, view));

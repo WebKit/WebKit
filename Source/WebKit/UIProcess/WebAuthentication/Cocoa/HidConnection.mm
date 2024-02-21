@@ -35,6 +35,8 @@
 namespace WebKit {
 using namespace fido;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(HidConnection);
+
 // FIXME(191518)
 static void reportReceived(void* context, IOReturn status, void*, IOHIDReportType type, uint32_t reportID, uint8_t* report, CFIndex reportLength)
 {

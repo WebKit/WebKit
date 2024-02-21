@@ -32,6 +32,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(XPCConnectionTerminationWatchdog);
+
 void XPCConnectionTerminationWatchdog::startConnectionTerminationWatchdog(AuxiliaryProcessProxy& process, Seconds interval)
 {
     new XPCConnectionTerminationWatchdog(process, interval);

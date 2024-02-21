@@ -38,6 +38,8 @@ namespace WebKit {
 
 using namespace Inspector;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(InspectorTargetProxy);
+
 std::unique_ptr<InspectorTargetProxy> InspectorTargetProxy::create(WebPageProxy& page, const String& targetId, Inspector::InspectorTargetType type)
 {
     return makeUnique<InspectorTargetProxy>(page, targetId, type);

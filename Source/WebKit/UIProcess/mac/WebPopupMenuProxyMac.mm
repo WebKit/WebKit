@@ -42,6 +42,8 @@
 namespace WebKit {
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(WebPopupMenuProxyMac);
+
 WebPopupMenuProxyMac::WebPopupMenuProxyMac(NSView *webView, WebPopupMenuProxy::Client& client)
     : WebPopupMenuProxy(client)
     , m_webView(webView)

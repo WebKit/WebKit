@@ -59,6 +59,8 @@ constexpr NSString * kDefaultTimeZoneIdentifier = @"UTC";
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(WebDateTimePickerMac);
+
 Ref<WebDateTimePickerMac> WebDateTimePickerMac::create(WebPageProxy& page, NSView *view)
 {
     return adoptRef(*new WebDateTimePickerMac(page, view));

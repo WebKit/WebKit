@@ -45,6 +45,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(ExtensionCapabilityGranter);
+
 static WorkQueue& granterQueue()
 {
     static NeverDestroyed<Ref<WorkQueue>> queue(WorkQueue::create("ExtensionCapabilityGranter Queue", WorkQueue::QOS::UserInitiated));

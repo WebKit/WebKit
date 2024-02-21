@@ -33,6 +33,7 @@
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
@@ -67,6 +68,7 @@ namespace WebKit {
 
 class WebExtension : public API::ObjectImpl<API::Object::Type::WebExtension>, public CanMakeWeakPtr<WebExtension> {
     WTF_MAKE_NONCOPYABLE(WebExtension);
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(WebExtension);
 
 public:
     template<typename... Args>

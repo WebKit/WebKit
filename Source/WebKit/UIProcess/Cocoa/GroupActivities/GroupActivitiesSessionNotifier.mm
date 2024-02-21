@@ -40,6 +40,8 @@ namespace WebKit {
 using namespace PAL;
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(GroupActivitiesSessionNotifier);
+
 GroupActivitiesSessionNotifier& GroupActivitiesSessionNotifier::sharedNotifier()
 {
     static NeverDestroyed<GroupActivitiesSessionNotifier> notifier;

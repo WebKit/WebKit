@@ -34,6 +34,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(SpeechRecognitionRemoteRealtimeMediaSourceManager);
+
 SpeechRecognitionRemoteRealtimeMediaSourceManager::SpeechRecognitionRemoteRealtimeMediaSourceManager(Ref<IPC::Connection>&& connection)
     : m_connection(WTFMove(connection))
 {

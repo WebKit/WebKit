@@ -50,6 +50,8 @@
 namespace WebKit {
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(AuthenticatorManager);
+
 namespace {
 
 // Suggested by WebAuthN spec as of 7 August 2018.

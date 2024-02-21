@@ -42,6 +42,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(AuthenticationChallengeProxy);
+
 AuthenticationChallengeProxy::AuthenticationChallengeProxy(WebCore::AuthenticationChallenge&& authenticationChallenge, AuthenticationChallengeIdentifier challengeID, Ref<IPC::Connection>&& connection, WeakPtr<SecKeyProxyStore>&& secKeyProxyStore)
     : m_coreAuthenticationChallenge(WTFMove(authenticationChallenge))
     , m_listener(AuthenticationDecisionListener::create([challengeID, connection = WTFMove(connection), secKeyProxyStore = WTFMove(secKeyProxyStore)](AuthenticationChallengeDisposition disposition, const WebCore::Credential& credential) {

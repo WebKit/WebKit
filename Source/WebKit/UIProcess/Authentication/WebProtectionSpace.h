@@ -28,10 +28,12 @@
 
 #include "APIObject.h"
 #include <WebCore/ProtectionSpace.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class WebProtectionSpace : public API::ObjectImpl<API::Object::Type::ProtectionSpace> {
+    WTF_MAKE_WK_TZONE_ALLOCATED(WebProtectionSpace);
 public:
     static Ref<WebProtectionSpace> create(const WebCore::ProtectionSpace& protectionSpace)
     {

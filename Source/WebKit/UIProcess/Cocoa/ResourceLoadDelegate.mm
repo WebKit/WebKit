@@ -34,6 +34,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(ResourceLoadDelegate);
+
 ResourceLoadDelegate::ResourceLoadDelegate(WKWebView *webView)
     : m_webView(webView)
 {

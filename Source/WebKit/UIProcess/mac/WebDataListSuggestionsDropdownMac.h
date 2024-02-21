@@ -29,12 +29,14 @@
 
 #import "WebDataListSuggestionsDropdown.h"
 #import <wtf/RetainPtr.h>
+#import <wtf/TZoneMalloc.h>
 
 OBJC_CLASS WKDataListSuggestionsController;
 
 namespace WebKit {
 
 class WebDataListSuggestionsDropdownMac final : public WebDataListSuggestionsDropdown {
+    WTF_MAKE_WK_TZONE_ALLOCATED(WebDataListSuggestionsDropdownMac);
 public:
     static Ref<WebDataListSuggestionsDropdownMac> create(WebPageProxy&, NSView *);
     ~WebDataListSuggestionsDropdownMac();

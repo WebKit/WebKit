@@ -35,6 +35,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(EndowmentStateTracker);
+
 static NSString* visibilityEndowment = @"com.apple.frontboard.visibility";
 static NSString* userfacingEndowment = @"com.apple.launchservices.userfacing";
 

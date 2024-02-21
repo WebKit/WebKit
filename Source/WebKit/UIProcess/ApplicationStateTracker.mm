@@ -53,6 +53,8 @@ static NSNotificationName const viewServiceForegroundNotificationName = @"_UIVie
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(ApplicationStateTracker);
+
 static WeakHashSet<ApplicationStateTracker>& allApplicationStateTrackers()
 {
     static NeverDestroyed<WeakHashSet<ApplicationStateTracker>> trackers;

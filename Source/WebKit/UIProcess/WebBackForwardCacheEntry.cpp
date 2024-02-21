@@ -36,6 +36,8 @@ namespace WebKit {
 
 static const Seconds expirationDelay { 30_min };
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(WebBackForwardCacheEntry);
+
 WebBackForwardCacheEntry::WebBackForwardCacheEntry(WebBackForwardCache& backForwardCache, WebCore::BackForwardItemIdentifier backForwardItemID, WebCore::ProcessIdentifier processIdentifier, std::unique_ptr<SuspendedPageProxy>&& suspendedPage)
     : m_backForwardCache(backForwardCache)
     , m_processIdentifier(processIdentifier)

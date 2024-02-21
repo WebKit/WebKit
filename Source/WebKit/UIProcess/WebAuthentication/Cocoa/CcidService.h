@@ -30,6 +30,7 @@
 #include "FidoService.h"
 #include <wtf/RetainPtr.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS NSArray;
 OBJC_CLASS TKSmartCardSlot;
@@ -42,6 +43,7 @@ namespace WebKit {
 class CcidConnection;
 
 class CcidService : public FidoService {
+    WTF_MAKE_WK_TZONE_ALLOCATED(CcidService);
 public:
     explicit CcidService(Observer&);
     ~CcidService();

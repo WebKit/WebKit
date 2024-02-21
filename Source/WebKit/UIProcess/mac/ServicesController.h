@@ -31,11 +31,13 @@
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class ServicesController {
     WTF_MAKE_NONCOPYABLE(ServicesController);
+    WTF_MAKE_WK_TZONE_ALLOCATED(ServicesController);
     friend NeverDestroyed<ServicesController>;
 public:
     static ServicesController& singleton();

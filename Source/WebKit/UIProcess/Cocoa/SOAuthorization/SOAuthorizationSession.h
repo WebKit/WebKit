@@ -30,6 +30,7 @@
 #include <pal/spi/cocoa/AppSSOSPI.h>
 #include <wtf/Forward.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WeakObjCPtr.h>
 #include <wtf/WeakPtr.h>
@@ -54,6 +55,7 @@ enum class SOAuthorizationLoadPolicy : bool;
 
 // A session will only be executed once.
 class SOAuthorizationSession : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<SOAuthorizationSession, WTF::DestructionThread::MainRunLoop> {
+    WTF_MAKE_WK_TZONE_ALLOCATED(SOAuthorizationSession);
 public:
     enum class InitiatingAction : uint8_t {
         Redirect,

@@ -41,6 +41,8 @@
 namespace WebKit {
 using namespace fido;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(FidoService);
+
 FidoService::FidoService(Observer& observer)
     : AuthenticatorTransportService(observer)
 {

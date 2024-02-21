@@ -42,6 +42,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(LocalService);
+
 LocalService::LocalService(Observer& observer)
     : AuthenticatorTransportService(observer)
 {

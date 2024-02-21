@@ -28,6 +28,7 @@
 #include <WebCore/ProcessIdentifier.h>
 #include <wtf/HashMap.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace API {
@@ -47,7 +48,7 @@ class WebPageProxy;
 class WebBackForwardListItem;
 
 class WebNavigationState : public CanMakeWeakPtr<WebNavigationState> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(WebNavigationState);
 public:
     explicit WebNavigationState();
     ~WebNavigationState();

@@ -30,6 +30,7 @@
 #include <WebCore/GamepadProviderClient.h>
 #include <wtf/HashSet.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakHashSet.h>
 
@@ -41,6 +42,7 @@ class WebProcessPool;
 class GamepadData;
 
 class UIGamepadProvider final : public WebCore::GamepadProviderClient {
+    WTF_MAKE_WK_TZONE_ALLOCATED(UIGamepadProvider);
 public:
     static UIGamepadProvider& singleton();
 

@@ -111,6 +111,8 @@ SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL(WebKit, WebKitSwift, WKMarketplaceKit)
 namespace WebKit {
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(NavigationState);
+
 static WeakHashMap<WebPageProxy, WeakPtr<NavigationState>>& navigationStates()
 {
     static NeverDestroyed<WeakHashMap<WebPageProxy, WeakPtr<NavigationState>>> navigationStates;

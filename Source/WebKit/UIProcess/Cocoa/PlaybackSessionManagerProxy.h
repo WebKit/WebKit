@@ -38,6 +38,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashSet.h>
 
 namespace WebKit {
@@ -46,6 +47,7 @@ class WebPageProxy;
 class PlaybackSessionManagerProxy;
 
 class PlaybackSessionModelContext final: public RefCounted<PlaybackSessionModelContext>, public WebCore::PlaybackSessionModel  {
+    WTF_MAKE_WK_TZONE_ALLOCATED(PlaybackSessionModelContext);
 public:
     static Ref<PlaybackSessionModelContext> create(PlaybackSessionManagerProxy& manager, PlaybackSessionContextIdentifier contextId)
     {

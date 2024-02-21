@@ -33,6 +33,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(GestureRecognizerConsistencyEnforcer);
+
 GestureRecognizerConsistencyEnforcer::GestureRecognizerConsistencyEnforcer(WKContentView *view)
     : m_view(view)
     , m_timer(RunLoop::main(), this, &GestureRecognizerConsistencyEnforcer::timerFired)

@@ -129,7 +129,7 @@ static WebCore::ModalContainerObservationPolicy coreModalContainerObservationPol
 }
 
 class WebPagePreferencesLockdownModeObserver final : public LockdownModeObserver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(WebPagePreferencesLockdownModeObserver);
 public:
     WebPagePreferencesLockdownModeObserver(id object)
         : m_object(object)

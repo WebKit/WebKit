@@ -38,6 +38,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(WebProcessCache);
+
 #if PLATFORM(COCOA)
 Seconds WebProcessCache::cachedProcessLifetime { 30_min };
 Seconds WebProcessCache::clearingDelayAfterApplicationResignsActive { 5_min };

@@ -32,10 +32,12 @@
 #include "NavigationSOAuthorizationSession.h"
 #include <WebCore/FrameIdentifier.h>
 #include <wtf/Deque.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class SubFrameSOAuthorizationSession final : public NavigationSOAuthorizationSession, public FrameLoadState::Observer {
+    WTF_MAKE_WK_TZONE_ALLOCATED(SubFrameSOAuthorizationSession);
 public:
     using Callback = CompletionHandler<void(bool)>;
 

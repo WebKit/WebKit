@@ -28,10 +28,12 @@
 #ifdef __cplusplus
 
 #include <WebKit/FullscreenTouchSecheuristicParameters.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class FullscreenTouchSecheuristic {
+    WTF_MAKE_WK_TZONE_ALLOCATED(FullscreenTouchSecheuristic);
 public:
     WK_EXPORT double scoreOfNextTouch(CGPoint location);
     WK_EXPORT double scoreOfNextTouch(CGPoint location, const Seconds& deltaTime);

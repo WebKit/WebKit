@@ -28,6 +28,7 @@
 #include "PageClient.h"
 #include <WebCore/PlatformTextAlternatives.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakObjCPtr.h>
 
 @class PlatformTextAlternatives;
@@ -47,6 +48,7 @@ struct AppHighlight;
 namespace WebKit {
 
 class PageClientImplCocoa : public PageClient {
+    WTF_MAKE_WK_TZONE_ALLOCATED(PageClientImplCocoa);
 public:
     PageClientImplCocoa(WKWebView *);
     virtual ~PageClientImplCocoa();

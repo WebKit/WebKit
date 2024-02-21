@@ -35,6 +35,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(HighPerformanceGPUManager);
+
 // FIXME: This class is using OpenGL to control the muxing of GPUs. Ultimately
 // we want to use Metal, but currently there isn't a way to "release" a
 // discrete MTLDevice, such that the process muxes back to an integrated GPU.

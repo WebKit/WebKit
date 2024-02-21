@@ -30,11 +30,13 @@
 #include "AuthenticatorTransportService.h"
 #include "CtapDriver.h"
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebKit {
 
 class FidoService : public AuthenticatorTransportService {
+    WTF_MAKE_WK_TZONE_ALLOCATED(FidoService);
 public:
     explicit FidoService(Observer&);
 

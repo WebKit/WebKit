@@ -37,6 +37,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(NavigationSOAuthorizationSession);
+
 NavigationSOAuthorizationSession::NavigationSOAuthorizationSession(RetainPtr<WKSOAuthorizationDelegate> delegate, Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, InitiatingAction action, Callback&& completionHandler)
     : SOAuthorizationSession(delegate, WTFMove(navigationAction), page, action)
     , m_callback(WTFMove(completionHandler))

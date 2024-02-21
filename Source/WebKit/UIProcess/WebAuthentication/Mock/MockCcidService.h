@@ -29,12 +29,14 @@
 
 #include "CcidService.h"
 #include <WebCore/MockWebAuthenticationConfiguration.h>
+#include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS NSData;
 
 namespace WebKit {
 
 class MockCcidService final : public CcidService {
+    WTF_MAKE_WK_TZONE_ALLOCATED(MockCcidService);
 public:
     MockCcidService(Observer&, const WebCore::MockWebAuthenticationConfiguration&);
 

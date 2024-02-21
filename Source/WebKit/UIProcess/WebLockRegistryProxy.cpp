@@ -38,6 +38,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(WebLockRegistryProxy);
+
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_process.connection())
 
 WebLockRegistryProxy::WebLockRegistryProxy(WebProcessProxy& process)

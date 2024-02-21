@@ -33,6 +33,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(WindowServerConnection);
+
 #if PLATFORM(MAC)
 void WindowServerConnection::applicationWindowModificationsStopped(bool stopped)
 {

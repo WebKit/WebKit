@@ -34,6 +34,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Seconds.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -70,7 +71,7 @@ public:
 };
 
 class WebFullScreenManagerProxy : public IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(WebFullScreenManagerProxy);
 public:
     WebFullScreenManagerProxy(WebPageProxy&, WebFullScreenManagerProxyClient&);
     virtual ~WebFullScreenManagerProxy();

@@ -29,6 +29,7 @@
 
 #include "SOAuthorizationSession.h"
 #include <wtf/CompletionHandler.h>
+#include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS WKSOSecretDelegate;
 OBJC_CLASS WKWebView;
@@ -41,6 +42,7 @@ namespace WebKit {
 
 // FSM: Idle => Active => Completed
 class PopUpSOAuthorizationSession final : public SOAuthorizationSession {
+    WTF_MAKE_WK_TZONE_ALLOCATED(PopUpSOAuthorizationSession);
 public:
     using NewPageCallback = CompletionHandler<void(RefPtr<WebPageProxy>&&)>;
     using UIClientCallback = Function<void(Ref<API::NavigationAction>&&, NewPageCallback&&)>;

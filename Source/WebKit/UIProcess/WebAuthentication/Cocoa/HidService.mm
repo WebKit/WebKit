@@ -34,6 +34,8 @@
 namespace WebKit {
 using namespace fido;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(HidService);
+
 // FIXME(191518)
 static void deviceAddedCallback(void* context, IOReturn, void*, IOHIDDeviceRef device)
 {
