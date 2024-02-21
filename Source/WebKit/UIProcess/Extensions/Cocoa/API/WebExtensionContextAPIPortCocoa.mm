@@ -60,6 +60,9 @@ void WebExtensionContext::portPostMessage(WebExtensionContentWorldType targetCon
 
     switch (targetContentWorldType) {
     case WebExtensionContentWorldType::Main:
+#if ENABLE(INSPECTOR_EXTENSIONS)
+    case WebExtensionContentWorldType::Inspector:
+#endif
         wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [&] {
             sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchPortMessageEvent(sendingPageProxyIdentifier, channelIdentifier, messageJSON));
         });
@@ -193,6 +196,9 @@ void WebExtensionContext::firePortDisconnectEventIfNeeded(WebExtensionContentWor
 
     switch (targetContentWorldType) {
     case WebExtensionContentWorldType::Main:
+#if ENABLE(INSPECTOR_EXTENSIONS)
+    case WebExtensionContentWorldType::Inspector:
+#endif
         wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [&] {
             sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchPortDisconnectEvent(channelIdentifier));
         });

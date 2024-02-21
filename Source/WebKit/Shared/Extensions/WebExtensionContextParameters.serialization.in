@@ -36,6 +36,7 @@ struct WebKit::WebExtensionContextParameters {
 
     std::optional<WebCore::PageIdentifier> backgroundPageIdentifier;
 #if ENABLE(INSPECTOR_EXTENSIONS)
+    Vector<WebKit::WebExtensionContext::PageIdentifierTuple> inspectorPageIdentifiers;
     Vector<WebKit::WebExtensionContext::PageIdentifierTuple> inspectorBackgroundPageIdentifiers;
 #endif
     Vector<WebKit::WebExtensionContext::PageIdentifierTuple> popupPageIdentifiers;

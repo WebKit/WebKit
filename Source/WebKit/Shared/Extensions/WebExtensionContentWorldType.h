@@ -36,6 +36,9 @@ enum class WebExtensionContentWorldType : uint8_t {
     ContentScript,
     Native,
     WebPage,
+#if ENABLE(INSPECTOR_EXTENSIONS)
+    Inspector,
+#endif
 };
 
 inline String toDebugString(WebExtensionContentWorldType contentWorldType)
@@ -49,6 +52,10 @@ inline String toDebugString(WebExtensionContentWorldType contentWorldType)
         return "native"_s;
     case WebExtensionContentWorldType::WebPage:
         return "web page"_s;
+#if ENABLE(INSPECTOR_EXTENSIONS)
+    case WebExtensionContentWorldType::Inspector:
+        return "inspector"_s;
+#endif
     }
 }
 

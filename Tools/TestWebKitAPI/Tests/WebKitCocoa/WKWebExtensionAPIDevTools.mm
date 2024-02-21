@@ -114,6 +114,9 @@ TEST(WKWebExtensionAPIDevTools, CreatePanel)
     ]);
 
     auto *panelScript = Util::constructScript(@[
+        @"browser.test.assertEq(typeof browser?.devtools?.inspectedWindow?.tabId, 'number', 'browser.devtools.inspectedWindow.tabId should be available')",
+        @"browser.test.assertTrue(browser?.devtools?.inspectedWindow?.tabId > 0, 'browser.devtools.inspectedWindow.tabId should be a positive value')",
+
         @"window.notifyHidden = () => {",
         @"  browser.test.yield('Panel Hidden')",
         @"}",
@@ -328,7 +331,7 @@ TEST(WKWebExtensionAPIDevTools, PanelsThemeName)
         @"  browser.test.assertEq(newTheme, 'dark', 'newTheme should be dark')",
         @"  browser.test.assertEq(browser?.devtools?.panels?.themeName, 'dark', 'panels.themeName should be dark')",
 
-        @"  browser.test.notifyPass();",
+        @"  browser.test.notifyPass()",
         @"})",
 
         @"browser.test.yield('Change Theme')",
@@ -357,6 +360,313 @@ TEST(WKWebExtensionAPIDevTools, PanelsThemeName)
 
     // Force dark mode on the inspector to tigger the theme change.
     mainWebView._inspector.extensionHostWebView.appearance = [NSAppearance appearanceNamed:NSAppearanceNameDarkAqua];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIDevTools, MessagePassingToBackground)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.runtime.onMessage.addListener((message, sender, sendResponse) => {",
+        @"  browser.test.assertEq(message, 'Hello from Inspector', 'Should get the correct message from the Inspector script')",
+        @"  sendResponse('Acknowledged by background')",
+        @"})"
+    ]);
+
+    auto *devToolsScript = Util::constructScript(@[
+        @"const response = await browser.runtime.sendMessage('Hello from Inspector')",
+        @"browser.test.assertEq(response, 'Acknowledged by background', 'Should get the correct response from the background script')",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto *resources = @{
+        @"background.js": backgroundScript,
+        @"devtools.html": @"<script type='module' src='devtools.js'></script>",
+        @"devtools.js": devToolsScript
+    };
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager.get().defaultTab.mainWebView loadRequest:server.requestWithLocalhost()];
+    [manager.get().defaultTab.mainWebView._inspector show];
+
+    [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPIDevTools, MessagePassingFromPanelToBackground)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.runtime.onMessage.addListener((message, sender, sendResponse) => {",
+        @"  browser.test.assertEq(message, 'Hello from Inspector panel', 'Should get the correct message from the pane script')",
+        @"  sendResponse('Acknowledged by Inspector panel')",
+        @"})"
+    ]);
+
+    auto *devToolsScript = Util::constructScript(@[
+        @"let panel = await browser.devtools.panels.create('Test Panel', 'icon.svg', 'panel.html')",
+        @"browser.test.assertEq(typeof panel, 'object', 'Panel should be created successfully')",
+
+        @"browser.test.yield('Panel Created')",
+    ]);
+
+    auto *panelScript = Util::constructScript(@[
+        @"const response = await browser.runtime.sendMessage('Hello from Inspector panel')",
+        @"browser.test.assertEq(response, 'Acknowledged by Inspector panel', 'Should get the correct response from the background script')",
+
+        @"browser.test.notifyPass()",
+    ]);
+
+    auto *iconSVG = @"<svg width='16' height='16' xmlns='http://www.w3.org/2000/svg'><circle cx='8' cy='8' r='8' fill='red' /></svg>";
+
+    auto *resources = @{
+        @"background.js": backgroundScript,
+        @"devtools.html": @"<script type='module' src='devtools.js'></script>",
+        @"devtools.js": devToolsScript,
+        @"panel.html": @"<script type='module' src='panel.js'></script>",
+        @"panel.js": panelScript,
+        @"icon.svg": iconSVG,
+    };
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager.get().defaultTab.mainWebView loadRequest:server.requestWithLocalhost()];
+    [manager.get().defaultTab.mainWebView._inspector show];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Panel Created");
+
+    NSString *extensionIdentifier = [NSString stringWithFormat:@"WebExtensionTab-%@-1", manager.get().context.uniqueIdentifier];
+    [manager.get().defaultTab.mainWebView._inspector showExtensionTabWithIdentifier:extensionIdentifier completionHandler:^(NSError *error) {
+        EXPECT_NULL(error);
+    }];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIDevTools, MessagePassingFromPanelToDevToolsBackground)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *devToolsScript = Util::constructScript(@[
+        @"let panel = await browser.devtools.panels.create('Test Panel', 'icon.svg', 'panel.html')",
+        @"browser.test.assertEq(typeof panel, 'object', 'Panel should be created successfully')",
+
+        @"browser.runtime.onMessage.addListener((message, sender, sendResponse) => {",
+        @"  browser.test.assertEq(message, 'Hello from Inspector panel', 'Should get the correct message from the pane script')",
+        @"  sendResponse('Acknowledged by Inspector background')",
+        @"})",
+
+        @"browser.test.yield('Panel Created')",
+    ]);
+
+    auto *panelScript = Util::constructScript(@[
+        @"const response = await browser.runtime.sendMessage('Hello from Inspector panel')",
+        @"browser.test.assertEq(response, 'Acknowledged by Inspector background', 'Should get the correct response from the Inspector background')",
+
+        @"browser.test.notifyPass()",
+    ]);
+
+    auto *iconSVG = @"<svg width='16' height='16' xmlns='http://www.w3.org/2000/svg'><circle cx='8' cy='8' r='8' fill='red' /></svg>";
+
+    auto *resources = @{
+        @"background.js": @"// This script is intentionally left blank.",
+        @"devtools.html": @"<script type='module' src='devtools.js'></script>",
+        @"devtools.js": devToolsScript,
+        @"panel.html": @"<script type='module' src='panel.js'></script>",
+        @"panel.js": panelScript,
+        @"icon.svg": iconSVG,
+    };
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager.get().defaultTab.mainWebView loadRequest:server.requestWithLocalhost()];
+    [manager.get().defaultTab.mainWebView._inspector show];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Panel Created");
+
+    NSString *extensionIdentifier = [NSString stringWithFormat:@"WebExtensionTab-%@-1", manager.get().context.uniqueIdentifier];
+    [manager.get().defaultTab.mainWebView._inspector showExtensionTabWithIdentifier:extensionIdentifier completionHandler:^(NSError *error) {
+        EXPECT_NULL(error);
+    }];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIDevTools, PortMessagePassingToBackground)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.runtime.onConnect.addListener(port => {",
+        @"  port.onMessage.addListener((message) => {",
+        @"    browser.test.assertEq(message, 'Hello from Inspector', 'Should get the correct message from the Inspector script')",
+        @"    port.postMessage('Acknowledged by background')",
+        @"  })",
+        @"})"
+    ]);
+
+    auto *devToolsScript = Util::constructScript(@[
+        @"const port = browser.runtime.connect()",
+        @"port.postMessage('Hello from Inspector')",
+
+        @"port.onMessage.addListener((response) => {",
+        @"  browser.test.assertEq(response, 'Acknowledged by background', 'Should get the correct response from the background script')",
+
+        @"  browser.test.notifyPass()",
+        @"})"
+    ]);
+
+    auto *resources = @{
+        @"background.js": backgroundScript,
+        @"devtools.html": @"<script type='module' src='devtools.js'></script>",
+        @"devtools.js": devToolsScript,
+    };
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager.get().defaultTab.mainWebView loadRequest:server.requestWithLocalhost()];
+    [manager.get().defaultTab.mainWebView._inspector show];
+
+    [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPIDevTools, PortMessagePassingFromPanelToBackground)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.runtime.onConnect.addListener(port => {",
+        @"  port.onMessage.addListener((message) => {",
+        @"    browser.test.assertEq(message, 'Hello from Inspector panel', 'Should get the correct message from the panel script')",
+        @"    port.postMessage('Acknowledged by Inspector panel')",
+        @"  })",
+        @"})"
+    ]);
+
+    auto *devToolsScript = Util::constructScript(@[
+        @"let panel = await browser.devtools.panels.create('Test Panel', 'icon.svg', 'panel.html')",
+        @"browser.test.assertEq(typeof panel, 'object', 'Panel should be created successfully')",
+
+        @"browser.test.yield('Panel Created')",
+    ]);
+
+    auto *panelScript = Util::constructScript(@[
+        @"const port = browser.runtime.connect()",
+        @"port.postMessage('Hello from Inspector panel')",
+        @"port.onMessage.addListener((response) => {",
+        @"  browser.test.assertEq(response, 'Acknowledged by Inspector panel', 'Should get the correct response from the background script')",
+
+        @"  browser.test.notifyPass()",
+        @"})"
+    ]);
+
+    auto *iconSVG = @"<svg width='16' height='16' xmlns='http://www.w3.org/2000/svg'><circle cx='8' cy='8' r='8' fill='red' /></svg>";
+
+    auto *resources = @{
+        @"background.js": backgroundScript,
+        @"devtools.html": @"<script type='module' src='devtools.js'></script>",
+        @"devtools.js": devToolsScript,
+        @"panel.html": @"<script type='module' src='panel.js'></script>",
+        @"panel.js": panelScript,
+        @"icon.svg": iconSVG,
+    };
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager.get().defaultTab.mainWebView loadRequest:server.requestWithLocalhost()];
+    [manager.get().defaultTab.mainWebView._inspector show];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Panel Created");
+
+    NSString *extensionIdentifier = [NSString stringWithFormat:@"WebExtensionTab-%@-1", manager.get().context.uniqueIdentifier];
+    [manager.get().defaultTab.mainWebView._inspector showExtensionTabWithIdentifier:extensionIdentifier completionHandler:^(NSError *error) {
+        EXPECT_NULL(error);
+    }];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIDevTools, PortMessagePassingFromPanelToDevToolsBackground)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *devToolsScript = Util::constructScript(@[
+        @"let panel = await browser.devtools.panels.create('Test Panel', 'icon.svg', 'panel.html')",
+        @"browser.test.assertEq(typeof panel, 'object', 'Panel should be created successfully')",
+
+        @"browser.runtime.onConnect.addListener(port => {",
+        @"  port.onMessage.addListener((message) => {",
+        @"    browser.test.assertEq(message, 'Hello from Inspector panel', 'Should get the correct message from the panel script')",
+        @"    port.postMessage('Acknowledged by Inspector background')",
+        @"  })",
+        @"})",
+
+        @"browser.test.yield('Panel Created')",
+    ]);
+
+    auto *panelScript = Util::constructScript(@[
+        @"const port = browser.runtime.connect()",
+        @"port.postMessage('Hello from Inspector panel')",
+
+        @"port.onMessage.addListener((response) => {",
+        @"  browser.test.assertEq(response, 'Acknowledged by Inspector background', 'Should get the correct response from the Inspector background')",
+
+        @"  browser.test.notifyPass()",
+        @"})"
+    ]);
+
+    auto *iconSVG = @"<svg width='16' height='16' xmlns='http://www.w3.org/2000/svg'><circle cx='8' cy='8' r='8' fill='red' /></svg>";
+
+    auto *resources = @{
+        @"background.js": @"// This script is intentionally left blank.",
+        @"devtools.html": @"<script type='module' src='devtools.js'></script>",
+        @"devtools.js": devToolsScript,
+        @"panel.html": @"<script type='module' src='panel.js'></script>",
+        @"panel.js": panelScript,
+        @"icon.svg": iconSVG,
+    };
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager.get().defaultTab.mainWebView loadRequest:server.requestWithLocalhost()];
+    [manager.get().defaultTab.mainWebView._inspector show];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Panel Created");
+
+    NSString *extensionIdentifier = [NSString stringWithFormat:@"WebExtensionTab-%@-1", manager.get().context.uniqueIdentifier];
+    [manager.get().defaultTab.mainWebView._inspector showExtensionTabWithIdentifier:extensionIdentifier completionHandler:^(NSError *error) {
+        EXPECT_NULL(error);
+    }];
 
     [manager run];
 }

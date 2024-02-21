@@ -2507,6 +2507,22 @@ Vector<WebExtensionContext::PageIdentifierTuple> WebExtensionContext::inspectorB
 
     return result;
 }
+
+Vector<WebExtensionContext::PageIdentifierTuple> WebExtensionContext::inspectorPageIdentifiers() const
+{
+    Vector<PageIdentifierTuple> result;
+
+    for (auto [inspector, tab] : loadedInspectors()) {
+        RefPtr window = tab ? tab->window() : nullptr;
+
+        auto tabIdentifier = tab ? std::optional(tab->identifier()) : std::nullopt;
+        auto windowIdentifier = window ? std::optional(window->identifier()) : std::nullopt;
+
+        result.append({ inspector->inspectorPage()->webPageID(), tabIdentifier, windowIdentifier });
+    }
+
+    return result;
+}
 #endif // ENABLE(INSPECTOR_EXTENSIONS)
 
 Vector<WebExtensionContext::PageIdentifierTuple> WebExtensionContext::popupPageIdentifiers() const
@@ -2886,7 +2902,7 @@ void WebExtensionContext::performTasksAfterBackgroundContentLoads()
     }).get());
 }
 
-void WebExtensionContext::wakeUpBackgroundContentIfNecessaryToFireEvents(EventListenerTypeSet types, CompletionHandler<void()>&& completionHandler)
+void WebExtensionContext::wakeUpBackgroundContentIfNecessaryToFireEvents(EventListenerTypeSet&& types, CompletionHandler<void()>&& completionHandler)
 {
     if (extension().backgroundContentIsPersistent()) {
         completionHandler();
@@ -3214,6 +3230,7 @@ void WebExtensionContext::loadInspectorBackgroundPage(WebInspectorUIProxy& inspe
 
         Ref process = webView._page->process();
         ASSERT(inspectorWebView._page->process() == process);
+        process->send(Messages::WebExtensionContextProxy::AddInspectorPageIdentifier(inspectorWebView._page->webPageID(), tab->identifier(), windowIdentifier), identifier());
         process->send(Messages::WebExtensionContextProxy::AddInspectorBackgroundPageIdentifier(webView._page->webPageID(), tab->identifier(), windowIdentifier), identifier());
         process->send(Messages::WebExtensionContextProxy::DispatchDevToolsPanelsThemeChangedEvent(appearance), identifier());
 

@@ -103,6 +103,8 @@ public:
     void setBackgroundPage(WebPage&);
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
+    void addInspectorPage(WebPage&, std::optional<WebExtensionTabIdentifier>, std::optional<WebExtensionWindowIdentifier>);
+
     void addInspectorBackgroundPage(WebPage&, std::optional<WebExtensionTabIdentifier>, std::optional<WebExtensionWindowIdentifier>);
     bool isInspectorBackgroundPage(WebPage&) const;
 #endif
@@ -147,6 +149,7 @@ private:
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
     // DevTools
+    void addInspectorPageIdentifier(WebCore::PageIdentifier, std::optional<WebExtensionTabIdentifier>, std::optional<WebExtensionWindowIdentifier>);
     void addInspectorBackgroundPageIdentifier(WebCore::PageIdentifier, std::optional<WebExtensionTabIdentifier>, std::optional<WebExtensionWindowIdentifier>);
     void dispatchDevToolsExtensionPanelShownEvent(Inspector::ExtensionTabID, WebCore::FrameIdentifier);
     void dispatchDevToolsExtensionPanelHiddenEvent(Inspector::ExtensionTabID);
@@ -220,6 +223,7 @@ private:
     WeakFrameSet m_extensionContentFrames;
     WeakPtr<WebPage> m_backgroundPage;
 #if ENABLE(INSPECTOR_EXTENSIONS)
+    WeakPageTabWindowMap m_inspectorPageMap;
     WeakPageTabWindowMap m_inspectorBackgroundPageMap;
 #endif
     WeakPageTabWindowMap m_popupPageMap;

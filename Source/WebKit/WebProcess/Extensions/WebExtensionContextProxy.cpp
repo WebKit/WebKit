@@ -59,6 +59,9 @@ std::optional<WebExtensionTabIdentifier> WebExtensionContextProxy::tabIdentifier
         return std::get<std::optional<WebExtensionTabIdentifier>>(m_tabPageMap.get(page));
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
+    if (m_inspectorPageMap.contains(page))
+        return std::get<std::optional<WebExtensionTabIdentifier>>(m_inspectorPageMap.get(page));
+
     if (m_inspectorBackgroundPageMap.contains(page))
         return std::get<std::optional<WebExtensionTabIdentifier>>(m_inspectorBackgroundPageMap.get(page));
 #endif
@@ -82,6 +85,17 @@ void WebExtensionContextProxy::setBackgroundPage(WebPage& page)
 }
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
+void WebExtensionContextProxy::addInspectorPage(WebPage& page, std::optional<WebExtensionTabIdentifier> tabIdentifier, std::optional<WebExtensionWindowIdentifier> windowIdentifier)
+{
+    m_inspectorPageMap.set(page, TabWindowIdentifierPair { tabIdentifier, windowIdentifier });
+}
+
+void WebExtensionContextProxy::addInspectorPageIdentifier(WebCore::PageIdentifier pageIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, std::optional<WebExtensionWindowIdentifier> windowIdentifier)
+{
+    if (RefPtr page = WebProcess::singleton().webPage(pageIdentifier))
+        addInspectorPage(*page, tabIdentifier, windowIdentifier);
+}
+
 void WebExtensionContextProxy::addInspectorBackgroundPageIdentifier(WebCore::PageIdentifier pageIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, std::optional<WebExtensionWindowIdentifier> windowIdentifier)
 {
     if (RefPtr page = WebProcess::singleton().webPage(pageIdentifier))
