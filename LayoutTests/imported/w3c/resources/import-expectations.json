@@ -52,6 +52,7 @@
     "web-platform-tests/css": "skip-new-directories",
     "web-platform-tests/css/CSS1": "skip",
     "web-platform-tests/css/CSS2": "skip",
+    "web-platform-tests/css/CSS2/visufx/animation": "import",
     "web-platform-tests/css/WOFF2": "import",
     "web-platform-tests/css/compositing": "import",
     "web-platform-tests/css/css-align": "import",
