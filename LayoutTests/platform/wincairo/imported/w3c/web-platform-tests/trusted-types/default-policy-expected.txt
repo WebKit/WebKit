@@ -1,0 +1,23 @@
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Count SecurityPolicyViolation events. Test timed out
+FAIL script.src no default policy assert_throws_js: function "_ => element[c[1]] = "nodefault"" did not throw
+FAIL div.innerHTML no default policy assert_throws_js: function "_ => element[c[1]] = "nodefault"" did not throw
+FAIL script.text no default policy assert_throws_js: function "_ => element[c[1]] = "nodefault"" did not throw
+FAIL script.src default assert_equals: expected "sanitized: abc" but got "http://web-platform.test:8800/trusted-types/abc"
+FAIL script.src null assert_throws_js: function "_ => element[c[1]] = "null"" did not throw
+FAIL script.src throw assert_throws_js: function "_ => element[c[1]] = "throw"" did not throw
+FAIL script.src undefined assert_throws_js: function "_ => element[c[1]] = "undefined"" did not throw
+FAIL script.src typeerror assert_throws_js: function "_ => element[c[1]] = "typeerror"" did not throw
+FAIL div.innerHTML default assert_equals: expected "sanitized: abc" but got "abc"
+FAIL div.innerHTML null assert_throws_js: function "_ => element[c[1]] = "null"" did not throw
+FAIL div.innerHTML throw assert_throws_js: function "_ => element[c[1]] = "throw"" did not throw
+FAIL div.innerHTML undefined assert_throws_js: function "_ => element[c[1]] = "undefined"" did not throw
+FAIL div.innerHTML typeerror assert_throws_js: function "_ => element[c[1]] = "typeerror"" did not throw
+FAIL script.text default assert_equals: expected "sanitized: abc" but got "abc"
+FAIL script.text null assert_throws_js: function "_ => element[c[1]] = "null"" did not throw
+FAIL script.text throw assert_throws_js: function "_ => element[c[1]] = "throw"" did not throw
+FAIL script.text undefined assert_throws_js: function "_ => element[c[1]] = "undefined"" did not throw
+FAIL script.text typeerror assert_throws_js: function "_ => element[c[1]] = "typeerror"" did not throw
+

@@ -188,7 +188,7 @@ CURL* CurlRequest::setupTransfer()
 
     m_curlHandle = makeUnique<CurlHandle>();
 
-    m_curlHandle->setUrl(m_request.url());
+    m_curlHandle->setURL(m_request.url(), m_localhostAlias);
 
     m_curlHandle->appendRequestHeaders(httpHeaderFields);
 

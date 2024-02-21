@@ -480,6 +480,7 @@ class WinPort(ApplePort):
 
 class WinCairoPort(WinPort):
     port_name = "wincairo"
+    supports_localhost_aliases = True
 
     DEFAULT_ARCHITECTURE = 'x86_64'
 

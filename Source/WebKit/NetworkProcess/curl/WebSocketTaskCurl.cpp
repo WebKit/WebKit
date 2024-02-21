@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebSocketTaskCurl.h"
 
+#include "NetworkProcess.h"
 #include "NetworkSessionCurl.h"
 #include "NetworkSocketChannel.h"
 #include <WebCore/AuthenticationChallenge.h>
@@ -47,7 +48,11 @@ WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, WebPageProxyIdentifi
     if (clientOrigin.topOrigin == clientOrigin.clientOrigin)
         m_topOrigin = clientOrigin.topOrigin;
 
-    m_streamID = m_scheduler.createStream(request.url(), *this);
+    auto localhostAlias = WebCore::CurlStream::LocalhostAlias::Disable;
+    if (networkSession() && networkSession()->networkProcess().localhostAliasesForTesting().contains<StringViewHashTranslator>(m_request.url().host()))
+        localhostAlias = WebCore::CurlStream::LocalhostAlias::Enable;
+
+    m_streamID = m_scheduler.createStream(request.url(), *this, WebCore::CurlStream::ServerTrustEvaluation::Enable, localhostAlias);
     m_channel.didSendHandshakeRequest(WebCore::ResourceRequest(m_request));
 }
 
@@ -245,9 +250,13 @@ void WebSocketTask::didFail(WebCore::CurlStreamID, CURLcode errorCode, WebCore::
 void WebSocketTask::tryServerTrustEvaluation(WebCore::AuthenticationChallenge&& challenge, String&& errorReason)
 {
     networkSession()->didReceiveChallenge(*this, WTFMove(challenge), [this, errorReason = WTFMove(errorReason)](WebKit::AuthenticationChallengeDisposition disposition, const WebCore::Credential& credential) mutable {
-        if (disposition == AuthenticationChallengeDisposition::UseCredential && !credential.isEmpty())
-            m_streamID = m_scheduler.createStream(m_request.url(), *this, WebCore::CurlStream::ServerTrustEvaluation::Disable);
-        else
+        if (disposition == AuthenticationChallengeDisposition::UseCredential && !credential.isEmpty()) {
+            auto localhostAlias = WebCore::CurlStream::LocalhostAlias::Disable;
+            if (networkSession() && networkSession()->networkProcess().localhostAliasesForTesting().contains<StringViewHashTranslator>(m_request.url().host()))
+                localhostAlias = WebCore::CurlStream::LocalhostAlias::Enable;
+
+            m_streamID = m_scheduler.createStream(m_request.url(), *this, WebCore::CurlStream::ServerTrustEvaluation::Disable, localhostAlias);
+        } else
             didFail(WTFMove(errorReason));
     });
 }

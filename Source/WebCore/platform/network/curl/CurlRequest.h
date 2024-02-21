@@ -63,6 +63,7 @@ public:
     WEBCORE_EXPORT void setUserPass(const String&, const String&);
     bool isServerTrustEvaluationDisabled() { return m_shouldDisableServerTrustEvaluation; }
     void disableServerTrustEvaluation() { m_shouldDisableServerTrustEvaluation = true; }
+    void enableLocalhostAlias() { m_localhostAlias = CurlHandle::LocalhostAlias::Enable; }
 
     WEBCORE_EXPORT void resume();
     WEBCORE_EXPORT void cancel();
@@ -136,6 +137,7 @@ private:
     String m_password;
     unsigned long m_authType { CURLAUTH_ANY };
     bool m_shouldDisableServerTrustEvaluation { false };
+    CurlHandle::LocalhostAlias m_localhostAlias { CurlHandle::LocalhostAlias::Disable };
 
     std::unique_ptr<CurlHandle> m_curlHandle;
     CurlFormDataStream m_formDataStream;

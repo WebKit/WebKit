@@ -235,6 +235,11 @@ public:
         StrictNameCheck = 2
     };
 
+    enum class LocalhostAlias : bool {
+        Disable,
+        Enable
+    };
+
     CurlHandle();
     virtual ~CurlHandle();
 
@@ -248,7 +253,7 @@ public:
 
     void enableShareHandle();
 
-    void setUrl(const URL&);
+    void setURL(const URL&, LocalhostAlias);
     void enableSSL();
 
     void appendRequestHeaders(const HTTPHeaderMap&);
@@ -334,6 +339,7 @@ private:
     char m_errorBuffer[CURL_ERROR_SIZE] { };
 
     URL m_url;
+    CurlSList m_localhostAlias;
     CurlSList m_requestHeaders;
 
     std::unique_ptr<CurlSSLVerifier> m_sslVerifier;

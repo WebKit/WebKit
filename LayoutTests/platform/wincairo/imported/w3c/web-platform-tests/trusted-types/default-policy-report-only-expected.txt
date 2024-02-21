@@ -1,0 +1,24 @@
+CONSOLE MESSAGE: The Content Security Policy 'require-trusted-types-for 'script';' was delivered in report-only mode, but does not specify a 'report-to'; the policy will have no effect. Please either add a 'report-to' directive, or deliver the policy via the 'Content-Security-Policy' header.
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Count SecurityPolicyViolation events. Test timed out
+PASS script.src no default policy
+PASS div.innerHTML no default policy
+PASS script.text no default policy
+FAIL script.src default assert_equals: expected "sanitized: abc" but got "http://web-platform.test:8800/trusted-types/abc"
+PASS script.src null
+FAIL script.src throw assert_throws_js: function "_ => element[c[1]] = "throw"" did not throw
+PASS script.src undefined
+FAIL script.src typeerror assert_throws_js: function "_ => element[c[1]] = "typeerror"" did not throw
+FAIL div.innerHTML default assert_equals: expected "sanitized: abc" but got "abc"
+PASS div.innerHTML null
+FAIL div.innerHTML throw assert_throws_js: function "_ => element[c[1]] = "throw"" did not throw
+PASS div.innerHTML undefined
+FAIL div.innerHTML typeerror assert_throws_js: function "_ => element[c[1]] = "typeerror"" did not throw
+FAIL script.text default assert_equals: expected "sanitized: abc" but got "abc"
+PASS script.text null
+FAIL script.text throw assert_throws_js: function "_ => element[c[1]] = "throw"" did not throw
+PASS script.text undefined
+FAIL script.text typeerror assert_throws_js: function "_ => element[c[1]] = "typeerror"" did not throw
+

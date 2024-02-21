@@ -1,0 +1,18 @@
+
+PASS WebTransport constructor should reject URL 'null'
+PASS WebTransport constructor should reject URL ''
+PASS WebTransport constructor should reject URL 'no-scheme'
+PASS WebTransport constructor should reject URL 'http://example.com/'
+PASS WebTransport constructor should reject URL 'quic-transport://example.com/'
+PASS WebTransport constructor should reject URL 'https:///'
+PASS WebTransport constructor should reject URL 'https://example.com/#failing'
+PASS WebTransport constructor should reject URL 'https://web-platform.test:999999/'
+PASS WebTransport constructor should allow options {"allowPooling":true}
+PASS WebTransport constructor should allow options {"requireUnreliable":true}
+PASS WebTransport constructor should allow options {"allowPooling":true,"requireUnreliable":true}
+PASS WebTransport constructor should allow options {"congestionControl":"default"}
+PASS WebTransport constructor should allow options {"congestionControl":"throughput"}
+PASS WebTransport constructor should allow options {"congestionControl":"low-latency"}
+PASS WebTransport constructor should allow options {"allowPooling":true,"requireUnreliable":true,"congestionControl":"low-latency"}
+FAIL Connection to port 0 should fail assert_unreached: Should have rejected: ready should be rejected Reached unreachable code
+
