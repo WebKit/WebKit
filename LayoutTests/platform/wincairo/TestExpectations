@@ -2437,7 +2437,6 @@ css3/filters/backdrop/resource-use-remove-some-layers.html [ Failure ]
 css3/filters/composited-during-animation-layertree.html [ Failure ]
 css3/filters/backdrop/backdrop-filter-with-border-radius-and-reflection-add.html [ ImageOnlyFailure ]
 css3/filters/backdrop/backdrop-filter-with-border-radius-and-reflection.html [ ImageOnlyFailure ]
-css3/filters/reference-filter-color-space.html [ ImageOnlyFailure ]
 
 fast/transforms/rotated-transform-affects-scrolling-1.html [ Failure ]
 fast/transforms/rotated-transform-affects-scrolling-2.html [ Failure ]
@@ -2760,3 +2759,11 @@ webkit.org/b/267251 imported/w3c/web-platform-tests/css/selectors/invalidation/u
 webkit.org/b/124566 fast/dom/SelectorAPI/resig-SelectorsAPI-test.xhtml [ Skip ] # Timeout
 
 imported/w3c/web-platform-tests/scroll-animations/css/view-timeline-inset-animation.html [ Pass Failure ]
+
+imported/w3c/web-platform-tests/css/css-view-transitions/backdrop-filter-captured.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/element-stops-grouping-after-animation.html [ ImageOnlyFailure ]
+
+webkit.org/b/269863 [ Debug ] imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-below-viewport-offscreen-new.html [ Skip ] # Crash
+webkit.org/b/269863 [ Debug ] imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-below-viewport-offscreen-old.html [ Skip ] # Crash
+webkit.org/b/269863 [ Debug ] imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-right-of-viewport-offscreen-new.html [ Skip ] # Crash
+webkit.org/b/269863 [ Debug ] imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-right-of-viewport-offscreen-old.html [ Skip ] # Crash
