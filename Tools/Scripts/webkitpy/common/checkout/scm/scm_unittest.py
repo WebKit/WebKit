@@ -462,14 +462,6 @@ class SCMTest(unittest.TestCase):
         self.scm.apply_reverse_diff('5')
         self.assertEqual(read_from_path('test_file'), "test1test2test3\n")
 
-    def _shared_test_diff_for_revision(self):
-        # Patch formats are slightly different between svn and git, so just regexp for things we know should be there.
-        r3_patch = self.scm.diff_for_revision(4)
-        self.assertRegex(r3_patch, b'test3')
-        self.assertNotRegex(r3_patch, b'test4')
-        self.assertRegex(r3_patch, b'test2')
-        self.assertRegex(self.scm.diff_for_revision(3), b'test2')
-
     def _shared_test_add_recursively(self):
         os.mkdir("added_dir")
         write_into_file_at_path("added_dir/added_file", "new stuff")
@@ -506,9 +498,6 @@ class SCMTest(unittest.TestCase):
         scm.delete('foo.txt')
         commit_function('deleting foo')
         self.assertFalse(scm.exists('foo.txt'))
-
-    def _shared_test_head_svn_revision(self):
-        self.assertEqual(self.scm.head_svn_revision(), '5')
 
     def _shared_test_svn_revision(self, scm):
         self.assertEqual(scm.svn_revision(scm.checkout_root), '5')
@@ -742,10 +731,6 @@ END
         self._shared_test_reverse_diff()
 
     @slow
-    def test_diff_for_revision(self):
-        self._shared_test_diff_for_revision()
-
-    @slow
     def test_changed_files(self):
         self._shared_test_changed_files()
 
@@ -803,10 +788,6 @@ END
         self._shared_test_delete_recursively_or_not()
 
     @slow
-    def test_head_svn_revision(self):
-        self._shared_test_head_svn_revision()
-
-    @slow
     def test_svn_revision(self):
         self._shared_test_svn_revision(self.scm)
 
@@ -816,32 +797,11 @@ END
 
     @slow
     def test_native_revision(self):
-        self.assertEqual(self.scm.head_svn_revision(), self.scm.native_revision('.'))
         self.assertEqual(self.scm.native_revision('.'), '5')
 
     @slow
     def test_native_branch(self):
         self.assertEqual(self.scm.native_branch('.'), 'trunk')
-
-    @slow
-    def test_propset_propget(self):
-        filepath = os.path.join(self.svn_checkout_path, "test_file")
-        self.scm.propset("svn:mime-type", "x-application/foo-bar", filepath)
-        self.assertEqual(b"x-application/foo-bar", self.scm.propget("svn:mime-type", filepath))
-
-    @slow
-    def test_show_head(self):
-        write_into_file_at_path("test_file", u"Hello!", "utf-8")
-        SVNTestRepository._svn_commit("fourth commit")
-        self.assertEqual(b"Hello!", self.scm.show_head('test_file'))
-
-    @slow
-    def test_show_head_binary(self):
-        data = b"\244"
-        write_into_file_at_path("binary_file", data, encoding=None)
-        self.scm.add("binary_file")
-        self.scm.commit_with_message("a test commit")
-        self.assertEqual(data, self.scm.show_head('binary_file'))
 
     def do_test_diff_for_file(self):
         write_into_file_at_path('test_file', 'some content')
@@ -1007,12 +967,6 @@ class GitTest(SCMTest):
     def test_exists(self):
         scm = self.untracking_scm
         self._shared_test_exists(scm, scm.commit_locally_with_message)
-
-    def test_head_svn_revision(self):
-        scm = detect_scm_system(self.untracking_checkout_path)
-        # If we cloned a git repo tracking an SVN repo, this would give the same result as
-        # self._shared_test_head_svn_revision().
-        self.assertEqual(scm.head_svn_revision(), '')
 
     def test_native_revision(self):
         scm = self.tracking_scm
@@ -1605,10 +1559,6 @@ class GitSVNTest(SCMTest):
         self._shared_test_delete_recursively_or_not()
 
     @slow
-    def test_head_svn_revision(self):
-        self._shared_test_head_svn_revision()
-
-    @slow
     def test_native_revision(self):
         command = ['git', '-C', self.git_checkout_path, 'rev-parse', 'HEAD']
         self.assertEqual(self.scm.native_revision(self.git_checkout_path), run_command(command).strip())
@@ -1616,26 +1566,6 @@ class GitSVNTest(SCMTest):
     @slow
     def test_native_branch(self):
         self.assertEqual('trunk', self.scm.native_branch(self.git_checkout_path))
-
-    @slow
-    def test_to_object_name(self):
-        relpath = 'test_file_commit1'
-        fullpath = os.path.realpath(os.path.join(self.git_checkout_path, relpath))
-        self.assertEqual(relpath, self.scm.to_object_name(fullpath))
-
-    @slow
-    def test_show_head(self):
-        self._two_local_commits()
-        self.assertEqual(b"more test content", self.scm.show_head('test_file_commit1'))
-
-    @slow
-    def test_show_head_binary(self):
-        self._two_local_commits()
-        data = b"\244"
-        write_into_file_at_path("binary_file", data, encoding=None)
-        self.scm.add("binary_file")
-        self.scm.commit_locally_with_message("a test commit")
-        self.assertEqual(data, self.scm.show_head('binary_file'))
 
     @slow
     def test_diff_for_file(self):
@@ -1726,14 +1656,11 @@ MOCK run_command: ['git', 'log', '-1', '--grep=git-svn-id:', '--date=iso', './MO
         scm._most_recent_log_matching = lambda grep_str, path: 'git-svn-id: http://svn.webkit.org/repository/webkit/trunk@258024 268f45cc-cd09-0410-ab3c-d52691b4dbfc'
         self.assertEqual(scm.svn_revision(scm.checkout_root), '258024')
         self.assertEqual(scm.svn_branch(scm.checkout_root), 'trunk')
-        self.assertEqual(scm.svn_url(scm.checkout_root), 'http://svn.webkit.org/repository/webkit/trunk')
 
         scm._most_recent_log_matching = lambda grep_str, path: 'git-svn-id: https://svn.webkit.org/repository/webkit/trunk@258024 268f45cc-cd09-0410-ab3c-d52691b4dbfc'
         self.assertEqual(scm.svn_revision(scm.checkout_root), '258024')
         self.assertEqual(scm.svn_branch(scm.checkout_root), 'trunk')
-        self.assertEqual(scm.svn_url(scm.checkout_root), 'https://svn.webkit.org/repository/webkit/trunk')
 
         scm._most_recent_log_matching = lambda grep_str, path: 'git-svn-id: https://svn.webkit.org/repository/webkit/branch/specialSubmission@258000 268f45cc-cd09-0410-ab3c-d52691b4dbfc'
         self.assertEqual(scm.svn_revision(scm.checkout_root), '258000')
         self.assertEqual(scm.svn_branch(scm.checkout_root), 'specialSubmission')
-        self.assertEqual(scm.svn_url(scm.checkout_root), 'https://svn.webkit.org/repository/webkit/branch/specialSubmission')

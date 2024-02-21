@@ -134,12 +134,6 @@ class Git(SCM, SVNRepository):
             checkout_root = self._filesystem.join(path, checkout_root)
         return checkout_root
 
-    def to_object_name(self, filepath):
-        # FIXME: This can't be the right way to append a slash.
-        root_end_with_slash = self._filesystem.join(self.find_checkout_root(self._filesystem.dirname(filepath)), '')
-        # FIXME: This seems to want some sort of rel_path instead?
-        return filepath.replace(root_end_with_slash, '')
-
     @classmethod
     def read_git_config(cls, key, cwd=None, executive=None):
         # FIXME: This should probably use cwd=self.checkout_root.
@@ -219,13 +213,6 @@ class Git(SCM, SVNRepository):
 
         return self.remote_merge_base(find_branch=find_branch)
 
-    def modifications_staged_for_commit(self):
-        # This will only return non-deleted files with the "updated in index" status
-        # as defined by http://git-scm.com/docs/git-status.
-        status_command = [self.executable_name, 'status', '--short']
-        updated_in_index_regexp = '^M[ M] (?P<filename>.+)$'
-        return self.run_status_and_extract_filenames(status_command, updated_in_index_regexp)
-
     def untracked_files(self, include_ignored_files=False):
         status_command = [self.executable_name, 'status', '--short']
         if include_ignored_files:
@@ -282,9 +269,6 @@ class Git(SCM, SVNRepository):
         # git 1.7.0.4 (and earlier) didn't support the separate arg.
         return self._run_git(['log', '--no-abbrev-commit', '-1', '--grep=' + grep_str, '--date=iso', self.find_checkout_root(path)])
 
-    def _most_recent_log_for_revision(self, revision, path):
-        return self._run_git(['log', '--no-abbrev-commit', '-1', revision, '--date=iso', self.find_checkout_root(path)])
-
     def _field_from_git_svn_id(self, path, field):
         # Keep this in sync with the regex from git_svn_id_regexp() above.
         allowed_fields = ['svn_url', 'base_url', 'svn_branch', 'svn_revision', 'svn_uuid']
@@ -302,17 +286,6 @@ class Git(SCM, SVNRepository):
 
     def svn_branch(self, path):
         return self._field_from_git_svn_id(path, 'svn_branch')
-
-    def svn_url(self, path):
-        return self._field_from_git_svn_id(path, 'svn_url')
-
-    def svn_repository_url(self):
-        git_command = ['svn', 'info']
-        status = self._run_git(git_command)
-        match = re.search(r'^URL: (?P<url>.*)$', status, re.MULTILINE)
-        if not match:
-            return ""
-        return match.group('url')
 
     def native_revision(self, path):
         return self._run_git(['-C', self.find_checkout_root(path), 'log', '-1', '--pretty=format:%H'])
@@ -344,13 +317,6 @@ class Git(SCM, SVNRepository):
         unix_timestamp = self._run_git(['-C', self.find_checkout_root(path), 'log', '-1', sha, '--pretty=format:%ct']).rstrip()
         commit_timestamp = datetime.datetime.utcfromtimestamp(float(unix_timestamp))
         return commit_timestamp.strftime('%Y-%m-%dT%H:%M:%SZ')
-
-    def prepend_svn_revision(self, diff):
-        revision = self.head_svn_revision()
-        if not revision:
-            return diff
-
-        return string_utils.encode("Subversion Revision: ") + string_utils.encode(revision) + string_utils.encode('\n') + string_utils.encode(diff)
 
     def create_patch(self, git_commit=None, changed_files=None, git_index=False, commit_message=True, find_branch=False):
         """Returns a byte array (str()) representing the patch file.
@@ -417,15 +383,8 @@ class Git(SCM, SVNRepository):
         of path @ revision in the repository."""
         return self._run_git(["show", "--no-abbrev-commit", "%s:%s" % (self.git_commit_from_string(revision), path)], decode_output=False)
 
-    def diff_for_revision(self, revision):
-        git_commit = self.git_commit_from_string(revision)
-        return self.create_patch(git_commit)
-
     def diff_for_file(self, path, log=None):
         return self._run_git(['diff', 'HEAD', '--no-renames', '--', path])
-
-    def show_head(self, path):
-        return self._run_git(['show', '--no-abbrev-commit', 'HEAD:' + self.to_object_name(path)], decode_output=False)
 
     def committer_email_for_revision(self, revision):
         git_commit = self.git_commit_from_string(revision)
@@ -495,7 +454,6 @@ class Git(SCM, SVNRepository):
 
         # Stuff our change into the merge branch.
         # We wrap in a try...finally block so if anything goes wrong, we clean up the branches.
-        commit_succeeded = True
         try:
             self._run_git(['checkout', '-q', '-b', MERGE_BRANCH_NAME, self.remote_branch_ref()])
 
@@ -511,7 +469,6 @@ class Git(SCM, SVNRepository):
         except Exception as e:
             _log.warning("COMMIT FAILED: " + str(e))
             output = "Commit failed."
-            commit_succeeded = False
         finally:
             # And then swap back to the original branch and clean up.
             self.discard_working_directory_changes()
@@ -526,22 +483,6 @@ class Git(SCM, SVNRepository):
 
     def last_svn_commit_log(self):
         return self._run_git(['svn', 'log', '--limit=1'])
-
-    def svn_blame(self, path):
-        return self._run_git(['svn', 'blame', path])
-
-    # Git-specific methods:
-    def origin_url(self):
-        return self._run_git(['config', '--get', 'remote.origin.url']).strip()
-
-    def init_submodules(self):
-        return self._run_git(['submodule', 'update', '--init', '--recursive'])
-
-    def submodules_status(self):
-        return self._run_git(['submodule', 'status', '--recursive'])
-
-    def deinit_submodules(self):
-        return self._run_git(['submodule', 'deinit', '-f', '.'])
 
     def branch_ref_exists(self, branch_ref):
         return self._run_git(['show-ref', '--quiet', '--verify', branch_ref], return_exit_code=True) == 0
@@ -572,10 +513,6 @@ class Git(SCM, SVNRepository):
             if self.branch_ref_exists(ref):
                 return ref
         raise ScriptError(message="Can't find a branch to diff against.")
-
-    def cherrypick_merge(self, commit):
-        git_args = ['cherry-pick', '-n', commit]
-        return self._run_git(git_args)
 
     def commit_locally_with_message(self, message):
         self._run_git(['commit', '--all', '-F', '-'], input=message)
@@ -619,9 +556,6 @@ class Git(SCM, SVNRepository):
             if line == "":
                 break
         return CommitMessage(commit_lines[first_line_after_headers:])
-
-    def files_changed_summary_for_commit(self, commit_id):
-        return self._run_git(['diff-tree', '--shortstat', '--no-renames', '--no-commit-id', commit_id])
 
     def fetch(self, remote='origin'):
         return self._run_git(['fetch', remote])

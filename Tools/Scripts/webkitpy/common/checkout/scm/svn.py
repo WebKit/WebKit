@@ -138,7 +138,7 @@ class SVN(SCM, SVNRepository):
             if uuid != self.find_uuid(path):
                 return last_path
             last_path = path
-            (path, last_component) = self._filesystem.split(path)
+            (path, _) = self._filesystem.split(path)
             if last_path == path:
                 return None
 
@@ -330,10 +330,6 @@ class SVN(SCM, SVNRepository):
         remote_path = "%s/%s" % (self._repository_url(), path)
         return self._run_svn(["cat", "-r", revision, remote_path], decode_output=False)
 
-    def diff_for_revision(self, revision):
-        # FIXME: This should probably use cwd=self.checkout_root
-        return self._run_svn(['diff', '-c', revision], decode_output=False)
-
     def _setup_bogus_dir(self, log):
         if self._bogus_dir:
             self._teardown_bogus_dir(log)
@@ -361,9 +357,6 @@ class SVN(SCM, SVNRepository):
             return self._run_svn(args, cwd=self.checkout_root)
         finally:
             self._teardown_bogus_dir(log)
-
-    def show_head(self, path):
-        return self._run_svn(['cat', '-r', 'BASE', path], decode_output=False)
 
     def _repository_url(self):
         return self.value_from_svn_info(self.checkout_root, 'URL')
@@ -404,14 +397,3 @@ class SVN(SCM, SVNRepository):
         # BASE is the checkout revision, HEAD is the remote repository revision
         # http://svnbook.red-bean.com/en/1.0/ch03s03.html
         return self.svn_commit_log('BASE')
-
-    def svn_blame(self, path):
-        return self._run_svn(['blame', path])
-
-    def propset(self, pname, pvalue, path):
-        dir, base = os.path.split(path)
-        return self._run_svn(['pset', pname, pvalue, base], cwd=dir)
-
-    def propget(self, pname, path):
-        dir, base = os.path.split(path)
-        return string_utils.encode(self._run_svn(['pget', pname, base], cwd=dir).rstrip("\n"))
