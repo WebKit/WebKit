@@ -72,7 +72,6 @@
 #include "WebSearchPopupMenu.h"
 #include "WebWorkerClient.h"
 #include <WebCore/AppHighlight.h>
-#include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/AXObjectCache.h>
 #include <WebCore/ColorChooser.h>
 #include <WebCore/ContentRuleListResults.h>
@@ -837,31 +836,6 @@ void WebChromeClient::print(LocalFrame& frame, const StringWithDirection& title)
 
     IPC::UnboundedSynchronousIPCScope unboundedSynchronousIPCScope;
     page->sendSyncWithDelayedReply(Messages::WebPageProxy::PrintFrame(webFrame->frameID(), truncatedTitle.string, pdfFirstPageSize));
-}
-
-void WebChromeClient::reachedMaxAppCacheSize(int64_t)
-{
-    notImplemented();
-}
-
-void WebChromeClient::reachedApplicationCacheOriginQuota(SecurityOrigin& origin, int64_t totalBytesNeeded)
-{
-    auto page = protectedPage();
-    auto securityOrigin = API::SecurityOrigin::createFromString(origin.toString());
-    if (page->injectedBundleUIClient().didReachApplicationCacheOriginQuota(page.ptr(), securityOrigin.ptr(), totalBytesNeeded))
-        return;
-
-    Ref cacheStorage = page->corePage()->applicationCacheStorage();
-    int64_t currentQuota = 0;
-    if (!cacheStorage->calculateQuotaForOrigin(origin, currentQuota))
-        return;
-
-    auto relay = AXRelayProcessSuspendedNotification(page);
-
-    auto sendResult = page->sendSyncWithDelayedReply(Messages::WebPageProxy::ReachedApplicationCacheOriginQuota(origin.data().databaseIdentifier(), currentQuota, totalBytesNeeded));
-    auto [newQuota] = sendResult.takeReplyOr(0);
-
-    cacheStorage->storeUpdatedQuotaForOrigin(&origin, newQuota);
 }
 
 #if ENABLE(INPUT_TYPE_COLOR)

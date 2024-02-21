@@ -10306,15 +10306,6 @@ void WebPageProxy::makeStorageSpaceRequest(FrameIdentifier frameID, const String
     m_uiClient->exceededDatabaseQuota(this, frame.get(), origin.ptr(), databaseName, displayName, currentQuota, currentOriginUsage, currentDatabaseUsage, expectedUsage, WTFMove(completionHandler));
 }
 
-void WebPageProxy::reachedApplicationCacheOriginQuota(const String& originIdentifier, uint64_t currentQuota, uint64_t totalBytesNeeded, CompletionHandler<void(uint64_t)>&& reply)
-{
-    auto securityOriginData = SecurityOriginData::fromDatabaseIdentifier(originIdentifier);
-    MESSAGE_CHECK(m_process, securityOriginData);
-
-    Ref securityOrigin = securityOriginData->securityOrigin();
-    m_uiClient->reachedApplicationCacheOriginQuota(this, securityOrigin.get(), currentQuota, totalBytesNeeded, WTFMove(reply));
-}
-
 void WebPageProxy::requestGeolocationPermissionForFrame(GeolocationIdentifier geolocationID, FrameInfoData&& frameInfo)
 {
     MESSAGE_CHECK(m_process, frameInfo.frameID);

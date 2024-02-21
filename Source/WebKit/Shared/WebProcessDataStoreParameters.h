@@ -38,9 +38,6 @@ struct WebProcessDataStoreParameters {
     using SubResourceDomain = WebCore::RegistrableDomain;
 
     PAL::SessionID sessionID;
-    String applicationCacheDirectory;
-    SandboxExtension::Handle applicationCacheDirectoryExtensionHandle;
-    String applicationCacheFlatFileSubdirectoryName;
     String mediaCacheDirectory;
 #if !ENABLE(GPU_PROCESS)
     SandboxExtension::Handle mediaCacheDirectoryExtensionHandle;

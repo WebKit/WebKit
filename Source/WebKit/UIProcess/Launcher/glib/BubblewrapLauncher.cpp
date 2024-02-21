@@ -897,7 +897,7 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
             bindX11(sandboxArgs);
 #endif
 
-        Vector<String> extraPaths = { "applicationCacheDirectory"_s, "mediaKeysDirectory"_s, "waylandSocket"_s };
+        Vector<String> extraPaths = { "mediaKeysDirectory"_s, "waylandSocket"_s };
         for (const auto& path : extraPaths) {
             String extraPath = launchOptions.extraInitializationData.get(path);
             if (!extraPath.isEmpty())

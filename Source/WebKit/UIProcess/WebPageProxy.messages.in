@@ -266,9 +266,6 @@ messages -> WebPageProxy {
     # Database messages
     ExceededDatabaseQuota(WebCore::FrameIdentifier frameID, String originIdentifier, String databaseName, String databaseDisplayName, uint64_t currentQuota, uint64_t currentOriginUsage, uint64_t currentDatabaseUsage, uint64_t expectedUsage) -> (uint64_t newQuota) Synchronous
 
-    # Application cache messages
-    ReachedApplicationCacheOriginQuota(String originIdentifier, uint64_t currentQuota, uint64_t totalBytesNeeded) -> (uint64_t newQuota) Synchronous
-
     # Geolocation messages
     RequestGeolocationPermissionForFrame(WebKit::GeolocationIdentifier geolocationID, struct WebKit::FrameInfoData frameInfo)
     RevokeGeolocationAuthorizationToken(String authorizationToken);

@@ -152,9 +152,6 @@ private:
     void print(WebCore::LocalFrame&, const WebCore::StringWithDirection&) final;
 
     void exceededDatabaseQuota(WebCore::LocalFrame&, const String& databaseName, WebCore::DatabaseDetails) final { }
-
-    void reachedMaxAppCacheSize(int64_t spaceNeeded) final;
-    void reachedApplicationCacheOriginQuota(WebCore::SecurityOrigin&, int64_t spaceNeeded) final;
     
 #if ENABLE(INPUT_TYPE_COLOR)
     std::unique_ptr<WebCore::ColorChooser> createColorChooser(WebCore::ColorChooserClient&, const WebCore::Color&) final;

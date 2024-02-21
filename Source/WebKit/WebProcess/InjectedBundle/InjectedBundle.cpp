@@ -53,8 +53,6 @@
 #include <JavaScriptCore/Exception.h>
 #include <JavaScriptCore/JSGlobalObjectInlines.h>
 #include <JavaScriptCore/JSLock.h>
-#include <WebCore/ApplicationCache.h>
-#include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/CommonVM.h>
 #include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/Document.h>

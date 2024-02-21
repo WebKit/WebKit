@@ -845,7 +845,7 @@ public:
     void setLastSpatialNavigationCandidateCount(unsigned count) { m_lastSpatialNavigationCandidatesCount = count; }
     unsigned lastSpatialNavigationCandidateCount() const { return m_lastSpatialNavigationCandidatesCount; }
 
-    ApplicationCacheStorage& applicationCacheStorage() { return m_applicationCacheStorage; }
+    ApplicationCacheStorage* applicationCacheStorage() { return m_applicationCacheStorage.get(); }
     DatabaseProvider& databaseProvider() { return m_databaseProvider; }
     CacheStorageProvider& cacheStorageProvider() { return m_cacheStorageProvider; }
     SocketProvider& socketProvider() { return m_socketProvider; }
@@ -1313,7 +1313,7 @@ private:
 
     Ref<SocketProvider> m_socketProvider;
     Ref<CookieJar> m_cookieJar;
-    Ref<ApplicationCacheStorage> m_applicationCacheStorage;
+    RefPtr<ApplicationCacheStorage> m_applicationCacheStorage;
     Ref<CacheStorageProvider> m_cacheStorageProvider;
     Ref<DatabaseProvider> m_databaseProvider;
     Ref<PluginInfoProvider> m_pluginInfoProvider;

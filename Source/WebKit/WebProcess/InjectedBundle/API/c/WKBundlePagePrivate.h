@@ -129,8 +129,6 @@ WK_EXPORT void WKBundlePageClearApplicationCache(WKBundlePageRef page);
 WK_EXPORT void WKBundlePageClearApplicationCacheForOrigin(WKBundlePageRef page, WKStringRef origin);
 WK_EXPORT void WKBundlePageSetAppCacheMaximumSize(WKBundlePageRef page, uint64_t size);
 WK_EXPORT uint64_t WKBundlePageGetAppCacheUsageForOrigin(WKBundlePageRef page, WKStringRef origin);
-WK_EXPORT void WKBundlePageSetApplicationCacheOriginQuota(WKBundlePageRef page, WKStringRef origin, uint64_t bytes);
-WK_EXPORT void WKBundlePageResetApplicationCacheOriginQuota(WKBundlePageRef page, WKStringRef origin);
 WK_EXPORT WKArrayRef WKBundlePageCopyOriginsWithApplicationCache(WKBundlePageRef page);
 
 WK_EXPORT void WKBundlePageSetCaptionDisplayMode(WKBundlePageRef page, WKStringRef mode);

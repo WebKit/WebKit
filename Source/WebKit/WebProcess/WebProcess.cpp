@@ -91,7 +91,6 @@
 #include <JavaScriptCore/MemoryStatistics.h>
 #include <JavaScriptCore/WasmFaultSignalHandler.h>
 #include <WebCore/AXObjectCache.h>
-#include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/BackForwardCache.h>
 #include <WebCore/CPUMonitor.h>
@@ -641,12 +640,6 @@ void WebProcess::setWebsiteDataStoreParameters(WebProcessDataStoreParameters&& p
     ASSERT(!m_sessionID);
     m_sessionID = parameters.sessionID;
 
-    // FIXME: This should be constructed per data store, not per process.
-    m_applicationCacheStorage = ApplicationCacheStorage::create(parameters.applicationCacheDirectory, parameters.applicationCacheFlatFileSubdirectoryName);
-#if PLATFORM(IOS_FAMILY)
-    m_applicationCacheStorage->setDefaultOriginQuota(25ULL * 1024 * 1024);
-#endif
-
 #if ENABLE(VIDEO)
     if (!parameters.mediaCacheDirectory.isEmpty())
         WebCore::HTMLMediaElement::setMediaCacheDirectory(parameters.mediaCacheDirectory);
@@ -986,8 +979,6 @@ void WebProcess::didClose(IPC::Connection& connection)
 #if ENABLE(VIDEO)
     FileSystem::markPurgeable(WebCore::HTMLMediaElement::mediaCacheDirectory());
 #endif
-    if (m_applicationCacheStorage)
-        FileSystem::markPurgeable(m_applicationCacheStorage->cacheDirectory());
 #if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
     FileSystem::markPurgeable(ARKitInlinePreviewModelPlayerMac::modelElementCacheDirectory());
 #endif

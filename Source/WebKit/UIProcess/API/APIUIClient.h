@@ -141,11 +141,6 @@ public:
         completionHandler(currentQuota);
     }
 
-    virtual void reachedApplicationCacheOriginQuota(WebKit::WebPageProxy*, const WebCore::SecurityOrigin&, uint64_t currentQuota, uint64_t, Function<void (unsigned long long)>&& completionHandler)
-    {
-        completionHandler(currentQuota);
-    }
-
     virtual bool lockScreenOrientation(WebKit::WebPageProxy&, WebCore::ScreenOrientationType) { return false; }
     virtual void unlockScreenOrientation(WebKit::WebPageProxy&) { }
 

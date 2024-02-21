@@ -22,9 +22,6 @@
 
 [RValue] struct WebKit::WebProcessDataStoreParameters {
     PAL::SessionID sessionID;
-    String applicationCacheDirectory;
-    WebKit::SandboxExtension::Handle applicationCacheDirectoryExtensionHandle;
-    String applicationCacheFlatFileSubdirectoryName;
     String mediaCacheDirectory;
 #if !ENABLE(GPU_PROCESS)
     WebKit::SandboxExtension::Handle mediaCacheDirectoryExtensionHandle;

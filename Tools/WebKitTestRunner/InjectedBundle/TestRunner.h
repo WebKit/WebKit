@@ -172,8 +172,6 @@ public:
     void clearApplicationCacheForOrigin(JSStringRef origin);
     void setAppCacheMaximumSize(uint64_t);
     long long applicationCacheDiskUsageForOrigin(JSStringRef origin);
-    void disallowIncreaseForApplicationCacheQuota();
-    bool shouldDisallowIncreaseForApplicationCacheQuota() { return m_disallowIncreaseForApplicationCacheQuota; }
     JSValueRef originsWithApplicationCache();
 
     void clearDOMCache(JSStringRef origin);
@@ -639,7 +637,6 @@ private:
     bool m_dumpApplicationCacheDelegateCallbacks { false };
     bool m_dumpDatabaseCallbacks { false };
 
-    bool m_disallowIncreaseForApplicationCacheQuota { false };
     bool m_testRepaint { false };
     bool m_testRepaintSweepHorizontally { false };
     bool m_displayOnLoadFinish { false };

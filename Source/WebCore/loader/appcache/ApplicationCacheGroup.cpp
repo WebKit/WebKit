@@ -84,7 +84,11 @@ ApplicationCache* ApplicationCacheGroup::cacheForMainRequest(const ResourceReque
     if (!page || page->usesEphemeralSession())
         return nullptr;
 
-    auto* group = page->applicationCacheStorage().cacheGroupForURL(url);
+    auto* applicationCacheStorage = page->applicationCacheStorage();
+    if (!applicationCacheStorage)
+        return nullptr;
+
+    auto* group = applicationCacheStorage->cacheGroupForURL(url);
     if (!group)
         return nullptr;
 
@@ -110,7 +114,11 @@ ApplicationCache* ApplicationCacheGroup::fallbackCacheForMainRequest(const Resou
     URL url(request.url());
     url.removeFragmentIdentifier();
 
-    auto* group = page->applicationCacheStorage().fallbackCacheGroupForURL(url);
+    auto* applicationCacheStorage = page->applicationCacheStorage();
+    if (!applicationCacheStorage)
+        return nullptr;
+
+    auto* group = applicationCacheStorage->fallbackCacheGroupForURL(url);
     if (!group)
         return nullptr;
 
@@ -167,8 +175,8 @@ void ApplicationCacheGroup::selectCache(LocalFrame& frame, const URL& passedMani
 
             bool inStorage = resource.storageID();
             resource.addType(ApplicationCacheResource::Foreign);
-            if (inStorage)
-                frame.page()->applicationCacheStorage().storeUpdatedType(&resource, mainResourceCache);
+            if (inStorage && frame.page()->applicationCacheStorage())
+                frame.page()->applicationCacheStorage()->storeUpdatedType(&resource, mainResourceCache);
 
             // Restart the current navigation from the top of the navigation algorithm, undoing any changes that were made
             // as part of the initial load.
@@ -190,7 +198,11 @@ void ApplicationCacheGroup::selectCache(LocalFrame& frame, const URL& passedMani
     if (!protocolHostAndPortAreEqual(manifestURL, request.url()))
         return;
 
-    auto& group = *frame.page()->applicationCacheStorage().findOrCreateCacheGroup(manifestURL);
+    auto* applicationCacheStorage = frame.page()->applicationCacheStorage();
+    if (!applicationCacheStorage)
+        return;
+
+    auto& group = *(applicationCacheStorage->findOrCreateCacheGroup(manifestURL));
 
     documentLoader.applicationCacheHost().setCandidateApplicationCacheGroup(&group);
     group.m_pendingMasterResourceLoaders.add(&documentLoader);
@@ -687,7 +699,12 @@ void ApplicationCacheGroup::didReachMaxAppCacheSize()
 {
     ASSERT(m_frame);
     ASSERT(m_cacheBeingUpdated);
-    m_frame->page()->chrome().client().reachedMaxAppCacheSize(m_frame->page()->applicationCacheStorage().spaceNeeded(m_cacheBeingUpdated->estimatedSizeInStorage()));
+
+    auto* applicationCacheStorage = m_frame->page()->applicationCacheStorage();
+    if (!applicationCacheStorage)
+        return;
+
+    m_frame->page()->chrome().client().reachedMaxAppCacheSize(applicationCacheStorage->spaceNeeded(m_cacheBeingUpdated->estimatedSizeInStorage()));
     m_calledReachedMaxAppCacheSize = true;
     checkIfLoadIsComplete();
 }
@@ -711,7 +728,11 @@ void ApplicationCacheGroup::cacheUpdateFailed()
 
 void ApplicationCacheGroup::recalculateAvailableSpaceInQuota()
 {
-    if (!m_frame->page()->applicationCacheStorage().calculateRemainingSizeForOriginExcludingCache(m_origin, m_newestCache.get(), m_availableSpaceInQuota)) {
+    auto* applicationCacheStorage = m_frame->page()->applicationCacheStorage();
+    if (!applicationCacheStorage)
+        return;
+
+    if (!applicationCacheStorage->calculateRemainingSizeForOriginExcludingCache(m_origin, m_newestCache.get(), m_availableSpaceInQuota)) {
         // Failed to determine what is left in the quota. Fallback to allowing anything.
         m_availableSpaceInQuota = ApplicationCacheStorage::noQuota();
     }

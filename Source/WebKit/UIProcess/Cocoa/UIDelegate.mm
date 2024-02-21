@@ -1393,33 +1393,6 @@ void UIDelegate::UIClient::mediaCaptureStateDidChange(WebCore::MediaProducerMedi
     [(id <WKUIDelegatePrivate>)delegate _webView:webView.get().get() mediaCaptureStateDidChange:toWKMediaCaptureStateDeprecated(state)];
 }
 
-void UIDelegate::UIClient::reachedApplicationCacheOriginQuota(WebPageProxy*, const WebCore::SecurityOrigin& securityOrigin, uint64_t currentQuota, uint64_t totalBytesNeeded, Function<void (unsigned long long)>&& completionHandler)
-{
-    if (!m_uiDelegate)
-        return completionHandler(currentQuota);
-
-    if (!m_uiDelegate->m_delegateMethods.webViewDecideWebApplicationCacheQuotaForSecurityOriginCurrentQuotaTotalBytesNeeded) {
-        completionHandler(currentQuota);
-        return;
-    }
-
-    auto delegate = m_uiDelegate->m_delegate.get();
-    if (!delegate) {
-        completionHandler(currentQuota);
-        return;
-    }
-
-    auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:decideWebApplicationCacheQuotaForSecurityOrigin:currentQuota:totalBytesNeeded:decisionHandler:));
-    auto apiOrigin = API::SecurityOrigin::create(securityOrigin);
-    
-    [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate->m_webView.get().get() decideWebApplicationCacheQuotaForSecurityOrigin:wrapper(apiOrigin.get()) currentQuota:currentQuota totalBytesNeeded:totalBytesNeeded decisionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)](unsigned long long newQuota) {
-        if (checker->completionHandlerHasBeenCalled())
-            return;
-        checker->didCallCompletionHandler();
-        completionHandler(newQuota);
-    }).get()];
-}
-
 void UIDelegate::UIClient::printFrame(WebPageProxy&, WebFrameProxy& webFrameProxy, const WebCore::FloatSize& pdfFirstPageSize, CompletionHandler<void()>&& completionHandler)
 {
     if (!m_uiDelegate)

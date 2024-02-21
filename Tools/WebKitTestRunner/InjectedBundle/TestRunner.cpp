@@ -418,11 +418,6 @@ long long TestRunner::applicationCacheDiskUsageForOrigin(JSStringRef origin)
     return WKBundlePageGetAppCacheUsageForOrigin(page(), toWK(origin).get());
 }
 
-void TestRunner::disallowIncreaseForApplicationCacheQuota()
-{
-    m_disallowIncreaseForApplicationCacheQuota = true;
-}
-
 static inline JSValueRef stringArrayToJS(JSContextRef context, WKArrayRef strings)
 {
     const size_t count = WKArrayGetSize(strings);

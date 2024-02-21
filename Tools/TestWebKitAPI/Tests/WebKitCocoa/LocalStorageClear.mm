@@ -123,7 +123,7 @@ NSString *defaultApplicationCacheDirectory()
 #endif
 }
 
-TEST(WKWebView, ClearAppCache)
+TEST(WKWebView, ClearStaleAppCache)
 {
 #if PLATFORM(IOS_FAMILY)
     // On iOS, MobileSafari and webbookmarksd need to share the same AppCache directory.
@@ -171,37 +171,12 @@ TEST(WKWebView, ClearAppCache)
     EXPECT_GT(fileSize(shmTargetURL), 0);
     EXPECT_GT(fileSize(walTargetURL), 0);
 
-    static size_t originalWebsiteDataRecordCount;
-
-    // Make sure there is a record in the WKWebsiteDataStore.
+    // Stale AppCache data is removed, so there should be no record.
     readyToContinue = false;
     [[WKWebsiteDataStore defaultDataStore] fetchDataRecordsOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] completionHandler:^(NSArray<WKWebsiteDataRecord *> *websiteDataRecords)
     {
-        EXPECT_EQ(websiteDataRecords.count, 1ul);
-        for (WKWebsiteDataRecord *record in websiteDataRecords) {
-            EXPECT_STREQ("127.0.0.1", [record.displayName UTF8String]);
-            for (NSString *type in record.dataTypes)
-                EXPECT_STREQ([WKWebsiteDataTypeOfflineWebApplicationCache UTF8String], [type UTF8String]);
-        }
-
-        originalWebsiteDataRecordCount = websiteDataRecords.count;
+        EXPECT_EQ(websiteDataRecords.count, 0ul);
         readyToContinue = true;
-    }];
-    TestWebKitAPI::Util::run(&readyToContinue);
-
-    readyToContinue = false;
-    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^()
-    {
-        NSURL *targetURL = [NSURL fileURLWithPath:[defaultApplicationCacheDirectory() stringByExpandingTildeInPath]];
-        NSURL *walTargetURL = [targetURL URLByAppendingPathComponent:@"ApplicationCache.db-wal"];
-        
-        // Make sure there is no record in the WKWebsiteDataStore.
-        EXPECT_EQ(fileSize(walTargetURL), 0);
-        [[WKWebsiteDataStore defaultDataStore] fetchDataRecordsOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] completionHandler:^(NSArray<WKWebsiteDataRecord *> *websiteDataRecords)
-        {
-            EXPECT_EQ(websiteDataRecords.count, originalWebsiteDataRecordCount - 1);
-            readyToContinue = true;
-        }];
     }];
     TestWebKitAPI::Util::run(&readyToContinue);
 }

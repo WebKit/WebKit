@@ -102,7 +102,6 @@ private:
         bool canRunBeforeUnloadConfirmPanel() const final;
         void runBeforeUnloadConfirmPanel(WebPageProxy&, const WTF::String&, WebFrameProxy*, FrameInfoData&&, Function<void(bool)>&& completionHandler) final;
         void exceededDatabaseQuota(WebPageProxy*, WebFrameProxy*, API::SecurityOrigin*, const WTF::String& databaseName, const WTF::String& displayName, unsigned long long currentQuota, unsigned long long currentOriginUsage, unsigned long long currentUsage, unsigned long long expectedUsage, Function<void(unsigned long long)>&& completionHandler) final;
-        void reachedApplicationCacheOriginQuota(WebPageProxy*, const WebCore::SecurityOrigin&, uint64_t currentQuota, uint64_t totalBytesNeeded, Function<void(unsigned long long)>&& completionHandler) final;
         bool lockScreenOrientation(WebPageProxy&, WebCore::ScreenOrientationType) final;
         void unlockScreenOrientation(WebPageProxy&) final;
         void didResignInputElementStrongPasswordAppearance(WebPageProxy&, API::Object*) final;

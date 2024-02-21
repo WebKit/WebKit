@@ -152,7 +152,6 @@ interface TestRunner {
     undefined setAppCacheMaximumSize(unsigned long long size);
     long long applicationCacheDiskUsageForOrigin(DOMString origin);
     undefined clearApplicationCacheForOrigin(DOMString name);
-    undefined disallowIncreaseForApplicationCacheQuota();
     object originsWithApplicationCache();
 
     // Text search testing.

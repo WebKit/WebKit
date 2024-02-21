@@ -281,7 +281,7 @@ public:
     // size or past the amount of free space on the device. 
     // The chrome client would need to take some action such as evicting some
     // old caches.
-    virtual void reachedMaxAppCacheSize(int64_t spaceNeeded) = 0;
+    virtual void reachedMaxAppCacheSize(int64_t) { }
 
     // Callback invoked when the application cache origin quota is reached. This
     // means that the resources attempting to be cached via the manifest are
@@ -291,7 +291,7 @@ public:
     // storage, in bytes, needed to store the new cache along with all of the
     // other existing caches for the origin that would not be replaced by
     // the new cache.
-    virtual void reachedApplicationCacheOriginQuota(SecurityOrigin&, int64_t totalSpaceNeeded) = 0;
+    virtual void reachedApplicationCacheOriginQuota(SecurityOrigin&, int64_t) { }
 
     virtual std::unique_ptr<WorkerClient> createWorkerClient(SerialFunctionDispatcher&) { return nullptr; }
 

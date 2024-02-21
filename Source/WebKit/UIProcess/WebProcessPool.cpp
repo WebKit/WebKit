@@ -91,7 +91,6 @@
 #include "WebsiteDataStore.h"
 #include "WebsiteDataStoreParameters.h"
 #include <JavaScriptCore/JSCInlines.h>
-#include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/GamepadProvider.h>
 #include <WebCore/MockRealtimeMediaSourceCenter.h>
 #include <WebCore/NetworkStorageSession.h>
@@ -822,15 +821,6 @@ WebProcessDataStoreParameters WebProcessPool::webProcessDataStoreParameters(WebP
 {
     websiteDataStore.resolveDirectoriesIfNecessary();
 
-    String applicationCacheDirectory = websiteDataStore.resolvedApplicationCacheDirectory();
-    SandboxExtension::Handle applicationCacheDirectoryExtensionHandle;
-    if (!applicationCacheDirectory.isEmpty()) {
-        if (auto handle = SandboxExtension::createHandleWithoutResolvingPath(applicationCacheDirectory, SandboxExtension::Type::ReadWrite))
-            applicationCacheDirectoryExtensionHandle = WTFMove(*handle);
-    }
-
-    String applicationCacheFlatFileSubdirectoryName = websiteDataStore.applicationCacheFlatFileSubdirectoryName();
-
     String mediaCacheDirectory = websiteDataStore.resolvedMediaCacheDirectory();
 #if !ENABLE(GPU_PROCESS)
     SandboxExtension::Handle mediaCacheDirectoryExtensionHandle;
@@ -883,9 +873,6 @@ WebProcessDataStoreParameters WebProcessPool::webProcessDataStoreParameters(WebP
 
     return WebProcessDataStoreParameters {
         websiteDataStore.sessionID(),
-        WTFMove(applicationCacheDirectory),
-        WTFMove(applicationCacheDirectoryExtensionHandle),
-        WTFMove(applicationCacheFlatFileSubdirectoryName),
         WTFMove(mediaCacheDirectory),
 #if !ENABLE(GPU_PROCESS)
         WTFMove(mediaCacheDirectoryExtensionHandle),

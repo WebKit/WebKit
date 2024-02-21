@@ -294,7 +294,7 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
         0, /*statusBarIsVisible*/
         0, /*menuBarIsVisible*/
         0, /*toolbarsAreVisible*/
-        didReachApplicationCacheOriginQuota,
+        0, /*didReachApplicationCacheOriginQuota*/
         didExceedDatabaseQuota,
         0, /*plugInStartLabelTitle*/
         0, /*plugInStartLabelSubtitle*/
@@ -1177,11 +1177,6 @@ void InjectedBundlePage::willRunJavaScriptPrompt(WKBundlePageRef page, WKStringR
     static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->willRunJavaScriptPrompt(message, defaultValue, frame);
 }
 
-void InjectedBundlePage::didReachApplicationCacheOriginQuota(WKBundlePageRef page, WKSecurityOriginRef origin, int64_t totalBytesNeeded, const void* clientInfo)
-{
-    static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didReachApplicationCacheOriginQuota(origin, totalBytesNeeded);
-}
-
 uint64_t InjectedBundlePage::didExceedDatabaseQuota(WKBundlePageRef page, WKSecurityOriginRef origin, WKStringRef databaseName, WKStringRef databaseDisplayName, uint64_t currentQuotaBytes, uint64_t currentOriginUsageBytes, uint64_t currentDatabaseUsageBytes, uint64_t expectedUsageBytes, const void* clientInfo)
 {
     return static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didExceedDatabaseQuota(origin, databaseName, databaseDisplayName, currentQuotaBytes, currentOriginUsageBytes, currentDatabaseUsageBytes, expectedUsageBytes);
@@ -1279,25 +1274,6 @@ void InjectedBundlePage::willRunJavaScriptConfirm(WKStringRef message, WKBundleF
 void InjectedBundlePage::willRunJavaScriptPrompt(WKStringRef message, WKStringRef defaultValue, WKBundleFrameRef)
 {
     InjectedBundle::singleton().outputText(makeString("PROMPT: ", message, ", default text:", addLeadingSpaceStripTrailingSpacesAddNewline(toWTFString(defaultValue))));
-}
-
-void InjectedBundlePage::didReachApplicationCacheOriginQuota(WKSecurityOriginRef origin, int64_t totalBytesNeeded)
-{
-    auto& injectedBundle = InjectedBundle::singleton();
-    if (injectedBundle.testRunner()->shouldDumpApplicationCacheDelegateCallbacks()) {
-        // For example, numbers from 30000 - 39999 will output as 30000.
-        // Rounding up or down does not really matter for these tests. It's
-        // sufficient to just get a range of 10000 to determine if we were
-        // above or below a threshold.
-        auto truncatedSpaceNeeded = (totalBytesNeeded / 10000) * 10000;
-        injectedBundle.outputText(makeString("UI DELEGATE APPLICATION CACHE CALLBACK: exceededApplicationCacheOriginQuotaForSecurityOrigin:", string(origin), " totalSpaceNeeded:~", truncatedSpaceNeeded, '\n'));
-    }
-
-    if (injectedBundle.testRunner()->shouldDisallowIncreaseForApplicationCacheQuota())
-        return;
-
-    // Reset default application cache quota.
-    WKBundlePageResetApplicationCacheOriginQuota(injectedBundle.page()->page(), adoptWK(WKSecurityOriginCopyToString(origin)).get());
 }
 
 uint64_t InjectedBundlePage::didExceedDatabaseQuota(WKSecurityOriginRef origin, WKStringRef databaseName, WKStringRef databaseDisplayName, uint64_t currentQuotaBytes, uint64_t currentOriginUsageBytes, uint64_t currentDatabaseUsageBytes, uint64_t expectedUsageBytes)

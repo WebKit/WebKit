@@ -863,7 +863,8 @@ WKStringRef WKBundlePageCopyGroupIdentifier(WKBundlePageRef pageRef)
 
 void WKBundlePageClearApplicationCache(WKBundlePageRef page)
 {
-    WebKit::toImpl(page)->corePage()->applicationCacheStorage().deleteAllEntries();
+    if (auto* applicationCacheStorage = WebKit::toImpl(page)->corePage()->applicationCacheStorage())
+        applicationCacheStorage->deleteAllEntries();
 }
 
 void WKBundlePageSetCaptionDisplayMode(WKBundlePageRef page, WKStringRef mode)
@@ -892,32 +893,31 @@ WKCaptionUserPreferencesTestingModeTokenRef WKBundlePageCreateCaptionUserPrefere
 
 void WKBundlePageClearApplicationCacheForOrigin(WKBundlePageRef page, WKStringRef origin)
 {
-    WebKit::toImpl(page)->corePage()->applicationCacheStorage().deleteCacheForOrigin(WebCore::SecurityOriginData::fromURL(URL { WebKit::toImpl(origin)->string() }));
+    if (auto* applicationCacheStorage = WebKit::toImpl(page)->corePage()->applicationCacheStorage())
+        applicationCacheStorage->deleteCacheForOrigin(WebCore::SecurityOriginData::fromURL(URL { WebKit::toImpl(origin)->string() }));
 }
 
 void WKBundlePageSetAppCacheMaximumSize(WKBundlePageRef page, uint64_t size)
 {
-    WebKit::toImpl(page)->corePage()->applicationCacheStorage().setMaximumSize(size);
+    if (auto* applicationCacheStorage = WebKit::toImpl(page)->corePage()->applicationCacheStorage())
+        applicationCacheStorage->setMaximumSize(size);
 }
 
 uint64_t WKBundlePageGetAppCacheUsageForOrigin(WKBundlePageRef page, WKStringRef origin)
 {
-    return WebKit::toImpl(page)->corePage()->applicationCacheStorage().diskUsageForOrigin(WebCore::SecurityOriginData::fromURL(URL { WebKit::toImpl(origin)->string() }));
-}
+    if (auto* applicationCacheStorage = WebKit::toImpl(page)->corePage()->applicationCacheStorage())
+        return applicationCacheStorage->diskUsageForOrigin(WebCore::SecurityOriginData::fromURL(URL { WebKit::toImpl(origin)->string() }));
 
-void WKBundlePageSetApplicationCacheOriginQuota(WKBundlePageRef page, WKStringRef origin, uint64_t bytes)
-{
-    WebKit::toImpl(page)->corePage()->applicationCacheStorage().storeUpdatedQuotaForOrigin(WebCore::SecurityOrigin::createFromString(WebKit::toImpl(origin)->string()).ptr(), bytes);
-}
-
-void WKBundlePageResetApplicationCacheOriginQuota(WKBundlePageRef page, WKStringRef origin)
-{
-    WebKit::toImpl(page)->corePage()->applicationCacheStorage().storeUpdatedQuotaForOrigin(WebCore::SecurityOrigin::createFromString(WebKit::toImpl(origin)->string()).ptr(), WebKit::toImpl(page)->corePage()->applicationCacheStorage().defaultOriginQuota());
+    return 0;
 }
 
 WKArrayRef WKBundlePageCopyOriginsWithApplicationCache(WKBundlePageRef page)
 {
-    auto origins = WebKit::toImpl(page)->corePage()->applicationCacheStorage().originsWithCache();
+    auto* applicationCacheStorage = WebKit::toImpl(page)->corePage()->applicationCacheStorage();
+    if (!applicationCacheStorage)
+        return { };
+
+    auto origins = applicationCacheStorage->originsWithCache();
     auto originIdentifiers = WTF::map(origins, [](auto& origin) -> RefPtr<API::Object> {
         return API::String::create(origin.databaseIdentifier());
     });

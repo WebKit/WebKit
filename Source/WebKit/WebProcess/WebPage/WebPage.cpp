@@ -170,7 +170,6 @@
 #include <JavaScriptCore/ProfilerDatabase.h>
 #include <JavaScriptCore/SamplingProfiler.h>
 #include <WebCore/AppHighlight.h>
-#include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/ArchiveResource.h>
 #include <WebCore/BackForwardCache.h>
 #include <WebCore/BackForwardController.h>
@@ -699,7 +698,6 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     pageConfiguration.validationMessageClient = makeUnique<WebValidationMessageClient>(*this);
 #endif
 
-    pageConfiguration.applicationCacheStorage = &WebProcess::singleton().applicationCacheStorage();
     pageConfiguration.databaseProvider = WebDatabaseProvider::getOrCreate(m_pageGroup->pageGroupID());
     pageConfiguration.pluginInfoProvider = &WebPluginInfoProvider::singleton();
     pageConfiguration.storageNamespaceProvider = WebStorageNamespaceProvider::getOrCreate();

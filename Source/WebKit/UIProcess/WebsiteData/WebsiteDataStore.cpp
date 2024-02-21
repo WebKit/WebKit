@@ -62,6 +62,7 @@
 #include <WebCore/OriginLock.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/ResourceRequest.h>
+#include <WebCore/SQLiteFileSystem.h>
 #include <WebCore/SearchPopupMenu.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
@@ -394,8 +395,6 @@ void WebsiteDataStore::resolveDirectoriesIfNecessary()
     // Resolve directory paths.
     Ref configuration = m_configuration;
     Ref resolvedConfiguration = m_resolvedConfiguration;
-    if (!configuration->applicationCacheDirectory().isEmpty())
-        resolvedConfiguration->setApplicationCacheDirectory(resolveAndCreateReadWriteDirectoryForSandboxExtension(configuration->applicationCacheDirectory()));
     if (!configuration->mediaCacheDirectory().isEmpty())
         resolvedConfiguration->setMediaCacheDirectory(resolveAndCreateReadWriteDirectoryForSandboxExtension(configuration->mediaCacheDirectory()));
     if (!configuration->mediaKeysStorageDirectory().isEmpty()) {
@@ -441,8 +440,7 @@ void WebsiteDataStore::resolveDirectoriesIfNecessary()
     // so we need to explicitly exclude them from backup.
     if (configuration->identifier()) {
         Vector<String> allCacheDirectories = {
-            resolvedApplicationCacheDirectory()
-            , resolvedMediaCacheDirectory()
+            resolvedMediaCacheDirectory()
             , resolvedNetworkCacheDirectory()
 #if ENABLE(ARKIT_INLINE_PREVIEW)
             , resolvedModelElementCacheDirectory()
@@ -459,6 +457,22 @@ void WebsiteDataStore::resolveDirectoriesIfNecessary()
         protectedQueue()->dispatch([webSQLDirectory = webSQLDirectory.isolatedCopy()]() {
             WebCore::DatabaseTracker::trackerWithDatabasePath(webSQLDirectory)->deleteAllDatabasesImmediately();
             FileSystem::deleteEmptyDirectory(webSQLDirectory);
+        });
+    }
+
+    if (auto applicationCacheDirectory = m_configuration->applicationCacheDirectory(); !applicationCacheDirectory.isEmpty()) {
+        protectedQueue()->dispatch([applicationCacheDirectory = applicationCacheDirectory.isolatedCopy(), applicationCacheFlatFileSubdirectoryName = m_configuration->applicationCacheFlatFileSubdirectoryName().isolatedCopy()]() {
+            {
+                auto storage = WebCore::ApplicationCacheStorage::create(applicationCacheDirectory, applicationCacheFlatFileSubdirectoryName);
+                storage->deleteAllCaches();
+            }
+            if (!applicationCacheFlatFileSubdirectoryName.isEmpty()) {
+                auto applicationCacheFlatFileSubdirectory = FileSystem::pathByAppendingComponent(applicationCacheDirectory, applicationCacheFlatFileSubdirectoryName);
+                FileSystem::deleteEmptyDirectory(applicationCacheFlatFileSubdirectory);
+            }
+            auto applicationCacheDatabasePath = FileSystem::pathByAppendingComponent(applicationCacheDirectory, "ApplicationCache.db"_s);
+            WebCore::SQLiteFileSystem::deleteDatabaseFile(applicationCacheDatabasePath);
+            FileSystem::deleteEmptyDirectory(applicationCacheDirectory);
         });
     }
 }
@@ -658,19 +672,6 @@ private:
         });
     }
 
-    if (dataTypes.contains(WebsiteDataType::OfflineWebApplicationCache) && isPersistent()) {
-        protectedQueue()->dispatch([fetchOptions, applicationCacheDirectory = m_configuration->applicationCacheDirectory().isolatedCopy(), applicationCacheFlatFileSubdirectoryName = m_configuration->applicationCacheFlatFileSubdirectoryName().isolatedCopy(), callbackAggregator] {
-            auto storage = WebCore::ApplicationCacheStorage::create(applicationCacheDirectory, applicationCacheFlatFileSubdirectoryName);
-            WebsiteData websiteData;
-            auto origins = storage->originsWithCache();
-            websiteData.entries = WTF::map(origins, [&](auto& origin) {
-                uint64_t size = fetchOptions.contains(WebsiteDataFetchOption::ComputeSizes) ? storage->diskUsageForOrigin(origin) : 0;
-                return WebsiteData::Entry { origin, WebsiteDataType::OfflineWebApplicationCache, size };
-            });
-            callbackAggregator->addWebsiteData(WTFMove(websiteData));
-        });
-    }
-
     if (dataTypes.contains(WebsiteDataType::MediaKeys) && isPersistent()) {
         auto mediaKeysStorageDirectory = migrateMediaKeysStorageIfNecessary(m_configuration->mediaKeysStorageDirectory());
         protectedQueue()->dispatch([mediaKeysStorageDirectory = mediaKeysStorageDirectory.isolatedCopy(), callbackAggregator] {
@@ -782,13 +783,6 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, WallTime
     if (dataTypes.contains(WebsiteDataType::DeviceIdHashSalt) || (dataTypes.contains(WebsiteDataType::Cookies)))
         m_deviceIdHashSaltStorage->deleteDeviceIdHashSaltOriginsModifiedSince(modifiedSince, [callbackAggregator] { });
 
-    if (dataTypes.contains(WebsiteDataType::OfflineWebApplicationCache) && isPersistent()) {
-        protectedQueue()->dispatch([applicationCacheDirectory = m_configuration->applicationCacheDirectory().isolatedCopy(), applicationCacheFlatFileSubdirectoryName = m_configuration->applicationCacheFlatFileSubdirectoryName().isolatedCopy(), callbackAggregator] {
-            auto storage = WebCore::ApplicationCacheStorage::create(applicationCacheDirectory, applicationCacheFlatFileSubdirectoryName);
-            storage->deleteAllCaches();
-        });
-    }
-
     if (dataTypes.contains(WebsiteDataType::MediaKeys) && isPersistent()) {
         auto mediaKeysStorageDirectory = migrateMediaKeysStorageIfNecessary(m_configuration->mediaKeysStorageDirectory());
         protectedQueue()->dispatch([mediaKeysStorageDirectory = mediaKeysStorageDirectory.isolatedCopy(), callbackAggregator, modifiedSince] {
@@ -880,20 +874,6 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
 
     if (dataTypes.contains(WebsiteDataType::DeviceIdHashSalt) || (dataTypes.contains(WebsiteDataType::Cookies)))
         protectedDeviceIdHashSaltStorage()->deleteDeviceIdHashSaltForOrigins(origins, [callbackAggregator] { });
-
-    if (dataTypes.contains(WebsiteDataType::OfflineWebApplicationCache) && isPersistent()) {
-        HashSet<WebCore::SecurityOriginData> origins;
-        for (const auto& dataRecord : dataRecords) {
-            for (const auto& origin : dataRecord.origins)
-                origins.add(crossThreadCopy(origin));
-        }
-
-        protectedQueue()->dispatch([origins = WTFMove(origins), applicationCacheDirectory = m_configuration->applicationCacheDirectory().isolatedCopy(), applicationCacheFlatFileSubdirectoryName = m_configuration->applicationCacheFlatFileSubdirectoryName().isolatedCopy(), callbackAggregator] {
-            auto storage = WebCore::ApplicationCacheStorage::create(applicationCacheDirectory, applicationCacheFlatFileSubdirectoryName);
-            for (const auto& origin : origins)
-                storage->deleteCacheForOrigin(origin);
-        });
-    }
 
     if (dataTypes.contains(WebsiteDataType::MediaKeys) && isPersistent()) {
         HashSet<WebCore::SecurityOriginData> origins;

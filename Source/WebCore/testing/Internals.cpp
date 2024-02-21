@@ -583,7 +583,8 @@ void Internals::resetToConsistentState(Page& page)
     if (localMainFrame->editor().isOverwriteModeEnabled())
         localMainFrame->editor().toggleOverwriteModeEnabled();
     localMainFrame->loader().clearTestingOverrides();
-    page.applicationCacheStorage().setDefaultOriginQuota(ApplicationCacheStorage::noQuota());
+    if (auto* applicationCacheStorage = page.applicationCacheStorage())
+        applicationCacheStorage->setDefaultOriginQuota(ApplicationCacheStorage::noQuota());
 #if ENABLE(VIDEO)
     page.group().ensureCaptionPreferences().setCaptionDisplayMode(CaptionUserPreferences::CaptionDisplayMode::ForcedOnly);
     page.group().ensureCaptionPreferences().setCaptionsStyleSheetOverride(emptyString());
@@ -3863,7 +3864,8 @@ void Internals::setApplicationCacheOriginQuota(unsigned long long quota)
     Document* document = contextDocument();
     if (!document || !document->page())
         return;
-    document->page()->applicationCacheStorage().storeUpdatedQuotaForOrigin(&document->securityOrigin(), quota);
+    if (auto* applicationCacheStorage = document->page()->applicationCacheStorage())
+        applicationCacheStorage->storeUpdatedQuotaForOrigin(&document->securityOrigin(), quota);
 }
 
 void Internals::registerURLSchemeAsBypassingContentSecurityPolicy(const String& scheme)

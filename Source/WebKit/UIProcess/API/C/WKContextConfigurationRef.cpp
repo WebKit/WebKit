@@ -52,15 +52,6 @@ void WKContextConfigurationSetDiskCacheDirectory(WKContextConfigurationRef, WKSt
 {
 }
 
-WKStringRef WKContextConfigurationCopyApplicationCacheDirectory(WKContextConfigurationRef)
-{
-    return nullptr;
-}
-
-void WKContextConfigurationSetApplicationCacheDirectory(WKContextConfigurationRef, WKStringRef)
-{
-}
-
 WKStringRef WKContextConfigurationCopyIndexedDBDatabaseDirectory(WKContextConfigurationRef)
 {
     return nullptr;

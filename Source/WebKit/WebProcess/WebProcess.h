@@ -102,7 +102,6 @@ enum class UserInterfaceIdiom : uint8_t;
 }
 
 namespace WebCore {
-class ApplicationCacheStorage;
 class CPUMonitor;
 class PageGroup;
 class SecurityOriginData;
@@ -341,8 +340,6 @@ public:
     bool hasSelectionServices() const { return m_hasSelectionServices; }
     bool hasRichContentServices() const { return m_hasRichContentServices; }
 #endif
-
-    WebCore::ApplicationCacheStorage& applicationCacheStorage() { return *m_applicationCacheStorage; }
 
     void prefetchDNS(const String&);
 
@@ -772,8 +769,6 @@ private:
 #if ENABLE(NON_VISIBLE_WEBPROCESS_MEMORY_CLEANUP_TIMER)
     WebCore::Timer m_nonVisibleProcessMemoryCleanupTimer;
 #endif
-
-    RefPtr<WebCore::ApplicationCacheStorage> m_applicationCacheStorage;
 
 #if USE(RUNNINGBOARD)
     WebSQLiteDatabaseTracker m_webSQLiteDatabaseTracker;
