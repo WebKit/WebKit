@@ -27,6 +27,7 @@
 
 #include "CSSAspectRatioValue.h"
 #include "CSSCustomPropertyValue.h"
+#include "CSSParserImpl.h"
 #include "CSSPropertyParser.h"
 #include "CSSPropertyParserHelpers.h"
 #include "CSSValue.h"
@@ -58,11 +59,16 @@ std::optional<Feature> FeatureParser::consumeFeature(CSSParserTokenRange& range,
 
 static RefPtr<CSSValue> consumeCustomPropertyValue(AtomString propertyName, CSSParserTokenRange& range)
 {
-    auto propertyValueRange = range.consumeAllExcludingTrailingWhitespace();
-    range.consumeWhitespace();
-    if (propertyValueRange.atEnd())
+    auto valueRange = range;
+    range.consumeAll();
+
+    // Syntax is that of a valid declaration so !important is allowed. It just gets ignored.
+    CSSParserImpl::consumeTrailingImportantAndWhitespace(valueRange);
+
+    if (valueRange.atEnd())
         return CSSCustomPropertyValue::createEmpty(propertyName);
-    return CSSVariableParser::parseDeclarationValue(propertyName, propertyValueRange, strictCSSParserContext());
+
+    return CSSVariableParser::parseDeclarationValue(propertyName, valueRange, strictCSSParserContext());
 }
 
 std::optional<Feature> FeatureParser::consumeBooleanOrPlainFeature(CSSParserTokenRange& range, const MediaQueryParserContext& context)

@@ -47,7 +47,7 @@ PASS outer style(--outer-space-after: true)
 PASS outer style(--outer-space-after:true)
 PASS outer style(--outer-space-after:true )
 PASS outer style(--outer-space-after: true )
-FAIL Query custom property with !important declaration assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+PASS Query custom property with !important declaration
 PASS Query custom property using var()
 PASS Query custom property including unknown var() reference
 PASS Query custom property including unknown var() reference with non-matching fallback

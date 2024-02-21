@@ -109,6 +109,8 @@ public:
     static void parseDeclarationListForInspector(const String&, const CSSParserContext&, CSSParserObserver&);
     static void parseStyleSheetForInspector(const String&, const CSSParserContext&, StyleSheetContents&, CSSParserObserver&);
 
+    static bool consumeTrailingImportantAndWhitespace(CSSParserTokenRange&);
+
     CSSTokenizer* tokenizer() const { return m_tokenizer.get(); }
 
 private:

@@ -5,7 +5,7 @@ PASS style(not ((--foo: calc(10px + 2em)) and ((--foo: url(x)))))
 PASS style((--foo: bar) or (--bar: 10px))
 PASS style(--my-prop:)
 PASS style(--my-prop: )
-FAIL style(--foo: bar !important) assert_equals: expected "true" but got ""
+PASS style(--foo: bar !important)
 PASS style(--foo)
 PASS style(--foo: bar;)
 PASS style(style(--foo: bar))
