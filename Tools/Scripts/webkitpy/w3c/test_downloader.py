@@ -78,7 +78,6 @@ class TestDownloader(object):
         self._port = port
         self._host = port.host
         self._filesystem = port.host.filesystem
-        self._test_suites = []
 
         self.repository_directory = repository_directory
         self.upstream_revision = None
