@@ -2434,21 +2434,36 @@ void UnifiedPDFPlugin::continueTrackingSelection(PDFDocumentLayout::PageIndex pa
         return setCurrentSelection([page selectionForRect:m_selectionTrackingData.marqueeSelectionRect]);
     }
 
-    switch (m_selectionTrackingData.granularity) {
-    case SelectionGranularity::Character: {
-        auto fromPage = m_documentLayout.pageAtIndex(m_selectionTrackingData.startPageIndex);
-        auto toPage = m_documentLayout.pageAtIndex(pageIndex);
-        RetainPtr<PDFSelection> selection = [m_pdfDocument selectionFromPage:fromPage.get() atPoint:m_selectionTrackingData.startPagePoint toPage:toPage.get() atPoint:pagePoint];
-        if (m_selectionTrackingData.shouldExtendCurrentSelection)
-            [selection addSelection:m_selectionTrackingData.selectionToExtendWith.get()];
-        setCurrentSelection(WTFMove(selection));
-        break;
-    }
-    // FIXME: <https://webkit.org/b/268616> Selection tracking should be able to reason at word/line granularity.
-    case SelectionGranularity::Word:
-    case SelectionGranularity::Line:
-        notImplemented();
-    }
+    auto fromPage = m_documentLayout.pageAtIndex(m_selectionTrackingData.startPageIndex);
+    auto toPage = m_documentLayout.pageAtIndex(pageIndex);
+
+    RetainPtr<PDFSelection> selection;
+
+#if HAVE(PDFDOCUMENT_SELECTION_WITH_GRANULARITY)
+    auto toPDFSelectionGranularity = [](SelectionGranularity granularity) {
+        switch (granularity) {
+        case SelectionGranularity::Character:
+            return (PDFSelectionGranularity)PDFSelectionGranularityCharacter;
+        case SelectionGranularity::Word:
+            return (PDFSelectionGranularity)PDFSelectionGranularityWord;
+        case SelectionGranularity::Line:
+            return (PDFSelectionGranularity)PDFSelectionGranularityLine;
+        }
+        ASSERT_NOT_REACHED();
+        return (PDFSelectionGranularity)PDFSelectionGranularityCharacter;
+    };
+
+    if ([m_pdfDocument respondsToSelector:@selector(selectionFromPage:atPoint:toPage:atPoint:withGranularity:)])
+        selection = [m_pdfDocument selectionFromPage:fromPage.get() atPoint:m_selectionTrackingData.startPagePoint toPage:toPage.get() atPoint:pagePoint withGranularity:toPDFSelectionGranularity(m_selectionTrackingData.granularity)];
+    else
+#else
+        selection = [m_pdfDocument selectionFromPage:fromPage.get() atPoint:m_selectionTrackingData.startPagePoint toPage:toPage.get() atPoint:pagePoint];
+#endif
+
+    if (m_selectionTrackingData.granularity == SelectionGranularity::Character && m_selectionTrackingData.shouldExtendCurrentSelection)
+        [selection addSelection:m_selectionTrackingData.selectionToExtendWith.get()];
+
+    setCurrentSelection(WTFMove(selection));
 }
 
 void UnifiedPDFPlugin::stopTrackingSelection()
