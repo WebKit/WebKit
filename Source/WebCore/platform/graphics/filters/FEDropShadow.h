@@ -51,6 +51,10 @@ public:
 
     static IntOutsets calculateOutsets(const FloatSize& offset, const FloatSize& stdDeviation);
 
+#if USE(CAIRO)
+    void setOperatingColorSpace(const DestinationColorSpace&) override { }
+#endif
+
 private:
     FEDropShadow(float stdX, float stdY, float dx, float dy, const Color& shadowColor, float shadowOpacity, DestinationColorSpace);
 

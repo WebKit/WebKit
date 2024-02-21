@@ -47,10 +47,10 @@ public:
     virtual bool hasSourceImage() const { return false; }
 
     virtual void beginClipAndDrawSourceImage(GraphicsContext& destinationContext, const FloatRect& repaintRect, const FloatRect& clipRect) = 0;
-    virtual void endClipAndDrawSourceImage(GraphicsContext& destinationContext) = 0;
+    virtual void endClipAndDrawSourceImage(GraphicsContext& destinationContext, const DestinationColorSpace&) = 0;
 
     virtual void beginDrawSourceImage(GraphicsContext& destinationContext) = 0;
-    virtual void endDrawSourceImage(GraphicsContext& destinationContext) = 0;
+    virtual void endDrawSourceImage(GraphicsContext& destinationContext, const DestinationColorSpace&) = 0;
 
 protected:
     FilterTargetSwitcher(Filter&);

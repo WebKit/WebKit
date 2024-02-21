@@ -1,4 +1,5 @@
  <svg width="400px" height="400px" xmlns="http://www.w3.org/2000/svg">
+ <meta name="fuzzy" content="maxDifference=6; totalPixels=144400" />
   <defs>
     <filter id="filter" filterUnits="objectBoundingBox" x="0" y="0" width="100%" height="100%">
     	<feFlood x="0" y="0" width="500" height="500" flood-color="rgb(93, 7, 54)" result="flood1" color-interpolation-filters="sRGB"/>
