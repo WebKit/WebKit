@@ -30,8 +30,8 @@
 #define FALSE #f
 
 (define (webcontent_gpu_sandbox_extensions_blocking)
-#if ENABLE(WEBCONTENT_GPU_SANDBOX_EXTENSIONS_BLOCKING)
-    (equal? (param "CPU") "arm64")
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 140400
+    (and (equal? (param "CPU") "arm64") (not (uid 0)))
 #else
     FALSE
 #endif
