@@ -607,6 +607,7 @@ Result<AST::ConstAssert::Ref> Parser<Lexer>::parseConstAssert()
     START_PARSE();
     CONSUME_TYPE(KeywordConstAssert);
     PARSE(test, Expression);
+    CONSUME_TYPE(Semicolon);
     RETURN_ARENA_NODE(ConstAssert, WTFMove(test));
 }
 
@@ -634,6 +635,8 @@ Result<AST::Attribute::Ref> Parser<Lexer>::parseAttribute()
     if (ident.ident == "group"_s) {
         CONSUME_TYPE(ParenLeft);
         PARSE(group, Expression);
+        if (current().type  == TokenType::Comma)
+            consume();
         CONSUME_TYPE(ParenRight);
         RETURN_ARENA_NODE(GroupAttribute, WTFMove(group));
     }
@@ -641,6 +644,8 @@ Result<AST::Attribute::Ref> Parser<Lexer>::parseAttribute()
     if (ident.ident == "binding"_s) {
         CONSUME_TYPE(ParenLeft);
         PARSE(binding, Expression);
+        if (current().type  == TokenType::Comma)
+            consume();
         CONSUME_TYPE(ParenRight);
         RETURN_ARENA_NODE(BindingAttribute, WTFMove(binding));
     }
@@ -648,6 +653,8 @@ Result<AST::Attribute::Ref> Parser<Lexer>::parseAttribute()
     if (ident.ident == "location"_s) {
         CONSUME_TYPE(ParenLeft);
         PARSE(location, Expression);
+        if (current().type  == TokenType::Comma)
+            consume();
         CONSUME_TYPE(ParenRight);
         RETURN_ARENA_NODE(LocationAttribute, WTFMove(location));
     }
@@ -675,6 +682,8 @@ Result<AST::Attribute::Ref> Parser<Lexer>::parseAttribute()
             break;
         }
 
+        if (current().type  == TokenType::Comma)
+            consume();
         CONSUME_TYPE(ParenRight);
         RETURN_ARENA_NODE(BuiltinAttribute, *builtin);
     }
@@ -709,6 +718,8 @@ Result<AST::Attribute::Ref> Parser<Lexer>::parseAttribute()
     if (ident.ident == "align"_s) {
         CONSUME_TYPE(ParenLeft);
         PARSE(alignment, Expression);
+        if (current().type  == TokenType::Comma)
+            consume();
         CONSUME_TYPE(ParenRight);
         RETURN_ARENA_NODE(AlignAttribute, WTFMove(alignment));
     }
@@ -737,6 +748,8 @@ Result<AST::Attribute::Ref> Parser<Lexer>::parseAttribute()
     if (ident.ident == "size"_s) {
         CONSUME_TYPE(ParenLeft);
         PARSE(size, Expression);
+        if (current().type  == TokenType::Comma)
+            consume();
         CONSUME_TYPE(ParenRight);
         RETURN_ARENA_NODE(SizeAttribute, WTFMove(size));
     }
@@ -744,6 +757,8 @@ Result<AST::Attribute::Ref> Parser<Lexer>::parseAttribute()
     if (ident.ident == "id"_s) {
         CONSUME_TYPE(ParenLeft);
         PARSE(size, Expression);
+        if (current().type  == TokenType::Comma)
+            consume();
         CONSUME_TYPE(ParenRight);
         RETURN_ARENA_NODE(IdAttribute, WTFMove(size));
     }
