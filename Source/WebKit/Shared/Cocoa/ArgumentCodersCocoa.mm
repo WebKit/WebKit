@@ -29,6 +29,7 @@
 #if PLATFORM(COCOA)
 
 #import "CoreIPCNSCFObject.h"
+#import "CoreIPCNSURLCredential.h"
 #import "CoreIPCTypes.h"
 #import "CoreTextHelpers.h"
 #import "LegacyGlobalSettings.h"
@@ -404,11 +405,6 @@ template<> void encodeObjectDirectly<NSObject<NSSecureCoding>>(Encoder& encoder,
 
     auto delegate = adoptNS([[WKSecureCodingArchivingDelegate alloc] init]);
 
-    // FIXME: These can be removed on operating systems that have rdar://107730786.
-    if ([object isKindOfClass:NSURLCredential.class]
-        || [object isKindOfClass:NSURLProtectionSpace.class])
-        [delegate setRewriteMutableDictionary:YES];
-
 #if ENABLE(DATA_DETECTION)
     if (PAL::isDataDetectorsCoreFrameworkAvailable() && [object isKindOfClass:PAL::getDDScannerResultClass()])
         [delegate setRewriteMutableString:YES];
@@ -459,16 +455,6 @@ static bool shouldEnableStrictMode(Decoder& decoder, const HashSet<Class>& allow
     // Shortcut the following unnecessary Class checks on newer OSes to fix rdar://111926152.
     return true;
 #else
-
-    auto isDecodingKnownNSURLCredentialMessage = [] (auto& decoder) {
-        auto messageName = decoder.messageName();
-        return messageName == IPC::MessageName::DownloadProxy_DidReceiveAuthenticationChallenge // NP -> UIP
-            || messageName == IPC::MessageName::NetworkProcessProxy_DidReceiveAuthenticationChallenge // NP -> UIP
-            || messageName == IPC::MessageName::NetworkProcessProxy_ResourceLoadDidReceiveChallenge // NP -> UIP
-            || messageName == IPC::MessageName::NetworkProcessProxy_DataTaskReceivedChallenge // NP -> UIP
-            || messageName == IPC::MessageName::NetworkProcessProxy_DataTaskReceivedChallengeReply // UIP -> NP
-            || messageName == IPC::MessageName::AuthenticationManager_CompleteAuthenticationChallenge; // UIP -> NP
-    };
 
 #if HAVE(SECURE_ACTION_CONTEXT)
 static constexpr bool haveSecureActionContext = true;
@@ -561,7 +547,7 @@ static constexpr bool haveSecureActionContext = false;
         || (PAL::isPassKitCoreFrameworkAvailable() && PAL::getPKPaymentMerchantSessionClass() && allowedClasses.contains(PAL::getPKPaymentMerchantSessionClass())) // rdar://107553452
         || (PAL::isPassKitCoreFrameworkAvailable() && PAL::getPKPaymentClass() && allowedClasses.contains(PAL::getPKPaymentClass()) && isInWebProcess())
 #endif // ENABLE(APPLE_PAY)
-        || (allowedClasses.contains(NSURLCredential.class) && isDecodingKnownNSURLCredentialMessage(decoder))) // rdar://107553367
+        )
         return true;
 
     // Note: Do not add more classes to the list of strict decoded classes.
@@ -731,6 +717,7 @@ ENCODE_WITH_COREIPC_WRAPPER(CNPostalAddress);
 ENCODE_WITH_COREIPC_WRAPPER(NSURLProtectionSpace);
 ENCODE_WITH_COREIPC_WRAPPER(NSShadow);
 ENCODE_WITH_COREIPC_WRAPPER(NSValue);
+ENCODE_WITH_COREIPC_WRAPPER(NSURLCredential);
 ENCODE_WITH_COREIPC_WRAPPER_NAMED(NSPersonNameComponents, CoreIPCPersonNameComponents);
 ENCODE_WITH_COREIPC_WRAPPER_NAMED(NSDateComponents, CoreIPCDateComponents);
 ENCODE_WITH_COREIPC_WRAPPER_NAMED(PlatformColor, CoreIPCColor);
@@ -748,7 +735,6 @@ ENCODE_WITH_COREIPC_WRAPPER_NAMED(NSDictionary, CoreIPCDictionary);
 ENCODE_WITH_COREIPC_WRAPPER_NAMED(NSPresentationIntent, CoreIPCPresentationIntent);
 
 ENCODE_AS_SECURE_CODING(NSURLRequest);
-ENCODE_AS_SECURE_CODING(NSURLCredential);
 ENCODE_AS_SECURE_CODING(NSParagraphStyle);
 #if USE(PASSKIT)
 ENCODE_AS_SECURE_CODING(PKSecureElementPass);
