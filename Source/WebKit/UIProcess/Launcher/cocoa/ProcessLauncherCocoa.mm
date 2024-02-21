@@ -174,11 +174,6 @@ void ProcessLauncher::launchProcess()
 #if USE(EXTENSIONKIT)
     auto handler = [](ThreadSafeWeakPtr<ProcessLauncher> weakProcessLauncher, _SEExtensionProcess* process, ASCIILiteral name, NSError* error)
     {
-        RefPtr launcher = weakProcessLauncher.get();
-        if (!launcher) {
-            [process invalidate];
-            return;
-        }
         if (error) {
             NSLog(@"Error launching process %@ error %@", process, error);
             RELEASE_LOG_FAULT(Process, "Error launching process, description '%s', reason '%s'", String([error localizedDescription]).utf8().data(), String([error localizedFailureReason]).utf8().data());
@@ -211,7 +206,8 @@ void ProcessLauncher::launchProcess()
 
         callOnMainRunLoop([weakProcessLauncher, name, process = retainPtr(process), launchGrant = WTFMove(launchGrant)] () mutable {
             RefPtr launcher = weakProcessLauncher.get();
-            if (!launcher) {
+            // If m_client is null, the Process launcher has been invalidated, and we should not proceed with the launch.
+            if (!launcher || !launcher->m_client) {
                 [process invalidate];
                 return;
             }
