@@ -52,8 +52,12 @@ void SplitTextNodeContainingElementCommand::doApply()
     if (!parent || !parent->parentElement() || !parent->parentElement()->hasEditableStyle())
         return;
 
-    CheckedPtr parentRenderer = parent->renderer();
-    if (!parentRenderer || !parentRenderer->isInline()) {
+    bool parentRendererIsNoneOrNotInline = false;
+    {
+        CheckedPtr parentRenderer = parent->renderer();
+        parentRendererIsNoneOrNotInline = !parentRenderer || !parentRenderer->isInline();
+    }
+    if (parentRendererIsNoneOrNotInline) {
         wrapContentsInDummySpan(*parent);
         RefPtr firstChild = parent->firstChild();
         if (!is<Element>(firstChild))
