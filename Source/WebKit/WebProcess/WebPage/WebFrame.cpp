@@ -713,7 +713,7 @@ String WebFrame::innerText() const
 RefPtr<WebFrame> WebFrame::parentFrame() const
 {
     RefPtr frame = m_coreFrame.get();
-    if (!frame || !frame->ownerElement())
+    if (!frame)
         return nullptr;
 
     RefPtr parentFrame = frame->tree().parent();
