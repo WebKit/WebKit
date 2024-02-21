@@ -31,6 +31,7 @@
 #include "NotImplemented.h"
 #include "PathStream.h"
 #include <skia/core/SkPathUtils.h>
+#include <skia/core/SkRRect.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
@@ -167,7 +168,10 @@ void PathSkia::add(PathRect rect)
 
 void PathSkia::add(PathRoundedRect roundedRect)
 {
-    addBeziersForRoundedRect(roundedRect.roundedRect);
+    if (roundedRect.strategy == PathRoundedRect::Strategy::PreferNative)
+        m_platformPath.addRRect(roundedRect.roundedRect);
+    else
+        addBeziersForRoundedRect(roundedRect.roundedRect);
 }
 
 void PathSkia::add(PathCloseSubpath)

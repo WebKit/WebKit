@@ -642,18 +642,9 @@ void GraphicsContextSkia::clipOut(const FloatRect& rect)
 
 void GraphicsContextSkia::fillRoundedRectImpl(const FloatRoundedRect& rect, const Color& color)
 {
-    auto skRect = SkRRect::MakeEmpty();
-    const auto& radii = rect.radii();
-    SkVector skRadii[4] = {
-        { SkFloatToScalar(radii.topLeft().width()), SkFloatToScalar(radii.topLeft().height()) },
-        { SkFloatToScalar(radii.topRight().width()), SkFloatToScalar(radii.topRight().height()) },
-        { SkFloatToScalar(radii.bottomLeft().width()), SkFloatToScalar(radii.bottomLeft().height()) },
-        { SkFloatToScalar(radii.bottomRight().width()), SkFloatToScalar(radii.bottomRight().height()) } };
-    skRect.setRectRadii(rect.rect(), skRadii);
-
     SkPaint paint = createFillPaint(color);
     paint.setImageFilter(createDropShadowFilterIfNeeded(ShadowStyle::Outset));
-    canvas().drawRRect(skRect, paint);
+    canvas().drawRRect(rect, paint);
 }
 
 void GraphicsContextSkia::fillRectWithRoundedHole(const FloatRect& outerRect, const FloatRoundedRect& innerRRect, const Color& color)
@@ -661,18 +652,9 @@ void GraphicsContextSkia::fillRectWithRoundedHole(const FloatRect& outerRect, co
     if (!color.isValid())
         return;
 
-    auto innerSkRect = SkRRect::MakeEmpty();
-    const auto& radii = innerRRect.radii();
-    SkVector skRadii[4] = {
-        { SkFloatToScalar(radii.topLeft().width()), SkFloatToScalar(radii.topLeft().height()) },
-        { SkFloatToScalar(radii.topRight().width()), SkFloatToScalar(radii.topRight().height()) },
-        { SkFloatToScalar(radii.bottomLeft().width()), SkFloatToScalar(radii.bottomLeft().height()) },
-        { SkFloatToScalar(radii.bottomRight().width()), SkFloatToScalar(radii.bottomRight().height()) } };
-    innerSkRect.setRectRadii(innerRRect.rect(), skRadii);
-
     SkPaint paint = createFillPaint(color);
     paint.setImageFilter(createDropShadowFilterIfNeeded(ShadowStyle::Inset));
-    canvas().drawDRRect(SkRRect::MakeRect(outerRect), innerSkRect, paint);
+    canvas().drawDRRect(SkRRect::MakeRect(outerRect), innerRRect, paint);
 }
 
 void GraphicsContextSkia::drawPattern(NativeImage& nativeImage, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options)
