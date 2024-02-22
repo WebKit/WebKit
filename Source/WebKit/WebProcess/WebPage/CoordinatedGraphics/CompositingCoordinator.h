@@ -100,7 +100,7 @@ private:
 #if USE(CAIRO)
     Nicosia::PaintingEngine& paintingEngine() override;
 #elif USE(SKIA)
-    SkiaAcceleratedBufferPool* skiaAcceleratedBufferPool() const override { return m_skiaAcceleratedBufferPool.get(); }
+    WebCore::SkiaAcceleratedBufferPool* skiaAcceleratedBufferPool() const override { return m_skiaAcceleratedBufferPool.get(); }
     WorkerPool* skiaUnacceleratedThreadedRenderingPool() const override { return m_skiaUnacceleratedThreadedRenderingPool.get(); }
 #endif
     RefPtr<Nicosia::ImageBackingStore> imageBackingStore(uint64_t, Function<RefPtr<Nicosia::Buffer>()>) override;
@@ -135,7 +135,7 @@ private:
 #if USE(CAIRO)
     std::unique_ptr<Nicosia::PaintingEngine> m_paintingEngine;
 #elif USE(SKIA)
-    std::unique_ptr<SkiaAcceleratedBufferPool> m_skiaAcceleratedBufferPool;
+    std::unique_ptr<WebCore::SkiaAcceleratedBufferPool> m_skiaAcceleratedBufferPool;
     RefPtr<WorkerPool> m_skiaUnacceleratedThreadedRenderingPool;
 #endif
     HashMap<uint64_t, Ref<Nicosia::ImageBackingStore>> m_imageBackingStores;
