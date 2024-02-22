@@ -2123,6 +2123,9 @@ void IPIntGenerator::addCallCommonData(const FunctionSignature& signature)
 #elif CPU(X86_64)
     const uint8_t gprs = 4;
     const uint8_t fprs = 4;
+#elif CPU(ARM)
+    const uint8_t gprs = 4;
+    const uint8_t fprs = 2;
 #else
     const uint8_t gprs = 0;
     const uint8_t fprs = 0;
