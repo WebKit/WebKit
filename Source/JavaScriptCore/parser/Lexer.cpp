@@ -2519,8 +2519,18 @@ start:
             shift();
             goto inSingleLineComment;
         }
-        // Otherwise, it could be a valid PrivateName.
-        if (isSingleCharacterIdentStart(next) || next == '\\') {
+
+        bool isValidPrivateName;
+        if (LIKELY(isLatin1(next)))
+            isValidPrivateName = typesOfLatin1Characters[static_cast<LChar>(next)] == CharacterIdentifierStart || next == '\\';
+        else {
+            ASSERT(m_code + 1 < m_codeEnd);
+            char32_t codePoint;
+            U16_GET(m_code + 1, 0, 0, m_codeEnd - (m_code + 1), codePoint);
+            isValidPrivateName = isNonLatin1IdentStart(codePoint);
+        }
+
+        if (isValidPrivateName) {
             lexerFlags.remove(LexerFlags::DontBuildKeywords);
             goto parseIdent;
         }
