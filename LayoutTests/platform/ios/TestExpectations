@@ -4695,8 +4695,8 @@ webkit.org/b/268929 imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-w
 
 # web-platform-tests/svg/painting/reftests failures
 imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-002.svg [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-021.svg [ Failure ]
-imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-022.svg [ Failure ]
-imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-023.svg [ Failure ]
+imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-021.svg [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-022.svg [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-023.svg [ ImageOnlyFailure ]
 
 webkit.org/b/269852 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-edge-behavior.html [ ImageOnlyFailure ]
