@@ -162,36 +162,36 @@ void AsyncPDFRenderer::enqueuePaintWithClip(const TileForGrid& tileInfo, const F
     if (pageCoverage.pages.isEmpty())
         return;
 
-    auto tileRenderInfo = TileRenderInfo { pageCoverage, m_currentConfigurationIdentifier };
+    auto tileRenderInfo = TileRenderInfo { tileRect, pageCoverage, m_currentConfigurationIdentifier };
     m_enqueuedTileRenders.add(tileInfo, tileRenderInfo);
 
     LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::enqueuePaintWithClip for tile " << tileInfo << " " << tileRenderInfo.pageCoverage);
 
-    m_paintingWorkQueue->dispatch([protectedThis = Ref { *this }, pdfDocument = WTFMove(pdfDocument), tileInfo, tileRect, tileRenderInfo]() mutable {
-        protectedThis->paintTileOnWorkQueue(WTFMove(pdfDocument), tileInfo, tileRect, tileRenderInfo);
+    m_paintingWorkQueue->dispatch([protectedThis = Ref { *this }, pdfDocument = WTFMove(pdfDocument), tileInfo, tileRenderInfo]() mutable {
+        protectedThis->paintTileOnWorkQueue(WTFMove(pdfDocument), tileInfo, tileRenderInfo);
     });
 }
 
-void AsyncPDFRenderer::paintTileOnWorkQueue(RetainPtr<PDFDocument>&& pdfDocument, const TileForGrid& tileInfo, const FloatRect& tileRect, const TileRenderInfo& renderInfo)
+void AsyncPDFRenderer::paintTileOnWorkQueue(RetainPtr<PDFDocument>&& pdfDocument, const TileForGrid& tileInfo, const TileRenderInfo& renderInfo)
 {
     ASSERT(!isMainRunLoop());
 
     // FIXME: We should take a lock and check m_enqueuedTileRenders here, since we don't want to spend time painting a tile which will only be thrown away.
 
-    auto tileBuffer = ImageBuffer::create(tileRect.size(), RenderingPurpose::Unspecified, renderInfo.pageCoverage.deviceScaleFactor, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    auto tileBuffer = ImageBuffer::create(renderInfo.tileRect.size(), RenderingPurpose::Unspecified, renderInfo.pageCoverage.deviceScaleFactor, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
     if (!tileBuffer)
         return;
 
-    paintPDFIntoBuffer(WTFMove(pdfDocument), *tileBuffer, tileInfo, tileRect, renderInfo);
+    paintPDFIntoBuffer(WTFMove(pdfDocument), *tileBuffer, tileInfo, renderInfo);
 
     // This is really a no-op (but only works if there's just one ref).
     auto bufferCopy = ImageBuffer::sinkIntoBufferForDifferentThread(WTFMove(tileBuffer));
     ASSERT(bufferCopy);
 
-    transferBufferToMainThread(WTFMove(bufferCopy), tileInfo, tileRect, renderInfo);
+    transferBufferToMainThread(WTFMove(bufferCopy), tileInfo, renderInfo);
 }
 
-void AsyncPDFRenderer::paintPDFIntoBuffer(RetainPtr<PDFDocument>&& pdfDocument, Ref<ImageBuffer> imageBuffer, const TileForGrid& tileInfo, const FloatRect& tileRect, const TileRenderInfo& renderInfo)
+void AsyncPDFRenderer::paintPDFIntoBuffer(RetainPtr<PDFDocument>&& pdfDocument, Ref<ImageBuffer> imageBuffer, const TileForGrid& tileInfo, const TileRenderInfo& renderInfo)
 {
     ASSERT(!isMainRunLoop());
 
@@ -199,10 +199,10 @@ void AsyncPDFRenderer::paintPDFIntoBuffer(RetainPtr<PDFDocument>&& pdfDocument, 
 
     auto stateSaver = GraphicsContextStateSaver(context);
 
-    context.translate(FloatPoint { -tileRect.location() });
+    context.translate(FloatPoint { -renderInfo.tileRect.location() });
 
     if (m_showDebugBorders.load())
-        context.fillRect(tileRect, Color::green.colorWithAlphaByte(32));
+        context.fillRect(renderInfo.tileRect, Color::green.colorWithAlphaByte(32));
 
     context.scale(renderInfo.pageCoverage.pdfDocumentScale * renderInfo.pageCoverage.pageScaleFactor);
 
@@ -221,16 +221,16 @@ void AsyncPDFRenderer::paintPDFIntoBuffer(RetainPtr<PDFDocument>&& pdfDocument, 
         context.translate(destinationRect.minXMaxYCorner());
         context.scale({ 1, -1 });
 
-        LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer: tile " << tileInfo << " painting PDF page " << pageInfo.pageIndex << " into rect " << destinationRect << " with clip " << tileRect);
+        LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer: tile " << tileInfo << " painting PDF page " << pageInfo.pageIndex << " into rect " << destinationRect << " with clip " << renderInfo.tileRect);
         [pdfPage drawWithBox:kPDFDisplayBoxCropBox toContext:context.platformContext()];
     }
 }
 
-void AsyncPDFRenderer::transferBufferToMainThread(RefPtr<ImageBuffer>&& imageBuffer, const TileForGrid& tileInfo, const FloatRect& tileRect, const TileRenderInfo& renderInfo)
+void AsyncPDFRenderer::transferBufferToMainThread(RefPtr<ImageBuffer>&& imageBuffer, const TileForGrid& tileInfo, const TileRenderInfo& renderInfo)
 {
     ASSERT(!isMainRunLoop());
 
-    callOnMainRunLoop([weakThis = ThreadSafeWeakPtr { *this }, imageBuffer = WTFMove(imageBuffer), tileInfo, tileRect, renderInfo]() {
+    callOnMainRunLoop([weakThis = ThreadSafeWeakPtr { *this }, imageBuffer = WTFMove(imageBuffer), tileInfo, renderInfo]() {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -254,10 +254,10 @@ void AsyncPDFRenderer::transferBufferToMainThread(RefPtr<ImageBuffer>&& imageBuf
             return;
         }
 
-        auto bufferAndClip = BufferAndClip { WTFMove(imageBuffer), tileRect, protectedThis->m_currentConfigurationIdentifier };
-        protectedThis->m_rendereredTiles.add(tileInfo, WTFMove(bufferAndClip));
+        auto renderedTileInfo = RenderedTile { WTFMove(imageBuffer), renderInfo };
+        protectedThis->m_rendereredTiles.add(tileInfo, WTFMove(renderedTileInfo));
 
-        auto paintingClipRect = convertTileRectToPaintingCoords(tileRect, renderInfo.pageCoverage.pageScaleFactor);
+        auto paintingClipRect = convertTileRectToPaintingCoords(renderInfo.tileRect, renderInfo.pageCoverage.pageScaleFactor);
         protectedThis->m_pdfContentsLayer->setNeedsDisplayInRect(paintingClipRect);
     });
 }
@@ -278,25 +278,25 @@ bool AsyncPDFRenderer::paintTilesForPaintingRect(GraphicsContext& context, float
 
     for (auto& keyValuePair : m_rendereredTiles) {
         auto& tileInfo = keyValuePair.key;
-        auto& bufferAndClip = keyValuePair.value;
+        auto& renderedTile = keyValuePair.value;
 
         m_enqueuedTileRenders.remove(tileInfo);
 
         // FIXME: if we stored PDFPageCoverage we could skip non-relevant tiles
 
-        auto tileClipInPaintingCoordinates = scaleTransform.mapRect(bufferAndClip.tileClip);
+        auto tileClipInPaintingCoordinates = scaleTransform.mapRect(renderedTile.tileInfo.tileRect);
         if (!destinationRect.intersects(tileClipInPaintingCoordinates))
             continue;
 
-        if (bufferAndClip.configurationIdentifier != m_currentConfigurationIdentifier) {
+        if (renderedTile.tileInfo.configurationIdentifier != m_currentConfigurationIdentifier) {
             if (m_showDebugBorders.load())
-                context.fillRect(bufferAndClip.tileClip, Color::orange.colorWithAlphaByte(32));
+                context.fillRect(renderedTile.tileInfo.tileRect, Color::orange.colorWithAlphaByte(32));
             continue;
         }
 
-        LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::paintTilesForPaintingRect " << destinationRect  << " - painting tile for " << tileInfo << " with clip " << bufferAndClip.tileClip << " scale " << pageScaleFactor);
+        LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::paintTilesForPaintingRect " << destinationRect  << " - painting tile for " << tileInfo << " with clip " << renderedTile.tileInfo.tileRect << " scale " << pageScaleFactor);
 
-        context.drawImageBuffer(*bufferAndClip.buffer, bufferAndClip.tileClip.location());
+        context.drawImageBuffer(*renderedTile.buffer, renderedTile.tileInfo.tileRect.location());
         paintedATile = true;
     }
 
@@ -309,9 +309,9 @@ void AsyncPDFRenderer::invalidateTilesForPaintingRect(float pageScaleFactor, con
     auto scaleTransform = tileToPaintingTransform(pageScaleFactor);
 
     m_rendereredTiles.removeIf([&](auto& entry) {
-        auto& bufferAndClip = entry.value;
+        auto& renderedTile = entry.value;
 
-        auto tileClipInPaintingCoordinates = scaleTransform.mapRect(bufferAndClip.tileClip);
+        auto tileClipInPaintingCoordinates = scaleTransform.mapRect(renderedTile.tileInfo.tileRect);
         bool result = paintingRect.intersects(tileClipInPaintingCoordinates);
         if (result)
             LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::invalidateTilesForPaintingRect " << paintingRect << " - removing tile " << entry.key);

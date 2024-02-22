@@ -111,6 +111,7 @@ private:
     AsyncPDFRenderer(UnifiedPDFPlugin&);
 
     struct TileRenderInfo {
+        WebCore::FloatRect tileRect;
         PDFPageCoverage pageCoverage;
         PDFConfigurationIdentifier configurationIdentifier;
     };
@@ -121,9 +122,9 @@ private:
     void willRepaintAllTiles(WebCore::TileGridIndex) final;
 
     void enqueuePaintWithClip(const TileForGrid&, const WebCore::FloatRect& tileRect);
-    void paintTileOnWorkQueue(RetainPtr<PDFDocument>&&, const TileForGrid&, const WebCore::FloatRect& tileRect, const TileRenderInfo&);
-    void paintPDFIntoBuffer(RetainPtr<PDFDocument>&&, Ref<WebCore::ImageBuffer>, const TileForGrid&, const WebCore::FloatRect& tileRect, const TileRenderInfo&);
-    void transferBufferToMainThread(RefPtr<WebCore::ImageBuffer>&&, const TileForGrid&, const WebCore::FloatRect& tileRect, const TileRenderInfo&);
+    void paintTileOnWorkQueue(RetainPtr<PDFDocument>&&, const TileForGrid&, const TileRenderInfo&);
+    void paintPDFIntoBuffer(RetainPtr<PDFDocument>&&, Ref<WebCore::ImageBuffer>, const TileForGrid&, const TileRenderInfo&);
+    void transferBufferToMainThread(RefPtr<WebCore::ImageBuffer>&&, const TileForGrid&, const TileRenderInfo&);
 
     void clearRequestsAndCachedTiles();
 
@@ -138,12 +139,11 @@ private:
 
     HashMap<TileForGrid, TileRenderInfo> m_enqueuedTileRenders;
 
-    struct BufferAndClip {
+    struct RenderedTile {
         RefPtr<WebCore::ImageBuffer> buffer;
-        WebCore::FloatRect tileClip;
-        PDFConfigurationIdentifier configurationIdentifier;
+        TileRenderInfo tileInfo;
     };
-    HashMap<TileForGrid, BufferAndClip> m_rendereredTiles;
+    HashMap<TileForGrid, RenderedTile> m_rendereredTiles;
 
     std::atomic<bool> m_showDebugBorders { false };
 };
