@@ -49,8 +49,9 @@ public:
     Animation(Animation&&) = default;
     Animation& operator=(Animation&&) = default;
 
-    void apply(ApplicationResult&, MonotonicTime);
-    void applyKeepingInternalState(ApplicationResult&, MonotonicTime);
+    enum class KeepInternalState { Yes, No };
+    void apply(ApplicationResult&, MonotonicTime, KeepInternalState);
+
     void pause(Seconds);
     void resume();
 
@@ -82,6 +83,11 @@ class Animations {
 public:
     Animations() = default;
 
+    void setTranslate(WebCore::TransformationMatrix transform) { m_translate = transform; }
+    void setRotate(WebCore::TransformationMatrix transform) { m_rotate = transform; }
+    void setScale(WebCore::TransformationMatrix transform) { m_scale = transform; }
+    void setTransform(WebCore::TransformationMatrix transform) { m_transform = transform; }
+
     void add(const Animation&);
     void remove(const String& name);
     void remove(const String& name, WebCore::AnimatedProperty);
@@ -89,18 +95,24 @@ public:
     void suspend(MonotonicTime);
     void resume();
 
-    void apply(Animation::ApplicationResult&, MonotonicTime);
-    void applyKeepingInternalState(Animation::ApplicationResult&, MonotonicTime);
+    void apply(Animation::ApplicationResult&, MonotonicTime, Animation::KeepInternalState = Animation::KeepInternalState::No);
 
     bool isEmpty() const { return m_animations.isEmpty(); }
     size_t size() const { return m_animations.size(); }
     const Vector<Animation>& animations() const { return m_animations; }
     Vector<Animation>& animations() { return m_animations; }
 
-    bool hasRunningAnimations() const;
     bool hasActiveAnimationsOfType(WebCore::AnimatedProperty type) const;
 
+    bool hasRunningAnimations() const;
+    bool hasRunningTransformAnimations() const;
+
 private:
+    WebCore::TransformationMatrix m_translate;
+    WebCore::TransformationMatrix m_rotate;
+    WebCore::TransformationMatrix m_scale;
+    WebCore::TransformationMatrix m_transform;
+
     Vector<Animation> m_animations;
 };
 

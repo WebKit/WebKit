@@ -74,6 +74,11 @@ void CoordinatedGraphicsLayer::notifyFlushRequired()
 
 void CoordinatedGraphicsLayer::didChangeAnimations()
 {
+    m_animations.setTranslate(client().transformMatrixForProperty(AnimatedProperty::Translate));
+    m_animations.setRotate(client().transformMatrixForProperty(AnimatedProperty::Rotate));
+    m_animations.setScale(client().transformMatrixForProperty(AnimatedProperty::Scale));
+    m_animations.setTransform(client().transformMatrixForProperty(AnimatedProperty::Transform));
+
     m_nicosia.delta.animationsChanged = true;
     notifyFlushRequired();
 }
@@ -1418,6 +1423,9 @@ bool CoordinatedGraphicsLayer::addAnimation(const KeyframeValueList& valueList, 
         break;
     }
     case AnimatedProperty::Opacity:
+    case AnimatedProperty::Translate:
+    case AnimatedProperty::Rotate:
+    case AnimatedProperty::Scale:
     case AnimatedProperty::Transform:
         break;
     default:
@@ -1453,6 +1461,12 @@ void CoordinatedGraphicsLayer::resumeAnimations()
 {
     m_animations.resume();
     didChangeAnimations();
+}
+
+void CoordinatedGraphicsLayer::transformRelatedPropertyDidChange()
+{
+    if (m_animations.hasRunningTransformAnimations())
+        didChangeAnimations();
 }
 
 void CoordinatedGraphicsLayer::animationStartedTimerFired()

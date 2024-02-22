@@ -1761,7 +1761,6 @@ webkit.org/b/132995 transitions/cancel-transition.html [ Failure Pass ]
 
 webkit.org/b/211948 webanimations/accelerated-animation-playback-rate.html [ ImageOnlyFailure ]
 webkit.org/b/212020 webanimations/accelerated-animation-single-keyframe.html [ Skip ]
-webkit.org/b/213783 webanimations/accelerated-animation-with-easing.html [ ImageOnlyFailure ]
 
 webkit.org/b/215945 webanimations/accelerated-css-animation-with-easing.html [ ImageOnlyFailure ]
 

@@ -1043,7 +1043,7 @@ bool TextureMapperLayer::syncAnimations(MonotonicTime time)
 #if USE(COORDINATED_GRAPHICS)
     // Calculate localTransform 50ms in the future.
     Nicosia::Animation::ApplicationResult futureApplicationResults;
-    m_animations.applyKeepingInternalState(futureApplicationResults, time + 50_ms);
+    m_animations.apply(futureApplicationResults, time + 50_ms, Nicosia::Animation::KeepInternalState::Yes);
     m_layerTransforms.futureLocalTransform = futureApplicationResults.transform.value_or(m_layerTransforms.localTransform);
 #endif
 

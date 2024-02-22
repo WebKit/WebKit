@@ -1568,7 +1568,6 @@ webkit.org/b/264680 svg/css/svg-resource-fragment-identifier-img-src.html [ Imag
 webkit.org/b/264680 tables/mozilla_expected_failures/bugs/bug2479-5.html [ Failure Missing Pass ]
 
 fast/history/page-cache-execute-script-during-restore.html [ Timeout ]
-webanimations/animation-page-cache.html [ Timeout ]
 
 imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/mask-and-nested-clip-path.svg [ Failure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/mask-nested-clip-path-006.svg [ Failure ]

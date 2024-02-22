@@ -131,6 +131,7 @@ public:
     void removeAnimation(const String&, std::optional<AnimatedProperty>) override;
     void suspendAnimations(MonotonicTime) override;
     void resumeAnimations() override;
+    void transformRelatedPropertyDidChange() override;
     bool usesContentsLayer() const override;
     void dumpAdditionalProperties(WTF::TextStream&, OptionSet<LayerTreeAsTextOptions>) const override;
 
