@@ -1982,6 +1982,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/MediaSourcePrivateClient.h
     platform/graphics/MediaUsageInfo.h
     platform/graphics/Model.h
+    platform/graphics/ModelPlayerIdentifier.h
     platform/graphics/NativeImage.h
     platform/graphics/NullGraphicsContext.h
     platform/graphics/NullImageBufferBackend.h
