@@ -876,8 +876,7 @@ WI.LogContentView = class LogContentView extends WI.ContentView
 
     _showConsoleTab()
     {
-        const requestedScope = null;
-        WI.showConsoleTab(requestedScope, {
+        WI.showConsoleTab({
             initiatorHint: WI.TabBrowser.TabNavigationInitiator.ButtonClick,
         });
     }
