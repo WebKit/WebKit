@@ -109,13 +109,14 @@ static size_t readULEBSize(std::span<const uint8_t> data, size_t& index)
     return value;
 }
 
-static std::span<const uint8_t> getSequenceHeaderOBU(std::span<const uint8_t> data)
+static std::optional<std::pair<std::span<const uint8_t>, std::span<const uint8_t>>> getSequenceHeaderOBU(std::span<const uint8_t> data)
 {
     size_t index = 0;
     do {
         if (index >= data.size())
             return { };
 
+        auto startIndex = index;
         auto value = data[index++];
         if (value >> 7)
             return { };
@@ -132,8 +133,11 @@ static std::span<const uint8_t> getSequenceHeaderOBU(std::span<const uint8_t> da
         if (index >= data.size())
             return { };
 
-        if (headerType == 1)
-            return { data.data() + index, payloadSize };
+        if (headerType == 1) {
+            std::span<const uint8_t> fullObu { data.data() + startIndex, payloadSize + index - startIndex };
+            std::span<const uint8_t> obuData { data.data() + index, payloadSize };
+            return std::make_pair(fullObu, obuData);
+        }
 
         index += payloadSize;
     } while (true);
@@ -251,10 +255,10 @@ static std::optional<ParsedSequenceHeaderParameters> parseSequenceHeaderOBU(std:
 static RetainPtr<CMVideoFormatDescriptionRef> computeAV1InputFormat(const uint8_t* data, size_t size, int32_t width, int32_t height)
 {
     auto sequenceHeaderData = getSequenceHeaderOBU({ data, size });
-    if (!sequenceHeaderData.size())
+    if (!sequenceHeaderData)
         return { };
 
-    auto parameters = parseSequenceHeaderOBU(sequenceHeaderData);
+    auto parameters = parseSequenceHeaderOBU(sequenceHeaderData->second);
     if (!parameters)
         return { };
 
@@ -263,14 +267,21 @@ static RetainPtr<CMVideoFormatDescriptionRef> computeAV1InputFormat(const uint8_
     if (height && parameters->height != height)
         return { };
 
+    auto fullOBUHeader = sequenceHeaderData->first;
+
     constexpr size_t VPCodecConfigurationContentsSize = 4;
-    uint8_t header[VPCodecConfigurationContentsSize];
+    size_t cfDataSize = VPCodecConfigurationContentsSize + fullOBUHeader.size();
+    auto cfData = adoptCF(CFDataCreateMutable(kCFAllocatorDefault, cfDataSize));
+    CFDataIncreaseLength(cfData.get(), cfDataSize);
+    uint8_t* header = CFDataGetMutableBytePtr(cfData.get());
+
     header[0] = 129;
     header[1] = (parameters->profile << 5) | parameters->level;
     header[2] = (parameters->high_bitdepth << 6) | (parameters->twelve_bit << 5) | (parameters->chroma_type << 2);
     header[3] = 0;
 
-    auto cfData = adoptCF(CFDataCreate(kCFAllocatorDefault, header, 4));
+    memcpy(header + 4, fullOBUHeader.data(), fullOBUHeader.size());
+
     auto configurationDict = @{ @"av1C": (__bridge NSData *)cfData.get() };
     auto extensions = @{ (__bridge NSString *)PAL::kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms: configurationDict };
 
