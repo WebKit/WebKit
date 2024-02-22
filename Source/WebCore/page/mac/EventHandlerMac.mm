@@ -189,7 +189,7 @@ void EventHandler::focusDocumentView()
     }
 
     RELEASE_ASSERT(page == m_frame->page());
-    CheckedRef(page->focusController())->setFocusedFrame(protectedFrame().ptr());
+    page->checkedFocusController()->setFocusedFrame(protectedFrame().ptr());
 }
 
 bool EventHandler::passWidgetMouseDownEventToWidget(const MouseEventWithHitTestResults& event)

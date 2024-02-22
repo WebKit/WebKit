@@ -327,10 +327,11 @@ RefPtr<WebCore::TextIndicator> WebFoundTextRangeController::createTextIndicatorF
         options.add({ WebCore::TextIndicatorOption::PaintAllContent, WebCore::TextIndicatorOption::PaintBackgrounds });
 
 #if PLATFORM(IOS_FAMILY)
-    Ref frame = CheckedRef(m_webPage->corePage()->focusController())->focusedOrMainFrame();
-    frame->selection().setUpdateAppearanceEnabled(true);
-    frame->selection().updateAppearance();
-    frame->selection().setUpdateAppearanceEnabled(false);
+    if (RefPtr frame = m_webPage->corePage()->checkedFocusController()->focusedOrMainFrame()) {
+        frame->selection().setUpdateAppearanceEnabled(true);
+        frame->selection().updateAppearance();
+        frame->selection().setUpdateAppearanceEnabled(false);
+    }
 #endif
 
     return WebCore::TextIndicator::createWithRange(range, options, transition, WebCore::FloatSize(indicatorMargin, indicatorMargin));

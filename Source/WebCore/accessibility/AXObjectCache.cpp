@@ -516,7 +516,10 @@ AccessibilityObject* AXObjectCache::focusedObjectForPage(const Page* page)
         return nullptr;
 
     // get the focused node in the page
-    RefPtr document = page->focusController().focusedOrMainFrame().document();
+    RefPtr focusedOrMainFrame = page->focusController().focusedOrMainFrame();
+    if (!focusedOrMainFrame)
+        return nullptr;
+    RefPtr document = focusedOrMainFrame->document();
     if (!document)
         return nullptr;
 

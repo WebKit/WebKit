@@ -250,7 +250,10 @@ void WebPage::platformInitializeAccessibility()
 
 void WebPage::platformReinitialize()
 {
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return;
+
     accessibilityTransferRemoteToken(accessibilityRemoteTokenData(), frame->frameID());
 }
 
@@ -423,7 +426,10 @@ void WebPage::getPlatformEditorState(LocalFrame& frame, EditorState& result) con
 void WebPage::platformWillPerformEditingCommand()
 {
 #if ENABLE(CONTENT_CHANGE_OBSERVER)
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return;
+
     if (RefPtr document = frame->document()) {
         if (auto* holdingTank = document->domTimerHoldingTankIfExists())
             holdingTank->removeAll();
@@ -629,7 +635,10 @@ bool WebPage::performNonEditingBehaviorForSelector(const String&, WebCore::Keybo
 
 void WebPage::getSelectionContext(CompletionHandler<void(const String&, const String&, const String&)>&& completionHandler)
 {
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return;
+
     if (!frame->selection().isRange())
         return completionHandler({ }, { }, { });
     const int selectionExtendedContextLength = 350;
@@ -728,7 +737,10 @@ IntRect WebPage::rectForElementAtInteractionLocation() const
 
 void WebPage::updateSelectionAppearance()
 {
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return;
+
     auto& editor = frame->editor();
     if (editor.ignoreSelectionChanges())
         return;
@@ -739,7 +751,7 @@ void WebPage::updateSelectionAppearance()
     if (!editor.hasComposition() && frame->selection().selection().isNone())
         return;
 
-    didChangeSelection(frame.get());
+    didChangeSelection(*frame);
 }
 
 static void dispatchSyntheticMouseMove(LocalFrame& mainFrame, const WebCore::FloatPoint& location, OptionSet<WebEventModifier> modifiers, WebCore::PointerID pointerId = WebCore::mousePointerID)
@@ -753,7 +765,9 @@ static void dispatchSyntheticMouseMove(LocalFrame& mainFrame, const WebCore::Flo
 void WebPage::generateSyntheticEditingCommand(SyntheticEditingCommandType command)
 {
     PlatformKeyboardEvent keyEvent;
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return;
     
     OptionSet<PlatformEvent::Modifier> modifiers;
     modifiers.add(PlatformEvent::Modifier::MetaKey);
@@ -909,7 +923,7 @@ void WebPage::completeSyntheticClick(Node& nodeRespondingToClick, const WebCore:
     if (!localMainFrame)
         return;
 
-    RefPtr oldFocusedFrame = CheckedRef(m_page->focusController())->focusedLocalFrame();
+    RefPtr oldFocusedFrame = m_page->checkedFocusController()->focusedLocalFrame();
     RefPtr<Element> oldFocusedElement = oldFocusedFrame ? oldFocusedFrame->document()->focusedElement() : nullptr;
 
     SetForScope userIsInteractingChange { m_userIsInteracting, true };
@@ -932,7 +946,7 @@ void WebPage::completeSyntheticClick(Node& nodeRespondingToClick, const WebCore:
     if (m_isClosed)
         return;
 
-    RefPtr newFocusedFrame = CheckedRef(m_page->focusController())->focusedLocalFrame();
+    RefPtr newFocusedFrame = m_page->checkedFocusController()->focusedLocalFrame();
     RefPtr<Element> newFocusedElement = newFocusedFrame ? newFocusedFrame->document()->focusedElement() : nullptr;
 
     if (nodeRespondingToClick.document().settings().contentChangeObserverEnabled()) {
@@ -1077,7 +1091,10 @@ void WebPage::didConcludeEditDrag()
 
     m_pendingImageElementsForDropSnapshot.clear();
 
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return;
+
     if (auto selectionRange = frame->selection().selection().toNormalizedRange()) {
         m_pendingImageElementsForDropSnapshot = visibleImageElementsInRangeWithNonLoadedImages(*selectionRange);
         frame->selection().setSelectedRange(makeSimpleRange(selectionRange->end), Affinity::Downstream, FrameSelection::ShouldCloseTyping::Yes, UserTriggered::Yes);
@@ -1262,7 +1279,10 @@ void WebPage::commitPotentialTapFailed()
 
 void WebPage::clearSelectionAfterTapIfNeeded()
 {
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return;
+
     if (frame->selection().selection().isContentEditable())
         return;
 
@@ -1466,8 +1486,11 @@ void WebPage::selectWithGesture(const IntPoint& point, GestureType gestureType, 
     if (static_cast<GestureRecognizerState>(gestureState) == GestureRecognizerState::Began)
         setFocusedFrameBeforeSelectingTextAtLocation(point);
 
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
-    VisiblePosition position = visiblePositionInFocusedNodeForPoint(frame, point, isInteractingWithFocusedElement);
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return;
+
+    VisiblePosition position = visiblePositionInFocusedNodeForPoint(*frame, point, isInteractingWithFocusedElement);
 
     if (position.isNull()) {
         completionHandler(point, gestureType, gestureState, { });
@@ -1802,12 +1825,16 @@ IntRect WebPage::rootViewInteractionBounds(const Node& node)
 void WebPage::clearSelection()
 {
     m_startingGestureRange = std::nullopt;
-    CheckedRef(m_page->focusController())->focusedOrMainFrame().selection().clear();
+    RefPtr focusedOrMainFrame = m_page->checkedFocusController()->focusedOrMainFrame();
+    focusedOrMainFrame->selection().clear();
 }
 
 void WebPage::dispatchSyntheticMouseEventsForSelectionGesture(SelectionTouch touch, const IntPoint& point)
 {
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return;
+
     if (!frame->selection().selection().isContentEditable())
         return;
 
@@ -1842,7 +1869,10 @@ void WebPage::dispatchSyntheticMouseEventsForSelectionGesture(SelectionTouch tou
 
 void WebPage::updateSelectionWithTouches(const IntPoint& point, SelectionTouch selectionTouch, bool baseIsStart, CompletionHandler<void(const WebCore::IntPoint&, SelectionTouch, OptionSet<SelectionFlags>)>&& completionHandler)
 {
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return;
+
     IntPoint pointInDocument = RefPtr(frame->view())->rootViewToContents(point);
     VisiblePosition position = frame->visiblePositionForPoint(pointInDocument);
     if (position.isNull())
@@ -1864,16 +1894,16 @@ void WebPage::updateSelectionWithTouches(const IntPoint& point, SelectionTouch s
         if (frame->selection().selection().isContentEditable())
             range = makeSimpleRange(closestWordBoundaryForPosition(position));
         else
-            std::tie(range, selectionFlipped) = rangeForPointInRootViewCoordinates(frame, point, baseIsStart, selectionFlippingEnabled());
+            std::tie(range, selectionFlipped) = rangeForPointInRootViewCoordinates(*frame, point, baseIsStart, selectionFlippingEnabled());
         break;
 
     case SelectionTouch::EndedMovingForward:
     case SelectionTouch::EndedMovingBackward:
-        range = rangeAtWordBoundaryForPosition(frame.ptr(), position, baseIsStart);
+        range = rangeAtWordBoundaryForPosition(frame.get(), position, baseIsStart);
         break;
 
     case SelectionTouch::Moved:
-        std::tie(range, selectionFlipped) = rangeForPointInRootViewCoordinates(frame, point, baseIsStart, selectionFlippingEnabled());
+        std::tie(range, selectionFlipped) = rangeForPointInRootViewCoordinates(*frame, point, baseIsStart, selectionFlippingEnabled());
         break;
     }
 
@@ -1888,7 +1918,10 @@ void WebPage::updateSelectionWithTouches(const IntPoint& point, SelectionTouch s
 
 void WebPage::selectWithTwoTouches(const WebCore::IntPoint& from, const WebCore::IntPoint& to, GestureType gestureType, GestureRecognizerState gestureState, CompletionHandler<void(const WebCore::IntPoint&, GestureType, GestureRecognizerState, OptionSet<SelectionFlags>)>&& completionHandler)
 {
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return;
+
     RefPtr view = frame->view();
     auto fromPosition = frame->visiblePositionForPoint(view->rootViewToContents(from));
     auto toPosition = frame->visiblePositionForPoint(view->rootViewToContents(to));
@@ -1906,7 +1939,10 @@ void WebPage::extendSelectionForReplacement(CompletionHandler<void()>&& completi
 {
     auto callCompletionHandlerOnExit = makeScopeExit(WTFMove(completion));
 
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return;
+
     RefPtr document = frame->document();
     if (!document)
         return;
@@ -1947,7 +1983,10 @@ void WebPage::extendSelection(WebCore::TextGranularity granularity, CompletionHa
 {
     auto callCompletionHandlerOnExit = makeScopeExit(WTFMove(completionHandler));
 
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return;
+
     // For the moment we handle only TextGranularity::WordGranularity.
     if (granularity != TextGranularity::WordGranularity || !frame->selection().isCaret())
         return;
@@ -1962,7 +2001,10 @@ void WebPage::extendSelection(WebCore::TextGranularity granularity, CompletionHa
 
 void WebPage::setSelectedRangeDispatchingSyntheticMouseEventsIfNeeded(const SimpleRange& range, Affinity affinity)
 {
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return;
+
     IntPoint endLocationForSyntheticMouseEvents;
     bool shouldDispatchMouseEvents = shouldDispatchSyntheticMouseEventsWhenModifyingSelection();
     if (shouldDispatchMouseEvents) {
@@ -1984,7 +2026,10 @@ void WebPage::platformDidSelectAll()
     if (!shouldDispatchSyntheticMouseEventsWhenModifyingSelection())
         return;
 
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return;
+
     RefPtr view = frame->view();
     auto startCaretRect = view->contentsToRootView(VisiblePosition(frame->selection().selection().start()).absoluteCaretBounds());
     auto endCaretRect = view->contentsToRootView(VisiblePosition(frame->selection().selection().end()).absoluteCaretBounds());
@@ -1995,7 +2040,10 @@ void WebPage::platformDidSelectAll()
 
 void WebPage::selectWordBackward()
 {
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return;
+
     if (!frame->selection().isCaret())
         return;
 
@@ -2009,7 +2057,9 @@ void WebPage::selectWordBackward()
 
 void WebPage::moveSelectionByOffset(int32_t offset, CompletionHandler<void()>&& completionHandler)
 {
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return;
     
     VisiblePosition startPosition = frame->selection().selection().end();
     if (startPosition.isNull())
@@ -2037,7 +2087,9 @@ void WebPage::startAutoscrollAtPosition(const WebCore::FloatPoint& positionInWin
         return;
     }
     
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return;
     auto& selection = frame->selection().selection();
     if (!selection.isRange())
         return;
@@ -2059,7 +2111,10 @@ void WebPage::cancelAutoscroll()
 
 void WebPage::requestEvasionRectsAboveSelection(CompletionHandler<void(const Vector<FloatRect>&)>&& reply)
 {
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return reply({ });
+
     RefPtr frameView = frame->view();
     if (!frameView) {
         reply({ });
@@ -2170,7 +2225,9 @@ void WebPage::requestEvasionRectsAboveSelection(CompletionHandler<void(const Vec
 
 void WebPage::getRectsForGranularityWithSelectionOffset(WebCore::TextGranularity granularity, int32_t offset, CompletionHandler<void(const Vector<WebCore::SelectionGeometry>&)>&& completionHandler)
 {
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return completionHandler({ });
 
     auto selection = m_storedSelectionForAccessibility.isNone() ? frame->selection().selection() : m_storedSelectionForAccessibility;
     auto position = visiblePositionForPositionWithOffset(selection.visibleStart(), offset);
@@ -2192,8 +2249,8 @@ void WebPage::storeSelectionForAccessibility(bool shouldStore)
     if (!shouldStore)
         m_storedSelectionForAccessibility = VisibleSelection();
     else {
-        auto& frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
-        m_storedSelectionForAccessibility = frame.selection().selection();
+        if (RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame())
+            m_storedSelectionForAccessibility = frame->selection().selection();
     }
 }
 
@@ -2211,7 +2268,9 @@ static std::optional<SimpleRange> rangeNearPositionMatchesText(const VisiblePosi
 
 void WebPage::getRectsAtSelectionOffsetWithText(int32_t offset, const String& text, CompletionHandler<void(const Vector<WebCore::SelectionGeometry>&)>&& completionHandler)
 {
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return completionHandler({ });
     auto& selection = m_storedSelectionForAccessibility.isNone() ? frame->selection().selection() : m_storedSelectionForAccessibility;
     auto startPosition = visiblePositionForPositionWithOffset(selection.visibleStart(), offset);
     auto range = makeSimpleRange(startPosition, visiblePositionForPositionWithOffset(startPosition, text.length()));
@@ -2247,8 +2306,11 @@ void WebPage::selectPositionAtPoint(const WebCore::IntPoint& point, bool isInter
 
     setFocusedFrameBeforeSelectingTextAtLocation(point);
 
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
-    VisiblePosition position = visiblePositionInFocusedNodeForPoint(frame, point, isInteractingWithFocusedElement);
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return completionHandler();
+
+    VisiblePosition position = visiblePositionInFocusedNodeForPoint(*frame, point, isInteractingWithFocusedElement);
     
     if (position.isNotNull())
         frame->selection().setSelectedRange(makeSimpleRange(position), position.affinity(), WebCore::FrameSelection::ShouldCloseTyping::Yes, UserTriggered::Yes);
@@ -2257,8 +2319,11 @@ void WebPage::selectPositionAtPoint(const WebCore::IntPoint& point, bool isInter
 
 void WebPage::selectPositionAtBoundaryWithDirection(const WebCore::IntPoint& point, WebCore::TextGranularity granularity, WebCore::SelectionDirection direction, bool isInteractingWithFocusedElement, CompletionHandler<void()>&& completionHandler)
 {
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
-    VisiblePosition position = visiblePositionInFocusedNodeForPoint(frame, point, isInteractingWithFocusedElement);
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return completionHandler();
+
+    VisiblePosition position = visiblePositionInFocusedNodeForPoint(*frame, point, isInteractingWithFocusedElement);
 
     if (position.isNotNull()) {
         position = positionOfNextBoundaryOfGranularity(position, granularity, direction);
@@ -2270,7 +2335,9 @@ void WebPage::selectPositionAtBoundaryWithDirection(const WebCore::IntPoint& poi
 
 void WebPage::moveSelectionAtBoundaryWithDirection(WebCore::TextGranularity granularity, WebCore::SelectionDirection direction, CompletionHandler<void()>&& completionHandler)
 {
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return completionHandler();
 
     if (!frame->selection().selection().isNone()) {
         bool isForward = (direction == SelectionDirection::Forward || direction == SelectionDirection::Right);
@@ -2333,7 +2400,7 @@ void WebPage::setFocusedFrameBeforeSelectingTextAtLocation(const IntPoint& point
     auto* hitNode = result.innerNode();
     if (hitNode && hitNode->renderer()) {
         RefPtr frame = result.innerNodeFrame();
-        CheckedRef(m_page->focusController())->setFocusedFrame(frame.get());
+        m_page->checkedFocusController()->setFocusedFrame(frame.get());
     }
 }
 
@@ -2341,8 +2408,11 @@ void WebPage::setSelectionRange(const WebCore::IntPoint& point, WebCore::TextGra
 {
     setFocusedFrameBeforeSelectingTextAtLocation(point);
 
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
-    auto range = rangeForGranularityAtPoint(frame, point, granularity, isInteractingWithFocusedElement);
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return;
+
+    auto range = rangeForGranularityAtPoint(*frame, point, granularity, isInteractingWithFocusedElement);
     if (range)
         frame->selection().setSelectedRange(*range, Affinity::Upstream, WebCore::FrameSelection::ShouldCloseTyping::Yes, UserTriggered::Yes);
     m_initialSelection = range;
@@ -2380,9 +2450,12 @@ void WebPage::beginSelectionInDirection(WebCore::SelectionDirection direction, C
 
 void WebPage::updateSelectionWithExtentPointAndBoundary(const WebCore::IntPoint& point, WebCore::TextGranularity granularity, bool isInteractingWithFocusedElement, CompletionHandler<void(bool)>&& callback)
 {
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
-    auto position = visiblePositionInFocusedNodeForPoint(frame, point, isInteractingWithFocusedElement);
-    auto newRange = rangeForGranularityAtPoint(frame, point, granularity, isInteractingWithFocusedElement);
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return callback(false);
+
+    auto position = visiblePositionInFocusedNodeForPoint(*frame, point, isInteractingWithFocusedElement);
+    auto newRange = rangeForGranularityAtPoint(*frame, point, granularity, isInteractingWithFocusedElement);
     
     if (position.isNull() || !m_initialSelection || !newRange)
         return callback(false);
@@ -2405,8 +2478,11 @@ void WebPage::updateSelectionWithExtentPointAndBoundary(const WebCore::IntPoint&
 
 void WebPage::updateSelectionWithExtentPoint(const WebCore::IntPoint& point, bool isInteractingWithFocusedElement, RespectSelectionAnchor respectSelectionAnchor, CompletionHandler<void(bool)>&& callback)
 {
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
-    auto position = visiblePositionInFocusedNodeForPoint(frame, point, isInteractingWithFocusedElement);
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return callback(false);
+
+    auto position = visiblePositionInFocusedNodeForPoint(*frame, point, isInteractingWithFocusedElement);
 
     if (position.isNull())
         return callback(false);
@@ -2453,7 +2529,10 @@ void WebPage::updateSelectionWithExtentPoint(const WebCore::IntPoint& point, boo
 #if ENABLE(REVEAL)
 RevealItem WebPage::revealItemForCurrentSelection()
 {
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return { };
+
     auto selection = frame->selection().selection();
     if (!selection.isNone()) {
         std::optional<SimpleRange> fullCharacterRange;
@@ -2519,19 +2598,25 @@ void WebPage::prepareSelectionForContextMenuWithLocationInView(IntPoint point, C
 
 void WebPage::replaceSelectedText(const String& oldText, const String& newText)
 {
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return;
+
     auto wordRange = frame->selection().isCaret() ? wordRangeFromPosition(frame->selection().selection().start()) : frame->selection().selection().toNormalizedRange();
     if (plainTextForContext(wordRange) != oldText)
         return;
 
-    IgnoreSelectionChangeForScope ignoreSelectionChanges { frame };
+    IgnoreSelectionChangeForScope ignoreSelectionChanges { *frame };
     frame->selection().setSelectedRange(wordRange, Affinity::Upstream, WebCore::FrameSelection::ShouldCloseTyping::Yes);
     frame->editor().insertText(newText, 0);
 }
 
 void WebPage::replaceDictatedText(const String& oldText, const String& newText)
 {
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return;
+
     if (frame->selection().isNone())
         return;
     
@@ -2550,18 +2635,21 @@ void WebPage::replaceDictatedText(const String& oldText, const String& newText)
         return;
 
     // We don't want to notify the client that the selection has changed until we are done inserting the new text.
-    IgnoreSelectionChangeForScope ignoreSelectionChanges { frame };
+    IgnoreSelectionChangeForScope ignoreSelectionChanges { *frame };
     frame->selection().setSelectedRange(range, Affinity::Upstream, WebCore::FrameSelection::ShouldCloseTyping::Yes);
     frame->editor().insertText(newText, 0);
 }
 
 void WebPage::willInsertFinalDictationResult()
 {
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return;
+
     if (frame->selection().isNone())
         return;
 
-    m_ignoreSelectionChangeScopeForDictation = makeUnique<IgnoreSelectionChangeForScope>(frame);
+    m_ignoreSelectionChangeScopeForDictation = makeUnique<IgnoreSelectionChangeForScope>(*frame);
 }
 
 void WebPage::didInsertFinalDictationResult()
@@ -2572,7 +2660,10 @@ void WebPage::didInsertFinalDictationResult()
 
 void WebPage::requestAutocorrectionData(const String& textForAutocorrection, CompletionHandler<void(WebAutocorrectionData)>&& reply)
 {
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return reply({ });
+
     if (!frame->selection().isCaret()) {
         reply({ });
         return;
@@ -2643,7 +2734,10 @@ void WebPage::syncApplyAutocorrection(const String& correction, const String& or
 
 bool WebPage::applyAutocorrectionInternal(const String& correction, const String& originalText, bool isCandidate)
 {
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return false;
+
     if (!frame->selection().isCaretOrRange())
         return false;
 
@@ -2708,7 +2802,7 @@ bool WebPage::applyAutocorrectionInternal(const String& correction, const String
     if (correction.length()) {
         frame->editor().insertText(correction, 0, originalText.isEmpty() ? TextEventInputKeyboard : TextEventInputAutocompletion);
         if (isCandidate)
-            adjustCandidateAutocorrectionInFrame(correction, frame.get());
+            adjustCandidateAutocorrectionInFrame(correction, *frame);
     } else if (originalText.length())
         frame->editor().deleteWithDirection(SelectionDirection::Backward, TextGranularity::CharacterGranularity, false, true);
     return true;
@@ -2719,7 +2813,10 @@ WebAutocorrectionContext WebPage::autocorrectionContext()
     if (!m_focusedElement)
         return { };
 
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return { };
+
     if (!frame->selection().selection().hasEditableStyle())
         return { };
 
@@ -2857,15 +2954,15 @@ static inline bool isObscuredElement(Element& element)
     
 static void focusedElementPositionInformation(WebPage& page, Element& focusedElement, const InteractionInformationRequest& request, InteractionInformationAtPosition& info)
 {
-    Ref frame = CheckedRef(page.corePage()->focusController())->focusedOrMainFrame();
-    if (!frame->editor().hasComposition())
+    RefPtr frame = page.corePage()->checkedFocusController()->focusedOrMainFrame();
+    if (!frame || !frame->editor().hasComposition())
         return;
 
     const uint32_t kHitAreaWidth = 66;
     const uint32_t kHitAreaHeight = 66;
     Ref view = *frame->view();
     IntPoint adjustedPoint(view->rootViewToContents(request.point));
-    IntPoint constrainedPoint = constrainPoint(adjustedPoint, frame, focusedElement);
+    IntPoint constrainedPoint = constrainPoint(adjustedPoint, *frame, focusedElement);
     VisiblePosition position = frame->visiblePositionForPoint(constrainedPoint);
 
     auto compositionRange = frame->editor().compositionRange();
@@ -3528,7 +3625,10 @@ void WebPage::focusNextFocusedElement(bool isForward, CompletionHandler<void()>&
 
 std::optional<FocusedElementInformation> WebPage::focusedElementInformation()
 {
-    RefPtr<Document> document = CheckedRef(m_page->focusController())->focusedOrMainFrame().document();
+    RefPtr focusedOrMainFrame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!focusedOrMainFrame)
+        return std::nullopt;
+    RefPtr<Document> document = focusedOrMainFrame->document();
     if (!document || !document->view())
         return std::nullopt;
 
@@ -3543,7 +3643,7 @@ std::optional<FocusedElementInformation> WebPage::focusedElementInformation()
 
     FocusedElementInformation information;
 
-    information.frameID = CheckedRef(m_page->focusController())->focusedOrMainFrame().frameID();
+    information.frameID = focusedOrMainFrame->frameID();
 
     information.lastInteractionLocation = m_lastInteractionLocation;
     if (auto elementContext = contextForElement(*focusedElement))
@@ -4723,7 +4823,7 @@ void WebPage::hardwareKeyboardAvailabilityChanged(bool keyboardIsAttached)
 {
     m_keyboardIsAttached = keyboardIsAttached;
 
-    if (RefPtr focusedFrame = CheckedRef(m_page->focusController())->focusedLocalFrame())
+    if (RefPtr focusedFrame = m_page->checkedFocusController()->focusedLocalFrame())
         focusedFrame->eventHandler().capsLockStateMayHaveChanged();
 }
 
@@ -4744,7 +4844,10 @@ bool WebPage::platformPrefersTextLegibilityBasedZoomScaling() const
 void WebPage::insertTextPlaceholder(const IntSize& size, CompletionHandler<void(const std::optional<WebCore::ElementContext>&)>&& completionHandler)
 {
     // Inserting the placeholder may run JavaScript, which can do anything, including frame destruction.
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return completionHandler({ });
+
     auto placeholder = frame->editor().insertTextPlaceholder(size);
     completionHandler(placeholder ? contextForElement(*placeholder) : std::nullopt);
 }
@@ -4760,7 +4863,10 @@ void WebPage::removeTextPlaceholder(const ElementContext& placeholder, Completio
 
 void WebPage::updateSelectionWithDelta(int64_t locationDelta, int64_t lengthDelta, CompletionHandler<void()>&& completionHandler)
 {
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return completionHandler();
+
     RefPtr root = frame->selection().rootEditableElementOrDocumentElement();
     auto selectionRange = frame->selection().selection().toNormalizedRange();
     if (!root || !selectionRange) {
@@ -4842,7 +4948,10 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest&& requ
         return;
     }
 
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return completionHandler({ });
+
     RefPtr { frame->document() }->updateLayout(LayoutOptions::IgnorePendingStylesheets);
 
     VisibleSelection selection = frame->selection().selection();
@@ -4873,8 +4982,8 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest&& requ
         }
     } else if (isSpatialRequest) {
         // FIXME: We might need to be a bit more careful that we get something useful (test the other corners?).
-        rangeOfInterest.start = visiblePositionForPointInRootViewCoordinates(frame.get(), request.rect.minXMinYCorner());
-        rangeOfInterest.end = visiblePositionForPointInRootViewCoordinates(frame.get(), request.rect.maxXMaxYCorner());
+        rangeOfInterest.start = visiblePositionForPointInRootViewCoordinates(*frame, request.rect.minXMinYCorner());
+        rangeOfInterest.end = visiblePositionForPointInRootViewCoordinates(*frame, request.rect.maxXMaxYCorner());
         if (request.options.contains(DocumentEditingContextRequest::Options::SpatialAndCurrentSelection)) {
             if (RefPtr rootEditableElement = selection.rootEditableElement()) {
                 VisiblePosition startOfEditableRoot { firstPositionInOrBeforeNode(rootEditableElement.get()) };
@@ -5115,7 +5224,7 @@ void WebPage::focusTextInputContextAndPlaceCaret(const ElementContext& elementCo
     // because we only want to do so if the caret can be placed.
     UserGestureIndicator gestureIndicator { IsProcessingUserGesture::Yes, &target->document() };
     SetForScope userIsInteractingChange { m_userIsInteracting, true };
-    CheckedRef(m_page->focusController())->setFocusedElement(target.get(), targetFrame);
+    m_page->checkedFocusController()->setFocusedElement(target.get(), targetFrame);
 
     // Setting the focused element could tear down the element's renderer. Check that we still have one.
     if (m_focusedElement != target || !target->renderer()) {
@@ -5178,7 +5287,10 @@ void WebPage::requestPasswordForQuickLookDocumentInMainFrame(const String& fileN
 
 void WebPage::animationDidFinishForElement(const WebCore::Element& animatedElement)
 {
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return;
+
     auto& selection = frame->selection().selection();
     if (selection.isNoneOrOrphaned())
         return;

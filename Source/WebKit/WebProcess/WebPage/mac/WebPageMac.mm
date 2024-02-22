@@ -152,7 +152,9 @@ void WebPage::createMockAccessibilityElement(pid_t pid)
 
 void WebPage::platformReinitialize()
 {
-    Ref frame = m_page->focusController().focusedOrMainFrame();
+    RefPtr frame = m_page->focusController().focusedOrMainFrame();
+    if (!frame)
+        return;
     accessibilityTransferRemoteToken(accessibilityRemoteTokenData(), frame->frameID());
 }
 
@@ -262,7 +264,9 @@ static LocalFrame* frameForEvent(KeyboardEvent* event)
 
 bool WebPage::executeKeypressCommandsInternal(const Vector<WebCore::KeypressCommand>& commands, KeyboardEvent* event)
 {
-    Ref frame = event ? *frameForEvent(event) : m_page->focusController().focusedOrMainFrame();
+    RefPtr frame = event ? frameForEvent(event) : m_page->focusController().focusedOrMainFrame();
+    if (!frame)
+        return false;
     ASSERT(frame->page() == corePage());
 
     bool eventWasHandled = false;
@@ -342,7 +346,9 @@ bool WebPage::handleEditingKeyboardEvent(KeyboardEvent& event)
 
 void WebPage::attributedSubstringForCharacterRangeAsync(const EditingRange& editingRange, CompletionHandler<void(const WebCore::AttributedString&, const EditingRange&)>&& completionHandler)
 {
-    Ref frame = m_page->focusController().focusedOrMainFrame();
+    RefPtr frame = m_page->focusController().focusedOrMainFrame();
+    if (!frame)
+        return completionHandler({ }, { });
 
     const VisibleSelection& selection = frame->selection().selection();
     if (selection.isNone() || !selection.isContentEditable() || selection.isInPasswordField()) {
@@ -350,7 +356,7 @@ void WebPage::attributedSubstringForCharacterRangeAsync(const EditingRange& edit
         return;
     }
 
-    auto range = EditingRange::toRange(frame, editingRange);
+    auto range = EditingRange::toRange(*frame, editingRange);
     if (!range) {
         completionHandler({ }, { });
         return;
@@ -505,10 +511,12 @@ void WebPage::registerUIProcessAccessibilityTokens(std::span<const uint8_t> elem
 
 void WebPage::getStringSelectionForPasteboard(CompletionHandler<void(String&&)>&& completionHandler)
 {
-    Ref frame = m_page->focusController().focusedOrMainFrame();
+    RefPtr frame = m_page->focusController().focusedOrMainFrame();
+    if (!frame)
+        return completionHandler({ });
 
 #if ENABLE(PDF_PLUGIN)
-    if (auto* pluginView = focusedPluginViewForFrame(frame)) {
+    if (auto* pluginView = focusedPluginViewForFrame(*frame)) {
         String selection = pluginView->selectionString();
         if (!selection.isNull())
             return completionHandler(WTFMove(selection));
@@ -523,7 +531,9 @@ void WebPage::getStringSelectionForPasteboard(CompletionHandler<void(String&&)>&
 
 void WebPage::getDataSelectionForPasteboard(const String pasteboardType, CompletionHandler<void(RefPtr<SharedBuffer>&&)>&& completionHandler)
 {
-    Ref frame = m_page->focusController().focusedOrMainFrame();
+    RefPtr frame = m_page->focusController().focusedOrMainFrame();
+    if (!frame)
+        return completionHandler({ });
     if (frame->selection().isNone())
         return completionHandler({ });
 
@@ -571,7 +581,9 @@ bool WebPage::platformCanHandleRequest(const WebCore::ResourceRequest& request)
 
 void WebPage::shouldDelayWindowOrderingEvent(const WebKit::WebMouseEvent& event, CompletionHandler<void(bool)>&& completionHandler)
 {
-    Ref frame = m_page->focusController().focusedOrMainFrame();
+    RefPtr frame = m_page->focusController().focusedOrMainFrame();
+    if (!frame)
+        return completionHandler({ });
 
     bool result = false;
 #if ENABLE(DRAG_SUPPORT)
@@ -592,7 +604,9 @@ void WebPage::requestAcceptsFirstMouse(int eventNumber, const WebKit::WebMouseEv
         return;
     }
 
-    Ref frame = m_page->focusController().focusedOrMainFrame();
+    RefPtr frame = m_page->focusController().focusedOrMainFrame();
+    if (!frame)
+        return;
 
     constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AllowChildFrameContent };
     HitTestResult hitResult = frame->eventHandler().hitTestResultAtPoint(frame->view()->windowToContents(event.position()), hitType);
@@ -888,7 +902,10 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locati
 
     WebHitTestResultData immediateActionResult(hitTestResult, { });
 
-    auto selectionRange = corePage()->focusController().focusedOrMainFrame().selection().selection().firstRange();
+    RefPtr focusedOrMainFrame = corePage()->focusController().focusedOrMainFrame();
+    if (!focusedOrMainFrame)
+        return;
+    auto selectionRange = focusedOrMainFrame->selection().selection().firstRange();
 
     auto indicatorOptions = [&](const SimpleRange& range) {
         OptionSet<TextIndicatorOption> options { TextIndicatorOption::UseBoundingRectAndPaintAllContentForComplexRanges, TextIndicatorOption::UseUserSelectAllCommonAncestor };

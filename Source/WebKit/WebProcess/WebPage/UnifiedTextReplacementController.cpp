@@ -127,7 +127,9 @@ void UnifiedTextReplacementController::willBeginTextReplacementSession(const WTF
     ASSERT(!m_contextRanges.contains(uuid));
     m_contextRanges.set(uuid, liveRange);
 
-    Ref frame = CheckedRef(corePage->focusController())->focusedOrMainFrame();
+    RefPtr frame = corePage->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return completionHandler({ });
 
     auto selectedTextRange = frame->selection().selection().firstRange();
 
@@ -157,7 +159,9 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveReplaceme
         return;
     }
 
-    Ref frame = CheckedRef(corePage->focusController())->focusedOrMainFrame();
+    RefPtr frame = corePage->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return;
 
     ASSERT(m_contextRanges.contains(uuid));
 
@@ -178,7 +182,7 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveReplaceme
         auto originalRangeWithOffset = CharacterRange { locationWithOffset, replacementData.originalRange.length };
         auto resolvedRange = resolveCharacterRange(*sessionRange, originalRangeWithOffset);
 
-        replaceTextInRange(frame.get(), resolvedRange, replacementData.replacement);
+        replaceTextInRange(*frame, resolvedRange, replacementData.replacement);
 
         auto newRangeWithOffset = CharacterRange { locationWithOffset, replacementData.replacement.length() };
         auto newResolvedRange = resolveCharacterRange(*sessionRange, newRangeWithOffset);
@@ -205,7 +209,10 @@ void UnifiedTextReplacementController::textReplacementSessionDidUpdateStateForRe
         return;
     }
 
-    Ref frame = CheckedRef(corePage->focusController())->focusedOrMainFrame();
+    RefPtr frame = corePage->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return;
+
     RefPtr document = frame->document();
     if (!document) {
         ASSERT_NOT_REACHED();
@@ -243,7 +250,7 @@ void UnifiedTextReplacementController::textReplacementSessionDidUpdateStateForRe
         }
     }();
 
-    replaceTextInRange(frame.get(), rangeToReplace, newText);
+    replaceTextInRange(*frame, rangeToReplace, newText);
 
     auto newData = DocumentMarker::UnifiedTextReplacementData { oldData.originalText, oldData.uuid, newState };
     document->markers().addMarker(node, DocumentMarker { DocumentMarker::Type::UnifiedTextReplacement, offsetRange, WTFMove(newData) });
@@ -264,7 +271,9 @@ void UnifiedTextReplacementController::didEndTextReplacementSession(const WTF::U
         return;
     }
 
-    Ref frame = CheckedRef(corePage->focusController())->focusedOrMainFrame();
+    RefPtr frame = corePage->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return;
     RefPtr document = frame->document();
     if (!document) {
         ASSERT_NOT_REACHED();
@@ -281,7 +290,7 @@ void UnifiedTextReplacementController::didEndTextReplacementSession(const WTF::U
                 return false;
 
             auto rangeToReplace = makeSimpleRange(node, marker);
-            replaceTextInRange(frame.get(), rangeToReplace, data.originalText);
+            replaceTextInRange(*frame, rangeToReplace, data.originalText);
 
             return false;
         });
@@ -309,7 +318,9 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithR
         return;
     }
 
-    Ref frame = CheckedRef(corePage->focusController())->focusedOrMainFrame();
+    RefPtr frame = corePage->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return;
     RefPtr document = frame->document();
     if (!document) {
         ASSERT_NOT_REACHED();
@@ -355,7 +366,7 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithR
 
     auto newResolvedRange = resolveCharacterRange(*sessionRange, newRange);
 
-    replaceTextInRange(frame.get(), newResolvedRange, newText);
+    replaceTextInRange(*frame, newResolvedRange, newText);
 
     auto updatedLiveRange = createLiveRange(*sessionRange);
     m_contextRanges.set(uuid, updatedLiveRange);
@@ -378,7 +389,10 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveEditActio
         return;
     }
 
-    Ref frame = CheckedRef(corePage->focusController())->focusedOrMainFrame();
+    RefPtr frame = corePage->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return;
+
     RefPtr document = frame->document();
     if (!document) {
         ASSERT_NOT_REACHED();
@@ -411,7 +425,7 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveEditActio
 
         m_originalDocumentNodes.set(uuid, contents.returnValue()); // Deep clone.
 
-        replaceContentsInRange(frame, *sessionRange, *originalFragment);
+        replaceContentsInRange(*frame, *sessionRange, *originalFragment);
 
         auto updatedLiveRange = createLiveRange(*sessionRange);
         m_contextRanges.set(uuid, updatedLiveRange);

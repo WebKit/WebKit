@@ -2021,8 +2021,10 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         WebCore::TextIndicatorOption::IncludeSnapshotWithSelectionHighlight,
         WebCore::TextIndicatorOption::RespectTextColor
     };
-    auto& frame = page->focusController().focusedOrMainFrame();
-    if (auto range = frame.selection().selection().toNormalizedRange()) {
+    RefPtr frame = page->focusController().focusedOrMainFrame();
+    if (!frame)
+        return;
+    if (auto range = frame->selection().selection().toNormalizedRange()) {
         if (auto textIndicator = WebCore::TextIndicator::createWithRange(*range, defaultEditDragTextIndicatorOptions, WebCore::TextIndicatorPresentationTransition::None, WebCore::FloatSize()))
             _private->dataOperationTextIndicator = adoptNS([[WebUITextIndicatorData alloc] initWithImage:nil textIndicatorData:textIndicator->data() scale:page->deviceScaleFactor()]);
     }
@@ -4031,8 +4033,13 @@ IGNORE_WARNINGS_END
 
 - (void)_executeCoreCommandByName:(NSString *)name value:(NSString *)value
 {
-    if (RefPtr page = _private->page)
-        page->focusController().focusedOrMainFrame().editor().command(name).execute(value);
+    RefPtr page = _private->page;
+    if (!page)
+        return;
+    RefPtr focusedOrMainFrame = page->focusController().focusedOrMainFrame();
+    if (!focusedOrMainFrame)
+        return;
+    focusedOrMainFrame->editor().command(name).execute(value);
 }
 
 - (void)_clearMainFrameName

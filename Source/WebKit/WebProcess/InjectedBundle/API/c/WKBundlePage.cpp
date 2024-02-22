@@ -281,24 +281,27 @@ void* WKAccessibilityRootObject(WKBundlePageRef pageRef)
 void* WKAccessibilityFocusedObject(WKBundlePageRef pageRef)
 {
     if (!pageRef)
-        return 0;
+        return nullptr;
 
     WebCore::Page* page = WebKit::toImpl(pageRef)->corePage();
     if (!page)
-        return 0;
+        return nullptr;
 
-    RefPtr focusedDocument = CheckedRef(page->focusController())->focusedOrMainFrame().document();
+    RefPtr focusedOrMainFrame = page->checkedFocusController()->focusedOrMainFrame();
+    if (!focusedOrMainFrame)
+        return nullptr;
+    RefPtr focusedDocument = focusedOrMainFrame->document();
     if (!focusedDocument)
-        return 0;
+        return nullptr;
 
     WebCore::AXObjectCache::enableAccessibility();
 
     auto* axObjectCache = focusedDocument->axObjectCache();
     if (!axObjectCache)
-        return 0;
+        return nullptr;
 
     auto* focus = axObjectCache->focusedObjectForPage(page);
-    return focus ? focus->wrapper() : 0;
+    return focus ? focus->wrapper() : nullptr;
 }
 
 void* WKAccessibilityFocusedUIElement()

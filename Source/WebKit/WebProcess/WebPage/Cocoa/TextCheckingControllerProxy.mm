@@ -73,7 +73,10 @@ static OptionSet<DocumentMarker::Type> relevantMarkerTypes()
 
 std::optional<TextCheckingControllerProxy::RangeAndOffset> TextCheckingControllerProxy::rangeAndOffsetRelativeToSelection(int64_t offset, uint64_t length)
 {
-    auto& frameSelection = CheckedRef(m_page.corePage()->focusController())->focusedOrMainFrame().selection();
+    RefPtr focusedOrMainFrame = m_page.corePage()->checkedFocusController()->focusedOrMainFrame();
+    if (!focusedOrMainFrame)
+        return std::nullopt;
+    auto& frameSelection = focusedOrMainFrame->selection();
     auto selection = frameSelection.selection();
 
     RefPtr root = frameSelection.rootEditableElementOrDocumentElement();
@@ -96,7 +99,7 @@ std::optional<TextCheckingControllerProxy::RangeAndOffset> TextCheckingControlle
 
 void TextCheckingControllerProxy::replaceRelativeToSelection(const WebCore::AttributedString& annotatedString, int64_t selectionOffset, uint64_t length, uint64_t relativeReplacementLocation, uint64_t relativeReplacementLength)
 {
-    Ref frame = CheckedRef(m_page.corePage()->focusController())->focusedOrMainFrame();
+    Ref frame = m_page.corePage()->checkedFocusController()->focusedOrMainFrame();
     auto& frameSelection = frame->selection();
     if (!frameSelection.selection().isContentEditable())
         return;
@@ -158,7 +161,10 @@ void TextCheckingControllerProxy::removeAnnotationRelativeToSelection(const Stri
 
     auto removeCoreSpellingMarkers = annotation == "NSSpellingState"_s;
     auto types = removeCoreSpellingMarkers ? relevantMarkerTypes() : WebCore::DocumentMarker::Type::PlatformTextChecking;
-    RefPtr document = CheckedRef(m_page.corePage()->focusController())->focusedOrMainFrame().document();
+    RefPtr focusedOrMainFrame = m_page.corePage()->checkedFocusController()->focusedOrMainFrame();
+    if (!focusedOrMainFrame)
+        return;
+    RefPtr document = focusedOrMainFrame->document();
     document->markers().filterMarkers(rangeAndOffset->range, [&] (const DocumentMarker& marker) {
         if (!std::holds_alternative<WebCore::DocumentMarker::PlatformTextCheckingData>(marker.data()))
             return FilterMarkerResult::Keep;

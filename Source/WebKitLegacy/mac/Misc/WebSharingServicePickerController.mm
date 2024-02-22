@@ -214,8 +214,8 @@ RetainPtr<NSImage> WebSharingServicePickerClient::imageForCurrentSharingServiceP
         }];
     }
     else if ([item isKindOfClass:[NSAttributedString class]]) {
-        auto& frame = _pickerClient->pageForSharingServicePicker(*self)->focusController().focusedOrMainFrame();
-        frame.editor().replaceSelectionWithAttributedString(item);
+        if (RefPtr frame = _pickerClient->pageForSharingServicePicker(*self)->focusController().focusedOrMainFrame())
+            frame->editor().replaceSelectionWithAttributedString(item);
     } else
         LOG_ERROR("sharingService:didShareItems: - Unknown item type returned\n");
 }

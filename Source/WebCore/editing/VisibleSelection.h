@@ -35,6 +35,7 @@ enum class SelectionDirection : uint8_t { Forward, Backward, Right, Left };
 class VisibleSelection {
 public:
     WEBCORE_EXPORT VisibleSelection();
+    static const VisibleSelection& emptySelection();
 
     static constexpr auto defaultAffinity = VisiblePosition::defaultAffinity;
 

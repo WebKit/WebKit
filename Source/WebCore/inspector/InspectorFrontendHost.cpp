@@ -442,7 +442,11 @@ void InspectorFrontendHost::killText(const String& text, bool shouldPrependToKil
     if (!m_frontendPage)
         return;
 
-    Editor& editor = m_frontendPage->focusController().focusedOrMainFrame().editor();
+    RefPtr focusedOrMainFrame = m_frontendPage->checkedFocusController()->focusedOrMainFrame();
+    if (!focusedOrMainFrame)
+        return;
+
+    Editor& editor = focusedOrMainFrame->editor();
     editor.setStartNewKillRingSequence(shouldStartNewSequence);
     Editor::KillRingInsertionMode insertionMode = shouldPrependToKillRing ? Editor::KillRingInsertionMode::PrependText : Editor::KillRingInsertionMode::AppendText;
     editor.addTextToKillRing(text, insertionMode);

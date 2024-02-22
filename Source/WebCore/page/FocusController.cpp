@@ -481,16 +481,14 @@ void FocusController::setFocusedFrame(Frame* frame, BroadcastFocusedFrame broadc
     m_isChangingFocusedFrame = false;
 }
 
-LocalFrame& FocusController::focusedOrMainFrame() const
+LocalFrame* FocusController::focusedOrMainFrame() const
 {
     if (auto* frame = focusedLocalFrame())
-        return *frame;
+        return frame;
     if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame()))
-        return *localMainFrame;
-
-    // FIXME: Do something better here in the site isolated case. <rdar://116201648>
+        return localMainFrame;
     ASSERT(m_page->settings().siteIsolationEnabled());
-    return *m_page->rootFrames().begin();
+    return nullptr;
 }
 
 void FocusController::setFocused(bool focused)
@@ -500,8 +498,10 @@ void FocusController::setFocused(bool focused)
 
 void FocusController::setFocusedInternal(bool focused)
 {
-    if (!isFocused())
-        focusedOrMainFrame().eventHandler().stopAutoscrollTimer();
+    if (!isFocused()) {
+        if (RefPtr focusedOrMainFrame = this->focusedOrMainFrame())
+            focusedOrMainFrame->eventHandler().stopAutoscrollTimer();
+    }
 
     if (!focusedFrame())
         setFocusedFrame(m_page->protectedMainFrame().ptr());
@@ -539,8 +539,9 @@ bool FocusController::setInitialFocus(FocusDirection direction, KeyboardEvent* p
     // If focus is being set initially, accessibility needs to be informed that system focus has moved 
     // into the web area again, even if focus did not change within WebCore. PostNotification is called instead
     // of handleFocusedUIElementChanged, because this will send the notification even if the element is the same.
-    if (auto* cache = focusedOrMainFrame().document()->existingAXObjectCache())
-        cache->postNotification(focusedOrMainFrame().document(), AXObjectCache::AXFocusedUIElementChanged);
+    RefPtr focusedOrMainFrame = this->focusedOrMainFrame();
+    if (auto* cache = focusedOrMainFrame ? focusedOrMainFrame->document()->existingAXObjectCache() : nullptr)
+        cache->postNotification(focusedOrMainFrame->document(), AXObjectCache::AXFocusedUIElementChanged);
 
     return didAdvanceFocus;
 }
@@ -565,7 +566,10 @@ bool FocusController::advanceFocus(FocusDirection direction, KeyboardEvent* even
 
 bool FocusController::relinquishFocusToChrome(FocusDirection direction)
 {
-    Ref frame = focusedOrMainFrame();
+    RefPtr frame = focusedOrMainFrame();
+    if (!frame)
+        return false;
+
     RefPtr document = frame->document();
     if (!document)
         return false;
@@ -574,7 +578,7 @@ bool FocusController::relinquishFocusToChrome(FocusDirection direction)
     if (!page->chrome().canTakeFocus(direction) || page->isControlledByAutomation())
         return false;
 
-    clearSelectionIfNeeded(frame.ptr(), nullptr, nullptr);
+    clearSelectionIfNeeded(frame.get(), nullptr, nullptr);
     document->setFocusedElement(nullptr);
     setFocusedFrame(nullptr);
     page->chrome().takeFocus(direction);
@@ -583,15 +587,18 @@ bool FocusController::relinquishFocusToChrome(FocusDirection direction)
 
 bool FocusController::advanceFocusInDocumentOrder(FocusDirection direction, KeyboardEvent* event, bool initialFocus)
 {
-    LocalFrame& frame = focusedOrMainFrame();
-    RefPtr document = frame.document();
+    RefPtr frame = focusedOrMainFrame();
+    if (!frame)
+        return false;
+
+    RefPtr document = frame->document();
 
     RefPtr<Node> currentNode = document->focusNavigationStartingNode(direction);
     // FIXME: Not quite correct when it comes to focus transitions leaving/entering the WebView itself
-    bool caretBrowsing = frame.settings().caretBrowsingEnabled();
+    bool caretBrowsing = frame->settings().caretBrowsingEnabled();
 
     if (caretBrowsing && !currentNode)
-        currentNode = frame.selection().selection().start().protectedDeprecatedNode();
+        currentNode = frame->selection().selection().start().protectedDeprecatedNode();
 
     document->updateLayoutIgnorePendingStylesheets();
 
@@ -647,9 +654,9 @@ bool FocusController::advanceFocusInDocumentOrder(FocusDirection direction, Keyb
 
     if (caretBrowsing) {
         VisibleSelection newSelection(firstPositionInOrBeforeNode(element.get()), Affinity::Downstream);
-        if (frame.selection().shouldChangeSelection(newSelection)) {
+        if (frame->selection().shouldChangeSelection(newSelection)) {
             AXTextStateChangeIntent intent(AXTextStateChangeTypeSelectionMove, AXTextSelection { AXTextSelectionDirectionDiscontiguous, AXTextSelectionGranularityUnknown, true });
-            frame.selection().setSelection(newSelection, FrameSelection::defaultSetSelectionOptions(UserTriggered::Yes), intent);
+            frame->selection().setSelection(newSelection, FrameSelection::defaultSetSelectionOptions(UserTriggered::Yes), intent);
         }
     }
 
@@ -1014,7 +1021,8 @@ void FocusController::setActiveInternal(bool active)
         }
     }
 
-    focusedOrMainFrame().selection().pageActivationChanged();
+    if (RefPtr focusedOrMainFrame = this->focusedOrMainFrame())
+        focusedOrMainFrame->selection().pageActivationChanged();
     
     auto* focusedFrame = focusedLocalFrame();
     if (focusedFrame && isFocused())
@@ -1183,7 +1191,8 @@ bool FocusController::advanceFocusDirectionallyInContainer(Node* container, cons
         }
         // Navigate into a new frame.
         LayoutRect rect;
-        RefPtr focusedElement = focusedOrMainFrame().document()->focusedElement();
+        RefPtr focusedOrMainFrame = this->focusedOrMainFrame();
+        RefPtr focusedElement = focusedOrMainFrame ? focusedOrMainFrame->document()->focusedElement() : nullptr;
         if (focusedElement && !hasOffscreenRect(focusedElement.get()))
             rect = nodeRectInAbsoluteCoordinates(focusedElement.get(), true /* ignore border */);
         dynamicDowncast<LocalFrame>(frameElement->contentFrame())->document()->updateLayoutIgnorePendingStylesheets();
@@ -1201,7 +1210,8 @@ bool FocusController::advanceFocusDirectionallyInContainer(Node* container, cons
         }
         // Navigate into a new scrollable container.
         LayoutRect startingRect;
-        RefPtr focusedElement = focusedOrMainFrame().document()->focusedElement();
+        RefPtr focusedOrMainFrame = this->focusedOrMainFrame();
+        RefPtr focusedElement = focusedOrMainFrame ? focusedOrMainFrame->document()->focusedElement() : nullptr;
         if (focusedElement && !hasOffscreenRect(focusedElement.get()))
             startingRect = nodeRectInAbsoluteCoordinates(focusedElement.get(), true);
         return advanceFocusDirectionallyInContainer(RefPtr { focusCandidate.visibleNode.get() }.get(), startingRect, direction, event);
@@ -1222,14 +1232,18 @@ bool FocusController::advanceFocusDirectionallyInContainer(Node* container, cons
 
 bool FocusController::advanceFocusDirectionally(FocusDirection direction, KeyboardEvent* event)
 {
-    Document* focusedDocument = focusedOrMainFrame().document();
+    RefPtr focusedOrMainFrame = this->focusedOrMainFrame();
+    if (!focusedOrMainFrame)
+        return false;
+
+    RefPtr focusedDocument = focusedOrMainFrame->document();
     if (!focusedDocument)
         return false;
 
     focusedDocument->updateLayoutIgnorePendingStylesheets();
 
     // Figure out the starting rect.
-    Node* container = focusedDocument;
+    RefPtr<Node> container = focusedDocument.get();
     LayoutRect startingRect;
     if (auto* focusedElement = focusedDocument->focusedElement()) {
         if (!hasOffscreenRect(focusedElement)) {
@@ -1247,10 +1261,10 @@ bool FocusController::advanceFocusDirectionally(FocusDirection direction, Keyboa
 
     bool consumed = false;
     do {
-        consumed = advanceFocusDirectionallyInContainer(container, startingRect, direction, event);
+        consumed = advanceFocusDirectionallyInContainer(container.get(), startingRect, direction, event);
         focusedDocument->updateLayoutIgnorePendingStylesheets();
-        startingRect = nodeRectInAbsoluteCoordinates(container, true /* ignore border */);
-        container = scrollableEnclosingBoxOrParentFrameForNodeInDirection(direction, container);
+        startingRect = nodeRectInAbsoluteCoordinates(container.get(), true /* ignore border */);
+        container = scrollableEnclosingBoxOrParentFrameForNodeInDirection(direction, container.get());
     } while (!consumed && container);
 
     return consumed;
@@ -1263,11 +1277,15 @@ void FocusController::setFocusedElementNeedsRepaint()
 
 void FocusController::focusRepaintTimerFired()
 {
-    Document* focusedDocument = focusedOrMainFrame().document();
+    RefPtr focusedOrMainFrame = this->focusedOrMainFrame();
+    if (!focusedOrMainFrame)
+        return;
+
+    RefPtr focusedDocument = focusedOrMainFrame->document();
     if (!focusedDocument)
         return;
 
-    Element* focusedElement = focusedDocument->focusedElement();
+    RefPtr focusedElement = focusedDocument->focusedElement();
     if (!focusedElement)
         return;
 
