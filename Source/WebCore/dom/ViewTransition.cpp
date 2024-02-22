@@ -26,6 +26,8 @@
 #include "config.h"
 #include "ViewTransition.h"
 
+#include "CSSKeyframeRule.h"
+#include "CSSKeyframesRule.h"
 #include "CSSTransformListValue.h"
 #include "CheckVisibilityOptions.h"
 #include "ComputedStyleExtractor.h"
@@ -318,11 +320,78 @@ ExceptionOr<void> ViewTransition::captureNewState()
     return { };
 }
 
+void ViewTransition::setupDynamicStyleSheet(const AtomString& name, const CapturedElement& capturedElement)
+{
+    auto& resolver = protectedDocument()->styleScope().resolver();
+
+    {
+        CSSValueListBuilder list;
+        list.append(CSSPrimitiveValue::create("-ua-view-transition-fade-out"_s));
+        if (capturedElement.newElement)
+            list.append(CSSPrimitiveValue::create("-ua-mix-blend-mode-plus-lighter"_s));
+        Ref valueList = CSSValueList::createCommaSeparated(WTFMove(list));
+        Ref props = MutableStyleProperties::create();
+        props->setProperty(CSSPropertyAnimationName, WTFMove(valueList));
+
+        resolver.setViewTransitionStyles(CSSSelector::PseudoElement::ViewTransitionOld, name, props);
+    }
+
+    {
+        CSSValueListBuilder list;
+        list.append(CSSPrimitiveValue::create("-ua-view-transition-fade-in"_s));
+        if (capturedElement.oldImage)
+            list.append(CSSPrimitiveValue::create("-ua-mix-blend-mode-plus-lighter"_s));
+        Ref valueList = CSSValueList::createCommaSeparated(WTFMove(list));
+        Ref props = MutableStyleProperties::create();
+        props->setProperty(CSSPropertyAnimationName, WTFMove(valueList));
+
+        resolver.setViewTransitionStyles(CSSSelector::PseudoElement::ViewTransitionNew, name, props);
+    }
+
+    if (!capturedElement.oldImage || !capturedElement.newElement)
+        return;
+
+    {
+        Ref props = MutableStyleProperties::create();
+        props->setProperty(CSSPropertyIsolation, CSSPrimitiveValue::create(CSSValueID::CSSValueIsolate));
+
+        resolver.setViewTransitionStyles(CSSSelector::PseudoElement::ViewTransitionImagePair, name, props);
+    }
+
+    {
+        Ref list = CSSValueList::createCommaSeparated(CSSPrimitiveValue::create(makeString("-ua-view-transition-group-anim-"_s, name)));
+        Ref props = MutableStyleProperties::create();
+        props->setProperty(CSSPropertyAnimationName, WTFMove(list));
+
+        resolver.setViewTransitionStyles(CSSSelector::PseudoElement::ViewTransitionGroup, name, props);
+    }
+
+    if (!capturedElement.oldProperties)
+        return;
+
+    Ref props = MutableStyleProperties::createEmpty();
+    props->setProperty(CSSPropertyWidth, capturedElement.oldProperties->getPropertyCSSValue(CSSPropertyWidth));
+    props->setProperty(CSSPropertyHeight, capturedElement.oldProperties->getPropertyCSSValue(CSSPropertyHeight));
+    props->setProperty(CSSPropertyTransform, capturedElement.oldProperties->getPropertyCSSValue(CSSPropertyTransform));
+    props->setProperty(CSSPropertyBackdropFilter, capturedElement.oldProperties->getPropertyCSSValue(CSSPropertyBackdropFilter));
+
+    Ref keyframe = StyleRuleKeyframe::create(WTFMove(props));
+    keyframe->setKeyText("from"_s);
+
+    Ref keyframes = StyleRuleKeyframes::create(AtomString(makeString("-ua-view-transition-group-anim-"_s, name)));
+    keyframes->wrapperAppendKeyframe(WTFMove(keyframe));
+
+    // We can add this to the normal namespace, since we recreate the resolver when the view-transition ends.
+    resolver.addKeyframeStyle(WTFMove(keyframes));
+}
+
 // https://drafts.csswg.org/css-view-transitions/#setup-transition-pseudo-elements
 void ViewTransition::setupTransitionPseudoElements()
 {
     protectedDocument()->setHasViewTransitionPseudoElementTree(true);
-    // FIXME: Implement step 9.
+
+    for (auto& [name, capturedElement] : m_namedElements.map())
+        setupDynamicStyleSheet(name, capturedElement);
 
     if (RefPtr documentElement = protectedDocument()->documentElement())
         documentElement->invalidateStyleInternal();
@@ -449,7 +518,8 @@ Ref<MutableStyleProperties> ViewTransition::copyElementBaseProperties(Element& e
     if (element.renderer()) {
         Ref<CSSValue> transformListValue = CSSTransformListValue::create(ComputedStyleExtractor::matrixTransformValue(transform, element.renderer()->style()));
         props->setProperty(CSSPropertyTransform, WTFMove(transformListValue));
-    }
+    } else
+        props->setProperty(CSSPropertyTransform, CSSPrimitiveValue::create(CSSValueID::CSSValueNone));
 
     return props;
 }
@@ -469,7 +539,7 @@ void ViewTransition::updatePseudoElementStyles()
         if (properties) {
             if (!iter.value->groupStyleProperties) {
                 iter.value->groupStyleProperties = properties;
-                resolver.setViewTransitionGroupStyles(iter.key, *properties);
+                resolver.setViewTransitionStyles(CSSSelector::PseudoElement::ViewTransitionGroup, iter.key, *properties);
             } else
                 iter.value->groupStyleProperties->mergeAndOverrideOnConflict(*properties);
         }

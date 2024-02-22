@@ -1,3 +1,3 @@
 
-FAIL incorrect UA animations for root transition promise_test: Unhandled rejection with value: undefined
+PASS incorrect UA animations for root transition
 

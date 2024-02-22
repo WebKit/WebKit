@@ -726,24 +726,56 @@ std::optional<DynamicMediaQueryEvaluationChanges> Resolver::evaluateDynamicMedia
 }
 
 
-void Resolver::setViewTransitionGroupStyles(const AtomString& name, Ref<MutableStyleProperties> properties)
+static CSSSelectorList viewTransitionSelector(CSSSelector::PseudoElement element, const AtomString& name)
 {
-    if (!m_document)
-        return;
-
-    auto* viewTransitionsStyle = m_ruleSets.dynamicViewTransitionsStyle();
-    RuleSetBuilder builder(*viewTransitionsStyle, mediaQueryEvaluator(), this);
-    CSSSelectorParserContext context(*m_document.get());
-
     MutableCSSSelectorList selectorList;
-    selectorList.append(MutableCSSSelector::parsePseudoClassSelector("root"_s, context));
-    auto groupSelector = MutableCSSSelector::parsePseudoElementSelector("view-transition-group"_s, context);
+
+    auto rootSelector = makeUnique<MutableCSSSelector>();
+    rootSelector->setMatch(CSSSelector::Match::PseudoClass);
+    rootSelector->setPseudoClass(CSSSelector::PseudoClass::Root);
+    selectorList.append(WTFMove(rootSelector));
+
+    auto groupSelector = makeUnique<MutableCSSSelector>();
+    groupSelector->setMatch(CSSSelector::Match::PseudoElement);
+    groupSelector->setPseudoElement(element);
+
+    AtomString selectorName;
+    switch (element) {
+    case CSSSelector::PseudoElement::ViewTransitionGroup:
+        selectorName = "view-transition-group"_s;
+        break;
+    case CSSSelector::PseudoElement::ViewTransitionImagePair:
+        selectorName = "view-transition-image-pair"_s;
+        break;
+    case CSSSelector::PseudoElement::ViewTransitionNew:
+        selectorName = "view-transition-new"_s;
+        break;
+    case CSSSelector::PseudoElement::ViewTransitionOld:
+        selectorName = "view-transition-old"_s;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+
+    groupSelector->setValue(selectorName);
     groupSelector->setArgumentList({ { name } });
 
     selectorList.first()->appendTagHistory(CSSSelector::Relation::Subselector, WTFMove(groupSelector));
 
-    auto styleRule = StyleRule::create(WTFMove(properties), true, CSSSelectorList(WTFMove(selectorList)));
+    return CSSSelectorList(WTFMove(selectorList));
+}
 
+
+void Resolver::setViewTransitionStyles(CSSSelector::PseudoElement element, const AtomString& name, Ref<MutableStyleProperties> properties)
+{
+    if (!m_document)
+        return;
+
+    auto styleRule = StyleRule::create(WTFMove(properties), true, viewTransitionSelector(element, name));
+
+    auto* viewTransitionsStyle = m_ruleSets.dynamicViewTransitionsStyle();
+    RuleSetBuilder builder(*viewTransitionsStyle, mediaQueryEvaluator(), this);
     builder.addStyleRule(styleRule);
 }
 
