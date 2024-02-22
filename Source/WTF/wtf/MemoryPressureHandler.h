@@ -43,16 +43,15 @@
 
 namespace WTF {
 
-enum class MemoryPressureStatus : uint8_t {
+enum class SystemMemoryPressureStatus : uint8_t {
     Normal,
+    Warning,
+    Critical,
+};
 
-    // The entire system is at a warning or critical pressure level.
-    SystemWarning,
-    SystemCritical,
-
-    // This specific process crossed a warning or critical memory usage limit.
-    ProcessLimitWarning,
-    ProcessLimitCritical
+enum class ProcessMemoryLimit : uint8_t {
+    Warning,
+    Critical,
 };
 
 enum class MemoryUsagePolicy : uint8_t {
@@ -98,7 +97,8 @@ public:
 #endif
 
     void setMemoryKillCallback(WTF::Function<void()>&& function) { m_memoryKillCallback = WTFMove(function); }
-    void setMemoryPressureStatusChangedCallback(WTF::Function<void(MemoryPressureStatus)>&& function) { m_memoryPressureStatusChangedCallback = WTFMove(function); }
+    void setMemoryPressureStatusChangedCallback(WTF::Function<void()>&& function) { m_memoryPressureStatusChangedCallback = WTFMove(function); }
+    void setDidExceedProcessMemoryLimitCallback(WTF::Function<void(ProcessMemoryLimit)>&& function) { m_didExceedProcessMemoryLimitCallback = WTFMove(function); }
 
     void setLowMemoryHandler(LowMemoryHandler&& handler)
     {
@@ -107,9 +107,7 @@ public:
 
     bool isUnderMemoryWarning() const
     {
-        auto memoryPressureStatus = m_memoryPressureStatus.load();
-        return memoryPressureStatus == MemoryPressureStatus::SystemWarning
-            || memoryPressureStatus == MemoryPressureStatus::ProcessLimitWarning
+        return m_memoryPressureStatus == SystemMemoryPressureStatus::Warning
 #if PLATFORM(MAC)
             || m_memoryUsagePolicy == MemoryUsagePolicy::Conservative
 #endif
@@ -118,17 +116,16 @@ public:
 
     bool isUnderMemoryPressure() const
     {
-        auto memoryPressureStatus = m_memoryPressureStatus.load();
-        return memoryPressureStatus == MemoryPressureStatus::SystemCritical
-            || memoryPressureStatus == MemoryPressureStatus::ProcessLimitCritical
+        return m_memoryPressureStatus == SystemMemoryPressureStatus::Critical
 #if PLATFORM(MAC)
             || m_memoryUsagePolicy >= MemoryUsagePolicy::Strict
 #endif
             || m_isSimulatingMemoryPressure;
     }
+
     bool isSimulatingMemoryWarning() const { return m_isSimulatingMemoryWarning; }
     bool isSimulatingMemoryPressure() const { return m_isSimulatingMemoryPressure; }
-    void setMemoryPressureStatus(MemoryPressureStatus);
+    void setMemoryPressureStatus(SystemMemoryPressureStatus);
 
     WTF_EXPORT_PRIVATE MemoryUsagePolicy currentMemoryUsagePolicy();
 
@@ -223,6 +220,7 @@ private:
     MemoryPressureHandler();
     ~MemoryPressureHandler() = delete;
 
+    void didExceedProcessMemoryLimit(ProcessMemoryLimit);
     void respondToMemoryPressure(Critical, Synchronous = Synchronous::No);
     void platformReleaseMemory(Critical);
     void platformInitialize();
@@ -233,7 +231,7 @@ private:
 
     unsigned m_pageCount { 0 };
 
-    std::atomic<MemoryPressureStatus> m_memoryPressureStatus { MemoryPressureStatus::Normal };
+    std::atomic<SystemMemoryPressureStatus> m_memoryPressureStatus { SystemMemoryPressureStatus::Normal };
     bool m_installed { false };
     bool m_isSimulatingMemoryWarning { false };
     bool m_isSimulatingMemoryPressure { false };
@@ -245,7 +243,8 @@ private:
 
     std::unique_ptr<RunLoop::Timer>m_measurementTimer;
     WTF::Function<void()> m_memoryKillCallback;
-    WTF::Function<void(MemoryPressureStatus)> m_memoryPressureStatusChangedCallback;
+    WTF::Function<void()> m_memoryPressureStatusChangedCallback;
+    WTF::Function<void(ProcessMemoryLimit)> m_didExceedProcessMemoryLimitCallback;
     LowMemoryHandler m_lowMemoryHandler;
 
     Configuration m_configuration;

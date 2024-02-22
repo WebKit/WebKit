@@ -299,19 +299,25 @@ void MemoryPressureHandler::releaseMemory(Critical critical, Synchronous synchro
     platformReleaseMemory(critical);
 }
 
-void MemoryPressureHandler::setMemoryPressureStatus(MemoryPressureStatus memoryPressureStatus)
+void MemoryPressureHandler::setMemoryPressureStatus(SystemMemoryPressureStatus status)
 {
-    if (m_memoryPressureStatus == memoryPressureStatus)
+    if (m_memoryPressureStatus == status)
         return;
 
-    m_memoryPressureStatus = memoryPressureStatus;
+    m_memoryPressureStatus = status;
     memoryPressureStatusChanged();
 }
 
 void MemoryPressureHandler::memoryPressureStatusChanged()
 {
     if (m_memoryPressureStatusChangedCallback)
-        m_memoryPressureStatusChangedCallback(m_memoryPressureStatus);
+        m_memoryPressureStatusChangedCallback();
+}
+
+void MemoryPressureHandler::didExceedProcessMemoryLimit(ProcessMemoryLimit limit)
+{
+    if (m_didExceedProcessMemoryLimitCallback)
+        m_didExceedProcessMemoryLimitCallback(limit);
 }
 
 void MemoryPressureHandler::ReliefLogger::logMemoryUsageChange()
