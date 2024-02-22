@@ -158,18 +158,17 @@ CMSampleBufferRef H264BufferToCMSampleBuffer(const uint8_t* buffer, size_t buffe
     return WEBRTC_VIDEO_CODEC_ERROR;
   }
 
-  rtc::ScopedCFTypeRef<CMVideoFormatDescriptionRef> inputFormat =
-      rtc::ScopedCF(webrtc::CreateVideoFormatDescription(data, size));
-  if (inputFormat) {
-    // FIXME: Reenable reorder size computation for AnnexB decoders, once feasible (rdar://122902399).
-    _reorderQueue.setReorderSize(_useAVC ? webrtc::ComputeH264ReorderSizeFromAnnexB(data, size) : 0);
-    // Check if the video format has changed, and reinitialize decoder if
-     // needed.
-    if (!CMFormatDescriptionEqual(inputFormat.get(), _videoFormat)) {
-      [self setVideoFormat:inputFormat.get()];
-      int resetDecompressionSessionError = [self resetDecompressionSession];
-      if (resetDecompressionSessionError != WEBRTC_VIDEO_CODEC_OK) {
-        return resetDecompressionSessionError;
+  if (!_useAVC) {
+    rtc::ScopedCFTypeRef<CMVideoFormatDescriptionRef> inputFormat = rtc::ScopedCF(webrtc::CreateVideoFormatDescription(data, size));
+    if (inputFormat) {
+      _reorderQueue.setReorderSize(webrtc::ComputeH264ReorderSizeFromAnnexB(data, size));
+      // Check if the video format has changed, and reinitialize decoder if needed.
+      if (!CMFormatDescriptionEqual(inputFormat.get(), _videoFormat)) {
+        [self setVideoFormat:inputFormat.get()];
+        int resetDecompressionSessionError = [self resetDecompressionSession];
+        if (resetDecompressionSessionError != WEBRTC_VIDEO_CODEC_OK) {
+         return resetDecompressionSessionError;
+        }
       }
     }
   }

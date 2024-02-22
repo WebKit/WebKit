@@ -705,11 +705,11 @@ uint8_t ComputeH264ReorderSizeFromAnnexB(const uint8_t* annexb_buffer, size_t an
   const uint8_t* spsData;
   size_t spsDataSize;
 
-  if (!reader.ReadNalu(&spsData, &spsDataSize)) {
+  if (!reader.ReadNalu(&spsData, &spsDataSize) || spsDataSize <= H264::kNaluTypeSize) {
     return 0;
   }
 
-  std::vector<uint8_t> unpacked_buffer = H264::ParseRbsp(spsData, spsDataSize);
+  std::vector<uint8_t> unpacked_buffer = H264::ParseRbsp(spsData + H264::kNaluTypeSize, spsDataSize - H264::kNaluTypeSize);
   auto spsAndVui = SpsAndVuiParser::Parse(unpacked_buffer);
   if (!spsAndVui) {
     RTC_LOG(LS_ERROR) << "Failed to parse sps.";
