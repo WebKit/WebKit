@@ -1,7 +1,7 @@
 /*
     Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
-    Copyright (C) 2005-2017 Apple Inc. All rights reserved.
+    Copyright (C) 2005-2024 Apple Inc. All rights reserved.
     Copyright (C) Research In Motion Limited 2010. All rights reserved.
     Copyright (C) 2014 Adobe Systems Incorporated. All rights reserved.
 
@@ -52,7 +52,7 @@ public:
     // Initial values for all the properties
     static AlignmentBaseline initialAlignmentBaseline() { return AlignmentBaseline::Baseline; }
     static DominantBaseline initialDominantBaseline() { return DominantBaseline::Auto; }
-    static BaselineShift initialBaselineShift() { return BaselineShift::Baseline; }
+    static BaselineShift initialBaselineShift() { return BaselineShift::Length; }
     static VectorEffect initialVectorEffect() { return VectorEffect::None; }
     static BufferedRendering initialBufferedRendering() { return BufferedRendering::Auto; }
     static WindRule initialClipRule() { return WindRule::NonZero; }
@@ -82,7 +82,7 @@ public:
     static String initialMarkerMidResource() { return String(); }
     static String initialMarkerEndResource() { return String(); }
     static MaskType initialMaskType() { return MaskType::Luminance; }
-    static SVGLengthValue initialBaselineShiftValue() { return SVGLengthValue(0, SVGLengthType::Number); }
+    static SVGLengthValue initialBaselineShiftValue() { return SVGLengthValue(0, SVGLengthType::Pixels); }
     static SVGLengthValue initialKerning() { return SVGLengthValue(0, SVGLengthType::Number); }
 
     // SVG CSS Property setters

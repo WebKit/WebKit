@@ -10,7 +10,7 @@ rect: style.getPropertyValue(background-image) : none
 rect: style.getPropertyValue(background-origin) : padding-box
 rect: style.getPropertyValue(background-repeat) : repeat
 rect: style.getPropertyValue(background-size) : auto
-rect: style.getPropertyValue(baseline-shift) : baseline
+rect: style.getPropertyValue(baseline-shift) : 0px
 rect: style.getPropertyValue(border-bottom-color) : rgb(0, 0, 0)
 rect: style.getPropertyValue(border-bottom-left-radius) : 0px
 rect: style.getPropertyValue(border-bottom-right-radius) : 0px
@@ -252,7 +252,7 @@ g: style.getPropertyValue(background-image) : none
 g: style.getPropertyValue(background-origin) : padding-box
 g: style.getPropertyValue(background-repeat) : repeat
 g: style.getPropertyValue(background-size) : auto
-g: style.getPropertyValue(baseline-shift) : baseline
+g: style.getPropertyValue(baseline-shift) : 0px
 g: style.getPropertyValue(border-bottom-color) : rgb(0, 0, 0)
 g: style.getPropertyValue(border-bottom-left-radius) : 0px
 g: style.getPropertyValue(border-bottom-right-radius) : 0px
