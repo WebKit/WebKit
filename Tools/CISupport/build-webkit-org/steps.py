@@ -73,7 +73,7 @@ class CustomFlagsMixin(object):
             platform = platform + '-simulator'
         elif platform in ['ios', 'tvos', 'watchos']:
             platform = platform + '-device'
-        self.setCommand(self.command + ['--' + platform])
+        self.command += ['--' + platform]
 
     def appendCustomTestingFlags(self, platform, device_model):
         if platform not in ('gtk', 'wincairo', 'ios', 'jsc-only', 'wpe'):
@@ -659,10 +659,10 @@ class RunJavaScriptCoreTests(TestWithFailureCount, CustomFlagsMixin):
         # Linux bots have currently problems with JSC tests that try to use large amounts of memory.
         # Check: https://bugs.webkit.org/show_bug.cgi?id=175140
         if platform in ('gtk', 'wpe', 'jsc-only'):
-            self.setCommand(self.command + ['--memory-limited', '--verbose'])
+            self.command += ['--memory-limited', '--verbose']
         # WinCairo uses the Windows command prompt, not Cygwin.
         elif platform == 'wincairo':
-            self.setCommand(self.command + ['--test-writer=ruby'])
+            self.command += ['--test-writer=ruby']
 
         self.appendCustomBuildFlags(platform, self.getProperty('fullPlatform'))
         return super().run()
@@ -1247,7 +1247,7 @@ class RunWebKit1LeakTests(RunWebKit1Tests):
     warnOnWarnings = True
 
     def start(self):
-        self.setCommand(self.command + ["--leaks", "--result-report-flavor", "Leaks"])
+        self.command += ["--leaks", "--result-report-flavor", "Leaks"]
         return RunWebKit1Tests.start(self)
 
 
