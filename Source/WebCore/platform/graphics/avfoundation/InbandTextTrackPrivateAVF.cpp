@@ -50,7 +50,7 @@ namespace WebCore {
 
 AVFInbandTrackParent::~AVFInbandTrackParent() = default;
 
-InbandTextTrackPrivateAVF::InbandTextTrackPrivateAVF(AVFInbandTrackParent* owner, CueFormat format)
+InbandTextTrackPrivateAVF::InbandTextTrackPrivateAVF(AVFInbandTrackParent* owner, TrackID trackID, CueFormat format)
     : InbandTextTrackPrivate(format)
     , m_owner(owner)
     , m_pendingCueStatus(None)
@@ -58,6 +58,7 @@ InbandTextTrackPrivateAVF::InbandTextTrackPrivateAVF(AVFInbandTrackParent* owner
     , m_hasBeenReported(false)
     , m_seeking(false)
     , m_haveReportedVTTHeader(false)
+    , m_trackID(trackID)
 {
 }
 

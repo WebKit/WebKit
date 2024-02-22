@@ -3134,13 +3134,13 @@ void MediaPlayerPrivateAVFoundationObjC::processMediaSelectionOptions()
 
 #if ENABLE(AVF_CAPTIONS)
         if ([option outOfBandSource]) {
-            m_textTracks.append(OutOfBandTextTrackPrivateAVF::create(this, option));
+            m_textTracks.append(OutOfBandTextTrackPrivateAVF::create(this, option, m_currentTextTrackID++));
             m_textTracks.last()->setHasBeenReported(true); // Ignore out-of-band tracks that we passed to AVFoundation so we do not double-count them
             continue;
         }
 #endif
 
-        m_textTracks.append(InbandTextTrackPrivateAVFObjC::create(this, legibleGroup, option, InbandTextTrackPrivate::CueFormat::Generic));
+        m_textTracks.append(InbandTextTrackPrivateAVFObjC::create(this, legibleGroup, option, m_currentTextTrackID++, InbandTextTrackPrivate::CueFormat::Generic));
     }
 
     processNewAndRemovedTextTracks(removedTextTracks);
@@ -3151,7 +3151,7 @@ void MediaPlayerPrivateAVFoundationObjC::processMetadataTrack()
     if (m_metadataTrack)
         return;
 
-    m_metadataTrack = InbandMetadataTextTrackPrivateAVF::create(InbandTextTrackPrivate::Kind::Metadata, InbandTextTrackPrivate::CueFormat::Data);
+    m_metadataTrack = InbandMetadataTextTrackPrivateAVF::create(InbandTextTrackPrivate::Kind::Metadata, m_currentTextTrackID++, InbandTextTrackPrivate::CueFormat::Data);
     m_metadataTrack->setInBandMetadataTrackDispatchType("com.apple.streaming"_s);
     if (auto player = this->player())
         player->addTextTrack(*m_metadataTrack);
