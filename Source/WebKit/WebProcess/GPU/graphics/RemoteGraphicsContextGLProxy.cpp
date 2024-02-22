@@ -165,7 +165,7 @@ void RemoteGraphicsContextGLProxy::initialize(const RemoteGraphicsContextGLIniti
     m_externalImageBindingQuery = initializationState.externalImageBindingQuery;
 }
 
-GCEGLImage RemoteGraphicsContextGLProxy::createAndBindEGLImage(GCGLenum, GraphicsContextGL::EGLImageSource, GCGLint)
+GCEGLImage RemoteGraphicsContextGLProxy::createAndBindEGLImage(GCGLenum, GCGLenum, GraphicsContextGL::EGLImageSource, GCGLint)
 {
     notImplemented();
     return { };
