@@ -92,6 +92,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 static String accessibleNameForNode(Node* node, Node* labelledbyNode = nullptr);
+static void appendNameToStringBuilder(StringBuilder&, String&&);
 
 AccessibilityNodeObject::AccessibilityNodeObject(Node* node)
     : AccessibilityObject()
@@ -1686,7 +1687,7 @@ bool AccessibilityNodeObject::isLabelable() const
     return is<HTMLInputElement>(*node) || isControl() || isProgressIndicator() || isMeter();
 }
 
-String AccessibilityNodeObject::textAsLabel() const
+String AccessibilityNodeObject::textAsLabelFor(const AccessibilityObject& labeledObject) const
 {
     auto labelAttribute = getAttribute(aria_labelAttr);
     if (!labelAttribute.isEmpty())
@@ -1700,6 +1701,39 @@ String AccessibilityNodeObject::textAsLabel() const
     if (!labelAttribute.isEmpty())
         return labelAttribute;
 
+    if (isAccessibilityLabelInstance()) {
+        StringBuilder builder;
+        for (const auto& child : const_cast<AccessibilityNodeObject*>(this)->children()) {
+            if (child.get() == &labeledObject)
+                continue;
+
+            if (child->isListBox()) {
+                for (const auto& selectedGrandChild : child->selectedChildren())
+                    appendNameToStringBuilder(builder, accessibleNameForNode(selectedGrandChild->node()));
+                continue;
+            }
+
+            if (child->isComboBox()) {
+                appendNameToStringBuilder(builder, child->stringValue());
+                continue;
+            }
+
+            if (child->isTextControl()) {
+                appendNameToStringBuilder(builder, child->text());
+                continue;
+            }
+
+            if (child->isSlider() || child->isSpinButton()) {
+                appendNameToStringBuilder(builder, String::number(child->valueForRange()));
+                continue;
+            }
+
+            appendNameToStringBuilder(builder, child->textUnderElement());
+        }
+        if (builder.length())
+            return builder.toString().trim(deprecatedIsSpaceOrNewline).simplifyWhiteSpace(isHTMLSpaceButNotLineBreak);
+    }
+
     String text = this->text();
     if (!text.isEmpty())
         return text;
@@ -1711,30 +1745,28 @@ String AccessibilityNodeObject::textForLabelElements(Vector<Ref<HTMLElement>>&& 
     // https://www.w3.org/TR/html-aam-1.0/#input-type-text-input-type-password-input-type-number-input-type-search-input-type-tel-input-type-email-input-type-url-and-textarea-element-accessible-name-computation
     // "...if more than one label is associated; concatenate by DOM order, delimited by spaces."
     StringBuilder result;
-    auto appendLabel = [&result] (String&& string) {
-        if (string.isEmpty())
-            return;
-
-        if (!result.isEmpty())
-            result.append(" ");
-        result.append(WTFMove(string));
-    };
 
     WeakPtr cache = axObjectCache();
     for (auto& labelElement : labelElements) {
-        auto* axLabel = cache ? cache->getOrCreate(labelElement.ptr()) : nullptr;
+        RefPtr label = cache ? cache->getOrCreate(labelElement.ptr()) : nullptr;
+        if (!label)
+            continue;
 
-        if (axLabel == this) {
+        if (label.get() == this) {
             // This object labels itself, so use its textAsLabel.
-            appendLabel(textAsLabel());
+            appendNameToStringBuilder(result, textAsLabelFor(*this));
             continue;
         }
 
-        auto ariaLabeledBy = axLabel ? axLabel->ariaLabeledByAttribute() : String();
+        auto ariaLabeledBy = label->ariaLabeledByAttribute();
         if (!ariaLabeledBy.isEmpty())
-            appendLabel(WTFMove(ariaLabeledBy));
+            appendNameToStringBuilder(result, WTFMove(ariaLabeledBy));
+#if PLATFORM(COCOA)
+        else if (auto* axLabel = dynamicDowncast<AccessibilityLabel>(*label))
+            appendNameToStringBuilder(result, axLabel->textAsLabelFor(*this));
+#endif
         else
-            appendLabel(accessibleNameForNode(labelElement.ptr()));
+            appendNameToStringBuilder(result, accessibleNameForNode(labelElement.ptr()));
     }
 
     return result.toString();
@@ -2236,20 +2268,14 @@ static bool shouldUseAccessibilityObjectInnerText(AccessibilityObject* obj, Acce
     return true;
 }
 
-static bool shouldAddSpaceBeforeAppendingNextElement(StringBuilder& builder, const String& childText)
+static void appendNameToStringBuilder(StringBuilder& builder, String&& text)
 {
-    if (!builder.length() || !childText.length())
-        return false;
+    if (text.isEmpty())
+        return;
 
-    // We don't need to add an additional space before or after a line break.
-    return !(isHTMLLineBreak(childText[0]) || isHTMLLineBreak(builder[builder.length() - 1]));
-}
-
-static void appendNameToStringBuilder(StringBuilder& builder, const String& text)
-{
-    if (shouldAddSpaceBeforeAppendingNextElement(builder, text))
+    if (!isHTMLLineBreak(text[0]) && builder.length() && !isHTMLLineBreak(builder[builder.length() - 1]))
         builder.append(' ');
-    builder.append(text);
+    builder.append(WTFMove(text));
 }
 
 String AccessibilityNodeObject::textUnderElement(AccessibilityTextUnderElementMode mode) const
@@ -2295,7 +2321,7 @@ String AccessibilityNodeObject::textUnderElement(AccessibilityTextUnderElementMo
             Vector<AccessibilityText> textOrder;
             accessibilityNodeObject->alternativeText(textOrder);
             if (textOrder.size() > 0 && textOrder[0].text.length()) {
-                appendNameToStringBuilder(builder, textOrder[0].text);
+                appendNameToStringBuilder(builder, WTFMove(textOrder[0].text));
                 continue;
             }
         }
@@ -2425,7 +2451,19 @@ String AccessibilityNodeObject::stringValue() const
         }
         if (!selectElement->multiple())
             return selectElement->value();
-        return String();
+        return { };
+    }
+
+    if (isComboBox()) {
+        for (const auto& child : const_cast<AccessibilityNodeObject*>(this)->children()) {
+            if (!child->isListBox())
+                continue;
+
+            auto selection = child->selectedChildren();
+            if (!selection.isEmpty() && selection.first())
+                return selection.first()->stringValue();
+            break;
+        }
     }
 
     if (isTextControl())
@@ -2551,7 +2589,7 @@ static String accessibleNameForNode(Node* node, Node* labelledbyNode)
             return assignedNodesText;
     }
 
-    return String();
+    return { };
 }
 
 String AccessibilityNodeObject::accessibilityDescriptionForChildren() const
@@ -2573,7 +2611,7 @@ String AccessibilityNodeObject::accessibilityDescriptionForChildren() const
             String description = axObject->ariaLabeledByAttribute();
             if (description.isEmpty())
                 description = accessibleNameForNode(child);
-            appendNameToStringBuilder(builder, description);
+            appendNameToStringBuilder(builder, WTFMove(description));
         }
     }
 

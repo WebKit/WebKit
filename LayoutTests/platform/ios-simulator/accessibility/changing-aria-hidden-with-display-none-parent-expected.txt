@@ -2,13 +2,13 @@ This test ensures that we don't crash when removing an object from the AX tree w
 
 ApplicationGroup AXTitle:  AXLabel:
   List AXTitle:  AXLabel:
-    ListItem AXTitle:  AXLabel:
+    ListItem AXTitle: One AXLabel: One
       ListMarker AXTitle: • AXLabel: •
       StaticText AXTitle: One AXLabel: One
-    ListItem AXTitle:  AXLabel:
+    ListItem AXTitle: Two AXLabel: Two
       ListMarker AXTitle: • AXLabel: •
       StaticText AXTitle: Two AXLabel: Two
-    ListItem AXTitle:  AXLabel:
+    ListItem AXTitle: Three AXLabel: Three
       ListMarker AXTitle: • AXLabel: •
       StaticText AXTitle: Three AXLabel: Three
 

@@ -31,7 +31,7 @@
 #include "AccessibilityRenderObject.h"
 
 namespace WebCore {
-    
+
 class AccessibilityLabel final : public AccessibilityRenderObject {
 public:
     static Ref<AccessibilityLabel> create(RenderObject*);

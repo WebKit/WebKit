@@ -198,7 +198,7 @@ protected:
     String accessKey() const final;
     bool isLabelable() const;
     AccessibilityObject* controlForLabelElement() const final;
-    String textAsLabel() const;
+    String textAsLabelFor(const AccessibilityObject&) const;
     String textForLabelElements(Vector<Ref<HTMLElement>>&&) const;
     HTMLLabelElement* labelElementContainer() const;
 

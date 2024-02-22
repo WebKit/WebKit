@@ -136,7 +136,7 @@ AXParent: <AXGroup>
 AXSize: NSSize: {729, 18}
 AXTitle:
 AXDescription:
-AXValue:
+AXValue: test 1
 AXFocused: 0
 AXEnabled: 1
 AXWindow: <AXGroup>
@@ -170,7 +170,7 @@ AXParent: <AXGroup>
 AXSize: NSSize: {729, 18}
 AXTitle:
 AXDescription:
-AXValue:
+AXValue: test 2
 AXFocused: 0
 AXEnabled: 1
 AXWindow: <AXGroup>
@@ -206,7 +206,7 @@ AXParent: <AXGroup>
 AXSize: NSSize: {729, 18}
 AXTitle:
 AXDescription:
-AXValue:
+AXValue: test 1
 AXFocused: 0
 AXEnabled: 1
 AXWindow: <AXGroup>
@@ -240,7 +240,7 @@ AXParent: <AXGroup>
 AXSize: NSSize: {729, 18}
 AXTitle:
 AXDescription:
-AXValue:
+AXValue: test 2
 AXFocused: 0
 AXEnabled: 1
 AXWindow: <AXGroup>

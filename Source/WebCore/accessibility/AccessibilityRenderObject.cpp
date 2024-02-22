@@ -767,8 +767,12 @@ String AccessibilityRenderObject::stringValue() const
     if (!m_renderer)
         return AccessibilityNodeObject::stringValue();
 
-    if (isStaticText() || isTextControl() || isSecureField())
+    if (isStaticText() || isTextControl() || isSecureField()) {
+        // A combobox is considered a text control, and its value is handled in AXNodeObject.
+        if (isComboBox())
+            return AccessibilityNodeObject::stringValue();
         return text();
+    }
 
     if (is<RenderText>(m_renderer.get()))
         return textUnderElement();
@@ -788,6 +792,11 @@ String AccessibilityRenderObject::stringValue() const
         }
         return renderMenuList->text();
     }
+
+#if PLATFORM(COCOA)
+    if (is<RenderListItem>(m_renderer.get()))
+        return textUnderElement();
+#endif
 
     if (auto* renderListMarker = dynamicDowncast<RenderListMarker>(m_renderer.get())) {
 #if USE(ATSPI)
