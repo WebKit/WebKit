@@ -35,6 +35,7 @@
 #include "RenderStyleInlines.h"
 #include "RotateTransformOperation.h"
 #include "ScaleTransformOperation.h"
+#include "Settings.h"
 #include "TransformOperations.h"
 #include "TranslateTransformOperation.h"
 #include "WebAnimation.h"
@@ -291,6 +292,21 @@ void KeyframeEffectStack::applyPendingAcceleratedActions() const
         else
             effect->applyPendingAcceleratedActions();
     }
+}
+
+bool KeyframeEffectStack::hasAcceleratedEffects(const Settings& settings) const
+{
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    if (settings.threadedAnimationResolutionEnabled())
+        return !m_acceleratedEffects.isEmptyIgnoringNullReferences();
+#else
+    UNUSED_PARAM(settings);
+#endif
+    for (auto& effect : m_effects) {
+        if (effect->isRunningAccelerated())
+            return true;
+    }
+    return false;
 }
 
 } // namespace WebCore

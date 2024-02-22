@@ -941,7 +941,7 @@ void RenderBoxModelObject::mapAbsoluteToLocalPoint(OptionSet<MapCoordinatesMode>
 bool RenderBoxModelObject::hasRunningAcceleratedAnimations() const
 {
     if (auto styleable = Styleable::fromRenderer(*this))
-        return styleable->runningAnimationsAreAllAccelerated();
+        return styleable->hasRunningAcceleratedAnimations();
     return false;
 }
 

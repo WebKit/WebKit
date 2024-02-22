@@ -78,7 +78,7 @@ struct Styleable {
 
     bool isRunningAcceleratedTransformAnimation() const;
 
-    bool runningAnimationsAreAllAccelerated() const;
+    bool hasRunningAcceleratedAnimations() const;
 
     KeyframeEffectStack* keyframeEffectStack() const
     {

@@ -101,6 +101,7 @@
 #include "AcceleratedEffectValues.h"
 #include "KeyframeEffect.h"
 #include "KeyframeEffectStack.h"
+#include <wtf/WeakListHashSet.h>
 #endif
 
 namespace WebCore {
@@ -4079,6 +4080,7 @@ bool RenderLayerBacking::updateAcceleratedEffectsAndBaseValues()
     }();
 
     AcceleratedEffects acceleratedEffects;
+    WeakListHashSet<AcceleratedEffect> weakAcceleratedEffects;
     if (auto* effectStack = target->keyframeEffectStack()) {
         auto animatesWidth = effectStack->containsProperty(CSSPropertyWidth);
         auto animatesHeight = effectStack->containsProperty(CSSPropertyHeight);
@@ -4096,8 +4098,10 @@ bool RenderLayerBacking::updateAcceleratedEffectsAndBaseValues()
             if (!hasInterpolatingEffect && effect->isRunningAccelerated())
                 hasInterpolatingEffect = true;
             effect->setAcceleratedRepresentation(acceleratedEffect.get());
+            weakAcceleratedEffects.add(*acceleratedEffect);
             acceleratedEffects.append(acceleratedEffect.releaseNonNull());
         }
+        effectStack->setAcceleratedEffects(WTFMove(weakAcceleratedEffects));
     }
 
     // If all of the effects in the stack are either idle, paused or filling, then the
