@@ -267,6 +267,13 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
     if (object.isListBox())
         setObjectVectorProperty(AXPropertyName::VisibleChildren, object.visibleChildren());
 
+    if (object.isDateTime()) {
+        setProperty(AXPropertyName::DateTimeValue, object.dateTimeValue().isolatedCopy());
+#if PLATFORM(MAC)
+        setProperty(AXPropertyName::DateTimeComponents, object.dateTimeComponents());
+#endif
+    }
+
     if (object.isSpinButton()) {
         // FIXME: These properties get out of date every time AccessibilitySpinButton::{clearChildren, addChildren} is called. We should probably just not cache these properties.
         setObjectProperty(AXPropertyName::DecrementButton, object.decrementButton());
@@ -479,6 +486,7 @@ void AXIsolatedObject::setProperty(AXPropertyName propertyName, AXPropertyValueV
 #if ENABLE(AX_THREAD_TEXT_APIS)
         [](AXTextRuns& runs) { return !runs.size(); },
 #endif
+        [] (WallTime& time) { return !time; },
         [](auto&) {
             ASSERT_NOT_REACHED();
             return false;

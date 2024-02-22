@@ -41,6 +41,7 @@
 #include <wtf/ProcessID.h>
 #include <wtf/RefCounted.h>
 #include <wtf/ThreadSafeWeakPtr.h>
+#include <wtf/WallTime.h>
 
 #if PLATFORM(WIN)
 #include "AccessibilityObjectWrapperWin.h"
@@ -989,6 +990,10 @@ public:
     virtual bool hasHighlighting() const = 0;
     virtual AXTextMarkerRange textInputMarkedTextMarkerRange() const = 0;
 
+    virtual WallTime dateTimeValue() const = 0;
+#if PLATFORM(MAC)
+    virtual unsigned dateTimeComponents() const = 0;
+#endif
     virtual bool supportsDatetimeAttribute() const = 0;
     virtual String datetimeAttributeValue() const = 0;
 
@@ -1111,7 +1116,7 @@ public:
 
     virtual bool inheritsPresentationalRole() const = 0;
 
-    using AXValue = std::variant<bool, unsigned, float, String, AccessibilityButtonState, AXCoreObject*>;
+    using AXValue = std::variant<bool, unsigned, float, String, WallTime, AccessibilityButtonState, AXCoreObject*>;
     AXValue value();
 
     // Accessibility Text

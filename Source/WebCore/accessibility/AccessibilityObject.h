@@ -241,6 +241,10 @@ public:
     bool hasHighlighting() const override;
     AXTextMarkerRange textInputMarkedTextMarkerRange() const final;
 
+    WallTime dateTimeValue() const override { return { }; }
+#if PLATFORM(MAC)
+    unsigned dateTimeComponents() const override;
+#endif
     bool supportsDatetimeAttribute() const override;
     String datetimeAttributeValue() const override;
 

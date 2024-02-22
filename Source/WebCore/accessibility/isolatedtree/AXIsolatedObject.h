@@ -227,6 +227,10 @@ private:
 #endif
     IntSize size() const final { return snappedIntRect(LayoutRect(relativeFrame())).size(); }
     FloatRect relativeFrameFromChildren() const;
+    WallTime dateTimeValue() const { return propertyValue<WallTime>(AXPropertyName::DateTimeValue); }
+#if PLATFORM(MAC)
+    unsigned dateTimeComponents() const { return propertyValue<unsigned>(AXPropertyName::DateTimeComponents); }
+#endif
     bool supportsDatetimeAttribute() const final { return boolAttributeValue(AXPropertyName::SupportsDatetimeAttribute); }
     String datetimeAttributeValue() const final { return stringAttributeValue(AXPropertyName::DatetimeAttributeValue); }
     bool canSetValueAttribute() const final { return boolAttributeValue(AXPropertyName::CanSetValueAttribute); }

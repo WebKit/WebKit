@@ -1691,7 +1691,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return backingObject->descriptionAttributeValue();
     }
 
-    if ([attributeName isEqualToString: NSAccessibilityValueAttribute]) {
+    if ([attributeName isEqualToString:NSAccessibilityValueAttribute]) {
         if (backingObject->isAttachment()) {
             id attachmentView = [self attachmentView];
             if ([[attachmentView accessibilityAttributeNames] containsObject:NSAccessibilityValueAttribute])
@@ -1704,11 +1704,18 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             [] (unsigned& typedValue) -> id { return @(typedValue); },
             [] (float& typedValue) -> id { return @(typedValue); },
             [] (String& typedValue) -> id { return (NSString *)typedValue; },
+            [] (WallTime& typedValue) -> id {
+                RetainPtr date = [NSDate dateWithTimeIntervalSince1970:typedValue.secondsSinceEpoch().value()];
+                return date.autorelease();
+            },
             [] (AccessibilityButtonState& typedValue) -> id { return @((unsigned)typedValue); },
             [] (AXCoreObject*& typedValue) { return typedValue ? (id)typedValue->wrapper() : nil; },
             [] (auto&) { return nil; }
         );
     }
+
+    if ([attributeName isEqualToString:@"AXDateTimeComponents"])
+        return @(backingObject->dateTimeComponents());
 
     if ([attributeName isEqualToString:(NSString *)kAXMenuItemMarkCharAttribute]) {
         const unichar ch = 0x2713; // ✓ used on Mac for selected menu items.
@@ -2267,6 +2274,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     // Used by LayoutTests only, not by AT clients.
     if (UNLIKELY([attributeName isEqualToString:@"AXARIARole"]))
         return backingObject->computedRoleString();
+
+    if (UNLIKELY([attributeName isEqualToString:@"AXStringValue"]))
+        return backingObject->stringValue();
 
     if (UNLIKELY([attributeName isEqualToString:@"AXControllers"]))
         return makeNSArray(backingObject->controllers());
