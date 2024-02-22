@@ -2064,7 +2064,7 @@ bool RenderElement::hasSelfPaintingLayer() const
     return layerModelObject.hasSelfPaintingLayer();
 }
 
-bool RenderElement::hasViewTransition() const
+bool RenderElement::capturedInViewTransition() const
 {
     if (!style().viewTransitionName())
         return false;

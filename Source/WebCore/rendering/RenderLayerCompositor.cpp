@@ -1558,7 +1558,7 @@ void RenderLayerCompositor::updateBackingAndHierarchy(RenderLayer& layer, Vector
             }
         }
 
-        if (!layer.renderer().hasViewTransition())
+        if (!layer.renderer().capturedInViewTransition())
             childLayersOfEnclosingLayer.append(*layerBacking->childForSuperlayers());
 
         if (layerBacking->hasAncestorClippingLayers() && layerBacking->ancestorClippingStack()->hasAnyScrollingLayers())
@@ -3492,7 +3492,7 @@ bool RenderLayerCompositor::requiresCompositingForBackfaceVisibility(RenderLayer
 
 bool RenderLayerCompositor::requiresCompositingForViewTransition(RenderLayerModelObject& renderer) const
 {
-    return renderer.hasViewTransition() || renderer.isViewTransitionPseudo();
+    return renderer.capturedInViewTransition() || renderer.isViewTransitionPseudo();
 }
 
 bool RenderLayerCompositor::requiresCompositingForVideo(RenderLayerModelObject& renderer) const

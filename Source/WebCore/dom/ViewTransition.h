@@ -52,20 +52,12 @@ enum class ViewTransitionPhase : uint8_t {
 struct CapturedElement {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    // FIXME: Add the following:
     RefPtr<ImageBuffer> oldImage;
     LayoutSize oldSize;
     RefPtr<MutableStyleProperties> oldProperties;
-    // old transform
     WeakPtr<Element, WeakPtrImplWithEventTargetData> newElement;
 
     RefPtr<MutableStyleProperties> groupStyleProperties;
-
-    // FIXME: Also handle these:
-    // group keyframes
-    // group animation name rule
-    // image pair isolation rule
-    // image animation name rule
 };
 
 struct OrderedNamedElementsMap {

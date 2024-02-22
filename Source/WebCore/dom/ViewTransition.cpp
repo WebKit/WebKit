@@ -275,13 +275,11 @@ ExceptionOr<void> ViewTransition::captureOldState()
         if (auto name = effectiveViewTransitionName(element); !name.isNull()) {
             if (auto check = checkDuplicateViewTransitionName(name, usedTransitionNames); check.hasException())
                 return check.releaseException();
-            // FIXME: Set element’s captured in a view transition to true.
             captureElements.append(element);
         }
     }
     // FIXME: Sort captureElements in paint order.
     for (auto& element : captureElements) {
-        // FIXME: Fill in the rest of CapturedElement.
         CapturedElement capture;
 
         CheckedPtr renderBox = dynamicDowncast<RenderBox>(element->renderer());
@@ -326,6 +324,7 @@ void ViewTransition::setupDynamicStyleSheet(const AtomString& name, const Captur
 {
     auto& resolver = protectedDocument()->styleScope().resolver();
 
+    // image animation name rule
     {
         CSSValueListBuilder list;
         list.append(CSSPrimitiveValue::create("-ua-view-transition-fade-out"_s));
@@ -353,13 +352,7 @@ void ViewTransition::setupDynamicStyleSheet(const AtomString& name, const Captur
     if (!capturedElement.oldImage || !capturedElement.newElement)
         return;
 
-    {
-        Ref props = MutableStyleProperties::create();
-        props->setProperty(CSSPropertyIsolation, CSSPrimitiveValue::create(CSSValueID::CSSValueIsolate));
-
-        resolver.setViewTransitionStyles(CSSSelector::PseudoElement::ViewTransitionImagePair, name, props);
-    }
-
+    // group animation name rule
     {
         Ref list = CSSValueList::createCommaSeparated(CSSPrimitiveValue::create(makeString("-ua-view-transition-group-anim-"_s, name)));
         Ref props = MutableStyleProperties::create();
@@ -368,9 +361,18 @@ void ViewTransition::setupDynamicStyleSheet(const AtomString& name, const Captur
         resolver.setViewTransitionStyles(CSSSelector::PseudoElement::ViewTransitionGroup, name, props);
     }
 
+    // image pair isolation rule
+    {
+        Ref props = MutableStyleProperties::create();
+        props->setProperty(CSSPropertyIsolation, CSSPrimitiveValue::create(CSSValueID::CSSValueIsolate));
+
+        resolver.setViewTransitionStyles(CSSSelector::PseudoElement::ViewTransitionImagePair, name, props);
+    }
+
     if (!capturedElement.oldProperties)
         return;
 
+    // group keyframes
     Ref props = MutableStyleProperties::createEmpty();
     props->setProperty(CSSPropertyWidth, capturedElement.oldProperties->getPropertyCSSValue(CSSPropertyWidth));
     props->setProperty(CSSPropertyHeight, capturedElement.oldProperties->getPropertyCSSValue(CSSPropertyHeight));
@@ -414,8 +416,6 @@ void ViewTransition::activateViewTransition()
         skipViewTransition(checkFailure.releaseException());
         return;
     }
-
-    // FIXME: Set captured element flag to true.
 
     setupTransitionPseudoElements();
     updatePseudoElementStyles();
@@ -475,8 +475,6 @@ void ViewTransition::clearViewTransition()
         return;
 
     ASSERT(m_document->activeViewTransition() == this);
-
-    // FIXME: Implement step 3.
 
     // End animations on pseudo-elements so they can run again.
     if (RefPtr documentElement = m_document->documentElement()) {
@@ -552,6 +550,7 @@ void ViewTransition::updatePseudoElementStyles()
             properties = capturedElement->oldProperties;
 
         if (properties) {
+            // group styles rule
             if (!capturedElement->groupStyleProperties) {
                 capturedElement->groupStyleProperties = properties;
                 resolver.setViewTransitionStyles(CSSSelector::PseudoElement::ViewTransitionGroup, name, *properties);
