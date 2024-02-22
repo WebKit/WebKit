@@ -1860,28 +1860,20 @@ HandleUserInputEventResult EventHandler::handleMousePressEvent(const PlatformMou
         if (auto remoteMouseEventData = userInputEventDataForRemoteFrame(dynamicDowncast<RemoteFrame>(subframe).get(), mouseEvent.hitTestResult().roundedPointInInnerNodeFrame()))
             return *remoteMouseEventData;
 
-        auto captureMouseEventsElementIfNeeded = [&](RefPtr<Element>&& element = nullptr) {
-            if (m_mousePressed && (m_capturesDragging || m_capturesDragging.inabilityReason() == CapturesDragging::InabilityReason::MousePressIsCancelled)) {
-                if (element)
-                    m_capturingMouseEventsElement = WTFMove(element);
-                else
-                    m_isCapturingRootElementForMouseEvents = true;
-                m_eventHandlerWillResetCapturingMouseEventsElement = true;
-            }
-        };
         RefPtr localSubframe = dynamicDowncast<LocalFrame>(subframe.get());
         if (localSubframe && passMousePressEventToSubframe(mouseEvent, *localSubframe)) {
             // Start capturing future events for this frame. We only do this if we didn't clear
             // the m_mousePressed flag, which may happen if an AppKit widget entered a modal event loop.
-            if (auto subframeCapturesDragging = localSubframe->eventHandler().capturesDragging())
-                m_capturesDragging = true;
-            else
-                m_capturesDragging = subframeCapturesDragging.inabilityReason();
-            captureMouseEventsElementIfNeeded(localSubframe->protectedOwnerElement().get());
+            m_capturesDragging = localSubframe->eventHandler().capturesDragging();
+            if (m_mousePressed) {
+                m_capturingMouseEventsElement = localSubframe->ownerElement();
+                m_eventHandlerWillResetCapturingMouseEventsElement = true;
+                if (!m_capturingMouseEventsElement)
+                    m_isCapturingRootElementForMouseEvents = true;
+            }
             invalidateClick();
             return true;
-        } else
-            captureMouseEventsElementIfNeeded();
+        }
     }
 
 #if ENABLE(PAN_SCROLLING)
