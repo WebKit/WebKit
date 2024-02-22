@@ -4268,6 +4268,7 @@ GstElement* MediaPlayerPrivateGStreamer::createVideoSink()
             m_videoSink = gst_element_factory_make("fakesink", nullptr);
             g_object_set(m_videoSink.get(), "sync", TRUE, nullptr);
         }
+        player->renderingModeChanged();
 
         return m_videoSink.get();
     }

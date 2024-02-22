@@ -105,7 +105,6 @@
 #include "Quirks.h"
 #include "RegistrableDomain.h"
 #include "RenderBoxInlines.h"
-#include "RenderLayerCompositor.h"
 #include "RenderTheme.h"
 #include "RenderVideo.h"
 #include "RenderView.h"
@@ -1011,8 +1010,7 @@ void HTMLMediaElement::didDetachRenderers()
         // If we detach a media element from a renderer, we may no longer need the MediaPlayerPrivate
         // to vend a PlatformLayer. However, the renderer may be torn down and re-attached during a
         // single run-loop as a result of layout or due to the element being re-parented.
-        if (!renderer() && m_player)
-            RefPtr { m_player }->acceleratedRenderingStateChanged();
+        computeAcceleratedRenderingStateAndUpdateMediaPlayer();
     });
 }
 
@@ -5715,28 +5713,6 @@ void HTMLMediaElement::mediaPlayerSizeChanged()
     endProcessingMediaPlayerCallback();
 }
 
-bool HTMLMediaElement::mediaPlayerRenderingCanBeAccelerated()
-{
-#if ENABLE(VIDEO_PRESENTATION_MODE)
-    // This function must return "true" when the video is playing in the
-    // picture-in-picture window or if it is in fullscreen.
-    // Otherwise, the MediaPlayerPrivate* may destroy the video layer if
-    // the no longer in the DOM.
-    if (m_videoFullscreenMode != VideoFullscreenModeNone)
-        return true;
-#endif
-    auto* renderer = dynamicDowncast<RenderVideo>(this->renderer());
-    return renderer && renderer->view().compositor().canAccelerateVideoRendering(*renderer);
-}
-
-void HTMLMediaElement::mediaPlayerRenderingModeChanged()
-{
-    ALWAYS_LOG(LOGIDENTIFIER);
-
-    // Kick off a fake recalcStyle that will update the compositing tree.
-    invalidateStyleAndLayerComposition();
-}
-
 bool HTMLMediaElement::mediaPlayerAcceleratedCompositingEnabled()
 {
     return document().settings().acceleratedCompositingEnabled();
@@ -9064,8 +9040,7 @@ void HTMLMediaElement::setFullscreenMode(VideoFullscreenMode mode)
     visibilityStateChanged();
     schedulePlaybackControlsManagerUpdate();
 
-    if (RefPtr player = m_player)
-        player->acceleratedRenderingStateChanged();
+    computeAcceleratedRenderingStateAndUpdateMediaPlayer();
 }
 
 #if !RELEASE_LOG_DISABLED

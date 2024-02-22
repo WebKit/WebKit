@@ -580,11 +580,7 @@ void MediaPlayerPrivateRemote::acceleratedRenderingStateChanged()
 
 void MediaPlayerPrivateRemote::updateConfiguration(RemoteMediaPlayerConfiguration&& configuration)
 {
-    bool oldSupportsAcceleraterRendering = supportsAcceleratedRendering();
     m_configuration = WTFMove(configuration);
-    // player->renderingCanBeAccelerated() result is dependent on m_configuration.supportsAcceleratedRendering value.
-    if (RefPtr player = m_player.get(); player && oldSupportsAcceleraterRendering != supportsAcceleratedRendering())
-        player->renderingModeChanged();
 }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -1020,9 +1016,6 @@ void MediaPlayerPrivateRemote::setVideoFullscreenLayer(PlatformLayer* videoFulls
 #if PLATFORM(COCOA)
     m_videoLayerManager->setVideoFullscreenLayer(videoFullscreenLayer, WTFMove(completionHandler), nullptr);
 #endif
-    // A Fullscreen layer has been set, this could update the value returned by player->renderingCanBeAccelerated().
-    if (RefPtr player = m_player.get())
-        player->renderingModeChanged();
 }
 
 void MediaPlayerPrivateRemote::updateVideoFullscreenInlineImage()

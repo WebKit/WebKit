@@ -324,8 +324,7 @@ bool RenderVideo::supportsAcceleratedRendering() const
 
 void RenderVideo::acceleratedRenderingStateChanged()
 {
-    if (RefPtr player = videoElement().player())
-        player->acceleratedRenderingStateChanged();
+    videoElement().acceleratedRenderingStateChanged();
 }
 
 bool RenderVideo::requiresImmediateCompositing() const

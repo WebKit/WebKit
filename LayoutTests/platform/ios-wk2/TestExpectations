@@ -61,6 +61,10 @@ media/modern-media-controls/overflow-support [ Pass ]
 http/tests/media/modern-media-controls/overflow-support [ Pass ]
 media/modern-media-controls/tracks-support [ Pass ]
 
+media/media-source/media-managedmse-airplay.html [ Pass ]
+media/media-source/media-managedmse-idl.html [ Pass ]
+webkit.org/b/269897 media/media-source/media-managedmse-poster.html [ Skip ]
+
 webkit.org/b/231187 media/modern-media-controls/overflow-support/button-state.html [ Skip ]
 webkit.org/b/231187 media/modern-media-controls/overflow-support/playback-speed.html [ Skip ]
 webkit.org/b/231187 media/modern-media-controls/overflow-support/chapters.html [ Skip ]
