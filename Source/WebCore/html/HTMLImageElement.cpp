@@ -876,9 +876,14 @@ void HTMLImageElement::setAllowsAnimation(std::optional<bool> allowsAnimation)
 void HTMLImageElement::setAttachmentElement(Ref<HTMLAttachmentElement>&& attachment)
 {
     AttachmentAssociatedElement::setAttachmentElement(WTFMove(attachment));
+
 #if ENABLE(SERVICE_CONTROLS)
-    setImageMenuEnabled(true);
+    bool shouldEnableImageMenu = true;
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+    shouldEnableImageMenu = !isMultiRepresentationHEIC();
 #endif
+    setImageMenuEnabled(shouldEnableImageMenu);
+#endif // ENABLE(SERVICE_CONTROLS)
 }
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
