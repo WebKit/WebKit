@@ -983,8 +983,12 @@ bool AVVideoCaptureSource::setupSession()
     }
 #endif
 
-    if (!m_session)
+    if (!m_session) {
+#if ENABLE(EXTENSION_CAPABILITIES)
+        ERROR_LOG_IF(loggerPtr(), LOGIDENTIFIER, "allocating AVCaptureSession without media environment nor identity");
+#endif
         m_session = adoptNS([PAL::allocAVCaptureSessionInstance() init]);
+    }
 
     if (!m_session) {
         ERROR_LOG_IF(loggerPtr(), LOGIDENTIFIER, "failed to allocate AVCaptureSession");

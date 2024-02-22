@@ -113,7 +113,7 @@ public:
 
 #if ENABLE(EXTENSION_CAPABILITIES)
     const String& currentMediaEnvironment() const;
-    void setCurrentMediaEnvironment(const String&);
+    void setCurrentMediaEnvironment(String&&);
 #endif
 
 private:

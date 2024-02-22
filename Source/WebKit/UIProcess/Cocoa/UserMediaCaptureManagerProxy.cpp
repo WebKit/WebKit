@@ -46,6 +46,7 @@
 #include <WebCore/WebAudioBufferList.h>
 #include <wtf/NativePromise.h>
 #include <wtf/UniqueRef.h>
+#include <wtf/cocoa/Entitlements.h>
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, &m_connectionProxy->connection())
 
@@ -572,7 +573,12 @@ void UserMediaCaptureManagerProxy::startProducingData(RealtimeMediaSourceIdentif
     m_connectionProxy->setTCCIdentity();
 #endif
 #if ENABLE(EXTENSION_CAPABILITIES)
-    m_connectionProxy->setCurrentMediaEnvironment(pageIdentifier);
+    bool hasValidMediaEnvironment = m_connectionProxy->setCurrentMediaEnvironment(pageIdentifier);
+    if (!hasValidMediaEnvironment && proxy->source().deviceType() == CaptureDevice::DeviceType::Camera && WTF::processHasEntitlement("com.apple.developer.web-browser-engine.rendering"_s)) {
+        RELEASE_LOG_ERROR(WebRTC, "Unable to set media environment, failing capture.");
+        proxy->source().captureFailed();
+        return;
+    }
 #endif
     m_connectionProxy->startProducingData(proxy->source().deviceType());
     proxy->start();

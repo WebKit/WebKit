@@ -49,6 +49,10 @@
 #include <wtf/UUID.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 
+#if ENABLE(EXTENSION_CAPABILITIES)
+#include <wtf/cocoa/Entitlements.h>
+#endif
+
 namespace WebCore {
 
 #if !PLATFORM(MAC) && !PLATFORM(IOS_FAMILY) && !USE(GSTREAMER)
@@ -418,6 +422,11 @@ void MockRealtimeVideoSource::startCaptureTimer()
 void MockRealtimeVideoSource::startProducingData()
 {
     ASSERT(!m_beingConfigured);
+
+#if ENABLE(EXTENSION_CAPABILITIES)
+    ASSERT(!RealtimeMediaSourceCenter::singleton().currentMediaEnvironment().isEmpty() || !WTF::processHasEntitlement("com.apple.developer.web-browser-engine.rendering"_s));
+#endif
+
     startCaptureTimer();
     m_startTime = MonotonicTime::now();
 }

@@ -224,9 +224,12 @@ private:
 #endif
 
 #if ENABLE(EXTENSION_CAPABILITIES)
-    void setCurrentMediaEnvironment(WebCore::PageIdentifier pageIdentifier) final
+    bool setCurrentMediaEnvironment(WebCore::PageIdentifier pageIdentifier) final
     {
-        WebCore::RealtimeMediaSourceCenter::singleton().setCurrentMediaEnvironment(m_process.mediaEnvironment(pageIdentifier));
+        auto mediaEnvironment = m_process.mediaEnvironment(pageIdentifier);
+        bool result = !mediaEnvironment.isEmpty();
+        WebCore::RealtimeMediaSourceCenter::singleton().setCurrentMediaEnvironment(WTFMove(mediaEnvironment));
+        return result;
     }
 #endif
 
