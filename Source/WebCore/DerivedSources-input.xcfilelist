@@ -345,6 +345,7 @@ $(PROJECT_DIR)/Modules/applepay/ApplePayCouponCodeUpdate.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayDateComponents.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayDateComponentsRange.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayDeferredPaymentRequest.idl
+$(PROJECT_DIR)/Modules/applepay/ApplePayDisbursementPaymentRequest.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayDetailsUpdateBase.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayError.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayErrorCode.idl

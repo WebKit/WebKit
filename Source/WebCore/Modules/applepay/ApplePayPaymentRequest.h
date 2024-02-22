@@ -29,6 +29,7 @@
 
 #include "ApplePayAutomaticReloadPaymentRequest.h"
 #include "ApplePayDeferredPaymentRequest.h"
+#include "ApplePayDisbursementPaymentRequest.h"
 #include "ApplePayLineItem.h"
 #include "ApplePayPaymentContact.h"
 #include "ApplePayPaymentTokenContext.h"
@@ -64,6 +65,10 @@ struct ApplePayPaymentRequest : ApplePayRequestBase {
 
 #if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
     std::optional<ApplePayDeferredPaymentRequest> deferredPaymentRequest;
+#endif
+
+#if ENABLE(APPLE_PAY_DISBURSEMENTS)
+    std::optional<ApplePayDisbursementPaymentRequest> disbursementPaymentRequest;
 #endif
 };
 

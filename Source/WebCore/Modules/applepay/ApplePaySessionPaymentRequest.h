@@ -29,6 +29,7 @@
 
 #include "ApplePayAutomaticReloadPaymentRequest.h"
 #include "ApplePayDeferredPaymentRequest.h"
+#include "ApplePayDisbursementPaymentRequest.h"
 #include "ApplePayError.h"
 #include "ApplePayLaterAvailability.h"
 #include "ApplePayLineItem.h"
@@ -93,6 +94,9 @@ public:
         bool supportsEMV { false };
         bool supportsCredit { false };
         bool supportsDebit { false };
+#if ENABLE(APPLE_PAY_DISBURSEMENTS)
+        bool supportsInstantFundsOut { false };
+#endif
     };
 
     const MerchantCapabilities& merchantCapabilities() const { return m_merchantCapabilities; }
@@ -161,6 +165,11 @@ public:
 #if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
     const std::optional<ApplePayDeferredPaymentRequest>& deferredPaymentRequest() const { return m_deferredPaymentRequest; }
     void setDeferredPaymentRequest(std::optional<ApplePayDeferredPaymentRequest>&& deferredPaymentRequest) { m_deferredPaymentRequest = WTFMove(deferredPaymentRequest); }
+#endif
+
+#if ENABLE(APPLE_PAY_DISBURSEMENTS)
+    const std::optional<ApplePayDisbursementPaymentRequest>& disbursementPaymentRequest() const { return m_disbursementPaymentRequest; }
+    void setDisbursementPaymentRequest(std::optional<ApplePayDisbursementPaymentRequest>&& disbursementPaymentRequest) { m_disbursementPaymentRequest = WTFMove(disbursementPaymentRequest); }
 #endif
 
 #if ENABLE(APPLE_PAY_LATER_AVAILABILITY)
@@ -304,6 +313,10 @@ private:
 
 #if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
     std::optional<ApplePayDeferredPaymentRequest> m_deferredPaymentRequest;
+#endif
+
+#if ENABLE(APPLE_PAY_DISBURSEMENTS)
+    std::optional<ApplePayDisbursementPaymentRequest> m_disbursementPaymentRequest;
 #endif
 
 #if ENABLE(APPLE_PAY_LATER_AVAILABILITY)

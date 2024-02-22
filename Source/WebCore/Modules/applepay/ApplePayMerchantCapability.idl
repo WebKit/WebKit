@@ -29,5 +29,8 @@
     "supports3DS",
     "supportsEMV",
     "supportsCredit",
-    "supportsDebit"
+    "supportsDebit",
+#if defined(ENABLE_APPLE_PAY_DISBURSEMENTS) && ENABLE_APPLE_PAY_DISBURSEMENTS
+    "supportsInstantFundsOut"
+#endif
 };
