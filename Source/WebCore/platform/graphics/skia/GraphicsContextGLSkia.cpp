@@ -108,11 +108,23 @@ bool GraphicsContextGLImageExtractor::extractImage(bool premultiplyAlpha, bool i
     return true;
 }
 
-RefPtr<NativeImage> GraphicsContextGL::createNativeImageFromPixelBuffer(const GraphicsContextGLAttributes& /*sourceContextAttributes*/, Ref<PixelBuffer>&& pixelBuffer)
+RefPtr<NativeImage> GraphicsContextGL::createNativeImageFromPixelBuffer(const GraphicsContextGLAttributes& sourceContextAttributes, Ref<PixelBuffer>&& pixelBuffer)
 {
-    ASSERT_UNUSED(pixelBuffer, !pixelBuffer->size().isEmpty());
-    notImplemented();
-    return nullptr;
+    ASSERT(!pixelBuffer->size().isEmpty());
+    auto imageSize = pixelBuffer->size();
+    SkAlphaType alphaType = kUnpremul_SkAlphaType;
+    if (!sourceContextAttributes.alpha)
+        alphaType = kOpaque_SkAlphaType;
+    else if (sourceContextAttributes.premultipliedAlpha)
+        alphaType = kPremul_SkAlphaType;
+    auto imageInfo = SkImageInfo::Make(imageSize.width(), imageSize.height(), kRGBA_8888_SkColorType, alphaType);
+
+    Ref protectedPixelBuffer = pixelBuffer;
+    SkPixmap pixmap(imageInfo, pixelBuffer->bytes(), imageInfo.minRowBytes());
+    auto image = SkImages::RasterFromPixmap(pixmap, [](const void*, void* context) {
+        static_cast<PixelBuffer*>(context)->deref();
+    }, &protectedPixelBuffer.leakRef());
+    return NativeImage::create(WTFMove(image));
 }
 
 } // namespace WebCore
