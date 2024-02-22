@@ -255,7 +255,8 @@ auto TreeResolver::resolveElement(Element& element, const RenderStyle* existingS
     auto update = createAnimatedElementUpdate(WTFMove(resolvedStyle), styleable, parent().change, resolutionContext);
     auto descendantsToResolve = computeDescendantsToResolve(update.change, element.styleValidity(), parent().descendantsToResolve);
 
-    if (&element == m_document.documentElement()) {
+    bool isDocumentElement = &element == m_document.documentElement();
+    if (isDocumentElement) {
         if (styleChangeAffectsRelativeUnits(*update.style, existingStyle)) {
             // "rem" units are relative to the document element's font size so we need to recompute everything.
             scope().resolver->invalidateMatchedDeclarationsCache();
@@ -312,9 +313,8 @@ auto TreeResolver::resolveElement(Element& element, const RenderStyle* existingS
     resolveAndAddPseudoElementStyle({ PseudoId::Before });
     resolveAndAddPseudoElementStyle({ PseudoId::After });
     resolveAndAddPseudoElementStyle({ PseudoId::Backdrop });
-    resolveAndAddPseudoElementStyle({ PseudoId::ViewTransition });
-
-    if (m_document.hasViewTransitionPseudoElementTree() && &element == m_document.documentElement()) {
+    if (isDocumentElement && m_document.hasViewTransitionPseudoElementTree()) {
+        resolveAndAddPseudoElementStyle({ PseudoId::ViewTransition });
         RefPtr activeViewTransition = m_document.activeViewTransition();
         ASSERT(activeViewTransition);
         for (auto& name : activeViewTransition->namedElements().keys()) {
@@ -368,8 +368,8 @@ std::optional<ElementUpdate> TreeResolver::resolvePseudoElement(Element& element
         || pseudoElementIdentifier.pseudoId == PseudoId::ViewTransitionImagePair
         || pseudoElementIdentifier.pseudoId == PseudoId::ViewTransitionNew
         || pseudoElementIdentifier.pseudoId == PseudoId::ViewTransitionOld;
-    if (isViewTransitionPseudoElement && (!element.document().hasViewTransitionPseudoElementTree() || &element != element.document().documentElement()))
-        return { };
+    if (isViewTransitionPseudoElement)
+        ASSERT(element.document().hasViewTransitionPseudoElementTree() && &element != element.document().documentElement());
 
     if (!elementUpdate.style->hasPseudoStyle(pseudoElementIdentifier.pseudoId))
         return resolveAncestorPseudoElement(element, pseudoElementIdentifier, elementUpdate);
