@@ -287,7 +287,7 @@ class Configuration {
             version_name = this.version_name.substring(0, this.version_name.length - 2);
         return {
             platform: [this.platform],
-            version:[this.version && !this.version_name ? Configuration.integerToVersion(this.version) : null],
+            version:[this.version ? Configuration.integerToVersion(this.version) : null],
             version_name: [version_name],
             is_simulator: [this.is_simulator === null ? null : (this.is_simulator ? 'True' : 'False')],
             style: [this.style],
