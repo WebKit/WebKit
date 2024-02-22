@@ -1111,7 +1111,7 @@ class RunGLibAPITests(shell.TestNewStyle):
         self.log_observer = logobserver.BufferLogObserver()
         self.addLogObserver('stdio', self.log_observer)
 
-        rc = yield super().run(self)
+        rc = yield super().run()
 
         logText = self.log_observer.getStdout()
 
