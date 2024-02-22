@@ -44,6 +44,7 @@ enum ReadyState {
     JSGenerateToNativeObject,
     ActiveDOMObject,
     Conditional=MEDIA_SOURCE,
+    ConditionalForWorker=MEDIA_SOURCE_IN_WORKERS,
     EnabledBySetting=MediaSourceEnabled,
     EnabledForContext,
     Exposed=(Window,DedicatedWorker)

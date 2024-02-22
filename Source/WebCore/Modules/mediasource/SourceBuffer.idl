@@ -38,6 +38,7 @@
     JSGenerateToNativeObject,
     ActiveDOMObject,
     Conditional=MEDIA_SOURCE,
+    ConditionalForWorker=MEDIA_SOURCE_IN_WORKERS,
     EnabledBySetting=MediaSourceEnabled,
     ExportMacro=WEBCORE_EXPORT,
     GenerateAddOpaqueRoot,
