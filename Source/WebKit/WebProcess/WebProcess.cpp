@@ -481,14 +481,15 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
             parentProcessConnection()->send(Messages::WebProcessProxy::DidExceedMemoryFootprintThreshold(footprint), 0);
         });
 #endif
-        memoryPressureHandler.setMemoryPressureStatusChangedCallback([this](WTF::MemoryPressureStatus memoryPressureStatus) {
+        memoryPressureHandler.setMemoryPressureStatusChangedCallback([this]() {
             if (parentProcessConnection())
                 parentProcessConnection()->send(Messages::WebProcessProxy::MemoryPressureStatusChanged(MemoryPressureHandler::singleton().isUnderMemoryPressure()), 0);
-
-            if (memoryPressureStatus == WTF::MemoryPressureStatus::ProcessLimitWarning && !m_loggedProcessLimitWarningMemoryStatistics) {
+        });
+        memoryPressureHandler.setDidExceedProcessMemoryLimitCallback([this](WTF::ProcessMemoryLimit limit) {
+            if (limit == WTF::ProcessMemoryLimit::Warning && !m_loggedProcessLimitWarningMemoryStatistics) {
                 m_loggedProcessLimitWarningMemoryStatistics = true;
                 scheduleLogMemoryStatistics(LogMemoryStatisticsReason::WarningMemoryPressureNotification);
-            } else if (memoryPressureStatus == WTF::MemoryPressureStatus::ProcessLimitCritical && !m_loggedProcessLimitCriticalMemoryStatistics) {
+            } else if (limit == WTF::ProcessMemoryLimit::Critical && !m_loggedProcessLimitCriticalMemoryStatistics) {
                 m_loggedProcessLimitCriticalMemoryStatistics = true;
                 scheduleLogMemoryStatistics(LogMemoryStatisticsReason::CriticalMemoryPressureNotification);
             }
