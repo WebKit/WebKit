@@ -1508,7 +1508,7 @@ public:
 #else
     using EGLImageSource = int;
 #endif
-    virtual GCEGLImage createAndBindEGLImage(GCGLenum, EGLImageSource, GCGLint) = 0;
+    virtual GCEGLImage createAndBindEGLImage(GCGLenum, GCGLenum, EGLImageSource, GCGLint) = 0;
     virtual void destroyEGLImage(GCEGLImage) = 0;
 
 #if PLATFORM(COCOA)

@@ -289,7 +289,7 @@ public:
     String getActiveUniformBlockName(PlatformGLObject program, GCGLuint uniformBlockIndex) final;
     void uniformBlockBinding(PlatformGLObject program, GCGLuint uniformBlockIndex, GCGLuint uniformBlockBinding) final;
     void getActiveUniformBlockiv(PlatformGLObject program, GCGLuint uniformBlockIndex, GCGLenum pname, std::span<GCGLint> params) final;
-    GCEGLImage createAndBindEGLImage(GCGLenum, EGLImageSource, GCGLint) override;
+    GCEGLImage createAndBindEGLImage(GCGLenum, GCGLenum, EGLImageSource, GCGLint) override;
     void destroyEGLImage(GCEGLImage) final;
     GCEGLSync createEGLSync(ExternalEGLSyncEvent) override;
     void destroyEGLSync(GCEGLSync) final;

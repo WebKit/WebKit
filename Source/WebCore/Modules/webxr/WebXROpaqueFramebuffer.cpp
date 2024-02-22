@@ -68,11 +68,11 @@ static void ensure(GL& gl, GCGLOwnedRenderbuffer& buffer)
     }
 }
 
-static void createAndBindCompositorBuffer(GL& gl, WebXRExternalRenderbuffer& buffer, GL::EGLImageSource source, GCGLint layer)
+static void createAndBindCompositorBuffer(GL& gl, WebXRExternalRenderbuffer& buffer, GCGLenum internalFormat, GL::EGLImageSource source, GCGLint layer)
 {
     ensure(gl, buffer.rbo);
     gl.bindRenderbuffer(GL::RENDERBUFFER, buffer.rbo);
-    buffer.image.adopt(gl, gl.createAndBindEGLImage(GL::RENDERBUFFER, source, layer));
+    buffer.image.adopt(gl, gl.createAndBindEGLImage(GL::RENDERBUFFER, internalFormat, source, layer));
 }
 
 static GL::EGLImageSource makeEGLImageSource(const std::tuple<WTF::MachSendRight, bool>& imageSource)
@@ -154,13 +154,13 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::FrameData::LayerData& 
     int layerCount = (data.displayLayout == PlatformXR::Layout::Layered) ? 2 : 1;
     for (int layer = 0; layer < layerCount; ++layer) {
         auto colorTextureSource = makeEGLImageSource(data.colorTexture);
-        createAndBindCompositorBuffer(*gl, m_displayAttachments[layer].colorBuffer, colorTextureSource, layer);
+        createAndBindCompositorBuffer(*gl, m_displayAttachments[layer].colorBuffer, GL::NONE, colorTextureSource, layer);
         ASSERT(m_displayAttachments[layer].colorBuffer.image);
         if (!m_displayAttachments[layer].colorBuffer.image)
             return;
 
         auto depthStencilBufferSource = makeEGLImageSource(data.depthStencilBuffer);
-        createAndBindCompositorBuffer(*gl, m_displayAttachments[layer].depthStencilBuffer, depthStencilBufferSource, layer);
+        createAndBindCompositorBuffer(*gl, m_displayAttachments[layer].depthStencilBuffer, GL::DEPTH24_STENCIL8, depthStencilBufferSource, layer);
     }
 
     // The drawing target can change size at any point during the session. If this happens, we need
