@@ -118,9 +118,10 @@ void LibWebRTCCodecs::setHasAV1HardwareDecoder(bool hasAV1HardwareDecoder)
         return;
     Page::forEachPage([](auto& page) {
         auto& settings = page.settings();
-        if (settings.webRTCAV1CodecEnabled())
+        if (settings.webRTCAV1CodecEnabled() && settings.webCodecsAV1Enabled())
             return;
         settings.setWebRTCAV1CodecEnabled(true);
+        settings.setWebCodecsAV1Enabled(true);
         page.settingsDidChange();
     });
 }
