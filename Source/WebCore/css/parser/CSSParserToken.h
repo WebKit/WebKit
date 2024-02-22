@@ -135,7 +135,11 @@ public:
 
     CSSPropertyID parseAsCSSPropertyID() const;
 
-    void serialize(StringBuilder&, const CSSParserToken* nextToken = nullptr) const;
+    enum class SerializationMode : bool {
+        Normal,
+        CustomProperty // Custom properties don't collapse whitespace and serialize numbers as original strings.
+    };
+    void serialize(StringBuilder&, const CSSParserToken* nextToken = nullptr, SerializationMode = SerializationMode::Normal) const;
 
     template<typename CharacterType>
     void updateCharacters(const CharacterType* characters, unsigned length);

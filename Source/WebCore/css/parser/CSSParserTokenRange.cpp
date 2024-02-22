@@ -120,11 +120,11 @@ const CSSParserToken& CSSParserTokenRange::consumeLast()
     return *--m_last;
 }
 
-String CSSParserTokenRange::serialize() const
+String CSSParserTokenRange::serialize(CSSParserToken::SerializationMode mode) const
 {
     StringBuilder builder;
     for (const CSSParserToken* it = m_first; it < m_last; ++it)
-        it->serialize(builder, it + 1 == m_last ? nullptr : it + 1);
+        it->serialize(builder, it + 1 == m_last ? nullptr : it + 1, mode);
     return builder.toString();
 }
 

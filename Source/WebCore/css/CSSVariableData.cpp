@@ -77,4 +77,9 @@ CSSVariableData::CSSVariableData(const CSSParserTokenRange& range, const CSSPars
     }
 }
 
+String CSSVariableData::serialize() const
+{
+    return tokenRange().serialize(CSSParserToken::SerializationMode::CustomProperty);
+}
+
 } // namespace WebCore

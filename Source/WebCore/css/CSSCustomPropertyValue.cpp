@@ -107,7 +107,7 @@ String CSSCustomPropertyValue::customCSSText() const
         }, [&](const CSSValueID& value) {
             return nameString(value).string();
         }, [&](const Ref<CSSVariableData>& value) {
-            return value->tokenRange().serialize();
+            return value->serialize();
         }, [&](const SyntaxValue& syntaxValue) {
             return serializeSyntaxValue(syntaxValue);
         }, [&](const SyntaxValueList& syntaxValueList) {

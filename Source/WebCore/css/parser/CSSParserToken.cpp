@@ -433,7 +433,7 @@ void CSSParserToken::convertToPercentage()
 
 StringView CSSParserToken::originalText() const
 {
-    ASSERT(m_type == NumberToken || m_type == DimensionToken);
+    ASSERT(m_type == NumberToken || m_type == DimensionToken || m_type == PercentageToken);
     return value();
 }
 
@@ -560,12 +560,16 @@ bool CSSParserToken::operator==(const CSSParserToken& other) const
     case UrlToken:
         return value() == other.value();
     case DimensionToken:
-        if (unitString() != other.unitString())
-            return false;
+        if (!m_nonUnitPrefixLength) {
+            // The spec wants equality comparison of the original text but in some rare dimension cases we don't have it. Fall back to parsed values.
+            if (unitString() != other.unitString())
+                return false;
+            return m_numericSign == other.m_numericSign && m_numericValue == other.m_numericValue && m_numericValueType == other.m_numericValueType;
+        }
         FALLTHROUGH;
     case NumberToken:
     case PercentageToken:
-        return m_numericSign == other.m_numericSign && m_numericValue == other.m_numericValue && m_numericValueType == other.m_numericValueType;
+        return originalText() == other.originalText();
     default:
         return true;
     }
@@ -581,7 +585,7 @@ struct NextTokenNeedsCommentBuilder {
     std::array<bool, numberOfCSSParserTokenTypes> buffer { false };
 };
 
-void CSSParserToken::serialize(StringBuilder& builder, const CSSParserToken* nextToken) const
+void CSSParserToken::serialize(StringBuilder& builder, const CSSParserToken* nextToken, SerializationMode mode) const
 {
     // This is currently only used for @supports CSSOM. To keep our implementation
     // simple we handle some of the edge cases incorrectly (see comments below).
@@ -661,19 +665,28 @@ void CSSParserToken::serialize(StringBuilder& builder, const CSSParserToken* nex
         }
         break;
     case NumberToken:
-        // These won't properly preserve the NumericValueType flag.
-        if (m_numericSign == PlusSign)
-            builder.append('+');
-        builder.append(numericValue());
+        if (mode == SerializationMode::CustomProperty)
+            builder.append(originalText());
+        else {
+            if (m_numericSign == PlusSign)
+                builder.append('+');
+            builder.append(numericValue());
+        }
         appendCommentIfNeeded({ IdentToken, FunctionToken, UrlToken, BadUrlToken, NumberToken, PercentageToken, DimensionToken }, '%');
         break;
     case PercentageToken:
-        builder.append(numericValue(), '%');
+        if (mode == SerializationMode::CustomProperty)
+            builder.append(originalText(), '%');
+        else
+            builder.append(numericValue(), '%');
         break;
     case DimensionToken:
-        // This will incorrectly serialize e.g. 4e3e2 as 4000e2.
-        builder.append(numericValue());
-        serializeIdentifier(unitString().toString(), builder);
+        if (mode == SerializationMode::CustomProperty && m_nonUnitPrefixLength)
+            builder.append(originalText());
+        else {
+            builder.append(numericValue());
+            serializeIdentifier(unitString().toString(), builder);
+        }
         appendCommentIfNeeded({ IdentToken, FunctionToken, UrlToken, BadUrlToken, NumberToken, PercentageToken, DimensionToken, CDCToken }, '-');
         break;
     case StringToken:
