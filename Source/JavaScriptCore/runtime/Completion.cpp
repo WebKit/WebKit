@@ -43,9 +43,9 @@ namespace JSC {
 
 static inline bool checkSyntaxInternal(VM& vm, const SourceCode& source, ParserError& error)
 {
-    return !!parse<ProgramNode>(
-        vm, source, Identifier(), ImplementationVisibility::Public, JSParserBuiltinMode::NotBuiltin,
-        JSParserStrictMode::NotStrict, JSParserScriptMode::Classic, SourceParseMode::ProgramMode, FunctionMode::None, SuperBinding::NotNeeded, error);
+    return !!parseRootNode<ProgramNode>(
+        vm, source, ImplementationVisibility::Public, JSParserBuiltinMode::NotBuiltin,
+        JSParserStrictMode::NotStrict, JSParserScriptMode::Classic, SourceParseMode::ProgramMode, error);
 }
 
 bool checkSyntax(JSGlobalObject* globalObject, const SourceCode& source, JSValue* returnedException)
@@ -75,9 +75,9 @@ bool checkModuleSyntax(JSGlobalObject* globalObject, const SourceCode& source, P
     VM& vm = globalObject->vm();
     JSLockHolder lock(vm);
     RELEASE_ASSERT(vm.atomStringTable() == Thread::current().atomStringTable());
-    std::unique_ptr<ModuleProgramNode> moduleProgramNode = parse<ModuleProgramNode>(
-        vm, source, Identifier(), ImplementationVisibility::Public, JSParserBuiltinMode::NotBuiltin,
-        JSParserStrictMode::Strict, JSParserScriptMode::Module, SourceParseMode::ModuleAnalyzeMode, FunctionMode::None, SuperBinding::NotNeeded, error);
+    std::unique_ptr<ModuleProgramNode> moduleProgramNode = parseRootNode<ModuleProgramNode>(
+        vm, source, ImplementationVisibility::Public, JSParserBuiltinMode::NotBuiltin,
+        JSParserStrictMode::Strict, JSParserScriptMode::Module, SourceParseMode::ModuleAnalyzeMode, error);
     if (!moduleProgramNode)
         return false;
 

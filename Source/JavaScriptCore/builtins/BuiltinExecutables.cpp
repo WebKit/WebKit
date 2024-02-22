@@ -219,10 +219,10 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const S
         JSTextPosition positionBeforeLastNewlineFromParser;
         ParserError error;
         JSParserBuiltinMode builtinMode = isBuiltinDefaultClassConstructor ? JSParserBuiltinMode::NotBuiltin : JSParserBuiltinMode::Builtin;
-        std::unique_ptr<ProgramNode> program = parse<ProgramNode>(
-            vm, source, Identifier(), implementationVisibility, builtinMode,
-            JSParserStrictMode::NotStrict, JSParserScriptMode::Classic, SourceParseMode::ProgramMode, FunctionMode::None, SuperBinding::NotNeeded, error,
-            &positionBeforeLastNewlineFromParser, constructorKind);
+        std::unique_ptr<ProgramNode> program = parseRootNode<ProgramNode>(
+            vm, source, implementationVisibility, builtinMode,
+            JSParserStrictMode::NotStrict, JSParserScriptMode::Classic, SourceParseMode::ProgramMode, error,
+            constructorKind, &positionBeforeLastNewlineFromParser);
 
         if (program) {
             StatementNode* exprStatement = program->singleStatement();
