@@ -75,11 +75,17 @@ public:
     static LayoutPoint pagePointToAbsolutePoint(LayoutPoint pagePoint, LocalFrameView*);
 
 protected:
-    MouseRelatedEvent() = default;
+    MouseRelatedEvent(enum EventInterfaceType);
+    MouseRelatedEvent();
+    MouseRelatedEvent(enum EventInterfaceType, const AtomString& type, CanBubble, IsCancelable, IsComposed, MonotonicTime, RefPtr<WindowProxy>&&, int detail,
+        const IntPoint& screenLocation, const IntPoint& windowLocation, double movementX, double movementY, OptionSet<Modifier> modifiers,
+        IsSimulated = IsSimulated::No, IsTrusted = IsTrusted::Yes);
     MouseRelatedEvent(const AtomString& type, CanBubble, IsCancelable, IsComposed, MonotonicTime, RefPtr<WindowProxy>&&, int detail,
         const IntPoint& screenLocation, const IntPoint& windowLocation, double movementX, double movementY, OptionSet<Modifier> modifiers,
         IsSimulated = IsSimulated::No, IsTrusted = IsTrusted::Yes);
     MouseRelatedEvent(const AtomString& type, IsCancelable, MonotonicTime, RefPtr<WindowProxy>&&, const IntPoint& globalLocation, OptionSet<Modifier>);
+    MouseRelatedEvent(enum EventInterfaceType, const AtomString& type, IsCancelable, MonotonicTime, RefPtr<WindowProxy>&&, const IntPoint& globalLocation, OptionSet<Modifier>);
+    MouseRelatedEvent(enum EventInterfaceType, const AtomString& type, const MouseRelatedEventInit&, IsTrusted = IsTrusted::No);
     MouseRelatedEvent(const AtomString& type, const MouseRelatedEventInit&, IsTrusted = IsTrusted::No);
 
     void initCoordinates();

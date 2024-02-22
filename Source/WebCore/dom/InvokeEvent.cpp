@@ -34,8 +34,13 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(InvokeEvent);
 
+InvokeEvent::InvokeEvent()
+    : Event(EventInterfaceType::InvokeEvent)
+{
+}
+
 InvokeEvent::InvokeEvent(const AtomString& type, const InvokeEvent::Init& initializer, IsTrusted isTrusted)
-    : Event(type, initializer, isTrusted)
+    : Event(EventInterfaceType::InvokeEvent, type, initializer, isTrusted)
     , m_invoker(initializer.invoker)
     , m_action(initializer.action)
 {

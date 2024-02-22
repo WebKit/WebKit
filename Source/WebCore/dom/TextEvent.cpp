@@ -67,7 +67,7 @@ Ref<TextEvent> TextEvent::createForDictation(RefPtr<WindowProxy>&& view, const S
 }
 
 TextEvent::TextEvent()
-    : m_inputType(TextEventInputKeyboard)
+    : UIEvent(EventInterfaceType::TextEvent)
     , m_shouldSmartReplace(false)
     , m_shouldMatchStyle(false)
     , m_mailBlockquoteHandling(MailBlockquoteHandling::RespectBlockquote)
@@ -75,7 +75,7 @@ TextEvent::TextEvent()
 }
 
 TextEvent::TextEvent(RefPtr<WindowProxy>&& view, const String& data, TextEventInputType inputType)
-    : UIEvent(eventNames().textInputEvent, CanBubble::Yes, IsCancelable::Yes, IsComposed::Yes, WTFMove(view), 0)
+    : UIEvent(EventInterfaceType::TextEvent, eventNames().textInputEvent, CanBubble::Yes, IsCancelable::Yes, IsComposed::Yes, WTFMove(view), 0)
     , m_inputType(inputType)
     , m_data(data)
     , m_shouldSmartReplace(false)
@@ -85,7 +85,7 @@ TextEvent::TextEvent(RefPtr<WindowProxy>&& view, const String& data, TextEventIn
 }
 
 TextEvent::TextEvent(RefPtr<WindowProxy>&& view, const String& data, RefPtr<DocumentFragment>&& pastingFragment, TextEventInputType inputType, bool shouldSmartReplace, bool shouldMatchStyle, MailBlockquoteHandling mailBlockquoteHandling)
-    : UIEvent(eventNames().textInputEvent, CanBubble::Yes, IsCancelable::Yes, IsComposed::Yes, WTFMove(view), 0)
+    : UIEvent(EventInterfaceType::TextEvent, eventNames().textInputEvent, CanBubble::Yes, IsCancelable::Yes, IsComposed::Yes, WTFMove(view), 0)
     , m_inputType(inputType)
     , m_data(data)
     , m_pastingFragment(WTFMove(pastingFragment))
@@ -96,7 +96,7 @@ TextEvent::TextEvent(RefPtr<WindowProxy>&& view, const String& data, RefPtr<Docu
 }
 
 TextEvent::TextEvent(RefPtr<WindowProxy>&& view, const String& data, const Vector<DictationAlternative>& dictationAlternatives)
-    : UIEvent(eventNames().textInputEvent, CanBubble::Yes, IsCancelable::Yes, IsComposed::Yes, WTFMove(view), 0)
+    : UIEvent(EventInterfaceType::TextEvent, eventNames().textInputEvent, CanBubble::Yes, IsCancelable::Yes, IsComposed::Yes, WTFMove(view), 0)
     , m_inputType(TextEventInputDictation)
     , m_data(data)
     , m_shouldSmartReplace(false)

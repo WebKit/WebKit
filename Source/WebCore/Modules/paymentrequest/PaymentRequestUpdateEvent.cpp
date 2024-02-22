@@ -36,14 +36,14 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(PaymentRequestUpdateEvent);
 
-PaymentRequestUpdateEvent::PaymentRequestUpdateEvent(const AtomString& type, const PaymentRequestUpdateEventInit& eventInit)
-    : Event { type, eventInit, IsTrusted::No }
+PaymentRequestUpdateEvent::PaymentRequestUpdateEvent(enum EventInterfaceType eventInterface, const AtomString& type, const PaymentRequestUpdateEventInit& eventInit)
+    : Event { eventInterface, type, eventInit, IsTrusted::No }
 {
     ASSERT(!isTrusted());
 }
 
-PaymentRequestUpdateEvent::PaymentRequestUpdateEvent(const AtomString& type)
-    : Event { type, CanBubble::No, IsCancelable::No }
+PaymentRequestUpdateEvent::PaymentRequestUpdateEvent(enum EventInterfaceType eventInterface, const AtomString& type)
+    : Event { eventInterface, type, CanBubble::No, IsCancelable::No }
 {
     ASSERT(isTrusted());
 }

@@ -52,13 +52,13 @@ static inline std::optional<TrackEvent::TrackEventTrack> convertToTrackEventTrac
 }
 
 TrackEvent::TrackEvent(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, Ref<TrackBase>&& track)
-    : Event(type, canBubble, cancelable)
+    : Event(EventInterfaceType::TrackEvent, type, canBubble, cancelable)
     , m_track(convertToTrackEventTrack(WTFMove(track)))
 {
 }
 
 TrackEvent::TrackEvent(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
-    : Event(type, initializer, isTrusted)
+    : Event(EventInterfaceType::TrackEvent, type, initializer, isTrusted)
     , m_track(WTFMove(initializer.track))
 {
 }

@@ -58,7 +58,7 @@ ExceptionOr<Ref<MerchantValidationEvent>> MerchantValidationEvent::create(Docume
 }
 
 MerchantValidationEvent::MerchantValidationEvent(const AtomString& type, const String& methodName, URL&& validationURL)
-    : Event { type, Event::CanBubble::No, Event::IsCancelable::No }
+    : Event { EventInterfaceType::MerchantValidationEvent, type, Event::CanBubble::No, Event::IsCancelable::No }
     , m_methodName { methodName }
     , m_validationURL { WTFMove(validationURL) }
 {
@@ -67,7 +67,7 @@ MerchantValidationEvent::MerchantValidationEvent(const AtomString& type, const S
 }
 
 MerchantValidationEvent::MerchantValidationEvent(const AtomString& type, String&& methodName, URL&& validationURL, Init&& eventInit)
-    : Event { type, WTFMove(eventInit), IsTrusted::No }
+    : Event { EventInterfaceType::MerchantValidationEvent, type, WTFMove(eventInit), IsTrusted::No }
     , m_methodName { WTFMove(methodName) }
     , m_validationURL { WTFMove(validationURL) }
 {

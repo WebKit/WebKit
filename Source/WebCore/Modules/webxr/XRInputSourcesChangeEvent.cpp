@@ -42,7 +42,7 @@ Ref<XRInputSourcesChangeEvent> XRInputSourcesChangeEvent::create(const AtomStrin
 }
 
 XRInputSourcesChangeEvent::XRInputSourcesChangeEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
-    : Event(type, initializer, isTrusted)
+    : Event(EventInterfaceType::XRInputSourcesChangeEvent, type, initializer, isTrusted)
     , m_session(*initializer.session)
     , m_added(initializer.added)
     , m_removed(initializer.removed)

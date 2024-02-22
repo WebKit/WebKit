@@ -38,7 +38,7 @@ using namespace JSC;
 WTF_MAKE_ISO_ALLOCATED_IMPL(PromiseRejectionEvent);
 
 PromiseRejectionEvent::PromiseRejectionEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
-    : Event(type, initializer, isTrusted)
+    : Event(EventInterfaceType::PromiseRejectionEvent, type, initializer, isTrusted)
     , m_promise(*(initializer.promise))
     , m_reason(initializer.reason)
 {

@@ -39,7 +39,7 @@ Ref<RTCTransformEvent> RTCTransformEvent::create(const AtomString& type, Ref<RTC
 }
 
 RTCTransformEvent::RTCTransformEvent(const AtomString& type, Ref<RTCRtpScriptTransformer>&& transformer, IsTrusted isTrusted)
-    : Event(type, { }, isTrusted)
+    : Event(EventInterfaceType::RTCTransformEvent, type, { }, isTrusted)
     , m_transformer(WTFMove(transformer))
 {
 }

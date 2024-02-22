@@ -53,7 +53,7 @@ Ref<RTCTrackEvent> RTCTrackEvent::create(const AtomString& type, const Init& ini
 }
 
 RTCTrackEvent::RTCTrackEvent(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, RefPtr<RTCRtpReceiver>&& receiver, RefPtr<MediaStreamTrack>&& track, Vector<RefPtr<MediaStream>>&& streams, RefPtr<RTCRtpTransceiver>&& transceiver)
-    : Event(type, canBubble, cancelable)
+    : Event(EventInterfaceType::RTCTrackEvent, type, canBubble, cancelable)
     , m_receiver(WTFMove(receiver))
     , m_track(WTFMove(track))
     , m_streams(WTFMove(streams))
@@ -62,7 +62,7 @@ RTCTrackEvent::RTCTrackEvent(const AtomString& type, CanBubble canBubble, IsCanc
 }
 
 RTCTrackEvent::RTCTrackEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
-    : Event(type, initializer, isTrusted)
+    : Event(EventInterfaceType::RTCTrackEvent, type, initializer, isTrusted)
     , m_receiver(initializer.receiver)
     , m_track(initializer.track)
     , m_streams(initializer.streams)

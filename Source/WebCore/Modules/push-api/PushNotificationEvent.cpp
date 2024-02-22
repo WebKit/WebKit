@@ -35,7 +35,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(PushNotificationEvent);
 
 PushNotificationEvent::PushNotificationEvent(const AtomString& type, ExtendableEventInit&& eventInit, Notification* proposedNotification, std::optional<uint64_t> proposedAppBadge, IsTrusted isTrusted)
-    : ExtendableEvent(type, WTFMove(eventInit), isTrusted)
+    : ExtendableEvent(EventInterfaceType::PushNotificationEvent, type, WTFMove(eventInit), isTrusted)
     , m_proposedNotification(proposedNotification)
     , m_proposedAppBadge(proposedAppBadge)
 {

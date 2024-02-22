@@ -46,7 +46,7 @@ public:
     String newState() const { return m_newState; }
 
 private:
-    ToggleEvent() = default;
+    ToggleEvent();
     ToggleEvent(const AtomString&, const Init&, Event::IsCancelable);
     ToggleEvent(const AtomString&, const Init&);
 

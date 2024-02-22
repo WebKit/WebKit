@@ -56,7 +56,7 @@ void ScopedEventQueue::enqueueEvent(Ref<Event>&& event)
 
 void ScopedEventQueue::dispatchEvent(const ScopedEvent& event) const
 {
-    if (event.event->eventInterface() == MutationEventInterfaceType && event.target->isInShadowTree())
+    if (event.event->interfaceType() == EventInterfaceType::MutationEvent && event.target->isInShadowTree())
         return;
     Ref { event.target.get() }->dispatchEvent(event.event);
 }

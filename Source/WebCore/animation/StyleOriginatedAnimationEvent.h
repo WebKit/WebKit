@@ -40,8 +40,8 @@ public:
     const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier() const { return m_pseudoElementIdentifier; }
 
 protected:
-    StyleOriginatedAnimationEvent(const AtomString& type, WebAnimation*, std::optional<Seconds> scheduledTime, double, const std::optional<Style::PseudoElementIdentifier>&);
-    StyleOriginatedAnimationEvent(const AtomString&, const EventInit&, IsTrusted, double, const String&);
+    StyleOriginatedAnimationEvent(enum EventInterfaceType, const AtomString& type, WebAnimation*, std::optional<Seconds> scheduledTime, double, const std::optional<Style::PseudoElementIdentifier>&);
+    StyleOriginatedAnimationEvent(enum EventInterfaceType, const AtomString&, const EventInit&, IsTrusted, double, const String&);
 
 private:
     double m_elapsedTime;

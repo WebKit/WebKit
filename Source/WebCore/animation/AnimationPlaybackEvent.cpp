@@ -34,7 +34,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(AnimationPlaybackEvent);
 
 AnimationPlaybackEvent::AnimationPlaybackEvent(const AtomString& type, const AnimationPlaybackEventInit& initializer, IsTrusted isTrusted)
-    : AnimationEventBase(type, initializer, isTrusted)
+    : AnimationEventBase(EventInterfaceType::AnimationPlaybackEvent, type, initializer, isTrusted)
 {
     if (initializer.currentTime)
         m_currentTime = Seconds::fromMilliseconds(*initializer.currentTime);
@@ -48,7 +48,7 @@ AnimationPlaybackEvent::AnimationPlaybackEvent(const AtomString& type, const Ani
 }
 
 AnimationPlaybackEvent::AnimationPlaybackEvent(const AtomString& type, WebAnimation* animation, std::optional<Seconds> scheduledTime, std::optional<Seconds> timelineTime, std::optional<Seconds> currentTime)
-    : AnimationEventBase(type, animation, scheduledTime)
+    : AnimationEventBase(EventInterfaceType::AnimationPlaybackEvent, type, animation, scheduledTime)
     , m_timelineTime(timelineTime)
     , m_currentTime(currentTime)
 {
