@@ -2680,8 +2680,7 @@ void MediaPlayerPrivateGStreamer::updateStates()
         else if (m_currentState == GST_STATE_PLAYING)
             m_isPaused = false;
 
-        if (!m_isPaused && m_playbackRate)
-            changePipelineState(GST_STATE_PLAYING);
+        changePipelineState(GST_STATE_PLAYING);
 
         m_networkState = MediaPlayer::NetworkState::Loading;
 
