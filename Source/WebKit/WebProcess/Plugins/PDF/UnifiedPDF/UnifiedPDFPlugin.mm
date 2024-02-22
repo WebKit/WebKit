@@ -1837,6 +1837,9 @@ OptionSet<RepaintRequirement> UnifiedPDFPlugin::repaintRequirementsForAnnotation
     if ([annotation isKindOfClass:getPDFAnnotationPopupClass()])
         return RepaintRequirement::PDFContent;
 
+    if ([annotation isKindOfClass:getPDFAnnotationChoiceWidgetClass()])
+        return RepaintRequirement::PDFContent;
+
     if ([annotation isKindOfClass:getPDFAnnotationTextClass()])
         return RepaintRequirement::PDFContent;
 
