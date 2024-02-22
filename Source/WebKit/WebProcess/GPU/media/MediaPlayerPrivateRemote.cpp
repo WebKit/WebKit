@@ -1534,12 +1534,13 @@ void MediaPlayerPrivateRemote::setPreferredDynamicRangeMode(WebCore::DynamicRang
     connection().send(Messages::RemoteMediaPlayerProxy::SetPreferredDynamicRangeMode(mode), m_id);
 }
 
-bool MediaPlayerPrivateRemote::performTaskAtTime(WTF::Function<void()>&& completionHandler, const MediaTime& mediaTime)
+bool MediaPlayerPrivateRemote::performTaskAtTime(WTF::Function<void()>&& task, const MediaTime& mediaTime)
 {
-    auto asyncReplyHandler = [weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)](std::optional<MediaTime> currentTime, std::optional<MonotonicTime> queryTime) mutable {
-        if (RefPtr protectedThis = weakThis.get(); protectedThis && currentTime && queryTime)
-            protectedThis->m_currentTimeEstimator.setTime(*currentTime, *queryTime);
-        completionHandler();
+    auto asyncReplyHandler = [weakThis = WeakPtr { *this }, task = WTFMove(task)](std::optional<MediaTime> currentTime, std::optional<MonotonicTime> queryTime) mutable {
+        if (!weakThis || !currentTime || !queryTime)
+            return;
+        weakThis->m_currentTimeEstimator.setTime(*currentTime, *queryTime);
+        task();
     };
 
     connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::PerformTaskAtTime(mediaTime, MonotonicTime::now()), WTFMove(asyncReplyHandler), m_id);
