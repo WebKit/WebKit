@@ -38,6 +38,7 @@
 #include <WebCore/NicosiaPlatformLayer.h>
 #include <WebCore/NicosiaScene.h>
 #include <WebCore/NicosiaSceneIntegration.h>
+#include <wtf/WorkerPool.h>
 
 namespace Nicosia {
 class ImageBackingStore;
@@ -100,6 +101,7 @@ private:
     Nicosia::PaintingEngine& paintingEngine() override;
 #elif USE(SKIA)
     SkiaAcceleratedBufferPool* skiaAcceleratedBufferPool() const override { return m_skiaAcceleratedBufferPool.get(); }
+    WorkerPool* skiaUnacceleratedThreadedRenderingPool() const override { return m_skiaUnacceleratedThreadedRenderingPool.get(); }
 #endif
     RefPtr<Nicosia::ImageBackingStore> imageBackingStore(uint64_t, Function<RefPtr<Nicosia::Buffer>()>) override;
 
@@ -134,6 +136,7 @@ private:
     std::unique_ptr<Nicosia::PaintingEngine> m_paintingEngine;
 #elif USE(SKIA)
     std::unique_ptr<SkiaAcceleratedBufferPool> m_skiaAcceleratedBufferPool;
+    RefPtr<WorkerPool> m_skiaUnacceleratedThreadedRenderingPool;
 #endif
     HashMap<uint64_t, Ref<Nicosia::ImageBackingStore>> m_imageBackingStores;
 

@@ -43,7 +43,9 @@
 #include <WebCore/NicosiaImageBacking.h>
 #include <WebCore/Page.h>
 #include <wtf/MemoryPressureHandler.h>
+#include <wtf/NumberOfCores.h>
 #include <wtf/SetForScope.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 #if USE(CAIRO)
 #include <WebCore/NicosiaPaintingEngine.h>
@@ -69,6 +71,24 @@ static bool skiaForceUseCpuRendering()
 
     return forceUseCpuRendering.value();
 }
+
+static unsigned skiaNumberOfCpuPaintingThreads()
+{
+    static std::optional<unsigned> numberOfCpuPaintingThreads;
+    if (!numberOfCpuPaintingThreads.has_value()) {
+        numberOfCpuPaintingThreads = std::max(1, std::min(8, WTF::numberOfProcessorCores() / 2));
+
+        if (const char* numThreadsEnv = getenv("WEBKIT_SKIA_CPU_PAINTING_THREADS")) {
+            auto newValue = parseInteger<unsigned>(StringView::fromLatin1(numThreadsEnv));
+            if (newValue && *newValue <= 8)
+                numberOfCpuPaintingThreads = *newValue;
+            else
+                WTFLogAlways("The number of Skia/CPU painting threads is not between 0 and 8. Using the default value %u\n", numberOfCpuPaintingThreads.value());
+        }
+    }
+
+    return numberOfCpuPaintingThreads.value();
+}
 #endif
 
 CompositingCoordinator::CompositingCoordinator(WebPage& page, CompositingCoordinator::Client& client)
@@ -79,7 +99,10 @@ CompositingCoordinator::CompositingCoordinator(WebPage& page, CompositingCoordin
 #endif
 {
 #if USE(SKIA)
-    if (!skiaForceUseCpuRendering())
+    if (skiaForceUseCpuRendering()) {
+        if (auto numberOfThreads = skiaNumberOfCpuPaintingThreads(); numberOfThreads > 0)
+            m_skiaUnacceleratedThreadedRenderingPool = WorkerPool::create("SkiaPaintingThread"_s, numberOfThreads);
+    } else
         m_skiaAcceleratedBufferPool = makeUnique<SkiaAcceleratedBufferPool>();
 #endif
 
@@ -111,6 +134,7 @@ void CompositingCoordinator::invalidate()
 
 #if USE(SKIA)
     m_skiaAcceleratedBufferPool = nullptr;
+    m_skiaUnacceleratedThreadedRenderingPool = nullptr;
 #endif
 }
 

@@ -21,6 +21,7 @@
 #include "CoordinatedGraphicsLayer.h"
 
 #if USE(COORDINATED_GRAPHICS) && USE(SKIA)
+#include "DisplayListDrawingContext.h"
 #include "GLContext.h"
 #include "GraphicsContextSkia.h"
 #include "NicosiaBuffer.h"
@@ -37,40 +38,69 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Vector.h>
+#include <wtf/WorkerPool.h>
 
 namespace WebCore {
 
 Ref<Nicosia::Buffer> CoordinatedGraphicsLayer::paintTile(const IntRect& tileRect, const IntRect& mappedTileRect, float contentsScale)
 {
-    auto paintBuffer = [&](Nicosia::Buffer& buffer) {
-        buffer.beginPainting();
-
-        GraphicsContextSkia context(sk_ref_sp(buffer.surface()));
-        context.clip(IntRect { IntPoint::zero(), tileRect.size() });
+    auto paintIntoGraphicsContext = [&](GraphicsContext& context) {
+        IntRect initialClip(IntPoint::zero(), tileRect.size());
+        context.clip(initialClip);
 
         if (!contentsOpaque()) {
             context.setCompositeOperation(CompositeOperator::Copy);
-            context.fillRect(IntRect { IntPoint::zero(), tileRect.size() }, Color::transparentBlack);
+            context.fillRect(initialClip, Color::transparentBlack);
             context.setCompositeOperation(CompositeOperator::SourceOver);
         }
 
         context.translate(-tileRect.x(), -tileRect.y());
         context.scale({ contentsScale, contentsScale });
         paintGraphicsLayerContents(context, mappedTileRect);
+    };
+
+    auto paintBuffer = [&](Nicosia::Buffer& buffer) {
+        buffer.beginPainting();
+
+        GraphicsContextSkia context(sk_ref_sp(buffer.surface()));
+        paintIntoGraphicsContext(context);
 
         buffer.completePainting();
     };
 
+    // Skia/GPU - accelerated rendering.
     if (auto* acceleratedBufferPool = m_coordinator->skiaAcceleratedBufferPool()) {
         auto* glContext = PlatformDisplay::sharedDisplayForCompositing().skiaGLContext();
         RELEASE_ASSERT(glContext);
         GLContext::ScopedGLContextCurrent scopedCurrent(*glContext);
+
         auto buffer = acceleratedBufferPool->acquireBuffer(tileRect.size(), !contentsOpaque());
         paintBuffer(buffer.get());
         return buffer;
     }
 
+    // Skia/CPU - unaccelerated rendering.
     auto buffer = Nicosia::UnacceleratedBuffer::create(tileRect.size(), contentsOpaque() ? Nicosia::Buffer::NoFlags : Nicosia::Buffer::SupportsAlpha);
+
+    // Non-blocking, multi-threaded variant.
+    if (auto* workerPool = m_coordinator->skiaUnacceleratedThreadedRenderingPool()) {
+        // Threaded rendering: record display lists, and asynchronously replay them using dedicated worker threads.
+        buffer->beginPainting();
+
+        auto recordingContext = makeUnique<DisplayList::DrawingContext>(tileRect.size());
+        paintIntoGraphicsContext(recordingContext->context());
+
+        workerPool->postTask([buffer = Ref { buffer }, recordingContext = WTFMove(recordingContext)] {
+            RELEASE_ASSERT(buffer->surface());
+            GraphicsContextSkia context(sk_ref_sp(buffer->surface()));
+            recordingContext->replayDisplayList(context);
+            buffer->completePainting();
+        });
+
+        return buffer;
+    }
+
+    // Blocking, single-thread variant.
     paintBuffer(buffer.get());
     return buffer;
 }
