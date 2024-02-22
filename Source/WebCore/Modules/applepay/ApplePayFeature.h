@@ -75,6 +75,9 @@ enum class ApplePayFeature : uint8_t {
 #if ENABLE(APPLE_PAY_SHIPPING_METHOD_DATE_COMPONENTS_RANGE)
     ShippingMethodDateComponentsRange,
 #endif
+#if ENABLE(APPLE_PAY_DISBURSEMENTS)
+    PaymentRequestDisbursements,
+#endif
 };
 
 } // namespace WebCore

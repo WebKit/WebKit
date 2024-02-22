@@ -27,6 +27,7 @@
 
 #if ENABLE(APPLE_PAY)
 
+#include <WebCore/ApplePaySessionPaymentRequest.h>
 #include <wtf/Forward.h>
 
 OBJC_CLASS PKShippingMethod;
@@ -34,6 +35,7 @@ OBJC_CLASS PKShippingMethods;
 
 namespace WebCore {
 struct ApplePayShippingMethod;
+class ApplePaySessionPaymentRequest;
 }
 
 namespace WebKit {
@@ -44,6 +46,7 @@ PKShippingMethod *toPKShippingMethod(const WebCore::ApplePayShippingMethod&);
 #if HAVE(PASSKIT_DEFAULT_SHIPPING_METHOD)
 PKShippingMethods *toPKShippingMethods(const Vector<WebCore::ApplePayShippingMethod>&);
 #endif
+PKMerchantCapability toPKMerchantCapabilities(const WebCore::ApplePaySessionPaymentRequest::MerchantCapabilities&);
 
 } // namespace WebKit
 

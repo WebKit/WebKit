@@ -55,6 +55,18 @@
 #endif
 #endif
 
+#if HAVE(PASSKIT_DISBURSEMENTS)
+#if HAVE(PASSKIT_MODULARIZATION) && USE(APPLE_INTERNAL_SDK)
+#import <PassKitCore/PKDisbursementPaymentRequest.h>
+#import <PassKitCore/PKDisbursementSummaryItem.h>
+#import <PassKitCore/PKInstantFundsOutFeeSummaryItem.h>
+#import <PassKitCore/PKDisbursementRequest.h>
+#else
+#import <PassKit/PKDisbursementSummaryItem.h>
+#import <PassKit/PKInstantFundsOutFeeSummaryItem.h>
+#endif
+#endif
+
 #if HAVE(PASSKIT_AUTOMATIC_RELOAD_SUMMARY_ITEM)
 #if HAVE(PASSKIT_MODULARIZATION) && USE(APPLE_INTERNAL_SDK)
 #import <PassKitCore/PKAutomaticReloadPaymentSummaryItem.h>
