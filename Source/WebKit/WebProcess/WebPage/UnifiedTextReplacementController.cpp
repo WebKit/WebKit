@@ -31,8 +31,10 @@
 #include "Logging.h"
 #include "WebPage.h"
 #include "WebUnifiedTextReplacementContextData.h"
+#include <WebCore/DocumentInlines.h>
 #include <WebCore/DocumentMarkerController.h>
 #include <WebCore/Editor.h>
+#include <WebCore/FocusController.h>
 #include <WebCore/HTMLConverter.h>
 #include <WebCore/RenderedDocumentMarker.h>
 #include <WebCore/SimpleRange.h>

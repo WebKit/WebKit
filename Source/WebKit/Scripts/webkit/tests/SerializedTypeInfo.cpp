@@ -80,13 +80,13 @@
 #include <wtf/CreateUsingClass.h>
 #include <wtf/Seconds.h>
 
-static_asssert(std::is_same_v<WebCore::SharedStringHash, uint32_t>);
-static_asssert(std::is_same_v<WebCore::UsingWithSemicolon, uint32_t>);
+static_assert(std::is_same_v<WebCore::SharedStringHash, uint32_t>);
+static_assert(std::is_same_v<WebCore::UsingWithSemicolon, uint32_t>);
 #if OS(WINDOWS)
-static_asssert(std::is_same_v<WTF::ProcessID, int>);
+static_assert(std::is_same_v<WTF::ProcessID, int>);
 #endif
 #if !(OS(WINDOWS))
-static_asssert(std::is_same_v<WTF::ProcessID, pid_t>);
+static_assert(std::is_same_v<WTF::ProcessID, pid_t>);
 #endif
 
 #if ENABLE(IPC_TESTING_API)

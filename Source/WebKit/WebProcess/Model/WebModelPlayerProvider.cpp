@@ -61,7 +61,7 @@ RefPtr<WebCore::ModelPlayer> WebModelPlayerProvider::createModelPlayer(WebCore::
 {
 #if ENABLE(MODEL_PROCESS)
     if (m_page.corePage()->settings().modelProcessEnabled())
-        return ModelProcessModelPlayer::create(m_page, client);
+        return WebProcess::singleton().modelProcessModelPlayerManager().createModelProcessModelPlayer(m_page, client);
 #endif
 #if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
     if (m_page.useARKitForModel())

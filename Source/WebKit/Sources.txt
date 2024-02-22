@@ -93,6 +93,8 @@ GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.cpp
 
 ModelProcess/ModelProcess.cpp
 ModelProcess/ModelConnectionToWebProcess.cpp
+ModelProcess/ModelProcessModelPlayerManagerProxy.cpp
+ModelProcess/ModelProcessModelPlayerProxy.cpp
 
 NetworkProcess/BackgroundFetchLoad.cpp
 NetworkProcess/DatabaseUtilities.cpp
@@ -685,8 +687,9 @@ WebProcess/MediaStream/MediaDeviceSandboxExtensions.cpp
 WebProcess/MediaStream/UserMediaPermissionRequestManager.cpp
 
 WebProcess/Model/WebModelPlayerProvider.cpp
-
 WebProcess/Model/ModelProcessConnection.cpp
+WebProcess/Model/ModelProcessModelPlayer.cpp
+WebProcess/Model/ModelProcessModelPlayerManager.cpp
 
 WebProcess/GPU/GPUProcessConnection.cpp
 WebProcess/GPU/ShapeDetection/RemoteBarcodeDetectorProxy.cpp
@@ -876,6 +879,9 @@ IPCStreamTesterMessageReceiver.cpp
 IPCStreamTesterProxyMessageReceiver.cpp
 IPCTesterMessageReceiver.cpp
 IPCTesterReceiverMessageReceiver.cpp
+ModelProcessModelPlayerManagerProxyMessageReceiver.cpp
+ModelProcessModelPlayerMessageReceiver.cpp
+ModelProcessModelPlayerProxyMessageReceiver.cpp
 NetworkBroadcastChannelRegistryMessageReceiver.cpp
 NetworkTransportSessionMessageReceiver.cpp
 RTCDataChannelRemoteManagerMessageReceiver.cpp

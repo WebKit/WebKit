@@ -318,6 +318,7 @@ def serialized_identifiers():
         'WebCore::MediaKeySystemRequestIdentifier',
         'WebCore::MediaPlayerIdentifier',
         'WebCore::MediaSessionIdentifier',
+        'WebCore::ModelPlayerIdentifier',
         'WebCore::OpaqueOriginIdentifier',
         'WebCore::PageIdentifier',
         'WebCore::PlaybackTargetClientContextIdentifier',

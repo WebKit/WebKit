@@ -32,19 +32,27 @@
 #import "WebPageProxyMessages.h"
 #import <WebCore/ModelPlayer.h>
 #import <WebCore/ModelPlayerClient.h>
+#import <WebCore/ModelPlayerIdentifier.h>
 #import <wtf/Compiler.h>
 
 namespace WebKit {
 
-class ModelProcessModelPlayer : public WebCore::ModelPlayer, public CanMakeWeakPtr<ModelProcessModelPlayer> {
+class ModelProcessModelPlayer
+    : public WebCore::ModelPlayer
+    , public IPC::MessageReceiver {
 public:
-    static Ref<ModelProcessModelPlayer> create(WebPage&, WebCore::ModelPlayerClient&);
-
+    static Ref<ModelProcessModelPlayer> create(WebCore::ModelPlayerIdentifier, WebPage&, WebCore::ModelPlayerClient&);
     virtual ~ModelProcessModelPlayer();
 
-private:
-    explicit ModelProcessModelPlayer(WebPage&, WebCore::ModelPlayerClient&);
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
+    // Messages
+    void didLoad();
+
+private:
+    explicit ModelProcessModelPlayer(WebCore::ModelPlayerIdentifier, WebPage&, WebCore::ModelPlayerClient&);
+
+    WebCore::ModelPlayerIdentifier identifier() { return m_id; }
     WebPage* page() { return m_page.get(); }
     WebCore::ModelPlayerClient* client() { return m_client.get(); }
 
@@ -52,9 +60,9 @@ private:
     void load(WebCore::Model&, WebCore::LayoutSize) final;
     void sizeDidChange(WebCore::LayoutSize) final;
     PlatformLayer* layer() final;
-    void handleMouseDown(const LayoutPoint&, MonotonicTime) final;
-    void handleMouseMove(const LayoutPoint&, MonotonicTime) final;
-    void handleMouseUp(const LayoutPoint&, MonotonicTime) final;
+    void handleMouseDown(const WebCore::LayoutPoint&, MonotonicTime) final;
+    void handleMouseMove(const WebCore::LayoutPoint&, MonotonicTime) final;
+    void handleMouseUp(const WebCore::LayoutPoint&, MonotonicTime) final;
     void enterFullscreen() final;
     void getCamera(CompletionHandler<void(std::optional<WebCore::HTMLModelElementCamera>&&)>&&) final;
     void setCamera(WebCore::HTMLModelElementCamera, CompletionHandler<void(bool success)>&&) final;
@@ -70,6 +78,7 @@ private:
     void setIsMuted(bool, CompletionHandler<void(bool success)>&&) final;
     Vector<RetainPtr<id>> accessibilityChildren() final;
 
+    WebCore::ModelPlayerIdentifier m_id;
     WeakPtr<WebPage> m_page;
     WeakPtr<WebCore::ModelPlayerClient> m_client;
 };

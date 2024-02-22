@@ -4764,7 +4764,7 @@
 		2DA8153628A4939700CF811C /* ModelProcessProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ModelProcessProxy.cpp; sourceTree = "<group>"; };
 		2DA8153728A4939700CF811C /* ModelProcessProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ModelProcessProxy.messages.in; sourceTree = "<group>"; };
 		2DA8153B28A6430D00CF811C /* ModelProcessModelPlayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ModelProcessModelPlayer.h; sourceTree = "<group>"; };
-		2DA8153C28A6430D00CF811C /* ModelProcessModelPlayer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ModelProcessModelPlayer.mm; sourceTree = "<group>"; };
+		2DA8153C28A6430D00CF811C /* ModelProcessModelPlayer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ModelProcessModelPlayer.cpp; sourceTree = "<group>"; };
 		2DA944971884E4F000ED86DB /* NativeWebKeyboardEventIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NativeWebKeyboardEventIOS.mm; path = ios/NativeWebKeyboardEventIOS.mm; sourceTree = "<group>"; };
 		2DA944981884E4F000ED86DB /* NativeWebTouchEventIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NativeWebTouchEventIOS.mm; path = ios/NativeWebTouchEventIOS.mm; sourceTree = "<group>"; };
 		2DA944991884E4F000ED86DB /* WebIOSEventFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebIOSEventFactory.h; path = ios/WebIOSEventFactory.h; sourceTree = "<group>"; };
@@ -5803,6 +5803,15 @@
 		541A3D0B2B5F3948009CE0D6 /* GPUProcessConnectionInfo.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = GPUProcessConnectionInfo.serialization.in; sourceTree = "<group>"; };
 		541A3D0C2B5F3968009CE0D6 /* ModelProcessConnectionInfo.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ModelProcessConnectionInfo.serialization.in; sourceTree = "<group>"; };
 		54BBB5E22B732B2000BF1A8A /* Info-embedded.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-embedded.plist"; sourceTree = "<group>"; };
+		54BBB5F72B7C3FE200BF1A8A /* ModelProcessModelPlayerManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ModelProcessModelPlayerManager.cpp; sourceTree = "<group>"; };
+		54BBB5F82B7C3FE200BF1A8A /* ModelProcessModelPlayerManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ModelProcessModelPlayerManager.h; sourceTree = "<group>"; };
+		54BBB6032B7EBE3D00BF1A8A /* ModelProcessModelPlayerManagerProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ModelProcessModelPlayerManagerProxy.h; sourceTree = "<group>"; };
+		54BBB6042B7EBE3D00BF1A8A /* ModelProcessModelPlayerManagerProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ModelProcessModelPlayerManagerProxy.cpp; sourceTree = "<group>"; };
+		54BBB6052B7EBE3E00BF1A8A /* ModelProcessModelPlayerManagerProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ModelProcessModelPlayerManagerProxy.messages.in; sourceTree = "<group>"; };
+		54BBB6062B7ED58400BF1A8A /* ModelProcessModelPlayerProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ModelProcessModelPlayerProxy.h; sourceTree = "<group>"; };
+		54BBB6072B7ED58400BF1A8A /* ModelProcessModelPlayerProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ModelProcessModelPlayerProxy.messages.in; sourceTree = "<group>"; };
+		54BBB6082B7ED58400BF1A8A /* ModelProcessModelPlayerProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ModelProcessModelPlayerProxy.cpp; sourceTree = "<group>"; };
+		54BBB6092B80177C00BF1A8A /* ModelProcessModelPlayer.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ModelProcessModelPlayer.messages.in; sourceTree = "<group>"; };
 		5506409D2407160900AAE045 /* RemoteRenderingBackendProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteRenderingBackendProxy.cpp; sourceTree = "<group>"; };
 		5506409E2407160900AAE045 /* RemoteRenderingBackendProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteRenderingBackendProxy.h; sourceTree = "<group>"; };
 		5506409F2407196A00AAE045 /* RenderingBackendIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderingBackendIdentifier.h; sourceTree = "<group>"; };
@@ -10415,6 +10424,12 @@
 				2D56C1A428A367760081BD25 /* ModelProcess.messages.in */,
 				2D56C1A328A367760081BD25 /* ModelProcessCreationParameters.h */,
 				2D56C1A928A367760081BD25 /* ModelProcessCreationParameters.serialization.in */,
+				54BBB6042B7EBE3D00BF1A8A /* ModelProcessModelPlayerManagerProxy.cpp */,
+				54BBB6032B7EBE3D00BF1A8A /* ModelProcessModelPlayerManagerProxy.h */,
+				54BBB6052B7EBE3E00BF1A8A /* ModelProcessModelPlayerManagerProxy.messages.in */,
+				54BBB6082B7ED58400BF1A8A /* ModelProcessModelPlayerProxy.cpp */,
+				54BBB6062B7ED58400BF1A8A /* ModelProcessModelPlayerProxy.h */,
+				54BBB6072B7ED58400BF1A8A /* ModelProcessModelPlayerProxy.messages.in */,
 			);
 			path = ModelProcess;
 			sourceTree = "<group>";
@@ -10807,18 +10822,6 @@
 				2D9FB2122375209D0049F936 /* Info-OSX.plist */,
 			);
 			path = GPUService;
-			sourceTree = "<group>";
-		};
-		2DA8152E28A462B400CF811C /* Model */ = {
-			isa = PBXGroup;
-			children = (
-				2DA8152F28A462B400CF811C /* ModelProcessConnection.cpp */,
-				2DA8153128A462B400CF811C /* ModelProcessConnection.h */,
-				2DA8153228A462B400CF811C /* ModelProcessConnection.messages.in */,
-				2DA8153028A462B400CF811C /* ModelProcessConnectionInfo.h */,
-				541A3D0C2B5F3968009CE0D6 /* ModelProcessConnectionInfo.serialization.in */,
-			);
-			path = Model;
 			sourceTree = "<group>";
 		};
 		2DA8153428A4939700CF811C /* Model */ = {
@@ -13511,7 +13514,6 @@
 				0736B752260D039F00E06994 /* MediaSession */,
 				4A410F4119AF7B27002EBAB5 /* MediaStream */,
 				BC2B410A2732EF6500A2D191 /* Model */,
-				2DA8152E28A462B400CF811C /* Model */,
 				5105B0D2162F7A5E00E27709 /* Network */,
 				31099974146C8AA80029DEB9 /* Notifications (User) */,
 				1A6FB7AA11E64B4900DB1371 /* Plugins */,
@@ -14393,8 +14395,16 @@
 				BC2B410B2732EF7500A2D191 /* mac */,
 				7177AD5C2743D7A9002F103B /* ARKitInlinePreviewModelPlayer.h */,
 				7177AD5B2743D7A9002F103B /* ARKitInlinePreviewModelPlayer.mm */,
+				2DA8152F28A462B400CF811C /* ModelProcessConnection.cpp */,
+				2DA8153128A462B400CF811C /* ModelProcessConnection.h */,
+				2DA8153228A462B400CF811C /* ModelProcessConnection.messages.in */,
+				2DA8153028A462B400CF811C /* ModelProcessConnectionInfo.h */,
+				541A3D0C2B5F3968009CE0D6 /* ModelProcessConnectionInfo.serialization.in */,
+				2DA8153C28A6430D00CF811C /* ModelProcessModelPlayer.cpp */,
 				2DA8153B28A6430D00CF811C /* ModelProcessModelPlayer.h */,
-				2DA8153C28A6430D00CF811C /* ModelProcessModelPlayer.mm */,
+				54BBB6092B80177C00BF1A8A /* ModelProcessModelPlayer.messages.in */,
+				54BBB5F72B7C3FE200BF1A8A /* ModelProcessModelPlayerManager.cpp */,
+				54BBB5F82B7C3FE200BF1A8A /* ModelProcessModelPlayerManager.h */,
 				BC2B411B2732F66E00A2D191 /* WebModelPlayerProvider.cpp */,
 				BC2B411A2732F66E00A2D191 /* WebModelPlayerProvider.h */,
 			);

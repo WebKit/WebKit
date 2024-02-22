@@ -28,11 +28,13 @@
 
 #if ENABLE(MODEL_PROCESS)
 
-#include "GPUConnectionToWebProcessMessages.h"
 #include "Logging.h"
+#include "ModelConnectionToWebProcessMessages.h"
 #include "ModelProcessConnectionInfo.h"
 #include "ModelProcessConnectionMessages.h"
 #include "ModelProcessConnectionParameters.h"
+#include "ModelProcessModelPlayerManager.h"
+#include "ModelProcessModelPlayerMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebPage.h"
 #include "WebPageCreationParameters.h"
@@ -96,12 +98,14 @@ void ModelProcessConnection::invalidate()
 
 void ModelProcessConnection::didClose(IPC::Connection&)
 {
+    RELEASE_LOG(Process, "%p - ModelProcessConnection::didClose", this);
     auto protector = Ref { *this };
     WebProcess::singleton().modelProcessConnectionClosed(*this);
 
-    auto clients = m_clients;
-    for (auto& client : clients)
+    m_clients.forEach([this] (auto& client) {
         client.modelProcessConnectionDidClose(*this);
+    });
+    m_clients.clear();
 }
 
 void ModelProcessConnection::didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName)
@@ -110,6 +114,11 @@ void ModelProcessConnection::didReceiveInvalidMessage(IPC::Connection&, IPC::Mes
 
 bool ModelProcessConnection::dispatchMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
+    if (decoder.messageReceiverName() == Messages::ModelProcessModelPlayer::messageReceiverName()) {
+        WebProcess::singleton().modelProcessModelPlayerManager().didReceivePlayerMessage(connection, decoder);
+        return true;
+    }
+
     return false;
 }
 
@@ -143,18 +152,18 @@ bool ModelProcessConnection::waitForDidInitialize()
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
 void ModelProcessConnection::createVisibilityPropagationContextForPage(WebPage& page)
 {
-    connection().send(Messages::GPUConnectionToWebProcess::CreateVisibilityPropagationContextForPage(page.webPageProxyIdentifier(), page.identifier(), page.canShowWhileLocked()), { });
+    connection().send(Messages::ModelConnectionToWebProcess::CreateVisibilityPropagationContextForPage(page.webPageProxyIdentifier(), page.identifier(), page.canShowWhileLocked()), { });
 }
 
 void ModelProcessConnection::destroyVisibilityPropagationContextForPage(WebPage& page)
 {
-    connection().send(Messages::GPUConnectionToWebProcess::DestroyVisibilityPropagationContextForPage(page.webPageProxyIdentifier(), page.identifier()), { });
+    connection().send(Messages::ModelConnectionToWebProcess::DestroyVisibilityPropagationContextForPage(page.webPageProxyIdentifier(), page.identifier()), { });
 }
 #endif
 
 void ModelProcessConnection::configureLoggingChannel(const String& channelName, WTFLogChannelState state, WTFLogLevel level)
 {
-    connection().send(Messages::GPUConnectionToWebProcess::ConfigureLoggingChannel(channelName, state, level), { });
+    connection().send(Messages::ModelConnectionToWebProcess::ConfigureLoggingChannel(channelName, state, level), { });
 }
 
 } // namespace WebKit

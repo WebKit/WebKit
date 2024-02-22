@@ -128,6 +128,7 @@ class InjectedBundle;
 class LibWebRTCCodecs;
 class LibWebRTCNetwork;
 class ModelProcessConnection;
+class ModelProcessModelPlayerManager;
 class NetworkProcessConnection;
 class ObjCObjectGraph;
 class RemoteCDMFactory;
@@ -344,7 +345,9 @@ public:
     void prefetchDNS(const String&);
 
     WebAutomationSessionProxy* automationSessionProxy() { return m_automationSessionProxy.get(); }
-
+#if ENABLE(MODEL_PROCESS)
+    ModelProcessModelPlayerManager& modelProcessModelPlayerManager() { return m_modelProcessModelPlayerManager.get(); }
+#endif
     WebCacheStorageProvider& cacheStorageProvider() { return m_cacheStorageProvider.get(); }
     WebBadgeClient& badgeClient() { return m_badgeClient.get(); }
 #if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
@@ -733,6 +736,7 @@ private:
 #endif
 
 #if ENABLE(MODEL_PROCESS)
+    Ref<ModelProcessModelPlayerManager> m_modelProcessModelPlayerManager;
     RefPtr<ModelProcessConnection> m_modelProcessConnection;
 #endif
 

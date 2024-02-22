@@ -193,6 +193,11 @@ set(WebKit_MESSAGES_IN_FILES
     GPUProcess/webrtc/RemoteSampleBufferDisplayLayer
     GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager
 
+    ModelProcess/ModelConnectionToWebProcess
+    ModelProcess/ModelProcess
+    ModelProcess/ModelProcessModelPlayerManagerProxy
+    ModelProcess/ModelProcessModelPlayerProxy
+
     NetworkProcess/Cookies/WebCookieManager
 
     NetworkProcess/NetworkBroadcastChannelRegistry
@@ -254,6 +259,8 @@ set(WebKit_MESSAGES_IN_FILES
 
     UIProcess/GPU/GPUProcessProxy
 
+    UIProcess/Model/ModelProcessProxy
+
     UIProcess/Inspector/RemoteWebInspectorUIProxy
     UIProcess/Inspector/WebInspectorUIProxy
 
@@ -303,6 +310,9 @@ set(WebKit_MESSAGES_IN_FILES
     WebProcess/Inspector/WebInspectorUI
 
     WebProcess/MediaSession/RemoteMediaSessionCoordinator
+
+    WebProcess/Model/ModelProcessConnection
+    WebProcess/Model/ModelProcessModelPlayer
 
     WebProcess/Network/webrtc/LibWebRTCNetwork
     WebProcess/Network/webrtc/RTCDataChannelRemoteManager

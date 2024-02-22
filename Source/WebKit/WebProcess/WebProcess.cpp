@@ -34,6 +34,7 @@
 #include "InjectedBundle.h"
 #include "LibWebRTCNetwork.h"
 #include "Logging.h"
+#include "ModelProcessModelPlayerManager.h"
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkProcessConnection.h"
 #include "NetworkProcessConnectionInfo.h"
@@ -291,6 +292,9 @@ WebProcess::WebProcess()
     : m_webLoaderStrategy(*new WebLoaderStrategy)
 #if PLATFORM(COCOA) && USE(LIBWEBRTC) && ENABLE(WEB_CODECS)
     , m_remoteVideoCodecFactory(*this)
+#endif
+#if ENABLE(MODEL_PROCESS)
+    , m_modelProcessModelPlayerManager(ModelProcessModelPlayerManager::create())
 #endif
     , m_cacheStorageProvider(WebCacheStorageProvider::create())
     , m_badgeClient(WebBadgeClient::create())

@@ -40,6 +40,7 @@
 #include <wtf/Logger.h>
 #include <wtf/MachSendRight.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/WeakPtr.h>
 
 #if ENABLE(IPC_TESTING_API)
 #include "IPCTester.h"
@@ -58,21 +59,30 @@ class SecurityOriginData;
 namespace WebKit {
 
 class ModelProcess;
+class ModelProcessModelPlayerManagerProxy;
 struct ModelProcessConnectionParameters;
 
 class ModelConnectionToWebProcess
     : public ThreadSafeRefCounted<ModelConnectionToWebProcess, WTF::DestructionThread::Main>
+    , public CanMakeWeakPtr<ModelConnectionToWebProcess>
     , IPC::Connection::Client {
 public:
     static Ref<ModelConnectionToWebProcess> create(ModelProcess&, WebCore::ProcessIdentifier, PAL::SessionID, IPC::Connection::Handle&&, ModelProcessConnectionParameters&&);
     virtual ~ModelConnectionToWebProcess();
 
+    using CanMakeWeakPtr<ModelConnectionToWebProcess>::weakPtrFactory;
+    using CanMakeWeakPtr<ModelConnectionToWebProcess>::WeakValueType;
+    using CanMakeWeakPtr<ModelConnectionToWebProcess>::WeakPtrImplType;
+
     IPC::Connection& connection() { return m_connection.get(); }
+    Ref<IPC::Connection> protectedConnection() { return m_connection; }
     IPC::MessageReceiverMap& messageReceiverMap() { return m_messageReceiverMap; }
     ModelProcess& modelProcess() { return m_modelProcess.get(); }
     WebCore::ProcessIdentifier webProcessIdentifier() const { return m_webProcessIdentifier; }
 
     PAL::SessionID sessionID() const { return m_sessionID; }
+
+    ModelProcessModelPlayerManagerProxy& modelProcessModelPlayerManagerProxy() { return m_modelProcessModelPlayerManagerProxy.get(); }
 
     Logger& logger();
 
@@ -104,6 +114,8 @@ private:
     bool dispatchSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
 
     static uint64_t gObjectCountForTesting;
+
+    UniqueRef<ModelProcessModelPlayerManagerProxy> m_modelProcessModelPlayerManagerProxy;
 
     RefPtr<Logger> m_logger;
 

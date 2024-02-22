@@ -122,6 +122,7 @@ template: struct WebCore::HTMLMediaElementIdentifierType
 template: struct WebCore::MediaKeySystemRequestIdentifierType
 template: struct WebCore::MediaPlayerIdentifierType
 template: struct WebCore::MediaSessionIdentifierType
+template: struct WebCore::ModelPlayerIdentifierType
 template: struct WebCore::PageIdentifierType
 template: struct WebCore::PlatformLayerIdentifierType
 template: struct WebCore::PlaybackTargetClientContextIdentifierType
