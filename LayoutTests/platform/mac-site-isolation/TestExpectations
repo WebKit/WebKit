@@ -3,7 +3,6 @@
 ##########################################################################
 # Root directories skipped until we can make test expectations for them: #
 ##########################################################################
-accessibility [ Skip ]
 accessibility-isolated-tree [ Skip ]
 animations [ Skip ]
 applicationmanifest [ Skip ]
@@ -247,7 +246,10 @@ workers [ Skip ]
 
 ##########################################################################
 # Tests that crash (or at least crashed when we initially skipped them): #
+# [ Skip ] to avoid running all these tests until verification is needed #
 ##########################################################################
+accessibility/model-element-attributes.html [ Skip ]
+accessibility/multiple-attribute-change-crash.html [ Skip ]
 http/tests/contentextensions/block-everything-unless-domain-iframe.html [ Skip ]
 http/tests/contentextensions/block-everything-unless-domain.html [ Skip ]
 http/tests/contentextensions/block-private-click-measurement.html [ Skip ]
@@ -392,7 +394,10 @@ imported/w3c/web-platform-tests/html/browsers/the-window-object/named-access-on-
 
 ###############################################################################
 # Tests that time out (or at least timed out when we initially skipped them): #
+# [ Skip ] to avoid running all these tests until verification is needed      #
 ###############################################################################
+accessibility/aria-menubar-menuitems.html [ Skip ]
+accessibility/mac/spinbutton-valuedescription.html [ Skip ]
 http/tests/cache/xhr-vary-header.html [ Skip ]
 http/tests/cookies/same-site/fetch-in-cross-origin-page.html [ Skip ]
 http/tests/cookies/same-site/fetch-in-cross-origin-service-worker.html [ Skip ]
@@ -500,6 +505,16 @@ imported/w3c/web-platform-tests/html/browsers/windows/targeting-cross-origin-nes
 ########################################################################
 # Tests that run to completion but indicate differences we need to fix #
 ########################################################################
+accessibility/datalist.html [ Pass ImageOnlyFailure ]
+accessibility/img-alt-tag-only-whitespace.html [ Pass ImageOnlyFailure ]
+accessibility/mac/basic-embed-pdf-accessibility.html [ ImageOnlyFailure ]
+accessibility/mac/iframe-pdf.html [ ImageOnlyFailure ]
+accessibility/mac/media-role-descriptions.html [ Pass ImageOnlyFailure ]
+accessibility/mac/scrolling-in-pdf-crash.html [ Pass ImageOnlyFailure ]
+accessibility/mac/webkit-scrollarea-position.html [ Pass ImageOnlyFailure ]
+accessibility/model-element-attributes.html [ Pass ImageOnlyFailure ]
+accessibility/progressbar.html [ Pass ImageOnlyFailure ]
+accessibility/tree-update-with-dirty-layout.html [ Pass ImageOnlyFailure ]
 http/tests/IndexedDB/collect-IDB-objects.https.html [ ImageOnlyFailure Failure ]
 http/tests/cache-storage/cache-clearing-origin.https.html [ ImageOnlyFailure Failure ]
 http/tests/cache-storage/cache-origins.https.html [ ImageOnlyFailure Failure ]
