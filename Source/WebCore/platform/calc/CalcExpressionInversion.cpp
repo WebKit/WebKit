@@ -42,7 +42,8 @@ void CalcExpressionInversion::dump(TextStream& ts) const
 
 bool CalcExpressionInversion::operator==(const CalcExpressionNode& other) const
 {
-    return is<CalcExpressionInversion>(other) && *this == downcast<CalcExpressionInversion>(other);
+    auto otherExpressionInversion = dynamicDowncast<CalcExpressionInversion>(other);
+    return otherExpressionInversion && *this == *otherExpressionInversion;
 }
 
 bool operator==(const CalcExpressionInversion& a, const CalcExpressionInversion& b)
