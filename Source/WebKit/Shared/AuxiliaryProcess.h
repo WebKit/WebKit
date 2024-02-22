@@ -108,8 +108,6 @@ public:
     bool parentProcessHasEntitlement(ASCIILiteral entitlement);
 #endif
 
-    static void setNotifyOptions();
-
 protected:
     explicit AuxiliaryProcess();
     virtual ~AuxiliaryProcess();
