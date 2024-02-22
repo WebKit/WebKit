@@ -2784,8 +2784,8 @@ webkit.org/b/177366 http/tests/security/frameNavigation/sandbox-ALLOWED-top-navi
 webkit.org/b/177395 fast/mediastream/RTCPeerConnection-overloaded-operations.html [ Pass Failure ]
 fast/mediastream/getUserMedia-webaudio.html [ Pass Failure ]
 fast/mediastream/getUserMedia-grant-persistency3.html [ Pass Failure ]
+
 # These tests are timing out and should be investigated.
-fast/mediastream/device-change-event-2.html [ Skip ]
 fast/mediastream/get-display-media-muted.html [ Skip ]
 fast/mediastream/media-stream-page-muted.html [ Skip ]
 fast/mediastream/MediaStream-add-ended-tracks.html [ Skip ]
@@ -3409,10 +3409,6 @@ webkit.org/b/222844 imported/blink/compositing/draws-content/webgl-simple-backgr
 fast/text/line-break-with-locale.html [ ImageOnlyFailure ]
 
 webkit.org/b/229154 webrtc/peer-connection-audio-mute2.html [ Pass Failure ]
-
-# Skip WebXR tests on iOS
-imported/w3c/web-platform-tests/webxr [ Skip ]
-http/wpt/webxr [ Skip ]
 
 # WebM is not supported on iOS
 http/tests/media/video-webm-stall.html [ Skip ]
