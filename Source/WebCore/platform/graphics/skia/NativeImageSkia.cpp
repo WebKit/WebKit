@@ -40,8 +40,15 @@ IntSize PlatformImageNativeImageBackend::size() const
 
 bool PlatformImageNativeImageBackend::hasAlpha() const
 {
-    notImplemented();
-    return true;
+    switch (m_platformImage->imageInfo().alphaType()) {
+    case kUnknown_SkAlphaType:
+    case kOpaque_SkAlphaType:
+        return false;
+    case kPremul_SkAlphaType:
+    case kUnpremul_SkAlphaType:
+        return true;
+    }
+    return false;
 }
 
 DestinationColorSpace PlatformImageNativeImageBackend::colorSpace() const
