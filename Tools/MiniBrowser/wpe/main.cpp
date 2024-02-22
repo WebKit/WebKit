@@ -141,6 +141,14 @@ static gboolean wpeViewEventCallback(WPEView* view, WPEEvent* event, WebKitWebVi
             webkit_web_view_go_forward(webView);
             return TRUE;
         }
+
+        if (keyval == WPE_KEY_Up) {
+            if (wpe_view_get_state(view) & WPE_VIEW_STATE_MAXIMIZED)
+                wpe_view_unmaximize(view);
+            else
+                wpe_view_maximize(view);
+            return TRUE;
+        }
     }
 
     if (keyval == WPE_KEY_F11) {

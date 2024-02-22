@@ -53,6 +53,8 @@ struct _WPEViewClass
     WPEMonitor *(* get_monitor)                   (WPEView    *view);
     gboolean    (* set_fullscreen)                (WPEView    *view,
                                                    gboolean    fullscreen);
+    gboolean    (* set_maximized)                 (WPEView    *view,
+                                                   gboolean    maximized);
     GList      *(* get_preferred_dma_buf_formats) (WPEView    *view);
     void        (* set_cursor_from_name)          (WPEView    *view,
                                                    const char *name);
@@ -69,12 +71,16 @@ struct _WPEViewClass
 
 /**
  * WPEViewState:
+ * @WPE_VIEW_STATE_NONE: the view is in normal state
+ * @WPE_VIEW_STATE_FULLSCREEN: the view is fullscreen
+ * @WPE_VIEW_STATE_MAXIMIZED: the view is maximized
  *
  * The current state of the view.
  */
 typedef enum {
     WPE_VIEW_STATE_NONE = 0,
     WPE_VIEW_STATE_FULLSCREEN = (1 << 0),
+    WPE_VIEW_STATE_MAXIMIZED = (1 << 1)
 } WPEViewState;
 
 #define WPE_VIEW_ERROR (wpe_view_error_quark())
@@ -120,6 +126,8 @@ WPE_API void         wpe_view_set_state                     (WPEView     *view,
 WPE_API WPEMonitor  *wpe_view_get_monitor                   (WPEView     *view);
 WPE_API gboolean     wpe_view_fullscreen                    (WPEView     *view);
 WPE_API gboolean     wpe_view_unfullscreen                  (WPEView     *view);
+WPE_API gboolean     wpe_view_maximize                      (WPEView     *view);
+WPE_API gboolean     wpe_view_unmaximize                    (WPEView     *view);
 WPE_API gboolean     wpe_view_render_buffer                 (WPEView     *view,
                                                              WPEBuffer   *buffer,
                                                              GError     **error);

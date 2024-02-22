@@ -153,18 +153,50 @@ struct _WPEViewWaylandPrivate {
         std::optional<uint32_t> height;
         WPEViewState state { WPE_VIEW_STATE_NONE };
     } pendingState;
+
+    struct {
+        std::optional<uint32_t> width;
+        std::optional<uint32_t> height;
+    } savedSize;
 };
 WEBKIT_DEFINE_FINAL_TYPE(WPEViewWayland, wpe_view_wayland, WPE_TYPE_VIEW, WPEView)
+
+static void wpeViewWaylandSaveSize(WPEView* view)
+{
+    auto state = wpe_view_get_state(view);
+    if (state & (WPE_VIEW_STATE_FULLSCREEN | WPE_VIEW_STATE_MAXIMIZED))
+        return;
+
+    auto* priv = WPE_VIEW_WAYLAND(view)->priv;
+    priv->savedSize.width = wpe_view_get_width(view);
+    priv->savedSize.height = wpe_view_get_height(view);
+}
 
 const struct xdg_surface_listener xdgSurfaceListener = {
     // configure
     [](void* data, struct xdg_surface* surface, uint32_t serial)
     {
-        auto* view = WPE_VIEW_WAYLAND(data);
-        if (view->priv->pendingState.width && view->priv->pendingState.height)
-            wpe_view_resize(WPE_VIEW(view), view->priv->pendingState.width.value(), view->priv->pendingState.height.value());
-        wpe_view_set_state(WPE_VIEW(view), view->priv->pendingState.state);
-        view->priv->pendingState = { };
+        auto* view = WPE_VIEW(data);
+        auto* priv = WPE_VIEW_WAYLAND(view)->priv;
+
+        bool isFixedSize = priv->pendingState.state & (WPE_VIEW_STATE_FULLSCREEN | WPE_VIEW_STATE_MAXIMIZED);
+        bool wasFixedSize = wpe_view_get_state(view) & (WPE_VIEW_STATE_FULLSCREEN | WPE_VIEW_STATE_MAXIMIZED);
+        auto width = priv->pendingState.width;
+        auto height = priv->pendingState.height;
+        bool useSavedSize = !width.has_value() && !height.has_value();
+        if (useSavedSize && !isFixedSize && wasFixedSize) {
+            width = priv->savedSize.width;
+            height = priv->savedSize.height;
+        }
+
+        if (width.has_value() && height.has_value()) {
+            if (!useSavedSize)
+                wpeViewWaylandSaveSize(view);
+            wpe_view_resize(view, width.value(), height.value());
+        }
+
+        wpe_view_set_state(view, priv->pendingState.state);
+        priv->pendingState = { };
         xdg_surface_ack_configure(surface, serial);
     },
 };
@@ -187,6 +219,9 @@ const struct xdg_toplevel_listener xdgToplevelListener = {
             switch (state) {
             case XDG_TOPLEVEL_STATE_FULLSCREEN:
                 pendingState |= WPE_VIEW_STATE_FULLSCREEN;
+                break;
+            case XDG_TOPLEVEL_STATE_MAXIMIZED:
+                pendingState |= WPE_VIEW_STATE_MAXIMIZED;
                 break;
             default:
                 break;
@@ -572,11 +607,29 @@ static gboolean wpeViewWaylandSetFullscreen(WPEView* view, gboolean fullscreen)
     if (!priv->xdgToplevel)
         return FALSE;
 
-    if (fullscreen)
+    if (fullscreen) {
+        wpeViewWaylandSaveSize(view);
         xdg_toplevel_set_fullscreen(priv->xdgToplevel, nullptr);
-    else
-        xdg_toplevel_unset_fullscreen(priv->xdgToplevel);
+        return TRUE;
+    }
 
+    xdg_toplevel_unset_fullscreen(priv->xdgToplevel);
+    return TRUE;
+}
+
+static gboolean wpeViewWaylandSetMaximized(WPEView* view, gboolean maximized)
+{
+    auto* priv = WPE_VIEW_WAYLAND(view)->priv;
+    if (!priv->xdgToplevel)
+        return FALSE;
+
+    if (maximized) {
+        wpeViewWaylandSaveSize(view);
+        xdg_toplevel_set_maximized(priv->xdgToplevel);
+        return TRUE;
+    }
+
+    xdg_toplevel_unset_maximized(priv->xdgToplevel);
     return TRUE;
 }
 
@@ -646,6 +699,7 @@ static void wpe_view_wayland_class_init(WPEViewWaylandClass* viewWaylandClass)
     viewClass->render_buffer = wpeViewWaylandRenderBuffer;
     viewClass->get_monitor = wpeViewWaylandGetMonitor;
     viewClass->set_fullscreen = wpeViewWaylandSetFullscreen;
+    viewClass->set_maximized = wpeViewWaylandSetMaximized;
     viewClass->get_preferred_dma_buf_formats = wpeViewWaylandGetPreferredDMABufFormats;
     viewClass->set_cursor_from_name = wpeViewWaylandSetCursorFromName;
     viewClass->set_cursor_from_bytes = wpeViewWaylandSetCursorFromBytes;

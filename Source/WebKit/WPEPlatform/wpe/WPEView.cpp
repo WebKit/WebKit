@@ -640,6 +640,44 @@ gboolean wpe_view_unfullscreen(WPEView* view)
 }
 
 /**
+ * wpe_view_maximize:
+ * @view: a #WPEView
+ *
+ * Request that the @view is maximized. If the view is already maximized this function
+ * does nothing.
+ *
+ * To track the state see #WPEView::state-changed
+ *
+ * Returns: %TRUE if maximize is supported, otherwise %FALSE
+ */
+gboolean wpe_view_maximize(WPEView* view)
+{
+    g_return_val_if_fail(WPE_IS_VIEW(view), FALSE);
+
+    auto* viewClass = WPE_VIEW_GET_CLASS(view);
+    return viewClass->set_maximized ? viewClass->set_maximized(view, TRUE) : FALSE;
+}
+
+/**
+ * wpe_view_unmaximize:
+ * @view: a #WPEView
+ *
+ * Request that the @view is unmaximized. If the view is not maximized this function
+ * does nothing.
+ *
+ * To track the state see #WPEView::state-changed
+ *
+ * Returns: %TRUE if maximize is supported, otherwise %FALSE
+ */
+gboolean wpe_view_unmaximize(WPEView* view)
+{
+    g_return_val_if_fail(WPE_IS_VIEW(view), FALSE);
+
+    auto* viewClass = WPE_VIEW_GET_CLASS(view);
+    return viewClass->set_maximized ? viewClass->set_maximized(view, FALSE) : FALSE;
+}
+
+/**
  * wpe_view_render_buffer:
  * @view: a #WPEView
  * @buffer: a #WPEBuffer to render
