@@ -196,6 +196,7 @@ enum class Feature
     HasShaderStencilOutput,
     HasStencilAutoResolve,
     HasTextureSwizzle,
+    HasVariableRasterizationRate,
     InitFragmentOutputVariables,
     InitializeCurrentVertexAttributes,
     InjectAsmStatementIntoLoopBodies,

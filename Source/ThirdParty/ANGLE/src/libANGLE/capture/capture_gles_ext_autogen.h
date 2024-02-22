@@ -991,6 +991,11 @@ angle::CallCapture CaptureGetTranslatedShaderSourceANGLE(const State &glState,
                                                          GLsizei *length,
                                                          GLchar *source);
 
+// GL_ANGLE_variable_rasterization_rate_metal
+angle::CallCapture CaptureBindMetalRasterizationRateMapANGLE(const State &glState,
+                                                             bool isCallValid,
+                                                             GLMTLRasterizationRateMapANGLE map);
+
 // GL_ANGLE_vulkan_image
 angle::CallCapture CaptureAcquireTexturesANGLE(const State &glState,
                                                bool isCallValid,

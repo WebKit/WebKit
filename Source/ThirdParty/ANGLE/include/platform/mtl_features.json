@@ -71,6 +71,13 @@
             ]
         },
         {
+            "name": "has_variable_rasterization_rate",
+            "category": "Features",
+            "description": [
+                "The renderer supports variable rasterization rate"
+            ]
+        },
+        {
             "name": "allow_inline_const_vertex_data",
             "category": "Features",
             "description": [
