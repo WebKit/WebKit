@@ -304,9 +304,6 @@ public:
 
     void setIsHoldingLockedFiles(bool);
 
-    ProcessThrottler& throttler() final { return m_throttler; }
-    const ProcessThrottler& throttler() const final { return m_throttler; }
-
     void isResponsive(CompletionHandler<void(bool isWebProcessResponsive)>&&);
     void isResponsiveWithLazyStop();
     void didReceiveBackgroundResponsivenessPing();
@@ -679,7 +676,6 @@ private:
     WeakHashSet<WebUserContentControllerProxy> m_webUserContentControllerProxies;
 
     int m_numberOfTimesSuddenTerminationWasDisabled;
-    ProcessThrottler m_throttler;
     std::unique_ptr<ProcessThrottler::BackgroundActivity> m_activityForHoldingLockedFiles;
     ForegroundWebProcessToken m_foregroundToken;
     BackgroundWebProcessToken m_backgroundToken;

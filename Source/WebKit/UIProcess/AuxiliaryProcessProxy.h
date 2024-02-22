@@ -67,7 +67,7 @@ class AuxiliaryProcessProxy
     WTF_MAKE_NONCOPYABLE(AuxiliaryProcessProxy);
 
 protected:
-    AuxiliaryProcessProxy(bool alwaysRunsAtBackgroundPriority = false, Seconds responsivenessTimeout = ResponsivenessTimer::defaultResponsivenessTimeout);
+    AuxiliaryProcessProxy(bool shouldTakeUIBackgroundAssertion, bool alwaysRunsAtBackgroundPriority = false, Seconds responsivenessTimeout = ResponsivenessTimer::defaultResponsivenessTimeout);
 
 public:
     using ResponsivenessTimer::Client::weakPtrFactory;
@@ -81,8 +81,8 @@ public:
     void connect();
     virtual void terminate();
 
-    virtual ProcessThrottler& throttler() = 0;
-    virtual const ProcessThrottler& throttler() const = 0;
+    ProcessThrottler& throttler() { return m_throttler; }
+    const ProcessThrottler& throttler() const { return m_throttler; }
 
     template<typename T> bool send(T&& message, uint64_t destinationID, OptionSet<IPC::SendOption> sendOptions = { });
 
@@ -275,6 +275,7 @@ private:
     WebCore::ProcessIdentifier m_processIdentifier { WebCore::ProcessIdentifier::generate() };
     std::optional<UseLazyStop> m_delayedResponsivenessCheck;
     MonotonicTime m_processStart;
+    ProcessThrottler m_throttler;
 #if USE(RUNNINGBOARD)
     ProcessThrottler::TimedActivity m_timedActivityForIPC;
 #if PLATFORM(MAC)

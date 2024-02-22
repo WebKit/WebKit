@@ -155,8 +155,7 @@ static String gpuProcessCachesDirectory()
 #endif
 
 GPUProcessProxy::GPUProcessProxy()
-    : AuxiliaryProcessProxy()
-    , m_throttler(*this, WebProcessPool::anyProcessPoolNeedsUIBackgroundAssertion())
+    : AuxiliaryProcessProxy(WebProcessPool::anyProcessPoolNeedsUIBackgroundAssertion())
 #if ENABLE(MEDIA_STREAM)
     , m_useMockCaptureDevices(MockRealtimeMediaSourceCenter::mockRealtimeMediaSourceCenterEnabled())
 #endif
@@ -589,16 +588,6 @@ void GPUProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
         return;
     }
     
-#if USE(RUNNINGBOARD)
-    m_throttler.didConnectToProcess(*this);
-#if USE(EXTENSIONKIT)
-    // FIXME: this should be moved to AuxiliaryProcessProxy::didFinishLaunching along with m_throttler.didConnectToProcess.
-    // This FIXME applies to all process proxy subclasses.
-    if (launcher)
-        launcher->releaseLaunchGrant();
-#endif
-#endif
-
 #if PLATFORM(COCOA)
     if (auto networkProcess = NetworkProcessProxy::defaultNetworkProcess())
         networkProcess->sendXPCEndpointToProcess(*this);
