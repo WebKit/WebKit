@@ -54,7 +54,12 @@
     RELEASE_ASSERT(input.length);
     RELEASE_ASSERT(handler);
 
-    auto *command = [self commandWithTitle:title image:image action:@selector(_performWithTarget:) input:input modifierFlags:modifierFlags propertyList:nil];
+    auto *propertyList = @{
+        @"title": title,
+        @"activation": input,
+    };
+
+    auto *command = [self commandWithTitle:title image:image action:@selector(_performWithTarget:) input:input modifierFlags:modifierFlags propertyList:propertyList];
     if (!command)
         return nil;
 
