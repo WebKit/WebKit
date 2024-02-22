@@ -32,6 +32,7 @@
 #include "CheckVisibilityOptions.h"
 #include "ComputedStyleExtractor.h"
 #include "Document.h"
+#include "DocumentTimeline.h"
 #include "FrameSnapshotting.h"
 #include "JSDOMPromise.h"
 #include "JSDOMPromiseDeferred.h"
@@ -41,6 +42,7 @@
 #include "StyleScope.h"
 #include "Styleable.h"
 #include "TypedElementDescendantIteratorInlines.h"
+#include "WebAnimation.h"
 
 namespace WebCore {
 
@@ -432,15 +434,28 @@ void ViewTransition::handleTransitionFrame()
     if (!documentElement)
         return;
 
-    bool hasActiveAnimations = documentElement->hasKeyframeEffects(Style::PseudoElementIdentifier { PseudoId::ViewTransition });
+    auto checkForActiveAnimations = [&](const Style::PseudoElementIdentifier& pseudoElementIdentifier) -> bool {
+        if (!documentElement->animations(pseudoElementIdentifier))
+            return false;
+
+        for (auto& animation : *documentElement->animations(pseudoElementIdentifier)) {
+            if (animation->playState() == WebAnimation::PlayState::Paused || animation->playState() == WebAnimation::PlayState::Running)
+                return true;
+            if (m_document->timeline().hasPendingAnimationEventForAnimation(animation))
+                return true;
+        }
+        return false;
+    };
+
+    bool hasActiveAnimations = checkForActiveAnimations({ PseudoId::ViewTransition });
 
     for (auto& name : namedElements().keys()) {
         if (hasActiveAnimations)
             break;
-        hasActiveAnimations = documentElement->hasKeyframeEffects(Style::PseudoElementIdentifier { PseudoId::ViewTransitionGroup, name })
-            || documentElement->hasKeyframeEffects(Style::PseudoElementIdentifier { PseudoId::ViewTransitionImagePair, name })
-            || documentElement->hasKeyframeEffects(Style::PseudoElementIdentifier { PseudoId::ViewTransitionNew, name })
-            || documentElement->hasKeyframeEffects(Style::PseudoElementIdentifier { PseudoId::ViewTransitionOld, name });
+        hasActiveAnimations = checkForActiveAnimations({ PseudoId::ViewTransitionGroup, name })
+            || checkForActiveAnimations({ PseudoId::ViewTransitionImagePair, name })
+            || checkForActiveAnimations({ PseudoId::ViewTransitionNew, name })
+            || checkForActiveAnimations({ PseudoId::ViewTransitionOld, name });
     }
 
     if (!hasActiveAnimations) {
@@ -529,19 +544,19 @@ void ViewTransition::updatePseudoElementStyles()
 {
     auto& resolver = protectedDocument()->styleScope().resolver();
 
-    for (auto& iter : m_namedElements.map()) {
+    for (auto& [name, capturedElement] : m_namedElements.map()) {
         RefPtr<MutableStyleProperties> properties;
-        if (iter.value->newElement)
-            properties = copyElementBaseProperties(*iter.value->newElement);
+        if (capturedElement->newElement)
+            properties = copyElementBaseProperties(*capturedElement->newElement);
         else
-            properties = iter.value->oldProperties;
+            properties = capturedElement->oldProperties;
 
         if (properties) {
-            if (!iter.value->groupStyleProperties) {
-                iter.value->groupStyleProperties = properties;
-                resolver.setViewTransitionStyles(CSSSelector::PseudoElement::ViewTransitionGroup, iter.key, *properties);
+            if (!capturedElement->groupStyleProperties) {
+                capturedElement->groupStyleProperties = properties;
+                resolver.setViewTransitionStyles(CSSSelector::PseudoElement::ViewTransitionGroup, name, *properties);
             } else
-                iter.value->groupStyleProperties->mergeAndOverrideOnConflict(*properties);
+                capturedElement->groupStyleProperties->mergeAndOverrideOnConflict(*properties);
         }
     }
 

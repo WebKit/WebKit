@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT validates that view-transition-name: unset or initial are ignored Test timed out
+PASS validates that view-transition-name: unset or initial are ignored
 

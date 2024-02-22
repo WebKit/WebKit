@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT style inheritance of pseudo elements Test timed out
+PASS style inheritance of pseudo elements
 

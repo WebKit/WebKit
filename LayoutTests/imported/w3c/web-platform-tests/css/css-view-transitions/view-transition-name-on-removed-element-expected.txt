@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT view-transition-name on an element removed by script should not be visited when discovering named elements Test timed out
+PASS view-transition-name on an element removed by script should not be visited when discovering named elements
 
