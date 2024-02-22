@@ -11908,7 +11908,7 @@ void WebPageProxy::requestAttachmentIcon(const String& identifier, const String&
     };
 
 #if PLATFORM(MAC)
-    if (RefPtr attachment = attachmentForIdentifier(identifier); attachment && attachment->contentType() == "public.directory"_s) {
+    if (RefPtr attachment = attachmentForIdentifier(identifier); attachment && attachment->shouldUseFileWrapperIconForDirectory()) {
         attachment->doWithFileWrapper([&, updateAttachmentIcon = WTFMove(updateAttachmentIcon)] (NSFileWrapper *fileWrapper) {
             if (updateIconForDirectory(fileWrapper, attachment->identifier()))
                 return;
@@ -11917,7 +11917,7 @@ void WebPageProxy::requestAttachmentIcon(const String& identifier, const String&
         });
         return;
     }
-#endif
+#endif // PLATFORM(MAC)
 
     updateAttachmentIcon();
 }
