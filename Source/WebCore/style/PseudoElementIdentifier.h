@@ -54,6 +54,22 @@ inline WTF::TextStream& operator<<(WTF::TextStream& ts, const PseudoElementIdent
     return ts;
 }
 
+inline bool isNamedViewTransitionPseudoElement(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
+{
+    if (!pseudoElementIdentifier)
+        return false;
+
+    switch (pseudoElementIdentifier->pseudoId) {
+    case PseudoId::ViewTransitionGroup:
+    case PseudoId::ViewTransitionImagePair:
+    case PseudoId::ViewTransitionOld:
+    case PseudoId::ViewTransitionNew:
+        return true;
+    default:
+        return false;
+    }
+};
+
 } // namespace WebCore
 
 namespace WTF {

@@ -2013,8 +2013,3 @@ webkit.org/b/269581 http/tests/site-isolation/mouse-events/context-menu-event-tw
 webkit.org/b/269814 [ Monterey+ ] media/media-source/media-source-seek-complete.html [ Pass Timeout ]
 
 webkit.org/b/123404489 [ Monterey+ Debug ] imported/w3c/web-platform-tests/media-source/dedicated-worker/mediasource-worker-detach-element.html [ Skip ]
-
-# webkit.org/b/269927 REGRESSION (275156@main): [ macOS Debug ] 3 tests in imported/w3c/web-platform-tests/css/css-view-transitions are constant crash
-[ Debug ] imported/w3c/web-platform-tests/css/css-view-transitions/backdrop-filter-animated.html [ Skip ]
-[ Debug ] imported/w3c/web-platform-tests/css/css-view-transitions/new-content-is-inline.html [ Skip ]
-[ Debug ] imported/w3c/web-platform-tests/css/css-view-transitions/old-content-is-inline.html [ Skip ]

@@ -41,6 +41,7 @@
 #include "KeyframeEffectStack.h"
 #include "ScriptExecutionContext.h"
 #include "StyleOriginatedAnimation.h"
+#include "ViewTransition.h"
 #include "WebAnimation.h"
 
 namespace WebCore {
@@ -60,7 +61,6 @@ static bool compareStyleOriginatedAnimationOwningElementPositionsInDocumentTreeO
     //     - any other pseudo-elements not mentioned specifically in this list, sorted in ascending order by the Unicode codepoints that make up each selector
     //     - ::after
     //     - element children
-    // FIXME: Tree order should account for the name argument of view transitions.
     enum SortingIndex : uint8_t { NotPseudo, Marker, Before, FirstLetter, FirstLine, GrammarError, Highlight, WebKitScrollbar, Selection, SpellingError, After, ViewTransition, ViewTransitionGroup, ViewTransitionImagePair, ViewTransitionOld, ViewTransitionNew, Other };
     auto sortingIndex = [](const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier) -> SortingIndex {
         if (!pseudoElementIdentifier)
@@ -107,6 +107,18 @@ static bool compareStyleOriginatedAnimationOwningElementPositionsInDocumentTreeO
     auto& bReferenceElement = b.element;
 
     if (&aReferenceElement == &bReferenceElement) {
+        if (isNamedViewTransitionPseudoElement(a.pseudoElementIdentifier) && isNamedViewTransitionPseudoElement(b.pseudoElementIdentifier) && a.pseudoElementIdentifier->nameArgument != b.pseudoElementIdentifier->nameArgument) {
+            RefPtr activeViewTransition = aReferenceElement.document().activeViewTransition();
+            ASSERT(activeViewTransition);
+            for (auto& key : activeViewTransition->namedElements().keys()) {
+                if (key == a.pseudoElementIdentifier->nameArgument)
+                    return true;
+                if (key == b.pseudoElementIdentifier->nameArgument)
+                    return false;
+            }
+            return false;
+        }
+
         auto aSortingIndex = sortingIndex(a.pseudoElementIdentifier);
         auto bSortingIndex = sortingIndex(b.pseudoElementIdentifier);
         ASSERT(aSortingIndex != bSortingIndex);
