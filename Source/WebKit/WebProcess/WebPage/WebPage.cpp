@@ -6357,6 +6357,9 @@ void WebPage::drawPagesToPDFImpl(FrameIdentifier frameID, const PrintInfo& print
         } else
 #endif
         {
+            if (!m_printContext)
+                return;
+
             size_t pageCount = m_printContext->pageCount();
             for (uint32_t page = first; page < first + count; ++page) {
                 if (page >= pageCount)
