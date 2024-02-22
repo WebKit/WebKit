@@ -2951,12 +2951,12 @@
 			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
 			remoteInfo = WebKit;
 		};
-		EB4E56612B16547200CDB9C6 /* PBXContainerItemProxy */ = {
+		F4B3F0492B86D28D00BFEBFC /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = C0CE72851247E66800BC0EC4;
-			remoteInfo = "Derived Sources";
+			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
+			remoteInfo = WebKit;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -17765,7 +17765,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				EB4E56622B16547200CDB9C6 /* PBXTargetDependency */,
+				F4B3F04A2B86D28D00BFEBFC /* PBXTargetDependency */,
 			);
 			name = WebKitSwift;
 			productName = WebKitSwift;
@@ -19719,7 +19719,9 @@
 		};
 		5C400E6A29DB8AB500446F6F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			platformFilter = ios;
+			platformFilters = (
+				ios,
+			);
 			target = 5C139DA129DB82E500D5117B /* WebContentCaptivePortalExtension */;
 			targetProxy = 5C400E6929DB8AB500446F6F /* PBXContainerItemProxy */;
 		};
@@ -19735,19 +19737,25 @@
 		};
 		5CE4B60729CEBB760038F565 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			platformFilter = ios;
+			platformFilters = (
+				ios,
+			);
 			target = 5CA5A2C929CBBA1A000F1046 /* WebContentExtension */;
 			targetProxy = 5CE4B60629CEBB760038F565 /* PBXContainerItemProxy */;
 		};
 		5CE4B62329CF880B0038F565 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			platformFilter = ios;
+			platformFilters = (
+				ios,
+			);
 			target = 5CE4B61529CF877F0038F565 /* GPUExtension */;
 			targetProxy = 5CE4B62229CF880B0038F565 /* PBXContainerItemProxy */;
 		};
 		5CE4B62529CF880B0038F565 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			platformFilter = ios;
+			platformFilters = (
+				ios,
+			);
 			target = 5CE4B60829CF87680038F565 /* NetworkingExtension */;
 			targetProxy = 5CE4B62429CF880B0038F565 /* PBXContainerItemProxy */;
 		};
@@ -19876,10 +19884,10 @@
 			target = 8DC2EF4F0486A6940098B216 /* WebKit */;
 			targetProxy = E3B746A62A9E586C0024BFAE /* PBXContainerItemProxy */;
 		};
-		EB4E56622B16547200CDB9C6 /* PBXTargetDependency */ = {
+		F4B3F04A2B86D28D00BFEBFC /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = C0CE72851247E66800BC0EC4 /* Derived Sources */;
-			targetProxy = EB4E56612B16547200CDB9C6 /* PBXContainerItemProxy */;
+			target = 8DC2EF4F0486A6940098B216 /* WebKit */;
+			targetProxy = F4B3F0492B86D28D00BFEBFC /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
