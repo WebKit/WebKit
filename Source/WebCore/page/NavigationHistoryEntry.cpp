@@ -26,7 +26,11 @@
 #include "config.h"
 #include "NavigationHistoryEntry.h"
 
+#include "FrameLoader.h"
+#include "HistoryController.h"
 #include "JSDOMGlobalObject.h"
+#include "LocalDOMWindow.h"
+#include "Navigation.h"
 #include "ScriptExecutionContext.h"
 #include "SerializedScriptValue.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
@@ -42,6 +46,7 @@ NavigationHistoryEntry::NavigationHistoryEntry(ScriptExecutionContext* context, 
     , m_key(WTF::UUID::createVersion4())
     , m_id(WTF::UUID::createVersion4())
     , m_associatedHistoryItem(historyItem)
+    , m_documentSequenceNumber(historyItem->documentSequenceNumber())
 {
 }
 
@@ -61,6 +66,30 @@ ScriptExecutionContext* NavigationHistoryEntry::scriptExecutionContext() const
 EventTargetInterface NavigationHistoryEntry::eventTargetInterface() const
 {
     return NavigationHistoryEntryEventTargetInterfaceType;
+}
+
+uint64_t NavigationHistoryEntry::index() const
+{
+    RefPtr document = dynamicDowncast<Document>(scriptExecutionContext());
+    if (!document || !document->domWindow())
+        return -1;
+    return document->domWindow()->navigation().entries().findIf([this] (auto& entry) {
+        return entry.ptr() == this;
+    });
+}
+
+// https://html.spec.whatwg.org/multipage/nav-history-apis.html#dom-navigationhistoryentry-samedocument
+bool NavigationHistoryEntry::sameDocument() const
+{
+    if (!m_documentSequenceNumber)
+        return false;
+    RefPtr document = dynamicDowncast<Document>(scriptExecutionContext());
+    if (!document || !document->frame())
+        return false;
+    RefPtr currentItem = document->frame()->loader().history().currentItem();
+    if (!currentItem)
+        return false;
+    return currentItem->documentSequenceNumber() == *m_documentSequenceNumber;
 }
 
 JSC::JSValue NavigationHistoryEntry::getState(JSDOMGlobalObject& globalObject) const

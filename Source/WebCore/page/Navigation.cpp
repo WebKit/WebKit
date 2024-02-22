@@ -231,7 +231,7 @@ Navigation::Result Navigation::traverseTo(const String& key, Options&&, Ref<Defe
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#dom-navigation-back
 Navigation::Result Navigation::back(Options&&, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished)
 {
-    if (!m_currentEntryIndex.value_or(0))
+    if (!canGoBack())
         return createErrorResult(committed, finished, ExceptionCode::InvalidStateError, "Cannot go back"_s);
 
     return performTraversal(m_entries[m_currentEntryIndex.value() - 1], committed, finished);
@@ -240,7 +240,7 @@ Navigation::Result Navigation::back(Options&&, Ref<DeferredPromise>&& committed,
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#dom-navigation-forward
 Navigation::Result Navigation::forward(Options&&, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished)
 {
-    if (!m_currentEntryIndex || m_currentEntryIndex.value() == m_entries.size())
+    if (!canGoForward())
         return createErrorResult(committed, finished, ExceptionCode::InvalidStateError, "Cannot go forward"_s);
 
     return performTraversal(m_entries[m_currentEntryIndex.value() + 1], committed, finished);
@@ -279,6 +279,5 @@ bool Navigation::hasEntriesAndEventsDisabled() const
         return true;
     return false;
 }
-
 
 } // namespace WebCore

@@ -39,7 +39,6 @@ class JSValue;
 namespace WebCore {
 
 class SerializedScriptValue;
-class HistoryItem;
 
 class NavigationHistoryEntry final : public RefCounted<NavigationHistoryEntry>, public EventTarget, public ContextDestructionObserver {
     WTF_MAKE_ISO_ALLOCATED(NavigationHistoryEntry);
@@ -53,8 +52,8 @@ public:
     const String& url() const { return m_url.string(); };
     String key() const { return m_key.toString(); };
     String id() const { return m_id.toString(); };
-    uint64_t index() const { return m_index; };
-    bool sameDocument() const { return m_sameDocument; };
+    uint64_t index() const;
+    bool sameDocument() const;
     JSC::JSValue getState(JSDOMGlobalObject&) const;
 
     void setState(RefPtr<SerializedScriptValue>&&);
@@ -71,10 +70,9 @@ private:
     const URL m_url;
     const WTF::UUID m_key;
     const WTF::UUID m_id;
-    uint64_t m_index;
     // TODO: Every entry is supposed to have an associated history item.
     std::optional<Ref<HistoryItem>> m_associatedHistoryItem;
-    bool m_sameDocument;
+    std::optional<long long> m_documentSequenceNumber;
 };
 
 } // namespace WebCore
