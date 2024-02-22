@@ -1,0 +1,4 @@
+label popover
+
+PASS Buttons with popovertarget should invoke targets even if there is a label in the button.
+

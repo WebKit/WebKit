@@ -2772,6 +2772,10 @@ imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-for-user-sc
 imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-mouse.html [ Skip ]
 
+imported/w3c/web-platform-tests/html/semantics/popovers/popover-top-layer-nesting.tentative.html [ Failure ]
+imported/w3c/web-platform-tests/html/semantics/popovers/popover-top-layer-nesting-hints.tentative.html [ Failure ]
+imported/w3c/web-platform-tests/html/semantics/popovers/popover-top-layer-nesting-anchor.tentative.html [ Failure ]
+
 #test uses test helper functions not implemented on WK1
 fast/dom/no-scroll-when-command-click-fragment-URL.html [ Skip ]
 

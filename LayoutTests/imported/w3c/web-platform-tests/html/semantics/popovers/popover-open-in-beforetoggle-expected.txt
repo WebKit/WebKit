@@ -1,0 +1,7 @@
+Outside
+
+FAIL Open popover from closing beforetoggle event assert_false: expected false got true
+FAIL Open double-nested popovers from closing beforetoggle event assert_false: expected false got true
+PASS Open double-nested popovers from closing beforetoggle event, dialog open
+PASS Open double-nested popovers from closing beforetoggle event, light dismiss
+

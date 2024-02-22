@@ -45,7 +45,6 @@ test(() => {
   // exception, so the return value is not testable.
 }, `togglePopover's return value should reflect what the end state is, not just the force parameter.`);
 
-	
 test(() => {
   const popover = document.createElement('div');
   document.body.appendChild(popover);
@@ -73,5 +72,8 @@ test(() => {
   popover.showPopover();
   // togglePopover(true) should not throw just because the popover is already showing.
   popover.togglePopover(true);
+
+  // cleanup
+  popover.hidePopover();
 }, 'togglePopover should throw an exception when there is no popover attribute.');
 </script>

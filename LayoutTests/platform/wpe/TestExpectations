@@ -1624,6 +1624,10 @@ webrtc/captureCanvas-webrtc-with-video-scaling-adaptation.html [ Failure Timeout
 webkit.org/b/268917 [ Debug ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletprocessor-promises.https.html [ Pass Crash ]
 webkit.org/b/268917 [ Debug ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletglobalscope-sample-rate.https.html [ Pass Crash ]
 
+imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus-2.html [ Failure ]
+imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus-harness.html [ Failure ]
+imported/w3c/web-platform-tests/html/semantics/popovers/popover-anchor-transition.tentative.tentative.html [ Failure ]
+
 compositing/filters/opacity-change-on-filtered-paints-into-ancestor.html [ ImageOnlyFailure ]
 compositing/geometry/composited-in-columns.html [ Failure ]
 compositing/geometry/limit-layer-bounds-transformed-overflow.html [ Failure ]

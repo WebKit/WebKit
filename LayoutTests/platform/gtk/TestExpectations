@@ -2485,6 +2485,10 @@ imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/mask-and-n
 fast/dom/no-scroll-when-command-click-fragment-URL.html [ Skip ]
 compositing/repaint/copy-forward-dirty-region-purged-backbuffer.html [ ImageOnlyFailure ]
 
+imported/w3c/web-platform-tests/html/semantics/popovers/popover-anchor-transition.tentative.tentative.html [ Failure ]
+imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus-2.html [ Failure ]
+imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus-harness.html [ Failure ]
+
 compositing/overflow/dynamic-composited-scrolling-status.html [ Failure ]
 http/tests/security/svg-image-with-cached-remote-image.html [ ImageOnlyFailure ]
 fast/scrolling/gtk/repeated-mouse-wheel-smooth.html [ Timeout ]
