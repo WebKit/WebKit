@@ -454,6 +454,31 @@ TEST(WKWebExtensionAPITabs, Update)
     [manager loadAndRun];
 }
 
+TEST(WKWebExtensionAPITabs, UpdateWithoutTabId)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const allWindows = await browser.windows.getAll({ populate: true })",
+        @"const activeTab = allWindows[0].tabs[0]",
+
+        @"browser.test.assertFalse(activeTab.mutedInfo.muted, 'The tab should not be initially muted')",
+
+        @"const updatedTab = await browser.tabs.update({",
+        @"  muted: true,",
+        @"})",
+
+        @"browser.test.assertTrue(updatedTab.mutedInfo.muted, 'The tab should be muted after update')",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    EXPECT_EQ(manager.get().defaultWindow.tabs.count, 1lu);
+
+    [manager loadAndRun];
+}
+
 TEST(WKWebExtensionAPITabs, Get)
 {
     auto *backgroundScript = Util::constructScript(@[

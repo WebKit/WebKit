@@ -686,7 +686,7 @@ void WebExtensionAPITabs::update(WebPage& page, double tabID, NSDictionary *prop
     if (!parseTabUpdateOptions(properties, parameters, @"properties", outExceptionString))
         return;
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::TabsUpdate(tabIdentifer.value(), WTFMove(parameters)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<std::optional<WebExtensionTabParameters>, WebExtensionError>&& result) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::TabsUpdate(page.webPageProxyIdentifier(), tabIdentifer, WTFMove(parameters)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<std::optional<WebExtensionTabParameters>, WebExtensionError>&& result) {
         if (!result) {
             callback->reportError(result.error());
             return;

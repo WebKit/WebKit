@@ -229,6 +229,51 @@ TEST(WKWebExtensionAPIAction, GetCurrentTabAndWindowFromPopupPage)
     [manager run];
 }
 
+TEST(WKWebExtensionAPIAction, UpdateTabFromPopupPage)
+{
+    auto *popupScript = Util::constructScript(@[
+        @"const tab = await browser.tabs.getCurrent()",
+        @"browser.test.assertEq(typeof tab, 'object', 'The tab should be')",
+        @"browser.test.assertTrue(tab.active, 'The current tab should be active')",
+
+        @"browser.test.assertFalse(tab.mutedInfo.muted, 'The tab should not be initially muted')",
+
+        @"const updatedTab = await browser.tabs.update({",
+        @"  muted: true,",
+        @"})",
+
+        @"browser.test.assertTrue(updatedTab.mutedInfo.muted, 'The tab should be muted after update')",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.yield('Test Popup Action')"
+    ]);
+
+    auto *resources = @{
+        @"background.js": backgroundScript,
+        @"popup.html": @"<script type='module' src='popup.js'></script>",
+        @"popup.js": popupScript
+    };
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    manager.get().internalDelegate.presentPopupForAction = ^(_WKWebExtensionAction *action) {
+        EXPECT_TRUE(action.presentsPopup);
+        EXPECT_NOT_NULL(action.popupWebView);
+    };
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Test Popup Action");
+
+    [manager.get().context performActionForTab:manager.get().defaultTab];
+
+    [manager run];
+}
+
 TEST(WKWebExtensionAPIAction, SetDefaultActionProperties)
 {
     auto *popupPage = @"<b>Hello World!</b>";

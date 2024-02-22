@@ -126,7 +126,7 @@ messages -> WebExtensionContext {
 
     // Tabs APIs
     TabsCreate(std::optional<WebKit::WebPageProxyIdentifier> webPageProxyIdentifier, WebKit::WebExtensionTabParameters creationParameters) -> (Expected<std::optional<WebKit::WebExtensionTabParameters>, WebKit::WebExtensionError> result)
-    TabsUpdate(WebKit::WebExtensionTabIdentifier tabIdentifier, WebKit::WebExtensionTabParameters updateParameters) -> (Expected<std::optional<WebKit::WebExtensionTabParameters>, WebKit::WebExtensionError> result)
+    TabsUpdate(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier, WebKit::WebExtensionTabParameters updateParameters) -> (Expected<std::optional<WebKit::WebExtensionTabParameters>, WebKit::WebExtensionError> result)
     TabsDuplicate(WebKit::WebExtensionTabIdentifier tabIdentifier, WebKit::WebExtensionTabParameters creationParameters) -> (Expected<std::optional<WebKit::WebExtensionTabParameters>, WebKit::WebExtensionError> result)
     TabsGet(WebKit::WebExtensionTabIdentifier tabIdentifier) -> (Expected<std::optional<WebKit::WebExtensionTabParameters>, WebKit::WebExtensionError> result)
     TabsGetCurrent(WebKit::WebPageProxyIdentifier webPageProxyIdentifier) -> (Expected<std::optional<WebKit::WebExtensionTabParameters>, WebKit::WebExtensionError> result)
