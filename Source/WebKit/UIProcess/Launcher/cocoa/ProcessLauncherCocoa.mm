@@ -177,10 +177,6 @@ void ProcessLauncher::launchProcess()
 #if USE(EXTENSIONKIT)
     auto handler = [](ThreadSafeWeakPtr<ProcessLauncher> weakProcessLauncher, ExtensionProcess&& process, ASCIILiteral name, NSError *error)
     {
-        if (!weakProcessLauncher.get()) {
-            process.invalidate();
-            return;
-        }
         if (error) {
             RELEASE_LOG_FAULT(Process, "Error launching process, description '%s', reason '%s'", String([error localizedDescription]).utf8().data(), String([error localizedFailureReason]).utf8().data());
 #if PLATFORM(IOS)
