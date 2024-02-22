@@ -111,19 +111,24 @@ private:
 
 static constexpr int maxSavedResults = 256;
 
-HTMLInputElement::HTMLInputElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form, bool createdByParser)
+HTMLInputElement::HTMLInputElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form, CreationType creationType)
     : HTMLTextFormControlElement(tagName, document, form)
-    , m_parsingInProgress(createdByParser)
+    , m_parsingInProgress(creationType == CreationType::ByParser)
     // m_inputType is lazily created when constructed by the parser to avoid constructing unnecessarily a text inputType,
     // just to destroy them when the |type| attribute gets set by the parser to something else than 'text'.
-    , m_inputType(createdByParser ? nullptr : RefPtr { TextInputType::create(*this) })
+    , m_inputType(creationType != CreationType::Normal ? nullptr : RefPtr { TextInputType::create(*this) })
 {
     ASSERT(hasTagName(inputTag));
 }
 
 Ref<HTMLInputElement> HTMLInputElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form, bool createdByParser)
 {
-    return adoptRef(*new HTMLInputElement(tagName, document, form, createdByParser));
+    return adoptRef(*new HTMLInputElement(tagName, document, form, createdByParser ? CreationType::ByParser : CreationType::Normal));
+}
+
+Ref<Element> HTMLInputElement::cloneElementWithoutAttributesAndChildren(Document& targetDocument)
+{
+    return adoptRef(*new HTMLInputElement(tagQName(), targetDocument, nullptr, CreationType::ByCloning));
 }
 
 HTMLImageLoader& HTMLInputElement::ensureImageLoader()
@@ -753,9 +758,8 @@ void HTMLInputElement::collectPresentationalHintsForAttribute(const QualifiedNam
     }
 }
 
-void HTMLInputElement::parserInitializeInputType()
+void HTMLInputElement::initializeInputTypeAfterParsingOrCloning()
 {
-    ASSERT(m_parsingInProgress);
     ASSERT(!m_inputType);
 
     auto& type = attributeWithoutSynchronization(typeAttr);
@@ -785,13 +789,13 @@ void HTMLInputElement::attributeChanged(const QualifiedName& name, const AtomStr
 
     switch (name.nodeName()) {
     case AttributeNames::typeAttr:
-        if (attributeModificationReason == AttributeModificationReason::Parser)
-            return; // parserSetAttributes have taken care of this
+        if (attributeModificationReason != AttributeModificationReason::Directly)
+            return; // initializeInputTypeAfterParsingOrCloning has taken care of this.
         updateType(newValue);
         break;
     case AttributeNames::valueAttr:
-        if (attributeModificationReason == AttributeModificationReason::Parser)
-            return; // parserSetAttributes have taken care of this
+        if (attributeModificationReason != AttributeModificationReason::Directly)
+            return; // initializeInputTypeAfterParsingOrCloning has taken care of this.
         // Changes to the value attribute may change whether or not this element has a default value.
         // If this field is autocomplete=off that might affect the return value of needsSuspensionCallback.
         if (m_autocomplete == Off) {
@@ -1129,7 +1133,8 @@ void HTMLInputElement::copyNonAttributePropertiesFromElement(const Element& sour
 
     updateValidity();
     setFormControlValueMatchesRenderer(false);
-    m_inputType->updateInnerTextValue();
+    if (m_inputType->hasCreatedShadowSubtree())
+        m_inputType->updateInnerTextValue();
 }
 
 String HTMLInputElement::value() const

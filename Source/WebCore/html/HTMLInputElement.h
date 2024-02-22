@@ -58,7 +58,7 @@ struct InputElementClickState {
 
 enum class WasSetByJavaScript : bool { No, Yes };
 
-class HTMLInputElement : public HTMLTextFormControlElement {
+class HTMLInputElement final : public HTMLTextFormControlElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLInputElement);
 public:
     static Ref<HTMLInputElement> create(const QualifiedName&, Document&, HTMLFormElement*, bool createdByParser);
@@ -345,14 +345,16 @@ public:
     bool isSwitchVisuallyOn() const;
     float switchAnimationPressedProgress() const;
 
-    void parserInitializeInputType();
+    void initializeInputTypeAfterParsingOrCloning();
 
-protected:
-    HTMLInputElement(const QualifiedName&, Document&, HTMLFormElement*, bool createdByParser);
+private:
+    enum class CreationType : uint8_t { Normal, ByParser, ByCloning };
+    HTMLInputElement(const QualifiedName&, Document&, HTMLFormElement*, CreationType);
 
     void defaultEventHandler(Event&) final;
 
-private:
+    Ref<Element> cloneElementWithoutAttributesAndChildren(Document&) override;
+
     enum AutoCompleteSetting : uint8_t { Uninitialized, On, Off };
     static constexpr int defaultSize = 20;
 
