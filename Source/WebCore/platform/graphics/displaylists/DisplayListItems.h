@@ -486,7 +486,7 @@ public:
     Ref<Filter> filter() const { return m_filter; }
 
     NO_RETURN_DUE_TO_ASSERT void apply(GraphicsContext&) const;
-    WEBCORE_EXPORT void apply(GraphicsContext&, ImageBuffer* sourceImage, FilterResults&);
+    WEBCORE_EXPORT void apply(GraphicsContext&, ImageBuffer* sourceImage, FilterResults&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
 
 private:
