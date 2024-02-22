@@ -9903,6 +9903,12 @@ void Context::textureFoveationParameters(TextureID texturePacked,
         state::ExtendedDirtyBitType::EXTENDED_DIRTY_BIT_FOVEATED_RENDERING);
 }
 
+void Context::bindMetalRasterizationRateMap(GLMTLRasterizationRateMapANGLE map)
+{
+    ANGLE_CONTEXT_TRY(mImplementation->bindMetalRasterizationRateMap(this, map));
+    getMutablePrivateState()->setVariableRasterizationRateMap(map);
+}
+
 // ErrorSet implementation.
 ErrorSet::ErrorSet(Debug *debug,
                    const angle::FrontendFeatures &frontendFeatures,

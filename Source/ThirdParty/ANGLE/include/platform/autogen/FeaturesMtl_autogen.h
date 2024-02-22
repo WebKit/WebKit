@@ -83,6 +83,13 @@ struct FeaturesMtl : FeatureSetBase
         &members,
     };
 
+    FeatureInfo hasVariableRasterizationRate = {
+        "hasVariableRasterizationRate",
+        FeatureCategory::MetalFeatures,
+        "The renderer supports variable rasterization rate",
+        &members,
+    };
+
     FeatureInfo allowInlineConstVertexData = {
         "allowInlineConstVertexData",
         FeatureCategory::MetalFeatures,

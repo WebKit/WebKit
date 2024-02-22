@@ -261,6 +261,7 @@ void ContextMtl::onDestroy(const gl::Context *context)
     mIncompleteTextures.onDestroy(context);
     mProvokingVertexHelper.onDestroy(this);
     mDummyXFBRenderTexture = nullptr;
+    mRasterizationRateMap.reset();
 
     mContextDevice.reset();
 }
@@ -1396,6 +1397,9 @@ void ContextMtl::updateExtendedState(const gl::State &glState,
             case gl::state::EXTENDED_DIRTY_BIT_POLYGON_OFFSET_LINE_ENABLED:
                 mDirtyBits.set(DIRTY_BIT_DEPTH_BIAS);
                 break;
+            case gl::state::EXTENDED_DIRTY_BIT_VARIABLE_RASTERIZATION_RATE:
+                mDirtyBits.set(DIRTY_BIT_VARIABLE_RASTERIZATION_RATE);
+                break;
             default:
                 break;
         }
@@ -1644,6 +1648,19 @@ angle::Result ContextMtl::memoryBarrierByRegion(const gl::Context *context, GLbi
     // NOTE(hqle): ES 3.0
     UNIMPLEMENTED();
     return angle::Result::Stop;
+}
+
+angle::Result ContextMtl::bindMetalRasterizationRateMap(gl::Context *context,
+                                                        GLMTLRasterizationRateMapANGLE map)
+{
+    id<MTLRasterizationRateMap> rateMap = (__bridge id<MTLRasterizationRateMap>)(map);
+    if (rateMap && rateMap.device != mContextDevice.get())
+    {
+        return angle::Result::Stop;
+    }
+
+    mRasterizationRateMap = std::move(rateMap);
+    return angle::Result::Continue;
 }
 
 // override mtl::ErrorHandler
@@ -2611,7 +2628,7 @@ angle::Result ContextMtl::setupDrawImpl(const gl::Context *context,
                 mRenderEncoder.setViewport(mViewport);
                 break;
             case DIRTY_BIT_SCISSOR:
-                mRenderEncoder.setScissorRect(mScissorRect);
+                mRenderEncoder.setScissorRect(mScissorRect, mRasterizationRateMap);
                 break;
             case DIRTY_BIT_DRAW_FRAMEBUFFER:
                 // Already handled.
@@ -2635,6 +2652,13 @@ angle::Result ContextMtl::setupDrawImpl(const gl::Context *context,
                 break;
             case DIRTY_BIT_RASTERIZER_DISCARD:
                 // Already handled.
+                break;
+            case DIRTY_BIT_VARIABLE_RASTERIZATION_RATE:
+                if (getState().privateState().isVariableRasterizationRateEnabled() &&
+                    mRasterizationRateMap)
+                {
+                    mRenderEncoder.setRasterizationRateMap(mRasterizationRateMap);
+                }
                 break;
             default:
                 UNREACHABLE();
