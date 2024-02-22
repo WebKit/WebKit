@@ -94,8 +94,7 @@ InspectorFrontendAPI = {
 
     showConsole: function()
     {
-        const requestedScope = null;
-        WI.showConsoleTab(requestedScope, {
+        WI.showConsoleTab({
             initiatorHint: WI.TabBrowser.TabNavigationInitiator.FrontendAPI,
         });
 
