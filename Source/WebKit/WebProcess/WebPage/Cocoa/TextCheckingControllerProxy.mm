@@ -99,7 +99,9 @@ std::optional<TextCheckingControllerProxy::RangeAndOffset> TextCheckingControlle
 
 void TextCheckingControllerProxy::replaceRelativeToSelection(const WebCore::AttributedString& annotatedString, int64_t selectionOffset, uint64_t length, uint64_t relativeReplacementLocation, uint64_t relativeReplacementLength)
 {
-    Ref frame = m_page.corePage()->checkedFocusController()->focusedOrMainFrame();
+    RefPtr frame = m_page.corePage()->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return;
     auto& frameSelection = frame->selection();
     if (!frameSelection.selection().isContentEditable())
         return;
