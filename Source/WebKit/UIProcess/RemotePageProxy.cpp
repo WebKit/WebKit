@@ -33,6 +33,7 @@
 #include "HandleMessage.h"
 #include "NativeWebMouseEvent.h"
 #include "NavigationActionData.h"
+#include "PageLoadState.h"
 #include "RemotePageDrawingAreaProxy.h"
 #include "RemotePageVisitedLinkStoreRegistration.h"
 #include "WebFrameProxy.h"
@@ -81,7 +82,7 @@ void RemotePageProxy::injectPageIntoNewProcess()
 
     auto parameters = page->creationParameters(m_process, *drawingArea);
     parameters.subframeProcessPageParameters = WebPageCreationParameters::SubframeProcessPageParameters {
-        URL(page->currentURL()),
+        URL(page->pageLoadState().url()),
         page->mainFrame()->frameTreeCreationParameters(),
         page->mainFrameWebsitePoliciesData() ? std::make_optional(*page->mainFrameWebsitePoliciesData()) : std::nullopt
     };
