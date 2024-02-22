@@ -123,6 +123,30 @@ inline bool JSArray::canDoFastIndexedAccess() const
     return true;
 }
 
+ALWAYS_INLINE bool JSArray::definitelyNegativeOneMiss() const
+{
+    JSGlobalObject* globalObject = this->globalObject();
+    if (!globalObject->arrayPrototypeChainIsSane())
+        return false;
+
+    if (!globalObject->arrayNegativeOneWatchpointSet().isStillValid())
+        return false;
+
+    Structure* structure = this->structure();
+    // This is the fast case. Many arrays will be an original array.
+    if (globalObject->isOriginalArrayStructure(structure))
+        return true;
+
+    if (getPrototypeDirect() != globalObject->arrayPrototype())
+        return false;
+
+    if (structure->seenProperties().bits())
+        return false;
+
+    return true;
+}
+
+
 ALWAYS_INLINE uint64_t toLength(JSGlobalObject* globalObject, JSObject* object)
 {
     VM& vm = globalObject->vm();

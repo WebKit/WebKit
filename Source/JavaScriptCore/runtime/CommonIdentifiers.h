@@ -395,6 +395,7 @@ namespace JSC {
         const Identifier underscoreProto;
         const Identifier useStrictIdentifier;
         const Identifier timesIdentifier;
+        const Identifier negativeOneIdentifier;
     private:
         std::unique_ptr<BuiltinNames> m_builtinNames;
 

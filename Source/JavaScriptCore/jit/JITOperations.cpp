@@ -3010,8 +3010,13 @@ ALWAYS_INLINE static JSValue getByVal(JSGlobalObject* globalObject, CallFrame* c
         }
 
         RELEASE_AND_RETURN(scope, baseValue.get(globalObject, i));
-    } else if (subscript.isNumber() && baseValue.isCell() && arrayProfile)
+    } else if (subscript.isNumber() && baseValue.isCell() && arrayProfile) {
         arrayProfile->setOutOfBounds();
+        if (subscript == jsNumber(-1)) {
+            if (auto* array = jsDynamicCast<JSArray*>(baseValue.asCell()); LIKELY(array && array->definitelyNegativeOneMiss()))
+                return jsUndefined();
+        }
+    }
 
     baseValue.requireObjectCoercible(globalObject);
     RETURN_IF_EXCEPTION(scope, JSValue());
@@ -3129,8 +3134,13 @@ ALWAYS_INLINE static JSValue getByValWithThis(JSGlobalObject* globalObject, Call
         }
 
         RELEASE_AND_RETURN(scope, baseValue.get(globalObject, i, slot));
-    } else if (subscript.isNumber() && baseValue.isCell() && arrayProfile)
+    } else if (subscript.isNumber() && baseValue.isCell() && arrayProfile) {
         arrayProfile->setOutOfBounds();
+        if (subscript == jsNumber(-1)) {
+            if (auto* array = jsDynamicCast<JSArray*>(baseValue.asCell()); LIKELY(array && array->definitelyNegativeOneMiss()))
+                return jsUndefined();
+        }
+    }
 
     baseValue.requireObjectCoercible(globalObject);
     RETURN_IF_EXCEPTION(scope, { });

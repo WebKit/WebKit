@@ -774,6 +774,13 @@ JSC_DEFINE_JIT_OPERATION(operationArithMaxMultipleDouble, double, (const double*
 ALWAYS_INLINE EncodedJSValue getByValCellInt(JSGlobalObject* globalObject, VM& vm, JSCell* base, int32_t index)
 {
     if (index < 0) {
+        // When index is negative, -1 is the most common case. Let's handle it separately.
+        if (LIKELY(index == -1)) {
+            if (auto* array = jsDynamicCast<JSArray*>(base); LIKELY(array && array->definitelyNegativeOneMiss()))
+                return JSValue::encode(jsUndefined());
+            return JSValue::encode(JSValue(base).get(globalObject, vm.propertyNames->negativeOneIdentifier));
+        }
+
         // Go the slowest way possible because negative indices don't use indexed storage.
         return JSValue::encode(JSValue(base).get(globalObject, Identifier::from(vm, index)));
     }
@@ -2345,6 +2352,13 @@ JSC_DEFINE_JIT_OPERATION(operationHasIndexedProperty, size_t, (JSGlobalObject* g
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     JSObject* object = baseCell->toObject(globalObject);
     if (UNLIKELY(subscript < 0)) {
+        // When subscript is negative, -1 is the most common case. Let's handle it separately.
+        if (LIKELY(subscript == -1)) {
+            if (auto* array = jsDynamicCast<JSArray*>(object); LIKELY(array && array->definitelyNegativeOneMiss()))
+                return false;
+            return object->hasProperty(globalObject, vm.propertyNames->negativeOneIdentifier);
+        }
+
         // Go the slowest way possible because negative indices don't use indexed storage.
         return object->hasProperty(globalObject, Identifier::from(vm, subscript));
     }
@@ -2358,6 +2372,13 @@ JSC_DEFINE_JIT_OPERATION(operationHasEnumerableIndexedProperty, size_t, (JSGloba
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     JSObject* object = baseCell->toObject(globalObject);
     if (UNLIKELY(subscript < 0)) {
+        // When subscript is negative, -1 is the most common case. Let's handle it separately.
+        if (LIKELY(subscript == -1)) {
+            if (auto* array = jsDynamicCast<JSArray*>(baseCell); LIKELY(array && array->definitelyNegativeOneMiss()))
+                return false;
+            return object->hasProperty(globalObject, vm.propertyNames->negativeOneIdentifier);
+        }
+
         // Go the slowest way possible because negative indices don't use indexed storage.
         return object->hasEnumerableProperty(globalObject, Identifier::from(vm, subscript));
     }

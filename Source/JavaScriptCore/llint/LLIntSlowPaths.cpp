@@ -1124,6 +1124,14 @@ static ALWAYS_INLINE JSValue getByVal(VM& vm, JSGlobalObject* globalObject, Code
 
         scope.release();
         return baseValue.get(globalObject, i);
+    } else if (subscript.isNumber() && baseValue.isCell()) {
+        auto& metadata = bytecode.metadata(codeBlock);
+        ArrayProfile* arrayProfile = &metadata.m_arrayProfile;
+        arrayProfile->setOutOfBounds();
+        if (subscript == jsNumber(-1)) {
+            if (auto* array = jsDynamicCast<JSArray*>(baseValue.asCell()); LIKELY(array && array->definitelyNegativeOneMiss()))
+                return jsUndefined();
+        }
     }
 
     baseValue.requireObjectCoercible(globalObject);

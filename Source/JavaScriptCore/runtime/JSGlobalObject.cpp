@@ -756,6 +756,26 @@ static ObjectPropertyCondition setupAdaptiveWatchpoint(JSGlobalObject* globalObj
     return condition;
 }
 
+static ObjectPropertyCondition setupAbsenceAdaptiveWatchpoint(JSGlobalObject* globalObject, JSObject* base, PropertyName propertyName, JSObject* prototype)
+{
+    // Performing these gets should not throw.
+    VM& vm = globalObject->vm();
+    DeferTerminationForAWhile deferScope(vm);
+    auto catchScope = DECLARE_CATCH_SCOPE(vm);
+    PropertySlot slot(base, PropertySlot::InternalMethodType::VMInquiry, &vm);
+    bool result = base->getOwnPropertySlot(base, globalObject, propertyName, slot);
+    RELEASE_ASSERT(!result);
+    catchScope.assertNoException();
+    RELEASE_ASSERT(slot.isUnset());
+    RELEASE_ASSERT(base->getPrototypeDirect() == (prototype ? JSValue(prototype) : jsNull()));
+    ObjectPropertyCondition condition = ObjectPropertyCondition::absence(vm, globalObject, base, propertyName.uid(), prototype);
+
+    bool isWatchable = condition.isWatchable(PropertyCondition::EnsureWatchability);
+    RELEASE_ASSERT(isWatchable); // We allow this to install the necessary watchpoints.
+
+    return condition;
+}
+
 template<ErrorType errorType>
 void JSGlobalObject::initializeErrorConstructor(LazyClassStructure::Initializer& init)
 {
@@ -1801,25 +1821,20 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
         m_regExpPrototypeSymbolReplaceWatchpoint->install(vm);
     }
     {
-        auto absenceCondition = [&](JSGlobalObject* globalObject, JSObject* base, PropertyName propertyName, JSObject* prototype) {
-            PropertySlot slot(base, PropertySlot::InternalMethodType::VMInquiry, &vm);
-            bool result = base->getOwnPropertySlot(base, globalObject, propertyName, slot);
-            RELEASE_ASSERT(!result);
-            catchScope.assertNoException();
-            RELEASE_ASSERT(slot.isUnset());
-            RELEASE_ASSERT(base->getPrototypeDirect() == (prototype ? JSValue(prototype) : jsNull()));
-            return ObjectPropertyCondition::absence(vm, globalObject, base, propertyName.uid(), prototype);
-        };
-        auto absenceStringPrototype = absenceCondition(this, m_stringPrototype.get(), vm.propertyNames->replaceSymbol, objectPrototype());
-        auto absenceObjectPrototype = absenceCondition(this, m_objectPrototype.get(), vm.propertyNames->replaceSymbol, nullptr);
-
-        RELEASE_ASSERT(absenceStringPrototype.isWatchable(PropertyCondition::EnsureWatchability));
+        auto absenceStringPrototype = setupAbsenceAdaptiveWatchpoint(this, m_stringPrototype.get(), vm.propertyNames->replaceSymbol, objectPrototype());
+        auto absenceObjectPrototype = setupAbsenceAdaptiveWatchpoint(this, m_objectPrototype.get(), vm.propertyNames->replaceSymbol, nullptr);
         m_stringPrototypeSymbolReplaceMissWatchpoint = makeUnique<ObjectAdaptiveStructureWatchpoint>(this, absenceStringPrototype, m_stringSymbolReplaceWatchpointSet);
         m_stringPrototypeSymbolReplaceMissWatchpoint->install(vm);
-
-        RELEASE_ASSERT(absenceObjectPrototype.isWatchable(PropertyCondition::EnsureWatchability));
         m_objectPrototypeSymbolReplaceMissWatchpoint = makeUnique<ObjectAdaptiveStructureWatchpoint>(this, absenceObjectPrototype, m_stringSymbolReplaceWatchpointSet);
         m_objectPrototypeSymbolReplaceMissWatchpoint->install(vm);
+    }
+    {
+        auto absenceArrayPrototype = setupAbsenceAdaptiveWatchpoint(this, m_arrayPrototype.get(), vm.propertyNames->negativeOneIdentifier, objectPrototype());
+        auto absenceObjectPrototype = setupAbsenceAdaptiveWatchpoint(this, m_objectPrototype.get(), vm.propertyNames->negativeOneIdentifier, nullptr);
+        m_arrayPrototypeNegativeOneMissWatchpoint = makeUnique<ObjectAdaptiveStructureWatchpoint>(this, absenceArrayPrototype, m_arrayNegativeOneWatchpointSet);
+        m_arrayPrototypeNegativeOneMissWatchpoint->install(vm);
+        m_objectPrototypeNegativeOneMissWatchpoint = makeUnique<ObjectAdaptiveStructureWatchpoint>(this, absenceObjectPrototype, m_arrayNegativeOneWatchpointSet);
+        m_objectPrototypeNegativeOneMissWatchpoint->install(vm);
     }
 
     installArraySpeciesWatchpoint();
