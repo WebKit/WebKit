@@ -124,7 +124,7 @@ class Configuration {
                 return 'C'
             return 'D';
         }
-        if (['L', 'T'].includes(match[2])) {
+        if (['L', 'O', 'T'].includes(match[2])) {
             const count = parseInt(match[3]);
             if (count < 400)
                 return 'E'
@@ -132,8 +132,6 @@ class Configuration {
         }
         if (['M', 'U'].includes(match[2]))
             return 'G';
-        if (match[2] == 'O')
-            return 'E';
 
         return '';
     }
