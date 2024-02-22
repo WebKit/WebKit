@@ -22,6 +22,7 @@
 
 #include "LayoutSize.h"
 #include "TranslateTransformOperation.h"
+#include <wtf/Scope.h>
 
 namespace Nicosia {
 
@@ -217,8 +218,20 @@ Animation& Animation::operator=(const Animation& other)
     return *this;
 }
 
-void Animation::apply(ApplicationResult& applicationResults, MonotonicTime time)
+void Animation::apply(ApplicationResult& applicationResults, MonotonicTime time, KeepInternalState keepInternalState)
 {
+    MonotonicTime oldLastRefreshedTime = m_lastRefreshedTime;
+    Seconds oldTotalRunningTime = m_totalRunningTime;
+    AnimationState oldState = m_state;
+
+    auto maybeRestoreInternalState = makeScopeExit([&] {
+        if (keepInternalState == KeepInternalState::Yes) {
+            m_lastRefreshedTime = oldLastRefreshedTime;
+            m_totalRunningTime = oldTotalRunningTime;
+            m_state = oldState;
+        }
+    });
+
     // Even when m_state == AnimationState::Stopped && !m_fillsForwards, we should calculate the last value to avoid a flash.
     // CoordinatedGraphicsScene will soon remove the stopped animation and update the value instead of this function.
 
@@ -263,19 +276,6 @@ void Animation::apply(ApplicationResult& applicationResults, MonotonicTime time)
     }
 }
 
-void Animation::applyKeepingInternalState(ApplicationResult& applicationResults, MonotonicTime time)
-{
-    MonotonicTime oldLastRefreshedTime = m_lastRefreshedTime;
-    Seconds oldTotalRunningTime = m_totalRunningTime;
-    AnimationState oldState = m_state;
-
-    apply(applicationResults, time);
-
-    m_lastRefreshedTime = oldLastRefreshedTime;
-    m_totalRunningTime = oldTotalRunningTime;
-    m_state = oldState;
-}
-
 void Animation::pause(Seconds time)
 {
     m_state = AnimationState::Paused;
@@ -306,9 +306,15 @@ Seconds Animation::computeTotalRunningTime(MonotonicTime time)
 void Animation::applyInternal(ApplicationResult& applicationResults, const AnimationValue& from, const AnimationValue& to, float progress)
 {
     switch (m_keyframes.property()) {
-    case AnimatedProperty::Transform:
-        applicationResults.transform = applyTransformAnimation(static_cast<const TransformAnimationValue&>(from).value(), static_cast<const TransformAnimationValue&>(to).value(), progress, m_boxSize);
+    case AnimatedProperty::Translate:
+    case AnimatedProperty::Rotate:
+    case AnimatedProperty::Scale:
+    case AnimatedProperty::Transform: {
+        ASSERT(applicationResults.transform);
+        auto transform = applyTransformAnimation(static_cast<const TransformAnimationValue&>(from).value(), static_cast<const TransformAnimationValue&>(to).value(), progress, m_boxSize);
+        applicationResults.transform->multiply(transform);
         return;
+    }
     case AnimatedProperty::Opacity:
         applicationResults.opacity = applyOpacityAnimation((static_cast<const FloatAnimationValue&>(from).value()), (static_cast<const FloatAnimationValue&>(to).value()), progress);
         return;
@@ -365,16 +371,65 @@ void Animations::resume()
         animation.resume();
 }
 
-void Animations::apply(Animation::ApplicationResult& applicationResults, MonotonicTime time)
+void Animations::apply(Animation::ApplicationResult& applicationResults, MonotonicTime time, Animation::KeepInternalState keepInternalState)
 {
-    for (auto& animation : m_animations)
-        animation.apply(applicationResults, time);
-}
+    Vector<Animation*> translateAnimations;
+    Vector<Animation*> rotateAnimations;
+    Vector<Animation*> scaleAnimations;
+    Vector<Animation*> transformAnimations;
+    Vector<Animation*> leafAnimations;
 
-void Animations::applyKeepingInternalState(Animation::ApplicationResult& applicationResults, MonotonicTime time)
-{
-    for (auto& animation : m_animations)
-        animation.applyKeepingInternalState(applicationResults, time);
+    for (auto& animation : m_animations) {
+        switch (animation.keyframes().property()) {
+        case AnimatedProperty::Translate:
+            translateAnimations.append(&animation);
+            break;
+        case AnimatedProperty::Rotate:
+            rotateAnimations.append(&animation);
+            break;
+        case AnimatedProperty::Scale:
+            scaleAnimations.append(&animation);
+            break;
+        case AnimatedProperty::Transform:
+            transformAnimations.append(&animation);
+            break;
+        default:
+            leafAnimations.append(&animation);
+        }
+    }
+
+    if (!translateAnimations.isEmpty() || !rotateAnimations.isEmpty() || !scaleAnimations.isEmpty() || !transformAnimations.isEmpty()) {
+        applicationResults.transform = TransformationMatrix();
+
+        if (translateAnimations.isEmpty())
+            applicationResults.transform->multiply(m_translate);
+        else {
+            for (auto* animation : translateAnimations)
+                animation->apply(applicationResults, time, keepInternalState);
+        }
+
+        if (rotateAnimations.isEmpty())
+            applicationResults.transform->multiply(m_rotate);
+        else {
+            for (auto* animation : rotateAnimations)
+                animation->apply(applicationResults, time, keepInternalState);
+        }
+
+        if (scaleAnimations.isEmpty())
+            applicationResults.transform->multiply(m_scale);
+        else {
+            for (auto* animation : scaleAnimations)
+                animation->apply(applicationResults, time, keepInternalState);
+        }
+
+        if (transformAnimations.isEmpty())
+            applicationResults.transform->multiply(m_transform);
+        else
+            transformAnimations.last()->apply(applicationResults, time, keepInternalState);
+    }
+
+    for (auto* animation : leafAnimations)
+        animation->apply(applicationResults, time, keepInternalState);
 }
 
 bool Animations::hasActiveAnimationsOfType(AnimatedProperty type) const
@@ -390,6 +445,32 @@ bool Animations::hasRunningAnimations() const
     return std::any_of(m_animations.begin(), m_animations.end(),
         [](const Animation& animation) {
             return animation.state() == Animation::AnimationState::Playing;
+        });
+}
+
+bool Animations::hasRunningTransformAnimations() const
+{
+    return std::any_of(m_animations.begin(), m_animations.end(),
+        [](const Animation& animation) {
+            switch (animation.keyframes().property()) {
+            case AnimatedProperty::Translate:
+            case AnimatedProperty::Rotate:
+            case AnimatedProperty::Scale:
+            case AnimatedProperty::Transform:
+                break;
+            default:
+                return false;
+            }
+
+            switch (animation.state()) {
+            case Animation::AnimationState::Playing:
+            case Animation::AnimationState::Paused:
+                break;
+            default:
+                return false;
+            }
+
+            return true;
         });
 }
 
