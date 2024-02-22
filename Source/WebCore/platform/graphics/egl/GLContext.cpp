@@ -85,6 +85,8 @@ bool GLContext::getEGLConfig(PlatformDisplay& platformDisplay, EGLConfig* config
     if (const char* environmentVariable = getenv("WEBKIT_EGL_PIXEL_LAYOUT")) {
         if (!strcmp(environmentVariable, "RGB565"))
             rgbaSize = { 5, 6, 5, 0 };
+        else if (!strcmp(environmentVariable, "XRGB8888"))
+            rgbaSize = { 8, 8, 8, 0 };         
         else
             WTFLogAlways("Unknown pixel layout %s, falling back to RGBA8888", environmentVariable);
     }
