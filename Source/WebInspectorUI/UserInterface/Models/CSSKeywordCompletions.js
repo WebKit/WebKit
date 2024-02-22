@@ -529,7 +529,7 @@ WI.CSSKeywordCompletions._propertyKeywordMap = {
         "a3", "a4", "a5", "b4", "b5", "landscape", "ledger", "legal", "letter", "portrait"
     ],
     "background": [
-        "none", "url()", "linear-gradient()", "radial-gradient()", "repeating-linear-gradient()", "repeating-radial-gradient()", "-webkit-canvas()", "cross-fade()", "image-set()",
+        "none", "url()", "linear-gradient()", "radial-gradient()", "conic-gradient()", "repeating-linear-gradient()", "repeating-radial-gradient()", "repeating-conic-gradient()", "-webkit-canvas()", "cross-fade()", "image-set()",
         "repeat", "repeat-x", "repeat-y", "no-repeat", "space", "round",
         "scroll", "fixed", "local",
         "auto", "contain", "cover",
