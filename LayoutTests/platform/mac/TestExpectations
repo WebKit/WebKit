@@ -2575,3 +2575,8 @@ imported/w3c/web-platform-tests/svg/painting/reftests/percentage.svg [ ImageOnly
 webkit.org/b/269852 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-edge-behavior.html [ ImageOnlyFailure ]
 
 webkit.org/b/269873 imported/w3c/web-platform-tests/webrtc-extensions/transfer-datachannel-service-worker.https.html [ Pass Failure ]
+
+# webkit.org/b/269955 (REGRESSION (274945@main): [ MacOS ] Multiple editing/selection tests are constant failures)
+[ Ventura ] editing/selection/3690703.html  [ Failure ]
+[ Ventura ] editing/selection/3690703-2.html  [ Failure ]
+[ Ventura ] editing/selection/3690719.html  [ Failure ]
