@@ -1212,7 +1212,7 @@ void InlineDisplayContentBuilder::applyRubyOverhang(InlineDisplay::Boxes& displa
                 auto expansion = afterRubyBaseDisplayBox.expansion();
                 auto inflateValue = afterOverhang + beforeOverhang;
                 afterRubyBaseDisplayBox.setExpansion({ expansion.behavior, expansion.horizontalExpansion + inflateValue });
-                afterRubyBaseDisplayBox.expandHorizontally(inflateValue);
+                isHorizontalWritingMode ? afterRubyBaseDisplayBox.expandHorizontally(inflateValue) : afterRubyBaseDisplayBox.expandVertically(inflateValue);
                 moveBoxRangeToVisualLeft(startEndPair.end(), startEndPair.end(), afterOverhang);
             } else
                 moveBoxRangeToVisualLeft(startEndPair.end(), displayBoxes.size() - 1, afterOverhang);
