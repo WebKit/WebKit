@@ -82,6 +82,12 @@ class Encoder;
 
 namespace WebKit {
 
+struct SubframeProcessPageParameters {
+    URL initialMainDocumentURL;
+    FrameTreeCreationParameters frameTreeParameters;
+    std::optional<WebsitePoliciesData> websitePoliciesData;
+};
+
 struct WebPageCreationParameters {
     WebCore::IntSize viewSize;
 
@@ -304,11 +310,6 @@ struct WebPageCreationParameters {
 
     WebCore::ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension { WebCore::ContentSecurityPolicyModeForExtension::None };
 
-    struct SubframeProcessPageParameters {
-        URL initialMainDocumentURL;
-        FrameTreeCreationParameters frameTreeParameters;
-        std::optional<WebsitePoliciesData> websitePoliciesData;
-    };
     std::optional<SubframeProcessPageParameters> subframeProcessPageParameters;
     std::optional<WebCore::FrameIdentifier> openerFrameIdentifier;
     std::optional<WebCore::FrameIdentifier> mainFrameIdentifier;

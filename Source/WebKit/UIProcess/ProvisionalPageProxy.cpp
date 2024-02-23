@@ -201,7 +201,7 @@ void ProvisionalPageProxy::initializeWebPage(RefPtr<API::WebsitePolicies>&& webs
     bool registerWithInspectorController { true };
     if (websitePolicies)
         m_mainFrameWebsitePoliciesData = makeUnique<WebsitePoliciesData>(websitePolicies->data());
-    auto parameters = m_page->creationParameters(m_process, *m_drawingArea, WTFMove(websitePolicies));
+    std::optional<WebCore::FrameIdentifier> mainFrameIdentifier;
 
     if (page().preferences().processSwapOnCrossSiteWindowOpenEnabled() || page().preferences().siteIsolationEnabled()) {
         // FIXME: <rdar://121241026> This is not elegant and not robust. It needs to be.
@@ -209,7 +209,7 @@ void ProvisionalPageProxy::initializeWebPage(RefPtr<API::WebsitePolicies>&& webs
         RefPtr openerFrame = m_page->openerFrame();
         RefPtr openerPage = openerFrame ? openerFrame->page() : nullptr;
         if (openerFrame)
-            parameters.mainFrameIdentifier = m_page->mainFrame()->frameID();
+            mainFrameIdentifier = m_page->mainFrame()->frameID();
         auto existingRemotePageProxy = m_page->takeRemotePageProxyInOpenerProcessIfDomainEquals(navigationDomain);
         if (!existingRemotePageProxy) {
             if ((existingRemotePageProxy = m_page->takeOpenedRemotePageProxyIfDomainEquals(navigationDomain)))
@@ -238,9 +238,8 @@ void ProvisionalPageProxy::initializeWebPage(RefPtr<API::WebsitePolicies>&& webs
         m_needsDidStartProvisionalLoad = false;
     }
 
-    parameters.isProcessSwap = true;
     if (sendPageCreationParameters) {
-        m_process->send(Messages::WebProcess::CreateWebPage(m_webPageID, WTFMove(parameters)), 0);
+        m_process->send(Messages::WebProcess::CreateWebPage(m_webPageID, m_page->creationParametersForProvisionalPage(m_process, *m_drawingArea, WTFMove(websitePolicies), WTFMove(mainFrameIdentifier))), 0);
         m_process->addVisitedLinkStoreUser(m_page->visitedLinkStore(), m_page->identifier());
     }
 

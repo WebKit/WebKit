@@ -241,7 +241,7 @@ headers: "ArgumentCoders.h"
 
     WebCore::ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension;
 
-    std::optional<WebKit::WebPageCreationParameters::SubframeProcessPageParameters> subframeProcessPageParameters;
+    std::optional<WebKit::SubframeProcessPageParameters> subframeProcessPageParameters;
     std::optional<WebCore::FrameIdentifier> openerFrameIdentifier;
     std::optional<WebCore::FrameIdentifier> mainFrameIdentifier;
 
@@ -259,7 +259,7 @@ headers: "ArgumentCoders.h"
 #endif
 }
 
-[Nested] struct WebKit::WebPageCreationParameters::SubframeProcessPageParameters {
+[Nested] struct WebKit::SubframeProcessPageParameters {
     URL initialMainDocumentURL;
     WebKit::FrameTreeCreationParameters frameTreeParameters;
     std::optional<WebKit::WebsitePoliciesData> websitePoliciesData;
