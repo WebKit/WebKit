@@ -4321,11 +4321,14 @@ MasonryEnabled:
   humanReadableDescription: "Enable Masonry Layout for CSS Grid"
   defaultValue:
     WebKitLegacy:
-      default: true
+      "PLATFORM(COCOA)": true
+      default: false
     WebKit:
-      default: true
+      "PLATFORM(COCOA)": true
+      default: false
     WebCore:
-      default: true
+      "PLATFORM(COCOA)": true
+      default: false
 
 MathMLEnabled:
   type: bool
