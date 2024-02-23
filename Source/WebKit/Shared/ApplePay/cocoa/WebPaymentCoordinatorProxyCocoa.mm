@@ -32,7 +32,6 @@
 #import "ApplePayPaymentSetupFeaturesWebKit.h"
 #import "AutomaticReloadPaymentRequest.h"
 #import "DeferredPaymentRequest.h"
-#import "DisbursementPaymentRequest.h"
 #import "PaymentSetupConfigurationWebKit.h"
 #import "PaymentTokenContext.h"
 #import "RecurringPaymentRequest.h"
@@ -121,7 +120,7 @@ static RetainPtr<NSSet> toPKContactFields(const WebCore::ApplePaySessionPaymentR
     return adoptNS([[NSSet alloc] initWithObjects:result.data() count:result.size()]);
 }
 
-PKMerchantCapability toPKMerchantCapabilities(const WebCore::ApplePaySessionPaymentRequest::MerchantCapabilities& merchantCapabilities)
+static PKMerchantCapability toPKMerchantCapabilities(const WebCore::ApplePaySessionPaymentRequest::MerchantCapabilities& merchantCapabilities)
 {
     PKMerchantCapability result = 0;
     if (merchantCapabilities.supports3DS)
@@ -132,10 +131,6 @@ PKMerchantCapability toPKMerchantCapabilities(const WebCore::ApplePaySessionPaym
         result |= PKMerchantCapabilityCredit;
     if (merchantCapabilities.supportsDebit)
         result |= PKMerchantCapabilityDebit;
-#if HAVE(PASSKIT_DISBURSEMENTS)
-    if (merchantCapabilities.supportsInstantFundsOut)
-        result |= PKMerchantCapabilityInstantFundsOut;
-#endif // HAVE(PASSKIT_DISBURSEMENTS)
 
     return result;
 }
