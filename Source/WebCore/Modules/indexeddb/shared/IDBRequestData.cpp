@@ -121,10 +121,9 @@ IDBResourceIdentifier IDBRequestData::requestIdentifier() const
     return m_requestIdentifier;
 }
 
-IDBResourceIdentifier IDBRequestData::transactionIdentifier() const
+std::optional<IDBResourceIdentifier> IDBRequestData::transactionIdentifier() const
 {
-    ASSERT(m_transactionIdentifier);
-    return *m_transactionIdentifier;
+    return m_transactionIdentifier;
 }
 
 IDBResourceIdentifier IDBRequestData::cursorIdentifier() const

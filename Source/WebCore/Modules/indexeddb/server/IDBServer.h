@@ -104,6 +104,7 @@ public:
 
 private:
     UniqueIDBDatabase& getOrCreateUniqueIDBDatabase(const IDBDatabaseIdentifier&);
+    UniqueIDBDatabaseTransaction* idbTransaction(const IDBRequestData&) const;
 
     void upgradeFilesIfNecessary();
     String upgradedDatabaseDirectory(const WebCore::IDBDatabaseIdentifier&);

@@ -187,13 +187,22 @@ void IDBServer::abortTransaction(const IDBResourceIdentifier& transactionIdentif
     transaction->abort();
 }
 
+UniqueIDBDatabaseTransaction* IDBServer::idbTransaction(const IDBRequestData& requestData) const
+{
+    auto transactionIdentifier = requestData.transactionIdentifier();
+    if (!transactionIdentifier)
+        return nullptr;
+
+    return m_transactions.get(*transactionIdentifier);
+}
+
 void IDBServer::createObjectStore(const IDBRequestData& requestData, const IDBObjectStoreInfo& info)
 {
     LOG(IndexedDB, "IDBServer::createObjectStore");
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    auto transaction = m_transactions.get(requestData.transactionIdentifier());
+    auto transaction = idbTransaction(requestData);
     if (!transaction)
         return;
 
@@ -207,7 +216,7 @@ void IDBServer::deleteObjectStore(const IDBRequestData& requestData, const Strin
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    auto transaction = m_transactions.get(requestData.transactionIdentifier());
+    auto transaction = idbTransaction(requestData);
     if (!transaction)
         return;
 
@@ -221,7 +230,7 @@ void IDBServer::renameObjectStore(const IDBRequestData& requestData, uint64_t ob
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    auto transaction = m_transactions.get(requestData.transactionIdentifier());
+    auto transaction = idbTransaction(requestData);
     if (!transaction)
         return;
 
@@ -235,7 +244,7 @@ void IDBServer::clearObjectStore(const IDBRequestData& requestData, uint64_t obj
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    auto transaction = m_transactions.get(requestData.transactionIdentifier());
+    auto transaction = idbTransaction(requestData);
     if (!transaction)
         return;
 
@@ -248,7 +257,7 @@ void IDBServer::createIndex(const IDBRequestData& requestData, const IDBIndexInf
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    auto transaction = m_transactions.get(requestData.transactionIdentifier());
+    auto transaction = idbTransaction(requestData);
     if (!transaction)
         return;
 
@@ -262,7 +271,7 @@ void IDBServer::deleteIndex(const IDBRequestData& requestData, uint64_t objectSt
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    auto transaction = m_transactions.get(requestData.transactionIdentifier());
+    auto transaction = idbTransaction(requestData);
     if (!transaction)
         return;
 
@@ -276,7 +285,7 @@ void IDBServer::renameIndex(const IDBRequestData& requestData, uint64_t objectSt
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    auto transaction = m_transactions.get(requestData.transactionIdentifier());
+    auto transaction = idbTransaction(requestData);
     if (!transaction)
         return;
 
@@ -290,7 +299,7 @@ void IDBServer::putOrAdd(const IDBRequestData& requestData, const IDBKeyData& ke
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    auto transaction = m_transactions.get(requestData.transactionIdentifier());
+    auto transaction = idbTransaction(requestData);
     if (!transaction)
         return;
 
@@ -303,7 +312,7 @@ void IDBServer::getRecord(const IDBRequestData& requestData, const IDBGetRecordD
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    auto transaction = m_transactions.get(requestData.transactionIdentifier());
+    auto transaction = idbTransaction(requestData);
     if (!transaction)
         return;
 
@@ -316,7 +325,7 @@ void IDBServer::getAllRecords(const IDBRequestData& requestData, const IDBGetAll
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    auto transaction = m_transactions.get(requestData.transactionIdentifier());
+    auto transaction = idbTransaction(requestData);
     if (!transaction)
         return;
 
@@ -329,7 +338,7 @@ void IDBServer::getCount(const IDBRequestData& requestData, const IDBKeyRangeDat
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    auto transaction = m_transactions.get(requestData.transactionIdentifier());
+    auto transaction = idbTransaction(requestData);
     if (!transaction)
         return;
 
@@ -342,7 +351,7 @@ void IDBServer::deleteRecord(const IDBRequestData& requestData, const IDBKeyRang
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    auto transaction = m_transactions.get(requestData.transactionIdentifier());
+    auto transaction = idbTransaction(requestData);
     if (!transaction)
         return;
 
@@ -355,7 +364,7 @@ void IDBServer::openCursor(const IDBRequestData& requestData, const IDBCursorInf
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    auto transaction = m_transactions.get(requestData.transactionIdentifier());
+    auto transaction = idbTransaction(requestData);
     if (!transaction)
         return;
 
@@ -368,7 +377,7 @@ void IDBServer::iterateCursor(const IDBRequestData& requestData, const IDBIterat
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    auto transaction = m_transactions.get(requestData.transactionIdentifier());
+    auto transaction = idbTransaction(requestData);
     if (!transaction)
         return;
 

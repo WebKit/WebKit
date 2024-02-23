@@ -53,6 +53,10 @@ class SharedFileHandle;
 }
 
 namespace WebCore {
+namespace IDBServer {
+class UniqueIDBDatabaseTransaction;
+}
+
 class IDBCursorInfo;
 class IDBKeyData;
 class IDBIndexInfo;
@@ -242,6 +246,7 @@ private:
     void performEviction(HashMap<WebCore::SecurityOriginData, AccessRecord>&&);
     SuspendableWorkQueue& workQueue() WTF_RETURNS_CAPABILITY(m_queue.get()) { return m_queue; }
     OriginQuotaManager::Parameters originQuotaManagerParameters(const WebCore::ClientOrigin&);
+    WebCore::IDBServer::UniqueIDBDatabaseTransaction* idbTransaction(const WebCore::IDBRequestData&);
 
     WeakPtr<NetworkProcess> m_process;
     PAL::SessionID m_sessionID;

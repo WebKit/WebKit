@@ -58,7 +58,7 @@ public:
 
     IDBConnectionIdentifier serverConnectionIdentifier() const;
     WEBCORE_EXPORT IDBResourceIdentifier requestIdentifier() const;
-    WEBCORE_EXPORT IDBResourceIdentifier transactionIdentifier() const;
+    WEBCORE_EXPORT std::optional<IDBResourceIdentifier> transactionIdentifier() const;
     uint64_t objectStoreIdentifier() const;
     uint64_t indexIdentifier() const;
     IndexedDB::IndexRecordType indexRecordType() const;
