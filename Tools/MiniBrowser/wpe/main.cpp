@@ -356,6 +356,7 @@ static void activate(GApplication* application, WPEToolingBackends::ViewBackend*
         "enable-developer-extras", TRUE,
         "enable-webgl", TRUE,
         "enable-media-stream", TRUE,
+        "enable-webrtc", TRUE,
         "enable-encrypted-media", TRUE,
         nullptr);
 
@@ -393,6 +394,10 @@ static void activate(GApplication* application, WPEToolingBackends::ViewBackend*
         delete static_cast<WPEToolingBackends::ViewBackend*>(data);
     }, backend) : nullptr;
 
+    auto* defaultWebsitePolicies = webkit_website_policies_new_with_policies(
+        "autoplay", WEBKIT_AUTOPLAY_ALLOW,
+        nullptr);
+
     auto* webView = WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW,
         "backend", viewBackend,
         "web-context", webContext,
@@ -402,8 +407,10 @@ static void activate(GApplication* application, WPEToolingBackends::ViewBackend*
         "settings", settings,
         "user-content-manager", userContentManager,
         "is-controlled-by-automation", automationMode,
+        "website-policies", defaultWebsitePolicies,
         nullptr));
     g_object_unref(settings);
+    g_object_unref(defaultWebsitePolicies);
 
     if (backend) {
         backend->setInputClient(std::make_unique<InputClient>(application, webView));
