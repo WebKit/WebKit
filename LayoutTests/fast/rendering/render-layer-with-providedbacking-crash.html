@@ -1,0 +1,28 @@
+<html>
+<style>
+    html.changed {
+        -webkit-mask-box-image-source:  url(data:image/gif;base64,R0lGODlhEAAQAMQAAORHHOVSKudfOulrSOp3WOyDZu6QdvCchPGolfO0o/XBs/fNwfjZ0frl3/zy7////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAkAABAALAAAAAAQABAAAAVVICSOZGlCQAosJ6mu7fiyZeKqNKToQGDsM8hBADgUXoGAiqhSvp5QAnQKGIgUhwFUYLCVDFCrKUE1lBavAViFIDlTImbKC5Gm2hB0SlBCBMQiB0UjIQA7);
+    }
+
+    .masked {
+        -webkit-mask-image: url(data:image/gif;base64,R0lGODlhEAAQAMQAAORHHOVSKudfOulrSOp3WOyDZu6QdvCchPGolfO0o/XBs/fNwfjZ0frl3/zy7////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAkAABAALAAAAAAQABAAAAVVICSOZGlCQAosJ6mu7fiyZeKqNKToQGDsM8hBADgUXoGAiqhSvp5QAnQKGIgUhwFUYLCVDFCrKUE1lBavAViFIDlTImbKC5Gm2hB0SlBCBMQiB0UjIQA7);
+    }
+
+    .sticky {
+        position: sticky;
+    }
+</style>
+<script>
+function runTest()
+{
+    document.elementFromPoint(1,0); // probably just forces layout.
+    document.documentElement.classList.add('changed');
+}
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+</head>
+<body onload=runTest()>
+<content class="sticky">
+<div contenteditable="plaintext-only" class="masked">This test passes if it doesn't crash.<div>
+</content>
