@@ -151,8 +151,13 @@ ALWAYS_INLINE auto ContainerNode::removeAllChildrenWithScriptAssertion(ChildChan
 
     ASSERT_WITH_SECURITY_IMPLICATION(!document().selection().selection().isOrphan());
 
-    if (deferChildrenChanged == DeferChildrenChanged::No)
+    if (deferChildrenChanged == DeferChildrenChanged::No) {
+#if ASSERT_ENABLED
+        auto treeVersion = document().domTreeVersion();
+#endif
         childrenChanged(childChange);
+        ASSERT_WITH_SECURITY_IMPLICATION(document().domTreeVersion() > treeVersion);
+    }
 
     return hadElementChild ? DidRemoveElements::Yes : DidRemoveElements::No;
 }
