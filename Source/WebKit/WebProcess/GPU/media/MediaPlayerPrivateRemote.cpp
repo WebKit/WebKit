@@ -488,6 +488,7 @@ void MediaPlayerPrivateRemote::rateChanged(double rate)
 
 void MediaPlayerPrivateRemote::playbackStateChanged(bool paused, MediaTime&& mediaTime, MonotonicTime&& wallTime)
 {
+    INFO_LOG(LOGIDENTIFIER, mediaTime);
     m_cachedState.paused = paused;
     m_currentTimeEstimator.setTime(mediaTime, wallTime);
     if (auto player = m_player.get())
@@ -517,6 +518,9 @@ void MediaPlayerPrivateRemote::sizeChanged(WebCore::FloatSize naturalSize)
 
 void MediaPlayerPrivateRemote::currentTimeChanged(const MediaTime& mediaTime, const MonotonicTime& queryTime, bool timeIsProgressing)
 {
+    INFO_LOG(LOGIDENTIFIER, mediaTime, " seeking:", bool(m_seeking));
+    if (m_seeking)
+        return;
     auto oldCachedTime = m_currentTimeEstimator.cachedTime();
     auto oldTimeIsProgressing = m_currentTimeEstimator.timeIsProgressing();
     auto reverseJump = mediaTime < oldCachedTime;
