@@ -1000,6 +1000,7 @@ def headers_for_type(type):
         'WebKit::WebEventType': ['"WebEvent.h"'],
         'WebKit::WebExtensionContext::InstallReason': ['"WebExtensionContext.h"'],
         'WebKit::WebExtensionCookieFilterParameters': ['"WebExtensionCookieParameters.h"'],
+        'WebKit::WebExtensionError': ['"WebExtensionError.h"'],
         'WebKit::WebExtensionTab::ImageFormat': ['"WebExtensionTab.h"'],
         'WebKit::WebGPU::BindGroupDescriptor': ['"WebGPUBindGroupDescriptor.h"'],
         'WebKit::WebGPU::BindGroupEntry': ['"WebGPUBindGroupEntry.h"'],

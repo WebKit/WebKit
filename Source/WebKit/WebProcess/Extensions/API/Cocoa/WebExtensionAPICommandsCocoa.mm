@@ -76,7 +76,7 @@ void WebExtensionAPICommands::getAll(Ref<WebExtensionCallbackHandler>&& callback
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::CommandsGetAll(), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Vector<WebExtensionCommandParameters> commands) {
         callback->call(toAPI(commands));
-    }, extensionContext().identifier().toUInt64());
+    }, extensionContext().identifier());
 }
 
 WebExtensionAPIEvent& WebExtensionAPICommands::onCommand()

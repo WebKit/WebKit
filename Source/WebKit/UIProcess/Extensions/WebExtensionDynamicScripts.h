@@ -49,7 +49,6 @@ class WebExtensionTab;
 namespace WebExtensionDynamicScripts {
 
 using InjectionResults = Vector<WebExtensionScriptInjectionResultParameters>;
-using Error = std::optional<String>;
 
 using SourcePair = std::pair<String, std::optional<URL>>;
 using SourcePairs = Vector<std::optional<SourcePair>>;
@@ -58,22 +57,6 @@ using InjectionTime = WebExtension::InjectionTime;
 
 using UserScriptVector = Vector<Ref<API::UserScript>>;
 using UserStyleSheetVector = Vector<Ref<API::UserStyleSheet>>;
-
-class InjectionResultHolder : public RefCounted<InjectionResultHolder> {
-    WTF_MAKE_NONCOPYABLE(InjectionResultHolder);
-    WTF_MAKE_FAST_ALLOCATED;
-
-public:
-    template<typename... Args>
-    static Ref<InjectionResultHolder> create(Args&&... args)
-    {
-        return adoptRef(*new InjectionResultHolder(std::forward<Args>(args)...));
-    }
-
-    InjectionResultHolder() { };
-
-    InjectionResults results;
-};
 
 class WebExtensionRegisteredScript : public RefCounted<WebExtensionRegisteredScript> {
     WTF_MAKE_NONCOPYABLE(WebExtensionRegisteredScript);
@@ -116,7 +99,7 @@ std::optional<SourcePair> sourcePairForResource(String path, RefPtr<WebExtension
 SourcePairs getSourcePairsForParameters(const WebExtensionScriptInjectionParameters&, RefPtr<WebExtension>);
 Vector<RetainPtr<_WKFrameTreeNode>> getFrames(_WKFrameTreeNode *, std::optional<Vector<WebExtensionFrameIdentifier>>);
 
-void executeScript(std::optional<SourcePairs>, WKWebView *, API::ContentWorld&, WebExtensionTab*, const WebExtensionScriptInjectionParameters&, WebExtensionContext&, CompletionHandler<void(InjectionResultHolder&)>&&);
+void executeScript(std::optional<SourcePairs>, WKWebView *, API::ContentWorld&, WebExtensionTab*, const WebExtensionScriptInjectionParameters&, WebExtensionContext&, CompletionHandler<void(InjectionResults&&)>&&);
 void injectStyleSheets(SourcePairs, WKWebView *, API::ContentWorld&, WebCore::UserContentInjectedFrames, WebExtensionContext&);
 void removeStyleSheets(SourcePairs, WKWebView *, WebCore::UserContentInjectedFrames, WebExtensionContext&);
 

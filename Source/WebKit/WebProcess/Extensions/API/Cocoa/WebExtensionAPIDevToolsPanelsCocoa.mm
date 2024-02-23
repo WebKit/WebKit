@@ -52,7 +52,7 @@ void WebExtensionAPIDevToolsPanels::createPanel(WebPage& page, NSString *title, 
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/devtools/panels/create
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::DevToolsPanelsCreate(page.webPageProxyIdentifier(), title, iconPath, pagePath), [this, protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<Inspector::ExtensionTabID, String> result) mutable {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::DevToolsPanelsCreate(page.webPageProxyIdentifier(), title, iconPath, pagePath), [this, protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<Inspector::ExtensionTabID, WebExtensionError>&& result) mutable {
         if (!result) {
             callback->reportError(result.error());
             return;

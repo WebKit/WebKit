@@ -27,6 +27,7 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#include "WebExtensionError.h"
 #include "WebExtensionWindowIdentifier.h"
 #include "WebPageProxyIdentifier.h"
 #include <wtf/Forward.h>
@@ -87,7 +88,6 @@ public:
 
     enum class PopulateTabs : bool { No, Yes };
 
-    using Error = std::optional<String>;
     using TabVector = Vector<Ref<WebExtensionTab>>;
 
     WebExtensionWindowIdentifier identifier() const { return m_identifier; }
@@ -109,7 +109,7 @@ public:
     Type type() const;
 
     State state() const;
-    void setState(State, CompletionHandler<void(Error)>&&);
+    void setState(State, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
 
     bool isOpen() const;
     void didOpen() { ASSERT(!m_isOpen); m_isOpen = true; }
@@ -117,7 +117,7 @@ public:
 
     bool isFocused() const;
     bool isFrontmost() const;
-    void focus(CompletionHandler<void(Error)>&&);
+    void focus(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
 
     bool isPrivate() const;
 
@@ -126,11 +126,11 @@ public:
 
     // Handles the frame in the screen's native coordinate system.
     CGRect frame() const;
-    void setFrame(CGRect, CompletionHandler<void(Error)>&&);
+    void setFrame(CGRect, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
 
     CGRect screenFrame() const;
 
-    void close(CompletionHandler<void(Error)>&&);
+    void close(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
 
 #ifdef __OBJC__
     _WKWebExtensionWindow *delegate() const { return m_delegate.getAutoreleased(); }

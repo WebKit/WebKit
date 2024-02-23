@@ -109,7 +109,7 @@ JSValue *WebExtensionAPIExtension::getBackgroundPage(JSContextRef context)
 
     auto backgroundPage = extensionContext().backgroundPage();
     if (!backgroundPage)
-        return nil;
+        return toJSValue(context, JSValueMakeNull(context));
 
     return toWindowObject(context, *backgroundPage);
 }

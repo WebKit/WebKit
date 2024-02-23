@@ -40,29 +40,29 @@
 
 namespace WebKit {
 
-void WebExtensionContext::devToolsInspectedWindowEval(WebPageProxyIdentifier webPageProxyIdentifier, const String& scriptSource, const std::optional<URL>& frameURL, CompletionHandler<void(Expected<Expected<std::span<const uint8_t>, WebCore::ExceptionDetails>, String>)>&& completionHandler)
+void WebExtensionContext::devToolsInspectedWindowEval(WebPageProxyIdentifier webPageProxyIdentifier, const String& scriptSource, const std::optional<URL>& frameURL, CompletionHandler<void(Expected<Expected<std::span<const uint8_t>, WebCore::ExceptionDetails>, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"devtools.inspectedWindow.eval()";
 
     RefPtr extension = inspectorExtension(webPageProxyIdentifier);
     if (!extension) {
         RELEASE_LOG_ERROR(Extensions, "Inspector extension not found for page %llu", webPageProxyIdentifier.toUInt64());
-        completionHandler(makeUnexpected(toErrorString(apiName, nil, @"Web Inspector not found")));
+        completionHandler(toWebExtensionError(apiName, nil, @"Web Inspector not found"));
         return;
     }
 
     // FIXME: <https://webkit.org/b/269349> Implement `contextSecurityOrigin` and `useContentScriptContext` options for `devtools.inspectedWindow.eval` command
 
-    extension->evaluateScript(scriptSource, frameURL, std::nullopt, std::nullopt, [completionHandler = WTFMove(completionHandler)](Inspector::ExtensionEvaluationResult result) mutable {
+    extension->evaluateScript(scriptSource, frameURL, std::nullopt, std::nullopt, [completionHandler = WTFMove(completionHandler)](Inspector::ExtensionEvaluationResult&& result) mutable {
         if (!result) {
             RELEASE_LOG_ERROR(Extensions, "Inspector could not evaluate script (%{public}@)", (NSString *)extensionErrorToString(result.error()));
-            completionHandler(makeUnexpected(toErrorString(apiName, nil, @"Web Inspector could not evaluate script")));
+            completionHandler(toWebExtensionError(apiName, nil, @"Web Inspector could not evaluate script"));
             return;
         }
 
         if (!result.value()) {
             Expected<std::span<const uint8_t>, WebCore::ExceptionDetails> returnedValue = makeUnexpected(result.value().error());
-            completionHandler({ returnedValue });
+            completionHandler({ WTFMove(returnedValue) });
             return;
         }
 
@@ -80,7 +80,7 @@ void WebExtensionContext::devToolsInspectedWindowReload(WebPageProxyIdentifier w
 
     // FIXME: <https://webkit.org/b/222328> Implement `userAgent` and `injectedScript` options for `devtools.inspectedWindow.reload` command
 
-    extension->reloadIgnoringCache(ignoreCache, std::nullopt, std::nullopt, [](Inspector::ExtensionVoidResult result) {
+    extension->reloadIgnoringCache(ignoreCache, std::nullopt, std::nullopt, [](Inspector::ExtensionVoidResult&& result) {
         if (!result)
             RELEASE_LOG_ERROR(Extensions, "Inspector could not reload page (%{public}@)", (NSString *)extensionErrorToString(result.error()));
     });

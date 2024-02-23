@@ -281,21 +281,23 @@ _WKWebExtensionWindowState toAPI(WebExtensionWindow::State state)
     return _WKWebExtensionWindowStateNormal;
 }
 
-void WebExtensionWindow::setState(WebExtensionWindow::State state, CompletionHandler<void(Error)>&& completionHandler)
+void WebExtensionWindow::setState(WebExtensionWindow::State state, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
+    static NSString * const apiName = @"windows.update()";
+
     if (!isValid() || !m_respondsToSetWindowState || !m_respondsToWindowState) {
-        completionHandler(toErrorString(@"windows.update()", nil, @"it is not implemented for 'state'"));
+        completionHandler(toWebExtensionError(apiName, nil, @"it is not implemented for 'state'"));
         return;
     }
 
     [m_delegate setWindowState:toAPI(state) forWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for setWindowState: %{private}@", error);
-            completionHandler(error.localizedDescription);
+            completionHandler(toWebExtensionError(apiName, nil, error.localizedDescription));
             return;
         }
 
-        completionHandler(std::nullopt);
+        completionHandler({ });
     }).get()];
 }
 
@@ -320,21 +322,23 @@ bool WebExtensionWindow::isFrontmost() const
     return this == m_extensionContext->frontmostWindow();
 }
 
-void WebExtensionWindow::focus(CompletionHandler<void(Error)>&& completionHandler)
+void WebExtensionWindow::focus(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
+    static NSString * const apiName = @"windows.update()";
+
     if (!isValid() || !m_respondsToFocus) {
-        completionHandler(toErrorString(@"windows.update()", nil, @"it is not implemented for 'focused'"));
+        completionHandler(toWebExtensionError(apiName, nil, @"it is not implemented for 'focused'"));
         return;
     }
 
     [m_delegate focusForWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for window focus: %{private}@", error);
-            completionHandler(error.localizedDescription);
+            completionHandler(toWebExtensionError(apiName, nil, error.localizedDescription));
             return;
         }
 
-        completionHandler(std::nullopt);
+        completionHandler({ });
     }).get()];
 }
 
@@ -376,15 +380,17 @@ CGRect WebExtensionWindow::frame() const
     return CGRectStandardize([m_delegate frameForWebExtensionContext:m_extensionContext->wrapper()]);
 }
 
-void WebExtensionWindow::setFrame(CGRect frame, CompletionHandler<void(Error)>&& completionHandler)
+void WebExtensionWindow::setFrame(CGRect frame, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
+    static NSString * const apiName = @"windows.update()";
+
 #if PLATFORM(MAC)
     if (!isValid() || !m_respondsToSetFrame || !m_respondsToFrame || !m_respondsToScreenFrame)
 #else
     if (!isValid() || !m_respondsToSetFrame || !m_respondsToFrame)
 #endif
     {
-        completionHandler(toErrorString(@"windows.update()", nil, @"it is not implemented for 'top', 'left', 'width', and 'height'"));
+        completionHandler(toWebExtensionError(apiName, nil, @"it is not implemented for 'top', 'left', 'width', and 'height'"));
         return;
     }
 
@@ -395,11 +401,11 @@ void WebExtensionWindow::setFrame(CGRect frame, CompletionHandler<void(Error)>&&
     [m_delegate setFrame:frame forWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for setFrame: %{private}@", error);
-            completionHandler(error.localizedDescription);
+            completionHandler(toWebExtensionError(apiName, nil, error.localizedDescription));
             return;
         }
 
-        completionHandler(std::nullopt);
+        completionHandler({ });
     }).get()];
 }
 
@@ -411,21 +417,23 @@ CGRect WebExtensionWindow::screenFrame() const
     return CGRectStandardize([m_delegate screenFrameForWebExtensionContext:m_extensionContext->wrapper()]);
 }
 
-void WebExtensionWindow::close(CompletionHandler<void(Error)>&& completionHandler)
+void WebExtensionWindow::close(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
+    static NSString * const apiName = @"windows.remove()";
+
     if (!isValid() || !m_respondsToClose) {
-        completionHandler(toErrorString(@"windows.remove()", nil, @"it is not implemented"));
+        completionHandler(toWebExtensionError(apiName, nil, @"it is not implemented"));
         return;
     }
 
     [m_delegate closeForWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for window close: %{private}@", error);
-            completionHandler(error.localizedDescription);
+            completionHandler(toWebExtensionError(apiName, nil, error.localizedDescription));
             return;
         }
 
-        completionHandler(std::nullopt);
+        completionHandler({ });
     }).get()];
 }
 
