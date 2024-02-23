@@ -2399,8 +2399,4 @@ webkit.org/b/269116 imported/w3c/web-platform-tests/css/css-flexbox/negative-ove
 
 webkit.org/b/269321 webgl/1.0.3/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Timeout ]
 
-# webkit.org/b/123266095  (REGRESSION (274957@main) [ iOS Debug ] 2x imported/w3c/web-platform-tests/css/css-view-transitions tests are constant crash)
-[ Debug ] imported/w3c/web-platform-tests/css/css-view-transitions/new-content-captures-different-size.html [ Skip ]
-[ Debug ] imported/w3c/web-platform-tests/css/css-view-transitions/old-content-captures-different-size.html [ Skip ]
-
 webkit.org/b/269760 mathml/presentation/scripts-underover.html [ Failure ]
