@@ -56,6 +56,10 @@ Interpolate = properties.Interpolate
 THRESHOLD_FOR_EXCESSIVE_LOGS = 1000000
 MSG_FOR_EXCESSIVE_LOGS = f'Stopped due to excessive logging, limit: {THRESHOLD_FOR_EXCESSIVE_LOGS}'
 
+DNS_NAME = CURRENT_HOSTNAME
+if DNS_NAME in BUILD_WEBKIT_HOSTNAMES:
+    DNS_NAME = 'build.webkit.org'
+
 
 class CustomFlagsMixin(object):
 
@@ -628,7 +632,7 @@ class RunJavaScriptCoreTests(TestWithFailureCount, CustomFlagsMixin):
         "--builder-name", WithProperties("%(buildername)s"),
         "--build-number", WithProperties("%(buildnumber)s"),
         "--buildbot-worker", WithProperties("%(workername)s"),
-        "--buildbot-master", CURRENT_HOSTNAME,
+        "--buildbot-master", DNS_NAME,
         "--report", RESULTS_WEBKIT_URL,
     ]
     commandExtra = ['--treat-failing-as-flaky=0.7,10,20']
@@ -723,7 +727,7 @@ class RunWebKitTests(shell.TestNewStyle, CustomFlagsMixin):
                "--builder-name", WithProperties("%(buildername)s"),
                "--build-number", WithProperties("%(buildnumber)s"),
                "--buildbot-worker", WithProperties("%(workername)s"),
-               "--buildbot-master", CURRENT_HOSTNAME,
+               "--buildbot-master", DNS_NAME,
                "--report", RESULTS_WEBKIT_URL,
                "--exit-after-n-crashes-or-timeouts", "50",
                "--exit-after-n-failures", "500",
@@ -859,7 +863,7 @@ class RunAPITests(TestWithFailureCount, CustomFlagsMixin):
         f"--json-output={jsonFileName}",
         WithProperties("--%(configuration)s"),
         "--verbose",
-        "--buildbot-master", CURRENT_HOSTNAME,
+        "--buildbot-master", DNS_NAME,
         "--builder-name", WithProperties("%(buildername)s"),
         "--build-number", WithProperties("%(buildnumber)s"),
         "--buildbot-worker", WithProperties("%(workername)s"),
@@ -947,7 +951,7 @@ class RunWebKitPyTests(RunPythonTests):
         "python3",
         "Tools/Scripts/test-webkitpy",
         "--verbose",
-        "--buildbot-master", CURRENT_HOSTNAME,
+        "--buildbot-master", DNS_NAME,
         "--builder-name", WithProperties("%(buildername)s"),
         "--build-number", WithProperties("%(buildnumber)s"),
         "--buildbot-worker", WithProperties("%(workername)s"),
@@ -1015,7 +1019,7 @@ class RunLLINTCLoopTests(TestWithFailureCount):
         "--builder-name", WithProperties("%(buildername)s"),
         "--build-number", WithProperties("%(buildnumber)s"),
         "--buildbot-worker", WithProperties("%(workername)s"),
-        "--buildbot-master", CURRENT_HOSTNAME,
+        "--buildbot-master", DNS_NAME,
         "--report", RESULTS_WEBKIT_URL,
     ]
     failedTestsFormatString = "%d regression%s found."
@@ -1056,7 +1060,7 @@ class Run32bitJSCTests(TestWithFailureCount):
         "--builder-name", WithProperties("%(buildername)s"),
         "--build-number", WithProperties("%(buildnumber)s"),
         "--buildbot-worker", WithProperties("%(workername)s"),
-        "--buildbot-master", CURRENT_HOSTNAME,
+        "--buildbot-master", DNS_NAME,
         "--report", RESULTS_WEBKIT_URL,
     ]
     failedTestsFormatString = "%d regression%s found."
