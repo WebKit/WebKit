@@ -54,8 +54,11 @@ static std::optional<RetainPtr<UIView>> makeVectorElement(const RetainPtr<UIView
 
 namespace WebKit {
 
-static void collectDescendantViewsAtPoint(Vector<RetainPtr<UIView>, 16>& viewsAtPoint, UIView *parent, CGPoint point, UIEvent *event)
+static void collectDescendantViewsAtPoint(Vector<RetainPtr<UIView>, 16>& viewsAtPoint, UIView *parent, CGPoint point, UIEvent *event, bool withUserInteractionDisabled = false)
 {
+
+    //ALWAYS_LOG_WITH_NAME("collectDescendantViewsAtPoint " << &point);
+
     if (parent.clipsToBounds && ![parent pointInside:point withEvent:event])
         return;
 
@@ -73,7 +76,7 @@ static void collectDescendantViewsAtPoint(Vector<RetainPtr<UIView>, 16>& viewsAt
         auto handlesEvent = [&] {
             // FIXME: isUserInteractionEnabled is mostly redundant with event regions for web content layers.
             // It is currently only needed for scroll views.
-            if (![view isUserInteractionEnabled])
+            if (!withUserInteractionDisabled && ![view isUserInteractionEnabled])
                 return false;
 
             if (CGRectIsEmpty([view frame]))
@@ -257,6 +260,8 @@ OptionSet<WebCore::EventListenerRegionType> eventListenerTypesAtPoint(UIView *ro
 
 UIScrollView *findActingScrollParent(UIScrollView *scrollView, const RemoteLayerTreeHost& host)
 {
+    //ALWAYS_LOG_WITH_NAME("findActingScrollParent " << scrollView);
+
     HashSet<WebCore::PlatformLayerIdentifier> scrollersToSkip;
 
     for (UIView *view = [scrollView superview]; view; view = [view superview]) {
@@ -297,34 +302,62 @@ static Class scrollViewScrollIndicatorClass()
 - (UIView *)_web_findDescendantViewAtPoint:(CGPoint)point withEvent:(UIEvent *)event
 {
     Vector<RetainPtr<UIView>, 16> viewsAtPoint;
-    WebKit::collectDescendantViewsAtPoint(viewsAtPoint, self, point, event);
+    WebKit::collectDescendantViewsAtPoint(viewsAtPoint, self, point, event, true);
 
     LOG_WITH_STREAM(UIHitTesting, stream << (void*)self << "_web_findDescendantViewAtPoint " << WebCore::FloatPoint(point) << " found " << viewsAtPoint.size() << " views");
 
-    for (RetainPtr view : WTF::makeReversedRange(viewsAtPoint)) {
-        if ([view conformsToProtocol:@protocol(WKNativelyInteractible)]) {
-            LOG_WITH_STREAM(UIHitTesting, stream << " " << (void*)view.get() << " is natively interactible");
-            CGPoint subviewPoint = [view convertPoint:point fromView:self];
-            return [view hitTest:subviewPoint withEvent:event];
-        }
+     //ALWAYS_LOG_WITH_STREAM(stream << "mdubet: findDescendantViewAtPoint " << viewsAtPoint.size());
+    WTF_ALWAYS_LOG("mdubet findDescendantViewAtPoint " << viewsAtPoint.size());
+    //for (RetainPtr view : WTF::makeReversedRange(viewsAtPoint)) {
+    viewsAtPoint.reverse();
+    for (size_t i = 0 ; i < viewsAtPoint.size() ; i++) {
+        RetainPtr view = viewsAtPoint[i];
 
-        if ([view isKindOfClass:[WKChildScrollView class]]) {
-            if (WebKit::isScrolledBy((WKChildScrollView *)view.get(), viewsAtPoint.last().get())) {
+        if (![view isUserInteractionEnabled])
+            continue;
+
+        auto interactiveViewAtPoint = [&] (auto& view) -> UIView* {
+            if ([view conformsToProtocol:@protocol(WKNativelyInteractible)]) {
+                LOG_WITH_STREAM(UIHitTesting, stream << " " << (void*)view.get() << " is natively interactible");
+                WTF_ALWAYS_LOG("mdubet " << (void*)view.get() << " is natively interactible");
+                CGPoint subviewPoint = [view convertPoint:point fromView:self];
+                return [view hitTest:subviewPoint withEvent:event];
+            }
+
+            if ([view isKindOfClass:[WKChildScrollView class]]) {
+                WTF_ALWAYS_LOG("mdubet view is a scrollview ");
+                if (WebKit::isScrolledBy((WKChildScrollView *)view.get(), viewsAtPoint.first().get())) {
+                    WTF_ALWAYS_LOG("mdubet view is a scrolled by ");
                 LOG_WITH_STREAM(UIHitTesting, stream << " " << (void*)view.get() << " is child scroll view and scrolled by " << (void*)viewsAtPoint.last().get());
-                return view.get();
+                    return view.get();
+                }
             }
-        }
 
-        if ([view isKindOfClass:WebKit::scrollViewScrollIndicatorClass()] && [[view superview] isKindOfClass:WKChildScrollView.class]) {
-            if (WebKit::isScrolledBy((WKChildScrollView *)[view superview], viewsAtPoint.last().get())) {
-                LOG_WITH_STREAM(UIHitTesting, stream << " " << (void*)view.get() << " is the scroll indicator of child scroll view, which is scrolled by " << (void*)viewsAtPoint.last().get());
-                return view.get();
+            if ([view isKindOfClass:WebKit::scrollViewScrollIndicatorClass()] && [[view superview] isKindOfClass:WKChildScrollView.class]) {
+                WTF_ALWAYS_LOG("mdubet scrollviewscrollindication " << [view class] << " " << (void*)view.get());
+                if (WebKit::isScrolledBy((WKChildScrollView *)[view superview], viewsAtPoint.last().get())) {
+                    LOG_WITH_STREAM(UIHitTesting, stream << " " << (void*)view.get() << " is the scroll indicator of child scroll view, which is scrolled by " << (void*)viewsAtPoint.last().get());
+                    return view.get();
+                }
             }
+            return nullptr;
+        };
+
+        if (auto found = interactiveViewAtPoint(view))
+            return found;
+
+        // Check if there is a scrolling view behind
+        for (size_t j = i + 1; j < viewsAtPoint.size() ; j++) {
+            WTF_ALWAYS_LOG("mdubet checking behind");
+            RetainPtr behindView = viewsAtPoint[j];
+            if (auto behindFound = interactiveViewAtPoint(behindView))
+                return behindFound;
         }
 
         LOG_WITH_STREAM(UIHitTesting, stream << " ignoring " << [view class] << " " << (void*)view.get());
-    }
-
+        WTF_ALWAYS_LOG("mdubet ignoring " << [view class] << " " << (void*)view.get());
+   }
+    // ALWAYS_LOG_WITH_NAME("no interactive views");
     LOG_WITH_STREAM(UIHitTesting, stream << (void*)self << "_web_findDescendantViewAtPoint found no interactive views");
     return nil;
 }
