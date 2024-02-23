@@ -541,9 +541,9 @@ bool CookieStore::virtualHasPendingActivity() const
     return m_hasChangeEventListener;
 }
 
-EventTargetInterface CookieStore::eventTargetInterface() const
+enum EventTargetInterfaceType CookieStore::eventTargetInterface() const
 {
-    return CookieStoreEventTargetInterfaceType;
+    return EventTargetInterfaceType::CookieStore;
 }
 
 ScriptExecutionContext* CookieStore::scriptExecutionContext() const

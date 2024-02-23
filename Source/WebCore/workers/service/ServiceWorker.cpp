@@ -127,9 +127,9 @@ ExceptionOr<void> ServiceWorker::postMessage(JSC::JSGlobalObject& globalObject, 
     return { };
 }
 
-EventTargetInterface ServiceWorker::eventTargetInterface() const
+enum EventTargetInterfaceType ServiceWorker::eventTargetInterface() const
 {
-    return ServiceWorkerEventTargetInterfaceType;
+    return EventTargetInterfaceType::ServiceWorker;
 }
 
 ScriptExecutionContext* ServiceWorker::scriptExecutionContext() const

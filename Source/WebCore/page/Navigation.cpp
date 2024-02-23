@@ -101,9 +101,9 @@ ScriptExecutionContext* Navigation::scriptExecutionContext() const
     return ContextDestructionObserver::scriptExecutionContext();
 }
 
-EventTargetInterface Navigation::eventTargetInterface() const
+enum EventTargetInterfaceType Navigation::eventTargetInterface() const
 {
-    return NavigationEventTargetInterfaceType;
+    return EventTargetInterfaceType::Navigation;
 }
 
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#navigation-api-early-error-result

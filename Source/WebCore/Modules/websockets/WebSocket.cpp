@@ -479,9 +479,9 @@ void WebSocket::setBinaryType(BinaryType binaryType)
     m_binaryType = binaryType;
 }
 
-EventTargetInterface WebSocket::eventTargetInterface() const
+enum EventTargetInterfaceType WebSocket::eventTargetInterface() const
 {
-    return WebSocketEventTargetInterfaceType;
+    return EventTargetInterfaceType::WebSocket;
 }
 
 ScriptExecutionContext* WebSocket::scriptExecutionContext() const

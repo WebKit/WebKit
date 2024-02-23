@@ -77,7 +77,7 @@ public:
 private:
     EventSource(ScriptExecutionContext&, const URL&, const Init&);
 
-    EventTargetInterface eventTargetInterface() const final { return EventSourceEventTargetInterfaceType; }
+    enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::EventSource; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
 
     void refEventTarget() final { ref(); }

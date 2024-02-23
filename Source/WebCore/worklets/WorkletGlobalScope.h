@@ -96,7 +96,7 @@ private:
     IDBClient::IDBConnectionProxy* idbConnectionProxy() final { ASSERT_NOT_REACHED(); return nullptr; }
 
     // EventTarget.
-    EventTargetInterface eventTargetInterface() const final { return WorkletGlobalScopeEventTargetInterfaceType; }
+    enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::WorkletGlobalScope; }
 
     bool isWorkletGlobalScope() const final { return true; }
 

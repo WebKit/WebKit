@@ -87,7 +87,7 @@ public:
     inline void ref(); // Defined in Node.h.
     inline void deref(); // Defined in Node.h.
 
-    virtual EventTargetInterface eventTargetInterface() const = 0;
+    virtual enum EventTargetInterfaceType eventTargetInterface() const = 0;
     virtual ScriptExecutionContext* scriptExecutionContext() const = 0;
 
     WEBCORE_EXPORT virtual bool isPaymentRequest() const;

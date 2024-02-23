@@ -56,7 +56,7 @@ protected:
 
 private:
     // EventTarget
-    EventTargetInterface eventTargetInterface() const final { return WebXRLayerEventTargetInterfaceType; }
+    enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::WebXRLayer; }
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 };

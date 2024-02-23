@@ -60,7 +60,7 @@ private:
     SharedWorker(Document&, const SharedWorkerKey&, Ref<MessagePort>&&);
 
     // EventTarget.
-    EventTargetInterface eventTargetInterface() const final;
+    enum EventTargetInterfaceType eventTargetInterface() const final;
 
     // ActiveDOMObject.
     const char* activeDOMObjectName() const final;

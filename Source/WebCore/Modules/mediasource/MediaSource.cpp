@@ -1307,9 +1307,9 @@ ScriptExecutionContext* MediaSource::scriptExecutionContext() const
     return ActiveDOMObject::scriptExecutionContext();
 }
 
-EventTargetInterface MediaSource::eventTargetInterface() const
+enum EventTargetInterfaceType MediaSource::eventTargetInterface() const
 {
-    return MediaSourceEventTargetInterfaceType;
+    return EventTargetInterfaceType::MediaSource;
 }
 
 URLRegistry& MediaSource::registry() const

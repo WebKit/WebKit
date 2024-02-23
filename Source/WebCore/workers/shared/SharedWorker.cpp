@@ -142,9 +142,9 @@ const char* SharedWorker::activeDOMObjectName() const
     return "SharedWorker";
 }
 
-EventTargetInterface SharedWorker::eventTargetInterface() const
+enum EventTargetInterfaceType SharedWorker::eventTargetInterface() const
 {
-    return SharedWorkerEventTargetInterfaceType;
+    return EventTargetInterfaceType::SharedWorker;
 }
 
 void SharedWorker::didFinishLoading(const ResourceError& error)

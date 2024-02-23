@@ -211,7 +211,7 @@ private:
     bool virtualHasPendingActivity() const final;
 
     // EventTarget
-    EventTargetInterface eventTargetInterface() const final { return WebAnimationEventTargetInterfaceType; }
+    enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::WebAnimation; }
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 

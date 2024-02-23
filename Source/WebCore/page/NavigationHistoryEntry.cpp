@@ -63,9 +63,9 @@ ScriptExecutionContext* NavigationHistoryEntry::scriptExecutionContext() const
     return ContextDestructionObserver::scriptExecutionContext();
 }
 
-EventTargetInterface NavigationHistoryEntry::eventTargetInterface() const
+enum EventTargetInterfaceType NavigationHistoryEntry::eventTargetInterface() const
 {
-    return NavigationHistoryEntryEventTargetInterfaceType;
+    return EventTargetInterfaceType::NavigationHistoryEntry;
 }
 
 uint64_t NavigationHistoryEntry::index() const

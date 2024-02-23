@@ -96,7 +96,7 @@ public:
 private:
     Navigation(ScriptExecutionContext*, LocalDOMWindow&);
 
-    EventTargetInterface eventTargetInterface() const final;
+    enum EventTargetInterfaceType eventTargetInterface() const final;
     ScriptExecutionContext* scriptExecutionContext() const final;
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }

@@ -2159,9 +2159,9 @@ Element* Node::enclosingLinkEventParentOrSelf()
     return nullptr;
 }
 
-EventTargetInterface Node::eventTargetInterface() const
+enum EventTargetInterfaceType Node::eventTargetInterface() const
 {
-    return NodeEventTargetInterfaceType;
+    return EventTargetInterfaceType::Node;
 }
 
 template <typename MoveNodeFunction, typename MoveShadowRootFunction>

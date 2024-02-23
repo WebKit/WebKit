@@ -149,7 +149,7 @@ private:
     void derefEventTarget() final { deref(); }
     using EventTarget::dispatchEvent;
     void dispatchEvent(Event&) final;
-    EventTargetInterface eventTargetInterface() const final { return TextTrackCueEventTargetInterfaceType; }
+    enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::TextTrackCue; }
     ScriptExecutionContext* scriptExecutionContext() const final;
 
     // ActiveDOMObject

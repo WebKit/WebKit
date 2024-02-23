@@ -74,7 +74,7 @@ public:
     void renameIndex(IDBIndex&, const String& newName);
 
     // EventTarget
-    EventTargetInterface eventTargetInterface() const final { return IDBDatabaseEventTargetInterfaceType; }
+    enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::IDBDatabase; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
     void refEventTarget() final { ThreadSafeRefCounted<IDBDatabase>::ref(); }
     void derefEventTarget() final { ThreadSafeRefCounted<IDBDatabase>::deref(); }

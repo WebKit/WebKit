@@ -148,7 +148,7 @@ private:
     Ref<GPUPipelineLayout> createAutoPipelineLayout();
 
     // EventTarget.
-    EventTargetInterface eventTargetInterface() const final { return GPUDeviceEventTargetInterfaceType; }
+    enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::GPUDevice; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }

@@ -445,9 +445,9 @@ void AudioNode::initializeDefaultNodeOptions(unsigned count, ChannelCountMode mo
     m_channelInterpretation = interpretation;
 }
 
-EventTargetInterface AudioNode::eventTargetInterface() const
+enum EventTargetInterfaceType AudioNode::eventTargetInterface() const
 {
-    return AudioNodeEventTargetInterfaceType;
+    return EventTargetInterfaceType::AudioNode;
 }
 
 ScriptExecutionContext* AudioNode::scriptExecutionContext() const

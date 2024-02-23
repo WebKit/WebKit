@@ -45,9 +45,9 @@ VisualViewport::VisualViewport(LocalDOMWindow& window)
 {
 }
 
-EventTargetInterface VisualViewport::eventTargetInterface() const
+enum EventTargetInterfaceType VisualViewport::eventTargetInterface() const
 {
-    return VisualViewportEventTargetInterfaceType;
+    return EventTargetInterfaceType::VisualViewport;
 }
 
 ScriptExecutionContext* VisualViewport::scriptExecutionContext() const

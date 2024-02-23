@@ -65,7 +65,7 @@ protected:
 
 private:
     // EventTarget
-    EventTargetInterface eventTargetInterface() const final { return WebXRSpaceEventTargetInterfaceType; }
+    enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::WebXRSpace; }
 
     Ref<WebXRRigidTransform> m_originOffset;
 };

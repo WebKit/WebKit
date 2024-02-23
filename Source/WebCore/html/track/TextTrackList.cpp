@@ -258,9 +258,9 @@ bool TextTrackList::contains(TrackBase& track) const
     return tracks->find(&track) != notFound;
 }
 
-EventTargetInterface TextTrackList::eventTargetInterface() const
+enum EventTargetInterfaceType TextTrackList::eventTargetInterface() const
 {
-    return TextTrackListEventTargetInterfaceType;
+    return EventTargetInterfaceType::TextTrackList;
 }
 
 const char* TextTrackList::activeDOMObjectName() const

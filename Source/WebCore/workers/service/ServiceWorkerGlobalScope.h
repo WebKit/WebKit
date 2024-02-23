@@ -67,7 +67,7 @@ public:
     
     void skipWaiting(Ref<DeferredPromise>&&);
 
-    EventTargetInterface eventTargetInterface() const final;
+    enum EventTargetInterfaceType eventTargetInterface() const final;
 
     ServiceWorkerThread& thread();
 

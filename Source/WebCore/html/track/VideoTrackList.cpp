@@ -109,9 +109,9 @@ VideoTrack* VideoTrackList::selectedItem() const
     return item(selectedIndex);
 }
 
-EventTargetInterface VideoTrackList::eventTargetInterface() const
+enum EventTargetInterfaceType VideoTrackList::eventTargetInterface() const
 {
-    return VideoTrackListEventTargetInterfaceType;
+    return EventTargetInterfaceType::VideoTrackList;
 }
 
 const char* VideoTrackList::activeDOMObjectName() const

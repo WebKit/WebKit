@@ -127,7 +127,7 @@ private:
 
     void contextDestroyed() override;
 
-    EventTargetInterface eventTargetInterface() const final { return PerformanceEventTargetInterfaceType; }
+    enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::Performance; }
 
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }

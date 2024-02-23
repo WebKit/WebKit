@@ -258,7 +258,7 @@ private:
     void handleDeferredDecrementConnectionCounts();
 
     // EventTarget
-    EventTargetInterface eventTargetInterface() const final;
+    enum EventTargetInterfaceType eventTargetInterface() const final;
     void refEventTarget() override { ref(); }
     void derefEventTarget() override { deref(); }
 

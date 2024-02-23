@@ -246,7 +246,7 @@ sub generateInterfacesHeader()
     }
 
     if ($namespace eq "EventTarget") {
-        print F "    ${suffix} = $count,\n";
+        print F "    ${namespace} = $count,\n";
         $count++;
     }
 

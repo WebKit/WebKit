@@ -54,7 +54,7 @@ public:
     void append(Ref<VideoTrack>&&);
 
     // EventTarget
-    EventTargetInterface eventTargetInterface() const override;
+    enum EventTargetInterfaceType eventTargetInterface() const override;
 
 private:
     VideoTrackList(ScriptExecutionContext*);

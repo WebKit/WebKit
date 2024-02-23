@@ -79,9 +79,9 @@ DedicatedWorkerGlobalScope::~DedicatedWorkerGlobalScope()
     removeFromContextsMap();
 }
 
-EventTargetInterface DedicatedWorkerGlobalScope::eventTargetInterface() const
+enum EventTargetInterfaceType DedicatedWorkerGlobalScope::eventTargetInterface() const
 {
-    return DedicatedWorkerGlobalScopeEventTargetInterfaceType;
+    return EventTargetInterfaceType::DedicatedWorkerGlobalScope;
 }
 
 void DedicatedWorkerGlobalScope::prepareForDestruction()

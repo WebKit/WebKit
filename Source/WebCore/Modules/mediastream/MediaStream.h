@@ -94,7 +94,7 @@ public:
     void stopProducingData();
 
     // EventTarget
-    EventTargetInterface eventTargetInterface() const final { return MediaStreamEventTargetInterfaceType; }
+    enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::MediaStream; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
 
     using RefCounted<MediaStream>::ref;

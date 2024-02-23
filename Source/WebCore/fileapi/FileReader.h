@@ -86,7 +86,7 @@ private:
     void stop() final;
     bool virtualHasPendingActivity() const final;
 
-    EventTargetInterface eventTargetInterface() const final { return FileReaderEventTargetInterfaceType; }
+    enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::FileReader; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }

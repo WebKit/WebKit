@@ -62,7 +62,7 @@ private:
     NavigationHistoryEntry(ScriptExecutionContext*, Ref<HistoryItem>&);
     NavigationHistoryEntry(ScriptExecutionContext*, const URL&);
 
-    EventTargetInterface eventTargetInterface() const final;
+    enum EventTargetInterfaceType eventTargetInterface() const final;
     ScriptExecutionContext* scriptExecutionContext() const final;
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }

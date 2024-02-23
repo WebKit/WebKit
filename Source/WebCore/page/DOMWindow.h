@@ -79,7 +79,7 @@ protected:
 
     ExceptionOr<RefPtr<SecurityOrigin>> createTargetOriginForPostMessage(const String&, Document&);
 
-    EventTargetInterface eventTargetInterface() const final { return LocalDOMWindowEventTargetInterfaceType; }
+    enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::LocalDOMWindow; }
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 

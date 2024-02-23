@@ -244,9 +244,9 @@ void ServiceWorkerRegistration::queueTaskToFireUpdateFoundEvent()
     queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, Event::create(eventNames().updatefoundEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
-EventTargetInterface ServiceWorkerRegistration::eventTargetInterface() const
+enum EventTargetInterfaceType ServiceWorkerRegistration::eventTargetInterface() const
 {
-    return ServiceWorkerRegistrationEventTargetInterfaceType;
+    return EventTargetInterfaceType::ServiceWorkerRegistration;
 }
 
 ScriptExecutionContext* ServiceWorkerRegistration::scriptExecutionContext() const

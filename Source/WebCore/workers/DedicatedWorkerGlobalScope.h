@@ -96,7 +96,7 @@ private:
 
     Type type() const final { return Type::DedicatedWorker; }
 
-    EventTargetInterface eventTargetInterface() const final;
+    enum EventTargetInterfaceType eventTargetInterface() const final;
 
     void prepareForDestruction() final;
 

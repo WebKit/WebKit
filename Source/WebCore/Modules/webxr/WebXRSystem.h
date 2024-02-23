@@ -86,7 +86,7 @@ public:
 
 protected:
     // EventTarget
-    EventTargetInterface eventTargetInterface() const override { return WebXRSystemEventTargetInterfaceType; }
+    enum EventTargetInterfaceType eventTargetInterface() const override { return EventTargetInterfaceType::WebXRSystem; }
     ScriptExecutionContext* scriptExecutionContext() const override { return ActiveDOMObject::scriptExecutionContext(); }
     void refEventTarget() override { ref(); }
     void derefEventTarget() override { deref(); }

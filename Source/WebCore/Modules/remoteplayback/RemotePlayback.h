@@ -92,7 +92,7 @@ private:
     const char* activeDOMObjectName() const final;
 
     // EventTarget.
-    EventTargetInterface eventTargetInterface() const final { return RemotePlaybackEventTargetInterfaceType; }
+    enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::RemotePlayback; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
 
 #if !RELEASE_LOG_DISABLED

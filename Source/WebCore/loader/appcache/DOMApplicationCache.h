@@ -54,7 +54,7 @@ private:
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
-    EventTargetInterface eventTargetInterface() const final { return DOMApplicationCacheEventTargetInterfaceType; }
+    enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::DOMApplicationCache; }
     ScriptExecutionContext* scriptExecutionContext() const final;
 
     ApplicationCacheHost* applicationCacheHost() const;

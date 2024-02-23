@@ -90,9 +90,9 @@ Navigator* Clipboard::navigator()
     return m_navigator.get();
 }
 
-EventTargetInterface Clipboard::eventTargetInterface() const
+enum EventTargetInterfaceType Clipboard::eventTargetInterface() const
 {
-    return ClipboardEventTargetInterfaceType;
+    return EventTargetInterfaceType::Clipboard;
 }
 
 ScriptExecutionContext* Clipboard::scriptExecutionContext() const
