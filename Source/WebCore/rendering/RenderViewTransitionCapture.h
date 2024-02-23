@@ -34,14 +34,17 @@ class RenderViewTransitionCapture : public RenderReplaced {
 public:
     RenderViewTransitionCapture(Type, Document&, RenderStyle&&);
 
-    void setImage(RefPtr<ImageBuffer>, const LayoutSize&);
+    void setImage(RefPtr<ImageBuffer>, const LayoutSize&, const LayoutRect& overflowRect);
 
     void paintReplaced(PaintInfo&, const LayoutPoint& paintOffset) override;
+
+    void layout() override;
 
 private:
     ASCIILiteral renderName() const override { return style().pseudoElementType() == PseudoId::ViewTransitionNew ? "RenderViewTransitionNew"_s : "RenderViewTransitionOld"_s; }
 
     RefPtr<ImageBuffer> m_oldImage;
+    LayoutRect m_overflowRect;
 };
 
 } // namespace WebCore

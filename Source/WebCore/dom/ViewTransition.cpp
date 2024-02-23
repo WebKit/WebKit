@@ -36,8 +36,10 @@
 #include "FrameSnapshotting.h"
 #include "JSDOMPromise.h"
 #include "JSDOMPromiseDeferred.h"
+#include "LayoutRect.h"
 #include "PseudoElementRequest.h"
 #include "RenderBox.h"
+#include "RenderLayer.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"
 #include "Styleable.h"
@@ -260,6 +262,34 @@ static ExceptionOr<void> checkDuplicateViewTransitionName(const AtomString& name
     return { };
 }
 
+static RefPtr<ImageBuffer> snapshotNodeVisualOverflowClippedToViewport(LocalFrame& frame, Node& node, SnapshotOptions&& options, LayoutRect& oldOverflowRect)
+{
+    if (!node.renderer())
+        return nullptr;
+
+    auto paintBehavior = frame.view()->paintBehavior();
+    auto backgroundColor = frame.view()->baseBackgroundColor();
+
+    options.flags.add(SnapshotFlags::Accelerated);
+
+    frame.view()->setBaseBackgroundColor(Color::transparentBlack);
+    frame.view()->setNodeToDraw(&node);
+
+    ASSERT(node.renderer()->hasLayer());
+    CheckedPtr layerRenderer = downcast<RenderLayerModelObject>(node.renderer());
+
+    IntRect paintRect = layerRenderer->layer()->absoluteBoundingBox();
+    paintRect.intersect(snappedIntRect(frame.view()->layoutViewportRect()));
+    RefPtr result = snapshotFrameRect(frame, paintRect, WTFMove(options));
+
+    frame.view()->setPaintBehavior(paintBehavior);
+    frame.view()->setBaseBackgroundColor(backgroundColor);
+    frame.view()->setNodeToDraw(nullptr);
+
+    oldOverflowRect = layerRenderer->layer()->localBoundingBox();
+    return result;
+}
+
 // https://drafts.csswg.org/css-view-transitions/#capture-old-state-algorithm
 ExceptionOr<void> ViewTransition::captureOldState()
 {
@@ -287,7 +317,7 @@ ExceptionOr<void> ViewTransition::captureOldState()
             capture.oldSize = renderBox->size();
         capture.oldProperties = copyElementBaseProperties(element.get());
         if (m_document->frame())
-            capture.oldImage = snapshotNode(*m_document->frame(), element.get(), { { }, PixelFormat::BGRA8, DestinationColorSpace::SRGB() });
+            capture.oldImage = snapshotNodeVisualOverflowClippedToViewport(*m_document->frame(), element.get(), { { }, PixelFormat::BGRA8, DestinationColorSpace::SRGB() }, capture.oldOverflowRect);
 
         auto transitionName = element->computedStyle()->viewTransitionName();
         m_namedElements.add(transitionName->name, capture);

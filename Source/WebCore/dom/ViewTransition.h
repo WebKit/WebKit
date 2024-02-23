@@ -53,6 +53,7 @@ struct CapturedElement {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     RefPtr<ImageBuffer> oldImage;
+    LayoutRect oldOverflowRect;
     LayoutSize oldSize;
     RefPtr<MutableStyleProperties> oldProperties;
     WeakPtr<Element, WeakPtrImplWithEventTargetData> newElement;

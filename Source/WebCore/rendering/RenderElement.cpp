@@ -2066,10 +2066,15 @@ bool RenderElement::hasSelfPaintingLayer() const
 
 bool RenderElement::capturedInViewTransition() const
 {
-    if (!style().viewTransitionName())
+    if (!hasViewTransitionName())
         return false;
 
     return !!document().activeViewTransition();
+}
+
+bool RenderElement::hasViewTransitionName() const
+{
+    return !!style().viewTransitionName();
 }
 
 bool RenderElement::isViewTransitionPseudo() const

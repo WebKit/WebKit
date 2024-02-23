@@ -44,7 +44,7 @@ class ImageBuffer;
 class LocalFrame;
 class Node;
 
-enum class SnapshotFlags : uint8_t {
+enum class SnapshotFlags : uint16_t {
     ExcludeSelectionHighlighting = 1 << 0,
     PaintSelectionOnly = 1 << 1,
     InViewCoordinates = 1 << 2,
@@ -53,6 +53,7 @@ enum class SnapshotFlags : uint8_t {
     PaintEverythingExcludingSelection = 1 << 5,
     PaintWithIntegralScaleFactor = 1 << 6,
     Shareable = 1 << 7,
+    Accelerated = 1 << 8,
 };
 
 struct SnapshotOptions {
