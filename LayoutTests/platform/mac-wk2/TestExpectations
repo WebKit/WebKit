@@ -2007,3 +2007,10 @@ webkit.org/b/269581 http/tests/site-isolation/mouse-events/context-menu-event-tw
 webkit.org/b/269871 [ Monterey+ Debug ] imported/w3c/web-platform-tests/media-source/dedicated-worker/mediasource-worker-detach-element.html [ Skip ]
 
 webkit.org/b/269996 [ Monterey+ Debug ] imported/w3c/web-platform-tests/css/css-view-transitions/offscreen-element-modified-before-coming-onscreen.html [ Skip ]
+
+# webkit.org/b/270014 REGRESSION (275227@main): [ macOS wk2 Debug ] ASSERTION FAILED fixedPositionContainerLayer result of 5 tests in imported/w3c/web-platform-tests/css/css-view-transitions to flaky crash or constant failure
+[ Monterey+ Debug ] imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-below-viewport-offscreen-new.html [ Skip ]
+[ Monterey+ Debug ] imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-below-viewport-offscreen-old.html [ Skip ]
+[ Monterey+ Debug ] imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-right-of-viewport-offscreen-new.html [ Skip ]
+[ Monterey+ Debug ] imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-right-of-viewport-offscreen-old.html [ Skip ]
+[ Monterey+ Debug ] imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-rendering-invalidation.html [ Failure ]
