@@ -109,7 +109,7 @@ size_t AudioDestinationResampler::pullRendered(size_t numberOfFrames)
 bool AudioDestinationResampler::render(double sampleTime, MonotonicTime hostTime,  size_t framesToRender)
 {
     m_outputTimestamp = {
-        Seconds { sampleTime / sampleRate() },
+        Seconds { sampleTime },
         hostTime
     };
     // When there is a AudioWorklet, we do rendering on the AudioWorkletThread.

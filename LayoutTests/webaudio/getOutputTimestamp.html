@@ -1,0 +1,28 @@
+<DOCTYPE html>
+<html>
+<body>
+<script src="../resources/js-test.js"></script>
+<script>
+description("Validate the value returned by AudioContext.getOutputTimestamp()");
+jsTestIsAsync = true;
+
+const audioContext = new AudioContext();
+const gainNode = new GainNode(audioContext, { gain: 0.01 });
+const oscillatorNode = new OscillatorNode(audioContext);
+
+oscillatorNode.connect(gainNode).connect(audioContext.destination);
+oscillatorNode.start();
+
+handle = setInterval(() => {
+    if (audioContext.currentTime < 0.100)
+        return;
+    clearInterval(handle);
+
+    contextTime = audioContext.getOutputTimestamp().contextTime;
+    shouldBeTrue("contextTime > 0.090");
+    shouldBeTrue("contextTime <= audioContext.currentTime");
+    finishJSTest();
+}, 10);
+</script>
+</body>
+</html>
