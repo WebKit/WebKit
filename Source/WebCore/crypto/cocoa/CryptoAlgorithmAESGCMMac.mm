@@ -29,7 +29,7 @@
 #include "CommonCryptoUtilities.h"
 #include "CryptoAlgorithmAesGcmParams.h"
 #include "CryptoKeyAES.h"
-#include "WebCoreSwift-Swift.h"
+#include "PALSwift.h"
 #include <wtf/CryptographicUtilities.h>
 
 namespace WebCore {

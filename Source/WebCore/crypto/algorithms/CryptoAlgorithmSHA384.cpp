@@ -43,19 +43,7 @@ CryptoAlgorithmIdentifier CryptoAlgorithmSHA384::identifier() const
 
 void CryptoAlgorithmSHA384::digest(Vector<uint8_t>&& message, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
 {
-    auto digest = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_384);
-    if (!digest) {
-        exceptionCallback(ExceptionCode::OperationError);
-        return;
-    }
-
-    workQueue.dispatch([digest = WTFMove(digest), message = WTFMove(message), callback = WTFMove(callback), contextIdentifier = context.identifier()]() mutable {
-        digest->addBytes(message.data(), message.size());
-        auto result = digest->computeHash();
-        ScriptExecutionContext::postTaskTo(contextIdentifier, [callback = WTFMove(callback), result = WTFMove(result)](auto&) {
-            callback(result);
-        });
-    });
+    CryptoAlgorithm::dispatchDigest(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback), WTFMove(message), PAL::CryptoDigest::Algorithm::SHA_384);
 }
 
 } // namespace WebCore
