@@ -1192,7 +1192,7 @@ class RunWebDriverTests(shell.Test):
         if additionalArguments:
             self.command += additionalArguments
 
-        appendCustomBuildFlags(self, self.getProperty('platform'), self.getProperty('fullPlatform'))
+        self.appendCustomBuildFlags(self.getProperty('platform'), self.getProperty('fullPlatform'))
 
         self.log_observer = logobserver.BufferLogObserver()
         self.addLogObserver('stdio', self.log_observer)
