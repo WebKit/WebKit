@@ -29,18 +29,16 @@
 #if ENABLE(EXTENSION_CAPABILITIES)
 
 #import <BrowserEngineKit/BECapability.h>
-#import <WebCore/RegistrableDomain.h>
+#import <WebCore/SecurityOrigin.h>
 #import <wtf/text/WTFString.h>
 
 #import "ExtensionKitSoftLink.h"
 
 namespace WebKit {
 
-using WebCore::RegistrableDomain;
-
-MediaCapability::MediaCapability(URL url)
-    : m_url { WTFMove(url) }
-    , m_mediaEnvironment(adoptNS([[BEMediaEnvironment alloc] initWithWebPageURL:m_url]))
+MediaCapability::MediaCapability(Ref<WebCore::SecurityOrigin>&& securityOrigin)
+    : m_securityOrigin { WTFMove(securityOrigin) }
+    , m_mediaEnvironment { adoptNS([[BEMediaEnvironment alloc] initWithWebPageURL:m_securityOrigin->toURL()]) }
 {
     setPlatformCapability([BEProcessCapability mediaPlaybackAndCaptureWithEnvironment:m_mediaEnvironment.get()]);
 }
@@ -58,11 +56,6 @@ bool MediaCapability::isActivatingOrActive() const
 
     RELEASE_ASSERT_NOT_REACHED();
     return false;
-}
-
-RegistrableDomain MediaCapability::registrableDomain() const
-{
-    return RegistrableDomain { m_url };
 }
 
 String MediaCapability::environmentIdentifier() const

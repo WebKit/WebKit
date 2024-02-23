@@ -30,11 +30,11 @@
 #include "ExtensionCapability.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/URL.h>
+#include <wtf/Ref.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
-class RegistrableDomain;
+class SecurityOrigin;
 }
 
 OBJC_CLASS BEMediaEnvironment;
@@ -46,7 +46,7 @@ class ExtensionCapabilityGrant;
 class MediaCapability final : public ExtensionCapability, public CanMakeWeakPtr<MediaCapability> {
     WTF_MAKE_NONCOPYABLE(MediaCapability);
 public:
-    explicit MediaCapability(URL);
+    explicit MediaCapability(Ref<WebCore::SecurityOrigin>&&);
     MediaCapability(MediaCapability&&) = default;
     MediaCapability& operator=(MediaCapability&&) = default;
 
@@ -61,8 +61,7 @@ public:
     void setState(State state) { m_state = state; }
     bool isActivatingOrActive() const;
 
-    const URL& url() const { return m_url; }
-    WebCore::RegistrableDomain registrableDomain() const;
+    const WebCore::SecurityOrigin& securityOrigin() const { return m_securityOrigin.get(); }
 
     // ExtensionCapability
     String environmentIdentifier() const final;
@@ -71,7 +70,7 @@ public:
 
 private:
     State m_state { State::Inactive };
-    URL m_url;
+    Ref<WebCore::SecurityOrigin> m_securityOrigin;
     RetainPtr<BEMediaEnvironment> m_mediaEnvironment;
 };
 
