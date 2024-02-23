@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,16 +25,12 @@
 
 #pragma once
 
-#include "NetworkProcessPreferencesForWebProcess.h"
-
 namespace WebKit {
 
-struct NetworkProcessConnectionParameters {
-    bool allowTestOnlyIPC { false };
-#if ENABLE(IPC_TESTING_API)
-    bool ignoreInvalidMessageForTesting { false };
-#endif
-    NetworkProcessPreferencesForWebProcess preferencesForWebProcess;
+struct NetworkProcessPreferencesForWebProcess {
+    bool isWebTransportEnabled { false };
+
+    friend bool operator==(const NetworkProcessPreferencesForWebProcess&, const NetworkProcessPreferencesForWebProcess&) = default;
 };
 
 } // namespace WebKit

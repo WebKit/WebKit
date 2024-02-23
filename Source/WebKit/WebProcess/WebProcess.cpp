@@ -685,6 +685,17 @@ bool WebProcess::areAllPagesSuspended() const
     return true;
 }
 
+void WebProcess::updateIsWebTransportEnabled()
+{
+    for (auto& page : m_pageMap.values()) {
+        if (page->isWebTransportEnabled()) {
+            m_isWebTransportEnabled = true;
+            return;
+        }
+    }
+    m_isWebTransportEnabled = false;
+}
+
 void WebProcess::setHasSuspendedPageProxy(bool hasSuspendedPageProxy)
 {
     ASSERT(m_hasSuspendedPageProxy != hasSuspendedPageProxy);
@@ -884,6 +895,7 @@ void WebProcess::createWebPage(PageIdentifier pageID, WebPageCreationParameters&
         // Balanced by an enableTermination in removeWebPage.
         disableTermination();
         updateCPULimit();
+        updateIsWebTransportEnabled();
 #if OS(LINUX)
         RealTimeThreads::singleton().setEnabled(hasVisibleWebPage());
 #endif
@@ -908,6 +920,7 @@ void WebProcess::removeWebPage(PageIdentifier pageID)
 
     enableTermination();
     updateCPULimit();
+    updateIsWebTransportEnabled();
 #if OS(LINUX)
     RealTimeThreads::singleton().setEnabled(hasVisibleWebPage());
 #endif
