@@ -66,10 +66,9 @@ static Seconds adjustedTimeoutForThermalState(Seconds timeout)
 #endif
 }
 
-AuxiliaryProcessProxy::AuxiliaryProcessProxy(bool shouldTakeUIBackgroundAssertion, bool alwaysRunsAtBackgroundPriority, Seconds responsivenessTimeout)
+AuxiliaryProcessProxy::AuxiliaryProcessProxy(bool alwaysRunsAtBackgroundPriority, Seconds responsivenessTimeout)
     : m_responsivenessTimer(*this, adjustedTimeoutForThermalState(responsivenessTimeout))
     , m_alwaysRunsAtBackgroundPriority(alwaysRunsAtBackgroundPriority)
-    , m_throttler(*this, shouldTakeUIBackgroundAssertion)
 #if USE(RUNNINGBOARD)
     , m_timedActivityForIPC(3_s)
 #endif
@@ -349,15 +348,6 @@ void AuxiliaryProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::C
         else
             connection->sendMessage(WTFMove(pendingMessage.encoder), pendingMessage.sendOptions);
     }
-
-#if USE(RUNNINGBOARD)
-    m_throttler.didConnectToProcess(*this);
-#if USE(EXTENSIONKIT)
-    ASSERT(launcher);
-    if (launcher)
-        launcher->releaseLaunchGrant();
-#endif // USE(EXTENSIONKIT)
-#endif // USE(RUNNINGBOARD)
 }
 
 void AuxiliaryProcessProxy::outgoingMessageQueueIsGrowingLarge()

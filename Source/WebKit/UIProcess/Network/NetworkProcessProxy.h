@@ -230,6 +230,9 @@ public:
 
     void requestTermination();
 
+    ProcessThrottler& throttler() final { return m_throttler; }
+    const ProcessThrottler& throttler() const final { return m_throttler; }
+
     void updateProcessAssertion();
 
 #if ENABLE(CONTENT_EXTENSIONS)
@@ -423,6 +426,7 @@ private:
     LegacyCustomProtocolManagerProxy m_customProtocolManagerProxy;
 #endif
 
+    ProcessThrottler m_throttler;
     ProcessThrottler::ActivityVariant m_activityFromWebProcesses;
 
 #if ENABLE(CONTENT_EXTENSIONS)

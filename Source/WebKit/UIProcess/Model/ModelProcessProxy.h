@@ -58,6 +58,9 @@ public:
 
     void createModelProcessConnection(WebProcessProxy&, IPC::Connection::Handle&& connectionIdentifier, ModelProcessConnectionParameters&&);
 
+    ProcessThrottler& throttler() final { return m_throttler; }
+    const ProcessThrottler& throttler() const final { return m_throttler; }
+
     void updateProcessAssertion();
 
     void terminateForTesting();
@@ -103,6 +106,7 @@ private:
 
     ModelProcessCreationParameters processCreationParameters();
 
+    ProcessThrottler m_throttler;
     ProcessThrottler::ActivityVariant m_activityFromWebProcesses;
 
     HashSet<PAL::SessionID> m_sessionIDs;
