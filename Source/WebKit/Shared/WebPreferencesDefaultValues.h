@@ -40,6 +40,12 @@
 #define Webgpu_feature_status Preview
 #endif
 
+#if defined(ENABLE_UNPREFIXED_BACKDROP_FILTER) && ENABLE_UNPREFIXED_BACKDROP_FILTER
+#define Backdropfilter_feature_status Stable
+#else
+#define Backdropfilter_feature_status Testable
+#endif
+
 namespace WebKit {
 
 #if PLATFORM(IOS_FAMILY)

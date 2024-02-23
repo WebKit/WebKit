@@ -1511,20 +1511,20 @@ CSSTypedOMEnabled:
 
 CSSUnprefixedBackdropFilterEnabled:
   type: bool
-  status: embedder
+  status: Backdropfilter_feature_status
   category: css
   humanReadableName: "CSS Unprefixed Backdrop Filter"
   humanReadableDescription: "Enable unprefixed backdrop-filter CSS property"
   defaultValue:
     WebKitLegacy:
       "ENABLE(UNPREFIXED_BACKDROP_FILTER)": true
-      default: true
+      default: false
     WebKit:
       "ENABLE(UNPREFIXED_BACKDROP_FILTER)": true
-      default: true
+      default: false
     WebCore:
       "ENABLE(UNPREFIXED_BACKDROP_FILTER)": true
-      default: true
+      default: false
 
 CSSWordBreakAutoPhraseEnabled:
   type: bool
