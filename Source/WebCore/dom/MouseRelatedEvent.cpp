@@ -291,9 +291,4 @@ int MouseRelatedEvent::pageY() const
     return m_pageLocation.y();
 }
 
-const LayoutPoint& MouseRelatedEvent::pageLocation() const
-{
-    return m_pageLocation;
-}
-
 } // namespace WebCore
