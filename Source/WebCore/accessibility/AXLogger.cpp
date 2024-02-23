@@ -888,8 +888,8 @@ void streamAXCoreObject(TextStream& stream, const AXCoreObject& object, const Op
     if (options & AXStreamOptions::Role)
         stream.dumpProperty("role", object.roleValue());
 
-    if (object.renderer())
-        stream.dumpProperty("renderName", object.renderer()->renderName());
+    if (auto* axObject = dynamicDowncast<AccessibilityObject>(object); axObject && axObject->renderer())
+        stream.dumpProperty("renderName", axObject->renderer()->renderName());
 
     if (options & AXStreamOptions::ParentID) {
         auto* parent = object.parentObjectUnignored();
