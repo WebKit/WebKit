@@ -101,6 +101,7 @@ public:
     CSSParserToken(CSSParserTokenType, BlockType = NotBlock);
     CSSParserToken(CSSParserTokenType, StringView, BlockType = NotBlock);
 
+    explicit CSSParserToken(unsigned whitespaceCount); // WhitespaceToken
     CSSParserToken(CSSParserTokenType, UChar); // for DelimiterToken
     CSSParserToken(double, NumericValueType, NumericSign, StringView originalText); // for NumberToken
 
@@ -137,7 +138,11 @@ public:
 
     enum class SerializationMode : bool {
         Normal,
-        CustomProperty // Custom properties don't collapse whitespace and serialize numbers as original strings.
+        // "Specified values of custom properties must be serialized exactly as specified by the author.
+        // Simplifications that might occur in other properties, such as dropping comments, normalizing whitespace,
+        // reserializing numeric tokens from their value, etc., must not occur."
+        // https://drafts.csswg.org/css-variables-2/#serializing-custom-props
+        CustomProperty
     };
     void serialize(StringBuilder&, const CSSParserToken* nextToken = nullptr, SerializationMode = SerializationMode::Normal) const;
 
@@ -171,6 +176,7 @@ private:
         HashTokenType m_hashTokenType;
         double m_numericValue;
         mutable int m_id;
+        unsigned m_whitespaceCount;
     };
 };
 

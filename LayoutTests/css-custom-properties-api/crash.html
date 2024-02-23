@@ -26,10 +26,10 @@ test(function() {
 
 test(function() {
   inlineStyle.setProperty('--baz', '   40px');
-  assert_equals(computedStyle.getPropertyValue('--baz'), ' 40px');
+  assert_equals(computedStyle.getPropertyValue('--baz'), '40px');
   assert_equals(computedStyle.getPropertyValue('--foo'), '');
   assert_equals(computedStyle.getPropertyValue('--bar'), '');
-  assert_equals(computedStyle.getPropertyValue('--baz'), ' 40px');
+  assert_equals(computedStyle.getPropertyValue('--baz'), '40px');
   assert_equals(computedStyle.getPropertyValue('font-size'), '30px');
   inlineStyle.removeProperty('--baz');
   assert_equals(computedStyle.getPropertyValue('--baz'), '');

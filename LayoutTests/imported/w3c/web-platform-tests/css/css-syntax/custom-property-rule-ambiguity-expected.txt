@@ -1,6 +1,6 @@
 
 FAIL Rule that looks like a custom property declaration is ignored assert_equals: expected 2 but got 3
 FAIL Rule that looks like an invalid custom property declaration is ignored assert_equals: expected 2 but got 3
-FAIL Nested rule that looks like a custom property declaration assert_equals: expected "hover { }\n    .b { }" but got "hover { } .b { }"
+FAIL Nested rule that looks like a custom property declaration assert_equals: expected "hover { }\n    .b { }" but got "hover { }     .b { }"
 FAIL Nested rule that looks like an invalid custom property declaration assert_equals: expected 1 but got 3
 

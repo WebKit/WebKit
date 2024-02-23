@@ -131,7 +131,12 @@ CSSParser::ParseResult CSSParserImpl::parseValue(MutableStyleProperties& declara
 CSSParser::ParseResult CSSParserImpl::parseCustomPropertyValue(MutableStyleProperties& declaration, const AtomString& propertyName, const String& string, bool important, const CSSParserContext& context)
 {
     CSSParserImpl parser(context, string);
-    parser.consumeCustomPropertyValue(parser.tokenizer()->tokenRange(), propertyName, important);
+
+    auto range = parser.tokenizer()->tokenRange();
+    range.consumeWhitespace();
+    range.trimTrailingWhitespace();
+    parser.consumeCustomPropertyValue(range, propertyName, important);
+
     if (parser.topContext().m_parsedProperties.isEmpty())
         return CSSParser::ParseResult::Error;
     return declaration.addParsedProperties(parser.topContext().m_parsedProperties) ? CSSParser::ParseResult::Changed : CSSParser::ParseResult::Unchanged;

@@ -84,11 +84,11 @@ test(function() {
 }, "Valid values can be set on inline styles");
 
 test(function() {
-  inlineStyle.setProperty('--b', ' 20px');
+  inlineStyle.setProperty('--b', '20px');
   inlineStyle.setProperty('--a', 'calc(var(--b) + 10px)');
-  assert_equals(inlineStyle.getPropertyValue('--b'), ' 20px');
+  assert_equals(inlineStyle.getPropertyValue('--b'), '20px');
   assert_equals(inlineStyle.getPropertyValue('--a'), 'calc(var(--b) + 10px)');
-  assert_equals(computedStyle.getPropertyValue('--b'), ' 20px');
+  assert_equals(computedStyle.getPropertyValue('--b'), '20px');
   assert_equals(computedStyle.getPropertyValue('--a'), '30px');
 }, "Var values are accepted");
 

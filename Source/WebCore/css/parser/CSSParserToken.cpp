@@ -358,6 +358,13 @@ CSSParserToken::CSSParserToken(CSSParserTokenType type, BlockType blockType)
 {
 }
 
+CSSParserToken::CSSParserToken(unsigned whitespaceCount)
+    : m_type(WhitespaceToken)
+    , m_blockType(NotBlock)
+    , m_whitespaceCount(whitespaceCount)
+{
+}
+
 // Just a helper used for Delimiter tokens.
 CSSParserToken::CSSParserToken(CSSParserTokenType type, UChar c)
     : m_type(type)
@@ -570,6 +577,8 @@ bool CSSParserToken::operator==(const CSSParserToken& other) const
     case NumberToken:
     case PercentageToken:
         return originalText() == other.originalText();
+    case WhitespaceToken:
+        return m_whitespaceCount == other.m_whitespaceCount;
     default:
         return true;
     }
@@ -723,9 +732,12 @@ void CSSParserToken::serialize(StringBuilder& builder, const CSSParserToken* nex
     case BadUrlToken:
         builder.append("url(()");
         break;
-    case WhitespaceToken:
-        builder.append(' ');
+    case WhitespaceToken: {
+        auto count = mode == SerializationMode::CustomProperty ? m_whitespaceCount : 1;
+        for (auto i = 0u; i < count; ++i)
+            builder.append(' ');
         break;
+    }
     case ColonToken:
         builder.append(':');
         break;

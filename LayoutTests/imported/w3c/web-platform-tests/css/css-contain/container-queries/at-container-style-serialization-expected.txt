@@ -5,6 +5,6 @@ PASS Empty declaration value
 PASS No declaration value
 PASS Unknown CSS property after 'or'
 PASS Not a style function with space before '('
-FAIL Spaces preserved in custom property value assert_equals: expected "style(--foo: bar   baz)" but got "style(--foo: bar baz)"
+PASS Spaces preserved in custom property value
 PASS Original string number in custom property value
 
