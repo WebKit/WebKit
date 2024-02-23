@@ -632,7 +632,6 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/MonotonicObjectIdentifier.serialization.in \
 	Shared/NavigationActionData.serialization.in \
 	Shared/NetworkProcessConnectionParameters.serialization.in \
-	Shared/NetworkProcessPreferencesForWebProcess.serialization.in \
 	Shared/Pasteboard.serialization.in \
 	Shared/PlatformPopupMenuData.serialization.in \
 	Shared/PolicyDecision.serialization.in \

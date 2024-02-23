@@ -55,7 +55,6 @@ WebTransportSession::WebTransportSession(WebTransportSessionIdentifier identifie
     : m_identifier(identifier)
 {
     ASSERT(RunLoop::isMain());
-    RELEASE_ASSERT(WebProcess::singleton().isWebTransportEnabled());
     WebProcess::singleton().addWebTransportSession(m_identifier, *this);
 }
 

@@ -135,7 +135,7 @@ void PageConfiguration::setPageGroup(RefPtr<WebPageGroup>&& pageGroup)
     m_data.pageGroup = WTFMove(pageGroup);
 }
 
-WebPreferences* PageConfiguration::preferences() const
+WebPreferences* PageConfiguration::preferences()
 {
     return m_data.preferences.get();
 }
@@ -277,15 +277,5 @@ WebKit::GPUProcessPreferencesForWebProcess PageConfiguration::preferencesForGPUP
     };
 }
 #endif
-
-WebKit::NetworkProcessPreferencesForWebProcess PageConfiguration::preferencesForNetworkProcess() const
-{
-    RefPtr preferences = m_data.preferences;
-    RELEASE_ASSERT(preferences);
-
-    return {
-        preferences->webTransportEnabled(),
-    };
-}
 
 } // namespace API

@@ -308,7 +308,6 @@ $(PROJECT_DIR)/Shared/ModelProcessConnectionParameters.serialization.in
 $(PROJECT_DIR)/Shared/MonotonicObjectIdentifier.serialization.in
 $(PROJECT_DIR)/Shared/NavigationActionData.serialization.in
 $(PROJECT_DIR)/Shared/NetworkProcessConnectionParameters.serialization.in
-$(PROJECT_DIR)/Shared/NetworkProcessPreferencesForWebProcess.serialization.in
 $(PROJECT_DIR)/Shared/Notifications/NotificationManagerMessageHandler.messages.in
 $(PROJECT_DIR)/Shared/Notifications/NotificationManagerProxy.messages.in
 $(PROJECT_DIR)/Shared/PALArgumentCoders.serialization.in

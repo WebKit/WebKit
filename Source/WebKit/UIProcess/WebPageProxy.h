@@ -462,7 +462,6 @@ struct LoadParameters;
 struct ModelIdentifier;
 struct NavigationActionData;
 struct NetworkResourceLoadIdentifierType;
-struct NetworkProcessPreferencesForWebProcess;
 struct PDFContextMenu;
 struct PDFPluginIdentifierType;
 struct PlatformPopupMenuData;
@@ -593,10 +592,9 @@ public:
 #if ENABLE(GPU_PROCESS)
     GPUProcessPreferencesForWebProcess preferencesForGPUProcess() const;
 #endif
-    NetworkProcessPreferencesForWebProcess preferencesForNetworkProcess() const;
 
-    bool hasSameGPUAndNetworkProcessPreferencesAs(const API::PageConfiguration&) const;
-    bool hasSameGPUAndNetworkProcessPreferencesAs(const WebPageProxy& page) const { return hasSameGPUAndNetworkProcessPreferencesAs(page.configuration()); }
+    bool hasSameGPUProcessPreferencesAs(const API::PageConfiguration&) const;
+    bool hasSameGPUProcessPreferencesAs(const WebPageProxy& page) const { return hasSameGPUProcessPreferencesAs(page.configuration()); }
 
     void processIsNoLongerAssociatedWithPage(WebProcessProxy&);
 

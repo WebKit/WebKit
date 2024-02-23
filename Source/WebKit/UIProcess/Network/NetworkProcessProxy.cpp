@@ -304,10 +304,6 @@ void NetworkProcessProxy::getNetworkProcessConnection(WebProcessProxy& webProces
 #if ENABLE(IPC_TESTING_API)
     parameters.ignoreInvalidMessageForTesting = webProcessProxy.ignoreInvalidMessageForTesting();
 #endif
-    // The WebProcess shouldn't request a connection to the network process before we've had a chance to
-    // initialize the preferences for the network process.
-    ASSERT(webProcessProxy.preferencesForNetworkProcess());
-    parameters.preferencesForWebProcess = *webProcessProxy.preferencesForNetworkProcess();
     sendWithAsyncReply(Messages::NetworkProcess::CreateNetworkConnectionToWebProcess { webProcessProxy.coreProcessIdentifier(), webProcessProxy.sessionID(), parameters }, [this, weakThis = WeakPtr { *this }, reply = WTFMove(reply)](auto&& identifier, auto cookieAcceptPolicy) mutable {
         if (!weakThis) {
             RELEASE_LOG_ERROR(Process, "NetworkProcessProxy::getNetworkProcessConnection: NetworkProcessProxy deallocated during connection establishment");

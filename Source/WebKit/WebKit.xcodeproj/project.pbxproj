@@ -1121,7 +1121,6 @@
 		46C916AA2799D0A2001A4E7C /* WebSharedWorkerServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 46C916A92799D09D001A4E7C /* WebSharedWorkerServer.h */; };
 		46CE3B1123D8C8490016A96A /* WebBackForwardListCounts.h in Headers */ = {isa = PBXBuildFile; fileRef = 46CE3B1023D8C83D0016A96A /* WebBackForwardListCounts.h */; };
 		46D246262AFE956500F24C94 /* PlatformCAAnimationRemoteProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = 46D246242AFE954F00F24C94 /* PlatformCAAnimationRemoteProperties.h */; };
-		46D3F7BB2B844E9F0044D45F /* NetworkProcessPreferencesForWebProcess.h in Headers */ = {isa = PBXBuildFile; fileRef = 46D3F7BA2B844E8F0044D45F /* NetworkProcessPreferencesForWebProcess.h */; };
 		46D48FCE2799D7E1007D2014 /* WebSharedWorkerServerToContextConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 46D48FCD2799D7DE007D2014 /* WebSharedWorkerServerToContextConnection.h */; };
 		46DBC28C2AF96B9F00E6B63A /* ITPThirdPartyData.h in Headers */ = {isa = PBXBuildFile; fileRef = 46DBC28A2AF96B9700E6B63A /* ITPThirdPartyData.h */; };
 		46DBC28D2AF96BA400E6B63A /* ITPThirdPartyDataForSpecificFirstParty.h in Headers */ = {isa = PBXBuildFile; fileRef = 46DBC28B2AF96B9700E6B63A /* ITPThirdPartyDataForSpecificFirstParty.h */; };
@@ -5358,8 +5357,6 @@
 		46CE3B1023D8C83D0016A96A /* WebBackForwardListCounts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebBackForwardListCounts.h; sourceTree = "<group>"; };
 		46D246242AFE954F00F24C94 /* PlatformCAAnimationRemoteProperties.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlatformCAAnimationRemoteProperties.h; sourceTree = "<group>"; };
 		46D246252AFE954F00F24C94 /* PlatformCAAnimationRemoteProperties.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = PlatformCAAnimationRemoteProperties.serialization.in; sourceTree = "<group>"; };
-		46D3F7B92B844E8F0044D45F /* NetworkProcessPreferencesForWebProcess.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = NetworkProcessPreferencesForWebProcess.serialization.in; sourceTree = "<group>"; };
-		46D3F7BA2B844E8F0044D45F /* NetworkProcessPreferencesForWebProcess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetworkProcessPreferencesForWebProcess.h; sourceTree = "<group>"; };
 		46D48FCC2799D7DD007D2014 /* WebSharedWorkerServerToContextConnection.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebSharedWorkerServerToContextConnection.cpp; sourceTree = "<group>"; };
 		46D48FCD2799D7DE007D2014 /* WebSharedWorkerServerToContextConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebSharedWorkerServerToContextConnection.h; sourceTree = "<group>"; };
 		46DA285727B73E760089D339 /* WebGeolocationManagerProxyCocoa.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebGeolocationManagerProxyCocoa.cpp; sourceTree = "<group>"; };
@@ -9025,8 +9022,6 @@
 				86D1968129A512590083B077 /* NavigationActionData.serialization.in */,
 				86D1970829AE4E930083B077 /* NetworkProcessConnectionParameters.h */,
 				86D1970729AE4E8A0083B077 /* NetworkProcessConnectionParameters.serialization.in */,
-				46D3F7BA2B844E8F0044D45F /* NetworkProcessPreferencesForWebProcess.h */,
-				46D3F7B92B844E8F0044D45F /* NetworkProcessPreferencesForWebProcess.serialization.in */,
 				5CD748B523C8EB190092A9B5 /* NetworkResourceLoadIdentifier.h */,
 				8657EE3928EDB8C500FF9B40 /* Pasteboard.serialization.in */,
 				7AFBD36E21E546E3005DBACB /* PersistencyUtils.cpp */,
@@ -16300,7 +16295,6 @@
 				5C1426ED1C23F80900D41183 /* NetworkProcessCreationParameters.h in Headers */,
 				5163199516289A6300E22F00 /* NetworkProcessMessages.h in Headers */,
 				E14A954A16E016A40068DE82 /* NetworkProcessPlatformStrategies.h in Headers */,
-				46D3F7BB2B844E9F0044D45F /* NetworkProcessPreferencesForWebProcess.h in Headers */,
 				5179556E162877B300FA43B6 /* NetworkProcessProxy.h in Headers */,
 				513A163D163088F6005D7D22 /* NetworkProcessProxyMessages.h in Headers */,
 				5C1426EE1C23F80900D41183 /* NetworkProcessSupplement.h in Headers */,

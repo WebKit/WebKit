@@ -7302,11 +7302,6 @@ void WebPage::setSmartInsertDeleteEnabled(bool enabled)
     }
 }
 
-bool WebPage::isWebTransportEnabled() const
-{
-    return m_page->settings().webTransportEnabled();
-}
-
 bool WebPage::isSelectTrailingWhitespaceEnabled() const
 {
     return m_page->settings().selectTrailingWhitespaceEnabled();

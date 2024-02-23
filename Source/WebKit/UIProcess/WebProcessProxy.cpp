@@ -443,43 +443,26 @@ void WebProcessProxy::updateRegistrationWithDataStore()
     }
 }
 
-void WebProcessProxy::initializePreferencesForGPUAndNetworkProcesses(const WebPageProxy& page)
+void WebProcessProxy::initializePreferencesForGPUProcess(const WebPageProxy& page)
 {
 #if ENABLE(GPU_PROCESS)
     if (!m_preferencesForGPUProcess)
         m_preferencesForGPUProcess = page.preferencesForGPUProcess();
     else
         ASSERT(*m_preferencesForGPUProcess == page.preferencesForGPUProcess());
+#else
+    UNUSED_PARAM(page);
 #endif
-    if (!m_preferencesForNetworkProcess)
-        m_preferencesForNetworkProcess = page.preferencesForNetworkProcess();
-    else
-        ASSERT(*m_preferencesForNetworkProcess == page.preferencesForNetworkProcess());
 }
 
-void WebProcessProxy::initializePreferencesForNetworkProcess(const API::PageConfiguration& pageConfiguration)
-{
-    ASSERT(!m_preferencesForNetworkProcess);
-    m_preferencesForNetworkProcess = pageConfiguration.preferencesForNetworkProcess();
-}
-
-void WebProcessProxy::initializePreferencesForNetworkProcess(const WebPreferencesStore& preferences)
-{
-    ASSERT(!m_preferencesForNetworkProcess);
-    m_preferencesForNetworkProcess = NetworkProcessPreferencesForWebProcess {
-        preferences.getBoolValueForKey(WebPreferencesKey::webTransportEnabledKey()),
-    };
-}
-
-bool WebProcessProxy::hasSameGPUAndNetworkProcessPreferencesAs(const API::PageConfiguration& pageConfiguration) const
+bool WebProcessProxy::hasSameGPUProcessPreferencesAs(const API::PageConfiguration& pageConfiguration) const
 {
 #if ENABLE(GPU_PROCESS)
-    if (m_preferencesForGPUProcess && *m_preferencesForGPUProcess != pageConfiguration.preferencesForGPUProcess())
-        return false;
-#endif
-    if (m_preferencesForNetworkProcess && *m_preferencesForNetworkProcess != pageConfiguration.preferencesForNetworkProcess())
-        return false;
+    return !m_preferencesForGPUProcess || *m_preferencesForGPUProcess == pageConfiguration.preferencesForGPUProcess();
+#else
+    UNUSED_PARAM(pageConfiguration);
     return true;
+#endif
 }
 
 void WebProcessProxy::addProvisionalPageProxy(ProvisionalPageProxy& provisionalPage)
@@ -490,7 +473,7 @@ void WebProcessProxy::addProvisionalPageProxy(ProvisionalPageProxy& provisionalP
     ASSERT(!m_provisionalPages.contains(provisionalPage));
     markProcessAsRecentlyUsed();
     m_provisionalPages.add(provisionalPage);
-    initializePreferencesForGPUAndNetworkProcesses(provisionalPage.protectedPage());
+    initializePreferencesForGPUProcess(provisionalPage.protectedPage());
     updateRegistrationWithDataStore();
 }
 
@@ -515,7 +498,7 @@ void WebProcessProxy::addRemotePageProxy(RemotePageProxy& remotePage)
     ASSERT(!m_remotePages.contains(remotePage));
     m_remotePages.add(remotePage);
     markProcessAsRecentlyUsed();
-    initializePreferencesForGPUAndNetworkProcesses(*remotePage.protectedPage());
+    initializePreferencesForGPUProcess(*remotePage.protectedPage());
 }
 
 void WebProcessProxy::removeRemotePageProxy(RemotePageProxy& remotePage)
@@ -809,7 +792,7 @@ void WebProcessProxy::addExistingWebPage(WebPageProxy& webPage, BeginsUsingDataS
         protectedProcessPool()->pageBeginUsingWebsiteDataStore(webPage, webPage.protectedWebsiteDataStore());
     }
 
-    initializePreferencesForGPUAndNetworkProcesses(webPage);
+    initializePreferencesForGPUProcess(webPage);
 
 #if PLATFORM(MAC) && USE(RUNNINGBOARD)
     if (webPage.preferences().backgroundWebContentRunningBoardThrottlingEnabled())

@@ -30,7 +30,6 @@
 #include "BackgroundProcessResponsivenessTimer.h"
 #include "GPUProcessPreferencesForWebProcess.h"
 #include "MessageReceiverMap.h"
-#include "NetworkProcessPreferencesForWebProcess.h"
 #include "NetworkProcessProxy.h"
 #include "ProcessLauncher.h"
 #include "ProcessTerminationReason.h"
@@ -179,9 +178,6 @@ public:
 #if ENABLE(GPU_PROCESS)
     const std::optional<GPUProcessPreferencesForWebProcess>& preferencesForGPUProcess() const { return m_preferencesForGPUProcess; }
 #endif
-    const std::optional<NetworkProcessPreferencesForWebProcess>& preferencesForNetworkProcess() const { return m_preferencesForNetworkProcess; }
-    void initializePreferencesForNetworkProcess(const API::PageConfiguration&);
-    void initializePreferencesForNetworkProcess(const WebPreferencesStore&);
 
     bool isMatchingRegistrableDomain(const WebCore::RegistrableDomain& domain) const { return m_registrableDomain ? *m_registrableDomain == domain : false; }
     WebCore::RegistrableDomain registrableDomain() const { return valueOrDefault(m_registrableDomain); }
@@ -398,7 +394,7 @@ public:
     void sendAudioComponentRegistrations();
 #endif
 
-    bool hasSameGPUAndNetworkProcessPreferencesAs(const API::PageConfiguration&) const;
+    bool hasSameGPUProcessPreferencesAs(const API::PageConfiguration&) const;
 
 #if ENABLE(REMOTE_INSPECTOR) && PLATFORM(COCOA)
     void enableRemoteInspectorIfNeeded();
@@ -544,7 +540,7 @@ private:
     static WebPageProxyMap& globalPageMap();
     static Vector<Ref<WebPageProxy>> globalPages();
 
-    void initializePreferencesForGPUAndNetworkProcesses(const WebPageProxy&);
+    void initializePreferencesForGPUProcess(const WebPageProxy&);
 
     void reportProcessDisassociatedWithPageIfNecessary(WebPageProxyIdentifier);
     bool isAssociatedWithPage(WebPageProxyIdentifier) const;
@@ -777,7 +773,6 @@ private:
 #if ENABLE(GPU_PROCESS)
     mutable std::optional<GPUProcessPreferencesForWebProcess> m_preferencesForGPUProcess;
 #endif
-    mutable std::optional<NetworkProcessPreferencesForWebProcess> m_preferencesForNetworkProcess;
 
     ProcessThrottleState m_throttleStateForStatistics { ProcessThrottleState::Suspended };
     MonotonicTime m_throttleStateForStatisticsTimestamp;

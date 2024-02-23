@@ -206,7 +206,6 @@ public:
     void removeWebPage(WebCore::PageIdentifier);
     WebPage* focusedWebPage() const;
     bool hasEverHadAnyWebPages() const { return m_hasEverHadAnyWebPages; }
-    bool isWebTransportEnabled() const { return m_isWebTransportEnabled; }
 
     InjectedBundle* injectedBundle() const { return m_injectedBundle.get(); }
     
@@ -824,8 +823,6 @@ private:
     HashCountedSet<WebCore::ServiceWorkerRegistrationIdentifier> m_swRegistrationCounts;
 
     HashMap<StorageAreaMapIdentifier, WeakPtr<StorageAreaMap>> m_storageAreaMaps;
-
-    void updateIsWebTransportEnabled();
     
     // Prewarmed WebProcesses do not have an associated sessionID yet, which is why this is an optional.
     // By the time the WebProcess gets a WebPage, it is guaranteed to have a sessionID.
@@ -857,7 +854,6 @@ private:
     bool m_imageAnimationEnabled { true };
     bool m_hasEverHadAnyWebPages { false };
     bool m_hasPendingAccessibilityUnsuspension { false };
-    bool m_isWebTransportEnabled { false };
 #if ENABLE(ACCESSIBILITY_NON_BLINKING_CURSOR)
     bool m_prefersNonBlinkingCursor { false };
 #endif
