@@ -2007,3 +2007,5 @@ webkit.org/b/269581 http/tests/site-isolation/mouse-events/context-menu-event-tw
 [ Monterey+ ] http/tests/navigation/ping-attribute/area-cross-origin-from-https-UpgradeMixedContent.html [ Pass Failure ]
 
 webkit.org/b/269871 [ Monterey+ Debug ] imported/w3c/web-platform-tests/media-source/dedicated-worker/mediasource-worker-detach-element.html [ Skip ]
+
+webkit.org/b/269996 [ Monterey+ Debug ] imported/w3c/web-platform-tests/css/css-view-transitions/offscreen-element-modified-before-coming-onscreen.html [ Skip ]
