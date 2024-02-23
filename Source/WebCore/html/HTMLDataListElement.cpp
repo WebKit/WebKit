@@ -77,6 +77,7 @@ Ref<HTMLCollection> HTMLDataListElement::options()
 
 void HTMLDataListElement::childrenChanged(const ChildChange& change)
 {
+    HTMLElement::childrenChanged(change);
     if (change.source == ChildChange::Source::API)
         optionElementChildrenChanged();
 }
