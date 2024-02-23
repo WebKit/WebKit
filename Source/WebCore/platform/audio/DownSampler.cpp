@@ -70,7 +70,7 @@ void DownSampler::initializeKernel()
 
         // Compute Blackman window, matching the offset of the sinc().
         double x = static_cast<double>(i) / n;
-        double window = a0 - a1 * cos(2.0 * piDouble * x) + a2 * cos(4.0 * piDouble * x);
+        double window = a0 - a1 * cos(twoPiDouble * x) + a2 * cos(2.0 * twoPiDouble * x);
 
         // Window the sinc() function.
         // Then store only the odd terms in the kernel.

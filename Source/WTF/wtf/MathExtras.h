@@ -71,6 +71,9 @@ constexpr double sqrtOfTwoDouble = M_SQRT2;
 constexpr float sqrtOfTwoFloat = static_cast<float>(M_SQRT2);
 #endif
 
+constexpr double twoPiDouble = piDouble * 2.0;
+constexpr float twoPiFloat = piFloat * 2.0f;
+
 #if COMPILER(MSVC)
 
 // Work around a bug in Win, where atan2(+-infinity, +-infinity) yields NaN instead of specific values.

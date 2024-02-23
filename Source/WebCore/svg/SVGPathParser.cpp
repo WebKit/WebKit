@@ -466,9 +466,9 @@ bool SVGPathParser::decomposeArcToCubic(float angle, float rx, float ry, FloatPo
 
     float thetaArc = theta2 - theta1;
     if (thetaArc < 0 && sweepFlag)
-        thetaArc += 2 * piFloat;
+        thetaArc += twoPiFloat;
     else if (thetaArc > 0 && !sweepFlag)
-        thetaArc -= 2 * piFloat;
+        thetaArc -= twoPiFloat;
 
     pointTransform.makeIdentity();
     pointTransform.rotate(angle);

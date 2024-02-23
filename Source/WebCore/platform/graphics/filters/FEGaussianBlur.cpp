@@ -79,7 +79,7 @@ bool FEGaussianBlur::setEdgeMode(EdgeModeType edgeMode)
 
 static inline float gaussianKernelFactor()
 {
-    return 3 / 4.f * sqrtf(2 * piFloat);
+    return 3 / 4.f * sqrtf(twoPiFloat);
 }
 
 static int clampedToKernelSize(float value)

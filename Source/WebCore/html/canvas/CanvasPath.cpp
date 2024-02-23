@@ -142,7 +142,6 @@ ExceptionOr<void> CanvasPath::arcTo(float x1, float y1, float x2, float y2, floa
 
 static void normalizeAngles(float& startAngle, float& endAngle, bool anticlockwise)
 {
-    constexpr auto twoPiFloat = 2 * piFloat;
     float newStartAngle = fmodf(startAngle, twoPiFloat);
     if (newStartAngle < 0)
         newStartAngle += twoPiFloat;

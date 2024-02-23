@@ -193,7 +193,7 @@ void SincResampler::initializeKernel()
 
             // Compute Blackman window, matching the offset of the sinc().
             double x = (i - subsampleOffset) / n;
-            double window = a0 - a1 * cos(2.0 * piDouble * x) + a2 * cos(4.0 * piDouble * x);
+            double window = a0 - a1 * cos(twoPiDouble * x) + a2 * cos(2.0 * twoPiDouble * x);
 
             // Window the sinc() function and store at the correct offset.
             m_kernelStorage[i + offsetIndex * kernelSize] = sinc * window;
