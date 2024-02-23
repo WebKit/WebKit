@@ -426,6 +426,9 @@ NSURL *WebExtension::resourceFileURLForPath(NSString *path)
 {
     ASSERT(path);
 
+    if ([path hasPrefix:@"/"])
+        path = [path substringFromIndex:1];
+
     if (!path.length || !m_resourceBaseURL)
         return nil;
 
