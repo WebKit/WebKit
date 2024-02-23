@@ -1,5 +1,3 @@
 # Failing after OS migration rdar://112624778 (Migrate macOS Sonoma test expectations to OpenSource, add expectation files to Down-Levels (259373))
 
 webkit.org/b/268789 [ Debug ] imported/w3c/web-platform-tests/css/css-break/table/repeated-section/special-elements-crash.html [ Skip ]
-
-webkit.org/b/269403 http/tests/media/hls/track-in-band-multiple-cues.html [ Skip ]
