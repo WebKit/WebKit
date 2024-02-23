@@ -2484,9 +2484,15 @@ void FunctionDefinitionWriter::serializeConstant(const Type* type, ConstantValue
             }
             m_stringBuilder.append(")");
         },
-        [&](const Struct&) {
-            // Not supported yet
-            RELEASE_ASSERT_NOT_REACHED();
+        [&](const Struct& structType) {
+            auto& constantStruct = std::get<ConstantStruct>(value);
+            m_stringBuilder.append(structType.structure.name(), " { ");
+            for (auto& member : structType.structure.members()) {
+                m_stringBuilder.append(".", member.name(), " = ");
+                serializeConstant(structType.fields.get(member.originalName()), constantStruct.fields.get(member.originalName()));
+                m_stringBuilder.append(", ");
+            }
+            m_stringBuilder.append(" }");
         },
         [&](const PrimitiveStruct& primitiveStruct) {
             auto& constantStruct = std::get<ConstantStruct>(value);
