@@ -81,7 +81,7 @@ static MacroAssemblerCodeRef<tag> generateThunkWithJumpTo(LLIntCode target, cons
     CCallHelpers::RegisterID scratch = JSInterfaceJIT::regT0;
 #endif
     jit.move(JSInterfaceJIT::TrustedImmPtr(target), scratch);
-    jit.farJump(scratch, OperationPtrTag);
+    jit.call(scratch, OperationPtrTag);
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::LLIntThunk);
     return FINALIZE_THUNK(patchBuffer, tag, ASCIILiteral::fromLiteralUnsafe(thunkKind), "LLInt %s thunk", thunkKind);
@@ -293,7 +293,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> inPlaceInterpreterEntryThunkSIMD()
 #endif
         jit.tagReturnAddress();
         jit.move(JSInterfaceJIT::TrustedImmPtr(retagged), scratch);
-        jit.farJump(scratch, OperationPtrTag);
+        jit.call(scratch, OperationPtrTag);
 
         LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::LLIntThunk);
         codeRef.construct(FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "inPlaceInterpreterEntryThunkSIMD"_s, "LLInt %s jump to prologue thunk", "function for wasm in place interpreter"));
@@ -543,7 +543,7 @@ MacroAssemblerCodeRef<NativeToJITGatePtrTag> createJSGateThunk(void* pointer, Pt
 
     jit.call(GPRInfo::regT5, tag);
     jit.move(CCallHelpers::TrustedImmPtr(pointer), GPRInfo::regT5);
-    jit.farJump(GPRInfo::regT5, OperationPtrTag);
+    jit.call(GPRInfo::regT5, OperationPtrTag);
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::LLIntThunk);
     return FINALIZE_THUNK(patchBuffer, NativeToJITGatePtrTag, "CallJSGate"_s, "LLInt %s call gate thunk", name);
@@ -555,7 +555,7 @@ MacroAssemblerCodeRef<NativeToJITGatePtrTag> createWasmGateThunk(void* pointer, 
 
     jit.call(GPRInfo::wasmScratchGPR0, tag);
     jit.move(CCallHelpers::TrustedImmPtr(pointer), GPRInfo::wasmScratchGPR1);
-    jit.farJump(GPRInfo::wasmScratchGPR1, OperationPtrTag);
+    jit.call(GPRInfo::wasmScratchGPR1, OperationPtrTag);
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::LLIntThunk);
     return FINALIZE_THUNK(patchBuffer, NativeToJITGatePtrTag, "CallWasmGate"_s, "LLInt %s wasm call gate thunk", name);
@@ -672,7 +672,7 @@ MacroAssemblerCodeRef<NativeToJITGatePtrTag> tagGateThunk(void* pointer)
     jit.tagPtr(GPRInfo::regT3, ARM64Registers::lr);
     jit.storePtr(ARM64Registers::lr, CCallHelpers::Address(GPRInfo::callFrameRegister, 8));
     jit.move(CCallHelpers::TrustedImmPtr(pointer), GPRInfo::regT3);
-    jit.farJump(GPRInfo::regT3, OperationPtrTag);
+    jit.call(GPRInfo::regT3, OperationPtrTag);
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::LLIntThunk);
     return FINALIZE_THUNK(patchBuffer, NativeToJITGatePtrTag, "tag"_s, "tag thunk");
@@ -687,7 +687,7 @@ MacroAssemblerCodeRef<NativeToJITGatePtrTag> untagGateThunk(void* pointer)
     jit.untagPtr(GPRInfo::regT3, ARM64Registers::lr);
     jit.validateUntaggedPtr(ARM64Registers::lr, GPRInfo::regT3);
     jit.move(CCallHelpers::TrustedImmPtr(pointer), GPRInfo::regT3);
-    jit.farJump(GPRInfo::regT3, OperationPtrTag);
+    jit.call(GPRInfo::regT3, OperationPtrTag);
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::LLIntThunk);
     return FINALIZE_THUNK(patchBuffer, NativeToJITGatePtrTag, "untag"_s, "untag thunk");

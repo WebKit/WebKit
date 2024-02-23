@@ -393,20 +393,16 @@ macro makeJavaScriptCall(entry, protoCallFrame, temp1, temp2)
     addp 16, sp
     if C_LOOP or C_LOOP_WIN
         cloopCallJSFunction entry
-    elsif ARM64E
+    else
         move entry, t5
         leap _g_config, a7
-        jmp JSCConfigGateMapOffset + (constexpr Gate::vmEntryToJavaScript) * PtrSize[a7], NativeToJITGatePtrTag # JSEntryPtrTag
+        call JSCConfigGateMapOffset + (constexpr Gate::vmEntryToJavaScript) * PtrSize[a7], NativeToJITGatePtrTag # JSEntryPtrTag
         global _vmEntryToJavaScriptTrampoline
         _vmEntryToJavaScriptTrampoline:
         call t5, JSEntryPtrTag
-    else
-        call entry, JSEntryPtrTag
     end
-    if ARM64E
         global _vmEntryToJavaScriptGateAfter
         _vmEntryToJavaScriptGateAfter:
-    end
     subp 16, sp
 end
 
@@ -534,12 +530,8 @@ if JIT
 
                 loadBaselineJITConstantPool()
 
-                if ARM64E
-                    leap _g_config, a2
-                    jmp JSCConfigGateMapOffset + (constexpr Gate::loopOSREntry) * PtrSize[a2], NativeToJITGatePtrTag # JSEntryPtrTag
-                else
-                    jmp r0, JSEntryPtrTag
-                end
+                leap _g_config, a2
+                jmp JSCConfigGateMapOffset + (constexpr Gate::loopOSREntry) * PtrSize[a2], NativeToJITGatePtrTag # JSEntryPtrTag
             .recover:
                 loadPC()
             end)
@@ -832,17 +824,13 @@ macro functionArityCheck(opcodeName, doneLabel)
     btiz t1, .continue
 
 .noExtraSlot:
-    if ARM64E
-        leap _g_config, t3
-        jmp JSCConfigGateMapOffset + (constexpr Gate::%opcodeName%Untag) * PtrSize[t3], NativeToJITGatePtrTag
-        _js_trampoline_%opcodeName%_untag:
-        loadp 8[cfr], lr
-        addp 16, cfr, t3
-        untagReturnAddress t3
-        _%opcodeName%UntagGateAfter:
-    else
-        _js_trampoline_%opcodeName%_untag:
-    end
+    leap _g_config, t3
+    jmp JSCConfigGateMapOffset + (constexpr Gate::%opcodeName%Untag) * PtrSize[t3], NativeToJITGatePtrTag
+    _js_trampoline_%opcodeName%_untag:
+    loadp 8[cfr], lr
+    addp 16, cfr, t3
+    untagReturnAddress t3
+    _%opcodeName%UntagGateAfter:
 
     // Move frame up t1 slots
     negq t1
@@ -868,17 +856,13 @@ macro functionArityCheck(opcodeName, doneLabel)
     addp 8, t3
     baddinz 1, t2, .fillLoop
 
-    if ARM64E
-        leap _g_config, t3
-        jmp JSCConfigGateMapOffset + (constexpr Gate::%opcodeName%Tag) * PtrSize[t3], NativeToJITGatePtrTag
-        _js_trampoline_%opcodeName%_tag:
-        addp 16, cfr, t1
-        tagReturnAddress t1
-        storep lr, 8[cfr]
-        _%opcodeName%TagGateAfter:
-    else
-        _js_trampoline_%opcodeName%_tag:
-    end
+    leap _g_config, t3
+    jmp JSCConfigGateMapOffset + (constexpr Gate::%opcodeName%Tag) * PtrSize[t3], NativeToJITGatePtrTag
+    _js_trampoline_%opcodeName%_tag:
+    addp 16, cfr, t1
+    tagReturnAddress t1
+    storep lr, 8[cfr]
+    _%opcodeName%TagGateAfter:
 
 .continue:
     # Reload CodeBlock and reset PC, since the slow_path clobbered them.
@@ -2764,13 +2748,9 @@ op(llint_throw_from_slow_path_trampoline, macro ()
     # the throw target is not necessarily interpreted code, we come to here.
     # This essentially emulates the JIT's throwing protocol.
     getVMFromCallFrame(t1, t2)
-    if ARM64E
-        loadp VM::targetMachinePCForThrow[t1], a0
-        leap _g_config, a1
-        jmp JSCConfigGateMapOffset + (constexpr Gate::exceptionHandler) * PtrSize[a1], NativeToJITGatePtrTag # ExceptionHandlerPtrTag
-    else
-        jmp VM::targetMachinePCForThrow[t1], ExceptionHandlerPtrTag
-    end
+    loadp VM::targetMachinePCForThrow[t1], a0
+    leap _g_config, a1
+    jmp JSCConfigGateMapOffset + (constexpr Gate::exceptionHandler) * PtrSize[a1], NativeToJITGatePtrTag # ExceptionHandlerPtrTag
 end)
 
 
@@ -2791,9 +2771,7 @@ macro nativeCallTrampoline(executableOffsetToFunction)
     loadp JSFunction::m_scope[a0], a0
     loadp JSGlobalObject::m_vm[a0], a1
     storep cfr, VM::topCallFrame[a1]
-    if ARM64 or ARM64E or C_LOOP or C_LOOP_WIN
-        storep lr, ReturnPC[cfr]
-    end
+    storep lr, ReturnPC[cfr]
     move cfr, a1
     checkStackPointerAlignment(t3, 0xdead0001)
     if C_LOOP or C_LOOP_WIN
@@ -2829,9 +2807,7 @@ macro internalFunctionCallTrampoline(offsetOfFunction)
     loadp InternalFunction::m_globalObject[a2], a0
     loadp JSGlobalObject::m_vm[a0], a1
     storep cfr, VM::topCallFrame[a1]
-    if ARM64 or ARM64E or C_LOOP or C_LOOP_WIN
-        storep lr, ReturnPC[cfr]
-    end
+    storep lr, ReturnPC[cfr]
     move cfr, a1
     checkStackPointerAlignment(t3, 0xdead0001)
     if C_LOOP or C_LOOP_WIN
@@ -3641,9 +3617,5 @@ op(fuzzer_return_early_from_loop_hint, macro ()
 end)
 
 op(loop_osr_entry_gate, macro ()
-    if ARM64E
-        jmp r0, JSEntryPtrTag
-    else
-        crash() # Should never reach here.
-    end
+    jmp r0, JSEntryPtrTag
 end)
