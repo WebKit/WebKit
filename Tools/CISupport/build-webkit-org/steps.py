@@ -1149,16 +1149,10 @@ class RunGLibAPITests(shell.TestNewStyle):
         if messages:
             self.statusLine = ["API tests: %s" % ", ".join(messages)]
 
-        defer.returnValue(rc)
-
-    def evaluateCommand(self, cmd):
         if self.totalFailedTests > 0:
-            return FAILURE
-
-        if cmd.rc != 0:
-            return FAILURE
-
-        return SUCCESS
+            defer.returnValue(FAILURE)
+        else:
+            defer.returnValue(SUCCESS if rc == 0 else FAILURE)
 
     def getText(self, cmd, results):
         return self.getText2(cmd, results)
