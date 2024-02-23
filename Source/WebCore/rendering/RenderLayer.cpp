@@ -2166,11 +2166,11 @@ bool RenderLayer::cannotBlitToWindow() const
 
 RenderLayer* RenderLayer::transparentPaintingAncestor()
 {
-    if (isComposited())
+    if (isComposited() || paintsIntoProvidedBacking())
         return nullptr;
 
     for (RenderLayer* curr = stackingContext(); curr; curr = curr->stackingContext()) {
-        if (curr->isComposited())
+        if (curr->isComposited() || curr->paintsIntoProvidedBacking())
             break;
         if (curr->isTransparent())
             return curr;
