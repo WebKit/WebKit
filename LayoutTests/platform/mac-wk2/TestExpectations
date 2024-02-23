@@ -1968,11 +1968,7 @@ webkit.org/b/268018 [ Sonoma+ Release ] fast/images/text-recognition/mac/select-
 
 webkit.org/b/268047 [ Monterey+ ] http/wpt/webrtc/video-script-transform-simulcast.html [ Pass Failure ]
 
-webkit.org/b/268098 [ Monterey+ ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-GC.https.html [ Pass Failure ]
-
 webkit.org/b/268200 [ Sonoma+ Release ] inspector/console/console-screenshot.html [ Pass Failure ]
-
-webkit.org/b/268332 [ Monterey+ x86_64 ] imported/w3c/web-platform-tests/webrtc/simulcast/getStats.https.html [ Failure ]
 
 webkit.org/b/268406 transitions/flex-transitions.html [ Pass Failure ]
 
