@@ -84,6 +84,8 @@ SOFT_LINK_CLASS_OPTIONAL(AVKit, AVPictureInPictureContentViewController)
 @property (nonatomic, assign /* weak */) RefPtr<WebCore::VideoPresentationInterfaceAVKit> fullscreenInterface;
 #if !PLATFORM(APPLETV)
 - (BOOL)playerViewController:(AVPlayerViewController *)playerViewController shouldExitFullScreenWithReason:(AVPlayerViewControllerExitFullScreenReason)reason;
+#else
+- (BOOL)playerViewControllerShouldDismiss:(AVPlayerViewController *)playerViewController;
 #endif
 @end
 
@@ -175,6 +177,15 @@ static WebCore::VideoPresentationInterfaceAVKit::ExitFullScreenReason convertToE
         return fullscreenInterface->shouldExitFullscreenWithReason(convertToExitFullScreenReason(reason));
 
     return YES;
+}
+
+#else
+
+- (BOOL)playerViewControllerShouldDismiss:(AVPlayerViewController *)playerViewController
+{
+    UNUSED_PARAM(playerViewController);
+    if (auto fullscreenInterface = self.fullscreenInterface)
+        return fullscreenInterface->shouldExitFullscreenWithReason(VideoPresentationInterfaceIOS::ExitFullScreenReason::PinchGestureHandled);
 }
 
 #endif // !PLATFORM(APPLETV)
