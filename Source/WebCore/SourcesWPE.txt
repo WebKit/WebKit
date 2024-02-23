@@ -48,17 +48,6 @@ loader/soup/ResourceLoaderSoup.cpp
 page/linux/ResourceUsageOverlayLinux.cpp
 page/linux/ResourceUsageThreadLinux.cpp
 
-page/scrolling/nicosia/ScrollingCoordinatorNicosia.cpp
-page/scrolling/nicosia/ScrollingStateNodeNicosia.cpp
-page/scrolling/nicosia/ScrollingTreeFixedNodeNicosia.cpp
-page/scrolling/nicosia/ScrollingTreeFrameScrollingNodeNicosia.cpp
-page/scrolling/nicosia/ScrollingTreeNicosia.cpp
-page/scrolling/nicosia/ScrollingTreeOverflowScrollProxyNodeNicosia.cpp
-page/scrolling/nicosia/ScrollingTreeOverflowScrollingNodeNicosia.cpp
-page/scrolling/nicosia/ScrollingTreePositionedNodeNicosia.cpp
-page/scrolling/nicosia/ScrollingTreeScrollingNodeDelegateNicosia.cpp
-page/scrolling/nicosia/ScrollingTreeStickyNodeNicosia.cpp
-
 platform/gamepad/libwpe/GamepadLibWPE.cpp
 platform/gamepad/libwpe/GamepadProviderLibWPE.cpp
 

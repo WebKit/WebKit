@@ -1,11 +1,8 @@
 list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/graphics/texmap"
-    "${WEBCORE_DIR}/platform/graphics/nicosia"
 )
 
 list(APPEND WebCore_SOURCES
-    platform/graphics/nicosia/NicosiaAnimation.cpp
-
     platform/graphics/texmap/BitmapTexture.cpp
     platform/graphics/texmap/BitmapTexturePool.cpp
     platform/graphics/texmap/ClipStack.cpp
@@ -20,8 +17,6 @@ list(APPEND WebCore_SOURCES
 )
 
 list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
-    platform/graphics/nicosia/NicosiaAnimation.h
-
     platform/graphics/texmap/BitmapTexture.h
     platform/graphics/texmap/BitmapTexturePool.h
     platform/graphics/texmap/ClipStack.h
@@ -54,7 +49,6 @@ endif ()
 
 if (USE_COORDINATED_GRAPHICS)
     list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
-        "${WEBCORE_DIR}/page/scrolling/nicosia"
         "${WEBCORE_DIR}/platform/graphics/texmap/coordinated"
     )
     list(APPEND WebCore_SOURCES
@@ -75,25 +69,48 @@ if (USE_COORDINATED_GRAPHICS)
         platform/graphics/texmap/coordinated/TiledBackingStoreClient.h
     )
 
-    # FIXME: Move this into Nicosia.cmake once the component is set for long-term use.
+    if (USE_CAIRO)
+        list(APPEND WebCore_SOURCES
+            platform/graphics/texmap/coordinated/CoordinatedGraphicsLayerCairo.cpp
+        )
+    elseif (USE_SKIA)
+        list(APPEND WebCore_SOURCES
+            platform/graphics/texmap/coordinated/CoordinatedGraphicsLayerSkia.cpp
+        )
+    endif ()
+else ()
+    list(APPEND WebCore_SOURCES
+        platform/graphics/texmap/GraphicsLayerTextureMapper.cpp
+        platform/graphics/texmap/TextureMapperTiledBackingStore.cpp
+    )
+
+    # FIXME: Share NicosiaAnimation since its used outside of Nicosia
     list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
-        "${WEBCORE_DIR}/platform/graphics/nicosia/texmap"
+        "${WEBCORE_DIR}/platform/graphics/nicosia"
     )
     list(APPEND WebCore_SOURCES
-        platform/graphics/nicosia/NicosiaBackingStore.cpp
-        platform/graphics/nicosia/NicosiaBuffer.cpp
-        platform/graphics/nicosia/NicosiaContentLayer.cpp
-        platform/graphics/nicosia/NicosiaImageBacking.cpp
-        platform/graphics/nicosia/NicosiaImageBackingStore.cpp
-        platform/graphics/nicosia/NicosiaImageBufferPipe.cpp
-        platform/graphics/nicosia/NicosiaScene.cpp
-        platform/graphics/nicosia/NicosiaSceneIntegration.cpp
+        platform/graphics/nicosia/NicosiaAnimation.cpp
+    )
+    list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
+        platform/graphics/nicosia/NicosiaAnimation.h
+    )
+endif ()
+
+if (USE_NICOSIA)
+    list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
+        "${WEBCORE_DIR}/page/scrolling/nicosia"
+        "${WEBCORE_DIR}/platform/graphics/nicosia"
+        "${WEBCORE_DIR}/platform/graphics/nicosia/texmap"
+    )
+    list(APPEND WebCore_UNIFIED_SOURCE_LIST_FILES
+        "platform/SourcesNicosia.txt"
     )
     list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
         page/scrolling/nicosia/ScrollingTreeFixedNodeNicosia.h
         page/scrolling/nicosia/ScrollingTreeStickyNodeNicosia.h
 
         platform/graphics/nicosia/NicosiaAnimatedBackingStoreClient.h
+        platform/graphics/nicosia/NicosiaAnimation.h
         platform/graphics/nicosia/NicosiaBackingStore.h
         platform/graphics/nicosia/NicosiaBuffer.h
         platform/graphics/nicosia/NicosiaCompositionLayer.h
@@ -112,6 +129,9 @@ if (USE_COORDINATED_GRAPHICS)
         list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
             platform/graphics/nicosia/NicosiaPaintingEngine.h
         )
+
+        # Currently NicosiaPaintingContext.cpp will cause a compilation error
+        # when building without USE_CAIRO so these are not in unified sources
         list(APPEND WebCore_SOURCES
             platform/graphics/nicosia/NicosiaPaintingContext.cpp
             platform/graphics/nicosia/NicosiaPaintingEngine.cpp
@@ -120,27 +140,8 @@ if (USE_COORDINATED_GRAPHICS)
 
             platform/graphics/nicosia/cairo/NicosiaCairoOperationRecorder.cpp
             platform/graphics/nicosia/cairo/NicosiaPaintingContextCairo.cpp
-
-            platform/graphics/texmap/coordinated/CoordinatedGraphicsLayerCairo.cpp
-        )
-    elseif (USE_SKIA)
-        list(APPEND WebCore_SOURCES
-            platform/graphics/texmap/coordinated/CoordinatedGraphicsLayerSkia.cpp
         )
     endif ()
-else ()
-    list(APPEND WebCore_SOURCES
-        platform/graphics/texmap/GraphicsLayerTextureMapper.cpp
-        platform/graphics/texmap/TextureMapperTiledBackingStore.cpp
-    )
-endif ()
-
-if (ENABLE_WEBGL)
-    list(APPEND WebCore_SOURCES
-        platform/graphics/nicosia/NicosiaGCGLANGLELayer.cpp
-
-        platform/graphics/texmap/GraphicsContextGLTextureMapperANGLENicosia.cpp
-    )
 endif ()
 
 if (USE_GRAPHICS_LAYER_WC)

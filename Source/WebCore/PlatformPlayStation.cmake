@@ -28,17 +28,6 @@ list(APPEND WebCore_SOURCES
     page/playstation/ResourceUsageOverlayPlayStation.cpp
     page/playstation/ResourceUsageThreadPlayStation.cpp
 
-    page/scrolling/nicosia/ScrollingCoordinatorNicosia.cpp
-    page/scrolling/nicosia/ScrollingStateNodeNicosia.cpp
-    page/scrolling/nicosia/ScrollingTreeFixedNodeNicosia.cpp
-    page/scrolling/nicosia/ScrollingTreeFrameScrollingNodeNicosia.cpp
-    page/scrolling/nicosia/ScrollingTreeNicosia.cpp
-    page/scrolling/nicosia/ScrollingTreeOverflowScrollProxyNodeNicosia.cpp
-    page/scrolling/nicosia/ScrollingTreeOverflowScrollingNodeNicosia.cpp
-    page/scrolling/nicosia/ScrollingTreePositionedNodeNicosia.cpp
-    page/scrolling/nicosia/ScrollingTreeScrollingNodeDelegateNicosia.cpp
-    page/scrolling/nicosia/ScrollingTreeStickyNodeNicosia.cpp
-
     platform/ScrollAnimationKinetic.cpp
     platform/ScrollAnimationSmooth.cpp
 
