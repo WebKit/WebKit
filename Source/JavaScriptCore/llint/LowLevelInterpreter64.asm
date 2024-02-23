@@ -393,17 +393,17 @@ macro makeJavaScriptCall(entry, protoCallFrame, temp1, temp2)
     addp 16, sp
     if C_LOOP or C_LOOP_WIN
         cloopCallJSFunction entry
-    elsif ARM64E
+    elsif ARM64E or ARM64
         move entry, t5
         leap _g_config, a7
-        jmp JSCConfigGateMapOffset + (constexpr Gate::vmEntryToJavaScript) * PtrSize[a7], NativeToJITGatePtrTag # JSEntryPtrTag
+        call JSCConfigGateMapOffset + (constexpr Gate::vmEntryToJavaScript) * PtrSize[a7], NativeToJITGatePtrTag # JSEntryPtrTag
         global _vmEntryToJavaScriptTrampoline
         _vmEntryToJavaScriptTrampoline:
         call t5, JSEntryPtrTag
     else
         call entry, JSEntryPtrTag
     end
-    if ARM64E
+    if ARM64E or ARM64
         global _vmEntryToJavaScriptGateAfter
         _vmEntryToJavaScriptGateAfter:
     end
@@ -534,9 +534,9 @@ if JIT
 
                 loadBaselineJITConstantPool()
 
-                if ARM64E
+                if ARM64E or ARM64
                     leap _g_config, a2
-                    jmp JSCConfigGateMapOffset + (constexpr Gate::loopOSREntry) * PtrSize[a2], NativeToJITGatePtrTag # JSEntryPtrTag
+                    call JSCConfigGateMapOffset + (constexpr Gate::loopOSREntry) * PtrSize[a2], NativeToJITGatePtrTag # JSEntryPtrTag
                 else
                     jmp r0, JSEntryPtrTag
                 end
@@ -832,7 +832,7 @@ macro functionArityCheck(opcodeName, doneLabel)
     btiz t1, .continue
 
 .noExtraSlot:
-    if ARM64E
+    if ARM64E or ARM64
         leap _g_config, t3
         jmp JSCConfigGateMapOffset + (constexpr Gate::%opcodeName%Untag) * PtrSize[t3], NativeToJITGatePtrTag
         _js_trampoline_%opcodeName%_untag:
@@ -868,7 +868,7 @@ macro functionArityCheck(opcodeName, doneLabel)
     addp 8, t3
     baddinz 1, t2, .fillLoop
 
-    if ARM64E
+    if ARM64E or ARM64
         leap _g_config, t3
         jmp JSCConfigGateMapOffset + (constexpr Gate::%opcodeName%Tag) * PtrSize[t3], NativeToJITGatePtrTag
         _js_trampoline_%opcodeName%_tag:
@@ -2764,7 +2764,7 @@ op(llint_throw_from_slow_path_trampoline, macro ()
     # the throw target is not necessarily interpreted code, we come to here.
     # This essentially emulates the JIT's throwing protocol.
     getVMFromCallFrame(t1, t2)
-    if ARM64E
+    if ARM64E or ARM64
         loadp VM::targetMachinePCForThrow[t1], a0
         leap _g_config, a1
         jmp JSCConfigGateMapOffset + (constexpr Gate::exceptionHandler) * PtrSize[a1], NativeToJITGatePtrTag # ExceptionHandlerPtrTag
@@ -3641,9 +3641,9 @@ op(fuzzer_return_early_from_loop_hint, macro ()
 end)
 
 op(loop_osr_entry_gate, macro ()
-    if ARM64E
+    if ARM64E or ARM64
         jmp r0, JSEntryPtrTag
     else
-        crash() # Should never reach here.
+        crash() # Should never reach here
     end
 end)
