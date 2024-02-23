@@ -101,7 +101,11 @@ public:
     void teardown();
     bool paintTilesForPaintingRect(WebCore::GraphicsContext&, float pageScaleFactor, const WebCore::FloatRect& paintingRect);
 
+    // Throws away existing tiles. Can result in flashing.
     void invalidateTilesForPaintingRect(float pageScaleFactor, const WebCore::FloatRect& paintingRect);
+
+    // Updates existing tiles. Can result in temporarily stale content.
+    void updateTilesForPaintingRect(float pageScaleFactor, const WebCore::FloatRect& paintingRect);
 
     void setShowDebugBorders(bool);
 
@@ -112,8 +116,14 @@ private:
 
     struct TileRenderInfo {
         WebCore::FloatRect tileRect;
+        std::optional<WebCore::FloatRect> clipRect; // If set, represents the portion of the tile that needs repaint (in the same coordinate system as tileRect).
         PDFPageCoverage pageCoverage;
         PDFConfigurationIdentifier configurationIdentifier;
+    };
+
+    enum class TileRenderRequestType : uint8_t {
+        NewTile,
+        TileUpdate
     };
 
     // TiledBackingClient
@@ -122,14 +132,18 @@ private:
     void willRepaintAllTiles(WebCore::TileGridIndex) final;
 
     void enqueuePaintWithClip(const TileForGrid&, const WebCore::FloatRect& tileRect);
-    void paintTileOnWorkQueue(RetainPtr<PDFDocument>&&, const TileForGrid&, const TileRenderInfo&);
+    void paintTileOnWorkQueue(RetainPtr<PDFDocument>&&, const TileForGrid&, const TileRenderInfo&, TileRenderRequestType);
     void paintPDFIntoBuffer(RetainPtr<PDFDocument>&&, Ref<WebCore::ImageBuffer>, const TileForGrid&, const TileRenderInfo&);
-    void transferBufferToMainThread(RefPtr<WebCore::ImageBuffer>&&, const TileForGrid&, const TileRenderInfo&);
+    void transferBufferToMainThread(RefPtr<WebCore::ImageBuffer>&&, const TileForGrid&, const TileRenderInfo&, TileRenderRequestType);
+
+    void didCompleteNewTileRender(RefPtr<WebCore::ImageBuffer>&&, const TileForGrid&, const TileRenderInfo&);
+    void didCompleteTileUpdateRender(RefPtr<WebCore::ImageBuffer>&&, const TileForGrid&, const TileRenderInfo&);
 
     void clearRequestsAndCachedTiles();
 
     static WebCore::FloatRect convertTileRectToPaintingCoords(const WebCore::FloatRect&, float pageScaleFactor);
     static WebCore::AffineTransform tileToPaintingTransform(float pageScaleFactor);
+    static WebCore::AffineTransform paintingToTileTransform(float pageScaleFactor);
 
     ThreadSafeWeakPtr<UnifiedPDFPlugin> m_plugin;
     RefPtr<WebCore::GraphicsLayer> m_pdfContentsLayer;
@@ -138,6 +152,7 @@ private:
     PDFConfigurationIdentifier m_currentConfigurationIdentifier;
 
     HashMap<TileForGrid, TileRenderInfo> m_enqueuedTileRenders;
+    HashMap<TileForGrid, TileRenderInfo> m_enqueuedTileUpdates;
 
     struct RenderedTile {
         RefPtr<WebCore::ImageBuffer> buffer;

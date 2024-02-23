@@ -286,7 +286,7 @@ void UnifiedPDFPlugin::setNeedsRepaintInDocumentRect(OptionSet<RepaintRequiremen
     auto contentsRect = convertUp(CoordinateSpace::PDFDocumentLayout, CoordinateSpace::Contents, rectInDocumentCoordinates);
     if (repaintRequirements.contains(RepaintRequirement::PDFContent)) {
         if (RefPtr asyncRenderer = asyncRendererIfExists())
-            asyncRenderer->invalidateTilesForPaintingRect(m_scaleFactor, contentsRect);
+            asyncRenderer->updateTilesForPaintingRect(m_scaleFactor, contentsRect);
     }
 
     RefPtr { m_contentsLayer }->setNeedsDisplayInRect(contentsRect);
