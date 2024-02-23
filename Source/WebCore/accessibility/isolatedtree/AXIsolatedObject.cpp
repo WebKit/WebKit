@@ -1280,10 +1280,9 @@ FloatRect AXIsolatedObject::relativeFrame() const
     } else if (roleValue() == AccessibilityRole::Column || roleValue() == AccessibilityRole::TableHeaderContainer)
         relativeFrame = exposedTableAncestor() ? relativeFrameFromChildren() : FloatRect();
 
-
     // Mock objects and SVG objects need use the main thread since they do not have render nodes and are not painted with layers, respectively.
     // FIXME: Remove isNonLayerSVGObject when LBSE is enabled & SVG frames are cached.
-    if (!AXObjectCache::shouldServeInitialCachedFrame() || isMockObject() || isNonLayerSVGObject()) {
+    if (!AXObjectCache::shouldServeInitialCachedFrame() || isNonLayerSVGObject()) {
         return Accessibility::retrieveValueFromMainThread<FloatRect>([this] () -> FloatRect {
             if (auto* axObject = associatedAXObject())
                 return axObject->relativeFrame();
