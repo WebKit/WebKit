@@ -248,7 +248,7 @@ public:
         auto timestamps = m_dtsPtsMap[GST_BUFFER_PTS(buffer)];
         m_dtsPtsMap.erase(GST_BUFFER_PTS(buffer));
 
-        auto frame(convertGStreamerSampleToLibWebRTCVideoFrame(sample, webrtc::kVideoRotation_0,
+        auto frame(convertGStreamerSampleToLibWebRTCVideoFrame(WTFMove(sample), webrtc::kVideoRotation_0,
             timestamps.timestamp, timestamps.renderTimeMs));
 
         GST_BUFFER_DTS(buffer) = GST_CLOCK_TIME_NONE;
