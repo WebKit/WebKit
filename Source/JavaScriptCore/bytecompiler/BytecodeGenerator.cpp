@@ -1698,8 +1698,28 @@ RegisterID* BytecodeGenerator::emitBinaryOp(OpcodeID opcodeID, RegisterID* dst, 
         return emitBinaryOp<OpRshift>(dst, src1, src2, types);
     case op_urshift:
         return emitBinaryOp<OpUrshift>(dst, src1, src2, types);
-    case op_add:
+    case op_add: {
+        auto isConstantEmptyString = [&](RegisterID* src) {
+            if (!src->virtualRegister().isConstant())
+                return false;
+            if (!m_codeBlock->constantRegister(src->virtualRegister()).get().isString())
+                return false;
+            String value = asString(m_codeBlock->constantRegister(src->virtualRegister()).get())->tryGetValue();
+            return value.isEmpty();
+        };
+
+        if (isConstantEmptyString(src1)) {
+            emitToPrimitive(dst, src2);
+            return emitToString(dst, dst);
+        }
+
+        if (isConstantEmptyString(src2)) {
+            emitToPrimitive(dst, src1);
+            return emitToString(dst, dst);
+        }
+
         return emitBinaryOp<OpAdd>(dst, src1, src2, types);
+    }
     case op_mul:
         return emitBinaryOp<OpMul>(dst, src1, src2, types);
     case op_div:
