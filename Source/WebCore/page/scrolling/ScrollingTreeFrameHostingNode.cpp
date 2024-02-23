@@ -51,12 +51,12 @@ ScrollingTreeFrameHostingNode::~ScrollingTreeFrameHostingNode() = default;
 
 bool ScrollingTreeFrameHostingNode::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
 {
-    if (!is<ScrollingStateFrameHostingNode>(stateNode))
+    auto* state = dynamicDowncast<ScrollingStateFrameHostingNode>(stateNode);
+    if (!state)
         return false;
 
-    const auto& state = downcast<ScrollingStateFrameHostingNode>(stateNode);
-    if (state.hasChangedProperty(ScrollingStateNode::Property::LayerHostingContextIdentifier))
-        setLayerHostingContextIdentifier(state.layerHostingContextIdentifier());
+    if (state->hasChangedProperty(ScrollingStateNode::Property::LayerHostingContextIdentifier))
+        setLayerHostingContextIdentifier(state->layerHostingContextIdentifier());
     return true;
 }
 

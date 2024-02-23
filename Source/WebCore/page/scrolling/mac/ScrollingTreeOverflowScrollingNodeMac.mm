@@ -66,10 +66,11 @@ bool ScrollingTreeOverflowScrollingNodeMac::commitStateBeforeChildren(const Scro
     if (!ScrollingTreeOverflowScrollingNode::commitStateBeforeChildren(stateNode))
         return false;
 
-    if (!is<ScrollingStateOverflowScrollingNode>(stateNode))
+    auto* state = dynamicDowncast<ScrollingStateOverflowScrollingNode>(stateNode);
+    if (!state)
         return false;
 
-    m_delegate->updateFromStateNode(downcast<ScrollingStateOverflowScrollingNode>(stateNode));
+    m_delegate->updateFromStateNode(*state);
     return true;
 }
 

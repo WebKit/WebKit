@@ -191,8 +191,8 @@ class LayerTreeHitTestLocker {
 public:
     LayerTreeHitTestLocker(ScrollingCoordinator* scrollingCoordinator)
     {
-        if (is<AsyncScrollingCoordinator>(scrollingCoordinator)) {
-            m_scrollingTree = downcast<AsyncScrollingCoordinator>(*scrollingCoordinator).scrollingTree();
+        if (auto* asyncScrollingCoordinator = dynamicDowncast<AsyncScrollingCoordinator>(scrollingCoordinator)) {
+            m_scrollingTree = asyncScrollingCoordinator->scrollingTree();
             if (m_scrollingTree)
                 m_scrollingTree->lockLayersForHitTesting();
         }

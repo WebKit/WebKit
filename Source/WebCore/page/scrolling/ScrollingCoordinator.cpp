@@ -141,9 +141,10 @@ EventTrackingRegions ScrollingCoordinator::absoluteEventTrackingRegionsForFrame(
     }
 
     for (auto& widget : frameView->widgetsInRenderTree()) {
-        if (!is<PluginViewBase>(widget))
+        auto* pluginViewBase = dynamicDowncast<PluginViewBase>(widget.get());
+        if (!pluginViewBase)
             continue;
-        if (!downcast<PluginViewBase>(widget.get()).wantsWheelEvents())
+        if (!pluginViewBase->wantsWheelEvents())
             continue;
         auto* renderWidget = RenderWidget::find(widget);
         if (!renderWidget)
@@ -309,9 +310,10 @@ bool ScrollingCoordinator::hasVisibleSlowRepaintViewportConstrainedObjects(const
         return false;
 
     for (auto& viewportConstrainedObject : *viewportConstrainedObjects) {
-        if (!is<RenderBoxModelObject>(viewportConstrainedObject) || !viewportConstrainedObject.hasLayer())
+        auto* viewportConstrainedBoxModelObject = dynamicDowncast<RenderBoxModelObject>(viewportConstrainedObject);
+        if (!viewportConstrainedBoxModelObject || !viewportConstrainedBoxModelObject->hasLayer())
             return true;
-        auto& layer = *downcast<RenderBoxModelObject>(viewportConstrainedObject).layer();
+        auto& layer = *viewportConstrainedBoxModelObject->layer();
         // Any explicit reason that a fixed position element is not composited shouldn't cause slow scrolling.
         if (!layer.isComposited() && layer.viewportConstrainedNotCompositedReason() == RenderLayer::NoNotCompositedReason)
             return true;

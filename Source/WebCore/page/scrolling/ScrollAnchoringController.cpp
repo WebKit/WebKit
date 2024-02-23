@@ -50,8 +50,8 @@ ScrollAnchoringController::~ScrollAnchoringController()
 
 LocalFrameView& ScrollAnchoringController::frameView()
 {
-    if (is<RenderLayerScrollableArea>(m_owningScrollableArea))
-        return downcast<RenderLayerScrollableArea>(m_owningScrollableArea).layer().renderer().view().frameView();
+    if (auto* renderLayerScrollableArea = dynamicDowncast<RenderLayerScrollableArea>(m_owningScrollableArea))
+        return renderLayerScrollableArea->layer().renderer().view().frameView();
     return downcast<LocalFrameView>(downcast<ScrollView>(m_owningScrollableArea));
 }
 
@@ -62,8 +62,8 @@ static bool elementIsScrollableArea(const Element& element, const ScrollableArea
 
 static Element* elementForScrollableArea(ScrollableArea& scrollableArea)
 {
-    if (is<RenderLayerScrollableArea>(scrollableArea))
-        return downcast<RenderLayerScrollableArea>(scrollableArea).layer().renderer().element();
+    if (auto* renderLayerScrollableArea = dynamicDowncast<RenderLayerScrollableArea>(scrollableArea))
+        return renderLayerScrollableArea->layer().renderer().element();
     if (auto* document = downcast<LocalFrameView>(downcast<ScrollView>(scrollableArea)).frame().document())
         return document->documentElement();
     return nullptr;
@@ -91,8 +91,8 @@ void ScrollAnchoringController::invalidateAnchorElement()
 
 static IntRect boundingRectForScrollableArea(ScrollableArea& scrollableArea)
 {
-    if (is<RenderLayerScrollableArea>(scrollableArea))
-        return downcast<RenderLayerScrollableArea>(scrollableArea).layer().renderer().absoluteBoundingBoxRect();
+    if (auto* renderLayerScrollableArea = dynamicDowncast<RenderLayerScrollableArea>(scrollableArea))
+        return renderLayerScrollableArea->layer().renderer().absoluteBoundingBoxRect();
 
     return IntRect(downcast<LocalFrameView>(downcast<ScrollView>(scrollableArea)).layoutViewportRect());
 }
@@ -194,9 +194,9 @@ bool ScrollAnchoringController::didFindPriorityCandidate(Document& document)
 
 static bool absolutePositionedElementOutsideScroller(RenderElement& renderer, ScrollableArea& scroller)
 {
-    if (is<RenderLayerScrollableArea>(scroller) && renderer.hasLayer()) {
+    if (auto* renderLayerScrollableArea = dynamicDowncast<RenderLayerScrollableArea>(scroller); renderLayerScrollableArea && renderer.hasLayer()) {
         if (auto* layerForRenderer = downcast<RenderLayerModelObject>(renderer).layer())
-            return !layerForRenderer->ancestorLayerIsInContainingBlockChain(downcast<RenderLayerScrollableArea>(scroller).layer());
+            return !layerForRenderer->ancestorLayerIsInContainingBlockChain(renderLayerScrollableArea->layer());
     }
     return false;
 }

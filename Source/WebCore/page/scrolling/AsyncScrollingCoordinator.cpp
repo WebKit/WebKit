@@ -791,13 +791,11 @@ void AsyncScrollingCoordinator::scrollableAreaScrollbarLayerDidChange(Scrollable
     ASSERT(isMainThread());
     ASSERT(page());
 
-    RefPtr node = m_scrollingStateTree->stateNodeForID(scrollableArea.scrollingNodeID());
-    if (is<ScrollingStateScrollingNode>(node)) {
-        auto& scrollingNode = downcast<ScrollingStateScrollingNode>(*node);
+    if (RefPtr scrollingNode = dynamicDowncast<ScrollingStateScrollingNode>(m_scrollingStateTree->stateNodeForID(scrollableArea.scrollingNodeID()))) {
         if (orientation == ScrollbarOrientation::Vertical)
-            scrollingNode.setVerticalScrollbarLayer(scrollableArea.layerForVerticalScrollbar());
+            scrollingNode->setVerticalScrollbarLayer(scrollableArea.layerForVerticalScrollbar());
         else
-            scrollingNode.setHorizontalScrollbarLayer(scrollableArea.layerForHorizontalScrollbar());
+            scrollingNode->setHorizontalScrollbarLayer(scrollableArea.layerForHorizontalScrollbar());
     }
 
     if (orientation == ScrollbarOrientation::Vertical)
@@ -889,60 +887,58 @@ void AsyncScrollingCoordinator::setNodeLayers(ScrollingNodeID nodeID, const Node
 
     node->setLayer(nodeLayers.layer);
 
-    if (is<ScrollingStateScrollingNode>(node)) {
-        auto& scrollingNode = downcast<ScrollingStateScrollingNode>(*node);
-        scrollingNode.setScrollContainerLayer(nodeLayers.scrollContainerLayer);
-        scrollingNode.setScrolledContentsLayer(nodeLayers.scrolledContentsLayer);
-        scrollingNode.setHorizontalScrollbarLayer(nodeLayers.horizontalScrollbarLayer);
-        scrollingNode.setVerticalScrollbarLayer(nodeLayers.verticalScrollbarLayer);
+    if (auto* scrollingNode = dynamicDowncast<ScrollingStateScrollingNode>(*node)) {
+        scrollingNode->setScrollContainerLayer(nodeLayers.scrollContainerLayer);
+        scrollingNode->setScrolledContentsLayer(nodeLayers.scrolledContentsLayer);
+        scrollingNode->setHorizontalScrollbarLayer(nodeLayers.horizontalScrollbarLayer);
+        scrollingNode->setVerticalScrollbarLayer(nodeLayers.verticalScrollbarLayer);
 
-        if (is<ScrollingStateFrameScrollingNode>(node)) {
-            auto& frameScrollingNode = downcast<ScrollingStateFrameScrollingNode>(*node);
-            frameScrollingNode.setInsetClipLayer(nodeLayers.insetClipLayer);
-            frameScrollingNode.setCounterScrollingLayer(nodeLayers.counterScrollingLayer);
-            frameScrollingNode.setRootContentsLayer(nodeLayers.rootContentsLayer);
+        if (auto* frameScrollingNode = dynamicDowncast<ScrollingStateFrameScrollingNode>(*scrollingNode)) {
+            frameScrollingNode->setInsetClipLayer(nodeLayers.insetClipLayer);
+            frameScrollingNode->setCounterScrollingLayer(nodeLayers.counterScrollingLayer);
+            frameScrollingNode->setRootContentsLayer(nodeLayers.rootContentsLayer);
         }
     }
 }
 
 void AsyncScrollingCoordinator::setFrameScrollingNodeState(ScrollingNodeID nodeID, const LocalFrameView& frameView)
 {
-    auto stateNode = m_scrollingStateTree->stateNodeForID(nodeID);
+    RefPtr stateNode = m_scrollingStateTree->stateNodeForID(nodeID);
     ASSERT(stateNode);
-    if (!is<ScrollingStateFrameScrollingNode>(stateNode))
+    RefPtr frameScrollingNode = dynamicDowncast<ScrollingStateFrameScrollingNode>(stateNode);
+    if (!frameScrollingNode)
         return;
 
     auto& settings = page()->mainFrame().settings();
-    auto& frameScrollingNode = downcast<ScrollingStateFrameScrollingNode>(*stateNode);
 
-    frameScrollingNode.setFrameScaleFactor(frameView.frame().frameScaleFactor());
-    frameScrollingNode.setHeaderHeight(frameView.headerHeight());
-    frameScrollingNode.setFooterHeight(frameView.footerHeight());
-    frameScrollingNode.setTopContentInset(frameView.topContentInset());
-    frameScrollingNode.setLayoutViewport(frameView.layoutViewportRect());
-    frameScrollingNode.setAsyncFrameOrOverflowScrollingEnabled(settings.asyncFrameScrollingEnabled() || settings.asyncOverflowScrollingEnabled());
-    frameScrollingNode.setScrollingPerformanceTestingEnabled(settings.scrollingPerformanceTestingEnabled());
-    frameScrollingNode.setOverlayScrollbarsEnabled(WebCore::DeprecatedGlobalSettings::usesOverlayScrollbars());
-    frameScrollingNode.setWheelEventGesturesBecomeNonBlocking(settings.wheelEventGesturesBecomeNonBlocking());
+    frameScrollingNode->setFrameScaleFactor(frameView.frame().frameScaleFactor());
+    frameScrollingNode->setHeaderHeight(frameView.headerHeight());
+    frameScrollingNode->setFooterHeight(frameView.footerHeight());
+    frameScrollingNode->setTopContentInset(frameView.topContentInset());
+    frameScrollingNode->setLayoutViewport(frameView.layoutViewportRect());
+    frameScrollingNode->setAsyncFrameOrOverflowScrollingEnabled(settings.asyncFrameScrollingEnabled() || settings.asyncOverflowScrollingEnabled());
+    frameScrollingNode->setScrollingPerformanceTestingEnabled(settings.scrollingPerformanceTestingEnabled());
+    frameScrollingNode->setOverlayScrollbarsEnabled(WebCore::DeprecatedGlobalSettings::usesOverlayScrollbars());
+    frameScrollingNode->setWheelEventGesturesBecomeNonBlocking(settings.wheelEventGesturesBecomeNonBlocking());
 
-    frameScrollingNode.setMinLayoutViewportOrigin(frameView.minStableLayoutViewportOrigin());
-    frameScrollingNode.setMaxLayoutViewportOrigin(frameView.maxStableLayoutViewportOrigin());
+    frameScrollingNode->setMinLayoutViewportOrigin(frameView.minStableLayoutViewportOrigin());
+    frameScrollingNode->setMaxLayoutViewportOrigin(frameView.maxStableLayoutViewportOrigin());
 
     if (auto visualOverrideRect = frameView.visualViewportOverrideRect())
-        frameScrollingNode.setOverrideVisualViewportSize(FloatSize(visualOverrideRect.value().size()));
+        frameScrollingNode->setOverrideVisualViewportSize(FloatSize(visualOverrideRect.value().size()));
     else
-        frameScrollingNode.setOverrideVisualViewportSize(std::nullopt);
+        frameScrollingNode->setOverrideVisualViewportSize(std::nullopt);
 
-    frameScrollingNode.setFixedElementsLayoutRelativeToFrame(frameView.fixedElementsLayoutRelativeToFrame());
+    frameScrollingNode->setFixedElementsLayoutRelativeToFrame(frameView.fixedElementsLayoutRelativeToFrame());
 
     auto visualViewportIsSmallerThanLayoutViewport = [](const LocalFrameView& frameView) {
         auto layoutViewport = frameView.layoutViewportRect();
         auto visualViewport = frameView.visualViewportRect();
         return visualViewport.width() < layoutViewport.width() || visualViewport.height() < layoutViewport.height();
     };
-    frameScrollingNode.setVisualViewportIsSmallerThanLayoutViewport(visualViewportIsSmallerThanLayoutViewport(frameView));
+    frameScrollingNode->setVisualViewportIsSmallerThanLayoutViewport(visualViewportIsSmallerThanLayoutViewport(frameView));
     
-    frameScrollingNode.setScrollBehaviorForFixedElements(frameView.scrollBehaviorForFixedElements());
+    frameScrollingNode->setScrollBehaviorForFixedElements(frameView.scrollBehaviorForFixedElements());
 }
 
 void AsyncScrollingCoordinator::setScrollingNodeScrollableAreaGeometry(ScrollingNodeID nodeID, ScrollableArea& scrollableArea)
@@ -1024,26 +1020,24 @@ void AsyncScrollingCoordinator::setRelatedOverflowScrollingNodes(ScrollingNodeID
     if (!node)
         return;
 
-    if (is<ScrollingStatePositionedNode>(node))
-        downcast<ScrollingStatePositionedNode>(*node).setRelatedOverflowScrollingNodes(WTFMove(relatedNodes));
-    else if (is<ScrollingStateOverflowScrollProxyNode>(node)) {
-        auto& overflowScrollProxyNode = downcast<ScrollingStateOverflowScrollProxyNode>(*node);
+    if (auto* positionedNode = dynamicDowncast<ScrollingStatePositionedNode>(*node))
+        positionedNode->setRelatedOverflowScrollingNodes(WTFMove(relatedNodes));
+    else if (auto* overflowScrollProxyNode = dynamicDowncast<ScrollingStateOverflowScrollProxyNode>(*node)) {
         if (!relatedNodes.isEmpty())
-            overflowScrollProxyNode.setOverflowScrollingNode(relatedNodes[0]);
+            overflowScrollProxyNode->setOverflowScrollingNode(relatedNodes[0]);
         else
-            overflowScrollProxyNode.setOverflowScrollingNode({ });
+            overflowScrollProxyNode->setOverflowScrollingNode({ });
     } else
         ASSERT_NOT_REACHED();
 }
 
 void AsyncScrollingCoordinator::setSynchronousScrollingReasons(ScrollingNodeID nodeID, OptionSet<SynchronousScrollingReason> reasons)
 {
-    RefPtr node = m_scrollingStateTree->stateNodeForID(nodeID);
-    if (!is<ScrollingStateScrollingNode>(node))
+    RefPtr scrollingStateNode = dynamicDowncast<ScrollingStateScrollingNode>(m_scrollingStateTree->stateNodeForID(nodeID));
+    if (!scrollingStateNode)
         return;
 
-    auto& scrollingStateNode = downcast<ScrollingStateScrollingNode>(*node);
-    if (reasons && is<ScrollingStateFrameScrollingNode>(scrollingStateNode)) {
+    if (reasons && is<ScrollingStateFrameScrollingNode>(*scrollingStateNode)) {
         // The LocalFrameView's GraphicsLayer is likely to be out-of-synch with the PlatformLayer
         // at this point. So we'll update it before we switch back to main thread scrolling
         // in order to avoid layer positioning bugs.
@@ -1053,18 +1047,18 @@ void AsyncScrollingCoordinator::setSynchronousScrollingReasons(ScrollingNodeID n
 
     // FIXME: Ideally all the "synchronousScrollingReasons" functions should be #ifdeffed.
 #if ENABLE(SCROLLING_THREAD)
-    scrollingStateNode.setSynchronousScrollingReasons(reasons);
+    scrollingStateNode->setSynchronousScrollingReasons(reasons);
 #endif
 }
 
 OptionSet<SynchronousScrollingReason> AsyncScrollingCoordinator::synchronousScrollingReasons(ScrollingNodeID nodeID) const
 {
-    RefPtr node = m_scrollingStateTree->stateNodeForID(nodeID);
-    if (!is<ScrollingStateScrollingNode>(node))
+    RefPtr node = dynamicDowncast<ScrollingStateScrollingNode>(m_scrollingStateTree->stateNodeForID(nodeID));
+    if (!node)
         return { };
 
 #if ENABLE(SCROLLING_THREAD)
-    return downcast<ScrollingStateScrollingNode>(*node).synchronousScrollingReasons();
+    return node->synchronousScrollingReasons();
 #else
     return { };
 #endif
