@@ -43,10 +43,11 @@ ScaleTransformOperation::ScaleTransformOperation(double sx, double sy, double sz
 
 bool ScaleTransformOperation::operator==(const TransformOperation& other) const
 {
-    if (!isSameType(other))
-        return false;
-    const ScaleTransformOperation& s = downcast<ScaleTransformOperation>(other);
-    return m_x == s.m_x && m_y == s.m_y && m_z == s.m_z;
+    auto* otherOperation = dynamicDowncast<ScaleTransformOperation>(other);
+    return otherOperation
+        && m_x == otherOperation->m_x
+        && m_y == otherOperation->m_y
+        && m_z == otherOperation->m_z;
 }
 
 static double blendScaleComponent(double from, double to, const BlendingContext& context)

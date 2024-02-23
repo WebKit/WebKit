@@ -46,9 +46,8 @@ PerspectiveTransformOperation::PerspectiveTransformOperation(const std::optional
 
 bool PerspectiveTransformOperation::operator==(const TransformOperation& other) const
 {
-    if (!isSameType(other))
-        return false;
-    return m_p == downcast<PerspectiveTransformOperation>(other).m_p;
+    auto* otherOperation = dynamicDowncast<PerspectiveTransformOperation>(other);
+    return otherOperation && m_p == otherOperation->m_p;
 }
 
 Ref<TransformOperation> PerspectiveTransformOperation::blend(const TransformOperation* from, const BlendingContext& context, bool blendToIdentity)

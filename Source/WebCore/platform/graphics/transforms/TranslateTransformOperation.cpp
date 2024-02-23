@@ -44,10 +44,11 @@ TranslateTransformOperation::TranslateTransformOperation(const Length& tx, const
 
 bool TranslateTransformOperation::operator==(const TransformOperation& other) const
 {
-    if (!isSameType(other))
-        return false;
-    const TranslateTransformOperation& t = downcast<TranslateTransformOperation>(other);
-    return m_x == t.m_x && m_y == t.m_y && m_z == t.m_z;
+    auto* otherOperation = dynamicDowncast<TranslateTransformOperation>(other);
+    return otherOperation
+        && m_x == otherOperation->m_x
+        && m_y == otherOperation->m_y
+        && m_z == otherOperation->m_z;
 }
 
 Ref<TransformOperation> TranslateTransformOperation::blend(const TransformOperation* from, const BlendingContext& context, bool blendToIdentity)

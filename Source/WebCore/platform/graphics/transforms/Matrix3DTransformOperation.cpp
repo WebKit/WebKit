@@ -45,7 +45,8 @@ Matrix3DTransformOperation::Matrix3DTransformOperation(const TransformationMatri
 
 bool Matrix3DTransformOperation::operator==(const TransformOperation& other) const
 {
-    return isSameType(other) && m_matrix == downcast<Matrix3DTransformOperation>(other).m_matrix;
+    auto* otherOperation = dynamicDowncast<Matrix3DTransformOperation>(other);
+    return otherOperation && m_matrix == otherOperation->m_matrix;
 }
 
 static Ref<TransformOperation> createOperation(TransformationMatrix& to, TransformationMatrix& from, const BlendingContext& context)

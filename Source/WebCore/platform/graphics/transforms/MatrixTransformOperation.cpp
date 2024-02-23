@@ -46,10 +46,14 @@ MatrixTransformOperation::MatrixTransformOperation(const TransformationMatrix& t
 
 bool MatrixTransformOperation::operator==(const TransformOperation& other) const
 {
-    if (!isSameType(other))
-        return false;
-    const MatrixTransformOperation& m = downcast<MatrixTransformOperation>(other);
-    return m_a == m.m_a && m_b == m.m_b && m_c == m.m_c && m_d == m.m_d && m_e == m.m_e && m_f == m.m_f;
+    auto* otherOperation = dynamicDowncast<MatrixTransformOperation>(other);
+    return otherOperation
+        && m_a == otherOperation->m_a
+        && m_b == otherOperation->m_b
+        && m_c == otherOperation->m_c
+        && m_d == otherOperation->m_d
+        && m_e == otherOperation->m_e
+        && m_f == otherOperation->m_f;
 }
 
 Ref<TransformOperation> MatrixTransformOperation::blend(const TransformOperation* from, const BlendingContext& context, bool blendToIdentity)

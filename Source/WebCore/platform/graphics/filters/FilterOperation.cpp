@@ -45,10 +45,8 @@ namespace WebCore {
     
 bool DefaultFilterOperation::operator==(const FilterOperation& operation) const
 {
-    if (!isSameType(operation))
-        return false;
-    
-    return representedType() == downcast<DefaultFilterOperation>(operation).representedType();
+    auto* defaultOperation = dynamicDowncast<DefaultFilterOperation>(operation);
+    return defaultOperation && representedType() == defaultOperation->representedType();
 }
 
 FilterOperation::Type DefaultFilterOperation::representedType() const
@@ -67,10 +65,8 @@ ReferenceFilterOperation::~ReferenceFilterOperation() = default;
     
 bool ReferenceFilterOperation::operator==(const FilterOperation& operation) const
 {
-    if (!isSameType(operation))
-        return false;
-    
-    return m_url == downcast<ReferenceFilterOperation>(operation).m_url;
+    auto* referenceOperation = dynamicDowncast<ReferenceFilterOperation>(operation);
+    return referenceOperation && m_url == referenceOperation->m_url;
 }
 
 bool ReferenceFilterOperation::isIdentity() const
@@ -181,10 +177,8 @@ bool BasicColorMatrixFilterOperation::transformColor(SRGBA<float>& color) const
 
 inline bool BasicColorMatrixFilterOperation::operator==(const FilterOperation& operation) const
 {
-    if (!isSameType(operation))
-        return false;
-    const BasicColorMatrixFilterOperation& other = downcast<BasicColorMatrixFilterOperation>(operation);
-    return m_amount == other.m_amount;
+    auto* basicOperation = dynamicDowncast<BasicColorMatrixFilterOperation>(operation);
+    return basicOperation && m_amount == basicOperation->m_amount;
 }
 
 double BasicColorMatrixFilterOperation::passthroughAmount() const
@@ -255,10 +249,8 @@ bool BasicComponentTransferFilterOperation::transformColor(SRGBA<float>& color) 
 
 inline bool BasicComponentTransferFilterOperation::operator==(const FilterOperation& operation) const
 {
-    if (!isSameType(operation))
-        return false;
-    const BasicComponentTransferFilterOperation& other = downcast<BasicComponentTransferFilterOperation>(operation);
-    return m_amount == other.m_amount;
+    auto* basicOperation = dynamicDowncast<BasicComponentTransferFilterOperation>(operation);
+    return basicOperation && m_amount == basicOperation->m_amount;
 }
 
 double BasicComponentTransferFilterOperation::passthroughAmount() const
@@ -401,10 +393,8 @@ bool InvertLightnessFilterOperation::inverseTransformColor(SRGBA<float>& color) 
 
 bool BlurFilterOperation::operator==(const FilterOperation& operation) const
 {
-    if (!isSameType(operation))
-        return false;
-    
-    return m_stdDeviation == downcast<BlurFilterOperation>(operation).stdDeviation();
+    auto* blurOperation = dynamicDowncast<BlurFilterOperation>(operation);
+    return blurOperation && m_stdDeviation == blurOperation->stdDeviation();
 }
     
 RefPtr<FilterOperation> BlurFilterOperation::blend(const FilterOperation* from, const BlendingContext& context, bool blendToPassthrough)
@@ -435,10 +425,11 @@ IntOutsets BlurFilterOperation::outsets() const
 
 bool DropShadowFilterOperation::operator==(const FilterOperation& operation) const
 {
-    if (!isSameType(operation))
-        return false;
-    const DropShadowFilterOperation& other = downcast<DropShadowFilterOperation>(operation);
-    return m_location == other.m_location && m_stdDeviation == other.m_stdDeviation && m_color == other.m_color;
+    auto* dropShadowOperation = dynamicDowncast<DropShadowFilterOperation>(operation);
+    return dropShadowOperation
+        && m_location == dropShadowOperation->m_location
+        && m_stdDeviation == dropShadowOperation->m_stdDeviation
+        && m_color == dropShadowOperation->m_color;
 }
     
 RefPtr<FilterOperation> DropShadowFilterOperation::blend(const FilterOperation* from, const BlendingContext& context, bool blendToPassthrough)

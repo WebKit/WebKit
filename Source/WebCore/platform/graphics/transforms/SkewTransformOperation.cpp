@@ -42,10 +42,8 @@ SkewTransformOperation::SkewTransformOperation(double angleX, double angleY, Tra
 
 bool SkewTransformOperation::operator==(const TransformOperation& other) const
 {
-    if (!isSameType(other))
-        return false;
-    const SkewTransformOperation& s = downcast<SkewTransformOperation>(other);
-    return m_angleX == s.m_angleX && m_angleY == s.m_angleY;
+    auto* otherOperation = dynamicDowncast<SkewTransformOperation>(other);
+    return otherOperation && m_angleX == otherOperation->m_angleX && m_angleY == otherOperation->m_angleY;
 }
 
 Ref<TransformOperation> SkewTransformOperation::blend(const TransformOperation* from, const BlendingContext& context, bool blendToIdentity)
