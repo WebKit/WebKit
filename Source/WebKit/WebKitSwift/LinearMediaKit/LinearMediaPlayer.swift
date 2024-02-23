@@ -21,7 +21,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-#if canImport(LinearMediaKit)
+#if os(visionOS)
 
 import AVFoundation
 import Combine
@@ -135,11 +135,15 @@ private class SwiftOnlyData: NSObject {
 
     func makeViewController() -> PlayableViewController {
         let viewController = PlayableViewController()
+#if canImport(LinearMediaKit, _version: 205)
         viewController.playable = self
+#endif
         viewController.prefersAutoDimming = true
         return viewController
     }
 }
+
+#if canImport(LinearMediaKit, _version: 205)
 
 extension WKSLinearMediaPlayer: @retroactive Playable {
     public var selectedPlaybackRatePublisher: AnyPublisher<Double, Never> {
@@ -504,11 +508,9 @@ extension WKSLinearMediaPlayer: @retroactive Playable {
     }
 
     public func makeDefaultEntity() -> Entity? {
-#if canImport(LinearMediaKit, _version: 205)
         if let captionLayer = captionLayer {
             return ContentType.makeEntity(captionLayer: captionLayer)
         }
-#endif
         return nil
     }
 
@@ -565,4 +567,6 @@ extension WKSLinearMediaPlayer: @retroactive Playable {
     }
 }
 
-#endif // canImport(LinearMediaKit)
+#endif // canImport(LinearMediaKit, _version: 205)
+
+#endif // os(visionOS)
