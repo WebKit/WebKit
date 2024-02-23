@@ -29,6 +29,7 @@
 #include "CommonVM.h"
 #include "JSHTMLDocument.h"
 #include "Location.h"
+#include "WorkerGlobalScope.h"
 #include <JavaScriptCore/Heap.h>
 #include <JavaScriptCore/HeapSnapshotBuilder.h>
 #include <JavaScriptCore/JSLock.h>
@@ -138,7 +139,7 @@ void GCController::deleteAllLinkedCode(DeleteAllCodeEffort effort)
     commonVM().deleteAllLinkedCode(effort);
 }
 
-void GCController::dumpHeap()
+void GCController::dumpHeapForVM(VM& vm)
 {
     FileSystem::PlatformFileHandle fileHandle;
     String tempFilePath = FileSystem::openTemporaryFile("GCHeap"_s, fileHandle);
@@ -147,9 +148,7 @@ void GCController::dumpHeap()
         return;
     }
 
-    VM& vm = commonVM();
     JSLockHolder lock(vm);
-
     sanitizeStackForVM(vm);
 
     String jsonData;
@@ -166,8 +165,13 @@ void GCController::dumpHeap()
 
     FileSystem::writeToFile(fileHandle, utf8String.data(), utf8String.length());
     FileSystem::closeFile(fileHandle);
-    
-    WTFLogAlways("Dumped GC heap to %s", tempFilePath.utf8().data());
+    WTFLogAlways("Dumped GC heap to %s%s", tempFilePath.utf8().data(), isMainThread() ? ""_s : " for Worker");
+}
+
+void GCController::dumpHeap()
+{
+    dumpHeapForVM(commonVM());
+    WorkerGlobalScope::dumpGCHeapForWorkers();
 }
 
 } // namespace WebCore

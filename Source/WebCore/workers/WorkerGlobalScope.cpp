@@ -37,6 +37,7 @@
 #include "DocumentInlines.h"
 #include "FontCustomPlatformData.h"
 #include "FontFaceSet.h"
+#include "GCController.h"
 #include "IDBConnectionProxy.h"
 #include "ImageBitmapOptions.h"
 #include "InspectorInstrumentation.h"
@@ -629,6 +630,16 @@ void WorkerGlobalScope::releaseMemoryInWorkers(Synchronous synchronous)
     for (auto& globalScopeIdentifier : allWorkerGlobalScopeIdentifiers()) {
         postTaskTo(globalScopeIdentifier, [synchronous](auto& context) {
             downcast<WorkerGlobalScope>(context).releaseMemory(synchronous);
+        });
+    }
+}
+
+void WorkerGlobalScope::dumpGCHeapForWorkers()
+{
+    Locker locker { allWorkerGlobalScopeIdentifiersLock };
+    for (auto& globalScopeIdentifier : allWorkerGlobalScopeIdentifiers()) {
+        postTaskTo(globalScopeIdentifier, [](auto& context) {
+            GCController::dumpHeapForVM(downcast<WorkerGlobalScope>(context).vm());
         });
     }
 }

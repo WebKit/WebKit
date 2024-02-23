@@ -163,6 +163,7 @@ public:
 
     void releaseMemory(Synchronous);
     static void releaseMemoryInWorkers(Synchronous);
+    static void dumpGCHeapForWorkers();
 
     void setMainScriptSourceProvider(ScriptBufferSourceProvider&);
     void addImportedScriptSourceProvider(const URL&, ScriptBufferSourceProvider&);

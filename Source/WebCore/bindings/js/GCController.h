@@ -38,6 +38,7 @@ class GCController {
     friend class WTF::NeverDestroyed<GCController>;
 public:
     WEBCORE_EXPORT static GCController& singleton();
+    WEBCORE_EXPORT static void dumpHeapForVM(JSC::VM&);
 
     WEBCORE_EXPORT void garbageCollectSoon();
     WEBCORE_EXPORT void garbageCollectNow(); // It's better to call garbageCollectSoon, unless you have a specific reason not to.
