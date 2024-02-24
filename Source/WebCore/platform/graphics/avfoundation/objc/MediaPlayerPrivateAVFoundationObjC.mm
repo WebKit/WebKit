@@ -613,6 +613,8 @@ void MediaPlayerPrivateAVFoundationObjC::createVideoLayer()
         return;
 
     ensureOnMainThread([this, weakThis = ThreadSafeWeakPtr { *this }] {
+        assertIsMainThread();
+
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -631,6 +633,8 @@ void MediaPlayerPrivateAVFoundationObjC::createVideoLayer()
 
 void MediaPlayerPrivateAVFoundationObjC::createAVPlayerLayer()
 {
+    assertIsMainThread();
+
     if (!m_avPlayer)
         return;
 
@@ -659,6 +663,8 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerLayer()
 
 void MediaPlayerPrivateAVFoundationObjC::destroyVideoLayer()
 {
+    assertIsMainThread();
+
     if (!m_videoLayer)
         return;
 
@@ -1082,6 +1088,8 @@ static NSString* convertDynamicRangeModeEnumToAVVideoRange(DynamicRangeMode mode
 
 void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
 {
+    assertIsMainThread();
+
     if (m_avPlayer)
         return;
 
@@ -1353,6 +1361,8 @@ void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenGravity(MediaPlayer::
 void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenMode(MediaPlayer::VideoFullscreenMode mode)
 {
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(WATCHOS)
+    assertIsMainThread();
+
     if ([m_videoLayer respondsToSelector:@selector(setPIPModeEnabled:)])
         [m_videoLayer setPIPModeEnabled:(mode & MediaPlayer::VideoFullscreenModePictureInPicture)];
     updateDisableExternalPlayback();
@@ -1411,6 +1421,8 @@ void MediaPlayerPrivateAVFoundationObjC::didEnd()
 
 void MediaPlayerPrivateAVFoundationObjC::platformSetVisible(bool isVisible)
 {
+    assertIsMainThread();
+
     if (!m_videoLayer)
         return;
 
@@ -2215,6 +2227,8 @@ MediaTime MediaPlayerPrivateAVFoundationObjC::mediaTimeForTimeValue(const MediaT
 
 void MediaPlayerPrivateAVFoundationObjC::updateVideoLayerGravity(ShouldAnimate shouldAnimate)
 {
+    assertIsMainThread();
+
     if (!m_videoLayer)
         return;
 
@@ -3842,7 +3856,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 std::optional<VideoPlaybackQualityMetrics> MediaPlayerPrivateAVFoundationObjC::videoPlaybackQualityMetrics()
 {
-    if (![m_videoLayer respondsToSelector:@selector(videoPerformanceMetrics)])
+    assertIsMainThread();
+
+    return videoPlaybackQualityMetrics(m_videoLayer.get());
+}
+
+std::optional<VideoPlaybackQualityMetrics> MediaPlayerPrivateAVFoundationObjC::videoPlaybackQualityMetrics(AVPlayerLayer* videoLayer) const
+{
+    if (!videoLayer || ![videoLayer respondsToSelector:@selector(videoPerformanceMetrics)])
         return std::nullopt;
 
 #if PLATFORM(WATCHOS)
@@ -3850,7 +3871,7 @@ std::optional<VideoPlaybackQualityMetrics> MediaPlayerPrivateAVFoundationObjC::v
 #else
 ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
 
-    auto metrics = [m_videoLayer videoPerformanceMetrics];
+    auto metrics = [videoLayer videoPerformanceMetrics];
     if (!metrics)
         return std::nullopt;
 
@@ -3872,14 +3893,20 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 auto MediaPlayerPrivateAVFoundationObjC::asyncVideoPlaybackQualityMetrics() -> Ref<VideoPlaybackQualityMetricsPromise>
 {
+    assertIsMainThread();
+
     static std::once_flag onceKey;
     static LazyNeverDestroyed<Ref<WorkQueue>> metricsWorkQueue;
     std::call_once(onceKey, [] {
         metricsWorkQueue.construct(WorkQueue::create("VideoPlaybackQualityMetrics", WorkQueue::QOS::Background));
     });
 
-    return invokeAsync(metricsWorkQueue.get(), [protectedThis = Ref { *this }, this] {
-        return MediaPlayerPrivateInterface::asyncVideoPlaybackQualityMetrics();
+    if (!m_videoLayer)
+        return VideoPlaybackQualityMetricsPromise::createAndReject(PlatformMediaError::NotSupportedError);
+    return invokeAsync(metricsWorkQueue.get(), [protectedThis = Ref { *this }, protectedVideoLayer = m_videoLayer, this] {
+        if (auto metrics = videoPlaybackQualityMetrics(protectedVideoLayer.get()))
+            return VideoPlaybackQualityMetricsPromise::createAndResolve(WTFMove(*metrics));
+        return VideoPlaybackQualityMetricsPromise::createAndReject(PlatformMediaError::NotSupportedError);
     });
 }
 
@@ -3927,6 +3954,8 @@ void MediaPlayerPrivateAVFoundationObjC::setPreferredDynamicRangeMode(DynamicRan
 
 void MediaPlayerPrivateAVFoundationObjC::setShouldDisableHDR(bool shouldDisable)
 {
+    assertIsMainThread();
+
     if (![m_videoLayer respondsToSelector:@selector(setToneMapToStandardDynamicRange:)])
         return;
 
