@@ -1511,6 +1511,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return nil;
 }
 
+// VoiceOver expects the datetime value in the local time zone. Since we store it in GMT, we need to convert it to local before returning it to VoiceOver.
+// This helper funtion computes the offset to go from local to GMT and returns its opposite.
+static inline NSInteger gmtToLocalTimeOffset()
+{
+    NSDate *now = [NSDate date];
+    return -1 * [[NSTimeZone localTimeZone] secondsFromGMTForDate:now];
+}
+
 // FIXME: split up this function in a better way.
 // suggestions: Use a hash table that maps attribute names to function calls,
 // or maybe pointers to member functions
@@ -1705,8 +1713,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             [] (float& typedValue) -> id { return @(typedValue); },
             [] (String& typedValue) -> id { return (NSString *)typedValue; },
             [] (WallTime& typedValue) -> id {
-                RetainPtr date = [NSDate dateWithTimeIntervalSince1970:typedValue.secondsSinceEpoch().value()];
-                return date.autorelease();
+                NSInteger offset = gmtToLocalTimeOffset();
+                auto time = typedValue.secondsSinceEpoch().value();
+                NSDate *gmtDate = [NSDate dateWithTimeIntervalSince1970:time];
+                return [NSDate dateWithTimeInterval:offset sinceDate:gmtDate];
             },
             [] (AccessibilityButtonState& typedValue) -> id { return @((unsigned)typedValue); },
             [] (AXCoreObject*& typedValue) { return typedValue ? (id)typedValue->wrapper() : nil; },
