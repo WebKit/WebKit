@@ -41,6 +41,7 @@ enum class PlatformMediaError : uint8_t {
     Cancelled,
     LogicError,
     DecoderCreationError,
+    NotSupportedError,
 };
 
 using MediaPromise = NativePromise<void, PlatformMediaError>;
@@ -73,7 +74,9 @@ template<> struct EnumTraits<WebCore::PlatformMediaError> {
         WebCore::PlatformMediaError::ParsingError,
         WebCore::PlatformMediaError::MemoryError,
         WebCore::PlatformMediaError::Cancelled,
-        WebCore::PlatformMediaError::LogicError
+        WebCore::PlatformMediaError::LogicError,
+        WebCore::PlatformMediaError::DecoderCreationError,
+        WebCore::PlatformMediaError::NotSupportedError
     >;
 };
 

@@ -45,7 +45,7 @@ class InbandTextTrackPrivateAVF;
 
 // Use eager initialization for the WeakPtrFactory since we construct WeakPtrs on another thread.
 class MediaPlayerPrivateAVFoundation
-    : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MediaPlayerPrivateAVFoundation>
+    : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MediaPlayerPrivateAVFoundation, WTF::DestructionThread::Main>
     , public MediaPlayerPrivateInterface
     , public AVFInbandTrackParent
 #if !RELEASE_LOG_DISABLED

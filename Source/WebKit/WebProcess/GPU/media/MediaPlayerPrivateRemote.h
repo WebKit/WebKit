@@ -116,6 +116,7 @@ public:
     void playbackStateChanged(bool, MediaTime&&, MonotonicTime&&);
     void engineFailedToLoad(int64_t);
     void updateCachedState(RemoteMediaPlayerState&&);
+    void updatePlaybackQualityMetrics(WebCore::VideoPlaybackQualityMetrics&&);
     void characteristicChanged(RemoteMediaPlayerState&&);
     void sizeChanged(WebCore::FloatSize);
     void firstVideoFrameAvailable();

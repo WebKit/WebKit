@@ -103,6 +103,7 @@
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/FileSystem.h>
 #import <wtf/ListHashSet.h>
+#import <wtf/NativePromise.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/OSObjectPtr.h>
 #import <wtf/URL.h>
@@ -3867,6 +3868,19 @@ ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
 
 ALLOW_NEW_API_WITHOUT_GUARDS_END
 #endif
+}
+
+auto MediaPlayerPrivateAVFoundationObjC::asyncVideoPlaybackQualityMetrics() -> Ref<VideoPlaybackQualityMetricsPromise>
+{
+    static std::once_flag onceKey;
+    static LazyNeverDestroyed<Ref<WorkQueue>> metricsWorkQueue;
+    std::call_once(onceKey, [] {
+        metricsWorkQueue.construct(WorkQueue::create("VideoPlaybackQualityMetrics", WorkQueue::QOS::Background));
+    });
+
+    return invokeAsync(metricsWorkQueue.get(), [protectedThis = Ref { *this }, this] {
+        return MediaPlayerPrivateInterface::asyncVideoPlaybackQualityMetrics();
+    });
 }
 
 bool MediaPlayerPrivateAVFoundationObjC::performTaskAtMediaTime(WTF::Function<void()>&& task, const MediaTime& time)
