@@ -368,11 +368,11 @@ void SamplingProfiler::takeSample(Seconds& stackTraceProcessingTime)
 
         Locker machineThreadsLocker { m_vm.heap.machineThreads().getLock() };
         Locker codeBlockSetLocker { m_vm.heap.codeBlockSet().getLock() };
-        std::optional<LockHolder> executableAllocatorLocker;
+        std::optional<Locker<Lock>> executableAllocatorLocker;
         if (Options::useJIT())
             executableAllocatorLocker.emplace(ExecutableAllocator::singleton().getLock());
 
-        std::optional<LockHolder> wasmCalleesLocker;
+        std::optional<Locker<Lock>> wasmCalleesLocker;
 #if ENABLE(WEBASSEMBLY)
         if (Wasm::isSupported())
             wasmCalleesLocker.emplace(NativeCalleeRegistry::singleton().getLock());

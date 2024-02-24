@@ -689,7 +689,7 @@ public:
 #endif // ENABLE(LIBPAS_JIT_HEAP)
 
 #if ENABLE(JUMP_ISLANDS)
-    void handleWillBeReleased(const LockHolder& locker, ExecutableMemoryHandle& handle)
+    void handleWillBeReleased(const Locker<Lock>& locker, ExecutableMemoryHandle& handle)
     {
         if (m_islandsForJumpSourceLocation.isEmpty())
             return;
@@ -741,7 +741,7 @@ private:
         return result;
     }
 
-    void freeJumpIslands(const LockHolder&, Islands* islands)
+    void freeJumpIslands(const Locker<Lock>&, Islands* islands)
     {
         for (CodeLocationLabel<ExecutableMemoryPtrTag> jumpIsland : islands->jumpIslands) {
             uintptr_t untaggedJumpIsland = bitwise_cast<uintptr_t>(jumpIsland.dataLocation());
@@ -752,14 +752,14 @@ private:
         islands->jumpIslands.clear();
     }
 
-    void freeIslands(const LockHolder& locker, Islands* islands)
+    void freeIslands(const Locker<Lock>& locker, Islands* islands)
     {
         freeJumpIslands(locker, islands);
         m_islandsForJumpSourceLocation.remove(islands);
         delete islands;
     }
 
-    void* islandForJumpLocation(const LockHolder& locker, uintptr_t jumpLocation, uintptr_t target, bool concurrently, bool useMemcpy)
+    void* islandForJumpLocation(const Locker<Lock>& locker, uintptr_t jumpLocation, uintptr_t target, bool concurrently, bool useMemcpy)
     {
         Islands* islands = m_islandsForJumpSourceLocation.findExact(bitwise_cast<void*>(jumpLocation));
         if (islands) {
@@ -921,7 +921,7 @@ private:
         }
 
 #if !ENABLE(LIBPAS_JIT_HEAP)
-        void release(const LockHolder& locker, MetaAllocatorHandle& handle) final
+        void release(const Locker<Lock>& locker, MetaAllocatorHandle& handle) final
         {
             AssemblyCommentRegistry::singleton().unregisterCodeRange(handle.start().untaggedPtr(), handle.end().untaggedPtr());
             m_fixedAllocator.handleWillBeReleased(locker, handle);

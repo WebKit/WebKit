@@ -74,7 +74,7 @@ public:
         Locker locker { m_lock };
         return allocate(locker, sizeInBytes);
     }
-    WTF_EXPORT_PRIVATE RefPtr<MetaAllocatorHandle> allocate(const LockHolder&, size_t sizeInBytes);
+    WTF_EXPORT_PRIVATE RefPtr<MetaAllocatorHandle> allocate(const Locker<Lock>&, size_t sizeInBytes);
 
     void trackAllocations(MetaAllocatorTracker* tracker)
     {
@@ -98,7 +98,7 @@ public:
         Locker locker { m_lock };
         return currentStatistics(locker);
     }
-    WTF_EXPORT_PRIVATE Statistics currentStatistics(const LockHolder&);
+    WTF_EXPORT_PRIVATE Statistics currentStatistics(const Locker<Lock>&);
 
     // Add more free space to the allocator. Call this directly from
     // the constructor if you wish to operate the allocator within a
@@ -134,7 +134,7 @@ protected:
     // as there are Handles that refer to it.
 
     // Release a MetaAllocatorHandle.
-    WTF_EXPORT_PRIVATE virtual void release(const LockHolder&, MetaAllocatorHandle&);
+    WTF_EXPORT_PRIVATE virtual void release(const Locker<Lock>&, MetaAllocatorHandle&);
 private:
     
     friend class MetaAllocatorHandle;

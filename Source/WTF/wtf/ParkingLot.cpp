@@ -230,7 +230,7 @@ struct Hashtable {
             // This is not fast and it's not data-access parallel, but that's fine, because
             // hashtable resizing is guaranteed to be rare and it will never happen in steady
             // state.
-            WordLockHolder locker(hashtablesLock);
+            Locker locker(hashtablesLock);
             if (!hashtables)
                 hashtables = new Vector<Hashtable*>();
             hashtables->append(result);
@@ -243,7 +243,7 @@ struct Hashtable {
     {
         {
             // This is not fast, but that's OK. See comment in create().
-            WordLockHolder locker(hashtablesLock);
+            Locker locker(hashtablesLock);
             hashtables->removeFirst(hashtable);
         }
         

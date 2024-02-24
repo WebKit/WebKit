@@ -39,13 +39,13 @@ using namespace Unicode;
 
 #if USE(WEB_THREAD)
 
-class AtomStringTableLocker : public LockHolder {
+class AtomStringTableLocker : public Locker<Lock> {
     WTF_MAKE_NONCOPYABLE(AtomStringTableLocker);
 
     static Lock s_stringTableLock;
 public:
     AtomStringTableLocker()
-        : LockHolder(s_stringTableLock)
+        : Locker<Lock>(s_stringTableLock)
     {
     }
 };

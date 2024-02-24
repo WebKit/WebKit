@@ -78,7 +78,7 @@ void Instance::scheduleWork(WorkItem&& workItem)
 
 void Instance::defaultScheduleWork(WGPUWorkItem&& workItem)
 {
-    LockHolder lockHolder(m_lock);
+    Locker locker(m_lock);
     m_pendingWork.append(WTFMove(workItem));
 }
 
@@ -87,7 +87,7 @@ void Instance::processEvents()
     while (true) {
         Deque<WGPUWorkItem> localWork;
         {
-            LockHolder lockHolder(m_lock);
+            Locker locker(m_lock);
             std::swap(m_pendingWork, localWork);
         }
         if (localWork.isEmpty())

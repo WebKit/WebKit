@@ -404,19 +404,19 @@ RefPtr<Uint8Array> CDMSessionAVContentKeySession::generateKeyReleaseMessage(unsi
 
 bool CDMSessionAVContentKeySession::hasContentKeyRequest() const
 {
-    LockHolder holder { m_keyRequestLock };
+    Locker holder { m_keyRequestLock };
     return m_keyRequest;
 }
 
 RetainPtr<AVContentKeyRequest> CDMSessionAVContentKeySession::contentKeyRequest()
 {
-    LockHolder holder { m_keyRequestLock };
+    Locker holder { m_keyRequestLock };
     return RetainPtr { m_keyRequest.get() };
 }
 
 void CDMSessionAVContentKeySession::didProvideContentKeyRequest(AVContentKeyRequest *keyRequest)
 {
-    LockHolder holder { m_keyRequestLock };
+    Locker holder { m_keyRequestLock };
     m_keyRequest = keyRequest;
     m_hasKeyRequestSemaphore.signal();
 }

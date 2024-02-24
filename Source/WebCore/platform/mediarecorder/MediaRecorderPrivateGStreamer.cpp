@@ -152,7 +152,7 @@ void MediaRecorderPrivateBackend::stopRecording(CompletionHandler<void()>&& comp
 
     bool isEOS = false;
     while (!isEOS) {
-        LockHolder lock(m_eosLock);
+        Locker lock(m_eosLock);
         m_eosCondition.waitFor(m_eosLock, 200_ms, [weakThis = ThreadSafeWeakPtr { *this }]() -> bool {
             if (auto protectedThis = weakThis.get())
                 return protectedThis->m_eos;
@@ -412,7 +412,7 @@ void MediaRecorderPrivateBackend::processSample(GRefPtr<GstSample>&& sample)
 void MediaRecorderPrivateBackend::notifyEOS()
 {
     GST_DEBUG("EOS received");
-    LockHolder lock(m_eosLock);
+    Locker lock(m_eosLock);
     m_eos = true;
     m_eosCondition.notifyAll();
 }

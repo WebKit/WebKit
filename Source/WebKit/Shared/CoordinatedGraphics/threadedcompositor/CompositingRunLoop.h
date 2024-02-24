@@ -58,7 +58,7 @@ public:
     void scheduleUpdate();
     void stopUpdates();
 
-    void updateCompleted(LockHolder&);
+    void updateCompleted(Locker<Lock>&);
 
     RunLoop& runLoop() const { return m_runLoop.get(); }
 
@@ -69,7 +69,7 @@ private:
         InProgress,
     };
 
-    void scheduleUpdate(LockHolder&);
+    void scheduleUpdate(Locker<Lock>&);
     void updateTimerFired();
 
     Ref<RunLoop> m_runLoop;

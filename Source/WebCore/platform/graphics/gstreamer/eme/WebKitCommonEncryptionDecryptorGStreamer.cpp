@@ -490,7 +490,7 @@ static GstStateChangeReturn changeState(GstElement* element, GstStateChange tran
     case GST_STATE_CHANGE_READY_TO_PAUSED: {
         GST_DEBUG_OBJECT(self, "READY->PAUSED");
 
-        LockHolder locker(priv->lock);
+        Locker locker(priv->lock);
         priv->isStopped = false;
         break;
     }
@@ -498,7 +498,7 @@ static GstStateChangeReturn changeState(GstElement* element, GstStateChange tran
         // We need to do this here instead of after the , otherwise we won't be able to break the wait.
         GST_DEBUG_OBJECT(self, "PAUSED->READY");
 
-        LockHolder locker(priv->lock);
+        Locker locker(priv->lock);
         priv->isStopped = true;
         priv->condition.notifyOne();
         if (priv->cdmProxy)
