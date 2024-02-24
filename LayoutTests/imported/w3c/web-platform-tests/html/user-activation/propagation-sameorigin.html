@@ -1,118 +1,75 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <script src="/resources/testharness.js"></script>
-  <script src="/resources/testharnessreport.js"></script>
-  <script src="/resources/testdriver.js"></script>
-  <script src="/resources/testdriver-vendor.js"></script>
+  <head>
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+    <script src="../../resources/testdriver.js"></script>
+    <script src="/resources/testdriver-vendor.js"></script>
+    <script src="resources/utils.js"></script>
+    <style>
+      iframe {
+        border: 1px solid red;
+      }
+    </style>
+  </head>
+  <body></body>
   <script>
-    // Frame layout:
-    // top=this-file [
-    //   child1=child-one.html,
-    //   child-so=propagation-sameorigin-child.html [
-    //     gchild=child-two.html
-    //   ]
-    // ]
-    let propagation_test = async_test("Propagation test");
-
-    let num_children_to_load = 3;
-    let num_children_to_report = 3;
-
-    function finishLoadPhase() {
-        assert_equals(num_children_to_load, 0);
-
-        test(() => {
-            assert_false(navigator.userActivation.isActive);
-            assert_false(navigator.userActivation.hasBeenActive);
-        }, "Parent frame initial state");
-
-        test_driver.click(document.getElementById("child-so"));
+    async function createNestedIframes() {
+      const iframe = await attachIframe("resources/blank.html");
+      const nested1 = await attachIframe(
+        "resources/blank.html#nested1",
+        iframe.contentDocument,
+      );
+      const nested2 = await attachIframe(
+        "resources/blank.html#nested2",
+        nested1.contentDocument,
+      );
+      return [iframe, nested1, nested2];
     }
 
-    function finishReportPhase() {
-        assert_equals(num_children_to_report, 0);
+    test(() => {
+      assert_false(navigator.userActivation.isActive, "top isActive");
+      assert_false(navigator.userActivation.hasBeenActive, "top hasBeenActive");
+    }, "Initial user activation states");
 
-        test(() => {
-            assert_true(navigator.userActivation.isActive);
-            assert_true(navigator.userActivation.hasBeenActive);
-        }, "Parent frame final state");
+    promise_test(async () => {
+      const soloFrame = await attachIframe("resources/blank.html#solo");
+      const nestedFrames = await createNestedIframes();
+      const iframes = [soloFrame, ...nestedFrames];
 
-        propagation_test.done();
-    }
+      for (const frame of iframes) {
+        const { userActivation } = frame.contentWindow.navigator;
+        assert_false(
+          userActivation.isActive,
+          `before click isActive frame ${frame.src}`,
+        );
+        assert_false(
+          userActivation.hasBeenActive,
+          `before click hasBeenActive frame ${frame.src}`,
+        );
+      }
 
-    window.addEventListener("message", event => {
-        // Test driver can send messages too...
-        if (typeof event.data !== "string") return;
+      await test_driver.click(soloFrame.contentDocument.body);
 
-        var msg = JSON.parse(event.data);
+      for (const frame of iframes) {
+        const { userActivation } = frame.contentWindow.navigator;
+        assert_true(
+          userActivation.isActive,
+          `after click isActive frame ${frame.src}`,
+        );
+        assert_true(
+          userActivation.hasBeenActive,
+          `after click hasBeenActive frame ${frame.src}`,
+        );
+      }
 
-        if (msg.type == 'child-one-loaded') {
-            test(() => {
-                assert_false(msg.isActive);
-                assert_false(msg.hasBeenActive);
-            }, "Child1 frame initial state");
-        } else if (msg.type == 'child-sameorigin-loaded') {
-            test(() => {
-                assert_false(msg.isActive);
-                assert_false(msg.hasBeenActive);
-            }, "Child2 frame initial state");
-        } else if (msg.type == 'child-two-loaded') {
-            test(() => {
-                assert_false(msg.isActive);
-                assert_false(msg.hasBeenActive);
-            }, "Grandchild frame initial state");
-        } else if (msg.type == 'child-one-report') {
-            test(() => {
-                assert_true(msg.isActive);
-                assert_true(msg.hasBeenActive);
-            }, "Child1 frame final state");
-        } else if (msg.type == 'child-sameorigin-report') {
-            // This msg was triggered by a user click.
-            test(() => {
-                assert_true(msg.isActive);
-                assert_true(msg.hasBeenActive);
-            }, "Child2 frame final state");
+      assert_true(navigator.userActivation.isActive, "top isActive");
+      assert_true(navigator.userActivation.hasBeenActive, "top hasBeenActive");
 
-            // Ask remaining frames to report states.
-            let ask_report = JSON.stringify({"type": "report"});
-            frames[0].postMessage(ask_report, "*");
-            frames[1].frames[0].postMessage(ask_report, "*");
-        } else if (msg.type == 'child-two-report') {
-            test(() => {
-                assert_true(msg.isActive);
-                assert_true(msg.hasBeenActive);
-            }, "Grand child frame final state");
-        }
+      await consumeTransientActivation(soloFrame.contentWindow);
 
-        // Phase switching.
-        if (msg.type.endsWith("-loaded")) {
-            if (--num_children_to_load == 0)
-                finishLoadPhase();
-        } else if (msg.type.endsWith("-report")) {
-            if (--num_children_to_report == 0)
-                finishReportPhase();
-        }
-    });
-    async function createIframes() {
-        const child1 = document.createElement("iframe");
-        child1.src = "resources/child-one.html";
-        child1.id = "child1";
-        await new Promise((resolve) => {
-            child1.onload = resolve;
-            document.body.appendChild(child1);
-        });
-        const childSO = document.createElement("iframe");
-        childSO.id = "child-so";
-        childSO.src = "resources/propagation-sameorigin-child.html";
-        document.body.appendChild(childSO);
-    }
+      assert_false(navigator.userActivation.isActive, "top isActive");
+      assert_true(navigator.userActivation.hasBeenActive, "top hasBeenActive");
+    }, "User activation propagates across same-origin frame boundary.");
   </script>
-</head>
-<body onload="createIframes()">
-  <h1>User activation propagation across same-origin frame boundary</h1>
-  <p>Tests that user activation propagates across same-origin frame boundary.</p>
-  <ol id="instructions">
-    <li>Click anywhere on the green area (child frame).
-  </ol>
-</body>
 </html>

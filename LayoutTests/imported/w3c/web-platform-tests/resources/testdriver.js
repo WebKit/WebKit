@@ -165,7 +165,22 @@
                                                      {x: centerPoint[0],
                                                       y: centerPoint[1]});
         },
-
+        /**
+         * Consumes the user activation
+         *
+         * Matches the behavior of the `Consume User Activation of window`
+         * as proposed in: https://github.com/w3c/webdriver/pull/1695
+         *
+         * Which corresponds to these steps in HTML:
+         * https://html.spec.whatwg.org/#consume-user-activation
+         *
+         * @param {WindowProxy} context - Browsing context in which to run the
+         *                                call.
+         * @returns {Promise<boolean>} fulfilled when user activation is consumed.
+         */
+        consume_user_activation(context=null) {
+            return window.test_driver_internal.consume_user_activation(context);
+        },
         /**
          * Deletes all cookies.
          *
@@ -743,6 +758,10 @@
 
                 element.addEventListener("keydown", onKeyDown);
             });
+        },
+
+        async consume_user_activation(context=null) {
+            throw new Error("consume_user_activation() is not implemented by testdriver-vendor.js");
         },
 
         async freeze(context=null) {
