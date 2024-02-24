@@ -101,13 +101,13 @@ public:
 
     const DoubleRange& doubleRange() const
     {
-        RELEASE_ASSERT(m_doubleRange);
+        ASSERT(m_doubleRange);
         return *m_doubleRange;
     }
 
     const LongRange& longRange() const
     {
-        RELEASE_ASSERT(m_longRange);
+        ASSERT(m_longRange);
         return *m_longRange;
     }
 
