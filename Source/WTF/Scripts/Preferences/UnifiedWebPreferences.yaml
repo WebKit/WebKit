@@ -5117,13 +5117,16 @@ PDFJSViewerEnabled:
 PDFPluginEnabled:
   type: bool
   status: embedder
-  webcoreBinding: none
   condition: PLATFORM(COCOA)
   exposed: [ WebKit ]
   defaultValue:
+    WebKitLegacy:
+      default: false
     WebKit:
       "PLATFORM(IOS_FAMILY)": false
       default: true
+    WebCore:
+      default: false
 
 PDFPluginHUDEnabled:
   type: bool

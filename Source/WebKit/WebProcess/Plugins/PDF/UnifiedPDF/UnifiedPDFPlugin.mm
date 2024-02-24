@@ -524,14 +524,10 @@ void UnifiedPDFPlugin::updateLayerPositions()
     m_pageBackgroundsContainerLayer->setTransform(transform);
 }
 
-std::pair<bool, bool> UnifiedPDFPlugin::shouldShowDebugIndicators() const
+bool UnifiedPDFPlugin::shouldShowDebugIndicators() const
 {
     RefPtr page = this->page();
-    if (!page)
-        return { };
-
-    auto& settings = page->settings();
-    return std::make_pair<bool>(settings.showDebugBorders(), settings.showRepaintCounter());
+    return page && page->settings().showDebugBorders();
 }
 
 void UnifiedPDFPlugin::didChangeSettings()
@@ -540,7 +536,8 @@ void UnifiedPDFPlugin::didChangeSettings()
     if (!page)
         return;
 
-    auto [showDebugBorders, showRepaintCounter] = shouldShowDebugIndicators();
+    auto showDebugBorders = shouldShowDebugIndicators();
+    auto showRepaintCounter = page->settings().showRepaintCounter();
 
     auto propagateSettingsToLayer = [&] (GraphicsLayer& layer) {
         layer.setShowDebugBorder(showDebugBorders);
@@ -686,7 +683,7 @@ void UnifiedPDFPlugin::paintPDFContent(GraphicsContext& context, const FloatRect
 
     auto stateSaver = GraphicsContextStateSaver(context);
 
-    auto [showDebugBorders, showRepaintCounter] = shouldShowDebugIndicators();
+    auto showDebugIndicators = shouldShowDebugIndicators();
 
     bool haveSelection = false;
     bool isVisibleAndActive = false;
@@ -729,7 +726,7 @@ void UnifiedPDFPlugin::paintPDFContent(GraphicsContext& context, const FloatRect
             bool paintedPageContent = asyncRenderer->paintTilesForPaintingRect(context, m_scaleFactor, pageBoundsInDocumentCoordinates);
             LOG_WITH_STREAM(PDFAsyncRendering, stream << "UnifiedPDFPlugin::paintPDFContent - painting tiles for page " << pageInfo.pageIndex << " dest rect " << pageBoundsInDocumentCoordinates << " clip " << clipRect << " - painted cached tile " << paintedPageContent);
 
-            if (!paintedPageContent && showDebugBorders)
+            if (!paintedPageContent && showDebugIndicators)
                 context.fillRect(pageBoundsInDocumentCoordinates, Color::yellow.colorWithAlphaByte(128));
         }
 
@@ -1651,6 +1648,7 @@ auto UnifiedPDFPlugin::pdfElementTypesForPluginPoint(const IntPoint& point) cons
     if (!isTaggedPDF())
         return pdfElementTypes;
 
+#if HAVE(COREGRAPHICS_WITH_PDF_AREA_OF_INTEREST_SUPPORT)
     if (auto pageLayout = [page pageLayout]) {
         CGPDFAreaOfInterest areaOfInterest = CGPDFPageLayoutGetAreaOfInterestAtPoint(pageLayout, pointInPDFPageSpace);
         if (areaOfInterest & kCGPDFAreaText)
@@ -1658,6 +1656,7 @@ auto UnifiedPDFPlugin::pdfElementTypesForPluginPoint(const IntPoint& point) cons
         if (areaOfInterest & kCGPDFAreaImage)
             pdfElementTypes.add(PDFElementType::Image);
     }
+#endif
 
     // FIXME: <https://webkit.org/b/265908> Cursor updates are incorrect over text/image elements for untagged PDFs.
 
@@ -3054,6 +3053,7 @@ void UnifiedPDFPlugin::handlePDFActionForAnnotation(PDFAnnotation *annotation, u
         RetainPtr currentAction = actionsForAnnotation.takeLast().get();
         performPDFAction(currentAction.get());
 
+#if HAVE(PDFKIT_WITH_NEXT_ACTIONS)
         if ([currentAction respondsToSelector:@selector(nextActions)]) {
             RetainPtr reversedNextActions = [[currentAction nextActions] reverseObjectEnumerator];
             while (RetainPtr nextAction = [reversedNextActions nextObject]) {
@@ -3061,6 +3061,7 @@ void UnifiedPDFPlugin::handlePDFActionForAnnotation(PDFAnnotation *annotation, u
                 nextAction = [reversedNextActions nextObject];
             }
         }
+#endif // HAVE(PDFKIT_WITH_NEXT_ACTIONS)
     }
 }
 #endif

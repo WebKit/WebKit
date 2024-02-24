@@ -130,6 +130,7 @@ const TestFeatures& TestOptions::defaults()
             { "TabsToLinks", false },
             { "TextAutosizingEnabled", false },
             { "TextAutosizingUsesIdempotentMode", false },
+            { "UnifiedPDFEnabled", false },
             { "UsesBackForwardCache", false },
             { "WebAuthenticationEnabled", true },
 #if ENABLE(WEBGL) && PLATFORM(COCOA)

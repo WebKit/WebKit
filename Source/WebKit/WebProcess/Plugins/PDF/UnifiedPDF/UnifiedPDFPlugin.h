@@ -401,7 +401,7 @@ private:
 
     bool isTaggedPDF() const;
 
-    std::pair<bool, bool> shouldShowDebugIndicators() const;
+    bool shouldShowDebugIndicators() const;
 
 #if PLATFORM(MAC)
     void createPasswordEntryForm();
