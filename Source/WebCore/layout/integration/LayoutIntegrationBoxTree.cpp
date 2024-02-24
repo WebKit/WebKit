@@ -74,8 +74,8 @@ static Layout::Box::ElementAttributes elementAttributes(const RenderElement& ren
             return Layout::Box::NodeType::ListMarker;
         if (is<RenderReplaced>(renderer))
             return is<RenderImage>(renderer) ? Layout::Box::NodeType::Image : Layout::Box::NodeType::ReplacedElement;
-        if (is<RenderLineBreak>(renderer))
-            return downcast<RenderLineBreak>(renderer).isWBR() ? Layout::Box::NodeType::WordBreakOpportunity : Layout::Box::NodeType::LineBreak;
+        if (auto* renderLineBreak = dynamicDowncast<RenderLineBreak>(renderer))
+            return renderLineBreak->isWBR() ? Layout::Box::NodeType::WordBreakOpportunity : Layout::Box::NodeType::LineBreak;
         return Layout::Box::NodeType::GenericElement;
     }();
 
@@ -109,9 +109,10 @@ BoxTree::~BoxTree()
         if (!renderer)
             continue;
 
-        bool isLFCInlineBlock = is<RenderBlockFlow>(*renderer) && downcast<RenderBlockFlow>(*renderer).modernLineLayout();
+        auto* renderBlockFlow = dynamicDowncast<RenderBlockFlow>(*renderer);
+        auto isLFCInlineBlock = renderBlockFlow && renderBlockFlow->modernLineLayout();
         if (isLFCInlineBlock) {
-            auto detachedBox = renderer->layoutBox()->removeFromParent();
+            auto detachedBox = renderBlockFlow->layoutBox()->removeFromParent();
             initialContainingBlock().appendChild(WTFMove(detachedBox));
             continue;
         }
@@ -144,10 +145,9 @@ void BoxTree::adjustStyleIfNeeded(const RenderElement& renderer, RenderStyle& st
             }
             return;
         }
-        if (is<RenderInline>(renderer)) {
-            auto& renderInline = downcast<RenderInline>(renderer);
-            auto shouldNotRetainBorderPaddingAndMarginStart = renderInline.isContinuation();
-            auto shouldNotRetainBorderPaddingAndMarginEnd = !renderInline.isContinuation() && renderInline.inlineContinuation();
+        if (auto* renderInline = dynamicDowncast<RenderInline>(renderer)) {
+            auto shouldNotRetainBorderPaddingAndMarginStart = renderInline->isContinuation();
+            auto shouldNotRetainBorderPaddingAndMarginEnd = !renderInline->isContinuation() && renderInline->inlineContinuation();
             // This looks like continuation renderer.
             if (shouldNotRetainBorderPaddingAndMarginStart) {
                 styleToAdjust.setMarginStart(RenderStyle::initialMargin());
@@ -159,11 +159,11 @@ void BoxTree::adjustStyleIfNeeded(const RenderElement& renderer, RenderStyle& st
                 styleToAdjust.resetBorderRight();
                 styleToAdjust.setPaddingRight(RenderStyle::initialPadding());
             }
-            if ((styleToAdjust.display() == DisplayType::RubyBase || styleToAdjust.display() == DisplayType::RubyAnnotation) && renderInline.parent()->style().display() != DisplayType::Ruby)
+            if ((styleToAdjust.display() == DisplayType::RubyBase || styleToAdjust.display() == DisplayType::RubyAnnotation) && renderInline->parent()->style().display() != DisplayType::Ruby)
                 styleToAdjust.setDisplay(DisplayType::Inline);
             return;
         }
-        if (renderer.isRenderLineBreak()) {
+        if (auto* renderLineBreak = dynamicDowncast<RenderLineBreak>(renderer)) {
             if (!styleToAdjust.hasOutOfFlowPosition()) {
                 // Force in-flow display value to inline (see webkit.org/b/223151).
                 styleToAdjust.setDisplay(DisplayType::Inline);
@@ -172,7 +172,7 @@ void BoxTree::adjustStyleIfNeeded(const RenderElement& renderer, RenderStyle& st
             // Clear property should only apply on block elements, however,
             // it appears that browsers seem to ignore it on <br> inline elements.
             // https://drafts.csswg.org/css2/#propdef-clear
-            if (downcast<RenderLineBreak>(renderer).isWBR())
+            if (renderLineBreak->isWBR())
                 styleToAdjust.setClear(Clear::None);
             return;
         }
@@ -186,26 +186,27 @@ UniqueRef<Layout::Box> BoxTree::createLayoutBox(RenderObject& renderer)
 {
     std::unique_ptr<RenderStyle> firstLineStyle = firstLineStyleFor(renderer);
 
-    if (is<RenderText>(renderer)) {
-        auto& textRenderer = downcast<RenderText>(renderer);
-
-        auto style = RenderStyle::createAnonymousStyleWithDisplay(textRenderer.style(), DisplayType::Inline);
-        auto isCombinedText = is<RenderCombineText>(textRenderer) && downcast<RenderCombineText>(textRenderer).isCombined();
+    if (auto* textRenderer = dynamicDowncast<RenderText>(renderer)) {
+        auto style = RenderStyle::createAnonymousStyleWithDisplay(textRenderer->style(), DisplayType::Inline);
+        auto isCombinedText = [&]() {
+            auto* combineTextRenderer = dynamicDowncast<RenderCombineText>(*textRenderer);
+            return combineTextRenderer && combineTextRenderer->isCombined();
+        }();
         auto text = style.textSecurity() == TextSecurity::None
-            ? (isCombinedText ? textRenderer.originalText() : textRenderer.text())
-            : RenderBlock::updateSecurityDiscCharacters(style, isCombinedText ? textRenderer.originalText() : String { textRenderer.text() });
+            ? (isCombinedText ? textRenderer->originalText() : textRenderer->text())
+            : RenderBlock::updateSecurityDiscCharacters(style, isCombinedText ? textRenderer->originalText() : String { textRenderer->text() });
 
-        auto canUseSimpleFontCodePath = textRenderer.canUseSimpleFontCodePath();
-        auto canUseSimplifiedTextMeasuring = textRenderer.canUseSimplifiedTextMeasuring();
+        auto canUseSimpleFontCodePath = textRenderer->canUseSimpleFontCodePath();
+        auto canUseSimplifiedTextMeasuring = textRenderer->canUseSimplifiedTextMeasuring();
         if (!canUseSimplifiedTextMeasuring) {
             canUseSimplifiedTextMeasuring = canUseSimpleFontCodePath && Layout::TextUtil::canUseSimplifiedTextMeasuring(text, style, firstLineStyle.get());
-            textRenderer.setCanUseSimplifiedTextMeasuring(*canUseSimplifiedTextMeasuring);
+            textRenderer->setCanUseSimplifiedTextMeasuring(*canUseSimplifiedTextMeasuring);
         }
 
-        auto hasPositionDependentContentWidth = textRenderer.hasPositionDependentContentWidth();
+        auto hasPositionDependentContentWidth = textRenderer->hasPositionDependentContentWidth();
         if (!hasPositionDependentContentWidth) {
             hasPositionDependentContentWidth = Layout::TextUtil::hasPositionDependentContentWidth(text);
-            textRenderer.setHasPositionDependentContentWidth(*hasPositionDependentContentWidth);
+            textRenderer->setHasPositionDependentContentWidth(*hasPositionDependentContentWidth);
         }
 
         auto contentCharacteristic = OptionSet<Layout::InlineTextBox::ContentCharacteristic> { };
@@ -224,14 +225,13 @@ UniqueRef<Layout::Box> BoxTree::createLayoutBox(RenderObject& renderer)
     auto style = RenderStyle::clone(renderer.style());
     adjustStyleIfNeeded(renderElement, style, firstLineStyle.get());
 
-    if (is<RenderListMarker>(renderElement)) {
-        auto& listMarkerRenderer = downcast<RenderListMarker>(renderElement);
+    if (auto* listMarkerRenderer = dynamicDowncast<RenderListMarker>(renderElement)) {
         OptionSet<Layout::ElementBox::ListMarkerAttribute> listMarkerAttributes;
-        if (listMarkerRenderer.isImage())
+        if (listMarkerRenderer->isImage())
             listMarkerAttributes.add(Layout::ElementBox::ListMarkerAttribute::Image);
-        if (!listMarkerRenderer.isInside())
+        if (!listMarkerRenderer->isInside())
             listMarkerAttributes.add(Layout::ElementBox::ListMarkerAttribute::Outside);
-        if (listMarkerRenderer.listItem() && !listMarkerRenderer.listItem()->notInList())
+        if (listMarkerRenderer->listItem() && !listMarkerRenderer->listItem()->notInList())
             listMarkerAttributes.add(Layout::ElementBox::ListMarkerAttribute::HasListElementAncestor);
         return makeUniqueRef<Layout::ElementBox>(elementAttributes(renderElement), listMarkerAttributes, WTFMove(style), WTFMove(firstLineStyle));
     }

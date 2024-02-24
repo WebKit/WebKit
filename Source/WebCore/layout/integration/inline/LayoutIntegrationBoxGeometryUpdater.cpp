@@ -250,8 +250,8 @@ void BoxGeometryUpdater::updateLayoutBoxDimensions(const RenderBox& renderBox, s
     boxGeometry.setPadding(padding);
 
     auto hasNonSyntheticBaseline = [&] {
-        if (is<RenderListMarker>(renderBox))
-            return !downcast<RenderListMarker>(renderBox).isImage();
+        if (auto* renderListMarker = dynamicDowncast<RenderListMarker>(renderBox))
+            return !renderListMarker->isImage();
 
         if ((is<RenderReplaced>(renderBox) && renderBox.style().display() == DisplayType::Inline)
             || is<RenderListBox>(renderBox)
@@ -271,11 +271,11 @@ void BoxGeometryUpdater::updateLayoutBoxDimensions(const RenderBox& renderBox, s
             // These are special RenderBlock renderers that override the default baseline position behavior of the inline block box.
             return true;
         }
-        if (!is<RenderBlockFlow>(renderBox))
+        auto* blockFlow = dynamicDowncast<RenderBlockFlow>(renderBox);
+        if (!blockFlow)
             return false;
-        auto& blockFlow = downcast<RenderBlockFlow>(renderBox);
-        auto hasAppareance = blockFlow.style().hasEffectiveAppearance() && !blockFlow.theme().isControlContainer(blockFlow.style().effectiveAppearance());
-        return hasAppareance || !blockFlow.childrenInline() || blockFlow.hasLines() || blockFlow.hasLineIfEmpty();
+        auto hasAppareance = blockFlow->style().hasEffectiveAppearance() && !blockFlow->theme().isControlContainer(blockFlow->style().effectiveAppearance());
+        return hasAppareance || !blockFlow->childrenInline() || blockFlow->hasLines() || blockFlow->hasLineIfEmpty();
     }();
     if (hasNonSyntheticBaseline) {
         auto baseline = renderBox.baselinePosition(AlphabeticBaseline, false /* firstLine */, blockFlowDirection == BlockFlowDirection::TopToBottom || blockFlowDirection == BlockFlowDirection::BottomToTop ? HorizontalLine : VerticalLine, PositionOnContainingLine);
@@ -338,16 +338,16 @@ void BoxGeometryUpdater::setGeometriesForLayout()
             updateLayoutBoxDimensions(downcast<RenderBox>(renderer));
             continue;
         }
-        if (is<RenderListMarker>(renderer)) {
-            updateListMarkerDimensions(downcast<RenderListMarker>(renderer));
+        if (auto* renderListMarker = dynamicDowncast<RenderListMarker>(renderer)) {
+            updateListMarkerDimensions(*renderListMarker);
             continue;
         }
-        if (is<RenderLineBreak>(renderer)) {
-            updateLineBreakBoxDimensions(downcast<RenderLineBreak>(renderer));
+        if (auto* renderLineBreak = dynamicDowncast<RenderLineBreak>(renderer)) {
+            updateLineBreakBoxDimensions(*renderLineBreak);
             continue;
         }
-        if (is<RenderInline>(renderer)) {
-            updateInlineBoxDimensions(downcast<RenderInline>(renderer));
+        if (auto* renderInline = dynamicDowncast<RenderInline>(renderer)) {
+            updateInlineBoxDimensions(*renderInline);
             continue;
         }
     }
@@ -358,12 +358,12 @@ void BoxGeometryUpdater::setGeometriesForIntrinsicWidth(Layout::IntrinsicWidthMo
     for (auto walker = InlineWalker(downcast<RenderBlockFlow>(boxTree().rootRenderer())); !walker.atEnd(); walker.advance()) {
         auto& renderer = *walker.current();
 
-        if (is<RenderLineBreak>(renderer)) {
-            updateLineBreakBoxDimensions(downcast<RenderLineBreak>(renderer));
+        if (auto* renderLineBreak = dynamicDowncast<RenderLineBreak>(renderer)) {
+            updateLineBreakBoxDimensions(*renderLineBreak);
             continue;
         }
-        if (is<RenderInline>(renderer)) {
-            updateInlineBoxDimensions(downcast<RenderInline>(renderer), intrinsicWidthMode);
+        if (auto* renderInline = dynamicDowncast<RenderInline>(renderer)) {
+            updateInlineBoxDimensions(*renderInline, intrinsicWidthMode);
             continue;
         }
         ASSERT(is<RenderText>(renderer));

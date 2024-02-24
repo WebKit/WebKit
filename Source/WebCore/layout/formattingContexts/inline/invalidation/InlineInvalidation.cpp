@@ -191,12 +191,10 @@ static std::optional<InlineItemPosition> inlineItemPositionForDisplayBox(const I
     auto startOffset = displayBox.text().start();
     while (true) {
         auto inlineTextItemRange = [&]() -> WTF::Range<unsigned> {
-            if (is<InlineTextItem>(inlineItemList[inlineItemIndex])) {
-                auto& inlineTextItem = downcast<InlineTextItem>(inlineItemList[inlineItemIndex]);
-                return { inlineTextItem.start(), inlineTextItem.end() };
-            }
-            if (is<InlineSoftLineBreakItem>(inlineItemList[inlineItemIndex])) {
-                auto startPosition = downcast<InlineSoftLineBreakItem>(inlineItemList[inlineItemIndex]).position();
+            if (auto* inlineTextItem = dynamicDowncast<InlineTextItem>(inlineItemList[inlineItemIndex]))
+                return { inlineTextItem->start(), inlineTextItem->end() };
+            if (auto* inlineSoftBreakItem = dynamicDowncast<InlineSoftLineBreakItem>(inlineItemList[inlineItemIndex])) {
+                auto startPosition = inlineSoftBreakItem->position();
                 return { startPosition, startPosition + 1 };
             }
             ASSERT_NOT_REACHED();
@@ -229,7 +227,8 @@ static std::optional<InlineItemPosition> inlineItemPositionForDamagedContentPosi
     }
 
     auto startPosition = [&](auto& inlineItem) {
-        return is<InlineTextItem>(inlineItem) ? downcast<InlineTextItem>(inlineItem).start() : downcast<InlineSoftLineBreakItem>(inlineItem).position();
+        auto* inlineTextItem = dynamicDowncast<InlineTextItem>(inlineItem);
+        return inlineTextItem ? inlineTextItem->start() : downcast<InlineSoftLineBreakItem>(inlineItem).position();
     };
 
     auto contentOffset = startPosition(candidateInlineItem) + candidatePosition.offset;

@@ -142,8 +142,8 @@ RenderBlockFlow* LineLayout::blockContainer(const RenderObject& renderer)
     for (auto* parent = renderer.parent(); parent; parent = parent->parent()) {
         if (!parent->childrenInline())
             return nullptr;
-        if (is<RenderBlockFlow>(*parent))
-            return downcast<RenderBlockFlow>(parent);
+        if (auto* renderBlockFlow = dynamicDowncast<RenderBlockFlow>(*parent))
+            return renderBlockFlow;
     }
 
     return nullptr;
@@ -169,8 +169,8 @@ LineLayout* LineLayout::containing(RenderObject& renderer)
         }
         if (renderer.isRenderFrameSet()) {
             // Since RenderFrameSet is not a RenderBlock, finding container for nested framesets can't use containingBlock ancestor walk.
-            if (auto* parent = renderer.parent(); is<RenderBlockFlow>(parent))
-                return downcast<RenderBlockFlow>(*parent).modernLineLayout();
+            if (auto* parent = dynamicDowncast<RenderBlockFlow>(renderer.parent()))
+                return parent->modernLineLayout();
             return nullptr;
         }
         auto adjustedContainingBlock = [&] {
@@ -988,7 +988,10 @@ bool LineLayout::hitTest(const HitTestRequest& request, HitTestResult& result, c
         if (!locationInContainer.intersects(boxRect))
             continue;
 
-        auto& elementRenderer = is<RenderElement>(renderer) ? downcast<RenderElement>(renderer) : *renderer.parent();
+        auto& elementRenderer = *[&]() {
+            auto* renderElement = dynamicDowncast<RenderElement>(renderer);
+            return renderElement ? renderElement : renderer.parent();
+        }();
         if (!elementRenderer.visibleToHitTesting(request))
             continue;
         
@@ -1044,9 +1047,9 @@ void LineLayout::insertedIntoTree(const RenderElement& parent, RenderObject& chi
     }
 
     auto& childLayoutBox = m_boxTree.insert(parent, child, child.previousSibling());
-    if (is<Layout::InlineTextBox>(childLayoutBox)) {
+    if (auto* childInlineTextBox = dynamicDowncast<Layout::InlineTextBox>(childLayoutBox)) {
         auto invalidation = Layout::InlineInvalidation { ensureLineDamage(), m_inlineContentCache.inlineItems().content(), m_inlineContent->displayContent() };
-        invalidation.textInserted(downcast<Layout::InlineTextBox>(childLayoutBox));
+        invalidation.textInserted(*childInlineTextBox);
         return;
     }
 
@@ -1068,8 +1071,9 @@ void LineLayout::removedFromTree(const RenderElement& parent, RenderObject& chil
     }
 
     auto& childLayoutBox = m_boxTree.layoutBoxForRenderer(child);
+    auto* childInlineTextBox = dynamicDowncast<Layout::InlineTextBox>(childLayoutBox);
     auto invalidation = Layout::InlineInvalidation { ensureLineDamage(), m_inlineContentCache.inlineItems().content(), m_inlineContent->displayContent() };
-    auto boxIsInvalidated = is<Layout::InlineTextBox>(childLayoutBox) ? invalidation.textWillBeRemoved(downcast<Layout::InlineTextBox>(childLayoutBox)) : childLayoutBox.isLineBreakBox() ? invalidation.inlineLevelBoxWillBeRemoved(childLayoutBox) : false;
+    auto boxIsInvalidated = childInlineTextBox ? invalidation.textWillBeRemoved(*childInlineTextBox) : childLayoutBox.isLineBreakBox() ? invalidation.inlineLevelBoxWillBeRemoved(childLayoutBox) : false;
     if (boxIsInvalidated)
         m_lineDamage->addDetachedBox(m_boxTree.remove(parent, child));
 }

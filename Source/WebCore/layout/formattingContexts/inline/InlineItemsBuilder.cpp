@@ -262,10 +262,9 @@ void InlineItemsBuilder::collectInlineItems(InlineItemList& inlineItemList, Inli
             if (layoutBox->isOutOfFlowPositioned()) {
                 m_isTextAndForcedLineBreakOnlyContent = false;
                 inlineItemList.append({ layoutBox, InlineItem::Type::Opaque });
-            } else if (layoutBox->isInlineTextBox()) {
-                auto& inlineTextBox = downcast<InlineTextBox>(layoutBox);
-                handleTextContent(inlineTextBox, inlineItemList, partialContentOffset(inlineTextBox));
-            } else if (layoutBox->isAtomicInlineLevelBox() || layoutBox->isLineBreakBox())
+            } else if (auto* inlineTextBox = dynamicDowncast<InlineTextBox>(layoutBox.get()))
+                handleTextContent(*inlineTextBox, inlineItemList, partialContentOffset(*inlineTextBox));
+            else if (layoutBox->isAtomicInlineLevelBox() || layoutBox->isLineBreakBox())
                 handleInlineLevelBox(layoutBox, inlineItemList);
             else if (layoutBox->isInlineBox())
                 handleInlineBoxEnd(layoutBox, inlineItemList);
@@ -450,21 +449,21 @@ static inline void buildBidiParagraph(const RenderStyle& rootStyle, const Inline
     for (size_t index = 0; index < inlineItemList.size(); ++index) {
         auto& inlineItem = inlineItemList[index];
         auto& layoutBox = inlineItem.layoutBox();
-        auto mayAppendTextContentAsOneEntry = is<InlineTextBox>(layoutBox) && !TextUtil::shouldPreserveNewline(downcast<InlineTextBox>(layoutBox));
 
         if (inlineItem.isText() || inlineItem.isSoftLineBreak()) {
+            auto* inlineTextBox = dynamicDowncast<InlineTextBox>(layoutBox);
+            auto mayAppendTextContentAsOneEntry = inlineTextBox && !TextUtil::shouldPreserveNewline(*inlineTextBox);
             if (mayAppendTextContentAsOneEntry) {
                 // Append the entire InlineTextBox content and keep track of individual inline item positions as we process them.
                 if (lastInlineTextBox != &layoutBox) {
                     inlineTextBoxOffset = paragraphContentBuilder.length();
-                    replaceNonPreservedNewLineAndTabCharactersAndAppend(downcast<InlineTextBox>(layoutBox), paragraphContentBuilder);
+                    replaceNonPreservedNewLineAndTabCharactersAndAppend(*inlineTextBox, paragraphContentBuilder);
                     lastInlineTextBox = &layoutBox;
                 }
                 inlineItemOffsetList.append({ inlineTextBoxOffset + (is<InlineTextItem>(inlineItem) ? downcast<InlineTextItem>(inlineItem).start() : downcast<InlineSoftLineBreakItem>(inlineItem).position()) });
-            } else if (is<InlineTextItem>(inlineItem)) {
+            } else if (auto* inlineTextItem = dynamicDowncast<InlineTextItem>(inlineItem)) {
                 inlineItemOffsetList.append({ paragraphContentBuilder.length() });
-                auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
-                paragraphContentBuilder.append(StringView(inlineTextItem.inlineTextBox().content()).substring(inlineTextItem.start(), inlineTextItem.length()));
+                paragraphContentBuilder.append(StringView(inlineTextItem->inlineTextBox().content()).substring(inlineTextItem->start(), inlineTextItem->length()));
             } else if (is<InlineSoftLineBreakItem>(inlineItem))
                 handleBidiParagraphStart(paragraphContentBuilder, inlineItemOffsetList, bidiContextStack);
             else

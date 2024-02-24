@@ -45,7 +45,6 @@ public:
 
     TextBoxSelectableRange selectableRange() const;
 
-    bool isCombinedText() const;
     const FontCascade& fontCascade() const;
 
     inline TextRun textRun(TextRunMode = TextRunMode::Painting) const;
