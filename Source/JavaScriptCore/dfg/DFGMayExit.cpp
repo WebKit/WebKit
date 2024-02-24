@@ -290,6 +290,8 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
         case StringOrStringObjectUse:
             result = ExitsForExceptions;
             break;
+        case StringOrOtherUse:
+            break;
         default:
             return Exits;
         }

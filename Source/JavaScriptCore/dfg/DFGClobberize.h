@@ -2031,6 +2031,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             // original String or StringObject structure. Therefore, we don't have an overridden
             // valueOf, etc.
 
+        case StringOrOtherUse:
         case Int32Use:
         case Int52RepUse:
         case DoubleRepUse:

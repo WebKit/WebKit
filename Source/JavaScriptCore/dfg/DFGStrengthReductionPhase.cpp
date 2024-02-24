@@ -448,6 +448,23 @@ private:
                 }
                 break;
             }
+            case StringOrOtherUse: {
+                if (child1->hasConstant()) {
+                    if (JSValue value = child1->constant()->value()) {
+                        if (value.isUndefinedOrNull()) {
+                            m_graph.convertToConstant(m_node, value.isUndefined() ? vm().smallStrings.undefinedString() : vm().smallStrings.nullString());
+                            m_changed = true;
+                            break;
+                        }
+                        if (value.isString()) {
+                            m_graph.convertToConstant(m_node, value);
+                            m_changed = true;
+                            break;
+                        }
+                    }
+                }
+                break;
+            }
             case KnownPrimitiveUse:
                 break;
 

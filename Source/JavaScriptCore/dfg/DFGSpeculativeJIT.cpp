@@ -11622,6 +11622,39 @@ void SpeculativeJIT::compileToStringOrCallStringConstructorOrStringValueOf(Node*
         return;
     }
 
+    case StringOrOtherUse: {
+        JSValueOperand arg(this, node->child1(), ManualOperandSpeculation);
+        GPRTemporary result(this);
+
+        JSValueRegs argRegs = arg.jsValueRegs();
+        GPRReg resultGPR = result.gpr();
+
+        Edge& edge = node->child1();
+        JumpList doneCases;
+
+        auto notCell = branchIfNotCell(argRegs);
+        GPRReg cell = argRegs.payloadGPR();
+        DFG_TYPE_CHECK(argRegs, edge, (~SpecCellCheck) | SpecString, branchIfNotString(cell));
+        move(cell, resultGPR);
+        doneCases.append(jump());
+
+        notCell.link(this);
+        auto isUndefined = branchIfUndefined(argRegs);
+        auto isNull = branchIfNull(argRegs);
+        DFG_TYPE_CHECK(argRegs, edge, SpecCellCheck | SpecOther, jump());
+
+        isUndefined.link(this);
+        loadLinkableConstant(LinkableConstant(*this, vm().smallStrings.undefinedString()), resultGPR);
+        doneCases.append(jump());
+
+        isNull.link(this);
+        loadLinkableConstant(LinkableConstant(*this, vm().smallStrings.nullString()), resultGPR);
+
+        doneCases.link(this);
+        cellResult(resultGPR, node);
+        return;
+    }
+
     case KnownPrimitiveUse:
     case UntypedUse: {
         JSValueOperand op1(this, node->child1(), ManualOperandSpeculation);

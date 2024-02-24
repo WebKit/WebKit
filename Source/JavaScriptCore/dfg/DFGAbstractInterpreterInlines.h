@@ -3058,6 +3058,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case CallStringConstructor: {
         switch (node->child1().useKind()) {
         case StringObjectUse:
+        case StringOrOtherUse:
         case StringOrStringObjectUse:
         case Int32Use:
         case Int52RepUse:

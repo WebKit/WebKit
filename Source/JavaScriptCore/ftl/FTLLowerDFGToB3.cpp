@@ -9490,7 +9490,42 @@ IGNORE_CLANG_WARNINGS_END
             m_interpreter.filter(m_node->child1(), SpecString | SpecStringObject);
             return;
         }
-            
+
+        case StringOrOtherUse: {
+            LValue value = lowJSValue(m_node->child1(), ManualOperandSpeculation);
+
+            Edge& edge = m_node->child1();
+
+            LBasicBlock cellCase = m_out.newBlock();
+            LBasicBlock notCellCase = m_out.newBlock();
+            LBasicBlock undefinedCase = m_out.newBlock();
+            LBasicBlock nullCase = m_out.newBlock();
+            LBasicBlock continuation = m_out.newBlock();
+
+            m_out.branch(isCell(value, provenType(edge)), unsure(cellCase), unsure(notCellCase));
+
+            LBasicBlock lastNext = m_out.appendTo(cellCase, notCellCase);
+            FTL_TYPE_CHECK(jsValueValue(value), edge, (~SpecCellCheck) | SpecString, isNotString(value));
+            ValueFromBlock simpleResult = m_out.anchor(value);
+            m_out.jump(continuation);
+
+            m_out.appendTo(notCellCase, undefinedCase);
+            m_out.branch(m_out.equal(value, m_out.constInt64(JSValue::ValueUndefined)), unsure(undefinedCase), unsure(nullCase));
+
+            m_out.appendTo(undefinedCase, nullCase);
+            ValueFromBlock convertedUndefined = m_out.anchor(weakPointer(vm().smallStrings.undefinedString()));
+            m_out.jump(continuation);
+
+            m_out.appendTo(nullCase, continuation);
+            FTL_TYPE_CHECK(jsValueValue(value), edge, SpecCellCheck | SpecOther, m_out.notEqual(value, m_out.constInt64(JSValue::ValueNull)));
+            ValueFromBlock convertedNull = m_out.anchor(weakPointer((vm().smallStrings.nullString())));
+            m_out.jump(continuation);
+
+            m_out.appendTo(continuation, lastNext);
+            setJSValue(m_out.phi(pointerType(), simpleResult, convertedUndefined, convertedNull));
+            return;
+        }
+
         case CellUse:
         case NotCellUse:
         case UntypedUse:

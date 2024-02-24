@@ -3587,6 +3587,12 @@ private:
             node->convertToIdentity();
             return;
         }
+
+        if (node->child1()->shouldSpeculateStringOrOther()) {
+            fixEdge<StringOrOtherUse>(node->child1());
+            node->convertToIdentity();
+            return;
+        }
         
         if (node->child1()->shouldSpeculateStringObject()
             && m_graph.canOptimizeStringObjectAccess(node->origin.semantic)) {
@@ -3801,6 +3807,12 @@ private:
             return;
         }
 
+        if (node->child1()->shouldSpeculateStringOrOther()) {
+            fixEdge<StringOrOtherUse>(node->child1());
+            node->clearFlags(NodeMustGenerate);
+            return;
+        }
+
         // ToString(Symbol) throws an error. So if the child1 can include Symbols,
         // we need to care about it in the clobberize. In the following case,
         // since NotCellUse edge filter is used and this edge filters Symbols,
@@ -3817,6 +3829,14 @@ private:
         if (node->child1()->shouldSpeculateString()) {
             fixEdge<StringUse>(node->child1());
             node->convertToIdentity();
+            return;
+        }
+
+        if (node->child1()->shouldSpeculateStringOrOther()) {
+            fixEdge<StringOrOtherUse>(node->child1());
+            node->convertToToString();
+            // It does not need to look up a toString property for the StringObject case. So we can clear NodeMustGenerate.
+            node->clearFlags(NodeMustGenerate);
             return;
         }
 
