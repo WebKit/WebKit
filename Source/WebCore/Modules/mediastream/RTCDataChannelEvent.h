@@ -45,8 +45,6 @@ public:
 
     RTCDataChannel& channel();
 
-    virtual EventInterface eventInterface() const;
-
 private:
     RTCDataChannelEvent(const AtomString& type, CanBubble, IsCancelable, Ref<RTCDataChannel>&&);
     RTCDataChannelEvent(const AtomString& type, Init&&, IsTrusted);

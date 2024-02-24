@@ -44,9 +44,4 @@ Ref<NavigationCurrentEntryChangeEvent> NavigationCurrentEntryChangeEvent::create
     return adoptRef(*new NavigationCurrentEntryChangeEvent(type, init));
 }
 
-EventInterface NavigationCurrentEntryChangeEvent::eventInterface() const
-{
-    return NavigationCurrentEntryChangeEventInterfaceType;
-}
-
 } // namespace WebCore

@@ -41,8 +41,6 @@ public:
 
     AudioBuffer& renderedBuffer() { return m_renderedBuffer.get(); }
 
-    EventInterface eventInterface() const override;
-
 private:
     explicit OfflineAudioCompletionEvent(Ref<AudioBuffer>&& renderedBuffer);
     OfflineAudioCompletionEvent(const AtomString& eventType, OfflineAudioCompletionEventInit&&);

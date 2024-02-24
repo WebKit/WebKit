@@ -75,11 +75,6 @@ MerchantValidationEvent::MerchantValidationEvent(const AtomString& type, String&
     ASSERT(m_validationURL.isValid());
 }
 
-EventInterface MerchantValidationEvent::eventInterface() const
-{
-    return MerchantValidationEventInterfaceType;
-}
-
 ExceptionOr<void> MerchantValidationEvent::complete(Ref<DOMPromise>&& merchantSessionPromise)
 {
     if (!isTrusted())

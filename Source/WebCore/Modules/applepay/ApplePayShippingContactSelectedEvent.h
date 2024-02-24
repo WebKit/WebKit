@@ -49,9 +49,6 @@ public:
 private:
     ApplePayShippingContactSelectedEvent(const AtomString& type, unsigned version, const PaymentContact&);
 
-    // Event.
-    EventInterface eventInterface() const override;
-
     const ApplePayPaymentContact m_shippingContact;
 };
 

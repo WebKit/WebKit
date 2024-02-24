@@ -46,11 +46,6 @@ ApplePaySessionError ApplePayCancelEvent::sessionError() const
     return m_sessionError.sessionError();
 }
 
-EventInterface ApplePayCancelEvent::eventInterface() const
-{
-    return ApplePayCancelEventInterfaceType;
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(APPLE_PAY)

@@ -70,9 +70,4 @@ void CustomEvent::initCustomEvent(const AtomString& type, bool canBubble, bool c
     m_cachedDetail.clear();
 }
 
-EventInterface CustomEvent::eventInterface() const
-{
-    return CustomEventInterfaceType;
-}
-
 } // namespace WebCore

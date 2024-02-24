@@ -103,7 +103,6 @@ protected:
 
 private:
     bool isMouseEvent() const final;
-    EventInterface eventInterface() const override;
 
     void setRelatedTarget(RefPtr<EventTarget>&& relatedTarget) final { m_relatedTarget = WTFMove(relatedTarget); }
 

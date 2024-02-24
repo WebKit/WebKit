@@ -52,8 +52,6 @@ private:
 
     bool isToggleEvent() const final { return true; }
 
-    EventInterface eventInterface() const final;
-
     String m_oldState;
     String m_newState;
 };

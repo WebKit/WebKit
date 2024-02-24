@@ -34,11 +34,6 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(PaymentMethodChangeEvent);
 
-EventInterface PaymentMethodChangeEvent::eventInterface() const
-{
-    return PaymentMethodChangeEventInterfaceType;
-}
-
 PaymentMethodChangeEvent::PaymentMethodChangeEvent(const AtomString& type, Init&& eventInit)
     : PaymentRequestUpdateEvent { EventInterfaceType::PaymentMethodChangeEvent, type, eventInit }
     , m_methodName { WTFMove(eventInit.methodName) }

@@ -84,9 +84,4 @@ RefPtr<SerializedScriptValue> PopStateEvent::trySerializeState(JSC::JSGlobalObje
     return m_serializedState;
 }
 
-EventInterface PopStateEvent::eventInterface() const
-{
-    return PopStateEventInterfaceType;
-}
-
 } // namespace WebCore

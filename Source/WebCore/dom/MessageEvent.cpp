@@ -128,11 +128,6 @@ void MessageEvent::initMessageEvent(const AtomString& type, bool canBubble, bool
     m_cachedPorts.clear();
 }
 
-EventInterface MessageEvent::eventInterface() const
-{
-    return MessageEventInterfaceType;
-}
-
 size_t MessageEvent::memoryCost() const
 {
     Locker locker { m_concurrentDataAccessLock };

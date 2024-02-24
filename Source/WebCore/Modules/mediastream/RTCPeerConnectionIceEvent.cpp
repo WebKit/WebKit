@@ -60,11 +60,6 @@ RTCIceCandidate* RTCPeerConnectionIceEvent::candidate() const
     return m_candidate.get();
 }
 
-EventInterface RTCPeerConnectionIceEvent::eventInterface() const
-{
-    return RTCPeerConnectionIceEventInterfaceType;
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(WEB_RTC)

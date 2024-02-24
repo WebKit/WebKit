@@ -48,11 +48,6 @@ WebGLContextEvent::WebGLContextEvent(const AtomString& type, const Init& initial
 
 WebGLContextEvent::~WebGLContextEvent() = default;
 
-EventInterface WebGLContextEvent::eventInterface() const
-{
-    return WebGLContextEventInterfaceType;
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(WEBGL)

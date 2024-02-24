@@ -81,8 +81,6 @@ private:
     DeviceMotionEvent();
     DeviceMotionEvent(const AtomString& eventType, DeviceMotionData*);
 
-    EventInterface eventInterface() const override;
-
     RefPtr<DeviceMotionData> m_deviceMotionData;
 };
 

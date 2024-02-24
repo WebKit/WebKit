@@ -40,10 +40,4 @@ BeforeTextInsertedEvent::BeforeTextInsertedEvent(const String& text)
 
 BeforeTextInsertedEvent::~BeforeTextInsertedEvent() = default;
 
-EventInterface BeforeTextInsertedEvent::eventInterface() const
-{
-    // Notice that there is no BeforeTextInsertedEvent.idl.
-    return EventInterfaceType;
-}
-
 }

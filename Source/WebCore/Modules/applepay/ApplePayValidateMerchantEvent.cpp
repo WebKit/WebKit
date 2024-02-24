@@ -42,11 +42,6 @@ ApplePayValidateMerchantEvent::ApplePayValidateMerchantEvent(const AtomString& t
 
 ApplePayValidateMerchantEvent::~ApplePayValidateMerchantEvent() = default;
 
-EventInterface ApplePayValidateMerchantEvent::eventInterface() const
-{
-    return ApplePayValidateMerchantEventInterfaceType;
-}
-
 }
 
 #endif

@@ -41,8 +41,6 @@ public:
 
     SpeechSynthesisErrorCode error() const { return m_error; }
 
-    virtual EventInterface eventInterface() const { return SpeechSynthesisErrorEventInterfaceType; }
-
 private:
     SpeechSynthesisErrorEvent(const AtomString& type, const SpeechSynthesisErrorEventInit&);
 

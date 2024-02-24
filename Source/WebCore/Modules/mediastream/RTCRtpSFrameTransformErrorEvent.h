@@ -47,8 +47,6 @@ public:
 
     Type errorType() const { return m_errorType; }
 
-    virtual EventInterface eventInterface() const;
-
 private:
     RTCRtpSFrameTransformErrorEvent(const AtomString& type, CanBubble, IsCancelable, Type);
 

@@ -70,11 +70,6 @@ ErrorEvent::ErrorEvent(const String& message, const String& fileName, unsigned l
 
 ErrorEvent::~ErrorEvent() = default;
 
-EventInterface ErrorEvent::eventInterface() const
-{
-    return ErrorEventInterfaceType;
-}
-
 JSValue ErrorEvent::error(JSGlobalObject& globalObject)
 {    
     if (!m_error)

@@ -45,8 +45,6 @@ public:
 
     PictureInPictureWindow& pictureInPictureWindow() const { return m_pictureInPictureWindow.get(); }
 
-    EventInterface eventInterface() const final { return PictureInPictureEventInterfaceType; }
-
 private:
     PictureInPictureEvent(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
 

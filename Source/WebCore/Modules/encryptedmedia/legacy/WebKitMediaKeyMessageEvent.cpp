@@ -52,11 +52,6 @@ WebKitMediaKeyMessageEvent::WebKitMediaKeyMessageEvent(const AtomString& type, c
 
 WebKitMediaKeyMessageEvent::~WebKitMediaKeyMessageEvent() = default;
 
-EventInterface WebKitMediaKeyMessageEvent::eventInterface() const
-{
-    return WebKitMediaKeyMessageEventInterfaceType;
-}
-
 } // namespace WebCore
 
 #endif

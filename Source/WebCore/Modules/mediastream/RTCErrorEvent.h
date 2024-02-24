@@ -46,9 +46,6 @@ public:
 private:
     RTCErrorEvent(const AtomString& type, Init&&, IsTrusted);
 
-    // Event
-    EventInterface eventInterface() const final { return RTCErrorEventInterfaceType; }
-
     Ref<RTCError> m_error;
 };
 

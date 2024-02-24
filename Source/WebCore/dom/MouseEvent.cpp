@@ -144,11 +144,6 @@ void MouseEvent::initMouseEvent(const AtomString& type, bool canBubble, bool can
     setIsSimulated(false);
 }
 
-EventInterface MouseEvent::eventInterface() const
-{
-    return MouseEventInterfaceType;
-}
-
 bool MouseEvent::isMouseEvent() const
 {
     return true;

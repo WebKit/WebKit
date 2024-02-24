@@ -72,9 +72,4 @@ DragEvent::DragEvent()
 {
 }
 
-EventInterface DragEvent::eventInterface() const
-{
-    return DragEventInterfaceType;
-}
-
 } // namespace WebCore

@@ -58,11 +58,6 @@ RTCPeerConnectionIceErrorEvent::RTCPeerConnectionIceErrorEvent(const AtomString&
 
 RTCPeerConnectionIceErrorEvent::~RTCPeerConnectionIceErrorEvent() = default;
 
-EventInterface RTCPeerConnectionIceErrorEvent::eventInterface() const
-{
-    return RTCPeerConnectionIceErrorEventInterfaceType;
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(WEB_RTC)

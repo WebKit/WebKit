@@ -82,7 +82,6 @@ public:
     WEBCORE_EXPORT int keyCode() const; // key code for keydown and keyup, character for keypress
     WEBCORE_EXPORT int charCode() const; // character code for keypress, 0 for keydown and keyup
 
-    EventInterface eventInterface() const final;
     bool isKeyboardEvent() const final;
     unsigned which() const final;
 

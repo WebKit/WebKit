@@ -62,8 +62,6 @@ public:
     const String& oldURL() const { return m_oldURL; }
     const String& newURL() const { return m_newURL; }
 
-    EventInterface eventInterface() const override { return HashChangeEventInterfaceType; }
-
 private:
     HashChangeEvent()
         : Event(EventInterfaceType::HashChangeEvent)

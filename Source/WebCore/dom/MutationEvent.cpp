@@ -56,9 +56,4 @@ void MutationEvent::initMutationEvent(const AtomString& type, bool canBubble, bo
     m_attrChange = attrChange;
 }
 
-EventInterface MutationEvent::eventInterface() const
-{
-    return MutationEventInterfaceType;
-}
-
 } // namespace WebCore

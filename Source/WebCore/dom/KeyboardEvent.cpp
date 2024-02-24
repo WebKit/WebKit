@@ -226,11 +226,6 @@ int KeyboardEvent::charCode() const
     return m_underlyingPlatformEvent->text().characterStartingAt(0);
 }
 
-EventInterface KeyboardEvent::eventInterface() const
-{
-    return KeyboardEventInterfaceType;
-}
-
 bool KeyboardEvent::isKeyboardEvent() const
 {
     return true;

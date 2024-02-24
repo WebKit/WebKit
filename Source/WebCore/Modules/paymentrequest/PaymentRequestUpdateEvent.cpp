@@ -81,11 +81,6 @@ ExceptionOr<void> PaymentRequestUpdateEvent::updateWith(Ref<DOMPromise>&& detail
     return { };
 }
 
-EventInterface PaymentRequestUpdateEvent::eventInterface() const
-{
-    return PaymentRequestUpdateEventInterfaceType;
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(PAYMENT_REQUEST)

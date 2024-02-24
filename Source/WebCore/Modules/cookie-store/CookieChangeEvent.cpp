@@ -49,9 +49,4 @@ CookieChangeEvent::CookieChangeEvent(const AtomString& type, CookieChangeEventIn
 
 CookieChangeEvent::~CookieChangeEvent() = default;
 
-EventInterface CookieChangeEvent::eventInterface() const
-{
-    return CookieChangeEventInterfaceType;
-}
-
 } // namespace WebCore

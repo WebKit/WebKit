@@ -56,11 +56,6 @@ Ref<InvokeEvent> InvokeEvent::createForBindings()
     return adoptRef(*new InvokeEvent);
 }
 
-EventInterface InvokeEvent::eventInterface() const
-{
-    return InvokeEventInterfaceType;
-}
-
 bool InvokeEvent::isInvokeEvent() const
 {
     return true;

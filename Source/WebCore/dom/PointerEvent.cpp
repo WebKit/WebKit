@@ -122,9 +122,4 @@ PointerEvent::PointerEvent(const AtomString& type, PointerID pointerId, const St
 
 PointerEvent::~PointerEvent() = default;
 
-EventInterface PointerEvent::eventInterface() const
-{
-    return PointerEventInterfaceType;
-}
-
 } // namespace WebCore

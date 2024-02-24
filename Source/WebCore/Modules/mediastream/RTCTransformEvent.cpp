@@ -49,11 +49,6 @@ RTCRtpScriptTransformer& RTCTransformEvent::transformer()
     return m_transformer.get();
 }
 
-EventInterface RTCTransformEvent::eventInterface() const
-{
-    return RTCTransformEventInterfaceType;
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(WEB_RTC)

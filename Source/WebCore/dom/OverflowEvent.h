@@ -65,8 +65,6 @@ public:
     bool horizontalOverflow() const { return m_horizontalOverflow; }
     bool verticalOverflow() const { return m_verticalOverflow; }
 
-    EventInterface eventInterface() const override;
-
 private:
     OverflowEvent();
     OverflowEvent(bool horizontalOverflowChanged, bool horizontalOverflow, bool verticalOverflowChanged, bool verticalOverflow);

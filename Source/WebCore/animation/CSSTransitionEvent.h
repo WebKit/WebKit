@@ -55,8 +55,6 @@ public:
 
     const String& propertyName() const { return m_propertyName; }
 
-    EventInterface eventInterface() const override { return CSSTransitionEventInterfaceType; }
-
 private:
     CSSTransitionEvent(const AtomString& type, WebAnimation*, std::optional<Seconds> scheduledTime, double elapsedTime, const std::optional<Style::PseudoElementIdentifier>&, const String propertyName);
     CSSTransitionEvent(const AtomString& type, const Init& initializer, IsTrusted);

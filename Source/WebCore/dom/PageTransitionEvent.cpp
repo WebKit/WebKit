@@ -46,9 +46,4 @@ PageTransitionEvent::PageTransitionEvent(const AtomString& type, const Init& ini
 
 PageTransitionEvent::~PageTransitionEvent() = default;
 
-EventInterface PageTransitionEvent::eventInterface() const
-{
-    return PageTransitionEventInterfaceType;
-}
-
 } // namespace WebCore

@@ -58,11 +58,6 @@ MediaRecorderErrorEvent::MediaRecorderErrorEvent(const AtomString& type, Excepti
 {
 }
 
-EventInterface MediaRecorderErrorEvent::eventInterface() const
-{
-    return MediaRecorderErrorEventInterfaceType;
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_RECORDER)

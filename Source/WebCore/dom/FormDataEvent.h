@@ -47,8 +47,7 @@ public:
 private:
     FormDataEvent(const AtomString&, Init&&);
     FormDataEvent(const AtomString&, CanBubble, IsCancelable, IsComposed, Ref<DOMFormData>&&);
-    EventInterface eventInterface() const final;
-    
+
     Ref<DOMFormData> m_formData;
 };
 

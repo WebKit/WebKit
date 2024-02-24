@@ -54,7 +54,6 @@ private:
     ClipboardEvent(const AtomString& type, Ref<DataTransfer>&&);
     ClipboardEvent(const AtomString& type, const Init&);
 
-    EventInterface eventInterface() const final;
     bool isClipboardEvent() const final;
 
     RefPtr<DataTransfer> m_clipboardData;

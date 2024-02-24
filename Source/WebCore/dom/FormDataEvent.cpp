@@ -55,9 +55,4 @@ FormDataEvent::FormDataEvent(const AtomString& eventType, CanBubble canBubble, I
 {
 }
 
-EventInterface FormDataEvent::eventInterface() const
-{
-    return FormDataEventInterfaceType;
-}
-
 } // namespace WebCore

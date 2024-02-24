@@ -58,11 +58,6 @@ TouchEvent::TouchEvent(const AtomString& type, const Init& initializer, IsTruste
 
 TouchEvent::~TouchEvent() = default;
 
-EventInterface TouchEvent::eventInterface() const
-{
-    return TouchEventInterfaceType;
-}
-
 bool TouchEvent::isTouchEvent() const
 {
     return true;

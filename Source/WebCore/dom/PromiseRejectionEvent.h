@@ -50,8 +50,6 @@ public:
     DOMPromise& promise() const { return m_promise.get(); }
     const JSValueInWrappedObject& reason() const { return m_reason; }
 
-    EventInterface eventInterface() const override { return PromiseRejectionEventInterfaceType; }
-
 private:
     PromiseRejectionEvent(const AtomString&, const Init&, IsTrusted);
 

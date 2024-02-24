@@ -46,7 +46,6 @@ public:
     }
 
     GPUError error() const;
-    EventInterface eventInterface() const override;
 
 private:
     GPUUncapturedErrorEvent(const AtomString&, GPUUncapturedErrorEventInit&&);

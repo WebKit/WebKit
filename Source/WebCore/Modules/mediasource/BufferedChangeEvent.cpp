@@ -63,11 +63,6 @@ RefPtr<TimeRanges> BufferedChangeEvent::removedRanges() const
     return m_removed;
 }
 
-EventInterface BufferedChangeEvent::eventInterface() const
-{
-    return BufferedChangeEventInterfaceType;
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_SOURCE)

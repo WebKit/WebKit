@@ -62,11 +62,6 @@ RTCDataChannel& RTCDataChannelEvent::channel()
     return m_channel.get();
 }
 
-EventInterface RTCDataChannelEvent::eventInterface() const
-{
-    return RTCDataChannelEventInterfaceType;
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(WEB_RTC)

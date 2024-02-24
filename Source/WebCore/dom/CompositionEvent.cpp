@@ -62,11 +62,6 @@ void CompositionEvent::initCompositionEvent(const AtomString& type, bool canBubb
     m_data = data;
 }
 
-EventInterface CompositionEvent::eventInterface() const
-{
-    return CompositionEventInterfaceType;
-}
-
 bool CompositionEvent::isCompositionEvent() const
 {
     return true;

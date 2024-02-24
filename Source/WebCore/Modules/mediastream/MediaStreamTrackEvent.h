@@ -47,9 +47,6 @@ public:
 
     MediaStreamTrack* track() const;
 
-    // Event
-    EventInterface eventInterface() const override;
-
 private:
     MediaStreamTrackEvent(const AtomString& type, CanBubble, IsCancelable, RefPtr<MediaStreamTrack>&&);
     MediaStreamTrackEvent(const AtomString& type, const Init&, IsTrusted);

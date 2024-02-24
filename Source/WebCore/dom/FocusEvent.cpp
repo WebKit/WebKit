@@ -33,11 +33,6 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(FocusEvent);
 
-EventInterface FocusEvent::eventInterface() const
-{
-    return FocusEventInterfaceType;
-}
-
 bool FocusEvent::isFocusEvent() const
 {
     return true;

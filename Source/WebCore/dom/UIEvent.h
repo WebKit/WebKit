@@ -55,8 +55,6 @@ public:
     WindowProxy* view() const { return m_view.get(); }
     int detail() const { return m_detail; }
 
-    EventInterface eventInterface() const override;
-
     virtual int layerX();
     virtual int layerY();
 

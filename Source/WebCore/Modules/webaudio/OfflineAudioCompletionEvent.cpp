@@ -64,11 +64,6 @@ OfflineAudioCompletionEvent::OfflineAudioCompletionEvent(const AtomString& event
 
 OfflineAudioCompletionEvent::~OfflineAudioCompletionEvent() = default;
 
-EventInterface OfflineAudioCompletionEvent::eventInterface() const
-{
-    return OfflineAudioCompletionEventInterfaceType;
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(WEB_AUDIO)

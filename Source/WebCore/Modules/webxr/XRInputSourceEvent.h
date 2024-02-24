@@ -50,8 +50,6 @@ public:
     const WebXRInputSource& inputSource() const;
     void setFrameActive(bool);
 
-    EventInterface eventInterface() const final { return XRInputSourceEventInterfaceType; }
-
 private:
     XRInputSourceEvent(const AtomString&, const Init&, IsTrusted);
 

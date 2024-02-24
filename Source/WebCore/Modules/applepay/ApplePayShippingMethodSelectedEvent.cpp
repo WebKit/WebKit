@@ -43,11 +43,6 @@ ApplePayShippingMethodSelectedEvent::ApplePayShippingMethodSelectedEvent(const A
 
 ApplePayShippingMethodSelectedEvent::~ApplePayShippingMethodSelectedEvent() = default;
 
-EventInterface ApplePayShippingMethodSelectedEvent::eventInterface() const
-{
-    return ApplePayShippingMethodSelectedEventInterfaceType;
-}
-
 }
 
 #endif

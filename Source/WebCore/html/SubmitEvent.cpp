@@ -54,9 +54,4 @@ SubmitEvent::SubmitEvent(RefPtr<HTMLElement>&& submitter)
     , m_submitter(WTFMove(submitter))
 { }
 
-EventInterface SubmitEvent::eventInterface() const
-{
-    return SubmitEventInterfaceType;
-}
-
 } // namespace WebCore

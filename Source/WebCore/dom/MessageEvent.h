@@ -88,8 +88,6 @@ private:
     MessageEvent(const AtomString& type, Init&&, IsTrusted);
     MessageEvent(const AtomString& type, DataType&&, const String& origin, const String& lastEventId = { }, std::optional<MessageEventSource>&& = std::nullopt, Vector<RefPtr<MessagePort>>&& = { });
 
-    EventInterface eventInterface() const final;
-
     DataType m_data WTF_GUARDED_BY_LOCK(m_concurrentDataAccessLock);
     String m_origin;
     String m_lastEventId;

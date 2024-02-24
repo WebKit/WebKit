@@ -58,9 +58,6 @@ public:
     unsigned short code() const { return m_code; }
     String reason() const { return m_reason; }
 
-    // Event function.
-    EventInterface eventInterface() const override { return CloseEventInterfaceType; }
-
 private:
     CloseEvent(bool wasClean, int code, const String& reason)
         : Event(EventInterfaceType::CloseEvent, eventNames().closeEvent, CanBubble::No, IsCancelable::No)

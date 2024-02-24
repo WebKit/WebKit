@@ -49,8 +49,6 @@ private:
     SubmitEvent(const AtomString& type, Init&&);
     explicit SubmitEvent(RefPtr<HTMLElement>&& submitter);
 
-    EventInterface eventInterface() const final;
-
     RefPtr<HTMLElement> m_submitter;
 };
 

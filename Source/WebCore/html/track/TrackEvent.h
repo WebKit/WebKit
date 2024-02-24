@@ -61,8 +61,6 @@ private:
     TrackEvent(const AtomString& type, CanBubble, IsCancelable, Ref<TrackBase>&&);
     TrackEvent(const AtomString& type, Init&& initializer, IsTrusted);
 
-    EventInterface eventInterface() const override;
-
     std::optional<TrackEventTrack> m_track;
 };
 

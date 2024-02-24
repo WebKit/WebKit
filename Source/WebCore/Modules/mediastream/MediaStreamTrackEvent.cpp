@@ -63,11 +63,6 @@ MediaStreamTrack* MediaStreamTrackEvent::track() const
     return m_track.get();
 }
 
-EventInterface MediaStreamTrackEvent::eventInterface() const
-{
-    return MediaStreamTrackEventInterfaceType;
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)

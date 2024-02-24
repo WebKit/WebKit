@@ -48,8 +48,6 @@ public:
     RTCIceCandidate* candidate() const;
     const String& url() const { return m_url; }
 
-    virtual EventInterface eventInterface() const;
-
 private:
     RTCPeerConnectionIceEvent(const AtomString& type, CanBubble, IsCancelable, RefPtr<RTCIceCandidate>&&, String&& serverURL);
 

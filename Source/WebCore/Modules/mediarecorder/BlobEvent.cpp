@@ -47,11 +47,6 @@ BlobEvent::BlobEvent(const AtomString& type, Init&& init, IsTrusted isTrusted)
 {
 }
 
-EventInterface BlobEvent::eventInterface() const
-{
-    return BlobEventInterfaceType;
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_RECORDER)

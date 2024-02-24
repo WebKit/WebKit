@@ -64,11 +64,6 @@ AudioProcessingEvent::AudioProcessingEvent(const AtomString& eventType, AudioPro
 
 AudioProcessingEvent::~AudioProcessingEvent() = default;
 
-EventInterface AudioProcessingEvent::eventInterface() const
-{
-    return AudioProcessingEventInterfaceType;
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(WEB_AUDIO)

@@ -54,8 +54,6 @@ public:
 
     const String& animationName() const { return m_animationName; }
 
-    EventInterface eventInterface() const override { return CSSAnimationEventInterfaceType; }
-
 private:
     CSSAnimationEvent(const AtomString& type, WebAnimation*, std::optional<Seconds> scheduledTime, double elapsedTime, const std::optional<Style::PseudoElementIdentifier>&, const String& animationName);
     CSSAnimationEvent(const AtomString&, const Init&, IsTrusted);

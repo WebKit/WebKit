@@ -114,7 +114,6 @@ public:
     RefPtr<Node> toElement() const final { return nullptr; }
     RefPtr<Node> fromElement() const final { return nullptr; }
 
-    EventInterface eventInterface() const override;
     static bool typeIsUpOrDown(const AtomString& type);
     static MouseButton buttonForType(const AtomString& type) { return !typeIsUpOrDown(type) ? MouseButton::PointerHasNotChanged : MouseButton::Left; }
 

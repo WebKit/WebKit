@@ -64,11 +64,6 @@ OverflowEvent::OverflowEvent(const AtomString& type, const Init& initializer, Is
 {
 }
 
-EventInterface OverflowEvent::eventInterface() const
-{
-    return OverflowEventInterfaceType;
-}
-
 void OverflowEvent::initOverflowEvent(unsigned short orient, bool horizontalOverflow, bool verticalOverflow)
 {
     if (isBeingDispatched())

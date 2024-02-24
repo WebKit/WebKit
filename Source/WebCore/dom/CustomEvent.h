@@ -54,8 +54,6 @@ private:
     CustomEvent(IsTrusted);
     CustomEvent(const AtomString& type, const Init& initializer, IsTrusted);
 
-    EventInterface eventInterface() const final;
-
     JSValueInWrappedObject m_detail;
     JSValueInWrappedObject m_cachedDetail;
 };

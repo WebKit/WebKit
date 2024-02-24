@@ -47,9 +47,6 @@ public:
 private:
     explicit ApplePayCancelEvent(const AtomString&, PaymentSessionError&&);
 
-    // Event.
-    EventInterface eventInterface() const final;
-
     PaymentSessionError m_sessionError;
 };
 

@@ -45,8 +45,6 @@ public:
     float elapsedTime() const { return m_elapsedTime; }
     const String& name() const { return m_name; }
 
-    virtual EventInterface eventInterface() const { return SpeechSynthesisEventInterfaceType; }
-
 protected:
     SpeechSynthesisEvent(enum EventInterfaceType, const AtomString& type, const SpeechSynthesisEventInit&);
 

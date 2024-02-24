@@ -87,8 +87,6 @@ public:
 private:
     NavigateEvent(const AtomString& type, const Init&);
 
-    EventInterface eventInterface() const override;
-
     NavigationNavigationType m_navigationType;
     RefPtr<NavigationDestination> m_destination;
     RefPtr<AbortSignal> m_signal;

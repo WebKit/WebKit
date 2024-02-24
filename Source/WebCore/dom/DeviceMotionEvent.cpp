@@ -133,18 +133,6 @@ void DeviceMotionEvent::initDeviceMotionEvent(const AtomString& type, bool bubbl
     m_deviceMotionData = DeviceMotionData::create(convert(WTFMove(acceleration)), convert(WTFMove(accelerationIncludingGravity)), convert(WTFMove(rotationRate)), interval);
 }
 
-EventInterface DeviceMotionEvent::eventInterface() const
-{
-#if ENABLE(DEVICE_ORIENTATION)
-    return DeviceMotionEventInterfaceType;
-#else
-    // FIXME: ENABLE(DEVICE_ORIENTATION) seems to be in a strange state where
-    // it is half-guarded by #ifdefs. DeviceMotionEvent.idl is guarded
-    // but DeviceMotionEvent.cpp itself is required by ungarded code.
-    return EventInterfaceType;
-#endif
-}
-
 #if ENABLE(DEVICE_ORIENTATION)
 void DeviceMotionEvent::requestPermission(Document& document, PermissionPromise&& promise)
 {

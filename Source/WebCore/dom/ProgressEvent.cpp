@@ -48,9 +48,4 @@ ProgressEvent::ProgressEvent(enum EventInterfaceType eventInterface, const AtomS
 {
 }
 
-EventInterface ProgressEvent::eventInterface() const
-{
-    return ProgressEventInterfaceType;
-}
-
 }

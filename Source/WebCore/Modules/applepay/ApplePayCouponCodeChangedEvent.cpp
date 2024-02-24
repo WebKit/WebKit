@@ -42,11 +42,6 @@ ApplePayCouponCodeChangedEvent::ApplePayCouponCodeChangedEvent(const AtomString&
 
 ApplePayCouponCodeChangedEvent::~ApplePayCouponCodeChangedEvent() = default;
 
-EventInterface ApplePayCouponCodeChangedEvent::eventInterface() const
-{
-    return ApplePayCouponCodeChangedEventInterfaceType;
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(APPLE_PAY_COUPON_CODE)

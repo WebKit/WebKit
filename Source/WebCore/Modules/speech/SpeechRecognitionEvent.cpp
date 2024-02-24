@@ -57,9 +57,4 @@ SpeechRecognitionEvent::SpeechRecognitionEvent(const AtomString& type, uint64_t 
 {
 }
 
-EventInterface SpeechRecognitionEvent::eventInterface() const
-{
-    return SpeechRecognitionEventInterfaceType;
-}
-
 } // namespace WebCore

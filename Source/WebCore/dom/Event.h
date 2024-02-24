@@ -72,7 +72,7 @@ public:
     const AtomString& type() const { return m_type; }
     void setType(const AtomString& type) { m_type = type; }
 
-    enum EventInterfaceType interfaceType() const { return m_eventInterface ? static_cast<enum EventInterfaceType>(m_eventInterface) : static_cast<enum EventInterfaceType>(eventInterface()); }
+    enum EventInterfaceType interfaceType() const { return static_cast<enum EventInterfaceType>(m_eventInterface); }
 
     EventTarget* target() const { return m_target.get(); }
     void setTarget(RefPtr<EventTarget>&&);
@@ -103,8 +103,6 @@ public:
 
     bool legacyReturnValue() const { return !m_wasCanceled; }
     void setLegacyReturnValue(bool);
-
-    virtual EventInterface eventInterface() const { return EventInterfaceType; }
 
     virtual bool isBeforeTextInsertedEvent() const { return false; }
     virtual bool isBeforeUnloadEvent() const { return false; }

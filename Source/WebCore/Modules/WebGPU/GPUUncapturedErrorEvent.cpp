@@ -43,11 +43,6 @@ GPUError GPUUncapturedErrorEvent::error() const
     return m_uncapturedErrorEventInit.error;
 }
 
-EventInterface GPUUncapturedErrorEvent::eventInterface() const
-{
-    return GPUUncapturedErrorEventInterfaceType;
-}
-
 }
 
 

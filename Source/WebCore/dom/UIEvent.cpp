@@ -76,11 +76,6 @@ bool UIEvent::isUIEvent() const
     return true;
 }
 
-EventInterface UIEvent::eventInterface() const
-{
-    return UIEventInterfaceType;
-}
-
 int UIEvent::layerX()
 {
     return 0;

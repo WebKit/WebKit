@@ -43,8 +43,6 @@ public:
 
     ~ExtendableEvent();
 
-    EventInterface eventInterface() const override { return ExtendableEventInterfaceType; }
-
     ExceptionOr<void> waitUntil(Ref<DOMPromise>&&);
     unsigned pendingPromiseCount() const { return m_pendingPromiseCount; }
 

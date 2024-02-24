@@ -41,8 +41,6 @@ public:
     unsigned long long position() const { return loaded(); }
     unsigned long long totalSize() const { return total(); }
 
-    EventInterface eventInterface() const override { return XMLHttpRequestProgressEventInterfaceType; }
-
 private:
     XMLHttpRequestProgressEvent(const AtomString& type, bool lengthComputable, unsigned long long loaded, unsigned long long total)
         : ProgressEvent(EventInterfaceType::XMLHttpRequestProgressEvent, type, lengthComputable, loaded, total)

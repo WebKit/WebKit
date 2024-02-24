@@ -89,11 +89,6 @@ Ref<WheelEvent> WheelEvent::create(const AtomString& type, const Init& initializ
     return adoptRef(*new WheelEvent(type, initializer));
 }
 
-EventInterface WheelEvent::eventInterface() const
-{
-    return WheelEventInterfaceType;
-}
-
 bool WheelEvent::isWheelEvent() const
 {
     return true;

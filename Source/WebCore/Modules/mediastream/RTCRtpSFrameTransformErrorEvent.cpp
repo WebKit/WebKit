@@ -54,11 +54,6 @@ RTCRtpSFrameTransformErrorEvent::RTCRtpSFrameTransformErrorEvent(const AtomStrin
 
 RTCRtpSFrameTransformErrorEvent::~RTCRtpSFrameTransformErrorEvent() = default;
 
-EventInterface RTCRtpSFrameTransformErrorEvent::eventInterface() const
-{
-    return RTCRtpSFrameTransformErrorEventInterfaceType;
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(WEB_RTC)

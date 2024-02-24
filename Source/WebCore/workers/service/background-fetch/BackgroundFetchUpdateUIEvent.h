@@ -40,8 +40,6 @@ public:
 
     ~BackgroundFetchUpdateUIEvent();
 
-    EventInterface eventInterface() const final { return BackgroundFetchUpdateUIEventInterfaceType; }
-
     void updateUI(BackgroundFetchUIOptions&&, DOMPromiseDeferred<void>&&);
 
 private:

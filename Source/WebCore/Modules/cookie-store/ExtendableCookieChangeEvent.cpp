@@ -49,9 +49,4 @@ ExtendableCookieChangeEvent::ExtendableCookieChangeEvent(const AtomString& type,
 
 ExtendableCookieChangeEvent::~ExtendableCookieChangeEvent() = default;
 
-EventInterface ExtendableCookieChangeEvent::eventInterface() const
-{
-    return ExtendableCookieChangeEventInterfaceType;
-}
-
 } // namespace WebCore

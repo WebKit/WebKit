@@ -60,9 +60,4 @@ void NavigateEvent::scroll()
 {
 }
 
-EventInterface NavigateEvent::eventInterface() const
-{
-    return NavigateEventInterfaceType;
-}
-
 } // namespace WebCore

@@ -71,8 +71,6 @@ public:
 
     bool isTouchEvent() const override;
 
-    EventInterface eventInterface() const override;
-
 private:
     TouchEvent();
     TouchEvent(TouchList* touches, TouchList* targetTouches, TouchList* changedTouches, const AtomString& type,

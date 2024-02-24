@@ -64,11 +64,6 @@ const String& RTCDTMFToneChangeEvent::tone() const
     return m_tone;
 }
 
-EventInterface RTCDTMFToneChangeEvent::eventInterface() const
-{
-    return RTCDTMFToneChangeEventInterfaceType;
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(WEB_RTC)

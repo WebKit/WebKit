@@ -48,11 +48,6 @@ MediaKeyMessageEvent::MediaKeyMessageEvent(const AtomString& type, const MediaKe
 
 MediaKeyMessageEvent::~MediaKeyMessageEvent() = default;
 
-EventInterface MediaKeyMessageEvent::eventInterface() const
-{
-    return MediaKeyMessageEventInterfaceType;
-}
-
 RefPtr<JSC::ArrayBuffer> MediaKeyMessageEvent::message() const
 {
     return m_message;

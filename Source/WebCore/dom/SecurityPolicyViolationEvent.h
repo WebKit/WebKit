@@ -72,8 +72,6 @@ public:
     unsigned lineNumber() const { return m_lineNumber; }
     unsigned columnNumber() const { return m_columnNumber; }
 
-    EventInterface eventInterface() const final { return SecurityPolicyViolationEventInterfaceType; }
-
 private:
     SecurityPolicyViolationEvent()
         : Event(EventInterfaceType::SecurityPolicyViolationEvent)

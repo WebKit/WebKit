@@ -257,32 +257,6 @@ sub generateInterfacesHeader()
 
     print F "};\n";
     print F "\n";
-    print F "enum ${namespace}Interface {\n";
-
-    $count = 1;
-    for my $conditional (sort keys %interfacesByConditional) {
-        my $preferredConditional = $object->preferredConditional($conditional);
-        print F "#if " . $object->conditionalStringFromAttributeValue($conditional) . "\n";
-        for my $interface (sort keys %{ $interfacesByConditional{$conditional} }) {
-            next if defined($unconditionalInterfaces{$interface});
-            print F "    ${interface}${suffix} = $count,\n";
-            $count++;
-        }
-        print F "#endif\n";
-    }
-
-    if ($namespace eq "EventTarget") {
-        print F "    ${suffix} = $count,\n";
-        $count++;
-    }
-
-    for my $interface (sort keys %unconditionalInterfaces) {
-        print F "    ${interface}${suffix} = $count,\n";
-        $count++;
-    }
-
-    print F "};\n";
-    print F "\n";
     print F "} // namespace WebCore\n";
 
     close F;

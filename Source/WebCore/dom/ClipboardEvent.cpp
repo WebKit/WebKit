@@ -44,11 +44,6 @@ ClipboardEvent::ClipboardEvent(const AtomString& type, const Init& init)
 
 ClipboardEvent::~ClipboardEvent() = default;
 
-EventInterface ClipboardEvent::eventInterface() const
-{
-    return ClipboardEventInterfaceType;
-}
-
 bool ClipboardEvent::isClipboardEvent() const
 {
     return true;

@@ -52,8 +52,6 @@ public:
     unsigned long long loaded() const { return m_loaded; }
     unsigned long long total() const { return m_total; }
 
-    EventInterface eventInterface() const override;
-
 protected:
     ProgressEvent(enum EventInterfaceType, const AtomString& type, bool lengthComputable, unsigned long long loaded, unsigned long long total);
     ProgressEvent(enum EventInterfaceType, const AtomString&, const Init&, IsTrusted);

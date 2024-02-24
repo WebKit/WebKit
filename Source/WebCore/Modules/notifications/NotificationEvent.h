@@ -49,8 +49,6 @@ public:
     static Ref<NotificationEvent> create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
     static Ref<NotificationEvent> create(const AtomString&, Notification*, const String& action, IsTrusted = IsTrusted::No);
 
-    EventInterface eventInterface() const final { return NotificationEventInterfaceType; }
-
     Notification* notification() { return m_notification.get(); }
     const String& action() { return m_action; }
 

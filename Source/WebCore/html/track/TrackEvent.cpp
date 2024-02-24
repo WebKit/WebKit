@@ -65,11 +65,6 @@ TrackEvent::TrackEvent(const AtomString& type, Init&& initializer, IsTrusted isT
 
 TrackEvent::~TrackEvent() = default;
 
-EventInterface TrackEvent::eventInterface() const
-{
-    return TrackEventInterfaceType;
-}
-
 } // namespace WebCore
 
 #endif

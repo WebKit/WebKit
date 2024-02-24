@@ -66,9 +66,4 @@ Ref<ToggleEvent> ToggleEvent::createForBindings()
     return adoptRef(*new ToggleEvent);
 }
 
-EventInterface ToggleEvent::eventInterface() const
-{
-    return ToggleEventInterfaceType;
-}
-
 } // namespace WebCore

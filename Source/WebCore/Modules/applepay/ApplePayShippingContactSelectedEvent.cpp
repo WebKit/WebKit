@@ -43,11 +43,6 @@ ApplePayShippingContactSelectedEvent::ApplePayShippingContactSelectedEvent(const
 
 ApplePayShippingContactSelectedEvent::~ApplePayShippingContactSelectedEvent() = default;
 
-EventInterface ApplePayShippingContactSelectedEvent::eventInterface() const
-{
-    return ApplePayShippingContactSelectedEventInterfaceType;
-}
-
 }
 
 #endif

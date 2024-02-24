@@ -51,9 +51,6 @@ protected:
     explicit PaymentRequestUpdateEvent(enum EventInterfaceType, const AtomString& type);
     PaymentRequestUpdateEvent(enum EventInterfaceType, const AtomString& type, const PaymentRequestUpdateEventInit&);
 
-    // Event
-    EventInterface eventInterface() const override;
-
 private:
     bool m_waitForUpdate { false };
 };

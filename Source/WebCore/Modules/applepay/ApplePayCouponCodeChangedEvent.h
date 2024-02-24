@@ -47,9 +47,6 @@ public:
 private:
     ApplePayCouponCodeChangedEvent(const AtomString& type, String&&);
 
-    // Event
-    EventInterface eventInterface() const override;
-
     const String m_couponCode;
 };
 

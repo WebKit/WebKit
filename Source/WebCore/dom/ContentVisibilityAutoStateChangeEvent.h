@@ -45,8 +45,6 @@ public:
 
     bool skipped() const { return m_skipped; }
 
-    EventInterface eventInterface() const override { return ContentVisibilityAutoStateChangeEventInterfaceType; }
-
 private:
     ContentVisibilityAutoStateChangeEvent(const AtomString&, const Init&, IsTrusted);
 

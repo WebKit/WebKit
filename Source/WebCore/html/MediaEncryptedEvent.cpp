@@ -47,11 +47,6 @@ MediaEncryptedEvent::MediaEncryptedEvent(const AtomString& type, const MediaEncr
 
 MediaEncryptedEvent::~MediaEncryptedEvent() = default;
 
-EventInterface MediaEncryptedEvent::eventInterface() const
-{
-    return MediaEncryptedEventInterfaceType;
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(ENCRYPTED_MEDIA)

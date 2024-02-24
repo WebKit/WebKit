@@ -59,7 +59,6 @@ public:
 private:
     BufferedChangeEvent(RefPtr<TimeRanges>&& added, RefPtr<TimeRanges>&& removed);
     BufferedChangeEvent(const AtomString& type, Init&&);
-    EventInterface eventInterface() const final;
 
     RefPtr<TimeRanges> m_added;
     RefPtr<TimeRanges> m_removed;

@@ -54,7 +54,6 @@ private:
     InvokeEvent();
     InvokeEvent(const AtomString& type, const Init&, IsTrusted = IsTrusted::No);
 
-    EventInterface eventInterface() const final;
     bool isInvokeEvent() const final;
 
     void setInvoker(RefPtr<Element>&& invoker) { m_invoker = WTFMove(invoker); }
