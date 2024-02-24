@@ -1038,6 +1038,7 @@ void WebPageProxy::setMediaCapability(std::optional<MediaCapability>&& capabilit
     internals().mediaCapability = WTFMove(capability);
 
     if (!internals().mediaCapability) {
+        WEBPAGEPROXY_RELEASE_LOG(ProcessCapabilities, "setMediaCapability: clearing media capability");
         send(Messages::WebPage::SetMediaEnvironment({ }));
         return;
     }
@@ -1115,6 +1116,9 @@ bool WebPageProxy::shouldDeactivateMediaCapability() const
         return false;
 
     if (internals().mediaState.containsAny(MediaProducerMediaState::HasAudioOrVideo))
+        return false;
+
+    if (hasValidAudibleActivity())
         return false;
 
     return true;

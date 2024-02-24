@@ -2287,6 +2287,7 @@ WebProcessWithAudibleMediaToken WebProcessPool::webProcessWithAudibleMediaToken(
 
 void WebProcessPool::clearAudibleActivity()
 {
+    WEBPROCESSPOOL_RELEASE_LOG(ProcessSuspension, "clearAudibleActivity: The number of processes playing audible media is now zero. Releasing UI process assertion.");
     ASSERT(!m_webProcessWithAudibleMediaCounter.value());
     m_audibleMediaActivity = std::nullopt;
 }
@@ -2294,7 +2295,7 @@ void WebProcessPool::clearAudibleActivity()
 void WebProcessPool::updateAudibleMediaAssertions()
 {
     if (!m_webProcessWithAudibleMediaCounter.value()) {
-        WEBPROCESSPOOL_RELEASE_LOG(ProcessSuspension, "updateAudibleMediaAssertions: The number of processes playing audible media now zero. Releasing UI process assertion.");
+        WEBPROCESSPOOL_RELEASE_LOG(ProcessSuspension, "updateAudibleMediaAssertions: Starting timer to clear audible activity in %g seconds because we are no longer playing audio", audibleActivityClearDelay.seconds());
         // We clear the audible activity on a timer for 2 reasons:
         // 1. Media may start playing shortly after (e.g. switching from one track to another)
         // 2. It minimizes the risk of the GPUProcess getting suspended while shutting down the media stack.

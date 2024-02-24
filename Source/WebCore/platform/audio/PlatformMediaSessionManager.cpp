@@ -663,8 +663,10 @@ void PlatformMediaSessionManager::maybeDeactivateAudioSession()
 bool PlatformMediaSessionManager::maybeActivateAudioSession()
 {
 #if USE(AUDIO_SESSION)
-    if (!activeAudioSessionRequired())
+    if (!activeAudioSessionRequired()) {
+        ALWAYS_LOG(LOGIDENTIFIER, "active audio session not required");
         return true;
+    }
 
     m_becameActive = AudioSession::sharedSession().tryToSetActive(true);
     ALWAYS_LOG(LOGIDENTIFIER, m_becameActive ? "successfully activated" : "failed to activate", " AudioSession");

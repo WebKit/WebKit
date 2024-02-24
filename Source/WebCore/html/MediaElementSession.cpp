@@ -571,11 +571,13 @@ bool MediaElementSession::canShowControlsManager(PlaybackControlsPurpose purpose
         return true;
     }
 
-    if (client().presentationType() == MediaType::Audio
-        && purpose == PlaybackControlsPurpose::NowPlaying
-        && !isLongEnoughForMainContent()) {
-        INFO_LOG(LOGIDENTIFIER, "returning FALSE: audio too short for NowPlaying");
-        return false;
+    if (client().presentationType() == MediaType::Audio && purpose == PlaybackControlsPurpose::NowPlaying) {
+        if (!m_element.hasSource()
+            || m_element.error()
+            || (!isLongEnoughForMainContent() && !PlatformMediaSessionManager::sharedManager().registeredAsNowPlayingApplication())) {
+            INFO_LOG(LOGIDENTIFIER, "returning FALSE: audio too short for NowPlaying");
+            return false;
+        }
     }
 
     if (client().presentationType() == MediaType::Audio && (purpose == PlaybackControlsPurpose::ControlsManager || purpose == PlaybackControlsPurpose::MediaSession)) {

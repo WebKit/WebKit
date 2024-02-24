@@ -2815,11 +2815,15 @@ void WebPageProxy::updateThrottleState()
             WEBPAGEPROXY_RELEASE_LOG(ProcessSuspension, "updateThrottleState: UIProcess is taking a foreground assertion because we are playing audio");
             m_processActivityState.takeAudibleActivity();
         }
-        internals().audibleActivityTimer.stop();
+        if (internals().audibleActivityTimer.isActive()) {
+            WEBPAGEPROXY_RELEASE_LOG(ProcessSuspension, "updateThrottleState: Cancelling timer to release foreground assertion");
+            internals().audibleActivityTimer.stop();
+        }
     } else if (m_processActivityState.hasValidAudibleActivity()) {
-        WEBPAGEPROXY_RELEASE_LOG(ProcessSuspension, "updateThrottleState: UIProcess will release a foreground assertion in %g seconds because we are no longer playing audio", audibleActivityClearDelay.seconds());
-        if (!internals().audibleActivityTimer.isActive())
+        if (!internals().audibleActivityTimer.isActive()) {
+            WEBPAGEPROXY_RELEASE_LOG(ProcessSuspension, "updateThrottleState: UIProcess starting timer to release a foreground assertion in %g seconds if audio doesn't start to play", audibleActivityClearDelay.seconds());
             internals().audibleActivityTimer.startOneShot(audibleActivityClearDelay);
+        }
     }
 
     bool isCapturingMedia = internals().activityState.contains(ActivityState::IsCapturingMedia);
@@ -2837,8 +2841,16 @@ void WebPageProxy::updateThrottleState()
 
 void WebPageProxy::clearAudibleActivity()
 {
-    WEBPAGEPROXY_RELEASE_LOG(ProcessSuspension, "updateThrottleState: UIProcess is releasing a foreground assertion because we are no longer playing audio");
+    WEBPAGEPROXY_RELEASE_LOG(ProcessSuspension, "clearAudibleActivity: UIProcess is releasing a foreground assertion because we are no longer playing audio");
     m_processActivityState.dropAudibleActivity();
+#if ENABLE(EXTENSION_CAPABILITIES)
+    updateMediaCapability();
+#endif
+}
+
+bool WebPageProxy::hasValidAudibleActivity() const
+{
+    return m_processActivityState.hasValidAudibleActivity();
 }
 
 void WebPageProxy::updateHiddenPageThrottlingAutoIncreases()

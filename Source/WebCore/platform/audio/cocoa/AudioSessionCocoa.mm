@@ -103,6 +103,8 @@ bool AudioSessionCocoa::tryToSetActiveInternal(bool active)
             NSError *error = nil;
             if (supportsSetActive)
                 [[PAL::getAVAudioSessionClass() sharedInstance] setActive:YES withOptions:0 error:&error];
+            if (error)
+                RELEASE_LOG_ERROR(Media, "failed to activate audio session, error: %@", error.localizedDescription);
             success = !error;
         });
         return success;
@@ -112,6 +114,8 @@ bool AudioSessionCocoa::tryToSetActiveInternal(bool active)
         NSError *error = nil;
         if (supportsSetActive)
             [[PAL::getAVAudioSessionClass() sharedInstance] setActive:NO withOptions:0 error:&error];
+        if (error)
+            RELEASE_LOG_ERROR(Media, "failed to deactivate audio session, error: %@", error.localizedDescription);
     });
     setEligibleForSmartRouting(false);
 #else
