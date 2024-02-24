@@ -1624,6 +1624,38 @@ auto UnifiedPDFPlugin::pdfElementTypesForPluginPoint(const IntPoint& point) cons
 
     PDFElementTypes pdfElementTypes { PDFElementType::Page };
 
+#if HAVE(PDFPAGE_AREA_OF_INTEREST_AT_POINT)
+    if ([page respondsToSelector:@selector(areaOfInterestAtPoint:)]) {
+        PDFAreaOfInterest areaOfInterest = [page areaOfInterestAtPoint:pointInPDFPageSpace];
+
+        if (areaOfInterest & kPDFTextArea)
+            pdfElementTypes.add(PDFElementType::Text);
+
+        if (areaOfInterest & kPDFAnnotationArea)
+            pdfElementTypes.add(PDFElementType::Annotation);
+
+        if ((areaOfInterest & kPDFLinkArea) && annotationIsLinkWithDestination([page annotationAtPoint:pointInPDFPageSpace]))
+            pdfElementTypes.add(PDFElementType::Link);
+
+        if (areaOfInterest & kPDFControlArea)
+            pdfElementTypes.add(PDFElementType::Control);
+
+        if (areaOfInterest & kPDFTextFieldArea)
+            pdfElementTypes.add(PDFElementType::TextField);
+
+        if (areaOfInterest & kPDFIconArea)
+            pdfElementTypes.add(PDFElementType::Icon);
+
+        if (areaOfInterest & kPDFPopupArea)
+            pdfElementTypes.add(PDFElementType::Popup);
+
+        if (areaOfInterest & kPDFImageArea)
+            pdfElementTypes.add(PDFElementType::Image);
+
+        return pdfElementTypes;
+    }
+#endif
+
     if (auto annotation = [page annotationAtPoint:pointInPDFPageSpace]) {
         pdfElementTypes.add(PDFElementType::Annotation);
 
@@ -1657,8 +1689,6 @@ auto UnifiedPDFPlugin::pdfElementTypesForPluginPoint(const IntPoint& point) cons
             pdfElementTypes.add(PDFElementType::Image);
     }
 #endif
-
-    // FIXME: <https://webkit.org/b/265908> Cursor updates are incorrect over text/image elements for untagged PDFs.
 
     return pdfElementTypes;
 }

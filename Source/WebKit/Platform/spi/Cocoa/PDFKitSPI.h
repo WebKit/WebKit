@@ -37,7 +37,9 @@
 #endif // PLATFORM(IOS_FAMILY)
 
 #import <PDFKit/PDFDocumentPriv.h>
+#import <PDFKit/PDFPagePriv.h>
 #import <PDFKit/PDFSelectionPriv.h>
+
 #if __has_include(<PDFKit/PDFActionPriv.h>)
 #import <PDFKit/PDFActionPriv.h>
 #else
@@ -119,6 +121,23 @@
 #if HAVE(COREGRAPHICS_WITH_PDF_AREA_OF_INTEREST_SUPPORT)
 @interface PDFPage (IPI)
 - (CGPDFPageLayoutRef) pageLayout;
+@end
+#endif
+
+#if HAVE(PDFPAGE_AREA_OF_INTEREST_AT_POINT)
+#define PDFAreaOfInterest NSInteger
+
+#define kPDFTextArea        (1UL << 1)
+#define kPDFAnnotationArea  (1UL << 2)
+#define kPDFLinkArea        (1UL << 3)
+#define kPDFControlArea     (1UL << 4)
+#define kPDFTextFieldArea   (1UL << 5)
+#define kPDFIconArea        (1UL << 6)
+#define kPDFPopupArea       (1UL << 7)
+#define kPDFImageArea       (1UL << 8)
+
+@interface PDFPage (Staging_119217538)
+- (PDFAreaOfInterest)areaOfInterestAtPoint:(PDFPoint)point;
 @end
 #endif
 
