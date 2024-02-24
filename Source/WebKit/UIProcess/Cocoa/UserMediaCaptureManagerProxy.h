@@ -67,7 +67,7 @@ public:
         virtual void setTCCIdentity() { }
 #endif
 #if ENABLE(EXTENSION_CAPABILITIES)
-        virtual void setCurrentMediaEnvironment(WebCore::PageIdentifier) { };
+        virtual bool setCurrentMediaEnvironment(WebCore::PageIdentifier) { return false; };
 #endif
         virtual void startProducingData(WebCore::CaptureDevice::DeviceType) { }
         virtual RemoteVideoFrameObjectHeap* remoteVideoFrameObjectHeap() { return nullptr; }

@@ -430,9 +430,9 @@ const String& RealtimeMediaSourceCenter::currentMediaEnvironment() const
     return m_currentMediaEnvironment;
 }
 
-void RealtimeMediaSourceCenter::setCurrentMediaEnvironment(const String& mediaEnvironment)
+void RealtimeMediaSourceCenter::setCurrentMediaEnvironment(String&& mediaEnvironment)
 {
-    m_currentMediaEnvironment = mediaEnvironment;
+    m_currentMediaEnvironment = WTFMove(mediaEnvironment);
 }
 #endif
 

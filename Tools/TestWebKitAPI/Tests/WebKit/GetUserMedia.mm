@@ -380,6 +380,31 @@ TEST(WebKit2, CaptureStop)
     [delegate waitUntilPrompted];
 }
 
+TEST(WebKit2, CloseWKWebViewShortlyAfterStartingToCapture)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto processPoolConfig = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    initializeMediaCaptureConfiguration(configuration.get());
+
+    auto messageHandler = adoptNS([[GUMMessageHandler alloc] init]);
+    [[configuration.get() userContentController] addScriptMessageHandler:messageHandler.get() name:@"gum"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()]);
+    auto delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+
+    [webView loadTestPageNamed:@"getUserMedia"];
+    [delegate waitUntilPrompted];
+
+    // Wait a bit before closing so that WebPage is instructed to start capturing.
+    TestWebKitAPI::Util::spinRunLoop(5);
+
+    [webView _close];
+
+    // Wait a little bit to verify everything is fine.
+    TestWebKitAPI::Util::spinRunLoop(100);
+}
+
 TEST(WebKit2, CaptureIndicatorDelay)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
