@@ -281,16 +281,18 @@ void CachedResourceRequest::updateReferrerPolicy(ReferrerPolicy defaultPolicy)
 void CachedResourceRequest::updateReferrerAndOriginHeaders(FrameLoader& frameLoader)
 {
     // Implementing step 9 to 11 of https://fetch.spec.whatwg.org/#http-network-or-cache-fetch as of 16 March 2018
-    String outgoingReferrer = frameLoader.outgoingReferrer();
+    URL outgoingReferrerURL;
     if (m_resourceRequest.hasHTTPReferrer())
-        outgoingReferrer = m_resourceRequest.httpReferrer();
-    updateRequestReferrer(m_resourceRequest, m_options.referrerPolicy, outgoingReferrer, OriginAccessPatternsForWebProcess::singleton());
+        outgoingReferrerURL = URL { m_resourceRequest.httpReferrer() };
+    else
+        outgoingReferrerURL = frameLoader.outgoingReferrerURL();
+    updateRequestReferrer(m_resourceRequest, m_options.referrerPolicy, outgoingReferrerURL, OriginAccessPatternsForWebProcess::singleton());
 
     if (!m_resourceRequest.httpOrigin().isEmpty())
         return;
 
     auto* document = frameLoader.frame().document();
-    auto actualOrigin = (document && m_options.destination == FetchOptionsDestination::EmptyString && m_initiatorType == cachedResourceRequestInitiatorTypes().fetch) ? Ref { document->securityOrigin() } : SecurityOrigin::createFromString(outgoingReferrer);
+    auto actualOrigin = (document && m_options.destination == FetchOptionsDestination::EmptyString && m_initiatorType == cachedResourceRequestInitiatorTypes().fetch) ? Ref { document->securityOrigin() } : SecurityOrigin::create(outgoingReferrerURL);
     String outgoingOrigin;
     if (m_options.mode == FetchOptions::Mode::Cors)
         outgoingOrigin = actualOrigin->toString();

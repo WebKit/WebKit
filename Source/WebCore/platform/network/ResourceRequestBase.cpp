@@ -418,7 +418,7 @@ void ResourceRequestBase::setExistingHTTPReferrerToOriginString()
     if (!hasHTTPReferrer())
         return;
 
-    setHTTPHeaderField(HTTPHeaderName::Referer, SecurityPolicy::referrerToOriginString(httpReferrer()));
+    setHTTPHeaderField(HTTPHeaderName::Referer, SecurityPolicy::referrerToOriginString(URL { httpReferrer() }));
 }
     
 void ResourceRequestBase::clearHTTPReferrer()

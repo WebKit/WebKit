@@ -230,11 +230,20 @@ const AtomString& HTMLImageElement::imageSourceURL() const
     return m_bestFitImageURL.isEmpty() ? attributeWithoutSynchronization(srcAttr) : m_bestFitImageURL;
 }
 
+const AtomString& HTMLImageElement::currentSrc()
+{
+    if (m_currentSrc.isNull()) {
+        if (!m_currentURL.isEmpty())
+            m_currentSrc = AtomString(m_currentURL.string());
+    }
+    return m_currentSrc;
+}
+
 void HTMLImageElement::setBestFitURLAndDPRFromImageCandidate(const ImageCandidate& candidate)
 {
     m_bestFitImageURL = candidate.string.toAtomString();
     m_currentURL = document().completeURL(imageSourceURL());
-    m_currentSrc = AtomString(m_currentURL.string());
+    m_currentSrc = { };
     if (candidate.density >= 0)
         m_imageDevicePixelRatio = 1 / candidate.density;
     if (CheckedPtr renderImage = dynamicDowncast<RenderImage>(renderer()))
@@ -330,11 +339,21 @@ void HTMLImageElement::selectImageSource(RelevantMutation relevantMutation)
     ImageCandidate candidate = bestFitSourceFromPictureElement();
     if (candidate.isEmpty()) {
         setSourceElement(nullptr);
-        // If we don't have a <picture> or didn't find a source, then we use our own attributes.
-        SizesAttributeParser sizesParser(attributeWithoutSynchronization(sizesAttr).string(), document());
-        m_dynamicMediaQueryResults.appendVector(sizesParser.dynamicMediaQueryResults());
-        auto sourceSize = sizesParser.length();
-        candidate = bestFitSourceForImageAttributes(document().deviceScaleFactor(), attributeWithoutSynchronization(srcAttr), attributeWithoutSynchronization(srcsetAttr), sourceSize);
+        auto srcAttribute = attributeWithoutSynchronization(srcAttr);
+        auto srcsetAttribute = attributeWithoutSynchronization(srcsetAttr);
+        // This is extremely common case. We should not invoke SizesAttributeParser at all.
+        if (srcsetAttribute.isNull()) {
+            if (srcAttribute.isNull())
+                candidate = { };
+            else
+                candidate = ImageCandidate(StringViewWithUnderlyingString(srcAttribute, srcAttribute), DescriptorParsingResult(), ImageCandidate::SrcOrigin);
+        } else {
+            // If we don't have a <picture> or didn't find a source, then we use our own attributes.
+            SizesAttributeParser sizesParser(attributeWithoutSynchronization(sizesAttr).string(), document());
+            m_dynamicMediaQueryResults.appendVector(sizesParser.dynamicMediaQueryResults());
+            auto sourceSize = sizesParser.length();
+            candidate = bestFitSourceForImageAttributes(document().deviceScaleFactor(), srcAttribute, srcsetAttribute, sourceSize);
+        }
     }
     setBestFitURLAndDPRFromImageCandidate(candidate);
     m_imageLoader->updateFromElementIgnoringPreviousError(relevantMutation);

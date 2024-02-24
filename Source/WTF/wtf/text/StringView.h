@@ -287,6 +287,8 @@ namespace WTF {
 
 struct StringViewWithUnderlyingString {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    StringViewWithUnderlyingString() = default;
+
     StringViewWithUnderlyingString(StringView passedView, String passedUnderlyingString)
         : underlyingString(WTFMove(passedUnderlyingString))
         , view(WTFMove(passedView))
@@ -296,6 +298,7 @@ struct StringViewWithUnderlyingString {
     StringView view;
 
     String toString() const;
+    AtomString toAtomString() const;
 };
 
 inline StringView::StringView()
@@ -307,6 +310,13 @@ inline String StringViewWithUnderlyingString::toString() const
     if (LIKELY(view.length() == underlyingString.length()))
         return underlyingString;
     return view.toString();
+}
+
+inline AtomString StringViewWithUnderlyingString::toAtomString() const
+{
+    if (LIKELY(view.length() == underlyingString.length()))
+        return AtomString { underlyingString };
+    return view.toAtomString();
 }
 
 #if CHECK_STRINGVIEW_LIFETIME

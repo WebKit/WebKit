@@ -171,6 +171,7 @@ public:
     ReferrerPolicy effectiveReferrerPolicy() const;
     String referrer() const;
     WEBCORE_EXPORT String outgoingReferrer() const;
+    WEBCORE_EXPORT URL outgoingReferrerURL();
     String outgoingOrigin() const;
 
     WEBCORE_EXPORT DocumentLoader* activeDocumentLoader() const;
@@ -361,6 +362,8 @@ private:
         MayNotAttemptCacheOnlyLoadForFormSubmissionItem
     };
 
+    RefPtr<LocalFrame> nonSrcdocFrame() const;
+
     std::optional<PageIdentifier> pageID() const;
     void executeJavaScriptURL(const URL&, const NavigationAction&);
 
@@ -491,6 +494,7 @@ private:
     bool m_provisionalLoadHappeningInAnotherProcess { false };
 
     String m_outgoingReferrer;
+    URL m_outgoingReferrerURL;
 
     bool m_isExecutingJavaScriptFormAction { false };
 
