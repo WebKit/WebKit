@@ -756,7 +756,6 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
 #if ENABLE(FULLSCREEN_DISMISSAL_GESTURES)
     RetainPtr<UISwipeGestureRecognizer> _startDismissGestureRecognizer;
     RetainPtr<UIPanGestureRecognizer> _interactivePanDismissGestureRecognizer;
-    RetainPtr<UIPinchGestureRecognizer> _interactivePinchDismissGestureRecognizer;
     RetainPtr<WKFullScreenInteractiveTransition> _interactiveDismissTransitionCoordinator;
 #endif
 #if PLATFORM(VISION)
@@ -935,11 +934,6 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
     [_interactivePanDismissGestureRecognizer setDelegate:self];
     [_interactivePanDismissGestureRecognizer setCancelsTouchesInView:NO];
     [_fullscreenViewController.get().view addGestureRecognizer:_interactivePanDismissGestureRecognizer.get()];
-
-    _interactivePinchDismissGestureRecognizer = adoptNS([[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(_interactivePinchDismissChanged:)]);
-    [_interactivePinchDismissGestureRecognizer setDelegate:self];
-    [_interactivePinchDismissGestureRecognizer setCancelsTouchesInView:NO];
-    [_fullscreenViewController.get().view addGestureRecognizer:_interactivePinchDismissGestureRecognizer.get()];
 #endif // ENABLE(FULLSCREEN_DISMISSAL_GESTURES)
 
     manager->saveScrollPosition();
@@ -1435,8 +1429,6 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
         CGPoint anchor = CGPointZero;
         if (_interactivePanDismissGestureRecognizer.get().state == UIGestureRecognizerStateBegan)
             anchor = [_interactivePanDismissGestureRecognizer locationInView:_fullscreenViewController.get().view];
-        else if (_interactivePinchDismissGestureRecognizer.get().state == UIGestureRecognizerStateBegan)
-            anchor = [_interactivePinchDismissGestureRecognizer locationInView:_fullscreenViewController.get().view];
         _interactiveDismissTransitionCoordinator = adoptNS([[WKFullScreenInteractiveTransition alloc] initWithAnimator:(WKFullscreenAnimationController *)animator anchor:anchor]);
     }
 
@@ -1660,12 +1652,6 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
     if (!_inInteractiveDismiss)
         return;
 
-    auto pinchState = [_interactivePinchDismissGestureRecognizer state];
-    if (pinchState > UIGestureRecognizerStatePossible && pinchState <= UIGestureRecognizerStateEnded) {
-        OBJC_ALWAYS_LOG(OBJC_LOGIDENTIFIER, "pinch state: ", pinchState, ", dropping");
-        return;
-    }
-
     CGPoint translation = [_interactivePanDismissGestureRecognizer translationInView:_fullscreenViewController.get().view];
     CGPoint velocity = [_interactivePanDismissGestureRecognizer velocityInView:_fullscreenViewController.get().view];
     CGFloat progress = translation.y / (_fullscreenViewController.get().view.bounds.size.height / 2);
@@ -1683,30 +1669,6 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
     }
 
     [_interactiveDismissTransitionCoordinator updateInteractiveTransition:progress withTranslation:CGSizeMake(translation.x, translation.y)];
-}
-
-- (void)_interactivePinchDismissChanged:(id)sender
-{
-    CGFloat scale = [_interactivePinchDismissGestureRecognizer scale];
-    CGFloat velocity = [_interactivePinchDismissGestureRecognizer velocity];
-    CGFloat progress = std::min(1., std::max(0., 1 - scale));
-
-    CGPoint translation = CGPointZero;
-    auto panState = [_interactivePanDismissGestureRecognizer state];
-    if (panState > UIGestureRecognizerStatePossible && panState <= UIGestureRecognizerStateEnded)
-        translation = [_interactivePanDismissGestureRecognizer translationInView:_fullscreenViewController.get().view];
-
-    if (_interactivePinchDismissGestureRecognizer.get().state == UIGestureRecognizerStateEnded) {
-        OBJC_ALWAYS_LOG(OBJC_LOGIDENTIFIER, "ended");
-        _inInteractiveDismiss = false;
-        if ((progress > 0.05 && velocity < 0.) || velocity < -2.5)
-            [self requestExitFullScreen];
-        else
-            [_interactiveDismissTransitionCoordinator cancelInteractiveTransition];
-        return;
-    }
-
-    [_interactiveDismissTransitionCoordinator updateInteractiveTransition:progress withScale:scale andTranslation:CGSizeMake(translation.x, translation.y)];
 }
 #endif // ENABLE(FULLSCREEN_DISMISSAL_GESTURES)
 
