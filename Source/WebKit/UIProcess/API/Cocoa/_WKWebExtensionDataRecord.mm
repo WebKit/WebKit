@@ -36,10 +36,7 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-- (void)dealloc
-{
-    _webExtensionDataRecord->~WebExtensionDataRecord();
-}
+WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(_WKWebExtensionDataRecord, WebExtensionDataRecord, _webExtensionDataRecord);
 
 - (BOOL)isEqual:(id)object
 {

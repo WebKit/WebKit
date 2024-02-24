@@ -35,12 +35,14 @@
 #import "WKWebsiteDataStoreInternal.h"
 #import "WebExtensionControllerConfiguration.h"
 
+#if ENABLE(WK_WEB_EXTENSIONS)
 static NSString * const persistentCodingKey = @"persistent";
 static NSString * const temporaryCodingKey = @"temporary";
 static NSString * const temporaryDirectoryCodingKey = @"temporaryDirectory";
 static NSString * const identifierCodingKey = @"identifier";
 static NSString * const webViewConfigurationCodingKey = @"webViewConfiguration";
 static NSString * const defaultWebsiteDataStoreCodingKey = @"defaultWebsiteDataStore";
+#endif
 
 @implementation _WKWebExtensionControllerConfiguration
 
@@ -50,6 +52,8 @@ static NSString * const defaultWebsiteDataStoreCodingKey = @"defaultWebsiteDataS
 }
 
 #if ENABLE(WK_WEB_EXTENSIONS)
+
+WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(_WKWebExtensionControllerConfiguration, WebExtensionControllerConfiguration, _webExtensionControllerConfiguration);
 
 + (instancetype)defaultConfiguration
 {
@@ -134,13 +138,6 @@ static NSString * const defaultWebsiteDataStoreCodingKey = @"defaultWebsiteDataS
 - (id)copyWithZone:(NSZone *)zone
 {
     return _webExtensionControllerConfiguration->copy()->wrapper();
-}
-
-- (void)dealloc
-{
-    ASSERT(isMainRunLoop());
-
-    _webExtensionControllerConfiguration->~WebExtensionControllerConfiguration();
 }
 
 - (BOOL)isEqual:(id)object

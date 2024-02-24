@@ -41,6 +41,8 @@ NSNotificationName const _WKWebExtensionErrorsWereUpdatedNotification = @"_WKWeb
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(_WKWebExtension, WebExtension, _webExtension);
+
 + (instancetype)extensionWithAppExtensionBundle:(NSBundle *)appExtensionBundle
 {
     NSParameterAssert([appExtensionBundle isKindOfClass:NSBundle.class]);
@@ -144,13 +146,6 @@ NSNotificationName const _WKWebExtensionErrorsWereUpdatedNotification = @"_WKWeb
     API::Object::constructInWrapper<WebKit::WebExtension>(self, resources);
 
     return self;
-}
-
-- (void)dealloc
-{
-    ASSERT(isMainRunLoop());
-
-    _webExtension->~WebExtension();
 }
 
 - (NSDictionary<NSString *, id> *)manifest

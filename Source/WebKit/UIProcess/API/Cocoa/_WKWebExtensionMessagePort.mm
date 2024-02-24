@@ -40,12 +40,7 @@ NSErrorDomain const _WKWebExtensionMessagePortErrorDomain = @"_WKWebExtensionMes
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-- (void)dealloc
-{
-    ASSERT(isMainRunLoop());
-
-    _webExtensionMessagePort->~WebExtensionMessagePort();
-}
+WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(_WKWebExtensionMessagePort, WebExtensionMessagePort, _webExtensionMessagePort);
 
 - (BOOL)isEqual:(id)object
 {

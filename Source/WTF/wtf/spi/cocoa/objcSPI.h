@@ -44,4 +44,7 @@ void objc_destroyWeak(id*);
 void objc_copyWeak(id*, id*);
 void objc_moveWeak(id*, id*);
 
+void _class_setCustomDeallocInitiation(Class);
+void _objc_deallocOnMainThreadHelper(void* object);
+
 WTF_EXTERN_C_END
