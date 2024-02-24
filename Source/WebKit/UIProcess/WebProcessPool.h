@@ -570,7 +570,7 @@ private:
     std::tuple<Ref<WebProcessProxy>, SuspendedPageProxy*, ASCIILiteral> processForNavigationInternal(WebPageProxy&, const API::Navigation&, Ref<WebProcessProxy>&& sourceProcess, const URL& sourceURL, ProcessSwapRequestedByClient, WebProcessProxy::LockdownMode, const FrameInfoData&, Ref<WebsiteDataStore>&&);
     void prepareProcessForNavigation(Ref<WebProcessProxy>&&, WebPageProxy&, SuspendedPageProxy*, ASCIILiteral reason, const WebCore::RegistrableDomain&, const API::Navigation&, WebProcessProxy::LockdownMode, Ref<WebsiteDataStore>&&, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, ASCIILiteral)>&&, unsigned previousAttemptsCount = 0);
 
-    RefPtr<WebProcessProxy> tryTakePrewarmedProcess(WebsiteDataStore&, WebProcessProxy::LockdownMode);
+    RefPtr<WebProcessProxy> tryTakePrewarmedProcess(WebsiteDataStore&, WebProcessProxy::LockdownMode, const API::PageConfiguration&);
 
     void initializeNewWebProcess(WebProcessProxy&, WebsiteDataStore*, WebProcessProxy::IsPrewarmed = WebProcessProxy::IsPrewarmed::No);
 

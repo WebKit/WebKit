@@ -1109,14 +1109,16 @@ void WebPageProxy::handleSynchronousMessage(IPC::Connection& connection, const S
     });
 }
 
-bool WebPageProxy::hasSameGPUProcessPreferencesAs(const API::PageConfiguration& configuration) const
+bool WebPageProxy::hasSameGPUAndNetworkProcessPreferencesAs(const API::PageConfiguration& configuration) const
 {
 #if ENABLE(GPU_PROCESS)
-    return preferencesForGPUProcess() == configuration.preferencesForGPUProcess();
-#else
-    UNUSED_PARAM(configuration);
-    return true;
+    if (preferencesForGPUProcess() != configuration.preferencesForGPUProcess())
+        return false;
 #endif
+    if (preferencesForNetworkProcess() != configuration.preferencesForNetworkProcess())
+        return false;
+    return true;
+
 }
 
 void WebPageProxy::launchProcess(const RegistrableDomain& registrableDomain, ProcessLaunchReason reason)
@@ -1136,7 +1138,7 @@ void WebPageProxy::launchProcess(const RegistrableDomain& registrableDomain, Pro
     Ref processPool = m_process->processPool();
 
     RefPtr relatedPage = m_configuration->relatedPage();
-    if (relatedPage && !relatedPage->isClosed() && reason == ProcessLaunchReason::InitialProcess && hasSameGPUProcessPreferencesAs(*relatedPage)) {
+    if (relatedPage && !relatedPage->isClosed() && reason == ProcessLaunchReason::InitialProcess && hasSameGPUAndNetworkProcessPreferencesAs(*relatedPage)) {
         m_process = relatedPage->ensureRunningProcess();
         WEBPAGEPROXY_RELEASE_LOG(Loading, "launchProcess: Using process (process=%p, PID=%i) from related page", m_process.ptr(), m_process->processID());
     } else
@@ -6618,6 +6620,11 @@ GPUProcessPreferencesForWebProcess WebPageProxy::preferencesForGPUProcess() cons
     return configuration().preferencesForGPUProcess();
 }
 #endif
+
+NetworkProcessPreferencesForWebProcess WebPageProxy::preferencesForNetworkProcess() const
+{
+    return configuration().preferencesForNetworkProcess();
+}
 
 void WebPageProxy::viewIsBecomingVisible()
 {

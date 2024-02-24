@@ -165,7 +165,7 @@ RefPtr<WebProcessProxy> WebProcessCache::takeProcess(const WebCore::RegistrableD
     if (it->value->process().lockdownMode() != lockdownMode)
         return nullptr;
 
-    if (!it->value->process().hasSameGPUProcessPreferencesAs(pageConfiguration))
+    if (!it->value->process().hasSameGPUAndNetworkProcessPreferencesAs(pageConfiguration))
         return nullptr;
 
     auto process = it->value->takeProcess();

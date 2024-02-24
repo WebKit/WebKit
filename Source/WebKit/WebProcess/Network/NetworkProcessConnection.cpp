@@ -123,7 +123,7 @@ void NetworkProcessConnection::didReceiveMessage(IPC::Connection& connection, IP
         WebProcess::singleton().fileSystemStorageConnection().didReceiveMessage(connection, decoder);
         return;
     }
-    if (decoder.messageReceiverName() == Messages::WebTransportSession::messageReceiverName()) {
+    if (decoder.messageReceiverName() == Messages::WebTransportSession::messageReceiverName() && WebProcess::singleton().isWebTransportEnabled()) {
         if (auto* webTransportSession = WebProcess::singleton().webTransportSession(WebTransportSessionIdentifier(decoder.destinationID())))
             webTransportSession->didReceiveMessage(connection, decoder);
         return;

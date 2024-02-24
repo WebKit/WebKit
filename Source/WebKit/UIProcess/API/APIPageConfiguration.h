@@ -51,6 +51,7 @@ class WebUserContentControllerProxy;
 class WebsiteDataStore;
 
 struct GPUProcessPreferencesForWebProcess;
+struct NetworkProcessPreferencesForWebProcess;
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 class WebExtensionController;
@@ -105,7 +106,7 @@ public:
     WebKit::WebPageGroup* pageGroup();
     void setPageGroup(RefPtr<WebKit::WebPageGroup>&&);
 
-    WebKit::WebPreferences* preferences();
+    WebKit::WebPreferences* preferences() const;
     void setPreferences(RefPtr<WebKit::WebPreferences>&&);
 
     WebKit::WebPageProxy* relatedPage() const;
@@ -235,6 +236,7 @@ public:
 #if ENABLE(GPU_PROCESS)
     WebKit::GPUProcessPreferencesForWebProcess preferencesForGPUProcess() const;
 #endif
+    WebKit::NetworkProcessPreferencesForWebProcess preferencesForNetworkProcess() const;
 
 private:
     struct Data {

@@ -64,7 +64,7 @@ RefPtr<WebProcessProxy> SuspendedPageProxy::findReusableSuspendedPageProcess(Web
             && process->crossOriginMode() != CrossOriginMode::Isolated
             && process->lockdownMode() == lockdownMode
             && !process->wasTerminated()
-            && process->hasSameGPUProcessPreferencesAs(pageConfiguration)) {
+            && process->hasSameGPUAndNetworkProcessPreferencesAs(pageConfiguration)) {
             return process;
         }
     }

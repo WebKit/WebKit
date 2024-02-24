@@ -29,6 +29,7 @@
 #include "DownloadID.h"
 #include "NetworkActivityTracker.h"
 #include "NetworkMDNSRegister.h"
+#include "NetworkProcessPreferencesForWebProcess.h"
 #include "NetworkRTCProvider.h"
 #include "NetworkResourceLoadIdentifier.h"
 #include "NetworkResourceLoadMap.h"
@@ -141,6 +142,8 @@ public:
 
     IPC::Connection& connection() { return m_connection.get(); }
     NetworkProcess& networkProcess() { return m_networkProcess.get(); }
+
+    bool isWebTransportEnabled() const { return m_preferencesForWebProcess.isWebTransportEnabled; }
 
     void didCleanupResourceLoader(NetworkResourceLoader&);
     void transferKeptAliveLoad(NetworkResourceLoader&);
@@ -477,6 +480,7 @@ private:
     using BlobURLKey = std::pair<URL, std::optional<WebCore::SecurityOriginData>>;
     HashSet<BlobURLKey> m_blobURLs;
     HashCountedSet<BlobURLKey> m_blobURLHandles;
+    NetworkProcessPreferencesForWebProcess m_preferencesForWebProcess;
 #if ENABLE(IPC_TESTING_API)
     IPCTester m_ipcTester;
 #endif

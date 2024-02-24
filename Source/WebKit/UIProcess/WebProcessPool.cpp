@@ -674,16 +674,6 @@ void WebProcessPool::establishRemoteWorkerContextConnectionToNetworkProcess(Remo
         }
     }
 
-    if (!remoteWorkerProcessProxy) {
-        Ref newProcessProxy = WebProcessProxy::createForRemoteWorkers(workerType, processPool, RegistrableDomain  { registrableDomain }, *websiteDataStore);
-        remoteWorkerProcessProxy = newProcessProxy.copyRef();
-
-        WEBPROCESSPOOL_RELEASE_LOG_STATIC(ServiceWorker, "establishRemoteWorkerContextConnectionToNetworkProcess creating a new service worker process (process=%p, workerType=%" PUBLIC_LOG_STRING ", PID=%d)", remoteWorkerProcessProxy.get(), workerType == RemoteWorkerType::ServiceWorker ? "service" : "shared", remoteWorkerProcessProxy->processID());
-
-        processPool->initializeNewWebProcess(newProcessProxy, websiteDataStore.get());
-        processPool->m_processes.append(WTFMove(newProcessProxy));
-    }
-
     CheckedPtr<const WebPreferencesStore> preferencesStore;
     if (workerType == RemoteWorkerType::ServiceWorker) {
         if (RefPtr preferences = websiteDataStore->serviceWorkerOverridePreferences())
@@ -697,6 +687,17 @@ void WebProcessPool::establishRemoteWorkerContextConnectionToNetworkProcess(Remo
         preferencesStore = &processPool->m_defaultPageGroup->preferences().store();
 
     ASSERT(preferencesStore);
+
+    if (!remoteWorkerProcessProxy) {
+        Ref newProcessProxy = WebProcessProxy::createForRemoteWorkers(workerType, processPool, RegistrableDomain  { registrableDomain }, *websiteDataStore);
+        remoteWorkerProcessProxy = newProcessProxy.copyRef();
+
+        WEBPROCESSPOOL_RELEASE_LOG_STATIC(ServiceWorker, "establishRemoteWorkerContextConnectionToNetworkProcess creating a new service worker process (process=%p, workerType=%" PUBLIC_LOG_STRING ", PID=%d)", remoteWorkerProcessProxy.get(), workerType == RemoteWorkerType::ServiceWorker ? "service" : "shared", remoteWorkerProcessProxy->processID());
+
+        processPool->initializeNewWebProcess(newProcessProxy, websiteDataStore.get());
+        processPool->m_processes.append(WTFMove(newProcessProxy));
+        remoteWorkerProcessProxy->initializePreferencesForNetworkProcess(*preferencesStore);
+    }
 
     remoteWorkerProcessProxy->addAllowedFirstPartyForCookies(registrableDomain);
     auto aggregator = CallbackAggregator::create([completionHandler = WTFMove(completionHandler), remoteProcessIdentifier = remoteWorkerProcessProxy->coreProcessIdentifier()]() mutable {
@@ -773,7 +774,7 @@ Ref<WebProcessProxy> WebProcessPool::createNewWebProcess(WebsiteDataStore* websi
     return processProxy;
 }
 
-RefPtr<WebProcessProxy> WebProcessPool::tryTakePrewarmedProcess(WebsiteDataStore& websiteDataStore, WebProcessProxy::LockdownMode lockdownMode)
+RefPtr<WebProcessProxy> WebProcessPool::tryTakePrewarmedProcess(WebsiteDataStore& websiteDataStore, WebProcessProxy::LockdownMode lockdownMode, const API::PageConfiguration& pageConfiguration)
 {
     RefPtr prewarmedProcess = m_prewarmedProcess.get();
     if (!prewarmedProcess)
@@ -796,6 +797,11 @@ RefPtr<WebProcessProxy> WebProcessPool::tryTakePrewarmedProcess(WebsiteDataStore
     if (m_sandboxEnabled)
         return nullptr;
 #endif
+
+    // Setting the data store below will cause the WebProcess to launch initialize its connection to
+    // the network process, we need to make sure we have the preferences for the network process
+    // ready beforehand.
+    prewarmedProcess->initializePreferencesForNetworkProcess(pageConfiguration);
 
     ASSERT(prewarmedProcess->isPrewarmed());
     prewarmedProcess->setWebsiteDataStore(websiteDataStore);
@@ -1173,7 +1179,7 @@ Ref<WebProcessProxy> WebProcessPool::processForRegistrableDomain(WebsiteDataStor
         }
     }
 
-    if (RefPtr process = tryTakePrewarmedProcess(websiteDataStore, lockdownMode)) {
+    if (RefPtr process = tryTakePrewarmedProcess(websiteDataStore, lockdownMode, pageConfiguration)) {
         WEBPROCESSPOOL_RELEASE_LOG(ProcessSwapping, "processForRegistrableDomain: Using prewarmed process (process=%p, PID=%i)", process.get(), process->processID());
         if (!registrableDomain.isEmpty())
             tryPrewarmWithDomainInformation(*process, registrableDomain);
@@ -1198,7 +1204,9 @@ Ref<WebProcessProxy> WebProcessPool::processForRegistrableDomain(WebsiteDataStor
             return process;
         }
     }
-    return createNewWebProcess(&websiteDataStore, lockdownMode);
+    Ref process = createNewWebProcess(&websiteDataStore, lockdownMode);
+    process->initializePreferencesForNetworkProcess(pageConfiguration);
+    return process;
 }
 
 UserContentControllerIdentifier WebProcessPool::userContentControllerIdentifierForRemoteWorkers()
@@ -1229,7 +1237,7 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
     RefPtr<WebProcessProxy> process;
     auto lockdownMode = pageConfiguration->lockdownModeEnabled() ? WebProcessProxy::LockdownMode::Enabled : WebProcessProxy::LockdownMode::Disabled;
     RefPtr relatedPage = pageConfiguration->relatedPage();
-    if (relatedPage && !relatedPage->isClosed() && relatedPage->hasSameGPUProcessPreferencesAs(pageConfiguration)) {
+    if (relatedPage && !relatedPage->isClosed() && relatedPage->hasSameGPUAndNetworkProcessPreferencesAs(pageConfiguration)) {
         // Sharing processes, e.g. when creating the page via window.open().
         process = &relatedPage->ensureRunningProcess();
         // We do not support several WebsiteDataStores sharing a single process.
@@ -2096,7 +2104,7 @@ std::tuple<Ref<WebProcessProxy>, SuspendedPageProxy*, ASCIILiteral> WebProcessPo
         }
 
         if (RefPtr process = WebProcessProxy::processForIdentifier(targetItem->lastProcessIdentifier())) {
-            if (process->state() != WebProcessProxy::State::Terminated && process->hasSameGPUProcessPreferencesAs(page.configuration())) {
+            if (process->state() != WebProcessProxy::State::Terminated && process->hasSameGPUAndNetworkProcessPreferencesAs(page.configuration())) {
                 // Make sure we remove the process from the cache if it is in there since we're about to use it.
                 if (process->isInProcessCache()) {
                     checkedWebProcessCache()->removeProcess(*process, WebProcessCache::ShouldShutDownProcess::No);
