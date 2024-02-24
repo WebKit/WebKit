@@ -82,6 +82,7 @@
 #import "WKSecurityOriginInternal.h"
 #import "WKSharedAPICast.h"
 #import "WKSnapshotConfigurationPrivate.h"
+#import "WKTextExtractionItem.h"
 #import "WKTextExtractionUtilities.h"
 #import "WKUIDelegate.h"
 #import "WKUIDelegatePrivate.h"
@@ -4242,6 +4243,13 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 @end
 
 @implementation WKWebView (WKTextExtraction)
+
+- (void)_requestTextExtractionForSwift:(WKTextExtractionRequest *)context
+{
+    [self _requestTextExtraction:context.rectInWebView completionHandler:makeBlockPtr([context = retainPtr(context)](WKTextExtractionItem *result) {
+        [context fulfill:result];
+    }).get()];
+}
 
 - (void)_requestTextExtraction:(CGRect)rectInWebView completionHandler:(void(^)(WKTextExtractionItem *))completionHandler
 {

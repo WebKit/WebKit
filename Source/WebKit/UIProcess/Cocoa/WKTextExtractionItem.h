@@ -82,3 +82,8 @@ typedef NS_ENUM(NSInteger, WKTextExtractionContainer) {
 @property (nonatomic, readonly) NSString *name;
 @property (nonatomic, readonly) NSString *altText;
 @end
+
+@interface WKTextExtractionRequest : NSObject
+- (void)fulfill:(WKTextExtractionItem *)result;
+@property (nonatomic, readonly) CGRect rectInWebView;
+@end

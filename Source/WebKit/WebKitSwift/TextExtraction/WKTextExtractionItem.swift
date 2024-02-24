@@ -120,3 +120,19 @@ import Foundation
         super.init(with: rectInRootView, children: children)
     }
 }
+
+@objc(WKTextExtractionRequest) class WKTextExtractionRequest: NSObject {
+    @objc public let rectInWebView: CGRect
+    private var completionHandler: ((WKTextExtractionItem?) -> Void)?
+
+    @objc public init(rectInWebView: CGRect, _ completionHandler: @escaping (WKTextExtractionItem?) -> Void) {
+        self.rectInWebView = rectInWebView
+        self.completionHandler = completionHandler
+    }
+
+    @objc(fulfill:) public func fulfill(item: WKTextExtractionItem) {
+        guard let completionHandler = self.completionHandler else { return }
+        completionHandler(item)
+        self.completionHandler = nil
+    }
+}
