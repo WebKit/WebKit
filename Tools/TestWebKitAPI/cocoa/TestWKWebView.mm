@@ -58,6 +58,9 @@ SOFT_LINK_FRAMEWORK(UIKit)
 SOFT_LINK_CLASS(UIKit, UIWindow)
 
 #if USE(BROWSERENGINEKIT)
+// FIXME: Replace this with linker flags in TestWebKitAPI.xcconfig once BrowserEngineKit
+// is available everywhere we require it.
+asm(".linker_option \"-framework\", \"BrowserEngineKit\"");
 // FIXME: This workaround can be removed once the fix for rdar://120390585 lands in the SDK.
 SOFT_LINK_CLASS(UIKit, UIKeyEvent)
 #endif
