@@ -314,7 +314,17 @@ void ScreenCaptureKitCaptureSource::startContentStream()
     if (!m_captureHelper)
         m_captureHelper = adoptNS([[WebCoreScreenCaptureKitHelper alloc] initWithCallback:this]);
 
-    m_sessionSource = ScreenCaptureKitSharingSessionManager::singleton().createSessionSourceForDevice(*this, m_captureDevice, streamConfiguration().get(), (SCStreamDelegate*)m_captureHelper.get());
+    if (!m_contentFilter)
+        m_contentFilter = ScreenCaptureKitSharingSessionManager::singleton().contentFilterFromCaptureDevice(m_captureDevice);
+
+#if HAVE(SC_CONTENT_SHARING_PICKER)
+    if (!m_contentFilter) {
+        sessionFailedWithError(nil, "Unkown display device"_s);
+        return;
+    }
+#endif
+
+    m_sessionSource = ScreenCaptureKitSharingSessionManager::singleton().createSessionSourceForDevice(*this, m_contentFilter.get(), streamConfiguration().get(), (SCStreamDelegate*)m_captureHelper.get());
     if (!m_sessionSource) {
         sessionFailedWithError(nil, "Failed to allocate stream"_s);
         return;
