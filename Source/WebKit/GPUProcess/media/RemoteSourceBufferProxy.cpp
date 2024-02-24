@@ -330,6 +330,16 @@ void RemoteSourceBufferProxy::setMaximumQueueDepthForTrackID(TrackID trackID, ui
     m_sourceBufferPrivate->setMaximumQueueDepthForTrackID(trackID, depth);
 }
 
+void RemoteSourceBufferProxy::shutdown()
+{
+    if (!m_connectionToWebProcess)
+        return;
+
+    m_connectionToWebProcess->connection().sendWithAsyncReply(Messages::SourceBufferPrivateRemoteMessageReceiver::SourceBufferPrivateShuttingDown(), [this, protectedThis = Ref { *this }, protectedConnection = Ref { *m_connectionToWebProcess }] {
+        disconnect();
+    }, m_identifier);
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(GPU_PROCESS) && ENABLE(MEDIA_SOURCE)

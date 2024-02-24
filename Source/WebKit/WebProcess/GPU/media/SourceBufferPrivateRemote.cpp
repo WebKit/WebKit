@@ -154,6 +154,7 @@ void SourceBufferPrivateRemote::resetParserStateInternal()
 void SourceBufferPrivateRemote::removedFromMediaSource()
 {
     ensureWeakOnDispatcher([this] {
+        m_removed = true;
         m_gpuProcessConnection.get()->connection().send(Messages::RemoteSourceBufferProxy::RemovedFromMediaSource(), m_remoteSourceBufferIdentifier);
     });
 }
@@ -503,6 +504,15 @@ void SourceBufferPrivateRemote::MessageReceiver::sourceBufferPrivateDidReceiveRe
 {
     if (auto client = this->client())
         client->sourceBufferPrivateDidReceiveRenderingError(errorCode);
+}
+
+void SourceBufferPrivateRemote::MessageReceiver::sourceBufferPrivateShuttingDown(CompletionHandler<void()>&& completionHandler)
+{
+    assertIsCurrent(MediaSourcePrivateRemote::queue());
+
+    if (RefPtr parent = m_parent.get())
+        parent->m_shutdown = true;
+    completionHandler();
 }
 
 uint64_t SourceBufferPrivateRemote::totalTrackBufferSizeInBytes() const

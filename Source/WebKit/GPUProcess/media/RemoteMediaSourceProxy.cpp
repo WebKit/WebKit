@@ -57,9 +57,6 @@ RemoteMediaSourceProxy::~RemoteMediaSourceProxy()
 
 void RemoteMediaSourceProxy::disconnect()
 {
-    for (auto& sourceBuffer : m_sourceBuffers)
-        sourceBuffer->disconnect();
-
     if (!m_connectionToWebProcess)
         return;
 
@@ -165,6 +162,9 @@ void RemoteMediaSourceProxy::shutdown()
 {
     if (!m_connectionToWebProcess)
         return;
+
+    for (auto sourceBuffer : m_sourceBuffers)
+        sourceBuffer->shutdown();
 
     m_connectionToWebProcess->connection().sendWithAsyncReply(Messages::MediaSourcePrivateRemoteMessageReceiver::MediaSourcePrivateShuttingDown(), [this, protectedThis = Ref { *this }, protectedConnection = Ref { *m_connectionToWebProcess }] {
         disconnect();

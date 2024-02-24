@@ -33,6 +33,7 @@ messages -> SourceBufferPrivateRemoteMessageReceiver NotRefCounted {
     SourceBufferPrivateDurationChanged(MediaTime duration) -> ()
     SourceBufferPrivateDidDropSample()
     SourceBufferPrivateDidReceiveRenderingError(int64_t errorCode)
+    SourceBufferPrivateShuttingDown() -> ()
 }
 
 #endif

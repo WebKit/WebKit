@@ -67,8 +67,6 @@ public:
 
     constexpr WebCore::MediaPlatformType platformType() const final { return WebCore::MediaPlatformType::Remote; }
 
-    void disconnect() { m_disconnected = true; }
-
     static WorkQueue& queue();
 
     class MessageReceiver : public IPC::WorkQueueMessageReceiver {
@@ -88,6 +86,7 @@ public:
         void sourceBufferPrivateDurationChanged(const MediaTime&, CompletionHandler<void()>&&);
         void sourceBufferPrivateDidDropSample();
         void sourceBufferPrivateDidReceiveRenderingError(int64_t errorCode);
+        void sourceBufferPrivateShuttingDown(CompletionHandler<void()>&&);
         RefPtr<WebCore::SourceBufferPrivateClient> client() const;
         ThreadSafeWeakPtr<SourceBufferPrivateRemote> m_parent;
     };
@@ -149,8 +148,9 @@ private:
 
     std::atomic<uint64_t> m_totalTrackBufferSizeInBytes = { 0 };
 
-    bool isGPURunning() const { return !m_disconnected; }
-    bool m_disconnected { false };
+    bool isGPURunning() const { return !m_shutdown && !m_removed; }
+    std::atomic<bool> m_shutdown { false };
+    std::atomic<bool> m_removed { false };
 
     mutable Lock m_lock;
     // We mirror some members from the base class, as we require them to be atomic.

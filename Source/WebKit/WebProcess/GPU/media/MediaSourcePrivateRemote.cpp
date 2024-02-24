@@ -270,8 +270,6 @@ void MediaSourcePrivateRemote::MessageReceiver::mediaSourcePrivateShuttingDown(C
     if (RefPtr parent = m_parent.get()) {
         parent->m_shutdown = true;
         parent->m_mediaPlayerReadyState = MediaPlayer::ReadyState::HaveNothing;
-        for (auto& sourceBuffer : parent->m_sourceBuffers)
-            downcast<SourceBufferPrivateRemote>(sourceBuffer)->disconnect();
     };
     completionHandler();
 }
