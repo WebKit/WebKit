@@ -221,7 +221,13 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     LayoutPoint adjustedPaintOffset = paintOffset + location();
 
     if (paintInfo.phase == PaintPhase::EventRegion) {
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+        if (isRenderOrLegacyRenderSVGRoot() && !isSkippedContentRoot())
+            paintReplaced(paintInfo, adjustedPaintOffset);
+        else if (visibleToHitTesting()) {
+#else
         if (visibleToHitTesting()) {
+#endif
             auto borderRect = LayoutRect(adjustedPaintOffset, size());
             auto borderRoundedRect = style().getRoundedBorderFor(borderRect);
             paintInfo.eventRegionContext()->unite(FloatRoundedRect(borderRoundedRect), *this, style());

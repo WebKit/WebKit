@@ -40,6 +40,8 @@
 #include "HTMLInputElement.h"
 #include "HTMLLabelElement.h"
 #include "HitTestResult.h"
+#include "LegacyRenderSVGShape.h"
+#include "LegacyRenderSVGShapeInlines.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
 #include "Page.h"
@@ -49,6 +51,7 @@
 #include "RenderBoxInlines.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
+#include "SVGSVGElement.h"
 #include "SimpleRange.h"
 #include "SliderThumbElement.h"
 #include "StyleResolver.h"
@@ -286,7 +289,32 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
     OptionSet<InteractionRegion::CornerMask> maskedCorners { };
     std::optional<Path> clipPath = std::nullopt;
 
-    if (const auto& renderBox = dynamicDowncast<RenderBox>(regionRenderer)) {
+    if (const auto& renderShape = dynamicDowncast<LegacyRenderSVGShape>(regionRenderer)) {
+        auto& svgElement = renderShape->graphicsElement();
+        auto path = svgElement.toClipPath();
+
+        auto shapeBoundingBox = svgElement.getBBox(SVGLocatable::DisallowStyleUpdate);
+        path.translate(FloatSize(-shapeBoundingBox.x(), -shapeBoundingBox.y()));
+
+        auto* svgSVGElement = svgElement.ownerSVGElement();
+        if (svgSVGElement) {
+            FloatSize size = svgSVGElement->currentViewportSizeExcludingZoom();
+            auto viewBoxTransform = svgSVGElement->viewBoxToViewTransform(size.width(), size.height());
+            shapeBoundingBox = viewBoxTransform.mapRect(shapeBoundingBox);
+            path.transform(AffineTransform::makeScale(FloatSize(viewBoxTransform.xScale(), viewBoxTransform.yScale())));
+
+            // Position to respect clipping. `rect` is already clipped but the Path is complete.
+            auto clipDeltaX = rect.width() - shapeBoundingBox.width();
+            auto clipDeltaY = rect.height() - shapeBoundingBox.height();
+            if (shapeBoundingBox.x() >= 0)
+                clipDeltaX = 0;
+            if (shapeBoundingBox.y() >= 0)
+                clipDeltaY = 0;
+            path.translate(FloatSize(clipDeltaX, clipDeltaY));
+        }
+
+        clipPath = path;
+    } else if (const auto& renderBox = dynamicDowncast<RenderBox>(regionRenderer)) {
         auto roundedRect = renderBox->borderRoundedRect();
         auto borderRadii = roundedRect.radii();
         auto minRadius = borderRadii.minimumRadius();
@@ -322,7 +350,8 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
     }
 
     auto& style = regionRenderer.style();
-    bool canTweakShape = !style.hasBackground()
+    bool canTweakShape = !clipPath
+        && !style.hasBackground()
         && !style.hasOutline()
         && !style.boxShadow()
         && !style.hasExplicitlySetBorderRadius()

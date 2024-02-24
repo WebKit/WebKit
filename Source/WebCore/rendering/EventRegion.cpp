@@ -87,26 +87,34 @@ bool EventRegionContext::contains(const IntRect& rect) const
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
 
-static std::optional<FloatRect> guardRectForRegionBounds(const FloatRect& regionBounds)
+static std::optional<FloatRect> guardRectForRegionBounds(const InteractionRegion& region)
 {
     constexpr int minimumSize = 20;
     constexpr int occlusionMargin = 10;
+    constexpr int complexSegmentsCount = 20;
 
     bool isSmallRect = false;
-    auto occlusionRect = regionBounds;
+    auto guardRect = region.rectInLayerCoordinates;
 
-    if (occlusionRect.width() < minimumSize) {
-        occlusionRect.inflateX(occlusionMargin);
+    // Use a non-inflated guard rect for complex shapes.
+    if (region.clipPath
+        && region.clipPath->segmentsIfExists()
+        && region.clipPath->segmentsIfExists()->size() > complexSegmentsCount)
+        return guardRect;
+
+    if (guardRect.width() < minimumSize) {
+        guardRect.inflateX(occlusionMargin);
         isSmallRect = true;
     }
 
-    if (occlusionRect.height() < minimumSize) {
-        occlusionRect.inflateY(occlusionMargin);
+    if (guardRect.height() < minimumSize) {
+        guardRect.inflateY(occlusionMargin);
         isSmallRect = true;
     }
 
     if (isSmallRect)
-        return occlusionRect;
+        return guardRect;
+
     return std::nullopt;
 }
 
@@ -146,7 +154,7 @@ void EventRegionContext::uniteInteractionRegions(RenderObject& renderer, const F
         discoveredRects.append(interactionRegion->rectInLayerCoordinates);
         m_discoveredRectsByElement.add(interactionRegion->elementIdentifier, discoveredRects);
     
-        auto guardRect = guardRectForRegionBounds(interactionRegion->rectInLayerCoordinates);
+        auto guardRect = guardRectForRegionBounds(*interactionRegion);
         if (guardRect) {
             m_interactionRegions.append({
                 InteractionRegion::Type::Guard,

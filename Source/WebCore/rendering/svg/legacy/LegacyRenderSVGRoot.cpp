@@ -236,7 +236,7 @@ void LegacyRenderSVGRoot::paintReplaced(PaintInfo& paintInfo, const LayoutPoint&
         return;
 
     // Don't paint, if the context explicitly disabled it.
-    if (paintInfo.context().paintingDisabled() && !paintInfo.context().detectingContentfulPaint())
+    if (paintInfo.phase != PaintPhase::EventRegion && paintInfo.context().paintingDisabled() && !paintInfo.context().detectingContentfulPaint())
         return;
 
     // SVG outlines are painted during PaintPhase::Foreground.
@@ -277,13 +277,20 @@ void LegacyRenderSVGRoot::paintReplaced(PaintInfo& paintInfo, const LayoutPoint&
     childPaintInfo.context().save();
 
     // Apply initial viewport clip
-    if (clipViewport)
-        childPaintInfo.context().clip(snappedIntRect(overflowClipRect(paintOffset)));
+    if (clipViewport) {
+        auto clipRect = snappedIntRect(overflowClipRect(paintOffset));
+        childPaintInfo.context().clip(clipRect);
+        if (paintInfo.phase == PaintPhase::EventRegion && childPaintInfo.eventRegionContext())
+            childPaintInfo.eventRegionContext()->pushClip(clipRect);
+    }
 
     // Convert from container offsets (html renderers) to a relative transform (svg renderers).
     // Transform from our paint container's coordinate system to our local coords.
     IntPoint adjustedPaintOffset = roundedIntPoint(paintOffset);
-    childPaintInfo.applyTransform(AffineTransform::makeTranslation(toFloatSize(adjustedPaintOffset)) * localToBorderBoxTransform());
+    auto transform = AffineTransform::makeTranslation(toFloatSize(adjustedPaintOffset)) * localToBorderBoxTransform();
+    childPaintInfo.applyTransform(transform);
+    if (paintInfo.phase == PaintPhase::EventRegion && childPaintInfo.eventRegionContext())
+        childPaintInfo.eventRegionContext()->pushTransform(transform);
 
     // SVGRenderingContext must be destroyed before we restore the childPaintInfo.context(), because a filter may have
     // changed the context and it is only reverted when the SVGRenderingContext destructor finishes applying the filter.
@@ -302,6 +309,11 @@ void LegacyRenderSVGRoot::paintReplaced(PaintInfo& paintInfo, const LayoutPoint&
         }
     }
 
+    if (paintInfo.phase == PaintPhase::EventRegion && childPaintInfo.eventRegionContext()) {
+        childPaintInfo.eventRegionContext()->popTransform();
+        if (clipViewport)
+            childPaintInfo.eventRegionContext()->popClip();
+    }
     childPaintInfo.context().restore();
 }
 

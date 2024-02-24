@@ -99,7 +99,7 @@ bool LegacyRenderSVGContainer::selfWillPaint()
 
 void LegacyRenderSVGContainer::paint(PaintInfo& paintInfo, const LayoutPoint&)
 {
-    if (paintInfo.context().paintingDisabled())
+    if (paintInfo.phase != PaintPhase::EventRegion && paintInfo.context().paintingDisabled())
         return;
 
     // Spec: groups w/o children still may render filter content.
@@ -117,7 +117,10 @@ void LegacyRenderSVGContainer::paint(PaintInfo& paintInfo, const LayoutPoint&)
         // Let the LegacyRenderSVGViewportContainer subclass clip if necessary
         applyViewportClip(childPaintInfo);
 
-        childPaintInfo.applyTransform(localToParentTransform());
+        auto transform = localToParentTransform();
+        childPaintInfo.applyTransform(transform);
+        if (paintInfo.phase == PaintPhase::EventRegion && childPaintInfo.eventRegionContext())
+            childPaintInfo.eventRegionContext()->pushTransform(transform);
 
         SVGRenderingContext renderingContext;
         bool continueRendering = true;
@@ -131,7 +134,11 @@ void LegacyRenderSVGContainer::paint(PaintInfo& paintInfo, const LayoutPoint&)
             for (auto& child : childrenOfType<RenderElement>(*this))
                 child.paint(childPaintInfo, IntPoint());
         }
+
+        if (paintInfo.phase == PaintPhase::EventRegion && childPaintInfo.eventRegionContext())
+            childPaintInfo.eventRegionContext()->popTransform();
     }
+
     
     // FIXME: This really should be drawn from local coordinates, but currently we hack it
     // to avoid our clip killing our outline rect. Thus we translate our

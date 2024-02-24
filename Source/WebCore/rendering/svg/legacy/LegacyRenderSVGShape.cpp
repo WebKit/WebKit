@@ -264,9 +264,17 @@ void LegacyRenderSVGShape::fillStrokeMarkers(PaintInfo& childPaintInfo)
 
 void LegacyRenderSVGShape::paint(PaintInfo& paintInfo, const LayoutPoint&)
 {
-    if (paintInfo.context().paintingDisabled() || paintInfo.phase != PaintPhase::Foreground
-        || style().visibility() == Visibility::Hidden || isEmpty())
+    if (style().visibility() == Visibility::Hidden || isEmpty())
         return;
+
+    if (paintInfo.phase == PaintPhase::EventRegion) {
+        paintInfo.eventRegionContext()->unite(FloatRoundedRect(m_fillBoundingBox), *this, style(), false);
+        return;
+    }
+
+    if (paintInfo.context().paintingDisabled() || paintInfo.phase != PaintPhase::Foreground)
+        return;
+
     FloatRect boundingBox = repaintRectInLocalCoordinates();
     if (!SVGRenderSupport::paintInfoIntersectsRepaintRect(boundingBox, m_localTransform, paintInfo))
         return;
