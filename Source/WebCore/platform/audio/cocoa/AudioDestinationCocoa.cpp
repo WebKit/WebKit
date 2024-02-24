@@ -34,6 +34,7 @@
 #include "Logging.h"
 #include "MultiChannelResampler.h"
 #include "PushPullFIFO.h"
+#include "SharedAudioDestination.h"
 #include <algorithm>
 
 namespace WebCore {
@@ -56,8 +57,9 @@ Ref<AudioDestination> AudioDestination::create(AudioIOCallback& callback, const 
     if (AudioDestinationCocoa::createOverride)
         return AudioDestinationCocoa::createOverride(callback, sampleRate);
 
-    auto destination = adoptRef(*new AudioDestinationCocoa(callback, numberOfOutputChannels, sampleRate));
-    return destination;
+    return SharedAudioDestination::create(callback, numberOfOutputChannels, sampleRate, [numberOfOutputChannels, sampleRate] (AudioIOCallback& callback) {
+        return adoptRef(*new AudioDestinationCocoa(callback, numberOfOutputChannels, sampleRate));
+    });
 }
 
 float AudioDestination::hardwareSampleRate()

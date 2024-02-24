@@ -37,6 +37,7 @@
 #include <WebCore/CDMFactory.h>
 #include <WebCore/MediaPlayer.h>
 #include <WebCore/NowPlayingManager.h>
+#include <WebCore/SharedAudioDestination.h>
 
 #if PLATFORM(COCOA)
 #include <WebCore/MediaSessionManagerCocoa.h>
@@ -56,7 +57,9 @@ Ref<WebCore::AudioDestination> WebMediaStrategy::createAudioDestination(WebCore:
 {
 #if ENABLE(GPU_PROCESS)
     if (m_useGPUProcess)
-        return RemoteAudioDestinationProxy::create(callback, inputDeviceId, numberOfInputChannels, numberOfOutputChannels, sampleRate);
+        return WebCore::SharedAudioDestination::create(callback, numberOfOutputChannels, sampleRate, [inputDeviceId, numberOfInputChannels, numberOfOutputChannels, sampleRate] (WebCore::AudioIOCallback& callback) {
+            return RemoteAudioDestinationProxy::create(callback, inputDeviceId, numberOfInputChannels, numberOfOutputChannels, sampleRate);
+        });
 #endif
     return WebCore::AudioDestination::create(callback, inputDeviceId, numberOfInputChannels, numberOfOutputChannels, sampleRate);
 }

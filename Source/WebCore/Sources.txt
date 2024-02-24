@@ -2210,6 +2210,7 @@ platform/audio/ReverbAccumulationBuffer.cpp
 platform/audio/ReverbConvolver.cpp
 platform/audio/ReverbConvolverStage.cpp
 platform/audio/ReverbInputBuffer.cpp
+platform/audio/SharedAudioDestination.cpp
 platform/audio/SincResampler.cpp
 platform/audio/StereoPanner.cpp
 platform/audio/UpSampler.cpp
