@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src=../../media-resources/video-test.js></script>
+    <script>
+        window.addEventListener('load', async event => {
+            video = document.getElementById('video');
+            waitForAndFail(video, 'error');
+            video.src = "../resources/hls/test-webvtt-multitracks.m3u8";
+            await Promise.all([
+                video.play(),
+                waitFor(video.textTracks, 'addtrack', true),
+                testExpectedEventually('video.textTracks.length', 2, '==', 5000),
+            ]);
+            run('video.textTracks[1].mode = "showing"');
+            await waitFor(video.textTracks[1], 'cuechange');
+            testExpected("video.textTracks[1].cues.length", 1, '>=');
+
+            endTest();
+        });
+    </script>
+</head>
+<body>
+    <video id="video" muted loop></video>
+</body>
+</html>
