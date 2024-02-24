@@ -16,7 +16,6 @@ accessibility/element-reflection-ariaowns.html [ Timeout ]
 accessibility/content-editable-set-inner-text-generates-axvalue-notification.html [ Failure Pass ]
 accessibility/dynamically-ignored-canvas.html [ Failure ]
 accessibility/frame-disconnect-textmarker-cache-crash.html [ Failure ]
-accessibility/image-link-inline-cont.html [ Failure ]
 accessibility/keyevents-for-actions-mimic-real-key-events.html [ Failure ]
 accessibility/keyevents-posted-for-increment-actions.html [ Failure ]
 accessibility/mac/area-with-aria-label.html [ Failure ]
@@ -37,11 +36,6 @@ accessibility/mac/attributed-string/attributed-string-has-completion-annotation.
 # This causes us to fail to call AXIsolatedTree::addUnconnectedNode in AXObjectCache::addRelation, meaning
 # we never create an isolated object for #menu-item-one, causing ariaLabelledByElementAtIndex(0) to return null.
 accessibility/menuitem-is-selected.html [ Failure ]
-
-# Frames are off by 1px vs. non-ITM mode.
-accessibility/table-cells.html [ Failure ]
-accessibility/mac/document-links.html [ Failure ]
-accessibility/table-with-rules.html [ Failure ]
 
 accessibility/aria-owns-hierarchy-remap.html [ Failure ]
 accessibility/element-reflection-ariaactivedescendant.html [ Failure ]
