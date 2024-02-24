@@ -116,9 +116,11 @@
 - (PDFDestination *)namedDestination:(NSString *)name;
 @end
 
+#if HAVE(COREGRAPHICS_WITH_PDF_AREA_OF_INTEREST_SUPPORT)
 @interface PDFPage (IPI)
 - (CGPDFPageLayoutRef) pageLayout;
 @end
+#endif
 
 #if HAVE(PDFDOCUMENT_SELECTION_WITH_GRANULARITY)
 typedef NS_ENUM(NSUInteger, PDFSelectionGranularity);
