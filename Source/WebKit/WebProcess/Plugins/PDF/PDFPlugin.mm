@@ -1540,6 +1540,11 @@ CGFloat PDFPlugin::scaleFactor() const
     return [m_pdfLayerController contentScaleFactor];
 }
 
+float PDFPlugin::contentScaleFactor() const
+{
+    return scaleFactor();
+}
+
 bool PDFPlugin::handleWheelEvent(const WebWheelEvent& event)
 {
     PDFDisplayMode displayMode = [m_pdfLayerController displayMode];

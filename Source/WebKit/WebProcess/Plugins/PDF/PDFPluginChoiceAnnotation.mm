@@ -52,7 +52,7 @@ void PDFPluginChoiceAnnotation::updateGeometry()
     PDFPluginAnnotation::updateGeometry();
 
     RefPtr styledElement = downcast<StyledElement>(element());
-    styledElement->setInlineStyleProperty(CSSPropertyFontSize, choiceAnnotation().font.pointSize * plugin()->scaleFactor(), CSSUnitType::CSS_PX);
+    styledElement->setInlineStyleProperty(CSSPropertyFontSize, choiceAnnotation().font.pointSize * plugin()->contentScaleFactor(), CSSUnitType::CSS_PX);
 }
 
 void PDFPluginChoiceAnnotation::commit()

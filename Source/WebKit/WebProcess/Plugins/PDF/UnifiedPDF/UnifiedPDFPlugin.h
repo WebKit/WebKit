@@ -136,6 +136,7 @@ private:
     float scaleForFitToView() const;
 
     CGFloat scaleFactor() const override;
+    float contentScaleFactor() const final;
 
     void didBeginMagnificationGesture() override;
     void didEndMagnificationGesture() override;

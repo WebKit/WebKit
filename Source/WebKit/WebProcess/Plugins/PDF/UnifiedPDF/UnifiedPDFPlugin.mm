@@ -859,6 +859,11 @@ CGFloat UnifiedPDFPlugin::scaleFactor() const
     return m_scaleFactor;
 }
 
+float UnifiedPDFPlugin::contentScaleFactor() const
+{
+    return m_scaleFactor * m_documentLayout.scale();
+}
+
 float UnifiedPDFPlugin::deviceScaleFactor() const
 {
     return PDFPluginBase::deviceScaleFactor();
@@ -1355,7 +1360,7 @@ void UnifiedPDFPlugin::updateSnapOffsets()
         // FIXME: Factor out documentToContents from pageToContents?
         auto destinationRect = m_documentLayout.layoutBoundsForPageAtIndex(i);
         destinationRect.inflate(PDFDocumentLayout::pageMargin);
-        destinationRect.scale(m_documentLayout.scale() * m_scaleFactor);
+        destinationRect.scale(contentScaleFactor());
         snapAreas.append(LayoutRect { destinationRect });
 
         bool isLargerThanViewport = destinationRect.height() > m_size.height();
@@ -2727,7 +2732,7 @@ bool UnifiedPDFPlugin::performDictionaryLookupAtLocation(const FloatPoint& rootV
 
 bool UnifiedPDFPlugin::searchInDictionary(const RetainPtr<PDFSelection>& lookupSelection)
 {
-    RetainPtr scaledString = [lookupSelection attributedStringScaled:(m_scaleFactor * m_documentLayout.scale())];
+    RetainPtr scaledString = [lookupSelection attributedStringScaled:(contentScaleFactor())];
 
     if (auto selectionBounds = selectionBoundsForFirstPageInDocumentSpace(lookupSelection))
         return showDefinitionForAttributedString(WTFMove(scaledString), *selectionBounds);
