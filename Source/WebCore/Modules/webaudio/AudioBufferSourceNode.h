@@ -85,6 +85,8 @@ public:
 private:
     AudioBufferSourceNode(BaseAudioContext&);
 
+    void acquireBufferContent() WTF_REQUIRES_LOCK(m_processLock);
+
     double tailTime() const final { return 0; }
     double latencyTime() const final { return 0; }
 
@@ -98,10 +100,11 @@ private:
     inline bool renderSilenceAndFinishIfNotLooping(AudioBus*, unsigned index, size_t framesToProcess) WTF_REQUIRES_LOCK(m_processLock);
 
     // m_buffer holds the sample data which this node outputs.
-    RefPtr<AudioBuffer> m_buffer WTF_GUARDED_BY_LOCK(m_processLock); // Only modified on the main thread but used on the audio thread.
+    RefPtr<AudioBuffer> m_buffer; // Only used on the main thread.
 
     // Pointers for the buffer and destination.
-    UniqueArray<const float*> m_sourceChannels;
+    double m_sourceChannelsSampleRate WTF_GUARDED_BY_LOCK(m_processLock) { 0 };
+    FixedVector<Vector<float>> m_sourceChannels WTF_GUARDED_BY_LOCK(m_processLock);
     UniqueArray<float*> m_destinationChannels;
 
     Ref<AudioParam> m_detune;

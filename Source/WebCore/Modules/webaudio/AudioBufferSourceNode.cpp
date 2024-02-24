@@ -120,7 +120,7 @@ void AudioBufferSourceNode::process(size_t framesToProcess)
     // After calling setBuffer() with a buffer having a different number of channels, there can in rare cases be a slight delay
     // before the output bus is updated to the new number of channels because of use of tryLocks() in the context's updating system.
     // In this case, if the buffer has just been changed and we're not quite ready yet, then just output silence.
-    if (numberOfChannels() != m_buffer->numberOfChannels()) {
+    if (numberOfChannels() != m_sourceChannels.size()) {
         outputBus.zero();
         return;
     }
@@ -207,8 +207,8 @@ bool AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
     // Offset the pointers to the correct offset frame.
     unsigned writeIndex = destinationFrameOffset;
 
-    size_t bufferLength = m_buffer->length();
-    double bufferSampleRate = m_buffer->sampleRate();
+    size_t bufferLength = m_sourceChannels[0].size();
+    double bufferSampleRate = m_sourceChannelsSampleRate;
     double pitchRate = totalPitchRate();
     bool reverse = pitchRate < 0;
 
@@ -232,8 +232,8 @@ bool AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
 
     if (m_isLooping && (m_loopStart || m_loopEnd) && m_loopStart >= 0 && m_loopEnd > 0 && m_loopStart < m_loopEnd) {
         // Convert from seconds to sample-frames.
-        double loopMinFrame = m_loopStart * m_buffer->sampleRate();
-        double loopMaxFrame = m_loopEnd * m_buffer->sampleRate();
+        double loopMinFrame = m_loopStart * m_sourceChannelsSampleRate;
+        double loopMaxFrame = m_loopEnd * m_sourceChannelsSampleRate;
 
         virtualMaxFrame = std::min(loopMaxFrame, virtualMaxFrame);
         virtualMinFrame = std::max(loopMinFrame, virtualMinFrame);
@@ -243,7 +243,7 @@ bool AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
     // If we're looping and the offset (virtualReadIndex) is past the end of the loop, wrap back to the
     // beginning of the loop. For other cases, nothing needs to be done.
     if (m_isLooping && m_virtualReadIndex >= virtualMaxFrame) {
-        m_virtualReadIndex = (m_loopStart < 0) ? 0 : (m_loopStart * m_buffer->sampleRate());
+        m_virtualReadIndex = (m_loopStart < 0) ? 0 : (m_loopStart * m_sourceChannelsSampleRate);
         m_virtualReadIndex = std::min(m_virtualReadIndex, static_cast<double>(bufferLength - 1));
     }
 
@@ -267,7 +267,6 @@ bool AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
     // Render loop - reading from the source buffer to the destination using linear interpolation.
     int framesToProcess = numberOfFrames;
 
-    const float** sourceChannels = m_sourceChannels.get();
     float** destinationChannels = m_destinationChannels.get();
 
     // Optimize for the very common case of playing back with pitchRate == 1.
@@ -282,7 +281,7 @@ bool AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
             framesThisTime = std::max(0, framesThisTime);
 
             for (unsigned i = 0; i < numberOfChannels; ++i) 
-                memcpy(destinationChannels[i] + writeIndex, sourceChannels[i] + readIndex, sizeof(float) * framesThisTime);
+                memcpy(destinationChannels[i] + writeIndex, m_sourceChannels[i].data() + readIndex, sizeof(float) * framesThisTime);
 
             writeIndex += framesThisTime;
             readIndex += framesThisTime;
@@ -308,7 +307,7 @@ bool AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
             while (framesThisTime--) {
                 for (unsigned i = 0; i < numberOfChannels; ++i) {
                     float* destination = destinationChannels[i];
-                    const float* source = sourceChannels[i];
+                    auto& source = m_sourceChannels[i];
 
                     destination[writeIndex] = source[readIndex];
                 }
@@ -330,7 +329,7 @@ bool AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
         unsigned readIndex = static_cast<unsigned>(virtualReadIndex);
 
         for (unsigned i = 0; i < numberOfChannels; ++i)
-            std::fill_n(destinationChannels[i] + writeIndex, framesToProcess, sourceChannels[i][readIndex]);
+            std::fill_n(destinationChannels[i] + writeIndex, framesToProcess, m_sourceChannels[i][readIndex]);
     } else if (reverse) {
         unsigned maxFrame = static_cast<unsigned>(virtualMaxFrame);
         unsigned minFrame = static_cast<unsigned>(floorf(virtualMinFrame));
@@ -346,9 +345,9 @@ bool AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
             // Linear interpolation.
             for (unsigned i = 0; i < numberOfChannels; ++i) {
                 float* destination = destinationChannels[i];
-                const float* source = sourceChannels[i];
+                auto& source = m_sourceChannels[i];
 
-                destination[writeIndex] = computeSampleUsingLinearInterpolation(source, readIndex, readIndex2, interpolationFactor);
+                destination[writeIndex] = computeSampleUsingLinearInterpolation(source.data(), readIndex, readIndex2, interpolationFactor);
             }
 
             writeIndex++;
@@ -385,9 +384,9 @@ bool AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
             // Linear interpolation.
             for (unsigned i = 0; i < numberOfChannels; ++i) {
                 float* destination = destinationChannels[i];
-                const float* source = sourceChannels[i];
+                auto& source = m_sourceChannels[i];
 
-                destination[writeIndex] = computeSampleUsingLinearInterpolation(source, readIndex, readIndex2, interpolationFactor);
+                destination[writeIndex] = computeSampleUsingLinearInterpolation(source.data(), readIndex, readIndex2, interpolationFactor);
             }
             writeIndex++;
 
@@ -432,11 +431,7 @@ ExceptionOr<void> AudioBufferSourceNode::setBufferForBindings(RefPtr<AudioBuffer
 
         output(0)->setNumberOfChannels(numberOfChannels);
 
-        m_sourceChannels = makeUniqueArray<const float*>(numberOfChannels);
         m_destinationChannels = makeUniqueArray<float*>(numberOfChannels);
-
-        for (unsigned i = 0; i < numberOfChannels; ++i) 
-            m_sourceChannels[i] = buffer->channelData(i)->data();
     }
 
     m_virtualReadIndex = 0;
@@ -446,7 +441,28 @@ ExceptionOr<void> AudioBufferSourceNode::setBufferForBindings(RefPtr<AudioBuffer
     if (m_isGrain)
         adjustGrainParameters();
 
+    if (isPlayingOrScheduled())
+        acquireBufferContent();
+
     return { };
+}
+
+void AudioBufferSourceNode::acquireBufferContent()
+{
+    ASSERT(isMainThread());
+    if (!m_buffer) {
+        m_sourceChannels = FixedVector<Vector<float>>();
+        m_sourceChannelsSampleRate = 0;
+        return;
+    }
+
+    m_sourceChannelsSampleRate = m_buffer->sampleRate();
+    m_sourceChannels = FixedVector<Vector<float>>(m_buffer->numberOfChannels());
+    for (unsigned i = 0; i < m_buffer->numberOfChannels(); ++i) {
+        // Make sure we copy the buffer's content for the audio thread to use, since JS on
+        // the main thread may detach / transfer array buffers.
+        m_sourceChannels[i] = Vector<float> { m_buffer->rawChannelData(i), m_buffer->length() };
+    }
 }
 
 unsigned AudioBufferSourceNode::numberOfChannels()
@@ -513,6 +529,7 @@ ExceptionOr<void> AudioBufferSourceNode::startPlaying(double when, double grainO
 
     adjustGrainParameters();
 
+    acquireBufferContent();
     m_playbackState = SCHEDULED_STATE;
 
     return { };
@@ -520,6 +537,7 @@ ExceptionOr<void> AudioBufferSourceNode::startPlaying(double when, double grainO
 
 void AudioBufferSourceNode::adjustGrainParameters()
 {
+    ASSERT(isMainThread());
     ASSERT(m_processLock.isHeld());
 
     if (!m_buffer)
@@ -555,11 +573,12 @@ void AudioBufferSourceNode::adjustGrainParameters()
 
 double AudioBufferSourceNode::totalPitchRate()
 {
+    ASSERT(!isMainThread());
     // Incorporate buffer's sample-rate versus AudioContext's sample-rate.
     // Normally it's not an issue because buffers are loaded at the AudioContext's sample-rate, but we can handle it in any case.
     double sampleRateFactor = 1.0;
     if (m_buffer)
-        sampleRateFactor = m_buffer->sampleRate() / static_cast<double>(sampleRate());
+        sampleRateFactor = m_sourceChannelsSampleRate / static_cast<double>(sampleRate());
     
     double basePitchRate = playbackRate().finalValue();
     double detune = pow(2, m_detune->finalValue() / 1200);
@@ -587,7 +606,7 @@ bool AudioBufferSourceNode::propagatesSilence() const
         return false;
     }
     Locker locker { AdoptLock, m_processLock };
-    return !m_buffer;
+    return m_sourceChannels.isEmpty();
 }
 
 } // namespace WebCore
