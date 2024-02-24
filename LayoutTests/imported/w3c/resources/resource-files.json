@@ -7370,6 +7370,7 @@
         "web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-display-none-ref.html",
         "web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-nesting-ref.html",
         "web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-position-ref.html",
+        "web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-remove-popover-attribute-ref.html",
         "web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-stacking-correct-order-remove-readd-ref.html",
         "web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-stacking-dynamic-ref.html",
         "web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-stacking-ref.html",
