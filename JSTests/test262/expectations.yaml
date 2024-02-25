@@ -22,42 +22,6 @@ test/built-ins/Object/entries/order-after-define-property-with-function.js:
 test/built-ins/Object/keys/order-after-define-property-with-function.js:
   default: 'Test262Error: Expected [a, length] and [length, a] to have the same contents. '
   strict mode: 'Test262Error: Expected [a, length] and [length, a] to have the same contents. '
-test/built-ins/Proxy/apply/arguments-realm.js:
-  default: 'Test262Error: Expected SameValue(«function Array() {'
-  strict mode: 'Test262Error: Expected SameValue(«function Array() {'
-test/built-ins/Proxy/apply/null-handler-realm.js:
-  default: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
-  strict mode: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
-test/built-ins/Proxy/apply/trap-is-not-callable-realm.js:
-  default: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
-  strict mode: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
-test/built-ins/Proxy/construct/arguments-realm.js:
-  default: 'Test262Error: Expected SameValue(«function Array() {'
-  strict mode: 'Test262Error: Expected SameValue(«function Array() {'
-test/built-ins/Proxy/construct/null-handler-realm.js:
-  default: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
-  strict mode: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
-test/built-ins/Proxy/construct/return-not-object-throws-boolean-realm.js:
-  default: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
-  strict mode: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
-test/built-ins/Proxy/construct/return-not-object-throws-null-realm.js:
-  default: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
-  strict mode: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
-test/built-ins/Proxy/construct/return-not-object-throws-number-realm.js:
-  default: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
-  strict mode: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
-test/built-ins/Proxy/construct/return-not-object-throws-string-realm.js:
-  default: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
-  strict mode: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
-test/built-ins/Proxy/construct/return-not-object-throws-symbol-realm.js:
-  default: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
-  strict mode: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
-test/built-ins/Proxy/construct/return-not-object-throws-undefined-realm.js:
-  default: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
-  strict mode: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
-test/built-ins/Proxy/construct/trap-is-not-callable-realm.js:
-  default: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
-  strict mode: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
 test/built-ins/RegExp/prototype/Symbol.match/builtin-infer-unicode.js:
   default: 'Test262Error: Expected SameValue(«�», «null») to be true'
   strict mode: 'Test262Error: Expected SameValue(«�», «null») to be true'
