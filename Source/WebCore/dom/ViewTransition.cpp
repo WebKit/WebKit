@@ -40,10 +40,10 @@
 #include "PseudoElementRequest.h"
 #include "RenderBox.h"
 #include "RenderLayer.h"
+#include "RenderView.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"
 #include "Styleable.h"
-#include "TypedElementDescendantIteratorInlines.h"
 #include "WebAnimation.h"
 
 namespace WebCore {
@@ -290,6 +290,37 @@ static RefPtr<ImageBuffer> snapshotNodeVisualOverflowClippedToViewport(LocalFram
     return result;
 }
 
+// This only iterates through elements with a RenderLayer, which is sufficient for View Transitions which force their creation.
+static ExceptionOr<void> forEachElementInPaintOrder(const std::function<ExceptionOr<void>(Element&)>& function, RenderLayer& layer)
+{
+    if (RefPtr element = layer.renderer().element()) {
+        auto result = function(*element);
+        if (result.hasException())
+            return result.releaseException();
+    }
+
+    layer.updateLayerListsIfNeeded();
+
+    for (auto* child : layer.negativeZOrderLayers()) {
+        auto result = forEachElementInPaintOrder(function, *child);
+        if (result.hasException())
+            return result.releaseException();
+    }
+
+    for (auto* child : layer.normalFlowLayers()) {
+        auto result = forEachElementInPaintOrder(function, *child);
+        if (result.hasException())
+            return result.releaseException();
+    }
+
+    for (auto* child : layer.positiveZOrderLayers()) {
+        auto result = forEachElementInPaintOrder(function, *child);
+        if (result.hasException())
+            return result.releaseException();
+    }
+    return { };
+};
+
 // https://drafts.csswg.org/css-view-transitions/#capture-old-state-algorithm
 ExceptionOr<void> ViewTransition::captureOldState()
 {
@@ -299,23 +330,26 @@ ExceptionOr<void> ViewTransition::captureOldState()
     Vector<Ref<Element>> captureElements;
     Ref document = *m_document;
     // FIXME: Set transition’s initial snapshot containing block size to the snapshot containing block size.
-    // FIXME: Loop should probably use flat tree.
-    for (Ref element : descendantsOfType<Element>(document)) {
-        // FIXME: This check should also cover fragmented content.
-        if (auto name = effectiveViewTransitionName(element); !name.isNull()) {
-            if (auto check = checkDuplicateViewTransitionName(name, usedTransitionNames); check.hasException())
-                return check.releaseException();
-            captureElements.append(element);
-        }
+    if (CheckedPtr view = document->renderView()) {
+        auto result = forEachElementInPaintOrder([&](Element& element) -> ExceptionOr<void> {
+            if (auto name = effectiveViewTransitionName(element); !name.isNull()) {
+                if (auto check = checkDuplicateViewTransitionName(name, usedTransitionNames); check.hasException())
+                    return check.releaseException();
+                captureElements.append(element);
+            }
+            return { };
+        }, *view->layer());
+        if (result.hasException())
+            return result.releaseException();
     }
-    // FIXME: Sort captureElements in paint order.
+
     for (auto& element : captureElements) {
         CapturedElement capture;
 
         CheckedPtr renderBox = dynamicDowncast<RenderBox>(element->renderer());
         if (renderBox)
             capture.oldSize = renderBox->size();
-        capture.oldProperties = copyElementBaseProperties(element.get());
+        capture.oldProperties = copyElementBaseProperties(element);
         if (m_document->frame())
             capture.oldImage = snapshotNodeVisualOverflowClippedToViewport(*m_document->frame(), element.get(), { { }, PixelFormat::BGRA8, DestinationColorSpace::SRGB() }, capture.oldOverflowRect);
 
@@ -334,18 +368,22 @@ ExceptionOr<void> ViewTransition::captureNewState()
         return { };
     ListHashSet<AtomString> usedTransitionNames;
     Ref document = *m_document;
-    // FIXME: Loop should probably use flat tree.
-    for (Ref element : descendantsOfType<Element>(document)) {
-        if (auto name = effectiveViewTransitionName(element); !name.isNull()) {
-            if (auto check = checkDuplicateViewTransitionName(name, usedTransitionNames); check.hasException())
-                return check.releaseException();
+    if (CheckedPtr view = document->renderView()) {
+        auto result = forEachElementInPaintOrder([&](Element& element) -> ExceptionOr<void> {
+            if (auto name = effectiveViewTransitionName(element); !name.isNull()) {
+                if (auto check = checkDuplicateViewTransitionName(name, usedTransitionNames); check.hasException())
+                    return check.releaseException();
 
-            if (!m_namedElements.contains(name)) {
-                CapturedElement capturedElement;
-                m_namedElements.add(name, capturedElement);
+                if (!m_namedElements.contains(name)) {
+                    CapturedElement capturedElement;
+                    m_namedElements.add(name, capturedElement);
+                }
+                m_namedElements.find(name)->newElement = &element;
             }
-            m_namedElements.find(name)->newElement = element.ptr();
-        }
+            return { };
+        }, *view->layer());
+        if (result.hasException())
+            return result.releaseException();
     }
     return { };
 }

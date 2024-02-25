@@ -2011,4 +2011,3 @@ webkit.org/b/269996 [ Monterey+ Debug ] imported/w3c/web-platform-tests/css/css-
 [ Monterey+ Debug ] imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-below-viewport-offscreen-old.html [ Skip ]
 [ Monterey+ Debug ] imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-right-of-viewport-offscreen-new.html [ Skip ]
 [ Monterey+ Debug ] imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-right-of-viewport-offscreen-old.html [ Skip ]
-[ Monterey+ Debug ] imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-rendering-invalidation.html [ Failure ]

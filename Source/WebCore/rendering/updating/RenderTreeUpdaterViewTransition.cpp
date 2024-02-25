@@ -101,7 +101,7 @@ void RenderTreeUpdater::ViewTransition::updatePseudoElementTree(RenderElement& d
                 updatePseudoElementGroup(*style, downcast<RenderElement>(*currentGroup), documentElementRenderer);
         } else {
             buildPseudoElementGroup(name, documentElementRenderer, currentGroup);
-            currentGroup = currentGroup ? currentGroup->previousSibling() : documentElementRenderer.view().viewTransitionRoot()->firstChild();
+            currentGroup = currentGroup ? currentGroup->previousSibling() : nullptr;
         }
 
         currentGroup = currentGroup ? currentGroup->nextSibling() : nullptr;
