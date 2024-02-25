@@ -7,8 +7,11 @@
   native <methods>;
 }
 
-# Members of this class may be accessed from native methods. Keep them
+# Members of these classes may be accessed from native methods. Keep them
 # unobfuscated.
+-keep class org.aomedia.avif.android.AvifDecoder {
+  *;
+}
 -keep class org.aomedia.avif.android.AvifDecoder$Info {
   *;
 }

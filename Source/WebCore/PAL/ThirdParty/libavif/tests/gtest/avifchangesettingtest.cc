@@ -8,7 +8,7 @@
 #include "aviftest_helpers.h"
 #include "gtest/gtest.h"
 
-namespace libavif {
+namespace avif {
 namespace {
 
 void TestEncodeDecode(avifCodecChoice codec,
@@ -18,30 +18,35 @@ void TestEncodeDecode(avifCodecChoice codec,
     GTEST_SKIP() << "Codec unavailable, skip test.";
   }
 
-  const uint32_t image_size = 512;
-  testutil::AvifImagePtr image =
-      testutil::CreateImage(image_size, image_size, 8, AVIF_PIXEL_FORMAT_YUV420,
-                            AVIF_PLANES_YUV, AVIF_RANGE_FULL);
+  constexpr uint32_t kImageSize = 512;
+  ImagePtr image = testutil::CreateImage(kImageSize, kImageSize, /*depth=*/8,
+                                         AVIF_PIXEL_FORMAT_YUV420,
+                                         AVIF_PLANES_YUV, AVIF_RANGE_FULL);
   ASSERT_NE(image, nullptr);
   testutil::FillImageGradient(image.get());
 
   // Encode
-  testutil::AvifEncoderPtr encoder(avifEncoderCreate(), avifEncoderDestroy);
+  EncoderPtr encoder(avifEncoderCreate());
   ASSERT_NE(encoder, nullptr);
   encoder->codecChoice = codec;
   encoder->speed = AVIF_SPEED_FASTEST;
   encoder->timescale = 1;
 
   for (const auto& option : init_cs_options) {
-    avifEncoderSetCodecSpecificOption(encoder.get(), option.first.c_str(),
-                                      option.second.c_str());
+    ASSERT_EQ(avifEncoderSetCodecSpecificOption(
+                  encoder.get(), option.first.c_str(), option.second.c_str()),
+              AVIF_RESULT_OK);
   }
 
   if (use_cq) {
     encoder->minQuantizer = 0;
     encoder->maxQuantizer = 63;
-    avifEncoderSetCodecSpecificOption(encoder.get(), "end-usage", "q");
-    avifEncoderSetCodecSpecificOption(encoder.get(), "cq-level", "63");
+    ASSERT_EQ(
+        avifEncoderSetCodecSpecificOption(encoder.get(), "end-usage", "q"),
+        AVIF_RESULT_OK);
+    ASSERT_EQ(
+        avifEncoderSetCodecSpecificOption(encoder.get(), "cq-level", "63"),
+        AVIF_RESULT_OK);
   } else {
     encoder->minQuantizer = 63;
     encoder->maxQuantizer = 63;
@@ -52,7 +57,8 @@ void TestEncodeDecode(avifCodecChoice codec,
             AVIF_RESULT_OK);
 
   if (use_cq) {
-    avifEncoderSetCodecSpecificOption(encoder.get(), "cq-level", "0");
+    ASSERT_EQ(avifEncoderSetCodecSpecificOption(encoder.get(), "cq-level", "0"),
+              AVIF_RESULT_OK);
   } else {
     encoder->minQuantizer = 0;
     encoder->maxQuantizer = 0;
@@ -74,7 +80,7 @@ void TestEncodeDecode(avifCodecChoice codec,
   ASSERT_EQ(avifEncoderFinish(encoder.get(), &encodedAvif), AVIF_RESULT_OK);
 
   // Decode
-  testutil::AvifDecoderPtr decoder(avifDecoderCreate(), avifDecoderDestroy);
+  DecoderPtr decoder(avifDecoderCreate());
   ASSERT_NE(decoder, nullptr);
 
   // The second frame is set to have far better quality,
@@ -117,19 +123,20 @@ TEST(ChangeSettingTest, UnchangeableSetting) {
     GTEST_SKIP() << "Codec unavailable, skip test.";
   }
 
-  const uint32_t image_size = 512;
-  testutil::AvifImagePtr image =
-      testutil::CreateImage(image_size, image_size, 8, AVIF_PIXEL_FORMAT_YUV420,
-                            AVIF_PLANES_YUV, AVIF_RANGE_FULL);
+  constexpr uint32_t kImageSize = 512;
+  ImagePtr image = testutil::CreateImage(kImageSize, kImageSize, /*depth=*/8,
+                                         AVIF_PIXEL_FORMAT_YUV420,
+                                         AVIF_PLANES_YUV, AVIF_RANGE_FULL);
   ASSERT_NE(image, nullptr);
   testutil::FillImageGradient(image.get());
 
   // Encode
-  testutil::AvifEncoderPtr encoder(avifEncoderCreate(), avifEncoderDestroy);
+  EncoderPtr encoder(avifEncoderCreate());
   ASSERT_NE(encoder, nullptr);
   encoder->codecChoice = AVIF_CODEC_CHOICE_AOM;
   encoder->speed = AVIF_SPEED_FASTEST;
   encoder->timescale = 1;
+  ASSERT_EQ(encoder->repetitionCount, AVIF_REPETITION_COUNT_INFINITE);
   encoder->minQuantizer = 63;
   encoder->maxQuantizer = 63;
 
@@ -141,7 +148,93 @@ TEST(ChangeSettingTest, UnchangeableSetting) {
   ASSERT_EQ(avifEncoderAddImage(encoder.get(), image.get(), 1,
                                 AVIF_ADD_IMAGE_FLAG_FORCE_KEYFRAME),
             AVIF_RESULT_CANNOT_CHANGE_SETTING);
+
+  encoder->timescale = 1;
+  ASSERT_EQ(avifEncoderAddImage(encoder.get(), image.get(), 1,
+                                AVIF_ADD_IMAGE_FLAG_FORCE_KEYFRAME),
+            AVIF_RESULT_OK);
+
+  encoder->repetitionCount = 0;
+  ASSERT_EQ(avifEncoderAddImage(encoder.get(), image.get(), 1,
+                                AVIF_ADD_IMAGE_FLAG_FORCE_KEYFRAME),
+            AVIF_RESULT_CANNOT_CHANGE_SETTING);
+}
+
+TEST(ChangeSettingTest, UnchangeableImageColorRange) {
+  if (avifCodecName(AVIF_CODEC_CHOICE_AOM, AVIF_CODEC_FLAG_CAN_ENCODE) ==
+      nullptr) {
+    GTEST_SKIP() << "Codec unavailable, skip test.";
+  }
+
+  constexpr uint32_t kImageSize = 512;
+  ImagePtr image = testutil::CreateImage(kImageSize, kImageSize, /*depth=*/8,
+                                         AVIF_PIXEL_FORMAT_YUV420,
+                                         AVIF_PLANES_YUV, AVIF_RANGE_FULL);
+  ASSERT_NE(image, nullptr);
+  const uint32_t yuva[] = {128, 128, 128, 255};
+  testutil::FillImagePlain(image.get(), yuva);
+
+  // Encode
+  EncoderPtr encoder(avifEncoderCreate());
+  ASSERT_NE(encoder, nullptr);
+  encoder->codecChoice = AVIF_CODEC_CHOICE_AOM;
+  encoder->speed = AVIF_SPEED_FASTEST;
+  encoder->timescale = 1;
+  ASSERT_EQ(encoder->repetitionCount, AVIF_REPETITION_COUNT_INFINITE);
+  encoder->quality = AVIF_QUALITY_WORST;
+
+  ASSERT_EQ(avifEncoderAddImage(encoder.get(), image.get(), 1,
+                                AVIF_ADD_IMAGE_FLAG_NONE),
+            AVIF_RESULT_OK);
+
+  ASSERT_EQ(avifEncoderAddImage(encoder.get(), image.get(), 1,
+                                AVIF_ADD_IMAGE_FLAG_NONE),
+            AVIF_RESULT_OK);
+
+  image->yuvRange = AVIF_RANGE_LIMITED;
+  ASSERT_EQ(avifEncoderAddImage(encoder.get(), image.get(), 1,
+                                AVIF_ADD_IMAGE_FLAG_NONE),
+            AVIF_RESULT_INCOMPATIBLE_IMAGE);
+}
+
+TEST(ChangeSettingTest, UnchangeableImageChromaSamplePosition) {
+  if (avifCodecName(AVIF_CODEC_CHOICE_AOM, AVIF_CODEC_FLAG_CAN_ENCODE) ==
+      nullptr) {
+    GTEST_SKIP() << "Codec unavailable, skip test.";
+  }
+
+  constexpr uint32_t kImageSize = 512;
+  ImagePtr image = testutil::CreateImage(kImageSize, kImageSize, /*depth=*/8,
+                                         AVIF_PIXEL_FORMAT_YUV420,
+                                         AVIF_PLANES_YUV, AVIF_RANGE_FULL);
+  ASSERT_NE(image, nullptr);
+  const uint32_t yuva[] = {128, 128, 128, 255};
+  testutil::FillImagePlain(image.get(), yuva);
+
+  // Encode
+  EncoderPtr encoder(avifEncoderCreate());
+  ASSERT_NE(encoder, nullptr);
+  encoder->codecChoice = AVIF_CODEC_CHOICE_AOM;
+  encoder->speed = AVIF_SPEED_FASTEST;
+  encoder->timescale = 1;
+  ASSERT_EQ(encoder->repetitionCount, AVIF_REPETITION_COUNT_INFINITE);
+  encoder->quality = AVIF_QUALITY_WORST;
+
+  ASSERT_EQ(avifEncoderAddImage(encoder.get(), image.get(), 1,
+                                AVIF_ADD_IMAGE_FLAG_NONE),
+            AVIF_RESULT_OK);
+
+  ASSERT_EQ(avifEncoderAddImage(encoder.get(), image.get(), 1,
+                                AVIF_ADD_IMAGE_FLAG_NONE),
+            AVIF_RESULT_OK);
+
+  ASSERT_EQ(image->yuvChromaSamplePosition,
+            AVIF_CHROMA_SAMPLE_POSITION_UNKNOWN);
+  image->yuvChromaSamplePosition = AVIF_CHROMA_SAMPLE_POSITION_VERTICAL;
+  ASSERT_EQ(avifEncoderAddImage(encoder.get(), image.get(), 1,
+                                AVIF_ADD_IMAGE_FLAG_NONE),
+            AVIF_RESULT_INCOMPATIBLE_IMAGE);
 }
 
 }  // namespace
-}  // namespace libavif
+}  // namespace avif

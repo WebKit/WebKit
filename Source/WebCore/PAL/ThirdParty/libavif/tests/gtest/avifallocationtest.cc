@@ -1,4 +1,4 @@
-// Copyright 2022 Google LLC. All rights reserved.
+// Copyright 2022 Google LLC
 // SPDX-License-Identifier: BSD-2-Clause
 
 #include <limits>
@@ -8,7 +8,7 @@
 #include "aviftest_helpers.h"
 #include "gtest/gtest.h"
 
-namespace libavif {
+namespace avif {
 namespace {
 
 void TestAllocation(uint32_t width, uint32_t height, uint32_t depth,
@@ -21,7 +21,7 @@ void TestAllocation(uint32_t width, uint32_t height, uint32_t depth,
         AVIF_PIXEL_FORMAT_YUV400}) {
     for (avifPlanesFlag planes :
          {AVIF_PLANES_YUV, AVIF_PLANES_A, AVIF_PLANES_ALL}) {
-      testutil::AvifImagePtr image(avifImageCreateEmpty(), avifImageDestroy);
+      ImagePtr image(avifImageCreateEmpty());
       ASSERT_NE(image, nullptr);
       image->width = width;
       image->height = height;
@@ -95,7 +95,7 @@ TEST(DISABLED_AllocationTest, OutOfMemory) {
 
 void TestEncoding(uint32_t width, uint32_t height, uint32_t depth,
                   avifResult expected_result) {
-  testutil::AvifImagePtr image(avifImageCreateEmpty(), avifImageDestroy);
+  ImagePtr image(avifImageCreateEmpty());
   ASSERT_NE(image, nullptr);
   image->width = width;
   image->height = height;
@@ -135,7 +135,7 @@ void TestEncoding(uint32_t width, uint32_t height, uint32_t depth,
   image->alphaPlane = bytes;
 
   // Try to encode.
-  testutil::AvifEncoderPtr encoder(avifEncoderCreate(), avifEncoderDestroy);
+  EncoderPtr encoder(avifEncoderCreate());
   ASSERT_NE(encoder, nullptr);
   encoder->speed = AVIF_SPEED_FASTEST;
   testutil::AvifRwData encoded_avif;
@@ -148,12 +148,14 @@ TEST(EncodingTest, MinimumValidDimensions) {
 }
 
 TEST(EncodingTest, ReasonableValidDimensions) {
+  // 16384 x 8704 is the maximum width x height allowed in the levels defined
+  // in the AV1 specification.
   TestEncoding(16384, 1, 12, AVIF_RESULT_OK);
-  TestEncoding(1, 16384, 12, AVIF_RESULT_OK);
+  TestEncoding(1, 8704, 12, AVIF_RESULT_OK);
 }
 
 // 65536 is the maximum AV1 frame dimension allowed by the AV1 specification.
-// See the section 5.5.1. General sequence header OBU syntax.
+// See the section 5.5.1 General sequence header OBU syntax.
 // However, this test is disabled because:
 // - Old versions of libaom are capped to 65535 (http://crbug.com/aomedia/3304).
 // - libaom may be compiled with CONFIG_SIZE_LIMIT defined, limiting the
@@ -186,5 +188,13 @@ TEST(EncodingTest, MaximumInvalidDimensions) {
                AVIF_RESULT_UNSUPPORTED_DEPTH);
 }
 
+TEST(AvifAllocTest, Extremes) {
+  void* p1 = avifAlloc(1);
+  EXPECT_NE(p1, nullptr);
+  avifFree(p1);
+
+  EXPECT_EQ(avifAlloc(std::numeric_limits<size_t>::max()), nullptr);
+}
+
 }  // namespace
-}  // namespace libavif
+}  // namespace avif

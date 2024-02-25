@@ -36,7 +36,12 @@
 
 #include "avif/internal.h"
 
+#include <stdint.h>
 #include <string.h>
+
+#if defined(AVIF_CODEC_AVM)
+#include "config/aom_config.h"
+#endif
 
 // ---------------------------------------------------------------------------
 // avifBits - Originally dav1d's GetBits struct (see dav1d's getbits.c)
@@ -123,12 +128,13 @@ static uint32_t avifBitsReadVLC(avifBits * const bits)
 }
 
 // ---------------------------------------------------------------------------
-// Variables in here use snake_case to self-document from the AV1 spec:
+// Variables in here use snake_case to self-document from the AV1 spec and the draft AV2 spec:
 //
 // https://aomediacodec.github.io/av1-spec/av1-spec.pdf
+//
+// Originally dav1d's parse_seq_hdr() function (heavily modified and split)
 
-// Originally dav1d's parse_seq_hdr() function (heavily modified)
-static avifBool parseSequenceHeader(avifBits * bits, avifSequenceHeader * header)
+static avifBool parseSequenceHeaderProfile(avifBits * bits, avifSequenceHeader * header)
 {
     uint32_t seq_profile = avifBitsRead(bits, 3);
     if (seq_profile > 2) {
@@ -137,12 +143,12 @@ static avifBool parseSequenceHeader(avifBits * bits, avifSequenceHeader * header
     header->av1C.seqProfile = (uint8_t)seq_profile;
 
     uint32_t still_picture = avifBitsRead(bits, 1);
-    uint32_t reduced_still_picture_header = avifBitsRead(bits, 1);
-    if (reduced_still_picture_header && !still_picture) {
+    header->reduced_still_picture_header = (uint8_t)avifBitsRead(bits, 1);
+    if (header->reduced_still_picture_header && !still_picture) {
         return AVIF_FALSE;
     }
 
-    if (reduced_still_picture_header) {
+    if (header->reduced_still_picture_header) {
         header->av1C.seqLevelIdx0 = (uint8_t)avifBitsRead(bits, 5);
         header->av1C.seqTier0 = 0;
     } else {
@@ -198,22 +204,30 @@ static avifBool parseSequenceHeader(avifBits * bits, avifSequenceHeader * header
             }
         }
     }
+    return !bits->error;
+}
 
+static avifBool parseSequenceHeaderFrameMaxDimensions(avifBits * bits, avifSequenceHeader * header)
+{
     uint32_t frame_width_bits = avifBitsRead(bits, 4) + 1;
     uint32_t frame_height_bits = avifBitsRead(bits, 4) + 1;
     header->maxWidth = avifBitsRead(bits, frame_width_bits) + 1;   // max_frame_width
     header->maxHeight = avifBitsRead(bits, frame_height_bits) + 1; // max_frame_height
     uint32_t frame_id_numbers_present_flag = 0;
-    if (!reduced_still_picture_header) {
+    if (!header->reduced_still_picture_header) {
         frame_id_numbers_present_flag = avifBitsRead(bits, 1);
     }
     if (frame_id_numbers_present_flag) {
         avifBitsRead(bits, 7); // delta_frame_id_length_minus_2, additional_frame_id_length_minus_1
     }
+    return !bits->error;
+}
 
-    avifBitsRead(bits, 3); // use_128x128_superblock, enable_filter_intra, enable_intra_edge_filter
+static avifBool parseSequenceHeaderEnabledFeatures(avifBits * bits, avifSequenceHeader * header)
+{
+    avifBitsRead(bits, 2); // enable_filter_intra, enable_intra_edge_filter
 
-    if (!reduced_still_picture_header) {
+    if (!header->reduced_still_picture_header) {
         avifBitsRead(bits, 4); // enable_interintra_compound, enable_masked_compound, enable_warped_motion, enable_dual_filter
         uint32_t enable_order_hint = avifBitsRead(bits, 1);
         if (enable_order_hint) {
@@ -238,15 +252,17 @@ static avifBool parseSequenceHeader(avifBits * bits, avifSequenceHeader * header
         }
     }
 
-    avifBitsRead(bits, 3); // enable_superres, enable_cdef, enable_restoration
+    return !bits->error;
+}
 
-    // color_config()
+static avifBool parseSequenceHeaderColorConfig(avifBits * bits, avifSequenceHeader * header)
+{
     header->bitDepth = 8;
     header->chromaSamplePosition = AVIF_CHROMA_SAMPLE_POSITION_UNKNOWN;
     header->av1C.chromaSamplePosition = (uint8_t)header->chromaSamplePosition;
     uint32_t high_bitdepth = avifBitsRead(bits, 1);
     header->av1C.highBitdepth = (uint8_t)high_bitdepth;
-    if ((seq_profile == 2) && high_bitdepth) {
+    if ((header->av1C.seqProfile == 2) && high_bitdepth) {
         uint32_t twelve_bit = avifBitsRead(bits, 1);
         header->bitDepth = twelve_bit ? 12 : 10;
         header->av1C.twelveBit = (uint8_t)twelve_bit;
@@ -255,7 +271,7 @@ static avifBool parseSequenceHeader(avifBits * bits, avifSequenceHeader * header
         header->av1C.twelveBit = 0;
     }
     uint32_t mono_chrome = 0;
-    if (seq_profile != 1) {
+    if (header->av1C.seqProfile != 1) {
         mono_chrome = avifBitsRead(bits, 1);
     }
     header->av1C.monochrome = (uint8_t)mono_chrome;
@@ -285,7 +301,7 @@ static avifBool parseSequenceHeader(avifBits * bits, avifSequenceHeader * header
         uint32_t subsampling_x = 0;
         uint32_t subsampling_y = 0;
         header->range = avifBitsRead(bits, 1) ? AVIF_RANGE_FULL : AVIF_RANGE_LIMITED; // color_range
-        switch (seq_profile) {
+        switch (header->av1C.seqProfile) {
             case 0:
                 subsampling_x = 1;
                 subsampling_y = 1;
@@ -325,12 +341,69 @@ static avifBool parseSequenceHeader(avifBits * bits, avifSequenceHeader * header
     if (!mono_chrome) {
         avifBitsRead(bits, 1); // separate_uv_delta_q
     }
-    avifBitsRead(bits, 1); // film_grain_params_present
 
     return !bits->error;
 }
 
-avifBool avifSequenceHeaderParse(avifSequenceHeader * header, const avifROData * sample)
+static avifBool parseAV1SequenceHeader(avifBits * bits, avifSequenceHeader * header)
+{
+    AVIF_CHECK(parseSequenceHeaderProfile(bits, header));
+
+    AVIF_CHECK(parseSequenceHeaderFrameMaxDimensions(bits, header));
+    avifBitsRead(bits, 1); // use_128x128_superblock
+    AVIF_CHECK(parseSequenceHeaderEnabledFeatures(bits, header));
+
+    avifBitsRead(bits, 3); // enable_superres, enable_cdef, enable_restoration
+
+    AVIF_CHECK(parseSequenceHeaderColorConfig(bits, header));
+
+    avifBitsRead(bits, 1); // film_grain_params_present
+    return !bits->error;
+}
+
+#if defined(AVIF_CODEC_AVM)
+// See https://gitlab.com/AOMediaCodec/avm/-/blob/main/av1/decoder/decodeframe.c
+static avifBool parseAV2SequenceHeader(avifBits * bits, avifSequenceHeader * header)
+{
+    // See read_sequence_header_obu() in avm.
+    AVIF_CHECK(parseSequenceHeaderProfile(bits, header));
+
+    // See av1_read_sequence_header() in avm.
+    AVIF_CHECK(parseSequenceHeaderFrameMaxDimensions(bits, header));
+#if CONFIG_BLOCK_256
+    if (!avifBitsRead(bits, 1)) // BLOCK_256X256
+#endif
+        avifBitsRead(bits, 1); // BLOCK_128X128
+    AVIF_CHECK(parseSequenceHeaderEnabledFeatures(bits, header));
+
+    avifBitsRead(bits, 2);       // enable_superres, enable_cdef
+    if (avifBitsRead(bits, 1)) { // enable_restoration
+#if CONFIG_LR_IMPROVEMENTS
+        const int lr_tools_disable_mask_length = /*RESTORE_SWITCHABLE_TYPES=*/5 - 1;
+        avifBitsRead(bits, lr_tools_disable_mask_length); // lr_tools_disable_mask[0]
+        if (avifBitsRead(bits, 1)) {
+            avifBitsRead(bits, lr_tools_disable_mask_length - 1); // lr_tools_disable_mask[1]
+        }
+#endif
+    }
+
+    // See av1_read_color_config() in avm.
+    AVIF_CHECK(parseSequenceHeaderColorConfig(bits, header));
+    // Ignored fields.
+    //   base_y_dc_delta_q
+    //   base_uv_dc_delta_q
+
+    // See read_sequence_header_obu() in avm.
+    // Ignored field.
+    //   film_grain_params_present
+
+    // See av1_read_sequence_header_beyond_av1() in avm.
+    // Other ignored fields.
+    return !bits->error;
+}
+#endif
+
+avifBool avifSequenceHeaderParse(avifSequenceHeader * header, const avifROData * sample, avifCodecType codecType)
 {
     avifROData obus = *sample;
 
@@ -366,7 +439,16 @@ avifBool avifSequenceHeaderParse(avifSequenceHeader * header, const avifROData *
             return AVIF_FALSE;
 
         if (obu_type == 1) { // Sequence Header
-            return parseSequenceHeader(&bits, header);
+            switch (codecType) {
+                case AVIF_CODEC_TYPE_AV1:
+                    return parseAV1SequenceHeader(&bits, header);
+#if defined(AVIF_CODEC_AVM)
+                case AVIF_CODEC_TYPE_AV2:
+                    return parseAV2SequenceHeader(&bits, header);
+#endif
+                default:
+                    return AVIF_FALSE;
+            }
         }
 
         // Skip this OBU

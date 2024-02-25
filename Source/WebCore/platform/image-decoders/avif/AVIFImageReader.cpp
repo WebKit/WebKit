@@ -29,7 +29,6 @@
 #if USE(AVIF)
 
 #include "AVIFImageReader.h"
-
 #include "AVIFImageDecoder.h"
 
 namespace WebCore {
@@ -94,11 +93,13 @@ void AVIFImageReader::decodeFrame(size_t frameIndex, ScalableImageDecoderFrame& 
 
     avifRGBImage decodedRGBImage;
     avifRGBImageSetDefaults(&decodedRGBImage, m_avifDecoder->image);
+
     decodedRGBImage.depth = 8;
     decodedRGBImage.alphaPremultiplied = m_decoder->premultiplyAlpha();
     decodedRGBImage.format = AVIF_RGB_FORMAT_BGRA;
     decodedRGBImage.rowBytes = imageSize.width() * sizeof(uint32_t);
     decodedRGBImage.pixels = reinterpret_cast<uint8_t*>(buffer.backingStore()->pixelAt(0, 0));
+
     if (avifImageYUVToRGB(m_avifDecoder->image, &decodedRGBImage) != AVIF_RESULT_OK) {
         m_decoder->setFailed();
         return;
@@ -114,6 +115,6 @@ size_t AVIFImageReader::imageCount() const
     return m_avifDecoder->imageCount;
 }
 
-}
+} // namespace WebCore
 
 #endif // USE(AVIF)

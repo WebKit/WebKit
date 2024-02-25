@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ISOBaseMediaFileTrace>
+<!--MP4Box dump trace-->
+<IsoMediaFile xmlns="urn:mpeg:isobmff:schema:file:2016" Name="paris_exif_xmp_gainmap_bigendian_ignore.jpg.avif">
+<FileTypeBox Size="32" Type="ftyp" Specification="p12" Container="file otyp" MajorBrand="avif" MinorVersion="0">
+<BrandEntry AlternateBrand="avif"/>
+<BrandEntry AlternateBrand="mif1"/>
+<BrandEntry AlternateBrand="miaf"/>
+<BrandEntry AlternateBrand="MA1B"/>
+</FileTypeBox>
+<MetaBox Size="379" Type="meta" Version="0" Flags="0" Specification="p12" Container="file moov trak moof traf udta" >
+<HandlerBox Size="40" Type="hdlr" Version="0" Flags="0" Specification="p12" Container="mdia meta minf" hdlrType="pict" Name="libavif" reserved1="0" reserved2="data:application/octet-string,000000000000000000000000">
+</HandlerBox>
+<PrimaryItemBox Size="14" Type="pitm" Version="0" Flags="0" Specification="p12" Container="meta" item_ID="1">
+</PrimaryItemBox>
+<ItemLocationBox Size="58" Type="iloc" Version="0" Flags="0" Specification="p12" Container="meta" offset_size="4" length_size="4" base_offset_size="0" index_size="0">
+<ItemLocationEntry item_ID="1" data_reference_index="0" base_offset="0" construction_method="0">
+<ItemExtentEntry extent_offset="REDACTED" extent_length="REDACTED" extent_index="0" />
+</ItemLocationEntry>
+<ItemLocationEntry item_ID="2" data_reference_index="0" base_offset="0" construction_method="0">
+<ItemExtentEntry extent_offset="REDACTED" extent_length="REDACTED" extent_index="0" />
+</ItemLocationEntry>
+<ItemLocationEntry item_ID="3" data_reference_index="0" base_offset="0" construction_method="0">
+<ItemExtentEntry extent_offset="REDACTED" extent_length="REDACTED" extent_index="0" />
+</ItemLocationEntry>
+</ItemLocationBox>
+<ItemInfoBox Size="109" Type="iinf" Version="0" Flags="0" Specification="p12" Container="meta" >
+<ItemInfoEntryBox Size="26" Type="infe" Version="2" Flags="0" Specification="p12" Container="iinf" item_ID="1" item_protection_index="0" item_name="Color" content_type="(null)" content_encoding="(null)" item_type="av01">
+</ItemInfoEntryBox>
+<ItemInfoEntryBox Size="25" Type="infe" Version="2" Flags="0" Specification="p12" Container="iinf" item_ID="2" item_protection_index="0" item_name="Exif" content_type="(null)" content_encoding="(null)" item_type="Exif">
+</ItemInfoEntryBox>
+<ItemInfoEntryBox Size="44" Type="infe" Version="2" Flags="0" Specification="p12" Container="iinf" item_ID="3" item_protection_index="0" item_name="XMP" content_type="application/rdf+xml" content_encoding="(null)" item_type="mime">
+</ItemInfoEntryBox>
+</ItemInfoBox>
+<ItemReferenceBox Size="40" Type="iref" Version="0" Flags="0" Specification="p12" Container="meta" >
+<ItemReferenceBox Size="14" Type="cdsc" Specification="p12" Container="iref" from_item_id="2">
+<ItemReferenceBoxEntry ItemID="1"/>
+</ItemReferenceBox>
+<ItemReferenceBox Size="14" Type="cdsc" Specification="p12" Container="iref" from_item_id="3">
+<ItemReferenceBoxEntry ItemID="1"/>
+</ItemReferenceBox>
+</ItemReferenceBox>
+<ItemPropertiesBox Size="106" Type="iprp" Specification="iff" Container="meta" >
+<ItemPropertyContainerBox Size="75" Type="ipco" Specification="iff" Container="iprp" >
+<ImageSpatialExtentsPropertyBox Size="20" Type="ispe" Version="0" Flags="0" Specification="iff" Container="ipco" image_width="403" image_height="302">
+</ImageSpatialExtentsPropertyBox>
+<PixelInformationPropertyBox Size="16" Type="pixi" Version="0" Flags="0" Specification="iff" Container="ipco" >
+<BitPerChannel bits_per_channel="8"/>
+<BitPerChannel bits_per_channel="8"/>
+<BitPerChannel bits_per_channel="8"/>
+</PixelInformationPropertyBox>
+<AV1ConfigurationBox>
+<AV1Config version="1" profile="0" level_idx0="0" tier="0" high_bitdepth="0" twelve_bit="0" monochrome="0" chroma_subsampling_x="1" chroma_subsampling_y="1" chroma_sample_position="0" initial_presentation_delay="1" OBUs_count="0">
+</AV1Config>
+</AV1ConfigurationBox>
+<ColourInformationBox Size="19" Type="colr" Specification="iff" Container="video_sample_entry ipco encv resv" colour_type="nclx" colour_primaries="1" transfer_characteristics="13" matrix_coefficients="6" full_range_flag="1">
+</ColourInformationBox>
+</ItemPropertyContainerBox>
+<ItemPropertyAssociationBox Size="23" Type="ipma" Version="0" Flags="0" Specification="iff" Container="iprp" entry_count="1">
+<AssociationEntry item_ID="1" association_count="4">
+<Property index="1" essential="0"/>
+<Property index="2" essential="0"/>
+<Property index="3" essential="1"/>
+<Property index="4" essential="0"/>
+</AssociationEntry>
+</ItemPropertyAssociationBox>
+</ItemPropertiesBox>
+</MetaBox>
+<MediaDataBox Size="REDACTED" Type="mdat" Specification="p12" Container="file" dataSize="REDACTED">
+</MediaDataBox>
+</IsoMediaFile>
+<Tracks>
+</Tracks>
+</ISOBaseMediaFileTrace>

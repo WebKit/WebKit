@@ -41,3 +41,13 @@ find_package_handle_standard_args(
 # show the DAV1D_INCLUDE_DIR, DAV1D_LIBRARY and DAV1D_LIBRARIES variables only
 # in the advanced view
 mark_as_advanced(DAV1D_INCLUDE_DIR DAV1D_LIBRARY DAV1D_LIBRARIES)
+
+if(DAV1D_LIBRARY)
+    if("${DAV1D_LIBRARY}" MATCHES "\\.a$")
+        add_library(dav1d::dav1d STATIC IMPORTED GLOBAL)
+    else()
+        add_library(dav1d::dav1d SHARED IMPORTED GLOBAL)
+    endif()
+    set_target_properties(dav1d::dav1d PROPERTIES IMPORTED_LOCATION "${DAV1D_LIBRARY}" IMPORTED_SONAME dav1d)
+    target_include_directories(dav1d::dav1d INTERFACE ${DAV1D_INCLUDE_DIR})
+endif()
