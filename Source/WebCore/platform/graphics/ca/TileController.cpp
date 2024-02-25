@@ -233,6 +233,11 @@ void TileController::setCoverageRect(const FloatRect& rect)
 
     m_coverageRect = rect;
     setNeedsRevalidateTiles();
+
+    if (!m_client)
+        return;
+
+    m_client->coverageRectDidChange(m_coverageRect);
 }
 
 bool TileController::tilesWouldChangeForCoverageRect(const FloatRect& rect) const

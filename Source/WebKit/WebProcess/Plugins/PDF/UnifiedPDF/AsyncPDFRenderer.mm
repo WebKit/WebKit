@@ -79,6 +79,72 @@ void AsyncPDFRenderer::setShowDebugBorders(bool showDebugBorders)
     m_showDebugBorders = showDebugBorders;
 }
 
+void AsyncPDFRenderer::generatePreviewImageForPage(PDFDocumentLayout::PageIndex pageIndex, float scale)
+{
+    RefPtr plugin = m_plugin.get();
+    if (!plugin)
+        return;
+
+    RetainPtr pdfDocument = plugin->pdfDocument();
+    if (!pdfDocument)
+        return;
+
+    LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::generatePreviewImageForPage " << pageIndex << " (have request " << m_enqueuedPagePreviews.contains(pageIndex) << ")");
+
+    if (m_enqueuedPagePreviews.contains(pageIndex))
+        return;
+
+    auto pageBounds = plugin->layoutBoundsForPageAtIndex(pageIndex);
+    pageBounds.setLocation({ });
+
+    auto pagePreviewRequest = PagePreviewRequest { pageIndex, pageBounds, scale };
+    m_paintingWorkQueue->dispatch([protectedThis = Ref { *this }, pdfDocument = WTFMove(pdfDocument), pagePreviewRequest]() mutable {
+        protectedThis->paintPagePreviewOnWorkQueue(WTFMove(pdfDocument), pagePreviewRequest);
+    });
+}
+
+void AsyncPDFRenderer::removePreviewForPage(PDFDocumentLayout::PageIndex pageIndex)
+{
+    LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::removePreviewForPage " << pageIndex);
+
+    // We could use a purgeable cache here.
+    m_enqueuedPagePreviews.remove(pageIndex);
+    m_pagePreviews.remove(pageIndex);
+}
+
+void AsyncPDFRenderer::paintPagePreviewOnWorkQueue(RetainPtr<PDFDocument>&& pdfDocument, const PagePreviewRequest& pagePreviewRequest)
+{
+    ASSERT(!isMainRunLoop());
+
+    auto pageImageBuffer = ImageBuffer::create(pagePreviewRequest.normalizedPageBounds.size(), RenderingPurpose::Unspecified, pagePreviewRequest.scale, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    if (!pageImageBuffer)
+        return;
+
+    paintPDFPageIntoBuffer(WTFMove(pdfDocument), *pageImageBuffer, pagePreviewRequest.pageIndex, pagePreviewRequest.normalizedPageBounds);
+
+    // This is really a no-op (but only works if there's just one ref).
+    auto bufferCopy = ImageBuffer::sinkIntoBufferForDifferentThread(WTFMove(pageImageBuffer));
+    ASSERT(bufferCopy);
+
+    callOnMainRunLoop([weakThis = ThreadSafeWeakPtr { *this }, imageBuffer = WTFMove(bufferCopy), pagePreviewRequest]() mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+
+        RefPtr plugin = protectedThis->m_plugin.get();
+        if (!plugin)
+            return;
+
+        protectedThis->m_pagePreviews.set(pagePreviewRequest.pageIndex, WTFMove(imageBuffer));
+        // There's no need to trigger any repaints when we've created the preview.
+    });
+}
+
+RefPtr<WebCore::ImageBuffer> AsyncPDFRenderer::previewImageForPage(PDFDocumentLayout::PageIndex pageIndex) const
+{
+    return m_pagePreviews.get(pageIndex);
+}
+
 void AsyncPDFRenderer::willRepaintTile(TileGridIndex gridIndex, TileIndex tileIndex, const FloatRect& tileRect, const FloatRect& tileDirtyRect)
 {
     auto tileInfo = TileForGrid { gridIndex, tileIndex };
@@ -116,6 +182,37 @@ void AsyncPDFRenderer::willRepaintAllTiles(TileGridIndex)
 
     m_enqueuedTileRenders.clear();
     m_rendereredTiles.clear();
+}
+
+void AsyncPDFRenderer::coverageRectDidChange(const FloatRect& coverageRect)
+{
+    RefPtr plugin = m_plugin.get();
+    if (!plugin)
+        return;
+
+    auto pageCoverage = plugin->pageCoverageForRect(coverageRect);
+    LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::coverageRectDidChange " << coverageRect << " " << pageCoverage);
+
+    PDFPageIndexSet unwantedPageIndices;
+    for (auto pageIndex : m_pagePreviews.keys())
+        unwantedPageIndices.add(pageIndex);
+
+    for (auto& pageInfo : pageCoverage.pages) {
+        auto it = unwantedPageIndices.find(pageInfo.pageIndex);
+        if (it != unwantedPageIndices.end()) {
+            unwantedPageIndices.remove(it);
+            continue;
+        }
+
+        // The scale for page previews is a half of the normal tile resolution at 1x page scale.
+        // pageCoverage.pdfDocumentScale is here because page previews draw into a buffer sized using layoutBoundsForPageAtIndex().
+        static constexpr float pagePreviewScale = 0.5;
+        float previewScale = pageCoverage.deviceScaleFactor * pageCoverage.pdfDocumentScale * pagePreviewScale;
+        generatePreviewImageForPage(pageInfo.pageIndex, previewScale);
+    }
+
+    for (auto pageIndex : unwantedPageIndices)
+        removePreviewForPage(pageIndex);
 }
 
 void AsyncPDFRenderer::layoutConfigurationChanged()
@@ -235,6 +332,34 @@ void AsyncPDFRenderer::paintPDFIntoBuffer(RetainPtr<PDFDocument>&& pdfDocument, 
     }
 }
 
+void AsyncPDFRenderer::paintPDFPageIntoBuffer(RetainPtr<PDFDocument>&& pdfDocument, Ref<WebCore::ImageBuffer> imageBuffer, PDFDocumentLayout::PageIndex pageIndex, const FloatRect& pageBounds)
+{
+    ASSERT(!isMainRunLoop());
+
+    auto& context = imageBuffer->context();
+
+    auto stateSaver = GraphicsContextStateSaver(context);
+
+    RetainPtr pdfPage = [pdfDocument pageAtIndex:pageIndex];
+    if (!pdfPage)
+        return;
+
+    auto pageStateSaver = GraphicsContextStateSaver(context);
+    auto destinationRect = pageBounds;
+
+    if (m_showDebugBorders.load())
+        context.fillRect(destinationRect, Color::orange.colorWithAlphaByte(32));
+
+    // Translate the context to the bottom of pageBounds and flip, so that PDFKit operates
+    // from this page's drawing origin.
+    context.translate(destinationRect.minXMaxYCorner());
+    context.scale({ 1, -1 });
+
+    LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::paintPDFPageIntoBuffer - painting page " << pageIndex);
+    [pdfPage drawWithBox:kPDFDisplayBoxCropBox toContext:context.platformContext()];
+}
+
+
 void AsyncPDFRenderer::transferBufferToMainThread(RefPtr<ImageBuffer>&& imageBuffer, const TileForGrid& tileInfo, const TileRenderInfo& renderInfo, TileRenderRequestType requestType)
 {
     ASSERT(!isMainRunLoop());
@@ -331,46 +456,49 @@ void AsyncPDFRenderer::didCompleteTileUpdateRender(RefPtr<WebCore::ImageBuffer>&
     m_rendereredTiles.set(tileInfo, WTFMove(renderedTileInfo));
 }
 
-bool AsyncPDFRenderer::paintTilesForPaintingRect(GraphicsContext& context, float pageScaleFactor, const FloatRect& destinationRect)
+bool AsyncPDFRenderer::paintTilesForPage(GraphicsContext& context, float pageScaleFactor, float documentScale, const FloatRect& clipRect, const WebCore::FloatRect& pageBoundsInPaintingCoordinates, PDFDocumentLayout::PageIndex pageIndex)
 {
     ASSERT(isMainRunLoop());
 
     bool paintedATile = false;
 
-    auto stateSaver = GraphicsContextStateSaver(context);
-
     // This scale takes us from "painting" coordinates into the coordinate system of the tile grid,
     // so we can paint tiles directly.
-
     auto scaleTransform = tileToPaintingTransform(pageScaleFactor);
-    context.concatCTM(scaleTransform);
+    {
+        auto stateSaver = GraphicsContextStateSaver(context);
+        context.concatCTM(scaleTransform);
 
-    for (auto& keyValuePair : m_rendereredTiles) {
-        auto& tileInfo = keyValuePair.key;
-        auto& renderedTile = keyValuePair.value;
+        for (auto& keyValuePair : m_rendereredTiles) {
+            auto& tileInfo = keyValuePair.key;
+            auto& renderedTile = keyValuePair.value;
 
-        m_enqueuedTileRenders.remove(tileInfo);
+            m_enqueuedTileRenders.remove(tileInfo);
 
-        // FIXME: if we stored PDFPageCoverage we could skip non-relevant tiles
+            auto tileClipInPaintingCoordinates = scaleTransform.mapRect(renderedTile.tileInfo.tileRect);
+            if (!pageBoundsInPaintingCoordinates.intersects(tileClipInPaintingCoordinates))
+                continue;
 
-        auto tileClipInPaintingCoordinates = scaleTransform.mapRect(renderedTile.tileInfo.tileRect);
-        if (!destinationRect.intersects(tileClipInPaintingCoordinates))
-            continue;
+            if (renderedTile.tileInfo.configurationIdentifier != m_currentConfigurationIdentifier) {
+                if (m_showDebugBorders.load())
+                    context.fillRect(renderedTile.tileInfo.tileRect, Color::orange.colorWithAlphaByte(32));
+                continue;
+            }
 
-        if (renderedTile.tileInfo.configurationIdentifier != m_currentConfigurationIdentifier) {
-            if (m_showDebugBorders.load())
-                context.fillRect(renderedTile.tileInfo.tileRect, Color::orange.colorWithAlphaByte(32));
-            continue;
+            LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::paintTilesForPage " << pageBoundsInPaintingCoordinates  << " - painting tile for " << tileInfo << " with clip " << renderedTile.tileInfo.tileRect << " scale " << pageScaleFactor);
+
+            context.drawImageBuffer(*renderedTile.buffer, renderedTile.tileInfo.tileRect.location());
+            paintedATile = true;
         }
-
-        LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::paintTilesForPaintingRect " << destinationRect  << " - painting tile for " << tileInfo << " with clip " << renderedTile.tileInfo.tileRect << " scale " << pageScaleFactor);
-
-        context.drawImageBuffer(*renderedTile.buffer, renderedTile.tileInfo.tileRect.location());
-        paintedATile = true;
     }
 
-    // FIXME: Ideally return true if we covered the entire dirty rect.
-    return paintedATile;
+    if (paintedATile)
+        return true;
+
+    if (RefPtr imageBuffer = previewImageForPage(pageIndex))
+        context.drawImageBuffer(*imageBuffer, pageBoundsInPaintingCoordinates);
+
+    return false;
 }
 
 void AsyncPDFRenderer::invalidateTilesForPaintingRect(float pageScaleFactor, const FloatRect& paintingRect)
@@ -432,6 +560,8 @@ void AsyncPDFRenderer::updateTilesForPaintingRect(float pageScaleFactor, const W
         m_paintingWorkQueue->dispatch([protectedThis = Ref { *this }, pdfDocument, tileInfo, tileRenderInfo]() mutable {
             protectedThis->paintTileOnWorkQueue(WTFMove(pdfDocument), tileInfo, tileRenderInfo, TileRenderRequestType::TileUpdate);
         });
+
+        // FIXME: We also need to update the page previews, but probably after a slight delay so they don't compete with tile rendering. webkit.org/b/270040
     }
 }
 

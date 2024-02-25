@@ -678,9 +678,6 @@ void UnifiedPDFPlugin::paintPDFContent(GraphicsContext& context, const FloatRect
     bool shouldPaintBackground = behavior == PaintingBehavior::All;
     bool shouldPaintSelection = behavior == PaintingBehavior::All;
 
-    auto drawingRect = IntRect { { }, documentSize() };
-    drawingRect.intersect(enclosingIntRect(clipRect));
-
     auto stateSaver = GraphicsContextStateSaver(context);
 
     auto showDebugIndicators = shouldShowDebugIndicators();
@@ -696,6 +693,7 @@ void UnifiedPDFPlugin::paintPDFContent(GraphicsContext& context, const FloatRect
 
     auto pageWithAnnotation = pageIndexWithHoveredAnnotation();
     auto pageCoverage = pageCoverageForRect(clipRect);
+    auto documentScale = pageCoverage.pdfDocumentScale;
 
     LOG_WITH_STREAM(PDF, stream << "UnifiedPDFPlugin: paintPDFContent " << pageCoverage);
 
@@ -707,7 +705,6 @@ void UnifiedPDFPlugin::paintPDFContent(GraphicsContext& context, const FloatRect
         if (!shouldDisplayPage(pageInfo.pageIndex))
             continue;
 
-        auto documentScale = pageCoverage.pdfDocumentScale;
         auto pageDestinationRect = pageInfo.pageBounds;
 
         if (shouldPaintBackground) {
@@ -718,16 +715,17 @@ void UnifiedPDFPlugin::paintPDFContent(GraphicsContext& context, const FloatRect
 
         RefPtr asyncRenderer = asyncRendererIfExists();
         if (asyncRenderer) {
-            auto pageBoundsInDocumentCoordinates = AffineTransform::makeScale(FloatSize { documentScale, documentScale }).mapRect(pageDestinationRect);
+            auto pageBoundsInPaintingCoordinates = pageDestinationRect;
+            pageBoundsInPaintingCoordinates.scale(documentScale);
 
             auto pageStateSaver = GraphicsContextStateSaver(context);
-            context.clip(pageBoundsInDocumentCoordinates);
+            context.clip(pageBoundsInPaintingCoordinates);
 
-            bool paintedPageContent = asyncRenderer->paintTilesForPaintingRect(context, m_scaleFactor, pageBoundsInDocumentCoordinates);
-            LOG_WITH_STREAM(PDFAsyncRendering, stream << "UnifiedPDFPlugin::paintPDFContent - painting tiles for page " << pageInfo.pageIndex << " dest rect " << pageBoundsInDocumentCoordinates << " clip " << clipRect << " - painted cached tile " << paintedPageContent);
+            bool paintedPageContent = asyncRenderer->paintTilesForPage(context, m_scaleFactor, documentScale, clipRect, pageBoundsInPaintingCoordinates, pageInfo.pageIndex);
+            LOG_WITH_STREAM(PDFAsyncRendering, stream << "UnifiedPDFPlugin::paintPDFContent - painting tiles for page " << pageInfo.pageIndex << " dest rect " << pageBoundsInPaintingCoordinates << " clip " << clipRect << " - painted cached tile " << paintedPageContent);
 
             if (!paintedPageContent && showDebugIndicators)
-                context.fillRect(pageBoundsInDocumentCoordinates, Color::yellow.colorWithAlphaByte(128));
+                context.fillRect(pageBoundsInPaintingCoordinates, Color::yellow.colorWithAlphaByte(128));
         }
 
         bool currentPageHasAnnotation = pageWithAnnotation && *pageWithAnnotation == pageInfo.pageIndex;
@@ -1020,16 +1018,25 @@ IntSize UnifiedPDFPlugin::contentsSize() const
     return expandedIntSize(size);
 }
 
-unsigned UnifiedPDFPlugin::heightForPage(PDFDocumentLayout::PageIndex pageIndex) const
+unsigned UnifiedPDFPlugin::heightForPageAtIndex(PDFDocumentLayout::PageIndex pageIndex) const
 {
-    if (isLocked() || !m_documentLayout.pageCount())
+    if (isLocked() || pageIndex >= m_documentLayout.pageCount())
         return 0;
+
     return std::ceil<unsigned>(m_documentLayout.layoutBoundsForPageAtIndex(pageIndex).height());
 }
 
 unsigned UnifiedPDFPlugin::firstPageHeight() const
 {
-    return heightForPage(0);
+    return heightForPageAtIndex(0);
+}
+
+FloatRect UnifiedPDFPlugin::layoutBoundsForPageAtIndex(PDFDocumentLayout::PageIndex pageIndex) const
+{
+    if (isLocked() || pageIndex >= m_documentLayout.pageCount())
+        return { };
+
+    return m_documentLayout.layoutBoundsForPageAtIndex(pageIndex);
 }
 
 RefPtr<FragmentedSharedBuffer> UnifiedPDFPlugin::liveResourceData() const
@@ -1439,6 +1446,8 @@ bool UnifiedPDFPlugin::shouldDisplayPage(PDFDocumentLayout::PageIndex pageIndex)
 
     return false;
 }
+
+#pragma mark -
 
 enum class AltKeyIsActive : bool { No, Yes };
 
@@ -1923,7 +1932,7 @@ void UnifiedPDFPlugin::scrollToPDFDestination(PDFDestination *destination)
     if (pointInPDFPageSpace.x == unspecifiedValue)
         pointInPDFPageSpace.x = 0;
     if (pointInPDFPageSpace.y == unspecifiedValue)
-        pointInPDFPageSpace.y = heightForPage(pageIndex);
+        pointInPDFPageSpace.y = heightForPageAtIndex(pageIndex);
 
     scrollToPointInPage(pointInPDFPageSpace, pageIndex);
 }

@@ -70,6 +70,7 @@ public:
     virtual void willRepaintTile(TileGridIndex, TileIndex, const FloatRect& tileClip, const FloatRect& paintDirtyRect) = 0;
     virtual void willRemoveTile(TileGridIndex, TileIndex) = 0;
     virtual void willRepaintAllTiles(TileGridIndex) = 0;
+    virtual void coverageRectDidChange(const FloatRect&) = 0;
 };
 
 

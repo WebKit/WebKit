@@ -145,7 +145,8 @@ private:
     WebCore::IntSize documentSize() const;
     WebCore::IntSize contentsSize() const override;
     unsigned firstPageHeight() const override;
-    unsigned heightForPage(PDFDocumentLayout::PageIndex) const;
+    unsigned heightForPageAtIndex(PDFDocumentLayout::PageIndex) const;
+    WebCore::FloatRect layoutBoundsForPageAtIndex(PDFDocumentLayout::PageIndex) const;
 
     void scheduleRenderingUpdate();
 
@@ -409,6 +410,8 @@ private:
 
     Ref<AsyncPDFRenderer> asyncRenderer();
     RefPtr<AsyncPDFRenderer> asyncRendererIfExists() const;
+
+    void paintBackgroundLayerForPage(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, const WebCore::FloatRect&);
 
     PDFDocumentLayout m_documentLayout;
     RefPtr<WebCore::GraphicsLayer> m_rootLayer;
