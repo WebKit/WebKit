@@ -42,7 +42,6 @@ ENV WEBKIT_OUT_DIR=/webkitbuild
 RUN mkdir -p /output/lib /output/include /output/include/JavaScriptCore /output/include/wtf /output/include/bmalloc
 
 RUN cp -r /usr/lib/$(uname -m)-linux-gnu/libicu* /output/lib
-RUN cp -r /usr/include/unicode* /output/include/unicode
 
 COPY . /webkit
 WORKDIR /webkit
