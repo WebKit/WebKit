@@ -92,9 +92,10 @@ void PathSkia::add(PathBezierCurveTo cubicTo)
         SkFloatToScalar(cubicTo.endPoint.x()), SkFloatToScalar(cubicTo.endPoint.y()));
 }
 
-void PathSkia::add(PathArcTo)
+void PathSkia::add(PathArcTo arcTo)
 {
-    notImplemented();
+    m_platformPath.arcTo(SkFloatToScalar(arcTo.controlPoint1.x()), SkFloatToScalar(arcTo.controlPoint1.y()), SkFloatToScalar(arcTo.controlPoint2.x()), SkFloatToScalar(arcTo.controlPoint2.y()),
+        SkFloatToScalar(arcTo.radius));
 }
 
 void PathSkia::addEllipse(const FloatPoint& center, float radiusX, float radiusY, float startAngle, float endAngle, RotationDirection direction)
