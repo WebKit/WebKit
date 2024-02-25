@@ -1290,18 +1290,21 @@ FloatRect AXIsolatedObject::relativeFrame() const
         });
     }
 
-    // InitialFrameRect stores the correct size, but not position, of the element before it is painted.
-    // We find the position of the nearest painted ancestor to use as the position until the object's frame
-    // is cached during painting.
-    auto* ancestor = Accessibility::findAncestor<AXIsolatedObject>(*this, false, [] (const auto& object) {
-        return object.hasCachedRelativeFrame();
-    });
-    auto frameRect = rectAttributeValue<FloatRect>(AXPropertyName::InitialFrameRect);
-    if (ancestor && frameRect.location() == FloatPoint())
-        frameRect.setLocation(ancestor->relativeFrame().location());
+    // Having an empty relative frame at this point means a frame hasn't been cached yet.
+    if (relativeFrame.isEmpty()) {
+        // InitialFrameRect stores the correct size, but not position, of the element before it is painted.
+        // We find the position of the nearest painted ancestor to use as the position until the object's frame
+        // is cached during painting.
+        auto* ancestor = Accessibility::findAncestor<AXIsolatedObject>(*this, false, [] (const auto& object) {
+            return object.hasCachedRelativeFrame();
+        });
+        relativeFrame = rectAttributeValue<FloatRect>(AXPropertyName::InitialFrameRect);
+        if (ancestor && relativeFrame.location() == FloatPoint())
+            relativeFrame.setLocation(ancestor->relativeFrame().location());
+    }
 
-    frameRect.moveBy({ remoteFrameOffset() });
-    return frameRect;
+    relativeFrame.moveBy({ remoteFrameOffset() });
+    return relativeFrame;
 }
 
 FloatRect AXIsolatedObject::relativeFrameFromChildren() const
