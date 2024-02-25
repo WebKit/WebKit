@@ -76,6 +76,7 @@ using namespace skif;
 
 // NOTE: Not in anonymous so that FilterResult can friend it
 class FilterResultTestAccess {
+    using BoundsAnalysis = FilterResult::BoundsAnalysis;
 public:
     static void Draw(const skif::Context& ctx,
                      SkDevice* device,
@@ -100,10 +101,10 @@ public:
            return nullptr;
         } else {
             // Add flags to ensure no deferred effects or clamping logic are optimized away.
-            analysis |= FilterResult::BoundsAnalysis::kDstBoundsNotCovered;
-            analysis |= FilterResult::BoundsAnalysis::kRequiresShaderTiling;
+            analysis |= BoundsAnalysis::kDstBoundsNotCovered;
+            analysis |= BoundsAnalysis::kRequiresShaderTiling;
             if (image.tileMode() == SkTileMode::kDecal) {
-                analysis |= FilterResult::BoundsAnalysis::kRequiresDecalInLayerSpace;
+                analysis |= BoundsAnalysis::kRequiresDecalInLayerSpace;
             }
             return image.getAnalyzedShaderView(ctx, image.sampling(), analysis);
         }
@@ -117,6 +118,65 @@ public:
 
     static void TrackStats(skif::Context* ctx, skif::Stats* stats) {
         ctx->fStats = stats;
+    }
+
+    static bool IsIntegerTransform(const skif::FilterResult& image) {
+        SkMatrix m = SkMatrix(image.fTransform);
+        return m.isTranslate() &&
+               SkScalarIsInt(m.getTranslateX()) &&
+               SkScalarIsInt(m.getTranslateY());
+    }
+
+    static bool IsShaderTilingExpected(const skif::Context& ctx,
+                                       const skif::FilterResult& image,
+                                       bool rescaling) {
+        if (image.tileMode() == SkTileMode::kClamp) {
+            return false;
+        }
+        if (image.tileMode() == SkTileMode::kDecal &&
+            image.fBoundary == FilterResult::PixelBoundary::kTransparent) {
+            return false;
+        }
+        auto analysis = image.analyzeBounds(ctx.desiredOutput());
+        if (!(analysis & BoundsAnalysis::kHasLayerFillingEffect) &&
+             (image.tileMode() == SkTileMode::kRepeat || image.tileMode() == SkTileMode::kMirror ||
+              (image.tileMode() == SkTileMode::kDecal && !rescaling))) {
+            return false;
+        }
+
+        // If we got here, it's either a mirror/repeat tile mode that's visible so a shader has to
+        // be used if the image isn't HW tileable; OR it's a decal tile mode without transparent
+        // padding that can't be drawn directly (in this case hasLayerFillingEffect implies a
+        // color filter that has to evaluate the decal'ed sampling).
+        // TODO(b/323886180): Rescaling with decal images does not draw directly but should, so it
+        // will eventually avoid the expensive decal shader.
+        return true;
+    }
+
+    static bool IsShaderClampingExpected(const skif::Context& ctx,
+                                         const skif::FilterResult& image,
+                                         bool rescaling) {
+        auto analysis = image.analyzeBounds(ctx.desiredOutput());
+        if (analysis & BoundsAnalysis::kHasLayerFillingEffect ||
+            (image.tileMode() == SkTileMode::kDecal && rescaling)) {
+            // The image won't be drawn directly so some form of shader is needed. The faster clamp
+            // can be used when clamping explicitly or decal-with-transparent-padding.
+            // TODO(b/323886180): Once rescaling can draw decals directly, decal-with-transparent
+            // padding should only need clamping when there's a layer-filling color filter as well.
+            if (image.tileMode() == SkTileMode::kClamp ||
+                (image.tileMode() == SkTileMode::kDecal &&
+                 image.fBoundary == FilterResult::PixelBoundary::kTransparent)) {
+                return true;
+            } else {
+                // These cases should be covered by the more expensive shader tiling, but if we
+                // are rescaling with a deferrable tile mode, it can still be converted to a clamp.
+                SkASSERT(IsShaderTilingExpected(ctx, image, rescaling));
+                return rescaling;
+            }
+        }
+        // If we got here, it will be drawn directly but a clamp can be needed if the data outside
+        // the image is unknown and sampling might pull those values in accidentally.
+        return image.fBoundary == FilterResult::PixelBoundary::kUnknown;
     }
 };
 
@@ -269,6 +329,7 @@ public:
     const SkSamplingOptions& expectedSampling() const { return fExpectedSampling; }
     SkTileMode expectedTileMode() const { return fExpectedTileMode; }
     const SkColorFilter* expectedColorFilter() const { return fExpectedColorFilter.get(); }
+    bool isRescaling() const { return std::holds_alternative<RescaleParams>(fAction); }
 
     int expectedOffscreenSurfaces() const {
         if (fExpectation != Expect::kNewImage) {
@@ -1096,11 +1157,28 @@ public:
                             "expected %d+%d <= %d",
                             stats.fNumShaderBasedTilingDraws, stats.fNumShaderClampedDraws,
                             expectedShaderTiledDraws);
+            const bool rescaling = fActions[i].isRescaling();
+            REPORTER_ASSERT(fRunner, stats.fNumShaderBasedTilingDraws == 0 ||
+                                     FilterResultTestAccess::IsShaderTilingExpected(
+                                            ctx, source, rescaling));
+            REPORTER_ASSERT(fRunner, stats.fNumShaderClampedDraws == 0 ||
+                                     FilterResultTestAccess::IsShaderClampingExpected(
+                                            ctx, source, rescaling));
 
             // Validate layer bounds and sampling when we expect a new or deferred image
             if (output.image()) {
+                auto actualBounds = output.layerBounds();
+                // A deferred action doesn't have to crop its layer bounds to the desired output to
+                // preserve accuracy of later bounds analysis. New images however should restrict
+                // themselves to the desired output to minimize memory of the surface. The exception
+                // is a new image for applyTransform() because the new transform is deferred to the
+                // resolved image, which can make its layer bounds larger than the desired output.
+                if (correctedExpectation == Expect::kDeferredImage ||
+                    !FilterResultTestAccess::IsIntegerTransform(output)) {
+                    REPORTER_ASSERT(fRunner, actualBounds.intersect(desiredOutputs[i]));
+                }
                 REPORTER_ASSERT(fRunner, !expectedBounds.isEmpty());
-                REPORTER_ASSERT(fRunner, SkIRect(output.layerBounds()) == SkIRect(expectedBounds));
+                REPORTER_ASSERT(fRunner, SkIRect(actualBounds) == SkIRect(expectedBounds));
                 REPORTER_ASSERT(fRunner, output.sampling() == fActions[i].expectedSampling());
                 REPORTER_ASSERT(fRunner, output.tileMode() == fActions[i].expectedTileMode());
                 REPORTER_ASSERT(fRunner, colorfilter_equals(output.colorFilter(),
@@ -2269,7 +2347,7 @@ DEF_TEST_SUITE(RescaleWithTileMode, r,
                 .run(/*requestedOutput=*/{0, 0, 80, 80});
 
         TestCase(r, "Identity X axis, 1-step Y axis preserves tile mode",
-                 /*allowedPercentImageDiff=*/tm == SkTileMode::kMirror ? 1.2f : 1.f,
+                 /*allowedPercentImageDiff=*/tm == SkTileMode::kMirror ? 1.21f : 1.f,
                  /*transparentCheckBorderTolerance=*/tm == SkTileMode::kDecal ? 1 : 0)
                 .source({16, 16, 64, 64})
                 .applyCrop({16, 16, 64, 64}, tm, Expect::kDeferredImage)
@@ -2349,7 +2427,7 @@ DEF_TEST_SUITE(RescaleWithTransform, r,
     for (SkTileMode tm : kTileModes) {
         TestCase(r, "Identity rescale defers integer translation")
                 .source({0, 0, 50, 50})
-                .applyCrop({0, 0, 50, 50}, SkTileMode::kMirror, Expect::kDeferredImage)
+                .applyCrop({0, 0, 50, 50}, tm, Expect::kDeferredImage)
                 .applyTransform(SkMatrix::Translate(-10.f, -10.f), Expect::kDeferredImage)
                 .rescale({1.f, 1.f}, Expect::kDeferredImage)
                 .run(/*requestedOutput=*/{-15, -15, 45, 45});
@@ -2361,16 +2439,18 @@ DEF_TEST_SUITE(RescaleWithTransform, r,
                 .rescale({1.f, 1.f}, Expect::kNewImage, SkTileMode::kClamp)
                 .run(/*requestedOutput=*/{0, 0, 80, 80});
 
-        TestCase(r, "Near-identity rescale defers integer translation")
+        TestCase(r, "Near-identity rescale defers integer translation",
+                 /*allowedPercentImageDiff=*/kDefaultMaxAllowedPercentImageDiff,
+                 /*transparentCheckBorderTolerance=*/tm == SkTileMode::kDecal ? 1 : 0)
                 .source({0, 0, 50, 50})
-                .applyCrop({0, 0, 50, 50}, SkTileMode::kMirror, Expect::kDeferredImage)
+                .applyCrop({0, 0, 50, 50}, tm, Expect::kDeferredImage)
                 .applyTransform(SkMatrix::Translate(-10.f, -10.f), Expect::kDeferredImage)
                 .rescale(kNearlyIdentity, Expect::kDeferredImage)
                 .run(/*requestedOutput=*/{-15, -15, 45, 45});
 
         TestCase(r, "Near-identity rescale applies complex transform")
                 .source({0, 0, 50, 50})
-                .applyCrop({0, 0, 50, 50}, SkTileMode::kClamp, Expect::kDeferredImage)
+                .applyCrop({0, 0, 50, 50}, tm, Expect::kDeferredImage)
                 .applyTransform(SkMatrix::RotateDeg(15.f, {25.f, 25.f}), Expect::kDeferredImage)
                 .rescale(kNearlyIdentity, Expect::kNewImage, SkTileMode::kClamp)
                 .run(/*requestedOutput=*/{-5, -5, 55, 55});

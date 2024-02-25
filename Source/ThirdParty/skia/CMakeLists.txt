@@ -235,6 +235,7 @@ add_library(Skia STATIC
     src/core/SkImageFilterTypes.cpp
     src/core/SkImageGenerator.cpp
     src/core/SkImageInfo.cpp
+    src/core/SkKnownRuntimeEffects.cpp
     src/core/SkLatticeIter.cpp
     src/core/SkLineClipper.cpp
     src/core/SkLocalMatrixImageFilter.cpp
@@ -328,7 +329,6 @@ add_library(Skia STATIC
     src/core/SkSwizzler_opts_ssse3.cpp
     src/core/SkTaskGroup.cpp
     src/core/SkTextBlob.cpp
-    src/core/SkTextBlobTrace.cpp
     src/core/SkTypeface.cpp
     src/core/SkTypefaceCache.cpp
     src/core/SkTypeface_remote.cpp

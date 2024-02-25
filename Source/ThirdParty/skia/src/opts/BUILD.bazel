@@ -12,7 +12,6 @@ Skia's headers. These libraries are each compiled with a different set of compil
 """
 
 load("@skia_user_config//:copts.bzl", "DEFAULT_COPTS")
-load("//:defines.bzl", "DEFAULT_DEFINES", "DEFAULT_LOCAL_DEFINES")
 load("//bazel:flags.bzl", "selects")
 load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_cc_deps", "skia_cc_library", "skia_filegroup")
 
@@ -54,10 +53,10 @@ skia_cc_library(
         "//include/private/base:private_hdrs",
         "//src/base:private_hdrs",
         "//src/core:opts_srcs",
+        "//src/shaders:opts_srcs",
         "//src/sksl/tracing:opts_srcs",
     ],
     copts = DEFAULT_COPTS + ["-march=haswell"],
-    local_defines = DEFAULT_DEFINES + DEFAULT_LOCAL_DEFINES,
     textual_hdrs = [
         "SkRasterPipeline_opts.h",
     ],
@@ -76,10 +75,10 @@ skia_cc_library(
         "//include/private/base:private_hdrs",
         "//src/base:private_hdrs",
         "//src/core:opts_srcs",
+        "//src/shaders:opts_srcs",
         "//src/sksl/tracing:opts_srcs",
     ],
     copts = DEFAULT_COPTS + ["-march=skylake-avx512"],
-    local_defines = DEFAULT_DEFINES + DEFAULT_LOCAL_DEFINES,
     textual_hdrs = [
         "SkRasterPipeline_opts.h",
     ],
@@ -115,10 +114,10 @@ skia_cc_library(
         "//include/core:opts_srcs",
         "//include/private:opts_srcs",
         "//src/core:opts_srcs",
+        "//src/shaders:opts_srcs",
         "//src/sksl/tracing:opts_srcs",
     ],
     copts = DEFAULT_COPTS + ["-march=haswell"],
-    local_defines = DEFAULT_DEFINES + DEFAULT_LOCAL_DEFINES,
     textual_hdrs = [
         "SkRasterPipeline_opts.h",
         ":private_hdrs",
@@ -137,10 +136,10 @@ skia_cc_library(
         "//include/core:opts_srcs",
         "//include/private:opts_srcs",
         "//src/core:opts_srcs",
+        "//src/shaders:opts_srcs",
         "//src/sksl/tracing:opts_srcs",
     ],
     copts = DEFAULT_COPTS + ["-march=skylake-avx512"],
-    local_defines = DEFAULT_DEFINES + DEFAULT_LOCAL_DEFINES,
     textual_hdrs = [
         "SkRasterPipeline_opts.h",
         ":private_hdrs",

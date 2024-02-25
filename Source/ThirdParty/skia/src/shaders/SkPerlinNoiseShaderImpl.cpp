@@ -16,6 +16,7 @@
 #include "src/base/SkArenaAlloc.h"
 #include "src/core/SkReadBuffer.h"
 #include "src/core/SkWriteBuffer.h"
+#include "src/shaders/SkPerlinNoiseShaderType.h"
 
 namespace {
 
@@ -36,7 +37,7 @@ inline SkScalar smoothCurve(SkScalar t) { return t * t * (3 - 2 * t); }
 
 }  // end namespace
 
-SkPerlinNoiseShader::SkPerlinNoiseShader(SkPerlinNoiseShader::Type type,
+SkPerlinNoiseShader::SkPerlinNoiseShader(SkPerlinNoiseShaderType type,
                                          SkScalar baseFrequencyX,
                                          SkScalar baseFrequencyY,
                                          int numOctaves,
@@ -60,7 +61,7 @@ SkPerlinNoiseShader::SkPerlinNoiseShader(SkPerlinNoiseShader::Type type,
 }
 
 sk_sp<SkFlattenable> SkPerlinNoiseShader::CreateProc(SkReadBuffer& buffer) {
-    Type type = buffer.read32LE(kLast_Type);
+    SkPerlinNoiseShaderType type = buffer.read32LE(SkPerlinNoiseShaderType::kLast);
 
     SkScalar freqX = buffer.readScalar();
     SkScalar freqY = buffer.readScalar();
@@ -72,9 +73,9 @@ sk_sp<SkFlattenable> SkPerlinNoiseShader::CreateProc(SkReadBuffer& buffer) {
     tileSize.fHeight = buffer.readInt();
 
     switch (type) {
-        case kFractalNoise_Type:
+        case SkPerlinNoiseShaderType::kFractalNoise:
             return SkShaders::MakeFractalNoise(freqX, freqY, octaves, seed, &tileSize);
-        case kTurbulence_Type:
+        case SkPerlinNoiseShaderType::kTurbulence:
             return SkShaders::MakeTurbulence(freqX, freqY, octaves, seed, &tileSize);
         default:
             // Really shouldn't get here b.c. of earlier check on type
@@ -166,8 +167,9 @@ SkScalar SkPerlinNoiseShader::PerlinNoiseShaderContext::calculateTurbulenceValue
     SkScalar ratio = SK_Scalar1;
     for (int octave = 0; octave < perlinNoiseShader.fNumOctaves; ++octave) {
         SkScalar noise = noise2D(channel, stitchData, noiseVector);
-        SkScalar numer =
-                (perlinNoiseShader.fType == kFractalNoise_Type) ? noise : SkScalarAbs(noise);
+        SkScalar numer = (perlinNoiseShader.fType == SkPerlinNoiseShaderType::kFractalNoise)
+                                 ? noise
+                                 : SkScalarAbs(noise);
         turbulenceFunctionResult += numer / ratio;
         noiseVector.fX *= 2;
         noiseVector.fY *= 2;
@@ -178,7 +180,7 @@ SkScalar SkPerlinNoiseShader::PerlinNoiseShaderContext::calculateTurbulenceValue
         }
     }
 
-    if (perlinNoiseShader.fType == kFractalNoise_Type) {
+    if (perlinNoiseShader.fType == SkPerlinNoiseShaderType::kFractalNoise) {
         // For kFractalNoise the result is: noise[-1,1] * 0.5 + 0.5
         turbulenceFunctionResult = SkScalarHalf(turbulenceFunctionResult + 1);
     }
@@ -287,7 +289,7 @@ sk_sp<SkShader> MakeFractalNoise(SkScalar baseFrequencyX,
         return SkShaders::Color(kTransparentGray, /* colorSpace= */ nullptr);
     }
 
-    return sk_sp<SkShader>(new SkPerlinNoiseShader(SkPerlinNoiseShader::kFractalNoise_Type,
+    return sk_sp<SkShader>(new SkPerlinNoiseShader(SkPerlinNoiseShaderType::kFractalNoise,
                                                    baseFrequencyX,
                                                    baseFrequencyY,
                                                    numOctaves,
@@ -309,7 +311,7 @@ sk_sp<SkShader> MakeTurbulence(SkScalar baseFrequencyX,
         return SkShaders::Color(SkColors::kTransparent, /* colorSpace= */ nullptr);
     }
 
-    return sk_sp<SkShader>(new SkPerlinNoiseShader(SkPerlinNoiseShader::kTurbulence_Type,
+    return sk_sp<SkShader>(new SkPerlinNoiseShader(SkPerlinNoiseShaderType::kTurbulence,
                                                    baseFrequencyX,
                                                    baseFrequencyY,
                                                    numOctaves,

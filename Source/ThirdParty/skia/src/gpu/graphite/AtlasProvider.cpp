@@ -33,9 +33,7 @@ AtlasProvider::AtlasProvider(Recorder* recorder)
         : fTextAtlasManager(std::make_unique<TextAtlasManager>(recorder))
         , fRasterPathAtlas(std::make_unique<RasterPathAtlas>(recorder))
         , fSmallPathAtlas(std::make_unique<SmallPathAtlas>(recorder))
-        , fPathAtlasFlags(QueryPathAtlasSupport(recorder->priv().caps())) {
-    fSmallPathAtlas->initAtlas();
-}
+        , fPathAtlasFlags(QueryPathAtlasSupport(recorder->priv().caps())) {}
 
 std::unique_ptr<ComputePathAtlas> AtlasProvider::createComputePathAtlas(Recorder* recorder) const {
     if (this->isAvailable(PathAtlasFlags::kCompute)) {
@@ -109,6 +107,10 @@ void AtlasProvider::recordUploads(DrawContext* dc) {
     if (fSmallPathAtlas) {
         fSmallPathAtlas->recordUploads(dc);
     }
+}
+
+void AtlasProvider::postFlush() {
+    fTextAtlasManager->postFlush();
 }
 
 }  // namespace skgpu::graphite

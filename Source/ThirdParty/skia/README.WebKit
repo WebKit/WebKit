@@ -1,7 +1,7 @@
 This directory contains a copy of Skia from the official repository.
 
   - URL: https://skia.googlesource.com/skia
-  - Commit: a76b083ac4ccf09d21ec1b805cc51325818f7ae4
+  - Commit: 5325053967daf408d21ec70f93db4a5d9bd09efd
 
 Changes on top of upstream Skia:
 

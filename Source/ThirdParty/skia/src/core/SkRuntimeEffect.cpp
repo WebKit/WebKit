@@ -490,7 +490,7 @@ SkRuntimeEffect::Result SkRuntimeEffect::MakeInternal(std::unique_ptr<SkSL::Prog
         case SkSL::ProgramKind::kRuntimeColorFilter:
             // TODO(skia:11209): Figure out a way to run ES3+ color filters on the CPU. This doesn't
             // need to be fast - it could just be direct IR evaluation. But without it, there's no
-            // way for us to fully implement the SkColorFilter API (eg, `filterColor`)
+            // way for us to fully implement the SkColorFilter API (eg, `filterColor4f`)
             if (!SkRuntimeEffectPriv::CanDraw(SkCapabilities::RasterBackend().get(),
                                               program.get())) {
                 RETURN_FAILURE("SkSL color filters must target #version 100");
@@ -740,6 +740,7 @@ SkRuntimeEffect::SkRuntimeEffect(std::unique_ptr<SkSL::Program> baseProgram,
                                  std::vector<SkSL::SampleUsage>&& sampleUsages,
                                  uint32_t flags)
         : fHash(SkChecksum::Hash32(baseProgram->fSource->c_str(), baseProgram->fSource->size()))
+        , fStableKey(options.fStableKey)
         , fBaseProgram(std::move(baseProgram))
         , fMain(main)
         , fUniforms(std::move(uniforms))
@@ -755,6 +756,7 @@ SkRuntimeEffect::SkRuntimeEffect(std::unique_ptr<SkSL::Program> baseProgram,
     // to match the layout of Options.
     struct KnownOptions {
         bool forceUnoptimized, allowPrivateAccess;
+        uint32_t fStableKey;
         SkSL::Version maxVersionAllowed;
     };
     static_assert(sizeof(Options) == sizeof(KnownOptions));
@@ -762,6 +764,8 @@ SkRuntimeEffect::SkRuntimeEffect(std::unique_ptr<SkSL::Program> baseProgram,
                                sizeof(options.forceUnoptimized), fHash);
     fHash = SkChecksum::Hash32(&options.allowPrivateAccess,
                                sizeof(options.allowPrivateAccess), fHash);
+    fHash = SkChecksum::Hash32(&options.fStableKey,
+                               sizeof(options.fStableKey), fHash);
     fHash = SkChecksum::Hash32(&options.maxVersionAllowed,
                                sizeof(options.maxVersionAllowed), fHash);
 }

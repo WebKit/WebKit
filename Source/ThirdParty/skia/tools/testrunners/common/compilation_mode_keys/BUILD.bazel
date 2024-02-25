@@ -9,7 +9,7 @@ skia_cc_library(
     testonly = True,
     srcs = ["CompilationModeKeys.cpp"],
     hdrs = ["CompilationModeKeys.h"],
-    local_defines = select({
+    defines = select({
         # These keys reflect all possible values of the --compilation_mode Bazel flag[1], which
         # defaults to "fastbuild". See https://bazel.build/docs/user-manual#compilation-mode.
         #
@@ -20,6 +20,7 @@ skia_cc_library(
     }),
     visibility = [
         "//bench:__subpackages__",
+        "//gm:__subpackages__",
         "//tools/testrunners:__subpackages__",
     ],
 )

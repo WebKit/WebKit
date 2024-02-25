@@ -506,6 +506,8 @@ BASE_SRCS_ALL = [
     "src/core/SkImageInfo.cpp",
     "src/core/SkImageInfoPriv.h",
     "src/core/SkImagePriv.h",
+    "src/core/SkKnownRuntimeEffects.cpp",
+    "src/core/SkKnownRuntimeEffects.h",
     "src/core/SkLRUCache.h",
     "src/core/SkLatticeIter.cpp",
     "src/core/SkLatticeIter.h",
@@ -684,8 +686,6 @@ BASE_SRCS_ALL = [
     "src/core/SkTaskGroup.h",
     "src/core/SkTextBlob.cpp",
     "src/core/SkTextBlobPriv.h",
-    "src/core/SkTextBlobTrace.cpp",
-    "src/core/SkTextBlobTrace.h",
     "src/core/SkTextFormatParams.h",
     "src/core/SkTraceEvent.h",
     "src/core/SkTraceEventCommon.h",
@@ -1449,6 +1449,7 @@ BASE_SRCS_ALL = [
     "src/shaders/SkLocalMatrixShader.h",
     "src/shaders/SkPerlinNoiseShaderImpl.cpp",
     "src/shaders/SkPerlinNoiseShaderImpl.h",
+    "src/shaders/SkPerlinNoiseShaderType.h",
     "src/shaders/SkPictureShader.cpp",
     "src/shaders/SkPictureShader.h",
     "src/shaders/SkRuntimeShader.cpp",
@@ -2511,7 +2512,6 @@ SKOTTIE_LIB_SRCS = [
     "modules/skottie/src/text/Font.h",
     "modules/skottie/src/text/RangeSelector.cpp",
     "modules/skottie/src/text/RangeSelector.h",
-    "modules/skottie/src/text/SkottieShaper.h",
     "modules/skottie/src/text/TextAdapter.cpp",
     "modules/skottie/src/text/TextAdapter.h",
     "modules/skottie/src/text/TextAnimator.cpp",
@@ -2541,8 +2541,6 @@ SKOTTIE_UTILS_SRCS = [
 
 SKOTTIE_SHAPER_HDRS = [
     "modules/skottie/include/TextShaper.h",
-    # transitional
-    "modules/skottie/src/text/SkottieShaper.h",
 ]
 
 SKOTTIE_SHAPER_SRCS = [

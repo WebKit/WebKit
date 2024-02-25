@@ -30,11 +30,12 @@ namespace skgpu {
 class KeyBuilder;
 }
 struct GrShaderCaps;
+enum class SkPerlinNoiseShaderType;
 
 class GrPerlinNoise2Effect : public GrFragmentProcessor {
 public:
     static std::unique_ptr<GrFragmentProcessor> Make(
-            SkPerlinNoiseShader::Type type,
+            SkPerlinNoiseShaderType type,
             int numOctaves,
             bool stitchTiles,
             std::unique_ptr<SkPerlinNoiseShader::PaintingData> paintingData,
@@ -71,7 +72,7 @@ public:
         return fPaintingData->fStitchDataInit;
     }
 
-    SkPerlinNoiseShader::Type type() const { return fType; }
+    SkPerlinNoiseShaderType type() const { return fType; }
     bool stitchTiles() const { return fStitchTiles; }
     const SkVector& baseFrequency() const { return fPaintingData->fBaseFrequency; }
     int numOctaves() const { return fNumOctaves; }
@@ -103,7 +104,7 @@ private:
                fPaintingData->fStitchDataInit == s.fPaintingData->fStitchDataInit;
     }
 
-    GrPerlinNoise2Effect(SkPerlinNoiseShader::Type type,
+    GrPerlinNoise2Effect(SkPerlinNoiseShaderType type,
                          int numOctaves,
                          bool stitchTiles,
                          std::unique_ptr<SkPerlinNoiseShader::PaintingData> paintingData,
@@ -128,7 +129,7 @@ private:
 
     GR_DECLARE_FRAGMENT_PROCESSOR_TEST
 
-    SkPerlinNoiseShader::Type fType;
+    SkPerlinNoiseShaderType fType;
     int fNumOctaves;
     bool fStitchTiles;
 

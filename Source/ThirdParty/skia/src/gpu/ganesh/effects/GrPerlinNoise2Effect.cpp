@@ -24,6 +24,7 @@
 #include "src/gpu/ganesh/glsl/GrGLSLFragmentShaderBuilder.h"
 #include "src/gpu/ganesh/glsl/GrGLSLProgramDataManager.h"
 #include "src/gpu/ganesh/glsl/GrGLSLUniformHandler.h"
+#include "src/shaders/SkPerlinNoiseShaderType.h"
 
 #include <cstdint>
 #include <iterator>
@@ -83,8 +84,8 @@ SkString GrPerlinNoise2Effect::Impl::emitHelper(EmitArgs& args) {
             "floorVal.zw = floorVal.xy + half2(1);"
             "half2 fractVal = fract(noiseVec);"
 
-            // smooth curve : t^2*(3 - 2*t)
-            "half2 noiseSmooth = fractVal*fractVal*(half2(3) - 2*fractVal);"
+            // Hermite interpolation : t^2*(3 - 2*t)
+            "half2 noiseSmooth = smoothstep(0, 1, fractVal);"
     );
 
     // Adjust frequencies if we're stitching tiles
@@ -94,8 +95,8 @@ SkString GrPerlinNoise2Effect::Impl::emitHelper(EmitArgs& args) {
 
     // NOTE: We need to explicitly pass half4(1) as input color here, because the helper function
     // can't see fInputColor (which is "_input" in the FP's outer function). skbug.com/10506
-    SkString sampleX = this->invokeChild(0, "half4(1)", args, "half2(floorVal.x, 0.5)");
-    SkString sampleY = this->invokeChild(0, "half4(1)", args, "half2(floorVal.z, 0.5)");
+    SkString sampleX = this->invokeChild(0, "half4(1)", args, "half2(floorVal.x + 0.5, 0.5)");
+    SkString sampleY = this->invokeChild(0, "half4(1)", args, "half2(floorVal.z + 0.5, 0.5)");
     noiseCode.appendf("half2 latticeIdx = half2(%s.a, %s.a);", sampleX.c_str(), sampleY.c_str());
 
     if (args.fShaderCaps->fPerlinNoiseRoundingFix) {
@@ -112,8 +113,6 @@ SkString GrPerlinNoise2Effect::Impl::emitHelper(EmitArgs& args) {
     // Get (x,y) coordinates with the permuted x
     noiseCode.append("half4 bcoords = 256*latticeIdx.xyxy + floorVal.yyww;");
 
-    noiseCode.append("half2 uv;");
-
     // This is the math to convert the two 16bit integer packed into rgba 8 bit input into a
     // [-1,1] vector and perform a dot product between that vector and the provided vector.
     // Save it as a string because we will repeat it 4x.
@@ -128,31 +127,31 @@ SkString GrPerlinNoise2Effect::Impl::emitHelper(EmitArgs& args) {
 
     // Compute u, at offset (0,0)
     noiseCode.appendf("half4 lattice = %s;", sampleA.c_str());
-    noiseCode.appendf("uv.x = %s;", dotLattice.c_str());
+    noiseCode.appendf("half u = %s;", dotLattice.c_str());
 
     // Compute v, at offset (-1,0)
     noiseCode.append("fractVal.x -= 1.0;");
     noiseCode.appendf("lattice = %s;", sampleB.c_str());
-    noiseCode.appendf("uv.y = %s;", dotLattice.c_str());
+    noiseCode.appendf("half v = %s;", dotLattice.c_str());
 
     // Compute 'a' as a linear interpolation of 'u' and 'v'
-    noiseCode.append("half2 ab;");
-    noiseCode.append("ab.x = mix(uv.x, uv.y, noiseSmooth.x);");
+    noiseCode.append("half a = mix(u, v, noiseSmooth.x);");
 
     // Compute v, at offset (-1,-1)
     noiseCode.append("fractVal.y -= 1.0;");
     noiseCode.appendf("lattice = %s;", sampleC.c_str());
-    noiseCode.appendf("uv.y = %s;", dotLattice.c_str());
+    noiseCode.appendf("v = %s;", dotLattice.c_str());
 
     // Compute u, at offset (0,-1)
     noiseCode.append("fractVal.x += 1.0;");
     noiseCode.appendf("lattice = %s;", sampleD.c_str());
-    noiseCode.appendf("uv.x = %s;", dotLattice.c_str());
+    noiseCode.appendf("u = %s;", dotLattice.c_str());
 
     // Compute 'b' as a linear interpolation of 'u' and 'v'
-    noiseCode.append("ab.y = mix(uv.x, uv.y, noiseSmooth.x);");
+    noiseCode.append("half b = mix(u, v, noiseSmooth.x);");
+
     // Compute the noise as a linear interpolation of 'a' and 'b'
-    noiseCode.append("return mix(ab.x, ab.y, noiseSmooth.y);");
+    noiseCode.append("return mix(a, b, noiseSmooth.y);");
 
     SkString noiseFuncName = fragBuilder->getMangledFunctionName("noiseFuncName");
     if (pne.stitchTiles()) {
@@ -189,9 +188,16 @@ void GrPerlinNoise2Effect::Impl::emitCode(EmitArgs& args) {
         stitchDataUni = uniformHandler->getUniformCStr(fStitchDataUni);
     }
 
-    // There are rounding errors if the floor operation is not performed here
+    // In the past, Perlin noise handled coordinates a bit differently than most shaders.
+    // It operated in device space, floored; it also had a one-pixel transform matrix applied to
+    // both the X and Y coordinates. This is roughly equivalent to adding 0.5 to the coordinates.
+    // This was originally done in order to better match preexisting golden images from WebKit.
+    // Perlin noise now operates in local space, which allows rotation to work correctly. To better
+    // approximate past behavior, we add 0.5 to the coordinates here. This is _not_ the same because
+    // this adjustment is occurring in local space, not device space, but it means that the "same"
+    // noise will be calculated regardless of CTM.
     fragBuilder->codeAppendf(
-            "half2 noiseVec = half2(floor(%s.xy) * %s);", args.fSampleCoord, baseFrequencyUni);
+            "half2 noiseVec = half2((%s + 0.5) * %s);", args.fSampleCoord, baseFrequencyUni);
 
     // Clear the color accumulator
     fragBuilder->codeAppendf("half4 color = half4(0);");
@@ -205,7 +211,7 @@ void GrPerlinNoise2Effect::Impl::emitCode(EmitArgs& args) {
     // Loop over all octaves
     fragBuilder->codeAppendf("for (int octave = 0; octave < %d; ++octave) {", pne.numOctaves());
     fragBuilder->codeAppendf("color += ");
-    if (pne.type() != SkPerlinNoiseShader::kFractalNoise_Type) {
+    if (pne.type() != SkPerlinNoiseShaderType::kFractalNoise) {
         fragBuilder->codeAppend("abs(");
     }
 
@@ -239,7 +245,7 @@ void GrPerlinNoise2Effect::Impl::emitCode(EmitArgs& args) {
                 noiseFuncName.c_str(),
                 chanCoordA);
     }
-    if (pne.type() != SkPerlinNoiseShader::kFractalNoise_Type) {
+    if (pne.type() != SkPerlinNoiseShaderType::kFractalNoise) {
         fragBuilder->codeAppend(")");  // end of "abs("
     }
     fragBuilder->codeAppend(" * ratio;");
@@ -253,7 +259,7 @@ void GrPerlinNoise2Effect::Impl::emitCode(EmitArgs& args) {
     }
     fragBuilder->codeAppend("}");  // end of the for loop on octaves
 
-    if (pne.type() == SkPerlinNoiseShader::kFractalNoise_Type) {
+    if (pne.type() == SkPerlinNoiseShaderType::kFractalNoise) {
         // The value of turbulenceFunctionResult comes from ((turbulenceFunctionResult) + 1) / 2
         // by fractalNoise and (turbulenceFunctionResult) by turbulence.
         fragBuilder->codeAppendf("color = color * half4(0.5) + half4(0.5);");
@@ -285,10 +291,10 @@ void GrPerlinNoise2Effect::onAddToKey(const GrShaderCaps& caps, skgpu::KeyBuilde
     uint32_t key = fNumOctaves;
     key = key << 3;  // Make room for next 3 bits
     switch (fType) {
-        case SkPerlinNoiseShader::kFractalNoise_Type:
+        case SkPerlinNoiseShaderType::kFractalNoise:
             key |= 0x1;
             break;
-        case SkPerlinNoiseShader::kTurbulence_Type:
+        case SkPerlinNoiseShaderType::kTurbulence:
             key |= 0x2;
             break;
         default:

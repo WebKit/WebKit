@@ -29,6 +29,7 @@
 
 class SkArenaAlloc;
 class SkReadBuffer;
+enum class SkPerlinNoiseShaderType;
 class SkWriteBuffer;
 
 class SkPerlinNoiseShader : public SkShaderBase {
@@ -248,20 +249,9 @@ public:
         }
     };  // struct PaintingData
 
-    /**
-     *  About the noise types : the difference between the first 2 is just minor tweaks to the
-     *  algorithm, they're not 2 entirely different noises. The output looks different, but once the
-     *  noise is generated in the [1, -1] range, the output is brought back in the [0, 1] range by
-     *  doing :
-     *  kFractalNoise_Type : noise * 0.5 + 0.5
-     *  kTurbulence_Type   : abs(noise)
-     *  Very little differs between the 2 types, although you can tell the difference visually.
-     */
-    enum Type { kFractalNoise_Type, kTurbulence_Type, kLast_Type = kTurbulence_Type };
-
     static const int kMaxOctaves = 255;  // numOctaves must be <= 0 and <= kMaxOctaves
 
-    SkPerlinNoiseShader(SkPerlinNoiseShader::Type type,
+    SkPerlinNoiseShader(SkPerlinNoiseShaderType type,
                         SkScalar baseFrequencyX,
                         SkScalar baseFrequencyY,
                         int numOctaves,
@@ -289,12 +279,14 @@ public:
         PaintingData fPaintingData;
     };
 
-    SkPerlinNoiseShader::Type noiseType() const { return fType; }
+    SkPerlinNoiseShaderType noiseType() const { return fType; }
     int numOctaves() const { return fNumOctaves; }
     bool stitchTiles() const { return fStitchTiles; }
     SkISize tileSize() const { return fTileSize; }
 
     std::unique_ptr<PaintingData> getPaintingData(const SkMatrix& mat) const {
+        // TODO(b/40045243): the passed-in matrix should be removed once Graphite switches over to
+        // local coordinates
         return std::make_unique<PaintingData>(
                 fTileSize, fSeed, fBaseFrequencyX, fBaseFrequencyY, mat);
     }
@@ -308,7 +300,7 @@ protected:
 private:
     SK_FLATTENABLE_HOOKS(SkPerlinNoiseShader)
 
-    const SkPerlinNoiseShader::Type fType;
+    const SkPerlinNoiseShaderType fType;
     const SkScalar fBaseFrequencyX;
     const SkScalar fBaseFrequencyY;
     const int fNumOctaves;

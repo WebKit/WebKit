@@ -5,27 +5,6 @@ licenses(["notice"])
 exports_files_legacy()
 
 skia_cc_library(
-    name = "target",
-    testonly = True,
-    srcs = ["BenchmarkTarget.cpp"] + select({
-        "//src/gpu:has_ganesh_backend": ["GaneshBenchmarkTarget.cpp"],
-        "//conditions:default": ["RasterBenchmarkTarget.cpp"],
-    }),
-    hdrs = ["BenchmarkTarget.h"],
-    visibility = ["//tools/testrunners/benchmark:__pkg__"],
-    deps = [
-        "//:skia_internal",
-        "//bench:benchmark",
-        "//tools:legacy_tool_utils",
-        "//tools/testrunners/common:testrunner",
-        "//tools/testrunners/common/surface_manager",
-    ] + select({
-        "//src/gpu:has_ganesh_backend": ["//tools/gpu:utils"],
-        "//conditions:default": ["//tools/timer:legacy_timer"],
-    }),
-)
-
-skia_cc_library(
     name = "raster",
     testonly = True,
     srcs = [
@@ -63,5 +42,26 @@ skia_cc_library(
         "//tools/flags:cmd_flags",
         "//tools/testrunners/common:testrunner",
         "//tools/testrunners/common/surface_manager:ganesh_gl",
+    ],
+)
+
+skia_cc_library(
+    name = "ganesh_vulkan",
+    testonly = True,
+    srcs = [
+        "BenchmarkTarget.cpp",
+        "GaneshBenchmarkTarget.cpp",
+    ],
+    hdrs = ["BenchmarkTarget.h"],
+    visibility = ["//bench:__pkg__"],
+    deps = [
+        "//:core",
+        "//bench:benchmark",
+        "//src/base",
+        "//src/gpu/ganesh/vk:ganesh_vulkan_TEST_UTIL",
+        "//tools:tool_utils",
+        "//tools/flags:cmd_flags",
+        "//tools/testrunners/common:testrunner",
+        "//tools/testrunners/common/surface_manager:ganesh_vulkan",
     ],
 )

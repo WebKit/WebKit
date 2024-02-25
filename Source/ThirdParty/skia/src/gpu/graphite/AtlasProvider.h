@@ -40,7 +40,7 @@ public:
         // RasterPathAtlas is supported
         kRaster  = 0b010,
     };
-    SK_DECL_BITMASK_OPS_FRIENDS(PathAtlasFlags);
+    SK_DECL_BITMASK_OPS_FRIENDS(PathAtlasFlags)
     using PathAtlasFlagsBitMask = SkEnumBitMask<PathAtlasFlags>;
 
     // Query the supported path atlas algorithms based on device capabilities.
@@ -80,6 +80,9 @@ public:
 
     // Push any pending uploads to atlases onto the draw context
     void recordUploads(DrawContext*);
+
+    // Handle any post-flush work (garbage collection, e.g.)
+    void postFlush();
 
 private:
     std::unique_ptr<TextAtlasManager> fTextAtlasManager;

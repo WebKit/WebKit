@@ -63,6 +63,7 @@
 #include "src/shaders/SkImageShader.h"
 #include "src/shaders/SkLocalMatrixShader.h"
 #include "src/shaders/SkPerlinNoiseShaderImpl.h"
+#include "src/shaders/SkPerlinNoiseShaderType.h"
 #include "src/shaders/SkPictureShader.h"
 #include "src/shaders/SkRuntimeShader.h"
 #include "src/shaders/SkShaderBase.h"
@@ -337,7 +338,7 @@ GradientShaderBlocks::GradientData::GradientData(SkShaderBase::GradientType type
 }
 
 void GradientShaderBlocks::AddBlock(const KeyContext& keyContext,
-                                    PaintParamsKeyBuilder *builder,
+                                    PaintParamsKeyBuilder* builder,
                                     PipelineDataGatherer* gatherer,
                                     const GradientData& gradData) {
     auto dict = keyContext.dict();
@@ -973,7 +974,9 @@ void RuntimeEffectBlock::BeginBlock(const KeyContext& keyContext,
     ShaderCodeDictionary* dict = keyContext.dict();
     int codeSnippetID = dict->findOrCreateRuntimeEffectSnippet(shaderData.fEffect.get());
 
-    keyContext.rtEffectDict()->set(codeSnippetID, shaderData.fEffect);
+    if (codeSnippetID >= SkKnownRuntimeEffects::kUnknownRuntimeEffectIDStart) {
+        keyContext.rtEffectDict()->set(codeSnippetID, shaderData.fEffect);
+    }
 
     const ShaderSnippet* entry = dict->getEntry(codeSnippetID);
     SkASSERT(entry);
@@ -1557,9 +1560,9 @@ static void add_to_key(const KeyContext& keyContext,
 
 // If either of these change then the corresponding change must also be made in the SkSL
 // perlin_noise_shader function.
-static_assert((int)SkPerlinNoiseShader::kFractalNoise_Type ==
+static_assert((int)SkPerlinNoiseShaderType::kFractalNoise ==
               (int)PerlinNoiseShaderBlock::Type::kFractalNoise);
-static_assert((int)SkPerlinNoiseShader::kTurbulence_Type ==
+static_assert((int)SkPerlinNoiseShaderType::kTurbulence ==
               (int)PerlinNoiseShaderBlock::Type::kTurbulence);
 static void add_to_key(const KeyContext& keyContext,
                        PaintParamsKeyBuilder* builder,
@@ -1568,21 +1571,8 @@ static void add_to_key(const KeyContext& keyContext,
     SkASSERT(shader);
     SkASSERT(shader->numOctaves());
 
-    SkMatrix totalMatrix = keyContext.local2Dev().asM33();
-    if (keyContext.localMatrix()) {
-        totalMatrix.preConcat(*keyContext.localMatrix());
-    }
-
-    SkMatrix invTotal;
-    bool result = totalMatrix.invert(&invTotal);
-    if (!result) {
-        SKGPU_LOG_W("Couldn't invert totalMatrix for PerlinNoiseShader");
-        builder->addBlock(BuiltInCodeSnippetID::kError);
-        return;
-    }
-
     std::unique_ptr<SkPerlinNoiseShader::PaintingData> paintingData =
-        shader->getPaintingData(totalMatrix);
+            shader->getPaintingData(SkMatrix::I());
     paintingData->generateBitmaps();
 
     sk_sp<TextureProxy> perm = RecorderPriv::CreateCachedProxy(
@@ -1606,21 +1596,7 @@ static void add_to_key(const KeyContext& keyContext,
     perlinData.fPermutationsProxy = std::move(perm);
     perlinData.fNoiseProxy = std::move(noise);
 
-    // This (1,1) translation is due to WebKit's 1 based coordinates for the noise
-    // (as opposed to 0 based, usually). Remember: this matrix (shader2World) is going to be
-    // inverted before being applied.
-    SkMatrix shader2Local =
-            SkMatrix::Translate(-1 + totalMatrix.getTranslateX(), -1 + totalMatrix.getTranslateY());
-    shader2Local.postConcat(invTotal);
-
-    LocalMatrixShaderBlock::LMShaderData lmShaderData(shader2Local);
-
-    KeyContextWithLocalMatrix newContext(keyContext, shader2Local);
-
-    LocalMatrixShaderBlock::BeginBlock(newContext, builder, gatherer, lmShaderData);
-        PerlinNoiseShaderBlock::AddBlock(newContext, builder, gatherer, perlinData);
-    builder->endBlock();
-
+    PerlinNoiseShaderBlock::AddBlock(keyContext, builder, gatherer, perlinData);
 }
 
 static void add_to_key(const KeyContext& keyContext,

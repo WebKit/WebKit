@@ -5,25 +5,6 @@ licenses(["notice"])
 exports_files_legacy()
 
 skia_cc_library(
-    name = "surface_manager",
-    testonly = True,
-    srcs = ["SurfaceManager.cpp"] + select({
-        "//src/gpu:gl_ganesh": ["GaneshGLSurfaceManager.cpp"],
-        "//src/gpu:vulkan_ganesh": ["GaneshVulkanSurfaceManager.cpp"],
-        "//conditions:default": ["RasterSurfaceManager.cpp"],
-    }),
-    hdrs = ["SurfaceManager.h"],
-    visibility = ["//tools/testrunners:__subpackages__"],
-    deps = [
-        "//:skia_internal",
-        "//tools:legacy_tool_utils",
-    ] + select({
-        "//src/gpu:has_ganesh_backend": ["//tools/gpu:utils"],
-        "//conditions:default": [],
-    }),
-)
-
-skia_cc_library(
     name = "raster",
     testonly = True,
     srcs = [
@@ -31,7 +12,10 @@ skia_cc_library(
         "SurfaceManager.cpp",
     ],
     hdrs = ["SurfaceManager.h"],
-    visibility = ["//tools/testrunners:__subpackages__"],
+    visibility = [
+        "//gm:__pkg__",
+        "//tools/testrunners:__subpackages__",
+    ],
     deps = [
         "//:core",
         "//src/base",
@@ -47,12 +31,36 @@ skia_cc_library(
         "SurfaceManager.cpp",
     ],
     hdrs = ["SurfaceManager.h"],
-    visibility = ["//tools/testrunners:__subpackages__"],
+    visibility = [
+        "//gm:__pkg__",
+        "//tools/testrunners:__subpackages__",
+    ],
     deps = [
         "//:core",
         "//src/base",
         "//src/gpu/ganesh/gl:ganesh_gl_TEST_UTIL",
         "//tools:tool_utils",
         "//tools/gpu:ganesh_gl_utils",
+    ],
+)
+
+skia_cc_library(
+    name = "ganesh_vulkan",
+    testonly = True,
+    srcs = [
+        "GaneshVulkanSurfaceManager.cpp",
+        "SurfaceManager.cpp",
+    ],
+    hdrs = ["SurfaceManager.h"],
+    visibility = [
+        "//gm:__pkg__",
+        "//tools/testrunners:__subpackages__",
+    ],
+    deps = [
+        "//:core",
+        "//src/base",
+        "//src/gpu/ganesh/vk:ganesh_vulkan_TEST_UTIL",
+        "//tools:tool_utils",
+        "//tools/gpu:ganesh_vulkan_utils",
     ],
 )
