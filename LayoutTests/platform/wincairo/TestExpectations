@@ -2779,6 +2779,10 @@ webkit.org/b/269863 [ Debug ] imported/w3c/web-platform-tests/css/css-view-trans
 webkit.org/b/269863 [ Debug ] imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-right-of-viewport-offscreen-new.html [ Skip ] # Crash
 webkit.org/b/269863 [ Debug ] imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-right-of-viewport-offscreen-old.html [ Skip ] # Crash
 
+imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-below-and-on-top-of-viewport-partially-onscreen-old.html [ Skip ] # Crash
+imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-on-top-of-viewport-offscreen-new.html [ Skip ] # Crash
+imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-on-top-of-viewport-partially-onscreen-old.html [ Skip ] # Crash
+
 [ Debug ] imported/w3c/web-platform-tests/css/css-view-transitions/animating-new-content-subset.html [ Skip ] # Crash
 [ Debug ] imported/w3c/web-platform-tests/css/css-view-transitions/animating-new-content.html [ Skip ] # Crash
 imported/w3c/web-platform-tests/css/css-view-transitions/offscreen-element-modified-before-coming-onscreen.html [ Skip ] # Crash
