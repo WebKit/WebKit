@@ -85,6 +85,8 @@ RUN --mount=type=tmpfs,target=/webkitbuild \
     mkdir -p /output/Source/JavaScriptCore && \
     cp -r /webkit/Source/JavaScriptCore/Scripts /output/Source/JavaScriptCore && \
     cp /webkit/Source/JavaScriptCore/create_hash_table /output/Source/JavaScriptCore && \
+    rm -rf /output/include/unicode && \
+    cp -r /usr/include/unicode /output/include/unicode && \
     echo "";
 
 
