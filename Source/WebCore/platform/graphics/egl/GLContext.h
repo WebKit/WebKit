@@ -20,6 +20,7 @@
 #pragma once
 
 #if USE(EGL)
+#include "GLContextWrapper.h"
 #include "IntSize.h"
 #include "PlatformDisplay.h"
 #include <wtf/Noncopyable.h>
@@ -43,7 +44,7 @@ typedef void* EGLSurface;
 
 namespace WebCore {
 
-class GLContext {
+class GLContext final : public GLContextWrapper {
     WTF_MAKE_NONCOPYABLE(GLContext); WTF_MAKE_FAST_ALLOCATED;
 public:
     WEBCORE_EXPORT static std::unique_ptr<GLContext> create(GLNativeWindowType, PlatformDisplay&);
@@ -85,6 +86,7 @@ public:
         ~ScopedGLContext();
     private:
         struct {
+            GLContext* glContext { nullptr };
             EGLDisplay display { nullptr };
             EGLContext context { nullptr };
             EGLSurface readSurface { nullptr };
@@ -122,6 +124,11 @@ private:
 #endif
 
     static bool getEGLConfig(PlatformDisplay&, EGLConfig*, EGLSurfaceType);
+
+    // GLContextWrapper
+    GLContextWrapper::Type type() const override { return GLContextWrapper::Type::Native; }
+    bool makeCurrentImpl() override;
+    bool unmakeCurrentImpl() override;
 
     PlatformDisplay& m_display;
     unsigned m_version { 0 };
