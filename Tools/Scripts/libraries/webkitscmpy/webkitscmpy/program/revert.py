@@ -46,7 +46,7 @@ class Revert(Command):
     def parser(cls, parser, loggers=None):
         PullRequest.parser(parser, loggers=loggers)
         parser.add_argument(
-            'commit',
+            'commit_id',
             nargs='+',
             help='git hash, svn revision or identifier of commits to revert'
         )
@@ -70,7 +70,7 @@ class Revert(Command):
         commit_objects = []
         commit_issues = {}
 
-        for c in args.commit:
+        for c in args.commit_id:
             try:
                 commit = repository.find(c, include_log=True)
             except (local.Scm.Exception, ValueError) as exception:
@@ -165,7 +165,7 @@ class Revert(Command):
                 commit_identifiers.append('{}@{}'.format(commit.identifier, commit.branch))
                 reverted_changeset += '\nhttps://commits.webkit.org/{}@{}\n'.format(commit.identifier, commit.branch)
             else:
-                sys.stderr.write('Could not find "{}"'.format(', '.join(args.commit)) + '\n')
+                sys.stderr.write('Could not find "{}"'.format(', '.join(args.commit_id)) + '\n')
                 return None, None
 
         # Retrieve information for the issue tracking the revert
@@ -218,7 +218,8 @@ class Revert(Command):
             bug=[issue],
         )
 
-        result = run([repository.executable(), 'commit', '--date=now'], cwd=repository.root_path, env=os.environ)
+        if args.commit:
+            result = run([repository.executable(), 'commit', '--date=now'], cwd=repository.root_path, env=os.environ)
         if result.returncode:
             run([repository.executable(), 'revert', '--abort'], cwd=repository.root_path)
             sys.stderr.write('Failed revert commit')
@@ -257,7 +258,7 @@ class Revert(Command):
             return 1
 
         if repository.modified():
-            sys.stderr.write('Please commit your changes or stash them before you revert commit: {}'.format(', '.join(args.commit)))
+            sys.stderr.write('Please commit your changes or stash them before you revert commit: {}'.format(', '.join(args.commit_id)))
             return 1
 
         if not PullRequest.check_pull_request_args(repository, args):
@@ -266,6 +267,12 @@ class Revert(Command):
         commit_objects, commit_issues = cls.get_commit_info(args, repository, **kwargs)
         if not commit_objects:
             return 1
+
+        # Overrides PR args.commit to set default as True
+        if args.commit is None:
+            args.commit = True
+        if not args.commit:
+            return cls.revert_commit(args, repository, None, commit_objects, **kwargs)
 
         issue = cls.get_issue_info(args, repository, commit_objects, commit_issues, **kwargs)
         if not issue:
