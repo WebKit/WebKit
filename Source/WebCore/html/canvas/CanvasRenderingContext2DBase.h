@@ -223,8 +223,6 @@ public:
     void putImageData(ImageData&, int dx, int dy);
     void putImageData(ImageData&, int dx, int dy, int dirtyX, int dirtyY, int dirtyWidth, int dirtyHeight);
 
-    static constexpr float webkitBackingStorePixelRatio() { return 1; }
-
     void reset();
 
     bool imageSmoothingEnabled() const { return state().imageSmoothingEnabled; }
