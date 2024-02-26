@@ -121,10 +121,12 @@ void WebSocketTask::didOpen(WebCore::CurlStreamID)
     CString cookieHeader;
 
     if (m_request.allowCookies()) {
-        auto includeSecureCookies = m_request.url().protocolIs("wss"_s) ? WebCore::IncludeSecureCookies::Yes : WebCore::IncludeSecureCookies::No;
-        auto cookieHeaderField = m_channel.session()->networkStorageSession()->cookieRequestHeaderFieldValue(m_request.firstPartyForCookies(), WebCore::SameSiteInfo::create(m_request), m_request.url(), std::nullopt, std::nullopt, includeSecureCookies, WebCore::ApplyTrackingPrevention::Yes, WebCore::ShouldRelaxThirdPartyCookieBlocking::No).first;
-        if (!cookieHeaderField.isEmpty())
-            cookieHeader = makeString("Cookie: "_s, cookieHeaderField, "\r\n"_s).utf8();
+        if (auto* storageSession = networkSession() ? networkSession()->networkStorageSession() : nullptr) {
+            auto includeSecureCookies = m_request.url().protocolIs("wss"_s) ? WebCore::IncludeSecureCookies::Yes : WebCore::IncludeSecureCookies::No;
+            auto cookieHeaderField = storageSession->cookieRequestHeaderFieldValue(m_request.firstPartyForCookies(), WebCore::SameSiteInfo::create(m_request), m_request.url(), std::nullopt, std::nullopt, includeSecureCookies, WebCore::ApplyTrackingPrevention::Yes, WebCore::ShouldRelaxThirdPartyCookieBlocking::No).first;
+            if (!cookieHeaderField.isEmpty())
+                cookieHeader = makeString("Cookie: "_s, cookieHeaderField, "\r\n"_s).utf8();
+        }
     }
 
     auto originalMessage = m_handshake->clientHandshakeMessage();
@@ -300,8 +302,10 @@ Expected<bool, String> WebSocketTask::validateOpeningHandshake()
     }
 
     auto serverSetCookie = m_handshake->serverSetCookie();
-    if (!serverSetCookie.isEmpty())
-        m_channel.session()->networkStorageSession()->setCookiesFromHTTPResponse(m_request.firstPartyForCookies(), m_request.url(), serverSetCookie);
+    if (!serverSetCookie.isEmpty()) {
+        if (auto* storageSession = networkSession() ? networkSession()->networkStorageSession() : nullptr)
+            storageSession->setCookiesFromHTTPResponse(m_request.firstPartyForCookies(), m_request.url(), serverSetCookie);
+    }
 
     m_state = State::Opened;
     m_didCompleteOpeningHandshake = true;
