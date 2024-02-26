@@ -56,6 +56,8 @@ private:
     HTMLDetailsElement(const QualifiedName&, Document&);
 
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
+    void didFinishInsertingNode() final;
+
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
     Vector<RefPtr<HTMLDetailsElement>> otherElementsInNameGroup();
     void ensureDetailsExclusivityAfterMutation();
