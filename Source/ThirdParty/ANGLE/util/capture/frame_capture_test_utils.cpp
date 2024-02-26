@@ -232,11 +232,6 @@ TraceLibrary::TraceLibrary(const std::string &traceName, const TraceInfo &traceI
     libNameStr << "lib";
 #endif  // !defined(ANGLE_PLATFORM_WINDOWS)
     libNameStr << traceName;
-#if defined(ANGLE_PLATFORM_ANDROID) && defined(COMPONENT_BUILD)
-    // Added to shared library names in Android component builds in
-    // https://chromium.googlesource.com/chromium/src/+/9bacc8c4868cc802f69e1e858eea6757217a508f/build/toolchain/toolchain.gni#56
-    libNameStr << ".cr";
-#endif  // defined(ANGLE_PLATFORM_ANDROID) && defined(COMPONENT_BUILD)
     std::string libName = libNameStr.str();
     std::string loadError;
     mTraceLibrary.reset(OpenSharedLibraryAndGetError(libName.c_str(), searchType, &loadError));

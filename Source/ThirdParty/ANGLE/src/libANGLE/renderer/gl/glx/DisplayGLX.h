@@ -15,6 +15,7 @@
 #include "common/Optional.h"
 #include "libANGLE/renderer/gl/DisplayGL.h"
 #include "libANGLE/renderer/gl/RendererGL.h"
+
 #include "libANGLE/renderer/gl/glx/FunctionsGLX.h"
 
 namespace rx

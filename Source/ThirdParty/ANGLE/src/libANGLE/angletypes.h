@@ -1010,6 +1010,9 @@ using DrawBuffersVector = angle::FixedVector<T, IMPLEMENTATION_MAX_DRAW_BUFFERS>
 template <typename T>
 using AttribArray = std::array<T, MAX_VERTEX_ATTRIBS>;
 
+template <typename T>
+using AttribVector = angle::FixedVector<T, MAX_VERTEX_ATTRIBS>;
+
 using ActiveTextureMask = angle::BitSet<IMPLEMENTATION_MAX_ACTIVE_TEXTURES>;
 
 template <typename T>

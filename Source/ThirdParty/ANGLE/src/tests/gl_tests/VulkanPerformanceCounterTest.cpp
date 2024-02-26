@@ -7,14 +7,9 @@
 //   Validates specific GL call patterns with ANGLE performance counters.
 //   For example we can verify a certain call set doesn't break the render pass.
 
+#include "include/platform/Feature.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/angle_test_instantiate.h"
-// 'None' is defined as 'struct None {};' in
-// third_party/googletest/src/googletest/include/gtest/internal/gtest-type-util.h.
-// But 'None' is also defined as a numeric constant 0L in <X11/X.h>.
-// So we need to include ANGLETest.h first to avoid this conflict.
-
-#include "include/platform/Feature.h"
 #include "test_utils/gl_raii.h"
 #include "util/random_utils.h"
 #include "util/shader_utils.h"

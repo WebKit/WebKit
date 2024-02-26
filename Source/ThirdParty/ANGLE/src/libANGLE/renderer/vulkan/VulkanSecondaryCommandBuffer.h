@@ -194,6 +194,10 @@ class VulkanSecondaryCommandBuffer : public priv::CommandBuffer
                        const void *data);
 
     void setEvent(VkEvent event, VkPipelineStageFlags stageMask);
+    void setVertexInput(uint32_t vertexBindingDescriptionCount,
+                        const VkVertexInputBindingDescription2EXT *vertexBindingDescriptions,
+                        uint32_t vertexAttributeDescriptionCount,
+                        const VkVertexInputAttributeDescription2EXT *vertexAttributeDescriptions);
     void resetEvent(VkEvent event, VkPipelineStageFlags stageMask);
     void resetQueryPool(const QueryPool &queryPool, uint32_t firstQuery, uint32_t queryCount);
     void resolveImage(const Image &srcImage,
@@ -565,6 +569,17 @@ ANGLE_INLINE void VulkanSecondaryCommandBuffer::setEvent(VkEvent event,
 {
     onRecordCommand();
     CommandBuffer::setEvent(event, stageMask);
+}
+
+ANGLE_INLINE void VulkanSecondaryCommandBuffer::setVertexInput(
+    uint32_t vertexBindingDescriptionCount,
+    const VkVertexInputBindingDescription2EXT *vertexBindingDescriptions,
+    uint32_t vertexAttributeDescriptionCount,
+    const VkVertexInputAttributeDescription2EXT *vertexAttributeDescriptions)
+{
+    onRecordCommand();
+    CommandBuffer::setVertexInput(vertexBindingDescriptionCount, vertexBindingDescriptions,
+                                  vertexAttributeDescriptionCount, vertexAttributeDescriptions);
 }
 
 ANGLE_INLINE void VulkanSecondaryCommandBuffer::resetEvent(VkEvent event,

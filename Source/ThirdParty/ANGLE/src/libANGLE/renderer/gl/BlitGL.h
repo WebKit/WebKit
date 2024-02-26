@@ -161,6 +161,12 @@ class BlitGL : angle::NonCopyable
                                                    gl::TextureTarget target,
                                                    size_t level);
 
+    angle::Result generateMipmap(const gl::Context *context,
+                                 TextureGL *source,
+                                 GLuint baseLevel,
+                                 GLuint levelCount,
+                                 const gl::Extents &sourceBaseLevelSize,
+                                 const nativegl::TexImageFormat &format);
     angle::Result generateSRGBMipmap(const gl::Context *context,
                                      TextureGL *source,
                                      GLuint baseLevel,

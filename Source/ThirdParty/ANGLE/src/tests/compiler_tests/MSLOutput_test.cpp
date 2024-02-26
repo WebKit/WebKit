@@ -21,6 +21,7 @@ class MSLVertexOutputTest : public MatchOutputCodeTest
     MSLVertexOutputTest() : MatchOutputCodeTest(GL_VERTEX_SHADER, SH_MSL_METAL_OUTPUT)
     {
         ShCompileOptions defaultCompileOptions = {};
+        defaultCompileOptions.validateAST      = true;
         setDefaultCompileOptions(defaultCompileOptions);
     }
 };
@@ -32,6 +33,7 @@ class MSLOutputTest : public MatchOutputCodeTest
     {
         ShCompileOptions defaultCompileOptions       = {};
         defaultCompileOptions.rescopeGlobalVariables = true;
+        defaultCompileOptions.validateAST            = true;
         setDefaultCompileOptions(defaultCompileOptions);
     }
 };
@@ -856,6 +858,19 @@ TEST_F(MSLOutputTest, RemovedForBodyNoCrash)
     const char kShader[] = R"(#version 310 es
 void main() {
     for(;;)if(2==0);
+})";
+    compile(kShader);
+}
+
+// Test that accessing array element of array of anonymous struct instances does not fail
+// validation.
+TEST_F(MSLOutputTest, AnonymousStructArrayValidationNoCrash)
+{
+    const char kShader[] = R"(
+precision mediump float;
+void main() {
+    struct { vec4 field; } s1[1];
+    gl_FragColor = s1[0].field;
 })";
     compile(kShader);
 }

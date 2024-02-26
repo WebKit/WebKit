@@ -105,6 +105,7 @@ if(angle_use_x11)
     list(APPEND gl_backend_sources
         "src/libANGLE/renderer/gl/glx/DisplayGLX.cpp"
         "src/libANGLE/renderer/gl/glx/DisplayGLX.h"
+        "src/libANGLE/renderer/gl/glx/DisplayGLX_api.h"
         "src/libANGLE/renderer/gl/glx/FunctionsGLX.cpp"
         "src/libANGLE/renderer/gl/glx/FunctionsGLX.h"
         "src/libANGLE/renderer/gl/glx/PbufferSurfaceGLX.cpp"

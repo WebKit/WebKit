@@ -671,7 +671,7 @@ void Shader::compile(const Context *context, angle::JobResultExpectancy resultEx
         egl::CacheGetResult result = shaderCache->getShader(context, this, mShaderHash);
         switch (result)
         {
-            case egl::CacheGetResult::GetSuccess:
+            case egl::CacheGetResult::Success:
                 return;
             case egl::CacheGetResult::Rejected:
                 // Reset the state

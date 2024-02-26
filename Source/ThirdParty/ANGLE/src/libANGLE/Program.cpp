@@ -989,7 +989,7 @@ angle::Result Program::link(const Context *context, angle::JobResultExpectancy r
 
         switch (result)
         {
-            case egl::CacheGetResult::GetSuccess:
+            case egl::CacheGetResult::Success:
             {
                 // No need to care about the compile jobs any more.
                 mState.mShaderCompileJobs = {};
@@ -1454,7 +1454,7 @@ angle::Result Program::loadBinary(const Context *context,
     mLinkingState->linkingFromBinary = true;
     mLinkingState->linkEvent         = std::move(loadEvent);
 
-    *resultOut = egl::CacheGetResult::GetSuccess;
+    *resultOut = egl::CacheGetResult::Success;
 
     return angle::Result::Continue;
 }

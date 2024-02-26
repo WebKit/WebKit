@@ -434,6 +434,11 @@ EGLAPI void *EGLAPIENTRY eglCopyMetalSharedEventANGLE(EGLDisplay dpy, EGLSync sy
 #endif
 #endif /* EGL_ANGLE_metal_shared_event_sync */
 
+#ifndef EGL_ANGLE_global_fence_sync
+#define EGL_ANGLE_global_fence_sync 1
+#define EGL_SYNC_GLOBAL_FENCE_ANGLE 0x34DE
+#endif /* EGL_ANGLE_global_fence_sync */
+
 // clang-format on
 
 #endif  // INCLUDE_EGL_EGLEXT_ANGLE_

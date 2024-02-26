@@ -182,8 +182,8 @@
 
 7581 : FramebufferTest_ES3.BlitWithDifferentPreRotations/* = SKIP_FOR_CAPTURE
 
-7814 WIN : PBOExtensionTest.PBOWithExistingData/ES2_Vulkan_SwiftShader = FLAKY
-7814 WIN : PBOExtensionTest.PBOWithOtherTarget/ES2_Vulkan_SwiftShader = FLAKY
+7814 WIN : PBOExtensionTest.PBOWithExistingData/* = FLAKY
+7814 WIN : PBOExtensionTest.PBOWithOtherTarget/* = FLAKY
 
 # Related to uninitialized memory/buffers when using image suballocation
 8033 WIN : FramebufferTestWithFormatFallback.R4G4B4A4_OutOfRangeStagedUpdateReformated/* = SKIP_FOR_CAPTURE
@@ -203,3 +203,5 @@
 # No support yet for Capture/Replay of QCOM foveated extensions
 8484 : Texture2DTestES3Foveation.FoveatedFBDraw/* = SKIP_FOR_CAPTURE
 8484 : Texture2DTestES3Foveation.FoveatedTextureDraw/* = SKIP_FOR_CAPTURE
+
+8539 : EGLSyncTest.GlobalFenceSync/* = FAIL

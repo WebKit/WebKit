@@ -4857,16 +4857,16 @@ angle::Result BufferHelper::init(Context *context,
     return angle::Result::Continue;
 }
 
-angle::Result BufferHelper::initExternal(ContextVk *contextVk,
+angle::Result BufferHelper::initExternal(Context *context,
                                          VkMemoryPropertyFlags memoryProperties,
                                          const VkBufferCreateInfo &requestedCreateInfo,
                                          GLeglClientBufferEXT clientBuffer)
 {
     ASSERT(IsAndroid());
 
-    RendererVk *renderer = contextVk->getRenderer();
+    RendererVk *renderer = context->getRenderer();
 
-    initializeBarrierTracker(contextVk);
+    initializeBarrierTracker(context);
 
     VkBufferCreateInfo modifiedCreateInfo             = requestedCreateInfo;
     VkExternalMemoryBufferCreateInfo externCreateInfo = {};
@@ -4877,39 +4877,41 @@ angle::Result BufferHelper::initExternal(ContextVk *contextVk,
     modifiedCreateInfo.pNext = &externCreateInfo;
 
     DeviceScoped<Buffer> buffer(renderer->getDevice());
-    ANGLE_VK_TRY(contextVk, buffer.get().init(renderer->getDevice(), modifiedCreateInfo));
+    ANGLE_VK_TRY(context, buffer.get().init(renderer->getDevice(), modifiedCreateInfo));
 
     DeviceScoped<DeviceMemory> deviceMemory(renderer->getDevice());
     VkMemoryPropertyFlags memoryPropertyFlagsOut;
     VkDeviceSize allocatedSize = 0;
     uint32_t memoryTypeIndex;
-    ANGLE_TRY(InitAndroidExternalMemory(contextVk, clientBuffer, memoryProperties, &buffer.get(),
+    ANGLE_TRY(InitAndroidExternalMemory(context, clientBuffer, memoryProperties, &buffer.get(),
                                         &memoryPropertyFlagsOut, &memoryTypeIndex,
                                         &deviceMemory.get(), &allocatedSize));
     mClientBuffer = clientBuffer;
 
-    mSuballocation.initWithEntireBuffer(
-        contextVk, buffer.get(), MemoryAllocationType::BufferExternal, memoryTypeIndex,
-        deviceMemory.get(), memoryPropertyFlagsOut, requestedCreateInfo.size, allocatedSize);
+    mSuballocation.initWithEntireBuffer(context, buffer.get(), MemoryAllocationType::BufferExternal,
+                                        memoryTypeIndex, deviceMemory.get(), memoryPropertyFlagsOut,
+                                        requestedCreateInfo.size, allocatedSize);
     if (isHostVisible())
     {
         uint8_t *ptrOut;
-        ANGLE_TRY(map(contextVk, &ptrOut));
+        ANGLE_TRY(map(context, &ptrOut));
     }
     return angle::Result::Continue;
 }
 
-VkResult BufferHelper::initSuballocation(ContextVk *contextVk,
+VkResult BufferHelper::initSuballocation(Context *context,
                                          uint32_t memoryTypeIndex,
                                          size_t size,
                                          size_t alignment,
-                                         BufferUsageType usageType)
+                                         BufferUsageType usageType,
+                                         BufferPool *pool)
 {
-    RendererVk *renderer = contextVk->getRenderer();
+    ASSERT(pool != nullptr);
+    RendererVk *renderer = context->getRenderer();
 
     // We should reset these in case the BufferHelper object has been released and called
     // initSuballocation again.
-    initializeBarrierTracker(contextVk);
+    initializeBarrierTracker(context);
 
     if (renderer->getFeatures().padBuffersToMaxVertexAttribStride.enabled)
     {
@@ -4918,10 +4920,9 @@ VkResult BufferHelper::initSuballocation(ContextVk *contextVk,
         size += maxVertexAttribStride;
     }
 
-    vk::BufferPool *pool = contextVk->getDefaultBufferPool(size, memoryTypeIndex, usageType);
-    VK_RESULT_TRY(pool->allocateBuffer(contextVk, size, alignment, &mSuballocation));
+    VK_RESULT_TRY(pool->allocateBuffer(context, size, alignment, &mSuballocation));
 
-    contextVk->getPerfCounters().bufferSuballocationCalls++;
+    context->getPerfCounters().bufferSuballocationCalls++;
 
     return VK_SUCCESS;
 }
@@ -5109,31 +5110,6 @@ void BufferHelper::releaseBufferAndDescriptorSetCache(RendererVk *renderer)
     release(renderer);
 }
 
-angle::Result BufferHelper::copyFromBuffer(ContextVk *contextVk,
-                                           BufferHelper *srcBuffer,
-                                           uint32_t regionCount,
-                                           const VkBufferCopy *copyRegions)
-{
-    // Check for self-dependency.
-    vk::CommandBufferAccess access;
-    if (srcBuffer->getBufferSerial() == getBufferSerial())
-    {
-        access.onBufferSelfCopy(this);
-    }
-    else
-    {
-        access.onBufferTransferRead(srcBuffer);
-        access.onBufferTransferWrite(this);
-    }
-
-    OutsideRenderPassCommandBuffer *commandBuffer;
-    ANGLE_TRY(contextVk->getOutsideRenderPassCommandBuffer(access, &commandBuffer));
-
-    commandBuffer->copyBuffer(srcBuffer->getBuffer(), getBuffer(), regionCount, copyRegions);
-
-    return angle::Result::Continue;
-}
-
 angle::Result BufferHelper::map(Context *context, uint8_t **ptrOut)
 {
     if (!mSuballocation.isMapped())
@@ -5144,10 +5120,10 @@ angle::Result BufferHelper::map(Context *context, uint8_t **ptrOut)
     return angle::Result::Continue;
 }
 
-angle::Result BufferHelper::mapWithOffset(ContextVk *contextVk, uint8_t **ptrOut, size_t offset)
+angle::Result BufferHelper::mapWithOffset(Context *context, uint8_t **ptrOut, size_t offset)
 {
     uint8_t *mapBufPointer;
-    ANGLE_TRY(map(contextVk, &mapBufPointer));
+    ANGLE_TRY(map(context, &mapBufPointer));
     *ptrOut = mapBufPointer + offset;
     return angle::Result::Continue;
 }
@@ -5191,8 +5167,7 @@ void BufferHelper::changeQueue(uint32_t newQueueFamilyIndex,
     mCurrentQueueFamilyIndex = newQueueFamilyIndex;
 }
 
-void BufferHelper::acquireFromExternal(ContextVk *contextVk,
-                                       uint32_t externalQueueFamilyIndex,
+void BufferHelper::acquireFromExternal(uint32_t externalQueueFamilyIndex,
                                        uint32_t rendererQueueFamilyIndex,
                                        OutsideRenderPassCommandBuffer *commandBuffer)
 {
@@ -5201,8 +5176,7 @@ void BufferHelper::acquireFromExternal(ContextVk *contextVk,
     changeQueue(rendererQueueFamilyIndex, commandBuffer);
 }
 
-void BufferHelper::releaseToExternal(ContextVk *contextVk,
-                                     uint32_t rendererQueueFamilyIndex,
+void BufferHelper::releaseToExternal(uint32_t rendererQueueFamilyIndex,
                                      uint32_t externalQueueFamilyIndex,
                                      OutsideRenderPassCommandBuffer *commandBuffer)
 {

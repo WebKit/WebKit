@@ -247,7 +247,7 @@ BlobCache::GetAndDecompressResult BlobCache::getAndDecompress(
         }
     }
 
-    return GetAndDecompressResult::GetSuccess;
+    return GetAndDecompressResult::Success;
 }
 
 void BlobCache::remove(const BlobCache::Key &key)

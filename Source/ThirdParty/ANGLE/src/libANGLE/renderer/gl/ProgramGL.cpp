@@ -215,7 +215,7 @@ angle::Result ProgramGL::load(const gl::Context *context,
     executableGL->reapplyUBOBindings();
 
     *loadTaskOut = {};
-    *resultOut   = egl::CacheGetResult::GetSuccess;
+    *resultOut   = egl::CacheGetResult::Success;
 
     return angle::Result::Continue;
 }

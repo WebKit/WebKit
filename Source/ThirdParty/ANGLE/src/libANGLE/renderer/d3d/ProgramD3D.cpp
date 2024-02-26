@@ -610,7 +610,7 @@ angle::Result ProgramD3D::load(const gl::Context *context,
 
     // Note: pretty much all the above can also be moved to the task
     *loadTaskOut = std::shared_ptr<LinkTask>(new LoadTaskD3D(this, std::move(streamData)));
-    *resultOut   = egl::CacheGetResult::GetSuccess;
+    *resultOut   = egl::CacheGetResult::Success;
 
     return angle::Result::Continue;
 }

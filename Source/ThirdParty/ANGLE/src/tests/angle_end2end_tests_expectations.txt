@@ -31,6 +31,8 @@
 7881 VULKAN : MultithreadingTestES3.UnsynchronizedTextureReads2/* = SKIP
 // Incorrectly handled pretty much in all backends
 8446 : CopyTexImageTestES3.RedefineSameLevel/* = SKIP
+// Currently fails on WebGPU as it's not fully implemented yet.
+8485 WGPU : RendererTest.* = SKIP
 
 6743 OPENGL : SimpleStateChangeTestES3.RespecifyBufferAfterBeginTransformFeedback/* = SKIP
 6743 GLES : SimpleStateChangeTestES3.RespecifyBufferAfterBeginTransformFeedback/* = SKIP

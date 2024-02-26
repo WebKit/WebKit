@@ -58,7 +58,7 @@ class SharedFence final
     SharedFence(const SharedFence &other);
     SharedFence(SharedFence &&other);
     ~SharedFence();
-    // Copy assignment will add reference count to the underline object
+    // Copy assignment will add reference count to the underlying object
     SharedFence &operator=(const SharedFence &other);
     // Move assignment will move reference count from other to this object
     SharedFence &operator=(SharedFence &&other);
@@ -69,7 +69,7 @@ class SharedFence final
     void destroy(VkDevice device);
     // Release the vkFence (to recycler)
     void release();
-    // Return true if underline VkFence is valid
+    // Return true if the underlying VkFence is valid
     operator bool() const;
     const Fence &get() const
     {
@@ -529,7 +529,7 @@ class CommandQueue : angle::NonCopyable
     // Queue serial management.
     AtomicQueueSerialFixedArray mLastSubmittedSerials;
     // This queue serial can be read/write from different threads, so we need to use atomic
-    // operations to access the underline value. Since we only do load/store on this value, it
+    // operations to access the underlying value. Since we only do load/store on this value, it
     // should be just a normal uint64_t load/store on most platforms.
     AtomicQueueSerialFixedArray mLastCompletedSerials;
 

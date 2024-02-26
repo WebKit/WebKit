@@ -29,7 +29,7 @@ void FenceNVVk::onDestroy(const gl::Context *context)
 angle::Result FenceNVVk::set(const gl::Context *context, GLenum condition)
 {
     ASSERT(condition == GL_ALL_COMPLETED_NV);
-    return mFenceSync.initialize(vk::GetImpl(context), false);
+    return mFenceSync.initialize(vk::GetImpl(context), SyncFenceScope::CurrentContextToShareGroup);
 }
 
 angle::Result FenceNVVk::test(const gl::Context *context, GLboolean *outFinished)

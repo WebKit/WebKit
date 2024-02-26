@@ -3005,11 +3005,6 @@ TEST_P(CopyTextureTestES3, DrawThenCopyThenBlend)
                          GLColor::transparentBlack);
 }
 
-#ifdef Bool
-// X11 craziness.
-#    undef Bool
-#endif
-
 ANGLE_INSTANTIATE_TEST_ES2(CopyTextureTest);
 ANGLE_INSTANTIATE_TEST_COMBINE_6(CopyTextureVariationsTest,
                                  CopyTextureVariationsTestPrint,

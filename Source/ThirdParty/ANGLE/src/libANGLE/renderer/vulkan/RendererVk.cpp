@@ -250,6 +250,7 @@ constexpr const char *kSkippedMessages[] = {
     "VUID-VkGraphicsPipelineCreateInfo-Input-07905",
     "VUID-vkCmdDrawIndexed-None-07835",
     "VUID-VkGraphicsPipelineCreateInfo-Input-08733",
+    "VUID-vkCmdDraw-Input-08734",
     // http://anglebug.com/8151
     "VUID-vkCmdDraw-None-07844",
     "VUID-vkCmdDraw-None-07845",
@@ -292,6 +293,9 @@ constexpr const char *kSkippedMessages[] = {
     "VUID-vkCmdEndDebugUtilsLabelEXT-commandBuffer-01912",
     // https://anglebug.com/8522
     "VUID-VkPipelineVertexInputStateCreateInfo-pNext-pNext",
+    // https://issuetracker.google.com/319228278
+    "VUID-vkCmdDrawIndexed-format-07753",
+    "VUID-vkCmdDraw-format-07753",
 };
 
 // Validation messages that should be ignored only when VK_EXT_primitive_topology_list_restart is
@@ -2161,6 +2165,7 @@ angle::Result RendererVk::initializeMemoryAllocator(DisplayVk *displayVk)
 //                                                     pCopyDstLayouts (property),
 //                                                     identicalMemoryTypeRequirements (property)
 // - VK_ANDROID_external_format_resolve:               externalFormatResolve (feature)
+// - VK_EXT_vertex_input_dynamic_state:                vertexInputDynamicState (feature)
 //
 void RendererVk::appendDeviceExtensionFeaturesNotPromoted(
     const vk::ExtensionNameList &deviceExtensionNames,
@@ -2314,6 +2319,11 @@ void RendererVk::appendDeviceExtensionFeaturesNotPromoted(
 
         vk::AddToPNextChain(deviceFeatures, &mHostImageCopyFeatures);
         vk::AddToPNextChain(deviceProperties, &mHostImageCopyProperties);
+    }
+
+    if (ExtensionFound(VK_EXT_VERTEX_INPUT_DYNAMIC_STATE_EXTENSION_NAME, deviceExtensionNames))
+    {
+        vk::AddToPNextChain(deviceFeatures, &mVertexInputDynamicStateFeatures);
     }
 
 #if defined(ANGLE_PLATFORM_ANDROID)
@@ -2573,6 +2583,10 @@ void RendererVk::queryDeviceExtensionFeatures(const vk::ExtensionNameList &devic
     mGraphicsPipelineLibraryProperties.sType =
         VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GRAPHICS_PIPELINE_LIBRARY_PROPERTIES_EXT;
 
+    mVertexInputDynamicStateFeatures = {};
+    mVertexInputDynamicStateFeatures.sType =
+        VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_INPUT_DYNAMIC_STATE_FEATURES_EXT;
+
     mFragmentShadingRateFeatures = {};
     mFragmentShadingRateFeatures.sType =
         VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_FEATURES_KHR;
@@ -2681,6 +2695,7 @@ void RendererVk::queryDeviceExtensionFeatures(const vk::ExtensionNameList &devic
     mExtendedDynamicState2Features.pNext                    = nullptr;
     mGraphicsPipelineLibraryFeatures.pNext                  = nullptr;
     mGraphicsPipelineLibraryProperties.pNext                = nullptr;
+    mVertexInputDynamicStateFeatures.pNext                  = nullptr;
     mFragmentShadingRateFeatures.pNext                      = nullptr;
     mFragmentShaderInterlockFeatures.pNext                  = nullptr;
     mImagelessFramebufferFeatures.pNext                     = nullptr;
@@ -2989,6 +3004,12 @@ void RendererVk::enableDeviceExtensionsNotPromoted(
         vk::AddToPNextChain(&mEnabledFeatures, &mHostImageCopyFeatures);
     }
 
+    if (getFeatures().supportsVertexInputDynamicState.enabled)
+    {
+        mEnabledDeviceExtensions.push_back(VK_EXT_VERTEX_INPUT_DYNAMIC_STATE_EXTENSION_NAME);
+        vk::AddToPNextChain(&mEnabledFeatures, &mVertexInputDynamicStateFeatures);
+    }
+
 #if defined(ANGLE_PLATFORM_WINDOWS)
     // We only need the VK_EXT_full_screen_exclusive extension if we are opting
     // out of it via VK_FULL_SCREEN_EXCLUSIVE_DISALLOWED_EXT (i.e. working
@@ -3271,6 +3292,10 @@ void RendererVk::initDeviceExtensionEntryPoints()
     if (mFeatures.supportsHostImageCopy.enabled)
     {
         InitHostImageCopyFunctions(mDevice);
+    }
+    if (mFeatures.supportsVertexInputDynamicState.enabled)
+    {
+        InitVertexInputDynamicStateEXTFunctions(mDevice);
     }
     // Extensions promoted to Vulkan 1.2
     {
@@ -3668,7 +3693,7 @@ std::string RendererVk::getVersionString(bool includeFullVersion) const
         else if (mPhysicalDeviceProperties.vendorID == VENDOR_ID_INTEL && IsWindows())
         {
             strstr << ANGLE_VK_VERSION_MAJOR_WIN_INTEL(driverVersion) << ".";
-            strstr << ANGLE_VK_VERSION_MAJOR_WIN_INTEL(driverVersion) << ".";
+            strstr << ANGLE_VK_VERSION_MINOR_WIN_INTEL(driverVersion);
         }
         // All other drivers use the Vulkan standard
         else
@@ -4588,12 +4613,23 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
         }
     }
 
+    // Intel driver has issues with VK_EXT_vertex_input_dynamic_state
+    // http://anglebug.com/7162#c8
+    ANGLE_FEATURE_CONDITION(&mFeatures, supportsVertexInputDynamicState,
+                            mVertexInputDynamicStateFeatures.vertexInputDynamicState == VK_TRUE &&
+                                !(IsWindows() && isIntel));
+
     ANGLE_FEATURE_CONDITION(
         &mFeatures, supportsExtendedDynamicState,
         mExtendedDynamicStateFeatures.extendedDynamicState == VK_TRUE && dynamicStateWorks);
 
+    // VK_EXT_vertex_input_dynamic_state enables dynamic state for the full vertex input state. As
+    // such, when available use supportsVertexInputDynamicState instead of
+    // useVertexInputBindingStrideDynamicState.
     ANGLE_FEATURE_CONDITION(&mFeatures, useVertexInputBindingStrideDynamicState,
-                            mFeatures.supportsExtendedDynamicState.enabled && dynamicStateWorks);
+                            mFeatures.supportsExtendedDynamicState.enabled &&
+                                !mFeatures.supportsVertexInputDynamicState.enabled &&
+                                dynamicStateWorks);
     ANGLE_FEATURE_CONDITION(&mFeatures, useCullModeDynamicState,
                             mFeatures.supportsExtendedDynamicState.enabled && dynamicStateWorks);
     ANGLE_FEATURE_CONDITION(&mFeatures, useDepthCompareOpDynamicState,

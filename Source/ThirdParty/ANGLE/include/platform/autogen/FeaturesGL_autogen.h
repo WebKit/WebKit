@@ -717,6 +717,13 @@ struct FeaturesGL : FeatureSetBase
         &members, "https://anglebug.com/8471"
     };
 
+    FeatureInfo useIntermediateTextureForGenerateMipmap = {
+        "useIntermediateTextureForGenerateMipmap",
+        FeatureCategory::OpenGLWorkarounds,
+        "Some drivers lose context when repeatedly generating mipmaps on textures that were used as framebuffers.",
+        &members, "https://crbug.com/40279678"
+    };
+
 };
 
 inline FeaturesGL::FeaturesGL()  = default;

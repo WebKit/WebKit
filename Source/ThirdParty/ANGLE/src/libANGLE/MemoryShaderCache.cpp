@@ -61,11 +61,11 @@ egl::CacheGetResult MemoryShaderCache::getShader(const Context *context,
         case egl::BlobCache::GetAndDecompressResult::NotFound:
             return egl::CacheGetResult::NotFound;
 
-        case egl::BlobCache::GetAndDecompressResult::GetSuccess:
+        case egl::BlobCache::GetAndDecompressResult::Success:
             if (shader->loadBinary(context, uncompressedData.data(),
                                    static_cast<int>(uncompressedData.size())))
             {
-                return egl::CacheGetResult::GetSuccess;
+                return egl::CacheGetResult::Success;
             }
 
             // Cache load failed, evict.

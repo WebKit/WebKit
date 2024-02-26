@@ -114,11 +114,16 @@ bool IsMetalRendererAvailable()
                     ANGLE_APPLE_ALLOW_DEPRECATED_END
                 }
 #elif ANGLE_PLATFORM_IOS_FAMILY && !ANGLE_PLATFORM_IOS_FAMILY_SIMULATOR
+#    if !defined(__IPHONE_16_0) || __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_16_0
                 // Hardcode constant to sidestep compiler errors. Call will
                 // return false on older macOS versions.
                 const NSUInteger iosFamily3v1 = 4;
                 if ([device supportsFeatureSet:static_cast<MTLFeatureSet>(iosFamily3v1)])
                     gpuFamilySufficient = true;
+#    else
+                // iOS 16 and later target A11 Bionic.
+                gpuFamilySufficient = true;
+#    endif
 #elif ANGLE_PLATFORM_IOS_FAMILY && ANGLE_PLATFORM_IOS_FAMILY_SIMULATOR
                 // FIXME: Currently we do not have good simulator query, as it does not support
                 // the whole feature set needed for iOS.

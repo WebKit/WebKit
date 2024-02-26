@@ -13090,6 +13090,55 @@ TEST_P(TextureBufferTestES31, TexBufferFormatMismatch)
     }
 }
 
+// Create an integer format texture but specify a FLOAT sampler. OpenGL
+// tolerates this but it causes a Vulkan validation error.
+TEST_P(Texture2DTestES3, TexImageFormatMismatch)
+{
+    GLint textureUnit = 2;
+    GLuint genericBuffer;
+    GLubyte genericBufferMemory[1024];
+    GLuint texture;
+    GLuint sampler;
+    GLuint vertexArray;
+
+    glGenBuffers(1, &genericBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, genericBuffer);
+    glBufferData(GL_ARRAY_BUFFER, 1024, &genericBufferMemory, GL_STATIC_DRAW);
+
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_R16UI, 8, 8, 0, GL_RED_INTEGER, GL_UNSIGNED_SHORT,
+                 &genericBufferMemory);
+
+    const char *vertexShaderSource   = getVertexShaderSource();
+    const char *fragmentShaderSource = getFragmentShaderSource();
+    ANGLE_GL_PROGRAM(testProgram, vertexShaderSource, fragmentShaderSource);
+
+    GLint texLocation = glGetUniformLocation(testProgram, "tex");
+    glUseProgram(testProgram);
+
+    glUniform1iv(texLocation, 1, &textureUnit);
+
+    glGenSamplers(1, &sampler);
+    glSamplerParameteri(sampler, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glSamplerParameteri(sampler, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    glBindBuffer(GL_UNIFORM_BUFFER, genericBuffer);
+
+    glActiveTexture(GL_TEXTURE0 + textureUnit);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glBindSampler(textureUnit, sampler);
+
+    glGenVertexArrays(1, &vertexArray);
+    glBindVertexArray(vertexArray);
+    glBindBuffer(GL_ARRAY_BUFFER, genericBuffer);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, genericBuffer);
+    glBindVertexArray(vertexArray);
+    glDrawElementsInstanced(GL_TRIANGLES, 4, GL_UNSIGNED_SHORT, 0, 1);
+}
+
 // Test that the correct error is generated if texture buffer support used anyway when not enabled.
 TEST_P(TextureBufferTestES31, TestErrorWhenNotEnabled)
 {

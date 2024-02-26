@@ -1314,10 +1314,10 @@ struct FeaturesVk : FeatureSetBase
         &members, "https://issuetracker.google.com/309028728"
     };
 
-    FeatureInfo forceSampleUsageForImageWithExternalFormat = {
-        "forceSampleUsageForImageWithExternalFormat",
+    FeatureInfo forceSampleUsageForAhbBackedImages = {
+        "forceSampleUsageForAhbBackedImages",
         FeatureCategory::VulkanAppWorkarounds,
-        "Force enable VK_IMAGE_USAGE_SAMPLED_BIT usage for images with external format",
+        "Force enable VK_IMAGE_USAGE_SAMPLED_BIT usage for all AHB images",
         &members, "https://issuetracker.google.com/155487768"
     };
 

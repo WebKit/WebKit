@@ -324,14 +324,19 @@ angle::Result HardwareBufferImageSiblingVkAndroid::initImpl(DisplayVk *displayVk
         if (externalFormat.externalFormat != 0 && !externalRenderTargetSupported)
         {
             // Clear all other bits except sampled
-            usage = (renderer->getFeatures().forceSampleUsageForImageWithExternalFormat.enabled)
-                        ? VK_IMAGE_USAGE_SAMPLED_BIT
-                        : (usage & VK_IMAGE_USAGE_SAMPLED_BIT);
+            usage &= VK_IMAGE_USAGE_SAMPLED_BIT;
         }
 
         // If the pNext chain includes a VkExternalFormatANDROID structure whose externalFormat
         // member is not 0, tiling must be VK_IMAGE_TILING_OPTIMAL
         imageTilingMode = VK_IMAGE_TILING_OPTIMAL;
+    }
+
+    // If forceSampleUsageForAhbBackedImages feature is enabled force enable
+    // VK_IMAGE_USAGE_SAMPLED_BIT
+    if (renderer->getFeatures().forceSampleUsageForAhbBackedImages.enabled)
+    {
+        usage |= VK_IMAGE_USAGE_SAMPLED_BIT;
     }
 
     VkExternalMemoryImageCreateInfo externalMemoryImageCreateInfo = {};

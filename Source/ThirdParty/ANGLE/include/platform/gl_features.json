@@ -777,6 +777,14 @@
                 "Corrupt the program binary retrieved from the driver for testing purposes."
             ],
             "issue": "https://anglebug.com/8471"
+        },
+        {
+            "name": "use_intermediate_texture_for_generate_mipmap",
+            "category": "Workarounds",
+            "description": [
+                "Some drivers lose context when repeatedly generating mipmaps on textures that were used as framebuffers."
+            ],
+            "issue": "https://crbug.com/40279678"
         }
     ]
 }

@@ -217,6 +217,10 @@ angle_test("angle_unittests") {
     data_deps = [ ":test_utils_unittest_helper" ]
   }
 
+  if (is_android) {
+    data += [ "$angle_root/src/tests/angle_android_test_runner.py" ]
+  }
+
   if (angle_has_rapidjson) {
     sources += [ "../common/serializer/JsonSerializer_unittest.cpp" ]
   }

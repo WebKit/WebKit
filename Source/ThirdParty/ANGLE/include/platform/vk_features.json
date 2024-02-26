@@ -1424,10 +1424,10 @@
             "issue": "https://issuetracker.google.com/309028728"
         },
         {
-            "name": "force_sample_usage_for_image_with_external_format",
+            "name": "force_sample_usage_for_ahb_backed_images",
             "category": "AppWorkarounds",
             "description": [
-                "Force enable VK_IMAGE_USAGE_SAMPLED_BIT usage for images with external format"
+                "Force enable VK_IMAGE_USAGE_SAMPLED_BIT usage for all AHB images"
             ],
             "issue": "https://issuetracker.google.com/155487768"
         },

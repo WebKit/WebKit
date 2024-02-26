@@ -138,7 +138,7 @@ angle::Result MemoryProgramCache::getProgram(const Context *context,
             // corrupted cache might as well not have existed.
             return angle::Result::Continue;
 
-        case egl::BlobCache::GetAndDecompressResult::GetSuccess:
+        case egl::BlobCache::GetAndDecompressResult::Success:
             ANGLE_TRY(program->loadBinary(context, uncompressedData.data(),
                                           static_cast<int>(uncompressedData.size()), resultOut));
 

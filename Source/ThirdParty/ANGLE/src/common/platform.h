@@ -114,7 +114,9 @@
 #    define ANGLE_USE_SSE
 #elif defined(__GNUC__) && (defined(__x86_64__) || defined(__i386__))
 #    include <x86intrin.h>
-#    define ANGLE_USE_SSE
+#    if __SSE__
+#        define ANGLE_USE_SSE
+#    endif
 #endif
 
 // Mips and arm devices need to include stddef for size_t.

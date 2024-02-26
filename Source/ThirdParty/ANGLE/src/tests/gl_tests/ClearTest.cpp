@@ -3453,11 +3453,6 @@ TEST_P(ClearTestES3, RepeatedStencilClearWithBlitAfterClearAndDrawInBetween)
     ASSERT_GL_NO_ERROR();
 }
 
-#ifdef Bool
-// X11 craziness.
-#    undef Bool
-#endif
-
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(
     ClearTest,
     ES3_VULKAN().enable(Feature::ForceFallbackFormat),

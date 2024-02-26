@@ -1366,6 +1366,7 @@ cl_int ValidateSetKernelArg(cl_kernel kernel,
         // when the specified arg_value is not a valid sampler object.
         else if (typeName == "sampler_t")
         {
+            static_assert(sizeof(cl_mem) == sizeof(cl_sampler), "api object size check failed");
             if (!Sampler::IsValid(*static_cast<const cl_sampler *>(arg_value)))
             {
                 return CL_INVALID_SAMPLER;
@@ -1375,6 +1376,8 @@ cl_int ValidateSetKernelArg(cl_kernel kernel,
         // when the specified arg_value is not a valid device queue object.
         else if (typeName == "queue_t")
         {
+            static_assert(sizeof(cl_mem) == sizeof(cl_command_queue),
+                          "api object size check failed");
             const cl_command_queue queue = *static_cast<const cl_command_queue *>(arg_value);
             if (!CommandQueue::IsValid(queue) || !queue->cast<CommandQueue>().isOnDevice())
             {

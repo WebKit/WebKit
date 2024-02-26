@@ -42,7 +42,7 @@ angle::Result ProgramNULL::load(const gl::Context *context,
                                 egl::CacheGetResult *resultOut)
 {
     *loadTaskOut = {};
-    *resultOut   = egl::CacheGetResult::GetSuccess;
+    *resultOut   = egl::CacheGetResult::Success;
     return angle::Result::Continue;
 }
 

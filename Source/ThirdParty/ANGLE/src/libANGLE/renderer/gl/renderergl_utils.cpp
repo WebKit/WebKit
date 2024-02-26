@@ -179,6 +179,12 @@ bool IsMaliValhall(const FunctionsGL *functions)
            number == 510 || number == 610 || number == 710 || number == 615 || number == 715;
 }
 
+bool IsPixel7OrPixel8(const FunctionsGL *functions)
+{
+    int number = getMaliGNumber(functions);
+    return number == 710 || number == 715;
+}
+
 [[maybe_unused]] bool IsAndroidEmulator(const FunctionsGL *functions)
 {
     constexpr char androidEmulator[] = "Android Emulator";
@@ -2631,7 +2637,8 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
     // https://anglebug.com/8315
     ANGLE_FEATURE_CONDITION(features, disableRenderSnorm,
                             isMesa && (mesaVersion < (std::array<int, 3>{21, 3, 0}) ||
-                                       functions->standard == STANDARD_GL_ES));
+                                       (mesaVersion < (std::array<int, 3>{23, 3, 0}) &&
+                                        functions->standard == STANDARD_GL_ES)));
 
     // https://anglebug.com/8319
     ANGLE_FEATURE_CONDITION(features, disableTextureMirrorClampToEdge,
@@ -2649,6 +2656,10 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
 
     // https://anglebug.com/8433
     ANGLE_FEATURE_CONDITION(features, preTransformTextureCubeGradDerivatives, isApple);
+
+    // https://crbug.com/40279678
+    ANGLE_FEATURE_CONDITION(features, useIntermediateTextureForGenerateMipmap,
+                            IsPixel7OrPixel8(functions));
 }
 
 void InitializeFrontendFeatures(const FunctionsGL *functions, angle::FrontendFeatures *features)

@@ -450,8 +450,9 @@ void DisplayVk::generateExtensions(egl::DisplayExtensions *outExtensions) const
     // will ignore the hint and do a regular swap.
     outExtensions->swapBuffersWithDamage = true;
 
-    outExtensions->fenceSync = true;
-    outExtensions->waitSync  = true;
+    outExtensions->fenceSync            = true;
+    outExtensions->waitSync             = true;
+    outExtensions->globalFenceSyncANGLE = true;
 
     outExtensions->image                 = true;
     outExtensions->imageBase             = true;

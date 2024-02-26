@@ -9271,6 +9271,79 @@ void main()
     ASSERT_GL_NO_ERROR();
 }
 
+// Tests state change for vertex attribute format
+TEST_P(StateChangeTestES3, VertexFormat)
+{
+    constexpr char kVS[] = R"(precision highp float;
+attribute vec3 position;
+attribute vec4 color;
+varying vec4 colorOut;
+
+void main()
+{
+    gl_Position = vec4(position, 1.0);
+    colorOut = color;
+})";
+
+    constexpr char kFS[] = R"(precision highp float;
+varying vec4 colorOut;
+
+void main()
+{
+    gl_FragColor = colorOut;
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+
+    GLint positionLoc = glGetAttribLocation(program, "position");
+    ASSERT_NE(positionLoc, -1);
+    GLint colorLoc = glGetAttribLocation(program, "color");
+    ASSERT_NE(colorLoc, -1);
+
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    std::vector<Vector4> colorAttribDataFloat(6, Vector4(255.0f, 0.0f, 0.0f, 255.0f));
+    std::vector<GLColor> colorAttribDataUnsignedByte(6, GLColor::green);
+
+    // Setup position attribute
+    std::array<Vector3, 6> quadVertices = GetQuadVertices();
+    GLBuffer vertexLocationBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, vertexLocationBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(Vector3) * 6, quadVertices.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(positionLoc, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(positionLoc);
+
+    // Setup color attribute with float data
+    GLBuffer floatBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, floatBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(Vector4) * 6, colorAttribDataFloat.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(colorLoc, 4, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(colorLoc);
+
+    // Draw red using float attribute
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    // Setup color attribute with unsigned byte data
+    GLBuffer unsignedByteBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, unsignedByteBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLColor) * 6, colorAttribDataUnsignedByte.data(),
+                 GL_STATIC_DRAW);
+    glVertexAttribPointer(colorLoc, 4, GL_UNSIGNED_BYTE, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(colorLoc);
+
+    // Draw green using unsigned byte attribute
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+
+    glUseProgram(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
 // Tests state change for depth test, write and function
 TEST_P(StateChangeTestES3, DepthTestWriteAndFunc)
 {

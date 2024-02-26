@@ -2607,16 +2607,23 @@ const void *GraphicsPipelineDesc::getPipelineSubsetMemory(GraphicsPipelineSubset
                       kGraphicsPipelineSharedNonVertexInputStateSize);
     static_assert(offsetof(GraphicsPipelineDesc, mVertexInput) == kPipelineVertexInputDescOffset);
 
-    // Exclude vertex strides from the hash. It's conveniently placed last, so it would be easy to
-    // exclude it from hash.
+    // Exclude the full vertex or only vertex strides from the hash. It's conveniently placed last,
+    // so it would be easy to exclude it from hash.
     static_assert(offsetof(GraphicsPipelineDesc, mVertexInput.vertex.strides) +
                       sizeof(PackedVertexInputAttributes::strides) ==
+                  sizeof(GraphicsPipelineDesc));
+    static_assert(offsetof(GraphicsPipelineDesc, mVertexInput.vertex) +
+                      sizeof(PackedVertexInputAttributes) ==
                   sizeof(GraphicsPipelineDesc));
 
     size_t vertexInputReduceSize = 0;
     if (mVertexInput.inputAssembly.bits.useVertexInputBindingStrideDynamicState)
     {
         vertexInputReduceSize = sizeof(PackedVertexInputAttributes::strides);
+    }
+    else if (mVertexInput.inputAssembly.bits.useVertexInputDynamicState)
+    {
+        vertexInputReduceSize = sizeof(PackedVertexInputAttributes);
     }
 
     switch (subset)
@@ -2694,6 +2701,8 @@ void GraphicsPipelineDesc::initDefaults(const Context *context,
         mVertexInput.inputAssembly.bits.primitiveRestartEnable = 0;
         mVertexInput.inputAssembly.bits.useVertexInputBindingStrideDynamicState =
             context->getRenderer()->useVertexInputBindingStrideDynamicState();
+        mVertexInput.inputAssembly.bits.useVertexInputDynamicState =
+            context->getFeatures().supportsVertexInputDynamicState.enabled;
         mVertexInput.inputAssembly.bits.padding = 0;
     }
 
@@ -3000,6 +3009,58 @@ angle::FormatID patchVertexAttribComponentType(angle::FormatID format,
                                  !vertexFormat.pureInteger);
 }
 
+VkFormat GraphicsPipelineDesc::getPipelineVertexInputStateFormat(
+    Context *context,
+    angle::FormatID formatID,
+    bool compressed,
+    const gl::ComponentType programAttribType,
+    uint32_t attribIndex)
+{
+    // Get the corresponding VkFormat for the attrib's format.
+    const Format &format                = context->getRenderer()->getFormat(formatID);
+    const angle::Format &intendedFormat = format.getIntendedFormat();
+    VkFormat vkFormat                   = format.getActualBufferVkFormat(compressed);
+
+    const gl::ComponentType attribType = GetVertexAttributeComponentType(
+        intendedFormat.isPureInt(), intendedFormat.vertexAttribType);
+
+    if (attribType != programAttribType)
+    {
+        VkFormat origVkFormat = vkFormat;
+        if (attribType == gl::ComponentType::Float || programAttribType == gl::ComponentType::Float)
+        {
+            angle::FormatID patchFormatID =
+                patchVertexAttribComponentType(formatID, programAttribType);
+            vkFormat = context->getRenderer()
+                           ->getFormat(patchFormatID)
+                           .getActualBufferVkFormat(compressed);
+        }
+        else
+        {
+            // When converting from an unsigned to a signed format or vice versa, attempt to
+            // match the bit width.
+            angle::FormatID convertedFormatID = gl::ConvertFormatSignedness(intendedFormat);
+            const Format &convertedFormat = context->getRenderer()->getFormat(convertedFormatID);
+            ASSERT(intendedFormat.channelCount == convertedFormat.getIntendedFormat().channelCount);
+            ASSERT(intendedFormat.redBits == convertedFormat.getIntendedFormat().redBits);
+            ASSERT(intendedFormat.greenBits == convertedFormat.getIntendedFormat().greenBits);
+            ASSERT(intendedFormat.blueBits == convertedFormat.getIntendedFormat().blueBits);
+            ASSERT(intendedFormat.alphaBits == convertedFormat.getIntendedFormat().alphaBits);
+
+            vkFormat = convertedFormat.getActualBufferVkFormat(compressed);
+        }
+        const Format &origFormat =
+            context->getRenderer()->getFormat(GetFormatIDFromVkFormat(origVkFormat));
+        const Format &patchFormat =
+            context->getRenderer()->getFormat(GetFormatIDFromVkFormat(vkFormat));
+        ASSERT(origFormat.getIntendedFormat().pixelBytes ==
+               patchFormat.getIntendedFormat().pixelBytes);
+        ASSERT(context->getRenderer()->getNativeExtensions().relaxedVertexAttributeTypeANGLE);
+    }
+
+    return vkFormat;
+}
+
 void GraphicsPipelineDesc::initializePipelineVertexInputState(
     Context *context,
     GraphicsPipelineVertexInputVulkanStructs *stateOut,
@@ -3036,62 +3097,20 @@ void GraphicsPipelineDesc::initializePipelineVertexInputState(
             bindingDesc.inputRate = static_cast<VkVertexInputRate>(VK_VERTEX_INPUT_RATE_VERTEX);
         }
 
-        // Get the corresponding VkFormat for the attrib's format.
-        angle::FormatID formatID            = static_cast<angle::FormatID>(packedAttrib.format);
-        const Format &format                = context->getRenderer()->getFormat(formatID);
-        const angle::Format &intendedFormat = format.getIntendedFormat();
-        VkFormat vkFormat = format.getActualBufferVkFormat(packedAttrib.compressed);
-
-        const gl::ComponentType attribType = GetVertexAttributeComponentType(
-            intendedFormat.isPureInt(), intendedFormat.vertexAttribType);
-        const gl::ComponentType programAttribType = gl::GetComponentTypeMask(
-            gl::ComponentTypeMask(mVertexInput.vertex.shaderAttribComponentType), attribIndex);
-
         // If using dynamic state for stride, the value for stride is unconditionally 0 here.
         // |ContextVk::handleDirtyGraphicsVertexBuffers| implements the same fix when setting stride
         // dynamically.
         ASSERT(!context->getRenderer()->useVertexInputBindingStrideDynamicState() ||
                bindingDesc.stride == 0);
 
-        if (attribType != programAttribType)
-        {
-            VkFormat origVkFormat = vkFormat;
-            if (attribType == gl::ComponentType::Float ||
-                programAttribType == gl::ComponentType::Float)
-            {
-                angle::FormatID patchFormatID =
-                    patchVertexAttribComponentType(formatID, programAttribType);
-                vkFormat = context->getRenderer()
-                               ->getFormat(patchFormatID)
-                               .getActualBufferVkFormat(packedAttrib.compressed);
-            }
-            else
-            {
-                // When converting from an unsigned to a signed format or vice versa, attempt to
-                // match the bit width.
-                angle::FormatID convertedFormatID = gl::ConvertFormatSignedness(intendedFormat);
-                const Format &convertedFormat =
-                    context->getRenderer()->getFormat(convertedFormatID);
-                ASSERT(intendedFormat.channelCount ==
-                       convertedFormat.getIntendedFormat().channelCount);
-                ASSERT(intendedFormat.redBits == convertedFormat.getIntendedFormat().redBits);
-                ASSERT(intendedFormat.greenBits == convertedFormat.getIntendedFormat().greenBits);
-                ASSERT(intendedFormat.blueBits == convertedFormat.getIntendedFormat().blueBits);
-                ASSERT(intendedFormat.alphaBits == convertedFormat.getIntendedFormat().alphaBits);
+        // Get the corresponding VkFormat for the attrib's format.
+        angle::FormatID formatID = static_cast<angle::FormatID>(packedAttrib.format);
+        const gl::ComponentType programAttribType = gl::GetComponentTypeMask(
+            gl::ComponentTypeMask(mVertexInput.vertex.shaderAttribComponentType), attribIndex);
 
-                vkFormat = convertedFormat.getActualBufferVkFormat(packedAttrib.compressed);
-            }
-            const Format &origFormat =
-                context->getRenderer()->getFormat(GetFormatIDFromVkFormat(origVkFormat));
-            const Format &patchFormat =
-                context->getRenderer()->getFormat(GetFormatIDFromVkFormat(vkFormat));
-            ASSERT(origFormat.getIntendedFormat().pixelBytes ==
-                   patchFormat.getIntendedFormat().pixelBytes);
-            ASSERT(context->getRenderer()->getNativeExtensions().relaxedVertexAttributeTypeANGLE);
-        }
-
-        attribDesc.binding  = attribIndex;
-        attribDesc.format   = vkFormat;
+        attribDesc.binding = attribIndex;
+        attribDesc.format  = getPipelineVertexInputStateFormat(
+            context, formatID, packedAttrib.compressed, programAttribType, attribIndex);
         attribDesc.location = static_cast<uint32_t>(attribIndex);
         attribDesc.offset   = packedAttrib.offset;
 
@@ -3129,6 +3148,10 @@ void GraphicsPipelineDesc::initializePipelineVertexInputState(
     if (context->getRenderer()->usePrimitiveRestartEnableDynamicState())
     {
         dynamicStateListOut->push_back(VK_DYNAMIC_STATE_PRIMITIVE_RESTART_ENABLE);
+    }
+    if (context->getFeatures().supportsVertexInputDynamicState.enabled)
+    {
+        dynamicStateListOut->push_back(VK_DYNAMIC_STATE_VERTEX_INPUT_EXT);
     }
 }
 

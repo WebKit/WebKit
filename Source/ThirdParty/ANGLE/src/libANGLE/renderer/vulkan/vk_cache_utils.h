@@ -428,6 +428,11 @@ struct PackedInputAssemblyState final
         // for.  Used by GraphicsPipelineDesc::hash() to exclude |vertexStrides| from the hash
         uint32_t useVertexInputBindingStrideDynamicState : 1;
 
+        // Whether dynamic state for vertex input state from VK_EXT_vertex_input_dynamic_state can
+        // be used by GraphicsPipelineDesc::hash() to exclude |PackedVertexInputAttributes| from the
+        // hash
+        uint32_t useVertexInputDynamicState : 1;
+
         // Whether the pipeline is robust (vertex input copy)
         uint32_t isRobustContext : 1;
         // Whether the pipeline needs access to protected content (vertex input copy)
@@ -436,7 +441,7 @@ struct PackedInputAssemblyState final
         // Which attributes are actually active in the program and should affect the pipeline.
         uint32_t programActiveAttributeLocations : gl::MAX_VERTEX_ATTRIBS;
 
-        uint32_t padding : 24 - gl::MAX_VERTEX_ATTRIBS;
+        uint32_t padding : 23 - gl::MAX_VERTEX_ATTRIBS;
     } bits;
 };
 
@@ -683,7 +688,7 @@ struct GraphicsPipelineFragmentOutputVulkanStructs
 
 ANGLE_ENABLE_STRUCT_PADDING_WARNINGS
 
-using GraphicsPipelineDynamicStateList = angle::FixedVector<VkDynamicState, 22>;
+using GraphicsPipelineDynamicStateList = angle::FixedVector<VkDynamicState, 23>;
 
 enum class PipelineRobustness
 {
@@ -898,6 +903,12 @@ class GraphicsPipelineDesc final
         mVertexInput.inputAssembly.bits.useVertexInputBindingStrideDynamicState = supports;
         mShaders.shaders.bits.nonZeroStencilWriteMaskWorkaround                 = false;
     }
+
+    static VkFormat getPipelineVertexInputStateFormat(Context *context,
+                                                      angle::FormatID formatID,
+                                                      bool compressed,
+                                                      const gl::ComponentType programAttribType,
+                                                      uint32_t attribIndex);
 
     // Helpers to dump the state
     const PipelineVertexInputState &getVertexInputStateForLog() const { return mVertexInput; }

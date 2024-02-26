@@ -8,6 +8,8 @@
 #ifndef ANGLEBASE_SYS_BYTEORDER_H_
 #define ANGLEBASE_SYS_BYTEORDER_H_
 
+#include <cstdlib>
+
 namespace angle
 {
 

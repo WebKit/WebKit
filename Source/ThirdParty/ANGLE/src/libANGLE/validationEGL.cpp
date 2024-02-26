@@ -1355,6 +1355,7 @@ bool ValidateCreateSyncBase(const ValidationContext *val,
     switch (type)
     {
         case EGL_SYNC_FENCE_KHR:
+        case EGL_SYNC_GLOBAL_FENCE_ANGLE:
             if (!attribs.isEmpty())
             {
                 val->setError(EGL_BAD_ATTRIBUTE, "Invalid attribute");
@@ -1365,6 +1366,16 @@ bool ValidateCreateSyncBase(const ValidationContext *val,
             {
                 val->setError(EGL_BAD_MATCH, "EGL_KHR_fence_sync extension is not available");
                 return false;
+            }
+
+            if (type == EGL_SYNC_GLOBAL_FENCE_ANGLE)
+            {
+                if (!display->getExtensions().globalFenceSyncANGLE)
+                {
+                    val->setError(EGL_BAD_MATCH,
+                                  "EGL_ANGLE_global_fence_sync extension is not available");
+                    return false;
+                }
             }
 
             if (display != currentDisplay)
@@ -1411,7 +1422,7 @@ bool ValidateCreateSyncBase(const ValidationContext *val,
             if (!currentContext->getExtensions().EGLSyncOES)
             {
                 val->setError(EGL_BAD_MATCH,
-                              "EGL_SYNC_FENCE_KHR cannot be used without "
+                              "EGL_SYNC_NATIVE_FENCE_ANDROID cannot be used without "
                               "GL_OES_EGL_sync support.");
                 return false;
             }
@@ -1540,6 +1551,7 @@ bool ValidateGetSyncAttribBase(const ValidationContext *val,
             {
                 case EGL_SYNC_FENCE_KHR:
                 case EGL_SYNC_NATIVE_FENCE_ANDROID:
+                case EGL_SYNC_GLOBAL_FENCE_ANGLE:
                 case EGL_SYNC_METAL_SHARED_EVENT_ANGLE:
                     break;
 

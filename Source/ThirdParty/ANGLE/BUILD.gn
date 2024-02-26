@@ -110,10 +110,11 @@ if (angle_build_all) {
       "$angle_root/src/tests:angle_tests",
     ]
     if (angle_enable_cl) {
-      deps += [
-        "$angle_clspv_dir:clspv",
-        "$angle_root/src/libOpenCL:angle_cl",
-      ]
+      deps += [ "$angle_root/src/libOpenCL:angle_cl" ]
+    }
+    if (angle_enable_cl && angle_enable_vulkan) {
+      # OpenCL through Vulkan in ANGLE requires clspv for online compiler
+      deps += [ "$angle_clspv_dir:clspv" ]
     }
     if (angle_build_mesa) {
       deps += [ "$angle_root/third_party/mesa" ]
@@ -1356,24 +1357,17 @@ config("shared_library_public_config") {
   }
 }
 
-# TODO(crbug.com/324916799): Remove once .cr is no more.
-if (is_android) {
-  _cr_suffix = string_replace(shlib_extension, ".so", "")
-} else {
-  _cr_suffix = ""
-}
-
 if (angle_expose_wgl_entry_points) {
-  _angle_glesv2_library_name = "opengl32${angle_libs_suffix}${_cr_suffix}"
+  _angle_glesv2_library_name = "opengl32${angle_libs_suffix}"
 } else {
-  _angle_glesv2_library_name = "libGLESv2${angle_libs_suffix}${_cr_suffix}"
+  _angle_glesv2_library_name = "libGLESv2${angle_libs_suffix}"
 }
 _angle_glesv2_vulkan_secondaries_library_name =
-    "libGLESv2_vulkan_secondaries${angle_libs_suffix}${_cr_suffix}"
+    "libGLESv2_vulkan_secondaries${angle_libs_suffix}"
 
 config("library_name_config") {
-  _egllib = "libEGL${angle_libs_suffix}${_cr_suffix}"
-  _vk2egllib = "libEGL_vulkan_secondaries${angle_libs_suffix}${_cr_suffix}"
+  _egllib = "libEGL${angle_libs_suffix}"
+  _vk2egllib = "libEGL_vulkan_secondaries${angle_libs_suffix}"
   defines = [
     "ANGLE_EGL_LIBRARY_NAME=\"${_egllib}\"",
     "ANGLE_GLESV2_LIBRARY_NAME=\"${_angle_glesv2_library_name}\"",

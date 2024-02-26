@@ -1218,6 +1218,10 @@ void ResetDynamicState(ContextVk *contextVk, vk::RenderPassCommandBuffer *comman
     {
         commandBuffer->setLogicOp(VK_LOGIC_OP_COPY);
     }
+    if (contextVk->getFeatures().supportsVertexInputDynamicState.enabled)
+    {
+        commandBuffer->setVertexInput(0, nullptr, 0, nullptr);
+    }
 
     // Let ContextVk know that it should refresh all dynamic state.
     contextVk->invalidateAllDynamicState();

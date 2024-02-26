@@ -663,7 +663,7 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
 
     // Either issue a submission or defer it when a sync object is initialized.  If deferred, a
     // submission will have to be incurred during client wait.
-    angle::Result onSyncObjectInit(vk::SyncHelper *syncHelper, bool isEGLSyncObject);
+    angle::Result onSyncObjectInit(vk::SyncHelper *syncHelper, SyncFenceScope scope);
     // Called when a sync object is waited on while its submission was deffered in onSyncObjectInit.
     // It's a no-op if this context doesn't have a pending submission.  Note that due to
     // mHasDeferredFlush being set, flushing the render pass leads to a submission automatically.
@@ -1727,13 +1727,16 @@ ANGLE_INLINE angle::Result ContextVk::onVertexAttributeChange(size_t attribIndex
 {
     const GLuint staticStride = mRenderer->useVertexInputBindingStrideDynamicState() ? 0 : stride;
 
-    invalidateCurrentGraphicsPipeline();
+    if (!getFeatures().supportsVertexInputDynamicState.enabled)
+    {
+        invalidateCurrentGraphicsPipeline();
 
-    // Set divisor to 1 for attribs with emulated divisor
-    mGraphicsPipelineDesc->updateVertexInput(
-        this, &mGraphicsPipelineTransition, static_cast<uint32_t>(attribIndex), staticStride,
-        divisor > mRenderer->getMaxVertexAttribDivisor() ? 1 : divisor, format, compressed,
-        relativeOffset);
+        // Set divisor to 1 for attribs with emulated divisor
+        mGraphicsPipelineDesc->updateVertexInput(
+            this, &mGraphicsPipelineTransition, static_cast<uint32_t>(attribIndex), staticStride,
+            divisor > mRenderer->getMaxVertexAttribDivisor() ? 1 : divisor, format, compressed,
+            relativeOffset);
+    }
     return onVertexBufferChange(vertexBuffer);
 }
 

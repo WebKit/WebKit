@@ -9,7 +9,15 @@
 #ifndef LIBANGLE_RENDERER_VULKAN_CLCOMMANDQUEUEVK_H_
 #define LIBANGLE_RENDERER_VULKAN_CLCOMMANDQUEUEVK_H_
 
+#include <vector>
+
+#include "libANGLE/renderer/vulkan/DisplayVk.h"
+#include "libANGLE/renderer/vulkan/ResourceVk.h"
 #include "libANGLE/renderer/vulkan/cl_types.h"
+#include "libANGLE/renderer/vulkan/vk_command_buffer_utils.h"
+#include "libANGLE/renderer/vulkan/vk_helpers.h"
+#include "libANGLE/renderer/vulkan/vk_utils.h"
+#include "libANGLE/renderer/vulkan/vk_wrapper.h"
 
 #include "libANGLE/renderer/CLCommandQueueImpl.h"
 
@@ -210,6 +218,18 @@ class CLCommandQueueVk : public CLCommandQueueImpl
     angle::Result flush() override;
 
     angle::Result finish() override;
+
+  private:
+    vk::ProtectionType getProtectionType() const { return vk::ProtectionType::Unprotected; }
+
+    CLContextVk *mContext;
+    const CLDeviceVk *mDevice;
+
+    vk::SecondaryCommandPools mCommandPool;
+    vk::OutsideRenderPassCommandBufferHelper *mComputePassCommands;
+    vk::SecondaryCommandMemoryAllocator mOutsideRenderPassCommandsAllocator;
+
+    std::vector<std::string> mCommandBufferDiagnostics;
 };
 
 }  // namespace rx

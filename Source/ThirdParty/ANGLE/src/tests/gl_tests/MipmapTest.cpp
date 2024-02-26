@@ -2398,7 +2398,9 @@ ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(MipmapTest);
 
 namespace extraPlatforms
 {
-ANGLE_INSTANTIATE_TEST(MipmapTest, ES2_METAL().disable(Feature::AllowGenMultipleMipsPerPass));
+ANGLE_INSTANTIATE_TEST(MipmapTest,
+                       ES2_METAL().disable(Feature::AllowGenMultipleMipsPerPass),
+                       ES2_OPENGLES().enable(Feature::UseIntermediateTextureForGenerateMipmap));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(Mipmap3DBoxFilterTest);
 ANGLE_INSTANTIATE_TEST(Mipmap3DBoxFilterTest,

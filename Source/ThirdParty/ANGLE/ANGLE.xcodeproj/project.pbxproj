@@ -328,6 +328,8 @@
 		31CDFFFD249184B000486F27 /* imageformats.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CCD598B2284FC400018F2D8 /* imageformats.h */; };
 		31CDFFFE249184B000486F27 /* copyimage.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CCD59862284FC400018F2D8 /* copyimage.h */; };
 		31CDFFFF249184B000486F27 /* generatemip.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CCD598C2284FC400018F2D8 /* generatemip.h */; };
+		3A084D472B8C317B00374F23 /* SeparateStructFromFunctionDeclarations.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A084D452B8C317B00374F23 /* SeparateStructFromFunctionDeclarations.h */; };
+		3A084D482B8C317B00374F23 /* SeparateStructFromFunctionDeclarations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A084D462B8C317B00374F23 /* SeparateStructFromFunctionDeclarations.cpp */; };
 		3A0EBF992980B495002C72BC /* logging.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A0EBF812980B445002C72BC /* logging.h */; };
 		3A0EBF9A2980B495002C72BC /* sys_byteorder.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A0EBF822980B445002C72BC /* sys_byteorder.h */; };
 		3A0EBF9B2980B49D002C72BC /* sha1.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A0EBF942980B445002C72BC /* sha1.h */; };
@@ -1032,6 +1034,8 @@
 		31B15721236B803300CAA4FD /* SystemInfo_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemInfo_internal.h; sourceTree = "<group>"; };
 		31CDFDEE24917F8900486F27 /* ANGLE-dynamic.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "ANGLE-dynamic.xcconfig"; sourceTree = "<group>"; };
 		31CDFDF42491819E00486F27 /* libANGLE-shared.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "libANGLE-shared.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3A084D452B8C317B00374F23 /* SeparateStructFromFunctionDeclarations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SeparateStructFromFunctionDeclarations.h; sourceTree = "<group>"; };
+		3A084D462B8C317B00374F23 /* SeparateStructFromFunctionDeclarations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SeparateStructFromFunctionDeclarations.cpp; sourceTree = "<group>"; };
 		3A0EBF802980B445002C72BC /* trace_event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = trace_event.h; sourceTree = "<group>"; };
 		3A0EBF812980B445002C72BC /* logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = logging.h; sourceTree = "<group>"; };
 		3A0EBF822980B445002C72BC /* sys_byteorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sys_byteorder.h; sourceTree = "<group>"; };
@@ -2683,6 +2687,8 @@
 				5C55D62B22826B9700B5BA2C /* RewriteTexelFetchOffset.h */,
 				5C55D60322826B9000B5BA2C /* SeparateDeclarations.cpp */,
 				5C55D61422826B9100B5BA2C /* SeparateDeclarations.h */,
+				3A084D462B8C317B00374F23 /* SeparateStructFromFunctionDeclarations.cpp */,
+				3A084D452B8C317B00374F23 /* SeparateStructFromFunctionDeclarations.h */,
 				FF194FD427432CC2006A97A3 /* SeparateStructFromUniformDeclarations.cpp */,
 				FF194FD627432CC2006A97A3 /* SeparateStructFromUniformDeclarations.h */,
 				5C55D61722826B9200B5BA2C /* SimplifyLoopConditions.cpp */,
@@ -3614,6 +3620,7 @@
 				7B359DA82A7CEDAA0016DC59 /* RewriteInterpolants.h in Headers */,
 				7B359D9F2A7CEDAA0016DC59 /* RewriteOutArgs.h in Headers */,
 				7B7608352898326C000012A1 /* RewritePixelLocalStorage.h in Headers */,
+				3A084D472B8C317B00374F23 /* SeparateStructFromFunctionDeclarations.h in Headers */,
 				7B359D6F2A7CED3C0016DC59 /* RewriteRepeatedAssignToSwizzled.h in Headers */,
 				FF62F64327446DC800AD6EDC /* RewriteSampleMaskVariable.h in Headers */,
 				31CDFF7D2491849800486F27 /* RewriteStructSamplers.h in Headers */,
@@ -4124,6 +4131,7 @@
 				DF83E2762639FD33000825EF /* RemoveUnreferencedVariables.cpp in Sources */,
 				DF83E31F2639FE17000825EF /* Renderbuffer.cpp in Sources */,
 				DF83E36E2639FE92000825EF /* RenderbufferGL.cpp in Sources */,
+				3A084D482B8C317B00374F23 /* SeparateStructFromFunctionDeclarations.cpp in Sources */,
 				7B76083B289832BD000012A1 /* RenderbufferImpl.cpp in Sources */,
 				DF83E3852639FEB8000825EF /* RenderBufferMtl.mm in Sources */,
 				DF83E39C2639FED4000825EF /* renderer_utils.cpp in Sources */,

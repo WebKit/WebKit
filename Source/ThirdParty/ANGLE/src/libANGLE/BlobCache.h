@@ -53,7 +53,7 @@ namespace egl
 enum class CacheGetResult
 {
     // Binary blob was found and is valid
-    GetSuccess,
+    Success,
     // Binary blob was not found
     NotFound,
     // Binary blob was found, but was rejected due to errors (corruption, version mismatch, etc)
@@ -138,7 +138,7 @@ class BlobCache final : angle::NonCopyable
 
     enum class GetAndDecompressResult
     {
-        GetSuccess,
+        Success,
         NotFound,
         DecompressFailure,
     };

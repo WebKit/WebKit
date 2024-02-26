@@ -191,7 +191,7 @@ angle::Result ProgramMtl::load(const gl::Context *context,
     ANGLE_TRY(compileMslShaderLibs(context, &subTasks));
 
     *loadTaskOut = std::shared_ptr<LinkTask>(new LoadTaskMtl(std::move(subTasks)));
-    *resultOut   = egl::CacheGetResult::GetSuccess;
+    *resultOut   = egl::CacheGetResult::Success;
 
     return angle::Result::Continue;
 }

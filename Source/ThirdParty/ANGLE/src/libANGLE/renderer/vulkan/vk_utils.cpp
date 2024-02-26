@@ -1000,6 +1000,9 @@ PFN_vkCmdSetPatchControlPointsEXT vkCmdSetPatchControlPointsEXT           = null
 PFN_vkCmdSetPrimitiveRestartEnableEXT vkCmdSetPrimitiveRestartEnableEXT   = nullptr;
 PFN_vkCmdSetRasterizerDiscardEnableEXT vkCmdSetRasterizerDiscardEnableEXT = nullptr;
 
+// VK_EXT_vertex_input_dynamic_state
+PFN_vkCmdSetVertexInputEXT vkCmdSetVertexInputEXT = nullptr;
+
 // VK_KHR_fragment_shading_rate
 PFN_vkGetPhysicalDeviceFragmentShadingRatesKHR vkGetPhysicalDeviceFragmentShadingRatesKHR = nullptr;
 PFN_vkCmdSetFragmentShadingRateKHR vkCmdSetFragmentShadingRateKHR                         = nullptr;
@@ -1110,6 +1113,12 @@ void InitExtendedDynamicState2EXTFunctions(VkDevice device)
     GET_DEVICE_FUNC(vkCmdSetPatchControlPointsEXT);
     GET_DEVICE_FUNC(vkCmdSetPrimitiveRestartEnableEXT);
     GET_DEVICE_FUNC(vkCmdSetRasterizerDiscardEnableEXT);
+}
+
+// VK_EXT_vertex_input_dynamic_state
+void InitVertexInputDynamicStateEXTFunctions(VkDevice device)
+{
+    GET_DEVICE_FUNC(vkCmdSetVertexInputEXT);
 }
 
 // VK_KHR_fragment_shading_rate

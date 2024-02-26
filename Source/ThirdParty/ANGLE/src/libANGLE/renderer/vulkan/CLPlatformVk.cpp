@@ -6,6 +6,7 @@
 // CLPlatformVk.cpp: Implements the class methods for CLPlatformVk.
 
 #include "libANGLE/renderer/vulkan/CLPlatformVk.h"
+#include "libANGLE/renderer/vulkan/CLContextVk.h"
 #include "libANGLE/renderer/vulkan/CLDeviceVk.h"
 #include "libANGLE/renderer/vulkan/DisplayVk.h"
 #include "libANGLE/renderer/vulkan/RendererVk.h"
@@ -115,8 +116,12 @@ angle::Result CLPlatformVk::createContext(cl::Context &context,
                                           bool userSync,
                                           CLContextImpl::Ptr *contextOut)
 {
-    UNIMPLEMENTED();
-    ANGLE_CL_RETURN_ERROR(CL_OUT_OF_RESOURCES);
+    *contextOut = CLContextImpl::Ptr(new (std::nothrow) CLContextVk(context, mDisplay, devices));
+    if (*contextOut == nullptr)
+    {
+        ANGLE_CL_RETURN_ERROR(CL_OUT_OF_HOST_MEMORY);
+    }
+    return angle::Result::Continue;
 }
 
 angle::Result CLPlatformVk::createContextFromType(cl::Context &context,
@@ -124,8 +129,49 @@ angle::Result CLPlatformVk::createContextFromType(cl::Context &context,
                                                   bool userSync,
                                                   CLContextImpl::Ptr *contextOut)
 {
-    UNIMPLEMENTED();
-    ANGLE_CL_RETURN_ERROR(CL_OUT_OF_RESOURCES);
+    ASSERT(mDisplay);
+    ASSERT(mDisplay->isInitialized());
+
+    const VkPhysicalDeviceType &vkPhysicalDeviceType =
+        GetImplAs<DisplayVk>(mDisplay)->getRenderer()->getPhysicalDeviceProperties().deviceType;
+
+    if (deviceType.isSet(CL_DEVICE_TYPE_CPU) && vkPhysicalDeviceType != VK_PHYSICAL_DEVICE_TYPE_CPU)
+    {
+        ANGLE_CL_RETURN_ERROR(CL_DEVICE_NOT_FOUND);
+    }
+    else if (deviceType.isSet(CL_DEVICE_TYPE_GPU))
+    {
+        switch (vkPhysicalDeviceType)
+        {
+            case VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU:
+            case VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU:
+            case VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU:
+                break;
+            default:
+                ANGLE_CL_RETURN_ERROR(CL_DEVICE_NOT_FOUND);
+        }
+    }
+    else
+    {
+        ANGLE_CL_RETURN_ERROR(CL_DEVICE_NOT_FOUND);
+    }
+
+    cl::DevicePtrs devices;
+    for (const auto &platformDevice : mPlatform.getDevices())
+    {
+        const auto &platformDeviceInfo = platformDevice->getInfo();
+        if (platformDeviceInfo.type.isSet(deviceType))
+        {
+            devices.push_back(platformDevice);
+        }
+    }
+
+    *contextOut = CLContextImpl::Ptr(new (std::nothrow) CLContextVk(context, mDisplay, devices));
+    if (*contextOut == nullptr)
+    {
+        ANGLE_CL_RETURN_ERROR(CL_OUT_OF_HOST_MEMORY);
+    }
+    return angle::Result::Continue;
 }
 
 angle::Result CLPlatformVk::unloadCompiler()

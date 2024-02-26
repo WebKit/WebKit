@@ -443,6 +443,11 @@
                 <enum name="EGL_PLATFORM_ANGLE_TYPE_NULL_ANGLE"/>
             </require>
         </extension>
+        <extension name="EGL_ANGLE_platform_angle_webgpu" supported="egl">
+            <require>
+                <enum name="EGL_PLATFORM_ANGLE_TYPE_WEBGPU_ANGLE"/>
+            </require>
+        </extension>
         <extension name="EGL_ANGLE_platform_angle_opengl" supported="egl">
             <require>
                 <enum name="EGL_PLATFORM_ANGLE_TYPE_OPENGL_ANGLE"/>
@@ -490,6 +495,11 @@
                 <enum name="EGL_SYNC_METAL_SHARED_EVENT_SIGNAL_VALUE_LO_ANGLE"/>
                 <enum name="EGL_SYNC_METAL_SHARED_EVENT_SIGNAL_VALUE_HI_ANGLE"/>
                 <enum name="EGL_SYNC_METAL_SHARED_EVENT_SIGNALED_ANGLE" />
+            </require>
+        </extension>
+        <extension name="EGL_ANGLE_global_fence_sync" supported="egl">
+            <require>
+                <enum name="EGL_SYNC_GLOBAL_FENCE_ANGLE"/>
             </require>
         </extension>
     </extensions>
@@ -618,6 +628,8 @@
         <enum value="0x34DB" name="EGL_SYNC_METAL_SHARED_EVENT_SIGNAL_VALUE_HI_ANGLE"/>
         <enum value="0x34DC" name="EGL_SYNC_METAL_SHARED_EVENT_SIGNALED_ANGLE" />
         <enum value="0x34DD" name="EGL_METAL_TEXTURE_ARRAY_SLICE_ANGLE"/>
+        <enum value="0x34DE" name="EGL_SYNC_GLOBAL_FENCE_ANGLE"/>
+        <enum value="0x34DF" name="EGL_PLATFORM_ANGLE_TYPE_WEBGPU_ANGLE"/>
     </enums>
     <enums namespace="EGL" vendor="ANGLE">
         <enum value="0x0001" name="EGL_LOW_POWER_ANGLE"/>

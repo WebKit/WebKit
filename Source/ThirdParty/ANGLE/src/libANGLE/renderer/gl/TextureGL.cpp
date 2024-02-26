@@ -1422,9 +1422,15 @@ angle::Result TextureGL::generateMipmap(const gl::Context *context)
     const gl::ImageDesc &baseLevelDesc                = mState.getBaseLevelDesc();
     const gl::InternalFormat &baseLevelInternalFormat = *baseLevelDesc.format.info;
 
+    const LevelInfoGL &baseLevelInfo = getBaseLevelInfo();
+
     stateManager->bindTexture(getType(), mTextureID);
-    if (baseLevelInternalFormat.colorEncoding == GL_SRGB &&
-        features.decodeEncodeSRGBForGenerateMipmap.enabled && getType() == gl::TextureType::_2D)
+    if (getType() == gl::TextureType::_2D &&
+        ((baseLevelInternalFormat.colorEncoding == GL_SRGB &&
+          features.decodeEncodeSRGBForGenerateMipmap.enabled) ||
+         (features.useIntermediateTextureForGenerateMipmap.enabled &&
+          nativegl::SupportsNativeRendering(functions, mState.getType(),
+                                            baseLevelInfo.nativeInternalFormat))))
     {
         nativegl::TexImageFormat texImageFormat = nativegl::GetTexImageFormat(
             functions, features, baseLevelInternalFormat.internalFormat,
@@ -1440,11 +1446,11 @@ angle::Result TextureGL::generateMipmap(const gl::Context *context)
             const gl::ImageDesc &levelDesc =
                 mState.getImageDesc(gl::TextureTarget::_2D, effectiveBaseLevel + levelIdx);
 
-            // Make sure no pixel unpack buffer is bound
-            stateManager->bindBuffer(gl::BufferBinding::PixelUnpack, 0);
-
             if (levelDesc.size != levelSize || *levelDesc.format.info != baseLevelInternalFormat)
             {
+                // Make sure no pixel unpack buffer is bound
+                stateManager->bindBuffer(gl::BufferBinding::PixelUnpack, 0);
+
                 ANGLE_GL_TRY_ALWAYS_CHECK(
                     context, functions->texImage2D(
                                  ToGLenum(getType()), effectiveBaseLevel + levelIdx,
@@ -1455,8 +1461,16 @@ angle::Result TextureGL::generateMipmap(const gl::Context *context)
 
         // Use the blitter to generate the mips
         BlitGL *blitter = GetBlitGL(context);
-        ANGLE_TRY(blitter->generateSRGBMipmap(context, this, effectiveBaseLevel, levelCount,
-                                              baseLevelDesc.size));
+        if (baseLevelInternalFormat.colorEncoding == GL_SRGB)
+        {
+            ANGLE_TRY(blitter->generateSRGBMipmap(context, this, effectiveBaseLevel, levelCount,
+                                                  baseLevelDesc.size));
+        }
+        else
+        {
+            ANGLE_TRY(blitter->generateMipmap(context, this, effectiveBaseLevel, levelCount,
+                                              baseLevelDesc.size, texImageFormat));
+        }
     }
     else
     {

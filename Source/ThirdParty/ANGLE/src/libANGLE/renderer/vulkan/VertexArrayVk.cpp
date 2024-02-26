@@ -191,6 +191,7 @@ VertexArrayVk::VertexArrayVk(ContextVk *contextVk, const gl::VertexArrayState &s
       mCurrentArrayBufferRelativeOffsets{},
       mCurrentArrayBuffers{},
       mCurrentArrayBufferStrides{},
+      mCurrentArrayBufferDivisors{},
       mCurrentElementArrayBuffer(nullptr),
       mLineLoopHelper(contextVk->getRenderer()),
       mDirtyLineLoopTranslation(true)
@@ -202,6 +203,7 @@ VertexArrayVk::VertexArrayVk(ContextVk *contextVk, const gl::VertexArrayState &s
     mCurrentArrayBufferRelativeOffsets.fill(0);
     mCurrentArrayBuffers.fill(&emptyBuffer);
     mCurrentArrayBufferStrides.fill(0);
+    mCurrentArrayBufferDivisors.fill(0);
 
     mBindingDirtyBitsRequiresPipelineUpdate.set(gl::VertexArray::DIRTY_BINDING_DIVISOR);
     if (!contextVk->getRenderer()->useVertexInputBindingStrideDynamicState())
@@ -899,6 +901,7 @@ angle::Result VertexArrayVk::syncDirtyAttrib(ContextVk *contextVk,
 
             mCurrentArrayBufferFormats[attribIndex]    = format;
             mCurrentArrayBufferCompressed[attribIndex] = compressed;
+            mCurrentArrayBufferDivisors[attribIndex]   = binding.getDivisor();
         }
     }
     else
@@ -912,6 +915,7 @@ angle::Result VertexArrayVk::syncDirtyAttrib(ContextVk *contextVk,
         mCurrentArrayBufferHandles[attribIndex]         = emptyBuffer.getBuffer().getHandle();
         mCurrentArrayBufferOffsets[attribIndex]         = emptyBuffer.getOffset();
         mCurrentArrayBufferStrides[attribIndex]         = 0;
+        mCurrentArrayBufferDivisors[attribIndex]        = 0;
         mCurrentArrayBufferCompressed[attribIndex]      = false;
         mCurrentArrayBufferRelativeOffsets[attribIndex] = 0;
 
@@ -1149,8 +1153,9 @@ angle::Result VertexArrayVk::updateStreamedAttribs(const gl::Context *context,
             vertexDataBuffer
                 ->getBufferForVertexArray(contextVk, vertexDataBuffer->getSize(), &bufferOffset)
                 .getHandle();
-        mCurrentArrayBufferOffsets[attribIndex] = bufferOffset + startOffset;
-        mCurrentArrayBufferStrides[attribIndex] = stride;
+        mCurrentArrayBufferOffsets[attribIndex]  = bufferOffset + startOffset;
+        mCurrentArrayBufferStrides[attribIndex]  = stride;
+        mCurrentArrayBufferDivisors[attribIndex] = divisor;
     }
 
     return angle::Result::Continue;
@@ -1233,10 +1238,11 @@ angle::Result VertexArrayVk::updateDefaultAttrib(ContextVk *contextVk, size_t at
         mCurrentArrayBufferHandles[attribIndex] =
             bufferHelper->getBufferForVertexArray(contextVk, kDefaultValueSize, &bufferOffset)
                 .getHandle();
-        mCurrentArrayBufferOffsets[attribIndex] = bufferOffset;
-        mCurrentArrayBuffers[attribIndex]       = bufferHelper;
-        mCurrentArrayBufferSerial[attribIndex]  = bufferHelper->getBufferSerial();
-        mCurrentArrayBufferStrides[attribIndex] = 0;
+        mCurrentArrayBufferOffsets[attribIndex]  = bufferOffset;
+        mCurrentArrayBuffers[attribIndex]        = bufferHelper;
+        mCurrentArrayBufferSerial[attribIndex]   = bufferHelper->getBufferSerial();
+        mCurrentArrayBufferStrides[attribIndex]  = 0;
+        mCurrentArrayBufferDivisors[attribIndex] = 0;
 
         ANGLE_TRY(setDefaultPackedInput(contextVk, attribIndex,
                                         &mCurrentArrayBufferFormats[attribIndex]));

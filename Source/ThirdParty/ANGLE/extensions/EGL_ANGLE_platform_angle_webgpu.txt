@@ -53,7 +53,7 @@ New Tokens
 
     Accepted as values for the EGL_PLATFORM_ANGLE_TYPE_ANGLE attribute:
 
-        EGL_PLATFORM_ANGLE_TYPE_WEBGPU_ANGLE               0x34DD
+        EGL_PLATFORM_ANGLE_TYPE_WEBGPU_ANGLE               0x34DF
 
 Additions to the EGL Specification
 

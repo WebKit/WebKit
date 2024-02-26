@@ -607,7 +607,7 @@ angle::Result ProgramExecutableVk::load(ContextVk *contextVk,
     ANGLE_TRY(initializeDescriptorPools(contextVk, &contextVk->getDescriptorSetLayoutCache(),
                                         &contextVk->getMetaDescriptorPools()));
 
-    *resultOut = egl::CacheGetResult::GetSuccess;
+    *resultOut = egl::CacheGetResult::Success;
     return angle::Result::Continue;
 }
 
