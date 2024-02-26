@@ -38,6 +38,10 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
+#if USE(SKIA)
+#include <skia/core/SkColor.h>
+#endif
+
 #if USE(CG)
 typedef struct CGColor* CGColorRef;
 #endif
@@ -150,6 +154,14 @@ public:
 #if PLATFORM(GTK)
     Color(const GdkRGBA&);
     operator GdkRGBA() const;
+#endif
+
+#if USE(SKIA)
+    Color(const SkColor&);
+    operator SkColor() const;
+
+    Color(const SkColor4f&);
+    operator SkColor4f() const;
 #endif
 
 #if USE(CG)

@@ -300,25 +300,20 @@ sk_sp<SkImageFilter> GraphicsContextSkia::createDropShadowFilterIfNeeded(ShadowS
     ASSERT(shadow);
 
     const FloatSize& offset = shadow->offset;
-    auto shadowColor = shadow->color;
+    const auto& shadowColor = shadow->color;
 
     if (!shadowColor.isVisible() || (!offset.width() && !offset.height() && !shadow->radius))
         return nullptr;
 
     const auto& state = this->state();
-
     const auto sigma = shadow->radius / 2.0;
-    auto globalAlpha = state.alpha();
-    if (globalAlpha < 1)
-        shadowColor = shadowColor.colorWithAlphaMultipliedBy(globalAlpha);
-    auto [r, g, b, a] = shadowColor.toColorTypeLossy<SRGBA<uint8_t>>().resolved();
 
     switch (shadowStyle) {
     case ShadowStyle::Outset:
-        return SkImageFilters::DropShadow(offset.width(), offset.height(), sigma, sigma, SkColorSetARGB(a, r, g, b), nullptr);
+        return SkImageFilters::DropShadow(offset.width(), offset.height(), sigma, sigma, shadowColor.colorWithAlphaMultipliedBy(state.alpha()), nullptr);
     case ShadowStyle::Inset: {
         auto dropShadow = SkImageFilters::DropShadowOnly(offset.width(), offset.height(), sigma, sigma, SK_ColorBLACK, nullptr);
-        return SkImageFilters::ColorFilter(SkColorFilters::Blend(SkColorSetARGB(a, r, g, b), SkBlendMode::kSrcIn), dropShadow);
+        return SkImageFilters::ColorFilter(SkColorFilters::Blend(shadowColor.colorWithAlphaMultipliedBy(state.alpha()), SkBlendMode::kSrcIn), dropShadow);
     }
     }
 
@@ -338,14 +333,8 @@ SkPaint GraphicsContextSkia::createFillPaint(std::optional<Color> fillColor) con
         paint.setShader(fillPattern->createPlatformPattern({ }));
     else if (auto fillGradient = state.fillBrush().gradient())
         paint.setShader(fillGradient->shader(state.alpha(), state.fillBrush().gradientSpaceTransform()));
-    else {
-        auto globalAlpha = state.alpha();
-        auto color = fillColor.value_or(state.fillBrush().color());
-        if (globalAlpha < 1)
-            color = color.colorWithAlphaMultipliedBy(globalAlpha);
-        auto [r, g, b, a] = color.toColorTypeLossy<SRGBA<uint8_t>>().resolved();
-        paint.setColor(SkColorSetARGB(a, r, g, b));
-    }
+    else
+        paint.setColor(SkColor(fillColor.value_or(state.fillBrush().color()).colorWithAlphaMultipliedBy(state.alpha())));
 
     return paint;
 }
@@ -373,10 +362,8 @@ SkPaint GraphicsContextSkia::createStrokePaint(std::optional<Color> strokeColor)
         paint.setShader(strokePattern->createPlatformPattern({ }));
     else if (auto strokeGradient = state.strokeBrush().gradient())
         paint.setShader(strokeGradient->shader(state.alpha(), state.strokeBrush().gradientSpaceTransform()));
-    else {
-        auto [r, g, b, a] = strokeColor.value_or(state.strokeBrush().color()).toColorTypeLossy<SRGBA<uint8_t>>().resolved();
-        paint.setColor(SkColorSetARGB(a, r, g, b));
-    }
+    else
+        paint.setColor(SkColor(strokeColor.value_or(state.strokeBrush().color()).colorWithAlphaMultipliedBy(state.alpha())));
 
     return paint;
 }

@@ -85,14 +85,12 @@ sk_sp<SkShader> Gradient::shader(float globalAlpha, const AffineTransform& gradi
             colors.append(SkColors::kTransparent);
         } else if (stops.begin()->offset > 0) {
             positions.append(webCoreDoubleToSkScalar(0));
-            auto [r, g, b, a] = stops.begin()->color.toColorTypeLossy<SRGBA<float>>().resolved();
-            colors.append(SkColor4f { r, g, b, a * globalAlpha });
+            colors.append(stops.begin()->color.colorWithAlphaMultipliedBy(globalAlpha));
         }
 
         for (size_t i = 0; i < stops.size(); i++) {
             positions.append(webCoreDoubleToSkScalar(stops[i].offset));
-            auto [r, g, b, a] = stops[i].color.toColorTypeLossy<SRGBA<float>>().resolved();
-            colors.append(SkColor4f { r, g, b, a * globalAlpha });
+            colors.append(stops[i].color.colorWithAlphaMultipliedBy(globalAlpha));
         }
 
         if (positions.last() < 1) {
