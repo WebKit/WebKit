@@ -516,7 +516,6 @@ add_library(Skia STATIC
     src/gpu/ganesh/gl/builders/GrGLProgramBuilder.cpp
     src/gpu/ganesh/gl/builders/GrGLShaderStringBuilder.cpp
     src/gpu/ganesh/gl/epoxy/GrGLMakeEpoxyEGLInterface.cpp
-    src/gpu/ganesh/gl/epoxy/GrGLMakeNativeInterface_epoxy.cpp
     src/gpu/ganesh/glsl/GrGLSLBlend.cpp
     src/gpu/ganesh/glsl/GrGLSLFragmentShaderBuilder.cpp
     src/gpu/ganesh/glsl/GrGLSLProgramBuilder.cpp
@@ -913,6 +912,7 @@ target_compile_definitions(Skia PRIVATE
 )
 
 target_compile_definitions(Skia PUBLIC
+    SK_DISABLE_LEGACY_GL_MAKE_NATIVE_INTERFACE
     SK_DISABLE_LEGACY_IMAGE_READBUFFER
     SK_DISABLE_LEGACY_INIT_DECODERS
     SK_DISABLE_LEGACY_PNG_WRITEBUFFER

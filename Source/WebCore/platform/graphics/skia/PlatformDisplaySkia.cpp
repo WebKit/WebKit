@@ -38,8 +38,34 @@ IGNORE_CLANG_WARNINGS_END
 #include <skia/gpu/ganesh/gl/GrGLDirectContext.h>
 #include <skia/gpu/gl/GrGLInterface.h>
 #include <skia/gpu/gl/GrGLTypes.h>
+#include <wtf/NeverDestroyed.h>
+
+#if USE(EGL)
+#if USE(LIBEPOXY)
+#include <skia/gpu/gl/epoxy/GrGLMakeEpoxyEGLInterface.h>
+#else
+#include <skia/gpu/gl/egl/GrGLMakeEGLInterface.h>
+#endif
+#endif
 
 namespace WebCore {
+
+static sk_sp<const GrGLInterface> skiaGLInterface()
+{
+    static NeverDestroyed<sk_sp<const GrGLInterface>> interface {
+#if USE(EGL)
+#if USE(LIBEPOXY)
+        GrGLMakeEpoxyEGLInterface()
+#else
+        GrGLInterfaces::MakeEGL()
+#endif
+#else
+# error No implementation available for getSkiaGLInterface()
+#endif
+    };
+
+    return interface.get();
+}
 
 GLContext* PlatformDisplay::skiaGLContext()
 {
@@ -49,7 +75,7 @@ GLContext* PlatformDisplay::skiaGLContext()
     m_skiaGLContext = GLContext::createOffscreen(*this);
     GLContext::ScopedGLContextCurrent scopedCurrent(*m_skiaGLContext);
     // FIXME: add GrContextOptions, shader cache, etc.
-    m_skiaGrContext = GrDirectContexts::MakeGL();
+    m_skiaGrContext = GrDirectContexts::MakeGL(skiaGLInterface());
     return m_skiaGLContext.get();
 }
 
