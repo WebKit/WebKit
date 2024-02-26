@@ -571,6 +571,41 @@ CharacterRange AXTextMarker::rangeForLine(unsigned lineIndex) const
     return currentLineRange ? CharacterRange(precedingLength, currentLineRange.toString().length()) : CharacterRange();
 }
 
+int AXTextMarker::lineNumberForIndex(unsigned index) const
+{
+    RefPtr object = isolatedObject();
+    if (!object)
+        return -1;
+    auto* stopObject = object->siblingOrParent(AXDirection::Next);
+    auto stopAtID = stopObject ? std::make_optional(stopObject->objectID()) : std::nullopt;
+
+    // To match the behavior of the VisiblePosition implementation of this functionality, we need to
+    // check an extra position ahead (as tested by ax-thread-text-apis/textarea-line-for-index.html),
+    // so increment index.
+    ++index;
+
+    unsigned lineIndex = 0;
+    auto currentMarker = *this;
+    while (index) {
+        auto oldMarker = WTFMove(currentMarker);
+        currentMarker = oldMarker.findMarker(AXDirection::Next, stopAtID);
+        if (!currentMarker.isValid())
+            break;
+
+        object = currentMarker.isolatedObject();
+        // Skip line breaks to avoid double-counting a line change.
+        if (object && object->roleValue() == AccessibilityRole::LineBreak)
+            continue;
+
+        if (oldMarker.lineID() != currentMarker.lineID())
+            ++lineIndex;
+
+        --index;
+    }
+    // Only return the line number if the index was a valid offset into our descendants.
+    return !index ? lineIndex : -1;
+}
+
 bool AXTextMarker::atLineBoundaryForDirection(AXDirection direction) const
 {
     auto adjacentMarker = findMarker(direction);

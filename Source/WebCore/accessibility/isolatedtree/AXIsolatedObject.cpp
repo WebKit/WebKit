@@ -1487,6 +1487,11 @@ IntRect AXIsolatedObject::doAXBoundsForRangeUsingCharacterOffset(const Character
 
 unsigned AXIsolatedObject::doAXLineForIndex(unsigned index)
 {
+#if ENABLE(AX_THREAD_TEXT_APIS)
+    if (AXObjectCache::useAXThreadTextApis())
+        return AXTextMarker { treeID(), objectID(), 0 }.lineNumberForIndex(index);
+#endif
+
     return Accessibility::retrieveValueFromMainThread<unsigned>([&index, this] () -> unsigned {
         if (auto* object = associatedAXObject())
             return object->doAXLineForIndex(index);

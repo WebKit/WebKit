@@ -190,6 +190,9 @@ public:
     // The index of the line this text marker is on relative to the nearest editable ancestor (or start of the page if there are no editable ancestors).
     // Returns -1 if the line couldn't be computed (i.e. because `this` is invalid).
     int lineIndex() const;
+    // Returns the line number for the character index within the descendants of this marker's object.
+    // Returns -1 if the index is out of bounds, or this marker isn't valid.
+    int lineNumberForIndex(unsigned) const;
     // The location and length of the line that is `lineIndex` lines away from the start of this marker.
     CharacterRange rangeForLine(unsigned lineIndex) const;
 #endif // ENABLE(AX_THREAD_TEXT_APIS)
