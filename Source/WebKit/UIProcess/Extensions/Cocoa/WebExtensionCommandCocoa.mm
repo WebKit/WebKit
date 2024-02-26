@@ -50,8 +50,8 @@
 
 + (instancetype)commandWithTitle:(NSString *)title image:(UIImage *)image input:(NSString *)input modifierFlags:(UIKeyModifierFlags)modifierFlags handler:(WebExtensionKeyCommandHandlerBlock)handler
 {
-    RELEASE_ASSERT(title.length);
-    RELEASE_ASSERT(input.length);
+    RELEASE_ASSERT(title);
+    RELEASE_ASSERT(input);
     RELEASE_ASSERT(handler);
 
     auto *propertyList = @{

@@ -1615,8 +1615,11 @@ void WebExtension::populateCommandsIfNeeded()
             continue;
         }
 
-        if (isActionCommand && !description.length)
+        if (isActionCommand && !description.length) {
             description = displayActionLabel();
+            if (!description.length)
+                description = displayShortName();
+        }
 
         commandData.description = description;
 
