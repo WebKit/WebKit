@@ -322,6 +322,11 @@ void MediaPlayerPrivateGStreamerMSE::sourceSetup(GstElement* sourceElement)
         webKitMediaSrcEmitStreams(WEBKIT_MEDIA_SRC(m_source.get()), m_tracks);
 }
 
+size_t MediaPlayerPrivateGStreamerMSE::extraMemoryCost() const
+{
+    return 0;
+}
+
 void MediaPlayerPrivateGStreamerMSE::updateStates()
 {
     bool isSeeking = isPipelineSeeking();

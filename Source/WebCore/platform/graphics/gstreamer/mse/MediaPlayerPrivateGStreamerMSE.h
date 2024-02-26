@@ -99,6 +99,8 @@ private:
     friend class SourceBufferPrivateGStreamer;
     friend class MediaSourcePrivateGStreamer;
 
+    size_t extraMemoryCost() const override;
+
     void updateStates() override;
 
     // FIXME: Implement videoPlaybackQualityMetrics.
