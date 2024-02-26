@@ -39,30 +39,40 @@ static constexpr char32_t sentinelCodePoint = U_SENTINEL;
 bool convertLatin1ToUTF8(const LChar** sourceStart, const LChar* sourceEnd, char** targetStart, const char* targetEnd)
 {
     const LChar* source;
-    char* target = *targetStart;
-    int32_t i = 0;
+    char* const target = *targetStart;
+    const ptrdiff_t targetCapacity = targetEnd - *targetStart;
+    ptrdiff_t i = 0;
+    bool result = true;
     for (source = *sourceStart; source < sourceEnd; ++source) {
+        if (UNLIKELY(i >= targetCapacity)) {
+            result = false;
+            break;
+        }
+
         UBool sawError = false;
         // Work around bug in either Windows compiler or old version of ICU, where passing a uint8_t to
         // U8_APPEND warns, by converting from uint8_t to a wider type.
         char32_t character = *source;
-        U8_APPEND(target, i, targetEnd - *targetStart, character, sawError);
-        ASSERT_WITH_MESSAGE(!sawError, "UTF8 destination buffer was not big enough");
-        if (sawError)
-            return false;
+        U8_APPEND(target, i, targetCapacity, character, sawError);
+
+        if (UNLIKELY(sawError)) {
+            result = false;
+            break;
+        }
     }
     *sourceStart = source;
     *targetStart = target + i;
-    return true;
+    return result;
 }
 
 ConversionResult convertUTF16ToUTF8(const UChar** sourceStart, const UChar* sourceEnd, char** targetStart, const char* targetEnd, bool strict)
 {
     auto result = ConversionResult::Success;
     const UChar* source = *sourceStart;
-    char* target = *targetStart;
+    char* const target = *targetStart;
     UBool sawError = false;
-    int32_t i = 0;
+    const ptrdiff_t targetCapacity = targetEnd - target;
+    ptrdiff_t i = 0;
     while (source < sourceEnd) {
         char32_t ch;
         int j = 0;
@@ -78,7 +88,11 @@ ConversionResult convertUTF16ToUTF8(const UChar** sourceStart, const UChar* sour
             }
             ch = replacementCharacter;
         }
-        U8_APPEND(reinterpret_cast<uint8_t*>(target), i, targetEnd - target, ch, sawError);
+        if (i >= targetCapacity) {
+            result = ConversionResult::TargetExhausted;
+            break;
+        }
+        U8_APPEND(reinterpret_cast<uint8_t*>(target), i, targetCapacity, ch, sawError);
         if (sawError) {
             result = ConversionResult::TargetExhausted;
             break;
