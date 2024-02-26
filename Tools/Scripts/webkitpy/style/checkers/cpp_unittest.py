@@ -6256,11 +6256,6 @@ class WebKitStyleTest(CppStyleTestBase):
         self.assert_lint('typedef struct _Evas_Object Evas_Object;', '')
         self.assert_lint('typedef struct _Ewk_History_Item Ewk_History_Item;', '')
 
-        # NPAPI functions that start with NPN_, NPP_ or NP_ are allowed.
-        self.assert_lint('void NPN_Status(NPP, const char*)', '')
-        self.assert_lint('NPError NPP_SetWindow(NPP instance, NPWindow *window)', '')
-        self.assert_lint('NPObject* NP_Allocate(NPP, NPClass*)', '')
-
         # const_iterator is allowed as well.
         self.assert_lint('typedef VectorType::const_iterator const_iterator;', '')
 

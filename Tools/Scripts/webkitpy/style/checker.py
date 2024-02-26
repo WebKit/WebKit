@@ -140,11 +140,6 @@ _PATH_RULES_SPECIFIER = [
     # API and therefore do not follow the same header including
     # discipline as WebCore.
 
-    ([  # TestNetscapePlugIn has no config.h and uses funny names like
-      # NPP_SetWindow.
-      os.path.join('Tools', 'DumpRenderTree', 'TestNetscapePlugIn')],
-     ["-build/include",
-      "-readability/naming"]),
     ([  # Ignore use of RetainPtr<NSObject *> for tests that ensure its compatibility with ReteainPtr<NSObject>.
       os.path.join('Tools', 'TestWebKitAPI', 'Tests', 'WTF', 'ns', 'RetainPtr.mm')],
      ["-runtime/retainptr"]),
@@ -220,9 +215,6 @@ _PATH_RULES_SPECIFIER = [
 
     # WebKit rules:
     # WebKit and certain directories have idiosyncracies.
-    ([  # NPAPI has function names with underscores.
-      os.path.join('Source', 'WebKit', 'WebProcess', 'Plugins', 'Netscape')],
-     ["-readability/naming"]),
     ([
       # The WebKit C API has names with underscores and whitespace-aligned
       # struct members. Also, we allow unnecessary parameter names in
