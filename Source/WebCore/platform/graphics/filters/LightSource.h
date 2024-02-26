@@ -96,9 +96,8 @@ protected:
     template<typename LightSourceType>
     static bool areEqual(const LightSourceType& a, const LightSource& b)
     {
-        if (!is<LightSourceType>(b))
-            return false;
-        return a.operator==(downcast<LightSourceType>(b));
+        auto* bType = dynamicDowncast<LightSourceType>(b);
+        return bType && a.operator==(*bType);
     }
 
 private:

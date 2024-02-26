@@ -97,8 +97,8 @@ void RealtimeOutgoingVideoSourceCocoa::videoFrameAvailable(VideoFrame& videoFram
                 static_cast<int>(size.width() * videoFrameScaling), static_cast<int>(size.height() * videoFrameScaling)));
             return;
         }
-        if (videoFrame.isLibWebRTC()) {
-            auto webrtcBuffer = downcast<VideoFrameLibWebRTC>(videoFrame).buffer();
+        if (auto* webrtcVideoFrame = dynamicDowncast<VideoFrameLibWebRTC>(videoFrame)) {
+            auto webrtcBuffer = webrtcVideoFrame->buffer();
             if (videoFrameScaling != 1)
                 webrtcBuffer = webrtcBuffer->Scale(webrtcBuffer->width() * videoFrameScaling, webrtcBuffer->height() * videoFrameScaling);
             sendFrame(WTFMove(webrtcBuffer));
