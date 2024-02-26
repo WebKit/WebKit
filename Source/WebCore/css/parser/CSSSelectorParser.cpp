@@ -750,10 +750,9 @@ std::unique_ptr<MutableCSSSelector> CSSSelectorParser::consumePseudo(CSSParserTo
         return selector;
     }
 
+    ASSERT(token.type() == FunctionToken);
     CSSParserTokenRange block = range.consumeBlock();
     block.consumeWhitespace();
-    if (token.type() != FunctionToken)
-        return nullptr;
 
     if (selector->match() == CSSSelector::Match::PseudoClass) {
         switch (selector->pseudoClass()) {
