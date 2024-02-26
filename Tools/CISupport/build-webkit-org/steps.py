@@ -1172,7 +1172,7 @@ class RunWPEAPITests(RunGLibAPITests):
     command = ["python3", "Tools/Scripts/run-wpe-tests", WithProperties("--%(configuration)s")]
 
 
-class RunWebDriverTests(shell.Test):
+class RunWebDriverTests(shell.Test, CustomFlagsMixin):
     name = "webdriver-test"
     description = ["webdriver-tests running"]
     descriptionDone = ["webdriver-tests"]
