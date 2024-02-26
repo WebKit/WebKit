@@ -2490,16 +2490,16 @@
 		F451C0FE2703B263002BA03B /* RemoteDisplayListRecorderProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = F48BB8DD26F9635D001C1C40 /* RemoteDisplayListRecorderProxy.h */; };
 		F4648E92296E81FA00744170 /* WebPrivacyHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = F4648E90296E81F500744170 /* WebPrivacyHelpers.h */; };
 		F4660BC225DEF08100E86598 /* PasteboardAccessIntent.h in Headers */ = {isa = PBXBuildFile; fileRef = F4660BC125DEF08100E86598 /* PasteboardAccessIntent.h */; };
-		F47AA6CA2B7A80BB00CD8AE9 /* WKWebView+TextExtraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = F47AA6C92B7A80BB00CD8AE9 /* WKWebView+TextExtraction.swift */; };
 		F48570A32644BEC500C05F71 /* Timeout.h in Headers */ = {isa = PBXBuildFile; fileRef = F48570A22644BEC400C05F71 /* Timeout.h */; };
 		F48C81E42AE0BA8E00073850 /* CoreIPCData.h in Headers */ = {isa = PBXBuildFile; fileRef = F48C81E32AE0BA6E00073850 /* CoreIPCData.h */; };
 		F48D2A8521583A7E00C6752B /* AppKitSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = F48D2A8421583A0200C6752B /* AppKitSPI.h */; };
-		F48EC3532B75837F00D1B886 /* WKTextExtractionItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = F48EC3522B75837F00D1B886 /* WKTextExtractionItem.swift */; };
 		F48EC3582B75895800D1B886 /* WKTextExtractionUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = F48EC3562B7585A300D1B886 /* WKTextExtractionUtilities.h */; };
 		F496A4311F58A272004C1757 /* DragDropInteractionState.h in Headers */ = {isa = PBXBuildFile; fileRef = F496A42F1F58A272004C1757 /* DragDropInteractionState.h */; };
 		F4974E76265ECBBC00B49B8C /* WKRevealItemPresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = F446EDEF265EB2B00031DA8F /* WKRevealItemPresenter.h */; };
 		F4975CF22624B80A003C626E /* WKQuickLookPreviewController.h in Headers */ = {isa = PBXBuildFile; fileRef = F4975CF12624B80A003C626E /* WKQuickLookPreviewController.h */; };
 		F499BAA32947C1A4001241D6 /* RevealFocusedElementDeferrer.h in Headers */ = {isa = PBXBuildFile; fileRef = F499BAA12947C1A4001241D6 /* RevealFocusedElementDeferrer.h */; };
+		F49CF43C2B88EF230082904B /* WKTextExtractionItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = F48EC3522B75837F00D1B886 /* WKTextExtractionItem.swift */; };
+		F49CF43E2B88F3520082904B /* WKWebView+TextExtraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = F47AA6C92B7A80BB00CD8AE9 /* WKWebView+TextExtraction.swift */; };
 		F49DC6FE2B76A89600816E73 /* WKTextExtractionItem.h in Headers */ = {isa = PBXBuildFile; fileRef = F49DC6FD2B76A88F00816E73 /* WKTextExtractionItem.h */; };
 		F49EE2212AE87F41003E3C34 /* CoreIPCDate.h in Headers */ = {isa = PBXBuildFile; fileRef = F49EE2202AE87F41003E3C34 /* CoreIPCDate.h */; };
 		F4A30A6D2B08255B004E1F24 /* CoreIPCLocale.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4A30A6C2B08254C004E1F24 /* CoreIPCLocale.mm */; };
@@ -8091,15 +8091,15 @@
 		F48C81E52AE0E1DF00073850 /* CoreIPCData.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = CoreIPCData.serialization.in; sourceTree = "<group>"; };
 		F48D2A8421583A0200C6752B /* AppKitSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppKitSPI.h; sourceTree = "<group>"; };
 		F48EC3522B75837F00D1B886 /* WKTextExtractionItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WKTextExtractionItem.swift; path = TextExtraction/WKTextExtractionItem.swift; sourceTree = "<group>"; };
-		F48EC3542B7585A300D1B886 /* WKTextExtractionUtilities.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKTextExtractionUtilities.mm; sourceTree = "<group>"; };
-		F48EC3562B7585A300D1B886 /* WKTextExtractionUtilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKTextExtractionUtilities.h; sourceTree = "<group>"; };
+		F48EC3542B7585A300D1B886 /* WKTextExtractionUtilities.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKTextExtractionUtilities.mm; path = TextExtraction/WKTextExtractionUtilities.mm; sourceTree = "<group>"; };
+		F48EC3562B7585A300D1B886 /* WKTextExtractionUtilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKTextExtractionUtilities.h; path = TextExtraction/WKTextExtractionUtilities.h; sourceTree = "<group>"; };
 		F496A42F1F58A272004C1757 /* DragDropInteractionState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DragDropInteractionState.h; path = ios/DragDropInteractionState.h; sourceTree = "<group>"; };
 		F496A4301F58A272004C1757 /* DragDropInteractionState.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = DragDropInteractionState.mm; path = ios/DragDropInteractionState.mm; sourceTree = "<group>"; };
 		F4975CF12624B80A003C626E /* WKQuickLookPreviewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKQuickLookPreviewController.h; sourceTree = "<group>"; };
 		F4975CF32624B918003C626E /* WKQuickLookPreviewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKQuickLookPreviewController.mm; sourceTree = "<group>"; };
 		F499BAA12947C1A4001241D6 /* RevealFocusedElementDeferrer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RevealFocusedElementDeferrer.h; path = ios/RevealFocusedElementDeferrer.h; sourceTree = "<group>"; };
 		F499BAA22947C1A4001241D6 /* RevealFocusedElementDeferrer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = RevealFocusedElementDeferrer.mm; path = ios/RevealFocusedElementDeferrer.mm; sourceTree = "<group>"; };
-		F49DC6FD2B76A88F00816E73 /* WKTextExtractionItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKTextExtractionItem.h; sourceTree = "<group>"; };
+		F49DC6FD2B76A88F00816E73 /* WKTextExtractionItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKTextExtractionItem.h; path = TextExtraction/WKTextExtractionItem.h; sourceTree = "<group>"; };
 		F49EE21F2AE87ED7003E3C34 /* CoreIPCDate.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = CoreIPCDate.serialization.in; sourceTree = "<group>"; };
 		F49EE2202AE87F41003E3C34 /* CoreIPCDate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreIPCDate.h; sourceTree = "<group>"; };
 		F4A30A6C2B08254C004E1F24 /* CoreIPCLocale.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CoreIPCLocale.mm; sourceTree = "<group>"; };
@@ -9358,6 +9358,7 @@
 			children = (
 				CDF1B90C266F395E0007EC10 /* GroupActivities */,
 				57FD316B22B3367E008D0E8B /* SOAuthorization */,
+				F49CF43D2B88F0310082904B /* TextExtraction */,
 				99C81D551C20DFBE005C4C82 /* AutomationClient.h */,
 				99C81D561C20DFBE005C4C82 /* AutomationClient.mm */,
 				990D28B71C6539A000986977 /* AutomationSessionClient.h */,
@@ -9447,9 +9448,6 @@
 				1DBBB061211CC3CB00502ECC /* WKShareSheet.mm */,
 				7A78FF2E224191750096483E /* WKStorageAccessAlert.h */,
 				7A78FF2F224191760096483E /* WKStorageAccessAlert.mm */,
-				F49DC6FD2B76A88F00816E73 /* WKTextExtractionItem.h */,
-				F48EC3562B7585A300D1B886 /* WKTextExtractionUtilities.h */,
-				F48EC3542B7585A300D1B886 /* WKTextExtractionUtilities.mm */,
 				2D7AAFD218C8640600A7ACD4 /* WKWebViewContentProvider.h */,
 				2DC6D9C118C44A610043BAD4 /* WKWebViewContentProviderRegistry.h */,
 				2DC6D9C218C44A610043BAD4 /* WKWebViewContentProviderRegistry.mm */,
@@ -13275,7 +13273,6 @@
 				A14F9B602B686DAE00AD9C56 /* LinearMediaKit */,
 				A14F9B332B68467F00AD9C56 /* MarketplaceKit */,
 				B66F88BE2B6D1D6000FB1734 /* Preview */,
-				F48EC3512B75837200D1B886 /* TextExtraction */,
 				A14F9B652B686E0200AD9C56 /* module.modulemap */,
 				A14F9B662B686E0200AD9C56 /* WebKitSwift.h */,
 			);
@@ -15583,10 +15580,13 @@
 			path = mac;
 			sourceTree = "<group>";
 		};
-		F48EC3512B75837200D1B886 /* TextExtraction */ = {
+		F49CF43D2B88F0310082904B /* TextExtraction */ = {
 			isa = PBXGroup;
 			children = (
+				F49DC6FD2B76A88F00816E73 /* WKTextExtractionItem.h */,
 				F48EC3522B75837F00D1B886 /* WKTextExtractionItem.swift */,
+				F48EC3562B7585A300D1B886 /* WKTextExtractionUtilities.h */,
+				F48EC3542B7585A300D1B886 /* WKTextExtractionUtilities.mm */,
 				F47AA6C92B7A80BB00CD8AE9 /* WKWebView+TextExtraction.swift */,
 			);
 			name = TextExtraction;
@@ -19587,7 +19587,9 @@
 				5CA26D83217AD1B800F97A35 /* WKSafeBrowsingWarning.mm in Sources */,
 				1DB01944211CF005009FB3E8 /* WKShareSheet.mm in Sources */,
 				7A78FF332241919B0096483E /* WKStorageAccessAlert.mm in Sources */,
+				F49CF43C2B88EF230082904B /* WKTextExtractionItem.swift in Sources */,
 				CE212160240EE571006ED443 /* WKTextPlaceholder.mm in Sources */,
+				F49CF43E2B88F3520082904B /* WKWebView+TextExtraction.swift in Sources */,
 				C14D306924B79BE000480387 /* XPCEndpoint.mm in Sources */,
 				C14D306A24B79BE400480387 /* XPCEndpointClient.mm in Sources */,
 			);
@@ -19630,8 +19632,6 @@
 				A14F9B642B686DD300AD9C56 /* LinearMediaTypes.swift in Sources */,
 				EB0FBFA72B66C61E00269CC1 /* MarketplaceKitWrapper.swift in Sources */,
 				B66F88C02B6D1F2300FB1734 /* PreviewWindowController.swift in Sources */,
-				F48EC3532B75837F00D1B886 /* WKTextExtractionItem.swift in Sources */,
-				F47AA6CA2B7A80BB00CD8AE9 /* WKWebView+TextExtraction.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(TEXT_EXTRACTION_SUPPORT)
+
 #import <wtf/RetainPtr.h>
 
 @class WKTextExtractionItem;
@@ -37,7 +39,8 @@ struct Item;
 
 namespace WebKit {
 
-void prepareTextExtractionSupport();
 RetainPtr<WKTextExtractionItem> createItem(const WebCore::TextExtraction::Item&);
 
 } // namespace WebKit
+
+#endif // ENABLE(TEXT_EXTRACTION_SUPPORT)

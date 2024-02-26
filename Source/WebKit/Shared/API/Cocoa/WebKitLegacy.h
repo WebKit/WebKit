@@ -31,6 +31,7 @@
 #endif
 #else
 
+#ifndef __swift__
 #import <WebKit/DOM.h>
 #import <WebKit/WebArchive.h>
 #import <WebKit/WebBackForwardList.h>
@@ -55,4 +56,6 @@
 #import <WebKit/WebScriptObject.h>
 #import <WebKit/WebUIDelegate.h>
 #import <WebKit/WebView.h>
+#endif // not defined(__swift__)
+
 #endif

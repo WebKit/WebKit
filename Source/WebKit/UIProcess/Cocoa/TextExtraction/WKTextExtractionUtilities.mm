@@ -26,21 +26,14 @@
 #import "config.h"
 #import "WKTextExtractionUtilities.h"
 
+#if ENABLE(TEXT_EXTRACTION_SUPPORT)
+
 #import "WKTextExtractionItem.h"
 #import <WebCore/TextExtraction.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
-#import "WebKitSwiftSoftLink.h"
-
 namespace WebKit {
 using namespace WebCore;
-
-void prepareTextExtractionSupport()
-{
-    // Preemptively soft link libWebKitSwift if it exists, so that the corresponding Swift extension
-    // on WKWebView will be loaded.
-    WebKitSwiftLibrary(true);
-}
 
 inline static WKTextExtractionContainer containerType(TextExtraction::ContainerType type)
 {
@@ -70,7 +63,7 @@ inline static RetainPtr<WKTextExtractionTextItem> createWKTextItem(const TextExt
 {
     RetainPtr<WKTextExtractionEditable> editable;
     if (data.editable) {
-        editable = adoptNS([allocWKTextExtractionEditableInstance()
+        editable = adoptNS([[WKTextExtractionEditable alloc]
             initWithLabel:data.editable->label
             placeholder:data.editable->placeholder
             isSecure:static_cast<BOOL>(data.editable->isSecure)
@@ -87,10 +80,10 @@ inline static RetainPtr<WKTextExtractionTextItem> createWKTextItem(const TextExt
         auto& [url, range] = linkAndRange;
         if (UNLIKELY(range.location + range.length > data.content.length()))
             return { };
-        return adoptNS([allocWKTextExtractionLinkInstance() initWithURL:url range:NSMakeRange(range.location, range.length)]);
+        return adoptNS([[WKTextExtractionLink alloc] initWithURL:url range:NSMakeRange(range.location, range.length)]);
     });
 
-    return adoptNS([allocWKTextExtractionTextItemInstance()
+    return adoptNS([[WKTextExtractionTextItem alloc]
         initWithContent:data.content
         selectedRange:selectedRange
         links:links.get()
@@ -105,11 +98,11 @@ inline static RetainPtr<WKTextExtractionItem> createItemWithChildren(const TextE
         [&](const TextExtraction::TextItemData& data) -> RetainPtr<WKTextExtractionItem> {
             return createWKTextItem(data, item.rectInRootView, children);
         }, [&](const TextExtraction::ScrollableItemData& data) -> RetainPtr<WKTextExtractionItem> {
-            return adoptNS([allocWKTextExtractionScrollableItemInstance() initWithContentSize:data.contentSize rectInRootView:item.rectInRootView children:children]);
+            return adoptNS([[WKTextExtractionScrollableItem alloc] initWithContentSize:data.contentSize rectInRootView:item.rectInRootView children:children]);
         }, [&](const TextExtraction::ImageItemData& data) -> RetainPtr<WKTextExtractionItem> {
-            return adoptNS([allocWKTextExtractionImageItemInstance() initWithName:data.name altText:data.altText rectInRootView:item.rectInRootView children:children]);
+            return adoptNS([[WKTextExtractionImageItem alloc] initWithName:data.name altText:data.altText rectInRootView:item.rectInRootView children:children]);
         }, [&](TextExtraction::ContainerType type) -> RetainPtr<WKTextExtractionItem> {
-            return adoptNS([allocWKTextExtractionContainerItemInstance() initWithContainer:containerType(type) rectInRootView:item.rectInRootView children:children]);
+            return adoptNS([[WKTextExtractionContainerItem alloc] initWithContainer:containerType(type) rectInRootView:item.rectInRootView children:children]);
         }
     );
 }
@@ -137,3 +130,5 @@ RetainPtr<WKTextExtractionItem> createItem(const TextExtraction::Item& item)
 }
 
 } // namespace WebKit
+
+#endif // ENABLE(TEXT_EXTRACTION_SUPPORT)

@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(TEXT_EXTRACTION_SUPPORT)
+
 #import <WebKit/WebKit.h>
 
 @class WKTextExtractionItem;
@@ -38,3 +40,5 @@ namespace WTR {
 NSString *recursiveDescription(WKTextExtractionItem *);
 
 }
+
+#endif // ENABLE(TEXT_EXTRACTION_SUPPORT)

@@ -26,6 +26,8 @@
 #import "config.h"
 #import "WKTextExtractionTestingHelpers.h"
 
+#if ENABLE(TEXT_EXTRACTION_SUPPORT)
+
 #import "WKTextExtractionItem.h"
 #import <objc/runtime.h>
 #import <wtf/text/TextStream.h>
@@ -130,3 +132,5 @@ NSString *recursiveDescription(WKTextExtractionItem *item)
 }
 
 } // namespace WTR
+
+#endif // ENABLE(TEXT_EXTRACTION_SUPPORT)
