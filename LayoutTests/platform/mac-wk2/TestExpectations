@@ -2009,3 +2009,9 @@ webkit.org/b/269996 [ Monterey+ Debug ] imported/w3c/web-platform-tests/css/css-
 [ Monterey+ Debug ] imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-below-viewport-offscreen-old.html [ Skip ]
 [ Monterey+ Debug ] imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-right-of-viewport-offscreen-new.html [ Skip ]
 [ Monterey+ Debug ] imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-right-of-viewport-offscreen-old.html [ Skip ]
+
+# webkit.org/b/270092  (REGRESSION (275274@main): [ Sonoma+ wk2 ] Multiple compositing/plugins/pdf/pdf are constant failures)
+[ Sonoma+ ] compositing/plugins/pdf/pdf-in-embed.html [ Failure ]
+[ Sonoma+ ] compositing/plugins/pdf/pdf-in-styled-embed.html [ Failure ]
+[ Sonoma+ ] compositing/plugins/pdf/pdf-scrolling-tree-dynamic.html [ Failure ]
+[ Sonoma+ ] compositing/plugins/pdf/pdf-scrolling-tree.html [ Failure ]
