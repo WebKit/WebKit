@@ -11,9 +11,8 @@ layer at (0,0) size 785x1199
         RenderText {#text} at (0,0) size 84x18
           text run at (0,0) width 84: "TEXTAREA"
         RenderBR {BR} at (83,0) size 1x18
-        RenderText {#text} at (406,210) size 4x18
-          text run at (406,210) width 4: " "
-        RenderBR {BR} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderBR {BR} at (406,210) size 0x18
         RenderBR {BR} at (0,228) size 0x18
         RenderText {#text} at (0,246) size 148x18
           text run at (0,246) width 148: "PARAGRAPH - works"
@@ -36,16 +35,14 @@ layer at (0,0) size 785x1199
         RenderText {#text} at (0,36) size 125x18
           text run at (0,36) width 125: "Un-Styled Textarea"
         RenderBR {BR} at (124,36) size 1x18
-        RenderText {#text} at (161,72) size 4x18
-          text run at (161,72) width 4: " "
-        RenderBR {BR} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderBR {BR} at (161,72) size 0x18
         RenderBR {BR} at (0,90) size 0x18
         RenderText {#text} at (0,108) size 216x18
           text run at (0,108) width 216: "Totally Blank Un-Styled Textarea"
         RenderBR {BR} at (215,108) size 1x18
-        RenderText {#text} at (161,144) size 4x18
-          text run at (161,144) width 4: " "
-        RenderBR {BR} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderBR {BR} at (161,144) size 0x18
         RenderBR {BR} at (0,162) size 0x18
         RenderText {#text} at (0,180) size 212x18
           text run at (0,180) width 212: "Totally Blank STYLED Textarea"
@@ -56,19 +53,15 @@ layer at (8,60) size 406x206 clip at (9,61) size 404x204
   RenderTextControl {TEXTAREA} at (0,18) size 406x206 [bgcolor=#FFFFFF] [border: (1px dotted #C0C0C0)]
     RenderBlock {DIV} at (3,3) size 400x106
       RenderText {#text} at (0,18) size 388x69
-        text run at (0,18) width 384: "Demo text here that wraps a bit and should demonstrate"
-        text run at (383,18) width 5: " "
+        text run at (0,18) width 388: "Demo text here that wraps a bit and should demonstrate "
         text run at (0,71) width 184: "the goodness of line-height"
 layer at (8,829) size 161x32 clip at (9,830) size 144x30 scrollHeight 56
   RenderTextControl {TEXTAREA} at (0,54) size 161x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 140x52
-      RenderText {#text} at (0,0) size 140x52
-        text run at (0,0) width 139: "Demo text here that wraps"
-        text run at (138,0) width 2: " "
-        text run at (0,13) width 84: "a bit and should"
-        text run at (83,13) width 4: " "
-        text run at (0,26) width 87: "demonstrate the"
-        text run at (86,26) width 4: " "
+      RenderText {#text} at (0,0) size 143x52
+        text run at (0,0) width 143: "Demo text here that wraps "
+        text run at (0,13) width 87: "a bit and should "
+        text run at (0,26) width 90: "demonstrate the "
         text run at (0,39) width 125: "goodness of line-height"
 layer at (8,901) size 161x32 clip at (9,902) size 159x30
   RenderTextControl {TEXTAREA} at (0,126) size 161x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
