@@ -1401,6 +1401,15 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
     ASSERT(compositedAncestor == m_owningLayer.ancestorCompositingLayer());
     LayoutRect parentGraphicsLayerRect = computeParentGraphicsLayerRect(compositedAncestor);
 
+    // If our content is being used in a view-transition, then all positioning
+    // is handled using a synthesized 'transform' property on the wrapping
+    // ::view-transition-new element. Move the parent graphics layer rect to our
+    // position so that layer positions are computed relative to our origin.
+    if (renderer().capturedInViewTransition()) {
+        ComputedOffsets computedOffsets(m_owningLayer, compositedAncestor, compositedBounds(), { }, { });
+        parentGraphicsLayerRect.move(computedOffsets.fromParentGraphicsLayer());
+    }
+
     if (m_ancestorClippingStack)
         updateClippingStackLayerGeometry(*m_ancestorClippingStack, compositedAncestor, parentGraphicsLayerRect);
 
@@ -1412,12 +1421,6 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
     m_compositedBoundsOffsetFromGraphicsLayer = compositedBoundsOffset.fromPrimaryGraphicsLayer();
 
     auto primaryLayerPosition = primaryGraphicsLayerRect.location();
-
-    // If our content is being used in a view-transition, then all positioning
-    // is handled using a synthesized 'transform' property on the wrapping
-    // ::view-transition-new element.
-    if (renderer().capturedInViewTransition())
-        primaryLayerPosition = { };
 
     // FIXME: reflections should force transform-style to be flat in the style: https://bugs.webkit.org/show_bug.cgi?id=106959
     bool preserves3D = style.preserves3D() && !renderer().hasReflection();
