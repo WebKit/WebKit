@@ -161,7 +161,9 @@
 
     (allow mach-lookup (with report) (with telemetry)
         (global-name "com.apple.coremedia.cpeprotector.xpc")
+#if !HAVE(REFACTORED_MEDIASERVERD)
         (global-name "com.apple.coremedia.endpoint.xpc")
+#endif
         (global-name "com.apple.coremedia.figcontentkeysession.xpc")
         (global-name "com.apple.coremedia.figcontentkeyboss.xpc")
         (global-name "com.apple.coremedia.routingsessionmanager.xpc")

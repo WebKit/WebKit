@@ -872,7 +872,6 @@
 (allow mach-lookup
     (global-name "com.apple.coremedia.routingcontext.xpc"))
 (allow mach-lookup
-    (global-name "com.apple.coremedia.endpoint.xpc")
     (global-name "com.apple.coremedia.endpointstream.xpc")
     (global-name "com.apple.coremedia.endpointstreamaudioengine.xpc") ;; <rdar://76029596>
     (global-name "com.apple.coremedia.endpointplaybacksession.xpc")
@@ -892,6 +891,8 @@
 #if HAVE(REFACTORED_MEDIASERVERD)
     (global-name "com.apple.airplay.endpoint.xpc")
     (global-name "com.apple.mediaexperience.endpoint.xpc")
+#else
+    (global-name "com.apple.coremedia.endpoint.xpc")
 #endif
 )
 
