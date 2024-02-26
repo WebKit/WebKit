@@ -215,8 +215,8 @@ AcceleratedEffect::AcceleratedEffect(const KeyframeEffect& effect, const IntRect
         ASSERT(animation->holdTime() || animation->startTime());
         m_holdTime = animation->holdTime();
         m_startTime = animation->startTime();
-        if (is<StyleOriginatedAnimation>(animation)) {
-            if (auto* defaultKeyframeTimingFunction = downcast<StyleOriginatedAnimation>(*animation).backingAnimation().timingFunction())
+        if (auto* styleAnimation = dynamicDowncast<StyleOriginatedAnimation>(*animation)) {
+            if (auto* defaultKeyframeTimingFunction = styleAnimation->backingAnimation().timingFunction())
                 m_defaultKeyframeTimingFunction = defaultKeyframeTimingFunction;
         }
     }
@@ -385,12 +385,10 @@ void AcceleratedEffect::apply(Seconds currentTime, AcceleratedEffectValues& valu
         auto* startKeyframe = interval.endpoints.first();
         auto* endKeyframe = interval.endpoints.last();
 
-        ASSERT(is<AcceleratedEffect::Keyframe>(startKeyframe) && is<AcceleratedEffect::Keyframe>(endKeyframe));
         auto startKeyframeValues = downcast<AcceleratedEffect::Keyframe>(startKeyframe)->values();
         auto endKeyframeValues = downcast<AcceleratedEffect::Keyframe>(endKeyframe)->values();
 
         KeyframeInterpolation::CompositionCallback composeProperty = [&](const KeyframeInterpolation::Keyframe& keyframe, CompositeOperation compositeOperation) {
-            ASSERT(is<AcceleratedEffect::Keyframe>(keyframe));
             auto& acceleratedKeyframe = downcast<AcceleratedEffect::Keyframe>(keyframe);
             BlendingContext context { 1, false, compositeOperation };
             if (acceleratedKeyframe.offset() == startKeyframe->offset())
@@ -507,16 +505,15 @@ const KeyframeInterpolation::Keyframe& AcceleratedEffect::keyframeAtIndex(size_t
 
 const TimingFunction* AcceleratedEffect::timingFunctionForKeyframe(const KeyframeInterpolation::Keyframe& keyframe) const
 {
-    if (!is<Keyframe>(keyframe)) {
-        ASSERT_NOT_REACHED();
+    auto* acceleratedEffectKeyframe = dynamicDowncast<Keyframe>(keyframe);
+    ASSERT(acceleratedEffectKeyframe);
+    if (!acceleratedEffectKeyframe)
         return nullptr;
-    }
 
-    auto& acceleratedEffectKeyframe = downcast<Keyframe>(keyframe);
     if (m_animationType == WebAnimationType::CSSAnimation || m_animationType == WebAnimationType::CSSTransition) {
         // If we're dealing with a CSS Animation, the timing function may be specified on the keyframe.
         if (m_animationType == WebAnimationType::CSSAnimation) {
-            if (auto& timingFunction = acceleratedEffectKeyframe.timingFunction())
+            if (auto& timingFunction = acceleratedEffectKeyframe->timingFunction())
                 return timingFunction.get();
         }
 
@@ -524,7 +521,7 @@ const TimingFunction* AcceleratedEffect::timingFunctionForKeyframe(const Keyfram
         return m_defaultKeyframeTimingFunction.get();
     }
 
-    return acceleratedEffectKeyframe.timingFunction().get();
+    return acceleratedEffectKeyframe->timingFunction().get();
 }
 
 bool AcceleratedEffect::isPropertyAdditiveOrCumulative(KeyframeInterpolation::Property property) const

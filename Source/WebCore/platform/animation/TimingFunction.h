@@ -82,10 +82,8 @@ public:
     
     bool operator==(const TimingFunction& other) const final
     {
-        if (!is<LinearTimingFunction>(other))
-            return false;
-        auto& otherLinear = downcast<LinearTimingFunction>(other);
-        return m_points == otherLinear.m_points;
+        auto* otherLinear = dynamicDowncast<LinearTimingFunction>(other);
+        return otherLinear && m_points == otherLinear->m_points;
     }
 
     const Vector<Point>& points() const { return m_points; }
@@ -146,14 +144,12 @@ public:
 
     bool operator==(const TimingFunction& other) const final
     {
-        if (!is<CubicBezierTimingFunction>(other))
-            return false;
-        auto& otherCubic = downcast<CubicBezierTimingFunction>(other);
-        if (m_timingFunctionPreset != otherCubic.m_timingFunctionPreset)
+        auto* otherCubic = dynamicDowncast<CubicBezierTimingFunction>(other);
+        if (!otherCubic || m_timingFunctionPreset != otherCubic->m_timingFunctionPreset)
             return false;
         if (m_timingFunctionPreset != TimingFunctionPreset::Custom)
             return true;
-        return m_x1 == otherCubic.m_x1 && m_y1 == otherCubic.m_y1 && m_x2 == otherCubic.m_x2 && m_y2 == otherCubic.m_y2;
+        return m_x1 == otherCubic->m_x1 && m_y1 == otherCubic->m_y1 && m_x2 == otherCubic->m_x2 && m_y2 == otherCubic->m_y2;
     }
 
     double x1() const { return m_x1; }
@@ -225,20 +221,17 @@ public:
     
     bool operator==(const TimingFunction& other) const final
     {
-        if (!is<StepsTimingFunction>(other))
-            return false;
-        auto& otherSteps = downcast<StepsTimingFunction>(other);
-
-        if (m_steps != otherSteps.m_steps)
+        auto* otherSteps = dynamicDowncast<StepsTimingFunction>(other);
+        if (!otherSteps || m_steps != otherSteps->m_steps)
             return false;
 
-        if (m_stepPosition == otherSteps.m_stepPosition)
+        if (m_stepPosition == otherSteps->m_stepPosition)
             return true;
 
-        if (!m_stepPosition && *otherSteps.m_stepPosition == StepPosition::End)
+        if (!m_stepPosition && *otherSteps->m_stepPosition == StepPosition::End)
             return true;
 
-        if (!otherSteps.m_stepPosition && *m_stepPosition == StepPosition::End)
+        if (!otherSteps->m_stepPosition && *m_stepPosition == StepPosition::End)
             return true;
 
         return false;
@@ -281,10 +274,8 @@ public:
     
     bool operator==(const TimingFunction& other) const final
     {
-        if (!is<SpringTimingFunction>(other))
-            return false;
-        auto& otherSpring = downcast<SpringTimingFunction>(other);
-        return m_mass == otherSpring.m_mass && m_stiffness == otherSpring.m_stiffness && m_damping == otherSpring.m_damping && m_initialVelocity == otherSpring.m_initialVelocity;
+        auto* otherSpring = dynamicDowncast<SpringTimingFunction>(other);
+        return otherSpring && m_mass == otherSpring->m_mass && m_stiffness == otherSpring->m_stiffness && m_damping == otherSpring->m_damping && m_initialVelocity == otherSpring->m_initialVelocity;
     }
 
     double mass() const { return m_mass; }
