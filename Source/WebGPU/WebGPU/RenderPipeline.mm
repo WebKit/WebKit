@@ -811,7 +811,7 @@ NSString* Device::addPipelineLayouts(Vector<Vector<WGPUBindGroupLayoutEntry>>& p
                 auto shortName = entryName.substring(2, entryName.length() - (sizeof("_ArrayLength") + 1));
                 minBindingSize = entryMap.find(shortName)->value;
             } else
-                entryMap.set(entryName, entry.binding);
+                entryMap.set(entryName, entry.webBinding);
 
             newEntry.binding = entry.webBinding;
             newEntry.metalBinding = entry.binding;
