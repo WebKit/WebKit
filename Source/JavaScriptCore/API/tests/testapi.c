@@ -1194,6 +1194,117 @@ void JSSynchronousGarbageCollectForDebugging(JSContextRef);
 }
 #endif
 
+static void checkJSStringOOBUTF8(void)
+{
+    const size_t sourceCStringSize = 200;
+    const size_t outCStringSize = 10;
+
+    char sourceCString[sourceCStringSize];
+    memset(sourceCString, 0, sizeof(sourceCString));
+    for (size_t i = 0; i < sourceCStringSize - 1; ++i)
+        sourceCString[i] = '0' + (i%10);
+
+    char outCString[outCStringSize + sourceCStringSize];
+    memset(outCString, 0x13, sizeof(outCString));
+
+    JSStringRef str = JSStringCreateWithUTF8CString(sourceCString);
+    size_t bytesWritten = JSStringGetUTF8CString(str, outCString, outCStringSize);
+
+    assertTrue(!bytesWritten, "we report no bytes written");
+
+    for (size_t i = 0; i < sizeof(outCString); ++i) {
+        if (i == outCStringSize - 1)
+            assertTrue(outCString[i] == '\0', "string terminated");
+        else if (i < outCStringSize - 1)
+            assertTrue(outCString[i] == sourceCString[i], "string copied");
+        else
+            assertTrue(outCString[i] == 0x13, "did not write past the end");
+    }
+
+    JSStringRelease(str);
+}
+
+static void checkJSStringOOBUTF16(void)
+{
+    const size_t sourceCStringSize = 22;
+    const size_t outCStringSize = 20;
+
+    char sourceCString[sourceCStringSize];
+    memset(sourceCString, 0, sizeof(sourceCString));
+    for (size_t i = 0; i < sourceCStringSize - 1; ++i)
+        sourceCString[i] = '0' + (i%10);
+
+    sourceCString[3] = '\xF0';
+    sourceCString[4] = '\x9F';
+    sourceCString[5] = '\x98';
+    sourceCString[6] = '\x81';
+
+    char outCString[outCStringSize + sourceCStringSize];
+    memset(outCString, 0x13, sizeof(outCString));
+
+    JSStringRef str = JSStringCreateWithUTF8CString(sourceCString);
+    size_t bytesWritten = JSStringGetUTF8CString(str, outCString, outCStringSize);
+
+    assertTrue(!bytesWritten, "we report no bytes written");
+
+    for (size_t i = 0; i < sizeof(outCString); ++i) {
+        if (i == outCStringSize - 1)
+            assertTrue(outCString[i] == '\0', "string terminated");
+        else if (i < outCStringSize - 1)
+            assertTrue(outCString[i] == sourceCString[i], "string copied");
+        else
+            assertTrue(outCString[i] == 0x13, "did not write past the end");
+    }
+
+    JSStringRelease(str);
+}
+
+static void checkJSStringOOBUTF16AtEnd(void)
+{
+    const size_t sourceCStringSize = 22;
+    const size_t outCStringSize = 20;
+
+    char sourceCString[sourceCStringSize];
+    memset(sourceCString, 0, sizeof(sourceCString));
+    for (size_t i = 0; i < sourceCStringSize - 1; ++i)
+        sourceCString[i] = '0' + (i%10);
+
+    sourceCString[17] = '\xF0';
+    sourceCString[18] = '\x9F';
+    sourceCString[19] = '\x98';
+    sourceCString[20] = '\x81';
+
+    char outCString[outCStringSize + sourceCStringSize];
+    memset(outCString, 0x13, sizeof(outCString));
+
+    JSStringRef str = JSStringCreateWithUTF8CString(sourceCString);
+    size_t bytesWritten = JSStringGetUTF8CString(str, outCString, outCStringSize);
+
+    assertTrue(!bytesWritten, "we report no bytes written");
+
+    for (size_t i = 0; i < sizeof(outCString); ++i) {
+        if (i == 17)
+            assertTrue(outCString[i] == '\0', "string terminated");
+        else if (i < 17)
+            assertTrue(outCString[i] == sourceCString[i], "string copied");
+        else
+            assertTrue(outCString[i] == 0x13, "did not write past the end");
+    }
+
+    JSStringRelease(str);
+}
+
+static void checkJSStringOOB(void)
+{
+    printf("Test: checkJSStringOOB\n");
+    checkJSStringOOBUTF8();
+    printf(".\n");
+    checkJSStringOOBUTF16();
+    printf(".\n");
+    checkJSStringOOBUTF16AtEnd();
+    printf("PASS: checkJSStringOOB\n");
+}
+
 static const unsigned numWeakRefs = 10000;
 
 static void markingConstraint(JSMarkerRef marker, void *userData)
@@ -1767,7 +1878,7 @@ int main(int argc, char* argv[])
     assertEqualsAsCharactersPtr(jsOneThird, "0.3333333333333333");
     assertEqualsAsCharactersPtr(jsEmptyString, "");
     assertEqualsAsCharactersPtr(jsOneString, "1");
-    
+
     assertEqualsAsUTF8String(jsUndefined, "undefined");
     assertEqualsAsUTF8String(jsNull, "null");
     assertEqualsAsUTF8String(jsTrue, "true");
@@ -1777,9 +1888,11 @@ int main(int argc, char* argv[])
     assertEqualsAsUTF8String(jsOneThird, "0.3333333333333333");
     assertEqualsAsUTF8String(jsEmptyString, "");
     assertEqualsAsUTF8String(jsOneString, "1");
-    
+
+    checkJSStringOOB();
+
     checkConstnessInJSObjectNames();
-    
+
     ASSERT(JSValueIsStrictEqual(context, jsTrue, jsTrue));
     ASSERT(!JSValueIsStrictEqual(context, jsOne, jsOneString));
 
