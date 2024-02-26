@@ -299,8 +299,8 @@ void Recorder::drawSystemImage(SystemImage& systemImage, const FloatRect& destin
 {
     appendStateChangeItemIfNecessary();
 #if USE(SYSTEM_PREVIEW)
-    if (is<ARKitBadgeSystemImage>(systemImage)) {
-        if (auto image = downcast<ARKitBadgeSystemImage>(systemImage).image()) {
+    if (auto* badgeSystemImage = dynamicDowncast<ARKitBadgeSystemImage>(systemImage)) {
+        if (auto image = badgeSystemImage->image()) {
             auto nativeImage = image->nativeImage();
             if (!nativeImage)
                 return;

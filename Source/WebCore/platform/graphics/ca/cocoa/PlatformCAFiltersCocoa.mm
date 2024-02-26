@@ -355,8 +355,8 @@ RetainPtr<NSValue> PlatformCAFilters::filterValueForOperation(const FilterOperat
     FilterOperation::Type type = operation->type();
     RetainPtr<id> value;
     
-    if (is<DefaultFilterOperation>(*operation)) {
-        type = downcast<DefaultFilterOperation>(*operation).representedType();
+    if (auto* defaultOperation = dynamicDowncast<DefaultFilterOperation>(*operation)) {
+        type = defaultOperation->representedType();
         operation = nullptr;
     }
     

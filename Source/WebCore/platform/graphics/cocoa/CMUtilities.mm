@@ -138,23 +138,22 @@ RetainPtr<CMFormatDescriptionRef> createFormatDescriptionFromTrackInfo(const Tra
 {
     ASSERT(info.isVideo() || info.isAudio());
 
-    if (info.isAudio()) {
-        auto& audioInfo = downcast<const AudioInfo>(info);
-        if (!audioInfo.cookieData || !audioInfo.cookieData->size())
+    if (auto* audioInfo = dynamicDowncast<AudioInfo>(info)) {
+        if (!audioInfo->cookieData || !audioInfo->cookieData->size())
             return nullptr;
 
-        switch (audioInfo.codecName.value) {
+        switch (audioInfo->codecName.value) {
 #if ENABLE(OPUS)
         case kAudioFormatOpus:
             if (!isOpusDecoderAvailable())
                 return nullptr;
-            return createAudioFormatDescription(audioInfo);
+            return createAudioFormatDescription(*audioInfo);
 #endif
 #if ENABLE(VORBIS)
         case kAudioFormatVorbis:
             if (!isVorbisDecoderAvailable())
                 return nullptr;
-            return createAudioFormatDescription(audioInfo);
+            return createAudioFormatDescription(*audioInfo);
 #endif
         default:
             return nullptr;

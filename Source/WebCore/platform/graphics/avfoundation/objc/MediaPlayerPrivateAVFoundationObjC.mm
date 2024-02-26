@@ -2951,17 +2951,17 @@ void MediaPlayerPrivateAVFoundationObjC::outputObscuredDueToInsufficientExternal
 void MediaPlayerPrivateAVFoundationObjC::cdmInstanceAttached(CDMInstance& instance)
 {
 #if HAVE(AVCONTENTKEYSESSION)
-    if (!is<CDMInstanceFairPlayStreamingAVFObjC>(instance))
+    auto* fpsInstance = dynamicDowncast<CDMInstanceFairPlayStreamingAVFObjC>(instance);
+    if (!fpsInstance)
         return;
 
-    auto& fpsInstance = downcast<CDMInstanceFairPlayStreamingAVFObjC>(instance);
-    if (&fpsInstance == m_cdmInstance)
+    if (fpsInstance == m_cdmInstance)
         return;
 
     if (m_cdmInstance)
         cdmInstanceDetached(*m_cdmInstance);
 
-    m_cdmInstance = &fpsInstance;
+    m_cdmInstance = fpsInstance;
 #else
     UNUSED_PARAM(instance);
 #endif

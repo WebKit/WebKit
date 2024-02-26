@@ -342,47 +342,47 @@ void PlaybackSessionModelMediaElement::selectLegibleMediaOption(uint64_t index)
 void PlaybackSessionModelMediaElement::toggleFullscreen()
 {
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-    ASSERT(is<HTMLVideoElement>(*m_mediaElement));
-    if (!is<HTMLVideoElement>(*m_mediaElement))
+    auto* element = dynamicDowncast<HTMLVideoElement>(*m_mediaElement);
+    ASSERT(element);
+    if (!element)
         return;
 
-    auto& element = downcast<HTMLVideoElement>(*m_mediaElement);
-    if (element.fullscreenMode() == MediaPlayerEnums::VideoFullscreenModeStandard)
-        element.setPresentationMode(HTMLVideoElement::VideoPresentationMode::Inline);
+    if (element->fullscreenMode() == MediaPlayerEnums::VideoFullscreenModeStandard)
+        element->setPresentationMode(HTMLVideoElement::VideoPresentationMode::Inline);
     else
-        element.setPresentationMode(HTMLVideoElement::VideoPresentationMode::Fullscreen);
+        element->setPresentationMode(HTMLVideoElement::VideoPresentationMode::Fullscreen);
 #endif
 }
 
 void PlaybackSessionModelMediaElement::togglePictureInPicture()
 {
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-    ASSERT(is<HTMLVideoElement>(*m_mediaElement));
-    if (!is<HTMLVideoElement>(*m_mediaElement))
+    auto* element = dynamicDowncast<HTMLVideoElement>(*m_mediaElement);
+    ASSERT(element);
+    if (!element)
         return;
 
-    auto& element = downcast<HTMLVideoElement>(*m_mediaElement);
-    if (element.fullscreenMode() == MediaPlayerEnums::VideoFullscreenModePictureInPicture)
-        element.setPresentationMode(HTMLVideoElement::VideoPresentationMode::Inline);
+    if (element->fullscreenMode() == MediaPlayerEnums::VideoFullscreenModePictureInPicture)
+        element->setPresentationMode(HTMLVideoElement::VideoPresentationMode::Inline);
     else
-        element.setPresentationMode(HTMLVideoElement::VideoPresentationMode::PictureInPicture);
+        element->setPresentationMode(HTMLVideoElement::VideoPresentationMode::PictureInPicture);
 #endif
 }
 
 void PlaybackSessionModelMediaElement::toggleInWindowFullscreen()
 {
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-    ASSERT(is<HTMLVideoElement>(*m_mediaElement));
-    if (!is<HTMLVideoElement>(*m_mediaElement))
+    auto* element = dynamicDowncast<HTMLVideoElement>(*m_mediaElement);
+    ASSERT(element);
+    if (!element)
         return;
 
-    auto& element = downcast<HTMLVideoElement>(*m_mediaElement);
-    UserGestureIndicator indicator(IsProcessingUserGesture::Yes, &element.document());
+    UserGestureIndicator indicator { IsProcessingUserGesture::Yes, &element->document() };
 
-    if (element.fullscreenMode() == MediaPlayerEnums::VideoFullscreenModeInWindow)
-        element.setPresentationMode(HTMLVideoElement::VideoPresentationMode::Inline);
+    if (element->fullscreenMode() == MediaPlayerEnums::VideoFullscreenModeInWindow)
+        element->setPresentationMode(HTMLVideoElement::VideoPresentationMode::Inline);
     else
-        element.setPresentationMode(HTMLVideoElement::VideoPresentationMode::InWindow);
+        element->setPresentationMode(HTMLVideoElement::VideoPresentationMode::InWindow);
 #endif
 }
 

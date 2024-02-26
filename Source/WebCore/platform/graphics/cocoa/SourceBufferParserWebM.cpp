@@ -1056,8 +1056,8 @@ webm::Status WebMParser::TrackData::readFrameData(webm::Reader& reader, const we
 void WebMParser::flushPendingVideoSamples()
 {
     for (auto& track : m_tracks) {
-        if (track->trackType() == TrackInfo::TrackType::Video)
-            downcast<WebMParser::VideoTrackData>(track.get()).flushPendingSamples();
+        if (auto* videoTrack = dynamicDowncast<WebMParser::VideoTrackData>(track.get()))
+            videoTrack->flushPendingSamples();
     }
 }
 

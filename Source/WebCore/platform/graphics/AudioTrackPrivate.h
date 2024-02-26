@@ -44,7 +44,6 @@ public:
             return;
         m_enabled = enabled;
         notifyClients([enabled](auto& client) {
-            ASSERT(is<AudioTrackPrivateClient>(client));
             downcast<AudioTrackPrivateClient>(client).enabledChanged(enabled);
         });
         if (m_enabledChangedCallback)
@@ -68,7 +67,6 @@ public:
             return;
         m_configuration = WTFMove(configuration);
         notifyClients([configuration = m_configuration](auto& client) {
-            ASSERT(is<AudioTrackPrivateClient>(client));
             downcast<AudioTrackPrivateClient>(client).configurationChanged(configuration);
         });
     }

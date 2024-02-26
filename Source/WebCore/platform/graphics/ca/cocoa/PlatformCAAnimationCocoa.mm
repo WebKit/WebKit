@@ -129,9 +129,9 @@ static PlatformCAAnimation::ValueFunctionType fromCAValueFunctionType(NSString* 
 
 CAMediaTimingFunction* toCAMediaTimingFunction(const TimingFunction& timingFunction, bool reverse)
 {
-    if (is<CubicBezierTimingFunction>(timingFunction)) {
+    if (auto* cubic = dynamicDowncast<CubicBezierTimingFunction>(timingFunction)) {
         RefPtr<CubicBezierTimingFunction> reversed;
-        std::reference_wrapper<const CubicBezierTimingFunction> function = downcast<CubicBezierTimingFunction>(timingFunction);
+        std::reference_wrapper<const CubicBezierTimingFunction> function = *cubic;
 
         if (reverse) {
             reversed = function.get().createReversed();
@@ -581,8 +581,8 @@ void PlatformCAAnimationCocoa::setAnimations(const Vector<RefPtr<PlatformCAAnima
     ASSERT([static_cast<CAAnimation *>(m_animation.get()) isKindOfClass:[CAAnimationGroup class]]);
 
     [static_cast<CAAnimationGroup *>(m_animation.get()) setAnimations:createNSArray(value, [&] (auto& animation) -> CAAnimation * {
-        if (is<PlatformCAAnimationCocoa>(animation))
-            return downcast<PlatformCAAnimationCocoa>(animation.get())->m_animation.get();
+        if (auto* platformAnimation = dynamicDowncast<PlatformCAAnimationCocoa>(animation.get()))
+            return platformAnimation->m_animation.get();
         return nil;
     }).get()];
 }

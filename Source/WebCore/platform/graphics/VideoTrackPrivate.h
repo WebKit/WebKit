@@ -44,7 +44,6 @@ public:
             return;
         m_selected = selected;
         notifyClients([selected](auto& client) {
-            ASSERT(is<VideoTrackPrivateClient>(client));
             downcast<VideoTrackPrivateClient>(client).selectedChanged(selected);
         });
         if (m_selectedChangedCallback)
@@ -69,7 +68,6 @@ public:
             return;
         m_configuration = WTFMove(configuration);
         notifyClients([configuration = m_configuration](auto& client) {
-            ASSERT(is<VideoTrackPrivateClient>(client));
             downcast<VideoTrackPrivateClient>(client).configurationChanged(configuration);
         });
     }

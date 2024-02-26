@@ -66,7 +66,6 @@ void InbandChapterTrackPrivateAVFObjC::processChapters(RetainPtr<NSArray<AVTimed
         ISOWebVTTCue cueData = ISOWebVTTCue(PAL::toMediaTime([item time]), PAL::toMediaTime([item duration]), AtomString::number(chapterNumber), [item stringValue]);
         INFO_LOG(identifier, "created cue ", cueData);
         notifyMainThreadClient([cueData = WTFMove(cueData)](TrackPrivateBaseClient& client) mutable {
-            ASSERT(is<InbandTextTrackPrivateClient>(client));
             downcast<InbandTextTrackPrivateClient>(client).parseWebVTTCueData(WTFMove(cueData));
         });
     });
