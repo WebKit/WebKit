@@ -276,6 +276,12 @@ _PATH_RULES_SPECIFIER = [
       os.path.join('Source', 'WebKit', 'NetworkProcess', 'soup', 'WebKitDirectoryInputStream.h')],
      ["-readability/naming",
       "-readability/enum_casing"]),
+    ([
+      # This file needs to define symbols with underscores to integrate
+      # with the rest of Skia, and does not have a corresponding header.
+      os.path.join('Source', 'WebCore', 'platform', 'skia', 'SkiaAllocatorFastMalloc.cpp')],
+     ["-build/include_order",
+      "-readability/naming/underscores"]),
 
     # For third-party code, keep only the following checks--
     #
