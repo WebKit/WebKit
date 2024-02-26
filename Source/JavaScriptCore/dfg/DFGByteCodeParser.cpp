@@ -3987,6 +3987,7 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
 
             insertChecks();
             Node* thisNumber = get(virtualRegisterForArgumentIncludingThis(0, registerOffset));
+            addToGraph(Check, Edge(thisNumber, NumberUse));
             if (argumentCountIncludingThis == 1) {
                 Node* resultNode = addToGraph(NumberToStringWithValidRadixConstant, OpInfo(10), thisNumber);
                 setResult(resultNode);
