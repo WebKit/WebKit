@@ -810,6 +810,10 @@ String AccessibilityRenderObject::stringValue() const
         return { };
 
     if (isDateTime()) {
+        if (RefPtr input = dynamicDowncast<HTMLInputElement>(node()))
+            return input->visibleValue();
+
+        // As fallback, gather the static text under this.
         String value;
         Accessibility::enumerateDescendants(*const_cast<AccessibilityRenderObject*>(this), false, [&value] (const auto& object) {
             if (object.isStaticText())

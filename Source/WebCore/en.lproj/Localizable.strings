@@ -2014,6 +2014,13 @@
 /* accessibility label for a date field year input. */
 "year" = "year";
 
+/* Accessibility labels for time fields. */
+"hour" = "hour";
+"minutes" = "minutes";
+"seconds" = "seconds";
+"milliseconds" = "milliseconds";
+"meridiem" = "meridiem";
+
 /* Message for requesting access to the device motion and orientation */
 "“%@” Would Like to Access Motion and Orientation" = "“%@” Would Like to Access Motion and Orientation";
 

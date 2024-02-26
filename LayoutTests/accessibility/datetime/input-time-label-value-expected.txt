@@ -1,0 +1,23 @@
+This tests input type=time label and value properties.
+
+inputtime1:
+PASS: inputtime.title === 'AXTitle: Meeting time:'
+AXValue: 8:00 AM
+
+inputtime2:
+PASS: inputtime.title === 'AXTitle: Meeting time:'
+AXValue: 8:00 AM
+
+inputtime3:
+PASS: inputtime.title === 'AXTitle: Meeting time:'
+AXValue: 8:00 AM
+
+inputtime4:
+PASS: inputtime.title === 'AXTitle: '
+AXValue: 7:30 AM
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ Meeting time: Meeting time:

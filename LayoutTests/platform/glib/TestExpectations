@@ -543,7 +543,9 @@ accessibility/display-contents/tree-and-treeitems.html [ Skip ]
 
 webkit.org/b/212805 accessibility/svg-text.html [ Failure ]
 
-webkit.org/b/251544 accessibility/date-input-aria-label-and-value.html [ Skip ]
+webkit.org/b/251544 accessibility/datetime/input-date-field-labels-and-value-changes.html [ Skip ]
+accessibility/datetime/input-time-field-labels-and-value-changes.html [ Skip ]
+accessibility/datetime/input-time-label-value.html [ Skip ]
 
 # Added in r263823. Both tests are timing out.
 webkit.org/b/213874 accessibility/keyevents-for-increment-actions-with-node-removal.html [ Skip ]
