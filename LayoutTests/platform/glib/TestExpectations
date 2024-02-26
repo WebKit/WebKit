@@ -1067,6 +1067,7 @@ webkit.org/b/265919 media/track/media-source-audio-track.html [ Failure ]
 # WebProcess's MemoryPressureHandler are disabled, test is nonfunctional
 media/media-source/media-managedmse-memorypressure.html [ Timeout ]
 media/media-source/media-managedmse-memorypressure-inactive.html [ Timeout ]
+media/media-source/media-managedmse-eviction.html [ Timeout ]
 # No AirPlay on glib platforms.
 media/media-source/media-managedmse-airplay.html [ Skip ]
 
