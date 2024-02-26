@@ -60,7 +60,10 @@ CachedPage::CachedPage(Page& page)
     : m_page(page)
     , m_expirationTime(MonotonicTime::now() + page.settings().backForwardCacheExpirationInterval())
     , m_cachedMainFrame(makeUnique<CachedFrame>(page.mainFrame()))
-    , m_loadedSubresourceDomains(is<LocalFrame>(page.mainFrame()) ? downcast<LocalFrame>(page.mainFrame()).loader().client().loadedSubresourceDomains() : Vector<RegistrableDomain>())
+    , m_loadedSubresourceDomains([&] {
+        auto* localFrame = dynamicDowncast<LocalFrame>(page.mainFrame());
+        return localFrame ? localFrame->loader().client().loadedSubresourceDomains() : Vector<RegistrableDomain>();
+    }())
 {
 #ifndef NDEBUG
     cachedPageCounter.increment();

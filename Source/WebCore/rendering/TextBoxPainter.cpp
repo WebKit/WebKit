@@ -84,7 +84,10 @@ TextBoxPainter<TextBoxPath>::TextBoxPainter(TextBoxPath&& textBox, PaintInfo& pa
     , m_paintOffset(paintOffset)
     , m_paintRect(computePaintRect(paintOffset))
     , m_isFirstLine(m_textBox.isFirstLine())
-    , m_isCombinedText(is<RenderCombineText>(m_renderer) && downcast<RenderCombineText>(m_renderer).isCombined())
+    , m_isCombinedText([&] {
+        auto* combineTextRenderer = dynamicDowncast<RenderCombineText>(m_renderer);
+        return combineTextRenderer && combineTextRenderer->isCombined();
+    }())
     , m_isPrinting(m_document.printing())
     , m_haveSelection(computeHaveSelection())
     , m_containsComposition(m_renderer.textNode() && m_renderer.frame().editor().compositionNode() == m_renderer.textNode())

@@ -61,12 +61,18 @@ namespace WebCore {
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, cachedFrameCounter, ("CachedFrame"));
 
 CachedFrameBase::CachedFrameBase(Frame& frame)
-    : m_document(is<LocalFrame>(frame) ? downcast<LocalFrame>(frame).document() : nullptr)
-    , m_documentLoader(is<LocalFrame>(frame) ? downcast<LocalFrame>(frame).loader().documentLoader() : nullptr)
-    , m_view(frame.virtualView())
-    , m_url(is<LocalFrame>(frame) ? downcast<LocalFrame>(frame).document()->url() : URL())
+    : m_view(frame.virtualView())
     , m_isMainFrame(!frame.tree().parent())
 {
+    if (auto* localFrame = dynamicDowncast<LocalFrame>(frame))
+        initializeWithLocalFrame(*localFrame);
+}
+
+void CachedFrameBase::initializeWithLocalFrame(LocalFrame& frame)
+{
+    m_document = frame.document();
+    m_documentLoader = frame.loader().documentLoader();
+    m_url = frame.document()->url();
 }
 
 CachedFrameBase::~CachedFrameBase()

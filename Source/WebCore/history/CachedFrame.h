@@ -68,6 +68,9 @@ protected:
     bool m_isMainFrame;
 
     Vector<UniqueRef<CachedFrame>> m_childFrames;
+
+private:
+    void initializeWithLocalFrame(LocalFrame&);
 };
 
 class CachedFrame : private CachedFrameBase {

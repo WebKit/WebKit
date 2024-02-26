@@ -152,7 +152,10 @@ using namespace HTMLNames;
 RenderImage::RenderImage(Type type, Element& element, RenderStyle&& style, OptionSet<ReplacedFlag> flags, StyleImage* styleImage, const float imageDevicePixelRatio)
     : RenderReplaced(type, element, WTFMove(style), IntSize(), flags | ReplacedFlag::IsImage)
     , m_imageResource(styleImage ? makeUnique<RenderImageResourceStyleImage>(*styleImage) : makeUnique<RenderImageResource>())
-    , m_hasImageOverlay(is<HTMLElement>(element) && ImageOverlay::hasOverlay(downcast<HTMLElement>(element)))
+    , m_hasImageOverlay([&] {
+        auto* htmlElement = dynamicDowncast<HTMLElement>(element);
+        return htmlElement && ImageOverlay::hasOverlay(*htmlElement);
+    }())
     , m_imageDevicePixelRatio(imageDevicePixelRatio)
 {
     updateAltText();
