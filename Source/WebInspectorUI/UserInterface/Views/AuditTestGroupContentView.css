@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2018-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Frances Cornwall.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,19 +26,35 @@
 
 .content-view-container > .content-view.audit-test-group > header {
     background-color: var(--background-color-content);
+    overflow-x: hidden;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
 }
 
 .content-view.audit-test-group > section > .audit-test-group > header {
     margin-top: -1px;
     border-top: 1px solid var(--border-color);
+    display: flex;
+    overflow-x: visible;
+    justify-content: end;
 }
 
 .content-view.audit-test-group > header {
     padding-inline-end: var(--audit-test-horizontal-space);
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    overflow-x: hidden;
+    justify-content: end;
 }
 
 .content-view.audit-test-group.no-matches + .audit-test-group > header {
     border-top: none;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: end;
+    overflow-x: hidden;
 }
 
 .content-view.audit-test-group > header,
@@ -73,14 +90,14 @@
 }
 
 .content-view.audit-test-group > header > nav {
-    display: inline-flex;
-    height: auto;
+    display: flex;
+    justify-content: flex-end;
     border-bottom: none;
-    overflow: visible;
 }
 
 .content-view.audit-test-group > header > nav > .scope-bar {
-    overflow: visible;
+    display: flex;
+    text-wrap: normal;
 }
 
 .content-view.audit-test-group > header > nav:empty {
@@ -88,7 +105,10 @@
 }
 
 .content-view.audit-test-group > header > nav > .scope-bar > li {
+    break-inside: avoid-column;
+    display: inline-block;
     margin: 0 3px;
+    white-space: nowrap;
 }
 
 .content-view.audit-test-group > header > nav > .scope-bar > li:not(:hover, .selected) {

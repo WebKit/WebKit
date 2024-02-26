@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Frances Cornwall.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +26,8 @@
 
 .scope-bar {
     padding: 0 3px;
+    overflow-x: visible;
+    position: relative;
 
     --scope-bar-margin-default: 2px;
     --scope-bar-padding-default: 6px;
@@ -44,6 +47,8 @@
     line-height: 11px;
     color: var(--scope-bar-text-color);
     text-align: center;
+    overflow-x: visible;
+    margin-left: 0;
 
     --scope-bar-margin: var(--scope-bar-margin-override, var(--scope-bar-margin-default));
     --scope-bar-padding: var(--scope-bar-padding-override, var(--scope-bar-padding-default));
@@ -65,6 +70,7 @@
     border: 1px solid var(--scope-bar-border-color);
     border-radius: 3px;
     opacity: var(--scope-bar-background-opacity);
+    margin-left: 0;
 }
 
 .scope-bar > li:focus {
@@ -86,7 +92,7 @@
 }
 
 .scope-bar > li.multiple {
-    position: relative;
+    position: absolute;
 }
 
 .scope-bar > li.multiple > select {

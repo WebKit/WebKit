@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Frances Cornwall.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -128,7 +129,7 @@ body.window-inactive .tab-bar > .navigation-bar > .item.divider {
     padding: 0 8px;
 
     height: var(--tab-bar-item-height);
-    overflow: hidden;
+    overflow: visible;
 
     line-height: 15px;
     outline: none;
@@ -289,7 +290,7 @@ body.window-inactive .tab-bar > .tabs > .item > .name {
 .tab-bar > .tabs > .item > .name > .content {
     min-width: 0;
     width: 100%;
-    overflow: hidden;
+    overflow: visible;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
