@@ -414,6 +414,7 @@ typedef struct CGSVGDocument *CGSVGDocumentRef;
 @class FBSDisplayConfiguration;
 @interface UIScreen ()
 @property (nonatomic, readonly, retain) FBSDisplayConfiguration *displayConfiguration;
+@property (nonatomic, readonly) CGRect _referenceBounds;
 @end
 
 @interface UIScrollView ()
@@ -544,6 +545,13 @@ typedef enum {
 - (pid_t)_hostProcessIdentifier;
 @property (readonly) NSString *_hostApplicationBundleIdentifier;
 @end
+
+@interface UIViewController (Private)
+- (/* nullable */ UIPresentationController *)_existingPresentationControllerImmediate:(BOOL)immediate effective:(BOOL)effective;
+@end
+
+extern NSString * const UIPresentationControllerDismissalTransitionDidEndNotification;
+extern NSString * const UIPresentationControllerDismissalTransitionDidEndCompletedKey;
 
 @interface _UIViewControllerTransitionContext : NSObject <UIViewControllerContextTransitioning>
 @end

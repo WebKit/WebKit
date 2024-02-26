@@ -119,6 +119,13 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(_WKWebExtensionAction, WebExtensionAction,
     return _webExtensionAction->presentsPopup();
 }
 
+#if PLATFORM(IOS_FAMILY)
+- (UIViewController *)popupViewController
+{
+    return _webExtensionAction->popupViewController();
+}
+#endif
+
 - (WKWebView *)popupWebView
 {
     return _webExtensionAction->popupWebView();
@@ -191,6 +198,13 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(_WKWebExtensionAction, WebExtensionAction,
 {
     return NO;
 }
+
+#if PLATFORM(IOS_FAMILY)
+- (UIViewController *)popupViewController
+{
+    return nil;
+}
+#endif
 
 - (WKWebView *)popupWebView
 {

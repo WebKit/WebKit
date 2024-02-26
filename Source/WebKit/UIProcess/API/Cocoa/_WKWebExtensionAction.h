@@ -34,6 +34,7 @@
 #if TARGET_OS_IPHONE
 @class UIImage;
 @class UIMenuElement;
+@class UIViewController;
 #else
 @class NSImage;
 @class NSMenuItem;
@@ -126,11 +127,23 @@ NS_SWIFT_NAME(_WKWebExtension.Action)
  */
 @property (nonatomic, readonly) BOOL presentsPopup;
 
+#if TARGET_OS_IPHONE
+/*!
+ @abstract A view controller that presents a web view loaded with the popup page for this action, or `nil` if no popup is specified.
+ @discussion The view controller adaptively adjusts its presentation style based on where it is presented from, preferring popover.
+ It contains a web view preloaded with the popup page and automatically adjusts tis `preferredContentSize` to fit the web view's
+ content size. The `presentsPopup` property should be checked to determine the availability of a popup before accessing this property.
+ Dismissing the view controller will close the web view.
+ @seealso presentsPopup
+ */
+@property (nonatomic, readonly, nullable) UIViewController *popupViewController;
+#endif
+
 /*!
  @abstract A web view loaded with the popup page for this action, or `nil` if no popup is specified.
- @discussion The web view will be preloaded with the popup page upon first access or after it has been closed. Use the `hasPopup`
+ @discussion The web view will be preloaded with the popup page upon first access or after it has been closed. Use the `presentsPopup`
  property to determine whether a popup should be displayed before accessing this property.
- @seealso hasPopup
+ @seealso presentsPopup
  */
 @property (nonatomic, readonly, nullable) WKWebView *popupWebView;
 
