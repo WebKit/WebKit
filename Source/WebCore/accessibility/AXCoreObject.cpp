@@ -230,6 +230,9 @@ AXCoreObject::AXValue AXCoreObject::value()
     if (isTabItem())
         return isSelected();
 
+    if (isDateTime())
+        return dateTimeValue();
+
     if (isColorWell()) {
         auto color = convertColor<SRGBA<float>>(colorValue()).resolved();
         return makeString("rgb ", String::numberToStringFixedPrecision(color.red, 6, TrailingZerosPolicy::Keep), " ", String::numberToStringFixedPrecision(color.green, 6, TrailingZerosPolicy::Keep), " ", String::numberToStringFixedPrecision(color.blue, 6, TrailingZerosPolicy::Keep), " 1");

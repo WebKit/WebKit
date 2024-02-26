@@ -114,6 +114,7 @@ public:
     void alternativeText(Vector<AccessibilityText>&) const;
     void helpText(Vector<AccessibilityText>&) const;
     String stringValue() const override;
+    WallTime dateTimeValue() const final;
     SRGBA<uint8_t> colorValue() const override;
     String ariaLabeledByAttribute() const override;
     bool hasAttributesRequiredForInclusion() const final;

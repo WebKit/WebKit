@@ -892,7 +892,13 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::orientation() const
 JSRetainPtr<JSStringRef> AccessibilityUIElement::stringValue()
 {
     BEGIN_AX_OBJC_EXCEPTIONS
-    auto value = attributeValue(NSAccessibilityValueAttribute);
+    RetainPtr<id> value;
+    auto role = attributeValue(NSAccessibilityRoleAttribute);
+    if ([role isEqualToString:@"AXDateTimeArea"])
+        value = attributeValue(@"AXStringValue");
+    else
+        value = attributeValue(NSAccessibilityValueAttribute);
+
     auto description = descriptionOfValue(value.get());
     if (description)
         return concatenateAttributeAndValue(@"AXValue", description.get());

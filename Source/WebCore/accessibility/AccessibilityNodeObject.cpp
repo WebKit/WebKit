@@ -2438,6 +2438,15 @@ String AccessibilityNodeObject::stringValue() const
     return { };
 }
 
+WallTime AccessibilityNodeObject::dateTimeValue() const
+{
+    if (!isDateTime())
+        return { };
+
+    auto* input = dynamicDowncast<HTMLInputElement>(node());
+    return input ? input->valueAsDate() : WallTime();
+}
+
 SRGBA<uint8_t> AccessibilityNodeObject::colorValue() const
 {
 #if !ENABLE(INPUT_TYPE_COLOR)
