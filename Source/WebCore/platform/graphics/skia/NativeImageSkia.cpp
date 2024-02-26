@@ -30,6 +30,13 @@
 
 #include "GraphicsContextSkia.h"
 #include "NotImplemented.h"
+#include "PlatformDisplay.h"
+#include <skia/core/SkData.h>
+#include <skia/core/SkImage.h>
+
+IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
+#include <skia/core/SkPixmap.h>
+IGNORE_CLANG_WARNINGS_END
 
 namespace WebCore {
 
@@ -62,8 +69,25 @@ Color NativeImage::singlePixelSolidColor() const
     if (size() != IntSize(1, 1))
         return Color();
 
-    notImplemented();
-    return Color();
+    auto platformImage = this->platformImage();
+    if (platformImage->isTextureBacked()) {
+        GrDirectContext* grContext = PlatformDisplay::sharedDisplayForCompositing().skiaGrContext();
+        auto* glContext = PlatformDisplay::sharedDisplayForCompositing().skiaGLContext();
+        GLContext::ScopedGLContextCurrent scopedCurrent(*glContext);
+        const auto& imageInfo = platformImage->imageInfo();
+        uint32_t pixel;
+        SkPixmap pixmap(imageInfo, &pixel, imageInfo.minRowBytes());
+        if (!platformImage->readPixels(grContext, pixmap, 0, 0))
+            return Color();
+
+        return pixmap.getColor(0, 0);
+    }
+
+    SkPixmap pixmap;
+    if (!platformImage->peekPixels(&pixmap))
+        return Color();
+
+    return pixmap.getColor(0, 0);
 }
 
 void NativeImage::draw(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions options)
