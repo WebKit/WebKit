@@ -95,7 +95,7 @@ GraphicsContextGLANGLE::~GraphicsContextGLANGLE()
 
 bool GraphicsContextGLANGLE::makeContextCurrent()
 {
-    return static_cast<GraphicsContextGLTextureMapperANGLE*>(this)->makeCurrent();
+    return !!EGL_MakeCurrent(m_displayObj, m_surfaceObj, m_surfaceObj, m_contextObj);
 }
 
 void GraphicsContextGLANGLE::checkGPUStatus()
@@ -351,21 +351,6 @@ void GraphicsContextGLTextureMapperANGLE::prepareForDisplay()
 
     prepareTexture();
     swapCompositorTexture();
-}
-
-GLContextWrapper::Type GraphicsContextGLTextureMapperANGLE::type() const
-{
-    return GLContextWrapper::Type::Angle;
-}
-
-bool GraphicsContextGLTextureMapperANGLE::makeCurrentImpl()
-{
-    return !!EGL_MakeCurrent(m_displayObj, m_surfaceObj, m_surfaceObj, m_contextObj);
-}
-
-bool GraphicsContextGLTextureMapperANGLE::unmakeCurrentImpl()
-{
-    return !!EGL_MakeCurrent(m_displayObj, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
 }
 
 } // namespace WebCore

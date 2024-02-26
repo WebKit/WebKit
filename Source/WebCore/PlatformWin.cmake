@@ -55,7 +55,6 @@ list(APPEND WebCore_SOURCES
     platform/graphics/angle/PlatformDisplayANGLE.cpp
 
     platform/graphics/egl/GLContext.cpp
-    platform/graphics/egl/GLContextWrapper.cpp
 
     platform/graphics/opentype/OpenTypeUtilities.cpp
 

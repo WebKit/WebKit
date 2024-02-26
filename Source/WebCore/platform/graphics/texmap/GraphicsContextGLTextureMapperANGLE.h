@@ -27,7 +27,6 @@
 
 #if ENABLE(WEBGL) && USE(TEXTURE_MAPPER)
 
-#include "GLContextWrapper.h"
 #include "GraphicsContextGLANGLE.h"
 
 #if USE(NICOSIA)
@@ -40,7 +39,7 @@ namespace WebCore {
 
 class TextureMapperGCGLPlatformLayer;
 
-class WEBCORE_EXPORT GraphicsContextGLTextureMapperANGLE : public GraphicsContextGLANGLE, public GLContextWrapper {
+class WEBCORE_EXPORT GraphicsContextGLTextureMapperANGLE : public GraphicsContextGLANGLE {
 public:
     static RefPtr<GraphicsContextGLTextureMapperANGLE> create(WebCore::GraphicsContextGLAttributes&&);
     virtual ~GraphicsContextGLTextureMapperANGLE();
@@ -70,11 +69,6 @@ private:
 #if USE(NICOSIA)
     GCGLuint setupCurrentTexture();
 #endif
-
-    // GLContextWrapper
-    GLContextWrapper::Type type() const override;
-    bool makeCurrentImpl() override;
-    bool unmakeCurrentImpl() override;
 
     RefPtr<GraphicsLayerContentsDisplayDelegate> m_layerContentsDisplayDelegate;
 
