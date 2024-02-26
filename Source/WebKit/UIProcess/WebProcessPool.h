@@ -859,7 +859,7 @@ private:
     std::unique_ptr<PAL::SystemSleepListener> m_systemSleepListener;
     Vector<int> m_openDirectoryNotifyTokens;
 #endif
-#if ENABLE(NOTIFYD_BLOCKING_IN_WEBCONTENT)
+#if ENABLE(NOTIFY_BLOCKING)
     Vector<int> m_notifyTokens;
     Vector<RetainPtr<NSObject>> m_notificationObservers;
 #endif

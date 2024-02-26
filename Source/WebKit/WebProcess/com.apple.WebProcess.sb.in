@@ -2058,6 +2058,35 @@
 (deny darwin-notification-post)
 (allow darwin-notification-post
     (notification-name
+#if ENABLE(NOTIFY_BLOCKING)
+        "com.apple.WebKit.LibraryPathDiagnostics"
+        "com.apple.WebKit.deleteAllCode"
+        "com.apple.WebKit.dumpGCHeap"
+        "com.apple.WebKit.dumpUntrackedMallocs"
+        "com.apple.WebKit.fullGC"
+        "com.apple.WebKit.logMemStats"
+        "com.apple.WebKit.logPageState"
+        "com.apple.WebKit.showAllDocuments"
+        "com.apple.WebKit.showBackForwardCache"
+        "com.apple.WebKit.showGraphicsLayerTree"
+        "com.apple.WebKit.showLayerTree"
+        "com.apple.WebKit.showLayoutTree"
+        "com.apple.WebKit.showMemoryCache"
+        "com.apple.WebKit.showPaintOrderTree"
+        "com.apple.WebKit.showRenderTree"
+        "com.apple.language.changed"
+        "com.apple.mediaaccessibility.captionAppearanceSettingsChanged"
+        "com.apple.powerlog.state_changed"
+        "com.apple.system.lowpowermode"
+        "com.apple.system.timezone"
+        "com.apple.zoomwindow"
+        "org.WebKit.lowMemory"
+        "org.WebKit.lowMemory.begin"
+        "org.WebKit.lowMemory.end"
+        "org.WebKit.memoryWarning"
+        "org.WebKit.memoryWarning.begin"
+        "org.WebKit.memoryWarning.end"
+#endif
         "com.apple.accessibility.AirPodsSpatialAudioLockToDeviceChanged"
         "com.apple.webinspectord.availability_check"))
 

@@ -382,8 +382,8 @@ public:
     void openDirectoryCacheInvalidated(SandboxExtension::Handle&&, SandboxExtension::Handle&&);
 #endif
 
-#if ENABLE(NOTIFYD_BLOCKING_IN_WEBCONTENT)
-    void postNotification(const String& message);
+#if ENABLE(NOTIFY_BLOCKING)
+    void postNotification(const String& message, std::optional<uint64_t> state);
     void postObserverNotification(const String& message);
 #endif
 

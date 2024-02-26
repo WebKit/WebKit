@@ -1534,9 +1534,16 @@ void WebProcess::revokeLaunchServicesSandboxExtension()
 }
 #endif
 
-#if ENABLE(NOTIFYD_BLOCKING_IN_WEBCONTENT)
-void WebProcess::postNotification(const String& message)
+#if ENABLE(NOTIFY_BLOCKING)
+void WebProcess::postNotification(const String& message, std::optional<uint64_t> state)
 {
+    if (state) {
+        int token = 0;
+        if (notify_register_check(message.ascii().data(), &token) == NOTIFY_STATUS_OK) {
+            notify_set_state(token, *state);
+            notify_cancel(token);
+        }
+    }
     notify_post(message.ascii().data());
 }
 
