@@ -987,14 +987,13 @@ static FetchOptions::Destination destinationForType(CachedResource::Type type, L
 static inline bool isSVGImageCachedResource(const CachedResource* resource)
 {
     auto* cachedImage = dynamicDowncast<CachedImage>(resource);
-    return cachedImage && cachedImage->hasSVGImage();
+    return cachedImage && is<SVGImage>(cachedImage->image());
 }
 
 static inline SVGImage* cachedResourceSVGImage(CachedResource* resource)
 {
-    if (!isSVGImageCachedResource(resource))
-        return nullptr;
-    return downcast<SVGImage>(downcast<CachedImage>(*resource).image());
+    auto* cachedImage = dynamicDowncast<CachedImage>(resource);
+    return cachedImage ? dynamicDowncast<SVGImage>(cachedImage->image()) : nullptr;
 }
 
 static bool computeMayAddToMemoryCache(const CachedResourceRequest& newRequest, const CachedResource* existingResource)

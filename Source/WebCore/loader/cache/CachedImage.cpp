@@ -288,11 +288,6 @@ Image* CachedImage::imageForRenderer(const RenderObject* renderer)
     return m_image.get();
 }
 
-bool CachedImage::hasSVGImage() const
-{
-    return image() && image()->isSVGImage();
-}
-
 void CachedImage::setContainerContextForClient(const CachedImageClient& client, const LayoutSize& containerSize, float containerZoom, const URL& imageURL)
 {
     if (containerSize.isEmpty())
