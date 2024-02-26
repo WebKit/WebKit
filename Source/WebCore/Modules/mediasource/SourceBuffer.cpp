@@ -1280,30 +1280,6 @@ void SourceBuffer::sourceBufferPrivateDidDropSample()
     m_source->incrementDroppedFrameCount();
 }
 
-bool SourceBuffer::canPlayThroughRange(const PlatformTimeRanges& ranges)
-{
-    if (isRemoved())
-        return false;
-
-    MediaTime duration = m_source->duration();
-    if (!duration.isValid())
-        return false;
-
-    MediaTime currentTime = m_source->currentTime();
-    if (duration <= currentTime)
-        return true;
-
-    // If we have data up to the mediasource's duration or 3s ahead, we can
-    // assume that we can play without interruption.
-    MediaTime bufferedEnd = ranges.maximumBufferedTime();
-    // Same tolerance as contiguousFrameTolerance in SourceBufferPrivate::processMediaSample(),
-    // to account for small errors.
-    const MediaTime tolerance = MediaTime(1, 1000);
-    MediaTime timeAhead = std::min(duration, currentTime + MediaTime(3, 1)) - tolerance;
-
-    return bufferedEnd >= timeAhead;
-}
-
 void SourceBuffer::reportExtraMemoryAllocated(uint64_t extraMemory)
 {
     uint64_t extraMemoryCost = extraMemory;

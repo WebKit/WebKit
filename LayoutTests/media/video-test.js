@@ -112,12 +112,17 @@ function sleepFor(duration) {
     });
 }
 
-function testExpectedEventually(testFuncString, expected, comparison, timeout)
+function testExpectedEventuallySilent(testFuncString, expected, comparison, timeout)
 {
-    return testExpectedEventuallyWhileRunningBetweenTests(testFuncString, expected, comparison, timeout, null);
+    return testExpectedEventuallyWhileRunningBetweenTests(testFuncString, expected, comparison, timeout, null, true);
 }
 
-function testExpectedEventuallyWhileRunningBetweenTests(testFuncString, expected, comparison, timeout, work)
+function testExpectedEventually(testFuncString, expected, comparison, timeout)
+{
+    return testExpectedEventuallyWhileRunningBetweenTests(testFuncString, expected, comparison, timeout, null, false);
+}
+
+function testExpectedEventuallyWhileRunningBetweenTests(testFuncString, expected, comparison, timeout, work, silent = false)
 {
     return new Promise(async resolve => {
         var success;
@@ -129,7 +134,8 @@ function testExpectedEventuallyWhileRunningBetweenTests(testFuncString, expected
             try {
                 ({success, observed} = compare(testFuncString, expected, comparison));
                 if (success) {
-                    reportExpected(success, testFuncString, comparison, expected, observed);
+                    if (!silent)
+                        reportExpected(success, testFuncString, comparison, expected, observed);
                     resolve();
                     return;
                 }

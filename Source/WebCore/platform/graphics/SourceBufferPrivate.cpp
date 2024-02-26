@@ -983,7 +983,6 @@ bool SourceBufferPrivate::processMediaSample(SourceBufferPrivateClient& client, 
         // For instance, most WebM files are muxed rounded to the millisecond (the default TimecodeScale of the format)
         // but their durations use a finer timescale (causing a sub-millisecond overlap). More rarely, there are also
         // MP4 files with slightly off tfdt boxes, presenting a similar problem at the beginning of each fragment.
-        // Same as tolerance in SourceBuffer::canPlayThroughRange().
         const MediaTime contiguousFrameTolerance = MediaTime(1, 1000);
 
         // If highest presentation timestamp for track buffer is set and less than or equal to presentation timestamp

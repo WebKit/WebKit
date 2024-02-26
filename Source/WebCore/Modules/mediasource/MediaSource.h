@@ -177,6 +177,7 @@ protected:
     bool hasBufferedTime(const MediaTime&);
     bool hasCurrentTime();
     bool hasFutureTime();
+    bool isBuffered(const PlatformTimeRanges&) const;
 
     void scheduleEvent(const AtomString& eventName);
     void notifyElementUpdateMediaState() const;

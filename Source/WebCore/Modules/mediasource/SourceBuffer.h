@@ -115,8 +115,6 @@ public:
     Ref<ComputeSeekPromise> computeSeekTime(const SeekTarget&);
     void seekToTime(const MediaTime&);
 
-    bool canPlayThroughRange(const PlatformTimeRanges&);
-
     bool hasVideo() const;
 
     bool active() const { return m_active; }

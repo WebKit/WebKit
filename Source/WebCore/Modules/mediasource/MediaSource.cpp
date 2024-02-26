@@ -496,6 +496,40 @@ bool MediaSource::hasFutureTime()
     return m_private->hasFutureTime(currentTime());
 }
 
+bool MediaSource::isBuffered(const PlatformTimeRanges& ranges) const
+{
+    if (ranges.length() < 1 || isClosed())
+        return true;
+
+    ASSERT(ranges.length() == 1);
+
+    auto bufferedRanges = m_private->buffered();
+    if (!bufferedRanges.length())
+        return false;
+    bufferedRanges.intersectWith(ranges);
+
+    if (!bufferedRanges.length())
+        return false;
+
+    auto hasBufferedTime = [&] (const MediaTime& time) {
+        return abs(bufferedRanges.nearest(time) - time) <= m_private->timeFudgeFactor();
+    };
+
+    if (!hasBufferedTime(ranges.minimumBufferedTime()) || !hasBufferedTime(ranges.maximumBufferedTime()))
+        return false;
+
+    if (bufferedRanges.length() == 1)
+        return true;
+
+    // Ensure that if we have a gap in the buffered range, it is smaller than the fudge factor;
+    for (unsigned i = 1; i < bufferedRanges.length(); i++) {
+        if (bufferedRanges.end(i) - bufferedRanges.start(i-1) > m_private->timeFudgeFactor())
+            return false;
+    }
+
+    return true;
+}
+
 void MediaSource::monitorSourceBuffers()
 {
     // 2.4.4 SourceBuffer Monitoring
@@ -526,9 +560,17 @@ void MediaSource::monitorSourceBuffers()
 
     // ↳ If HTMLMediaElement.buffered contains a TimeRange that includes the current
     //  playback position and enough data to ensure uninterrupted playback:
-    if (std::all_of(m_activeSourceBuffers->begin(), m_activeSourceBuffers->end(), [&](auto& sourceBuffer) {
-        return sourceBuffer->canPlayThroughRange(m_private->buffered());
-    })) {
+
+    // If we have data up to 3s ahead, we can assume that we can play without interruption.
+    constexpr double kHaveEnoughDataThreshold = 3;
+    auto currentTime = this->currentTime();
+    auto limitAhead = [&] (double upper) {
+        MediaTime aheadTime = currentTime + MediaTime::createWithDouble(upper);
+        return isEnded() ? std::min(duration(), aheadTime) : aheadTime;
+    };
+    PlatformTimeRanges neededBufferedRange { currentTime, std::max(currentTime, limitAhead(kHaveEnoughDataThreshold)) };
+
+    if (isBuffered(neededBufferedRange)) {
         // 1. Set the HTMLMediaElement.readyState attribute to HAVE_ENOUGH_DATA.
         // 2. Queue a task to fire a simple event named canplaythrough at the media element.
         // 3. Playback may resume at this point if it was previously suspended by a transition to HAVE_CURRENT_DATA.
