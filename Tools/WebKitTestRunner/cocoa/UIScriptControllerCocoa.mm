@@ -324,8 +324,6 @@ void UIScriptControllerCocoa::setSpellCheckerResults(JSValueRef results)
     [[LayoutTestSpellChecker checker] setResultsFromJSValue:results inContext:m_context->jsContext()];
 }
 
-#if ENABLE(TEXT_EXTRACTION_SUPPORT)
-
 void UIScriptControllerCocoa::requestTextExtraction(JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
@@ -337,7 +335,5 @@ void UIScriptControllerCocoa::requestTextExtraction(JSValueRef callback)
         m_context->asyncTaskComplete(callbackID, { JSValueMakeString(m_context->jsContext(), description.get()) });
     }];
 }
-
-#endif // ENABLE(TEXT_EXTRACTION_SUPPORT)
 
 } // namespace WTR

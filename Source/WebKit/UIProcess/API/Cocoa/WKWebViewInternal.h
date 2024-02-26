@@ -389,9 +389,7 @@ RetainPtr<NSError> nsErrorFromExceptionDetails(const WebCore::ExceptionDetails&)
 @end
 #endif
 
-#if ENABLE(TEXT_EXTRACTION_SUPPORT)
 @interface WKWebView (WKTextExtraction)
 - (void)_requestTextExtractionForSwift:(WKTextExtractionRequest *)context;
 - (void)_requestTextExtraction:(CGRect)rect completionHandler:(void(^)(WKTextExtractionItem *))completionHandler;
 @end
-#endif

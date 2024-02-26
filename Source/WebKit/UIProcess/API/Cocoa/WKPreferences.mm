@@ -823,6 +823,12 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 
 - (void)_setTextExtractionEnabled:(BOOL)enabled
 {
+    if (enabled) {
+        static std::once_flag onceFlag;
+        std::call_once(onceFlag, [] {
+            WebKit::prepareTextExtractionSupport();
+        });
+    }
     _preferences->setTextExtractionEnabled(enabled);
 }
 

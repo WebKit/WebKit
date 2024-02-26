@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(TEXT_EXTRACTION_SUPPORT)
-
 #import <CoreGraphics/CoreGraphics.h>
 #import <Foundation/Foundation.h>
 
@@ -89,5 +87,3 @@ typedef NS_ENUM(NSInteger, WKTextExtractionContainer) {
 - (void)fulfill:(WKTextExtractionItem *)result;
 @property (nonatomic, readonly) CGRect rectInWebView;
 @end
-
-#endif // ENABLE(TEXT_EXTRACTION_SUPPORT)

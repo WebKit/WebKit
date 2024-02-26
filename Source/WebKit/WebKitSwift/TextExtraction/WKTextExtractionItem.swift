@@ -23,7 +23,8 @@
 
 import Foundation
 
-@objc(WKTextExtractionItem) class WKTextExtractionItem: NSObject {
+@available(iOS 17.0, macOS 12.0, *)
+@objc(WKTextExtractionItem) public class WKTextExtractionItem: NSObject {
     @objc public let rectInRootView: CGRect
     @objc public let children: [WKTextExtractionItem]
 
@@ -33,7 +34,8 @@ import Foundation
     }
 }
 
-@objc enum WKTextExtractionContainer: Int {
+@available(iOS 17.0, macOS 12.0, *)
+@objc public enum WKTextExtractionContainer: Int {
     case root
     case viewportConstrained
     case list
@@ -45,7 +47,8 @@ import Foundation
     case button
 }
 
-@objc(WKTextExtractionContainerItem) class WKTextExtractionContainerItem: WKTextExtractionItem {
+@available(iOS 17.0, macOS 12.0, *)
+@objc(WKTextExtractionContainerItem) public class WKTextExtractionContainerItem: WKTextExtractionItem {
     @objc public let container: WKTextExtractionContainer
 
     @objc public init(container: WKTextExtractionContainer, rectInRootView: CGRect, children: [WKTextExtractionItem]) {
@@ -54,7 +57,8 @@ import Foundation
     }
 }
 
-@objc(WKTextExtractionEditable) class WKTextExtractionEditable: NSObject {
+@available(iOS 17.0, macOS 12.0, *)
+@objc(WKTextExtractionEditable) public class WKTextExtractionEditable: NSObject {
     @objc public let label: String
     @objc public let placeholder: String
     @objc public let isSecure: Bool
@@ -68,7 +72,8 @@ import Foundation
     }
 }
 
-@objc(WKTextExtractionLink) class WKTextExtractionLink: NSObject {
+@available(iOS 17.0, macOS 12.0, *)
+@objc(WKTextExtractionLink) public class WKTextExtractionLink: NSObject {
     @objc public let url: NSURL
     @objc public let range: NSRange
 
@@ -78,7 +83,8 @@ import Foundation
     }
 }
 
-@objc(WKTextExtractionTextItem) class WKTextExtractionTextItem: WKTextExtractionItem {
+@available(iOS 17.0, macOS 12.0, *)
+@objc(WKTextExtractionTextItem) public class WKTextExtractionTextItem: WKTextExtractionItem {
     @objc public let content: String
     @objc public let selectedRange: NSRange
     @objc public let links: [WKTextExtractionLink]
@@ -93,7 +99,8 @@ import Foundation
     }
 }
 
-@objc(WKTextExtractionScrollableItem) class WKTextExtractionScrollableItem: WKTextExtractionItem {
+@available(iOS 17.0, macOS 12.0, *)
+@objc(WKTextExtractionScrollableItem) public class WKTextExtractionScrollableItem: WKTextExtractionItem {
     @objc public let contentSize: CGSize
 
     @objc public init(contentSize: CGSize, rectInRootView: CGRect, children: [WKTextExtractionItem]) {
@@ -102,7 +109,8 @@ import Foundation
     }
 }
 
-@objc(WKTextExtractionImageItem) class WKTextExtractionImageItem: WKTextExtractionItem {
+@available(iOS 17.0, macOS 12.0, *)
+@objc(WKTextExtractionImageItem) public class WKTextExtractionImageItem: WKTextExtractionItem {
     @objc public let name: String
     @objc public let altText: String
 

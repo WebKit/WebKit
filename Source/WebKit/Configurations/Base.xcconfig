@@ -160,8 +160,3 @@ WK_USER_LTO_MODE_thin = YES_THIN;
 WK_USER_LTO_MODE_none = NO;
 WK_USER_LTO_MODE_ = $(WK_DEFAULT_LTO_MODE);
 WK_DEFAULT_LTO_MODE = $(WK_USER_LTO_MODE_thin);
-
-SPI_ONLY_IMPORTS_FLAGS = -Xfrontend -experimental-spi-only-imports;
-SPI_ONLY_IMPORTS_FLAGS[sdk=macosx11*] = ;
-SPI_ONLY_IMPORTS_FLAGS[sdk=macosx12*] = ;
-OTHER_SWIFT_FLAGS = $(inherited) $(SPI_ONLY_IMPORTS_FLAGS)

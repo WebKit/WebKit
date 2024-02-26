@@ -4242,8 +4242,6 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 
 @end
 
-#if ENABLE(TEXT_EXTRACTION_SUPPORT)
-
 @implementation WKWebView (WKTextExtraction)
 
 - (void)_requestTextExtractionForSwift:(WKTextExtractionRequest *)context
@@ -4275,7 +4273,5 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 }
 
 @end
-
-#endif // ENABLE(TEXT_EXTRACTION_SUPPORT)
 
 #undef WKWEBVIEW_RELEASE_LOG
