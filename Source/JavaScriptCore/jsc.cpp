@@ -672,8 +672,9 @@ private:
         putDirectNativeFunction(vm, this, Identifier::fromString(vm, "isFinalTier"_s), 0, functionFalse, ImplementationVisibility::Public, IsFinalTierIntrinsic, DontEnum);
         putDirectNativeFunction(vm, this, Identifier::fromString(vm, "predictInt32"_s), 0, functionUndefined2, ImplementationVisibility::Public, SetInt32HeapPredictionIntrinsic, DontEnum);
         putDirectNativeFunction(vm, this, Identifier::fromString(vm, "isInt32"_s), 0, functionIsInt32, ImplementationVisibility::Public, CheckInt32Intrinsic, DontEnum);
-        putDirectNativeFunction(vm, this, Identifier::fromString(vm, "isPureNaN"_s), 0, functionIsPureNaN, ImplementationVisibility::Public, CheckInt32Intrinsic, DontEnum);
         putDirectNativeFunction(vm, this, Identifier::fromString(vm, "fiatInt52"_s), 0, functionIdentity, ImplementationVisibility::Public, FiatInt52Intrinsic, DontEnum);
+
+        addFunction(vm, "isPureNaN"_s, functionIsPureNaN, 0);
         
         addFunction(vm, "effectful42"_s, functionEffectful42, 0);
         addFunction(vm, "makeMasquerader"_s, functionMakeMasquerader, 0);
