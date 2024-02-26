@@ -3520,8 +3520,11 @@ void RenderLayer::paintList(LayerList layerIterator, GraphicsContext& context, c
     LayerListMutationDetector mutationChecker(*this);
 #endif
 
-    for (auto* childLayer : layerIterator)
+    for (auto* childLayer : layerIterator) {
+        if (paintFlags.contains(PaintLayerFlag::PaintingSkipDescendantViewTransition) && childLayer->renderer().capturedInViewTransition())
+            continue;
         childLayer->paintLayer(context, paintingInfo, paintFlags);
+    }
 }
 
 RenderLayer* RenderLayer::enclosingPaginationLayerInSubtree(const RenderLayer* rootLayer, PaginationInclusionMode mode) const

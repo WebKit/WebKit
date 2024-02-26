@@ -34,6 +34,7 @@
 #include "Document.h"
 #include "DocumentTimeline.h"
 #include "FrameSnapshotting.h"
+#include "HostWindow.h"
 #include "JSDOMPromise.h"
 #include "JSDOMPromiseDeferred.h"
 #include "LayoutRect.h"
@@ -262,32 +263,38 @@ static ExceptionOr<void> checkDuplicateViewTransitionName(const AtomString& name
     return { };
 }
 
-static RefPtr<ImageBuffer> snapshotNodeVisualOverflowClippedToViewport(LocalFrame& frame, Node& node, SnapshotOptions&& options, LayoutRect& oldOverflowRect)
+static RefPtr<ImageBuffer> snapshotNodeVisualOverflowClippedToViewport(LocalFrame& frame, Node& node, LayoutRect& oldOverflowRect)
 {
     if (!node.renderer())
         return nullptr;
 
-    auto paintBehavior = frame.view()->paintBehavior();
-    auto backgroundColor = frame.view()->baseBackgroundColor();
-
-    options.flags.add(SnapshotFlags::Accelerated);
-
-    frame.view()->setBaseBackgroundColor(Color::transparentBlack);
-    frame.view()->setNodeToDraw(&node);
-
     ASSERT(node.renderer()->hasLayer());
     CheckedPtr layerRenderer = downcast<RenderLayerModelObject>(node.renderer());
 
-    IntRect paintRect = layerRenderer->layer()->absoluteBoundingBox();
-    paintRect.intersect(snappedIntRect(frame.view()->layoutViewportRect()));
-    RefPtr result = snapshotFrameRect(frame, paintRect, WTFMove(options));
-
-    frame.view()->setPaintBehavior(paintBehavior);
-    frame.view()->setBaseBackgroundColor(backgroundColor);
-    frame.view()->setNodeToDraw(nullptr);
-
     oldOverflowRect = layerRenderer->layer()->localBoundingBox();
-    return result;
+    IntRect paintRect = snappedIntRect(oldOverflowRect);
+
+    ASSERT(frame.page());
+    float scaleFactor = frame.page()->deviceScaleFactor();
+    if (frame.page()->delegatesScaling())
+        scaleFactor *= frame.page()->pageScaleFactor();
+
+    ASSERT(frame.document());
+    auto hostWindow = (frame.document()->view() && frame.document()->view()->root()) ? frame.document()->view()->root()->hostWindow() : nullptr;
+
+    auto buffer = ImageBuffer::create(paintRect.size(), RenderingPurpose::Snapshot, scaleFactor, DestinationColorSpace::SRGB(), PixelFormat::BGRA8, { ImageBufferOptions::Accelerated }, hostWindow);
+    if (!buffer)
+        return nullptr;
+
+    buffer->context().translate(-paintRect.location());
+
+    auto paintFlags = RenderLayer::paintLayerPaintingCompositingAllPhasesFlags();
+    paintFlags.add(RenderLayer::PaintLayerFlag::TemporaryClipRects);
+    paintFlags.add(RenderLayer::PaintLayerFlag::AppliedTransform);
+    paintFlags.add(RenderLayer::PaintLayerFlag::PaintingSkipDescendantViewTransition);
+    layerRenderer->layer()->paint(buffer->context(), paintRect, LayoutSize(), { PaintBehavior::FlattenCompositingLayers, PaintBehavior::Snapshotting }, nullptr, paintFlags);
+
+    return buffer;
 }
 
 // This only iterates through elements with a RenderLayer, which is sufficient for View Transitions which force their creation.
@@ -351,7 +358,7 @@ ExceptionOr<void> ViewTransition::captureOldState()
             capture.oldSize = renderBox->size();
         capture.oldProperties = copyElementBaseProperties(element);
         if (m_document->frame())
-            capture.oldImage = snapshotNodeVisualOverflowClippedToViewport(*m_document->frame(), element.get(), { { }, PixelFormat::BGRA8, DestinationColorSpace::SRGB() }, capture.oldOverflowRect);
+            capture.oldImage = snapshotNodeVisualOverflowClippedToViewport(*m_document->frame(), element.get(), capture.oldOverflowRect);
 
         auto transitionName = element->computedStyle()->viewTransitionName();
         m_namedElements.add(transitionName->name, capture);

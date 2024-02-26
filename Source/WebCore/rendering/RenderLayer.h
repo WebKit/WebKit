@@ -606,7 +606,7 @@ public:
 
     inline int zIndex() const;
 
-    enum class PaintLayerFlag : uint16_t {
+    enum class PaintLayerFlag : uint32_t {
         HaveTransparency                      = 1 << 0,
         AppliedTransform                      = 1 << 1,
         TemporaryClipRects                    = 1 << 2,
@@ -623,6 +623,7 @@ public:
         PaintingChildClippingMaskPhase        = 1 << 13,
         PaintingSVGClippingMask               = 1 << 14,
         CollectingEventRegion                 = 1 << 15,
+        PaintingSkipDescendantViewTransition  = 1 << 16,
     };
     static constexpr OptionSet<PaintLayerFlag> paintLayerPaintingCompositingAllPhasesFlags() { return { PaintLayerFlag::PaintingCompositingBackgroundPhase, PaintLayerFlag::PaintingCompositingForegroundPhase }; }
 
