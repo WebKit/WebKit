@@ -36,6 +36,7 @@
 
 namespace WebKit {
 
+class ProcessThrottlerActivity;
 class WebProcessPool;
 class WebsiteDataStore;
 
@@ -89,6 +90,7 @@ private:
         RunLoop::Timer m_evictionTimer;
 #if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(WPE)
         RunLoop::Timer m_suspensionTimer;
+        std::unique_ptr<ProcessThrottlerActivity> m_backgroundActivity;
 #endif
     };
 

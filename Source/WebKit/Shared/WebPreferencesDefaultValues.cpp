@@ -222,7 +222,7 @@ bool defaultShouldDropNearSuspendedAssertionAfterDelay()
 
 bool defaultShouldTakeNearSuspendedAssertion()
 {
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(COCOA)
     static bool newSDK = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::FullySuspendsBackgroundContentImmediately);
     return !newSDK;
 #else
