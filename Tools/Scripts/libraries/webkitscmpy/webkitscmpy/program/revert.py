@@ -29,6 +29,7 @@ from .command import Command
 from .branch import Branch
 from .pull_request import PullRequest
 from .commit import Commit as CommitProgram
+from .land import Land
 
 from webkitbugspy import Tracker, bugzilla, radar
 from webkitcorepy import arguments, run, Terminal, string_utils
@@ -44,20 +45,18 @@ class Revert(Command):
 
     @classmethod
     def parser(cls, parser, loggers=None):
-        PullRequest.parser(parser, loggers=loggers)
+        Land.parser(parser, loggers=loggers)
         parser.add_argument(
             'commit_id',
             nargs='+',
             help='git hash, svn revision or identifier of commits to revert'
         )
-
         parser.add_argument(
             '--reason', '--why', '-w',
             dest='reason',
             type=str,
             help='Reason for the revert'
         )
-
         parser.add_argument(
             '--pr', '--no-pr',
             default=True,
@@ -291,6 +290,9 @@ class Revert(Command):
 
         if cls.relate_issues(args, repository, issue, commit_issues, revert_reason):
             return 1
+
+        if args.safe is not None and args.pr:
+            return Land.main(args, repository, identifier_template=None, canonical_svn=False, hooks=None)
 
         if args.pr:
             return PullRequest.create_pull_request(repository, args, branch_point)
