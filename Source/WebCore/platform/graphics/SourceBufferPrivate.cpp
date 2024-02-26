@@ -1225,8 +1225,11 @@ bool SourceBufferPrivate::evictFrames(uint64_t newDataSize, uint64_t maximumBuff
             size_t currentTimeRange = buffered.find(currentTime);
             size_t startTimeRange = buffered.find(rangeStart);
             if (currentTimeRange != notFound && startTimeRange == currentTimeRange) {
-                size_t endTimeRange = buffered.find(rangeEnd);
-                if (endTimeRange == currentTimeRange)
+                currentTimeRange++;
+                if (currentTimeRange == buffered.length())
+                    break;
+                rangeStart = buffered.start(currentTimeRange);
+                if (rangeStart >= rangeEnd)
                     break;
             }
 

@@ -1,0 +1,44 @@
+
+EXPECTED (source.readyState == 'closed') OK
+RUN(video.src = URL.createObjectURL(source))
+RUN(video.disableRemotePlayback = true)
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock"))
+RUN(sourceBuffer.onbufferedchange = bufferedChange)
+RUN(initSegment = makeAInit(10, [makeATrack(1, 'mock', TRACK_KIND.VIDEO)]))
+RUN(sourceBuffer.appendBuffer(initSegment))
+EVENT(updateend)
+RUN(sourceBuffer.appendBuffer(syncSampleRun(0, 10)))
+onbufferedchange called.
+e.addedRanges = [0, 10)
+e.removedRanges = []
+EVENT(update)
+RUN(sourceBuffer.appendBuffer(syncSampleRun(10, 15)))
+onbufferedchange called.
+e.addedRanges = [10, 15)
+e.removedRanges = []
+EVENT(update)
+RUN(sourceBuffer.appendBuffer(syncSampleRun(15, 20)))
+onbufferedchange called.
+e.addedRanges = [15, 20)
+e.removedRanges = []
+EVENT(update)
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+RUN(sourceBuffer.appendBuffer(syncSampleRun(22, 30)))
+onbufferedchange called.
+e.addedRanges = [22, 30)
+e.removedRanges = []
+EVENT(update)
+EXPECTED (sourceBuffer.buffered.length == '2') OK
+RUN(video.currentTime = 9)
+EVENT(seeked)
+RUN(internals.beginSimulatedMemoryPressure())
+onbufferedchange called.
+e.addedRanges = []
+e.removedRanges = [22, 30)
+EVENT(bufferedchange)
+RUN(internals.endSimulatedMemoryPressure())
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '20') OK
+END OF TEST
+

@@ -1,0 +1,73 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ManagedMediaSourceEnabled=true MediaSourceEnabled=true ] -->
+<html>
+<head>
+    <title>managedmediasource-memoryPressure</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../../media/video-test.js"></script>
+    <script src="../../media/utilities.js"></script>
+    <script>
+    var source;
+    var sourceBuffer;
+    var initsegment;
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    function syncSampleRun(start, end, stepSync = 9999999999) {
+        const samples = [];
+        for (let time = start; time < end; time++)
+            samples.push(makeASample(time, time, 1, 1, 1, (time - start) % stepSync == 0 ? SAMPLE_FLAG.SYNC : SAMPLE_FLAG.NONE));
+        return concatenateSamples(samples);
+    }
+
+    function bufferedChange(e) {
+        consoleWrite('onbufferedchange called.')
+        consoleWrite(`e.addedRanges = ${ timeRangesToString(e.addedRanges) }`);
+        consoleWrite(`e.removedRanges = ${ timeRangesToString(e.removedRanges) }`);
+    };
+
+    window.addEventListener('load', async event => {
+        findMediaElement();
+
+        source = new ManagedMediaSource();
+
+        testExpected('source.readyState', 'closed');
+        run('video.src = URL.createObjectURL(source)');
+        run('video.disableRemotePlayback = true');
+        await waitFor(source, 'sourceopen');
+
+        run('sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock")');
+        run('sourceBuffer.onbufferedchange = bufferedChange');
+
+        run("initSegment = makeAInit(10, [makeATrack(1, 'mock', TRACK_KIND.VIDEO)])");
+
+        run('sourceBuffer.appendBuffer(initSegment)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        run('sourceBuffer.appendBuffer(syncSampleRun(0, 10))');
+        await waitFor(sourceBuffer, 'update');
+        run('sourceBuffer.appendBuffer(syncSampleRun(10, 15))');
+        await waitFor(sourceBuffer, 'update');
+        run('sourceBuffer.appendBuffer(syncSampleRun(15, 20))');
+        await waitFor(sourceBuffer, 'update');
+        testExpected('sourceBuffer.buffered.length', '1');
+
+        run('sourceBuffer.appendBuffer(syncSampleRun(22, 30))');
+        await waitFor(sourceBuffer, 'update');
+        testExpected('sourceBuffer.buffered.length', '2');
+
+        run('video.currentTime = 9');
+        await waitFor(video, 'seeked');
+        run('internals.beginSimulatedMemoryPressure()');
+        await waitFor(sourceBuffer, 'bufferedchange');
+        run('internals.endSimulatedMemoryPressure()');
+        testExpected('sourceBuffer.buffered.length', '1');
+        testExpected('sourceBuffer.buffered.end(0)', '20');
+        endTest();
+    });
+    </script>
+</head>
+<body>
+    <video controls></video>
+</body>
+</html>
