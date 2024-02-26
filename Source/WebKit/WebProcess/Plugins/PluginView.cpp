@@ -993,7 +993,7 @@ WebCore::FloatRect PluginView::rectForSelectionInRootView(PDFSelection *selectio
 
 CGFloat PluginView::contentScaleFactor() const
 {
-    return protectedPlugin()->scaleFactor();
+    return protectedPlugin()->contentScaleFactor();
 }
 
 bool PluginView::isUsingUISideCompositing() const
