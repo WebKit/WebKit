@@ -18,7 +18,6 @@ skip:
     - FinalizationRegistry.prototype.cleanupSome
     - decorators
     - iterator-helpers
-    - Intl.Locale-info # Getters are replaced with methods.
   paths:
     - test/built-ins/Temporal/Calendar
     - test/built-ins/Temporal/Instant/prototype/toZonedDateTime
