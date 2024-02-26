@@ -76,7 +76,8 @@ rtc::scoped_refptr<webrtc::I420BufferInterface> GStreamerVideoFrameLibWebRTC::To
 {
     GstMappedFrame inFrame(m_sample, GST_MAP_READ);
     if (!inFrame) {
-        GST_WARNING("Could not map frame");
+        GST_WARNING("Could not map input frame");
+        ASSERT_NOT_REACHED_WITH_MESSAGE("Could not map input frame");
         return nullptr;
     }
 
@@ -90,6 +91,11 @@ rtc::scoped_refptr<webrtc::I420BufferInterface> GStreamerVideoFrameLibWebRTC::To
 
         auto buffer = adoptGRef(gst_buffer_new_allocate(nullptr, GST_VIDEO_INFO_SIZE(&outInfo), nullptr));
         GstMappedFrame outFrame(buffer.get(), &outInfo, GST_MAP_WRITE);
+        if (!outFrame) {
+            GST_WARNING("Could not map output frame");
+            ASSERT_NOT_REACHED_WITH_MESSAGE("Could not map output frame");
+            return nullptr;
+        }
         GUniquePtr<GstVideoConverter> videoConverter(gst_video_converter_new(inFrame.info(), &outInfo, gst_structure_new("GstVideoConvertConfig",
             GST_VIDEO_CONVERTER_OPT_THREADS, G_TYPE_UINT, std::max(std::thread::hardware_concurrency(), 1u), nullptr)));
 
