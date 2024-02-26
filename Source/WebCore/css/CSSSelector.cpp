@@ -197,10 +197,22 @@ SelectorSpecificity simpleSelectorSpecificity(const CSSSelector& simpleSelector)
             return 0;
         return SelectorSpecificityIncrement::ClassC;
     case CSSSelector::Match::PseudoElement:
+        switch (simpleSelector.pseudoElement()) {
         // Slotted only competes with other slotted selectors for specificity,
         // so whether we add the ClassC specificity shouldn't be observable.
-        if (simpleSelector.pseudoElement() == CSSSelector::PseudoElement::Slotted)
+        case CSSSelector::PseudoElement::Slotted:
             return maxSpecificity(simpleSelector.selectorList());
+        case CSSSelector::PseudoElement::ViewTransitionGroup:
+        case CSSSelector::PseudoElement::ViewTransitionImagePair:
+        case CSSSelector::PseudoElement::ViewTransitionNew:
+        case CSSSelector::PseudoElement::ViewTransitionOld:
+            ASSERT(simpleSelector.argumentList() && simpleSelector.argumentList()->size());
+            if (simpleSelector.argumentList()->first().identifier == starAtom())
+                return 0;
+            break;
+        default:
+            break;
+        }
         return SelectorSpecificityIncrement::ClassC;
     case CSSSelector::Match::HasScope:
     case CSSSelector::Match::Unknown:

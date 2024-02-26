@@ -6941,7 +6941,6 @@ imported/w3c/web-platform-tests/css/css-view-transitions/root-style-change-durin
 imported/w3c/web-platform-tests/css/css-view-transitions/root-to-shared-animation-end.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/root-to-shared-animation-incoming.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/root-to-shared-animation-start.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/set-universal-specificity.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/snapshot-containing-block-absolute.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/span-with-overflowing-text-and-box-decorations.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/span-with-overflowing-text.html [ ImageOnlyFailure ]
