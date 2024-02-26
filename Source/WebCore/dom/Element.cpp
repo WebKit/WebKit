@@ -870,8 +870,8 @@ void Element::setActive(bool value, Style::InvalidationScope invalidationScope)
     if (!renderer)
         return;
 
-    if (renderer->style().hasEffectiveAppearance())
-        renderer->theme().stateChanged(*renderer, ControlStyle::State::Pressed);
+    if (!isDisabledFormControl() && renderer->style().hasEffectiveAppearance())
+        renderer->repaint();
 }
 
 static bool shouldAlwaysHaveFocusVisibleWhenFocused(const Element& element)
@@ -945,8 +945,8 @@ void Element::setHovered(bool value, Style::InvalidationScope invalidationScope,
     }
 
     if (auto* style = renderStyle(); style && style->hasEffectiveAppearance()) {
-        CheckedPtr renderer = this->renderer();
-        renderer->theme().stateChanged(*renderer, ControlStyle::State::Hovered);
+        if (CheckedPtr renderer = this->renderer(); renderer && renderer->theme().supportsHover())
+            renderer->repaint();
     }
 }
 

@@ -1142,18 +1142,6 @@ bool RenderTheme::supportsFocusRing(const RenderStyle& style) const
         && style.effectiveAppearance() != StyleAppearance::Listbox;
 }
 
-bool RenderTheme::stateChanged(const RenderObject& renderer, ControlStyle::State state) const
-{
-    if (state == ControlStyle::State::Hovered && !supportsHover(renderer.style()))
-        return false;
-
-    if (state == ControlStyle::State::Pressed && !isEnabled(renderer))
-        return false;
-
-    renderer.repaint();
-    return true;
-}
-
 bool RenderTheme::isWindowActive(const RenderObject& renderer) const
 {
     return renderer.page().focusController().isActive();

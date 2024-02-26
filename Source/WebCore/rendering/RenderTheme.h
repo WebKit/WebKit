@@ -138,10 +138,6 @@ public:
     virtual void inflateRectForControlRenderer(const RenderObject&, FloatRect&) { }
     virtual void adjustRepaintRect(const RenderBox&, FloatRect&) { }
 
-    // This method is called whenever a relevant state changes on a particular themed object, e.g., the mouse becomes pressed
-    // or a control becomes disabled.
-    bool stateChanged(const RenderObject&, ControlStyle::State) const;
-
     // This method is called whenever the theme changes on the system in order to flush cached resources from the
     // old theme.
     virtual void themeChanged() { }
@@ -150,7 +146,7 @@ public:
     virtual bool supportsFocusRing(const RenderStyle&) const;
 
     // A method asking if the theme's controls actually care about redrawing when hovered.
-    virtual bool supportsHover(const RenderStyle&) const { return false; }
+    virtual bool supportsHover() const { return false; }
 
     // A method asking if the platform is able to show datalist suggestions for a given input type.
     virtual bool supportsDataListUI(const AtomString&) const { return false; }

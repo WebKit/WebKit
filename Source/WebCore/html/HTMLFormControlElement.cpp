@@ -172,7 +172,7 @@ void HTMLFormControlElement::disabledStateChanged()
 {
     ValidatedFormListedElement::disabledStateChanged();
     if (renderer() && renderer()->style().hasEffectiveAppearance())
-        renderer()->theme().stateChanged(*renderer(), ControlStyle::State::Enabled);
+        renderer()->repaint();
 }
 
 void HTMLFormControlElement::readOnlyStateChanged()
