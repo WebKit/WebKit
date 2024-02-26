@@ -188,7 +188,7 @@ UniqueRef<Layout::Box> BoxTree::createLayoutBox(RenderObject& renderer)
 
     if (auto* textRenderer = dynamicDowncast<RenderText>(renderer)) {
         auto style = RenderStyle::createAnonymousStyleWithDisplay(textRenderer->style(), DisplayType::Inline);
-        auto isCombinedText = [&]() {
+        auto isCombinedText = [&] {
             auto* combineTextRenderer = dynamicDowncast<RenderCombineText>(*textRenderer);
             return combineTextRenderer && combineTextRenderer->isCombined();
         }();
@@ -294,7 +294,10 @@ void BoxTree::updateContent(const RenderText& textRenderer)
 {
     auto& inlineTextBox = downcast<Layout::InlineTextBox>(layoutBoxForRenderer(textRenderer));
     auto& style = inlineTextBox.style();
-    auto isCombinedText = is<RenderCombineText>(textRenderer) && downcast<RenderCombineText>(textRenderer).isCombined();
+    auto isCombinedText = [&] {
+        auto* combineTextRenderer = dynamicDowncast<RenderCombineText>(textRenderer);
+        return combineTextRenderer && combineTextRenderer->isCombined();
+    }();
     auto text = style.textSecurity() == TextSecurity::None ? (isCombinedText ? textRenderer.originalText() : String { textRenderer.text() }) : RenderBlock::updateSecurityDiscCharacters(style, isCombinedText ? textRenderer.originalText() : String { textRenderer.text() });
     auto contentCharacteristic = OptionSet<Layout::InlineTextBox::ContentCharacteristic> { };
     if (textRenderer.canUseSimpleFontCodePath())

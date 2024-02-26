@@ -144,8 +144,8 @@ bool shouldInvalidateLineLayoutPathAfterChangeFor(const RenderBlockFlow& rootBlo
             return true;
         if (is<RenderReplaced>(renderer))
             return typeOfChange == TypeOfChangeForInvalidation::NodeInsertion;
-        if (is<RenderInline>(renderer))
-            return typeOfChange == TypeOfChangeForInvalidation::NodeInsertion && !downcast<RenderInline>(renderer).firstChild();
+        if (auto* inlineRenderer = dynamicDowncast<RenderInline>(renderer))
+            return typeOfChange == TypeOfChangeForInvalidation::NodeInsertion && !inlineRenderer->firstChild();
         return false;
     };
     if (!isSupportedRendererWithChange(renderer))
@@ -164,8 +164,8 @@ bool shouldInvalidateLineLayoutPathAfterChangeFor(const RenderBlockFlow& rootBlo
     auto isBidiContent = [&] {
         if (lineLayout.contentNeedsVisualReordering())
             return true;
-        if (is<RenderText>(renderer))
-            return Layout::TextUtil::containsStrongDirectionalityText(downcast<RenderText>(renderer).text());
+        if (auto* textRenderer = dynamicDowncast<RenderText>(renderer))
+            return Layout::TextUtil::containsStrongDirectionalityText(textRenderer->text());
         if (is<RenderInline>(renderer)) {
             auto& style = renderer.style();
             return !style.isLeftToRightDirection() || (style.rtlOrdering() == Order::Logical && style.unicodeBidi() != UnicodeBidi::Normal);
