@@ -2216,7 +2216,6 @@ http/tests/contentextensions [ Skip ]
 http/tests/inspector/network/contentextensions [ Skip ]
 http/tests/websocket/tests/hybi/contentextensions [ Skip ]
 http/wpt/beacon/contentextensions [ Skip ]
-webkit.org/b/143085 media/track/track-mode.html [ Pass Timeout ]
 
 # In ES6, Object type restrictions on a first parameter of several Object.* functions are relaxed.
 webkit.org/b/142937 ietestcenter/Javascript/15.2.3.2-1.html [ Failure ]

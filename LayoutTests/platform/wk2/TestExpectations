@@ -834,8 +834,6 @@ fullscreen/fullscreen-enter-bottom-padding-animation.html [ Pass ]
 ### (4) Features that are not supported in WebKit2 and likely never will be
 ### (5) Progressions, expected successes that are expected failures in WebKit1.
 
-webkit.org/b/168092 media/track/track-cues-sorted-before-dispatch.html [ Pass Failure ]
-
 webkit.org/b/172662 [ Debug ] http/tests/cache/disk-cache/disk-cache-vary-cookie.html [ Pass Failure ]
 webkit.org/b/172662 [ Debug ] http/tests/cache/disk-cache/redirect-chain-limits.html [ Pass Failure ]
 

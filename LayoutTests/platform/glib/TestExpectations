@@ -3265,8 +3265,6 @@ webkit.org/b/131546 media/track/track-in-band.html [ Failure ]
 # See also webkit.org/b/163528 Threaded compositor failures caused by one of r203496, r203497, or r203498
 webkit.org/b/177536 media/video-object-fit.html [ ImageOnlyFailure Pass ]
 
-webkit.org/b/104809 media/track/track-cues-pause-on-exit.html [ Timeout Pass Crash ]
-
 webkit.org/b/133865 media/W3C/video/networkState/networkState_during_progress.html [ Failure ]
 
 webkit.org/b/134576 media/track/video/video-track-mkv-theora-selected.html [ Failure ]
