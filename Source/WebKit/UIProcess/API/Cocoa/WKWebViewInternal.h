@@ -106,6 +106,7 @@ class ViewGestureController;
 @class WKSafeBrowsingWarning;
 @class WKScrollView;
 @class WKTextExtractionItem;
+@class WKTextExtractionRequest;
 @class WKWebViewContentProviderRegistry;
 @class _WKFrameHandle;
 
@@ -389,5 +390,6 @@ RetainPtr<NSError> nsErrorFromExceptionDetails(const WebCore::ExceptionDetails&)
 #endif
 
 @interface WKWebView (WKTextExtraction)
+- (void)_requestTextExtractionForSwift:(WKTextExtractionRequest *)context;
 - (void)_requestTextExtraction:(CGRect)rect completionHandler:(void(^)(WKTextExtractionItem *))completionHandler;
 @end

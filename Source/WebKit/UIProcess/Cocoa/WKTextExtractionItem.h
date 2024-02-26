@@ -67,3 +67,8 @@ typedef NS_ENUM(NSInteger, WKTextExtractionContainer) {
 @interface WKTextExtractionImageItem : WKTextExtractionItem
 - (instancetype)initWithName:(NSString *)name altText:(NSString *)altText rectInRootView:(CGRect)rectInRootView;
 @end
+
+@interface WKTextExtractionRequest : NSObject
+- (void)fulfill:(WKTextExtractionItem *)result;
+@property (nonatomic, readonly) CGRect rectInWebView;
+@end
