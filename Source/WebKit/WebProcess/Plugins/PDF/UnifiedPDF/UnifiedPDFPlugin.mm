@@ -1738,6 +1738,11 @@ bool UnifiedPDFPlugin::handleMouseEvent(const WebMouseEvent& event)
     if (!pageIndex)
         return false;
 
+    if (!shouldDisplayPage(*pageIndex)) {
+        notifyCursorChanged(toWebCoreCursorType({ }));
+        return false;
+    }
+
     auto pointInPageSpace = convertDown(CoordinateSpace::PDFDocumentLayout, CoordinateSpace::PDFPage, pointInDocumentSpace, *pageIndex);
 
     auto mouseEventButton = event.button();
