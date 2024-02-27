@@ -1143,9 +1143,7 @@ webkit.org/b/232386 fast/overflow/clip-rects-fixed-ancestor.html [ Failure ]
 webkit.org/b/232386 svg/text/remove-text-node-from-tspan.html [ Failure ]
 webkit.org/b/232386 svg/text/text-rescale.html [ Failure ]
 
-webkit.org/b/236298 fast/forms/basic-textareas-quirks-simple-lines.html [ ImageOnlyFailure ]
 webkit.org/b/236298 fast/inline-block/hidpi-margin-top-with-subpixel-value-and-overflow-hidden.html [ ImageOnlyFailure ]
-webkit.org/b/236298 fast/text/simple-line-wordspacing.html [ ImageOnlyFailure ]
 
 # Changes to logical height/width computations (https://bugs.webkit.org/show_bug.cgi?id=241601)
 webkit.org/b/241601 svg/wicd/rightsizing-grid.xhtml [ Failure ]
