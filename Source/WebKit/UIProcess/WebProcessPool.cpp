@@ -1363,8 +1363,17 @@ void WebProcessPool::postMessageToInjectedBundle(const String& messageName, API:
     }
 }
 
+static void loadRestrictedOpenerTypeDataIfNeeded()
+{
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+    RestrictedOpenerDomainsController::shared();
+#endif
+}
+
 void WebProcessPool::didReachGoodTimeToPrewarm()
 {
+    loadRestrictedOpenerTypeDataIfNeeded();
+
     if (!configuration().isAutomaticProcessWarmingEnabled() || !configuration().processSwapsOnNavigation() || usesSingleWebProcess())
         return;
 
