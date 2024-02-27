@@ -165,6 +165,9 @@ mac/Plugins/WebPluginController.mm
 mac/Plugins/WebPluginDatabase.mm
 
 mac/History/WebBackForwardList.mm
+
+mac/WebCoreSupport/WebApplicationCache.mm
+mac/WebCoreSupport/WebApplicationCacheQuotaManager.mm
 mac/WebCoreSupport/WebFrameLoaderClient.mm
 
 mac/WebInspector/WebInspector.mm

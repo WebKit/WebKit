@@ -131,6 +131,8 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic) BOOL mediaDevicesEnabled;
 @property (nonatomic) BOOL mediaStreamEnabled;
 @property (nonatomic) BOOL peerConnectionEnabled;
+@property (nonatomic) int64_t applicationCacheTotalQuota;
+@property (nonatomic) int64_t applicationCacheDefaultOriginQuota;
 @property (nonatomic) WebKitEditableLinkBehavior editableLinkBehavior;
 @property (nonatomic) WebTextDirectionSubmenuInclusionBehavior textDirectionSubmenuInclusionBehavior;
 // If site-specific spoofing is enabled, some pages that do inappropriate user-agent string checks will be
@@ -354,8 +356,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic) BOOL CSSIndividualTransformPropertiesEnabled;
 @property (nonatomic) BOOL serverTimingEnabled;
 @property (nonatomic) BOOL offlineWebApplicationCacheEnabled;
-@property (nonatomic) int64_t applicationCacheTotalQuota;
-@property (nonatomic) int64_t applicationCacheDefaultOriginQuota;
 
 - (void)setDiskImageCacheEnabled:(BOOL)enabled;
 

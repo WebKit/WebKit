@@ -49,6 +49,7 @@
 #import "WebResourceLoadDelegate.h"
 #import "WebViewInternal.h"
 #import <JavaScriptCore/InitializeThreading.h>
+#import <WebCore/ApplicationCacheStorage.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/LegacyWebArchive.h>
 #import <WebCore/MIMETypeRegistry.h>

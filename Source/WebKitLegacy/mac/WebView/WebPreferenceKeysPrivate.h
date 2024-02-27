@@ -93,6 +93,7 @@
 #define WebKitEnableFullDocumentTeardownPreferenceKey @"WebKitEnableFullDocumentTeardown"
 #define WebKitOfflineWebApplicationCacheEnabledPreferenceKey @"WebKitOfflineWebApplicationCacheEnabled"
 #define WebKitApplicationCacheTotalQuota @"WebKitApplicationCacheTotalQuota"
+#define WebKitApplicationCacheDefaultOriginQuota @"WebKitApplicationCacheDefaultOriginQuota"
 #define WebKitZoomsTextOnlyPreferenceKey @"WebKitZoomsTextOnly"
 #define WebKitJavaScriptCanAccessClipboardPreferenceKey @"WebKitJavaScriptCanAccessClipboard"
 #define WebKitAcceleratedDrawingEnabledPreferenceKey @"WebKitAcceleratedDrawingEnabled"

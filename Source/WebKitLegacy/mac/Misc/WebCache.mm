@@ -26,11 +26,13 @@
 #import "WebCache.h"
 
 #import "NetworkStorageSessionMap.h"
+#import "WebApplicationCacheInternal.h"
 #import "WebNSObjectExtras.h"
 #import "WebPreferences.h"
 #import "WebView.h"
 #import "WebViewInternal.h"
 #import <JavaScriptCore/InitializeThreading.h>
+#import <WebCore/ApplicationCacheStorage.h>
 #import <WebCore/CookieJar.h>
 #import <WebCore/CredentialStorage.h>
 #import <WebCore/CrossOriginPreflightResultCache.h>
@@ -121,6 +123,9 @@ class DefaultStorageSessionProvider : public WebCore::StorageSessionProvider {
     WebCacheModel cacheModel = [WebView _cacheModel];
     [WebView _setCacheModel:WebCacheModelDocumentViewer];
     [WebView _setCacheModel:cacheModel];
+
+    // Empty the application cache.
+    webApplicationCacheStorage().empty();
 
     // Empty the Cross-Origin Preflight cache
     WebCore::CrossOriginPreflightResultCache::singleton().clear();

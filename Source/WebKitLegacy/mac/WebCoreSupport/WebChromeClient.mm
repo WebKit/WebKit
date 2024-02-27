@@ -682,6 +682,21 @@ void WebChromeClient::exceededDatabaseQuota(LocalFrame& frame, const String& dat
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
+void WebChromeClient::reachedMaxAppCacheSize(int64_t spaceNeeded)
+{
+    // FIXME: Free some space.
+}
+
+void WebChromeClient::reachedApplicationCacheOriginQuota(SecurityOrigin& origin, int64_t totalSpaceNeeded)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+
+    auto webOrigin = adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:&origin]);
+    CallUIDelegate(m_webView, @selector(webView:exceededApplicationCacheOriginQuotaForSecurityOrigin:totalSpaceNeeded:), webOrigin.get(), static_cast<NSUInteger>(totalSpaceNeeded));
+
+    END_BLOCK_OBJC_EXCEPTIONS
+}
+
 #if ENABLE(INPUT_TYPE_COLOR)
 
 std::unique_ptr<ColorChooser> WebChromeClient::createColorChooser(ColorChooserClient& client, const Color& initialColor)

@@ -68,6 +68,7 @@ public:
     const char* redirectionDestinationForURL(const char*);
     void setPortsForUpgradingInsecureScheme(uint16_t insecurePort, uint16_t securePort) { m_portsForUpgradingInsecureScheme = { insecurePort, securePort }; }
     std::optional<std::pair<uint16_t, uint16_t>> portsForUpgradingInsecureScheme() { return m_portsForUpgradingInsecureScheme; }
+    void clearAllApplicationCaches();
     void clearAllDatabases();
     void clearNotificationPermissionState();
     void clearApplicationCacheForOrigin(JSStringRef name);
@@ -104,6 +105,7 @@ public:
     void removeAllCookies(JSValueRef callback);
     void removeAllVisitedLinks();
     void setAcceptsEditing(bool);
+    void setAppCacheMaximumSize(unsigned long long quota);
     void setCacheModel(int);
     void setCustomPolicyDelegate(bool setDelegate, bool permissive);
     void setDatabaseQuota(unsigned long long quota);

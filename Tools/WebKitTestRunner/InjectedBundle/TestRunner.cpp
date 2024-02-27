@@ -398,6 +398,26 @@ void TestRunner::syncLocalStorage()
     postSynchronousMessage("SyncLocalStorage", true);
 }
 
+void TestRunner::clearAllApplicationCaches()
+{
+    WKBundlePageClearApplicationCache(page());
+}
+
+void TestRunner::clearApplicationCacheForOrigin(JSStringRef origin)
+{
+    WKBundlePageClearApplicationCacheForOrigin(page(), toWK(origin).get());
+}
+
+void TestRunner::setAppCacheMaximumSize(uint64_t size)
+{
+    WKBundlePageSetAppCacheMaximumSize(page(), size);
+}
+
+long long TestRunner::applicationCacheDiskUsageForOrigin(JSStringRef origin)
+{
+    return WKBundlePageGetAppCacheUsageForOrigin(page(), toWK(origin).get());
+}
+
 static inline JSValueRef stringArrayToJS(JSContextRef context, WKArrayRef strings)
 {
     const size_t count = WKArrayGetSize(strings);
@@ -407,6 +427,11 @@ static inline JSValueRef stringArrayToJS(JSContextRef context, WKArrayRef string
         JSObjectSetPropertyAtIndex(context, array, i, JSValueMakeString(context, toJS(stringRef).get()), nullptr);
     }
     return array;
+}
+
+JSValueRef TestRunner::originsWithApplicationCache()
+{
+    return stringArrayToJS(mainFrameJSContext(), adoptWK(WKBundlePageCopyOriginsWithApplicationCache(page())).get());
 }
 
 bool TestRunner::isCommandEnabled(JSStringRef name)

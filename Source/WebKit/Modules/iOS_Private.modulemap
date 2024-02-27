@@ -2019,6 +2019,11 @@ framework module WebKit_Private [system] {
     export *
   }
 
+  explicit module WebApplicationCache {
+    header "WebApplicationCache.h"
+    export *
+  }
+
   explicit module WebArchive {
     header "WebArchive.h"
     export *

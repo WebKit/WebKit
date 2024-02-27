@@ -35,6 +35,7 @@ struct WebSecurityOriginPrivate;
 @interface WebSecurityOrigin : NSObject {
 @private
     struct WebSecurityOriginPrivate *_private;
+    id<WebQuotaManager> _applicationCacheQuotaManager;
     id<WebQuotaManager> _databaseQuotaManager;
 }
 
@@ -57,6 +58,7 @@ struct WebSecurityOriginPrivate;
 @end
 
 @interface WebSecurityOrigin (WebQuotaManagers)
+- (id<WebQuotaManager>)applicationCacheQuotaManager;
 - (id<WebQuotaManager>)databaseQuotaManager;
 @end
 

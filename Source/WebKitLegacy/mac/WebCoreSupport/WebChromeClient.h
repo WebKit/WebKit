@@ -126,6 +126,8 @@ private:
 
     void print(WebCore::LocalFrame&, const WebCore::StringWithDirection&) final;
     void exceededDatabaseQuota(WebCore::LocalFrame&, const String& databaseName, WebCore::DatabaseDetails) final;
+    void reachedMaxAppCacheSize(int64_t spaceNeeded) final;
+    void reachedApplicationCacheOriginQuota(WebCore::SecurityOrigin&, int64_t totalSpaceNeeded) final;
 
     void runOpenPanel(WebCore::LocalFrame&, WebCore::FileChooser&) override;
     void showShareSheet(WebCore::ShareDataWithParsedURL&, CompletionHandler<void(bool)>&&) override;

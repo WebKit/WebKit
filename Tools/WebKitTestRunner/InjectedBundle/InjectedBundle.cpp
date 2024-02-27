@@ -584,6 +584,7 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings, BegingTestingMode te
     if (testingMode != BegingTestingMode::New)
         return;
 
+    WKBundlePageClearApplicationCache(page()->page());
     WKBundleResetOriginAccessAllowLists(m_bundle.get());
     clearResourceLoadStatistics();
 

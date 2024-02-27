@@ -86,7 +86,6 @@
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/Document.h>
 #import <WebCore/DocumentFragment.h>
-#import <WebCore/DocumentInlines.h>
 #import <WebCore/DocumentMarkerController.h>
 #import <WebCore/DragController.h>
 #import <WebCore/DragImage.h>
@@ -113,7 +112,6 @@
 #import <WebCore/LocalFrameView.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/MIMETypeRegistry.h>
-#import <WebCore/MutableStyleProperties.h>
 #import <WebCore/Page.h>
 #import <WebCore/PrintContext.h>
 #import <WebCore/Range.h>

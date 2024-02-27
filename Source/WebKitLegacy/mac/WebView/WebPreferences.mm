@@ -31,6 +31,7 @@
 
 #import "NetworkStorageSessionMap.h"
 #import "TestingFunctions.h"
+#import "WebApplicationCache.h"
 #import "WebFeature.h"
 #import "WebFrameNetworkingContext.h"
 #import "WebKitLogging.h"
@@ -416,11 +417,17 @@ public:
         @"1", WebKitPDFDisplayModePreferenceKey,
         @"0", WebKitPDFScaleFactorPreferenceKey,
         @(WebTextDirectionSubmenuAutomaticallyIncluded), WebKitTextDirectionSubmenuInclusionBehaviorPreferenceKey,
+        [NSNumber numberWithLongLong:ApplicationCacheStorage::noQuota()], WebKitApplicationCacheDefaultOriginQuota,
 #endif
 
 #if PLATFORM(IOS_FAMILY)
         @NO, WebKitStorageTrackerEnabledPreferenceKey,
         @(static_cast<unsigned>(AudioSession::CategoryType::None)), WebKitAudioSessionCategoryOverride,
+
+        // Per-Origin Quota on iOS is 25MB. When the quota is reached for a particular origin
+        // the quota for that origin can be increased. See also webView:exceededApplicationCacheOriginQuotaForSecurityOrigin:totalSpaceNeeded in WebUI/WebUIDelegate.m.
+        [NSNumber numberWithLongLong:(25 * 1024 * 1024)], WebKitApplicationCacheDefaultOriginQuota,
+
         @NO, WebKitAlwaysRequestGeolocationPermissionPreferenceKey,
         @(static_cast<int>(InterpolationQuality::Low)), WebKitInterpolationQualityPreferenceKey,
         @NO, WebKitNetworkDataUsageTrackingEnabledPreferenceKey,
@@ -1403,6 +1410,29 @@ public:
     [self _setFloatValue:factor forKey:WebKitPDFScaleFactorPreferenceKey];
 }
 #endif
+
+- (int64_t)applicationCacheTotalQuota
+{
+    return [self _longLongValueForKey:WebKitApplicationCacheTotalQuota];
+}
+
+- (void)setApplicationCacheTotalQuota:(int64_t)quota
+{
+    [self _setLongLongValue:quota forKey:WebKitApplicationCacheTotalQuota];
+
+    // Application Cache Preferences are stored on the global cache storage manager, not in Settings.
+    [WebApplicationCache setMaximumSize:quota];
+}
+
+- (int64_t)applicationCacheDefaultOriginQuota
+{
+    return [self _longLongValueForKey:WebKitApplicationCacheDefaultOriginQuota];
+}
+
+- (void)setApplicationCacheDefaultOriginQuota:(int64_t)quota
+{
+    [self _setLongLongValue:quota forKey:WebKitApplicationCacheDefaultOriginQuota];
+}
 
 #if !PLATFORM(IOS_FAMILY)
 - (PDFDisplayMode)PDFDisplayMode
@@ -3305,24 +3335,5 @@ static RetainPtr<NSString>& classIBCreatorID()
 - (void)setOfflineWebApplicationCacheEnabled:(BOOL)flag
 {
 }
-
-- (int64_t)applicationCacheTotalQuota
-{
-    return 0;
-}
-
-- (void)setApplicationCacheTotalQuota:(int64_t)quota
-{
-}
-
-- (int64_t)applicationCacheDefaultOriginQuota
-{
-    return 0;
-}
-
-- (void)setApplicationCacheDefaultOriginQuota:(int64_t)quota
-{
-}
-
 
 @end

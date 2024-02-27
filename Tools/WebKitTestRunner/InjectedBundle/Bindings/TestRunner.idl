@@ -147,6 +147,13 @@ interface TestRunner {
     attribute double databaseDefaultQuota;
     attribute double databaseMaxQuota;
 
+    // Application Cache API
+    undefined clearAllApplicationCaches();
+    undefined setAppCacheMaximumSize(unsigned long long size);
+    long long applicationCacheDiskUsageForOrigin(DOMString origin);
+    undefined clearApplicationCacheForOrigin(DOMString name);
+    object originsWithApplicationCache();
+
     // Text search testing.
     boolean findString(DOMString target, object optionsArray);
     undefined findStringMatchesInPage(DOMString target, object optionsArray);
