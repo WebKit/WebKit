@@ -2730,6 +2730,13 @@ void WebViewImpl::selectionDidChange()
         updateCursorAccessoryPlacement();
 #endif
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    if (m_page->editorState().hasPostLayoutData()) {
+        auto selectionRect = m_page->editorState().postLayoutData->selectionBoundingRect;
+        scheduleShowSwapCharactersViewForSelectionRectOfView(selectionRect, m_view.getAutoreleased());
+    }
+#endif
+
     NSWindow *window = [m_view window];
     if (window.firstResponder == m_view.get().get()) {
         NSInspectorBar *inspectorBar = window.inspectorBar;
@@ -5311,7 +5318,7 @@ void WebViewImpl::showInlinePredictionsForCandidates(NSArray<NSTextCheckingResul
 
 NSRange WebViewImpl::selectedRange()
 {
-    ASSERT_NOT_REACHED();
+    // FIXME: (rdar://123703512) Re-add the `ASSERT_NOT_REACHED` assertion when possible.
     return NSMakeRange(NSNotFound, 0);
 }
 
