@@ -1739,6 +1739,7 @@ imported/w3c/web-platform-tests/css/css-typed-om [ Skip ]
 imported/w3c/web-platform-tests/css/css-ui [ Skip ]
 imported/w3c/web-platform-tests/css/css-values [ Skip ]
 imported/w3c/web-platform-tests/css/css-variables [ Skip ]
+imported/w3c/web-platform-tests/css/css-view-transitions [ Skip ]
 imported/w3c/web-platform-tests/css/css-will-change [ Skip ]
 imported/w3c/web-platform-tests/css/css-writing-modes [ Skip ]
 imported/w3c/web-platform-tests/css/filter-effects [ Skip ]
@@ -2695,25 +2696,6 @@ webkit.org/b/222563 http/tests/loading/basic-auth-load-URL-with-consecutive-slas
 
 webkit.org/b/265213 fast/dom/Range/detach-range-during-deletecontents.html [ Skip ] # Timeout
 
-imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-name-is-backdrop-filter-root.html [ Pass ]
-
-imported/w3c/web-platform-tests/css/css-view-transitions/fractional-box-old.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-right-of-viewport-partially-onscreen-new.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-right-of-viewport-partially-onscreen-old.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-view-transitions/new-content-captures-clip-path.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-view-transitions/old-content-captures-clip-path.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-view-transitions/scroller-child.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-view-transitions/scroller.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-view-transitions/set-current-time.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-view-transitions/span-with-overflowing-text-hidden.html [ Pass ]
-
-imported/w3c/web-platform-tests/css/css-view-transitions/backdrop-filter-animated.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/capture-with-offscreen-child.html [ ImageOnlyFailure Pass ]
-imported/w3c/web-platform-tests/css/css-view-transitions/capture-with-opacity-zero-child.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/capture-with-visibility-hidden-child.html [ ImageOnlyFailure Pass ]
-imported/w3c/web-platform-tests/css/css-view-transitions/inline-element-size.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-rendering-invalidation.html [ ImageOnlyFailure ]
-
 webkit.org/b/266204 [ Debug ] imported/w3c/web-platform-tests/scroll-animations/css/animation-inactive-outside-range-test.html [ Skip ] # Crash
 webkit.org/b/266204 [ Debug ] imported/w3c/web-platform-tests/scroll-animations/css/animation-fill-outside-range-test.html [ Skip ] # Crash
 
@@ -2772,17 +2754,3 @@ webkit.org/b/124566 fast/dom/SelectorAPI/resig-SelectorsAPI-test.xhtml [ Skip ] 
 
 imported/w3c/web-platform-tests/scroll-animations/css/view-timeline-inset-animation.html [ Pass Failure ]
 
-imported/w3c/web-platform-tests/css/css-view-transitions/element-stops-grouping-after-animation.html [ ImageOnlyFailure ]
-
-webkit.org/b/269863 [ Debug ] imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-below-viewport-offscreen-new.html [ Skip ] # Crash
-webkit.org/b/269863 [ Debug ] imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-below-viewport-offscreen-old.html [ Skip ] # Crash
-webkit.org/b/269863 [ Debug ] imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-right-of-viewport-offscreen-new.html [ Skip ] # Crash
-webkit.org/b/269863 [ Debug ] imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-right-of-viewport-offscreen-old.html [ Skip ] # Crash
-
-imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-below-and-on-top-of-viewport-partially-onscreen-old.html [ Skip ] # Crash
-imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-on-top-of-viewport-offscreen-new.html [ Skip ] # Crash
-imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-on-top-of-viewport-partially-onscreen-old.html [ Skip ] # Crash
-
-[ Debug ] imported/w3c/web-platform-tests/css/css-view-transitions/animating-new-content-subset.html [ Skip ] # Crash
-[ Debug ] imported/w3c/web-platform-tests/css/css-view-transitions/animating-new-content.html [ Skip ] # Crash
-imported/w3c/web-platform-tests/css/css-view-transitions/offscreen-element-modified-before-coming-onscreen.html [ Skip ] # Crash
