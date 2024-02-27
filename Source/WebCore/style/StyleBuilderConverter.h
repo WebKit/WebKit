@@ -81,7 +81,9 @@
 namespace WebCore {
 namespace Style {
 
-// Note that we assume the CSS parser only allows valid CSSValue types.
+// FIXME: Some of those functions assume the CSS parser only allows valid CSSValue types.
+// This might not be true if we pass the CSSValue from js via CSS Typed OM.
+
 class BuilderConverter {
 public:
     static Length convertLength(const BuilderState&, const CSSValue&);
@@ -279,7 +281,7 @@ inline Length BuilderConverter::convertLengthOrAuto(const BuilderState& builderS
 
 inline Length BuilderConverter::convertLengthSizing(const BuilderState& builderState, const CSSValue& value)
 {
-    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+    auto& primitiveValue = checkedDowncast<CSSPrimitiveValue>(value);
     switch (primitiveValue.valueID()) {
     case CSSValueInvalid:
         return convertLength(builderState, value);
@@ -304,7 +306,7 @@ inline Length BuilderConverter::convertLengthSizing(const BuilderState& builderS
         return Length(LengthType::Content);
     default:
         ASSERT_NOT_REACHED();
-        return Length();
+        return { };
     }
 }
 
