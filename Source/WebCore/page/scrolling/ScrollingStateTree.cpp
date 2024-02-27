@@ -387,7 +387,7 @@ bool ScrollingStateTree::isValid() const
         case ScrollingNodeType::OverflowProxy: {
             auto& proxyNode = downcast<ScrollingStateOverflowScrollProxyNode>(node);
             if (!proxyNode.overflowScrollingNode() || !nodeMap().contains(proxyNode.overflowScrollingNode())) {
-                ALWAYS_LOG_WITH_STREAM(stream << "ScrollingStateOverflowScrollProxyNode " << node.scrollingNodeID() << " refers to non-existant overflow node " << proxyNode.overflowScrollingNode());
+                LOG_WITH_STREAM(ScrollingTree, stream << "ScrollingStateOverflowScrollProxyNode " << node.scrollingNodeID() << " refers to non-existant overflow node " << proxyNode.overflowScrollingNode());
                 isValid = false;
             }
             break;
@@ -400,7 +400,7 @@ bool ScrollingStateTree::isValid() const
             auto& positionedNode = downcast<ScrollingStatePositionedNode>(node);
             for (auto relatedNodeID : positionedNode.relatedOverflowScrollingNodes()) {
                 if (!relatedNodeID || !nodeMap().contains(relatedNodeID)) {
-                    ALWAYS_LOG_WITH_STREAM(stream << "ScrollingStatePositionedNode " << node.scrollingNodeID() << " refers to non-existant overflow node " << relatedNodeID);
+                    LOG_WITH_STREAM(ScrollingTree, stream << "ScrollingStatePositionedNode " << node.scrollingNodeID() << " refers to non-existant overflow node " << relatedNodeID);
                     isValid = false;
                 }
             }
