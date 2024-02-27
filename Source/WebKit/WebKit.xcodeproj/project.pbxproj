@@ -94,8 +94,8 @@
 			buildPhases = (
 			);
 			dependencies = (
-				CD0C36DD2639D3B4004E35D8 /* PBXTargetDependency */,
 				CD0C36DB2639D3AF004E35D8 /* PBXTargetDependency */,
+				CD0C36DD2639D3B4004E35D8 /* PBXTargetDependency */,
 			);
 			name = Everything;
 			productName = Everything;
