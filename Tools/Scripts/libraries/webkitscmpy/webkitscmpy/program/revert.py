@@ -59,7 +59,7 @@ class Revert(Command):
         )
         parser.add_argument(
             '--pr', '--no-pr',
-            default=True,
+            default=None,
             action=arguments.NoAction,
             help='Create a pull request (or do not) after reverting'
         )
@@ -291,7 +291,15 @@ class Revert(Command):
         if cls.relate_issues(args, repository, issue, commit_issues, revert_reason):
             return 1
 
-        if args.safe is not None and args.pr:
+        if args.safe is not None:
+            if args.pr is False:
+                response = Terminal.choose(
+                    '--no-pr is set. Do you want to create a PR and land the revert?', options=('Yes', 'No'), default='No',
+                )
+                if response == 'No':
+                    return 0
+                if response == 'Yes':
+                    log.info('Creating PR...')
             return Land.main(args, repository, identifier_template=None, canonical_svn=False, hooks=None)
 
         if args.pr:

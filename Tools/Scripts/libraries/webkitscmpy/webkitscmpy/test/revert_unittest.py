@@ -274,7 +274,7 @@ index 05e8751..0bf3c85 100644
             ),
         ), mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA)]):
             result = program.main(
-                args=('revert', 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc', '-v'),
+                args=('revert', 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc', '-v', '--pr'),
                 path=self.path,
             )
             self.assertEqual(0, result)
@@ -339,7 +339,7 @@ index 05e8751..0bf3c85 100644
             ),
         ), mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA)]):
             result = program.main(
-                args=('revert', 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc', '--issue', '{}/show_bug.cgi?id=2'.format(self.BUGZILLA), '-v'),
+                args=('revert', 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc', '--issue', '{}/show_bug.cgi?id=2'.format(self.BUGZILLA), '-v', '--pr'),
                 path=self.path,
             )
             self.assertEqual(0, result)
