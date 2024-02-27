@@ -96,10 +96,6 @@ class Revert(Command):
 
         issue = Tracker.from_string(args.issue)
 
-        if not issue.title:
-            sys.stderr.write('Could not fetch {} from link. Please verify that the issue exists.\n'.format(issue.tracker.NAME))
-            return None
-
         # Create a new bug if no issue exists
         if not issue and Tracker.instance() and getattr(args, 'update_issue', True):
             if getattr(Tracker.instance(), 'credentials', None):
@@ -139,6 +135,9 @@ class Revert(Command):
             print("Created '{}'".format(issue))
         elif not Tracker.instance():
             sys.stderr.write('Could not find tracker instance.\n')
+        elif not issue or not issue.title:
+            sys.stderr.write('Could not fetch {} from link. Please verify that the issue exists.\n'.format(issue.tracker.NAME))
+            return None
 
         rdar = Branch.cc_radar(args, repository, issue)
         if rdar:
