@@ -22,7 +22,6 @@
 #if USE(EGL)
 #include "GraphicsContextGL.h"
 #include "Logging.h"
-#include <wtf/ThreadSpecific.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
@@ -37,16 +36,6 @@
 #endif
 
 namespace WebCore {
-
-static ThreadSpecific<GLContext*>& currentContext()
-{
-    static ThreadSpecific<GLContext*>* context;
-    static std::once_flag flag;
-    std::call_once(flag, [] {
-        context = new ThreadSpecific<GLContext*>();
-    });
-    return *context;
-}
 
 const char* GLContext::errorString(int statusCode)
 {
@@ -409,9 +398,6 @@ GLContext::~GLContext()
 #if USE(WPE_RENDERER)
     destroyWPETarget();
 #endif
-
-    if (this == *currentContext())
-        *currentContext() = nullptr;
 }
 
 EGLContext GLContext::createContextForEGLVersion(PlatformDisplay& platformDisplay, EGLConfig config, EGLContext sharingContext)
@@ -430,31 +416,62 @@ EGLContext GLContext::createContextForEGLVersion(PlatformDisplay& platformDispla
     return eglCreateContext(platformDisplay.eglDisplay(), config, sharingContext, contextAttributes);
 }
 
-bool GLContext::makeContextCurrent()
+bool GLContext::makeCurrentImpl()
 {
     ASSERT(m_context);
+    return eglMakeCurrent(m_display.eglDisplay(), m_surface, m_surface, m_context);
+}
 
-    *currentContext() = this;
-    if (eglGetCurrentContext() == m_context)
+bool GLContext::unmakeCurrentImpl()
+{
+    return eglMakeCurrent(m_display.eglDisplay(), EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+}
+
+bool GLContext::makeContextCurrent()
+{
+    if (isCurrent())
         return true;
 
-    return eglMakeCurrent(m_display.eglDisplay(), m_surface, m_surface, m_context);
+    // ANGLE doesn't know anything about non-ANGLE contexts, and does
+    // nothing in MakeCurrent if what it thinks is current hasn't changed.
+    // So, when making a native context current we need to unmark any previous
+    // ANGLE context to ensure the next MakeCurrent does the right thing.
+    auto* context = currentContext();
+    bool isSwitchingFromANGLE = context && context->type() == GLContextWrapper::Type::Angle;
+    if (isSwitchingFromANGLE)
+        context->unmakeCurrentImpl();
+
+    if (eglMakeCurrent(m_display.eglDisplay(), m_surface, m_surface, m_context)) {
+        didMakeContextCurrent();
+        return true;
+    }
+
+    // If we failed to make the native context current, restore the previous ANGLE one.
+    if (isSwitchingFromANGLE)
+        context->makeCurrentImpl();
+
+    return false;
 }
 
 bool GLContext::unmakeContextCurrent()
 {
-    if (this != *currentContext())
-        return false;
+    if (!isCurrent())
+        return true;
 
-    eglMakeCurrent(m_display.eglDisplay(), EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-    *currentContext() = nullptr;
+    if (eglMakeCurrent(m_display.eglDisplay(), EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT)) {
+        didUnmakeContextCurrent();
+        return true;
+    }
 
-    return true;
+    return false;
 }
 
 GLContext* GLContext::current()
 {
-    return *currentContext();
+    auto* context = currentContext();
+    if (context && context->type() == GLContextWrapper::Type::Native)
+        return static_cast<GLContext*>(context);
+    return nullptr;
 }
 
 void GLContext::swapBuffers()
@@ -527,11 +544,15 @@ const GLContext::GLExtensions& GLContext::glExtensions() const
 GLContext::ScopedGLContext::ScopedGLContext(std::unique_ptr<GLContext>&& context)
     : m_context(WTFMove(context))
 {
-    m_previous.context = eglGetCurrentContext();
-    if (m_previous.context) {
-        m_previous.display = eglGetCurrentDisplay();
-        m_previous.readSurface = eglGetCurrentSurface(EGL_READ);
-        m_previous.drawSurface = eglGetCurrentSurface(EGL_DRAW);
+    auto eglContext = eglGetCurrentContext();
+    m_previous.glContext = GLContext::current();
+    if (!m_previous.glContext || m_previous.glContext->platformContext() != eglContext) {
+        m_previous.context = eglContext;
+        if (m_previous.context != EGL_NO_CONTEXT) {
+            m_previous.display = eglGetCurrentDisplay();
+            m_previous.readSurface = eglGetCurrentSurface(EGL_READ);
+            m_previous.drawSurface = eglGetCurrentSurface(EGL_DRAW);
+        }
     }
     m_context->makeContextCurrent();
 }
@@ -539,20 +560,25 @@ GLContext::ScopedGLContext::ScopedGLContext(std::unique_ptr<GLContext>&& context
 GLContext::ScopedGLContext::~ScopedGLContext()
 {
     m_context = nullptr;
-    if (m_previous.context)
+
+    if (m_previous.context != EGL_NO_CONTEXT)
         eglMakeCurrent(m_previous.display, m_previous.drawSurface, m_previous.readSurface, m_previous.context);
+    else if (m_previous.glContext)
+        m_previous.glContext->makeContextCurrent();
 }
 
 GLContext::ScopedGLContextCurrent::ScopedGLContextCurrent(GLContext& context)
     : m_context(context)
 {
     auto eglContext = eglGetCurrentContext();
-    m_previous.glContext = *currentContext();
+    m_previous.glContext = GLContext::current();
     if (!m_previous.glContext || m_previous.glContext->platformContext() != eglContext) {
         m_previous.context = eglContext;
-        m_previous.display = eglGetCurrentDisplay();
-        m_previous.readSurface = eglGetCurrentSurface(EGL_READ);
-        m_previous.drawSurface = eglGetCurrentSurface(EGL_DRAW);
+        if (m_previous.context != EGL_NO_CONTEXT) {
+            m_previous.display = eglGetCurrentDisplay();
+            m_previous.readSurface = eglGetCurrentSurface(EGL_READ);
+            m_previous.drawSurface = eglGetCurrentSurface(EGL_DRAW);
+        }
     }
     m_context.makeContextCurrent();
 }
@@ -564,12 +590,10 @@ GLContext::ScopedGLContextCurrent::~ScopedGLContextCurrent()
         return;
     }
 
+    m_context.unmakeContextCurrent();
+
     if (m_previous.context)
         eglMakeCurrent(m_previous.display, m_previous.drawSurface, m_previous.readSurface, m_previous.context);
-    else
-        m_context.unmakeContextCurrent();
-
-    *currentContext() = m_previous.glContext;
 }
 
 } // namespace WebCore

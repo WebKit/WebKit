@@ -2091,6 +2091,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/cv/ImageTransferSessionVT.h
 
     platform/graphics/egl/GLContext.h
+    platform/graphics/egl/GLContextWrapper.h
 
     platform/graphics/filters/DistantLightSource.h
     platform/graphics/filters/FEBlend.h

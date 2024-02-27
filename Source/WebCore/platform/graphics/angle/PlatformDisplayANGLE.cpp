@@ -114,7 +114,7 @@ void PlatformDisplay::clearANGLESharingGLContext()
 
     ASSERT(m_angleEGLDisplay);
     ASSERT(m_sharingGLContext);
-    GLContext::ScopedGLContextCurrent scopedCurrent(*m_sharingGLContext);
+    EGL_MakeCurrent(m_angleEGLDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
     EGL_DestroyContext(m_angleEGLDisplay, m_angleSharingGLContext);
     m_angleSharingGLContext = EGL_NO_CONTEXT;
 }
