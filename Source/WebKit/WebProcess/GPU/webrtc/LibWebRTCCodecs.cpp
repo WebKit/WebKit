@@ -693,7 +693,7 @@ template<typename Frame> int32_t LibWebRTCCodecs::encodeFrameInternal(Encoder& e
 
 int32_t LibWebRTCCodecs::encodeFrame(Encoder& encoder, const webrtc::VideoFrame& frame, bool shouldEncodeAsKeyFrame)
 {
-    return encodeFrameInternal(encoder, frame, shouldEncodeAsKeyFrame, toVideoRotation(frame.rotation()), MediaTime(frame.timestamp_us() * 1000, 1000000), frame.timestamp(), { }, [](auto) { });
+    return encodeFrameInternal(encoder, frame, shouldEncodeAsKeyFrame, toVideoRotation(frame.rotation()), MediaTime::createWithDouble(Seconds::fromMicroseconds(frame.timestamp_us()).value()), frame.timestamp(), { }, [](auto) { });
 }
 
 int32_t LibWebRTCCodecs::encodeFrame(Encoder& encoder, const WebCore::VideoFrame& frame, int64_t timestamp, std::optional<uint64_t> duration, bool shouldEncodeAsKeyFrame, Function<void(bool)>&& callback)
