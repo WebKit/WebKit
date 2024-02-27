@@ -138,6 +138,10 @@ WI.FontStyles = class FontStyles
 
         const createIfMissing = true;
         let cssProperty = this._effectiveWritablePropertyForName(targetPropertyName, createIfMissing);
+
+        if (this._propertiesMap.get(targetPropertyName)?.isImportant)
+            targetPropertyValue += " !important";
+
         cssProperty.rawValue = targetPropertyValue;
     }
 
@@ -276,9 +280,10 @@ WI.FontStyles = class FontStyles
         keywordComputedReplacements ??= [];
         keywordReplacements ??= new Map;
 
-        let resultProperties = {};
+        let resultProperty = {};
 
-        let value = this._effectivePropertyValueForName(style.domNodeStyle, name);
+        let effectivePropertyForName = style.domNodeStyle.effectivePropertyForName(name);
+        let value = effectivePropertyForName?.value || "";
 
         if (!value || value === "inherit" || keywordComputedReplacements.includes(value))
             value = this._computedPropertyValueForName(style.domNodeStyle, name);
@@ -286,13 +291,13 @@ WI.FontStyles = class FontStyles
         if (keywordReplacements.has(value))
             value = keywordReplacements.get(value);
 
-        resultProperties.value = value;
+        resultProperty.value = value;
 
         for (let fontVariationTag of variations) {
             let fontVariationAxis = style.variationsMap.get(fontVariationTag);
             if (fontVariationAxis) {
-                resultProperties.variations ??= new Map;
-                resultProperties.variations.set(fontVariationTag, fontVariationAxis);
+                resultProperty.variations ??= new Map;
+                resultProperty.variations.set(fontVariationTag, fontVariationAxis);
 
                 // Remove the tag so it is not presented twice.
                 style.variationsMap.delete(fontVariationTag);
@@ -304,20 +309,17 @@ WI.FontStyles = class FontStyles
         for (let fontFeatureSetting of features) {
             let featureSettingValue = style.featuresMap.get(fontFeatureSetting);
             if (featureSettingValue || featureSettingValue === 0) {
-                resultProperties.features ??= new Map;
-                resultProperties.features.set(fontFeatureSetting, featureSettingValue);
+                resultProperty.features ??= new Map;
+                resultProperty.features.set(fontFeatureSetting, featureSettingValue);
 
                 // Remove the tag so it is not presented twice.
                 style.featuresMap.delete(fontFeatureSetting);
             }
         }
 
-        return resultProperties;
-    }
+        resultProperty.isImportant = effectivePropertyForName?.important ?? false;
 
-    _effectivePropertyValueForName(domNodeStyle, name)
-    {
-        return domNodeStyle.effectivePropertyForName(name)?.value || "";
+        return resultProperty;
     }
 
     _effectiveWritablePropertyForName(name, createIfMissing)
