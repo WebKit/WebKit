@@ -2274,7 +2274,7 @@ void CodeBlock::jettison(Profiler::JettisonReason reason, ReoptimizationMode mod
         return;
 
     // This accomplishes (2).
-    ownerExecutable()->installCode(vm, alternative(), codeType(), specializationKind());
+    ownerExecutable()->installCode(vm, alternative(), codeType(), specializationKind(), reason);
 
 #if ENABLE(DFG_JIT)
     if (DFG::shouldDumpDisassembly())
