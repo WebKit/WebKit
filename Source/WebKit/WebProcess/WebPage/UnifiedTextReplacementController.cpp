@@ -165,7 +165,7 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveReplaceme
 
     ASSERT(m_contextRanges.contains(uuid));
 
-    auto liveRange = m_contextRanges.get(uuid);
+    RefPtr liveRange = m_contextRanges.get(uuid);
     auto sessionRange = makeSimpleRange(liveRange);
     if (!sessionRange) {
         ASSERT_NOT_REACHED();
@@ -300,6 +300,7 @@ void UnifiedTextReplacementController::didEndTextReplacementSession(const WTF::U
 
     m_contextRanges.remove(uuid);
     m_originalDocumentNodes.remove(uuid);
+    m_replacedDocumentNodes.remove(uuid);
     m_replacements.remove(uuid);
 }
 
@@ -327,7 +328,7 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithR
         return;
     }
 
-    auto liveRange = m_contextRanges.get(uuid);
+    RefPtr liveRange = m_contextRanges.get(uuid);
     auto sessionRange = makeSimpleRange(liveRange);
     if (!sessionRange) {
         ASSERT_NOT_REACHED();
@@ -399,46 +400,69 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveEditActio
         return;
     }
 
-    auto liveRange = m_contextRanges.get(uuid);
+    RefPtr liveRange = m_contextRanges.get(uuid);
     auto sessionRange = makeSimpleRange(liveRange);
     if (!sessionRange) {
         ASSERT_NOT_REACHED();
         return;
     }
 
+    if (m_replacements.isEmpty())
+        return;
+
+    auto contents = liveRange->cloneContents();
+    if (contents.hasException()) {
+        RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionDidReceiveEditAction (%s) => exception when cloning contents", uuid.toString().utf8().data());
+        return;
+    }
+
     switch (action) {
-    case WebKit::WebTextReplacementData::EditAction::Undo:
-    case WebKit::WebTextReplacementData::EditAction::Redo: {
-        if (m_replacements.isEmpty())
-            return;
-
-        auto firstReplacement = m_replacements.get(uuid).first();
-        auto lastReplacement = m_replacements.get(uuid).last();
-
-        auto originalFragment = m_originalDocumentNodes.take(uuid);
-
-        auto contents = liveRange->cloneContents();
-        if (contents.hasException()) {
-            RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionDidReceiveEditAction (%s) => exception when cloning contents", uuid.toString().utf8().data());
+    case WebKit::WebTextReplacementData::EditAction::Undo: {
+        RefPtr originalFragment = m_originalDocumentNodes.get(uuid);
+        if (!originalFragment) {
+            ASSERT_NOT_REACHED();
             return;
         }
 
-        m_originalDocumentNodes.set(uuid, contents.returnValue()); // Deep clone.
+        m_replacedDocumentNodes.set(uuid, contents.returnValue()); // Deep clone.
 
         replaceContentsInRange(*frame, *sessionRange, *originalFragment);
 
-        auto updatedLiveRange = createLiveRange(*sessionRange);
-        m_contextRanges.set(uuid, updatedLiveRange);
+        break;
+    }
+
+    case WebKit::WebTextReplacementData::EditAction::Redo: {
+        RefPtr originalFragment = m_replacedDocumentNodes.take(uuid);
+        if (!originalFragment) {
+            ASSERT_NOT_REACHED();
+            return;
+        }
+
+        m_replacedDocumentNodes.set(uuid, contents.returnValue()); // Deep clone.
+
+        replaceContentsInRange(*frame, *sessionRange, *originalFragment);
 
         break;
     }
 
-    case WebKit::WebTextReplacementData::EditAction::UndoAll:
-        // FIXME: Implement this action.
-        RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionDidReceiveEditAction (%s) [action: %hhu] => not yet implemented", uuid.toString().utf8().data(), enumToUnderlyingType(action));
-        RELEASE_ASSERT_NOT_REACHED();
+    case WebKit::WebTextReplacementData::EditAction::UndoAll: {
+        RefPtr originalFragment = m_originalDocumentNodes.get(uuid);
+        if (!originalFragment) {
+            ASSERT_NOT_REACHED();
+            return;
+        }
+
+        replaceContentsInRange(*frame, *sessionRange, *originalFragment);
+
+        m_replacements.remove(uuid);
+        m_replacedDocumentNodes.remove(uuid);
+
         break;
     }
+    }
+
+    auto updatedLiveRange = createLiveRange(*sessionRange);
+    m_contextRanges.set(uuid, updatedLiveRange);
 }
 
 } // namespace WebKit

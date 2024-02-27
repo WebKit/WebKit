@@ -72,6 +72,7 @@ private:
 
     HashMap<WTF::UUID, Ref<WebCore::Range>> m_contextRanges;
     HashMap<WTF::UUID, Ref<WebCore::DocumentFragment>> m_originalDocumentNodes;
+    HashMap<WTF::UUID, Ref<WebCore::DocumentFragment>> m_replacedDocumentNodes;
     HashMap<WTF::UUID, Vector<Replacement>> m_replacements;
 };
 
