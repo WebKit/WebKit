@@ -7351,6 +7351,14 @@ enum class WebCore::SourceBufferAppendMode : uint8_t {
     Sequence
 };
 
+header: <WebCore/SourceBufferPrivateClient.h>
+[CustomHeader] struct WebCore::SourceBufferEvictionData {
+    uint64_t contentSize;
+    int64_t evictableSize;
+    uint64_t maximumBufferSize;
+    size_t numMediaSamples;
+};
+
 #endif
 
 header: <WebCore/Font.h>

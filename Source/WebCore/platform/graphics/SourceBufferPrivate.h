@@ -107,7 +107,8 @@ public:
     virtual void setGroupStartTimestampToEndTimestamp() { m_groupStartTimestamp = m_groupEndTimestamp; }
     virtual void setShouldGenerateTimestamps(bool flag) { m_shouldGenerateTimestamps = flag; }
     WEBCORE_EXPORT virtual Ref<MediaPromise> removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentMediaTime);
-    WEBCORE_EXPORT virtual void evictCodedFrames(uint64_t newDataSize, uint64_t maximumBufferSize, const MediaTime& currentTime);
+    WEBCORE_EXPORT virtual bool evictCodedFrames(uint64_t newDataSize, const MediaTime& currentTime);
+    WEBCORE_EXPORT virtual void asyncEvictCodedFrames(uint64_t newDataSize, const MediaTime& currentTime);
     WEBCORE_EXPORT virtual size_t platformEvictionThreshold() const;
     WEBCORE_EXPORT virtual uint64_t totalTrackBufferSizeInBytes() const;
     WEBCORE_EXPORT virtual void resetTimestampOffsetInTrackBuffers();
@@ -125,7 +126,9 @@ public:
 
     void setMediaSourceDuration(const MediaTime& duration) { m_mediaSourceDuration = duration; }
 
-    bool isBufferFullFor(uint64_t requiredSize, uint64_t maximumBufferSize);
+    WEBCORE_EXPORT virtual bool isBufferFullFor(uint64_t requiredSize) const;
+    WEBCORE_EXPORT virtual bool canAppend(uint64_t requiredSize) const;
+    SourceBufferEvictionData evictionData() const { return m_evictionData; }
     WEBCORE_EXPORT Vector<PlatformTimeRanges> trackBuffersRanges() const;
 
     // Methods used by MediaSourcePrivate
@@ -136,9 +139,10 @@ public:
     virtual MediaTime timestampOffset() const { return m_timestampOffset; }
 
     virtual size_t platformMaximumBufferSize() const { return 0; }
+    virtual Ref<GenericPromise> setMaximumBufferSize(size_t);
 
     // Methods for ManagedSourceBuffer
-    WEBCORE_EXPORT virtual void memoryPressure(uint64_t maximumBufferSize, const MediaTime& currentTime);
+    WEBCORE_EXPORT virtual void memoryPressure(const MediaTime& currentTime);
 
     // Internals Utility methods
     using SamplesPromise = NativePromise<Vector<String>, int>;
@@ -206,6 +210,8 @@ protected:
     ThreadSafeWeakPtr<MediaSourcePrivate> m_mediaSource { nullptr };
     const Ref<RefCountedSerialFunctionDispatcher> m_dispatcher; // SerialFunctionDispatcher the SourceBufferPrivate/MediaSourcePrivate
 
+    SourceBufferEvictionData m_evictionData;
+
 private:
     MediaTime minimumBufferedTime() const;
     MediaTime maximumBufferedTime() const;
@@ -219,7 +225,7 @@ private:
     void trySignalAllSamplesInTrackEnqueued(TrackBuffer&, TrackID);
     MediaTime findPreviousSyncSamplePresentationTime(const MediaTime&);
     void removeCodedFramesInternal(const MediaTime& start, const MediaTime& end, const MediaTime& currentMediaTime);
-    bool evictFrames(uint64_t newDataSize, uint64_t maximumBufferSize, const MediaTime& currentTime);
+    bool evictFrames(uint64_t newDataSize, const MediaTime& currentTime);
     bool hasTooManySamples() const;
     void iterateTrackBuffers(Function<void(TrackBuffer&)>&&);
     void iterateTrackBuffers(Function<void(const TrackBuffer&)>&&) const;
@@ -243,6 +249,12 @@ private:
 
     void processPendingMediaSamples();
     bool processMediaSample(SourceBufferPrivateClient&, Ref<MediaSample>&&);
+
+    enum class ComputeEvictionDataRule {
+        Default,
+        ForceNotification
+    };
+    void computeEvictionData(ComputeEvictionDataRule = ComputeEvictionDataRule::Default);
 
     using SamplesVector = Vector<Ref<MediaSample>>;
     SamplesVector m_pendingSamples;

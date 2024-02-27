@@ -223,23 +223,37 @@ Ref<MediaPromise> SourceBufferPrivateRemote::removeCodedFrames(const MediaTime& 
     });
 }
 
-void SourceBufferPrivateRemote::evictCodedFrames(uint64_t newDataSize, uint64_t maximumBufferSize, const MediaTime& currentTime)
+bool SourceBufferPrivateRemote::evictCodedFrames(uint64_t newDataSize, const MediaTime& currentTime)
 {
+    if (canAppend(newDataSize)) {
+        if (!isBufferFullFor(newDataSize))
+            return false;
+        // The buffer is full, but we will be able to evict the content prior appending.
+        ensureWeakOnDispatcher([this, newDataSize, currentTime] {
+            m_gpuProcessConnection.get()->connection().send(Messages::RemoteSourceBufferProxy::AsyncEvictCodedFrames(newDataSize, currentTime), m_remoteSourceBufferIdentifier);
+        });
+        return false;
+    }
+
     // FIXME: Uses a new Connection for remote playback, and not the main GPUProcessConnection's one.
     callOnMainRunLoopAndWait([&] {
         auto gpuProcessConnection = m_gpuProcessConnection.get();
         if (!gpuProcessConnection || !isGPURunning())
             return;
 
-        auto sendResult = gpuProcessConnection->connection().sendSync(Messages::RemoteSourceBufferProxy::EvictCodedFrames(newDataSize, maximumBufferSize, currentTime), m_remoteSourceBufferIdentifier);
+        auto sendResult = gpuProcessConnection->connection().sendSync(Messages::RemoteSourceBufferProxy::EvictCodedFrames(newDataSize, currentTime), m_remoteSourceBufferIdentifier);
         if (sendResult.succeeded()) {
             if (auto client = this->client()) {
                 Vector<PlatformTimeRanges> trackBufferRanges;
-                std::tie(trackBufferRanges, m_totalTrackBufferSizeInBytes) = sendResult.takeReply();
-                client->sourceBufferPrivateBufferedChanged(trackBufferRanges, m_totalTrackBufferSizeInBytes);
+                {
+                    Locker locker { m_lock };
+                    std::tie(trackBufferRanges, m_evictionData) = sendResult.takeReply();
+                }
+                client->sourceBufferPrivateBufferedChanged(trackBufferRanges);
             }
         }
     });
+    return isBufferFullFor(newDataSize);
 }
 
 void SourceBufferPrivateRemote::addTrackBuffer(TrackID trackId, RefPtr<MediaDescription>&&)
@@ -258,7 +272,10 @@ void SourceBufferPrivateRemote::resetTrackBuffers()
 
 void SourceBufferPrivateRemote::clearTrackBuffers(bool)
 {
-    m_totalTrackBufferSizeInBytes = 0;
+    {
+        Locker locker { m_lock };
+        m_evictionData.clear();
+    }
     ensureWeakOnDispatcher([this] {
         m_gpuProcessConnection.get()->connection().send(Messages::RemoteSourceBufferProxy::ClearTrackBuffers(), m_remoteSourceBufferIdentifier);
     });
@@ -343,6 +360,20 @@ void SourceBufferPrivateRemote::setAppendWindowEnd(const MediaTime& appendWindow
     ensureWeakOnDispatcher([this, appendWindowEnd] {
         m_gpuProcessConnection.get()->connection().send(Messages::RemoteSourceBufferProxy::SetAppendWindowEnd(appendWindowEnd), m_remoteSourceBufferIdentifier);
     });
+}
+
+Ref<GenericPromise> SourceBufferPrivateRemote::setMaximumBufferSize(size_t size)
+{
+    {
+        Locker locker { m_lock };
+        m_evictionData.maximumBufferSize = size;
+    }
+    GenericPromise::AutoRejectProducer producer;
+    Ref promise = producer.promise();
+    ensureWeakOnDispatcher([this, size, producer = WTFMove(producer)]() mutable {
+        m_gpuProcessConnection.get()->connection().sendWithPromisedReply(Messages::RemoteSourceBufferProxy::SetMaximumBufferSize(size), m_remoteSourceBufferIdentifier)->chainTo(WTFMove(producer));
+    });
+    return promise;
 }
 
 Ref<SourceBufferPrivate::ComputeSeekPromise> SourceBufferPrivateRemote::computeSeekTime(const WebCore::SeekTarget& target)
@@ -464,6 +495,18 @@ void SourceBufferPrivateRemote::MessageReceiver::sourceBufferPrivateDidReceiveIn
     client->sourceBufferPrivateDidReceiveInitializationSegment(WTFMove(segment))->whenSettled(parent->queue(), WTFMove(completionHandler));
 }
 
+void SourceBufferPrivateRemote::MessageReceiver::sourceBufferPrivateEvictionDataChanged(SourceBufferEvictionData&& evictionData)
+{
+    assertIsCurrent(SourceBufferPrivateRemote::queue());
+
+    if (RefPtr parent = m_parent.get()) {
+        Locker locker { parent->m_lock };
+        parent->m_evictionData = WTFMove(evictionData);
+    }
+    if (auto client = this->client())
+        client->sourceBufferPrivateEvictionDataChanged(WTFMove(evictionData));
+}
+
 void SourceBufferPrivateRemote::MessageReceiver::sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime& timestamp)
 {
     assertIsCurrent(SourceBufferPrivateRemote::queue());
@@ -483,12 +526,12 @@ void SourceBufferPrivateRemote::MessageReceiver::sourceBufferPrivateDurationChan
     completionHandler();
 }
 
-void SourceBufferPrivateRemote::MessageReceiver::sourceBufferPrivateBufferedChanged(Vector<WebCore::PlatformTimeRanges>&& trackBuffersRanges, uint64_t extraMemory, CompletionHandler<void()>&& completionHandler)
+void SourceBufferPrivateRemote::MessageReceiver::sourceBufferPrivateBufferedChanged(Vector<WebCore::PlatformTimeRanges>&& trackBuffersRanges, CompletionHandler<void()>&& completionHandler)
 {
     assertIsCurrent(SourceBufferPrivateRemote::queue());
 
     if (auto client = this->client()) {
-        client->sourceBufferPrivateBufferedChanged(WTFMove(trackBuffersRanges), extraMemory)->whenSettled(SourceBufferPrivateRemote::queue(), WTFMove(completionHandler));
+        client->sourceBufferPrivateBufferedChanged(WTFMove(trackBuffersRanges))->whenSettled(SourceBufferPrivateRemote::queue(), WTFMove(completionHandler));
         return;
     }
     completionHandler();
@@ -517,17 +560,18 @@ void SourceBufferPrivateRemote::MessageReceiver::sourceBufferPrivateShuttingDown
 
 uint64_t SourceBufferPrivateRemote::totalTrackBufferSizeInBytes() const
 {
-    return m_totalTrackBufferSizeInBytes;
+//    assertIsHeld(m_lock);
+    return m_evictionData.contentSize;
 }
 
-void SourceBufferPrivateRemote::memoryPressure(uint64_t maximumBufferSize, const MediaTime& currentTime)
+void SourceBufferPrivateRemote::memoryPressure(const MediaTime& currentTime)
 {
-    ensureOnDispatcher([protectedThis = Ref { *this }, this, maximumBufferSize, currentTime]() mutable {
+    ensureOnDispatcher([protectedThis = Ref { *this }, this, currentTime]() mutable {
         auto gpuProcessConnection = m_gpuProcessConnection.get();
         if (!gpuProcessConnection || !isGPURunning())
             return;
 
-        gpuProcessConnection->connection().send(Messages::RemoteSourceBufferProxy::MemoryPressure(maximumBufferSize, currentTime), m_remoteSourceBufferIdentifier);
+        gpuProcessConnection->connection().send(Messages::RemoteSourceBufferProxy::MemoryPressure(currentTime), m_remoteSourceBufferIdentifier);
     });
 }
 
@@ -555,6 +599,22 @@ void SourceBufferPrivateRemote::setMaximumQueueDepthForTrackID(TrackID trackID, 
 
         gpuProcessConnection->connection().send(Messages::RemoteSourceBufferProxy::SetMaximumQueueDepthForTrackID(trackID, depth), m_remoteSourceBufferIdentifier);
     });
+}
+
+bool SourceBufferPrivateRemote::isBufferFullFor(uint64_t requiredSize) const
+{
+    Locker locker { m_lock };
+
+    ALWAYS_LOG(LOGIDENTIFIER, "requiredSize:", requiredSize, " evictionData:", m_evictionData);
+
+    return SourceBufferPrivate::isBufferFullFor(requiredSize);
+}
+
+bool SourceBufferPrivateRemote::canAppend(uint64_t requiredSize) const
+{
+    Locker locker { m_lock };
+
+    return SourceBufferPrivate::canAppend(requiredSize);
 }
 
 #if !RELEASE_LOG_DISABLED

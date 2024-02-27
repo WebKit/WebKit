@@ -59,7 +59,7 @@
         testExpected('isNaN(source.duration)', true, '==');
 
         // This should allow bufering up to 177 (empirically tested).
-        internals.settings.setMaximumSourceBufferSize(3000);
+        await internals.setMaximumSourceBufferSize(sourceBuffer, 3000);
 
         exception = await appendPtsRange(120, 176);
 

@@ -77,7 +77,7 @@
         await waitFor(sourceBuffer, 'updateend');
         waitFor(sourceBuffer, 'error');
 
-        internals.settings.setMaximumSourceBufferSize(500);
+        await internals.setMaximumSourceBufferSize(sourceBuffer, 500);
 
         video.currentTime = 18;
         testExpected('video.currentTime', 18, '==');
@@ -87,7 +87,7 @@
         testExpected('bufferedRanges()', '[ 10...15 ]', '==');
 
         endTest();
-        });
+    });
     </script>
 </head>
 <body>
