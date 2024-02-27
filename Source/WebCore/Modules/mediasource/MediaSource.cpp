@@ -121,7 +121,9 @@ private:
     explicit MediaSourceClientImpl(MediaSource& parent)
         : m_parent(parent)
         , m_identifier(parent.scriptExecutionContext()->identifier())
+#if !RELEASE_LOG_DISABLED
         , m_logger(parent.logger())
+#endif
         {
         }
 
