@@ -777,6 +777,7 @@ static const WebCore::Color textAnnotationHoverColor()
 void UnifiedPDFPlugin::paintHoveredAnnotationOnPage(PDFDocumentLayout::PageIndex indexOfPaintedPage, WebCore::GraphicsContext& context, const WebCore::FloatRect& clipRect)
 {
     ASSERT(pageIndexWithHoveredAnnotation());
+    ASSERT(supportsForms());
 
     RetainPtr trackedAnnotation = m_annotationTrackingState.trackedAnnotation();
     auto pageIndex = [m_pdfDocument indexForPage:[trackedAnnotation page]];
@@ -1766,7 +1767,7 @@ bool UnifiedPDFPlugin::handleMouseEvent(const WebMouseEvent& event)
             if (auto* currentTrackedAnnotation = m_annotationTrackingState.trackedAnnotation(); (currentTrackedAnnotation && currentTrackedAnnotation != annotationUnderMouse) || (currentTrackedAnnotation && !m_annotationTrackingState.isBeingHovered()))
                 finishTrackingAnnotation(annotationUnderMouse.get(), mouseEventType, mouseEventButton, RepaintRequirement::HoverOverlay);
 
-            if (!m_annotationTrackingState.trackedAnnotation() && annotationUnderMouse && [annotationUnderMouse isKindOfClass:getPDFAnnotationTextWidgetClass()])
+            if (!m_annotationTrackingState.trackedAnnotation() && annotationUnderMouse && [annotationUnderMouse isKindOfClass:getPDFAnnotationTextWidgetClass()] && supportsForms())
                 startTrackingAnnotation(WTFMove(annotationUnderMouse), mouseEventType, mouseEventButton);
 
             return true;
