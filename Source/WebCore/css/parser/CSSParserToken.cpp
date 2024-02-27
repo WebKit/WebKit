@@ -486,15 +486,19 @@ CSSValueID CSSParserToken::id() const
 {
     if (m_type != IdentToken)
         return CSSValueInvalid;
-    if (m_id < 0)
-        m_id = cssValueKeywordID(value());
-    return static_cast<CSSValueID>(m_id);
+    return identOrFunctionId();
 }
 
 CSSValueID CSSParserToken::functionId() const
 {
     if (m_type != FunctionToken)
         return CSSValueInvalid;
+    return identOrFunctionId();
+}
+
+CSSValueID CSSParserToken::identOrFunctionId() const
+{
+    ASSERT(m_type == IdentToken || m_type == FunctionToken);
     if (m_id < 0)
         m_id = cssValueKeywordID(value());
     return static_cast<CSSValueID>(m_id);
@@ -542,12 +546,27 @@ bool CSSParserToken::hasStringBacking() const
     return false;
 }
 
-CSSParserToken CSSParserToken::copyWithUpdatedString(StringView string) const
+bool CSSParserToken::tryUseStringLiteralBacking()
 {
-    ASSERT(value() == string);
-    CSSParserToken copy(*this);
-    copy.initValueFromStringView(string);
-    return copy;
+    if (m_type != IdentToken && m_type != FunctionToken)
+        return false;
+
+    if (!m_isBackedByStringLiteral) {
+        auto valueId = identOrFunctionId();
+        if (valueId == CSSValueInvalid)
+            return false;
+
+        auto literal = nameLiteral(valueId);
+
+        // Typically all lowercase but we need to keep the original for correct serialization if they differ.
+        if (value() != literal)
+            return false;
+
+        updateCharacters(literal.characters8(), literal.length());
+
+        m_isBackedByStringLiteral = true;
+    }
+    return true;
 }
 
 bool CSSParserToken::operator==(const CSSParserToken& other) const
