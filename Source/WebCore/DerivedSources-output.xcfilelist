@@ -3052,6 +3052,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVisualViewport.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVisualViewport.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVoidCallback.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVoidCallback.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWGSLLanguageFeatures.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWGSLLanguageFeatures.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWakeLock.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWakeLock.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWakeLockSentinel.cpp

@@ -24,27 +24,18 @@
  */
 
 #include "config.h"
-#include "DigitalIdentity.h"
+#include "WGSLLanguageFeatures.h"
 
-#include <wtf/text/Base64.h>
-
-#if ENABLE(WEB_AUTHN)
+#include "IDLTypes.h"
 
 namespace WebCore {
 
-Ref<DigitalIdentity> DigitalIdentity::create(Ref<ArrayBuffer>&& data)
+void WGSLLanguageFeatures::initializeSetLike(DOMSetAdapter& set) const
 {
-    return adoptRef(*new DigitalIdentity(WTFMove(data)));
+    set.add<IDLDOMString>("packed_4x8_integer_dot_product"_s);
+    set.add<IDLDOMString>("pointer_composite_access"_s);
+    set.add<IDLDOMString>("readonly_and_readwrite_storage_textures"_s);
+    set.add<IDLDOMString>("unrestricted_pointer_parameters"_s);
 }
 
-DigitalIdentity::~DigitalIdentity() = default;
-
-DigitalIdentity::DigitalIdentity(Ref<ArrayBuffer>&& data)
-    : BasicCredential(base64URLEncodeToString(data->data(), data->byteLength()), Type::DigitalIdentity, Discovery::CredentialStore)
-    , m_data(WTFMove(data))
-{
 }
-
-} // namespace WebCore
-
-#endif // ENABLE(WEB_AUTHN)

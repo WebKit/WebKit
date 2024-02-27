@@ -458,6 +458,7 @@ namespace WebCore {
     macro(ViewTimeline) \
     macro(ViewTransition) \
     macro(VisualViewport) \
+    macro(WGSLLanguageFeatures) \
     macro(WakeLock) \
     macro(WakeLockSentinel) \
     macro(WaveShaperNode) \

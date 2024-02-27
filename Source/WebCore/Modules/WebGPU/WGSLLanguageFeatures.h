@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,52 +25,25 @@
 
 #pragma once
 
-#include "GPUAdapter.h"
-#include "GPURequestAdapterOptions.h"
-#include "GPUTextureFormat.h"
-#include "JSDOMPromiseDeferredForward.h"
-#include "WebGPU.h"
-#include <optional>
-#include <wtf/Deque.h>
-#include <wtf/Ref.h>
+#include "IDLTypes.h"
+#include "JSDOMSetLike.h"
 #include <wtf/RefCounted.h>
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class GPUCompositorIntegration;
-class GPUPresentationContext;
-struct GPUPresentationContextDescriptor;
-class GraphicsContext;
-class NativeImage;
-class WGSLLanguageFeatures;
-
-class GPU : public RefCounted<GPU> {
+class WGSLLanguageFeatures : public RefCounted<WGSLLanguageFeatures> {
 public:
-    static Ref<GPU> create(Ref<WebGPU::GPU>&& backing)
+    static Ref<WGSLLanguageFeatures> create()
     {
-        return adoptRef(*new GPU(WTFMove(backing)));
+        return adoptRef(*new WGSLLanguageFeatures());
     }
-    ~GPU();
 
-    using RequestAdapterPromise = DOMPromiseDeferred<IDLNullable<IDLInterface<GPUAdapter>>>;
-    void requestAdapter(const std::optional<GPURequestAdapterOptions>&, RequestAdapterPromise&&);
-
-    GPUTextureFormat getPreferredCanvasFormat() const;
-    Ref<WGSLLanguageFeatures> wgslLanguageFeatures() const;
-
-    Ref<GPUPresentationContext> createPresentationContext(const GPUPresentationContextDescriptor&);
-
-    Ref<GPUCompositorIntegration> createCompositorIntegration();
-
-    void paintToCanvas(NativeImage&, const IntSize&, GraphicsContext&);
+    void initializeSetLike(DOMSetAdapter&) const;
 
 private:
-    GPU(Ref<WebGPU::GPU>&&);
-
-    struct PendingRequestAdapterArguments;
-    Deque<PendingRequestAdapterArguments> m_pendingRequestAdapterArguments;
-    Ref<WebGPU::GPU> m_backing;
-    Ref<WGSLLanguageFeatures> m_wgslLanguageFeatures;
+    WGSLLanguageFeatures() = default;
 };
 
 }

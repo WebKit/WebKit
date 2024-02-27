@@ -1870,6 +1870,7 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/WebGPU/GPUVertexState.idl
     Modules/WebGPU/GPUVertexStepMode.idl
     Modules/WebGPU/NavigatorGPU.idl
+    Modules/WebGPU/WGSLLanguageFeatures.idl
 )
 
 set(WebCore_IDL_FILES

@@ -30,11 +30,14 @@
 #include "GPUPresentationContextDescriptor.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSGPUAdapter.h"
+#include "JSWGSLLanguageFeatures.h"
+#include "WGSLLanguageFeatures.h"
 
 namespace WebCore {
 
 GPU::GPU(Ref<WebGPU::GPU>&& backing)
     : m_backing(WTFMove(backing))
+    , m_wgslLanguageFeatures(WGSLLanguageFeatures::create())
 {
 }
 
@@ -64,9 +67,14 @@ void GPU::requestAdapter(const std::optional<GPURequestAdapterOptions>& options,
     });
 }
 
-GPUTextureFormat GPU::getPreferredCanvasFormat()
+GPUTextureFormat GPU::getPreferredCanvasFormat() const
 {
     return GPUTextureFormat::Bgra8unorm;
+}
+
+Ref<WGSLLanguageFeatures> GPU::wgslLanguageFeatures() const
+{
+    return m_wgslLanguageFeatures;
 }
 
 Ref<GPUPresentationContext> GPU::createPresentationContext(const GPUPresentationContextDescriptor& presentationContextDescriptor)

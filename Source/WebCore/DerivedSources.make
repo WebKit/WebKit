@@ -198,6 +198,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/WebGPU/GPUVertexState.idl \
     $(WebCore)/Modules/WebGPU/GPUVertexStepMode.idl \
     $(WebCore)/Modules/WebGPU/NavigatorGPU.idl \
+    $(WebCore)/Modules/WebGPU/WGSLLanguageFeatures.idl \
     $(WebCore)/Modules/ShapeDetection/BarcodeDetector.idl \
     $(WebCore)/Modules/ShapeDetection/BarcodeDetectorOptions.idl \
     $(WebCore)/Modules/ShapeDetection/BarcodeFormat.idl \
