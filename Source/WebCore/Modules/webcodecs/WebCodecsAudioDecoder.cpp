@@ -29,6 +29,7 @@
 
 #if ENABLE(WEB_CODECS)
 
+#include "ContextDestructionObserverInlines.h"
 #include "DOMException.h"
 #include "Event.h"
 #include "EventNames.h"

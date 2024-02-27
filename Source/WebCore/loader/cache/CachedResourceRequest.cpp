@@ -40,6 +40,7 @@
 #include "MIMETypeRegistry.h"
 #include "MemoryCache.h"
 #include "OriginAccessPatterns.h"
+#include "Quirks.h"
 #include "SecurityPolicy.h"
 #include "ServiceWorkerRegistrationData.h"
 #include <wtf/NeverDestroyed.h>

@@ -26,8 +26,8 @@
 #ifndef MediaDescription_h
 #define MediaDescription_h
 
-#include <wtf/Forward.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

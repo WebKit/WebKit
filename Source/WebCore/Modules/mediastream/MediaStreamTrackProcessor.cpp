@@ -27,9 +27,11 @@
 
 #if ENABLE(MEDIA_STREAM) && ENABLE(WEB_CODECS)
 
+#include "ContextDestructionObserverInlines.h"
 #include "JSWebCodecsVideoFrame.h"
 #include "Logging.h"
 #include "ReadableStream.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/Seconds.h>
 
 namespace WebCore {

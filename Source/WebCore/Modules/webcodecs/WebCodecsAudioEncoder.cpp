@@ -30,6 +30,7 @@
 #if ENABLE(WEB_CODECS)
 
 #include "AacEncoderConfig.h"
+#include "ContextDestructionObserverInlines.h"
 #include "DOMException.h"
 #include "Event.h"
 #include "EventNames.h"
