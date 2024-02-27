@@ -189,6 +189,7 @@ private:
     template<typename... Arguments>
     void typeError(InferBottom, const SourceSpan&, Arguments&&...);
 
+    const Type* check(AST::Expression&, Constraint, Evaluation);
     const Type* infer(AST::Expression&, Evaluation, DiscardResult = DiscardResult::No);
     const Type* resolve(AST::Expression&);
     const Type* lookupType(const AST::Identifier&);
@@ -713,50 +714,44 @@ void TypeChecker::visit(AST::Function& function)
 // Attributes
 void TypeChecker::visit(AST::AlignAttribute& attribute)
 {
-    auto* type = infer(attribute.alignment(), Evaluation::Constant);
-    if (!satisfies(type, Constraints::ConcreteInteger))
+    if (!check(attribute.alignment(), Constraints::ConcreteInteger, Evaluation::Constant))
         typeError(InferBottom::No, attribute.span(), "@align must be an i32 or u32 value");
 }
 
 void TypeChecker::visit(AST::BindingAttribute& attribute)
 {
-    auto* type = infer(attribute.binding(), Evaluation::Constant);
-    if (!satisfies(type, Constraints::ConcreteInteger))
+    if (!check(attribute.binding(), Constraints::ConcreteInteger, Evaluation::Constant))
         typeError(InferBottom::No, attribute.span(), "@binding must be an i32 or u32 value");
 }
 
 void TypeChecker::visit(AST::GroupAttribute& attribute)
 {
-    auto* type = infer(attribute.group(), Evaluation::Constant);
-    if (!satisfies(type, Constraints::ConcreteInteger))
+    if (!check(attribute.group(), Constraints::ConcreteInteger, Evaluation::Constant))
         typeError(InferBottom::No, attribute.span(), "@group must be an i32 or u32 value");
 }
 
 void TypeChecker::visit(AST::IdAttribute& attribute)
 {
-    auto* type = infer(attribute.value(), Evaluation::Constant);
-    if (!satisfies(type, Constraints::ConcreteInteger))
+    if (!check(attribute.value(), Constraints::ConcreteInteger, Evaluation::Constant))
         typeError(InferBottom::No, attribute.span(), "@id must be an i32 or u32 value");
 }
 
 void TypeChecker::visit(AST::LocationAttribute& attribute)
 {
-    auto* type = infer(attribute.location(), Evaluation::Constant);
-    if (!satisfies(type, Constraints::ConcreteInteger))
+    if (!check(attribute.location(), Constraints::ConcreteInteger, Evaluation::Constant))
         typeError(InferBottom::No, attribute.span(), "@location must be an i32 or u32 value");
 }
 
 void TypeChecker::visit(AST::SizeAttribute& attribute)
 {
-    auto* type = infer(attribute.size(), Evaluation::Constant);
-    if (!satisfies(type, Constraints::ConcreteInteger))
+    if (!check(attribute.size(), Constraints::ConcreteInteger, Evaluation::Constant))
         typeError(InferBottom::No, attribute.span(), "@size must be an i32 or u32 value");
 }
 
 void TypeChecker::visit(AST::WorkgroupSizeAttribute& attribute)
 {
-    auto* xType = infer(attribute.x(), Evaluation::Override);
-    if (!satisfies(xType, Constraints::ConcreteInteger)) {
+    auto* xType = check(attribute.x(), Constraints::ConcreteInteger, Evaluation::Override);
+    if (!xType) {
         typeError(InferBottom::No, attribute.span(), "@workgroup_size x dimension must be an i32 or u32 value");
         return;
     }
@@ -764,15 +759,15 @@ void TypeChecker::visit(AST::WorkgroupSizeAttribute& attribute)
     const Type* yType = nullptr;
     const Type* zType = nullptr;
     if (auto* y = attribute.maybeY()) {
-        yType = infer(*y, Evaluation::Override);
-        if (!satisfies(yType, Constraints::ConcreteInteger)) {
+        yType = check(*y, Constraints::ConcreteInteger, Evaluation::Override);
+        if (!yType) {
             typeError(InferBottom::No, attribute.span(), "@workgroup_size y dimension must be an i32 or u32 value");
             return;
         }
 
         if (auto* z = attribute.maybeZ()) {
-            zType = infer(*z, Evaluation::Override);
-            if (!satisfies(zType, Constraints::ConcreteInteger)) {
+            zType = check(*z, Constraints::ConcreteInteger, Evaluation::Override);
+            if (!zType) {
                 typeError(InferBottom::No, attribute.span(), "@workgroup_size z dimension must be an i32 or u32 value");
                 return;
             }
@@ -1942,6 +1937,16 @@ const Type* TypeChecker::infer(AST::Expression& expression, Evaluation evaluatio
     m_inferredType = nullptr;
 
     return inferredType;
+}
+
+const Type* TypeChecker::check(AST::Expression& expression, Constraint constraint, Evaluation evaluation)
+{
+    auto* type = infer(expression, evaluation);
+    type = satisfyOrPromote(type, constraint, m_types);
+    if (!type)
+        return nullptr;
+    convertValue(expression.span(), type, expression.m_constantValue);
+    return type;
 }
 
 const Type* TypeChecker::resolve(AST::Expression& type)

@@ -349,8 +349,8 @@ void AttributeValidator::visit(AST::StructureMember& member)
             }
             auto alignmentValue = constantValue->integerValue();
             auto isPowerOf2 = !(alignmentValue & (alignmentValue - 1));
-            if (alignmentValue < 0)
-                error(attribute.span(), "@align value must be non-negative");
+            if (alignmentValue < 1)
+                error(attribute.span(), "@align value must be positive");
             else if (!isPowerOf2)
                 error(attribute.span(), "@align value must be a power of two");
             // FIXME: validate that alignment is a multiple of RequiredAlignOf(T,C)
