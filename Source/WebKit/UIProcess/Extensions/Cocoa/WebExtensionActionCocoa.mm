@@ -142,7 +142,7 @@ using namespace WebKit;
     if (!_webExtensionAction)
         return;
 
-    _webExtensionAction->popupDidClose();
+    _webExtensionAction->closePopupWebView();
 }
 
 - (void)webViewDidClose:(WKWebView *)webView
@@ -150,7 +150,7 @@ using namespace WebKit;
     if (!_webExtensionAction)
         return;
 
-    _webExtensionAction->popupDidClose();
+    _webExtensionAction->closePopupWebView();
 }
 
 @end
@@ -672,8 +672,16 @@ void WebExtensionAction::popupDidClose()
 void WebExtensionAction::closePopupWebView()
 {
     [m_popupWebView _close];
+
 #if PLATFORM(IOS_FAMILY)
     [m_popupViewController dismissViewControllerAnimated:YES completion:nil];
+#endif
+
+#if PLATFORM(MAC)
+    auto *window = m_popupWebView.get().window;
+    // FIXME: Instead of checking this window type, this should be handled more like iOS.
+    if ([window isKindOfClass:NSPanel.class])
+        [window close];
 #endif
 
     popupDidClose();
