@@ -39,6 +39,7 @@ class EventTypeInfo;
 class HTMLElement;
 class HTMLVideoElement;
 class LayoutUnit;
+class LocalFrame;
 class PlatformMouseEvent;
 class RegistrableDomain;
 class SecurityOriginData;

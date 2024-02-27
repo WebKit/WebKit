@@ -34,6 +34,7 @@
 #include "CSSParserIdioms.h"
 #include "CSSSelector.h"
 #include "CSSSelectorInlines.h"
+#include "CSSTokenizer.h"
 #include "CommonAtomStrings.h"
 #include "Document.h"
 #include "MutableCSSSelector.h"

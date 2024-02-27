@@ -31,6 +31,7 @@
 #include "LegacyRenderSVGRoot.h"
 #include "RenderAncestorIterator.h"
 #include "RenderBlock.h"
+#include "RenderObjectInlines.h"
 #include "RenderSVGText.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGInlineTextBoxInlines.h"

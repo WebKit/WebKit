@@ -26,6 +26,7 @@
 #include "config.h"
 #include "FragmentDirectiveGenerator.h"
 
+#include "Document.h"
 #include "HTMLParserIdioms.h"
 #include "Logging.h"
 #include "Range.h"

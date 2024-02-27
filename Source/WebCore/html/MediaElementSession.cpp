@@ -44,6 +44,7 @@
 #include "LocalFrameView.h"
 #include "Logging.h"
 #include "MediaUsageInfo.h"
+#include "Navigator.h"
 #include "NowPlayingInfo.h"
 #include "Page.h"
 #include "PlatformMediaSessionManager.h"

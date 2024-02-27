@@ -37,8 +37,13 @@ namespace WebCore {
 enum class PseudoId : uint32_t;
 
 class AnimationEventBase;
+class Document;
 class Element;
 class WebAnimation;
+
+namespace Style {
+struct PseudoElementIdentifier;
+}
 
 inline double secondsToWebAnimationsAPITime(const Seconds time)
 {

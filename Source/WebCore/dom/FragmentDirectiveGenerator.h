@@ -26,11 +26,12 @@
 #pragma once
 
 #include <wtf/Forward.h>
+#include <wtf/URL.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class Range;
+struct SimpleRange;
 
 struct TextDirective {
     String textStart;

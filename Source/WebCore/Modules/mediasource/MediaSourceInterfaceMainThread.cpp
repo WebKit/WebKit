@@ -30,6 +30,8 @@
 
 #include "ManagedMediaSource.h"
 #include "MediaSource.h"
+#include "SourceBufferList.h"
+#include "TimeRanges.h"
 
 namespace WebCore {
 

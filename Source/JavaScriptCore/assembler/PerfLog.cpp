@@ -29,6 +29,7 @@
 
 #if ENABLE(ASSEMBLER) && (OS(LINUX) || OS(DARWIN))
 
+#include "Options.h"
 #include <array>
 #include <fcntl.h>
 #include <mutex>
@@ -41,6 +42,7 @@
 #include <wtf/MonotonicTime.h>
 #include <wtf/PageBlock.h>
 #include <wtf/ProcessID.h>
+#include <wtf/StringPrintStream.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {

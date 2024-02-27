@@ -31,6 +31,8 @@
 
 namespace WebCore {
 
+class MediaSource;
+
 class MediaSourceInterfaceMainThread : public MediaSourceInterfaceProxy {
 public:
     static Ref<MediaSourceInterfaceMainThread> create(Ref<MediaSource>&& mediaSource) { return adoptRef(*new MediaSourceInterfaceMainThread(WTFMove(mediaSource))); }

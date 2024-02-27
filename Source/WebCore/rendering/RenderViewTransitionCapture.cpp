@@ -26,7 +26,11 @@
 #include "config.h"
 #include "RenderViewTransitionCapture.h"
 
+#include "ImageOverlayController.h"
+#include "ImageQualityController.h"
+#include "PaintInfo.h"
 #include "RenderBoxModelObjectInlines.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 

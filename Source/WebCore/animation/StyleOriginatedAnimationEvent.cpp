@@ -26,6 +26,7 @@
 #include "config.h"
 #include "StyleOriginatedAnimationEvent.h"
 
+#include "Node.h"
 #include "WebAnimationUtilities.h"
 
 #include <wtf/IsoMallocInlines.h>

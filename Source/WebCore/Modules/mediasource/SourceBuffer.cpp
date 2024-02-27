@@ -73,9 +73,6 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(SourceBuffer);
 
-static const double ExponentialMovingAverageCoefficient = 0.2;
-
-
 class SourceBufferClientImpl final : public SourceBufferPrivateClient {
 public:
     static Ref<SourceBufferClientImpl> create(SourceBuffer& parent) { return adoptRef(*new SourceBufferClientImpl(parent)); }

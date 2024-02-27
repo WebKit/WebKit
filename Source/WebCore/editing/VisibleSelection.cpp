@@ -29,7 +29,7 @@
 #include "Document.h"
 #include "DocumentInlines.h"
 #include "Editing.h"
-#include "Element.h"
+#include "ElementInlines.h"
 #include "HTMLInputElement.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
