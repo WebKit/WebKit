@@ -42,8 +42,9 @@ SkiaAcceleratedBufferPool::~SkiaAcceleratedBufferPool()
     if (m_buffers.isEmpty())
         return;
 
-    auto* glContext = PlatformDisplay::sharedDisplayForCompositing().skiaGLContext();
-    GLContext::ScopedGLContextCurrent scopedCurrent(*glContext);
+    if (!PlatformDisplay::sharedDisplayForCompositing().skiaGLContext()->makeContextCurrent())
+        return;
+
     m_buffers.clear();
 }
 
@@ -89,9 +90,7 @@ void SkiaAcceleratedBufferPool::releaseUnusedBuffersTimerFired()
     static const Seconds releaseUnusedSecondsTolerance { 3_s };
     MonotonicTime minUsedTime = MonotonicTime::now() - releaseUnusedSecondsTolerance;
 
-    {
-        auto* glContext = PlatformDisplay::sharedDisplayForCompositing().skiaGLContext();
-        GLContext::ScopedGLContextCurrent scopedCurrent(*glContext);
+    if (PlatformDisplay::sharedDisplayForCompositing().skiaGLContext()->makeContextCurrent()) {
         m_buffers.removeAllMatching([&minUsedTime](const Entry& entry) {
             return entry.canBeReleased(minUsedTime);
         });

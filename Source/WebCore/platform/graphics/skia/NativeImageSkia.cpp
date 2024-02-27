@@ -71,9 +71,10 @@ Color NativeImage::singlePixelSolidColor() const
 
     auto platformImage = this->platformImage();
     if (platformImage->isTextureBacked()) {
+        if (!PlatformDisplay::sharedDisplayForCompositing().skiaGLContext()->makeContextCurrent())
+            return Color();
+
         GrDirectContext* grContext = PlatformDisplay::sharedDisplayForCompositing().skiaGrContext();
-        auto* glContext = PlatformDisplay::sharedDisplayForCompositing().skiaGLContext();
-        GLContext::ScopedGLContextCurrent scopedCurrent(*glContext);
         const auto& imageInfo = platformImage->imageInfo();
         uint32_t pixel;
         SkPixmap pixmap(imageInfo, &pixel, imageInfo.minRowBytes());

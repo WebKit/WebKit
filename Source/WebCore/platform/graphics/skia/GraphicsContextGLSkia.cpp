@@ -86,9 +86,10 @@ bool GraphicsContextGLImageExtractor::extractImage(bool premultiplyAlpha, bool i
 
     if (image->isTextureBacked()) {
         auto data = SkData::MakeUninitialized(imageInfo.computeMinByteSize());
+        if (!PlatformDisplay::sharedDisplayForCompositing().skiaGLContext()->makeContextCurrent())
+            return false;
+
         GrDirectContext* grContext = PlatformDisplay::sharedDisplayForCompositing().skiaGrContext();
-        auto* glContext = PlatformDisplay::sharedDisplayForCompositing().skiaGLContext();
-        GLContext::ScopedGLContextCurrent scopedCurrent(*glContext);
         if (!image->readPixels(grContext, imageInfo, static_cast<uint8_t*>(data->writable_data()), bytesPerRow, 0, 0))
             return false;
 

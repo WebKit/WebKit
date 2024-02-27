@@ -49,7 +49,9 @@ std::unique_ptr<ImageBufferSkiaAcceleratedBackend> ImageBufferSkiaAcceleratedBac
         return nullptr;
 
     auto* glContext = PlatformDisplay::sharedDisplayForCompositing().skiaGLContext();
-    GLContext::ScopedGLContextCurrent scopedCurrent(*glContext);
+    if (!glContext || !glContext->makeContextCurrent())
+        return nullptr;
+
     auto* grContext = PlatformDisplay::sharedDisplayForCompositing().skiaGrContext();
     RELEASE_ASSERT(grContext);
     auto imageInfo = SkImageInfo::MakeN32Premul(backendSize.width(), backendSize.height());
@@ -77,8 +79,9 @@ RefPtr<NativeImage> ImageBufferSkiaAcceleratedBackend::createNativeImageReferenc
 
 void ImageBufferSkiaAcceleratedBackend::getPixelBuffer(const IntRect& srcRect, PixelBuffer& destination)
 {
-    auto* glContext = PlatformDisplay::sharedDisplayForCompositing().skiaGLContext();
-    GLContext::ScopedGLContextCurrent scopedCurrent(*glContext);
+    if (!PlatformDisplay::sharedDisplayForCompositing().skiaGLContext()->makeContextCurrent())
+        return;
+
     auto info = m_surface->imageInfo();
     auto data = SkData::MakeUninitialized(info.computeMinByteSize());
     auto* pixels = static_cast<uint8_t*>(data->writable_data());
@@ -89,8 +92,9 @@ void ImageBufferSkiaAcceleratedBackend::getPixelBuffer(const IntRect& srcRect, P
 
 void ImageBufferSkiaAcceleratedBackend::putPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
 {
-    auto* glContext = PlatformDisplay::sharedDisplayForCompositing().skiaGLContext();
-    GLContext::ScopedGLContextCurrent scopedCurrent(*glContext);
+    if (!PlatformDisplay::sharedDisplayForCompositing().skiaGLContext()->makeContextCurrent())
+        return;
+
     auto info = m_surface->imageInfo();
     auto data = SkData::MakeUninitialized(info.computeMinByteSize());
     auto* pixels = static_cast<uint8_t*>(data->writable_data());

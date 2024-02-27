@@ -73,9 +73,10 @@ GLContext* PlatformDisplay::skiaGLContext()
         return m_skiaGLContext.get();
 
     m_skiaGLContext = GLContext::createOffscreen(*this);
-    GLContext::ScopedGLContextCurrent scopedCurrent(*m_skiaGLContext);
-    // FIXME: add GrContextOptions, shader cache, etc.
-    m_skiaGrContext = GrDirectContexts::MakeGL(skiaGLInterface());
+    if (m_skiaGLContext && m_skiaGLContext->makeContextCurrent()) {
+        // FIXME: add GrContextOptions, shader cache, etc.
+        m_skiaGrContext = GrDirectContexts::MakeGL(skiaGLInterface());
+    }
     return m_skiaGLContext.get();
 }
 
