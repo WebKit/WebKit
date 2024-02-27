@@ -57,13 +57,13 @@ char TrackPrivateBaseGStreamer::prefixForType(TrackType trackType)
 
 static AtomString trimStreamId(StringView streamId)
 {
-    StringView trimmedStreamId = streamId.trim([](auto c) {
-        return c == '0';
+    size_t index = streamId.find([](auto c) {
+        return c != '0';
     });
 
-    if (trimmedStreamId.isEmpty())
+    if (index == notFound)
         return AtomString::fromLatin1("0");
-    return AtomString(trimmedStreamId.toString());
+    return AtomString(streamId.substring(index).toString());
 }
 
 AtomString TrackPrivateBaseGStreamer::generateUniquePlaybin2StreamID(TrackType trackType, unsigned index)
