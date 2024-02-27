@@ -25,7 +25,7 @@
 
 #import <Foundation/NSDate.h>
 
-#if PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK)
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST) || USE(APPLE_INTERNAL_SDK)
 
 #import <Foundation/NSCalendarDate.h>
 

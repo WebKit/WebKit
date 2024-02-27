@@ -91,6 +91,7 @@
 #import <UIKit/UIWindowScene_Private.h>
 #import <UIKit/UIWindow_Private.h>
 #import <UIKit/_UIApplicationRotationFollowing.h>
+#import <UIKit/_UILookupGestureRecognizer.h>
 #import <UIKit/_UINavigationInteractiveTransition.h>
 #import <UIKit/_UINavigationParallaxTransition.h>
 #import <UIKit/_UISheetPresentationController.h>
@@ -1012,7 +1013,7 @@ extern NSNotificationName const _UIWindowSceneDidEndLiveResizeNotification;
 #endif // HAVE(UI_WINDOW_SCENE_LIVE_RESIZE)
 
 #if HAVE(CATALYST_USER_INTERFACE_IDIOM_AND_SCALE_FACTOR)
-extern void _UIApplicationCatalystRequestViewServiceIdiomAndScaleFactor(UIUserInterfaceIdiom, CGFloat scaleFactor);
+extern "C" void _UIApplicationCatalystRequestViewServiceIdiomAndScaleFactor(UIUserInterfaceIdiom, CGFloat scaleFactor);
 #endif
 
 #endif // USE(APPLE_INTERNAL_SDK)
@@ -1231,6 +1232,11 @@ extern NSString * const UIKeyboardPrivateDidRequestDismissalNotification;
 extern NSString * const UIKeyboardIsLocalUserInfoKey;
 
 BOOL _UIApplicationIsExtension(void);
+
+#if PLATFORM(MACCATALYST)
+UIUserInterfaceIdiom _UIApplicationCatalystUserInterfaceIdiom(void);
+CGFloat _UIApplicationCatalystScaleFactor(void);
+#endif
 
 void UIImageDataWriteToSavedPhotosAlbum(NSData *imageData, id completionTarget, SEL completionSelector, void *contextInfo);
 

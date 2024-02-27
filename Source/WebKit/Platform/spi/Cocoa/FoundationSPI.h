@@ -41,7 +41,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (null_unspecified CFBundleRef)_cfBundle;
 @end
 
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
 @interface NSDistributedNotificationCenter : NSNotificationCenter
 + (NSDistributedNotificationCenter *)defaultCenter;
 - (void)addObserver:(id)observer selector:(SEL)aSelector name:(nullable NSNotificationName)aName object:(nullable NSString *)anObject;

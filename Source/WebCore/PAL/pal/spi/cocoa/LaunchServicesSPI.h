@@ -37,19 +37,7 @@ typedef void (^LSAppLinkCompletionHandler)(LSAppLink *appLink, NSError *error);
 typedef void (^LSAppLinkOpenCompletionHandler)(BOOL success, NSError *error);
 #endif
 
-#if USE(APPLE_INTERNAL_SDK)
-// FIXME: remove the following section when <rdar://83360464> is fixed.
-#if PLATFORM(MACCATALYST)
-#if !defined(__LSAPPLICATIONSERVICESPRIV__)
-enum LSSessionID {
-    kLSDefaultSessionID = -2,
-};
-#endif // !defined(__LSAPPLICATIONSERVICESPRIV__)
-WTF_EXTERN_C_BEGIN
-CFDictionaryRef _LSApplicationCheckIn(LSSessionID, CFDictionaryRef applicationInfo);
-WTF_EXTERN_C_END
-#endif // PLATFORM(MACCATALYST)
-#else // USE(APPLE_INTERNAL_SDK)
+#if !USE(APPLE_INTERNAL_SDK)
 
 const uint8_t kLSOpenRunningInstanceBehaviorUseRunningProcess = 1;
 
@@ -95,7 +83,7 @@ const uint8_t kLSOpenRunningInstanceBehaviorUseRunningProcess = 1;
 - (NSURL *)iTunesStoreURL;
 @end
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
 enum LSSessionID {
     kLSDefaultSessionID = -2,
 };

@@ -312,7 +312,7 @@ NS_ASSUME_NONNULL_END
 #endif
 #endif // PLATFORM(MAC)
 
-#if PLATFORM(IOS) || PLATFORM(VISION)
+#if PLATFORM(IOS) || PLATFORM(MACCATALYST) || PLATFORM(VISION)
 #if __has_include(<VisionKitCore/VKCImageAnalysisInteraction.h>)
 #import <VisionKitCore/VKCImageAnalysisInteraction.h>
 #else

@@ -90,6 +90,7 @@ typedef enum {
 + (UIApplicationSceneClassicMode)_classicMode;
 - (GSKeyboardRef)_hardwareKeyboard;
 - (void)_setIdleTimerDisabled:(BOOL)disabled forReason:(NSString *)reason;
+- (CGFloat)_iOSMacScale;
 @end
 
 static const UIUserInterfaceIdiom UIUserInterfaceIdiomWatch = (UIUserInterfaceIdiom)4;

@@ -63,7 +63,7 @@
 #endif
 
 #if PLATFORM(MACCATALYST)
-#import <UIKitMacHelper/UINSRevealController.h>
+#import <pal/spi/mac/UIKitMacHelperSPI.h>
 SOFT_LINK_PRIVATE_FRAMEWORK(UIKitMacHelper)
 SOFT_LINK(UIKitMacHelper, UINSSharedRevealController, id<UINSRevealController>, (void), ())
 #endif // PLATFORM(MACCATALYST)

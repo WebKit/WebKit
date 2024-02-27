@@ -32,7 +32,7 @@
 #include <wtf/spi/cocoa/IOSurfaceSPI.h>
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
 #include <pal/spi/cocoa/IOKitSPI.h>
 #endif
 
@@ -48,7 +48,7 @@
 #include <CoreGraphics/CGStylePrivate.h>
 #include <CoreGraphics/CoreGraphicsPrivate.h>
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
 #include <CoreGraphics/CGAccessibility.h>
 #include <CoreGraphics/CGEventPrivate.h>
 #endif
@@ -106,7 +106,7 @@ typedef uint32_t CGFontRenderingStyle;
 enum {
     kCGFontAntialiasingStyleUnfiltered = 0 << 7,
     kCGFontAntialiasingStyleFilterLight = 1 << 7,
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     kCGFontAntialiasingStyleUnfilteredCustomDilation = (8 << 7),
 #endif
 };
@@ -215,7 +215,7 @@ typedef CF_ENUM (int32_t, CGStyleType)
 #endif
 };
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
 
 typedef CF_ENUM(uint32_t, CGSNotificationType) {
     kCGSFirstConnectionNotification = 900,
@@ -232,7 +232,7 @@ static const CGSNotificationType kCGSessionLoggedOn = (CGSNotificationType)(kCGS
 static const CGSNotificationType kCGSessionLoggedOff = (CGSNotificationType)(kCGSessionLoggedOn + 1);
 static const CGSNotificationType kCGSessionConsoleWillDisconnect = (CGSNotificationType)(kCGSessionLoggedOff + 1);
 
-#endif // PLATFORM(MAC)
+#endif // PLATFORM(MAC) || PLATFORM(MACCATALYST)
 
 typedef struct CGContextDelegate *CGContextDelegateRef;
 typedef void (*CGContextDelegateCallback)(void);
@@ -271,7 +271,7 @@ typedef void* CGSNotificationArg;
 typedef void* CGSNotificationData;
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
 typedef void (*CGSNotifyConnectionProcPtr)(CGSNotificationType, void* data, uint32_t data_length, void* arg, CGSConnectionID);
 typedef void (*CGSNotifyProcPtr)(CGSNotificationType, void* data, uint32_t data_length, void* arg);
 #endif
@@ -391,7 +391,7 @@ CGStyleRef CGStyleCreateColorMatrix(const CGColorMatrixStyle*);
 
 #endif // PLATFORM(COCOA)
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
 
 bool CGDisplayUsesForceToGray(void);
 
@@ -399,6 +399,7 @@ CGSConnectionID CGSMainConnectionID(void);
 CFArrayRef CGSHWCaptureWindowList(CGSConnectionID, CGSWindowIDList windowList, CGSWindowCount, CGSWindowCaptureOptions);
 CGError CGSSetConnectionProperty(CGSConnectionID, CGSConnectionID ownerCid, CFStringRef key, CFTypeRef value);
 CGError CGSCopyConnectionProperty(CGSConnectionID, CGSConnectionID ownerCid, CFStringRef key, CFTypeRef *value);
+CGError CGSSetDenyWindowServerConnections(bool);
 CGError CGSGetScreenRectForWindow(CGSConnectionID, CGSWindowID, CGRect *);
 CGError CGSRegisterConnectionNotifyProc(CGSConnectionID, CGSNotifyConnectionProcPtr, CGSNotificationType, void* arg);
 CGError CGSRegisterNotifyProc(CGSNotifyProcPtr, CGSNotificationType, void* arg);
@@ -412,11 +413,7 @@ typedef int32_t CGSDisplayID;
 CGSDisplayID CGSMainDisplayID(void);
 
 IOHIDEventRef CGEventCopyIOHIDEvent(CGEventRef);
-#endif // PLATFORM(MAC)
-
-#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
-CGError CGSSetDenyWindowServerConnections(bool);
-#endif
+#endif // PLATFORM(MAC) || PLATFORM(MACCATALYST)
 
 #if ENABLE(LEGACY_PDFKIT_PLUGIN) && !USE(APPLE_INTERNAL_SDK)
 

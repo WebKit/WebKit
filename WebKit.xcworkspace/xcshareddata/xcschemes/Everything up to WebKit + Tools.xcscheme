@@ -98,20 +98,6 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "A54C2256148B23DF00373FA3"
-               BuildableName = "WebInspectorUI.framework"
-               BlueprintName = "WebInspectorUI"
-               ReferencedContainer = "container:Source/WebInspectorUI/WebInspectorUI.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
                BlueprintIdentifier = "9398100A0824BF01008DF038"
                BuildableName = "WebKitLegacy.framework"
                BlueprintName = "WebKitLegacy"
