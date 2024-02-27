@@ -2920,9 +2920,7 @@ LookupTextResult UnifiedPDFPlugin::lookupTextAtLocation(const FloatPoint& rootVi
     if (!lookupText || !lookupText.length)
         return { { }, wordSelection };
 
-    setCurrentSelection(WTFMove(wordSelection));
-
-    return { lookupText, m_currentSelection };
+    return { lookupText, wordSelection };
 }
 
 #if PLATFORM(MAC)
