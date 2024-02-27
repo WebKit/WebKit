@@ -309,6 +309,13 @@ FloatSize PDFDocumentLayout::scaledContentsSize() const
     return m_documentBounds.size().scaled(m_scale);
 }
 
+auto PDFDocumentLayout::geometryForPage(RetainPtr<PDFPage> page) const -> std::optional<PageGeometry>
+{
+    if (auto pageIndex = indexForPage(page))
+        return m_pageGeometry[*pageIndex];
+    return { };
+}
+
 AffineTransform PDFDocumentLayout::toPageTransform(const PageGeometry& pageGeometry) const
 {
     AffineTransform matrix;

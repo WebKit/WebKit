@@ -99,19 +99,20 @@ public:
     void setShouldUpdateAutoSizeScale(ShouldUpdateAutoSizeScale autoSizeState) { m_autoSizeState = autoSizeState; }
     ShouldUpdateAutoSizeScale shouldUpdateAutoSizeScale() const { return m_autoSizeState; }
 
-private:
-    void layoutPages(float availableWidth, float maxRowWidth);
-
-    void layoutSingleColumn(float availableWidth, float maxRowWidth);
-    void layoutTwoUpColumn(float availableWidth, float maxRowWidth);
-
     struct PageGeometry {
         WebCore::FloatRect cropBox;
         WebCore::FloatRect layoutBounds;
         WebCore::IntDegrees rotation { 0 };
     };
 
+    std::optional<PageGeometry> geometryForPage(RetainPtr<PDFPage>) const;
     WebCore::AffineTransform toPageTransform(const PageGeometry&) const;
+
+private:
+    void layoutPages(float availableWidth, float maxRowWidth);
+
+    void layoutSingleColumn(float availableWidth, float maxRowWidth);
+    void layoutTwoUpColumn(float availableWidth, float maxRowWidth);
 
     RetainPtr<PDFDocument> m_pdfDocument;
     Vector<PageGeometry> m_pageGeometry;

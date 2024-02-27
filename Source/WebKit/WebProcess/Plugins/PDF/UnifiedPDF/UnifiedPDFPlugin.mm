@@ -748,8 +748,13 @@ void UnifiedPDFPlugin::paintPDFContent(GraphicsContext& context, const FloatRect
 
         // FIXME: Need to apply a rotation transform here for correct rendering in rotated pages.
 
-        if (haveSelection)
+        if (haveSelection) {
+            auto pageGeometry = m_documentLayout.geometryForPage(page);
+            auto transformForBox = m_documentLayout.toPageTransform(*pageGeometry).inverse().value_or(AffineTransform { });
+            GraphicsContextStateSaver stateSaver(context);
+            context.concatCTM(transformForBox);
             [m_currentSelection drawForPage:page.get() withBox:kCGPDFCropBox active:isVisibleAndActive inContext:context.platformContext()];
+        }
 
         if (currentPageHasAnnotation)
             paintHoveredAnnotationOnPage(pageInfo.pageIndex, context, clipRect);
