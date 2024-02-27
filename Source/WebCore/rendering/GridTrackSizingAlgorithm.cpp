@@ -1149,7 +1149,7 @@ double IndefiniteSizeStrategy::findUsedFlexFraction(Vector<unsigned>& flexibleSi
     // If we are computing the flex fraction of the grid while under the "Sizing as if empty," phase,
     // then we should use the flex fraction computed up to this point since we do not want to avoid
     // taking into consideration the grid items.
-    if (!grid.hasGridItems() || (isComputingSizeOrInlineSizeContainment() && !m_algorithm.renderGrid()->explicitIntrinsicInnerLogicalSize(direction)))
+    if (!grid.hasGridItems() || (renderGrid()->shouldCheckExplicitIntrinsicInnerLogicalSize(direction) && !m_algorithm.renderGrid()->explicitIntrinsicInnerLogicalSize(direction)))
         return flexFraction;
 
     SingleThreadWeakHashSet<RenderBox> itemsSet;
