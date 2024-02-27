@@ -2643,7 +2643,7 @@ CookieAccess ResourceLoadStatisticsStore::cookieAccess(const SubResourceDomain& 
 
     bool hasNoEntry = statement->step() != SQLITE_ROW;
     bool isPrevalent = !hasNoEntry && !!statement->columnInt(0);
-    bool hadUserInteraction = !hasNoEntry && statement->columnInt(1) ? true : false;
+    bool hadUserInteraction = !hasNoEntry && statement->columnInt(1);
 
     if (!areAllThirdPartyCookiesBlockedUnder(topFrameDomain) && !isPrevalent)
         return CookieAccess::BasedOnCookiePolicy;
@@ -2786,8 +2786,8 @@ Vector<ResourceLoadStatisticsStore::DomainData> ResourceLoadStatisticsStore::dom
             , RegistrableDomain::uncheckedCreateFromRegistrableDomainString(statement->columnText(1))
             , WallTime::fromRawSeconds(statement->columnDouble(2))
             , WallTime::fromRawSeconds(statement->columnDouble(3))
-            , statement->columnInt(4) ? true : false
-            , statement->columnInt(5) ? true : false
+            , !!statement->columnInt(4)
+            , !!statement->columnInt(5)
             , toDataRemovalFrequency(statement->columnInt(6))
             , static_cast<unsigned>(statement->columnInt(7))
         });

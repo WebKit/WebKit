@@ -387,7 +387,7 @@ bool WebExtensionContext::createInjectedContentForScripts(const Vector<WebExtens
         injectedContentData.excludeMatchPatterns = WTFMove(excludeMatchPatterns);
         injectedContentData.injectionTime = parameters.injectionTime.value();
         injectedContentData.injectsIntoAllFrames = parameters.allFrames.value();
-        injectedContentData.forMainWorld = parameters.world.value() == WebExtensionContentWorldType::Main ? true : false;
+        injectedContentData.forMainWorld = parameters.world.value() == WebExtensionContentWorldType::Main;
         injectedContentData.scriptPaths = scriptPaths;
         injectedContentData.styleSheetPaths = styleSheetPaths;
 
