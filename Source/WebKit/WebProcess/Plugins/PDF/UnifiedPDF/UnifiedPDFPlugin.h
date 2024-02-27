@@ -67,7 +67,7 @@ enum class RepaintRequirement : uint8_t {
 class AnnotationTrackingState {
 public:
     OptionSet<RepaintRequirement> startAnnotationTracking(RetainPtr<PDFAnnotation>&&, WebEventType, WebMouseEventButton);
-    OptionSet<RepaintRequirement> finishAnnotationTracking(WebEventType, WebMouseEventButton);
+    OptionSet<RepaintRequirement> finishAnnotationTracking(PDFAnnotation* annotationUnderMouse, WebEventType, WebMouseEventButton);
 
     PDFAnnotation *trackedAnnotation() const { return m_trackedAnnotation.get(); }
     bool isBeingHovered() const;
@@ -355,7 +355,8 @@ private:
     void followLinkAnnotation(PDFAnnotation *);
 
     void startTrackingAnnotation(RetainPtr<PDFAnnotation>&&, WebEventType, WebMouseEventButton);
-    void finishTrackingAnnotation(WebEventType, WebMouseEventButton, OptionSet<RepaintRequirement> = { });
+    void updateTrackedAnnotation(PDFAnnotation *annotationUnderMouse);
+    void finishTrackingAnnotation(PDFAnnotation *annotationUnderMouse, WebEventType, WebMouseEventButton, OptionSet<RepaintRequirement> = { });
 
     RefPtr<WebCore::GraphicsLayer> createGraphicsLayer(const String& name, WebCore::GraphicsLayer::Type);
 
