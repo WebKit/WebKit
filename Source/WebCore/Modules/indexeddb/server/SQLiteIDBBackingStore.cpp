@@ -2105,7 +2105,7 @@ IDBError SQLiteIDBBackingStore::getRecord(const IDBResourceIdentifier& transacti
 
     auto* objectStoreInfo = infoForObjectStore(objectStoreID);
     if (!objectStoreInfo)
-        return IDBError { ExceptionCode::InvalidStateError, "Object store cannot be found in the backing store"_s };
+        return IDBError { ExceptionCode::InvalidStateError, "Object store cannot be found in the database"_s };
 
     auto key = keyRange.lowerKey;
     if (key.isNull())
@@ -2284,9 +2284,8 @@ IDBError SQLiteIDBBackingStore::getAllObjectStoreRecords(const IDBResourceIdenti
     }
 
     auto* objectStoreInfo = infoForObjectStore(getAllRecordsData.objectStoreIdentifier);
-    ASSERT(objectStoreInfo);
     if (!objectStoreInfo)
-        return IDBError { ExceptionCode::UnknownError, "Failed to look up IDBObjectStoreInfo from identifier"_s };
+        return IDBError { ExceptionCode::InvalidStateError, "Object store cannot be found in the database"_s };
 
     result = { getAllRecordsData.getAllType, objectStoreInfo->keyPath() };
 
@@ -2361,7 +2360,9 @@ IDBError SQLiteIDBBackingStore::getAllIndexRecords(const IDBResourceIdentifier& 
     }
 
     auto* objectStoreInfo = infoForObjectStore(getAllRecordsData.objectStoreIdentifier);
-    ASSERT(objectStoreInfo);
+    if (!objectStoreInfo)
+        return IDBError { ExceptionCode::InvalidStateError, "Object store cannot be found in the database"_s };
+
     result = { getAllRecordsData.getAllType, objectStoreInfo->keyPath() };
 
     uint32_t currentCount = 0;
