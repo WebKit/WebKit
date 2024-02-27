@@ -929,6 +929,8 @@ void UnifiedPDFPlugin::setPageScaleFactor(double scale, std::optional<WebCore::I
 
 bool UnifiedPDFPlugin::geometryDidChange(const IntSize& pluginSize, const AffineTransform& pluginToRootViewTransform)
 {
+    bool sizeChanged = pluginSize != m_size;
+
     if (!PDFPluginBase::geometryDidChange(pluginSize, pluginToRootViewTransform))
         return false;
 
@@ -937,7 +939,9 @@ bool UnifiedPDFPlugin::geometryDidChange(const IntSize& pluginSize, const Affine
         m_activeAnnotation->updateGeometry();
 #endif
 
-    updateLayout();
+    if (sizeChanged)
+        updateLayout();
+
     return true;
 }
 
