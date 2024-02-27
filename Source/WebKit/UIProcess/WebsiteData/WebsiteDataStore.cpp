@@ -1672,24 +1672,14 @@ void WebsiteDataStore::setTrackingPreventionEnabled(bool enabled)
         return;
 
     RELEASE_LOG(Storage, "%p - WebsiteDataStore::setTrackingPreventionEnabled sessionID=%" PRIu64 ", enabled=%d", this, m_sessionID.toUInt64(), enabled);
-    if (enabled) {
-        m_trackingPreventionEnabled = true;
-        
-        resolveDirectoriesIfNecessary();
-        
-        if (RefPtr networkProcessProxy = m_networkProcess)
-            networkProcessProxy->send(Messages::NetworkProcess::SetTrackingPreventionEnabled(m_sessionID, true), 0);
-        for (RefPtr processPool : processPools())
-            processPool->sendToAllProcessesForSession(Messages::WebProcess::SetTrackingPreventionEnabled(true), m_sessionID);
-        return;
-    }
+
+    m_trackingPreventionEnabled = enabled;
 
     if (RefPtr networkProcessProxy = m_networkProcess)
-        networkProcessProxy->send(Messages::NetworkProcess::SetTrackingPreventionEnabled(m_sessionID, false), 0);
-    for (RefPtr processPool : processPools())
-        processPool->sendToAllProcessesForSession(Messages::WebProcess::SetTrackingPreventionEnabled(false), m_sessionID);
+        networkProcessProxy->send(Messages::NetworkProcess::SetTrackingPreventionEnabled(m_sessionID, m_trackingPreventionEnabled), 0);
 
-    m_trackingPreventionEnabled = false;
+    for (RefPtr processPool : processPools())
+        processPool->sendToAllProcessesForSession(Messages::WebProcess::SetTrackingPreventionEnabled(m_trackingPreventionEnabled), m_sessionID);
 }
 
 void WebsiteDataStore::setStatisticsTestingCallback(Function<void(const String&)>&& callback)
