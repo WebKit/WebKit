@@ -4046,7 +4046,6 @@ void BlockNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 
 void EmptyStatementNode::emitBytecode(BytecodeGenerator&, RegisterID*)
 {
-    RELEASE_ASSERT(needsDebugHook());
 }
 
 // ------------------------------ DebuggerStatementNode ---------------------------

@@ -1108,15 +1108,6 @@ test/language/statements/class/subclass/default-constructor-spread-override.js:
 test/language/statements/class/subclass/derived-class-return-override-catch-finally-arrow.js:
   default: "ReferenceError: 'super()' must be called in derived constructor before accessing |this| or returning non-object."
   strict mode: "ReferenceError: 'super()' must be called in derived constructor before accessing |this| or returning non-object."
-test/language/statements/class/subclass/derived-class-return-override-catch-super-arrow.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-test/language/statements/class/subclass/derived-class-return-override-catch-super.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-test/language/statements/class/subclass/derived-class-return-override-catch.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
 test/language/statements/class/subclass/derived-class-return-override-finally-super-arrow.js:
   default: "ReferenceError: 'super()' must be called in derived constructor before accessing |this| or returning non-object."
   strict mode: "ReferenceError: 'super()' must be called in derived constructor before accessing |this| or returning non-object."

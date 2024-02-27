@@ -2027,6 +2027,7 @@ private:
         int assignmentCount { 0 };
         int nonLHSCount { 0 };
         int nonTrivialExpressionCount { 0 };
+        int returnStatementCount { 0 };
         int unaryTokenStackDepth { 0 };
         FunctionParsePhase functionParsePhase { FunctionParsePhase::Body };
         const Identifier* lastIdentifier { nullptr };

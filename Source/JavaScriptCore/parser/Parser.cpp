@@ -1697,6 +1697,7 @@ template <typename LexerType>
 template <class TreeBuilder> TreeStatement Parser<LexerType>::parseReturnStatement(TreeBuilder& context)
 {
     ASSERT(match(RETURN));
+    m_parserState.returnStatementCount++;
     JSTokenLocation location(tokenLocation());
     semanticFailIfFalse(currentScope()->isFunction() && !currentScope()->isStaticBlock(), "Return statements are only valid inside functions");
     JSTextPosition start = tokenStartPosition();
@@ -1857,8 +1858,10 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseTryStatement(
     next();
     matchOrFail(OPENBRACE, "Expected a block statement as body of a try statement");
     
+    int returnStatementCountBeforeTryBlock = m_parserState.returnStatementCount;
     tryBlock = parseBlockStatement(context);
     failIfFalse(tryBlock, "Cannot parse the body of try block");
+    bool tryBlockContainsReturn = m_parserState.returnStatementCount != returnStatementCountBeforeTryBlock;
     int lastLine = m_lastTokenEndPosition.line;
     VariableEnvironment catchEnvironment; 
     DeclarationStacks::FunctionStack functionStack;
@@ -1904,6 +1907,15 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseTryStatement(
         failIfFalse(finallyBlock, "Cannot parse finally body");
     }
     failIfFalse(catchBlock || finallyBlock, "Try statements must have at least a catch or finally block");
+
+    if (tryBlockContainsReturn && !finallyBlock && currentFunctionScope()->constructorKind() == ConstructorKind::Extends) {
+        // Empty `finally` statement is necessary to prevent BytecodeGenerator::emitReturn() from being
+        // called inside the `try` block, which would otherwise result in errors thrown at steps 10-12
+        // of https://tc39.es/ecma262/#sec-ecmascript-function-objects-construct-argumentslist-newtarget
+        // being caught by the `catch` block.
+        finallyBlock = context.createEmptyStatement(location);
+    }
+
     return context.createTryStatement(location, tryBlock, catchPattern, catchBlock, finallyBlock, firstLine, lastLine, WTFMove(catchEnvironment));
 }
 
