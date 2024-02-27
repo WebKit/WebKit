@@ -5291,7 +5291,7 @@ ExceptionOr<Element*> Element::insertAdjacentElement(const String& where, Elemen
     auto result = insertAdjacent(where, newChild);
     if (result.hasException())
         return result.releaseException();
-    return downcast<Element>(result.releaseReturnValue());
+    return &newChild;
 }
 
 // Step 1 of https://w3c.github.io/DOM-Parsing/#dom-element-insertadjacenthtml.
