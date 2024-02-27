@@ -120,6 +120,7 @@
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, &this->connection())
 #define MESSAGE_CHECK_COMPLETION(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, &this->connection(), completion)
+#define MESSAGE_CHECK_WITH_RETURN_VALUE(assertion, returnValue) MESSAGE_CHECK_WITH_RETURN_VALUE_BASE(assertion, &this->connection(), returnValue)
 
 namespace WebKit {
 using namespace WebCore;
@@ -230,7 +231,7 @@ void NetworkConnectionToWebProcess::didReceiveMessage(IPC::Connection& connectio
     ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
 
     // For security reasons, Messages::NetworkProcess IPC is only supposed to come from the UIProcess.
-    ASSERT_WITH_SECURITY_IMPLICATION(decoder.messageReceiverName() != Messages::NetworkProcess::messageReceiverName());
+    MESSAGE_CHECK(decoder.messageReceiverName() != Messages::NetworkProcess::messageReceiverName());
 
     if (decoder.messageReceiverName() == Messages::NetworkConnectionToWebProcess::messageReceiverName()) {
         didReceiveNetworkConnectionToWebProcessMessage(connection, decoder);
@@ -382,7 +383,7 @@ void NetworkConnectionToWebProcess::unregisterToRTCDataChannelProxy()
 bool NetworkConnectionToWebProcess::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& reply)
 {
     // For security reasons, Messages::NetworkProcess IPC is only supposed to come from the UIProcess.
-    ASSERT(decoder.messageReceiverName() != Messages::NetworkProcess::messageReceiverName());
+    MESSAGE_CHECK_WITH_RETURN_VALUE(decoder.messageReceiverName() != Messages::NetworkProcess::messageReceiverName(), false);
 
     if (decoder.messageReceiverName() == Messages::NetworkConnectionToWebProcess::messageReceiverName())
         return didReceiveSyncNetworkConnectionToWebProcessMessage(connection, decoder, reply);
@@ -1586,3 +1587,4 @@ void NetworkConnectionToWebProcess::destroyWebTransportSession(WebTransportSessi
 #undef CONNECTION_RELEASE_LOG
 #undef MESSAGE_CHECK_COMPLETION
 #undef MESSAGE_CHECK
+#undef MESSAGE_CHECK_WITH_RETURN_VALUE
