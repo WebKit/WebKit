@@ -4263,15 +4263,28 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
         return result;
 
     auto typingAttributes = _page->editorState().postLayoutData->typingAttributes;
-    
-    UIFont *font = _autocorrectionData.font.get();
+
+    RetainPtr font = _autocorrectionData.font.get();
     double zoomScale = self._contentZoomScale;
     if (std::abs(zoomScale - 1) > FLT_EPSILON)
-        font = [font fontWithSize:font.pointSize * zoomScale];
+        font = [font fontWithSize:[font pointSize] * zoomScale];
 
-    if (font)
-        [result setObject:font forKey:NSFontAttributeName];
-    
+    if (font) {
+        auto originalTraits = [font fontDescriptor].symbolicTraits;
+        auto newTraits = originalTraits;
+        if (typingAttributes.contains(WebKit::TypingAttribute::Bold))
+            newTraits |= UIFontDescriptorTraitBold;
+
+        if (typingAttributes.contains(WebKit::TypingAttribute::Italics))
+            newTraits |= UIFontDescriptorTraitItalic;
+
+        if (originalTraits != newTraits) {
+            RetainPtr descriptor = [[font fontDescriptor] ?: adoptNS([UIFontDescriptor new]) fontDescriptorWithSymbolicTraits:newTraits];
+            font = [UIFont fontWithDescriptor:descriptor.get() size:[font pointSize]];
+        }
+        [result setObject:font.get() forKey:NSFontAttributeName];
+    }
+
     if (typingAttributes.contains(WebKit::TypingAttribute::Underline))
         [result setObject:@(NSUnderlineStyleSingle) forKey:NSUnderlineStyleAttributeName];
 

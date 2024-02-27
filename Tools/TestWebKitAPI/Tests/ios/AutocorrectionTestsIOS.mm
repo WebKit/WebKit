@@ -38,6 +38,17 @@
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <pal/spi/ios/BrowserEngineKitSPI.h>
 
+@implementation UIFont (TestWebKitAPI)
+
++ (instancetype)_test_systemFontWithSize:(CGFloat)size traits:(UIFontDescriptorSymbolicTraits)traits
+{
+    auto font = [self systemFontOfSize:size];
+    auto newDescriptor = [font.fontDescriptor fontDescriptorWithSymbolicTraits:traits];
+    return [self fontWithDescriptor:newDescriptor size:0];
+}
+
+@end
+
 static void checkCGRectIsNotEmpty(CGRect rect)
 {
     BOOL isEmpty = CGRectIsEmpty(rect);
@@ -56,7 +67,10 @@ TEST(AutocorrectionTests, FontAtCaretWhenUsingUICTFontTextStyle)
 
     [webView _setInputDelegate:inputDelegate.get()];
     [webView _setEditable:YES];
-    [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='width=device-width, initial-scale=1'><body style='font-size: 16px; font-family: UICTFontTextStyleBody'>Wulk</body>"];
+    [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='width=device-width, initial-scale=1'>"
+        "<body style='font-size: 16px; font-family: UICTFontTextStyleBody; font-weight: bold;'>"
+        "<em>Wulk</em>"
+        "</body>"];
     [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"document.body.focus()"];
     [webView _executeEditCommand:@"MoveToEndOfLine" argument:nil completion:nil];
 
@@ -68,19 +82,27 @@ TEST(AutocorrectionTests, FontAtCaretWhenUsingUICTFontTextStyle)
     auto selectedTextRangeBeforeScaling = contentView.selectedTextRange;
     auto stylingDictionaryBeforeScaling = [contentView textStylingAtPosition:selectedTextRangeBeforeScaling.start inDirection:UITextStorageDirectionForward];
     UIFont *fontBeforeScaling = [stylingDictionaryBeforeScaling objectForKey:NSFontAttributeName];
-    UIFont *size16SystemFont = [UIFont systemFontOfSize:16];
+    UIFont *size16SystemFont = [UIFont _test_systemFontWithSize:16 traits:UIFontDescriptorTraitBold | UIFontDescriptorTraitItalic];
     EXPECT_WK_STREQ(size16SystemFont.fontName, fontBeforeScaling.fontName);
     EXPECT_WK_STREQ(size16SystemFont.familyName, fontBeforeScaling.familyName);
     EXPECT_EQ(16, fontBeforeScaling.pointSize);
+
+    auto traitsBeforeScaling = fontBeforeScaling.fontDescriptor.symbolicTraits;
+    EXPECT_TRUE(traitsBeforeScaling & UIFontDescriptorTraitBold);
+    EXPECT_TRUE(traitsBeforeScaling & UIFontDescriptorTraitItalic);
 
     [webView scrollView].zoomScale = 2;
     auto selectedTextRangeAfterScaling = contentView.selectedTextRange;
     auto stylingDictionaryAfterScaling = [contentView textStylingAtPosition:selectedTextRangeAfterScaling.start inDirection:UITextStorageDirectionForward];
     UIFont *fontAfterScaling = [stylingDictionaryAfterScaling objectForKey:NSFontAttributeName];
-    UIFont *size32SystemFont = [UIFont systemFontOfSize:32];
+    UIFont *size32SystemFont = [UIFont _test_systemFontWithSize:32 traits:UIFontDescriptorTraitBold | UIFontDescriptorTraitItalic];
     EXPECT_WK_STREQ(size32SystemFont.fontName, fontAfterScaling.fontName);
     EXPECT_WK_STREQ(size32SystemFont.familyName, fontAfterScaling.familyName);
     EXPECT_EQ(32, fontAfterScaling.pointSize);
+
+    auto traitsAfterScaling = fontBeforeScaling.fontDescriptor.symbolicTraits;
+    EXPECT_TRUE(traitsAfterScaling & UIFontDescriptorTraitBold);
+    EXPECT_TRUE(traitsAfterScaling & UIFontDescriptorTraitItalic);
 }
 
 TEST(AutocorrectionTests, RequestAutocorrectionContextAfterClosingPage)
