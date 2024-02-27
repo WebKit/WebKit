@@ -1043,15 +1043,20 @@ void TypeChecker::visit(AST::FieldAccessExpression& access)
         return nullptr;
     };
 
-    auto* baseType = infer(access.base(), m_evaluation);
-    if (const auto* reference = std::get_if<Types::Reference>(baseType)) {
+    const auto& referenceImpl = [&](const auto& type) {
         bool canBeReference = true;
         bool isVector = false;
-        if (const Type* result = accessImpl(reference->element, &canBeReference, &isVector)) {
+        if (const Type* result = accessImpl(type.element, &canBeReference, &isVector)) {
             if (canBeReference)
-                result = m_types.referenceType(reference->addressSpace, result, reference->accessMode, isVector);
+                result = m_types.referenceType(type.addressSpace, result, type.accessMode, isVector);
             inferred(result);
         }
+        return;
+    };
+
+    auto* baseType = infer(access.base(), m_evaluation);
+    if (const auto* reference = std::get_if<Types::Reference>(baseType)) {
+        referenceImpl(*reference);
         return;
     }
 
@@ -1126,12 +1131,22 @@ void TypeChecker::visit(AST::IndexAccessExpression& access)
         return;
     }
 
-    if (const auto* reference = std::get_if<Types::Reference>(base)) {
+    const auto& referenceImpl = [&](const auto& type) {
         bool isVector = false;
-        if (const Type* result = accessImpl(reference->element, &isVector)) {
-            result = m_types.referenceType(reference->addressSpace, result, reference->accessMode, isVector);
+        if (const Type* result = accessImpl(type.element, &isVector)) {
+            result = m_types.referenceType(type.addressSpace, result, type.accessMode, isVector);
             inferred(result);
         }
+        return;
+    };
+
+    if (const auto* reference = std::get_if<Types::Reference>(base)) {
+        referenceImpl(*reference);
+        return;
+    }
+
+    if (const auto* pointer = std::get_if<Types::Pointer>(base)) {
+        referenceImpl(*pointer);
         return;
     }
 
