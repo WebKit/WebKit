@@ -55,7 +55,7 @@ messages -> NetworkProcess LegacyReceiver {
     PublishDownloadProgress(WebKit::DownloadID downloadID, URL url, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
 #endif
     DataTaskWithRequest(WebKit::WebPageProxyIdentifier pageID, PAL::SessionID sessionID, WebCore::ResourceRequest request, std::optional<WebCore::SecurityOriginData> topOrigin, IPC::FormDataReference requestBody) -> (WebKit::DataTaskIdentifier taskIdentifier)
-    CancelDataTask(WebKit::DataTaskIdentifier taskIdentifier, PAL::SessionID sessionID)
+    CancelDataTask(WebKit::DataTaskIdentifier taskIdentifier, PAL::SessionID sessionID) -> ()
     ApplicationDidEnterBackground()
     ApplicationWillEnterForeground()
 

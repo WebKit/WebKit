@@ -476,7 +476,7 @@ private:
     void publishDownloadProgress(DownloadID, const URL&, SandboxExtensionHandle&&);
 #endif
     void dataTaskWithRequest(WebPageProxyIdentifier, PAL::SessionID, WebCore::ResourceRequest&&, const std::optional<WebCore::SecurityOriginData>& topOrigin, IPC::FormDataReference&&, CompletionHandler<void(DataTaskIdentifier)>&&);
-    void cancelDataTask(DataTaskIdentifier, PAL::SessionID);
+    void cancelDataTask(DataTaskIdentifier, PAL::SessionID, CompletionHandler<void()>&&);
     void applicationDidEnterBackground();
     void applicationWillEnterForeground();
 

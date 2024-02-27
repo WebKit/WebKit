@@ -2156,10 +2156,11 @@ void NetworkProcess::dataTaskWithRequest(WebPageProxyIdentifier pageID, PAL::Ses
     networkSession(sessionID)->dataTaskWithRequest(pageID, WTFMove(request), topOrigin, WTFMove(completionHandler));
 }
 
-void NetworkProcess::cancelDataTask(DataTaskIdentifier identifier, PAL::SessionID sessionID)
+void NetworkProcess::cancelDataTask(DataTaskIdentifier identifier, PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
 {
     if (auto* session = networkSession(sessionID))
         session->cancelDataTask(identifier);
+    completionHandler();
 }
 
 void NetworkProcess::setCacheModelSynchronouslyForTesting(CacheModel cacheModel, CompletionHandler<void()>&& completionHandler)

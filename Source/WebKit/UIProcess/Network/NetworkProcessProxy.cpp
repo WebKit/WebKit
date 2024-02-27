@@ -348,16 +348,17 @@ Ref<DownloadProxy> NetworkProcessProxy::createDownloadProxy(WebsiteDataStore& da
     return m_downloadProxyMap->createDownloadProxy(dataStore, WTFMove(client), resourceRequest, frameInfo, originatingPage);
 }
 
-void NetworkProcessProxy::dataTaskWithRequest(WebPageProxy& page, PAL::SessionID sessionID, WebCore::ResourceRequest&& request, const std::optional<SecurityOriginData>& topOrigin, CompletionHandler<void(API::DataTask&)>&& completionHandler)
+void NetworkProcessProxy::dataTaskWithRequest(WebPageProxy& page, PAL::SessionID sessionID, WebCore::ResourceRequest&& request, const std::optional<SecurityOriginData>& topOrigin, bool shouldRunAtForegroundPriority, CompletionHandler<void(API::DataTask&)>&& completionHandler)
 {
-    sendWithAsyncReply(Messages::NetworkProcess::DataTaskWithRequest(page.identifier(), sessionID, request, topOrigin, IPC::FormDataReference(request.httpBody())), [this, protectedThis = Ref { *this }, weakPage = WeakPtr { page }, completionHandler = WTFMove(completionHandler), originalURL = request.url()] (DataTaskIdentifier identifier) mutable {
-        auto dataTask = API::DataTask::create(identifier, WTFMove(weakPage), WTFMove(originalURL));
+    auto activity = shouldRunAtForegroundPriority ? throttler().foregroundActivity("WKDataTask initialization"_s) : throttler().backgroundActivity("WKDataTask initialization"_s);
+    sendWithAsyncReply(Messages::NetworkProcess::DataTaskWithRequest(page.identifier(), sessionID, request, topOrigin, IPC::FormDataReference(request.httpBody())), [this, protectedThis = Ref { *this }, weakPage = WeakPtr { page }, activity = WTFMove(activity), shouldRunAtForegroundPriority, completionHandler = WTFMove(completionHandler), originalURL = request.url()] (DataTaskIdentifier identifier) mutable {
+        auto dataTask = API::DataTask::create(identifier, WTFMove(weakPage), WTFMove(originalURL), shouldRunAtForegroundPriority);
         completionHandler(dataTask);
         if (decltype(m_dataTasks)::isValidKey(identifier))
             m_dataTasks.add(identifier, WTFMove(dataTask));
         else
             dataTask->networkProcessCrashed();
-    });
+    }, 0, { }, ShouldStartProcessThrottlerActivity::No);
 }
 
 void NetworkProcessProxy::dataTaskReceivedChallenge(DataTaskIdentifier identifier, WebCore::AuthenticationChallenge&& challenge, CompletionHandler<void(AuthenticationChallengeDisposition, WebCore::Credential&&)>&& completionHandler)
@@ -396,13 +397,13 @@ void NetworkProcessProxy::dataTaskDidCompleteWithError(DataTaskIdentifier identi
 {
     MESSAGE_CHECK(decltype(m_dataTasks)::isValidKey(identifier));
     if (auto task = m_dataTasks.take(identifier))
-        task->client().didCompleteWithError(*task, WTFMove(error));
+        task->didCompleteWithError(WTFMove(error));
 }
 
 void NetworkProcessProxy::cancelDataTask(DataTaskIdentifier identifier, PAL::SessionID sessionID)
 {
     m_dataTasks.remove(identifier);
-    send(Messages::NetworkProcess::CancelDataTask(identifier, sessionID), 0);
+    sendWithAsyncReply(Messages::NetworkProcess::CancelDataTask(identifier, sessionID), [] { });
 }
 
 void NetworkProcessProxy::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDataType> dataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, CompletionHandler<void(WebsiteData)>&& completionHandler)

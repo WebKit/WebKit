@@ -387,7 +387,8 @@ void SystemPreviewController::begin(const URL& url, const WebCore::SecurityOrigi
 
     auto request = WebCore::ResourceRequest(url);
     WeakPtr weakThis { *this };
-    m_webPageProxy.dataTaskWithRequest(WTFMove(request), topOrigin, [weakThis, completionHandler = WTFMove(completionHandler)] (Ref<API::DataTask>&& task) mutable {
+    bool shouldRunAtForegroundPriority = false;
+    m_webPageProxy.dataTaskWithRequest(WTFMove(request), topOrigin, shouldRunAtForegroundPriority, [weakThis, completionHandler = WTFMove(completionHandler)] (Ref<API::DataTask>&& task) mutable {
         if (!weakThis)
             return completionHandler();
 
