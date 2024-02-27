@@ -73,6 +73,10 @@ typedef NS_OPTIONS(NSUInteger, NSWindowShadowOptions) {
 
 #endif
 
+@interface NSPopover (IPI)
+@property (readonly) NSView *positioningView;
+@end
+
 @interface NSWorkspace (NSWorkspaceAccessibilityDisplayInternal_IPI)
 + (void)_invalidateAccessibilityDisplayValues;
 @end

@@ -45,6 +45,11 @@ OBJC_CLASS UIViewController;
 OBJC_CLASS _WKWebExtensionActionViewController;
 #endif
 
+#if PLATFORM(MAC)
+OBJC_CLASS NSPopover;
+OBJC_CLASS _WKWebExtensionActionPopover;
+#endif
+
 namespace WebKit {
 
 class WebExtensionContext;
@@ -67,6 +72,10 @@ public:
 
     enum class LoadOnFirstAccess { No, Yes };
     enum class FallbackWhenEmpty { No, Yes };
+
+#if PLATFORM(MAC)
+    enum class Appearance : uint8_t { Default, Light, Dark, Both };
+#endif
 
     bool operator==(const WebExtensionAction&) const;
 
@@ -106,12 +115,18 @@ public:
     UIViewController *popupViewController();
 #endif
 
+#if PLATFORM(MAC)
+    NSPopover *popupPopover();
+
+    Appearance popupPopoverAppearance() const { return m_popoverAppearance; }
+    void setPopupPopoverAppearance(Appearance);
+#endif
+
     WKWebView *popupWebView(LoadOnFirstAccess = LoadOnFirstAccess::Yes);
     void presentPopupWhenReady();
     void readyToPresentPopup();
     void popupSizeDidChange();
-    void popupDidClose();
-    void closePopupWebView();
+    void closePopup();
 
     NSArray *platformMenuItems() const;
 
@@ -122,12 +137,21 @@ public:
 private:
     WebExtensionAction* fallbackAction() const;
 
+#if PLATFORM(MAC)
+    void detectPopoverColorScheme();
+#endif
+
     WeakPtr<WebExtensionContext> m_extensionContext;
     RefPtr<WebExtensionTab> m_tab;
     RefPtr<WebExtensionWindow> m_window;
 
 #if PLATFORM(IOS_FAMILY)
     RetainPtr<_WKWebExtensionActionViewController> m_popupViewController;
+#endif
+
+#if PLATFORM(MAC)
+    RetainPtr<_WKWebExtensionActionPopover> m_popupPopover;
+    Appearance m_popoverAppearance { Appearance::Default };
 #endif
 
     RetainPtr<_WKWebExtensionActionWebView> m_popupWebView;

@@ -38,8 +38,6 @@
 #import <wtf/CompletionHandler.h>
 
 NSNotificationName const _WKWebExtensionActionPropertiesDidChangeNotification = @"_WKWebExtensionActionPropertiesDidChange";
-NSNotificationName const _WKWebExtensionActionPopupWebViewContentSizeDidChangeNotification = @"_WKWebExtensionActionPopupWebViewContentSizeDidChange";
-NSNotificationName const _WKWebExtensionActionPopupWebViewDidCloseNotification = @"_WKWebExtensionActionPopupWebViewDidClose";
 
 #if USE(APPKIT)
 using CocoaMenuItem = NSMenuItem;
@@ -126,14 +124,21 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(_WKWebExtensionAction, WebExtensionAction,
 }
 #endif
 
+#if PLATFORM(MAC)
+- (NSPopover *)popupPopover
+{
+    return _webExtensionAction->popupPopover();
+}
+#endif
+
 - (WKWebView *)popupWebView
 {
     return _webExtensionAction->popupWebView();
 }
 
-- (void)closePopupWebView
+- (void)closePopup
 {
-    _webExtensionAction->closePopupWebView();
+    _webExtensionAction->closePopup();
 }
 
 #pragma mark WKObject protocol implementation
@@ -206,12 +211,19 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(_WKWebExtensionAction, WebExtensionAction,
 }
 #endif
 
+#if PLATFORM(MAC)
+- (NSPopover *)popupPopover
+{
+    return nil;
+}
+#endif
+
 - (WKWebView *)popupWebView
 {
     return nil;
 }
 
-- (void)closePopupWebView
+- (void)closePopup
 {
 }
 

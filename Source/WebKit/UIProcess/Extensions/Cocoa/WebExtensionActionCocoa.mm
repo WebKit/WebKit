@@ -54,6 +54,10 @@
 #import "UIKitSPI.h"
 #endif
 
+#if PLATFORM(MAC)
+#import "AppKitSPI.h"
+#endif
+
 #if PLATFORM(VISION)
 constexpr CGFloat maximumPopoverWidth = 734;
 constexpr CGFloat maximumPopoverHeight = 734;
@@ -142,7 +146,7 @@ using namespace WebKit;
     if (!_webExtensionAction)
         return;
 
-    _webExtensionAction->closePopupWebView();
+    _webExtensionAction->closePopup();
 }
 
 - (void)webViewDidClose:(WKWebView *)webView
@@ -150,7 +154,7 @@ using namespace WebKit;
     if (!_webExtensionAction)
         return;
 
-    _webExtensionAction->closePopupWebView();
+    _webExtensionAction->closePopup();
 }
 
 @end
@@ -331,7 +335,7 @@ static void* kvoContext = &kvoContext;
     if (dismissedViewController != self && dismissedViewController != self.navigationController)
         return;
 
-    _webExtensionAction->closePopupWebView();
+    _webExtensionAction->closePopup();
 }
 
 - (void)_updatePopoverContentSize
@@ -394,6 +398,88 @@ static void* kvoContext = &kvoContext;
 @end
 #endif // PLATFORM(IOS_FAMILY)
 
+#if PLATFORM(MAC)
+@interface _WKWebExtensionActionPopover : NSPopover
+@end
+
+@implementation _WKWebExtensionActionPopover {
+    WeakPtr<WebExtensionAction> _webExtensionAction;
+    _WKWebExtensionActionWebView *_popupWebView;
+}
+
+- (instancetype)initWithWebExtensionAction:(WebExtensionAction&)action
+{
+    if (!(self = [super init]))
+        return nil;
+
+    RefPtr extensionContext = action.extensionContext();
+    if (!extensionContext)
+        return nil;
+
+    _webExtensionAction = action;
+    _popupWebView = dynamic_objc_cast<_WKWebExtensionActionWebView>(action.popupWebView());
+
+    _popupWebView.accessibilityRole = NSAccessibilityPopoverRole;
+
+    [_popupWebView setContentHuggingPriority:NSLayoutPriorityDefaultHigh forOrientation:NSLayoutConstraintOrientationHorizontal];
+    [_popupWebView setContentHuggingPriority:NSLayoutPriorityDefaultHigh forOrientation:NSLayoutConstraintOrientationVertical];
+
+    [NSLayoutConstraint activateConstraints:@[
+        [_popupWebView.widthAnchor constraintGreaterThanOrEqualToConstant:minimumPopoverWidth],
+        [_popupWebView.widthAnchor constraintLessThanOrEqualToConstant:maximumPopoverWidth],
+        [_popupWebView.heightAnchor constraintGreaterThanOrEqualToConstant:minimumPopoverHeight],
+        [_popupWebView.heightAnchor constraintLessThanOrEqualToConstant:maximumPopoverHeight]
+    ]];
+
+    auto *viewController = [[NSViewController alloc] init];
+    viewController.view = _popupWebView;
+    viewController.preferredContentSize = _popupWebView.intrinsicContentSize;
+
+    self.contentViewController = viewController;
+    self.behavior = NSPopoverBehaviorSemitransient;
+
+    action.setPopupPopoverAppearance(action.popupPopoverAppearance());
+
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(_otherPopoverWillShow:) name:NSPopoverWillShowNotification object:nil];
+
+    return self;
+}
+
+- (void)popoverWillClose:(NSNotification *)notification
+{
+    ASSERT([self isEqual:notification.object]);
+
+    auto *parentWindow = self.positioningView.window;
+    [parentWindow makeFirstResponder:parentWindow.windowController];
+}
+
+- (void)popoverDidClose:(NSNotification *)notification
+{
+    ASSERT([self isEqual:notification.object]);
+
+    if (!_webExtensionAction)
+        return;
+
+    _webExtensionAction->closePopup();
+}
+
+- (void)_otherPopoverWillShow:(NSNotification *)notification
+{
+    if (!self.shown)
+        return;
+
+    // Close if another popover is about to show in the same window.
+    auto *incomingPopover = dynamic_objc_cast<NSPopover>(notification.object);
+    auto *incomingPopoverWindow = incomingPopover.positioningView.window;
+    if (![incomingPopoverWindow isEqual:self.positioningView.window])
+        return;
+
+    [self close];
+}
+
+@end
+#endif // PLATFORM(MAC)
+
 namespace WebKit {
 
 WebExtensionAction::WebExtensionAction(WebExtensionContext& extensionContext)
@@ -434,6 +520,11 @@ void WebExtensionAction::clearCustomizations()
     m_customBadgeText = nullString();
     m_customEnabled = std::nullopt;
     m_blockedResourceCount = 0;
+
+#if PLATFORM(MAC)
+    // Reset the popover appearance until the color-scheme CSS can be checked on the next load.
+    m_popoverAppearance = Appearance::Default;
+#endif
 
     propertiesDidChange();
 }
@@ -516,6 +607,11 @@ void WebExtensionAction::setPopupPath(String path)
 
     m_customPopupPath = path;
 
+#if PLATFORM(MAC)
+    // Reset the popover appearance until the color-scheme CSS can be checked on the next load.
+    m_popoverAppearance = Appearance::Default;
+#endif
+
     propertiesDidChange();
 }
 
@@ -532,7 +628,101 @@ UIViewController *WebExtensionAction::popupViewController()
 
     return m_popupViewController.get();
 }
-#endif
+#endif // PLATFORM(IOS_FAMILY)
+
+#if PLATFORM(MAC)
+NSPopover *WebExtensionAction::popupPopover()
+{
+    if (!presentsPopup())
+        return nil;
+
+    if (m_popupPopover)
+        return m_popupPopover.get();
+
+    m_popupPopover = [[_WKWebExtensionActionPopover alloc] initWithWebExtensionAction:*this];
+
+    return m_popupPopover.get();
+}
+
+void WebExtensionAction::setPopupPopoverAppearance(Appearance appearance)
+{
+    m_popoverAppearance = appearance;
+
+    if (!m_popupPopover)
+        return;
+
+    // Set the popover appearance to light when it is unknown. Dark mode support is checked in detectPopoverColorScheme().
+    // This maintains the best compatibility for extensions that only support light mode.
+
+    switch (appearance) {
+    case Appearance::Default:
+    case Appearance::Light:
+        m_popupPopover.get().appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+        break;
+
+    case Appearance::Dark:
+        m_popupPopover.get().appearance = [NSAppearance appearanceNamed:NSAppearanceNameDarkAqua];
+        break;
+
+    case Appearance::Both:
+        m_popupPopover.get().appearance = nil;
+        break;
+    }
+}
+
+void WebExtensionAction::detectPopoverColorScheme()
+{
+    if (!m_popupPopover || !m_popupPopover.get().shown)
+        return;
+
+    static NSString * const checkColorSchemeScript = @"(function() {"
+    "  let computedStyle = window.getComputedStyle(document.body).colorScheme;"
+    "  if (computedStyle && computedStyle !== 'normal' && computedStyle !== 'auto') {"
+    "      let styleParts = computedStyle.split(/\\s+/);"
+    "      if (styleParts?.length)"
+    "        return styleParts;"
+    "  }"
+
+    "  let metaElements = document.querySelectorAll(`meta[name='color-scheme']`);"
+    "  if (!metaElements.length) metaElements = document.querySelectorAll(`meta[name='supported-color-schemes']`);"
+
+    "  let lastMetaElement = metaElements?.[metaElements.length - 1];"
+    "  if (lastMetaElement?.content) {"
+    "    let contentParts = lastMetaElement.content.toLowerCase().split(/\\s+/);"
+    "    if (contentParts?.length)"
+    "      return contentParts;"
+    "  }"
+
+    "  return null;"
+    "})()";
+
+    [m_popupWebView evaluateJavaScript:checkColorSchemeScript completionHandler:^(id result, NSError *error) {
+        if (error) {
+            RELEASE_LOG_ERROR(Extensions, "Error while checking popup color scheme: %{private}@", error);
+            return;
+        }
+
+        bool forceLightPopoverAppearance = false;
+        bool forceDarkPopoverAppearance = false;
+
+        if (auto *colorSchemesArray = dynamic_objc_cast<NSArray>(result)) {
+            auto *supportedColorSchemes = [NSSet setWithArray:colorSchemesArray];
+            if (([supportedColorSchemes containsObject:@"light"] || [supportedColorSchemes containsObject:@"only"]) && ![supportedColorSchemes containsObject:@"dark"])
+                forceLightPopoverAppearance = true;
+            else if ([supportedColorSchemes containsObject:@"dark"] && ![supportedColorSchemes containsObject:@"light"])
+                forceDarkPopoverAppearance = true;
+        } else
+            forceLightPopoverAppearance = true;
+
+        if (forceLightPopoverAppearance)
+            setPopupPopoverAppearance(Appearance::Light);
+        else if (forceDarkPopoverAppearance)
+            setPopupPopoverAppearance(Appearance::Dark);
+        else
+            setPopupPopoverAppearance(Appearance::Both);
+    }];
+}
+#endif // PLATFORM(MAC)
 
 WKWebView *WebExtensionAction::popupWebView(LoadOnFirstAccess loadOnFirstAccess)
 {
@@ -550,27 +740,13 @@ WKWebView *WebExtensionAction::popupWebView(LoadOnFirstAccess loadOnFirstAccess)
     m_popupWebView = [[_WKWebExtensionActionWebView alloc] initWithFrame:CGRectZero configuration:webViewConfiguration webExtensionAction:*this];
     m_popupWebView.get().navigationDelegate = m_popupWebViewDelegate.get();
     m_popupWebView.get().UIDelegate = m_popupWebViewDelegate.get();
-
     m_popupWebView.get().inspectable = extensionContext()->isInspectable();
-
     m_popupWebView.get().accessibilityLabel = extensionContext()->extension().displayName();
 
 #if PLATFORM(MAC)
-    m_popupWebView.get().accessibilityRole = NSAccessibilityPopoverRole;
-
     m_popupWebView.get()._sizeToContentAutoSizeMaximumSize = CGSizeMake(maximumPopoverWidth, maximumPopoverHeight);
     m_popupWebView.get()._useSystemAppearance = YES;
-
-    [m_popupWebView setContentHuggingPriority:NSLayoutPriorityDefaultHigh forOrientation:NSLayoutConstraintOrientationHorizontal];
-    [m_popupWebView setContentHuggingPriority:NSLayoutPriorityDefaultHigh forOrientation:NSLayoutConstraintOrientationVertical];
-
-    [NSLayoutConstraint activateConstraints:@[
-        [m_popupWebView.get().widthAnchor constraintGreaterThanOrEqualToConstant:minimumPopoverWidth],
-        [m_popupWebView.get().widthAnchor constraintLessThanOrEqualToConstant:maximumPopoverWidth],
-        [m_popupWebView.get().heightAnchor constraintGreaterThanOrEqualToConstant:minimumPopoverHeight],
-        [m_popupWebView.get().heightAnchor constraintLessThanOrEqualToConstant:maximumPopoverHeight]
-    ]];
-#endif // PLATFORM(MAC)
+#endif
 
 #if PLATFORM(IOS_FAMILY)
     [m_popupWebView _overrideViewportWithArguments:@{ @"width": @"device-width", @"initial-scale": @"1", @"minimum-scale": @"1", @"maximum-scale": @"1", @"user-scalable": @"no" }];
@@ -640,13 +816,21 @@ void WebExtensionAction::readyToPresentPopup()
         auto delegate = extensionController ? extensionController->delegate() : nil;
 
         if (!delegate || ![delegate respondsToSelector:@selector(webExtensionController:presentPopupForAction:forExtensionContext:completionHandler:)]) {
-            closePopupWebView();
+            closePopup();
             return;
         }
 
         [delegate webExtensionController:extensionController->wrapper() presentPopupForAction:wrapper() forExtensionContext:extensionContext()->wrapper() completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }](NSError *error) {
-            if (error)
-                closePopupWebView();
+            if (error) {
+                closePopup();
+                return;
+            }
+
+#if PLATFORM(MAC)
+            // Perform the color scheme check after showing the popover, since this can cause a layout,
+            // which can cause the popover content to misrender the first time.
+            detectPopoverColorScheme();
+#endif
         }).get()];
     }).get());
 }
@@ -657,34 +841,27 @@ void WebExtensionAction::popupSizeDidChange()
     [m_popupViewController _updatePopoverContentSize];
 #endif
 
-    [NSNotificationCenter.defaultCenter postNotificationName:_WKWebExtensionActionPopupWebViewContentSizeDidChangeNotification object:wrapper() userInfo:nil];
-}
-
-void WebExtensionAction::popupDidClose()
-{
-#if PLATFORM(IOS_FAMILY)
-    m_popupViewController = nil;
+#if PLATFORM(MAC)
+    m_popupPopover.get().contentViewController.preferredContentSize = m_popupWebView.get().intrinsicContentSize;
 #endif
-    m_popupWebView = nil;
-    m_popupPresented = false;
 }
 
-void WebExtensionAction::closePopupWebView()
+void WebExtensionAction::closePopup()
 {
     [m_popupWebView _close];
 
 #if PLATFORM(IOS_FAMILY)
     [m_popupViewController dismissViewControllerAnimated:YES completion:nil];
+    m_popupViewController = nil;
 #endif
 
 #if PLATFORM(MAC)
-    auto *window = m_popupWebView.get().window;
-    // FIXME: Instead of checking this window type, this should be handled more like iOS.
-    if ([window isKindOfClass:NSPanel.class])
-        [window close];
+    [m_popupPopover close];
+    m_popupPopover = nil;
 #endif
 
-    popupDidClose();
+    m_popupWebView = nil;
+    m_popupPresented = false;
 }
 
 String WebExtensionAction::label(FallbackWhenEmpty fallback) const

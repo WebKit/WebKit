@@ -171,6 +171,10 @@ TEST(WKWebExtensionAPIAction, PresentPopupForAction)
         EXPECT_NOT_NULL(action.popupViewController);
 #endif
 
+#if PLATFORM(MAC)
+        EXPECT_NOT_NULL(action.popupPopover);
+#endif
+
         EXPECT_NOT_NULL(action.popupWebView);
         EXPECT_FALSE(action.popupWebView.loading);
 
@@ -178,7 +182,7 @@ TEST(WKWebExtensionAPIAction, PresentPopupForAction)
         EXPECT_NS_EQUAL(webViewURL.scheme, @"webkit-extension");
         EXPECT_NS_EQUAL(webViewURL.path, @"/popup.html");
 
-        [action closePopupWebView];
+        [action closePopup];
 
         [manager done];
     };
@@ -343,7 +347,7 @@ TEST(WKWebExtensionAPIAction, SetDefaultActionProperties)
         EXPECT_NS_EQUAL(webViewURL.scheme, @"webkit-extension");
         EXPECT_NS_EQUAL(webViewURL.path, @"/alt-popup.html");
 
-        [action closePopupWebView];
+        [action closePopup];
 
         [manager done];
     };
@@ -457,9 +461,9 @@ TEST(WKWebExtensionAPIAction, TabSpecificActionProperties)
         EXPECT_NS_EQUAL(webViewURL.scheme, @"webkit-extension");
         EXPECT_NS_EQUAL(webViewURL.path, @"/popup.html");
 
-        [secondTabAction closePopupWebView];
-        [secondWindowAction closePopupWebView];
-        [action closePopupWebView];
+        [secondTabAction closePopup];
+        [secondWindowAction closePopup];
+        [action closePopup];
 
         [manager done];
     };
@@ -551,8 +555,8 @@ TEST(WKWebExtensionAPIAction, WindowSpecificActionProperties)
         EXPECT_NS_EQUAL(webViewURL.scheme, @"webkit-extension");
         EXPECT_NS_EQUAL(webViewURL.path, @"/popup.html");
 
-        [secondWindowAction closePopupWebView];
-        [action closePopupWebView];
+        [secondWindowAction closePopup];
+        [action closePopup];
 
         [manager done];
     };
@@ -877,6 +881,10 @@ TEST(WKWebExtensionAPIAction, BrowserAction)
         EXPECT_NOT_NULL(action.popupViewController);
 #endif
 
+#if PLATFORM(MAC)
+        EXPECT_NOT_NULL(action.popupPopover);
+#endif
+
         EXPECT_NOT_NULL(action.popupWebView);
         EXPECT_FALSE(action.popupWebView.loading);
 
@@ -884,7 +892,7 @@ TEST(WKWebExtensionAPIAction, BrowserAction)
         EXPECT_NS_EQUAL(webViewURL.scheme, @"webkit-extension");
         EXPECT_NS_EQUAL(webViewURL.path, @"/alt-popup.html");
 
-        [action closePopupWebView];
+        [action closePopup];
 
         [manager done];
     };
@@ -967,6 +975,10 @@ TEST(WKWebExtensionAPIAction, PageAction)
         EXPECT_NOT_NULL(action.popupViewController);
 #endif
 
+#if PLATFORM(MAC)
+        EXPECT_NOT_NULL(action.popupPopover);
+#endif
+
         EXPECT_NOT_NULL(action.popupWebView);
         EXPECT_FALSE(action.popupWebView.loading);
 
@@ -974,7 +986,7 @@ TEST(WKWebExtensionAPIAction, PageAction)
         EXPECT_NS_EQUAL(webViewURL.scheme, @"webkit-extension");
         EXPECT_NS_EQUAL(webViewURL.path, @"/alt-popup.html");
 
-        [action closePopupWebView];
+        [action closePopup];
 
         [manager done];
     };
