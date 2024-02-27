@@ -82,6 +82,7 @@ private:
     void transitionToMainThreadDocument();
 
     bool documentFinishedLoading() const;
+    bool hasBeenDestroyed() const;
 
     void ensureDataBufferLength(uint64_t);
     void appendAccumulatedDataToDataBuffer(ByteRangeRequest&);
@@ -118,6 +119,7 @@ private:
 
     RetainPtr<PDFDocument> m_backgroundThreadDocument;
     RefPtr<Thread> m_pdfThread;
+    NSNotificationCenter * __weak m_center { [NSNotificationCenter defaultCenter] };
 
     Ref<PDFPluginStreamLoaderClient> m_streamLoaderClient;
 

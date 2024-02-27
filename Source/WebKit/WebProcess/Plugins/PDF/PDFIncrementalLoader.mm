@@ -38,6 +38,7 @@
 #import <wtf/Range.h>
 #import <wtf/RangeSet.h>
 #import <wtf/WTFSemaphore.h>
+#import <wtf/threads/BinarySemaphore.h>
 
 #import "PDFKitSoftLink.h"
 
@@ -288,12 +289,19 @@ PDFIncrementalLoader::PDFIncrementalLoader(PDFPluginBase& plugin)
 
 PDFIncrementalLoader::~PDFIncrementalLoader() = default;
 
+static String pdfThreadIsExitingNotificationName(uint32_t threadUID)
+{
+    static constexpr ASCIILiteral pdfThreadIsExitingNotificationNameBase = "PDFThreadIsExiting_"_s;
+    return makeString(pdfThreadIsExitingNotificationNameBase, threadUID);
+}
+
 void PDFIncrementalLoader::clear()
 {
     // By clearing out the resource data and handling all outstanding range requests,
     // we can force the PDFThread to complete quickly
     if (m_pdfThread) {
         unconditionalCompleteOutstandingRangeRequests();
+        [m_center postNotificationName:pdfThreadIsExitingNotificationName(m_pdfThread->uid()) object:nil];
         m_pdfThread->waitForCompletion();
     }
 }
@@ -319,6 +327,14 @@ bool PDFIncrementalLoader::documentFinishedLoading() const
         return true;
 
     return plugin->documentFinishedLoading();
+}
+
+bool PDFIncrementalLoader::hasBeenDestroyed() const
+{
+    ASSERT(isMainRunLoop());
+
+    RefPtr plugin = m_plugin.get();
+    return !plugin || plugin->hasBeenDestroyed();
 }
 
 void PDFIncrementalLoader::ensureDataBufferLength(uint64_t targetLength)
@@ -649,16 +665,33 @@ size_t PDFIncrementalLoader::dataProviderGetBytesAtPosition(void* buffer, off_t 
         return 0;
     }
 
-    WTF::Semaphore dataSemaphore { 0 };
+    BinarySemaphore dataSemaphore;
     size_t bytesProvided = 0;
 
+    // One time notification observer to signal PDF thread to not wait for task dispatched in main runloop when main runloop is destructing the plugin.
+    RetainPtr<NSObject> token = [m_center addObserverForName:pdfThreadIsExitingNotificationName(Thread::current().uid()) object:nil queue:nil usingBlock:[weakThis = ThreadSafeWeakPtr { *this }, &dataSemaphore, &token](NSNotification *) {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+
+        dataSemaphore.signal();
+        [protectedThis->m_center removeObserver:token.get()];
+    }];
+
+    // Do not dispatch main runloop (again) and wait anymore if plugin has been destroyed.
+    if (plugin->hasBeenDestroyed())
+        return 0;
+
     RunLoop::main().dispatch([protectedLoader = Ref { *this }, position, count, buffer, &dataSemaphore, &bytesProvided] {
-        protectedLoader->getResourceBytesAtPosition(count, position, [count, buffer, &dataSemaphore, &bytesProvided](const uint8_t* bytes, size_t bytesCount) {
-            RELEASE_ASSERT(bytesCount <= count);
-            memcpy(buffer, bytes, bytesCount);
-            bytesProvided = bytesCount;
-            dataSemaphore.signal();
-        });
+        // protection against race when plugin has been destroyed in last runloop while this runloop has queued up.
+        if (!protectedLoader->hasBeenDestroyed()) {
+            protectedLoader->getResourceBytesAtPosition(count, position, [count, buffer, &dataSemaphore, &bytesProvided](const uint8_t* bytes, size_t bytesCount) {
+                RELEASE_ASSERT(bytesCount <= count);
+                memcpy(buffer, bytes, bytesCount);
+                bytesProvided = bytesCount;
+                dataSemaphore.signal();
+            });
+        }
     });
 
     dataSemaphore.wait();
