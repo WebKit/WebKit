@@ -697,11 +697,26 @@ CONSTANT_FUNCTION(BitwiseShiftLeft)
     // i.e. we accept (u32, u32) as well as (i32, u32)
     UNUSED_PARAM(resultType);
     ASSERT(arguments.size() == 2);
-    const auto& shift = [&]<typename T>(T left, uint32_t right) -> T {
-        return left << right;
+    const auto& shift = [&]<typename T>(T left, uint32_t right) -> ConstantResult {
+        constexpr auto bitSize = sizeof(T) * 8;
+        if (right >= bitSize)
+            return makeUnexpected(makeString("shift left value must be less than the bit width of the shifted value, which is ", String::number(bitSize)));
+
+        if constexpr (std::is_unsigned_v<T>) {
+            uint32_t mask = -1 << (bitSize - right);
+            if (left & mask)
+                return makeUnexpected("shift left overflows"_s);
+        } else {
+            uint32_t mask = -1 << (bitSize - (right + 1));
+            auto leftBits = left & mask;
+            if (leftBits && leftBits != mask)
+                return makeUnexpected("shift left overflows"_s);
+        }
+
+        return { left << right };
     };
 
-    return scalarOrVector([&](const auto& left, const auto& rightValue) -> ConstantValue {
+    return scalarOrVector([&](const auto& left, const auto& rightValue) -> ConstantResult {
         auto right = std::get<uint32_t>(rightValue);
         if (auto* i32 = std::get_if<int32_t>(&left))
             return shift(*i32, right);
@@ -719,11 +734,14 @@ CONSTANT_FUNCTION(BitwiseShiftRight)
     // i.e. we accept (u32, u32) as well as (i32, u32)
     UNUSED_PARAM(resultType);
     ASSERT(arguments.size() == 2);
-    const auto& shift = [&]<typename T>(T left, uint32_t right) {
-        return left >> right;
+    const auto& shift = [&]<typename T>(T left, uint32_t right) -> ConstantResult {
+        constexpr auto bitSize = sizeof(T) * 8;
+        if (right >= bitSize)
+            return makeUnexpected(makeString("shift right value must be less than the bit width of the shifted value, which is ", String::number(bitSize)));
+        return { left >> right };
     };
 
-    return scalarOrVector([&](const auto& left, const auto& rightValue) -> ConstantValue {
+    return scalarOrVector([&](const auto& left, const auto& rightValue) -> ConstantResult {
         auto right = std::get<uint32_t>(rightValue);
         if (auto* i32 = std::get_if<int32_t>(&left))
             return shift(*i32, right);
