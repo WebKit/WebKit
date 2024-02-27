@@ -1774,7 +1774,7 @@ bool UnifiedPDFPlugin::handleMouseEvent(const WebMouseEvent& event)
             }
 
             if (m_selectionTrackingData.isActivelyTrackingSelection)
-                continueTrackingSelection(*pageIndex, pointInPageSpace);
+                continueTrackingSelection(*pageIndex, pointInPageSpace, IsDraggingSelection::Yes);
 
             return true;
         }
@@ -2506,7 +2506,7 @@ void UnifiedPDFPlugin::beginTrackingSelection(PDFDocumentLayout::PageIndex pageI
     if (m_selectionTrackingData.shouldExtendCurrentSelection)
         extendCurrentSelectionIfNeeded();
 
-    continueTrackingSelection(pageIndex, pagePoint);
+    continueTrackingSelection(pageIndex, pagePoint, IsDraggingSelection::No);
 }
 
 void UnifiedPDFPlugin::updateCurrentSelectionForContextMenuEventIfNeeded()
@@ -2523,8 +2523,25 @@ static FloatRect computeMarqueeSelectionRect(const WebCore::FloatPoint& point1, 
     return { marqueeRectLocation.x(), marqueeRectLocation.y(), std::abs(marqueeRectSize.width()), std::abs(marqueeRectSize.height()) };
 }
 
-void UnifiedPDFPlugin::continueTrackingSelection(PDFDocumentLayout::PageIndex pageIndex, const WebCore::FloatPoint& pagePoint)
+void UnifiedPDFPlugin::freezeCursorDuringSelectionDragIfNeeded(IsDraggingSelection isDraggingSelection)
 {
+    if (isDraggingSelection == IsDraggingSelection::Yes && !std::exchange(m_selectionTrackingData.cursorIsFrozenForSelectionDrag, true))
+        notifyCursorChanged(PlatformCursorType::IBeam);
+}
+
+void UnifiedPDFPlugin::unfreezeCursorAfterSelectionDragIfNeeded()
+{
+    if (std::exchange(m_selectionTrackingData.cursorIsFrozenForSelectionDrag, false) && m_lastMouseEvent) {
+        auto altKeyIsActive = m_lastMouseEvent->altKey() ? AltKeyIsActive::Yes : AltKeyIsActive::No;
+        auto pdfElementTypes = pdfElementTypesForPluginPoint(lastKnownMousePositionInView());
+        notifyCursorChanged(toWebCoreCursorType(pdfElementTypes, altKeyIsActive));
+    }
+}
+
+void UnifiedPDFPlugin::continueTrackingSelection(PDFDocumentLayout::PageIndex pageIndex, const WebCore::FloatPoint& pagePoint, IsDraggingSelection isDraggingSelection)
+{
+    freezeCursorDuringSelectionDragIfNeeded(isDraggingSelection);
+
     if (m_selectionTrackingData.shouldMakeMarqueeSelection) {
         if (m_selectionTrackingData.startPageIndex != pageIndex)
             return;
@@ -2570,6 +2587,7 @@ void UnifiedPDFPlugin::stopTrackingSelection()
 {
     m_selectionTrackingData.selectionToExtendWith = nullptr;
     m_selectionTrackingData.isActivelyTrackingSelection = false;
+    unfreezeCursorAfterSelectionDragIfNeeded();
 }
 
 Vector<FloatRect> UnifiedPDFPlugin::selectionBoundsAcrossDocument(const PDFSelection *selection) const

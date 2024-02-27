@@ -243,11 +243,15 @@ private:
         WindowActivityChanged,
     };
 
+    enum class IsDraggingSelection : bool { No, Yes };
+
     SelectionGranularity selectionGranularityForMouseEvent(const WebMouseEvent&) const;
     void beginTrackingSelection(PDFDocumentLayout::PageIndex, const WebCore::FloatPoint& pagePoint, const WebMouseEvent&);
     void extendCurrentSelectionIfNeeded();
     void updateCurrentSelectionForContextMenuEventIfNeeded();
-    void continueTrackingSelection(PDFDocumentLayout::PageIndex, const WebCore::FloatPoint& pagePoint);
+    void continueTrackingSelection(PDFDocumentLayout::PageIndex, const WebCore::FloatPoint& pagePoint, IsDraggingSelection);
+    void freezeCursorDuringSelectionDragIfNeeded(IsDraggingSelection);
+    void unfreezeCursorAfterSelectionDragIfNeeded();
     void stopTrackingSelection();
     void setCurrentSelection(RetainPtr<PDFSelection>&&);
     RetainPtr<PDFSelection> protectedCurrentSelection() const;
@@ -444,6 +448,7 @@ private:
         bool shouldExtendCurrentSelection { false };
         bool shouldMakeMarqueeSelection { false };
         bool lastHandledEventWasContextMenuEvent { false };
+        bool cursorIsFrozenForSelectionDrag { false };
         SelectionGranularity granularity { SelectionGranularity::Character };
         PDFDocumentLayout::PageIndex startPageIndex;
         WebCore::FloatPoint startPagePoint;
