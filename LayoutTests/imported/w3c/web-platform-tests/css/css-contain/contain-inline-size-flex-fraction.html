@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Verify contain:inline-size effect on grid flex child</title>
+<link rel="author" title="Rob Buis" href="mailto:rbuis@igalia.com">
+<meta name="assert" content="Tests that contain:inline-size does not apply to flex child's block direction" />
+
+<style>
+.grid {
+  display: grid;
+  grid-template-rows: 1fr;
+  contain: inline-size;
+}
+
+.images {
+  display: flex;
+  overflow: auto;
+}
+</style>
+
+<div class="grid">
+  <div class="images">
+    <img src="/css/support/60x60-green.png">
+  </div>
+</div>

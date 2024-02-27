@@ -129,6 +129,9 @@ public:
 
     LayoutUnit masonryContentSize() const;
     Vector<LayoutRect> gridItemsLayoutRects();
+
+    bool shouldCheckExplicitIntrinsicInnerLogicalSize(GridTrackSizingDirection) const;
+
 private:
     friend class GridTrackSizingAlgorithm;
     friend class GridMasonryLayout;
@@ -150,7 +153,6 @@ private:
     bool namedGridLinesDefinitionDidChange(const RenderStyle&) const;
     bool implicitGridLinesDefinitionDidChange(const RenderStyle&) const;
 
-    bool shouldCheckExplicitIntrinsicInnerLogicalSize(GridTrackSizingDirection) const;
     unsigned computeAutoRepeatTracksCount(GridTrackSizingDirection, std::optional<LayoutUnit> availableSize) const;
 
     unsigned clampAutoRepeatTracks(GridTrackSizingDirection, unsigned autoRepeatTracks) const;
