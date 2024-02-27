@@ -76,6 +76,7 @@
 #include <WebCore/ScrollbarTheme.h>
 #include <WebCore/ScrollbarsController.h>
 #include <pal/spi/cg/CoreGraphicsSPI.h>
+#include <wtf/Algorithms.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
 #include "PDFKitSoftLink.h"
@@ -290,6 +291,12 @@ void UnifiedPDFPlugin::setNeedsRepaintInDocumentRect(OptionSet<RepaintRequiremen
     }
 
     RefPtr { m_contentsLayer }->setNeedsDisplayInRect(contentsRect);
+}
+
+void UnifiedPDFPlugin::setNeedsRepaintInDocumentRects(OptionSet<RepaintRequirement> repaintRequirements, const Vector<FloatRect>& rectsInDocumentCoordinates)
+{
+    for (auto& rectInDocumentCoordinates : rectsInDocumentCoordinates)
+        setNeedsRepaintInDocumentRect(repaintRequirements, rectInDocumentCoordinates);
 }
 
 void UnifiedPDFPlugin::scheduleRenderingUpdate()
@@ -584,7 +591,6 @@ void UnifiedPDFPlugin::didChangeIsInWindow()
 
 void UnifiedPDFPlugin::windowActivityDidChange()
 {
-    // FIXME: <https://webkit.org/b/268927> Selection painting requests should be optimized by specifying dirty rects.
     repaintOnSelectionActiveStateChangeIfNeeded(ActiveStateChangeReason::WindowActivityChanged);
 }
 
@@ -2547,7 +2553,20 @@ void UnifiedPDFPlugin::stopTrackingSelection()
     m_selectionTrackingData.isActivelyTrackingSelection = false;
 }
 
-void UnifiedPDFPlugin::repaintOnSelectionActiveStateChangeIfNeeded(ActiveStateChangeReason reason)
+Vector<FloatRect> UnifiedPDFPlugin::selectionBoundsAcrossDocument(const PDFSelection *selection) const
+{
+    if (!selection || [selection isEmpty])
+        return { };
+
+    return makeVector([selection pages], [this, selection](PDFPage *page) -> std::optional<FloatRect> {
+        auto pageIndex = m_documentLayout.indexForPage(page);
+        if (!pageIndex)
+            return { };
+        return convertUp(CoordinateSpace::PDFPage, CoordinateSpace::PDFDocumentLayout, FloatRect { [selection boundsForPage:page] }, *pageIndex);
+    });
+}
+
+void UnifiedPDFPlugin::repaintOnSelectionActiveStateChangeIfNeeded(ActiveStateChangeReason reason, const Vector<FloatRect>& additionalDocumentRectsToRepaint)
 {
     switch (reason) {
     case ActiveStateChangeReason::HandledContextMenuEvent:
@@ -2557,14 +2576,20 @@ void UnifiedPDFPlugin::repaintOnSelectionActiveStateChangeIfNeeded(ActiveStateCh
         if (!std::exchange(m_selectionTrackingData.lastHandledEventWasContextMenuEvent, false))
             return;
         break;
-    case ActiveStateChangeReason::SetCurrentSelection:
     case ActiveStateChangeReason::WindowActivityChanged:
+        if (!m_currentSelection || [m_currentSelection isEmpty])
+            return;
+        break;
+    case ActiveStateChangeReason::SetCurrentSelection:
         break;
     default:
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    m_contentsLayer->setNeedsDisplay();
+    auto selectionDocumentRectsToRepaint = selectionBoundsAcrossDocument(protectedCurrentSelection().get());
+    selectionDocumentRectsToRepaint.appendVector(additionalDocumentRectsToRepaint);
+
+    setNeedsRepaintInDocumentRects(RepaintRequirement::Selection, selectionDocumentRectsToRepaint);
 }
 
 bool UnifiedPDFPlugin::isSelectionActiveAfterContextMenuInteraction() const
@@ -2572,12 +2597,19 @@ bool UnifiedPDFPlugin::isSelectionActiveAfterContextMenuInteraction() const
     return !m_selectionTrackingData.lastHandledEventWasContextMenuEvent;
 }
 
+RetainPtr<PDFSelection> UnifiedPDFPlugin::protectedCurrentSelection() const
+{
+    return m_currentSelection;
+}
+
 void UnifiedPDFPlugin::setCurrentSelection(RetainPtr<PDFSelection>&& selection)
 {
+    auto staleSelectionDocumentRectsToRepaint = selectionBoundsAcrossDocument(protectedCurrentSelection().get());
+
     m_currentSelection = WTFMove(selection);
     // FIXME: <https://webkit.org/b/268980> Selection painting requests should be only be made if the current selection has changed.
-    // FIXME: <https://webkit.org/b/268927> Selection painting requests should be optimized by specifying dirty rects.
-    repaintOnSelectionActiveStateChangeIfNeeded(ActiveStateChangeReason::SetCurrentSelection);
+    // FIXME: <https://webkit.org/b/270070> Selection painting should be optimized by only repainting diff between old and new selection.
+    repaintOnSelectionActiveStateChangeIfNeeded(ActiveStateChangeReason::SetCurrentSelection, staleSelectionDocumentRectsToRepaint);
     notifySelectionChanged();
 }
 

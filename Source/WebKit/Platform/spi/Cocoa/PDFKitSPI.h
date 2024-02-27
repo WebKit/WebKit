@@ -98,6 +98,7 @@
 - (/*nullable*/ NSString *)html;
 - (/*nullable*/ NSData *)webArchive;
 - (NSAttributedString *)attributedStringScaled:(CGFloat)scale;
+- (BOOL)isEmpty;
 @end
 
 #endif // HAVE(PDFKIT)

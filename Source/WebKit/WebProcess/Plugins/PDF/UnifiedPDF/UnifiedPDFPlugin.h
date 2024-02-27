@@ -250,7 +250,9 @@ private:
     void continueTrackingSelection(PDFDocumentLayout::PageIndex, const WebCore::FloatPoint& pagePoint);
     void stopTrackingSelection();
     void setCurrentSelection(RetainPtr<PDFSelection>&&);
-    void repaintOnSelectionActiveStateChangeIfNeeded(ActiveStateChangeReason);
+    RetainPtr<PDFSelection> protectedCurrentSelection() const;
+    Vector<WebCore::FloatRect> selectionBoundsAcrossDocument(const PDFSelection *) const;
+    void repaintOnSelectionActiveStateChangeIfNeeded(ActiveStateChangeReason, const Vector<WebCore::FloatRect>& additionalDocumentRectsToRepaint = { });
     bool isSelectionActiveAfterContextMenuInteraction() const;
 
     String selectionString() const override;
@@ -358,6 +360,7 @@ private:
     RefPtr<WebCore::GraphicsLayer> createGraphicsLayer(const String& name, WebCore::GraphicsLayer::Type);
 
     void setNeedsRepaintInDocumentRect(OptionSet<RepaintRequirement>, const WebCore::FloatRect&);
+    void setNeedsRepaintInDocumentRects(OptionSet<RepaintRequirement>, const Vector<WebCore::FloatRect>&);
 
     /*
         Unified PDF Plugin coordinate spaces, in depth order:
