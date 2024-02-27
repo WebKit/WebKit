@@ -118,11 +118,6 @@ void WebExtensionController::getDataRecord(OptionSet<WebExtensionDataType> types
     String displayName;
     URL lastBaseURL;
 
-    auto recordHolder = WebExtensionDataRecordHolder::create();
-    auto aggregator = MainRunLoopCallbackAggregator::create([recordHolder, completionHandler = WTFMove(completionHandler)]() mutable {
-        completionHandler(recordHolder->recordsMap.takeFirst());
-    });
-
     auto uniqueIdentifiers = FileSystem::listDirectory(m_configuration->storageDirectory());
     for (auto& uniqueIdentifier : uniqueIdentifiers) {
         if (!WebExtensionContext::readDisplayNameAndLastBaseURLFromState(stateFilePath(uniqueIdentifier), displayName, lastBaseURL))
@@ -138,6 +133,11 @@ void WebExtensionController::getDataRecord(OptionSet<WebExtensionDataType> types
         completionHandler(nullptr);
         return;
     }
+
+    Ref recordHolder = WebExtensionDataRecordHolder::create();
+    Ref aggregator = MainRunLoopCallbackAggregator::create([recordHolder, completionHandler = WTFMove(completionHandler)]() mutable {
+        completionHandler(recordHolder->recordsMap.takeFirst());
+    });
 
     for (auto type : types) {
         auto *storage = sqliteStore(storageDirectory(matchingUniqueIdentifier), type, this->extensionContext(lastBaseURL));
