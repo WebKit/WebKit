@@ -42,6 +42,7 @@ public:
 
     String customCSSText() const;
     bool equals(const CSSValuePair&) const;
+    bool canBeCoalesced() const;
 
 private:
     friend bool CSSValue::addHash(Hasher&) const;
