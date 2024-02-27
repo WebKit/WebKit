@@ -243,6 +243,12 @@ bool Connection::sendMessage(std::unique_ptr<MachMessage> message)
         // the send right inside the `message`that goes out of scope, and thus we get the NO_SENDERS.
         return false;
 
+#if ENABLE(IPC_TESTING_API)
+    case MACH_SEND_TOO_LARGE:
+        RELEASE_LOG_ERROR(Process, "%" PUBLIC_LOG_STRING "Error MACH_SEND_TOO_LARGE", WTF_PRETTY_FUNCTION);
+        return false;
+#endif
+
     default:
         auto messageName = message->messageName();
         auto errorMessage = makeString("Unhandled error code 0x", hex(kr), ", message '", description(messageName), "' (", messageName, ')');
