@@ -220,6 +220,7 @@ struct Reference {
     AddressSpace addressSpace;
     AccessMode accessMode;
     const Type* element;
+    bool isVectorComponent;
 };
 
 struct Pointer {

@@ -1002,7 +1002,7 @@ void TypeChecker::visit(AST::Expression&)
 
 void TypeChecker::visit(AST::FieldAccessExpression& access)
 {
-    const auto& accessImpl = [&](const Type* baseType, bool* canBeReference = nullptr) -> const Type* {
+    const auto& accessImpl = [&](const Type* baseType, bool* canBeReference = nullptr, bool* isVector = nullptr) -> const Type* {
         if (isBottom(baseType))
             return m_types.bottomType();
 
@@ -1037,6 +1037,8 @@ void TypeChecker::visit(AST::FieldAccessExpression& access)
         if (std::holds_alternative<Types::Vector>(*baseType)) {
             auto& vector = std::get<Types::Vector>(*baseType);
             auto* result = vectorFieldAccess(vector, access);
+            if (isVector)
+                *isVector = true;
             if (result && canBeReference)
                 *canBeReference = !std::holds_alternative<Types::Vector>(*result);
             return result;
@@ -1049,9 +1051,10 @@ void TypeChecker::visit(AST::FieldAccessExpression& access)
     auto* baseType = infer(access.base(), m_evaluation);
     if (const auto* reference = std::get_if<Types::Reference>(baseType)) {
         bool canBeReference = true;
-        if (const Type* result = accessImpl(reference->element, &canBeReference)) {
+        bool isVector = false;
+        if (const Type* result = accessImpl(reference->element, &canBeReference, &isVector)) {
             if (canBeReference)
-                result = m_types.referenceType(reference->addressSpace, result, reference->accessMode);
+                result = m_types.referenceType(reference->addressSpace, result, reference->accessMode, isVector);
             inferred(result);
         }
         return;
@@ -1086,7 +1089,7 @@ void TypeChecker::visit(AST::IndexAccessExpression& access)
             access.setConstantValue(std::get<T>(*constantBase)[index]);
     };
 
-    const auto& accessImpl = [&](const Type* base) -> const Type* {
+    const auto& accessImpl = [&](const Type* base, bool* isVector = nullptr) -> const Type* {
         if (isBottom(base))
             return m_types.bottomType();
 
@@ -1099,6 +1102,8 @@ void TypeChecker::visit(AST::IndexAccessExpression& access)
                 size = *constantSize;
             constantAccess.operator()<ConstantArray>(size);
         } else if (auto* vector = std::get_if<Types::Vector>(base)) {
+            if (isVector)
+                *isVector = true;
             result = vector->element;
             constantAccess.operator()<ConstantVector>(vector->size);
         } else if (auto* matrix = std::get_if<Types::Matrix>(base)) {
@@ -1127,8 +1132,9 @@ void TypeChecker::visit(AST::IndexAccessExpression& access)
     }
 
     if (const auto* reference = std::get_if<Types::Reference>(base)) {
-        if (const Type* result = accessImpl(reference->element)) {
-            result = m_types.referenceType(reference->addressSpace, result, reference->accessMode);
+        bool isVector = false;
+        if (const Type* result = accessImpl(reference->element, &isVector)) {
+            result = m_types.referenceType(reference->addressSpace, result, reference->accessMode, isVector);
             inferred(result);
         }
         return;
@@ -1549,6 +1555,39 @@ void TypeChecker::bitcast(AST::CallExpression& call, const Vector<const Type*>& 
 
 void TypeChecker::visit(AST::UnaryExpression& unary)
 {
+    if (unary.operation() == AST::UnaryOperation::AddressOf) {
+        auto* type = infer(unary.expression(), Evaluation::Runtime);
+        auto* reference = std::get_if<Types::Reference>(type);
+        if (!reference) {
+            typeError(unary.span(), "cannot take address of expression");
+            return;
+        }
+
+        if (reference->addressSpace == AddressSpace::Handle) {
+            typeError(unary.span(), "cannot take the address of expression in handle address space");
+            return;
+        }
+
+        if (reference->isVectorComponent) {
+            typeError(unary.span(), "cannot take the address of a vector component");
+            return;
+        }
+
+        inferred(m_types.pointerType(reference->addressSpace, reference->element, reference->accessMode));
+        return;
+    }
+
+    if (unary.operation() == AST::UnaryOperation::Dereference) {
+        auto* type = infer(unary.expression(), Evaluation::Runtime);
+        auto* pointer = std::get_if<Types::Pointer>(type);
+        if (!pointer) {
+            typeError(unary.span(), "cannot dereference expression of type '", *type, "'");
+            return;
+        }
+
+        inferred(m_types.referenceType(pointer->addressSpace, pointer->element, pointer->accessMode));
+        return;
+    }
     chooseOverload("operator", unary, toString(unary.operation()), ReferenceWrapperVector<AST::Expression, 1> { unary.expression() }, { });
 }
 

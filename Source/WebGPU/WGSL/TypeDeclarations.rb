@@ -52,10 +52,6 @@ operator :'&', {
     must_use: true,
     const: 'constantBitwiseAnd',
 
-    # unary
-    # FIXME: move this out of here
-    [AS, T, AM].(ref[AS, T, AM]) => ptr[AS, T, AM],
-
     # binary
     [].(bool, bool) => bool,
     [N].(vec[N][bool], vec[N][bool]) => vec[N][bool],
@@ -97,10 +93,6 @@ operator :+, {
 operator :*, {
     must_use: true,
     const: "constantMultiply",
-
-    # unary
-    # FIXME: move this out of here
-    [AS, T, AM].(ptr[AS, T, AM]) => ref[AS, T, AM],
 
     # binary
     [T < Number].(T, T) => T,
