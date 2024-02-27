@@ -401,6 +401,11 @@ String Quirks::storageAccessUserAgentStringQuirkForDomain(const URL& url)
     return iterator->value;
 }
 
+bool Quirks::isYoutubeEmbedDomain() const
+{
+    return isEmbedDomain("youtube.com"_s) || isEmbedDomain("youtube-nocookie.com"_s);
+}
+
 bool Quirks::shouldDisableElementFullscreenQuirk() const
 {
 #if PLATFORM(IOS_FAMILY)
@@ -421,7 +426,7 @@ bool Quirks::shouldDisableElementFullscreenQuirk() const
         m_shouldDisableElementFullscreen = isDomain("vimeo.com"_s)
             || isDomain("instagram.com"_s)
             || isEmbedDomain("twitter.com"_s)
-            || (PAL::currentUserInterfaceIdiomIsSmallScreen() && (isDomain("youtube.com"_s) || isEmbedDomain("youtube.com"_s)));
+            || (PAL::currentUserInterfaceIdiomIsSmallScreen() && (isDomain("youtube.com"_s) || isYoutubeEmbedDomain()));
     }
 
     return m_shouldDisableElementFullscreen.value();

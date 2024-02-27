@@ -191,6 +191,7 @@ private:
     bool needsQuirks() const;
     bool isDomain(const String&) const;
     bool isEmbedDomain(const String&) const;
+    bool isYoutubeEmbedDomain() const;
 
 #if ENABLE(TOUCH_EVENTS)
     bool isAmazon() const;
