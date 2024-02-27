@@ -78,8 +78,10 @@ public:
     ~WebAuthenticatorCoordinatorProxy();
 
 #if HAVE(WEB_AUTHN_AS_MODERN)
-    void pauseConditionalAssertion();
+    static WeakPtr<WebAuthenticatorCoordinatorProxy>& activeConditionalMediationProxy();
+    void pauseConditionalAssertion(CompletionHandler<void()>&&);
     void unpauseConditionalAssertion();
+    void makeActiveConditionalAssertion();
 #endif
 
 private:
