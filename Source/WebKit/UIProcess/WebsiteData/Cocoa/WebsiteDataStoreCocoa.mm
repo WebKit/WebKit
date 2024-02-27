@@ -855,16 +855,7 @@ std::optional<double> WebsiteDataStore::defaultTotalQuotaRatio()
 
 UnifiedOriginStorageLevel WebsiteDataStore::defaultUnifiedOriginStorageLevel()
 {
-    auto defaultUnifiedOriginStorageLevelValue = UnifiedOriginStorageLevel::Standard;
-    NSString* unifiedOriginStorageLevelKey = @"WebKitDebugUnifiedOriginStorageLevel";
-    if ([[NSUserDefaults standardUserDefaults] objectForKey:unifiedOriginStorageLevelKey] == nil)
-        return defaultUnifiedOriginStorageLevelValue;
-
-    auto level = convertToUnifiedOriginStorageLevel([[NSUserDefaults standardUserDefaults] integerForKey:unifiedOriginStorageLevelKey]);
-    if (!level)
-        return defaultUnifiedOriginStorageLevelValue;
-
-    return *level;
+    return UnifiedOriginStorageLevel::Standard;
 }
 
 #if PLATFORM(IOS_FAMILY)
