@@ -91,17 +91,15 @@ PASS html: label input[type=month] encapsulation
 PASS html: label input[type=number] encapsulation
 PASS html: label input[type=password] encapsulation
 PASS html: label input[type=radio] encapsulation
-FAIL html: label input[type=range] encapsulation assert_equals: <input type="range" data-expectedlabel="range label" data-testname="html: label input[type=range] encapsulation" class="ex"> expected "range label" but got "50 range label"
-FAIL html: label input[type=search] encapsulation assert_equals: <input type="search" data-expectedlabel="search label" data-testname="html: label input[type=search] encapsulation" class="ex"> expected "search label" but got "cancel search label"
+PASS html: label input[type=range] encapsulation
+PASS html: label input[type=search] encapsulation
 PASS html: label input[type=tel] encapsulation
 PASS html: label[for] input[type=text] encapsulation
 PASS html: label input[type=time] encapsulation
 PASS html: label input[type=url] encapsulation
 PASS html: label input[type=week] encapsulation
 PASS html: select for/id
-FAIL html: select encapsulation assert_equals: <select data-expectedlabel="select label" data-testname="html: select encapsulation" class="ex">
-    <option>foo</option>
-  </select> expected "select label" but got "select label foo"
+PASS html: select encapsulation
 PASS html: img[alt] (non-empty)
 PASS html: picture > img[alt] (non-empty)
 FAIL html: fieldset > legend assert_equals: <fieldset data-expectedlabel="fieldset legend label" data-testname="html: fieldset > legend" class="ex">
