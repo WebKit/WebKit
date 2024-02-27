@@ -62,7 +62,6 @@
 #include "WebProcess.h"
 #include <WebCore/AXCoreObject.h>
 #include <WebCore/AXObjectCache.h>
-#include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/CSSParser.h>
 #include <WebCore/CaptionUserPreferences.h>
 #include <WebCore/CompositionHighlight.h>
@@ -864,12 +863,6 @@ WKStringRef WKBundlePageCopyGroupIdentifier(WKBundlePageRef pageRef)
     return WebKit::toCopiedAPI(WebKit::toImpl(pageRef)->pageGroup()->identifier());
 }
 
-void WKBundlePageClearApplicationCache(WKBundlePageRef page)
-{
-    if (auto* applicationCacheStorage = WebKit::toImpl(page)->corePage()->applicationCacheStorage())
-        applicationCacheStorage->deleteAllEntries();
-}
-
 void WKBundlePageSetCaptionDisplayMode(WKBundlePageRef page, WKStringRef mode)
 {
 #if ENABLE(VIDEO)
@@ -892,39 +885,6 @@ WKCaptionUserPreferencesTestingModeTokenRef WKBundlePageCreateCaptionUserPrefere
     UNUSED_PARAM(page);
     return { };
 #endif
-}
-
-void WKBundlePageClearApplicationCacheForOrigin(WKBundlePageRef page, WKStringRef origin)
-{
-    if (auto* applicationCacheStorage = WebKit::toImpl(page)->corePage()->applicationCacheStorage())
-        applicationCacheStorage->deleteCacheForOrigin(WebCore::SecurityOriginData::fromURL(URL { WebKit::toImpl(origin)->string() }));
-}
-
-void WKBundlePageSetAppCacheMaximumSize(WKBundlePageRef page, uint64_t size)
-{
-    if (auto* applicationCacheStorage = WebKit::toImpl(page)->corePage()->applicationCacheStorage())
-        applicationCacheStorage->setMaximumSize(size);
-}
-
-uint64_t WKBundlePageGetAppCacheUsageForOrigin(WKBundlePageRef page, WKStringRef origin)
-{
-    if (auto* applicationCacheStorage = WebKit::toImpl(page)->corePage()->applicationCacheStorage())
-        return applicationCacheStorage->diskUsageForOrigin(WebCore::SecurityOriginData::fromURL(URL { WebKit::toImpl(origin)->string() }));
-
-    return 0;
-}
-
-WKArrayRef WKBundlePageCopyOriginsWithApplicationCache(WKBundlePageRef page)
-{
-    auto* applicationCacheStorage = WebKit::toImpl(page)->corePage()->applicationCacheStorage();
-    if (!applicationCacheStorage)
-        return { };
-
-    auto origins = applicationCacheStorage->originsWithCache();
-    auto originIdentifiers = WTF::map(origins, [](auto& origin) -> RefPtr<API::Object> {
-        return API::String::create(origin.databaseIdentifier());
-    });
-    return WebKit::toAPI(&API::Array::create(WTFMove(originIdentifiers)).leakRef());
 }
 
 void WKBundlePageSetEventThrottlingBehaviorOverride(WKBundlePageRef page, WKEventThrottlingBehavior* behavior)

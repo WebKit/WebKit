@@ -1985,7 +1985,6 @@ static void runTest(const std::string& inputLine)
 
     sizeWebViewForCurrentTest();
     gTestRunner->setIconDatabaseEnabled(false);
-    gTestRunner->clearAllApplicationCaches();
 
     gTestRunner->clearAllDatabases();
     gTestRunner->clearNotificationPermissionState();

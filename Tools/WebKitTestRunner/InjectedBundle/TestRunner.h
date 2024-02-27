@@ -167,13 +167,6 @@ public:
     JSRetainPtr<JSStringRef> pathToLocalResource(JSStringRef);
     void syncLocalStorage();
 
-    // Application Cache
-    void clearAllApplicationCaches();
-    void clearApplicationCacheForOrigin(JSStringRef origin);
-    void setAppCacheMaximumSize(uint64_t);
-    long long applicationCacheDiskUsageForOrigin(JSStringRef origin);
-    JSValueRef originsWithApplicationCache();
-
     void clearDOMCache(JSStringRef origin);
     void clearDOMCaches();
     bool hasDOMCache(JSStringRef origin);

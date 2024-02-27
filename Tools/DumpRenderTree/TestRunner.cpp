@@ -384,48 +384,6 @@ static JSValueRef callShouldCloseOnWebViewCallback(JSContextRef context, JSObjec
     return JSValueMakeBoolean(context, controller->callShouldCloseOnWebView());
 }
 
-static JSValueRef clearAllApplicationCachesCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-{
-    // Has mac implementation
-    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
-    controller->clearAllApplicationCaches();
-
-    return JSValueMakeUndefined(context);
-}
-
-static JSValueRef clearApplicationCacheForOriginCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-{
-    if (argumentCount < 1)
-        return JSValueMakeUndefined(context);
-
-    auto originURL = adopt(JSValueToStringCopy(context, arguments[0], exception));
-    ASSERT(!*exception);
-
-    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
-    controller->clearApplicationCacheForOrigin(originURL.get());
-    
-    return JSValueMakeUndefined(context);
-}
-
-static JSValueRef applicationCacheDiskUsageForOriginCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-{
-    if (argumentCount < 1)
-        return JSValueMakeUndefined(context);
-
-    auto originURL = adopt(JSValueToStringCopy(context, arguments[0], exception));
-    ASSERT(!*exception);
-    
-    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
-
-    return JSValueMakeNumber(context, controller->applicationCacheDiskUsageForOrigin(originURL.get()));
-}
-
-static JSValueRef originsWithApplicationCacheCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-{
-    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
-    return controller->originsWithApplicationCache(context);
-}
-
 static JSValueRef clearAllDatabasesCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     // Has mac & windows implementation
@@ -760,21 +718,6 @@ static JSValueRef setOnlyAcceptFirstPartyCookiesCallback(JSContextRef context, J
     TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setOnlyAcceptFirstPartyCookies(JSValueToBoolean(context, arguments[0]));
 
-    return JSValueMakeUndefined(context);
-}
-
-static JSValueRef setAppCacheMaximumSizeCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-{
-    // Has mac implementation
-    if (argumentCount < 1)
-        return JSValueMakeUndefined(context);
-
-    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
-
-    double size = JSValueToNumber(context, arguments[0], NULL);
-    if (!std::isnan(size))
-        controller->setAppCacheMaximumSize(static_cast<unsigned long long>(size));
-        
     return JSValueMakeUndefined(context);
 }
 
@@ -2001,11 +1944,8 @@ const JSStaticFunction* TestRunner::staticFunctions()
         { "addUserStyleSheet", addUserStyleSheetCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "apiTestNewWindowDataLoadBaseURL", apiTestNewWindowDataLoadBaseURLCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "apiTestGoToCurrentBackForwardItem", apiTestGoToCurrentBackForwardItemCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "applicationCacheDiskUsageForOrigin", applicationCacheDiskUsageForOriginCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "callShouldCloseOnWebView", callShouldCloseOnWebViewCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "clearAllApplicationCaches", clearAllApplicationCachesCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "clearAllDatabases", clearAllDatabasesCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "clearApplicationCacheForOrigin", clearApplicationCacheForOriginCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "clearBackForwardList", clearBackForwardListCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "clearPersistentUserStyleSheet", clearPersistentUserStyleSheetCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "closeWebInspector", closeWebInspectorCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
@@ -2040,7 +1980,6 @@ const JSStaticFunction* TestRunner::staticFunctions()
         { "execCommand", execCommandCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "findString", findStringCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "generateTestReport", generateTestReportCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "originsWithApplicationCache", originsWithApplicationCacheCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "goBack", goBackCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete }, 
         { "ignoreLegacyWebNotificationPermissionRequests", ignoreLegacyWebNotificationPermissionRequestsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "isGeolocationProviderActive", isGeolocationProviderActiveCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
@@ -2067,7 +2006,6 @@ const JSStaticFunction* TestRunner::staticFunctions()
         { "setAllowsAnySSLCertificate", setAllowsAnySSLCertificateCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setAlwaysAcceptCookies", setAlwaysAcceptCookiesCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setOnlyAcceptFirstPartyCookies", setOnlyAcceptFirstPartyCookiesCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "setAppCacheMaximumSize", setAppCacheMaximumSizeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setAudioResult", setAudioResultCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setAuthenticationPassword", setAuthenticationPasswordCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setAuthenticationUsername", setAuthenticationUsernameCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
