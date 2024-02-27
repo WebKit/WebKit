@@ -100,7 +100,7 @@ public:
 
     IPC::MessageReceiverMap& messageReceiverMap() { return m_messageReceiverMap; }
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     static bool isSystemWebKit();
 #endif
     

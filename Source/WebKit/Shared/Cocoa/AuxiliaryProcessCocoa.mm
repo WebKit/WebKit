@@ -31,12 +31,16 @@
 #import "SharedBufferReference.h"
 #import "WKCrashReporter.h"
 #import "WKProcessExtension.h"
+#import "WKWebView.h"
 #import "XPCServiceEntryPoint.h"
 #import <WebCore/FloatingPointEnvironment.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <mach/task.h>
+#import <objc/runtime.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/NSKeyedUnarchiverSPI.h>
+#import <wtf/FileSystem.h>
+#import <wtf/RetainPtr.h>
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/cocoa/SoftLinking.h>
@@ -288,5 +292,24 @@ void AuxiliaryProcess::consumeAudioComponentRegistrations(const IPC::SharedBuffe
         RELEASE_LOG_ERROR(Process, "Could not apply AudioComponent registrations, err(%ld)", static_cast<long>(err));
 }
 #endif
+
+bool AuxiliaryProcess::isSystemWebKit()
+{
+    static bool isSystemWebKit = []() -> bool {
+        auto imagePath = class_getImageName([WKWebView class]);
+        if (!imagePath)
+            return false;
+
+        RetainPtr path = adoptNS([[NSString alloc] initWithUTF8String:imagePath]);
+#if HAVE(READ_ONLY_SYSTEM_VOLUME)
+        if ([path hasPrefix:@"/Library/Apple/System/"])
+            return true;
+#endif
+        return [path hasPrefix:FileSystem::systemDirectoryPath()];
+    }();
+
+    return isSystemWebKit;
+}
+
 
 } // namespace WebKit

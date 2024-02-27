@@ -131,10 +131,9 @@ NEVER_INLINE NO_RETURN_DUE_TO_CRASH static void crashDueWebKitFrameworkVersionMi
 }
 static void checkFrameworkVersion(xpc_object_t message)
 {
-    auto webKitBundleVersion = String::fromLatin1(xpc_dictionary_get_string(message, "WebKitBundleVersion"));
-    String expectedBundleVersion = [NSBundle bundleForClass:NSClassFromString(@"WKWebView")].infoDictionary[(__bridge NSString *)kCFBundleVersionKey];
-    if (!webKitBundleVersion.isNull() && !expectedBundleVersion.isNull() && webKitBundleVersion != expectedBundleVersion) {
-        auto errorMessage = makeString("WebKit framework version mismatch: ", webKitBundleVersion, " != ", expectedBundleVersion);
+    auto uiProcessWebKitBundleVersion = String::fromLatin1(xpc_dictionary_get_string(message, "WebKitBundleVersion"));
+    if (!uiProcessWebKitBundleVersion.isNull() && uiProcessWebKitBundleVersion != ASCIILiteral::fromLiteralUnsafe(WEBKIT_BUNDLE_VERSION)) {
+        auto errorMessage = makeString("WebKit framework version mismatch: ", uiProcessWebKitBundleVersion, " != ", WEBKIT_BUNDLE_VERSION);
         logAndSetCrashLogMessage(errorMessage.utf8().data());
         crashDueWebKitFrameworkVersionMismatch();
     }

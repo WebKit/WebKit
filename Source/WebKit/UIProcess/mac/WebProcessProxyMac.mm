@@ -29,6 +29,7 @@
 
 #if PLATFORM(MAC)
 
+#import "AuxiliaryProcess.h"
 #import "CodeSigning.h"
 #import "WKFullKeyboardAccessWatcher.h"
 #import <signal.h>
@@ -43,12 +44,7 @@ bool WebProcessProxy::fullKeyboardAccessEnabled()
 
 bool WebProcessProxy::shouldAllowNonValidInjectedCode() const
 {
-    static bool isSystemWebKit = [] {
-        NSBundle *webkit2Bundle = [NSBundle bundleForClass:NSClassFromString(@"WKWebView")];
-        return [webkit2Bundle.bundlePath hasPrefix:@"/System/"];
-    }();
-
-    if (!isSystemWebKit)
+    if (!AuxiliaryProcess::isSystemWebKit())
         return false;
 
     static bool isPlatformBinary = currentProcessIsPlatformBinary();

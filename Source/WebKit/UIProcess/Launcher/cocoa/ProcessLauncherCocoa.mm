@@ -26,6 +26,7 @@
 #import "config.h"
 #import "ProcessLauncher.h"
 
+#import "AuxiliaryProcess.h"
 #import "Logging.h"
 #import "WebPreferencesDefaultValues.h"
 #import "XPCUtilities.h"
@@ -294,7 +295,7 @@ void ProcessLauncher::finishLaunchingProcess(const char* name)
     auto bootstrapMessage = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
-    xpc_dictionary_set_string(bootstrapMessage.get(), "WebKitBundleVersion", [[NSBundle bundleForClass:NSClassFromString(@"WKWebView")].infoDictionary[(__bridge NSString *)kCFBundleVersionKey] UTF8String]);
+    xpc_dictionary_set_string(bootstrapMessage.get(), "WebKitBundleVersion", WEBKIT_BUNDLE_VERSION);
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -342,8 +343,7 @@ void ProcessLauncher::finishLaunchingProcess(const char* name)
         xpc_dictionary_set_bool(bootstrapMessage.get(), "disable-logging", disableLogging);
     }
 
-    bool isWebKitDevelopmentBuild = ![[[[NSBundle bundleForClass:NSClassFromString(@"WKWebView")] bundlePath] stringByDeletingLastPathComponent] hasPrefix:FileSystem::systemDirectoryPath()];
-    if (isWebKitDevelopmentBuild) {
+    if (!AuxiliaryProcess::isSystemWebKit()) {
         xpc_dictionary_set_fd(bootstrapMessage.get(), "stdout", STDOUT_FILENO);
         xpc_dictionary_set_fd(bootstrapMessage.get(), "stderr", STDERR_FILENO);
     }
