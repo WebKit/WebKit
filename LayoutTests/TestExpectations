@@ -5506,11 +5506,6 @@ imported/w3c/web-platform-tests/web-locks/bfcache
 
 webkit.org/b/239533 [ Debug ] editing/inserting/insert-list-user-select-none-crash.html [ Skip ]
 
-# Mismatching line wrapping when -webkit-hyphen is auto.
-webkit.org/b/239550 fast/text/simple-line-hyphens-with-text-align.html [ ImageOnlyFailure ]
-webkit.org/b/239550 fast/text/simple-line-layout-hyphen-limit-after.html [ ImageOnlyFailure ]
-webkit.org/b/239550 fast/text/simple-line-layout-hyphen-limit-before.html [ ImageOnlyFailure ]
-
 # Incorrect expectation (test leads to timeout)
 webkit.org/b/246584 fast/text/scroll-text-overflow-ellipsis.html [ Skip ]
 
