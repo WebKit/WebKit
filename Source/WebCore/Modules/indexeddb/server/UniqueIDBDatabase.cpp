@@ -33,6 +33,8 @@
 #include "IDBGetRecordData.h"
 #include "IDBIterateCursorData.h"
 #include "IDBKeyRangeData.h"
+#include "IDBOpenRequestData.h"
+#include "IDBRequestData.h"
 #include "IDBResultData.h"
 #include "IDBSerialization.h"
 #include "IDBServer.h"
@@ -169,7 +171,7 @@ UniqueIDBDatabaseManager* UniqueIDBDatabase::manager()
     return m_manager.get();
 }
 
-void UniqueIDBDatabase::openDatabaseConnection(IDBConnectionToClient& connection, const IDBRequestData& requestData)
+void UniqueIDBDatabase::openDatabaseConnection(IDBConnectionToClient& connection, const IDBOpenRequestData& requestData)
 {
     LOG(IndexedDB, "UniqueIDBDatabase::openDatabaseConnection");
     ASSERT(!isMainThread());
@@ -415,7 +417,7 @@ bool UniqueIDBDatabase::allConnectionsAreClosedOrClosing() const
     return true;
 }
 
-void UniqueIDBDatabase::handleDelete(IDBConnectionToClient& connection, const IDBRequestData& requestData)
+void UniqueIDBDatabase::handleDelete(IDBConnectionToClient& connection, const IDBOpenRequestData& requestData)
 {
     LOG(IndexedDB, "UniqueIDBDatabase::handleDelete");
 
@@ -860,8 +862,7 @@ void UniqueIDBDatabase::putOrAdd(const IDBRequestData& requestData, const IDBKey
     IDBError error;
     bool usedKeyIsGenerated = false;
     uint64_t keyNumber;
-    ASSERT(requestData.transactionIdentifier());
-    auto transactionIdentifier = *requestData.transactionIdentifier();
+    auto transactionIdentifier = requestData.transactionIdentifier();
     auto generatedKeyResetter = makeScopeExit([this, transactionIdentifier, objectStoreIdentifier, &keyNumber, &usedKeyIsGenerated]() {
         if (usedKeyIsGenerated)
             m_backingStore->revertGeneratedKeyNumber(transactionIdentifier, objectStoreIdentifier, keyNumber);
@@ -918,8 +919,7 @@ void UniqueIDBDatabase::putOrAddAfterSpaceCheck(const IDBRequestData& requestDat
 
     uint64_t keyNumber = isKeyGenerated ? keyData.number() : 0;
     auto objectStoreIdentifier = objectStoreInfo.identifier();
-    ASSERT(requestData.transactionIdentifier());
-    auto transactionIdentifier = *requestData.transactionIdentifier();
+    auto transactionIdentifier = requestData.transactionIdentifier();
     auto generatedKeyResetter = makeScopeExit([this, transactionIdentifier, objectStoreIdentifier, &keyNumber, &isKeyGenerated]() {
         if (isKeyGenerated)
             m_backingStore->revertGeneratedKeyNumber(transactionIdentifier, objectStoreIdentifier, keyNumber);
@@ -969,8 +969,7 @@ void UniqueIDBDatabase::getRecord(const IDBRequestData& requestData, const IDBGe
     IDBGetResult result;
     IDBError error;
 
-    ASSERT(requestData.transactionIdentifier());
-    auto transactionIdentifier = *requestData.transactionIdentifier();
+    auto transactionIdentifier = requestData.transactionIdentifier();
     if (uint64_t indexIdentifier = requestData.indexIdentifier())
         error = m_backingStore->getIndexRecord(transactionIdentifier, requestData.objectStoreIdentifier(), indexIdentifier, requestData.indexRecordType(), getRecordData.keyRangeData, result);
     else
@@ -1002,8 +1001,7 @@ void UniqueIDBDatabase::getAllRecords(const IDBRequestData& requestData, const I
         return callback(IDBError { ExceptionCode::InvalidStateError, "Backing store is closed"_s }, IDBGetAllResult { });
 
     IDBGetAllResult result;
-    ASSERT(requestData.transactionIdentifier());
-    auto error = m_backingStore->getAllRecords(*requestData.transactionIdentifier(), getAllRecordsData, result);
+    auto error = m_backingStore->getAllRecords(requestData.transactionIdentifier(), getAllRecordsData, result);
 
     callback(error, result);
 }
@@ -1031,8 +1029,7 @@ void UniqueIDBDatabase::getCount(const IDBRequestData& requestData, const IDBKey
         return callback(IDBError { ExceptionCode::InvalidStateError, "Backing store is closed"_s }, 0);
 
     uint64_t count = 0;
-    ASSERT(requestData.transactionIdentifier());
-    auto error = m_backingStore->getCount(*requestData.transactionIdentifier(), requestData.objectStoreIdentifier(), requestData.indexIdentifier(), range, count);
+    auto error = m_backingStore->getCount(requestData.transactionIdentifier(), requestData.objectStoreIdentifier(), requestData.indexIdentifier(), range, count);
 
     callback(error, count);
 }
@@ -1059,8 +1056,7 @@ void UniqueIDBDatabase::deleteRecord(const IDBRequestData& requestData, const ID
     if (!m_backingStore)
         return callback(IDBError { ExceptionCode::InvalidStateError, "Backing store is closed"_s });
 
-    ASSERT(requestData.transactionIdentifier());
-    auto error = m_backingStore->deleteRange(*requestData.transactionIdentifier(), requestData.objectStoreIdentifier(), keyRangeData);
+    auto error = m_backingStore->deleteRange(requestData.transactionIdentifier(), requestData.objectStoreIdentifier(), keyRangeData);
 
     callback(error);
 }
@@ -1088,8 +1084,7 @@ void UniqueIDBDatabase::openCursor(const IDBRequestData& requestData, const IDBC
         return callback(IDBError { ExceptionCode::InvalidStateError, "Backing store is closed"_s }, IDBGetResult { });
 
     IDBGetResult result;
-    ASSERT(requestData.transactionIdentifier());
-    auto error = m_backingStore->openCursor(*requestData.transactionIdentifier(), info, result);
+    auto error = m_backingStore->openCursor(requestData.transactionIdentifier(), info, result);
 
     callback(error, result);
 }
@@ -1117,10 +1112,8 @@ void UniqueIDBDatabase::iterateCursor(const IDBRequestData& requestData, const I
         return callback(IDBError { ExceptionCode::InvalidStateError, "Backing store is closed"_s }, IDBGetResult { });
 
     IDBGetResult result;
-    auto transactionIdentifier = requestData.transactionIdentifier();
-    ASSERT(transactionIdentifier);
     auto cursorIdentifier = requestData.cursorIdentifier();
-    auto error = m_backingStore->iterateCursor(*transactionIdentifier, cursorIdentifier, data, result);
+    auto error = m_backingStore->iterateCursor(requestData.transactionIdentifier(), cursorIdentifier, data, result);
 
     callback(error, result);
 }

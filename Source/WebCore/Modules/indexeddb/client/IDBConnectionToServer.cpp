@@ -32,6 +32,7 @@
 #include "IDBGetRecordData.h"
 #include "IDBKeyRangeData.h"
 #include "IDBOpenDBRequest.h"
+#include "IDBOpenRequestData.h"
 #include "IDBRequestData.h"
 #include "IDBResultData.h"
 #include "Logging.h"
@@ -74,7 +75,7 @@ void IDBConnectionToServer::callResultFunctionWithErrorLater(ResultFunction func
     });
 }
 
-void IDBConnectionToServer::deleteDatabase(const IDBRequestData& request)
+void IDBConnectionToServer::deleteDatabase(const IDBOpenRequestData& request)
 {
     LOG(IndexedDB, "IDBConnectionToServer::deleteDatabase - %s", request.databaseIdentifier().loggingString().utf8().data());
     
@@ -90,7 +91,7 @@ void IDBConnectionToServer::didDeleteDatabase(const IDBResultData& resultData)
     m_proxy->didDeleteDatabase(resultData);
 }
 
-void IDBConnectionToServer::openDatabase(const IDBRequestData& request)
+void IDBConnectionToServer::openDatabase(const IDBOpenRequestData& request)
 {
     LOG(IndexedDB, "IDBConnectionToServer::openDatabase - %s (%s) (%" PRIu64 ")", request.databaseIdentifier().loggingString().utf8().data(), request.requestIdentifier().loggingString().utf8().data(), request.requestedVersion());
 
@@ -460,7 +461,7 @@ void IDBConnectionToServer::notifyOpenDBRequestBlocked(const IDBResourceIdentifi
     m_proxy->notifyOpenDBRequestBlocked(requestIdentifier, oldVersion, newVersion);
 }
 
-void IDBConnectionToServer::openDBRequestCancelled(const IDBRequestData& requestData)
+void IDBConnectionToServer::openDBRequestCancelled(const IDBOpenRequestData& requestData)
 {
     LOG(IndexedDB, "IDBConnectionToServer::openDBRequestCancelled");
     ASSERT(isMainThread());

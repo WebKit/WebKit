@@ -27,6 +27,7 @@
 #include "UniqueIDBDatabaseTransaction.h"
 
 #include "IDBIterateCursorData.h"
+#include "IDBRequestData.h"
 #include "IDBResultData.h"
 #include "Logging.h"
 #include "UniqueIDBDatabase.h"
@@ -156,7 +157,7 @@ void UniqueIDBDatabaseTransaction::createObjectStore(const IDBRequestData& reque
     LOG(IndexedDB, "UniqueIDBDatabaseTransaction::createObjectStore");
 
     ASSERT(isVersionChange());
-    ASSERT(requestData.transactionIdentifier() && m_transactionInfo.identifier() == *requestData.transactionIdentifier());
+    ASSERT(m_transactionInfo.identifier() == requestData.transactionIdentifier());
 
     auto* database = this->database();
     if (!database)
@@ -182,7 +183,7 @@ void UniqueIDBDatabaseTransaction::deleteObjectStore(const IDBRequestData& reque
     LOG(IndexedDB, "UniqueIDBDatabaseTransaction::deleteObjectStore");
 
     ASSERT(isVersionChange());
-    ASSERT(requestData.transactionIdentifier() && m_transactionInfo.identifier() == *requestData.transactionIdentifier());
+    ASSERT(m_transactionInfo.identifier() == requestData.transactionIdentifier());
 
     auto* database = this->database();
     if (!database)
@@ -208,7 +209,7 @@ void UniqueIDBDatabaseTransaction::renameObjectStore(const IDBRequestData& reque
     LOG(IndexedDB, "UniqueIDBDatabaseTransaction::renameObjectStore");
 
     ASSERT(isVersionChange());
-    ASSERT(requestData.transactionIdentifier() && m_transactionInfo.identifier() == *requestData.transactionIdentifier());
+    ASSERT(m_transactionInfo.identifier() == requestData.transactionIdentifier());
 
     auto* database = this->database();
     if (!database)
@@ -233,7 +234,7 @@ void UniqueIDBDatabaseTransaction::clearObjectStore(const IDBRequestData& reques
 {
     LOG(IndexedDB, "UniqueIDBDatabaseTransaction::clearObjectStore");
 
-    ASSERT(requestData.transactionIdentifier() && m_transactionInfo.identifier() == *requestData.transactionIdentifier());
+    ASSERT(m_transactionInfo.identifier() == requestData.transactionIdentifier());
 
     auto* database = this->database();
     if (!database)
@@ -259,7 +260,7 @@ void UniqueIDBDatabaseTransaction::createIndex(const IDBRequestData& requestData
     LOG(IndexedDB, "UniqueIDBDatabaseTransaction::createIndex");
 
     ASSERT(isVersionChange());
-    ASSERT(requestData.transactionIdentifier() && m_transactionInfo.identifier() == *requestData.transactionIdentifier());
+    ASSERT(m_transactionInfo.identifier() == requestData.transactionIdentifier());
     
     auto* database = this->database();
     if (!database)
@@ -285,7 +286,7 @@ void UniqueIDBDatabaseTransaction::deleteIndex(const IDBRequestData& requestData
     LOG(IndexedDB, "UniqueIDBDatabaseTransaction::deleteIndex");
 
     ASSERT(isVersionChange());
-    ASSERT(requestData.transactionIdentifier() && m_transactionInfo.identifier() == *requestData.transactionIdentifier());
+    ASSERT(m_transactionInfo.identifier() == requestData.transactionIdentifier());
 
     auto* database = this->database();
     if (!database)
@@ -311,7 +312,7 @@ void UniqueIDBDatabaseTransaction::renameIndex(const IDBRequestData& requestData
     LOG(IndexedDB, "UniqueIDBDatabaseTransaction::renameIndex");
 
     ASSERT(isVersionChange());
-    ASSERT(requestData.transactionIdentifier() && m_transactionInfo.identifier() == *requestData.transactionIdentifier());
+    ASSERT(m_transactionInfo.identifier() == requestData.transactionIdentifier());
 
     auto* database = this->database();
     if (!database)
@@ -338,7 +339,7 @@ void UniqueIDBDatabaseTransaction::putOrAdd(const IDBRequestData& requestData, c
     LOG(IndexedDB, "UniqueIDBDatabaseTransaction::putOrAdd");
 
     ASSERT(!isReadOnly());
-    ASSERT(requestData.transactionIdentifier() && m_transactionInfo.identifier() == *requestData.transactionIdentifier());
+    ASSERT(m_transactionInfo.identifier() == requestData.transactionIdentifier());
     
     auto* database = this->database();
     if (!database)
@@ -363,7 +364,7 @@ void UniqueIDBDatabaseTransaction::getRecord(const IDBRequestData& requestData, 
 {
     LOG(IndexedDB, "UniqueIDBDatabaseTransaction::getRecord");
 
-    ASSERT(requestData.transactionIdentifier() && m_transactionInfo.identifier() == *requestData.transactionIdentifier());
+    ASSERT(m_transactionInfo.identifier() == requestData.transactionIdentifier());
 
     auto* database = this->database();
     if (!database)
@@ -388,7 +389,7 @@ void UniqueIDBDatabaseTransaction::getAllRecords(const IDBRequestData& requestDa
 {
     LOG(IndexedDB, "UniqueIDBDatabaseTransaction::getAllRecords");
 
-    ASSERT(requestData.transactionIdentifier() && m_transactionInfo.identifier() == *requestData.transactionIdentifier());
+    ASSERT(m_transactionInfo.identifier() == requestData.transactionIdentifier());
     
     auto* database = this->database();
     if (!database)
@@ -413,7 +414,7 @@ void UniqueIDBDatabaseTransaction::getCount(const IDBRequestData& requestData, c
 {
     LOG(IndexedDB, "UniqueIDBDatabaseTransaction::getCount");
 
-    ASSERT(requestData.transactionIdentifier() && m_transactionInfo.identifier() == *requestData.transactionIdentifier());
+    ASSERT(m_transactionInfo.identifier() == requestData.transactionIdentifier());
     
     auto* database = this->database();
     if (!database)
@@ -438,7 +439,7 @@ void UniqueIDBDatabaseTransaction::deleteRecord(const IDBRequestData& requestDat
 {
     LOG(IndexedDB, "UniqueIDBDatabaseTransaction::deleteRecord");
 
-    ASSERT(requestData.transactionIdentifier() && m_transactionInfo.identifier() == *requestData.transactionIdentifier());
+    ASSERT(m_transactionInfo.identifier() == requestData.transactionIdentifier());
     
     auto* database = this->database();
     if (!database)
@@ -463,7 +464,7 @@ void UniqueIDBDatabaseTransaction::openCursor(const IDBRequestData& requestData,
 {
     LOG(IndexedDB, "UniqueIDBDatabaseTransaction::openCursor");
 
-    ASSERT(requestData.transactionIdentifier() && m_transactionInfo.identifier() == *requestData.transactionIdentifier());
+    ASSERT(m_transactionInfo.identifier() == requestData.transactionIdentifier());
     
     auto* database = this->database();
     if (!database)
@@ -488,7 +489,7 @@ void UniqueIDBDatabaseTransaction::iterateCursor(const IDBRequestData& requestDa
 {
     LOG(IndexedDB, "UniqueIDBDatabaseTransaction::iterateCursor");
 
-    ASSERT(requestData.transactionIdentifier() && m_transactionInfo.identifier() == *requestData.transactionIdentifier());
+    ASSERT(m_transactionInfo.identifier() == requestData.transactionIdentifier());
 
     auto* database = this->database();
     if (!database)

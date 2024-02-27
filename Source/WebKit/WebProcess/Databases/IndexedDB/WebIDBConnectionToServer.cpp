@@ -80,12 +80,12 @@ IDBClient::IDBConnectionToServer& WebIDBConnectionToServer::coreConnectionToServ
     return m_connectionToServer;
 }
 
-void WebIDBConnectionToServer::deleteDatabase(const IDBRequestData& requestData)
+void WebIDBConnectionToServer::deleteDatabase(const IDBOpenRequestData& requestData)
 {
     send(Messages::NetworkStorageManager::DeleteDatabase(requestData));
 }
 
-void WebIDBConnectionToServer::openDatabase(const IDBRequestData& requestData)
+void WebIDBConnectionToServer::openDatabase(const IDBOpenRequestData& requestData)
 {
     send(Messages::NetworkStorageManager::OpenDatabase(requestData));
 }
@@ -200,7 +200,7 @@ void WebIDBConnectionToServer::didFireVersionChangeEvent(uint64_t databaseConnec
     send(Messages::NetworkStorageManager::DidFireVersionChangeEvent(databaseConnectionIdentifier, requestIdentifier, connectionClosed));
 }
 
-void WebIDBConnectionToServer::openDBRequestCancelled(const IDBRequestData& requestData)
+void WebIDBConnectionToServer::openDBRequestCancelled(const IDBOpenRequestData& requestData)
 {
     send(Messages::NetworkStorageManager::OpenDBRequestCancelled(requestData));
 }

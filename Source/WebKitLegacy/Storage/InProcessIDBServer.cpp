@@ -103,7 +103,7 @@ IDBServer::IDBConnectionToClient& InProcessIDBServer::connectionToClient() const
     return *m_connectionToClient;
 }
 
-void InProcessIDBServer::deleteDatabase(const WebCore::IDBRequestData& requestData)
+void InProcessIDBServer::deleteDatabase(const WebCore::IDBOpenRequestData& requestData)
 {
     dispatchTask([this, protectedThis = Ref { *this }, requestData = requestData.isolatedCopy()] {
         Locker locker { m_serverLock };
@@ -118,7 +118,7 @@ void InProcessIDBServer::didDeleteDatabase(const IDBResultData& resultData)
     });
 }
 
-void InProcessIDBServer::openDatabase(const WebCore::IDBRequestData& requestData)
+void InProcessIDBServer::openDatabase(const WebCore::IDBOpenRequestData& requestData)
 {
     dispatchTask([this, protectedThis = Ref { *this }, requestData = requestData.isolatedCopy()] {
         Locker locker { m_serverLock };
@@ -452,7 +452,7 @@ void InProcessIDBServer::didFireVersionChangeEvent(uint64_t databaseConnectionId
     });
 }
 
-void InProcessIDBServer::openDBRequestCancelled(const WebCore::IDBRequestData& requestData)
+void InProcessIDBServer::openDBRequestCancelled(const WebCore::IDBOpenRequestData& requestData)
 {
     dispatchTask([this, protectedThis = Ref { *this }, requestData = requestData.isolatedCopy()] {
         Locker locker { m_serverLock };

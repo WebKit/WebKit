@@ -35,6 +35,7 @@ class IDBCursorInfo;
 class IDBIndexInfo;
 class IDBKeyData;
 class IDBObjectStoreInfo;
+class IDBOpenRequestData;
 class IDBRequestData;
 class IDBTransactionInfo;
 class IDBValue;
@@ -59,8 +60,8 @@ public:
     virtual ~IDBConnectionToServerDelegate() = default;
 
     virtual IDBConnectionIdentifier identifier() const = 0;
-    virtual void deleteDatabase(const IDBRequestData&) = 0;
-    virtual void openDatabase(const IDBRequestData&) = 0;
+    virtual void deleteDatabase(const IDBOpenRequestData&) = 0;
+    virtual void openDatabase(const IDBOpenRequestData&) = 0;
     virtual void abortTransaction(const IDBResourceIdentifier&) = 0;
     virtual void commitTransaction(const IDBResourceIdentifier&, uint64_t pendingRequestCount) = 0;
     virtual void didFinishHandlingVersionChangeTransaction(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier&) = 0;
@@ -84,7 +85,7 @@ public:
     virtual void databaseConnectionClosed(uint64_t databaseConnectionIdentifier) = 0;
     virtual void abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const std::optional<IDBResourceIdentifier>& transactionIdentifier) = 0;
     virtual void didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier, const IndexedDB::ConnectionClosedOnBehalfOfServer) = 0;
-    virtual void openDBRequestCancelled(const IDBRequestData&) = 0;
+    virtual void openDBRequestCancelled(const IDBOpenRequestData&) = 0;
 
     virtual void getAllDatabaseNamesAndVersions(const IDBResourceIdentifier&, const ClientOrigin&) = 0;
 };

@@ -131,7 +131,7 @@ std::unique_ptr<IDBBackingStore> IDBServer::createBackingStore(const IDBDatabase
     return makeUnique<SQLiteIDBBackingStore>(identifier, upgradedDatabaseDirectory(identifier));
 }
 
-void IDBServer::openDatabase(const IDBRequestData& requestData)
+void IDBServer::openDatabase(const IDBOpenRequestData& requestData)
 {
     LOG(IndexedDB, "IDBServer::openDatabase");
     ASSERT(!isMainThread());
@@ -149,7 +149,7 @@ void IDBServer::openDatabase(const IDBRequestData& requestData)
     uniqueIDBDatabase.openDatabaseConnection(*connection, requestData);
 }
 
-void IDBServer::deleteDatabase(const IDBRequestData& requestData)
+void IDBServer::deleteDatabase(const IDBOpenRequestData& requestData)
 {
     LOG(IndexedDB, "IDBServer::deleteDatabase - %s", requestData.databaseIdentifier().loggingString().utf8().data());
     ASSERT(!isMainThread());
@@ -189,11 +189,7 @@ void IDBServer::abortTransaction(const IDBResourceIdentifier& transactionIdentif
 
 UniqueIDBDatabaseTransaction* IDBServer::idbTransaction(const IDBRequestData& requestData) const
 {
-    auto transactionIdentifier = requestData.transactionIdentifier();
-    if (!transactionIdentifier)
-        return nullptr;
-
-    return m_transactions.get(*transactionIdentifier);
+    return m_transactions.get(requestData.transactionIdentifier());
 }
 
 void IDBServer::createObjectStore(const IDBRequestData& requestData, const IDBObjectStoreInfo& info)
@@ -486,7 +482,7 @@ void IDBServer::didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier,
         databaseConnection->didFireVersionChangeEvent(requestIdentifier, connectionClosed);
 }
 
-void IDBServer::openDBRequestCancelled(const IDBRequestData& requestData)
+void IDBServer::openDBRequestCancelled(const IDBOpenRequestData& requestData)
 {
     LOG(IndexedDB, "IDBServer::openDBRequestCancelled");
     ASSERT(!isMainThread());

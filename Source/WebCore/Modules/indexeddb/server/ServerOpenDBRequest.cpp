@@ -31,12 +31,12 @@
 namespace WebCore {
 namespace IDBServer {
 
-Ref<ServerOpenDBRequest> ServerOpenDBRequest::create(IDBConnectionToClient& connection, const IDBRequestData& requestData)
+Ref<ServerOpenDBRequest> ServerOpenDBRequest::create(IDBConnectionToClient& connection, const IDBOpenRequestData& requestData)
 {
     return adoptRef(*new ServerOpenDBRequest(connection, requestData));
 }
 
-ServerOpenDBRequest::ServerOpenDBRequest(IDBConnectionToClient& connection, const IDBRequestData& requestData)
+ServerOpenDBRequest::ServerOpenDBRequest(IDBConnectionToClient& connection, const IDBOpenRequestData& requestData)
     : m_connection(connection)
     , m_requestData(requestData)
 {

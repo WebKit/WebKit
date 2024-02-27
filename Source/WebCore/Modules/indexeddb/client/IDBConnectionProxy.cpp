@@ -34,6 +34,7 @@
 #include "IDBIterateCursorData.h"
 #include "IDBKeyRangeData.h"
 #include "IDBOpenDBRequest.h"
+#include "IDBOpenRequestData.h"
 #include "IDBRequestData.h"
 #include "IDBResultData.h"
 #include "ScriptExecutionContext.h"
@@ -74,7 +75,7 @@ Ref<IDBOpenDBRequest> IDBConnectionProxy::openDatabase(ScriptExecutionContext& c
         m_openDBRequestMap.set(request->resourceIdentifier(), request.get());
     }
 
-    callConnectionOnMainThread(&IDBConnectionToServer::openDatabase, IDBRequestData(*this, *request));
+    callConnectionOnMainThread(&IDBConnectionToServer::openDatabase, IDBOpenRequestData(*this, *request));
 
     return request.releaseNonNull();
 }
@@ -90,7 +91,7 @@ Ref<IDBOpenDBRequest> IDBConnectionProxy::deleteDatabase(ScriptExecutionContext&
         m_openDBRequestMap.set(request->resourceIdentifier(), request.get());
     }
 
-    callConnectionOnMainThread(&IDBConnectionToServer::deleteDatabase, IDBRequestData(*this, *request));
+    callConnectionOnMainThread(&IDBConnectionToServer::deleteDatabase, IDBOpenRequestData(*this, *request));
 
     return request.releaseNonNull();
 }
@@ -315,7 +316,7 @@ void IDBConnectionProxy::notifyOpenDBRequestBlocked(const IDBResourceIdentifier&
     request->performCallbackOnOriginThread(*request, &IDBOpenDBRequest::requestBlocked, oldVersion, newVersion);
 }
 
-void IDBConnectionProxy::openDBRequestCancelled(const IDBRequestData& requestData)
+void IDBConnectionProxy::openDBRequestCancelled(const IDBOpenRequestData& requestData)
 {
     callConnectionOnMainThread(&IDBConnectionToServer::openDBRequestCancelled, requestData);
 }

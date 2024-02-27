@@ -39,6 +39,7 @@ class IDBCursorInfo;
 class IDBDatabase;
 class IDBError;
 class IDBObjectStoreInfo;
+class IDBOpenRequestData;
 class IDBResultData;
 class IDBValue;
 class SecurityOrigin;
@@ -60,10 +61,10 @@ public:
 
     IDBConnectionProxy& proxy();
 
-    void deleteDatabase(const IDBRequestData&);
+    void deleteDatabase(const IDBOpenRequestData&);
     WEBCORE_EXPORT void didDeleteDatabase(const IDBResultData&);
 
-    void openDatabase(const IDBRequestData&);
+    void openDatabase(const IDBOpenRequestData&);
     WEBCORE_EXPORT void didOpenDatabase(const IDBResultData&);
 
     void createObjectStore(const IDBRequestData&, const IDBObjectStoreInfo&);
@@ -126,7 +127,7 @@ public:
     WEBCORE_EXPORT void connectionToServerLost(const IDBError&);
 
     WEBCORE_EXPORT void notifyOpenDBRequestBlocked(const IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion);
-    void openDBRequestCancelled(const IDBRequestData&);
+    void openDBRequestCancelled(const IDBOpenRequestData&);
 
     void establishTransaction(uint64_t databaseConnectionIdentifier, const IDBTransactionInfo&);
 

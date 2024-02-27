@@ -195,8 +195,8 @@ private:
 class EmptyDatabaseProvider final : public DatabaseProvider {
     struct EmptyIDBConnectionToServerDeletegate final : public IDBClient::IDBConnectionToServerDelegate {
         IDBConnectionIdentifier identifier() const final { return { }; }
-        void deleteDatabase(const IDBRequestData&) final { }
-        void openDatabase(const IDBRequestData&) final { }
+        void deleteDatabase(const IDBOpenRequestData&) final { }
+        void openDatabase(const IDBOpenRequestData&) final { }
         void abortTransaction(const IDBResourceIdentifier&) final { }
         void commitTransaction(const IDBResourceIdentifier&, uint64_t) final { }
         void didFinishHandlingVersionChangeTransaction(uint64_t, const IDBResourceIdentifier&) final { }
@@ -219,7 +219,7 @@ class EmptyDatabaseProvider final : public DatabaseProvider {
         void databaseConnectionClosed(uint64_t) final { }
         void abortOpenAndUpgradeNeeded(uint64_t, const std::optional<IDBResourceIdentifier>&) final { }
         void didFireVersionChangeEvent(uint64_t, const IDBResourceIdentifier&, const IndexedDB::ConnectionClosedOnBehalfOfServer) final { }
-        void openDBRequestCancelled(const IDBRequestData&) final { }
+        void openDBRequestCancelled(const IDBOpenRequestData&) final { }
         void getAllDatabaseNamesAndVersions(const IDBResourceIdentifier&, const ClientOrigin&) final { }
         ~EmptyIDBConnectionToServerDeletegate() { }
     };

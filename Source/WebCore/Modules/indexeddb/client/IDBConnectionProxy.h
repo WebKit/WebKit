@@ -46,6 +46,7 @@ class IDBDatabase;
 class IDBDatabaseIdentifier;
 class IDBError;
 class IDBOpenDBRequest;
+class IDBOpenRequestData;
 class IDBResultData;
 class IDBTransaction;
 class ScriptExecutionContext;
@@ -88,7 +89,7 @@ public:
     void didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier, const IndexedDB::ConnectionClosedOnBehalfOfServer = IndexedDB::ConnectionClosedOnBehalfOfServer::No);
 
     void notifyOpenDBRequestBlocked(const IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion);
-    void openDBRequestCancelled(const IDBRequestData&);
+    void openDBRequestCancelled(const IDBOpenRequestData&);
 
     void establishTransaction(IDBTransaction&);
     void commitTransaction(IDBTransaction&, uint64_t pendingRequestCount);

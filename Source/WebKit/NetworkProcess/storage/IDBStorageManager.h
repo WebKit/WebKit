@@ -60,9 +60,9 @@ public:
     void stopDatabaseActivitiesForSuspend();
     void handleLowMemoryWarning();
 
-    void openDatabase(WebCore::IDBServer::IDBConnectionToClient&, const WebCore::IDBRequestData&);
-    void openDBRequestCancelled(const WebCore::IDBRequestData&);
-    void deleteDatabase(WebCore::IDBServer::IDBConnectionToClient&, const WebCore::IDBRequestData&);
+    void openDatabase(WebCore::IDBServer::IDBConnectionToClient&, const WebCore::IDBOpenRequestData&);
+    void openDBRequestCancelled(const WebCore::IDBOpenRequestData&);
+    void deleteDatabase(WebCore::IDBServer::IDBConnectionToClient&, const WebCore::IDBOpenRequestData&);
     Vector<WebCore::IDBDatabaseNameAndVersion> getAllDatabaseNamesAndVersions();
 
 private:

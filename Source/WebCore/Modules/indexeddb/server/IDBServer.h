@@ -57,8 +57,8 @@ public:
     WEBCORE_EXPORT void unregisterConnection(IDBConnectionToClient&);
 
     // Operations requested by the client.
-    WEBCORE_EXPORT void openDatabase(const IDBRequestData&);
-    WEBCORE_EXPORT void deleteDatabase(const IDBRequestData&);
+    WEBCORE_EXPORT void openDatabase(const IDBOpenRequestData&);
+    WEBCORE_EXPORT void deleteDatabase(const IDBOpenRequestData&);
     WEBCORE_EXPORT void abortTransaction(const IDBResourceIdentifier&);
     WEBCORE_EXPORT void commitTransaction(const IDBResourceIdentifier&, uint64_t pendingRequestCount);
     WEBCORE_EXPORT void didFinishHandlingVersionChangeTransaction(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier&);
@@ -82,7 +82,7 @@ public:
     WEBCORE_EXPORT void databaseConnectionClosed(uint64_t databaseConnectionIdentifier);
     WEBCORE_EXPORT void abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const std::optional<IDBResourceIdentifier>& transactionIdentifier);
     WEBCORE_EXPORT void didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier, IndexedDB::ConnectionClosedOnBehalfOfServer);
-    WEBCORE_EXPORT void openDBRequestCancelled(const IDBRequestData&);
+    WEBCORE_EXPORT void openDBRequestCancelled(const IDBOpenRequestData&);
 
     WEBCORE_EXPORT void getAllDatabaseNamesAndVersions(IDBConnectionIdentifier, const IDBResourceIdentifier&, const ClientOrigin&);
 

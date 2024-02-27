@@ -26,7 +26,7 @@
 #pragma once
 
 #include "IDBConnectionToClient.h"
-#include "IDBRequestData.h"
+#include "IDBOpenRequestData.h"
 #include <wtf/HashSet.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -39,10 +39,10 @@ namespace IDBServer {
 
 class ServerOpenDBRequest : public RefCounted<ServerOpenDBRequest> {
 public:
-    static Ref<ServerOpenDBRequest> create(IDBConnectionToClient&, const IDBRequestData&);
+    static Ref<ServerOpenDBRequest> create(IDBConnectionToClient&, const IDBOpenRequestData&);
 
     IDBConnectionToClient& connection() { return m_connection; }
-    const IDBRequestData& requestData() const { return m_requestData; }
+    const IDBOpenRequestData& requestData() const { return m_requestData; }
 
     bool isOpenRequest() const;
     bool isDeleteRequest() const;
@@ -59,10 +59,10 @@ public:
 
 
 private:
-    ServerOpenDBRequest(IDBConnectionToClient&, const IDBRequestData&);
+    ServerOpenDBRequest(IDBConnectionToClient&, const IDBOpenRequestData&);
 
     Ref<IDBConnectionToClient> m_connection;
-    IDBRequestData m_requestData;
+    IDBOpenRequestData m_requestData;
 
     bool m_notifiedBlocked { false };
 

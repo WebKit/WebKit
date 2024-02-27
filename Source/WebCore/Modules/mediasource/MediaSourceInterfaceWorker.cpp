@@ -31,6 +31,7 @@
 #include "ManagedMediaSource.h"
 #include "MediaSource.h"
 #include "MediaSourceHandle.h"
+#include "MediaSourcePrivate.h"
 #include "MediaSourcePrivateClient.h"
 #include "PlatformTimeRanges.h"
 #include "TimeRanges.h"

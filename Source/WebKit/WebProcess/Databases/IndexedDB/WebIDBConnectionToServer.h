@@ -52,8 +52,8 @@ private:
     uint64_t messageSenderDestinationID() const final { return 0; }
 
     // IDBConnectionToServerDelegate
-    void deleteDatabase(const WebCore::IDBRequestData&) final;
-    void openDatabase(const WebCore::IDBRequestData&) final;
+    void deleteDatabase(const WebCore::IDBOpenRequestData&) final;
+    void openDatabase(const WebCore::IDBOpenRequestData&) final;
     void abortTransaction(const WebCore::IDBResourceIdentifier&) final;
     void commitTransaction(const WebCore::IDBResourceIdentifier&, uint64_t pendingRequestCount) final;
     void didFinishHandlingVersionChangeTransaction(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier&) final;
@@ -76,7 +76,7 @@ private:
     void databaseConnectionClosed(uint64_t databaseConnectionIdentifier) final;
     void abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const std::optional<WebCore::IDBResourceIdentifier>& transactionIdentifier) final;
     void didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& requestIdentifier, const WebCore::IndexedDB::ConnectionClosedOnBehalfOfServer) final;
-    void openDBRequestCancelled(const WebCore::IDBRequestData&) final;
+    void openDBRequestCancelled(const WebCore::IDBOpenRequestData&) final;
 
     void getAllDatabaseNamesAndVersions(const WebCore::IDBResourceIdentifier&, const WebCore::ClientOrigin&) final;
 

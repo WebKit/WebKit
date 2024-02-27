@@ -51,9 +51,9 @@
     RemoveItem(WebKit::StorageAreaIdentifier identifier, WebKit::StorageAreaImplIdentifier implIdentifier, String key, String urlString) -> (bool hasError, HashMap<String, String> allItems)
     Clear(WebKit::StorageAreaIdentifier identifier, WebKit::StorageAreaImplIdentifier implIdentifier, String urlString) -> ()
 
-    OpenDatabase(WebCore::IDBRequestData requestData)
-    OpenDBRequestCancelled(WebCore::IDBRequestData requestData)
-    DeleteDatabase(WebCore::IDBRequestData requestData)
+    OpenDatabase(WebCore::IDBOpenRequestData requestData)
+    OpenDBRequestCancelled(WebCore::IDBOpenRequestData requestData)
+    DeleteDatabase(WebCore::IDBOpenRequestData requestData)
     EstablishTransaction(uint64_t databaseConnectionIdentifier, WebCore::IDBTransactionInfo info)
     DatabaseConnectionPendingClose(uint64_t databaseConnectionIdentifier)
     DatabaseConnectionClosed(uint64_t databaseConnectionIdentifier)

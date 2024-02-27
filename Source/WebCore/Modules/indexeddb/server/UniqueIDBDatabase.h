@@ -72,7 +72,7 @@ public:
     UniqueIDBDatabase(UniqueIDBDatabase&) = delete;
     WEBCORE_EXPORT ~UniqueIDBDatabase();
 
-    WEBCORE_EXPORT void openDatabaseConnection(IDBConnectionToClient&, const IDBRequestData&);
+    WEBCORE_EXPORT void openDatabaseConnection(IDBConnectionToClient&, const IDBOpenRequestData&);
 
     const IDBDatabaseInfo& info() const;
     UniqueIDBDatabaseManager* manager();
@@ -108,7 +108,7 @@ public:
 
     void enqueueTransaction(Ref<UniqueIDBDatabaseTransaction>&&);
 
-    WEBCORE_EXPORT void handleDelete(IDBConnectionToClient&, const IDBRequestData&);
+    WEBCORE_EXPORT void handleDelete(IDBConnectionToClient&, const IDBOpenRequestData&);
     WEBCORE_EXPORT void immediateClose();
 
     bool hasActiveTransactions() const;

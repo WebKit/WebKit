@@ -61,6 +61,7 @@ class IDBCursorInfo;
 class IDBKeyData;
 class IDBIndexInfo;
 class IDBObjectStoreInfo;
+class IDBOpenRequestData;
 class IDBRequestData;
 class IDBTransactionInfo;
 class IDBValue;
@@ -180,9 +181,9 @@ private:
     void clear(IPC::Connection&, StorageAreaIdentifier, StorageAreaImplIdentifier, String&& urlString, CompletionHandler<void()>&&);
 
     // Message handlers for IndexedDB.
-    void openDatabase(IPC::Connection&, const WebCore::IDBRequestData&);
-    void openDBRequestCancelled(const WebCore::IDBRequestData&);
-    void deleteDatabase(IPC::Connection&, const WebCore::IDBRequestData&);
+    void openDatabase(IPC::Connection&, const WebCore::IDBOpenRequestData&);
+    void openDBRequestCancelled(const WebCore::IDBOpenRequestData&);
+    void deleteDatabase(IPC::Connection&, const WebCore::IDBOpenRequestData&);
     void establishTransaction(uint64_t databaseConnectionIdentifier, const WebCore::IDBTransactionInfo&);
     void databaseConnectionPendingClose(uint64_t databaseConnectionIdentifier);
     void databaseConnectionClosed(uint64_t databaseConnectionIdentifier);

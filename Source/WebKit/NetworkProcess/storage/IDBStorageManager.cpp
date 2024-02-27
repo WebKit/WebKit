@@ -189,13 +189,13 @@ WebCore::IDBServer::UniqueIDBDatabase& IDBStorageManager::getOrCreateUniqueIDBDa
     return *addResult.iterator->value;
 }
 
-void IDBStorageManager::openDatabase(WebCore::IDBServer::IDBConnectionToClient& connectionToClient, const WebCore::IDBRequestData& requestData)
+void IDBStorageManager::openDatabase(WebCore::IDBServer::IDBConnectionToClient& connectionToClient, const WebCore::IDBOpenRequestData& requestData)
 {
     auto& database = getOrCreateUniqueIDBDatabase(requestData.databaseIdentifier());
     database.openDatabaseConnection(connectionToClient, requestData);
 }
 
-void IDBStorageManager::deleteDatabase(WebCore::IDBServer::IDBConnectionToClient& connectionToClient, const WebCore::IDBRequestData& requestData)
+void IDBStorageManager::deleteDatabase(WebCore::IDBServer::IDBConnectionToClient& connectionToClient, const WebCore::IDBOpenRequestData& requestData)
 {
     auto& database = getOrCreateUniqueIDBDatabase(requestData.databaseIdentifier());
     database.handleDelete(connectionToClient, requestData);
@@ -232,7 +232,7 @@ Vector<WebCore::IDBDatabaseNameAndVersion> IDBStorageManager::getAllDatabaseName
     return result;
 }
 
-void IDBStorageManager::openDBRequestCancelled(const WebCore::IDBRequestData& requestData)
+void IDBStorageManager::openDBRequestCancelled(const WebCore::IDBOpenRequestData& requestData)
 {
     auto* database = m_databases.get(requestData.databaseIdentifier());
     if (!database)
