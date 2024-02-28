@@ -834,6 +834,26 @@ void PlatformMediaSessionManager::setMediaCapabilityGrantsEnabled(bool mediaCapa
 }
 #endif
 
+WeakPtr<PlatformMediaSession> PlatformMediaSessionManager::bestEligibleSessionForRemoteControls(const Function<bool(const PlatformMediaSession&)>& filterFunction, PlatformMediaSession::PlaybackControlsPurpose purpose)
+{
+    Vector<WeakPtr<PlatformMediaSession>> eligibleAudioVideoSessions;
+    Vector<WeakPtr<PlatformMediaSession>> eligibleWebAudioSessions;
+    forEachMatchingSession(filterFunction, [&](auto& session) {
+        if (eligibleAudioVideoSessions.isEmpty() && session.presentationType() == PlatformMediaSession::MediaType::WebAudio)
+            eligibleWebAudioSessions.append(session);
+        else
+            eligibleAudioVideoSessions.append(session);
+    });
+
+    if (eligibleAudioVideoSessions.isEmpty()) {
+        if (eligibleWebAudioSessions.isEmpty())
+            return nullptr;
+        return eligibleWebAudioSessions[0]->selectBestMediaSession(eligibleWebAudioSessions, purpose);
+    }
+
+    return eligibleAudioVideoSessions[0]->selectBestMediaSession(eligibleAudioVideoSessions, purpose);
+}
+
 #if !RELEASE_LOG_DISABLED
 WTFLogChannel& PlatformMediaSessionManager::logChannel() const
 {

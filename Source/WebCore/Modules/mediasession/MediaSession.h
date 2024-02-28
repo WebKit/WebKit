@@ -49,6 +49,7 @@ class MediaSessionCoordinator;
 class MediaSessionCoordinatorPrivate;
 class Navigator;
 template<typename> class DOMPromiseDeferred;
+struct NowPlayingInfo;
 
 class MediaSession : public RefCounted<MediaSession>, public ActiveDOMObject, public CanMakeWeakPtr<MediaSession> {
     WTF_MAKE_FAST_ALLOCATED;
@@ -119,6 +120,8 @@ public:
     void removeObserver(Observer&);
 
     RefPtr<HTMLMediaElement> activeMediaElement() const;
+
+    void updateNowPlayingInfo(NowPlayingInfo&);
 
 private:
     explicit MediaSession(Navigator&);

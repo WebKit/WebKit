@@ -439,7 +439,17 @@ bool PlatformMediaSession::shouldOverridePauseDuringRouteChange() const
 
 std::optional<NowPlayingInfo> PlatformMediaSession::nowPlayingInfo() const
 {
-    return { };
+    return client().nowPlayingInfo();
+}
+
+bool PlatformMediaSession::isNowPlayingEligible() const
+{
+    return client().isNowPlayingEligible();
+};
+
+WeakPtr<PlatformMediaSession> PlatformMediaSession::selectBestMediaSession(const Vector<WeakPtr<PlatformMediaSession>>& sessions, PlaybackControlsPurpose purpose)
+{
+    return client().selectBestMediaSession(sessions, purpose);
 }
 
 #if !RELEASE_LOG_DISABLED
@@ -452,6 +462,11 @@ WTFLogChannel& PlatformMediaSession::logChannel() const
 MediaTime PlatformMediaSessionClient::mediaSessionDuration() const
 {
     return MediaTime::invalidTime();
+}
+
+std::optional<NowPlayingInfo> PlatformMediaSessionClient::nowPlayingInfo() const
+{
+    return { };
 }
 
 }

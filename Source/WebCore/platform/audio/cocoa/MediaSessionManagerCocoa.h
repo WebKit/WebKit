@@ -97,7 +97,7 @@ protected:
 
     virtual void providePresentingApplicationPIDIfNecessary() { }
 
-    PlatformMediaSession* nowPlayingEligibleSession();
+    WeakPtr<PlatformMediaSession> nowPlayingEligibleSession();
 
     void addSupportedCommand(PlatformMediaSession::RemoteControlCommandType) final;
     void removeSupportedCommand(PlatformMediaSession::RemoteControlCommandType) final;

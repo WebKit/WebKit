@@ -661,18 +661,33 @@ std::optional<MediaPlayerIdentifier> HTMLMediaElement::playerIdentifier() const
 
 RefPtr<HTMLMediaElement> HTMLMediaElement::bestMediaElementForRemoteControls(MediaElementSession::PlaybackControlsPurpose purpose, const Document* document)
 {
-    Vector<MediaElementSessionInfo> candidateSessions;
-    bool atLeastOneNonCandidateMayBeConfusedForMainContent = false;
-    PlatformMediaSessionManager::sharedManager().forEachMatchingSession([document](auto& session) {
+    auto selectedSession = PlatformMediaSessionManager::sharedManager().bestEligibleSessionForRemoteControls([&document] (auto& session) {
         auto* mediaElementSession = dynamicDowncast<MediaElementSession>(session);
         return mediaElementSession && (!document || &mediaElementSession->element().document() == document);
-    }, [&](auto& session) {
-        auto mediaElementSessionInfo = mediaElementSessionInfoForSession(downcast<MediaElementSession>(session), purpose);
+    }, purpose);
+
+    return selectedSession ? RefPtr { &downcast<MediaElementSession>(selectedSession.get())->element() } : nullptr;
+}
+
+std::optional<NowPlayingInfo> HTMLMediaElement::nowPlayingInfo() const
+{
+    return m_mediaSession->computeNowPlayingInfo();
+}
+
+WeakPtr<PlatformMediaSession> HTMLMediaElement::selectBestMediaSession(const Vector<WeakPtr<PlatformMediaSession>>& sessions, PlatformMediaSession::PlaybackControlsPurpose purpose)
+{
+    if (!sessions.size())
+        return nullptr;
+
+    Vector<MediaElementSessionInfo> candidateSessions;
+    bool atLeastOneNonCandidateMayBeConfusedForMainContent = false;
+    for (auto& session : sessions) {
+        auto mediaElementSessionInfo = mediaElementSessionInfoForSession(*downcast<MediaElementSession>(session.get()), purpose);
         if (mediaElementSessionInfo.canShowControlsManager)
             candidateSessions.append(mediaElementSessionInfo);
         else if (mediaSessionMayBeConfusedWithMainContent(mediaElementSessionInfo, purpose))
             atLeastOneNonCandidateMayBeConfusedForMainContent = true;
-    });
+    }
 
     if (!candidateSessions.size())
         return nullptr;
@@ -682,7 +697,7 @@ RefPtr<HTMLMediaElement> HTMLMediaElement::bestMediaElementForRemoteControls(Med
     if (!strongestSessionCandidate.isVisibleInViewportOrFullscreen && !strongestSessionCandidate.isPlayingAudio && atLeastOneNonCandidateMayBeConfusedForMainContent)
         return nullptr;
 
-    return &strongestSessionCandidate.session->element();
+    return strongestSessionCandidate.session.get();
 }
 
 void HTMLMediaElement::registerWithDocument(Document& document)

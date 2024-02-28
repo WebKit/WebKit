@@ -145,7 +145,6 @@ public:
     bool wantsToObserveViewportVisibilityForMediaControls() const;
     bool wantsToObserveViewportVisibilityForAutoplay() const;
 
-    enum class PlaybackControlsPurpose { ControlsManager, NowPlaying, MediaSession };
     bool canShowControlsManager(PlaybackControlsPurpose) const;
     bool isLargeEnoughForMainContent(MediaSessionMainContentPurpose) const;
     bool isLongEnoughForMainContent() const final;
@@ -161,7 +160,7 @@ public:
             || type == MediaType::VideoAudio;
     }
 
-    std::optional<NowPlayingInfo> nowPlayingInfo() const final;
+    std::optional<NowPlayingInfo> computeNowPlayingInfo() const;
 
     WEBCORE_EXPORT void updateMediaUsageIfChanged() final;
     std::optional<MediaUsageInfo> mediaUsageInfo() const { return m_mediaUsageInfo; }
@@ -180,6 +179,8 @@ public:
     void actionHandlersChanged();
 
     MediaSession* mediaSession() const;
+
+    bool hasNowPlayingInfo() const;
 
 private:
 

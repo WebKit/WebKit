@@ -189,6 +189,8 @@ public:
 
     bool isApplicationInBackground() const { return m_isApplicationInBackground; }
 
+    WeakPtr<PlatformMediaSession> bestEligibleSessionForRemoteControls(const Function<bool(const PlatformMediaSession&)>&, PlatformMediaSession::PlaybackControlsPurpose);
+
 protected:
     friend class PlatformMediaSession;
     static std::unique_ptr<PlatformMediaSessionManager> create();
