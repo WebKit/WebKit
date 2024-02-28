@@ -823,6 +823,13 @@ String parentPath(const String& path)
     return fromStdFileSystemPath(toStdFileSystemPath(path).parent_path());
 }
 
+String createTemporaryFile(StringView prefix, StringView suffix)
+{
+    auto [path, handle] = openTemporaryFile(prefix, suffix);
+    closeFile(handle);
+    return path;
+}
+
 #if !PLATFORM(PLAYSTATION)
 String realPath(const String& path)
 {

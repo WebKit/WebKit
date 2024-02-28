@@ -5253,8 +5253,7 @@ String Internals::createTemporaryFile(const String& name, const String& contents
     if (name.isEmpty())
         return nullString();
 
-    auto file = FileSystem::invalidPlatformFileHandle;
-    auto path = FileSystem::openTemporaryFile(makeString("WebCoreTesting-", name), file);
+    auto [path, file] = FileSystem::openTemporaryFile(makeString("WebCoreTesting-", name));
     if (!FileSystem::isHandleValid(file))
         return nullString();
 

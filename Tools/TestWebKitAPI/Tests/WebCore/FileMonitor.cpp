@@ -54,10 +54,11 @@ public:
         WTF::initializeMainThread();
         
         // create temp file
-        FileSystem::PlatformFileHandle handle;
-        m_tempFilePath = FileSystem::openTemporaryFile("tempTestFile"_s, handle);
+        auto result = FileSystem::openTemporaryFile("tempTestFile"_s);
+        m_tempFilePath = result.first;
+        auto handle = result.second;
         ASSERT_NE(handle, FileSystem::invalidPlatformFileHandle);
-        
+
         int rc = FileSystem::writeToFile(handle, FileMonitorTestData.utf8().data(), FileMonitorTestData.length());
         ASSERT_NE(rc, -1);
         

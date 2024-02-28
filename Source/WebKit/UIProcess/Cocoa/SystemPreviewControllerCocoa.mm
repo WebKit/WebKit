@@ -321,7 +321,9 @@ static NSString * const _WKARQLWebsiteURLParameterKey = @"ARQLWebsiteURLParamete
         return ".usdz"_s;
     }();
 
-    _filePath = FileSystem::openTemporaryFile("SystemPreview"_s, _fileHandle, fileExtension);
+    auto result = FileSystem::openTemporaryFile("SystemPreview"_s, fileExtension);
+    _filePath = result.first;
+    _fileHandle = result.second;
     ASSERT(FileSystem::isHandleValid(_fileHandle));
 
     _previewController->loadStarted(URL::fileURLWithFileSystemPath(_filePath));

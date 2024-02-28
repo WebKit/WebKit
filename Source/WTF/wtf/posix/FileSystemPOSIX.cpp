@@ -259,8 +259,9 @@ static const char* temporaryFileDirectory()
 #endif
 }
 
-String openTemporaryFile(StringView prefix, PlatformFileHandle& handle, StringView suffix)
+std::pair<String, PlatformFileHandle> openTemporaryFile(StringView prefix, StringView suffix)
 {
+    PlatformFileHandle handle = invalidPlatformFileHandle;
     // Suffix is not supported because that's incompatible with mkstemp.
     // This is OK for now since the code using it is built on macOS only.
     ASSERT_UNUSED(suffix, suffix.isEmpty());
@@ -273,11 +274,11 @@ String openTemporaryFile(StringView prefix, PlatformFileHandle& handle, StringVi
     if (handle < 0)
         goto end;
 
-    return String::fromUTF8(buffer);
+    return { String::fromUTF8(buffer), handle };
 
 end:
     handle = invalidPlatformFileHandle;
-    return String();
+    return { String(), handle };
 }
 #endif // !PLATFORM(COCOA)
 

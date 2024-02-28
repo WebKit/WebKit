@@ -43,18 +43,10 @@ public:
         WTF::initializeMainThread();
 
         // create temp file
-        FileSystem::PlatformFileHandle handle;
-        m_tempFilePath = FileSystem::openTemporaryFile("tempTestFile"_s, handle);
-        FileSystem::closeFile(handle);
-        
-        m_spaceContainingFilePath = FileSystem::openTemporaryFile("temp Empty Test File"_s, handle);
-        FileSystem::closeFile(handle);
-        
-        m_bangContainingFilePath = FileSystem::openTemporaryFile("temp!Empty!Test!File"_s, handle);
-        FileSystem::closeFile(handle);
-        
-        m_quoteContainingFilePath = FileSystem::openTemporaryFile("temp\"Empty\"TestFile"_s, handle);
-        FileSystem::closeFile(handle);
+        m_tempFilePath = FileSystem::createTemporaryFile("tempTestFile"_s);
+        m_spaceContainingFilePath = FileSystem::createTemporaryFile("temp Empty Test File"_s);
+        m_bangContainingFilePath = FileSystem::createTemporaryFile("temp!Empty!Test!File"_s);
+        m_quoteContainingFilePath = FileSystem::createTemporaryFile("temp\"Empty\"TestFile"_s);
     }
 
     void TearDown() override

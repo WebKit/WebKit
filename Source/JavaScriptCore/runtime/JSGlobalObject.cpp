@@ -445,8 +445,7 @@ JSC_DEFINE_HOST_FUNCTION(dumpAndClearSamplingProfilerSamples, (JSGlobalObject* g
 
     auto jsonData = json->toJSONString();
     {
-        FileSystem::PlatformFileHandle fileHandle;
-        String tempFilePath = FileSystem::openTemporaryFile(filenamePrefix, fileHandle);
+        auto [tempFilePath, fileHandle] = FileSystem::openTemporaryFile(filenamePrefix);
         if (!FileSystem::isHandleValid(fileHandle)) {
             dataLogLn("Dumping sampling profiler samples failed to open temporary file");
             return JSValue::encode(jsUndefined());

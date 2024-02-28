@@ -112,10 +112,8 @@ IGNORE_WARNINGS_END
     EXPECT_TRUE(hasReceivedResponse);
     EXPECT_EQ(_download, download);
 
-    FileSystem::PlatformFileHandle fileHandle;
-    _destinationPath = FileSystem::openTemporaryFile("TestWebKitAPI"_s, fileHandle);
-    EXPECT_TRUE(fileHandle != FileSystem::invalidPlatformFileHandle);
-    FileSystem::closeFile(fileHandle);
+    _destinationPath = FileSystem::createTemporaryFile("TestWebKitAPI"_s);
+    EXPECT_TRUE(!_destinationPath.isEmpty());
 
     *allowOverwrite = YES;
     return _destinationPath;
@@ -418,10 +416,8 @@ IGNORE_WARNINGS_END
     EXPECT_TRUE(hasReceivedResponse);
     EXPECT_EQ(_download, download);
 
-    FileSystem::PlatformFileHandle fileHandle;
-    _destinationPath = FileSystem::openTemporaryFile("TestWebKitAPI"_s, fileHandle);
-    EXPECT_TRUE(fileHandle != FileSystem::invalidPlatformFileHandle);
-    FileSystem::closeFile(fileHandle);
+    _destinationPath = FileSystem::createTemporaryFile("TestWebKitAPI"_s);
+    EXPECT_TRUE(!_destinationPath.isEmpty());
 
     *allowOverwrite = YES;
     return _destinationPath;
@@ -478,10 +474,8 @@ IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (NSString *)_download:(_WKDownload *)download decideDestinationWithSuggestedFilename:(NSString *)filename allowOverwrite:(BOOL *)allowOverwrite
 IGNORE_WARNINGS_END
 {
-    FileSystem::PlatformFileHandle fileHandle;
-    _destinationPath = FileSystem::openTemporaryFile("TestWebKitAPI"_s, fileHandle);
-    EXPECT_TRUE(fileHandle != FileSystem::invalidPlatformFileHandle);
-    FileSystem::closeFile(fileHandle);
+    _destinationPath = FileSystem::createTemporaryFile("TestWebKitAPI"_s);
+    EXPECT_TRUE(!_destinationPath.isEmpty());
     *allowOverwrite = YES;
     return _destinationPath;
 }
@@ -653,10 +647,8 @@ TEST(_WKDownload, DownloadCanceledWhileDecidingDestination)
 {
     EXPECT_TRUE([filename hasSuffix:@".usdz"]);
 
-    FileSystem::PlatformFileHandle fileHandle;
-    _destinationPath = FileSystem::openTemporaryFile(String { filename }, fileHandle);
-    EXPECT_TRUE(fileHandle != FileSystem::invalidPlatformFileHandle);
-    FileSystem::closeFile(fileHandle);
+    _destinationPath = FileSystem::createTemporaryFile(String { filename });
+    EXPECT_TRUE(!_destinationPath.isEmpty());
 
     completionHandler(YES, _destinationPath);
 }
@@ -1077,10 +1069,8 @@ TEST(WebKit, DownloadNavigationResponseFromMemoryCache)
 
 - (void)_download:(_WKDownload *)download decideDestinationWithSuggestedFilename:(NSString *)filename completionHandler:(void (^)(BOOL allowOverwrite, NSString *destination))completionHandler
 {
-    FileSystem::PlatformFileHandle fileHandle;
-    _path = FileSystem::openTemporaryFile("TestWebKitAPI"_s, fileHandle);
-    EXPECT_TRUE(fileHandle != FileSystem::invalidPlatformFileHandle);
-    FileSystem::closeFile(fileHandle);
+    _path = FileSystem::createTemporaryFile("TestWebKitAPI"_s);
+    EXPECT_TRUE(_path && [_path.get() length]);
     completionHandler(YES, _path.get());
 }
 

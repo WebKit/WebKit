@@ -387,8 +387,7 @@ void BlobRegistryImpl::writeBlobsToTemporaryFilesForIndexedDB(const Vector<Strin
     blobUtilityQueue().dispatch([blobsForWriting = WTFMove(blobsForWriting), completionHandler = WTFMove(completionHandler)]() mutable {
         Vector<String> filePaths;
         for (auto& blob : blobsForWriting) {
-            FileSystem::PlatformFileHandle file;
-            String tempFilePath = FileSystem::openTemporaryFile("Blob"_s, file);
+            auto [tempFilePath, file] = FileSystem::openTemporaryFile("Blob"_s);
             if (!writeFilePathsOrDataBuffersToFile(blob.filePathsOrDataBuffers, file, tempFilePath)) {
                 filePaths.clear();
                 break;

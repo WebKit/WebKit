@@ -141,8 +141,7 @@ void GCController::deleteAllLinkedCode(DeleteAllCodeEffort effort)
 
 void GCController::dumpHeapForVM(VM& vm)
 {
-    FileSystem::PlatformFileHandle fileHandle;
-    String tempFilePath = FileSystem::openTemporaryFile("GCHeap"_s, fileHandle);
+    auto [tempFilePath, fileHandle] = FileSystem::openTemporaryFile("GCHeap"_s);
     if (!FileSystem::isHandleValid(fileHandle)) {
         WTFLogAlways("Dumping GC heap failed to open temporary file");
         return;

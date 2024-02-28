@@ -185,12 +185,12 @@ static String generateTemporaryPath(const Function<bool(const String&)>& action)
     return proposedPath;
 }
 
-String openTemporaryFile(StringView, PlatformFileHandle& handle, StringView suffix)
+std::pair<String, PlatformFileHandle> openTemporaryFile(StringView, StringView suffix)
 {
     // FIXME: Suffix is not supported, but OK for now since the code using it is macOS-port-only.
     ASSERT_UNUSED(suffix, suffix.isEmpty());
 
-    handle = INVALID_HANDLE_VALUE;
+    PlatformFileHandle handle = INVALID_HANDLE_VALUE;
 
     String proposedPath = generateTemporaryPath([&handle](const String& proposedPath) {
         // use CREATE_NEW to avoid overwriting an existing file with the same name
@@ -200,9 +200,9 @@ String openTemporaryFile(StringView, PlatformFileHandle& handle, StringView suff
     });
 
     if (!isHandleValid(handle))
-        return String();
+        return { String(), handle };
 
-    return proposedPath;
+    return { proposedPath, handle };
 }
 
 PlatformFileHandle openFile(const String& path, FileOpenMode mode, FileAccessPermission, bool failIfFileExists)
