@@ -54,7 +54,7 @@ std::unique_ptr<GraphicsContext> ShareableBitmap::createGraphicsContext()
     auto surface = SkSurfaces::WrapPixels(m_configuration.imageInfo(), data(), bytesPerRow(), [](void*, void* context) {
         static_cast<ShareableBitmap*>(context)->deref();
     }, this);
-    return makeUnique<GraphicsContextSkia>(WTFMove(surface));
+    return makeUnique<GraphicsContextSkia>(WTFMove(surface), RenderingMode::Unaccelerated, RenderingPurpose::ShareableSnapshot);
 }
 
 void ShareableBitmap::paint(GraphicsContext& context, const IntPoint& dstPoint, const IntRect& srcRect)

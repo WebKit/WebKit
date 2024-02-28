@@ -39,7 +39,7 @@ namespace WebCore {
 
 class WEBCORE_EXPORT GraphicsContextSkia final : public GraphicsContext {
 public:
-    explicit GraphicsContextSkia(sk_sp<SkSurface>&&);
+    GraphicsContextSkia(sk_sp<SkSurface>&&, RenderingMode, RenderingPurpose);
     virtual ~GraphicsContextSkia();
 
     bool hasPlatformContext() const final;
@@ -109,6 +109,8 @@ public:
 private:
     SkCanvas& canvas() const;
 
+    bool makeGLContextCurrentIfNeeded() const;
+
     class SkiaState {
     public:
         SkiaState() = default;
@@ -122,6 +124,8 @@ private:
     };
 
     sk_sp<SkSurface> m_surface;
+    RenderingMode m_renderingMode { RenderingMode::Accelerated };
+    RenderingPurpose m_renderingPurpose { RenderingPurpose::Unspecified };
     SkiaState m_skiaState;
     Vector<SkiaState, 1> m_skiaStateStack;
 };

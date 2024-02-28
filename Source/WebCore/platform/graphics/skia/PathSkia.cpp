@@ -288,7 +288,7 @@ bool PathSkia::strokeContains(const FloatPoint& point, const Function<void(Graph
     if (isEmpty() || !std::isfinite(point.x()) || !std::isfinite(point.y()))
         return false;
 
-    GraphicsContextSkia graphicsContext(SkSurfaces::Null(1, 1));
+    GraphicsContextSkia graphicsContext(SkSurfaces::Null(1, 1), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified);
     strokeStyleApplier(graphicsContext);
 
     // FIXME: Compute stroke precision.
@@ -313,7 +313,7 @@ FloatRect PathSkia::strokeBoundingRect(const Function<void(GraphicsContext&)>& s
     if (isEmpty())
         return { };
 
-    GraphicsContextSkia graphicsContext(SkSurfaces::Null(1, 1));
+    GraphicsContextSkia graphicsContext(SkSurfaces::Null(1, 1), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified);
     strokeStyleApplier(graphicsContext);
 
     // Skia stroke resolution scale for reduced-precision requirements.

@@ -58,10 +58,10 @@ size_t ImageBufferSkiaSurfaceBackend::calculateMemoryCost(const Parameters& para
     return ImageBufferBackend::calculateMemoryCost(parameters.backendSize, calculateBytesPerRow(parameters.backendSize));
 }
 
-ImageBufferSkiaSurfaceBackend::ImageBufferSkiaSurfaceBackend(const Parameters& parameters, sk_sp<SkSurface>&& surface)
+ImageBufferSkiaSurfaceBackend::ImageBufferSkiaSurfaceBackend(const Parameters& parameters, sk_sp<SkSurface>&& surface, RenderingMode renderingMode)
     : ImageBufferSkiaBackend(parameters)
     , m_surface(WTFMove(surface))
-    , m_context(sk_ref_sp(m_surface.get()))
+    , m_context(sk_ref_sp(m_surface.get()), renderingMode, parameters.purpose)
 {
 }
 

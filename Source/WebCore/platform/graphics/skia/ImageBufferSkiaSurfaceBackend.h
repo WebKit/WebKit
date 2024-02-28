@@ -42,7 +42,7 @@ public:
     static size_t calculateMemoryCost(const Parameters&);
 
 protected:
-    ImageBufferSkiaSurfaceBackend(const Parameters&, sk_sp<SkSurface>&&);
+    ImageBufferSkiaSurfaceBackend(const Parameters&, sk_sp<SkSurface>&&, RenderingMode);
 
     GraphicsContext& context() final { return m_context; }
     unsigned bytesPerRow() const final;

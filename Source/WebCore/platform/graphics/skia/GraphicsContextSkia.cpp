@@ -31,9 +31,11 @@
 #include "DecomposedGlyphs.h"
 #include "FloatRect.h"
 #include "FloatRoundedRect.h"
+#include "GLContext.h"
 #include "ImageBuffer.h"
 #include "IntRect.h"
 #include "NotImplemented.h"
+#include "PlatformDisplay.h"
 #include <skia/core/SkColorFilter.h>
 #include <skia/core/SkImage.h>
 #include <skia/core/SkPath.h>
@@ -51,8 +53,10 @@
 
 namespace WebCore {
 
-GraphicsContextSkia::GraphicsContextSkia(sk_sp<SkSurface>&& surface)
+GraphicsContextSkia::GraphicsContextSkia(sk_sp<SkSurface>&& surface, RenderingMode renderingMode, RenderingPurpose renderingPurpose)
     : m_surface(WTFMove(surface))
+    , m_renderingMode(renderingMode)
+    , m_renderingPurpose(renderingPurpose)
 {
     RELEASE_ASSERT(m_surface->getCanvas());
 }
@@ -78,6 +82,14 @@ AffineTransform GraphicsContextSkia::getCTM(IncludeDeviceScale includeScale) con
 SkCanvas* GraphicsContextSkia::platformContext() const
 {
     return m_surface->getCanvas();
+}
+
+bool GraphicsContextSkia::makeGLContextCurrentIfNeeded() const
+{
+    if (m_renderingMode == RenderingMode::Unaccelerated || m_renderingPurpose != RenderingPurpose::Canvas)
+        return true;
+
+    return PlatformDisplay::sharedDisplayForCompositing().skiaGLContext()->makeContextCurrent();
 }
 
 void GraphicsContextSkia::save(GraphicsContextState::Purpose purpose)
@@ -107,6 +119,9 @@ void GraphicsContextSkia::restore(GraphicsContextState::Purpose purpose)
 void GraphicsContextSkia::drawRect(const FloatRect& rect, float borderThickness)
 {
     ASSERT(!rect.isEmpty());
+    if (!makeGLContextCurrentIfNeeded())
+        return;
+
     canvas().drawRect(rect, createFillPaint());
     if (strokeStyle() == StrokeStyle::NoStroke)
         return;
@@ -228,6 +243,9 @@ void GraphicsContextSkia::drawNativeImageInternal(NativeImage& nativeImage, cons
     if (!imageRect.intersects(normalizedSrcRect))
         return;
 
+    if (!makeGLContextCurrentIfNeeded())
+        return;
+
     auto normalizedDestRect = normalizeRect(destRect);
     SkPaint paint = createFillPaint();
     paint.setBlendMode(toSkiaBlendMode(options.compositeOperator(), options.blendMode()));
@@ -240,12 +258,19 @@ void GraphicsContextSkia::drawLine(const FloatPoint& point1, const FloatPoint& p
 {
     if (strokeStyle() == StrokeStyle::NoStroke)
         return;
+
+    if (!makeGLContextCurrentIfNeeded())
+        return;
+
     canvas().drawLine(SkFloatToScalar(point1.x()), SkFloatToScalar(point1.y()), SkFloatToScalar(point2.x()), SkFloatToScalar(point2.y()), createFillPaint());
 }
 
 // This method is only used to draw the little circles used in lists.
 void GraphicsContextSkia::drawEllipse(const FloatRect& boundaries)
 {
+    if (!makeGLContextCurrentIfNeeded())
+        return;
+
     canvas().drawOval(boundaries, createFillPaint());
 }
 
@@ -266,6 +291,9 @@ void GraphicsContextSkia::fillPath(const Path& path)
     if (path.isEmpty())
         return;
 
+    if (!makeGLContextCurrentIfNeeded())
+        return;
+
     SkPaint paint = createFillPaint();
     paint.setImageFilter(createDropShadowFilterIfNeeded(ShadowStyle::Outset));
 
@@ -284,6 +312,9 @@ void GraphicsContextSkia::fillPath(const Path& path)
 void GraphicsContextSkia::strokePath(const Path& path)
 {
     if (path.isEmpty())
+        return;
+
+    if (!makeGLContextCurrentIfNeeded())
         return;
 
     canvas().drawPath(*path.platformPath(), createStrokePaint());
@@ -370,6 +401,9 @@ SkPaint GraphicsContextSkia::createStrokePaint(std::optional<Color> strokeColor)
 
 void GraphicsContextSkia::fillRect(const FloatRect& boundaries)
 {
+    if (!makeGLContextCurrentIfNeeded())
+        return;
+
     SkPaint paint = createFillPaint();
     paint.setImageFilter(createDropShadowFilterIfNeeded(ShadowStyle::Outset));
     canvas().drawRect(boundaries, paint);
@@ -377,6 +411,9 @@ void GraphicsContextSkia::fillRect(const FloatRect& boundaries)
 
 void GraphicsContextSkia::fillRect(const FloatRect& boundaries, const Color& fillColor)
 {
+    if (!makeGLContextCurrentIfNeeded())
+        return;
+
     SkPaint paint = createFillPaint(fillColor);
     paint.setImageFilter(createDropShadowFilterIfNeeded(ShadowStyle::Outset));
     canvas().drawRect(boundaries, paint);
@@ -524,6 +561,9 @@ void GraphicsContextSkia::setCTM(const AffineTransform& ctm)
 
 void GraphicsContextSkia::beginTransparencyLayer(float opacity)
 {
+    if (!makeGLContextCurrentIfNeeded())
+        return;
+
     GraphicsContext::beginTransparencyLayer(opacity);
     SkPaint paint;
     paint.setAlphaf(opacity);
@@ -533,12 +573,18 @@ void GraphicsContextSkia::beginTransparencyLayer(float opacity)
 
 void GraphicsContextSkia::endTransparencyLayer()
 {
+    if (!makeGLContextCurrentIfNeeded())
+        return;
+
     GraphicsContext::endTransparencyLayer();
     canvas().restore();
 }
 
 void GraphicsContextSkia::clearRect(const FloatRect& rect)
 {
+    if (!makeGLContextCurrentIfNeeded())
+        return;
+
     auto paint = createFillPaint();
     paint.setBlendMode(SkBlendMode::kClear);
     canvas().drawRect(rect, paint);
@@ -546,6 +592,9 @@ void GraphicsContextSkia::clearRect(const FloatRect& rect)
 
 void GraphicsContextSkia::strokeRect(const FloatRect& boundaries, float lineWidth)
 {
+    if (!makeGLContextCurrentIfNeeded())
+        return;
+
     auto strokePaint = createStrokePaint();
     strokePaint.setStrokeWidth(SkFloatToScalar(lineWidth));
     canvas().drawRect(boundaries, strokePaint);
@@ -629,6 +678,9 @@ void GraphicsContextSkia::clipOut(const FloatRect& rect)
 
 void GraphicsContextSkia::fillRoundedRectImpl(const FloatRoundedRect& rect, const Color& color)
 {
+    if (!makeGLContextCurrentIfNeeded())
+        return;
+
     SkPaint paint = createFillPaint(color);
     paint.setImageFilter(createDropShadowFilterIfNeeded(ShadowStyle::Outset));
     canvas().drawRRect(rect, paint);
@@ -637,6 +689,9 @@ void GraphicsContextSkia::fillRoundedRectImpl(const FloatRoundedRect& rect, cons
 void GraphicsContextSkia::fillRectWithRoundedHole(const FloatRect& outerRect, const FloatRoundedRect& innerRRect, const Color& color)
 {
     if (!color.isValid())
+        return;
+
+    if (!makeGLContextCurrentIfNeeded())
         return;
 
     SkPaint paint = createFillPaint(color);
@@ -651,6 +706,9 @@ void GraphicsContextSkia::drawPattern(NativeImage& nativeImage, const FloatRect&
 
     auto image = nativeImage.platformImage();
     if (!image)
+        return;
+
+    if (!makeGLContextCurrentIfNeeded())
         return;
 
     auto tileMode = [](float dstPoint, float dstMax, float tilePoint, float tileMax) -> SkTileMode {
@@ -679,7 +737,7 @@ void GraphicsContextSkia::drawPattern(NativeImage& nativeImage, const FloatRect&
 
 RenderingMode GraphicsContextSkia::renderingMode() const
 {
-    return RenderingMode::Accelerated;
+    return m_renderingMode;
 }
 
 } // namespace WebCore
