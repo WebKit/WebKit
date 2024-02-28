@@ -1110,9 +1110,9 @@ void UIScriptControllerIOS::simulateRotation(DeviceOrientation orientation, JSVa
 {
     auto callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
     webView().rotationDidEndCallback = makeBlockPtr([this, protectedThis = Ref { *this }, callbackID] {
-        if (!m_context)
-            return;
-        m_context->asyncTaskComplete(callbackID);
+        if (m_context)
+            m_context->asyncTaskComplete(callbackID);
+        webView().rotationDidEndCallback = nil;
     }).get();
 
 #if HAVE(UI_WINDOW_SCENE_GEOMETRY_PREFERENCES)
