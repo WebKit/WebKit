@@ -1244,4 +1244,9 @@ HTMLCollection* ContainerNode::cachedHTMLCollection(CollectionType type)
     return hasRareData() && rareData()->nodeLists() ? rareData()->nodeLists()->cachedCollection<HTMLCollection>(type) : nullptr;
 }
 
+ContainerNode& ContainerNode::traverseToRootNode() const
+{
+    return traverseToRootNodeInternal(*this);
+}
+
 } // namespace WebCore

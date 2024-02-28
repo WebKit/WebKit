@@ -740,6 +740,9 @@ protected:
     void updateAncestorsForStyleRecalc();
     void markAncestorsForInvalidatedStyle();
 
+    template<typename NodeClass>
+    static NodeClass& traverseToRootNodeInternal(const NodeClass&);
+
     // FIXME: Replace all uses of convertNodesOrStringsIntoNode by convertNodesOrStringsIntoNodeVector.
     ExceptionOr<RefPtr<Node>> convertNodesOrStringsIntoNode(FixedVector<NodeOrString>&&);
     ExceptionOr<NodeVector> convertNodesOrStringsIntoNodeVector(FixedVector<NodeOrString>&&);
@@ -945,6 +948,15 @@ inline void EventTarget::deref()
         node->deref();
     else
         derefEventTarget();
+}
+
+template<typename NodeClass>
+inline NodeClass& Node::traverseToRootNodeInternal(const NodeClass& node)
+{
+    auto* current = const_cast<NodeClass*>(&node);
+    while (current->parentNode())
+        current = current->parentNode();
+    return *current;
 }
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const Node&);

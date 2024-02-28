@@ -1444,11 +1444,7 @@ Element* Node::parentOrShadowHostElement() const
 
 Node& Node::traverseToRootNode() const
 {
-    Node* node = const_cast<Node*>(this);
-    Node* highest = node;
-    for (; node; node = node->parentNode())
-        highest = node;
-    return *highest;
+    return traverseToRootNodeInternal(*this);
 }
 
 // https://dom.spec.whatwg.org/#concept-shadow-including-root

@@ -59,8 +59,9 @@ public:
     void stringReplaceAll(String&&);
     void replaceAll(Node*);
 
-    ContainerNode& rootNode() const { return downcast<ContainerNode>(Node::rootNode()); }
-    Ref<ContainerNode> protectedRootNode() const { return downcast<ContainerNode>(Node::rootNode()); }
+    ContainerNode& rootNode() const;
+    Ref<ContainerNode> protectedRootNode() const { return rootNode(); }
+    ContainerNode& traverseToRootNode() const;
 
     // These methods are only used during parsing.
     // They don't send DOM mutation events or handle reparenting.
@@ -207,6 +208,13 @@ inline Node* Node::lastChild() const
 }
 
 inline Node& Node::rootNode() const
+{
+    if (isInTreeScope())
+        return treeScope().rootNode();
+    return traverseToRootNode();
+}
+
+inline ContainerNode& ContainerNode::rootNode() const
 {
     if (isInTreeScope())
         return treeScope().rootNode();

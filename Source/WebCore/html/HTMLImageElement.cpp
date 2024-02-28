@@ -131,7 +131,7 @@ void HTMLImageElement::setFormInternal(RefPtr<HTMLFormElement>&& newForm)
 
 void HTMLImageElement::formOwnerRemovedFromTree(const Node& formRoot)
 {
-    Node& rootNode = traverseToRootNode(); // Do not rely on rootNode() because our IsInTreeScope can be outdated.
+    auto& rootNode = traverseToRootNode(); // Do not rely on rootNode() because our IsInTreeScope can be outdated.
     if (&rootNode != &formRoot)
         setForm(nullptr);
 }
