@@ -2695,9 +2695,6 @@ private:
     void speak(const String&);
     void stopSpeaking();
 
-    // Spotlight.
-    void searchWithSpotlight(const String&);
-
     void searchTheWeb(const String&);
 
     // Dictionary.

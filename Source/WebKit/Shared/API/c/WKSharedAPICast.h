@@ -437,8 +437,6 @@ inline WKContextMenuItemTag toAPI(WebCore::ContextMenuAction action)
         return kWKContextMenuItemTagLearnSpelling;
     case WebCore::ContextMenuItemTagOther:
         return kWKContextMenuItemTagOther;
-    case WebCore::ContextMenuItemTagSearchInSpotlight:
-        return kWKContextMenuItemTagSearchInSpotlight;
     case WebCore::ContextMenuItemTagSearchWeb:
         return kWKContextMenuItemTagSearchWeb;
     case WebCore::ContextMenuItemTagLookUpInDictionary:
@@ -656,7 +654,7 @@ inline WebCore::ContextMenuAction toImpl(WKContextMenuItemTag tag)
     case kWKContextMenuItemTagOther:
         return WebCore::ContextMenuItemTagOther;
     case kWKContextMenuItemTagSearchInSpotlight:
-        return WebCore::ContextMenuItemTagSearchInSpotlight;
+        return WebCore::ContextMenuItemTagNoAction;
     case kWKContextMenuItemTagSearchWeb:
         return WebCore::ContextMenuItemTagSearchWeb;
     case kWKContextMenuItemTagLookUpInDictionary:

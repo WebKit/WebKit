@@ -89,11 +89,6 @@ void WebContextMenuClient::downloadURL(const URL& url)
     [m_webView _downloadURL:url];
 }
 
-void WebContextMenuClient::searchWithSpotlight()
-{
-    [m_webView _searchWithSpotlightFromMenu:nil];
-}
-
 void WebContextMenuClient::searchWithGoogle(const LocalFrame*)
 {
     [m_webView _searchWithGoogleFromMenu:nil];

@@ -53,11 +53,6 @@ String contextMenuItemTagAddHighlightToNewQuickNote()
 #endif
 
 #if ENABLE(CONTEXT_MENUS)
-String contextMenuItemTagSearchInSpotlight()
-{
-    return WEB_UI_STRING("Search in Spotlight", "Search in Spotlight context menu item");
-}
-
 String contextMenuItemTagSearchWeb()
 {
     auto searchProviderName = PAL::defaultSearchProviderDisplayName();

@@ -55,7 +55,6 @@ public:
     bool isSpeaking() const override;
     void speak(const WTF::String&) override;
     void stopSpeaking() override;
-    void searchWithSpotlight() override;
     void showContextMenu() override;
 
 #if ENABLE(IMAGE_ANALYSIS)

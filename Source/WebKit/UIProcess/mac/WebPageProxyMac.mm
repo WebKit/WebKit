@@ -165,11 +165,6 @@ void WebPageProxy::stopSpeaking()
     [NSApp stopSpeaking:nil];
 }
 
-void WebPageProxy::searchWithSpotlight(const String& string)
-{
-    [[NSWorkspace sharedWorkspace] showSearchResultsForQueryString:nsStringFromWebCoreString(string)];
-}
-
 void WebPageProxy::searchTheWeb(const String& string)
 {
     NSPasteboard *pasteboard = [NSPasteboard pasteboardWithUniqueName];

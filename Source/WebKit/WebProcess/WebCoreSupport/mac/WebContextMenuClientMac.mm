@@ -70,36 +70,6 @@ void WebContextMenuClient::searchWithGoogle(const LocalFrame* frame)
     m_page->send(Messages::WebPageProxy::SearchTheWeb(searchString));
 }
 
-void WebContextMenuClient::searchWithSpotlight()
-{
-    // FIXME: Why do we need to search all the frames like this?
-    // Isn't there any function in WebCore that can do this?
-    // If not, can we find a place in WebCore to put this?
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->corePage()->mainFrame());
-    if (!localMainFrame)
-        return;
-
-    auto* selectionFrame = [&] () -> LocalFrame* {
-        for (Frame* selectionFrame = localMainFrame; selectionFrame; selectionFrame = selectionFrame->tree().traverseNext()) {
-            auto* localFrame = dynamicDowncast<LocalFrame>(selectionFrame);
-            if (!localFrame)
-                continue;
-            if (localFrame->selection().isRange())
-                return localFrame;
-        }
-        return nullptr;
-    }();
-    if (!selectionFrame)
-        selectionFrame = localMainFrame;
-
-    String selectedString = selectionFrame->displayStringModifiedByEncoding(selectionFrame->editor().selectedText());
-
-    if (selectedString.isEmpty())
-        return;
-
-    m_page->send(Messages::WebPageProxy::SearchWithSpotlight(selectedString));
-}
-
 #if HAVE(TRANSLATION_UI_SERVICES)
 
 void WebContextMenuClient::handleTranslation(const WebCore::TranslationContextMenuInfo& info)

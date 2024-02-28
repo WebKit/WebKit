@@ -188,7 +188,6 @@ static bool isValidContextMenuAction(WebCore::ContextMenuAction action)
     case ContextMenuAction::ContextMenuItemTagIgnoreSpelling:
     case ContextMenuAction::ContextMenuItemTagLearnSpelling:
     case ContextMenuAction::ContextMenuItemTagOther:
-    case ContextMenuAction::ContextMenuItemTagSearchInSpotlight:
     case ContextMenuAction::ContextMenuItemTagSearchWeb:
     case ContextMenuAction::ContextMenuItemTagLookUpInDictionary:
     case ContextMenuAction::ContextMenuItemTagOpenWithDefaultApplication:

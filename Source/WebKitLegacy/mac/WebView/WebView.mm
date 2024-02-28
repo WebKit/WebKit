@@ -8598,18 +8598,6 @@ FORWARD(toggleUnderline)
     NSPerformService(@"Search With Google", pasteboard);
 }
 
-- (void)_searchWithSpotlightFromMenu:(id)sender
-{
-    id documentView = [[[self selectedFrame] frameView] documentView];
-    if (![documentView conformsToProtocol:@protocol(WebDocumentText)])
-        return;
-
-    NSString *selectedString = [(id <WebDocumentText>)documentView selectedString];
-    if (![selectedString length])
-        return;
-
-    [[NSWorkspace sharedWorkspace] showSearchResultsForQueryString:selectedString];
-}
 #endif // !PLATFORM(IOS_FAMILY)
 
 @end

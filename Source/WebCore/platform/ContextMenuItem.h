@@ -76,8 +76,11 @@ enum ContextMenuAction {
     ContextMenuItemTagIgnoreSpelling,
     ContextMenuItemTagLearnSpelling,
     ContextMenuItemTagOther,
-    ContextMenuItemTagSearchInSpotlight,
-    ContextMenuItemTagSearchWeb,
+#if PLATFORM(GTK)
+    ContextMenuItemTagSearchWeb = 38,
+#else
+    ContextMenuItemTagSearchWeb = 21,
+#endif
     ContextMenuItemTagLookUpInDictionary,
     ContextMenuItemTagOpenWithDefaultApplication,
     ContextMenuItemPDFActualSize,

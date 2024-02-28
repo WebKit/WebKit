@@ -139,11 +139,6 @@ void WebPageProxy::stopSpeaking()
     notImplemented();
 }
 
-void WebPageProxy::searchWithSpotlight(const String&)
-{
-    notImplemented();
-}
-
 void WebPageProxy::searchTheWeb(const String&)
 {
     notImplemented();

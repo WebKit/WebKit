@@ -125,7 +125,6 @@ namespace WebCore {
     WEBCORE_EXPORT String contextMenuItemTagLeftToRight();
     WEBCORE_EXPORT String contextMenuItemTagRightToLeft();
 #if PLATFORM(COCOA)
-    String contextMenuItemTagSearchInSpotlight();
     WEBCORE_EXPORT String contextMenuItemTagShowFonts();
     WEBCORE_EXPORT String contextMenuItemTagStyles();
     WEBCORE_EXPORT String contextMenuItemTagShowColors();

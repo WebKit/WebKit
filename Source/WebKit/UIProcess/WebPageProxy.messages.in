@@ -332,9 +332,6 @@ messages -> WebPageProxy {
     MakeFirstResponder()
     AssistiveTechnologyMakeFirstResponder()
 
-    # Spotlight
-    SearchWithSpotlight(String string)
-
     SearchTheWeb(String string)
 #endif
 

@@ -57,10 +57,6 @@ private:
     bool supportsCopySubject() final { return true; }
 #endif
 
-#if PLATFORM(COCOA)
-    void searchWithSpotlight() override;
-#endif
-
 #if HAVE(TRANSLATION_UI_SERVICES)
     void handleTranslation(const WebCore::TranslationContextMenuInfo&) final;
 #endif

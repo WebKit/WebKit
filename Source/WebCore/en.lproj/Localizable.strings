@@ -1219,9 +1219,6 @@
 /* Title of the Search button for zoomed form controls. */
 "Search" = "Search";
 
-/* Search in Spotlight context menu item */
-"Search in Spotlight" = "Search in Spotlight";
-
 /* Search the Web context menu item */
 "Search the Web" = "Search the Web";
 

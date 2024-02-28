@@ -246,7 +246,6 @@ WebLayoutMilestones kitLayoutMilestones(OptionSet<WebCore::LayoutMilestone>);
 - (void)_writeLinkElement:(NSDictionary *)element withPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard;
 - (void)_openFrameInNewWindowFromMenu:(NSMenuItem *)sender;
 - (void)_searchWithGoogleFromMenu:(id)sender;
-- (void)_searchWithSpotlightFromMenu:(id)sender;
 #endif
 - (void)_progressCompleted:(WebFrame *)frame;
 - (void)_didCommitLoadForFrame:(WebFrame *)frame;

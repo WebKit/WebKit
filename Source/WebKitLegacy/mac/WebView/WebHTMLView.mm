@@ -282,7 +282,7 @@ static std::optional<WebCore::ContextMenuAction> toAction(NSInteger tag)
     case WebMenuItemTagOther:
         return ContextMenuItemTagOther;
     case WebMenuItemTagSearchInSpotlight:
-        return ContextMenuItemTagSearchInSpotlight;
+        return ContextMenuItemTagNoAction;
     case WebMenuItemTagSearchWeb:
         return ContextMenuItemTagSearchWeb;
     case WebMenuItemTagLookUpInDictionary:
@@ -459,8 +459,6 @@ static std::optional<NSInteger> toTag(WebCore::ContextMenuAction action)
         return WebMenuItemTagLearnSpelling;
     case ContextMenuItemTagOther:
         return WebMenuItemTagOther;
-    case ContextMenuItemTagSearchInSpotlight:
-        return WebMenuItemTagSearchInSpotlight;
     case ContextMenuItemTagSearchWeb:
         return WebMenuItemTagSearchWeb;
     case ContextMenuItemTagLookUpInDictionary:
