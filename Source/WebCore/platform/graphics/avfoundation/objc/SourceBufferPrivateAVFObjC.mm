@@ -758,6 +758,8 @@ void SourceBufferPrivateAVFObjC::flushIfNeeded()
     if (!requiresFlush())
         return;
 
+    ALWAYS_LOG(LOGIDENTIFIER);
+
 #if PLATFORM(IOS_FAMILY)
     m_displayLayerWasInterrupted = false;
 #endif
@@ -1193,6 +1195,9 @@ void SourceBufferPrivateAVFObjC::didBecomeReadyForMoreSamples(TrackID trackID)
 
 void SourceBufferPrivateAVFObjC::notifyClientWhenReadyForMoreSamples(TrackID trackID)
 {
+    if (requiresFlush())
+        return;
+
     if (isEnabledVideoTrackID(trackID)) {
         if (m_decompressionSession) {
             m_decompressionSession->requestMediaDataWhenReady([weakThis = ThreadSafeWeakPtr { *this }, trackID] {
