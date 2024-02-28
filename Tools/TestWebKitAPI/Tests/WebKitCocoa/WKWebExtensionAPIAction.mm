@@ -318,7 +318,7 @@ TEST(WKWebExtensionAPIAction, SetDefaultActionProperties)
         EXPECT_NS_EQUAL(defaultAction.badgeText, @"42");
         EXPECT_FALSE(defaultAction.hasUnreadBadgeText);
 
-        EXPECT_NULL(action.associatedTab);
+        EXPECT_NS_EQUAL(action.associatedTab, manager.get().defaultTab);
 
         EXPECT_FALSE(action.isEnabled);
         EXPECT_NS_EQUAL(action.label, @"Modified Title");
@@ -855,7 +855,7 @@ TEST(WKWebExtensionAPIAction, BrowserAction)
         EXPECT_NS_EQUAL(defaultAction.badgeText, @"42");
         EXPECT_FALSE(defaultAction.hasUnreadBadgeText);
 
-        EXPECT_NULL(action.associatedTab);
+        EXPECT_NS_EQUAL(action.associatedTab, manager.get().defaultTab);
 
         EXPECT_FALSE(action.isEnabled);
         EXPECT_NS_EQUAL(action.label, @"Modified Title");
@@ -941,7 +941,7 @@ TEST(WKWebExtensionAPIAction, PageAction)
         EXPECT_NS_EQUAL(defaultAction.badgeText, @"42");
         EXPECT_FALSE(defaultAction.hasUnreadBadgeText);
 
-        EXPECT_NULL(action.associatedTab);
+        EXPECT_NS_EQUAL(action.associatedTab, manager.get().defaultTab);
 
         EXPECT_FALSE(action.isEnabled);
         EXPECT_NS_EQUAL(action.label, @"Modified Title");

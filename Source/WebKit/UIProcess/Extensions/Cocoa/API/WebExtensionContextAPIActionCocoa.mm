@@ -161,38 +161,47 @@ void WebExtensionContext::actionOpenPopup(WebPageProxyIdentifier identifier, std
         return;
     }
 
+    RefPtr<WebExtensionWindow> window;
+    RefPtr<WebExtensionTab> tab;
+
     if (windowIdentifier) {
-        RefPtr window = getWindow(windowIdentifier.value());
+        window = getWindow(windowIdentifier.value());
         if (!window) {
             completionHandler(toWebExtensionError(apiName, nil, @"window not found"));
             return;
         }
 
-        if (RefPtr activeTab = window->activeTab()) {
-            if (getAction(activeTab.get())->presentsPopup())
-                performAction(activeTab.get(), UserTriggered::No);
-
-            completionHandler({ });
+        tab = window->activeTab();
+        if (!tab) {
+            completionHandler(toWebExtensionError(apiName, nil, @"active tab not found in window"));
             return;
         }
     }
 
     if (tabIdentifier) {
-        RefPtr tab = getTab(tabIdentifier.value());
+        tab = getTab(tabIdentifier.value());
         if (!tab) {
             completionHandler(toWebExtensionError(apiName, nil, @"tab not found"));
             return;
         }
-
-        if (getAction(tab.get())->presentsPopup())
-            performAction(tab.get(), UserTriggered::No);
-
-        completionHandler({ });
-        return;
     }
 
-    if (defaultAction().presentsPopup())
-        performAction(nullptr, UserTriggered::No);
+    if (!tab) {
+        window = frontmostWindow();
+        if (!window) {
+            completionHandler(toWebExtensionError(apiName, nil, @"no windows open"));
+            return;
+        }
+
+        tab = window->activeTab();
+        if (!tab) {
+            completionHandler(toWebExtensionError(apiName, nil, @"active tab not found in window"));
+            return;
+        }
+    }
+
+    if (getOrCreateAction(tab.get())->presentsPopup())
+        performAction(tab.get(), UserTriggered::No);
 
     completionHandler({ });
 }
