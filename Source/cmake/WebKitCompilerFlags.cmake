@@ -1,65 +1,3 @@
-# Prepends flags to CMAKE_C_FLAGS if supported by the C compiler. Almost all
-# flags should be prepended to allow the user to override them.
-macro(WEBKIT_PREPEND_GLOBAL_C_FLAGS)
-    foreach (_flag ${ARGN})
-        check_c_compiler_flag("${_flag}" C_COMPILER_SUPPORTS_${_flag})
-        if (C_COMPILER_SUPPORTS_${_flag})
-            set(CMAKE_C_FLAGS "${_flag} ${CMAKE_C_FLAGS}")
-        endif ()
-    endforeach ()
-endmacro()
-
-# Appends flags to CMAKE_C_FLAGS if supported by the C compiler. This macro
-# should be used sparingly. Only append flags if the user must not be allowed to
-# override them.
-macro(WEBKIT_APPEND_GLOBAL_C_FLAGS)
-    foreach (_flag ${ARGN})
-        check_c_compiler_flag("${_flag}" C_COMPILER_SUPPORTS_${_flag})
-        if (C_COMPILER_SUPPORTS_${_flag})
-            set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${_flag}")
-        endif ()
-    endforeach ()
-endmacro()
-
-# Prepends flags to CMAKE_CXX_FLAGS if supported by the C++ compiler. Almost all
-# flags should be prepended to allow the user to override them.
-macro(WEBKIT_PREPEND_GLOBAL_CXX_FLAGS)
-    foreach (_flag ${ARGN})
-        check_cxx_compiler_flag("${_flag}" CXX_COMPILER_SUPPORTS_${_flag})
-        if (CXX_COMPILER_SUPPORTS_${_flag})
-            set(CMAKE_CXX_FLAGS "${_flag} ${CMAKE_CXX_FLAGS}")
-        endif ()
-    endforeach ()
-endmacro()
-
-# Appends flags to CMAKE_CXX_FLAGS if supported by the C++ compiler. This macro
-# should be used sparingly. Only append flags if the user must not be allowed to
-# override them.
-macro(WEBKIT_APPEND_GLOBAL_CXX_FLAGS)
-    foreach (_flag ${ARGN})
-        check_cxx_compiler_flag("${_flag}" CXX_COMPILER_SUPPORTS_${_flag})
-        if (CXX_COMPILER_SUPPORTS_${_flag})
-            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${_flag}")
-        endif ()
-    endforeach ()
-endmacro()
-
-# Prepends flags to CMAKE_C_FLAGS and CMAKE_CXX_FLAGS if supported by the C
-# or C++ compiler, respectively. Almost all flags should be prepended to allow
-# the user to override them.
-macro(WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS)
-    WEBKIT_PREPEND_GLOBAL_C_FLAGS(${ARGN})
-    WEBKIT_PREPEND_GLOBAL_CXX_FLAGS(${ARGN})
-endmacro()
-
-# Appends flags to CMAKE_C_FLAGS and CMAKE_CXX_FLAGS if supported by the C or
-# C++ compiler, respectively. This macro should be used sparingly. Only append
-# flags if the user must not be allowed to override them.
-macro(WEBKIT_APPEND_GLOBAL_COMPILER_FLAGS)
-    WEBKIT_APPEND_GLOBAL_C_FLAGS(${ARGN})
-    WEBKIT_APPEND_GLOBAL_CXX_FLAGS(${ARGN})
-endmacro()
-
 # Checks whether all the given compiler flags are supported by the compiler.
 # The _compiler may be either "C" or "CXX", and the result from the check
 # will be stored in the variable named by _result.
@@ -85,6 +23,74 @@ function(WEBKIT_CHECK_COMPILER_FLAGS _compiler _result)
     endforeach ()
     set(${_result} TRUE PARENT_SCOPE)
 endfunction()
+
+# Appends, prepends, or sets (_op = APPEND, PREPEND, SET) flags supported
+# by the C or CXX _compiler to a string _variable.
+function(WEBKIT_VAR_ADD_COMPILER_FLAGS _compiler _op _variable)
+    if (NOT (_op STREQUAL APPEND OR _op STREQUAL PREPEND OR _op STREQUAL SET))
+        message(FATAL_ERROR "Unrecognized operation '${_op}'")
+    endif ()
+
+    if (_op STREQUAL SET)
+        set(flags "")
+        set(_op APPEND)
+    else ()
+        set(flags ${${_variable}})
+    endif ()
+
+    foreach (flag IN LISTS ARGN)
+        WEBKIT_CHECK_COMPILER_FLAGS(${_compiler} flag_supported "${flag}")
+        if (flag_supported)
+            list(${_op} flags "${flag}")
+        endif ()
+    endforeach ()
+
+    # Turn back into a plain string
+    list(JOIN flags " " flags_string)
+    set(${_variable} "${flags_string}" PARENT_SCOPE)
+endfunction()
+
+# Prepends flags to CMAKE_C_FLAGS if supported by the C compiler. Almost all
+# flags should be prepended to allow the user to override them.
+macro(WEBKIT_PREPEND_GLOBAL_C_FLAGS)
+    WEBKIT_VAR_ADD_COMPILER_FLAGS(C PREPEND CMAKE_C_FLAGS ${ARGN})
+endmacro()
+
+# Appends flags to CMAKE_C_FLAGS if supported by the C compiler. This macro
+# should be used sparingly. Only append flags if the user must not be allowed to
+# override them.
+macro(WEBKIT_APPEND_GLOBAL_C_FLAGS)
+    WEBKIT_VAR_ADD_COMPILER_FLAGS(C APPEND CMAKE_C_FLAGS ${ARGN})
+endmacro()
+
+# Prepends flags to CMAKE_CXX_FLAGS if supported by the C++ compiler. Almost all
+# flags should be prepended to allow the user to override them.
+macro(WEBKIT_PREPEND_GLOBAL_CXX_FLAGS)
+    WEBKIT_VAR_ADD_COMPILER_FLAGS(CXX PREPEND CMAKE_CXX_FLAGS ${ARGN})
+endmacro()
+
+# Appends flags to CMAKE_CXX_FLAGS if supported by the C++ compiler. This macro
+# should be used sparingly. Only append flags if the user must not be allowed to
+# override them.
+macro(WEBKIT_APPEND_GLOBAL_CXX_FLAGS)
+    WEBKIT_VAR_ADD_COMPILER_FLAGS(CXX APPEND CMAKE_CXX_FLAGS ${ARGN})
+endmacro()
+
+# Prepends flags to CMAKE_C_FLAGS and CMAKE_CXX_FLAGS if supported by the C
+# or C++ compiler, respectively. Almost all flags should be prepended to allow
+# the user to override them.
+macro(WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS)
+    WEBKIT_VAR_ADD_COMPILER_FLAGS(C PREPEND CMAKE_C_FLAGS ${ARGN})
+    WEBKIT_VAR_ADD_COMPILER_FLAGS(CXX PREPEND CMAKE_CXX_FLAGS ${ARGN})
+endmacro()
+
+# Appends flags to CMAKE_C_FLAGS and CMAKE_CXX_FLAGS if supported by the C or
+# C++ compiler, respectively. This macro should be used sparingly. Only append
+# flags if the user must not be allowed to override them.
+macro(WEBKIT_APPEND_GLOBAL_COMPILER_FLAGS)
+    WEBKIT_VAR_ADD_COMPILER_FLAGS(C APPEND CMAKE_C_FLAGS ${ARGN})
+    WEBKIT_VAR_ADD_COMPILER_FLAGS(CXX APPEND CMAKE_CXX_FLAGS ${ARGN})
+endmacro()
 
 # Appends flags to COMPILE_OPTIONS of _subject if supported by the C
 # or CXX _compiler. The _subject argument depends on its _kind, it may be
