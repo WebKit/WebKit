@@ -326,15 +326,13 @@ bool RemoteLayerBackingStoreCollection::markAllBackingStoreVolatile(OptionSet<Vo
     auto now = MonotonicTime::now();
 
     for (auto& backingStore : m_liveBackingStore) {
-        if (is<RemoteLayerWithRemoteRenderingBackingStore>(backingStore))
-            continue;
-        successfullyMadeBackingStoreVolatile &= markInProcessBackingStoreVolatile(downcast<RemoteLayerWithInProcessRenderingBackingStore>(backingStore), liveBackingStoreMarkingBehavior, now);
+        if (auto* inProcessBackingStore = dynamicDowncast<RemoteLayerWithInProcessRenderingBackingStore>(backingStore))
+            successfullyMadeBackingStoreVolatile &= markInProcessBackingStoreVolatile(*inProcessBackingStore, liveBackingStoreMarkingBehavior, now);
     }
 
     for (auto& backingStore : m_unparentedBackingStore) {
-        if (is<RemoteLayerWithRemoteRenderingBackingStore>(backingStore))
-            continue;
-        successfullyMadeBackingStoreVolatile &= markInProcessBackingStoreVolatile(downcast<RemoteLayerWithInProcessRenderingBackingStore>(backingStore), unparentedBackingStoreMarkingBehavior, now);
+        if (auto* inProcessBackingStore = dynamicDowncast<RemoteLayerWithInProcessRenderingBackingStore>(backingStore))
+            successfullyMadeBackingStoreVolatile &= markInProcessBackingStoreVolatile(*inProcessBackingStore, unparentedBackingStoreMarkingBehavior, now);
     }
 
     return successfullyMadeBackingStoreVolatile;

@@ -33,6 +33,7 @@
 #include <WebCore/Node.h>
 #include <WebCore/RenderImage.h>
 #include <WebCore/SharedBuffer.h>
+#include <WebCore/Text.h>
 #include <wtf/URL.h>
 #include <wtf/text/WTFString.h>
 
@@ -96,7 +97,7 @@ WebHitTestResultData::WebHitTestResultData(const HitTestResult& hitTestResult, c
     , elementBoundingBox(elementBoundingBoxInWindowCoordinates(hitTestResult))
     , isScrollbar(IsScrollbar::No)
     , isSelected(hitTestResult.isSelected())
-    , isTextNode(hitTestResult.innerNode() && hitTestResult.innerNode()->isTextNode())
+    , isTextNode(is<Text>(hitTestResult.innerNode()))
     , isOverTextInsideFormControlElement(hitTestResult.isOverTextInsideFormControlElement())
     , isDownloadableMedia(hitTestResult.isDownloadableMedia())
     , mediaIsInFullscreen(hitTestResult.mediaIsInFullscreen())
@@ -126,7 +127,7 @@ WebHitTestResultData::WebHitTestResultData(const HitTestResult& hitTestResult, b
     , elementBoundingBox(elementBoundingBoxInWindowCoordinates(hitTestResult))
     , isScrollbar(IsScrollbar::No)
     , isSelected(hitTestResult.isSelected())
-    , isTextNode(hitTestResult.innerNode() && hitTestResult.innerNode()->isTextNode())
+    , isTextNode(is<Text>(hitTestResult.innerNode()))
     , isOverTextInsideFormControlElement(hitTestResult.isOverTextInsideFormControlElement())
     , isDownloadableMedia(hitTestResult.isDownloadableMedia())
     , mediaIsInFullscreen(hitTestResult.mediaIsInFullscreen())
@@ -151,9 +152,9 @@ WebHitTestResultData::WebHitTestResultData(const HitTestResult& hitTestResult, b
             imageSharedMemory = WebCore::SharedMemory::copyBuffer(*buffer);
     }
 
-    if (auto target = RefPtr { hitTestResult.innerNonSharedNode() }) {
+    if (RefPtr target = hitTestResult.innerNonSharedNode()) {
         if (auto renderer = dynamicDowncast<RenderImage>(target->renderer())) {
-            imageBitmap = createShareableBitmap(*downcast<RenderImage>(target->renderer()));
+            imageBitmap = createShareableBitmap(*renderer);
             if (auto* cachedImage = renderer->cachedImage()) {
                 if (auto* image = cachedImage->image())
                     sourceImageMIMEType = image->mimeType();
