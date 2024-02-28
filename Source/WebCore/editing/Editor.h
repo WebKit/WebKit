@@ -660,7 +660,7 @@ private:
     void postTextStateChangeNotificationForCut(const String&, const VisibleSelection&);
 
     WeakPtr<EditorClient> m_client;
-    CheckedRef<Document> m_document;
+    WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
     RefPtr<CompositeEditCommand> m_lastEditCommand;
     RefPtr<Text> m_compositionNode;
     unsigned m_compositionStart;

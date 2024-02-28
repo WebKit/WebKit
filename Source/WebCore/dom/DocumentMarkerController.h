@@ -119,7 +119,7 @@ private:
     MarkerMap m_markers;
     // Provide a quick way to determine whether a particular marker type is absent without going through the map.
     OptionSet<DocumentMarker::Type> m_possiblyExistingMarkerTypes;
-    CheckedRef<Document> m_document;
+    WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
 
     Timer m_fadeAnimationTimer;
 };

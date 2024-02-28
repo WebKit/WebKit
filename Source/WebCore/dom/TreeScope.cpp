@@ -87,20 +87,20 @@ TreeScope::TreeScope(Document& document)
 
 TreeScope::~TreeScope() = default;
 
-void TreeScope::incrementPtrCount() const
+void TreeScope::ref() const
 {
     if (auto* document = dynamicDowncast<Document>(m_rootNode))
-        document->incrementPtrCount();
+        document->ref();
     else
-        checkedDowncast<ShadowRoot>(m_rootNode).incrementPtrCount();
+        checkedDowncast<ShadowRoot>(m_rootNode).ref();
 }
 
-void TreeScope::decrementPtrCount() const
+void TreeScope::deref() const
 {
     if (auto* document = dynamicDowncast<Document>(m_rootNode))
-        document->decrementPtrCount();
+        document->deref();
     else
-        checkedDowncast<ShadowRoot>(m_rootNode).decrementPtrCount();
+        checkedDowncast<ShadowRoot>(m_rootNode).deref();
 }
 
 #if CHECKED_POINTER_DEBUG

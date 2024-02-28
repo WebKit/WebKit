@@ -54,7 +54,7 @@ public:
 private:
     void fontLoadingTimerFired();
 
-    CheckedRef<Document> m_document;
+    WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
     Timer m_fontLoadingTimer;
     Vector<CachedResourceHandle<CachedFont>> m_fontsToBeginLoading;
     bool m_isFontLoadingSuspended { false };

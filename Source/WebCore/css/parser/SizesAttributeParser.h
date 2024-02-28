@@ -60,7 +60,7 @@ private:
 
     Ref<const Document> protectedDocument() const;
 
-    CheckedRef<const Document> m_document;
+    WeakRef<const Document, WeakPtrImplWithEventTargetData> m_document;
     Vector<MQ::MediaQueryResult> m_dynamicMediaQueryResults;
     float m_length { 0 };
     bool m_lengthWasSet { false };

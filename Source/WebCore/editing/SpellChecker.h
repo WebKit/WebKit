@@ -95,7 +95,7 @@ private:
 
     Ref<Document> protectedDocument() const { return m_document.get(); }
 
-    CheckedRef<Document> m_document;
+    WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
     TextCheckingRequestIdentifier m_lastRequestIdentifier;
     TextCheckingRequestIdentifier m_lastProcessedIdentifier;
 

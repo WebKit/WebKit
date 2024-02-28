@@ -84,7 +84,7 @@ public:
 private:
     Ref<Document> protectedDocument() const;
 
-    CheckedRef<Document> m_document;
+    WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
 
     RefPtr<CSSStyleSheet> m_pageUserSheet;
 

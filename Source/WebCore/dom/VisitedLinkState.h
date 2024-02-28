@@ -49,7 +49,7 @@ public:
 private:
     InsideLink determineLinkStateSlowCase(const Element&);
 
-    CheckedRef<Document> m_document;
+    WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
     HashSet<SharedStringHash, SharedStringHashHash> m_linksCheckedForVisitedState;
 };
 

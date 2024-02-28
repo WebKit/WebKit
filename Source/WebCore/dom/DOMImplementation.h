@@ -50,7 +50,7 @@ public:
 private:
     Ref<Document> protectedDocument();
 
-    CheckedRef<Document> m_document;
+    WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
 };
 
 } // namespace WebCore

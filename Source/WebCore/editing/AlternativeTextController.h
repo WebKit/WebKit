@@ -139,7 +139,7 @@ private:
 
     void removeCorrectionIndicatorMarkers();
 
-    CheckedRef<Document> m_document;
+    WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
 };
 
 #undef UNLESS_ENABLED

@@ -113,7 +113,7 @@ private:
     Document& topDocument() { return m_topDocument ? *m_topDocument : document().topDocument(); }
     Ref<Document> protectedTopDocument();
 
-    CheckedRef<Document> m_document;
+    WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_topDocument;
 
     RefPtr<Element> fullscreenOrPendingElement() const { return m_fullscreenElement ? m_fullscreenElement : m_pendingFullscreenElement; }
