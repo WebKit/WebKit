@@ -2731,7 +2731,8 @@ void WebViewImpl::selectionDidChange()
 #endif
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-    if (m_page->editorState().hasPostLayoutData()) {
+    // FIXME: (rdar://123767495) Remove the `isEditable() && m_page->editorState().selectionIsRange` restriction when possible.
+    if (m_page->editorState().hasPostLayoutData() && isEditable() && m_page->editorState().selectionIsRange) {
         auto selectionRect = m_page->editorState().postLayoutData->selectionBoundingRect;
         scheduleShowSwapCharactersViewForSelectionRectOfView(selectionRect, m_view.getAutoreleased());
     }
