@@ -294,15 +294,9 @@ static String sandboxDirectory(WebCore::AuxiliaryProcessType processType, const 
     return directory.toString();
 }
 
-static String sandboxFilePath(const String& directoryPath, const CString& header)
+static String sandboxFilePath(const String& directoryPath)
 {
-    // Make the filename semi-unique based on the contents of the header.
-
-    auto crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
-    crypto->addBytes(header.data(), header.length());
-    auto hash = crypto->computeHash();
-
-    return makeString(directoryPath, "/CompiledSandbox+", base64URLEncoded(hash.data(), hash.size()));
+    return makeString(directoryPath, "/CompiledSandbox");
 }
 
 static bool ensureSandboxCacheDirectory(const SandboxInfo& info)
@@ -590,7 +584,7 @@ static bool applySandbox(const AuxiliaryProcessInitializationParameters& paramet
     }
 
     String directoryPath { sandboxDirectory(parameters.processType, dataVaultParentDirectory) };
-    String filePath = sandboxFilePath(directoryPath, *header);
+    String filePath = sandboxFilePath(directoryPath);
     SandboxInfo info {
         dataVaultParentDirectory,
         directoryPath,
