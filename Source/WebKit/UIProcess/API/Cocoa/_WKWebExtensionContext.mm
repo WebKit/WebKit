@@ -70,6 +70,8 @@ using CocoaMenuItem = UIMenuElement;
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(_WKWebExtensionContext, WebExtensionContext, _webExtensionContext);
+
 + (instancetype)contextForExtension:(_WKWebExtension *)extension
 {
     NSParameterAssert([extension isKindOfClass:_WKWebExtension.class]);
@@ -87,13 +89,6 @@ using CocoaMenuItem = UIMenuElement;
     API::Object::constructInWrapper<WebKit::WebExtensionContext>(self, extension._webExtension);
 
     return self;
-}
-
-- (void)dealloc
-{
-    ASSERT(isMainRunLoop());
-
-    _webExtensionContext->~WebExtensionContext();
 }
 
 - (_WKWebExtension *)webExtension

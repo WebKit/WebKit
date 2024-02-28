@@ -26,8 +26,10 @@
 #import "WKFoundation.h"
 
 #import <type_traits>
+#import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/spi/cocoa/objcSPI.h>
 
 namespace API {
 
@@ -105,3 +107,55 @@ using WebKit::wrapper;
 - (NSObject *)_web_createTarget NS_RETURNS_RETAINED;
 
 @end
+
+#if HAVE(OBJC_CUSTOM_DEALLOC)
+
+// This macro ensures WebKit ObjC objects of a specified class are deallocated on the main thread.
+// Use this macro in the ObjC implementation file.
+
+#define WK_OBJECT_DEALLOC_ON_MAIN_THREAD(objcClass) \
++ (void)initialize \
+{ \
+    if (self == objcClass.class) \
+        _class_setCustomDeallocInitiation(self); \
+} \
+\
+- (void)_objc_initiateDealloc \
+{ \
+    if (isMainRunLoop()) \
+        _objc_deallocOnMainThreadHelper((__bridge void *)self); \
+    else \
+        dispatch_async_f(dispatch_get_main_queue(), (__bridge void *)self, _objc_deallocOnMainThreadHelper); \
+} \
+\
+using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
+
+// This macro ensures WebKit ObjC objects and their C++ implementation are safely deallocated on the main thread.
+// Use this macro in the ObjC implementation file if you don't require a custom dealloc method.
+
+#define WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(objcClass, implClass, storageVar) \
+WK_OBJECT_DEALLOC_ON_MAIN_THREAD(objcClass); \
+\
+- (void)dealloc \
+{ \
+    ASSERT(isMainRunLoop()); \
+    storageVar->~implClass(); \
+} \
+\
+using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
+
+#else
+
+#define WK_OBJECT_DEALLOC_ON_MAIN_THREAD(objcClass) \
+using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
+
+#define WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(objcClass, implClass, storageVar) \
+- (void)dealloc \
+{ \
+    ASSERT(isMainRunLoop()); \
+    storageVar->~implClass(); \
+} \
+\
+using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
+
+#endif // HAVE(OBJC_CUSTOM_DEALLOC)

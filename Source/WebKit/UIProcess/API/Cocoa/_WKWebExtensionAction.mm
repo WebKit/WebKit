@@ -51,12 +51,7 @@ using CocoaMenuItem = UIMenuElement;
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-- (void)dealloc
-{
-    ASSERT(isMainRunLoop());
-
-    _webExtensionAction->~WebExtensionAction();
-}
+WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(_WKWebExtensionAction, WebExtensionAction, _webExtensionAction);
 
 - (BOOL)isEqual:(id)object
 {
