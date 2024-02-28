@@ -299,24 +299,13 @@ RetainPtr<NSArray> WebAuthenticatorCoordinatorProxy::requestsForAssertion(const 
     return requests;
 }
 
-WeakPtr<WebAuthenticatorCoordinatorProxy>& WebAuthenticatorCoordinatorProxy::activeConditionalMediationProxy()
+void WebAuthenticatorCoordinatorProxy::pauseConditionalAssertion()
 {
-    static MainThreadNeverDestroyed<WeakPtr<WebAuthenticatorCoordinatorProxy>> proxy;
-    return proxy.get();
-}
-
-void WebAuthenticatorCoordinatorProxy::pauseConditionalAssertion(CompletionHandler<void()>&& completionHandler)
-{
-    if (m_paused) {
-        completionHandler();
+    if (m_paused)
         return;
-    }
     m_paused = true;
     if (m_isConditionalAssertion)
-        m_cancelHandler = WTFMove(completionHandler);
         [m_controller cancel];
-    } else
-        completionHandler();
 }
 
 void WebAuthenticatorCoordinatorProxy::unpauseConditionalAssertion()
@@ -327,19 +316,6 @@ void WebAuthenticatorCoordinatorProxy::unpauseConditionalAssertion()
         [m_controller performAutoFillAssistedRequests];
 
     m_paused = false;
-}
-
-void WebAuthenticatorCoordinatorProxy::makeActiveConditionalAssertion()
-{
-    if (auto& activeProxy = activeConditionalMediationProxy()) {
-        if (activeProxy == this)
-            return;
-        activeProxy->pauseConditionalAssertion([weakThis = WeakPtr { *this }] () {
-            if (!weakThis)
-                return;
-            weakThis->unpauseConditionalAssertion();
-        });
-    }
 }
 
 #endif // HAVE(WEB_AUTHN_AS_MODERN)
@@ -363,8 +339,6 @@ void WebAuthenticatorCoordinatorProxy::performRequest(WebAuthenticationRequestDa
         handler(WebCore::AuthenticatorResponseData { }, AuthenticatorAttachment::Platform, { ExceptionCode::NotAllowedError, @"" });
         return;
     }
-    if (m_isConditionalMediation)
-        activeConditionalMediationProxy() = *this;
     m_controller = WTFMove(controller);
     m_completionHandler = WTFMove(handler);
     m_delegate = adoptNS([[_WKASDelegate alloc] initWithPage:WTFMove(requestData.page) completionHandler:makeBlockPtr([weakThis = WeakPtr { *this }](ASAuthorization *auth, NSError *error) mutable {
@@ -411,17 +385,11 @@ void WebAuthenticatorCoordinatorProxy::performRequest(WebAuthenticationRequestDa
                 response.userHandle = toArrayBuffer(credential.get().userID);
                 response.clientDataJSON = toArrayBuffer(credential.get().rawClientDataJSON);
             }
-            if (weakThis) {
-                if (activeConditionalMediationProxy() == weakThis)
-                    activeConditionalMediationProxy() = nullptr;
-                if (auto cancelHandler = WTFMove(weakThis->m_cancelHandler))
-                    cancelHandler();
-                if (!weakThis->m_paused) {
-                    weakThis->m_completionHandler(response, attachment, exceptionData);
-                    weakThis->m_delegate.clear();
-                    weakThis->m_controller.clear();
-                    weakThis->m_isConditionalAssertion = false;
-                }
+            if (!weakThis->m_paused) {
+                weakThis->m_completionHandler(response, attachment, exceptionData);
+                weakThis->m_delegate.clear();
+                weakThis->m_controller.clear();
+                weakThis->m_isConditionalAssertion = false;
             }
         });
     }).get()]);

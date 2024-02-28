@@ -78,10 +78,8 @@ public:
     ~WebAuthenticatorCoordinatorProxy();
 
 #if HAVE(WEB_AUTHN_AS_MODERN)
-    static WeakPtr<WebAuthenticatorCoordinatorProxy>& activeConditionalMediationProxy();
-    void pauseConditionalAssertion(CompletionHandler<void()>&&);
+    void pauseConditionalAssertion();
     void unpauseConditionalAssertion();
-    void makeActiveConditionalAssertion();
 #endif
 
 private:
@@ -126,7 +124,6 @@ private:
 
     RetainPtr<ASCAuthorizationRemotePresenter> m_presenter;
     RetainPtr<ASCAgentProxy> m_proxy;
-    CompletionHandler<void()> m_cancelHandler;
 #endif // HAVE(UNIFIED_ASC_AUTH_UI)
 };
 
