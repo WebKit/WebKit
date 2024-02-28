@@ -552,10 +552,10 @@ if (ENABLE_WPE_QT_API)
     set(qtwpe_LIBRARIES
         Epoxy::Epoxy
         Qt5::Core Qt5::Quick
+        WPE::FDO
         WebKit
         ${GLIB_GOBJECT_LIBRARIES}
         ${GLIB_LIBRARIES}
-        ${WPEBACKEND_FDO_LIBRARIES}
     )
 
     set(qtwpe_INCLUDE_DIRECTORIES
@@ -567,7 +567,6 @@ if (ENABLE_WPE_QT_API)
         ${Qt5Gui_PRIVATE_INCLUDE_DIRS}
         ${LIBSOUP_INCLUDE_DIRS}
         ${WPE_INCLUDE_DIRS}
-        ${WPEBACKEND_FDO_INCLUDE_DIRS}
     )
 
     list(APPEND WPE_QT_API_INSTALLED_HEADERS

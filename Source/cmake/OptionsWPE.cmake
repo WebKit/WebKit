@@ -293,7 +293,7 @@ endif ()
 if (ENABLE_WPE_QT_API)
     find_package(Qt5 REQUIRED COMPONENTS Core Quick Gui)
     find_package(Qt5Test REQUIRED)
-    find_package(WPEBackend_fdo 1.5.0 REQUIRED)
+    find_package(WPEBackendFDO 1.5.0 REQUIRED)
 endif ()
 
 if (ENABLE_WEBXR)
