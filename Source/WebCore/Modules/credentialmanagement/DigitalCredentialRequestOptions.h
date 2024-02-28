@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "AbortSignal.h"
 #include "IdentityRequestProvider.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -36,7 +35,6 @@ namespace WebCore {
 struct IdentityRequestProvider;
 
 struct DigitalCredentialRequestOptions {
-    RefPtr<AbortSignal> signal;
     Vector<IdentityRequestProvider> providers;
 };
 
