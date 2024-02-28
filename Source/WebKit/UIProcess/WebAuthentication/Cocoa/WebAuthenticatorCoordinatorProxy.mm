@@ -363,7 +363,7 @@ void WebAuthenticatorCoordinatorProxy::performRequest(WebAuthenticationRequestDa
         handler(WebCore::AuthenticatorResponseData { }, AuthenticatorAttachment::Platform, { ExceptionCode::NotAllowedError, @"" });
         return;
     }
-    if (m_isConditionalMediation)
+    if (m_isConditionalAssertion)
         activeConditionalMediationProxy() = *this;
     m_controller = WTFMove(controller);
     m_completionHandler = WTFMove(handler);
