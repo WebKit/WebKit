@@ -290,9 +290,9 @@ struct Connection::PendingSyncReply {
     }
 };
 
-Ref<Connection> Connection::createServerConnection(Identifier identifier)
+Ref<Connection> Connection::createServerConnection(Identifier identifier, Thread::QOS receiveQueueQOS)
 {
-    return adoptRef(*new Connection(identifier, true));
+    return adoptRef(*new Connection(identifier, true, receiveQueueQOS));
 }
 
 Ref<Connection> Connection::createClientConnection(Identifier identifier)
@@ -306,10 +306,10 @@ HashMap<IPC::Connection::UniqueID, ThreadSafeWeakPtr<Connection>>& Connection::c
     return map;
 }
 
-Connection::Connection(Identifier identifier, bool isServer)
+Connection::Connection(Identifier identifier, bool isServer, Thread::QOS receiveQueueQOS)
     : m_uniqueID(UniqueID::generate())
     , m_isServer(isServer)
-    , m_connectionQueue(WorkQueue::create("com.apple.IPC.ReceiveQueue"))
+    , m_connectionQueue(WorkQueue::create("com.apple.IPC.ReceiveQueue", receiveQueueQOS))
 {
     {
         Locker locker { s_connectionMapLock };

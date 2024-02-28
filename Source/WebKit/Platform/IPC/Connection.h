@@ -255,7 +255,7 @@ public:
     pid_t remoteProcessID() const;
 #endif
 
-    static Ref<Connection> createServerConnection(Identifier);
+    static Ref<Connection> createServerConnection(Identifier, Thread::QOS = Thread::QOS::Default);
     static Ref<Connection> createClientConnection(Identifier);
 
     struct ConnectionIdentifierPair {
@@ -423,7 +423,7 @@ public:
     template<typename T, typename C> static void cancelReply(C&& completionHandler);
 
 private:
-    Connection(Identifier, bool isServer);
+    Connection(Identifier, bool isServer, Thread::QOS = Thread::QOS::Default);
     void platformInitialize(Identifier);
     bool platformPrepareForOpen();
     void platformOpen();

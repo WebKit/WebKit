@@ -328,7 +328,7 @@ void AuxiliaryProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::C
     m_boostedJetsamAssertion = ProcessAssertion::create(*this, "Jetsam Boost"_s, ProcessAssertionType::BoostedJetsam);
 #endif
 
-    RefPtr connection = IPC::Connection::createServerConnection(connectionIdentifier);
+    RefPtr connection = IPC::Connection::createServerConnection(connectionIdentifier, Thread::QOS::UserInteractive);
     m_connection = connection.copyRef();
 
     connectionWillOpen(*connection);
