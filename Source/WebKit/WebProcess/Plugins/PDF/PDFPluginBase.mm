@@ -428,17 +428,6 @@ void PDFPluginBase::receivedNonLinearizedPDFSentinel()
 
 #endif // HAVE(INCREMENTAL_PDF_APIS)
 
-void PDFPluginBase::performSpotlightSearch(const String& query)
-{
-    if (!m_frame || !m_frame->page())
-        return;
-
-    if (!query || !query.trim(isASCIIWhitespace) || query.utf8().isNull())
-        return;
-
-    m_frame->protectedPage()->send(Messages::WebPageProxy::SearchWithSpotlight(query));
-}
-
 void PDFPluginBase::performWebSearch(const String& query)
 {
     if (!m_frame || !m_frame->page())
