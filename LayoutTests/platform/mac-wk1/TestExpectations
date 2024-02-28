@@ -2783,3 +2783,10 @@ fast/dom/no-scroll-when-command-click-fragment-URL.html [ Skip ]
 [ Ventura ] media/track/track-paint-on-captions.html [ Crash ]
 
 webkit.org/b/270133 [ Sonoma+ ] imported/w3c/web-platform-tests/accname/name/comp_host_language_label.html [ Failure ]
+
+# webkit.org/b/270199 [ Sonoma wk1 ] 5 tests in imported/w3c/web-platform-tests/css/filter-effects are constant failures
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/filter-effects/backdrop-filters-grayscale-001.html [ ImageOnlyFailure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/filter-effects/backdrop-filters-sepia.html [ ImageOnlyFailure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/filter-effects/filters-grayscale-001-test.html [ ImageOnlyFailure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/filter-effects/css-filters-animation-grayscale.html [ ImageOnlyFailure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/filter-effects/css-filters-animation-sepia.html [ ImageOnlyFailure ]
