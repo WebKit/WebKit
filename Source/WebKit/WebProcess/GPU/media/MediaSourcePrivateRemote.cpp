@@ -55,7 +55,7 @@ WorkQueue& MediaSourcePrivateRemote::queue()
     static std::once_flag onceKey;
     static LazyNeverDestroyed<Ref<WorkQueue>> workQueue;
     std::call_once(onceKey, [] {
-        workQueue.construct(WorkQueue::create("MediaSourceRemote", WorkQueue::QOS::Background));
+        workQueue.construct(WorkQueue::create("MediaSourceRemote"));
     });
     return workQueue.get();
 }
