@@ -1139,10 +1139,16 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
 }
 
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
-static void addOverlayEventRegions(WebCore::PlatformLayerIdentifier layerID, const WebKit::LayerPropertiesMap& changedLayerPropertiesMap, HashSet<WebCore::PlatformLayerIdentifier>& overlayRegionsIDs)
+static void addOverlayEventRegions(WebCore::PlatformLayerIdentifier layerID, const WebKit::LayerPropertiesMap& changedLayerPropertiesMap, HashSet<WebCore::PlatformLayerIdentifier>& overlayRegionsIDs, const WebKit::RemoteLayerTreeHost& host)
 {
     const auto& it = changedLayerPropertiesMap.find(layerID);
     if (it == changedLayerPropertiesMap.end())
+        return;
+
+    const auto* node = host.nodeForID(layerID);
+    if (!node)
+        return;
+    if ([node->uiView() isKindOfClass:[WKBaseScrollView class]])
         return;
 
     const auto& layerProperties = *it->value;
@@ -1153,7 +1159,7 @@ static void addOverlayEventRegions(WebCore::PlatformLayerIdentifier layerID, con
     }
 
     for (auto childLayerID : layerProperties.children)
-        addOverlayEventRegions(childLayerID, changedLayerPropertiesMap, overlayRegionsIDs);
+        addOverlayEventRegions(childLayerID, changedLayerPropertiesMap, overlayRegionsIDs, host);
 }
 
 static CGRect snapRectToScrollViewEdges(CGRect rect, CGRect viewport)
@@ -1186,47 +1192,61 @@ static void configureScrollViewWithOverlayRegionsIDs(WKBaseScrollView* scrollVie
         const auto* node = host.nodeForID(layerID);
         if (!node)
             continue;
-        const auto* uiView = node->uiView();
-        if (!uiView)
-            continue;
-        if (uiView == scrollView)
+        const auto* overlayView = node->uiView();
+        if (!overlayView)
             continue;
 
-        WKBaseScrollView* enclosingScrollView = nil;
-        for (UIView *view = [uiView superview]; view; view = [view superview]) {
-            if ([view isKindOfClass:[WKBaseScrollView class]]) {
-                enclosingScrollView = (WKBaseScrollView *)view;
+        WKBaseScrollView *enclosingScrollView = nil;
+        HashSet<UIView *> overlayAncestorsChain;
+        for (UIView *overlayAncestor = (UIView *)overlayView; overlayAncestor; overlayAncestor = [overlayAncestor superview]) {
+            overlayAncestorsChain.add(overlayAncestor);
+            if ([overlayAncestor isKindOfClass:[WKBaseScrollView class]]) {
+                enclosingScrollView = (WKBaseScrollView *)overlayAncestor;
                 break;
             }
         }
+
         if (!enclosingScrollView)
             continue;
 
         if (enclosingScrollView != scrollView) {
-            // Overlays on parent scrollViews should still be taken into account.
-            bool overlayFromAncestor = false;
-            for (UIView *view = [scrollView superview]; view; view = [view superview]) {
-                if (view == enclosingScrollView) {
-                    overlayFromAncestor = true;
+            // Overlays on parent scrollViews should still be taken into account if they draw above the selected scrollView.
+            bool shouldKeepOverlay = false;
+            UIView * previousScrollViewAncestor = nil;
+            for (UIView *scrollViewAncestor = [scrollView superview]; scrollViewAncestor; scrollViewAncestor = [scrollViewAncestor superview]) {
+                // Found a common parent, check if the overlay is drawn avove the selected scrollView.
+                if (overlayAncestorsChain.contains(scrollViewAncestor)) {
+                    NSUInteger configuredScrollViewZIndex = [scrollViewAncestor.subviews indexOfObject:previousScrollViewAncestor];
+                    NSUInteger overlayAncestorZIndex = 0;
+                    for (UIView *subview in scrollViewAncestor.subviews) {
+                        if (overlayAncestorsChain.contains(subview))
+                            break;
+                        overlayAncestorZIndex++;
+                    }
+                    if (overlayAncestorZIndex < configuredScrollViewZIndex)
+                        break;
+                }
+
+                if (scrollViewAncestor == enclosingScrollView) {
+                    shouldKeepOverlay = true;
                     break;
                 }
+
+                previousScrollViewAncestor = scrollViewAncestor;
             }
 
-            if (!overlayFromAncestor)
+            if (!shouldKeepOverlay)
                 continue;
         }
 
         // Overlay regions are positioned relative to the viewport of the scrollview,
         // not the frame (external) nor the bounds (origin moves while scrolling).
-        CGRect rect = [uiView.superview convertRect:uiView.frame toView:scrollView.superview];
+        CGRect rect = [overlayView.superview convertRect:overlayView.frame toView:scrollView.superview];
         CGRect offsetRect = CGRectOffset(rect, -scrollView.frame.origin.x, -scrollView.frame.origin.y);
         CGRect viewport = CGRectOffset(scrollView.frame, -scrollView.frame.origin.x, -scrollView.frame.origin.y);
         CGRect snappedRect = snapRectToScrollViewEdges(offsetRect, viewport);
 
-        if (!snappedRect.size.width || !snappedRect.size.height)
-            continue;
-        // Filtering out solid background color layers and other larger overlays.
-        if (snappedRect.size.width * snappedRect.size.height >= scrollView.bounds.size.width * scrollView.bounds.size.height * 0.5)
+        if (CGRectIsEmpty(snappedRect))
             continue;
 
         overlayRegionRects.add(WebCore::enclosingIntRect(snappedRect));
@@ -1292,7 +1312,7 @@ static void configureScrollViewWithOverlayRegionsIDs(WKBaseScrollView* scrollVie
     const auto& fixedIDs = scrollingCoordinatorProxy->fixedScrollingNodeLayerIDs();
 
     for (auto layerID : fixedIDs)
-        addOverlayEventRegions(layerID, changedLayerPropertiesMap, overlayRegionsIDs);
+        addOverlayEventRegions(layerID, changedLayerPropertiesMap, overlayRegionsIDs, layerTreeHost);
 
     configureScrollViewWithOverlayRegionsIDs(overlayRegionScrollView, layerTreeHost, overlayRegionsIDs);
 
