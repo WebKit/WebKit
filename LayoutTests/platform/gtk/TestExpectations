@@ -972,7 +972,6 @@ webkit.org/b/160120 editing/deleting/delete-emoji-6.html [ Skip ]
 webkit.org/b/160120 editing/deleting/delete-emoji-7.html [ Skip ]
 webkit.org/b/160120 editing/deleting/delete-emoji-8.html [ Skip ]
 webkit.org/b/160120 editing/deleting/delete-emoji-9.html [ Skip ]
-webkit.org/b/160120 fast/text/emoji-single-parent-family.html [ Skip ]
 webkit.org/b/160120 editing/caret/emoji.html [ Skip ]
 
 # No support for font-variant-* properties in @font-face declarations
