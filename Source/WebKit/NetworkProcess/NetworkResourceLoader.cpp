@@ -117,6 +117,9 @@ static void sendReplyToSynchronousRequest(NetworkResourceLoader::SynchronousLoad
     ASSERT(data.delayedReply);
     ASSERT(!data.response.isNull() || !data.error.isNull());
 
+    if (!data.delayedReply)
+        return;
+
     Vector<uint8_t> responseBuffer;
     if (buffer && buffer->size())
         responseBuffer.append(buffer->makeContiguous()->data(), buffer->size());
