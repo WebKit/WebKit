@@ -2725,9 +2725,7 @@ void WebPageProxy::dispatchActivityStateChange()
 #if ENABLE(WEB_AUTHN) && HAVE(WEB_AUTHN_AS_MODERN)
     if ((changed & ActivityState::WindowIsActive) && m_credentialsMessenger) {
         if (pageClient().isViewWindowActive())
-            m_credentialsMessenger->unpauseConditionalAssertion();
-        else
-            m_credentialsMessenger->pauseConditionalAssertion();
+            m_credentialsMessenger->makeActiveConditionalAssertion();
     }
 #endif
 
