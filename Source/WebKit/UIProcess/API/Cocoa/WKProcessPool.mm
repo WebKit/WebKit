@@ -436,6 +436,11 @@ static RetainPtr<WKProcessPool>& sharedProcessPool()
     return [self _webProcessCount] - ([self _hasPrewarmedWebProcess] ? 1 : 0);
 }
 
+- (size_t)_webProcessesCreated
+{
+    return _processPool->webProcessProxiesCreated();
+}
+
 - (size_t)_webProcessCountIgnoringPrewarmedAndCached
 {
     size_t count = 0;

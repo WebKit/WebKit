@@ -449,6 +449,8 @@ public:
         return m_hiddenPageThrottlingAutoIncreasesCounter.count();
     }
 
+    size_t webProcessProxiesCreated() const { return m_webProcessProxiesCreated; }
+
     bool alwaysRunsAtBackgroundPriority() const { return m_alwaysRunsAtBackgroundPriority; }
     bool shouldTakeUIBackgroundAssertion() const { return m_shouldTakeUIBackgroundAssertion; }
     static bool anyProcessPoolNeedsUIBackgroundAssertion();
@@ -878,6 +880,7 @@ private:
     RefPtr<StorageAccessUserAgentStringQuirkObserver> m_storageAccessUserAgentStringQuirksDataUpdateObserver;
     RefPtr<StorageAccessPromptQuirkObserver> m_storageAccessPromptQuirksDataUpdateObserver;
 #endif
+    size_t m_webProcessProxiesCreated { 0 };
 };
 
 template<typename T>

@@ -444,6 +444,22 @@ TEST(SiteIsolation, WindowOpenRedirect)
     }
 }
 
+TEST(SiteIsolation, MultipleCrossSiteRedirects)
+{
+    HTTPServer server({
+        { "/example"_s, { "<iframe src='https://a.com/a'></iframe>"_s } },
+        { "/a"_s, { 302, { { "Location"_s, "https://b.com/b"_s } }, "redirecting..."_s } },
+        { "/b"_s, { 302, { { "Location"_s, "https://c.com/c"_s } }, "redirecting..."_s } },
+        { "/c"_s, { "arrived!"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/a"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    auto pool = webView.get().configuration.processPool;
+    EXPECT_EQ(pool._webProcessesCreated - pool._hasPrewarmedWebProcess, 2u);
+}
+
 TEST(SiteIsolation, CloseAfterWindowOpen)
 {
     HTTPServer server({
