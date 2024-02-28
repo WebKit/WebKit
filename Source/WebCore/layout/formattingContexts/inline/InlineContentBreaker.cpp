@@ -67,7 +67,10 @@ static inline bool isWhitespaceOnlyContent(const InlineContentBreaker::Continuou
         auto& inlineItem = run.inlineItem;
         if (inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd() || inlineItem.isOpaque())
             continue;
-        auto isWhitespace = inlineItem.isText() && downcast<InlineTextItem>(inlineItem).isWhitespace();
+        auto isWhitespace = [&] {
+            auto* textItem = dynamicDowncast<InlineTextItem>(inlineItem);
+            return textItem && textItem->isWhitespace();
+        }();
         if (!isWhitespace)
             return false;
         hasWhitespace = true;
@@ -666,14 +669,16 @@ std::optional<InlineContentBreaker::OverflowingTextContent::BreakingPosition> In
         // FIXME: Maybe content across inline boxes should be hyphenated as well.
         if (inlineItem.isOpaque())
             continue;
-        if (!inlineItem.isText() || inlineItem.style().fontCascade() != style.fontCascade())
+        if (inlineItem.style().fontCascade() != style.fontCascade())
             return { };
 
-        auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
-        if (inlineTextItem.isWhitespace())
+        auto* inlineTextItem = dynamicDowncast<InlineTextItem>(inlineItem);
+        if (!inlineTextItem)
             return { };
-        content.append(inlineTextItem.inlineTextBox().content().substring(inlineTextItem.start(), inlineTextItem.length()));
-        overflowingRunStartPosition += index < overflowingRunIndex ? inlineTextItem.length() : 0;
+        if (inlineTextItem->isWhitespace())
+            return { };
+        content.append(inlineTextItem->inlineTextBox().content().substring(inlineTextItem->start(), inlineTextItem->length()));
+        overflowingRunStartPosition += index < overflowingRunIndex ? inlineTextItem->length() : 0;
     }
     // Only non-whitespace text runs with same style.
     auto& fontCascade = style.fontCascade();
@@ -683,12 +688,12 @@ std::optional<InlineContentBreaker::OverflowingTextContent::BreakingPosition> In
         return { };
 
     auto& overflowingRun = runs[overflowingRunIndex];
-    if (!is<InlineTextItem>(overflowingRun.inlineItem)) {
-        ASSERT_NOT_REACHED();
+    auto* textItem = dynamicDowncast<InlineTextItem>(overflowingRun.inlineItem);
+    ASSERT(textItem);
+    if (!textItem)
         return { };
-    }
     // Make sure we always hyphenate before the overflow.
-    auto overflowPositionWithHyphen = TextUtil::breakWord(downcast<InlineTextItem>(overflowingRun.inlineItem), fontCascade, overflowingRun.logicalWidth, availableWidthExcludingHyphen, lineStatus.contentLogicalRight).length;
+    auto overflowPositionWithHyphen = TextUtil::breakWord(*textItem, fontCascade, overflowingRun.logicalWidth, availableWidthExcludingHyphen, lineStatus.contentLogicalRight).length;
     auto hyphenLocation = hyphenPosition(content, overflowingRunStartPosition + overflowPositionWithHyphen, style);
     if (!hyphenLocation)
         return { };
@@ -759,9 +764,12 @@ InlineContentBreaker::OverflowingTextContent InlineContentBreaker::processOverfl
     // before the whitespace content e.g.
     // <div style="line-break: after-white-space; word-wrap: break-word">before<span style="white-space: pre">   </span>after</div>
     // "before" content is not breakable sine it is _before_ the overflowing whitespace content.
-    auto isBreakingAllowedBeforeOverflowingRun = !is<InlineTextItem>(overflowingInlineItem)
-        || !downcast<InlineTextItem>(overflowingInlineItem).isWhitespace()
-        || overflowingInlineItem.style().lineBreak() != LineBreak::AfterWhiteSpace;
+    auto isBreakingAllowedBeforeOverflowingRun = [&] {
+        auto* textItem = dynamicDowncast<InlineTextItem>(overflowingInlineItem);
+        return !textItem
+            || !textItem->isWhitespace()
+            || textItem->style().lineBreak() != LineBreak::AfterWhiteSpace;
+    }();
     if (isBreakingAllowedBeforeOverflowingRun) {
         // We did not manage to break the run that overflows the line.
         // Let's try to find a previous breaking position starting from the overflowing run. It surely fits.

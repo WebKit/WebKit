@@ -309,14 +309,13 @@ InlineItemPosition InlineFormattingUtils::leadingInlineItemPositionForNextLine(I
 InlineLayoutUnit InlineFormattingUtils::inlineItemWidth(const InlineItem& inlineItem, InlineLayoutUnit contentLogicalLeft, bool useFirstLineStyle) const
 {
     ASSERT(inlineItem.layoutBox().isInlineLevelBox());
-    if (is<InlineTextItem>(inlineItem)) {
-        auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
-        if (auto contentWidth = inlineTextItem.width())
+    if (auto* inlineTextItem = dynamicDowncast<InlineTextItem>(inlineItem)) {
+        if (auto contentWidth = inlineTextItem->width())
             return *contentWidth;
-        auto& fontCascade = useFirstLineStyle ? inlineTextItem.firstLineStyle().fontCascade() : inlineTextItem.style().fontCascade();
-        if (!inlineTextItem.isWhitespace() || InlineTextItem::shouldPreserveSpacesAndTabs(inlineTextItem))
-            return TextUtil::width(inlineTextItem, fontCascade, contentLogicalLeft);
-        return TextUtil::width(inlineTextItem, fontCascade, inlineTextItem.start(), inlineTextItem.start() + 1, contentLogicalLeft);
+        auto& fontCascade = useFirstLineStyle ? inlineTextItem->firstLineStyle().fontCascade() : inlineTextItem->style().fontCascade();
+        if (!inlineTextItem->isWhitespace() || InlineTextItem::shouldPreserveSpacesAndTabs(*inlineTextItem))
+            return TextUtil::width(*inlineTextItem, fontCascade, contentLogicalLeft);
+        return TextUtil::width(*inlineTextItem, fontCascade, inlineTextItem->start(), inlineTextItem->start() + 1, contentLogicalLeft);
     }
 
     if (inlineItem.isLineBreak() || inlineItem.isWordBreakOpportunity())
@@ -418,9 +417,9 @@ bool InlineFormattingUtils::isAtSoftWrapOpportunity(const InlineItem& previous, 
     if (&previous.layoutBox().parent() == &next.layoutBox().parent() && !mayWrapPrevious && !mayWrapNext)
         return false;
 
-    if (previous.isText() && next.isText()) {
-        auto& previousInlineTextItem = downcast<InlineTextItem>(previous);
-        auto& nextInlineTextItem = downcast<InlineTextItem>(next);
+    if (is<InlineTextItem>(previous) && is<InlineTextItem>(next)) {
+        auto& previousInlineTextItem = uncheckedDowncast<InlineTextItem>(previous);
+        auto& nextInlineTextItem = uncheckedDowncast<InlineTextItem>(next);
         if (previousInlineTextItem.isWhitespace() || nextInlineTextItem.isWhitespace()) {
             // For soft wrap opportunities created by characters that disappear at the line break (e.g. U+0020 SPACE), properties on the box directly
             // containing that character control the line breaking at that opportunity.

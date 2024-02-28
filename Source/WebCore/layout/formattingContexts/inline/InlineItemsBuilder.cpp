@@ -460,7 +460,8 @@ static inline void buildBidiParagraph(const RenderStyle& rootStyle, const Inline
                     replaceNonPreservedNewLineAndTabCharactersAndAppend(*inlineTextBox, paragraphContentBuilder);
                     lastInlineTextBox = &layoutBox;
                 }
-                inlineItemOffsetList.append({ inlineTextBoxOffset + (is<InlineTextItem>(inlineItem) ? downcast<InlineTextItem>(inlineItem).start() : downcast<InlineSoftLineBreakItem>(inlineItem).position()) });
+                auto* inlineTextItem = dynamicDowncast<InlineTextItem>(inlineItem);
+                inlineItemOffsetList.append({ inlineTextBoxOffset + (inlineTextItem ? inlineTextItem->start() : downcast<InlineSoftLineBreakItem>(inlineItem).position()) });
             } else if (auto* inlineTextItem = dynamicDowncast<InlineTextItem>(inlineItem)) {
                 inlineItemOffsetList.append({ paragraphContentBuilder.length() });
                 paragraphContentBuilder.append(StringView(inlineTextItem->inlineTextBox().content()).substring(inlineTextItem->start(), inlineTextItem->length()));

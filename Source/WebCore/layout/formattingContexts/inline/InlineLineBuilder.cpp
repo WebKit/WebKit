@@ -117,9 +117,8 @@ static bool hasTrailingSoftWrapOpportunity(size_t softWrapOpportunityIndex, size
         // For Web-compatibility there is a soft wrap opportunity before and after each replaced element or other atomic inline.
         return true;
     }
-    if (trailingInlineItem.isText()) {
-        auto& inlineTextItem = downcast<InlineTextItem>(trailingInlineItem);
-        if (inlineTextItem.isWhitespace())
+    if (auto* inlineTextItem = dynamicDowncast<InlineTextItem>(trailingInlineItem)) {
+        if (inlineTextItem->isWhitespace())
             return true;
         // Now in case of non-whitespace trailing content, we need to check if the actual soft wrap opportunity belongs to the next set.
         // e.g. "this_is_the_trailing_run<span> <-but_this_space_here_is_the_soft_wrap_opportunity"
@@ -131,7 +130,8 @@ static bool hasTrailingSoftWrapOpportunity(size_t softWrapOpportunityIndex, size
                 continue;
             // FIXME: Check if [non-whitespace][inline-box][no-whitespace] content has rules about it.
             // For now let's say the soft wrap position belongs to the next set of runs when [non-whitespace][inline-box][whitespace], [non-whitespace][inline-box][box] etc.
-            return inlineItemList[index].isText() && !downcast<InlineTextItem>(inlineItemList[index]).isWhitespace();
+            auto inlineItemListTextItem = dynamicDowncast<InlineTextItem>(inlineItemList[index]);
+            return inlineItemListTextItem && !inlineItemListTextItem->isWhitespace();
         }
         return true;
     }
@@ -208,8 +208,8 @@ inline void LineCandidate::InlineContent::appendInlineItem(const InlineItem& inl
     if (inlineItem.isBox() || inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd() || inlineItem.isOpaque())
         return m_continuousContent.append(inlineItem, style, logicalWidth);
 
-    if (inlineItem.isText())
-        return m_continuousContent.appendTextContent(downcast<InlineTextItem>(inlineItem), style, logicalWidth);
+    if (auto* inlineTextItem = dynamicDowncast<InlineTextItem>(inlineItem))
+        return m_continuousContent.appendTextContent(*inlineTextItem, style, logicalWidth);
 
     ASSERT_NOT_REACHED();
 }
@@ -358,14 +358,13 @@ void LineBuilder::initialize(const InlineRect& initialLineLogicalRect, const Inl
         if (!previousLine || !needsLayoutRange.start.offset)
             return;
         auto overflowingInlineItemPosition = needsLayoutRange.start;
-        if (is<InlineTextItem>(m_inlineItemList[overflowingInlineItemPosition.index])) {
-            auto& overflowingInlineTextItem = downcast<InlineTextItem>(m_inlineItemList[overflowingInlineItemPosition.index]);
-            ASSERT(overflowingInlineItemPosition.offset < overflowingInlineTextItem.length());
-            auto overflowingLength = overflowingInlineTextItem.length() - overflowingInlineItemPosition.offset;
+        if (auto* overflowingInlineTextItem = dynamicDowncast<InlineTextItem>(m_inlineItemList[overflowingInlineItemPosition.index])) {
+            ASSERT(overflowingInlineItemPosition.offset < overflowingInlineTextItem->length());
+            auto overflowingLength = overflowingInlineTextItem->length() - overflowingInlineItemPosition.offset;
             if (overflowingLength) {
                 // Turn previous line's overflow content into the next line's leading content.
                 // "sp[<-line break->]lit_content" -> break position: 2 -> leading partial content length: 11.
-                m_partialLeadingTextItem = overflowingInlineTextItem.right(overflowingLength, previousLine->trailingOverflowingContentWidth);
+                m_partialLeadingTextItem = overflowingInlineTextItem->right(overflowingLength, previousLine->trailingOverflowingContentWidth);
                 return;
             }
         }
@@ -612,9 +611,8 @@ InlineLayoutUnit LineBuilder::trailingPunctuationOrStopOrCommaWidthForLineCandia
                 auto& inlineItem = m_inlineItemList[index];
                 if (inlineItem.isFloat() || inlineItem.isOpaque())
                     return false;
-                if (inlineItem.isText()) {
-                    auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
-                    if (inlineTextItem.isFullyTrimmable() || inlineTextItem.isEmpty() || inlineTextItem.isWordSeparator() || inlineTextItem.isZeroWidthSpaceSeparator() || inlineTextItem.isQuirkNonBreakingSpace())
+                if (auto* inlineTextItem = dynamicDowncast<InlineTextItem>(inlineItem)) {
+                    if (inlineTextItem->isFullyTrimmable() || inlineTextItem->isEmpty() || inlineTextItem->isWordSeparator() || inlineTextItem->isZeroWidthSpaceSeparator() || inlineTextItem->isQuirkNonBreakingSpace())
                         return false;
                     return true;
                 }
@@ -666,12 +664,11 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t c
             ASSERT(currentInlineItemIndex + 1 == softWrapOpportunityIndex);
             continue;
         }
-        if (inlineItem.isText()) {
-            auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
-            auto logicalWidth = m_overflowingLogicalWidth ? *std::exchange(m_overflowingLogicalWidth, std::nullopt) : formattingContext().formattingUtils().inlineItemWidth(inlineTextItem, currentLogicalRight, isFirstFormattedLine());
-            lineCandidate.inlineContent.appendInlineItem(inlineTextItem, style, logicalWidth);
+        if (auto* inlineTextItem = dynamicDowncast<InlineTextItem>(inlineItem)) {
+            auto logicalWidth = m_overflowingLogicalWidth ? *std::exchange(m_overflowingLogicalWidth, std::nullopt) : formattingContext().formattingUtils().inlineItemWidth(*inlineTextItem, currentLogicalRight, isFirstFormattedLine());
+            lineCandidate.inlineContent.appendInlineItem(*inlineTextItem, style, logicalWidth);
             // Word spacing does not make the run longer, but it produces an offset instead. See Line::appendTextContent as well.
-            currentLogicalRight += logicalWidth + (inlineTextItem.isWordSeparator() ? style.fontCascade().wordSpacing() : 0.f);
+            currentLogicalRight += logicalWidth + (inlineTextItem->isWordSeparator() ? style.fontCascade().wordSpacing() : 0.f);
             firstInlineTextItemIndex = firstInlineTextItemIndex.value_or(index);
             lastInlineTextItemIndex = index;
             continue;
@@ -1239,7 +1236,12 @@ bool LineBuilder::isLastLineWithInlineContent(const LineContent& lineContent, si
     // Omit floats to see if this is the last line with inline content.
     for (auto i = needsLayoutEnd; i--;) {
         auto& inlineItem = m_inlineItemList[i];
-        auto isContentfulInlineType = !inlineItem.isFloat() && !inlineItem.isOpaque() && (!inlineItem.isText() || !downcast<InlineTextItem>(inlineItem).isWhitespace() || InlineTextItem::shouldPreserveSpacesAndTabs(downcast<InlineTextItem>(inlineItem)));
+        auto isContentfulInlineType = [&] {
+            if (inlineItem.isFloat() || inlineItem.isOpaque())
+                return false;
+            auto* inlineTextItem = dynamicDowncast<InlineTextItem>(inlineItem);
+            return !inlineTextItem || !inlineTextItem->isWhitespace() || InlineTextItem::shouldPreserveSpacesAndTabs(*inlineTextItem);
+        }();
         if (isContentfulInlineType) {
             // InlineItems beyond this line range won't produce any inline content.
             return i == lineContent.range.endIndex() - 1;

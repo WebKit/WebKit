@@ -51,23 +51,24 @@ static bool containsTrailingSoftHyphen(const InlineItem& inlineItem)
 {
     if (inlineItem.style().hyphens() == Hyphens::None)
         return false;
-    if (!inlineItem.isText())
+    auto* textItem = dynamicDowncast<InlineTextItem>(inlineItem);
+    if (!textItem)
         return false;
-    return downcast<InlineTextItem>(inlineItem).hasTrailingSoftHyphen();
+    return textItem->hasTrailingSoftHyphen();
 }
 
 static bool containsPreservedTab(const InlineItem& inlineItem)
 {
-    if (!inlineItem.isText())
+    auto* textItem = dynamicDowncast<InlineTextItem>(inlineItem);
+    if (!textItem)
         return false;
-    const auto& textItem = downcast<InlineTextItem>(inlineItem);
-    if (!textItem.isWhitespace())
+    if (!textItem->isWhitespace())
         return false;
-    const auto& textBox = textItem.inlineTextBox();
+    const auto& textBox = textItem->inlineTextBox();
     if (!TextUtil::shouldPreserveSpacesAndTabs(textBox))
         return false;
-    auto start = textItem.start();
-    auto length = textItem.length();
+    auto start = textItem->start();
+    auto length = textItem->length();
     const auto& textContent = textBox.content();
     for (size_t index = start; index < start + length; index++) {
         if (textContent[index] == tabCharacter)
@@ -427,9 +428,8 @@ bool InlineContentBalancer::shouldTrimLeading(size_t inlineItemIndex, bool useFi
     if (inlineItem.isLineBreak())
         return true;
 
-    if (inlineItem.isText()) {
-        auto& textItem = downcast<InlineTextItem>(inlineItem);
-        if (textItem.isWhitespace()) {
+    if (auto* textItem = dynamicDowncast<InlineTextItem>(inlineItem)) {
+        if (textItem->isWhitespace()) {
             bool isFirstLineLeadingPreservedWhiteSpace = style.whiteSpaceCollapse() == WhiteSpaceCollapse::Preserve && isFirstLineInChunk;
             return !isFirstLineLeadingPreservedWhiteSpace && style.whiteSpaceCollapse() != WhiteSpaceCollapse::BreakSpaces;
         }
@@ -451,9 +451,8 @@ bool InlineContentBalancer::shouldTrimTrailing(size_t inlineItemIndex, bool useF
     if (inlineItem.isLineBreak())
         return true;
 
-    if (inlineItem.isText()) {
-        auto& textItem = downcast<InlineTextItem>(inlineItem);
-        if (textItem.isWhitespace())
+    if (auto* textItem = dynamicDowncast<InlineTextItem>(inlineItem)) {
+        if (textItem->isWhitespace())
             return style.whiteSpaceCollapse() != WhiteSpaceCollapse::BreakSpaces;
         return false;
     }

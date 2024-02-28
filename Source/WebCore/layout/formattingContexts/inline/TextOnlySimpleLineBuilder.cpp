@@ -191,15 +191,14 @@ InlineItemPosition TextOnlySimpleLineBuilder::placeInlineTextContent(const Inlin
         auto& inlineItem = m_inlineItemList[nextItemIndex++];
         ASSERT(inlineItem.isText() || inlineItem.isLineBreak());
 
-        if (inlineItem.isText()) {
-            auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
+        if (auto* inlineTextItem = dynamicDowncast<InlineTextItem>(inlineItem)) {
             auto contentWidth = [&] {
-                if (auto logicalWidth = inlineTextItem.width())
+                if (auto logicalWidth = inlineTextItem->width())
                     return *logicalWidth;
-                return measuredInlineTextItem(inlineTextItem, rootStyle, m_line.contentLogicalRight() + candidateContent.logicalWidth);
+                return measuredInlineTextItem(*inlineTextItem, rootStyle, m_line.contentLogicalRight() + candidateContent.logicalWidth);
             };
             candidateContent.append(contentWidth());
-            if (isAtSoftWrapOpportunityOrContentEnd(inlineTextItem))
+            if (isAtSoftWrapOpportunityOrContentEnd(*inlineTextItem))
                 isEndOfLine = processCandidateContent();
             continue;
         }
@@ -232,11 +231,11 @@ InlineItemPosition TextOnlySimpleLineBuilder::placeNonWrappingInlineTextContent(
     while (!isEndOfLine) {
         auto& inlineItem = m_inlineItemList[nextItemIndex];
         ASSERT(inlineItem.isText() || inlineItem.isLineBreak());
-        if (inlineItem.isText()) {
+        if (auto* inlineTextItem = dynamicDowncast<InlineTextItem>(inlineItem)) {
             auto contentWidth = [&] {
-                if (auto logicalWidth = downcast<InlineTextItem>(inlineItem).width())
+                if (auto logicalWidth = inlineTextItem->width())
                     return *logicalWidth;
-                return measuredInlineTextItem(downcast<InlineTextItem>(inlineItem), rootStyle, candidateContent.logicalWidth);
+                return measuredInlineTextItem(*inlineTextItem, rootStyle, candidateContent.logicalWidth);
             };
             candidateContent.append(contentWidth());
         } else if (inlineItem.isLineBreak())

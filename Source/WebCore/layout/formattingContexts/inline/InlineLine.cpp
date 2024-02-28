@@ -579,7 +579,6 @@ void Line::appendLineBreak(const InlineItem& inlineItem, const RenderStyle& styl
         return m_runs.append({ inlineItem, style, lastRunLogicalRight() });
     }
     // Soft line breaks (preserved new line characters) require inline text boxes for compatibility reasons.
-    ASSERT(inlineItem.isSoftLineBreak());
     m_runs.append({ downcast<InlineSoftLineBreakItem>(inlineItem), inlineItem.style(), lastRunLogicalRight() });
 }
 
