@@ -119,15 +119,17 @@ WI.ScopeBar = class ScopeBar extends WI.NavigationItem
             for (var item of this._items) {
                 this._itemsById.set(item.id, item);
 
-                if (item.exclusive)
-                    this._element.appendChild(item.element);
-                else
+                if (!item.exclusive) {
                     nonExclusiveItems.push(item);
+                    continue;
+                }
 
+                this._element.appendChild(item.element);
                 item.addEventListener(WI.ScopeBarItem.Event.SelectionChanged, this._itemSelectionDidChange, this);
             }
 
             this._multipleItem = new WI.MultipleScopeBarItem(nonExclusiveItems);
+            this._multipleItem.addEventListener(WI.ScopeBarItem.Event.SelectionChanged, this._itemSelectionDidChange, this);
             this._element.appendChild(this._multipleItem.element);
         } else {
             for (var item of this._items) {
@@ -148,24 +150,22 @@ WI.ScopeBar = class ScopeBar extends WI.NavigationItem
 
     _itemSelectionDidChange(event)
     {
-        var sender = event.target;
-        var item;
+        if (this._ignoreItemSelectedEvent)
+            return;
 
-        // An exclusive item was selected, unselect everything else.
-        if (sender.exclusive && sender.selected) {
-            for (var i = 0; i < this._items.length; ++i) {
-                item = this._items[i];
-                if (item !== sender)
-                    item.selected = false;
-            }
-        } else {
-            let replacesCurrentSelection = this._shouldGroupNonExclusiveItems || !event.data.extendSelection;
-            for (var i = 0; i < this._items.length; ++i) {
-                item = this._items[i];
-                if (item.exclusive && item !== sender && sender.selected)
-                    item.selected = false;
-                else if (sender.selected && replacesCurrentSelection && sender !== item)
-                    item.selected = false;
+        this._ignoreItemSelectedEvent = true;
+
+        let target = event.target;
+        if (target.selected) {
+            for (let item of this._items) {
+                if (item === target)
+                    continue;
+                if (target === this._multipleItem && !item.exclusive)
+                    continue;
+                if (event.data.extendSelection && !target.exclusive && !item.exclusive)
+                    continue;
+
+                item.selected = false;
             }
         }
 
@@ -177,6 +177,8 @@ WI.ScopeBar = class ScopeBar extends WI.NavigationItem
         }
 
         this.dispatchEventToListeners(WI.ScopeBar.Event.SelectionChanged);
+
+        this._ignoreItemSelectedEvent = false;
     }
 
     _handleKeyDown(event)
