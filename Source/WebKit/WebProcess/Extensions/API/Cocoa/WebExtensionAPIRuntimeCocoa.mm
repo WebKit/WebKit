@@ -59,7 +59,8 @@ static NSString * const previousVersionKey = @"previousVersion";
 
 namespace WebKit {
 
-using ReplyCallbackAggregator = EagerCallbackAggregator<void(id)>;
+enum class IsDefaultReply : bool { No, Yes };
+using ReplyCallbackAggregator = EagerCallbackAggregator<void(id, IsDefaultReply)>;
 
 }
 
@@ -552,7 +553,13 @@ void WebExtensionContextProxy::internalDispatchRuntimeMessageEvent(WebExtensionC
     auto *senderInfo = toWebAPI(senderParameters);
     auto sourceContentWorldType = senderParameters.contentWorldType;
 
-    auto callbackAggregator = ReplyCallbackAggregator::create([completionHandler = WTFMove(completionHandler)](id replyMessage) mutable {
+    auto callbackAggregator = ReplyCallbackAggregator::create([completionHandler = WTFMove(completionHandler)](id replyMessage, IsDefaultReply defaultReply) mutable {
+        if (defaultReply == IsDefaultReply::Yes) {
+            // A null reply to the completionHandler means no listeners replied.
+            completionHandler({ });
+            return;
+        }
+
         NSString *replyMessageJSON;
         if (JSValue *value = dynamic_objc_cast<JSValue>(replyMessage))
             replyMessageJSON = value._toJSONString;
@@ -560,10 +567,14 @@ void WebExtensionContextProxy::internalDispatchRuntimeMessageEvent(WebExtensionC
             replyMessageJSON = encodeJSONString(replyMessage, JSONOptions::FragmentsAllowed);
 
         if (replyMessageJSON.length > webExtensionMaxMessageLength)
-            replyMessageJSON = nil;
+            replyMessageJSON = @"";
+
+        // Ensure a real reply is never null, so the completionHandler can make the distinction.
+        if (!replyMessageJSON)
+            replyMessageJSON = @"";
 
         completionHandler(replyMessageJSON);
-    }, nil);
+    }, nil, IsDefaultReply::Yes);
 
     // This ObjC wrapper is need for the inner reply block, which is required to be a compiled block.
     auto *callbackAggregatorWrapper = [[_WKReplyCallbackAggregator alloc] initWithAggregator:callbackAggregator];
@@ -592,7 +603,7 @@ void WebExtensionContextProxy::internalDispatchRuntimeMessageEvent(WebExtensionC
             // with a signature to translate the JS function arguments. Having the block capture
             // callbackAggregatorWrapper ensures that callbackAggregator remains in scope.
             id returnValue = listener->call(message, senderInfo, ^(id replyMessage) {
-                callbackAggregatorWrapper.get().aggregator(replyMessage);
+                callbackAggregatorWrapper.get().aggregator(replyMessage, IsDefaultReply::No);
             });
 
             if (dynamic_objc_cast<NSNumber>(returnValue).boolValue) {
@@ -610,13 +621,13 @@ void WebExtensionContextProxy::internalDispatchRuntimeMessageEvent(WebExtensionC
                 if (error)
                     return;
 
-                callbackAggregatorWrapper.get().aggregator(replyMessage);
+                callbackAggregatorWrapper.get().aggregator(replyMessage, IsDefaultReply::No);
             }];
         }
     }, toDOMWrapperWorld(contentWorldType));
 
     if (!anyListenerHandledMessage)
-        callbackAggregator.get()(nil);
+        callbackAggregator.get()(nil, IsDefaultReply::Yes);
 }
 
 void WebExtensionContextProxy::dispatchRuntimeMessageEvent(WebExtensionContentWorldType contentWorldType, const String& messageJSON, std::optional<WebExtensionFrameIdentifier> frameIdentifier, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(String&& replyJSON)>&& completionHandler)

@@ -145,6 +145,11 @@ void WebExtensionContext::runtimeSendMessage(const String& extensionID, const St
 
     for (auto& process : mainWorldProcesses) {
         process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeMessageEvent(targetContentWorldType, messageJSON, std::nullopt, completeSenderParameters), [callbackAggregator](String&& replyJSON) {
+            // A null reply means no listeners replied. Don't call the callbackAggregator
+            // to give other listeners in a different process a chance to reply.
+            if (replyJSON.isNull())
+                return;
+
             callbackAggregator.get()(WTFMove(replyJSON));
         }, identifier());
     }
@@ -294,6 +299,11 @@ void WebExtensionContext::runtimeWebPageSendMessage(const String& extensionID, c
 
     for (auto& process : mainWorldProcesses) {
         process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeMessageEvent(WebExtensionContentWorldType::Main, messageJSON, std::nullopt, completeSenderParameters), [callbackAggregator](String&& replyJSON) {
+            // A null reply means no listeners replied. Don't call the callbackAggregator
+            // to give other listeners in a different process a chance to reply.
+            if (replyJSON.isNull())
+                return;
+
             callbackAggregator.get()(WTFMove(replyJSON));
         }, identifier());
     }
