@@ -41,3 +41,13 @@ find_package_handle_standard_args(
 # show the SVT_INCLUDE_DIR, SVT_LIBRARY and SVT_LIBRARIES variables only
 # in the advanced view
 mark_as_advanced(SVT_INCLUDE_DIR SVT_LIBRARY SVT_LIBRARIES)
+
+if(SVT_LIBRARY)
+    if("${SVT_LIBRARY}" MATCHES "\\${CMAKE_STATIC_LIBRARY_SUFFIX}$")
+        add_library(SvtAv1Enc STATIC IMPORTED GLOBAL)
+    else()
+        add_library(SvtAv1Enc SHARED IMPORTED GLOBAL)
+    endif()
+    set_target_properties(SvtAv1Enc PROPERTIES IMPORTED_LOCATION "${SVT_LIBRARY}")
+    target_include_directories(SvtAv1Enc INTERFACE ${SVT_INCLUDE_DIR})
+endif()

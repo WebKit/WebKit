@@ -1,4 +1,4 @@
-: # If you want to use a local build of libyuv, you must clone the libyuv repo in this directory first, then enable CMake's AVIF_LOCAL_LIBYUV option.
+: # If you want to use a local build of libyuv, you must clone the libyuv repo in this directory first, then set CMake's AVIF_LIBYUV to LOCAL.
 
 : # The odd choice of comment style in this file is to try to share this script between *nix and win32.
 
@@ -14,11 +14,14 @@
 git clone --single-branch https://chromium.googlesource.com/libyuv/libyuv
 
 cd libyuv
-git checkout f9fda6e7
+: # When changing the commit below to a newer version of libyuv, it is best to make sure it is being used by chromium,
+: # because the test suite of chromium provides additional test coverage of libyuv.
+: # It can be looked up at https://source.chromium.org/chromium/chromium/src/+/main:DEPS?q=libyuv.
+git checkout 464c51a0
 
 mkdir build
 cd build
 
-cmake -G Ninja -DBUILD_SHARED_LIBS=0 -DCMAKE_BUILD_TYPE=Release ..
+cmake -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_POSITION_INDEPENDENT_CODE=ON ..
 ninja yuv
 cd ../..

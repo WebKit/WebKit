@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="1" android:versionName="1.0">
+  <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="30"/>
+  <application android:label="libavif JNI Test" android:taskAffinity="">
+  </application>
+  <instrumentation android:targetPackage="org.aomedia.avif.android" android:name="androidx.test.runner.AndroidJUnitRunner" android:label="Tests for libavif JNI API"/>
+</manifest>
