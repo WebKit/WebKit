@@ -1012,6 +1012,8 @@ public:
     double currentAudioBufferSize() const;
     bool audioSessionActive() const;
 
+    void setHistoryTotalStateObjectPayloadLimitOverride(uint32_t);
+
     void storeRegistrationsOnDisk(DOMPromiseDeferred<void>&&);
     void sendH2Ping(String url, DOMPromiseDeferred<IDLDouble>&&);
 

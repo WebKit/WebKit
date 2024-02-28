@@ -1314,6 +1314,8 @@ typedef (FetchRequest or FetchResponse) FetchObject;
 
     SelectorFilterHashCounts selectorFilterHashCounts(DOMString selector);
 
+    undefined setHistoryTotalStateObjectPayloadLimitOverride(unsigned long limit);
+
     readonly attribute boolean isVisuallyNonEmpty;
     
     boolean isUsingUISideCompositing();

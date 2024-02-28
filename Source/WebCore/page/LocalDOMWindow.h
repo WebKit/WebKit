@@ -159,7 +159,7 @@ public:
     WEBCORE_EXPORT void setCanShowModalDialogOverride(bool);
 
     Screen& screen();
-    History& history();
+    WEBCORE_EXPORT History& history();
     Crypto& crypto() const;
     BarProp& locationbar();
     BarProp& menubar();

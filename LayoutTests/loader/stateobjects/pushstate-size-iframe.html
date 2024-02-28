@@ -2,8 +2,12 @@
 
 if (window.testRunner) {
     testRunner.dumpAsText();
-    testRunner.dumpChildFramesAsText();
     testRunner.waitUntilDone();
+}
+
+if (window.internals) {
+    // Decrease the state object total limit from 64MB to 4MB to speed up the test.
+    internals.setHistoryTotalStateObjectPayloadLimitOverride(4 * 1024 * 1024);
 }
 
 function log(msg) {
@@ -11,7 +15,7 @@ function log(msg) {
 }
 
 var object = "aaaaaaaaaa";
-for (var i = 0; i < 16; ++i)
+for (var i = 0; i < 14; ++i)
     object += object;
 
 function click()
@@ -42,7 +46,7 @@ function clicked()
     log("Parent frame successfully added item: " + count + " times");
     ++count;
 
-    if (count > 10) {
+    if (count > 4) {
         openFrame();
         return;
     }

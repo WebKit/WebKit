@@ -44,6 +44,7 @@
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/MainThread.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 
 #if PLATFORM(COCOA)
@@ -200,12 +201,19 @@ URL History::urlForState(const String& urlString)
     return frame->document()->completeURL(urlString);
 }
 
+uint32_t History::totalStateObjectPayloadLimit() const
+{
+    ASSERT(frame() && frame()->isMainFrame());
+
+    // Each unique main-frame document is only allowed to send 64MB of state object payload to the UI client/process.
+    static uint32_t defaultTotalStateObjectPayloadLimit = 64 * MB;
+    return m_totalStateObjectPayloadLimitOverride.value_or(defaultTotalStateObjectPayloadLimit);
+}
+
 ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data, const String& urlString, StateObjectType stateObjectType)
 {
     m_cachedState.clear();
 
-    // Each unique main-frame document is only allowed to send 64MB of state object payload to the UI client/process.
-    static uint32_t totalStateObjectPayloadLimit = 0x4000000;
     static Seconds stateObjectTimeSpan { 10_s };
     static unsigned perStateObjectTimeSpanLimit = 100;
 
@@ -277,7 +285,7 @@ ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data
         newTotalUsage -= m_mostRecentStateObjectUsage;
     newTotalUsage += payloadSize;
 
-    if (newTotalUsage > totalStateObjectPayloadLimit) {
+    if (newTotalUsage > mainHistory->totalStateObjectPayloadLimit()) {
         if (stateObjectType == StateObjectType::Replace)
             return Exception { ExceptionCode::QuotaExceededError, "Attempt to store more data than allowed using history.replaceState()"_s };
         return Exception { ExceptionCode::QuotaExceededError, "Attempt to store more data than allowed using history.pushState()"_s };

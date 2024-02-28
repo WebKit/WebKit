@@ -108,6 +108,7 @@
 #include "HTMLTextAreaElement.h"
 #include "HTMLVideoElement.h"
 #include "HighlightRegistry.h"
+#include "History.h"
 #include "HistoryController.h"
 #include "HistoryItem.h"
 #include "HitTestResult.h"
@@ -574,6 +575,9 @@ void Internals::resetToConsistentState(Page& page)
         if (auto* backing = mainFrameView->tiledBacking())
             backing->setTileSizeUpdateDelayDisabledForTesting(false);
     }
+
+    if (RefPtr window = localMainFrame->window())
+        window->history().setTotalStateObjectPayloadLimitOverride(std::nullopt);
 
     WTF::clearDefaultPortForProtocolMapForTesting();
     overrideUserPreferredLanguages(Vector<String>());
@@ -7328,6 +7332,14 @@ bool Internals::hasScopeBreakingHasSelectors() const
 {
     contextDocument()->styleScope().flushPendingUpdate();
     return !!contextDocument()->styleScope().resolver().ruleSets().scopeBreakingHasPseudoClassInvalidationRuleSet();
+}
+
+void Internals::setHistoryTotalStateObjectPayloadLimitOverride(uint32_t limit)
+{
+    RefPtr window = contextDocument() ? contextDocument()->domWindow() : nullptr;
+    if (!window)
+        return;
+    window->history().setTotalStateObjectPayloadLimitOverride(limit);
 }
 
 } // namespace WebCore

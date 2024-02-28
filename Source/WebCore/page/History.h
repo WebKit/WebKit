@@ -51,6 +51,8 @@ public:
     ExceptionOr<ScrollRestoration> scrollRestoration() const;
     ExceptionOr<void> setScrollRestoration(ScrollRestoration);
 
+    void setTotalStateObjectPayloadLimitOverride(std::optional<uint32_t> limit) { m_totalStateObjectPayloadLimitOverride = limit; }
+
     ExceptionOr<SerializedScriptValue*> state();
     JSValueInWrappedObject& cachedState();
     JSValueInWrappedObject& cachedStateForGC() { return m_cachedState; }
@@ -78,6 +80,7 @@ private:
     URL urlForState(const String& url);
 
     SerializedScriptValue* stateInternal() const;
+    uint32_t totalStateObjectPayloadLimit() const;
 
     RefPtr<SerializedScriptValue> m_lastStateObjectRequested;
     JSValueInWrappedObject m_cachedState;
@@ -87,6 +90,7 @@ private:
 
     // For the main frame's History object to keep track of all state object usage.
     uint64_t m_totalStateObjectUsage { 0 };
+    std::optional<uint32_t> m_totalStateObjectPayloadLimitOverride;
 
     // For each individual History object to keep track of the most recent state object added.
     uint64_t m_mostRecentStateObjectUsage { 0 };
