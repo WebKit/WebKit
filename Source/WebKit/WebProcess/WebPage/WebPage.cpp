@@ -6201,14 +6201,16 @@ void WebPage::effectiveAppearanceDidChange(bool useDarkAppearance, bool useEleva
         m_inspectorUI->effectiveAppearanceDidChange(useDarkAppearance ? WebCore::InspectorFrontendClient::Appearance::Dark : WebCore::InspectorFrontendClient::Appearance::Light);
 }
 
-void WebPage::freezeLayerTreeDueToSwipeAnimation()
+void WebPage::swipeAnimationDidStart()
 {
     freezeLayerTree(LayerTreeFreezeReason::SwipeAnimation);
+    corePage()->setIsInSwipeAnimation(true);
 }
 
-void WebPage::unfreezeLayerTreeDueToSwipeAnimation()
+void WebPage::swipeAnimationDidEnd()
 {
     unfreezeLayerTree(LayerTreeFreezeReason::SwipeAnimation);
+    corePage()->setIsInSwipeAnimation(false);
 }
 
 void WebPage::beginPrinting(FrameIdentifier frameID, const PrintInfo& printInfo)

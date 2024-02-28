@@ -441,8 +441,9 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     SuspendAllMediaPlayback() -> ()
     ResumeAllMediaPlayback() -> ()
 
-    FreezeLayerTreeDueToSwipeAnimation()
-    UnfreezeLayerTreeDueToSwipeAnimation()
+    SwipeAnimationDidStart()
+    SwipeAnimationDidEnd()
+
     IsLayerTreeFrozen() -> (bool isFrozen)
 
     # Printing.

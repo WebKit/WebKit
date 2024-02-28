@@ -1098,6 +1098,9 @@ public:
     WEBCORE_EXPORT bool hasActiveImmersiveSession() const;
 #endif
 
+    void setIsInSwipeAnimation(bool inSwipeAnimation) { m_inSwipeAnimation = inSwipeAnimation; }
+    bool isInSwipeAnimation() const { return m_inSwipeAnimation; }
+
 private:
     explicit Page(PageConfiguration&&);
 
@@ -1360,6 +1363,8 @@ private:
 #if ENABLE(EDITABLE_REGION)
     bool m_isEditableRegionEnabled { false };
 #endif
+
+    bool m_inSwipeAnimation { false };
 
     Vector<OptionSet<RenderingUpdateStep>, 2> m_renderingUpdateRemainingSteps;
     OptionSet<RenderingUpdateStep> m_unfulfilledRequestedSteps;

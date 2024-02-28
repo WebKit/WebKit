@@ -1,0 +1,87 @@
+<!-- webkit-test-runner [ NavigationAPIEnabled=true ] -->
+<head>
+<style>
+html {
+    font-size: 32pt;
+}
+</style>
+<script src="resources/swipe-test.js"></script>
+<script src="../resources/ui-helper.js"></script>
+
+<script>
+
+function didBeginSwipeCallback()
+{
+    log("didBeginSwipe");
+
+    completeSwipeGesture();
+}
+
+function willEndSwipeCallback()
+{
+    log("willEndSwipe");
+
+    shouldBe(false, isFirstPage(), "The swipe should not yet have navigated away from the second page.");
+}
+
+function didEndSwipeCallback()
+{
+    log("didEndSwipe");
+
+    startMeasuringDuration("snapshotRemoval");
+}
+
+function didRemoveSwipeSnapshotCallback()
+{
+    log("didRemoveSwipeSnapshot");
+
+    shouldBe(true, isFirstPage(), "The swipe should have navigated back to the first page.");
+
+    testComplete();
+}
+
+function isFirstPage()
+{
+    return window.location.href.indexOf("second") == -1;
+}
+
+function updateContent()
+{
+    document.body.innerHTML = isFirstPage() ? "first" : "second";
+}
+
+window.onload = async function () {
+    if (!window.eventSender || !window.testRunner) {
+        document.body.innerHTML = "This test must be run in WebKitTestRunner.";
+        return;
+    }
+
+    updateContent();
+
+    initializeSwipeTest();
+
+    testRunner.installDidBeginSwipeCallback(didBeginSwipeCallback);
+    testRunner.installWillEndSwipeCallback(willEndSwipeCallback);
+    testRunner.installDidEndSwipeCallback(didEndSwipeCallback);
+    testRunner.installDidRemoveSwipeSnapshotCallback(didRemoveSwipeSnapshotCallback);
+
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+
+    window.addEventListener("popstate", function(e) {
+        log("hasUAVisualTransition " + e.hasUAVisualTransition);
+        updateContent();
+    });
+
+    await UIHelper.delayFor(0);
+
+    history.pushState(null, null, "#second");
+    updateContent();
+
+    await UIHelper.delayFor(0);
+    await startSwipeGesture();
+};
+</script>
+</head>
+<body>
+</body>

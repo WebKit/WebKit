@@ -4505,7 +4505,7 @@ void WebPageProxy::commitProvisionalPage(FrameIdentifier frameID, FrameInfoData&
 #endif
 
     if (m_isLayerTreeFrozenDueToSwipeAnimation)
-        send(Messages::WebPage::UnfreezeLayerTreeDueToSwipeAnimation());
+        send(Messages::WebPage::SwipeAnimationDidEnd());
 
     resetStateAfterProcessTermination(ProcessTerminationReason::NavigationSwap);
 
@@ -11404,7 +11404,7 @@ void WebPageProxy::navigationGestureWillEnd(bool willNavigate, WebBackForwardLis
     Ref protectedPageClient { pageClient() };
     if (willNavigate) {
         m_isLayerTreeFrozenDueToSwipeAnimation = true;
-        send(Messages::WebPage::FreezeLayerTreeDueToSwipeAnimation());
+        send(Messages::WebPage::SwipeAnimationDidStart());
     }
 
     protectedPageClient->navigationGestureWillEnd(willNavigate, item);
@@ -11422,10 +11422,10 @@ void WebPageProxy::navigationGestureDidEnd(bool willNavigate, WebBackForwardList
 
     if (m_isLayerTreeFrozenDueToSwipeAnimation) {
         m_isLayerTreeFrozenDueToSwipeAnimation = false;
-        send(Messages::WebPage::UnfreezeLayerTreeDueToSwipeAnimation());
+        send(Messages::WebPage::SwipeAnimationDidEnd());
 
         if (m_provisionalPage)
-            m_provisionalPage->unfreezeLayerTreeDueToSwipeAnimation();
+            m_provisionalPage->swipeAnimationDidEnd();
     }
 }
 

@@ -244,7 +244,7 @@ void ProvisionalPageProxy::initializeWebPage(RefPtr<API::WebsitePolicies>&& webs
     }
 
     if (m_page->isLayerTreeFrozenDueToSwipeAnimation())
-        send(Messages::WebPage::FreezeLayerTreeDueToSwipeAnimation());
+        send(Messages::WebPage::SwipeAnimationDidStart());
 
     if (registerWithInspectorController)
         m_page->inspectorController().didCreateProvisionalPage(*this);
@@ -590,9 +590,9 @@ void ProvisionalPageProxy::didCreateContextInModelProcessForVisibilityPropagatio
 #endif // ENABLE(MODEL_PROCESS)
 #endif // HAVE(VISIBILITY_PROPAGATION_VIEW)
 
-void ProvisionalPageProxy::unfreezeLayerTreeDueToSwipeAnimation()
+void ProvisionalPageProxy::swipeAnimationDidEnd()
 {
-    send(Messages::WebPage::UnfreezeLayerTreeDueToSwipeAnimation());
+    send(Messages::WebPage::SwipeAnimationDidEnd());
 }
 
 void ProvisionalPageProxy::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)

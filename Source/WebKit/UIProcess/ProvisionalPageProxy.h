@@ -130,7 +130,7 @@ public:
     void goToBackForwardItem(API::Navigation&, WebBackForwardListItem&, RefPtr<API::WebsitePolicies>&&, WebCore::ShouldTreatAsContinuingLoad, std::optional<NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume = std::nullopt);
     void cancel();
 
-    void unfreezeLayerTreeDueToSwipeAnimation();
+    void swipeAnimationDidEnd();
 
     void processDidTerminate();
 
