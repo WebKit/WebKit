@@ -578,7 +578,7 @@ static void* copyToDestinationFormat(const uint8_t* rgbaBytes, GPUTextureFormat 
             data[i0 + 1] = rgbaBytes[i + 1];
         }
 
-        sizeInBytes = sizeInBytes * sizeof(float);
+        sizeInBytes = (sizeInBytes / 2) * sizeof(float);
         return data;
     }
 
