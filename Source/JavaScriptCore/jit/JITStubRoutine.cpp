@@ -89,6 +89,15 @@ bool JITStubRoutine::visitWeak(VM& vm)
     return result;
 }
 
+CallLinkInfo* JITStubRoutine::callLinkInfoAt(const ConcurrentJSLocker& locker, unsigned index)
+{
+    CallLinkInfo* result = nullptr;
+    runWithDowncast([&](auto* derived) {
+        result = derived->callLinkInfoAtImpl(locker, index);
+    });
+    return result;
+}
+
 void JITStubRoutine::markRequiredObjects(AbstractSlotVisitor& visitor)
 {
     runWithDowncast([&](auto* derived) {

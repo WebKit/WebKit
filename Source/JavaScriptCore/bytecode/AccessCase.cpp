@@ -737,9 +737,6 @@ void AccessCase::forEachDependentCell(VM&, const Functor& functor) const
     switch (type()) {
     case Getter:
     case Setter: {
-        auto& accessor = this->as<GetterSetterAccessCase>();
-        if (accessor.callLinkInfo())
-            accessor.callLinkInfo()->forEachDependentCell(functor);
         break;
     }
     case CustomValueGetter:
@@ -767,9 +764,6 @@ void AccessCase::forEachDependentCell(VM&, const Functor& functor) const
     case ProxyObjectLoad:
     case ProxyObjectStore:
     case IndexedProxyObjectLoad: {
-        auto& accessor = this->as<ProxyObjectAccessCase>();
-        if (accessor.callLinkInfo())
-            accessor.callLinkInfo()->forEachDependentCell(functor);
         break;
     }
     case InstanceOfHit:
@@ -880,7 +874,7 @@ void AccessCase::forEachDependentCell(VM&, const Functor& functor) const
     }
 }
 
-bool AccessCase::doesCalls(VM& vm, Vector<JSCell*>* cellsToMarkIfDoesCalls) const
+bool AccessCase::doesCalls(VM&) const
 {
     bool doesCalls = false;
     switch (type()) {
@@ -1006,12 +1000,6 @@ bool AccessCase::doesCalls(VM& vm, Vector<JSCell*>* cellsToMarkIfDoesCalls) cons
     case Replace:
         doesCalls = viaGlobalProxy();
         break;
-    }
-
-    if (doesCalls && cellsToMarkIfDoesCalls) {
-        forEachDependentCell(vm, [&](JSCell* cell) {
-            cellsToMarkIfDoesCalls->append(cell);
-        });
     }
     return doesCalls;
 }
@@ -1251,17 +1239,18 @@ void AccessCase::dump(PrintStream& out) const
 
 bool AccessCase::visitWeak(VM& vm) const
 {
-    if (isAccessor()) {
-        auto& accessor = this->as<GetterSetterAccessCase>();
-        if (accessor.callLinkInfo())
-            accessor.callLinkInfo()->visitWeak(vm);
-    }
-
     bool isValid = true;
     forEachDependentCell(vm, [&](JSCell* cell) {
         isValid &= vm.heap.isMarked(cell);
     });
     return isValid;
+}
+
+void AccessCase::collectDependentCells(VM& vm, Vector<JSCell*>& cells) const
+{
+    forEachDependentCell(vm, [&](JSCell* cell) {
+        cells.append(cell);
+    });
 }
 
 template<typename Visitor>

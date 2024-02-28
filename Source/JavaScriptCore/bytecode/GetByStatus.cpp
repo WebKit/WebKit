@@ -263,7 +263,7 @@ GetByStatus GetByStatus::computeForStubInfoWithoutExitSiteFeedback(const Concurr
                 auto& accessCase = access.as<ProxyObjectAccessCase>();
                 auto status = GetByStatus(accessCase);
                 auto callLinkStatus = makeUnique<CallLinkStatus>();
-                if (CallLinkInfo* callLinkInfo = accessCase.callLinkInfo())
+                if (CallLinkInfo* callLinkInfo = stubInfo->callLinkInfoAt(locker, 0))
                     *callLinkStatus = CallLinkStatus::computeFor(locker, profiledBlock, *callLinkInfo, callExitSiteData);
                 status.appendVariant(GetByVariant(accessCase.identifier(), { }, invalidOffset, { }, WTFMove(callLinkStatus)));
                 return status;
@@ -375,10 +375,8 @@ GetByStatus GetByStatus::computeForStubInfoWithoutExitSiteFeedback(const Concurr
                     }
                     case AccessCase::Getter: {
                         callLinkStatus = makeUnique<CallLinkStatus>();
-                        if (CallLinkInfo* callLinkInfo = access.as<GetterSetterAccessCase>().callLinkInfo()) {
-                            *callLinkStatus = CallLinkStatus::computeFor(
-                                locker, profiledBlock, *callLinkInfo, callExitSiteData);
-                        }
+                        if (CallLinkInfo* callLinkInfo = stubInfo->callLinkInfoAt(locker, listIndex))
+                            *callLinkStatus = CallLinkStatus::computeFor(locker, profiledBlock, *callLinkInfo, callExitSiteData);
                         break;
                     }
                     default: {

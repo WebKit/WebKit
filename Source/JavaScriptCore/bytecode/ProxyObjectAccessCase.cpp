@@ -64,8 +64,6 @@ Ref<AccessCase> ProxyObjectAccessCase::cloneImpl() const
 void ProxyObjectAccessCase::dumpImpl(PrintStream& out, CommaPrinter& comma, Indenter& indent) const
 {
     Base::dumpImpl(out, comma, indent);
-    if (callLinkInfo())
-        out.print(comma, "callLinkInfo = ", RawPointer(callLinkInfo()));
 }
 
 } // namespace JSC
