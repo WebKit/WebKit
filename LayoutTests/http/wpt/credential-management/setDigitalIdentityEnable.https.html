@@ -14,9 +14,9 @@
             console.log("FAIL: identity must not be exposed by default.");
         }
 
-        if (window.DigitalIdentity !== undefined) {
+        if (window.DigitalCredential !== undefined) {
             console.log(
-                "FAIL: DigitalIdentity interface must not be exposed by default."
+                "FAIL: DigitalCredential interface must not be exposed by default."
             );
         }
 
@@ -45,12 +45,12 @@
                 );
             }
 
-            const isInstanceOfDigitalIdentity =
-                iframeWin.DigitalIdentity.prototype instanceof
+            const isInstanceOfDigitalCredential =
+                iframeWin.DigitalCredential.prototype instanceof
                 iframeWin.Credential;
-            if (!isInstanceOfDigitalIdentity) {
+            if (!isInstanceOfDigitalCredential) {
                 console.log(
-                    "FAIL: DigitalIdentity's prototype interface must be an instance of Credential."
+                    "FAIL: DigitalCredential's prototype interface must be an instance of Credential."
                 );
             }
             console.log("Test finished");

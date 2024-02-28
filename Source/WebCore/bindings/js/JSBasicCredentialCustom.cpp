@@ -29,7 +29,7 @@
 #if ENABLE(WEB_AUTHN)
 
 #include "JSDOMBinding.h"
-#include "JSDigitalIdentity.h"
+#include "JSDigitalCredential.h"
 #include "JSPublicKeyCredential.h"
 
 namespace WebCore {
@@ -39,8 +39,8 @@ JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, 
 {
     if (is<PublicKeyCredential>(credential))
         return createWrapper<PublicKeyCredential>(globalObject, WTFMove(credential));
-    if (is<DigitalIdentity>(credential))
-        return createWrapper<DigitalIdentity>(globalObject, WTFMove(credential));
+    if (is<DigitalCredential>(credential))
+        return createWrapper<DigitalCredential>(globalObject, WTFMove(credential));
     return createWrapper<BasicCredential>(globalObject, WTFMove(credential));
 }
 

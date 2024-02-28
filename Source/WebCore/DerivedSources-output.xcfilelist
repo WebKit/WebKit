@@ -841,10 +841,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDeviceOrientationEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDeviceOrientationEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDeviceOrientationOrMotionPermissionState.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDeviceOrientationOrMotionPermissionState.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDigitalCredential.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDigitalCredential.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDigitalCredentialRequestOptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDigitalCredentialRequestOptions.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDigitalIdentity.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDigitalIdentity.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDistanceModelType.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDistanceModelType.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocument+CSSOMView.cpp

@@ -46,8 +46,8 @@ BasicCredential::~BasicCredential() = default;
 String BasicCredential::type() const
 {
     switch (m_type) {
-    case Type::DigitalIdentity:
-        return "digital-identity"_s;
+    case Type::DigitalCredential:
+        return "digital-credential"_s;
 
     case Type::PublicKey:
         return "public-key"_s;
