@@ -354,14 +354,13 @@ void RemoteDisplayListRecorder::drawNativeImage(RenderingResourceIdentifier imag
 void RemoteDisplayListRecorder::drawSystemImage(Ref<SystemImage> systemImage, const FloatRect& destinationRect)
 {
 #if USE(SYSTEM_PREVIEW)
-    if (is<ARKitBadgeSystemImage>(systemImage.get())) {
-        ARKitBadgeSystemImage& badge = downcast<ARKitBadgeSystemImage>(systemImage.get());
-        RefPtr nativeImage = resourceCache().cachedNativeImage(badge.imageIdentifier());
+    if (auto* badge = dynamicDowncast<ARKitBadgeSystemImage>(systemImage.get())) {
+        RefPtr nativeImage = resourceCache().cachedNativeImage(badge->imageIdentifier());
         if (!nativeImage) {
             ASSERT_NOT_REACHED();
             return;
         }
-        badge.setImage(BitmapImage::create(nativeImage.releaseNonNull()));
+        badge->setImage(BitmapImage::create(nativeImage.releaseNonNull()));
     }
 #endif
     handleItem(DisplayList::DrawSystemImage(systemImage, destinationRect));

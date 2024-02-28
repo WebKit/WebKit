@@ -103,13 +103,13 @@ bool LocalStorageManager::isActive() const
 
 bool LocalStorageManager::hasDataInMemory() const
 {
-    bool hasDataInLocalStorageArea = m_localStorageArea && is<MemoryStorageArea>(*m_localStorageArea) && !m_localStorageArea->isEmpty();
+    bool hasDataInLocalStorageArea = is<MemoryStorageArea>(m_localStorageArea) && !m_localStorageArea->isEmpty();
     return hasDataInLocalStorageArea || (m_transientStorageArea && !m_transientStorageArea->isEmpty());
 }
 
 void LocalStorageManager::clearDataInMemory()
 {
-    if (m_localStorageArea && is<MemoryStorageArea>(*m_localStorageArea))
+    if (is<MemoryStorageArea>(m_localStorageArea))
         m_localStorageArea->clear();
 
     if (m_transientStorageArea)
@@ -118,26 +118,26 @@ void LocalStorageManager::clearDataInMemory()
 
 void LocalStorageManager::clearDataOnDisk()
 {
-    if (m_localStorageArea && is<SQLiteStorageArea>(*m_localStorageArea))
+    if (is<SQLiteStorageArea>(m_localStorageArea))
         m_localStorageArea->clear();
 }
 
 void LocalStorageManager::close()
 {
-    if (m_localStorageArea && is<SQLiteStorageArea>(*m_localStorageArea))
-        downcast<SQLiteStorageArea>(*m_localStorageArea).close();
+    if (auto* storage = dynamicDowncast<SQLiteStorageArea>(m_localStorageArea.get()))
+        storage->close();
 }
 
 void LocalStorageManager::handleLowMemoryWarning()
 {
-    if (m_localStorageArea && is<SQLiteStorageArea>(*m_localStorageArea))
-        downcast<SQLiteStorageArea>(*m_localStorageArea).handleLowMemoryWarning();
+    if (auto* storage = dynamicDowncast<SQLiteStorageArea>(m_localStorageArea.get()))
+        storage->handleLowMemoryWarning();
 }
 
 void LocalStorageManager::syncLocalStorage()
 {
-    if (m_localStorageArea && is<SQLiteStorageArea>(*m_localStorageArea))
-        downcast<SQLiteStorageArea>(*m_localStorageArea).commitTransactionIfNecessary();
+    if (auto* storage = dynamicDowncast<SQLiteStorageArea>(m_localStorageArea.get()))
+        storage->commitTransactionIfNecessary();
 }
 
 void LocalStorageManager::connectionClosed(IPC::Connection::UniqueID connection)
@@ -186,7 +186,7 @@ StorageAreaIdentifier LocalStorageManager::connectToLocalStorageArea(IPC::Connec
         m_registry.registerStorageArea(m_localStorageArea->identifier(), *m_localStorageArea);
     }
 
-    ASSERT(m_path.isEmpty() || m_localStorageArea->type() == StorageAreaBase::Type::SQLite);
+    ASSERT(m_path.isEmpty() || is<SQLiteStorageArea>(*m_localStorageArea));
     m_localStorageArea->addListener(connection, sourceIdentifier);
     return m_localStorageArea->identifier();
 }
@@ -198,7 +198,7 @@ StorageAreaIdentifier LocalStorageManager::connectToTransientLocalStorageArea(IP
         m_registry.registerStorageArea(m_transientStorageArea->identifier(), *m_transientStorageArea);
     }
 
-    ASSERT(m_transientStorageArea->type() == StorageAreaBase::Type::Memory);
+    ASSERT(is<MemoryStorageArea>(*m_transientStorageArea));
     m_transientStorageArea->addListener(connection, sourceIdentifier);
     return m_transientStorageArea->identifier();
 }

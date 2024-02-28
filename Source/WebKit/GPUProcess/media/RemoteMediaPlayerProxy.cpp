@@ -1184,11 +1184,11 @@ void RemoteMediaPlayerProxy::createAudioSourceProvider()
     if (!m_player)
         return;
 
-    auto* provider = m_player->audioSourceProvider();
-    if (!provider || !is<AudioSourceProviderAVFObjC>(provider))
+    auto* provider = dynamicDowncast<AudioSourceProviderAVFObjC>(m_player->audioSourceProvider());
+    if (!provider)
         return;
 
-    m_remoteAudioSourceProvider = RemoteAudioSourceProviderProxy::create(m_id, m_webProcessConnection.copyRef(), downcast<AudioSourceProviderAVFObjC>(*provider));
+    m_remoteAudioSourceProvider = RemoteAudioSourceProviderProxy::create(m_id, m_webProcessConnection.copyRef(), *provider);
 #endif
 }
 
