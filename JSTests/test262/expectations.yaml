@@ -1105,15 +1105,6 @@ test/language/statements/class/elements/privatefieldset-evaluation-order-1.js:
 test/language/statements/class/subclass/default-constructor-spread-override.js:
   default: 'Test262Error: @@iterator invoked'
   strict mode: 'Test262Error: @@iterator invoked'
-test/language/statements/class/subclass/derived-class-return-override-catch-finally-arrow.js:
-  default: "ReferenceError: 'super()' must be called in derived constructor before accessing |this| or returning non-object."
-  strict mode: "ReferenceError: 'super()' must be called in derived constructor before accessing |this| or returning non-object."
-test/language/statements/class/subclass/derived-class-return-override-finally-super-arrow.js:
-  default: "ReferenceError: 'super()' must be called in derived constructor before accessing |this| or returning non-object."
-  strict mode: "ReferenceError: 'super()' must be called in derived constructor before accessing |this| or returning non-object."
-test/language/statements/class/subclass/derived-class-return-override-for-of-arrow.js:
-  default: "ReferenceError: 'super()' must be called in derived constructor before accessing |this| or returning non-object."
-  strict mode: "ReferenceError: 'super()' must be called in derived constructor before accessing |this| or returning non-object."
 test/language/statements/const/dstr/ary-init-iter-get-err-array-prototype.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'

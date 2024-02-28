@@ -3801,17 +3801,14 @@ void BytecodeGenerator::emitCallDefineProperty(RegisterID* newObj, RegisterID* p
     }
 }
 
-RegisterID* BytecodeGenerator::emitReturn(RegisterID* src, ReturnFrom from)
+RegisterID* BytecodeGenerator::emitReturn(RegisterID* src)
 {
     // Normal functions and naked constructors do not handle `return` specially.
     if (isConstructor() && constructorKind() != ConstructorKind::Naked) {
         bool isDerived = constructorKind() == ConstructorKind::Extends;
         bool srcIsThis = src->index() == m_thisRegister.index();
 
-        if (isDerived && (srcIsThis || from == ReturnFrom::Finally))
-            emitTDZCheck(src);
-
-        if (!srcIsThis || from == ReturnFrom::Finally) {
+        if (!srcIsThis) {
             Ref<Label> isObjectLabel = newLabel();
             emitJumpIfTrue(emitIsObject(newTemporary(), src), isObjectLabel.get());
 
@@ -3820,9 +3817,9 @@ RegisterID* BytecodeGenerator::emitReturn(RegisterID* src, ReturnFrom from)
                 emitJumpIfTrue(emitIsUndefined(newTemporary(), src), isUndefinedLabel.get());
                 emitThrowTypeError("Cannot return a non-object type in the constructor of a derived class."_s);
                 emitLabel(isUndefinedLabel.get());
-                emitTDZCheck(&m_thisRegister);
             }
-            OpRet::emit(this, &m_thisRegister);
+
+            OpRet::emit(this, ensureThis());
             emitLabel(isObjectLabel.get());
         }
     }
@@ -5438,7 +5435,7 @@ void BytecodeGenerator::emitFinallyCompletion(FinallyContext& context, Label& no
                 // is whatever is in the completionValueRegister.
 
                 emitWillLeaveCallFrameDebugHook();
-                emitReturn(context.completionValueRegister(), ReturnFrom::Finally);
+                emitReturn(context.completionValueRegister());
 
                 emitLabel(notReturnLabel.get());
             }
