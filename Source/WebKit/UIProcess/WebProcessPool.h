@@ -832,7 +832,7 @@ private:
     WebProcessWithAudibleMediaCounter m_webProcessWithAudibleMediaCounter;
 
     struct AudibleMediaActivity {
-        Ref<ProcessAssertion> uiProcessMediaPlaybackAssertion;
+        RefPtr<ProcessAssertion> uiProcessMediaPlaybackAssertion;
 #if ENABLE(GPU_PROCESS)
         RefPtr<ProcessAssertion> gpuProcessMediaPlaybackAssertion;
 #endif

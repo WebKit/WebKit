@@ -137,6 +137,7 @@
 #include <WebCore/HIDGamepadProvider.h>
 #include <WebCore/MultiGamepadProvider.h>
 #include <WebCore/PowerSourceNotifier.h>
+#include <wtf/cocoa/Entitlements.h>
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
@@ -2317,8 +2318,13 @@ void WebProcessPool::updateAudibleMediaAssertions()
         return;
 
     WEBPROCESSPOOL_RELEASE_LOG(ProcessSuspension, "updateAudibleMediaAssertions: The number of processes playing audible media is now greater than zero. Taking UI process assertion.");
+#if PLATFORM(COCOA)
+    bool shouldTakeUIProcessAssertion = WTF::processHasEntitlement("com.apple.runningboard.assertions.webkit"_s);
+#else
+    bool shouldTakeUIProcessAssertion = true;
+#endif
     m_audibleMediaActivity = AudibleMediaActivity {
-        ProcessAssertion::create(getCurrentProcessID(), "WebKit Media Playback"_s, ProcessAssertionType::MediaPlayback)
+        shouldTakeUIProcessAssertion ?  RefPtr<ProcessAssertion> { ProcessAssertion::create(getCurrentProcessID(), "WebKit Media Playback"_s, ProcessAssertionType::MediaPlayback) } : nullptr
 #if ENABLE(GPU_PROCESS)
         , gpuProcess() ? RefPtr<ProcessAssertion> { ProcessAssertion::create(*gpuProcess(), "WebKit Media Playback"_s, ProcessAssertionType::MediaPlayback) } : nullptr
 #endif
