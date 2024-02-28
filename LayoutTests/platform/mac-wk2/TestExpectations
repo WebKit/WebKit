@@ -2009,5 +2009,3 @@ webkit.org/b/269996 [ Monterey+ Debug ] imported/w3c/web-platform-tests/css/css-
 [ Sonoma+ ] compositing/plugins/pdf/pdf-in-styled-embed.html [ Failure ]
 [ Sonoma+ ] compositing/plugins/pdf/pdf-scrolling-tree-dynamic.html [ Failure ]
 [ Sonoma+ ] compositing/plugins/pdf/pdf-scrolling-tree.html [ Failure ]
-
-webkit.org/b/270096 [ Monterey+ Debug ] webrtc/h265.html [ Timeout ]
