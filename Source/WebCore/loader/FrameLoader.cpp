@@ -2800,7 +2800,6 @@ void FrameLoader::checkLoadCompleteForThisFrame()
             if (m_frame->isMainFrame()) {
                 tracePoint(MainResourceLoadDidEnd, PAGE_ID);
                 page->didFinishLoad();
-                m_client->loadStorageAccessQuirksIfNeeded();
             }
         }
 

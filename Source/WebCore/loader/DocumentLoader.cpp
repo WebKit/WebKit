@@ -499,6 +499,7 @@ void DocumentLoader::finishedLoading()
         if (!frameLoader())
             return;
         frameLoader()->client().finishedLoading(this);
+        frameLoader()->client().loadStorageAccessQuirksIfNeeded();
     }
 
     m_writer.end();

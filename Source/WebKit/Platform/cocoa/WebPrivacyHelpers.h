@@ -137,6 +137,7 @@ public:
     const Vector<WebCore::OrganizationStorageAccessPromptQuirk>& cachedQuirks() const { return m_cachedQuirks; }
     void updateQuirks(CompletionHandler<void()>&&);
     void setCachedQuirksForTesting(Vector<WebCore::OrganizationStorageAccessPromptQuirk>&&);
+    void initialize();
 
     Ref<StorageAccessPromptQuirkObserver> observeUpdates(Function<void()>&&);
 
@@ -148,6 +149,7 @@ private:
     RetainPtr<WKWebPrivacyNotificationListener> m_notificationListener;
     Vector<WebCore::OrganizationStorageAccessPromptQuirk> m_cachedQuirks;
     WeakHashSet<StorageAccessPromptQuirkObserver> m_observers;
+    bool m_wasInitialized { false };
 };
 
 class StorageAccessUserAgentStringQuirkController {
@@ -157,6 +159,7 @@ public:
     const HashMap<WebCore::RegistrableDomain, String>& cachedQuirks() const { return m_cachedQuirks; }
     void updateQuirks(CompletionHandler<void()>&&);
     void setCachedQuirksForTesting(HashMap<WebCore::RegistrableDomain, String>&&);
+    void initialize();
 
     Ref<StorageAccessUserAgentStringQuirkObserver> observeUpdates(Function<void()>&&);
 
@@ -168,6 +171,7 @@ private:
     RetainPtr<WKWebPrivacyNotificationListener> m_notificationListener;
     HashMap<WebCore::RegistrableDomain, String> m_cachedQuirks;
     WeakHashSet<StorageAccessUserAgentStringQuirkObserver> m_observers;
+    bool m_wasInitialized { false };
 };
 
 class RestrictedOpenerDomainsController {

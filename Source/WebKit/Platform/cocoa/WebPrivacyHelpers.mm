@@ -306,6 +306,7 @@ void StorageAccessPromptQuirkController::setCachedQuirks(Vector<WebCore::Organiz
 
 void StorageAccessPromptQuirkController::setCachedQuirksForTesting(Vector<WebCore::OrganizationStorageAccessPromptQuirk>&& quirks)
 {
+    m_wasInitialized = true;
     setCachedQuirks(WTFMove(quirks));
     m_observers.forEach([](auto& observer) {
         observer.invokeCallback();
@@ -323,6 +324,19 @@ static HashMap<WebCore::RegistrableDomain, Vector<WebCore::RegistrableDomain>> d
         map.add(WebCore::RegistrableDomain::fromRawString(String { topDomain }), WTFMove(subFrameDomains));
     }
     return map;
+}
+
+void StorageAccessPromptQuirkController::initialize()
+{
+    if (m_wasInitialized)
+        return;
+
+    updateQuirks([this] {
+        m_observers.forEach([](auto& observer) {
+            observer.invokeCallback();
+        });
+    });
+    m_wasInitialized = true;
 }
 
 void StorageAccessPromptQuirkController::updateQuirks(CompletionHandler<void()>&& completionHandler)
@@ -392,6 +406,20 @@ void StorageAccessUserAgentStringQuirkController::setCachedQuirksForTesting(Hash
     m_observers.forEach([](auto& observer) {
         observer.invokeCallback();
     });
+    m_wasInitialized = true;
+}
+
+void StorageAccessUserAgentStringQuirkController::initialize()
+{
+    if (m_wasInitialized)
+        return;
+
+    updateQuirks([this] {
+        m_observers.forEach([](auto& observer) {
+            observer.invokeCallback();
+        });
+    });
+    m_wasInitialized = true;
 }
 
 void StorageAccessUserAgentStringQuirkController::updateQuirks(CompletionHandler<void()>&& completionHandler)
