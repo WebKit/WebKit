@@ -157,6 +157,33 @@ using namespace WebKit;
     _webExtensionAction->closePopup();
 }
 
+- (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation withError:(NSError *)error
+{
+    if (!_webExtensionAction)
+        return;
+
+    RELEASE_LOG_ERROR(Extensions, "Popup provisional load failed: %{public}@", error);
+
+    _webExtensionAction->closePopup();
+}
+
+- (void)webView:(WKWebView *)webView didFailNavigation:(WKNavigation *)navigation withError:(NSError *)error
+{
+    if (!_webExtensionAction)
+        return;
+
+    RELEASE_LOG_ERROR(Extensions, "Popup load failed: %{public}@", error);
+
+    _webExtensionAction->closePopup();
+}
+
+- (void)_webView:(WKWebView *)webView navigationDidFinishDocumentLoad:(WKNavigation *)navigation
+{
+    if (!_webExtensionAction)
+        return;
+
+    _webExtensionAction->popupDidFinishDocumentLoad();
+}
 @end
 
 #if PLATFORM(IOS_FAMILY)
@@ -782,25 +809,30 @@ void WebExtensionAction::presentPopupWhenReady()
         return;
     }
 
-    m_popupPresented = false;
-
-    if (m_popupWebView) {
-        readyToPresentPopup();
+    // The popup might have presented already.
+    if (m_popupPresented)
         return;
-    }
+
+    popupWebView(LoadOnFirstAccess::Yes);
+}
+
+void WebExtensionAction::popupDidFinishDocumentLoad()
+{
+    // The popup might have presented or closed already.
+    if (m_popupPresented || !m_popupWebView)
+        return;
 
     // Delay showing the popup until a minimum size or a timeout is reached.
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(popoverShowTimeout * NSEC_PER_SEC)), dispatch_get_main_queue(), makeBlockPtr([this, protectedThis = Ref { *this }] {
         readyToPresentPopup();
     }).get());
-
-    popupWebView(LoadOnFirstAccess::Yes);
 }
 
 void WebExtensionAction::readyToPresentPopup()
 {
     ASSERT(canProgrammaticallyPresentPopup());
 
+    // The popup might have presented or closed already.
     if (m_popupPresented || !m_popupWebView)
         return;
 

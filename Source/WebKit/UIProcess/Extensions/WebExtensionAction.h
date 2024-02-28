@@ -124,6 +124,7 @@ public:
 
     WKWebView *popupWebView(LoadOnFirstAccess = LoadOnFirstAccess::Yes);
     void presentPopupWhenReady();
+    void popupDidFinishDocumentLoad();
     void readyToPresentPopup();
     void popupSizeDidChange();
     void closePopup();
