@@ -155,7 +155,7 @@ using namespace WebKit;
     // FIXME: rdar://87898825 (unlimitedStorage: Allow the SQLite database to be opened as SQLiteDatabaseAccessTypeReadOnly if the request is to calculate storage size).
     NSError *error;
     if (![_database openWithAccessType:SQLiteDatabaseAccessTypeReadWriteCreate error:&error]) {
-        RELEASE_LOG_ERROR(Extensions, "Failed to open database for extension %{private}@: %{public}@", _uniqueIdentifier, privacyPreservingDescription(error));
+        RELEASE_LOG_ERROR(Extensions, "Failed to open database for extension %{private}@: %{public}@", _uniqueIdentifier, error);
 
         if (usingDatabaseFile && deleteDatabaseFileOnError)
             return [self _deleteDatabaseFileAtURL:databaseURL reopenDatabase:YES];
@@ -168,7 +168,7 @@ using namespace WebKit;
 
     // Enable write-ahead logging to minimize the impact of SQLite's disk I/O.
     if (![_database enableWAL:&error]) {
-        RELEASE_LOG_ERROR(Extensions, "Failed to enable write-ahead logging on database for extension %{private}@: %{public}@", _uniqueIdentifier, privacyPreservingDescription(error));
+        RELEASE_LOG_ERROR(Extensions, "Failed to enable write-ahead logging on database for extension %{private}@: %{public}@", _uniqueIdentifier, error);
 
         if (usingDatabaseFile && deleteDatabaseFileOnError)
             return [self _deleteDatabaseFileAtURL:databaseURL reopenDatabase:YES];

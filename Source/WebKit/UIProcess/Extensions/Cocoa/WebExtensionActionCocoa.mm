@@ -725,7 +725,7 @@ void WebExtensionAction::detectPopoverColorScheme()
 
     [m_popupWebView evaluateJavaScript:checkColorSchemeScript completionHandler:^(id result, NSError *error) {
         if (error) {
-            RELEASE_LOG_ERROR(Extensions, "Error while checking popup color scheme: %{private}@", error);
+            RELEASE_LOG_ERROR(Extensions, "Error while checking popup color scheme: %{public}@", error);
             return;
         }
 

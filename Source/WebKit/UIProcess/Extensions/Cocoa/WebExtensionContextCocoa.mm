@@ -348,7 +348,7 @@ NSMutableDictionary *WebExtensionContext::readStateFromPath(const String& stateF
     }];
 
     if (coordinatorError)
-        RELEASE_LOG_ERROR(Extensions, "Failed to coordinate reading extension state: %{private}@", coordinatorError);
+        RELEASE_LOG_ERROR(Extensions, "Failed to coordinate reading extension state: %{public}@", coordinatorError);
 
     return savedState;
 }
@@ -399,11 +399,11 @@ void WebExtensionContext::writeStateToStorage() const
     [fileCoordinator coordinateWritingItemAtURL:[NSURL fileURLWithPath:stateFilePath()] options:NSFileCoordinatorWritingForReplacing error:&coordinatorError byAccessor:^(NSURL *fileURL) {
         NSError *error;
         if (![currentState() writeToURL:fileURL error:&error])
-            RELEASE_LOG_ERROR(Extensions, "Unable to save extension state: %{private}@", error);
+            RELEASE_LOG_ERROR(Extensions, "Unable to save extension state: %{public}@", error);
     }];
 
     if (coordinatorError)
-        RELEASE_LOG_ERROR(Extensions, "Failed to coordinate writing extension state: %{private}@", coordinatorError);
+        RELEASE_LOG_ERROR(Extensions, "Failed to coordinate writing extension state: %{public}@", coordinatorError);
 }
 
 void WebExtensionContext::moveLocalStorageIfNeeded(const URL& previousBaseURL, CompletionHandler<void()>&& completionHandler)
@@ -3714,7 +3714,7 @@ void WebExtensionContext::loadDeclarativeNetRequestRules(CompletionHandler<void(
             NSError *serializationError;
             NSData *dynamicRulesAsData = encodeJSONData(rules, JSONOptions::FragmentsAllowed, &serializationError);
             if (serializationError)
-                RELEASE_LOG_ERROR(Extensions, "Unable to serialize dynamic declarativeNetRequest rules for extension with identifier %{private}@ with error: %{public}@", (NSString *)uniqueIdentifier(), privacyPreservingDescription(serializationError));
+                RELEASE_LOG_ERROR(Extensions, "Unable to serialize dynamic declarativeNetRequest rules for extension with identifier %{private}@ with error: %{public}@", (NSString *)uniqueIdentifier(), serializationError);
             else
                 [allJSONData addObject:dynamicRulesAsData];
 
@@ -3738,7 +3738,7 @@ void WebExtensionContext::loadDeclarativeNetRequestRules(CompletionHandler<void(
         NSError *serializationError;
         NSData *sessionRulesAsData = encodeJSONData(rules, JSONOptions::FragmentsAllowed, &serializationError);
         if (serializationError)
-            RELEASE_LOG_ERROR(Extensions, "Unable to serialize session declarativeNetRequest rules for extension with identifier %{private}@ with error: %{public}@", (NSString *)uniqueIdentifier(), privacyPreservingDescription(serializationError));
+            RELEASE_LOG_ERROR(Extensions, "Unable to serialize session declarativeNetRequest rules for extension with identifier %{private}@ with error: %{public}@", (NSString *)uniqueIdentifier(), serializationError);
         else
             [allJSONData addObject:sessionRulesAsData];
 

@@ -106,7 +106,7 @@ using namespace WebKit;
     if (error)
         *error = errorObject;
     else
-        RELEASE_LOG_ERROR(Extensions, "Unhandled SQLite error: %{public}@", privacyPreservingDescription(errorObject));
+        RELEASE_LOG_ERROR(Extensions, "Unhandled SQLite error: %{public}@", errorObject);
 
     return NO;
 }

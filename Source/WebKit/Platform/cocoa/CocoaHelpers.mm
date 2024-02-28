@@ -374,26 +374,6 @@ NSDictionary *mergeDictionariesAndSetValues(NSDictionary *dictionaryA, NSDiction
     return [newDictionary copy];
 }
 
-// MARK: NSError Helpers
-
-NSString *privacyPreservingDescription(NSError *error)
-{
-    NSString *privacyPreservingDescription = objectForKey<NSString>(error.userInfo, privacyPreservingDescriptionKey);
-    if (!privacyPreservingDescription) {
-        NSString *domain = error.domain;
-        if (domain.length) {
-            id (^valueProvider)(NSError *err, NSString *userInfoKey) = [NSError userInfoValueProviderForDomain:domain];
-            if (valueProvider)
-                privacyPreservingDescription = valueProvider(error, privacyPreservingDescriptionKey);
-        }
-    }
-
-    if (privacyPreservingDescription)
-        return [NSString stringWithFormat:@"Error Domain=%@ Code=%ld \"%@\"", error.domain, (long)error.code, privacyPreservingDescription];
-
-    return [NSError errorWithDomain:error.domain ?: @"" code:error.code userInfo:nil].description;
-}
-
 NSURL *ensureDirectoryExists(NSURL *directory)
 {
     ASSERT(directory.isFileURL);

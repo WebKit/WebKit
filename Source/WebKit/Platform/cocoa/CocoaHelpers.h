@@ -112,8 +112,6 @@ NSDictionary *dictionaryWithKeys(NSDictionary *, NSArray *keys);
 NSDictionary *mergeDictionaries(NSDictionary *, NSDictionary *);
 NSDictionary *mergeDictionariesAndSetValues(NSDictionary *, NSDictionary *);
 
-NSString *privacyPreservingDescription(NSError *);
-
 NSURL *ensureDirectoryExists(NSURL *directory);
 
 NSString *escapeCharactersInString(NSString *, NSString *charactersToEscape);
