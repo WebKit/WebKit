@@ -252,7 +252,8 @@ auto TreeResolver::resolveElement(Element& element, const RenderStyle* existingS
     auto update = createAnimatedElementUpdate(WTFMove(resolvedStyle), styleable, parent().change, resolutionContext);
     auto descendantsToResolve = computeDescendantsToResolve(update.change, element.styleValidity(), parent().descendantsToResolve);
 
-    if (&element == m_document.documentElement()) {
+    bool isDocumentElement = &element == m_document.documentElement();
+    if (isDocumentElement) {
         if (styleChangeAffectsRelativeUnits(*update.style, existingStyle)) {
             // "rem" units are relative to the document element's font size so we need to recompute everything.
             scope().resolver->invalidateMatchedDeclarationsCache();
@@ -308,7 +309,8 @@ auto TreeResolver::resolveElement(Element& element, const RenderStyle* existingS
     resolveAndAddPseudoElementStyle(PseudoId::Before);
     resolveAndAddPseudoElementStyle(PseudoId::After);
     resolveAndAddPseudoElementStyle(PseudoId::Backdrop);
-    resolveAndAddPseudoElementStyle(PseudoId::ViewTransition);
+    if (isDocumentElement && m_document.hasViewTransitionPseudoElementTree())
+        resolveAndAddPseudoElementStyle(PseudoId::ViewTransition);
 
 #if ENABLE(TOUCH_ACTION_REGIONS)
     // FIXME: Track this exactly.
@@ -348,8 +350,8 @@ std::optional<ElementUpdate> TreeResolver::resolvePseudoElement(Element& element
         return { };
     if (pseudoId == PseudoId::Scrollbar && elementUpdate.style->overflowX() != Overflow::Scroll && elementUpdate.style->overflowY() != Overflow::Scroll)
         return { };
-    if (pseudoId == PseudoId::ViewTransition && (!element.document().hasViewTransitionPseudoElementTree() || &element != element.document().documentElement()))
-        return { };
+    if (pseudoId == PseudoId::ViewTransition)
+        ASSERT(element.document().hasViewTransitionPseudoElementTree() && &element == element.document().documentElement());
 
     if (!elementUpdate.style->hasPseudoStyle(pseudoId))
         return resolveAncestorPseudoElement(element, pseudoId, elementUpdate);
