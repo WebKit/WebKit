@@ -1924,12 +1924,6 @@ void linkPolymorphicCall(VM& vm, JSCell* owner, CallFrame* callFrame, CallLinkIn
         // If there had been a previous stub routine, that one will die as soon as the GC runs and sees
         // that it's no longer on stack.
         callLinkInfo.setStub(WTFMove(stubRoutine));
-
-        // The call link info no longer has a call cache apart from the jump to the polymorphic call
-        // stub.
-        if (callLinkInfo.isOnList())
-            callLinkInfo.remove();
-
         return;
     }
 
@@ -2050,11 +2044,6 @@ void linkPolymorphicCall(VM& vm, JSCell* owner, CallFrame* callFrame, CallLinkIn
     // If there had been a previous stub routine, that one will die as soon as the GC runs and sees
     // that it's no longer on stack.
     callLinkInfo.setStub(WTFMove(stubRoutine));
-    
-    // The call link info no longer has a call cache apart from the jump to the polymorphic call
-    // stub.
-    if (callLinkInfo.isOnList())
-        callLinkInfo.remove();
 }
 
 void resetGetBy(CodeBlock* codeBlock, StructureStubInfo& stubInfo, GetByKind kind)
