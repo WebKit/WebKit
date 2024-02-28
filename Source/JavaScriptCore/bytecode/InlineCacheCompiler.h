@@ -155,7 +155,6 @@ private:
     typedef Vector<RefPtr<AccessCase>, 2> ListType;
 
     ListType m_list;
-    RefPtr<PolymorphicAccessJITStubRoutine> m_stubRoutine;
     std::unique_ptr<WatchpointsOnStructureStubInfo> m_watchpoints;
 };
 
@@ -184,6 +183,8 @@ public:
         uintptr_t pcAsInt = bitwise_cast<uintptr_t>(pc);
         return m_stubRoutine->startAddress() <= pcAsInt && pcAsInt <= m_stubRoutine->endAddress();
     }
+
+    CallLinkInfo* callLinkInfoAt(const ConcurrentJSLocker&, unsigned index);
 
     // If this returns false then we are requesting a reset of the owning StructureStubInfo.
     bool visitWeak(VM&) const;
@@ -299,12 +300,12 @@ public:
     // Fall through on success. Two kinds of failures are supported: fall-through, which means that we
     // should try a different case; and failure, which means that this was the right case but it needs
     // help from the slow path.
-    void generateWithGuard(AccessCase&, MacroAssembler::JumpList& fallThrough);
+    void generateWithGuard(unsigned index, AccessCase&, MacroAssembler::JumpList& fallThrough);
 
     // Fall through on success, add a jump to the failure list on failure.
-    void generate(AccessCase&);
+    void generate(unsigned index, AccessCase&);
 
-    void generateImpl(AccessCase&);
+    void generateImpl(unsigned index, AccessCase&);
 
     static bool canEmitIntrinsicGetter(StructureStubInfo&, JSFunction*, Structure*);
 
@@ -326,7 +327,7 @@ private:
 
     void emitDOMJITGetter(GetterSetterAccessCase&, const DOMJIT::GetterSetter*, GPRReg baseForGetGPR);
     void emitModuleNamespaceLoad(ModuleNamespaceAccessCase&, MacroAssembler::JumpList& fallThrough);
-    void emitProxyObjectAccess(ProxyObjectAccessCase&, MacroAssembler::JumpList& fallThrough);
+    void emitProxyObjectAccess(unsigned index, ProxyObjectAccessCase&, MacroAssembler::JumpList& fallThrough);
     void emitIntrinsicGetter(IntrinsicGetterAccessCase&);
 
     VM& m_vm;
@@ -344,7 +345,7 @@ private:
     GPRReg m_scratchGPR { InvalidGPRReg };
     FPRReg m_scratchFPR { InvalidFPRReg };
     Vector<StructureID> m_weakStructures;
-    Bag<OptimizingCallLinkInfo> m_callLinkInfos;
+    Vector<std::unique_ptr<OptimizingCallLinkInfo>> m_callLinkInfos;
     ScalarRegisterSet m_liveRegistersToPreserveAtExceptionHandlingCallSite;
     ScalarRegisterSet m_liveRegistersForCall;
     CallSiteIndex m_callSiteIndex;

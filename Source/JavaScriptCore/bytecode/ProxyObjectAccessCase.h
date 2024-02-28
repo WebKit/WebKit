@@ -41,16 +41,12 @@ public:
 
     void emit(InlineCacheCompiler&, MacroAssembler::JumpList& fallThrough);
 
-    OptimizingCallLinkInfo* callLinkInfo() const { return m_callLinkInfo; }
-
 private:
     ProxyObjectAccessCase(VM&, JSCell* owner, AccessType, CacheableIdentifier);
     ProxyObjectAccessCase(const ProxyObjectAccessCase&);
 
     void dumpImpl(PrintStream&, CommaPrinter&, Indenter&) const;
     Ref<AccessCase> cloneImpl() const;
-
-    OptimizingCallLinkInfo* m_callLinkInfo { nullptr };
 };
 
 } // namespace JSC

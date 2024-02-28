@@ -401,6 +401,13 @@ void StructureStubInfo::propagateTransitions(Visitor& visitor)
 template void StructureStubInfo::propagateTransitions(AbstractSlotVisitor&);
 template void StructureStubInfo::propagateTransitions(SlotVisitor&);
 
+CallLinkInfo* StructureStubInfo::callLinkInfoAt(const ConcurrentJSLocker& locker, unsigned index)
+{
+    if (!m_handler)
+        return nullptr;
+    return m_handler->callLinkInfoAt(locker, index);
+}
+
 StubInfoSummary StructureStubInfo::summary(VM& vm) const
 {
     StubInfoSummary takesSlowPath = StubInfoSummary::TakesSlowPath;

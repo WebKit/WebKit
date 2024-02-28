@@ -95,8 +95,6 @@ void GetterSetterAccessCase::dumpImpl(PrintStream& out, CommaPrinter& comma, Ind
 {
     Base::dumpImpl(out, comma, indent);
     out.print(comma, "customSlotBase = ", RawPointer(customSlotBase()));
-    if (callLinkInfo())
-        out.print(comma, "callLinkInfo = ", RawPointer(callLinkInfo()));
     out.print(comma, "customAccessor = ", RawPointer(m_customAccessor.taggedPtr()));
 }
 

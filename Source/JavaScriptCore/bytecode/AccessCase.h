@@ -269,9 +269,7 @@ public:
     WatchpointSet* additionalSet() const;
     bool viaGlobalProxy() const { return m_viaGlobalProxy; }
 
-    // If you supply the optional vector, this will append the set of cells that this will need to keep alive
-    // past the call.
-    bool doesCalls(VM&, Vector<JSCell*>* cellsToMark = nullptr) const;
+    bool doesCalls(VM&) const;
 
     bool isCustom() const
     {
@@ -337,6 +335,8 @@ public:
     }
 
     static bool canBeShared(const AccessCase&, const AccessCase&);
+
+    void collectDependentCells(VM&, Vector<JSCell*>&) const;
 
     template<typename Func>
     void runWithDowncast(const Func&);
