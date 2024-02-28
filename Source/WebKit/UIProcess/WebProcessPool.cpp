@@ -2283,7 +2283,9 @@ void WebProcessPool::sendResourceLoadStatisticsDataImmediately(CompletionHandler
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
 
     for (Ref process : processes()) {
-        if (!process->pageCount())
+        // WebProcess already flushes outstanding stats to NetworkProcess on suspend, so there's no
+        // need to resume a suspended process to force another flush.
+        if (!process->pageCount() || process->throttler().isSuspended())
             continue;
 
         process->sendWithAsyncReply(Messages::WebProcess::SendResourceLoadStatisticsDataImmediately(), [callbackAggregator] { });
