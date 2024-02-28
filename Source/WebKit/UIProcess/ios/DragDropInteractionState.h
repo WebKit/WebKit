@@ -35,6 +35,7 @@
 #import <WebCore/WebItemProviderPasteboard.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/TZoneMalloc.h>
 #import <wtf/URL.h>
 #import <wtf/Vector.h>
 
@@ -64,6 +65,7 @@ using DragItemToPreviewMap = HashMap<RetainPtr<UIDragItem>, RetainPtr<UITargeted
 enum class AddPreviewViewToContainer : bool;
 
 class DragDropInteractionState {
+    WTF_MAKE_WK_TZONE_ALLOCATED(DragDropInteractionState);
 public:
     bool anyActiveDragSourceContainsSelection() const;
 

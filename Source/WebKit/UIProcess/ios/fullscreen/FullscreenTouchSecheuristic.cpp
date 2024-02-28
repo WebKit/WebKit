@@ -30,6 +30,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(FullscreenTouchSecheuristic);
+
 double FullscreenTouchSecheuristic::scoreOfNextTouch(CGPoint location)
 {
     Seconds now = MonotonicTime::now().secondsSinceEpoch();

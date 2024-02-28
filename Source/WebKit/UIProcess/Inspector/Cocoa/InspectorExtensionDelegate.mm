@@ -37,6 +37,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(InspectorExtensionDelegate);
+
 InspectorExtensionDelegate::InspectorExtensionDelegate(_WKInspectorExtension *inspectorExtension, id <_WKInspectorExtensionDelegate> delegate)
     : m_inspectorExtension(inspectorExtension)
     , m_delegate(delegate)

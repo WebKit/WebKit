@@ -128,6 +128,8 @@ namespace WebKit {
 using namespace fido;
 using Mock = WebCore::MockWebAuthenticationConfiguration;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(MockNfcService);
+
 #if HAVE(NEAR_FIELD)
 
 namespace {

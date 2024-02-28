@@ -30,6 +30,7 @@
 #import "WebDataListSuggestionsDropdown.h"
 #import <pal/spi/ios/BrowserEngineKitSPI.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/TZoneMalloc.h>
 #import <wtf/Vector.h>
 
 OBJC_CLASS WKContentView;
@@ -52,6 +53,7 @@ OBJC_CLASS WKContentView;
 namespace WebKit {
 
 class WebDataListSuggestionsDropdownIOS : public WebDataListSuggestionsDropdown {
+    WTF_MAKE_WK_TZONE_ALLOCATED(WebDataListSuggestionsDropdownIOS);
 public:
     static Ref<WebDataListSuggestionsDropdownIOS> create(WebPageProxy&, WKContentView *);
 

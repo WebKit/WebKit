@@ -42,6 +42,8 @@
 namespace WebKit {
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(RemoteScrollingTree);
+
 RemoteScrollingTree::RemoteScrollingTree(RemoteScrollingCoordinatorProxy& scrollingCoordinator)
     : m_scrollingCoordinatorProxy(WeakPtr { scrollingCoordinator })
 {

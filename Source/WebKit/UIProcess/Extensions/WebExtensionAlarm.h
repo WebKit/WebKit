@@ -32,6 +32,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
@@ -39,7 +40,7 @@ class WebExtensionContext;
 
 class WebExtensionAlarm : public RefCounted<WebExtensionAlarm> {
     WTF_MAKE_NONCOPYABLE(WebExtensionAlarm);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(WebExtensionAlarm);
 
 public:
     template<typename... Args>

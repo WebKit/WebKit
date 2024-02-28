@@ -46,9 +46,11 @@
 namespace WebKit {
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(RemoteLayerTreeEventDispatcher);
+
 class RemoteLayerTreeEventDispatcherDisplayLinkClient final : public DisplayLink::Client {
 public:
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(RemoteLayerTreeEventDispatcherDisplayLinkClient);
 public:
     explicit RemoteLayerTreeEventDispatcherDisplayLinkClient(RemoteLayerTreeEventDispatcher& eventDispatcher)
         : m_eventDispatcher(&eventDispatcher)

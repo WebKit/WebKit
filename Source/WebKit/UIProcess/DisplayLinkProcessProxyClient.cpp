@@ -33,6 +33,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(DisplayLinkProcessProxyClient);
+
 void DisplayLinkProcessProxyClient::setConnection(RefPtr<IPC::Connection>&& connection)
 {
     Locker locker { m_connectionLock };

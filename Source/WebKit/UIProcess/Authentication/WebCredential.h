@@ -29,10 +29,12 @@
 #include "APIObject.h"
 #include "APIString.h"
 #include <WebCore/Credential.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class WebCredential : public API::ObjectImpl<API::Object::Type::Credential> {
+    WTF_MAKE_WK_TZONE_ALLOCATED(WebCredential);
 public:
     ~WebCredential();
 

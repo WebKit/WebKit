@@ -43,6 +43,8 @@
 namespace WebKit {
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(WebNotificationManagerProxy);
+
 ASCIILiteral WebNotificationManagerProxy::supplementName()
 {
     return "WebNotificationManagerProxy"_s;

@@ -36,6 +36,8 @@
 namespace WebKit {
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(ScrollingTreePluginScrollingNodeIOS);
+
 Ref<ScrollingTreePluginScrollingNodeIOS> ScrollingTreePluginScrollingNodeIOS::create(WebCore::ScrollingTree& scrollingTree, WebCore::ScrollingNodeID nodeID)
 {
     return adoptRef(*new ScrollingTreePluginScrollingNodeIOS(scrollingTree, nodeID));

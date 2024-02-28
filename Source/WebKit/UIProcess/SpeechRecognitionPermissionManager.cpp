@@ -34,6 +34,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(SpeechRecognitionPermissionManager);
+
 static SpeechRecognitionPermissionManager::CheckResult computeMicrophoneAccess()
 {
 #if HAVE(AVCAPTUREDEVICE)

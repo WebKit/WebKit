@@ -32,6 +32,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(RevealFocusedElementDeferrer);
+
 RevealFocusedElementDeferrer::RevealFocusedElementDeferrer(WKContentView *view, OptionSet<RevealFocusedElementDeferralReason> reasons)
     : m_view(view)
     , m_reasons(reasons)

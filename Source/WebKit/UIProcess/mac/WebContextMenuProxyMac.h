@@ -29,6 +29,7 @@
 
 #include "WebContextMenuProxy.h"
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakObjCPtr.h>
 
 OBJC_CLASS NSMenu;
@@ -42,6 +43,7 @@ namespace WebKit {
 class WebContextMenuItemData;
 
 class WebContextMenuProxyMac final : public WebContextMenuProxy {
+    WTF_MAKE_WK_TZONE_ALLOCATED(WebContextMenuProxyMac);
 public:
     static auto create(NSView *webView, WebPageProxy& page, ContextMenuContextData&& context, const UserData& userData)
     {

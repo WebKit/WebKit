@@ -38,6 +38,8 @@
 namespace WebKit {
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(DragDropInteractionState);
+
 enum class AddPreviewViewToContainer : bool { No, Yes };
 
 static UIDragItem *dragItemMatchingIdentifier(id <UIDragSession> session, NSInteger identifier)

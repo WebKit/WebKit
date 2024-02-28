@@ -30,6 +30,7 @@
 #include "SOAuthorizationSession.h"
 #include "WebViewDidMoveToWindowObserver.h"
 #include <wtf/CompletionHandler.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
@@ -41,6 +42,7 @@ namespace WebKit {
 // FSM: Idle => isInWindow => Active => Completed
 //      Idle => !isInWindow => Waiting => become isInWindow => Active => Completed
 class NavigationSOAuthorizationSession : public SOAuthorizationSession, private WebViewDidMoveToWindowObserver {
+    WTF_MAKE_WK_TZONE_ALLOCATED(NavigationSOAuthorizationSession);
 public:
     ~NavigationSOAuthorizationSession();
 

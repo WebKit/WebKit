@@ -42,13 +42,16 @@
 #define PROCESSTHROTTLER_RELEASE_LOG(msg, ...) RELEASE_LOG(ProcessSuspension, "%p - [PID=%d] ProcessThrottler::" msg, this, m_process->processID(), ##__VA_ARGS__)
 
 namespace WebKit {
-    
+
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(ProcessThrottlerActivity);
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(ProcessThrottlerTimedActivity);
+
 static constexpr Seconds processSuspensionTimeout { 20_s };
 static constexpr Seconds removeAllAssertionsTimeout { 8_min };
 static constexpr Seconds processAssertionCacheLifetime { 1_s };
 
 class ProcessThrottler::ProcessAssertionCache : public CanMakeCheckedPtr {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(ProcessThrottler::ProcessAssertionCache);
 public:
     void add(Ref<ProcessAssertion>&& assertion)
     {

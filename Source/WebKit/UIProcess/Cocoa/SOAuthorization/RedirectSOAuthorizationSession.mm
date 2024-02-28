@@ -38,6 +38,8 @@
 namespace WebKit {
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(RedirectSOAuthorizationSession);
+
 Ref<SOAuthorizationSession> RedirectSOAuthorizationSession::create(RetainPtr<WKSOAuthorizationDelegate> delegate, Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, Callback&& completionHandler)
 {
     return adoptRef(*new RedirectSOAuthorizationSession(delegate, WTFMove(navigationAction), page, WTFMove(completionHandler)));

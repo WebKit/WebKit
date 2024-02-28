@@ -39,6 +39,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(PlatformXRSystem);
+
 PlatformXRSystem::PlatformXRSystem(WebPageProxy& page)
     : m_page(page)
 {

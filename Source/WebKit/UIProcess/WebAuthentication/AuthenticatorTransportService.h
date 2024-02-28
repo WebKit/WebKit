@@ -29,6 +29,8 @@
 
 #include "WebAuthenticationFlags.h"
 #include <WebCore/AuthenticatorTransport.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
 
@@ -41,10 +43,11 @@ namespace WebKit {
 class Authenticator;
 
 class AuthenticatorTransportService : public CanMakeWeakPtr<AuthenticatorTransportService> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(AuthenticatorTransportService);
     WTF_MAKE_NONCOPYABLE(AuthenticatorTransportService);
 public:
     class Observer : public CanMakeWeakPtr<Observer> {
+        WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(Observer);
     public:
         virtual ~Observer() = default;
 

@@ -27,6 +27,7 @@
 
 #include "APIObject.h"
 #include <wtf/Markable.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
 #include <wtf/UUID.h>
 #include <wtf/text/WTFString.h>
@@ -42,6 +43,7 @@ struct WebPushDaemonConnectionConfiguration;
 enum class IsPersistent : bool { No, Yes };
 
 class WebsiteDataStoreConfiguration : public API::ObjectImpl<API::Object::Type::WebsiteDataStoreConfiguration> {
+    WTF_MAKE_WK_TZONE_ALLOCATED(WebsiteDataStoreConfiguration);
 public:
     enum class ShouldInitializePaths : bool { No, Yes };
     static Ref<WebsiteDataStoreConfiguration> create(IsPersistent isPersistent) { return adoptRef(*new WebsiteDataStoreConfiguration(isPersistent, ShouldInitializePaths::Yes)); }

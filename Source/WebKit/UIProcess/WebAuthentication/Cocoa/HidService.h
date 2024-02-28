@@ -30,6 +30,7 @@
 #include "FidoService.h"
 #include <pal/spi/cocoa/IOKitSPI.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebKit {
@@ -37,6 +38,7 @@ namespace WebKit {
 class HidConnection;
 
 class HidService : public FidoService {
+    WTF_MAKE_WK_TZONE_ALLOCATED(HidService);
 public:
     explicit HidService(Observer&);
     ~HidService();

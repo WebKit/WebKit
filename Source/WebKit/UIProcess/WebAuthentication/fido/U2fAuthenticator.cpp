@@ -41,6 +41,8 @@ using namespace WebCore;
 using namespace apdu;
 using namespace fido;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(U2fAuthenticator);
+
 namespace {
 const unsigned retryTimeOutValueMs = 200;
 }

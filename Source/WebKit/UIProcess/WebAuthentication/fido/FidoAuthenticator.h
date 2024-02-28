@@ -28,12 +28,14 @@
 #if ENABLE(WEB_AUTHN)
 
 #include "Authenticator.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class CtapDriver;
 
 class FidoAuthenticator : public Authenticator {
+    WTF_MAKE_WK_TZONE_ALLOCATED(FidoAuthenticator);
 public:
     ~FidoAuthenticator() override;
 

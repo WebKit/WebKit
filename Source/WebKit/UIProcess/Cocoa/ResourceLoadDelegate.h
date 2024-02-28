@@ -27,6 +27,8 @@
 
 #import "APIResourceLoadClient.h"
 #import "WKFoundation.h"
+#import <wtf/TZoneMalloc.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/WeakObjCPtr.h>
 
 @class WKWebView;
@@ -40,7 +42,7 @@ class ResourceLoadClient;
 namespace WebKit {
 
 class ResourceLoadDelegate {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(ResourceLoadDelegate);
 public:
     explicit ResourceLoadDelegate(WKWebView *);
     ~ResourceLoadDelegate();
@@ -52,7 +54,7 @@ public:
 
 private:
     class ResourceLoadClient : public API::ResourceLoadClient {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(ResourceLoadClient);
     public:
         explicit ResourceLoadClient(ResourceLoadDelegate&);
         ~ResourceLoadClient();

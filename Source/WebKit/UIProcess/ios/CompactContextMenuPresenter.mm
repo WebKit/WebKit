@@ -80,6 +80,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(CompactContextMenuPresenter);
+
 CompactContextMenuPresenter::CompactContextMenuPresenter(UIView *rootView, id<UIContextMenuInteractionDelegate> delegate)
     : m_rootView(rootView)
     , m_button([WKCompactContextMenuPresenterButton buttonWithType:UIButtonTypeSystem])

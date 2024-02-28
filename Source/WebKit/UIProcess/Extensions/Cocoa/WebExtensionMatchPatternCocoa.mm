@@ -47,6 +47,8 @@ namespace WebKit {
 using namespace WTF;
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(WebExtensionMatchPattern);
+
 static constexpr ASCIILiteral allURLsPattern = "<all_urls>"_s;
 static constexpr ASCIILiteral allHostsAndSchemesPattern = "*://*/*"_s;
 

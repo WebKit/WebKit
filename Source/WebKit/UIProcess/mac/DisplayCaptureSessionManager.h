@@ -31,6 +31,7 @@
 #include "WebPageProxy.h"
 #include <WebCore/SecurityOriginData.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -40,6 +41,7 @@ class SecurityOrigin;
 namespace WebKit {
 
 class DisplayCaptureSessionManager {
+    WTF_MAKE_WK_TZONE_ALLOCATED(DisplayCaptureSessionManager);
 public:
     static DisplayCaptureSessionManager& singleton();
     static bool isAvailable();

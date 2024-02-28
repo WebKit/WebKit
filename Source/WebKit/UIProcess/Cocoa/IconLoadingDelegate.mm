@@ -34,6 +34,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(IconLoadingDelegate);
+
 IconLoadingDelegate::IconLoadingDelegate(WKWebView *webView)
     : m_webView(webView)
 {

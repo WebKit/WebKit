@@ -30,6 +30,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(WebScriptMessageHandler);
+
 Ref<WebScriptMessageHandler> WebScriptMessageHandler::create(std::unique_ptr<Client> client, const String& name, API::ContentWorld& world)
 {
     return adoptRef(*new WebScriptMessageHandler(WTFMove(client), name, world));

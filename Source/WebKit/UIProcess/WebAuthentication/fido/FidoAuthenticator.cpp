@@ -32,6 +32,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(FidoAuthenticator);
+
 FidoAuthenticator::FidoAuthenticator(std::unique_ptr<CtapDriver>&& driver)
     : m_driver(WTFMove(driver))
 {

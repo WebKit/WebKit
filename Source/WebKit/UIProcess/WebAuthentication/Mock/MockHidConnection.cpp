@@ -44,6 +44,8 @@ using namespace WebCore;
 using namespace cbor;
 using namespace fido;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(MockHidConnection);
+
 MockHidConnection::MockHidConnection(IOHIDDeviceRef device, const MockWebAuthenticationConfiguration& configuration)
     : HidConnection(device)
     , m_configuration(configuration)

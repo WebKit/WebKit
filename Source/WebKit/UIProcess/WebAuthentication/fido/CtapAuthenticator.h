@@ -29,6 +29,7 @@
 
 #include "FidoAuthenticator.h"
 #include <WebCore/AuthenticatorGetInfoResponse.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace fido {
 namespace pin {
@@ -45,6 +46,7 @@ namespace WebKit {
 class CtapDriver;
 
 class CtapAuthenticator final : public FidoAuthenticator {
+    WTF_MAKE_WK_TZONE_ALLOCATED(CtapAuthenticator);
 public:
     static Ref<CtapAuthenticator> create(std::unique_ptr<CtapDriver>&& driver, fido::AuthenticatorGetInfoResponse&& info)
     {

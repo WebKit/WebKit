@@ -32,6 +32,7 @@
 #include <wtf/CheckedRef.h>
 #include <wtf/HashMap.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
@@ -41,7 +42,7 @@ class WebProcessPool;
 class WebsiteDataStore;
 
 class WebProcessCache : public CanMakeCheckedPtr {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(WebProcessCache);
 public:
     explicit WebProcessCache(WebProcessPool&);
 

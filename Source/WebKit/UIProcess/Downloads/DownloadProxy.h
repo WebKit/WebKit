@@ -33,6 +33,7 @@
 #include <WebCore/ResourceRequest.h>
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 OBJC_CLASS NSProgress;
@@ -62,6 +63,7 @@ enum class AllowOverwrite : bool;
 struct FrameInfoData;
 
 class DownloadProxy : public API::ObjectImpl<API::Object::Type::Download>, public IPC::MessageReceiver {
+    WTF_MAKE_WK_TZONE_ALLOCATED(DownloadProxy);
 public:
 
     template<typename... Args> static Ref<DownloadProxy> create(Args&&... args)

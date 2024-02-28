@@ -30,6 +30,7 @@
 #import "WebDateTimePicker.h"
 #import <WebCore/DateTimeChooserParameters.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/TZoneMalloc.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/text/StringView.h>
 
@@ -38,6 +39,7 @@
 namespace WebKit {
 
 class WebDateTimePickerMac final : public WebDateTimePicker {
+    WTF_MAKE_WK_TZONE_ALLOCATED(WebDateTimePickerMac);
 public:
     static Ref<WebDateTimePickerMac> create(WebPageProxy&, NSView *);
     ~WebDateTimePickerMac();

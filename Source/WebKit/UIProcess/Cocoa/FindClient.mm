@@ -30,6 +30,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(FindClient);
+
 FindClient::FindClient(WKWebView *webView)
     : m_webView(webView)
 {

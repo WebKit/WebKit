@@ -30,6 +30,7 @@
 #include "AuthenticatorTransportService.h"
 #include "VirtualAuthenticatorConfiguration.h"
 #include "VirtualCredential.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
@@ -37,6 +38,7 @@ namespace WebKit {
 class VirtualAuthenticatorManager;
 
 class VirtualService : public AuthenticatorTransportService {
+    WTF_MAKE_WK_TZONE_ALLOCATED(VirtualService);
 public:
     explicit VirtualService(Observer&, Vector<std::pair<String, VirtualAuthenticatorConfiguration>>&);
 

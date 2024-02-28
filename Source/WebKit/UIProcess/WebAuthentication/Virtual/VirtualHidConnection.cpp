@@ -43,6 +43,8 @@ using namespace cbor;
 using namespace fido;
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(VirtualHidConnection);
+
 const size_t CtapChannelIdSize = 4;
 
 VirtualHidConnection::VirtualHidConnection(const String& authenticatorId, const VirtualAuthenticatorConfiguration& configuration, const WeakPtr<VirtualAuthenticatorManager>& manager)

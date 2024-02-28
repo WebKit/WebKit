@@ -39,6 +39,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(MockLocalService);
+
 MockLocalService::MockLocalService(Observer& observer, const WebCore::MockWebAuthenticationConfiguration& configuration)
     : LocalService(observer)
     , m_configuration(configuration)

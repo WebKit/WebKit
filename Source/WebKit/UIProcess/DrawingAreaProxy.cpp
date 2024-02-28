@@ -40,6 +40,8 @@
 namespace WebKit {
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(DrawingAreaProxy);
+
 DrawingAreaProxy::DrawingAreaProxy(DrawingAreaType type, WebPageProxy& webPageProxy, WebProcessProxy& webProcessProxy)
     : m_type(type)
     , m_identifier(DrawingAreaIdentifier::generate())

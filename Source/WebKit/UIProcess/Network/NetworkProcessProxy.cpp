@@ -112,6 +112,8 @@
 namespace WebKit {
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(NetworkProcessProxy);
+
 static constexpr Seconds networkProcessResponsivenessTimeout = 6_s;
 
 static WeakHashSet<NetworkProcessProxy>& networkProcessesSet()

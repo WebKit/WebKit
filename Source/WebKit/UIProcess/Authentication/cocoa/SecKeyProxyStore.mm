@@ -33,6 +33,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(SecKeyProxyStore);
+
 bool SecKeyProxyStore::initialize(const WebCore::Credential& credential)
 {
     if (!credential.isEmpty() && credential.nsCredential().identity)

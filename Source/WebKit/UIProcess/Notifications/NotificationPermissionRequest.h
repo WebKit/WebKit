@@ -27,10 +27,12 @@
 
 #include "APIObject.h"
 #include <wtf/CompletionHandler.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
 class NotificationPermissionRequest : public API::ObjectImpl<API::Object::Type::NotificationPermissionRequest> {
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(NotificationPermissionRequest);
 public:
     static Ref<NotificationPermissionRequest> create(CompletionHandler<void(bool)>&& completionHandler)
     {

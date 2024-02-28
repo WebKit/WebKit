@@ -67,6 +67,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(MockCcidService);
+
 MockCcidService::MockCcidService(Observer& observer, const WebCore::MockWebAuthenticationConfiguration& configuration)
     : CcidService(observer)
     , m_configuration(configuration)

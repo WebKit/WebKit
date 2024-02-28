@@ -39,6 +39,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(NfcService);
+
 NfcService::NfcService(Observer& observer)
     : FidoService(observer)
     , m_restartTimer(RunLoop::main(), this, &NfcService::platformStartDiscovery)

@@ -32,6 +32,7 @@
 #include "ProcessThrottler.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/PlatformXR.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class SecurityOriginData;
@@ -45,7 +46,7 @@ class WebPageProxy;
 struct XRDeviceInfo;
 
 class PlatformXRSystem : public IPC::MessageReceiver, public PlatformXRCoordinator::SessionEventClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(PlatformXRSystem);
 public:
     PlatformXRSystem(WebPageProxy&);
     virtual ~PlatformXRSystem();

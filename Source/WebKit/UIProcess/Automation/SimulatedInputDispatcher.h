@@ -34,6 +34,8 @@
 #include <wtf/ListHashSet.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Seconds.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -130,6 +132,7 @@ public:
 
 class SimulatedInputDispatcher : public RefCounted<SimulatedInputDispatcher> {
     WTF_MAKE_NONCOPYABLE(SimulatedInputDispatcher);
+    WTF_MAKE_WK_TZONE_ALLOCATED(SimulatedInputDispatcher);
 public:
     class Client {
     public:

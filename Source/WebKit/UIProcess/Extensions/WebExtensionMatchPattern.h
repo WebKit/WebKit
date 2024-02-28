@@ -32,6 +32,7 @@
 #include <wtf/Forward.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS NSArray;
 OBJC_CLASS NSError;
@@ -43,6 +44,7 @@ namespace WebKit {
 
 class WebExtensionMatchPattern : public API::ObjectImpl<API::Object::Type::WebExtensionMatchPattern> {
     WTF_MAKE_NONCOPYABLE(WebExtensionMatchPattern);
+    WTF_MAKE_WK_TZONE_ALLOCATED(WebExtensionMatchPattern);
 
 public:
     template<typename... Args>

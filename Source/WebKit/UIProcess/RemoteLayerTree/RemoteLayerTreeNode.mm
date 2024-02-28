@@ -45,6 +45,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(RemoteLayerTreeNode);
+
 static NSString *const WKRemoteLayerTreeNodePropertyKey = @"WKRemoteLayerTreeNode";
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
 static NSString *const WKInteractionRegionContainerKey = @"WKInteractionRegionContainer";

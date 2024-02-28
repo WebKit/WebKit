@@ -54,6 +54,8 @@
 namespace WebKit {
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(SOAuthorizationSession);
+
 namespace {
 
 static const char* Redirect = "Redirect";

@@ -38,6 +38,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(WebScreenOrientationManagerProxy);
+
 WebScreenOrientationManagerProxy::WebScreenOrientationManagerProxy(WebPageProxy& page, WebCore::ScreenOrientationType orientation)
     : m_page(page)
     , m_currentOrientation(orientation)

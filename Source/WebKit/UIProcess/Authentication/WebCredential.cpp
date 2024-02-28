@@ -28,6 +28,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(WebCredential);
+
 WebCredential::WebCredential(const WebCore::Credential& credential)
     : m_coreCredential(credential)
 {

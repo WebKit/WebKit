@@ -30,6 +30,7 @@
 #include "APIObject.h"
 #include "WebExtension.h"
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -68,6 +69,7 @@ struct WebExtensionCommandParameters;
 
 class WebExtensionCommand : public API::ObjectImpl<API::Object::Type::WebExtensionCommand>, public CanMakeWeakPtr<WebExtensionCommand> {
     WTF_MAKE_NONCOPYABLE(WebExtensionCommand);
+    WTF_MAKE_WK_TZONE_ALLOCATED(WebExtensionCommand);
 
 public:
     template<typename... Args>

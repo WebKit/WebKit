@@ -30,6 +30,7 @@
 #include "APIObject.h"
 #include "WebExtensionPortChannelIdentifier.h"
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS NSError;
 OBJC_CLASS _WKWebExtensionMessagePort;
@@ -40,6 +41,7 @@ class WebExtensionContext;
 
 class WebExtensionMessagePort : public API::ObjectImpl<API::Object::Type::WebExtensionMessagePort> {
     WTF_MAKE_NONCOPYABLE(WebExtensionMessagePort);
+    WTF_MAKE_WK_TZONE_ALLOCATED(WebExtensionMessagePort);
 
 public:
     template<typename... Args>

@@ -2433,7 +2433,7 @@ void WKPageSetPageNavigationClient(WKPageRef pageRef, const WKPageNavigationClie
 }
 
 class StateClient final : public API::Client<WKPageStateClientBase>, public PageLoadState::Observer {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(StateClient);
 public:
     explicit StateClient(const WKPageStateClientBase* client)
     {

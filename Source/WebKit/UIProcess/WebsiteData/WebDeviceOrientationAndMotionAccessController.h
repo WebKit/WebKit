@@ -30,6 +30,7 @@
 #include <WebCore/DeviceOrientationOrMotionPermissionState.h>
 #include <WebCore/SecurityOriginData.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
@@ -39,6 +40,7 @@ class WebFrameProxy;
 struct FrameInfoData;
 
 class WebDeviceOrientationAndMotionAccessController : public CanMakeWeakPtr<WebDeviceOrientationAndMotionAccessController> {
+    WTF_MAKE_WK_TZONE_ALLOCATED(WebDeviceOrientationAndMotionAccessController);
 public:
     WebDeviceOrientationAndMotionAccessController() = default;
 

@@ -36,6 +36,8 @@ namespace WebKit {
 
 using namespace Inspector;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(WebPageDebuggable);
+
 WebPageDebuggable::WebPageDebuggable(WebPageProxy& page)
     : m_page(page)
 {

@@ -44,6 +44,8 @@ namespace WebKit {
 
 using namespace Inspector;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(WebPageInspectorController);
+
 static String getTargetID(const ProvisionalPageProxy& provisionalPage)
 {
     return WebPageInspectorTarget::toTargetID(provisionalPage.webPageID());

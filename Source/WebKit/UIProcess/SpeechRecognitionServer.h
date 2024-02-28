@@ -34,6 +34,7 @@
 #include <WebCore/SpeechRecognitionResultData.h>
 #include <WebCore/SpeechRecognizer.h>
 #include <wtf/Deque.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 enum class SpeechRecognitionUpdateType : uint8_t;
@@ -50,7 +51,7 @@ using SpeechRecognitionPermissionChecker = Function<void(WebCore::SpeechRecognit
 using SpeechRecognitionCheckIfMockSpeechRecognitionEnabled = Function<bool()>;
 
 class SpeechRecognitionServer : public IPC::MessageReceiver, private IPC::MessageSender {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(SpeechRecognitionServer);
 public:
 #if ENABLE(MEDIA_STREAM)
     using RealtimeMediaSourceCreateFunction = Function<WebCore::CaptureSourceOrError()>;

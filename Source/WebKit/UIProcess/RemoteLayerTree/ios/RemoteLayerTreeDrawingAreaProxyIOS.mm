@@ -175,6 +175,8 @@ namespace WebKit {
 using namespace IPC;
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(RemoteLayerTreeDrawingAreaProxyIOS);
+
 RemoteLayerTreeDrawingAreaProxyIOS::RemoteLayerTreeDrawingAreaProxyIOS(WebPageProxy& pageProxy, WebProcessProxy& webProcessProxy)
     : RemoteLayerTreeDrawingAreaProxy(pageProxy, webProcessProxy)
 {

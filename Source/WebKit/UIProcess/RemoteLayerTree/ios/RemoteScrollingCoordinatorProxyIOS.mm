@@ -56,6 +56,8 @@
 namespace WebKit {
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(RemoteScrollingCoordinatorProxyIOS);
+
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, webPageProxy().process().connection())
 
 RemoteScrollingCoordinatorProxyIOS::RemoteScrollingCoordinatorProxyIOS(WebPageProxy& webPageProxy)

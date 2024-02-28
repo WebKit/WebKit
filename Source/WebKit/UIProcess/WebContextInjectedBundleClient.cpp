@@ -34,6 +34,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(WebContextInjectedBundleClient);
+
 WebContextInjectedBundleClient::WebContextInjectedBundleClient(const WKContextInjectedBundleClientBase* client)
 {
     initialize(client);

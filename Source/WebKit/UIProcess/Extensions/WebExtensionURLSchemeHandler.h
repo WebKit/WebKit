@@ -30,6 +30,7 @@
 #include "WebURLSchemeHandler.h"
 #include <wtf/Forward.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 OBJC_CLASS NSBlockOperation;
@@ -39,6 +40,7 @@ namespace WebKit {
 class WebExtensionController;
 
 class WebExtensionURLSchemeHandler : public WebURLSchemeHandler {
+    WTF_MAKE_WK_TZONE_ALLOCATED(WebExtensionURLSchemeHandler);
 public:
     static Ref<WebExtensionURLSchemeHandler> create(WebExtensionController& controller)
     {

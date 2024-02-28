@@ -30,6 +30,7 @@
 #include "HidConnection.h"
 #include "VirtualAuthenticatorConfiguration.h"
 #include <WebCore/FidoHidMessage.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
@@ -37,6 +38,7 @@ struct VirtualAuthenticatorConfiguration;
 class VirtualAuthenticatorManager;
 
 class VirtualHidConnection final : public CanMakeWeakPtr<VirtualHidConnection>, public HidConnection {
+    WTF_MAKE_WK_TZONE_ALLOCATED(VirtualHidConnection);
 public:
     explicit VirtualHidConnection(const String& authenticatorId, const VirtualAuthenticatorConfiguration&, const WeakPtr<VirtualAuthenticatorManager>&);
 

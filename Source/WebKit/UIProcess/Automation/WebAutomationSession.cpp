@@ -69,6 +69,8 @@ namespace WebKit {
 using namespace Inspector;
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(AutomationCommandError);
+
 String AutomationCommandError::toProtocolString()
 {
     String protocolErrorName = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(type);

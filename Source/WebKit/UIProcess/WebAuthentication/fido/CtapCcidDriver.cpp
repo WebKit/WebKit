@@ -36,6 +36,8 @@ namespace WebKit {
 using namespace apdu;
 using namespace fido;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(CtapCcidDriver);
+
 CtapCcidDriver::CtapCcidDriver(Ref<CcidConnection>&& connection, WebCore::AuthenticatorTransport transport)
     : CtapDriver(transport)
     , m_connection(WTFMove(connection))

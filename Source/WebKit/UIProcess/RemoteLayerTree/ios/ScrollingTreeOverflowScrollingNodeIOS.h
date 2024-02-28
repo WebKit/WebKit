@@ -28,6 +28,7 @@
 #if ENABLE(ASYNC_SCROLLING) && PLATFORM(IOS_FAMILY)
 
 #include <WebCore/ScrollingTreeOverflowScrollingNode.h>
+#include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS WKBaseScrollView;
 
@@ -36,6 +37,7 @@ namespace WebKit {
 class ScrollingTreeScrollingNodeDelegateIOS;
 
 class ScrollingTreeOverflowScrollingNodeIOS final : public WebCore::ScrollingTreeOverflowScrollingNode {
+    WTF_MAKE_WK_TZONE_ALLOCATED(ScrollingTreeOverflowScrollingNodeIOS);
 public:
     static Ref<ScrollingTreeOverflowScrollingNodeIOS> create(WebCore::ScrollingTree&, WebCore::ScrollingNodeID);
     virtual ~ScrollingTreeOverflowScrollingNodeIOS();

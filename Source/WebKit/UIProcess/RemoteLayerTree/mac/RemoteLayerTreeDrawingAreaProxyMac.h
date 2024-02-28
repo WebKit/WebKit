@@ -31,6 +31,7 @@
 
 #include "DisplayLinkObserverID.h"
 #include <WebCore/AnimationFrameRate.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
@@ -41,6 +42,7 @@ class RemoteScrollingCoordinatorProxy;
 class RemoteScrollingCoordinatorTransaction;
 
 class RemoteLayerTreeDrawingAreaProxyMac final : public RemoteLayerTreeDrawingAreaProxy {
+    WTF_MAKE_WK_TZONE_ALLOCATED(RemoteLayerTreeDrawingAreaProxyMac);
 friend class RemoteScrollingCoordinatorProxyMac;
 public:
     RemoteLayerTreeDrawingAreaProxyMac(WebPageProxy&, WebProcessProxy&);

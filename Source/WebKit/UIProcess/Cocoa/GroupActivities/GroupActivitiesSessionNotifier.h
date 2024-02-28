@@ -29,6 +29,7 @@
 
 #include "GroupActivitiesSession.h"
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URLHash.h>
 #include <wtf/WeakPtr.h>
 
@@ -39,7 +40,7 @@ namespace WebKit {
 class WebPageProxy;
 
 class GroupActivitiesSessionNotifier : public CanMakeWeakPtr<GroupActivitiesSessionNotifier> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(GroupActivitiesSessionNotifier);
 public:
     static GroupActivitiesSessionNotifier& sharedNotifier();
 

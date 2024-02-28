@@ -456,6 +456,7 @@ TextStream& operator<<(TextStream& stream, const WKSelectionDrawingInfo& info)
 #if ENABLE(IMAGE_ANALYSIS)
 
 class ImageAnalysisGestureDeferralToken final : public RefCounted<ImageAnalysisGestureDeferralToken> {
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(RevealFocusedElementDeferrer);
 public:
     static RefPtr<ImageAnalysisGestureDeferralToken> create(WKContentView *view)
     {

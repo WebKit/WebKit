@@ -30,6 +30,7 @@
 #include "HidConnection.h"
 #include <WebCore/FidoHidMessage.h>
 #include <WebCore/MockWebAuthenticationConfiguration.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
@@ -44,6 +45,7 @@ namespace WebKit {
 // FSM: Info::Init => Info::Msg => [Request::Init => Request::Msg]+
 // According to different combinations of error and stages, error will manifest differently.
 class MockHidConnection final : public CanMakeWeakPtr<MockHidConnection>, public HidConnection {
+    WTF_MAKE_WK_TZONE_ALLOCATED(MockHidConnection);
 public:
     MockHidConnection(IOHIDDeviceRef, const WebCore::MockWebAuthenticationConfiguration&);
 

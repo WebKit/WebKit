@@ -32,6 +32,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(ProcessAssertion);
+
 ASCIILiteral processAssertionTypeDescription(ProcessAssertionType type)
 {
     switch (type) {

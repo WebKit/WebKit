@@ -30,6 +30,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(MockAuthenticatorManager);
+
 MockAuthenticatorManager::MockAuthenticatorManager(WebCore::MockWebAuthenticationConfiguration&& configuration)
     : m_testConfiguration(WTFMove(configuration))
 {

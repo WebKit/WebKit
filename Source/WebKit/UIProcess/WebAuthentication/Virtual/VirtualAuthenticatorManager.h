@@ -30,12 +30,14 @@
 #include "AuthenticatorManager.h"
 #include "VirtualAuthenticatorConfiguration.h"
 #include "VirtualCredential.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
 struct VirtualCredential;
 
 class VirtualAuthenticatorManager final : public AuthenticatorManager {
+    WTF_MAKE_WK_TZONE_ALLOCATED(VirtualAuthenticatorManager);
 public:
     explicit VirtualAuthenticatorManager();
 

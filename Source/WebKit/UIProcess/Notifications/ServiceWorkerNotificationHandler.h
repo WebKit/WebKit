@@ -29,12 +29,14 @@
 #include <WebCore/PageIdentifier.h>
 #include <pal/SessionID.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class WebsiteDataStore;
 
 class ServiceWorkerNotificationHandler final : public NotificationManagerMessageHandler {
+    WTF_MAKE_WK_TZONE_ALLOCATED(ServiceWorkerNotificationHandler);
 public:
     static ServiceWorkerNotificationHandler& singleton();
 

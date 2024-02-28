@@ -32,6 +32,7 @@
 #include <WebCore/NotificationClient.h>
 #include <pal/SessionID.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UUID.h>
 #include <wtf/text/StringHash.h>
 
@@ -54,6 +55,7 @@ class WebProcessPool;
 class WebsiteDataStore;
 
 class WebNotificationManagerProxy : public API::ObjectImpl<API::Object::Type::NotificationManager>, public WebContextSupplement {
+    WTF_MAKE_WK_TZONE_ALLOCATED(WebNotificationManagerProxy);
 public:
     static ASCIILiteral supplementName();
 

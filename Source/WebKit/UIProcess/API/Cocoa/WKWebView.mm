@@ -3791,7 +3791,7 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
     _inputDelegate = inputDelegate;
 
     class FormClient : public API::FormClient {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(FormClient);
     public:
         explicit FormClient(WKWebView *webView)
             : m_webView(webView)

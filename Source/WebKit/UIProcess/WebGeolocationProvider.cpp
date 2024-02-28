@@ -31,6 +31,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(WebGeolocationProvider);
+
 WebGeolocationProvider::WebGeolocationProvider(const WKGeolocationProviderBase* provider)
 {
     initialize(provider);

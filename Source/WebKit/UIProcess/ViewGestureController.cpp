@@ -55,6 +55,8 @@
 namespace WebKit {
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(ViewGestureController);
+
 static const Seconds swipeSnapshotRemovalWatchdogAfterFirstVisuallyNonEmptyLayoutDuration { 3_s };
 static const Seconds swipeSnapshotRemovalActiveLoadMonitoringInterval { 250_ms };
 static const Seconds swipeSnapshotRemovalWatchdogDuration = 3_s;

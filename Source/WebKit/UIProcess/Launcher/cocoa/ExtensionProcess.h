@@ -27,6 +27,7 @@
 
 #include <wtf/OSObjectPtr.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 #if USE(EXTENSIONKIT)
 OBJC_CLASS BEWebContentProcess;
@@ -41,6 +42,7 @@ using ExtensionProcessVariant = std::variant<RetainPtr<BEWebContentProcess>, Ret
 namespace WebKit {
 
 class ExtensionProcess {
+    WTF_MAKE_WK_TZONE_ALLOCATED(ExtensionProcess);
 public:
     ExtensionProcess(BEWebContentProcess *);
     ExtensionProcess(BENetworkingProcess *);

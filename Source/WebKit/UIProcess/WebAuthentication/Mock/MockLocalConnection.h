@@ -30,10 +30,12 @@
 #include "LocalConnection.h"
 #include <WebCore/AuthenticatorAssertionResponse.h>
 #include <WebCore/MockWebAuthenticationConfiguration.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class MockLocalConnection final : public LocalConnection {
+    WTF_MAKE_WK_TZONE_ALLOCATED(MockLocalConnection);
 public:
     explicit MockLocalConnection(const WebCore::MockWebAuthenticationConfiguration&);
 

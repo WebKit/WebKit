@@ -29,6 +29,7 @@
 
 #include "FidoAuthenticator.h"
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace apdu {
 class ApduResponse;
@@ -39,6 +40,7 @@ namespace WebKit {
 class CtapDriver;
 
 class U2fAuthenticator final : public FidoAuthenticator {
+    WTF_MAKE_WK_TZONE_ALLOCATED(U2fAuthenticator);
 public:
     static Ref<U2fAuthenticator> create(std::unique_ptr<CtapDriver>&& driver)
     {

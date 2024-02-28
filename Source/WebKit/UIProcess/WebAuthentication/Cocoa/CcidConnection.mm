@@ -36,6 +36,8 @@
 namespace WebKit {
 using namespace fido;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(CcidConnection);
+
 namespace {
 
 // FIXME: This is duplicate code with compareVersion in NfcConnection.mm.

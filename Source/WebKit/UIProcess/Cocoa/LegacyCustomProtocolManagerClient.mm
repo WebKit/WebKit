@@ -138,6 +138,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 namespace WebKit {
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(LegacyCustomProtocolManagerClient);
+
 void LegacyCustomProtocolManagerClient::startLoading(LegacyCustomProtocolManagerProxy& manager, WebKit::LegacyCustomProtocolID customProtocolID, const ResourceRequest& coreRequest)
 {
     NSURLRequest *request = coreRequest.nsURLRequest(HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody);

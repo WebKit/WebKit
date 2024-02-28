@@ -37,6 +37,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(WebExtensionController);
+
 constexpr auto freshlyCreatedTimeout = 5_s;
 
 static HashMap<WebExtensionControllerIdentifier, WeakRef<WebExtensionController>>& webExtensionControllers()

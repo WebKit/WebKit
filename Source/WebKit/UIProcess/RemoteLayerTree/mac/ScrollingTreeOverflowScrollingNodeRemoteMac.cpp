@@ -35,6 +35,8 @@
 namespace WebKit {
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(ScrollingTreeOverflowScrollingNodeRemoteMac);
+
 Ref<ScrollingTreeOverflowScrollingNodeRemoteMac> ScrollingTreeOverflowScrollingNodeRemoteMac::create(ScrollingTree& tree, ScrollingNodeID nodeID)
 {
     return adoptRef(*new ScrollingTreeOverflowScrollingNodeRemoteMac(tree, nodeID));

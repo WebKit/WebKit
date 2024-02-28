@@ -40,6 +40,8 @@ using namespace Inspector;
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(AutomationClient);
+
 AutomationClient::AutomationClient(WKProcessPool *processPool, id <_WKAutomationDelegate> delegate)
     : m_processPool(processPool)
     , m_delegate(delegate)

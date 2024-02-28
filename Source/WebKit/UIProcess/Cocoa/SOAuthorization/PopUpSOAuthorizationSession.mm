@@ -97,6 +97,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(PopUpSOAuthorizationSession);
+
 Ref<SOAuthorizationSession> PopUpSOAuthorizationSession::create(RetainPtr<WKSOAuthorizationDelegate> delegate, WebPageProxy& page, Ref<API::NavigationAction>&& navigationAction, NewPageCallback&& newPageCallback, UIClientCallback&& uiClientCallback)
 {
     return adoptRef(*new PopUpSOAuthorizationSession(delegate, page, WTFMove(navigationAction), WTFMove(newPageCallback), WTFMove(uiClientCallback)));

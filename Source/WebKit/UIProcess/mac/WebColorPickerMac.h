@@ -34,6 +34,7 @@
 #import "WebColorPicker.h"
 #import <WebCore/IntRect.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/TZoneMalloc.h>
 #import <wtf/Vector.h>
 
 namespace WebCore {
@@ -54,7 +55,8 @@ class WebColorPickerMac;
 namespace WebKit {
     
 class WebColorPickerMac final : public WebColorPicker {
-public:        
+    WTF_MAKE_WK_TZONE_ALLOCATED(WebColorPickerMac);
+public:
     static Ref<WebColorPickerMac> create(WebColorPicker::Client*, const WebCore::Color&, const WebCore::IntRect&, Vector<WebCore::Color>&&, NSView *);
     virtual ~WebColorPickerMac();
 

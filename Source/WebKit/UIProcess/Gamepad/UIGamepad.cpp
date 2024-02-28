@@ -34,6 +34,8 @@
 namespace WebKit {
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(UIGamepad);
+
 UIGamepad::UIGamepad(WebCore::PlatformGamepad& platformGamepad)
     : m_index(platformGamepad.index())
     , m_id(platformGamepad.id())

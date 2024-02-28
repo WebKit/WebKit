@@ -35,6 +35,8 @@
 namespace WebKit {
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(WebPageInjectedBundleClient);
+
 void WebPageInjectedBundleClient::didReceiveMessageFromInjectedBundle(WebPageProxy* page, const String& messageName, API::Object* messageBody)
 {
     if (!m_client.didReceiveMessageFromInjectedBundle)

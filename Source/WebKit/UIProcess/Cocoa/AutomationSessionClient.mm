@@ -36,6 +36,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(AutomationSessionClient);
+
 AutomationSessionClient::AutomationSessionClient(id <_WKAutomationSessionDelegate> delegate)
     : m_delegate(delegate)
 {

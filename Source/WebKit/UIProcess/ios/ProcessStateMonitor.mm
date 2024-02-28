@@ -35,6 +35,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(ProcessStateMonitor);
+
 static constexpr double maxPrepareForSuspensionDelayInSecond = 15;
 
 ProcessStateMonitor::ProcessStateMonitor(Function<void(bool)>&& becomeSuspendedHandler)

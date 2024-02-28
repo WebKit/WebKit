@@ -75,6 +75,8 @@ static const CGFloat colorPickerMatrixSwatchWidth = 13.0;
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(WebColorPickerMac);
+
 Ref<WebColorPickerMac> WebColorPickerMac::create(WebColorPicker::Client* client, const WebCore::Color& initialColor, const WebCore::IntRect& rect, Vector<WebCore::Color>&& suggestions, NSView *view)
 {
     return adoptRef(*new WebColorPickerMac(client, initialColor, rect, WTFMove(suggestions), view));

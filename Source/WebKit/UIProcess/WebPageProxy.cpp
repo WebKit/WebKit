@@ -413,7 +413,8 @@ static WorkQueue& sharedFileQueue()
 #endif
 
 class StorageRequests {
-    WTF_MAKE_NONCOPYABLE(StorageRequests); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(StorageRequests);
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(StorageRequests);
     friend NeverDestroyed<StorageRequests>;
 public:
     static StorageRequests& singleton();
@@ -455,7 +456,7 @@ StorageRequests& StorageRequests::singleton()
 
 class WebPageProxyFrameLoadStateObserver final : public FrameLoadState::Observer {
     WTF_MAKE_NONCOPYABLE(WebPageProxyFrameLoadStateObserver);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(WebPageProxyFrameLoadStateObserver);
 public:
     static constexpr size_t maxVisitedDomainsSize = 6;
 

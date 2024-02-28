@@ -32,6 +32,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(MediaUsageManager);
+
 #if !HAVE(MEDIA_USAGE_FRAMEWORK)
 std::unique_ptr<MediaUsageManager> MediaUsageManager::create()
 {

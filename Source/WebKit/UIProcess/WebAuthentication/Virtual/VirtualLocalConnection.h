@@ -29,12 +29,14 @@
 
 #include "LocalConnection.h"
 #include "VirtualAuthenticatorConfiguration.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
 struct VirtualAuthenticatorConfiguration;
 
 class VirtualLocalConnection final : public CanMakeWeakPtr<VirtualLocalConnection>, public LocalConnection {
+    WTF_MAKE_WK_TZONE_ALLOCATED(VirtualLocalConnection);
 public:
     explicit VirtualLocalConnection(const VirtualAuthenticatorConfiguration&);
 

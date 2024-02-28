@@ -28,6 +28,7 @@
 #include "APIObject.h"
 #include "IdentifierTypes.h"
 #include <WebCore/AuthenticationChallenge.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace IPC {
@@ -42,6 +43,7 @@ class WebCredential;
 class WebProtectionSpace;
 
 class AuthenticationChallengeProxy : public API::ObjectImpl<API::Object::Type::AuthenticationChallenge> {
+    WTF_MAKE_WK_TZONE_ALLOCATED(AuthenticationChallengeProxy);
 public:
     static Ref<AuthenticationChallengeProxy> create(WebCore::AuthenticationChallenge&& authenticationChallenge, AuthenticationChallengeIdentifier challengeID, Ref<IPC::Connection>&& connection, WeakPtr<SecKeyProxyStore>&& secKeyProxyStore)
     {

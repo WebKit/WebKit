@@ -620,7 +620,7 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     class WKMediaSessionCoordinatorForTesting
         : public WebKit::MediaSessionCoordinatorProxyPrivate
         , public WebCore::MediaSessionCoordinatorClient {
-        WTF_MAKE_FAST_ALLOCATED;
+            WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(WKMediaSessionCoordinatorForTesting);
     public:
 
         static Ref<WKMediaSessionCoordinatorForTesting> create(id <_WKMediaSessionCoordinator> privateCoordinator)

@@ -51,6 +51,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(WebExtensionTab);
+
 WebExtensionTab::WebExtensionTab(const WebExtensionContext& context, _WKWebExtensionTab *delegate)
     : m_identifier(WebExtensionTabIdentifier::generate())
     , m_extensionContext(context)

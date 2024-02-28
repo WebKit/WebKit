@@ -41,6 +41,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(WebPermissionControllerProxy);
+
 WebPermissionControllerProxy::WebPermissionControllerProxy(WebProcessProxy& process)
     : m_process(process)
 {

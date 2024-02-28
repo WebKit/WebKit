@@ -33,6 +33,7 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -73,6 +74,7 @@ public:
 };
 
 class RemoteWebInspectorUIProxy : public RefCounted<RemoteWebInspectorUIProxy>, public IPC::MessageReceiver {
+    WTF_MAKE_WK_TZONE_ALLOCATED(RemoteWebInspectorUIProxy);
 public:
     static Ref<RemoteWebInspectorUIProxy> create()
     {

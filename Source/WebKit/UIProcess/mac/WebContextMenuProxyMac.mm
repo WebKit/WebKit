@@ -198,6 +198,8 @@
 namespace WebKit {
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(WebContextMenuProxyMac);
+
 WebContextMenuProxyMac::WebContextMenuProxyMac(NSView *webView, WebPageProxy& page, ContextMenuContextData&& context, const UserData& userData)
     : WebContextMenuProxy(page, WTFMove(context), userData)
     , m_webView(webView)

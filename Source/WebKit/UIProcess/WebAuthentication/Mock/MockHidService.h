@@ -29,10 +29,12 @@
 
 #include "HidService.h"
 #include <WebCore/MockWebAuthenticationConfiguration.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class MockHidService final : public HidService {
+    WTF_MAKE_WK_TZONE_ALLOCATED(MockHidService);
 public:
     MockHidService(Observer&, const WebCore::MockWebAuthenticationConfiguration&);
 

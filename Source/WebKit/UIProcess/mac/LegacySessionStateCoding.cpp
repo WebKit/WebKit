@@ -31,6 +31,7 @@
 #include <mutex>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/MallocPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/cf/TypeCastsCF.h>
 #include <wtf/text/StringView.h>
 
@@ -77,6 +78,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER_AND_EXPORT(HistoryEntryDataEncoder, WTF_I
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HistoryEntryDataEncoder);
 
 class HistoryEntryDataEncoder {
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(HistoryEntryDataEncoder);
 public:
     HistoryEntryDataEncoder()
         : m_bufferSize(0)
@@ -530,6 +532,7 @@ RefPtr<API::Data> encodeLegacySessionState(const SessionState& sessionState)
 }
 
 class HistoryEntryDataDecoder {
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(HistoryEntryDataDecoder);
 public:
     HistoryEntryDataDecoder(const uint8_t* buffer, size_t bufferSize)
         : m_buffer(buffer)

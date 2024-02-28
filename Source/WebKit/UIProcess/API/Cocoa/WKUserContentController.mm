@@ -125,7 +125,7 @@
 }
 
 class ScriptMessageHandlerDelegate final : public WebKit::WebScriptMessageHandler::Client {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(ScriptMessageHandlerDelegate);
 public:
     ScriptMessageHandlerDelegate(WKUserContentController *controller, id <WKScriptMessageHandler> handler, NSString *name)
         : m_controller(controller)

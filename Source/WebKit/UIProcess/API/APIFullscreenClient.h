@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/TZoneMallocInlines.h>
+
 namespace WebKit {
 class WebPageProxy;
 }
@@ -32,7 +34,7 @@ class WebPageProxy;
 namespace API {
 
 class FullscreenClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(FullscreenClient);
 public:
     enum Type {
         APIType,

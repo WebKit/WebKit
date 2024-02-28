@@ -42,6 +42,8 @@
 #include "WebUserContentControllerProxy.h"
 #include <WebCore/Timer.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URLHash.h>
 #include <wtf/WeakHashSet.h>
 
@@ -70,6 +72,7 @@ class WebInspectorUIProxy;
 
 class WebExtensionController : public API::ObjectImpl<API::Object::Type::WebExtensionController>, public IPC::MessageReceiver {
     WTF_MAKE_NONCOPYABLE(WebExtensionController);
+    WTF_MAKE_WK_TZONE_ALLOCATED(WebExtensionController);
 
 public:
     static Ref<WebExtensionController> create(Ref<WebExtensionControllerConfiguration> configuration) { return adoptRef(*new WebExtensionController(configuration)); }
@@ -204,7 +207,7 @@ private:
     void testFinished(bool result, String message, String sourceURL, unsigned lineNumber);
 
     class HTTPCookieStoreObserver : public API::HTTPCookieStore::Observer {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(HTTPCookieStoreObserver);
 
     public:
         explicit HTTPCookieStoreObserver(WebExtensionController& extensionController)

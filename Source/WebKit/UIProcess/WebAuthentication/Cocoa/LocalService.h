@@ -28,12 +28,14 @@
 #if ENABLE(WEB_AUTHN)
 
 #include "AuthenticatorTransportService.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class LocalConnection;
 
 class LocalService : public AuthenticatorTransportService {
+    WTF_MAKE_WK_TZONE_ALLOCATED(LocalService);
 public:
     explicit LocalService(Observer&);
 

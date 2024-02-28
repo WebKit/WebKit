@@ -29,6 +29,7 @@
 
 #include "Authenticator.h"
 #include "LocalConnection.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 
 OBJC_CLASS LAContext;
@@ -41,6 +42,7 @@ class AuthenticatorAssertionResponse;
 namespace WebKit {
 
 class LocalAuthenticator final : public Authenticator {
+    WTF_MAKE_WK_TZONE_ALLOCATED(LocalAuthenticator);
 public:
     // Here is the FSM.
     // MakeCredential: Init => RequestReceived => PolicyDecided => UserVerified => (Attested) => End

@@ -29,6 +29,7 @@
 
 #include <WebCore/Credential.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
@@ -36,6 +37,7 @@ enum class AuthenticationChallengeDisposition : uint8_t;
 class AuthenticationChallengeProxy;
 
 class AuthenticationDecisionListener : public API::ObjectImpl<API::Object::Type::AuthenticationDecisionListener> {
+    WTF_MAKE_WK_TZONE_ALLOCATED(AuthenticationDecisionListener);
 public:
     static Ref<AuthenticationDecisionListener> create(CompletionHandler<void(AuthenticationChallengeDisposition, const WebCore::Credential&)>&& completionHandler)
     {

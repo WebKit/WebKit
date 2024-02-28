@@ -30,6 +30,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(FullscreenClient);
+
 FullscreenClient::FullscreenClient(WKWebView *webView)
     : m_webView(webView)
 {

@@ -23,9 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#pragma once
+
+#include <wtf/TZoneMalloc.h>
+
 namespace WebKit {
 
 class WindowServerConnection {
+    WTF_MAKE_WK_TZONE_ALLOCATED(WindowServerConnection);
 public:
     static WindowServerConnection& singleton();
 

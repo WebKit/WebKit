@@ -33,6 +33,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(ProvisionalFrameProxy);
+
 ProvisionalFrameProxy::ProvisionalFrameProxy(WebFrameProxy& frame, WebProcessProxy& process, RefPtr<RemotePageProxy>&& remotePageProxy)
     : m_frame(frame)
     , m_process(process)

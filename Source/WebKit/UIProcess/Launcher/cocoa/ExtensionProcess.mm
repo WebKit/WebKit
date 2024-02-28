@@ -33,6 +33,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(ExtensionProcess);
+
 ExtensionProcess::ExtensionProcess(BEWebContentProcess *process)
     : m_process(process)
 {

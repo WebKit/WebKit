@@ -27,6 +27,7 @@
 
 #include "WebURLSchemeHandler.h"
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 @protocol WKURLSchemeHandler;
 
@@ -35,6 +36,7 @@ namespace WebKit {
 class WebURLSchemeTask;
 
 class WebURLSchemeHandlerCocoa : public WebURLSchemeHandler {
+    WTF_MAKE_WK_TZONE_ALLOCATED(WebURLSchemeHandlerCocoa);
 public:
     static Ref<WebURLSchemeHandlerCocoa> create(id <WKURLSchemeHandler>);
 

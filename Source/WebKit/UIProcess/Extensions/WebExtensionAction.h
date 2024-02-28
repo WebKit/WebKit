@@ -30,6 +30,7 @@
 #include "APIObject.h"
 #include "CocoaImage.h"
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakObjCPtr.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
@@ -58,6 +59,7 @@ class WebExtensionWindow;
 
 class WebExtensionAction : public API::ObjectImpl<API::Object::Type::WebExtensionAction>, public CanMakeWeakPtr<WebExtensionAction> {
     WTF_MAKE_NONCOPYABLE(WebExtensionAction);
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(WebExtensionAction);
 
 public:
     template<typename... Args>

@@ -32,6 +32,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(ModelElementController);
+
 ModelElementController::ModelElementController(WebPageProxy& webPageProxy)
     : m_webPageProxy(webPageProxy)
 {

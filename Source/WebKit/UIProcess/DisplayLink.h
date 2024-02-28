@@ -34,6 +34,7 @@
 #include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
+#include <wtf/TZoneMalloc.h>
 
 #if PLATFORM(MAC)
 #include <CoreVideo/CVDisplayLink.h>
@@ -46,7 +47,7 @@
 namespace WebKit {
 
 class DisplayLink {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(DisplayLink);
 public:
     class Client : public CanMakeThreadSafeCheckedPtr {
     friend class DisplayLink;
