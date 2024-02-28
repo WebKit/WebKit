@@ -2522,10 +2522,6 @@ fast/css/accent-color/radio.html [ Pass ]
 fast/css/accent-color/range.html [ Pass ]
 fast/css/accent-color/text.html [ Pass ]
 
-webkit.org/b/239550 fast/text/simple-line-hyphens-with-text-align.html [ Pass ]
-webkit.org/b/239550 fast/text/simple-line-layout-hyphen-limit-after.html [ Pass ]
-webkit.org/b/239550 fast/text/simple-line-layout-hyphen-limit-before.html [ Pass ]
-
 fast/events/wheel/wheel-event-destroys-frame.html [ Skip ] # Timeout
 fast/text/install-font-style-recalc.html [ Skip ] # Timeout
 webgl/2.0.y/conformance2/state/gl-object-get-calls.html [ Skip ] # Timeout
@@ -2749,3 +2745,7 @@ webkit.org/b/124566 fast/dom/SelectorAPI/resig-SelectorsAPI-test.xhtml [ Skip ] 
 
 imported/w3c/web-platform-tests/scroll-animations/css/view-timeline-inset-animation.html [ Pass Failure ]
 
+fast/text/simple-line-hyphens-with-text-align.html [ ImageOnlyFailure ]
+fast/text/simple-line-layout-hyphen-limit-after.html [ ImageOnlyFailure ]
+fast/text/simple-line-layout-hyphen-limit-before.html [ ImageOnlyFailure ]
+fast/text/simple-line-layout-hyphen-limit-lines.html [ ImageOnlyFailure ]
