@@ -127,16 +127,49 @@ static Navigation::Result createErrorResult(Ref<DeferredPromise> committed, Ref<
     return createErrorResult(committed, finished, Exception { exceptionCode, errorMessage });
 }
 
-// https://html.spec.whatwg.org/multipage/nav-history-apis.html#dom-navigation-reload
-Navigation::Result Navigation::reload(ReloadOptions&&, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished)
+ExceptionOr<RefPtr<SerializedScriptValue>> Navigation::serializeState(JSC::JSValue& state)
 {
+    if (state.isUndefined())
+        return { nullptr };
+
+    Vector<RefPtr<MessagePort>> dummyPorts;
+    auto serializeResult = SerializedScriptValue::create(*protectedScriptExecutionContext()->globalObject(), state, { }, dummyPorts, SerializationForStorage::Yes);
+    if (serializeResult.hasException())
+        return serializeResult.releaseException();
+
+    return { serializeResult.releaseReturnValue().ptr() };
+}
+
+// https://html.spec.whatwg.org/multipage/nav-history-apis.html#maybe-set-the-upcoming-non-traverse-api-method-tracker
+NavigationAPIMethodTracker Navigation::maybeSetUpcomingNonTraversalTracker(Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished, JSC::JSValue&& info, RefPtr<SerializedScriptValue>&& serializedState)
+{
+    static uint64_t lastTrackerID;
+    auto apiMethodTracker = NavigationAPIMethodTracker(lastTrackerID++, WTFMove(committed), WTFMove(finished), WTFMove(info), WTFMove(serializedState));
+
+    // FIXME: apiMethodTracker.finishedPromise needs to be considered Handled
+
+    ASSERT(!m_upcomingNonTraverseMethodTracker);
+    if (!hasEntriesAndEventsDisabled())
+        m_upcomingNonTraverseMethodTracker = apiMethodTracker;
+
+    return apiMethodTracker;
+}
+
+// https://html.spec.whatwg.org/multipage/nav-history-apis.html#dom-navigation-reload
+Navigation::Result Navigation::reload(ReloadOptions&& options, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished)
+{
+    auto serializedState = serializeState(options.state);
+    if (serializedState.hasException())
+        return createErrorResult(committed, finished, serializedState.releaseException());
+
+    auto apiMethodTracker = maybeSetUpcomingNonTraversalTracker(WTFMove(committed), WTFMove(finished), WTFMove(options.info), serializedState.releaseReturnValue());
+
     // FIXME: Only a stub to reload for testing.
     window()->frame()->loader().reload();
 
     // FIXME: keep track of promises to resolve later.
     Ref entry = NavigationHistoryEntry::create(scriptExecutionContext(), { });
-    auto globalObject = committed->globalObject();
-    Navigation::Result result = { DOMPromise::create(*globalObject, *JSC::jsCast<JSC::JSPromise*>(committed->promise())), DOMPromise::create(*globalObject, *JSC::jsCast<JSC::JSPromise*>(finished->promise())) };
+    Navigation::Result result = { apiMethodTracker.committedPromise.ptr(), apiMethodTracker.finishedPromise.ptr() };
     committed->resolve<IDLInterface<NavigationHistoryEntry>>(entry.get());
     finished->resolve<IDLInterface<NavigationHistoryEntry>>(entry.get());
     return result;
@@ -161,23 +194,26 @@ Navigation::Result Navigation::navigate(ScriptExecutionContext& scriptExecutionC
     if (options.history == HistoryBehavior::Push && newURL.protocolIsJavaScript())
         return createErrorResult(committed, finished, ExceptionCode::NotSupportedError, "A \"push\" navigation was explicitly requested, but only a \"replace\" navigation is possible when navigating to a javascript: URL."_s);
 
-    if (options.state) {
-        Vector<RefPtr<MessagePort>> dummyPorts;
-        auto serializeResult = SerializedScriptValue::create(*scriptExecutionContext.globalObject(), options.state, { }, dummyPorts, SerializationForStorage::Yes);
-        if (serializeResult.hasException())
-            return createErrorResult(committed, finished, serializeResult.releaseException());
-    }
+    auto serializedState = serializeState(options.state);
+    if (serializedState.hasException())
+        return createErrorResult(committed, finished, serializedState.releaseException());
 
     if (!window()->frame() || !window()->frame()->document())
         return createErrorResult(committed, finished, ExceptionCode::InvalidStateError, "Invalid state"_s);
 
+    auto apiMethodTracker = maybeSetUpcomingNonTraversalTracker(WTFMove(committed), WTFMove(finished), WTFMove(options.info), serializedState.releaseReturnValue());
+
     // FIXME: This is not a proper Navigation API initiated traversal, just a simple load for now.
     window()->frame()->loader().load(FrameLoadRequest(*window()->frame(), newURL));
 
+    if (m_upcomingNonTraverseMethodTracker && m_upcomingNonTraverseMethodTracker.value() == apiMethodTracker) {
+        // TODO: Once the frameloader properly promotes the upcoming tracker with the navigate event `m_upcomingNonTraverseMethodTracker` should be unset or this will throw.
+        m_upcomingNonTraverseMethodTracker = std::nullopt;
+    }
+
     // FIXME: keep track of promises to resolve later.
     Ref entry = NavigationHistoryEntry::create(&scriptExecutionContext, newURL);
-    auto globalObject = committed->globalObject();
-    Navigation::Result result = { DOMPromise::create(*globalObject, *JSC::jsCast<JSC::JSPromise*>(committed->promise())), DOMPromise::create(*globalObject, *JSC::jsCast<JSC::JSPromise*>(finished->promise())) };
+    Navigation::Result result = { apiMethodTracker.committedPromise.ptr(), apiMethodTracker.finishedPromise.ptr() };
     committed->resolve<IDLInterface<NavigationHistoryEntry>>(entry.get());
     finished->resolve<IDLInterface<NavigationHistoryEntry>>(entry.get());
     return result;
