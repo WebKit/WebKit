@@ -12,7 +12,7 @@ let assert = {
             threwException = false;
         } catch(e) {
             threwException = true;
-            if (!e instanceof exception)
+            if (!(e instanceof exception))
                 throw new Error("Expected to throw: " + exception.name + " but it throws: " + e.name);
         }
 
