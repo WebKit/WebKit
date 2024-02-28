@@ -124,7 +124,7 @@ private:
     void popParent();
     void popParentsToDepth(unsigned depth);
 
-    static DescendantsToResolve computeDescendantsToResolve(Change, Validity, DescendantsToResolve);
+    DescendantsToResolve computeDescendantsToResolve(const ElementUpdate&, const RenderStyle* existingStyle, Validity) const;
     static std::optional<ResolutionType> determineResolutionType(const Element&, const RenderStyle*, DescendantsToResolve, Change parentChange);
     static void resetDescendantStyleRelations(Element&, DescendantsToResolve);
 

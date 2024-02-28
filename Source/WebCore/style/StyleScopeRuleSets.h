@@ -76,6 +76,8 @@ public:
     const Vector<InvalidationRuleSet>* pseudoClassInvalidationRuleSets(const PseudoClassInvalidationKey&) const;
     const Vector<InvalidationRuleSet>* hasPseudoClassInvalidationRuleSets(const PseudoClassInvalidationKey&) const;
 
+    const HashSet<AtomString>& customPropertyNamesInStyleContainerQueries() const;
+
     bool hasComplexSelectorsForStyleAttribute() const;
 
     void setUsesSharedUserStyle(bool b) { m_usesSharedUserStyle = b; }
@@ -123,6 +125,8 @@ private:
     mutable HashMap<AtomString, std::unique_ptr<Vector<InvalidationRuleSet>>> m_attributeInvalidationRuleSets;
     mutable HashMap<PseudoClassInvalidationKey, std::unique_ptr<Vector<InvalidationRuleSet>>> m_pseudoClassInvalidationRuleSets;
     mutable HashMap<PseudoClassInvalidationKey, std::unique_ptr<Vector<InvalidationRuleSet>>> m_hasPseudoClassInvalidationRuleSets;
+
+    mutable std::optional<HashSet<AtomString>> m_customPropertyNamesInStyleContainerQueries;
 
     mutable std::optional<bool> m_cachedHasComplexSelectorsForStyleAttribute;
 

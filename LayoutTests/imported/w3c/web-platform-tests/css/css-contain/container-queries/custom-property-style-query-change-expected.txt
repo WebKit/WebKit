@@ -3,6 +3,6 @@ PASS Initially no queries match.
 PASS Target child
 PASS Target grandchild
 PASS Initially no queries for registered property match.
-FAIL Registered property query child assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
-FAIL Registered property query grandchild assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+PASS Registered property query child
+PASS Registered property query grandchild
 

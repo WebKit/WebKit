@@ -357,6 +357,7 @@ public:
     inline const StyleCustomPropertyData& inheritedCustomProperties() const;
     inline const StyleCustomPropertyData& nonInheritedCustomProperties() const;
     const CSSCustomPropertyValue* customPropertyValue(const AtomString&) const;
+    bool customPropertyValueEqual(const RenderStyle&, const AtomString&) const;
 
     void deduplicateCustomProperties(const RenderStyle&);
     void setCustomPropertyValue(Ref<const CSSCustomPropertyValue>&&, bool isInherited);

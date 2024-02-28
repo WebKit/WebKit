@@ -460,6 +460,13 @@ void RuleSet::shrinkToFit()
     m_resolverMutatingRulesInLayers.shrinkToFit();
 }
 
+Vector<Ref<const StyleRuleContainer>> RuleSet::containerQueryRules() const
+{
+    return m_containerQueries.map([](auto& entry) {
+        return entry.containerRule;
+    });
+}
+
 Vector<Ref<const StyleRuleScope>> RuleSet::scopeRulesFor(const RuleData& ruleData) const
 {
     if (m_scopeRuleIdentifierForRulePosition.size() <= ruleData.position())
@@ -479,7 +486,6 @@ Vector<Ref<const StyleRuleScope>> RuleSet::scopeRulesFor(const RuleData& ruleDat
 
     return queries;
 }
-
 
 } // namespace Style
 } // namespace WebCore

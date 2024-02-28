@@ -197,13 +197,28 @@ static bool affectsRenderedSubtree(Element& element, const RenderStyle& newStyle
     return false;
 }
 
-auto TreeResolver::computeDescendantsToResolve(Change change, Validity validity, DescendantsToResolve parentDescendantsToResolve) -> DescendantsToResolve
+auto TreeResolver::computeDescendantsToResolve(const ElementUpdate& update, const RenderStyle* existingStyle, Validity validity) const -> DescendantsToResolve
 {
-    if (parentDescendantsToResolve == DescendantsToResolve::All)
+    if (parent().descendantsToResolve == DescendantsToResolve::All)
         return DescendantsToResolve::All;
     if (validity >= Validity::SubtreeInvalid)
         return DescendantsToResolve::All;
-    switch (change) {
+
+    if (update.change != Change::None && existingStyle) {
+        auto customPropertyInStyleContainerQueryChanged = [&] {
+            auto& namesInQueries = scope().resolver->ruleSets().customPropertyNamesInStyleContainerQueries();
+            for (auto& name : namesInQueries) {
+                // Any descendant may depend on this changed custom property via a style query.
+                if (!existingStyle->customPropertyValueEqual(*update.style, name))
+                    return true;
+            }
+            return false;
+        }();
+        if (customPropertyInStyleContainerQueryChanged)
+            return DescendantsToResolve::All;
+    }
+
+    switch (update.change) {
     case Change::None:
         return DescendantsToResolve::None;
     case Change::NonInherited:
@@ -253,7 +268,7 @@ auto TreeResolver::resolveElement(Element& element, const RenderStyle* existingS
         return { };
 
     auto update = createAnimatedElementUpdate(WTFMove(resolvedStyle), styleable, parent().change, resolutionContext);
-    auto descendantsToResolve = computeDescendantsToResolve(update.change, element.styleValidity(), parent().descendantsToResolve);
+    auto descendantsToResolve = computeDescendantsToResolve(update, existingStyle, element.styleValidity());
     bool isDocumentElement = &element == m_document.documentElement();
     if (isDocumentElement) {
         if (styleChangeAffectsRelativeUnits(*update.style, existingStyle)) {

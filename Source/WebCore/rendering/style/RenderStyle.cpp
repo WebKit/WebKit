@@ -3465,6 +3465,20 @@ const CSSCustomPropertyValue* RenderStyle::customPropertyValue(const AtomString&
     return nullptr;
 }
 
+bool RenderStyle::customPropertyValueEqual(const RenderStyle& other, const AtomString& name) const
+{
+    if (&nonInheritedCustomProperties() == &other.nonInheritedCustomProperties() && &inheritedCustomProperties() == &other.inheritedCustomProperties())
+        return true;
+
+    auto* value = customPropertyValue(name);
+    auto* otherValue = other.customPropertyValue(name);
+    if (value == otherValue)
+        return true;
+    if (!value || !otherValue)
+        return false;
+    return *value == *otherValue;
+}
+
 bool RenderStyle::customPropertiesEqual(const RenderStyle& other) const
 {
     return m_nonInheritedData->rareData->customProperties == other.m_nonInheritedData->rareData->customProperties

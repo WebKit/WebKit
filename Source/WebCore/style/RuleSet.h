@@ -118,6 +118,7 @@ public:
 
     bool hasContainerQueries() const { return !m_containerQueries.isEmpty(); }
     Vector<const CQ::ContainerQuery*> containerQueriesFor(const RuleData&) const;
+    Vector<Ref<const StyleRuleContainer>> containerQueryRules() const;
 
     bool hasScopeRules() const { return !m_scopeRules.isEmpty(); }
     Vector<Ref<const StyleRuleScope>> scopeRulesFor(const RuleData&) const;
@@ -162,7 +163,7 @@ private:
     };
 
     struct ContainerQueryAndParent {
-        Ref<StyleRuleContainer> containerRule;
+        Ref<const StyleRuleContainer> containerRule;
         ContainerQueryIdentifier parent;
     };
 
