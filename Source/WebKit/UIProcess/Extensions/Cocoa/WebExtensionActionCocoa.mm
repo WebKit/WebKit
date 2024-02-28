@@ -200,7 +200,7 @@ WebExtensionContext* WebExtensionAction::extensionContext() const
 
 void WebExtensionAction::clearCustomizations()
 {
-    if (!m_customIcons && !m_customPopupPath.isNull() && !m_customLabel.isNull() && !m_customBadgeText.isNull() && !m_customEnabled && !m_blockedResourceCount)
+    if (!m_customIcons && m_customPopupPath.isNull() && m_customLabel.isNull() && m_customBadgeText.isNull() && !m_customEnabled && !m_blockedResourceCount)
         return;
 
     m_customIcons = nil;
@@ -261,6 +261,9 @@ CocoaImage *WebExtensionAction::icon(CGSize idealSize)
 
 void WebExtensionAction::setIconsDictionary(NSDictionary *icons)
 {
+    if ([(m_customIcons ?: @{ }) isEqualToDictionary:(icons ?: @{ })])
+        return;
+
     m_customIcons = icons.count ? icons : nil;
 
     propertiesDidChange();
@@ -504,7 +507,11 @@ bool WebExtensionAction::hasUnreadBadgeText() const
 
 void WebExtensionAction::setHasUnreadBadgeText(bool hasUnreadBadgeText)
 {
-    m_hasUnreadBadgeText = !badgeText().isEmpty() ? std::optional(hasUnreadBadgeText) : std::nullopt;
+    auto newValue = !badgeText().isEmpty() ? std::optional(hasUnreadBadgeText) : std::nullopt;
+    if (m_hasUnreadBadgeText == newValue)
+        return;
+
+    m_hasUnreadBadgeText = newValue;
 
     // Only propagate the change if we're setting it to false.
     if (RefPtr fallback = fallbackAction(); fallback && !hasUnreadBadgeText)
@@ -515,6 +522,9 @@ void WebExtensionAction::setHasUnreadBadgeText(bool hasUnreadBadgeText)
 
 void WebExtensionAction::incrementBlockedResourceCount(ssize_t amount)
 {
+    if (!amount)
+        return;
+
     m_blockedResourceCount += amount;
 
     if (m_blockedResourceCount < 0)
