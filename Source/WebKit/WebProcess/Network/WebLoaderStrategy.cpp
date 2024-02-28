@@ -185,8 +185,8 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResou
     WebResourceLoader::TrackingParameters trackingParameters;
     if (auto* webFrameLoaderClient = toWebLocalFrameLoaderClient(frameLoaderClient))
         trackingParameters.webPageProxyID = valueOrDefault(webFrameLoaderClient->webPageProxyID());
-    else if (is<RemoteWorkerFrameLoaderClient>(frameLoaderClient))
-        trackingParameters.webPageProxyID = downcast<RemoteWorkerFrameLoaderClient>(frameLoaderClient).webPageProxyID();
+    else if (auto* workerFrameLoaderClient = dynamicDowncast<RemoteWorkerFrameLoaderClient>(frameLoaderClient))
+        trackingParameters.webPageProxyID = workerFrameLoaderClient->webPageProxyID();
     trackingParameters.pageID = valueOrDefault(frameLoader->frame().pageID());
     trackingParameters.frameID = frameLoader->frameID();
     trackingParameters.resourceID = identifier;
@@ -449,11 +449,10 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
 
     // FIXME: All loaders should provide their origin if navigation mode is cors/no-cors/same-origin.
     // As a temporary approach, we use the document origin if available or the HTTP Origin header otherwise.
-    if (is<SubresourceLoader>(resourceLoader)) {
-        auto& loader = downcast<SubresourceLoader>(resourceLoader);
-        loadParameters.sourceOrigin = loader.origin();
+    if (auto* loader = dynamicDowncast<SubresourceLoader>(resourceLoader)) {
+        loadParameters.sourceOrigin = loader->origin();
 
-        if (auto* headers = loader.originalHeaders())
+        if (auto* headers = loader->originalHeaders())
             loadParameters.originalRequestHeaders = *headers;
     }
 

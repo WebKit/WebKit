@@ -1384,20 +1384,20 @@ void MediaPlayerPrivateRemote::mediaPlayerKeyNeeded(std::span<const uint8_t> mes
 #if ENABLE(ENCRYPTED_MEDIA)
 void MediaPlayerPrivateRemote::cdmInstanceAttached(CDMInstance& instance)
 {
-    if (is<RemoteCDMInstance>(instance))
-        connection().send(Messages::RemoteMediaPlayerProxy::CdmInstanceAttached(downcast<RemoteCDMInstance>(instance).identifier()), m_id);
+    if (auto* remoteInstance = dynamicDowncast<RemoteCDMInstance>(instance))
+        connection().send(Messages::RemoteMediaPlayerProxy::CdmInstanceAttached(remoteInstance->identifier()), m_id);
 }
 
 void MediaPlayerPrivateRemote::cdmInstanceDetached(CDMInstance& instance)
 {
-    if (is<RemoteCDMInstance>(instance))
-        connection().send(Messages::RemoteMediaPlayerProxy::CdmInstanceDetached(downcast<RemoteCDMInstance>(instance).identifier()), m_id);
+    if (auto* remoteInstance = dynamicDowncast<RemoteCDMInstance>(instance))
+        connection().send(Messages::RemoteMediaPlayerProxy::CdmInstanceDetached(remoteInstance->identifier()), m_id);
 }
 
 void MediaPlayerPrivateRemote::attemptToDecryptWithInstance(CDMInstance& instance)
 {
-    if (is<RemoteCDMInstance>(instance))
-        connection().send(Messages::RemoteMediaPlayerProxy::AttemptToDecryptWithInstance(downcast<RemoteCDMInstance>(instance).identifier()), m_id);
+    if (auto* remoteInstance = dynamicDowncast<RemoteCDMInstance>(instance))
+        connection().send(Messages::RemoteMediaPlayerProxy::AttemptToDecryptWithInstance(remoteInstance->identifier()), m_id);
 }
 
 void MediaPlayerPrivateRemote::waitingForKeyChanged(bool waitingForKey)

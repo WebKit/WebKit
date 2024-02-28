@@ -73,9 +73,8 @@ RefPtr<ShareableBitmap> createShareableBitmap(RenderImage& renderImage, CreateSh
     }
 
 #if ENABLE(VIDEO)
-    if (is<RenderVideo>(renderImage)) {
-        auto& renderVideo = downcast<RenderVideo>(renderImage);
-        Ref video = renderVideo.videoElement();
+    if (auto* renderVideo = dynamicDowncast<RenderVideo>(renderImage)) {
+        Ref video = renderVideo->videoElement();
         auto image = video->nativeImageForCurrentTime();
         if (!image)
             return { };

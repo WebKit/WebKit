@@ -183,10 +183,8 @@ bool PDFPluginBase::isFullFramePlugin() const
     if (!m_frame || !m_frame->coreLocalFrame())
         return false;
 
-    RefPtr document = m_frame->coreLocalFrame()->document();
-    if (!is<PluginDocument>(document))
-        return false;
-    return downcast<PluginDocument>(*document).pluginWidget() == m_view;
+    RefPtr document = dynamicDowncast<PluginDocument>(m_frame->coreLocalFrame()->document());
+    return document && document->pluginWidget() == m_view;
 }
 
 bool PDFPluginBase::handlesPageScaleFactor() const

@@ -116,12 +116,12 @@ std::optional<SharedVideoFrame> SharedVideoFrameWriter::write(const VideoFrame& 
 
 std::optional<SharedVideoFrame::Buffer> SharedVideoFrameWriter::writeBuffer(const VideoFrame& frame, const Function<void(IPC::Semaphore&)>& newSemaphoreCallback, const Function<void(SharedMemory::Handle&&)>& newMemoryCallback)
 {
-    if (is<RemoteVideoFrameProxy>(frame))
-        return downcast<RemoteVideoFrameProxy>(frame).newReadReference();
+    if (auto* frameProxy = dynamicDowncast<RemoteVideoFrameProxy>(frame))
+        return frameProxy->newReadReference();
 
 #if USE(LIBWEBRTC)
-    if (is<VideoFrameLibWebRTC>(frame))
-        return writeBuffer(*downcast<VideoFrameLibWebRTC>(frame).buffer(), newSemaphoreCallback, newMemoryCallback);
+    if (auto* webrtcFrame = dynamicDowncast<VideoFrameLibWebRTC>(frame))
+        return writeBuffer(*webrtcFrame->buffer(), newSemaphoreCallback, newMemoryCallback);
 #endif
 
     return writeBuffer(frame.pixelBuffer(), newSemaphoreCallback, newMemoryCallback);

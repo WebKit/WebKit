@@ -218,11 +218,11 @@ void RemoteResourceCacheProxy::clearRenderingResourceMap()
 void RemoteResourceCacheProxy::clearNativeImageMap()
 {
     m_renderingResources.removeIf([&] (auto& keyValuePair) {
-        if (!is<NativeImage>(keyValuePair.value.get()))
+        RefPtr nativeImage = dynamicDowncast<NativeImage>(keyValuePair.value.get());
+        if (!nativeImage)
             return false;
 
-        auto& nativeImage = downcast<NativeImage>(*keyValuePair.value.get());
-        nativeImage.removeObserver(*this);
+        nativeImage->removeObserver(*this);
         return true;
     });
 }

@@ -133,14 +133,12 @@ bool PDFPluginTextAnnotation::handleEvent(Event& event)
     if (PDFPluginAnnotation::handleEvent(event))
         return true;
 
-    if (event.isKeyboardEvent() && event.type() == eventNames().keydownEvent) {
-        auto& keyboardEvent = downcast<KeyboardEvent>(event);
-
-        if (keyboardEvent.keyIdentifier() == "U+0009"_s) {
-            if (keyboardEvent.ctrlKey() || keyboardEvent.metaKey())
+    if (auto* keyboardEvent = dynamicDowncast<KeyboardEvent>(event); keyboardEvent && keyboardEvent->type() == eventNames().keydownEvent) {
+        if (keyboardEvent->keyIdentifier() == "U+0009"_s) {
+            if (keyboardEvent->ctrlKey() || keyboardEvent->metaKey())
                 return false;
 
-            if (keyboardEvent.shiftKey())
+            if (keyboardEvent->shiftKey())
                 plugin()->focusPreviousAnnotation();
             else
                 plugin()->focusNextAnnotation();
