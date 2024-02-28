@@ -44,7 +44,7 @@ struct PDFPageCoverage {
     Vector<PerPageInfo> pages;
     float deviceScaleFactor { 1 };
     float pdfDocumentScale { 1 };
-    float pageScaleFactor { 1 };
+    float tilingScaleFactor { 1 };
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const PerPageInfo&);

@@ -150,13 +150,23 @@ void TileController::setContentsScale(float contentsScale)
         tileGridsChanged();
     }
 
+    auto oldScale = tileGrid().scale();
     tileGrid().setScale(scale);
+
+    if (m_client && scale != oldScale)
+        m_client->tilingScaleFactorDidChange(scale);
+
     tileGrid().setNeedsDisplay();
 }
 
 float TileController::contentsScale() const
 {
     return tileGrid().scale() * m_deviceScaleFactor;
+}
+
+float TileController::tilingScaleFactor() const
+{
+    return tileGrid().scale();
 }
 
 float TileController::zoomedOutContentsScale() const

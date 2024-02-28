@@ -647,17 +647,21 @@ PDFPageCoverage UnifiedPDFPlugin::pageCoverageForRect(const FloatRect& clipRect)
     if (m_size.isEmpty() || documentSize().isEmpty())
         return { };
 
-    auto scale = m_documentLayout.scale();
+    auto tilingScaleFactor = 1.0f;
+    if (auto* tiledBacking = m_contentsLayer->tiledBacking())
+        tilingScaleFactor = tiledBacking->tilingScaleFactor();
+
+    auto documentLayoutScale = m_documentLayout.scale();
 
     auto pageCoverage = PDFPageCoverage { };
     pageCoverage.deviceScaleFactor = deviceScaleFactor();
-    pageCoverage.pdfDocumentScale = scale;
-    pageCoverage.pageScaleFactor = m_scaleFactor;
+    pageCoverage.pdfDocumentScale = documentLayoutScale;
+    pageCoverage.tilingScaleFactor = tilingScaleFactor;
 
     auto drawingRect = IntRect { { }, documentSize() };
     drawingRect.intersect(enclosingIntRect(clipRect));
 
-    auto inverseScale = 1.0f / scale;
+    auto inverseScale = 1.0f / documentLayoutScale;
     auto scaleTransform = AffineTransform::makeScale({ inverseScale, inverseScale });
     auto drawingRectInPDFLayoutCoordinates = scaleTransform.mapRect(FloatRect { drawingRect });
 
@@ -727,7 +731,7 @@ void UnifiedPDFPlugin::paintPDFContent(GraphicsContext& context, const FloatRect
             auto pageStateSaver = GraphicsContextStateSaver(context);
             context.clip(pageBoundsInPaintingCoordinates);
 
-            bool paintedPageContent = asyncRenderer->paintTilesForPage(context, m_scaleFactor, documentScale, clipRect, pageBoundsInPaintingCoordinates, pageInfo.pageIndex);
+            bool paintedPageContent = asyncRenderer->paintTilesForPage(context, documentScale, clipRect, pageBoundsInPaintingCoordinates, pageInfo.pageIndex);
             LOG_WITH_STREAM(PDFAsyncRendering, stream << "UnifiedPDFPlugin::paintPDFContent - painting tiles for page " << pageInfo.pageIndex << " dest rect " << pageBoundsInPaintingCoordinates << " clip " << clipRect << " - painted cached tile " << paintedPageContent);
 
             if (!paintedPageContent && showDebugIndicators)

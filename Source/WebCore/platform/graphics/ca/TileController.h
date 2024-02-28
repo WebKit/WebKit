@@ -179,6 +179,7 @@ private:
     void setMarginSize(int) final;
     void setZoomedOutContentsScale(float) final;
     float zoomedOutContentsScale() const final;
+    float tilingScaleFactor() const final;
 
     void updateMargins();
     void clearZoomedOutTileGrid();

@@ -98,7 +98,7 @@ public:
 
     void setupWithLayer(WebCore::GraphicsLayer&);
     void teardown();
-    bool paintTilesForPage(WebCore::GraphicsContext&, float pageScaleFactor, float documentScale, const WebCore::FloatRect& clipRect, const WebCore::FloatRect& pageBoundsInPaintingCoordinates, PDFDocumentLayout::PageIndex);
+    bool paintTilesForPage(WebCore::GraphicsContext&, float documentScale, const WebCore::FloatRect& clipRect, const WebCore::FloatRect& pageBoundsInPaintingCoordinates, PDFDocumentLayout::PageIndex);
 
     // Throws away existing tiles. Can result in flashing.
     void invalidateTilesForPaintingRect(float pageScaleFactor, const WebCore::FloatRect& paintingRect);
@@ -134,6 +134,7 @@ private:
     void willRemoveTile(WebCore::TileGridIndex, WebCore::TileIndex) final;
     void willRepaintAllTiles(WebCore::TileGridIndex) final;
     void coverageRectDidChange(const WebCore::FloatRect&) final;
+    void tilingScaleFactorDidChange(float) final;
 
     void enqueuePaintWithClip(const TileForGrid&, const WebCore::FloatRect& tileRect);
     void paintTileOnWorkQueue(RetainPtr<PDFDocument>&&, const TileForGrid&, const TileRenderInfo&, TileRenderRequestType);
@@ -155,8 +156,8 @@ private:
     void paintPDFPageIntoBuffer(RetainPtr<PDFDocument>&&, Ref<WebCore::ImageBuffer>, PDFDocumentLayout::PageIndex, const WebCore::FloatRect& pageBounds);
 
     static WebCore::FloatRect convertTileRectToPaintingCoords(const WebCore::FloatRect&, float pageScaleFactor);
-    static WebCore::AffineTransform tileToPaintingTransform(float pageScaleFactor);
-    static WebCore::AffineTransform paintingToTileTransform(float pageScaleFactor);
+    static WebCore::AffineTransform tileToPaintingTransform(float tilingScaleFactor);
+    static WebCore::AffineTransform paintingToTileTransform(float tilingScaleFactor);
 
     ThreadSafeWeakPtr<UnifiedPDFPlugin> m_plugin;
     RefPtr<WebCore::GraphicsLayer> m_pdfContentsLayer;

@@ -71,6 +71,7 @@ public:
     virtual void willRemoveTile(TileGridIndex, TileIndex) = 0;
     virtual void willRepaintAllTiles(TileGridIndex) = 0;
     virtual void coverageRectDidChange(const FloatRect&) = 0;
+    virtual void tilingScaleFactorDidChange(float) = 0;
 };
 
 
@@ -141,6 +142,9 @@ public:
     virtual int bottomMarginHeight() const = 0;
     virtual int leftMarginWidth() const = 0;
     virtual int rightMarginWidth() const = 0;
+
+    // This is the scale used to compute tile sizes; it's contentScale / deviceScaleFactor.
+    virtual float tilingScaleFactor() const  = 0;
 
     virtual void setZoomedOutContentsScale(float) = 0;
     virtual float zoomedOutContentsScale() const = 0;
