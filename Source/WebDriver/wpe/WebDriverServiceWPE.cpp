@@ -148,6 +148,13 @@ void WebDriverService::platformParseCapabilities(const JSON::Object& matchedCapa
             capabilities.certificates->append({ WTFMove(host), WTFMove(certificateFile) });
         }
     }
+
+    String targetAddr;
+    if (browserOptions->getString("targetAddr"_s, targetAddr))
+        capabilities.targetAddr = targetAddr;
+
+    if (auto targetPort = browserOptions->getInteger("targetPort"_s))
+        capabilities.targetPort = targetPort;
 }
 
 } // namespace WebDriver

@@ -83,7 +83,7 @@ struct Capabilities {
 #if PLATFORM(GTK)
     std::optional<bool> useOverlayScrollbars;
 #endif
-#if USE(INSPECTOR_SOCKET_SERVER)
+#if USE(INSPECTOR_SOCKET_SERVER) || PLATFORM(GTK) || PLATFORM(WPE)
     std::optional<String> targetAddr;
     std::optional<int> targetPort;
 #endif

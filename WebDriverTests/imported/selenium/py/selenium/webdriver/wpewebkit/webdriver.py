@@ -31,7 +31,7 @@ class WebDriver(RemoteWebDriver):
     """
 
     def __init__(self, executable_path="WPEWebDriver", port=0, options=None,
-                 desired_capabilities=DesiredCapabilities.WPEWEBKIT,
+                 desired_capabilities=None,
                  service_log_path=None):
         """
         Creates a new instance of the WPEWebKit driver.
@@ -45,9 +45,13 @@ class WebDriver(RemoteWebDriver):
          - desired_capabilities : Dictionary object with desired capabilities
          - service_log_path : Path to write service stdout and stderr output.
         """
-        if options is not None:
+        if options is None:
+            if desired_capabilities is None:
+                desired_capabilities = Options().to_capabilities()
+        else:
             capabilities = options.to_capabilities()
-            capabilities.update(desired_capabilities)
+            if desired_capabilities is not None:
+                capabilities.update(desired_capabilities)
             desired_capabilities = capabilities
 
         self.service = Service(executable_path, port=port, log_path=service_log_path)

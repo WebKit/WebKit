@@ -49,6 +49,10 @@ def pytest_addoption(parser):
                      help='driver to run tests against ({})'.format(', '.join(drivers)))
     parser.addoption('--browser-binary', action='store', dest='binary',
                      help='location of the browser binary')
+    parser.addoption('--browser-target-ip', action='store', dest='browser_ip',
+                     help='ip of exiting browser instance running in automation mode')
+    parser.addoption('--browser-target-port', action='store', dest='browser_port',
+                     help='port of exiting browser instance running in automation mode')
     parser.addoption('--driver-binary', action='store', dest='executable',
                      help='location of the service executable binary')
     parser.addoption('--browser-args', action='store', dest='args',
@@ -136,6 +140,8 @@ def driver(request):
 def get_options(driver_class, config):
     browser_path = config.option.binary
     browser_args = config.option.args
+    browser_ip = config.option.browser_ip
+    browser_port = config.option.browser_port
     options = None
 
     if driver_class == 'ChromiumEdge':
@@ -147,8 +153,14 @@ def get_options(driver_class, config):
             options = getattr(webdriver, '{}Options'.format(driver_class))()
         if driver_class == 'WebKitGTK':
             options.overlay_scrollbars_enabled = False
+        if driver_class in ['WPEWebKit', 'WebKitGTK']:
+            options.set_capability("browserName", os.path.basename(browser_path))
+            options.target_ip = browser_ip
+            options.target_port = browser_port
         if browser_path is not None:
             options.binary_location = browser_path
+        if driver_class == "WPEWebKit":
+            options.set_capability("browserName", os.path.basename(browser_path))
         if browser_args is not None:
             for arg in browser_args.split():
                 options.add_argument(arg)

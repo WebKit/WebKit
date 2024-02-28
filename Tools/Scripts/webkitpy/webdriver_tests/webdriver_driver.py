@@ -43,6 +43,12 @@ class WebDriver(object):
     def browser_env(self):
         return {}
 
+    def browser_target_ip(self):
+        return self._port.browser_target_ip()
+
+    def browser_target_port(self):
+        return self._port.browser_target_port()
+
     def selenium_name(self):
         """Return the name of the driver used by Selenium, passed to pytest using --driver command line option.
           If this is not implemented, Selenium tests will not be run."""

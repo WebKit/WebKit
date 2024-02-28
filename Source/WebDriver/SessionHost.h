@@ -56,7 +56,7 @@ public:
     }
     ~SessionHost();
 
-#if USE(INSPECTOR_SOCKET_SERVER)
+#if USE(INSPECTOR_SOCKET_SERVER) || PLATFORM(GTK) || PLATFORM(WPE)
     void setHostAddress(const String& ip, uint16_t port) { m_targetIp = ip; m_targetPort = port; }
 #endif
     bool isConnected() const;
@@ -122,10 +122,17 @@ private:
     RefPtr<SocketConnection> m_socketConnection;
     GRefPtr<GCancellable> m_cancellable;
 #elif USE(INSPECTOR_SOCKET_SERVER)
-    String m_targetIp;
-    uint16_t m_targetPort { 0 };
     Function<void(bool, std::optional<String>)> m_startSessionCompletionHandler;
     std::optional<Inspector::ConnectionID> m_clientID;
+#endif
+
+#if USE(INSPECTOR_SOCKET_SERVER) || PLATFORM(GTK) || PLATFORM(WPE)
+    String m_targetIp;
+    uint16_t m_targetPort { 0 };
+#endif
+
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    bool m_isRemoteBrowser { false };
 #endif
 };
 

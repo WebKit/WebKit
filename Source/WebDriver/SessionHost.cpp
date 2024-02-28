@@ -27,7 +27,6 @@
 #include "SessionHost.h"
 
 #include <wtf/text/StringBuilder.h>
-
 namespace WebDriver {
 
 void SessionHost::inspectorDisconnected()

@@ -44,10 +44,15 @@ class WebDriverSeleniumExecutor(object):
         browser_path = driver.browser_path()
         if browser_path:
             self._args.extend(['--browser-binary=%s' % browser_path])
+        browser_target_ip = driver.browser_target_ip()
+        if browser_target_ip:
+            self._args.extend(['--browser-target-ip=%s' % browser_target_ip])
+        browser_target_port = driver.browser_target_port()
+        if browser_target_port:
+            self._args.extend(['--browser-target-port=%s' % browser_target_port])
         browser_args = driver.browser_args()
         if browser_args:
             self._args.extend(['--browser-args=%s' % ' '.join(browser_args)])
-
         if pytest_runner is None:
             do_delayed_imports()
 

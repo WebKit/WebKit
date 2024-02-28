@@ -26,6 +26,8 @@ class Options(ArgOptions):
         super(Options, self).__init__()
         self._binary_location = ''
         self._caps = DesiredCapabilities.WPEWEBKIT.copy()
+        self._target_ip = None
+        self._target_port = None
 
     @property
     def capabilities(self):
@@ -52,6 +54,40 @@ class Options(ArgOptions):
         """
         self._binary_location = value
 
+    @property
+    def target_ip(self):
+        """
+        :Returns: The IP address of existing browser instance running in automation mode othewise None
+        """
+        return self._target_ip
+
+    @target_ip.setter
+    def target_ip(self, value):
+        """
+        Allows you to set the tcp port of existing browser instance running in automation mode
+
+        :Args:
+         - value : ip address
+        """
+        self._target_ip = value
+
+    @property
+    def target_port(self):
+        """
+        :Returns: The IP port number of existing browser instance running in automation mode othewise None
+        """
+        return self._target_port
+
+    @target_port.setter
+    def target_port(self, value):
+        """
+        Allows you to set the IP port number of existing browser instance running in automation mode
+
+        :Args:
+         - value : port number
+        """
+        self._target_port = value
+
     def to_capabilities(self):
         """
         Creates a capabilities with all the options that have been set and
@@ -64,6 +100,10 @@ class Options(ArgOptions):
             browser_options["binary"] = self.binary_location
         if self.arguments:
             browser_options["args"] = self.arguments
+        if self.target_ip:
+            browser_options["targetAddr"] = self.target_ip
+        if self.target_port:
+            browser_options["targetPort"] = int(self.target_port)
 
         caps[Options.KEY] = browser_options
 

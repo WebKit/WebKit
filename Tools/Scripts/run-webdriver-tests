@@ -53,6 +53,10 @@ option_parser.add_option('--display-server', choices=['xvfb', 'xorg', 'weston', 
                          help='"xvfb": Use a virtualized X11 server. "xorg": Use the current X11 session. '
                               '"weston": Use a virtualized Weston server. "wayland": Use the current wayland session.'
                               '"headless": Headless mode in current session')
+option_parser.add_option('--browser-target-ip', default=None,
+                         help='Inspector ip of exiting browser instance running in automation mode')
+option_parser.add_option('--browser-target-port', default=None,
+                         help='Inspector port of exiting browser instance running in automation mode')
 
 options, args = option_parser.parse_args()
 

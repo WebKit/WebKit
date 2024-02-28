@@ -50,8 +50,8 @@ static void printUsageStatement(const char* programName)
     printf("  -h,          --help             Prints this help message\n");
     printf("  -p <port>,   --port=<port>      Port number the driver will use\n");
     printf("               --host=<host>      Host IP the driver will use, or either 'local' or 'all' (default: 'local')\n");
-#if USE(INSPECTOR_SOCKET_SERVER)
-    printf("  -t <ip:port> --target=<ip:port> [WinCairo] Target IP and port\n");
+#if USE(INSPECTOR_SOCKET_SERVER) || PLATFORM(GTK) || PLATFORM(WPE)
+    printf("  -t <ip:port> --target=<ip:port> [GTK][WinCairo][WPE] Target IP and port\n");
 #endif
 }
 
@@ -59,7 +59,7 @@ int WebDriverService::run(int argc, char** argv)
 {
     String portString;
     std::optional<String> host;
-#if USE(INSPECTOR_SOCKET_SERVER)
+#if USE(INSPECTOR_SOCKET_SERVER) || PLATFORM(GTK) || PLATFORM(WPE)
     String targetString;
     if (const char* targetEnvVar = getenv("WEBDRIVER_TARGET_ADDR"))
         targetString = String::fromLatin1(targetEnvVar);
@@ -92,7 +92,7 @@ int WebDriverService::run(int argc, char** argv)
             continue;
         }
 
-#if USE(INSPECTOR_SOCKET_SERVER)
+#if USE(INSPECTOR_SOCKET_SERVER) || PLATFORM(GTK) || PLATFORM(WPE)
         if (!strcmp(arg, "-t") && targetString.isNull()) {
             if (++i == argc) {
                 printUsageStatement(argv[0]);
@@ -115,7 +115,7 @@ int WebDriverService::run(int argc, char** argv)
         return EXIT_FAILURE;
     }
 
-#if USE(INSPECTOR_SOCKET_SERVER)
+#if USE(INSPECTOR_SOCKET_SERVER) || PLATFORM(GTK) || PLATFORM(WPE)
     if (!targetString.isEmpty()) {
         auto position = targetString.reverseFind(':');
         if (position != notFound) {
@@ -834,7 +834,7 @@ void WebDriverService::connectToBrowser(Vector<Capabilities>&& capabilitiesList,
 
     auto sessionHost = makeUnique<SessionHost>(capabilitiesList.takeLast());
     auto* sessionHostPtr = sessionHost.get();
-#if USE(INSPECTOR_SOCKET_SERVER)
+#if USE(INSPECTOR_SOCKET_SERVER) || PLATFORM(GTK) || PLATFORM(WPE)
     sessionHostPtr->setHostAddress(m_targetAddress, m_targetPort);
 #endif
     sessionHostPtr->connectToBrowser([this, capabilitiesList = WTFMove(capabilitiesList), sessionHost = WTFMove(sessionHost), completionHandler = WTFMove(completionHandler)](std::optional<String> error) mutable {

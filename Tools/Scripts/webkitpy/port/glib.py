@@ -41,6 +41,8 @@ class GLibPort(Port):
     def __init__(self, *args, **kwargs):
         super(GLibPort, self).__init__(*args, **kwargs)
         self._display_server = self.get_option("display_server")
+        self._browser_target_ip = self.get_option("browser_target_ip")
+        self._browser_target_port = self.get_option("browser_target_port")
 
         if self.get_option("leaks"):
             self._leakdetector = LeakDetectorValgrind(self._executive, self._filesystem, self.results_directory())
@@ -143,6 +145,12 @@ class GLibPort(Port):
         env['WEBKIT_INJECTED_BUNDLE_PATH'] = self._build_path('lib')
         env['LD_LIBRARY_PATH'] = self._prepend_to_env_value(self._build_path('lib'), env.get('LD_LIBRARY_PATH', ''))
         return env
+
+    def browser_target_ip(self):
+        return self._browser_target_ip
+
+    def browser_target_port(self):
+        return self._browser_target_port
 
     def _get_crash_log(self, name, pid, stdout, stderr, newer_than, target_host=None):
         return GDBCrashLogGenerator(self._executive, name, pid, newer_than,
