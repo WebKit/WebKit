@@ -2790,3 +2790,5 @@ webkit.org/b/270133 [ Sonoma+ ] imported/w3c/web-platform-tests/accname/name/com
 [ Sonoma+ ] imported/w3c/web-platform-tests/css/filter-effects/filters-grayscale-001-test.html [ ImageOnlyFailure ]
 [ Sonoma+ ] imported/w3c/web-platform-tests/css/filter-effects/css-filters-animation-grayscale.html [ ImageOnlyFailure ]
 [ Sonoma+ ] imported/w3c/web-platform-tests/css/filter-effects/css-filters-animation-sepia.html [ ImageOnlyFailure ]
+
+webkit.org/b/270256 [ Monterey+ arm64 ] media/mediacapabilities/vp9-hw.html [ Failure ]
