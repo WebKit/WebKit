@@ -25,11 +25,11 @@ import os
 import socket
 
 
-def load_password(name, default=None):
+def load_password(name, default=None, master_prefix_path=os.path.dirname(os.path.abspath(__file__))):
     if os.getenv(name):
         return os.getenv(name)
     try:
-        passwords = json.load(open('passwords.json'))
+        passwords = json.load(open(os.path.join(master_prefix_path, 'passwords.json')))
         return passwords.get(name, default)
     except FileNotFoundError as e:
         print(f'ERROR: passwords.json missing: {e}, using default value for {name}\n')
