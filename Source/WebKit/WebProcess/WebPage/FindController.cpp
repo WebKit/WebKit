@@ -209,10 +209,12 @@ void FindController::updateFindUIAfterPageScroll(bool found, const String& strin
         // If we're doing a multi-result search and just updating the indicator,
         // this would blow away the results for the other matches.
         // FIXME: This whole class needs a much clearer division between these two paths.
-        m_findMatches.clear();
-        if (auto range = m_webPage->corePage()->selection().firstRange()) {
-            matchRects = RenderObject::absoluteTextRects(*range);
-            m_findMatches.append(*range);
+        if (idOfFrameContainingString) {
+            m_findMatches.clear();
+            if (auto range = m_webPage->corePage()->selection().firstRange()) {
+                matchRects = RenderObject::absoluteTextRects(*range);
+                m_findMatches.append(*range);
+            }
         }
     }
 
