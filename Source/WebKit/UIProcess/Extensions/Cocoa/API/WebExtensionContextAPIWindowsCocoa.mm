@@ -103,7 +103,7 @@ void WebExtensionContext::windowsCreate(const WebExtensionWindowParameters& crea
 
     [delegate webExtensionController:extensionController()->wrapper() openNewWindowWithOptions:creationOptions forExtensionContext:wrapper() completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](id<_WKWebExtensionWindow> newWindow, NSError *error) mutable {
         if (error) {
-            RELEASE_LOG_ERROR(Extensions, "Error for open new window: %{private}@", error);
+            RELEASE_LOG_ERROR(Extensions, "Error for open new window: %{public}@", privacyPreservingDescription(error));
             completionHandler(toWebExtensionError(apiName, nil, error.localizedDescription));
             return;
         }

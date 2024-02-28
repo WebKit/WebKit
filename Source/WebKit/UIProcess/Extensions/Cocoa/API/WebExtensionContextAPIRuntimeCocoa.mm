@@ -74,7 +74,7 @@ void WebExtensionContext::runtimeOpenOptionsPage(CompletionHandler<void(Expected
     if (respondsToOpenOptionsPage) {
         [delegate webExtensionController:extensionController()->wrapper() openOptionsPageForExtensionContext:wrapper() completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
             if (error) {
-                RELEASE_LOG_ERROR(Extensions, "Error opening options page: %{private}@", error);
+                RELEASE_LOG_ERROR(Extensions, "Error opening options page: %{public}@", privacyPreservingDescription(error));
                 completionHandler(toWebExtensionError(apiName, nil, error.localizedDescription));
                 return;
             }
@@ -98,7 +98,7 @@ void WebExtensionContext::runtimeOpenOptionsPage(CompletionHandler<void(Expected
 
     [delegate webExtensionController:extensionController()->wrapper() openNewTabWithOptions:creationOptions forExtensionContext:wrapper() completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler)](id<_WKWebExtensionTab> newTab, NSError *error) mutable {
         if (error) {
-            RELEASE_LOG_ERROR(Extensions, "Error opening options page in new tab: %{private}@", error);
+            RELEASE_LOG_ERROR(Extensions, "Error opening options page in new tab: %{public}@", privacyPreservingDescription(error));
             completionHandler(toWebExtensionError(apiName, nil, error.localizedDescription));
             return;
         }

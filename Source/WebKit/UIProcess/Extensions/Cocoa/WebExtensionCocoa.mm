@@ -774,7 +774,7 @@ void WebExtension::recordError(NSError *error, SuppressNotification suppressNoti
     if (!m_errors)
         m_errors = [NSMutableArray array];
 
-    RELEASE_LOG_ERROR(Extensions, "Error recorded: %{private}@", error);
+    RELEASE_LOG_ERROR(Extensions, "Error recorded: %{public}@", privacyPreservingDescription(error));
 
     [m_errors addObject:error];
 

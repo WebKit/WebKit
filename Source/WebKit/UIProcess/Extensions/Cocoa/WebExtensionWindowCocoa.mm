@@ -292,7 +292,7 @@ void WebExtensionWindow::setState(WebExtensionWindow::State state, CompletionHan
 
     [m_delegate setWindowState:toAPI(state) forWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
         if (error) {
-            RELEASE_LOG_ERROR(Extensions, "Error for setWindowState: %{private}@", error);
+            RELEASE_LOG_ERROR(Extensions, "Error for setWindowState: %{public}@", privacyPreservingDescription(error));
             completionHandler(toWebExtensionError(apiName, nil, error.localizedDescription));
             return;
         }
@@ -333,7 +333,7 @@ void WebExtensionWindow::focus(CompletionHandler<void(Expected<void, WebExtensio
 
     [m_delegate focusForWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
         if (error) {
-            RELEASE_LOG_ERROR(Extensions, "Error for window focus: %{private}@", error);
+            RELEASE_LOG_ERROR(Extensions, "Error for window focus: %{public}@", privacyPreservingDescription(error));
             completionHandler(toWebExtensionError(apiName, nil, error.localizedDescription));
             return;
         }
@@ -400,7 +400,7 @@ void WebExtensionWindow::setFrame(CGRect frame, CompletionHandler<void(Expected<
 
     [m_delegate setFrame:frame forWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
         if (error) {
-            RELEASE_LOG_ERROR(Extensions, "Error for setFrame: %{private}@", error);
+            RELEASE_LOG_ERROR(Extensions, "Error for setFrame: %{public}@", privacyPreservingDescription(error));
             completionHandler(toWebExtensionError(apiName, nil, error.localizedDescription));
             return;
         }
@@ -428,7 +428,7 @@ void WebExtensionWindow::close(CompletionHandler<void(Expected<void, WebExtensio
 
     [m_delegate closeForWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
         if (error) {
-            RELEASE_LOG_ERROR(Extensions, "Error for window close: %{private}@", error);
+            RELEASE_LOG_ERROR(Extensions, "Error for window close: %{public}@", privacyPreservingDescription(error));
             completionHandler(toWebExtensionError(apiName, nil, error.localizedDescription));
             return;
         }

@@ -162,7 +162,7 @@ using namespace WebKit;
     if (!_webExtensionAction)
         return;
 
-    RELEASE_LOG_ERROR(Extensions, "Popup provisional load failed: %{public}@", error);
+    RELEASE_LOG_ERROR(Extensions, "Popup provisional load failed: %{public}@", privacyPreservingDescription(error));
 
     _webExtensionAction->closePopup();
 }
@@ -172,7 +172,7 @@ using namespace WebKit;
     if (!_webExtensionAction)
         return;
 
-    RELEASE_LOG_ERROR(Extensions, "Popup load failed: %{public}@", error);
+    RELEASE_LOG_ERROR(Extensions, "Popup load failed: %{public}@", privacyPreservingDescription(error));
 
     _webExtensionAction->closePopup();
 }
@@ -725,7 +725,7 @@ void WebExtensionAction::detectPopoverColorScheme()
 
     [m_popupWebView evaluateJavaScript:checkColorSchemeScript completionHandler:^(id result, NSError *error) {
         if (error) {
-            RELEASE_LOG_ERROR(Extensions, "Error while checking popup color scheme: %{private}@", error);
+            RELEASE_LOG_ERROR(Extensions, "Error while checking popup color scheme: %{public}@", privacyPreservingDescription(error));
             return;
         }
 
