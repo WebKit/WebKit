@@ -24,18 +24,26 @@
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 
+#include "GLContext.h"
 #include "GStreamerCommon.h"
 #include "GraphicsContext.h"
 #include "ImageGStreamer.h"
 #include "ImageOrientation.h"
-#include "NotImplemented.h"
 #include "PixelBuffer.h"
+#include "PlatformDisplay.h"
 #include "VideoPixelFormat.h"
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/TypedArrayInlines.h>
 
 #if USE(CAIRO)
 #include <cairo.h>
+#elif USE(SKIA)
+#include <skia/core/SkData.h>
+#include <skia/core/SkImage.h>
+
+IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
+#include <skia/core/SkPixmap.h>
+IGNORE_CLANG_WARNINGS_END
 #endif
 
 GST_DEBUG_CATEGORY(webkit_video_frame_debug);
@@ -79,13 +87,13 @@ static RefPtr<ImageGStreamer> convertSampleToImage(const GRefPtr<GstSample>& sam
 
 RefPtr<VideoFrame> VideoFrame::fromNativeImage(NativeImage& image)
 {
-#if USE(CAIRO)
     ensureVideoFrameDebugCategoryInitialized();
     GST_TRACE("Creating VideoFrame from native image");
 
     size_t offsets[GST_VIDEO_MAX_PLANES] = { 0, };
     int strides[GST_VIDEO_MAX_PLANES] = { 0, };
 
+#if USE(CAIRO)
     auto surface = image.platformImage();
     strides[0] = cairo_image_surface_get_stride(surface.get());
     auto width = cairo_image_surface_get_width(surface.get());
@@ -94,17 +102,60 @@ RefPtr<VideoFrame> VideoFrame::fromNativeImage(NativeImage& image)
     auto format = G_BYTE_ORDER == G_LITTLE_ENDIAN ? GST_VIDEO_FORMAT_BGRA : GST_VIDEO_FORMAT_ARGB;
 
     auto buffer = adoptGRef(gst_buffer_new_wrapped_full(GST_MEMORY_FLAG_READONLY, cairo_image_surface_get_data(surface.get()), size, 0, size, cairo_surface_reference(surface.get()), reinterpret_cast<GDestroyNotify>(cairo_surface_destroy)));
+#elif USE(SKIA)
+    auto platformImage = image.platformImage();
+    const auto& imageInfo = platformImage->imageInfo();
+    strides[0] = imageInfo.minRowBytes();
+    auto width = imageInfo.width();
+    auto height = imageInfo.height();
+    auto size = imageInfo.computeMinByteSize();
+
+    GRefPtr<GstBuffer> buffer;
+    if (platformImage->isTextureBacked()) {
+        if (!PlatformDisplay::sharedDisplayForCompositing().skiaGLContext()->makeContextCurrent())
+            return nullptr;
+
+        auto data = SkData::MakeUninitialized(size);
+        GrDirectContext* grContext = PlatformDisplay::sharedDisplayForCompositing().skiaGrContext();
+        if (!platformImage->readPixels(grContext, imageInfo, static_cast<uint8_t*>(data->writable_data()), strides[0], 0, 0))
+            return nullptr;
+
+        auto* bytes = data->writable_data();
+        buffer = adoptGRef(gst_buffer_new_wrapped_full(GST_MEMORY_FLAG_READONLY, bytes, size, 0, size, data.release(), [](gpointer userData) {
+            auto data = sk_sp<SkData>(static_cast<SkData*>(userData));
+        }));
+    } else {
+        SkPixmap pixmap;
+        if (!platformImage->peekPixels(&pixmap))
+            return nullptr;
+
+        buffer = adoptGRef(gst_buffer_new_wrapped_full(GST_MEMORY_FLAG_READONLY, pixmap.writable_addr(), size, 0, size, SkRef(platformImage.get()), [](gpointer userData) {
+            SkSafeUnref(static_cast<SkImage*>(userData));
+        }));
+    }
+
+    GstVideoFormat format = GST_VIDEO_FORMAT_UNKNOWN;
+    switch (imageInfo.colorType()) {
+    case kBGRA_8888_SkColorType:
+        format = imageInfo.alphaType() == kOpaque_SkAlphaType ? GST_VIDEO_FORMAT_BGRx : GST_VIDEO_FORMAT_BGRA;
+        break;
+    case kRGB_888x_SkColorType:
+        format = GST_VIDEO_FORMAT_RGBx;
+        break;
+    case kRGBA_8888_SkColorType:
+        format = GST_VIDEO_FORMAT_RGBA;
+        break;
+    default:
+        return nullptr;
+    }
+#endif
+
     gst_buffer_add_video_meta_full(buffer.get(), GST_VIDEO_FRAME_FLAG_NONE, format, width, height, 1, offsets, strides);
 
     auto caps = adoptGRef(gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, gst_video_format_to_string(format), "width", G_TYPE_INT, width, "height", G_TYPE_INT, height, nullptr));
     auto sample = adoptGRef(gst_sample_new(buffer.get(), caps.get(), nullptr, nullptr));
     FloatSize presentationSize { static_cast<float>(width), static_cast<float>(height) };
     return VideoFrameGStreamer::create(WTFMove(sample), presentationSize);
-#elif USE(SKIA)
-    notImplemented();
-    UNUSED_PARAM(image);
-#endif
-    return nullptr;
 }
 
 static void copyToGstBufferPlane(uint8_t* destination, const GstVideoInfo& info, size_t planeIndex, const uint8_t* source, size_t height, uint32_t bytesPerRowSource)
