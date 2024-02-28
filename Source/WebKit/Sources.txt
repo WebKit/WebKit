@@ -94,7 +94,6 @@ GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.cpp
 ModelProcess/ModelProcess.cpp
 ModelProcess/ModelConnectionToWebProcess.cpp
 ModelProcess/ModelProcessModelPlayerManagerProxy.cpp
-ModelProcess/ModelProcessModelPlayerProxy.cpp
 
 NetworkProcess/BackgroundFetchLoad.cpp
 NetworkProcess/DatabaseUtilities.cpp

@@ -23,7 +23,7 @@
 #if ENABLE(MODEL_PROCESS)
 
 messages -> ModelProcessModelPlayer {
-    DidLoad()
+    DidCreateLayer(WebCore::LayerHostingContextIdentifier identifier)
 }
 
 #endif // ENABLE(MODEL_PROCESS)

@@ -26,9 +26,9 @@
 #include "config.h"
 #include "ModelProcessModelPlayerManagerProxy.h"
 
-#include "ModelProcessModelPlayerProxy.h"
-
 #if ENABLE(MODEL_PROCESS)
+
+#include "ModelProcessModelPlayerProxy.h"
 
 namespace WebKit {
 

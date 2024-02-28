@@ -45,6 +45,8 @@ namespace WebKit {
 
 class RemoteLayerTreeContext;
 
+using LayerHostingContextID = uint32_t;
+
 struct PlatformCALayerRemoteDelegatedContents {
     ImageBufferBackendHandle surface;
     RefPtr<WebCore::PlatformCALayerDelegatedContentsFence> finishedFence;
@@ -55,6 +57,7 @@ class PlatformCALayerRemote : public WebCore::PlatformCALayer, public CanMakeWea
 public:
     static Ref<PlatformCALayerRemote> create(WebCore::PlatformCALayer::LayerType, WebCore::PlatformCALayerClient*, RemoteLayerTreeContext&);
     static Ref<PlatformCALayerRemote> create(PlatformLayer *, WebCore::PlatformCALayerClient*, RemoteLayerTreeContext&);
+    static Ref<PlatformCALayerRemote> create(LayerHostingContextID, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext&);
 #if ENABLE(MODEL_ELEMENT)
     static Ref<PlatformCALayerRemote> create(Ref<WebCore::Model>, WebCore::PlatformCALayerClient*, RemoteLayerTreeContext&);
 #endif

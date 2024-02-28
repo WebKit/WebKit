@@ -38,6 +38,7 @@ class WEBCORE_EXPORT ModelPlayerClient : public CanMakeWeakPtr<ModelPlayerClient
 public:
     virtual ~ModelPlayerClient();
 
+    virtual void didUpdateLayerHostingContextIdentifier(ModelPlayer&, LayerHostingContextIdentifier) = 0;
     virtual void didFinishLoading(ModelPlayer&) = 0;
     virtual void didFailLoading(ModelPlayer&, const ResourceError&) = 0;
     virtual PlatformLayerIdentifier platformLayerID() = 0;

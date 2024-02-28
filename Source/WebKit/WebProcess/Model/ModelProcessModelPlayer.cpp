@@ -28,6 +28,8 @@
 
 #if ENABLE(MODEL_PROCESS)
 
+#include "ModelProcessModelPlayerProxy.h"
+#include "ModelProcessModelPlayerProxyMessages.h"
 #include "WebPage.h"
 #include "WebProcess.h"
 
@@ -43,26 +45,40 @@ ModelProcessModelPlayer::ModelProcessModelPlayer(WebCore::ModelPlayerIdentifier 
     , m_page { page }
     , m_client { client }
 {
-    // FIXME: This should remotely-host a layer tree from the model process.
+    RELEASE_LOG(ModelElement, "%p - ModelProcessModelPlayer spawned id=%" PRIu64, this, m_id.toUInt64());
+    send(Messages::ModelProcessModelPlayerProxy::CreateLayer());
 }
 
 ModelProcessModelPlayer::~ModelProcessModelPlayer()
 {
+    RELEASE_LOG(ModelElement, "%p - ModelProcessModelPlayer deallocating id=%" PRIu64, this, m_id.toUInt64());
+}
+
+template<typename T>
+ALWAYS_INLINE void ModelProcessModelPlayer::send(T&& message)
+{
+    WebProcess::singleton().modelProcessModelPlayerManager().modelProcessConnection().connection().send(std::forward<T>(message), m_id);
 }
 
 // Messages
-void ModelProcessModelPlayer::didLoad()
+void ModelProcessModelPlayer::didCreateLayer(LayerHostingContextIdentifier identifier)
 {
-    // FIXME: Forwards to JS side
+    RELEASE_LOG(ModelElement, "%p - ModelProcessModelPlayer obtained new layerHostingContextIdentifier id=%" PRIu64, this, m_id.toUInt64());
+    m_layerHostingContextIdentifier = identifier;
+    m_client->didUpdateLayerHostingContextIdentifier(*this, identifier);
 }
 
 // ModelPlayer
-void ModelProcessModelPlayer::load(WebCore::Model&, WebCore::LayoutSize)
+void ModelProcessModelPlayer::load(WebCore::Model& model, WebCore::LayoutSize size)
 {
+    RELEASE_LOG(ModelElement, "%p - ModelProcessModelPlayer load model id=%" PRIu64, this, m_id.toUInt64());
+    send(Messages::ModelProcessModelPlayerProxy::LoadModel(model, size));
 }
 
-void ModelProcessModelPlayer::sizeDidChange(LayoutSize)
+void ModelProcessModelPlayer::sizeDidChange(WebCore::LayoutSize size)
 {
+    RELEASE_LOG(ModelElement, "%p - ModelProcessModelPlayer size did change to w=%f h=%f id=%" PRIu64, this, size.width().toFloat(), size.height().toFloat(), m_id.toUInt64());
+    send(Messages::ModelProcessModelPlayerProxy::SizeDidChange(size));
 }
 
 PlatformLayer* ModelProcessModelPlayer::layer()

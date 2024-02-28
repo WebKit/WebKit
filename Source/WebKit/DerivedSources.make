@@ -328,7 +328,7 @@ MESSAGE_RECEIVERS = \
 	ModelProcess/ModelConnectionToWebProcess \
 	ModelProcess/ModelProcess \
 	ModelProcess/ModelProcessModelPlayerManagerProxy \
-	ModelProcess/ModelProcessModelPlayerProxy \
+	ModelProcess/cocoa/ModelProcessModelPlayerProxy \
 	webpushd/PushClientConnection \
 #
 

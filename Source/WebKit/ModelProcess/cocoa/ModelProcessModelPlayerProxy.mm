@@ -23,15 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ModelProcessModelPlayerProxy.h"
+#import "config.h"
+#import "ModelProcessModelPlayerProxy.h"
 
 #if ENABLE(MODEL_PROCESS)
 
-#include "LayerHostingContext.h"
-#include "Logging.h"
-#include "ModelConnectionToWebProcess.h"
-#include "ModelProcessModelPlayerMessages.h"
+#import "LayerHostingContext.h"
+#import "Logging.h"
+#import "ModelConnectionToWebProcess.h"
+#import "ModelProcessModelPlayerManagerProxy.h"
+#import "ModelProcessModelPlayerMessages.h"
+#import <WebCore/Color.h>
+#import <WebCore/LayerHostingContextIdentifier.h>
+#import <WebCore/Model.h>
 
 namespace WebKit {
 
@@ -50,18 +54,47 @@ ModelProcessModelPlayerProxy::ModelProcessModelPlayerProxy(ModelProcessModelPlay
 
 ModelProcessModelPlayerProxy::~ModelProcessModelPlayerProxy()
 {
+    RELEASE_LOG(ModelElement, "%p - ModelProcessModelPlayerProxy deallocated id=%" PRIu64, this, m_id.toUInt64());
 }
 
 void ModelProcessModelPlayerProxy::invalidate()
 {
+    RELEASE_LOG(ModelElement, "%p - ModelProcessModelPlayerProxy invalidated id=%" PRIu64, this, m_id.toUInt64());
 }
 
-void ModelProcessModelPlayerProxy::loadModel()
+template<typename T>
+ALWAYS_INLINE void ModelProcessModelPlayerProxy::send(T&& message)
 {
-    // FIXME: Perform model loading here
-    m_webProcessConnection->send(Messages::ModelProcessModelPlayer::DidLoad(), m_id);
+    m_webProcessConnection->send(std::forward<T>(message), m_id);
+}
+
+void ModelProcessModelPlayerProxy::createLayer()
+{
+    m_layer = adoptNS([[CALayer alloc] init]);
+    [m_layer setBackgroundColor:cachedCGColor(Color::green).get()];
+    [m_layer setFrame:CGRectMake(0, 0, 100, 100)];
+
+    LayerHostingContextOptions contextOptions;
+    m_layerHostingContext = LayerHostingContext::createForExternalHostingProcess(contextOptions);
+    m_layerHostingContext->setRootLayer(m_layer.get());
+
+    RELEASE_LOG(ModelElement, "%p - ModelProcessModelPlayerProxy creating remote CA layer ctxID = %" PRIu64 " id=%" PRIu64, this, layerHostingContextIdentifier().value().toUInt64(), m_id.toUInt64());
+
+    if (auto contextID = layerHostingContextIdentifier())
+        send(Messages::ModelProcessModelPlayer::DidCreateLayer(contextID.value()));
+}
+
+void ModelProcessModelPlayerProxy::loadModel(Ref<WebCore::Model>&& model, WebCore::LayoutSize)
+{
+    RELEASE_LOG(ModelElement, "%p - ModelProcessModelPlayerProxy::loadModel size=%zu url=%s id=%" PRIu64, this, model->data()->size(), model->url().string().utf8().data(), m_id.toUInt64());
+}
+
+void ModelProcessModelPlayerProxy::sizeDidChange(WebCore::LayoutSize layoutSize)
+{
+    RELEASE_LOG(ModelElement, "%p - ModelProcessModelPlayerProxy::sizeDidChange w=%lf h=%lf id=%" PRIu64, this, layoutSize.width().toDouble(), layoutSize.width().toDouble(), m_id.toUInt64());
+    [m_layer setFrame:CGRectMake(0, 0, layoutSize.width().toDouble(), layoutSize.width().toDouble())];
 }
 
 } // namespace WebKit
 
-#endif // ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
+#endif // ENABLE(MODEL_PROCESS)

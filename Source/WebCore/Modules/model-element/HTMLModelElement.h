@@ -34,6 +34,7 @@
 #include "HTMLElement.h"
 #include "HTMLModelElementCamera.h"
 #include "IDLTypes.h"
+#include "LayerHostingContextIdentifier.h"
 #include "ModelPlayerClient.h"
 #include "PlatformLayer.h"
 #include "PlatformLayerIdentifier.h"
@@ -74,6 +75,8 @@ public:
 
     bool usesPlatformLayer() const;
     PlatformLayer* platformLayer() const;
+
+    std::optional<LayerHostingContextIdentifier> layerHostingContextIdentifier() const;
 
     void enterFullscreen();
 
@@ -149,6 +152,7 @@ private:
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&) final;
 
     // ModelPlayerClient overrides.
+    void didUpdateLayerHostingContextIdentifier(ModelPlayer&, LayerHostingContextIdentifier) final;
     void didFinishLoading(ModelPlayer&) final;
     void didFailLoading(ModelPlayer&, const ResourceError&) final;
     PlatformLayerIdentifier platformLayerID() final;

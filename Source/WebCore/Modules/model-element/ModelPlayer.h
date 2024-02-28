@@ -26,6 +26,7 @@
 #pragma once
 
 #include "HTMLModelElementCamera.h"
+#include "LayerHostingContextIdentifier.h"
 #include "LayoutPoint.h"
 #include "LayoutSize.h"
 #include "PlatformLayer.h"
@@ -46,6 +47,7 @@ public:
     virtual void load(Model&, LayoutSize) = 0;
     virtual void sizeDidChange(LayoutSize) = 0;
     virtual PlatformLayer* layer() = 0;
+    virtual std::optional<LayerHostingContextIdentifier> layerHostingContextIdentifier() = 0;
     virtual void enterFullscreen() = 0;
     virtual bool supportsMouseInteraction();
     virtual bool supportsDragging();

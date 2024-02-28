@@ -196,7 +196,6 @@ set(WebKit_MESSAGES_IN_FILES
     ModelProcess/ModelConnectionToWebProcess
     ModelProcess/ModelProcess
     ModelProcess/ModelProcessModelPlayerManagerProxy
-    ModelProcess/ModelProcessModelPlayerProxy
 
     NetworkProcess/Cookies/WebCookieManager
 

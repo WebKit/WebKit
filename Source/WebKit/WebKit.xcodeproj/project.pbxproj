@@ -5806,6 +5806,7 @@
 		53CFBBC62224D1B000266546 /* TextCheckerCompletion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextCheckerCompletion.cpp; sourceTree = "<group>"; };
 		53CFBBC72224D1B000266546 /* TextCheckerCompletion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextCheckerCompletion.h; sourceTree = "<group>"; };
 		53F3CAA5206C443E0086490E /* NetworkActivityTracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkActivityTracker.cpp; sourceTree = "<group>"; };
+		540D14C72B840E9A007FD5DE /* ModelProcessModelPlayerProxy.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ModelProcessModelPlayerProxy.mm; sourceTree = "<group>"; };
 		541A3D0A2B5F2BA3009CE0D6 /* ModelProcessConnectionParameters.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ModelProcessConnectionParameters.serialization.in; sourceTree = "<group>"; };
 		541A3D0B2B5F3948009CE0D6 /* GPUProcessConnectionInfo.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = GPUProcessConnectionInfo.serialization.in; sourceTree = "<group>"; };
 		541A3D0C2B5F3968009CE0D6 /* ModelProcessConnectionInfo.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ModelProcessConnectionInfo.serialization.in; sourceTree = "<group>"; };
@@ -5817,7 +5818,6 @@
 		54BBB6052B7EBE3E00BF1A8A /* ModelProcessModelPlayerManagerProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ModelProcessModelPlayerManagerProxy.messages.in; sourceTree = "<group>"; };
 		54BBB6062B7ED58400BF1A8A /* ModelProcessModelPlayerProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ModelProcessModelPlayerProxy.h; sourceTree = "<group>"; };
 		54BBB6072B7ED58400BF1A8A /* ModelProcessModelPlayerProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ModelProcessModelPlayerProxy.messages.in; sourceTree = "<group>"; };
-		54BBB6082B7ED58400BF1A8A /* ModelProcessModelPlayerProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ModelProcessModelPlayerProxy.cpp; sourceTree = "<group>"; };
 		54BBB6092B80177C00BF1A8A /* ModelProcessModelPlayer.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ModelProcessModelPlayer.messages.in; sourceTree = "<group>"; };
 		5506409D2407160900AAE045 /* RemoteRenderingBackendProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteRenderingBackendProxy.cpp; sourceTree = "<group>"; };
 		5506409E2407160900AAE045 /* RemoteRenderingBackendProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteRenderingBackendProxy.h; sourceTree = "<group>"; };
@@ -10439,9 +10439,6 @@
 				54BBB6042B7EBE3D00BF1A8A /* ModelProcessModelPlayerManagerProxy.cpp */,
 				54BBB6032B7EBE3D00BF1A8A /* ModelProcessModelPlayerManagerProxy.h */,
 				54BBB6052B7EBE3E00BF1A8A /* ModelProcessModelPlayerManagerProxy.messages.in */,
-				54BBB6082B7ED58400BF1A8A /* ModelProcessModelPlayerProxy.cpp */,
-				54BBB6062B7ED58400BF1A8A /* ModelProcessModelPlayerProxy.h */,
-				54BBB6072B7ED58400BF1A8A /* ModelProcessModelPlayerProxy.messages.in */,
 			);
 			path = ModelProcess;
 			sourceTree = "<group>";
@@ -10458,6 +10455,9 @@
 			isa = PBXGroup;
 			children = (
 				2D56C1B028A367760081BD25 /* ModelProcessCocoa.mm */,
+				54BBB6062B7ED58400BF1A8A /* ModelProcessModelPlayerProxy.h */,
+				54BBB6072B7ED58400BF1A8A /* ModelProcessModelPlayerProxy.messages.in */,
+				540D14C72B840E9A007FD5DE /* ModelProcessModelPlayerProxy.mm */,
 			);
 			path = cocoa;
 			sourceTree = "<group>";

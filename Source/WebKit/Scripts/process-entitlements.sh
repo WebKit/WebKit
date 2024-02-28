@@ -444,7 +444,13 @@ fi
 
 function ios_family_process_model_entitlements()
 {
-    ios_family_process_webcontent_shared_entitlements
+    plistbuddy Add :com.apple.QuartzCore.secure-mode bool YES
+    plistbuddy Add :com.apple.QuartzCore.webkit-end-points bool YES
+    plistbuddy add :com.apple.QuartzCore.webkit-limited-types bool YES
+    plistbuddy Add :com.apple.private.memorystatus bool YES
+    plistbuddy Add :com.apple.runningboard.assertions.webkit bool YES
+    plistbuddy Add :com.apple.private.pac.exception bool YES
+    plistbuddy Add :com.apple.private.sandbox.profile string com.apple.WebKit.Model
 }
 
 function ios_family_process_adattributiond_entitlements()

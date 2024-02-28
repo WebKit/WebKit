@@ -56,6 +56,11 @@ PlatformLayer* ARKitInlinePreviewModelPlayer::layer()
     return nullptr;
 }
 
+std::optional<WebCore::LayerHostingContextIdentifier> ARKitInlinePreviewModelPlayer::layerHostingContextIdentifier()
+{
+    return std::nullopt;
+}
+
 void ARKitInlinePreviewModelPlayer::enterFullscreen()
 {
 }

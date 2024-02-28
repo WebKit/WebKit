@@ -52,6 +52,13 @@ Ref<PlatformCALayerRemote> PlatformCALayerRemoteCustom::create(PlatformLayer *pl
     return WTFMove(layer);
 }
 
+Ref<PlatformCALayerRemote> PlatformCALayerRemoteCustom::create(LayerHostingContextID hostedContextIdentifier, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
+{
+    auto layer = adoptRef(*new PlatformCALayerRemoteCustom(WebCore::PlatformCALayer::LayerType::LayerTypeCustom, hostedContextIdentifier, owner, context));
+    context.layerDidEnterContext(layer.get(), layer->layerType());
+    return WTFMove(layer);
+}
+
 #if HAVE(AVKIT)
 Ref<PlatformCALayerRemote> PlatformCALayerRemoteCustom::create(WebCore::HTMLVideoElement& videoElement, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
 {
@@ -61,10 +68,15 @@ Ref<PlatformCALayerRemote> PlatformCALayerRemoteCustom::create(WebCore::HTMLVide
 }
 #endif
 
-PlatformCALayerRemoteCustom::PlatformCALayerRemoteCustom(HTMLVideoElement& videoElement, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
-    : PlatformCALayerRemote(PlatformCALayer::LayerType::LayerTypeAVPlayerLayer, owner, context)
+PlatformCALayerRemoteCustom::PlatformCALayerRemoteCustom(WebCore::PlatformCALayer::LayerType layerType, LayerHostingContextID hostedContextIdentifier, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
+    : PlatformCALayerRemote(layerType, owner, context)
 {
-    m_layerHostingContext = LayerHostingContext::createTransportLayerForRemoteHosting(videoElement.layerHostingContextID());
+    m_layerHostingContext = LayerHostingContext::createTransportLayerForRemoteHosting(hostedContextIdentifier);
+}
+
+PlatformCALayerRemoteCustom::PlatformCALayerRemoteCustom(HTMLVideoElement& videoElement, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
+    : PlatformCALayerRemoteCustom(PlatformCALayer::LayerType::LayerTypeAVPlayerLayer, videoElement.layerHostingContextID(), owner, context)
+{
     m_hasVideo = true;
 }
 

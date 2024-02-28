@@ -120,6 +120,7 @@ $(PROJECT_DIR)/ModelProcess/ModelProcess.messages.in
 $(PROJECT_DIR)/ModelProcess/ModelProcessCreationParameters.serialization.in
 $(PROJECT_DIR)/ModelProcess/ModelProcessModelPlayerManagerProxy.messages.in
 $(PROJECT_DIR)/ModelProcess/ModelProcessModelPlayerProxy.messages.in
+$(PROJECT_DIR)/ModelProcess/cocoa/ModelProcessModelPlayerProxy.messages.in
 $(PROJECT_DIR)/Modules/OSX_Private.modulemap
 $(PROJECT_DIR)/Modules/iOS_Private.modulemap
 $(PROJECT_DIR)/NetworkProcess/Classifier/ITPThirdPartyData.serialization.in

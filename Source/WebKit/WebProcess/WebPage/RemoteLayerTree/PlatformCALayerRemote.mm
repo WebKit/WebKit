@@ -71,6 +71,11 @@ Ref<PlatformCALayerRemote> PlatformCALayerRemote::create(PlatformLayer *platform
     return PlatformCALayerRemoteCustom::create(platformLayer, owner, context);
 }
 
+Ref<PlatformCALayerRemote> PlatformCALayerRemote::create(LayerHostingContextID contextID, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
+{
+    return PlatformCALayerRemoteCustom::create(contextID, owner, context);
+}
+
 #if ENABLE(MODEL_ELEMENT)
 Ref<PlatformCALayerRemote> PlatformCALayerRemote::create(Ref<WebCore::Model> model, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
 {

@@ -82,6 +82,11 @@ PlatformLayer* SceneKitModelPlayer::layer()
     return m_layer.get();
 }
 
+std::optional<LayerHostingContextIdentifier> SceneKitModelPlayer::layerHostingContextIdentifier()
+{
+    return std::nullopt;
+}
+
 void SceneKitModelPlayer::enterFullscreen()
 {
 }

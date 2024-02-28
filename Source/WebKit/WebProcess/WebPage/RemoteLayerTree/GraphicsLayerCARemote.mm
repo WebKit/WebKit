@@ -76,6 +76,11 @@ Ref<PlatformCALayer> GraphicsLayerCARemote::createPlatformCALayer(PlatformLayer*
     return PlatformCALayerRemote::create(platformLayer, owner, *m_context);
 }
 
+Ref<PlatformCALayer> GraphicsLayerCARemote::createPlatformCALayer(WebCore::LayerHostingContextIdentifier layerHostingContextIdentifier, PlatformCALayerClient* owner)
+{
+    return PlatformCALayerRemote::create(layerHostingContextIdentifier.toUInt64(), owner, *m_context);
+}
+
 #if ENABLE(MODEL_ELEMENT)
 Ref<PlatformCALayer> GraphicsLayerCARemote::createPlatformCALayer(Ref<WebCore::Model> model, PlatformCALayerClient* owner)
 {

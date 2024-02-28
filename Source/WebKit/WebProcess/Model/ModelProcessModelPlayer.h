@@ -46,6 +46,8 @@ public:
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
+    std::optional<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier() { return m_layerHostingContextIdentifier; };
+
     // Messages
     void didLoad();
 
@@ -55,6 +57,11 @@ private:
     WebCore::ModelPlayerIdentifier identifier() { return m_id; }
     WebPage* page() { return m_page.get(); }
     WebCore::ModelPlayerClient* client() { return m_client.get(); }
+
+    template<typename T> void send(T&& message);
+
+    // Messages
+    void didCreateLayer(WebCore::LayerHostingContextIdentifier);
 
     // WebCore::ModelPlayer overrides.
     void load(WebCore::Model&, WebCore::LayoutSize) final;
@@ -81,6 +88,8 @@ private:
     WebCore::ModelPlayerIdentifier m_id;
     WeakPtr<WebPage> m_page;
     WeakPtr<WebCore::ModelPlayerClient> m_client;
+
+    std::optional<WebCore::LayerHostingContextIdentifier> m_layerHostingContextIdentifier;
 };
 
 }

@@ -61,9 +61,11 @@ ModelProcessConnection& ModelProcessModelPlayerManager::modelProcessConnection()
 Ref<ModelProcessModelPlayer> ModelProcessModelPlayerManager::createModelProcessModelPlayer(WebPage& page, WebCore::ModelPlayerClient& client)
 {
     auto identifier = WebCore::ModelPlayerIdentifier::generate();
+    modelProcessConnection().connection().send(Messages::ModelProcessModelPlayerManagerProxy::CreateModelPlayer(identifier), 0);
+
     auto player = ModelProcessModelPlayer::create(identifier, page, client);
     m_players.add(identifier, player);
-    modelProcessConnection().connection().send(Messages::ModelProcessModelPlayerManagerProxy::CreateModelPlayer(identifier), 0);
+
     return player;
 }
 
@@ -78,7 +80,6 @@ void ModelProcessModelPlayerManager::didReceivePlayerMessage(IPC::Connection& co
     if (const auto& player = m_players.get(WebCore::ModelPlayerIdentifier(decoder.destinationID())))
         player->didReceiveMessage(connection, decoder);
 }
-
 
 }
 

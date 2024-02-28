@@ -340,6 +340,12 @@ Ref<PlatformCALayer> GraphicsLayerCA::createPlatformCALayer(PlatformLayer* platf
     return PlatformCALayerCocoa::create(platformLayer, owner);
 }
 
+Ref<PlatformCALayer> GraphicsLayerCA::createPlatformCALayer(LayerHostingContextIdentifier, PlatformCALayerClient* owner)
+{
+    ASSERT_NOT_REACHED_WITH_MESSAGE("GraphicsLayerCARemote::createPlatformCALayer should always be called instead of this, but this symbol is needed to compile WebKitLegacy.");
+    return GraphicsLayerCA::createPlatformCALayer(PlatformCALayer::LayerType::LayerTypeLayer, owner);
+}
+
 #if ENABLE(MODEL_ELEMENT)
 Ref<PlatformCALayer> GraphicsLayerCA::createPlatformCALayer(Ref<WebCore::Model>, PlatformCALayerClient* owner)
 {
@@ -1318,6 +1324,18 @@ void GraphicsLayerCA::setContentsToPlatformLayerHost(LayerHostingContextIdentifi
 
     m_contentsLayer = createPlatformCALayerHost(identifier, this);
     m_contentsLayerPurpose = GraphicsLayer::ContentsLayerPurpose::Host;
+    m_contentsDisplayDelegate = nullptr;
+    noteSublayersChanged();
+    noteLayerPropertyChanged(ContentsPlatformLayerChanged);
+}
+
+void GraphicsLayerCA::setContentsToRemotePlatformContext(LayerHostingContextIdentifier identifier, ContentsLayerPurpose purpose)
+{
+    if (m_contentsLayer && m_contentsLayer->hostingContextIdentifier() == identifier)
+        return;
+
+    m_contentsLayer = createPlatformCALayer(identifier, this);
+    m_contentsLayerPurpose = purpose;
     m_contentsDisplayDelegate = nullptr;
     noteSublayersChanged();
     noteLayerPropertyChanged(ContentsPlatformLayerChanged);
@@ -4232,6 +4250,8 @@ const char* GraphicsLayerCA::purposeNameForInnerLayer(PlatformCALayer& layer) co
             return "contents layer (plugin)";
         case ContentsLayerPurpose::Model:
             return "contents layer (model)";
+        case ContentsLayerPurpose::HostedModel:
+            return "contents layer (hosted model)";
         case ContentsLayerPurpose::Host:
             return "contents layer (host)";
         }

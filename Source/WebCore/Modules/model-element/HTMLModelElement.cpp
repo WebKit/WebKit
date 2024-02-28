@@ -228,7 +228,7 @@ void HTMLModelElement::notifyFinished(CachedResource& resource, const NetworkLoa
         m_resource->removeClient(*this);
         m_resource = nullptr;
 
-        if (auto* renderer = this->renderer())
+        if (CheckedPtr renderer = this->renderer())
             renderer->updateFromElement();
     };
 
@@ -308,6 +308,13 @@ PlatformLayer* HTMLModelElement::platformLayer() const
     return nullptr;
 }
 
+std::optional<LayerHostingContextIdentifier> HTMLModelElement::layerHostingContextIdentifier() const
+{
+    if (m_modelPlayer)
+        return m_modelPlayer->layerHostingContextIdentifier();
+    return std::nullopt;
+}
+
 void HTMLModelElement::sizeMayHaveChanged()
 {
     if (m_modelPlayer)
@@ -316,11 +323,20 @@ void HTMLModelElement::sizeMayHaveChanged()
         createModelPlayer();
 }
 
+void HTMLModelElement::didUpdateLayerHostingContextIdentifier(ModelPlayer& modelPlayer, LayerHostingContextIdentifier identifier)
+{
+    ASSERT_UNUSED(modelPlayer, &modelPlayer == m_modelPlayer);
+    ASSERT_UNUSED(identifier, identifier.toUInt64() > 0);
+
+    if (CheckedPtr renderer = this->renderer())
+        renderer->updateFromElement();
+}
+
 void HTMLModelElement::didFinishLoading(ModelPlayer& modelPlayer)
 {
     ASSERT_UNUSED(modelPlayer, &modelPlayer == m_modelPlayer);
 
-    if (auto* renderer = this->renderer())
+    if (CheckedPtr renderer = this->renderer())
         renderer->updateFromElement();
 
     m_readyPromise->resolve(*this);

@@ -24,7 +24,11 @@
 #if ENABLE(MODEL_PROCESS)
 
 messages -> ModelProcessModelPlayerProxy {
-    void loadModel()
+    CreateLayer()
+    
+    # ModelPlayer
+    LoadModel(Ref<WebCore::Model> url, WebCore::LayoutSize layoutSize)
+    SizeDidChange(WebCore::LayoutSize layoutSize)
 }
 
 #endif

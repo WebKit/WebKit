@@ -28,16 +28,17 @@
 #if ENABLE(MODEL_PROCESS)
 
 #include "Connection.h"
+#include "LayerHostingContext.h"
 #include "MessageReceiver.h"
+
+#include <QuartzCore/CALayer.h>
+#include <WebCore/LayerHostingContextIdentifier.h>
 #include <WebCore/ModelPlayer.h>
 #include <WebCore/ModelPlayerIdentifier.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
-
-namespace WebCore {
-}
 
 namespace WebKit {
 
@@ -54,20 +55,27 @@ public:
     WebCore::ModelPlayerIdentifier identifier() const { return m_id; }
     void invalidate();
 
+    std::optional<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier() const { return WebCore::LayerHostingContextIdentifier(m_layerHostingContext->contextID()); }
+
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    template<typename T> void send(T&& message);
 
     // Messages
-    void loadModel();
+    void createLayer();
+    void loadModel(Ref<WebCore::Model>&&, WebCore::LayoutSize);
+    void sizeDidChange(WebCore::LayoutSize);
 
 private:
     ModelProcessModelPlayerProxy(ModelProcessModelPlayerManagerProxy&, WebCore::ModelPlayerIdentifier, Ref<IPC::Connection>&&);
 
     WebCore::ModelPlayerIdentifier m_id;
     Ref<IPC::Connection> m_webProcessConnection;
-
     WeakPtr<ModelProcessModelPlayerManagerProxy> m_manager;
+
+    std::unique_ptr<LayerHostingContext> m_layerHostingContext;
+    RetainPtr<CALayer> m_layer;
 };
 
 } // namespace WebKit
 
-#endif // ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
+#endif // ENABLE(MODEL_PROCESS)
