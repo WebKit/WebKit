@@ -1060,6 +1060,11 @@ void TypeChecker::visit(AST::FieldAccessExpression& access)
         return;
     }
 
+    if (const auto* pointer = std::get_if<Types::Pointer>(baseType)) {
+        referenceImpl(*pointer);
+        return;
+    }
+
     if (const Type* result = accessImpl(baseType))
         inferred(result);
 }

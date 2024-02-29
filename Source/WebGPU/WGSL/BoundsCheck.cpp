@@ -130,6 +130,8 @@ void BoundsCheckVisitor::visit(AST::IndexAccessExpression& access)
     auto* base = access.base().inferredType();
     if (auto* reference = std::get_if<Types::Reference>(base))
         base = reference->element;
+    if (auto* pointer = std::get_if<Types::Pointer>(base))
+        base = pointer->element;
 
     if (auto* vector = std::get_if<Types::Vector>(base)) {
         replace(constant(vector->size));
