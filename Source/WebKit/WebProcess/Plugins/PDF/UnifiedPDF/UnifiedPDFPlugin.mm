@@ -601,7 +601,11 @@ void UnifiedPDFPlugin::paint(WebCore::GraphicsContext& context, const WebCore::I
         return;
 
     context.translate(-m_scrollOffset.width(), -m_scrollOffset.height());
-    paintPDFContent(context, { FloatPoint(m_scrollOffset), size() });
+
+    FloatRect clipRect { FloatPoint(m_scrollOffset), size() };
+    context.clip(clipRect);
+
+    paintPDFContent(context, clipRect);
 }
 
 void UnifiedPDFPlugin::paintContents(const GraphicsLayer* layer, GraphicsContext& context, const FloatRect& clipRect, OptionSet<GraphicsLayerPaintBehavior>)
