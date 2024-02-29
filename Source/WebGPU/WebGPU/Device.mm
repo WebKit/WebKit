@@ -305,8 +305,10 @@ void Device::generateAValidationError(String&& message)
         return;
     }
 
-    if (m_uncapturedErrorCallback)
+    if (m_uncapturedErrorCallback) {
         m_uncapturedErrorCallback(WGPUErrorType_Validation, WTFMove(message));
+        m_uncapturedErrorCallback = nullptr;
+    }
 }
 
 void Device::generateAnOutOfMemoryError(String&& message)
