@@ -187,7 +187,6 @@ private:
 
     Ref<GStreamerStatsCollector> m_statsCollector;
 
-    unsigned m_pendingIncomingStreams { 0 };
     uint32_t m_negotiationNeededEventId { 0 };
 
 #if !RELEASE_LOG_DISABLED
@@ -204,7 +203,7 @@ private:
 
     RefPtr<UniqueSSRCGenerator> m_ssrcGenerator;
 
-    Vector<RefPtr<GStreamerIncomingTrackProcessor>> m_trackProcessors;
+    HashMap<GRefPtr<GstWebRTCRTPTransceiver>, RefPtr<GStreamerIncomingTrackProcessor>> m_trackProcessors;
 };
 
 } // namespace WebCore

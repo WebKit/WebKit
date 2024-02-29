@@ -195,7 +195,6 @@ void GStreamerPeerConnectionBackend::close()
 void GStreamerPeerConnectionBackend::doStop()
 {
     m_endpoint->stop();
-    m_pendingReceivers.clear();
 }
 
 void GStreamerPeerConnectionBackend::doAddIceCandidate(RTCIceCandidate& candidate, AddIceCandidateCallback&& callback)

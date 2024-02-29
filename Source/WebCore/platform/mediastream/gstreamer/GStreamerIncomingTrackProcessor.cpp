@@ -29,15 +29,18 @@ GST_DEBUG_CATEGORY(webkit_webrtc_incoming_track_processor_debug);
 
 namespace WebCore {
 
-GStreamerIncomingTrackProcessor::GStreamerIncomingTrackProcessor(ThreadSafeWeakPtr<GStreamerMediaEndpoint>&& endPoint, GRefPtr<GstPad>&& pad)
-    : m_endPoint(WTFMove(endPoint))
-    , m_pad(WTFMove(pad))
+GStreamerIncomingTrackProcessor::GStreamerIncomingTrackProcessor()
 {
     static std::once_flag debugRegisteredFlag;
     std::call_once(debugRegisteredFlag, [] {
         GST_DEBUG_CATEGORY_INIT(webkit_webrtc_incoming_track_processor_debug, "webkitwebrtcincomingtrackprocessor", 0, "WebKit WebRTC Incoming Track Processor");
     });
+}
 
+void GStreamerIncomingTrackProcessor::configure(ThreadSafeWeakPtr<GStreamerMediaEndpoint>&& endPoint, GRefPtr<GstPad>&& pad)
+{
+    m_endPoint = WTFMove(endPoint);
+    m_pad = WTFMove(pad);
     m_data.mediaStreamBinName = makeString(GST_OBJECT_NAME(m_pad.get()));
     m_bin = gst_bin_new(m_data.mediaStreamBinName.ascii().data());
 

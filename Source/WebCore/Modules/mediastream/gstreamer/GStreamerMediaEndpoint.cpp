@@ -888,7 +888,7 @@ void GStreamerMediaEndpoint::initiate(bool isInitiator, GstStructure* rawOptions
 void GStreamerMediaEndpoint::getStats(GstPad* pad, const GstStructure* additionalStats, Ref<DeferredPromise>&& promise)
 {
     GUniquePtr<GstStructure> aggregatedStats(additionalStats ? gst_structure_copy(additionalStats) : gst_structure_new_empty("stats"));
-    for (auto& processor : m_trackProcessors) {
+    for (auto& processor : m_trackProcessors.values()) {
         if (pad && pad != processor->pad())
             continue;
 
@@ -933,7 +933,7 @@ void GStreamerMediaEndpoint::getStats(RTCRtpReceiver& receiver, Ref<DeferredProm
         // The incoming source bin is not linked yet, so look for a matching upstream track processor.
         GstPad* pad = nullptr;
         const auto& trackId = receiver.track().id();
-        for (auto& processor : m_trackProcessors) {
+        for (auto& processor : m_trackProcessors.values()) {
             if (processor->trackId() != trackId)
                 continue;
             pad = processor->pad();
@@ -1017,13 +1017,12 @@ void GStreamerMediaEndpoint::connectIncomingTrack(WebRTCTrackData& data)
     auto& mediaStream = mediaStreamFromRTCStream(data.mediaStreamId);
     mediaStream.addTrackFromPlatform(track);
 
-    for (auto& processor : m_trackProcessors) {
+    for (auto& processor : m_trackProcessors.values()) {
         if (!processor->isReady())
             return;
     }
 
     GST_DEBUG_OBJECT(m_pipeline.get(), "Incoming streams gathered, now dispatching track events");
-    m_pendingIncomingStreams = 0;
     m_peerConnectionBackend.dispatchPendingTrackEvents(mediaStream);
     gst_element_set_state(m_pipeline.get(), GST_STATE_PLAYING);
 
@@ -1035,9 +1034,12 @@ void GStreamerMediaEndpoint::connectIncomingTrack(WebRTCTrackData& data)
 
 void GStreamerMediaEndpoint::connectPad(GstPad* pad)
 {
-    m_pendingIncomingStreams++;
+    GRefPtr<GstWebRTCRTPTransceiver> transceiver;
+    g_object_get(pad, "transceiver", &transceiver.outPtr(), nullptr);
 
-    auto trackProcessor = GStreamerIncomingTrackProcessor::create(ThreadSafeWeakPtr { *this }, GRefPtr<GstPad>(pad));
+    auto trackProcessor = m_trackProcessors.get(transceiver);
+    trackProcessor->configure(ThreadSafeWeakPtr { *this }, GRefPtr<GstPad>(pad));
+
     auto bin = trackProcessor->bin();
     gst_bin_add(GST_BIN_CAST(m_pipeline.get()), bin);
 
@@ -1045,7 +1047,6 @@ void GStreamerMediaEndpoint::connectPad(GstPad* pad)
     gst_pad_link(pad, sinkPad.get());
     gst_element_sync_state_with_parent(bin);
 
-    m_trackProcessors.append(WTFMove(trackProcessor));
 #ifndef GST_DISABLE_GST_DEBUG
     auto dotFileName = makeString(GST_OBJECT_NAME(m_pipeline.get()), ".pending-"_s, GST_OBJECT_NAME(pad));
     GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(m_pipeline.get()), GST_DEBUG_GRAPH_SHOW_ALL, dotFileName.utf8().data());
@@ -1585,6 +1586,9 @@ void GStreamerMediaEndpoint::collectTransceivers()
 
     for (unsigned i = 0; i < transceivers->len; i++) {
         auto current = adoptGRef(g_array_index(transceivers, GstWebRTCRTPTransceiver*, i));
+        m_trackProcessors.ensure(GRefPtr(current), [] {
+            return GStreamerIncomingTrackProcessor::create();
+        });
         auto* existingTransceiver = m_peerConnectionBackend.existingTransceiver([&](auto& transceiverBackend) {
             return current == transceiverBackend.rtcTransceiver();
         });
