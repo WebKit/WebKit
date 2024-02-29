@@ -223,11 +223,11 @@ TEST(IPCTestingAPI, CanSendInvalidSyncMessageToUIProcessWithoutTermination)
 
     done = false;
     [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><script>"
-        "IPC.sendSyncMessage('UI', IPC.webPageProxyID, IPC.messages.WebPageProxy_RunJavaScriptAlert.name, 100, [{type: 'FrameID', value: IPC.frameID}]);"
-        "alert('hi')</script>"];
+        "try{IPC.sendSyncMessage('UI', IPC.webPageProxyID, IPC.messages.WebPageProxy_RunJavaScriptAlert.name, 100, [{type: 'FrameID', value: IPC.frameID}]);}catch(e){alert(e.message)}"
+        "</script>"];
     TestWebKitAPI::Util::run(&done);
 
-    EXPECT_STREQ([alertMessage UTF8String], "hi");
+    EXPECT_STREQ([alertMessage UTF8String], "Failed to successfully deserialize the message");
 }
 
 #if ENABLE(GPU_PROCESS)
