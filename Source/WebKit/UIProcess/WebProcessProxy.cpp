@@ -772,8 +772,8 @@ bool WebProcessProxy::shouldTakeNearSuspendedAssertion() const
 #if USE(RUNNINGBOARD)
     if (m_pageMap.isEmpty()) {
         // The setting come from pages but this process has no page, we thus use the default
-        // setting value, which is true.
-        return true;
+        // setting value.
+        return defaultShouldTakeNearSuspendedAssertion();
     }
 
     for (auto& page : m_pageMap.values()) {
