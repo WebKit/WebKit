@@ -6584,6 +6584,16 @@
    },
    {
       "emails" : [
+         "robinm@apple.com"
+      ],
+      "github" : "codeofrobin",
+      "name" : "Robin Malhotra",
+      "nicks" : [
+         "robinm"
+      ]
+   },
+   {
+      "emails" : [
          "rmorisset@apple.com",
          "robin.morisset@normalesup.org"
       ],
