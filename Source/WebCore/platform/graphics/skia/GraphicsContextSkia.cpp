@@ -41,6 +41,7 @@
 #include <skia/core/SkPath.h>
 #include <skia/core/SkPathEffect.h>
 #include <skia/core/SkPathTypes.h>
+#include <skia/core/SkPoint3.h>
 #include <skia/core/SkRRect.h>
 #include <skia/core/SkRegion.h>
 #include <skia/core/SkTileMode.h>
@@ -345,25 +346,46 @@ void GraphicsContextSkia::strokePath(const Path& path)
 
 sk_sp<SkImageFilter> GraphicsContextSkia::createDropShadowFilterIfNeeded(ShadowStyle shadowStyle) const
 {
-    // FIXME: this does not handle state.shadowsIgnoreTransforms()
-
     if (!hasDropShadow())
         return nullptr;
 
     const auto& shadow = dropShadow();
     ASSERT(shadow);
 
-    const FloatSize& offset = shadow->offset;
+    auto offset = shadow->offset;
     const auto& shadowColor = shadow->color;
 
     if (!shadowColor.isVisible() || (!offset.width() && !offset.height() && !shadow->radius))
         return nullptr;
 
     const auto& state = this->state();
-    const auto sigma = shadow->radius / 2.0;
+    auto sigma = shadow->radius / 2.0;
 
     switch (shadowStyle) {
     case ShadowStyle::Outset:
+        if (state.shadowsIgnoreTransforms()) {
+            // When state.shadowsIgnoreTransforms() is true, the offset is in
+            // natural orientation for the Y axis, like CG. Convert that back to
+            // the Skia coordinate system.
+            offset.scale(1.0, -1.0);
+
+            // Fast path: identity CTM doesn't need the transform compensation
+            AffineTransform ctm = getCTM(GraphicsContext::IncludeDeviceScale::PossiblyIncludeDeviceScale);
+            if (ctm.isIdentity())
+                return SkImageFilters::DropShadow(offset.width(), offset.height(), sigma, sigma, shadowColor.colorWithAlphaMultipliedBy(state.alpha()), nullptr);
+
+            // Ignoring the CTM is practically equal as applying the inverse of
+            // the CTM when post-processing the drop shadow.
+            if (const std::optional<SkMatrix>& inverse = ctm.inverse()) {
+                SkPoint3 p = SkPoint3::Make(offset.width(), offset.height(), 0);
+                inverse->mapHomogeneousPoints(&p, &p, 1);
+                sigma = inverse->mapRadius(sigma);
+                return SkImageFilters::DropShadow(p.x(), p.y(), sigma, sigma, shadowColor.colorWithAlphaMultipliedBy(state.alpha()), nullptr);
+            }
+
+            return nullptr;
+        }
+
         return SkImageFilters::DropShadow(offset.width(), offset.height(), sigma, sigma, shadowColor.colorWithAlphaMultipliedBy(state.alpha()), nullptr);
     case ShadowStyle::Inset: {
         auto dropShadow = SkImageFilters::DropShadowOnly(offset.width(), offset.height(), sigma, sigma, SK_ColorBLACK, nullptr);
