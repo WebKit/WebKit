@@ -72,7 +72,7 @@ function archiveLink(suite, data)
 function elapsed(data)
 {
     if (data.time)
-        return `Took ${data.time / 1000} seconds`;
+        return `Took ${elapsedTime(data.time / 1000)}`;
     if (data.stats && data.stats.start_time && data.stats.end_time)
         return `Suite took ${elapsedTime(data.stats.start_time, data.stats.end_time)}`;
     return '';
