@@ -26,6 +26,8 @@
 .content-view.audit-test-case {
     display: flex;
     flex-direction: column;
+    height: 100%;
+    overflow: hidden;
 
     > header {
         flex-shrink: 0;

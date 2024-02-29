@@ -296,11 +296,11 @@ void InspectorCSSAgent::reset()
     m_nodesWithPendingLayoutFlagsChange.clear();
     if (m_nodesWithPendingLayoutFlagsChangeDispatchTimer.isActive())
         m_nodesWithPendingLayoutFlagsChangeDispatchTimer.stop();
-    m_layoutContextTypeChangedMode = Inspector::Protocol::CSS::LayoutContextTypeChangedMode::Observed;
+    m_layoutContextTypeChangedMode = Protocol::CSS::LayoutContextTypeChangedMode::Observed;
     resetPseudoStates();
 }
 
-Inspector::Protocol::ErrorStringOr<void> InspectorCSSAgent::enable()
+Protocol::ErrorStringOr<void> InspectorCSSAgent::enable()
 {
     if (m_instrumentingAgents.enabledCSSAgent() == this)
         return { };
@@ -315,7 +315,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorCSSAgent::enable()
     return { };
 }
 
-Inspector::Protocol::ErrorStringOr<void> InspectorCSSAgent::disable()
+Protocol::ErrorStringOr<void> InspectorCSSAgent::disable()
 {
     m_instrumentingAgents.setEnabledCSSAgent(nullptr);
 
@@ -379,7 +379,7 @@ void InspectorCSSAgent::setActiveStyleSheetsForDocument(Document& document, Vect
     }
 }
 
-bool InspectorCSSAgent::forcePseudoState(const Element& element, CSSSelector::PseudoClass pseudoClass)
+bool InspectorCSSAgent::forcePseudoState(const Element& element, CSSSelector::PseudoClassType pseudoClassType)
 {
     if (m_nodeIdToForcedPseudoState.isEmpty())
         return false;
@@ -392,56 +392,42 @@ bool InspectorCSSAgent::forcePseudoState(const Element& element, CSSSelector::Ps
     if (!nodeId)
         return false;
 
-    return m_nodeIdToForcedPseudoState.get(nodeId).contains(pseudoClass);
+    return m_nodeIdToForcedPseudoState.get(nodeId).contains(pseudoClassType);
 }
 
-std::optional<Inspector::Protocol::CSS::PseudoId> InspectorCSSAgent::protocolValueForPseudoId(PseudoId pseudoId)
+std::optional<Protocol::CSS::PseudoId> InspectorCSSAgent::protocolValueForPseudoId(PseudoId pseudoId)
 {
     switch (pseudoId) {
     case PseudoId::FirstLine:
-        return Inspector::Protocol::CSS::PseudoId::FirstLine;
+        return Protocol::CSS::PseudoId::FirstLine;
     case PseudoId::FirstLetter:
-        return Inspector::Protocol::CSS::PseudoId::FirstLetter;
-    case PseudoId::GrammarError:
-        return Inspector::Protocol::CSS::PseudoId::GrammarError;
+        return Protocol::CSS::PseudoId::FirstLetter;
     case PseudoId::Marker:
-        return Inspector::Protocol::CSS::PseudoId::Marker;
+        return Protocol::CSS::PseudoId::Marker;
     case PseudoId::Backdrop:
-        return Inspector::Protocol::CSS::PseudoId::Backdrop;
+        return Protocol::CSS::PseudoId::Backdrop;
     case PseudoId::Before:
-        return Inspector::Protocol::CSS::PseudoId::Before;
+        return Protocol::CSS::PseudoId::Before;
     case PseudoId::After:
-        return Inspector::Protocol::CSS::PseudoId::After;
+        return Protocol::CSS::PseudoId::After;
     case PseudoId::Selection:
-        return Inspector::Protocol::CSS::PseudoId::Selection;
+        return Protocol::CSS::PseudoId::Selection;
     case PseudoId::Highlight:
-        return Inspector::Protocol::CSS::PseudoId::Highlight;
-    case PseudoId::SpellingError:
-        return Inspector::Protocol::CSS::PseudoId::SpellingError;
-    case PseudoId::ViewTransition:
-        return Inspector::Protocol::CSS::PseudoId::ViewTransition;
-    case PseudoId::ViewTransitionGroup:
-        return Inspector::Protocol::CSS::PseudoId::ViewTransitionGroup;
-    case PseudoId::ViewTransitionImagePair:
-        return Inspector::Protocol::CSS::PseudoId::ViewTransitionImagePair;
-    case PseudoId::ViewTransitionOld:
-        return Inspector::Protocol::CSS::PseudoId::ViewTransitionOld;
-    case PseudoId::ViewTransitionNew:
-        return Inspector::Protocol::CSS::PseudoId::ViewTransitionNew;
-    case PseudoId::WebKitResizer:
-        return Inspector::Protocol::CSS::PseudoId::WebKitResizer;
-    case PseudoId::WebKitScrollbar:
-        return Inspector::Protocol::CSS::PseudoId::WebKitScrollbar;
-    case PseudoId::WebKitScrollbarThumb:
-        return Inspector::Protocol::CSS::PseudoId::WebKitScrollbarThumb;
-    case PseudoId::WebKitScrollbarButton:
-        return Inspector::Protocol::CSS::PseudoId::WebKitScrollbarButton;
-    case PseudoId::WebKitScrollbarTrack:
-        return Inspector::Protocol::CSS::PseudoId::WebKitScrollbarTrack;
-    case PseudoId::WebKitScrollbarTrackPiece:
-        return Inspector::Protocol::CSS::PseudoId::WebKitScrollbarTrackPiece;
-    case PseudoId::WebKitScrollbarCorner:
-        return Inspector::Protocol::CSS::PseudoId::WebKitScrollbarCorner;
+        return Protocol::CSS::PseudoId::Highlight;
+    case PseudoId::Scrollbar:
+        return Protocol::CSS::PseudoId::Scrollbar;
+    case PseudoId::ScrollbarThumb:
+        return Protocol::CSS::PseudoId::ScrollbarThumb;
+    case PseudoId::ScrollbarButton:
+        return Protocol::CSS::PseudoId::ScrollbarButton;
+    case PseudoId::ScrollbarTrack:
+        return Protocol::CSS::PseudoId::ScrollbarTrack;
+    case PseudoId::ScrollbarTrackPiece:
+        return Protocol::CSS::PseudoId::ScrollbarTrackPiece;
+    case PseudoId::ScrollbarCorner:
+        return Protocol::CSS::PseudoId::ScrollbarCorner;
+    case PseudoId::Resizer:
+        return Protocol::CSS::PseudoId::Resizer;
 
     default:
         ASSERT_NOT_REACHED();
@@ -449,9 +435,9 @@ std::optional<Inspector::Protocol::CSS::PseudoId> InspectorCSSAgent::protocolVal
     }
 }
 
-Inspector::Protocol::ErrorStringOr<std::tuple<RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::RuleMatch>>, RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::PseudoIdMatches>>, RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::InheritedStyleEntry>>>> InspectorCSSAgent::getMatchedStylesForNode(Inspector::Protocol::DOM::NodeId nodeId, std::optional<bool>&& includePseudo, std::optional<bool>&& includeInherited)
+Protocol::ErrorStringOr<std::tuple<RefPtr<JSON::ArrayOf<Protocol::CSS::RuleMatch>>, RefPtr<JSON::ArrayOf<Protocol::CSS::PseudoIdMatches>>, RefPtr<JSON::ArrayOf<Protocol::CSS::InheritedStyleEntry>>>> InspectorCSSAgent::getMatchedStylesForNode(Protocol::DOM::NodeId nodeId, std::optional<bool>&& includePseudo, std::optional<bool>&& includeInherited)
 {
-    Inspector::Protocol::ErrorString errorString;
+    Protocol::ErrorString errorString;
 
     Element* element = elementForId(errorString, nodeId);
     if (!element)
@@ -461,7 +447,7 @@ Inspector::Protocol::ErrorStringOr<std::tuple<RefPtr<JSON::ArrayOf<Inspector::Pr
         return makeUnexpected("Element for given nodeId was not connected to DOM tree."_s);
 
     Element* originalElement = element;
-    auto elementPseudoId = element->pseudoId();
+    PseudoId elementPseudoId = element->pseudoId();
     if (elementPseudoId != PseudoId::None) {
         element = downcast<PseudoElement>(*element).hostElement();
         if (!element)
@@ -470,14 +456,14 @@ Inspector::Protocol::ErrorStringOr<std::tuple<RefPtr<JSON::ArrayOf<Inspector::Pr
 
     // Matched rules.
     auto& styleResolver = element->styleResolver();
-    auto matchedRules = styleResolver.pseudoStyleRulesForElement(element, elementPseudoId == PseudoId::None ? std::nullopt : std::optional(Style::PseudoElementIdentifier { elementPseudoId }), Style::Resolver::AllCSSRules);
+    auto matchedRules = styleResolver.pseudoStyleRulesForElement(element, elementPseudoId, Style::Resolver::AllCSSRules);
     auto matchedCSSRules = buildArrayForMatchedRuleList(matchedRules, styleResolver, *element, elementPseudoId);
-    RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::PseudoIdMatches>> pseudoElements;
-    RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::InheritedStyleEntry>> inherited;
+    RefPtr<JSON::ArrayOf<Protocol::CSS::PseudoIdMatches>> pseudoElements;
+    RefPtr<JSON::ArrayOf<Protocol::CSS::InheritedStyleEntry>> inherited;
 
     if (!originalElement->isPseudoElement()) {
         if (!includePseudo || *includePseudo) {
-            pseudoElements = JSON::ArrayOf<Inspector::Protocol::CSS::PseudoIdMatches>::create();
+            pseudoElements = JSON::ArrayOf<Protocol::CSS::PseudoIdMatches>::create();
             for (PseudoId pseudoId = PseudoId::FirstPublicPseudoId; pseudoId < PseudoId::AfterLastInternalPseudoId; pseudoId = static_cast<PseudoId>(static_cast<unsigned>(pseudoId) + 1)) {
                 // `*::marker` selectors are only applicable to elements with `display: list-item`.
                 if (pseudoId == PseudoId::Marker && element->computedStyle()->display() != DisplayType::ListItem)
@@ -489,7 +475,7 @@ Inspector::Protocol::ErrorStringOr<std::tuple<RefPtr<JSON::ArrayOf<Inspector::Pr
                 if (auto protocolPseudoId = protocolValueForPseudoId(pseudoId)) {
                     auto matchedRules = styleResolver.pseudoStyleRulesForElement(element, pseudoId, Style::Resolver::AllCSSRules);
                     if (!matchedRules.isEmpty()) {
-                        auto matches = Inspector::Protocol::CSS::PseudoIdMatches::create()
+                        auto matches = Protocol::CSS::PseudoIdMatches::create()
                             .setPseudoId(protocolPseudoId.value())
                             .setMatches(buildArrayForMatchedRuleList(matchedRules, styleResolver, *element, pseudoId))
                             .release();
@@ -500,15 +486,15 @@ Inspector::Protocol::ErrorStringOr<std::tuple<RefPtr<JSON::ArrayOf<Inspector::Pr
         }
 
         if (!includeInherited || *includeInherited) {
-            inherited = JSON::ArrayOf<Inspector::Protocol::CSS::InheritedStyleEntry>::create();
+            inherited = JSON::ArrayOf<Protocol::CSS::InheritedStyleEntry>::create();
             for (auto& ancestor : ancestorsOfType<Element>(*element)) {
                 auto& parentStyleResolver = ancestor.styleResolver();
                 auto parentMatchedRules = parentStyleResolver.styleRulesForElement(&ancestor, Style::Resolver::AllCSSRules);
-                auto entry = Inspector::Protocol::CSS::InheritedStyleEntry::create()
+                auto entry = Protocol::CSS::InheritedStyleEntry::create()
                     .setMatchedCSSRules(buildArrayForMatchedRuleList(parentMatchedRules, styleResolver, ancestor, PseudoId::None))
                     .release();
-                if (RefPtr styledElement = dynamicDowncast<StyledElement>(ancestor); styledElement && styledElement->cssomStyle().length()) {
-                    auto& styleSheet = asInspectorStyleSheet(*styledElement);
+                if (is<StyledElement>(ancestor) && downcast<StyledElement>(ancestor).cssomStyle().length()) {
+                    auto& styleSheet = asInspectorStyleSheet(downcast<StyledElement>(ancestor));
                     entry->setInlineStyle(styleSheet.buildObjectForStyle(styleSheet.styleForId(InspectorCSSId(styleSheet.id(), 0))));
                 }
                 inherited->addItem(WTFMove(entry));
@@ -519,25 +505,25 @@ Inspector::Protocol::ErrorStringOr<std::tuple<RefPtr<JSON::ArrayOf<Inspector::Pr
     return { { WTFMove(matchedCSSRules), WTFMove(pseudoElements), WTFMove(inherited) } };
 }
 
-Inspector::Protocol::ErrorStringOr<std::tuple<RefPtr<Inspector::Protocol::CSS::CSSStyle> /* inlineStyle */, RefPtr<Inspector::Protocol::CSS::CSSStyle> /* attributesStyle */>> InspectorCSSAgent::getInlineStylesForNode(Inspector::Protocol::DOM::NodeId nodeId)
+Protocol::ErrorStringOr<std::tuple<RefPtr<Protocol::CSS::CSSStyle> /* inlineStyle */, RefPtr<Protocol::CSS::CSSStyle> /* attributesStyle */>> InspectorCSSAgent::getInlineStylesForNode(Protocol::DOM::NodeId nodeId)
 {
-    Inspector::Protocol::ErrorString errorString;
+    Protocol::ErrorString errorString;
 
     auto* element = elementForId(errorString, nodeId);
     if (!element)
         return makeUnexpected(errorString);
 
-    RefPtr styledElement = dynamicDowncast<StyledElement>(*element);
-    if (!styledElement)
+    if (!is<StyledElement>(element))
         return { { nullptr, nullptr } };
 
-    auto& styleSheet = asInspectorStyleSheet(*styledElement);
-    return { { styleSheet.buildObjectForStyle(&styledElement->cssomStyle()), buildObjectForAttributesStyle(*styledElement) } };
+    auto& styledElement = downcast<StyledElement>(*element);
+    auto& styleSheet = asInspectorStyleSheet(styledElement);
+    return { { styleSheet.buildObjectForStyle(&styledElement.cssomStyle()), buildObjectForAttributesStyle(styledElement) } };
 }
 
-Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::CSS::CSSComputedStyleProperty>>> InspectorCSSAgent::getComputedStyleForNode(Inspector::Protocol::DOM::NodeId nodeId)
+Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::CSS::CSSComputedStyleProperty>>> InspectorCSSAgent::getComputedStyleForNode(Protocol::DOM::NodeId nodeId)
 {
-    Inspector::Protocol::ErrorString errorString;
+    Protocol::ErrorString errorString;
 
     auto* element = elementForId(errorString, nodeId);
     if (!element)
@@ -546,18 +532,18 @@ Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::CSS::C
     if (!element->isConnected())
         return makeUnexpected("Element for given nodeId was not connected to DOM tree."_s);
 
-    auto computedStyleInfo = CSSComputedStyleDeclaration::create(*element, CSSComputedStyleDeclaration::AllowVisited::Yes);
+    auto computedStyleInfo = CSSComputedStyleDeclaration::create(*element, true);
     auto inspectorStyle = InspectorStyle::create(InspectorCSSId(), WTFMove(computedStyleInfo), nullptr);
     return inspectorStyle->buildArrayForComputedStyle();
 }
 
-static Ref<Inspector::Protocol::CSS::Font> buildObjectForFont(const Font& font)
+static Ref<Protocol::CSS::Font> buildObjectForFont(const Font& font)
 {
     auto& fontPlatformData = font.platformData();
     
-    auto resultVariationAxes = JSON::ArrayOf<Inspector::Protocol::CSS::FontVariationAxis>::create();
+    auto resultVariationAxes = JSON::ArrayOf<Protocol::CSS::FontVariationAxis>::create();
     for (auto& variationAxis : fontPlatformData.variationAxes(ShouldLocalizeAxisNames::Yes)) {
-        auto axis = Inspector::Protocol::CSS::FontVariationAxis::create()
+        auto axis = Protocol::CSS::FontVariationAxis::create()
             .setTag(variationAxis.tag())
             .setMinimumValue(variationAxis.minimumValue())
             .setMaximumValue(variationAxis.maximumValue())
@@ -570,7 +556,7 @@ static Ref<Inspector::Protocol::CSS::Font> buildObjectForFont(const Font& font)
         resultVariationAxes->addItem(WTFMove(axis));
     }
 
-    auto protocolFont = Inspector::Protocol::CSS::Font::create()
+    auto protocolFont = Protocol::CSS::Font::create()
         .setDisplayName(font.platformData().familyName())
         .setVariationAxes(WTFMove(resultVariationAxes))
         .release();
@@ -581,9 +567,9 @@ static Ref<Inspector::Protocol::CSS::Font> buildObjectForFont(const Font& font)
     return protocolFont;
 }
 
-Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::CSS::Font>> InspectorCSSAgent::getFontDataForNode(Inspector::Protocol::DOM::NodeId nodeId)
+Protocol::ErrorStringOr<Ref<Protocol::CSS::Font>> InspectorCSSAgent::getFontDataForNode(Protocol::DOM::NodeId nodeId)
 {
-    Inspector::Protocol::ErrorString errorString;
+    Protocol::ErrorString errorString;
     auto* node = nodeForId(errorString, nodeId);
     if (!node)
         return makeUnexpected(errorString);
@@ -595,9 +581,9 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::CSS::Font>> Inspecto
     return buildObjectForFont(computedStyle->fontCascade().primaryFont());
 }
 
-Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::CSS::CSSStyleSheetHeader>>> InspectorCSSAgent::getAllStyleSheets()
+Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::CSS::CSSStyleSheetHeader>>> InspectorCSSAgent::getAllStyleSheets()
 {
-    auto headers = JSON::ArrayOf<Inspector::Protocol::CSS::CSSStyleSheetHeader>::create();
+    auto headers = JSON::ArrayOf<Protocol::CSS::CSSStyleSheetHeader>::create();
 
     Vector<InspectorStyleSheet*> inspectorStyleSheets;
     collectAllStyleSheets(inspectorStyleSheets);
@@ -640,9 +626,9 @@ void InspectorCSSAgent::collectStyleSheets(CSSStyleSheet* styleSheet, Vector<CSS
     }
 }
 
-Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::CSS::CSSStyleSheetBody>> InspectorCSSAgent::getStyleSheet(const Inspector::Protocol::CSS::StyleSheetId& styleSheetId)
+Protocol::ErrorStringOr<Ref<Protocol::CSS::CSSStyleSheetBody>> InspectorCSSAgent::getStyleSheet(const Protocol::CSS::StyleSheetId& styleSheetId)
 {
-    Inspector::Protocol::ErrorString errorString;
+    Protocol::ErrorString errorString;
 
     InspectorStyleSheet* inspectorStyleSheet = assertStyleSheetForId(errorString, styleSheetId);
     if (!inspectorStyleSheet)
@@ -655,9 +641,9 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::CSS::CSSStyleSheetBo
     return styleSheet.releaseNonNull();
 }
 
-Inspector::Protocol::ErrorStringOr<String> InspectorCSSAgent::getStyleSheetText(const Inspector::Protocol::CSS::StyleSheetId& styleSheetId)
+Protocol::ErrorStringOr<String> InspectorCSSAgent::getStyleSheetText(const Protocol::CSS::StyleSheetId& styleSheetId)
 {
-    Inspector::Protocol::ErrorString errorString;
+    Protocol::ErrorString errorString;
 
     InspectorStyleSheet* inspectorStyleSheet = assertStyleSheetForId(errorString, styleSheetId);
     if (!inspectorStyleSheet)
@@ -670,9 +656,9 @@ Inspector::Protocol::ErrorStringOr<String> InspectorCSSAgent::getStyleSheetText(
     return text.releaseReturnValue();
 }
 
-Inspector::Protocol::ErrorStringOr<void> InspectorCSSAgent::setStyleSheetText(const Inspector::Protocol::CSS::StyleSheetId& styleSheetId, const String& text)
+Protocol::ErrorStringOr<void> InspectorCSSAgent::setStyleSheetText(const Protocol::CSS::StyleSheetId& styleSheetId, const String& text)
 {
-    Inspector::Protocol::ErrorString errorString;
+    Protocol::ErrorString errorString;
 
     InspectorStyleSheet* inspectorStyleSheet = assertStyleSheetForId(errorString, styleSheetId);
     if (!inspectorStyleSheet)
@@ -689,9 +675,9 @@ Inspector::Protocol::ErrorStringOr<void> InspectorCSSAgent::setStyleSheetText(co
     return { };
 }
 
-Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::CSS::CSSStyle>> InspectorCSSAgent::setStyleText(Ref<JSON::Object>&& styleId, const String& text)
+Protocol::ErrorStringOr<Ref<Protocol::CSS::CSSStyle>> InspectorCSSAgent::setStyleText(Ref<JSON::Object>&& styleId, const String& text)
 {
-    Inspector::Protocol::ErrorString errorString;
+    Protocol::ErrorString errorString;
 
     InspectorCSSId compoundId(styleId);
     ASSERT(!compoundId.isEmpty());
@@ -711,9 +697,9 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::CSS::CSSStyle>> Insp
     return inspectorStyleSheet->buildObjectForStyle(inspectorStyleSheet->styleForId(compoundId));
 }
 
-Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::CSS::CSSRule>> InspectorCSSAgent::setRuleSelector(Ref<JSON::Object>&& ruleId, const String& selector)
+Protocol::ErrorStringOr<Ref<Protocol::CSS::CSSRule>> InspectorCSSAgent::setRuleSelector(Ref<JSON::Object>&& ruleId, const String& selector)
 {
-    Inspector::Protocol::ErrorString errorString;
+    Protocol::ErrorString errorString;
 
     InspectorCSSId compoundId(ruleId);
     ASSERT(!compoundId.isEmpty());
@@ -737,9 +723,9 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::CSS::CSSRule>> Inspe
     return rule.releaseNonNull();
 }
 
-Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::CSS::Grouping>> InspectorCSSAgent::setGroupingHeaderText(Ref<JSON::Object>&& ruleId, const String& headerText)
+Protocol::ErrorStringOr<Ref<Protocol::CSS::Grouping>> InspectorCSSAgent::setGroupingHeaderText(Ref<JSON::Object>&& ruleId, const String& headerText)
 {
-    Inspector::Protocol::ErrorString errorString;
+    Protocol::ErrorString errorString;
 
     InspectorCSSId compoundId(WTFMove(ruleId));
     ASSERT(!compoundId.isEmpty());
@@ -764,9 +750,9 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::CSS::Grouping>> Insp
 }
 
 
-Inspector::Protocol::ErrorStringOr<Inspector::Protocol::CSS::StyleSheetId> InspectorCSSAgent::createStyleSheet(const Inspector::Protocol::Network::FrameId& frameId)
+Protocol::ErrorStringOr<Protocol::CSS::StyleSheetId> InspectorCSSAgent::createStyleSheet(const Protocol::Network::FrameId& frameId)
 {
-    Inspector::Protocol::ErrorString errorString;
+    Protocol::ErrorString errorString;
 
     auto* pageAgent = m_instrumentingAgents.enabledPageAgent();
     if (!pageAgent)
@@ -828,9 +814,9 @@ InspectorStyleSheet* InspectorCSSAgent::createInspectorStyleSheetForDocument(Doc
     return inspectorStyleSheetsForDocument.last().get();
 }
 
-Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::CSS::CSSRule>> InspectorCSSAgent::addRule(const Inspector::Protocol::CSS::StyleSheetId& styleSheetId, const String& selector)
+Protocol::ErrorStringOr<Ref<Protocol::CSS::CSSRule>> InspectorCSSAgent::addRule(const Protocol::CSS::StyleSheetId& styleSheetId, const String& selector)
 {
-    Inspector::Protocol::ErrorString errorString;
+    Protocol::ErrorString errorString;
 
     InspectorStyleSheet* inspectorStyleSheet = assertStyleSheetForId(errorString, styleSheetId);
     if (!inspectorStyleSheet)
@@ -853,15 +839,15 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::CSS::CSSRule>> Inspe
     return rule.releaseNonNull();
 }
 
-Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::CSS::CSSPropertyInfo>>> InspectorCSSAgent::getSupportedCSSProperties()
+Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::CSS::CSSPropertyInfo>>> InspectorCSSAgent::getSupportedCSSProperties()
 {
-    auto cssProperties = JSON::ArrayOf<Inspector::Protocol::CSS::CSSPropertyInfo>::create();
+    auto cssProperties = JSON::ArrayOf<Protocol::CSS::CSSPropertyInfo>::create();
 
     for (auto propertyID : allCSSProperties()) {
         if (!isExposed(propertyID, &m_inspectedPage.settings()))
             continue;
 
-        auto property = Inspector::Protocol::CSS::CSSPropertyInfo::create()
+        auto property = Protocol::CSS::CSSPropertyInfo::create()
             .setName(nameString(propertyID))
             .release();
 
@@ -903,7 +889,7 @@ Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::CSS::C
     return cssProperties;
 }
 
-Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<String>>> InspectorCSSAgent::getSupportedSystemFontFamilyNames()
+Protocol::ErrorStringOr<Ref<JSON::ArrayOf<String>>> InspectorCSSAgent::getSupportedSystemFontFamilyNames()
 {
     auto fontFamilyNames = JSON::ArrayOf<String>::create();
 
@@ -914,9 +900,9 @@ Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<String>>> InspectorCSSAgent
     return fontFamilyNames;
 }
 
-Inspector::Protocol::ErrorStringOr<void> InspectorCSSAgent::forcePseudoState(Inspector::Protocol::DOM::NodeId nodeId, Ref<JSON::Array>&& forcedPseudoClasses)
+Protocol::ErrorStringOr<void> InspectorCSSAgent::forcePseudoState(Protocol::DOM::NodeId nodeId, Ref<JSON::Array>&& forcedPseudoClasses)
 {
-    Inspector::Protocol::ErrorString errorString;
+    Protocol::ErrorString errorString;
 
     auto* domAgent = m_instrumentingAgents.persistentDOMAgent();
     if (!domAgent)
@@ -932,37 +918,37 @@ Inspector::Protocol::ErrorStringOr<void> InspectorCSSAgent::forcePseudoState(Ins
         if (!pseudoClassString)
             return makeUnexpected("Unexpected non-string value in given forcedPseudoClasses"_s);
 
-        auto pseudoClass = Inspector::Protocol::Helpers::parseEnumValueFromString<Inspector::Protocol::CSS::ForceablePseudoClass>(pseudoClassString);
+        auto pseudoClass = Protocol::Helpers::parseEnumValueFromString<Protocol::CSS::ForceablePseudoClass>(pseudoClassString);
         if (!pseudoClass)
             return makeUnexpected(makeString("Unknown forcedPseudoClass: ", pseudoClassString));
 
         switch (*pseudoClass) {
-        case Inspector::Protocol::CSS::ForceablePseudoClass::Active:
-            forcedPseudoClassesToSet.add(CSSSelector::PseudoClass::Active);
+        case Protocol::CSS::ForceablePseudoClass::Active:
+            forcedPseudoClassesToSet.add(CSSSelector::PseudoClassType::Active);
             break;
 
-        case Inspector::Protocol::CSS::ForceablePseudoClass::Hover:
-            forcedPseudoClassesToSet.add(CSSSelector::PseudoClass::Hover);
+        case Protocol::CSS::ForceablePseudoClass::Hover:
+            forcedPseudoClassesToSet.add(CSSSelector::PseudoClassType::Hover);
             break;
 
-        case Inspector::Protocol::CSS::ForceablePseudoClass::Focus:
-            forcedPseudoClassesToSet.add(CSSSelector::PseudoClass::Focus);
+        case Protocol::CSS::ForceablePseudoClass::Focus:
+            forcedPseudoClassesToSet.add(CSSSelector::PseudoClassType::Focus);
             break;
 
-        case Inspector::Protocol::CSS::ForceablePseudoClass::FocusVisible:
-            forcedPseudoClassesToSet.add(CSSSelector::PseudoClass::FocusVisible);
+        case Protocol::CSS::ForceablePseudoClass::FocusVisible:
+            forcedPseudoClassesToSet.add(CSSSelector::PseudoClassType::FocusVisible);
             break;
 
-        case Inspector::Protocol::CSS::ForceablePseudoClass::FocusWithin:
-            forcedPseudoClassesToSet.add(CSSSelector::PseudoClass::FocusWithin);
+        case Protocol::CSS::ForceablePseudoClass::FocusWithin:
+            forcedPseudoClassesToSet.add(CSSSelector::PseudoClassType::FocusWithin);
             break;
 
-        case Inspector::Protocol::CSS::ForceablePseudoClass::Target:
-            forcedPseudoClassesToSet.add(CSSSelector::PseudoClass::Target);
+        case Protocol::CSS::ForceablePseudoClass::Target:
+            forcedPseudoClassesToSet.add(CSSSelector::PseudoClassType::Target);
             break;
 
-        case Inspector::Protocol::CSS::ForceablePseudoClass::Visited:
-            forcedPseudoClassesToSet.add(CSSSelector::PseudoClass::Visited);
+        case Protocol::CSS::ForceablePseudoClass::Visited:
+            forcedPseudoClassesToSet.add(CSSSelector::PseudoClassType::Visited);
             break;
         }
     }
@@ -1036,7 +1022,7 @@ OptionSet<InspectorCSSAgent::LayoutFlag> InspectorCSSAgent::layoutFlagsForNode(N
                 if (frameView->isScrollable())
                     layoutFlags.add(InspectorCSSAgent::LayoutFlag::Scrollable);
             }
-        } else if (CheckedPtr renderBox = dynamicDowncast<RenderBox>(*renderer); renderBox && renderBox->canBeScrolledAndHasScrollableArea())
+        } else if (is<RenderBox>(*renderer) && downcast<RenderBox>(*renderer).canBeScrolledAndHasScrollableArea())
             layoutFlags.add(InspectorCSSAgent::LayoutFlag::Scrollable);
     }
 
@@ -1049,26 +1035,26 @@ OptionSet<InspectorCSSAgent::LayoutFlag> InspectorCSSAgent::layoutFlagsForNode(N
     return layoutFlags;
 }
 
-static RefPtr<JSON::ArrayOf<String /* Inspector::Protocol::CSS::LayoutFlag */>> toProtocol(OptionSet<InspectorCSSAgent::LayoutFlag> layoutFlags)
+static RefPtr<JSON::ArrayOf<String /* Protocol::CSS::LayoutFlag */>> toProtocol(OptionSet<InspectorCSSAgent::LayoutFlag> layoutFlags)
 {
     if (layoutFlags.isEmpty())
         return nullptr;
 
-    auto protocolLayoutFlags = JSON::ArrayOf<String /* Inspector::Protocol::CSS::LayoutFlag */>::create();
+    auto protocolLayoutFlags = JSON::ArrayOf<String /* Protocol::CSS::LayoutFlag */>::create();
     if (layoutFlags.contains(InspectorCSSAgent::LayoutFlag::Rendered))
-        protocolLayoutFlags->addItem(Inspector::Protocol::Helpers::getEnumConstantValue(Inspector::Protocol::CSS::LayoutFlag::Rendered));
+        protocolLayoutFlags->addItem(Protocol::Helpers::getEnumConstantValue(Protocol::CSS::LayoutFlag::Rendered));
     if (layoutFlags.contains(InspectorCSSAgent::LayoutFlag::Scrollable))
-        protocolLayoutFlags->addItem(Inspector::Protocol::Helpers::getEnumConstantValue(Inspector::Protocol::CSS::LayoutFlag::Scrollable));
+        protocolLayoutFlags->addItem(Protocol::Helpers::getEnumConstantValue(Protocol::CSS::LayoutFlag::Scrollable));
     if (layoutFlags.contains(InspectorCSSAgent::LayoutFlag::Flex))
-        protocolLayoutFlags->addItem(Inspector::Protocol::Helpers::getEnumConstantValue(Inspector::Protocol::CSS::LayoutFlag::Flex));
+        protocolLayoutFlags->addItem(Protocol::Helpers::getEnumConstantValue(Protocol::CSS::LayoutFlag::Flex));
     if (layoutFlags.contains(InspectorCSSAgent::LayoutFlag::Grid))
-        protocolLayoutFlags->addItem(Inspector::Protocol::Helpers::getEnumConstantValue(Inspector::Protocol::CSS::LayoutFlag::Grid));
+        protocolLayoutFlags->addItem(Protocol::Helpers::getEnumConstantValue(Protocol::CSS::LayoutFlag::Grid));
     if (layoutFlags.contains(InspectorCSSAgent::LayoutFlag::Event))
-        protocolLayoutFlags->addItem(Inspector::Protocol::Helpers::getEnumConstantValue(Inspector::Protocol::CSS::LayoutFlag::Event));
+        protocolLayoutFlags->addItem(Protocol::Helpers::getEnumConstantValue(Protocol::CSS::LayoutFlag::Event));
     return protocolLayoutFlags;
 }
 
-RefPtr<JSON::ArrayOf<String /* Inspector::Protocol::CSS::LayoutFlag */>> InspectorCSSAgent::protocolLayoutFlagsForNode(Node& node)
+RefPtr<JSON::ArrayOf<String /* Protocol::CSS::LayoutFlag */>> InspectorCSSAgent::protocolLayoutFlagsForNode(Node& node)
 {
     auto layoutFlags = layoutFlagsForNode(node);
     if (!layoutFlags.isEmpty())
@@ -1085,14 +1071,14 @@ static void pushChildrenNodesToFrontendIfLayoutFlagIsRelevant(InspectorDOMAgent&
         domAgent.pushNodeToFrontend(&node);
 }
 
-Inspector::Protocol::ErrorStringOr<void> InspectorCSSAgent::setLayoutContextTypeChangedMode(Inspector::Protocol::CSS::LayoutContextTypeChangedMode mode)
+Protocol::ErrorStringOr<void> InspectorCSSAgent::setLayoutContextTypeChangedMode(Protocol::CSS::LayoutContextTypeChangedMode mode)
 {
     if (m_layoutContextTypeChangedMode == mode)
         return { };
     
     m_layoutContextTypeChangedMode = mode;
     
-    if (mode == Inspector::Protocol::CSS::LayoutContextTypeChangedMode::All) {
+    if (mode == Protocol::CSS::LayoutContextTypeChangedMode::All) {
         auto* domAgent = m_instrumentingAgents.persistentDOMAgent();
         if (!domAgent)
             return makeUnexpected("DOM domain must be enabled"_s);
@@ -1141,7 +1127,7 @@ void InspectorCSSAgent::nodesWithPendingLayoutFlagsChangeDispatchTimerFired()
 
         auto nodeId = domAgent->boundNodeId(&node);
         auto nodeWasPushedToFrontend = false;
-        if (!nodeId && m_layoutContextTypeChangedMode == Inspector::Protocol::CSS::LayoutContextTypeChangedMode::All && layoutFlagsContainLayoutContextType(layoutFlags)) {
+        if (!nodeId && m_layoutContextTypeChangedMode == Protocol::CSS::LayoutContextTypeChangedMode::All && layoutFlagsContainLayoutContextType(layoutFlags)) {
             // FIXME: <https://webkit.org/b/189687> Preserve DOM.NodeId if a node is removed and re-added
             nodeId = domAgent->identifierForNode(node);
             nodeWasPushedToFrontend = nodeId;
@@ -1159,13 +1145,13 @@ InspectorStyleSheetForInlineStyle& InspectorCSSAgent::asInspectorStyleSheet(Styl
 {
     return m_nodeToInspectorStyleSheet.ensure(&element, [this, &element] {
         String newStyleSheetId = String::number(m_lastStyleSheetId++);
-        auto inspectorStyleSheet = InspectorStyleSheetForInlineStyle::create(m_instrumentingAgents.enabledPageAgent(), newStyleSheetId, element, Inspector::Protocol::CSS::StyleSheetOrigin::Author, this);
+        auto inspectorStyleSheet = InspectorStyleSheetForInlineStyle::create(m_instrumentingAgents.enabledPageAgent(), newStyleSheetId, element, Protocol::CSS::StyleSheetOrigin::Author, this);
         m_idToInspectorStyleSheet.set(newStyleSheetId, inspectorStyleSheet.copyRef());
         return inspectorStyleSheet;
     }).iterator->value;
 }
 
-Element* InspectorCSSAgent::elementForId(Inspector::Protocol::ErrorString& errorString, Inspector::Protocol::DOM::NodeId nodeId)
+Element* InspectorCSSAgent::elementForId(Protocol::ErrorString& errorString, Protocol::DOM::NodeId nodeId)
 {
     auto* domAgent = m_instrumentingAgents.persistentDOMAgent();
     if (!domAgent) {
@@ -1176,7 +1162,7 @@ Element* InspectorCSSAgent::elementForId(Inspector::Protocol::ErrorString& error
     return domAgent->assertElement(errorString, nodeId);
 }
 
-Node* InspectorCSSAgent::nodeForId(Inspector::Protocol::ErrorString& errorString, Inspector::Protocol::DOM::NodeId nodeId)
+Node* InspectorCSSAgent::nodeForId(Protocol::ErrorString& errorString, Protocol::DOM::NodeId nodeId)
 {
     auto* domAgent = m_instrumentingAgents.persistentDOMAgent();
     if (!domAgent) {
@@ -1213,7 +1199,7 @@ InspectorStyleSheet* InspectorCSSAgent::bindStyleSheet(CSSStyleSheet* styleSheet
     return inspectorStyleSheet.get();
 }
 
-InspectorStyleSheet* InspectorCSSAgent::assertStyleSheetForId(Inspector::Protocol::ErrorString& errorString, const String& styleSheetId)
+InspectorStyleSheet* InspectorCSSAgent::assertStyleSheetForId(Protocol::ErrorString& errorString, const String& styleSheetId)
 {
     IdToInspectorStyleSheet::iterator it = m_idToInspectorStyleSheet.find(styleSheetId);
     if (it == m_idToInspectorStyleSheet.end()) {
@@ -1223,29 +1209,29 @@ InspectorStyleSheet* InspectorCSSAgent::assertStyleSheetForId(Inspector::Protoco
     return it->value.get();
 }
 
-Inspector::Protocol::CSS::StyleSheetOrigin InspectorCSSAgent::detectOrigin(CSSStyleSheet* pageStyleSheet, Document* ownerDocument)
+Protocol::CSS::StyleSheetOrigin InspectorCSSAgent::detectOrigin(CSSStyleSheet* pageStyleSheet, Document* ownerDocument)
 {
     if (m_creatingViaInspectorStyleSheet)
-        return Inspector::Protocol::CSS::StyleSheetOrigin::Inspector;
+        return Protocol::CSS::StyleSheetOrigin::Inspector;
 
     if (pageStyleSheet && !pageStyleSheet->ownerNode() && pageStyleSheet->href().isEmpty())
-        return Inspector::Protocol::CSS::StyleSheetOrigin::UserAgent;
+        return Protocol::CSS::StyleSheetOrigin::UserAgent;
 
     if (pageStyleSheet && pageStyleSheet->contents().isUserStyleSheet())
-        return Inspector::Protocol::CSS::StyleSheetOrigin::User;
+        return Protocol::CSS::StyleSheetOrigin::User;
 
     auto iterator = m_documentToInspectorStyleSheet.find(ownerDocument);
     if (iterator != m_documentToInspectorStyleSheet.end()) {
         for (auto& inspectorStyleSheet : iterator->value) {
             if (pageStyleSheet == inspectorStyleSheet->pageStyleSheet())
-                return Inspector::Protocol::CSS::StyleSheetOrigin::Inspector;
+                return Protocol::CSS::StyleSheetOrigin::Inspector;
         }
     }
 
-    return Inspector::Protocol::CSS::StyleSheetOrigin::Author;
+    return Protocol::CSS::StyleSheetOrigin::Author;
 }
 
-RefPtr<Inspector::Protocol::CSS::CSSRule> InspectorCSSAgent::buildObjectForRule(const StyleRule* styleRule, Style::Resolver& styleResolver, Element& element)
+RefPtr<Protocol::CSS::CSSRule> InspectorCSSAgent::buildObjectForRule(const StyleRule* styleRule, Style::Resolver& styleResolver, Element& element)
 {
     ASSERT(element.isConnected());
 
@@ -1254,8 +1240,7 @@ RefPtr<Inspector::Protocol::CSS::CSSRule> InspectorCSSAgent::buildObjectForRule(
 
     // StyleRules returned by Style::Resolver::styleRulesForElement lack parent pointers since that infomation is not cheaply available.
     // Since the inspector wants to walk the parent chain, we construct the full wrappers here.
-    if (auto* extensionStyleSheets = styleResolver.document().extensionStyleSheetsIfExists())
-        styleResolver.inspectorCSSOMWrappers().collectDocumentWrappers(*extensionStyleSheets);
+    styleResolver.inspectorCSSOMWrappers().collectDocumentWrappers(styleResolver.document().extensionStyleSheets());
     styleResolver.inspectorCSSOMWrappers().collectScopeWrappers(Style::Scope::forNode(element));
 
     // Possiblity of :host styles if this element has a shadow root.
@@ -1266,7 +1251,7 @@ RefPtr<Inspector::Protocol::CSS::CSSRule> InspectorCSSAgent::buildObjectForRule(
     return buildObjectForRule(cssomWrapper);
 }
 
-RefPtr<Inspector::Protocol::CSS::CSSRule> InspectorCSSAgent::buildObjectForRule(CSSStyleRule* rule)
+RefPtr<Protocol::CSS::CSSRule> InspectorCSSAgent::buildObjectForRule(CSSStyleRule* rule)
 {
     if (!rule)
         return nullptr;
@@ -1276,16 +1261,16 @@ RefPtr<Inspector::Protocol::CSS::CSSRule> InspectorCSSAgent::buildObjectForRule(
     return inspectorStyleSheet ? inspectorStyleSheet->buildObjectForRule(rule) : nullptr;
 }
 
-Ref<JSON::ArrayOf<Inspector::Protocol::CSS::RuleMatch>> InspectorCSSAgent::buildArrayForMatchedRuleList(const Vector<RefPtr<const StyleRule>>& matchedRules, Style::Resolver& styleResolver, Element& element, PseudoId pseudoId)
+Ref<JSON::ArrayOf<Protocol::CSS::RuleMatch>> InspectorCSSAgent::buildArrayForMatchedRuleList(const Vector<RefPtr<const StyleRule>>& matchedRules, Style::Resolver& styleResolver, Element& element, PseudoId pseudoId)
 {
-    auto result = JSON::ArrayOf<Inspector::Protocol::CSS::RuleMatch>::create();
+    auto result = JSON::ArrayOf<Protocol::CSS::RuleMatch>::create();
 
     SelectorChecker::CheckingContext context(SelectorChecker::Mode::CollectingRules);
     context.pseudoId = pseudoId != PseudoId::None ? pseudoId : element.pseudoId();
     SelectorChecker selectorChecker(element.document());
 
     for (auto& matchedRule : matchedRules) {
-        RefPtr<Inspector::Protocol::CSS::CSSRule> ruleObject = buildObjectForRule(matchedRule.get(), styleResolver, element);
+        RefPtr<Protocol::CSS::CSSRule> ruleObject = buildObjectForRule(matchedRule.get(), styleResolver, element);
         if (!ruleObject)
             continue;
 
@@ -1299,7 +1284,7 @@ Ref<JSON::ArrayOf<Inspector::Protocol::CSS::RuleMatch>> InspectorCSSAgent::build
             ++index;
         }
 
-        auto match = Inspector::Protocol::CSS::RuleMatch::create()
+        auto match = Protocol::CSS::RuleMatch::create()
             .setRule(ruleObject.releaseNonNull())
             .setMatchingSelectors(WTFMove(matchingSelectors))
             .release();
@@ -1309,7 +1294,7 @@ Ref<JSON::ArrayOf<Inspector::Protocol::CSS::RuleMatch>> InspectorCSSAgent::build
     return result;
 }
 
-RefPtr<Inspector::Protocol::CSS::CSSStyle> InspectorCSSAgent::buildObjectForAttributesStyle(StyledElement& element)
+RefPtr<Protocol::CSS::CSSStyle> InspectorCSSAgent::buildObjectForAttributesStyle(StyledElement& element)
 {
     auto* presentationalHintStyle = element.presentationalHintStyle();
     if (!presentationalHintStyle)
@@ -1321,7 +1306,7 @@ RefPtr<Inspector::Protocol::CSS::CSSStyle> InspectorCSSAgent::buildObjectForAttr
     return inspectorStyle->buildObjectForStyle();
 }
 
-void InspectorCSSAgent::didRemoveDOMNode(Node& node, Inspector::Protocol::DOM::NodeId nodeId)
+void InspectorCSSAgent::didRemoveDOMNode(Node& node, Protocol::DOM::NodeId nodeId)
 {
     // This can be called in response to GC.
     m_nodeIdToForcedPseudoState.remove(nodeId);
