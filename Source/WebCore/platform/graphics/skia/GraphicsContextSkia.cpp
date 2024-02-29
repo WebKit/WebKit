@@ -136,7 +136,9 @@ void GraphicsContextSkia::drawRect(const FloatRect& rect, float borderThickness)
 
     SkRegion region;
     region.setRects(rects, 4);
-    canvas().drawRegion(region, createStrokePaint());
+    SkPaint strokePaint = createStrokePaint();
+    strokePaint.setImageFilter(createDropShadowFilterIfNeeded(ShadowStyle::Outset));
+    canvas().drawRegion(region, strokePaint);
 }
 
 static SkBlendMode toSkiaBlendMode(CompositeOperator operation, BlendMode blendMode)
@@ -341,7 +343,9 @@ void GraphicsContextSkia::strokePath(const Path& path)
     if (!makeGLContextCurrentIfNeeded())
         return;
 
-    canvas().drawPath(*path.platformPath(), createStrokePaint());
+    SkPaint strokePaint = createStrokePaint();
+    strokePaint.setImageFilter(createDropShadowFilterIfNeeded(ShadowStyle::Outset));
+    canvas().drawPath(*path.platformPath(), strokePaint);
 }
 
 sk_sp<SkImageFilter> GraphicsContextSkia::createDropShadowFilterIfNeeded(ShadowStyle shadowStyle) const
@@ -642,6 +646,7 @@ void GraphicsContextSkia::strokeRect(const FloatRect& boundaries, float lineWidt
 
     auto strokePaint = createStrokePaint();
     strokePaint.setStrokeWidth(SkFloatToScalar(lineWidth));
+    strokePaint.setImageFilter(createDropShadowFilterIfNeeded(ShadowStyle::Outset));
     canvas().drawRect(boundaries, strokePaint);
 }
 
