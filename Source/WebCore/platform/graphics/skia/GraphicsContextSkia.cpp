@@ -238,19 +238,42 @@ void GraphicsContextSkia::drawNativeImageInternal(NativeImage& nativeImage, cons
         return;
 
     auto imageSize = nativeImage.size();
+    if (options.orientation().usesWidthAsHeight())
+        imageSize = imageSize.transposedSize();
     auto imageRect = FloatRect { { }, imageSize };
     auto normalizedSrcRect = normalizeRect(srcRect);
     if (!imageRect.intersects(normalizedSrcRect))
         return;
 
+    if (options.orientation().usesWidthAsHeight())
+        normalizedSrcRect = normalizedSrcRect.transposedRect();
+
     if (!makeGLContextCurrentIfNeeded())
         return;
 
     auto normalizedDestRect = normalizeRect(destRect);
+    if (options.orientation() != ImageOrientation::Orientation::None) {
+        canvas().save();
+
+        // ImageOrientation expects the origin to be at (0, 0).
+        canvas().translate(normalizedDestRect.x(), normalizedDestRect.y());
+        normalizedDestRect.setLocation(FloatPoint());
+        canvas().concat(options.orientation().transformFromDefault(normalizedDestRect.size()));
+
+        if (options.orientation().usesWidthAsHeight()) {
+            // The destination rectangle will have its width and height already reversed for the orientation of
+            // the image, as it was needed for page layout, so we need to reverse it back here.
+            normalizedDestRect.setSize(normalizedDestRect.size().transposedSize());
+        }
+    }
+
     SkPaint paint = createFillPaint();
     paint.setBlendMode(toSkiaBlendMode(options.compositeOperator(), options.blendMode()));
     paint.setImageFilter(createDropShadowFilterIfNeeded(ShadowStyle::Outset));
     canvas().drawImageRect(image, normalizedSrcRect, normalizedDestRect, toSkSamplingOptions(m_state.imageInterpolationQuality()), &paint, { });
+
+    if (options.orientation() != ImageOrientation::Orientation::None)
+        canvas().restore();
 }
 
 // This is only used to draw borders, so we should not draw shadows.
