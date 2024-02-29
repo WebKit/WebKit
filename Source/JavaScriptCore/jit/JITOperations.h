@@ -29,6 +29,7 @@
 
 #include "JITMathICForwards.h"
 #include "JITOperationValidation.h"
+#include "MegamorphicCache.h"
 #include "PrivateFieldPutKind.h"
 #include "UGPRPair.h"
 #include <wtf/Platform.h>
@@ -218,6 +219,8 @@ JSC_DECLARE_JIT_OPERATION(operationPutByIdSloppyOptimize, void, (EncodedJSValue 
 JSC_DECLARE_JIT_OPERATION(operationPutByIdSloppyMegamorphic, void, (EncodedJSValue encodedValue, EncodedJSValue encodedBase, JSGlobalObject*, StructureStubInfo*));
 JSC_DECLARE_JIT_OPERATION(operationPutByIdSloppyGaveUp, void, (EncodedJSValue encodedValue, EncodedJSValue encodedBase, JSGlobalObject*, StructureStubInfo*));
 JSC_DECLARE_JIT_OPERATION(operationPutByIdSloppyMegamorphicGeneric, void, (JSGlobalObject*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t));
+
+JSC_DECLARE_JIT_OPERATION(operationPutByMegamorphicReallocating, void, (VM*, JSObject*, EncodedJSValue encodedValue, const MegamorphicCache::StoreEntry*));
 
 JSC_DECLARE_JIT_OPERATION(operationPutByIdDirectStrictOptimize, void, (EncodedJSValue encodedValue, EncodedJSValue encodedBase, JSGlobalObject*, StructureStubInfo*));
 JSC_DECLARE_JIT_OPERATION(operationPutByIdDirectStrictGaveUp, void, (EncodedJSValue encodedValue, EncodedJSValue encodedBase, JSGlobalObject*, StructureStubInfo*));

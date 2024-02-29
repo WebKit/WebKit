@@ -897,6 +897,8 @@ bool AccessCase::doesCalls(VM& vm, Vector<JSCell*>* cellsToMarkIfDoesCalls) cons
     case ProxyObjectLoad:
     case ProxyObjectStore:
     case IndexedProxyObjectLoad:
+    case StoreMegamorphic:
+    case IndexedMegamorphicStore:
         doesCalls = true;
         break;
     case IntrinsicGetter: {
@@ -908,7 +910,6 @@ bool AccessCase::doesCalls(VM& vm, Vector<JSCell*>* cellsToMarkIfDoesCalls) cons
     case DeleteMiss:
     case Load:
     case LoadMegamorphic:
-    case StoreMegamorphic:
     case InMegamorphic:
     case Miss:
     case GetGetter:
@@ -925,7 +926,6 @@ bool AccessCase::doesCalls(VM& vm, Vector<JSCell*>* cellsToMarkIfDoesCalls) cons
     case InstanceOfMiss:
     case InstanceOfGeneric:
     case IndexedMegamorphicLoad:
-    case IndexedMegamorphicStore:
     case IndexedMegamorphicIn:
     case IndexedInt32Load:
     case IndexedDoubleLoad:

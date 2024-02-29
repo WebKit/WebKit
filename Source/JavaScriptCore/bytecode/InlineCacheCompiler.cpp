@@ -2200,19 +2200,33 @@ void InlineCacheCompiler::generateWithGuard(AccessCase& accessCase, CCallHelpers
         GPRReg scratch2GPR = allocator.allocateScratchGPR();
         GPRReg scratch3GPR = allocator.allocateScratchGPR();
 
-        ScratchRegisterAllocator::PreservedState preservedState = allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
+        ScratchRegisterAllocator::PreservedState preservedState = allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::SpaceForCCall);
 
-        auto slowCases = jit.storeMegamorphicProperty(vm, baseGPR, InvalidGPRReg, uid, valueRegs.payloadGPR(), scratchGPR, scratch2GPR, scratch3GPR);
+        auto [slow, reallocating] = jit.storeMegamorphicProperty(vm, baseGPR, InvalidGPRReg, uid, valueRegs.payloadGPR(), scratchGPR, scratch2GPR, scratch3GPR);
 
+        CCallHelpers::Label doneLabel = jit.label();
         allocator.restoreReusedRegistersByPopping(jit, preservedState);
         succeed();
 
         if (allocator.didReuseRegisters()) {
-            slowCases.link(&jit);
+            slow.link(&jit);
             allocator.restoreReusedRegistersByPopping(jit, preservedState);
             m_failAndRepatch.append(jit.jump());
         } else
-            m_failAndRepatch.append(slowCases);
+            m_failAndRepatch.append(slow);
+
+        reallocating.link(&jit);
+        {
+            // Handle the case where we are allocating out-of-line using an operation.
+            InlineCacheCompiler::SpillState spillState = preserveLiveRegistersToStackForCall();
+            jit.makeSpaceOnStackForCCall();
+            jit.setupArguments<decltype(operationPutByMegamorphicReallocating)>(CCallHelpers::TrustedImmPtr(&vm), baseGPR, valueRegs.payloadGPR(), scratch3GPR);
+            jit.prepareCallOperation(vm);
+            jit.callOperation<OperationPtrTag>(operationPutByMegamorphicReallocating);
+            jit.reclaimSpaceOnStackForCCall();
+            restoreLiveRegistersFromStackForCall(spillState, { });
+            jit.jump().linkTo(doneLabel, &jit);
+        }
 #endif
         return;
     }
@@ -2294,7 +2308,7 @@ void InlineCacheCompiler::generateWithGuard(AccessCase& accessCase, CCallHelpers
         GPRReg scratch3GPR = allocator.allocateScratchGPR();
         GPRReg scratch4GPR = allocator.allocateScratchGPR();
 
-        ScratchRegisterAllocator::PreservedState preservedState = allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
+        ScratchRegisterAllocator::PreservedState preservedState = allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::SpaceForCCall);
 
         CCallHelpers::JumpList notString;
         GPRReg propertyGPR = m_stubInfo->propertyGPR();
@@ -2307,8 +2321,10 @@ void InlineCacheCompiler::generateWithGuard(AccessCase& accessCase, CCallHelpers
         slowCases.append(jit.branchIfRopeStringImpl(scratch4GPR));
         slowCases.append(jit.branchTest32(CCallHelpers::Zero, CCallHelpers::Address(scratch4GPR, StringImpl::flagsOffset()), CCallHelpers::TrustedImm32(StringImpl::flagIsAtom())));
 
-        slowCases.append(jit.storeMegamorphicProperty(vm, baseGPR, scratch4GPR, nullptr, valueRegs.payloadGPR(), scratchGPR, scratch2GPR, scratch3GPR));
+        auto [slow, reallocating] = jit.storeMegamorphicProperty(vm, baseGPR, scratch4GPR, nullptr, valueRegs.payloadGPR(), scratchGPR, scratch2GPR, scratch3GPR);
+        slowCases.append(WTFMove(slow));
 
+        CCallHelpers::Label doneLabel = jit.label();
         allocator.restoreReusedRegistersByPopping(jit, preservedState);
         succeed();
 
@@ -2318,6 +2334,19 @@ void InlineCacheCompiler::generateWithGuard(AccessCase& accessCase, CCallHelpers
             m_failAndRepatch.append(jit.jump());
         } else
             m_failAndRepatch.append(slowCases);
+
+        reallocating.link(&jit);
+        {
+            // Handle the case where we are allocating out-of-line using an operation.
+            InlineCacheCompiler::SpillState spillState = preserveLiveRegistersToStackForCall();
+            jit.makeSpaceOnStackForCCall();
+            jit.setupArguments<decltype(operationPutByMegamorphicReallocating)>(CCallHelpers::TrustedImmPtr(&vm), baseGPR, valueRegs.payloadGPR(), scratch3GPR);
+            jit.prepareCallOperation(vm);
+            jit.callOperation<OperationPtrTag>(operationPutByMegamorphicReallocating);
+            jit.reclaimSpaceOnStackForCCall();
+            restoreLiveRegistersFromStackForCall(spillState, { });
+            jit.jump().linkTo(doneLabel, &jit);
+        }
 #endif
         return;
     }
@@ -3830,12 +3859,6 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
                     allAreSimpleReplaceOrTransition = false;
                     break;
                 }
-                if (accessCase->type() == AccessCase::Transition) {
-                    if (accessCase->newStructure()->outOfLineCapacity() != accessCase->structure()->outOfLineCapacity()) {
-                        allAreSimpleReplaceOrTransition = false;
-                        break;
-                    }
-                }
             }
 
             // Currently, we do not apply megamorphic cache for "length" property since Array#length and String#length are too common.
@@ -3873,12 +3896,6 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
                 if (!canUseMegamorphicPutFastPath(accessCase->structure())) {
                     allAreSimpleReplaceOrTransition = false;
                     break;
-                }
-                if (accessCase->type() == AccessCase::Transition) {
-                    if (accessCase->newStructure()->outOfLineCapacity() != accessCase->structure()->outOfLineCapacity()) {
-                        allAreSimpleReplaceOrTransition = false;
-                        break;
-                    }
                 }
             }
 
@@ -4350,7 +4367,6 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
     CodeBlock* owner = codeBlock;
     if (generatedMegamorphicCode && useHandlerIC()) {
         ASSERT(codeBlock->useDataIC());
-        ASSERT(!doesCalls);
         ASSERT(cellsToMark.isEmpty());
         owner = nullptr;
     }

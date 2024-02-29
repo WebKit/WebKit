@@ -98,14 +98,16 @@ public:
         static ptrdiff_t offsetOfNewStructureID() { return OBJECT_OFFSETOF(StoreEntry, m_newStructureID); }
         static ptrdiff_t offsetOfEpoch() { return OBJECT_OFFSETOF(StoreEntry, m_epoch); }
         static ptrdiff_t offsetOfOffset() { return OBJECT_OFFSETOF(StoreEntry, m_offset); }
+        static ptrdiff_t offsetOfReallocating() { return OBJECT_OFFSETOF(StoreEntry, m_reallocating); }
 
-        void init(StructureID oldStructureID, StructureID newStructureID, UniquedStringImpl* uid, uint16_t epoch, uint16_t offset)
+        void init(StructureID oldStructureID, StructureID newStructureID, UniquedStringImpl* uid, uint16_t epoch, uint16_t offset, bool reallocating)
         {
             m_uid = uid;
             m_oldStructureID = oldStructureID;
             m_newStructureID = newStructureID;
             m_epoch = epoch;
             m_offset = offset;
+            m_reallocating = reallocating;
         }
 
         RefPtr<UniquedStringImpl> m_uid;
@@ -113,6 +115,7 @@ public:
         StructureID m_newStructureID { };
         uint16_t m_epoch { invalidEpoch };
         uint16_t m_offset { 0 };
+        uint8_t m_reallocating { 0 };
     };
 
     struct HasEntry {
@@ -224,7 +227,7 @@ public:
         m_loadCachePrimaryEntries[primaryIndex].initAsHit(structureID, uid, m_epoch, holder, offset, ownProperty);
     }
 
-    void initAsTransition(StructureID oldStructureID, StructureID newStructureID, UniquedStringImpl* uid, uint16_t offset)
+    void initAsTransition(StructureID oldStructureID, StructureID newStructureID, UniquedStringImpl* uid, uint16_t offset, bool reallocating)
     {
         uint32_t primaryIndex = MegamorphicCache::storeCachePrimaryHash(oldStructureID, uid) & storeCachePrimaryMask;
         auto& entry = m_storeCachePrimaryEntries[primaryIndex];
@@ -232,7 +235,7 @@ public:
             uint32_t secondaryIndex = MegamorphicCache::storeCacheSecondaryHash(entry.m_oldStructureID, entry.m_uid.get()) & storeCacheSecondaryMask;
             m_storeCacheSecondaryEntries[secondaryIndex] = WTFMove(entry);
         }
-        m_storeCachePrimaryEntries[primaryIndex].init(oldStructureID, newStructureID, uid, m_epoch, offset);
+        m_storeCachePrimaryEntries[primaryIndex].init(oldStructureID, newStructureID, uid, m_epoch, offset, reallocating);
     }
 
     void initAsReplace(StructureID structureID, UniquedStringImpl* uid, uint16_t offset)
@@ -243,7 +246,7 @@ public:
             uint32_t secondaryIndex = MegamorphicCache::storeCacheSecondaryHash(entry.m_oldStructureID, entry.m_uid.get()) & storeCacheSecondaryMask;
             m_storeCacheSecondaryEntries[secondaryIndex] = WTFMove(entry);
         }
-        m_storeCachePrimaryEntries[primaryIndex].init(structureID, structureID, uid, m_epoch, offset);
+        m_storeCachePrimaryEntries[primaryIndex].init(structureID, structureID, uid, m_epoch, offset, false);
     }
 
     void initAsHasHit(StructureID structureID, UniquedStringImpl* uid)

@@ -1181,10 +1181,9 @@ ALWAYS_INLINE static void putByIdMegamorphic(JSGlobalObject* globalObject, VM& v
         return;
     }
 
-    if (newStructure->outOfLineCapacity() == oldStructure->outOfLineCapacity()) {
-        if (LIKELY(slot.cachedOffset() <= MegamorphicCache::maxOffset))
-            vm.megamorphicCache()->initAsTransition(StructureID::encode(oldStructure), StructureID::encode(newStructure), uid, slot.cachedOffset());
-    }
+    bool reallocating = newStructure->outOfLineCapacity() != oldStructure->outOfLineCapacity();
+    if (LIKELY(slot.cachedOffset() <= MegamorphicCache::maxOffset))
+        vm.megamorphicCache()->initAsTransition(StructureID::encode(oldStructure), StructureID::encode(newStructure), uid, slot.cachedOffset(), reallocating);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationPutByIdStrictMegamorphic, void, (EncodedJSValue encodedValue, EncodedJSValue encodedBase, JSGlobalObject* globalObject, StructureStubInfo* stubInfo))
@@ -1245,6 +1244,26 @@ JSC_DEFINE_JIT_OPERATION(operationPutByIdSloppyMegamorphicGeneric, void, (JSGlob
     CacheableIdentifier identifier = CacheableIdentifier::createFromRawBits(rawCacheableIdentifier);
 
     putByIdMegamorphic(globalObject, vm, callFrame, nullptr, baseValue, value, identifier, PutByKind::ByIdSloppy);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationPutByMegamorphicReallocating, void, (VM* vmPointer, JSObject* baseObject, EncodedJSValue encodedValue, const MegamorphicCache::StoreEntry* entry))
+{
+    constexpr bool verbose = false;
+    VM& vm = *vmPointer;
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+
+    Structure* oldStructure = baseObject->structure();
+    Structure* newStructure = entry->m_newStructureID.decode();
+    PropertyOffset offset = entry->m_offset;
+
+    ASSERT(oldStructure == entry->m_oldStructureID.decode());
+    Butterfly* newButterfly = baseObject->allocateMoreOutOfLineStorage(vm, oldStructure->outOfLineCapacity(), newStructure->outOfLineCapacity());
+    baseObject->nukeStructureAndSetButterfly(vm, StructureID::encode(oldStructure), newButterfly);
+    baseObject->putDirectOffset(vm, offset, JSValue::decode(encodedValue));
+    baseObject->setStructure(vm, newStructure);
+    ASSERT(newStructure == baseObject->structure());
+    dataLogLnIf(verbose, JSValue(baseObject), " ", offset);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationPutByIdDirectStrictGaveUp, void, (EncodedJSValue encodedValue, EncodedJSValue encodedBase, JSGlobalObject* globalObject, StructureStubInfo* stubInfo))
@@ -1918,10 +1937,9 @@ ALWAYS_INLINE static void putByValMegamorphic(JSGlobalObject* globalObject, VM& 
         return;
     }
 
-    if (newStructure->outOfLineCapacity() == oldStructure->outOfLineCapacity()) {
-        if (LIKELY(slot.cachedOffset() <= MegamorphicCache::maxOffset))
-            vm.megamorphicCache()->initAsTransition(StructureID::encode(oldStructure), StructureID::encode(newStructure), uid, slot.cachedOffset());
-    }
+    bool reallocating = newStructure->outOfLineCapacity() != oldStructure->outOfLineCapacity();
+    if (LIKELY(slot.cachedOffset() <= MegamorphicCache::maxOffset))
+        vm.megamorphicCache()->initAsTransition(StructureID::encode(oldStructure), StructureID::encode(newStructure), uid, slot.cachedOffset(), reallocating);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationPutByValStrictMegamorphic, void, (EncodedJSValue encodedBaseValue, EncodedJSValue encodedSubscript, EncodedJSValue encodedValue, JSGlobalObject* globalObject, StructureStubInfo* stubInfo, ArrayProfile* profile))
