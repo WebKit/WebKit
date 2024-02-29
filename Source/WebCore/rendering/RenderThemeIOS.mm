@@ -721,7 +721,7 @@ static bool renderThemePaintSwitchTrack(OptionSet<ControlStyle::State>, const Re
 }
 #endif
 
-void RenderThemeIOS::adjustSwitchStyle(RenderStyle& style, const Element* element) const
+void RenderThemeIOS::adjustSwitchStyle(RenderStyle& style, const Element*) const
 {
     // FIXME: Deduplicate sizing with the generic code somehow.
     if (style.width().isAuto() || style.height().isAuto()) {
@@ -733,9 +733,6 @@ void RenderThemeIOS::adjustSwitchStyle(RenderStyle& style, const Element* elemen
 
     if (style.outlineStyleIsAuto() == OutlineIsAuto::On)
         style.setOutlineStyle(BorderStyle::None);
-
-    if (element->isDisabledFormControl())
-        style.setOpacity(.4f);
 }
 
 bool RenderThemeIOS::paintSwitchThumb(const RenderObject& renderer, const PaintInfo& paintInfo, const FloatRect& rect)
