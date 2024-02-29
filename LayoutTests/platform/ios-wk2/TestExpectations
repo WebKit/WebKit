@@ -2400,3 +2400,5 @@ webkit.org/b/269116 imported/w3c/web-platform-tests/css/css-flexbox/negative-ove
 webkit.org/b/269321 webgl/1.0.3/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Timeout ]
 
 webkit.org/b/269760 mathml/presentation/scripts-underover.html [ Failure ]
+
+webkit.org/b/270315 svg/custom/svg-fonts-in-html.html [ Failure ]
