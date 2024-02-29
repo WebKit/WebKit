@@ -2794,3 +2794,5 @@ webkit.org/b/270133 [ Sonoma+ ] imported/w3c/web-platform-tests/accname/name/com
 webkit.org/b/270256 [ Monterey+ arm64 ] media/mediacapabilities/vp9-hw.html [ Failure ]
 
 webkit.org/b/270273 [ Monterey+ Debug ] imported/w3c/web-platform-tests/scroll-animations/css/animation-inactive-outside-range-test.html [ Skip ]
+
+webkit.org/b/270274 [ Monterey+ Debug ] imported/w3c/web-platform-tests/scroll-animations/css/animation-fill-outside-range-test.html [ Skip ]
