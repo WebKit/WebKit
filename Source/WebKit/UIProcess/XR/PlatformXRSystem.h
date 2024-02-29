@@ -32,6 +32,7 @@
 #include "ProcessThrottler.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/PlatformXR.h>
+#include <WebCore/SecurityOriginData.h>
 
 namespace WebCore {
 class SecurityOriginData;
