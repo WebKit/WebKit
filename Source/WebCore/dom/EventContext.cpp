@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-void EventContext::handleLocalEvents(Event& event, EventInvokePhase phase) const
+void EventContext::invokeSlowCase(Event& event, EventInvokePhase phase) const
 {
     event.setTarget(m_target.copyRef());
     event.setCurrentTarget(m_currentTarget.copyRef(), m_currentTargetIsInShadowTree);
@@ -84,9 +84,6 @@ void EventContext::handleLocalEvents(Event& event, EventInvokePhase phase) const
             return;
         }
     }
-
-    if (!m_node->hasEventTargetData())
-        return;
 
     if (event.isTrusted() && is<MouseEvent>(event) && !event.isWheelEvent() && !m_node->document().settings().sendMouseEventsToDisabledFormControlsEnabled()) {
         auto* element = dynamicDowncast<Element>(m_node.get());

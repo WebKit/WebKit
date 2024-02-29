@@ -56,7 +56,13 @@ public:
     EventTarget* target() const { return m_target.get(); }
     int closedShadowDepth() const { return m_closedShadowDepth; }
 
-    void handleLocalEvents(Event&, EventInvokePhase) const;
+    // https://dom.spec.whatwg.org/#concept-event-listener-invoke
+    void invoke(Event& event, EventInvokePhase phase) const
+    {
+        bool hasEventTargetData = m_node && m_type != Type::Window ? m_node->hasEventTargetData() : m_currentTarget->hasEventTargetData();
+        if (hasEventTargetData)
+          invokeSlowCase(event, phase);
+    }
 
     bool isMouseOrFocusEventContext() const { return m_type == Type::MouseOrFocus; }
     bool isTouchEventContext() const { return m_type == Type::Touch; }
@@ -72,6 +78,8 @@ public:
 
 private:
     inline EventContext(Type, Node* currentNode, RefPtr<EventTarget>&& currentTarget, EventTarget* origin, int closedShadowDepth, bool currentTargetIsInShadowTree = false);
+
+    void invokeSlowCase(Event&, EventInvokePhase) const;
 
 #if ENABLE(TOUCH_EVENTS)
     void initializeTouchLists();

@@ -93,7 +93,7 @@ static void dispatchEventInDOM(Event& event, const EventPath& path)
             event.setEventPhase(Event::AT_TARGET);
         else
             event.setEventPhase(Event::CAPTURING_PHASE);
-        eventContext.handleLocalEvents(event, EventTarget::EventInvokePhase::Capturing);
+        eventContext.invoke(event, EventTarget::EventInvokePhase::Capturing);
         if (event.propagationStopped())
             return;
     }
@@ -108,7 +108,7 @@ static void dispatchEventInDOM(Event& event, const EventPath& path)
             event.setEventPhase(Event::BUBBLING_PHASE);
         else
             continue;
-        eventContext.handleLocalEvents(event, EventTarget::EventInvokePhase::Bubbling);
+        eventContext.invoke(event, EventTarget::EventInvokePhase::Bubbling);
         if (event.propagationStopped())
             return;
     }
