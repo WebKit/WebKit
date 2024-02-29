@@ -1105,12 +1105,6 @@ test/language/statements/class/elements/privatefieldset-evaluation-order-1.js:
 test/language/statements/class/subclass/default-constructor-spread-override.js:
   default: 'Test262Error: @@iterator invoked'
   strict mode: 'Test262Error: @@iterator invoked'
-test/language/statements/const/dstr/ary-init-iter-get-err-array-prototype.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-test/language/statements/const/dstr/ary-ptrn-elem-id-iter-val-array-prototype.js:
-  default: 'Test262Error: Expected SameValue(«3», «42») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«3», «42») to be true'
 test/language/statements/for-await-of/head-lhs-async.js:
   default: "SyntaxError: Unexpected identifier 'of'"
   strict mode: "SyntaxError: Unexpected identifier 'of'"
@@ -1181,35 +1175,5 @@ test/language/statements/for-of/dstr/array-rest-iter-thrw-close.js:
 test/language/statements/for-of/dstr/array-rest-lref-err.js:
   default: 'Test262Error: Expected SameValue(«1», «0») to be true'
   strict mode: 'Test262Error: Expected SameValue(«1», «0») to be true'
-test/language/statements/for/dstr/const-ary-init-iter-get-err-array-prototype.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-test/language/statements/for/dstr/const-ary-ptrn-elem-id-iter-val-array-prototype.js:
-  default: 'Test262Error: Expected SameValue(«3», «42») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«3», «42») to be true'
-test/language/statements/for/dstr/let-ary-init-iter-get-err-array-prototype.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-test/language/statements/for/dstr/let-ary-ptrn-elem-id-iter-val-array-prototype.js:
-  default: 'Test262Error: Expected SameValue(«3», «42») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«3», «42») to be true'
-test/language/statements/for/dstr/var-ary-init-iter-get-err-array-prototype.js:
-  default: 'Test262Error: Expected a TypeError but got a ReferenceError'
-  strict mode: 'Test262Error: Expected a TypeError but got a ReferenceError'
-test/language/statements/for/dstr/var-ary-ptrn-elem-id-iter-val-array-prototype.js:
-  default: 'Test262Error: Expected SameValue(«3», «42») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«3», «42») to be true'
 test/language/statements/for/head-lhs-let.js:
   default: "SyntaxError: Unexpected token ';'. Expected a parameter pattern or a ')' in parameter list."
-test/language/statements/let/dstr/ary-init-iter-get-err-array-prototype.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-test/language/statements/let/dstr/ary-ptrn-elem-id-iter-val-array-prototype.js:
-  default: 'Test262Error: Expected SameValue(«3», «42») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«3», «42») to be true'
-test/language/statements/variable/dstr/ary-init-iter-get-err-array-prototype.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-test/language/statements/variable/dstr/ary-ptrn-elem-id-iter-val-array-prototype.js:
-  default: 'Test262Error: Expected SameValue(«3», «42») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«3», «42») to be true'

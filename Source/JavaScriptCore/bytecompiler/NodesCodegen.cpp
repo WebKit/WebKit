@@ -5445,8 +5445,6 @@ void ExportNamedDeclarationNode::emitBytecode(BytecodeGenerator&, RegisterID*)
 // ------------------------------ DestructuringAssignmentNode -----------------
 RegisterID* DestructuringAssignmentNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
-    if (RegisterID* result = m_bindings->emitDirectBinding(generator, dst, m_initializer))
-        return result;
     RefPtr<RegisterID> initializer = generator.tempDestination(dst);
     generator.emitNode(initializer.get(), m_initializer);
     m_bindings->bindValue(generator, initializer.get());
@@ -5547,48 +5545,6 @@ void ArrayPatternNode::bindValue(BytecodeGenerator& generator, RegisterID* rhs) 
     generator.emitJumpIfTrue(done.get(), iteratorClosed.get());
     generator.emitIteratorGenericClose(iterator.get(), this);
     generator.emitLabel(iteratorClosed.get());
-}
-
-RegisterID* ArrayPatternNode::emitDirectBinding(BytecodeGenerator& generator, RegisterID* dst, ExpressionNode* rhs)
-{
-    if (!rhs->isSimpleArray())
-        return nullptr;
-
-    if (m_targetPatterns.findIf([&] (auto& target) { return target.bindingType == BindingType::RestElement; }) != notFound)
-        return nullptr;
-
-    ElementNode* elementNodes = static_cast<ArrayNode*>(rhs)->elements();
-    Vector<ExpressionNode*> elements;
-    for (; elementNodes; elementNodes = elementNodes->next()) {
-        ExpressionNode* value = elementNodes->value();
-        ASSERT(!value->isSpreadExpression());
-        elements.append(value);
-    }
-
-    RefPtr<RegisterID> resultRegister;
-    if (dst != generator.ignoredResult())
-        resultRegister = generator.emitNewArray(generator.newTemporary(), nullptr, 0, ArrayWithUndecided);
-    if (m_targetPatterns.size() != elements.size())
-        return nullptr;
-    Vector<RefPtr<RegisterID>> registers(m_targetPatterns.size(), [&](size_t i) {
-        RefPtr newRegister = generator.newTemporary();
-        generator.emitNode(newRegister.get(), elements[i]);
-        if (m_targetPatterns[i].defaultValue)
-            assignDefaultValueIfUndefined(generator, newRegister.get(), m_targetPatterns[i].defaultValue);
-        if (resultRegister) {
-            RefPtr index = generator.emitLoad(nullptr, jsNumber(i));
-            generator.emitDirectPutByVal(resultRegister.get(), index.get(), newRegister.get());
-        }
-        return newRegister;
-    });
-    
-    for (size_t i = 0; i < m_targetPatterns.size(); i++) {
-        if (m_targetPatterns[i].pattern)
-            m_targetPatterns[i].pattern->bindValue(generator, registers[i].get());
-    }
-    if (resultRegister)
-        return generator.move(generator.finalDestination(dst, resultRegister.get()), resultRegister.get());
-    return generator.emitLoad(generator.finalDestination(dst), jsUndefined());
 }
 
 void ArrayPatternNode::toString(StringBuilder& builder) const
