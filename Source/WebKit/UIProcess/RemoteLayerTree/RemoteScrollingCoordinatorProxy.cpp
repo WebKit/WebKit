@@ -71,14 +71,9 @@ ScrollingNodeID RemoteScrollingCoordinatorProxy::rootScrollingNodeID() const
 
 const RemoteLayerTreeHost* RemoteScrollingCoordinatorProxy::layerTreeHost() const
 {
-    auto* drawingArea = m_webPageProxy.drawingArea();
-    if (!is<RemoteLayerTreeDrawingAreaProxy>(drawingArea)) {
-        ASSERT_NOT_REACHED();
-        return nullptr;
-    }
-
-    auto& remoteDrawingArea = downcast<RemoteLayerTreeDrawingAreaProxy>(*drawingArea);
-    return &remoteDrawingArea.remoteLayerTreeHost();
+    auto* remoteDrawingArea = dynamicDowncast<RemoteLayerTreeDrawingAreaProxy>(m_webPageProxy.drawingArea());
+    ASSERT(remoteDrawingArea);
+    return remoteDrawingArea ? &remoteDrawingArea->remoteLayerTreeHost() : nullptr;
 }
 
 std::optional<RequestedScrollData> RemoteScrollingCoordinatorProxy::commitScrollingTreeState(const RemoteScrollingCoordinatorTransaction& transaction, std::optional<LayerHostingContextIdentifier> identifier)

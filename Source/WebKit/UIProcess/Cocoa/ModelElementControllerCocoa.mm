@@ -67,10 +67,11 @@ WKModelView * ModelElementController::modelViewForModelIdentifier(ModelIdentifie
     if (!m_webPageProxy.preferences().modelElementEnabled())
         return nil;
 
-    if (!is<RemoteLayerTreeDrawingAreaProxy>(m_webPageProxy.drawingArea()))
+    auto* proxy = dynamicDowncast<RemoteLayerTreeDrawingAreaProxy>(m_webPageProxy.drawingArea());
+    if (!proxy)
         return nil;
 
-    auto* node = downcast<RemoteLayerTreeDrawingAreaProxy>(*m_webPageProxy.drawingArea()).remoteLayerTreeHost().nodeForID(modelIdentifier.layerIdentifier);
+    auto* node = proxy->remoteLayerTreeHost().nodeForID(modelIdentifier.layerIdentifier);
     if (!node)
         return nil;
 

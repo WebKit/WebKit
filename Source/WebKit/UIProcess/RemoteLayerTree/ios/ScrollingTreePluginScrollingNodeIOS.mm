@@ -78,13 +78,13 @@ bool ScrollingTreePluginScrollingNodeIOS::commitStateBeforeChildren(const WebCor
 
 bool ScrollingTreePluginScrollingNodeIOS::commitStateAfterChildren(const ScrollingStateNode& stateNode)
 {
-    if (!is<ScrollingStateScrollingNode>(stateNode))
+    auto* scrollingStateNode = dynamicDowncast<ScrollingStateScrollingNode>(stateNode);
+    if (!scrollingStateNode)
         return false;
 
-    const auto& scrollingStateNode = downcast<ScrollingStateScrollingNode>(stateNode);
-    delegate().commitStateAfterChildren(scrollingStateNode);
+    delegate().commitStateAfterChildren(*scrollingStateNode);
 
-    return ScrollingTreePluginScrollingNode::commitStateAfterChildren(stateNode);
+    return ScrollingTreePluginScrollingNode::commitStateAfterChildren(*scrollingStateNode);
 }
 
 void ScrollingTreePluginScrollingNodeIOS::repositionScrollingLayers()

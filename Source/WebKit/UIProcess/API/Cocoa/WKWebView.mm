@@ -4030,8 +4030,8 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 - (void)_setFullscreenDelegate:(id<_WKFullscreenDelegate>)delegate
 {
 #if ENABLE(FULLSCREEN_API)
-    if (is<WebKit::FullscreenClient>(_page->fullscreenClient()))
-        downcast<WebKit::FullscreenClient>(_page->fullscreenClient()).setDelegate(delegate);
+    if (auto* client = dynamicDowncast<WebKit::FullscreenClient>(_page->fullscreenClient()))
+        client->setDelegate(delegate);
 #endif
 }
 
@@ -4039,8 +4039,8 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 - (id<_WKFullscreenDelegate>)_fullscreenDelegate
 {
 #if ENABLE(FULLSCREEN_API)
-    if (is<WebKit::FullscreenClient>(_page->fullscreenClient()))
-        return downcast<WebKit::FullscreenClient>(_page->fullscreenClient()).delegate().autorelease();
+    if (auto* client = dynamicDowncast<WebKit::FullscreenClient>(_page->fullscreenClient()))
+        return client->delegate().autorelease();
 #endif
     return nil;
 }

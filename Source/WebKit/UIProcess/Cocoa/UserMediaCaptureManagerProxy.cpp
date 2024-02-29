@@ -318,7 +318,6 @@ private:
             m_connection->send(Messages::RemoteCaptureSampleManager::AudioStorageChanged(m_id, WTFMove(handle), *m_description, *m_captureSemaphore, m_startTime, m_frameChunkSize), 0);
         }
 
-        ASSERT(is<WebAudioBufferList>(audioData));
         m_ringBuffer->store(downcast<WebAudioBufferList>(audioData).list(), numberOfFrames, m_writeOffset);
         m_writeOffset += numberOfFrames;
 

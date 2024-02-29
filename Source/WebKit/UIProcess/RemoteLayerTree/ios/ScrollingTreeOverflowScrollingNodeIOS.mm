@@ -78,13 +78,13 @@ bool ScrollingTreeOverflowScrollingNodeIOS::commitStateBeforeChildren(const WebC
 
 bool ScrollingTreeOverflowScrollingNodeIOS::commitStateAfterChildren(const ScrollingStateNode& stateNode)
 {
-    if (!is<ScrollingStateScrollingNode>(stateNode))
+    auto* scrollingStateNode = dynamicDowncast<ScrollingStateScrollingNode>(stateNode);
+    if (!scrollingStateNode)
         return false;
 
-    const auto& scrollingStateNode = downcast<ScrollingStateScrollingNode>(stateNode);
-    delegate().commitStateAfterChildren(scrollingStateNode);
+    delegate().commitStateAfterChildren(*scrollingStateNode);
 
-    return ScrollingTreeOverflowScrollingNode::commitStateAfterChildren(stateNode);
+    return ScrollingTreeOverflowScrollingNode::commitStateAfterChildren(*scrollingStateNode);
 }
 
 void ScrollingTreeOverflowScrollingNodeIOS::repositionScrollingLayers()

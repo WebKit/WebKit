@@ -66,21 +66,20 @@ bool ScrollingTreeFrameScrollingNodeRemoteIOS::commitStateBeforeChildren(const S
     if (!ScrollingTreeFrameScrollingNode::commitStateBeforeChildren(stateNode))
         return false;
 
-    if (!is<ScrollingStateFrameScrollingNode>(stateNode))
+    auto* scrollingStateNode = dynamicDowncast<ScrollingStateFrameScrollingNode>(stateNode);
+    if (!scrollingStateNode)
         return false;
 
-    const auto& scrollingStateNode = downcast<ScrollingStateFrameScrollingNode>(stateNode);
+    if (scrollingStateNode->hasChangedProperty(ScrollingStateNode::Property::CounterScrollingLayer))
+        m_counterScrollingLayer = static_cast<CALayer*>(scrollingStateNode->counterScrollingLayer());
 
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::CounterScrollingLayer))
-        m_counterScrollingLayer = static_cast<CALayer*>(scrollingStateNode.counterScrollingLayer());
+    if (scrollingStateNode->hasChangedProperty(ScrollingStateNode::Property::HeaderLayer))
+        m_headerLayer = static_cast<CALayer*>(scrollingStateNode->headerLayer());
 
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::HeaderLayer))
-        m_headerLayer = static_cast<CALayer*>(scrollingStateNode.headerLayer());
+    if (scrollingStateNode->hasChangedProperty(ScrollingStateNode::Property::FooterLayer))
+        m_footerLayer = static_cast<CALayer*>(scrollingStateNode->footerLayer());
 
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::FooterLayer))
-        m_footerLayer = static_cast<CALayer*>(scrollingStateNode.footerLayer());
-
-    if (stateNode.hasChangedProperty(ScrollingStateNode::Property::ScrollContainerLayer)) {
+    if (scrollingStateNode->hasChangedProperty(ScrollingStateNode::Property::ScrollContainerLayer)) {
         if (scrollContainerLayer())
             m_delegate = makeUnique<ScrollingTreeScrollingNodeDelegateIOS>(*this);
         else
@@ -88,7 +87,7 @@ bool ScrollingTreeFrameScrollingNodeRemoteIOS::commitStateBeforeChildren(const S
     }
 
     if (m_delegate)
-        delegate()->commitStateBeforeChildren(scrollingStateNode);
+        delegate()->commitStateBeforeChildren(*scrollingStateNode);
 
     return true;
 }
@@ -96,10 +95,11 @@ bool ScrollingTreeFrameScrollingNodeRemoteIOS::commitStateBeforeChildren(const S
 bool ScrollingTreeFrameScrollingNodeRemoteIOS::commitStateAfterChildren(const ScrollingStateNode& stateNode)
 {
     if (m_delegate) {
-        if (!is<ScrollingStateFrameScrollingNode>(stateNode))
+        auto* scrollingStateNode = dynamicDowncast<ScrollingStateFrameScrollingNode>(stateNode);
+        if (!scrollingStateNode)
             return false;
 
-        delegate()->commitStateAfterChildren(downcast<ScrollingStateFrameScrollingNode>(stateNode));
+        delegate()->commitStateAfterChildren(*scrollingStateNode);
     }
 
     return ScrollingTreeFrameScrollingNode::commitStateAfterChildren(stateNode);

@@ -364,13 +364,12 @@ CGPoint RemoteScrollingCoordinatorProxyIOS::nearestActiveContentInsetAdjustedSna
 {
     CGPoint activePoint = currentPoint;
 
-    ScrollingTreeNode* root = scrollingTree()->rootNode();
-    if (!is<ScrollingTreeFrameScrollingNode>(root))
+    auto* rootNode = scrollingTree()->rootNode();
+    if (!rootNode)
         return CGPointZero;
 
-    auto& rootScrollingNode = downcast<ScrollingTreeFrameScrollingNode>(*root);
-    const auto& horizontal = rootScrollingNode.snapOffsetsInfo().horizontalSnapOffsets;
-    const auto& vertical = rootScrollingNode.snapOffsetsInfo().verticalSnapOffsets;
+    const auto& horizontal = rootNode->snapOffsetsInfo().horizontalSnapOffsets;
+    const auto& vertical = rootNode->snapOffsetsInfo().verticalSnapOffsets;
     auto zoomScale = [webPageProxy().cocoaView() scrollView].zoomScale;
 
     // The bounds checking with maxScrollOffsets is to ensure that we won't interfere with rubber-banding when scrolling to the edge of the page.
