@@ -995,6 +995,13 @@ void PDFPluginBase::navigateToURL(const URL& url)
     frame->loader().changeLocation(url, emptyAtom(), coreEvent.get(), ReferrerPolicy::NoReferrer, ShouldOpenExternalURLsPolicy::ShouldAllow);
 }
 
+#if PLATFORM(MAC)
+RefPtr<PDFPluginAnnotation> PDFPluginBase::protectedActiveAnnotation() const
+{
+    return m_activeAnnotation;
+}
+#endif
+
 id PDFPluginBase::accessibilityAssociatedPluginParentForElement(Element* element) const
 {
     ASSERT(isMainRunLoop());

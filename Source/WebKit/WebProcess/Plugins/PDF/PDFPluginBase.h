@@ -210,6 +210,7 @@ public:
 
 #if PLATFORM(MAC)
     PDFPluginAnnotation* activeAnnotation() const { return m_activeAnnotation.get(); }
+    RefPtr<PDFPluginAnnotation> protectedActiveAnnotation() const;
 #endif
     virtual void setActiveAnnotation(RetainPtr<PDFAnnotation>&&) = 0;
     void didMutatePDFDocument() { m_pdfDocumentWasMutated = true; }

@@ -3132,7 +3132,12 @@ void UnifiedPDFPlugin::setActiveAnnotation(RetainPtr<PDFAnnotation>&& annotation
         }
 
         m_activeAnnotation = PDFPluginAnnotation::create(annotation.get(), this);
-        m_activeAnnotation->attach(m_annotationContainer.get());
+        protectedActiveAnnotation()->attach(m_annotationContainer.get());
+
+        auto newAnnotationRectInContentsCoordinates = convertUp(CoordinateSpace::PDFDocumentLayout, CoordinateSpace::ScrolledContents, documentRectForAnnotation(protectedActiveAnnotation()->annotation()));
+        auto pluginRectInContentsCoordinates = convertDown(CoordinateSpace::Plugin, CoordinateSpace::ScrolledContents, FloatRect { { 0, 0 }, size() });
+        auto rectToExpose = getRectToExposeForScrollIntoView(LayoutRect(pluginRectInContentsCoordinates), LayoutRect(newAnnotationRectInContentsCoordinates), ScrollAlignment::alignCenterIfNeeded, ScrollAlignment::alignCenterIfNeeded, std::nullopt);
+        scrollToPositionWithoutAnimation(rectToExpose.location());
     } else
         m_activeAnnotation = nullptr;
 #endif
