@@ -3159,7 +3159,8 @@ void UnifiedPDFPlugin::handlePDFActionForAnnotation(PDFAnnotation *annotation, u
 
         RetainPtr actionType = [action type];
         if ([actionType isEqualToString:@"Named"]) {
-            switch ([static_cast<PDFActionNamed *>(action) name]) {
+            auto actionName = [static_cast<PDFActionNamed *>(action) name];
+            switch (actionName) {
             case kPDFActionNamedNextPage:
                 if (currentPageIndex + 1 < m_documentLayout.pageCount())
                     scrollToPage(currentPageIndex + 1);
@@ -3180,8 +3181,11 @@ void UnifiedPDFPlugin::handlePDFActionForAnnotation(PDFAnnotation *annotation, u
             case kPDFActionNamedZoomOut:
                 zoomOut();
                 break;
+            case kPDFActionNamedPrint:
+                print();
+                break;
             default:
-                ASSERT_NOT_REACHED();
+                LOG_WITH_STREAM(PDF, stream << "UnifiedPDFPlugin: unhandled action " << actionName);
                 break;
             }
         } else if ([actionType isEqualToString:@"GoTo"])
