@@ -1,0 +1,19 @@
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+<style>
+.repeating-gradient-with-suffix-stops {
+    background: repeating-conic-gradient(from 0deg, red 0%, green 0.0001%);
+}
+.repeating-gradient-with-prefix-stops {
+    background: repeating-conic-gradient(from 0deg, red 99.9999%, green 100%);
+}
+.repeating-gradient-with-prefix-and-suffix-stops {
+    background: repeating-conic-gradient(from 0deg, red 50%, green 50.0001%);
+}
+</style>
+<div>This test passess if it doesn't crash.</div>
+<div class="repeating-gradient-with-suffix-stops">Repeating Gradient With Many Stops</div>
+<div class="repeating-gradient-with-prefix-stops">Repeating Gradient With Many Stops</div>
+<div class="repeating-gradient-with-prefix-and-suffix-stops">Repeating Gradient With Many Stops</div>
