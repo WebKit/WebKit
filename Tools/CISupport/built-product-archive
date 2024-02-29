@@ -34,6 +34,8 @@ import subprocess
 import sys
 import zipfile
 
+webkitTopAbsPath = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+
 _configurationBuildDirectory = None
 _topLevelBuildDirectory = None
 _hostBuildDirectory = None
@@ -265,8 +267,9 @@ def archiveBuiltProduct(configuration, platform, fullPlatform, minify=False):
 
         # Save WinCairoRequirements version for test bot use
         if platform == 'wincairo':
+            libDirectory = os.getenv('WEBKIT_LIBRARIES') or os.path.join(webkitTopAbsPath, 'WebKitLibraries', 'win')
             shutil.copy(
-                os.path.join(os.getenv('WEBKIT_LIBRARIES'), 'WebKitRequirementsWin64.zip.version'),
+                os.path.join(libDirectory, 'WebKitRequirementsWin64.zip.version'),
                 os.path.join(thinDirectory, 'WebKitRequirementsWin64.zip.config'))
 
         if createZip(thinDirectory, configuration):
@@ -360,9 +363,9 @@ def extractBuiltProduct(configuration, platform):
 
         # Restore WinCairoRequirements version for test bot use
         if platform == 'wincairo':
-            assert 'WEBKIT_LIBRARIES' in os.environ
-            os.makedirs(os.getenv('WEBKIT_LIBRARIES'), exist_ok=True)
-            shutil.copy(os.path.join(_configurationBuildDirectory, 'WebKitRequirementsWin64.zip.config'), os.getenv('WEBKIT_LIBRARIES'))
+            libDirectory = os.getenv('WEBKIT_LIBRARIES') or os.path.join(webkitTopAbsPath, 'WebKitLibraries', 'win')
+            os.makedirs(libDirectory, exist_ok=True)
+            shutil.copy(os.path.join(_configurationBuildDirectory, 'WebKitRequirementsWin64.zip.config'), libDirectory)
 
 
 if __name__ == '__main__':
