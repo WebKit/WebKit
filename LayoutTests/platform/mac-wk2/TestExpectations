@@ -2009,3 +2009,5 @@ webkit.org/b/269996 [ Monterey+ Debug ] imported/w3c/web-platform-tests/css/css-
 [ Sonoma+ ] compositing/plugins/pdf/pdf-scrolling-tree.html [ Failure ]
 
 webkit.org/b/270235 [ Ventura+ Debug x86_64 ] webgl/pending/conformance/glsl/misc/shader-with-reserved-words-2.html [ Timeout ]
+
+webkit.org/b/270319 [ Ventura ] accessibility/datetime/input-time-label-value.html [ Failure ]
