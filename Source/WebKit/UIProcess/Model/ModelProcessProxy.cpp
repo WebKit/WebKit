@@ -78,7 +78,8 @@ ModelProcessProxy* ModelProcessProxy::singletonIfCreated()
 }
 
 ModelProcessProxy::ModelProcessProxy()
-    : AuxiliaryProcessProxy(WebProcessPool::anyProcessPoolNeedsUIBackgroundAssertion())
+    : AuxiliaryProcessProxy()
+    , m_throttler(*this, WebProcessPool::anyProcessPoolNeedsUIBackgroundAssertion())
 {
     connect();
 
@@ -217,6 +218,14 @@ void ModelProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Conne
         modelProcessExited(ProcessTerminationReason::Crash);
         return;
     }
+
+#if USE(RUNNINGBOARD)
+    m_throttler.didConnectToProcess(*this);
+#if USE(EXTENSIONKIT)
+    if (launcher)
+        launcher->releaseLaunchGrant();
+#endif
+#endif
 
 #if PLATFORM(COCOA)
     if (auto networkProcess = NetworkProcessProxy::defaultNetworkProcess())
