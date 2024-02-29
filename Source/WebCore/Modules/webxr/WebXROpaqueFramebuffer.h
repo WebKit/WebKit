@@ -84,10 +84,13 @@ public:
     static std::unique_ptr<WebXROpaqueFramebuffer> create(PlatformXR::LayerHandle, WebGLRenderingContextBase&, Attributes&&, IntSize);
     ~WebXROpaqueFramebuffer();
 
+    bool supportsDynamicViewportScaling() const;
+
     PlatformXR::LayerHandle handle() const { return m_handle; }
     const WebGLFramebuffer& framebuffer() const { return m_drawFramebuffer.get(); }
     IntSize displayFramebufferSize() const;
     IntSize drawFramebufferSize() const;
+    IntRect drawViewport(PlatformXR::Eye) const;
 
     void startFrame(const PlatformXR::FrameData::LayerData&);
     void endFrame();
@@ -95,13 +98,14 @@ public:
 private:
     WebXROpaqueFramebuffer(PlatformXR::LayerHandle, Ref<WebGLFramebuffer>&&, WebGLRenderingContextBase&, Attributes&&, IntSize);
 
-    bool setupFramebuffer(GraphicsContextGL&, const PlatformXR::FrameData::LayerData&);
+    bool setupFramebuffer(GraphicsContextGL&, const PlatformXR::FrameData::LayerSetupData&);
     void allocateRenderbufferStorage(GraphicsContextGL&, GCGLOwnedRenderbuffer&, GCGLsizei, GCGLenum, IntSize);
     void allocateAttachments(GraphicsContextGL&, WebXRAttachments&, GCGLsizei, IntSize);
     void bindAttachments(GraphicsContextGL&, WebXRAttachments&);
     void resolveMSAAFramebuffer(GraphicsContextGL&);
     void blitShared(GraphicsContextGL&);
     void blitSharedToLayered(GraphicsContextGL&);
+    IntRect calculateViewportShared(PlatformXR::Eye, bool);
 
     PlatformXR::LayerHandle m_handle;
     Ref<WebGLFramebuffer> m_drawFramebuffer;
@@ -109,13 +113,19 @@ private:
     Attributes m_attributes;
     PlatformXR::Layout m_displayLayout = PlatformXR::Layout::Shared;
     IntSize m_framebufferSize;
+#if PLATFORM(COCOA)
+    IntRect m_leftViewport;
+    IntRect m_rightViewport;
+#endif
     WebXRAttachments m_drawAttachments;
     WebXRAttachments m_resolveAttachments;
     GCGLOwnedFramebuffer m_displayFBO;
     GCGLOwnedFramebuffer m_resolvedFBO;
 #if PLATFORM(COCOA)
     std::array<WebXRExternalAttachments, 2> m_displayAttachments;
-    GraphicsContextGL::ExternalEGLSyncEvent m_completionSyncEvent;
+    MachSendRight m_completionSyncEvent;
+    uint64_t m_renderingFrameIndex { ~0u };
+    bool m_usingFoveation { false };
 #else
     PlatformGLObject m_colorTexture;
 #endif

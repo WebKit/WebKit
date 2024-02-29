@@ -231,7 +231,7 @@ ExceptionOr<RefPtr<WebXRViewport>> WebXRWebGLLayer::getViewport(WebXRView& view)
     // 6. If the viewport modifiable flag is true and view’s requested viewport scale is not equal to current viewport scale:
     //   6.1 Set current viewport scale to requested viewport scale.
     //   6.2 Compute the scaled viewport.
-    if (view.isViewportModifiable() && view.requestedViewportScale() != viewportData.currentScale) {
+    if (m_framebuffer->supportsDynamicViewportScaling() && view.isViewportModifiable() && view.requestedViewportScale() != viewportData.currentScale) {
         viewportData.currentScale = view.requestedViewportScale();
         m_viewportsDirty = true;
     }
@@ -308,21 +308,25 @@ void WebXRWebGLLayer::canvasResized(CanvasBase&)
 // https://immersive-web.github.io/webxr/#xrview-obtain-a-scaled-viewport
 void WebXRWebGLLayer::computeViewports()
 {
-    auto roundDown = [](double value) -> int {
+    auto roundDown = [](IntSize size, double scale) -> IntSize {
         // Round down to integer value and ensure that the value is not zero.
-        return std::max(1, static_cast<int>(std::floor(value)));
+        size.scale(scale);
+        size.clampToMinimumSize({ 1, 1 });
+        return size;
     };
 
-    auto width = framebufferWidth();
-    auto height = framebufferHeight();
-
     if (m_session->mode() == XRSessionMode::ImmersiveVr && m_session->views().size() > 1) {
-        auto leftScale = m_leftViewportData.currentScale;
-        m_leftViewportData.viewport->updateViewport(IntRect(0, 0, roundDown(width * 0.5 * leftScale), roundDown(height * leftScale)));
-        auto rightScale = m_rightViewportData.currentScale;
-        m_rightViewportData.viewport->updateViewport(IntRect(width * 0.5, 0, roundDown(width * 0.5 * rightScale), roundDown(height * rightScale)));
+        auto scale = m_leftViewportData.currentScale;
+        auto viewport = m_framebuffer->drawViewport(PlatformXR::Eye::Left);
+        viewport.setSize(roundDown(viewport.size(), scale));
+        m_leftViewportData.viewport->updateViewport(viewport);
+
+        scale = m_rightViewportData.currentScale;
+        viewport = m_framebuffer->drawViewport(PlatformXR::Eye::Right);
+        viewport.setSize(roundDown(viewport.size(), scale));
+        m_rightViewportData.viewport->updateViewport(viewport);
     } else
-        m_leftViewportData.viewport->updateViewport(IntRect(0, 0, width, height));
+        m_leftViewportData.viewport->updateViewport(m_framebuffer->drawViewport(PlatformXR::Eye::None));
 
     m_viewportsDirty = false;
 }

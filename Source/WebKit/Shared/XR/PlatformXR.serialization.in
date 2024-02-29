@@ -100,13 +100,25 @@ enum class PlatformXR::XRTargetRayMode : uint8_t {
     Vector<WebCore::FloatPoint> bounds;
 };
 
-[Nested, RValue] struct PlatformXR::FrameData::LayerData {
+#if PLATFORM(COCOA)
+[Nested, RValue] struct PlatformXR::FrameData::LayerSetupData {
     PlatformXR::Layout displayLayout;
     WebCore::IntSize framebufferSize;
+    WebCore::IntSize physicalSize;
+    WebCore::IntSize screenSize;
+    std::array<WebCore::IntRect, 2> viewports;
+    std::span<const float> horizontalSamples;
+    std::span<const float> verticalSamples;
+    MachSendRight completionSyncEvent;
+};
+#endif
+
+[Nested, RValue] struct PlatformXR::FrameData::LayerData {
 #if PLATFORM(COCOA)
+    std::optional<PlatformXR::FrameData::LayerSetupData> layerSetup;
     std::tuple<MachSendRight, bool> colorTexture;
     std::tuple<MachSendRight, bool> depthStencilBuffer;
-    std::tuple<MachSendRight, uint64_t> completionSyncEvent;
+    uint64_t renderingFrameIndex;
 #else
     PlatformGLObject opaqueTexture;
 #endif
