@@ -1197,8 +1197,9 @@ void MediaPlayerPrivateGStreamer::videoSinkCapsChanged(GstPad* videoSinkPad)
         return;
     }
 
-    RunLoop::main().dispatch([weakThis = WeakPtr { *this }, this, caps = WTFMove(caps)] {
-        if (!weakThis)
+    RunLoop::main().dispatch([weakThis = ThreadSafeWeakPtr { *this }, this, caps = WTFMove(caps)] {
+        RefPtr self = weakThis.get();
+        if (!self)
             return;
         updateVideoSizeAndOrientationFromCaps(caps.get());
     });
@@ -1537,8 +1538,9 @@ void MediaPlayerPrivateGStreamer::updateTracks(const GRefPtr<GstObject>& collect
     for (auto& track : m_textTracks.values())
         track->setActive(false);
 
-    auto scopeExit = makeScopeExit([oldHasAudio, oldHasVideo, protectedThis = WeakPtr { *this }, this] {
-        if (!protectedThis)
+    auto scopeExit = makeScopeExit([oldHasAudio, oldHasVideo, protectedThis = ThreadSafeWeakPtr { *this }, this] {
+        RefPtr self = protectedThis.get();
+        if (!self)
             return;
 
         RefPtr player = m_player.get();
@@ -1639,7 +1641,8 @@ void MediaPlayerPrivateGStreamer::handleStreamCollectionMessage(GstMessage* mess
     ASSERT(GST_MESSAGE_TYPE(message) == GST_MESSAGE_STREAM_COLLECTION);
     gst_message_parse_stream_collection(message, &m_streamCollection.outPtr());
 
-    auto callback = [player = WeakPtr { *this }, owner = GRefPtr<GstObject>(GST_MESSAGE_SRC(message))] {
+    auto callback = [weakThis = ThreadSafeWeakPtr { *this }, owner = GRefPtr<GstObject>(GST_MESSAGE_SRC(message))] {
+        RefPtr player = weakThis.get();
         if (player)
             player->updateTracks(owner);
     };
@@ -3093,8 +3096,9 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url)
     }), this);
 
     g_signal_connect_swapped(bus.get(), "message::segment-done", G_CALLBACK(+[](MediaPlayerPrivateGStreamer* player, GstMessage*) {
-        callOnMainThread([weakThis = WeakPtr { *player }, player] {
-            if (!weakThis)
+        callOnMainThread([weakThis = ThreadSafeWeakPtr { *player }, player] {
+            RefPtr self = weakThis.get();
+            if (!self)
                 return;
             RefPtr mediaPlayer = player->m_player.get();
             if (!mediaPlayer || !mediaPlayer->isLooping())
@@ -3733,11 +3737,15 @@ void MediaPlayerPrivateGStreamer::updateVideoOrientation(const GstTagList* tagLi
         m_videoSize = m_videoSize.transposedSize();
 
     GST_DEBUG_OBJECT(pipeline(), "Enqueuing and waiting for main-thread task to call sizeChanged()...");
-    bool sizeChangedProcessed = m_sinkTaskQueue.enqueueTaskAndWait<AbortableTaskQueue::Void>([weakThis = WeakPtr { *this }, this] {
-        if (weakThis) {
-            if (RefPtr player = m_player.get())
-                player->sizeChanged();
-        }
+    bool sizeChangedProcessed = m_sinkTaskQueue.enqueueTaskAndWait<AbortableTaskQueue::Void>([weakThis = ThreadSafeWeakPtr { *this }, this] {
+        RefPtr self = weakThis.get();
+        if (!self)
+            return AbortableTaskQueue::Void();
+        RefPtr player = m_player.get();
+        if (!player)
+            return AbortableTaskQueue::Void();
+
+        player->sizeChanged();
         return AbortableTaskQueue::Void();
     }).has_value();
     GST_DEBUG_OBJECT(pipeline(), "Finished waiting for main-thread task to call sizeChanged()... %s", sizeChangedProcessed ? "sizeChanged() was called." : "task queue aborted by flush");
@@ -3822,8 +3830,9 @@ void MediaPlayerPrivateGStreamer::invalidateCachedPosition() const
 
 void MediaPlayerPrivateGStreamer::invalidateCachedPositionOnNextIteration() const
 {
-    RunLoop::main().dispatch([weakThis = WeakPtr { *this }, this] {
-        if (!weakThis)
+    RunLoop::main().dispatch([weakThis = ThreadSafeWeakPtr { *this }, this] {
+        RefPtr player = weakThis.get();
+        if (!player)
             return;
         invalidateCachedPosition();
     });
@@ -3867,8 +3876,9 @@ void MediaPlayerPrivateGStreamer::triggerRepaint(GRefPtr<GstSample>&& sample)
                 return;
             }
         }
-        RunLoop::main().dispatch([weakThis = WeakPtr { *this }, this, caps = WTFMove(caps)] {
-            if (!weakThis)
+        RunLoop::main().dispatch([weakThis = ThreadSafeWeakPtr { *this }, this, caps = WTFMove(caps)] {
+            RefPtr self = weakThis.get();
+            if (!self)
                 return;
             RefPtr player = m_player.get();
 
@@ -4434,17 +4444,16 @@ bool MediaPlayerPrivateGStreamer::waitForCDMAttachment()
 
 void MediaPlayerPrivateGStreamer::initializationDataEncountered(InitData&& initData)
 {
-    ASSERT(!isMainThread());
-
     if (!initData.payload()) {
         GST_DEBUG("initializationDataEncountered No payload");
         return;
     }
 
-    RunLoop::main().dispatch([weakThis = WeakPtr { *this }, initData = WTFMove(initData)] {
-        if (!weakThis)
+    RunLoop::main().dispatch([weakThis = ThreadSafeWeakPtr { *this }, initData = WTFMove(initData)] {
+        RefPtr self = weakThis.get();
+        if (!self)
             return;
-        RefPtr player = weakThis->m_player.get();
+        RefPtr player = self->m_player.get();
 
         GST_DEBUG("scheduling initializationDataEncountered %s event of size %zu", initData.payloadContainerType().utf8().data(),
             initData.payload()->size());

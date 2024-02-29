@@ -48,17 +48,17 @@ static void ensureDebugCategoryInitialized()
     });
 }
 
-AudioTrackPrivateGStreamer::AudioTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivateGStreamer> player, unsigned index, GRefPtr<GstPad>&& pad, bool shouldHandleStreamStartEvent)
+AudioTrackPrivateGStreamer::AudioTrackPrivateGStreamer(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&& player, unsigned index, GRefPtr<GstPad>&& pad, bool shouldHandleStreamStartEvent)
     : TrackPrivateBaseGStreamer(TrackPrivateBaseGStreamer::TrackType::Audio, this, index, WTFMove(pad), shouldHandleStreamStartEvent)
-    , m_player(player)
+    , m_player(WTFMove(player))
 {
     ensureDebugCategoryInitialized();
     installUpdateConfigurationHandlers();
 }
 
-AudioTrackPrivateGStreamer::AudioTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivateGStreamer> player, unsigned index, GstStream* stream)
+AudioTrackPrivateGStreamer::AudioTrackPrivateGStreamer(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&& player, unsigned index, GstStream* stream)
     : TrackPrivateBaseGStreamer(TrackPrivateBaseGStreamer::TrackType::Audio, this, index, stream)
-    , m_player(player)
+    , m_player(WTFMove(player))
 {
     ensureDebugCategoryInitialized();
     installUpdateConfigurationHandlers();
@@ -75,10 +75,11 @@ void AudioTrackPrivateGStreamer::capsChanged(const String& streamId, GRefPtr<Gst
     ASSERT(isMainThread());
     updateConfigurationFromCaps(WTFMove(caps));
 
-    if (!m_player)
+    RefPtr player = m_player.get();
+    if (!player)
         return;
 
-    auto codec = m_player->codecForStreamId(streamId);
+    auto codec = player->codecForStreamId(streamId);
     if (codec.isEmpty())
         return;
 
@@ -174,8 +175,9 @@ void AudioTrackPrivateGStreamer::setEnabled(bool enabled)
         return;
     AudioTrackPrivate::setEnabled(enabled);
 
-    if (m_player)
-        m_player->updateEnabledAudioTrack();
+    RefPtr player = m_player.get();
+    if (player)
+        player->updateEnabledAudioTrack();
 }
 
 #undef GST_CAT_DEFAULT

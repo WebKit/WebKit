@@ -88,7 +88,7 @@ struct WebKitMediaSrcPrivate {
     // Only used by URI Handler API implementation.
     GUniquePtr<char> uri;
 
-    WeakPtr<MediaPlayerPrivateGStreamerMSE> player;
+    ThreadSafeWeakPtr<MediaPlayerPrivateGStreamerMSE> player;
 };
 
 static void webKitMediaSrcUriHandlerInit(gpointer, gpointer);
@@ -100,7 +100,7 @@ static void webKitMediaSrcTearDownStream(WebKitMediaSrc* source, const AtomStrin
 static void webKitMediaSrcGetProperty(GObject*, unsigned propId, GValue*, GParamSpec*);
 static void webKitMediaSrcStreamFlush(Stream*, bool isSeekingFlush);
 static gboolean webKitMediaSrcSendEvent(GstElement*, GstEvent*);
-static MediaPlayerPrivateGStreamerMSE* webKitMediaSrcPlayer(WebKitMediaSrc*);
+static RefPtr<MediaPlayerPrivateGStreamerMSE> webKitMediaSrcPlayer(WebKitMediaSrc*);
 
 #define webkit_media_src_parent_class parent_class
 
@@ -343,12 +343,12 @@ void webKitMediaSrcEmitStreams(WebKitMediaSrc* source, const Vector<RefPtr<Media
     GST_DEBUG_OBJECT(source, "All pads added");
 }
 
-static MediaPlayerPrivateGStreamerMSE* webKitMediaSrcPlayer(WebKitMediaSrc* source)
+static RefPtr<MediaPlayerPrivateGStreamerMSE> webKitMediaSrcPlayer(WebKitMediaSrc* source)
 {
     return source->priv->player.get();
 }
 
-void webKitMediaSrcSetPlayer(WebKitMediaSrc* source, WeakPtr<MediaPlayerPrivateGStreamerMSE>&& player)
+void webKitMediaSrcSetPlayer(WebKitMediaSrc* source, ThreadSafeWeakPtr<MediaPlayerPrivateGStreamerMSE>&& player)
 {
     source->priv->player = WTFMove(player);
 }
@@ -649,7 +649,7 @@ static void webKitMediaSrcStreamFlush(Stream* stream, bool isSeekingFlush)
     } else {
         // In the case of non-seeking flushes we don't reset the timeline, so instead we need to increase the `base` field
         // by however running time we're starting after the flush.
-        MediaPlayerPrivateGStreamerMSE* player = webKitMediaSrcPlayer(stream->source);
+        auto player = webKitMediaSrcPlayer(stream->source);
         if (player) {
             MediaTime streamTime = player->currentTime();
             GstClockTime pipelineStreamTime = toGstClockTime(streamTime);
