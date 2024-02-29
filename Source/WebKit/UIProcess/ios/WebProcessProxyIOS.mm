@@ -70,7 +70,7 @@ void WebProcessProxy::platformInitialize()
         });
     }
 
-    m_throttler.setAllowsActivities(!m_processPool->processesShouldSuspend());
+    throttler().setAllowsActivities(!m_processPool->processesShouldSuspend());
 }
 
 void WebProcessProxy::platformDestroy()
