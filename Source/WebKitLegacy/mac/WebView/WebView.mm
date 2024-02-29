@@ -43,7 +43,6 @@
 #import "SocketStreamHandleImpl.h"
 #import "StorageThread.h"
 #import "WebAlternativeTextClient.h"
-#import "WebApplicationCacheInternal.h"
 #import "WebArchive.h"
 #import "WebBackForwardListInternal.h"
 #import "WebBroadcastChannelRegistry.h"
@@ -1380,6 +1379,32 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     initialized = true;
 }
 #endif
+
+static NSString *applicationCacheBundleIdentifier()
+{
+    NSString *appName = [[NSBundle mainBundle] bundleIdentifier];
+    if (!appName)
+        appName = [[NSProcessInfo processInfo] processName];
+
+    ASSERT(appName);
+    return appName;
+}
+
+static NSString *applicationCachePath()
+{
+    return [NSString _webkit_localCacheDirectoryWithBundleIdentifier:applicationCacheBundleIdentifier()];
+}
+
+static WebCore::ApplicationCacheStorage& webApplicationCacheStorage()
+{
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        FileSystem::deleteNonEmptyDirectory(applicationCachePath());
+    });
+    static WebCore::ApplicationCacheStorage& storage = WebCore::ApplicationCacheStorage::create(emptyString(), emptyString()).leakRef();
+
+    return storage;
+}
 
 - (void)_commonInitializationWithFrameName:(NSString *)frameName groupName:(NSString *)groupName
 {
@@ -2914,9 +2939,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     // FIXME: Is this relevent to WebKitLegacy? If not, we should remove it.
     WebCore::DeprecatedGlobalSettings::setTrackingPreventionEnabled([preferences resourceLoadStatisticsEnabled]);
-
-    // Application Cache Preferences are stored on the global cache storage manager, not in Settings.
-    [WebApplicationCache setDefaultOriginQuota:[preferences applicationCacheDefaultOriginQuota]];
 
     BOOL zoomsTextOnly = [preferences zoomsTextOnly];
     if (_private->zoomsTextOnly != zoomsTextOnly)

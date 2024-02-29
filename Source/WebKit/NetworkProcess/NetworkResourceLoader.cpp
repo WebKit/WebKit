@@ -784,7 +784,7 @@ void NetworkResourceLoader::processClearSiteDataHeader(const WebCore::ResourceRe
     if (clearSiteDataValues.contains(ClearSiteDataValue::Cookies))
         typesToRemove.add(WebsiteDataType::Cookies);
     if (clearSiteDataValues.contains(ClearSiteDataValue::Storage)) {
-        typesToRemove.add({ WebsiteDataType::LocalStorage, WebsiteDataType::SessionStorage, WebsiteDataType::IndexedDBDatabases, WebsiteDataType::DOMCache, WebsiteDataType::OfflineWebApplicationCache, WebsiteDataType::FileSystem, WebsiteDataType::WebSQLDatabases });
+        typesToRemove.add({ WebsiteDataType::LocalStorage, WebsiteDataType::SessionStorage, WebsiteDataType::IndexedDBDatabases, WebsiteDataType::DOMCache, WebsiteDataType::FileSystem, WebsiteDataType::WebSQLDatabases });
         typesToRemove.add(WebsiteDataType::ServiceWorkerRegistrations);
     }
 

@@ -32,6 +32,7 @@
 #import "WebViewInternal.h"
 #import "WebWindowAnimation.h"
 #import <WebCore/Document.h>
+#import <WebCore/DocumentInlines.h>
 #import <WebCore/Element.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/FullscreenManager.h>

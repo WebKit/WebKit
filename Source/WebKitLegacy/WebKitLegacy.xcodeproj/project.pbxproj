@@ -66,7 +66,6 @@
 		1A6B313B1A51F3A900422975 /* StorageTracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6B312E1A51F3A900422975 /* StorageTracker.cpp */; };
 		1A6B313C1A51F3A900422975 /* StorageTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6B312F1A51F3A900422975 /* StorageTracker.h */; };
 		1A6B313D1A51F3A900422975 /* StorageTrackerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6B31301A51F3A900422975 /* StorageTrackerClient.h */; };
-		1A86CCD41AD48A620074BA89 /* WebApplicationCacheInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A86CCD31AD48A620074BA89 /* WebApplicationCacheInternal.h */; };
 		1A9119F61DB0470A0087D1FD /* BackForwardList.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A9119F41DB0470A0087D1FD /* BackForwardList.mm */; };
 		1A9119F71DB0470A0087D1FD /* BackForwardList.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9119F51DB0470A0087D1FD /* BackForwardList.h */; };
 		1AA83F831A5C4AE400026EC6 /* WebDatabaseProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AA83F811A5C4AE400026EC6 /* WebDatabaseProvider.cpp */; };
@@ -610,11 +609,9 @@
 		A5DEFC0C11D5331C00885273 /* WebSecurityOriginPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = A5DEFC0911D5331C00885273 /* WebSecurityOriginPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5DEFC0F11D5343E00885273 /* WebDatabaseQuotaManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A5DEFC0D11D5343E00885273 /* WebDatabaseQuotaManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5DEFC1011D5343E00885273 /* WebDatabaseQuotaManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5DEFC0E11D5343E00885273 /* WebDatabaseQuotaManager.mm */; };
-		A5DEFC1311D5344B00885273 /* WebApplicationCacheQuotaManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A5DEFC1111D5344B00885273 /* WebApplicationCacheQuotaManager.h */; };
 		A70936AF0B5608DC00CDB48E /* WebDragClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A70936AD0B5608DC00CDB48E /* WebDragClient.h */; };
 		A70936B00B5608DC00CDB48E /* WebDragClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = A70936AE0B5608DC00CDB48E /* WebDragClient.mm */; };
 		AB9FBBBB0F8582B0006ADC43 /* WebDOMOperationsInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = AB9FBBBA0F8582B0006ADC43 /* WebDOMOperationsInternal.h */; };
-		B6CE5C25100BC5F500219936 /* WebApplicationCache.h in Headers */ = {isa = PBXBuildFile; fileRef = B68049710FFBCEC1009F7F62 /* WebApplicationCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B804176F1217A83100466BAE /* WebInspectorFrontend.h in Headers */ = {isa = PBXBuildFile; fileRef = B804176D1217A83100466BAE /* WebInspectorFrontend.h */; };
 		B80417701217A83100466BAE /* WebInspectorFrontend.mm in Sources */ = {isa = PBXBuildFile; fileRef = B804176E1217A83100466BAE /* WebInspectorFrontend.mm */; };
 		B82958D3132707D0000D0E79 /* CorrectionPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = B82958D1132707D0000D0E79 /* CorrectionPanel.h */; };
@@ -726,7 +723,6 @@
 		1A6B312E1A51F3A900422975 /* StorageTracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StorageTracker.cpp; path = Storage/StorageTracker.cpp; sourceTree = SOURCE_ROOT; };
 		1A6B312F1A51F3A900422975 /* StorageTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StorageTracker.h; path = Storage/StorageTracker.h; sourceTree = SOURCE_ROOT; };
 		1A6B31301A51F3A900422975 /* StorageTrackerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StorageTrackerClient.h; path = Storage/StorageTrackerClient.h; sourceTree = SOURCE_ROOT; };
-		1A86CCD31AD48A620074BA89 /* WebApplicationCacheInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebApplicationCacheInternal.h; sourceTree = "<group>"; };
 		1A9119F41DB0470A0087D1FD /* BackForwardList.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BackForwardList.mm; sourceTree = "<group>"; };
 		1A9119F51DB0470A0087D1FD /* BackForwardList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackForwardList.h; sourceTree = "<group>"; };
 		1AA83F811A5C4AE400026EC6 /* WebDatabaseProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebDatabaseProvider.cpp; path = ../../Storage/WebDatabaseProvider.cpp; sourceTree = "<group>"; };
@@ -1405,13 +1401,9 @@
 		A5DEFC0911D5331C00885273 /* WebSecurityOriginPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSecurityOriginPrivate.h; sourceTree = "<group>"; };
 		A5DEFC0D11D5343E00885273 /* WebDatabaseQuotaManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDatabaseQuotaManager.h; sourceTree = "<group>"; };
 		A5DEFC0E11D5343E00885273 /* WebDatabaseQuotaManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebDatabaseQuotaManager.mm; sourceTree = "<group>"; };
-		A5DEFC1111D5344B00885273 /* WebApplicationCacheQuotaManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebApplicationCacheQuotaManager.h; sourceTree = "<group>"; };
-		A5DEFC1211D5344B00885273 /* WebApplicationCacheQuotaManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebApplicationCacheQuotaManager.mm; sourceTree = "<group>"; };
 		A70936AD0B5608DC00CDB48E /* WebDragClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebDragClient.h; sourceTree = "<group>"; };
 		A70936AE0B5608DC00CDB48E /* WebDragClient.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebDragClient.mm; sourceTree = "<group>"; };
 		AB9FBBBA0F8582B0006ADC43 /* WebDOMOperationsInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDOMOperationsInternal.h; sourceTree = "<group>"; };
-		B68049710FFBCEC1009F7F62 /* WebApplicationCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebApplicationCache.h; sourceTree = "<group>"; };
-		B68049720FFBCEC1009F7F62 /* WebApplicationCache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebApplicationCache.mm; sourceTree = "<group>"; };
 		B804176D1217A83100466BAE /* WebInspectorFrontend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebInspectorFrontend.h; sourceTree = "<group>"; };
 		B804176E1217A83100466BAE /* WebInspectorFrontend.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebInspectorFrontend.mm; sourceTree = "<group>"; };
 		B82958D1132707D0000D0E79 /* CorrectionPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CorrectionPanel.h; sourceTree = "<group>"; };
@@ -2514,11 +2506,6 @@
 				5CB05C8629CA18C400CC1AA0 /* SocketStreamHandleImplCFNet.cpp */,
 				CEDA12DA152CBE6800D9E08D /* WebAlternativeTextClient.h */,
 				CEDA12D9152CBE6800D9E08D /* WebAlternativeTextClient.mm */,
-				B68049710FFBCEC1009F7F62 /* WebApplicationCache.h */,
-				B68049720FFBCEC1009F7F62 /* WebApplicationCache.mm */,
-				1A86CCD31AD48A620074BA89 /* WebApplicationCacheInternal.h */,
-				A5DEFC1111D5344B00885273 /* WebApplicationCacheQuotaManager.h */,
-				A5DEFC1211D5344B00885273 /* WebApplicationCacheQuotaManager.mm */,
 				460135E2269FAD31007A8A95 /* WebBroadcastChannelRegistry.cpp */,
 				460135E3269FAD31007A8A95 /* WebBroadcastChannelRegistry.h */,
 				51CBFCAC0D10E6C5002DBF51 /* WebCachedFramePlatformData.h */,
@@ -2857,9 +2844,6 @@
 				44DDD0822540F97F00836F81 /* TestingFunctions.h in Headers */,
 				7C1FB3C21846E8E1001A03D8 /* WebAllowDenyPolicyListener.h in Headers */,
 				CEDA12DC152CBE6800D9E08D /* WebAlternativeTextClient.h in Headers */,
-				B6CE5C25100BC5F500219936 /* WebApplicationCache.h in Headers */,
-				1A86CCD41AD48A620074BA89 /* WebApplicationCacheInternal.h in Headers */,
-				A5DEFC1311D5344B00885273 /* WebApplicationCacheQuotaManager.h in Headers */,
 				9398109A0824BF01008DF038 /* WebArchive.h in Headers */,
 				44BB8B141241A022001E3A22 /* WebArchiveInternal.h in Headers */,
 				939810290824BF01008DF038 /* WebAuthenticationPanel.h in Headers */,

@@ -124,13 +124,6 @@ WK_EXPORT void WKBundlePageAddUserScriptInWorld(WKBundlePageRef page, WKStringRe
 WK_EXPORT void WKBundlePageAddUserStyleSheet(WKBundlePageRef page, WKStringRef source, WKUserContentInjectedFrames injectedFrames);
 WK_EXPORT void WKBundlePageRemoveAllUserContent(WKBundlePageRef page);
 
-// Application Cache API, for WKTR.
-WK_EXPORT void WKBundlePageClearApplicationCache(WKBundlePageRef page);
-WK_EXPORT void WKBundlePageClearApplicationCacheForOrigin(WKBundlePageRef page, WKStringRef origin);
-WK_EXPORT void WKBundlePageSetAppCacheMaximumSize(WKBundlePageRef page, uint64_t size);
-WK_EXPORT uint64_t WKBundlePageGetAppCacheUsageForOrigin(WKBundlePageRef page, WKStringRef origin);
-WK_EXPORT WKArrayRef WKBundlePageCopyOriginsWithApplicationCache(WKBundlePageRef page);
-
 WK_EXPORT void WKBundlePageSetCaptionDisplayMode(WKBundlePageRef page, WKStringRef mode);
 WK_EXPORT WKCaptionUserPreferencesTestingModeTokenRef WKBundlePageCreateCaptionUserPreferencesTestingModeToken(WKBundlePageRef page);
 
