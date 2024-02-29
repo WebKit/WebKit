@@ -367,7 +367,7 @@ public:
     void didActivateTab(const WebExtensionTab&, const WebExtensionTab* previousTab = nullptr);
     void didSelectOrDeselectTabs(const TabSet&);
 
-    void didMoveTab(const WebExtensionTab&, size_t oldIndex, const WebExtensionWindow* oldWindow = nullptr);
+    void didMoveTab(WebExtensionTab&, size_t oldIndex, const WebExtensionWindow* oldWindow = nullptr);
     void didReplaceTab(WebExtensionTab& oldTab, WebExtensionTab& newTab);
     void didChangeTabProperties(WebExtensionTab&, OptionSet<WebExtensionTab::ChangedProperties> = { });
 

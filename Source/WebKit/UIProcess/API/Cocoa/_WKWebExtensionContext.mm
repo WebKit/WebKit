@@ -729,7 +729,7 @@ static inline WebKit::WebExtensionContext::TabSet toImpl(NSSet<id<_WKWebExtensio
     if (oldWindow)
         NSParameterAssert([oldWindow conformsToProtocol:@protocol(_WKWebExtensionWindow)]);
 
-    _webExtensionContext->didMoveTab(toImpl(movedTab, *_webExtensionContext), index, oldWindow ? toImpl(oldWindow, *_webExtensionContext).ptr() : nullptr);
+    _webExtensionContext->didMoveTab(toImpl(movedTab, *_webExtensionContext), index != NSNotFound ? index : notFound, oldWindow ? toImpl(oldWindow, *_webExtensionContext).ptr() : nullptr);
 }
 
 - (void)didReplaceTab:(id<_WKWebExtensionTab>)oldTab withTab:(id<_WKWebExtensionTab>)newTab

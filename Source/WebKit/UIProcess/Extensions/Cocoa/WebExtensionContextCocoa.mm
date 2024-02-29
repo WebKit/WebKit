@@ -1840,31 +1840,52 @@ void WebExtensionContext::didSelectOrDeselectTabs(const TabSet& tabs)
         fireTabsHighlightedEventIfNeeded(entry.value, entry.key);
 }
 
-void WebExtensionContext::didMoveTab(const WebExtensionTab& tab, size_t oldIndex, const WebExtensionWindow* oldWindow)
+void WebExtensionContext::didMoveTab(WebExtensionTab& tab, size_t oldIndex, const WebExtensionWindow* oldWindow)
 {
     ASSERT(isValidTab(tab));
     ASSERT(!oldWindow || isValidWindow(*oldWindow));
 
-    if (!tab.isOpen()) {
+    if (oldWindow && !tab.isOpen()) {
         RELEASE_LOG_ERROR(Extensions, "Moved tab %{public}llu to index %{public}zu from window %{public}llu, but tab is not open", tab.identifier().toUInt64(), oldIndex, oldWindow->identifier().toUInt64());
         return;
     }
 
-    if (oldWindow)
-        RELEASE_LOG_DEBUG(Extensions, "Moved tab %{public}llu to index %{public}zu from window %{public}llu", tab.identifier().toUInt64(), oldIndex, oldWindow->identifier().toUInt64());
-    else
-        RELEASE_LOG_DEBUG(Extensions, "Moved tab %{public}llu to index %{public}zu (in same window)", tab.identifier().toUInt64(), oldIndex);
+    RefPtr newWindow = tab.window();
+    size_t newIndex = tab.index();
+
+    if (oldWindow == newWindow)
+        RELEASE_LOG_DEBUG(Extensions, "Moved tab %{public}llu from index %{public}zu to index %{public}zu (in same window)", tab.identifier().toUInt64(), oldIndex, newIndex);
+    else if (oldWindow && newWindow)
+        RELEASE_LOG_DEBUG(Extensions, "Moved tab %{public}llu to window %{public}llu at index %{public}zu", tab.identifier().toUInt64(), newWindow->identifier().toUInt64(), newIndex);
+    else if (oldWindow)
+        RELEASE_LOG_DEBUG(Extensions, "Moved tab %{public}llu out of window %{public}llu", tab.identifier().toUInt64(), oldWindow->identifier().toUInt64());
+    else if (newWindow)
+        RELEASE_LOG_DEBUG(Extensions, "Added tab %{public}llu to window %{public}llu at index %{public}zu", tab.identifier().toUInt64(), newWindow->identifier().toUInt64(), newIndex);
+
+    if (!oldWindow)
+        didOpenTab(tab);
 
     if (!isLoaded() || !tab.extensionHasAccess())
         return;
 
-    RefPtr window = tab.window();
-    if (oldWindow && window && oldWindow != window) {
+    if (oldWindow == newWindow) {
+        // Window did not change, only the index.
+        if (newIndex == oldIndex)
+            return;
+
+        fireTabsMovedEventIfNeeded(tab.identifier(), newWindow->identifier(), oldIndex, newIndex);
+    } else if (oldWindow && newWindow) {
+        // Window changed to another.
         fireTabsDetachedEventIfNeeded(tab.identifier(), oldWindow->identifier(), oldIndex);
-        fireTabsAttachedEventIfNeeded(tab.identifier(), window->identifier(), tab.index());
-    } else {
-        auto windowIdentifier = window ? window->identifier() : WebExtensionWindowConstants::NoneIdentifier;
-        fireTabsMovedEventIfNeeded(tab.identifier(), windowIdentifier, oldIndex, tab.index());
+        fireTabsAttachedEventIfNeeded(tab.identifier(), newWindow->identifier(), newIndex);
+    } else if (oldWindow) {
+        // Window changed to null.
+        fireTabsDetachedEventIfNeeded(tab.identifier(), oldWindow->identifier(), oldIndex);
+        fireTabsAttachedEventIfNeeded(tab.identifier(), WebExtensionWindowConstants::NoneIdentifier, newIndex);
+    } else if (newWindow) {
+        // Window changed from null.
+        fireTabsDetachedEventIfNeeded(tab.identifier(), WebExtensionWindowConstants::NoneIdentifier, oldIndex);
+        fireTabsAttachedEventIfNeeded(tab.identifier(), newWindow->identifier(), newIndex);
     }
 }
 
