@@ -40,7 +40,6 @@ void* createPbufferAndAttachIOSurface(GCGLDisplay, GCGLConfig, GCGLenum target, 
 void destroyPbufferAndDetachIOSurface(GCGLDisplay, void* handle);
 
 RetainPtr<MTLSharedEvent> newSharedEventWithMachPort(GCGLDisplay, mach_port_t);
-
 RetainPtr<MTLSharedEvent> newSharedEvent(GCGLDisplay);
 
 }

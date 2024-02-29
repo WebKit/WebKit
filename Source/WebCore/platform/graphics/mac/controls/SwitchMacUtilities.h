@@ -26,6 +26,14 @@
 
 #if PLATFORM(MAC)
 
+#include "FloatRect.h"
+
+namespace WebCore {
+struct ControlStyle;
+class GraphicsContext;
+class ImageBuffer;
+}
+
 namespace WebCore::SwitchMacUtilities {
 
 IntSize cellSize(NSControlSize);

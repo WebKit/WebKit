@@ -60,10 +60,17 @@
 #import "ImageRotationSessionVT.h"
 #endif
 
+#if ENABLE(WEBXR)
+#import "CompositorServicesUtilities.h"
+#import "PlatformXR.h"
+#endif
+
 // FIXME: Checking for EGL_Initialize does not seem to be robust in recovery OS.
 WTF_WEAK_LINK_FORCE_IMPORT(EGL_GetPlatformDisplayEXT);
 
 namespace WebCore {
+
+using GL = GraphicsContextGL;
 
 // In isCurrentContextPredictable() == true case this variable is accessed in single-threaded manner.
 // In isCurrentContextPredictable() == false case this variable is accessed from multiple threads but always sequentially
@@ -683,6 +690,33 @@ GCEGLImage GraphicsContextGLCocoa::createAndBindEGLImage(GCGLenum target, GCGLen
     return eglImage;
 }
 
+#if ENABLE(WEBXR)
+PlatformGLObject GraphicsContextGLCocoa::createRasterizationRateMapForFixedFoveation(PlatformXR::Layout layout, IntSize physicalSize, IntSize screenSize, std::span<const GCGLfloat> horizontalSamplesLeft, std::span<const GCGLfloat> horizontalSamplesRight, std::span<const GCGLfloat> verticalSamples)
+{
+    ASSERT(layout == PlatformXR::Layout::Shared);
+    if (layout != PlatformXR::Layout::Shared)
+        return 0;
+
+    RetainPtr map = newRasterizationRateMapForSharedFixedFoveation(m_displayObj, physicalSize, screenSize, horizontalSamplesLeft, horizontalSamplesRight, verticalSamples);
+    PlatformGLObject object = m_rasterizationRateMaps.size() + 1; // Next object is one more than current count. size 0 -> 1, size 3 -> 4, etc since 0 is invalid.
+    m_rasterizationRateMaps.add(object, map);
+    return object;
+}
+
+void GraphicsContextGLCocoa::deleteRasterizationRateMap(PlatformGLObject object)
+{
+    m_rasterizationRateMaps.remove(object);
+}
+
+void GraphicsContextGLCocoa::framebufferMTLRasterizationRateMapANGLE(GCGLenum target, PlatformGLObject object)
+{
+    if (object)
+        GL_FramebufferMTLRasterizationRateMapANGLE(target, m_rasterizationRateMaps.get(object).get());
+    else
+        GL_FramebufferMTLRasterizationRateMapANGLE(target, nullptr);
+}
+#endif
+
 RetainPtr<id> GraphicsContextGLCocoa::newSharedEventWithMachPort(mach_port_t sharedEventSendRight)
 {
     return WebCore::newSharedEventWithMachPort(m_displayObj, sharedEventSendRight);
@@ -716,6 +750,7 @@ bool GraphicsContextGLCocoa::enableRequiredWebXRExtensionsImpl()
 {
     return enableExtension("GL_ANGLE_framebuffer_multisample"_s)
         && enableExtension("GL_ANGLE_framebuffer_blit"_s)
+        && enableExtension("GL_ANGLE_rasterization_rate_map_metal"_s)
         && enableExtension("GL_EXT_sRGB"_s)
         && enableExtension("GL_OES_EGL_image"_s)
         && enableExtension("GL_OES_rgb8_rgba8"_s);

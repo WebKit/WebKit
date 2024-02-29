@@ -99,6 +99,12 @@ public:
     void multiDrawArraysInstancedBaseInstanceANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLint, const GCGLsizei, const GCGLsizei, const GCGLuint> firstsCountsInstanceCountsAndBaseInstances) final;
     void multiDrawElementsInstancedBaseVertexBaseInstanceANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLsizei, const GCGLsizei, const GCGLsizei, const GCGLint, const GCGLuint> countsOffsetsInstanceCountsBaseVerticesAndBaseInstances, GCGLenum type) final;
 
+#if ENABLE(WEBXR)
+    PlatformGLObject createRasterizationRateMapForFixedFoveation(PlatformXR::Layout layout, WebCore::IntSize physicalSize, WebCore::IntSize screenSize, std::span<const GCGLfloat> horizontalSamplesLeft, std::span<const GCGLfloat> horizontalSamplesRight, std::span<const GCGLfloat> verticalSamples) final;// NOLINT(readability/parameter_name)
+    void deleteRasterizationRateMap(PlatformGLObject map) final;
+    void framebufferMTLRasterizationRateMapANGLE(GCGLenum target, PlatformGLObject map) final;
+#endif
+
     // Functions with a generated implementation. This list is used by generate-gpup-webgl script.
     void activeTexture(GCGLenum texture) final;
     void attachShader(PlatformGLObject program, PlatformGLObject shader) final;
