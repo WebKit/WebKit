@@ -105,8 +105,8 @@ class SuiteFailuresView {
                 }
 
                 const agregatedStats = {
-                    tests_run: diff.results.map(result => result.stats.tests_run).reduce((a, b) => a + b, 0),
-                    tests_skipped: diff.results.map(result => result.stats.tests_skipped).reduce((a, b) => a + b, 0),
+                    tests_run: diff.results.map(result => result.stats.tests_run).reduce((a, b) => (~~a) + (~~b), 0),
+                    tests_skipped: diff.results.map(result => result.stats.tests_skipped).reduce((a, b) => (~~a) + (~~b), 0),
                 };
 
                 let lastValue = 0;
