@@ -689,7 +689,6 @@ void UnifiedPDFPlugin::paintPDFContent(GraphicsContext& context, const FloatRect
     if (m_size.isEmpty() || documentSize().isEmpty())
         return;
 
-    bool shouldPaintBackground = behavior == PaintingBehavior::All;
     bool shouldPaintSelection = behavior == PaintingBehavior::All;
 
     auto stateSaver = GraphicsContextStateSaver(context);
@@ -721,7 +720,7 @@ void UnifiedPDFPlugin::paintPDFContent(GraphicsContext& context, const FloatRect
 
         auto pageDestinationRect = pageInfo.pageBounds;
 
-        if (shouldPaintBackground) {
+        {
             auto whiteBackgroundStateSaver = GraphicsContextStateSaver(context);
             context.scale(documentScale);
             context.fillRect(pageDestinationRect, Color::white);
@@ -2827,10 +2826,23 @@ RefPtr<TextIndicator> UnifiedPDFPlugin::textIndicatorForSelection(OptionSet<WebC
         return nullptr;
 
     auto& context = buffer->context();
-    context.translate(-rectInContentsCoordinates.location());
-    context.scale(m_scaleFactor);
-    context.translate(centeringOffset());
-    paintPDFContent(context, rectInContentsCoordinates, PaintingBehavior::PageContentsOnly);
+
+    {
+        GraphicsContextStateSaver saver(context);
+
+        context.scale(m_scaleFactor);
+        context.translate(-rectInContentsCoordinates.location());
+
+        paintPDFContent(context, rectInContentsCoordinates, PaintingBehavior::PageContentsOnly);
+    }
+
+    // FIXME: Figure out how to share this with WebTextIndicatorLayer.
+#if PLATFORM(MAC)
+    Color highlightColor = *roundAndClampToSRGBALossy([NSColor findHighlightColor].CGColor);
+#else
+    Color highlightColor = SRGBA<float>(.99, .89, 0.22, 1.0);
+#endif
+    context.fillRect({ { 0, 0 }, rectInRootViewCoordinates.size() }, highlightColor, CompositeOperator::SourceOver, BlendMode::Multiply);
 
     TextIndicatorData data;
     data.contentImage = BitmapImage::create(ImageBuffer::sinkIntoNativeImage(WTFMove(buffer)));
