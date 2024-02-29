@@ -1479,6 +1479,12 @@ void NetworkProcess::setBlobRegistryTopOriginPartitioningEnabled(PAL::SessionID 
         session->setBlobRegistryTopOriginPartitioningEnabled(enabled);
 }
 
+void NetworkProcess::setShouldSendPrivateTokenIPCForTesting(PAL::SessionID sessionID, bool enabled) const
+{
+    if (auto* session = networkSession(sessionID))
+        session->setShouldSendPrivateTokenIPCForTesting(enabled);
+}
+
 void NetworkProcess::preconnectTo(PAL::SessionID sessionID, WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier webPageID, WebCore::ResourceRequest&& request, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain)
 {
     auto url = request.url();

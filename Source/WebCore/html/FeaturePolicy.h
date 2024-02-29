@@ -62,6 +62,7 @@ public:
 #if ENABLE(WEBXR)
         XRSpatialTracking,
 #endif
+        PrivateToken,
     };
     bool allows(Type, const SecurityOriginData&) const;
 
@@ -97,6 +98,7 @@ private:
 #if ENABLE(WEBXR)
     AllowRule m_xrSpatialTrackingRule;
 #endif
+    AllowRule m_privateTokenRule;
 };
 
 enum class LogFeaturePolicyFailure : bool { No, Yes };

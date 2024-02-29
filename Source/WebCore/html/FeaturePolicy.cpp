@@ -80,6 +80,8 @@ static const char* policyTypeName(FeaturePolicy::Type type)
     case FeaturePolicy::Type::XRSpatialTracking:
         return "XRSpatialTracking";
 #endif
+    case FeaturePolicy::Type::PrivateToken:
+        return "PrivateToken";
     }
     ASSERT_NOT_REACHED();
     return "";
@@ -226,6 +228,7 @@ FeaturePolicy FeaturePolicy::parse(Document& document, const HTMLIFrameElement* 
 #if ENABLE(WEBXR)
     bool isXRSpatialTrackingInitialized = false;
 #endif
+    bool isPrivateTokenInitialized = false;
     if (iframe) {
         for (auto allowItem : allowAttributeValue.split(';')) {
             auto item = allowItem.trim(isASCIIWhitespace<UChar>);
@@ -315,6 +318,12 @@ FeaturePolicy FeaturePolicy::parse(Document& document, const HTMLIFrameElement* 
                 continue;
             }
 #endif
+            constexpr auto privateTokenToken { "private-token"_s };
+            if (item.startsWith(privateTokenToken)) {
+                isPrivateTokenInitialized = true;
+                updateList(document, *iframe, policy.m_privateTokenRule, item.substring(privateTokenToken.length()));
+                continue;
+            }
         }
     }
 
@@ -353,6 +362,8 @@ FeaturePolicy FeaturePolicy::parse(Document& document, const HTMLIFrameElement* 
     if (!isXRSpatialTrackingInitialized)
         policy.m_xrSpatialTrackingRule.allowedList.add(document.securityOrigin().data());
 #endif
+    if (!isPrivateTokenInitialized)
+        policy.m_privateTokenRule.allowedList.add(document.securityOrigin().data());
 
     // https://w3c.github.io/webappsec-feature-policy/#process-feature-policy-attributes
     // 9.5 Process Feature Policy Attributes
@@ -416,6 +427,8 @@ bool FeaturePolicy::allows(Type type, const SecurityOriginData& origin) const
     case Type::XRSpatialTracking:
         return isAllowedByFeaturePolicy(m_xrSpatialTrackingRule, origin);
 #endif
+    case Type::PrivateToken:
+        return isAllowedByFeaturePolicy(m_privateTokenRule, origin);
     }
     ASSERT_NOT_REACHED();
     return false;

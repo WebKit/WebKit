@@ -100,6 +100,7 @@ void ResourceRequestBase::setAsIsolatedCopy(const ResourceRequest& other)
     setPrivacyProxyFailClosedForUnreachableNonMainHosts(other.privacyProxyFailClosedForUnreachableNonMainHosts());
     setUseAdvancedPrivacyProtections(other.useAdvancedPrivacyProtections());
     setDidFilterLinkDecoration(other.didFilterLinkDecoration());
+    setIsPrivateTokenUsageByThirdPartyAllowed(other.isPrivateTokenUsageByThirdPartyAllowed());
 }
 
 bool ResourceRequestBase::isEmpty() const
@@ -670,6 +671,11 @@ void ResourceRequestBase::setDidFilterLinkDecoration(bool didFilterLinkDecoratio
     if (m_requestData.m_didFilterLinkDecoration == didFilterLinkDecoration)
         return;
     m_requestData.m_didFilterLinkDecoration = didFilterLinkDecoration;
+}
+
+void ResourceRequestBase::setIsPrivateTokenUsageByThirdPartyAllowed(bool isPrivateTokenUsageByThirdPartyAllowed)
+{
+    m_requestData.m_isPrivateTokenUsageByThirdPartyAllowed = isPrivateTokenUsageByThirdPartyAllowed;
 }
 
 bool equalIgnoringHeaderFields(const ResourceRequestBase& a, const ResourceRequestBase& b)
