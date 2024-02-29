@@ -141,6 +141,7 @@ public:
     NetworkProcessProxy& networkProcess();
     Ref<NetworkProcessProxy> protectedNetworkProcess() const;
     NetworkProcessProxy* networkProcessIfExists() { return m_networkProcess.get(); }
+    void setNetworkProcess(NetworkProcessProxy&);
     
     static WebsiteDataStore* existingDataStoreForSessionID(PAL::SessionID);
 

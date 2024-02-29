@@ -316,6 +316,12 @@ static Ref<NetworkProcessProxy> networkProcessForSession(PAL::SessionID sessionI
 #endif
 }
 
+void WebsiteDataStore::setNetworkProcess(NetworkProcessProxy& networkProcess)
+{
+    ASSERT(!m_networkProcess);
+    m_networkProcess = &networkProcess;
+}
+
 NetworkProcessProxy& WebsiteDataStore::networkProcess()
 {
     if (!m_networkProcess) {
