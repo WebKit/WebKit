@@ -3772,6 +3772,9 @@ webkit.org/b/266719 fast/canvas/offscreen-giant.html [ ImageOnlyFailure ]
 
 webkit.org/b/266713 webrtc/processIceTransportStateChange-gc.html [ Skip ]
 
+# This test hits some infinite-loop condition inside Cairo
+fast/css/repeating-conic-gradient-small-range.html [ Skip ]
+
 # End: Common failures between GTK and WPE.
 
 #////////////////////////////////////////////////////////////////////////////////////////
