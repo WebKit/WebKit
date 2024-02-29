@@ -80,7 +80,7 @@ static SVGPathByteStream copySVGPathByteStream(const SVGPathByteStream& source, 
     return source;
 }
 
-Ref<CSSValue> valueForBasicShape(const RenderStyle& style, const BasicShape& basicShape, SVGPathConversion conversion)
+RefPtr<CSSValue> valueForBasicShape(const RenderStyle& style, const BasicShape& basicShape, SVGPathConversion conversion)
 {
     auto createValue = [&](const Length& length) {
         return CSSPrimitiveValue::create(length.isAuto() ? Length(0, LengthType::Percent) : length, style);
@@ -89,11 +89,14 @@ Ref<CSSValue> valueForBasicShape(const RenderStyle& style, const BasicShape& bas
         return CSSValuePair::create(createValue(size.width), createValue(size.height));
     };
 
-    auto createSumValue = [&](Vector<Ref<CSSCalcExpressionNode>> expressions) -> Ref<CSSValue> {
-        auto node = CSSCalcOperationNode::simplify(CSSCalcOperationNode::createSum(WTFMove(expressions)).releaseNonNull());
+    auto createSumValue = [&](Vector<Ref<CSSCalcExpressionNode>> expressions) -> RefPtr<CSSValue> {
+        auto sum = CSSCalcOperationNode::createSum(WTFMove(expressions));
+        if (!sum)
+            return nullptr;
+        auto node = CSSCalcOperationNode::simplify(sum.releaseNonNull());
         if (RefPtr operation = dynamicDowncast<CSSCalcOperationNode>(node); operation && operation->isIdentity()) {
             if (RefPtr child = dynamicDowncast<CSSCalcPrimitiveValueNode>(operation->children()[0]))
-                return const_cast<CSSPrimitiveValue&>(child->value());
+                return const_cast<CSSPrimitiveValue*>(&child->value());
         }
         return CSSCalcValue::create(WTFMove(node));
     };
@@ -110,7 +113,7 @@ Ref<CSSValue> valueForBasicShape(const RenderStyle& style, const BasicShape& bas
     auto createReflectedSumValue = [&](const Length& a, const Length& b) {
         return createSumValue({ create100PercentNode(), createNegatedNode(a), createNegatedNode(b) });
     };
-    auto createReflectedValue = [&](const Length& length) -> Ref<CSSValue> {
+    auto createReflectedValue = [&](const Length& length) -> RefPtr<CSSValue> {
         if (length.isAuto())
             return createValue(Length(0, LengthType::Percent));
         return createSumValue({ create100PercentNode(), createNegatedNode(length) });
@@ -162,15 +165,23 @@ Ref<CSSValue> valueForBasicShape(const RenderStyle& style, const BasicShape& bas
     }
     case BasicShape::Type::Xywh: {
         auto& xywh = uncheckedDowncast<BasicShapeXywh>(basicShape);
-        return CSSInsetShapeValue::create(createValue(xywh.insetY()), createReflectedSumValue(xywh.insetX(), xywh.width()),
-            createReflectedSumValue(xywh.insetY(), xywh.height()), createValue(xywh.insetX()),
+        RefPtr right = createReflectedSumValue(xywh.insetX(), xywh.width());
+        RefPtr bottom = createReflectedSumValue(xywh.insetY(), xywh.height());
+        if (!right || !bottom)
+            return nullptr;
+        return CSSInsetShapeValue::create(createValue(xywh.insetY()), *right,
+            *bottom, createValue(xywh.insetX()),
             createPair(xywh.topLeftRadius()), createPair(xywh.topRightRadius()),
             createPair(xywh.bottomRightRadius()), createPair(xywh.bottomLeftRadius()));
     }
     case BasicShape::Type::Rect: {
         auto& rect = uncheckedDowncast<BasicShapeRect>(basicShape);
-        return CSSInsetShapeValue::create(createValue(rect.top()), createReflectedValue(rect.right()),
-            createReflectedValue(rect.bottom()), createValue(rect.left()),
+        RefPtr right = createReflectedValue(rect.right());
+        RefPtr bottom = createReflectedValue(rect.bottom());
+        if (!right || !bottom)
+            return nullptr;
+        return CSSInsetShapeValue::create(createValue(rect.top()),
+            *right, *bottom, createValue(rect.left()),
             createPair(rect.topLeftRadius()), createPair(rect.topRightRadius()),
             createPair(rect.bottomRightRadius()), createPair(rect.bottomLeftRadius()));
     }

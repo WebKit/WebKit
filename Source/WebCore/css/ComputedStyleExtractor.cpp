@@ -1842,7 +1842,7 @@ static CSSValueID valueIDForRaySize(RayPathOperation::Size size)
     return CSSValueInvalid;
 }
 
-static Ref<CSSValue> valueForPathOperation(const RenderStyle& style, const PathOperation* operation, SVGPathConversion conversion = SVGPathConversion::None)
+static RefPtr<CSSValue> valueForPathOperation(const RenderStyle& style, const PathOperation* operation, SVGPathConversion conversion = SVGPathConversion::None)
 {
     if (!operation)
         return CSSPrimitiveValue::create(CSSValueNone);
@@ -1853,10 +1853,12 @@ static Ref<CSSValue> valueForPathOperation(const RenderStyle& style, const PathO
 
     case PathOperation::Shape: {
         auto& shapeOperation = uncheckedDowncast<ShapePathOperation>(*operation);
+        auto basicShape = valueForBasicShape(style, shapeOperation.basicShape(), conversion);
+        if (!basicShape)
+            return nullptr;
         if (shapeOperation.referenceBox() == CSSBoxType::BoxMissing)
-            return CSSValueList::createSpaceSeparated(valueForBasicShape(style, shapeOperation.basicShape(), conversion));
-        return CSSValueList::createSpaceSeparated(valueForBasicShape(style, shapeOperation.basicShape(), conversion),
-            createConvertingToCSSValueID(shapeOperation.referenceBox()));
+            return CSSValueList::createSpaceSeparated(*basicShape);
+        return CSSValueList::createSpaceSeparated(*basicShape, createConvertingToCSSValueID(shapeOperation.referenceBox()));
     }
 
     case PathOperation::Box:
@@ -2830,7 +2832,7 @@ static inline const RenderStyle* computeRenderStyleForProperty(Element& element,
     return element.computedStyle(pseudoElementIdentifier);
 }
 
-static Ref<CSSValue> shapePropertyValue(const RenderStyle& style, const ShapeValue* shapeValue)
+static RefPtr<CSSValue> shapePropertyValue(const RenderStyle& style, const ShapeValue* shapeValue)
 {
     if (!shapeValue)
         return CSSPrimitiveValue::create(CSSValueNone);
@@ -2846,10 +2848,13 @@ static Ref<CSSValue> shapePropertyValue(const RenderStyle& style, const ShapeVal
 
     ASSERT(shapeValue->type() == ShapeValue::Type::Shape);
 
+    auto basicShape = valueForBasicShape(style, *shapeValue->shape());
+    if (!basicShape)
+        return nullptr;
+
     if (shapeValue->cssBox() == CSSBoxType::BoxMissing)
-        return CSSValueList::createSpaceSeparated(valueForBasicShape(style, *shapeValue->shape()));
-    return CSSValueList::createSpaceSeparated(valueForBasicShape(style, *shapeValue->shape()),
-        createConvertingToCSSValueID(shapeValue->cssBox()));
+        return CSSValueList::createSpaceSeparated(*basicShape);
+    return CSSValueList::createSpaceSeparated(*basicShape, createConvertingToCSSValueID(shapeValue->cssBox()));
 }
 
 static Ref<CSSValueList> valueForItemPositionWithOverflowAlignment(const StyleSelfAlignmentData& data)
@@ -2927,8 +2932,10 @@ static Ref<CSSValue> valueForOffsetShorthand(const RenderStyle& style)
     bool nonInitialDistance = !style.offsetDistance().isZero();
     bool nonInitialRotate = style.offsetRotate() != style.initialOffsetRotate();
 
-    if (style.offsetPath() || nonInitialDistance || nonInitialRotate)
-        innerList.append(valueForPathOperation(style, style.offsetPath(), SVGPathConversion::ForceAbsolute));
+    if (style.offsetPath() || nonInitialDistance || nonInitialRotate) {
+        if (auto pathOperation = valueForPathOperation(style, style.offsetPath(), SVGPathConversion::ForceAbsolute))
+            innerList.append(*pathOperation);
+    }
 
     if (nonInitialDistance)
         innerList.append(CSSPrimitiveValue::create(style.offsetDistance(), style));

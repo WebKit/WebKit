@@ -41,7 +41,7 @@ class RenderStyle;
 
 enum class SVGPathConversion : bool { None, ForceAbsolute };
 
-Ref<CSSValue> valueForBasicShape(const RenderStyle&, const BasicShape&, SVGPathConversion = SVGPathConversion::None);
+RefPtr<CSSValue> valueForBasicShape(const RenderStyle&, const BasicShape&, SVGPathConversion = SVGPathConversion::None);
 Ref<BasicShape> basicShapeForValue(const CSSToLengthConversionData&, const CSSValue&, float zoom = 1);
 float floatValueForCenterCoordinate(const BasicShapeCenterCoordinate&, float);
 
