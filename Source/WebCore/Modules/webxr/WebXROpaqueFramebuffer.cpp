@@ -151,7 +151,16 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::FrameData::LayerData& 
     // the textures/renderbuffers.
 
 #if PLATFORM(COCOA)
-    int layerCount = (data.displayLayout == PlatformXR::Layout::Layered) ? 2 : 1;
+    if (data.layerSetup) {
+        // The drawing target can change size at any point during the session. If this happens, we need
+        // to recreate the framebuffer.
+        if (!setupFramebuffer(*gl, *data.layerSetup))
+            return;
+
+        m_completionSyncEvent = MachSendRight(data.layerSetup->completionSyncEvent);
+    }
+
+    int layerCount = (m_displayLayout == PlatformXR::Layout::Layered) ? 2 : 1;
     for (int layer = 0; layer < layerCount; ++layer) {
         auto colorTextureSource = makeEGLImageSource(data.colorTexture);
         createAndBindCompositorBuffer(*gl, m_displayAttachments[layer].colorBuffer, GL::NONE, colorTextureSource, layer);
@@ -163,12 +172,8 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::FrameData::LayerData& 
         createAndBindCompositorBuffer(*gl, m_displayAttachments[layer].depthStencilBuffer, GL::DEPTH24_STENCIL8, depthStencilBufferSource, layer);
     }
 
-    // The drawing target can change size at any point during the session. If this happens, we need
-    // to recreate the framebuffer.
-    if (!setupFramebuffer(*gl, data))
-        return;
+    m_renderingFrameIndex = data.renderingFrameIndex;
 
-    m_completionSyncEvent = std::tuple(data.completionSyncEvent);
 #else
     m_colorTexture = data.opaqueTexture;
 #endif
@@ -213,8 +218,8 @@ void WebXROpaqueFramebuffer::endFrame()
     }
 
 #if PLATFORM(COCOA)
-    if (std::get<MachSendRight>(m_completionSyncEvent)) {
-        auto completionSync = gl->createEGLSync(m_completionSyncEvent);
+    if (m_completionSyncEvent) {
+        auto completionSync = gl->createEGLSync(std::tuple(m_completionSyncEvent, m_renderingFrameIndex));
         ASSERT(completionSync);
         constexpr uint64_t kTimeout = 1'000'000'000; // 1 second
         gl->clientWaitEGLSyncWithFlush(completionSync, kTimeout);
@@ -227,6 +232,8 @@ void WebXROpaqueFramebuffer::endFrame()
         m_displayAttachments[layer].colorBuffer.destroyImage(*gl);
         m_displayAttachments[layer].depthStencilBuffer.destroyImage(*gl);
     }
+
+    gl->disableFoveation();
 #else
     // FIXME: We have to call finish rather than flush because we only want to disconnect
     // the IOSurface and signal the DeviceProxy when we know the content has been rendered.
@@ -311,6 +318,15 @@ void WebXROpaqueFramebuffer::blitSharedToLayered(GraphicsContextGL& gl)
 #endif
 }
 
+bool WebXROpaqueFramebuffer::supportsDynamicViewportScaling() const
+{
+#if PLATFORM(VISION)
+    return false;
+#else
+    return true;
+#endif
+}
+
 IntSize WebXROpaqueFramebuffer::displayFramebufferSize() const
 {
     return m_framebufferSize;
@@ -326,10 +342,23 @@ IntSize WebXROpaqueFramebuffer::drawFramebufferSize() const
     }
 }
 
-bool WebXROpaqueFramebuffer::setupFramebuffer(GraphicsContextGL& gl, const PlatformXR::FrameData::LayerData& data)
+IntRect WebXROpaqueFramebuffer::drawViewport(PlatformXR::Eye eye) const
 {
-    if (m_framebufferSize == data.framebufferSize && m_displayLayout == data.displayLayout)
-        return true;
+    switch (eye) {
+    case PlatformXR::Eye::None:
+        return IntRect(IntPoint::zero(), drawFramebufferSize());
+    case PlatformXR::Eye::Left:
+        return m_leftViewport;
+    case PlatformXR::Eye::Right:
+        return m_rightViewport;
+    }
+}
+
+bool WebXROpaqueFramebuffer::setupFramebuffer(GraphicsContextGL& gl, const PlatformXR::FrameData::LayerSetupData& data)
+{
+
+    bool framebufferResize = m_framebufferSize != data.framebufferSize || m_displayLayout != data.displayLayout;
+    bool foveationChange = !data.horizontalSamples.empty() && !data.verticalSamples.empty();
 
     m_framebufferSize = data.framebufferSize;
     m_displayLayout = data.displayLayout;
@@ -342,8 +371,18 @@ bool WebXROpaqueFramebuffer::setupFramebuffer(GraphicsContextGL& gl, const Platf
 
     IntSize size = drawFramebufferSize();
 
+    // Calculate viewports of each eye
+    if (foveationChange) {
+        if (!gl.createFoveation(PlatformXR::Layout::Shared, data.physicalSize, data.screenSize, data.horizontalSamples, data.verticalSamples))
+            return false;
+        gl.enableFoveation(PlatformXR::Layout::Shared);
+    }
+
+    m_leftViewport = calculateViewportShared(PlatformXR::Eye::Left, foveationChange);
+    m_rightViewport = calculateViewportShared(PlatformXR::Eye::Right, foveationChange);
+
     // Intermediate resolve target
-    if (needsIntermediateResolve) {
+    if (framebufferResize && needsIntermediateResolve) {
         allocateAttachments(gl, m_resolveAttachments, 0, size);
 
         ensure(gl, m_resolvedFBO);
@@ -356,7 +395,7 @@ bool WebXROpaqueFramebuffer::setupFramebuffer(GraphicsContextGL& gl, const Platf
         m_resolvedFBO.release(gl);
 
     // Drawing target
-    {
+    if (framebufferResize) {
         // FIXME: We always allocate a new drawing target
         allocateAttachments(gl, m_drawAttachments, sampleCount, size);
 
@@ -391,6 +430,31 @@ void WebXROpaqueFramebuffer::bindAttachments(GraphicsContextGL& gl, WebXRAttachm
     // NOTE: In WebGL2, GL::DEPTH_STENCIL_ATTACHMENT is an alias to set GL::DEPTH_ATTACHMENT and GL::STENCIL_ATTACHMENT, which is all we require.
     ASSERT((m_attributes.stencil || m_attributes.depth) && attachments.depthStencilBuffer);
     gl.framebufferRenderbuffer(GL::FRAMEBUFFER, GL::DEPTH_STENCIL_ATTACHMENT, GL::RENDERBUFFER, attachments.depthStencilBuffer);
+}
+
+IntRect WebXROpaqueFramebuffer::calculateViewportShared(PlatformXR::Eye eye, bool isFoveated)
+{
+#if !PLATFORM(VISION)
+    RELEASE_ASSERT(!isFoveated, "Foveated rendering is not supported");
+#endif
+
+    switch (eye) {
+    case PlatformXR::Eye::None:
+        ASSERT_NOT_REACHED();
+        return IntRect();
+
+    case PlatformXR::Eye::Left:
+        if (isFoveated)
+            return IntRect(0, 0, 4064, 2767);
+        else
+            return IntRect(0, 0, m_framebufferSize.width(), m_framebufferSize.height());
+
+    case PlatformXR::Eye::Right:
+        if (isFoveated)
+            return IntRect(4096, 0, 4064, 2767);
+        else
+            return IntRect(m_framebufferSize.width(), 0, m_framebufferSize.width(), m_framebufferSize.height());
+    }
 }
 
 void WebXRExternalRenderbuffer::destroyImage(GraphicsContextGL& gl)
