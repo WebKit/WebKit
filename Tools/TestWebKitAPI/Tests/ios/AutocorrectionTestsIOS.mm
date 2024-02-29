@@ -140,6 +140,29 @@ TEST(AutocorrectionTests, AutocorrectionContextDoesNotIncludeNewlineInTextField)
     EXPECT_TRUE(contextAfterTyping.contextAfterSelection.isEmpty());
 }
 
+TEST(AutocorrectionTests, MultiWordAutocorrectionFromStartOfText)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 568)]);
+    auto inputDelegate = adoptNS([TestInputDelegate new]);
+    bool startedInputSession = false;
+    [inputDelegate setFocusStartsInputSessionPolicyHandler:[&] (WKWebView *, id<_WKFocusedElementInfo>) -> _WKFocusStartsInputSessionPolicy {
+        startedInputSession = true;
+        return _WKFocusStartsInputSessionPolicyAllow;
+    }];
+    [webView _setInputDelegate:inputDelegate.get()];
+    [webView synchronouslyLoadHTMLString:@"<input id='input' value='Helol wordl'></input>"];
+    [webView objectByEvaluatingJavaScript:@"input.focus(); input.setSelectionRange(0, 0)"];
+    TestWebKitAPI::Util::run(&startedInputSession);
+
+    __block bool done = false;
+    [webView replaceText:@"Helol wordl" withText:@"Hello world" shouldUnderline:NO completion:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_WK_STREQ("Hello world", [webView stringByEvaluatingJavaScript:@"input.value"]);
+}
+
 TEST(AutocorrectionTests, DoNotLearnCorrectionsAfterChangingInputTypeFromPassword)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 568)]);

@@ -2753,26 +2753,12 @@ bool WebPage::applyAutocorrectionInternal(const String& correction, const String
         // If 'originalText' is not the same as 'textForRange' we need to move 'range'
         // forward such that it matches the original selection as much as possible.
         if (foldQuoteMarks(textForRange) != originalTextWithFoldedQuoteMarks) {
-            // Search for the original text before the selection caret.
-            // FIXME: Does this do the right thing in the case where `originalText` contains one or more grapheme clusters
-            // that encompass multiple codepoints? Advancing backwards by grapheme cluster count here may also allow us to
-            // sidestep the position adjustment logic below in some cases.
-            for (size_t i = 0; i < originalText.length(); ++i)
-                position = position.previous();
-            if (position.isNull())
-                position = startOfDocument(frame->document());
-            range = makeSimpleRange(position, frame->selection().selection().start());
-            textForRange = plainTextForContext(range);
-            unsigned loopCount = 0;
-            const unsigned maxPositionsAttempts = 10;
-            while (textForRange.length() && textForRange.length() > originalText.length() && loopCount < maxPositionsAttempts) {
-                position = position.next();
-                if (position.isNotNull() && position >= frame->selection().selection().start())
-                    range = std::nullopt;
-                else
-                    range = makeSimpleRange(position, frame->selection().selection().start());
-                textForRange = plainTextForContext(range);
-                loopCount++;
+            // Search for the original text near the selection caret.
+            if (auto searchRange = rangeExpandedAroundPositionByCharacters(position, numGraphemeClusters(originalText))) {
+                if (auto foundRange = findPlainText(*searchRange, originalTextWithFoldedQuoteMarks, { DoNotSetSelection, DoNotRevealSelection }); !foundRange.collapsed()) {
+                    textForRange = plainTextForContext(foundRange);
+                    range = foundRange;
+                }
             }
         } else if (textForRange.isEmpty() && range && !range->collapsed()) {
             // If 'range' does not include any text but it is not collapsed, we need to set
