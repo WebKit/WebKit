@@ -336,7 +336,7 @@ JSC_DECLARE_JIT_OPERATION(operationLoadVarargs, void, (JSGlobalObject*, int32_t 
 JSC_DECLARE_JIT_OPERATION(operationThrowDFG, void, (JSGlobalObject*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationThrowStaticError, void, (JSGlobalObject*, JSString*, uint32_t));
 
-JSC_DECLARE_JIT_OPERATION(operationHasOwnProperty, size_t, (JSGlobalObject*, JSObject*, EncodedJSValue));
+JSC_DECLARE_JIT_OPERATION(operationHasOwnProperty, EncodedJSValue, (JSGlobalObject*, JSObject*, EncodedJSValue));
 
 JSC_DECLARE_JIT_OPERATION(operationArrayIndexOfString, UCPUStrictInt32, (JSGlobalObject*, Butterfly*, JSString*, int32_t));
 JSC_DECLARE_JIT_OPERATION(operationArrayIndexOfValueDouble, UCPUStrictInt32, (Butterfly*, EncodedJSValue, int32_t));

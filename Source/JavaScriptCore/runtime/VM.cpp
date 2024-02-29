@@ -56,7 +56,6 @@
 #include "FunctionExecutableInlines.h"
 #include "GetterSetterInlines.h"
 #include "GigacageAlignedMemoryAllocator.h"
-#include "HasOwnPropertyCache.h"
 #include "HashMapImplInlines.h"
 #include "Heap.h"
 #include "HeapProfiler.h"
@@ -240,10 +239,6 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
 
     // Set up lazy initializers.
     {
-        m_hasOwnPropertyCache.initLater([](VM&, auto& ref) {
-            ref.set(HasOwnPropertyCache::create());
-        });
-
         m_megamorphicCache.initLater([](VM&, auto& ref) {
             ref.set(makeUniqueRef<MegamorphicCache>());
         });

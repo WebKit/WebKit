@@ -30,7 +30,6 @@
 #include "B3Value.h"
 #include "DFGArrayMode.h"
 #include "FTLAbstractHeap.h"
-#include "HasOwnPropertyCache.h"
 #include "IndexingType.h"
 #include "JSGlobalObject.h"
 #include "JSMap.h"
@@ -208,7 +207,6 @@ namespace JSC { namespace FTL {
     macro(singleCharacterStrings, 0, sizeof(JSString*)) \
     macro(structureTable, 0, sizeof(Structure*)) \
     macro(variables, 0, sizeof(Register)) \
-    macro(HasOwnPropertyCache, 0, sizeof(HasOwnPropertyCache::Entry)) \
     macro(SmallIntCache, 0, sizeof(NumericStrings::StringWithJSString)) \
     
 #define FOR_EACH_NUMBERED_ABSTRACT_HEAP(macro) \

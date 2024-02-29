@@ -36,7 +36,6 @@
 #include "DFGOperations.h"
 #include "DFGSlowPathGenerator.h"
 #include "DateInstance.h"
-#include "HasOwnPropertyCache.h"
 #include "MegamorphicCache.h"
 #include "SetupVarargsFrame.h"
 #include "SpillRegistersMode.h"
@@ -5621,11 +5620,10 @@ void SpeculativeJIT::compile(Node* node)
 
     case HasOwnProperty: {
         SpeculateCellOperand object(this, node->child1());
-        GPRTemporary uniquedStringImpl(this);
-        GPRTemporary temp(this);
-        GPRTemporary hash(this);
-        GPRTemporary structureID(this);
-        GPRTemporary result(this);
+        GPRTemporary scratch1(this);
+        GPRTemporary scratch2(this);
+        GPRTemporary scratch3(this);
+        GPRTemporary scratch4(this);
 
         std::optional<SpeculateCellOperand> keyAsCell;
         std::optional<JSValueOperand> keyAsValue;
@@ -5640,43 +5638,42 @@ void SpeculativeJIT::compile(Node* node)
         }
 
         GPRReg objectGPR = object.gpr();
-        GPRReg implGPR = uniquedStringImpl.gpr();
-        GPRReg tempGPR = temp.gpr();
-        GPRReg hashGPR = hash.gpr();
-        GPRReg structureIDGPR = structureID.gpr();
-        GPRReg resultGPR = result.gpr();
+        GPRReg scratch1GPR = scratch1.gpr();
+        GPRReg scratch2GPR = scratch2.gpr();
+        GPRReg scratch3GPR = scratch3.gpr();
+        GPRReg scratch4GPR = scratch4.gpr();
 
-        speculateObject(node->child1());
+        speculateObject(node->child1(), objectGPR);
 
-        JumpList slowPath;
+        JumpList slowCases;
         switch (node->child2().useKind()) {
         case SymbolUse: {
             speculateSymbol(node->child2(), keyGPR);
-            loadPtr(Address(keyGPR, Symbol::offsetOfSymbolImpl()), implGPR);
+            loadPtr(Address(keyGPR, Symbol::offsetOfSymbolImpl()), scratch4GPR);
             break;
         }
         case StringUse: {
             speculateString(node->child2(), keyGPR);
-            loadPtr(Address(keyGPR, JSString::offsetOfValue()), implGPR);
-            slowPath.append(branchIfRopeStringImpl(implGPR));
-            slowPath.append(branchTest32(
-                Zero, Address(implGPR, StringImpl::flagsOffset()),
+            loadPtr(Address(keyGPR, JSString::offsetOfValue()), scratch4GPR);
+            slowCases.append(branchIfRopeStringImpl(scratch4GPR));
+            slowCases.append(branchTest32(
+                Zero, Address(scratch4GPR, StringImpl::flagsOffset()),
                 TrustedImm32(StringImpl::flagIsAtom())));
             break;
         }
         case UntypedUse: {
-            slowPath.append(branchIfNotCell(JSValueRegs(keyGPR)));
+            slowCases.append(branchIfNotCell(JSValueRegs(keyGPR)));
             auto isNotString = branchIfNotString(keyGPR);
-            loadPtr(Address(keyGPR, JSString::offsetOfValue()), implGPR);
-            slowPath.append(branchIfRopeStringImpl(implGPR));
-            slowPath.append(branchTest32(
-                Zero, Address(implGPR, StringImpl::flagsOffset()),
+            loadPtr(Address(keyGPR, JSString::offsetOfValue()), scratch4GPR);
+            slowCases.append(branchIfRopeStringImpl(scratch4GPR));
+            slowCases.append(branchTest32(
+                Zero, Address(scratch4GPR, StringImpl::flagsOffset()),
                 TrustedImm32(StringImpl::flagIsAtom())));
             auto hasUniquedImpl = jump();
 
             isNotString.link(this);
-            slowPath.append(branchIfNotSymbol(keyGPR));
-            loadPtr(Address(keyGPR, Symbol::offsetOfSymbolImpl()), implGPR);
+            slowCases.append(branchIfNotSymbol(keyGPR));
+            loadPtr(Address(keyGPR, Symbol::offsetOfSymbolImpl()), scratch4GPR);
 
             hasUniquedImpl.link(this);
             break;
@@ -5685,42 +5682,12 @@ void SpeculativeJIT::compile(Node* node)
             RELEASE_ASSERT_NOT_REACHED();
         }
 
-        // Note that we don't test if the hash is zero here. AtomStringImpl's can't have a zero
-        // hash, however, a SymbolImpl may. But, because this is a cache, we don't care. We only
-        // ever load the result from the cache if the cache entry matches what we are querying for.
-        // So we either get super lucky and use zero for the hash and somehow collide with the entity
-        // we're looking for, or we realize we're comparing against another entity, and go to the
-        // slow path anyways.
-        load32(Address(implGPR, UniquedStringImpl::flagsOffset()), hashGPR);
-        urshift32(TrustedImm32(StringImpl::s_flagCount), hashGPR);
-        load32(Address(objectGPR, JSCell::structureIDOffset()), structureIDGPR);
-        add32(structureIDGPR, hashGPR);
-        and32(TrustedImm32(HasOwnPropertyCache::mask), hashGPR);
-        if (hasOneBitSet(sizeof(HasOwnPropertyCache::Entry))) // is a power of 2
-            lshift32(TrustedImm32(getLSBSet(sizeof(HasOwnPropertyCache::Entry))), hashGPR);
-        else
-            mul32(TrustedImm32(sizeof(HasOwnPropertyCache::Entry)), hashGPR, hashGPR);
-        ASSERT(vm().hasOwnPropertyCache());
-        move(TrustedImmPtr(vm().hasOwnPropertyCache()), tempGPR);
-        slowPath.append(branchPtr(NotEqual,
-            BaseIndex(tempGPR, hashGPR, TimesOne, HasOwnPropertyCache::Entry::offsetOfImpl()), implGPR));
-        load8(BaseIndex(tempGPR, hashGPR, TimesOne, HasOwnPropertyCache::Entry::offsetOfResult()), resultGPR);
-        load32(BaseIndex(tempGPR, hashGPR, TimesOne, HasOwnPropertyCache::Entry::offsetOfStructureID()), tempGPR);
-        slowPath.append(branch32(NotEqual, tempGPR, structureIDGPR));
-        auto done = jump();
-
-        slowPath.link(this);
-        silentSpillAllRegisters(resultGPR);
-        callOperation(operationHasOwnProperty, resultGPR, LinkableConstant::globalObject(*this, node), objectGPR, keyGPR);
-        silentFillAllRegisters();
-        exceptionCheck();
-
-        done.link(this);
-        or32(TrustedImm32(JSValue::ValueFalse), resultGPR);
-        jsValueResult(resultGPR, node, DataFormatJSBoolean);
+        slowCases.append(hasOwnMegamorphicProperty(vm(), objectGPR, scratch4GPR, nullptr, scratch3GPR, scratch1GPR, scratch2GPR, scratch3GPR));
+        addSlowPathGenerator(slowPathCall(slowCases, this, operationHasOwnProperty, scratch3GPR, LinkableConstant::globalObject(*this, node), objectGPR, keyGPR));
+        jsValueResult(scratch3GPR, node);
         break;
     }
-        
+
     case CountExecution:
         add64(TrustedImm32(1), AbsoluteAddress(node->executionCounter()->address()));
         break;

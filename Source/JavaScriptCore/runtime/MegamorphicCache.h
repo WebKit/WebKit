@@ -57,6 +57,13 @@ public:
     static constexpr uint32_t hasCachePrimaryMask = hasCachePrimarySize - 1;
     static constexpr uint32_t hasCacheSecondaryMask = hasCacheSecondarySize - 1;
 
+    static constexpr uint32_t hasOwnCachePrimarySize = 2048;
+    static constexpr uint32_t hasOwnCacheSecondarySize = 512;
+    static_assert(hasOneBitSet(hasOwnCachePrimarySize), "size should be a power of two.");
+    static_assert(hasOneBitSet(hasOwnCacheSecondarySize), "size should be a power of two.");
+    static constexpr uint32_t hasOwnCachePrimaryMask = hasOwnCachePrimarySize - 1;
+    static constexpr uint32_t hasOwnCacheSecondaryMask = hasOwnCacheSecondarySize - 1;
+
     static constexpr uint16_t invalidEpoch = 0;
     static constexpr PropertyOffset maxOffset = UINT16_MAX;
 
@@ -135,6 +142,8 @@ public:
         uint16_t m_result { false };
     };
 
+    using HasOwnEntry = HasEntry;
+
     static ptrdiff_t offsetOfLoadCachePrimaryEntries() { return OBJECT_OFFSETOF(MegamorphicCache, m_loadCachePrimaryEntries); }
     static ptrdiff_t offsetOfLoadCacheSecondaryEntries() { return OBJECT_OFFSETOF(MegamorphicCache, m_loadCacheSecondaryEntries); }
 
@@ -143,6 +152,9 @@ public:
 
     static ptrdiff_t offsetOfHasCachePrimaryEntries() { return OBJECT_OFFSETOF(MegamorphicCache, m_hasCachePrimaryEntries); }
     static ptrdiff_t offsetOfHasCacheSecondaryEntries() { return OBJECT_OFFSETOF(MegamorphicCache, m_hasCacheSecondaryEntries); }
+
+    static ptrdiff_t offsetOfHasOwnCachePrimaryEntries() { return OBJECT_OFFSETOF(MegamorphicCache, m_hasOwnCachePrimaryEntries); }
+    static ptrdiff_t offsetOfHasOwnCacheSecondaryEntries() { return OBJECT_OFFSETOF(MegamorphicCache, m_hasOwnCacheSecondaryEntries); }
 
     static ptrdiff_t offsetOfEpoch() { return OBJECT_OFFSETOF(MegamorphicCache, m_epoch); }
 
@@ -164,13 +176,16 @@ public:
     static constexpr unsigned structureIDHashShift6 = structureIDHashShift1 + 9;
     static constexpr unsigned structureIDHashShift7 = structureIDHashShift1 + 7;
 
-    ALWAYS_INLINE static uint32_t primaryHash(StructureID structureID, UniquedStringImpl* uid)
+    static constexpr unsigned structureIDHashShift8 = structureIDHashShift1 + 10;
+    static constexpr unsigned structureIDHashShift9 = structureIDHashShift1 + 8;
+
+    ALWAYS_INLINE static uint32_t loadPrimaryHash(StructureID structureID, UniquedStringImpl* uid)
     {
         uint32_t sid = bitwise_cast<uint32_t>(structureID);
         return ((sid >> structureIDHashShift1) ^ (sid >> structureIDHashShift2)) + uid->hash();
     }
 
-    ALWAYS_INLINE static uint32_t secondaryHash(StructureID structureID, UniquedStringImpl* uid)
+    ALWAYS_INLINE static uint32_t loadSecondaryHash(StructureID structureID, UniquedStringImpl* uid)
     {
         uint32_t key = bitwise_cast<uint32_t>(structureID) + static_cast<uint32_t>(bitwise_cast<uintptr_t>(uid));
         return key + (key >> structureIDHashShift3);
@@ -200,14 +215,26 @@ public:
         return key + (key >> structureIDHashShift7);
     }
 
+    ALWAYS_INLINE static uint32_t hasOwnCachePrimaryHash(StructureID structureID, UniquedStringImpl* uid)
+    {
+        uint32_t sid = bitwise_cast<uint32_t>(structureID);
+        return ((sid >> structureIDHashShift1) ^ (sid >> structureIDHashShift8)) + uid->hash();
+    }
+
+    ALWAYS_INLINE static uint32_t hasOwnCacheSecondaryHash(StructureID structureID, UniquedStringImpl* uid)
+    {
+        uint32_t key = bitwise_cast<uint32_t>(structureID) + static_cast<uint32_t>(bitwise_cast<uintptr_t>(uid));
+        return key + (key >> structureIDHashShift9);
+    }
+
     JS_EXPORT_PRIVATE void age(CollectionScope);
 
     void initAsMiss(StructureID structureID, UniquedStringImpl* uid)
     {
-        uint32_t primaryIndex = MegamorphicCache::primaryHash(structureID, uid) & loadCachePrimaryMask;
+        uint32_t primaryIndex = MegamorphicCache::loadPrimaryHash(structureID, uid) & loadCachePrimaryMask;
         auto& entry = m_loadCachePrimaryEntries[primaryIndex];
         if (entry.m_epoch == m_epoch) {
-            uint32_t secondaryIndex = MegamorphicCache::secondaryHash(entry.m_structureID, entry.m_uid.get()) & loadCacheSecondaryMask;
+            uint32_t secondaryIndex = MegamorphicCache::loadSecondaryHash(entry.m_structureID, entry.m_uid.get()) & loadCacheSecondaryMask;
             m_loadCacheSecondaryEntries[secondaryIndex] = WTFMove(entry);
         }
         m_loadCachePrimaryEntries[primaryIndex].initAsMiss(structureID, uid, m_epoch);
@@ -215,10 +242,10 @@ public:
 
     void initAsHit(StructureID structureID, UniquedStringImpl* uid, JSCell* holder, uint16_t offset, bool ownProperty)
     {
-        uint32_t primaryIndex = MegamorphicCache::primaryHash(structureID, uid) & loadCachePrimaryMask;
+        uint32_t primaryIndex = MegamorphicCache::loadPrimaryHash(structureID, uid) & loadCachePrimaryMask;
         auto& entry = m_loadCachePrimaryEntries[primaryIndex];
         if (entry.m_epoch == m_epoch) {
-            uint32_t secondaryIndex = MegamorphicCache::secondaryHash(entry.m_structureID, entry.m_uid.get()) & loadCacheSecondaryMask;
+            uint32_t secondaryIndex = MegamorphicCache::loadSecondaryHash(entry.m_structureID, entry.m_uid.get()) & loadCacheSecondaryMask;
             m_loadCacheSecondaryEntries[secondaryIndex] = WTFMove(entry);
         }
         m_loadCachePrimaryEntries[primaryIndex].initAsHit(structureID, uid, m_epoch, holder, offset, ownProperty);
@@ -268,6 +295,77 @@ public:
         m_hasCachePrimaryEntries[primaryIndex].init(structureID, uid, m_epoch, false);
     }
 
+    void initAsHasOwnHit(StructureID structureID, UniquedStringImpl* uid)
+    {
+        uint32_t primaryIndex = MegamorphicCache::hasOwnCachePrimaryHash(structureID, uid) & hasOwnCachePrimaryMask;
+        auto& entry = m_hasOwnCachePrimaryEntries[primaryIndex];
+        if (entry.m_epoch == m_epoch) {
+            uint32_t secondaryIndex = MegamorphicCache::hasOwnCacheSecondaryHash(entry.m_structureID, entry.m_uid.get()) & hasOwnCacheSecondaryMask;
+            m_hasOwnCacheSecondaryEntries[secondaryIndex] = WTFMove(entry);
+        }
+        m_hasOwnCachePrimaryEntries[primaryIndex].init(structureID, uid, m_epoch, true);
+    }
+
+    void initAsHasOwnMiss(StructureID structureID, UniquedStringImpl* uid)
+    {
+        uint32_t primaryIndex = MegamorphicCache::hasOwnCachePrimaryHash(structureID, uid) & hasOwnCachePrimaryMask;
+        auto& entry = m_hasOwnCachePrimaryEntries[primaryIndex];
+        if (entry.m_epoch == m_epoch) {
+            uint32_t secondaryIndex = MegamorphicCache::hasOwnCacheSecondaryHash(entry.m_structureID, entry.m_uid.get()) & hasOwnCacheSecondaryMask;
+            m_hasOwnCacheSecondaryEntries[secondaryIndex] = WTFMove(entry);
+        }
+        m_hasOwnCachePrimaryEntries[primaryIndex].init(structureID, uid, m_epoch, false);
+    }
+
+    ALWAYS_INLINE std::optional<bool> tryGetHasOwn(Structure* structure, UniquedStringImpl* uid)
+    {
+        StructureID structureID = structure->id();
+        uint32_t primaryIndex = MegamorphicCache::hasOwnCachePrimaryHash(structureID, uid) & hasOwnCachePrimaryMask;
+        auto& primaryEntry = m_hasOwnCachePrimaryEntries[primaryIndex];
+        if (primaryEntry.m_uid == uid && primaryEntry.m_structureID == structureID && primaryEntry.m_epoch == m_epoch)
+            return primaryEntry.m_result;
+
+        uint32_t secondaryIndex = MegamorphicCache::hasOwnCacheSecondaryHash(structureID, uid) & hasOwnCacheSecondaryMask;
+        auto& secondaryEntry = m_hasOwnCacheSecondaryEntries[secondaryIndex];
+        if (secondaryEntry.m_uid == uid && secondaryEntry.m_structureID == structureID && secondaryEntry.m_epoch == m_epoch)
+            return secondaryEntry.m_result;
+
+        return std::nullopt;
+    }
+
+    ALWAYS_INLINE bool tryAddHasOwn(PropertySlot& slot, JSObject* object, UniquedStringImpl* uid, bool result)
+    {
+        if (!slot.isCacheable() && !slot.isUnset())
+            return false;
+
+        if (object->type() == GlobalProxyType)
+            return false;
+
+        Structure* structure = object->structure();
+
+        if (!structure->propertyAccessesAreCacheable())
+            return false;
+
+        if (result) {
+            ASSERT(!slot.isUnset());
+            // If this is hit and slot is cacheable, we do not care about Dictionary.
+            initAsHasOwnHit(structure->id(), uid);
+            return true;
+        }
+
+        ASSERT(slot.isUnset());
+        if (!structure->propertyAccessesAreCacheableForAbsence())
+            return false;
+
+        // FIXME: We should be able to flatten a dictionary object again.
+        // https://bugs.webkit.org/show_bug.cgi?id=163092
+        if (structure->isDictionary())
+            return false;
+
+        initAsHasOwnMiss(structure->id(), uid);
+        return true;
+    }
+
     uint16_t epoch() const { return m_epoch; }
 
     void bumpEpoch()
@@ -286,6 +384,8 @@ private:
     std::array<StoreEntry, storeCacheSecondarySize> m_storeCacheSecondaryEntries { };
     std::array<HasEntry, hasCachePrimarySize> m_hasCachePrimaryEntries { };
     std::array<HasEntry, hasCacheSecondarySize> m_hasCacheSecondaryEntries { };
+    std::array<HasOwnEntry, hasOwnCachePrimarySize> m_hasOwnCachePrimaryEntries { };
+    std::array<HasOwnEntry, hasOwnCacheSecondarySize> m_hasOwnCacheSecondaryEntries { };
     uint16_t m_epoch { 1 };
 };
 

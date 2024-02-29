@@ -39,7 +39,6 @@
 #include "DFGSlowPathGenerator.h"
 #include "DirectArguments.h"
 #include "GetterSetter.h"
-#include "HasOwnPropertyCache.h"
 #include "HashMapImpl.h"
 #include "JSLexicalEnvironment.h"
 #include "JSPropertyNameEnumerator.h"

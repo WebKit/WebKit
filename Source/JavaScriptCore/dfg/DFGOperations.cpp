@@ -43,7 +43,6 @@
 #include "FTLForOSREntryJITCode.h"
 #include "FTLOSREntry.h"
 #include "FrameTracers.h"
-#include "HasOwnPropertyCache.h"
 #include "Interpreter.h"
 #include "InterpreterInlines.h"
 #include "IntlCollator.h"
@@ -3356,7 +3355,7 @@ JSC_DEFINE_JIT_OPERATION(operationSizeOfVarargs, UCPUStrictInt32, (JSGlobalObjec
     return toUCPUStrictInt32(sizeOfVarargs(globalObject, arguments, firstVarArgOffset));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationHasOwnProperty, size_t, (JSGlobalObject* globalObject, JSObject* thisObject, EncodedJSValue encodedKey))
+JSC_DEFINE_JIT_OPERATION(operationHasOwnProperty, EncodedJSValue, (JSGlobalObject* globalObject, JSObject* thisObject, EncodedJSValue encodedKey))
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -3364,17 +3363,22 @@ JSC_DEFINE_JIT_OPERATION(operationHasOwnProperty, size_t, (JSGlobalObject* globa
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue key = JSValue::decode(encodedKey);
+    uint32_t i;
+    if (key.getUInt32(i))
+        RELEASE_AND_RETURN(scope, JSValue::encode(jsBoolean(thisObject->hasOwnProperty(globalObject, i))));
+
     Identifier propertyName = key.toPropertyKey(globalObject);
-    RETURN_IF_EXCEPTION(scope, false);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    if (std::optional<uint32_t> index = parseIndex(propertyName))
+        RELEASE_AND_RETURN(scope, JSValue::encode(jsBoolean(thisObject->hasOwnProperty(globalObject, index.value()))));
 
     PropertySlot slot(thisObject, PropertySlot::InternalMethodType::GetOwnProperty);
     bool result = thisObject->hasOwnProperty(globalObject, propertyName.impl(), slot);
-    RETURN_IF_EXCEPTION(scope, false);
+    RETURN_IF_EXCEPTION(scope, { });
 
-    HasOwnPropertyCache* hasOwnPropertyCache = vm.hasOwnPropertyCache();
-    ASSERT(hasOwnPropertyCache);
-    hasOwnPropertyCache->tryAdd(slot, thisObject, propertyName.impl(), result);
-    return result;
+    vm.ensureMegamorphicCache().tryAddHasOwn(slot, thisObject, propertyName.impl(), result);
+    return JSValue::encode(jsBoolean(result));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationNumberIsInteger, size_t, (JSGlobalObject* globalObject, EncodedJSValue value))
