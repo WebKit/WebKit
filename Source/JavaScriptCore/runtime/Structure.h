@@ -1093,4 +1093,7 @@ private:
     friend class Integrity::Analyzer;
 };
 
+void dumpTransitionKind(PrintStream&, TransitionKind);
+MAKE_PRINT_ADAPTOR(TransitionKindDump, TransitionKind, dumpTransitionKind);
+
 } // namespace JSC
