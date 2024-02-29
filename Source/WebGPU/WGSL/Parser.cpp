@@ -373,6 +373,7 @@ Result<void> Parser<Lexer>::parseShader()
         case TokenType::KeywordDiagnostic: {
             consume();
             PARSE(diagnostic, Diagnostic);
+            CONSUME_TYPE(Semicolon);
             auto& directive = MAKE_ARENA_NODE(DiagnosticDirective, WTFMove(diagnostic));
             m_shaderModule.directives().append(directive);
             break;
