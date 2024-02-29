@@ -40,7 +40,15 @@
 #include <memory>
 #endif
 
+#if ENABLE(WEBXR)
+#include "PlatformXR.h"
+#include <wtf/EnumeratedArray.h>
+#endif
+
 OBJC_CLASS MTLSharedEventListener;
+#if ENABLE(WEBXR)
+OBJC_PROTOCOL(MTLRasterizationRateMap);
+#endif
 
 namespace WebCore {
 
@@ -69,6 +77,12 @@ public:
     void destroyPbufferAndDetachIOSurface(void* handle);
 
     GCEGLImage createAndBindEGLImage(GCGLenum, GCGLenum, EGLImageSource, GCGLint) final;
+
+#if ENABLE(WEBXR)
+    bool createFoveation(PlatformXR::Layout, IntSize, IntSize, std::span<const GCGLfloat>, std::span<const GCGLfloat>) final;
+    void enableFoveation(PlatformXR::Layout) final;
+    void disableFoveation() final;
+#endif
 
     RetainPtr<id> newSharedEventWithMachPort(mach_port_t);
     GCEGLSync createEGLSync(ExternalEGLSyncEvent) final;
@@ -151,6 +165,10 @@ protected:
 #endif
     RetainPtr<MTLSharedEventListener> m_finishedMetalSharedEventListener;
     RetainPtr<id> m_finishedMetalSharedEvent; // FIXME: Remove all C++ includees and use id<MTLSharedEvent>.
+#if ENABLE(WEBXR)
+    using RasterizationRateMapArray =  EnumeratedArray<PlatformXR::Layout, RetainPtr<MTLRasterizationRateMap>, PlatformXR::Layout::Layered>;
+    RasterizationRateMapArray m_rasterizationRateMap;
+#endif
 
     static constexpr size_t maxReusedDrawingBuffers { 3 };
     size_t m_currentDrawingBufferIndex { 0 };

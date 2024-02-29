@@ -65,6 +65,8 @@ WTF_WEAK_LINK_FORCE_IMPORT(EGL_GetPlatformDisplayEXT);
 
 namespace WebCore {
 
+using GL = GraphicsContextGL;
+
 // In isCurrentContextPredictable() == true case this variable is accessed in single-threaded manner.
 // In isCurrentContextPredictable() == false case this variable is accessed from multiple threads but always sequentially
 // and it always contains nullptr and nullptr is always written to it.
@@ -682,6 +684,28 @@ GCEGLImage GraphicsContextGLCocoa::createAndBindEGLImage(GCGLenum target, GCGLen
 
     return eglImage;
 }
+
+#if ENABLE(WEBXR)
+bool GraphicsContextGLCocoa::createFoveation(PlatformXR::Layout layout, IntSize physicalSize, IntSize screenSize, std::span<const GCGLfloat> horizontalSamples, std::span<const GCGLfloat> verticalSamples)
+{
+    RELEASE_ASSERT(layout != PlatformXR::Layout::Layered);
+    m_rasterizationRateMap[layout] = newRasterizationRateMap(m_displayObj, physicalSize, screenSize, horizontalSamples, verticalSamples);
+    return m_rasterizationRateMap[layout];
+}
+
+void GraphicsContextGLCocoa::enableFoveation(PlatformXR::Layout layout)
+{
+    RELEASE_ASSERT(layout != PlatformXR::Layout::Layered);
+    GL_BindMetalRasterizationRateMapANGLE(m_rasterizationRateMap[layout].get());
+    GL_Enable(GL::VARIABLE_RASTERIZATION_RATE_ANGLE);
+}
+
+void GraphicsContextGLCocoa::disableFoveation()
+{
+    GL_Disable(GL::VARIABLE_RASTERIZATION_RATE_ANGLE);
+    GL_BindMetalRasterizationRateMapANGLE(nullptr);
+}
+#endif
 
 RetainPtr<id> GraphicsContextGLCocoa::newSharedEventWithMachPort(mach_port_t sharedEventSendRight)
 {

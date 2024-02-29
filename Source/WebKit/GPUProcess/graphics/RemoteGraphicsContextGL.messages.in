@@ -331,6 +331,9 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {
     void DestroyEGLSync(uint64_t arg0) -> (bool returnValue) Synchronous
     void ClientWaitEGLSyncWithFlush(uint64_t arg0, uint64_t timeout)
     void EnableRequiredWebXRExtensions() -> (bool returnValue) Synchronous
+    void CreateFoveation(PlatformXR::Layout layout, WebCore::IntSize physicalSize, WebCore::IntSize screenSize, std::span<const float> horizontalSamples, std::span<const float> verticalSamples) -> (bool returnValue) Synchronous
+    void EnableFoveation(PlatformXR::Layout layout)
+    void DisableFoveation()
 }
 
 #endif

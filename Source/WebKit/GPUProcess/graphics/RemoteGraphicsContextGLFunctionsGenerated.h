@@ -1518,4 +1518,21 @@
         returnValue = m_context->enableRequiredWebXRExtensions();
         completionHandler(returnValue);
     }
+    void createFoveation(PlatformXR::Layout&& layout, WebCore::IntSize&& physicalSize, WebCore::IntSize&& screenSize, std::span<const float>&& horizontalSamples, std::span<const float>&& verticalSamples, CompletionHandler<void(bool)>&& completionHandler)
+    {
+        bool returnValue = { };
+        assertIsCurrent(workQueue());
+        returnValue = m_context->createFoveation(layout, physicalSize, screenSize, std::span(reinterpret_cast<const GCGLfloat*>(horizontalSamples.data()), horizontalSamples.size()), std::span(reinterpret_cast<const GCGLfloat*>(verticalSamples.data()), verticalSamples.size()));
+        completionHandler(returnValue);
+    }
+    void enableFoveation(PlatformXR::Layout&& layout)
+    {
+        assertIsCurrent(workQueue());
+        m_context->enableFoveation(layout);
+    }
+    void disableFoveation()
+    {
+        assertIsCurrent(workQueue());
+        m_context->disableFoveation();
+    }
 

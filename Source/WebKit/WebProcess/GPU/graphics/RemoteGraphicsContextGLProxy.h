@@ -369,6 +369,12 @@ public:
     void clientWaitEGLSyncWithFlush(GCEGLSync, uint64_t timeout) final;
 
     bool enableRequiredWebXRExtensions() final;
+#if ENABLE(WEBXR)
+    bool createFoveation(PlatformXR::Layout layout, WebCore::IntSize physicalSize, WebCore::IntSize screenSize, std::span<const GCGLfloat> horizontalSamples, std::span<const GCGLfloat> verticalSamples) final;
+    void enableFoveation(PlatformXR::Layout layout) final;
+    void disableFoveation() final;
+#endif
+
     // End of list used by generate-gpup-webgl script.
 
     static bool handleMessageToRemovedDestination(IPC::Connection&, IPC::Decoder&);
