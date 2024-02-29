@@ -163,6 +163,8 @@ private:
     String debugDescription() const final;
     void didStartScrollAnimation() final;
 
+    bool useDarkAppearance() const final;
+
     // NOTE: This should only be called by the overridden setScrollOffset from ScrollableArea.
     void scrollTo(const ScrollPosition&);
 

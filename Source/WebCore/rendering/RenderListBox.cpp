@@ -447,6 +447,11 @@ void RenderListBox::addFocusRingRects(Vector<LayoutRect>& rects, const LayoutPoi
     }
 }
 
+bool RenderListBox::useDarkAppearance() const
+{
+    return RenderBlockFlow::useDarkAppearance();
+}
+
 void RenderListBox::paintScrollbar(PaintInfo& paintInfo, const LayoutPoint& paintOffset, Scrollbar& scrollbar)
 {
     auto scrollRect = rectForScrollbar(scrollbar);
