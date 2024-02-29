@@ -23,8 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <Metal/Metal.h>
+
 #if USE(APPLE_INTERNAL_SDK)
 
+#import <Metal/MTLDevice_Private.h>
 #import <Metal/MTLTexture_Private.h>
 #import <Metal/MetalPrivate.h>
 
@@ -55,5 +58,11 @@ typedef struct __IOSurface *IOSurfaceRef;
 - (instancetype)initWithMachPort:(mach_port_t)machPort;
 @end
 #endif
+
+WTF_EXTERN_C_BEGIN
+
+void MTLSetShaderCachePath(NSString *path);
+
+WTF_EXTERN_C_END
 
 #endif
