@@ -111,7 +111,7 @@ Ref<MediaPromise> SourceBufferPrivateRemote::append(Ref<SharedBuffer>&& data)
         if (!gpuProcessConnection || !isGPURunning())
             return MediaPromise::createAndReject(PlatformMediaError::IPCError);
 
-        return gpuProcessConnection->connection().sendWithPromisedReply(Messages::RemoteSourceBufferProxy::Append(IPC::SharedBufferReference { WTFMove(data) }), m_remoteSourceBufferIdentifier)->whenSettled(m_dispatcher, [weakThis = ThreadSafeWeakPtr { *this }](auto&& result) {
+        return sendWithPromisedReply(Messages::RemoteSourceBufferProxy::Append(IPC::SharedBufferReference { WTFMove(data) }))->whenSettled(m_dispatcher, [weakThis = ThreadSafeWeakPtr { *this }](auto&& result) {
             if (!result)
                 return MediaPromise::createAndReject(PlatformMediaError::IPCError);
             if (RefPtr protectedThis = weakThis.get()) {
@@ -214,8 +214,7 @@ Ref<MediaPromise> SourceBufferPrivateRemote::removeCodedFrames(const MediaTime& 
         if (!gpuProcessConnection || !isGPURunning())
             return MediaPromise::createAndReject(PlatformMediaError::IPCError);
 
-        return gpuProcessConnection->connection().sendWithPromisedReply(
-            Messages::RemoteSourceBufferProxy::RemoveCodedFrames(start, end, currentMediaTime), m_remoteSourceBufferIdentifier)->whenSettled(m_dispatcher, [] (auto&& result) mutable {
+        return sendWithPromisedReply(Messages::RemoteSourceBufferProxy::RemoveCodedFrames(start, end, currentMediaTime))->whenSettled(m_dispatcher, [] (auto&& result) mutable {
                 if (!result)
                     return MediaPromise::createAndReject(PlatformMediaError::IPCError);
                 return MediaPromise::createAndResolve();
@@ -383,7 +382,7 @@ Ref<SourceBufferPrivate::ComputeSeekPromise> SourceBufferPrivateRemote::computeS
         if (!gpuProcessConnection || !isGPURunning())
             return ComputeSeekPromise::createAndReject(PlatformMediaError::IPCError);
 
-        return gpuProcessConnection->connection().sendWithPromisedReply(Messages::RemoteSourceBufferProxy::ComputeSeekTime(target), m_remoteSourceBufferIdentifier)->whenSettled(m_dispatcher, [](auto&& result) {
+        return sendWithPromisedReply(Messages::RemoteSourceBufferProxy::ComputeSeekTime(target))->whenSettled(m_dispatcher, [](auto&& result) {
             return result ? ComputeSeekPromise::createAndSettle(*result) : ComputeSeekPromise::createAndReject(PlatformMediaError::IPCError);
         });
     });
@@ -410,7 +409,7 @@ Ref<SourceBufferPrivate::SamplesPromise> SourceBufferPrivateRemote::bufferedSamp
         if (!gpuProcessConnection || !isGPURunning())
             return SamplesPromise::createAndResolve(Vector<String> { });
 
-        return gpuProcessConnection->connection().sendWithPromisedReply(Messages::RemoteSourceBufferProxy::BufferedSamplesForTrackId(trackID), m_remoteSourceBufferIdentifier)->whenSettled(m_dispatcher, [](auto&& result) {
+        return sendWithPromisedReply(Messages::RemoteSourceBufferProxy::BufferedSamplesForTrackId(trackID))->whenSettled(m_dispatcher, [](auto&& result) {
             if (!result)
                 return SamplesPromise::createAndResolve(Vector<String> { });
             return SamplesPromise::createAndSettle(WTFMove(*result));
@@ -425,7 +424,7 @@ Ref<SourceBufferPrivate::SamplesPromise> SourceBufferPrivateRemote::enqueuedSamp
         if (!gpuProcessConnection || !isGPURunning())
             return SamplesPromise::createAndResolve(Vector<String> { });
 
-        return gpuProcessConnection->connection().sendWithPromisedReply(Messages::RemoteSourceBufferProxy::EnqueuedSamplesForTrackID(trackID), m_remoteSourceBufferIdentifier)->whenSettled(m_dispatcher, [](auto&& result) {
+        return sendWithPromisedReply(Messages::RemoteSourceBufferProxy::EnqueuedSamplesForTrackID(trackID))->whenSettled(m_dispatcher, [](auto&& result) {
             if (!result)
                 return SamplesPromise::createAndResolve(Vector<String> { });
             return SamplesPromise::createAndSettle(WTFMove(*result));

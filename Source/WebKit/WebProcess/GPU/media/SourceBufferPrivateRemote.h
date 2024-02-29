@@ -143,6 +143,10 @@ private:
 
     void ensureOnDispatcherSync(Function<void()>&&);
     void ensureWeakOnDispatcher(Function<void()>&&);
+    template<typename T> Ref<typename T::Promise> sendWithPromisedReply(T&& message)
+    {
+        return m_gpuProcessConnection.get()->connection().sendWithPromisedReplyOnDispatcher(std::forward<T>(message), queue(), m_remoteSourceBufferIdentifier);
+    }
 
     friend class MessageReceiver;
     ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
