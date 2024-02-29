@@ -1234,6 +1234,11 @@ void TypeChecker::visit(AST::CallExpression& call)
                         return;
                     }
 
+                    if (UNLIKELY(m_discardResult == DiscardResult::Yes)) {
+                        typeError(call.span(), "value constructor evaluated but not used");
+                        return;
+                    }
+
                     auto numberOfArguments = call.arguments().size();
                     auto numberOfFields = structType->fields.size();
                     if (numberOfArguments && numberOfArguments != numberOfFields) {
@@ -1501,6 +1506,11 @@ void TypeChecker::bitcast(AST::CallExpression& call, const Vector<const Type*>& 
 
     if (typeArguments.size() != 1) {
         typeError(call.span(), "bitcast expects a single template argument, found ", String::number(typeArguments.size()));
+        return;
+    }
+
+    if (UNLIKELY(m_discardResult == DiscardResult::Yes)) {
+        typeError(call.span(), "cannot discard the result of bitcast");
         return;
     }
 
