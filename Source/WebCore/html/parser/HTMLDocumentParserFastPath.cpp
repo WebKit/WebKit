@@ -585,8 +585,6 @@ private:
             // fails. For example, an image's onload event.
             return nullQName();
         }
-        if (attributeName.size() == 2 && compareCharacters(attributeName.data(), 'i', 's'))
-            return nullQName();
         return HTMLNameCache::makeAttributeQualifiedName(attributeName);
     }
 
