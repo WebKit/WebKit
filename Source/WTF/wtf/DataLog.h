@@ -52,25 +52,19 @@ void dataLogLn(const Types&... values)
     dataLog(values..., "\n");
 }
 
-template<typename... Types>
-ALWAYS_INLINE void dataLogIf(bool shouldLog, const Types&... values)
-{
-    if (UNLIKELY(shouldLog))
-        dataLog(values...);
-}
+#define dataLogIf(shouldLog, ...) do { \
+        if (UNLIKELY(shouldLog)) \
+            dataLog(__VA_ARGS__); \
+    } while (0)
 
-template<typename... Types>
-ALWAYS_INLINE void dataLogLnIf(bool shouldLog, const Types&... values)
-{
-    if (UNLIKELY(shouldLog))
-        dataLogLn(values...);
-}
+#define dataLogLnIf(shouldLog, ...) do { \
+        if (UNLIKELY(shouldLog)) \
+            dataLogLn(__VA_ARGS__); \
+    } while (0)
 
 } // namespace WTF
 
 using WTF::dataLog;
 using WTF::dataLogLn;
-using WTF::dataLogIf;
-using WTF::dataLogLnIf;
 using WTF::dataLogF;
 using WTF::dataLogFString;
