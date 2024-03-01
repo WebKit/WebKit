@@ -194,7 +194,7 @@ static inline VideoFrame::Rotation toVideoRotation(webrtc::VideoRotation rotatio
 
 static void createRemoteDecoder(LibWebRTCCodecs::Decoder& decoder, IPC::Connection& connection, bool useRemoteFrames, bool enableAdditionalLogging, Function<void(bool)>&& callback)
 {
-    connection.sendWithAsyncReply(Messages::LibWebRTCCodecsProxy::CreateDecoder { decoder.identifier, decoder.type, decoder.codec, useRemoteFrames, enableAdditionalLogging }, WTFMove(callback), 0);
+    connection.sendWithAsyncReplyOnDispatcher(Messages::LibWebRTCCodecsProxy::CreateDecoder { decoder.identifier, decoder.type, decoder.codec, useRemoteFrames, enableAdditionalLogging }, WebProcess::singleton().libWebRTCCodecs().workQueue(), WTFMove(callback), 0);
 }
 
 static int32_t encodeVideoFrame(webrtc::WebKitVideoEncoder encoder, const webrtc::VideoFrame& frame, bool shouldEncodeAsKeyFrame)
@@ -349,16 +349,14 @@ LibWebRTCCodecs::Decoder* LibWebRTCCodecs::createDecoderInternal(VideoCodecType 
         {
             Locker locker { m_connectionLock };
             createRemoteDecoder(*decoder, *protectedConnection(), m_useRemoteFrames, m_enableAdditionalLogging, [identifier = decoder->identifier, callback = WTFMove(callback)](bool result) mutable {
-                WebProcess::singleton().libWebRTCCodecs().m_queue->dispatch([identifier, result, callback = WTFMove(callback)]() mutable {
-                    if (!result) {
-                        callback(nullptr);
-                        return;
-                    }
+                if (!result) {
+                    callback(nullptr);
+                    return;
+                }
 
-                    auto& codecs = WebProcess::singleton().libWebRTCCodecs();
-                    assertIsCurrent(codecs.workQueue());
-                    callback(codecs.m_decoders.get(identifier));
-                });
+                auto& codecs = WebProcess::singleton().libWebRTCCodecs();
+                assertIsCurrent(codecs.workQueue());
+                callback(codecs.m_decoders.get(identifier));
             });
 
             setDecoderConnection(*decoder, m_connection.get());
@@ -576,7 +574,7 @@ void LibWebRTCCodecs::createEncoderAndWaitUntilInitialized(VideoCodecType type, 
 
 static void createRemoteEncoder(LibWebRTCCodecs::Encoder& encoder, IPC::Connection& connection, const Vector<std::pair<String, String>>& parameters, Function<void(bool)>&& callback)
 {
-    connection.sendWithAsyncReply(Messages::LibWebRTCCodecsProxy::CreateEncoder { encoder.identifier, encoder.type, encoder.codec, parameters, encoder.isRealtime, encoder.useAnnexB, encoder.scalabilityMode }, WTFMove(callback), 0);
+    connection.sendWithAsyncReplyOnDispatcher(Messages::LibWebRTCCodecsProxy::CreateEncoder { encoder.identifier, encoder.type, encoder.codec, parameters, encoder.isRealtime, encoder.useAnnexB, encoder.scalabilityMode }, WebProcess::singleton().libWebRTCCodecs().workQueue(), WTFMove(callback), 0);
 }
 
 LibWebRTCCodecs::Encoder* LibWebRTCCodecs::createEncoderInternal(VideoCodecType type, const String& codec, const std::map<std::string, std::string>& formatParameters, bool isRealtime, bool useAnnexB, VideoEncoderScalabilityMode scalabilityMode, Function<void(Encoder*)>&& callback)
@@ -605,16 +603,14 @@ LibWebRTCCodecs::Encoder* LibWebRTCCodecs::createEncoderInternal(VideoCodecType 
         {
             Locker locker { m_encodersConnectionLock };
             createRemoteEncoder(*encoder, connection.get(), parameters, [identifier = encoder->identifier, callback = WTFMove(callback)](bool result) mutable {
-                WebProcess::singleton().libWebRTCCodecs().m_queue->dispatch([identifier, result, callback = WTFMove(callback)]() mutable {
-                    if (!result) {
-                        callback(nullptr);
-                        return;
-                    }
+                if (!result) {
+                    callback(nullptr);
+                    return;
+                }
 
-                    auto& codecs = WebProcess::singleton().libWebRTCCodecs();
-                    assertIsCurrent(codecs.workQueue());
-                    callback(codecs.m_encoders.get(identifier));
-                });
+                auto& codecs = WebProcess::singleton().libWebRTCCodecs();
+                assertIsCurrent(codecs.workQueue());
+                callback(codecs.m_encoders.get(identifier));
             });
             setEncoderConnection(*encoder, connection.ptr());
         }
