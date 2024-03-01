@@ -389,6 +389,7 @@ const struct wl_touch_listener WaylandSeat::s_touchListener = {
             id, iter->value.first, iter->value.second);
         wpe_view_event(seat.m_touch.view.get(), event);
         wpe_event_unref(event);
+        seat.m_touch.points.remove(id);
     },
     // motion
     [](void* data, struct wl_touch*, uint32_t time, int32_t id, wl_fixed_t x, wl_fixed_t y)

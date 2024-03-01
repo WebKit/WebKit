@@ -112,7 +112,7 @@ private:
         struct wl_touch* object { nullptr };
         WPEInputSource source { WPE_INPUT_SOURCE_TOUCHSCREEN };
         GWeakPtr<WPEView> view;
-        HashMap<int32_t, std::pair<double, double>> points;
+        HashMap<int32_t, std::pair<double, double>, IntHash<int32_t>, WTF::SignedWithZeroKeyHashTraits<int32_t>> points;
     } m_touch;
 };
 
