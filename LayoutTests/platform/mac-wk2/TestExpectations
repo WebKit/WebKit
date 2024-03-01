@@ -2015,3 +2015,5 @@ webkit.org/b/270319 [ Ventura ] accessibility/datetime/input-time-label-value.ht
 # webkit.org/b/266168 Two wheel/mousewheel passive event listeners WPT test pass on macOS Sonoma and up
 [ Sonoma+ ] imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-mousewheel-event-listener-on-div.html [ Pass ]
 [ Sonoma+ ] imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-wheel-event-listener-on-div.html [ Pass ]
+
+webkit.org/b/270275 http/tests/navigation/keyboard-events-during-provisional-subframe-navigation.html [ Pass Timeout ]
