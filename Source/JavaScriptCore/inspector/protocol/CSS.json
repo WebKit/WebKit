@@ -142,9 +142,10 @@
                 { "name": "origin", "$ref": "StyleSheetOrigin", "description": "Stylesheet origin."},
                 { "name": "title", "type": "string", "description": "Stylesheet title."},
                 { "name": "disabled", "type": "boolean", "description": "Denotes whether the stylesheet is disabled."},
-                { "name": "isInline", "type": "boolean", "description": "Whether this stylesheet is a <style> tag created by the parser. This is not set for document.written <style> tags." },
-                { "name": "startLine", "type": "number", "description": "Line offset of the stylesheet within the resource (zero based)." },
-                { "name": "startColumn", "type": "number", "description": "Column offset of the stylesheet within the resource (zero based)." }
+                { "name": "isInline", "type": "boolean", "description": "Whether this stylesheet lives inside a <style> element." },
+                { "name": "ownerNodeId", "$ref": "DOM.NodeId", "optional": true, "description": "Id of the <style> element that the stylesheet lives in. Only included if the stylesheet is inline." },
+                { "name": "startLine", "type": "number", "optional": true, "description": "Line offset of the stylesheet within the resource (zero based). If not included, this stylesheet is created dynamically by JavaScript within sourceURL (e.g. with document.write)." },
+                { "name": "startColumn", "type": "number", "optional": true, "description": "Column offset of the stylesheet within the resource (zero based). If not included, this stylesheet is created dynamically by JavaScript within sourceURL (e.g. with document.write)." }
             ]
         },
         {

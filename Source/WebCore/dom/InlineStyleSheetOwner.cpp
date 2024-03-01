@@ -64,10 +64,11 @@ static std::optional<Style::StyleSheetContentsCache::Key> makeStyleSheetContents
 InlineStyleSheetOwner::InlineStyleSheetOwner(Document& document, bool createdByParser)
     : m_isParsingChildren(createdByParser)
     , m_loading(false)
-    , m_startTextPosition()
 {
     if (createdByParser && document.scriptableDocumentParser() && !document.isInDocumentWrite())
         m_startTextPosition = document.scriptableDocumentParser()->textPosition();
+    else
+        m_startTextPosition = TextPosition::belowRangePosition();
 }
 
 InlineStyleSheetOwner::~InlineStyleSheetOwner()

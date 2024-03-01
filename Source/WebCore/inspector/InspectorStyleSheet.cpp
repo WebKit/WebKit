@@ -55,6 +55,7 @@
 #include "HTMLStyleElement.h"
 #include "InspectorCSSAgent.h"
 #include "InspectorDOMAgent.h"
+#include "InspectorInstrumentation.h"
 #include "InspectorPageAgent.h"
 #include "MediaList.h"
 #include "Node.h"
@@ -1273,17 +1274,26 @@ RefPtr<Inspector::Protocol::CSS::CSSStyleSheetHeader> InspectorStyleSheet::build
 
     auto* document = styleSheet->ownerDocument();
     auto* frame = document ? document->frame() : nullptr;
-    return Inspector::Protocol::CSS::CSSStyleSheetHeader::create()
+
+    auto header = Inspector::Protocol::CSS::CSSStyleSheetHeader::create()
         .setStyleSheetId(id())
         .setOrigin(m_origin)
         .setDisabled(styleSheet->disabled())
         .setSourceURL(finalURL())
         .setTitle(styleSheet->title())
         .setFrameId(m_pageAgent->frameId(frame))
-        .setIsInline(styleSheet->isInline() && styleSheet->startPosition() != TextPosition())
-        .setStartLine(styleSheet->startPosition().m_line.zeroBasedInt())
-        .setStartColumn(styleSheet->startPosition().m_column.zeroBasedInt())
+        .setIsInline(styleSheet->isInline())
         .release();
+
+    if (auto ownerNodeId = InspectorInstrumentation::identifierForNode(*styleSheet->ownerNode()))
+        header->setOwnerNodeId(ownerNodeId);
+
+    if (styleSheet->startPosition() != TextPosition::belowRangePosition()) {
+        header->setStartLine(styleSheet->startPosition().m_line.zeroBasedInt());
+        header->setStartColumn(styleSheet->startPosition().m_column.zeroBasedInt());
+    }
+
+    return header;
 }
 
 static Ref<Inspector::Protocol::CSS::CSSSelector> buildObjectForSelectorHelper(const String& selectorText, const CSSSelector& selector)
