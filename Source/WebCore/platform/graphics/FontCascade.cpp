@@ -224,12 +224,7 @@ std::unique_ptr<DisplayList::DisplayList> FontCascade::displayListForTextRun(Gra
     ASSERT(!context.paintingDisabled());
     unsigned destination = to.value_or(run.length());
 
-    // FIXME: Use the fast code path once it handles partial runs with kerning and ligatures. See http://webkit.org/b/100050
-    CodePath codePathToUse = codePath(run);
-    if (codePathToUse != CodePath::Complex && (enableKerning() || requiresShaping()) && (from || destination != run.length()))
-        codePathToUse = CodePath::Complex;
-
-    auto glyphBuffer = layoutText(codePathToUse, run, from, destination);
+    auto glyphBuffer = layoutText(codePath(run, from, to), run, from, destination);
     glyphBuffer.flatten();
 
     if (glyphBuffer.isEmpty())
