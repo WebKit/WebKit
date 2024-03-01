@@ -2812,3 +2812,5 @@ webkit.org/b/270310 [ Sonoma+ ] imported/w3c/web-platform-tests/html/semantics/i
 [ Sonoma+ ] imported/blink/compositing/will-change/stacking-context-creation.html [ ImageOnlyFailure ]
 [ Sonoma+ ] imported/w3c/web-platform-tests/css/css-transforms/transform3d-preserve3d-001.html [ ImageOnlyFailure ]
 [ Sonoma+ ] imported/w3c/web-platform-tests/css/css-transforms/ttwf-css-3d-polygon-cycle.html [ ImageOnlyFailure ]
+
+webkit.org/b/270380 [ Ventura+ ] fast/hidpi/filters-drop-shadow.html [ ImageOnlyFailure ]
