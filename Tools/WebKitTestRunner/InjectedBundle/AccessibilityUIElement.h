@@ -160,6 +160,7 @@ public:
     JSRetainPtr<JSStringRef> description();
     JSRetainPtr<JSStringRef> language();
     JSRetainPtr<JSStringRef> stringValue();
+    JSRetainPtr<JSStringRef> dateValue();
     JSRetainPtr<JSStringRef> accessibilityValue() const;
     JSRetainPtr<JSStringRef> helpText() const;
     JSRetainPtr<JSStringRef> orientation() const;

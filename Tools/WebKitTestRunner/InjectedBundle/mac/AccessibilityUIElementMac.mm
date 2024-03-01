@@ -899,9 +899,24 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::stringValue()
     else
         value = attributeValue(NSAccessibilityValueAttribute);
 
-    auto description = descriptionOfValue(value.get());
-    if (description)
+    if (auto description = descriptionOfValue(value.get()))
         return concatenateAttributeAndValue(@"AXValue", description.get());
+    END_AX_OBJC_EXCEPTIONS
+
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElement::dateValue()
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    auto value = attributeValue(NSAccessibilityValueAttribute);
+    if (![value isKindOfClass:[NSDate class]])
+        return nullptr;
+
+    NSInteger offset = [[NSTimeZone localTimeZone] secondsFromGMTForDate:[NSDate date]];
+    value = [NSDate dateWithTimeInterval:offset sinceDate:value.get()];
+    if (auto description = descriptionOfValue(value.get()))
+        return concatenateAttributeAndValue(@"AXDateValue", description.get());
     END_AX_OBJC_EXCEPTIONS
 
     return nullptr;

@@ -87,6 +87,7 @@ public:
     void setValueForUser(const String& value) { setValue(value, DispatchInputAndChangeEvent); }
     WEBCORE_EXPORT WallTime valueAsDate() const;
     WEBCORE_EXPORT ExceptionOr<void> setValueAsDate(WallTime);
+    WallTime accessibilityValueAsDate() const;
     WEBCORE_EXPORT double valueAsNumber() const;
     WEBCORE_EXPORT ExceptionOr<void> setValueAsNumber(double, TextFieldEventBehavior = DispatchNoEvent);
     WEBCORE_EXPORT ExceptionOr<void> stepUp(int = 1);

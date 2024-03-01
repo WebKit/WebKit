@@ -230,6 +230,7 @@ public:
     virtual String defaultValue() const; // Checked after even fallbackValue, only when the valueWithDefault function is called.
     virtual WallTime valueAsDate() const;
     virtual ExceptionOr<void> setValueAsDate(WallTime) const;
+    virtual WallTime accessibilityValueAsDate() const;
     virtual double valueAsDouble() const;
     virtual ExceptionOr<void> setValueAsDouble(double, TextFieldEventBehavior) const;
     virtual ExceptionOr<void> setValueAsDecimal(const Decimal&, TextFieldEventBehavior) const;

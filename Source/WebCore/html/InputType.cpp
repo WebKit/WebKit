@@ -326,6 +326,11 @@ ExceptionOr<void> InputType::setValueAsDate(WallTime) const
     return Exception { ExceptionCode::InvalidStateError };
 }
 
+WallTime InputType::accessibilityValueAsDate() const
+{
+    return WallTime::nan();
+}
+
 double InputType::valueAsDouble() const
 {
     return std::numeric_limits<double>::quiet_NaN();

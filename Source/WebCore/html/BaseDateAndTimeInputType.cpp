@@ -143,6 +143,11 @@ ExceptionOr<void> BaseDateAndTimeInputType::setValueAsDate(WallTime value) const
     return { };
 }
 
+WallTime BaseDateAndTimeInputType::accessibilityValueAsDate() const
+{
+    return WallTime::fromRawSeconds(Seconds::fromMilliseconds(valueAsDouble()).value());
+}
+
 double BaseDateAndTimeInputType::valueAsDouble() const
 {
     ASSERT(element());

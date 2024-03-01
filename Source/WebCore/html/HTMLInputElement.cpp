@@ -1208,6 +1208,11 @@ ExceptionOr<void> HTMLInputElement::setValueAsDate(WallTime value)
     return m_inputType->setValueAsDate(value);
 }
 
+WallTime HTMLInputElement::accessibilityValueAsDate() const
+{
+    return m_inputType->accessibilityValueAsDate();
+}
+
 double HTMLInputElement::valueAsNumber() const
 {
     return m_inputType->valueAsDouble();

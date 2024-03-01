@@ -76,10 +76,11 @@ interface AccessibilityUIElement {
     undefined setValue(DOMString value);
 
     readonly attribute DOMString stringValue;
+    readonly attribute DOMString dateValue;
     readonly attribute long intValue;
     readonly attribute long minValue;
     readonly attribute long maxValue;
-    
+
     readonly attribute boolean isAtomicLiveRegion;
     readonly attribute boolean isBusy;
     readonly attribute boolean isEnabled;

@@ -2482,7 +2482,7 @@ WallTime AccessibilityNodeObject::dateTimeValue() const
         return { };
 
     auto* input = dynamicDowncast<HTMLInputElement>(node());
-    return input ? input->valueAsDate() : WallTime();
+    return input ? input->accessibilityValueAsDate() : WallTime();
 }
 
 SRGBA<uint8_t> AccessibilityNodeObject::colorValue() const
