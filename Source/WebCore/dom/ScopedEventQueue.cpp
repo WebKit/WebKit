@@ -43,15 +43,12 @@ ScopedEventQueue& ScopedEventQueue::singleton()
     return scopedEventQueue;
 }
 
-void ScopedEventQueue::enqueueEvent(Ref<Event>&& event)
+void ScopedEventQueue::enqueueEvent(ScopedEvent&& event)
 {
-    ASSERT(event->target());
-    auto& target = downcast<Node>(*event->target());
-    ScopedEvent scopedEvent = { WTFMove(event), target };
     if (m_scopingLevel)
-        m_queuedEvents.append(WTFMove(scopedEvent));
+        m_queuedEvents.append(WTFMove(event));
     else
-        dispatchEvent(scopedEvent);
+        dispatchEvent(event);
 }
 
 void ScopedEventQueue::dispatchEvent(const ScopedEvent& event) const
