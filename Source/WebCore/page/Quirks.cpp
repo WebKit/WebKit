@@ -1819,4 +1819,22 @@ bool Quirks::needsIpadMiniUserAgent(StringView host)
     return false;
 }
 
+
+bool Quirks::shouldIgnorePlaysInlineRequirementQuirk() const
+{
+#if PLATFORM(IOS_FAMILY)
+    if (!needsQuirks())
+        return false;
+
+    if (m_shouldIgnorePlaysInlineRequirementQuirk)
+        return *m_shouldIgnorePlaysInlineRequirementQuirk;
+
+    m_shouldIgnorePlaysInlineRequirementQuirk = isDomain("premierleague.com"_s);
+
+    return *m_shouldIgnorePlaysInlineRequirementQuirk;
+#else
+    return false;
+#endif
+}
+
 }

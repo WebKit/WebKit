@@ -186,6 +186,7 @@ public:
     bool needsDisableDOMPasteAccessQuirk() const;
 
     bool shouldDisableElementFullscreenQuirk() const;
+    bool shouldIgnorePlaysInlineRequirementQuirk() const;
 
 private:
     bool needsQuirks() const;
@@ -257,6 +258,7 @@ private:
     mutable std::optional<bool> m_shouldDisableDataURLPaddingValidation;
     mutable std::optional<bool> m_needsDisableDOMPasteAccessQuirk;
     mutable std::optional<bool> m_shouldDisableElementFullscreen;
+    mutable std::optional<bool> m_shouldIgnorePlaysInlineRequirementQuirk;
 
     Vector<RegistrableDomain> m_subFrameDomainsForStorageAccessQuirk;
 };
