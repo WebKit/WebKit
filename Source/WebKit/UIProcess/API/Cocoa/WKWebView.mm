@@ -4222,6 +4222,11 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
     WebKit::WebProcessProxy::permissionChanged(*name, origin->_securityOrigin->securityOrigin());
 }
 
+- (NSURL *)_requiredWebExtensionBaseURL
+{
+    return [_configuration _requiredWebExtensionBaseURL];
+}
+
 @end
 
 @implementation WKWebView (WKDeprecated)
