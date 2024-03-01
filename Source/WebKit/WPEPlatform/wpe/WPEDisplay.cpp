@@ -37,6 +37,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
+#include <wtf/glib/GWeakPtr.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringHash.h>
@@ -79,6 +80,16 @@ static guint signals[LAST_SIGNAL] = { 0, };
  **/
 G_DEFINE_QUARK(wpe-display-error-quark, wpe_display_error)
 
+static GWeakPtr<WPEDisplay> s_primaryDisplay;
+
+static void wpeDisplayConstructed(GObject* object)
+{
+    if (!s_primaryDisplay)
+        s_primaryDisplay.reset(WPE_DISPLAY(object));
+
+    G_OBJECT_CLASS(wpe_display_parent_class)->constructed(object);
+}
+
 static void wpeDisplayDispose(GObject* object)
 {
     auto* priv = WPE_DISPLAY(object)->priv;
@@ -92,6 +103,7 @@ static void wpeDisplayDispose(GObject* object)
 static void wpe_display_class_init(WPEDisplayClass* displayClass)
 {
     GObjectClass* objectClass = G_OBJECT_CLASS(displayClass);
+    objectClass->constructed = wpeDisplayConstructed;
     objectClass->dispose = wpeDisplayDispose;
 
     /**
@@ -183,6 +195,36 @@ WPEDisplay* wpe_display_get_default(void)
         }
     });
     return s_defaultDisplay.get();
+}
+
+/**
+ * wpe_display_get_primary:
+ *
+ * Get the primary display. By default, the first #WPEDisplay that is
+ * created is set as primary display. This is the desired behavior in
+ * most of the cases, but you can set any #WPEDisplay as primary
+ * calling wpe_display_set_primary() if needed.
+ *
+ * Returns: (nullable) (transfer none): the primary display or %NULL
+ */
+WPEDisplay* wpe_display_get_primary()
+{
+    return s_primaryDisplay.get();
+}
+
+/**
+ * wpe_display_set_primary:
+ * @display: a #WPEDisplay
+ *
+ * Set @display as the primary display.
+ *
+ * In most of the cases you don't need to call this, because
+ * the first #WPEDisplay that is created is set as primary
+ * automatically.
+ */
+void wpe_display_set_primary(WPEDisplay* display)
+{
+    s_primaryDisplay.reset(display);
 }
 
 /**

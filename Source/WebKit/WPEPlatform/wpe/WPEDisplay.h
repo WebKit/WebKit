@@ -78,6 +78,8 @@ typedef enum {
 
 WPE_API GQuark       wpe_display_error_quark                   (void);
 WPE_API WPEDisplay  *wpe_display_get_default                   (void);
+WPE_API WPEDisplay  *wpe_display_get_primary                   (void);
+WPE_API void         wpe_display_set_primary                   (WPEDisplay *display);
 WPE_API gboolean     wpe_display_connect                       (WPEDisplay *display,
                                                                 GError    **error);
 WPE_API gpointer     wpe_display_get_egl_display               (WPEDisplay *display,

@@ -41,8 +41,7 @@ PlatformDisplayID ScreenManager::generatePlatformDisplayID(WPEMonitor* monitor)
 
 ScreenManager::ScreenManager()
 {
-    // FIXME: default might not be the right display.
-    auto* display = wpe_display_get_default();
+    auto* display = wpe_display_get_primary();
     auto monitorsCount = wpe_display_get_n_monitors(display);
     for (unsigned i = 0; i < monitorsCount; ++i) {
         if (auto* monitor = wpe_display_get_monitor(display, i))
@@ -64,8 +63,7 @@ ScreenManager::ScreenManager()
 void ScreenManager::updatePrimaryDisplayID()
 {
     // Assume the first monitor is the primary one.
-    // FIXME: default might not be the right display.
-    auto* display = wpe_display_get_default();
+    auto* display = wpe_display_get_primary();
     auto monitorsCount = wpe_display_get_n_monitors(display);
     auto* monitor = monitorsCount ? wpe_display_get_monitor(display, 0) : nullptr;
     m_primaryDisplayID = monitor ? displayID(monitor) : 0;
