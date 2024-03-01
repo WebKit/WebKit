@@ -32,13 +32,18 @@
 #import <WebCore/SecurityOrigin.h>
 #import <wtf/text/WTFString.h>
 
-#import "ExtensionKitSoftLink.h"
-
 namespace WebKit {
 
-MediaCapability::MediaCapability(Ref<WebCore::SecurityOrigin>&& securityOrigin)
-    : m_securityOrigin { WTFMove(securityOrigin) }
-    , m_mediaEnvironment { adoptNS([[BEMediaEnvironment alloc] initWithWebPageURL:m_securityOrigin->toURL()]) }
+static RetainPtr<BEMediaEnvironment> createMediaEnvironment(const URL& webPageURL)
+{
+    NSURL *protocolHostAndPortURL = URL { webPageURL.protocolHostAndPort() };
+    RELEASE_ASSERT(protocolHostAndPortURL);
+    return adoptNS([[BEMediaEnvironment alloc] initWithWebPageURL:protocolHostAndPortURL]);
+}
+
+MediaCapability::MediaCapability(URL&& webPageURL)
+    : m_webPageURL { WTFMove(webPageURL) }
+    , m_mediaEnvironment { createMediaEnvironment(m_webPageURL) }
 {
     setPlatformCapability([BEProcessCapability mediaPlaybackAndCaptureWithEnvironment:m_mediaEnvironment.get()]);
 }

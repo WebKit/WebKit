@@ -1901,7 +1901,6 @@
 		A13B3DA2207F39DE0090C58D /* MobileWiFiSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = A13B3DA1207F39DE0090C58D /* MobileWiFiSPI.h */; };
 		A13DC682207AA6B20066EF72 /* WKApplicationStateTrackingView.h in Headers */ = {isa = PBXBuildFile; fileRef = A13DC680207AA6B20066EF72 /* WKApplicationStateTrackingView.h */; };
 		A141DF4F2B06ED0800E80B2D /* MediaCapability.h in Headers */ = {isa = PBXBuildFile; fileRef = A141DF4D2B06ECFB00E80B2D /* MediaCapability.h */; };
-		A141DF502B06ED0F00E80B2D /* MediaCapability.mm in Sources */ = {isa = PBXBuildFile; fileRef = A141DF4E2B06ECFB00E80B2D /* MediaCapability.mm */; };
 		A141DF522B07054900E80B2D /* ExtensionCapabilityGrant.h in Headers */ = {isa = PBXBuildFile; fileRef = A141DF512B07054900E80B2D /* ExtensionCapabilityGrant.h */; };
 		A14F9B632B686DD300AD9C56 /* WKSLinearMediaTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = A14F9B612B686DD200AD9C56 /* WKSLinearMediaTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A14F9B642B686DD300AD9C56 /* LinearMediaTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = A14F9B622B686DD200AD9C56 /* LinearMediaTypes.swift */; };
@@ -19146,7 +19145,6 @@
 				41A0EB142641714900794471 /* LibWebRTCCodecsProxy.mm in Sources */,
 				51F060E11654318500F3281C /* LibWebRTCNetworkMessageReceiver.cpp in Sources */,
 				449D90DA21FDC30B00F677C0 /* LocalAuthenticationSoftLink.mm in Sources */,
-				A141DF502B06ED0F00E80B2D /* MediaCapability.mm in Sources */,
 				07E19EFB23D401F10094FFB4 /* MediaPlayerPrivateRemoteMessageReceiver.cpp in Sources */,
 				510C52D32B241019008EABED /* MediaSourcePrivateRemoteMessageReceiverMessageReceiver.cpp in Sources */,
 				9B4790912531563200EC11AB /* MessageArgumentDescriptions.cpp in Sources */,

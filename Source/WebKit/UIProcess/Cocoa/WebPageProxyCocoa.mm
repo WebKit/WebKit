@@ -1043,13 +1043,13 @@ void WebPageProxy::setMediaCapability(std::optional<MediaCapability>&& capabilit
         return;
     }
 
-    WEBPAGEPROXY_RELEASE_LOG(ProcessCapabilities, "setMediaCapability: creating (envID=%{public}s) for host '%{sensitive}s'", internals().mediaCapability->environmentIdentifier().utf8().data(), internals().mediaCapability->securityOrigin().host().utf8().data());
+    WEBPAGEPROXY_RELEASE_LOG(ProcessCapabilities, "setMediaCapability: creating (envID=%{public}s) for URL '%{sensitive}s'", internals().mediaCapability->environmentIdentifier().utf8().data(), internals().mediaCapability->webPageURL().string().utf8().data());
     send(Messages::WebPage::SetMediaEnvironment(internals().mediaCapability->environmentIdentifier()));
 }
 
 void WebPageProxy::deactivateMediaCapability(MediaCapability& capability)
 {
-    WEBPAGEPROXY_RELEASE_LOG(ProcessCapabilities, "deactivateMediaCapability: deactivating (envID=%{public}s) for host '%{sensitive}s'", capability.environmentIdentifier().utf8().data(), capability.securityOrigin().host().utf8().data());
+    WEBPAGEPROXY_RELEASE_LOG(ProcessCapabilities, "deactivateMediaCapability: deactivating (envID=%{public}s) for URL '%{sensitive}s'", capability.environmentIdentifier().utf8().data(), capability.webPageURL().string().utf8().data());
     Ref processPool { protectedProcess()->protectedProcessPool() };
     processPool->extensionCapabilityGranter().setMediaCapabilityActive(capability, false);
     processPool->extensionCapabilityGranter().revoke(capability);
@@ -1067,10 +1067,8 @@ void WebPageProxy::resetMediaCapability()
         return;
     }
 
-    Ref securityOrigin = SecurityOrigin::create(currentURL);
-
-    if (!mediaCapability() || !mediaCapability()->securityOrigin().isSameOriginAs(securityOrigin.get()))
-        setMediaCapability(MediaCapability { WTFMove(securityOrigin) });
+    if (!mediaCapability() || !protocolHostAndPortAreEqual(mediaCapability()->webPageURL(), currentURL))
+        setMediaCapability(MediaCapability { WTFMove(currentURL) });
 }
 
 void WebPageProxy::updateMediaCapability()
