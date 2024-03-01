@@ -28,6 +28,7 @@ import {queryToParams, paramsToQuery, QueryModifier, percentage, elapsedTime} fr
 import {Configuration} from '/assets/js/configuration.js'
 import {Expectations} from '/assets/js/expectations.js';
 import {Failures} from '/assets/js/failures.js';
+import {TypeForSuite} from '/assets/js/suites.js';
 
 function commitsForUuid(uuid) {
     return `Commits: ${CommitBank.commitsDuring(uuid).map((commit) => {
@@ -59,7 +60,8 @@ function testRunLink(suite, data)
 {
     if (!data.start_time)
         return '';
-    return `<a href="/urls/build?${parametersForInstance(suite, data)}" target="_blank">Test run</a> @ ${new Date(data.start_time * 1000).toLocaleString()}`;
+    const typ = TypeForSuite(suite);
+    return `<a href="/urls/build?${parametersForInstance(suite, data)}" target="_blank">${typ.runDescription}</a> @ ${new Date(data.start_time * 1000).toLocaleString()}`;
 }
 
 function archiveLink(suite, data)
