@@ -41,6 +41,7 @@
 #include <skia/core/SkPath.h>
 #include <skia/core/SkPathEffect.h>
 #include <skia/core/SkPathTypes.h>
+#include <skia/core/SkPictureRecorder.h>
 #include <skia/core/SkPoint3.h>
 #include <skia/core/SkRRect.h>
 #include <skia/core/SkRegion.h>
@@ -771,18 +772,28 @@ void GraphicsContextSkia::drawPattern(NativeImage& nativeImage, const FloatRect&
     rect.moveBy(phase);
     SkMatrix phaseMatrix;
     phaseMatrix.setTranslate(rect.x(), rect.y());
+    SkMatrix shaderMatrix = SkMatrix::Concat(phaseMatrix, patternTransform);
+    auto samplingOptions = toSkSamplingOptions(m_state.imageInterpolationQuality());
+    bool needsClip = tileRect.size() != nativeImage.size();
 
-    if (spacing.isZero()) {
-        auto shader = image->makeShader(tileModeX, tileModeY, toSkSamplingOptions(m_state.imageInterpolationQuality()), SkMatrix::Concat(phaseMatrix, patternTransform));
-        SkPaint paint = createFillPaint();
-        paint.setBlendMode(toSkiaBlendMode(options.compositeOperator(), options.blendMode()));
-        paint.setShader(WTFMove(shader));
-        canvas().drawRect(destRect, paint);
-        return;
+    SkPaint paint = createFillPaint();
+    paint.setBlendMode(toSkiaBlendMode(options.compositeOperator(), options.blendMode()));
+
+    if (spacing.isZero() && !needsClip)
+        paint.setShader(image->makeShader(tileModeX, tileModeY, samplingOptions, &shaderMatrix));
+    else {
+        if (needsClip) {
+            // FIXME: handle the case where the tile rect has a different size than the image.
+            notImplemented();
+        }
+        SkPictureRecorder recorder;
+        auto* recordCanvas = recorder.beginRecording(SkRect::MakeWH(tileRect.width() + spacing.width() / patternTransform.a(), tileRect.height() + spacing.height() / patternTransform.d()));
+        recordCanvas->drawImageRect(image, tileRect, SkRect::MakeWH(tileRect.width(), tileRect.height()), samplingOptions, nullptr, SkCanvas::kStrict_SrcRectConstraint);
+        auto picture = recorder.finishRecordingAsPicture();
+        paint.setShader(picture->makeShader(tileModeX, tileModeY, samplingOptions.filter, &shaderMatrix, nullptr));
     }
 
-    // FIXME: implement spacing.
-    notImplemented();
+    canvas().drawRect(destRect, paint);
 }
 
 RenderingMode GraphicsContextSkia::renderingMode() const
