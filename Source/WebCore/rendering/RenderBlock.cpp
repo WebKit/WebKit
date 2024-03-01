@@ -2297,7 +2297,10 @@ void RenderBlock::computeBlockPreferredLogicalWidths(LayoutUnit& minLogicalWidth
         }
 
         const RenderStyle& childStyle = child->style();
-        if (child->isFloating() || (is<RenderBox>(*child) && downcast<RenderBox>(*child).avoidsFloats())) {
+        // Either the box itself of its content avoids floats.
+        auto* childBox = dynamicDowncast<RenderBox>(*child);
+        auto childAvoidsFloats = childBox ? childBox->avoidsFloats() || (childBox->isAnonymousBlock() && childBox->childrenInline()) : false;
+        if (child->isFloating() || childAvoidsFloats) {
             LayoutUnit floatTotalWidth = floatLeftWidth + floatRightWidth;
             auto childUsedClear = RenderStyle::usedClear(*child);
             if (childUsedClear == UsedClear::Left || childUsedClear == UsedClear::Both) {
@@ -2337,7 +2340,7 @@ void RenderBlock::computeBlockPreferredLogicalWidths(LayoutUnit& minLogicalWidth
         w = childMaxPreferredLogicalWidth + margin;
 
         if (!child->isFloating()) {
-            if (is<RenderBox>(*child) && downcast<RenderBox>(*child).avoidsFloats()) {
+            if (childAvoidsFloats) {
                 // Determine a left and right max value based off whether or not the floats can fit in the
                 // margins of the object.  For negative margins, we will attempt to overlap the float if the negative margin
                 // is smaller than the float width.
