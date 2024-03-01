@@ -1852,6 +1852,53 @@ void JIT::emit_op_new_array_with_size(const JSInstruction* currentInstruction)
     callOperation(operationNewArrayWithSizeAndProfile, dst, globalObjectGPR, profileGPR, sizeJSR);
 }
 
+void JIT::emit_op_create_lexical_environment(const JSInstruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpCreateLexicalEnvironment>();
+    VirtualRegister dst = bytecode.m_dst;
+    VirtualRegister scope = bytecode.m_scope;
+    VirtualRegister symbolTable = bytecode.m_symbolTable;
+    VirtualRegister initialValue = bytecode.m_initialValue;
+
+    ASSERT(initialValue.isConstant());
+    ASSERT(m_profiledCodeBlock->isConstantOwnedByUnlinkedCodeBlock(initialValue));
+    JSValue value = m_unlinkedCodeBlock->getConstant(initialValue);
+
+    loadGlobalObject(argumentGPR0);
+    emitGetVirtualRegisterPayload(scope, argumentGPR1);
+    emitGetVirtualRegisterPayload(symbolTable, argumentGPR2);
+    callOperationNoExceptionCheck(value == jsUndefined() ? operationCreateLexicalEnvironmentUndefined : operationCreateLexicalEnvironmentTDZ, dst, argumentGPR0, argumentGPR1, argumentGPR2);
+}
+
+void JIT::emit_op_create_direct_arguments(const JSInstruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpCreateDirectArguments>();
+    VirtualRegister dst = bytecode.m_dst;
+
+    loadGlobalObject(argumentGPR0);
+    callOperationNoExceptionCheck(operationCreateDirectArgumentsBaseline, dst, argumentGPR0);
+}
+
+void JIT::emit_op_create_scoped_arguments(const JSInstruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpCreateScopedArguments>();
+    VirtualRegister dst = bytecode.m_dst;
+    VirtualRegister scope = bytecode.m_scope;
+
+    loadGlobalObject(argumentGPR0);
+    emitGetVirtualRegisterPayload(scope, argumentGPR1);
+    callOperationNoExceptionCheck(operationCreateScopedArgumentsBaseline, dst, argumentGPR0, argumentGPR1);
+}
+
+void JIT::emit_op_create_cloned_arguments(const JSInstruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpCreateClonedArguments>();
+    VirtualRegister dst = bytecode.m_dst;
+
+    loadGlobalObject(argumentGPR0);
+    callOperation(operationCreateClonedArgumentsBaseline, dst, argumentGPR0);
+}
+
 void JIT::emit_op_profile_type(const JSInstruction* currentInstruction)
 {
     m_isShareable = false;

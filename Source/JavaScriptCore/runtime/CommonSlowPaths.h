@@ -249,9 +249,6 @@ class CallFrame;
 #define JSC_DEFINE_COMMON_SLOW_PATH(name) \
     JSC_DEFINE_JIT_OPERATION(name, UGPRPair, (CallFrame* callFrame, const JSInstruction* pc))
 
-JSC_DECLARE_COMMON_SLOW_PATH(slow_path_create_direct_arguments);
-JSC_DECLARE_COMMON_SLOW_PATH(slow_path_create_scoped_arguments);
-JSC_DECLARE_COMMON_SLOW_PATH(slow_path_create_cloned_arguments);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_create_this);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_enter);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_to_this);
@@ -300,7 +297,6 @@ JSC_DECLARE_COMMON_SLOW_PATH(slow_path_enumerator_put_by_val);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_enumerator_has_own_property);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_profile_type_clear_log);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_unreachable);
-JSC_DECLARE_COMMON_SLOW_PATH(slow_path_create_lexical_environment);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_push_with_scope);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_resolve_scope);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_resolve_scope_for_hoisting_func_decl_in_eval);
