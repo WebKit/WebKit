@@ -36,8 +36,11 @@
 #include <wpe/wpe-platform.h>
 #endif
 
-#if USE(GBM) && ENABLE(WPE_PLATFORM)
+#if USE(GBM)
 #include "DMABufRendererBufferFormat.h"
+#endif
+
+#if USE(GBM) && ENABLE(WPE_PLATFORM)
 #include "MessageSenderInlines.h"
 #include "WebPageMessages.h"
 #endif
