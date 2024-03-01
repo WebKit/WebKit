@@ -423,7 +423,7 @@ WI.CSSKeywordCompletions._colors = [
     "royalblue", "saddlebrown", "salmon", "sandybrown", "seagreen", "seashell", "sienna", "skyblue", "slateblue",
     "slategray", "slategrey", "snow", "springgreen", "steelblue", "tan", "thistle", "tomato", "turquoise", "violet",
     "wheat", "whitesmoke", "yellowgreen", "rgb()", "rgba()", "hsl()", "hsla()", "color()", "hwb()", "lch()", "lab()",
-    "color-mix()", "color-contrast()",
+    "color-mix()", "color-contrast()", "light-dark()",
 ];
 
 WI.CSSKeywordCompletions._colorAwareProperties = new Set([

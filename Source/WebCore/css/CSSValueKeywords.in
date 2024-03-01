@@ -1588,6 +1588,9 @@ AAA-large
 // color-mix()
 color-mix
 
+// light-dark()
+light-dark
+
 // color-space-interpolation
 in
 // srgb

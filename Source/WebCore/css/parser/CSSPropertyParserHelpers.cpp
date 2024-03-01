@@ -3117,6 +3117,37 @@ static std::optional<ColorOrUnresolvedColor> parseColorMixFunctionParameters(CSS
     } } };
 }
 
+static std::optional<ColorOrUnresolvedColor> parseLightDarkFunctionParameters(CSSParserTokenRange& range, const CSSParserContext& context)
+{
+    // light-dark() = light-dark( <color>, <color> )
+
+    ASSERT(range.peek().functionId() == CSSValueLightDark);
+
+    if (!context.lightDarkEnabled)
+        return std::nullopt;
+
+    auto args = consumeFunction(range);
+
+    auto lightColor = consumeColor(args, context);
+    if (!lightColor)
+        return std::nullopt;
+
+    if (!consumeCommaIncludingWhitespace(args))
+        return std::nullopt;
+
+    auto darkColor = consumeColor(args, context);
+    if (!darkColor)
+        return std::nullopt;
+
+    if (!args.atEnd())
+        return std::nullopt;
+
+    return { CSSUnresolvedColor { CSSUnresolvedLightDark {
+        lightColor.releaseNonNull(),
+        darkColor.releaseNonNull()
+    } } };
+}
+
 static std::optional<SRGBA<uint8_t>> parseHexColor(CSSParserTokenRange& range, bool acceptQuirkyColors)
 {
     String string;
@@ -3200,6 +3231,9 @@ static Color parseColorFunctionRaw(CSSParserTokenRange& range, const CSSParserCo
     case CSSValueColorMix:
         color = parseColorMixFunctionParametersRaw(colorRange, context);
         break;
+    case CSSValueLightDark:
+        // FIXME: Need a worker-safe way to compute light-dark colors.
+        return { };
     default:
         return { };
     }
@@ -3255,6 +3289,9 @@ static std::optional<ColorOrUnresolvedColor> parseColorFunction(CSSParserTokenRa
         break;
     case CSSValueColorMix:
         color = parseColorMixFunctionParameters(colorRange, context);
+        break;
+    case CSSValueLightDark:
+        color = parseLightDarkFunctionParameters(colorRange, context);
         break;
     default:
         return { };
