@@ -1,0 +1,23 @@
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    function eventhandler2() {
+        try { var00010 = eventhandler5; } catch (e) { }
+        try { var00046 = htmlvar00059.contentWindow; } catch (e) { }
+        try { var00192 = var00046.window; } catch (e) { }
+        try { var00193 = var00010; } catch (e) { }
+        try { var00192.addEventListener("DOMSubtreeModified", var00193); } catch (e) { }
+    }
+    function eventhandler5() {
+        try { /* */ var00010 = document.caretRangeFromPoint(459, 251); } catch (e) { }
+        try { var00010.setStartBefore(htmlvar00032); } catch (e) { }
+        try { var00010.deleteContents(); } catch (e) { }
+    }
+</script>
+<p>This test PASSED if it did not crash.</p>
+<image src="x" onerror="eventhandler2()" nohref="nohref">
+    <map id="htmlvar00032" inputmode="email">
+        <iframe id="htmlvar00059"
+            src="data:image/gif;base64,R0lGODlhIAAgAPIBAGbMzP///wAAADOZZpn/zAAAAAAAAAAAACH5BAAAAAAALAAAAAAgACAAAAOLGLrc/k7ISau9S5DNu/8fICgaYJ5oqqbDGJRrLAMtScw468J5Xr+3nm8XFM5+PGMMWYwxcMyZ40iULQaDhSzqDGBNisGyuhUDrmNb72pWcaXhtpsM/27pVi8UX96rcQpDf3V+QD12d4NKK2+Lc4qOKI2RJ5OUNHyXSDRYnZ6foKAuLxelphMQqaoPCQA7"></iframe>
+    </map>
+</image>
