@@ -28,6 +28,7 @@
 #include "CachedResourceRequest.h"
 #include "CachedResourceRequestInitiatorTypes.h"
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "MediaList.h"
 #include "MediaQueryParserContext.h"
 #include "Page.h"

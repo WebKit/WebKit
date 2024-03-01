@@ -882,6 +882,7 @@ css/CSSSegmentedFontFace.cpp
 css/CSSSelector.cpp
 css/CSSSelectorList.cpp
 css/CSSShadowValue.cpp
+css/CSSStartingStyleRule.cpp
 css/CSSStyleDeclaration.cpp
 css/CSSStyleRule.cpp
 css/CSSStyleSheet.cpp
@@ -3278,6 +3279,7 @@ JSCSSRule.cpp
 JSCSSRuleList.cpp
 JSCSSStyleDeclaration.cpp
 JSCSSScopeRule.cpp
+JSCSSStartingStyleRule.cpp
 JSCSSStyleRule.cpp
 JSCSSStyleSheet.cpp
 JSCSSSupportsRule.cpp
