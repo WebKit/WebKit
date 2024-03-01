@@ -4581,17 +4581,11 @@ static void adjustSettingsForLockdownMode(Settings& settings, const WebPreferenc
 #if ENABLE(WEB_AUDIO)
     settings.setWebAudioEnabled(false);
 #endif
-    switch (settings.downloadableBinaryFontTrustedTypes()) {
-    case DownloadableBinaryFontTrustedTypes::Any:
+    if (settings.downloadableBinaryFontTrustedTypes() != DownloadableBinaryFontTrustedTypes::None) {
         settings.setDownloadableBinaryFontTrustedTypes(
             settings.lockdownFontParserEnabled()
                 ? DownloadableBinaryFontTrustedTypes::FallbackParser
                 : DownloadableBinaryFontTrustedTypes::Restricted);
-        break;
-    case DownloadableBinaryFontTrustedTypes::FallbackParser:
-    case DownloadableBinaryFontTrustedTypes::Restricted:
-    case DownloadableBinaryFontTrustedTypes::None:
-        break;
     }
 #if ENABLE(WEB_CODECS)
     settings.setWebCodecsVideoEnabled(false);
