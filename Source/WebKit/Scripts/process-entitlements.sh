@@ -366,6 +366,7 @@ if [[ "${PRODUCT_NAME}" != WebContentExtension && "${PRODUCT_NAME}" != WebConten
     plistbuddy Add :com.apple.private.pac.exception bool YES
     plistbuddy Add :com.apple.private.sandbox.profile string com.apple.WebKit.WebContent
 fi
+    plistbuddy add :com.apple.coreaudio.LoadDecodersInProcess bool YES
     plistbuddy add :com.apple.coreaudio.allow-vorbis-decode bool YES
     webcontent_sandbox_entitlements
 }
