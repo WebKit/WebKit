@@ -28,6 +28,11 @@
 
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/WebMAudioUtilitiesCocoa.h>
+#import <mach/mach_init.h>
+#import <mach/task.h>
+#import <mach/task_info.h>
+#import <wtf/MonotonicTime.h>
+#import <wtf/Scope.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 #if USE(RUNNINGBOARD)
@@ -82,5 +87,58 @@ RetainPtr<_SEExtensionProcess> AuxiliaryProcessProxy::extensionProcess() const
     return m_processLauncher->extensionProcess();
 }
 #endif
+
+std::optional<AuxiliaryProcessProxy::TaskInfo> AuxiliaryProcessProxy::taskInfo() const
+{
+    auto pid = processID();
+    if (!pid)
+        return std::nullopt;
+
+    mach_port_t task = MACH_PORT_NULL;
+    if (task_name_for_pid(mach_task_self(), pid, &task) != KERN_SUCCESS)
+        return std::nullopt;
+
+    auto scope = makeScopeExit([task]() {
+        mach_port_deallocate(mach_task_self(), task);
+    });
+
+    mach_task_basic_info_data_t basicInfo;
+    mach_msg_type_number_t basicInfoCount = MACH_TASK_BASIC_INFO_COUNT;
+
+    if (task_info(task, MACH_TASK_BASIC_INFO, (task_info_t)&basicInfo, &basicInfoCount) != KERN_SUCCESS)
+        return std::nullopt;
+
+    task_absolutetime_info_data_t timeInfo;
+    mach_msg_type_number_t timeInfoCount = TASK_ABSOLUTETIME_INFO_COUNT;
+
+    if (task_info(task, TASK_ABSOLUTETIME_INFO, (task_info_t)&timeInfo, &timeInfoCount) != KERN_SUCCESS)
+        return std::nullopt;
+
+    task_vm_info_data_t vmInfo;
+    mach_msg_type_number_t vmInfoCount = TASK_VM_INFO_REV1_COUNT;
+
+    if (task_info(task, TASK_VM_INFO, (task_info_t)&vmInfo, &vmInfoCount) != KERN_SUCCESS)
+        return std::nullopt;
+
+    // ProcessThrottler's "suspend" state is a bit of a misnomer, because it could mean that the
+    // process either is holding the "Suspended" assertion (in which case it's actually still not
+    // task_suspended), or it is holding no assertions (in which case it's actually suspended).
+    // Also, other processes (like NetworkProcess) can acquire assertions on the process that
+    // UIProcess doesn't know about and which prevent the process from suspending.
+    //
+    // So we only tell the client that the task is suspended if we're sure that the task is actually
+    // suspended (by consulting suspend_count).
+    auto state = throttler().currentState();
+    if (state == ProcessThrottleState::Suspended && !basicInfo.suspend_count)
+        state = ProcessThrottleState::Background;
+
+    return TaskInfo {
+        pid,
+        state,
+        MonotonicTime::fromMachAbsoluteTime(timeInfo.total_user).secondsSinceEpoch(),
+        MonotonicTime::fromMachAbsoluteTime(timeInfo.total_system).secondsSinceEpoch(),
+        static_cast<size_t>(vmInfo.phys_footprint)
+    };
+}
 
 } // namespace WebKit
