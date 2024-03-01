@@ -9,10 +9,8 @@ let currentDraftExtensions = {
     ],
     "webgl2" : [
         "EXT_blend_func_extended",
-        "EXT_conservative_depth",
         "EXT_render_snorm",
         "EXT_texture_mirror_clamp_to_edge",
-        "NV_shader_noperspective_interpolation",
         "OES_sample_variables",
         "OES_shader_multisample_interpolation",
         "WEBGL_draw_instanced_base_vertex_base_instance",
