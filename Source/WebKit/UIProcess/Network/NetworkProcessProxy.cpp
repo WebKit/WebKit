@@ -1421,9 +1421,6 @@ void NetworkProcessProxy::addSession(WebsiteDataStore& store, SendParametersToNe
     // DispatchMessageEvenWhenWaitingForSyncReply flag.
     if (canSendMessage() && sendParametersToNetworkProcess == SendParametersToNetworkProcess::Yes)
         send(Messages::NetworkProcess::AddWebsiteDataStore { store.parameters() }, 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
-    auto sessionID = store.sessionID();
-    if (!sessionID.isEphemeral())
-        createSymLinkForFileUpgrade(store.resolvedIndexedDBDatabaseDirectory());
 }
 
 void NetworkProcessProxy::removeSession(WebsiteDataStore& websiteDataStore, CompletionHandler<void(String&&)>&& completionHandler)
@@ -1691,17 +1688,6 @@ void NetworkProcessProxy::testProcessIncomingSyncMessagesWhenWaitingForSyncReply
     auto syncResult = page->sendSync(Messages::WebPage::TestProcessIncomingSyncMessagesWhenWaitingForSyncReply(), Seconds::infinity(), IPC::SendSyncOption::ForceDispatchWhenDestinationIsWaitingForUnboundedSyncReply);
     auto [handled] = syncResult.takeReplyOr(false);
     reply(handled);
-}
-
-void NetworkProcessProxy::createSymLinkForFileUpgrade(const String& indexedDatabaseDirectory)
-{
-    if (indexedDatabaseDirectory.isEmpty())
-        return;
-
-    String oldVersionDirectory = FileSystem::pathByAppendingComponent(indexedDatabaseDirectory, "v0"_s);
-    FileSystem::deleteEmptyDirectory(oldVersionDirectory);
-    if (!FileSystem::fileExists(oldVersionDirectory))
-        FileSystem::createSymbolicLink(indexedDatabaseDirectory, oldVersionDirectory);
 }
 
 void NetworkProcessProxy::preconnectTo(PAL::SessionID sessionID, WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier webPageID, WebCore::ResourceRequest&& request, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain)

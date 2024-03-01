@@ -46,6 +46,7 @@ class IDBStorageRegistry;
 
 class IDBStorageManager final : public WebCore::IDBServer::UniqueIDBDatabaseManager {
 public:
+    static void createVersionDirectoryIfNeeded(const String& rootDirectory);
     static String idbStorageOriginDirectory(const String& rootDirectory, const WebCore::ClientOrigin&);
     static uint64_t idbStorageSize(const String& originDirectory);
     static HashSet<WebCore::ClientOrigin> originsOfIDBStorageData(const String& rootDirectory);

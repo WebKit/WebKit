@@ -213,6 +213,7 @@ NetworkStorageManager::NetworkStorageManager(NetworkProcess& process, PAL::Sessi
         }
 #endif
 
+        IDBStorageManager::createVersionDirectoryIfNeeded(m_customIDBStoragePath);
         RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis)] { });
     });
 }

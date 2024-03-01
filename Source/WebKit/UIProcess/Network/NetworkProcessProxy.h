@@ -239,8 +239,6 @@ public:
     enum class SendParametersToNetworkProcess : bool { No, Yes };
     void addSession(WebsiteDataStore&, SendParametersToNetworkProcess);
     void removeSession(WebsiteDataStore&, CompletionHandler<void(String&&)>&&);
-    
-    void createSymLinkForFileUpgrade(const String& indexedDatabaseDirectory);
 
     // ProcessThrottlerClient
     void sendProcessDidResume(ResumeReason) final;
