@@ -44,7 +44,8 @@ public:
         Inherited = 1 << 1,
         ExplicitlyInherited = 1 << 2,
         AfterAnimation = 1 << 3,
-        AfterTransition = 1 << 4
+        AfterTransition = 1 << 4,
+        StartingStyle = 1 << 5,
     };
     static constexpr OptionSet<PropertyType> allProperties() { return { PropertyType::NonInherited,  PropertyType::Inherited }; }
 

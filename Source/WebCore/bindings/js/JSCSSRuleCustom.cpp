@@ -115,6 +115,9 @@ JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<C
         return createWrapper<CSSPropertyRule>(globalObject, WTFMove(rule));
     case StyleRuleType::Scope:
         return createWrapper<CSSScopeRule>(globalObject, WTFMove(rule));
+    case StyleRuleType::StartingStyle:
+        // FIXME: Implement.
+        return createWrapper<CSSRule>(globalObject, WTFMove(rule));
     case StyleRuleType::Unknown:
     case StyleRuleType::Charset:
     case StyleRuleType::Margin:
