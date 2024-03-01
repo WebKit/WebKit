@@ -133,7 +133,6 @@ public:
     void visit(AST::WorkgroupSizeAttribute&) override;
 
     // Statements
-    void visit(AST::VariableStatement&) override;
     void visit(AST::AssignmentStatement&) override;
     void visit(AST::CallStatement&) override;
     void visit(AST::CompoundAssignmentStatement&) override;
@@ -172,12 +171,6 @@ public:
     void visit(AST::Continuing&) override;
 
 private:
-    enum class VariableKind : uint8_t {
-        Local,
-        Global,
-    };
-
-    void visitVariable(AST::Variable&, VariableKind);
     const Type* vectorFieldAccess(const Types::Vector&, AST::FieldAccessExpression&);
     void visitAttributes(AST::Attribute::List&);
     void bitcast(AST::CallExpression&, const Vector<const Type*>&);
@@ -471,43 +464,6 @@ void TypeChecker::visit(AST::Structure& structure)
 
 void TypeChecker::visit(AST::Variable& variable)
 {
-    visitVariable(variable, VariableKind::Global);
-}
-
-void TypeChecker::visit(AST::TypeAlias& alias)
-{
-    auto* type = resolve(alias.type());
-    introduceType(alias.name(), type);
-}
-
-void TypeChecker::visit(AST::ConstAssert& assertion)
-{
-    auto* testType = infer(assertion.test(), Evaluation::Constant);
-    if (!unify(m_types.boolType(), testType)) {
-        typeError(InferBottom::No, assertion.test().span(), "const assertion condition must be a bool, got '", *testType, "'");
-        return;
-    }
-
-    if (isBottom(testType))
-        return;
-
-    auto constantValue = assertion.test().constantValue();
-    if (!constantValue) {
-        typeError(InferBottom::No, assertion.test().span(), "const assertion requires a const-expression");
-        return;
-    }
-
-    if (!std::get<bool>(*constantValue))
-        typeError(InferBottom::No, assertion.span(), "const assertion failed");
-}
-
-void TypeChecker::visit(AST::VariableStatement& statement)
-{
-    visitVariable(statement.variable(), VariableKind::Local);
-}
-
-void TypeChecker::visitVariable(AST::Variable& variable, VariableKind variableKind)
-{
     visitAttributes(variable.attributes());
 
     const Type* result = nullptr;
@@ -527,7 +483,10 @@ void TypeChecker::visitVariable(AST::Variable& variable, VariableKind variableKi
     if (variable.maybeTypeName())
         result = resolve(*variable.maybeTypeName());
     if (variable.maybeInitializer()) {
-        auto* initializerType = infer(*variable.maybeInitializer(), evaluation);
+        auto initializerEvaluation = evaluation;
+        if (variable.flavor() == AST::VariableFlavor::Var && isModuleScope())
+            initializerEvaluation = Evaluation::Override;
+        auto* initializerType = infer(*variable.maybeInitializer(), initializerEvaluation);
         auto& constantValue = variable.maybeInitializer()->m_constantValue;
         if (constantValue.has_value())
             value = &constantValue;
@@ -560,7 +519,7 @@ void TypeChecker::visitVariable(AST::Variable& variable, VariableKind variableKi
 
     switch (variable.flavor()) {
     case AST::VariableFlavor::Let:
-        if (variableKind == VariableKind::Global)
+        if (isModuleScope())
             return error("module-scope 'let' is invalid, use 'const'");
         if (!result->isConstructible() && !std::holds_alternative<Types::Pointer>(*result))
             return error("'", *result, "' cannot be used as the type of a 'let'");
@@ -572,7 +531,7 @@ void TypeChecker::visitVariable(AST::Variable& variable, VariableKind variableKi
             return error("'", *result, "' cannot be used as the type of a 'const'");
         break;
     case AST::VariableFlavor::Override:
-        RELEASE_ASSERT(variableKind == VariableKind::Global);
+        RELEASE_ASSERT(isModuleScope());
         if (!satisfies(result, Constraints::ConcreteScalar))
             return error("'", *result, "' cannot be used as the type of an 'override'");
         break;
@@ -582,7 +541,7 @@ void TypeChecker::visitVariable(AST::Variable& variable, VariableKind variableKi
         if (auto* maybeQualifier = variable.maybeQualifier()) {
             addressSpace = maybeQualifier->addressSpace();
             accessMode = maybeQualifier->accessMode();
-        } else if (variableKind == VariableKind::Local) {
+        } else if (!isModuleScope()) {
             addressSpace = AddressSpace::Function;
             accessMode = AccessMode::ReadWrite;
         } else {
@@ -636,14 +595,14 @@ void TypeChecker::visitVariable(AST::Variable& variable, VariableKind variableKi
         }
         }
 
-        if (addressSpace == AddressSpace::Function && variableKind == VariableKind::Global)
+        if (addressSpace == AddressSpace::Function && isModuleScope())
             return error("module-scope 'var' must not use address space 'function'");
-        if (addressSpace != AddressSpace::Function && variableKind == VariableKind::Local)
+        if (addressSpace != AddressSpace::Function && !isModuleScope())
             return error("function-scope 'var' declaration must use 'function' address space");
         if ((addressSpace == AddressSpace::Storage || addressSpace == AddressSpace::Uniform || addressSpace == AddressSpace::Handle || addressSpace == AddressSpace::Workgroup) && variable.maybeInitializer())
             return error("variables in the address space '", toString(addressSpace), "' cannot have an initializer");
         if (addressSpace != AddressSpace::Workgroup && result->containsOverrideArray())
-            return error("");
+            return error("array with an 'override' element count can only be used as the store type of a 'var<workgroup>'");
     }
 
     if (value && !isBottom(result))
@@ -666,6 +625,33 @@ void TypeChecker::visitVariable(AST::Variable& variable, VariableKind variableKi
     }
 
     introduceValue(variable.name(), result, evaluation, value ? std::optional<ConstantValue>(*value) : std::nullopt);
+}
+
+void TypeChecker::visit(AST::TypeAlias& alias)
+{
+    auto* type = resolve(alias.type());
+    introduceType(alias.name(), type);
+}
+
+void TypeChecker::visit(AST::ConstAssert& assertion)
+{
+    auto* testType = infer(assertion.test(), Evaluation::Constant);
+    if (!unify(m_types.boolType(), testType)) {
+        typeError(InferBottom::No, assertion.test().span(), "const assertion condition must be a bool, got '", *testType, "'");
+        return;
+    }
+
+    if (isBottom(testType))
+        return;
+
+    auto constantValue = assertion.test().constantValue();
+    if (!constantValue) {
+        typeError(InferBottom::No, assertion.test().span(), "const assertion requires a const-expression");
+        return;
+    }
+
+    if (!std::get<bool>(*constantValue))
+        typeError(InferBottom::No, assertion.span(), "const assertion failed");
 }
 
 void TypeChecker::visit(AST::Function& function)
@@ -1208,11 +1194,6 @@ void TypeChecker::visit(AST::IdentifierExpression& identifier)
         return;
     }
 
-    if (UNLIKELY(isModuleScope() && std::holds_alternative<Types::Reference>(*binding->type))) {
-        typeError(identifier.span(), "var '", identifier.identifier(), "' cannot be referenced at module scope");
-        return;
-    }
-
     inferred(binding->type);
     if (binding->constantValue.has_value())
         setConstantValue(identifier, binding->type, *binding->constantValue);
@@ -1318,11 +1299,6 @@ void TypeChecker::visit(AST::CallExpression& call)
                 auto numberOfParameters = functionType.parameters.size();
                 if (UNLIKELY(m_evaluation < Evaluation::Runtime)) {
                     typeError(call.span(), "cannot call function from ", evaluationToString(m_evaluation), " context");
-                    return;
-                }
-
-                if (UNLIKELY(isModuleScope())) {
-                    typeError(call.span(), "functions cannot be called at module scope");
                     return;
                 }
 
