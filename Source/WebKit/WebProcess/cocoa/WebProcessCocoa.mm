@@ -803,6 +803,16 @@ static void prewarmLogs()
     }
 }
 
+static Ref<WorkQueue> logQueue()
+{
+    static LazyNeverDestroyed<Ref<WorkQueue>> queue;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, [&] {
+        queue.construct(WorkQueue::create("Log Queue", WorkQueue::QOS::Background));
+    });
+    return queue.get();
+}
+
 static void registerLogHook()
 {
     if (os_trace_get_mode() != OS_TRACE_MODE_DISABLE && os_trace_get_mode() != OS_TRACE_MODE_OFF)
@@ -836,9 +846,7 @@ static void registerLogHook()
         Vector<uint8_t> buffer(msg->buffer, msg->buffer_sz);
         Vector<uint8_t> privdata(msg->privdata, msg->privdata_sz);
 
-        static NeverDestroyed<Ref<WorkQueue>> queue(WorkQueue::create("Log Queue", WorkQueue::QOS::Background));
-
-        queue.get()->dispatchWithQOS([logFormat = WTFMove(logFormat), logChannel = WTFMove(logChannel), logCategory = WTFMove(logCategory), type = type, buffer = WTFMove(buffer), privdata = WTFMove(privdata), qos] {
+        logQueue()->dispatchWithQOS([logFormat = WTFMove(logFormat), logChannel = WTFMove(logChannel), logCategory = WTFMove(logCategory), type = type, buffer = WTFMove(buffer), privdata = WTFMove(privdata), qos] {
             os_log_message_s msg;
             memset(&msg, 0, sizeof(msg));
 
