@@ -436,7 +436,6 @@ void TypeChecker::visit(AST::Structure& structure)
         auto* memberType = resolve(member.type());
 
         if (UNLIKELY(std::holds_alternative<Types::Bottom>(*memberType))) {
-            typeError(InferBottom::No, member.span(), "type '", *memberType, "' cannot be used as a struct member");
             introduceType(structure.name(), m_types.bottomType());
             return;
         }
