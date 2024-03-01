@@ -158,7 +158,7 @@ static void processResponse(Ref<Client>&& client, Expected<Ref<FetchResponse>, s
     });
 }
 
-void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalScope, ResourceRequest&& request, String&& referrer, FetchOptions&& options, FetchIdentifier fetchIdentifier, bool isServiceWorkerNavigationPreloadEnabled, String&& clientIdentifier, String&& resultingClientIdentifier)
+void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalScope, ResourceRequest&& request, String&& referrer, FetchOptions&& options, FetchIdentifier fetchIdentifier, bool isServiceWorkerNavigationPreloadEnabled, String&& clientIdentifier, String&& resultingClientIdentifier, String&& replacesClientIdentifier)
 {
     auto requestHeaders = FetchHeaders::create(FetchHeaders::Guard::Immutable, HTTPHeaderMap { request.httpHeaderFields() });
 
@@ -195,6 +195,7 @@ void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalSc
     FetchEvent::Init init;
     init.request = WTFMove(fetchRequest);
     init.resultingClientId = WTFMove(resultingClientIdentifier);
+    init.replacesClientId = WTFMove(replacesClientIdentifier);
     init.clientId = WTFMove(clientIdentifier);
     init.cancelable = true;
 

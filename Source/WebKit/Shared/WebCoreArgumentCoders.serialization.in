@@ -3242,6 +3242,7 @@ struct WebCore::FetchOptions {
     String integrity;
     Markable<WTF::UUID> clientIdentifier;
     Markable<WTF::UUID> resultingClientIdentifier;
+    Markable<WTF::UUID> replacesClientIdentifier;
 }
 
 enum class WebCore::FetchHeadersGuard : uint8_t {

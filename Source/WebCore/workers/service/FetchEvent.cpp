@@ -63,6 +63,7 @@ FetchEvent::FetchEvent(JSC::JSGlobalObject& globalObject, const AtomString& type
     , m_request(initializer.request.releaseNonNull())
     , m_clientId(WTFMove(initializer.clientId))
     , m_resultingClientId(WTFMove(initializer.resultingClientId))
+    , m_replacesClientId(WTFMove(initializer.replacesClientId))
     , m_handled(retrieveHandledPromise(globalObject, WTFMove(initializer.handled)))
 {
 }

@@ -67,7 +67,7 @@ public:
     void willPostTaskToFireMessageEvent();
     void willPostTaskToFirePushSubscriptionChangeEvent();
 
-    void queueTaskToFireFetchEvent(Ref<ServiceWorkerFetch::Client>&&, ResourceRequest&&, String&& referrer, FetchOptions&&, FetchIdentifier, bool isServiceWorkerNavigationPreloadEnabled, String&& clientIdentifier, String&& resultingClientIdentifier);
+    void queueTaskToFireFetchEvent(Ref<ServiceWorkerFetch::Client>&&, ResourceRequest&&, String&& referrer, FetchOptions&&, FetchIdentifier, bool isServiceWorkerNavigationPreloadEnabled, String&& clientIdentifier, String&& resultingClientIdentifier, String&& replacesClientIdentifier);
     void queueTaskToPostMessage(MessageWithMessagePorts&&, ServiceWorkerOrClientData&& sourceData);
     void queueTaskToFireInstallEvent();
     void queueTaskToFireActivateEvent();

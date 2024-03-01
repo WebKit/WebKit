@@ -2221,6 +2221,7 @@ void DocumentLoader::loadMainResource(ResourceRequest&& request)
         // The main navigation load will trigger the registration of the client.
         if (m_resultingClientId)
             scriptExecutionContextIdentifierToLoaderMap().remove(m_resultingClientId);
+            mainResourceLoadOptions.replacesClientIdentifier = m_resultingClientId.object();
         m_resultingClientId = ScriptExecutionContextIdentifier::generate();
         ASSERT(!scriptExecutionContextIdentifierToLoaderMap().contains(m_resultingClientId));
         scriptExecutionContextIdentifierToLoaderMap().add(m_resultingClientId, this);

@@ -35,6 +35,7 @@
     [CallWith=CurrentScriptExecutionContext, EnabledBySetting=ServiceWorkerNavigationPreloadEnabled] readonly attribute Promise<any> preloadResponse;
     readonly attribute DOMString clientId;
     readonly attribute DOMString resultingClientId;
+    readonly attribute DOMString replacesClientId;
     readonly attribute Promise<undefined> handled;
 
     undefined respondWith(Promise<FetchResponse> r);
@@ -44,5 +45,6 @@ dictionary FetchEventInit : ExtendableEventInit {
     required FetchRequest request;
     DOMString clientId = "";
     DOMString resultingClientId = "";
+    DOMString replacesClientId = "";
     Promise<undefined> handled;
 };

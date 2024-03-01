@@ -49,9 +49,9 @@ struct FetchOptions {
     using Redirect = FetchOptionsRedirect;
 
     FetchOptions() = default;
-    FetchOptions(Destination, Mode, Credentials, Cache, Redirect, ReferrerPolicy, bool, String&&, Markable<WTF::UUID>, Markable<WTF::UUID>);
-    FetchOptions isolatedCopy() const & { return { destination, mode, credentials, cache, redirect, referrerPolicy, keepAlive, integrity.isolatedCopy(), clientIdentifier, resultingClientIdentifier }; }
-    FetchOptions isolatedCopy() && { return { destination, mode, credentials, cache, redirect, referrerPolicy, keepAlive, WTFMove(integrity).isolatedCopy(), clientIdentifier, resultingClientIdentifier }; }
+    FetchOptions(Destination, Mode, Credentials, Cache, Redirect, ReferrerPolicy, bool, String&&, Markable<WTF::UUID>, Markable<WTF::UUID>, Markable<WTF::UUID>);
+    FetchOptions isolatedCopy() const & { return { destination, mode, credentials, cache, redirect, referrerPolicy, keepAlive, integrity.isolatedCopy(), clientIdentifier, resultingClientIdentifier, replacesClientIdentifier }; }
+    FetchOptions isolatedCopy() && { return { destination, mode, credentials, cache, redirect, referrerPolicy, keepAlive, WTFMove(integrity).isolatedCopy(), clientIdentifier, resultingClientIdentifier, replacesClientIdentifier }; }
 
     template<class Encoder> void encodePersistent(Encoder&) const;
     template<class Decoder> static WARN_UNUSED_RETURN bool decodePersistent(Decoder&, FetchOptions&);
@@ -64,11 +64,13 @@ struct FetchOptions {
     ReferrerPolicy referrerPolicy { ReferrerPolicy::EmptyString };
     bool keepAlive { false };
     String integrity;
+
     Markable<WTF::UUID> clientIdentifier; // Identifier of https://fetch.spec.whatwg.org/#concept-request-client
     Markable<WTF::UUID> resultingClientIdentifier; // Identifier of https://fetch.spec.whatwg.org/#concept-request-reserved-client
+    Markable<WTF::UUID> replacesClientIdentifier; // Identifier of https://fetch.spec.whatwg.org/#concept-request-replaces-client-id
 };
 
-inline FetchOptions::FetchOptions(Destination destination, Mode mode, Credentials credentials, Cache cache, Redirect redirect, ReferrerPolicy referrerPolicy, bool keepAlive, String&& integrity, Markable<WTF::UUID> clientIdentifier, Markable<WTF::UUID> resultingClientIdentifier)
+inline FetchOptions::FetchOptions(Destination destination, Mode mode, Credentials credentials, Cache cache, Redirect redirect, ReferrerPolicy referrerPolicy, bool keepAlive, String&& integrity, Markable<WTF::UUID> clientIdentifier, Markable<WTF::UUID> resultingClientIdentifier, Markable<WTF::UUID> replacesClientIdentifier)
     : destination(destination)
     , mode(mode)
     , credentials(credentials)
@@ -79,6 +81,7 @@ inline FetchOptions::FetchOptions(Destination destination, Mode mode, Credential
     , integrity(WTFMove(integrity))
     , clientIdentifier(clientIdentifier)
     , resultingClientIdentifier(resultingClientIdentifier)
+    , replacesClientIdentifier(replacesClientIdentifier)
 {
 }
 
