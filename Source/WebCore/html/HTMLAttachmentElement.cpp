@@ -114,6 +114,12 @@ static const AtomString& attachmentContainerIdentifier()
     return identifier;
 }
 
+static const AtomString& attachmentBackgroundIdentifier()
+{
+    static MainThreadNeverDestroyed<const AtomString> identifier("attachment-background"_s);
+    return identifier;
+}
+
 static const AtomString& attachmentPreviewAreaIdentifier()
 {
     static MainThreadNeverDestroyed<const AtomString> identifier("attachment-preview-area"_s);
@@ -255,7 +261,9 @@ void HTMLAttachmentElement::ensureWideLayoutShadowTree(ShadowRoot& root)
     m_containerElement->setInlineStyleCustomProperty(attachmentIconSizeProperty(), makeString(attachmentIconSize, "px"_s));
     root.appendChild(*m_containerElement);
 
-    auto previewArea = createContainedElement<HTMLDivElement>(*m_containerElement, attachmentPreviewAreaIdentifier());
+    auto background = createContainedElement<HTMLDivElement>(*m_containerElement, attachmentBackgroundIdentifier());
+
+    auto previewArea = createContainedElement<HTMLDivElement>(background, attachmentPreviewAreaIdentifier());
 
     m_imageElement = createContainedElement<HTMLImageElement>(previewArea, attachmentIconIdentifier());
     AttachmentImageEventsListener::addToImageForAttachment(*m_imageElement, *this);
@@ -267,7 +275,7 @@ void HTMLAttachmentElement::ensureWideLayoutShadowTree(ShadowRoot& root)
     m_progressElement = createContainedElement<HTMLDivElement>(previewArea, attachmentProgressIdentifier());
     updateProgress(attributeWithoutSynchronization(progressAttr));
 
-    auto informationArea = createContainedElement<HTMLDivElement>(*m_containerElement, attachmentInformationAreaIdentifier());
+    auto informationArea = createContainedElement<HTMLDivElement>(background, attachmentInformationAreaIdentifier());
 
     m_informationBlock = createContainedElement<HTMLDivElement>(informationArea, attachmentInformationBlockIdentifier());
 
