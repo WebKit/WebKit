@@ -6900,7 +6900,6 @@ imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/custom-proper
 imported/w3c/web-platform-tests/scroll-animations/view-timelines/range-boundary.html [ ImageOnlyFailure ]
 
 # webkit.org/b/229520 CSS @scope unimplemented
-imported/w3c/web-platform-tests/css/css-cascade/import-conditional-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-cascade/scope-visited.html [ ImageOnlyFailure ]
 
 imported/w3c/web-platform-tests/css/css-nesting/host-nesting-001.html [ ImageOnlyFailure ]

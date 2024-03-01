@@ -18,7 +18,7 @@ PASS supports(selector(a)) is a valid import condition
 PASS supports(selector(p a)) is a valid import condition
 PASS supports(selector(p > a)) is a valid import condition
 PASS supports(selector(p + a)) is a valid import condition
-FAIL supports(font-tech(color-COLRv1)) is a valid import condition assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+PASS supports(font-tech(color-COLRv1)) is a valid import condition
 PASS supports(font-tech(invalid)) is not a valid import condition
 PASS supports(font-format(opentype)) is a valid import condition
 PASS supports(font-format(woff)) is a valid import condition
