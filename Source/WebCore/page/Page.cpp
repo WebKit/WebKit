@@ -2247,11 +2247,6 @@ void Page::setImageAnimationEnabled(bool enabled)
     updatePlayStateForAllAnimations();
     chrome().client().isAnyAnimationAllowedToPlayDidChange(enabled);
 }
-
-void Page::setSystemAllowsAnimationControls(bool isAllowed)
-{
-    m_systemAllowsAnimationControls = isAllowed;
-}
 #endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 
 #if ENABLE(ACCESSIBILITY_NON_BLINKING_CURSOR)

@@ -76,6 +76,7 @@
 #import <WebCore/HistoryController.h>
 #import <WebCore/HistoryItem.h>
 #import <WebCore/IOSurface.h>
+#import <WebCore/Image.h>
 #import <WebCore/ImageDecoderCG.h>
 #import <WebCore/LocalFrameView.h>
 #import <WebCore/LocalizedDeviceModel.h>
@@ -1278,6 +1279,10 @@ void WebProcess::setMediaAccessibilityPreferences(WebCore::CaptionUserPreference
 
 void WebProcess::updatePageAccessibilitySettings()
 {
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+    Image::setSystemAllowsAnimationControls(!imageAnimationEnabled());
+#endif
+
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL) || ENABLE(ACCESSIBILITY_NON_BLINKING_CURSOR)
     for (auto& page : m_pageMap.values()) {
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)

@@ -133,6 +133,8 @@ public:
     bool animationPending() const { return m_animationStartTimer && m_animationStartTimer->isActive(); }
     std::optional<bool> allowsAnimation() const { return m_allowsAnimation; }
     void setAllowsAnimation(std::optional<bool> allowsAnimation) { m_allowsAnimation = allowsAnimation; }
+    static bool systemAllowsAnimationControls() { return gSystemAllowsAnimationControls; }
+    WEBCORE_EXPORT static void setSystemAllowsAnimationControls(bool allowsControls);
 
     // Typically the CachedImage that owns us.
     RefPtr<ImageObserver> imageObserver() const;
@@ -185,6 +187,7 @@ private:
     // A value of true or false will override the default Page::imageAnimationEnabled state.
     std::optional<bool> m_allowsAnimation { std::nullopt };
     std::unique_ptr<Timer> m_animationStartTimer;
+    static bool gSystemAllowsAnimationControls;
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const Image&);

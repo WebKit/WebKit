@@ -345,7 +345,7 @@ bool BitmapImage::shouldAnimate() const
 
 bool BitmapImage::canAnimate() const
 {
-    return shouldAnimate() && frameCount() > 1;
+    return frameCount() > 1 && shouldAnimate();
 }
 
 bool BitmapImage::canUseAsyncDecodingForLargeImages() const

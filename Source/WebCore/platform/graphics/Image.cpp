@@ -444,4 +444,11 @@ TextStream& operator<<(TextStream& ts, const Image& image)
     return ts;
 }
 
+bool Image::gSystemAllowsAnimationControls = false;
+
+void Image::setSystemAllowsAnimationControls(bool allowsControls)
+{
+    gSystemAllowsAnimationControls = allowsControls;
+}
+
 } // namespace WebCore
