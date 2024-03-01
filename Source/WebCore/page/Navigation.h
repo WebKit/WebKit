@@ -40,8 +40,6 @@ class SerializedScriptValue;
 
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#navigation-api-method-tracker
 struct NavigationAPIMethodTracker {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
-
     NavigationAPIMethodTracker(uint64_t id, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished, JSC::JSValue&& info, RefPtr<SerializedScriptValue>&& serializedState)
         : info(info)
         , serializedState(serializedState)
@@ -136,8 +134,8 @@ private:
     bool hasEntriesAndEventsDisabled() const;
     Result performTraversal(NavigationHistoryEntry&, Ref<DeferredPromise> committed, Ref<DeferredPromise> finished);
     std::optional<Ref<NavigationHistoryEntry>> findEntryByKey(const String& key);
-    ExceptionOr<RefPtr<SerializedScriptValue>> serializeState(JSC::JSValue& state);
-    NavigationAPIMethodTracker maybeSetUpcomingNonTraversalTracker(Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished, JSC::JSValue&& info, RefPtr<SerializedScriptValue>&&);
+    ExceptionOr<RefPtr<SerializedScriptValue>> serializeState(JSC::JSValue state);
+    NavigationAPIMethodTracker maybeSetUpcomingNonTraversalTracker(Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished, JSC::JSValue info, RefPtr<SerializedScriptValue>&&);
 
 
     std::optional<size_t> m_currentEntryIndex;

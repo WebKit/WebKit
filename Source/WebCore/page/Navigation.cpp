@@ -127,7 +127,7 @@ static Navigation::Result createErrorResult(Ref<DeferredPromise> committed, Ref<
     return createErrorResult(committed, finished, Exception { exceptionCode, errorMessage });
 }
 
-ExceptionOr<RefPtr<SerializedScriptValue>> Navigation::serializeState(JSC::JSValue& state)
+ExceptionOr<RefPtr<SerializedScriptValue>> Navigation::serializeState(JSC::JSValue state)
 {
     if (state.isUndefined())
         return { nullptr };
@@ -141,7 +141,7 @@ ExceptionOr<RefPtr<SerializedScriptValue>> Navigation::serializeState(JSC::JSVal
 }
 
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#maybe-set-the-upcoming-non-traverse-api-method-tracker
-NavigationAPIMethodTracker Navigation::maybeSetUpcomingNonTraversalTracker(Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished, JSC::JSValue&& info, RefPtr<SerializedScriptValue>&& serializedState)
+NavigationAPIMethodTracker Navigation::maybeSetUpcomingNonTraversalTracker(Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished, JSC::JSValue info, RefPtr<SerializedScriptValue>&& serializedState)
 {
     static uint64_t lastTrackerID;
     auto apiMethodTracker = NavigationAPIMethodTracker(lastTrackerID++, WTFMove(committed), WTFMove(finished), WTFMove(info), WTFMove(serializedState));
@@ -206,8 +206,8 @@ Navigation::Result Navigation::navigate(ScriptExecutionContext& scriptExecutionC
     // FIXME: This is not a proper Navigation API initiated traversal, just a simple load for now.
     window()->frame()->loader().load(FrameLoadRequest(*window()->frame(), newURL));
 
-    if (m_upcomingNonTraverseMethodTracker && m_upcomingNonTraverseMethodTracker.value() == apiMethodTracker) {
-        // TODO: Once the frameloader properly promotes the upcoming tracker with the navigate event `m_upcomingNonTraverseMethodTracker` should be unset or this will throw.
+    if (m_upcomingNonTraverseMethodTracker == apiMethodTracker) {
+        // FIXME: Once the frameloader properly promotes the upcoming tracker with the navigate event `m_upcomingNonTraverseMethodTracker` should be unset or this will throw.
         m_upcomingNonTraverseMethodTracker = std::nullopt;
     }
 
