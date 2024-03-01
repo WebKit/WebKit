@@ -38,7 +38,6 @@ Path Font::platformPathForGlyph(Glyph glyph) const
     auto path = PathSkia::create();
     const auto& font = m_platformData.skFont();
     font.getPath(glyph, path->platformPath());
-    // FIXME: syntetic bold offset.
     return { path };
 }
 
@@ -108,8 +107,6 @@ void Font::platformInit()
         m_avgCharWidth = SkScalarToFloat(metrics.fAvgCharWidth);
 
     m_fontMetrics.setUnitsPerEm(font.getTypeface()->getUnitsPerEm());
-
-    m_syntheticBoldOffset = m_platformData.syntheticBold() ? 1.0f : 0.f;
 
     SkString familyName;
     font.getTypeface()->getFamilyName(&familyName);
