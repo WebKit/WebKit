@@ -1936,8 +1936,6 @@ webkit.org/b/221491 animations/keyframe-pseudo-shadow.html [ Pass ImageOnlyFailu
 
 webkit.org/b/221973 [ Monterey+ ] media/media-webm-no-duration.html [ Failure ]
 
-webkit.org/b/221935 media/webaudio-background-playback.html [ Pass Failure ]
-
 webkit.org/b/221218 [ Monterey+ ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framesize.html [ Pass Failure ]
 
 webkit.org/b/221100 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletnode-channel-count.https.html [ Pass Failure ]
