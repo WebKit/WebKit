@@ -806,7 +806,9 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
 {
     return _fullScreenState == WebKit::WaitingToEnterFullScreen
         || _fullScreenState == WebKit::EnteringFullScreen
-        || _fullScreenState == WebKit::InFullScreen;
+        || _fullScreenState == WebKit::InFullScreen
+        || _fullScreenState == WebKit::WaitingToExitFullScreen
+        || _fullScreenState == WebKit::ExitingFullScreen;
 }
 
 - (UIView *)webViewPlaceholder
@@ -1211,7 +1213,6 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
     [webView setFrame:[_webViewPlaceholder frame]];
     [webView setAutoresizingMask:[_webViewPlaceholder autoresizingMask]];
 
-    [[webView window] makeKeyAndVisible];
     [webView becomeFirstResponder];
 
     [webView _clearOverrideZoomScaleParameters];
@@ -1236,6 +1237,11 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
     _fullScreenState = WebKit::NotInFullScreen;
     OBJC_ALWAYS_LOG(OBJC_LOGIDENTIFIER);
 
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];
+
+    bool windowWasKey = [_window isKeyWindow];
+
     [self _reinsertWebViewUnderPlaceholder];
 
     if (auto* manager = self._manager) {
@@ -1255,7 +1261,7 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
     _parentWindowState = nil;
 #endif
 
-    CompletionHandler<void()> completionHandler([protectedSelf = retainPtr(self), self, logIdentifier = OBJC_LOGIDENTIFIER] {
+    CompletionHandler<void()> completionHandler([protectedSelf = retainPtr(self), self, windowWasKey, logIdentifier = OBJC_LOGIDENTIFIER] {
         _webViewPlaceholder.get().parent = nil;
         [_webViewPlaceholder removeFromSuperview];
 
@@ -1272,6 +1278,10 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
             [self requestRestoreFullScreen];
         } else
             OBJC_ALWAYS_LOG(logIdentifier, "repaint completed");
+
+        if (windowWasKey)
+            [self._webView.window makeKeyWindow];
+        [CATransaction commit];
     });
 
     auto* page = [self._webView _page].get();
