@@ -225,7 +225,7 @@ String ProcessThrottler::assertionName(ProcessAssertionType type) const
         return "Unknown"_s;
     }();
 
-    return makeString(m_process->clientName(), " ", typeString, " Assertion");
+    return makeString(protectedProcess()->clientName(), " ", typeString, " Assertion");
 }
 
 ProcessAssertionType ProcessThrottler::assertionTypeForState(ProcessThrottleState state)
@@ -387,6 +387,9 @@ void ProcessThrottler::clearPendingRequestToSuspend()
 
 void ProcessThrottler::sendPrepareToSuspendIPC(IsSuspensionImminent isSuspensionImminent)
 {
+    if (!m_isConnectedToProcess)
+        return;
+
     if (m_pendingRequestToSuspendID) {
         // Do not send a new PrepareToSuspend IPC for imminent suspension if we've already sent a non-imminent PrepareToSuspend IPC.
         RELEASE_ASSERT(isSuspensionImminent == IsSuspensionImminent::Yes);

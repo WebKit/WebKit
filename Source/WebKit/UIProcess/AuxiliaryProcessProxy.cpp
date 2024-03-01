@@ -35,6 +35,7 @@
 #include "WebPageProxyIdentifier.h"
 #include "WebProcessProxy.h"
 #include <wtf/RunLoop.h>
+#include <wtf/Scope.h>
 
 #if PLATFORM(COCOA)
 #include "CoreIPCSecureCoding.h"
@@ -66,9 +67,10 @@ static Seconds adjustedTimeoutForThermalState(Seconds timeout)
 #endif
 }
 
-AuxiliaryProcessProxy::AuxiliaryProcessProxy(bool alwaysRunsAtBackgroundPriority, Seconds responsivenessTimeout)
+AuxiliaryProcessProxy::AuxiliaryProcessProxy(ShouldTakeUIBackgroundAssertion shouldTakeUIBackgroundAssertion, AlwaysRunsAtBackgroundPriority alwaysRunsAtBackgroundPriority, Seconds responsivenessTimeout)
     : m_responsivenessTimer(*this, adjustedTimeoutForThermalState(responsivenessTimeout))
-    , m_alwaysRunsAtBackgroundPriority(alwaysRunsAtBackgroundPriority)
+    , m_alwaysRunsAtBackgroundPriority(alwaysRunsAtBackgroundPriority == AlwaysRunsAtBackgroundPriority::Yes)
+    , m_throttler(*this, shouldTakeUIBackgroundAssertion == ShouldTakeUIBackgroundAssertion::Yes)
 #if USE(RUNNINGBOARD)
     , m_timedActivityForIPC(3_s)
 #endif
@@ -77,6 +79,8 @@ AuxiliaryProcessProxy::AuxiliaryProcessProxy(bool alwaysRunsAtBackgroundPriority
 
 AuxiliaryProcessProxy::~AuxiliaryProcessProxy()
 {
+    throttler().didDisconnectFromProcess();
+
     if (RefPtr connection = m_connection)
         connection->invalidate();
 
@@ -348,6 +352,15 @@ void AuxiliaryProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::C
         else
             connection->sendMessage(WTFMove(pendingMessage.encoder), pendingMessage.sendOptions);
     }
+
+#if USE(RUNNINGBOARD)
+    m_throttler.didConnectToProcess(*this);
+#if USE(EXTENSIONKIT)
+    ASSERT(launcher);
+    if (launcher)
+        launcher->releaseLaunchGrant();
+#endif // USE(EXTENSIONKIT)
+#endif // USE(RUNNINGBOARD)
 }
 
 void AuxiliaryProcessProxy::outgoingMessageQueueIsGrowingLarge()
@@ -378,6 +391,10 @@ void AuxiliaryProcessProxy::replyToPendingMessages()
 
 void AuxiliaryProcessProxy::shutDownProcess()
 {
+    auto scopeExit = WTF::makeScopeExit([&] {
+        throttler().didDisconnectFromProcess();
+    });
+
     switch (state()) {
     case State::Launching: {
         RefPtr processLauncher = std::exchange(m_processLauncher, nullptr);
