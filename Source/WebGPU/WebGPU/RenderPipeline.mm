@@ -1699,18 +1699,18 @@ bool RenderPipeline::validateRenderBundle(const WGPURenderBundleEncoderDescripto
     }
 
     auto& fragment = *m_descriptor.fragment;
-    if (fragment.targetCount != descriptor.colorFormatCount) {
+    if (fragment.targetCount == descriptor.colorFormatCount) {
+        for (size_t i = 0; i < fragment.targetCount; ++i) {
+            auto colorFormat = descriptor.colorFormats[i];
+            if (m_descriptorTargets[i].format != colorFormat)
+                return false;
+        }
+    } else {
         for (size_t i = 0; i < descriptor.colorFormatCount; ++i) {
             auto colorFormat = descriptor.colorFormats[i];
             if (colorFormat != WGPUTextureFormat_Undefined)
                 return false;
         }
-    }
-
-    for (size_t i = 0; i < fragment.targetCount; ++i) {
-        auto colorFormat = descriptor.colorFormats[i];
-        if (m_descriptorTargets[i].format != colorFormat)
-            return false;
     }
 
     if (!m_descriptor.depthStencil) {
