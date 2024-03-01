@@ -2796,3 +2796,7 @@ webkit.org/b/270256 [ Monterey+ arm64 ] media/mediacapabilities/vp9-hw.html [ Fa
 webkit.org/b/270273 [ Monterey+ Debug ] imported/w3c/web-platform-tests/scroll-animations/css/animation-inactive-outside-range-test.html [ Skip ]
 
 webkit.org/b/270274 [ Monterey+ Debug ] imported/w3c/web-platform-tests/scroll-animations/css/animation-fill-outside-range-test.html [ Skip ]
+
+# webkit.org/b/270326 ([ Sonoma+ WK1 ] 2X imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive test are constant failures)
+[ Sonoma+ ] imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-wheel-event-listener-on-div.html [ Failure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-mousewheel-event-listener-on-div.html [ Failure ]
