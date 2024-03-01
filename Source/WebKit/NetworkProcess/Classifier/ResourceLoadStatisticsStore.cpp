@@ -1833,14 +1833,7 @@ void ResourceLoadStatisticsStore::grantStorageAccess(SubFrameDomain&& subFrameDo
                     for (auto&& quirkSubFrameDomain : subFrameDomains) {
                         if (quirkTopFrameDomain == topFrameDomain && quirkSubFrameDomain == subFrameDomain)
                             continue;
-                        StorageAccessWasGranted wasAccessGranted { StorageAccessWasGranted::No };
-                        addGrant(SubFrameDomain { quirkSubFrameDomain }, TopFrameDomain { quirkTopFrameDomain }, canRequestStorageAccessWithoutUserInteraction, [&wasAccessGranted] (StorageAccessWasGranted wasGranted) {
-                            wasAccessGranted = wasGranted;
-                        });
-                        if (wasAccessGranted == StorageAccessWasGranted::No) {
-                            completionHandler(wasAccessGranted);
-                            return;
-                        }
+                        addGrant(SubFrameDomain { quirkSubFrameDomain }, TopFrameDomain { quirkTopFrameDomain }, canRequestStorageAccessWithoutUserInteraction, [] (StorageAccessWasGranted) { });
                     }
                 }
             }
