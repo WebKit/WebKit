@@ -2524,7 +2524,6 @@ webkit.org/b/264001 [ Debug ] imported/w3c/web-platform-tests/requestidlecallbac
 
 # webkit.org/b/264419 ([ Sonoma 14.1+ ] Multiple tests are constantly failing following update from 14.0.)
 webkit.org/b/264544 [ Sonoma+ ] css3/filters/effect-opacity-hw.html [ ImageOnlyFailure ]
-webkit.org/b/263783 [ Sonoma+ ] fast/scrolling/scroll-snap-crash.html [ Skip ]
 
 webkit.org/b/264177 requestidlecallback/requestidlecallback-deadline-shortened-by-rendering-update.html [ Pass Failure ]
 
