@@ -442,6 +442,11 @@ void TypeChecker::visit(AST::Structure& structure)
         visitAttributes(member.attributes());
         auto* memberType = resolve(member.type());
 
+        if (UNLIKELY(std::holds_alternative<Types::Bottom>(*memberType))) {
+            typeError(InferBottom::No, member.span(), "type '", *memberType, "' cannot be used as a struct member");
+            introduceType(structure.name(), m_types.bottomType());
+            return;
+        }
         if (UNLIKELY(!memberType->hasCreationFixedFootprint())) {
             if (!memberType->containsRuntimeArray()) {
                 typeError(InferBottom::No, member.span(), "type '", *memberType, "' cannot be used as a struct member because it does not have creation-fixed footprint");

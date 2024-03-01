@@ -1,0 +1,22 @@
+<html>
+  <body>
+    <script>
+      const doTest = async () => {
+        try {
+            const adapter = await navigator.gpu.requestAdapter();
+            const device = await adapter.requestDevice();
+            const module = device.createShaderModule({
+              code: `
+                       struct S { x : u23 }
+                           @must_use fn foo() -> S { return S(); }
+                    `,
+            });
+        } catch (e) { }
+        if (window.testRunner) { testRunner.notifyDone() }
+      };
+      if (window.testRunner) { testRunner.waitUntilDone(); testRunner.dumpAsText() }
+      doTest();
+    </script>
+    This test passes if it does not crash.
+  </body>
+</html>
