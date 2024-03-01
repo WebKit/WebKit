@@ -30,7 +30,6 @@
 #include "NetworkResourceLoadIdentifier.h"
 #include "PolicyDecision.h"
 #include "ProcessThrottler.h"
-#include "RemotePageProxyState.h"
 #include "SandboxExtension.h"
 #include "WebFramePolicyListenerProxy.h"
 #include "WebPageProxyIdentifier.h"
@@ -59,6 +58,7 @@ namespace WebKit {
 
 class BrowsingContextGroup;
 class DrawingAreaProxy;
+class FrameProcess;
 class RemotePageProxy;
 class SuspendedPageProxy;
 class UserData;
@@ -83,7 +83,7 @@ using LayerHostingContextID = uint32_t;
 class ProvisionalPageProxy : public IPC::MessageReceiver, public IPC::MessageSender {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ProvisionalPageProxy(WebPageProxy&, Ref<WebProcessProxy>&&, std::unique_ptr<SuspendedPageProxy>, API::Navigation&, bool isServerRedirect, const WebCore::ResourceRequest&, ProcessSwapRequestedByClient, bool isProcessSwappingOnNavigationResponse, API::WebsitePolicies*, WebsiteDataStore* replacedDataStoreForWebArchiveLoad = nullptr);
+    ProvisionalPageProxy(WebPageProxy&, Ref<FrameProcess>&&, BrowsingContextGroup&, std::unique_ptr<SuspendedPageProxy>, API::Navigation&, bool isServerRedirect, const WebCore::ResourceRequest&, ProcessSwapRequestedByClient, bool isProcessSwappingOnNavigationResponse, API::WebsitePolicies*, WebsiteDataStore* replacedDataStoreForWebArchiveLoad = nullptr);
     ~ProvisionalPageProxy();
 
     WebPageProxy& page() { return m_page.get(); }
@@ -92,9 +92,9 @@ public:
 
     WebCore::PageIdentifier webPageID() const { return m_webPageID; }
     WebFrameProxy* mainFrame() const { return m_mainFrame.get(); }
-    BrowsingContextGroup* browsingContextGroup() { return m_browsingContextGroup.get(); }
-    RemotePageProxyState takeRemotePageProxyState() { return std::exchange(m_remotePageProxyState, { }); }
-    WebProcessProxy& process() { return m_process.get(); }
+    BrowsingContextGroup& browsingContextGroup() { return m_browsingContextGroup.get(); }
+    WebProcessProxy& process();
+    Ref<WebProcessProxy> protectedProcess();
     ProcessSwapRequestedByClient processSwapRequestedByClient() const { return m_processSwapRequestedByClient; }
     uint64_t navigationID() const { return m_navigationID; }
     const URL& provisionalURL() const { return m_provisionalLoadURL; }
@@ -191,14 +191,15 @@ private:
 
     WeakRef<WebPageProxy> m_page;
     WebCore::PageIdentifier m_webPageID;
-    Ref<WebProcessProxy> m_process;
+    Ref<FrameProcess> m_frameProcess;
+    Ref<BrowsingContextGroup> m_browsingContextGroup;
+
     // Keep WebsiteDataStore alive for provisional page load.
     RefPtr<WebsiteDataStore> m_websiteDataStore;
+
     std::unique_ptr<DrawingAreaProxy> m_drawingArea;
     RefPtr<WebFrameProxy> m_mainFrame;
-    RefPtr<BrowsingContextGroup> m_browsingContextGroup;
     RefPtr<WebsiteDataStore> m_replacedDataStoreForWebArchiveLoad;
-    RemotePageProxyState m_remotePageProxyState;
     uint64_t m_navigationID;
     bool m_isServerRedirect;
     WebCore::ResourceRequest m_request;

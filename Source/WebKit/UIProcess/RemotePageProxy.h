@@ -33,7 +33,6 @@
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/RegistrableDomain.h>
-#include <wtf/WeakHashSet.h>
 
 namespace IPC {
 class Connection;
@@ -67,16 +66,14 @@ struct FrameInfoData;
 struct FrameTreeCreationParameters;
 struct NavigationActionData;
 
-class RemotePageProxy : public RefCounted<RemotePageProxy>, public IPC::MessageReceiver {
+class RemotePageProxy : public IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemotePageProxy> create(WebPageProxy& page, WebProcessProxy& process, const WebCore::RegistrableDomain& domain, WebPageProxyMessageReceiverRegistration* registrationToTransfer = nullptr) { return adoptRef(*new RemotePageProxy(page, process, domain, registrationToTransfer)); }
+    RemotePageProxy(WebPageProxy&, WebProcessProxy&, const WebCore::RegistrableDomain&, WebPageProxyMessageReceiverRegistration* = nullptr);
     ~RemotePageProxy();
 
     WebPageProxy* page() const;
     RefPtr<WebPageProxy> protectedPage() const;
-    void addFrame(WebFrameProxy&);
-    void removeFrame(WebFrameProxy&);
 
     template<typename M> void send(M&&);
     template<typename M> IPC::ConnectionSendSyncResult<M> sendSync(M&& message);
@@ -94,7 +91,6 @@ public:
     const WebCore::RegistrableDomain& domain() const { return m_domain; }
 
 private:
-    RemotePageProxy(WebPageProxy&, WebProcessProxy&, const WebCore::RegistrableDomain&, WebPageProxyMessageReceiverRegistration*);
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
     void decidePolicyForResponse(FrameInfoData&&, uint64_t navigationID, const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, bool canShowMIMEType, const String& downloadAttribute, bool isShowingInitialAboutBlank, WebCore::CrossOriginOpenerPolicyValue activeDocumentCOOPValue, CompletionHandler<void(PolicyDecision&&)>&&);
@@ -112,7 +108,6 @@ private:
     std::unique_ptr<RemotePageDrawingAreaProxy> m_drawingArea;
     std::unique_ptr<RemotePageVisitedLinkStoreRegistration> m_visitedLinkStoreRegistration;
     WebPageProxyMessageReceiverRegistration m_messageReceiverRegistration;
-    WeakHashSet<WebFrameProxy> m_frames;
 };
 
 template<typename M> void RemotePageProxy::send(M&& message)

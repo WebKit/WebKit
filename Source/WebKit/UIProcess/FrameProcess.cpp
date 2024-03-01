@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,18 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "FrameProcess.h"
 
-#include "RemotePageProxy.h"
-#include <WebCore/RegistrableDomain.h>
-#include <wtf/HashMap.h>
+#include "BrowsingContextGroup.h"
+#include "WebPageProxy.h"
+#include "WebPreferences.h"
 
 namespace WebKit {
 
-struct RemotePageProxyState {
-    HashMap<WebCore::RegistrableDomain, WeakPtr<RemotePageProxy>> domainToRemotePageProxyMap;
-    RefPtr<RemotePageProxy> remotePageProxyInOpenerProcess;
-    HashMap<WebPageProxyIdentifier, Ref<RemotePageProxy>> openedRemotePageProxies;
-};
+FrameProcess::FrameProcess(WebProcessProxy& process, BrowsingContextGroup& group, const WebCore::RegistrableDomain& domain, const WebPreferences& preferences)
+    : m_process(process)
+    , m_browsingContextGroup(group)
+    , m_domain(domain)
+{
+    if (preferences.siteIsolationEnabled() || preferences.processSwapOnCrossSiteWindowOpenEnabled())
+        group.addFrameProcess(*this);
+    else
+        m_browsingContextGroup = nullptr;
+}
+
+FrameProcess::~FrameProcess()
+{
+    if (m_browsingContextGroup)
+        m_browsingContextGroup->removeFrameProcess(*this);
+}
 
 }

@@ -32,7 +32,6 @@
 #include "LayerTreeContext.h"
 #include "PageLoadState.h"
 #include "ProcessThrottler.h"
-#include "RemotePageProxyState.h"
 #include "ScrollingAccelerationCurve.h"
 #include "VisibleWebPageCounter.h"
 #include "WebColorPicker.h"
@@ -218,8 +217,6 @@ struct WebPageProxy::Internals final : WebPopupMenuProxy::Client
     WebCore::PageIdentifier webPageID;
     WindowKind windowKind { WindowKind::Unparented };
     PageAllowedToRunInTheBackgroundCounter::Token pageAllowedToRunInTheBackgroundToken;
-
-    RemotePageProxyState remotePageProxyState;
 
     WebPageProxyMessageReceiverRegistration messageReceiverRegistration;
 
