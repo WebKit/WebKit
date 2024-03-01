@@ -455,6 +455,8 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
                 page->releaseMemory(critical);
         });
 #if ENABLE(PERIODIC_MEMORY_MONITOR)
+        if (auto pollInterval = parameters.memoryFootprintPollIntervalForTesting)
+            memoryPressureHandler.setMemoryFootprintPollIntervalForTesting(pollInterval);
         memoryPressureHandler.setShouldUsePeriodicMemoryMonitor(true);
         memoryPressureHandler.setMemoryKillCallback([this] () {
             WebCore::logMemoryStatistics(LogMemoryStatisticsReason::OutOfMemoryDeath);
@@ -462,6 +464,9 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
                 parentProcessConnection()->send(Messages::WebProcessProxy::DidExceedActiveMemoryLimit(), 0);
             else
                 parentProcessConnection()->send(Messages::WebProcessProxy::DidExceedInactiveMemoryLimit(), 0);
+        });
+        memoryPressureHandler.setMemoryFootprintNotificationThresholds(WTFMove(parameters.memoryFootprintNotificationThresholds), [this](size_t footprint) {
+            parentProcessConnection()->send(Messages::WebProcessProxy::DidExceedMemoryFootprintThreshold(footprint), 0);
         });
 #endif
         memoryPressureHandler.setMemoryPressureStatusChangedCallback([this](WTF::MemoryPressureStatus memoryPressureStatus) {

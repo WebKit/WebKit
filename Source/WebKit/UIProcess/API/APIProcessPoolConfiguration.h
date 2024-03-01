@@ -158,6 +158,12 @@ public:
     void setTimeZoneOverride(const WTF::String& timeZoneOverride) { m_timeZoneOverride = timeZoneOverride; }
     const WTF::String& timeZoneOverride() const { return m_timeZoneOverride; }
 
+    void setMemoryFootprintPollIntervalForTesting(Seconds interval) { m_memoryFootprintPollIntervalForTesting = interval; }
+    Seconds memoryFootprintPollIntervalForTesting() const { return m_memoryFootprintPollIntervalForTesting; }
+
+    void setMemoryFootprintNotificationThresholds(Vector<size_t>&& thresholds) { m_memoryFootprintNotificationThresholds = WTFMove(thresholds); }
+    const Vector<size_t>& memoryFootprintNotificationThresholds() const { return m_memoryFootprintNotificationThresholds; }
+
 private:
     WTF::String m_injectedBundlePath;
     Vector<WTF::String> m_cachePartitionedURLSchemes;
@@ -198,6 +204,8 @@ private:
     std::optional<audit_token_t> m_presentingApplicationProcessToken;
 #endif
     WTF::String m_timeZoneOverride;
+    Seconds m_memoryFootprintPollIntervalForTesting;
+    Vector<size_t> m_memoryFootprintNotificationThresholds;
 };
 
 } // namespace API

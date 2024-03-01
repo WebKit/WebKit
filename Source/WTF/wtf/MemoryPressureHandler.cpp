@@ -26,7 +26,9 @@
 #include "config.h"
 #include <wtf/MemoryPressureHandler.h>
 
+#include <algorithm>
 #include <atomic>
+#include <functional>
 #include <wtf/Logging.h>
 #include <wtf/MemoryFootprint.h>
 #include <wtf/NeverDestroyed.h>
@@ -74,6 +76,11 @@ MemoryPressureHandler::MemoryPressureHandler()
 #if PLATFORM(COCOA)
     setDispatchQueue(dispatch_get_main_queue());
 #endif
+}
+
+void MemoryPressureHandler::setMemoryFootprintPollIntervalForTesting(Seconds pollInterval)
+{
+    m_configuration.pollInterval = pollInterval;
 }
 
 void MemoryPressureHandler::setShouldUsePeriodicMemoryMonitor(bool use)
@@ -209,12 +216,29 @@ void MemoryPressureHandler::setMemoryUsagePolicyBasedOnFootprint(size_t footprin
     memoryPressureStatusChanged();
 }
 
+void MemoryPressureHandler::setMemoryFootprintNotificationThresholds(Vector<size_t>&& thresholds, WTF::Function<void(size_t)>&& handler)
+{
+    if (thresholds.isEmpty() || !handler)
+        return;
+
+    std::sort(thresholds.begin(), thresholds.end(), std::greater<>());
+    m_memoryFootprintNotificationThresholds = WTFMove(thresholds);
+    m_memoryFootprintNotificationHandler = WTFMove(handler);
+}
+
+
 void MemoryPressureHandler::measurementTimerFired()
 {
     size_t footprint = memoryFootprint();
 #if PLATFORM(COCOA)
     RELEASE_LOG(MemoryPressure, "Current memory footprint: %zu MB", footprint / MB);
 #endif
+
+    while (m_memoryFootprintNotificationThresholds.size() && footprint > m_memoryFootprintNotificationThresholds.last()) {
+        m_memoryFootprintNotificationThresholds.removeLast();
+        m_memoryFootprintNotificationHandler(footprint);
+    }
+
     auto killThreshold = thresholdForMemoryKill();
     if (killThreshold && footprint >= *killThreshold) {
         shrinkOrDie(*killThreshold);

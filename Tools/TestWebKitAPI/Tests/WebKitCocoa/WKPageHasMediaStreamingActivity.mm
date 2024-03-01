@@ -28,6 +28,7 @@
 #import "PlatformUtilities.h"
 #import "PlatformWebView.h"
 #import "Test.h"
+#import "TestWKWebView.h"
 #import <JavaScriptCore/JavaScriptCore.h>
 #import <WebKit/WKPagePrivate.h>
 #import <WebKit/WKPreferencesPrivate.h>
