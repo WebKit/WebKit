@@ -1,0 +1,47 @@
+<html>
+  <body>
+    <script>
+      const doTest = async () => {
+        try {
+          const adapter = await navigator.gpu.requestAdapter();
+          const device = await adapter.requestDevice();
+          const module = device.createShaderModule({
+            code: `
+              fn tesch() {
+                let x1 = array<i32, 5>();
+              _32611&=
+               array<i32, 2>()[-0];
+              ;
+              _32611&=
+              array<i32, 9>();
+                let x1 = array<i32, 120>();
+                let x2 = array<i32,9>();//
+              l=array<i32,1>();//consents:han 0z
+                let x1 = array<i32, 39>();
+                let x1 = array<i32,10>();
+              ;
+              _32611&=
+               array<i32, 2>();
+              ;
+              _32611&=
+               array<i32, 2>();
+                let x1 = array<i32, 39>();
+                let x2 = array<i32,9>();//
+              l=array<i32,1>();//conster than 0z
+                let x1 = array<i32, 120>();
+                let x1 = array<i32, 71h>()[-0];
+              ;
+              _32611&=
+               array<i32, 2>();
+              }
+            `,
+          });
+        } catch (e) { }
+        if (window.testRunner) { testRunner.notifyDone() }
+      };
+      if (window.testRunner) { testRunner.waitUntilDone(); testRunner.dumpAsText() }
+      doTest();
+    </script>
+    This test passes if it does not crash.
+  </body>
+</html>

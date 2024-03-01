@@ -1272,7 +1272,6 @@ void TypeChecker::visit(AST::CallExpression& call)
                         isConstant = false;
                     }
                     if (isConstant) {
-
                         if (numberOfArguments)
                             setConstantValue(call, targetBinding->type, ConstantStruct { WTFMove(constantFields) });
                         else
@@ -1493,9 +1492,12 @@ void TypeChecker::visit(AST::CallExpression& call)
             else
                 arguments[i] = *value;
         }
-        if (isConstant)
-            setConstantValue(call, result, ConstantArray(WTFMove(arguments)));
-
+        if (isConstant) {
+            if (argumentCount)
+                setConstantValue(call, result, ConstantArray(WTFMove(arguments)));
+            else
+                setConstantValue(call, result, zeroValue(result));
+        }
         return;
     }
 
