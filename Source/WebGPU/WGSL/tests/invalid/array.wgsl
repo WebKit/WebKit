@@ -7,11 +7,20 @@ fn testArrayLengthMismatch() {
   // CHECK-L: array count must be greater than 0
   let x1 = array<i32, 0>();
 
+  // CHECK-L: array count must be greater than 0
+  let x2 = array<i32, -1>();
+
   // CHECK-L: array constructor has too few elements: expected 2, found 1
-  let x2 = array<i32, 2>(0);
+  let x3 = array<i32, 2>(0);
 
   // CHECK-L: array constructor has too many elements: expected 1, found 2
-  let x3 = array<i32, 1>(0, 0);
+  let x4 = array<i32, 1>(0, 0);
+
+  // CHECK-L: array count (65536) must be less than 65536
+  let x5 = array<i32, 65536>();
+
+  // CHECK-NOT-L: array count (65535) must be less than 65536
+  let x6 = array<i32, 65535>();
 
 }
 

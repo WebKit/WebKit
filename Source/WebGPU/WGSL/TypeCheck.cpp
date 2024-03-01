@@ -1405,11 +1405,17 @@ void TypeChecker::visit(AST::CallExpression& call)
                 return;
             }
 
-            elementCount = constantValue->integerValue();
-            if (!elementCount) {
+            auto intElementCount = constantValue->integerValue();
+            if (intElementCount < 1) {
                 typeError(call.span(), "array count must be greater than 0");
                 return;
             }
+
+            if (intElementCount > std::numeric_limits<uint16_t>::max()) {
+                typeError(call.span(), "array count (", String::number(intElementCount), ") must be less than 65536");
+                return;
+            }
+            elementCount = static_cast<unsigned>(intElementCount);
 
             unsigned numberOfArguments = call.arguments().size();
             if (numberOfArguments && numberOfArguments != elementCount) {
@@ -1670,9 +1676,14 @@ void TypeChecker::visit(AST::ArrayTypeExpression& array)
         }
 
         auto value = array.maybeElementCount()->constantValue();
-        if (value.has_value())
-            size = { static_cast<unsigned>(value->integerValue()) };
-        else
+        if (value.has_value()) {
+            auto elementCount = value->integerValue();
+            if (elementCount < 1) {
+                typeError(array.span(), "array count must be greater than 0");
+                return;
+            }
+            size = { static_cast<unsigned>(elementCount) };
+        } else
             size = { array.maybeElementCount() };
     }
 
