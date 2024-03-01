@@ -6252,10 +6252,8 @@ TEST(ProcessSwap, NavigateCrossOriginWithOpenee)
     TestWebKitAPI::Util::run(&done);
     done = false;
 
-    // Navigate cross-origin.
-    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.com/main.html"]];
-
-    [webView loadRequest:request];
+    // Navigate cross-origin via JavaScript. This should preserve the opener link.
+    [webView evaluateJavaScript:@"window.location = 'pson://www.apple.com/main.html'" completionHandler:nil];
     TestWebKitAPI::Util::run(&done);
     done = false;
 
@@ -6271,6 +6269,27 @@ TEST(ProcessSwap, NavigateCrossOriginWithOpenee)
 
     // We should not have process-swapped since an auxiliary window has an opener link to us.
     EXPECT_EQ(webkitPID, [webView _webProcessIdentifier]);
+
+    // Navigate cross-origin via the API. This should allow a process swap and sever the opener link.
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org.com/main3.html"]];
+
+    [webView loadRequest:request];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    EXPECT_WK_STREQ(@"pson://www.webkit.org.com/main3.html", [[webView URL] absoluteString]);
+
+    // Auxiliary window should no longer have an opener.
+    [createdWebView evaluateJavaScript:@"window.opener ? 'true' : 'false'" completionHandler: [&] (id hasOpener, NSError *error) {
+        EXPECT_WK_STREQ(@"false", hasOpener);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    // We should have process-swapped since an API navigations allow for process swap on windows
+    // with an openee.
+    EXPECT_NE(webkitPID, [webView _webProcessIdentifier]);
 }
 
 static const char* crossSiteLinkWithOpenerTestBytes = R"PSONRESOURCE(

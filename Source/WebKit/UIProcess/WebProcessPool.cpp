@@ -2106,7 +2106,9 @@ std::tuple<Ref<WebProcessProxy>, SuspendedPageProxy*, ASCIILiteral> WebProcessPo
         return { WTFMove(sourceProcess), nullptr, "Browsing context been opened by DOM without 'noopener'"_s };
 
     // FIXME: We should support process swap when a window has opened other windows via window.open.
-    if (navigation.hasOpenedFrames() && page.hasOpenedPage() && !(page.preferences().processSwapOnCrossSiteWindowOpenEnabled() || page.preferences().siteIsolationEnabled()))
+    // Currently we only allow the swap if the user has performed some manual navigation action
+    // (e.g. navigated via typing in the location bar).
+    if (navigation.hasOpenedFrames() && page.hasOpenedPage() && !(isRequestFromClientOrUserInput || page.preferences().processSwapOnCrossSiteWindowOpenEnabled() || page.preferences().siteIsolationEnabled()))
         return { WTFMove(sourceProcess), nullptr, "Browsing context has opened other windows"_s };
 
     if (RefPtr targetItem = navigation.targetItem()) {
