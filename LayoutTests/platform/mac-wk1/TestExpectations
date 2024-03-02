@@ -2814,3 +2814,5 @@ webkit.org/b/270310 [ Sonoma+ ] imported/w3c/web-platform-tests/html/semantics/i
 [ Sonoma+ ] imported/w3c/web-platform-tests/css/css-transforms/ttwf-css-3d-polygon-cycle.html [ ImageOnlyFailure ]
 
 webkit.org/b/270380 [ Ventura+ ] fast/hidpi/filters-drop-shadow.html [ ImageOnlyFailure ]
+
+webkit.org/b/270385 [ Sonoma+ ] fast/images/jpegxl-with-color-profile.html [ ImageOnlyFailure ]
