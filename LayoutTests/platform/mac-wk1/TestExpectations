@@ -2581,6 +2581,7 @@ webkit.org/b/253533 imported/w3c/web-platform-tests/xhr/status.h2.window.html [ 
 
 # webgpu is being brought up in the GPU process, radar://106507574 tracks fixing WK1
 http/tests/webgpu [ Skip ]
+fast/webgpu [ Skip ]
 
 imported/w3c/web-platform-tests/css/css-backgrounds/background-attachment-margin-root-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-backgrounds/background-image-shared-stylesheet.html [ ImageOnlyFailure ]
