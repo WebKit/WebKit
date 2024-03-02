@@ -24,6 +24,7 @@
 #include "FontCustomPlatformData.h"
 #include "FontVariationsSkia.h"
 #include "NotImplemented.h"
+#include "OpenTypeTypes.h"
 #include "SkiaHarfBuzzFont.h"
 #include <skia/core/SkStream.h>
 #include <skia/core/SkTypeface.h>
@@ -78,11 +79,24 @@ String FontPlatformData::familyName() const
     return { };
 }
 
+static_assert(std::is_same<SkFontTableTag, OpenType::Tag>::value);
+
 RefPtr<SharedBuffer> FontPlatformData::openTypeTable(uint32_t table) const
 {
-    notImplemented();
-    UNUSED_PARAM(table);
-    return nullptr;
+    auto* typeface = m_font.getTypeface();
+    if (!typeface)
+        return nullptr;
+
+    OpenType::Tag tag = OT_MAKE_TAG(table >> 24, (table & 0xff0000) >> 16, (table & 0xff00) >> 8, (table & 0xff));
+    size_t tableSize = typeface->getTableSize(tag);
+    if (!tableSize)
+        return nullptr;
+
+    Vector<uint8_t> data(tableSize);
+    if (typeface->getTableData(tag, 0, tableSize, data.data()) != tableSize)
+        return nullptr;
+
+    return SharedBuffer::create(WTFMove(data));
 }
 
 FontPlatformData FontPlatformData::create(const Attributes& data, const FontCustomPlatformData* custom)
