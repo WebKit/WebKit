@@ -81,6 +81,7 @@ struct AutocorrectionContext {
 - (std::pair<CGRect, CGRect>)autocorrectionRectsForString:(NSString *)string;
 - (NSArray<_WKTextInputContext *> *)synchronouslyRequestTextInputContextsInRect:(CGRect)rect;
 - (void)replaceText:(NSString *)input withText:(NSString *)correction shouldUnderline:(BOOL)shouldUnderline completion:(void(^)())completion;
+- (void)insertText:(NSString *)primaryString alternatives:(NSArray<NSString *> *)alternatives;
 - (void)handleKeyEvent:(WebEvent *)event completion:(void (^)(WebEvent *theEvent, BOOL handled))completion;
 - (void)selectTextForContextMenuWithLocationInView:(CGPoint)locationInView completion:(void(^)(BOOL shouldPresent))completion;
 - (void)defineSelection;

@@ -3285,13 +3285,16 @@ void Editor::updateMarkersForWordsAffectedByEditing(bool doNotRemoveIfSelectionA
 
     OptionSet<DocumentMarker::Type> markerTypesToRemove {
         DocumentMarker::Type::CorrectionIndicator,
-        DocumentMarker::Type::DictationAlternatives,
         DocumentMarker::Type::SpellCheckingExemption,
         DocumentMarker::Type::Spelling,
 #if !PLATFORM(IOS_FAMILY)
         DocumentMarker::Type::Grammar,
 #endif
     };
+
+    if (CheckedPtr client = this->client(); client && client->shouldRemoveDictationAlternativesAfterEditing())
+        markerTypesToRemove.add(DocumentMarker::Type::DictationAlternatives);
+
     adjustMarkerTypesToRemoveForWordsAffectedByEditing(markerTypesToRemove);
 
     removeMarkers(wordRange, markerTypesToRemove, RemovePartiallyOverlappingMarker::Yes);

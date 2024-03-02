@@ -81,6 +81,7 @@ public:
     virtual bool shouldChangeSelectedRange(const std::optional<SimpleRange>& fromRange, const std::optional<SimpleRange>& toRange, Affinity, bool stillSelecting) = 0;
     virtual bool shouldRevealCurrentSelectionAfterInsertion() const { return true; };
     virtual bool shouldSuppressPasswordEcho() const { return false; };
+    virtual bool shouldRemoveDictationAlternativesAfterEditing() const { return true; }
     
     virtual bool shouldApplyStyle(const StyleProperties&, const std::optional<SimpleRange>&) = 0;
     virtual void didApplyStyle() = 0;

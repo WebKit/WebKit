@@ -128,6 +128,23 @@ TEST(TextAlternatives, AddTextAlternativesWithoutMatch)
     EXPECT_EQ(0U, [webView dictationAlternativesMarkerCount:@"document.body.childNodes[0]"]);
 }
 
+TEST(TextAlternatives, InsertDictationResultsAsAlternatives)
+{
+    auto webView = createWebViewForTestingTextAlternatives();
+    [webView synchronouslyLoadHTMLString:@"<body></body>"];
+    [webView stringByEvaluatingJavaScript:@"getSelection().setPosition(document.body)"];
+
+    [[webView textInputContentView] willInsertFinalDictationResult];
+    [webView insertText:@"I " alternatives:@[ ]];
+    [webView insertText:@"wanna" alternatives:@[ @"want to" ]];
+    [webView insertText:@" test" alternatives:@[ ]];
+    [webView insertText:@" dictation" alternatives:@[ ]];
+    [[webView textInputContentView] didInsertFinalDictationResult];
+
+    [webView waitForNextPresentationUpdate];
+    EXPECT_EQ(1U, [webView dictationAlternativesMarkerCount:@"document.body.childNodes[0]"]);
+}
+
 } // namespace TestWebKitAPI
 
 #endif // PLATFORM(IOS_FAMILY)

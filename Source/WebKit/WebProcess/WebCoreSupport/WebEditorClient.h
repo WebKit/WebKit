@@ -194,6 +194,7 @@ private:
     bool shouldAllowSingleClickToChangeSelection(WebCore::Node&, const WebCore::VisibleSelection&) const final;
     bool shouldRevealCurrentSelectionAfterInsertion() const final;
     bool shouldSuppressPasswordEcho() const final;
+    bool shouldRemoveDictationAlternativesAfterEditing() const final;
 #endif
 
     void willChangeSelectionForAccessibility() final;

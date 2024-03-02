@@ -908,6 +908,7 @@ public:
 #endif
     void willInsertFinalDictationResult();
     void didInsertFinalDictationResult();
+    bool shouldRemoveDictationAlternativesAfterEditing() const;
     void replaceDictatedText(const String& oldText, const String& newText);
     void replaceSelectedText(const String& oldText, const String& newText);
     void requestAutocorrectionData(const String& textForAutocorrection, CompletionHandler<void(WebAutocorrectionData)>&& reply);

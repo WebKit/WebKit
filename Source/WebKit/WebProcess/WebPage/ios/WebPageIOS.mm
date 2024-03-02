@@ -2652,6 +2652,11 @@ void WebPage::willInsertFinalDictationResult()
     m_ignoreSelectionChangeScopeForDictation = makeUnique<IgnoreSelectionChangeForScope>(*frame);
 }
 
+bool WebPage::shouldRemoveDictationAlternativesAfterEditing() const
+{
+    return !m_ignoreSelectionChangeScopeForDictation;
+}
+
 void WebPage::didInsertFinalDictationResult()
 {
     m_ignoreSelectionChangeScopeForDictation = nullptr;

@@ -348,6 +348,22 @@ static NSString *overrideBundleIdentifier(id, SEL)
     }];
 }
 
+- (void)insertText:(NSString *)primaryString alternatives:(NSArray<NSString *> *)alternativeStrings
+{
+    if (!alternativeStrings.count) {
+        [self.textInputContentView insertText:primaryString];
+        return;
+    }
+
+#if USE(BROWSERENGINEKIT)
+    auto nsAlternatives = adoptNS([[NSTextAlternatives alloc] initWithPrimaryString:primaryString alternativeStrings:alternativeStrings]);
+    auto alternatives = adoptNS([[BETextAlternatives alloc] _initWithNSTextAlternatives:nsAlternatives.get()]);
+    [self.asyncTextInput insertTextAlternatives:alternatives.get()];
+#else
+    [self.textInputContentView insertText:primaryString alternatives:alternativeStrings style:UITextAlternativeStyleNone];
+#endif
+}
+
 #if USE(BROWSERENGINEKIT)
 
 static RetainPtr<BEKeyEntry> wrap(WebEvent *webEvent)
