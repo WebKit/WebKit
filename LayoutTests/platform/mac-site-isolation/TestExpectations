@@ -396,6 +396,21 @@ imported/w3c/web-platform-tests/html/browsers/the-window-object/named-access-on-
 # Tests that time out (or at least timed out when we initially skipped them): #
 # [ Skip ] to avoid running all these tests until verification is needed      #
 ###############################################################################
+http/tests/inspector/target/provisional-load-cancels-previous-load.html [ Skip ]
+http/tests/inspector/target/target-events-for-provisional-page.html [ Skip ]
+http/tests/media/media-stream/get-user-media-localhost.html [ Skip ]
+http/tests/privateClickMeasurement/attribution-conversion-through-fetch-keepalive.html [ Skip ]
+http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-ephemeral.html [ Skip ]
+http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-in-new-window.html [ Skip ]
+http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-with-priority.html [ Skip ]
+http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-without-priority.html [ Skip ]
+http/tests/privateClickMeasurement/clear-through-website-data-removal.html [ Skip ]
+http/tests/privateClickMeasurement/expired-ad-click-gets-removed-on-session-start.html [ Skip ]
+http/tests/privateClickMeasurement/expired-attributions-removed.html [ Skip ]
+http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-with-link-fragment-from-prevalent-resource.html [ Skip ]
+http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-with-link-query-and-fragment-from-prevalent-resource.html [ Skip ]
+http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-with-link-query-from-prevalent-resource.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/http-cache/status.any.html [ Skip ]
 accessibility/aria-menubar-menuitems.html [ Skip ]
 accessibility/mac/spinbutton-valuedescription.html [ Skip ]
 http/tests/cache/xhr-vary-header.html [ Skip ]

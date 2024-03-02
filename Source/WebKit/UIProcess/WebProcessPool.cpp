@@ -1978,9 +1978,9 @@ void WebProcessPool::removeProcessFromOriginCacheSet(WebProcessProxy& process)
     });
 }
 
-void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& frame, const API::Navigation& navigation, Ref<WebProcessProxy>&& sourceProcess, const URL& sourceURL, ProcessSwapRequestedByClient processSwapRequestedByClient, WebProcessProxy::LockdownMode lockdownMode, const FrameInfoData& frameInfo, Ref<WebsiteDataStore>&& dataStore, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, ASCIILiteral)>&& completionHandler)
+void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& frame, const API::Navigation& navigation, const URL& sourceURL, ProcessSwapRequestedByClient processSwapRequestedByClient, WebProcessProxy::LockdownMode lockdownMode, const FrameInfoData& frameInfo, Ref<WebsiteDataStore>&& dataStore, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, ASCIILiteral)>&& completionHandler)
 {
-    auto registrableDomain = RegistrableDomain { navigation.currentRequest().url() };
+    RegistrableDomain registrableDomain { navigation.currentRequest().url() };
     if (page.preferences().siteIsolationEnabled() && !registrableDomain.isEmpty()) {
         RegistrableDomain mainFrameDomain(URL(page.pageLoadState().activeURL()));
         if (!frame.isMainFrame() && registrableDomain == mainFrameDomain) {
@@ -1989,10 +1989,15 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& fra
                 return completionHandler(mainFrameProcess.copyRef(), nullptr, "Found process for the same registration domain as mainFrame domain"_s);
         }
         RefPtr process = page.processForRegistrableDomain(registrableDomain);
-        if (process && !process->isInProcessCache())
-            return completionHandler(process.releaseNonNull(), nullptr, "Found process for the same registration domain"_s);
+        if (process && !process->isInProcessCache()) {
+            dataStore->networkProcess().addAllowedFirstPartyForCookies(*process, mainFrameDomain, LoadedWebArchive::No, [completionHandler = WTFMove(completionHandler), process] () mutable {
+                completionHandler(process.releaseNonNull(), nullptr, "Found process for the same registration domain"_s);
+            });
+            return;
+        }
     }
 
+    Ref sourceProcess = frame.process();
     auto [process, suspendedPage, reason] = processForNavigationInternal(page, navigation, sourceProcess.copyRef(), sourceURL, processSwapRequestedByClient, lockdownMode, frameInfo, dataStore.copyRef());
 
     // We are process-swapping so automatic process prewarming would be beneficial if the client has not explicitly enabled / disabled it.
@@ -2016,9 +2021,6 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& fra
 
     process->addAllowedFirstPartyForCookies(registrableDomain);
 
-    // Cookie access will be given in WebFrameProxy::prepareForProvisionalNavigationInProcess and
-    // we need there to be no time between process selection and RemotePageProxy creation so that
-    // remotePageProxyForRegistrableDomain will always give the same process for the same domain.
     if (!frame.isMainFrame() && page.preferences().siteIsolationEnabled())
         return completionHandler(WTFMove(process), suspendedPage, reason);
 
