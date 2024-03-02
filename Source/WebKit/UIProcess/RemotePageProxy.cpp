@@ -58,6 +58,8 @@ RemotePageProxy::RemotePageProxy(WebPageProxy& page, WebProcessProxy& process, c
         m_messageReceiverRegistration.startReceivingMessages(m_process, m_webPageID, *this);
 
     m_process->addRemotePageProxy(*this);
+
+    page.addRemotePageProxy(domain, *this);
 }
 
 void RemotePageProxy::injectPageIntoNewProcess()
@@ -91,17 +93,27 @@ void RemotePageProxy::injectPageIntoNewProcess()
 
 void RemotePageProxy::processDidTerminate(WebCore::ProcessIdentifier processIdentifier)
 {
-    if (!m_page)
-        return;
-    if (auto* drawingArea = m_page->drawingArea())
-        drawingArea->remotePageProcessCrashed(processIdentifier);
-    if (RefPtr mainFrame = m_page->mainFrame())
-        mainFrame->remoteProcessDidTerminate(process());
+    if (m_page && m_page->drawingArea())
+        m_page->drawingArea()->remotePageProcessCrashed(processIdentifier);
+    for (auto& frame : m_frames)
+        frame.remoteProcessDidTerminate();
+}
+
+void RemotePageProxy::addFrame(WebFrameProxy& frame)
+{
+    m_frames.add(frame);
+}
+
+void RemotePageProxy::removeFrame(WebFrameProxy& frame)
+{
+    m_frames.remove(frame);
 }
 
 RemotePageProxy::~RemotePageProxy()
 {
     m_process->removeRemotePageProxy(*this);
+    if (m_page)
+        m_page->removeRemotePageProxy(m_domain);
 }
 
 void RemotePageProxy::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)

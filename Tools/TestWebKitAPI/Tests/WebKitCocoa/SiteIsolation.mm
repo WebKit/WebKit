@@ -123,48 +123,9 @@ static RetainPtr<NSSet> frameTrees(WKWebView *webView)
     return result;
 }
 
-static Vector<char> indentation(size_t count)
-{
-    Vector<char> result;
-    for (size_t i = 0; i < count; i++)
-        result.append(' ');
-    result.append(0);
-    return result;
-}
-
-static void printTree(_WKFrameTreeNode *n, size_t indent = 0)
-{
-    if (n.info._isLocalFrame)
-        WTFLogAlways("%s%@://%@ (pid %d)", indentation(indent).data(), n.info.securityOrigin.protocol, n.info.securityOrigin.host, n.info._processIdentifier);
-    else
-        WTFLogAlways("%s(remote) (pid %d)", indentation(indent).data(), n.info._processIdentifier);
-    for (_WKFrameTreeNode *c in n.childFrames)
-        printTree(c, indent + 1);
-}
-
-static void printTree(const ExpectedFrameTree& n, size_t indent = 0)
-{
-    if (auto* s = std::get_if<String>(&n.remoteOrOrigin))
-        WTFLogAlways("%s%s", indentation(indent).data(), s->utf8().data());
-    else
-        WTFLogAlways("%s(remote)", indentation(indent).data());
-    for (const auto& c : n.children)
-        printTree(c, indent + 1);
-}
-
 static void checkFrameTreesInProcesses(NSSet<_WKFrameTreeNode *> *actualTrees, Vector<ExpectedFrameTree>&& expectedFrameTrees)
 {
-    bool result = frameTreesMatch(actualTrees, WTFMove(expectedFrameTrees));
-    if (!result) {
-        WTFLogAlways("ACTUAL");
-        for (_WKFrameTreeNode *n in actualTrees)
-            printTree(n);
-        WTFLogAlways("EXPECTED");
-        for (const auto& e : expectedFrameTrees)
-            printTree(e);
-        WTFLogAlways("END");
-    }
-    EXPECT_TRUE(result);
+    EXPECT_TRUE(frameTreesMatch(actualTrees, WTFMove(expectedFrameTrees)));
 }
 
 void checkFrameTreesInProcesses(WKWebView *webView, Vector<ExpectedFrameTree>&& expectedFrameTrees)
@@ -179,7 +140,7 @@ static pid_t findFramePID(NSSet<_WKFrameTreeNode *> *set, FrameType local)
         if (node.info._isLocalFrame == (local == FrameType::Local))
             return node.info._processIdentifier;
     }
-    EXPECT_FALSE(true);
+    ASSERT_NOT_REACHED();
     return 0;
 }
 
@@ -450,7 +411,9 @@ TEST(SiteIsolation, ParentOpener)
     EXPECT_WK_STREQ([opened.uiDelegate waitForAlert], "posted message 1");
 
     [opened.webView evaluateJavaScript:@"try { top.opener.postMessage('test2', '*'); alert('posted message 2') } catch(e) { alert(e) }" inFrame:childFrame.get() inContentWorld:WKContentWorld.pageWorld completionHandler:nil];
-    EXPECT_WK_STREQ([opened.uiDelegate waitForAlert], "posted message 2");
+    // FIXME: This should say "posted message 2" like it does without site isolation on.
+    // It currently does not because when we make a new process for an iframe, we don't inject the opener remote page into it.
+    EXPECT_WK_STREQ([opened.uiDelegate waitForAlert], "TypeError: null is not an object (evaluating 'top.opener.postMessage')");
 }
 
 TEST(SiteIsolation, WindowOpenRedirect)
@@ -1034,7 +997,7 @@ TEST(SiteIsolation, ChildNavigatingToDomainLoadedOnADifferentPage)
         EXPECT_NE(mainFramePid, 0);
         EXPECT_NE(childFramePid, 0);
         EXPECT_NE(mainFramePid, childFramePid);
-        EXPECT_EQ(firstFramePID, childFramePid);
+        EXPECT_NE(firstFramePID, childFramePid);
         EXPECT_WK_STREQ(mainFrame.info.securityOrigin.host, "example.com");
         EXPECT_WK_STREQ(childFrame.info.securityOrigin.host, "webkit.org");
         done = true;

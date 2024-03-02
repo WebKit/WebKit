@@ -27,43 +27,21 @@
 
 #include <WebCore/RegistrableDomain.h>
 #include <wtf/RefCounted.h>
-#include <wtf/WeakHashMap.h>
-#include <wtf/WeakListHashSet.h>
 
 namespace WebKit {
 
-class FrameProcess;
-class RemotePageProxy;
-class WebPageProxy;
-class WebPreferences;
 class WebProcessProxy;
 
-class BrowsingContextGroup : public RefCounted<BrowsingContextGroup>, public CanMakeWeakPtr<BrowsingContextGroup> {
+class BrowsingContextGroup : public RefCounted<BrowsingContextGroup> {
 public:
     static Ref<BrowsingContextGroup> create() { return adoptRef(*new BrowsingContextGroup()); }
-    ~BrowsingContextGroup();
 
-    Ref<FrameProcess> ensureProcessForDomain(const WebCore::RegistrableDomain&, WebProcessProxy&, const WebPreferences&);
-    FrameProcess* processForDomain(const WebCore::RegistrableDomain&);
-    void addFrameProcess(FrameProcess&);
-    void removeFrameProcess(FrameProcess&);
-
-    void addPage(WebPageProxy&);
-    void removePage(WebPageProxy&);
-    void forEachRemotePage(const WebPageProxy&, Function<void(RemotePageProxy&)>&&);
-
-    RemotePageProxy* remotePageInProcess(const WebPageProxy&, const WebCore::RegistrableDomain&);
-    RemotePageProxy* remotePageInProcess(const WebPageProxy&, const WebProcessProxy&);
-
-    std::unique_ptr<RemotePageProxy> takeRemotePageInProcessForProvisionalPage(const WebPageProxy&, const WebCore::RegistrableDomain&);
-    void transitionPageToRemotePage(WebPageProxy&, const WebCore::RegistrableDomain& openerDomain);
-
+    WebProcessProxy* processForDomain(const WebCore::RegistrableDomain&);
+    void addProcessForDomain(const WebCore::RegistrableDomain&, WebProcessProxy&);
 private:
     BrowsingContextGroup();
 
-    HashMap<WebCore::RegistrableDomain, WeakPtr<FrameProcess>> m_processMap;
-    WeakListHashSet<WebPageProxy> m_pages;
-    WeakHashMap<WebPageProxy, HashSet<std::unique_ptr<RemotePageProxy>>> m_remotePages;
+    HashMap<WebCore::RegistrableDomain, WeakPtr<WebProcessProxy>> m_processMap;
 };
 
 }

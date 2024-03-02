@@ -32,7 +32,7 @@
 
 namespace WebKit {
 
-class FrameProcess;
+class RemotePageProxy;
 class VisitedLinkStore;
 class WebFrameProxy;
 class WebProcessProxy;
@@ -40,20 +40,22 @@ class WebProcessProxy;
 class ProvisionalFrameProxy : public CanMakeWeakPtr<ProvisionalFrameProxy> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ProvisionalFrameProxy(WebFrameProxy&, Ref<FrameProcess>&&);
+    ProvisionalFrameProxy(WebFrameProxy&, WebProcessProxy&, RefPtr<RemotePageProxy>&&);
     ~ProvisionalFrameProxy();
 
-    WebProcessProxy& process() const;
+    WebProcessProxy& process() const { return m_process.get(); }
     Ref<WebProcessProxy> protectedProcess() const;
+    RefPtr<RemotePageProxy> takeRemotePageProxy();
 
     WebCore::LayerHostingContextIdentifier layerHostingContextIdentifier() const { return m_layerHostingContextIdentifier; }
 
-    Ref<FrameProcess> takeFrameProcess();
-
 private:
     WeakRef<WebFrameProxy> m_frame;
-    Ref<FrameProcess> m_frameProcess;
+    Ref<WebProcessProxy> m_process;
+    RefPtr<RemotePageProxy> m_remotePageProxy;
     Ref<VisitedLinkStore> m_visitedLinkStore;
+    WebCore::PageIdentifier m_pageID;
+    WebPageProxyIdentifier m_webPageID;
     WebCore::LayerHostingContextIdentifier m_layerHostingContextIdentifier;
 };
 

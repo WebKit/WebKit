@@ -26,169 +26,27 @@
 #include "config.h"
 #include "BrowsingContextGroup.h"
 
-#include "FrameProcess.h"
-#include "PageLoadState.h"
-#include "RemotePageProxy.h"
-#include "WebFrameProxy.h"
 #include "WebProcessProxy.h"
 
 namespace WebKit {
 
 BrowsingContextGroup::BrowsingContextGroup() = default;
 
-BrowsingContextGroup::~BrowsingContextGroup() = default;
-
-Ref<FrameProcess> BrowsingContextGroup::ensureProcessForDomain(const WebCore::RegistrableDomain& domain, WebProcessProxy& process, const WebPreferences& preferences)
-{
-    if (preferences.siteIsolationEnabled() || preferences.processSwapOnCrossSiteWindowOpenEnabled()) {
-        if (auto* existingProcess = processForDomain(domain)) {
-            ASSERT(existingProcess->process().coreProcessIdentifier() == process.coreProcessIdentifier());
-            return *existingProcess;
-        }
-    }
-    return FrameProcess::create(process, *this, domain, preferences);
-}
-
-FrameProcess* BrowsingContextGroup::processForDomain(const WebCore::RegistrableDomain& domain)
+WebProcessProxy* BrowsingContextGroup::processForDomain(const WebCore::RegistrableDomain& domain)
 {
     auto process = m_processMap.get(domain);
     if (!process)
         return nullptr;
-    if (process->process().state() == WebProcessProxy::State::Terminated)
+    if (process->state() == WebProcessProxy::State::Terminated)
         return nullptr;
     return process.get();
 }
 
-void BrowsingContextGroup::addFrameProcess(FrameProcess& process)
+// FIXME: This needs a corresponding remove call when a process terminates. <rdar://116202371>
+void BrowsingContextGroup::addProcessForDomain(const WebCore::RegistrableDomain& domain, WebProcessProxy& process)
 {
-    auto& domain = process.domain();
-    ASSERT(!m_processMap.get(domain) || m_processMap.get(domain)->process().state() == WebProcessProxy::State::Terminated || m_processMap.get(domain) == &process);
+    ASSERT(!m_processMap.get(domain) || m_processMap.get(domain)->state() == WebProcessProxy::State::Terminated || m_processMap.get(domain) == &process);
     m_processMap.set(domain, process);
-    for (auto& page : m_pages) {
-        if (domain == WebCore::RegistrableDomain(URL(page.currentURL())))
-            return;
-        auto& set = m_remotePages.ensure(page, [] {
-            return HashSet<std::unique_ptr<RemotePageProxy>> { };
-        }).iterator->value;
-        auto newRemotePage = makeUnique<RemotePageProxy>(page, process.process(), domain);
-        newRemotePage->injectPageIntoNewProcess();
-#if ASSERT_ENABLED
-        for (auto& existingPage : set) {
-            ASSERT(existingPage->process().coreProcessIdentifier() != newRemotePage->process().coreProcessIdentifier() || existingPage->domain() != newRemotePage->domain());
-            ASSERT(existingPage->page() == newRemotePage->page());
-        }
-#endif
-        set.add(WTFMove(newRemotePage));
-    }
-}
-
-void BrowsingContextGroup::removeFrameProcess(FrameProcess& process)
-{
-    ASSERT(process.domain().isEmpty() || m_processMap.get(process.domain()).get() == &process);
-    m_processMap.remove(process.domain());
-
-    m_remotePages.removeIf([&] (auto& pair) {
-        auto& set = pair.value;
-        set.removeIf([&] (auto& remotePage) {
-            return remotePage->process().coreProcessIdentifier() == process.process().coreProcessIdentifier();
-        });
-        return set.isEmpty();
-    });
-}
-
-void BrowsingContextGroup::addPage(WebPageProxy& page)
-{
-    ASSERT(!m_pages.contains(page));
-    m_pages.add(page);
-    auto& set = m_remotePages.ensure(page, [] {
-        return HashSet<std::unique_ptr<RemotePageProxy>> { };
-    }).iterator->value;
-    m_processMap.removeIf([&] (auto& pair) {
-        auto& domain = pair.key;
-        auto& process = pair.value;
-        if (!process) {
-            ASSERT_NOT_REACHED_WITH_MESSAGE("FrameProcess should remove itself in the destructor so we should never find a null WeakPtr");
-            return true;
-        }
-
-        if (domain == page.mainFrameOrOpenerDomain())
-            return false;
-        auto newRemotePage = makeUnique<RemotePageProxy>(page, process->process(), domain);
-        newRemotePage->injectPageIntoNewProcess();
-#if ASSERT_ENABLED
-        for (auto& existingPage : set) {
-            ASSERT(existingPage->process().coreProcessIdentifier() != newRemotePage->process().coreProcessIdentifier() || existingPage->domain() != newRemotePage->domain());
-            ASSERT(existingPage->page() == newRemotePage->page());
-        }
-#endif
-        set.add(WTFMove(newRemotePage));
-        return false;
-    });
-}
-
-void BrowsingContextGroup::removePage(WebPageProxy& page)
-{
-    ASSERT(m_pages.contains(page));
-    m_pages.remove(page);
-
-    m_remotePages.take(page);
-}
-
-void BrowsingContextGroup::forEachRemotePage(const WebPageProxy& page, Function<void(RemotePageProxy&)>&& function)
-{
-    auto it = m_remotePages.find(page);
-    if (it == m_remotePages.end())
-        return;
-    for (auto& remotePage : it->value) {
-        if (remotePage)
-            function(*remotePage);
-    }
-}
-
-RemotePageProxy* BrowsingContextGroup::remotePageInProcess(const WebPageProxy& page, const WebCore::RegistrableDomain& domain)
-{
-    if (auto frameProcess = m_processMap.get(domain))
-        return remotePageInProcess(page, frameProcess->process());
-    return nullptr;
-}
-
-RemotePageProxy* BrowsingContextGroup::remotePageInProcess(const WebPageProxy& page, const WebProcessProxy& process)
-{
-    auto it = m_remotePages.find(page);
-    if (it == m_remotePages.end())
-        return nullptr;
-    for (auto& remotePage : it->value) {
-        if (remotePage->process().coreProcessIdentifier() == process.coreProcessIdentifier())
-            return remotePage.get();
-    }
-    return nullptr;
-}
-
-std::unique_ptr<RemotePageProxy> BrowsingContextGroup::takeRemotePageInProcessForProvisionalPage(const WebPageProxy& page, const WebCore::RegistrableDomain& domain)
-{
-    auto it = m_remotePages.find(page);
-    if (it == m_remotePages.end())
-        return nullptr;
-    auto* remotePage = remotePageInProcess(page, domain);
-    if (!remotePage)
-        return nullptr;
-    return it->value.take(remotePage);
-}
-
-void BrowsingContextGroup::transitionPageToRemotePage(WebPageProxy& page, const WebCore::RegistrableDomain& openerDomain)
-{
-    auto& set = m_remotePages.ensure(page, [] {
-        return HashSet<std::unique_ptr<RemotePageProxy>> { };
-    }).iterator->value;
-
-    auto newRemotePage = makeUnique<RemotePageProxy>(page, page.process(), openerDomain, &page.messageReceiverRegistration());
-#if ASSERT_ENABLED
-    for (auto& existingPage : set) {
-        ASSERT(existingPage->process().coreProcessIdentifier() != newRemotePage->process().coreProcessIdentifier() || existingPage->domain() != newRemotePage->domain());
-        ASSERT(existingPage->page() == newRemotePage->page());
-    }
-#endif
-    set.add(WTFMove(newRemotePage));
 }
 
 } // namespace WebKit

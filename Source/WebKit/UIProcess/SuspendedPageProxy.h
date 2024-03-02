@@ -27,6 +27,7 @@
 
 #include "Connection.h"
 #include "ProcessThrottler.h"
+#include "RemotePageProxyState.h"
 #include "WebBackForwardListItem.h"
 #include "WebPageProxyMessageReceiverRegistration.h"
 #include "WebProcessProxy.h"
@@ -56,7 +57,7 @@ enum class ShouldDelayClosingUntilFirstLayerFlush : bool { No, Yes };
 class SuspendedPageProxy final: public IPC::MessageReceiver, public CanMakeCheckedPtr {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    SuspendedPageProxy(WebPageProxy&, Ref<WebProcessProxy>&&, Ref<WebFrameProxy>&& mainFrame, Ref<BrowsingContextGroup>&&, ShouldDelayClosingUntilFirstLayerFlush);
+    SuspendedPageProxy(WebPageProxy&, Ref<WebProcessProxy>&&, Ref<WebFrameProxy>&& mainFrame, Ref<BrowsingContextGroup>&&, RemotePageProxyState&&, ShouldDelayClosingUntilFirstLayerFlush);
     ~SuspendedPageProxy();
 
     static RefPtr<WebProcessProxy> findReusableSuspendedPageProcess(WebProcessPool&, const WebCore::RegistrableDomain&, WebsiteDataStore&, WebProcessProxy::LockdownMode, const API::PageConfiguration&);
@@ -66,6 +67,7 @@ public:
     WebProcessProxy& process() const { return m_process.get(); }
     WebFrameProxy& mainFrame() { return m_mainFrame.get(); }
     BrowsingContextGroup& browsingContextGroup() { return m_browsingContextGroup.get(); }
+    RemotePageProxyState takeRemotePageProxyState() { return std::exchange(m_remotePageProxyState, { }); }
 
     WebBackForwardCache& backForwardCache() const;
 
@@ -126,6 +128,7 @@ private:
     LayerHostingContextID m_contextIDForVisibilityPropagationInGPUProcess { 0 };
 #endif
 #endif
+    RemotePageProxyState m_remotePageProxyState;
 };
 
 } // namespace WebKit

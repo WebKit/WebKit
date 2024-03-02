@@ -104,7 +104,7 @@ static const MessageNameSet& messageNamesToIgnoreWhileSuspended()
 }
 #endif
 
-SuspendedPageProxy::SuspendedPageProxy(WebPageProxy& page, Ref<WebProcessProxy>&& process, Ref<WebFrameProxy>&& mainFrame, Ref<BrowsingContextGroup>&& browsingContextGroup, ShouldDelayClosingUntilFirstLayerFlush shouldDelayClosingUntilFirstLayerFlush)
+SuspendedPageProxy::SuspendedPageProxy(WebPageProxy& page, Ref<WebProcessProxy>&& process, Ref<WebFrameProxy>&& mainFrame, Ref<BrowsingContextGroup>&& browsingContextGroup, RemotePageProxyState&& remotePageProxyState, ShouldDelayClosingUntilFirstLayerFlush shouldDelayClosingUntilFirstLayerFlush)
     : m_page(page)
     , m_webPageID(page.webPageID())
     , m_process(WTFMove(process))
@@ -121,6 +121,7 @@ SuspendedPageProxy::SuspendedPageProxy(WebPageProxy& page, Ref<WebProcessProxy>&
     , m_contextIDForVisibilityPropagationInGPUProcess(page.contextIDForVisibilityPropagationInGPUProcess())
 #endif
 #endif
+    , m_remotePageProxyState(WTFMove(remotePageProxyState))
 {
     allSuspendedPages().add(*this);
     m_process->addSuspendedPageProxy(*this);
@@ -132,6 +133,7 @@ SuspendedPageProxy::SuspendedPageProxy(WebPageProxy& page, Ref<WebProcessProxy>&
 template<typename T>
 void SuspendedPageProxy::sendToAllProcesses(T&& message)
 {
+    // FIXME: Iterate m_remotePageProxyState.domainToRemotePageProxyMap.values() and send to each RemotePageProxy's process.
     // FIXME: Rename m_process to m_mainFrameProcess and make its use aware of site isolation.
     m_process->send(std::forward<T>(message), m_webPageID);
 }
