@@ -52,19 +52,18 @@ static WorkQueue& granterQueue()
 }
 
 #if USE(EXTENSIONKIT)
-static RetainPtr<BEProcessCapabilityGrant> grantCapability(BEProcessCapability *capability, const std::optional<ExtensionProcess>& process)
+static PlatformGrant grantCapability(const PlatformCapability& capability, const std::optional<ExtensionProcess>& process)
 {
-    ASSERT(capability);
-    if (!capability || !process)
-        return nil;
+    if (!ExtensionCapability::platformCapabilityIsValid(capability) || !process)
+        return { };
 
     return process->grantCapability(capability);
 }
 #endif
 
 struct PlatformExtensionCapabilityGrants {
-    RetainPtr<BEProcessCapabilityGrant> gpuProcessGrant;
-    RetainPtr<BEProcessCapabilityGrant> webProcessGrant;
+    PlatformGrant gpuProcessGrant;
+    PlatformGrant webProcessGrant;
 };
 
 enum class ExtensionCapabilityGrantError: uint8_t {
@@ -80,13 +79,13 @@ static Ref<ExtensionCapabilityGrantsPromise> grantCapabilityInternal(const Exten
 
 #if USE(EXTENSIONKIT)
     return invokeAsync(granterQueue(), [
-        capability = RetainPtr { capability.platformCapability() },
+        capability = capability.platformCapability(),
         gpuExtension = WTFMove(gpuExtension),
         webExtension = WTFMove(webExtension)
     ] {
         PlatformExtensionCapabilityGrants grants {
-            grantCapability(capability.get(), gpuExtension),
-            grantCapability(capability.get(), webExtension)
+            grantCapability(capability, gpuExtension),
+            grantCapability(capability, webExtension)
         };
         return ExtensionCapabilityGrantsPromise::createAndResolve(WTFMove(grants));
     });
@@ -177,11 +176,11 @@ void ExtensionCapabilityGranter::grant(const ExtensionCapability& capability)
         needsWebProcessGrant
     ](auto&& result) {
         ExtensionCapabilityGrant gpuProcessGrant { environmentIdentifier };
-        gpuProcessGrant.setPlatformGrant(result ? WTFMove(result->gpuProcessGrant) : nil);
-
         ExtensionCapabilityGrant webProcessGrant { environmentIdentifier };
-        webProcessGrant.setPlatformGrant(result ? WTFMove(result->webProcessGrant) : nil);
-
+        if (result) {
+            gpuProcessGrant.setPlatformGrant(WTFMove(result->gpuProcessGrant));
+            webProcessGrant.setPlatformGrant(WTFMove(result->webProcessGrant));
+        }
         if (!weakThis) {
             invalidateGrants(Vector<ExtensionCapabilityGrant>::from(WTFMove(gpuProcessGrant), WTFMove(webProcessGrant)));
             return;
@@ -251,7 +250,7 @@ void ExtensionCapabilityGranter::setMediaCapabilityActive(MediaCapability& capab
 
     GRANTER_RELEASE_LOG(capability.environmentIdentifier(), "%{public}s", isActive ? "activating" : "deactivating");
 
-    invokeAsync(granterQueue(), [platformCapability = RetainPtr { capability.platformCapability() }, platformMediaEnvironment = RetainPtr { capability.platformMediaEnvironment() }, isActive] {
+    invokeAsync(granterQueue(), [platformCapability = capability.platformCapability(), platformMediaEnvironment = RetainPtr { capability.platformMediaEnvironment() }, isActive] {
 #if USE(EXTENSIONKIT)
         NSError *error = nil;
         if (isActive)
@@ -298,7 +297,7 @@ void ExtensionCapabilityGranter::invalidateGrants(Vector<ExtensionCapabilityGran
 {
     granterQueue().dispatch([grants = crossThreadCopy(WTFMove(grants))]() mutable {
         for (auto& grant : grants)
-            grant.setPlatformGrant(nil);
+            grant.setPlatformGrant({ });
     });
 }
 

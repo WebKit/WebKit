@@ -124,7 +124,7 @@ private:
 #if USE(EXTENSIONKIT)
     static Lock s_capabilityLock;
     std::optional<AssertionCapability> m_capability;
-    RetainPtr<BEProcessCapabilityGrant> m_grant WTF_GUARDED_BY_LOCK(s_capabilityLock);
+    ExtensionCapabilityGrant m_grant WTF_GUARDED_BY_LOCK(s_capabilityLock);
     std::optional<ExtensionProcess> m_process;
 #endif
 };

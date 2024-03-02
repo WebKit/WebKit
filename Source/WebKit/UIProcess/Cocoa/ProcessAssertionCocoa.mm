@@ -403,7 +403,7 @@ ProcessAssertion::ProcessAssertion(AuxiliaryProcessProxy& process, const String&
         };
         m_capability = AssertionCapability { process.environmentIdentifier(), runningBoardDomain, runningBoardAssertionName, WTFMove(willInvalidateBlock), WTFMove(didInvalidateBlock) };
         m_process = process.extensionProcess();
-        if (m_capability && m_capability->platformCapability())
+        if (m_capability && m_capability->hasPlatformCapability())
             return;
         RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() Failed to create capability %s", this, runningBoardAssertionName.characters());
     }
@@ -475,11 +475,12 @@ void ProcessAssertion::acquireSync()
 {
     RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion::acquireSync Trying to take RBS assertion '%{public}s' for process with PID=%d", this, m_reason.utf8().data(), m_pid);
 #if USE(EXTENSIONKIT)
-    if (m_process && m_capability && m_capability->platformCapability()) {
-        auto* capability = m_capability->platformCapability();
+    if (m_process && m_capability && m_capability->hasPlatformCapability()) {
+        auto capability = m_capability->platformCapability();
         Locker locker { s_capabilityLock };
-        m_grant = m_process->grantCapability(capability);
-        if (m_grant) {
+        auto grant = m_process->grantCapability(capability);
+        m_grant.setPlatformGrant(WTFMove(grant));
+        if (m_grant.isValid()) {
             RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() Successfully granted capability", this);
             return;
         }
@@ -512,7 +513,7 @@ ProcessAssertion::~ProcessAssertion()
 
 #if USE(EXTENSIONKIT)
     Locker locker { s_capabilityLock };
-    [m_grant invalidate];
+    m_grant.invalidate();
 #endif
 }
 
