@@ -2635,6 +2635,34 @@ TEST(SiteIsolation, WebsitePoliciesCustomUserAgentDuringCrossSiteProvisionalNavi
     Util::run(&receivedRequestFromSubframe);
 }
 
+TEST(SiteIsolation, LoadHTMLString)
+{
+    HTTPServer server({
+        { "/webkit"_s, { "hi"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    NSString *html = @"<iframe src='https://webkit.org/webkit'></iframe>";
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+
+    [webView loadHTMLString:html baseURL:[NSURL URLWithString:@"https://example.com"]];
+    [navigationDelegate waitForDidFinishNavigation];
+    checkFrameTreesInProcesses(webView.get(), {
+        { "https://example.com"_s,
+            { { RemoteFrame } }
+        }, { RemoteFrame,
+            { { "https://webkit.org"_s } }
+        },
+    });
+
+    [webView loadHTMLString:html baseURL:[NSURL URLWithString:@"https://webkit.org"]];
+    [navigationDelegate waitForDidFinishNavigation];
+    checkFrameTreesInProcesses(webView.get(), {
+        { "https://webkit.org"_s,
+            { { "https://webkit.org"_s } }
+        },
+    });
+}
+
 TEST(SiteIsolation, WebsitePoliciesCustomUserAgentDuringSameSiteProvisionalNavigation)
 {
     auto mainframeHTML = "<iframe id='frame' src='https://domain2.com/subframe'></iframe>"_s;
