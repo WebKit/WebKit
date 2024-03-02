@@ -29,6 +29,8 @@
 #if USE(SYSTEM_PREVIEW)
 
 #import "APIUIClient.h"
+#import "UIKitSPI.h"
+#import "UIKitUtilities.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
 #import "_WKDataTaskDelegate.h"
@@ -36,13 +38,16 @@
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <QuickLook/QuickLook.h>
 #import <UIKit/UIViewController.h>
+#import <WebCore/LocalizedStrings.h>
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/SecurityOriginData.h>
 #import <WebCore/UTIUtilities.h>
-#import <pal/ios/QuickLookSoftLink.h>
 #import <pal/spi/cocoa/FoundationSPI.h>
 #import <pal/spi/ios/QuickLookSPI.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/WeakObjCPtr.h>
+
+#import <pal/ios/QuickLookSoftLink.h>
 
 #if HAVE(ARKIT_QUICK_LOOK_PREVIEW_ITEM)
 #import "ARKitSoftLink.h"
@@ -367,8 +372,9 @@ namespace WebKit {
 
 void SystemPreviewController::begin(const URL& url, const WebCore::SecurityOriginData& topOrigin, const WebCore::SystemPreviewInfo& systemPreviewInfo, CompletionHandler<void()>&& completionHandler)
 {
-    if (m_state != State::Initial) {
+    if (m_state != State::Initial || m_allowPreviewCallback) {
         RELEASE_LOG(SystemPreview, "SystemPreview didn't start because an existing preview is in progress");
+        m_showPreviewDelay = std::min(30., 1. + m_showPreviewDelay * m_showPreviewDelay);
         return completionHandler();
     }
 
@@ -383,39 +389,68 @@ void SystemPreviewController::begin(const URL& url, const WebCore::SecurityOrigi
 
     m_systemPreviewInfo = systemPreviewInfo;
 
-    RELEASE_LOG(SystemPreview, "SystemPreview began on %lld", m_systemPreviewInfo.element.elementIdentifier.toUInt64());
-
-    auto request = WebCore::ResourceRequest(url);
-    WeakPtr weakThis { *this };
-    m_webPageProxy.dataTaskWithRequest(WTFMove(request), topOrigin, [weakThis, completionHandler = WTFMove(completionHandler)] (Ref<API::DataTask>&& task) mutable {
-        if (!weakThis)
+    auto successHandler = [completionHandler = WTFMove(completionHandler), topOrigin, weakThis = WeakPtr { *this }, url, presentingViewController] (bool success) mutable {
+        if (!success || !weakThis)
             return completionHandler();
 
         auto protectedThis = weakThis.get();
+        RELEASE_LOG(SystemPreview, "SystemPreview began on %lld", protectedThis->m_systemPreviewInfo.element.elementIdentifier.toUInt64());
+        auto request = WebCore::ResourceRequest(url);
+        protectedThis->m_webPageProxy.dataTaskWithRequest(WTFMove(request), topOrigin, [weakThis, completionHandler = WTFMove(completionHandler)] (Ref<API::DataTask>&& task) mutable {
+            if (!weakThis)
+                return completionHandler();
 
-        _WKDataTask *dataTask = wrapper(task);
-        protectedThis->m_wkSystemPreviewDataTaskDelegate = adoptNS([[_WKSystemPreviewDataTaskDelegate alloc] initWithSystemPreviewController:protectedThis]);
-        [dataTask setDelegate:protectedThis->m_wkSystemPreviewDataTaskDelegate.get()];
-        protectedThis->takeActivityToken();
-        completionHandler();
-    });
+            auto protectedThis = weakThis.get();
+            _WKDataTask *dataTask = wrapper(task);
+            protectedThis->m_wkSystemPreviewDataTaskDelegate = adoptNS([[_WKSystemPreviewDataTaskDelegate alloc] initWithSystemPreviewController:protectedThis]);
+            [dataTask setDelegate:protectedThis->m_wkSystemPreviewDataTaskDelegate.get()];
+            protectedThis->takeActivityToken();
+            completionHandler();
+            protectedThis->m_allowPreviewCallback = nullptr;
+        });
 
-    m_downloadURL = url;
-    m_fragmentIdentifier = url.fragmentIdentifier().toString();
+        protectedThis->m_downloadURL = url;
+        protectedThis->m_fragmentIdentifier = url.fragmentIdentifier().toString();
 
 #if !PLATFORM(VISION)
-    m_qlPreviewController = adoptNS([PAL::allocQLPreviewControllerInstance() init]);
+        protectedThis->m_qlPreviewController = adoptNS([PAL::allocQLPreviewControllerInstance() init]);
 
-    m_qlPreviewControllerDelegate = adoptNS([[_WKPreviewControllerDelegate alloc] initWithSystemPreviewController:this]);
-    [m_qlPreviewController setDelegate:m_qlPreviewControllerDelegate.get()];
+        protectedThis->m_qlPreviewControllerDelegate = adoptNS([[_WKPreviewControllerDelegate alloc] initWithSystemPreviewController:protectedThis]);
+        [protectedThis->m_qlPreviewController setDelegate:protectedThis->m_qlPreviewControllerDelegate.get()];
 
-    m_qlPreviewControllerDataSource = adoptNS([[_WKPreviewControllerDataSource alloc] initWithSystemPreviewController:this MIMEType:@"model/vnd.usdz+zip" originatingPageURL:url]);
-    [m_qlPreviewController setDataSource:m_qlPreviewControllerDataSource.get()];
+        protectedThis->m_qlPreviewControllerDataSource = adoptNS([[_WKPreviewControllerDataSource alloc] initWithSystemPreviewController:protectedThis MIMEType:@"model/vnd.usdz+zip" originatingPageURL:url]);
+        [protectedThis->m_qlPreviewController setDataSource:protectedThis->m_qlPreviewControllerDataSource.get()];
 
-    [presentingViewController presentViewController:m_qlPreviewController.get() animated:YES completion:nullptr];
+        [presentingViewController presentViewController:protectedThis->m_qlPreviewController.get() animated:YES completion:nullptr];
+#else
+        UNUSED_PARAM(presentingViewController);
 #endif
 
-    m_state = State::Initial;
+        protectedThis->m_state = State::Initial;
+    };
+    m_allowPreviewCallback = makeBlockPtr([successHandler = WTFMove(successHandler)](bool success) mutable {
+        successHandler(success);
+    });
+    auto alert = WebKit::createUIAlertController(WEB_UI_NSSTRING(@"Open this 3D model?", "Open this 3D model?"), nil);
+    UIAlertAction* allowAction = [UIAlertAction actionWithTitle:WEB_UI_NSSTRING(@"Allow (usdz QuickLook Preview)", "Allow") style:UIAlertActionStyleDefault handler:^(UIAlertAction *) {
+        m_allowPreviewCallback.get()(true);
+    }];
+
+    UIAlertAction* doNotAllowAction = [UIAlertAction actionWithTitle:WEB_UI_NSSTRING(@"Cancel (usdz QuickLook Preview)", "Cancel") style:UIAlertActionStyleCancel handler:^(UIAlertAction *) {
+        m_allowPreviewCallback.get()(false);
+        m_allowPreviewCallback = nullptr;
+    }];
+
+    [alert addAction:doNotAllowAction];
+    [alert addAction:allowAction];
+
+    if (m_showPreviewDelay) {
+        RunLoop::main().dispatchAfter(Seconds { m_showPreviewDelay }, [alert, presentingViewController] {
+            [presentingViewController presentViewController:alert.get() animated:YES completion:nil];
+        });
+        m_showPreviewDelay = 0;
+    } else
+        [presentingViewController presentViewController:alert.get() animated:YES completion:nil];
 }
 
 void SystemPreviewController::loadStarted(const URL& localFileURL)

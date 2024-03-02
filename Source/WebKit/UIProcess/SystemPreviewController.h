@@ -31,6 +31,7 @@
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/ResourceError.h>
+#include <wtf/BlockPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/URL.h>
 #include <wtf/WeakPtr.h>
@@ -103,6 +104,8 @@ private:
 
     std::unique_ptr<ProcessThrottler::BackgroundActivity> m_activity;
     CompletionHandler<void(bool)> m_testingCallback;
+    BlockPtr<void(bool)> m_allowPreviewCallback;
+    double m_showPreviewDelay { 0 };
 
 };
 
