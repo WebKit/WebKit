@@ -79,14 +79,14 @@ private:
 
     Ref<WebGPU::Buffer> m_backing;
     WebGPU::Buffer::MappedRange m_mappedRange;
-    JSC::ArrayBuffer* m_arrayBuffer { nullptr };
+    RefPtr<JSC::ArrayBuffer> m_arrayBuffer;
     size_t m_bufferSize { 0 };
     size_t m_mappedRangeOffset { 0 };
     size_t m_mappedRangeSize { 0 };
     const GPUBufferUsageFlags m_usage { 0 };
     GPUBufferMapState m_mapState { GPUBufferMapState::Unmapped };
     std::optional<MapAsyncPromise> m_pendingMapPromise;
-    GPUDevice& m_device;
+    WeakPtr<GPUDevice, WeakPtrImplWithEventTargetData> m_device;
     using MappedRanges = WTF::RangeSet<WTF::Range<size_t>>;
     MappedRanges m_mappedRanges;
     HashSet<size_t, DefaultHash<size_t>, WTF::UnsignedWithZeroKeyHashTraits<size_t>> m_mappedPoints;

@@ -30,13 +30,14 @@
 #include "WebGPUTextureFormat.h"
 #include "WebGPUTextureUsage.h"
 #include <wtf/Vector.h>
+#include <wtf/WeakRef.h>
 
 namespace WebCore::WebGPU {
 
 class Device;
 
 struct CanvasConfiguration {
-    Device& device;
+    WeakRef<Device> device;
     TextureFormat format { TextureFormat::R8unorm };
     TextureUsageFlags usage { TextureUsage::RenderAttachment };
     Vector<TextureFormat> viewFormats;

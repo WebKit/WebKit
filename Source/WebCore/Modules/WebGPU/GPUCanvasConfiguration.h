@@ -51,7 +51,7 @@ struct GPUCanvasConfiguration {
         };
     }
 
-    GPUDevice* device { nullptr };
+    WeakPtr<GPUDevice, WeakPtrImplWithEventTargetData> device;
     GPUTextureFormat format { GPUTextureFormat::R8unorm };
     GPUTextureUsageFlags usage { GPUTextureUsage::RENDER_ATTACHMENT };
     Vector<GPUTextureFormat> viewFormats;

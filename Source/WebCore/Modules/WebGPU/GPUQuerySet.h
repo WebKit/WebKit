@@ -30,11 +30,12 @@
 #include "WebGPUQuerySet.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class GPUQuerySet : public RefCounted<GPUQuerySet> {
+class GPUQuerySet : public RefCounted<GPUQuerySet>, public CanMakeWeakPtr<GPUQuerySet> {
 public:
     static Ref<GPUQuerySet> create(Ref<WebGPU::QuerySet>&& backing, const GPUQuerySetDescriptor& descriptor)
     {

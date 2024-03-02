@@ -46,7 +46,7 @@ struct GPUImageCopyBuffer : public GPUImageDataLayout {
         };
     }
 
-    GPUBuffer* buffer { nullptr };
+    WeakPtr<GPUBuffer> buffer;
 };
 
 }

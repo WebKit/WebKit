@@ -51,9 +51,9 @@ struct GPURenderPassColorAttachment {
         };
     }
 
-    GPUTextureView* view { nullptr };
+    WeakPtr<GPUTextureView> view;
     std::optional<GPUIntegerCoordinate> depthSlice;
-    GPUTextureView* resolveTarget { nullptr };
+    WeakPtr<GPUTextureView> resolveTarget;
 
     std::optional<GPUColor> clearValue;
     GPULoadOp loadOp { GPULoadOp::Load };
