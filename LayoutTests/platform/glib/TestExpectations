@@ -488,6 +488,10 @@ accessibility/display-contents/end-text-marker.html [ Skip ]
 # Need to implement AccessibilityUIElement::insertText.
 accessibility/insert-text-into-password-field.html [ Skip ]
 
+# Missing AccessibilityUIElement::brailleLabel and AccessibilityUIElement::brailleRoleDescription implementations.
+accessibility/aria-braillelabel.html [ Skip ]
+accessibility/aria-brailleroledescription.html [ Skip ]
+
 # Need to implement AccessibilityUIElement::hasDocumentRoleAncestor(), AccessibilityUIElement::hasWebApplicationAncestor(),
 # AccessibilityUIElement::isInDescriptionListDetail(), AccessibilityUIElement::isInDescriptionListTerm(), and
 # AccessibilityUIElement::isInCell().

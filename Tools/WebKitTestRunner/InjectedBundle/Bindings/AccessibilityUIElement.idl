@@ -49,6 +49,8 @@ interface AccessibilityUIElement {
     readonly attribute DOMString language;
     readonly attribute DOMString helpText;
     readonly attribute DOMString valueDescription;
+    readonly attribute DOMString brailleLabel;
+    readonly attribute DOMString brailleRoleDescription;
     readonly attribute DOMString url;
     readonly attribute DOMString speakAs;
     readonly attribute DOMString liveRegionRelevant;

@@ -2663,12 +2663,15 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
         recomputeParentTableProperties(element, { TableProperty::CellSlots, TableProperty::Exposed });
     } else if (attrName == aria_sortAttr)
         postNotification(element, AXSortDirectionChanged);
-    else if (attrName == aria_ownsAttr) {
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    else if (attrName == aria_ownsAttr) {
         if (oldValue.isEmpty() || newValue.isEmpty())
             updateIsolatedTree(get(element), AXPropertyName::SupportsARIAOwns);
-#endif
-    }
+    } else if (attrName == aria_braillelabelAttr)
+        postNotification(element, AXBrailleLabelChanged);
+    else if (attrName == aria_brailleroledescriptionAttr)
+        postNotification(element, AXBrailleRoleDescriptionChanged);
+#endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 }
 
 void AXObjectCache::handleLabelChanged(AccessibilityObject* object)
@@ -4298,6 +4301,12 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
             break;
         case AXAutofillTypeChanged:
             tree->queueNodeUpdate(notification.first->objectID(), { AXPropertyName::ValueAutofillButtonType });
+            break;
+        case AXBrailleLabelChanged:
+            tree->queueNodeUpdate(notification.first->objectID(), { AXPropertyName::BrailleLabel });
+            break;
+        case AXBrailleRoleDescriptionChanged:
+            tree->queueNodeUpdate(notification.first->objectID(), { AXPropertyName::BrailleRoleDescription });
             break;
         case AXCellSlotsChanged:
             ASSERT(notification.first->isTable());

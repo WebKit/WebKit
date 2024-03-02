@@ -26,13 +26,15 @@
 // https://w3c.github.io/aria/#idl-interface
 interface mixin AriaAttributes {
     [CEReactions=Needed, Reflect=aria_activedescendant, EnabledBySetting=AriaReflectionForElementReferencesEnabled] attribute Element? ariaActiveDescendantElement;
-    [CEReactions=Needed, Reflect=aria_atomic]           attribute DOMString? ariaAtomic;
-    [CEReactions=Needed, Reflect=aria_autocomplete]     attribute DOMString? ariaAutoComplete;
-    [CEReactions=Needed, Reflect=aria_busy]             attribute DOMString? ariaBusy;
-    [CEReactions=Needed, Reflect=aria_checked]          attribute DOMString? ariaChecked;
-    [CEReactions=Needed, Reflect=aria_colcount]         attribute DOMString? ariaColCount;
-    [CEReactions=Needed, Reflect=aria_colindex]         attribute DOMString? ariaColIndex;
-    [CEReactions=Needed, Reflect=aria_colspan]          attribute DOMString? ariaColSpan;
+    [CEReactions=Needed, Reflect=aria_atomic]                 attribute DOMString? ariaAtomic;
+    [CEReactions=Needed, Reflect=aria_autocomplete]           attribute DOMString? ariaAutoComplete;
+    [CEReactions=Needed, Reflect=aria_braillelabel]           attribute DOMString? ariaBrailleLabel;
+    [CEReactions=Needed, Reflect=aria_brailleroledescription] attribute DOMString? ariaBrailleRoleDescription;
+    [CEReactions=Needed, Reflect=aria_busy]                   attribute DOMString? ariaBusy;
+    [CEReactions=Needed, Reflect=aria_checked]                attribute DOMString? ariaChecked;
+    [CEReactions=Needed, Reflect=aria_colcount]               attribute DOMString? ariaColCount;
+    [CEReactions=Needed, Reflect=aria_colindex]               attribute DOMString? ariaColIndex;
+    [CEReactions=Needed, Reflect=aria_colspan]                attribute DOMString? ariaColSpan;
     [CEReactions=Needed, CustomGetter, Reflect=aria_controls, EnabledBySetting=AriaReflectionForElementReferencesEnabled] attribute FrozenArray<Element>? ariaControlsElements;
     [CEReactions=Needed, Reflect=aria_current]          attribute DOMString? ariaCurrent;
     [CEReactions=Needed, CustomGetter, Reflect=aria_describedby, EnabledBySetting=AriaReflectionForElementReferencesEnabled] attribute FrozenArray<Element>? ariaDescribedByElements;

@@ -869,6 +869,26 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::description()
     return nullptr;
 }
 
+JSRetainPtr<JSStringRef> AccessibilityUIElement::brailleLabel() const
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    auto description = descriptionOfValue(attributeValue(@"AXBrailleLabel").get());
+    return concatenateAttributeAndValue(@"AXBrailleLabel", description.get());
+    END_AX_OBJC_EXCEPTIONS
+
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElement::brailleRoleDescription() const
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    auto description = descriptionOfValue(attributeValue(@"AXBrailleRoleDescription").get());
+    return concatenateAttributeAndValue(@"AXBrailleRoleDescription", description.get());
+    END_AX_OBJC_EXCEPTIONS
+
+    return nullptr;
+}
+
 JSRetainPtr<JSStringRef> AccessibilityUIElement::liveRegionStatus() const
 {
     return stringAttributeValue(@"AXARIALive");

@@ -2231,20 +2231,6 @@ DeclarativeWebPush:
     WebCore:
       default: false
 
-DefaultARIAForCustomElementsEnabled:
-  type: bool
-  status: stable
-  category: dom
-  humanReadableName: "Default ARIA for Custom Elements"
-  humanReadableDescription: "Enable Default ARIA for Custom Elements"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 DefaultFixedFontSize:
   type: double
   status: embedder

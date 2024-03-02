@@ -562,6 +562,12 @@ void AXIsolatedTree::updateNodeProperties(AXCoreObject& axObject, const AXProper
         case AXPropertyName::AXColumnCount:
             propertyMap.set(AXPropertyName::AXColumnCount, axObject.axColumnCount());
             break;
+        case AXPropertyName::BrailleLabel:
+            propertyMap.set(AXPropertyName::BrailleLabel, axObject.brailleLabel().isolatedCopy());
+            break;
+        case AXPropertyName::BrailleRoleDescription:
+            propertyMap.set(AXPropertyName::BrailleRoleDescription, axObject.brailleRoleDescription().isolatedCopy());
+            break;
         case AXPropertyName::ColumnHeaders:
             propertyMap.set(AXPropertyName::ColumnHeaders, axIDs(axObject.columnHeaders()));
             break;

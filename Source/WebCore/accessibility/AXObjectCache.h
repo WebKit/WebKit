@@ -354,6 +354,8 @@ public:
         AXAnnouncementRequested,
         AXAutocorrectionOccured,
         AXAutofillTypeChanged,
+        AXBrailleLabelChanged,
+        AXBrailleRoleDescriptionChanged,
         AXCellSlotsChanged,
         AXCheckedStateChanged,
         AXChildrenChanged,

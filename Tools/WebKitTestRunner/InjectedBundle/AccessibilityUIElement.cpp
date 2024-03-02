@@ -137,6 +137,9 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::dateValue() { return nullptr; }
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::focusedElement() const { return nullptr; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::customContent() const { return nullptr; }
 
+JSRetainPtr<JSStringRef> AccessibilityUIElement::brailleLabel() const { return nullptr; }
+JSRetainPtr<JSStringRef> AccessibilityUIElement::brailleRoleDescription() const { return nullptr; }
+
 bool AccessibilityUIElement::hasDocumentRoleAncestor() const { return false; }
 bool AccessibilityUIElement::hasWebApplicationAncestor() const { return false; }
 bool AccessibilityUIElement::isInDescriptionListDetail() const { return false; }

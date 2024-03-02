@@ -46,6 +46,8 @@
 typedef void (*AXPostedNotificationCallback)(id element, NSString* notification, void* context);
 
 @interface NSObject (UIAccessibilityHidden)
+- (NSString *)accessibilityBrailleLabel;
+- (NSString *)accessibilityBrailleRoleDescription;
 - (id)accessibilityFocusedUIElement;
 - (id)accessibilityHitTest:(CGPoint)point;
 - (id)accessibilityLinkedElement;
@@ -525,6 +527,16 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::title()
 JSRetainPtr<JSStringRef> AccessibilityUIElement::description()
 {
     return concatenateAttributeAndValue(@"AXLabel", [m_element accessibilityLabel]);
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElement::brailleLabel() const
+{
+    return concatenateAttributeAndValue(@"AXBrailleLabel", [m_element accessibilityBrailleLabel]);
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElement::brailleRoleDescription() const
+{
+    return concatenateAttributeAndValue(@"AXBrailleRoleDescription", [m_element accessibilityBrailleRoleDescription]);
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::liveRegionRelevant() const

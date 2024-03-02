@@ -171,6 +171,8 @@ public:
     double width();
     double height();
     JSRetainPtr<JSStringRef> lineRectsAndText() const;
+    JSRetainPtr<JSStringRef> brailleLabel() const;
+    JSRetainPtr<JSStringRef> brailleRoleDescription() const;
 
     double intValue() const;
     double minValue();
