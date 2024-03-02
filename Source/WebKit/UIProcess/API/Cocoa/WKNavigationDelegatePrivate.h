@@ -122,6 +122,4 @@ static const WKNavigationResponsePolicy _WKNavigationResponsePolicyBecomeDownloa
 - (void)_webView:(WKWebView *)webView willGoToBackForwardListItem:(WKBackForwardListItem *)item inPageCache:(BOOL)inPageCache WK_API_AVAILABLE(macos(10.13.4), ios(14.0));
 - (void)_webView:(WKWebView *)webView decidePolicyForSOAuthorizationLoadWithCurrentPolicy:(_WKSOAuthorizationLoadPolicy)policy forExtension:(NSString *)extension completionHandler:(void (^)(_WKSOAuthorizationLoadPolicy policy))completionHandler WK_API_AVAILABLE(macos(10.15), ios(13.0));
 
-- (void)_webView:(WKWebView *)webView didExceedMemoryFootprintThresholdWithFootprint:(size_t)footprint WK_API_AVAILABLE(macos(WK_MAC_TBA));
-
 @end
