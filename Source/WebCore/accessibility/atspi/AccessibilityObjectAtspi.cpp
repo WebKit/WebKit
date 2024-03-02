@@ -354,6 +354,7 @@ static Atspi::Role atspiRole(AccessibilityRole role)
     case AccessibilityRole::Mark:
         return Atspi::Role::Mark;
     case AccessibilityRole::Details:
+    case AccessibilityRole::Emphasis:
     case AccessibilityRole::Ignored:
     case AccessibilityRole::Incrementor:
     case AccessibilityRole::LineBreak:
@@ -367,6 +368,7 @@ static Atspi::Role atspiRole(AccessibilityRole role)
     case AccessibilityRole::RubyText:
     case AccessibilityRole::SliderThumb:
     case AccessibilityRole::SpinButtonPart:
+    case AccessibilityRole::Strong:
     case AccessibilityRole::Summary:
     case AccessibilityRole::TableHeaderContainer:
     case AccessibilityRole::Suggestion:

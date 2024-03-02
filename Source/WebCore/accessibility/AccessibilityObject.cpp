@@ -2667,6 +2667,7 @@ static void initializeRoleMap()
         { "doc-subtitle"_s, AccessibilityRole::Heading },
         { "doc-tip"_s, AccessibilityRole::DocumentNote },
         { "doc-toc"_s, AccessibilityRole::LandmarkNavigation },
+        { "emphasis"_s, AccessibilityRole::Emphasis },
         { "figure"_s, AccessibilityRole::Figure },
         { "generic"_s, AccessibilityRole::Generic },
         // The mappings for 'graphics-*' roles are defined in this spec: https://w3c.github.io/graphics-aam/
@@ -2727,6 +2728,7 @@ static void initializeRoleMap()
         { "subscript"_s, AccessibilityRole::Subscript },
         { "suggestion"_s, AccessibilityRole::Suggestion },
         { "superscript"_s, AccessibilityRole::Superscript },
+        { "strong"_s, AccessibilityRole::Strong },
         { "switch"_s, AccessibilityRole::Switch },
         { "tab"_s, AccessibilityRole::Tab },
         { "tablist"_s, AccessibilityRole::TabList },

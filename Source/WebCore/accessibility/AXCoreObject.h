@@ -149,6 +149,7 @@ enum class AccessibilityRole {
     DocumentArticle,
     DocumentMath,
     DocumentNote,
+    Emphasis,
     Feed,
     Figure,
     Footer,
@@ -224,6 +225,7 @@ enum class AccessibilityRole {
     SpinButtonPart,
     Splitter,
     StaticText,
+    Strong,
     Subscript,
     Suggestion,
     Summary,
@@ -330,6 +332,8 @@ ALWAYS_INLINE String accessibilityRoleToString(AccessibilityRole role)
         return "DocumentMath"_s;
     case AccessibilityRole::DocumentNote:
         return "DocumentNote"_s;
+    case AccessibilityRole::Emphasis:
+        return "Emphasis"_s;
     case AccessibilityRole::Feed:
         return "Feed"_s;
     case AccessibilityRole::Figure:
@@ -480,6 +484,8 @@ ALWAYS_INLINE String accessibilityRoleToString(AccessibilityRole role)
         return "Splitter"_s;
     case AccessibilityRole::StaticText:
         return "StaticText"_s;
+    case AccessibilityRole::Strong:
+        return "Strong"_s;
     case AccessibilityRole::Subscript:
         return "Subscript"_s;
     case AccessibilityRole::Suggestion:
