@@ -85,7 +85,7 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     ReloadExecutionContextsForOrigin(struct WebCore::ClientOrigin origin, std::optional<WebCore::FrameIdentifier> triggeringFrame) -> ()
     DeleteAllCookies() -> ()
 
-    SetHiddenPageDOMTimerThrottlingIncreaseLimit(int milliseconds)
+    SetHiddenPageDOMTimerThrottlingIncreaseLimit(Seconds seconds)
 
     SetMemoryCacheDisabled(bool disabled);
 

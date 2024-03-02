@@ -319,7 +319,7 @@ public:
     void getActivePagesOriginsForTesting(CompletionHandler<void(Vector<String>&&)>&&);
     void pageActivityStateDidChange(WebCore::PageIdentifier, OptionSet<WebCore::ActivityState> changed);
 
-    void setHiddenPageDOMTimerThrottlingIncreaseLimit(int milliseconds);
+    void setHiddenPageDOMTimerThrottlingIncreaseLimit(Seconds);
 
     void releaseMemory(CompletionHandler<void()>&&);
     void prepareToSuspend(bool isSuspensionImminent, MonotonicTime estimatedSuspendTime, CompletionHandler<void()>&&);

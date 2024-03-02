@@ -1888,15 +1888,19 @@ void WebProcessPool::setFontAllowList(API::Array* array)
     }
 }
 
-void WebProcessPool::updateHiddenPageThrottlingAutoIncreaseLimit()
+Seconds WebProcessPool::hiddenPageThrottlingAutoIncreaseLimit() const
 {
     // We're estimating an upper bound for a set of background timer fires for a page to be 200ms
     // (including all timer fires, all paging-in, and any resulting GC). To ensure this does not
     // result in more than 1% CPU load allow for one timer fire per 100x this duration.
     static int maximumTimerThrottlePerPageInMS = 200 * 100;
-
     int limitInMilliseconds = maximumTimerThrottlePerPageInMS * m_hiddenPageThrottlingAutoIncreasesCounter.value();
-    sendToAllProcesses(Messages::WebProcess::SetHiddenPageDOMTimerThrottlingIncreaseLimit(limitInMilliseconds));
+    return Seconds::fromMilliseconds(limitInMilliseconds);
+}
+
+void WebProcessPool::updateHiddenPageThrottlingAutoIncreaseLimit()
+{
+    sendToAllProcesses(Messages::WebProcess::SetHiddenPageDOMTimerThrottlingIncreaseLimit(hiddenPageThrottlingAutoIncreaseLimit()), ShouldSkipSuspendedProcesses::Yes);
 }
 
 void WebProcessPool::reportWebContentCPUTime(Seconds cpuTime, uint64_t activityState)

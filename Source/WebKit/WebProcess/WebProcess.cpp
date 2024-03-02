@@ -1548,10 +1548,10 @@ void WebProcess::deleteWebsiteDataForOrigins(OptionSet<WebsiteDataType> websiteD
     completionHandler();
 }
 
-void WebProcess::setHiddenPageDOMTimerThrottlingIncreaseLimit(int milliseconds)
+void WebProcess::setHiddenPageDOMTimerThrottlingIncreaseLimit(Seconds seconds)
 {
     for (auto& page : m_pageMap.values())
-        page->setHiddenPageDOMTimerThrottlingIncreaseLimit(Seconds::fromMilliseconds(milliseconds));
+        page->setHiddenPageDOMTimerThrottlingIncreaseLimit(seconds);
 }
 
 #if !PLATFORM(COCOA)

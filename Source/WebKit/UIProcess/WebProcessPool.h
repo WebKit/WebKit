@@ -143,6 +143,7 @@ void setLockdownModeEnabledGloballyForTesting(std::optional<bool>);
 
 enum class CallDownloadDidStart : bool;
 enum class ProcessSwapRequestedByClient : bool;
+enum class ShouldSkipSuspendedProcesses : bool { No, Yes };
 
 class WebProcessPool final
     : public API::ObjectImpl<API::Object::Type::ProcessPool>
@@ -212,10 +213,10 @@ public:
     WebProcessProxy* dummyProcessProxy(PAL::SessionID sessionID) const { return m_dummyProcessProxies.get(sessionID).get(); }
 
     void forEachProcessForSession(PAL::SessionID, const Function<void(WebProcessProxy&)>&);
-    template<typename T> void sendToAllProcesses(const T& message);
-    template<typename T> void sendToAllProcessesForSession(const T& message, PAL::SessionID);
+    template<typename T> void sendToAllProcesses(const T& message, ShouldSkipSuspendedProcesses = ShouldSkipSuspendedProcesses::No);
+    template<typename T> void sendToAllProcessesForSession(const T& message, PAL::SessionID, ShouldSkipSuspendedProcesses = ShouldSkipSuspendedProcesses::No);
 
-    template<typename T> static void sendToAllRemoteWorkerProcesses(const T& message);
+    template<typename T> static void sendToAllRemoteWorkerProcesses(const T& message, ShouldSkipSuspendedProcesses = ShouldSkipSuspendedProcesses::No);
 
     void processDidFinishLaunching(WebProcessProxy&);
 
@@ -429,6 +430,7 @@ public:
     void updateProcessSuppressionState() const { }
 #endif
 
+    Seconds hiddenPageThrottlingAutoIncreaseLimit() const;
     void updateHiddenPageThrottlingAutoIncreaseLimit();
 
     void setMemoryCacheDisabled(bool);
@@ -881,28 +883,36 @@ private:
 };
 
 template<typename T>
-void WebProcessPool::sendToAllProcesses(const T& message)
+void WebProcessPool::sendToAllProcesses(const T& message, ShouldSkipSuspendedProcesses shouldSkipSuspendedProcesses)
 {
     for (auto& process : m_processes) {
-        if (process->canSendMessage())
-            process->send(T(message), 0);
+        if (!process->canSendMessage())
+            continue;
+        if (shouldSkipSuspendedProcesses == ShouldSkipSuspendedProcesses::Yes && process->throttler().isSuspended())
+            continue;
+        process->send(T(message), 0);
     }
 }
 
 template<typename T>
-void WebProcessPool::sendToAllProcessesForSession(const T& message, PAL::SessionID sessionID)
+void WebProcessPool::sendToAllProcessesForSession(const T& message, PAL::SessionID sessionID, ShouldSkipSuspendedProcesses shouldSkipSuspendedProcesses)
 {
     forEachProcessForSession(sessionID, [&](auto& process) {
+        if (shouldSkipSuspendedProcesses == ShouldSkipSuspendedProcesses::Yes && process.throttler().isSuspended())
+            return;
         process.send(T(message), 0);
     });
 }
 
 template<typename T>
-void WebProcessPool::sendToAllRemoteWorkerProcesses(const T& message)
+void WebProcessPool::sendToAllRemoteWorkerProcesses(const T& message, ShouldSkipSuspendedProcesses shouldSkipSuspendedProcesses)
 {
     for (auto& process : remoteWorkerProcesses()) {
-        if (process.canSendMessage())
-            process.send(T(message), 0);
+        if (!process.canSendMessage())
+            continue;
+        if (shouldSkipSuspendedProcesses == ShouldSkipSuspendedProcesses::Yes && process.throttler().isSuspended())
+            continue;
+        process.send(T(message), 0);
     }
 }
 
