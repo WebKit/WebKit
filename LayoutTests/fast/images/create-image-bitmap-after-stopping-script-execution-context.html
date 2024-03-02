@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests calling createImageBitmap on a window without a browsing context.<br>
+WebKit should not crash and should show pass below.</p>
+<div id="result">Running</div>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    setTimeout(() => {
+        testRunner.notifyDone();
+    }, 10); // Needs to happen after promise.catch below.
+}
+
+const iframe = document.createElement('iframe');
+document.documentElement.appendChild(iframe);
+const contentWindow = iframe.contentWindow;
+iframe.remove();
+const promise = contentWindow.createImageBitmap(new Blob());
+
+result.textContent = 'Partial PASS';
+promise.catch(() => result.textContent = 'PASS');
+
+</script>
+</body>
+</html>
