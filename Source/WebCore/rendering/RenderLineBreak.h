@@ -53,6 +53,10 @@ public:
     void collectSelectionGeometries(Vector<SelectionGeometry>&, unsigned startOffset = 0, unsigned endOffset = std::numeric_limits<unsigned>::max()) final;
 #endif
 
+    bool isBR() const { return !hasWBRLineBreakFlag(); }
+    bool isWBR() const { return hasWBRLineBreakFlag(); }
+    bool isLineBreakOpportunity() const { return isWBR(); }
+
 private:
     void node() const = delete;
 

@@ -2214,9 +2214,11 @@ Vector<FloatQuad> RenderObject::absoluteTextQuads(const SimpleRange& range, Opti
     Vector<FloatQuad> quads;
     for (Ref node : intersectingNodes(range)) {
         CheckedPtr renderer = node->renderer();
-        if (renderer && renderer->isBR())
-            downcast<RenderLineBreak>(*renderer).absoluteQuads(quads);
-        else if (CheckedPtr renderText = dynamicDowncast<RenderText>(renderer.get())) {
+        if (!renderer)
+            continue;
+        if (auto* lineBreakRenderer = dynamicDowncast<RenderLineBreak>(*renderer); lineBreakRenderer && lineBreakRenderer->isBR())
+            lineBreakRenderer->absoluteQuads(quads);
+        else if (auto* renderText = dynamicDowncast<RenderText>(*renderer)) {
             auto offsetRange = characterDataOffsetRange(range, downcast<CharacterData>(node.get()));
             quads.appendVector(renderText->absoluteQuadsForRange(offsetRange.start, offsetRange.end, behavior));
         }
@@ -2255,8 +2257,8 @@ Vector<IntRect> RenderObject::absoluteTextRects(const SimpleRange& range, Option
     Vector<LayoutRect> rects;
     for (Ref node : intersectingNodes(range)) {
         CheckedPtr renderer = node->renderer();
-        if (renderer && renderer->isBR())
-            downcast<RenderLineBreak>(*renderer).boundingRects(rects, flooredLayoutPoint(renderer->localToAbsolute()));
+        if (auto* lineBreakRenderer = dynamicDowncast<RenderLineBreak>(renderer.get()); lineBreakRenderer && lineBreakRenderer->isBR())
+            lineBreakRenderer->boundingRects(rects, flooredLayoutPoint(renderer->localToAbsolute()));
         else if (auto* textNode = dynamicDowncast<Text>(node.get())) {
             for (auto& rect : absoluteRectsForRangeInText(range, *textNode, behavior))
                 rects.append(LayoutRect { rect });

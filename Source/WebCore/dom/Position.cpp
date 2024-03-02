@@ -997,14 +997,15 @@ bool Position::isCandidate() const
     if (is<HTMLHtmlElement>(*m_anchorNode))
         return false;
 
-    if (is<RenderBlockFlow>(*renderer) || is<RenderGrid>(*renderer) || is<RenderFlexibleBox>(*renderer)) {
-        auto& block = downcast<RenderBlock>(*renderer);
-        if (block.logicalHeight() || is<HTMLBodyElement>(*m_anchorNode) || m_anchorNode->isRootEditableElement()) {
-            if (!Position::hasRenderedNonAnonymousDescendantsWithHeight(block))
-                return atFirstEditingPositionForNode() && !Position::nodeIsUserSelectNone(node.get());
-            return m_anchorNode->hasEditableStyle() && !Position::nodeIsUserSelectNone(node.get()) && atEditingBoundary();
+    if (auto* block = dynamicDowncast<RenderBlock>(*renderer)) {
+        if (is<RenderBlockFlow>(*block) || is<RenderGrid>(*block) || is<RenderFlexibleBox>(*block)) {
+            if (block->logicalHeight() || is<HTMLBodyElement>(*m_anchorNode) || m_anchorNode->isRootEditableElement()) {
+                if (!Position::hasRenderedNonAnonymousDescendantsWithHeight(*block))
+                    return atFirstEditingPositionForNode() && !Position::nodeIsUserSelectNone(node.get());
+                return m_anchorNode->hasEditableStyle() && !Position::nodeIsUserSelectNone(node.get()) && atEditingBoundary();
+            }
+            return false;
         }
-        return false;
     }
 
     return m_anchorNode->hasEditableStyle() && !Position::nodeIsUserSelectNone(node.get()) && atEditingBoundary();
@@ -1207,10 +1208,9 @@ InlineBoxAndOffset Position::inlineBoxAndOffset(Affinity affinity, TextDirection
 
     InlineIterator::LeafBoxIterator box;
 
-    if (renderer->isBR()) {
-        auto& lineBreakRenderer = downcast<RenderLineBreak>(*renderer);
+    if (auto* lineBreakRenderer = dynamicDowncast<RenderLineBreak>(*renderer); lineBreakRenderer && lineBreakRenderer->isBR()) {
         if (!caretOffset)
-            box = InlineIterator::boxFor(lineBreakRenderer);
+            box = InlineIterator::boxFor(*lineBreakRenderer);
     } else if (CheckedPtr textRenderer = dynamicDowncast<RenderText>(*renderer)) {
         auto textBox = InlineIterator::firstTextBoxFor(*textRenderer);
         InlineIterator::TextBoxIterator candidate;

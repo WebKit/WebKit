@@ -181,7 +181,7 @@ LegacyInlineBox* LegacyLineLayout::createInlineBoxForRenderer(RenderObject* rend
         auto inlineBox = lineBreak->createInlineBox().release();
         // We only treat a box as text for a <br> if we are on a line by ourself or in strict mode
         // (Note the use of strict mode. In "almost strict" mode, we don't treat the box for <br> as text.)
-        inlineBox->setBehavesLikeText(isOnlyRun || renderer->document().inNoQuirksMode() || renderer->isLineBreakOpportunity());
+        inlineBox->setBehavesLikeText(isOnlyRun || renderer->document().inNoQuirksMode() || lineBreak->isWBR());
         return inlineBox;
     }
 

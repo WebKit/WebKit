@@ -665,8 +665,8 @@ public:
 
     bool isRenderText() const { return m_typeFlags.contains(TypeFlag::IsText); }
     bool isRenderLineBreak() const { return type() == Type::LineBreak; }
-    bool isBR() const { return isRenderLineBreak() && !isWBR(); }
-    bool isWBR() const { return isRenderLineBreak() && m_typeSpecificFlags.lineBreakFlags().contains(LineBreakFlag::IsWBR); }
+    bool isBR() const { return isRenderLineBreak() && !hasWBRLineBreakFlag(); }
+    bool isWBR() const { return isRenderLineBreak() && hasWBRLineBreakFlag(); }
     bool isLineBreakOpportunity() const { return isRenderLineBreak() && isWBR(); }
     bool isRenderTextOrLineBreak() const { return isRenderText() || isRenderLineBreak(); }
     bool isRenderBox() const { return m_typeFlags.contains(TypeFlag::IsBox); }
@@ -1159,6 +1159,7 @@ protected:
     bool isSetNeedsLayoutForbidden() const;
 
     void issueRepaint(std::optional<LayoutRect> partialRepaintRect = std::nullopt, ClipRepaintToLayer = ClipRepaintToLayer::No, ForceRepaint = ForceRepaint::No, std::optional<LayoutBoxExtent> additionalRepaintOutsets = std::nullopt) const;
+    bool hasWBRLineBreakFlag() const { return m_typeSpecificFlags.lineBreakFlags().contains(LineBreakFlag::IsWBR); }
 
 private:
     virtual RepaintRects localRectsForRepaint(RepaintOutlineBounds) const;

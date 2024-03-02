@@ -264,11 +264,10 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
         r = IntRect(text->firstRunLocation(), text->linesBoundingBox().size());
         if (!InlineIterator::firstTextBoxFor(*text))
             adjustForTableCells = false;
-    } else if (o.isBR()) {
-        const RenderLineBreak& br = downcast<RenderLineBreak>(o);
-        IntRect linesBox = br.linesBoundingBox();
+    } else if (auto* br = dynamicDowncast<RenderLineBreak>(o); br && br->isBR()) {
+        IntRect linesBox = br->linesBoundingBox();
         r = IntRect(linesBox.x(), linesBox.y(), linesBox.width(), linesBox.height());
-        if (!br.inlineBoxWrapper() && !InlineIterator::boxFor(br))
+        if (!br->inlineBoxWrapper() && !InlineIterator::boxFor(*br))
             adjustForTableCells = false;
     } else if (auto* inlineFlow = dynamicDowncast<RenderInline>(o)) {
         // FIXME: Would be better not to just dump 0, 0 as the x and y here.
