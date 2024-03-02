@@ -524,6 +524,8 @@ void TextIterator::advance()
             if (!isRendererAccessible(renderer.get(), m_behaviors)) {
                 m_handledNode = true;
                 m_handledChildren = !hasDisplayContents(*m_currentNode) && !renderer;
+            } else if (m_behaviors.contains(TextIteratorBehavior::IgnoresInertNodes) && renderer->style().effectiveInert()) {
+                m_handledNode = true;
             } else {
                 if (isConsideredSkippedContent(dynamicDowncast<RenderBox>(renderer.get()), m_behaviors))
                     m_handledChildren = true;

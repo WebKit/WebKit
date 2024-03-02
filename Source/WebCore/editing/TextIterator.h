@@ -322,7 +322,8 @@ constexpr TextIteratorBehaviors findIteratorOptions(FindOptions options = { })
         TextIteratorBehavior::EntersTextControls,
         TextIteratorBehavior::ClipsToFrameAncestors,
         TextIteratorBehavior::EntersImageOverlays,
-        TextIteratorBehavior::EntersSkippedContentRelevantToUser
+        TextIteratorBehavior::EntersSkippedContentRelevantToUser,
+        TextIteratorBehavior::IgnoresInertNodes
     };
     if (!options.contains(FindOption::DoNotTraverseFlatTree))
         iteratorOptions.add(TextIteratorBehavior::TraversesFlatTree);
