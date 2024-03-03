@@ -330,10 +330,8 @@ Element* FocusNavigationScope::owner() const
     ASSERT(m_treeScopeRootNode);
     if (RefPtr shadowRoot = dynamicDowncast<ShadowRoot>(*m_treeScopeRootNode))
         return shadowRoot->host();
-    if (isOpenPopoverWithInvoker(m_treeScopeRootNode.get())) {
-        RELEASE_ASSERT(is<HTMLElement>(m_treeScopeRootNode.get()));
-        return downcast<HTMLElement>(*m_treeScopeRootNode).popoverData()->invoker();
-    }
+    if (isOpenPopoverWithInvoker(m_treeScopeRootNode.get()))
+        return checkedDowncast<HTMLElement>(*m_treeScopeRootNode).popoverData()->invoker();
     if (auto* frame = m_treeScopeRootNode->document().frame())
         return frame->ownerElement();
     return nullptr;

@@ -58,15 +58,15 @@ ImageAnalysisQueue::~ImageAnalysisQueue() = default;
 
 void ImageAnalysisQueue::enqueueIfNeeded(HTMLImageElement& element)
 {
-    if (!is<RenderImage>(element.renderer()))
+    CheckedPtr renderer = downcast<RenderImage>(element.renderer());
+    if (!renderer)
         return;
 
-    auto& renderer = downcast<RenderImage>(*element.renderer());
-    auto* cachedImage = renderer.cachedImage();
+    CachedResourceHandle cachedImage = renderer->cachedImage();
     if (!cachedImage || cachedImage->errorOccurred())
         return;
 
-    auto* image = cachedImage->image();
+    RefPtr image = cachedImage->image();
     if (!image || image->width() < minimumWidthForAnalysis || image->height() < minimumHeightForAnalysis)
         return;
 
@@ -94,10 +94,10 @@ void ImageAnalysisQueue::enqueueIfNeeded(HTMLImageElement& element)
     if (!shouldAddToQueue)
         return;
 
-    Ref view = renderer.view().frameView();
+    Ref view = renderer->view().frameView();
     m_queue.enqueue({
         element,
-        renderer.isVisibleInDocumentRect(view->windowToContents(view->windowClipRect())) ? Priority::High : Priority::Low,
+        renderer->isVisibleInDocumentRect(view->windowToContents(view->windowClipRect())) ? Priority::High : Priority::Low,
         nextTaskNumber()
     });
     resumeProcessingSoon();

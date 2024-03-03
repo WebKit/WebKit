@@ -208,26 +208,25 @@ void ImageOverlayController::elementUnderMouseDidChange(LocalFrame& frame, Eleme
         return;
     }
 
-    auto shadowHost = elementUnderMouse->shadowHost();
-    if (!is<HTMLElement>(shadowHost)) {
+    RefPtr imageOverlayHost = dynamicDowncast<HTMLElement>(elementUnderMouse->shadowHost());
+    if (!imageOverlayHost) {
         ASSERT_NOT_REACHED();
         m_hostElementForDataDetectors = nullptr;
         uninstallPageOverlayIfNeeded();
         return;
     }
 
-    Ref imageOverlayHost = downcast<HTMLElement>(*shadowHost);
-    if (!ImageOverlay::hasOverlay(imageOverlayHost.get())) {
+    if (!ImageOverlay::hasOverlay(*imageOverlayHost)) {
         ASSERT_NOT_REACHED();
         m_hostElementForDataDetectors = nullptr;
         uninstallPageOverlayIfNeeded();
         return;
     }
 
-    if (m_hostElementForDataDetectors == imageOverlayHost.ptr())
+    if (m_hostElementForDataDetectors == imageOverlayHost.get())
         return;
 
-    updateDataDetectorHighlights(imageOverlayHost.get());
+    updateDataDetectorHighlights(*imageOverlayHost);
 
     if (m_dataDetectorContainersAndHighlights.isEmpty()) {
         m_hostElementForDataDetectors = nullptr;
@@ -235,7 +234,7 @@ void ImageOverlayController::elementUnderMouseDidChange(LocalFrame& frame, Eleme
         return;
     }
 
-    m_hostElementForDataDetectors = imageOverlayHost;
+    m_hostElementForDataDetectors = imageOverlayHost.releaseNonNull();
     installPageOverlayIfNeeded();
 }
 

@@ -379,8 +379,8 @@ public:
     WEBCORE_EXPORT ColorSchemePreference colorSchemePreference() const;
     void setColorSchemePreference(ColorSchemePreference preference) { m_colorSchemePreference = preference; }
 
-    void addSubresourceLoader(ResourceLoader&);
-    void removeSubresourceLoader(LoadCompletionType, ResourceLoader*);
+    void addSubresourceLoader(SubresourceLoader&);
+    void removeSubresourceLoader(LoadCompletionType, SubresourceLoader&);
     void addPlugInStreamLoader(ResourceLoader&);
     void removePlugInStreamLoader(ResourceLoader&);
 

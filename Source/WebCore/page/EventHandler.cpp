@@ -2726,11 +2726,15 @@ void EventHandler::updateMouseEventTargetNode(const AtomString& eventType, Node*
     // If we're capturing, we always go right to that element.
     if (m_capturingMouseEventsElement)
         targetElement = m_capturingMouseEventsElement.get();
-    else if (targetNode) {
+    else {
         // If the target node is a non-element, dispatch on the parent. <rdar://problem/4196646>
-        while (targetNode && !is<Element>(*targetNode))
+        while (targetNode) {
+            if (auto* asElement = dynamicDowncast<Element>(*targetNode)) {
+                targetElement = asElement;
+                break;
+            }
             targetNode = targetNode->parentInComposedTree();
-        targetElement = downcast<Element>(targetNode);
+        }
     }
 
     m_elementUnderMouse = targetElement;

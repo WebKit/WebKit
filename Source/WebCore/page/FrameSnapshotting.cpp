@@ -184,8 +184,8 @@ Color estimatedBackgroundColorForRange(const SimpleRange& range, const LocalFram
     RenderElement* renderer = nullptr;
     auto commonAncestor = commonInclusiveAncestor<ComposedTree>(range);
     while (commonAncestor) {
-        if (is<RenderElement>(commonAncestor->renderer())) {
-            renderer = downcast<RenderElement>(commonAncestor->renderer());
+        if (auto* renderElement = dynamicDowncast<RenderElement>(commonAncestor->renderer())) {
+            renderer = renderElement;
             break;
         }
         commonAncestor = commonAncestor->parentOrShadowHostElement();

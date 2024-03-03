@@ -1961,7 +1961,7 @@ void DocumentLoader::stopLoadingSubresources()
     ASSERT(m_subresourceLoaders.isEmpty());
 }
 
-void DocumentLoader::addSubresourceLoader(ResourceLoader& loader)
+void DocumentLoader::addSubresourceLoader(SubresourceLoader& loader)
 {
     // The main resource's underlying ResourceLoader will ask to be added here.
     // It is much simpler to handle special casing of main resource loads if we don't
@@ -1985,7 +1985,7 @@ void DocumentLoader::addSubresourceLoader(ResourceLoader& loader)
             break;
         case Document::AboutToEnterBackForwardCache: {
             // A page about to enter the BackForwardCache should only be able to start ping loads.
-            auto* cachedResource = downcast<SubresourceLoader>(loader).cachedResource();
+            auto* cachedResource = loader.cachedResource();
             ASSERT(cachedResource && (CachedResource::shouldUsePingLoad(cachedResource->type()) || cachedResource->options().keepAlive));
             break;
         }
@@ -2000,15 +2000,15 @@ void DocumentLoader::addSubresourceLoader(ResourceLoader& loader)
     m_subresourceLoaders.add(loader.identifier(), &loader);
 }
 
-void DocumentLoader::removeSubresourceLoader(LoadCompletionType type, ResourceLoader* loader)
+void DocumentLoader::removeSubresourceLoader(LoadCompletionType type, SubresourceLoader& loader)
 {
-    ASSERT(loader->identifier());
+    ASSERT(loader.identifier());
 
-    if (!m_subresourceLoaders.remove(loader->identifier()))
+    if (!m_subresourceLoaders.remove(loader.identifier()))
         return;
     checkLoadComplete();
-    if (m_frame)
-        m_frame->loader().subresourceLoadDone(type);
+    if (RefPtr frame = m_frame.get())
+        frame->checkedLoader()->subresourceLoadDone(type);
 }
 
 void DocumentLoader::addPlugInStreamLoader(ResourceLoader& loader)

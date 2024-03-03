@@ -195,15 +195,15 @@ void EventHandler::focusDocumentView()
 bool EventHandler::passWidgetMouseDownEventToWidget(const MouseEventWithHitTestResults& event)
 {
     // Figure out which view to send the event to.
-    auto* target = event.targetNode() ? event.targetNode()->renderer() : nullptr;
-    if (!is<RenderWidget>(target))
+    auto* target = event.targetNode() ? dynamicDowncast<RenderWidget>(event.targetNode()->renderer()) : nullptr;
+    if (!target)
         return false;
 
     // Double-click events don't exist in Cocoa. Since passWidgetMouseDownEventToWidget() will
     // just pass currentEvent down to the widget, we don't want to call it for events that
     // don't correspond to Cocoa events. The mousedown/ups will have already been passed on as
     // part of the pressed/released handling.
-    return passMouseDownEventToWidget(downcast<RenderWidget>(*target).protectedWidget().get());
+    return passMouseDownEventToWidget(target->protectedWidget().get());
 }
 
 bool EventHandler::passWidgetMouseDownEventToWidget(RenderWidget* renderWidget)
@@ -417,13 +417,13 @@ bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& eve
         RefPtr node = event.targetNode();
         if (!node)
             return false;
-        WeakPtr renderer = node->renderer();
-        if (!is<RenderWidget>(renderer.get()))
+        RefPtr renderer = dynamicDowncast<RenderWidget>(node->renderer());
+        if (!renderer)
             return false;
-        RefPtr widget = downcast<RenderWidget>(*renderer).widget();
+        RefPtr widget = renderer->widget();
         if (!widget || !widget->isLocalFrameView())
             return false;
-        if (!passWidgetMouseDownEventToWidget(RefPtr { downcast<RenderWidget>(renderer.get()) }.get())) // May destroy the renderer.
+        if (!passWidgetMouseDownEventToWidget(renderer.get()))
             return false;
         m_mouseDownWasInSubframe = true;
         return true;
@@ -786,8 +786,8 @@ OptionSet<PlatformEvent::Modifier> EventHandler::accessKeyModifiers()
 
 static ScrollableArea* scrollableAreaForBox(RenderBox& box)
 {
-    if (is<RenderListBox>(box))
-        return downcast<RenderListBox>(&box);
+    if (auto* listBox = dynamicDowncast<RenderListBox>(box))
+        return listBox;
 
     if (auto* scrollableArea = box.layer() ? box.layer()->scrollableArea() : nullptr)
         return scrollableArea;
