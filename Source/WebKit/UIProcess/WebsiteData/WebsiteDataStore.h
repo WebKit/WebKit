@@ -44,7 +44,6 @@
 #include <wtf/CheckedRef.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
-#include <wtf/Identified.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -119,7 +118,7 @@ struct WebPushMessage;
 struct WebsiteDataRecord;
 struct WebsiteDataStoreParameters;
 
-class WebsiteDataStore : public API::ObjectImpl<API::Object::Type::WebsiteDataStore>, public Identified<WebsiteDataStore>, public CanMakeWeakPtr<WebsiteDataStore> {
+class WebsiteDataStore : public API::ObjectImpl<API::Object::Type::WebsiteDataStore>, public CanMakeWeakPtr<WebsiteDataStore> {
 public:
     static Ref<WebsiteDataStore> defaultDataStore();
     static bool defaultDataStoreExists();
