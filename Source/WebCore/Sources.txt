@@ -1216,6 +1216,7 @@ dom/TreeWalker.cpp
 dom/TrustedHTML.cpp
 dom/TrustedScript.cpp
 dom/TrustedScriptURL.cpp
+dom/TrustedType.cpp
 dom/TrustedTypePolicy.cpp
 dom/TrustedTypePolicyFactory.cpp
 dom/UIEvent.cpp

@@ -1,9 +1,12 @@
+CONSOLE MESSAGE: [Report Only] This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: [Report Only] This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: [Report Only] This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: Hello
+CONSOLE MESSAGE: [Report Only] This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 abc
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Trusted Type violation report-only: assign string to html Test timed out
-NOTRUN Trusted Type violation report-only: assign string to script.src
-NOTRUN Trusted Type violation report-only: assign string to script content
-NOTRUN Trusted Type violation report: check report contents
+PASS Trusted Type violation report-only: assign string to html
+PASS Trusted Type violation report-only: assign string to script.src
+PASS Trusted Type violation report-only: assign string to script content
+PASS Trusted Type violation report: check report contents
 

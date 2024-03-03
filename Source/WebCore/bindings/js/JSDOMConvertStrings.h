@@ -28,8 +28,13 @@
 #include "IDLTypes.h"
 #include "JSDOMConvertBase.h"
 #include "StringAdaptors.h"
+#include "TrustedType.h"
 
 namespace WebCore {
+
+class ScriptExecutionContext;
+
+enum class ShouldConvertNullToEmptyString : bool { No, Yes };
 
 WEBCORE_EXPORT String identifierToString(JSC::JSGlobalObject&, const JSC::Identifier&);
 WEBCORE_EXPORT String identifierToByteString(JSC::JSGlobalObject&, const JSC::Identifier&);
@@ -38,6 +43,7 @@ WEBCORE_EXPORT AtomString valueToByteAtomString(JSC::JSGlobalObject&, JSC::JSVal
 WEBCORE_EXPORT String identifierToUSVString(JSC::JSGlobalObject&, const JSC::Identifier&);
 WEBCORE_EXPORT String valueToUSVString(JSC::JSGlobalObject&, JSC::JSValue);
 WEBCORE_EXPORT AtomString valueToUSVAtomString(JSC::JSGlobalObject&, JSC::JSValue);
+String trustedTypeCompliantString(TrustedType, JSC::JSGlobalObject&, JSC::JSValue, const String& sink, ShouldConvertNullToEmptyString);
 
 inline AtomString propertyNameToString(JSC::PropertyName propertyName)
 {
@@ -167,6 +173,225 @@ template<typename T> struct JSConverter<IDLLegacyNullToEmptyStringAdaptor<T>> {
     static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const String& value)
     {
         return JSConverter<T>::convert(lexicalGlobalObject, value);
+    }
+};
+
+template<typename T> struct Converter<IDLStringContextTrustedHTMLAdaptor<T>> : DefaultConverter<IDLStringContextTrustedHTMLAdaptor<T>> {
+    static String convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
+    {
+        return Converter<IDLStringContextTrustedHTMLAdaptor<T>>::convert(lexicalGlobalObject, value, emptyString());
+    }
+
+    static String convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, const String& sink)
+    {
+        return trustedTypeCompliantString(TrustedType::TrustedHTML, lexicalGlobalObject, value, sink, ShouldConvertNullToEmptyString::No);
+    }
+};
+
+template<typename T> struct JSConverter<IDLStringContextTrustedHTMLAdaptor<T>> {
+    static constexpr bool needsState = true;
+    static constexpr bool needsGlobalObject = false;
+
+    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const String& value)
+    {
+        return JSConverter<T>::convert(lexicalGlobalObject, value);
+    }
+};
+
+template<typename T> struct Converter<IDLLegacyNullToEmptyStringStringContextTrustedHTMLAdaptor<T>> : DefaultConverter<IDLLegacyNullToEmptyStringStringContextTrustedHTMLAdaptor<T>> {
+    static String convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
+    {
+        return Converter<IDLLegacyNullToEmptyStringStringContextTrustedHTMLAdaptor<T>>::convert(lexicalGlobalObject, value, emptyString());
+    }
+
+    static String convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, const String& sink)
+    {
+        return trustedTypeCompliantString(TrustedType::TrustedHTML, lexicalGlobalObject, value, sink, ShouldConvertNullToEmptyString::Yes);
+    }
+};
+
+template<typename T> struct JSConverter<IDLLegacyNullToEmptyStringStringContextTrustedHTMLAdaptor<T>> {
+    static constexpr bool needsState = true;
+    static constexpr bool needsGlobalObject = false;
+
+    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const String& value)
+    {
+        return JSConverter<T>::convert(lexicalGlobalObject, value);
+    }
+};
+
+template<typename T> struct Converter<IDLStringContextTrustedScriptAdaptor<T>> : DefaultConverter<IDLStringContextTrustedScriptAdaptor<T>> {
+    static String convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
+    {
+        return Converter<IDLStringContextTrustedScriptAdaptor<T>>::convert(lexicalGlobalObject, value, emptyString());
+    }
+
+    static String convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, const String& sink)
+    {
+        return trustedTypeCompliantString(TrustedType::TrustedScript, lexicalGlobalObject, value, sink, ShouldConvertNullToEmptyString::No);
+    }
+};
+
+template<typename T> struct JSConverter<IDLStringContextTrustedScriptAdaptor<T>> {
+    static constexpr bool needsState = true;
+    static constexpr bool needsGlobalObject = false;
+
+    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const String& value)
+    {
+        return JSConverter<T>::convert(lexicalGlobalObject, value);
+    }
+};
+
+template<typename T> struct Converter<IDLLegacyNullToEmptyStringStringContextTrustedScriptAdaptor<T>> : DefaultConverter<IDLLegacyNullToEmptyStringStringContextTrustedScriptAdaptor<T>> {
+    static String convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
+    {
+        return Converter<IDLLegacyNullToEmptyStringStringContextTrustedScriptAdaptor<T>>::convert(lexicalGlobalObject, value, emptyString());
+    }
+
+    static String convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, const String& sink)
+    {
+        return trustedTypeCompliantString(TrustedType::TrustedScript, lexicalGlobalObject, value, sink, ShouldConvertNullToEmptyString::Yes);
+    }
+};
+
+template<typename T> struct JSConverter<IDLLegacyNullToEmptyStringStringContextTrustedScriptAdaptor<T>> {
+    static constexpr bool needsState = true;
+    static constexpr bool needsGlobalObject = false;
+
+    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const String& value)
+    {
+        return JSConverter<T>::convert(lexicalGlobalObject, value);
+    }
+};
+
+template<typename T> struct Converter<IDLStringContextTrustedScriptURLAdaptor<T>> : DefaultConverter<IDLStringContextTrustedScriptURLAdaptor<T>> {
+    static String convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
+    {
+        return Converter<IDLStringContextTrustedScriptURLAdaptor<T>>::convert(lexicalGlobalObject, value, emptyString());
+    }
+
+    static String convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, const String& sink)
+    {
+        return trustedTypeCompliantString(TrustedType::TrustedScriptURL, lexicalGlobalObject, value, sink, ShouldConvertNullToEmptyString::No);
+    }
+};
+
+template<typename T> struct JSConverter<IDLStringContextTrustedScriptURLAdaptor<T>> {
+    static constexpr bool needsState = true;
+    static constexpr bool needsGlobalObject = false;
+
+    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const String& value)
+    {
+        return JSConverter<T>::convert(lexicalGlobalObject, value);
+    }
+};
+
+template<typename T> struct Converter<IDLLegacyNullToEmptyStringStringContextTrustedScriptURLAdaptor<T>> : DefaultConverter<IDLLegacyNullToEmptyStringStringContextTrustedScriptURLAdaptor<T>> {
+    static String convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
+    {
+        return Converter<IDLLegacyNullToEmptyStringStringContextTrustedScriptURLAdaptor<T>>::convert(lexicalGlobalObject, value, emptyString());
+    }
+
+    static String convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, const String& sink)
+    {
+        return trustedTypeCompliantString(TrustedType::TrustedScriptURL, lexicalGlobalObject, value, sink, ShouldConvertNullToEmptyString::Yes);
+    }
+};
+
+template<typename T> struct JSConverter<IDLLegacyNullToEmptyStringStringContextTrustedScriptURLAdaptor<T>> {
+    static constexpr bool needsState = true;
+    static constexpr bool needsGlobalObject = false;
+
+    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const String& value)
+    {
+        return JSConverter<T>::convert(lexicalGlobalObject, value);
+    }
+};
+
+template<typename T> struct Converter<IDLAtomStringStringContextTrustedHTMLAdaptor<T>> : DefaultConverter<IDLAtomStringStringContextTrustedHTMLAdaptor<T>> {
+    static AtomString convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
+    {
+        return Converter<IDLAtomStringStringContextTrustedHTMLAdaptor<T>>::convert(lexicalGlobalObject, value, emptyString());
+    }
+
+    static AtomString convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, const String& sink)
+    {
+        auto result = trustedTypeCompliantString(TrustedType::TrustedHTML, lexicalGlobalObject, value, sink, ShouldConvertNullToEmptyString::No);
+
+        return AtomString { result };
+    }
+};
+
+template<typename T> struct JSConverter<IDLAtomStringStringContextTrustedHTMLAdaptor<T>> {
+    static constexpr bool needsState = true;
+    static constexpr bool needsGlobalObject = false;
+
+    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const AtomString& value)
+    {
+        return JSConverter<T>::convert(lexicalGlobalObject, value);
+    }
+
+    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const URL& value)
+    {
+        return JSConverter<T>::convert(lexicalGlobalObject, value.string());
+    }
+};
+
+template<typename T> struct Converter<IDLAtomStringStringContextTrustedScriptAdaptor<T>> : DefaultConverter<IDLAtomStringStringContextTrustedScriptAdaptor<T>> {
+    static AtomString convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
+    {
+        return Converter<IDLAtomStringStringContextTrustedScriptAdaptor<T>>::convert(lexicalGlobalObject, value, emptyString());
+    }
+
+    static AtomString convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, const String& sink)
+    {
+        auto result = trustedTypeCompliantString(TrustedType::TrustedScript, lexicalGlobalObject, value, sink, ShouldConvertNullToEmptyString::No);
+
+        return AtomString { result };
+    }
+};
+
+template<typename T> struct JSConverter<IDLAtomStringStringContextTrustedScriptAdaptor<T>> {
+    static constexpr bool needsState = true;
+    static constexpr bool needsGlobalObject = false;
+
+    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const AtomString& value)
+    {
+        return JSConverter<T>::convert(lexicalGlobalObject, value);
+    }
+
+    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const URL& value)
+    {
+        return JSConverter<T>::convert(lexicalGlobalObject, value.string());
+    }
+};
+
+template<typename T> struct Converter<IDLAtomStringStringContextTrustedScriptURLAdaptor<T>> : DefaultConverter<IDLAtomStringStringContextTrustedScriptURLAdaptor<T>> {
+    static AtomString convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
+    {
+        return Converter<IDLAtomStringStringContextTrustedScriptURLAdaptor<T>>::convert(lexicalGlobalObject, value, emptyString());
+    }
+
+    static AtomString convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, const String& sink)
+    {
+        auto result = trustedTypeCompliantString(TrustedType::TrustedScriptURL, lexicalGlobalObject, value, sink, ShouldConvertNullToEmptyString::No);
+
+        return AtomString { result };
+    }
+};
+
+template<typename T> struct JSConverter<IDLAtomStringStringContextTrustedScriptURLAdaptor<T>> {
+    static constexpr bool needsState = true;
+    static constexpr bool needsGlobalObject = false;
+
+    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const AtomString& value)
+    {
+        return JSConverter<T>::convert(lexicalGlobalObject, value);
+    }
+
+    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const URL& value)
+    {
+        return JSConverter<T>::convert(lexicalGlobalObject, value.string());
     }
 };
 

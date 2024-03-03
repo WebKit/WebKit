@@ -764,6 +764,8 @@ bool ContentSecurityPolicyDirectiveList::shouldReportSample(const String& violat
         directive = m_scriptSrc.get();
     else if (violatedDirective.startsWith(StringView { ContentSecurityPolicyDirectiveNames::trustedTypes }))
         return true;
+    else if (violatedDirective.startsWith(StringView { ContentSecurityPolicyDirectiveNames::requireTrustedTypesFor }))
+        return true;
 
     return directive && directive->shouldReportSample();
 }

@@ -1,7 +1,8 @@
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 
-FAIL same-document script assert_throws_js: function "_ => {
-    document.getElementById("to-be-modified").innerHTML = "'test'";
-  }" did not throw
-FAIL same-origin script assert_throws_js: function "() => setInnerHtml(toBeModified, "'test'")" did not throw
-FAIL cross-origin script assert_throws_js: function "() => setInnerHtml(toBeModified, "'test'")" did not throw
+PASS same-document script
+PASS same-origin script
+PASS cross-origin script
 

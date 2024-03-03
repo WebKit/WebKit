@@ -28,7 +28,7 @@
     ActiveDOMObject,
     Exposed=(Window,DedicatedWorker)
 ] interface Worker : EventTarget {
-    [CallWith=CurrentScriptExecutionContext&RuntimeFlags] constructor(USVString scriptUrl, optional WorkerOptions options);
+    [CallWith=CurrentScriptExecutionContext&RuntimeFlags] constructor(ScriptURLString scriptUrl, optional WorkerOptions options);
 
     undefined terminate();
 
@@ -39,3 +39,5 @@
 };
 
 Worker includes AbstractWorker;
+
+typedef [StringContext=TrustedScriptURL] USVString ScriptURLString;

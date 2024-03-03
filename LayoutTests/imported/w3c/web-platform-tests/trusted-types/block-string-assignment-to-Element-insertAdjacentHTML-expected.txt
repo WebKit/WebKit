@@ -1,11 +1,15 @@
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 
 PASS insertAdjacentHTML with html assigned via policy (successful HTML transformation).
-FAIL `insertAdjacentHTML(string)` throws. assert_throws_js: function "_ => {
-      d.insertAdjacentHTML('beforebegin', "<p>Fail</p>");
-    }" did not throw
-FAIL `insertAdjacentHTML(null)` throws. assert_throws_js: function "_ => {
-      d.insertAdjacentHTML('beforebegin', null);
-    }" did not throw
-FAIL `insertAdjacentHTML(string)` assigned via default policy (successful HTML transformation). assert_equals: expected "Quack, I want to be a duck!" but got "Hi, I want to be transformed!"
+PASS `insertAdjacentHTML(string)` throws.
+PASS `insertAdjacentHTML(null)` throws.
+PASS `insertAdjacentHTML(string)` assigned via default policy (successful HTML transformation).
 PASS `insertAdjacentHTML(null)` assigned via default policy does not throw.
 

@@ -20,11 +20,11 @@ FAIL div.onclick accepts only TrustedScript assert_throws_js: function "_ => {
 FAIL `Script.prototype.setAttribute.SrC = string` throws. assert_throws_js: function "_ => {
       el.setAttribute('SrC', INPUTS.URL);
     }" did not throw
-FAIL embed.src accepts string and null after default policy was created. assert_equals: expected "http://this.is.a.successful.test/" but got "http://this.is.a.scripturl.test/"
-FAIL object.data accepts string and null after default policy was created. assert_equals: expected "http://this.is.a.successful.test/" but got "http://this.is.a.scripturl.test/"
-FAIL object.codeBase accepts string and null after default policy was created. assert_equals: expected "http://this.is.a.successful.test/" but got "http://this.is.a.scripturl.test/"
-FAIL script.src accepts string and null after default policy was created. assert_equals: expected "http://this.is.a.successful.test/" but got "http://this.is.a.scripturl.test/"
-FAIL iframe.srcdoc accepts string and null after default policy was created. assert_equals: expected "Quack, I want to be a duck!" but got "Hi, I want to be transformed!"
+PASS embed.src accepts string and null after default policy was created.
+PASS object.data accepts string and null after default policy was created.
+PASS object.codeBase accepts string and null after default policy was created.
+PASS script.src accepts string and null after default policy was created.
+PASS iframe.srcdoc accepts string and null after default policy was created.
 FAIL div.onclick accepts string and null after default policy was created. assert_equals: expected "Meow, I want to be a cat!" but got "Hi, I want to be transformed!"
 PASS a.rel accepts strings
 PASS a.rel accepts null

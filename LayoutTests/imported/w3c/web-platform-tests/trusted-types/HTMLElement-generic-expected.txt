@@ -4,8 +4,26 @@ CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'simple'
 CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'simple'
 CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'simple'
 CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'simple'
-CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'simple'
-CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'simple'
+CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'simple'
 CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'simple'
 CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'simple'
@@ -14,8 +32,6 @@ CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'simple'
 a simple string
 a simple string
 
-a simple string
-a simple string
 
 
 Harness Error (FAIL), message = SyntaxError: Unexpected identifier 'simple'
@@ -48,26 +64,26 @@ PASS TT disabled: script.textContent = String on a connected element.
 PASS TT disabled: script.textContent = String on a non-connected element.
 PASS TT disabled: script.textContent = String on a connected element.
 PASS TT disabled: script.textContent = String on a non-connected element.
-FAIL TT enabled: embed.src = String on a connected element. assert_throws_js: function "_ => { elem[attr] = value; }" did not throw
-FAIL TT enabled: embed.src = String on a non-connected element. assert_throws_js: function "_ => { elem[attr] = value; }" did not throw
-FAIL TT enabled: embed.src = String on a connected element. assert_throws_js: function "_ => { elem[attr] = value; }" did not throw
-FAIL TT enabled: embed.src = String on a non-connected element. assert_throws_js: function "_ => { elem[attr] = value; }" did not throw
-FAIL TT enabled: script.src = String on a connected element. assert_throws_js: function "_ => { elem[attr] = value; }" did not throw
-FAIL TT enabled: script.src = String on a non-connected element. assert_throws_js: function "_ => { elem[attr] = value; }" did not throw
-FAIL TT enabled: script.src = String on a connected element. assert_throws_js: function "_ => { elem[attr] = value; }" did not throw
-FAIL TT enabled: script.src = String on a non-connected element. assert_throws_js: function "_ => { elem[attr] = value; }" did not throw
-FAIL TT enabled: div.innerHTML = String on a connected element. assert_throws_js: function "_ => { elem[attr] = value; }" did not throw
-FAIL TT enabled: div.innerHTML = String on a non-connected element. assert_throws_js: function "_ => { elem[attr] = value; }" did not throw
-FAIL TT enabled: div.innerHTML = String on a connected element. assert_throws_js: function "_ => { elem[attr] = value; }" did not throw
-FAIL TT enabled: div.innerHTML = String on a non-connected element. assert_throws_js: function "_ => { elem[attr] = value; }" did not throw
-FAIL TT enabled: iframe.srcdoc = String on a connected element. assert_throws_js: function "_ => { elem[attr] = value; }" did not throw
-FAIL TT enabled: iframe.srcdoc = String on a non-connected element. assert_throws_js: function "_ => { elem[attr] = value; }" did not throw
-FAIL TT enabled: iframe.srcdoc = String on a connected element. assert_throws_js: function "_ => { elem[attr] = value; }" did not throw
-FAIL TT enabled: iframe.srcdoc = String on a non-connected element. assert_throws_js: function "_ => { elem[attr] = value; }" did not throw
-FAIL TT enabled: script.text = String on a connected element. assert_throws_js: function "_ => { elem[attr] = value; }" did not throw
-FAIL TT enabled: script.text = String on a non-connected element. assert_throws_js: function "_ => { elem[attr] = value; }" did not throw
-FAIL TT enabled: script.text = String on a connected element. assert_throws_js: function "_ => { elem[attr] = value; }" did not throw
-FAIL TT enabled: script.text = String on a non-connected element. assert_throws_js: function "_ => { elem[attr] = value; }" did not throw
+PASS TT enabled: embed.src = String on a connected element.
+PASS TT enabled: embed.src = String on a non-connected element.
+PASS TT enabled: embed.src = String on a connected element.
+PASS TT enabled: embed.src = String on a non-connected element.
+PASS TT enabled: script.src = String on a connected element.
+PASS TT enabled: script.src = String on a non-connected element.
+PASS TT enabled: script.src = String on a connected element.
+PASS TT enabled: script.src = String on a non-connected element.
+PASS TT enabled: div.innerHTML = String on a connected element.
+PASS TT enabled: div.innerHTML = String on a non-connected element.
+PASS TT enabled: div.innerHTML = String on a connected element.
+PASS TT enabled: div.innerHTML = String on a non-connected element.
+PASS TT enabled: iframe.srcdoc = String on a connected element.
+PASS TT enabled: iframe.srcdoc = String on a non-connected element.
+PASS TT enabled: iframe.srcdoc = String on a connected element.
+PASS TT enabled: iframe.srcdoc = String on a non-connected element.
+PASS TT enabled: script.text = String on a connected element.
+PASS TT enabled: script.text = String on a non-connected element.
+PASS TT enabled: script.text = String on a connected element.
+PASS TT enabled: script.text = String on a non-connected element.
 FAIL TT enabled: script.innerText = String on a connected element. assert_throws_js: function "_ => { elem[attr] = value; }" did not throw
 FAIL TT enabled: script.innerText = String on a non-connected element. assert_throws_js: function "_ => { elem[attr] = value; }" did not throw
 FAIL TT enabled: script.innerText = String on a connected element. assert_throws_js: function "_ => { elem[attr] = value; }" did not throw

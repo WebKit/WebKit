@@ -5,23 +5,30 @@ CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'two' because it vi
 CONSOLE MESSAGE: Refused to load because it does not appear in the object-src directive of the Content Security Policy.
 CONSOLE MESSAGE: [Report Only] Refused to create a TrustedTypePolicy named 'one' because it violates the following Content Security Policy directive: "trusted-types two"
 CONSOLE MESSAGE: Refused to load because it does not appear in the object-src directive of the Content Security Policy.
-CONSOLE MESSAGE: SyntaxError: Unexpected token '<'
+CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: Refused to load because it does not appear in the object-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load because it does not appear in the object-src directive of the Content Security Policy.
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+
+abc
 
 
-
-Harness Error (FAIL), message = SyntaxError: Unexpected token '<'
+Harness Error (TIMEOUT), message = null
 
 PASS Trusted Type violation report: creating a forbidden policy.
 PASS Trusted Type violation report: creating a report-only-forbidden policy.
 PASS Trusted Type violation report: creating a forbidden-but-not-reported policy.
-TIMEOUT Trusted Type violation report: assign string to script url Test timed out
-NOTRUN Trusted Type violation report: assign string to html
-NOTRUN Trusted Type violation report: assign trusted script to script; no report
-NOTRUN Trusted Type violation report: assign trusted HTML to html; no report
-NOTRUN Trusted Type violation report: sample for innerHTML assignment
-NOTRUN Trusted Type violation report: sample for text assignment
-NOTRUN Trusted Type violation report: sample for script.src assignment
-NOTRUN Trusted Type violation report: sample for script innerText assignment
+PASS Trusted Type violation report: assign string to script url
+PASS Trusted Type violation report: assign string to html
+PASS Trusted Type violation report: assign trusted script to script; no report
+PASS Trusted Type violation report: assign trusted HTML to html; no report
+PASS Trusted Type violation report: sample for innerHTML assignment
+PASS Trusted Type violation report: sample for text assignment
+PASS Trusted Type violation report: sample for script.src assignment
+TIMEOUT Trusted Type violation report: sample for script innerText assignment Test timed out
 NOTRUN Trusted Type violation report: sample for SVGScriptElement href assignment
 NOTRUN Trusted Type violation report: sample for SVGScriptElement href assignment by setAttribute
 NOTRUN Trusted Type violation report: sample for SVGScriptElement text assignment

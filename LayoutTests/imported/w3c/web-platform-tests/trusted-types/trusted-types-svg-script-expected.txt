@@ -1,9 +1,8 @@
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 
 Harness Error (TIMEOUT), message = null
 
-FAIL Assign String to SVGScriptElement.innerHTML. assert_throws_js: function "_ => {
-        document.getElementById("script").innerHTML = "'modified via innerHTML';";
-      }" did not throw
+PASS Assign String to SVGScriptElement.innerHTML.
 PASS Assign TrustedHTML to SVGScriptElement.innerHTML.
 TIMEOUT Assign TrustedHTML to SVGScriptElement.innerHTML and execute it. Test timed out
 NOTRUN Modify SVGScriptElement via DOM manipulation.

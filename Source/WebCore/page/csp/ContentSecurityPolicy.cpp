@@ -776,6 +776,39 @@ AllowTrustedTypePolicy ContentSecurityPolicy::allowTrustedTypesPolicy(const Stri
         : details;
 }
 
+// https://w3c.github.io/trusted-types/dist/spec/#does-sink-require-trusted-types
+bool ContentSecurityPolicy::requireTrustedTypesForSinkGroup(const String& sinkGroup) const
+{
+    bool required = false;
+    for (auto& policy : m_policies) {
+        if (policy->requiresTrustedTypesForScript() && sinkGroup == "script"_s) {
+            required = true;
+            break;
+        }
+    }
+    return required;
+}
+
+// https://w3c.github.io/trusted-types/dist/spec/#should-block-sink-type-mismatch
+bool ContentSecurityPolicy::allowMissingTrustedTypesForSinkGroup(const String& stringContext, const String& sink, const String& sinkGroup, const String& source) const
+{
+    return allOf(m_policies, [&](auto& policy) {
+        bool isAllowed = true;
+        if (policy->requiresTrustedTypesForScript() && sinkGroup == "script"_s) {
+            if (!policy->isReportOnly())
+                isAllowed = false;
+
+            String consoleMessage = makeString(policy->isReportOnly() ? "[Report Only] " : "",
+                "This requires a "_s, stringContext, " value else it violates the following Content Security Policy directive: \"require-trusted-types-for 'script'\""_s);
+
+            TextPosition sourcePosition(OrdinalNumber::beforeFirst(), OrdinalNumber());
+            String sample = makeString(sink, '|', source);
+            reportViolation("require-trusted-types-for"_s, *policy, "trusted-types-sink"_s, consoleMessage, nullString(), sample, sourcePosition, nullptr);
+        }
+        return isAllowed;
+    });
+}
+
 static bool shouldReportProtocolOnly(const URL& url)
 {
     // FIXME: https://w3c.github.io/webappsec-csp/#strip-url-for-use-in-reports suggests this should
@@ -838,7 +871,7 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
     bool usesReportTo = !violatedDirectiveList.reportToTokens().isEmpty();
 
     String blockedURI;
-    if (blockedURLString == "eval"_s || blockedURLString == "inline"_s || blockedURLString == "trusted-types-policy"_s)
+    if (blockedURLString == "eval"_s || blockedURLString == "inline"_s || blockedURLString == "trusted-types-policy"_s || blockedURLString == "trusted-types-sink"_s)
         blockedURI = blockedURLString;
     else {
         // If there is a redirect then we use the pre-redirect URL: https://www.w3.org/TR/CSP3/#security-violation-reports.

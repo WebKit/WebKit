@@ -1,23 +1,31 @@
+CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Count SecurityPolicyViolation events. Test timed out
-FAIL script.src no default policy assert_throws_js: function "_ => element[c[1]] = "nodefault"" did not throw
-FAIL div.innerHTML no default policy assert_throws_js: function "_ => element[c[1]] = "nodefault"" did not throw
-FAIL script.text no default policy assert_throws_js: function "_ => element[c[1]] = "nodefault"" did not throw
-FAIL script.src default assert_equals: expected "sanitized: abc" but got "http://localhost:8800/trusted-types/abc"
-FAIL script.src null assert_throws_js: function "_ => element[c[1]] = "null"" did not throw
-FAIL script.src throw assert_throws_js: function "_ => element[c[1]] = "throw"" did not throw
-FAIL script.src undefined assert_throws_js: function "_ => element[c[1]] = "undefined"" did not throw
-FAIL script.src typeerror assert_throws_js: function "_ => element[c[1]] = "typeerror"" did not throw
-FAIL div.innerHTML default assert_equals: expected "sanitized: abc" but got "abc"
-FAIL div.innerHTML null assert_throws_js: function "_ => element[c[1]] = "null"" did not throw
-FAIL div.innerHTML throw assert_throws_js: function "_ => element[c[1]] = "throw"" did not throw
-FAIL div.innerHTML undefined assert_throws_js: function "_ => element[c[1]] = "undefined"" did not throw
-FAIL div.innerHTML typeerror assert_throws_js: function "_ => element[c[1]] = "typeerror"" did not throw
-FAIL script.text default assert_equals: expected "sanitized: abc" but got "abc"
-FAIL script.text null assert_throws_js: function "_ => element[c[1]] = "null"" did not throw
-FAIL script.text throw assert_throws_js: function "_ => element[c[1]] = "throw"" did not throw
-FAIL script.text undefined assert_throws_js: function "_ => element[c[1]] = "undefined"" did not throw
-FAIL script.text typeerror assert_throws_js: function "_ => element[c[1]] = "typeerror"" did not throw
+PASS Count SecurityPolicyViolation events.
+PASS script.src no default policy
+PASS div.innerHTML no default policy
+PASS script.text no default policy
+PASS script.src default
+PASS script.src null
+PASS script.src throw
+PASS script.src undefined
+PASS script.src typeerror
+PASS div.innerHTML default
+PASS div.innerHTML null
+PASS div.innerHTML throw
+PASS div.innerHTML undefined
+PASS div.innerHTML typeerror
+PASS script.text default
+PASS script.text null
+PASS script.text throw
+PASS script.text undefined
+PASS script.text typeerror
 

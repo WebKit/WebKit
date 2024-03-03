@@ -1,52 +1,26 @@
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
 
-
-FAIL importScripts with TrustedScriptURL works in dedicated worker Load failed
-FAIL importScripts with untrusted URLs throws in dedicated worker assert_throws_js: importScripts(untrusted_url) function "function() { importScripts(untrusted_url) }" threw object "NetworkError: Load failed" ("NetworkError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL null is not a trusted script URL throws in dedicated worker assert_throws_js: importScripts(null) function "function() { importScripts(null) }" threw object "NetworkError: Load failed" ("NetworkError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL importScripts with two URLs, both trusted, in dedicated worker Load failed
-FAIL importScripts with two URLs, both strings, in dedicated worker assert_throws_js: importScripts(untrusted_url, untrusted_url2) function "function() { importScripts(untrusted_url, untrusted_url2) }" threw object "NetworkError: Load failed" ("NetworkError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL importScripts with two URLs, one trusted, in dedicated worker assert_throws_js: importScripts(untrusted_url, trusted_url) function "function() { importScripts(untrusted_url, trusted_url) }" threw object "NetworkError: Load failed" ("NetworkError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL importScripts with untrusted URLs and default policy works in dedicated worker Load failed
-FAIL importScripts with one trusted and one untrusted URLs and default policy works in dedicated worker Load failed
-FAIL importScripts with TrustedScriptURL works in service worker Load failed
-FAIL importScripts with untrusted URLs throws in service worker assert_throws_js: importScripts(untrusted_url) function "function() { importScripts(untrusted_url) }" threw object "NetworkError: Load failed" ("NetworkError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL null is not a trusted script URL throws in service worker assert_throws_js: importScripts(null) function "function() { importScripts(null) }" threw object "NetworkError: Load failed" ("NetworkError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL importScripts with two URLs, both trusted, in service worker Load failed
-FAIL importScripts with two URLs, both strings, in service worker assert_throws_js: importScripts(untrusted_url, untrusted_url2) function "function() { importScripts(untrusted_url, untrusted_url2) }" threw object "NetworkError: Load failed" ("NetworkError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL importScripts with two URLs, one trusted, in service worker assert_throws_js: importScripts(untrusted_url, trusted_url) function "function() { importScripts(untrusted_url, trusted_url) }" threw object "NetworkError: Load failed" ("NetworkError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL importScripts with untrusted URLs and default policy works in service worker Load failed
-FAIL importScripts with one trusted and one untrusted URLs and default policy works in service worker Load failed
-FAIL importScripts with TrustedScriptURL works in shared worker Load failed
-FAIL importScripts with untrusted URLs throws in shared worker assert_throws_js: importScripts(untrusted_url) function "function() { importScripts(untrusted_url) }" threw object "NetworkError: Load failed" ("NetworkError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL null is not a trusted script URL throws in shared worker assert_throws_js: importScripts(null) function "function() { importScripts(null) }" threw object "NetworkError: Load failed" ("NetworkError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL importScripts with two URLs, both trusted, in shared worker Load failed
-FAIL importScripts with two URLs, both strings, in shared worker assert_throws_js: importScripts(untrusted_url, untrusted_url2) function "function() { importScripts(untrusted_url, untrusted_url2) }" threw object "NetworkError: Load failed" ("NetworkError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL importScripts with two URLs, one trusted, in shared worker assert_throws_js: importScripts(untrusted_url, trusted_url) function "function() { importScripts(untrusted_url, trusted_url) }" threw object "NetworkError: Load failed" ("NetworkError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL importScripts with untrusted URLs and default policy works in shared worker Load failed
-FAIL importScripts with one trusted and one untrusted URLs and default policy works in shared worker Load failed
+PASS importScripts with TrustedScriptURL works in dedicated worker
+PASS importScripts with untrusted URLs throws in dedicated worker
+PASS null is not a trusted script URL throws in dedicated worker
+PASS importScripts with two URLs, both trusted, in dedicated worker
+PASS importScripts with two URLs, both strings, in dedicated worker
+PASS importScripts with two URLs, one trusted, in dedicated worker
+PASS importScripts with untrusted URLs and default policy works in dedicated worker
+PASS importScripts with one trusted and one untrusted URLs and default policy works in dedicated worker
+PASS importScripts with TrustedScriptURL works in service worker
+PASS importScripts with untrusted URLs throws in service worker
+PASS null is not a trusted script URL throws in service worker
+PASS importScripts with two URLs, both trusted, in service worker
+PASS importScripts with two URLs, both strings, in service worker
+PASS importScripts with two URLs, one trusted, in service worker
+PASS importScripts with untrusted URLs and default policy works in service worker
+PASS importScripts with one trusted and one untrusted URLs and default policy works in service worker
+PASS importScripts with TrustedScriptURL works in shared worker
+PASS importScripts with untrusted URLs throws in shared worker
+PASS null is not a trusted script URL throws in shared worker
+PASS importScripts with two URLs, both trusted, in shared worker
+PASS importScripts with two URLs, both strings, in shared worker
+PASS importScripts with two URLs, one trusted, in shared worker
+PASS importScripts with untrusted URLs and default policy works in shared worker
+PASS importScripts with one trusted and one untrusted URLs and default policy works in shared worker
 

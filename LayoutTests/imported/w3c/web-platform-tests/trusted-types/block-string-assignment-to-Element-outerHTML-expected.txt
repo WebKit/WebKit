@@ -1,12 +1,9 @@
-Fail.Hi, I want to be transformed!
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 
 PASS outerHTML with html assigned via policy (successful HTML transformation).
-FAIL `outerHTML = string` throws. assert_throws_js: function "_ => {
-      d.outerHTML = "Fail.";
-    }" did not throw
-FAIL `outerHTML = null` throws. assert_throws_js: function "_ => {
-      d.outerHTML = null;
-    }" did not throw
-FAIL `outerHTML = string` assigned via default policy (successful HTML transformation). assert_equals: expected "Quack, I want to be a duck!" but got "Fail.Hi, I want to be transformed!"
-FAIL `outerHTML = null` assigned via default policy does not throw assert_equals: expected "" but got "Fail.Hi, I want to be transformed!"
+PASS `outerHTML = string` throws.
+PASS `outerHTML = null` throws.
+PASS `outerHTML = string` assigned via default policy (successful HTML transformation).
+PASS `outerHTML = null` assigned via default policy does not throw
 

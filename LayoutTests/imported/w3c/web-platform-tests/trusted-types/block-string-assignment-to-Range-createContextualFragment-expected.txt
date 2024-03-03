@@ -1,11 +1,9 @@
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 
 PASS range.createContextualFragment assigned via policy (successful HTML transformation).
-FAIL `range.createContextualFragment(string)` throws. assert_throws_js: function "_ => {
-      var result = range.createContextualFragment("A string");
-    }" did not throw
-FAIL `range.createContextualFragment(null)` throws. assert_throws_js: function "_ => {
-      var result = range.createContextualFragment(null);
-    }" did not throw
-FAIL `range.createContextualFragment(string)` assigned via default policy (successful HTML transformation). assert_equals: expected "Quack, I want to be a duck!" but got "Hi, I want to be transformed!"
+PASS `range.createContextualFragment(string)` throws.
+PASS `range.createContextualFragment(null)` throws.
+PASS `range.createContextualFragment(string)` assigned via default policy (successful HTML transformation).
 PASS `range.createContextualFragment(null)` assigned via default policy does not throw.
 

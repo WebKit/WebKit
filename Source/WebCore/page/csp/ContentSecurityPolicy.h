@@ -151,6 +151,8 @@ public:
     bool allowBaseURI(const URL&, bool overrideContentSecurityPolicy = false) const;
 
     AllowTrustedTypePolicy allowTrustedTypesPolicy(const String&, bool isDuplicate) const;
+    bool requireTrustedTypesForSinkGroup(const String& sinkGroup) const;
+    bool allowMissingTrustedTypesForSinkGroup(const String& stringContext, const String& sink, const String& sinkGroup, const String& source) const;
 
     void setOverrideAllowInlineStyle(bool);
 
