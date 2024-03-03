@@ -897,6 +897,7 @@ http/tests/subresource-integrity [ Skip ]
 http/tests/webarchive [ Skip ]
 http/tests/webcodecs [ Skip ]
 http/tests/webgpu [ Skip ]
+fast/webgpu [ Skip ]
 http/tests/webrtc [ Skip ]
 http/tests/webshare [ Skip ]
 
