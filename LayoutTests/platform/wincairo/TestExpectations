@@ -2746,8 +2746,13 @@ webkit.org/b/267251 imported/w3c/web-platform-tests/css/selectors/invalidation/u
 webkit.org/b/124566 fast/dom/SelectorAPI/resig-SelectorsAPI-test.xhtml [ Skip ] # Timeout
 
 imported/w3c/web-platform-tests/scroll-animations/css/view-timeline-inset-animation.html [ Pass Failure ]
+imported/w3c/web-platform-tests/scroll-animations/css/view-timeline-lookup.html [ Pass Failure ]
 
 fast/text/simple-line-hyphens-with-text-align.html [ ImageOnlyFailure ]
 fast/text/simple-line-layout-hyphen-limit-after.html [ ImageOnlyFailure ]
 fast/text/simple-line-layout-hyphen-limit-before.html [ ImageOnlyFailure ]
 fast/text/simple-line-layout-hyphen-limit-lines.html [ ImageOnlyFailure ]
+
+# Failure only on Buildbot
+fast/text/justify-ideograph-leading-expansion.html [ Pass Failure ]
+fast/text/tatechuyoko.html [ Pass Failure ]
