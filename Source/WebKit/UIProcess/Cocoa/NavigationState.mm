@@ -514,7 +514,7 @@ static void tryInterceptNavigation(Ref<API::NavigationAction>&& navigationAction
 #if ENABLE(WK_WEB_EXTENSIONS)
 static bool isUnsupportedWebExtensionNavigation(API::NavigationAction& navigationAction, WebPageProxy& page)
 {
-    auto *requiredBaseURL = page.cocoaView().get().configuration._requiredWebExtensionBaseURL;
+    auto *requiredBaseURL = page.cocoaView().get()._requiredWebExtensionBaseURL;
     if (!requiredBaseURL)
         return false;
 
