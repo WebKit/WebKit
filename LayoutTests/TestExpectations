@@ -3301,7 +3301,6 @@ imported/w3c/web-platform-tests/css/css-pseudo/highlight-currentcolor-painting-t
 imported/w3c/web-platform-tests/css/css-pseudo/highlight-currentcolor-painting-text-shadow-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/highlight-currentcolor-root-explicit-default-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/highlight-currentcolor-root-implicit-default-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-pseudo/highlight-currentcolor-root-implicit-default-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/highlight-painting-soft-hyphens-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/highlight-paired-cascade-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/highlight-paired-cascade-004.html [ ImageOnlyFailure ]

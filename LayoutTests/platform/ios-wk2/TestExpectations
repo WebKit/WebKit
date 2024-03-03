@@ -2348,9 +2348,7 @@ http/wpt/opener/child-access-parent-via-windowproxy.html [ Pass ]
 http/wpt/opener/iframe-access-top-via-windowproxy.html [ Pass ]
 http/wpt/opener/parent-access-child-via-windowproxy.html [ Pass ]
 
-# webkit.org/b/267890 REGRESSION (273260@main): [ iOS17 ]ASSERTION FAILED: isStackingContext() result of 5 tests in fast/forms/switch to consistent timeout/crash
-[ Debug ] fast/forms/switch/click-animation-disabled.html [ Crash ]
-[ Debug ] fast/forms/switch/pointer-tracking-disabled.html [ Crash ]
+# webkit.org/b/267890 REGRESSION (273260@main): [ iOS17 ] 3 tests in fast/forms/switch regularly timeout
 fast/forms/switch/pointer-tracking-there-and-back-again-rtl.html [ Timeout ]
 fast/forms/switch/pointer-tracking-there-and-back-again.html [ Timeout ]
 fast/forms/switch/pointer-tracking.html [ Timeout ]
