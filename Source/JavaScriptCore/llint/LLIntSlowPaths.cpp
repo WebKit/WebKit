@@ -661,6 +661,43 @@ LLINT_SLOW_PATH_DECL(slow_path_instanceof)
     LLINT_RETURN(jsBoolean(JSObject::defaultHasInstance(globalObject, value, proto)));
 }
 
+LLINT_SLOW_PATH_DECL(slow_path_create_lexical_environment)
+{
+    LLINT_BEGIN();
+    auto bytecode = pc->as<OpCreateLexicalEnvironment>();
+    JSScope* currentScope = callFrame->uncheckedR(bytecode.m_scope).Register::scope();
+    SymbolTable* symbolTable = jsCast<SymbolTable*>(getOperand(callFrame, bytecode.m_symbolTable));
+    JSValue initialValue = getOperand(callFrame, bytecode.m_initialValue);
+    ASSERT(initialValue == jsUndefined() || initialValue == jsTDZValue());
+    JSScope* newScope = JSLexicalEnvironment::create(vm, globalObject, currentScope, symbolTable, initialValue);
+    LLINT_RETURN(newScope);
+}
+
+LLINT_SLOW_PATH_DECL(slow_path_create_direct_arguments)
+{
+    LLINT_BEGIN();
+    auto bytecode = pc->as<OpCreateDirectArguments>();
+    LLINT_RETURN(DirectArguments::createByCopying(globalObject, callFrame));
+}
+
+LLINT_SLOW_PATH_DECL(slow_path_create_scoped_arguments)
+{
+    LLINT_BEGIN();
+    auto bytecode = pc->as<OpCreateScopedArguments>();
+    JSLexicalEnvironment* scope = jsCast<JSLexicalEnvironment*>(getOperand(callFrame, bytecode.m_scope));
+    ScopedArgumentsTable* table = scope->symbolTable()->arguments();
+    LLINT_RETURN(ScopedArguments::createByCopying(globalObject, callFrame, table, scope));
+}
+
+LLINT_SLOW_PATH_DECL(slow_path_create_cloned_arguments)
+{
+    LLINT_BEGIN();
+    auto bytecode = pc->as<OpCreateClonedArguments>();
+    auto result = ClonedArguments::createWithMachineFrame(globalObject, callFrame, ArgumentsMode::Cloned);
+    EXCEPTION_ASSERT(throwScope.exception() || result);
+    LLINT_RETURN(result);
+}
+
 LLINT_SLOW_PATH_DECL(slow_path_try_get_by_id)
 {
     LLINT_BEGIN();
