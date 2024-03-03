@@ -1,0 +1,10 @@
+<script>
+    if (window.testRunner)
+            testRunner.dumpAsText();
+function fuzz() {
+    if (window.IPC)
+        IPC.sendMessage('Networking',0,IPC.messages.NetworkProcess_ClearBundleIdentifier.name,[]);
+}
+</script>
+<body onload='fuzz()'></body>
+<div>This test should not crash</div>
