@@ -725,8 +725,10 @@ class PendingImageBitmap final : public RefCounted<PendingImageBitmap>, public A
 public:
     static void fetch(ScriptExecutionContext& scriptExecutionContext, RefPtr<Blob>&& blob, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmap::ImageBitmapCompletionHandler&& completionHandler)
     {
-        if (scriptExecutionContext.activeDOMObjectsAreStopped())
+        if (scriptExecutionContext.activeDOMObjectsAreStopped()) {
+            completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create ImageBitmap in a document without browsing context"_s });
             return;
+        }
         Ref pendingImageBitmap = adoptRef(*new PendingImageBitmap(scriptExecutionContext, WTFMove(blob), WTFMove(options), WTFMove(rect), WTFMove(completionHandler)));
         pendingImageBitmap->suspendIfNeeded();
         pendingImageBitmap->start(scriptExecutionContext);
