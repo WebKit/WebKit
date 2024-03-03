@@ -46,7 +46,6 @@ VideoPixelFormat convertVideoFramePixelFormat(uint32_t format, bool shouldDiscar
         return shouldDiscardAlpha ? VideoPixelFormat::BGRX : VideoPixelFormat::BGRA;
     if (format == kCVPixelFormatType_32ARGB)
         return shouldDiscardAlpha ? VideoPixelFormat::RGBX : VideoPixelFormat::RGBA;
-    ASSERT_NOT_REACHED();
 #elif USE(GSTREAMER)
     switch (format) {
     case GST_VIDEO_FORMAT_I420:

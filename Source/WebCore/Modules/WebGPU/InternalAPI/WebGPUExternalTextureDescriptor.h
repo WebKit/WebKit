@@ -38,11 +38,11 @@ typedef struct __CVBuffer* CVPixelBufferRef;
 namespace WebCore::WebGPU {
 
 #if ENABLE(VIDEO) && PLATFORM(COCOA)
-using VideoSourceIdentifier = std::variant<WebCore::MediaPlayerIdentifier, RefPtr<WebCore::VideoFrame>, RetainPtr<CVPixelBufferRef>>;
+using VideoSourceIdentifier = std::variant<std::optional<WebCore::MediaPlayerIdentifier>, RefPtr<WebCore::VideoFrame>, RetainPtr<CVPixelBufferRef>>;
 #elif ENABLE(VIDEO)
-using VideoSourceIdentifier = std::variant<WebCore::MediaPlayerIdentifier, RefPtr<WebCore::VideoFrame>, void*>;
+using VideoSourceIdentifier = std::variant<std::optional<WebCore::MediaPlayerIdentifier>, RefPtr<WebCore::VideoFrame>, void*>;
 #else
-using VideoSourceIdentifier = std::variant<WebCore::MediaPlayerIdentifier, void*>;
+using VideoSourceIdentifier = std::variant<std::optional<WebCore::MediaPlayerIdentifier>, void*>;
 #endif
 
 struct ExternalTextureDescriptor : public ObjectDescriptorBase {
