@@ -973,10 +973,6 @@ bool HTMLTreeBuilder::processTemplateEndTag(AtomHTMLToken&& token)
     Ref templateElement = checkedDowncast<HTMLTemplateElement>(m_tree.openElements().top());
     m_tree.openElements().pop();
 
-    auto& item = adjustedCurrentStackItem();
-    RELEASE_ASSERT(item.isElement());
-    Ref shadowHost = item.element();
-
     m_tree.activeFormattingElements().clearToLastMarker();
     m_templateInsertionModes.removeLast();
     resetInsertionModeAppropriately();
