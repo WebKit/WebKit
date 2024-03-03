@@ -219,61 +219,61 @@ bool InputType::isValidValue(const String& value) const
 {
     switch (m_type) {
     case Type::Button:
-        return validateInputType(downcast<ButtonInputType>(*this), value);
+        return validateInputType(uncheckedDowncast<ButtonInputType>(*this), value);
     case Type::Checkbox:
-        return validateInputType(downcast<CheckboxInputType>(*this), value);
+        return validateInputType(uncheckedDowncast<CheckboxInputType>(*this), value);
 #if ENABLE(INPUT_TYPE_COLOR)
     case Type::Color:
-        return validateInputType(downcast<ColorInputType>(*this), value);
+        return validateInputType(uncheckedDowncast<ColorInputType>(*this), value);
 #endif
 #if ENABLE(INPUT_TYPE_DATE)
     case Type::Date:
-        return validateInputType(downcast<DateInputType>(*this), value);
+        return validateInputType(uncheckedDowncast<DateInputType>(*this), value);
 #endif
 #if ENABLE(INPUT_TYPE_DATETIMELOCAL)
     case Type::DateTimeLocal:
-        return validateInputType(downcast<DateTimeLocalInputType>(*this), value);
+        return validateInputType(uncheckedDowncast<DateTimeLocalInputType>(*this), value);
 #endif
     case Type::Email:
-        return validateInputType(downcast<EmailInputType>(*this), value);
+        return validateInputType(uncheckedDowncast<EmailInputType>(*this), value);
     case Type::File:
-        return validateInputType(downcast<FileInputType>(*this), value);
+        return validateInputType(uncheckedDowncast<FileInputType>(*this), value);
     case Type::Hidden:
-        return validateInputType(downcast<HiddenInputType>(*this), value);
+        return validateInputType(uncheckedDowncast<HiddenInputType>(*this), value);
     case Type::Image:
-        return validateInputType(downcast<ImageInputType>(*this), value);
+        return validateInputType(uncheckedDowncast<ImageInputType>(*this), value);
 #if ENABLE(INPUT_TYPE_MONTH)
     case Type::Month:
-        return validateInputType(downcast<MonthInputType>(*this), value);
+        return validateInputType(uncheckedDowncast<MonthInputType>(*this), value);
 #endif
     case Type::Number:
-        return validateInputType(downcast<NumberInputType>(*this), value);
+        return validateInputType(uncheckedDowncast<NumberInputType>(*this), value);
     case Type::Password:
-        return validateInputType(downcast<PasswordInputType>(*this), value);
+        return validateInputType(uncheckedDowncast<PasswordInputType>(*this), value);
     case Type::Radio:
-        return validateInputType(downcast<RadioInputType>(*this), value);
+        return validateInputType(uncheckedDowncast<RadioInputType>(*this), value);
     case Type::Range:
-        return validateInputType(downcast<RangeInputType>(*this), value);
+        return validateInputType(uncheckedDowncast<RangeInputType>(*this), value);
     case Type::Reset:
-        return validateInputType(downcast<ResetInputType>(*this), value);
+        return validateInputType(uncheckedDowncast<ResetInputType>(*this), value);
     case Type::Search:
-        return validateInputType(downcast<SearchInputType>(*this), value);
+        return validateInputType(uncheckedDowncast<SearchInputType>(*this), value);
     case Type::Submit:
-        return validateInputType(downcast<SubmitInputType>(*this), value);
+        return validateInputType(uncheckedDowncast<SubmitInputType>(*this), value);
     case Type::Telephone:
-        return validateInputType(downcast<TelephoneInputType>(*this), value);
+        return validateInputType(uncheckedDowncast<TelephoneInputType>(*this), value);
 #if ENABLE(INPUT_TYPE_TIME)
     case Type::Time:
-        return validateInputType(downcast<TimeInputType>(*this), value);
+        return validateInputType(uncheckedDowncast<TimeInputType>(*this), value);
 #endif
     case Type::URL:
-        return validateInputType(downcast<URLInputType>(*this), value);
+        return validateInputType(uncheckedDowncast<URLInputType>(*this), value);
 #if ENABLE(INPUT_TYPE_WEEK)
     case Type::Week:
-        return validateInputType(downcast<WeekInputType>(*this), value);
+        return validateInputType(uncheckedDowncast<WeekInputType>(*this), value);
 #endif
     case Type::Text:
-        return validateInputType(downcast<TextInputType>(*this), value);
+        return validateInputType(uncheckedDowncast<TextInputType>(*this), value);
     default:
         break;
     }
