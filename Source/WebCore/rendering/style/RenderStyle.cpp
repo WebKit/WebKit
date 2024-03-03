@@ -2770,21 +2770,21 @@ void RenderStyle::setLineHeight(Length&& height)
     SET_VAR(m_inheritedData, lineHeight, WTFMove(height));
 }
 
-int RenderStyle::computedLineHeight() const
+float RenderStyle::computedLineHeight() const
 {
     return computeLineHeight(lineHeight());
 }
 
-int RenderStyle::computeLineHeight(const Length& lineHeightLength) const
+float RenderStyle::computeLineHeight(const Length& lineHeightLength) const
 {
     // Negative value means the line height is not set. Use the font's built-in spacing.
     if (lineHeightLength.isNegative())
-        return metricsOfPrimaryFont().intLineSpacing();
+        return metricsOfPrimaryFont().lineSpacing();
 
     if (lineHeightLength.isPercentOrCalculated())
-        return minimumValueForLength(lineHeightLength, computedFontSize());
+        return minimumValueForLength(lineHeightLength, computedFontSize()).toFloat();
 
-    return clampTo<int>(lineHeightLength.value());
+    return lineHeightLength.value();
 }
 
 // FIXME: Remove this after all old calls to whiteSpace() are replaced with appropriate

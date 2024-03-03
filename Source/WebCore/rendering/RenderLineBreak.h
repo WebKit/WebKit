@@ -88,8 +88,8 @@ private:
     void updateFromStyle() final;
     bool requiresLayer() const final { return false; }
 
-    LegacyInlineElementBox* m_inlineBoxWrapper;
-    mutable int m_cachedLineHeight;
+    LegacyInlineElementBox* m_inlineBoxWrapper { nullptr };
+    mutable std::optional<LayoutUnit> m_cachedLineHeight { };
 };
 
 } // namespace WebCore

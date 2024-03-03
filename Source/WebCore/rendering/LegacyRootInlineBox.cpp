@@ -359,7 +359,7 @@ LayoutUnit LegacyRootInlineBox::lineSnapAdjustment(LayoutUnit delta) const
     // as established by the line box.
     // FIXME: Need to handle crazy line-box-contain values that cause the root line box to not be considered. I assume
     // the grid should honor line-box-contain.
-    LayoutUnit gridLineHeight = lineGrid->style().computedLineHeight();
+    auto gridLineHeight = LayoutUnit::fromFloatCeil(lineGrid->style().computedLineHeight());
     if (!roundToInt(gridLineHeight))
         return 0;
 

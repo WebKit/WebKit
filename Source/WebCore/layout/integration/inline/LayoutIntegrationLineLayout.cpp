@@ -297,7 +297,7 @@ static inline std::optional<Layout::BlockLayoutState::LineGrid> lineGrid(const R
         }
 
         auto columnWidth = lineGrid->style().fontCascade().primaryFont().maxCharWidth();
-        auto rowHeight = lineGrid->style().computedLineHeight();
+        auto rowHeight = LayoutUnit::fromFloatCeil(lineGrid->style().computedLineHeight());
         auto topRowOffset = lineGrid->borderAndPaddingBefore();
 
         std::optional<LayoutSize> paginationOrigin;

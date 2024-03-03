@@ -211,7 +211,7 @@ void RenderLayoutState::computeLineGridPaginationOrigin(const RenderMultiColumnF
 
     // Shift to the next highest line grid multiple past the page logical top. Cache the delta
     // between this new value and the page logical top as the pagination origin.
-    auto lineBoxHeight = m_lineGrid->style().computedLineHeight();
+    auto lineBoxHeight = LayoutUnit::fromFloatCeil(m_lineGrid->style().computedLineHeight());
     if (!roundToInt(lineBoxHeight))
         return;
     LayoutUnit remainder = roundToInt(pageLogicalTop - firstLineTop) % roundToInt(lineBoxHeight);

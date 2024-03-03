@@ -68,4 +68,4 @@ layer at (8,901) size 161x32 clip at (9,902) size 159x30
     RenderBlock {DIV} at (3,3) size 155x13
 layer at (8,973) size 406x206 clip at (9,974) size 404x204
   RenderTextControl {TEXTAREA} at (0,198) size 406x206 [bgcolor=#FFFFFF] [border: (1px dotted #C0C0C0)]
-    RenderBlock {DIV} at (3,3) size 400x53
+    RenderBlock {DIV} at (3,3) size 400x54
