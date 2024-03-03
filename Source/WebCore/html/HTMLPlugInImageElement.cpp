@@ -323,7 +323,8 @@ bool HTMLPlugInImageElement::requestObject(const String& relativeURL, const Stri
         return document->frame()->loader().subframeLoader().requestObject(*this, relativeURL, getNameAttribute(), mimeType, paramNames, paramValues);
 
     document->eventLoop().queueTask(TaskSource::Networking, [this, protectedThis = Ref { *this }, document, relativeURL, nameAttribute = getNameAttribute(), mimeType, paramNames, paramValues]() mutable {
-        document->frame()->loader().subframeLoader().requestObject(*this, relativeURL, nameAttribute, mimeType, paramNames, paramValues);
+        if (this->isConnected())
+            document->frame()->loader().subframeLoader().requestObject(*this, relativeURL, nameAttribute, mimeType, paramNames, paramValues);
     });
     return true;
 }
