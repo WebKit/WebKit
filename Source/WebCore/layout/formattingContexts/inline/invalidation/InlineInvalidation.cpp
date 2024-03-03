@@ -287,6 +287,7 @@ static std::optional<InlineItemPosition> leadingInlineItemPositionOnLastLine(con
 struct InvalidatedLine {
     size_t index { 0 };
     InlineItemPosition leadingInlineItemPosition { };
+    size_t damagedLineIndex { 0 };
 };
 static std::optional<InvalidatedLine> invalidatedLineByDamagedBox(const DamagedContent& damagedContent, const InlineItemList& inlineItemList, const InlineDisplay::Boxes& displayBoxes)
 {
@@ -294,32 +295,35 @@ static std::optional<InvalidatedLine> invalidatedLineByDamagedBox(const DamagedC
     // 1. Find the root inline box based on the damaged layout box (this is our damaged line)
     // 2. Find the first content display box on this damaged line
     // 3. Find the associated InlineItem with partial text offset if applicable
-    auto lineIndex = damagedLineIndex(damagedContent, displayBoxes);
-    if (!lineIndex)
+    auto damagedLine = damagedLineIndex(damagedContent, displayBoxes);
+    if (!damagedLine)
         return { };
-    auto leadingContentDisplayBoxOnInvalidatedLine = leadingContentDisplayForLineIndex(*lineIndex, displayBoxes);
+
+    // We can't be sure whether a newly inserted content introduces a new breaking opportunity, so let's just initiate layout from the previous line.
+    auto lineToInvalidate = damagedContent.type == DamagedContent::Type::Removal ? *damagedLine : !*damagedLine ? 0 : *damagedLine - 1;
+    auto leadingContentDisplayBoxOnInvalidatedLine = leadingContentDisplayForLineIndex(lineToInvalidate, displayBoxes);
     if (!leadingContentDisplayBoxOnInvalidatedLine) {
         // This is a completely empty line (e.g. <div><span> </span></div> where the whitespace is collapsed).
         return { };
     }
     if (auto inlineItemPositionForLeadingDisplayBox = inlineItemPositionForDisplayBox(*leadingContentDisplayBoxOnInvalidatedLine, inlineItemList)) {
-        if (!isValidInlineItemPositionForLine(*inlineItemPositionForLeadingDisplayBox, *lineIndex)) {
+        if (!isValidInlineItemPositionForLine(*inlineItemPositionForLeadingDisplayBox, lineToInvalidate)) {
             ASSERT_NOT_REACHED();
             return { };
         }
         // In some rare cases, the leading display box's inline item position is after the actual damage (e.g. when collapsed leading content is removed).
         if (auto adjustedPosition = inlineItemPositionForDamagedContentPosition(damagedContent, *inlineItemPositionForLeadingDisplayBox, inlineItemList))
-            return InvalidatedLine { *lineIndex, *adjustedPosition };
+            return InvalidatedLine { lineToInvalidate, *adjustedPosition, *damagedLine };
     }
     return { };
 }
 
-static InlineDamage::TrailingDisplayBoxList trailingDisplayBoxesForInvalidatedLines(size_t invalidatedLineIndex, const InlineDisplay::Content& displayContent)
+static InlineDamage::TrailingDisplayBoxList trailingDisplayBoxesAfterDamagedLine(size_t damagedLineIndex, const InlineDisplay::Content& displayContent)
 {
     auto trailingDisplayBoxes = InlineDamage::TrailingDisplayBoxList { };
     auto& lines = displayContent.lines;
     auto& boxes = displayContent.boxes;
-    for (size_t lineIndex = invalidatedLineIndex; lineIndex < lines.size(); ++lineIndex) {
+    for (size_t lineIndex = damagedLineIndex + 1; lineIndex < lines.size(); ++lineIndex) {
         auto lastDisplayBoxIndexForLine = lines[lineIndex].firstBoxIndex() + lines[lineIndex].boxCount() - 1;
         if (lastDisplayBoxIndexForLine >= boxes.size()) {
             ASSERT_NOT_REACHED();
@@ -351,7 +355,7 @@ void InlineInvalidation::updateInlineDamage(InlineDamage::Type type, std::option
     m_inlineDamage.setDamageReason(*reason);
     m_inlineDamage.setDamagedPosition({ invalidatedLine->index, invalidatedLine->leadingInlineItemPosition });
     if (shouldApplyRangeLayout == ShouldApplyRangeLayout::Yes) 
-        m_inlineDamage.setTrailingDisplayBoxes(trailingDisplayBoxesForInvalidatedLines(invalidatedLine->index, m_displayContent));
+        m_inlineDamage.setTrailingDisplayBoxes(trailingDisplayBoxesAfterDamagedLine(invalidatedLine->damagedLineIndex, m_displayContent));
 }
 
 static bool isSupportedContent(const Box& layoutBox)
@@ -397,8 +401,10 @@ bool InlineInvalidation::textInserted(const InlineTextBox& newOrDamagedInlineTex
         break;
     case InlineDamage::Reason::Append:
         // New text box got appended. Let's dirty the last line.
-        if (auto leadingInlineItemPosition = leadingInlineItemPositionOnLastLine(m_inlineItemList, displayBoxes))
-            invalidatedLine = InvalidatedLine { displayBoxes.last().lineIndex(), *leadingInlineItemPosition };
+        if (auto leadingInlineItemPosition = leadingInlineItemPositionOnLastLine(m_inlineItemList, displayBoxes)) {
+            auto lastLineIndex = displayBoxes.last().lineIndex();
+            invalidatedLine = InvalidatedLine { lastLineIndex, *leadingInlineItemPosition, lastLineIndex };
+        }
         break;
     case InlineDamage::Reason::Insert: {
         invalidatedLine = InvalidatedLine { };
@@ -440,8 +446,10 @@ bool InlineInvalidation::inlineLevelBoxInserted(const Box& layoutBox)
             return m_inlineDamage.type() != InlineDamage::Type::Invalid;
         }
         ASSERT(!m_inlineDamage.reasons());
-        if (auto leadingInlineItemPosition = leadingInlineItemPositionOnLastLine(m_inlineItemList, displayBoxes))
-            invalidatedLine = InvalidatedLine { displayBoxes.last().lineIndex(), *leadingInlineItemPosition };
+        if (auto leadingInlineItemPosition = leadingInlineItemPositionOnLastLine(m_inlineItemList, displayBoxes)) {
+            auto lastLineIndex = displayBoxes.last().lineIndex();
+            invalidatedLine = InvalidatedLine { lastLineIndex, *leadingInlineItemPosition, lastLineIndex };
+        }
     } else {
         invalidatedLine = InvalidatedLine { };
         // New box got inserted. Let's damage existing content starting from the previous sibling.
