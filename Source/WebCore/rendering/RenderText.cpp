@@ -962,8 +962,8 @@ RenderText::Widths RenderText::trimmedPreferredWidths(float leadWidth, bool& str
     if (!collapseWhiteSpace)
         stripFrontSpaces = false;
 
-    if (m_hasTab || preferredLogicalWidthsDirty())
-        computePreferredLogicalWidths(leadWidth);
+    if (m_hasTab || preferredLogicalWidthsDirty() || !m_minWidth || !m_maxWidth)
+        computePreferredLogicalWidths(leadWidth, !m_minWidth || !m_maxWidth);
 
     Widths widths;
 
