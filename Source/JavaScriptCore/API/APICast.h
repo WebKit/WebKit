@@ -194,3 +194,71 @@ inline JSContextGroupRef toRef(JSC::VM* g)
 {
     return reinterpret_cast<JSContextGroupRef>(JSC::Integrity::audit(g));
 }
+
+namespace WTF {
+// So we can use WTF::Ref/RefPtr for C API values in the heap.
+template<>
+struct DefaultRefDerefTraits<std::remove_pointer_t<JSValueRef>> {
+    static JSValueRef refIfNotNull(JSValueRef ref)
+    {
+        if (!ref)
+            return ref;
+
+        JSC::JSValue value = toJS(nullptr, ref);
+        ASSERT(!value.isCell() || value.asCell()->vm().currentThreadIsHoldingAPILock());
+        gcProtect(value);
+        return ref;
+    }
+
+    static std::remove_pointer_t<JSValueRef>& ref(std::remove_pointer_t<JSValueRef>& ref)
+    {
+        JSC::JSValue value = toJS(nullptr, &ref);
+        ASSERT(!value.isCell() || value.asCell()->vm().currentThreadIsHoldingAPILock());
+        gcProtect(value);
+        return ref;
+    }
+
+    static void derefIfNotNull(JSValueRef ref)
+    {
+        if (!ref)
+            return;
+
+        JSC::JSValue value = toJS(nullptr, ref);
+        ASSERT(!value.isCell() || value.asCell()->vm().currentThreadIsHoldingAPILock());
+        gcUnprotect(value);
+    }
+};
+
+template<>
+struct DefaultRefDerefTraits<std::remove_pointer_t<JSContextRef>> {
+    static JSContextRef refIfNotNull(JSContextRef context)
+    {
+        if (!context)
+            return context;
+
+        JSC::JSCell* globalObject = toJS(context);
+        ASSERT(globalObject->vm().currentThreadIsHoldingAPILock());
+        gcProtect(globalObject);
+        return context;
+    }
+
+    static std::remove_pointer_t<JSContextRef>& ref(std::remove_pointer_t<JSContextRef>& context)
+    {
+        JSC::JSCell* globalObject = toJS(&context);
+        ASSERT(globalObject->vm().currentThreadIsHoldingAPILock());
+        gcProtect(globalObject);
+        return context;
+    }
+
+    static void derefIfNotNull(JSContextRef context)
+    {
+        if (!context)
+            return;
+
+        JSC::JSCell* globalObject = toJS(context);
+        ASSERT(globalObject->vm().currentThreadIsHoldingAPILock());
+        gcUnprotect(globalObject);
+    }
+};
+
+}

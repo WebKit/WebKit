@@ -27,6 +27,7 @@
 #include "JSBase.h"
 #include "JSBaseInternal.h"
 #include "JSBasePrivate.h"
+#include "JSValueRef.h"
 
 #include "APICast.h"
 #include "Completion.h"

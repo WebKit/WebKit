@@ -349,8 +349,8 @@ private:
 
     WeakPtr<JSIPC> m_jsIPC;
     Type m_type;
-    JSContextRef m_context;
-    JSObjectRef m_callback;
+    Ref<std::remove_ptr_t<JSContextRef>> m_context;
+    Ref<std::remove_ptr_t<JSObjectRef>> m_callback;
 };
 
 class JSIPC : public RefCounted<JSIPC>, public CanMakeWeakPtr<JSIPC> {
@@ -2851,8 +2851,8 @@ JSValueRef JSIPC::processTargets(JSContextRef context, JSObjectRef thisObject, J
 JSMessageListener::JSMessageListener(JSIPC& jsIPC, Type type, JSContextRef context, JSObjectRef callback)
     : m_jsIPC(jsIPC)
     , m_type(type)
-    , m_context(context)
-    , m_callback(callback)
+    , m_context(*context)
+    , m_callback(*callback)
 {
     auto* globalObject = toJS(context);
     auto& vm = globalObject->vm();

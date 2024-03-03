@@ -104,36 +104,8 @@ private:
 };
 
 template<typename T>
-class APIVector : protected Vector<T> {
-    using Base = Vector<T>;
-public:
-    APIVector(APIContext& context)
-        : Base()
-        , m_context(context)
-    {
-    }
+using APIVector = Vector<RefPtr<std::remove_pointer_t<T>>>;
 
-    ~APIVector()
-    {
-        for (auto& value : *this)
-            JSValueUnprotect(m_context, value);
-    }
-
-    using Vector<T>::operator[];
-    using Vector<T>::size;
-    using Vector<T>::begin;
-    using Vector<T>::end;
-    using typename Vector<T>::iterator;
-
-    void append(T value)
-    {
-        JSValueProtect(m_context, value);
-        Base::append(WTFMove(value));
-    }
-
-private:
-    APIContext& m_context;
-};
 
 class TestAPI {
 public:
@@ -178,6 +150,8 @@ private:
 
     bool scriptResultIs(ScriptResult, JSValueRef);
 
+    Ref<std::remove_pointer_t<JSValueRef>> foo();
+
     // Ways to make sets of interesting things.
     APIVector<JSObjectRef> interestingObjects();
     APIVector<JSValueRef> interestingKeys();
@@ -186,8 +160,14 @@ private:
     APIContext context;
 };
 
+Ref<std::remove_pointer_t<JSValueRef>> TestAPI::foo()
+{
+    return *JSValueMakeUndefined(context);
+}
+
 TestAPI::ScriptResult TestAPI::evaluateScript(const char* script, JSObjectRef thisObject)
 {
+    auto f = foo();
     APIString scriptAPIString(script);
     JSValueRef exception = nullptr;
 
@@ -290,7 +270,7 @@ void TestAPI::checkJSAndAPIMatch(const JSFunctor& jsFunctor, const APIFunctor& a
 
 APIVector<JSObjectRef> TestAPI::interestingObjects()
 {
-    APIVector<JSObjectRef> result(context);
+    APIVector<JSObjectRef> result;
     JSObjectRef array = JSValueToObject(context, evaluateScript(
         "[{}, [], { [Symbol.iterator]: 1 }, new Date(), new String('str'), new Map(), new Set(), new WeakMap(), new WeakSet(), new Error(), new Number(42), new Boolean(), { get length() { throw new Error(); } }];").value(), nullptr);
 
@@ -307,7 +287,7 @@ APIVector<JSObjectRef> TestAPI::interestingObjects()
 
 APIVector<JSValueRef> TestAPI::interestingKeys()
 {
-    APIVector<JSValueRef> result(context);
+    APIVector<JSValueRef> result;
     JSObjectRef array = JSValueToObject(context, evaluateScript("[{}, [], 1, Symbol.iterator, 'length']").value(), nullptr);
 
     APIString lengthString("length");
@@ -368,14 +348,14 @@ void TestAPI::symbolsGetPropertyForKey()
     auto keys = interestingKeys();
 
     for (auto& object : objects) {
-        dataLogLn("\nnext object: ", toJS(context, object));
+        dataLogLn("\nnext object: ", toJS(context, object.get()));
         for (auto& key : keys) {
-            dataLogLn("Using key: ", toJS(context, key));
+            dataLogLn("Using key: ", toJS(context, key.get()));
             checkJSAndAPIMatch(
             [&] {
-                return callFunction(getFunction, object, key);
+                return callFunction(getFunction, object.get(), key.get());
             }, [&] (JSValueRef* exception) {
-                return JSObjectGetPropertyForKey(context, object, key, exception);
+                return JSObjectGetPropertyForKey(context, object.get(), key.get(), exception);
             }, "checking get property keys");
         }
     }
@@ -390,28 +370,28 @@ void TestAPI::symbolsSetPropertyForKey()
     JSValueRef theAnswer = JSValueMakeNumber(context, 42);
     for (size_t i = 0; i < jsObjects.size(); i++) {
         for (auto& key : keys) {
-            JSObjectRef jsObject = jsObjects[i];
-            JSObjectRef apiObject = apiObjects[i];
+            JSObjectRef jsObject = jsObjects[i].get();
+            JSObjectRef apiObject = apiObjects[i].get();
             checkJSAndAPIMatch(
                 [&] {
-                    return callFunction(setFunction, jsObject, key, theAnswer);
+                    return callFunction(setFunction, jsObject, key.get(), theAnswer);
                 } , [&] (JSValueRef* exception) {
-                    JSObjectSetPropertyForKey(context, apiObject, key, theAnswer, kJSPropertyAttributeNone, exception);
+                    JSObjectSetPropertyForKey(context, apiObject, key.get(), theAnswer, kJSPropertyAttributeNone, exception);
                     return JSValueMakeUndefined(context);
                 }, "setting property keys to the answer");
             // Check get is the same on API object.
             checkJSAndAPIMatch(
                 [&] {
-                    return callFunction(getFunction, apiObject, key);
+                    return callFunction(getFunction, apiObject, key.get());
                 }, [&] (JSValueRef* exception) {
-                    return JSObjectGetPropertyForKey(context, apiObject, key, exception);
+                    return JSObjectGetPropertyForKey(context, apiObject, key.get(), exception);
                 }, "getting property keys from API objects");
             // Check get is the same on respective objects.
             checkJSAndAPIMatch(
                 [&] {
-                    return callFunction(getFunction, jsObject, key);
+                    return callFunction(getFunction, jsObject, key.get());
                 }, [&] (JSValueRef* exception) {
-                    return JSObjectGetPropertyForKey(context, apiObject, key, exception);
+                    return JSObjectGetPropertyForKey(context, apiObject, key.get(), exception);
                 }, "getting property keys from respective objects");
         }
     }
@@ -425,23 +405,23 @@ void TestAPI::symbolsHasPropertyForKey()
 
     JSValueRef theAnswer = JSValueMakeNumber(context, 42);
     for (auto& object : objects) {
-        dataLogLn("\nNext object: ", toJS(context, object));
+        dataLogLn("\nNext object: ", toJS(context, object.get()));
         for (auto& key : keys) {
-            dataLogLn("Using key: ", toJS(context, key));
+            dataLogLn("Using key: ", toJS(context, key.get()));
             checkJSAndAPIMatch(
                 [&] {
-                    return callFunction(hasFunction, object, key);
+                    return callFunction(hasFunction, object.get(), key.get());
                 }, [&] (JSValueRef* exception) {
-                    return JSValueMakeBoolean(context, JSObjectHasPropertyForKey(context, object, key, exception));
+                    return JSValueMakeBoolean(context, JSObjectHasPropertyForKey(context, object.get(), key.get(), exception));
                 }, "checking has property keys unset");
 
-            check(!!callFunction(setFunction, object, key, theAnswer), "set property to the answer");
+            check(!!callFunction(setFunction, object.get(), key.get(), theAnswer), "set property to the answer");
 
             checkJSAndAPIMatch(
                 [&] {
-                    return callFunction(hasFunction, object, key);
+                    return callFunction(hasFunction, object.get(), key.get());
                 }, [&] (JSValueRef* exception) {
-                    return JSValueMakeBoolean(context, JSObjectHasPropertyForKey(context, object, key, exception));
+                    return JSValueMakeBoolean(context, JSObjectHasPropertyForKey(context, object.get(), key.get(), exception));
                 }, "checking has property keys set");
         }
     }
@@ -456,23 +436,23 @@ void TestAPI::symbolsDeletePropertyForKey()
 
     JSValueRef theAnswer = JSValueMakeNumber(context, 42);
     for (auto& object : objects) {
-        dataLogLn("\nNext object: ", toJS(context, object));
+        dataLogLn("\nNext object: ", toJS(context, object.get()));
         for (auto& key : keys) {
-            dataLogLn("Using key: ", toJS(context, key));
+            dataLogLn("Using key: ", toJS(context, key.get()));
             checkJSAndAPIMatch(
                 [&] {
-                    return callFunction(deleteFunction, object, key);
+                    return callFunction(deleteFunction, object.get(), key.get());
                 }, [&] (JSValueRef* exception) {
-                    return JSValueMakeBoolean(context, JSObjectDeletePropertyForKey(context, object, key, exception));
+                    return JSValueMakeBoolean(context, JSObjectDeletePropertyForKey(context, object.get(), key.get(), exception));
                 }, "checking has property keys unset");
 
-            check(!!callFunction(setFunction, object, key, theAnswer), "set property to the answer");
+            check(!!callFunction(setFunction, object.get(), key.get(), theAnswer), "set property to the answer");
 
             checkJSAndAPIMatch(
                 [&] {
-                    return callFunction(deleteFunction, object, key);
+                    return callFunction(deleteFunction, object.get(), key.get());
                 }, [&] (JSValueRef* exception) {
-                    return JSValueMakeBoolean(context, JSObjectDeletePropertyForKey(context, object, key, exception));
+                    return JSValueMakeBoolean(context, JSObjectDeletePropertyForKey(context, object.get(), key.get(), exception));
                 }, "checking has property keys set");
         }
     }
