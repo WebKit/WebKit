@@ -2778,6 +2778,13 @@ void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldPar
 #endif
     }
 
+    if (lastRememberedLogicalWidth() || lastRememberedLogicalHeight()) {
+        // The disconnected element could be unobserved because of other properties, here we need to make sure it is observed,
+        // so that deliver could be triggered and it would clear lastRememberedSize.
+        document().observeForContainIntrinsicSize(*this);
+        document().resetObservationSizeForContainIntrinsicSize(*this);
+    }
+
     setSavedLayerScrollPosition({ });
 
     if (oldParentOfRemovedTree.isInTreeScope()) {
