@@ -42,6 +42,7 @@
 #if USE(SANDBOX_EXTENSIONS_FOR_CACHE_AND_TEMP_DIRECTORY_ACCESS)
     WebKit::SandboxExtension::Handle containerCachesDirectoryExtensionHandle;
     WebKit::SandboxExtension::Handle containerTemporaryDirectoryExtensionHandle;
+    String containerCachesDirectory;
 #endif
 
 #if PLATFORM(IOS_FAMILY)
