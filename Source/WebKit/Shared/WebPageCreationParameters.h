@@ -32,6 +32,7 @@
 #include "SessionState.h"
 #include "UserContentControllerParameters.h"
 #include "ViewWindowCoordinates.h"
+#include "VisitedLinkTableIdentifier.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebPageGroupData.h"
 #include "WebPageProxyIdentifier.h"
@@ -130,7 +131,7 @@ struct WebPageCreationParameters {
     bool itemStatesWereRestoredByAPIRequest { false };
     Vector<BackForwardListItemState> itemStates;
 
-    uint64_t visitedLinkTableID;
+    VisitedLinkTableIdentifier visitedLinkTableID;
     bool canRunBeforeUnloadConfirmPanel;
     bool canRunModal;
 

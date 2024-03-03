@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,36 +25,11 @@
 
 #pragma once
 
-#include "MessageReceiver.h"
-#include "SharedStringHashTableReadOnly.h"
-#include "VisitedLinkTableIdentifier.h"
-#include <WebCore/SharedMemory.h>
-#include <WebCore/VisitedLinkStore.h>
+#include <wtf/ObjectIdentifier.h>
 
 namespace WebKit {
 
-class VisitedLinkTableController final : public WebCore::VisitedLinkStore, public IPC::MessageReceiver {
-public:
-    static Ref<VisitedLinkTableController> getOrCreate(VisitedLinkTableIdentifier);
-    virtual ~VisitedLinkTableController();
-
-private:
-    explicit VisitedLinkTableController(VisitedLinkTableIdentifier);
-
-    // WebCore::VisitedLinkStore.
-    bool isLinkVisited(WebCore::Page&, WebCore::SharedStringHash, const URL& baseURL, const AtomString& attributeURL) override;
-    void addVisitedLink(WebCore::Page&, WebCore::SharedStringHash) override;
-
-    // IPC::MessageReceiver.
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
-
-    void setVisitedLinkTable(WebCore::SharedMemory::Handle&&);
-    void visitedLinkStateChanged(const Vector<WebCore::SharedStringHash>&);
-    void allVisitedLinkStateChanged();
-    void removeAllVisitedLinks();
-
-    VisitedLinkTableIdentifier m_identifier;
-    SharedStringHashTableReadOnly m_visitedLinkTable;
-};
+enum class VisitedLinkTableIdentifierType { };
+using VisitedLinkTableIdentifier = ObjectIdentifier<VisitedLinkTableIdentifierType>;
 
 } // namespace WebKit

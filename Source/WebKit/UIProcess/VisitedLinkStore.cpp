@@ -47,7 +47,8 @@ VisitedLinkStore::~VisitedLinkStore()
 }
 
 VisitedLinkStore::VisitedLinkStore()
-    : m_linkHashStore(*this)
+    : m_identifier(VisitedLinkTableIdentifier::generate())
+    , m_linkHashStore(*this)
 {
 }
 

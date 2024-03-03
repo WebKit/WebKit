@@ -2673,7 +2673,7 @@ JSValueRef JSIPC::visitedLinkStoreID(JSContextRef context, JSObjectRef thisObjec
 {
     return retrieveID(context, thisObject, exception, [](JSIPC& wrapped) {
         Ref webPage = *wrapped.m_webPage;
-        return webPage->visitedLinkTableID();
+        return webPage->visitedLinkTableID().toUInt64();
     });
 }
 

@@ -64,7 +64,7 @@ headers: "ArgumentCoders.h"
     bool itemStatesWereRestoredByAPIRequest;
     Vector<WebKit::BackForwardListItemState> itemStates;
 
-    uint64_t visitedLinkTableID;
+    WebKit::VisitedLinkTableIdentifier visitedLinkTableID;
     bool canRunBeforeUnloadConfirmPanel;
     bool canRunModal;
 

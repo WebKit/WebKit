@@ -1115,6 +1115,7 @@
 		46A2B6091E5676A600C3DEDA /* BackgroundProcessResponsivenessTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 46A2B6071E5675A200C3DEDA /* BackgroundProcessResponsivenessTimer.h */; };
 		46B0524722668D8500265B97 /* WebDeviceOrientationAndMotionAccessController.h in Headers */ = {isa = PBXBuildFile; fileRef = 46B0524422668D2300265B97 /* WebDeviceOrientationAndMotionAccessController.h */; };
 		46C392292316EC4D008EED9B /* WebPageProxyIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 46C392282316EC4D008EED9B /* WebPageProxyIdentifier.h */; };
+		46C52F8A2B94366000D9890E /* VisitedLinkTableIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 46C52F892B94366000D9890E /* VisitedLinkTableIdentifier.h */; };
 		46C5B7CE27AADDD3000C5B47 /* RemoteWorkerFrameLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 46C5B7CD27AADDBE000C5B47 /* RemoteWorkerFrameLoaderClient.h */; };
 		46C5B7CF27AADDD6000C5B47 /* RemoteWorkerLibWebRTCProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 46C5B7CB27AADDBE000C5B47 /* RemoteWorkerLibWebRTCProvider.h */; };
 		46C71AC92A942E2900E459AF /* GoToBackForwardItemParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 46C71AC72A942E1800E459AF /* GoToBackForwardItemParameters.h */; };
@@ -5347,6 +5348,7 @@
 		46B9E2372B04228A008346A5 /* LoadParameters.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = LoadParameters.serialization.in; sourceTree = "<group>"; };
 		46BB389C2B69764600F02BE0 /* IPCEvent.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = IPCEvent.serialization.in; sourceTree = "<group>"; };
 		46C392282316EC4D008EED9B /* WebPageProxyIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebPageProxyIdentifier.h; sourceTree = "<group>"; };
+		46C52F892B94366000D9890E /* VisitedLinkTableIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisitedLinkTableIdentifier.h; sourceTree = "<group>"; };
 		46C5B7CB27AADDBE000C5B47 /* RemoteWorkerLibWebRTCProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteWorkerLibWebRTCProvider.h; sourceTree = "<group>"; };
 		46C5B7CC27AADDBE000C5B47 /* RemoteWorkerFrameLoaderClient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteWorkerFrameLoaderClient.cpp; sourceTree = "<group>"; };
 		46C5B7CD27AADDBE000C5B47 /* RemoteWorkerFrameLoaderClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteWorkerFrameLoaderClient.h; sourceTree = "<group>"; };
@@ -9111,6 +9113,7 @@
 				9B38009C2AEA2D8A0011A892 /* ViewWindowCoordinates.serialization.in */,
 				2684054A18B866FF0022C38B /* VisibleContentRectUpdateInfo.cpp */,
 				2684054218B85A630022C38B /* VisibleContentRectUpdateInfo.h */,
+				46C52F892B94366000D9890E /* VisitedLinkTableIdentifier.h */,
 				46CE3B1023D8C83D0016A96A /* WebBackForwardListCounts.h */,
 				516BF1D12AE5CD42009A0204 /* WebBackForwardListCounts.serialization.in */,
 				518D2CAB12D5153B003BB93B /* WebBackForwardListItem.cpp */,
@@ -16584,6 +16587,7 @@
 				1A60224D18C16B9F00C3E8C9 /* VisitedLinkStoreMessages.h in Headers */,
 				1AF4CEF018BC481800BC2D34 /* VisitedLinkTableController.h in Headers */,
 				1A8E7D3D18C15149005A702A /* VisitedLinkTableControllerMessages.h in Headers */,
+				46C52F8A2B94366000D9890E /* VisitedLinkTableIdentifier.h in Headers */,
 				CEDA12E3152CD1B300D9E08D /* WebAlternativeTextClient.h in Headers */,
 				57C6244B234679A400383FE7 /* WebAuthenticationFlags.h in Headers */,
 				577FF7852346ECAA004EDFB9 /* WebAuthenticationPanelClient.h in Headers */,
