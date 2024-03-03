@@ -14,18 +14,36 @@ x
 x
 x
 x
+x
+x
+x
+x
+x
+x
+x
+x
+x
 
 PASS el-a
+PASS el-aside
+PASS el-aside-in-main
+PASS el-aside-in-article-in-main-with-name
+PASS el-aside-in-article-with-name
+PASS el-aside-in-aside-with-name
+PASS el-aside-in-nav-with-name
+PASS el-aside-in-nav-with-role
 PASS el-aside-in-section-with-name
-PASS el-aside-in-section-with-role
-PASS el-aside-ancestorbodymain
 PASS el-footer-ancestorbody
 PASS el-header-ancestorbody
-PASS el-header-ancestormain
 PASS el-section
 PASS el-a-no-href
-PASS el-aside-in-section-without-name
+PASS el-aside-in-article-in-main
+PASS el-aside-in-article
+PASS el-aside-in-aside
+PASS el-aside-in-nav
+PASS el-aside-in-section
 PASS el-footer
 PASS el-header
+PASS el-header-ancestormain
 PASS el-section-no-name
 

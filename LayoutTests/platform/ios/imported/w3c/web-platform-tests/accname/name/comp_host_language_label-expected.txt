@@ -57,10 +57,6 @@ HTML table/caption
 table caption label
 a	b	c
 1	2	3
-SVG title
-
-
-
 
 PASS html: input[type=button]
 PASS html: input[type=image]
@@ -107,8 +103,4 @@ FAIL html: fieldset > legend assert_equals: <fieldset data-expectedlabel="fields
   <input type="text"><br>
 </fieldset> expected "fieldset legend label" but got ""
 PASS html: table > caption
-PASS svg: circle > title
-PASS svg: rect > title
-PASS svg: polygon > title
-PASS svg: g > title
 

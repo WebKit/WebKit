@@ -119,7 +119,7 @@ Undefined aria-label tests
 
 Name computation precedence tests
 
-x   x    x  x label    label   x
+x   x    x  x label    label  x
 x
 
 x

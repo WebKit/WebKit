@@ -2,7 +2,7 @@ Tests the #comp_tooltip portions of the AccName Name Computation algorithm.
 
  contents
 contents
-       contents           WPT CTRL + OPT
+       contents            WPT CTRL + OPT
 contents
 
 
