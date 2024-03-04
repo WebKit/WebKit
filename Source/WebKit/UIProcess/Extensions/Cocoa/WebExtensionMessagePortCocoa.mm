@@ -93,11 +93,6 @@ bool WebExtensionMessagePort::isDisconnected() const
 
 void WebExtensionMessagePort::disconnect(Error error)
 {
-    if (isDisconnected())
-        return;
-
-    m_extensionContext->portDisconnect(WebExtensionContentWorldType::Native, WebExtensionContentWorldType::Main, m_channelIdentifier);
-
     remove();
 }
 
@@ -116,6 +111,7 @@ void WebExtensionMessagePort::remove()
     if (isDisconnected())
         return;
 
+    m_extensionContext->portRemoved(WebExtensionContentWorldType::Native, WebExtensionContentWorldType::Main, m_channelIdentifier);
     m_extensionContext->removeNativePort(*this);
     m_extensionContext = nullptr;
 }

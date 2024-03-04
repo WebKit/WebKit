@@ -57,7 +57,8 @@ public:
     void postMessage(WebFrame&, NSString *, NSString **outExceptionString);
     void disconnect();
 
-    bool disconnected() const { return m_disconnected; }
+    bool isDisconnected() const { return m_disconnected; }
+    bool isQuarantined() const { return !m_channelIdentifier; }
 
     NSString *name();
     NSDictionary *sender();
@@ -79,6 +80,14 @@ public:
 
 private:
     friend class WebExtensionContextProxy;
+
+    explicit WebExtensionAPIPort(const WebExtensionAPIObject& parentObject, const String& name)
+        : WebExtensionAPIObject(parentObject)
+        , m_targetContentWorldType(WebExtensionContentWorldType::Main)
+        , m_name(name)
+    {
+        ASSERT(isQuarantined());
+    }
 
     explicit WebExtensionAPIPort(const WebExtensionAPIObject& parentObject, WebPage& page, WebExtensionContentWorldType targetContentWorldType, const String& name)
         : WebExtensionAPIObject(parentObject)

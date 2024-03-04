@@ -94,7 +94,7 @@ messages -> WebExtensionContext {
 
     // Port APIs
     PortPostMessage(WebKit::WebExtensionContentWorldType targetContentWorldType, std::optional<WebKit::WebPageProxyIdentifier> sendingPageProxyIdentifier, WebKit::WebExtensionPortChannelIdentifier channelIdentifier, String messageJSON)
-    PortDisconnect(WebKit::WebExtensionContentWorldType sourceContentWorldType, WebKit::WebExtensionContentWorldType targetContentWorldType, WebKit::WebExtensionPortChannelIdentifier channelIdentifier)
+    PortRemoved(WebKit::WebExtensionContentWorldType sourceContentWorldType, WebKit::WebExtensionContentWorldType targetContentWorldType, WebKit::WebExtensionPortChannelIdentifier channelIdentifier)
 
     // Runtime APIs
     RuntimeGetBackgroundPage() -> (Expected<std::optional<WebCore::PageIdentifier>, WebKit::WebExtensionError> result)

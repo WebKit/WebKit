@@ -83,9 +83,9 @@ void WebExtensionContext::portPostMessage(WebExtensionContentWorldType targetCon
     }
 }
 
-void WebExtensionContext::portDisconnect(WebExtensionContentWorldType sourceContentWorldType, WebExtensionContentWorldType targetContentWorldType, WebExtensionPortChannelIdentifier channelIdentifier)
+void WebExtensionContext::portRemoved(WebExtensionContentWorldType sourceContentWorldType, WebExtensionContentWorldType targetContentWorldType, WebExtensionPortChannelIdentifier channelIdentifier)
 {
-    RELEASE_LOG_DEBUG(Extensions, "Port for channel %{public}llu disconnected in %{public}@ world", channelIdentifier.toUInt64(), (NSString *)toDebugString(sourceContentWorldType));
+    RELEASE_LOG_DEBUG(Extensions, "Port for channel %{public}llu removed in %{public}@ world", channelIdentifier.toUInt64(), (NSString *)toDebugString(sourceContentWorldType));
 
     removePort(sourceContentWorldType, channelIdentifier);
 

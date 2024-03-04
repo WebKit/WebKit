@@ -118,6 +118,8 @@ NSURL *ensureDirectoryExists(NSURL *directory);
 
 NSString *escapeCharactersInString(NSString *, NSString *charactersToEscape);
 
+void callAfterRandomDelay(Function<void()>&&);
+
 NSDate *toAPI(const WallTime&);
 WallTime toImpl(NSDate *);
 

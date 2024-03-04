@@ -76,6 +76,8 @@ public:
     virtual WebExtensionAPIRuntimeBase& runtime() const { return *m_runtime; }
     WebExtensionContextProxy& extensionContext() const { return *m_extensionContext; }
 
+    bool hasExtensionContext() const { return !!m_extensionContext; }
+
 private:
     WebExtensionContentWorldType m_contentWorldType { WebExtensionContentWorldType::Main };
     RefPtr<WebExtensionAPIRuntimeBase> m_runtime;

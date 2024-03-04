@@ -84,6 +84,9 @@ void WebExtensionAPIEvent::addListener(WebPage& page, RefPtr<WebExtensionCallbac
     m_pageProxyIdentifier = page.webPageProxyIdentifier();
     m_listeners.append(listener);
 
+    if (!hasExtensionContext())
+        return;
+
     WebProcess::singleton().send(Messages::WebExtensionContext::AddListener(page.webPageProxyIdentifier(), m_type, contentWorldType()), extensionContext().identifier());
 }
 
@@ -97,6 +100,9 @@ void WebExtensionAPIEvent::removeListener(WebPage& page, RefPtr<WebExtensionCall
         return;
 
     ASSERT(page.webPageProxyIdentifier() == m_pageProxyIdentifier);
+
+    if (!hasExtensionContext())
+        return;
 
     WebProcess::singleton().send(Messages::WebExtensionContext::RemoveListener(m_pageProxyIdentifier, m_type, contentWorldType(), removedCount), extensionContext().identifier());
 }
@@ -113,9 +119,13 @@ void WebExtensionAPIEvent::removeAllListeners()
     if (m_listeners.isEmpty())
         return;
 
-    WebProcess::singleton().send(Messages::WebExtensionContext::RemoveListener(m_pageProxyIdentifier, m_type, contentWorldType(), m_listeners.size()), extensionContext().identifier());
-
+    auto removedCount = m_listeners.size();
     m_listeners.clear();
+
+    if (!hasExtensionContext())
+        return;
+
+    WebProcess::singleton().send(Messages::WebExtensionContext::RemoveListener(m_pageProxyIdentifier, m_type, contentWorldType(), removedCount), extensionContext().identifier());
 }
 
 } // namespace WebKit
