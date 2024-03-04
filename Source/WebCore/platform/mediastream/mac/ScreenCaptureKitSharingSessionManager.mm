@@ -544,6 +544,8 @@ std::pair<RetainPtr<SCContentFilter>, RetainPtr<SCContentSharingSession>> Screen
         RELEASE_LOG_ERROR(WebRTC, "ScreenCaptureKitSharingSessionManager::contentFilterFromCaptureDevice - unknown capture device.");
         return { };
     }
+#else
+    UNUSED_PARAM(device);
 #endif
     return std::make_pair(std::exchange(m_pendingContentFilter, { }), std::exchange(m_pendingSession, { }));
 }
