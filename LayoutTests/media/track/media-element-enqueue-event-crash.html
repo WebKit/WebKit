@@ -1,60 +1,42 @@
 <!DOCTYPE  html>
-<html>
-    <head>
-        <script src=../video-test.js></script>
-        <script src=../../resources/gc.js></script>
+<title>Tests that appending events for dispatching doesn't crash.</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/gc.js"></script>
+<video autoplay>
+    <track src="captions-webvtt/captions-fast.vtt" default>
+</video>
+<script>
+async_test(function(t) {
+    if (localStorage.testRuns)
+        localStorage.testRuns = Number(localStorage.testRuns) + 1;
+    else {
+        localStorage.testRuns = 1;
+        localStorage.totalRuns = 5;
+    }
 
-        <script>
-        if (window.testRunner)
-        {
-            testRunner.dumpAsText();
-            testRunner.waitUntilDone();
-        }
+    document.querySelector("track").track.mode = "showing";
+    setTimeout(t.step_func(CFcrash), 100);
 
-        function startTest()
-        {
-            if (localStorage.testRuns)
-                localStorage.testRuns = Number(localStorage.testRuns) + 1;
-            else {
-                localStorage.testRuns = 1;
-                localStorage.totalRuns = 2;
-            }
+    function CFcrash() {
+        var video = document.querySelector("video");
+        video.src = "content/test.mp4";
+        var document1 = document.implementation.createDocument("", null);
+        document1.appendChild(video);
+        delete document1;
 
-            document.getElementsByTagName('track')[0].track.mode = 'showing';
-            setTimeout(CFcrash, 100);
-        }
+        setTimeout(t.step_func(forceGC), 0);
+    }
 
-        function forceGC() {
-            gc();
+    function forceGC() {
+        gc();
 
-            // End the test only if it ran at least totalRuns.
-            if (window.testRunner && localStorage.testRuns == localStorage.totalRuns) {
-                consoleWrite("** No crash. Pass **");
-                testRunner.notifyDone();
-            } else
-                window.location.reload();
-        }
+        // End the test only if it ran totalRuns.
+        if (localStorage.testRuns == localStorage.totalRuns)
+            t.done();
+        else
+            location.reload();
+    }
 
-        function CFcrash()
-        {
-            document1 = document.implementation.createDocument("", null);
-            document1.appendChild(videoElement);
-            delete document1;
-
-            setTimeout(forceGC, 0);
-        }
-
-        document.addEventListener("DOMContentLoaded", startTest, false);
-        setCaptionDisplayMode('Automatic');
-        </script>
-    </head>
-
-    <body>
-        <p>Tests that appending events for dispatching doesn't crash</p>
-        <video autoplay id="videoElement">
-            <source src="../content/test.ogv">
-            <source src="../content/test.mp4">
-            <track src="captions-webvtt/captions-fast.vtt" default>
-        </video>
-    </body>
-</html>
+});
+</script>
