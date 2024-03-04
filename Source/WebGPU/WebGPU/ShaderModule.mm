@@ -464,10 +464,10 @@ ShaderModule::FragmentOutputs ShaderModule::parseFragmentReturnType(const WGSL::
             populateOutputState(entryPoint, *member.builtin());
 
         for (auto& attribute : member.attributes()) {
-            if (attribute.kind() != WGSL::AST::NodeKind::BuiltinAttribute)
+            auto* builtinAttribute = dynamicDowncast<WGSL::AST::BuiltinAttribute>(attribute);
+            if (!builtinAttribute)
                 continue;
-            auto& builtinAttribute = downcast<WGSL::AST::BuiltinAttribute>(attribute);
-            populateOutputState(entryPoint, builtinAttribute.builtin());
+            populateOutputState(entryPoint, builtinAttribute->builtin());
         }
 
         if (!member.location() || member.builtin())
@@ -671,37 +671,35 @@ ShaderModule::ShaderModule(std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck
     if (std::holds_alternative<WGSL::SuccessfulCheck>(m_checkResult)) {
         auto& check = std::get<WGSL::SuccessfulCheck>(m_checkResult);
         for (auto& declaration : check.ast->declarations()) {
-            if (!is<WGSL::AST::Function>(declaration))
+            auto* function = dynamicDowncast<WGSL::AST::Function>(declaration);
+            if (!function || !function->stage())
                 continue;
-            auto& function = downcast<WGSL::AST::Function>(declaration);
-            if (!function.stage())
-                continue;
-            switch (*function.stage()) {
+            switch (*function->stage()) {
             case WGSL::ShaderStage::Vertex: {
-                m_stageInTypesForEntryPoint.add(function.name(), parseStageIn(function));
-                if (auto expression = function.maybeReturnType()) {
+                m_stageInTypesForEntryPoint.add(function->name(), parseStageIn(*function));
+                if (auto expression = function->maybeReturnType()) {
                     if (auto* inferredType = expression->inferredType())
-                        m_vertexReturnTypeForEntryPoint.add(function.name(), parseVertexReturnType(*inferredType));
+                        m_vertexReturnTypeForEntryPoint.add(function->name(), parseVertexReturnType(*inferredType));
                 }
                 if (!allowVertexDefault || m_defaultVertexEntryPoint.length()) {
                     allowVertexDefault = false;
                     m_defaultVertexEntryPoint = emptyString();
                     continue;
                 }
-                m_defaultVertexEntryPoint = function.name();
+                m_defaultVertexEntryPoint = function->name();
             } break;
             case WGSL::ShaderStage::Fragment: {
-                m_fragmentInputsForEntryPoint.add(function.name(), parseFragmentInputs(function));
-                if (auto expression = function.maybeReturnType()) {
+                m_fragmentInputsForEntryPoint.add(function->name(), parseFragmentInputs(*function));
+                if (auto expression = function->maybeReturnType()) {
                     if (auto* inferredType = expression->inferredType())
-                        m_fragmentReturnTypeForEntryPoint.add(function.name(), parseFragmentReturnType(*inferredType, function.name()));
+                        m_fragmentReturnTypeForEntryPoint.add(function->name(), parseFragmentReturnType(*inferredType, function->name()));
                 }
                 if (!allowFragmentDefault || m_defaultFragmentEntryPoint.length()) {
                     allowFragmentDefault = false;
                     m_defaultFragmentEntryPoint = emptyString();
                     continue;
                 }
-                m_defaultFragmentEntryPoint = function.name();
+                m_defaultFragmentEntryPoint = function->name();
             } break;
             case WGSL::ShaderStage::Compute: {
                 if (!allowComputeDefault || m_defaultComputeEntryPoint.length()) {
@@ -709,7 +707,7 @@ ShaderModule::ShaderModule(std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck
                     m_defaultComputeEntryPoint = emptyString();
                     continue;
                 }
-                m_defaultComputeEntryPoint = function.name();
+                m_defaultComputeEntryPoint = function->name();
             } break;
             default:
                 ASSERT_NOT_REACHED();

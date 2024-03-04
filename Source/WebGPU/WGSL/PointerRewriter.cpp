@@ -153,14 +153,12 @@ void PointerRewriter::visit(AST::UnaryExpression& unary)
     AST::Expression* nested = &unary.expression();
     while (is<AST::IdentityExpression>(*nested))
         nested = &downcast<AST::IdentityExpression>(*nested).expression();
-    if (!is<AST::UnaryExpression>(*nested))
+
+    auto* nestedUnary = dynamicDowncast<AST::UnaryExpression>(*nested);
+    if (!nestedUnary || nestedUnary->operation() != AST::UnaryOperation::AddressOf)
         return;
 
-    auto& nestedUnary = downcast<AST::UnaryExpression>(*nested);
-    if (nestedUnary.operation() != AST::UnaryOperation::AddressOf)
-        return;
-
-    m_callGraph.ast().replace(unary, nestedUnary.expression());
+    m_callGraph.ast().replace(unary, nestedUnary->expression());
 }
 
 void rewritePointers(CallGraph& callGraph)

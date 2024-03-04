@@ -1370,18 +1370,17 @@ void TypeChecker::visit(AST::CallExpression& call)
         return;
     }
 
-    if (is<AST::ArrayTypeExpression>(target)) {
-        AST::ArrayTypeExpression& array = downcast<AST::ArrayTypeExpression>(target);
+    if (auto* array = dynamicDowncast<AST::ArrayTypeExpression>(target)) {
         const Type* elementType = nullptr;
         unsigned elementCount;
 
-        if (array.maybeElementType()) {
-            if (!array.maybeElementCount()) {
+        if (array->maybeElementType()) {
+            if (!array->maybeElementCount()) {
                 typeError(call.span(), "cannot construct a runtime-sized array");
                 return;
             }
-            elementType = resolve(*array.maybeElementType());
-            auto* elementCountType = infer(*array.maybeElementCount(), m_evaluation);
+            elementType = resolve(*array->maybeElementType());
+            auto* elementCountType = infer(*array->maybeElementCount(), m_evaluation);
 
             if (isBottom(elementType) || isBottom(elementCountType)) {
                 inferred(m_types.bottomType());
@@ -1389,16 +1388,16 @@ void TypeChecker::visit(AST::CallExpression& call)
             }
 
             if (!unify(m_types.i32Type(), elementCountType) && !unify(m_types.u32Type(), elementCountType)) {
-                typeError(array.span(), "array count must be an i32 or u32 value, found '", *elementCountType, "'");
+                typeError(array->span(), "array count must be an i32 or u32 value, found '", *elementCountType, "'");
                 return;
             }
 
             if (!elementType->isConstructible()) {
-                typeError(array.span(), "'", *elementType, "' cannot be used as an element type of an array");
+                typeError(array->span(), "'", *elementType, "' cannot be used as an element type of an array");
                 return;
             }
 
-            auto constantValue = array.maybeElementCount()->constantValue();
+            auto constantValue = array->maybeElementCount()->constantValue();
             if (!constantValue) {
                 typeError(call.span(), "array must have constant size in order to be constructed");
                 return;
@@ -1431,7 +1430,7 @@ void TypeChecker::visit(AST::CallExpression& call)
                 argument.m_inferredType = elementType;
             }
         } else {
-            ASSERT(!array.maybeElementCount());
+            ASSERT(!array->maybeElementCount());
             elementCount = call.arguments().size();
             if (!elementCount) {
                 typeError(call.span(), "cannot infer array element type from constructor");
@@ -1446,7 +1445,7 @@ void TypeChecker::visit(AST::CallExpression& call)
                     elementType = argumentType;
 
                     if (!elementType->isConstructible()) {
-                        typeError(array.span(), "'", *elementType, "' cannot be used as an element type of an array");
+                        typeError(array->span(), "'", *elementType, "' cannot be used as an element type of an array");
                         return;
                     }
 
@@ -1881,9 +1880,9 @@ const Type* TypeChecker::chooseOverload(const char* kind, AST::Expression& expre
             callArguments[i].m_inferredType = overload->parameters[i];
         inferred(overload->result);
 
-        if (it->value.kind == OverloadedDeclaration::Constructor && is<AST::CallExpression>(expression)) {
-            auto& call = downcast<AST::CallExpression>(expression);
-            call.m_isConstructor = true;
+        if (it->value.kind == OverloadedDeclaration::Constructor) {
+            if (auto* call = dynamicDowncast<AST::CallExpression>(expression))
+                call->m_isConstructor = true;
         }
 
         unsigned argumentCount = callArguments.size();
@@ -1975,8 +1974,8 @@ const Type* TypeChecker::check(AST::Expression& expression, Constraint constrain
 const Type* TypeChecker::resolve(AST::Expression& type)
 {
     ASSERT(!m_inferredType);
-    if (is<AST::IdentifierExpression>(type))
-        inferred(lookupType(downcast<AST::IdentifierExpression>(type).identifier()));
+    if (auto* identifierExpression = dynamicDowncast<AST::IdentifierExpression>(type))
+        inferred(lookupType(identifierExpression->identifier()));
     else
         Base::visit(type);
     ASSERT(m_inferredType);
@@ -2320,7 +2319,6 @@ std::optional<TexelFormat> TypeChecker::texelFormat(AST::Expression& expression)
         return std::nullopt;
     }
 
-    ASSERT(is<AST::IdentifierExpression>(expression));
     auto& formatName = downcast<AST::IdentifierExpression>(expression).identifier();
 
     auto* format = parseTexelFormat(formatName.id());
@@ -2339,7 +2337,6 @@ std::optional<AccessMode> TypeChecker::accessMode(AST::Expression& expression)
         return std::nullopt;
     }
 
-    ASSERT(is<AST::IdentifierExpression>(expression));
     auto& accessName = downcast<AST::IdentifierExpression>(expression).identifier();
 
     auto* accessMode = parseAccessMode(accessName.id());
@@ -2358,7 +2355,6 @@ std::optional<AddressSpace> TypeChecker::addressSpace(AST::Expression& expressio
         return std::nullopt;
     }
 
-    ASSERT(is<AST::IdentifierExpression>(expression));
     auto& addressSpaceName = downcast<AST::IdentifierExpression>(expression).identifier();
 
     auto* addressSpace = parseAddressSpace(addressSpaceName.id());

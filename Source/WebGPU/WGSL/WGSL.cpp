@@ -144,7 +144,6 @@ ConstantValue evaluate(const AST::Expression& expression, const HashMap<String, 
 {
     if (auto constantValue = expression.constantValue())
         return *constantValue;
-    ASSERT(is<const AST::IdentifierExpression>(expression));
     auto constantValue = constants.get(downcast<const AST::IdentifierExpression>(expression).identifier());
     const_cast<AST::Expression&>(expression).setConstantValue(constantValue);
     return constantValue;

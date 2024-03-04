@@ -164,15 +164,15 @@ void FunctionDefinitionWriter::write()
     emitNecessaryHelpers();
 
     for (auto& declaration : m_callGraph.ast().declarations()) {
-        if (is<AST::Structure>(declaration))
-            visit(downcast<AST::Structure>(declaration));
-        else if (is<AST::Variable>(declaration))
-            visitGlobal(downcast<AST::Variable>(declaration));
+        if (auto* structure = dynamicDowncast<AST::Structure>(declaration))
+            visit(*structure);
+        else if (auto* variable = dynamicDowncast<AST::Variable>(declaration))
+            visitGlobal(*variable);
     }
 
     for (auto& declaration : m_callGraph.ast().declarations()) {
-        if (is<AST::Structure>(declaration))
-            generatePackingHelpers(downcast<AST::Structure>(declaration));
+        if (auto* structure = dynamicDowncast<AST::Structure>(declaration))
+            generatePackingHelpers(*structure);
     }
 
     for (auto& entryPoint : m_callGraph.entrypoints())
@@ -1108,17 +1108,12 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::Expression& expressi
         return;
     }
 
-    switch (expression.kind()) {
-    case AST::NodeKind::CallExpression:
-        visit(type, downcast<AST::CallExpression>(expression));
-        break;
-    case AST::NodeKind::IdentityExpression:
-        visit(type, downcast<AST::IdentityExpression>(expression).expression());
-        break;
-    default:
+    if (auto* call = dynamicDowncast<AST::CallExpression>(expression))
+        visit(type, *call);
+    else if (auto* identity = dynamicDowncast<AST::IdentityExpression>(expression))
+        visit(type, identity->expression());
+    else
         AST::Visitor::visit(expression);
-        break;
-    }
 }
 
 static void visitArguments(FunctionDefinitionWriter* writer, AST::CallExpression& call, unsigned startOffset = 0)
@@ -1792,9 +1787,8 @@ static void emitUnpack4xU8(FunctionDefinitionWriter* writer, AST::CallExpression
 
 void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call)
 {
-    if (is<AST::ElaboratedTypeExpression>(call.target())) {
-        auto& base = downcast<AST::ElaboratedTypeExpression>(call.target()).base();
-        if (base == "bitcast"_s) {
+    if (auto* target = dynamicDowncast<AST::ElaboratedTypeExpression>(call.target())) {
+        if (target->base() == "bitcast"_s) {
             emitBitcast(this, call);
             return;
         }
@@ -1825,7 +1819,7 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
         return;
     }
 
-    if (is<AST::IdentifierExpression>(call.target())) {
+    if (auto* target = dynamicDowncast<AST::IdentifierExpression>(call.target())) {
         static constexpr std::pair<ComparableASCIILiteral, void(*)(FunctionDefinitionWriter*, AST::CallExpression&)> builtinMappings[] {
             { "__dynamicOffset", emitDynamicOffset },
             { "arrayLength", emitArrayLength },
@@ -1873,7 +1867,7 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
             { "workgroupUniformLoad", emitWorkgroupUniformLoad },
         };
         static constexpr SortedArrayMap builtins { builtinMappings };
-        const auto& targetName = downcast<AST::IdentifierExpression>(call.target()).identifier().id();
+        const auto& targetName = target->identifier().id();
         if (auto mappedBuiltin = builtins.get(targetName)) {
             mappedBuiltin(this, call);
             return;
@@ -2253,10 +2247,8 @@ static std::optional<std::pair<String, String>> fragDepthIdentifierForFunction(A
                 if (member.builtin() == WGSL::Builtin::FragDepth)
                     return std::make_pair(returnStruct->structure.name(), member.name());
                 for (auto& attribute : member.attributes()) {
-                    if (attribute.kind() != AST::NodeKind::BuiltinAttribute)
-                        continue;
-                    auto& builtinAttribute = downcast<AST::BuiltinAttribute>(attribute);
-                    if (builtinAttribute.builtin() == WGSL::Builtin::FragDepth)
+                    auto* builtinAttribute = dynamicDowncast<AST::BuiltinAttribute>(attribute);
+                    if (builtinAttribute && builtinAttribute->builtin() == WGSL::Builtin::FragDepth)
                         return std::make_pair(returnStruct->structure.name(), member.name());
                 }
             }
