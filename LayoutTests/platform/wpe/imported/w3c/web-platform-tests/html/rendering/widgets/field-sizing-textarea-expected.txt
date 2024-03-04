@@ -4,9 +4,9 @@ PASS Empty value
 PASS Empty value with cols/rows
 PASS Auto width and auto height with a long text
 PASS Explicit width and heigth
-FAIL Explicit width and auto height assert_greater_than: expected a number greater than 32 but got 19
+FAIL Explicit width and auto height assert_greater_than: expected a number greater than 42 but got 24
 PASS Explicit height and auto width
 PASS Text caret is taller than the placeholder
 FAIL Text caret is shorter than the placeholder assert_less_than: height expected a number less than 29 but got 29
-FAIL Update field-sizing property dynamically assert_less_than: expected a number less than 161 but got 161
+FAIL Update field-sizing property dynamically assert_less_than: expected a number less than 221 but got 221
 

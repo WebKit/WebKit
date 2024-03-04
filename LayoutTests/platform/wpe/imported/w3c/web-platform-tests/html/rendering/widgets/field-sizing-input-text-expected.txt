@@ -8,7 +8,7 @@ PASS text: Explicit width and auto height
 PASS text: Explicit height and auto width
 PASS text: Text caret is taller than the placeholder
 FAIL text: Text caret is shorter than the placeholder assert_less_than: expected a number less than 29 but got 29
-FAIL text: Update field-sizing property dynamically assert_less_than: expected a number less than 148 but got 148
+FAIL text: Update field-sizing property dynamically assert_less_than: expected a number less than 173 but got 173
 PASS search: Empty value
 PASS search: Empty value with a size atttribute
 PASS search: Auto width and auto height with a long text
@@ -16,8 +16,8 @@ PASS search: Explicit width and heigth
 PASS search: Explicit width and auto height
 PASS search: Explicit height and auto width
 PASS search: Text caret is taller than the placeholder
-FAIL search: Text caret is shorter than the placeholder assert_less_than: expected a number less than 19 but got 19
-FAIL search: Update field-sizing property dynamically assert_less_than: expected a number less than 148 but got 148
+FAIL search: Text caret is shorter than the placeholder assert_less_than: expected a number less than 29 but got 29
+FAIL search: Update field-sizing property dynamically assert_less_than: expected a number less than 173 but got 173
 PASS tel: Empty value
 PASS tel: Empty value with a size atttribute
 PASS tel: Auto width and auto height with a long text
@@ -26,7 +26,7 @@ PASS tel: Explicit width and auto height
 PASS tel: Explicit height and auto width
 PASS tel: Text caret is taller than the placeholder
 FAIL tel: Text caret is shorter than the placeholder assert_less_than: expected a number less than 29 but got 29
-FAIL tel: Update field-sizing property dynamically assert_less_than: expected a number less than 148 but got 148
+FAIL tel: Update field-sizing property dynamically assert_less_than: expected a number less than 173 but got 173
 PASS url: Empty value
 PASS url: Empty value with a size atttribute
 PASS url: Auto width and auto height with a long text
@@ -35,7 +35,7 @@ PASS url: Explicit width and auto height
 PASS url: Explicit height and auto width
 PASS url: Text caret is taller than the placeholder
 FAIL url: Text caret is shorter than the placeholder assert_less_than: expected a number less than 29 but got 29
-FAIL url: Update field-sizing property dynamically assert_less_than: expected a number less than 148 but got 148
+FAIL url: Update field-sizing property dynamically assert_less_than: expected a number less than 173 but got 173
 PASS email: Empty value
 PASS email: Empty value with a size atttribute
 PASS email: Auto width and auto height with a long text
@@ -44,7 +44,7 @@ PASS email: Explicit width and auto height
 PASS email: Explicit height and auto width
 PASS email: Text caret is taller than the placeholder
 FAIL email: Text caret is shorter than the placeholder assert_less_than: expected a number less than 29 but got 29
-FAIL email: Update field-sizing property dynamically assert_less_than: expected a number less than 148 but got 148
+FAIL email: Update field-sizing property dynamically assert_less_than: expected a number less than 173 but got 173
 PASS password: Empty value
 PASS password: Empty value with a size atttribute
 PASS password: Auto width and auto height with a long text
@@ -53,5 +53,5 @@ PASS password: Explicit width and auto height
 PASS password: Explicit height and auto width
 PASS password: Text caret is taller than the placeholder
 FAIL password: Text caret is shorter than the placeholder assert_less_than: expected a number less than 29 but got 29
-FAIL password: Update field-sizing property dynamically assert_less_than: expected a number less than 148 but got 148
+FAIL password: Update field-sizing property dynamically assert_less_than: expected a number less than 173 but got 173
 
