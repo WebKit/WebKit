@@ -1889,6 +1889,9 @@ static WKRetainPtr<WKDictionaryRef> captureDeviceProperties(JSValueRef propertie
 {
     auto context = mainFrameJSContext();
 
+    if (JSValueGetType(context, properties) == kJSTypeUndefined)
+        return { };
+
     Vector<WKRetainPtr<WKStringRef>> strings;
     Vector<WKStringRef> keys;
     Vector<WKTypeRef> values;
