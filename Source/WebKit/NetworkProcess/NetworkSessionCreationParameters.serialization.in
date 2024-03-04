@@ -69,7 +69,6 @@
     bool shouldRunServiceWorkersOnMainThreadForTesting;
     std::optional<unsigned> overrideServiceWorkerRegistrationCountTestingValue;
     bool preventsSystemHTTPProxyAuthentication;
-    bool appHasRequestedCrossWebsiteTrackingPermission;
     std::optional<bool> useNetworkLoader;
     bool allowsHSTSWithUntrustedRootCertificate;
     String pcmMachServiceName;

@@ -160,6 +160,9 @@ WebsiteDataStore::WebsiteDataStore(Ref<WebsiteDataStoreConfiguration>&& configur
 {
     RELEASE_LOG(Storage, "%p - WebsiteDataStore::WebsiteDataStore sessionID=%" PRIu64, this, m_sessionID.toUInt64());
 
+#if PLATFORM(COCOA)
+    determineTrackingPreventionState();
+#endif
     WTF::setProcessPrivileges(allPrivileges());
     registerWithSessionIDMap();
     platformInitialize();
@@ -1294,8 +1297,6 @@ void WebsiteDataStore::grantStorageAccessForTesting(String&& topFrameDomain, Vec
 
 void WebsiteDataStore::setIsRunningResourceLoadStatisticsTest(bool value, CompletionHandler<void()>&& completionHandler)
 {
-    useExplicitTrackingPreventionState();
-
     protectedNetworkProcess()->setIsRunningResourceLoadStatisticsTest(m_sessionID, value, WTFMove(completionHandler));
 }
 
@@ -1662,9 +1663,21 @@ void WebsiteDataStore::sendNetworkProcessDidResume()
     protectedNetworkProcess()->sendProcessDidResume(AuxiliaryProcessProxy::ResumeReason::ForegroundActivity);
 }
 
+bool WebsiteDataStore::defaultTrackingPreventionEnabled() const
+{
+#if PLATFORM(COCOA)
+    return doesAppHaveTrackingPreventionEnabled();
+#else
+    return false;
+#endif
+}
+
 bool WebsiteDataStore::trackingPreventionEnabled() const
 {
-    return m_trackingPreventionEnabled;
+    if (m_trackingPreventionEnabled == TrackingPreventionEnabled::Default)
+        return defaultTrackingPreventionEnabled();
+
+    return m_trackingPreventionEnabled == TrackingPreventionEnabled::Yes;
 }
 
 bool WebsiteDataStore::resourceLoadStatisticsDebugMode() const
@@ -1674,18 +1687,22 @@ bool WebsiteDataStore::resourceLoadStatisticsDebugMode() const
 
 void WebsiteDataStore::setTrackingPreventionEnabled(bool enabled)
 {
-    if (enabled == trackingPreventionEnabled())
+    auto targetTrackingPreventionEnabled = enabled ? TrackingPreventionEnabled::Yes : TrackingPreventionEnabled::No;
+    if (m_trackingPreventionEnabled == targetTrackingPreventionEnabled)
         return;
 
-    RELEASE_LOG(Storage, "%p - WebsiteDataStore::setTrackingPreventionEnabled sessionID=%" PRIu64 ", enabled=%d", this, m_sessionID.toUInt64(), enabled);
+    bool valueChanged = trackingPreventionEnabled() != enabled;
+    m_trackingPreventionEnabled = targetTrackingPreventionEnabled;
+    if (!valueChanged)
+        return;
 
-    m_trackingPreventionEnabled = enabled;
+    RELEASE_LOG(Storage, "%p - WebsiteDataStore::setTrackingPreventionEnabled: sessionID=%" PRIu64 ", enabled=%d", this, m_sessionID.toUInt64(), enabled);
 
     if (RefPtr networkProcessProxy = m_networkProcess)
-        networkProcessProxy->send(Messages::NetworkProcess::SetTrackingPreventionEnabled(m_sessionID, m_trackingPreventionEnabled), 0);
+        networkProcessProxy->send(Messages::NetworkProcess::SetTrackingPreventionEnabled(m_sessionID, enabled), 0);
 
     for (RefPtr processPool : processPools())
-        processPool->sendToAllProcessesForSession(Messages::WebProcess::SetTrackingPreventionEnabled(m_trackingPreventionEnabled), m_sessionID);
+        processPool->sendToAllProcessesForSession(Messages::WebProcess::SetTrackingPreventionEnabled(enabled), m_sessionID);
 }
 
 void WebsiteDataStore::setStatisticsTestingCallback(Function<void(const String&)>&& callback)
@@ -1856,7 +1873,6 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
         WTFMove(resourceLoadStatisticsDirectory),
         WTFMove(resourceLoadStatisticsDirectoryHandle),
         trackingPreventionEnabled(),
-        isTrackingPreventionStateExplicitlySet(),
         hasStatisticsTestingCallback(),
         shouldIncludeLocalhostInResourceLoadStatistics,
         resourceLoadStatisticsDebugMode(),
@@ -1926,10 +1942,9 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
 #endif
 
     parameters.networkSessionParameters = WTFMove(networkSessionParameters);
-    parameters.networkSessionParameters.resourceLoadStatisticsParameters.enabled = m_trackingPreventionEnabled;
+    parameters.networkSessionParameters.resourceLoadStatisticsParameters.enabled = trackingPreventionEnabled();
     platformSetNetworkParameters(parameters);
 #if PLATFORM(COCOA)
-    parameters.networkSessionParameters.appHasRequestedCrossWebsiteTrackingPermission = hasRequestedCrossWebsiteTrackingPermission();
     parameters.networkSessionParameters.useNetworkLoader = useNetworkLoader();
 #endif
 

@@ -254,8 +254,6 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
         WebCore::NetworkStorageSession::permitProcessToUseCookieAPI(true);
         Process::setIdentifier(WebCore::ProcessIdentifier::generate());
 #if PLATFORM(COCOA)
-        determineTrackingPreventionState();
-
         // This can be removed once Safari calls _setLinkedOnOrAfterEverything everywhere that WebKit deploys.
 #if PLATFORM(IOS_FAMILY)
         bool isSafari = WebCore::IOSApplication::isMobileSafari();
@@ -762,12 +760,6 @@ void WebProcessPool::resolvePathsForSandboxExtensions()
 
 Ref<WebProcessProxy> WebProcessPool::createNewWebProcess(WebsiteDataStore* websiteDataStore, WebProcessProxy::LockdownMode lockdownMode, WebProcessProxy::IsPrewarmed isPrewarmed, CrossOriginMode crossOriginMode)
 {
-#if PLATFORM(COCOA)
-    m_tccPreferenceEnabled = doesAppHaveTrackingPreventionEnabled();
-    if (websiteDataStore && !websiteDataStore->isTrackingPreventionStateExplicitlySet())
-        websiteDataStore->setTrackingPreventionEnabled(m_tccPreferenceEnabled);
-#endif
-
     auto processProxy = WebProcessProxy::create(*this, websiteDataStore, lockdownMode, isPrewarmed, crossOriginMode);
     initializeNewWebProcess(processProxy, websiteDataStore, isPrewarmed);
     m_processes.append(processProxy.copyRef());

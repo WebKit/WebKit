@@ -608,7 +608,6 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 
 - (void)_setResourceLoadStatisticsEnabled:(BOOL)enabled
 {
-    _websiteDataStore->useExplicitTrackingPreventionState();
     _websiteDataStore->setTrackingPreventionEnabled(enabled);
 }
 

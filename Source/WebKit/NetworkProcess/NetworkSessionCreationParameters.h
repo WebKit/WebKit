@@ -102,7 +102,6 @@ struct NetworkSessionCreationParameters {
     bool shouldRunServiceWorkersOnMainThreadForTesting { false };
     std::optional<unsigned> overrideServiceWorkerRegistrationCountTestingValue;
     bool preventsSystemHTTPProxyAuthentication { false };
-    bool appHasRequestedCrossWebsiteTrackingPermission { false };
     std::optional<bool> useNetworkLoader { std::nullopt };
     bool allowsHSTSWithUntrustedRootCertificate { false };
     String pcmMachServiceName;

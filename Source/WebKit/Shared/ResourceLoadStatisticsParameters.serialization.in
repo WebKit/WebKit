@@ -24,7 +24,6 @@
     String directory;
     WebKit::SandboxExtension::Handle directoryExtensionHandle;
     bool enabled;
-    bool isTrackingPreventionStateExplicitlySet;
     bool enableLogTestingEvent;
     bool shouldIncludeLocalhost;
     bool enableDebugMode;

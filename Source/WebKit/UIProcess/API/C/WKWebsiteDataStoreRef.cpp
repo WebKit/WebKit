@@ -112,9 +112,7 @@ void WKWebsiteDataStoreResetServiceWorkerFetchTimeoutForTesting(WKWebsiteDataSto
 
 void WKWebsiteDataStoreSetResourceLoadStatisticsEnabled(WKWebsiteDataStoreRef dataStoreRef, bool enable)
 {
-    auto* websiteDataStore = WebKit::toImpl(dataStoreRef);
-    websiteDataStore->useExplicitTrackingPreventionState();
-    websiteDataStore->setTrackingPreventionEnabled(enable);
+    WebKit::toImpl(dataStoreRef)->setTrackingPreventionEnabled(enable);
 }
 
 void WKWebsiteDataStoreIsStatisticsEphemeral(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreStatisticsEphemeralFunction completionHandler)

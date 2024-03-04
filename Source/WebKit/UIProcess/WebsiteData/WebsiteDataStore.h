@@ -268,8 +268,6 @@ public:
     void setResourceLoadStatisticsFirstPartyHostCNAMEDomainForTesting(const URL& firstPartyURL, const URL& cnameURL, CompletionHandler<void()>&&);
     void setResourceLoadStatisticsThirdPartyCNAMEDomainForTesting(const URL&, CompletionHandler<void()>&&);
     WebCore::ThirdPartyCookieBlockingMode thirdPartyCookieBlockingMode() const;
-    bool isTrackingPreventionStateExplicitlySet() const { return m_isTrackingPreventionStateExplicitlySet; }
-    void useExplicitTrackingPreventionState() { m_isTrackingPreventionStateExplicitlySet = true; }
     void closeDatabases(CompletionHandler<void()>&&);
     void syncLocalStorage(CompletionHandler<void()>&&);
     void storeServiceWorkerRegistrations(CompletionHandler<void()>&&);
@@ -524,6 +522,7 @@ private:
 
     void registerWithSessionIDMap();
     bool hasActivePages();
+    bool defaultTrackingPreventionEnabled() const;
 
 #if ENABLE(APP_BOUND_DOMAINS)
     static std::optional<HashSet<WebCore::RegistrableDomain>> appBoundDomainsIfInitialized();
@@ -559,7 +558,8 @@ private:
 #endif
 
     bool m_trackingPreventionDebugMode { false };
-    bool m_trackingPreventionEnabled { false };
+    enum class TrackingPreventionEnabled : uint8_t { Default, No, Yes };
+    TrackingPreventionEnabled m_trackingPreventionEnabled { TrackingPreventionEnabled::Default };
     Function<void(const String&)> m_statisticsTestingCallback;
 
     Ref<WorkQueue> m_queue;
@@ -584,8 +584,6 @@ private:
 
     WeakHashSet<WebProcessProxy> m_processes;
     WeakHashSet<WebPageProxy> m_pages;
-
-    bool m_isTrackingPreventionStateExplicitlySet { false };
 
 #if HAVE(SEC_KEY_PROXY)
     Vector<Ref<SecKeyProxyStore>> m_secKeyProxyStores;
