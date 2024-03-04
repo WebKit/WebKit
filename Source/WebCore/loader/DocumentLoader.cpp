@@ -2219,8 +2219,11 @@ void DocumentLoader::loadMainResource(ResourceRequest&& request)
         mainResourceLoadOptions.serviceWorkersMode = ServiceWorkersMode::None;
     else {
         // The main navigation load will trigger the registration of the client.
-        if (m_resultingClientId)
+        if (m_resultingClientId) {
             scriptExecutionContextIdentifierToLoaderMap().remove(m_resultingClientId);
+            unregisterReservedServiceWorkerClient();
+        }
+
         m_resultingClientId = ScriptExecutionContextIdentifier::generate();
         ASSERT(!scriptExecutionContextIdentifierToLoaderMap().contains(m_resultingClientId));
         scriptExecutionContextIdentifierToLoaderMap().add(m_resultingClientId, this);
