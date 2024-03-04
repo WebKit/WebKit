@@ -60,6 +60,7 @@ div#attachment-background {
     background-color: -apple-system-tertiary-fill;
 #endif
     width: 100%;
+    border-radius: inherit;
     display: flex;
 }
 
