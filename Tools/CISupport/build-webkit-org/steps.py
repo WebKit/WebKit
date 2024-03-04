@@ -1204,19 +1204,14 @@ class RunWebDriverTests(shell.Test, CustomFlagsMixin):
         if foundItems:
             self.newPassesCount = int(foundItems[0])
 
-        defer.returnValue(rc)
-
-    def evaluateCommand(self, cmd):
-        if self.failuresCount:
-            return FAILURE
-
-        if self.newPassesCount:
-            return WARNINGS
-
-        if cmd.rc != 0:
-            return FAILURE
-
-        return SUCCESS
+        if rc != 0:
+            defer.returnValue(FAILURE)
+        elif self.failuresCount:
+            defer.returnValue(FAILURE)
+        elif self.newPassesCount:
+            defer.returnValue(WARNINGS)
+        else:
+            defer.returnValue(SUCCESS)
 
     def getText(self, cmd, results):
         return self.getText2(cmd, results)

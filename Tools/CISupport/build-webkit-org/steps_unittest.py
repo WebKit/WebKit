@@ -1622,3 +1622,49 @@ class TestCheckIfNeededUpdateCrossTargetImageSteps(BuildStepMixinAdditions, unit
         rc = self.runStep()
         self.assertTrue(RebootWithUpdatedCrossTargetImage() in self.build.addedStepsAfterCurrentStep)
         return rc
+
+
+class TestRunWebDriverTests(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        self.jsonFileName = 'webdriver_tests.json'
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def configureStep(self):
+        self.setupStep(RunWebDriverTests())
+        self.setProperty('buildername', 'GTK-Linux-64-bit-Release-WebDriver-Tests')
+        self.setProperty('buildnumber', '101')
+        self.setProperty('workername', 'gtk-linux-bot-14')
+
+    def test_success(self):
+        self.configureStep()
+        self.setProperty('fullPlatform', 'gtk')
+        self.setProperty('configuration', 'release')
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                logEnviron=True,
+                logfiles={'json': self.jsonFileName},
+                command=['python3', 'Tools/Scripts/run-webdriver-tests', '--json-output=webdriver_tests.json', '--release'],
+            ) + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='webdriver-tests')
+        return self.runStep()
+
+    def test_failure(self):
+        self.configureStep()
+        self.setProperty('fullPlatform', 'gtk')
+        self.setProperty('configuration', 'release')
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                logEnviron=True,
+                logfiles={'json': self.jsonFileName},
+                command=['python3', 'Tools/Scripts/run-webdriver-tests', '--json-output=webdriver_tests.json', '--release'],
+            ) + 1,
+        )
+        self.expectOutcome(result=FAILURE, state_string='webdriver-tests (failure)')
+        return self.runStep()
