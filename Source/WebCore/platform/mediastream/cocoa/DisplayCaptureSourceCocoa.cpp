@@ -193,6 +193,11 @@ void DisplayCaptureSourceCocoa::stopProducingData()
     m_capturer->stop();
 }
 
+void DisplayCaptureSourceCocoa::endProducingData()
+{
+    m_capturer->end();
+}
+
 Seconds DisplayCaptureSourceCocoa::elapsedTime()
 {
     if (m_startTime.isNaN())

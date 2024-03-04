@@ -172,6 +172,8 @@ ScreenCaptureKitCaptureSource::~ScreenCaptureKitCaptureSource()
 {
     if (!m_sessionSource)
         ScreenCaptureKitSharingSessionManager::singleton().cancelPendingSessionForDevice(m_captureDevice);
+
+    clearSharingSession();
 }
 
 bool ScreenCaptureKitCaptureSource::start()
@@ -204,12 +206,34 @@ void ScreenCaptureKitCaptureSource::stop()
         });
     });
     [contentStream() stopCaptureWithCompletionHandler:stopHandler.get()];
-    m_sessionSource = nullptr;
+
+    if (m_sessionSource) {
+        m_contentFilter = m_sessionSource->contentFilter();
+        m_sessionSource = nullptr;
+    }
+}
+
+void ScreenCaptureKitCaptureSource::end()
+{
+    stop();
+    clearSharingSession();
+}
+
+void ScreenCaptureKitCaptureSource::clearSharingSession()
+{
+    if (!m_sharingSession)
+        return;
+
+    ScreenCaptureKitSharingSessionManager::singleton().cleanupSharingSession(m_sharingSession.get());
+    m_sharingSession = nullptr;
 }
 
 void ScreenCaptureKitCaptureSource::sessionFailedWithError(RetainPtr<NSError>&& error, const String& message)
 {
     ASSERT(isMainThread());
+
+    if (!m_isRunning)
+        return;
 
     ERROR_LOG_IF(loggerPtr() && error, LOGIDENTIFIER, message, " with error '", error.get(), "'");
     ERROR_LOG_IF(loggerPtr() && !error, LOGIDENTIFIER, message);
@@ -314,17 +338,25 @@ void ScreenCaptureKitCaptureSource::startContentStream()
     if (!m_captureHelper)
         m_captureHelper = adoptNS([[WebCoreScreenCaptureKitHelper alloc] initWithCallback:this]);
 
-    if (!m_contentFilter)
-        m_contentFilter = ScreenCaptureKitSharingSessionManager::singleton().contentFilterFromCaptureDevice(m_captureDevice);
+    if (!m_contentFilter && !m_sharingSession) {
+        auto filterAndSession = ScreenCaptureKitSharingSessionManager::singleton().contentFilterAndSharingSessionFromCaptureDevice(m_captureDevice);
+        m_contentFilter = WTFMove(filterAndSession.first);
+        m_sharingSession = WTFMove(filterAndSession.second);
+    }
 
 #if HAVE(SC_CONTENT_SHARING_PICKER)
     if (!m_contentFilter) {
-        sessionFailedWithError(nil, "Unkown display device"_s);
+        sessionFailedWithError(nil, "Unkown display device - no content filter"_s);
+        return;
+    }
+#else
+    if (!m_sharingSession) {
+        sessionFailedWithError(nil, "Unkown display device - no sharing session"_s);
         return;
     }
 #endif
 
-    m_sessionSource = ScreenCaptureKitSharingSessionManager::singleton().createSessionSourceForDevice(*this, m_contentFilter.get(), streamConfiguration().get(), (SCStreamDelegate*)m_captureHelper.get());
+    m_sessionSource = ScreenCaptureKitSharingSessionManager::singleton().createSessionSourceForDevice(*this, m_contentFilter.get(), m_sharingSession.get(), streamConfiguration().get(), (SCStreamDelegate*)m_captureHelper.get());
     if (!m_sessionSource) {
         sessionFailedWithError(nil, "Failed to allocate stream"_s);
         return;
