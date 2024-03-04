@@ -380,19 +380,19 @@ Packing RewriteGlobalVariables::pack(Packing expectedPacking, AST::Expression& e
 
     switch (expression.kind()) {
     case AST::NodeKind::IdentifierExpression:
-        return visitAndReplace(downcast<AST::IdentifierExpression>(expression));
+        return visitAndReplace(uncheckedDowncast<AST::IdentifierExpression>(expression));
     case AST::NodeKind::FieldAccessExpression:
-        return visitAndReplace(downcast<AST::FieldAccessExpression>(expression));
+        return visitAndReplace(uncheckedDowncast<AST::FieldAccessExpression>(expression));
     case AST::NodeKind::IndexAccessExpression:
-        return visitAndReplace(downcast<AST::IndexAccessExpression>(expression));
+        return visitAndReplace(uncheckedDowncast<AST::IndexAccessExpression>(expression));
     case AST::NodeKind::BinaryExpression:
-        return visitAndReplace(downcast<AST::BinaryExpression>(expression));
+        return visitAndReplace(uncheckedDowncast<AST::BinaryExpression>(expression));
     case AST::NodeKind::UnaryExpression:
-        return visitAndReplace(downcast<AST::UnaryExpression>(expression));
+        return visitAndReplace(uncheckedDowncast<AST::UnaryExpression>(expression));
     case AST::NodeKind::CallExpression:
-        return visitAndReplace(downcast<AST::CallExpression>(expression));
+        return visitAndReplace(uncheckedDowncast<AST::CallExpression>(expression));
     case AST::NodeKind::IdentityExpression:
-        return visitAndReplace(downcast<AST::IdentityExpression>(expression));
+        return visitAndReplace(uncheckedDowncast<AST::IdentityExpression>(expression));
     default:
         AST::Visitor::visit(expression);
         return Packing::Unpacked;
@@ -460,30 +460,28 @@ Packing RewriteGlobalVariables::getPacking(AST::IdentityExpression& expression)
 
 Packing RewriteGlobalVariables::getPacking(AST::CallExpression& call)
 {
-    if (is<AST::IdentifierExpression>(call.target())) {
-        auto& target = downcast<AST::IdentifierExpression>(call.target());
-        if (target.identifier() == "arrayLength"_s) {
+    if (auto target = dynamicDowncast<AST::IdentifierExpression>(call.target())) {
+        if (target->identifier() == "arrayLength"_s) {
             ASSERT(call.arguments().size() == 1);
             auto arrayOffset = 0;
             const auto& getBase = [&](auto&& getBase, AST::Expression& expression) -> AST::IdentifierExpression& {
-                if (is<AST::IdentityExpression>(expression))
-                    return getBase(getBase, downcast<AST::IdentityExpression>(expression).expression());
-                if (is<AST::UnaryExpression>(expression))
-                    return getBase(getBase, downcast<AST::UnaryExpression>(expression).expression());
-                if (is<AST::FieldAccessExpression>(expression)) {
-                    auto& fieldAccess = downcast<AST::FieldAccessExpression>(expression);
-                    auto& base = fieldAccess.base();
+                if (auto* identityExpression = dynamicDowncast<AST::IdentityExpression>(expression))
+                    return getBase(getBase, identityExpression->expression());
+                if (auto* unaryExpression = dynamicDowncast<AST::UnaryExpression>(expression))
+                    return getBase(getBase, unaryExpression->expression());
+                if (auto* fieldAccess = dynamicDowncast<AST::FieldAccessExpression>(expression)) {
+                    auto& base = fieldAccess->base();
                     auto* type = base.inferredType();
                     if (auto* reference = std::get_if<Types::Reference>(type))
                         type = reference->element;
                     auto& structure = std::get<Types::Struct>(*type).structure;
                     auto& lastMember = structure.members().last();
-                    RELEASE_ASSERT(lastMember.name().id() == fieldAccess.fieldName().id());
+                    RELEASE_ASSERT(lastMember.name().id() == fieldAccess->fieldName().id());
                     arrayOffset += lastMember.offset();
                     return getBase(getBase, base);
                 }
-                if (is<AST::IdentifierExpression>(expression))
-                    return downcast<AST::IdentifierExpression>(expression);
+                if (auto* identifierExpression = dynamicDowncast<AST::IdentifierExpression>(expression))
+                    return *identifierExpression;
                 RELEASE_ASSERT_NOT_REACHED();
             };
             auto& arrayPointer = call.arguments()[0];
@@ -573,38 +571,37 @@ std::optional<Error> RewriteGlobalVariables::collectGlobals()
     // and insert them into the declarations vector
     auto size = m_callGraph.ast().declarations().size();
     for (unsigned i = 0; i < size; ++i) {
-        auto& declaration = m_callGraph.ast().declarations()[i];
-        if (!is<AST::Variable>(declaration))
+        auto* globalVar = dynamicDowncast<AST::Variable>(m_callGraph.ast().declarations()[i]);
+        if (!globalVar)
             continue;
-        auto& globalVar = downcast<AST::Variable>(declaration);
         std::optional<Global::Resource> resource;
-        if (globalVar.group().has_value()) {
-            RELEASE_ASSERT(globalVar.binding().has_value());
-            unsigned bufferIndex = *globalVar.group();
+        if (globalVar->group().has_value()) {
+            RELEASE_ASSERT(globalVar->binding().has_value());
+            unsigned bufferIndex = *globalVar->group();
             auto buffersCountForStage = buffersForStage(m_configuration, m_stage);
             if (bufferIndex >= buffersCountForStage)
                 return Error(makeString("global has buffer index ", String::number(bufferIndex), " which exceeds the max allowed buffer index ", String::number(buffersCountForStage), " for this stage"), SourceSpan::empty());
 
-            resource = { *globalVar.group(), *globalVar.binding() };
+            resource = { *globalVar->group(), *globalVar->binding() };
         }
 
-        dataLogLnIf(shouldLogGlobalVariableRewriting, "> Found global: ", globalVar.name(), ", isResource: ", resource.has_value() ? "yes" : "no");
+        dataLogLnIf(shouldLogGlobalVariableRewriting, "> Found global: ", globalVar->name(), ", isResource: ", resource.has_value() ? "yes" : "no");
 
-        auto result = m_globals.add(globalVar.name(), Global {
+        auto result = m_globals.add(globalVar->name(), Global {
             resource,
-            &globalVar
+            globalVar
         });
         ASSERT_UNUSED(result, result.isNewEntry);
 
         if (resource.has_value()) {
-            m_globalsByBinding.add({ resource->group + 1, resource->binding + 1 }, &globalVar);
+            m_globalsByBinding.add({ resource->group + 1, resource->binding + 1 }, globalVar);
 
             auto result = m_groupBindingMap.add(resource->group, Vector<std::pair<unsigned, String>>());
-            result.iterator->value.append({ resource->binding, globalVar.name() });
-            packResource(globalVar);
+            result.iterator->value.append({ resource->binding, globalVar->name() });
+            packResource(*globalVar);
 
-            if (!m_generatedLayout || globalVar.maybeReferenceType()->inferredType()->containsRuntimeArray())
-                bufferLengths.append({ &globalVar, resource->group });
+            if (!m_generatedLayout || globalVar->maybeReferenceType()->inferredType()->containsRuntimeArray())
+                bufferLengths.append({ globalVar, resource->group });
         }
     }
 
@@ -724,7 +721,6 @@ void RewriteGlobalVariables::updateReference(AST::Variable& global, AST::Express
 {
     auto* maybeReference = global.maybeReferenceType();
     ASSERT(maybeReference);
-    ASSERT(is<AST::ReferenceTypeExpression>(*maybeReference));
     auto& reference = downcast<AST::ReferenceTypeExpression>(*maybeReference);
     auto* referenceType = std::get_if<Types::Reference>(reference.inferredType());
     ASSERT(referenceType);

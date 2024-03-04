@@ -91,13 +91,13 @@ void AttributeValidator::visit(AST::Function& function)
             continue;
         }
 
-        if (is<AST::StageAttribute>(attribute)) {
-            update(attribute.span(), function.m_stage, downcast<AST::StageAttribute>(attribute).stage());
+        if (auto* stageAttribute = dynamicDowncast<AST::StageAttribute>(attribute)) {
+            update(attribute.span(), function.m_stage, stageAttribute->stage());
             continue;
         }
 
-        if (is<AST::WorkgroupSizeAttribute>(attribute)) {
-            auto& workgroupSize = downcast<AST::WorkgroupSizeAttribute>(attribute).workgroupSize();
+        if (auto* workgroupSizeAttribute = dynamicDowncast<AST::WorkgroupSizeAttribute>(attribute)) {
+            auto& workgroupSize = workgroupSizeAttribute->workgroupSize();
             const auto& check = [&](AST::Expression* dimension) {
                 if (!dimension)
                     return;
@@ -186,11 +186,11 @@ void AttributeValidator::visit(AST::Variable& variable)
     }();
 
     for (auto& attribute : variable.attributes()) {
-        if (is<AST::BindingAttribute>(attribute)) {
+        if (auto* bindingAttribute = dynamicDowncast<AST::BindingAttribute>(attribute)) {
             if (!isResource)
                 error(attribute.span(), "@binding attribute must only be applied to resource variables");
             // https://gpuweb.github.io/cts/standalone/?q=webgpu:shader,validation,parse,attribute:expressions:value=%22override%22;attribute=%22binding%22
-            auto& constantValue = downcast<AST::BindingAttribute>(attribute).binding().constantValue();
+            auto& constantValue = bindingAttribute->binding().constantValue();
             if (!constantValue) {
                 error(attribute.span(), "@binding attribute must only be applied to resource variables");
                 continue;
@@ -204,11 +204,11 @@ void AttributeValidator::visit(AST::Variable& variable)
             continue;
         }
 
-        if (is<AST::GroupAttribute>(attribute)) {
+        if (auto* groupAttribute = dynamicDowncast<AST::GroupAttribute>(attribute)) {
             if (!isResource)
                 error(attribute.span(), "@group attribute must only be applied to resource variables");
             // https://gpuweb.github.io/cts/standalone/?q=webgpu:shader,validation,parse,attribute:expressions:value=%22override%22;attribute=%22binding%22
-            auto& constantValue = downcast<AST::GroupAttribute>(attribute).group().constantValue();
+            auto& constantValue = groupAttribute->group().constantValue();
             if (!constantValue) {
                 error(attribute.span(), "@group attribute must only be applied to resource variables");
                 continue;
@@ -221,8 +221,8 @@ void AttributeValidator::visit(AST::Variable& variable)
             continue;
         }
 
-        if (is<AST::IdAttribute>(attribute)) {
-            auto& idExpression = downcast<AST::IdAttribute>(attribute).value();
+        if (auto* idAttribute = dynamicDowncast<AST::IdAttribute>(attribute)) {
+            auto& idExpression = idAttribute->value();
             if (variable.flavor() != AST::VariableFlavor::Override || !satisfies(variable.storeType(), Constraints::Scalar))
                 error(attribute.span(), "@id attribute must only be applied to override variables of scalar type");
             // https://gpuweb.github.io/cts/standalone/?q=webgpu:shader,validation,parse,attribute:expressions:value=%22override%22;attribute=%22binding%22
@@ -317,11 +317,11 @@ void AttributeValidator::visit(AST::StructureMember& member)
         if (parseLocation(nullptr, member.m_location, attribute, member.type().inferredType()))
             continue;
 
-        if (is<AST::SizeAttribute>(attribute)) {
+        if (auto* sizeAttribute = dynamicDowncast<AST::SizeAttribute>(attribute)) {
             // FIXME: check that the member type must have creation-fixed footprint.
             m_hasSizeOrAlignmentAttributes = true;
             // https://gpuweb.github.io/cts/standalone/?q=webgpu:shader,validation,parse,attribute:expressions:value=%22override%22;*
-            auto& constantValue = downcast<AST::SizeAttribute>(attribute).size().constantValue();
+            auto& constantValue = sizeAttribute->size().constantValue();
             if (!constantValue) {
                 error(attribute.span(), "@size constant value is not found");
                 continue;
@@ -339,10 +339,10 @@ void AttributeValidator::visit(AST::StructureMember& member)
             continue;
         }
 
-        if (is<AST::AlignAttribute>(attribute)) {
+        if (auto* alignAttribute = dynamicDowncast<AST::AlignAttribute>(attribute)) {
             m_hasSizeOrAlignmentAttributes = true;
             // https://gpuweb.github.io/cts/standalone/?q=webgpu:shader,validation,parse,attribute:expressions:value=%22override%22;attribute=%22align%22
-            auto constantValue = downcast<AST::AlignAttribute>(attribute).alignment().constantValue();
+            auto constantValue = alignAttribute->alignment().constantValue();
             if (!constantValue) {
                 error(attribute.span(), "@align constant value does not exist");
                 continue;
@@ -369,19 +369,21 @@ void AttributeValidator::visit(AST::StructureMember& member)
 
 bool AttributeValidator::parseBuiltin(AST::Function* function, std::optional<Builtin>& builtin, AST::Attribute& attribute)
 {
-    if (!is<AST::BuiltinAttribute>(attribute))
+    auto* builtinAttribute = dynamicDowncast<AST::BuiltinAttribute>(attribute);
+    if (!builtinAttribute)
         return false;
     if (function && !function->stage())
         error(attribute.span(), "@builtin is not valid for non-entry point function types");
-    update(attribute.span(), builtin, downcast<AST::BuiltinAttribute>(attribute).builtin());
+    update(attribute.span(), builtin, builtinAttribute->builtin());
     return true;
 }
 
 bool AttributeValidator::parseInterpolate(std::optional<AST::Interpolation>& interpolation, AST::Attribute& attribute)
 {
-    if (!is<AST::InterpolateAttribute>(attribute))
+    auto* interpolateAttribute = dynamicDowncast<AST::InterpolateAttribute>(attribute);
+    if (!interpolateAttribute)
         return false;
-    update(attribute.span(), interpolation, downcast<AST::InterpolateAttribute>(attribute).interpolation());
+    update(attribute.span(), interpolation, interpolateAttribute->interpolation());
     return true;
 }
 
@@ -395,7 +397,8 @@ bool AttributeValidator::parseInvariant(bool& invariant, AST::Attribute& attribu
 
 bool AttributeValidator::parseLocation(AST::Function* function, std::optional<unsigned>& location, AST::Attribute& attribute, const Type* declarationType)
 {
-    if (!is<AST::LocationAttribute>(attribute))
+    auto* locationAttribute = dynamicDowncast<AST::LocationAttribute>(attribute);
+    if (!locationAttribute)
         return false;
     if (function && !function->stage())
         error(attribute.span(), "@location is not valid for non-entry point function types");
@@ -411,7 +414,7 @@ bool AttributeValidator::parseLocation(AST::Function* function, std::optional<un
     if (!isNumeric && !isNumericVector)
         error(attribute.span(), "@location must only be applied to declarations of numeric scalar or numeric vector type");
 
-    auto& constantValue = downcast<AST::LocationAttribute>(attribute).location().constantValue();
+    auto& constantValue = locationAttribute->location().constantValue();
     // https://gpuweb.github.io/cts/standalone/?q=webgpu:shader,validation,parse,attribute:expressions:value=%22override%22;*
     if (!constantValue) {
         error(attribute.span(), "@location constant value is missing");

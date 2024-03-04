@@ -88,10 +88,10 @@ EntryPointRewriter::EntryPointRewriter(ShaderModule& shaderModule, const AST::Fu
     switch (m_stage) {
     case ShaderStage::Compute: {
         for (auto& attribute : function.attributes()) {
-            if (!is<AST::WorkgroupSizeAttribute>(attribute))
+            auto* workgroupSize = dynamicDowncast<AST::WorkgroupSizeAttribute>(attribute);
+            if (!workgroupSize)
                 continue;
-            auto& workgroupSize = downcast<AST::WorkgroupSizeAttribute>(attribute);
-            m_information.typedEntryPoint = Reflection::Compute { &workgroupSize.x(), workgroupSize.maybeY(), workgroupSize.maybeZ() };
+            m_information.typedEntryPoint = Reflection::Compute { &workgroupSize->x(), workgroupSize->maybeY(), workgroupSize->maybeZ() };
             break;
         }
         break;
@@ -147,14 +147,11 @@ void EntryPointRewriter::checkReturnType()
     if (m_stage == ShaderStage::Compute)
         return;
 
-    auto* maybeReturnType = m_function.maybeReturnType();
-    if (!maybeReturnType)
-        return;
-    if (!is<AST::IdentifierExpression>(*maybeReturnType))
+    auto* namedTypeName = dynamicDowncast<AST::IdentifierExpression>(m_function.maybeReturnType());
+    if (!namedTypeName)
         return;
 
-    auto& namedTypeName = downcast<AST::IdentifierExpression>(*maybeReturnType);
-    if (auto* structType = std::get_if<Types::Struct>(namedTypeName.inferredType())) {
+    if (auto* structType = std::get_if<Types::Struct>(namedTypeName->inferredType())) {
         const auto& duplicateStruct = [&] (AST::StructureRole role, const char* suffix) {
             ASSERT(structType->structure.role() == AST::StructureRole::UserDefined);
             String returnStructName = makeString("__", structType->structure.name(), "_", suffix);
@@ -171,7 +168,7 @@ void EntryPointRewriter::checkReturnType()
                 AST::Identifier::make(returnStructName)
             );
             returnType.m_inferredType = m_shaderModule.types().structType(returnStruct);
-            m_shaderModule.replace(namedTypeName, returnType);
+            m_shaderModule.replace(*namedTypeName, returnType);
         };
 
         if (m_stage == ShaderStage::Fragment) {
@@ -189,9 +186,9 @@ void EntryPointRewriter::checkReturnType()
     String returnStructName = makeString("__", m_function.name(), "_FragmentOutput");
     auto& fieldType = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(
         SourceSpan::empty(),
-        AST::Identifier::make(namedTypeName.identifier())
+        AST::Identifier::make(namedTypeName->identifier())
     );
-    fieldType.m_inferredType = namedTypeName.inferredType();
+    fieldType.m_inferredType = namedTypeName->inferredType();
     auto& member = m_shaderModule.astBuilder().construct<AST::StructureMember>(
         SourceSpan::empty(),
         AST::Identifier::make("__value"_s),
@@ -211,7 +208,7 @@ void EntryPointRewriter::checkReturnType()
         AST::Identifier::make(returnStructName)
     );
     returnType.m_inferredType = m_shaderModule.types().structType(returnStruct);
-    m_shaderModule.replace(namedTypeName, returnType);
+    m_shaderModule.replace(*namedTypeName, returnType);
 }
 
 void EntryPointRewriter::constructInputStruct()
@@ -322,8 +319,8 @@ void EntryPointRewriter::visit(Vector<String>& path, MemberOrParameter&& data)
 
     std::optional<Builtin> builtin;
     for (auto& attribute : data.attributes) {
-        if (is<AST::BuiltinAttribute>(attribute)) {
-            builtin = downcast<AST::BuiltinAttribute>(attribute).builtin();
+        if (auto* builtinAttribute = dynamicDowncast<AST::BuiltinAttribute>(attribute)) {
+            builtin = builtinAttribute->builtin();
             break;
         }
     }

@@ -72,26 +72,26 @@ CallGraph CallGraphBuilder::build()
 void CallGraphBuilder::initializeMappings()
 {
     for (auto& declaration : m_callGraph.m_ast.declarations()) {
-        if (!is<AST::Function>(declaration))
+        auto* function = dynamicDowncast<AST::Function>(declaration);
+        if (!function)
             continue;
 
-        auto& function = downcast<AST::Function>(declaration);
-        const auto& name = function.name();
+        const auto& name = function->name();
         {
-            auto result = m_callGraph.m_functionsByName.add(name, &function);
+            auto result = m_callGraph.m_functionsByName.add(name, function);
             ASSERT_UNUSED(result, result.isNewEntry);
         }
 
         if (!m_pipelineLayouts.contains(name))
             continue;
 
-        if (!function.stage())
+        if (!function->stage())
             continue;
 
-        auto addResult = m_entryPoints.add(function.name(), Reflection::EntryPointInformation { });
+        auto addResult = m_entryPoints.add(function->name(), Reflection::EntryPointInformation { });
         ASSERT(addResult.isNewEntry);
-        m_callGraph.m_entrypoints.append({ function, *function.stage(), addResult.iterator->value });
-        m_queue.append(&function);
+        m_callGraph.m_entrypoints.append({ *function, *function->stage(), addResult.iterator->value });
+        m_queue.append(function);
     }
 
     while (!m_queue.isEmpty())
@@ -116,11 +116,11 @@ void CallGraphBuilder::visit(AST::CallExpression& call)
     for (auto& argument : call.arguments())
         AST::Visitor::visit(argument);
 
-    if (!is<AST::IdentifierExpression>(call.target()))
+    auto* target = dynamicDowncast<AST::IdentifierExpression>(call.target());
+    if (!target)
         return;
 
-    auto& target = downcast<AST::IdentifierExpression>(call.target());
-    auto it = m_callGraph.m_functionsByName.find(target.identifier());
+    auto it = m_callGraph.m_functionsByName.find(target->identifier());
     if (it == m_callGraph.m_functionsByName.end())
         return;
 
