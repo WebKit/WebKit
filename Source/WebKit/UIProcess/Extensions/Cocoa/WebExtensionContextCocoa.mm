@@ -300,6 +300,22 @@ bool WebExtensionContext::unload(NSError **outError)
     m_extensionController = nil;
     m_contentScriptWorld = nullptr;
 
+    m_tabMap.clear();
+    m_extensionPageTabMap.clear();
+
+    m_windowMap.clear();
+    m_windowOrderVector.clear();
+    m_focusedWindowIdentifier = std::nullopt;
+
+    m_actionWindowMap.clear();
+    m_actionTabMap.clear();
+    m_defaultAction = nullptr;
+    m_popupPageActionMap.clear();
+
+    m_ports.clear();
+    m_portQueuedMessages.clear();
+    m_nativePortMap.clear();
+
     return true;
 }
 
