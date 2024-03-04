@@ -2394,12 +2394,12 @@ DiagnosticLoggingEnabled:
     WebCore:
       default: false
 
-DigitalIdentityEnabled:
+DigitalCredentialsEnabled:
   type: bool
   status: unstable
   category: dom
-  humanReadableName: "Digital Identity API"
-  humanReadableDescription: "Enable the experimental Digital Identity API"
+  humanReadableName: "Digital Credentials API"
+  humanReadableDescription: "Enable the experimental Digital Credentials API"
   defaultValue:
     WebKitLegacy:
       default: false

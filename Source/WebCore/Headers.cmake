@@ -343,6 +343,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/cookie-store/CookieStoreGetOptions.h
 
     Modules/credentialmanagement/CredentialRequestOptions.h
+    Modules/credentialmanagement/DigitalCredentialRequestOptions.h
 
     Modules/encryptedmedia/CDMClient.h
     Modules/encryptedmedia/MediaKeySystemClient.h
