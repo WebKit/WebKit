@@ -28,6 +28,8 @@
 
 #if ENABLE(MEDIA_SOURCE)
 
+#include "MediaPlayerPrivate.h"
+#include "MediaSource.h"
 #include "MediaSourcePrivateClient.h"
 #include "PlatformTimeRanges.h"
 #include "SourceBufferPrivate.h"
