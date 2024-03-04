@@ -58,16 +58,18 @@ class Expectations
     {
         const unexpectedSet = new Set(results.split('.'));
         const expectedSet = new Set(expectations.split(' '));
+        let result = 'WARNING';
 
         if (expectedSet.has('FAIL'))
             expectedSet.add('TEXT').add('AUDIO').add('IMAGE');
 
         for (const result of unexpectedSet) {
-            if (expectedSet.has(result))
+            if (expectedSet.has(result)) {
+                result = 'PASS';
                 unexpectedSet.delete(result);
+            }
         }
 
-        let result = 'PASS';
         for (const candidate of unexpectedSet) {
             if (Expectations.stringToStateId(candidate) < Expectations.stringToStateId(result))
                 result = candidate;
