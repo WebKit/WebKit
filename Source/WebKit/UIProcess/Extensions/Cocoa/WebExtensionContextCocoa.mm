@@ -62,6 +62,7 @@
 #import "WebExtensionWindow.h"
 #import "WebPageProxy.h"
 #import "WebPageProxyIdentifier.h"
+#import "WebPreferences.h"
 #import "WebScriptMessageHandler.h"
 #import "WebUserContentControllerProxy.h"
 #import "_WKWebExtensionContextInternal.h"
@@ -706,10 +707,26 @@ void WebExtensionContext::setDeniedPermissionMatchPatterns(PermissionMatchPatter
     postAsyncNotification(_WKWebExtensionContextPermissionMatchPatternsWereDeniedNotification, addedMatchPatterns);
 }
 
-void WebExtensionContext::postAsyncNotification(NSNotificationName notificationName, PermissionsSet& permissions)
+void WebExtensionContext::permissionsDidChange(const PermissionsSet& changedPermissions)
+{
+    if (!isLoaded())
+        return;
+
+    if (changedPermissions.contains(_WKWebExtensionPermissionClipboardWrite)) {
+        bool granted = hasPermission(_WKWebExtensionPermissionClipboardWrite);
+
+        enumerateExtensionPages([&](auto& page, bool&) {
+            page.preferences().setJavaScriptCanAccessClipboard(granted);
+        });
+    }
+}
+
+void WebExtensionContext::postAsyncNotification(NSNotificationName notificationName, const PermissionsSet& permissions)
 {
     if (permissions.isEmpty())
         return;
+
+    permissionsDidChange(permissions);
 
     if ([notificationName isEqualToString:_WKWebExtensionContextPermissionsWereGrantedNotification])
         firePermissionsEventListenerIfNecessary(WebExtensionEventListenerType::PermissionsOnAdded, permissions, { });
@@ -721,7 +738,7 @@ void WebExtensionContext::postAsyncNotification(NSNotificationName notificationN
     }).get());
 }
 
-void WebExtensionContext::postAsyncNotification(NSNotificationName notificationName, MatchPatternSet& matchPatterns)
+void WebExtensionContext::postAsyncNotification(NSNotificationName notificationName, const MatchPatternSet& matchPatterns)
 {
     if (matchPatterns.isEmpty())
         return;
@@ -2587,6 +2604,22 @@ void WebExtensionContext::addExtensionTabPage(WebPageProxy& page, WebExtensionTa
     page.process().send(Messages::WebExtensionContextProxy::AddTabPageIdentifier(page.webPageID(), tab.identifier(), windowIdentifier), identifier());
 }
 
+void WebExtensionContext::enumerateExtensionPages(Function<void(WebPageProxy&, bool&)>&& action)
+{
+    if (!isLoaded())
+        return;
+
+    bool stop = false;
+    for (auto& page : extensionController()->allPages()) {
+        auto* webView = page.cocoaView().get();
+        if (isURLForThisExtension(webView._requiredWebExtensionBaseURL)) {
+            action(page, stop);
+            if (stop)
+                return;
+        }
+    }
+}
+
 WKWebView *WebExtensionContext::relatedWebView()
 {
     ASSERT(isLoaded());
@@ -2594,12 +2627,13 @@ WKWebView *WebExtensionContext::relatedWebView()
     if (m_backgroundWebView)
         return m_backgroundWebView.get();
 
-    for (auto& page : extensionController()->allPages()) {
-        if (isURLForThisExtension(page.configuration().requiredWebExtensionBaseURL()))
-            return page.cocoaView().get();
-    }
+    WKWebView *extensionWebView;
+    enumerateExtensionPages([&](auto& page, bool& stop) {
+        extensionWebView = page.cocoaView().get();
+        stop = true;
+    });
 
-    return nil;
+    return extensionWebView;
 }
 
 NSString *WebExtensionContext::processDisplayName()
@@ -2654,9 +2688,11 @@ WKWebViewConfiguration *WebExtensionContext::webViewConfiguration(WebViewPurpose
         configuration._webExtensionController = nil;
     }
 
+    auto *preferences = configuration.preferences;
+    preferences._javaScriptCanAccessClipboard = hasPermission(_WKWebExtensionPermissionClipboardWrite);
+
     if (purpose == WebViewPurpose::Background || purpose == WebViewPurpose::Inspector) {
         // FIXME: <https://webkit.org/b/263286> Consider allowing the background page to throttle or be suspended.
-        auto *preferences = configuration.preferences;
         preferences._hiddenPageDOMTimerThrottlingEnabled = NO;
         preferences._pageVisibilityBasedProcessSuppressionEnabled = NO;
         preferences.inactiveSchedulingPolicy = WKInactiveSchedulingPolicyNone;

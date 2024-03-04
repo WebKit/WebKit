@@ -41,6 +41,8 @@ namespace TestWebKitAPI {
 
 static void runScriptWithUserGesture(const String& script, WKWebView *backgroundWebView)
 {
+    ASSERT(backgroundWebView);
+
     bool callbackComplete = false;
     RetainPtr<id> evalResult;
     [backgroundWebView callAsyncJavaScript:script arguments:nil inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:[&] (id result, NSError *error) {
@@ -50,6 +52,7 @@ static void runScriptWithUserGesture(const String& script, WKWebView *background
         if (error)
             NSLog(@"Encountered error: %@ while evaluating script: %@", error, static_cast<NSString *>(script));
     }];
+
     TestWebKitAPI::Util::run(&callbackComplete);
 }
 
@@ -409,6 +412,169 @@ TEST(WKWebExtensionAPIPermissions, ValidMatchPatterns)
     [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPatternApple];
 
     [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPIPermissions, ClipboardWrite)
+{
+    auto *manifest = @{
+        @"manifest_version": @3,
+
+        @"name": @"Permissions Test",
+        @"description": @"Permissions Test",
+        @"version": @"1",
+
+        @"background": @{
+            @"scripts": @[ @"background.js" ],
+            @"type": @"module",
+            @"persistent": @NO,
+        },
+
+        @"permissions": @[ @"clipboardWrite" ],
+    };
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"await navigator.clipboard.writeText('Test Clipboard Write')",
+
+        @"browser.test.yield('Clipboard Written')",
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionClipboardWrite];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Clipboard Written");
+
+#if TARGET_OS_IPHONE
+    auto *clipboardContent = UIPasteboard.generalPasteboard.string;
+#else
+    auto *clipboardContent = [NSPasteboard.generalPasteboard stringForType:NSPasteboardTypeString];
+#endif
+
+    EXPECT_NS_EQUAL(clipboardContent, @"Test Clipboard Write");
+}
+
+TEST(WKWebExtensionAPIPermissions, ClipboardWriteWithoutPermission)
+{
+    auto *manifest = @{
+        @"manifest_version": @3,
+
+        @"name": @"Permissions Test",
+        @"description": @"Permissions Test",
+        @"version": @"1",
+
+        @"background": @{
+            @"scripts": @[ @"background.js" ],
+            @"type": @"module",
+            @"persistent": @NO,
+        },
+    };
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"try {",
+        @"  await navigator.clipboard.writeText('Attempt Without Permission')",
+
+        @"  browser.test.notifyFail('Should not write to clipboard without permission')",
+        @"} catch (error) {",
+        @"  browser.test.assertTrue(error instanceof DOMException, 'Expect a DOMException for insufficient permissions')",
+
+        @"  browser.test.notifyPass()",
+        @"}"
+    ]);
+
+#if TARGET_OS_IPHONE
+    auto *clipboardContentBefore = UIPasteboard.generalPasteboard.string;
+#else
+    auto *clipboardContentBefore = [NSPasteboard.generalPasteboard stringForType:NSPasteboardTypeString];
+#endif
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager loadAndRun];
+
+#if TARGET_OS_IPHONE
+    auto *clipboardContentAfter = UIPasteboard.generalPasteboard.string;
+#else
+    auto *clipboardContentAfter = [NSPasteboard.generalPasteboard stringForType:NSPasteboardTypeString];
+#endif
+
+    EXPECT_NS_EQUAL(clipboardContentBefore, clipboardContentAfter);
+}
+
+TEST(WKWebExtensionAPIPermissions, ClipboardWriteWithRequest)
+{
+    auto *manifest = @{
+        @"manifest_version": @3,
+
+        @"name": @"Permissions Test",
+        @"description": @"Permissions Test",
+        @"version": @"1",
+
+        @"background": @{
+            @"scripts": @[ @"background.js" ],
+            @"type": @"module",
+            @"persistent": @NO,
+        },
+
+        @"optional_permissions": @[ @"clipboardWrite" ],
+    };
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"window.runTest = async () => {",
+        @"  try {",
+        @"    await navigator.clipboard.writeText('Initial Attempt Without Permission')",
+        @"  } catch (error) {",
+        @"    browser.test.assertTrue(error instanceof DOMException, 'Expect a DOMException for insufficient permissions')",
+        @"  }",
+
+        @"  const permissionGranted = await browser.permissions.request({ permissions: [ 'clipboardWrite' ] })",
+
+        @"  if (permissionGranted) {",
+        @"    await navigator.clipboard.writeText('Test Clipboard Write After Permission')",
+
+        @"    browser.test.yield('Clipboard Written')",
+        @"  } else {",
+        @"    browser.test.notifyFail('Permission was not granted')",
+        @"  }",
+        @"}",
+
+        @"browser.test.yield('Ready')",
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto requestDelegate = adoptNS([[TestWebExtensionsDelegate alloc] init]);
+
+    requestDelegate.get().promptForPermissions = ^(id<_WKWebExtensionTab> tab, NSSet<NSString *> *requestedPermissions, void (^callback)(NSSet<NSString *> *grantedPermissions)) {
+        EXPECT_EQ(requestedPermissions.count, 1ul);
+        EXPECT_TRUE([requestedPermissions containsObject:_WKWebExtensionPermissionClipboardWrite]);
+
+        callback(requestedPermissions);
+    };
+
+    manager.get().controllerDelegate = requestDelegate.get();
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Ready");
+
+    runScriptWithUserGesture("window.runTest()"_s, manager.get().context._backgroundWebView);
+
+    [manager run];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Clipboard Written");
+
+#if TARGET_OS_IPHONE
+    auto *clipboardContent = UIPasteboard.generalPasteboard.string;
+#else
+    auto *clipboardContent = [NSPasteboard.generalPasteboard stringForType:NSPasteboardTypeString];
+#endif
+
+    EXPECT_NS_EQUAL(clipboardContent, @"Test Clipboard Write After Permission");
 }
 
 } // namespace TestWebKitAPI

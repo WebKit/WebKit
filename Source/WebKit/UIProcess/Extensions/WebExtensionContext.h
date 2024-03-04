@@ -456,6 +456,8 @@ public:
     void addExtensionTabPage(WebPageProxy&, WebExtensionTab&);
     void addPopupPage(WebPageProxy&, WebExtensionAction&);
 
+    void enumerateExtensionPages(Function<void(WebPageProxy&, bool& stop)>&&);
+
     WKWebView *relatedWebView();
     NSString *processDisplayName();
     NSArray *corsDisablingPatterns();
@@ -515,8 +517,10 @@ private:
 
     void invalidateStorage();
 
-    void postAsyncNotification(NSString *notificationName, PermissionsSet&);
-    void postAsyncNotification(NSString *notificationName, MatchPatternSet&);
+    void permissionsDidChange(const PermissionsSet&);
+
+    void postAsyncNotification(NSString *notificationName, const PermissionsSet&);
+    void postAsyncNotification(NSString *notificationName, const MatchPatternSet&);
 
     bool removePermissions(PermissionsMap&, PermissionsSet&, WallTime& nextExpirationDate, NSString *notificationName);
     bool removePermissionMatchPatterns(PermissionMatchPatternsMap&, MatchPatternSet&, EqualityOnly, WallTime& nextExpirationDate, NSString *notificationName);
