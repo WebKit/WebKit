@@ -358,7 +358,7 @@ bool NotificationService::showNotification(const WebNotification& notification, 
         if (tag.isEmpty())
             return Notification();
 
-        uint64_t notificationID = 0;
+        WebNotificationIdentifier notificationID;
         for (const auto& it : m_notifications) {
             if (it.value.tag == tag) {
                 notificationID = it.key;
@@ -369,7 +369,7 @@ bool NotificationService::showNotification(const WebNotification& notification, 
         return notificationID ? m_notifications.take(notificationID) : Notification({ 0, { }, tag, { } });
     };
 
-    auto addResult = m_notifications.add(notification.notificationID(), findNotificationByTag(notification.tag()));
+    auto addResult = m_notifications.add(notification.identifier(), findNotificationByTag(notification.tag()));
     addResult.iterator->value.iconURL = notification.iconURL();
 
     if (shouldUsePortal()) {
@@ -420,7 +420,7 @@ bool NotificationService::showNotification(const WebNotification& notification, 
 
         auto* value = static_cast<GValue*>(fastZeroedMalloc(sizeof(GValue)));
         g_value_init(value, G_TYPE_UINT64);
-        g_value_set_uint64(value, notification.notificationID());
+        g_value_set_uint64(value, notification.identifier().toUInt64());
 
         CString body;
         if (m_capabilities.contains(Capabilities::Body))
@@ -443,7 +443,7 @@ bool NotificationService::showNotification(const WebNotification& notification, 
                 g_variant_get(notificationID.get(), "(u)", &id);
 
                 auto* value = static_cast<GValue*>(userData);
-                NotificationService::singleton().setNotificationID(g_value_get_uint64(value), id);
+                NotificationService::singleton().setNotificationID(WebNotificationIdentifier { g_value_get_uint64(value) }, id);
                 g_value_unset(value);
                 fastFree(value);
             }, value);
@@ -451,7 +451,7 @@ bool NotificationService::showNotification(const WebNotification& notification, 
     return true;
 }
 
-void NotificationService::cancelNotification(uint64_t webNotificationID)
+void NotificationService::cancelNotification(WebNotificationIdentifier webNotificationID)
 {
     if (!m_proxy)
         return;
@@ -485,7 +485,7 @@ void NotificationService::cancelNotification(uint64_t webNotificationID)
     }
 }
 
-void NotificationService::setNotificationID(uint64_t webNotificationID, uint32_t notificationID)
+void NotificationService::setNotificationID(WebNotificationIdentifier webNotificationID, uint32_t notificationID)
 {
     auto it = m_notifications.find(webNotificationID);
     if (it == m_notifications.end())
@@ -494,24 +494,24 @@ void NotificationService::setNotificationID(uint64_t webNotificationID, uint32_t
     it->value.id = notificationID;
 }
 
-uint64_t NotificationService::findNotification(uint32_t notificationID)
+WebNotificationIdentifier NotificationService::findNotification(uint32_t notificationID)
 {
     for (const auto& it : m_notifications) {
         if (it.value.id == notificationID)
             return it.key;
     }
 
-    return 0;
+    return  { };
 }
 
-uint64_t NotificationService::findNotification(const String& notificationID)
+WebNotificationIdentifier NotificationService::findNotification(const String& notificationID)
 {
     for (const auto& it : m_notifications) {
         if (it.value.portalID == notificationID)
             return it.key;
     }
 
-    return 0;
+    return { };
 }
 
 void NotificationService::handleSignal(GDBusProxy* proxy, char*, char* signal, GVariant* parameters, NotificationService* service)
@@ -541,7 +541,7 @@ void NotificationService::handleSignal(GDBusProxy* proxy, char*, char* signal, G
     }
 }
 
-void NotificationService::didClickNotification(uint64_t notificationID)
+void NotificationService::didClickNotification(WebNotificationIdentifier notificationID)
 {
     if (!notificationID)
         return;
@@ -550,7 +550,7 @@ void NotificationService::didClickNotification(uint64_t notificationID)
         observer->didClickNotification(notificationID);
 }
 
-void NotificationService::didCloseNotification(uint64_t notificationID)
+void NotificationService::didCloseNotification(WebNotificationIdentifier notificationID)
 {
     if (!notificationID)
         return;

@@ -28,9 +28,10 @@
 #include "APIDictionary.h"
 #include "APISecurityOrigin.h"
 #include "Connection.h"
+#include "WebNotificationIdentifier.h"
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/NotificationData.h>
-#include <wtf/Identified.h>
+#include <wtf/ObjectIdentifier.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -41,7 +42,7 @@ struct NotificationData;
 
 namespace WebKit {
 
-class WebNotification : public API::ObjectImpl<API::Object::Type::Notification>, public Identified<WebNotification> {
+class WebNotification : public API::ObjectImpl<API::Object::Type::Notification> {
 public:
     static Ref<WebNotification> createNonPersistent(const WebCore::NotificationData& data, WebPageProxyIdentifier pageIdentifier, IPC::Connection& sourceConnection)
     {
@@ -71,7 +72,7 @@ public:
     const API::SecurityOrigin* origin() const { return m_origin.get(); }
     API::SecurityOrigin* origin() { return m_origin.get(); }
 
-    uint64_t notificationID() const { return identifier(); }
+    WebNotificationIdentifier identifier() const { return m_identifier; }
 
     WebPageProxyIdentifier pageIdentifier() const { return m_pageIdentifier; }
     RefPtr<IPC::Connection> sourceConnection() const { return m_sourceConnection.get(); }
@@ -79,6 +80,7 @@ public:
 private:
     WebNotification(const WebCore::NotificationData&, WebPageProxyIdentifier, const std::optional<WTF::UUID>& dataStoreIdentifier, IPC::Connection*);
 
+    WebNotificationIdentifier m_identifier;
     WebCore::NotificationData m_data;
     RefPtr<API::SecurityOrigin> m_origin;
     WebPageProxyIdentifier m_pageIdentifier;

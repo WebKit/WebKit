@@ -32,7 +32,8 @@
 namespace WebKit {
 
 WebNotification::WebNotification(const WebCore::NotificationData& data, WebPageProxyIdentifier pageIdentifier, const std::optional<WTF::UUID>& dataStoreIdentifier, IPC::Connection* sourceConnection)
-    : m_data(data)
+    : m_identifier(WebNotificationIdentifier::generate())
+    , m_data(data)
     , m_origin(API::SecurityOrigin::createFromString(data.originString))
     , m_pageIdentifier(pageIdentifier)
     , m_dataStoreIdentifier(dataStoreIdentifier)

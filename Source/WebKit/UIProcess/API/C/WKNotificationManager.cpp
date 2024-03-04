@@ -47,12 +47,12 @@ void WKNotificationManagerSetProvider(WKNotificationManagerRef managerRef, const
 
 void WKNotificationManagerProviderDidShowNotification(WKNotificationManagerRef managerRef, uint64_t notificationID)
 {
-    toImpl(managerRef)->providerDidShowNotification(notificationID);
+    toImpl(managerRef)->providerDidShowNotification(WebNotificationIdentifier { notificationID });
 }
 
 void WKNotificationManagerProviderDidClickNotification(WKNotificationManagerRef managerRef, uint64_t notificationID)
 {
-    toImpl(managerRef)->providerDidClickNotification(notificationID);
+    toImpl(managerRef)->providerDidClickNotification(WebNotificationIdentifier { notificationID });
 }
 
 void WKNotificationManagerProviderDidClickNotification_b(WKNotificationManagerRef managerRef, WKDataRef identifier)

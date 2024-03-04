@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "WebNotificationIdentifier.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/StringHash.h>
@@ -49,7 +50,7 @@ public:
     virtual bool show(WebKit::WebPageProxy*, WebKit::WebNotification&, RefPtr<WebCore::NotificationResources>&&) { return false; }
     virtual void cancel(WebKit::WebNotification&) { }
     virtual void didDestroyNotification(WebKit::WebNotification&) { }
-    virtual void clearNotifications(const Vector<uint64_t>& /*notificationIDs*/) { }
+    virtual void clearNotifications(const Vector<WebKit::WebNotificationIdentifier>&) { }
 
     virtual void addNotificationManager(WebKit::WebNotificationManagerProxy&) { }
     virtual void removeNotificationManager(WebKit::WebNotificationManagerProxy&) { }

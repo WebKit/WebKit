@@ -86,7 +86,7 @@ WKSecurityOriginRef WKNotificationGetSecurityOrigin(WKNotificationRef notificati
 
 uint64_t WKNotificationGetID(WKNotificationRef notification)
 {
-    return toImpl(notification)->notificationID();
+    return toImpl(notification)->identifier().toUInt64();
 }
 
 WKStringRef WKNotificationCopyDataStoreIdentifier(WKNotificationRef notification)

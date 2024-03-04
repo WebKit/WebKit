@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,42 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebNotificationProvider_h
-#define WebNotificationProvider_h
+#pragma once
 
-#include "APIClient.h"
-#include "APINotificationProvider.h"
-#include "WKNotificationProvider.h"
-#include <wtf/Forward.h>
-
-namespace API {
-template<> struct ClientTraits<WKNotificationProviderBase> {
-    typedef std::tuple<WKNotificationProviderV0> Versions;
-};
-}
+#include <wtf/ObjectIdentifier.h>
 
 namespace WebKit {
 
-class WebNotification;
-class WebNotificationManagerProxy;
-class WebPageProxy;
-
-class WebNotificationProvider : public API::NotificationProvider, public API::Client<WKNotificationProviderBase> {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    explicit WebNotificationProvider(const WKNotificationProviderBase*);
-
-    bool show(WebPageProxy*, WebNotification&, RefPtr<WebCore::NotificationResources>&&) override;
-    void cancel(WebNotification&) override;
-    void didDestroyNotification(WebNotification&) override;
-    void clearNotifications(const Vector<WebNotificationIdentifier>&) override;
-
-    void addNotificationManager(WebNotificationManagerProxy&) override;
-    void removeNotificationManager(WebNotificationManagerProxy&) override;
-
-    HashMap<WTF::String, bool> notificationPermissions() override;
-};
+enum class WebNotificationIdentifierType { };
+using WebNotificationIdentifier = ObjectIdentifier<WebNotificationIdentifierType>;
 
 } // namespace WebKit
-
-#endif // WebNotificationProvider_h

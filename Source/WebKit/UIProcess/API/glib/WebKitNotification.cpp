@@ -211,7 +211,7 @@ guint64 webkit_notification_get_id(WebKitNotification* notification)
 {
     g_return_val_if_fail(WEBKIT_IS_NOTIFICATION(notification), 0);
 
-    return notification->priv->notification->notificationID();
+    return notification->priv->notification->identifier().toUInt64();
 }
 
 /**
