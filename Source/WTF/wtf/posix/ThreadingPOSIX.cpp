@@ -330,7 +330,7 @@ bool Thread::establishHandle(NewThreadContext* context, std::optional<size_t> st
     if (policy == SCHED_RR)
         RealTimeThreads::singleton().registerThread(*this);
     else {
-        struct sched_param param = { 0 };
+        struct sched_param param = { };
         error = pthread_setschedparam(threadHandle, policy | SCHED_RESET_ON_FORK, &param);
         if (error)
             LOG_ERROR("Failed to set sched policy %d for thread %ld: %s", policy, threadHandle, safeStrerror(error).data());
