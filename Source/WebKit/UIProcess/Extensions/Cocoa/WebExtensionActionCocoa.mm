@@ -1037,9 +1037,14 @@ NSArray *WebExtensionAction::platformMenuItems() const
     if (!extensionContext())
         return @[ ];
 
+    RefPtr tab = m_tab;
+    if (!tab && m_window)
+        tab = m_window->activeTab();
+
     WebExtensionMenuItemContextParameters contextParameters;
     contextParameters.types = WebExtensionMenuItemContextType::Action;
-    contextParameters.tabIdentifier = m_tab ? std::optional { m_tab->identifier() } : std::nullopt;
+    contextParameters.tabIdentifier = tab ? std::optional(tab->identifier()) : std::nullopt;
+    contextParameters.frameURL = tab ? tab->url() : URL { };
 
     return WebExtensionMenuItem::matchingPlatformMenuItems(extensionContext()->mainMenuItems(), contextParameters, webExtensionActionMenuItemTopLevelLimit);
 }

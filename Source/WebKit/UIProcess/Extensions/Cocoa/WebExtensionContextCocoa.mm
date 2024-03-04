@@ -2281,6 +2281,7 @@ NSArray *WebExtensionContext::platformMenuItems(const WebExtensionTab& tab) cons
     WebExtensionMenuItemContextParameters contextParameters;
     contextParameters.types = WebExtensionMenuItemContextType::Tab;
     contextParameters.tabIdentifier = tab.identifier();
+    contextParameters.frameURL = tab.url();
 
     if (auto *menuItem = singleMenuItemOrExtensionItemWithSubmenu(contextParameters))
         return @[ menuItem ];
