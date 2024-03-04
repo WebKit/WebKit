@@ -20,7 +20,7 @@ promise_test(async (test) => {
     if (!result.supported)
         return;
 
-    if (window.internals && internals.isHardwareVP9DecoderExpected())
+    if (window.internals && window.testRunner && testRunner.isWebKit2 && internals.isHardwareVP9DecoderExpected())
         assert_true(result.powerEfficient);
 }, "VP9 powerEfficient for webrtc with hardware VP9 if any");
 
