@@ -77,9 +77,6 @@ public:
     void scheduleSubtreeLayout(RenderElement& layoutRoot);
     void unscheduleLayout();
 
-    void disableSetNeedsLayout();
-    void enableSetNeedsLayout();
-
     enum class LayoutPhase : uint8_t {
         OutsideLayout,
         InPreLayout,
@@ -193,13 +190,11 @@ private:
     bool m_firstLayout { true };
     bool m_needsFullRepaint { true };
     bool m_inAsynchronousTasks { false };
-    bool m_setNeedsLayoutWasDeferred { false };
     bool m_needsSkippedContentLayout { false };
     LayoutPhase m_layoutPhase { LayoutPhase::OutsideLayout };
     enum class LayoutNestedState : uint8_t  { NotInLayout, NotNested, Nested };
     LayoutNestedState m_layoutNestedState { LayoutNestedState::NotInLayout };
     unsigned m_layoutCount { 0 };
-    unsigned m_disableSetNeedsLayoutCount { 0 };
     unsigned m_paintOffsetCacheDisableCount { 0 };
     LayoutStateStack m_layoutStateStack;
     std::unique_ptr<Layout::LayoutTree> m_layoutTree;
