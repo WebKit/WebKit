@@ -238,7 +238,7 @@ public:
     const LengthPoint& position() const { return m_position; }
 
     WEBCORE_EXPORT bool canBlend(const PathOperation&) const final;
-    WEBCORE_EXPORT RefPtr<PathOperation> blend(const PathOperation*, const BlendingContext&) const final;
+    RefPtr<PathOperation> blend(const PathOperation*, const BlendingContext&) const final;
 
     double lengthForPath() const;
     double lengthForContainPath(const FloatRect& elementRect, double computedPathLength) const;
