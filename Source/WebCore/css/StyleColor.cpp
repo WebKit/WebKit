@@ -75,7 +75,7 @@ Color StyleColor::colorFromAbsoluteKeyword(CSSValueID keyword)
     return { };
 }
 
-Color StyleColor::colorFromKeyword(CSSValueID keyword , OptionSet<StyleColorOptions> options)
+Color StyleColor::colorFromKeyword(CSSValueID keyword, OptionSet<StyleColorOptions> options)
 {
     if (isAbsoluteColorKeyword(keyword))
         return colorFromAbsoluteKeyword(keyword);
@@ -128,6 +128,17 @@ bool StyleColor::containsCurrentColor(const CSSPrimitiveValue& value)
 
     if (value.isUnresolvedColor())
         return value.unresolvedColor().containsCurrentColor();
+
+    return false;
+}
+
+bool StyleColor::containsColorSchemeDependentColor(const CSSPrimitiveValue& value)
+{
+    if (StyleColor::isSystemColorKeyword(value.valueID()))
+        return true;
+
+    if (value.isUnresolvedColor())
+        return value.unresolvedColor().containsColorSchemeDependentColor();
 
     return false;
 }

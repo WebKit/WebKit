@@ -45,6 +45,18 @@ bool CSSUnresolvedColor::containsCurrentColor() const
     );
 }
 
+bool CSSUnresolvedColor::containsColorSchemeDependentColor() const
+{
+    return WTF::switchOn(m_value,
+        [] (const CSSUnresolvedColorMix& unresolved) {
+            return StyleColor::containsColorSchemeDependentColor(unresolved.mixComponents1.color) || StyleColor::containsColorSchemeDependentColor(unresolved.mixComponents2.color);
+        },
+        [] (const CSSUnresolvedLightDark&) {
+            return true;
+        }
+    );
+}
+
 void CSSUnresolvedColor::serializationForCSS(StringBuilder& builder) const
 {
     return WTF::switchOn(m_value, [&] (auto& unresolved) { WebCore::serializationForCSS(builder, unresolved); });
