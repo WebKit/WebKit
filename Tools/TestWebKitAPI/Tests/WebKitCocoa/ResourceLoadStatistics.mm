@@ -1670,3 +1670,64 @@ TEST(ResourceLoadStatistics, StorageAccessOnRedirectSitesWithQuirk)
     }];
     TestWebKitAPI::Util::run(&done);
 }
+
+TEST(ResourceLoadStatistics, EnableResourceLoadStatisticsAfterNetworkProcessCreation)
+{
+    __block bool done = false;
+    @autoreleasepool {
+        // Create WebsiteDataStore to leave ITP data on disk.
+        auto websiteDataStore = [WKWebsiteDataStore dataStoreForIdentifier:[[NSUUID alloc] initWithUUIDString:@"68753a44-4d6f-1226-9c60-0050e4c00067"]];
+        [websiteDataStore _setResourceLoadStatisticsEnabled:YES];
+        [websiteDataStore removeDataOfTypes:[WKWebsiteDataStore _allWebsiteDataTypesIncludingPrivate]  modifiedSince:[NSDate distantPast] completionHandler:^ {
+            done = true;
+        }];
+        TestWebKitAPI::Util::run(&done);
+
+        auto *sharedProcessPool = [WKProcessPool _sharedProcessPool];
+        auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        configuration.get().processPool = sharedProcessPool;
+        configuration.get().websiteDataStore = websiteDataStore;
+        auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+        [webView loadHTMLString:@"" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
+        [webView _test_waitForDidFinishNavigation];
+
+        done = false;
+        [sharedProcessPool _seedResourceLoadStatisticsForTestingWithFirstParty:[NSURL URLWithString:@"http://webkit.org"] thirdParty:[NSURL URLWithString:@"http://evil.com"] shouldScheduleNotification:NO completionHandler: ^() {
+            done = true;
+        }];
+        TestWebKitAPI::Util::run(&done);
+
+        done = false;
+        [websiteDataStore _getResourceLoadStatisticsDataSummary:^(NSArray<_WKResourceLoadStatisticsThirdParty *> *thirdPartyData) {
+            EXPECT_EQ([thirdPartyData count], 1u);
+            done = true;
+        }];
+        TestWebKitAPI::Util::run(&done);
+
+        pid_t networkProcessIdentifier = [websiteDataStore _networkProcessIdentifier];
+        EXPECT_NE(networkProcessIdentifier, 0);
+        kill(networkProcessIdentifier, SIGKILL);
+    }
+
+    auto websiteDataStore1 = [WKWebsiteDataStore dataStoreForIdentifier:[[NSUUID alloc] initWithUUIDString:@"940e7729-738e-439f-a366-1a8719e23b2d"]];
+    [websiteDataStore1 _setResourceLoadStatisticsEnabled:NO];
+    auto websiteDataStore2 = [WKWebsiteDataStore dataStoreForIdentifier:[[NSUUID alloc] initWithUUIDString:@"68753a44-4d6f-1226-9c60-0050e4c00067"]];
+    [websiteDataStore2 _setResourceLoadStatisticsEnabled:NO];
+
+    // Wait until new network process is launched.
+    done = false;
+    [websiteDataStore1 removeDataOfTypes:[WKWebsiteDataStore _allWebsiteDataTypesIncludingPrivate]  modifiedSince:[NSDate distantPast] completionHandler:^ {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    while (![websiteDataStore1 _networkProcessIdentifier])
+        TestWebKitAPI::Util::spinRunLoop(10);
+
+    [websiteDataStore2 _setResourceLoadStatisticsEnabled:YES];
+    done = false;
+    [websiteDataStore2 _getResourceLoadStatisticsDataSummary:^(NSArray<_WKResourceLoadStatisticsThirdParty *> *thirdPartyData) {
+        EXPECT_EQ([thirdPartyData count], 1u);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+}
