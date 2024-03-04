@@ -31,6 +31,7 @@
 #include "MediaSource.h"
 #include "MediaSourcePrivate.h"
 #include "MediaSourcePrivateClient.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 

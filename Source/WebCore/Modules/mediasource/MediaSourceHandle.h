@@ -28,6 +28,7 @@
 
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
+#include <wtf/IsoMalloc.h>
 #include <wtf/Lock.h>
 #include <wtf/RefCounted.h>
 
