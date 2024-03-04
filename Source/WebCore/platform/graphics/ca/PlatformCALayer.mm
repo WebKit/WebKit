@@ -220,7 +220,7 @@ void PlatformCALayer::clearAcceleratedEffectsAndBaseValues()
 {
 }
 
-void PlatformCALayer::setAcceleratedEffectsAndBaseValues(const AcceleratedEffects&, AcceleratedEffectValues&)
+void PlatformCALayer::setAcceleratedEffectsAndBaseValues(const AcceleratedEffects&, const AcceleratedEffectValues&)
 {
 }
 #endif

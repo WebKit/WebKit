@@ -1098,7 +1098,7 @@ void PlatformCALayerRemote::clearAcceleratedEffectsAndBaseValues()
     m_properties.notePropertiesChanged(LayerChange::AnimationsChanged);
 }
 
-void PlatformCALayerRemote::setAcceleratedEffectsAndBaseValues(const AcceleratedEffects& effects, AcceleratedEffectValues& baseValues)
+void PlatformCALayerRemote::setAcceleratedEffectsAndBaseValues(const AcceleratedEffects& effects, const AcceleratedEffectValues& baseValues)
 {
     m_properties.animationChanges.effects = effects;
     m_properties.animationChanges.baseValues = baseValues;
