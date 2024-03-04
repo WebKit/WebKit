@@ -61,13 +61,15 @@ public:
         Append        = 1 << 0,
         Insert        = 1 << 1,
         Remove        = 1 << 2,
-        ContentChange = 1 << 3
+        ContentChange = 1 << 3,
+        Pagination    = 1 << 4
     };
     OptionSet<Reason> reasons() const { return m_damageReasons; }
     // FIXME: Add support for damage range with multiple, different damage types.
     struct Position {
         size_t lineIndex { 0 };
         InlineItemPosition inlineItemPosition { };
+        LayoutUnit partialContentTop;
     };
     std::optional<Position> start() const { return m_startPosition; }
     using TrailingDisplayBoxList = Vector<InlineDisplay::Box>;

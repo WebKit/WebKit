@@ -343,8 +343,7 @@ std::optional<LayoutRect> LineLayout::layout()
             ASSERT_NOT_REACHED();
             return *m_inlineContentConstraints;
         }
-        auto partialContentTop = LayoutUnit { m_inlineContent->displayContent().lines[damagedLineIndex - 1].lineBoxLogicalRect().maxY() };
-        auto constraintsForInFlowContent = Layout::ConstraintsForInFlowContent { m_inlineContentConstraints->horizontal(), partialContentTop };
+        auto constraintsForInFlowContent = Layout::ConstraintsForInFlowContent { m_inlineContentConstraints->horizontal(), m_lineDamage->start()->partialContentTop };
         return { constraintsForInFlowContent, m_inlineContentConstraints->visualLeft() };
     };
 
@@ -358,13 +357,22 @@ std::optional<LayoutRect> LineLayout::layout()
     auto inlineFormattingContext = Layout::InlineFormattingContext { rootLayoutBox(), layoutState(), parentBlockLayoutState };
     // Temporary, integration only.
     inlineFormattingContext.layoutState().setNestedListMarkerOffsets(m_boxGeometryUpdater.takeNestedListMarkerOffsets());
+
     auto layoutResult = inlineFormattingContext.layout(inlineContentConstraints(), m_lineDamage.get());
     auto repaintRect = LayoutRect { constructContent(inlineFormattingContext.layoutState(), WTFMove(layoutResult)) };
-    auto adjustments = adjustContent(parentBlockLayoutState);
+
+    m_lineDamage = { };
+
+    auto adjustments = adjustContentForPagination(parentBlockLayoutState, isPartialLayout);
 
     updateRenderTreePositions(adjustments);
 
-    m_lineDamage = { };
+    if (m_lineDamage) {
+        // Pagination may require another layout pass.
+        layout();
+
+        ASSERT(!m_lineDamage);
+    }
 
     return isPartialLayout ? std::make_optional(repaintRect) : std::nullopt;
 }
@@ -729,7 +737,7 @@ LayoutUnit LineLayout::lastLineLogicalBaseline() const
     }
 }
 
-Vector<LineAdjustment> LineLayout::adjustContent(const Layout::BlockLayoutState& blockLayoutState)
+Vector<LineAdjustment> LineLayout::adjustContentForPagination(const Layout::BlockLayoutState& blockLayoutState, bool isPartialLayout)
 {
     if (!m_inlineContent)
         return { };
@@ -738,8 +746,15 @@ Vector<LineAdjustment> LineLayout::adjustContent(const Layout::BlockLayoutState&
     if (!layoutState.isPaginated())
         return { };
 
-    auto adjustments = computeAdjustmentsForPagination(*m_inlineContent, m_blockFormattingState.placedFloats(), blockLayoutState, flow());
+    bool allowLayoutRestart = !isPartialLayout;
+    auto [adjustments, layoutRestartLineIndex] = computeAdjustmentsForPagination(*m_inlineContent, m_blockFormattingState.placedFloats(), allowLayoutRestart, blockLayoutState, flow());
+
     adjustLinePositionsForPagination(*m_inlineContent, adjustments);
+
+    if (layoutRestartLineIndex) {
+        auto invalidation = Layout::InlineInvalidation { ensureLineDamage(), m_inlineContentCache.inlineItems().content(), m_inlineContent->displayContent() };
+        invalidation.restartForPagination(*layoutRestartLineIndex, adjustments[*layoutRestartLineIndex].offset);
+    }
 
     return adjustments;
 }

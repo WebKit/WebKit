@@ -333,7 +333,8 @@ static InlineDamage::TrailingDisplayBoxList trailingDisplayBoxesAfterDamagedLine
     }
     return trailingDisplayBoxes;
 }
-void InlineInvalidation::updateInlineDamage(InlineDamage::Type type, std::optional<InlineDamage::Reason> reason, std::optional<InvalidatedLine> invalidatedLine, ShouldApplyRangeLayout shouldApplyRangeLayout)
+
+void InlineInvalidation::updateInlineDamage(InlineDamage::Type type, std::optional<InlineDamage::Reason> reason, std::optional<InvalidatedLine> invalidatedLine, ShouldApplyRangeLayout shouldApplyRangeLayout, LayoutUnit pageTopAdjustment)
 {
     if (type == InlineDamage::Type::Invalid || !invalidatedLine)
         return m_inlineDamage.reset();
@@ -351,11 +352,20 @@ void InlineInvalidation::updateInlineDamage(InlineDamage::Type type, std::option
         return;
     }
 
+    auto partialContentTop = LayoutUnit { invalidatedLine->index ? m_displayContent.lines[invalidatedLine->index - 1].lineBoxLogicalRect().maxY() : 0 } + pageTopAdjustment;
+
+    auto damagedPosition = InlineDamage::Position {
+        invalidatedLine->index,
+        invalidatedLine->leadingInlineItemPosition,
+        partialContentTop
+    };
+
     m_inlineDamage.setDamageType(type);
     m_inlineDamage.setDamageReason(*reason);
-    m_inlineDamage.setDamagedPosition({ invalidatedLine->index, invalidatedLine->leadingInlineItemPosition });
-    if (shouldApplyRangeLayout == ShouldApplyRangeLayout::Yes) 
-        m_inlineDamage.setTrailingDisplayBoxes(trailingDisplayBoxesAfterDamagedLine(invalidatedLine->damagedLineIndex, m_displayContent));
+    m_inlineDamage.setDamagedPosition(WTFMove(damagedPosition));
+
+    if (shouldApplyRangeLayout == ShouldApplyRangeLayout::Yes)
+        m_inlineDamage.setTrailingDisplayBoxes(trailingDisplayBoxesAfterDamagedLine(invalidatedLine->index, m_displayContent));
 }
 
 static bool isSupportedContent(const Box& layoutBox)
@@ -473,6 +483,20 @@ bool InlineInvalidation::inlineLevelBoxWillBeRemoved(const Box& layoutBox)
 void InlineInvalidation::horizontalConstraintChanged()
 {
     m_inlineDamage.setDamageType(InlineDamage::Type::NeedsLineLayout);
+}
+
+void InlineInvalidation::restartForPagination(size_t lineIndex, LayoutUnit pageTopAdjustment)
+{
+    auto leadingContentDisplayBoxOnDamagedLine = leadingContentDisplayForLineIndex(lineIndex, displayBoxes());
+    if (!leadingContentDisplayBoxOnDamagedLine)
+        return;
+    auto inlineItemPositionForLeadingDisplayBox = inlineItemPositionForDisplayBox(*leadingContentDisplayBoxOnDamagedLine, m_inlineItemList);
+    if (!leadingContentDisplayBoxOnDamagedLine)
+        return;
+
+    auto invalidatedLine = InvalidatedLine { lineIndex, *inlineItemPositionForLeadingDisplayBox };
+
+    updateInlineDamage(InlineDamage::Type::NeedsLineLayout, InlineDamage::Reason::Pagination, invalidatedLine, ShouldApplyRangeLayout::Yes, pageTopAdjustment);
 }
 
 }
