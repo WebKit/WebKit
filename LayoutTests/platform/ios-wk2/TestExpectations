@@ -2400,3 +2400,5 @@ webkit.org/b/269321 webgl/1.0.3/conformance/uniforms/out-of-bounds-uniform-array
 webkit.org/b/269760 mathml/presentation/scripts-underover.html [ Failure ]
 
 webkit.org/b/270315 svg/custom/svg-fonts-in-html.html [ Failure ]
+
+webkit.org/b/270477 [ Debug ] accessibility/text-marker/text-marker-range-stale-node-crash.html [ Skip ]
