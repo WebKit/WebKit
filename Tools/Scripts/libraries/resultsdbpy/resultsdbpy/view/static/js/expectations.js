@@ -56,23 +56,22 @@ class Expectations
 
     static unexpectedResults(results, expectations)
     {
-        let r = results.split('.');
-        expectations.split(' ').forEach(expectation => {
-            const i = r.indexOf(expectation);
-            if (i > -1)
-                r.splice(i, 1);
-            if (expectation === 'FAIL')
-                ['TEXT', 'AUDIO', 'IMAGE'].forEach(expectation => {
-                    const i = r.indexOf(expectation);
-                    if (i > -1)
-                        r.splice(i, 1);
-                });
-        });
+        const unexpectedSet = new Set(results.split('.'));
+        const expectedSet = new Set(expectations.split(' '));
+
+        if (expectedSet.has('FAIL'))
+            expectedSet.add('TEXT').add('AUDIO').add('IMAGE');
+
+        for (const result of unexpectedSet) {
+            if (expectedSet.has(result))
+                unexpectedSet.delete(result);
+        }
+
         let result = 'PASS';
-        r.forEach(candidate => {
+        for (const candidate of unexpectedSet) {
             if (Expectations.stringToStateId(candidate) < Expectations.stringToStateId(result))
                 result = candidate;
-        });
+        }
         return result;
     }
 }
