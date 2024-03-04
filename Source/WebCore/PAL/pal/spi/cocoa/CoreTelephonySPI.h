@@ -30,16 +30,13 @@
 #import <CoreTelephony/CoreTelephonyDefines.h>
 
 #if USE(APPLE_INTERNAL_SDK)
+#import <CoreTelephony/CoreTelephonyClient+CellularPlanManager.h>
 #import <CoreTelephony/CoreTelephonyClient.h>
 #else
 @interface CoreTelephonyClient : NSObject
 - (instancetype)initWithQueue:(dispatch_queue_t)queue;
-@end
-#endif
-
-// FIXME: This should eventually move into the !USE(APPLE_INTERNAL_SDK) section above.
-@interface CoreTelephonyClient (Staging_117597722)
 - (BOOL)isAutofilleSIMIdAllowedForDomain:(NSString *)domain error:(NSError **)outError;
 @end
+#endif
 
 #endif // HAVE(CORE_TELEPHONY)
