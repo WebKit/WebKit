@@ -278,6 +278,8 @@ private:
         
         if (memory)
             processMemoryAfterClobber(memory);
+
+        m_data.reads.add(m_value->effects().reads);
     }
 
     // Return true if we got rid of the operation. If you changed IR in this function, you have to
