@@ -170,7 +170,7 @@ RefPtr<FontCustomPlatformData> CachedFont::createCustomFontData(SharedBuffer& by
 {
     RefPtr buffer = { &bytes };
     wrapping = !convertWOFFToSfntIfNecessary(buffer);
-    return FontCustomPlatformData::create(*buffer, itemInCollection);
+    return buffer ? FontCustomPlatformData::create(*buffer, itemInCollection) : nullptr;
 }
 
 RefPtr<FontCustomPlatformData> CachedFont::createCustomFontDataExperimentalParser(SharedBuffer& bytes, const String& itemInCollection, bool& wrapping)
