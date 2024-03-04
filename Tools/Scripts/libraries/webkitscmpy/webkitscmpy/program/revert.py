@@ -236,17 +236,25 @@ class Revert(Command):
         for r_link in CommitProgram.bug_urls(issue):
             r_issue = Tracker.from_string(r_link)
             for c_issue in commit_issues.get(r_issue.tracker.NAME, []):
-                c_issue.open(why="Reopened {}.\n{}, tracking revert in {}.".format(r_issue.tracker.NAME, revert_reason, r_issue.link))
+                try:
+                    c_issue.open(why="Reopened {}.\n{}, tracking revert in {}.".format(r_issue.tracker.NAME, revert_reason, r_issue.link))
+                except radar.Tracker.radarclient().exceptions.UnsuccessfulResponseException as e:
+                    sys.stderr.write('Failed to re-open {}\n'.format(c_issue.link))
+                    sys.stderr.write('{}\n'.format(str(e)))
+                    c_issue.add_comment('{}, tracking revert in {}.'.format(revert_reason, r_issue.link))
+
                 # Revert tracking bug blocks commit bugs, revert tracking radar caused by commit radars
                 if isinstance(c_issue.tracker, bugzilla.Tracker):
                     r = r_issue.relate(blocks=c_issue)
                 elif isinstance(c_issue.tracker, radar.Tracker):
                     try:
                         r = c_issue.relate(cause_of=r_issue)
-                    except c_issue.radarclient().exceptions.UnsuccessfulResponseException:
+                    except radar.Tracker.radarclient().exceptions.UnsuccessfulResponseException:
                         r = None
                 if not r:
                     sys.stderr.write('Failed to relate {} and {}.\n'.format(c_issue.link, r_issue.link))
+                else:
+                    log.info('Related {} and {}.'.format(c_issue.link, r_issue.link))
         return 0
 
     @classmethod
