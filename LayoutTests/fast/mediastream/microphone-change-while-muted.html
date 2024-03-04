@@ -45,6 +45,7 @@
 
         await new Promise(resolve => video.srcObject.getAudioTracks()[0].onmute = resolve);
 
+        await new Promise(resolve => setTimeout(resolve, 500));
         testRunner.removeMockMediaDevice("usbmic");
 
         await new Promise(resolve => setTimeout(resolve, 500));
