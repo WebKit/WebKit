@@ -1,0 +1,21 @@
+<style>
+div { vertical-align: 0vh; -webkit-user-modify: read-write }
+</style>
+<body>
+
+<div>
+<object id="target" style="contain: size" data="?"></object>
+</div>
+
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+(function() {
+	document.getSelection().collapse(document.getElementById("target"));
+	document.execCommand("underline");
+})();
+</script>
+
+<div>This test passes if it doesn't crash</div>
+
+</body>
