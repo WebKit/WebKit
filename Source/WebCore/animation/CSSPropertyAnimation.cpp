@@ -3582,6 +3582,7 @@ private:
 };
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSPropertyAnimationWrapperMap);
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(NonNormalizedDiscretePropertyWrapper);
 template <typename T>
 class NonNormalizedDiscretePropertyWrapper final : public PropertyWrapper<T> {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(NonNormalizedDiscretePropertyWrapper);
@@ -3595,6 +3596,7 @@ private:
     bool canInterpolate(const RenderStyle&, const RenderStyle&, CompositeOperation) const final { return false; }
     bool normalizesProgressForDiscreteInterpolation() const final { return false; }
 };
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(NonNormalizedDiscretePropertyWrapper);
 
 CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
 {
