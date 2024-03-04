@@ -7536,6 +7536,9 @@ void HTMLMediaElement::createMediaPlayer() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     player->setPageIsVisible(!m_elementIsHidden, page ? page->sceneIdentifier() : ""_s);
     player->setVisibleInViewport(isVisibleInViewport());
     schedulePlaybackControlsManagerUpdate();
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA) && ENABLE(ENCRYPTED_MEDIA)
+    updateShouldContinueAfterNeedKey();
+#endif
 
 #if ENABLE(WEB_AUDIO)
     if (m_audioSourceNode) {

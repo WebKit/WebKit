@@ -98,6 +98,7 @@ public:
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     RetainPtr<AVAssetResourceLoadingRequest> takeRequestForKeyURI(const String&);
+    void setShouldContinueAfterKeyNeeded(bool) final;
 #endif
 
     void playerItemStatusDidChange(int);
@@ -435,6 +436,7 @@ private:
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     WeakPtr<CDMSessionAVFoundationObjC> m_session;
+    bool m_shouldContinueAfterKeyNeeded { false };
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
