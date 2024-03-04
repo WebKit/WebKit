@@ -28,7 +28,6 @@
 #include "APIObject.h"
 #include "MessageReceiver.h"
 #include "WebContextSupplement.h"
-#include "WebNotificationIdentifier.h"
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/NotificationClient.h>
 #include <pal/SessionID.h>
@@ -53,6 +52,9 @@ class WebNotification;
 class WebPageProxy;
 class WebProcessPool;
 class WebsiteDataStore;
+
+enum class WebNotificationIdentifierType;
+using WebNotificationIdentifier = ObjectIdentifier<WebNotificationIdentifierType>;
 
 class WebNotificationManagerProxy : public API::ObjectImpl<API::Object::Type::NotificationManager>, public WebContextSupplement {
 public:

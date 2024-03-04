@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "WebNotificationIdentifier.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/StringHash.h>
@@ -34,6 +33,9 @@ namespace WebKit {
 class WebNotification;
 class WebNotificationManagerProxy;
 class WebPageProxy;
+
+enum class WebNotificationIdentifierType;
+using WebNotificationIdentifier = ObjectIdentifier<WebNotificationIdentifierType>;
 }
 
 namespace WebCore {
