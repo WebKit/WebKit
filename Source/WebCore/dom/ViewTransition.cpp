@@ -509,12 +509,13 @@ void ViewTransition::handleTransitionFrame()
     if (!documentElement)
         return;
 
-    auto checkForActiveAnimations = [&](const Style::PseudoElementIdentifier& pseudoElementIdentifier) -> bool {
+    auto checkForActiveAnimations = [&](const Style::PseudoElementIdentifier& pseudoElementIdentifier) {
         if (!documentElement->animations(pseudoElementIdentifier))
             return false;
 
         for (auto& animation : *documentElement->animations(pseudoElementIdentifier)) {
-            if (animation->playState() == WebAnimation::PlayState::Paused || animation->playState() == WebAnimation::PlayState::Running)
+            auto playState = animation->playState();
+            if (playState == WebAnimation::PlayState::Paused || playState == WebAnimation::PlayState::Running)
                 return true;
             if (m_document->timeline().hasPendingAnimationEventForAnimation(animation))
                 return true;

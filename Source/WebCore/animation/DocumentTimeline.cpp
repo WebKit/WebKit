@@ -453,13 +453,11 @@ void DocumentTimeline::enqueueAnimationEvent(AnimationEventBase& event)
         scheduleAnimationResolution();
 }
 
-bool DocumentTimeline::hasPendingAnimationEventForAnimation(WebAnimation& animation) const
+bool DocumentTimeline::hasPendingAnimationEventForAnimation(const WebAnimation& animation) const
 {
-    for (auto& event : m_pendingAnimationEvents) {
-        if (event->animation() == &animation)
-            return true;
-    }
-    return false;
+    return m_pendingAnimationEvents.containsIf([&](auto& event) {
+        return event->animation() == &animation;
+    });
 }
 
 AnimationEvents DocumentTimeline::prepareForPendingAnimationEventsDispatch()
