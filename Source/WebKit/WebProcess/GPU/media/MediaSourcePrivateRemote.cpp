@@ -105,11 +105,9 @@ MediaSourcePrivateRemote::~MediaSourcePrivateRemote()
 
 MediaSourcePrivate::AddStatus MediaSourcePrivateRemote::addSourceBuffer(const ContentType& contentType, bool, RefPtr<SourceBufferPrivate>& outPrivate)
 {
-    if (!isGPURunning())
-        return AddStatus::NotSupported;
     RefPtr mediaPlayerPrivate = m_mediaPlayerPrivate.get();
     RefPtr gpuProcessConnection = m_gpuProcessConnection.get();
-    if (!gpuProcessConnection || !mediaPlayerPrivate)
+    if (!isGPURunning() || !gpuProcessConnection || !mediaPlayerPrivate)
         return AddStatus::NotSupported;
 
     AddStatus returnedStatus;
@@ -162,7 +160,7 @@ void MediaSourcePrivateRemote::durationChanged(const MediaTime& duration)
     MediaSourcePrivate::durationChanged(duration);
     ensureOnDispatcher([protectedThis = Ref { *this }, this, duration] {
         auto gpuProcessConnection = m_gpuProcessConnection.get();
-        if (!isGPURunning())
+        if (!isGPURunning() || !gpuProcessConnection)
             return;
 
         gpuProcessConnection->connection().send(Messages::RemoteMediaSourceProxy::DurationChanged(duration), m_identifier);
@@ -176,7 +174,7 @@ void MediaSourcePrivateRemote::bufferedChanged(const PlatformTimeRanges& buffere
     // Called from SourceBufferPrivateRemote
     ensureOnDispatcher([protectedThis = Ref { *this }, this, buffered] {
         auto gpuProcessConnection = m_gpuProcessConnection.get();
-        if (!isGPURunning())
+        if (!isGPURunning() || !gpuProcessConnection)
             return;
 
         gpuProcessConnection->connection().send(Messages::RemoteMediaSourceProxy::BufferedChanged(buffered), m_identifier);
@@ -187,8 +185,10 @@ void MediaSourcePrivateRemote::markEndOfStream(EndOfStreamStatus status)
 {
     MediaSourcePrivate::markEndOfStream(status);
     ensureOnDispatcher([protectedThis = Ref { *this }, this, status] {
-        if (auto gpuProcessConnection = m_gpuProcessConnection.get())
-            gpuProcessConnection->connection().send(Messages::RemoteMediaSourceProxy::MarkEndOfStream(status), m_identifier);
+        auto gpuProcessConnection = m_gpuProcessConnection.get();
+        if (!isGPURunning() || !gpuProcessConnection)
+            return;
+        gpuProcessConnection->connection().send(Messages::RemoteMediaSourceProxy::MarkEndOfStream(status), m_identifier);
     });
 }
 
@@ -197,8 +197,10 @@ void MediaSourcePrivateRemote::unmarkEndOfStream()
     MediaSourcePrivate::unmarkEndOfStream();
     ensureOnDispatcher([protectedThis = Ref { *this }, this] {
         // FIXME(125159): implement unmarkEndOfStream()
-        if (auto gpuProcessConnection = m_gpuProcessConnection.get())
-            gpuProcessConnection->connection().send(Messages::RemoteMediaSourceProxy::UnmarkEndOfStream(), m_identifier);
+        auto gpuProcessConnection = m_gpuProcessConnection.get();
+        if (!isGPURunning() || !gpuProcessConnection)
+            return;
+        gpuProcessConnection->connection().send(Messages::RemoteMediaSourceProxy::UnmarkEndOfStream(), m_identifier);
     });
 }
 
@@ -213,9 +215,8 @@ void MediaSourcePrivateRemote::setMediaPlayerReadyState(MediaPlayer::ReadyState 
     m_mediaPlayerReadyState = readyState;
     ensureOnDispatcher([protectedThis = Ref { *this }, this, readyState] {
         auto gpuProcessConnection = m_gpuProcessConnection.get();
-        if (!isGPURunning())
+        if (!isGPURunning() || !gpuProcessConnection)
             return;
-
         gpuProcessConnection->connection().send(Messages::RemoteMediaSourceProxy::SetMediaPlayerReadyState(readyState), m_identifier);
     });
 }
@@ -224,7 +225,7 @@ void MediaSourcePrivateRemote::setTimeFudgeFactor(const MediaTime& fudgeFactor)
 {
     ensureOnDispatcher([protectedThis = Ref { *this }, this, fudgeFactor] {
         auto gpuProcessConnection = m_gpuProcessConnection.get();
-        if (!isGPURunning())
+        if (!isGPURunning() || !gpuProcessConnection)
             return;
 
         gpuProcessConnection->connection().send(Messages::RemoteMediaSourceProxy::SetTimeFudgeFactor(fudgeFactor), m_identifier);
