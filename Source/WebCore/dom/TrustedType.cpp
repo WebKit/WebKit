@@ -168,4 +168,43 @@ ExceptionOr<String> trustedTypeCompliantString(TrustedType expectedType, ScriptE
     return stringValue;
 }
 
+// https://w3c.github.io/trusted-types/dist/spec/#require-trusted-types-for-pre-navigation-check
+ExceptionOr<String> requireTrustedTypesForPreNavigationCheckPasses(ScriptExecutionContext& scriptExecutionContext, const String& urlString)
+{
+    auto sinkGroup = "script"_s;
+    auto sink = "Location href"_s;
+    auto expectedType = TrustedType::TrustedScript;
+
+    auto contentSecurityPolicy = scriptExecutionContext.contentSecurityPolicy();
+
+    auto requireTrustedTypes = contentSecurityPolicy && contentSecurityPolicy->requireTrustedTypesForSinkGroup(sinkGroup);
+
+    if (!requireTrustedTypes || !scriptExecutionContext.settingsValues().trustedTypesEnabled)
+        return String(urlString);
+
+    const int javascriptSchemeLength = sizeof("javascript:") - 1;
+    auto decodedURLString = PAL::decodeURLEscapeSequences(urlString);
+    auto scriptSource = decodedURLString.substring(javascriptSchemeLength);
+
+    auto convertedScriptSource = processValueWithDefaultPolicy(scriptExecutionContext, expectedType, scriptSource, sink);
+    if (std::holds_alternative<Exception>(convertedScriptSource))
+        return WTFMove(std::get<Exception>(convertedScriptSource));
+
+    if (std::holds_alternative<std::monostate>(convertedScriptSource)) {
+        auto allowMissingTrustedTypes = contentSecurityPolicy->allowMissingTrustedTypesForSinkGroup(trustedTypeToString(expectedType), sink, sinkGroup, scriptSource);
+
+        if (!allowMissingTrustedTypes)
+            return Exception { ExceptionCode::TypeError, makeString("This assignment requires a ", trustedTypeToString(expectedType)) };
+
+        return String(urlString);
+    }
+
+    auto stringifiedConvertedScriptSource = std::visit(TrustedTypeVisitor { }, convertedScriptSource);
+
+    auto newURL = URL(makeString("javascript:"_s, stringifiedConvertedScriptSource));
+    return String(newURL.isValid()
+        ? newURL.string()
+        : nullString());
+}
+
 } // namespace WebCore

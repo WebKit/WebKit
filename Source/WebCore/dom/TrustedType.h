@@ -48,4 +48,6 @@ WEBCORE_EXPORT std::variant<std::monostate, Exception, Ref<TrustedHTML>, Ref<Tru
 
 WEBCORE_EXPORT ExceptionOr<String> trustedTypeCompliantString(TrustedType, ScriptExecutionContext&, const String& input, const String& sink);
 
+WEBCORE_EXPORT ExceptionOr<String> requireTrustedTypesForPreNavigationCheckPasses(ScriptExecutionContext&, const String& urlString);
+
 } // namespace WebCore

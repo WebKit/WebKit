@@ -1,12 +1,20 @@
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: The Content Security Policy 'require-trusted-types-for 'script';' was delivered in report-only mode, but does not specify a 'report-to'; the policy will have no effect. Please either add a 'report-to' directive, or deliver the policy via the 'Content-Security-Policy' header.
+CONSOLE MESSAGE: [Report Only] This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: The Content Security Policy 'require-trusted-types-for 'script';' was delivered in report-only mode, but does not specify a 'report-to'; the policy will have no effect. Please either add a 'report-to' directive, or deliver the policy via the 'Content-Security-Policy' header.
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: The Content Security Policy 'require-trusted-types-for 'script';' was delivered in report-only mode, but does not specify a 'report-to'; the policy will have no effect. Please either add a 'report-to' directive, or deliver the policy via the 'Content-Security-Policy' header.
+CONSOLE MESSAGE: The Content Security Policy 'require-trusted-types-for 'script';' was delivered in report-only mode, but does not specify a 'report-to'; the policy will have no effect. Please either add a 'report-to' directive, or deliver the policy via the 'Content-Security-Policy' header.
+CONSOLE MESSAGE: [Report Only] This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: The Content Security Policy 'require-trusted-types-for 'script';' was delivered in report-only mode, but does not specify a 'report-to'; the policy will have no effect. Please either add a 'report-to' directive, or deliver the policy via the 'Content-Security-Policy' header.
+CONSOLE MESSAGE: The Content Security Policy 'require-trusted-types-for 'script';' was delivered in report-only mode, but does not specify a 'report-to'; the policy will have no effect. Please either add a 'report-to' directive, or deliver the policy via the 'Content-Security-Policy' header.
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Navigate a window with javascript:-urls in enforcing mode. Test timed out
-NOTRUN Navigate a window with javascript:-urls w/ default policy in enforcing mode.
-NOTRUN Navigate a window with javascript:-urls in report-only mode.
-NOTRUN Navigate a window with javascript:-urls w/ default policy in report-only mode.
-NOTRUN Navigate a frame with javascript:-urls in enforcing mode.
-NOTRUN Navigate a frame with javascript:-urls w/ default policy in enforcing mode.
-NOTRUN Navigate a frame with javascript:-urls in report-only mode.
-NOTRUN Navigate a frame with javascript:-urls w/ default policy in report-only mode.
+PASS Navigate a window with javascript:-urls in enforcing mode.
+PASS Navigate a window with javascript:-urls w/ default policy in enforcing mode.
+PASS Navigate a window with javascript:-urls in report-only mode.
+PASS Navigate a window with javascript:-urls w/ default policy in report-only mode.
+PASS Navigate a frame with javascript:-urls in enforcing mode.
+PASS Navigate a frame with javascript:-urls w/ default policy in enforcing mode.
+PASS Navigate a frame with javascript:-urls in report-only mode.
+PASS Navigate a frame with javascript:-urls w/ default policy in report-only mode.
 
