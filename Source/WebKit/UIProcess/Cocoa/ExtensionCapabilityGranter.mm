@@ -34,6 +34,7 @@
 #import "GPUProcessProxy.h"
 #import "MediaCapability.h"
 #import "WebProcessProxy.h"
+#import <BrowserEngineKit/BrowserEngineKit.h>
 #import <wtf/CrossThreadCopier.h>
 #import <wtf/NativePromise.h>
 #import <wtf/NeverDestroyed.h>
@@ -51,24 +52,19 @@ static WorkQueue& granterQueue()
 }
 
 #if USE(EXTENSIONKIT)
-static RetainPtr<_SEGrant> grantCapability(_SECapability *capability, _SEExtensionProcess *process)
+static RetainPtr<BEProcessCapabilityGrant> grantCapability(BEProcessCapability *capability, const std::optional<ExtensionProcess>& process)
 {
     ASSERT(capability);
     if (!capability || !process)
         return nil;
 
-    NSError *error = nil;
-    _SEGrant *grant = [process grantCapability:capability error:&error];
-    if (!grant)
-        RELEASE_LOG_ERROR(ProcessCapabilities, "%{public}s (process=%{public}p) failed with error: %{public}@", __FUNCTION__, process, error);
-
-    return grant;
+    return process->grantCapability(capability);
 }
 #endif
 
 struct PlatformExtensionCapabilityGrants {
-    RetainPtr<_SEGrant> gpuProcessGrant;
-    RetainPtr<_SEGrant> webProcessGrant;
+    RetainPtr<BEProcessCapabilityGrant> gpuProcessGrant;
+    RetainPtr<BEProcessCapabilityGrant> webProcessGrant;
 };
 
 enum class ExtensionCapabilityGrantError: uint8_t {
@@ -79,18 +75,18 @@ using ExtensionCapabilityGrantsPromise = NativePromise<PlatformExtensionCapabili
 
 static Ref<ExtensionCapabilityGrantsPromise> grantCapabilityInternal(const ExtensionCapability& capability, const GPUProcessProxy* gpuProcess, const WebProcessProxy* webProcess)
 {
-    RetainPtr gpuExtension = gpuProcess ? gpuProcess->extensionProcess() : nil;
-    RetainPtr webExtension = webProcess ? webProcess->extensionProcess() : nil;
+    auto gpuExtension = gpuProcess ? gpuProcess->extensionProcess() : std::nullopt;
+    auto webExtension = webProcess ? webProcess->extensionProcess() : std::nullopt;
 
 #if USE(EXTENSIONKIT)
     return invokeAsync(granterQueue(), [
-        capability = capability.platformCapability(),
+        capability = RetainPtr { capability.platformCapability() },
         gpuExtension = WTFMove(gpuExtension),
         webExtension = WTFMove(webExtension)
     ] {
         PlatformExtensionCapabilityGrants grants {
-            grantCapability(capability.get(), gpuExtension.get()),
-            grantCapability(capability.get(), webExtension.get())
+            grantCapability(capability.get(), gpuExtension),
+            grantCapability(capability.get(), webExtension)
         };
         return ExtensionCapabilityGrantsPromise::createAndResolve(WTFMove(grants));
     });
@@ -255,9 +251,16 @@ void ExtensionCapabilityGranter::setMediaCapabilityActive(MediaCapability& capab
 
     GRANTER_RELEASE_LOG(capability.environmentIdentifier(), "%{public}s", isActive ? "activating" : "deactivating");
 
-    invokeAsync(granterQueue(), [platformCapability = capability.platformCapability(), isActive] {
+    invokeAsync(granterQueue(), [platformCapability = RetainPtr { capability.platformCapability() }, platformMediaEnvironment = RetainPtr { capability.platformMediaEnvironment() }, isActive] {
 #if USE(EXTENSIONKIT)
-        if ([platformCapability setActive:isActive])
+        NSError *error = nil;
+        if (isActive)
+            [platformMediaEnvironment activateWithError:&error];
+        else
+            [platformMediaEnvironment suspendWithError:&error];
+        if (error)
+            RELEASE_LOG_ERROR(ProcessCapabilities, "%{public}s failed with error: %{public}@", __FUNCTION__, error);
+        else
             return ExtensionCapabilityActivationPromise::createAndResolve();
 #endif
         return ExtensionCapabilityActivationPromise::createAndReject(ExtensionCapabilityGrantError::PlatformError);

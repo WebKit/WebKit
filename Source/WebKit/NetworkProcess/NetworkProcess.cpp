@@ -2970,7 +2970,7 @@ void NetworkProcess::setIsHoldingLockedFiles(bool isHoldingLockedFiles)
     if (!isHoldingLockedFiles) {
         m_holdingLockedFileAssertion = nullptr;
 #if USE(EXTENSIONKIT)
-        invalidateGrant();
+        invalidateFileActivity();
 #endif
         return;
     }
@@ -2979,9 +2979,9 @@ void NetworkProcess::setIsHoldingLockedFiles(bool isHoldingLockedFiles)
         return;
 
 #if USE(EXTENSIONKIT)
-    if (hasAcquiredGrant())
+    if (hasAcquiredFileActivity())
         return;
-    if (aqcuireLockedFileGrant())
+    if (acquireLockedFileActivity())
         return;
 #endif
 

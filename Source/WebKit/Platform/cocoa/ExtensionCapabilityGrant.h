@@ -30,7 +30,7 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
 
-OBJC_PROTOCOL(_SEGrant);
+OBJC_PROTOCOL(BEProcessCapabilityGrant);
 
 namespace WebKit {
 
@@ -48,13 +48,13 @@ public:
     bool isEmpty() const;
     bool isValid() const;
 
-    void setPlatformGrant(RetainPtr<_SEGrant>&&);
+    void setPlatformGrant(RetainPtr<BEProcessCapabilityGrant>&&);
 
 private:
-    ExtensionCapabilityGrant(String&&, RetainPtr<_SEGrant>&&);
+    ExtensionCapabilityGrant(String&&, RetainPtr<BEProcessCapabilityGrant>&&);
 
     String m_environmentIdentifier;
-    RetainPtr<_SEGrant> m_platformGrant;
+    RetainPtr<BEProcessCapabilityGrant> m_platformGrant;
 };
 
 } // namespace WebKit

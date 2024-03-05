@@ -28,8 +28,9 @@
 #if ENABLE(EXTENSION_CAPABILITIES)
 
 #include <wtf/Forward.h>
+#include <wtf/RetainPtr.h>
 
-OBJC_CLASS _SECapability;
+OBJC_CLASS BEProcessCapability;
 
 namespace WebKit {
 
@@ -37,10 +38,14 @@ class ExtensionCapability {
 public:
     virtual ~ExtensionCapability() = default;
     virtual String environmentIdentifier() const = 0;
-    virtual RetainPtr<_SECapability> platformCapability() const = 0;
+    BEProcessCapability *platformCapability() const { return m_platformCapability.get(); }
 
 protected:
     ExtensionCapability() = default;
+    void setPlatformCapability(BEProcessCapability *capability) { m_platformCapability = capability; }
+
+private:
+    RetainPtr<BEProcessCapability> m_platformCapability;
 };
 
 } // namespace WebKit

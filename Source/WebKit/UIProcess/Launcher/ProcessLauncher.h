@@ -45,7 +45,10 @@
 #endif
 
 #if USE(EXTENSIONKIT)
-OBJC_CLASS _SEExtensionProcess;
+#include "ExtensionProcess.h"
+OBJC_CLASS BEWebContentProcess;
+OBJC_CLASS BENetworkingProcess;
+OBJC_CLASS BERenderingProcess;
 #endif
 
 namespace WebKit {
@@ -54,6 +57,19 @@ namespace WebKit {
 enum class SandboxPermission {
     ReadOnly,
     ReadWrite,
+};
+#endif
+
+#if USE(EXTENSIONKIT)
+class LaunchGrant : public ThreadSafeRefCounted<LaunchGrant> {
+public:
+    static Ref<LaunchGrant> create(ExtensionProcess&);
+    ~LaunchGrant();
+
+private:
+    explicit LaunchGrant(ExtensionProcess&);
+
+    RetainPtr<BEProcessCapabilityGrant> m_grant;
 };
 #endif
 
@@ -118,9 +134,10 @@ public:
     void invalidate();
 
 #if USE(EXTENSIONKIT)
-    RetainPtr<_SEExtensionProcess> extensionProcess() const { return m_process; }
+    const std::optional<ExtensionProcess>& extensionProcess() const { return m_process; }
     void setIsRetryingLaunch() { m_isRetryingLaunch = true; }
     bool isRetryingLaunch() const { return m_isRetryingLaunch; }
+    void releaseLaunchGrant() { m_launchGrant = nullptr; }
 #endif
 
 private:
@@ -143,7 +160,8 @@ private:
 #endif
 
 #if USE(EXTENSIONKIT)
-    RetainPtr<_SEExtensionProcess> m_process;
+    RefPtr<LaunchGrant> m_launchGrant;
+    std::optional<ExtensionProcess> m_process;
     bool m_isRetryingLaunch { false };
 #endif
 

@@ -28,6 +28,7 @@
 
 #if ENABLE(EXTENSION_CAPABILITIES)
 
+#import <BrowserEngineKit/BECapability.h>
 #import <WebCore/RegistrableDomain.h>
 #import <wtf/text/WTFString.h>
 
@@ -37,21 +38,11 @@ namespace WebKit {
 
 using WebCore::RegistrableDomain;
 
-static RetainPtr<_SECapability> createPlatformCapability(const URL& url)
-{
-#if USE(EXTENSIONKIT)
-    if (_SECapability *capability = [get_SECapabilityClass() mediaWithWebsite:RegistrableDomain(url).string()])
-        return capability;
-#endif
-
-    UNUSED_PARAM(url);
-    return nil;
-}
-
 MediaCapability::MediaCapability(URL url)
     : m_url { WTFMove(url) }
-    , m_platformCapability { createPlatformCapability(m_url) }
+    , m_mediaEnvironment(adoptNS([[BEMediaEnvironment alloc] initWithWebPageURL:m_url]))
 {
+    setPlatformCapability([BEProcessCapability mediaPlaybackAndCaptureWithEnvironment:m_mediaEnvironment.get()]);
 }
 
 bool MediaCapability::isActivatingOrActive() const
@@ -77,8 +68,10 @@ RegistrableDomain MediaCapability::registrableDomain() const
 String MediaCapability::environmentIdentifier() const
 {
 #if USE(EXTENSIONKIT)
-    if (NSString *mediaEnvironment = [m_platformCapability mediaEnvironment])
-        return mediaEnvironment;
+    xpc_object_t xpcObject = [m_mediaEnvironment createXPCRepresentation];
+    if (!xpcObject)
+        return emptyString();
+    return String::fromUTF8(xpc_dictionary_get_string(xpcObject, "identifier"));
 #endif
 
     return { };

@@ -43,7 +43,6 @@ public:
 
     // ExtensionCapability
     String environmentIdentifier() const final { return m_environmentIdentifier; }
-    RetainPtr<_SECapability> platformCapability() const final;
 
 private:
     String m_environmentIdentifier;
@@ -51,7 +50,6 @@ private:
     String m_name;
     BlockPtr<void()> m_willInvalidateBlock;
     BlockPtr<void()> m_didInvalidateBlock;
-    RetainPtr<_SECapability> m_capability;
 };
 
 } // namespace WebKit

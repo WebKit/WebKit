@@ -522,9 +522,9 @@ private:
 #if USE(RUNNINGBOARD)
     void setIsHoldingLockedFiles(bool);
 #if USE(EXTENSIONKIT)
-    bool aqcuireLockedFileGrant();
-    void invalidateGrant();
-    bool hasAcquiredGrant() const;
+    bool acquireLockedFileActivity();
+    void invalidateFileActivity();
+    bool hasAcquiredFileActivity() const;
 #endif
 #endif
     void stopRunLoopIfNecessary();
@@ -563,7 +563,7 @@ private:
 #if USE(RUNNINGBOARD)
     WebSQLiteDatabaseTracker m_webSQLiteDatabaseTracker;
 #if USE(EXTENSIONKIT)
-    RetainPtr<WKGrant> m_holdingLockedFileGrant;
+    OSObjectPtr<dispatch_semaphore_t> m_holdingLockedFileSemaphore;
 #endif
     RefPtr<ProcessAssertion> m_holdingLockedFileAssertion;
 #endif

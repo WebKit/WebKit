@@ -47,18 +47,17 @@ using ProcessAndInteractionPair = std::pair<WeakPtr<AuxiliaryProcessProxy>, Reta
     if ([self _containsInteractionForProcess:process])
         return;
 
-    RetainPtr extensionProcess = process.extensionProcess();
-    SEL selector = NSSelectorFromString(@"createVisibilityPropagationInteraction");
-    if (![extensionProcess respondsToSelector:selector])
+    auto extensionProcess = process.extensionProcess();
+    if (!extensionProcess)
         return;
 
-    id<UIInteraction> visibilityPropagationInteraction = [extensionProcess performSelector:selector];
+    auto visibilityPropagationInteraction = extensionProcess->createVisibilityPropagationInteraction();
     if (!visibilityPropagationInteraction)
         return;
 
-    [self addInteraction:visibilityPropagationInteraction];
+    [self addInteraction:visibilityPropagationInteraction.get()];
 
-    RELEASE_LOG(Process, "Created visibility propagation interaction %p for process with PID=%d", visibilityPropagationInteraction, process.processID());
+    RELEASE_LOG(Process, "Created visibility propagation interaction %@ for process with PID=%d", visibilityPropagationInteraction.get(), process.processID());
 
     auto processAndInteraction = std::make_pair(WeakPtr(process), visibilityPropagationInteraction);
     _processesAndInteractions.append(WTFMove(processAndInteraction));

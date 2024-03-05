@@ -191,7 +191,7 @@ public:
 #endif
 
 #if USE(EXTENSIONKIT)
-    RetainPtr<_SEExtensionProcess> extensionProcess() const;
+    std::optional<ExtensionProcess> extensionProcess() const;
 #endif
 
 #if ENABLE(EXTENSION_CAPABILITIES)

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import ServiceExtensions
-@_spi(Private) import ServiceExtensions
+import BrowserEngineKit
 
 @main
 class GPUProcessExtension : WKProcessExtension {
@@ -34,14 +33,14 @@ class GPUProcessExtension : WKProcessExtension {
     }
 }
 
-extension GPUProcessExtension: GPUServiceExtension {
+extension GPUProcessExtension: RenderingExtension {
     func handle(xpcConnection: xpc_connection_t) {
         handleNewConnection(xpcConnection)
     }
 
     override func lockdownSandbox(_ version: String) {
-        if let lockdownVersion = _LockdownVersion(rawValue: version) {
-            self._lockdown(version: lockdownVersion)
+        if (version == "1.0") {
+            self.applyRestrictedSandbox(revision: RestrictedSandboxRevision.revision1)
         }
     }
 

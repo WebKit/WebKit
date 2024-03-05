@@ -43,6 +43,12 @@
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/WorkQueue.h>
 
+#if USE(EXTENSIONKIT)
+#import <BrowserEngineKit/BENetworkingProcess.h>
+#import <BrowserEngineKit/BERenderingProcess.h>
+#import <BrowserEngineKit/BEWebContentProcess.h>
+#endif
+
 #if PLATFORM(IOS_FAMILY)
 #import <UIKit/UIApplication.h>
 
@@ -469,16 +475,16 @@ void ProcessAssertion::acquireSync()
 {
     RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion::acquireSync Trying to take RBS assertion '%{public}s' for process with PID=%d", this, m_reason.utf8().data(), m_pid);
 #if USE(EXTENSIONKIT)
-    Locker locker { s_capabilityLock };
-    if (m_process && m_capability) {
-        NSError *error = nil;
-        m_grant = [m_process grantCapability:m_capability->platformCapability().get() error:&error];
+    if (m_process && m_capability && m_capability->platformCapability()) {
+        auto* capability = m_capability->platformCapability();
+        Locker locker { s_capabilityLock };
+        m_grant = m_process->grantCapability(capability);
         if (m_grant) {
             RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() Successfully granted capability", this);
             return;
         }
         ASCIILiteral runningBoardAssertionName = runningBoardNameForAssertionType(m_assertionType);
-        RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() Failed to grant capability %s with error %@", this, runningBoardAssertionName.characters(), error);
+        RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() Failed to grant capability %s", this, runningBoardAssertionName.characters());
     }
 #endif
     NSError *acquisitionError = nil;
@@ -506,7 +512,7 @@ ProcessAssertion::~ProcessAssertion()
 
 #if USE(EXTENSIONKIT)
     Locker locker { s_capabilityLock };
-    [m_grant invalidateWithError:nil];
+    [m_grant invalidate];
 #endif
 }
 

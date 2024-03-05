@@ -37,6 +37,8 @@ namespace WebCore {
 class RegistrableDomain;
 }
 
+OBJC_CLASS BEMediaEnvironment;
+
 namespace WebKit {
 
 class ExtensionCapabilityGrant;
@@ -64,12 +66,13 @@ public:
 
     // ExtensionCapability
     String environmentIdentifier() const final;
-    RetainPtr<_SECapability> platformCapability() const final { return m_platformCapability.get(); }
+
+    BEMediaEnvironment *platformMediaEnvironment() const { return m_mediaEnvironment.get(); }
 
 private:
     State m_state { State::Inactive };
     URL m_url;
-    RetainPtr<_SECapability> m_platformCapability;
+    RetainPtr<BEMediaEnvironment> m_mediaEnvironment;
 };
 
 } // namespace WebKit
