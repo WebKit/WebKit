@@ -46,6 +46,7 @@
 #include "Supplementable.h"
 #include "Timer.h"
 #include "TreeScope.h"
+#include "TrustedHTML.h"
 #include "URLKeepingBlobAlive.h"
 #include "UserActionElementSet.h"
 #include "ViewportArguments.h"
@@ -1197,7 +1198,7 @@ public:
     inline CheckedRef<DocumentMarkerController> checkedMarkers(); // Defined in DocumentInlines.h.
     inline CheckedRef<const DocumentMarkerController> checkedMarkers() const; // Defined in DocumentInlines.h.
 
-    WEBCORE_EXPORT ExceptionOr<bool> execCommand(const String& command, bool userInterface = false, const String& value = String());
+    WEBCORE_EXPORT ExceptionOr<bool> execCommand(const String& command, bool userInterface = false, const std::variant<String, RefPtr<TrustedHTML>>& value = String());
     WEBCORE_EXPORT ExceptionOr<bool> queryCommandEnabled(const String& command);
     WEBCORE_EXPORT ExceptionOr<bool> queryCommandIndeterm(const String& command);
     WEBCORE_EXPORT ExceptionOr<bool> queryCommandState(const String& command);

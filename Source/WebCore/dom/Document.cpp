@@ -272,6 +272,7 @@
 #include "TouchAction.h"
 #include "TransformSource.h"
 #include "TreeWalker.h"
+#include "TrustedType.h"
 #include "TypedElementDescendantIteratorInlines.h"
 #include "UndoManager.h"
 #include "UserGestureIndicator.h"
@@ -6895,13 +6896,27 @@ static Editor::Command command(Document* document, const String& commandName, bo
         userInterface ? EditorCommandSource::DOMWithUserInterface : EditorCommandSource::DOM);
 }
 
-ExceptionOr<bool> Document::execCommand(const String& commandName, bool userInterface, const String& value)
+ExceptionOr<bool> Document::execCommand(const String& commandName, bool userInterface, const std::variant<String, RefPtr<TrustedHTML>>& value)
 {
     if (UNLIKELY(!isHTMLDocument() && !isXHTMLDocument()))
         return Exception { ExceptionCode::InvalidStateError, "execCommand is only supported on HTML documents."_s };
 
+    auto stringValueHolder = WTF::switchOn(value,
+        [&commandName, this](const String& str) -> ExceptionOr<String> {
+            if (commandName != "insertHTML"_s)
+                return String(str);
+            return trustedTypeCompliantString(TrustedType::TrustedHTML, *scriptExecutionContext(), str, "Document execCommand"_s);
+        },
+        [](const RefPtr<TrustedHTML>& trustedHtml) -> ExceptionOr<String> {
+            return trustedHtml->toString();
+        }
+    );
+
+    if (stringValueHolder.hasException())
+        return stringValueHolder.releaseException();
+
     EventQueueScope eventQueueScope;
-    return command(this, commandName, userInterface).execute(value);
+    return command(this, commandName, userInterface).execute(stringValueHolder.releaseReturnValue());
 }
 
 ExceptionOr<bool> Document::queryCommandEnabled(const String& commandName)

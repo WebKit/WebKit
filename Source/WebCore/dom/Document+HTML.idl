@@ -68,7 +68,7 @@ partial interface Document {
     [ImplementedAs=windowProxy] readonly attribute WindowProxy? defaultView;
     boolean hasFocus();
     [CEReactions=Needed] attribute DOMString designMode;
-    [CEReactions=Needed] boolean execCommand(DOMString commandId, optional boolean showUI = false, optional DOMString value = "");
+    [CEReactions=Needed] boolean execCommand(DOMString commandId, optional boolean showUI = false, optional (DOMString or TrustedHTML) value = "");
     boolean queryCommandEnabled(DOMString commandId);
     boolean queryCommandIndeterm(DOMString commandId);
     boolean queryCommandState(DOMString commandId);
