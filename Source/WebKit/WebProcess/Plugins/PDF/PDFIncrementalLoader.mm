@@ -34,10 +34,10 @@
 #import <WebCore/HTTPStatusCodes.h>
 #import <WebCore/NetscapePlugInStreamLoader.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
+#import <wtf/CallbackAggregator.h>
 #import <wtf/Identified.h>
 #import <wtf/Range.h>
 #import <wtf/RangeSet.h>
-#import <wtf/WTFSemaphore.h>
 
 #import "PDFKitSoftLink.h"
 
@@ -294,6 +294,13 @@ void PDFIncrementalLoader::clear()
     // we can force the PDFThread to complete quickly
     if (m_pdfThread) {
         unconditionalCompleteOutstandingRangeRequests();
+        {
+            Locker locker { m_wasPDFThreadTerminationRequestedLock };
+            m_wasPDFThreadTerminationRequested = true;
+            m_dataSemaphores.forEach([](auto& dataSemaphore) {
+                dataSemaphore.signal();
+            });
+        }
         m_pdfThread->waitForCompletion();
     }
 }
@@ -649,19 +656,26 @@ size_t PDFIncrementalLoader::dataProviderGetBytesAtPosition(void* buffer, off_t 
         return 0;
     }
 
-    WTF::Semaphore dataSemaphore { 0 };
+    RefPtr dataSemaphore = createDataSemaphore();
+    if (!dataSemaphore)
+        return 0;
+
     size_t bytesProvided = 0;
 
-    RunLoop::main().dispatch([protectedLoader = Ref { *this }, position, count, buffer, &dataSemaphore, &bytesProvided] {
-        protectedLoader->getResourceBytesAtPosition(count, position, [count, buffer, &dataSemaphore, &bytesProvided](const uint8_t* bytes, size_t bytesCount) {
+    RunLoop::main().dispatch([protectedLoader = Ref { *this }, dataSemaphore, position, count, buffer, &bytesProvided] {
+        if (dataSemaphore->wasSignaled())
+            return;
+        protectedLoader->getResourceBytesAtPosition(count, position, [count, buffer, dataSemaphore, &bytesProvided](const uint8_t* bytes, size_t bytesCount) {
+            if (dataSemaphore->wasSignaled())
+                return;
             RELEASE_ASSERT(bytesCount <= count);
             memcpy(buffer, bytes, bytesCount);
             bytesProvided = bytesCount;
-            dataSemaphore.signal();
+            dataSemaphore->signal();
         });
     });
 
-    dataSemaphore.wait();
+    dataSemaphore->wait();
 
 #if !LOG_DISABLED
     decrementThreadsWaitingOnCallback();
@@ -669,6 +683,19 @@ size_t PDFIncrementalLoader::dataProviderGetBytesAtPosition(void* buffer, off_t 
 #endif
 
     return bytesProvided;
+}
+
+auto PDFIncrementalLoader::createDataSemaphore() -> RefPtr<SemaphoreWrapper>
+{
+    Ref dataSemaphore = SemaphoreWrapper::create();
+    {
+        Locker locker { m_wasPDFThreadTerminationRequestedLock };
+        if (m_wasPDFThreadTerminationRequested)
+            return nullptr;
+
+        m_dataSemaphores.add(dataSemaphore.get());
+    }
+    return dataSemaphore;
 }
 
 void PDFIncrementalLoader::dataProviderGetByteRanges(CFMutableArrayRef buffers, const CFRange* ranges, size_t count)
@@ -692,21 +719,29 @@ void PDFIncrementalLoader::dataProviderGetByteRanges(CFMutableArrayRef buffers, 
     incrementalLoaderLog(stream.release());
 #endif
 
-    WTF::Semaphore dataSemaphore { 0 };
+    RefPtr dataSemaphore = createDataSemaphore();
+    if (!dataSemaphore)
+        return;
+
     Vector<RetainPtr<CFDataRef>> dataResults(count);
 
     // FIXME: Once we support multi-range requests, make a single request for all ranges instead of <count> individual requests.
-    RunLoop::main().dispatch([protectedLoader = Ref { *this }, &dataResults, ranges, count, &dataSemaphore] {
+    RunLoop::main().dispatch([protectedLoader = Ref { *this }, &dataResults, ranges, count, dataSemaphore]() mutable {
+        if (dataSemaphore->wasSignaled())
+            return;
+        Ref callbackAggregator = CallbackAggregator::create([dataSemaphore] {
+            dataSemaphore->signal();
+        });
         for (size_t i = 0; i < count; ++i) {
-            protectedLoader->getResourceBytesAtPosition(ranges[i].length, ranges[i].location, [i, &dataResults, &dataSemaphore](const uint8_t* bytes, size_t bytesCount) {
+            protectedLoader->getResourceBytesAtPosition(ranges[i].length, ranges[i].location, [i, &dataResults, dataSemaphore, callbackAggregator](const uint8_t* bytes, size_t bytesCount) {
+                if (dataSemaphore->wasSignaled())
+                    return;
                 dataResults[i] = adoptCF(CFDataCreate(kCFAllocatorDefault, bytes, bytesCount));
-                dataSemaphore.signal();
             });
         }
     });
 
-    for (size_t i = 0; i < count; ++i)
-        dataSemaphore.wait();
+    dataSemaphore->wait();
 
 #if !LOG_DISABLED
     decrementThreadsWaitingOnCallback();
@@ -777,7 +812,7 @@ void PDFIncrementalLoader::threadEntry(Ref<PDFIncrementalLoader>&& protectedLoad
         return;
     }
 
-    WTF::Semaphore firstPageSemaphore { 0 };
+    BinarySemaphore firstPageSemaphore;
     auto firstPageQueue = WorkQueue::create("PDF first page work queue");
 
     [m_backgroundThreadDocument preloadDataOfPagesInRange:NSMakeRange(0, 1) onQueue:firstPageQueue->dispatchQueue() completion:[&firstPageSemaphore, protectedThis = Ref { *this }] (NSIndexSet *) mutable {
