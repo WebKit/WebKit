@@ -1727,8 +1727,10 @@ Node::InsertedIntoAncestorResult HTMLInputElement::insertedIntoAncestor(Insertio
         document().addElementWithPendingUserAgentShadowTreeUpdate(*this);
         m_hasPendingUserAgentShadowTreeUpdate = true;
     }
-    if (!insertionType.connectedToDocument)
+    if (!insertionType.connectedToDocument) {
+        addToRadioButtonGroup();
         return result;
+    }
     return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
 }
 
