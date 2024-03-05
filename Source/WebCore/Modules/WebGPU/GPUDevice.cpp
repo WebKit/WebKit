@@ -342,12 +342,14 @@ Ref<GPUExternalTexture> GPUDevice::importExternalTexture(const GPUExternalTextur
 #else
     if (auto* videoElement = &externalTextureDescriptor.source; videoElement && videoElement->get()) {
 #endif
-        HTMLVideoElement* videoElementPtr = videoElement->get();
+        WeakPtr<HTMLVideoElement> videoElementPtr = videoElement->get();
         m_videoElementToExternalTextureMap.set(*videoElementPtr, externalTexture.get());
         videoElementPtr->requestVideoFrameCallback(GPUDeviceVideoFrameRequestCallback::create(externalTexture.get(), *videoElementPtr, *this, scriptExecutionContext()));
-        queueTaskKeepingObjectAlive(*this, TaskSource::WebGPU, [protecedThis = Ref { *this }, videoElementPtr, externalTextureRef = externalTexture]() {
-            auto it = protecedThis->m_videoElementToExternalTextureMap.find(*videoElementPtr);
-            if (it == protecedThis->m_videoElementToExternalTextureMap.end() || externalTextureRef.ptr() != it->value.get())
+        queueTaskKeepingObjectAlive(*this, TaskSource::WebGPU, [protectedThis = Ref { *this }, videoElementPtr, externalTextureRef = externalTexture]() {
+            if (!videoElementPtr)
+                return;
+            auto it = protectedThis->m_videoElementToExternalTextureMap.find(*videoElementPtr);
+            if (it == protectedThis->m_videoElementToExternalTextureMap.end() || externalTextureRef.ptr() != it->value.get())
                 return;
 
             externalTextureRef->destroy();
