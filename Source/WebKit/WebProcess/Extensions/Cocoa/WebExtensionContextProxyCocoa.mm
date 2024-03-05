@@ -138,6 +138,9 @@ WebCore::DOMWrapperWorld& WebExtensionContextProxy::toDOMWrapperWorld(WebExtensi
     switch (contentWorldType) {
     case WebExtensionContentWorldType::Main:
     case WebExtensionContentWorldType::WebPage:
+#if ENABLE(INSPECTOR_EXTENSIONS)
+    case WebExtensionContentWorldType::Inspector:
+#endif
         return mainWorld();
     case WebExtensionContentWorldType::ContentScript:
         return contentScriptWorld();

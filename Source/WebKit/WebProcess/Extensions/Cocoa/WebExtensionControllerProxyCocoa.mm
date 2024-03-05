@@ -77,9 +77,9 @@ void WebExtensionControllerProxy::globalObjectIsAvailableForFrame(WebPage& page,
     auto contentWorldType = isMainWorld ? WebExtensionContentWorldType::Main : WebExtensionContentWorldType::ContentScript;
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
-    if (extension->isInspectorBackgroundPage(page)) {
-        // Inspector background pages have a limited set of APIs (like content scripts).
-        contentWorldType = WebExtensionContentWorldType::ContentScript;
+    if (page.isInspectorPage() || extension->isInspectorBackgroundPage(page)) {
+        // Inspector pages have a limited set of APIs (like content scripts).
+        contentWorldType = WebExtensionContentWorldType::Inspector;
     }
 #endif
 

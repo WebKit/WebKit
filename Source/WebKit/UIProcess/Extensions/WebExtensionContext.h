@@ -161,6 +161,7 @@ public:
     using EventListenerTypeCountedSet = HashCountedSet<WebExtensionEventListenerType>;
     using EventListenerTypePageMap = HashMap<WebExtensionEventListenerTypeWorldPair, WeakPageCountedSet>;
     using EventListenerTypeSet = HashSet<WebExtensionEventListenerType>;
+    using ContentWorldTypeSet = HashSet<WebExtensionContentWorldType>;
     using VoidCompletionHandlerVector = Vector<CompletionHandler<void()>>;
 
     using WindowIdentifierMap = HashMap<WebExtensionWindowIdentifier, Ref<WebExtensionWindow>>;
@@ -448,6 +449,7 @@ public:
     std::optional<WebCore::PageIdentifier> backgroundPageIdentifier() const;
 #if ENABLE(INSPECTOR_EXTENSIONS)
     Vector<PageIdentifierTuple> inspectorBackgroundPageIdentifiers() const;
+    Vector<PageIdentifierTuple> inspectorPageIdentifiers() const;
 #endif
     Vector<PageIdentifierTuple> popupPageIdentifiers() const;
     Vector<PageIdentifierTuple> tabPageIdentifiers() const;
@@ -465,10 +467,19 @@ public:
     void cookiesDidChange(API::HTTPCookieStore&);
 
     void wakeUpBackgroundContentIfNecessary(CompletionHandler<void()>&&);
-    void wakeUpBackgroundContentIfNecessaryToFireEvents(EventListenerTypeSet, CompletionHandler<void()>&&);
+    void wakeUpBackgroundContentIfNecessaryToFireEvents(EventListenerTypeSet&&, CompletionHandler<void()>&&);
 
-    HashSet<Ref<WebProcessProxy>> processes(WebExtensionEventListenerType, WebExtensionContentWorldType) const;
-    HashSet<Ref<WebProcessProxy>> processes(EventListenerTypeSet, WebExtensionContentWorldType) const;
+    HashSet<Ref<WebProcessProxy>> processes(WebExtensionEventListenerType type, WebExtensionContentWorldType contentWorldType) const
+    {
+        return processes(EventListenerTypeSet { type }, contentWorldType);
+    }
+
+    HashSet<Ref<WebProcessProxy>> processes(EventListenerTypeSet&& typeSet, WebExtensionContentWorldType contentWorldType) const
+    {
+        return processes(WTFMove(typeSet), ContentWorldTypeSet { contentWorldType });
+    }
+
+    HashSet<Ref<WebProcessProxy>> processes(EventListenerTypeSet&&, ContentWorldTypeSet&&) const;
 
     const UserContentControllerProxySet& userContentControllers() const;
 
@@ -481,7 +492,7 @@ public:
     void sendToProcessesForEvent(WebExtensionEventListenerType, const T& message) const;
 
     template<typename T>
-    void sendToProcessesForEvents(EventListenerTypeSet, const T& message) const;
+    void sendToProcessesForEvents(EventListenerTypeSet&&, const T& message) const;
 
     template<typename T>
     void sendToContentScriptProcessesForEvent(WebExtensionEventListenerType, const T& message) const;
@@ -893,9 +904,9 @@ void WebExtensionContext::sendToProcessesForEvent(WebExtensionEventListenerType 
 }
 
 template<typename T>
-void WebExtensionContext::sendToProcessesForEvents(EventListenerTypeSet typeSet, const T& message) const
+void WebExtensionContext::sendToProcessesForEvents(EventListenerTypeSet&& typeSet, const T& message) const
 {
-    sendToProcesses(processes(typeSet, WebExtensionContentWorldType::Main), message);
+    sendToProcesses(processes(WTFMove(typeSet), WebExtensionContentWorldType::Main), message);
 }
 
 template<typename T>

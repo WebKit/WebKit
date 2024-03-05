@@ -133,7 +133,9 @@ void WebExtensionContext::runtimeSendMessage(const String& extensionID, const St
     if (RefPtr tab = getTab(senderParameters.pageProxyIdentifier))
         completeSenderParameters.tabParameters = tab->parameters();
 
-    auto mainWorldProcesses = processes(WebExtensionEventListenerType::RuntimeOnMessage, WebExtensionContentWorldType::Main);
+    constexpr auto targetContentWorldType = WebExtensionContentWorldType::Main;
+
+    auto mainWorldProcesses = processes(WebExtensionEventListenerType::RuntimeOnMessage, targetContentWorldType);
     if (mainWorldProcesses.isEmpty()) {
         completionHandler({ });
         return;
@@ -142,7 +144,7 @@ void WebExtensionContext::runtimeSendMessage(const String& extensionID, const St
     auto callbackAggregator = EagerCallbackAggregator<void(Expected<String, WebExtensionError>)>::create(WTFMove(completionHandler), { });
 
     for (auto& process : mainWorldProcesses) {
-        process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeMessageEvent(WebExtensionContentWorldType::Main, messageJSON, std::nullopt, completeSenderParameters), [callbackAggregator](String&& replyJSON) {
+        process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeMessageEvent(targetContentWorldType, messageJSON, std::nullopt, completeSenderParameters), [callbackAggregator](String&& replyJSON) {
             callbackAggregator.get()(WTFMove(replyJSON));
         }, identifier());
     }

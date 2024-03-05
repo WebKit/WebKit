@@ -623,6 +623,9 @@ void WebExtensionContextProxy::dispatchRuntimeMessageEvent(WebExtensionContentWo
 {
     switch (contentWorldType) {
     case WebExtensionContentWorldType::Main:
+#if ENABLE(INSPECTOR_EXTENSIONS)
+    case WebExtensionContentWorldType::Inspector:
+#endif
         ASSERT(!frameIdentifier);
         internalDispatchRuntimeMessageEvent(contentWorldType, messageJSON, std::nullopt, senderParameters, WTFMove(completionHandler));
         return;
@@ -677,6 +680,9 @@ void WebExtensionContextProxy::dispatchRuntimeConnectEvent(WebExtensionContentWo
 {
     switch (contentWorldType) {
     case WebExtensionContentWorldType::Main:
+#if ENABLE(INSPECTOR_EXTENSIONS)
+    case WebExtensionContentWorldType::Inspector:
+#endif
         ASSERT(!frameIdentifier);
         internalDispatchRuntimeConnectEvent(contentWorldType, channelIdentifier, name, std::nullopt, senderParameters, WTFMove(completionHandler));
         return;
