@@ -67,8 +67,8 @@ public:
     void resetEffectiveRowSpan() { m_effectiveRowSpan = 1; }
     void setAXColIndexFromRow(int index) { m_axColIndexFromRow = index; }
 
-    void setRowIndex(unsigned index) { m_rowIndex = index; }
-    void setColumnIndex(unsigned index) { m_columnIndex = index; }
+    void setRowIndex(unsigned);
+    void setColumnIndex(unsigned);
 
 #if USE(ATSPI)
     int axColumnSpan() const;

@@ -209,7 +209,13 @@ public:
     void valueChanged(Element*);
     void checkedStateChanged(Node*);
     void autofillTypeChanged(Node*);
-    void handleRoleChanged(AccessibilityObject*);
+    void handleRoleChanged(AccessibilityObject&);
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    void columnIndexChanged(AccessibilityTableCell&);
+    void rowIndexChanged(AccessibilityTableCell&);
+#endif
+
     // Called when a RenderObject is created for an Element. Depending on the
     // presence of a RenderObject, we may have instatiated an AXRenderObject or
     // an AXNodeObject. This occurs when an Element with no renderer is
@@ -354,6 +360,8 @@ public:
         AXAnnouncementRequested,
         AXAutocorrectionOccured,
         AXAutofillTypeChanged,
+        AXARIAColumnIndexChanged,
+        AXARIARowIndexChanged,
         AXBrailleLabelChanged,
         AXBrailleRoleDescriptionChanged,
         AXCellSlotsChanged,
@@ -448,6 +456,12 @@ public:
     void postNotification(RenderObject*, AXNotification, PostTarget = PostTarget::Element);
     void postNotification(Node*, AXNotification, PostTarget = PostTarget::Element);
     void postNotification(AccessibilityObject*, Document*, AXNotification, PostTarget = PostTarget::Element);
+    void postNotification(AccessibilityObject* object, AXNotification notification)
+    {
+        if (object)
+            postNotification(*object, notification);
+    }
+    void postNotification(AccessibilityObject&, AXNotification);
     // Requests clients to announce to the user the given message in the way they deem appropriate.
     WEBCORE_EXPORT void announce(const String&);
 

@@ -558,6 +558,12 @@ TextStream& operator<<(TextStream& stream, AXObjectCache::AXNotification notific
     case AXObjectCache::AXNotification::AXAutofillTypeChanged:
         stream << "AXAutofillTypeChanged";
         break;
+    case AXObjectCache::AXNotification::AXARIAColumnIndexChanged:
+        stream << "AXARIAColumnIndexChanged";
+        break;
+    case AXObjectCache::AXNotification::AXARIARowIndexChanged:
+        stream << "AXARIARowIndexChanged";
+        break;
     case AXObjectCache::AXNotification::AXBrailleLabelChanged:
         stream << "AXBrailleLabelChanged";
         break;

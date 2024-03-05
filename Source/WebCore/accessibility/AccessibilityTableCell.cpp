@@ -328,6 +328,30 @@ void AccessibilityTableCell::ensureIndexesUpToDate() const
         parentTable->ensureCellIndexesUpToDate();
 }
 
+void AccessibilityTableCell::setRowIndex(unsigned index)
+{
+    if (m_rowIndex == index)
+        return;
+    m_rowIndex = index;
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    if (auto* cache = axObjectCache())
+        cache->rowIndexChanged(*this);
+#endif
+}
+
+void AccessibilityTableCell::setColumnIndex(unsigned index)
+{
+    if (m_columnIndex == index)
+        return;
+    m_columnIndex = index;
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    if (auto* cache = axObjectCache())
+        cache->columnIndexChanged(*this);
+#endif
+}
+
 std::pair<unsigned, unsigned> AccessibilityTableCell::rowIndexRange() const
 {
     ensureIndexesUpToDate();

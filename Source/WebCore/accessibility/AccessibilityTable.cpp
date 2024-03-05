@@ -404,7 +404,7 @@ void AccessibilityTable::recomputeIsExposable()
     if (previouslyExposable != m_isExposable) {
         // A table's role value is dependent on whether it's exposed, so notify the cache this has changed.
         if (auto* cache = axObjectCache())
-            cache->handleRoleChanged(this);
+            cache->handleRoleChanged(*this);
 
         // Before resetting our existing children, possibly losing references to them, ensure we update their role (since a table cell's role is dependent on whether its parent table is exposable).
         updateChildrenRoles();
@@ -845,7 +845,7 @@ unsigned AccessibilityTable::columnCount()
 {
     updateChildrenIfNecessary();
     
-    return m_columns.size();    
+    return m_columns.size();
 }
     
 unsigned AccessibilityTable::rowCount()
