@@ -28,3 +28,6 @@ INFOPLIST_KEY_CFBundleDisplayName = WebContentCaptivePortalExtension;
 PRODUCT_BUNDLE_IDENTIFIER = com.apple.WebKit.WebContent.CaptivePortal;
 EXECUTABLE_NAME = $(PRODUCT_BUNDLE_IDENTIFIER);
 PRODUCT_BUNDLE_NAME = WebContentCaptivePortalExtension;
+
+// For simulator builds, entitlements are added to a special __entitlements section on the binary rather than the signature.
+CODE_SIGN_ENTITLEMENTS[sdk=*simulator] = Shared/AuxiliaryProcessExtensions/WebContentProcessExtension.entitlements;
