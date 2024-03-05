@@ -25,6 +25,8 @@
 
 #include <wtf/HashMap.h>
 
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+
 namespace WebCore {
 
 class GraphicsContext;
@@ -54,3 +56,5 @@ private:
 }
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGResourceMasker, isRenderSVGResourceMasker())
+
+#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

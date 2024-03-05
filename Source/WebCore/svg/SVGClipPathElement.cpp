@@ -169,6 +169,7 @@ RefPtr<SVGGraphicsElement> SVGClipPathElement::shouldApplyPathClipping() const
 FloatRect SVGClipPathElement::calculateClipContentRepaintRect(RepaintRectCalculation repaintRectCalculation)
 {
     ASSERT(renderer());
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
     auto transformationMatrixFromChild = [&](const RenderLayerModelObject& child) -> std::optional<AffineTransform> {
         if (!document().settings().layerBasedSVGEngineEnabled())
             return std::nullopt;
@@ -182,6 +183,7 @@ FloatRect SVGClipPathElement::calculateClipContentRepaintRect(RepaintRectCalcula
         auto transform = SVGLayerTransformComputation(child).computeAccumulatedTransform(downcast<RenderLayerModelObject>(renderer()), TransformState::TrackSVGCTMMatrix);
         return transform.isIdentity() ? std::nullopt : std::make_optional(WTFMove(transform));
     };
+#endif
 
     FloatRect clipContentRepaintRect;
     // This is a rough heuristic to appraise the clip size and doesn't consider clip on clip.
