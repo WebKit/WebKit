@@ -125,7 +125,9 @@ public:
 
     void applyConstraints(const MediaConstraints&, RealtimeMediaSource::ApplyConstraintsHandler&&);
 
+#if ENABLE(WEB_AUDIO)
     RefPtr<WebAudioSourceProvider> createAudioSourceProvider();
+#endif
 
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&);
 

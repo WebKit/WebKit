@@ -535,6 +535,7 @@ void MediaStreamTrackPrivate::applyConstraints(const MediaConstraints& constrain
     m_sourceObserver->applyConstraints(constraints, WTFMove(callback));
 }
 
+#if ENABLE(WEB_AUDIO)
 RefPtr<WebAudioSourceProvider> MediaStreamTrackPrivate::createAudioSourceProvider()
 {
     ASSERT(isMainThread());
@@ -548,6 +549,7 @@ RefPtr<WebAudioSourceProvider> MediaStreamTrackPrivate::createAudioSourceProvide
     return nullptr;
 #endif
 }
+#endif
 
 void MediaStreamTrackPrivate::sourceStarted()
 {
