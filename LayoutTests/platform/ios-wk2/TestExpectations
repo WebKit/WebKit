@@ -2402,3 +2402,7 @@ webkit.org/b/269760 mathml/presentation/scripts-underover.html [ Failure ]
 webkit.org/b/270315 svg/custom/svg-fonts-in-html.html [ Failure ]
 
 webkit.org/b/270477 [ Debug ] accessibility/text-marker/text-marker-range-stale-node-crash.html [ Skip ]
+
+# webkit.org/b/268557 REGRESSION (274621@main-274598@main?): [ iOS Debug ]media/video-autoplay.html and media/video-element-other-namespace-crash.html are constant crashes 
+[ Debug ] media/video-autoplay.html [ Skip ]
+[ Debug ] media/video-element-other-namespace-crash.html  [ Skip ]
