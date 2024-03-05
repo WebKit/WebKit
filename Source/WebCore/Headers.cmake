@@ -343,7 +343,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/cookie-store/CookieStoreGetOptions.h
 
     Modules/credentialmanagement/CredentialRequestOptions.h
-    Modules/credentialmanagement/DigitalCredentialRequestOptions.h
 
     Modules/encryptedmedia/CDMClient.h
     Modules/encryptedmedia/MediaKeySystemClient.h
@@ -392,6 +391,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/highlight/Highlight.h
     Modules/highlight/HighlightRegistry.h
     Modules/highlight/HighlightVisibility.h
+
+    Modules/identity/DigitalCredentialRequestOptions.h
 
     Modules/indexeddb/IDBActiveDOMObject.h
     Modules/indexeddb/IDBDatabaseIdentifier.h

@@ -1788,6 +1788,9 @@ http/wpt/credential-management/ [ Skip ]
 http/wpt/webauthn/ [ Skip ]
 imported/w3c/web-platform-tests/credential-management/ [ Skip ]
 
+# Skip Digital Credentials API
+http/wpt/identity/ [ Skip ]
+
 webkit.org/b/182554 transitions/transition-display-property.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/184456 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-in-object-fallback.html [ Pass Failure ]

@@ -309,10 +309,6 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/credentialmanagement/CredentialMediationRequirement.idl \
     $(WebCore)/Modules/credentialmanagement/CredentialRequestOptions.idl \
     $(WebCore)/Modules/credentialmanagement/CredentialsContainer.idl \
-    $(WebCore)/Modules/credentialmanagement/DigitalCredential.idl \
-    $(WebCore)/Modules/credentialmanagement/DigitalCredentialRequestOptions.idl \
-    $(WebCore)/Modules/credentialmanagement/IdentityRequestProvider.idl \
-    $(WebCore)/Modules/credentialmanagement/IdentityCredentialProtocol.idl \
     $(WebCore)/Modules/credentialmanagement/Navigator+Credentials.idl \
     $(WebCore)/Modules/encryptedmedia/MediaKeyEncryptionScheme.idl \
     $(WebCore)/Modules/encryptedmedia/MediaKeyMessageEventInit.idl \
@@ -377,6 +373,10 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/geolocation/PositionOptions.idl \
     $(WebCore)/Modules/highlight/HighlightRegistry.idl \
     $(WebCore)/Modules/highlight/Highlight.idl \
+    $(WebCore)/Modules/identity/DigitalCredential.idl \
+    $(WebCore)/Modules/identity/DigitalCredentialRequestOptions.idl \
+    $(WebCore)/Modules/identity/IdentityRequestProvider.idl \
+    $(WebCore)/Modules/identity/IdentityCredentialProtocol.idl \
     $(WebCore)/Modules/identity/Navigator+Identity.idl \
     $(WebCore)/Modules/indexeddb/IDBCursor.idl \
     $(WebCore)/Modules/indexeddb/IDBCursorDirection.idl \

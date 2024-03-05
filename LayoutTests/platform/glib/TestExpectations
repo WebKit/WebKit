@@ -2621,6 +2621,9 @@ http/wpt/credential-management/ [ Skip ]
 http/wpt/webauthn/ [ Skip ]
 imported/w3c/web-platform-tests/credential-management/ [ Skip ]
 
+# Digital Crendentials API
+http/wpt/identity/ [ Skip ]
+
 # WebGL2
 webkit.org/b/166536 fast/canvas/webgl/webgl-transformed-varying-name-crash.html [ Skip ]
 webkit.org/b/166536 fast/canvas/webgl/shader-mix-with-bool.html [ Skip ]

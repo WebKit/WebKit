@@ -39,6 +39,7 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/filesystemaccess"
     "${WEBCORE_DIR}/Modules/geolocation"
     "${WEBCORE_DIR}/Modules/highlight"
+    "${WEBCORE_DIR}/Modules/identity"
     "${WEBCORE_DIR}/Modules/indexeddb"
     "${WEBCORE_DIR}/Modules/indexeddb/client"
     "${WEBCORE_DIR}/Modules/indexeddb/server"
@@ -224,6 +225,7 @@ set(WebCore_IDL_INCLUDES
     Modules/filesystemaccess
     Modules/geolocation
     Modules/highlight
+    Modules/identity
     Modules/indexeddb
     Modules/mediacapabilities
     Modules/mediarecorder
@@ -311,10 +313,6 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/credentialmanagement/CredentialMediationRequirement.idl
     Modules/credentialmanagement/CredentialRequestOptions.idl
     Modules/credentialmanagement/CredentialsContainer.idl
-    Modules/credentialmanagement/DigitalCredential.idl
-    Modules/credentialmanagement/DigitalCredentialRequestOptions.idl
-    Modules/credentialmanagement/IdentityCredentialProtocol.idl
-    Modules/credentialmanagement/IdentityRequestProvider.idl
     Modules/credentialmanagement/Navigator+Credentials.idl
 
     Modules/encryptedmedia/MediaKeyEncryptionScheme.idl
@@ -374,6 +372,10 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/highlight/Highlight.idl
     Modules/highlight/HighlightRegistry.idl
 
+    Modules/identity/DigitalCredential.idl
+    Modules/identity/DigitalCredentialRequestOptions.idl
+    Modules/identity/IdentityCredentialProtocol.idl
+    Modules/identity/IdentityRequestProvider.idl
     Modules/identity/Navigator+Identity.idl
 
     Modules/indexeddb/IDBCursor.idl
