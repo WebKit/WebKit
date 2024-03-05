@@ -643,23 +643,32 @@ void RenderLayerModelObject::repaintOrRelayoutAfterSVGTransformChange()
 {
     ASSERT(document().settings().layerBasedSVGEngineEnabled());
 
+    updateHasSVGTransformFlags();
+
+    // LBSE shares the text rendering code with the legacy SVG engine, largely unmodified.
+    // At present text layout depends on transformations ('screen font scaling factor' is used to
+    // determine which font to use for layout / painting). Therefore if the x/y scaling factors
+    // of the transformation matrix changes due to the transform update, we have to recompute the text metrics
+    // of all RenderSVGText descendants of the renderer in the ancestor chain, that will receive the transform
+    // update.
+    //
+    // There is no intrinsic reason for that, besides historical ones. If we decouple
+    // the 'font size screen scaling factor' from layout and only use it during painting
+    // we can optimize transformations for text, simply by avoid the need for layout.
+    auto previousTransform = layerTransform() ? layerTransform()->toAffineTransform() : identity;
+    updateLayerTransform();
+
+    auto currentTransform = layerTransform() ? layerTransform()->toAffineTransform() : identity;
+
+    // We have to force a stacking context if we did not have a transform before. Normally
+    // RenderLayer::styleChanged does this for us but repaintOrRelayoutAfterSVGTransformChange
+    // does not end up calling it.
+    if (previousTransform.isIdentity() && !currentTransform.isIdentity()) {
+        if (hasLayer())
+            layer()->forceStackingContextIfNeeded();
+    }
+
     auto determineIfLayerTransformChangeModifiesScale = [&]() -> bool {
-        updateHasSVGTransformFlags();
-
-        // LBSE shares the text rendering code with the legacy SVG engine, largely unmodified.
-        // At present text layout depends on transformations ('screen font scaling factor' is used to
-        // determine which font to use for layout / painting). Therefore if the x/y scaling factors
-        // of the transformation matrix changes due to the transform update, we have to recompute the text metrics
-        // of all RenderSVGText descendants of the renderer in the ancestor chain, that will receive the transform
-        // update.
-        //
-        // There is no intrinsic reason for that, besides historical ones. If we decouple
-        // the 'font size screen scaling factor' from layout and only use it during painting
-        // we can optimize transformations for text, simply by avoid the need for layout.
-        auto previousTransform = layerTransform() ? layerTransform()->toAffineTransform() : identity;
-        updateLayerTransform();
-
-        auto currentTransform = layerTransform() ? layerTransform()->toAffineTransform() : identity;
         if (previousTransform == currentTransform)
             return false;
 
@@ -672,9 +681,9 @@ void RenderLayerModelObject::repaintOrRelayoutAfterSVGTransformChange()
             return true;
 
         return false;
-    };
+    }();
 
-    if (determineIfLayerTransformChangeModifiesScale()) {
+    if (determineIfLayerTransformChangeModifiesScale) {
         if (auto* textAffectedByTransformChange = dynamicDowncast<RenderSVGText>(this)) {
             // Mark text metrics for update, and only trigger a relayout and not an explicit repaint.
             textAffectedByTransformChange->setNeedsTextMetricsUpdate();
@@ -698,7 +707,6 @@ void RenderLayerModelObject::repaintOrRelayoutAfterSVGTransformChange()
 
     // Instead of performing a full-fledged layout (issuing repaints), just recompute the layer transform, and repaint.
     // In LBSE transformations do not affect the layout (except for text, where it still does!) -- SVG follows closely the CSS/HTML route, to avoid costly layouts.
-    updateLayerTransform();
     repaintRendererOrClientsOfReferencedSVGResources();
 }
 

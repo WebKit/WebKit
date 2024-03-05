@@ -217,6 +217,8 @@ public:
     // itself, if it is a stacking container.
     RenderLayer* enclosingStackingContext() { return isStackingContext() ? this : stackingContext(); }
 
+    void forceStackingContextIfNeeded();
+
     RenderLayer* paintOrderParent() const;
 
     std::optional<LayoutRect> cachedClippedOverflowRect() const;

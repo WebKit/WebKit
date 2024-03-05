@@ -369,7 +369,6 @@ css3/masking/reference-clip-path-change-repaint.html                            
 imported/w3c/web-platform-tests/svg/import/masking-path-07-b-manual.svg                           [ ImageOnlyFailure ]
 svg/batik/text/textProperties.svg                                                                 [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/clip-path-precision-001.svg [ ImageOnlyFailure ]
-svg/repaint/image-with-clip-path.svg                                                              [ ImageOnlyFailure ]
 
 # Masking problems
 svg/masking/mask-negative-scale.svg                       [ ImageOnlyFailure ]

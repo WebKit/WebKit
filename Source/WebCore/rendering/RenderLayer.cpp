@@ -1341,6 +1341,17 @@ void RenderLayer::updateTransform()
     }
 }
 
+void RenderLayer::forceStackingContextIfNeeded()
+{
+    if (setIsCSSStackingContext(true)) {
+        setIsNormalFlowOnly(false);
+        if (parent()) {
+            if (!hasNotIsolatedBlendingDescendantsStatusDirty() && hasNotIsolatedBlendingDescendants())
+                parent()->dirtyAncestorChainHasBlendingDescendants();
+        }
+    }
+}
+
 TransformationMatrix RenderLayer::currentTransform(OptionSet<RenderStyle::TransformOperationOption> options) const
 {
     if (!m_transform)
