@@ -87,6 +87,7 @@ jsargs=(
     --plan jetstream2
     --diagnose-directory="$BASE/jetstream"
     --generate-pgo-profiles
+    --http-server-type builtin
     --count 1
 )
 
@@ -94,6 +95,7 @@ sp3args=(
     --plan speedometer3
     --diagnose-directory="$BASE/speedometer3"
     --generate-pgo-profiles
+    --http-server-type builtin
     --count 1
 )
 
@@ -101,6 +103,7 @@ mmargs=(
     --plan motionmark
     --diagnose-directory="$BASE/motionmark"
     --generate-pgo-profiles
+    --http-server-type builtin
     --count 1
 )
 
