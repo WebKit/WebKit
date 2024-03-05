@@ -1629,10 +1629,8 @@ template<typename T, typename F>
 T* findChild(T& object, F&& matches)
 {
     for (auto child : object.children()) {
-        if (matches(child)) {
-            RELEASE_ASSERT(is<T>(child.get()));
-            return downcast<T>(child.get());
-        }
+        if (matches(child))
+            return checkedDowncast<T>(child.get());
     }
     return nullptr;
 }

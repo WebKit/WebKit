@@ -98,13 +98,13 @@ int AccessibilityObject::accessibilitySecureFieldLength()
 {
     if (!isSecureField())
         return 0;
-    RenderObject* renderObject = downcast<AccessibilityRenderObject>(*this).renderer();
-    
-    if (!renderObject || !is<HTMLInputElement>(renderObject->node()))
-        return false;
-    
-    HTMLInputElement& inputElement = downcast<HTMLInputElement>(*renderObject->node());
-    return inputElement.value().length();
+
+    auto* renderObject = downcast<AccessibilityRenderObject>(*this).renderer();
+    if (!renderObject)
+        return 0;
+
+    auto* inputElement = dynamicDowncast<HTMLInputElement>(renderObject->node());
+    return inputElement ? inputElement->value().length() : 0;
 }
 
 bool AccessibilityObject::accessibilityIgnoreAttachment() const

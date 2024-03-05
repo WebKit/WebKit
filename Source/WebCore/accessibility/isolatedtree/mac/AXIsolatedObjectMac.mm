@@ -86,7 +86,8 @@ RemoteAXObjectRef AXIsolatedObject::remoteParentObject() const
     auto* scrollView = Accessibility::findAncestor<AXCoreObject>(*this, true, [] (const AXCoreObject& object) {
         return object.isScrollView();
     });
-    return is<AXIsolatedObject>(scrollView) ? downcast<AXIsolatedObject>(scrollView)->m_remoteParent.get() : nil;
+    auto* isolatedObject = dynamicDowncast<AXIsolatedObject>(scrollView);
+    return isolatedObject ? isolatedObject->m_remoteParent.get() : nil;
 }
 
 FloatRect AXIsolatedObject::primaryScreenRect() const

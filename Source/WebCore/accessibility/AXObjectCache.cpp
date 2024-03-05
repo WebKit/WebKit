@@ -1316,7 +1316,7 @@ void AXObjectCache::handleChildrenChanged(AccessibilityObject& object)
         if (children.isEmpty())
             return;
 
-        ASSERT(children.size() == 1 && is<AccessibilityObject>(*children[0]));
+        ASSERT(children.size() == 1);
         handleChildrenChanged(downcast<AccessibilityObject>(*children[0]));
     } else if (auto* menuListPopup = dynamicDowncast<AccessibilityMenuListPopup>(object)) {
         menuListPopup->handleChildrenChanged();

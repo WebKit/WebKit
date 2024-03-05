@@ -61,15 +61,15 @@ Ref<AccessibilitySVGElement> AccessibilitySVGElement::create(RenderObject* rende
 
 AccessibilityObject* AccessibilitySVGElement::targetForUseElement() const
 {
-    if (!is<SVGUseElement>(element()))
+    auto* use = dynamicDowncast<SVGUseElement>(element());
+    if (!use)
         return nullptr;
 
-    SVGUseElement& use = downcast<SVGUseElement>(*element());
-    String href = use.href();
+    auto href = use->href();
     if (href.isEmpty())
         href = getAttribute(HTMLNames::hrefAttr);
 
-    auto target = SVGURIReference::targetElementFromIRIString(href, use.treeScopeForSVGReferences());
+    auto target = SVGURIReference::targetElementFromIRIString(href, use->treeScopeForSVGReferences());
     if (!target.element)
         return nullptr;
 

@@ -152,18 +152,14 @@ bool AccessibilityMathMLElement::isAnonymousMathOperator() const
 
 bool AccessibilityMathMLElement::isMathFenceOperator() const
 {
-    if (!is<RenderMathMLOperator>(renderer()))
-        return false;
-
-    return downcast<RenderMathMLOperator>(*m_renderer).hasOperatorFlag(MathMLOperatorDictionary::Fence);
+    auto* mathMLOperator = dynamicDowncast<RenderMathMLOperator>(renderer());
+    return mathMLOperator && mathMLOperator->hasOperatorFlag(MathMLOperatorDictionary::Fence);
 }
 
 bool AccessibilityMathMLElement::isMathSeparatorOperator() const
 {
-    if (!is<RenderMathMLOperator>(renderer()))
-        return false;
-
-    return downcast<RenderMathMLOperator>(*m_renderer).hasOperatorFlag(MathMLOperatorDictionary::Separator);
+    auto* mathMLOperator = dynamicDowncast<RenderMathMLOperator>(renderer());
+    return mathMLOperator && mathMLOperator->hasOperatorFlag(MathMLOperatorDictionary::Separator);
 }
 
 bool AccessibilityMathMLElement::isMathText() const
@@ -443,10 +439,11 @@ void AccessibilityMathMLElement::mathPostscripts(AccessibilityMathMultiscriptPai
 
 int AccessibilityMathMLElement::mathLineThickness() const
 {
-    if (!is<RenderMathMLFraction>(renderer()))
+    auto* fraction = dynamicDowncast<RenderMathMLFraction>(renderer());
+    if (!fraction)
         return -1;
 
-    return downcast<RenderMathMLFraction>(*m_renderer).relativeLineThickness();
+    return fraction->relativeLineThickness();
 }
 
 } // namespace WebCore
