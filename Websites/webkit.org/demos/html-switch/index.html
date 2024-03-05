@@ -31,6 +31,7 @@
             <style>
 .basic-switch {
     appearance: none;
+    display: inline-grid;
     position: relative;
     background-color: #98989d;
     height: 20px;
@@ -55,6 +56,11 @@
 .basic-switch:checked::thumb {
     translate: 22px 0;
 }
+
+.basic-switch::thumb,
+.basic-switch::track {
+    grid-area: 1/1;
+}
             </style>
         </details>
     </section>
@@ -66,6 +72,7 @@
             <style>
 .basic-with-symbol {
     appearance: none;
+    display: inline-grid;
     position: relative;
     background-color: #98989d;
     height: 20px;
@@ -110,6 +117,11 @@
     content: "I" / "";
     margin-left: 10px;
 }
+
+.basic-with-symbol::thumb,
+.basic-with-symbol::track {
+    grid-area: 1/1;
+}
             </style>
         </details>
     </section>
@@ -121,6 +133,7 @@
             <style>
 .sliding-track {
     appearance: none;
+    display: inline-grid;
     color: #000;
     overflow: hidden;
     height: 20px;
@@ -147,6 +160,11 @@
     width: 20px;
     height: 20px;
     font-weight: 600;
+}
+
+.sliding-track::thumb,
+.sliding-track::track {
+    grid-area: 1/1;
 }
 
 .sliding-track::before {
@@ -236,6 +254,7 @@
     background-color: #FFFFFF;
     transition: all 0.2s;
 }
+
 .daylight-switch:not(:checked)::thumb {
     --crater: radial-gradient(circle, #FFF 0, #FFF 30%, #E3E3C7 30%, #E3E3C7 70%, transparent 70%);
     --deep-crater: radial-gradient(circle, #FFF 0, #FFF 20%, #E3E3C7 20%, #E3E3C7 70%, transparent 70%);
@@ -244,6 +263,7 @@
     background-position: 1px 1px, 13px 2px, 7px 14px;
     background-repeat: no-repeat;
 }
+
 .daylight-switch:checked::thumb {
     border-color: #E1C348;
     background-color: #FFDF6D;
@@ -263,6 +283,7 @@
     transition: all 0.2s;
     transition-delay: 0.15s;
 }
+
 .daylight-switch::before,
 .daylight-switch::after {
     content: "";
@@ -276,6 +297,7 @@
     transition: all 0.2s;
     transition-delay: 0.15s;
 }
+
 .daylight-switch::before {
     left: 17px;
     translate: 0 -1px;
@@ -283,12 +305,14 @@
     width: 4.5px;
     rotate: -20deg;
 }
+
 .daylight-switch::after {
     left: 23px;
     width: 3px;
     height: 3px;
     rotate: 20deg;
 }
+
 .daylight-switch:not(:checked)::track,
 .daylight-switch:not(:checked)::before,
 .daylight-switch:not(:checked)::after {
@@ -307,6 +331,7 @@
             <style>
 .toggle-button {
     appearance: none;
+    display: inline-grid;
     position: relative;
     background-color: #ccd;
     color: #000;
@@ -324,6 +349,11 @@
     border-radius: 2px;
     transition: translate 0.3s;
     z-index: 0;
+}
+
+.toggle-button::thumb,
+.toggle-button::track {
+    grid-area: 1/1;
 }
 
 .toggle-button:checked::thumb {
