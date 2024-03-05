@@ -307,15 +307,15 @@ static void blend(AcceleratedEffectProperty property, AcceleratedEffectValues& o
         break;
     }
     case AcceleratedEffectProperty::Translate:
-        if (auto toTranslate = to.translate)
+        if (auto& toTranslate = to.translate)
             output.translate = toTranslate->blend(from.translate.get(), blendingContext);
         break;
     case AcceleratedEffectProperty::Rotate:
-        if (auto toRotate = to.rotate)
+        if (auto& toRotate = to.rotate)
             output.rotate = toRotate->blend(from.rotate.get(), blendingContext);
         break;
     case AcceleratedEffectProperty::Scale:
-        if (auto toScale = to.scale)
+        if (auto& toScale = to.scale)
             output.scale = toScale->blend(from.scale.get(), blendingContext);
         break;
     case AcceleratedEffectProperty::OffsetAnchor:
