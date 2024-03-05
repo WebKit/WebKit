@@ -167,6 +167,10 @@ TEST(WKWebExtensionAPIAction, PresentPopupForAction)
         EXPECT_NOT_NULL(largeIcon);
         EXPECT_TRUE(CGSizeEqualToSize(largeIcon.size, CGSizeMake(32, 32)));
 
+#if PLATFORM(IOS_FAMILY)
+        EXPECT_NOT_NULL(action.popupViewController);
+#endif
+
         EXPECT_NOT_NULL(action.popupWebView);
         EXPECT_FALSE(action.popupWebView.loading);
 
@@ -869,6 +873,10 @@ TEST(WKWebExtensionAPIAction, BrowserAction)
         EXPECT_TRUE(action.presentsPopup);
         EXPECT_FALSE(action.isEnabled);
 
+#if PLATFORM(IOS_FAMILY)
+        EXPECT_NOT_NULL(action.popupViewController);
+#endif
+
         EXPECT_NOT_NULL(action.popupWebView);
         EXPECT_FALSE(action.popupWebView.loading);
 
@@ -954,6 +962,10 @@ TEST(WKWebExtensionAPIAction, PageAction)
 
         EXPECT_TRUE(action.presentsPopup);
         EXPECT_FALSE(action.isEnabled);
+
+#if PLATFORM(IOS_FAMILY)
+        EXPECT_NOT_NULL(action.popupViewController);
+#endif
 
         EXPECT_NOT_NULL(action.popupWebView);
         EXPECT_FALSE(action.popupWebView.loading);

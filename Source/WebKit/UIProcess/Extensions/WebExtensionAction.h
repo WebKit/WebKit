@@ -40,6 +40,11 @@ OBJC_CLASS _WKWebExtensionAction;
 OBJC_CLASS _WKWebExtensionActionWebView;
 OBJC_CLASS _WKWebExtensionActionWebViewDelegate;
 
+#if PLATFORM(IOS_FAMILY)
+OBJC_CLASS UIViewController;
+OBJC_CLASS _WKWebExtensionActionViewController;
+#endif
+
 namespace WebKit {
 
 class WebExtensionContext;
@@ -97,6 +102,10 @@ public:
     String popupPath() const;
     void setPopupPath(String);
 
+#if PLATFORM(IOS_FAMILY)
+    UIViewController *popupViewController();
+#endif
+
     WKWebView *popupWebView(LoadOnFirstAccess = LoadOnFirstAccess::Yes);
     void presentPopupWhenReady();
     void readyToPresentPopup();
@@ -116,6 +125,10 @@ private:
     WeakPtr<WebExtensionContext> m_extensionContext;
     RefPtr<WebExtensionTab> m_tab;
     RefPtr<WebExtensionWindow> m_window;
+
+#if PLATFORM(IOS_FAMILY)
+    RetainPtr<_WKWebExtensionActionViewController> m_popupViewController;
+#endif
 
     RetainPtr<_WKWebExtensionActionWebView> m_popupWebView;
     RetainPtr<_WKWebExtensionActionWebViewDelegate> m_popupWebViewDelegate;

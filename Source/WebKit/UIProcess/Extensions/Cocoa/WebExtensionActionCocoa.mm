@@ -50,23 +50,40 @@
 #import "_WKWebExtensionControllerDelegatePrivate.h"
 #import <wtf/BlockPtr.h>
 
-#if USE(APPKIT)
-constexpr CGFloat popoverMaximumWidth = 800;
-constexpr CGFloat popoverMaximumHeight = 600;
+#if PLATFORM(IOS_FAMILY)
+#import "UIKitSPI.h"
 #endif
 
-constexpr CGFloat popoverMinimumWidth = 50;
-constexpr CGFloat popoverMinimumHeight = 50;
+#if PLATFORM(VISION)
+constexpr CGFloat maximumPopoverWidth = 734;
+constexpr CGFloat maximumPopoverHeight = 734;
+#else
+constexpr CGFloat maximumPopoverWidth = 800;
+constexpr CGFloat maximumPopoverHeight = 600;
+#endif
+
+constexpr CGFloat minimumPopoverWidth = 50;
+constexpr CGFloat minimumPopoverHeight = 50;
+
+#ifdef NDEBUG
 constexpr NSTimeInterval popoverShowTimeout = 1;
+constexpr NSTimeInterval popoverStableSizeDuration = 0.1;
+#else
+// Debug builds are slower, so give rendering more time.
+constexpr NSTimeInterval popoverShowTimeout = 2;
+constexpr NSTimeInterval popoverStableSizeDuration = 0.2;
+#endif
+
+using namespace WebKit;
 
 @interface _WKWebExtensionActionWebViewDelegate : NSObject <WKNavigationDelegatePrivate, WKUIDelegatePrivate>
 @end
 
 @implementation _WKWebExtensionActionWebViewDelegate {
-    WeakPtr<WebKit::WebExtensionAction> _webExtensionAction;
+    WeakPtr<WebExtensionAction> _webExtensionAction;
 }
 
-- (instancetype)initWithWebExtensionAction:(WebKit::WebExtensionAction&)action
+- (instancetype)initWithWebExtensionAction:(WebExtensionAction&)action
 {
     if (!(self = [super init]))
         return nil;
@@ -93,13 +110,13 @@ constexpr NSTimeInterval popoverShowTimeout = 1;
         if (!currentWindow && currentTab)
             currentWindow = currentTab->window();
 
-        WebKit::WebExtensionTabParameters tabParameters;
+        WebExtensionTabParameters tabParameters;
         tabParameters.url = targetURL;
-        tabParameters.windowIdentifier = currentWindow ? currentWindow->identifier() : WebKit::WebExtensionWindowConstants::CurrentIdentifier;
+        tabParameters.windowIdentifier = currentWindow ? currentWindow->identifier() : WebExtensionWindowConstants::CurrentIdentifier;
         tabParameters.index = currentTab ? std::optional(currentTab->index() + 1) : std::nullopt;
         tabParameters.active = true;
 
-        _webExtensionAction->extensionContext()->openNewTab(tabParameters, [](RefPtr<WebKit::WebExtensionTab> newTab) {
+        _webExtensionAction->extensionContext()->openNewTab(tabParameters, [](RefPtr<WebExtensionTab> newTab) {
             ASSERT(newTab);
         });
 
@@ -138,36 +155,244 @@ constexpr NSTimeInterval popoverShowTimeout = 1;
 
 @end
 
+#if PLATFORM(IOS_FAMILY)
+static void* kvoContext = &kvoContext;
+#endif
+
 @interface _WKWebExtensionActionWebView : WKWebView
+
+@property (nonatomic, readonly) BOOL contentSizeHasStabilized;
+
 @end
 
 @implementation _WKWebExtensionActionWebView {
-    WeakPtr<WebKit::WebExtensionAction> _webExtensionAction;
+    WeakPtr<WebExtensionAction> _webExtensionAction;
+    CGSize _previousContentSize;
 }
 
-- (instancetype)initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration webExtensionAction:(WebKit::WebExtensionAction&)action
+- (instancetype)initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration webExtensionAction:(WebExtensionAction&)action
 {
     if (!(self = [super initWithFrame:frame configuration:configuration]))
         return nil;
 
     _webExtensionAction = action;
 
+#if PLATFORM(IOS_FAMILY)
+    // macOS uses invalidateIntrinsicContentSize to track this.
+    [self.scrollView addObserver:self forKeyPath:@"contentSize" options:NSKeyValueObservingOptionNew context:kvoContext];
+#endif
+
     return self;
 }
 
+#if PLATFORM(IOS_FAMILY)
+- (void)dealloc
+{
+    [self.scrollView removeObserver:self forKeyPath:@"contentSize" context:kvoContext];
+}
+#endif
+
+#if PLATFORM(MAC)
 - (void)invalidateIntrinsicContentSize
 {
-    auto intrinsicContentSize = self.intrinsicContentSize;
-
     [super invalidateIntrinsicContentSize];
+
+    [self _contentSizeDidChange];
+}
+#endif // PLATFORM(MAC)
+
+#if PLATFORM(IOS_FAMILY)
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *, id> *)change context:(void*)context
+{
+    if (context != kvoContext) {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+        return;
+    }
+
+    ASSERT(object == self.scrollView);
+
+    [self _contentSizeDidChange];
+}
+#endif // PLATFORM(IOS_FAMILY)
+
+- (CGSize)_contentSize
+{
+#if PLATFORM(IOS_FAMILY)
+    return self.scrollView.contentSize;
+#else
+    return self.intrinsicContentSize;
+#endif
+}
+
+- (void)_contentSizeDidChange
+{
+    if (!_webExtensionAction)
+        return;
+
+    CGSize contentSize = self._contentSize;
+    if (CGSizeEqualToSize(contentSize, _previousContentSize))
+        return;
+
+    SEL contentSizeStabilizedSelector = @selector(_checkIfContentSizeStabilizedAndPresentPopup);
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:contentSizeStabilizedSelector object:nil];
+    [self performSelector:contentSizeStabilizedSelector withObject:nil afterDelay:popoverStableSizeDuration];
+
+    _previousContentSize = contentSize;
+}
+
+- (void)_checkIfContentSizeStabilizedAndPresentPopup
+{
+    if (!_webExtensionAction || self.loading)
+        return;
 
     _webExtensionAction->popupSizeDidChange();
 
-    if (intrinsicContentSize.width >= popoverMinimumWidth && intrinsicContentSize.height >= popoverMinimumHeight && !self.loading)
-        _webExtensionAction->readyToPresentPopup();
+    CGSize contentSize = self._contentSize;
+    if (contentSize.width < minimumPopoverWidth || contentSize.height < minimumPopoverHeight)
+        return;
+
+    _contentSizeHasStabilized = YES;
+
+    _webExtensionAction->readyToPresentPopup();
 }
 
 @end
+
+#if PLATFORM(IOS_FAMILY)
+@interface _WKWebExtensionActionViewController : UIViewController <UIPopoverPresentationControllerDelegate>
+@end
+
+@implementation _WKWebExtensionActionViewController {
+    WeakPtr<WebExtensionAction> _webExtensionAction;
+    _WKWebExtensionActionWebView *_popupWebView;
+    BOOL _presentedAsSheet;
+}
+
+- (instancetype)initWithWebExtensionAction:(WebExtensionAction&)action
+{
+    if (!(self = [super init]))
+        return nil;
+
+    RefPtr extensionContext = action.extensionContext();
+    if (!extensionContext)
+        return nil;
+
+    _webExtensionAction = action;
+    _popupWebView = dynamic_objc_cast<_WKWebExtensionActionWebView>(action.popupWebView());
+
+    self.view = _popupWebView;
+    self.modalPresentationStyle = UIModalPresentationPopover;
+    self.popoverPresentationController.delegate = self;
+
+    UINavigationItem *navigationItem = self.navigationItem;
+    navigationItem.title = extensionContext->extension().displayName();
+    navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(_dismissPopup)];
+
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(_viewControllerDismissalTransitionDidEnd:) name:UIPresentationControllerDismissalTransitionDidEndNotification object:nil];
+
+    return self;
+}
+
+- (void)viewIsAppearing:(BOOL)animated
+{
+    [self _updatePopoverContentSize];
+}
+
+- (UIModalPresentationStyle)adaptivePresentationStyleForPresentationController:(UIPresentationController *)presentationController traitCollection:(UITraitCollection *)traitCollection
+{
+    return traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact ? UIModalPresentationFormSheet : UIModalPresentationPopover;
+}
+
+- (void)presentationController:(UIPresentationController *)presentationController prepareAdaptivePresentationController:(UIPresentationController *)adaptivePresentationController
+{
+    if (auto *sheetPresentationController = dynamic_objc_cast<UISheetPresentationController>(adaptivePresentationController))
+        [self _updateDetentForSheetPresentationController:sheetPresentationController];
+}
+
+- (UIViewController *)presentationController:(UIPresentationController *)presentationController viewControllerForAdaptivePresentationStyle:(UIModalPresentationStyle)style
+{
+    auto *presentedViewController = presentationController.presentedViewController;
+
+    if (style != UIModalPresentationFormSheet)
+        return presentedViewController;
+
+    auto *navigationController = [[UINavigationController alloc] initWithRootViewController:presentedViewController];
+    auto *navigationBar = navigationController.navigationBar;
+    navigationBar.scrollEdgeAppearance = navigationBar.standardAppearance;
+    return navigationController;
+}
+
+- (void)_viewControllerDismissalTransitionDidEnd:(NSNotification *)notification
+{
+    if (!_webExtensionAction || !objectForKey<NSNumber>(notification.userInfo, UIPresentationControllerDismissalTransitionDidEndCompletedKey).boolValue)
+        return;
+
+    auto *dismissedViewController = dynamic_objc_cast<UIViewController>(notification.object);
+    if (dismissedViewController != self && dismissedViewController != self.navigationController)
+        return;
+
+    _webExtensionAction->closePopupWebView();
+}
+
+- (void)_updatePopoverContentSize
+{
+    auto *presentationController = [self _existingPresentationControllerImmediate:NO effective:YES];
+    if (!presentationController)
+        return;
+
+    BOOL wasPresentedAsSheet = _presentedAsSheet;
+    _presentedAsSheet = [presentationController isKindOfClass:UISheetPresentationController.class];
+
+    if (_presentedAsSheet != wasPresentedAsSheet)
+        [_popupWebView setNeedsLayout];
+
+    if (_presentedAsSheet) {
+        // Clear any overriding of layout parameters set as a popover.
+        [_popupWebView _clearOverrideLayoutParameters];
+
+        if (UIDevice.currentDevice.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
+            CGFloat widthOfDeviceInPortrait = CGRectGetWidth(UIScreen.mainScreen._referenceBounds);
+
+            CGSize contentSize = self.preferredContentSize;
+            contentSize.width = std::max(contentSize.width, widthOfDeviceInPortrait);
+
+            self.preferredContentSize = contentSize;
+        }
+
+        [self _updateDetentForSheetPresentationController:dynamic_objc_cast<UISheetPresentationController>(presentationController)];
+    } else {
+        CGSize boundsSize = _popupWebView.bounds.size;
+        CGSize contentSize = _popupWebView.scrollView.contentSize;
+        CGSize desiredSize = CGSizeMake(std::min(contentSize.width, maximumPopoverWidth), std::min(contentSize.height, maximumPopoverHeight));
+
+        CGFloat minimumWidth = std::min(desiredSize.width, boundsSize.width);
+        CGFloat minimumHeight = _popupWebView.contentSizeHasStabilized ? std::min(desiredSize.height, boundsSize.height) : minimumPopoverHeight;
+        CGSize minimumLayoutSize = CGSizeMake(minimumWidth, minimumHeight);
+
+        [_popupWebView _overrideLayoutParametersWithMinimumLayoutSize:minimumLayoutSize minimumUnobscuredSizeOverride:minimumLayoutSize maximumUnobscuredSizeOverride:CGSizeZero];
+
+        self.preferredContentSize = desiredSize;
+    }
+}
+
+- (void)_updateDetentForSheetPresentationController:(UISheetPresentationController *)sheetPresentationController
+{
+    ASSERT(sheetPresentationController);
+
+    // FIXME: rdar://74753245 - This should choose either medium or large based on the desired height of the content.
+    sheetPresentationController.detents = @[ UISheetPresentationControllerDetent.mediumDetent, UISheetPresentationControllerDetent.largeDetent ];
+
+    sheetPresentationController.prefersEdgeAttachedInCompactHeight = YES;
+    sheetPresentationController.widthFollowsPreferredContentSizeWhenEdgeAttached = YES;
+}
+
+- (void)_dismissPopup
+{
+    [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+}
+
+@end
+#endif // PLATFORM(IOS_FAMILY)
 
 namespace WebKit {
 
@@ -294,9 +519,24 @@ void WebExtensionAction::setPopupPath(String path)
     propertiesDidChange();
 }
 
-WKWebView *WebExtensionAction::popupWebView(LoadOnFirstAccess loadOnFirstAccess)
+#if PLATFORM(IOS_FAMILY)
+UIViewController *WebExtensionAction::popupViewController()
 {
     if (!presentsPopup())
+        return nil;
+
+    if (m_popupViewController)
+        return m_popupViewController.get();
+
+    m_popupViewController = [[_WKWebExtensionActionViewController alloc] initWithWebExtensionAction:*this];
+
+    return m_popupViewController.get();
+}
+#endif
+
+WKWebView *WebExtensionAction::popupWebView(LoadOnFirstAccess loadOnFirstAccess)
+{
+    if (!presentsPopup() || !extensionContext())
         return nil;
 
     if (m_popupWebView || loadOnFirstAccess == LoadOnFirstAccess::No)
@@ -315,22 +555,26 @@ WKWebView *WebExtensionAction::popupWebView(LoadOnFirstAccess loadOnFirstAccess)
 
     m_popupWebView.get().accessibilityLabel = extensionContext()->extension().displayName();
 
-#if USE(APPKIT)
+#if PLATFORM(MAC)
     m_popupWebView.get().accessibilityRole = NSAccessibilityPopoverRole;
 
-    m_popupWebView.get()._sizeToContentAutoSizeMaximumSize = CGSizeMake(popoverMaximumWidth, popoverMaximumHeight);
+    m_popupWebView.get()._sizeToContentAutoSizeMaximumSize = CGSizeMake(maximumPopoverWidth, maximumPopoverHeight);
     m_popupWebView.get()._useSystemAppearance = YES;
 
     [m_popupWebView setContentHuggingPriority:NSLayoutPriorityDefaultHigh forOrientation:NSLayoutConstraintOrientationHorizontal];
     [m_popupWebView setContentHuggingPriority:NSLayoutPriorityDefaultHigh forOrientation:NSLayoutConstraintOrientationVertical];
 
     [NSLayoutConstraint activateConstraints:@[
-        [m_popupWebView.get().widthAnchor constraintGreaterThanOrEqualToConstant:popoverMinimumWidth],
-        [m_popupWebView.get().widthAnchor constraintLessThanOrEqualToConstant:popoverMaximumWidth],
-        [m_popupWebView.get().heightAnchor constraintGreaterThanOrEqualToConstant:popoverMinimumHeight],
-        [m_popupWebView.get().heightAnchor constraintLessThanOrEqualToConstant:popoverMaximumHeight]
+        [m_popupWebView.get().widthAnchor constraintGreaterThanOrEqualToConstant:minimumPopoverWidth],
+        [m_popupWebView.get().widthAnchor constraintLessThanOrEqualToConstant:maximumPopoverWidth],
+        [m_popupWebView.get().heightAnchor constraintGreaterThanOrEqualToConstant:minimumPopoverHeight],
+        [m_popupWebView.get().heightAnchor constraintLessThanOrEqualToConstant:maximumPopoverHeight]
     ]];
-#endif // USE(APPKIT)
+#endif // PLATFORM(MAC)
+
+#if PLATFORM(IOS_FAMILY)
+    [m_popupWebView _overrideViewportWithArguments:@{ @"width": @"device-width", @"initial-scale": @"1", @"minimum-scale": @"1", @"maximum-scale": @"1", @"user-scalable": @"no" }];
+#endif
 
     extensionContext()->addPopupPage(*m_popupWebView.get()._page.get(), *this);
 
@@ -381,7 +625,7 @@ void WebExtensionAction::readyToPresentPopup()
 {
     ASSERT(canProgrammaticallyPresentPopup());
 
-    if (m_popupPresented)
+    if (m_popupPresented || !m_popupWebView)
         return;
 
     setHasUnreadBadgeText(false);
@@ -409,11 +653,18 @@ void WebExtensionAction::readyToPresentPopup()
 
 void WebExtensionAction::popupSizeDidChange()
 {
+#if PLATFORM(IOS_FAMILY)
+    [m_popupViewController _updatePopoverContentSize];
+#endif
+
     [NSNotificationCenter.defaultCenter postNotificationName:_WKWebExtensionActionPopupWebViewContentSizeDidChangeNotification object:wrapper() userInfo:nil];
 }
 
 void WebExtensionAction::popupDidClose()
 {
+#if PLATFORM(IOS_FAMILY)
+    m_popupViewController = nil;
+#endif
     m_popupWebView = nil;
     m_popupPresented = false;
 }
@@ -421,8 +672,11 @@ void WebExtensionAction::popupDidClose()
 void WebExtensionAction::closePopupWebView()
 {
     [m_popupWebView _close];
-    m_popupWebView = nil;
-    m_popupPresented = false;
+#if PLATFORM(IOS_FAMILY)
+    [m_popupViewController dismissViewControllerAnimated:YES completion:nil];
+#endif
+
+    popupDidClose();
 }
 
 String WebExtensionAction::label(FallbackWhenEmpty fallback) const
