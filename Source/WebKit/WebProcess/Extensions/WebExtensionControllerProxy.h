@@ -88,6 +88,7 @@ private:
     RefPtr<WebExtensionContextProxy> extensionContext(const URL&) const;
     RefPtr<WebExtensionContextProxy> extensionContext(WebFrame&, WebCore::DOMWrapperWorld&) const;
 
+    bool hasLoadedContexts() const { return !m_extensionContexts.isEmpty(); }
     const WebExtensionContextProxySet& extensionContexts() const { return m_extensionContexts; }
 #endif
 
