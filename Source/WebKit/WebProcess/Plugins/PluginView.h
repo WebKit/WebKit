@@ -90,6 +90,7 @@ public:
     void didEndMagnificationGesture();
     void setPageScaleFactor(double, std::optional<WebCore::IntPoint> origin);
     double pageScaleFactor() const;
+    void pluginScaleFactorDidChange();
 
     void topContentInsetDidChange();
 

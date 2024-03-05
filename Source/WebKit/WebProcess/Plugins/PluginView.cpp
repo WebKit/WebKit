@@ -346,15 +346,21 @@ void PluginView::setPageScaleFactor(double scaleFactor, std::optional<IntPoint> 
     if (!m_isInitialized)
         return;
 
-    RefPtr webPage = m_webPage.get();
-    webPage->send(Messages::WebPageProxy::PluginScaleFactorDidChange(scaleFactor));
-    webPage->send(Messages::WebPageProxy::PluginZoomFactorDidChange(scaleFactor));
+    pluginScaleFactorDidChange();
     protectedPlugin()->setPageScaleFactor(scaleFactor, origin);
 }
 
 double PluginView::pageScaleFactor() const
 {
     return protectedPlugin()->scaleFactor();
+}
+
+void PluginView::pluginScaleFactorDidChange()
+{
+    auto scaleFactor = pageScaleFactor();
+    RefPtr webPage = m_webPage.get();
+    webPage->send(Messages::WebPageProxy::PluginScaleFactorDidChange(scaleFactor));
+    webPage->send(Messages::WebPageProxy::PluginZoomFactorDidChange(scaleFactor));
 }
 
 void PluginView::webPageDestroyed()

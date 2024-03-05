@@ -318,8 +318,7 @@ void UnifiedPDFPlugin::ensureLayers()
         m_rootLayer = createGraphicsLayer("UnifiedPDFPlugin root"_s, GraphicsLayer::Type::Normal);
         m_rootLayer->setAnchorPoint({ });
         m_rootLayer->setBackgroundColor(WebCore::roundAndClampToSRGBALossy([WebCore::CocoaColor grayColor].CGColor));
-        if (handlesPageScaleFactor())
-            m_rootLayer->setAppliesPageScale();
+        m_rootLayer->setAppliesPageScale();
     }
 
     if (!m_scrollContainerLayer) {
@@ -894,13 +893,8 @@ void UnifiedPDFPlugin::didEndMagnificationGesture()
     m_rootLayer->noteDeviceOrPageScaleFactorChangedIncludingDescendants();
 }
 
-void UnifiedPDFPlugin::setPageScaleFactor(double scale, std::optional<WebCore::IntPoint> origin)
+void UnifiedPDFPlugin::setScaleFactor(double scale, std::optional<WebCore::IntPoint> origin)
 {
-    if (!handlesPageScaleFactor()) {
-        m_rootLayer->noteDeviceOrPageScaleFactorChangedIncludingDescendants();
-        return;
-    }
-
     RefPtr page = this->page();
     if (!page)
         return;
@@ -911,7 +905,7 @@ void UnifiedPDFPlugin::setPageScaleFactor(double scale, std::optional<WebCore::I
     updateScrollbars();
     updateScrollingExtents();
 
-    if (!m_inMagnificationGesture)
+    if (!m_inMagnificationGesture || !handlesPageScaleFactor())
         m_rootLayer->noteDeviceOrPageScaleFactorChangedIncludingDescendants();
 
     updateLayerPositions();
@@ -939,6 +933,22 @@ void UnifiedPDFPlugin::setPageScaleFactor(double scale, std::optional<WebCore::I
     page->protectedScrollingCoordinator()->requestScrollToPosition(*this, newPosition, options);
 
     scheduleRenderingUpdate();
+
+    m_view->pluginScaleFactorDidChange();
+}
+
+void UnifiedPDFPlugin::setPageScaleFactor(double scale, std::optional<WebCore::IntPoint> origin)
+{
+    if (!handlesPageScaleFactor()) {
+        m_rootLayer->noteDeviceOrPageScaleFactorChangedIncludingDescendants();
+        return;
+    }
+
+    RefPtr page = this->page();
+    if (!page)
+        return;
+
+    setScaleFactor(scale, origin);
 }
 
 bool UnifiedPDFPlugin::geometryDidChange(const IntSize& pluginSize, const AffineTransform& pluginToRootViewTransform)
@@ -1002,7 +1012,7 @@ void UnifiedPDFPlugin::updateLayout(AdjustScaleAfterLayout shouldAdjustScale)
     if (shouldAdjustScale == AdjustScaleAfterLayout::Yes && m_view) {
         auto initialScaleFactor = initialScale();
         LOG_WITH_STREAM(PDF, stream << "UnifiedPDFPlugin::updateLayout - on first layout, chose scale for actual size " << initialScaleFactor);
-        m_view->setPageScaleFactor(initialScaleFactor, std::nullopt);
+        setScaleFactor(initialScaleFactor);
     }
 }
 
@@ -2336,7 +2346,7 @@ void UnifiedPDFPlugin::performContextMenuAction(ContextMenuItemTag tag, const In
         zoomOut();
         break;
     case ContextMenuItemTag::ActualSize:
-        m_view->setPageScaleFactor(scaleForActualSize(), std::nullopt);
+        setScaleFactor(scaleForActualSize());
         break;
     default:
         RELEASE_ASSERT_NOT_REACHED();
@@ -2997,18 +3007,18 @@ id UnifiedPDFPlugin::accessibilityObject() const
 void UnifiedPDFPlugin::zoomIn()
 {
     m_documentLayout.setShouldUpdateAutoSizeScale(PDFDocumentLayout::ShouldUpdateAutoSizeScale::No);
-    m_view->setPageScaleFactor(std::clamp(m_scaleFactor * zoomIncrement, minimumZoomScale, maximumZoomScale), std::nullopt);
+    setScaleFactor(std::clamp(m_scaleFactor * zoomIncrement, minimumZoomScale, maximumZoomScale));
 }
 
 void UnifiedPDFPlugin::zoomOut()
 {
     m_documentLayout.setShouldUpdateAutoSizeScale(PDFDocumentLayout::ShouldUpdateAutoSizeScale::No);
-    m_view->setPageScaleFactor(std::clamp(m_scaleFactor / zoomIncrement, minimumZoomScale, maximumZoomScale), std::nullopt);
+    setScaleFactor(std::clamp(m_scaleFactor / zoomIncrement, minimumZoomScale, maximumZoomScale));
 }
 
 void UnifiedPDFPlugin::resetZoom()
 {
-    m_view->setPageScaleFactor(initialScale(), { });
+    setScaleFactor(initialScale());
 }
 
 #endif // ENABLE(PDF_HUD)

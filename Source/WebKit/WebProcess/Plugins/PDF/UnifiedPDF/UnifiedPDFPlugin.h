@@ -135,12 +135,30 @@ private:
     float initialScale() const;
     float scaleForFitToView() const;
 
+    /*
+        Unified PDF Plugin scales, in depth order:
+
+        - "device": same as the rest of WebKit. CSS-to-screen pixel ratio.
+
+        - "page": the scale of the WebPage.
+
+        - "scale factor": the user's chosen scale for the PDF contents (by zoom buttons, pinch-zoom, etc.).
+            for main frame plugins, this is synced with the page scale
+            for embedded plugins, this is on top of the page scale
+
+        - "document layout scale": the scale between contents and document space, to fit the pages in the scroll view's contents
+
+        Convenience names:
+
+        - "contentScaleFactor": the scale between the plugin and document space (scaleFactor * document layout scale)
+    */
     CGFloat scaleFactor() const override;
     float contentScaleFactor() const final;
 
     void didBeginMagnificationGesture() override;
     void didEndMagnificationGesture() override;
     void setPageScaleFactor(double scale, std::optional<WebCore::IntPoint> origin) final;
+    void setScaleFactor(double scale, std::optional<WebCore::IntPoint> origin = std::nullopt);
 
     WebCore::IntSize documentSize() const;
     WebCore::IntSize contentsSize() const override;
