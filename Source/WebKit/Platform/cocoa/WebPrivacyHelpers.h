@@ -147,7 +147,7 @@ private:
     void setCachedQuirks(Vector<WebCore::OrganizationStorageAccessPromptQuirk>&&);
 
     RetainPtr<WKWebPrivacyNotificationListener> m_notificationListener;
-    Vector<WebCore::OrganizationStorageAccessPromptQuirk> m_cachedQuirks;
+    Vector<WebCore::OrganizationStorageAccessPromptQuirk> m_cachedQuirks { };
     WeakHashSet<StorageAccessPromptQuirkObserver> m_observers;
     bool m_wasInitialized { false };
 };
@@ -169,7 +169,7 @@ private:
     void setCachedQuirks(HashMap<WebCore::RegistrableDomain, String>&&);
 
     RetainPtr<WKWebPrivacyNotificationListener> m_notificationListener;
-    HashMap<WebCore::RegistrableDomain, String> m_cachedQuirks;
+    HashMap<WebCore::RegistrableDomain, String> m_cachedQuirks { };
     WeakHashSet<StorageAccessUserAgentStringQuirkObserver> m_observers;
     bool m_wasInitialized { false };
 };
