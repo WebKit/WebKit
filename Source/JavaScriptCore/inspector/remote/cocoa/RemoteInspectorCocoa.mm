@@ -720,8 +720,8 @@ void RemoteInspector::receivedIndicateMessage(NSDictionary *userInfo)
 
             target = findResult->value;
         }
-        if (is<RemoteInspectionTarget>(target))
-            downcast<RemoteInspectionTarget>(target)->setIndicating(indicateEnabled);
+        if (auto* inspectionTarget = dynamicDowncast<RemoteInspectionTarget>(target))
+            inspectionTarget->setIndicating(indicateEnabled);
     });
 }
 
