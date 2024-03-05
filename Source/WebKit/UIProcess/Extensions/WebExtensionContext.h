@@ -81,7 +81,9 @@
 OBJC_CLASS NSArray;
 OBJC_CLASS NSDate;
 OBJC_CLASS NSDictionary;
+OBJC_CLASS NSMapTable;
 OBJC_CLASS NSMutableDictionary;
+OBJC_CLASS NSNumber;
 OBJC_CLASS NSString;
 OBJC_CLASS NSURL;
 OBJC_CLASS NSUUID;
@@ -878,6 +880,8 @@ private:
     mutable TabIdentifierMap m_tabMap;
     PageTabIdentifierMap m_extensionPageTabMap;
     PopupPageActionMap m_popupPageActionMap;
+
+    RetainPtr<NSMapTable> m_tabDelegateToIdentifierMap;
 
     CommandsVector m_commands;
     bool m_populatedCommands { false };
