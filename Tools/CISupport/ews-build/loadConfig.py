@@ -35,10 +35,10 @@ from datetime import datetime, timezone
 from twisted.internet import defer
 
 from .factories import (APITestsFactory, BindingsFactory, BuildFactory, CommitQueueFactory, Factory, GTKBuildFactory,
-                       GTKTestsFactory, JSCBuildFactory, JSCBuildAndTestsFactory, JSCTestsFactory, MergeQueueFactory, SafeMergeQueueFactory, StressTestFactory,
-                       StyleFactory, TestFactory, tvOSBuildFactory, WPEBuildFactory, WPETestsFactory, WebKitPerlFactory, WebKitPyFactory,
-                       WinCairoFactory, iOSBuildFactory, iOSEmbeddedBuildFactory, iOSTestsFactory, macOSBuildFactory, macOSBuildOnlyFactory,
-                       macOSWK1Factory, macOSWK2Factory, ServicesFactory, UnsafeMergeQueueFactory, WatchListFactory, watchOSBuildFactory)
+                        GTKTestsFactory, JSCBuildFactory, JSCBuildAndTestsFactory, JSCTestsFactory, MergeQueueFactory, SafeMergeQueueFactory, StressTestFactory,
+                        StyleFactory, TestFactory, tvOSBuildFactory, WPEBuildFactory, WPESkiaBuildFactory, WPETestsFactory, WebKitPerlFactory, WebKitPyFactory,
+                        WinCairoFactory, iOSBuildFactory, iOSEmbeddedBuildFactory, iOSTestsFactory, macOSBuildFactory, macOSBuildOnlyFactory,
+                        macOSWK1Factory, macOSWK2Factory, ServicesFactory, UnsafeMergeQueueFactory, WatchListFactory, watchOSBuildFactory)
 
 BUILDER_NAME_LENGTH_LIMIT = 70
 STEP_NAME_LENGTH_LIMIT = 50
