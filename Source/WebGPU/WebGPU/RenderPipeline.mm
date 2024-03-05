@@ -1449,7 +1449,7 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
             return returnInvalidRenderPipeline(*this, isAsync, "Can not use sampleMask with alphaToCoverage"_s);
         if (!descriptor.fragment)
             return returnInvalidRenderPipeline(*this, isAsync, "Using alphaToCoverage requires a fragment state"_s);
-        if (!descriptor.fragment->targetCount || !hasAlphaChannel(descriptor.fragment->targets[0].format))
+        if (!descriptor.fragment->targetCount || !hasAlphaChannel(descriptor.fragment->targets[0].format) || !Texture::supportsBlending(descriptor.fragment->targets[0].format, *this))
             return returnInvalidRenderPipeline(*this, isAsync, "Using alphaToCoverage requires a fragment state"_s);
         if (descriptor.multisample.count == 1)
             return returnInvalidRenderPipeline(*this, isAsync, "Using alphaToCoverage requires multisampling"_s);
