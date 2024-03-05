@@ -23,8 +23,6 @@
 """Unit tests for error_handlers.py."""
 
 
-import unittest
-
 from webkitpy.common.system.logtesting import LoggingTestCase
 from webkitpy.style.checker import StyleProcessorConfiguration
 from webkitpy.style.error_handlers import DefaultStyleErrorHandler

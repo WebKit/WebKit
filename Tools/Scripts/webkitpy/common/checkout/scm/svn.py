@@ -29,14 +29,11 @@
 
 import logging
 import os
-import random
 import re
 import shutil
-import string
-import sys
 import tempfile
 
-from webkitcorepy import Version, string_utils
+from webkitcorepy import Version
 
 from webkitpy.common.checkout.scm.scm import AuthenticationError, SCM, commit_error_handler
 from webkitpy.common.config.urls import svn_server_host, svn_server_realm

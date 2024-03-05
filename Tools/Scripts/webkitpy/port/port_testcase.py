@@ -45,7 +45,6 @@ from webkitpy.common.system.systemhost_mock import MockSystemHost
 from webkitpy.common.version_name_map import INTERNAL_TABLE
 from webkitpy.port.base import Port
 from webkitpy.port.config import apple_additions
-from webkitpy.port.driver import DriverOutput
 from webkitpy.port.image_diff import ImageDiffer, ImageDiffResult
 from webkitpy.port.server_process_mock import MockServerProcess
 from webkitpy.layout_tests.servers import http_server_base

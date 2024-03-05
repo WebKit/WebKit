@@ -30,7 +30,6 @@ import unittest
 import sys
 
 from webkitpy.common.system.systemhost import SystemHost
-from webkitpy.common.system.platforminfo import PlatformInfo
 from webkitpy.common.system.platforminfo_mock import MockPlatformInfo
 from webkitpy.common.system import path
 

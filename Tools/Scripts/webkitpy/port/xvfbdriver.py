@@ -30,12 +30,9 @@
 import errno
 import logging
 import os
-import re
 import select
 import subprocess
-import sys
 import time
-from webkitpy.port.server_process import ServerProcess
 from webkitpy.port.driver import Driver
 
 _log = logging.getLogger(__name__)

@@ -24,14 +24,17 @@ import contextlib
 import errno
 import os
 import shutil
-import sys
 import tempfile
+
+from webkitcorepy import AutoInstall
 
 from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.webkit_finder import WebKitFinder
+
+AutoInstall.install("pytest_asyncio")
+AutoInstall.install("pytest_timeout")
+
 import pytest
-import pytest_timeout
-import pytest_asyncio
 from _pytest.config import ExitCode
 
 

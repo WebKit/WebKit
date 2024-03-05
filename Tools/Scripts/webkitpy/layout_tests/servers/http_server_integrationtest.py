@@ -38,8 +38,6 @@ import sys
 import tempfile
 import unittest
 
-from copy import copy
-
 from webkitpy.test.markers import slow, xfail, skip
 
 

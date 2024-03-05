@@ -80,7 +80,6 @@ except ImportError:
 from webkitpy.common.host import Host
 from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.webkit_finder import WebKitFinder
-from webkitpy.port.factory import PortFactory
 from webkitpy.layout_tests.controllers.layout_test_finder_legacy import LayoutTestFinder
 from webkitpy.w3c.common import TEMPLATED_TEST_HEADER, WPT_GH_URL, WPTPaths
 from webkitpy.w3c.test_parser import TestParser

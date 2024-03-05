@@ -50,7 +50,6 @@ Methods:
 
 
 import logging
-import sys
 
 
 _log = logging.getLogger(__name__)

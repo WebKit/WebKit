@@ -38,7 +38,7 @@ libraries = os.path.join(os.path.abspath(os.path.dirname(os.path.dirname(__file_
 webkitcorepy_path = os.path.join(libraries, 'webkitcorepy')
 if webkitcorepy_path not in sys.path:
     sys.path.insert(0, webkitcorepy_path)
-import webkitcorepy
+from webkitcorepy import AutoInstall, Package, Version
 
 if sys.platform == 'darwin':
     is_root = not os.getuid()
@@ -47,7 +47,6 @@ if sys.platform == 'darwin':
     if any([is_root, not does_own_libraries, not directory_writeable]):
         libraries = os.path.expanduser('~/Library/webkitpy')
 
-from webkitcorepy import AutoInstall, Package, Version
 AutoInstall.set_directory(os.path.join(libraries, 'autoinstalled', 'python-{}-{}'.format(sys.version_info[0], platform.machine())))
 
 if sys.version_info >= (3, 7):
@@ -133,7 +132,7 @@ AutoInstall.register(Package('webkitflaskpy', Version(0, 3, 0)), local=True)
 AutoInstall.register(Package('webkitscmpy', Version(4, 0, 0)), local=True)
 AutoInstall.register(Package('webkitbugspy', Version(0, 3, 1)), local=True)
 
-import webkitscmpy
+import webkitscmpy  # noqa: F401
 
 # Disable IPV6 if Bugzilla can't use IPV6.
 try:

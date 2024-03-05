@@ -31,7 +31,6 @@
 """Supports reading and processing text files."""
 
 import logging
-import sys
 
 from webkitpy.common.host import Host
 

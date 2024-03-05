@@ -31,7 +31,6 @@ import os
 import random
 import time
 
-from webkitpy.port.server_process import ServerProcess
 from webkitpy.port.driver import Driver
 from webkitpy.port.xvfbdriver import XvfbDriver
 

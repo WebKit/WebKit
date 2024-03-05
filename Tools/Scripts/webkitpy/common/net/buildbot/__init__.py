@@ -3,3 +3,5 @@
 # We only export public API here.
 # It's unclear if Builder and Build need to be public.
 from .buildbot import BuildBot, Builder, Build
+
+__all__ = ["BuildBot", "Builder", "Build"]

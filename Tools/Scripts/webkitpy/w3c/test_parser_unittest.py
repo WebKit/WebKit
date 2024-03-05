@@ -30,7 +30,6 @@ import logging
 import os
 import unittest
 
-from webkitpy.common.host_mock import MockHost
 from webkitpy.w3c.test_parser import TestParser
 
 from webkitcorepy import OutputCapture

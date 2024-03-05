@@ -45,8 +45,9 @@ from webkitpy.common.system.platforminfo import PlatformInfo
 _log = logging.getLogger(__name__)
 
 
+# Terminal.input behavior changes depending on whether readline exists, warn if it doesn't.
 try:
-    import readline
+    import readline  # noqa: F401
 except ImportError:
     if not sys.platform.startswith('win32'):
         # There is no readline module for win32, not much to do except cry.

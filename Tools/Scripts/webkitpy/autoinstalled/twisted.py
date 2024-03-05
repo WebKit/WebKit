@@ -44,9 +44,6 @@ if sys.version_info >= (3, 0):
     if not (platform.machine().startswith('arm') and platform.architecture()[0] == '32bit'):
         AutoInstall.install(Package('bcrypt', Version(4), wheel=True))
     AutoInstall.install(Package('pycparser', Version(2, 21), wheel=True))
-
-    from twisted.protocols.tls import TLSMemoryBIOFactory
-    from twisted.python import threadpool
 else:
     AutoInstall.install(Package('hyperlink', Version(17, 3, 0), pypi_name='hyperlink'))
     AutoInstall.install(Package('incremental', Version(17, 5, 0), pypi_name='incremental'))

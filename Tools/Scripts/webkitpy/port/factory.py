@@ -32,7 +32,6 @@
 
 import fnmatch
 import optparse
-import re
 
 from webkitpy.port import config
 from webkitpy.common.system import executive

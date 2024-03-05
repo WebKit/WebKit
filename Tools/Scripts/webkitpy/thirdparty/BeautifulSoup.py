@@ -23,9 +23,7 @@
 import sys
 
 if sys.version_info > (3, 0):
-    import html5lib
     import bs4
-    from bs4.builder import builder_registry, TreeBuilder
     from bs4.builder._htmlparser import HTMLParserTreeBuilder
 
     class BeautifulSoup(bs4.BeautifulSoup):
@@ -56,3 +54,5 @@ if sys.version_info > (3, 0):
     SoupStrainer = bs4.SoupStrainer
 else:
     from webkitpy.thirdparty.BeautifulSoup_legacy import BeautifulSoup, BeautifulStoneSoup, SoupStrainer
+
+__all__ = ["BeautifulSoup", "BeautifulStoneSoup", "SoupStrainer"]

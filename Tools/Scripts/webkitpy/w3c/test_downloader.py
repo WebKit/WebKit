@@ -30,7 +30,6 @@
 import json
 import logging
 
-from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.webkit_finder import WebKitFinder
 from webkitpy.common.checkout.scm.git import Git
 

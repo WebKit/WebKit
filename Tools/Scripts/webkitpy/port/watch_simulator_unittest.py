@@ -22,13 +22,10 @@
 
 from webkitcorepy import Version
 
-from webkitpy.common.system.executive_mock import MockExecutive2, ScriptError
 from webkitpy.port.watch_simulator import WatchSimulatorPort
 from webkitpy.port import watch_testcase
 from webkitpy.tool.mocktool import MockOptions
 from webkitpy.xcode.device_type import DeviceType
-
-from webkitcorepy import OutputCapture
 
 
 class WatchSimulatorTest(watch_testcase.WatchTest):

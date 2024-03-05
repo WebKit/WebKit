@@ -425,9 +425,9 @@ class Tester(object):
 
         # Force registration of all autoinstalled packages.
         if any([n.startswith('reporelaypy') for n in names]):
-            import reporelaypy
+            import reporelaypy  # noqa: F401
         if any([n.startswith('webkitflaskpy') for n in names]):
-            import webkitflaskpy
+            import webkitflaskpy  # noqa: F401
 
         AutoInstall.install_everything()
 

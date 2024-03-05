@@ -11,11 +11,9 @@ script_dir = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file
 if script_dir not in sys.path:
     sys.path.insert(0, script_dir)
 
-from webkitpy.autoinstalled import twisted
-
-from twisted.web import static, server
-from twisted.web.resource import Resource
-from twisted.internet import reactor
+from webkitpy.autoinstalled.twisted.web import static, server
+from webkitpy.autoinstalled.twisted.web.resource import Resource
+from webkitpy.autoinstalled.twisted.internet import reactor
 
 _log = logging.getLogger(__name__)
 

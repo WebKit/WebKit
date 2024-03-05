@@ -24,8 +24,6 @@
 
 """Supports ensuring equality of FeatureDefines.xcconfig files."""
 
-import os
-
 from webkitpy.common.system.systemhost import SystemHost
 
 FEATURE_DEFINE_FILES = [

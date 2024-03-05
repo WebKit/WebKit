@@ -23,8 +23,6 @@
 """Checks WebKit style for the contributors.json file."""
 
 import difflib
-import json
-import re
 from webkitpy.style.checkers.jsonchecker import JSONChecker
 from webkitpy.common.config.committers import CommitterList
 from webkitpy.common.system.filesystem import FileSystem

@@ -37,7 +37,7 @@ import logging
 import os
 import unittest
 
-from webkitpy.common.system.logtesting import LogTesting, TestLogStream, LoggingTestCase
+from webkitpy.common.system.logtesting import TestLogStream, LoggingTestCase
 from webkitpy.style import checker as style
 from webkitpy.style.checker import _BASE_FILTER_RULES
 from webkitpy.style.checker import _MAX_REPORTS_PER_CATEGORY
@@ -47,7 +47,6 @@ from webkitpy.style.checker import check_webkit_style_configuration
 from webkitpy.style.checker import check_webkit_style_parser
 from webkitpy.style.checker import configure_logging
 from webkitpy.style.checker import CheckerDispatcher
-from webkitpy.style.checker import ProcessorBase
 from webkitpy.style.checker import StyleProcessor
 from webkitpy.style.checker import StyleProcessorConfiguration
 from webkitpy.style.checkers.basexcconfig import BaseXcconfigChecker
@@ -60,7 +59,6 @@ from webkitpy.style.checkers.text import TextChecker
 from webkitpy.style.checkers.xml import XMLChecker
 from webkitpy.style.error_handlers import DefaultStyleErrorHandler
 from webkitpy.style.optparser import CommandOptionValues
-from webkitpy.style.filereader import TextFileReader
 from webkitpy.style.filter import validate_filter_rules
 from webkitpy.style.filter import FilterConfiguration
 from webkitpy.style.optparser import ArgumentParser

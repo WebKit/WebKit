@@ -41,7 +41,6 @@ import sys
 import subprocess
 import tempfile
 import time
-import urllib
 import shutil
 import unittest
 

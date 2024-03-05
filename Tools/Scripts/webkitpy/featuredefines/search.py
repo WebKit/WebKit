@@ -24,7 +24,6 @@
 
 import fnmatch
 import os
-import re
 
 from abc import abstractmethod, ABCMeta
 from io import open

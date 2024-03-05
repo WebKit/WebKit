@@ -26,10 +26,7 @@ from webkitpy.port.ios_simulator import IOSSimulatorPort
 from webkitpy.port import ios_testcase
 from webkitpy.port import port_testcase
 from webkitpy.tool.mocktool import MockOptions
-from webkitpy.common.system.executive_mock import MockExecutive2, ScriptError
 from webkitpy.xcode.device_type import DeviceType
-
-from webkitcorepy import OutputCapture
 
 
 class IOSSimulatorTest(ios_testcase.IOSTest):

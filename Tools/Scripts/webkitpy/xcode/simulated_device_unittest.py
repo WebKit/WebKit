@@ -23,7 +23,7 @@
 import json
 import unittest
 
-from webkitcorepy import string_utils, Version
+from webkitcorepy import Version
 
 from webkitpy.common.system.executive_mock import MockExecutive2
 from webkitpy.common.system.filesystem_mock import MockFileSystem

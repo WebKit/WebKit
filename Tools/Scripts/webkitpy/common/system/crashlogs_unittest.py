@@ -31,9 +31,6 @@ from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.systemhost import SystemHost
 from webkitpy.common.system.systemhost_mock import MockSystemHost
 
-# Needed to support Windows port tests
-from webkitpy.port.win import WinPort
-
 
 def make_mock_crash_report_darwin(process_name, pid):
     return """Crash log may not start with Process line

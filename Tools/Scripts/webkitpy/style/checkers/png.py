@@ -24,9 +24,6 @@
 
 """Supports checking WebKit style in png files."""
 
-import os
-import re
-
 from webkitpy.common import read_checksum_from_png
 from webkitpy.common.system.systemhost import SystemHost
 from webkitpy.common.checkout.scm.detection import SCMDetector

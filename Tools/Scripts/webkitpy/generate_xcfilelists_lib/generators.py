@@ -58,7 +58,6 @@ from __future__ import print_function
 import itertools
 import os
 import pickle
-import re
 import tempfile
 import traceback
 

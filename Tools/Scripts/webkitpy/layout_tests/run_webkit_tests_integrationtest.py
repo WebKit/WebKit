@@ -29,7 +29,6 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import json
-import sys
 import unittest
 
 from webkitcorepy import StringIO, OutputCapture

@@ -38,8 +38,7 @@ import time
 from webkitcorepy import Version
 
 from webkitpy.common.system.crashlogs import CrashLogs
-from webkitpy.common.system.systemhost import SystemHost
-from webkitpy.common.system.path import abspath_to_uri, cygpath
+from webkitpy.common.system.path import cygpath
 from webkitpy.common.version_name_map import VersionNameMap
 from webkitpy.port.apple import ApplePort
 from webkitpy.port.config import apple_additions
@@ -49,13 +48,8 @@ _log = logging.getLogger(__name__)
 
 try:
     import _winreg
-    import win32com.client
 except ImportError:
-    try:
-        import winreg as _winreg
-        import win32com.client
-    except ImportError:
-        _log.debug("Not running on native Windows.")
+    _log.debug("Not running on native Windows.")
 
 
 class WinPort(ApplePort):

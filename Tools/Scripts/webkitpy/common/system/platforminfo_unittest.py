@@ -26,12 +26,10 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import platform
-import sys
 import unittest
 
 from webkitpy.common.system.executive import Executive
-from webkitpy.common.system.executive_mock import MockExecutive, MockExecutive2
+from webkitpy.common.system.executive_mock import MockExecutive2
 from webkitpy.common.system.platforminfo import PlatformInfo
 
 
