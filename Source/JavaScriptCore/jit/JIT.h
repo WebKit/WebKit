@@ -47,6 +47,7 @@ namespace JSC {
     enum OpcodeID : unsigned;
 
     class ArrayAllocationProfile;
+    class BaselineJITPlan;
     class CallLinkInfo;
     class CodeBlock;
     class FunctionExecutable;
@@ -163,20 +164,17 @@ namespace JSC {
         using Base = JSInterfaceJIT;
 
     public:
-        JIT(VM&, CodeBlock*, BytecodeIndex loopOSREntryBytecodeOffset);
+        JIT(VM&, BaselineJITPlan&, CodeBlock*, BytecodeIndex loopOSREntryBytecodeOffset);
         ~JIT();
 
         VM& vm() { return *JSInterfaceJIT::vm(); }
 
-        std::tuple<std::unique_ptr<LinkBuffer>, RefPtr<BaselineJITCode>> compileAndLinkWithoutFinalizing(JITCompilationEffort);
-        static CompilationResult finalizeOnMainThread(CodeBlock*, LinkBuffer&, RefPtr<BaselineJITCode>);
+        RefPtr<BaselineJITCode> compileAndLinkWithoutFinalizing(JITCompilationEffort);
+        static CompilationResult finalizeOnMainThread(CodeBlock*, BaselineJITPlan&, RefPtr<BaselineJITCode>);
 
         static void doMainThreadPreparationBeforeCompile(VM&);
         
-        static CompilationResult compile(VM& vm, CodeBlock* codeBlock, JITCompilationEffort effort)
-        {
-            return JIT(vm, codeBlock, BytecodeIndex(0)).privateCompile(codeBlock, effort);
-        }
+        static CompilationResult compileSync(VM&, CodeBlock*, JITCompilationEffort);
 
         static unsigned frameRegisterCountFor(UnlinkedCodeBlock*);
         static unsigned frameRegisterCountFor(CodeBlock*);
@@ -194,7 +192,6 @@ namespace JSC {
         void privateCompileLinkPass();
         void privateCompileSlowCases();
         RefPtr<BaselineJITCode> link(LinkBuffer&);
-        CompilationResult privateCompile(CodeBlock*, JITCompilationEffort);
 
         // Add a call out from JIT code, without an exception check.
         Call appendCall(const CodePtr<CFunctionPtrTag> function)
@@ -893,6 +890,7 @@ namespace JSC {
         std::tuple<BaselineUnlinkedStructureStubInfo*, StructureStubInfoIndex> addUnlinkedStructureStubInfo();
         BaselineUnlinkedCallLinkInfo* addUnlinkedCallLinkInfo();
 
+        BaselineJITPlan& m_plan;
         Vector<FarCallRecord> m_farCalls;
         Vector<Label> m_labels;
         HashMap<BytecodeIndex, Label> m_checkpointLabels;

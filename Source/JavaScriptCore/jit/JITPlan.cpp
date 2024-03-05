@@ -254,6 +254,13 @@ void JITPlan::compileInThread(JITWorklistThread* thread)
     }
 }
 
+void JITPlan::runMainThreadFinalizationTasks()
+{
+    auto tasks = std::exchange(m_mainThreadFinalizationTasks, { });
+    for (auto& task : tasks)
+        task->run();
+}
+
 } // namespace JSC
 
 #endif // ENABLE(DFG_JIT)

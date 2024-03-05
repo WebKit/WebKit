@@ -172,22 +172,22 @@ void SpeculativeJIT::compile()
     createOSREntries();
     setEndOfCode();
 
-    auto linkBuffer = makeUnique<LinkBuffer>(*this, m_codeBlock, LinkBuffer::Profile::DFG, JITCompilationCanFail);
-    if (linkBuffer->didFailToAllocate()) {
+    LinkBuffer linkBuffer(*this, m_codeBlock, LinkBuffer::Profile::DFG, JITCompilationCanFail);
+    if (linkBuffer.didFailToAllocate()) {
         m_graph.m_plan.setFinalizer(makeUnique<FailedFinalizer>(m_graph.m_plan));
         return;
     }
 
-    link(*linkBuffer);
-    linkOSREntries(*linkBuffer);
+    link(linkBuffer);
+    linkOSREntries(linkBuffer);
 
-    disassemble(*linkBuffer);
+    disassemble(linkBuffer);
 
-    auto codeRef = FINALIZE_DFG_CODE(*linkBuffer, JSEntryPtrTag, "DFG JIT code for %s", toCString(CodeBlockWithJITType(m_codeBlock, JITType::DFGJIT)).data());
+    auto codeRef = FINALIZE_DFG_CODE(linkBuffer, JSEntryPtrTag, "DFG JIT code for %s", toCString(CodeBlockWithJITType(m_codeBlock, JITType::DFGJIT)).data());
     m_jitCode->initializeCodeRefForDFG(codeRef, codeRef.code());
     m_jitCode->variableEventStream = finalizeEventStream();
 
-    auto finalizer = makeUnique<JITFinalizer>(m_graph.m_plan, m_jitCode.releaseNonNull(), WTFMove(linkBuffer));
+    auto finalizer = makeUnique<JITFinalizer>(m_graph.m_plan, m_jitCode.releaseNonNull());
     m_graph.m_plan.setFinalizer(WTFMove(finalizer));
 }
 
@@ -271,24 +271,24 @@ void SpeculativeJIT::compileFunction()
     setEndOfCode();
 
     // === Link ===
-    auto linkBuffer = makeUnique<LinkBuffer>(*this, m_codeBlock, LinkBuffer::Profile::DFG, JITCompilationCanFail);
-    if (linkBuffer->didFailToAllocate()) {
+    LinkBuffer linkBuffer(*this, m_codeBlock, LinkBuffer::Profile::DFG, JITCompilationCanFail);
+    if (linkBuffer.didFailToAllocate()) {
         m_graph.m_plan.setFinalizer(makeUnique<FailedFinalizer>(m_graph.m_plan));
         return;
     }
-    link(*linkBuffer);
-    linkOSREntries(*linkBuffer);
+    link(linkBuffer);
+    linkOSREntries(linkBuffer);
 
-    disassemble(*linkBuffer);
+    disassemble(linkBuffer);
 
-    CodePtr<JSEntryPtrTag> withArityCheck = linkBuffer->locationOf<JSEntryPtrTag>(arityCheck);
+    CodePtr<JSEntryPtrTag> withArityCheck = linkBuffer.locationOf<JSEntryPtrTag>(arityCheck);
 
     m_jitCode->initializeCodeRefForDFG(
-        FINALIZE_DFG_CODE(*linkBuffer, JSEntryPtrTag, "DFG JIT code for %s", toCString(CodeBlockWithJITType(m_codeBlock, JITType::DFGJIT)).data()),
+        FINALIZE_DFG_CODE(linkBuffer, JSEntryPtrTag, "DFG JIT code for %s", toCString(CodeBlockWithJITType(m_codeBlock, JITType::DFGJIT)).data()),
         withArityCheck);
     m_jitCode->variableEventStream = finalizeEventStream();
 
-    auto finalizer = makeUnique<JITFinalizer>(m_graph.m_plan, m_jitCode.releaseNonNull(), WTFMove(linkBuffer), withArityCheck);
+    auto finalizer = makeUnique<JITFinalizer>(m_graph.m_plan, m_jitCode.releaseNonNull(), withArityCheck);
     m_graph.m_plan.setFinalizer(WTFMove(finalizer));
 }
 
@@ -664,7 +664,7 @@ void SpeculativeJIT::runSlowPathGenerators(PCToCodeOriginMapBuilder& pcToCodeOri
         slowPathGenerator->generate(this);
 
         if (UNLIKELY(sizeMarker))
-            vm().jitSizeStatistics->markEnd(WTFMove(*sizeMarker), *this);
+            vm().jitSizeStatistics->markEnd(WTFMove(*sizeMarker), *this, m_graph.m_plan);
     }
     for (auto& slowPathLambda : m_slowPathLambdas) {
         Node* currentNode = slowPathLambda.currentNode;
@@ -676,7 +676,7 @@ void SpeculativeJIT::runSlowPathGenerators(PCToCodeOriginMapBuilder& pcToCodeOri
         slowPathLambda.generator();
         m_outOfLineStreamIndex = std::nullopt;
         if (UNLIKELY(sizeMarker))
-            vm().jitSizeStatistics->markEnd(WTFMove(*sizeMarker), *this);
+            vm().jitSizeStatistics->markEnd(WTFMove(*sizeMarker), *this, m_graph.m_plan);
     }
 }
 
@@ -2601,7 +2601,7 @@ void SpeculativeJIT::compileCurrentBlock()
         compile(m_currentNode);
 
         if (UNLIKELY(sizeMarker))
-            vm().jitSizeStatistics->markEnd(WTFMove(*sizeMarker), *this);
+            vm().jitSizeStatistics->markEnd(WTFMove(*sizeMarker), *this, m_graph.m_plan);
 
         if (belongsInMinifiedGraph(m_currentNode->op()))
             m_minifiedGraph->append(MinifiedNode::fromNode(m_currentNode));
@@ -14147,7 +14147,7 @@ void SpeculativeJIT::compileLazyJSConstant(Node* node)
 {
     JSValueRegsTemporary result(this);
     JSValueRegs resultRegs = result.regs();
-    node->lazyJSValue().emit(*this, resultRegs);
+    node->lazyJSValue().emit(*this, resultRegs, m_graph.m_plan);
     jsValueResult(resultRegs, node);
 }
 

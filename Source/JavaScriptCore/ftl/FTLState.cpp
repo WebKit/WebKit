@@ -80,13 +80,12 @@ State::State(Graph& graph)
     proc->setFrontendData(&graph);
 }
 
-void State::dumpDisassembly(PrintStream& out, const ScopedLambda<void(DFG::Node*)>& perDFGNodeCallback)
+void State::dumpDisassembly(PrintStream& out, LinkBuffer& linkBuffer, const ScopedLambda<void(DFG::Node*)>& perDFGNodeCallback)
 {
     B3::Air::Disassembler* disassembler = proc->code().disassembler();
 
     out.print("Generated ", graph.m_plan.mode(), " code for ", CodeBlockWithJITType(graph.m_codeBlock, JITType::FTLJIT), ", instructions size = ", graph.m_codeBlock->instructionsSize(), ":\n");
 
-    LinkBuffer& linkBuffer = *finalizer->b3CodeLinkBuffer;
     B3::Value* currentB3Value = nullptr;
     Node* currentDFGNode = nullptr;
 

@@ -70,7 +70,7 @@ public:
 
     VM& vm() { return graph.m_vm; }
 
-    void dumpDisassembly(PrintStream&, const ScopedLambda<void(DFG::Node*)>& perDFGNodeCallback = scopedLambda<void(DFG::Node*)>([] (DFG::Node*) { }));
+    void dumpDisassembly(PrintStream&, LinkBuffer&, const ScopedLambda<void(DFG::Node*)>& perDFGNodeCallback = scopedLambda<void(DFG::Node*)>([] (DFG::Node*) { }));
 
     StructureStubInfo* addStructureStubInfo();
     OptimizingCallLinkInfo* addCallLinkInfo(CodeOrigin);
@@ -83,6 +83,7 @@ public:
     RefPtr<FTL::JITCode> jitCode;
     GeneratedFunction generatedFunction;
     JITFinalizer* finalizer;
+    std::unique_ptr<LinkBuffer> b3CodeLinkBuffer;
     // Top-level exception handler. Jump here if you know that you have to genericUnwind() and there
     // are no applicable catch blocks anywhere in the Graph.
     RefPtr<PatchpointExceptionHandle> defaultExceptionHandle;

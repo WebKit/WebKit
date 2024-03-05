@@ -141,7 +141,7 @@ void link(State& state)
         bool dumpDisassembly = shouldDumpDisassembly() || Options::asyncDisassembly();
 
         MacroAssemblerCodeRef<JSEntryPtrTag> b3CodeRef =
-            FINALIZE_CODE_IF(dumpDisassembly, *state.finalizer->b3CodeLinkBuffer, JSEntryPtrTag, nullptr,
+            FINALIZE_CODE_IF(dumpDisassembly, *state.b3CodeLinkBuffer, JSEntryPtrTag, nullptr,
                 "FTL B3 code for %s", toCString(CodeBlockWithJITType(codeBlock, JITType::FTLJIT)).data());
 
         MacroAssemblerCodeRef<JSEntryPtrTag> arityCheckCodeRef = linkBuffer
@@ -154,7 +154,7 @@ void link(State& state)
         state.jitCode->common.m_jumpReplacements = WTFMove(state.jumpReplacements);
     }
 
-    state.finalizer->entrypointLinkBuffer = WTFMove(linkBuffer);
+    state.finalizer->m_codeSize = state.b3CodeLinkBuffer->size() + (linkBuffer ? linkBuffer->size() : 0);
     state.finalizer->function = state.generatedFunction;
     state.finalizer->jitCode = state.jitCode;
 }

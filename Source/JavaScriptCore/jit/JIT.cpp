@@ -29,6 +29,7 @@
 
 #include "JIT.h"
 
+#include "BaselineJITPlan.h"
 #include "BytecodeGraph.h"
 #include "CodeBlock.h"
 #include "CodeBlockWithJITType.h"
@@ -65,8 +66,9 @@ Seconds totalFTLCompileTime;
 Seconds totalFTLDFGCompileTime;
 Seconds totalFTLB3CompileTime;
 
-JIT::JIT(VM& vm, CodeBlock* codeBlock, BytecodeIndex loopOSREntryBytecodeIndex)
+JIT::JIT(VM& vm, BaselineJITPlan& plan, CodeBlock* codeBlock, BytecodeIndex loopOSREntryBytecodeIndex)
     : JSInterfaceJIT(&vm, nullptr)
+    , m_plan(plan)
     , m_labels(codeBlock ? codeBlock->instructions().size() : 0)
     , m_pcToCodeOriginMapBuilder(vm)
     , m_canBeOptimized(false)
@@ -465,7 +467,7 @@ void JIT::privateCompileMainPass()
         }
 
         if (UNLIKELY(sizeMarker))
-            m_vm->jitSizeStatistics->markEnd(WTFMove(*sizeMarker), *this);
+            m_vm->jitSizeStatistics->markEnd(WTFMove(*sizeMarker), *this, m_plan);
 
         if (JITInternal::verbose)
             dataLog("At ", bytecodeOffset, ": ", m_slowCases.size(), "\n");
@@ -632,7 +634,7 @@ void JIT::privateCompileSlowCases()
 
         if (UNLIKELY(sizeMarker)) {
             m_bytecodeIndex = BytecodeIndex(m_bytecodeIndex.offset() + currentInstruction->size());
-            m_vm->jitSizeStatistics->markEnd(WTFMove(*sizeMarker), *this);
+            m_vm->jitSizeStatistics->markEnd(WTFMove(*sizeMarker), *this, m_plan);
         }
     }
 
@@ -725,7 +727,7 @@ void JIT::emitConsistencyCheck()
 }
 #endif
 
-std::tuple<std::unique_ptr<LinkBuffer>, RefPtr<BaselineJITCode>> JIT::compileAndLinkWithoutFinalizing(JITCompilationEffort effort)
+RefPtr<BaselineJITCode> JIT::compileAndLinkWithoutFinalizing(JITCompilationEffort effort)
 {
     DFG::CapabilityLevel level = m_profiledCodeBlock->capabilityLevel();
     switch (level) {
@@ -819,7 +821,7 @@ std::tuple<std::unique_ptr<LinkBuffer>, RefPtr<BaselineJITCode>> JIT::compileAnd
     RELEASE_ASSERT(!JITCode::isJIT(m_profiledCodeBlock->jitType()));
 
     if (UNLIKELY(sizeMarker))
-        m_vm->jitSizeStatistics->markEnd(WTFMove(*sizeMarker), *this);
+        m_vm->jitSizeStatistics->markEnd(WTFMove(*sizeMarker), *this, m_plan);
 
     privateCompileMainPass();
     privateCompileLinkPass();
@@ -877,9 +879,8 @@ std::tuple<std::unique_ptr<LinkBuffer>, RefPtr<BaselineJITCode>> JIT::compileAnd
         m_disassembler->setEndOfCode(label());
     m_pcToCodeOriginMapBuilder.appendItem(label(), PCToCodeOriginMapBuilder::defaultCodeOrigin());
 
-    auto linkBuffer = makeUnique<LinkBuffer>(*this, m_profiledCodeBlock, LinkBuffer::Profile::Baseline, effort);
-    auto jitCode = link(*linkBuffer);
-    return std::tuple { WTFMove(linkBuffer), WTFMove(jitCode) };
+    LinkBuffer linkBuffer(*this, m_profiledCodeBlock, LinkBuffer::Profile::Baseline, effort);
+    return link(linkBuffer);
 }
 
 RefPtr<BaselineJITCode> JIT::link(LinkBuffer& patchBuffer)
@@ -1008,14 +1009,14 @@ RefPtr<BaselineJITCode> JIT::link(LinkBuffer& patchBuffer)
     return jitCode;
 }
 
-CompilationResult JIT::finalizeOnMainThread(CodeBlock* codeBlock, LinkBuffer& linkBuffer, RefPtr<BaselineJITCode> jitCode)
+CompilationResult JIT::finalizeOnMainThread(CodeBlock* codeBlock, BaselineJITPlan& plan, RefPtr<BaselineJITCode> jitCode)
 {
     RELEASE_ASSERT(!isCompilationThread());
 
     if (!jitCode)
         return CompilationFailed;
 
-    linkBuffer.runMainThreadFinalizationTasks();
+    plan.runMainThreadFinalizationTasks();
 
     codeBlock->vm().machineCodeBytesPerBytecodeWordForBaselineJIT->add(
         static_cast<double>(jitCode->size()) /
@@ -1026,11 +1027,11 @@ CompilationResult JIT::finalizeOnMainThread(CodeBlock* codeBlock, LinkBuffer& li
     return CompilationSuccessful;
 }
 
-CompilationResult JIT::privateCompile(CodeBlock* codeBlock, JITCompilationEffort effort)
+CompilationResult JIT::compileSync(VM&, CodeBlock* codeBlock, JITCompilationEffort effort)
 {
-    doMainThreadPreparationBeforeCompile(vm());
-    auto [ linkBuffer, jitCode ] = compileAndLinkWithoutFinalizing(effort);
-    return JIT::finalizeOnMainThread(codeBlock, *linkBuffer, WTFMove(jitCode));
+    auto plan = adoptRef(*new BaselineJITPlan(codeBlock, BytecodeIndex(0)));
+    plan->compileSync(effort);
+    return plan->finalize();
 }
 
 void JIT::doMainThreadPreparationBeforeCompile(VM& vm)

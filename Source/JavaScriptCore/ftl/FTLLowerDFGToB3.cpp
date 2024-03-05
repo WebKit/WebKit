@@ -1943,9 +1943,10 @@ private:
     {
         PatchpointValue* patchpoint = m_out.patchpoint(Int64);
         LazyJSValue value = m_node->lazyJSValue();
+        State* state = &m_ftlState;
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
-                value.emit(jit, JSValueRegs(params[0].gpr()));
+                value.emit(jit, JSValueRegs(params[0].gpr()), state->graph.m_plan);
             });
         patchpoint->effects = Effects::none();
         setJSValue(patchpoint);

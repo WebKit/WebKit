@@ -136,19 +136,19 @@ void compile(State& state, Safepoint::Result& safepointResult)
     // Emit the exception handler.
     *state.exceptionHandler = jit.label();
     jit.jumpThunk(CodeLocationLabel(vm.getCTIStub(CommonJITThunkID::HandleException).template retaggedCode<NoPtrTag>()));
-    state.finalizer->b3CodeLinkBuffer = makeUnique<LinkBuffer>(jit, codeBlock, LinkBuffer::Profile::FTL, JITCompilationCanFail);
+    state.b3CodeLinkBuffer = makeUnique<LinkBuffer>(jit, codeBlock, LinkBuffer::Profile::FTL, JITCompilationCanFail);
 
-    if (state.finalizer->b3CodeLinkBuffer->didFailToAllocate()) {
+    if (state.b3CodeLinkBuffer->didFailToAllocate()) {
         state.allocationFailed = true;
         return;
     }
 
     if (vm.shouldBuilderPCToCodeOriginMapping()) {
         B3::PCToOriginMap originMap = state.proc->releasePCToOriginMap();
-        state.jitCode->common.m_pcToCodeOriginMap = makeUnique<PCToCodeOriginMap>(PCToCodeOriginMapBuilder(PCToCodeOriginMapBuilder::JSCodeOriginMap, vm, WTFMove(originMap)), *state.finalizer->b3CodeLinkBuffer);
+        state.jitCode->common.m_pcToCodeOriginMap = makeUnique<PCToCodeOriginMap>(PCToCodeOriginMapBuilder(PCToCodeOriginMapBuilder::JSCodeOriginMap, vm, WTFMove(originMap)), *state.b3CodeLinkBuffer);
     }
 
-    CodeLocationLabel<JSEntryPtrTag> label = state.finalizer->b3CodeLinkBuffer->locationOf<JSEntryPtrTag>(state.proc->code().entrypointLabel(0));
+    CodeLocationLabel<JSEntryPtrTag> label = state.b3CodeLinkBuffer->locationOf<JSEntryPtrTag>(state.proc->code().entrypointLabel(0));
     state.generatedFunction = label;
     state.jitCode->initializeB3Byproducts(state.proc->releaseByproducts());
 
@@ -156,12 +156,12 @@ void compile(State& state, Safepoint::Result& safepointResult)
         BytecodeIndex catchBytecodeIndex = pair.value;
         unsigned entrypointIndex = pair.key;
         Vector<FlushFormat> argumentFormats = state.graph.m_argumentFormats[entrypointIndex];
-        state.graph.appendCatchEntrypoint(catchBytecodeIndex, state.finalizer->b3CodeLinkBuffer->locationOf<ExceptionHandlerPtrTag>(state.proc->code().entrypointLabel(entrypointIndex)), WTFMove(argumentFormats));
+        state.graph.appendCatchEntrypoint(catchBytecodeIndex, state.b3CodeLinkBuffer->locationOf<ExceptionHandlerPtrTag>(state.proc->code().entrypointLabel(entrypointIndex)), WTFMove(argumentFormats));
     }
     state.jitCode->common.finalizeCatchEntrypoints(WTFMove(state.graph.m_catchEntrypoints));
 
     if (shouldDumpDisassembly())
-        state.dumpDisassembly(WTF::dataFile());
+        state.dumpDisassembly(WTF::dataFile(), *state.b3CodeLinkBuffer);
 
     Profiler::Compilation* compilation = graph.compilation();
     if (UNLIKELY(compilation)) {
@@ -218,7 +218,7 @@ void compile(State& state, Safepoint::Result& safepointResult)
         compilation->addDescription(Profiler::OriginStack(), out.toCString());
         out.reset();
 
-        state.dumpDisassembly(out, scopedLambda<void(Node*)>([&] (Node*) {
+        state.dumpDisassembly(out, *state.b3CodeLinkBuffer, scopedLambda<void(Node*)>([&] (Node*) {
             compilation->addDescription({ }, out.toCString());
             out.reset();
         }));

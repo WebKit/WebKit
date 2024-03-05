@@ -377,7 +377,7 @@ static void setupLLInt(CodeBlock* codeBlock)
 static void setupJIT(VM& vm, CodeBlock* codeBlock)
 {
 #if ENABLE(JIT)
-    CompilationResult result = JIT::compile(vm, codeBlock, JITCompilationMustSucceed);
+    CompilationResult result = JIT::compileSync(vm, codeBlock, JITCompilationMustSucceed);
     RELEASE_ASSERT(result == CompilationSuccessful);
 #else
     UNUSED_PARAM(vm);
