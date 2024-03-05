@@ -337,6 +337,7 @@ public:
     template<typename U> Vector<RefPtr<AXCoreObject>> objectsForIDs(const U&);
 
     void generateSubtree(AccessibilityObject&);
+    bool shouldCreateNodeChange(AccessibilityObject&);
     void updateNode(AccessibilityObject&);
     enum class ResolveNodeChanges : bool { No, Yes };
     void updateChildren(AccessibilityObject&, ResolveNodeChanges = ResolveNodeChanges::Yes);
@@ -448,6 +449,10 @@ private:
     // IsolatedObject must have one and only one entry in this map, that maps
     // its ObjectID to its ParentChildrenIDs struct.
     HashMap<AXID, ParentChildrenIDs> m_nodeMap;
+
+    // Only accessed on the main thread.
+    // Stores all nodes that are added via addUnconnectedNode, which do not get stored in m_nodeMap.
+    HashSet<AXID> m_unconnectedNodes;
 
     // Only accessed on the main thread.
     // The key is the ID of the object that will be resolved into an m_pendingAppends NodeChange.
