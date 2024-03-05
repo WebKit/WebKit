@@ -53,6 +53,12 @@
 #include <cairo.h>
 #endif
 
+#if USE(SKIA)
+IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
+#include <skia/core/SkPixmap.h>
+IGNORE_CLANG_WARNINGS_END
+#endif
+
 #if ENABLE(WPE_PLATFORM)
 #include "ScreenManager.h"
 #include <wpe/wpe-platform.h>
@@ -952,7 +958,21 @@ void View::setCursor(const WebCore::Cursor& cursor)
     WebCore::IntPoint hotspot = WebCore::determineHotSpot(image.get(), cursor.hotSpot());
     wpe_view_set_cursor_from_bytes(m_wpeView.get(), bytes.get(), width, height, stride, hotspot.x(), hotspot.y());
 #elif USE(SKIA)
-    // FIXME: implement.
+    auto nativeImage = cursor.image()->nativeImageForCurrentFrame();
+    if (!nativeImage)
+        return;
+
+    SkPixmap pixmap;
+    auto platformImage = nativeImage->platformImage();
+    ASSERT(platformImage->peekPixels(&pixmap));
+
+    platformImage->ref();
+    GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new_with_free_func(pixmap.addr(), pixmap.computeByteSize(), [](gpointer data) {
+        static_cast<SkImage*>(data)->unref();
+    }, platformImage.get()));
+
+    WebCore::IntPoint hotspot = WebCore::determineHotSpot(cursor.image().get(), cursor.hotSpot());
+    wpe_view_set_cursor_from_bytes(m_wpeView.get(), bytes.get(), pixmap.width(), pixmap.height(), pixmap.rowBytes(), hotspot.x(), hotspot.y());
 #endif
 #else
     UNUSED_PARAM(cursor);

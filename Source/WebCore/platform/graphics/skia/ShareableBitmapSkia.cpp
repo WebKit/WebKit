@@ -69,14 +69,21 @@ void ShareableBitmap::paint(GraphicsContext&, float /*scaleFactor*/, const IntPo
 
 RefPtr<Image> ShareableBitmap::createImage()
 {
-    notImplemented();
-    return nullptr;
+    return BitmapImage::create(createPlatformImage(BackingStoreCopy::DontCopyBackingStore));
 }
 
-PlatformImagePtr ShareableBitmap::createPlatformImage(BackingStoreCopy, ShouldInterpolate)
+PlatformImagePtr ShareableBitmap::createPlatformImage(BackingStoreCopy backingStoreCopy, ShouldInterpolate)
 {
-    notImplemented();
-    return nullptr;
+    sk_sp<SkData> pixelData;
+    if (backingStoreCopy == BackingStoreCopy::CopyBackingStore)
+        pixelData = SkData::MakeWithCopy(data(), sizeInBytes());
+    else {
+        ref();
+        pixelData = SkData::MakeWithProc(data(), sizeInBytes(), [](const void*, void* bitmap) -> void {
+            static_cast<ShareableBitmap*>(bitmap)->deref();
+        }, this);
+    }
+    return SkImages::RasterFromData(m_configuration.imageInfo(), pixelData, bytesPerRow());
 }
 
 void ShareableBitmap::setOwnershipOfMemory(const ProcessIdentity&)
