@@ -1,0 +1,5 @@
+
+
+PASS shadow root has selectable text when focus is not delegated
+PASS shadow root has selectable text when focus is delegated
+

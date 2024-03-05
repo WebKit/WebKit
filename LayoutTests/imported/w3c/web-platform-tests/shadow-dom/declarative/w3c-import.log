@@ -17,9 +17,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/declarative-after-attachshadow.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/declarative-parser-interaction.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/declarative-shadow-dom-attachment.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/declarative-shadow-dom-available-to-element-internals.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/declarative-shadow-dom-basic.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/declarative-shadow-dom-opt-in.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/declarative-shadow-dom-repeats.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/declarative-with-disabled-shadow.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/gethtml.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/getinnerhtml.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/innerhtml-before-closing-tag.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/innerhtml-on-ordinary-template.html
