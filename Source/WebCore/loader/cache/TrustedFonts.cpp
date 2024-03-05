@@ -831,7 +831,30 @@ static const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& trustedFontHas
         // internal build website fonts/appleicons_thin.woff
         "BeSxgqYI30lPA9+4OhNV5gZdbPSOmr1Uc3Pfh+zxgwY="_s,
         // confluence
-        "2W4TXu8CrouqU+yAxbOXQv7+cmCwBxTA8Qu4s3FiPao="_s /* adgs-icons.woff */ });
+        "2W4TXu8CrouqU+yAxbOXQv7+cmCwBxTA8Qu4s3FiPao="_s /* adgs-icons.woff */,
+        // Facebook (mobile) fonts
+        "1a96pPQvMOL3r7M4pKrELBz+gSxvFjHUUQ0unz0gzU4="_s /* 5cUXMf7SRuh.woff2 */,
+        "1bfLlCjJ0e23TraaDnSbY3f3lp3yRYxIBk93z1olQk4="_s /* SAgHdHVYZ-R.woff2 */,
+        "2WYVaxN4GYUJ1K3r2cn6EDxjs1lDDzppc4dxqIX5hbk="_s /* iYXgG2pUxVS.woff */,
+        "8HsMwJCq8uRlJrAboB720aHCK7N8pYUhDuUfnu5ZGHM="_s /* vmyyO1-mvOd.woff */,
+        "E+x+EdJlCzleQcPZFBHti7Deb2/FQ9WY4WPl0lIBoVA="_s /* UsF5W5WWG0E.woff2 */,
+        "EUi4DBFni9ElsilZOLrgzTVqYO3UCXNFcJ7B6ho3YOg="_s /* DqCNAu7Sk4G.woff */,
+        "EasQ00xIaRA1z+Mo0OytcyaLTrS854HecTIFeeglOSA="_s /* nPY4rFJtleI.woff */,
+        "HVp2n4aqJgRMuu2PXx8HIuHMA4tLh6yJ5ECN8o/weyg="_s /* Paifsle8_FW.woff */,
+        "I1qMr3fD27f3GeqSHNmjXvGYx7r1blHTV9SpOuW4VE4="_s /* UIUSNiq_0wY.woff2 */,
+        "J78l85/GfqiQJrW3Hg51GIfZhbDa7ak3lMfF2WGBhxc="_s /* TLCS-K3GTX9.woff2 */,
+        "KY+mbpM1KxujmLATIuWRn9LCwidoZ2CrJu7esqzNacc="_s /* zN72djA8Dpu.woff */,
+        "XSKMkqyLhl0oumU/pKLuo2cOQiPiHa/Z8QzOUc06FSQ="_s /* dndzIs-1lCT.woff2 */,
+        "Y16U8gcuiS/wTDlsuEH02hTU6w+cW5kBhuktTkWW/jQ="_s /* FbWLvH9Jv6h.woff2 */,
+        "Zy+VBJJuI14SZ1s/Z8xnnqyr6faavdZpl7ma2b9bbm8="_s /* P0hio8wRNYH.woff2 */,
+        "aRtGFjePuwV1JmwiKf1tQ9yD0ajb56SokVHDuMOQw7Y="_s /* tBffAN721Gl.woff */,
+        "j3/ufp5pfLyq9nNrA/4NW4qoQm6sOPeAeWr2a8EthhI="_s /* IptncetaoAc.woff2 */,
+        "lDLmI7QL8wwVsJI3hV85npRNMufchHJ2gvus+ePpUzs="_s /* mE6sRap-J3q.woff */,
+        "rgTQxpkGKLGDvfdEUqZkHsVPUA5raVtBGjitLg+eN0s="_s /* jwygLcMtndp.woff2 */,
+        "tboC32G7FHmioWbF0ScsnhgR4SnPevGgAcN9oyBxyV4="_s /* NT9VJlUQ2j5.woff */,
+        "toGCSrhxtzDo2US+GzyShOuyCBJSqfpLCfpuyuo3+Ig="_s /* F7ZcL-Lm2Os.woff */,
+        "ugyD8SdndqzkOiSODDKB0PXx5gR72goGjJ8HtpLzoBc="_s /* FqiK19_SYWS.woff */,
+        "wkSmw8cD+LK683467qvTuPjr847yjaPsRdrfsajfIgc="_s /* tL12ldcgP15.woff2 */ });
 
     return trustedFontHashes;
 }
