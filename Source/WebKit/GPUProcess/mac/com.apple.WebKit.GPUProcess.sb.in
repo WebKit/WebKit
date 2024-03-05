@@ -735,9 +735,10 @@
 (allow mach-lookup
     (global-name "com.apple.audio.AudioSession"))
 
+#if HAVE(AUDIO_CONVERTER_SERVICE)
 ;; See <rdar://118049196>
-(allow mach-lookup
-    (xpc-service-name "com.apple.audio.AudioConverterService"))
+(allow mach-lookup (xpc-service-name "com.apple.audio.AudioConverterService"))
+#endif
 
 #if !ENABLE(CFPREFS_DIRECT_MODE)
 (allow mach-lookup
@@ -1097,6 +1098,9 @@
                 mach_vm_remap_external
                 semaphore_create
                 semaphore_destroy
+#if HAVE(AUDIO_CONVERTER_SERVICE)
+                task_create_identity_token
+#endif
                 task_get_special_port_from_user
                 task_info_from_user
                 task_policy_set
