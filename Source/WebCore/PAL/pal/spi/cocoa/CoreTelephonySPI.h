@@ -30,12 +30,16 @@
 #import <CoreTelephony/CoreTelephonyDefines.h>
 
 #if USE(APPLE_INTERNAL_SDK)
+#if HAVE(ESIM_AUTOFILL_SYSTEM_SUPPORT)
 #import <CoreTelephony/CoreTelephonyClient+CellularPlanManager.h>
+#endif
 #import <CoreTelephony/CoreTelephonyClient.h>
 #else
 @interface CoreTelephonyClient : NSObject
 - (instancetype)initWithQueue:(dispatch_queue_t)queue;
+#if HAVE(ESIM_AUTOFILL_SYSTEM_SUPPORT)
 - (BOOL)isAutofilleSIMIdAllowedForDomain:(NSString *)domain error:(NSError **)outError;
+#endif
 @end
 #endif
 
