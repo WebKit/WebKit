@@ -20,7 +20,7 @@
 
 #include "config.h"
 
-#if USE(GSTREAMER)
+#if USE(GSTREAMER) && ENABLE(WEB_AUDIO)
 
 #include "FFTFrame.h"
 
@@ -140,4 +140,4 @@ int FFTFrame::maxFFTSize()
 
 } // namespace WebCore
 
-#endif // USE(GSTREAMER)
+#endif // USE(GSTREAMER) && ENABLE(WEB_AUDIO)
