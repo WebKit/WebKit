@@ -20,10 +20,14 @@
 #include "config.h"
 #include "WebKitWebView.h"
 
+#include "PageClientImpl.h"
 #include "WebKitColorPrivate.h"
 #include "WebKitScriptDialogPrivate.h"
 #include "WebKitWebViewPrivate.h"
 
+#if ENABLE(WPE_PLATFORM)
+#include <wpe/wpe-platform.h>
+#endif
 
 gboolean webkitWebViewAuthenticate(WebKitWebView*, WebKitAuthenticationRequest*)
 {
@@ -225,7 +229,17 @@ void webkit_web_view_set_background_color(WebKitWebView* webView, WebKitColor* b
     g_return_if_fail(backgroundColor);
 
     auto& page = webkitWebViewGetPage(webView);
-    page.setBackgroundColor(webkitColorToWebCoreColor(backgroundColor));
+    auto color = webkitColorToWebCoreColor(backgroundColor);
+    page.setBackgroundColor(color);
+#if ENABLE(WPE_PLATFORM)
+    if (auto* view = static_cast<WebKit::PageClientImpl&>(page.pageClient()).wpeView()) {
+        if (color.isOpaque()) {
+            WPERectangle rect { 0, 0, wpe_view_get_width(view), wpe_view_get_height(view) };
+            wpe_view_set_opaque_rectangles(view, &rect, 1);
+        } else
+            wpe_view_set_opaque_rectangles(view, nullptr, 0);
+    }
+#endif
 }
 
 /**

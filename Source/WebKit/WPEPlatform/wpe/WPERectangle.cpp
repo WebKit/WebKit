@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Igalia S.L.
+ * Copyright (C) 2024 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,31 +22,34 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef __WPE_PLATFORM_H__
-#define __WPE_PLATFORM_H__
 
-#define __WPE_PLATFORM_H_INSIDE__
+#include "config.h"
+#include "WPERectangle.h"
 
-#include <wpe/WPEEnumTypes.h>
-#include <wpe/WPEEvent.h>
-#include <wpe/WPEBuffer.h>
-#include <wpe/WPEBufferDMABuf.h>
-#include <wpe/WPEBufferDMABufFormat.h>
-#include <wpe/WPEBufferSHM.h>
-#include <wpe/WPEConfig.h>
-#include <wpe/WPEDefines.h>
-#include <wpe/WPEDisplay.h>
-#include <wpe/WPEEGLError.h>
-#include <wpe/WPEKeymap.h>
-#include <wpe/WPEKeyUnicode.h>
-#include <wpe/WPEKeymapXKB.h>
-#include <wpe/WPEKeysyms.h>
-#include <wpe/WPEKeysyms.h>
-#include <wpe/WPEMonitor.h>
-#include <wpe/WPERectangle.h>
-#include <wpe/WPEVersion.h>
-#include <wpe/WPEView.h>
+#include <wtf/FastMalloc.h>
 
-#undef __WPE_PLATFORM_H_INSIDE__
+/**
+ * WPERectangle:
+ * @x: The X coordinate of the top-left corner of the rectangle.
+ * @y: The Y coordinate of the top-left corner of the rectangle.
+ * @width: The width of the rectangle.
+ * @height: The height of the rectangle.
+ *
+ * Boxed type representing a rectangle with integer coordinates.
+ */
 
-#endif /* __WPE_PLATFORM_H__ */
+static WPERectangle* wpe_rectangle_copy(WPERectangle* rectangle)
+{
+    g_return_val_if_fail(rectangle, nullptr);
+
+    return static_cast<WPERectangle*>(fastMemDup(rectangle, sizeof(WPERectangle)));
+}
+
+static void wpe_rectangle_free(WPERectangle* rectangle)
+{
+    g_return_if_fail(rectangle);
+
+    fastFree(rectangle);
+}
+
+G_DEFINE_BOXED_TYPE(WPERectangle, wpe_rectangle, wpe_rectangle_copy, wpe_rectangle_free)
