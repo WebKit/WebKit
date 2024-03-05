@@ -47,7 +47,7 @@ _log = logging.getLogger(__name__)
 
 
 try:
-    import _winreg
+    import winreg
 except ImportError:
     _log.debug("Not running on native Windows.")
 
@@ -70,10 +70,10 @@ class WinPort(ApplePort):
         WINDOWS_ERROR_REPORTING_KEY = r'SOFTWARE\Microsoft\Windows\Windows Error Reporting'
         WOW64_WINDOWS_ERROR_REPORTING_KEY = r'SOFTWARE\Wow6432Node\Microsoft\Windows\Windows Error Reporting'
         FILE_SYSTEM_KEY = r'SYSTEM\CurrentControlSet\Control\FileSystem'
-        _HKLM = _winreg.HKEY_LOCAL_MACHINE
-        _HKCU = _winreg.HKEY_CURRENT_USER
-        _REG_DWORD = _winreg.REG_DWORD
-        _REG_SZ = _winreg.REG_SZ
+        _HKLM = winreg.HKEY_LOCAL_MACHINE
+        _HKCU = winreg.HKEY_CURRENT_USER
+        _REG_DWORD = winreg.REG_DWORD
+        _REG_SZ = winreg.REG_SZ
     else:
         POST_MORTEM_DEBUGGER_KEY = "/%s/SOFTWARE/Microsoft/Windows NT/CurrentVersion/AeDebug/%s"
         WOW64_POST_MORTEM_DEBUGGER_KEY = "/%s/SOFTWARE/Wow6432Node/Microsoft/Windows NT/CurrentVersion/AeDebug/%s"
@@ -250,9 +250,9 @@ class WinPort(ApplePort):
         if sys.platform.startswith('win'):
             _log.debug("Trying to read %s\\%s" % (reg_path, key))
             try:
-                registry_key = _winreg.OpenKey(root, reg_path)
-                value = _winreg.QueryValueEx(registry_key, key)
-                _winreg.CloseKey(registry_key)
+                registry_key = winreg.OpenKey(root, reg_path)
+                value = winreg.QueryValueEx(registry_key, key)
+                winreg.CloseKey(registry_key)
             except WindowsError as ex:
                 _log.debug("Unable to read %s\\%s: %s" % (reg_path, key, str(ex)))
                 return ['', self._REG_SZ]
@@ -278,19 +278,19 @@ class WinPort(ApplePort):
         if sys.platform.startswith('win'):
             _log.debug("Trying to write %s\\%s = %s" % (reg_path, key, value))
             try:
-                registry_key = _winreg.OpenKey(root, reg_path, 0, _winreg.KEY_WRITE)
+                registry_key = winreg.OpenKey(root, reg_path, 0, winreg.KEY_WRITE)
             except WindowsError:
                 try:
                     _log.debug("Key doesn't exist -- must create it.")
-                    registry_key = _winreg.CreateKeyEx(root, reg_path, 0, _winreg.KEY_WRITE)
+                    registry_key = winreg.CreateKeyEx(root, reg_path, 0, winreg.KEY_WRITE)
                 except WindowsError as ex:
                     _log.error(r"Error setting (%s) %s\key: %s to value: %s.  Error=%s." % (arch, root, key, value, str(ex)))
                     _log.error("You many need to adjust permissions on the %s\\%s key." % (reg_path, key))
                     return False
 
             _log.debug("Writing {0} of type {1} to {2}\\{3}".format(value, regType, registry_key, key))
-            _winreg.SetValueEx(registry_key, key, 0, regType, value)
-            _winreg.CloseKey(registry_key)
+            winreg.SetValueEx(registry_key, key, 0, regType, value)
+            winreg.CloseKey(registry_key)
         else:
             registry_key = reg_path % (root, key)
             _log.debug("Writing to %s" % registry_key)
