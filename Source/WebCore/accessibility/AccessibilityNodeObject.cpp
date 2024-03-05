@@ -1888,7 +1888,7 @@ void AccessibilityNodeObject::alternativeText(Vector<AccessibilityText>& textOrd
 
 void AccessibilityNodeObject::visibleText(Vector<AccessibilityText>& textOrder) const
 {
-    Node* node = this->node();
+    WeakPtr node = this->node();
     if (!node)
         return;
 
@@ -1901,49 +1901,7 @@ void AccessibilityNodeObject::visibleText(Vector<AccessibilityText>& textOrder) 
     if (!isAccessibilityRenderObject() && node->hasTagName(selectTag))
         return;
 
-    bool useTextUnderElement = false;
-
-    switch (roleValue()) {
-    case AccessibilityRole::PopUpButton:
-        // Native popup buttons should not use their button children's text as a title. That value is retrieved through stringValue().
-        if (node->hasTagName(selectTag))
-            break;
-        FALLTHROUGH;
-    case AccessibilityRole::Summary:
-        // The text node for a <summary> element should be included in its visible text, unless a title attribute is present.
-        if (!hasAttribute(titleAttr))
-            useTextUnderElement = true;
-        break;
-    case AccessibilityRole::Button:
-    case AccessibilityRole::ToggleButton:
-    case AccessibilityRole::Checkbox:
-    case AccessibilityRole::ListBoxOption:
-    // MacOS does not expect native <li> elements to expose label information, it only expects leaf node elements to do that.
-#if !PLATFORM(COCOA)
-    case AccessibilityRole::ListItem:
-#endif
-    case AccessibilityRole::MenuButton:
-    case AccessibilityRole::MenuItem:
-    case AccessibilityRole::MenuItemCheckbox:
-    case AccessibilityRole::MenuItemRadio:
-    case AccessibilityRole::RadioButton:
-    case AccessibilityRole::Switch:
-    case AccessibilityRole::Tab:
-        useTextUnderElement = true;
-        break;
-    default:
-        break;
-    }
-
-    // If it's focusable but it's not content editable or a known control type, then it will appear to
-    // the user as a single atomic object, so we should use its text as the default title.
-    if (isHeading() || isLink())
-        useTextUnderElement = true;
-
-    if (isOutput())
-        useTextUnderElement = true;
-
-    if (useTextUnderElement) {
+    if (dependsOnTextUnderElement()) {
         AccessibilityTextUnderElementMode mode;
 
         // Headings often include links as direct children. Those links need to be included in text under element.

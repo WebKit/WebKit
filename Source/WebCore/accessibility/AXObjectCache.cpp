@@ -1199,16 +1199,34 @@ void AXObjectCache::handleTextChanged(AccessibilityObject* object)
 
     Ref<AccessibilityObject> protectedObject(*object);
 
+    bool isText = object->isStaticText();
     // If this element supports ARIA live regions, or is part of a region with an ARIA editable role,
     // then notify the AT of changes.
     bool notifiedNonNativeTextControl = false;
-    for (RefPtr parent = object; parent; parent = parent->parentObject()) {
-        if (parent->supportsLiveRegion())
-            postLiveRegionChangeNotification(parent.get());
+    for (RefPtr ancestor = object; ancestor; ancestor = ancestor->parentObject()) {
+        if (ancestor->supportsLiveRegion())
+            postLiveRegionChangeNotification(ancestor.get());
 
-        if (!notifiedNonNativeTextControl && parent->isNonNativeTextControl()) {
-            postNotification(parent.get(), parent->protectedDocument().get(), AXValueChanged);
+        if (!notifiedNonNativeTextControl && ancestor->isNonNativeTextControl()) {
+            postNotification(ancestor.get(), ancestor->protectedDocument().get(), AXValueChanged);
             notifiedNonNativeTextControl = true;
+        }
+
+        if (isText) {
+            bool dependsOnTextUnderElement = ancestor->dependsOnTextUnderElement();
+            auto role = ancestor->roleValue();
+            dependsOnTextUnderElement |= role == AccessibilityRole::ListItem || role == AccessibilityRole::Label;
+
+            // If the starting object is a static text, its underlying text has changed.
+            if (dependsOnTextUnderElement) {
+                // Inform this ancestor its textUnderElement-dependent data is now out-of-date.
+                postNotification(ancestor.get(), nullptr, AXTextUnderElementChanged);
+            }
+
+            // Any objects this ancestor labeled now also need new AccessibilityText.
+            auto labeledObjects = ancestor->labelForObjects();
+            for (const auto& labeledObject : labeledObjects)
+                postNotification(checkedDowncast<AccessibilityObject>(labeledObject.get()), nullptr, AXTextChanged);
         }
     }
 
@@ -4411,6 +4429,11 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
             break;
         case AXTextCompositionChanged:
             tree->queueNodeUpdate(notification.first->objectID(), { AXPropertyName::TextInputMarkedTextMarkerRange });
+            break;
+        case AXTextUnderElementChanged:
+            tree->queueNodeUpdate(notification.first->objectID(), { { AXPropertyName::AccessibilityText, AXPropertyName::Title } });
+            if (notification.first->isAccessibilityLabelInstance())
+                tree->queueNodeUpdate(notification.first->objectID(), { AXPropertyName::StringValue });
             break;
 #if ENABLE(AX_THREAD_TEXT_APIS)
         case AXTextRunsChanged:

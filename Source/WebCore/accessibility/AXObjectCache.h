@@ -432,6 +432,7 @@ public:
         AXSortDirectionChanged,
         AXTextChanged,
         AXTextCompositionChanged,
+        AXTextUnderElementChanged,
 #if ENABLE(AX_THREAD_TEXT_APIS)
         AXTextRunsChanged,
 #endif

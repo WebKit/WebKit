@@ -650,6 +650,9 @@ void AXIsolatedTree::updateNodeProperties(AXCoreObject& axObject, const AXProper
         case AXPropertyName::RemoteFramePlatformElement:
             propertyMap.set(AXPropertyName::RemoteFramePlatformElement, axObject.remoteFramePlatformElement());
             break;
+        case AXPropertyName::StringValue:
+            propertyMap.set(AXPropertyName::StringValue, axObject.stringValue().isolatedCopy());
+            break;
         case AXPropertyName::HasRemoteFrameChild:
             propertyMap.set(AXPropertyName::HasRemoteFrameChild, axObject.hasRemoteFrameChild());
             break;
@@ -709,6 +712,9 @@ void AXIsolatedTree::updateNodeProperties(AXCoreObject& axObject, const AXProper
             propertyMap.set(AXPropertyName::TextRuns, dynamicDowncast<AccessibilityObject>(axObject)->textRuns());
             break;
 #endif
+        case AXPropertyName::Title:
+            propertyMap.set(AXPropertyName::Title, axObject.title().isolatedCopy());
+            break;
         case AXPropertyName::URL:
             propertyMap.set(AXPropertyName::URL, axObject.url().isolatedCopy());
             break;
@@ -744,9 +750,9 @@ void AXIsolatedTree::updateDependentProperties(AccessibilityObject& axObject)
 
     auto updateLabeledObjects = [this] (const AccessibilityObject& label) {
         auto labeledObjects = label.labelForObjects();
-        for (auto& labeledObject : labeledObjects) {
-            if (RefPtr axObject = dynamicDowncast<AccessibilityObject>(labeledObject.get()))
-                updateNode(*axObject);
+        for (const auto& labeledObject : labeledObjects) {
+            if (RefPtr axObject = checkedDowncast<AccessibilityObject>(labeledObject.get()))
+                queueNodeUpdate(axObject->objectID(), NodeUpdateOptions::nodeUpdate());
         }
     };
     updateLabeledObjects(axObject);
@@ -764,8 +770,8 @@ void AXIsolatedTree::updateDependentProperties(AccessibilityObject& axObject)
             // Only `updateChildren` if the table is unignored, because otherwise `updateChildren` will ascend and update the next highest unignored ancestor, which doesn't accomplish our goal of updating table columns.
             if (ancestor->accessibilityIsIgnored())
                 break;
-            // Use `updateChildren` rather than `updateNodeProperty` because `updateChildren` will ensure the columns (which are children) will have associated isolated objects created.
-            updateChildren(*ancestor, ResolveNodeChanges::No);
+            // Use `NodeUpdateOptions::childrenUpdate()` rather than `updateNodeProperty` because `childrenUpdate()` will ensure the columns (which are children) will have associated isolated objects created.
+            queueNodeUpdate(ancestor->objectID(), NodeUpdateOptions::childrenUpdate());
             break;
         }
 

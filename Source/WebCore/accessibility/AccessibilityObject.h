@@ -387,6 +387,7 @@ public:
     // Methods for determining accessibility text.
     bool isARIAStaticText() const { return ariaRoleAttribute() == AccessibilityRole::StaticText; }
     String stringValue() const override { return { }; }
+    bool dependsOnTextUnderElement() const;
     String textUnderElement(AccessibilityTextUnderElementMode = AccessibilityTextUnderElementMode()) const override { return { }; }
     String text() const override { return { }; }
     unsigned textLength() const final;
