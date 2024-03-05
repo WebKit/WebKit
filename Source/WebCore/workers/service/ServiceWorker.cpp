@@ -94,8 +94,8 @@ void ServiceWorker::updateState(State state)
 SWClientConnection& ServiceWorker::swConnection()
 {
     ASSERT(scriptExecutionContext());
-    if (is<WorkerGlobalScope>(scriptExecutionContext()))
-        return downcast<WorkerGlobalScope>(scriptExecutionContext())->swClientConnection();
+    if (auto* worker = dynamicDowncast<WorkerGlobalScope>(scriptExecutionContext()))
+        return worker->swClientConnection();
     return ServiceWorkerProvider::singleton().serviceWorkerConnection();
 }
 
@@ -117,8 +117,8 @@ ExceptionOr<void> ServiceWorker::postMessage(JSC::JSGlobalObject& globalObject, 
     auto& context = *scriptExecutionContext();
     // FIXME: Maybe we could use a ScriptExecutionContextIdentifier for service workers too.
     ServiceWorkerOrClientIdentifier sourceIdentifier;
-    if (is<ServiceWorkerGlobalScope>(context))
-        sourceIdentifier = downcast<ServiceWorkerGlobalScope>(context).thread().identifier();
+    if (auto* serviceWorker = dynamicDowncast<ServiceWorkerGlobalScope>(context))
+        sourceIdentifier = serviceWorker->thread().identifier();
     else
         sourceIdentifier = context.identifier();
 
