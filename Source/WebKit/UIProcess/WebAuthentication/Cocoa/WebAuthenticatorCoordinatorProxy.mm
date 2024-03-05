@@ -116,6 +116,13 @@ static inline Ref<ArrayBuffer> toArrayBuffer(NSData *data)
     return ArrayBuffer::create(reinterpret_cast<const uint8_t *>(data.bytes), data.length);
 }
 
+static inline RefPtr<ArrayBuffer> toArrayBufferNilIfEmpty(NSData *data)
+{
+    if (!data || !data.length)
+        return nullptr;
+    return ArrayBuffer::create(reinterpret_cast<const uint8_t *>(data.bytes), data.length);
+}
+
 static inline RetainPtr<NSData> toNSData(const Vector<uint8_t>& data)
 {
     return adoptNS([[NSData alloc] initWithBytes:data.data() length:data.size()]);
@@ -423,7 +430,7 @@ void WebAuthenticatorCoordinatorProxy::performRequest(WebAuthenticationRequestDa
                 response.rawId = toArrayBuffer(credential.get().credentialID);
                 response.authenticatorData = toArrayBuffer(credential.get().rawAuthenticatorData);
                 response.signature = toArrayBuffer(credential.get().signature);
-                response.userHandle = toArrayBuffer(credential.get().userID);
+                response.userHandle = toArrayBufferNilIfEmpty(credential.get().userID);
                 response.clientDataJSON = toArrayBuffer(credential.get().rawClientDataJSON);
 
                 bool hasExtensionOutput = false;
@@ -452,7 +459,7 @@ void WebAuthenticatorCoordinatorProxy::performRequest(WebAuthenticationRequestDa
                 response.rawId = toArrayBuffer(credential.get().credentialID);
                 response.authenticatorData = toArrayBuffer(credential.get().rawAuthenticatorData);
                 response.signature = toArrayBuffer(credential.get().signature);
-                response.userHandle = toArrayBuffer(credential.get().userID);
+                response.userHandle = toArrayBufferNilIfEmpty(credential.get().userID);
                 response.clientDataJSON = toArrayBuffer(credential.get().rawClientDataJSON);
             }
 
@@ -858,7 +865,7 @@ static inline void continueAfterRequest(RetainPtr<id <ASCCredentialProtocol>> cr
         response.rawId = toArrayBuffer(assertionCredential.credentialID);
         response.authenticatorData = toArrayBuffer(assertionCredential.authenticatorData);
         response.signature = toArrayBuffer(assertionCredential.signature);
-        response.userHandle = toArrayBuffer(assertionCredential.userHandle);
+        response.userHandle = toArrayBufferNilIfEmpty(assertionCredential.userHandle);
         response.clientDataJSON = toArrayBuffer(assertionCredential.rawClientDataJSON);
         rawAttachment = assertionCredential.attachment;
         if ([assertionCredential respondsToSelector:@selector(extensionOutputsCBOR)])
@@ -870,7 +877,7 @@ static inline void continueAfterRequest(RetainPtr<id <ASCCredentialProtocol>> cr
         response.rawId = toArrayBuffer(assertionCredential.credentialID);
         response.authenticatorData = toArrayBuffer(assertionCredential.authenticatorData);
         response.signature = toArrayBuffer(assertionCredential.signature);
-        response.userHandle = toArrayBuffer(assertionCredential.userHandle);
+        response.userHandle = toArrayBufferNilIfEmpty(assertionCredential.userHandle);
         response.clientDataJSON = toArrayBuffer(assertionCredential.rawClientDataJSON);
         rawAttachment = assertionCredential.attachment;
         if ([assertionCredential respondsToSelector:@selector(extensionOutputsCBOR)])
