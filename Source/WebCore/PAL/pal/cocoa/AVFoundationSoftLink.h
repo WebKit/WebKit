@@ -387,6 +387,9 @@ SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVAssetExportPresetHighestQuali
 SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(PAL, AVFoundation, AVURLAssetExtendedMIMETypePlayabilityTreatPlaylistMIMETypesAsISOBMFFMediaDataContainersKey, NSString *)
 #define AVURLAssetExtendedMIMETypePlayabilityTreatPlaylistMIMETypesAsISOBMFFMediaDataContainersKey PAL::get_AVFoundation_AVURLAssetExtendedMIMETypePlayabilityTreatPlaylistMIMETypesAsISOBMFFMediaDataContainersKey()
 
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(PAL, AVFoundation, AVURLAssetDoNotLogURLsKey, NSString *)
+#define AVURLAssetDoNotLogURLsKey PAL::get_AVFoundation_AVURLAssetDoNotLogURLsKey()
+
 #if HAVE(AVAUDIOSESSION)
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVAudioSessionPortCarAudio, NSString *)
 #define AVAudioSessionPortCarAudio PAL::get_AVFoundation_AVAudioSessionPortCarAudio()

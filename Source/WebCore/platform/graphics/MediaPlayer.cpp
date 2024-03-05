@@ -643,7 +643,7 @@ void MediaPlayer::loadWithNextMediaEngine(const MediaPlayerFactory* current)
             if (m_shouldContinueAfterKeyNeeded)
                 m_private->setShouldContinueAfterKeyNeeded(m_shouldContinueAfterKeyNeeded);
 #endif
-            m_private->prepareForPlayback(m_privateBrowsing, m_preload, m_preservesPitch, m_shouldPrepareToRender);
+            m_private->prepareForPlayback(m_inPrivateBrowsingMode, m_preload, m_preservesPitch, m_shouldPrepareToRender);
         }
     }
 
@@ -1417,9 +1417,9 @@ bool MediaPlayer::supportsKeySystem(const String& keySystem, const String& mimeT
 
 void MediaPlayer::setPrivateBrowsingMode(bool privateBrowsingMode)
 {
-    m_privateBrowsing = privateBrowsingMode;
+    m_inPrivateBrowsingMode = privateBrowsingMode;
     if (m_private)
-        m_private->setPrivateBrowsingMode(m_privateBrowsing);
+        m_private->setPrivateBrowsingMode(m_inPrivateBrowsingMode);
 }
 
 // Client callbacks.

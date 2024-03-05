@@ -7389,13 +7389,8 @@ void HTMLMediaElement::clearMediaCacheForOrigins(const String& path, const HashS
 
 void HTMLMediaElement::privateBrowsingStateDidChange(PAL::SessionID sessionID)
 {
-    // FIXME: We should try to reconcile this so there's no difference for PLATFORM(IOS_FAMILY).
-#if PLATFORM(IOS_FAMILY)
-    UNUSED_PARAM(sessionID);
-#else
     if (RefPtr player = m_player)
         player->setPrivateBrowsingMode(sessionID.isEphemeral());
-#endif
 }
 
 bool HTMLMediaElement::shouldForceControlsDisplay() const

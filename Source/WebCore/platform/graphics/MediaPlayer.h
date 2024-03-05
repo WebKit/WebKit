@@ -576,6 +576,7 @@ public:
     unsigned videoDecodedByteCount() const;
 
     void setPrivateBrowsingMode(bool);
+    bool inPrivateBrowsingMode() const { return m_inPrivateBrowsingMode; }
 
 #if ENABLE(WEB_AUDIO)
     AudioSourceProvider* audioSourceProvider();
@@ -767,7 +768,7 @@ private:
     bool m_visibleInViewport { false };
     bool m_muted { false };
     bool m_preservesPitch { true };
-    bool m_privateBrowsing { false };
+    bool m_inPrivateBrowsingMode { false };
     bool m_shouldPrepareToRender { false };
     bool m_contentMIMETypeWasInferredFromExtension { false };
     bool m_initializingMediaEngine { false };

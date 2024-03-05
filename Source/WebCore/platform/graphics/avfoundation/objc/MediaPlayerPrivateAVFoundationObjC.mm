@@ -933,6 +933,9 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const URL& url, Ret
     if (player->prefersSandboxedParsing() && PAL::canLoad_AVFoundation_AVAssetPrefersSandboxedParsingOptionKey())
         [options setObject:@YES forKey:AVAssetPrefersSandboxedParsingOptionKey];
 
+    if (player->inPrivateBrowsingMode() && PAL::canLoad_AVFoundation_AVURLAssetDoNotLogURLsKey())
+        [options setObject:@YES forKey:AVURLAssetDoNotLogURLsKey];
+
     auto type = player->contentMIMEType();
 
     // Don't advertise WebM MIME types or the format reader won't be loaded until rdar://72405127 is fixed.
