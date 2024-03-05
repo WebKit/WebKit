@@ -151,8 +151,7 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         return;
 
     if (paintInfo.phase == PaintPhase::Outline || paintInfo.phase == PaintPhase::SelfOutline) {
-        // FIXME: [LBSE] Upstream outline painting
-        // paintSVGOutline(paintInfo, adjustedPaintOffset);
+        paintSVGOutline(paintInfo, adjustedPaintOffset);
         return;
     }
 

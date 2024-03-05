@@ -140,7 +140,7 @@ void RenderSVGShape::layout()
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;
 
-    LayoutRepainter repainter(*this, checkForRepaintDuringLayout(), RepaintOutlineBounds::No);
+    LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
     if (m_needsShapeUpdate) {
         updateShapeFromElement();
 
@@ -244,8 +244,7 @@ void RenderSVGShape::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         return;
 
     if (paintInfo.phase == PaintPhase::Outline || paintInfo.phase == PaintPhase::SelfOutline) {
-        // FIXME: [LBSE] Upstream outline painting
-        // paintSVGOutline(paintInfo, adjustedPaintOffset);
+        paintSVGOutline(paintInfo, adjustedPaintOffset);
         return;
     }
 

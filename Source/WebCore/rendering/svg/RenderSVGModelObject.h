@@ -100,8 +100,7 @@ protected:
     void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const override;
 
     void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = 0) const override;
-    // FIXME: [LBSE] Upstream SVG outline painting functionality
-    // void paintSVGOutline(PaintInfo&, const LayoutPoint& adjustedPaintOffset);
+    void paintSVGOutline(PaintInfo&, const LayoutPoint& adjustedPaintOffset);
 
     // Returns false if the rect has no intersection with the applied clip rect. When the context specifies edge-inclusive
     // intersection, this return value allows distinguishing between no intersection and zero-area intersection.

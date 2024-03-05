@@ -287,6 +287,11 @@ Path RenderSVGModelObject::computeClipPath(AffineTransform& transform) const
     return pathFromGraphicsElement(Ref { downcast<SVGGraphicsElement>(element()) });
 }
 
+void RenderSVGModelObject::paintSVGOutline(PaintInfo& paintInfo, const LayoutPoint& adjustedPaintOffset)
+{
+    paintOutline(paintInfo, LayoutRect(adjustedPaintOffset, borderBoxRectEquivalent().size()));
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(LAYER_BASED_SVG_ENGINE)

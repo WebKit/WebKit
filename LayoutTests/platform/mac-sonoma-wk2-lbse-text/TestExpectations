@@ -403,8 +403,6 @@ svg/transforms/svgsvgelement-transform.svg [ ImageOnlyFailure ]
 
 # Outline / focus-ring support
 svg/custom/focus-ring.svg         [ Failure ]
-svg/custom/rgba-color-outline.svg [ ImageOnlyFailure ]
-svg/text/text-outline-rgba.html   [ ImageOnlyFailure ]
 
 # Text rendering visually different
 imported/w3c/web-platform-tests/svg/import/fonts-desc-01-t-manual.svg                           [ ImageOnlyFailure ]

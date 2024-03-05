@@ -219,10 +219,9 @@ void RenderSVGRoot::layout()
     }
 
     clearOverflow();
-    if (!shouldApplyViewportClip()) {
+    if (!shouldApplyViewportClip())
         addVisualOverflow(visualOverflowRectEquivalent());
-        addVisualEffectOverflow();
-    }
+    addVisualEffectOverflow();
 
     invalidateBackgroundObscurationStatus();
 
