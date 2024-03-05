@@ -1920,8 +1920,6 @@ fast/images/animated-heics-verify.html [ Skip ]
 # Skip IsLoggedIn
 http/tests/is-logged-in/ [ Skip ]
 
-webkit.org/b/203305 [ Debug ] imported/w3c/web-platform-tests/css/css-transitions/properties-value-inherit-001.html [ Pass Failure ]
-
 # wpt css-position failures
 webkit.org/b/203466 imported/w3c/web-platform-tests/css/css-position/z-index-blend-will-change-overlapping-layers.html [ ImageOnlyFailure ]
 
