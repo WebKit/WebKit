@@ -56,6 +56,11 @@ static bool isAncestorOrSelf(WebExtensionContext& context, const String& potenti
     return false;
 }
 
+bool WebExtensionContext::isMenusMessageAllowed()
+{
+    return isLoaded() && (hasPermission(_WKWebExtensionPermissionContextMenus) || hasPermission(_WKWebExtensionPermissionMenus));
+}
+
 void WebExtensionContext::menusCreate(const WebExtensionMenuItemParameters& parameters, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"menus.create()";

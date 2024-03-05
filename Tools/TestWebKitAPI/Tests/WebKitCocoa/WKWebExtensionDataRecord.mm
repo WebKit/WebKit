@@ -54,6 +54,7 @@ TEST(WKWebExtensionDataRecord, GetDataRecords)
     auto *testController = [[_WKWebExtensionController alloc] initWithConfiguration:_WKWebExtensionControllerConfiguration._temporaryConfiguration];
 
     auto *context = [[_WKWebExtensionContext alloc] initForExtension:extension.get()];
+    [context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionStorage];
 
     // Give the extension a unique identifier so it opts into saving data in the temporary configuration.
     context.uniqueIdentifier = @"org.webkit.test.extension (76C788B8)";
@@ -101,10 +102,12 @@ TEST(WKWebExtensionDataRecord, GetDataRecordsForMultipleContexts)
 
     auto *testExtensionOne = [[_WKWebExtension alloc] _initWithManifestDictionary:dataRecordTestManifest resources:@{ @"background.js": backgroundScriptOne }];
     auto *testContextOne = [[_WKWebExtensionContext alloc] initForExtension:testExtensionOne];
+    [testContextOne setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionStorage];
     testContextOne.uniqueIdentifier = @"org.webkit.testOne.extension (76C788B8)";
 
     auto *testExtensionTwo = [[_WKWebExtension alloc] _initWithManifestDictionary:dataRecordTestManifest resources:@{ @"background.js": backgroundScriptTwo }];
     auto *testContextTwo = [[_WKWebExtensionContext alloc] initForExtension:testExtensionTwo];
+    [testContextTwo setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionStorage];
     testContextTwo.uniqueIdentifier = @"org.webkit.testTwo.extension (76C788B8)";
 
     [testController loadExtensionContext:testContextOne error:nil];
@@ -165,6 +168,7 @@ TEST(WKWebExtensionDataRecord, DISABLED_RemoveDataRecords)
     auto *testController = [[_WKWebExtensionController alloc] initWithConfiguration:_WKWebExtensionControllerConfiguration._temporaryConfiguration];
 
     auto *context = [[_WKWebExtensionContext alloc] initForExtension:extension.get()];
+    [context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionStorage];
 
     // Give the extension a unique identifier so it opts into saving data in the temporary configuration.
     context.uniqueIdentifier = @"org.webkit.test.extension (76C788B8)";
@@ -210,10 +214,12 @@ TEST(WKWebExtensionDataRecord, DISABLED_RemoveDataRecordsForMultipleContexts)
 
     auto *testExtensionOne = [[_WKWebExtension alloc] _initWithManifestDictionary:dataRecordTestManifest resources:@{ @"background.js": backgroundScriptOne }];
     auto *testContextOne = [[_WKWebExtensionContext alloc] initForExtension:testExtensionOne];
+    [testContextOne setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionStorage];
     testContextOne.uniqueIdentifier = @"org.webkit.testOne.extension (76C788B8)";
 
     auto *testExtensionTwo = [[_WKWebExtension alloc] _initWithManifestDictionary:dataRecordTestManifest resources:@{ @"background.js": backgroundScriptTwo }];
     auto *testContextTwo = [[_WKWebExtensionContext alloc] initForExtension:testExtensionTwo];
+    [testContextTwo setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionStorage];
     testContextTwo.uniqueIdentifier = @"org.webkit.testTwo.extension (76C788B8)";
 
     [testController loadExtensionContext:testContextOne error:nil];

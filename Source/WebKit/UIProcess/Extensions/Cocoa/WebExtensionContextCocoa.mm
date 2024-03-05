@@ -3150,6 +3150,17 @@ bool WebExtensionContext::isInspectorBackgroundPage(WKWebView *webView) const
     return false;
 }
 
+bool WebExtensionContext::isDevToolsMessageAllowed()
+{
+#if ENABLE(INSPECTOR_EXTENSIONS)
+    if (!isLoaded())
+        return false;
+    return extension().hasInspectorBackgroundPage();
+#else
+    return false;
+#endif
+}
+
 void WebExtensionContext::loadInspectorBackgroundPagesDuringLoad()
 {
     ASSERT(isLoaded());

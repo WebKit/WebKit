@@ -226,6 +226,9 @@ TEST(WKWebExtensionAPIMenus, ActionMenus)
 
     auto manager = Util::loadAndRunExtension(menusManifest, @{ @"background.js": backgroundScript });
 
+    // Reset activeTab, WKWebExtensionAPIMenus.ActionMenusWithActiveTab tests that.
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusUnknown forPermission:_WKWebExtensionPermissionActiveTab];
+
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
 
     [manager.get().defaultTab.mainWebView loadRequest:server.requestWithLocalhost()];
@@ -296,8 +299,6 @@ TEST(WKWebExtensionAPIMenus, ActionMenusWithActiveTab)
     auto manager = Util::loadAndRunExtension(menusManifest, @{ @"background.js": backgroundScript });
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
-
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionActiveTab];
 
     EXPECT_FALSE([manager.get().context hasActiveUserGestureInTab:manager.get().defaultTab]);
 
@@ -1201,8 +1202,6 @@ TEST(WKWebExtensionAPIMenus, MacActiveTabContextMenuItems)
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
-
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionActiveTab];
 
     EXPECT_FALSE([manager.get().context hasActiveUserGestureInTab:manager.get().defaultTab]);
 

@@ -37,6 +37,11 @@
 
 namespace WebKit {
 
+bool WebExtensionContext::isAlarmsMessageAllowed()
+{
+    return isLoaded() && hasPermission(_WKWebExtensionPermissionAlarms);
+}
+
 void WebExtensionContext::alarmsCreate(const String& name, Seconds initialInterval, Seconds repeatInterval)
 {
     m_alarmMap.set(name, WebExtensionAlarm::create(name, initialInterval, repeatInterval, [&](const WebExtensionAlarm& alarm) {

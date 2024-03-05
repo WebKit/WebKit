@@ -62,6 +62,10 @@
     _context = [[_WKWebExtensionContext alloc] initForExtension:extension];
     _controller = [[_WKWebExtensionController alloc] initWithConfiguration:configuration ?: _WKWebExtensionControllerConfiguration.nonPersistentConfiguration];
 
+    // Grant all requested API permissions.
+    for (_WKWebExtensionPermission permission in _extension.requestedPermissions)
+        [_context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:permission];
+
     _controller._testingMode = YES;
 
     // This should always be self. If you need the delegate, use the controllerDelegate property.

@@ -41,6 +41,11 @@
 
 namespace WebKit {
 
+bool WebExtensionContext::isCommandsMessageAllowed()
+{
+    return isLoaded() && extension().hasCommands();
+}
+
 void WebExtensionContext::commandsGetAll(CompletionHandler<void(Vector<WebExtensionCommandParameters>)>&& completionHandler)
 {
     auto results = WTF::map(commands(), [](auto& command) {

@@ -81,6 +81,11 @@ static Expected<Ref<WebExtensionAction>, WebExtensionError> getOrCreateActionWit
     return Ref { context.defaultAction() };
 }
 
+bool WebExtensionContext::isActionMessageAllowed()
+{
+    return isLoaded() && (extension().hasAction() || extension().hasBrowserAction() || extension().hasPageAction());
+}
+
 void WebExtensionContext::actionGetTitle(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, CompletionHandler<void(Expected<String, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"action.getTitle()";

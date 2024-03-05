@@ -2152,8 +2152,6 @@ TEST(WKWebExtensionAPITabs, ActiveTab)
     auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:activeTabManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionActiveTab];
-
     auto *localhostRequest = server.requestWithLocalhost();
     auto *addressRequest = server.request();
 
@@ -2232,6 +2230,9 @@ TEST(WKWebExtensionAPITabs, UserGestureWithoutActiveTab)
 
     auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:activeTabManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    // Reset activeTab, WKWebExtensionAPITabs.ActiveTab tests that.
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusUnknown forPermission:_WKWebExtensionPermissionActiveTab];
 
     EXPECT_FALSE([manager.get().context hasPermission:_WKWebExtensionPermissionActiveTab]);
     EXPECT_FALSE([manager.get().context hasPermission:_WKWebExtensionPermissionTabs]);

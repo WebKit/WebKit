@@ -55,6 +55,11 @@ namespace WebKit {
 
 using namespace WebExtensionDynamicScripts;
 
+bool WebExtensionContext::isScriptingMessageAllowed()
+{
+    return isLoaded() && hasPermission(_WKWebExtensionPermissionScripting);
+}
+
 void WebExtensionContext::scriptingExecuteScript(const WebExtensionScriptInjectionParameters& parameters, CompletionHandler<void(Expected<InjectionResults, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName= @"scripting.executeScript()";

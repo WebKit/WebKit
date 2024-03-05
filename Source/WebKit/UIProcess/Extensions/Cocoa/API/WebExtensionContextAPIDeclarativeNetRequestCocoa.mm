@@ -36,6 +36,7 @@
 #import "WebExtensionConstants.h"
 #import "WebExtensionUtilities.h"
 #import "_WKWebExtensionDeclarativeNetRequestSQLiteStore.h"
+#import "_WKWebExtensionPermission.h"
 #import "_WKWebExtensionSQLiteStore.h"
 #import <wtf/BlockPtr.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -44,6 +45,11 @@ static NSString * const declarativeNetRequestRulesetStateKey = @"DeclarativeNetR
 static NSString * const displayBlockedResourceCountAsBadgeTextStateKey = @"DisplayBlockedResourceCountAsBadgeText";
 
 namespace WebKit {
+
+bool WebExtensionContext::isDeclarativeNetRequestMessageAllowed()
+{
+    return isLoaded() && (hasPermission(_WKWebExtensionPermissionDeclarativeNetRequest) || hasPermission(_WKWebExtensionPermissionDeclarativeNetRequestWithHostAccess));
+}
 
 void WebExtensionContext::declarativeNetRequestGetEnabledRulesets(CompletionHandler<void(Vector<String>&&)>&& completionHandler)
 {

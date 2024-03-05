@@ -68,6 +68,11 @@ static inline URL toURL(const WebCore::Cookie& cookie)
     return URL { makeString(cookie.secure ? "https"_s : "http"_s, "://"_s, domain, cookie.path) };
 }
 
+bool WebExtensionContext::isCookiesMessageAllowed()
+{
+    return isLoaded() && hasPermission(_WKWebExtensionPermissionCookies);
+}
+
 void WebExtensionContext::fetchCookies(WebsiteDataStore& dataStore, const URL& url, const WebExtensionCookieFilterParameters& filterParameters, CompletionHandler<void(Expected<Vector<WebExtensionCookieParameters>, WebExtensionError>&&)>&& completionHandler)
 {
     if (url.isValid() && !hasPermission(url)) {
