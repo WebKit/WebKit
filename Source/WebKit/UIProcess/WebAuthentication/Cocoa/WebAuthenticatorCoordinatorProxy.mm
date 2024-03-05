@@ -466,14 +466,14 @@ void WebAuthenticatorCoordinatorProxy::performRequest(WebAuthenticationRequestDa
             if (weakThis) {
                 if (activeConditionalMediationProxy() == weakThis)
                     activeConditionalMediationProxy() = nullptr;
-                if (auto cancelHandler = WTFMove(weakThis->m_cancelHandler))
-                    cancelHandler();
                 if (!weakThis->m_paused) {
                     weakThis->m_completionHandler(response, attachment, exceptionData);
                     weakThis->m_delegate.clear();
                     weakThis->m_controller.clear();
                     weakThis->m_isConditionalMediation = false;
                 }
+                if (auto cancelHandler = WTFMove(weakThis->m_cancelHandler))
+                    cancelHandler();
             }
         });
     }).get()]);
@@ -1063,7 +1063,16 @@ void WebAuthenticatorCoordinatorProxy::cancel(CompletionHandler<void()>&& handle
 #else
     if (m_proxy) {
 #endif
-        m_cancelHandler = WTFMove(handler);
+        m_cancelHandler = [weakThis = WeakPtr { *this }, handler = WTFMove(handler)]() mutable {
+#if HAVE(WEB_AUTHN_AS_MODERN)
+            if (weakThis) {
+                weakThis->m_controller.clear();
+                weakThis->m_delegate.clear();
+                weakThis->m_completionHandler = nullptr;
+            }
+#endif
+            handler();
+        };
     } else
         handler();
 
@@ -1072,12 +1081,8 @@ void WebAuthenticatorCoordinatorProxy::cancel(CompletionHandler<void()>&& handle
         m_proxy.clear();
     }
 #if HAVE(WEB_AUTHN_AS_MODERN)
-    if (m_controller) {
+    if (m_controller)
         [m_controller cancel];
-        m_controller.clear();
-        m_delegate.clear();
-        m_completionHandler = nullptr;
-    }
 #endif
 }
 
