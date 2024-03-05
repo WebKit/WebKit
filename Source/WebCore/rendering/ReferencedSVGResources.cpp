@@ -66,6 +66,11 @@ void CSSSVGResourceElementClient::resourceChanged(SVGElement& element)
         return;
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (!m_clientRenderer.document().settings().layerBasedSVGEngineEnabled()) {
+        m_clientRenderer.repaint();
+        return;
+    }
+
     // Special case for markers. Markers can be attached to RenderSVGPath object. Marker positions are computed
     // once during layout, or if the shape itself changes. Here we manually update the marker positions without
     // requiring a relayout. Instead we can simply repaint the path - via the updateLayerPosition() logic, properly
@@ -73,35 +78,10 @@ void CSSSVGResourceElementClient::resourceChanged(SVGElement& element)
     if (auto* pathClientRenderer = dynamicDowncast<RenderSVGPath>(m_clientRenderer); pathClientRenderer && is<SVGMarkerElement>(element))
         pathClientRenderer->updateMarkerPositions();
 
-    auto useUpdateLayerPositionsLogic = [&]() -> std::optional<CheckedPtr<RenderLayer>> {
-        auto& document = m_clientRenderer.document();
-        if (!document.settings().layerBasedSVGEngineEnabled())
-            return std::nullopt;
-
-        // Don't attempt to update anything during layout - the post-layout phase will invoke RenderLayer::updateLayerPosition(), if necessary.
-        if (document.view()->layoutContext().isInLayout())
-            return std::nullopt;
-
-        // If no layers are available, always use the renderer based repaint() logic.
-        if (!m_clientRenderer.hasLayer())
-            return std::nullopt;
-
-        // Use the cheaper update mechanism for all SVG renderers -- in proper subtrees, that do not need layout themselves.
-        if (!m_clientRenderer.isSVGLayerAwareRenderer() || m_clientRenderer.needsLayout())
-            return std::nullopt;
-
-        return std::make_optional(downcast<RenderLayerModelObject>(m_clientRenderer).checkedLayer());
-    };
-
-    // LBSE: Instead of repainting the current boundaries, utilize RenderLayer::updateLayerPositionsAfterStyleChange() to repaint
-    // the old and the new repaint boundaries, if they differ -- instead of just the new boundaries.
-    if (auto layer = useUpdateLayerPositionsLogic()) {
-        (*layer.value()).updateLayerPositionsAfterStyleChange();
-        return;
-    }
-#endif
-
+    m_clientRenderer.repaintOldAndNewPositionsForSVGRenderer();
+#else
     m_clientRenderer.repaint();
+#endif
 }
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(ReferencedSVGResources);

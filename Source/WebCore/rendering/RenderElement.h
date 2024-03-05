@@ -168,6 +168,7 @@ public:
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
     void repaintClientsOfReferencedSVGResources() const;
     void repaintRendererOrClientsOfReferencedSVGResources() const;
+    void repaintOldAndNewPositionsForSVGRenderer() const;
 #endif
 
     bool borderImageIsLoadedAndCanBeRendered() const;
