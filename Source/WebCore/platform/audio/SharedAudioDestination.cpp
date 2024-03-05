@@ -61,31 +61,31 @@ private:
     void isPlayingDidChange() final { }
 
     void configureRenderThread(CompletionHandler<void(bool)>&&);
+    void callAllConfigurationHandlers(bool);
 
     Ref<AudioDestination> protectedDestination() { return m_destination; }
     Ref<AudioBus> protectedWorkBus() { return m_workBus; }
-    Ref<WorkQueue> protectedConfigurationQueue() { return m_configurationQueue; }
 
     unsigned m_numberOfOutputChannels;
     float m_sampleRate;
 
     Ref<AudioDestination> m_destination;
     Ref<AudioBus> m_workBus;
-    Ref<WorkQueue> m_configurationQueue;
 
     bool m_started { false };
 
     Lock m_renderLock;
-    Semaphore m_configurationSemaphore;
 
-    // Only accessed on m_configurationQueue:
-    Vector<RefPtr<SharedAudioDestination>> m_renderers;
+    using RenderVector = Vector<RefPtr<SharedAudioDestination>>;
+    RenderVector m_renderers WTF_GUARDED_BY_CAPABILITY(mainThread);
 
     bool m_needsConfiguration WTF_GUARDED_BY_LOCK(m_renderLock) { true };
-    Vector<RefPtr<SharedAudioDestination>> m_newRenderers WTF_GUARDED_BY_LOCK(m_renderLock);
+    RenderVector m_newRenderers WTF_GUARDED_BY_LOCK(m_renderLock);
+    using ConfigurationHandlerVector = Vector<CompletionHandler<void(bool)>>;
+    ConfigurationHandlerVector m_configurationCompletionHandlers WTF_GUARDED_BY_LOCK(m_renderLock);
 
     // Only accessed on the audio thread:
-    Vector<RefPtr<SharedAudioDestination>> m_configuredRenderers;
+    RenderVector m_configuredRenderers;
 };
 
 auto SharedAudioDestinationAdapter::sharedMap() -> AdapterMap&
@@ -114,8 +114,6 @@ SharedAudioDestinationAdapter::SharedAudioDestinationAdapter(unsigned numberOfOu
     , m_sampleRate { sampleRate }
     , m_destination { ensureFunction(*this) }
     , m_workBus { AudioBus::create(numberOfOutputChannels, AudioUtilities::renderQuantumSize).releaseNonNull() }
-    , m_configurationQueue { WorkQueue::create("SharedAudioDestinationAdapter configuration queue") }
-    , m_configurationSemaphore(0)
 {
 }
 
@@ -124,91 +122,88 @@ SharedAudioDestinationAdapter::~SharedAudioDestinationAdapter()
     auto key = std::make_tuple(m_numberOfOutputChannels, m_sampleRate);
     sharedMap().remove(key);
     protectedDestination()->clearCallback();
+    callAllConfigurationHandlers(false);
 }
 
 void SharedAudioDestinationAdapter::addRenderer(SharedAudioDestination& renderer, CompletionHandler<void(bool)>&& completionHandler)
 {
-    protectedConfigurationQueue()->dispatch([this, weakThis = ThreadSafeWeakPtr { *this }, renderer = RefPtr { &renderer }, completionHandler = WTFMove(completionHandler)] () mutable {
-        RefPtr protectedThis = weakThis.get();
-        if (!protectedThis) {
-            callOnMainThread([completionHandler = WTFMove(completionHandler)] () mutable { completionHandler(false);
-            });
-            return;
-        }
-
-        if (!m_renderers.contains(renderer))
-            m_renderers.append(WTFMove(renderer));
-        configureRenderThread(WTFMove(completionHandler));
-    });
+    assertIsMainThread();
+    if (!m_renderers.contains(&renderer))
+        m_renderers.append(&renderer);
+    configureRenderThread(WTFMove(completionHandler));
 }
 
 void SharedAudioDestinationAdapter::removeRenderer(SharedAudioDestination& renderer, CompletionHandler<void(bool)>&& completionHandler)
 {
-    protectedConfigurationQueue()->dispatch([this, weakThis = ThreadSafeWeakPtr { *this }, renderer = RefPtr { &renderer }, completionHandler = WTFMove(completionHandler)] () mutable {
-        RefPtr protectedThis = weakThis.get();
-        if (!protectedThis) {
-            callOnMainThread([completionHandler = WTFMove(completionHandler)] () mutable { completionHandler(false);
-            });
-            return;
-        }
-
-        m_renderers.removeFirst(renderer);
-        configureRenderThread(WTFMove(completionHandler));
-    });
+    assertIsMainThread();
+    m_renderers.removeFirst(&renderer);
+    ASSERT(!m_renderers.contains(&renderer));
+    configureRenderThread(WTFMove(completionHandler));
 }
 
 void SharedAudioDestinationAdapter::configureRenderThread(CompletionHandler<void(bool)>&& completionHandler)
 {
-    ASSERT(m_configurationQueue->isCurrent());
+    assertIsMainThread();
+
+    bool shouldStart = !m_started && !m_renderers.isEmpty();
+    bool shouldStop = m_started && m_renderers.isEmpty();
+    bool shouldSkipRendering = !m_started && m_renderers.isEmpty();
+    bool onlyNeedsConfiguration = m_started && !m_renderers.isEmpty();
+
     {
         Locker locker { m_renderLock };
         m_newRenderers = m_renderers;
         m_needsConfiguration = true;
+        if (onlyNeedsConfiguration) {
+            // The destination is already running, but needs configuration. Move the
+            // completionHandler into a vector of outstanding handlers, to be called
+            // after the render thread finishes configuring the renderers.
+            m_configurationCompletionHandlers.append(WTFMove(completionHandler));
+            return;
+        }
     }
 
-    bool shouldStart = !m_started && !m_renderers.isEmpty();
-    bool shouldStop = m_started && m_renderers.isEmpty();
+    if (shouldStart) {
+        m_started = true;
+        protectedDestination()->start(nullptr, [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] (bool success) mutable {
+            // Ensure any outstanding configuration handlers are called and cleared.
+            callAllConfigurationHandlers(success);
+            completionHandler(success);
+        });
+        return;
+    }
+
+    if (shouldStop) {
+        m_started = false;
+        protectedDestination()->stop([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] (bool success) mutable {
+            // Ensure any outstanding configuration handlers are called and cleared.
+            callAllConfigurationHandlers(success);
+            completionHandler(success);
+        });
+        return;
+    }
 
     // If the destination has not been started, and the list of
     // renderers is empty, do not wait for the render thread to
     // finish configuration, as it will never run.
-    bool shouldSkipRendering = !m_started && m_renderers.isEmpty();
-
-    if (!shouldSkipRendering) {
-        // The AudioDestination must be started for configuration to take place.
-        if (shouldStart) {
-            // Dispatching to the main thread is required for destinations
-            // which are subclasses of AudioDestinationResampler.
-            callOnMainThreadAndWait([this] {
-                protectedDestination()->start(nullptr, [] (bool) { });
-            });
-            m_started = true;
-        }
-
-        m_configurationSemaphore.wait();
-
-        // The AudioDestination must not be stopped before configuration takes place.
-        if (shouldStop) {
-            // Dispatching to the main thread is required for destinations
-            // which are subclasses of AudioDestinationResampler.
-            callOnMainThreadAndWait([this] {
-                protectedDestination()->stop();
-            });
-            m_started = false;
-        }
+    if (shouldSkipRendering) {
+        callOnMainThread([completionHandler = WTFMove(completionHandler)] () mutable {
+            completionHandler(true);
+        });
+        return;
     }
+}
 
-    // Move the previously configured list of renderers to the MainThread for destruction:
-    Vector<RefPtr<SharedAudioDestination>> renderersToDispose;
+void SharedAudioDestinationAdapter::callAllConfigurationHandlers(bool success)
+{
+    ConfigurationHandlerVector handlers;
     {
         Locker locker { m_renderLock };
-        renderersToDispose = std::exchange(m_newRenderers, { });
+        std::swap(handlers, m_configurationCompletionHandlers);
     }
 
-    callOnMainThread([completionHandler = WTFMove(completionHandler), renderersToDispose = WTFMove(renderersToDispose)]() mutable {
-        renderersToDispose.clear();
-        completionHandler(true);
-    });
+    for (auto& handler : handlers)
+        handler(success);
 }
 
 void SharedAudioDestinationAdapter::render(AudioBus* sourceBus, AudioBus* destinationBus, size_t numberOfFrames, const AudioIOPosition& outputPosition)
@@ -218,11 +213,13 @@ void SharedAudioDestinationAdapter::render(AudioBus* sourceBus, AudioBus* destin
         if (m_needsConfiguration) {
             // The SharedAudioDestinationAdapter avoids allocing or deallocing on the
             // high priority audio thread by merely swapping the contents of the renderer
-            // configuration vectors. After the swap, the contents of m_newRenderers will
-            // be destroyed by configureRenderThread() on the m_configurationWorkQueue.
-            std::swap(m_newRenderers, m_configuredRenderers);
+            // configuration vectors. After the swap, the previous contents of m_configuredRenderers
+            // will be destroyed on the main thread.
+            RenderVector oldRenderers = std::exchange(m_configuredRenderers, WTFMove(m_newRenderers));
             m_needsConfiguration = false;
-            m_configurationSemaphore.signal();
+            callOnMainThread([this, protectedThis = Ref { *this }, oldRenderers = WTFMove(oldRenderers)] () mutable {
+                callAllConfigurationHandlers(true);
+            });
         }
     }
 
