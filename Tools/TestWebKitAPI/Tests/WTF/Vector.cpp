@@ -2086,4 +2086,26 @@ TEST(WTF_Vector, FlatMapInnerStruct)
     EXPECT_EQ(4, mapped[3]);
 }
 
+TEST(WTF_Vector, InsertFill)
+{
+    Vector<unsigned> vector;
+
+    for (size_t i = 0; i < 100; ++i)
+        vector.append(i);
+
+    EXPECT_EQ(vector.size(), 100U);
+
+    vector.insertFill(50, 0xffff, 100);
+    EXPECT_EQ(vector.size(), 200U);
+
+    for (size_t i = 0; i < 50; ++i)
+        EXPECT_EQ(vector[i], i);
+
+    for (size_t i = 0; i < 100; ++i)
+        EXPECT_EQ(vector[i + 50], 0xffffU);
+
+    for (size_t i = 0; i < 50; ++i)
+        EXPECT_EQ(vector[i + 150], i + 50U);
+}
+
 } // namespace TestWebKitAPI

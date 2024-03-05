@@ -133,8 +133,12 @@ public:
     template<typename Func>
     Expected<std::invoke_result_t<Func, std::span<const char>>, UTF8ConversionError> tryGetUTF8(const Func&, ConversionMode = LenientConversion) const;
 
-    class UpconvertedCharacters;
-    UpconvertedCharacters upconvertedCharacters() const;
+    template<size_t N>
+    class UpconvertedCharactersWithSize;
+    using UpconvertedCharacters = UpconvertedCharactersWithSize<32>;
+
+    template<size_t N = 32>
+    UpconvertedCharactersWithSize<N> upconvertedCharacters() const;
 
     template<typename CharacterType> void getCharacters(CharacterType*) const;
     template<typename CharacterType> void getCharacters8(CharacterType*) const;
@@ -511,20 +515,22 @@ inline bool StringView::containsOnlyASCII() const
     return charactersAreAllASCII(characters16(), length());
 }
 
-class StringView::UpconvertedCharacters {
+template<size_t N>
+class StringView::UpconvertedCharactersWithSize {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit UpconvertedCharacters(StringView);
+    explicit UpconvertedCharactersWithSize(StringView);
     operator const UChar*() const { return m_characters; }
     const UChar* get() const { return m_characters; }
 private:
-    Vector<UChar, 32> m_upconvertedCharacters;
+    Vector<UChar, N> m_upconvertedCharacters;
     const UChar* m_characters;
 };
 
-inline StringView::UpconvertedCharacters StringView::upconvertedCharacters() const
+template<size_t N>
+inline StringView::UpconvertedCharactersWithSize<N> StringView::upconvertedCharacters() const
 {
-    return UpconvertedCharacters(*this);
+    return UpconvertedCharactersWithSize<N>(*this);
 }
 
 inline bool StringView::isNull() const
@@ -631,7 +637,8 @@ template<typename CharacterType> inline void StringView::getCharacters(Character
         getCharacters16(destination);
 }
 
-inline StringView::UpconvertedCharacters::UpconvertedCharacters(StringView string)
+template<size_t N>
+inline StringView::UpconvertedCharactersWithSize<N>::UpconvertedCharactersWithSize(StringView string)
 {
     if (!string.is8Bit()) {
         m_characters = string.characters16();

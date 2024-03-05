@@ -66,7 +66,7 @@ public:
     const Vector<String>& timeAMPMLabels() override;
 #endif
 
-    static AtomString canonicalLanguageIdentifierFromString(const AtomString&);
+    static RetainPtr<CFStringRef> canonicalLanguageIdentifierFromString(const AtomString&);
     static void releaseMemory();
 
 private:
