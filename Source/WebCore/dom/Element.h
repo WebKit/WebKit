@@ -356,7 +356,7 @@ public:
     RefPtr<ShadowRoot> shadowRootForBindings(JSC::JSGlobalObject&) const;
 
     WEBCORE_EXPORT ExceptionOr<ShadowRoot&> attachShadow(const ShadowRootInit&);
-    ExceptionOr<ShadowRoot&> attachDeclarativeShadow(ShadowRootMode, bool delegatesFocus);
+    ExceptionOr<ShadowRoot&> attachDeclarativeShadow(ShadowRootMode, bool delegatesFocus, bool clonable);
 
     RefPtr<ShadowRoot> userAgentShadowRoot() const;
     WEBCORE_EXPORT ShadowRoot& ensureUserAgentShadowRoot();

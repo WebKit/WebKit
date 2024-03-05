@@ -2966,10 +2966,14 @@ static bool canAttachAuthorShadowRoot(const Element& element)
 
 ExceptionOr<ShadowRoot&> Element::attachShadow(const ShadowRootInit& init)
 {
+    if (init.mode == ShadowRootMode::UserAgent)
+        return Exception { ExceptionCode::TypeError };
     if (!canAttachAuthorShadowRoot(*this))
         return Exception { ExceptionCode::NotSupportedError };
     if (RefPtr shadowRoot = this->shadowRoot()) {
         if (shadowRoot->isDeclarativeShadowRoot()) {
+            if (init.mode != shadowRoot->mode())
+                return Exception { ExceptionCode::NotSupportedError };
             ChildListMutationScope mutation(*shadowRoot);
             shadowRoot->removeChildren();
             shadowRoot->setIsDeclarativeShadowRoot(false);
@@ -2977,8 +2981,6 @@ ExceptionOr<ShadowRoot&> Element::attachShadow(const ShadowRootInit& init)
         }
         return Exception { ExceptionCode::NotSupportedError };
     }
-    if (init.mode == ShadowRootMode::UserAgent)
-        return Exception { ExceptionCode::TypeError };
     Ref shadow = ShadowRoot::create(document(), init.mode, init.slotAssignment,
         init.delegatesFocus ? ShadowRoot::DelegatesFocus::Yes : ShadowRoot::DelegatesFocus::No,
         init.clonable ? ShadowRoot::Clonable::Yes : ShadowRoot::Clonable::No,
@@ -2987,9 +2989,11 @@ ExceptionOr<ShadowRoot&> Element::attachShadow(const ShadowRootInit& init)
     return shadow.get();
 }
 
-ExceptionOr<ShadowRoot&> Element::attachDeclarativeShadow(ShadowRootMode mode, bool delegatesFocus)
+ExceptionOr<ShadowRoot&> Element::attachDeclarativeShadow(ShadowRootMode mode, bool delegatesFocus, bool clonable)
 {
-    auto exceptionOrShadowRoot = attachShadow({ mode, delegatesFocus, /* clonable */ true });
+    if (this->shadowRoot())
+        return Exception { ExceptionCode::NotSupportedError };
+    auto exceptionOrShadowRoot = attachShadow({ mode, delegatesFocus, clonable });
     if (exceptionOrShadowRoot.hasException())
         return exceptionOrShadowRoot.releaseException();
     Ref shadowRoot = exceptionOrShadowRoot.releaseReturnValue();
