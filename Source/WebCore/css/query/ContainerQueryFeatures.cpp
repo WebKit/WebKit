@@ -189,7 +189,7 @@ struct StyleFeatureSchema : public FeatureSchema {
                 context.document.get(),
                 *context.conversionData.parentStyle(),
                 context.conversionData.rootStyle(),
-                nullptr
+                context.conversionData.elementForContainerUnitResolution()
             };
 
             auto dummyStyle = RenderStyle::clone(style);

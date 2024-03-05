@@ -67,7 +67,7 @@ PASS Match registered <length> custom property with px.
 PASS Match registered <length> custom property with px via initial keyword.
 PASS Match registered <length> custom property with em in query.
 PASS Match registered <length> custom property with em in computed value.
-FAIL Match registered <length> custom property with cqi unit. assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+PASS Match registered <length> custom property with cqi unit.
 PASS Match registered <length> custom property with initial value.
 PASS Match registered <length> custom property with initial value via initial keyword.
 PASS Should only match exact string for numbers in non-registered custom properties
