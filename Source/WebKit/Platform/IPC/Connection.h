@@ -319,7 +319,6 @@ public:
     template<typename T, typename C> AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t destinationID = 0, OptionSet<SendOption> = { }); // Thread-safe, but the reply will be called on the Connection's dispatcher
     template<typename T> Ref<typename T::Promise> sendWithPromisedReply(T&& message, uint64_t destinationID = 0, OptionSet<SendOption> = { }); // Thread-safe.
     template<typename T, typename C> AsyncReplyID sendWithAsyncReplyOnDispatcher(T&& message, RefCountedSerialFunctionDispatcher&, C&& completionHandler, uint64_t destinationID = 0, OptionSet<SendOption> = { }); // Thread-safe.
-    template<typename T> Ref<typename T::Promise> sendWithPromisedReplyOnDispatcher(T&& message, RefCountedSerialFunctionDispatcher&, uint64_t destinationID = 0, OptionSet<SendOption> = { }); // Thread-safe.
     template<typename T> Error send(T&& message, uint64_t destinationID, OptionSet<SendOption> sendOptions = { }, std::optional<Thread::QOS> qos = std::nullopt); // Thread-safe.
     template<typename T> static Error send(UniqueID, T&& message, uint64_t destinationID, OptionSet<SendOption> sendOptions = { }, std::optional<Thread::QOS> qos = std::nullopt); // Thread-safe.
 
@@ -437,18 +436,14 @@ private:
     void platformInvalidate();
 
     struct AsyncReplyHandlerWithDispatcher {
-        CompletionHandler<void(Decoder*)> completionHandler;
-        RefPtr<RefCountedSerialFunctionDispatcher> dispatcher;
+        CompletionHandler<void(std::unique_ptr<Decoder>&&)> completionHandler;
         AsyncReplyID replyID;
-
-        explicit operator bool() const { return completionHandler && dispatcher; };
     };
 
-    template<typename T> static AsyncReplyHandler makeAsyncReplyHandler(typename T::Promise::Producer&&, ThreadLikeAssertion callThread = CompletionHandlerCallThread::AnyThread);
     bool isAsyncReplyHandlerWithDispatcher(AsyncReplyID);
-    AsyncReplyHandlerWithDispatcher takeAsyncReplyHandlerWithDispatcher(AsyncReplyID);
+    CompletionHandler<void(std::unique_ptr<Decoder>&&)> takeAsyncReplyHandlerWithDispatcher(AsyncReplyID);
     template<typename T, typename C> static AsyncReplyHandlerWithDispatcher makeAsyncReplyHandlerWithDispatcher(C&& completionHandler, RefCountedSerialFunctionDispatcher&);
-    template<typename T> static AsyncReplyHandlerWithDispatcher makeAsyncReplyHandlerWithDispatcher(typename T::Promise::Producer&&, RefCountedSerialFunctionDispatcher&);
+    template<typename T> static AsyncReplyHandlerWithDispatcher makeAsyncReplyHandlerWithDispatcher(typename T::Promise::Producer&&);
     Error sendMessageWithAsyncReplyWithDispatcher(UniqueRef<Encoder>&&, AsyncReplyHandlerWithDispatcher&&, OptionSet<SendOption> sendOptions, std::optional<Thread::QOS> = std::nullopt);
     // Utility methods to avoid code duplication.
     template<typename T, typename C> static CompletionHandler<void(Decoder*)> makeAsyncReplyCompletionHandler(C&& completionHandler, ThreadLikeAssertion);
@@ -489,7 +484,7 @@ private:
     // Can be called on any thread.
     void enqueueIncomingMessage(UniqueRef<Decoder>) WTF_REQUIRES_LOCK(m_incomingMessagesLock);
     size_t incomingMessagesDispatchingBatchSize() const;
-    AsyncReplyHandlerWithDispatcher takeAsyncReplyHandlerWithDispatcherWithLockHeld(AsyncReplyID);
+    CompletionHandler<void(std::unique_ptr<Decoder>&&)> takeAsyncReplyHandlerWithDispatcherWithLockHeld(AsyncReplyID);
 
     Timeout timeoutRespectingIgnoreTimeoutsForTesting(Timeout) const;
     Ref<WorkQueue> protectedConnectionQueue() const { return m_connectionQueue; }
@@ -569,7 +564,7 @@ private:
 
     using AsyncReplyHandlerMap = HashMap<AsyncReplyID, CompletionHandler<void(Decoder*)>>;
     AsyncReplyHandlerMap m_asyncReplyHandlers WTF_GUARDED_BY_LOCK(m_incomingMessagesLock);
-    using AsyncReplyHandlerWithDispatcherMap = HashMap<AsyncReplyID, AsyncReplyHandlerWithDispatcher>;
+    using AsyncReplyHandlerWithDispatcherMap = HashMap<AsyncReplyID, CompletionHandler<void(std::unique_ptr<Decoder>&&)>>;
     AsyncReplyHandlerWithDispatcherMap m_asyncReplyHandlerWithDispatchers WTF_GUARDED_BY_LOCK(m_incomingMessagesLock);
 
 #if ENABLE(IPC_TESTING_API)
@@ -697,23 +692,9 @@ template<typename T>
 Ref<typename T::Promise> Connection::sendWithPromisedReply(T&& message, uint64_t destinationID, OptionSet<SendOption> sendOptions)
 {
     static_assert(!T::isSync, "Async message expected");
-    typename T::Promise::Producer producer(WTF::PromiseDispatchMode::RunSynchronouslyOnTarget);
+    typename T::Promise::Producer producer;
     auto promise = producer.promise();
-    auto handler = makeAsyncReplyHandler<T>(WTFMove(producer));
-    auto encoder = makeUniqueRef<Encoder>(T::name(), destinationID);
-    encoder.get() << message.arguments();
-    sendMessageWithAsyncReply(WTFMove(encoder), WTFMove(handler), sendOptions);
-    // The promise will be rejected in the handler should an error occur.
-    return promise;
-}
-
-template<typename T>
-Ref<typename T::Promise> Connection::sendWithPromisedReplyOnDispatcher(T&& message, RefCountedSerialFunctionDispatcher& dispatcher, uint64_t destinationID, OptionSet<SendOption> sendOptions)
-{
-    static_assert(!T::isSync, "Async message expected");
-    typename T::Promise::Producer producer(WTF::PromiseDispatchMode::RunSynchronouslyOnTarget);
-    auto promise = producer.promise();
-    auto handler = makeAsyncReplyHandlerWithDispatcher<T>(WTFMove(producer), dispatcher);
+    auto handler = makeAsyncReplyHandlerWithDispatcher<T>(WTFMove(producer));
     auto encoder = makeUniqueRef<Encoder>(T::name(), destinationID);
     encoder.get() << message.arguments();
     sendMessageWithAsyncReplyWithDispatcher(WTFMove(encoder), WTFMove(handler), sendOptions);
@@ -804,35 +785,6 @@ CompletionHandler<void(Decoder*)> Connection::makeAsyncReplyCompletionHandler(C&
     };
 }
 
-template<typename T>
-CompletionHandler<void(Decoder*)> Connection::makeAsyncReplyCompletionHandler(typename T::Promise::Producer&& producer, ThreadLikeAssertion callThread)
-{
-    return {
-        [producer = WTFMove(producer)] (Decoder* decoder) mutable {
-            if (!decoder) {
-                producer.reject(Error::InvalidConnection);
-                return;
-            }
-            if (!decoder->isValid()) {
-                producer.reject(Error::FailedToDecodeReplyArguments);
-                return;
-            }
-            if constexpr (!std::tuple_size_v<typename T::ReplyArguments>) {
-                producer.resolve();
-                return;
-            } else if (auto arguments = decoder->decode<typename T::ReplyArguments>()) {
-                if constexpr (std::tuple_size_v<typename T::ReplyArguments> == 1)
-                    producer.resolve(std::get<0>(WTFMove(*arguments)));
-                else
-                    producer.resolve(WTFMove(*arguments));
-                return;
-            }
-            ASSERT_NOT_REACHED();
-            producer.reject(Error::FailedToDecodeReplyArguments);
-        }, callThread
-    };
-}
-
 template<typename T, typename C>
 Connection::AsyncReplyHandler Connection::makeAsyncReplyHandler(C&& completionHandler, ThreadLikeAssertion callThread)
 {
@@ -844,15 +796,6 @@ Connection::AsyncReplyHandler Connection::makeAsyncReplyHandler(C&& completionHa
     };
 }
 
-template<typename T>
-Connection::AsyncReplyHandler Connection::makeAsyncReplyHandler(typename T::Promise::Producer&& producer, ThreadLikeAssertion callThread)
-{
-    return {
-        makeAsyncReplyCompletionHandler<T>(WTFMove(producer), callThread),
-        AsyncReplyID::generate()
-    };
-}
-
 template<typename T, typename C>
 Connection::AsyncReplyHandlerWithDispatcher Connection::makeAsyncReplyHandlerWithDispatcher(C&& completionHandler, RefCountedSerialFunctionDispatcher& dispatcher)
 {
@@ -860,21 +803,41 @@ Connection::AsyncReplyHandlerWithDispatcher Connection::makeAsyncReplyHandlerWit
     // We can just guarantee that the CompletionHandler will be run on the dispatcher provided, we don't want to enforce
     // where it's been created.
     return {
-        makeAsyncReplyCompletionHandler<T, C>(std::forward<C>(completionHandler), CompletionHandlerCallThread::AnyThread),
-        Ref { dispatcher },
+        {
+            [completionHandler = makeAsyncReplyCompletionHandler<T, C>(std::forward<C>(completionHandler), CompletionHandlerCallThread::AnyThread), dispatcher = Ref { dispatcher }](std::unique_ptr<Decoder>&& decoder) mutable {
+                dispatcher->dispatch([completionHandler = WTFMove(completionHandler), decoder = WTFMove(decoder)]() mutable {
+                    completionHandler(decoder.get());
+                });
+            }, CompletionHandlerCallThread::AnyThread
+        },
         AsyncReplyID::generate()
     };
 }
 
 template<typename T>
-Connection::AsyncReplyHandlerWithDispatcher Connection::makeAsyncReplyHandlerWithDispatcher(typename T::Promise::Producer&& producer, RefCountedSerialFunctionDispatcher& dispatcher)
+Connection::AsyncReplyHandlerWithDispatcher Connection::makeAsyncReplyHandlerWithDispatcher(typename T::Promise::Producer&& producer)
 {
-    // We use CompletionHandlerCallThread::AnyThread as it is up to the caller to determine the threading-model.
-    // We can just guarantee that the CompletionHandler will be run on the dispatcher provided, we don't want to enforce
-    // where it's been created.
     return {
-        makeAsyncReplyCompletionHandler<T>(WTFMove(producer), CompletionHandlerCallThread::AnyThread),
-        Ref { dispatcher },
+        {
+            [producer = WTFMove(producer)](std::unique_ptr<Decoder>&& decoder) mutable {
+                producer.settleWithFunction([decoder = WTFMove(decoder)]() mutable -> typename T::Promise::Result {
+                    if (!decoder)
+                        return makeUnexpected(Error::InvalidConnection);
+                    if (!decoder->isValid())
+                        return makeUnexpected(Error::FailedToDecodeReplyArguments);
+                    if constexpr (!std::tuple_size_v<typename T::ReplyArguments>)
+                        return typename T::Promise::Result { };
+                    else if (auto arguments = decoder->decode<typename T::ReplyArguments>()) {
+                        if constexpr (std::tuple_size_v<typename T::ReplyArguments> == 1)
+                            return std::get<0>(WTFMove(*arguments));
+                        else
+                            return WTFMove(*arguments);
+                    }
+                    ASSERT_NOT_REACHED();
+                    return makeUnexpected(Error::FailedToDecodeReplyArguments);
+                });
+            }, CompletionHandlerCallThread::AnyThread
+        },
         AsyncReplyID::generate()
     };
 }

@@ -680,7 +680,7 @@ TEST_P(ConnectionRunLoopTest, RunLoopSendWithPromisedReplyOnDispatcher)
         dispatchAndWait(runLoop, [&] {
             ASSERT_TRUE(openB());
             for (uint64_t i = 100u; i < 160u; ++i) {
-                b()->sendWithPromisedReplyOnDispatcher(MockTestMessageWithAsyncReply1 { }, awq.queue(), i)->whenSettled(awq.queue(), [&, j = i] (auto&& result) {
+                b()->sendWithPromisedReply(MockTestMessageWithAsyncReply1 { }, i)->whenSettled(awq.queue(), [&, j = i] (auto&& result) {
                     EXPECT_TRUE(result);
                     auto value = *result;
                     if (!value)
@@ -719,7 +719,7 @@ TEST_P(ConnectionRunLoopTest, RunLoopSendWithPromisedReplyOnMixAndMatchDispatche
         dispatchAndWait(runLoop, [&] {
             ASSERT_TRUE(openB());
             for (uint64_t i = 100u; i < 160u; ++i) {
-                b()->sendWithPromisedReplyOnDispatcher(MockTestMessageWithAsyncReply1 { }, awq.queue(), i)->whenSettled(runLoop, [&, j = i] (auto&& result) {
+                b()->sendWithPromisedReply(MockTestMessageWithAsyncReply1 { }, i)->whenSettled(runLoop, [&, j = i] (auto&& result) {
                     EXPECT_TRUE(result);
                     auto value = *result;
                     if (!value)

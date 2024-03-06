@@ -145,7 +145,7 @@ private:
     void ensureWeakOnDispatcher(Function<void()>&&);
     template<typename T> Ref<typename T::Promise> sendWithPromisedReply(T&& message)
     {
-        return m_gpuProcessConnection.get()->connection().sendWithPromisedReplyOnDispatcher(std::forward<T>(message), queue(), m_remoteSourceBufferIdentifier);
+        return m_gpuProcessConnection.get()->connection().sendWithPromisedReply(std::forward<T>(message), m_remoteSourceBufferIdentifier);
     }
 
     friend class MessageReceiver;

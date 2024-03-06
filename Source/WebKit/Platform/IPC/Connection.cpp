@@ -636,7 +636,6 @@ Error Connection::sendMessageWithAsyncReplyWithDispatcher(UniqueRef<Encoder>&& e
 {
     ASSERT(replyHandler.replyID);
     ASSERT(replyHandler.completionHandler);
-    ASSERT(replyHandler.dispatcher);
     auto replyID = replyHandler.replyID;
     encoder.get() << replyID;
     addAsyncReplyHandlerWithDispatcher(WTFMove(replyHandler));
@@ -644,11 +643,8 @@ Error Connection::sendMessageWithAsyncReplyWithDispatcher(UniqueRef<Encoder>&& e
     if (error == Error::NoError)
         return Error::NoError;
 
-    if (auto replyHandlerToCancel = takeAsyncReplyHandlerWithDispatcher(replyID)) {
-        replyHandlerToCancel.dispatcher->dispatch([completionHandler = WTFMove(replyHandlerToCancel.completionHandler)]() mutable {
-            completionHandler(nullptr);
-        });
-    }
+    if (auto replyHandlerToCancel = takeAsyncReplyHandlerWithDispatcher(replyID))
+        replyHandlerToCancel(nullptr);
     return error;
 }
 
@@ -928,9 +924,7 @@ void Connection::processIncomingMessage(UniqueRef<Decoder> message)
 
     if (message->messageReceiverName() == ReceiverName::AsyncReply) {
         if (auto replyHandlerWithDispatcher = takeAsyncReplyHandlerWithDispatcherWithLockHeld(AtomicObjectIdentifier<AsyncReplyIDType>(message->destinationID()))) {
-            replyHandlerWithDispatcher.dispatcher->dispatch([handler = WTFMove(replyHandlerWithDispatcher.completionHandler), message = WTFMove(message)]() mutable {
-                handler(message.ptr());
-            });
+            replyHandlerWithDispatcher(message.moveToUniquePtr());
             return;
         }
         // Fallback to default case, error handling will be performed in sendMessage().
@@ -1453,7 +1447,7 @@ void Connection::addAsyncReplyHandler(AsyncReplyHandler&& handler)
 void Connection::addAsyncReplyHandlerWithDispatcher(AsyncReplyHandlerWithDispatcher&& handler)
 {
     Locker locker { m_incomingMessagesLock };
-    auto result = m_asyncReplyHandlerWithDispatchers.add(handler.replyID, WTFMove(handler));
+    auto result = m_asyncReplyHandlerWithDispatchers.add(handler.replyID, WTFMove(handler.completionHandler));
     ASSERT_UNUSED(result, result.isNewEntry);
 }
 
@@ -1473,11 +1467,8 @@ void Connection::cancelAsyncReplyHandlers()
     }
 
     for (auto& handlerWithDispatcher : mapDispatcher.values()) {
-        if (handlerWithDispatcher) {
-            handlerWithDispatcher.dispatcher->dispatch([handler = WTFMove(handlerWithDispatcher.completionHandler)]() mutable {
-                handler(nullptr);
-            });
-        }
+        if (handlerWithDispatcher)
+            handlerWithDispatcher(nullptr);
     }
 }
 
@@ -1495,13 +1486,13 @@ bool Connection::isAsyncReplyHandlerWithDispatcher(AsyncReplyID replyID)
     return m_asyncReplyHandlerWithDispatchers.isValidKey(replyID) && m_asyncReplyHandlerWithDispatchers.contains(replyID);
 }
 
-Connection::AsyncReplyHandlerWithDispatcher Connection::takeAsyncReplyHandlerWithDispatcher(AsyncReplyID replyID)
+CompletionHandler<void(std::unique_ptr<Decoder>&&)> Connection::takeAsyncReplyHandlerWithDispatcher(AsyncReplyID replyID)
 {
     Locker locker { m_incomingMessagesLock };
     return takeAsyncReplyHandlerWithDispatcherWithLockHeld(replyID);
 }
 
-Connection::AsyncReplyHandlerWithDispatcher Connection::takeAsyncReplyHandlerWithDispatcherWithLockHeld(AsyncReplyID replyID)
+CompletionHandler<void(std::unique_ptr<Decoder>&&)> Connection::takeAsyncReplyHandlerWithDispatcherWithLockHeld(AsyncReplyID replyID)
 {
     assertIsHeld(m_incomingMessagesLock);
     if (!m_asyncReplyHandlerWithDispatchers.isValidKey(replyID))
