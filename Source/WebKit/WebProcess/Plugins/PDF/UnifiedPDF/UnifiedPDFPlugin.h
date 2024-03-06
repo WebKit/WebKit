@@ -112,6 +112,7 @@ public:
 #endif
     enum class IsAnnotationCommit : bool { No, Yes };
     static OptionSet<RepaintRequirement> repaintRequirementsForAnnotation(PDFAnnotation *, IsAnnotationCommit = IsAnnotationCommit::No);
+    void repaintAnnotationsForFormField(NSString *fieldName);
 
     void attemptToUnlockPDF(const String& password) final;
     void windowActivityDidChange() final;

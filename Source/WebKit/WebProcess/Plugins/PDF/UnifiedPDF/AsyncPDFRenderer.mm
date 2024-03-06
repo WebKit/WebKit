@@ -425,15 +425,16 @@ void AsyncPDFRenderer::didCompleteTileUpdateRender(RefPtr<WebCore::ImageBuffer>&
         << " (" << m_rendereredTiles.size() << " tiles in cache). Request removed " << !m_enqueuedTileUpdates.contains(tileInfo)
         << " configuration changed " << (renderInfo.configurationIdentifier != m_currentConfigurationIdentifier));
 
+    auto enqueuedTileUpdatesItr = m_enqueuedTileUpdates.find(tileInfo);
+
     // If the request for this tile has been revoked, don't cache it.
-    if (!m_enqueuedTileUpdates.contains(tileInfo))
+    if (enqueuedTileUpdatesItr == m_enqueuedTileUpdates.end() || enqueuedTileUpdatesItr->value.clipRect != renderInfo.clipRect)
         return;
 
     // Configuration has changed.
     if (renderInfo.configurationIdentifier != m_currentConfigurationIdentifier) {
-        auto it = m_enqueuedTileUpdates.find(tileInfo);
-        if (it != m_enqueuedTileUpdates.end() && it->value.configurationIdentifier == renderInfo.configurationIdentifier)
-            m_enqueuedTileUpdates.remove(it);
+        if (enqueuedTileUpdatesItr->value.configurationIdentifier == renderInfo.configurationIdentifier)
+            m_enqueuedTileUpdates.remove(enqueuedTileUpdatesItr);
         return;
     }
 
@@ -560,12 +561,17 @@ void AsyncPDFRenderer::updateTilesForPaintingRect(float pageScaleFactor, const W
             continue;
 
         auto it = m_enqueuedTileUpdates.find(tileInfo);
-        if (it != m_enqueuedTileUpdates.end() && it->value.configurationIdentifier == m_currentConfigurationIdentifier)
-            return;
-
         auto tileClipRect = intersection(renderedTile.tileInfo.tileRect, paintingRectInTileCoordinates);
+
+        if (it != m_enqueuedTileUpdates.end() && it->value.configurationIdentifier) {
+            if (!it->value.clipRect || it->value.clipRect->contains(tileClipRect))
+                return;
+
+            tileClipRect.unite(it->value.clipRect.value());
+        }
+
         auto tileRenderInfo = TileRenderInfo { renderedTile.tileInfo.tileRect, tileClipRect, pageCoverage, m_currentConfigurationIdentifier };
-        m_enqueuedTileUpdates.add(tileInfo, tileRenderInfo);
+        m_enqueuedTileUpdates.set(tileInfo, tileRenderInfo);
 
         LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::updateTilesForPaintingRect " << paintingRect << " - enqueue update for tile " << tileInfo
             << " tile clip " << tileClipRect << " in " << renderedTile.tileInfo.tileRect);

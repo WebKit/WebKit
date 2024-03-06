@@ -117,6 +117,7 @@
 #if ENABLE(UNIFIED_PDF)
 @interface PDFDocument (IPI)
 - (PDFDestination *)namedDestination:(NSString *)name;
+- (NSArray *)annotationsForFieldName:(NSString *)fieldname;
 @end
 
 #if HAVE(COREGRAPHICS_WITH_PDF_AREA_OF_INTEREST_SUPPORT)

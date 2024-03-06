@@ -99,6 +99,9 @@
 - (void)formChanged:(NSNotification *)notification
 {
     _plugin->didMutatePDFDocument();
+
+    NSString *fieldName = (NSString *)[[notification userInfo] objectForKey:@"PDFFormFieldName"];
+    _plugin->repaintAnnotationsForFormField(fieldName);
 }
 @end
 
@@ -1931,6 +1934,13 @@ OptionSet<RepaintRequirement> UnifiedPDFPlugin::repaintRequirementsForAnnotation
     // No visual feedback for getPDFAnnotationLinkClass at this time.
 
     return { };
+}
+
+void UnifiedPDFPlugin::repaintAnnotationsForFormField(NSString *fieldName)
+{
+    RetainPtr annotations = [m_pdfDocument annotationsForFieldName:fieldName];
+    for (PDFAnnotation *annotation in annotations.get())
+        setNeedsRepaintInDocumentRect(repaintRequirementsForAnnotation(annotation), documentRectForAnnotation(annotation));
 }
 
 WebCore::FloatRect UnifiedPDFPlugin::documentRectForAnnotation(PDFAnnotation *annotation) const
