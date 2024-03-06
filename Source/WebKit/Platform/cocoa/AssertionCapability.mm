@@ -31,6 +31,10 @@
 #import "Logging.h"
 #import <BrowserEngineKit/BrowserEngineKit.h>
 
+#if USE(LEGACY_EXTENSIONKIT_SPI)
+#import "ExtensionKitSoftLink.h"
+#endif
+
 namespace WebKit {
 
 AssertionCapability::AssertionCapability(String environmentIdentifier, String domain, String name, Function<void()>&& willInvalidateFunction, Function<void()>&& didInvalidateFunction)
@@ -41,12 +45,17 @@ AssertionCapability::AssertionCapability(String environmentIdentifier, String do
     , m_didInvalidateBlock { makeBlockPtr(WTFMove(didInvalidateFunction)) }
 {
     RELEASE_LOG(Process, "AssertionCapability::AssertionCapability: taking assertion %{public}s", m_name.utf8().data());
+#if USE(LEGACY_EXTENSIONKIT_SPI)
+    _SECapability* capability = [get_SECapabilityClass() assertionWithDomain:m_domain name:m_name environmentIdentifier:m_environmentIdentifier willInvalidate:m_willInvalidateBlock.get() didInvalidate:m_didInvalidateBlock.get()];
+    setPlatformCapability(capability);
+#else
     if (m_name == "Suspended"_s)
         setPlatformCapability([BEProcessCapability suspended]);
     else if (m_name == "Background"_s)
         setPlatformCapability([BEProcessCapability background]);
     else if (m_name == "Foreground"_s)
         setPlatformCapability([BEProcessCapability foreground]);
+#endif
 }
 
 } // namespace WebKit
