@@ -33,6 +33,7 @@
 #include <WebCore/NetworkLoadInformation.h>
 #include <pal/SessionID.h>
 #include <variant>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -57,7 +58,7 @@ class NetworkSchemeRegistry;
 using DocumentURL = URL;
 
 class NetworkLoadChecker : public CanMakeWeakPtr<NetworkLoadChecker> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(NetworkLoadChecker);
 public:
     enum class LoadType : bool { MainFrame, Other };
 

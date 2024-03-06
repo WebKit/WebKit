@@ -34,6 +34,7 @@
 #include <WebCore/WorkerOptions.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/ListHashSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -46,7 +47,7 @@ class WebSharedWorkerServer;
 class WebSharedWorkerServerToContextConnection;
 
 class WebSharedWorker : public CanMakeWeakPtr<WebSharedWorker> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(WebSharedWorker);
 public:
     WebSharedWorker(WebSharedWorkerServer&, const WebCore::SharedWorkerKey&, const WebCore::WorkerOptions&);
     ~WebSharedWorker();

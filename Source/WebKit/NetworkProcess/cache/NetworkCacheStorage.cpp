@@ -46,6 +46,8 @@
 namespace WebKit {
 namespace NetworkCache {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(Storage);
+
 static constexpr auto saltFileName = "salt"_s;
 static constexpr auto versionDirectoryPrefix = "Version "_s;
 static constexpr auto recordsDirectoryName = "Records"_s;
@@ -66,7 +68,7 @@ static uint64_t nextReadOperationOrdinal()
 }
 
 struct Storage::ReadOperation {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(Storage::ReadOperation);
 public:
     ReadOperation(Storage& storage, const Key& key, unsigned priority, RetrieveCompletionHandler&& completionHandler)
         : storage(storage)
@@ -130,7 +132,7 @@ bool Storage::ReadOperation::finish()
 }
 
 struct Storage::WriteOperation {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(Storage::WriteOperation);
 public:
     WriteOperation(Storage& storage, const Record& record, MappedBodyHandler&& mappedBodyHandler, CompletionHandler<void(int)>&& completionHandler)
         : storage(storage)
@@ -149,7 +151,7 @@ public:
 };
 
 struct Storage::TraverseOperation {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(Storage::TraverseOperation);
 public:
     TraverseOperation(Ref<Storage>&& storage, const String& type, OptionSet<TraverseFlag> flags, TraverseHandler&& handler)
         : storage(WTFMove(storage))

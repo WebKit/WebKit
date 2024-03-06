@@ -28,6 +28,7 @@
 #if USE(LIBWEBRTC)
 
 #include "NetworkRTCProvider.h"
+#include <wtf/TZoneMalloc.h>
 
 ALLOW_COMMA_BEGIN
 
@@ -44,7 +45,7 @@ typedef int64_t PacketTime;
 namespace WebKit {
 
 class LibWebRTCSocketClient final : public NetworkRTCProvider::Socket, public sigslot::has_slots<> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(LibWebRTCSocketClient);
 public:
     LibWebRTCSocketClient(WebCore::LibWebRTCSocketIdentifier, NetworkRTCProvider&, std::unique_ptr<rtc::AsyncPacketSocket>&&, Type, Ref<IPC::Connection>&&);
 

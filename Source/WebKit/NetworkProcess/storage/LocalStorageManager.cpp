@@ -34,6 +34,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(LocalStorageManager);
+
 // Suggested by https://www.w3.org/TR/webstorage/#disk-space
 constexpr unsigned localStorageQuotaInBytes = 5 * MB;
 constexpr auto s_fileSuffix = ".localstorage"_s;

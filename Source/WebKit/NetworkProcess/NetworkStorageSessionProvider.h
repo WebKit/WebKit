@@ -29,11 +29,13 @@
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/StorageSessionProvider.h>
 #include <pal/SessionID.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
 
 class NetworkStorageSessionProvider final : public WebCore::StorageSessionProvider {
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(NetworkStorageSessionProvider);
 public:
     static Ref<NetworkStorageSessionProvider> create(NetworkProcess& networkProcess, PAL::SessionID sessionID) { return adoptRef(*new NetworkStorageSessionProvider(networkProcess, sessionID)); }
     

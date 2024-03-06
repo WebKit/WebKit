@@ -30,6 +30,7 @@
 #include "NetworkLoadClient.h"
 #include <WebCore/Timer.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
@@ -40,6 +41,7 @@ class NetworkProcess;
 class NetworkSession;
 
 class PreconnectTask final : public NetworkLoadClient {
+    WTF_MAKE_WK_TZONE_ALLOCATED(PreconnectTask);
 public:
     PreconnectTask(NetworkSession&, NetworkLoadParameters&&, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::NetworkLoadMetrics&)>&&);
     ~PreconnectTask();

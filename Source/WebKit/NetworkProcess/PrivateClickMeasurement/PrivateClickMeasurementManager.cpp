@@ -47,6 +47,8 @@
 namespace WebKit {
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(PrivateClickMeasurementManager);
+
 using SourceSite = WebCore::PCM::SourceSite;
 using AttributionDestinationSite = WebCore::PCM::AttributionDestinationSite;
 using AttributionTriggerData = WebCore::PCM::AttributionTriggerData;

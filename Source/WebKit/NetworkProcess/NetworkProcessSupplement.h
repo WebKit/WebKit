@@ -26,12 +26,14 @@
 #pragma once
 
 #include "AuxiliaryProcessSupplement.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
 struct NetworkProcessCreationParameters;
 
 class NetworkProcessSupplement : public AuxiliaryProcessSupplement {
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(NetworkProcessSupplement);
 public:
     virtual void initialize(const NetworkProcessCreationParameters&)
     {

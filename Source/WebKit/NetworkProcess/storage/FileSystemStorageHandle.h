@@ -29,6 +29,7 @@
 #include "FileSystemSyncAccessHandleInfo.h"
 #include <WebCore/FileSystemHandleIdentifier.h>
 #include <WebCore/FileSystemSyncAccessHandleIdentifier.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace IPC {
@@ -41,7 +42,7 @@ class FileSystemStorageManager;
 enum class FileSystemStorageError : uint8_t;
 
 class FileSystemStorageHandle : public CanMakeWeakPtr<FileSystemStorageHandle, WeakPtrFactoryInitialization::Eager> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(FileSystemStorageHandle);
 public:
     enum class Type : uint8_t { File, Directory, Any };
     static std::unique_ptr<FileSystemStorageHandle> create(FileSystemStorageManager&, Type, String&& path, String&& name);

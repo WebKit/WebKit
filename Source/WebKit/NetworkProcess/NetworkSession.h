@@ -49,6 +49,8 @@
 #include <wtf/HashSet.h>
 #include <wtf/Ref.h>
 #include <wtf/Seconds.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/ThreadSafeWeakHashSet.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
@@ -102,7 +104,7 @@ class Cache;
 }
 
 class NetworkSession : public WebCore::SWServerDelegate, public CanMakeCheckedPtr {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(NetworkSession);
 public:
     static std::unique_ptr<NetworkSession> create(NetworkProcess&, const NetworkSessionCreationParameters&);
     virtual ~NetworkSession();
@@ -311,7 +313,7 @@ protected:
     HashSet<Ref<NetworkResourceLoader>> m_keptAliveLoads;
 
     class CachedNetworkResourceLoader {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(CachedNetworkResourceLoader);
     public:
         explicit CachedNetworkResourceLoader(Ref<NetworkResourceLoader>&&);
         RefPtr<NetworkResourceLoader> takeLoader();

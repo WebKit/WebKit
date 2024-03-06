@@ -26,6 +26,7 @@
 #pragma once
 
 #include "PrivateClickMeasurementStore.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
@@ -37,6 +38,7 @@ class Database;
 struct DebugInfo;
 
 class EphemeralStore : public Store {
+    WTF_MAKE_WK_TZONE_ALLOCATED(EphemeralStore);
 public:
     static Ref<Store> create()
     {

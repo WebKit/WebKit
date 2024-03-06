@@ -27,6 +27,7 @@
 
 #include "NetworkCacheData.h"
 #include <wtf/SHA1.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WTF::Persistence {
@@ -52,6 +53,7 @@ struct DataKey {
 };
 
 class Key {
+    WTF_MAKE_WK_TZONE_ALLOCATED(Key);
 public:
     typedef SHA1::Digest HashType;
 

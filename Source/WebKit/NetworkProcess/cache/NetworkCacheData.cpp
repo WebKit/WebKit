@@ -38,6 +38,8 @@
 namespace WebKit {
 namespace NetworkCache {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(Data);
+
 Data Data::mapToFile(const String& path) const
 {
     FileSystem::PlatformFileHandle handle;

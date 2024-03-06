@@ -33,6 +33,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(DownloadMonitor);
+
 constexpr uint64_t operator"" _kbps(unsigned long long kilobytesPerSecond)
 {
     return kilobytesPerSecond * 1024;

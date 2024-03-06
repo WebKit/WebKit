@@ -28,6 +28,7 @@
 #include <WebCore/ResourceLoaderIdentifier.h>
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 
 #if ENABLE(TAKE_UNBOUNDED_NETWORKING_ASSERTION)
 #include "ProcessAssertion.h"
@@ -39,6 +40,7 @@ class NetworkResourceLoader;
 class NetworkConnectionToWebProcess;
 
 class NetworkResourceLoadMap {
+    WTF_MAKE_WK_TZONE_ALLOCATED(NetworkResourceLoadMap);
 public:
     using MapType = HashMap<WebCore::ResourceLoaderIdentifier, Ref<NetworkResourceLoader>>;
     NetworkResourceLoadMap(Function<void(bool hasUpload)>&&);

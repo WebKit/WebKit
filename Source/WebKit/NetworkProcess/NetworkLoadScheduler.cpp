@@ -34,11 +34,13 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(NetworkLoadScheduler);
+
 static constexpr size_t maximumActiveCountForLowPriority = 2;
 static constexpr size_t maximumTrackedHTTP1XOrigins = 128;
 
 class NetworkLoadScheduler::HostContext {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(NetworkLoadScheduler::HostContext);
 public:
     HostContext() = default;
     ~HostContext();

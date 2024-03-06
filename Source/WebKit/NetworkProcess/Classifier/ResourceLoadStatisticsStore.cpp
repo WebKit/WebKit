@@ -61,6 +61,9 @@
 namespace WebKit {
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(OperatingDate);
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(ResourceLoadStatisticsStore);
+
 #define ITP_RELEASE_LOG(sessionID, fmt, ...) RELEASE_LOG(Network, "%p - ResourceLoadStatisticsStore::" fmt, this, ##__VA_ARGS__)
 #define ITP_RELEASE_LOG_ERROR(sessionID, fmt, ...) RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsStore::" fmt, this, ##__VA_ARGS__)
 

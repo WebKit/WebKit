@@ -32,6 +32,8 @@
 
 namespace WebKit::PCM {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(DaemonClient);
+
 void DaemonClient::broadcastConsoleMessage(JSC::MessageLevel level, const String& message)
 {
 #if PLATFORM(COCOA)

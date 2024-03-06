@@ -28,6 +28,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(NetworkTransportBidirectionalStream);
+
 NetworkTransportBidirectionalStream::NetworkTransportBidirectionalStream(NetworkTransportSession& session)
     : NetworkTransportReceiveStream(session) { }
 

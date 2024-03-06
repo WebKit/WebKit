@@ -44,9 +44,12 @@ ALLOW_COMMA_END
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(NetworkRTCMonitor);
+
 #define RTC_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - NetworkRTCMonitor::" fmt, this, ##__VA_ARGS__)
 
 class NetworkManagerWrapper final : public sigslot::has_slots<> {
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(NetworkManagerWrapper);
 public:
     void addListener(NetworkRTCMonitor&);
     void removeListener(NetworkRTCMonitor&);

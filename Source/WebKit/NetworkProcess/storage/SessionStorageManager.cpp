@@ -31,6 +31,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(SessionStorageManager);
+
 SessionStorageManager::SessionStorageManager(StorageAreaRegistry& registry)
     : m_registry(registry)
 {

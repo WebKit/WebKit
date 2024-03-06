@@ -33,6 +33,8 @@
 
 namespace WebKit::PCM {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(ManagerProxy);
+
 template<MessageType messageType, typename... Args>
 void ManagerProxy::sendMessage(Args&&... args) const
 {

@@ -32,13 +32,14 @@
 #elif USE(CURL)
 #include "WebSocketTaskCurl.h"
 #else
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
 struct SessionSet;
 
 class WebSocketTask : public CanMakeWeakPtr<WebSocketTask> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(WebSocketTask);
 public:
     typedef uint64_t TaskIdentifier;
 

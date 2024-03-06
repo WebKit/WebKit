@@ -27,6 +27,7 @@
 
 #include "DatabaseUtilities.h"
 #include <WebCore/PrivateClickMeasurement.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WeakPtr.h>
 
@@ -36,7 +37,7 @@ struct DebugInfo;
 
 // This is created, used, and destroyed on the Store's queue.
 class Database : public DatabaseUtilities, public CanMakeWeakPtr<Database> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(Database);
 public:
     Database(const String& storageDirectory);
     virtual ~Database();

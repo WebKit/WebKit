@@ -31,6 +31,8 @@
 
 namespace WebKit::PCM {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(ClientImpl);
+
 ClientImpl::ClientImpl(NetworkSession& session, NetworkProcess& networkProcess)
     : m_networkSession(session)
     , m_networkProcess(networkProcess) { }

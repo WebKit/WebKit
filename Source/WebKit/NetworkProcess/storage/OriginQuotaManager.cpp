@@ -30,6 +30,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(OriginQuotaManager);
+
 static constexpr double defaultReportedQuotaIncreaseFactor = 2.0;
 
 Ref<OriginQuotaManager> OriginQuotaManager::create(Parameters&& parameters, GetUsageFunction&& getUsageFunction)

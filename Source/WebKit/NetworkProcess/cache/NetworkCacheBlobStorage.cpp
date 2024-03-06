@@ -41,6 +41,8 @@
 namespace WebKit {
 namespace NetworkCache {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(BlobStorage);
+
 BlobStorage::BlobStorage(const String& blobDirectoryPath, Salt salt)
     : m_blobDirectoryPath(blobDirectoryPath)
     , m_salt(salt)

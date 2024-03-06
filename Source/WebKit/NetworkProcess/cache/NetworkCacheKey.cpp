@@ -36,6 +36,8 @@
 namespace WebKit {
 namespace NetworkCache {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(Key);
+
 Key::Key(const Key& o)
     : m_partition(o.m_partition.isolatedCopy())
     , m_type(o.m_type.isolatedCopy())

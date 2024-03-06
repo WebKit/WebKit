@@ -46,6 +46,8 @@ OBJC_CLASS NSURLCredentialStorage;
 #include <WebCore/RegistrableDomain.h>
 #include <wtf/HashMap.h>
 #include <wtf/Seconds.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 enum class AdvancedPrivacyProtections : uint16_t;
@@ -70,7 +72,7 @@ struct SessionWrapper : public CanMakeWeakPtr<SessionWrapper> {
 };
 
 struct IsolatedSession {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(IsolatedSession);
 public:
     SessionWrapper sessionWithCredentialStorage;
     WallTime lastUsed;
@@ -99,6 +101,7 @@ private:
 };
 
 class NetworkSessionCocoa final : public NetworkSession {
+    WTF_MAKE_WK_TZONE_ALLOCATED(NetworkSessionCocoa);
 public:
     static std::unique_ptr<NetworkSession> create(NetworkProcess&, const NetworkSessionCreationParameters&);
 

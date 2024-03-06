@@ -38,6 +38,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(CacheStorageCache);
+
 static String computeKeyURL(const URL& url)
 {
     RELEASE_ASSERT(url.isValid());

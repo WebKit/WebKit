@@ -36,6 +36,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/PriorityQueue.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WallTime.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/text/WTFString.h>
@@ -46,6 +47,7 @@ namespace NetworkCache {
 class IOChannel;
 
 class Storage : public ThreadSafeRefCounted<Storage, WTF::DestructionThread::Main> {
+    WTF_MAKE_WK_TZONE_ALLOCATED(Storage);
 public:
     enum class Mode { Normal, AvoidRandomness };
     static RefPtr<Storage> open(const String& cachePath, Mode, size_t capacity);

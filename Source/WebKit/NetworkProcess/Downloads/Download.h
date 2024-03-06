@@ -37,6 +37,7 @@
 #include <pal/SessionID.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 #if PLATFORM(COCOA)
@@ -61,7 +62,8 @@ class NetworkSession;
 class WebPage;
 
 class Download : public IPC::MessageSender, public CanMakeWeakPtr<Download> {
-    WTF_MAKE_NONCOPYABLE(Download); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(Download);
+    WTF_MAKE_WK_TZONE_ALLOCATED(Download);
 public:
     Download(DownloadManager&, DownloadID, NetworkDataTask&, NetworkSession&, const String& suggestedFilename = { });
 #if PLATFORM(COCOA)

@@ -33,6 +33,8 @@
 namespace WebKit {
 namespace NetworkCache {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(AsyncRevalidation);
+
 static inline WebCore::ResourceRequest constructRevalidationRequest(const Key& key, const WebCore::ResourceRequest& request, const Entry& entry)
 {
     WebCore::ResourceRequest revalidationRequest = request;

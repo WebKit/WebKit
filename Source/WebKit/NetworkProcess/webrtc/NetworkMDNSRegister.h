@@ -34,6 +34,7 @@
 #include <wtf/Expected.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 
 #if PLATFORM(COCOA) && defined __has_include && __has_include(<dns_sd.h>)
 #define ENABLE_MDNS 1
@@ -63,6 +64,7 @@ namespace WebKit {
 class NetworkConnectionToWebProcess;
 
 class NetworkMDNSRegister {
+    WTF_MAKE_WK_TZONE_ALLOCATED(NetworkMDNSRegister);
 public:
     NetworkMDNSRegister(NetworkConnectionToWebProcess&);
     ~NetworkMDNSRegister();

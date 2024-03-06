@@ -36,6 +36,10 @@
 namespace WebKit {
 namespace NetworkCache {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(SubresourceInfo);
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(SubresourceLoad);
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(SubresourcesEntry);
+
 bool SubresourceInfo::isFirstParty() const
 {
     WebCore::RegistrableDomain firstPartyDomain { m_firstPartyForCookies };

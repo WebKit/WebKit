@@ -28,6 +28,7 @@
 #include <WebCore/ClientOrigin.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WTF {
 class WorkQueue;
@@ -43,6 +44,7 @@ class NetworkStorageManager;
 struct BackgroundFetchState;
 
 class BackgroundFetchStoreImpl :  public WebCore::BackgroundFetchStore {
+    WTF_MAKE_WK_TZONE_ALLOCATED(BackgroundFetchStoreImpl);
 public:
     static Ref<BackgroundFetchStoreImpl> create(WeakPtr<NetworkStorageManager>&& manager, WeakPtr<WebCore::SWServer>&& server) { return adoptRef(*new BackgroundFetchStoreImpl(WTFMove(manager), WTFMove(server))); }
     ~BackgroundFetchStoreImpl();

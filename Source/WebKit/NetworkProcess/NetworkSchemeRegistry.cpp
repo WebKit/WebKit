@@ -28,6 +28,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(NetworkSchemeRegistry);
+
 void NetworkSchemeRegistry::registerURLSchemeAsCORSEnabled(String&& scheme)
 {
     m_corsEnabledSchemes.add(WTFMove(scheme));

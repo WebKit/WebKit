@@ -36,6 +36,7 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace PAL {
 class SessionID;
@@ -63,7 +64,7 @@ enum class CallDownloadDidStart : bool { No, Yes };
 
 class DownloadManager {
     WTF_MAKE_NONCOPYABLE(DownloadManager);
-
+    WTF_MAKE_WK_TZONE_ALLOCATED(DownloadManager);
 public:
     class Client : public CanMakeCheckedPtr {
     public:

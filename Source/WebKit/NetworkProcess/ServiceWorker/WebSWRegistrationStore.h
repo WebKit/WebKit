@@ -29,6 +29,7 @@
 #include <WebCore/ServiceWorkerContextData.h>
 #include <WebCore/Timer.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class SWServer;
@@ -39,6 +40,7 @@ namespace WebKit {
 class NetworkStorageManager;
 
 class WebSWRegistrationStore final : public WebCore::SWRegistrationStore, public CanMakeWeakPtr<WebSWRegistrationStore> {
+    WTF_MAKE_WK_TZONE_ALLOCATED(WebSWRegistrationStore);
 public:
     WebSWRegistrationStore(WebCore::SWServer&, NetworkStorageManager&);
 

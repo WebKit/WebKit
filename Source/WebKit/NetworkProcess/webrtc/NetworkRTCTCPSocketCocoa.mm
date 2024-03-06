@@ -40,6 +40,8 @@ namespace WebKit {
 
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(NetworkRTCTCPSocketCocoa);
+
 static dispatch_queue_t tcpSocketQueue()
 {
     static dispatch_queue_t queue;

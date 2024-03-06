@@ -30,6 +30,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(StorageAreaBase);
+
 uint64_t StorageAreaBase::nextMessageIdentifier()
 {
     static std::atomic<uint64_t> currentIdentifier;

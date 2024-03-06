@@ -29,6 +29,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(NetworkResourceLoadMap);
+
 NetworkResourceLoadMap::NetworkResourceLoadMap(Function<void(bool hasUpload)>&& hasUploadChangeListener)
     : m_hasUploadChangeListener(WTFMove(hasUploadChangeListener))
 {

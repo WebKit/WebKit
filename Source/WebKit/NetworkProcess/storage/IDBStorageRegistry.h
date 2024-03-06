@@ -27,6 +27,7 @@
 
 #include "Connection.h"
 #include <WebCore/IDBResourceIdentifier.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -41,7 +42,7 @@ namespace WebKit {
 class IDBStorageConnectionToClient;
 
 class IDBStorageRegistry {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(IDBStorageRegistry);
 public:
     IDBStorageRegistry();
     WebCore::IDBServer::IDBConnectionToClient& ensureConnectionToClient(IPC::Connection::UniqueID, WebCore::IDBConnectionIdentifier);

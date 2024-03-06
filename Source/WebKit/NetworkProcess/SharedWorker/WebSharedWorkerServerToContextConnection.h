@@ -34,6 +34,7 @@
 #include <WebCore/Timer.h>
 #include <WebCore/TransferredMessagePort.h>
 #include <wtf/CheckedRef.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class RegistrableDomain;
@@ -50,7 +51,7 @@ class WebSharedWorker;
 class WebSharedWorkerServer;
 
 class WebSharedWorkerServerToContextConnection final : public IPC::MessageSender, public IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(WebSharedWorkerServerToContextConnection);
 public:
     WebSharedWorkerServerToContextConnection(NetworkConnectionToWebProcess&, const WebCore::RegistrableDomain&, WebSharedWorkerServer&);
     ~WebSharedWorkerServerToContextConnection();

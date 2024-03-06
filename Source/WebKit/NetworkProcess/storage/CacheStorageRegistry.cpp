@@ -30,6 +30,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(CacheStorageRegistry);
+
 CacheStorageRegistry::CacheStorageRegistry() = default;
 
 void CacheStorageRegistry::registerCache(WebCore::DOMCacheIdentifier identifier, CacheStorageCache& cache)

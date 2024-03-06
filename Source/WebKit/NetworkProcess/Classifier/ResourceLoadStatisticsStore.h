@@ -33,6 +33,7 @@
 #include <pal/SessionID.h>
 #include <wtf/Forward.h>
 #include <wtf/StdSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 #if HAVE(CORE_PREDICTION)
@@ -53,6 +54,7 @@ namespace WebKit {
 enum class DidFilterKnownLinkDecoration : bool;
 
 class OperatingDate {
+    WTF_MAKE_WK_TZONE_ALLOCATED(OperatingDate);
 public:
     OperatingDate() = default;
     
@@ -86,7 +88,7 @@ enum class DataRemovalFrequency : uint8_t { Never, Short, Long };
 
 // This is always constructed / used / destroyed on the WebResourceLoadStatisticsStore's statistics queue.
 class ResourceLoadStatisticsStore final : public DatabaseUtilities, public CanMakeWeakPtr<ResourceLoadStatisticsStore> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(ResourceLoadStatisticsStore);
 public:
     using ResourceLoadStatistics = WebCore::ResourceLoadStatistics;
     using RegistrableDomain = WebCore::RegistrableDomain;

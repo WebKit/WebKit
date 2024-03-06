@@ -31,6 +31,7 @@
 #include <tuple>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakListHashSet.h>
 #include <wtf/WeakPtr.h>
 
@@ -43,7 +44,7 @@ namespace WebKit {
 class NetworkLoad;
 
 class NetworkLoadScheduler : public CanMakeWeakPtr<NetworkLoadScheduler> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(NetworkLoadScheduler);
 public:
     NetworkLoadScheduler();
     ~NetworkLoadScheduler();
