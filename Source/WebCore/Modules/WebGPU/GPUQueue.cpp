@@ -541,7 +541,7 @@ static void* copyToDestinationFormat(const uint8_t* rgbaBytes, GPUTextureFormat 
 
     case GPUTextureFormat::Rg8unorm: {
         uint8_t* data = (uint8_t*)malloc(sizeInBytes / 2);
-        for (size_t i = 0, i0 = 0; i < sizeInBytes; i += 2, ++i0) {
+        for (size_t i = 0, i0 = 0; i < sizeInBytes; i += 4, i0 += 2) {
             data[i0] = rgbaBytes[i];
             data[i0 + 1] = rgbaBytes[i + 1];
         }
