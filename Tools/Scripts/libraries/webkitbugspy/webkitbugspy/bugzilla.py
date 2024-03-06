@@ -441,6 +441,11 @@ class Tracker(GenericTracker):
 
         return issue
 
+    def open(self, issue, why):
+        if issue.opened:
+            return False
+        return self.set(issue, opened=True, why=why)
+
     def add_comment(self, issue, text):
         response = None
         try:

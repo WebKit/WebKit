@@ -448,6 +448,11 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
             sys.stderr.write('Could not assign {} to issue'.format(missed_assignees))
         return response_assignees
 
+    def open(self, issue, why):
+        if issue.opened:
+            return False
+        return self.set(issue, opened=True, why=why)
+
     def add_comment(self, issue, text):
         data = self.request(
             'issues/{id}/comments'.format(id=issue.id),

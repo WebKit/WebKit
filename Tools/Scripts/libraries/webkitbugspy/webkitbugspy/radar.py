@@ -393,6 +393,20 @@ class Tracker(GenericTracker):
             radar.commit_changes()
         return self.add_comment(issue, why) if why else issue
 
+    def open(self, issue, why):
+        if not self.client or not self.library:
+            sys.stderr.write('radarclient inaccessible on this machine\n')
+            return None
+
+        radar = self.client.radar_for_id(issue.id)
+        if not radar:
+            sys.stderr.write("Failed to fetch '{}'\n".format(issue.link))
+            return None
+
+        if issue.opened and radar.state != 'Integrate':
+            return False
+        return self.set(issue, opened=True, why=why)
+
     def add_comment(self, issue, text):
         if not self.client or not self.library:
             sys.stderr.write('radarclient inaccessible on this machine\n')

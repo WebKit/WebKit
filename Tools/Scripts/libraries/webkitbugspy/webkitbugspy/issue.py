@@ -119,9 +119,7 @@ class Issue(object):
         return self._opened
 
     def open(self, why=None):
-        if self.opened:
-            return False
-        return bool(self.tracker.set(self, opened=True, why=why))
+        return bool(self.tracker.open(self, why=why))
 
     def close(self, why=None, original=None):
         if not self.opened:
