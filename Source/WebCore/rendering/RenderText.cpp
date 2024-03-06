@@ -813,8 +813,8 @@ VisiblePosition RenderText::positionForPoint(const LayoutPoint& point, const Ren
     if (!firstRun || !text().length())
         return createVisiblePosition(0, Affinity::Downstream);
 
-    LayoutUnit pointLineDirection = firstRun->isHorizontal() ? point.x() : point.y();
-    LayoutUnit pointBlockDirection = firstRun->isHorizontal() ? point.y() : point.x();
+    auto pointLineDirection = firstRun->isHorizontal() ? point.x() : point.y();
+    auto pointBlockDirection = firstRun->isHorizontal() ? point.y() : point.x();
     bool blocksAreFlipped = style().isFlippedBlocksWritingMode();
 
     InlineIterator::TextBoxIterator lastRun;
@@ -825,15 +825,15 @@ VisiblePosition RenderText::positionForPoint(const LayoutPoint& point, const Ren
         auto lineBox = run->lineBox();
         auto top = LayoutUnit { std::min(previousLineBoxContentBottomOrBorderAndPadding(*lineBox), lineBox->contentLogicalTop()) };
         if (pointBlockDirection > top || (!blocksAreFlipped && pointBlockDirection == top)) {
-            auto bottom = LineSelection::logicalBottom(*lineBox);
+            auto bottom = LayoutUnit { LineSelection::logicalBottom(*lineBox) };
             if (auto nextLineBox = lineBox->next())
-                bottom = std::min(bottom, nextLineBox->contentLogicalTop());
+                bottom = std::min(bottom, LayoutUnit { nextLineBox->contentLogicalTop() });
 
             if (pointBlockDirection < bottom || (blocksAreFlipped && pointBlockDirection == bottom)) {
                 ShouldAffinityBeDownstream shouldAffinityBeDownstream;
 #if PLATFORM(IOS_FAMILY)
                 if (pointLineDirection != run->logicalLeftIgnoringInlineDirection() && point.x() < run->visualRectIgnoringBlockDirection().x() + run->logicalWidth()) {
-                    int half = run->visualRectIgnoringBlockDirection().x() + run->logicalWidth() / 2;
+                    auto half = LayoutUnit { run->visualRectIgnoringBlockDirection().x() + run->logicalWidth() / 2.f };
                     auto affinity = point.x() < half ? Affinity::Downstream : Affinity::Upstream;
                     return createVisiblePosition(offsetForPositionInRun(*run, pointLineDirection) + run->start(), affinity);
                 }
