@@ -96,7 +96,7 @@ private:
     String m_settings;
 };
 
-class WebVTTParser final {
+class WEBCORE_EXPORT WebVTTParser final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     enum ParseState {
@@ -111,6 +111,7 @@ public:
         Finished
     };
 
+    WebVTTParser() = delete;
     WebVTTParser(WebVTTParserClient&, Document&);
 
     static inline bool isRecognizedTag(const AtomString& tagName)
