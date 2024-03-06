@@ -5270,6 +5270,18 @@ PermissionsAPIEnabled:
     WebCore:
       default: false
 
+PhotoPickerPrefersOriginalImageFormat:
+  type: bool
+  status: internal
+  humanReadableName: "Photo Picker Prefers Original Image Format"
+  humanReadableDescription: "Prefer the original image format when selecting photos for file upload"
+  webcoreBinding: none
+  condition: HAVE(PHOTOS_UI)
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: true
+
 PictographFontFamily:
   type: String
   status: embedder

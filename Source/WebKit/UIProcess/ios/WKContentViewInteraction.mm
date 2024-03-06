@@ -9023,6 +9023,14 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
         && [uiDelegate _webView:webView.get() fileUploadPanelContentIsManagedWithInitiatingFrame:wrapper(API::FrameInfo::create(WTFMove(_frameInfoForFileUploadPanel), _page.get())).get()];
 }
 
+#if HAVE(PHOTOS_UI)
+- (BOOL)fileUploadPanelPhotoPickerPrefersOriginalImageFormat:(WKFileUploadPanel *)fileUploadPanel
+{
+    ASSERT(_fileUploadPanel.get() == fileUploadPanel);
+    return _page->preferences().photoPickerPrefersOriginalImageFormat();
+}
+#endif
+
 - (void)_showShareSheet:(const WebCore::ShareDataWithParsedURL&)data inRect:(std::optional<WebCore::FloatRect>)rect completionHandler:(CompletionHandler<void(bool)>&&)completionHandler
 {
 #if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)

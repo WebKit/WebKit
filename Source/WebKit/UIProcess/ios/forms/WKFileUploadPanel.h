@@ -56,6 +56,9 @@ class WebOpenPanelResultListenerProxy;
 @optional
 - (void)fileUploadPanelDidDismiss:(WKFileUploadPanel *)fileUploadPanel;
 - (BOOL)fileUploadPanelDestinationIsManaged:(WKFileUploadPanel *)fileUploadPanel;
+#if HAVE(PHOTOS_UI)
+- (BOOL)fileUploadPanelPhotoPickerPrefersOriginalImageFormat:(WKFileUploadPanel *)fileUploadPanel;
+#endif
 @end
 
 #endif // PLATFORM(IOS_FAMILY)
