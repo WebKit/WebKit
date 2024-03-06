@@ -238,11 +238,11 @@ void JITGetByIdWithThisGenerator::generateDFGDataICFastPath(DFG::JITCompiler& ji
 JITPutByIdGenerator::JITPutByIdGenerator(
     CodeBlock* codeBlock, CompileTimeStructureStubInfo stubInfo, JITType jitType, CodeOrigin codeOrigin, CallSiteIndex callSite, const RegisterSetBuilder& usedRegisters, CacheableIdentifier propertyName,
     JSValueRegs base, JSValueRegs value, GPRReg stubInfoGPR, GPRReg scratch,
-    ECMAMode ecmaMode, AccessType accessType)
+    AccessType accessType)
         : JITByIdGenerator(codeBlock, stubInfo, jitType, codeOrigin, accessType, base, value)
 {
     std::visit([&](auto* stubInfo) {
-        setUpStubInfo(*stubInfo, accessType, codeOrigin, callSite, usedRegisters, propertyName, base, value, stubInfoGPR, scratch, ecmaMode);
+        setUpStubInfo(*stubInfo, accessType, codeOrigin, callSite, usedRegisters, propertyName, base, value, stubInfoGPR, scratch);
     }, stubInfo);
 }
 
@@ -568,13 +568,13 @@ void JITGetByValWithThisGenerator::finalize(LinkBuffer& fastPath, LinkBuffer& sl
     ASSERT(!m_stubInfo->useDataIC);
 }
 
-JITPutByValGenerator::JITPutByValGenerator(CodeBlock* codeBlock, CompileTimeStructureStubInfo stubInfo, JITType jitType, CodeOrigin codeOrigin, CallSiteIndex callSiteIndex, AccessType accessType, const RegisterSetBuilder& usedRegisters, JSValueRegs base, JSValueRegs property, JSValueRegs value, GPRReg arrayProfileGPR, GPRReg stubInfoGPR, ECMAMode ecmaMode)
+JITPutByValGenerator::JITPutByValGenerator(CodeBlock* codeBlock, CompileTimeStructureStubInfo stubInfo, JITType jitType, CodeOrigin codeOrigin, CallSiteIndex callSiteIndex, AccessType accessType, const RegisterSetBuilder& usedRegisters, JSValueRegs base, JSValueRegs property, JSValueRegs value, GPRReg arrayProfileGPR, GPRReg stubInfoGPR)
     : Base(codeBlock, stubInfo, jitType, codeOrigin, accessType)
     , m_base(base)
     , m_value(value)
 {
     std::visit([&](auto* stubInfo) {
-        setUpStubInfo(*stubInfo, accessType, codeOrigin, callSiteIndex, usedRegisters, base, property, value, arrayProfileGPR, stubInfoGPR, ecmaMode);
+        setUpStubInfo(*stubInfo, accessType, codeOrigin, callSiteIndex, usedRegisters, base, property, value, arrayProfileGPR, stubInfoGPR);
     }, stubInfo);
 }
 

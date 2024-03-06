@@ -541,7 +541,6 @@ inline auto appropriatePutByIdOptimizeFunction(AccessType type) -> decltype(&ope
 
 struct UnlinkedStructureStubInfo {
     AccessType accessType;
-    ECMAMode ecmaMode { ECMAMode::sloppy() };
     bool propertyIsInt32 : 1 { false };
     bool propertyIsString : 1 { false };
     bool propertyIsSymbol : 1 { false };
@@ -556,6 +555,20 @@ struct UnlinkedStructureStubInfo {
 struct BaselineUnlinkedStructureStubInfo : JSC::UnlinkedStructureStubInfo {
     BytecodeIndex bytecodeIndex;
 };
+
+} // namespace JSC
+
+namespace WTF {
+
+template<typename T> struct DefaultHash;
+template<> struct DefaultHash<JSC::AccessType> : public IntHash<JSC::AccessType> { };
+
+template<typename T> struct HashTraits;
+template<> struct HashTraits<JSC::AccessType> : public StrongEnumHashTraits<JSC::AccessType> { };
+
+} // namespace WTF
+
+namespace JSC {
 
 class SharedJITStubSet {
     WTF_MAKE_FAST_ALLOCATED(SharedJITStubSet);
@@ -695,19 +708,17 @@ public:
         return nullptr;
     }
 
-    RefPtr<PolymorphicAccessJITStubRoutine> getMegamorphic(AccessType) const;
-    void setMegamorphic(AccessType, Ref<PolymorphicAccessJITStubRoutine>);
+    using StatelessCacheKey = std::tuple<AccessType, AccessCase::AccessType, bool, bool, bool, bool>;
+
+    RefPtr<PolymorphicAccessJITStubRoutine> getStatelessStub(StatelessCacheKey) const;
+    void setStatelessStub(StatelessCacheKey, Ref<PolymorphicAccessJITStubRoutine>);
 
     RefPtr<InlineCacheHandler> getSlowPathHandler(AccessType) const;
     void setSlowPathHandler(AccessType, Ref<InlineCacheHandler>);
 
 private:
     HashSet<Hash::Key, Hash, Hash::KeyTraits> m_stubs;
-
-    RefPtr<PolymorphicAccessJITStubRoutine> m_getByValMegamorphic;
-    RefPtr<PolymorphicAccessJITStubRoutine> m_getByValWithThisMegamorphic;
-    RefPtr<PolymorphicAccessJITStubRoutine> m_putByValMegamorphic;
-    RefPtr<PolymorphicAccessJITStubRoutine> m_inByValMegamorphic;
+    HashMap<StatelessCacheKey, Ref<PolymorphicAccessJITStubRoutine>> m_statelessStubs;
     std::array<RefPtr<InlineCacheHandler>, numberOfAccessTypes> m_fallbackHandlers { };
     std::array<RefPtr<InlineCacheHandler>, numberOfAccessTypes> m_slowPathHandlers { };
 };

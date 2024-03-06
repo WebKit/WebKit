@@ -284,11 +284,11 @@ RefPtr<AccessCase> AccessCase::fromStructureStubInfo(
 
     case CacheType::ArrayLength:
         RELEASE_ASSERT(stubInfo.hasConstantIdentifier);
-        return AccessCase::create(vm, owner, AccessCase::ArrayLength, identifier);
+        return AccessCase::create(vm, owner, AccessCase::ArrayLength, CacheableIdentifier::createFromImmortalIdentifier(vm.propertyNames->length.impl()));
 
     case CacheType::StringLength:
         RELEASE_ASSERT(stubInfo.hasConstantIdentifier);
-        return AccessCase::create(vm, owner, AccessCase::StringLength, identifier);
+        return AccessCase::create(vm, owner, AccessCase::StringLength, CacheableIdentifier::createFromImmortalIdentifier(vm.propertyNames->length.impl()));
 
     default:
         return nullptr;
@@ -347,13 +347,6 @@ Vector<WatchpointSet*, 2> AccessCase::commit(VM& vm)
     m_state = Committed;
 
     return result;
-}
-
-bool AccessCase::guardedByStructureCheck(const StructureStubInfo& stubInfo) const
-{
-    if (!stubInfo.hasConstantIdentifier)
-        return false;
-    return guardedByStructureCheckSkippingConstantIdentifierCheck(); 
 }
 
 bool AccessCase::guardedByStructureCheckSkippingConstantIdentifierCheck() const

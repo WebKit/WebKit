@@ -4835,7 +4835,7 @@ private:
 
         // We emit property check during DFG generation, so we don't need
         // to check it here.
-        cachedPutById(m_node, base, value, ECMAMode::strict(), m_node->privateFieldPutKind().isDefine() ? AccessType::DefinePrivateNameById : AccessType::SetPrivateNameById);
+        cachedPutById(m_node, base, value, m_node->privateFieldPutKind().isDefine() ? AccessType::DefinePrivateNameById : AccessType::SetPrivateNameById);
     }
 
     void compilePutPrivateName()
@@ -4899,7 +4899,7 @@ private:
             auto* stubInfo = state->addStructureStubInfo();
             auto generator = Box<JITPutByValGenerator>::create(
                 jit.codeBlock(), stubInfo, JITType::FTLJIT, nodeSemanticOrigin, callSiteIndex, privateFieldPutKind.isDefine() ? AccessType::DefinePrivateNameByVal : AccessType::SetPrivateNameByVal,
-                params.unavailableRegisters(), JSValueRegs(baseGPR), JSValueRegs(propertyGPR), JSValueRegs(valueGPR), InvalidGPRReg, stubInfoGPR, ECMAMode::sloppy());
+                params.unavailableRegisters(), JSValueRegs(baseGPR), JSValueRegs(propertyGPR), JSValueRegs(valueGPR), InvalidGPRReg, stubInfoGPR);
 
             generator->stubInfo()->propertyIsSymbol = true;
 
@@ -5205,7 +5205,7 @@ private:
         }
     }
     
-    void cachedPutById(Node* node, LValue base, LValue value, ECMAMode ecmaMode, AccessType accessType)
+    void cachedPutById(Node* node, LValue base, LValue value, AccessType accessType)
     {
         CacheableIdentifier identifier = node->cacheableIdentifier();
         ASSERT(identifier);
@@ -5257,7 +5257,7 @@ private:
                 auto generator = Box<JITPutByIdGenerator>::create(
                     jit.codeBlock(), stubInfo, JITType::FTLJIT, nodeSemanticOrigin, callSiteIndex,
                     params.unavailableRegisters(), identifier, JSValueRegs(params[0].gpr()),
-                    JSValueRegs(params[1].gpr()), stubInfoGPR, GPRInfo::patchpointScratchRegister, ecmaMode,
+                    JSValueRegs(params[1].gpr()), stubInfoGPR, GPRInfo::patchpointScratchRegister,
                     accessType);
 
                 generator->generateFastPath(jit);
@@ -5305,7 +5305,7 @@ private:
         LValue base = lowCell(node->child1());
         LValue value = lowJSValue(node->child2());
         auto accessType = node->op() == PutByIdDirect ? (node->ecmaMode().isStrict() ? AccessType::PutByIdDirectStrict : AccessType::PutByIdDirectSloppy) : (node->ecmaMode().isStrict() ? AccessType::PutByIdStrict : AccessType::PutByIdSloppy);
-        cachedPutById(node, base, value, node->ecmaMode(), accessType);
+        cachedPutById(node, base, value, accessType);
     }
 
     void compilePutByIdMegamorphic()
@@ -6511,7 +6511,7 @@ IGNORE_CLANG_WARNINGS_END
                 auto* stubInfo = state->addStructureStubInfo();
                 auto generator = Box<JITPutByValGenerator>::create(
                     jit.codeBlock(), stubInfo, JITType::FTLJIT, nodeSemanticOrigin, callSiteIndex, isDirect ? (ecmaMode.isStrict() ? AccessType::PutByValDirectStrict : AccessType::PutByValDirectSloppy) : (ecmaMode.isStrict() ? AccessType::PutByValStrict : AccessType::PutByValSloppy),
-                    params.unavailableRegisters(), JSValueRegs(baseGPR), JSValueRegs(propertyGPR), JSValueRegs(valueGPR), InvalidGPRReg, stubInfoGPR, ecmaMode);
+                    params.unavailableRegisters(), JSValueRegs(baseGPR), JSValueRegs(propertyGPR), JSValueRegs(valueGPR), InvalidGPRReg, stubInfoGPR);
 
                 generator->stubInfo()->propertyIsString = propertyIsString;
                 generator->stubInfo()->propertyIsInt32 = propertyIsInt32;
@@ -15745,7 +15745,7 @@ IGNORE_CLANG_WARNINGS_END
             auto* stubInfo = state->addStructureStubInfo();
             auto generator = Box<JITPutByValGenerator>::create(
                 jit.codeBlock(), stubInfo, JITType::FTLJIT, nodeSemanticOrigin, callSiteIndex, ecmaMode.isStrict() ? AccessType::PutByValStrict : AccessType::PutByValSloppy,
-                params.unavailableRegisters(), JSValueRegs(baseGPR), JSValueRegs(propertyGPR), JSValueRegs(valueGPR), InvalidGPRReg, stubInfoGPR, ecmaMode);
+                params.unavailableRegisters(), JSValueRegs(baseGPR), JSValueRegs(propertyGPR), JSValueRegs(valueGPR), InvalidGPRReg, stubInfoGPR);
             generator->stubInfo()->isEnumerator = true;
 
             generator->generateFastPath(jit);

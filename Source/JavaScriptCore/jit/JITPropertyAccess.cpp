@@ -258,7 +258,7 @@ void JIT::emit_op_put_by_val(const JSInstruction* currentInstruction)
         nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex),
         isDirect ? (ecmaMode.isStrict() ? AccessType::PutByValDirectStrict : AccessType::PutByValDirectSloppy) : (ecmaMode.isStrict() ? AccessType::PutByValStrict : AccessType::PutByValSloppy),
         RegisterSetBuilder::stubUnavailableRegisters(),
-        baseJSR, propertyJSR, valueJSR, profileGPR, stubInfoGPR, ecmaMode);
+        baseJSR, propertyJSR, valueJSR, profileGPR, stubInfoGPR);
     if (isOperandConstantInt(property))
         stubInfo->propertyIsInt32 = true;
 
@@ -329,7 +329,7 @@ void JIT::emit_op_put_private_name(const JSInstruction* currentInstruction)
 
     JITPutByValGenerator gen(
         nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), bytecode.m_putKind.isDefine() ? AccessType::DefinePrivateNameByVal : AccessType::SetPrivateNameByVal, RegisterSetBuilder::stubUnavailableRegisters(),
-        baseJSR, propertyJSR, valueJSR, InvalidGPRReg, stubInfoGPR, ECMAMode::sloppy());
+        baseJSR, propertyJSR, valueJSR, InvalidGPRReg, stubInfoGPR);
 
     gen.generateBaselineDataICFastPath(*this);
     addSlowCase();
@@ -723,7 +723,7 @@ void JIT::emit_op_put_by_id(const JSInstruction* currentInstruction)
     JITPutByIdGenerator gen(
         nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSetBuilder::stubUnavailableRegisters(),
         CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_unlinkedCodeBlock, *ident),
-        baseJSR, valueJSR, stubInfoGPR, scratch1GPR, ecmaMode, direct ? (ecmaMode.isStrict() ? AccessType::PutByIdDirectStrict : AccessType::PutByIdDirectSloppy) : (ecmaMode.isStrict() ? AccessType::PutByIdStrict : AccessType::PutByIdSloppy));
+        baseJSR, valueJSR, stubInfoGPR, scratch1GPR, direct ? (ecmaMode.isStrict() ? AccessType::PutByIdDirectStrict : AccessType::PutByIdDirectSloppy) : (ecmaMode.isStrict() ? AccessType::PutByIdStrict : AccessType::PutByIdSloppy));
 
     gen.generateBaselineDataICFastPath(*this);
     resetSP(); // We might OSR exit here, so we need to conservatively reset SP
@@ -1967,7 +1967,7 @@ void JIT::emit_op_enumerator_put_by_val(const JSInstruction* currentInstruction)
     ECMAMode ecmaMode = bytecode.m_ecmaMode;
     JITPutByValGenerator gen(
         nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), ecmaMode.isStrict() ? AccessType::PutByValStrict : AccessType::PutByValSloppy, RegisterSetBuilder::stubUnavailableRegisters(),
-        JSValueRegs(baseGPR), JSValueRegs(propertyGPR), JSValueRegs(valueGPR), profileGPR, stubInfoGPR, ecmaMode);
+        JSValueRegs(baseGPR), JSValueRegs(propertyGPR), JSValueRegs(valueGPR), profileGPR, stubInfoGPR);
     stubInfo->isEnumerator = true;
 
     gen.generateBaselineDataICFastPath(*this);

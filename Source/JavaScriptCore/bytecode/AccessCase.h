@@ -254,7 +254,6 @@ public:
             return m_structureID->previousID();
         return m_structureID.get();
     }
-    bool guardedByStructureCheck(const StructureStubInfo&) const;
 
     Structure* newStructure() const
     {
@@ -376,6 +375,8 @@ protected:
     void dumpImpl(PrintStream&, CommaPrinter&, Indenter&) const { }
     JSObject* alternateBaseImpl() const;
 
+    bool guardedByStructureCheckSkippingConstantIdentifierCheck() const;
+
 private:
     friend class CodeBlock;
     friend class PolymorphicAccess;
@@ -401,8 +402,6 @@ private:
     // was created. Returns a set of watchpoint sets that will need to be watched.
     Vector<WatchpointSet*, 2> commit(VM&);
 
-    bool guardedByStructureCheckSkippingConstantIdentifierCheck() const;
-
     AccessType m_type;
     State m_state { Primordial };
 protected:
@@ -426,5 +425,15 @@ private:
 };
 
 } // namespace JSC
+
+namespace WTF {
+
+template<typename T> struct DefaultHash;
+template<> struct DefaultHash<JSC::AccessCase::AccessType> : public IntHash<JSC::AccessCase::AccessType> { };
+
+template<typename T> struct HashTraits;
+template<> struct HashTraits<JSC::AccessCase::AccessType> : public StrongEnumHashTraits<JSC::AccessCase::AccessType> { };
+
+} // namespace WTF
 
 #endif
