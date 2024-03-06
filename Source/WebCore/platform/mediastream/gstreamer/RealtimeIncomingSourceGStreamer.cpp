@@ -169,7 +169,7 @@ std::optional<int> RealtimeIncomingSourceGStreamer::registerClient(GRefPtr<GstEl
 
             return false;
         },
-#if GST_CHECK_VERSION(1, 23, 0)
+#if GST_CHECK_VERSION(1, 24, 0)
         // propose_allocation
         nullptr,
 #endif

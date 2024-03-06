@@ -323,7 +323,7 @@ void AudioFileReader::handleNewDeinterleavePad(GstPad* pad)
         // new_event
         nullptr,
 #endif
-#if GST_CHECK_VERSION(1, 23, 0)
+#if GST_CHECK_VERSION(1, 24, 0)
         // propose_allocation
         nullptr,
 #endif

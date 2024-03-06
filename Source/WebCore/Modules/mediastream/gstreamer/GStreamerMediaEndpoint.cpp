@@ -1281,7 +1281,7 @@ void GStreamerMediaEndpoint::addIceCandidate(GStreamerIceCandidate& candidate, P
     }
 
     // https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/3960
-    if (webkitGstCheckVersion(1, 23, 0)) {
+    if (webkitGstCheckVersion(1, 24, 0)) {
         auto* data = createAddIceCandidateCallData();
         data->webrtcBin = m_webrtcBin;
         data->callback = WTFMove(callback);

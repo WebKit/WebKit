@@ -3528,7 +3528,7 @@ void MediaPlayerPrivateGStreamer::pushDMABufToCompositor()
             [&](auto&& object) {
                 bool infoHasDrmFormat = false;
                 uint32_t fourcc = 0;
-#if GST_CHECK_VERSION(1, 23, 0)
+#if GST_CHECK_VERSION(1, 24, 0)
                 GstVideoInfoDmaDrm drmInfo;
                 infoHasDrmFormat = gst_video_info_dma_drm_from_caps(&drmInfo, caps);
                 if (infoHasDrmFormat)
@@ -3580,7 +3580,7 @@ void MediaPlayerPrivateGStreamer::pushDMABufToCompositor()
                     object.offset[i] = offset;
                     object.stride[i] = GST_VIDEO_INFO_PLANE_STRIDE(&videoInfo, i);
                     object.modifierPresent[i] = infoHasDrmFormat;
-#if GST_CHECK_VERSION(1, 23, 0)
+#if GST_CHECK_VERSION(1, 24, 0)
                     if (infoHasDrmFormat)
                         object.modifierValue[i] = drmInfo.drm_modifier;
 #endif
