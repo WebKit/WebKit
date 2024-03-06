@@ -369,6 +369,7 @@ public:
     using RejectValueType = std::conditional_t<std::is_void_v<RejectValueT>, detail::VoidPlaceholder, std::conditional_t<WithAutomaticCrossThreadCopy || WithCrossThreadCopy, typename CrossThreadCopier<RejectValueT>::Type, RejectValueT>>;
     using Result = Expected<ResolveValueType, RejectValueType>;
     using Error = Unexpected<RejectValueType>;
+    using ResultRunnable = Function<Result(void)>;
 
     // used by IsConvertibleToNativePromise to determine how to cast the result.
     using PromiseType = NativePromise;
@@ -507,6 +508,13 @@ private:
             settleImpl(crossThreadCopy(std::forward<SettleValueType>(result)), lock);
         else
             settleImpl(std::forward<SettleValueType>(result), lock);
+    }
+
+    void settleWithFunction(ResultRunnable&& result, const Logger::LogSiteIdentifier& site)
+    {
+        Locker lock { m_lock };
+        PROMISE_LOG(site, " settling ", *this);
+        settleImpl(std::forward<ResultRunnable>(result), lock);
     }
 
     template<typename StorageType>
@@ -713,25 +721,39 @@ private:
             ASSERT(!promise.isNothing());
 
             if (UNLIKELY(!m_targetQueue || (promise.m_dispatchMode == PromiseDispatchMode::RunSynchronouslyOnTarget && m_targetQueue->isCurrent()))) {
-                PROMISE_LOG(*promise.m_result ? "Resolving" : "Rejecting", " synchronous then() call made from ", m_logSiteIdentifier, "[", promise, " callback:", (const void*)this, "]");
                 if (m_disconnected) {
-                    PROMISE_LOG("ThenCallback disconnected aborting [callback:", (const void*)this, " callSite:", m_logSiteIdentifier, "]");
+                    PROMISE_LOG("ThenCallback disconnected from ", promise, " aborting [callback:", (const void*)this, " callSite:", m_logSiteIdentifier, "]");
                     return;
                 }
                 {
                     // Holding the lock is unnecessary while running the resolve/reject callback and we don't want to hold the lock for too long.
                     DropLockForScope unlocker(lock);
-                    processResult(promise.result());
+                    if (promise.hasRunnable()) {
+                        ASSERT(IsExclusive);
+                        processResult(promise, promise.takeResultRunnable()());
+                    } else {
+                        if constexpr (IsExclusive)
+                            processResult(promise, promise.takeResult());
+                        else
+                            processResult(promise, promise.result());
+                    }
                 }
                 return;
             }
-            m_targetQueue->dispatch([this, protectedThis = Ref { *this }, promise = Ref { promise }, operation = *promise.m_result ? "Resolving" : "Rejecting"] () mutable {
-                PROMISE_LOG(operation, " then() call made from ", m_logSiteIdentifier, "[", promise.get(), " callback:", (const void*)this, "]");
+            m_targetQueue->dispatch([this, protectedThis = Ref { *this }, promise = Ref { promise }] () mutable {
                 if (m_disconnected) {
-                    PROMISE_LOG("ThenCallback disconnected aborting [callback:", (const void*)this, " callSite:", m_logSiteIdentifier, "]");
+                    PROMISE_LOG("ThenCallback disconnected from ", promise.get(), " aborting [callback:", (const void*)this, " callSite:", m_logSiteIdentifier, "]");
                     return;
                 }
-                processResult(promise->result());
+                if (promise->hasRunnable()) {
+                    ASSERT(IsExclusive);
+                    processResult(promise, promise->takeResultRunnable()());
+                } else {
+                    if constexpr (IsExclusive)
+                        processResult(promise, promise->takeResult());
+                    else
+                        processResult(promise, promise->result());
+                }
             });
         }
 
@@ -743,7 +765,7 @@ private:
         }
 
     protected:
-        virtual void processResult(Result&) = 0;
+        virtual void processResult(NativePromise&, ResultParam) = 0;
         const RefPtr<RefCountedSerialFunctionDispatcher> m_targetQueue;
         const Logger::LogSiteIdentifier m_logSiteIdentifier;
 
@@ -777,8 +799,9 @@ private:
             m_settleFunction = nullptr;
         }
 
-        void processResult(Result& result) override
+        void processResult(NativePromise& promise, ResultParam result) override
         {
+            PROMISE_LOG(result ? "Resolving" : "Rejecting", " then() call made from ", ThenCallbackBase::m_logSiteIdentifier, "[", promise, " callback:", (const void*)this, "]");
             if (ThenCallbackBase::m_targetQueue)
                 assertIsCurrent(*ThenCallbackBase::m_targetQueue);
             ASSERT(m_settleFunction);
@@ -1136,13 +1159,37 @@ private:
         return !m_result;
     }
 
-    Result& result()
+    const Result& result() const
     {
         // Only called by SettleFunction on the target's queue once all operations are complete and settled.
         // So we don't really need to hold the lock to access the value.
         Locker lock { m_lock };
-        ASSERT(!isNothing());
+        ASSERT(m_result.hasResult());
         return *m_result;
+    }
+
+    Result takeResult()
+    {
+        // Only called by SettleFunction on the target's queue once all operations are complete and settled.
+        // So we don't really need to hold the lock to access the value.
+        Locker lock { m_lock };
+        ASSERT(m_result.hasResult());
+        return WTFMove(*m_result);
+    }
+
+    bool hasRunnable() const
+    {
+        Locker lock { m_lock };
+        return m_result.hasRunnable();
+    }
+
+    ResultRunnable takeResultRunnable()
+    {
+        // Only called by SettleFunction on the target's queue once all operations are complete and settled.
+        // So we don't really need to hold the lock to access the value.
+        Locker lock { m_lock };
+        ASSERT(m_result.hasRunnable());
+        return WTFMove(m_result.runnable());
     }
 
     void dispatchAll(Locker<Lock>& lock)
@@ -1169,19 +1216,22 @@ private:
 
     // Replicate either std::optional<Result> if Exclusive or Ref<std::optional<Result>> otherwise.
     class Storage {
+        struct NoResult { };
+
+        using StorageType = std::variant<NoResult, Result, ResultRunnable>;
         struct RefCountedResult : ThreadSafeRefCounted<RefCountedResult> {
-            std::optional<Result> result;
+            StorageType result = NoResult { };
         };
-        using ResultType = std::conditional_t<IsExclusive, std::optional<Result>, Ref<RefCountedResult>>;
+        using ResultType = std::conditional_t<IsExclusive, StorageType, Ref<RefCountedResult>>;
         ResultType m_result;
-        std::optional<Result>& optionalResult()
+        StorageType& optionalResult()
         {
             if constexpr (IsExclusive)
                 return m_result;
             else
                 return m_result->result;
         }
-        const std::optional<Result>& optionalResult() const
+        const StorageType& optionalResult() const
         {
             if constexpr (IsExclusive)
                 return m_result;
@@ -1192,42 +1242,54 @@ private:
         Storage()
             : m_result([] {
                 if constexpr(IsExclusive)
-                    return std::nullopt;
+                    return NoResult { };
                 else
                     return adoptRef(*new RefCountedResult);
             }())
         {
         }
-        bool has_value() const
+        bool hasResult() const
         {
-            if constexpr (IsExclusive)
-                return m_result.has_value();
-            else
-                return m_result->result.has_value();
+            return std::holds_alternative<Result>(optionalResult());
         }
-        explicit operator bool() const { return has_value(); }
+        bool hasRunnable() const
+        {
+            return std::holds_alternative<ResultRunnable>(optionalResult());
+        }
+        explicit operator bool() const
+        {
+            return !std::holds_alternative<NoResult>(optionalResult());
+        }
         Storage& operator=(Storage&&) = default;
         Storage& operator=(const Storage&) = default;
         const Result& operator*() const
         {
-            ASSERT(has_value());
-            return *optionalResult();
+            ASSERT(hasResult());
+            return std::get<Result>(optionalResult());
         }
         Result& operator*()
         {
-            ASSERT(has_value());
-            return *optionalResult();
+            ASSERT(hasResult() );
+            return std::get<Result>(optionalResult());
         }
         const Result* operator->() const
         {
-            if (!has_value())
+            if (!hasResult())
                 return nullptr;
             return &(this->operator*());
         }
-        template <typename... Args>
-        void emplace(Args&&... args)
+        template <typename Arg>
+        void emplace(Arg&& arg)
         {
-            optionalResult().emplace(std::forward<Args>(args)...);
+            if constexpr (std::is_same_v<Arg, ResultRunnable>)
+                optionalResult().template emplace<2>(std::forward<Arg>(arg));
+            else
+                optionalResult().template emplace<1>(std::forward<Arg>(arg));
+        }
+        ResultRunnable& runnable()
+        {
+            ASSERT(hasRunnable());
+            return std::get<ResultRunnable>(optionalResult());
         }
     };
     const Logger::LogSiteIdentifier m_logSiteIdentifier; // For logging
@@ -1345,7 +1407,21 @@ public:
             PROMISE_LOG(site, " ignored already resolved or rejected ", *m_promise);
             return;
         }
-        m_promise->settle(std::forward<SettleValue>(result), site);
+        if constexpr (PromiseType::IsExclusive && std::is_invocable_r_v<typename PromiseType::Result, SettleValue>)
+            m_promise->settleWithFunction(WTFMove(result), site);
+        else
+            m_promise->settle(std::forward<SettleValue>(result), site);
+    }
+
+    template<typename = std::enable_if<PromiseType::IsExclusive>>
+    void settleWithFunction(typename PromiseType::ResultRunnable&& resultRunnable, const Logger::LogSiteIdentifier& site = DEFAULT_LOGSITEIDENTIFIER)
+    {
+        ASSERT(isNothing());
+        if (!isNothing()) {
+            PROMISE_LOG(site, " ignored already resolved or rejected ", *m_promise);
+            return;
+        }
+        m_promise->settleWithFunction(WTFMove(resultRunnable), site);
     }
 
     operator Ref<PromiseType>() const

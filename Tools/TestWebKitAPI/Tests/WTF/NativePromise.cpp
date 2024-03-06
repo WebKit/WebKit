@@ -1738,6 +1738,68 @@ TEST(NativePromise, AutoRejectProducer)
     });
 }
 
+TEST(NativePromise, ResolveWithFunction)
+{
+    AutoWorkQueue awq;
+    auto queue = awq.queue();
+
+    // Test settled with expected value, before whenSettled.
+    NativePromise<int, int>::Producer producer1;
+    producer1.settleWithFunction([queue]() -> NativePromise<int, int>::Result {
+        assertIsCurrent(queue);
+        return 1;
+    });
+    producer1.promise()->whenSettled(queue, [](auto result) {
+        EXPECT_TRUE(!!result);
+        EXPECT_EQ(*result, 1);
+    });
+
+    // Test settled with rejected value, before whenSettled.
+    NativePromise<int, int>::Producer producer2;
+    producer2.settleWithFunction([queue]() -> NativePromise<int, int>::Result {
+        assertIsCurrent(queue);
+        return makeUnexpected(2);
+    });
+    producer2.promise()->whenSettled(queue, [](auto result) {
+        EXPECT_FALSE(!!result);
+        EXPECT_EQ(result.error(), 2);
+    });
+
+    // Test settled with expected value, after whenSettled.
+    NativePromise<int, int>::Producer producer3;
+    producer3.promise()->whenSettled(queue, [](auto result) {
+        EXPECT_TRUE(!!result);
+        EXPECT_EQ(*result, 1);
+    });
+    producer3.settleWithFunction([queue]() -> NativePromise<int, int>::Result {
+        assertIsCurrent(queue);
+        return 1;
+    });
+
+    // Test settled with rejected value, after whenSettled.
+    NativePromise<int, int>::Producer producer4;
+    producer4.promise()->whenSettled(queue, [](auto result) {
+        EXPECT_FALSE(!!result);
+        EXPECT_EQ(result.error(), 2);
+    });
+    producer4.settleWithFunction([queue]() -> NativePromise<int, int>::Result {
+        assertIsCurrent(queue);
+        return makeUnexpected(2);
+    });
+
+    // Test with settle(Function) syntax
+    NativePromise<int, int>::Producer producer5;
+    producer5.settle([queue]() -> NativePromise<int, int>::Result {
+        assertIsCurrent(queue);
+        return 1;
+    });
+    producer5.promise()->whenSettled(queue, [queue](auto result) {
+        EXPECT_TRUE(!!result);
+        EXPECT_EQ(*result, 1);
+        queue->beginShutdown();
+    });
+}
+
 // Example:
 // Consider a PhotoProducer class that can take a photo and returns an image and its mimetype.
 // The PhotoProducer uses some system framework that takes a completion handler which will receive the photo once taken.
