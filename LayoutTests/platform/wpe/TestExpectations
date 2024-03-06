@@ -1657,3 +1657,5 @@ compositing/visible-rect/mask-layer-coverage.html [ Failure ]
 compositing/visible-rect/nested-transform.html [ Failure ]
 compositing/visible-rect/scrolled.html [ Failure ]
 compositing/video/video-border-radius-clipping.html [ ImageOnlyFailure ]
+
+imported/w3c/web-platform-tests/css/css-view-transitions/window-resize-aborts-transition-before-ready.html [ ImageOnlyFailure ]

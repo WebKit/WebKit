@@ -3885,6 +3885,10 @@ imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-below-v
 imported/w3c/web-platform-tests/css/css-view-transitions/offscreen-element-modified-before-coming-onscreen.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-rendering-invalidation.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/fractional-translation-from-transform.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-mismatch-ident.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-mismatch-partial.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-mismatch-wildcard.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-old-with-class-new-without.html [ ImageOnlyFailure ]
 
 # End: Common failures between GTK and WPE.
 
