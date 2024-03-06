@@ -128,11 +128,8 @@ static void launchWithExtensionKitFallback(ProcessLauncher& processLauncher, Pro
 static void launchWithExtensionKit(ProcessLauncher& processLauncher, ProcessLauncher::ProcessType processType, ProcessLauncher::Client* client, WTF::Function<void(ThreadSafeWeakPtr<ProcessLauncher> weakProcessLauncher, ExtensionProcess&& process, ASCIILiteral name, NSError *error)>&& handler)
 {
 #if USE(LEGACY_EXTENSIONKIT_SPI)
-    if (processLauncher.isRetryingLaunch()) {
-        launchWithExtensionKitFallback(processLauncher, processType, client, WTFMove(handler));
-        return;
-    }
-#endif
+    launchWithExtensionKitFallback(processLauncher, processType, client, WTFMove(handler));
+#else
     auto [name, identifier] = serviceNameAndIdentifier(processType, client, processLauncher.isRetryingLaunch());
 
     switch (processType) {
@@ -158,6 +155,7 @@ static void launchWithExtensionKit(ProcessLauncher& processLauncher, ProcessLaun
         break;
     }
     }
+#endif
 }
 #endif // USE(EXTENSIONKIT)
 
