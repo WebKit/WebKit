@@ -1722,7 +1722,8 @@ TEST(WebAuthenticationPanel, MakeCredentialSPITimeout)
 // For macOS, only internal builds can sign keychain entitlemnets
 // which are required to run local authenticator tests.
 #if USE(APPLE_INTERNAL_SDK) || PLATFORM(IOS) || PLATFORM(VISION)
-TEST(WebAuthenticationPanel, MakeCredentialLA)
+// Re-enable as part of test development in https://bugs.webkit.org/show_bug.cgi?id=270583
+TEST(WebAuthenticationPanel, DISABLED_MakeCredentialLA)
 {
     reset();
 
@@ -1759,7 +1760,8 @@ TEST(WebAuthenticationPanel, MakeCredentialLA)
     Util::run(&webAuthenticationPanelRan);
 }
 
-TEST(WebAuthenticationPanel, MakeCredentialLAClientDataHashMediation)
+// Re-enable as part of test development in https://bugs.webkit.org/show_bug.cgi?id=270583
+TEST(WebAuthenticationPanel, DISABLED_MakeCredentialLAClientDataHashMediation)
 {
     reset();
 
@@ -1797,7 +1799,8 @@ TEST(WebAuthenticationPanel, MakeCredentialLAClientDataHashMediation)
     Util::run(&webAuthenticationPanelRan);
 }
 
-TEST(WebAuthenticationPanel, MakeCredentialLAAttestationFalback)
+// Re-enable as part of test development in https://bugs.webkit.org/show_bug.cgi?id=270583
+TEST(WebAuthenticationPanel, DISABLED_MakeCredentialLAAttestationFalback)
 {
     reset();
 
@@ -1930,7 +1933,8 @@ TEST(WebAuthenticationPanel, GetAssertionSPITimeout)
 // For macOS, only internal builds can sign keychain entitlemnets
 // which are required to run local authenticator tests.
 #if USE(APPLE_INTERNAL_SDK) || PLATFORM(IOS) || PLATFORM(VISION)
-TEST(WebAuthenticationPanel, GetAssertionLA)
+// Re-enable as part of test development in https://bugs.webkit.org/show_bug.cgi?id=270583
+TEST(WebAuthenticationPanel, DISABLED_GetAssertionLA)
 {
     reset();
     auto beforeTime = adoptNS([[NSDate alloc] init]);
@@ -1993,7 +1997,8 @@ TEST(WebAuthenticationPanel, GetAssertionLA)
     Util::run(&webAuthenticationPanelRan);
 }
 
-TEST(WebAuthenticationPanel, GetAssertionLAClientDataHashMediation)
+// Re-enable as part of test development in https://bugs.webkit.org/show_bug.cgi?id=270583
+TEST(WebAuthenticationPanel, DISABLED_GetAssertionLAClientDataHashMediation)
 {
     reset();
 
@@ -2043,7 +2048,8 @@ TEST(WebAuthenticationPanel, GetAssertionLAClientDataHashMediation)
     Util::run(&webAuthenticationPanelRan);
 }
 
-TEST(WebAuthenticationPanel, GetAssertionNullUserHandle)
+// Re-enable as part of test development in https://bugs.webkit.org/show_bug.cgi?id=270583
+TEST(WebAuthenticationPanel, DISABLED_GetAssertionNullUserHandle)
 {
     reset();
 
