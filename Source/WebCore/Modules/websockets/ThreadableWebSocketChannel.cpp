@@ -66,10 +66,7 @@ RefPtr<ThreadableWebSocketChannel> ThreadableWebSocketChannel::create(ScriptExec
     return create(downcast<Document>(context), client, provider);
 }
 
-ThreadableWebSocketChannel::ThreadableWebSocketChannel()
-    : m_identifier(WebSocketIdentifier::generate())
-{
-}
+ThreadableWebSocketChannel::ThreadableWebSocketChannel() = default;
 
 std::optional<ThreadableWebSocketChannel::ValidatedURL> ThreadableWebSocketChannel::validateURL(Document& document, const URL& requestedURL)
 {

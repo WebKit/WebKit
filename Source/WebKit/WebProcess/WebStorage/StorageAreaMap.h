@@ -33,6 +33,7 @@
 #include <WebCore/StorageArea.h>
 #include <wtf/Forward.h>
 #include <wtf/HashCountedSet.h>
+#include <wtf/Identified.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/WeakPtr.h>
@@ -48,7 +49,7 @@ namespace WebKit {
 class StorageAreaImpl;
 class StorageNamespaceImpl;
 
-class StorageAreaMap final : public IPC::MessageReceiver {
+class StorageAreaMap final : public IPC::MessageReceiver, public Identified<StorageAreaMapIdentifier> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     StorageAreaMap(StorageNamespaceImpl&, Ref<const WebCore::SecurityOrigin>&&);
@@ -68,7 +69,6 @@ public:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
     const WebCore::SecurityOrigin& securityOrigin() const { return m_securityOrigin.get(); }
-    StorageAreaMapIdentifier identifier() const { return m_identifier; }
 
     void connect();
     void disconnect();
@@ -99,7 +99,6 @@ private:
     void connectSync();
     void didConnect(StorageAreaIdentifier, HashMap<String, String>&&, uint64_t messageIdentifier);
 
-    StorageAreaMapIdentifier m_identifier;
     uint64_t m_lastHandledMessageIdentifier { 0 };
     StorageNamespaceImpl& m_namespace;
     Ref<const WebCore::SecurityOrigin> m_securityOrigin;

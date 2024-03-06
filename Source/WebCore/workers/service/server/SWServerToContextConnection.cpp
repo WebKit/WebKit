@@ -33,14 +33,8 @@
 
 namespace WebCore {
 
-static SWServerToContextConnectionIdentifier generateServerToContextConnectionIdentifier()
-{
-    return SWServerToContextConnectionIdentifier::generate();
-}
-
 SWServerToContextConnection::SWServerToContextConnection(SWServer& server, RegistrableDomain&& registrableDomain, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier)
     : m_server(server)
-    , m_identifier(generateServerToContextConnectionIdentifier())
     , m_registrableDomain(WTFMove(registrableDomain))
     , m_serviceWorkerPageIdentifier(serviceWorkerPageIdentifier)
 {

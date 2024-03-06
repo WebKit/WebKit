@@ -36,6 +36,7 @@
 #include <wtf/Forward.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashMap.h>
+#include <wtf/Identified.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/URL.h>
@@ -66,7 +67,7 @@ struct WebPageCreationParameters;
 struct UserContentControllerParameters;
 enum class InjectUserScriptImmediately : bool;
 
-class WebUserContentControllerProxy : public API::ObjectImpl<API::Object::Type::UserContentController>, public IPC::MessageReceiver {
+class WebUserContentControllerProxy : public API::ObjectImpl<API::Object::Type::UserContentController>, public IPC::MessageReceiver, public Identified<UserContentControllerIdentifier> {
 public:
     static Ref<WebUserContentControllerProxy> create()
     { 
@@ -111,8 +112,6 @@ public:
     Vector<std::pair<WebCompiledContentRuleListData, URL>> contentRuleListData() const;
 #endif
 
-    UserContentControllerIdentifier identifier() const { return m_identifier; }
-
     void contentWorldDestroyed(API::ContentWorld&);
 
     bool operator==(const WebUserContentControllerProxy& other) const { return (this == &other); }
@@ -125,7 +124,6 @@ private:
 
     void addContentWorld(API::ContentWorld&);
 
-    UserContentControllerIdentifier m_identifier;
     WeakHashSet<WebProcessProxy> m_processes;
     Ref<API::Array> m_userScripts;
     Ref<API::Array> m_userStyleSheets;

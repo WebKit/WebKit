@@ -43,7 +43,6 @@ namespace WebKit {
 
 LibWebRTCSocket::LibWebRTCSocket(LibWebRTCSocketFactory& factory, WebCore::ScriptExecutionContextIdentifier contextIdentifier, Type type, const rtc::SocketAddress& localAddress, const rtc::SocketAddress& remoteAddress)
     : m_factory(factory)
-    , m_identifier(WebCore::LibWebRTCSocketIdentifier::generate())
     , m_type(type)
     , m_localAddress(localAddress)
     , m_remoteAddress(remoteAddress)
@@ -116,7 +115,7 @@ int LibWebRTCSocket::SendTo(const void *value, size_t size, const rtc::SocketAdd
         return size;
 
     std::span data(static_cast<const uint8_t*>(value), size);
-    connection->send(Messages::NetworkRTCProvider::SendToSocket { m_identifier, data, RTCNetwork::SocketAddress { address }, RTCPacketOptions { options } }, 0);
+    connection->send(Messages::NetworkRTCProvider::SendToSocket { identifier(), data, RTCNetwork::SocketAddress { address }, RTCPacketOptions { options } }, 0);
 
     return size;
 }
@@ -129,7 +128,7 @@ int LibWebRTCSocket::Close()
 
     m_state = STATE_CLOSED;
 
-    connection->send(Messages::NetworkRTCProvider::CloseSocket { m_identifier }, 0);
+    connection->send(Messages::NetworkRTCProvider::CloseSocket { identifier() }, 0);
 
     return 0;
 }
@@ -151,7 +150,7 @@ int LibWebRTCSocket::SetOption(rtc::Socket::Option option, int value)
     m_options[option] = value;
 
     if (auto* connection = m_factory.connection())
-        connection->send(Messages::NetworkRTCProvider::SetSocketOption { m_identifier, option, value }, 0);
+        connection->send(Messages::NetworkRTCProvider::SetSocketOption { identifier(), option, value }, 0);
 
     return 0;
 }
@@ -170,7 +169,7 @@ void LibWebRTCSocket::suspend()
 
     signalClose(-1);
     if (auto* connection = m_factory.connection())
-        connection->send(Messages::NetworkRTCProvider::CloseSocket { m_identifier }, 0);
+        connection->send(Messages::NetworkRTCProvider::CloseSocket { identifier() }, 0);
 }
 
 } // namespace WebKit

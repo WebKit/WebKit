@@ -65,11 +65,10 @@ WebUserContentControllerProxy* WebUserContentControllerProxy::get(UserContentCon
 }
     
 WebUserContentControllerProxy::WebUserContentControllerProxy()
-    : m_identifier(UserContentControllerIdentifier::generate())
-    , m_userScripts(API::Array::create())
+    : m_userScripts(API::Array::create())
     , m_userStyleSheets(API::Array::create())
 {
-    webUserContentControllerProxies().add(m_identifier, *this);
+    webUserContentControllerProxies().add(identifier(), *this);
 }
 
 WebUserContentControllerProxy::~WebUserContentControllerProxy()
@@ -80,7 +79,7 @@ WebUserContentControllerProxy::~WebUserContentControllerProxy()
         world->userContentControllerProxyDestroyed(*this);
     }
     
-    webUserContentControllerProxies().remove(m_identifier);
+    webUserContentControllerProxies().remove(identifier());
     for (auto& process : m_processes) {
         process.removeMessageReceiver(Messages::WebUserContentControllerProxy::messageReceiverName(), identifier());
         process.didDestroyWebUserContentControllerProxy(*this);

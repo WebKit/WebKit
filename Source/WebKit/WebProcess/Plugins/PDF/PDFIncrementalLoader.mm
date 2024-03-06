@@ -49,7 +49,7 @@ using namespace WebCore;
 // We'll assume any size over 4GB is PDFKit noticing non-linearized data.
 static const uint32_t nonLinearizedPDFSentinel = std::numeric_limits<uint32_t>::max();
 
-class ByteRangeRequest : public Identified<ByteRangeRequest> {
+class ByteRangeRequest : public LegacyIdentified<ByteRangeRequest> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     ByteRangeRequest() = default;

@@ -76,8 +76,7 @@ private:
 };
 
 MediaRecorderPrivate::MediaRecorderPrivate(MediaStreamPrivate& stream, const MediaRecorderPrivateOptions& options)
-    : m_identifier(MediaRecorderIdentifier::generate())
-    , m_stream(stream)
+    : m_stream(stream)
     , m_connection(WebProcess::singleton().ensureGPUProcessConnection().connection())
     , m_options(options)
     , m_hasVideo(stream.hasVideo())
@@ -92,7 +91,7 @@ void MediaRecorderPrivate::startRecording(StartRecordingCallback&& callback)
     // Currently we only choose the first track as the recorded track.
 
     auto selectedTracks = MediaRecorderPrivate::selectTracks(m_stream);
-    m_connection->sendWithAsyncReply(Messages::RemoteMediaRecorderManager::CreateRecorder { m_identifier, !!selectedTracks.audioTrack, !!selectedTracks.videoTrack, m_options }, [weakThis = WeakPtr { *this }, audioTrack = RefPtr { selectedTracks.audioTrack }, videoTrack = RefPtr { selectedTracks.videoTrack }, callback = WTFMove(callback)](auto&& exception, String&& mimeType, unsigned audioBitRate, unsigned videoBitRate) mutable {
+    m_connection->sendWithAsyncReply(Messages::RemoteMediaRecorderManager::CreateRecorder { identifier(), !!selectedTracks.audioTrack, !!selectedTracks.videoTrack, m_options }, [weakThis = WeakPtr { *this }, audioTrack = RefPtr { selectedTracks.audioTrack }, videoTrack = RefPtr { selectedTracks.videoTrack }, callback = WTFMove(callback)](auto&& exception, String&& mimeType, unsigned audioBitRate, unsigned videoBitRate) mutable {
         if (!weakThis) {
             callback(Exception { ExceptionCode::InvalidStateError }, 0, 0);
             return;
@@ -113,7 +112,7 @@ void MediaRecorderPrivate::startRecording(StartRecordingCallback&& callback)
 
 MediaRecorderPrivate::~MediaRecorderPrivate()
 {
-    m_connection->send(Messages::RemoteMediaRecorderManager::ReleaseRecorder { m_identifier }, 0);
+    m_connection->send(Messages::RemoteMediaRecorderManager::ReleaseRecorder { identifier() }, 0);
 }
 
 void MediaRecorderPrivate::videoFrameAvailable(WebCore::VideoFrame& videoFrame, VideoFrameTimeMetadata)
@@ -124,17 +123,17 @@ void MediaRecorderPrivate::videoFrameAvailable(WebCore::VideoFrame& videoFrame, 
             m_blackFrameSize = WebCore::IntSize { static_cast<int>(size.width()), static_cast<int>(size.height()) };
         }
         SharedVideoFrame sharedVideoFrame { videoFrame.presentationTime(), videoFrame.isMirrored(), videoFrame.rotation(), *m_blackFrameSize };
-        m_connection->send(Messages::RemoteMediaRecorder::VideoFrameAvailable { WTFMove(sharedVideoFrame) }, m_identifier);
+        m_connection->send(Messages::RemoteMediaRecorder::VideoFrameAvailable { WTFMove(sharedVideoFrame) }, identifier());
         return;
     }
 
     m_blackFrameSize = { };
     auto sharedVideoFrame = m_sharedVideoFrameWriter.write(videoFrame,
-        [this](auto& semaphore) { m_connection->send(Messages::RemoteMediaRecorder::SetSharedVideoFrameSemaphore { semaphore }, m_identifier); },
-        [this](SharedMemory::Handle&& handle) { m_connection->send(Messages::RemoteMediaRecorder::SetSharedVideoFrameMemory { WTFMove(handle) }, m_identifier); }
+        [this](auto& semaphore) { m_connection->send(Messages::RemoteMediaRecorder::SetSharedVideoFrameSemaphore { semaphore }, identifier()); },
+        [this](SharedMemory::Handle&& handle) { m_connection->send(Messages::RemoteMediaRecorder::SetSharedVideoFrameMemory { WTFMove(handle) }, identifier()); }
     );
     if (sharedVideoFrame)
-        m_connection->send(Messages::RemoteMediaRecorder::VideoFrameAvailable { WTFMove(*sharedVideoFrame) }, m_identifier);
+        m_connection->send(Messages::RemoteMediaRecorder::VideoFrameAvailable { WTFMove(*sharedVideoFrame) }, identifier());
 }
 
 void MediaRecorderPrivate::audioSamplesAvailable(const MediaTime& time, const PlatformAudioData& audioData, const AudioStreamDescription& description, size_t numberOfFrames)
@@ -154,7 +153,7 @@ void MediaRecorderPrivate::audioSamplesAvailable(const MediaTime& time, const Pl
         RELEASE_ASSERT(result); // FIXME(https://bugs.webkit.org/show_bug.cgi?id=262690): Handle allocation failure.
         auto [ringBuffer, handle] = WTFMove(*result);
         m_ringBuffer = WTFMove(ringBuffer);
-        m_connection->send(Messages::RemoteMediaRecorder::AudioSamplesStorageChanged { WTFMove(handle), format }, m_identifier);
+        m_connection->send(Messages::RemoteMediaRecorder::AudioSamplesStorageChanged { WTFMove(handle), format }, identifier());
         m_silenceAudioBuffer = nullptr;
     }
 
@@ -169,7 +168,7 @@ void MediaRecorderPrivate::audioSamplesAvailable(const MediaTime& time, const Pl
         m_ringBuffer->store(m_silenceAudioBuffer->list(), numberOfFrames, time.timeValue());
     } else
         m_ringBuffer->store(downcast<WebAudioBufferList>(audioData).list(), numberOfFrames, time.timeValue());
-    m_connection->send(Messages::RemoteMediaRecorder::AudioSamplesAvailable { time, numberOfFrames }, m_identifier);
+    m_connection->send(Messages::RemoteMediaRecorder::AudioSamplesAvailable { time, numberOfFrames }, identifier());
 }
 
 void MediaRecorderPrivate::fetchData(CompletionHandler<void(RefPtr<WebCore::FragmentedSharedBuffer>&&, const String& mimeType, double)>&& completionHandler)
@@ -180,23 +179,23 @@ void MediaRecorderPrivate::fetchData(CompletionHandler<void(RefPtr<WebCore::Frag
         if (data.size())
             buffer = SharedBuffer::create(data.data(), data.size());
         completionHandler(WTFMove(buffer), mimeType, timeCode);
-    }, m_identifier);
+    }, identifier());
 }
 
 void MediaRecorderPrivate::stopRecording(CompletionHandler<void()>&& completionHandler)
 {
     m_isStopped = true;
-    m_connection->sendWithAsyncReply(Messages::RemoteMediaRecorder::StopRecording { }, WTFMove(completionHandler), m_identifier);
+    m_connection->sendWithAsyncReply(Messages::RemoteMediaRecorder::StopRecording { }, WTFMove(completionHandler), identifier());
 }
 
 void MediaRecorderPrivate::pauseRecording(CompletionHandler<void()>&& completionHandler)
 {
-    m_connection->sendWithAsyncReply(Messages::RemoteMediaRecorder::Pause { }, WTFMove(completionHandler), m_identifier);
+    m_connection->sendWithAsyncReply(Messages::RemoteMediaRecorder::Pause { }, WTFMove(completionHandler), identifier());
 }
 
 void MediaRecorderPrivate::resumeRecording(CompletionHandler<void()>&& completionHandler)
 {
-    m_connection->sendWithAsyncReply(Messages::RemoteMediaRecorder::Resume { }, WTFMove(completionHandler), m_identifier);
+    m_connection->sendWithAsyncReply(Messages::RemoteMediaRecorder::Resume { }, WTFMove(completionHandler), identifier());
 }
 
 const String& MediaRecorderPrivate::mimeType() const

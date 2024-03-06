@@ -30,6 +30,7 @@
 #include <WebCore/ResourceLoaderIdentifier.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/Identified.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
@@ -45,12 +46,10 @@ class WebProcessProxy;
 
 using SyncLoadCompletionHandler = CompletionHandler<void(const WebCore::ResourceResponse&, const WebCore::ResourceError&, Vector<uint8_t>&&)>;
 
-class WebURLSchemeHandler : public RefCounted<WebURLSchemeHandler> {
+class WebURLSchemeHandler : public RefCounted<WebURLSchemeHandler>, public Identified<WebURLSchemeHandlerIdentifier> {
     WTF_MAKE_NONCOPYABLE(WebURLSchemeHandler);
 public:
     virtual ~WebURLSchemeHandler();
-
-    WebURLSchemeHandlerIdentifier identifier() const { return m_identifier; }
 
     void startTask(WebPageProxy&, WebProcessProxy&, WebCore::PageIdentifier, URLSchemeTaskParameters&&, SyncLoadCompletionHandler&&);
     void stopTask(WebPageProxy&, WebCore::ResourceLoaderIdentifier taskIdentifier);
@@ -69,8 +68,6 @@ private:
 
     void removeTaskFromPageMap(WebPageProxyIdentifier, WebCore::ResourceLoaderIdentifier);
     WebProcessProxy* processForTaskIdentifier(WebPageProxy&, WebCore::ResourceLoaderIdentifier) const;
-
-    WebURLSchemeHandlerIdentifier m_identifier;
 
     HashMap<std::pair<WebCore::ResourceLoaderIdentifier, WebPageProxyIdentifier>, Ref<WebURLSchemeTask>> m_tasks;
     HashMap<WebPageProxyIdentifier, HashSet<WebCore::ResourceLoaderIdentifier>> m_tasksByPageIdentifier;

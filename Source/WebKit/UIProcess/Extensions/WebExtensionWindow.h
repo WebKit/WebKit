@@ -31,6 +31,7 @@
 #include "WebExtensionWindowIdentifier.h"
 #include "WebPageProxyIdentifier.h"
 #include <wtf/Forward.h>
+#include <wtf/Identified.h>
 #include <wtf/WeakObjCPtr.h>
 
 OBJC_PROTOCOL(_WKWebExtensionWindow);
@@ -59,7 +60,7 @@ static constexpr OptionSet<WebExtensionWindowTypeFilter> allWebExtensionWindowTy
     };
 }
 
-class WebExtensionWindow : public RefCounted<WebExtensionWindow>, public CanMakeWeakPtr<WebExtensionWindow> {
+class WebExtensionWindow : public RefCounted<WebExtensionWindow>, public CanMakeWeakPtr<WebExtensionWindow>, public Identified<WebExtensionWindowIdentifier> {
     WTF_MAKE_NONCOPYABLE(WebExtensionWindow);
     WTF_MAKE_FAST_ALLOCATED;
 
@@ -90,7 +91,6 @@ public:
 
     using TabVector = Vector<Ref<WebExtensionTab>>;
 
-    WebExtensionWindowIdentifier identifier() const { return m_identifier; }
     WebExtensionWindowParameters parameters(PopulateTabs = PopulateTabs::No) const;
     WebExtensionWindowParameters minimalParameters() const;
 
@@ -139,7 +139,6 @@ public:
 #endif
 
 private:
-    WebExtensionWindowIdentifier m_identifier;
     WeakPtr<WebExtensionContext> m_extensionContext;
     WeakObjCPtr<_WKWebExtensionWindow> m_delegate;
     bool m_isOpen : 1 { false };

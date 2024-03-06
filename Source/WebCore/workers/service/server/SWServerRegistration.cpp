@@ -36,19 +36,13 @@
 
 namespace WebCore {
 
-static ServiceWorkerRegistrationIdentifier generateServiceWorkerRegistrationIdentifier()
-{
-    return ServiceWorkerRegistrationIdentifier::generate();
-}
-
 Ref<SWServerRegistration> SWServerRegistration::create(SWServer& server, const ServiceWorkerRegistrationKey& key, ServiceWorkerUpdateViaCache updateViaCache, const URL& scopeURL, const URL& scriptURL, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, NavigationPreloadState&& navigationPreloadState)
 {
     return adoptRef(*new SWServerRegistration(server, key, updateViaCache, scopeURL, scriptURL, serviceWorkerPageIdentifier, WTFMove(navigationPreloadState)));
 }
 
 SWServerRegistration::SWServerRegistration(SWServer& server, const ServiceWorkerRegistrationKey& key, ServiceWorkerUpdateViaCache updateViaCache, const URL& scopeURL, const URL& scriptURL, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, NavigationPreloadState&& navigationPreloadState)
-    : m_identifier(generateServiceWorkerRegistrationIdentifier())
-    , m_registrationKey(key)
+    : m_registrationKey(key)
     , m_updateViaCache(updateViaCache)
     , m_scopeURL(scopeURL)
     , m_scriptURL(scriptURL)

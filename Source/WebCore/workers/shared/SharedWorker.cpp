@@ -47,8 +47,8 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(SharedWorker);
 
-#define SHARED_WORKER_RELEASE_LOG(fmt, ...) RELEASE_LOG(SharedWorker, "%p - [identifier=%" PUBLIC_LOG_STRING "] SharedWorker::" fmt, this, m_identifier.toString().utf8().data(), ##__VA_ARGS__)
-#define SHARED_WORKER_RELEASE_LOG_ERROR(fmt, ...) RELEASE_LOG_ERROR(SharedWorker, "%p - [identifier=%" PUBLIC_LOG_STRING "] SharedWorker::" fmt, this, m_identifier.toString().utf8().data(), ##__VA_ARGS__)
+#define SHARED_WORKER_RELEASE_LOG(fmt, ...) RELEASE_LOG(SharedWorker, "%p - [identifier=%" PUBLIC_LOG_STRING "] SharedWorker::" fmt, this, identifier().toString().utf8().data(), ##__VA_ARGS__)
+#define SHARED_WORKER_RELEASE_LOG_ERROR(fmt, ...) RELEASE_LOG_ERROR(SharedWorker, "%p - [identifier=%" PUBLIC_LOG_STRING "] SharedWorker::" fmt, this, identifier().toString().utf8().data(), ##__VA_ARGS__)
 
 static HashMap<SharedWorkerObjectIdentifier, WeakRef<SharedWorker, WeakPtrImplWithEventTargetData>>& allSharedWorkers()
 {
@@ -115,20 +115,19 @@ ExceptionOr<Ref<SharedWorker>> SharedWorker::create(Document& document, String&&
 SharedWorker::SharedWorker(Document& document, const SharedWorkerKey& key, Ref<MessagePort>&& port)
     : ActiveDOMObject(&document)
     , m_key(key)
-    , m_identifier(SharedWorkerObjectIdentifier::generate())
     , m_port(WTFMove(port))
     , m_identifierForInspector("SharedWorker:" + Inspector::IdentifiersFactory::createIdentifier())
     , m_blobURLExtension({ m_key.url.protocolIsBlob() ? m_key.url : URL(), document.topOrigin().data() }) // Keep blob URL alive until the worker has finished loading.
 {
     SHARED_WORKER_RELEASE_LOG("SharedWorker:");
-    allSharedWorkers().add(m_identifier, *this);
+    allSharedWorkers().add(identifier(), *this);
 }
 
 SharedWorker::~SharedWorker()
 {
-    ASSERT(allSharedWorkers().get(m_identifier) == this);
+    ASSERT(allSharedWorkers().get(identifier()) == this);
     SHARED_WORKER_RELEASE_LOG("~SharedWorker:");
-    allSharedWorkers().remove(m_identifier);
+    allSharedWorkers().remove(identifier());
     ASSERT(!m_isActive);
 }
 
@@ -166,13 +165,13 @@ void SharedWorker::stop()
 {
     SHARED_WORKER_RELEASE_LOG("stop:");
     m_isActive = false;
-    mainThreadConnection()->sharedWorkerObjectIsGoingAway(m_key, m_identifier);
+    mainThreadConnection()->sharedWorkerObjectIsGoingAway(m_key, identifier());
 }
 
 void SharedWorker::suspend(ReasonForSuspension reason)
 {
     if (reason == ReasonForSuspension::BackForwardCache) {
-        mainThreadConnection()->suspendForBackForwardCache(m_key, m_identifier);
+        mainThreadConnection()->suspendForBackForwardCache(m_key, identifier());
         m_isSuspendedForBackForwardCache = true;
     }
 }
@@ -180,7 +179,7 @@ void SharedWorker::suspend(ReasonForSuspension reason)
 void SharedWorker::resume()
 {
     if (m_isSuspendedForBackForwardCache) {
-        mainThreadConnection()->resumeForBackForwardCache(m_key, m_identifier);
+        mainThreadConnection()->resumeForBackForwardCache(m_key, identifier());
         m_isSuspendedForBackForwardCache = false;
     }
 }

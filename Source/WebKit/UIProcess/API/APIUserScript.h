@@ -32,7 +32,7 @@
 
 namespace API {
 
-class UserScript final : public ObjectImpl<Object::Type::UserScript>, public Identified<UserScript> {
+class UserScript final : public ObjectImpl<Object::Type::UserScript>, public LegacyIdentified<UserScript> {
 public:
     static WTF::URL generateUniqueURL();
 

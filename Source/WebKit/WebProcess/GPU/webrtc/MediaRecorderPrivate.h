@@ -32,6 +32,7 @@
 #include "SharedVideoFrame.h"
 #include <WebCore/CAAudioStreamDescription.h>
 #include <WebCore/MediaRecorderPrivate.h>
+#include <wtf/Identified.h>
 #include <wtf/MediaTime.h>
 #include <wtf/WeakPtr.h>
 
@@ -50,7 +51,8 @@ class MediaRecorderPrivateGPUProcessDidCloseObserver;
 
 class MediaRecorderPrivate final
     : public WebCore::MediaRecorderPrivate
-    , public CanMakeWeakPtr<MediaRecorderPrivate> {
+    , public CanMakeWeakPtr<MediaRecorderPrivate>
+    , private Identified<MediaRecorderIdentifier> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     MediaRecorderPrivate(WebCore::MediaStreamPrivate&, const WebCore::MediaRecorderPrivateOptions&);
@@ -70,7 +72,6 @@ private:
     friend class MediaRecorderPrivateGPUProcessDidCloseObserver;
     void gpuProcessConnectionDidClose();
 
-    MediaRecorderIdentifier m_identifier;
     Ref<WebCore::MediaStreamPrivate> m_stream;
     Ref<IPC::Connection> m_connection;
 

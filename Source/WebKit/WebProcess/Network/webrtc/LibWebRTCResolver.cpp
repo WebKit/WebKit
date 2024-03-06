@@ -47,8 +47,8 @@ void LibWebRTCResolver::sendOnMainThread(Function<void(IPC::Connection&)>&& call
 
 LibWebRTCResolver::~LibWebRTCResolver()
 {
-    WebProcess::singleton().libWebRTCNetwork().socketFactory().removeResolver(m_identifier);
-    sendOnMainThread([identifier = m_identifier](IPC::Connection& connection) {
+    WebProcess::singleton().libWebRTCNetwork().socketFactory().removeResolver(identifier());
+    sendOnMainThread([identifier = this->identifier()](IPC::Connection& connection) {
         connection.send(Messages::NetworkRTCProvider::StopResolver(identifier), 0);
     });
 }
@@ -70,7 +70,7 @@ void LibWebRTCResolver::start(const rtc::SocketAddress& address, Function<void()
         return;
     }
 
-    sendOnMainThread([identifier = m_identifier, name = WTFMove(name).isolatedCopy()](IPC::Connection& connection) {
+    sendOnMainThread([identifier = this->identifier(), name = WTFMove(name).isolatedCopy()](IPC::Connection& connection) {
         connection.send(Messages::NetworkRTCProvider::CreateResolver(identifier, name), 0);
     });
 }

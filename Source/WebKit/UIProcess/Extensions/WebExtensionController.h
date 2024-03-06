@@ -42,6 +42,7 @@
 #include "WebUserContentControllerProxy.h"
 #include <WebCore/Timer.h>
 #include <wtf/Forward.h>
+#include <wtf/Identified.h>
 #include <wtf/URLHash.h>
 #include <wtf/WeakHashSet.h>
 
@@ -68,7 +69,7 @@ struct WebExtensionControllerParameters;
 class WebInspectorUIProxy;
 #endif
 
-class WebExtensionController : public API::ObjectImpl<API::Object::Type::WebExtensionController>, public IPC::MessageReceiver {
+class WebExtensionController : public API::ObjectImpl<API::Object::Type::WebExtensionController>, public IPC::MessageReceiver, public Identified<WebExtensionControllerIdentifier> {
     WTF_MAKE_NONCOPYABLE(WebExtensionController);
 
 public:
@@ -94,7 +95,6 @@ public:
     enum class ForPrivateBrowsing { No, Yes };
 
     WebExtensionControllerConfiguration& configuration() const { return m_configuration.get(); }
-    WebExtensionControllerIdentifier identifier() const { return m_identifier; }
     WebExtensionControllerParameters parameters() const;
 
     bool operator==(const WebExtensionController& other) const { return (this == &other); }
@@ -225,7 +225,6 @@ private:
     };
 
     Ref<WebExtensionControllerConfiguration> m_configuration;
-    WebExtensionControllerIdentifier m_identifier;
 
     WebExtensionContextSet m_extensionContexts;
     WebExtensionContextBaseURLMap m_extensionContextBaseURLMap;

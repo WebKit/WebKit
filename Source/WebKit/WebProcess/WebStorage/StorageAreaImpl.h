@@ -29,6 +29,7 @@
 #include "StorageAreaImplIdentifier.h"
 #include <WebCore/StorageArea.h>
 #include <wtf/HashMap.h>
+#include <wtf/Identified.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -39,14 +40,12 @@ namespace WebKit {
 
 class StorageAreaMap;
 
-class StorageAreaImpl final : public WebCore::StorageArea {
+class StorageAreaImpl final : public WebCore::StorageArea, public Identified<StorageAreaImplIdentifier> {
 public:
     using Identifier = StorageAreaImplIdentifier;
 
     static Ref<StorageAreaImpl> create(StorageAreaMap&);
     virtual ~StorageAreaImpl();
-
-    Identifier identifier() const { return m_identifier; }
 
 private:
     StorageAreaImpl(StorageAreaMap&);
@@ -63,7 +62,6 @@ private:
     size_t memoryBytesUsedByCache() override;
     void prewarm() final;
 
-    Identifier m_identifier;
     WeakPtr<StorageAreaMap> m_storageAreaMap;
 };
 

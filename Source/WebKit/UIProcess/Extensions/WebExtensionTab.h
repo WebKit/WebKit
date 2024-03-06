@@ -33,6 +33,7 @@
 #include "WebExtensionTabIdentifier.h"
 #include "WebPageProxyIdentifier.h"
 #include <wtf/Forward.h>
+#include <wtf/Identified.h>
 #include <wtf/WeakObjCPtr.h>
 
 OBJC_CLASS NSArray;
@@ -54,7 +55,7 @@ enum class WebExtensionTabImageFormat : uint8_t {
     JPEG,
 };
 
-class WebExtensionTab : public RefCounted<WebExtensionTab>, public CanMakeWeakPtr<WebExtensionTab> {
+class WebExtensionTab : public RefCounted<WebExtensionTab>, public CanMakeWeakPtr<WebExtensionTab>, public Identified<WebExtensionTabIdentifier> {
     WTF_MAKE_NONCOPYABLE(WebExtensionTab);
     WTF_MAKE_FAST_ALLOCATED;
 
@@ -101,7 +102,6 @@ public:
 
     using WebProcessProxySet = HashSet<Ref<WebProcessProxy>>;
 
-    WebExtensionTabIdentifier identifier() const { return m_identifier; }
     WebExtensionTabParameters parameters() const;
     WebExtensionTabParameters changedParameters(OptionSet<ChangedProperties> = { }) const;
 
@@ -199,7 +199,6 @@ public:
 #endif
 
 private:
-    WebExtensionTabIdentifier m_identifier;
     WeakPtr<WebExtensionContext> m_extensionContext;
     WeakObjCPtr<_WKWebExtensionTab> m_delegate;
     RefPtr<WebExtensionMatchPattern> m_temporaryPermissionMatchPattern;

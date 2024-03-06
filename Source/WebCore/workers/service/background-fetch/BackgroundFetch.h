@@ -36,6 +36,7 @@
 #include "ResourceResponse.h"
 #include "ServiceWorkerRegistrationKey.h"
 #include "ServiceWorkerTypes.h"
+#include <wtf/Identified.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -70,7 +71,7 @@ public:
     void pause();
     void resume(const CreateLoaderCallback&);
 
-    class Record final : public BackgroundFetchRecordLoader::Client, public RefCounted<Record> {
+    class Record final : public BackgroundFetchRecordLoader::Client, public RefCounted<Record>, private Identified<BackgroundFetchRecordIdentifier> {
         WTF_MAKE_FAST_ALLOCATED;
     public:
         static Ref<Record> create(BackgroundFetch& fetch, BackgroundFetchRequest&& request, size_t size) { return adoptRef(*new Record(fetch, WTFMove(request), size)); }
@@ -103,7 +104,6 @@ public:
         void didFinish(const ResourceError&) final;
 
         WeakPtr<BackgroundFetch> m_fetch;
-        BackgroundFetchRecordIdentifier m_identifier;
         String m_fetchIdentifier;
         ServiceWorkerRegistrationKey m_registrationKey;
         BackgroundFetchRequest m_request;

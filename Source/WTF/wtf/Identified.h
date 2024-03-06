@@ -26,19 +26,18 @@
 #pragma once
 
 #include <atomic>
+#include <type_traits>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/ObjectIdentifier.h>
 #include <wtf/ThreadAssertions.h>
 #include <wtf/UUID.h>
 
 namespace WTF {
 
-template <typename IdentifierType, typename ClassType>
+template <typename IdentifierType>
 class IdentifiedBase {
 public:
-    IdentifierType identifier() const
-    {
-        return m_identifier;
-    }
+    IdentifierType identifier() const { return m_identifier; }
 
 protected:
     IdentifiedBase(const IdentifiedBase&) = default;
@@ -54,19 +53,30 @@ private:
     IdentifierType m_identifier;
 };
 
-template <typename T>
-class Identified : public IdentifiedBase<uint64_t, T> {
+template <typename ObjectIdentifierType>
+class Identified : public IdentifiedBase<ObjectIdentifierType> {
 protected:
     Identified()
-        : IdentifiedBase<uint64_t, T>(generateIdentifier())
+        : IdentifiedBase<ObjectIdentifierType>(ObjectIdentifierType::generate())
     {
     }
 
     Identified(const Identified&) = default;
-    Identified& operator=(const Identified&) = default;
+};
 
-    explicit Identified(uint64_t identifier)
-        : IdentifiedBase<uint64_t, T>(identifier)
+template <typename T>
+class LegacyIdentified : public IdentifiedBase<uint64_t> {
+protected:
+    LegacyIdentified()
+        : IdentifiedBase<uint64_t>(generateIdentifier())
+    {
+    }
+
+    LegacyIdentified(const LegacyIdentified&) = default;
+    LegacyIdentified& operator=(const LegacyIdentified&) = default;
+
+    explicit LegacyIdentified(uint64_t identifier)
+        : IdentifiedBase<uint64_t>(identifier)
     {
     }
 
@@ -82,18 +92,18 @@ private:
 };
 
 template <typename T>
-class ThreadSafeIdentified : public IdentifiedBase<uint64_t, T> {
+class LegacyThreadSafeIdentified : public IdentifiedBase<uint64_t> {
 protected:
-    ThreadSafeIdentified()
-        : IdentifiedBase<uint64_t, T>(generateIdentifier())
+    LegacyThreadSafeIdentified()
+        : IdentifiedBase<uint64_t>(generateIdentifier())
     {
     }
 
-    ThreadSafeIdentified(const ThreadSafeIdentified&) = default;
-    ThreadSafeIdentified& operator=(const ThreadSafeIdentified&) = default;
+    LegacyThreadSafeIdentified(const LegacyThreadSafeIdentified&) = default;
+    LegacyThreadSafeIdentified& operator=(const LegacyThreadSafeIdentified&) = default;
 
-    explicit ThreadSafeIdentified(uint64_t identifier)
-        : IdentifiedBase<uint64_t, T>(identifier)
+    explicit LegacyThreadSafeIdentified(uint64_t identifier)
+        : IdentifiedBase<uint64_t>(identifier)
     {
     }
 
@@ -110,10 +120,10 @@ private:
 };
 
 template <typename T>
-class UUIDIdentified : public IdentifiedBase<UUID, T> {
+class UUIDIdentified : public IdentifiedBase<UUID> {
 protected:
     UUIDIdentified()
-        : IdentifiedBase<UUID, T>(UUID::createVersion4())
+        : IdentifiedBase<UUID>(UUID::createVersion4())
     {
     }
 
@@ -123,5 +133,6 @@ protected:
 } // namespace WTF
 
 using WTF::Identified;
-using WTF::ThreadSafeIdentified;
+using WTF::LegacyIdentified;
+using WTF::LegacyThreadSafeIdentified;
 using WTF::UUIDIdentified;

@@ -31,6 +31,7 @@
 #include "VisitedLinkTableIdentifier.h"
 #include "WebPageProxyIdentifier.h"
 #include <wtf/Forward.h>
+#include <wtf/Identified.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WeakHashSet.h>
 
@@ -38,14 +39,12 @@ namespace WebKit {
 
 class WebProcessProxy;
     
-class VisitedLinkStore final : public API::ObjectImpl<API::Object::Type::VisitedLinkStore>, public IPC::MessageReceiver, private SharedStringHashStore::Client {
+class VisitedLinkStore final : public API::ObjectImpl<API::Object::Type::VisitedLinkStore>, public IPC::MessageReceiver, public Identified<VisitedLinkTableIdentifier>, private SharedStringHashStore::Client {
 public:
     static Ref<VisitedLinkStore> create();
     VisitedLinkStore();
 
     virtual ~VisitedLinkStore();
-
-    VisitedLinkTableIdentifier identifier() const { return m_identifier; }
 
     void addProcess(WebProcessProxy&);
     void removeProcess(WebProcessProxy&);
@@ -67,7 +66,6 @@ private:
 
     void sendStoreHandleToProcess(WebProcessProxy&);
 
-    VisitedLinkTableIdentifier m_identifier;
     WeakHashSet<WebProcessProxy> m_processes;
     SharedStringHashStore m_linkHashStore;
 };

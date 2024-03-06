@@ -44,8 +44,7 @@
 namespace WebKit {
 
 WebExtensionWindow::WebExtensionWindow(const WebExtensionContext& context, _WKWebExtensionWindow* delegate)
-    : m_identifier(WebExtensionWindowIdentifier::generate())
-    , m_extensionContext(context)
+    : m_extensionContext(context)
     , m_delegate(delegate)
     , m_respondsToTabs([delegate respondsToSelector:@selector(tabsForWebExtensionContext:)])
     , m_respondsToActiveTab([delegate respondsToSelector:@selector(activeTabForWebExtensionContext:)])
@@ -69,7 +68,7 @@ WebExtensionContext* WebExtensionWindow::extensionContext() const
 
 bool WebExtensionWindow::operator==(const WebExtensionWindow& other) const
 {
-    return this == &other || (m_identifier == other.m_identifier && m_extensionContext == other.m_extensionContext && m_delegate.get() == other.m_delegate.get());
+    return this == &other || (identifier() == other.identifier() && m_extensionContext == other.m_extensionContext && m_delegate.get() == other.m_delegate.get());
 }
 
 WebExtensionWindowParameters WebExtensionWindow::parameters(PopulateTabs populate) const

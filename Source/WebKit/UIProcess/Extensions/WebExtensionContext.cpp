@@ -51,10 +51,9 @@ WebExtensionContext* WebExtensionContext::get(WebExtensionContextIdentifier iden
 }
 
 WebExtensionContext::WebExtensionContext()
-    : m_identifier(WebExtensionContextIdentifier::generate())
 {
-    ASSERT(!get(m_identifier));
-    webExtensionContexts().add(m_identifier, *this);
+    ASSERT(!get(identifier()));
+    webExtensionContexts().add(identifier(), *this);
 }
 
 WebExtensionContextParameters WebExtensionContext::parameters() const

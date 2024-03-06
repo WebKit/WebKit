@@ -51,8 +51,7 @@ namespace WebKit {
 using namespace WebCore;
 
 StorageAreaMap::StorageAreaMap(StorageNamespaceImpl& storageNamespace, Ref<const WebCore::SecurityOrigin>&& securityOrigin)
-    : m_identifier(StorageAreaMapIdentifier::generate())
-    , m_namespace(storageNamespace)
+    : m_namespace(storageNamespace)
     , m_securityOrigin(WTFMove(securityOrigin))
     , m_quotaInBytes(storageNamespace.quotaInBytes())
     , m_type(storageNamespace.storageType())
@@ -291,7 +290,7 @@ void StorageAreaMap::sendConnectMessage(SendMode mode)
     auto type = computeStorageType();
 
     if (mode == SendMode::Sync) {
-        auto sendResult = ipcConnection->sendSync(Messages::NetworkStorageManager::ConnectToStorageAreaSync(type, m_identifier, namespaceIdentifier, origin), 0);
+        auto sendResult = ipcConnection->sendSync(Messages::NetworkStorageManager::ConnectToStorageAreaSync(type, identifier(), namespaceIdentifier, origin), 0);
         auto [remoteAreaIdentifier, items, messageIdentifier] = sendResult.takeReplyOr(StorageAreaIdentifier { }, HashMap<String, String> { }, 0);
         didConnect(remoteAreaIdentifier, WTFMove(items), messageIdentifier);
         return;
@@ -302,7 +301,7 @@ void StorageAreaMap::sendConnectMessage(SendMode mode)
             return didConnect(remoteAreaIdentifier, WTFMove(items), messageIdentifier);
     };
 
-    ipcConnection->sendWithAsyncReply(Messages::NetworkStorageManager::ConnectToStorageArea(type, m_identifier, namespaceIdentifier, origin), WTFMove(completionHandler));
+    ipcConnection->sendWithAsyncReply(Messages::NetworkStorageManager::ConnectToStorageArea(type, identifier(), namespaceIdentifier, origin), WTFMove(completionHandler));
 }
 
 void StorageAreaMap::connectSync()

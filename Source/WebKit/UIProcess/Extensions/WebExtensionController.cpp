@@ -52,10 +52,9 @@ WebExtensionController* WebExtensionController::get(WebExtensionControllerIdenti
 
 WebExtensionController::WebExtensionController(Ref<WebExtensionControllerConfiguration> configuration)
     : m_configuration(configuration)
-    , m_identifier(WebExtensionControllerIdentifier::generate())
 {
-    ASSERT(!get(m_identifier));
-    webExtensionControllers().add(m_identifier, *this);
+    ASSERT(!get(identifier()));
+    webExtensionControllers().add(identifier(), *this);
 
     // A freshly created extension controller will be used to determine if the startup event
     // should be fired for any loaded extensions during a brief time window. Start a timer

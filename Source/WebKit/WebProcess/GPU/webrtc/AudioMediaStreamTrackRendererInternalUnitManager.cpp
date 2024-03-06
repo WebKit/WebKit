@@ -42,16 +42,15 @@
 #include <WebCore/WebAudioBufferList.h>
 #include <mach/mach_time.h>
 #include <wtf/Deque.h>
+#include <wtf/Identified.h>
 
 namespace WebKit {
 
-class AudioMediaStreamTrackRendererInternalUnitManager::Proxy final : public WebCore::AudioMediaStreamTrackRendererInternalUnit, public CanMakeWeakPtr<Proxy> {
+class AudioMediaStreamTrackRendererInternalUnitManager::Proxy final : public WebCore::AudioMediaStreamTrackRendererInternalUnit, public CanMakeWeakPtr<Proxy>, public Identified<AudioMediaStreamTrackRendererInternalUnitIdentifier> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit Proxy(Client&);
     ~Proxy();
-
-    AudioMediaStreamTrackRendererInternalUnitIdentifier identifier() const { return m_identifier; }
 
     enum class IsClosed : bool { No, Yes };
     void reset(IsClosed);
@@ -121,7 +120,6 @@ void AudioMediaStreamTrackRendererInternalUnitManager::restartAllUnits()
 
 AudioMediaStreamTrackRendererInternalUnitManager::Proxy::Proxy(Client& client)
     : m_client(client)
-    , m_identifier(AudioMediaStreamTrackRendererInternalUnitIdentifier::generate())
 {
     WebProcess::singleton().audioMediaStreamTrackRendererInternalUnitManager().add(*this);
     createRemoteUnit();
@@ -130,7 +128,7 @@ AudioMediaStreamTrackRendererInternalUnitManager::Proxy::Proxy(Client& client)
 AudioMediaStreamTrackRendererInternalUnitManager::Proxy::~Proxy()
 {
     WebProcess::singleton().audioMediaStreamTrackRendererInternalUnitManager().remove(*this);
-    WebProcess::singleton().ensureGPUProcessConnection().connection().send(Messages::RemoteAudioMediaStreamTrackRendererInternalUnitManager::DeleteUnit { m_identifier }, 0);
+    WebProcess::singleton().ensureGPUProcessConnection().connection().send(Messages::RemoteAudioMediaStreamTrackRendererInternalUnitManager::DeleteUnit { identifier() }, 0);
 
     while (!m_descriptionCallbacks.isEmpty())
         m_descriptionCallbacks.takeFirst()(std::nullopt);
@@ -138,7 +136,7 @@ AudioMediaStreamTrackRendererInternalUnitManager::Proxy::~Proxy()
 
 void AudioMediaStreamTrackRendererInternalUnitManager::Proxy::createRemoteUnit()
 {
-    WebProcess::singleton().ensureGPUProcessConnection().connection().sendWithAsyncReply(Messages::RemoteAudioMediaStreamTrackRendererInternalUnitManager::CreateUnit { m_identifier }, [weakThis = WeakPtr { *this }](auto&& description, auto frameChunkSize) {
+    WebProcess::singleton().ensureGPUProcessConnection().connection().sendWithAsyncReply(Messages::RemoteAudioMediaStreamTrackRendererInternalUnitManager::CreateUnit { identifier() }, [weakThis = WeakPtr { *this }](auto&& description, auto frameChunkSize) {
         if (weakThis && description && frameChunkSize)
             weakThis->initialize(*description, frameChunkSize);
     }, 0);
@@ -185,7 +183,7 @@ void AudioMediaStreamTrackRendererInternalUnitManager::Proxy::start()
     RELEASE_ASSERT(result); // FIXME(https://bugs.webkit.org/show_bug.cgi?id=262690): Handle allocation failure.
     auto [ringBuffer, handle] = WTFMove(*result);
     m_ringBuffer = WTFMove(ringBuffer);
-    WebProcess::singleton().ensureGPUProcessConnection().connection().send(Messages::RemoteAudioMediaStreamTrackRendererInternalUnitManager::StartUnit { m_identifier, WTFMove(handle), *m_semaphore }, 0);
+    WebProcess::singleton().ensureGPUProcessConnection().connection().send(Messages::RemoteAudioMediaStreamTrackRendererInternalUnitManager::StartUnit { identifier(), WTFMove(handle), *m_semaphore }, 0);
 
     m_buffer = makeUnique<WebCore::WebAudioBufferList>(*m_description, m_numberOfFrames);
     m_buffer->setSampleCount(m_frameChunkSize);
@@ -196,13 +194,13 @@ void AudioMediaStreamTrackRendererInternalUnitManager::Proxy::start()
 void AudioMediaStreamTrackRendererInternalUnitManager::Proxy::stop()
 {
     m_isPlaying = false;
-    WebProcess::singleton().ensureGPUProcessConnection().connection().send(Messages::RemoteAudioMediaStreamTrackRendererInternalUnitManager::StopUnit { m_identifier }, 0);
+    WebProcess::singleton().ensureGPUProcessConnection().connection().send(Messages::RemoteAudioMediaStreamTrackRendererInternalUnitManager::StopUnit { identifier() }, 0);
 }
 
 void AudioMediaStreamTrackRendererInternalUnitManager::Proxy::setAudioOutputDevice(const String& deviceId)
 {
     m_deviceId = deviceId;
-    WebProcess::singleton().ensureGPUProcessConnection().connection().send(Messages::RemoteAudioMediaStreamTrackRendererInternalUnitManager::SetAudioOutputDevice { m_identifier, deviceId }, 0);
+    WebProcess::singleton().ensureGPUProcessConnection().connection().send(Messages::RemoteAudioMediaStreamTrackRendererInternalUnitManager::SetAudioOutputDevice { identifier(), deviceId }, 0);
 }
 
 void AudioMediaStreamTrackRendererInternalUnitManager::Proxy::retrieveFormatDescription(CompletionHandler<void(std::optional<WebCore::CAAudioStreamDescription>)>&& callback)

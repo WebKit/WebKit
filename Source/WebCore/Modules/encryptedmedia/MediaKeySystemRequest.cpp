@@ -49,7 +49,6 @@ Ref<MediaKeySystemRequest> MediaKeySystemRequest::create(Document& document, con
 
 MediaKeySystemRequest::MediaKeySystemRequest(Document& document, const String& keySystem, Ref<DeferredPromise>&& promise)
     : ActiveDOMObject(document)
-    , m_identifier(MediaKeySystemRequestIdentifier::generate())
     , m_keySystem(keySystem)
     , m_promise(WTFMove(promise))
 {

@@ -32,6 +32,7 @@
 #include "RemoteImageBufferSetIdentifier.h"
 #include "RenderingUpdateID.h"
 #include "WorkQueueMessageReceiver.h"
+#include <wtf/Identified.h>
 #include <wtf/Lock.h>
 
 #if ENABLE(GPU_PROCESS)
@@ -75,12 +76,10 @@ public:
 // Usage is done through RemoteRenderingBackendProxy::prepareImageBufferSetsForDisplay,
 // so that a Vector of RemoteImageBufferSets can be used with a single
 // IPC call.
-class RemoteImageBufferSetProxy : public IPC::WorkQueueMessageReceiver {
+class RemoteImageBufferSetProxy : public IPC::WorkQueueMessageReceiver, public Identified<RemoteImageBufferSetIdentifier> {
 public:
     RemoteImageBufferSetProxy(RemoteRenderingBackendProxy&);
     ~RemoteImageBufferSetProxy();
-
-    RemoteImageBufferSetIdentifier identifier() const { return m_identifier; }
 
     OptionSet<BufferInSetType> requestedVolatility() { return m_requestedVolatility; }
     OptionSet<BufferInSetType> confirmedVolatility() { return m_confirmedVolatility; }
@@ -120,7 +119,6 @@ private:
     void createFlushFence() WTF_REQUIRES_LOCK(m_lock);
 
     WeakPtr<RemoteRenderingBackendProxy> m_remoteRenderingBackendProxy;
-    RemoteImageBufferSetIdentifier m_identifier;
 
     WebCore::RenderingResourceIdentifier m_displayListIdentifier;
     std::unique_ptr<RemoteDisplayListRecorderProxy> m_displayListRecorder;

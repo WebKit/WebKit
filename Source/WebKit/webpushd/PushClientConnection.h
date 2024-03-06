@@ -61,7 +61,7 @@ using WebKit::WebPushD::WebPushDaemonConnectionConfiguration;
 
 namespace WebPushD {
 
-class PushClientConnection : public RefCounted<PushClientConnection>, public Identified<PushClientConnection>, public IPC::MessageReceiver {
+class PushClientConnection : public RefCounted<PushClientConnection>, public LegacyIdentified<PushClientConnection>, public IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<PushClientConnection> create(xpc_connection_t);

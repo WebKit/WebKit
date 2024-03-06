@@ -38,6 +38,7 @@
 #include "WorkerThread.h"
 #include <wtf/CallbackAggregator.h>
 #include <wtf/HashMap.h>
+#include <wtf/Identified.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/MainThread.h>
 #include <wtf/Scope.h>
@@ -67,7 +68,7 @@ static PartitionedSecurityOrigin partitionedSecurityOriginFromContext(ScriptExec
     return { WTFMove(topOrigin), WTFMove(securityOrigin) };
 }
 
-class BroadcastChannel::MainThreadBridge : public ThreadSafeRefCounted<MainThreadBridge, WTF::DestructionThread::Main> {
+class BroadcastChannel::MainThreadBridge : public ThreadSafeRefCounted<MainThreadBridge, WTF::DestructionThread::Main>, public Identified<BroadcastChannelIdentifier> {
 public:
     static Ref<MainThreadBridge> create(BroadcastChannel& channel, const String& name)
     {
@@ -80,7 +81,6 @@ public:
     void detach() { m_broadcastChannel = nullptr; }
 
     String name() const { return m_name.isolatedCopy(); }
-    BroadcastChannelIdentifier identifier() const { return m_identifier; }
 
 private:
     MainThreadBridge(BroadcastChannel&, const String& name);
@@ -88,14 +88,12 @@ private:
     void ensureOnMainThread(Function<void(Page*)>&&);
 
     WeakPtr<BroadcastChannel, WeakPtrImplWithEventTargetData> m_broadcastChannel;
-    const BroadcastChannelIdentifier m_identifier;
     const String m_name; // Main thread only.
     PartitionedSecurityOrigin m_origin; // Main thread only.
 };
 
 BroadcastChannel::MainThreadBridge::MainThreadBridge(BroadcastChannel& channel, const String& name)
     : m_broadcastChannel(channel)
-    , m_identifier(BroadcastChannelIdentifier::generate())
     , m_name(name.isolatedCopy())
     , m_origin(partitionedSecurityOriginFromContext(*channel.protectedScriptExecutionContext()).isolatedCopy())
 {
@@ -130,8 +128,8 @@ void BroadcastChannel::MainThreadBridge::registerChannel()
 {
     ensureOnMainThread([this, contextIdentifier = m_broadcastChannel->scriptExecutionContext()->identifier()](auto* page) mutable {
         if (page)
-            page->protectedBroadcastChannelRegistry()->registerChannel(m_origin, m_name, m_identifier);
-        channelToContextIdentifier().add(m_identifier, contextIdentifier);
+            page->protectedBroadcastChannelRegistry()->registerChannel(m_origin, m_name, identifier());
+        channelToContextIdentifier().add(identifier(), contextIdentifier);
     });
 }
 
@@ -139,8 +137,8 @@ void BroadcastChannel::MainThreadBridge::unregisterChannel()
 {
     ensureOnMainThread([this](auto* page) {
         if (page)
-            page->protectedBroadcastChannelRegistry()->unregisterChannel(m_origin, m_name, m_identifier);
-        channelToContextIdentifier().remove(m_identifier);
+            page->protectedBroadcastChannelRegistry()->unregisterChannel(m_origin, m_name, identifier());
+        channelToContextIdentifier().remove(identifier());
     });
 }
 
@@ -151,7 +149,7 @@ void BroadcastChannel::MainThreadBridge::postMessage(Ref<SerializedScriptValue>&
             return;
 
         auto blobHandles = message->blobHandles();
-        page->protectedBroadcastChannelRegistry()->postMessage(m_origin, m_name, m_identifier, WTFMove(message), [blobHandles = WTFMove(blobHandles)] {
+        page->protectedBroadcastChannelRegistry()->postMessage(m_origin, m_name, identifier(), WTFMove(message), [blobHandles = WTFMove(blobHandles)] {
             // Keeps Blob data inside messageData alive until the message has been delivered.
         });
     });

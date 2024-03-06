@@ -32,7 +32,7 @@
 
 namespace API {
 
-class UserStyleSheet final : public ObjectImpl<Object::Type::UserStyleSheet>, public Identified<UserStyleSheet> {
+class UserStyleSheet final : public ObjectImpl<Object::Type::UserStyleSheet>, public LegacyIdentified<UserStyleSheet> {
 public:
     static WTF::URL generateUniqueURL();
 

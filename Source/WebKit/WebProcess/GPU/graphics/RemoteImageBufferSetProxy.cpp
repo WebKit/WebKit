@@ -142,7 +142,7 @@ ALWAYS_INLINE void RemoteImageBufferSetProxy::send(T&& message)
     if (UNLIKELY(!m_remoteRenderingBackendProxy))
         return;
 
-    auto result = m_remoteRenderingBackendProxy->streamConnection().send(std::forward<T>(message), m_identifier, RemoteRenderingBackendProxy::defaultTimeout);
+    auto result = m_remoteRenderingBackendProxy->streamConnection().send(std::forward<T>(message), identifier(), RemoteRenderingBackendProxy::defaultTimeout);
 #if !RELEASE_LOG_DISABLED
     if (UNLIKELY(result != IPC::Error::NoError)) {
         auto& parameters = m_remoteRenderingBackendProxy->parameters();
@@ -160,7 +160,7 @@ ALWAYS_INLINE auto RemoteImageBufferSetProxy::sendSync(T&& message)
     if (UNLIKELY(!m_remoteRenderingBackendProxy))
         return IPC::StreamClientConnection::SendSyncResult<T> { IPC::Error::InvalidConnection };
 
-    auto result = m_remoteRenderingBackendProxy->streamConnection().sendSync(std::forward<T>(message), m_identifier, RemoteRenderingBackendProxy::defaultTimeout);
+    auto result = m_remoteRenderingBackendProxy->streamConnection().sendSync(std::forward<T>(message), identifier(), RemoteRenderingBackendProxy::defaultTimeout);
 #if !RELEASE_LOG_DISABLED
     if (UNLIKELY(!result.succeeded())) {
         auto& parameters = m_remoteRenderingBackendProxy->parameters();
@@ -173,7 +173,6 @@ ALWAYS_INLINE auto RemoteImageBufferSetProxy::sendSync(T&& message)
 
 RemoteImageBufferSetProxy::RemoteImageBufferSetProxy(RemoteRenderingBackendProxy& remoteRenderingBackendProxy)
     : m_remoteRenderingBackendProxy(remoteRenderingBackendProxy)
-    , m_identifier(RemoteImageBufferSetIdentifier::generate())
     , m_displayListIdentifier(RenderingResourceIdentifier::generate())
 {
 }
@@ -226,7 +225,7 @@ void RemoteImageBufferSetProxy::didPrepareForDisplay(ImageBufferSetPrepareBuffer
 
         m_prepareForDisplayIsPending = false;
         if (m_closed && m_streamConnection) {
-            m_streamConnection->removeWorkQueueMessageReceiver(Messages::RemoteImageBufferSetProxy::messageReceiverName(), m_identifier.toUInt64());
+            m_streamConnection->removeWorkQueueMessageReceiver(Messages::RemoteImageBufferSetProxy::messageReceiverName(), identifier().toUInt64());
             m_streamConnection = nullptr;
         }
     }
@@ -239,7 +238,7 @@ void RemoteImageBufferSetProxy::close()
     Locker locker { m_lock };
     m_closed = true;
     if (!m_prepareForDisplayIsPending && m_streamConnection) {
-        m_streamConnection->removeWorkQueueMessageReceiver(Messages::RemoteImageBufferSetProxy::messageReceiverName(), m_identifier.toUInt64());
+        m_streamConnection->removeWorkQueueMessageReceiver(Messages::RemoteImageBufferSetProxy::messageReceiverName(), identifier().toUInt64());
         m_streamConnection = nullptr;
     }
     if (m_remoteRenderingBackendProxy)
@@ -291,7 +290,7 @@ std::unique_ptr<ThreadSafeImageBufferSetFlusher> RemoteImageBufferSetProxy::flus
         send(Messages::RemoteImageBufferSet::Flush());
     }
 
-    return makeUnique<RemoteImageBufferSetProxyFlusher>(m_identifier, Ref { *m_pendingFlush }, m_generation);
+    return makeUnique<RemoteImageBufferSetProxyFlusher>(identifier(), Ref { *m_pendingFlush }, m_generation);
 }
 
 void RemoteImageBufferSetProxy::willPrepareForDisplay()
@@ -316,7 +315,7 @@ void RemoteImageBufferSetProxy::willPrepareForDisplay()
 
     if (!m_streamConnection) {
         m_streamConnection = &m_remoteRenderingBackendProxy->streamConnection();
-        m_streamConnection->addWorkQueueMessageReceiver(Messages::RemoteImageBufferSetProxy::messageReceiverName(), m_remoteRenderingBackendProxy->workQueue(), *this, m_identifier.toUInt64());
+        m_streamConnection->addWorkQueueMessageReceiver(Messages::RemoteImageBufferSetProxy::messageReceiverName(), m_remoteRenderingBackendProxy->workQueue(), *this, identifier().toUInt64());
     }
     m_prepareForDisplayIsPending = true;
 }
@@ -329,7 +328,7 @@ void RemoteImageBufferSetProxy::remoteBufferSetWasDestroyed()
         m_pendingFlush = nullptr;
     }
     if (m_streamConnection) {
-        m_streamConnection->removeWorkQueueMessageReceiver(Messages::RemoteImageBufferSetProxy::messageReceiverName(), m_identifier.toUInt64());
+        m_streamConnection->removeWorkQueueMessageReceiver(Messages::RemoteImageBufferSetProxy::messageReceiverName(), identifier().toUInt64());
         m_streamConnection = nullptr;
     }
     m_prepareForDisplayIsPending = false;

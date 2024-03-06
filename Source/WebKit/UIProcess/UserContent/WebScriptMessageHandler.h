@@ -48,7 +48,7 @@ class WebPageProxy;
 class WebFrameProxy;
 struct FrameInfoData;
 
-class WebScriptMessageHandler : public RefCounted<WebScriptMessageHandler>, public Identified<WebScriptMessageHandler>  {
+class WebScriptMessageHandler : public RefCounted<WebScriptMessageHandler>, public LegacyIdentified<WebScriptMessageHandler>  {
 public:
     class Client {
     public:

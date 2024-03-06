@@ -43,8 +43,7 @@ Ref<StorageAreaImpl> StorageAreaImpl::create(StorageAreaMap& storageAreaMap)
 }
 
 StorageAreaImpl::StorageAreaImpl(StorageAreaMap& storageAreaMap)
-    : m_identifier(Identifier::generate())
-    , m_storageAreaMap(storageAreaMap)
+    : m_storageAreaMap(storageAreaMap)
 {
     storageAreaMap.incrementUseCount();
 }

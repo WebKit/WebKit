@@ -104,7 +104,7 @@ bool DrawingAreaProxyCoordinatedGraphics::forceUpdateIfNeeded()
 
     SetForScope inForceUpdate(m_inForceUpdate, true);
     send(Messages::DrawingArea::ForceUpdate());
-    m_webProcessProxy->connection()->waitForAndDispatchImmediately<Messages::DrawingAreaProxy::Update>(m_identifier, 500_ms);
+    m_webProcessProxy->connection()->waitForAndDispatchImmediately<Messages::DrawingAreaProxy::Update>(identifier(), 500_ms);
     return !!m_backingStore;
 }
 
