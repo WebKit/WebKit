@@ -1,22 +1,66 @@
-From 627bd29a83425c1cf7a75be3e7ad2efce9605dc0 Mon Sep 17 00:00:00 2001
+From db93844bb1f807d7acad0384e7804d6283079fdf Mon Sep 17 00:00:00 2001
 From: Philippe Normand <philn@igalia.com>
-Date: Thu, 21 Dec 2023 10:42:51 +0000
-Subject: [PATCH] GStreamer: Bump to 1.22.9
+Date: Wed, 6 Mar 2024 12:17:24 +0000
+Subject: [PATCH] Bump to GStreamer 1.24.0
 
 ---
- .../components/gstreamer-plugins-good.bst     |  1 +
+ elements/components/gstreamer-plugins-bad.bst |  1 +
+ .../components/gstreamer-plugins-base.bst     |  1 +
+ .../components/gstreamer-plugins-good.bst     |  4 +++
+ elements/components/gstreamer.bst             |  1 +
  elements/include/gstreamer-source.yml         |  2 +-
  .../gstreamer/graceful-error-noopenh264.patch | 35 -------------------
  ...ins-bad-Optional-LRDF-dep-for-ladspa.patch | 13 -------
- 4 files changed, 2 insertions(+), 49 deletions(-)
+ 7 files changed, 8 insertions(+), 49 deletions(-)
  delete mode 100644 patches/gstreamer/graceful-error-noopenh264.patch
  delete mode 100644 patches/gstreamer/gst-plugins-bad-Optional-LRDF-dep-for-ladspa.patch
 
+diff --git a/elements/components/gstreamer-plugins-bad.bst b/elements/components/gstreamer-plugins-bad.bst
+index a8599f9..2cc21e6 100644
+--- a/elements/components/gstreamer-plugins-bad.bst
++++ b/elements/components/gstreamer-plugins-bad.bst
+@@ -2,6 +2,7 @@ kind: meson
+ 
+ depends:
+ - bootstrap-import.bst
++- components/xorg-lib-xtst.bst
+ - components/aom.bst
+ - components/orc.bst
+ - components/frei0r.bst
+diff --git a/elements/components/gstreamer-plugins-base.bst b/elements/components/gstreamer-plugins-base.bst
+index 439d350..856b4cb 100644
+--- a/elements/components/gstreamer-plugins-base.bst
++++ b/elements/components/gstreamer-plugins-base.bst
+@@ -11,6 +11,7 @@ depends:
+ - components/graphene.bst
+ - components/gstreamer.bst
+ - components/jpeg.bst
++- components/libdrm.bst
+ - components/pango.bst
+ - components/xorg-lib-xv.bst
+ - components/libogg.bst
 diff --git a/elements/components/gstreamer-plugins-good.bst b/elements/components/gstreamer-plugins-good.bst
-index cea2a32..5d5224a 100644
+index cea2a32..67359a2 100644
 --- a/elements/components/gstreamer-plugins-good.bst
 +++ b/elements/components/gstreamer-plugins-good.bst
-@@ -45,6 +45,7 @@ variables:
+@@ -9,6 +9,7 @@ build-depends:
+ depends:
+ - bootstrap-import.bst
+ - components/cairo.bst
++- components/xorg-lib-xtst.bst
+ - components/jpeg.bst
+ - components/orc.bst
+ - components/lame.bst
+@@ -31,6 +32,8 @@ variables:
+ 
+   meson-local: >-
+     -Dpackage-origin="freedesktop-sdk"
++    -Damrnb=disabled
++    -Damrwbdec=disabled
+     -Dv4l2-libv4l2=enabled
+     -Dv4l2-gudev=disabled
+     -Daalib=disabled
+@@ -45,6 +48,7 @@ variables:
      -Dtwolame=disabled
      -Dexamples=disabled
      -Drpicamsrc=disabled
@@ -24,8 +68,20 @@ index cea2a32..5d5224a 100644
  
  public:
    cpe:
+diff --git a/elements/components/gstreamer.bst b/elements/components/gstreamer.bst
+index 7760976..b8163e1 100644
+--- a/elements/components/gstreamer.bst
++++ b/elements/components/gstreamer.bst
+@@ -6,6 +6,7 @@ build-depends:
+ - components/flex.bst
+ - components/bison.bst
+ - components/hotdoc.bst
++- components/rust.bst
+ 
+ depends:
+ - bootstrap-import.bst
 diff --git a/elements/include/gstreamer-source.yml b/elements/include/gstreamer-source.yml
-index f36b91e..8fdb4f6 100644
+index f36b91e..2d73091 100644
 --- a/elements/include/gstreamer-source.yml
 +++ b/elements/include/gstreamer-source.yml
 @@ -2,6 +2,6 @@ sources:
@@ -33,7 +89,7 @@ index f36b91e..8fdb4f6 100644
    url: freedesktop:gstreamer/gstreamer.git
    track: 1.*[02468].*
 -  ref: 1.22.5-0-gbf6ce1d64a0697e7910826147b48f8f658366a5a
-+  ref: 1.22.9-0-g3e41b8f18b7d19b0ca98a3437c2e27aa0cfe12bb
++  ref: 1.24.0-0-gb125253cade5432e535ef2ea848ac00d2fb5286d
  - kind: patch_queue
    path: patches/gstreamer
 diff --git a/patches/gstreamer/graceful-error-noopenh264.patch b/patches/gstreamer/graceful-error-noopenh264.patch
@@ -97,5 +153,5 @@ index a91cf04..0000000
 -   ladspa_cargs = ['-DHAVE_LRDF']
 - endif
 -- 
-2.43.0
+2.44.0
 

@@ -102,7 +102,11 @@ class GLibPort(Port):
             self._copy_value_from_environ_if_set(environment, 'GST_%s' % gst_variable)
 
         gst_feature_rank_override = os.environ.get('GST_PLUGIN_FEATURE_RANK')
-        environment['GST_PLUGIN_FEATURE_RANK'] = 'fakeaudiosink:max'
+        # Disable hardware-accelerated encoders and decoders. Depending on the underlying platform
+        # they might be selected and decrease tests reproducibility. They can still be re-enabled by
+        # setting the GST_PLUGIN_FEATURE_RANK variable accordingly when calling run-webkit-tests.
+        downranked_elements = ['vah264dec', 'vah264enc', 'vah265dec', 'vah265enc', 'vaav1dec', 'vaav1enc', 'vajpegdec','vavp9dec']
+        environment['GST_PLUGIN_FEATURE_RANK'] = 'fakeaudiosink:max,' + ','.join(['%s:0' % element for element in downranked_elements])
         if gst_feature_rank_override:
             environment['GST_PLUGIN_FEATURE_RANK'] += ',%s' % gst_feature_rank_override
 
