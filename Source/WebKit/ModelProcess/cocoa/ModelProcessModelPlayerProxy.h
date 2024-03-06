@@ -30,8 +30,6 @@
 #include "Connection.h"
 #include "LayerHostingContext.h"
 #include "MessageReceiver.h"
-
-#include <QuartzCore/CALayer.h>
 #include <WebCore/LayerHostingContextIdentifier.h>
 #include <WebCore/ModelPlayer.h>
 #include <WebCore/ModelPlayerIdentifier.h>
@@ -39,6 +37,8 @@
 #include <wtf/RunLoop.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
+
+OBJC_CLASS WKSeparatedModelLayer;
 
 namespace WebKit {
 
@@ -73,7 +73,7 @@ private:
     WeakPtr<ModelProcessModelPlayerManagerProxy> m_manager;
 
     std::unique_ptr<LayerHostingContext> m_layerHostingContext;
-    RetainPtr<CALayer> m_layer;
+    RetainPtr<WKSeparatedModelLayer> m_layer;
 };
 
 } // namespace WebKit

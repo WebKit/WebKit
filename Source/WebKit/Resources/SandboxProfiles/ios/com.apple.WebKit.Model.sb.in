@@ -25,3 +25,25 @@
 
 (allow mach-lookup
     (global-name "com.apple.CARenderServer"))
+
+(allow iokit-open-user-client
+    (iokit-user-client-class "AppleParavirtDeviceUserClient"))
+(allow iokit-open-user-client
+    (iokit-user-client-class "AGXDeviceUserClient"))
+
+(allow mach-lookup
+    (global-name "com.apple.surfboard.applicationservice"))
+(allow mach-lookup
+    (xpc-service-name "com.apple.ImageIOXPCService"))
+
+(allow syscall-mach (machtrap-number MSC_mk_timer_arm_leeway))
+
+(allow syscall-unix
+    (syscall-number
+        SYS_getsockname
+        SYS_getpeername
+        SYS_getsockopt
+        SYS_recvmsg
+        SYS_sendmsg
+        SYS_setsockopt
+    ))

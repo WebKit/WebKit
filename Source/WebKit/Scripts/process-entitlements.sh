@@ -452,6 +452,8 @@ function ios_family_process_model_entitlements()
     plistbuddy Add :com.apple.runningboard.assertions.webkit bool YES
     plistbuddy Add :com.apple.private.pac.exception bool YES
     plistbuddy Add :com.apple.private.sandbox.profile string com.apple.WebKit.Model
+    plistbuddy Add :com.apple.surfboard.application-service-client bool YES
+    plistbuddy Add :com.apple.surfboard.shared-simulation-connection-request bool YES
 }
 
 function ios_family_process_adattributiond_entitlements()

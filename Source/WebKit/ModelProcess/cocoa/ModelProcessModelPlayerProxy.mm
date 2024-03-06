@@ -36,6 +36,9 @@
 #import <WebCore/Color.h>
 #import <WebCore/LayerHostingContextIdentifier.h>
 #import <WebCore/Model.h>
+#import <WebKitAdditions/SeparatedModelPlayer.h>
+#import <WebKitAdditions/WKSeparatedModelLayer.h>
+#import <wtf/RetainPtr.h>
 
 namespace WebKit {
 
@@ -70,9 +73,10 @@ ALWAYS_INLINE void ModelProcessModelPlayerProxy::send(T&& message)
 
 void ModelProcessModelPlayerProxy::createLayer()
 {
-    m_layer = adoptNS([[CALayer alloc] init]);
-    [m_layer setBackgroundColor:cachedCGColor(Color::green).get()];
-    [m_layer setFrame:CGRectMake(0, 0, 100, 100)];
+    dispatch_assert_queue(dispatch_get_main_queue());
+
+    m_layer = adoptNS([[WKSeparatedModelLayer alloc] init]);
+    [m_layer setIsPortal:YES];
 
     LayerHostingContextOptions contextOptions;
     m_layerHostingContext = LayerHostingContext::createForExternalHostingProcess(contextOptions);
@@ -84,9 +88,12 @@ void ModelProcessModelPlayerProxy::createLayer()
         send(Messages::ModelProcessModelPlayer::DidCreateLayer(contextID.value()));
 }
 
-void ModelProcessModelPlayerProxy::loadModel(Ref<WebCore::Model>&& model, WebCore::LayoutSize)
+void ModelProcessModelPlayerProxy::loadModel(Ref<WebCore::Model>&& model, WebCore::LayoutSize layoutSize)
 {
-    RELEASE_LOG(ModelElement, "%p - ModelProcessModelPlayerProxy::loadModel size=%zu url=%s id=%" PRIu64, this, model->data()->size(), model->url().string().utf8().data(), m_id.toUInt64());
+    RELEASE_LOG(ModelElement, "%p - ModelProcessModelPlayerProxy::loadModel size=%zu id=%" PRIu64, this, model->data()->size(), m_id.toUInt64());
+    sizeDidChange(layoutSize);
+    [m_layer setPlayer:WebKit::SeparatedModelPlayer::create(SeparatedModelPlayer::ProcessEnvironment::ModelProcess)];
+    [m_layer player]->load(model);
 }
 
 void ModelProcessModelPlayerProxy::sizeDidChange(WebCore::LayoutSize layoutSize)
