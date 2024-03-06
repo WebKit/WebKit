@@ -1583,7 +1583,7 @@ webkit.org/b/241265 [ Debug ] imported/w3c/web-platform-tests/html/rendering/rep
 
 # NOTIFICATION_EVENT is Ventura+
 [ Ventura+ ] http/tests/workers/service/shownotification-allowed-document.html [ Pass ]
-webkit.org/b/253343 [ Ventura+ ] http/tests/workers/service/shownotification-allowed.html [ Pass Failure ]
+[ Ventura+ ] http/tests/workers/service/shownotification-allowed.html [ Pass ]
 [ Ventura+ ] http/tests/workers/service/shownotification-invalid-data.html [ Pass ]
 [ Ventura+ ] http/wpt/push-api/pushEvent.any.serviceworker.html [ Pass ]
 [ Ventura+ ] imported/w3c/web-platform-tests/notifications/idlharness.https.any.html [ Pass ]
