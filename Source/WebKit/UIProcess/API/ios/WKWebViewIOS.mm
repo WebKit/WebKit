@@ -3725,7 +3725,6 @@ static bool isLockdownModeWarningNeeded()
 // Deprecated SPI.
 - (CGSize)_minimumLayoutSizeOverride
 {
-    ASSERT(_overriddenLayoutParameters);
     if (!_overriddenLayoutParameters)
         return CGSizeZero;
 
@@ -3734,7 +3733,6 @@ static bool isLockdownModeWarningNeeded()
 
 - (CGSize)_minimumUnobscuredSizeOverride
 {
-    ASSERT(_overriddenLayoutParameters);
     if (!_overriddenLayoutParameters)
         return CGSizeZero;
 
@@ -3744,7 +3742,6 @@ static bool isLockdownModeWarningNeeded()
 // Deprecated SPI
 - (CGSize)_maximumUnobscuredSizeOverride
 {
-    ASSERT(_overriddenLayoutParameters);
     if (!_overriddenLayoutParameters)
         return CGSizeZero;
 
