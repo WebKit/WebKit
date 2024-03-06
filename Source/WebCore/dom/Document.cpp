@@ -8180,8 +8180,12 @@ bool Document::hasRecentUserInteractionForNavigationFromJS() const
     if (UserGestureIndicator::processingUserGesture(this))
         return true;
 
-    static constexpr Seconds maximumItervalForUserGestureForwarding { 10_s };
-    return (MonotonicTime::now() - lastHandledUserGestureTimestamp()) <= maximumItervalForUserGestureForwarding;
+    RefPtr window = domWindow();
+    if (!window || window->lastActivationTimestamp().isInfinity())
+        return false;
+
+    static constexpr Seconds maximumIntervalForUserActivationForwarding { 10_s };
+    return (MonotonicTime::now() - window->lastActivationTimestamp()) <= maximumIntervalForUserActivationForwarding;
 }
 
 void Document::startTrackingStyleRecalcs()
