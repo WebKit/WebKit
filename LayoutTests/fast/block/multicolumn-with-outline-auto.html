@@ -1,0 +1,24 @@
+<style>
+ * { rotate: 180deg; outline-style: auto; column-span: all;}
+ *:focus-within { columns: 2; }
+</style>
+<script>
+    function f0() {
+        window.find("POCUS");
+        keygen.replaceWith("HOCUS");
+
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+</script>
+<keygen id="keygen" onfocusin="f0()" autofocus="" contenteditable="true"/>
+<dir>
+    <div id="div">
+        <label id="label">POCUS</label>
+    </div>
+</dir>

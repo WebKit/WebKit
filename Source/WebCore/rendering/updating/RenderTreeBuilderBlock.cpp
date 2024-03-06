@@ -282,7 +282,7 @@ void RenderTreeBuilder::Block::removeLeftoverAnonymousBlock(RenderBlock& anonymo
     // anonymousBlock is dead here.
 }
 
-RenderPtr<RenderObject> RenderTreeBuilder::Block::detach(RenderBlock& parent, RenderObject& oldChild, CanCollapseAnonymousBlock canCollapseAnonymousBlock)
+RenderPtr<RenderObject> RenderTreeBuilder::Block::detach(RenderBlock& parent, RenderObject& oldChild, CanCollapseAnonymousBlock canCollapseAnonymousBlock, WillBeDestroyed willBeDestroyed)
 {
     // No need to waste time in merging or removing empty anonymous blocks.
     // We can just bail out if our document is getting destroyed.
@@ -295,7 +295,7 @@ RenderPtr<RenderObject> RenderTreeBuilder::Block::detach(RenderBlock& parent, Re
     WeakPtr next = oldChild.nextSibling();
     bool canMergeAnonymousBlocks = canCollapseAnonymousBlock == CanCollapseAnonymousBlock::Yes && canMergeContiguousAnonymousBlocks(oldChild, prev.get(), next.get());
 
-    auto takenChild = m_builder.detachFromRenderElement(parent, oldChild);
+    auto takenChild = m_builder.detachFromRenderElement(parent, oldChild, willBeDestroyed);
 
     if (canMergeAnonymousBlocks && prev && next) {
         prev->setNeedsLayoutAndPrefWidthsRecalc();
@@ -382,14 +382,14 @@ void RenderTreeBuilder::Block::dropAnonymousBoxChild(RenderBlock& parent, Render
     child.deleteLines();
 }
 
-RenderPtr<RenderObject> RenderTreeBuilder::Block::detach(RenderBlockFlow& parent, RenderObject& child, CanCollapseAnonymousBlock canCollapseAnonymousBlock)
+RenderPtr<RenderObject> RenderTreeBuilder::Block::detach(RenderBlockFlow& parent, RenderObject& child, CanCollapseAnonymousBlock canCollapseAnonymousBlock, WillBeDestroyed willBeDestroyed)
 {
     if (!parent.renderTreeBeingDestroyed()) {
         auto* fragmentedFlow = parent.multiColumnFlow();
         if (fragmentedFlow && fragmentedFlow != &child)
             m_builder.multiColumnBuilder().multiColumnRelativeWillBeRemoved(*fragmentedFlow, child, canCollapseAnonymousBlock);
     }
-    return detach(static_cast<RenderBlock&>(parent), child, canCollapseAnonymousBlock);
+    return detach(static_cast<RenderBlock&>(parent), child, canCollapseAnonymousBlock, willBeDestroyed);
 }
 
 }
