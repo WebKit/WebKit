@@ -572,7 +572,7 @@ void RenderBundleEncoder::drawIndexedIndirect(const Buffer& indirectBuffer, uint
             return;
         }
 
-        if (indirectBuffer.size() < indirectOffset + sizeof(MTLDrawIndexedPrimitivesIndirectArguments)) {
+        if (indirectBuffer.initialSize() < indirectOffset + sizeof(MTLDrawIndexedPrimitivesIndirectArguments)) {
             makeInvalid(@"drawIndexedIndirect: validation failed");
             return;
         }
@@ -622,7 +622,7 @@ void RenderBundleEncoder::drawIndirect(const Buffer& indirectBuffer, uint64_t in
             return;
         }
 
-        if (indirectBuffer.size() < indirectOffset + sizeof(MTLDrawPrimitivesIndirectArguments)) {
+        if (indirectBuffer.initialSize() < indirectOffset + sizeof(MTLDrawPrimitivesIndirectArguments)) {
             makeInvalid(@"drawIndirect: validation failed");
             return;
         }
@@ -890,7 +890,7 @@ void RenderBundleEncoder::setIndexBuffer(const Buffer& buffer, WGPUIndexFormat f
             return;
         }
 
-        if (offset + size > buffer.size()) {
+        if (offset + size > buffer.initialSize()) {
             makeInvalid(@"setIndexBuffer: offset + size > buffer.size()");
             return;
         }
@@ -1057,7 +1057,7 @@ void RenderBundleEncoder::setVertexBuffer(uint32_t slot, const Buffer* optionalB
                 makeInvalid(@"setVertexBuffer: validation failed");
                 return;
             }
-            if (offset + size > buffer.size()) {
+            if (offset + size > buffer.initialSize()) {
                 makeInvalid(@"offset + size > buffer.size()");
                 return;
             }

@@ -568,7 +568,7 @@ void RenderPassEncoder::drawIndexedIndirect(const Buffer& indirectBuffer, uint64
         return;
     }
 
-    if (indirectBuffer.size() < indirectOffset + sizeof(MTLDrawIndexedPrimitivesIndirectArguments)) {
+    if (indirectBuffer.initialSize() < indirectOffset + sizeof(MTLDrawIndexedPrimitivesIndirectArguments)) {
         makeInvalid(@"drawIndexedIndirect: validation failed");
         return;
     }
@@ -593,7 +593,7 @@ void RenderPassEncoder::drawIndirect(const Buffer& indirectBuffer, uint64_t indi
         return;
     }
 
-    if (indirectBuffer.size() < indirectOffset + sizeof(MTLDrawPrimitivesIndirectArguments)) {
+    if (indirectBuffer.initialSize() < indirectOffset + sizeof(MTLDrawPrimitivesIndirectArguments)) {
         makeInvalid(@"drawIndirect: validation failed");
         return;
     }

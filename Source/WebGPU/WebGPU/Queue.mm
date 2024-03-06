@@ -285,7 +285,7 @@ bool Queue::validateWriteBuffer(const Buffer& buffer, uint64_t bufferOffset, siz
         return false;
 
     auto end = checkedSum<uint64_t>(bufferOffset, size);
-    if (end.hasOverflowed() || end.value() > buffer.size())
+    if (end.hasOverflowed() || end.value() > buffer.currentSize())
         return false;
 
     return true;

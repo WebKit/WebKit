@@ -742,10 +742,10 @@ NSString* CommandEncoder::errorValidatingCopyBufferToBuffer(const Buffer& source
     if (destinationEnd.hasOverflowed())
         return ERROR_STRING(@"destination size + offset overflows");
 
-    if (source.size() < sourceEnd.value())
+    if (source.initialSize() < sourceEnd.value())
         return ERROR_STRING(@"source size + offset overflows");
 
-    if (destination.size() < destinationEnd.value())
+    if (destination.initialSize() < destinationEnd.value())
         return ERROR_STRING(@"destination size + offset overflows");
 
     if (&source == &destination)
@@ -875,7 +875,7 @@ NSString* CommandEncoder::errorValidatingCopyBufferToTexture(const WGPUImageCopy
             return ERROR_STRING(@"source.layout.offset is not a multiple of four for depth stencil format");
     }
 
-    if (!Texture::validateLinearTextureData(source.layout, fromAPI(source.buffer).size(), aspectSpecificFormat, copySize))
+    if (!Texture::validateLinearTextureData(source.layout, fromAPI(source.buffer).initialSize(), aspectSpecificFormat, copySize))
         return ERROR_STRING(@"source.layout.offset is not a multiple of four for depth stencil format");
 #undef ERROR_STRING
     return nil;
@@ -1099,7 +1099,7 @@ NSString* CommandEncoder::errorValidatingCopyTextureToBuffer(const WGPUImageCopy
             return ERROR_STRING(@"destination.layout.offset is not a multiple of 4");
     }
 
-    if (!Texture::validateLinearTextureData(destination.layout, fromAPI(destination.buffer).size(), aspectSpecificFormat, copySize))
+    if (!Texture::validateLinearTextureData(destination.layout, fromAPI(destination.buffer).initialSize(), aspectSpecificFormat, copySize))
         return ERROR_STRING(@"validateLinearTextureData fails");
 #undef ERROR_STRING
     return nil;
@@ -1565,7 +1565,7 @@ bool CommandEncoder::validateClearBuffer(const Buffer& buffer, uint64_t offset, 
         return false;
 
     auto end = checkedSum<uint64_t>(offset, size);
-    if (end.hasOverflowed() || buffer.size() < end.value())
+    if (end.hasOverflowed() || buffer.initialSize() < end.value())
         return false;
 
     return true;
@@ -1581,7 +1581,7 @@ void CommandEncoder::clearBuffer(const Buffer& buffer, uint64_t offset, uint64_t
     }
 
     if (size == WGPU_WHOLE_SIZE) {
-        auto localSize = checkedDifference<uint64_t>(buffer.size(), offset);
+        auto localSize = checkedDifference<uint64_t>(buffer.initialSize(), offset);
         if (localSize.hasOverflowed()) {
             m_device->generateAValidationError("CommandEncoder::clearBuffer(): offset > buffer.size"_s);
             return;
@@ -1736,7 +1736,7 @@ static bool validateResolveQuerySet(const QuerySet& querySet, uint32_t firstQuer
     if (destinationOffset % 256)
         return false;
 
-    if (destinationOffset + 8 * queryCount > destination.size())
+    if (destinationOffset + 8 * queryCount > destination.initialSize())
         return false;
 
     return true;

@@ -135,9 +135,9 @@ Ref<Buffer> Device::createBuffer(const WGPUBufferDescriptor& descriptor)
     return Buffer::create(buffer, descriptor.size, descriptor.usage, Buffer::State::Unmapped, { static_cast<size_t>(0), static_cast<size_t>(0) }, *this);
 }
 
-Buffer::Buffer(id<MTLBuffer> buffer, uint64_t size, WGPUBufferUsageFlags usage, State initialState, MappingRange initialMappingRange, Device& device)
+Buffer::Buffer(id<MTLBuffer> buffer, uint64_t initialSize, WGPUBufferUsageFlags usage, State initialState, MappingRange initialMappingRange, Device& device)
     : m_buffer(buffer)
-    , m_size(size)
+    , m_initialSize(initialSize)
     , m_usage(usage)
     , m_state(initialState)
     , m_mappingRange(initialMappingRange)
@@ -227,7 +227,7 @@ void* Buffer::getMappedRange(size_t offset, size_t size)
 
     auto rangeSize = size;
     if (size == WGPU_WHOLE_MAP_SIZE)
-        rangeSize = computeRangeSize(m_size, offset);
+        rangeSize = computeRangeSize(this->currentSize(), offset);
 
     if (!validateGetMappedRange(offset, rangeSize))
         return nullptr;
@@ -236,7 +236,8 @@ void* Buffer::getMappedRange(size_t offset, size_t size)
     m_mappedRanges.compact();
 
     m_device->getQueue().waitUntilIdle();
-    ASSERT(m_buffer.contents);
+    if (!m_buffer.contents)
+        return nullptr;
     return static_cast<char*>(m_buffer.contents) + offset;
 }
 
@@ -253,7 +254,7 @@ NSString* Buffer::errorValidatingMapAsync(WGPUMapModeFlags mode, size_t offset, 
         return ERROR_STRING(@"range size is not divisible by 4");
 
     auto end = checkedSum<uint64_t>(offset, rangeSize);
-    if (end.hasOverflowed() || end.value() > m_size)
+    if (end.hasOverflowed() || end.value() > currentSize())
         return ERROR_STRING(@"offset and rangeSize overflowed");
 
     if (m_state != State::Unmapped)
@@ -279,7 +280,7 @@ void Buffer::mapAsync(WGPUMapModeFlags mode, size_t offset, size_t size, Complet
 
     auto rangeSize = size;
     if (size == WGPU_WHOLE_MAP_SIZE)
-        rangeSize = computeRangeSize(m_size, offset);
+        rangeSize = computeRangeSize(currentSize(), offset);
 
     if (NSString* error = errorValidatingMapAsync(mode, offset, rangeSize)) {
         m_device->generateAValidationError(error);
@@ -355,9 +356,14 @@ void Buffer::setLabel(String&& label)
     m_buffer.label = label;
 }
 
-uint64_t Buffer::size() const
+uint64_t Buffer::initialSize() const
 {
-    return m_size;
+    return m_initialSize;
+}
+
+uint64_t Buffer::currentSize() const
+{
+    return m_buffer.length;
 }
 
 bool Buffer::isValid() const
@@ -442,7 +448,7 @@ void* wgpuBufferGetMappedRange(WGPUBuffer buffer, size_t offset, size_t size)
 
 uint64_t wgpuBufferGetSize(WGPUBuffer buffer)
 {
-    return WebGPU::fromAPI(buffer).size();
+    return WebGPU::fromAPI(buffer).initialSize();
 }
 
 void wgpuBufferMapAsync(WGPUBuffer buffer, WGPUMapModeFlags mode, size_t offset, size_t size, WGPUBufferMapCallback callback, void* userdata)

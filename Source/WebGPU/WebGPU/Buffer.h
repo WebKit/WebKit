@@ -52,9 +52,9 @@ public:
         size_t endOffset; // Exclusive
     };
 
-    static Ref<Buffer> create(id<MTLBuffer> buffer, uint64_t size, WGPUBufferUsageFlags usage, State initialState, MappingRange initialMappingRange, Device& device)
+    static Ref<Buffer> create(id<MTLBuffer> buffer, uint64_t initialSize, WGPUBufferUsageFlags usage, State initialState, MappingRange initialMappingRange, Device& device)
     {
-        return adoptRef(*new Buffer(buffer, size, usage, initialState, initialMappingRange, device));
+        return adoptRef(*new Buffer(buffer, initialSize, usage, initialState, initialMappingRange, device));
     }
     static Ref<Buffer> createInvalid(Device& device)
     {
@@ -82,7 +82,8 @@ public:
     };
 
     id<MTLBuffer> buffer() const { return m_buffer; }
-    uint64_t size() const;
+    uint64_t initialSize() const;
+    uint64_t currentSize() const;
     WGPUBufferUsageFlags usage() const { return m_usage; }
     State state() const { return m_state; }
 
@@ -92,7 +93,7 @@ public:
     uint32_t maxIndex(MTLIndexType) const;
 
 private:
-    Buffer(id<MTLBuffer>, uint64_t size, WGPUBufferUsageFlags, State initialState, MappingRange initialMappingRange, Device&);
+    Buffer(id<MTLBuffer>, uint64_t initialSize, WGPUBufferUsageFlags, State initialState, MappingRange initialMappingRange, Device&);
     Buffer(Device&);
     void recomputeMaxIndexValues() const;
 
@@ -104,7 +105,7 @@ private:
 
     // https://gpuweb.github.io/gpuweb/#buffer-interface
 
-    const uint64_t m_size { 0 };
+    const uint64_t m_initialSize { 0 };
     const WGPUBufferUsageFlags m_usage { 0 };
     State m_state { State::Unmapped };
     // [[mapping]] is unnecessary; we can just use m_device.contents.

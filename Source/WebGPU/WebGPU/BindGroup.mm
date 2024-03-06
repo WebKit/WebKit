@@ -939,7 +939,7 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
                 id<MTLBuffer> buffer = apiBuffer.buffer();
                 auto entrySize = entry.size == WGPU_WHOLE_MAP_SIZE ? buffer.length : entry.size;
                 if (layoutBinding->hasDynamicOffset && !appendedBufferToDynamicBuffers) {
-                    dynamicBuffers.append({ .type = layoutBinding->type, .bindingSize = entrySize, .bufferSize = apiBuffer.size() });
+                    dynamicBuffers.append({ .type = layoutBinding->type, .bindingSize = entrySize, .bufferSize = apiBuffer.currentSize() });
                     appendedBufferToDynamicBuffers = true;
                 }
 

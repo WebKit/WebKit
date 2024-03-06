@@ -63,14 +63,14 @@ NSString* CommandsMixin::encoderStateName() const
 bool CommandsMixin::computedSizeOverflows(const Buffer& buffer, uint64_t offset, uint64_t& size)
 {
     if (size == WGPU_WHOLE_SIZE) {
-        auto localSize = checkedDifference<uint64_t>(buffer.size(), offset);
+        auto localSize = checkedDifference<uint64_t>(buffer.initialSize(), offset);
         if (localSize.hasOverflowed())
             return true;
 
         size = localSize.value();
     }
 
-    if (offset + size > buffer.size())
+    if (offset + size > buffer.initialSize())
         return true;
 
     return false;
