@@ -24,5 +24,6 @@
 const XCODE_CLOUD_SUITES = [{% for suite in XcodeCloud %}
     '{{ suite }}',
 {% endfor %}];
+const DEFAULT_ARCHITECTURE = {{ default_architecture }};
 
-export {XCODE_CLOUD_SUITES}
+export {XCODE_CLOUD_SUITES, DEFAULT_ARCHITECTURE}

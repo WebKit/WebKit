@@ -20,6 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import json
 import os
 import requests
 import time
@@ -43,6 +44,7 @@ class ViewRoutes(AuthedBlueprint):
         title='Results Database', auth_decorator=None,
         archive_routes=None,
         suite_types=None,
+        default_architecture=None,
     ):
         super(ViewRoutes, self).__init__('view', import_name, url_prefix=None, auth_decorator=auth_decorator)
         self._cache = {}
@@ -52,7 +54,9 @@ class ViewRoutes(AuthedBlueprint):
             loader=PackageLoader(package_name='resultsdbpy.view', package_path='templates'),
             autoescape=select_autoescape(['html', 'xml']),
         )
+
         self.suite_types = suite_types or {}
+        self.default_architecture = default_architecture
 
         # Protecting js and css with auth doesn't make sense
         self.add_url_rule('/library/<path:path>', 'library', self.library, authed=False, methods=('GET',))
@@ -169,5 +173,6 @@ class ViewRoutes(AuthedBlueprint):
         return Response(
             self.environment.get_template('constants.js').render(
                 XcodeCloud=self.suite_types.get('XcodeCloud') or [],
+                default_architecture=json.dumps(self.default_architecture) if self.default_architecture else 'null',
             ), mimetype='application/javascript',
         )

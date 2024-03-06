@@ -146,6 +146,7 @@ class WebSiteUnittest(WebSiteTestCase):
 const XCODE_CLOUD_SUITES = [
     'Build',
 ];
+const DEFAULT_ARCHITECTURE = null;
 
-export {XCODE_CLOUD_SUITES}''',
+export {XCODE_CLOUD_SUITES, DEFAULT_ARCHITECTURE}''',
         )

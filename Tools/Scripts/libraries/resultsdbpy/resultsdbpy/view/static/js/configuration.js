@@ -22,6 +22,7 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 
 import {queryToParams, escapeHTML} from '/assets/js/common.js';
+import {DEFAULT_ARCHITECTURE} from '/assets/js/constants.js'
 
 // These are flipped delibrately, it makes the fromQuery function return configurations in an
 // intuitive order.
@@ -210,7 +211,7 @@ class Configuration {
             result += ' ' + this.style.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join('-');
         } if (this.model != null)
             result += ' on ' + this.model;
-        if (this.architecture != null)
+        if (this.architecture != null && (DEFAULT_ARCHITECTURE == null || this.architecture.search(DEFAULT_ARCHITECTURE) < 0))
             result += ' with ' + this.architecture;
 
         if (this.sdk != null)
