@@ -1492,7 +1492,7 @@ CompletionHandler<void(Decoder*)> Connection::takeAsyncReplyHandler(AsyncReplyID
 bool Connection::isAsyncReplyHandlerWithDispatcher(AsyncReplyID replyID)
 {
     Locker locker { m_incomingMessagesLock };
-    return m_asyncReplyHandlerWithDispatchers.isValidKey(replyID);
+    return m_asyncReplyHandlerWithDispatchers.isValidKey(replyID) && m_asyncReplyHandlerWithDispatchers.contains(replyID);
 }
 
 Connection::AsyncReplyHandlerWithDispatcher Connection::takeAsyncReplyHandlerWithDispatcher(AsyncReplyID replyID)
@@ -1504,6 +1504,8 @@ Connection::AsyncReplyHandlerWithDispatcher Connection::takeAsyncReplyHandlerWit
 Connection::AsyncReplyHandlerWithDispatcher Connection::takeAsyncReplyHandlerWithDispatcherWithLockHeld(AsyncReplyID replyID)
 {
     assertIsHeld(m_incomingMessagesLock);
+    if (!m_asyncReplyHandlerWithDispatchers.isValidKey(replyID))
+        return { };
     return m_asyncReplyHandlerWithDispatchers.take(replyID);
 }
 
