@@ -319,9 +319,6 @@ void CustomElementReactionQueue::invokeAll(Element& element)
     }
 }
 
-CustomElementQueue::CustomElementQueue() = default;
-CustomElementQueue::~CustomElementQueue() = default;
-
 inline void CustomElementQueue::add(Element& element)
 {
     ASSERT(!m_invoking);
@@ -346,7 +343,7 @@ inline void CustomElementQueue::invokeAll()
     m_elements.clear();
 }
 
-inline void CustomElementQueue::processQueue(JSC::JSGlobalObject* state)
+void CustomElementQueue::processQueue(JSC::JSGlobalObject* state)
 {
     if (!state) {
         invokeAll();
@@ -393,10 +390,7 @@ void CustomElementReactionQueue::enqueueElementOnAppropriateElementQueue(Element
         return;
     }
 
-    auto& queue = CustomElementReactionStack::s_currentProcessingStack->m_queue;
-    if (!queue)
-        queue = makeUnique<CustomElementQueue>();
-    queue->add(element);
+    CustomElementReactionStack::s_currentProcessingStack->m_queue.add(element);
 }
 
 #if ASSERT_ENABLED
@@ -404,22 +398,6 @@ unsigned CustomElementReactionDisallowedScope::s_customElementReactionDisallowed
 #endif
 
 CustomElementReactionStack* CustomElementReactionStack::s_currentProcessingStack = nullptr;
-
-void CustomElementReactionStack::processQueue(JSC::JSGlobalObject* state)
-{
-    ASSERT(m_queue);
-    m_queue->processQueue(state);
-    m_queue = nullptr;
-}
-
-Vector<GCReachableRef<Element>, 4> CustomElementReactionStack::takeElements()
-{
-    if (!m_queue)
-        return { };
-    auto elements = m_queue->takeElements();
-    m_queue = nullptr;
-    return elements;
-}
 
 void CustomElementReactionQueue::processBackupQueue(CustomElementQueue& backupElementQueue)
 {
