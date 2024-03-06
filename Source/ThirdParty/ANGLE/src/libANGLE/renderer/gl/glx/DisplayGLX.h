@@ -97,7 +97,7 @@ class DisplayGLX : public DisplayGL
 
     RendererGL *getRenderer() const override;
 
-    bool isX11() const override;
+    angle::NativeWindowSystem getWindowSystem() const override;
 
   private:
     egl::Error initializeContext(glx::FBConfig config,

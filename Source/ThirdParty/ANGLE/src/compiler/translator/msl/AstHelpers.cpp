@@ -218,6 +218,11 @@ TIntermBinary &sh::AccessField(const TVariable &structInstanceVar, const Immutab
     return AccessField(*new TIntermSymbol(&structInstanceVar), fieldName);
 }
 
+TIntermBinary &sh::AccessField(const TVariable &structInstanceVar, const Name &name)
+{
+    return AccessField(*new TIntermSymbol(&structInstanceVar), name);
+}
+
 TIntermBinary &sh::AccessField(TIntermTyped &object, const ImmutableString &fieldName)
 {
     const TStructure *structure = object.getType().getStruct();
@@ -226,6 +231,23 @@ TIntermBinary &sh::AccessField(TIntermTyped &object, const ImmutableString &fiel
     const int index = GetFieldIndex(*structure, fieldName);
     ASSERT(index >= 0);
     return AccessFieldByIndex(object, index);
+}
+
+TIntermBinary &sh::AccessField(TIntermTyped &object, const Name &name)
+{
+    const TStructure *structure = object.getType().getStruct();
+    ASSERT(structure);
+    const TFieldList &fieldList = structure->fields();
+    for (int i = 0; i < static_cast<int>(fieldList.size()); ++i)
+    {
+        TField *current = fieldList[i];
+        if (Name(*current) == name)
+        {
+            return AccessFieldByIndex(object, i);
+        }
+    }
+    UNREACHABLE();
+    return AccessFieldByIndex(object, -1);
 }
 
 TIntermBinary &sh::AccessFieldByIndex(TIntermTyped &object, int index)

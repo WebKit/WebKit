@@ -309,6 +309,11 @@ bool IsPixel6()
     return IsAndroidDevice("Pixel 6");
 }
 
+bool IsGalaxyS22()
+{
+    return IsAndroidDevice("SM-S901B");
+}
+
 bool IsNVIDIAShield()
 {
     return IsAndroidDevice("SHIELD Android TV");

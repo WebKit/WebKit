@@ -194,8 +194,7 @@ void GetPipelineCacheData(ContextVk *contextVk,
         }
 
         // Compress it.
-        if (!egl::CompressBlobCacheData(pipelineCacheData.size(), pipelineCacheData.data(),
-                                        cacheDataOut))
+        if (!angle::CompressBlob(pipelineCacheData.size(), pipelineCacheData.data(), cacheDataOut))
         {
             cacheDataOut->clear();
         }
@@ -514,8 +513,8 @@ angle::Result ProgramExecutableVk::initializePipelineCache(vk::Context *context,
     angle::MemoryBuffer uncompressedData;
     if (compressed)
     {
-        if (!egl::DecompressBlobCacheData(dataPointer, dataSize, kMaxLocalPipelineCacheSize,
-                                          &uncompressedData))
+        if (!angle::DecompressBlob(dataPointer, dataSize, kMaxLocalPipelineCacheSize,
+                                   &uncompressedData))
         {
             return angle::Result::Stop;
         }
@@ -538,7 +537,7 @@ angle::Result ProgramExecutableVk::initializePipelineCache(vk::Context *context,
     // Merge the pipeline cache into RendererVk's.
     if (context->getFeatures().mergeProgramPipelineCachesToGlobalCache.enabled)
     {
-        ANGLE_TRY(context->getRenderer()->mergeIntoPipelineCache(mPipelineCache));
+        ANGLE_TRY(context->getRenderer()->mergeIntoPipelineCache(context, mPipelineCache));
     }
 
     return angle::Result::Continue;
@@ -688,7 +687,7 @@ angle::Result ProgramExecutableVk::warmUpPipelineCache(
         // Merge the cache with RendererVk's
         if (context->getFeatures().mergeProgramPipelineCachesToGlobalCache.enabled)
         {
-            ANGLE_TRY(context->getRenderer()->mergeIntoPipelineCache(mPipelineCache));
+            ANGLE_TRY(context->getRenderer()->mergeIntoPipelineCache(context, mPipelineCache));
         }
 
         return angle::Result::Continue;
@@ -754,7 +753,7 @@ angle::Result ProgramExecutableVk::warmUpPipelineCache(
     // Merge the cache with RendererVk's
     if (context->getFeatures().mergeProgramPipelineCachesToGlobalCache.enabled)
     {
-        ANGLE_TRY(context->getRenderer()->mergeIntoPipelineCache(mPipelineCache));
+        ANGLE_TRY(context->getRenderer()->mergeIntoPipelineCache(context, mPipelineCache));
     }
 
     return angle::Result::Continue;
@@ -884,9 +883,9 @@ angle::Result ProgramExecutableVk::addTextureDescriptorSetDesc(
     const std::vector<GLuint> &samplerBoundTextureUnits =
         mExecutable->getSamplerBoundTextureUnits();
 
-    for (uint32_t textureIndex = 0; textureIndex < samplerBindings.size(); ++textureIndex)
+    for (uint32_t samplerIndex = 0; samplerIndex < samplerBindings.size(); ++samplerIndex)
     {
-        uint32_t uniformIndex = mExecutable->getUniformIndexFromSamplerIndex(textureIndex);
+        uint32_t uniformIndex = mExecutable->getUniformIndexFromSamplerIndex(samplerIndex);
         const gl::LinkedUniform &samplerUniform = uniforms[uniformIndex];
 
         // 2D arrays are split into multiple 1D arrays when generating LinkedUniforms. Since they
@@ -903,7 +902,7 @@ angle::Result ProgramExecutableVk::addTextureDescriptorSetDesc(
             mExecutable->getUniformNameByIndex(uniformIndex)));
 
         // The front-end always binds array sampler units sequentially.
-        const gl::SamplerBinding &samplerBinding = samplerBindings[textureIndex];
+        const gl::SamplerBinding &samplerBinding = samplerBindings[samplerIndex];
         uint32_t arraySize = static_cast<uint32_t>(samplerBinding.textureUnitsCount);
         arraySize *= samplerUniform.getOuterArraySizeProduct();
 
@@ -936,7 +935,7 @@ angle::Result ProgramExecutableVk::addTextureDescriptorSetDesc(
             const vk::YcbcrConversionDesc ycbcrConversionDesc =
                 isSamplerExternalY2Y ? image.getY2YConversionDesc()
                                      : image.getYcbcrConversionDesc();
-            mImmutableSamplerIndexMap[ycbcrConversionDesc] = textureIndex;
+            mImmutableSamplerIndexMap[ycbcrConversionDesc] = samplerIndex;
             // The Vulkan spec has the following note -
             // All descriptors in a binding use the same maximum
             // combinedImageSamplerDescriptorCount descriptors to allow implementations to use a
@@ -1177,7 +1176,7 @@ angle::Result ProgramExecutableVk::createGraphicsPipeline(
     if (useProgramPipelineCache &&
         contextVk->getFeatures().mergeProgramPipelineCachesToGlobalCache.enabled)
     {
-        ANGLE_TRY(contextVk->getRenderer()->mergeIntoPipelineCache(mPipelineCache));
+        ANGLE_TRY(contextVk->getRenderer()->mergeIntoPipelineCache(contextVk, mPipelineCache));
     }
 
     return angle::Result::Continue;

@@ -21,7 +21,6 @@ class DisplayVkOffscreen : public DisplayVkLinux
   public:
     DisplayVkOffscreen(const egl::DisplayState &state);
     bool isValidNativeWindow(EGLNativeWindowType window) const override;
-    bool isUsingSwapchain() const override;
     SurfaceImpl *createWindowSurfaceVk(const egl::SurfaceState &state,
                                        EGLNativeWindowType window) override;
     egl::ConfigSet generateConfigs() override;

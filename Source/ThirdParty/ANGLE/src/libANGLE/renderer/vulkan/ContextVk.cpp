@@ -838,6 +838,18 @@ void UpdateBufferWithSharedCacheKey(const gl::OffsetBindingPointer<gl::Buffer> &
         }
     }
 }
+
+void GenerateTextureUnitSamplerIndexMap(
+    const std::vector<GLuint> &samplerBoundTextureUnits,
+    std::unordered_map<size_t, uint32_t> *textureUnitSamplerIndexMapOut)
+{
+    // Create a map of textureUnit <-> samplerIndex
+    for (size_t samplerIndex = 0; samplerIndex < samplerBoundTextureUnits.size(); samplerIndex++)
+    {
+        textureUnitSamplerIndexMapOut->insert(
+            {samplerBoundTextureUnits[samplerIndex], static_cast<uint32_t>(samplerIndex)});
+    }
+}
 }  // anonymous namespace
 
 void ContextVk::flushDescriptorSetUpdates()
@@ -1338,6 +1350,8 @@ void ContextVk::onDestroy(const gl::Context *context)
     {
         releaseQueueSerialIndex();
     }
+
+    mImageLoadContext = {};
 }
 
 VertexArrayVk *ContextVk::getVertexArray() const
@@ -1358,9 +1372,11 @@ angle::Result ContextVk::getIncompleteTexture(const gl::Context *context,
     return mIncompleteTextures.getIncompleteTexture(context, type, format, this, textureOut);
 }
 
-angle::Result ContextVk::initialize()
+angle::Result ContextVk::initialize(const angle::ImageLoadContext &imageLoadContext)
 {
     ANGLE_TRACE_EVENT0("gpu.angle", "ContextVk::initialize");
+
+    mImageLoadContext = imageLoadContext;
 
     ANGLE_TRY(mShareGroupVk->unifyContextsPriority(this));
 
@@ -2112,7 +2128,7 @@ angle::Result ContextVk::createGraphicsPipeline()
     ASSERT(executableVk);
 
     vk::PipelineCacheAccess pipelineCache;
-    ANGLE_TRY(mRenderer->getPipelineCache(&pipelineCache));
+    ANGLE_TRY(mRenderer->getPipelineCache(this, &pipelineCache));
 
     vk::PipelineHelper *oldGraphicsPipeline = mCurrentGraphicsPipeline;
 
@@ -2503,7 +2519,7 @@ angle::Result ContextVk::handleDirtyComputePipelineDesc(DirtyBits::Iterator *dir
     if (mCurrentComputePipeline == nullptr)
     {
         vk::PipelineCacheAccess pipelineCache;
-        ANGLE_TRY(mRenderer->getPipelineCache(&pipelineCache));
+        ANGLE_TRY(mRenderer->getPipelineCache(this, &pipelineCache));
 
         ProgramExecutableVk *executableVk = vk::GetImpl(mState.getProgramExecutable());
         ASSERT(executableVk);
@@ -5935,9 +5951,6 @@ angle::Result ContextVk::syncState(const gl::Context *context,
                                 mGraphicsDirtyBits.set(DIRTY_BIT_DYNAMIC_FRAGMENT_SHADING_RATE);
                             }
                             break;
-                        case gl::state::EXTENDED_DIRTY_BIT_FOVEATED_RENDERING:
-                            // Noop until addition of backend support for QCOM foveated extensions
-                            break;
                         default:
                             UNREACHABLE();
                     }
@@ -7410,8 +7423,9 @@ angle::Result ContextVk::updateActiveTextures(const gl::Context *context, gl::Co
 
     FillWithNullptr(&mActiveTextures);
 
-    bool recreatePipelineLayout                       = false;
-    ImmutableSamplerIndexMap immutableSamplerIndexMap = {};
+    bool recreatePipelineLayout                                     = false;
+    ImmutableSamplerIndexMap immutableSamplerIndexMap               = {};
+    std::unordered_map<size_t, uint32_t> textureUnitSamplerIndexMap = {};
     for (size_t textureUnit : activeTextures)
     {
         gl::Texture *texture        = textures[textureUnit];
@@ -7473,8 +7487,13 @@ angle::Result ContextVk::updateActiveTextures(const gl::Context *context, gl::Co
 
         if (image.hasImmutableSampler())
         {
+            if (textureUnitSamplerIndexMap.empty())
+            {
+                GenerateTextureUnitSamplerIndexMap(executable->getSamplerBoundTextureUnits(),
+                                                   &textureUnitSamplerIndexMap);
+            }
             immutableSamplerIndexMap[image.getYcbcrConversionDesc()] =
-                static_cast<uint32_t>(textureUnit);
+                textureUnitSamplerIndexMap[textureUnit];
         }
 
         if (textureVk->getAndResetImmutableSamplerDirtyState())
@@ -8596,17 +8615,31 @@ angle::Result ContextVk::onResourceAccess(const vk::CommandBufferAccess &access)
         mOutsideRenderPassCommands->retainResource(imageAccess.image);
     }
 
-    for (const vk::CommandBufferImageWrite &imageWrite : access.getWriteImages())
+    for (const vk::CommandBufferImageSubresourceAccess &imageReadAccess :
+         access.getReadImageSubresources())
     {
-        ASSERT(!isRenderPassStartedAndUsesImage(*imageWrite.access.image));
+        vk::ImageHelper *image = imageReadAccess.access.image;
+        ASSERT(!isRenderPassStartedAndUsesImage(*image));
 
-        imageWrite.access.image->recordWriteBarrier(this, imageWrite.access.aspectFlags,
-                                                    imageWrite.access.imageLayout,
-                                                    mOutsideRenderPassCommands);
-        mOutsideRenderPassCommands->retainResource(imageWrite.access.image);
-        imageWrite.access.image->onWrite(imageWrite.levelStart, imageWrite.levelCount,
-                                         imageWrite.layerStart, imageWrite.layerCount,
-                                         imageWrite.access.aspectFlags);
+        image->recordReadSubresourceBarrier(
+            this, imageReadAccess.access.aspectFlags, imageReadAccess.access.imageLayout,
+            imageReadAccess.levelStart, imageReadAccess.levelCount, imageReadAccess.layerStart,
+            imageReadAccess.layerCount, mOutsideRenderPassCommands);
+        mOutsideRenderPassCommands->retainResource(image);
+    }
+
+    for (const vk::CommandBufferImageSubresourceAccess &imageWrite : access.getWriteImages())
+    {
+        vk::ImageHelper *image = imageWrite.access.image;
+        ASSERT(!isRenderPassStartedAndUsesImage(*image));
+
+        image->recordWriteBarrier(this, imageWrite.access.aspectFlags,
+                                  imageWrite.access.imageLayout, imageWrite.levelStart,
+                                  imageWrite.levelCount, imageWrite.layerStart,
+                                  imageWrite.layerCount, mOutsideRenderPassCommands);
+        mOutsideRenderPassCommands->retainResource(image);
+        image->onWrite(imageWrite.levelStart, imageWrite.levelCount, imageWrite.layerStart,
+                       imageWrite.layerCount, imageWrite.access.aspectFlags);
     }
 
     for (const vk::CommandBufferBufferAccess &bufferAccess : access.getReadBuffers())
@@ -8663,8 +8696,20 @@ angle::Result ContextVk::flushCommandBuffersIfNecessary(const vk::CommandBufferA
         }
     }
 
+    // In cases where the image has both read and write permissions, the render pass should be
+    // closed if there is a read from a previously written subresource (in a specific level/layer),
+    // or a write to a previously read one.
+    for (const vk::CommandBufferImageSubresourceAccess &imageSubresourceAccess :
+         access.getReadImageSubresources())
+    {
+        if (isRenderPassStartedAndUsesImage(*imageSubresourceAccess.access.image))
+        {
+            return flushCommandsAndEndRenderPass(RenderPassClosureReason::ImageUseThenOutOfRPRead);
+        }
+    }
+
     // Write images only need to close the render pass if they need a layout transition.
-    for (const vk::CommandBufferImageWrite &imageWrite : access.getWriteImages())
+    for (const vk::CommandBufferImageSubresourceAccess &imageWrite : access.getWriteImages())
     {
         if (isRenderPassStartedAndUsesImage(*imageWrite.access.image))
         {
@@ -8958,11 +9003,6 @@ vk::ComputePipelineFlags ContextVk::getComputePipelineFlags() const
     }
 
     return pipelineFlags;
-}
-
-angle::ImageLoadContext ContextVk::getImageLoadContext() const
-{
-    return getRenderer()->getDisplay()->getImageLoadContext();
 }
 
 angle::Result ContextVk::ensureInterfacePipelineCache()

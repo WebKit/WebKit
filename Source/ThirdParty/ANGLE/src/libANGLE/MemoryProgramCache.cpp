@@ -186,8 +186,7 @@ angle::Result MemoryProgramCache::putProgram(const egl::BlobCache::Key &programH
     ANGLE_TRY(program->serialize(context, &serializedProgram));
 
     angle::MemoryBuffer compressedData;
-    if (!egl::CompressBlobCacheData(serializedProgram.size(), serializedProgram.data(),
-                                    &compressedData))
+    if (!angle::CompressBlob(serializedProgram.size(), serializedProgram.data(), &compressedData))
     {
         ANGLE_PERF_WARNING(context->getState().getDebug(), GL_DEBUG_SEVERITY_LOW,
                            "Error compressing binary data.");

@@ -44,8 +44,8 @@ class CLKernelImpl : angle::NonCopyable
         ArgInfo();
         ~ArgInfo();
 
-        ArgInfo(const ArgInfo &)            = delete;
-        ArgInfo &operator=(const ArgInfo &) = delete;
+        ArgInfo(const ArgInfo &)            = default;
+        ArgInfo &operator=(const ArgInfo &) = default;
 
         ArgInfo(ArgInfo &&);
         ArgInfo &operator=(ArgInfo &&);

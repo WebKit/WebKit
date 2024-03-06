@@ -2497,7 +2497,7 @@ angle::Result WindowSurfaceVk::swapImpl(const gl::Context *context,
 
     RendererVk *renderer = contextVk->getRenderer();
     DisplayVk *displayVk = vk::GetImpl(context->getDisplay());
-    ANGLE_TRY(renderer->syncPipelineCacheVk(displayVk, context));
+    ANGLE_TRY(renderer->syncPipelineCacheVk(displayVk, displayVk, context));
 
     return angle::Result::Continue;
 }

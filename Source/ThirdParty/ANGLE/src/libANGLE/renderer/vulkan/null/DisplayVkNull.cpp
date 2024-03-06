@@ -35,11 +35,6 @@ const char *DisplayVkNull::getWSIExtension() const
     return nullptr;
 }
 
-bool DisplayVkNull::isUsingSwapchain() const
-{
-    return false;
-}
-
 egl::ConfigSet DisplayVkNull::generateConfigs()
 {
     constexpr GLenum kColorFormats[] = {GL_RGBA8, GL_BGRA8_EXT, GL_RGB565, GL_RGB8};

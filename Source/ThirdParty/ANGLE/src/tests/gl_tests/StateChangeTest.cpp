@@ -5811,6 +5811,32 @@ void main()
     EXPECT_GL_ERROR(GL_INVALID_OPERATION) << "Invalid buffer size should fail";
 }
 
+// Tests that redefining attachment storage updates the component type mask
+TEST_P(WebGL2ValidationStateChangeTest, AttachmentTypeRedefinition)
+{
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), essl3_shaders::fs::Green());
+
+    GLFramebuffer fb;
+    glBindFramebuffer(GL_FRAMEBUFFER, fb);
+
+    GLRenderbuffer rb;
+    glBindRenderbuffer(GL_RENDERBUFFER, rb);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rb);
+
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8I, 4, 4);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, 4, 4);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_PIXEL_RECT_EQ(0, 0, 4, 4, GLColor::green);
+
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8UI, 4, 4);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+}
+
 // Tests various state change effects on draw framebuffer validation.
 TEST_P(WebGL2ValidationStateChangeTest, DrawFramebufferNegativeAPI)
 {

@@ -3890,6 +3890,188 @@ TEST_P(Texture2DTestES3, TexStorage2DCycleThroughYuvSourcesNoData)
     ASSERT_GL_NO_ERROR();
 }
 
+// Test functionality of GL_ANGLE_yuv_internal_format with multiple YUV samplers while
+// switching sampler uniform values.
+TEST_P(Texture2DTestES3, TexStorage2DMultipleYuvSamplersSwitchSamplerUniformValues)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ANGLE_yuv_internal_format"));
+
+    // Create YUV texture
+    GLTexture yuvTexture;
+    GLubyte yuvColor[6]         = {40, 40, 40, 40, 240, 109};
+    GLubyte expectedRgbColor[4] = {0, 0, 255, 255};
+
+    // Create YUV texture
+    // Create 2 plane YCbCr 420 texture
+    GLTexture twoPlaneYuvTexture;
+    createImmutableTexture2D(twoPlaneYuvTexture, 2, 2, GL_G8_B8R8_2PLANE_420_UNORM_ANGLE,
+                             GL_G8_B8R8_2PLANE_420_UNORM_ANGLE, GL_UNSIGNED_BYTE, 1, yuvColor);
+    // Create 3 plane YCbCr 420 texture
+    GLTexture threePlaneYuvTexture;
+    createImmutableTexture2D(threePlaneYuvTexture, 2, 2, GL_G8_B8_R8_3PLANE_420_UNORM_ANGLE,
+                             GL_G8_B8_R8_3PLANE_420_UNORM_ANGLE, GL_UNSIGNED_BYTE, 1, nullptr);
+    // Create program with 2 samplers
+    const char *vertexShaderSource   = getVertexShaderSource();
+    const char *fragmentShaderSource = R"(#version 300 es
+precision highp float;
+uniform sampler2D tex0;
+uniform sampler2D tex1;
+uniform int texIndex;
+in vec2 texcoord;
+out vec4 fragColor;
+void main()
+{
+    vec4 color0 = texture(tex0, texcoord);
+    vec4 color1 = texture(tex1, texcoord);
+    if (texIndex == 0)
+    {
+        fragColor = color0;
+    }
+    else
+    {
+        fragColor = color1;
+    }
+})";
+    ANGLE_GL_PROGRAM(twoSamplersProgram, vertexShaderSource, fragmentShaderSource);
+    glUseProgram(twoSamplersProgram);
+    GLint tex0Location = glGetUniformLocation(twoSamplersProgram, "tex0");
+    ASSERT_NE(-1, tex0Location);
+    GLint tex1Location = glGetUniformLocation(twoSamplersProgram, "tex1");
+    ASSERT_NE(-1, tex1Location);
+    GLint texIndexLocation = glGetUniformLocation(twoSamplersProgram, "texIndex");
+    ASSERT_NE(-1, texIndexLocation);
+    // Bind 2 plane YUV source
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, twoPlaneYuvTexture);
+    ASSERT_GL_NO_ERROR();
+    // Bind 3 plane YUV source
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, threePlaneYuvTexture);
+    ASSERT_GL_NO_ERROR();
+
+    // Set sampler uniform values and draw
+    glUniform1i(tex0Location, 0);
+    glUniform1i(tex1Location, 1);
+    // Set texture index selector to the 2 plane texture unit
+    glUniform1i(texIndexLocation, 0);
+    drawQuad(twoSamplersProgram, "position", 0.5f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_NEAR(0, 0, expectedRgbColor[0], expectedRgbColor[1], expectedRgbColor[2],
+                      expectedRgbColor[3], 1);
+    ASSERT_GL_NO_ERROR();
+
+    // Switch sampler uniform values and draw
+    glUniform1i(tex0Location, 1);
+    glUniform1i(tex1Location, 0);
+    // Set texture index selector to the 2 plane texture unit
+    glUniform1i(texIndexLocation, 1);
+    drawQuad(twoSamplersProgram, "position", 0.5f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_NEAR(0, 0, expectedRgbColor[0], expectedRgbColor[1], expectedRgbColor[2],
+                      expectedRgbColor[3], 1);
+    ASSERT_GL_NO_ERROR();
+
+    // Switch back sampler uniform values and draw
+    glUniform1i(tex0Location, 0);
+    glUniform1i(tex1Location, 1);
+    // Set texture index selector to the 2 plane texture unit
+    glUniform1i(texIndexLocation, 0);
+    drawQuad(twoSamplersProgram, "position", 0.5f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_NEAR(0, 0, expectedRgbColor[0], expectedRgbColor[1], expectedRgbColor[2],
+                      expectedRgbColor[3], 1);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Test functionality of GL_ANGLE_yuv_internal_format with multiple YUV samplers while
+// switching bound textures.
+TEST_P(Texture2DTestES3, TexStorage2DMultipleYuvSamplersSwitchBoundTextures)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ANGLE_yuv_internal_format"));
+
+    // Create YUV texture
+    GLTexture yuvTexture;
+    GLubyte yuvColor[6]         = {40, 40, 40, 40, 240, 109};
+    GLubyte expectedRgbColor[4] = {0, 0, 255, 255};
+
+    // Create YUV texture
+    // Create 2 plane YCbCr 420 texture
+    GLTexture twoPlaneYuvTexture;
+    createImmutableTexture2D(twoPlaneYuvTexture, 2, 2, GL_G8_B8R8_2PLANE_420_UNORM_ANGLE,
+                             GL_G8_B8R8_2PLANE_420_UNORM_ANGLE, GL_UNSIGNED_BYTE, 1, yuvColor);
+    // Create 3 plane YCbCr 420 texture
+    GLTexture threePlaneYuvTexture;
+    createImmutableTexture2D(threePlaneYuvTexture, 2, 2, GL_G8_B8_R8_3PLANE_420_UNORM_ANGLE,
+                             GL_G8_B8_R8_3PLANE_420_UNORM_ANGLE, GL_UNSIGNED_BYTE, 1, nullptr);
+    // Create program with 2 samplers
+    const char *vertexShaderSource   = getVertexShaderSource();
+    const char *fragmentShaderSource = R"(#version 300 es
+precision highp float;
+uniform sampler2D tex0;
+uniform sampler2D tex1;
+uniform int texIndex;
+in vec2 texcoord;
+out vec4 fragColor;
+void main()
+{
+    vec4 color0 = texture(tex0, texcoord);
+    vec4 color1 = texture(tex1, texcoord);
+    if (texIndex == 0)
+    {
+        fragColor = color0;
+    }
+    else
+    {
+        fragColor = color1;
+    }
+})";
+    ANGLE_GL_PROGRAM(twoSamplersProgram, vertexShaderSource, fragmentShaderSource);
+    glUseProgram(twoSamplersProgram);
+    GLint tex0Location = glGetUniformLocation(twoSamplersProgram, "tex0");
+    ASSERT_NE(-1, tex0Location);
+    GLint tex1Location = glGetUniformLocation(twoSamplersProgram, "tex1");
+    ASSERT_NE(-1, tex1Location);
+    GLint texIndexLocation = glGetUniformLocation(twoSamplersProgram, "texIndex");
+    ASSERT_NE(-1, texIndexLocation);
+    // Set sampler uniform values
+    glUniform1i(tex0Location, 0);
+    glUniform1i(tex1Location, 1);
+
+    // Bind 2 plane YUV source
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, twoPlaneYuvTexture);
+    ASSERT_GL_NO_ERROR();
+    // Bind 3 plane YUV source
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, threePlaneYuvTexture);
+    ASSERT_GL_NO_ERROR();
+    // Set texture index selector to the 2 plane texture unit
+    glUniform1i(texIndexLocation, 0);
+    // Draw
+    drawQuad(twoSamplersProgram, "position", 0.5f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_NEAR(0, 0, expectedRgbColor[0], expectedRgbColor[1], expectedRgbColor[2],
+                      expectedRgbColor[3], 1);
+    ASSERT_GL_NO_ERROR();
+
+    // Bind 3 plane YUV source
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, threePlaneYuvTexture);
+    ASSERT_GL_NO_ERROR();
+    // Bind 2 plane YUV source
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, twoPlaneYuvTexture);
+    ASSERT_GL_NO_ERROR();
+    // Set texture index selector to the 2 plane texture unit
+    glUniform1i(texIndexLocation, 1);
+    // Draw
+    drawQuad(twoSamplersProgram, "position", 0.5f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_NEAR(0, 0, expectedRgbColor[0], expectedRgbColor[1], expectedRgbColor[2],
+                      expectedRgbColor[3], 1);
+    ASSERT_GL_NO_ERROR();
+}
+
 // Tests CopySubImage for float formats
 TEST_P(Texture2DTest, CopySubImageFloat_R_R)
 {
@@ -11195,9 +11377,6 @@ TEST_P(Texture2DTestES3Foveation, Clear)
     glFramebufferFoveationParametersQCOM(mFramebuffer, 0, 0, 0.0f, 0.0f, 8.0f, 8.0f, 0.0f);
     EXPECT_GL_NO_ERROR();
 
-    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
-    glUseProgram(program);
-
     // Clear
     glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -11213,6 +11392,43 @@ TEST_P(Texture2DTestES3Foveation, ClearThenDraw)
 
     // Switch to foveated framebuffer
     glBindFramebuffer(GL_FRAMEBUFFER, mFramebuffer);
+
+    // Just need 1 focal point
+    GLuint providedFeatures = 0;
+    glFramebufferFoveationConfigQCOM(mFramebuffer, 1, 1, GL_FOVEATION_ENABLE_BIT_QCOM,
+                                     &providedFeatures);
+    ASSERT_NE(providedFeatures & GL_FOVEATION_ENABLE_BIT_QCOM, 0u);
+    // Set foveation parameters
+    glFramebufferFoveationParametersQCOM(mFramebuffer, 0, 0, 0.0f, 0.0f, 8.0f, 8.0f, 0.0f);
+    EXPECT_GL_NO_ERROR();
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+    glUseProgram(program);
+
+    // Clear
+    glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_GL_NO_ERROR();
+
+    // Draw
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_GL_NO_ERROR();
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, angle::GLColor::green);
+}
+
+// QCOM framebuffer foveated rendering with rendebuffer attachment + clear then draw
+TEST_P(Texture2DTestES3Foveation, RenderbufferAttachmentClearThenDraw)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_QCOM_framebuffer_foveated"));
+
+    // Switch to foveated framebuffer and attach a renderbuffer
+    glBindFramebuffer(GL_FRAMEBUFFER, mFramebuffer);
+    GLRenderbuffer renderbuffer;
+    glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, getWindowWidth(), getWindowHeight());
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, renderbuffer);
+    EXPECT_GL_NO_ERROR();
 
     // Just need 1 focal point
     GLuint providedFeatures = 0;
@@ -13312,8 +13528,9 @@ TEST_P(CopyImageTestES31, CubeMapCopyImageSubData)
     ASSERT_GL_NO_ERROR();
 }
 
-// Verify that copies between texture layers works
-TEST_P(CopyImageTestES31, ArraySelfCopyImageSubData)
+// Verify that copies between texture layers works, including when there is a read after write in a
+// level/layer.
+TEST_P(CopyImageTestES31, ArraySelfCopyImageSubDataWithReadAfterWrite)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_copy_image"));
 
@@ -13360,6 +13577,7 @@ TEST_P(CopyImageTestES31, ArraySelfCopyImageSubData)
                           1, kWidth >> 1, kHeight >> 1, 2);
 
     // Partially copy level 1, layer 1 to level 0, layer 3
+    // Level 1/layer 1 will be read from after being written to
     glCopyImageSubDataEXT(tex, GL_TEXTURE_2D_ARRAY, 1, kWidth / 8, kHeight / 8, 1, tex,
                           GL_TEXTURE_2D_ARRAY, 0, kWidth / 4, kHeight / 4, 3, kWidth / 4,
                           kHeight / 4, 1);
@@ -13397,6 +13615,97 @@ TEST_P(CopyImageTestES31, ArraySelfCopyImageSubData)
 
     glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, tex, 1, 2);
     EXPECT_PIXEL_RECT_EQ(0, 0, kWidth >> 1, kHeight >> 1, GLColor::blue);
+
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, tex, 1, 3);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth >> 1, kHeight >> 1, GLColor::green);
+
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, tex, 1, 4);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth >> 1, kHeight >> 1, GLColor::blue);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Verify that copies between texture layers works, including when there is a write after read in a
+// level/layer.
+TEST_P(CopyImageTestES31, ArraySelfCopyImageSubDataWithWriteAfterRead)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_copy_image"));
+
+    // Set up a texture with multiple layers, then verify we can copy between them
+    constexpr uint32_t kWidth  = 13;
+    constexpr uint32_t kHeight = 57;
+    constexpr uint32_t kLayers = 5;
+    constexpr uint32_t kLevels = 2;
+    std::vector<GLColor> pixelsRed(kWidth * kHeight, GLColor::red);
+    std::vector<GLColor> pixelsGreen(kWidth * kHeight, GLColor::green);
+    std::vector<GLColor> pixelsBlue(kWidth * kHeight, GLColor::blue);
+
+    const GLColor *colors[3] = {
+        pixelsRed.data(),
+        pixelsGreen.data(),
+        pixelsBlue.data(),
+    };
+
+    GLTexture tex;
+    glBindTexture(GL_TEXTURE_2D_ARRAY, tex);
+    glTexStorage3D(GL_TEXTURE_2D_ARRAY, kLevels, GL_RGBA8, kWidth, kHeight, kLayers);
+    for (uint32_t level = 0; level < kLevels; ++level)
+    {
+        for (uint32_t layer = 0; layer < kLayers; ++layer)
+        {
+            glTexSubImage3D(GL_TEXTURE_2D_ARRAY, level, 0, 0, layer, kWidth >> level,
+                            kHeight >> level, 1, GL_RGBA, GL_UNSIGNED_BYTE,
+                            colors[(level + layer) % 3]);
+        }
+    }
+    ASSERT_GL_NO_ERROR();
+
+    // The texture has the following colors:
+    //              Layer 0   Layer 1   Layer 2   Layer 3   Layer 4
+    // Level  0      Red       Green     Blue      Red       Green
+    // Level  1      Green     Blue      Red       Green     Blue
+
+    // Copy level 0, layer 0 to level 0, layer 2
+    glCopyImageSubDataEXT(tex, GL_TEXTURE_2D_ARRAY, 0, 0, 0, 0, tex, GL_TEXTURE_2D_ARRAY, 0, 0, 0,
+                          2, kWidth, kHeight, 1);
+    ASSERT_GL_NO_ERROR();
+
+    // Copy level 0, layer 1 to level 0, layer 3
+    glCopyImageSubDataEXT(tex, GL_TEXTURE_2D_ARRAY, 0, 0, 0, 1, tex, GL_TEXTURE_2D_ARRAY, 0, 0, 0,
+                          3, kWidth, kHeight, 1);
+    ASSERT_GL_NO_ERROR();
+
+    // Copy level 0, layer 0 to level 0, layer 1
+    // Level 0/layer 1 will be written to from after being read from
+    glCopyImageSubDataEXT(tex, GL_TEXTURE_2D_ARRAY, 0, 0, 0, 0, tex, GL_TEXTURE_2D_ARRAY, 0, 0, 0,
+                          1, kWidth, kHeight, 1);
+    ASSERT_GL_NO_ERROR();
+
+    // Verify colors
+    GLFramebuffer FBO;
+    glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, tex, 0, 0);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight, GLColor::red);
+
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, tex, 0, 1);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight, GLColor::red);
+
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, tex, 0, 2);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight, GLColor::red);
+
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, tex, 0, 3);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight, GLColor::green);
+
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, tex, 0, 4);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight, GLColor::green);
+
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, tex, 1, 0);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth >> 1, kHeight >> 1, GLColor::green);
+
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, tex, 1, 1);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth >> 1, kHeight >> 1, GLColor::blue);
+
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, tex, 1, 2);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth >> 1, kHeight >> 1, GLColor::red);
 
     glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, tex, 1, 3);
     EXPECT_PIXEL_RECT_EQ(0, 0, kWidth >> 1, kHeight >> 1, GLColor::green);

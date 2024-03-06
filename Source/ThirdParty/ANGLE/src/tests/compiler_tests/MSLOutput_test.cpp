@@ -874,3 +874,33 @@ void main() {
 })";
     compile(kShader);
 }
+
+// Tests that rewriting varyings for per-element element access does not cause crash.
+// At the time of writing a_ would be confused with a due to matrixes being flattened
+// for fragment inputs, and the new variables would be given semantic names separated
+// with _. This would cause confusion because semantic naming would filter underscores.
+TEST_F(MSLOutputTest, VaryingRewriteUnderscoreNoCrash)
+{
+    const char kShader[] = R"(precision mediump float;
+varying mat2 a_;
+varying mat3 a;
+void main(){
+    gl_FragColor = vec4(a_) + vec4(a);
+})";
+    compile(kShader);
+}
+
+// Tests that rewriting attributes for per-element element access does not cause crash.
+// At the time of writing a_ would be confused with a due to matrixes being flattened
+// for fragment inputs, and the new variables would be given semantic names separated
+// with _. This would cause confusion because semantic naming would filter underscores.
+TEST_F(MSLVertexOutputTest, AttributeRewriteUnderscoreNoCrash)
+{
+    const char kShader[] = R"(precision mediump float;
+attribute mat2 a_;
+attribute mat3 a;
+void main(){
+    gl_Position = vec4(a_) + vec4(a);
+})";
+    compile(kShader);
+}

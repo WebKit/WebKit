@@ -1248,8 +1248,8 @@ void DisplayMtl::initializeFeatures()
     bool isSimulator = TARGET_OS_SIMULATOR;
     bool isARM       = ANGLE_APPLE_IS_ARM;
 
-    ApplyFeatureOverrides(&mFeatures, getState());
-    if (mState.featuresAllDisabled)
+    ApplyFeatureOverrides(&mFeatures, getState().featureOverrides);
+    if (mState.featureOverrides.allDisabled)
     {
         return;
     }

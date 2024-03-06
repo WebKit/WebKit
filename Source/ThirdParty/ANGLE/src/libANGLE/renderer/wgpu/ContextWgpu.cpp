@@ -95,7 +95,12 @@ ContextWgpu::ContextWgpu(const gl::State &state, gl::ErrorSet *errorSet)
 
 ContextWgpu::~ContextWgpu() {}
 
-angle::Result ContextWgpu::initialize()
+void ContextWgpu::onDestroy(const gl::Context *context)
+{
+    mImageLoadContext = {};
+}
+
+angle::Result ContextWgpu::initialize(const angle::ImageLoadContext &imageLoadContext)
 {
     return angle::Result::Continue;
 }

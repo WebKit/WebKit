@@ -179,10 +179,10 @@ class PBOCompressedSubImageBenchmark : public TextureUploadBenchmarkBase
     GLuint mPBO;
 };
 
-class TexureUploadETC2TranscodingBenchmark : public TextureUploadBenchmarkBase
+class TextureUploadETC2TranscodingBenchmark : public TextureUploadBenchmarkBase
 {
   public:
-    TexureUploadETC2TranscodingBenchmark() : TextureUploadBenchmarkBase("ETC2Transcoding") {}
+    TextureUploadETC2TranscodingBenchmark() : TextureUploadBenchmarkBase("ETC2Transcoding") {}
 
     void initializeBenchmark() override
     {
@@ -234,7 +234,7 @@ class TexureUploadETC2TranscodingBenchmark : public TextureUploadBenchmarkBase
     std::vector<GLuint> mTextures;
 };
 
-void TexureUploadETC2TranscodingBenchmark::initShaders()
+void TextureUploadETC2TranscodingBenchmark::initShaders()
 {
     constexpr char kVS[] = R"(#version 300 es
 in vec4 a_position;
@@ -265,7 +265,7 @@ void main()
     ASSERT_GL_NO_ERROR();
 }
 
-void TexureUploadETC2TranscodingBenchmark::drawBenchmark()
+void TextureUploadETC2TranscodingBenchmark::drawBenchmark()
 {
     const auto &params = GetParam();
     startGpuTimer();
@@ -526,7 +526,7 @@ TextureUploadParams ES3OpenGLPBOParams(GLsizei baseSize, GLsizei subImageSize)
 }  // anonymous namespace
 
 // Test etc to bc transcoding performance.
-TEST_P(TexureUploadETC2TranscodingBenchmark, Run)
+TEST_P(TextureUploadETC2TranscodingBenchmark, Run)
 {
     run();
 }
@@ -564,7 +564,7 @@ ANGLE_INSTANTIATE_TEST(TextureUploadSubImageBenchmark,
                        NullDevice(VulkanParams(false)),
                        VulkanParams(true));
 
-ANGLE_INSTANTIATE_TEST(TexureUploadETC2TranscodingBenchmark, ES3VulkanParams(false));
+ANGLE_INSTANTIATE_TEST(TextureUploadETC2TranscodingBenchmark, ES3VulkanParams(false));
 
 ANGLE_INSTANTIATE_TEST(TextureUploadFullMipBenchmark,
                        D3D11Params(false),

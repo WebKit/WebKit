@@ -112,5 +112,9 @@
 // Pixel 4 expectations.
 5990 PIXEL4ORXL VULKAN : KHR-GLES32.core.draw_buffers_indexed.color_masks = SKIP
 
+// Samsung Galaxy S22 (Xclipse)
+b/267953710 GALAXYS22 VULKAN : KHR-GLES32.core.tessellation_shader.tessellation_shader_tessellation.gl_InvocationID_PatchVerticesIn_PrimitiveID = SKIP
+b/267953710 GALAXYS22 VULKAN : KHR-GLES32.core.tessellation_shader.single.xfb_captures_data_from_correct_stage = SKIP
+
 // Samsung Galaxy S23
 8157 GALAXYS23 VULKAN : KHR-GLES32.shaders.function.global_variable_aliasing_fragment = SKIP

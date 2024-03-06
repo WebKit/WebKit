@@ -11,6 +11,7 @@
 #define LIBANGLE_RENDERER_D3D_D3D11_CONTEXT11_H_
 
 #include <stack>
+#include "image_util/loadimage.h"
 #include "libANGLE/renderer/ContextImpl.h"
 #include "libANGLE/renderer/d3d/ContextD3D.h"
 #include "libANGLE/renderer/d3d/d3d11/ResourceManager11.h"
@@ -25,7 +26,7 @@ class Context11 : public ContextD3D, public MultisampleTextureInitializer
     Context11(const gl::State &state, gl::ErrorSet *errorSet, Renderer11 *renderer);
     ~Context11() override;
 
-    angle::Result initialize() override;
+    angle::Result initialize(const angle::ImageLoadContext &imageLoadContext) override;
     void onDestroy(const gl::Context *context) override;
 
     // Shader creation
@@ -240,7 +241,7 @@ class Context11 : public ContextD3D, public MultisampleTextureInitializer
     const ShPixelLocalStorageOptions &getNativePixelLocalStorageOptions() const override;
 
     Renderer11 *getRenderer() const { return mRenderer; }
-    angle::ImageLoadContext getImageLoadContext() const;
+    const angle::ImageLoadContext &getImageLoadContext() const { return mImageLoadContext; }
 
     angle::Result dispatchCompute(const gl::Context *context,
                                   GLuint numGroupsX,
@@ -286,6 +287,7 @@ class Context11 : public ContextD3D, public MultisampleTextureInitializer
                                    bool isInstancedDraw);
 
     Renderer11 *mRenderer;
+    angle::ImageLoadContext mImageLoadContext;
     IncompleteTextureSet mIncompleteTextures;
     std::stack<std::string> mMarkerStack;
     d3d11::Query mDisjointQuery;

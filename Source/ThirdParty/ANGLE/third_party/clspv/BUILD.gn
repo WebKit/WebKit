@@ -267,6 +267,46 @@ static_library("clspv_core") {
   ]
 }
 
+shared_library("clspv_core_shared") {
+  configs += [ ":clspv_common_config" ]
+  configs += clspv_configs_to_append
+  configs -= clspv_configs_to_remove
+
+  if (is_android) {
+    # Removing this config, otherwise clspv API will not be visable
+    configs -= [ "//build/config/android:hide_all_but_jni_onload" ]
+  }
+
+  deps = [
+    "gn/llvm/sources:clspv_clang_lib_ast",
+    "gn/llvm/sources:clspv_clang_lib_basic",
+    "gn/llvm/sources:clspv_clang_lib_codegen",
+    "gn/llvm/sources:clspv_clang_lib_frontend",
+    "gn/llvm/sources:clspv_clang_lib_serialization",
+
+    # llvm/clang
+    ":clspv64_builtin_library",
+    ":clspv_baked_opencl_header",
+    ":clspv_builtin_library",
+    ":clspv_passes",
+    "gn/llvm/sources:clspv_llvm_components",
+    "gn/llvm/sources:clspv_llvm_lib_irreader",
+    "gn/llvm/sources:clspv_llvm_lib_linker",
+  ]
+  sources = [
+    "src/lib/Compiler.cpp",
+    "src/lib/FrontendPlugin.cpp",
+    "src/lib/Sampler.cpp",
+  ]
+  include_dirs = [
+    "//$clspv_llvm_dir/clang/include",
+    "//$clspv_llvm_dir/llvm/include",
+    "$root_gen_dir/$clspv_llvm_dir/",
+    "$target_gen_dir",
+    "$root_gen_dir/$clspv_llvm_dir/clang/include",
+  ]
+}
+
 # CLSPV Tools Targets
 config("clspv_opt_config") {
   include_dirs = [

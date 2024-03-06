@@ -837,6 +837,16 @@ void CaptureGLCallToFrameCapture(CaptureFuncT captureFunc,
     frameCaptureShared->captureCall(context, std::move(call), isCallValid);
 }
 
+template <typename FirstT, typename... OthersT>
+egl::Display *GetEGLDisplayArg(FirstT display, OthersT... others)
+{
+    if constexpr (std::is_same<egl::Display *, FirstT>::value)
+    {
+        return display;
+    }
+    return nullptr;
+}
+
 template <typename CaptureFuncT, typename... ArgsT>
 void CaptureEGLCallToFrameCapture(CaptureFuncT captureFunc,
                                   bool isCallValid,
@@ -846,7 +856,21 @@ void CaptureEGLCallToFrameCapture(CaptureFuncT captureFunc,
     gl::Context *context = thread->getContext();
     if (!context)
     {
-        return;
+        // Get a valid context from the display argument if no context is associated with this
+        // thread
+        egl::Display *display = GetEGLDisplayArg(captureParams...);
+        if (display)
+        {
+            for (const auto &contextIter : display->getState().contextMap)
+            {
+                context = contextIter.second;
+                break;
+            }
+        }
+        if (!context)
+        {
+            return;
+        }
     }
     std::lock_guard<egl::ContextMutex> lock(context->getContextMutex());
 

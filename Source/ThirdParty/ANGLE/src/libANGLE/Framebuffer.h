@@ -326,7 +326,6 @@ class Framebuffer final : public angle::ObserverInterface,
                        float gainY,
                        float foveaArea);
     const FocalPoint &getFocalPoint(uint32_t layer, uint32_t focalPoint) const;
-    bool canSupportFoveatedRendering() const;
     GLuint getSupportedFoveationFeatures() const;
     bool hasAnyAttachmentChanged() const { return mAttachmentChangedAfterEnablingFoveation; }
 

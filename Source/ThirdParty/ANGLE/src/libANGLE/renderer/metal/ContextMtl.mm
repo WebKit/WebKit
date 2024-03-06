@@ -227,7 +227,7 @@ ContextMtl::ContextMtl(const gl::State &state,
 
 ContextMtl::~ContextMtl() {}
 
-angle::Result ContextMtl::initialize()
+angle::Result ContextMtl::initialize(const angle::ImageLoadContext &imageLoadContext)
 {
     for (mtl::BlendDesc &blendDesc : mBlendDescArray)
     {
@@ -247,6 +247,8 @@ angle::Result ContextMtl::initialize()
                                                kMaxTriFanLineLoopBuffersPerFrame);
 
     mContextDevice.set(mDisplay->getMetalDevice());
+
+    mImageLoadContext = imageLoadContext;
 
     return angle::Result::Continue;
 }
@@ -3006,10 +3008,5 @@ angle::Result ContextMtl::copyTextureSliceLevelToWorkBuffer(
                                                     mWorkBuffer));
 
     return angle::Result::Continue;
-}
-
-angle::ImageLoadContext ContextMtl::getImageLoadContext() const
-{
-    return getDisplay()->getDisplay()->getImageLoadContext();
 }
 }  // namespace rx

@@ -38,7 +38,7 @@ class ContextNULL : public ContextImpl
                 AllocationTrackerNULL *allocationTracker);
     ~ContextNULL() override;
 
-    angle::Result initialize() override;
+    angle::Result initialize(const angle::ImageLoadContext &imageLoadContext) override;
 
     // Flush and finish.
     angle::Result flush(const gl::Context *context) override;

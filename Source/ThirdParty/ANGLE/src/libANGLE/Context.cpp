@@ -763,7 +763,7 @@ void Context::initializeDefaultResources()
 
     mState.initializeZeroTextures(this, mZeroTextures);
 
-    ANGLE_CONTEXT_TRY(mImplementation->initialize());
+    ANGLE_CONTEXT_TRY(mImplementation->initialize(mDisplay->getImageLoadContext()));
 
     // Add context into the share group
     mState.getShareGroup()->addSharedContext(this);
@@ -4245,6 +4245,11 @@ void Context::initCaps()
         constexpr GLint maxSamples = 4;
         INFO() << "Limiting GL_MAX_SAMPLES to " << maxSamples;
         ANGLE_LIMIT_CAP(caps->maxSamples, maxSamples);
+
+        // Pixel 4/5 only supports GL_MAX_VERTEX_UNIFORM_VECTORS of 256
+        constexpr GLint maxVertexUniformVectors = 256;
+        INFO() << "Limiting GL_MAX_VERTEX_UNIFORM_VECTORS to " << maxVertexUniformVectors;
+        ANGLE_LIMIT_CAP(caps->maxVertexUniformVectors, maxVertexUniformVectors);
 
         // Test if we require shadow memory for coherent buffer tracking
         getShareGroup()->getFrameCaptureShared()->determineMemoryProtectionSupport(this);
@@ -9857,15 +9862,12 @@ void Context::framebufferFoveationConfig(FramebufferID framebufferPacked,
     ASSERT(!framebuffer->isFoveationConfigured());
 
     *providedFeatures = 0;
-    if (framebuffer->canSupportFoveatedRendering())
+    // We only support GL_FOVEATION_ENABLE_BIT_QCOM feature, for now.
+    // If requestedFeatures == 0 return without configuring the framebuffer.
+    if (requestedFeatures != 0)
     {
-        // We only support GL_FOVEATION_ENABLE_BIT_QCOM feature, for now.
-        // If requestedFeatures == 0 return without configuring the framebuffer.
-        if (requestedFeatures != 0)
-        {
-            framebuffer->configureFoveation();
-            *providedFeatures = framebuffer->getSupportedFoveationFeatures();
-        }
+        framebuffer->configureFoveation();
+        *providedFeatures = framebuffer->getSupportedFoveationFeatures();
     }
 }
 
@@ -9881,9 +9883,6 @@ void Context::framebufferFoveationParameters(FramebufferID framebufferPacked,
     Framebuffer *framebuffer = getFramebuffer(framebufferPacked);
     ASSERT(framebuffer);
     framebuffer->setFocalPoint(layer, focalPoint, focalX, focalY, gainX, gainY, foveaArea);
-    mState.mDirtyBits.set(state::DIRTY_BIT_EXTENDED);
-    mState.mExtendedDirtyBits.set(
-        state::ExtendedDirtyBitType::EXTENDED_DIRTY_BIT_FOVEATED_RENDERING);
 }
 
 void Context::textureFoveationParameters(TextureID texturePacked,
@@ -9898,9 +9897,6 @@ void Context::textureFoveationParameters(TextureID texturePacked,
     Texture *texture = getTexture(texturePacked);
     ASSERT(texture);
     texture->setFocalPoint(layer, focalPoint, focalX, focalY, gainX, gainY, foveaArea);
-    mState.mDirtyBits.set(state::DIRTY_BIT_EXTENDED);
-    mState.mExtendedDirtyBits.set(
-        state::ExtendedDirtyBitType::EXTENDED_DIRTY_BIT_FOVEATED_RENDERING);
 }
 
 // ErrorSet implementation.

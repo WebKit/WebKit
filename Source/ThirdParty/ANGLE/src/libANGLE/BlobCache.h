@@ -13,37 +13,14 @@
 #include <array>
 #include <cstring>
 
-#include <anglebase/sha1.h>
-#include "common/MemoryBuffer.h"
-#include "common/hash_utils.h"
 #include "libANGLE/Error.h"
 #include "libANGLE/SizedMRUCache.h"
+#include "libANGLE/angletypes.h"
 
 namespace gl
 {
 class Context;
 }  // namespace gl
-
-namespace egl
-{
-// 160-bit SHA-1 hash key used for hasing a program.  BlobCache opts in using fixed keys for
-// simplicity and efficiency.
-static constexpr size_t kBlobCacheKeyLength = angle::base::kSHA1Length;
-using BlobCacheKey                          = std::array<uint8_t, kBlobCacheKeyLength>;
-}  // namespace egl
-
-namespace std
-{
-template <>
-struct hash<egl::BlobCacheKey>
-{
-    // Simple routine to hash four ints.
-    size_t operator()(const egl::BlobCacheKey &key) const
-    {
-        return angle::ComputeGenericHash(key.data(), key.size());
-    }
-};
-}  // namespace std
 
 namespace egl
 {
@@ -60,42 +37,14 @@ enum class CacheGetResult
     Rejected,
 };
 
-bool CompressBlobCacheData(const size_t cacheSize,
-                           const uint8_t *cacheData,
-                           angle::MemoryBuffer *compressedData);
-bool DecompressBlobCacheData(const uint8_t *compressedData,
-                             const size_t compressedSize,
-                             size_t maxUncompressedDataSize,
-                             angle::MemoryBuffer *uncompressedData);
-
 class BlobCache final : angle::NonCopyable
 {
   public:
     // 160-bit SHA-1 hash key used for hasing a program.  BlobCache opts in using fixed keys for
     // simplicity and efficiency.
-    static constexpr size_t kKeyLength = kBlobCacheKeyLength;
-    using Key                          = BlobCacheKey;
-    class Value
-    {
-      public:
-        Value() : mPtr(nullptr), mSize(0) {}
-        Value(const uint8_t *ptr, size_t sz) : mPtr(ptr), mSize(sz) {}
-
-        // A very basic struct to hold the pointer and size together.  The objects of this class
-        // don't own the memory.
-        const uint8_t *data() { return mPtr; }
-        size_t size() { return mSize; }
-
-        const uint8_t &operator[](size_t pos) const
-        {
-            ASSERT(pos < mSize);
-            return mPtr[pos];
-        }
-
-      private:
-        const uint8_t *mPtr;
-        size_t mSize;
-    };
+    static constexpr size_t kKeyLength = angle::kBlobCacheKeyLength;
+    using Key                          = angle::BlobCacheKey;
+    using Value                        = angle::BlobCacheValue;
     enum class CacheSource
     {
         Memory,
@@ -128,8 +77,7 @@ class BlobCache final : angle::NonCopyable
     // set, those will be used.  Otherwise they key is looked up in this object's cache.
     [[nodiscard]] bool get(angle::ScratchBuffer *scratchBuffer,
                            const BlobCache::Key &key,
-                           BlobCache::Value *valueOut,
-                           size_t *bufferSizeOut);
+                           BlobCache::Value *valueOut);
 
     // For querying the contents of the cache.
     [[nodiscard]] bool getAt(size_t index,

@@ -26,7 +26,7 @@ class Name
 
     constexpr Name() : Name(kEmptyImmutableString, SymbolType::Empty) {}
 
-    explicit constexpr Name(ImmutableString rawName, SymbolType symbolType)
+    constexpr Name(ImmutableString rawName, SymbolType symbolType)
         : mRawName(rawName), mSymbolType(symbolType)
     {
         ASSERT(rawName.empty() == (symbolType == SymbolType::Empty));
@@ -36,7 +36,7 @@ class Name
         : Name(ImmutableString(rawName), symbolType)
     {}
 
-    explicit Name(const std::string &rawName, SymbolType symbolType)
+    Name(const std::string &rawName, SymbolType symbolType)
         : Name(ImmutableString(rawName), symbolType)
     {}
 
@@ -59,6 +59,9 @@ class Name
   private:
     ImmutableString mRawName;
     SymbolType mSymbolType;
+    template <typename T>
+    void emitImpl(T &out) const;
+    friend std::ostream &operator<<(std::ostream &os, const sh::Name &name);
 };
 
 constexpr Name kBaseInstanceName = Name("baseInstance");

@@ -137,44 +137,21 @@ bool IsQualcommOpenSource(uint32_t vendorId, uint32_t driverId, const char *devi
     return strstr(deviceName, "Venus") != nullptr || strstr(deviceName, "Turnip") != nullptr;
 }
 
-bool IsPixel()
+bool IsXclipse()
 {
     if (!IsAndroid())
     {
         return false;
     }
 
-    angle::SystemInfo info;
-    if (!angle::GetSystemInfo(&info))
+    std::string modelName;
+    if (!angle::android::GetSystemProperty(angle::android::kModelSystemPropertyName, &modelName))
     {
-        return false;
+        return 0;
     }
 
-    return strstr(info.machineModelName.c_str(), "Pixel") != nullptr;
-}
-
-angle::vk::ICD ChooseICDFromAttribs(const egl::AttributeMap &attribs)
-{
-#if !defined(ANGLE_PLATFORM_ANDROID)
-    // Mock ICD does not currently run on Android
-    EGLAttrib deviceType = attribs.get(EGL_PLATFORM_ANGLE_DEVICE_TYPE_ANGLE,
-                                       EGL_PLATFORM_ANGLE_DEVICE_TYPE_HARDWARE_ANGLE);
-
-    switch (deviceType)
-    {
-        case EGL_PLATFORM_ANGLE_DEVICE_TYPE_HARDWARE_ANGLE:
-            break;
-        case EGL_PLATFORM_ANGLE_DEVICE_TYPE_NULL_ANGLE:
-            return angle::vk::ICD::Mock;
-        case EGL_PLATFORM_ANGLE_DEVICE_TYPE_SWIFTSHADER_ANGLE:
-            return angle::vk::ICD::SwiftShader;
-        default:
-            UNREACHABLE();
-            break;
-    }
-#endif  // !defined(ANGLE_PLATFORM_ANDROID)
-
-    return angle::vk::ICD::Default;
+    // Improve this when more Xclipse devices are available
+    return strstr(modelName.c_str(), "SM-S901B") != nullptr;
 }
 
 bool StrLess(const char *a, const char *b)
@@ -278,8 +255,6 @@ constexpr const char *kSkippedMessages[] = {
     "VUID-VkDescriptorImageInfo-imageView-07796",
     // https://issuetracker.google.com/303441816
     "VUID-VkRenderPassBeginInfo-renderPass-00904",
-    // http://anglebug.com/8401
-    "Undefined-Value-ShaderOutputNotConsumed",
     // http://anglebug.com/8466
     "VUID-VkMemoryAllocateInfo-allocationSize-01742",
     "VUID-VkMemoryDedicatedAllocateInfo-image-01878",
@@ -296,6 +271,7 @@ constexpr const char *kSkippedMessages[] = {
     // https://issuetracker.google.com/319228278
     "VUID-vkCmdDrawIndexed-format-07753",
     "VUID-vkCmdDraw-format-07753",
+    "Undefined-Value-ShaderFragmentOutputMismatch",
 };
 
 // Validation messages that should be ignored only when VK_EXT_primitive_topology_list_restart is
@@ -841,17 +817,6 @@ MemoryReportCallback(const VkDeviceMemoryReportCallbackDataEXT *callbackData, vo
     rendererVk->processMemoryReportCallback(*callbackData);
 }
 
-bool ShouldUseValidationLayers(const egl::AttributeMap &attribs)
-{
-#if defined(ANGLE_ENABLE_VULKAN_VALIDATION_LAYERS_BY_DEFAULT)
-    return ShouldUseDebugLayers(attribs);
-#else
-    EGLAttrib debugSetting =
-        attribs.get(EGL_PLATFORM_ANGLE_DEBUG_LAYERS_ENABLED_ANGLE, EGL_DONT_CARE);
-    return debugSetting == EGL_TRUE;
-#endif  // defined(ANGLE_ENABLE_VULKAN_VALIDATION_LAYERS_BY_DEFAULT)
-}
-
 gl::Version LimitVersionTo(const gl::Version &current, const gl::Version &lower)
 {
     return std::min(current, lower);
@@ -1028,7 +993,7 @@ void UnpackHeaderDataForPipelineCache(CacheDataHeader *data,
 
 void ComputePipelineCacheVkChunkKey(VkPhysicalDeviceProperties physicalDeviceProperties,
                                     const uint8_t chunkIndex,
-                                    egl::BlobCache::Key *hashOut)
+                                    angle::BlobCacheKey *hashOut)
 {
     std::ostringstream hashStream("ANGLE Pipeline Cache: ", std::ios_base::ate);
     // Add the pipeline cache UUID to make sure the blob cache always gives a compatible pipeline
@@ -1051,7 +1016,7 @@ void ComputePipelineCacheVkChunkKey(VkPhysicalDeviceProperties physicalDevicePro
 }
 
 void CompressAndStorePipelineCacheVk(VkPhysicalDeviceProperties physicalDeviceProperties,
-                                     DisplayVk *displayVk,
+                                     vk::GlobalOps *globalOps,
                                      ContextVk *contextVk,
                                      const std::vector<uint8_t> &cacheData,
                                      const size_t maxTotalSize)
@@ -1070,7 +1035,7 @@ void CompressAndStorePipelineCacheVk(VkPhysicalDeviceProperties physicalDevicePr
     // To make it possible to store more pipeline cache data, compress the whole pipelineCache.
     angle::MemoryBuffer compressedData;
 
-    if (!egl::CompressBlobCacheData(cacheData.size(), cacheData.data(), &compressedData))
+    if (!angle::CompressBlob(cacheData.size(), cacheData.data(), &compressedData))
     {
         ANGLE_PERF_WARNING(contextVk->getDebug(), GL_DEBUG_SEVERITY_LOW,
                            "Skip syncing pipeline cache data as it failed compression.");
@@ -1122,21 +1087,21 @@ void CompressAndStorePipelineCacheVk(VkPhysicalDeviceProperties physicalDevicePr
         compressedOffset += chunkSize;
 
         // Create unique hash key.
-        egl::BlobCache::Key chunkCacheHash;
+        angle::BlobCacheKey chunkCacheHash;
         ComputePipelineCacheVkChunkKey(physicalDeviceProperties, chunkIndex, &chunkCacheHash);
 
-        displayVk->getBlobCache()->putApplication(chunkCacheHash, keyData);
+        globalOps->putBlob(chunkCacheHash, keyData);
     }
 }
 
 class CompressAndStorePipelineCacheTask : public angle::Closure
 {
   public:
-    CompressAndStorePipelineCacheTask(DisplayVk *displayVk,
+    CompressAndStorePipelineCacheTask(vk::GlobalOps *globalOps,
                                       ContextVk *contextVk,
                                       std::vector<uint8_t> &&cacheData,
                                       size_t kMaxTotalSize)
-        : mDisplayVk(displayVk),
+        : mGlobalOps(globalOps),
           mContextVk(contextVk),
           mCacheData(std::move(cacheData)),
           mMaxTotalSize(kMaxTotalSize)
@@ -1146,18 +1111,19 @@ class CompressAndStorePipelineCacheTask : public angle::Closure
     {
         ANGLE_TRACE_EVENT0("gpu.angle", "CompressAndStorePipelineCacheVk");
         CompressAndStorePipelineCacheVk(mContextVk->getRenderer()->getPhysicalDeviceProperties(),
-                                        mDisplayVk, mContextVk, mCacheData, mMaxTotalSize);
+                                        mGlobalOps, mContextVk, mCacheData, mMaxTotalSize);
     }
 
   private:
-    DisplayVk *mDisplayVk;
+    vk::GlobalOps *mGlobalOps;
     ContextVk *mContextVk;
     std::vector<uint8_t> mCacheData;
     size_t mMaxTotalSize;
 };
 
 angle::Result GetAndDecompressPipelineCacheVk(VkPhysicalDeviceProperties physicalDeviceProperties,
-                                              DisplayVk *displayVk,
+                                              vk::Context *context,
+                                              vk::GlobalOps *globalOps,
                                               angle::MemoryBuffer *uncompressedData,
                                               bool *success)
 {
@@ -1165,14 +1131,11 @@ angle::Result GetAndDecompressPipelineCacheVk(VkPhysicalDeviceProperties physica
     *success = false;
 
     // Compute the hash key of chunkIndex 0 and find the first cache data in blob cache.
-    egl::BlobCache::Key chunkCacheHash;
+    angle::BlobCacheKey chunkCacheHash;
     ComputePipelineCacheVkChunkKey(physicalDeviceProperties, 0, &chunkCacheHash);
-    egl::BlobCache::Value keyData;
-    size_t keySize = 0;
+    angle::BlobCacheValue keyData;
 
-    if (!displayVk->getBlobCache()->get(displayVk->getScratchBuffer(), chunkCacheHash, &keyData,
-                                        &keySize) ||
-        keyData.size() < sizeof(CacheDataHeader))
+    if (!globalOps->getBlob(chunkCacheHash, &keyData) || keyData.size() < sizeof(CacheDataHeader))
     {
         // Nothing in the cache.
         return angle::Result::Continue;
@@ -1221,12 +1184,12 @@ angle::Result GetAndDecompressPipelineCacheVk(VkPhysicalDeviceProperties physica
         return angle::Result::Continue;
     }
 
-    size_t chunkSize      = keySize - sizeof(CacheDataHeader);
+    size_t chunkSize      = keyData.size() - sizeof(CacheDataHeader);
     size_t compressedSize = 0;
 
     // Allocate enough memory.
     angle::MemoryBuffer compressedData;
-    ANGLE_VK_CHECK(displayVk, compressedData.resize(chunkSize * numChunks),
+    ANGLE_VK_CHECK(context, compressedData.resize(chunkSize * numChunks),
                    VK_ERROR_INITIALIZATION_FAILED);
 
     // To combine the parts of the pipelineCache data.
@@ -1235,8 +1198,7 @@ angle::Result GetAndDecompressPipelineCacheVk(VkPhysicalDeviceProperties physica
         // Get the unique key by chunkIndex.
         ComputePipelineCacheVkChunkKey(physicalDeviceProperties, chunkIndex, &chunkCacheHash);
 
-        if (!displayVk->getBlobCache()->get(displayVk->getScratchBuffer(), chunkCacheHash, &keyData,
-                                            &keySize) ||
+        if (!globalOps->getBlob(chunkCacheHash, &keyData) ||
             keyData.size() < sizeof(CacheDataHeader))
         {
             // Can't find every part of the cache data.
@@ -1256,7 +1218,7 @@ angle::Result GetAndDecompressPipelineCacheVk(VkPhysicalDeviceProperties physica
                                          &checkUncompressedCacheDataSize, &checkNumChunks,
                                          &checkChunkIndex);
 
-        chunkSize = keySize - sizeof(CacheDataHeader);
+        chunkSize = keyData.size() - sizeof(CacheDataHeader);
         bool isHeaderDataCorrupted =
             (checkCacheVersion != cacheVersion) || (checkNumChunks != numChunks) ||
             (checkUncompressedCacheDataSize != uncompressedCacheDataSize) ||
@@ -1311,9 +1273,9 @@ angle::Result GetAndDecompressPipelineCacheVk(VkPhysicalDeviceProperties physica
         }
     }
 
-    ANGLE_VK_CHECK(displayVk,
-                   egl::DecompressBlobCacheData(compressedData.data(), compressedSize,
-                                                uncompressedCacheDataSize, uncompressedData),
+    ANGLE_VK_CHECK(context,
+                   angle::DecompressBlob(compressedData.data(), compressedSize,
+                                         uncompressedCacheDataSize, uncompressedData),
                    VK_ERROR_INITIALIZATION_FAILED);
 
     if (uncompressedData->size() != uncompressedCacheDataSize)
@@ -1333,28 +1295,41 @@ constexpr char kEnableDebugMarkersPropertyName[] = "debug.angle.markers";
 
 ANGLE_INLINE gl::ShadingRate GetShadingRateFromVkExtent(const VkExtent2D &extent)
 {
-    if (extent.width == 1 && extent.height == 2)
+    if (extent.width == 1)
     {
-        return gl::ShadingRate::_1x2;
+        if (extent.height == 1)
+        {
+            return gl::ShadingRate::_1x1;
+        }
+        else if (extent.height == 2)
+        {
+            return gl::ShadingRate::_1x2;
+        }
     }
-    else if (extent.width == 2 && extent.height == 1)
+    else if (extent.width == 2)
     {
-        return gl::ShadingRate::_2x1;
+        if (extent.height == 1)
+        {
+            return gl::ShadingRate::_2x1;
+        }
+        else if (extent.height == 2)
+        {
+            return gl::ShadingRate::_2x2;
+        }
     }
-    else if (extent.width == 2 && extent.height == 2)
+    else if (extent.width == 4)
     {
-        return gl::ShadingRate::_2x2;
-    }
-    else if (extent.width == 4 && extent.height == 2)
-    {
-        return gl::ShadingRate::_4x2;
-    }
-    else if (extent.width == 4 && extent.height == 4)
-    {
-        return gl::ShadingRate::_4x4;
+        if (extent.height == 2)
+        {
+            return gl::ShadingRate::_4x2;
+        }
+        else if (extent.height == 4)
+        {
+            return gl::ShadingRate::_4x4;
+        }
     }
 
-    return gl::ShadingRate::_1x1;
+    return gl::ShadingRate::Undefined;
 }
 }  // namespace
 
@@ -1569,9 +1544,10 @@ bool RendererVk::isDeviceLost() const
 }
 
 angle::Result RendererVk::enableInstanceExtensions(
-    DisplayVk *displayVk,
+    vk::Context *context,
     const VulkanLayerVector &enabledInstanceLayerNames,
     const char *wsiExtension,
+    UseVulkanSwapchain useVulkanSwapchain,
     bool canLoadDebugUtils)
 {
     // Enumerate instance extensions that are provided by the vulkan implementation and implicit
@@ -1580,8 +1556,8 @@ angle::Result RendererVk::enableInstanceExtensions(
     {
         ANGLE_SCOPED_DISABLE_LSAN();
         ANGLE_SCOPED_DISABLE_MSAN();
-        ANGLE_VK_TRY(displayVk, vkEnumerateInstanceExtensionProperties(
-                                    nullptr, &instanceExtensionCount, nullptr));
+        ANGLE_VK_TRY(context, vkEnumerateInstanceExtensionProperties(
+                                  nullptr, &instanceExtensionCount, nullptr));
     }
 
     std::vector<VkExtensionProperties> instanceExtensionProps(instanceExtensionCount);
@@ -1589,9 +1565,8 @@ angle::Result RendererVk::enableInstanceExtensions(
     {
         ANGLE_SCOPED_DISABLE_LSAN();
         ANGLE_SCOPED_DISABLE_MSAN();
-        ANGLE_VK_TRY(displayVk,
-                     vkEnumerateInstanceExtensionProperties(nullptr, &instanceExtensionCount,
-                                                            instanceExtensionProps.data()));
+        ANGLE_VK_TRY(context, vkEnumerateInstanceExtensionProperties(
+                                  nullptr, &instanceExtensionCount, instanceExtensionProps.data()));
         // In case fewer items were returned than requested, resize instanceExtensionProps to the
         // number of extensions returned (i.e. instanceExtensionCount).
         instanceExtensionProps.resize(instanceExtensionCount);
@@ -1605,16 +1580,16 @@ angle::Result RendererVk::enableInstanceExtensions(
         {
             ANGLE_SCOPED_DISABLE_LSAN();
             ANGLE_SCOPED_DISABLE_MSAN();
-            ANGLE_VK_TRY(displayVk, vkEnumerateInstanceExtensionProperties(
-                                        layerName, &instanceLayerExtensionCount, nullptr));
+            ANGLE_VK_TRY(context, vkEnumerateInstanceExtensionProperties(
+                                      layerName, &instanceLayerExtensionCount, nullptr));
         }
         instanceExtensionProps.resize(previousExtensionCount + instanceLayerExtensionCount);
         {
             ANGLE_SCOPED_DISABLE_LSAN();
             ANGLE_SCOPED_DISABLE_MSAN();
-            ANGLE_VK_TRY(displayVk, vkEnumerateInstanceExtensionProperties(
-                                        layerName, &instanceLayerExtensionCount,
-                                        instanceExtensionProps.data() + previousExtensionCount));
+            ANGLE_VK_TRY(context, vkEnumerateInstanceExtensionProperties(
+                                      layerName, &instanceLayerExtensionCount,
+                                      instanceExtensionProps.data() + previousExtensionCount));
         }
         // In case fewer items were returned than requested, resize instanceExtensionProps to the
         // number of extensions returned (i.e. instanceLayerExtensionCount).
@@ -1636,19 +1611,20 @@ angle::Result RendererVk::enableInstanceExtensions(
     ANGLE_FEATURE_CONDITION(
         &mFeatures, supportsSurfaceCapabilities2Extension,
         ExtensionFound(VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME, instanceExtensionNames) &&
-            displayVk->isUsingSwapchain());
+            useVulkanSwapchain == UseVulkanSwapchain::Yes);
 
     ANGLE_FEATURE_CONDITION(&mFeatures, supportsSurfaceProtectedCapabilitiesExtension,
                             ExtensionFound(VK_KHR_SURFACE_PROTECTED_CAPABILITIES_EXTENSION_NAME,
                                            instanceExtensionNames) &&
-                                displayVk->isUsingSwapchain());
+                                useVulkanSwapchain == UseVulkanSwapchain::Yes);
 
     // TODO: Validation layer has a bug when vkGetPhysicalDeviceSurfaceFormats2KHR is called
     // on Mock ICD with surface handle set as VK_NULL_HANDLE. http://anglebug.com/7631
+    // b/267953710: VK_GOOGLE_surfaceless_query isn't working on some Samsung Xclipse builds
     ANGLE_FEATURE_CONDITION(
         &mFeatures, supportsSurfacelessQueryExtension,
         ExtensionFound(VK_GOOGLE_SURFACELESS_QUERY_EXTENSION_NAME, instanceExtensionNames) &&
-            displayVk->isUsingSwapchain() && !isMockICDEnabled());
+            useVulkanSwapchain == UseVulkanSwapchain::Yes && !isMockICDEnabled() && !IsXclipse());
 
     // VK_KHR_external_fence_capabilities and VK_KHR_extenral_semaphore_capabilities are promoted to
     // core in Vulkan 1.1
@@ -1665,7 +1641,7 @@ angle::Result RendererVk::enableInstanceExtensions(
                             mFeatures.supportsPortabilityEnumeration.enabled && IsApple());
 
     // Enable extensions that could be used
-    if (displayVk->isUsingSwapchain())
+    if (useVulkanSwapchain == UseVulkanSwapchain::Yes)
     {
         mEnabledInstanceExtensions.push_back(VK_KHR_SURFACE_EXTENSION_NAME);
         if (ExtensionFound(VK_EXT_SWAPCHAIN_COLOR_SPACE_EXTENSION_NAME, instanceExtensionNames))
@@ -1714,7 +1690,7 @@ angle::Result RendererVk::enableInstanceExtensions(
 
     // Verify the required extensions are in the extension names set. Fail if not.
     std::sort(mEnabledInstanceExtensions.begin(), mEnabledInstanceExtensions.end(), StrLess);
-    ANGLE_VK_TRY(displayVk,
+    ANGLE_VK_TRY(context,
                  VerifyExtensionsPresent(instanceExtensionNames, mEnabledInstanceExtensions));
 
     return angle::Result::Continue;
@@ -1722,8 +1698,14 @@ angle::Result RendererVk::enableInstanceExtensions(
 
 angle::Result RendererVk::initialize(DisplayVk *displayVk,
                                      egl::Display *display,
+                                     angle::vk::ICD desiredICD,
+                                     uint32_t preferredVendorId,
+                                     uint32_t preferredDeviceId,
+                                     UseValidationLayers useValidationLayers,
                                      const char *wsiExtension,
-                                     const char *wsiLayer)
+                                     const char *wsiLayer,
+                                     angle::NativeWindowSystem nativeWindowSystem,
+                                     const angle::FeatureOverrides &featureOverrides)
 {
     bool canLoadDebugUtils = true;
 #if defined(ANGLE_SHARED_LIBVULKAN)
@@ -1749,10 +1731,10 @@ angle::Result RendererVk::initialize(DisplayVk *displayVk,
     }
 #endif  // defined(ANGLE_SHARED_LIBVULKAN)
 
-    mDisplay                         = display;
-    const egl::AttributeMap &attribs = mDisplay->getAttributeMap();
-    angle::vk::ScopedVkLoaderEnvironment scopedEnvironment(ShouldUseValidationLayers(attribs),
-                                                           ChooseICDFromAttribs(attribs));
+    mDisplay = display;
+
+    angle::vk::ScopedVkLoaderEnvironment scopedEnvironment(
+        useValidationLayers != UseValidationLayers::No, desiredICD);
     mEnableValidationLayers = scopedEnvironment.canEnableValidationLayers();
     mEnabledICD             = scopedEnvironment.getEnabledICD();
 
@@ -1776,13 +1758,12 @@ angle::Result RendererVk::initialize(DisplayVk *displayVk,
     VulkanLayerVector enabledInstanceLayerNames;
     if (mEnableValidationLayers)
     {
-        bool layersRequested =
-            (attribs.get(EGL_PLATFORM_ANGLE_DEBUG_LAYERS_ENABLED_ANGLE, EGL_DONT_CARE) == EGL_TRUE);
+        const bool layersRequested = useValidationLayers == UseValidationLayers::Yes;
         mEnableValidationLayers = GetAvailableValidationLayers(instanceLayerProps, layersRequested,
                                                                &enabledInstanceLayerNames);
     }
 
-    if (wsiLayer)
+    if (wsiLayer != nullptr)
     {
         enabledInstanceLayerNames.push_back(wsiLayer);
     }
@@ -1814,8 +1795,11 @@ angle::Result RendererVk::initialize(DisplayVk *displayVk,
         ANGLE_VK_TRY(displayVk, VK_ERROR_INCOMPATIBLE_DRIVER);
     }
 
+    const UseVulkanSwapchain useVulkanSwapchain = wsiExtension != nullptr || wsiLayer != nullptr
+                                                      ? UseVulkanSwapchain::Yes
+                                                      : UseVulkanSwapchain::No;
     ANGLE_TRY(enableInstanceExtensions(displayVk, enabledInstanceLayerNames, wsiExtension,
-                                       canLoadDebugUtils));
+                                       useVulkanSwapchain, canLoadDebugUtils));
 
     const std::string appName = angle::GetExecutableName();
 
@@ -1908,10 +1892,6 @@ angle::Result RendererVk::initialize(DisplayVk *displayVk,
     std::vector<VkPhysicalDevice> physicalDevices(physicalDeviceCount);
     ANGLE_VK_TRY(displayVk, vkEnumeratePhysicalDevices(mInstance, &physicalDeviceCount,
                                                        physicalDevices.data()));
-    uint32_t preferredVendorId =
-        static_cast<uint32_t>(attribs.get(EGL_PLATFORM_ANGLE_DEVICE_ID_HIGH_ANGLE, 0));
-    uint32_t preferredDeviceId =
-        static_cast<uint32_t>(attribs.get(EGL_PLATFORM_ANGLE_DEVICE_ID_LOW_ANGLE, 0));
     ChoosePhysicalDevice(vkGetPhysicalDeviceProperties, physicalDevices, mEnabledICD,
                          preferredVendorId, preferredDeviceId, &mPhysicalDevice,
                          &mPhysicalDeviceProperties);
@@ -1970,7 +1950,8 @@ angle::Result RendererVk::initialize(DisplayVk *displayVk,
     // Determine the threshold for pending garbage sizes.
     calculatePendingGarbageSizeLimit();
 
-    ANGLE_TRY(setupDevice(displayVk));
+    ANGLE_TRY(
+        setupDevice(displayVk, featureOverrides, wsiLayer, useVulkanSwapchain, nativeWindowSystem));
 
     // If only one queue family, that's the only choice and the device is initialize with that.  If
     // there is more than one queue, we still create the device with the first queue family and hope
@@ -2258,6 +2239,7 @@ void RendererVk::appendDeviceExtensionFeaturesNotPromoted(
     if (ExtensionFound(VK_KHR_FRAGMENT_SHADING_RATE_EXTENSION_NAME, deviceExtensionNames))
     {
         vk::AddToPNextChain(deviceFeatures, &mFragmentShadingRateFeatures);
+        vk::AddToPNextChain(deviceProperties, &mFragmentShadingRateProperties);
     }
 
     if (ExtensionFound(VK_EXT_FRAGMENT_SHADER_INTERLOCK_EXTENSION_NAME, deviceExtensionNames))
@@ -2590,6 +2572,10 @@ void RendererVk::queryDeviceExtensionFeatures(const vk::ExtensionNameList &devic
     mFragmentShadingRateFeatures = {};
     mFragmentShadingRateFeatures.sType =
         VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_FEATURES_KHR;
+
+    mFragmentShadingRateProperties = {};
+    mFragmentShadingRateProperties.sType =
+        VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_PROPERTIES_KHR;
 
     mFragmentShaderInterlockFeatures = {};
     mFragmentShaderInterlockFeatures.sType =
@@ -3161,13 +3147,16 @@ void RendererVk::enableDeviceExtensionsPromotedTo13(
     }
 }
 
-angle::Result RendererVk::enableDeviceExtensions(DisplayVk *displayVk)
+angle::Result RendererVk::enableDeviceExtensions(vk::Context *context,
+                                                 const angle::FeatureOverrides &featureOverrides,
+                                                 UseVulkanSwapchain useVulkanSwapchain,
+                                                 angle::NativeWindowSystem nativeWindowSystem)
 {
     // Enumerate device extensions that are provided by the vulkan
     // implementation and implicit layers.
     uint32_t deviceExtensionCount = 0;
-    ANGLE_VK_TRY(displayVk, vkEnumerateDeviceExtensionProperties(mPhysicalDevice, nullptr,
-                                                                 &deviceExtensionCount, nullptr));
+    ANGLE_VK_TRY(context, vkEnumerateDeviceExtensionProperties(mPhysicalDevice, nullptr,
+                                                               &deviceExtensionCount, nullptr));
 
     // Work-around a race condition in the Android platform during Android start-up, that can cause
     // the second call to vkEnumerateDeviceExtensionProperties to have an additional extension.  In
@@ -3176,7 +3165,7 @@ angle::Result RendererVk::enableDeviceExtensions(DisplayVk *displayVk)
     // were.  See: http://anglebug.com/6715 and internal-to-Google bug: b/206733351.
     deviceExtensionCount++;
     std::vector<VkExtensionProperties> deviceExtensionProps(deviceExtensionCount);
-    ANGLE_VK_TRY(displayVk,
+    ANGLE_VK_TRY(context,
                  vkEnumerateDeviceExtensionProperties(
                      mPhysicalDevice, nullptr, &deviceExtensionCount, deviceExtensionProps.data()));
     // In case fewer items were returned than requested, resize deviceExtensionProps to the number
@@ -3188,13 +3177,12 @@ angle::Result RendererVk::enableDeviceExtensions(DisplayVk *displayVk)
     {
         uint32_t previousExtensionCount    = static_cast<uint32_t>(deviceExtensionProps.size());
         uint32_t deviceLayerExtensionCount = 0;
-        ANGLE_VK_TRY(displayVk,
-                     vkEnumerateDeviceExtensionProperties(mPhysicalDevice, layerName,
-                                                          &deviceLayerExtensionCount, nullptr));
+        ANGLE_VK_TRY(context, vkEnumerateDeviceExtensionProperties(
+                                  mPhysicalDevice, layerName, &deviceLayerExtensionCount, nullptr));
         deviceExtensionProps.resize(previousExtensionCount + deviceLayerExtensionCount);
-        ANGLE_VK_TRY(displayVk, vkEnumerateDeviceExtensionProperties(
-                                    mPhysicalDevice, layerName, &deviceLayerExtensionCount,
-                                    deviceExtensionProps.data() + previousExtensionCount));
+        ANGLE_VK_TRY(context, vkEnumerateDeviceExtensionProperties(
+                                  mPhysicalDevice, layerName, &deviceLayerExtensionCount,
+                                  deviceExtensionProps.data() + previousExtensionCount));
         // In case fewer items were returned than requested, resize deviceExtensionProps to the
         // number of extensions returned (i.e. deviceLayerExtensionCount).
         deviceExtensionProps.resize(previousExtensionCount + deviceLayerExtensionCount);
@@ -3212,7 +3200,7 @@ angle::Result RendererVk::enableDeviceExtensions(DisplayVk *displayVk)
         std::sort(deviceExtensionNames.begin(), deviceExtensionNames.end(), StrLess);
     }
 
-    if (displayVk->isUsingSwapchain())
+    if (useVulkanSwapchain == UseVulkanSwapchain::Yes)
     {
         mEnabledDeviceExtensions.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
     }
@@ -3221,10 +3209,10 @@ angle::Result RendererVk::enableDeviceExtensions(DisplayVk *displayVk)
     queryDeviceExtensionFeatures(deviceExtensionNames);
 
     // Initialize features and workarounds.
-    initFeatures(displayVk, deviceExtensionNames);
+    initFeatures(deviceExtensionNames, featureOverrides, useVulkanSwapchain, nativeWindowSystem);
 
     // App based feature overrides.
-    appBasedFeatureOverrides(displayVk, deviceExtensionNames);
+    appBasedFeatureOverrides(deviceExtensionNames);
 
     // Enable extensions that could be used
     enableDeviceExtensionsNotPromoted(deviceExtensionNames);
@@ -3233,8 +3221,7 @@ angle::Result RendererVk::enableDeviceExtensions(DisplayVk *displayVk)
     enableDeviceExtensionsPromotedTo13(deviceExtensionNames);
 
     std::sort(mEnabledDeviceExtensions.begin(), mEnabledDeviceExtensions.end(), StrLess);
-    ANGLE_VK_TRY(displayVk,
-                 VerifyExtensionsPresent(deviceExtensionNames, mEnabledDeviceExtensions));
+    ANGLE_VK_TRY(context, VerifyExtensionsPresent(deviceExtensionNames, mEnabledDeviceExtensions));
 
     return angle::Result::Continue;
 }
@@ -3325,15 +3312,19 @@ void RendererVk::initDeviceExtensionEntryPoints()
     initializeDeviceExtensionEntryPointsFromCore();
 }
 
-angle::Result RendererVk::setupDevice(DisplayVk *displayVk)
+angle::Result RendererVk::setupDevice(vk::Context *context,
+                                      const angle::FeatureOverrides &featureOverrides,
+                                      const char *wsiLayer,
+                                      UseVulkanSwapchain useVulkanSwapchain,
+                                      angle::NativeWindowSystem nativeWindowSystem)
 {
     uint32_t deviceLayerCount = 0;
-    ANGLE_VK_TRY(displayVk,
+    ANGLE_VK_TRY(context,
                  vkEnumerateDeviceLayerProperties(mPhysicalDevice, &deviceLayerCount, nullptr));
 
     std::vector<VkLayerProperties> deviceLayerProps(deviceLayerCount);
-    ANGLE_VK_TRY(displayVk, vkEnumerateDeviceLayerProperties(mPhysicalDevice, &deviceLayerCount,
-                                                             deviceLayerProps.data()));
+    ANGLE_VK_TRY(context, vkEnumerateDeviceLayerProperties(mPhysicalDevice, &deviceLayerCount,
+                                                           deviceLayerProps.data()));
 
     mEnabledDeviceLayerNames.clear();
     if (mEnableValidationLayers)
@@ -3342,8 +3333,7 @@ angle::Result RendererVk::setupDevice(DisplayVk *displayVk)
             GetAvailableValidationLayers(deviceLayerProps, false, &mEnabledDeviceLayerNames);
     }
 
-    const char *wsiLayer = displayVk->getWSILayer();
-    if (wsiLayer)
+    if (wsiLayer != nullptr)
     {
         mEnabledDeviceLayerNames.push_back(wsiLayer);
     }
@@ -3351,7 +3341,8 @@ angle::Result RendererVk::setupDevice(DisplayVk *displayVk)
     mEnabledFeatures       = {};
     mEnabledFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
 
-    ANGLE_TRY(enableDeviceExtensions(displayVk));
+    ANGLE_TRY(
+        enableDeviceExtensions(context, featureOverrides, useVulkanSwapchain, nativeWindowSystem));
 
     // Used to support cubemap array:
     mEnabledFeatures.features.imageCubeArray = mFeatures.supportsImageCubeArray.enabled;
@@ -3835,21 +3826,8 @@ uint32_t RendererVk::getDeviceVersion()
     return mDeviceVersion == 0 ? mInstanceVersion : mDeviceVersion;
 }
 
-bool RendererVk::canSupportFragmentShadingRate(const vk::ExtensionNameList &deviceExtensionNames)
+void RendererVk::queryAndCacheFragmentShadingRates()
 {
-    // VK_KHR_create_renderpass2 is required for VK_KHR_fragment_shading_rate
-    if (!mFeatures.supportsRenderpass2.enabled)
-    {
-        return false;
-    }
-
-    // Device needs to support VK_KHR_fragment_shading_rate and specifically
-    // pipeline fragment shading rate.
-    if (mFragmentShadingRateFeatures.pipelineFragmentShadingRate != VK_TRUE)
-    {
-        return false;
-    }
-
     // Init required functions
 #if !defined(ANGLE_SHARED_LIBVULKAN)
     InitFragmentShadingRateKHRInstanceFunction(mInstance);
@@ -3874,14 +3852,35 @@ bool RendererVk::canSupportFragmentShadingRate(const vk::ExtensionNameList &devi
 
     // Cache supported fragment shading rates
     mSupportedFragmentShadingRates.reset();
+    mSupportedFragmentShadingRateSampleCounts.fill(0u);
     for (const VkPhysicalDeviceFragmentShadingRateKHR &shadingRate : shadingRates)
     {
         if (shadingRate.sampleCounts == 0)
         {
             continue;
         }
-        mSupportedFragmentShadingRates.set(GetShadingRateFromVkExtent(shadingRate.fragmentSize));
+        const gl::ShadingRate rate = GetShadingRateFromVkExtent(shadingRate.fragmentSize);
+        mSupportedFragmentShadingRates.set(rate);
+        mSupportedFragmentShadingRateSampleCounts[rate] = shadingRate.sampleCounts;
     }
+}
+
+bool RendererVk::canSupportFragmentShadingRate() const
+{
+    // VK_KHR_create_renderpass2 is required for VK_KHR_fragment_shading_rate
+    if (!mFeatures.supportsRenderpass2.enabled)
+    {
+        return false;
+    }
+
+    // Device needs to support VK_KHR_fragment_shading_rate and specifically
+    // pipeline fragment shading rate.
+    if (mFragmentShadingRateFeatures.pipelineFragmentShadingRate != VK_TRUE)
+    {
+        return false;
+    }
+
+    ASSERT(mSupportedFragmentShadingRates.any());
 
     // To implement GL_QCOM_shading_rate extension the Vulkan ICD needs to support at least the
     // following shading rates -
@@ -3893,6 +3892,38 @@ bool RendererVk::canSupportFragmentShadingRate(const vk::ExtensionNameList &devi
            mSupportedFragmentShadingRates.test(gl::ShadingRate::_1x2) &&
            mSupportedFragmentShadingRates.test(gl::ShadingRate::_2x1) &&
            mSupportedFragmentShadingRates.test(gl::ShadingRate::_2x2);
+}
+
+bool RendererVk::canSupportFoveatedRendering() const
+{
+    // Device needs to support attachment fragment shading rate.
+    if (mFragmentShadingRateFeatures.attachmentFragmentShadingRate != VK_TRUE)
+    {
+        return false;
+    }
+
+    ASSERT(mSupportedFragmentShadingRates.any());
+    ASSERT(!mSupportedFragmentShadingRateSampleCounts.empty());
+
+    // To implement QCOM foveated rendering extensions the Vulkan ICD needs to support all sample
+    // count bits listed in VkPhysicalDeviceLimits::framebufferColorSampleCounts for these shading
+    // rates -
+    //     {1, 1}
+    //     {1, 2}
+    //     {2, 1}
+    //     {2, 2}
+    VkSampleCountFlags framebufferSampleCounts =
+        getPhysicalDeviceProperties().limits.framebufferColorSampleCounts &
+        vk_gl::kSupportedSampleCounts;
+
+    return (mSupportedFragmentShadingRateSampleCounts[gl::ShadingRate::_1x1] &
+            framebufferSampleCounts) == framebufferSampleCounts &&
+           (mSupportedFragmentShadingRateSampleCounts[gl::ShadingRate::_1x2] &
+            framebufferSampleCounts) == framebufferSampleCounts &&
+           (mSupportedFragmentShadingRateSampleCounts[gl::ShadingRate::_2x1] &
+            framebufferSampleCounts) == framebufferSampleCounts &&
+           (mSupportedFragmentShadingRateSampleCounts[gl::ShadingRate::_2x2] &
+            framebufferSampleCounts) == framebufferSampleCounts;
 }
 
 bool RendererVk::canPreferDeviceLocalMemoryHostVisible(VkPhysicalDeviceType deviceType)
@@ -3927,12 +3958,14 @@ bool RendererVk::canPreferDeviceLocalMemoryHostVisible(VkPhysicalDeviceType devi
     return deviceType != VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU;
 }
 
-void RendererVk::initFeatures(DisplayVk *displayVk,
-                              const vk::ExtensionNameList &deviceExtensionNames)
+void RendererVk::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
+                              const angle::FeatureOverrides &featureOverrides,
+                              UseVulkanSwapchain useVulkanSwapchain,
+                              angle::NativeWindowSystem nativeWindowSystem)
 {
-    ApplyFeatureOverrides(&mFeatures, displayVk->getState());
+    ApplyFeatureOverrides(&mFeatures, featureOverrides);
 
-    if (displayVk->getState().featuresAllDisabled)
+    if (featureOverrides.allDisabled)
     {
         return;
     }
@@ -3976,9 +4009,6 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
     // Distinguish between the mesa and proprietary drivers
     const bool isRADV = IsRADV(mPhysicalDeviceProperties.vendorID, mDriverProperties.driverID,
                                mPhysicalDeviceProperties.deviceName);
-
-    // Identify Google Pixel brand Android devices
-    const bool isPixel = IsPixel();
 
     angle::VersionInfo nvidiaVersion;
     if (isNvidia)
@@ -4277,7 +4307,8 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
 
     ANGLE_FEATURE_CONDITION(&mFeatures, perFrameWindowSizeQuery,
                             IsAndroid() || isIntel || (IsWindows() && isAMD) || IsFuchsia() ||
-                                isSamsung || displayVk->isWayland());
+                                isSamsung ||
+                                nativeWindowSystem == angle::NativeWindowSystem::Wayland);
 
     ANGLE_FEATURE_CONDITION(&mFeatures, padBuffersToMaxVertexAttribStride, isAMD || isSamsung);
     mMaxVertexAttribStride = std::min(static_cast<uint32_t>(gl::limits::kMaxVertexAttribStride),
@@ -4506,7 +4537,7 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
     //
     ANGLE_FEATURE_CONDITION(&mFeatures, supportsSwapchainMaintenance1,
                             mSwapchainMaintenance1Features.swapchainMaintenance1 == VK_TRUE &&
-                                displayVk->isUsingSwapchain());
+                                useVulkanSwapchain == UseVulkanSwapchain::Yes);
 
     // The VK_EXT_legacy_dithering extension enables dithering support without emulation
     // Disable the usage of VK_EXT_legacy_dithering on ARM until the driver bug
@@ -4591,27 +4622,14 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
     // can root cause it.
     ANGLE_FEATURE_CONDITION(&mFeatures, requireCachedBitForStagingBuffer, !isARM);
 
-    bool dynamicStateWorks = true;
-    if (isARM)
-    {
-        // Multiple dynamic state issues on ARM have been fixed.
-        // http://issuetracker.google.com/285124778
-        // http://issuetracker.google.com/285196249
-        // http://issuetracker.google.com/286224923
-        // http://issuetracker.google.com/287318431
-
-        // Use it on drivers/devices known to work.
-        if (isPixel)
-        {
-            // Pixel devices are working after r44
-            dynamicStateWorks = armDriverVersion >= ARMDriverVersion(44, 0, 0);
-        }
-        else
-        {
-            // Others should work after r44p1
-            dynamicStateWorks = armDriverVersion >= ARMDriverVersion(44, 1, 0);
-        }
-    }
+    // Multiple dynamic state issues on ARM have been fixed.
+    // http://issuetracker.google.com/285124778
+    // http://issuetracker.google.com/285196249
+    // http://issuetracker.google.com/286224923
+    // http://issuetracker.google.com/287318431
+    //
+    // On Pixel devices, the issues have been fixed since r44, but on others since r44p1.
+    const bool isArm44OrLess = isARM && armDriverVersion < ARMDriverVersion(44, 1, 0);
 
     // Intel driver has issues with VK_EXT_vertex_input_dynamic_state
     // http://anglebug.com/7162#c8
@@ -4621,7 +4639,7 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
 
     ANGLE_FEATURE_CONDITION(
         &mFeatures, supportsExtendedDynamicState,
-        mExtendedDynamicStateFeatures.extendedDynamicState == VK_TRUE && dynamicStateWorks);
+        mExtendedDynamicStateFeatures.extendedDynamicState == VK_TRUE && !isArm44OrLess);
 
     // VK_EXT_vertex_input_dynamic_state enables dynamic state for the full vertex input state. As
     // such, when available use supportsVertexInputDynamicState instead of
@@ -4629,15 +4647,15 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
     ANGLE_FEATURE_CONDITION(&mFeatures, useVertexInputBindingStrideDynamicState,
                             mFeatures.supportsExtendedDynamicState.enabled &&
                                 !mFeatures.supportsVertexInputDynamicState.enabled &&
-                                dynamicStateWorks);
+                                !isArm44OrLess);
     ANGLE_FEATURE_CONDITION(&mFeatures, useCullModeDynamicState,
-                            mFeatures.supportsExtendedDynamicState.enabled && dynamicStateWorks);
+                            mFeatures.supportsExtendedDynamicState.enabled && !isArm44OrLess);
     ANGLE_FEATURE_CONDITION(&mFeatures, useDepthCompareOpDynamicState,
                             mFeatures.supportsExtendedDynamicState.enabled);
     ANGLE_FEATURE_CONDITION(&mFeatures, useDepthTestEnableDynamicState,
                             mFeatures.supportsExtendedDynamicState.enabled);
     ANGLE_FEATURE_CONDITION(&mFeatures, useDepthWriteEnableDynamicState,
-                            mFeatures.supportsExtendedDynamicState.enabled && dynamicStateWorks);
+                            mFeatures.supportsExtendedDynamicState.enabled && !isArm44OrLess);
     ANGLE_FEATURE_CONDITION(&mFeatures, useFrontFaceDynamicState,
                             mFeatures.supportsExtendedDynamicState.enabled);
     ANGLE_FEATURE_CONDITION(&mFeatures, useStencilOpDynamicState,
@@ -4647,10 +4665,10 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
 
     ANGLE_FEATURE_CONDITION(
         &mFeatures, supportsExtendedDynamicState2,
-        mExtendedDynamicState2Features.extendedDynamicState2 == VK_TRUE && dynamicStateWorks);
+        mExtendedDynamicState2Features.extendedDynamicState2 == VK_TRUE && !isArm44OrLess);
 
     ANGLE_FEATURE_CONDITION(&mFeatures, usePrimitiveRestartEnableDynamicState,
-                            mFeatures.supportsExtendedDynamicState2.enabled && dynamicStateWorks);
+                            mFeatures.supportsExtendedDynamicState2.enabled && !isArm44OrLess);
     ANGLE_FEATURE_CONDITION(&mFeatures, useRasterizerDiscardEnableDynamicState,
                             mFeatures.supportsExtendedDynamicState2.enabled);
     ANGLE_FEATURE_CONDITION(&mFeatures, useDepthBiasEnableDynamicState,
@@ -4667,20 +4685,32 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
             mExtendedDynamicState2Features.extendedDynamicState2LogicOp == VK_TRUE &&
             !(IsLinux() && isIntel && isMesaLessThan22_2) && !(IsAndroid() && isGalaxyS23));
 
-    // Support GL_QCOM_shading_rate extension
-    ANGLE_FEATURE_CONDITION(&mFeatures, supportsFragmentShadingRate,
-                            canSupportFragmentShadingRate(deviceExtensionNames));
-
-    // We can use the interlock to support GL_ANGLE_shader_pixel_local_storage_coherent.
-    ANGLE_FEATURE_CONDITION(
-        &mFeatures, supportsFragmentShaderPixelInterlock,
-        mFragmentShaderInterlockFeatures.fragmentShaderPixelInterlock == VK_TRUE);
-
     // Samsung Vulkan driver crashes in vkCmdClearAttachments() when imageless Framebuffer
     // is used to begin Secondary Command Buffer before the corresponding vkCmdBeginRenderPass().
     ANGLE_FEATURE_CONDITION(&mFeatures, supportsImagelessFramebuffer,
                             mImagelessFramebufferFeatures.imagelessFramebuffer == VK_TRUE &&
                                 (vk::RenderPassCommandBuffer::ExecutesInline() || !isSamsung));
+
+    if (ExtensionFound(VK_KHR_FRAGMENT_SHADING_RATE_EXTENSION_NAME, deviceExtensionNames))
+    {
+        queryAndCacheFragmentShadingRates();
+    }
+
+    // Support GL_QCOM_shading_rate extension
+    ANGLE_FEATURE_CONDITION(&mFeatures, supportsFragmentShadingRate,
+                            canSupportFragmentShadingRate());
+
+    // Support QCOM foveated rendering extensions.
+    // Gated on imageless framebuffer to reduce code complexity
+    ANGLE_FEATURE_CONDITION(&mFeatures, supportsFoveatedRendering,
+                            mFeatures.supportsImagelessFramebuffer.enabled &&
+                                mFeatures.supportsFragmentShadingRate.enabled &&
+                                canSupportFoveatedRendering());
+
+    // We can use the interlock to support GL_ANGLE_shader_pixel_local_storage_coherent.
+    ANGLE_FEATURE_CONDITION(
+        &mFeatures, supportsFragmentShaderPixelInterlock,
+        mFragmentShaderInterlockFeatures.fragmentShaderPixelInterlock == VK_TRUE);
 
     // The VK_PIPELINE_ROBUSTNESS_BUFFER_BEHAVIOR_ROBUST_BUFFER_ACCESS_EXT behavior is used by
     // ANGLE, which requires the robustBufferAccess feature to be available.
@@ -4845,7 +4875,8 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
                             IsAndroid() && isSamsung);
 
     // GBM does not have a VkSurface hence it does not support presentation through a Vulkan queue.
-    ANGLE_FEATURE_CONDITION(&mFeatures, supportsPresentation, !displayVk->isGBM());
+    ANGLE_FEATURE_CONDITION(&mFeatures, supportsPresentation,
+                            nativeWindowSystem != angle::NativeWindowSystem::Gbm);
 
     // For tiled renderer, the renderpass query result may not available until the entire renderpass
     // is completed. This may cause a bubble in the application thread waiting result to be
@@ -4915,9 +4946,7 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
     }
 }
 
-void RendererVk::appBasedFeatureOverrides(DisplayVk *display,
-                                          const vk::ExtensionNameList &extensions)
-{}
+void RendererVk::appBasedFeatureOverrides(const vk::ExtensionNameList &extensions) {}
 
 angle::Result RendererVk::initPipelineCache(DisplayVk *display,
                                             vk::PipelineCache *pipelineCache,
@@ -4926,8 +4955,8 @@ angle::Result RendererVk::initPipelineCache(DisplayVk *display,
     angle::MemoryBuffer initialData;
     if (!mFeatures.disablePipelineCacheLoadForTesting.enabled)
     {
-        ANGLE_TRY(GetAndDecompressPipelineCacheVk(mPhysicalDeviceProperties, display, &initialData,
-                                                  success));
+        ANGLE_TRY(GetAndDecompressPipelineCacheVk(mPhysicalDeviceProperties, display, display,
+                                                  &initialData, success));
     }
 
     VkPipelineCacheCreateInfo pipelineCacheCreateInfo = {};
@@ -4947,10 +4976,9 @@ angle::Result RendererVk::initPipelineCache(DisplayVk *display,
     return angle::Result::Continue;
 }
 
-angle::Result RendererVk::getPipelineCache(vk::PipelineCacheAccess *pipelineCacheOut)
+angle::Result RendererVk::getPipelineCache(vk::Context *context,
+                                           vk::PipelineCacheAccess *pipelineCacheOut)
 {
-    DisplayVk *displayVk = vk::GetImpl(mDisplay);
-
     // Note that ANGLE externally synchronizes the pipeline cache, and uses
     // VK_EXT_pipeline_creation_cache_control (where available) to disable internal synchronization.
     std::unique_lock<std::mutex> lock(mPipelineCacheMutex);
@@ -4960,13 +4988,13 @@ angle::Result RendererVk::getPipelineCache(vk::PipelineCacheAccess *pipelineCach
         // We should now recreate the pipeline cache with the blob cache pipeline data.
         vk::PipelineCache pCache;
         bool loadedFromBlobCache = false;
-        ANGLE_TRY(initPipelineCache(displayVk, &pCache, &loadedFromBlobCache));
+        ANGLE_TRY(initPipelineCache(vk::GetImpl(mDisplay), &pCache, &loadedFromBlobCache));
         if (loadedFromBlobCache)
         {
             // Merge the newly created pipeline cache into the existing one.
             mPipelineCache.merge(mDevice, 1, pCache.ptr());
 
-            ANGLE_TRY(getPipelineCacheSize(displayVk, &mPipelineCacheSizeAtLastSync));
+            ANGLE_TRY(getPipelineCacheSize(context, &mPipelineCacheSizeAtLastSync));
         }
 
         mPipelineCacheInitialized = true;
@@ -4977,10 +5005,11 @@ angle::Result RendererVk::getPipelineCache(vk::PipelineCacheAccess *pipelineCach
     return angle::Result::Continue;
 }
 
-angle::Result RendererVk::mergeIntoPipelineCache(const vk::PipelineCache &pipelineCache)
+angle::Result RendererVk::mergeIntoPipelineCache(vk::Context *context,
+                                                 const vk::PipelineCache &pipelineCache)
 {
     vk::PipelineCacheAccess globalCache;
-    ANGLE_TRY(getPipelineCache(&globalCache));
+    ANGLE_TRY(getPipelineCache(context, &globalCache));
 
     globalCache.merge(this, pipelineCache);
 
@@ -5039,15 +5068,15 @@ void RendererVk::initializeFrontendFeatures(angle::FrontendFeatures *features) c
     ANGLE_FEATURE_CONDITION(features, alwaysRunLinkSubJobsThreaded, true);
 }
 
-angle::Result RendererVk::getPipelineCacheSize(DisplayVk *displayVk, size_t *pipelineCacheSizeOut)
+angle::Result RendererVk::getPipelineCacheSize(vk::Context *context, size_t *pipelineCacheSizeOut)
 {
-    VkResult result = mPipelineCache.getCacheData(mDevice, pipelineCacheSizeOut, nullptr);
-    ANGLE_VK_TRY(displayVk, result);
-
+    ANGLE_VK_TRY(context, mPipelineCache.getCacheData(mDevice, pipelineCacheSizeOut, nullptr));
     return angle::Result::Continue;
 }
 
-angle::Result RendererVk::syncPipelineCacheVk(DisplayVk *displayVk, const gl::Context *context)
+angle::Result RendererVk::syncPipelineCacheVk(vk::Context *context,
+                                              vk::GlobalOps *globalOps,
+                                              const gl::Context *contextGL)
 {
     ASSERT(mPipelineCache.valid());
 
@@ -5064,7 +5093,7 @@ angle::Result RendererVk::syncPipelineCacheVk(DisplayVk *displayVk, const gl::Co
     mPipelineCacheVkUpdateTimeout = kPipelineCacheVkUpdatePeriod;
 
     size_t pipelineCacheSize = 0;
-    ANGLE_TRY(getPipelineCacheSize(displayVk, &pipelineCacheSize));
+    ANGLE_TRY(getPipelineCacheSize(context, &pipelineCacheSize));
     if (pipelineCacheSize <= mPipelineCacheSizeAtLastSync)
     {
         return angle::Result::Continue;
@@ -5080,7 +5109,7 @@ angle::Result RendererVk::syncPipelineCacheVk(DisplayVk *displayVk, const gl::Co
         return angle::Result::Continue;
     }
 
-    ContextVk *contextVk = vk::GetImpl(context);
+    ContextVk *contextVk = vk::GetImpl(contextGL);
 
     // Use worker thread pool to complete compression.
     // If the last task hasn't been finished, skip the syncing.
@@ -5115,7 +5144,7 @@ angle::Result RendererVk::syncPipelineCacheVk(DisplayVk *displayVk, const gl::Co
     }
     else
     {
-        ANGLE_VK_TRY(displayVk, result);
+        ANGLE_VK_TRY(context, result);
     }
 
     // If vkGetPipelineCacheData ends up writing fewer bytes than requested, shrink the buffer to
@@ -5131,16 +5160,16 @@ angle::Result RendererVk::syncPipelineCacheVk(DisplayVk *displayVk, const gl::Co
         constexpr size_t kMaxTotalSize = 64 * 1024 * 1024;
 
         // Create task to compress.
-        mCompressEvent = context->getWorkerThreadPool()->postWorkerTask(
+        mCompressEvent = contextGL->getWorkerThreadPool()->postWorkerTask(
             std::make_shared<CompressAndStorePipelineCacheTask>(
-                displayVk, contextVk, std::move(pipelineCacheData), kMaxTotalSize));
+                globalOps, contextVk, std::move(pipelineCacheData), kMaxTotalSize));
     }
     else
     {
         // If enableAsyncPipelineCacheCompression is disabled, to avoid the risk, set kMaxTotalSize
         // to 64k.
         constexpr size_t kMaxTotalSize = 64 * 1024;
-        CompressAndStorePipelineCacheVk(mPhysicalDeviceProperties, displayVk, contextVk,
+        CompressAndStorePipelineCacheVk(mPhysicalDeviceProperties, globalOps, contextVk,
                                         pipelineCacheData, kMaxTotalSize);
     }
 

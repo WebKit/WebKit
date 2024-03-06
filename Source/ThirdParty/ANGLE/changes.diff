@@ -61,6 +61,41 @@ index bfca63f6b9a7562e8ceea36a9a31793d0720e030..06b9ef5d3101e1a0ab86b4b36ae407e7
 +    sh::Finalize();
      return 0;
  }
+diff --git a/src/compiler/preprocessor/MacroExpander.cpp b/src/compiler/preprocessor/MacroExpander.cpp
+index f15dc901579c53c0232ca0e3ac5c70a7297afd41..2734ffb5aeb958d9654db2e42880e755c7797599 100644
+--- a/src/compiler/preprocessor/MacroExpander.cpp
++++ b/src/compiler/preprocessor/MacroExpander.cpp
+@@ -259,7 +259,7 @@ bool MacroExpander::pushMacro(std::shared_ptr<Macro> macro, const Token &identif
+     macro->disabled = true;
+ 
+     mTotalTokensInContexts += replacements.size();
+-    mContextStack.emplace_back(macro, std::move(replacements));
++    mContextStack.emplace_back(std::move(macro), std::move(replacements));
+     return true;
+ }
+ 
+diff --git a/src/compiler/preprocessor/MacroExpander.h b/src/compiler/preprocessor/MacroExpander.h
+index ac672f567cab2ac918ca506f36ff55e9010982fc..b2e45637913dd93a1fc955f048cd16a35159980d 100644
+--- a/src/compiler/preprocessor/MacroExpander.h
++++ b/src/compiler/preprocessor/MacroExpander.h
+@@ -13,6 +13,7 @@
+ #include "compiler/preprocessor/Lexer.h"
+ #include "compiler/preprocessor/Macro.h"
+ #include "compiler/preprocessor/Preprocessor.h"
++#include "compiler/preprocessor/Token.h"
+ 
+ namespace angle
+ {
+@@ -56,6 +57,9 @@ class MacroExpander : public Lexer
+ 
+     struct MacroContext
+     {
++        MacroContext(std::shared_ptr<Macro> macro, std::vector<Token>&& replacements)
++          : macro(std::move(macro)), replacements(std::move(replacements))
++        {}
+         bool empty() const;
+         const Token &get();
+         void unget();
 diff --git a/src/compiler/preprocessor/preprocessor_tab_autogen.cpp b/src/compiler/preprocessor/preprocessor_tab_autogen.cpp
 index a7607c9e529ce7a57bdc6c3c82134b144eb67130..c9ec1adec020589bd4fcfe226721042a8f2c6cf5 100644
 --- a/src/compiler/preprocessor/preprocessor_tab_autogen.cpp
@@ -171,10 +206,10 @@ index 08b431099786e24e6b27a6539812e520c92436bb..3902781af7459dc8a880bd44f957df36
      }
  
 diff --git a/src/libANGLE/renderer/metal/ContextMtl.mm b/src/libANGLE/renderer/metal/ContextMtl.mm
-index 92f6dd08372b0a606455ea6cc6113a53e6091dc8..8cc18a48bd0519922db0d17915be44b5384b852b 100644
+index 98b0cc5f27ebd3a77bd25e1d433f40077e958b90..0077dd45dd91889e8dfc174e736b4398a2204506 100644
 --- a/src/libANGLE/renderer/metal/ContextMtl.mm
 +++ b/src/libANGLE/renderer/metal/ContextMtl.mm
-@@ -1067,6 +1067,13 @@ angle::Result ContextMtl::multiDrawElementsInstancedBaseVertexBaseInstance(
+@@ -1069,6 +1069,13 @@ angle::Result ContextMtl::multiDrawElementsInstancedBaseVertexBaseInstance(
  // Device loss
  gl::GraphicsResetStatus ContextMtl::getResetStatus()
  {
@@ -188,7 +223,7 @@ index 92f6dd08372b0a606455ea6cc6113a53e6091dc8..8cc18a48bd0519922db0d17915be44b5
      return gl::GraphicsResetStatus::NoError;
  }
  
-@@ -2477,8 +2484,22 @@ angle::Result ContextMtl::setupDraw(const gl::Context *context,
+@@ -2479,8 +2486,22 @@ angle::Result ContextMtl::setupDraw(const gl::Context *context,
              return angle::Result::Continue;
          }
          // Setup with flushed state should either produce a working encoder or fail with an error
@@ -214,7 +249,7 @@ index 92f6dd08372b0a606455ea6cc6113a53e6091dc8..8cc18a48bd0519922db0d17915be44b5
      return angle::Result::Continue;
  }
 diff --git a/src/libANGLE/renderer/metal/DisplayMtl.mm b/src/libANGLE/renderer/metal/DisplayMtl.mm
-index 61af5c836acfcc9e6b7c1b147b574477b59b63d8..ffd4dee693ed8b6013ddafeec457b8946d995d21 100644
+index 2e128f005c3fe9c8e6514b85a23b74c4b7ca0363..78571ae1ae3c5eb126ba3e2204a73aa904f7cda7 100644
 --- a/src/libANGLE/renderer/metal/DisplayMtl.mm
 +++ b/src/libANGLE/renderer/metal/DisplayMtl.mm
 @@ -184,12 +184,22 @@ void DisplayMtl::terminate()
@@ -397,6 +432,126 @@ index 6207372fc309e2da60e269792aa1aa7a8d73d6b3..d182803b8ff855f4674d635209bd67b5
      if (timeElapsedEntry != 0)
      {
          // Record this command buffer's elapsed time.
+diff --git a/src/libANGLE/renderer/metal/mtl_msl_utils.mm b/src/libANGLE/renderer/metal/mtl_msl_utils.mm
+index 14b0512609068269e25ad8de0063c038a444ce69..d78ac9af68ac72ff92b8a5d5c9c3615d4f11e14f 100644
+--- a/src/libANGLE/renderer/metal/mtl_msl_utils.mm
++++ b/src/libANGLE/renderer/metal/mtl_msl_utils.mm
+@@ -45,7 +45,7 @@ std::ostream &operator<<(std::ostream &stream, const UserDefinedNameExpr &expr)
+ struct UserDefinedNameComponentExpr
+ {
+     UserDefinedNameExpr name;
+-    const int component;
++    int component;
+ };
+ 
+ std::ostream &operator<<(std::ostream &stream, const UserDefinedNameComponentExpr &expr)
+@@ -66,7 +66,7 @@ std::ostream &operator<<(std::ostream &stream, const InternalNameExpr &expr)
+ struct InternalNameComponentExpr
+ {
+     InternalNameExpr name;
+-    const int component;
++    int component;
+ };
+ 
+ std::ostream &operator<<(std::ostream &stream, const InternalNameComponentExpr &expr)
+@@ -81,9 +81,9 @@ ResolveModifiedAttributeName(const std::string &name, int registerIndex, int reg
+ {
+     if (registerCount < 2)
+     {
+-        return UserDefinedNameExpr(name);
++        return UserDefinedNameExpr{name};
+     }
+-    return InternalNameComponentExpr({name}, registerIndex);
++    return InternalNameComponentExpr{InternalNameExpr{name}, registerIndex};
+ }
+ 
+ std::variant<UserDefinedNameExpr, InternalNameComponentExpr>
+@@ -91,9 +91,9 @@ ResolveModifiedOutputName(const std::string &name, int component, int componentC
+ {
+     if (componentCount == 0)
+     {
+-        return UserDefinedNameExpr(name);
++        return UserDefinedNameExpr{name};
+     }
+-    return InternalNameComponentExpr({name}, component);
++    return InternalNameComponentExpr{InternalNameExpr{name}, component};
+ }
+ 
+ // Accessing unmodified structs uses user-defined name, business as usual.
+@@ -102,9 +102,9 @@ ResolveUserDefinedName(const std::string &name, int component, int componentCoun
+ {
+     if (componentCount == 0)
+     {
+-        return UserDefinedNameExpr(name);
++        return UserDefinedNameExpr{name};
+     }
+-    return UserDefinedNameComponentExpr({name}, component);
++    return UserDefinedNameComponentExpr{UserDefinedNameExpr{name}, component};
+ }
+ 
+ template <class T>
+@@ -112,20 +112,20 @@ struct ApplyOStream
+ {
+     const T &value;
+ };
+-template <class T>
++template<class T>
+ ApplyOStream(T) -> ApplyOStream<T>;
+ 
+ template <class T>
+-std::ostream &operator<<(std::ostream &os, ApplyOStream<T> s)
++std::ostream &operator<<(std::ostream &stream, ApplyOStream<T> v)
+ {
+-    os << s.value;
+-    return os;
++    stream << v.value;
++    return stream;
+ }
+ 
+ template <class... Ts>
+ std::ostream &operator<<(std::ostream &stream, ApplyOStream<std::variant<Ts...>> sv)
+ {
+-    std::visit([&stream](auto &&v) { stream << ApplyOStream(v); }, sv.value);
++    std::visit([&stream](auto &&v) { stream << ApplyOStream{v}; }, sv.value);
+     return stream;
+ }
+ 
+@@ -278,7 +278,7 @@ std::string UpdateAliasedShaderAttributes(std::string shaderSourceIn,
+         for (int i = 0; i < registers; i++)
+         {
+             stream << "#define ANGLE_ALIASED_"
+-                   << ApplyOStream(ResolveModifiedAttributeName(attribute.name, i, registers))
++                   << ApplyOStream{ResolveModifiedAttributeName(attribute.name, i, registers)}
+                    << " ANGLE_modified.ANGLE_ATTRIBUTE_" << (location + i);
+             if (components != maxComponents[location + i])
+             {
+@@ -332,7 +332,7 @@ std::string updateShaderAttributes(std::string shaderSourceIn,
+         {
+             stream.str("");
+             stream << ' '
+-                   << ApplyOStream(ResolveModifiedAttributeName(attribute.name, i, registers))
++                   << ApplyOStream{ResolveModifiedAttributeName(attribute.name, i, registers)}
+                    << sh::kUnassignedAttributeString;
+             attributeBindings.insert({stream.str(), i + attribute.getLocation()});
+         }
+@@ -381,7 +381,7 @@ std::string UpdateFragmentShaderOutputs(std::string shaderSourceIn,
+             const int location                 = outputVar.pod.location + index;
+             const int arraySize                = outputVar.getOutermostArraySize();
+             stream.str("");
+-            stream << ApplyOStream(ResolveModifiedOutputName(outputVar.name, index, arraySize))
++            stream << ApplyOStream{ResolveModifiedOutputName(outputVar.name, index, arraySize)}
+                    << " [[" << sh::kUnassignedFragmentOutputString;
+             const std::string placeholder(stream.str());
+ 
+@@ -402,7 +402,7 @@ std::string UpdateFragmentShaderOutputs(std::string shaderSourceIn,
+                 ASSERT(alphaOutputName.empty());
+                 std::ostringstream nameStream;
+                 nameStream << "ANGLE_fragmentOut."
+-                           << ApplyOStream(ResolveUserDefinedName(outputVar.name, index, arraySize))
++                           << ApplyOStream{ResolveUserDefinedName(outputVar.name, index, arraySize)}
+                            << ".a";
+                 alphaOutputName = nameStream.str();
+             }
 diff --git a/src/libANGLE/renderer/metal/mtl_render_utils.mm b/src/libANGLE/renderer/metal/mtl_render_utils.mm
 index 9e5487d393a0a2bd64106fc70e7b3f73626e2490..fec9fc3f884dfe7c87527ea19cca37c527d51e5a 100644
 --- a/src/libANGLE/renderer/metal/mtl_render_utils.mm

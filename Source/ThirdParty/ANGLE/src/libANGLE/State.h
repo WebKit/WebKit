@@ -179,7 +179,6 @@ enum ExtendedDirtyBitType
     EXTENDED_DIRTY_BIT_SHADING_RATE,                  // QCOM_shading_rate
     EXTENDED_DIRTY_BIT_LOGIC_OP_ENABLED,              // ANGLE_logic_op
     EXTENDED_DIRTY_BIT_LOGIC_OP,                      // ANGLE_logic_op
-    EXTENDED_DIRTY_BIT_FOVEATED_RENDERING,  // QCOM_framebuffer_foveated/QCOM_texture_foveated
 
     EXTENDED_DIRTY_BIT_INVALID,
     EXTENDED_DIRTY_BIT_MAX = EXTENDED_DIRTY_BIT_INVALID,

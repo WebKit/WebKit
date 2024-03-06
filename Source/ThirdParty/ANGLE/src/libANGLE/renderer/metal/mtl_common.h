@@ -162,8 +162,6 @@ constexpr uint32_t kUBOArgumentBufferBindingIndex = kShadowSamplerCompareModesBi
 
 constexpr uint32_t kStencilMaskAll = 0xff;  // Only 8 bits stencil is supported
 
-static const char *kUnassignedAttributeString = " __unassigned_attribute__";
-
 // This special constant is used to indicate that a particular vertex descriptor's buffer layout
 // index is unused.
 constexpr MTLVertexStepFunction kVertexStepFunctionInvalid =

@@ -931,6 +931,13 @@ struct FeaturesVk : FeatureSetBase
         &members, "http://anglebug.com/7172"
     };
 
+    FeatureInfo supportsFoveatedRendering = {
+        "supportsFoveatedRendering",
+        FeatureCategory::VulkanFeatures,
+        "Use VK_KHR_fragment_shading_rate extension to implement QCOM foveated rendering extensions",
+        &members, "http://anglebug.com/8484"
+    };
+
     FeatureInfo supportsFragmentShaderPixelInterlock = {
         "supportsFragmentShaderPixelInterlock",
         FeatureCategory::VulkanFeatures,
@@ -1327,6 +1334,13 @@ struct FeaturesVk : FeatureSetBase
         "On some drivers, the OpSelect SPIR-V instruction with arguments with mismatching "
         "RelaxedPrecision decoration causes a crash",
         &members, "http://anglebug.com/8503"
+    };
+
+    FeatureInfo clDumpVkSpirv = {
+        "clDumpVkSpirv",
+        FeatureCategory::VulkanFeatures,
+        "Enable SPIR-V dumping at runtime for OpenCL programs compiled with clspv",
+        &members,
     };
 
 };

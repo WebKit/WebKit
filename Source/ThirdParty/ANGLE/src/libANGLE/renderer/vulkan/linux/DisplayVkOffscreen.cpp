@@ -22,11 +22,6 @@ bool DisplayVkOffscreen::isValidNativeWindow(EGLNativeWindowType window) const
     return false;
 }
 
-bool DisplayVkOffscreen::isUsingSwapchain() const
-{
-    return false;
-}
-
 SurfaceImpl *DisplayVkOffscreen::createWindowSurfaceVk(const egl::SurfaceState &state,
                                                        EGLNativeWindowType window)
 {

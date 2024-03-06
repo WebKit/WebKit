@@ -1430,6 +1430,16 @@ TracePerfTest::TracePerfTest(std::unique_ptr<const TracePerfParams> params)
         addExtensionPrerequisite("GL_EXT_texture_cube_map_array");
     }
 
+    if (traceNameIs("pokemon_masters_ex"))
+    {
+        if (isIntelLinux)
+        {
+            skipTest(
+                "https://issuetracker.google.com/u/2/issues/326199738#comment3 Renders incorrectly "
+                "on Intel Linux");
+        }
+    }
+
     if (traceNameIs("aztec_ruins_high"))
     {
         addExtensionPrerequisite("GL_KHR_texture_compression_astc_ldr");
@@ -1658,6 +1668,23 @@ TracePerfTest::TracePerfTest(std::unique_ptr<const TracePerfParams> params)
         if (isNVIDIAWinANGLE)
         {
             skipTest("https://anglebug.com/8316 NVIDIA Windows flaky diffs");
+        }
+    }
+
+    if (traceNameIs("toca_life_world"))
+    {
+        addExtensionPrerequisite("GL_OES_EGL_image_external");
+    }
+
+    if (IsGalaxyS22())
+    {
+        if (traceNameIs("cod_mobile") || traceNameIs("dota_underlords") ||
+            traceNameIs("marvel_snap") || traceNameIs("nier_reincarnation") ||
+            traceNameIs("pokemon_unite") || traceNameIs("slingshot_test1") ||
+            traceNameIs("slingshot_test2") || traceNameIs("supertuxkart") ||
+            traceNameIs("the_witcher_monster_slayer") || traceNameIs("warcraft_rumble"))
+        {
+            skipTest("https://issuetracker.google.com/267953710 Trace needs triage on Galaxy S22");
         }
     }
 

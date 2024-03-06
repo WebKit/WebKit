@@ -7,6 +7,7 @@
 //   Test for parsing erroneous and correct GLSL input.
 //
 
+#include <memory>
 #include "GLSLANG/ShaderLang.h"
 #include "angle_gl.h"
 #include "compiler/translator/glsl/TranslatorESSL.h"
@@ -17,28 +18,31 @@ using namespace sh;
 class ParseTest : public testing::Test
 {
   public:
-    ParseTest() {}
-
-  protected:
-    void SetUp() override
+    ParseTest()
     {
-        ShBuiltInResources resources;
-        InitBuiltInResources(&resources);
-        resources.FragmentPrecisionHigh = 1;
-
-        mTranslator = new TranslatorESSL(GL_FRAGMENT_SHADER, SH_GLES3_1_SPEC);
-        ASSERT_TRUE(mTranslator->Init(resources));
+        InitBuiltInResources(&mResources);
+        mResources.FragmentPrecisionHigh = 1;
+        mCompileOptions.intermediateTree = true;
     }
 
-    void TearDown() override { delete mTranslator; }
+  protected:
+    void TearDown() override { mTranslator.reset(); }
 
     testing::AssertionResult compile(const std::string &shaderString)
     {
-        ShCompileOptions compileOptions = {};
-        compileOptions.intermediateTree = true;
+        if (mTranslator == nullptr)
+        {
+            std::unique_ptr<TranslatorESSL> translator =
+                std::make_unique<TranslatorESSL>(GL_FRAGMENT_SHADER, SH_WEBGL_SPEC);
+            if (!translator->Init(mResources))
+            {
+                return testing::AssertionFailure() << "Failed to initialize translator";
+            }
+            mTranslator = std::move(translator);
+        }
 
         const char *shaderStrings[] = {shaderString.c_str()};
-        bool compilationSuccess     = mTranslator->compile(shaderStrings, 1, compileOptions);
+        bool compilationSuccess     = mTranslator->compile(shaderStrings, 1, mCompileOptions);
         TInfoSink &infoSink         = mTranslator->getInfoSink();
         mInfoLog                    = RemoveSymbolIdsFromInfoLog(infoSink.info.c_str());
         if (!compilationSuccess)
@@ -54,6 +58,9 @@ class ParseTest : public testing::Test
     {
         return mInfoLog.find(stringToFind) != std::string::npos;
     }
+
+    ShBuiltInResources mResources;
+    ShCompileOptions mCompileOptions{};
 
   private:
     // Remove symbol ids from info log - the tests don't care about them.
@@ -73,7 +80,7 @@ class ParseTest : public testing::Test
         return filteredLog;
     }
 
-    TranslatorESSL *mTranslator;
+    std::unique_ptr<TranslatorESSL> mTranslator;
     std::string mInfoLog;
 };
 
@@ -113,4 +120,22 @@ void main(){
     EXPECT_FALSE(compile(kShader));
     EXPECT_TRUE(foundErrorInIntermediateTree());
     EXPECT_TRUE(foundInIntermediateTree("unsupported shader version"));
+}
+
+// Tests that layout(index=0) is parsed in es 100 shaders if an extension like
+// EXT_shader_framebuffer_fetch is enabled, but this does not cause a crash.
+TEST_F(ParseTest, ShaderFramebufferFetchLayoutIndexNoCrash)
+{
+    mResources.EXT_blend_func_extended      = 1;
+    mResources.MaxDualSourceDrawBuffers     = 1;
+    mResources.EXT_shader_framebuffer_fetch = 1;
+    const char kShader[]                    = R"(
+#extension GL_EXT_blend_func_extended: require
+#extension GL_EXT_shader_framebuffer_fetch : require
+layout(index=0)mediump vec4 c;
+void main() { }
+)";
+    EXPECT_FALSE(compile(kShader));
+    EXPECT_TRUE(foundErrorInIntermediateTree());
+    EXPECT_TRUE(foundInIntermediateTree("'index' : invalid layout qualifier"));
 }

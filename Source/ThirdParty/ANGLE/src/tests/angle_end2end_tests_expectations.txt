@@ -1112,6 +1112,48 @@ b/308668391 PIXEL4ORXL VULKAN : ImageTest.SourceYUVAHBTargetExternalRGBSampleNoD
 5990 PIXEL4ORXL VULKAN : ComputeShaderTest.SSBOAliasOverWrite/* = SKIP
 b/266235549 D3D11 : ComputeShaderTest.SSBOAliasOverWrite/* = SKIP
 
+// Samsung Galaxy S22 (Xclipse)
+b/267953710 GALAXYS22 GLES : VulkanImageTest.DeviceVulkan/* = SKIP
+b/267953710 GALAXYS22 GLES : VulkanImageTest.HasVulkanImageExtensions/* = SKIP
+b/267953710 GALAXYS22 GLES : VulkanExternalImageTest.TextureFormatCompatChromiumFd/* = SKIP
+b/267953710 GALAXYS22 GLES : VulkanExternalImageTestES31.UninitializedOnGLImportAndStorageWrite/* = SKIP
+b/267953710 GALAXYS22 VULKAN : FramebufferFetchES31.DrawNonFetchDrawFetchInStorageBufferThenClear_NonCoherent/* = SKIP
+b/267953710 GALAXYS22 VULKAN : FramebufferFetchES31.UniformUsageCombinations/* = SKIP
+b/267953710 GALAXYS22 VULKAN : ImageTestES3.RGBAHBUploadDataColorspace/* = SKIP
+b/267953710 GALAXYS22 VULKAN : ImageTestES3.SourceAHBMipTarget2DMip/* = SKIP
+b/267953710 GALAXYS22 VULKAN : ImageTestES3.SourceAHBMipTarget2DMipGenerateMipmap/* = SKIP
+b/267953710 GALAXYS22 VULKAN : MultisampledRenderToTextureES3Test.DrawCopyDrawAttachDepthStencilClearThenDraw/* = SKIP
+b/267953710 GALAXYS22 VULKAN : MultisampledRenderToTextureES3Test.RenderbufferDrawCopyDrawAttachDepthStencilClearThenDraw/* = SKIP
+b/267953710 GALAXYS22 VULKAN : MultisampledRenderToTextureWithAdvancedBlendTest.LoadThenDraw/* = SKIP
+b/267953710 GALAXYS22 VULKAN : MultisampledRenderToTextureWithAdvancedBlendTest.RenderbufferLoadThenDraw/* = SKIP
+b/267953710 GALAXYS22 VULKAN : MultithreadingTestES3.MultithreadFenceDraw/* = SKIP
+b/267953710 GALAXYS22 VULKAN : MultithreadingTestES3.MultithreadFenceTexImage/* = SKIP
+b/267953710 GALAXYS22 VULKAN : MultithreadingTestES3.SimultaneousUploadAndDraw/* = SKIP
+b/267953710 GALAXYS22 VULKAN : OcclusionQueriesTest.ClearNotCounted/* = SKIP
+b/267953710 GALAXYS22 VULKAN : OcclusionQueriesTest.MultiQueries/* = SKIP
+b/267953710 GALAXYS22 VULKAN : RobustBufferAccessBehaviorTest.BufferDataWithIncreasedSize/* = SKIP
+b/267953710 GALAXYS22 VULKAN : RobustBufferAccessBehaviorTest.BufferDataWithIncreasedSizeAndUseWithVAOs/* = SKIP
+b/267953710 GALAXYS22 VULKAN : RobustBufferAccessBehaviorTest.D3D11StateSynchronizationOrderBug/* = SKIP
+b/267953710 GALAXYS22 VULKAN : RobustBufferAccessBehaviorTest.DrawElementsIndexOutOfRangeWithDynamicDraw/* = SKIP
+b/267953710 GALAXYS22 VULKAN : RobustBufferAccessBehaviorTest.DrawElementsIndexOutOfRangeWithStaticDraw/* = SKIP
+b/267953710 GALAXYS22 VULKAN : SampleMultisampleInterpolationTest.SampleMaskInPerSample/* = SKIP
+b/267953710 GALAXYS22 VULKAN : SampleMultisampleInterpolationTest.SampleMaskInPerSampleNoPerspective/* = SKIP
+b/267953710 GALAXYS22 VULKAN : SampleVariablesTest.SampleID/* = SKIP
+b/267953710 GALAXYS22 VULKAN : SampleVariablesTest.SamplePosition/* = SKIP
+b/267953710 GALAXYS22 VULKAN : SimpleStateChangeTestES31.TransformFeedbackThenReadWithCompute/* = SKIP
+b/267953710 GALAXYS22 VULKAN : Texture2DFloatTestES2.TextureFloatLinearLegacyTest/* = SKIP
+b/267953710 GALAXYS22 VULKAN : Texture2DFloatTestES3.TextureFloatLinearLegacyTest/* = SKIP
+b/267953710 GALAXYS22 VULKAN : Texture2DFloatTestES2.TextureFloatLinearTest/* = SKIP
+b/267953710 GALAXYS22 VULKAN : Texture2DFloatTestES3.TextureFloatLinearTest/* = SKIP
+b/267953710 GALAXYS22 VULKAN : TextureSampleShadingTest.Basic/* = SKIP
+b/267953710 GALAXYS22 VULKAN : VulkanPerformanceCounterTest.bufferDataWithSizeFollowedByZeroAndThenSizeAgainShouldReuseStorage/* = SKIP
+b/267953710 GALAXYS22 VULKAN : VulkanPerformanceCounterTest.BufferSubDataShouldNotTriggerSyncState_Copy/* = SKIP
+b/267953710 GALAXYS22 VULKAN : VulkanPerformanceCounterTest.BufferSubDataShouldNotTriggerSyncState_SubData/* = SKIP
+b/267953710 GALAXYS22 VULKAN : VulkanPerformanceCounterTest.PipelineCacheIsRestoredWithProgramBinary/* = SKIP
+b/267953710 GALAXYS22 VULKAN : VulkanPerformanceCounterTest.PipelineCacheIsRestoredWithProgramBinaryTwice/* = SKIP
+b/267953710 GALAXYS22 VULKAN : VulkanPerformanceCounterTest.PipelineCacheIsWarmedUpAtLinkTime/* = SKIP
+b/267953710 GALAXYS22 VULKAN : VulkanPerformanceCounterTest_ES31.ColorMaskedFramebufferFetchDrawThenClear/* = SKIP
+
 // Samsung Galaxy Qualcomm crashes and failures (perhaps with other non-Pixel Qualcomm as well):
 8185 GALAXYQUALCOMM VULKAN : BlitFramebufferTest.BlitStencilScissoredScaled/* = SKIP
 8185 GALAXYQUALCOMM VULKAN : BlitFramebufferTest.MultisampleStencil/* = SKIP
@@ -1295,6 +1337,10 @@ b/266235549 D3D11 : ComputeShaderTest.SSBOAliasOverWrite/* = SKIP
 
 // Workaround feature that is only supposed to be enabled on vulkan backend
 b/292285899 PIXEL4ORXL GLES : EGLSurfaceTest.DestroyAndRecreateWhileCurrent/* = SKIP
+
+// NVIDIA driver has a bug in its YCbCr implementation
+8584 NVIDIA VULKAN : Texture2DTestES3.TexStorage2DMultipleYuvSamplersSwitchSamplerUniformValues/* = SKIP
+8584 NVIDIA VULKAN : Texture2DTestES3.TexStorage2DMultipleYuvSamplersSwitchBoundTextures/* = SKIP
 
 // Slow tests, should appear last in this file
 5076 : GLSLTest.VerifyMaxVertexUniformVectors* = TIMEOUT

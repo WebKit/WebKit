@@ -28,7 +28,6 @@ class DisplayVkNull : public DisplayVk
                                        EGLNativeWindowType window) override;
 
     virtual const char *getWSIExtension() const override;
-    bool isUsingSwapchain() const override;
     egl::ConfigSet generateConfigs() override;
     void checkConfigSupport(egl::Config *config) override;
 

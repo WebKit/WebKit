@@ -69,9 +69,7 @@ struct DisplayState final : private angle::NonCopyable
     EGLLabelKHR label;
     ContextMap contextMap;
     SurfaceMap surfaceMap;
-    std::vector<std::string> featureOverridesEnabled;
-    std::vector<std::string> featureOverridesDisabled;
-    bool featuresAllDisabled;
+    angle::FeatureOverrides featureOverrides;
     EGLNativeDisplayType displayId;
 };
 
@@ -309,6 +307,7 @@ class Display final : public LabeledObject,
     egl::Sync *getSync(egl::SyncID syncID);
 
     const SyncMap &getSyncsForCapture() const { return mSyncMap; }
+    const ImageMap &getImagesForCapture() const { return mImageMap; }
 
     // Initialize thread-local variables used by the Display and its backing implementations.  This
     // includes:

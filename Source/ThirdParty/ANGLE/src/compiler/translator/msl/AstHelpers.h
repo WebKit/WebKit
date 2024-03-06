@@ -78,11 +78,21 @@ int GetFieldIndex(const TStructure &structure, const ImmutableString &fieldName)
 
 // Accesses a field for the given variable with the given field name.
 // The variable must be a struct instance.
+// Note: This is incorect function, as it doesn't resolve based on symbol type.
 TIntermBinary &AccessField(const TVariable &structInstanceVar, const ImmutableString &fieldName);
 
 // Accesses a field for the given node with the given field name.
 // The node must be a struct instance.
+TIntermBinary &AccessField(const TVariable &structInstanceVar, const Name &field);
+
+// Accesses a field for the given node with the given field name.
+// The node must be a struct instance.
+// Note: This is incorect function, as it doesn't resolve based on symbol type.
 TIntermBinary &AccessField(TIntermTyped &object, const ImmutableString &fieldName);
+
+// Accesses a field for the given node with the given field name.
+// The node must be a struct instance.
+TIntermBinary &AccessField(TIntermTyped &object, const Name &field);
 
 // Accesses a field for the given node by its field index.
 // The node must be a struct instance.

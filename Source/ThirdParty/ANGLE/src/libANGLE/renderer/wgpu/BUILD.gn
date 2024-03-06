@@ -21,6 +21,7 @@ angle_source_set("angle_wgpu_backend") {
   public_deps = [ "$angle_root:libANGLE_headers" ]
 
   deps = [
+    "$angle_root:angle_image_util",
     "${angle_dawn_dir}/include/dawn:cpp_headers",
     "${angle_dawn_dir}/include/dawn:headers",
     "${angle_dawn_dir}/src/dawn:cpp",

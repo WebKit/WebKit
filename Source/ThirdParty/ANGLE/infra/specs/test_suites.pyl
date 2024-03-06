@@ -1482,6 +1482,10 @@
       'angle_restricted_trace_gold_isolated_scripts',
     ],
 
+    'isolated_scripts_group_s22': [
+      'angle_restricted_trace_gold_isolated_scripts',
+    ],
+
     'linux_intel_gtests': [
       'angle_deqp_gles2_gl_gtests',
       'angle_end2end_gtests',

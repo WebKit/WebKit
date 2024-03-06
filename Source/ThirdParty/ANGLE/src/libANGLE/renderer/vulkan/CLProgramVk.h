@@ -8,9 +8,20 @@
 #ifndef LIBANGLE_RENDERER_VULKAN_CLPROGRAMVK_H_
 #define LIBANGLE_RENDERER_VULKAN_CLPROGRAMVK_H_
 
+#include "libANGLE/renderer/vulkan/CLKernelVk.h"
 #include "libANGLE/renderer/vulkan/cl_types.h"
+#include "libANGLE/renderer/vulkan/vk_cache_utils.h"
+#include "libANGLE/renderer/vulkan/vk_helpers.h"
 
 #include "libANGLE/renderer/CLProgramImpl.h"
+
+#include "libANGLE/CLProgram.h"
+
+#include "clspv/Compiler.h"
+
+#include "vulkan/vulkan_core.h"
+
+#include "spirv-tools/libspirv.h"
 
 namespace rx
 {
@@ -18,8 +29,136 @@ namespace rx
 class CLProgramVk : public CLProgramImpl
 {
   public:
+    struct SpvReflectionData
+    {
+        angle::HashMap<uint32_t, uint32_t> spvIntLookup;
+        angle::HashMap<uint32_t, std::string> spvStrLookup;
+        angle::HashMap<uint32_t, CLKernelVk::ArgInfo> kernelArgInfos;
+        angle::HashMap<std::string, uint32_t> kernelFlags;
+        angle::HashMap<std::string, std::string> kernelAttributes;
+        angle::HashMap<std::string, std::array<uint32_t, 3>> kernelCompileWGS;
+        angle::HashMap<uint32_t, VkPushConstantRange> pushConstants;
+        std::array<uint32_t, 3> specConstantWGS{0, 0, 0};
+        CLKernelArgsMap kernelArgsMap;
+    };
+
+    // Output binary structure (for CL_PROGRAM_BINARIES query)
+    struct ProgramBinaryOutputHeader
+    {
+        uint32_t headerVersion{1};
+        cl_program_binary_type binaryType{CL_PROGRAM_BINARY_TYPE_NONE};
+    };
+    static constexpr uint32_t LatestSupportedBinaryVersion = 1;
+
+    struct ScopedClspvContext : angle::NonCopyable
+    {
+        ScopedClspvContext() = default;
+        ~ScopedClspvContext() { clspvFreeOutputBuildObjs(mOutputBin, mOutputBuildLog); }
+
+        size_t mOutputBinSize{0};
+        char *mOutputBin{nullptr};
+        char *mOutputBuildLog{nullptr};
+    };
+
+    struct ScopedProgramCallback : angle::NonCopyable
+    {
+        ScopedProgramCallback() = delete;
+        ScopedProgramCallback(cl::Program *notify) : mNotify(notify) {}
+        ~ScopedProgramCallback()
+        {
+            if (mNotify)
+            {
+                mNotify->callback();
+            }
+        }
+
+        cl::Program *mNotify{nullptr};
+    };
+
+    enum class BuildType
+    {
+        BUILD = 0,
+        COMPILE,
+        LINK,
+        BINARY
+    };
+
+    struct DeviceProgramData
+    {
+        std::vector<char> IR;
+        std::string buildLog;
+        angle::spirv::Blob binary;
+        SpvReflectionData reflectionData;
+        VkPushConstantRange pushConstRange{};
+        cl_build_status buildStatus{CL_BUILD_NONE};
+        cl_program_binary_type binaryType{CL_PROGRAM_BINARY_TYPE_NONE};
+
+        size_t numKernels() const { return reflectionData.kernelArgsMap.size(); }
+
+        size_t numKernelArgs(const std::string &kernelName) const
+        {
+            return containsKernel(kernelName) ? getKernelArgsMap().at(kernelName).size() : 0;
+        }
+
+        const CLKernelArgsMap &getKernelArgsMap() const { return reflectionData.kernelArgsMap; }
+
+        bool containsKernel(const std::string &name) const
+        {
+            return reflectionData.kernelArgsMap.contains(name);
+        }
+
+        std::string getKernelNames() const
+        {
+            std::string names;
+            for (auto name = getKernelArgsMap().begin(); name != getKernelArgsMap().end(); ++name)
+            {
+                names += name->first + (std::next(name) != getKernelArgsMap().end() ? ";" : "\0");
+            }
+            return names;
+        }
+
+        CLKernelArguments getKernelArguments(const std::string &kernelName) const
+        {
+            CLKernelArguments kargsCopy;
+            if (containsKernel(kernelName))
+            {
+                const CLKernelArguments &kargs = getKernelArgsMap().at(kernelName);
+                for (const CLKernelArgument &karg : kargs)
+                {
+                    kargsCopy.push_back(karg);
+                }
+            }
+            return kargsCopy;
+        }
+
+        cl::CompiledWorkgroupSize getCompiledWGS(const std::string &kernelName) const
+        {
+            cl::CompiledWorkgroupSize compiledWGS{0, 0, 0};
+            if (reflectionData.kernelCompileWGS.contains(kernelName))
+            {
+                compiledWGS = reflectionData.kernelCompileWGS.at(kernelName);
+            }
+            return compiledWGS;
+        }
+
+        std::string getKernelAttributes(const std::string &kernelName) const
+        {
+            if (containsKernel(kernelName))
+            {
+                return reflectionData.kernelAttributes.at(kernelName.c_str());
+            }
+            return std::string{};
+        }
+    };
+    using DevicePrograms     = angle::HashMap<const _cl_device_id *, DeviceProgramData>;
+    using DeviceProgramDatas = std::vector<const DeviceProgramData *>;
+
     CLProgramVk(const cl::Program &program);
+
     ~CLProgramVk() override;
+
+    angle::Result init();
+    angle::Result init(const size_t *lengths, const unsigned char **binaries, cl_int *binaryStatus);
 
     angle::Result build(const cl::DevicePtrs &devices,
                         const char *options,
@@ -49,6 +188,27 @@ class CLProgramVk : public CLProgramImpl
     angle::Result createKernels(cl_uint numKernels,
                                 CLKernelImpl::CreateFuncs &createFuncs,
                                 cl_uint *numKernelsRet) override;
+
+    const DeviceProgramData *getDeviceProgramData(const char *kernelName) const;
+    const DeviceProgramData *getDeviceProgramData(const _cl_device_id *device) const;
+
+    bool buildInternal(const cl::DevicePtrs &devices,
+                       std::string options,
+                       std::string internalOptions,
+                       BuildType buildType,
+                       const DeviceProgramDatas &inputProgramDatas);
+    angle::spirv::Blob stripReflection(const DeviceProgramData *deviceProgramData);
+
+  private:
+    CLContextVk *mContext;
+    std::string mProgramOpts;
+    DevicePrograms mAssociatedDevicePrograms;
+    PipelineLayoutCache mPipelineLayoutCache;
+    vk::MetaDescriptorPool mMetaDescriptorPool;
+    DescriptorSetLayoutCache mDescSetLayoutCache;
+    vk::DescriptorSetLayoutPointerArray mDescriptorSetLayouts;
+    vk::DescriptorSetArray<vk::DescriptorPoolPointer> mDescriptorPools;
+    std::mutex mProgramMutex;
 };
 
 }  // namespace rx

@@ -91,11 +91,8 @@
 #        endif
 #    endif
 
-// Include <windows.h> to ensure tests related files can be built when building
-// vulkan only backend ANGLE on windows.
-#    if defined(ANGLE_ENABLE_VULKAN)
-#        include <windows.h>
-#    endif
+// Include <windows.h> to ensure files that refer to near/far can be compiled.
+#    include <windows.h>
 
 // Macros 'near', 'far', 'NEAR' and 'FAR' are defined by 'shared/minwindef.h' in the Windows SDK.
 // Macros 'near' and 'far' are empty. They are not used by other Windows headers and are undefined

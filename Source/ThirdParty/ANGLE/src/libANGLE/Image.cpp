@@ -153,11 +153,6 @@ bool ImageSibling::hasProtectedContent() const
     return mTargetOf.get() && mTargetOf->hasProtectedContent();
 }
 
-bool ImageSibling::hasFoveatedRendering() const
-{
-    return mTargetOf.get() && mTargetOf->hasFoveatedRendering();
-}
-
 void ImageSibling::notifySiblings(angle::SubjectMessage message)
 {
     if (mTargetOf.get())

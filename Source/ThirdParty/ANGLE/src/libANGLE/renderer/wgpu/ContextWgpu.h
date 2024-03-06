@@ -10,6 +10,7 @@
 #ifndef LIBANGLE_RENDERER_WGPU_CONTEXTWGPU_H_
 #define LIBANGLE_RENDERER_WGPU_CONTEXTWGPU_H_
 
+#include "image_util/loadimage.h"
 #include "libANGLE/renderer/ContextImpl.h"
 
 namespace rx
@@ -21,7 +22,9 @@ class ContextWgpu : public ContextImpl
     ContextWgpu(const gl::State &state, gl::ErrorSet *errorSet);
     ~ContextWgpu() override;
 
-    angle::Result initialize() override;
+    angle::Result initialize(const angle::ImageLoadContext &imageLoadContext) override;
+
+    void onDestroy(const gl::Context *context) override;
 
     // Flush and finish.
     angle::Result flush(const gl::Context *context) override;
@@ -249,12 +252,16 @@ class ContextWgpu : public ContextImpl
                      const char *function,
                      unsigned int line);
 
+    const angle::ImageLoadContext &getImageLoadContext() const { return mImageLoadContext; }
+
   private:
     gl::Caps mCaps;
     gl::TextureCapsMap mTextureCaps;
     gl::Extensions mExtensions;
     gl::Limitations mLimitations;
     ShPixelLocalStorageOptions mPLSOptions;
+
+    angle::ImageLoadContext mImageLoadContext;
 };
 
 }  // namespace rx

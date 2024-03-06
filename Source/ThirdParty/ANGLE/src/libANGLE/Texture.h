@@ -381,6 +381,7 @@ class Texture final : public RefCountObject<TextureID>,
     void setProtectedContent(Context *context, bool hasProtectedContent);
     bool hasProtectedContent() const override;
     bool hasFoveatedRendering() const override { return isFoveationEnabled(); }
+    const gl::FoveationState *getFoveationState() const override { return &mState.mFoveationState; }
 
     void setRenderabilityValidation(Context *context, bool renderabilityValidation);
 

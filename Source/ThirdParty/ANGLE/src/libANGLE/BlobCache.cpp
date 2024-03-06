@@ -14,88 +14,8 @@
 #include "libANGLE/histogram_macros.h"
 #include "platform/PlatformMethods.h"
 
-#define USE_SYSTEM_ZLIB
-#include "compression_utils_portable.h"
-
 namespace egl
 {
-
-// In oder to store more cache in blob cache, compress cacheData to compressedData
-// before being stored.
-bool CompressBlobCacheData(const size_t cacheSize,
-                           const uint8_t *cacheData,
-                           angle::MemoryBuffer *compressedData)
-{
-    uLong uncompressedSize       = static_cast<uLong>(cacheSize);
-    uLong expectedCompressedSize = zlib_internal::GzipExpectedCompressedSize(uncompressedSize);
-
-    // Allocate memory.
-    if (!compressedData->resize(expectedCompressedSize))
-    {
-        ERR() << "Failed to allocate memory for compression";
-        return false;
-    }
-
-    int zResult = zlib_internal::GzipCompressHelper(compressedData->data(), &expectedCompressedSize,
-                                                    cacheData, uncompressedSize, nullptr, nullptr);
-
-    if (zResult != Z_OK)
-    {
-        ERR() << "Failed to compress cache data: " << zResult;
-        return false;
-    }
-
-    // Resize it to expected size.
-    if (!compressedData->resize(expectedCompressedSize))
-    {
-        return false;
-    }
-
-    return true;
-}
-
-bool DecompressBlobCacheData(const uint8_t *compressedData,
-                             const size_t compressedSize,
-                             size_t maxUncompressedDataSize,
-                             angle::MemoryBuffer *uncompressedData)
-{
-    // Call zlib function to decompress.
-    uint32_t uncompressedSize =
-        zlib_internal::GetGzipUncompressedSize(compressedData, compressedSize);
-
-    if (uncompressedSize > maxUncompressedDataSize)
-    {
-        ERR() << "Decompressed data size is larger than the maximum supported (" << uncompressedSize
-              << " vs " << maxUncompressedDataSize << ")";
-        return false;
-    }
-
-    // Allocate enough memory.
-    if (!uncompressedData->resize(uncompressedSize))
-    {
-        ERR() << "Failed to allocate memory for decompression";
-        return false;
-    }
-
-    uLong destLen = uncompressedSize;
-    int zResult   = zlib_internal::GzipUncompressHelper(
-        uncompressedData->data(), &destLen, compressedData, static_cast<uLong>(compressedSize));
-
-    if (zResult != Z_OK)
-    {
-        WARN() << "Failed to decompress data: " << zResult << "\n";
-        return false;
-    }
-
-    // Resize it to expected size.
-    if (!uncompressedData->resize(destLen))
-    {
-        return false;
-    }
-
-    return true;
-}
-
 BlobCache::BlobCache(size_t maxCacheSizeBytes)
     : mBlobCache(maxCacheSizeBytes), mSetBlobFunc(nullptr), mGetBlobFunc(nullptr)
 {}
@@ -121,8 +41,7 @@ bool BlobCache::compressAndPut(const BlobCache::Key &key,
                                size_t *compressedSize)
 {
     angle::MemoryBuffer compressedValue;
-    if (!CompressBlobCacheData(uncompressedValue.size(), uncompressedValue.data(),
-                               &compressedValue))
+    if (!angle::CompressBlob(uncompressedValue.size(), uncompressedValue.data(), &compressedValue))
     {
         return false;
     }
@@ -154,8 +73,7 @@ void BlobCache::populate(const BlobCache::Key &key, angle::MemoryBuffer &&value,
 
 bool BlobCache::get(angle::ScratchBuffer *scratchBuffer,
                     const BlobCache::Key &key,
-                    BlobCache::Value *valueOut,
-                    size_t *bufferSizeOut)
+                    BlobCache::Value *valueOut)
 {
     // Look into the application's cache, if there is such a cache
     if (areBlobCacheFuncsSet())
@@ -189,8 +107,7 @@ bool BlobCache::get(angle::ScratchBuffer *scratchBuffer,
             return false;
         }
 
-        *valueOut      = BlobCache::Value(scratchMemory->data(), scratchMemory->size());
-        *bufferSizeOut = valueSize;
+        *valueOut = BlobCache::Value(scratchMemory->data(), valueSize);
         return true;
     }
 
@@ -201,9 +118,7 @@ bool BlobCache::get(angle::ScratchBuffer *scratchBuffer,
 
     if (result)
     {
-
-        *valueOut      = BlobCache::Value(entry->first.data(), entry->first.size());
-        *bufferSizeOut = entry->first.size();
+        *valueOut = BlobCache::Value(entry->first.data(), entry->first.size());
     }
 
     return result;
@@ -230,18 +145,17 @@ BlobCache::GetAndDecompressResult BlobCache::getAndDecompress(
     ASSERT(uncompressedValueOut);
 
     Value compressedValue;
-    size_t compressedSize;
-    if (!get(scratchBuffer, key, &compressedValue, &compressedSize))
+    if (!get(scratchBuffer, key, &compressedValue))
     {
         return GetAndDecompressResult::NotFound;
     }
 
     {
-        // This needs to be locked because `DecompressBlobCacheData` is reading shared memory from
+        // This needs to be locked because `DecompressBlob` is reading shared memory from
         // `compressedValue.data()`.
         std::scoped_lock<std::mutex> lock(mBlobCacheMutex);
-        if (!DecompressBlobCacheData(compressedValue.data(), compressedSize,
-                                     maxUncompressedDataSize, uncompressedValueOut))
+        if (!angle::DecompressBlob(compressedValue.data(), compressedValue.size(),
+                                   maxUncompressedDataSize, uncompressedValueOut))
         {
             return GetAndDecompressResult::DecompressFailure;
         }

@@ -16,7 +16,7 @@ spirv_tools_dir = angle_spirv_tools_dir
 
 # configs that need adjustment
 clspv_configs_to_append = []
-clspv_configs_to_remove = [
-  "//build/config/compiler:chromium_code",
-  "//build/config/clang:extra_warnings",
-]
+clspv_configs_to_remove = [ "//build/config/compiler:chromium_code" ]
+if (is_clang) {
+  clspv_configs_to_remove += [ "//build/config/clang:extra_warnings" ]
+}

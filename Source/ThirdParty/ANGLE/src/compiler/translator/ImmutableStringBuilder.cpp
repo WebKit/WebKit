@@ -23,17 +23,7 @@ ImmutableStringBuilder &ImmutableStringBuilder::operator<<(const ImmutableString
     return *this;
 }
 
-ImmutableStringBuilder &ImmutableStringBuilder::operator<<(const char *str)
-{
-    ASSERT(mData != nullptr);
-    size_t len = strlen(str);
-    ASSERT(mPos + len <= mMaxLength);
-    memcpy(mData + mPos, str, len);
-    mPos += len;
-    return *this;
-}
-
-ImmutableStringBuilder &ImmutableStringBuilder::operator<<(const char &c)
+ImmutableStringBuilder &ImmutableStringBuilder::operator<<(char c)
 {
     ASSERT(mData != nullptr);
     ASSERT(mPos + 1 <= mMaxLength);
@@ -41,9 +31,11 @@ ImmutableStringBuilder &ImmutableStringBuilder::operator<<(const char &c)
     return *this;
 }
 
-void ImmutableStringBuilder::appendDecimal(const uint32_t &u)
+void ImmutableStringBuilder::appendDecimal(uint32_t u)
 {
-    int numChars = snprintf(mData + mPos, mMaxLength - mPos, "%d", u);
+    // + 1 is because snprintf writes at most bufsz - 1 and then \0.
+    // Our bufsz is mMaxLength + 1.
+    int numChars = snprintf(mData + mPos, mMaxLength - mPos + 1, "%d", u);
     ASSERT(numChars >= 0);
     ASSERT(mPos + numChars <= mMaxLength);
     mPos += numChars;
@@ -52,7 +44,7 @@ void ImmutableStringBuilder::appendDecimal(const uint32_t &u)
 ImmutableStringBuilder::operator ImmutableString()
 {
     mData[mPos] = '\0';
-    ImmutableString str(static_cast<const char *>(mData), mPos);
+    ImmutableString str(mData, mPos);
 #if defined(ANGLE_ENABLE_ASSERTS)
     // Make sure that nothing is added to the string after it is finalized.
     mData = nullptr;

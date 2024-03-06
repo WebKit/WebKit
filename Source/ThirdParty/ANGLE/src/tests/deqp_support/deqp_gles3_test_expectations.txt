@@ -766,6 +766,16 @@
 6678 UBSAN : dEQP-GLES3.functional.fragment_out.* = SKIP
 6678 UBSAN : dEQP-GLES3.functional.vertex_arrays.single_attribute.* = SKIP
 
+// Samsung Galaxy S22 (Xclipse)
+b/267953710 GALAXYS22 VULKAN : dEQP-GLES3.functional.draw.random.* = SKIP
+b/267953710 GALAXYS22 VULKAN : dEQP-GLES3.functional.ubo.instance_array_basic_type.* = SKIP
+b/267953710 GALAXYS22 VULKAN : dEQP-GLES3.functional.ubo.multi_basic_types.* = SKIP
+b/267953710 GALAXYS22 VULKAN : dEQP-GLES3.functional.ubo.multi_nested_struct.* = SKIP
+b/267953710 GALAXYS22 VULKAN : dEQP-GLES3.functional.ubo.random.* = SKIP
+b/267953710 GALAXYS22 VULKAN : dEQP-GLES3.functional.ubo.single_nested_struct* = SKIP
+b/267953710 GALAXYS22 VULKAN : dEQP-GLES3.functional.ubo.single_struct_array* = SKIP
+b/267953710 GALAXYS22 VULKAN : dEQP-GLES3.functional.vertex_arrays.single_attribute.*int2_10_10_10* = SKIP
+
 // Samsung Galaxy S23
 8157 GALAXYS23 VULKAN : dEQP-GLES3.functional.fbo.blit.depth_stencil.* = SKIP
 8157 GALAXYS23 VULKAN : dEQP-GLES3.functional.fbo.invalidate.format.stencil_index8 = SKIP

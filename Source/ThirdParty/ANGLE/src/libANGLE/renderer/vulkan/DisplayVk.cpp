@@ -90,6 +90,49 @@ void GetSupportedFormatColorspaces(VkPhysicalDevice physicalDevice,
         *surfaceFormatsOut = std::move(surfaceFormats2);
     }
 }
+
+UseValidationLayers ShouldUseValidationLayers(const egl::AttributeMap &attribs)
+{
+    EGLAttrib debugSetting =
+        attribs.get(EGL_PLATFORM_ANGLE_DEBUG_LAYERS_ENABLED_ANGLE, EGL_DONT_CARE);
+
+#if defined(ANGLE_ENABLE_VULKAN_VALIDATION_LAYERS_BY_DEFAULT)
+    const bool yes = ShouldUseDebugLayers(attribs);
+#else
+    const bool yes = debugSetting == EGL_TRUE;
+#endif  // defined(ANGLE_ENABLE_VULKAN_VALIDATION_LAYERS_BY_DEFAULT)
+
+    const bool ifAvailable = debugSetting == EGL_DONT_CARE;
+
+    return yes && ifAvailable ? UseValidationLayers::YesIfAvailable
+           : yes              ? UseValidationLayers::Yes
+                              : UseValidationLayers::No;
+}
+
+angle::vk::ICD ChooseICDFromAttribs(const egl::AttributeMap &attribs)
+{
+#if !defined(ANGLE_PLATFORM_ANDROID)
+    // Mock ICD does not currently run on Android
+    EGLAttrib deviceType = attribs.get(EGL_PLATFORM_ANGLE_DEVICE_TYPE_ANGLE,
+                                       EGL_PLATFORM_ANGLE_DEVICE_TYPE_HARDWARE_ANGLE);
+
+    switch (deviceType)
+    {
+        case EGL_PLATFORM_ANGLE_DEVICE_TYPE_HARDWARE_ANGLE:
+            break;
+        case EGL_PLATFORM_ANGLE_DEVICE_TYPE_NULL_ANGLE:
+            return angle::vk::ICD::Mock;
+        case EGL_PLATFORM_ANGLE_DEVICE_TYPE_SWIFTSHADER_ANGLE:
+            return angle::vk::ICD::SwiftShader;
+        default:
+            UNREACHABLE();
+            break;
+    }
+#endif  // !defined(ANGLE_PLATFORM_ANDROID)
+
+    return angle::vk::ICD::Default;
+}
+
 }  // namespace
 
 DisplayVk::DisplayVk(const egl::DisplayState &state)
@@ -107,7 +150,18 @@ DisplayVk::~DisplayVk()
 egl::Error DisplayVk::initialize(egl::Display *display)
 {
     ASSERT(mRenderer != nullptr && display != nullptr);
-    angle::Result result = mRenderer->initialize(this, display, getWSIExtension(), getWSILayer());
+    const egl::AttributeMap &attribs = display->getAttributeMap();
+
+    const UseValidationLayers useValidationLayers = ShouldUseValidationLayers(attribs);
+    const angle::vk::ICD desiredICD               = ChooseICDFromAttribs(attribs);
+    const uint32_t preferredVendorId =
+        static_cast<uint32_t>(attribs.get(EGL_PLATFORM_ANGLE_DEVICE_ID_HIGH_ANGLE, 0));
+    const uint32_t preferredDeviceId =
+        static_cast<uint32_t>(attribs.get(EGL_PLATFORM_ANGLE_DEVICE_ID_LOW_ANGLE, 0));
+
+    angle::Result result = mRenderer->initialize(
+        this, display, desiredICD, preferredVendorId, preferredDeviceId, useValidationLayers,
+        getWSIExtension(), getWSILayer(), getWindowSystem(), mState.featureOverrides);
     ANGLE_TRY(angle::ToEGL(result, EGL_NOT_INITIALIZED));
     // Query and cache supported surface format and colorspace for later use.
     initSupportedSurfaceFormatColorspaces();
@@ -556,17 +610,6 @@ const char *DisplayVk::getWSILayer() const
     return nullptr;
 }
 
-bool DisplayVk::isUsingSwapchain() const
-{
-    return true;
-}
-
-bool DisplayVk::getScratchBuffer(size_t requstedSizeBytes,
-                                 angle::MemoryBuffer **scratchBufferOut) const
-{
-    return mScratchBuffer.get(requstedSizeBytes, scratchBufferOut);
-}
-
 void DisplayVk::handleError(VkResult result,
                             const char *file,
                             const char *function,
@@ -597,5 +640,16 @@ void DisplayVk::initializeFrontendFeatures(angle::FrontendFeatures *features) co
 void DisplayVk::populateFeatureList(angle::FeatureList *features)
 {
     mRenderer->getFeatures().populateFeatureList(features);
+}
+
+// vk::GlobalOps
+void DisplayVk::putBlob(const angle::BlobCacheKey &key, const angle::MemoryBuffer &value)
+{
+    getBlobCache()->putApplication(key, value);
+}
+
+bool DisplayVk::getBlob(const angle::BlobCacheKey &key, angle::BlobCacheValue *valueOut)
+{
+    return getBlobCache()->get(&mScratchBuffer, key, valueOut);
 }
 }  // namespace rx

@@ -325,6 +325,19 @@ bool AttachmentOverlapsWithTexture(const FramebufferAttachment &attachment,
     return attachmentLevel >= textureEffectiveBaseLevel && attachmentLevel <= textureMaxLevel;
 }
 
+constexpr ComponentType GetAttachmentComponentType(GLenum componentType)
+{
+    switch (componentType)
+    {
+        case GL_INT:
+            return ComponentType::Int;
+        case GL_UNSIGNED_INT:
+            return ComponentType::UnsignedInt;
+        default:
+            return ComponentType::Float;
+    }
+}
+
 }  // anonymous namespace
 
 bool FramebufferStatus::isComplete() const
@@ -1185,17 +1198,7 @@ ComponentType Framebuffer::getDrawbufferWriteType(size_t drawBuffer) const
         return ComponentType::NoType;
     }
 
-    GLenum componentType = attachment->getFormat().info->componentType;
-    switch (componentType)
-    {
-        case GL_INT:
-            return ComponentType::Int;
-        case GL_UNSIGNED_INT:
-            return ComponentType::UnsignedInt;
-
-        default:
-            return ComponentType::Float;
-    }
+    return GetAttachmentComponentType(attachment->getFormat().info->componentType);
 }
 
 ComponentTypeMask Framebuffer::getDrawBufferTypeMask() const
@@ -2254,7 +2257,10 @@ void Framebuffer::onSubjectStateChange(angle::SubjectIndex index, angle::Subject
         // This can be triggered when a subject's foveated rendering state is changed
         if (message == angle::SubjectMessage::FoveatedRenderingStateChanged)
         {
-            mDirtyBits.set(DIRTY_BIT_FOVEATION);
+            // Only a color attachment can be foveated.
+            ASSERT(index >= DIRTY_BIT_COLOR_ATTACHMENT_0 && index < DIRTY_BIT_COLOR_ATTACHMENT_MAX);
+            // Mark the attachment as dirty so we can grab its updated foveation state.
+            mDirtyBits.set(index);
             onStateChange(angle::SubjectMessage::DirtyBitsFlagged);
             return;
         }
@@ -2275,13 +2281,19 @@ void Framebuffer::onSubjectStateChange(angle::SubjectIndex index, angle::Subject
     // Mark the appropriate init flag.
     mState.mResourceNeedsInit.set(index, attachment->initState() == InitState::MayNeedInit);
 
-    // Update mFloat32ColorAttachmentBits and mSharedExponentColorAttachmentBits cache
+    static_assert(DIRTY_BIT_COLOR_ATTACHMENT_MAX <= DIRTY_BIT_DEPTH_ATTACHMENT);
+    static_assert(DIRTY_BIT_COLOR_ATTACHMENT_MAX <= DIRTY_BIT_STENCIL_ATTACHMENT);
+
+    // Update component type mask, mFloat32ColorAttachmentBits,
+    // and mSharedExponentColorAttachmentBits cache
     if (index < DIRTY_BIT_COLOR_ATTACHMENT_MAX)
     {
-        ASSERT(index != DIRTY_BIT_DEPTH_ATTACHMENT);
-        ASSERT(index != DIRTY_BIT_STENCIL_ATTACHMENT);
-        updateFloat32AndSharedExponentColorAttachmentBits(index - DIRTY_BIT_COLOR_ATTACHMENT_0,
-                                                          attachment->getFormat().info);
+        const size_t colorIndex = index - DIRTY_BIT_COLOR_ATTACHMENT_0;
+        ASSERT(colorIndex < mState.mColorAttachments.size());
+        SetComponentTypeMask(
+            GetAttachmentComponentType(attachment->getFormat().info->componentType), colorIndex,
+            &mState.mDrawBufferTypeMask);
+        updateFloat32AndSharedExponentColorAttachmentBits(colorIndex, attachment->getFormat().info);
     }
 }
 
@@ -2738,31 +2750,6 @@ void Framebuffer::setFocalPoint(uint32_t layer,
 const FocalPoint &Framebuffer::getFocalPoint(uint32_t layer, uint32_t focalPoint) const
 {
     return mState.mFoveationState.getFocalPoint(layer, focalPoint);
-}
-
-bool Framebuffer::canSupportFoveatedRendering() const
-{
-    // Can't foveate a framebuffer without an attachemnt.
-    if (mState.mColorAttachmentsMask.count() == 0)
-    {
-        return false;
-    }
-
-    for (size_t colorIndex : mState.mEnabledDrawBuffers)
-    {
-        const gl::FramebufferAttachment *attachment = mState.getColorAttachment(colorIndex);
-        ASSERT(attachment);
-        ASSERT(attachment->type() != GL_NONE);
-
-        // Only non-external texture attachments are supported for foveated rendering.
-        // TODO (anglebug.com/8484): Add support for renderbuffer attachments
-        if (attachment->type() != GL_TEXTURE || attachment->isExternalTexture())
-        {
-            return false;
-        }
-    }
-
-    return true;
 }
 
 GLuint Framebuffer::getSupportedFoveationFeatures() const

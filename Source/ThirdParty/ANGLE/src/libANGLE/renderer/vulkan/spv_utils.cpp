@@ -30,15 +30,6 @@ namespace rx
 {
 namespace
 {
-template <size_t N>
-constexpr size_t ConstStrLen(const char (&)[N])
-{
-    static_assert(N > 0, "C++ shouldn't allow N to be zero");
-
-    // The length of a string defined as a char array is the size of the array minus 1 (the
-    // terminating '\0').
-    return N - 1;
-}
 
 // Test if there are non-zero indices in the uniform name, returning false in that case.  This
 // happens for multi-dimensional arrays, where a uniform is created for every possible index of the

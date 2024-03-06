@@ -159,8 +159,8 @@ RendererGL::RendererGL(std::unique_ptr<FunctionsGL> functions,
       mNeedsFlushBeforeDeleteTextures(false)
 {
     ASSERT(mFunctions);
-    ApplyFeatureOverrides(&mFeatures, display->getState());
-    if (!display->getState().featuresAllDisabled)
+    ApplyFeatureOverrides(&mFeatures, display->getState().featureOverrides);
+    if (!display->getState().featureOverrides.allDisabled)
     {
         nativegl_gl::InitializeFeatures(mFunctions.get(), &mFeatures);
     }

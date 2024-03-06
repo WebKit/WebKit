@@ -750,6 +750,11 @@ cl_int ValidateCreateContextFromType(const cl_context_properties *properties,
         return CL_INVALID_DEVICE_TYPE;
     }
 
+    if (!platform->hasDeviceType(device_type))
+    {
+        return CL_DEVICE_NOT_FOUND;
+    }
+
     // CL_INVALID_VALUE if pfn_notify is NULL but user_data is not NULL.
     if (pfn_notify == nullptr && user_data != nullptr)
     {
@@ -1163,6 +1168,37 @@ cl_int ValidateBuildProgram(cl_program program,
         return CL_INVALID_OPERATION;
     }
 
+    // If program was created with clCreateProgramWithBinary and device does not have a valid
+    // program binary loaded
+    std::vector<size_t> binSizes{prog.getDevices().size()};
+    std::vector<std::vector<unsigned char *>> bins{prog.getDevices().size()};
+    if (IsError(prog.getInfo(ProgramInfo::BinarySizes, binSizes.size() * sizeof(size_t),
+                             binSizes.data(), nullptr)))
+    {
+        return CL_INVALID_PROGRAM;
+    }
+    for (size_t i = 0; i < prog.getDevices().size(); ++i)
+    {
+        cl_program_binary_type binType;
+        bins.at(i).resize(binSizes[i]);
+
+        if (IsError(prog.getInfo(ProgramInfo::Binaries, sizeof(unsigned char *) * bins.size(),
+                                 bins.data(), nullptr)))
+        {
+            return CL_INVALID_VALUE;
+        }
+        if (IsError(prog.getBuildInfo(prog.getDevices()[i]->getNative(),
+                                      ProgramBuildInfo::BinaryType, sizeof(cl_program_binary_type),
+                                      &binType, nullptr)))
+        {
+            return CL_INVALID_VALUE;
+        }
+        if ((binType != CL_PROGRAM_BINARY_TYPE_NONE) && bins[i].empty())
+        {
+            return CL_INVALID_BINARY;
+        }
+    }
+
     return CL_SUCCESS;
 }
 
@@ -1199,6 +1235,18 @@ cl_int ValidateGetProgramInfo(cl_program program,
         default:
             // All remaining possible values for param_name are valid for all versions.
             break;
+    }
+
+    // CL_INVALID_VALUE if size in bytes specified by param_value_size is < size of return type
+    // as described in the Program Object Queries table and param_value is not NULL.
+    if (param_value != nullptr)
+    {
+        size_t valueSizeRet = 0;
+        if (IsError(prog.getInfo(param_name, 0, nullptr, &valueSizeRet)) ||
+            param_value_size < valueSizeRet)
+        {
+            return CL_INVALID_VALUE;
+        }
     }
 
     return CL_SUCCESS;
@@ -1239,6 +1287,18 @@ cl_int ValidateGetProgramBuildInfo(cl_program program,
         default:
             // All remaining possible values for param_name are valid for all versions.
             break;
+    }
+
+    // CL_INVALID_VALUE if size in bytes specified by param_value_size is < size of return type
+    // as described in the Program Object Queries table and param_value is not NULL.
+    if (param_value != nullptr)
+    {
+        size_t valueSizeRet = 0;
+        if (IsError(prog.getBuildInfo(device, param_name, 0, nullptr, &valueSizeRet)) ||
+            param_value_size < valueSizeRet)
+        {
+            return CL_INVALID_VALUE;
+        }
     }
 
     return CL_SUCCESS;

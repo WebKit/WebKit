@@ -53,11 +53,11 @@
             "issue": "http://anglebug.com/3970"
         },
         {
-             "name": "supports_depth_clamp_zero_one",
-             "category": "Features",
-             "description": [
-                 "VkDevice supports the VK_EXT_depth_clamp_zero_one extension"
-             ],
+            "name": "supports_depth_clamp_zero_one",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the VK_EXT_depth_clamp_zero_one extension"
+            ],
             "issue": "http://anglebug.com/3970"
         },
         {
@@ -1008,6 +1008,14 @@
             "issue": "http://anglebug.com/7172"
         },
         {
+            "name": "supports_foveated_rendering",
+            "category": "Features",
+            "description": [
+                "Use VK_KHR_fragment_shading_rate extension to implement QCOM foveated rendering extensions"
+            ],
+            "issue": "http://anglebug.com/8484"
+        },
+        {
             "name": "supports_fragment_shader_pixel_interlock",
             "category": "Features",
             "description": [
@@ -1155,7 +1163,7 @@
             "name": "supports_compute_transcode_etc_to_bc",
             "category": "Features",
             "description": [
-                 "supports compute shader transcode etc format to bc format"
+                "supports compute shader transcode etc format to bc format"
             ]
         },
         {
@@ -1278,19 +1286,25 @@
         {
             "name": "prefer_submit_on_any_samples_passed_query_end",
             "category": "Workarounds",
-            "description":["Submit commands to driver when last GL_ANY_SAMPLES_PASSED query is made for performance improvements."],
+            "description": [
+                "Submit commands to driver when last GL_ANY_SAMPLES_PASSED query is made for performance improvements."
+            ],
             "issue": "https://issuetracker.google.com/250706693"
         },
         {
             "name": "force_wait_for_submission_to_complete_for_query_result",
             "category": "Workarounds",
-            "description":["Force wait for submission to complete before calling getQueryResult(wait)."],
+            "description": [
+                "Force wait for submission to complete before calling getQueryResult(wait)."
+            ],
             "issue": "https://issuetracker.google.com/253522366"
         },
         {
             "name": "async_command_buffer_reset",
             "category": "Features",
-            "description":["Reset command buffer in async thread."],
+            "description": [
+                "Reset command buffer in async thread."
+            ],
             "issue": "https://issuetracker.google.com/255411748"
         },
         {
@@ -1304,7 +1318,9 @@
         {
             "name": "enable_pipeline_cache_data_compression",
             "category": "Features",
-            "description":["enable pipeline cache data compression."],
+            "description": [
+                "enable pipeline cache data compression."
+            ],
             "issue": "https://issuetracker.google.com/258207403"
         },
         {
@@ -1319,7 +1335,7 @@
             "name": "limit_sample_count_to_2",
             "category": "Workarounds",
             "description": [
-              "Limit sample count to 2 to save memory on low end devices."
+                "Limit sample count to 2 to save memory on low end devices."
             ],
             "issue": "http://anglebug.com/8162"
         },
@@ -1439,6 +1455,13 @@
                 "RelaxedPrecision decoration causes a crash"
             ],
             "issue": "http://anglebug.com/8503"
+        },
+        {
+            "name": "cl_dump_vk_spirv",
+            "category": "Features",
+            "description": [
+                "Enable SPIR-V dumping at runtime for OpenCL programs compiled with clspv"
+            ]
         }
     ]
 }

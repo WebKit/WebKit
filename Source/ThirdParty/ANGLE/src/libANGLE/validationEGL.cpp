@@ -5295,9 +5295,10 @@ bool ValidateCreatePlatformWindowSurfaceEXT(const ValidationContext *val,
         return false;
     }
 
-    const void *actualNativeWindow = display->getImplementation()->isX11()
-                                         ? *reinterpret_cast<const void *const *>(nativeWindow)
-                                         : nativeWindow;
+    const void *actualNativeWindow =
+        display->getImplementation()->getWindowSystem() == angle::NativeWindowSystem::X11
+            ? *reinterpret_cast<const void *const *>(nativeWindow)
+            : nativeWindow;
 
     return ValidateCreatePlatformWindowSurface(val, display, configuration, actualNativeWindow,
                                                attributes);

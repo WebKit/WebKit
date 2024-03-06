@@ -11,6 +11,13 @@ config("clspv_llvm_private_config") {
     "-DBLAKE3_NO_SSE2",
     "-DBLAKE3_USE_NEON=0",
   ]
+
+  # Traditional MSVC preprocessor does not properly expand __VA_ARGS__
+  # in "OPTION(...)" properly in LLVM. This MSVC switch fixes this issue.
+  if (angle_is_msvc) {
+    cflags += [ "/Zc:preprocessor" ]
+  }
+
   include_dirs = [
     "$target_gen_dir/../../../",
     "$root_gen_dir/$clspv_llvm_dir",

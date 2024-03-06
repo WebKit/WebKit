@@ -956,9 +956,9 @@ RendererGL *DisplayGLX::getRenderer() const
     return mRenderer.get();
 }
 
-bool DisplayGLX::isX11() const
+angle::NativeWindowSystem DisplayGLX::getWindowSystem() const
 {
-    return true;
+    return angle::NativeWindowSystem::X11;
 }
 
 DisplayImpl *CreateGLXDisplay(const egl::DisplayState &state)
