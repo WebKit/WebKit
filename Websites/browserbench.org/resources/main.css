@@ -67,7 +67,7 @@ main {
 hr {
     border: 2px solid rgb(200, 0, 0);
     border-radius: 2px;
-    margin: 20px 0;
+    margin: 40px 0;
 }
 
 .benchmark {
