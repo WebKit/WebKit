@@ -15,4 +15,7 @@ PASS styleOf("span", {"style":"unicode-bidi: bidi-override isolate bidi-override
 PASS styleOf("span", {"style":"unicode-bidi: bidi-override isolate isolate;"}).unicodeBidi is "normal"
 PASS styleOf("span", {"style":"unicode-bidi: bidi-override bad-value;"}).unicodeBidi is "normal"
 PASS styleOf("span", {"style":"unicode-bidi: bidi-override embed;"}).unicodeBidi is "normal"
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

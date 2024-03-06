@@ -101,7 +101,6 @@ center {
 hr {
     display: block;
     overflow: hidden;
-    unicode-bidi: isolate;
     color: gray;
     margin-block-start: 0.5em;
     margin-block-end: 0.5em;
@@ -1412,14 +1411,37 @@ summary::-webkit-details-marker {
     margin-inline-end: 0.4em;
 }
 
-bdi, output {
+/* Bidirectional text */
+/* https://html.spec.whatwg.org/multipage/rendering.html#bidi-rendering */
+/* To add `summary` below, we need to fix: https://bugs.webkit.org/show_bug.cgi?id=157323 */
+address, blockquote, center, div, figure, figcaption, footer, form, header, hr,
+legend, listing, main, p, plaintext, pre, xmp, article, aside, h1, h2,
+h3, h4, h5, h6, hgroup, nav, section, search, table, caption, colgroup, col,
+thead, tbody, tfoot, tr, td, th, dir, dd, dl, dt, menu, ol, ul, li, bdi, output,
+slot, [dir=ltr i], [dir=rtl i], [dir=auto i] {
     unicode-bidi: isolate;
 }
 
-input[type=tel i]:dir(ltr) { direction: ltr; }
+[dir]:dir(ltr), bdi:dir(ltr), input[type=tel i]:dir(ltr) {
+    direction: ltr;
+}
 
-bdo {
-    unicode-bidi: bidi-override;
+[dir]:dir(rtl), bdi:dir(rtl) {
+    direction: rtl;
+}
+
+bdo, bdo[dir] {
+    unicode-bidi: isolate-override;
+}
+
+input[dir=auto i]:is([type=search i], [type=tel i], [type=url i],
+[type=email i]), textarea[dir=auto i], pre[dir=auto i] {
+    unicode-bidi: plaintext;
+}
+
+/* https://drafts.csswg.org/css-ruby-1/#default-ua-ruby */
+ruby, rb, rt, rbc, rtc {
+    unicode-bidi: isolate;
 }
 
 slot {

@@ -351,7 +351,7 @@ PASS transition-duration
 PASS transition-property
 PASS transition-timing-function
 PASS translate
-PASS unicode-bidi
+FAIL unicode-bidi assert_equals: expected "isolate" but got "normal"
 PASS vector-effect
 PASS vertical-align
 PASS view-timeline-axis

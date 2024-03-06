@@ -405,7 +405,7 @@ TEST(WKWebViewEditActions, ModifyTextWritingDirection)
     auto webView = webViewForEditActionTesting(@"<div id='text' style='direction: rtl; unicode-bidi: bidi-override;'>WebKit</div>");
     [webView selectAll:nil];
     [webView makeTextWritingDirectionNatural:nil];
-    EXPECT_WK_STREQ("normal", [webView stringByEvaluatingJavaScript:@"getComputedStyle(text).unicodeBidi"]);
+    EXPECT_WK_STREQ("isolate", [webView stringByEvaluatingJavaScript:@"getComputedStyle(text).unicodeBidi"]);
 }
 
 TEST(WKWebViewEditActions, CopyFontAtCaretSelection)

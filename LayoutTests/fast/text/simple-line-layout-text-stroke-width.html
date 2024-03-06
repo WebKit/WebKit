@@ -7,9 +7,12 @@
 		position: absolute;
 		-webkit-text-stroke-width: 10px;
 	}
+	* {
+		unicode-bidi: normal;
+	}
 </style>
 <script>jsTestIsAsync = true;</script>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 <script>
 	if (window.internals)
 		internals.startTrackingRepaints();
@@ -30,5 +33,4 @@
 	, 0);
 </script>
 </body>
-<script src="../../resources/js-test-post.js"></script>
 </html>

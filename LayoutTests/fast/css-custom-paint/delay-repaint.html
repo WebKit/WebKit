@@ -3,7 +3,7 @@
 <meta name="assert" content="Test that paint worklets repaint when modules are added, and correctly watch properties">
 <link rel="help" content="https://drafts.css-houdini.org/css-paint-api-1/">
 <script src="resources/testharness.js"></script>
-
+<style>* {unicode-bidi: normal}</style>
 <script id="code" type="text/worklet">
   class MyPaint {
     static get inputProperties() { return ['--my-prop']; }

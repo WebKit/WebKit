@@ -128,15 +128,6 @@ String HTMLElement::nodeName() const
     return Element::nodeName();
 }
 
-static inline CSSValueID unicodeBidiAttributeForDirAuto(HTMLElement& element)
-{
-    if (element.hasTagName(preTag) || element.hasTagName(textareaTag))
-        return CSSValuePlaintext;
-    // FIXME: For bdo element, dir="auto" should result in "bidi-override isolate" but we don't support having multiple values in unicode-bidi yet.
-    // See https://bugs.webkit.org/show_bug.cgi?id=73164.
-    return CSSValueIsolate;
-}
-
 unsigned HTMLElement::parseBorderWidthAttribute(const AtomString& value) const
 {
     if (auto optionalBorderWidth = parseHTMLNonNegativeInteger(value))
@@ -281,13 +272,8 @@ void HTMLElement::collectPresentationalHintsForAttribute(const QualifiedName& na
             addPropertyToPresentationalHintStyle(style, CSSPropertyWebkitUserDrag, CSSValueNone);
         break;
     case AttributeNames::dirAttr:
-        if (equalLettersIgnoringASCIICase(value, "auto"_s))
-            addPropertyToPresentationalHintStyle(style, CSSPropertyUnicodeBidi, unicodeBidiAttributeForDirAuto(*this));
-        else if (equalLettersIgnoringASCIICase(value, "rtl"_s) || equalLettersIgnoringASCIICase(value, "ltr"_s)) {
+        if (equalLettersIgnoringASCIICase(value, "rtl"_s) || equalLettersIgnoringASCIICase(value, "ltr"_s))
             addPropertyToPresentationalHintStyle(style, CSSPropertyDirection, value);
-            if (!hasTagName(bdiTag) && !hasTagName(bdoTag) && !hasTagName(outputTag))
-                addPropertyToPresentationalHintStyle(style, CSSPropertyUnicodeBidi, CSSValueIsolate);
-        }
         break;
     case AttributeNames::XML::langAttr:
         mapLanguageAttributeToLocale(value, style);
