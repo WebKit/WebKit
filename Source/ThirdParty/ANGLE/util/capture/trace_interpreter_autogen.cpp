@@ -889,6 +889,13 @@ CallCapture ParseCallCapture(const Token &nameToken,
             paramTokens, strings);
         return CallCapture(EntryPoint::GLBindImageTexture, std::move(params));
     }
+    if (strcmp(nameToken, "glBindMetalRasterizationRateMapANGLE") == 0)
+    {
+        ParamBuffer params =
+            ParseParameters<std::remove_pointer<PFNGLBINDMETALRASTERIZATIONRATEMAPANGLEPROC>::type>(
+                paramTokens, strings);
+        return CallCapture(EntryPoint::GLBindMetalRasterizationRateMapANGLE, std::move(params));
+    }
     if (strcmp(nameToken, "glBindProgramPipeline") == 0)
     {
         ParamBuffer params =

@@ -42,6 +42,36 @@ class WebGLFramebuffer;
 class WebGLRenderingContextBase;
 struct XRWebGLLayerInit;
 
+struct WebXRExternalRenderbuffer {
+    GCGLOwnedRenderbuffer rbo;
+    GCEGLOwnedImage image;
+
+    void destroyImage(GraphicsContextGL&);
+    void release(GraphicsContextGL&);
+    void leakObject();
+};
+
+template<typename T>
+struct WebXRAttachmentSet {
+    T colorBuffer;
+    T depthStencilBuffer;
+
+    void release(GraphicsContextGL& gl)
+    {
+        colorBuffer.release(gl);
+        depthStencilBuffer.release(gl);
+    }
+
+    void leakObject()
+    {
+        colorBuffer.leakObject();
+        depthStencilBuffer.leakObject();
+    }
+};
+
+using WebXRAttachments = WebXRAttachmentSet<GCGLOwnedRenderbuffer>;
+using WebXRExternalAttachments = WebXRAttachmentSet<WebXRExternalRenderbuffer>;
+
 class WebXROpaqueFramebuffer {
 public:
     struct Attributes {
@@ -55,9 +85,9 @@ public:
     ~WebXROpaqueFramebuffer();
 
     PlatformXR::LayerHandle handle() const { return m_handle; }
-    const WebGLFramebuffer& framebuffer() const { return m_framebuffer.get(); }
-    GCGLint width() const { return m_framebufferSize.width(); }
-    GCGLint height() const { return m_framebufferSize.height(); }
+    const WebGLFramebuffer& framebuffer() const { return m_drawFramebuffer.get(); }
+    IntSize displayFramebufferSize() const;
+    IntSize drawFramebufferSize() const;
 
     void startFrame(const PlatformXR::FrameData::LayerData&);
     void endFrame();
@@ -65,26 +95,26 @@ public:
 private:
     WebXROpaqueFramebuffer(PlatformXR::LayerHandle, Ref<WebGLFramebuffer>&&, WebGLRenderingContextBase&, Attributes&&, IntSize);
 
-    bool setupFramebuffer();
-    PlatformGLObject allocateRenderbufferStorage(GraphicsContextGL&, GCGLsizei, GCGLenum, IntSize);
-    PlatformGLObject allocateColorStorage(GraphicsContextGL&, GCGLsizei, IntSize);
-    PlatformGLObject allocateDepthStencilStorage(GraphicsContextGL&, GCGLsizei, IntSize);
-    void bindColorBuffer(GraphicsContextGL&, PlatformGLObject);
-    void bindDepthStencilBuffer(GraphicsContextGL&, PlatformGLObject);
+    bool setupFramebuffer(GraphicsContextGL&, const PlatformXR::FrameData::LayerData&);
+    void allocateRenderbufferStorage(GraphicsContextGL&, GCGLOwnedRenderbuffer&, GCGLsizei, GCGLenum, IntSize);
+    void allocateAttachments(GraphicsContextGL&, WebXRAttachments&, GCGLsizei, IntSize);
+    void bindAttachments(GraphicsContextGL&, WebXRAttachments&);
+    void resolveMSAAFramebuffer(GraphicsContextGL&);
+    void blitShared(GraphicsContextGL&);
+    void blitSharedToLayered(GraphicsContextGL&);
 
     PlatformXR::LayerHandle m_handle;
-    Ref<WebGLFramebuffer> m_framebuffer;
+    Ref<WebGLFramebuffer> m_drawFramebuffer;
     WebGLRenderingContextBase& m_context;
     Attributes m_attributes;
+    PlatformXR::Layout m_displayLayout = PlatformXR::Layout::Shared;
     IntSize m_framebufferSize;
-    GCGLOwnedRenderbuffer m_depthStencilBuffer;
-    GCGLOwnedRenderbuffer m_multisampleColorBuffer;
-    GCGLOwnedRenderbuffer m_multisampleDepthStencilBuffer;
+    WebXRAttachments m_drawAttachments;
+    WebXRAttachments m_resolveAttachments;
+    GCGLOwnedFramebuffer m_displayFBO;
     GCGLOwnedFramebuffer m_resolvedFBO;
 #if PLATFORM(COCOA)
-    GCGLOwnedTexture m_colorTexture;
-    GCEGLImage m_colorImage { };
-    GCEGLImage m_depthStencilImage { };
+    std::array<WebXRExternalAttachments, 2> m_displayAttachments;
     GraphicsContextGL::ExternalEGLSyncEvent m_completionSyncEvent;
 #else
     PlatformGLObject m_colorTexture;

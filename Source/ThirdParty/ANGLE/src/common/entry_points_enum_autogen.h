@@ -275,6 +275,7 @@ enum class EntryPoint
     GLBindFramebufferOES,
     GLBindImageTexture,
     GLBindImageTextures,
+    GLBindMetalRasterizationRateMapANGLE,
     GLBindProgramPipeline,
     GLBindProgramPipelineEXT,
     GLBindRenderbuffer,

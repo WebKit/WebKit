@@ -20,6 +20,30 @@
 namespace rx
 {
 
+namespace
+{
+angle::FormatID intendedFormatForMTLTexture(id<MTLTexture> texture,
+                                            const egl::AttributeMap &attribs)
+{
+    angle::FormatID angleFormatId;
+    GLenum internalFormat =
+        static_cast<GLenum>(attribs.get(EGL_TEXTURE_INTERNAL_FORMAT_ANGLE, GL_NONE));
+    if (internalFormat != GL_NONE)
+    {
+        // If EGL_TEXTURE_INTERNAL_FORMAT_ANGLE is provided for eglCreateImageKHR(),
+        // the provided format will be used for mFormat and intendedFormat.
+        GLenum type                = gl::GetSizedInternalFormatInfo(internalFormat).type;
+        GLenum sizedInternalFormat = gl::Format(internalFormat, type).info->sizedInternalFormat;
+        angleFormatId              = angle::Format::InternalFormatToID(sizedInternalFormat);
+    }
+    else
+    {
+        angleFormatId = mtl::Format::MetalToAngleFormatID(texture.pixelFormat);
+    }
+    return angleFormatId;
+}
+}  // anonymous namespace
+
 // TextureImageSiblingMtl implementation
 TextureImageSiblingMtl::TextureImageSiblingMtl(EGLClientBuffer buffer,
                                                const egl::AttributeMap &attribs)
@@ -45,12 +69,18 @@ egl::Error TextureImageSiblingMtl::ValidateClientBuffer(const DisplayMtl *displa
         return egl::EglBadAttribute();
     }
 
-    angle::FormatID angleFormatId = mtl::Format::MetalToAngleFormatID(texture.pixelFormat);
+    angle::FormatID angleFormatId = intendedFormatForMTLTexture(texture, attribs);
     const mtl::Format &format     = display->getPixelFormat(angleFormatId);
     if (!format.valid())
     {
         return egl::EglBadAttribute() << "Unrecognized format";
     }
+    
+    if (format.metalFormat != texture.pixelFormat)
+    {
+        return egl::EglBadAttribute() << "Incompatible format";
+    }
+
     unsigned textureArraySlice =
         static_cast<unsigned>(attribs.getAsInt(EGL_METAL_TEXTURE_ARRAY_SLICE_ANGLE, 0));
     if (texture.textureType != MTLTextureType2DArray && textureArraySlice > 0)
@@ -89,9 +119,8 @@ angle::Result TextureImageSiblingMtl::initImpl(DisplayMtl *displayMtl)
             baseTexture->createSliceMipView(textureArraySlice, mtl::kZeroNativeMipLevel);
     }
 
-    angle::FormatID angleFormatId =
-        mtl::Format::MetalToAngleFormatID(mNativeTexture->pixelFormat());
-    mFormat = displayMtl->getPixelFormat(angleFormatId);
+    angle::FormatID angleFormatId = intendedFormatForMTLTexture(mNativeTexture->get(), mAttribs);
+    mFormat                       = displayMtl->getPixelFormat(angleFormatId);
 
     if (mNativeTexture)
     {
