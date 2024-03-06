@@ -146,6 +146,9 @@ public:
     bool resourceLoadStatisticsDebugModeEnabled() const { return m_trackingPreventionDebugModeEnabled; }
     void setResourceLoadStatisticsDebugModeEnabled(bool enabled) { m_trackingPreventionDebugModeEnabled = enabled; }
 
+    std::optional<bool> defaultTrackingPreventionEnabledOverride() const { return m_defaultTrackingPreventionEnabledOverride; }
+    void setDefaultTrackingPreventionEnabledOverride(std::optional<bool> enabled) { m_defaultTrackingPreventionEnabledOverride = enabled; }
+
     unsigned testSpeedMultiplier() const { return m_testSpeedMultiplier; }
     void setTestSpeedMultiplier(unsigned multiplier) { m_testSpeedMultiplier = multiplier; }
 
@@ -326,6 +329,7 @@ private:
     RetainPtr<CFDictionaryRef> m_proxyConfiguration;
 #endif
     Vector<size_t> m_memoryFootprintNotificationThresholds;
+    std::optional<bool> m_defaultTrackingPreventionEnabledOverride;
 };
 
 }

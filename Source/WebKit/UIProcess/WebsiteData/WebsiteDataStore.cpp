@@ -1666,6 +1666,9 @@ void WebsiteDataStore::sendNetworkProcessDidResume()
 bool WebsiteDataStore::defaultTrackingPreventionEnabled() const
 {
 #if PLATFORM(COCOA)
+    if (auto enabledOverride = m_configuration->defaultTrackingPreventionEnabledOverride())
+        return *enabledOverride;
+
     return doesAppHaveTrackingPreventionEnabled();
 #else
     return false;

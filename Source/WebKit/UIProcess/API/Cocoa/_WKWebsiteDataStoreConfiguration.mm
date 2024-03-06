@@ -807,6 +807,24 @@ static WebKit::UnifiedOriginStorageLevel toUnifiedOriginStorageLevel(_WKUnifiedO
     _configuration->setResourceLoadStatisticsDebugModeEnabled(enabled);
 }
 
+- (NSNumber *)defaultTrackingPreventionEnabledOverride
+{
+    auto enabled = _configuration->defaultTrackingPreventionEnabledOverride();
+    if (!enabled)
+        return nil;
+
+    return [NSNumber numberWithBool:*enabled];
+}
+
+- (void)setDefaultTrackingPreventionEnabledOverride:(NSNumber *)defaultTrackingPreventionEnabledOverride
+{
+    std::optional<bool> enabled;
+    if (defaultTrackingPreventionEnabledOverride)
+        enabled = [defaultTrackingPreventionEnabledOverride boolValue];
+
+    _configuration->setDefaultTrackingPreventionEnabledOverride(enabled);
+}
+
 - (NSUUID *)identifier
 {
     auto currentIdentifier = _configuration->identifier();
