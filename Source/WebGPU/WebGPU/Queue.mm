@@ -116,7 +116,8 @@ id<MTLCommandBuffer> Queue::commandBufferWithDescriptor(MTLCommandBufferDescript
     }
 
     id<MTLCommandBuffer> buffer = [m_commandQueue commandBufferWithDescriptor:descriptor];
-    [m_createdNotCommittedBuffers addObject:buffer];
+    if (buffer)
+        [m_createdNotCommittedBuffers addObject:buffer];
 
     return buffer;
 }
