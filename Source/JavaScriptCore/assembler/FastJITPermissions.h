@@ -78,18 +78,18 @@ static ALWAYS_INLINE void threadSelfRestrictRWXToRX()
 #elif USE(APPLE_INTERNAL_SDK)
 #include <os/thread_self_restrict.h>
 
-static ALWAYS_INLINE bool threadSelfRestrictSupported()
+SUPPRESS_ASAN static ALWAYS_INLINE bool threadSelfRestrictSupported()
 {
     return !!os_thread_self_restrict_rwx_is_supported();
 }
 
-static ALWAYS_INLINE void threadSelfRestrictRWXToRW()
+SUPPRESS_ASAN static ALWAYS_INLINE void threadSelfRestrictRWXToRW()
 {
     ASSERT(g_jscConfig.useFastJITPermissions);
     os_thread_self_restrict_rwx_to_rw();
 }
 
-static ALWAYS_INLINE void threadSelfRestrictRWXToRX()
+SUPPRESS_ASAN static ALWAYS_INLINE void threadSelfRestrictRWXToRX()
 {
     ASSERT(g_jscConfig.useFastJITPermissions);
     os_thread_self_restrict_rwx_to_rx();
