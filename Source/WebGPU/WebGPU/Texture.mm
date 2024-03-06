@@ -1786,7 +1786,7 @@ WGPUTextureFormat Texture::removeSRGBSuffix(WGPUTextureFormat format)
     }
 }
 
-static bool textureViewFormatCompatible(WGPUTextureFormat format1, WGPUTextureFormat format2)
+bool Texture::textureViewFormatCompatible(WGPUTextureFormat format1, WGPUTextureFormat format2)
 {
     // https://gpuweb.github.io/gpuweb/#texture-view-format-compatible
 
@@ -1901,7 +1901,7 @@ NSString *Device::errorValidatingTextureCreation(const WGPUTextureDescriptor& de
     }
 
     for (auto viewFormat : viewFormats) {
-        if (!textureViewFormatCompatible(descriptor.format, viewFormat))
+        if (!Texture::textureViewFormatCompatible(descriptor.format, viewFormat))
             return @"createTexture: !textureViewFormatCompatible(descriptor.format, viewFormat)";
     }
 
@@ -2943,6 +2943,11 @@ Ref<TextureView> Texture::createView(const WGPUTextureViewDescriptor& inputDescr
     auto levels = NSMakeRange(descriptor->baseMipLevel, descriptor->mipLevelCount);
 
     auto slices = NSMakeRange(descriptor->baseArrayLayer, descriptor->arrayLayerCount);
+
+    if (!Texture::textureViewFormatCompatible(m_format, descriptor->format)) {
+        m_device->generateAValidationError("GPUTexture.createView: invalid texture format"_s);
+        return TextureView::createInvalid(*this, m_device);
+    }
 
     id<MTLTexture> texture = [m_texture newTextureViewWithPixelFormat:resolvedPixelFormat(pixelFormat, m_texture.pixelFormat) textureType:textureType levels:levels slices:slices];
     if (!texture)

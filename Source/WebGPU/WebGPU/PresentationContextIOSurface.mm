@@ -116,6 +116,7 @@ void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChain
             parentLuminanceClampTexture = Texture::create(luminanceClampTexture, wgpuTextureDescriptor, WTFMove(viewFormats), device);
             parentLuminanceClampTexture->makeCanvasBacking();
             textureDescriptor.pixelFormat = MTLPixelFormatBGRA8Unorm;
+            wgpuTextureDescriptor.format = WGPUTextureFormat_BGRA8Unorm;
             textureDescriptor.usage = existingUsage | MTLTextureUsageShaderWrite;
             needsLuminanceClampFunction = true;
         }
@@ -142,6 +143,11 @@ void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChain
     for (auto viewFormat : descriptor.viewFormats) {
         if (!allowedFormat(viewFormat)) {
             device.generateAValidationError("Requested texture view format BGRA8UnormStorage is not enabled"_s);
+            return;
+        }
+
+        if (!Texture::textureViewFormatCompatible(descriptor.format, viewFormat)) {
+            device.generateAValidationError("Requested texture view format is not compatible with the descriptor format"_s);
             return;
         }
     }
