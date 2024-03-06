@@ -2566,6 +2566,15 @@
    },
    {
       "emails" : [
+         "elijahsawyers@gmail.com",
+         "esawyers@apple.com"
+      ],
+      "github" : "elijahsawyers",
+      "name" : "Elijah Sawyers",
+      "status" : "committer"
+   },
+   {
+      "emails" : [
          "fantasai.bugs@inkedblade.net",
          "fantasai@apple.com"
       ],
