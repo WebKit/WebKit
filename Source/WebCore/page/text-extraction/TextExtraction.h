@@ -26,14 +26,19 @@
 #pragma once
 
 #include "TextExtractionTypes.h"
+#include <wtf/Expected.h>
 
 namespace WebCore {
 
+class LocalFrame;
 class Page;
+enum class ExceptionCode : uint8_t;
 
 namespace TextExtraction {
 
 WEBCORE_EXPORT Item extractItem(std::optional<WebCore::FloatRect>&& collectionRectInRootView, Page&);
+
+WEBCORE_EXPORT Expected<String, ExceptionCode> extractRenderedText(LocalFrame&, String&& selector);
 
 } // namespace TextExtraction
 } // namespace WebCore

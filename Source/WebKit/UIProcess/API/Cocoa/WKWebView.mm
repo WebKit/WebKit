@@ -133,7 +133,9 @@
 #import <WebCore/ColorCocoa.h>
 #import <WebCore/ColorSerialization.h>
 #import <WebCore/ContentExtensionsBackend.h>
+#import <WebCore/DOMException.h>
 #import <WebCore/ElementContext.h>
+#import <WebCore/ExceptionCode.h>
 #import <WebCore/JSDOMBinding.h>
 #import <WebCore/JSDOMExceptionHandling.h>
 #import <WebCore/LegacySchemeRegistry.h>
@@ -2759,6 +2761,19 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
 #if ENABLE(APP_HIGHLIGHTS)
     _page->createAppHighlightInSelectedRange(newGroup ? WebCore::CreateNewGroupForHighlight::Yes : WebCore::CreateNewGroupForHighlight::No, originatedInApp ? WebCore::HighlightRequestOriginatedInApp::Yes : WebCore::HighlightRequestOriginatedInApp::No);
 #endif
+}
+
+- (void)_requestRenderedTextForElementSelector:(NSString *)selector completionHandler:(void(^)(NSString *, NSError *))completion
+{
+    _page->requestRenderedTextForElementSelector(selector, [completion = makeBlockPtr(completion)](Expected<String, WebCore::ExceptionCode>&& result) {
+        if (result)
+            return completion(result.value(), nil);
+
+        RetainPtr exceptionName = WebCore::DOMException::name(result.error()).createNSString();
+        return completion(nil, [NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{
+            NSLocalizedDescriptionKey: exceptionName.get() ?: @""
+        }]);
+    });
 }
 
 - (NSURL *)_unreachableURL

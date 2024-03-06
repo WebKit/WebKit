@@ -412,4 +412,5 @@ interface UIScriptController {
     undefined acceptInlinePrediction();
 
     undefined requestTextExtraction(object callback);
+    undefined requestRenderedTextForSelector(DOMString selector, object callback);
 };

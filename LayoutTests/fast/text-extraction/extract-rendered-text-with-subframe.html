@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../resources/ui-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<div class="container">
+    <h1>zero</h1>
+    <iframe frameborder="0" width="350" height="200" src="resources/subframe.html"></iframe>
+    <h3>five</h3>
+</div>
+<script>
+jsTestIsAsync = true;
+remainingLoadCount = 2;
+
+document.querySelector("iframe").addEventListener("load", runTestIfPossible);
+addEventListener("load", runTestIfPossible);
+
+async function runTestIfPossible() {
+    if (--remainingLoadCount)
+        return;
+    extractedText = await UIHelper.requestRenderedTextForSelector("div.container");
+    shouldBeEqualToString("extractedText", "zero one two three four five");
+    document.querySelector("div.container").remove();
+    finishJSTest();
+}
+</script>
+</body>
+</html>

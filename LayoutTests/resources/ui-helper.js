@@ -2152,6 +2152,18 @@ window.UIHelper = class UIHelper {
             })()`, resolve);
         });
     }
+
+    static requestRenderedTextForSelector(selector)
+    {
+        if (!this.isWebKit2())
+            return Promise.resolve();
+
+        return new Promise(resolve => {
+            testRunner.runUIScript(`(() => {
+                uiController.requestRenderedTextForSelector("${selector}", result => uiController.uiScriptComplete(result));
+            })()`, resolve);
+        });
+    }
 }
 
 UIHelper.EventStreamBuilder = class {

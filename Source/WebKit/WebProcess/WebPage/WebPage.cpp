@@ -197,6 +197,7 @@
 #include <WebCore/ElementIterator.h>
 #include <WebCore/EventHandler.h>
 #include <WebCore/EventNames.h>
+#include <WebCore/ExceptionCode.h>
 #include <WebCore/File.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/FontAttributeChanges.h>
@@ -9343,6 +9344,15 @@ void WebPage::renderTreeAsText(WebCore::FrameIdentifier frameID, size_t baseInde
 void WebPage::requestTextExtraction(std::optional<FloatRect>&& collectionRectInRootView, CompletionHandler<void(TextExtraction::Item&&)>&& completion)
 {
     completion(TextExtraction::extractItem(WTFMove(collectionRectInRootView), Ref { *corePage() }));
+}
+
+void WebPage::requestRenderedTextForElementSelector(String&& selector, CompletionHandler<void(Expected<String, WebCore::ExceptionCode>&&)>&& completion)
+{
+    RefPtr mainFrame = dynamicDowncast<LocalFrame>(corePage()->protectedMainFrame());
+    if (!mainFrame)
+        return completion(makeUnexpected(ExceptionCode::NotAllowedError));
+
+    completion(TextExtraction::extractRenderedText(mainFrame.releaseNonNull(), WTFMove(selector)));
 }
 
 template<typename T> void WebPage::remoteViewToRootView(WebCore::FrameIdentifier frameID, T geometry, CompletionHandler<void(T)>&& completionHandler)

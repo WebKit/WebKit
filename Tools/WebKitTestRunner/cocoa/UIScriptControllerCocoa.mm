@@ -336,4 +336,16 @@ void UIScriptControllerCocoa::requestTextExtraction(JSValueRef callback)
     }];
 }
 
+void UIScriptControllerCocoa::requestRenderedTextForSelector(JSStringRef selectorRef, JSValueRef callback)
+{
+    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+    [webView() _requestRenderedTextForElementSelector:toWTFString(selectorRef) completionHandler:^(NSString *text, NSError *error) {
+        if (!m_context)
+            return;
+
+        JSRetainPtr result = adopt(JSStringCreateWithCFString((__bridge CFStringRef)(error.description ?: text)));
+        m_context->asyncTaskComplete(callbackID, { JSValueMakeString(m_context->jsContext(), result.get()) });
+    }];
+}
+
 } // namespace WTR

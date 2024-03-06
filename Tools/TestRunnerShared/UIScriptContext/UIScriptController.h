@@ -408,6 +408,7 @@ public:
 
     // Text Extraction
     virtual void requestTextExtraction(JSValueRef) { notImplemented(); }
+    virtual void requestRenderedTextForSelector(JSStringRef, JSValueRef) { notImplemented(); }
 
 protected:
     explicit UIScriptController(UIScriptContext&);
