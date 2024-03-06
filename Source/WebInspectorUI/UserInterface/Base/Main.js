@@ -453,7 +453,8 @@ WI.contentLoaded = function()
     WI._consoleWarningsTabBarButton.imageType = WI.ButtonNavigationItem.ImageType.IMG;
     WI._consoleWarningsTabBarButton.hidden = true;
     WI._consoleWarningsTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, function(event) {
-        WI.showConsoleTab(WI.LogContentView.Scopes.Warnings, {
+        WI.showConsoleTab({
+            requestedScope: WI.LogContentView.Scopes.Warnings,
             initiatorHint: WI.TabBrowser.TabNavigationInitiator.Dashboard,
         });
     }, WI);
@@ -462,7 +463,8 @@ WI.contentLoaded = function()
     WI._consoleErrorsTabBarButton.imageType = WI.ButtonNavigationItem.ImageType.IMG;
     WI._consoleErrorsTabBarButton.hidden = true;
     WI._consoleErrorsTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, function(event) {
-        WI.showConsoleTab(WI.LogContentView.Scopes.Errors, {
+        WI.showConsoleTab({
+            requestedScope: WI.LogContentView.Scopes.Errors,
             initiatorHint: WI.TabBrowser.TabNavigationInitiator.Dashboard,
         });
     }, WI);
@@ -1199,13 +1201,12 @@ WI.hideSplitConsole = function()
     WI.consoleDrawer.collapsed = true;
 };
 
-WI.showConsoleTab = function(requestedScope, options = {})
+WI.showConsoleTab = function(options = {})
 {
-    requestedScope = requestedScope || WI.LogContentView.Scopes.All;
-
     WI.hideSplitConsole();
 
-    WI.consoleContentView.scopeBar.item(requestedScope).selected = true;
+    if (options.requestedScope)
+        WI.consoleContentView.scopeBar.item(options.requestedScope).selected = true;
 
     const cookie = null;
     WI.showRepresentedObject(WI._consoleRepresentedObject, cookie, options);
