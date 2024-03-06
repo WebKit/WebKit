@@ -185,9 +185,9 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
         || style.display() == DisplayType::TableHeaderGroup || style.display() == DisplayType::TableFooterGroup
         || style.display() == DisplayType::TableRow || style.display() == DisplayType::TableColumnGroup || style.display() == DisplayType::TableColumn
         || style.display() == DisplayType::TableCell || style.display() == DisplayType::TableCaption)
-        style.setEffectiveDisplay(DisplayType::InlineBlock);
+        style.setDisplay(DisplayType::InlineBlock);
     else if (style.display() == DisplayType::ListItem || style.display() == DisplayType::Table)
-        style.setEffectiveDisplay(DisplayType::Block);
+        style.setDisplay(DisplayType::Block);
 
     if (userAgentAppearanceStyle && isControlStyled(style, *userAgentAppearanceStyle)) {
         switch (appearance) {
@@ -1497,10 +1497,10 @@ void RenderTheme::adjustSwitchStyleDisplay(RenderStyle& style) const
     // RenderTheme::adjustStyle() normalizes a bunch of display types to InlineBlock and Block.
     switch (style.display()) {
     case DisplayType::InlineBlock:
-        style.setEffectiveDisplay(DisplayType::InlineGrid);
+        style.setDisplay(DisplayType::InlineGrid);
         break;
     case DisplayType::Block:
-        style.setEffectiveDisplay(DisplayType::Grid);
+        style.setDisplay(DisplayType::Grid);
         break;
     default:
         break;

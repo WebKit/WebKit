@@ -424,7 +424,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
     if (m_element && (m_element->hasTagName(frameTag) || m_element->hasTagName(framesetTag))) {
         // Framesets ignore display and position properties.
         style.setPosition(PositionType::Static);
-        style.setEffectiveDisplay(DisplayType::Block);
+        style.setDisplay(DisplayType::Block);
     }
 
     if (style.display() != DisplayType::None && style.display() != DisplayType::Contents) {
@@ -440,11 +440,11 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
             }
 
             if (m_element->hasTagName(legendTag))
-                style.setEffectiveDisplay(equivalentBlockDisplay(style));
+                style.setDisplay(equivalentBlockDisplay(style));
         }
 
         if (hasUnsupportedRubyDisplay(style.display(), m_element))
-            style.setEffectiveDisplay(style.display() == DisplayType::RubyBlock ? DisplayType::Block : DisplayType::Inline);
+            style.setDisplay(style.display() == DisplayType::RubyBlock ? DisplayType::Block : DisplayType::Inline);
 
         // Top layer elements are always position: absolute; unless the position is set to fixed.
         // https://fullscreen.spec.whatwg.org/#new-stacking-layer
@@ -453,12 +453,12 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
 
         // Absolute/fixed positioned elements, floating elements and the document element need block-like outside display.
         if (style.hasOutOfFlowPosition() || style.isFloating() || (m_element && m_document.documentElement() == m_element))
-            style.setEffectiveDisplay(equivalentBlockDisplay(style));
+            style.setDisplay(equivalentBlockDisplay(style));
 
         // FIXME: Don't support this mutation for pseudo styles like first-letter or first-line, since it's not completely
         // clear how that should work.
         if (style.display() == DisplayType::Inline && style.pseudoElementType() == PseudoId::None && style.writingMode() != m_parentStyle.writingMode())
-            style.setEffectiveDisplay(DisplayType::InlineBlock);
+            style.setDisplay(DisplayType::InlineBlock);
 
         // After performing the display mutation, check table rows. We do not honor position:relative or position:sticky on
         // table rows or cells. This has been established for position:relative in CSS2.1 (and caused a crash in containingBlock()
@@ -489,12 +489,12 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
         // "A parent with a grid or flex display value blockifies the box’s display type."
         if (m_parentBoxStyle.isDisplayFlexibleOrGridBox()) {
             style.setFloating(Float::None);
-            style.setEffectiveDisplay(equivalentBlockDisplay(style));
+            style.setDisplay(equivalentBlockDisplay(style));
         }
 
         // https://www.w3.org/TR/css-ruby-1/#anon-gen-inlinize
         if (shouldInlinifyForRuby(style, m_parentBoxStyle))
-            style.setEffectiveDisplay(equivalentInlineDisplay(style));
+            style.setDisplay(equivalentInlineDisplay(style));
         // https://drafts.csswg.org/css-ruby-1/#bidi
         if (isRubyContainerOrInternalRubyBox(style))
             style.setUnicodeBidi(forceBidiIsolationForRuby(style.unicodeBidi()));
@@ -767,7 +767,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
     adjustForSiteSpecificQuirks(style);
 }
 
-static bool hasEffectiveDisplayNoneForDisplayContents(const Element& element)
+static bool hasDisplayNoneForDisplayContents(const Element& element)
 {
     using namespace ElementNames;
 
@@ -814,17 +814,17 @@ void Adjuster::adjustDisplayContentsStyle(RenderStyle& style) const
 {
     bool isInTopLayer = isInTopLayerOrBackdrop(style, m_element);
     if (isInTopLayer || m_document.documentElement() == m_element) {
-        style.setEffectiveDisplay(DisplayType::Block);
+        style.setDisplay(DisplayType::Block);
         return;
     }
 
     if (!m_element && style.pseudoElementType() != PseudoId::Before && style.pseudoElementType() != PseudoId::After) {
-        style.setEffectiveDisplay(DisplayType::None);
+        style.setDisplay(DisplayType::None);
         return;
     }
 
-    if (m_element && hasEffectiveDisplayNoneForDisplayContents(*m_element))
-        style.setEffectiveDisplay(DisplayType::None);
+    if (m_element && hasDisplayNoneForDisplayContents(*m_element))
+        style.setDisplay(DisplayType::None);
 }
 
 void Adjuster::adjustSVGElementStyle(RenderStyle& style, const SVGElement& svgElement)
@@ -873,7 +873,7 @@ void Adjuster::adjustSVGElementStyle(RenderStyle& style, const SVGElement& svgEl
 
     // SVG text layout code expects us to be a block-level style element.
     if ((svgElement.hasTagName(SVGNames::foreignObjectTag) || svgElement.hasTagName(SVGNames::textTag)) && style.isDisplayInlineType())
-        style.setEffectiveDisplay(DisplayType::Block);
+        style.setDisplay(DisplayType::Block);
 }
 
 void Adjuster::adjustAnimatedStyle(RenderStyle& style, OptionSet<AnimationImpact> impact) const
@@ -957,7 +957,7 @@ void Adjuster::adjustForSiteSpecificQuirks(RenderStyle& style) const
             if (div->hasClass() && div->classNames().contains(instreamNativeVideoDivClass)) {
                 RefPtr video = dynamicDowncast<HTMLVideoElement>(div->treeScope().getElementById(videoElementID));
                 if (video && video->isFullscreen())
-                    style.setEffectiveDisplay(DisplayType::Block);
+                    style.setDisplay(DisplayType::Block);
             }
         }
     }

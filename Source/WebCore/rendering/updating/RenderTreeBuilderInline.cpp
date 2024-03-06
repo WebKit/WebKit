@@ -82,7 +82,7 @@ static RenderBoxModelObject* continuationBefore(RenderInline& parent, RenderObje
 static RenderPtr<RenderInline> cloneAsContinuation(RenderInline& renderer)
 {
     auto continuationStyle = RenderStyle::clone(renderer.style());
-    continuationStyle.setDisplay(DisplayType::Inline);
+    continuationStyle.setOriginalDisplay(DisplayType::Inline);
     RenderPtr<RenderInline> cloneInline = createRenderer<RenderInline>(RenderObject::Type::Inline, *renderer.element(), WTFMove(continuationStyle));
     cloneInline->initializeStyle();
     cloneInline->setFragmentedFlowState(renderer.fragmentedFlowState());

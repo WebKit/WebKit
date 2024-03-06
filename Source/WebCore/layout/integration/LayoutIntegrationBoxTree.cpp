@@ -134,7 +134,7 @@ void BoxTree::adjustStyleIfNeeded(const RenderElement& renderer, RenderStyle& st
     auto adjustStyle = [&] (auto& styleToAdjust) {
         if (is<RenderBlock>(renderer)) {
             if (styleToAdjust.display() == DisplayType::Inline)
-                styleToAdjust.setDisplay(DisplayType::InlineBlock);
+                styleToAdjust.setOriginalDisplay(DisplayType::InlineBlock);
             if (renderer.isAnonymousBlock()) {
                 auto& anonBlockParentStyle = renderer.parent()->style();
                 // overflow and text-overflow property values don't get forwarded to anonymous block boxes.
@@ -160,13 +160,13 @@ void BoxTree::adjustStyleIfNeeded(const RenderElement& renderer, RenderStyle& st
                 styleToAdjust.setPaddingRight(RenderStyle::initialPadding());
             }
             if ((styleToAdjust.display() == DisplayType::RubyBase || styleToAdjust.display() == DisplayType::RubyAnnotation) && renderInline->parent()->style().display() != DisplayType::Ruby)
-                styleToAdjust.setDisplay(DisplayType::Inline);
+                styleToAdjust.setOriginalDisplay(DisplayType::Inline);
             return;
         }
         if (auto* renderLineBreak = dynamicDowncast<RenderLineBreak>(renderer)) {
             if (!styleToAdjust.hasOutOfFlowPosition()) {
                 // Force in-flow display value to inline (see webkit.org/b/223151).
-                styleToAdjust.setDisplay(DisplayType::Inline);
+                styleToAdjust.setOriginalDisplay(DisplayType::Inline);
             }
             styleToAdjust.setFloating(Float::None);
             // Clear property should only apply on block elements, however,
