@@ -88,6 +88,7 @@ Platform/classifier/ResourceLoadStatisticsClassifier.cpp
 Platform/cocoa/AssertionCapability.mm @no-unify
 Platform/cocoa/ExtensionCapabilityGrant.mm
 Platform/cocoa/MediaCapability.mm
+Platform/cocoa/MediaPlaybackTargetContextSerialized.mm
 Platform/cocoa/PaymentAuthorizationPresenter.mm
 Platform/cocoa/PaymentAuthorizationViewController.mm
 Platform/cocoa/WKPaymentAuthorizationDelegate.mm

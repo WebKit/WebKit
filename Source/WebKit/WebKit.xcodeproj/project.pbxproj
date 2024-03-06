@@ -5568,6 +5568,9 @@
 		516BF1D22AE5FF0A009A0204 /* AppPrivacyReportTestingData.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = AppPrivacyReportTestingData.serialization.in; sourceTree = "<group>"; };
 		516BF1D32AE5FF24009A0204 /* UserContentControllerParameters.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = UserContentControllerParameters.serialization.in; sourceTree = "<group>"; };
 		516BF1D42AE5FF3F009A0204 /* ResourceLoadStatisticsParameters.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ResourceLoadStatisticsParameters.serialization.in; sourceTree = "<group>"; };
+		516E092A2B9453EE00A8C5B0 /* MediaPlaybackTargetContextSerialized.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaPlaybackTargetContextSerialized.mm; sourceTree = "<group>"; };
+		516E092B2B953AE300A8C5B0 /* MediaPlaybackTargetContextSerialized.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = MediaPlaybackTargetContextSerialized.serialization.in; sourceTree = "<group>"; };
+		516E092C2B953EDC00A8C5B0 /* MediaPlaybackTargetContextSerialized.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaPlaybackTargetContextSerialized.h; sourceTree = "<group>"; };
 		517A33B3130B308C00F80CB5 /* WKApplicationCacheManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKApplicationCacheManager.cpp; sourceTree = "<group>"; };
 		517A33B4130B308C00F80CB5 /* WKApplicationCacheManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKApplicationCacheManager.h; sourceTree = "<group>"; };
 		517A52D61F43A9B600DCDC0A /* WebSWServerConnectionMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSWServerConnectionMessages.h; sourceTree = "<group>"; };
@@ -11916,6 +11919,9 @@
 				BCE0937514FB128B001138D9 /* LayerHostingContext.mm */,
 				A141DF4D2B06ECFB00E80B2D /* MediaCapability.h */,
 				A141DF4E2B06ECFB00E80B2D /* MediaCapability.mm */,
+				516E092C2B953EDC00A8C5B0 /* MediaPlaybackTargetContextSerialized.h */,
+				516E092A2B9453EE00A8C5B0 /* MediaPlaybackTargetContextSerialized.mm */,
+				516E092B2B953AE300A8C5B0 /* MediaPlaybackTargetContextSerialized.serialization.in */,
 				F433C0A52958C22F00E771C2 /* NetworkIssueReporter.h */,
 				F433C0A62958C22F00E771C2 /* NetworkIssueReporter.mm */,
 				A1798B3D222D97A2000764BD /* PaymentAuthorizationPresenter.h */,

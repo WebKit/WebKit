@@ -28,54 +28,87 @@
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
+#import <Foundation/Foundation.h>
 #import <objc/runtime.h>
 #import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
 namespace WebCore {
 
-Ref<MediaPlaybackTarget> MediaPlaybackTargetCocoa::create(AVOutputContext *outputContext)
+MediaPlaybackTargetContextCocoa::MediaPlaybackTargetContextCocoa(RetainPtr<AVOutputContext>&& outputContext)
+    : MediaPlaybackTargetContext(Type::AVOutputContext)
+    , m_outputContext(WTFMove(outputContext))
 {
-    return adoptRef(*new MediaPlaybackTargetCocoa(outputContext));
+    ASSERT(m_outputContext);
 }
 
-Ref<MediaPlaybackTarget> MediaPlaybackTargetCocoa::create(MediaPlaybackTargetContext&& context)
+MediaPlaybackTargetContextCocoa::~MediaPlaybackTargetContextCocoa() = default;
+
+RetainPtr<AVOutputContext> MediaPlaybackTargetContextCocoa::outputContext() const
+{
+    return m_outputContext;
+}
+
+String MediaPlaybackTargetContextCocoa::deviceName() const
+{
+    if (![m_outputContext supportsMultipleOutputDevices])
+        return [m_outputContext deviceName];
+
+    auto outputDeviceNames = adoptNS([[NSMutableArray alloc] init]);
+    for (AVOutputDevice *outputDevice in [m_outputContext outputDevices])
+        [outputDeviceNames addObject:[outputDevice deviceName]];
+
+    return [outputDeviceNames componentsJoinedByString:@" + "];
+}
+
+bool MediaPlaybackTargetContextCocoa::hasActiveRoute() const
+{
+    if ([m_outputContext respondsToSelector:@selector(supportsMultipleOutputDevices)] && [m_outputContext supportsMultipleOutputDevices] && [m_outputContext respondsToSelector:@selector(outputDevices)]) {
+        for (AVOutputDevice *outputDevice in [m_outputContext outputDevices]) {
+            if (outputDevice.deviceFeatures & (AVOutputDeviceFeatureVideo | AVOutputDeviceFeatureAudio))
+                return true;
+        }
+    } else if ([m_outputContext respondsToSelector:@selector(outputDevice)]) {
+        if (auto *outputDevice = [m_outputContext outputDevice])
+            return outputDevice.deviceFeatures & (AVOutputDeviceFeatureVideo | AVOutputDeviceFeatureAudio);
+    }
+    return m_outputContext.get().deviceName;
+}
+bool MediaPlaybackTargetContextCocoa::supportsRemoteVideoPlayback() const
+{
+    if (![m_outputContext respondsToSelector:@selector(supportsMultipleOutputDevices)] || ![m_outputContext supportsMultipleOutputDevices] || ![m_outputContext respondsToSelector:@selector(outputDevices)]) {
+        if (auto *outputDevice = [m_outputContext outputDevice]) {
+            if (outputDevice.deviceFeatures & AVOutputDeviceFeatureVideo)
+                return true;
+        }
+        return false;
+    }
+
+    for (AVOutputDevice *outputDevice in [m_outputContext outputDevices]) {
+        if (outputDevice.deviceFeatures & AVOutputDeviceFeatureVideo)
+            return true;
+    }
+
+    return false;
+}
+
+Ref<MediaPlaybackTarget> MediaPlaybackTargetCocoa::create(MediaPlaybackTargetContextCocoa&& context)
 {
     return adoptRef(*new MediaPlaybackTargetCocoa(WTFMove(context)));
 }
 
-MediaPlaybackTargetCocoa::MediaPlaybackTargetCocoa(AVOutputContext *outputContext)
-    : m_context(outputContext)
-{
-}
-
-MediaPlaybackTargetCocoa::MediaPlaybackTargetCocoa(MediaPlaybackTargetContext&& context)
-    : m_context(WTFMove(context))
+MediaPlaybackTargetCocoa::MediaPlaybackTargetCocoa(MediaPlaybackTargetContextCocoa&& context)
+    : m_context(context.outputContext())
 {
 }
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(MACCATALYST)
-Ref<MediaPlaybackTarget> MediaPlaybackTargetCocoa::create()
+Ref<MediaPlaybackTargetCocoa> MediaPlaybackTargetCocoa::create()
 {
     auto *routingContextUID = [[PAL::getAVAudioSessionClass() sharedInstance] routingContextUID];
-    return adoptRef(*new MediaPlaybackTargetCocoa([PAL::getAVOutputContextClass() outputContextForID:routingContextUID]));
+    return adoptRef(*new MediaPlaybackTargetCocoa(MediaPlaybackTargetContextCocoa([PAL::getAVOutputContextClass() outputContextForID:routingContextUID])));
 }
 #endif
-
-MediaPlaybackTargetCocoa::~MediaPlaybackTargetCocoa()
-{
-}
-
-MediaPlaybackTargetCocoa* toMediaPlaybackTargetCocoa(MediaPlaybackTarget* rep)
-{
-    return const_cast<MediaPlaybackTargetCocoa*>(toMediaPlaybackTargetCocoa(const_cast<const MediaPlaybackTarget*>(rep)));
-}
-
-const MediaPlaybackTargetCocoa* toMediaPlaybackTargetCocoa(const MediaPlaybackTarget* rep)
-{
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(rep->targetType() == MediaPlaybackTarget::TargetType::AVFoundation);
-    return static_cast<const MediaPlaybackTargetCocoa*>(rep);
-}
 
 } // namespace WebCore
 

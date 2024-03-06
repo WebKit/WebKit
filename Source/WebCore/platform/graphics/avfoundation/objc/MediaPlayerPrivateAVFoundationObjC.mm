@@ -3433,7 +3433,7 @@ void MediaPlayerPrivateAVFoundationObjC::setWirelessPlaybackTarget(Ref<MediaPlay
 {
     m_playbackTarget = WTFMove(target);
 
-    m_outputContext = m_playbackTarget->targetType() == MediaPlaybackTarget::TargetType::AVFoundation ? toMediaPlaybackTargetCocoa(m_playbackTarget.get())->targetContext().outputContext() : nullptr;
+    m_outputContext = is<MediaPlaybackTargetCocoa>(m_playbackTarget) ? downcast<MediaPlaybackTargetCocoa>(m_playbackTarget)->outputContext() : nullptr;
 
     INFO_LOG(LOGIDENTIFIER);
 

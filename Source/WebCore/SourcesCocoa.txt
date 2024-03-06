@@ -441,7 +441,6 @@ platform/graphics/cocoa/IOSurfacePoolCocoa.mm
 platform/graphics/cocoa/IconCocoa.mm
 platform/graphics/cocoa/IntRectCocoa.mm
 platform/graphics/cocoa/MediaEngineConfigurationFactoryCocoa.cpp
-platform/graphics/cocoa/MediaPlaybackTargetContext.mm
 platform/graphics/cocoa/MediaPlayerCocoa.mm
 platform/graphics/cocoa/MediaPlayerPrivateWebM.mm
 platform/graphics/cocoa/SourceBufferParser.cpp
