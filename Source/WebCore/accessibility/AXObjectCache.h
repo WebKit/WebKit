@@ -212,8 +212,8 @@ public:
     void handleRoleChanged(AccessibilityObject&);
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    void columnIndexChanged(AccessibilityTableCell&);
-    void rowIndexChanged(AccessibilityTableCell&);
+    void columnIndexChanged(AccessibilityObject&);
+    void rowIndexChanged(AccessibilityObject&);
 #endif
 
     // Called when a RenderObject is created for an Element. Depending on the

@@ -592,6 +592,9 @@ void AXIsolatedTree::updateNodeProperties(AXCoreObject& axObject, const AXProper
         case AXPropertyName::CellSlots:
             propertyMap.set(AXPropertyName::CellSlots, dynamicDowncast<AccessibilityObject>(axObject)->cellSlots());
             break;
+        case AXPropertyName::ColumnIndex:
+            propertyMap.set(AXPropertyName::ColumnIndex, axObject.columnIndex());
+            break;
         case AXPropertyName::ColumnIndexRange:
             propertyMap.set(AXPropertyName::ColumnIndexRange, axObject.columnIndexRange());
             break;
@@ -664,6 +667,9 @@ void AXIsolatedTree::updateNodeProperties(AXCoreObject& axObject, const AXProper
             break;
         case AXPropertyName::RoleDescription:
             propertyMap.set(AXPropertyName::RoleDescription, axObject.roleDescription().isolatedCopy());
+            break;
+        case AXPropertyName::RowIndex:
+            propertyMap.set(AXPropertyName::RowIndex, axObject.rowIndex());
             break;
         case AXPropertyName::RowIndexRange:
             propertyMap.set(AXPropertyName::RowIndexRange, axObject.rowIndexRange());

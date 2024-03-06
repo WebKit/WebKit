@@ -74,6 +74,18 @@ AXCoreObject* AccessibilityTableColumn::columnHeader()
     return nullptr;
 }
 
+void AccessibilityTableColumn::setColumnIndex(unsigned columnIndex)
+{
+    if (m_columnIndex == columnIndex)
+        return;
+    m_columnIndex = columnIndex;
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    if (auto* cache = axObjectCache())
+        cache->columnIndexChanged(*this);
+#endif
+}
+
 bool AccessibilityTableColumn::computeAccessibilityIsIgnored() const
 {
     if (!m_parent)

@@ -633,6 +633,12 @@ http/tests/accessibility/focus-text-field-in-iframe.html [ Skip ]
 # Times out due to missing AccessibilityUIElement::linkedUIElementAtIndex() implementation.
 accessibility/combobox-linked-listbox-destroyed.html [ Skip ]
 
+# Fails due to missing AccessibilityUIElement::indexInTable() implementation.
+accessibility/table-insert-second-thead.html [ Skip ]
+
+# Fails due to missing AccessibilityUIElement::columns() implementation.
+accessibility/dynamic-table-row-column-indices.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Accessibility-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////

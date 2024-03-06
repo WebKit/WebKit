@@ -865,6 +865,9 @@ accessibility/mac/initial-relative-frame-cached.html [ Skip ]
 # New API not supported in WK1
 accessibility/mac/intersection-with-selection-range.html [ Skip ]
 
+# Skipping because AccessibilityUIElement::columns() is not supported on WK1.
+accessibility/dynamic-table-row-column-indices.html [ Skip ]
+
 # DOM paste access requests are not implemented in WebKit1.
 editing/async-clipboard/clipboard-change-data-while-reading.html [ Skip ]
 editing/async-clipboard/clipboard-do-not-read-text-from-platform-if-text-changes.html [ Skip ]

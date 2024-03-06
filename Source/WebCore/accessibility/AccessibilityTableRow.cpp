@@ -117,6 +117,18 @@ AccessibilityTable* AccessibilityTableRow::parentTable() const
     return nullptr;
 }
 
+void AccessibilityTableRow::setRowIndex(unsigned rowIndex)
+{
+    if (m_rowIndex == rowIndex)
+        return;
+    m_rowIndex = rowIndex;
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    if (auto* cache = axObjectCache())
+        cache->rowIndexChanged(*this);
+#endif
+}
+
 AXCoreObject* AccessibilityTableRow::rowHeader()
 {
     const auto& rowChildren = children();
