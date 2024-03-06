@@ -40,6 +40,10 @@ if (USE_CAIRO)
     list(APPEND WebKit_SOURCES
         UIProcess/cairo/BackingStoreCairo.cpp
     )
+elseif (USE_SKIA)
+    list(APPEND WebKit_SOURCES
+        UIProcess/skia/BackingStoreSkia.cpp
+    )
 endif ()
 
 if (USE_GRAPHICS_LAYER_TEXTURE_MAPPER)

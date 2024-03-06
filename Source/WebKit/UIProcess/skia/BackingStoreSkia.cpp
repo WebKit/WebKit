@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,51 +23,42 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "BackingStore.h"
 
-#if USE(GRAPHICS_LAYER_WC) || (USE(CAIRO) && !PLATFORM(WPE))
+#if USE(SKIA)
 
-#include <WebCore/IntSize.h>
-#include <WebCore/PlatformImage.h>
-#include <pal/HysteresisActivity.h>
-#include <wtf/Noncopyable.h>
-
-namespace WebCore {
-class IntRect;
-}
+#include "UpdateInfo.h"
+#include <WebCore/NotImplemented.h>
 
 namespace WebKit {
-struct UpdateInfo;
 
-#if USE(CAIRO)
-using PlatformPaintContextPtr = cairo_t*;
-#elif USE(SKIA)
-using PlatformPaintContextPtr = void*;
-#endif
+static const Seconds s_scrollHysteresisDuration { 300_ms };
 
-class BackingStore {
-    WTF_MAKE_FAST_ALLOCATED;
-    WTF_MAKE_NONCOPYABLE(BackingStore);
-public:
-    BackingStore(const WebCore::IntSize&, float deviceScaleFactor);
-    ~BackingStore();
+BackingStore::BackingStore(const WebCore::IntSize& size, float deviceScaleFactor)
+    : m_size(size)
+    , m_deviceScaleFactor(deviceScaleFactor)
+    , m_scrolledHysteresis([this](PAL::HysteresisState state) { if (state == PAL::HysteresisState::Stopped) m_scrollSurface = nullptr; }, s_scrollHysteresisDuration)
+{
+}
 
-    const WebCore::IntSize& size() const { return m_size; }
-    float deviceScaleFactor() const { return m_deviceScaleFactor; }
+BackingStore::~BackingStore() = default;
 
-    void paint(PlatformPaintContextPtr, const WebCore::IntRect&);
-    void incorporateUpdate(UpdateInfo&&);
+void BackingStore::paint(PlatformPaintContextPtr cr, const WebCore::IntRect& rect)
+{
+    notImplemented();
+}
 
-private:
-    void scroll(const WebCore::IntRect&, const WebCore::IntSize&);
+void BackingStore::incorporateUpdate(UpdateInfo&& updateInfo)
+{
+    notImplemented();
+}
 
-    WebCore::IntSize m_size;
-    float m_deviceScaleFactor { 1 };
-    WebCore::PlatformImagePtr m_surface;
-    WebCore::PlatformImagePtr m_scrollSurface;
-    PAL::HysteresisActivity m_scrolledHysteresis;
-};
+void BackingStore::scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset)
+{
+    notImplemented();
+}
 
 } // namespace WebKit
 
-#endif // USE(GRAPHICS_LAYER_WC) || (USE(CAIRO) && !PLATFORM(WPE))
+#endif // USE(SKIA)
