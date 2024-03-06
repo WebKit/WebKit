@@ -32,6 +32,7 @@
 #include "IPCUtilities.h"
 #include <WebCore/ProcessIdentity.h>
 #include <wtf/MachSendRight.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(VIDEO)
 #include "RemoteVideoFrameObjectHeap.h"
@@ -87,6 +88,7 @@ void RemoteGraphicsContextGL::setSharedVideoFrameMemory(SharedMemory::Handle&& h
 namespace {
 
 class RemoteGraphicsContextGLCocoa final : public RemoteGraphicsContextGL {
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(RemoteGraphicsContextGLCocoa);
 public:
     RemoteGraphicsContextGLCocoa(GPUConnectionToWebProcess&, GraphicsContextGLIdentifier, RemoteRenderingBackend&, Ref<IPC::StreamServerConnection>&&);
     ~RemoteGraphicsContextGLCocoa() final = default;

@@ -29,12 +29,14 @@
 #import "GPUProcess.h"
 #import "WKBase.h"
 #import "XPCServiceEntryPoint.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(GPU_PROCESS)
 
 namespace WebKit {
 
 class GPUServiceInitializerDelegate : public XPCServiceInitializerDelegate {
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(GPUServiceInitializerDelegate);
 public:
     GPUServiceInitializerDelegate(OSObjectPtr<xpc_connection_t> connection, xpc_object_t initializerMessage)
         : XPCServiceInitializerDelegate(WTFMove(connection), initializerMessage)

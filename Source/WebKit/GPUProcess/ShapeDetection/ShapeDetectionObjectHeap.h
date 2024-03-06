@@ -33,6 +33,7 @@
 #include <variant>
 #include <wtf/HashMap.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore::ShapeDetection {
 class BarcodeDetector;
@@ -49,7 +50,7 @@ class RemoteTextDetector;
 namespace WebKit::ShapeDetection {
 
 class ObjectHeap final : public RefCounted<ObjectHeap> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(ObjectHeap);
 public:
     static Ref<ObjectHeap> create()
     {

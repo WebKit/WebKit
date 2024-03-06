@@ -60,6 +60,8 @@ ALLOW_COMMA_END
 namespace WebKit {
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(LibWebRTCCodecsProxy);
+
 Ref<LibWebRTCCodecsProxy> LibWebRTCCodecsProxy::create(GPUConnectionToWebProcess& webProcessConnection)
 {
     auto instance = adoptRef(*new LibWebRTCCodecsProxy(webProcessConnection));

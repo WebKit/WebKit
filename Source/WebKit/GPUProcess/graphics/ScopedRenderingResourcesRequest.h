@@ -27,10 +27,12 @@
 
 #include <atomic>
 #include <utility>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class ScopedRenderingResourcesRequest {
+    WTF_MAKE_WK_TZONE_ALLOCATED(ScopedRenderingResourcesRequest);
 public:
     ScopedRenderingResourcesRequest() = default;
     ScopedRenderingResourcesRequest(ScopedRenderingResourcesRequest&& other)

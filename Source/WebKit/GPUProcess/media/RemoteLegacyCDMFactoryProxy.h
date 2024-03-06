@@ -33,6 +33,7 @@
 #include "RemoteLegacyCDMIdentifier.h"
 #include "RemoteLegacyCDMSessionIdentifier.h"
 #include <WebCore/MediaPlayerIdentifier.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
 
@@ -43,7 +44,7 @@ class RemoteLegacyCDMProxy;
 struct RemoteLegacyCDMConfiguration;
 
 class RemoteLegacyCDMFactoryProxy final : public IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(RemoteLegacyCDMFactoryProxy);
 public:
     RemoteLegacyCDMFactoryProxy(GPUConnectionToWebProcess&);
     virtual ~RemoteLegacyCDMFactoryProxy();

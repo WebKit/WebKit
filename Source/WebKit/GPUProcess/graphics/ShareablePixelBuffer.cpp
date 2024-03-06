@@ -31,6 +31,8 @@
 namespace WebKit {
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(ShareablePixelBuffer);
+
 RefPtr<ShareablePixelBuffer> ShareablePixelBuffer::tryCreate(const PixelBufferFormat& format, const IntSize& size)
 {
     ASSERT(supportedPixelFormat(format.pixelFormat));

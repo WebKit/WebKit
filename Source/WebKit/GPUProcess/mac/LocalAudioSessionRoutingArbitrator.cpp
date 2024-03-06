@@ -38,6 +38,8 @@ namespace WebKit {
 
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(LocalAudioSessionRoutingArbitrator);
+
 UniqueRef<LocalAudioSessionRoutingArbitrator> LocalAudioSessionRoutingArbitrator::create(GPUConnectionToWebProcess& gpuConnectionToWebProcess)
 {
     return makeUniqueRef<LocalAudioSessionRoutingArbitrator>(gpuConnectionToWebProcess);

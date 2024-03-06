@@ -87,6 +87,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(GPUProcess);
+
 // We wouldn't want the GPUProcess to repeatedly exit then relaunch when under memory pressure. In particular, we need to make sure the
 // WebProcess has a change to schedule work after the GPUProcess get launched. For this reason, we make sure that the GPUProcess never
 // idle-exits less than 5 seconds after getting launched. This amount of time should be sufficient for the WebProcess to schedule work

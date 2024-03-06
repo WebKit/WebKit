@@ -28,10 +28,12 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(MEDIA_SOURCE)
 
 #include "MediaDescriptionInfo.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
 class RemoteMediaDescription : public WebCore::MediaDescription {
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(RemoteMediaDescription);
 public:
     static Ref<RemoteMediaDescription> create(const MediaDescriptionInfo& descriptionInfo)
     {

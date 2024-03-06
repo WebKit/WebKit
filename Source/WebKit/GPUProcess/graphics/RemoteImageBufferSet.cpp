@@ -49,6 +49,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(RemoteImageBufferSet);
+
 Ref<RemoteImageBufferSet> RemoteImageBufferSet::create(RemoteImageBufferSetIdentifier identifier, WebCore::RenderingResourceIdentifier displayListIdentifier, RemoteRenderingBackend& backend)
 {
     auto instance = adoptRef(*new RemoteImageBufferSet(identifier, displayListIdentifier, backend));

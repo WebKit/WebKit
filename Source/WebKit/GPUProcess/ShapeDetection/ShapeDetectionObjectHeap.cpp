@@ -34,6 +34,8 @@
 
 namespace WebKit::ShapeDetection {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(ObjectHeap);
+
 ObjectHeap::ObjectHeap() = default;
 
 ObjectHeap::~ObjectHeap() = default;

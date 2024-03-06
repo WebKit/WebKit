@@ -41,6 +41,9 @@
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(RemoteMediaRecorder);
+
 static constexpr Seconds mediaRecorderDefaultTimeout { 1_s };
 
 std::unique_ptr<RemoteMediaRecorder> RemoteMediaRecorder::create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, MediaRecorderIdentifier identifier, bool recordAudio, bool recordVideo, const MediaRecorderPrivateOptions& options)

@@ -36,6 +36,8 @@ namespace WebKit {
 
 using namespace WebCore;
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(RemoteRemoteCommandListenerProxy);
+
 RemoteRemoteCommandListenerProxy::RemoteRemoteCommandListenerProxy(GPUConnectionToWebProcess& gpuConnection, RemoteRemoteCommandListenerIdentifier&& identifier)
     : m_gpuConnection(gpuConnection)
     , m_identifier(WTFMove(identifier))

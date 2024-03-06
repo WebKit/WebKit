@@ -46,6 +46,7 @@
 #include <wtf/LoggerHelper.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
@@ -107,7 +108,7 @@ class RemoteMediaPlayerProxy final
     : public RefCounted<RemoteMediaPlayerProxy>
     , public WebCore::MediaPlayerClient
     , private IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(RemoteMediaPlayerProxy);
 public:
     using WebCore::MediaPlayerClient::WeakPtrImplType;
     using WebCore::MediaPlayerClient::WeakValueType;

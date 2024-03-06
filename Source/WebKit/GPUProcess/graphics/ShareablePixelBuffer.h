@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/PixelBuffer.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class SharedMemory;
@@ -34,6 +35,7 @@ class SharedMemory;
 namespace WebKit {
 
 class ShareablePixelBuffer : public WebCore::PixelBuffer {
+    WTF_MAKE_WK_TZONE_ALLOCATED(ShareablePixelBuffer);
 public:
     static RefPtr<ShareablePixelBuffer> tryCreate(const WebCore::PixelBufferFormat&, const WebCore::IntSize&);
 

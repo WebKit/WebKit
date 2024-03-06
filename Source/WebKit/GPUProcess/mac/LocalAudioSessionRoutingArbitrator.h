@@ -28,6 +28,7 @@
 #if ENABLE(ROUTING_ARBITRATION) && HAVE(AVAUDIO_ROUTING_ARBITER)
 
 #include "AudioSessionRoutingArbitratorProxy.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WTF {
 class Logger;
@@ -39,7 +40,7 @@ class GPUConnectionToWebProcess;
 
 class LocalAudioSessionRoutingArbitrator final
     : public WebCore::AudioSessionRoutingArbitrationClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(LocalAudioSessionRoutingArbitrator);
 
     friend UniqueRef<LocalAudioSessionRoutingArbitrator> WTF::makeUniqueRefWithoutFastMallocCheck<LocalAudioSessionRoutingArbitrator>(GPUConnectionToWebProcess&);
 public:

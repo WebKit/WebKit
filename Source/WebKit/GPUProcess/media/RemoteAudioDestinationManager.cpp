@@ -63,12 +63,14 @@
 
 namespace WebKit {
 
+WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(RemoteAudioDestinationManager);
+
 class RemoteAudioDestination final
 #if PLATFORM(COCOA)
     : public WebCore::AudioUnitRenderer
 #endif
 {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED_INLINE(RemoteAudioDestination);
 public:
     RemoteAudioDestination(GPUConnectionToWebProcess&, const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate, IPC::Semaphore&& renderSemaphore)
         : m_renderSemaphore(WTFMove(renderSemaphore))

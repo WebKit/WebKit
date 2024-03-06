@@ -30,6 +30,7 @@
 #include "RemoteVideoFrameProxy.h"
 #include "ThreadSafeObjectHeap.h"
 #include "WorkQueueMessageReceiver.h"
+#include <wtf/TZoneMalloc.h>
 
 #if PLATFORM(COCOA)
 #include "SharedVideoFrame.h"
@@ -45,6 +46,7 @@ namespace WebKit {
 
 // Holds references to all VideoFrame instances that are mapped from GPU process to Web process.
 class RemoteVideoFrameObjectHeap final : public IPC::WorkQueueMessageReceiver {
+    WTF_MAKE_WK_TZONE_ALLOCATED(RemoteVideoFrameObjectHeap);
 public:
     static Ref<RemoteVideoFrameObjectHeap> create(Ref<IPC::Connection>&&);
     ~RemoteVideoFrameObjectHeap();

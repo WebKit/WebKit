@@ -34,6 +34,7 @@
 #include <variant>
 #include <wtf/HashMap.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore::WebGPU {
 class Adapter;
@@ -91,7 +92,7 @@ class RemoteTextureView;
 namespace WebKit::WebGPU {
 
 class ObjectHeap final : public RefCounted<ObjectHeap>, public WebGPU::ConvertFromBackingContext {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_WK_TZONE_ALLOCATED(ObjectHeap);
 public:
     static Ref<ObjectHeap> create()
     {
