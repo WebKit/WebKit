@@ -510,6 +510,11 @@ static inline WebKit::WebExtensionContext::PermissionState toImpl(_WKWebExtensio
     return _webExtensionContext->hasInjectedContentForURL(url);
 }
 
+- (BOOL)hasContentModificationRules
+{
+    return _webExtensionContext->hasContentModificationRules();
+}
+
 - (_WKWebExtensionAction *)actionForTab:(id<_WKWebExtensionTab>)tab
 {
     if (tab)
@@ -1032,6 +1037,11 @@ static inline OptionSet<WebKit::WebExtensionTab::ChangedProperties> toImpl(_WKWe
 }
 
 - (BOOL)hasInjectedContentForURL:(NSURL *)url
+{
+    return NO;
+}
+
+- (BOOL)hasContentModificationRules
 {
     return NO;
 }

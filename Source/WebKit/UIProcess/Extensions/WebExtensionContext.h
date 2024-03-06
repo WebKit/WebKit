@@ -285,6 +285,8 @@ public:
     bool hasInjectedContentForURL(const URL&);
     bool hasInjectedContent();
 
+    bool hasContentModificationRules();
+
     URL optionsPageURL() const;
     URL overrideNewTabPageURL() const;
 

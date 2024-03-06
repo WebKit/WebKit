@@ -526,9 +526,12 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, SessionRules)
     // Grant the declarativeNetRequest permission.
     [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionDeclarativeNetRequest];
 
+    EXPECT_FALSE(manager.get().context.hasContentModificationRules);
+
     [manager loadAndRun];
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+    EXPECT_TRUE(manager.get().context.hasContentModificationRules);
 
     auto webView = manager.get().defaultTab.mainWebView;
     auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
@@ -582,9 +585,12 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, DynamicRules)
     // Grant the declarativeNetRequest permission.
     [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionDeclarativeNetRequest];
 
+    EXPECT_FALSE(manager.get().context.hasContentModificationRules);
+
     [manager loadAndRun];
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Unload extension");
+    EXPECT_TRUE(manager.get().context.hasContentModificationRules);
 
     auto *storageDirectory = manager.get().controller.configuration._storageDirectoryPath;
     storageDirectory = [storageDirectory stringByAppendingPathComponent:manager.get().context.uniqueIdentifier];
