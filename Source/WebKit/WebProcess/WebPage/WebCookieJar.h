@@ -34,6 +34,10 @@
 #include <wtf/WeakHashSet.h>
 #include <wtf/text/WTFString.h>
 
+#if PLATFORM(COCOA)
+OBJC_CLASS NSHTTPCookieStorage;
+#endif
+
 namespace WebCore {
 struct Cookie;
 struct CookieStoreGetOptions;
@@ -76,9 +80,18 @@ private:
     bool remoteCookiesEnabledSync(WebCore::Document&) const;
     void clearCacheForHost(const String&) final;
     bool isEligibleForCache(WebFrame&, const URL& firstPartyForCookies, const URL& resourceURL) const;
+    String cookiesInPartitionedCookieStorage(const WebCore::Document&, const URL&, const WebCore::SameSiteInfo&) const;
+    void setCookiesInPartitionedCookieStorage(const WebCore::Document&, const URL&, const WebCore::SameSiteInfo&, const String& cookieString);
+#if PLATFORM(COCOA)
+    NSHTTPCookieStorage* ensurePartitionedCookieStorage();
+#endif
 
     mutable WebCookieCache m_cache;
     HashMap<String, WeakHashSet<WebCore::CookieChangeListener>> m_changeListeners;
+
+#if PLATFORM(COCOA)
+    RetainPtr<NSHTTPCookieStorage> m_partitionedStorageForDOMCookies;
+#endif
 };
 
 } // namespace WebKit

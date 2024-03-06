@@ -187,6 +187,7 @@ public:
 
     bool shouldDisableElementFullscreenQuirk() const;
     bool shouldIgnorePlaysInlineRequirementQuirk() const;
+    WEBCORE_EXPORT bool shouldUseEphemeralPartitionedStorageForDOMCookies(const URL&) const;
 
 private:
     bool needsQuirks() const;

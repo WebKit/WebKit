@@ -137,11 +137,11 @@ String WebCookieJar::cookies(WebCore::Document& document, const URL& url) const
     if (!webFrame || !webFrame->page())
         return { };
 
+    auto sameSiteInfo = CookieJar::sameSiteInfo(document, IsForDOMCookieAccess::Yes);
     ApplyTrackingPrevention applyTrackingPreventionInNetworkProcess = ApplyTrackingPrevention::No;
     if (shouldBlockCookies(webFrame.get(), document.firstPartyForCookies(), url, applyTrackingPreventionInNetworkProcess))
-        return { };
+        return cookiesInPartitionedCookieStorage(document, url, sameSiteInfo);
 
-    auto sameSiteInfo = CookieJar::sameSiteInfo(document, IsForDOMCookieAccess::Yes);
     auto includeSecureCookies = CookieJar::shouldIncludeSecureCookies(document, url);
     auto frameID = webFrame->frameID();
     auto pageID = webFrame->page()->identifier();
@@ -161,11 +161,13 @@ void WebCookieJar::setCookies(WebCore::Document& document, const URL& url, const
     if (!webFrame || !webFrame->page())
         return;
 
-    ApplyTrackingPrevention applyTrackingPreventionInNetworkProcess = ApplyTrackingPrevention::No;
-    if (shouldBlockCookies(webFrame.get(), document.firstPartyForCookies(), url, applyTrackingPreventionInNetworkProcess))
-        return;
-
     auto sameSiteInfo = CookieJar::sameSiteInfo(document, IsForDOMCookieAccess::Yes);
+    ApplyTrackingPrevention applyTrackingPreventionInNetworkProcess = ApplyTrackingPrevention::No;
+    if (shouldBlockCookies(webFrame.get(), document.firstPartyForCookies(), url, applyTrackingPreventionInNetworkProcess)) {
+        setCookiesInPartitionedCookieStorage(document, url, sameSiteInfo, cookieString);
+        return;
+    }
+
     auto frameID = webFrame->frameID();
     auto pageID = webFrame->page()->identifier();
 
@@ -390,5 +392,18 @@ void WebCookieJar::removeChangeListener(const String& host, const WebCore::Cooki
     WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::UnsubscribeFromCookieChangeNotifications(host), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 #endif
+
+#if !PLATFORM(COCOA)
+
+String WebCookieJar::cookiesInPartitionedCookieStorage(const WebCore::Document&, const URL&, const WebCore::SameSiteInfo&) const
+{
+    return { };
+}
+
+void WebCookieJar::setCookiesInPartitionedCookieStorage(const WebCore::Document&, const URL&, const WebCore::SameSiteInfo&, const String&)
+{
+}
+
+#endif // !PLATFORM(COCOA)
 
 } // namespace WebKit

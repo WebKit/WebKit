@@ -1838,4 +1838,19 @@ bool Quirks::shouldIgnorePlaysInlineRequirementQuirk() const
 #endif
 }
 
+bool Quirks::shouldUseEphemeralPartitionedStorageForDOMCookies(const URL& url) const
+{
+    if (!needsQuirks())
+        return false;
+
+    auto firstPartyDomain = RegistrableDomain(m_document->firstPartyForCookies()).string();
+    auto domain = RegistrableDomain(url).string();
+
+    // rdar://113830141
+    if (firstPartyDomain == "cagreatamerica.com"_s && domain == "queue-it.net"_s)
+        return true;
+
+    return false;
+}
+
 }
