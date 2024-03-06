@@ -36,13 +36,14 @@ from webkitpy.common.checkout.changelog import ChangeLogEntry
 from webkitpy.common.checkout.scm import CommitMessage, SCMDetector
 from webkitpy.common.checkout.scm.scm_mock import MockSCM
 from webkitpy.common.webkit_finder import WebKitFinder
-from webkitpy.common.system.executive import Executive
+from webkitpy.common.system.executive import Executive, ScriptError
 from webkitpy.common.system.filesystem import FileSystem  # FIXME: This should not be needed.
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.executive_mock import MockExecutive
 from webkitpy.thirdparty.mock import Mock
 
 from webkitcorepy import string_utils, OutputCapture
+from webkitscmpy import mocks
 
 
 _changelog1entry1 = u"""2010-03-25  Fr\u00e9d\u00e9ric Wang  <fred.wang@free.fr>

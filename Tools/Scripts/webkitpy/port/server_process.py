@@ -43,6 +43,7 @@ from webkitcorepy import string_utils
 if sys.platform.startswith('win'):
     import msvcrt
     import pywintypes
+    import win32api
     import win32file
     import win32pipe
     import winerror

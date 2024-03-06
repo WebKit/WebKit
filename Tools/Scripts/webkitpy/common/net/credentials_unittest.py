@@ -36,6 +36,7 @@ import unittest
 from webkitpy.common.net.credentials import Credentials
 from webkitpy.common.system.user_mock import MockUser
 from webkitpy.thirdparty.mock import Mock
+from webkitpy.tool.mocktool import MockOptions
 from webkitpy.common.system.executive_mock import MockExecutive
 
 from webkitcorepy import OutputCapture

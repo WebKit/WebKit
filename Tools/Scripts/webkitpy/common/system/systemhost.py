@@ -28,6 +28,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
+import platform
+import sys
 
 from webkitpy.common.system import environment, executive, filesystem, platforminfo, user, workspace
 from webkitcorepy import FileLock

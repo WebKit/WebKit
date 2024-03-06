@@ -22,10 +22,13 @@
 
 from webkitcorepy import Version
 
+from webkitpy.common.system.executive_mock import MockExecutive2, ScriptError
 from webkitpy.port.visionos_simulator import VisionOSSimulatorPort
 from webkitpy.port import visionos_testcase
 from webkitpy.tool.mocktool import MockOptions
 from webkitpy.xcode.device_type import DeviceType
+
+from webkitcorepy import OutputCapture
 
 
 class VisionOSSimulatorTest(visionos_testcase.VisionOSTest):

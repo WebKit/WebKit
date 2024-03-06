@@ -30,6 +30,7 @@ from webkitpy.common.iteration_compatibility import iteritems
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.results.upload import Upload
 from webkitpy.xcode.simulated_device import DeviceRequest, SimulatedDeviceManager
+from webkitpy.xcode.device_type import DeviceType
 
 _log = logging.getLogger(__name__)
 

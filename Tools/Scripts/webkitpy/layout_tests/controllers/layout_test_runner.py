@@ -34,6 +34,7 @@ import time
 from webkitcorepy.string_utils import pluralize
 from webkitcorepy import TaskPool
 
+from webkitpy.common import message_pool
 from webkitpy.common.iteration_compatibility import iteritems
 from webkitpy.common.interrupt_debugging import log_stack_trace_on_signal
 from webkitpy.layout_tests.controllers import single_test_runner

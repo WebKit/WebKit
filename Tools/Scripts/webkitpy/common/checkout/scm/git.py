@@ -31,7 +31,9 @@ import datetime
 import logging
 import re
 
+from webkitcorepy import string_utils
 from webkitscmpy import local
+from webkitscmpy.program import branch
 
 from webkitpy.common.memoized import memoized
 from webkitpy.common.system.executive import Executive, ScriptError

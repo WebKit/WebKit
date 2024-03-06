@@ -30,6 +30,8 @@
 
 import logging
 
+from webkitpy.common.memoized import memoized
+
 _log = logging.getLogger(__name__)
 
 

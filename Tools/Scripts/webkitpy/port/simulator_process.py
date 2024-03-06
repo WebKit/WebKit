@@ -22,6 +22,7 @@
 
 
 import os
+import sys
 import time
 
 from webkitcorepy import Timeout

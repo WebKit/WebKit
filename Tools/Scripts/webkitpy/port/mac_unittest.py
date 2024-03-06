@@ -35,7 +35,7 @@ from webkitpy.port.mac import MacPort
 from webkitpy.port import darwin_testcase
 from webkitpy.port import port_testcase
 from webkitpy.tool.mocktool import MockOptions
-from webkitpy.common.system.executive_mock import MockExecutive
+from webkitpy.common.system.executive_mock import MockExecutive, MockExecutive2, ScriptError
 from webkitpy.common.system.platforminfo_mock import MockPlatformInfo
 from webkitpy.common.system.systemhost_mock import MockSystemHost
 from webkitpy.common.version_name_map import VersionNameMap

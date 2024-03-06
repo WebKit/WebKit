@@ -28,11 +28,15 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
+import os
+import sys
+import unittest
 
 from webkitpy.common.system.executive_mock import MockExecutive
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.port.gtk import GtkPort
 from webkitpy.port import port_testcase
+from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.mocktool import MockOptions
 
 from webkitcorepy import OutputCapture

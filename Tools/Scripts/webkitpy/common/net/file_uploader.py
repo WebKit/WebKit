@@ -27,9 +27,10 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import mimetypes
+import time
 import sys
 
-from webkitpy.common.net.networktransaction import NetworkTransaction
+from webkitpy.common.net.networktransaction import NetworkTransaction, NetworkTimeout
 from webkitcorepy import string_utils, unicode
 
 if sys.version_info > (3, 0):

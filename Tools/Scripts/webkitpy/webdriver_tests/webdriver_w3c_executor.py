@@ -40,8 +40,8 @@ def _ensure_directory_in_path(directory):
 _ensure_directory_in_path(os.path.join(w3c_tools_dir, 'webdriver'))
 _ensure_directory_in_path(os.path.join(w3c_tools_dir, 'wptrunner'))
 
-from wptrunner.executors.base import WdspecExecutor
-from wptrunner.browsers.base import WebDriverBrowser
+from wptrunner.executors.base import WdspecExecutor, WdspecProtocol  # noqa
+from wptrunner.browsers.base import WebDriverBrowser  # noqa
 
 pytest_runner = None
 

@@ -122,4 +122,4 @@ class SimpleHTTPServerDriver(HTTPServerDriver):
     def _ensure_http_server_dependencies(self):
         _log.info('Ensure dependencies of http server is satisfied')
         if(self._server_type == 'twisted'):
-            from webkitpy.autoinstalled import twisted as _  # noqa: F401
+            from webkitpy.autoinstalled import twisted

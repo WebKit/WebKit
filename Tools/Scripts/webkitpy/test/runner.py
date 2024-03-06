@@ -22,6 +22,7 @@
 
 """code to actually run a list of python tests."""
 
+import re
 import time
 import unittest
 

@@ -27,11 +27,15 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import os
+import sys
+import unittest
+
 from webkitpy.common.system.executive_mock import MockExecutive
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.port.wpe import WPEPort
 from webkitpy.port import port_testcase
-from webkitpy.thirdparty.mock import patch
+from webkitpy.thirdparty.mock import Mock, patch
 from webkitpy.tool.mocktool import MockOptions
 from webkitcorepy import OutputCapture
 import logging

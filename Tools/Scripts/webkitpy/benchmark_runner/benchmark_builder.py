@@ -5,6 +5,7 @@ import re
 import requests
 import shutil
 import subprocess
+import sys
 import tarfile
 
 from webkitpy.benchmark_runner.utils import get_path_from_project_root, force_remove

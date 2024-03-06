@@ -35,27 +35,25 @@ import re
 
 from webkitpy.common.iteration_compatibility import iteritems, itervalues
 from webkitpy.layout_tests.models.test_configuration import (
+    TestConfiguration,
     TestConfigurationConverter,
 )
+from webkitpy.port.base import Port
 
 MYPY = False
 if MYPY:
     # MYPY is True when running Mypy; typing is stdlib only in Py3
-    from webkitpy.layout_tests.models.test_configuration import (
-        TestConfiguration,  # noqa: F401
-    )
-    from webkitpy.port.base import Port  # noqa: F401
     from typing import (
-        Any,  # noqa: F401
-        Callable,  # noqa: F401
-        Container,  # noqa: F401
-        Dict,  # noqa: F401
-        Iterable,  # noqa: F401
-        List,  # noqa: F401
-        Optional,  # noqa: F401
-        Set,  # noqa: F401
-        Tuple,  # noqa: F401
-        Union,  # noqa: F401
+        Any,
+        Callable,
+        Container,
+        Dict,
+        Iterable,
+        List,
+        Optional,
+        Set,
+        Tuple,
+        Union,
     )
 
 _log = logging.getLogger(__name__)

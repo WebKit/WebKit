@@ -30,6 +30,7 @@
 import logging
 import unittest
 
+from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.executive_mock import MockProcess
 from webkitpy.common.system.systemhost_mock import MockSystemHost
 from webkitpy.port import Port

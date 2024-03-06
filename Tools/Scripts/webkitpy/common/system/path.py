@@ -29,6 +29,7 @@
 """generic routines to convert platform-specific paths to URIs."""
 
 import atexit
+import os
 import re
 import subprocess
 import sys

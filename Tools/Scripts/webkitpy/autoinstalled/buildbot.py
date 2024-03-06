@@ -21,11 +21,10 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import sys
+import webkitscmpy
 
 from webkitcorepy import AutoInstall, Package, Version
-
-# Force twisted to be autoinstalled before buildbot.
-from webkitpy.autoinstalled import twisted as _  # noqa: F401
+from webkitpy.autoinstalled import twisted
 
 AutoInstall.install(Package('attr', Version(21, 3, 0), pypi_name='attrs'))
 AutoInstall.install(Package('constantly', Version(15, 1, 0)))
@@ -55,6 +54,8 @@ if sys.version_info >= (3, 0):
     # became public API and started being included in wheels from 3.5.0.
     AutoInstall.install(Package('buildbot', Version(2, 10, 5), wheel=False))
     AutoInstall.install(Package('buildbot-worker', Version(2, 10, 5)))
+
+    from buildbot import statistics
 else:
     # autobahn has wheel=False because of https://bugs.webkit.org/show_bug.cgi?id=263392
     AutoInstall.install(Package('autobahn', Version(17, 8, 1), wheel=False))
