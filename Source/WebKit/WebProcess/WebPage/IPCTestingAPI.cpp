@@ -2892,14 +2892,17 @@ void JSMessageListener::willSendMessage(const IPC::Encoder& encoder, OptionSet<I
 
     RELEASE_ASSERT(m_jsIPC);
     Ref protectOwnerOfThis = *m_jsIPC;
-    auto* globalObject = toJS(m_context);
-    JSC::JSLockHolder lock(globalObject->vm());
 
     auto decoder = IPC::Decoder::create({ encoder.buffer(), encoder.bufferSize() }, { });
-    auto* description = jsDescriptionFromDecoder(globalObject, *decoder);
+    RunLoop::main().dispatch([this, protectOwnerOfThis = WTFMove(protectOwnerOfThis), decoder = WTFMove(decoder)] {
+        auto* globalObject = toJS(m_context);
+        JSC::JSLockHolder lock(globalObject->vm());
 
-    JSValueRef arguments[] = { description ? toRef(globalObject, description) : JSValueMakeUndefined(m_context) };
-    JSObjectCallAsFunction(m_context, m_callback, m_callback, std::size(arguments), arguments, nullptr);
+        auto* description = jsDescriptionFromDecoder(globalObject, *decoder);
+
+        JSValueRef arguments[] = { description ? toRef(globalObject, description) : JSValueMakeUndefined(m_context) };
+        JSObjectCallAsFunction(m_context, m_callback, m_callback, std::size(arguments), arguments, nullptr);
+    });
 }
 
 JSC::JSObject* JSMessageListener::jsDescriptionFromDecoder(JSC::JSGlobalObject* globalObject, IPC::Decoder& decoder)
