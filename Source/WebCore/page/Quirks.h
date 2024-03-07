@@ -184,6 +184,8 @@ public:
 
     bool shouldDisableElementFullscreenQuirk() const;
 
+    bool needsGetElementsByNameQuirk() const;
+
 private:
     bool needsQuirks() const;
     bool isDomain(const String&) const;
