@@ -1440,19 +1440,6 @@
             F_SETCONFINED
             F_SETFD ;; libwebrtc.dylib (no backtrace)
             F_SETPROTECTIONCLASS))
-
-    (define (appcache-fcntl-commands)
-        (fcntl-command
-            F_GETLK
-            F_OFD_GETLK
-            F_OFD_SETLK
-            F_OFD_SETLKWTIMEOUT))
-
-#if HAVE(SANDBOX_STATE_FLAGS)
-    (deny system-fcntl (appcache-fcntl-commands))
-#else
-    (allow system-fcntl (appcache-fcntl-commands))
-#endif
 )
 
 (when (defined? 'process-codesigning*)
@@ -1616,13 +1603,6 @@
     SYS_sysctlbyname
     SYS_umask
     SYS_work_interval_ctl))
-
-(define (syscall-appcache)
-    (syscall-number
-        SYS_guarded_open_np
-        SYS_guarded_close_np
-        SYS_guarded_pwrite_np
-        SYS_unlink))
 
 (define (syscall-unix-downlevels)
     (syscall-number

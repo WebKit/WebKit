@@ -1215,17 +1215,6 @@
             F_GETLK
             F_OFD_SETLK))
 
-    (define (appcache-fcntl-commands)
-        (fcntl-command
-            F_OFD_GETLK
-            F_OFD_SETLKWTIMEOUT))
-            
-#if HAVE(SANDBOX_STATE_FLAGS)
-    (deny system-fcntl (with telemetry-backtrace) (appcache-fcntl-commands))
-#else
-    (allow system-fcntl (appcache-fcntl-commands))
-#endif
-
     (allow system-fcntl
         (fcntl-command F_GETPROTECTIONCLASS)
         (fcntl-command F_SETPROTECTIONCLASS))
