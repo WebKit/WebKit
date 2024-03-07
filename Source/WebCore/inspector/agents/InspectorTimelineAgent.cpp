@@ -224,6 +224,8 @@ void InspectorTimelineAgent::internalStart(std::optional<int>&& maxCallStackDept
             pushCurrentRecord(TimelineRecordFactory::createRenderingFrameData(name), TimelineRecordType::RenderingFrame, false, nullptr);
             break;
         case RunLoop::Event::DidDispatch:
+            if (m_startedComposite)
+                didComposite();
             didCompleteCurrentRecord(TimelineRecordType::RenderingFrame);
             break;
         }
