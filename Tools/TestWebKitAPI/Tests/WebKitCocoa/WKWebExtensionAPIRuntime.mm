@@ -1308,6 +1308,51 @@ TEST(WKWebExtensionAPIRuntime, ConnectFromWebPage)
     [manager run];
 }
 
+TEST(WKWebExtensionAPIRuntime, ConnectFromWebPageWithWrongIdentifier)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.runtime.onMessageExternal.addListener((message, sender, sendResponse) => {",
+        @"  browser.test.notifyFail('The page should not be able to connect')",
+        @"})",
+
+        @"browser.test.yield('Load Tab')"
+    ]);
+
+    auto *webpageScript = Util::constructScript(@[
+        @"<script>",
+        @"  const startTime = performance.now()",
+
+        @"  let port = browser.runtime.connect('org.webkit.test.extension (Incorrect)', { name: 'testPort' })",
+        @"  browser.test.assertTrue(!!port, 'Port should be returned even with a wrong extension identifier')",
+
+        @"  port.onDisconnect.addListener((port) => {",
+        @"    browser.test.assertTrue((performance.now() - startTime) >= 100, 'Disconnect should happen after a delay of at least 100ms')",
+
+        @"    browser.test.notifyPass()",
+        @"  })",
+        @"</script>"
+    ]);
+
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, webpageScript } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *urlRequest = server.requestWithLocalhost();
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:externallyConnectableManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager run];
+}
+
 TEST(WKWebExtensionAPIRuntime, SendMessageFromWebPage)
 {
     auto *uniqueIdentifier = @"org.webkit.test.extension (SendMessageTest)";
@@ -1463,6 +1508,49 @@ TEST(WKWebExtensionAPIRuntime, SendMessageFromWebPageWithTabFrameAndAsyncReply)
 
     auto *secondTab = [manager.get().defaultWindow openNewTab];
     [secondTab.mainWebView loadRequest:server.requestWithLocalhost("/second-tab.html"_s)];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIRuntime, SendMessageFromWebPageWithWrongIdentifier)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.runtime.onMessageExternal.addListener(async (message, sender, sendResponse) => {",
+        @"  browser.test.notifyFail('The page should not be able to send a message with a wrong identifier')",
+        @"})",
+
+        @"browser.test.yield('Load Tab')"
+    ]);
+
+    auto *webpageScript = Util::constructScript(@[
+        @"<script type='module'>",
+        @"  const startTime = performance.now()",
+
+        @"  const response = await browser.runtime.sendMessage('org.webkit.test.extension (Incorrect)', 'Hello')",
+        @"  browser.test.assertEq(response, undefined, 'The response should be undefined')",
+
+        @"  browser.test.assertTrue((performance.now() - startTime) >= 100, 'Should take at least 100ms to attempt the message send')",
+
+        @"  browser.test.notifyPass()",
+        @"</script>"
+    ]);
+
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, webpageScript } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *urlRequest = server.requestWithLocalhost();
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:externallyConnectableManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
 
     [manager run];
 }

@@ -265,16 +265,12 @@ void WebExtensionContext::runtimeConnectNative(const String& applicationID, WebE
 void WebExtensionContext::runtimeWebPageSendMessage(const String& extensionID, const String& messageJSON, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(Expected<String, WebExtensionError>&&)>&& completionHandler)
 {
     RefPtr destinationExtension = extensionController()->extensionContext(extensionID);
-    if (!destinationExtension) {
-        // FIXME: <https://webkit.org/b/269539> Return after a random delay.
-        completionHandler({ });
-        return;
-    }
-
     RefPtr tab = getTab(senderParameters.pageProxyIdentifier);
-    if (!tab) {
-        // FIXME: <https://webkit.org/b/269539> Return after a random delay.
-        completionHandler({ });
+    if (!destinationExtension || !tab) {
+        callAfterRandomDelay([completionHandler = WTFMove(completionHandler)]() mutable {
+            completionHandler({ });
+        });
+
         return;
     }
 
@@ -284,8 +280,10 @@ void WebExtensionContext::runtimeWebPageSendMessage(const String& extensionID, c
     auto url = completeSenderParameters.url;
     auto validMatchPatterns = destinationExtension->extension().externallyConnectableMatchPatterns();
     if (!hasPermission(url, tab.get()) || !WebExtensionMatchPattern::patternsMatchURL(validMatchPatterns, url)) {
-        // FIXME: <https://webkit.org/b/269539> Return after a random delay.
-        completionHandler({ });
+        callAfterRandomDelay([completionHandler = WTFMove(completionHandler)]() mutable {
+            completionHandler({ });
+        });
+
         return;
     }
 
@@ -316,20 +314,14 @@ void WebExtensionContext::runtimeWebPageConnect(const String& extensionID, WebEx
     constexpr auto targetContentWorldType = WebExtensionContentWorldType::Main;
 
     RefPtr destinationExtension = extensionController()->extensionContext(extensionID);
-    if (!destinationExtension) {
-        // FIXME: <https://webkit.org/b/269539> Return after a random delay.
-        completionHandler({ });
-        firePortDisconnectEventIfNeeded(sourceContentWorldType, targetContentWorldType, channelIdentifier);
-        clearQueuedPortMessages(targetContentWorldType, channelIdentifier);
-        return;
-    }
-
     RefPtr tab = getTab(senderParameters.pageProxyIdentifier);
-    if (!tab) {
-        // FIXME: <https://webkit.org/b/269539> Return after a random delay.
-        completionHandler({ });
-        firePortDisconnectEventIfNeeded(sourceContentWorldType, targetContentWorldType, channelIdentifier);
-        clearQueuedPortMessages(targetContentWorldType, channelIdentifier);
+    if (!destinationExtension || !tab) {
+        callAfterRandomDelay([=, this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
+            completionHandler({ });
+            firePortDisconnectEventIfNeeded(sourceContentWorldType, targetContentWorldType, channelIdentifier);
+            clearQueuedPortMessages(targetContentWorldType, channelIdentifier);
+        });
+
         return;
     }
 
@@ -339,10 +331,12 @@ void WebExtensionContext::runtimeWebPageConnect(const String& extensionID, WebEx
     auto url = completeSenderParameters.url;
     auto validMatchPatterns = destinationExtension->extension().externallyConnectableMatchPatterns();
     if (!hasPermission(url, tab.get()) || !WebExtensionMatchPattern::patternsMatchURL(validMatchPatterns, url)) {
-        // FIXME: <https://webkit.org/b/269539> Return after a random delay.
-        completionHandler({ });
-        firePortDisconnectEventIfNeeded(sourceContentWorldType, targetContentWorldType, channelIdentifier);
-        clearQueuedPortMessages(targetContentWorldType, channelIdentifier);
+        callAfterRandomDelay([=, this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
+            completionHandler({ });
+            firePortDisconnectEventIfNeeded(sourceContentWorldType, targetContentWorldType, channelIdentifier);
+            clearQueuedPortMessages(targetContentWorldType, channelIdentifier);
+        });
+
         return;
     }
 

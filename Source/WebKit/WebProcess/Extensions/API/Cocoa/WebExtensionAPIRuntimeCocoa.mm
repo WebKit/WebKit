@@ -411,8 +411,11 @@ void WebExtensionAPIWebPageRuntime::sendMessage(WebFrame& frame, NSString *exten
     Ref page = *frame.page();
     RefPtr destinationExtensionContext = page->webExtensionControllerProxy()->extensionContext(extensionID);
     if (!destinationExtensionContext) {
-        // FIXME: <https://webkit.org/b/269539> Return after a random delay.
-        callback->call();
+        // Respond after a random delay to prevent the page from easily detecting if extensions are not installed.
+        callAfterRandomDelay([callback = WTFMove(callback)]() {
+            callback->call();
+        });
+
         return;
     }
 
@@ -448,8 +451,14 @@ RefPtr<WebExtensionAPIPort> WebExtensionAPIWebPageRuntime::connect(WebFrame& fra
     Ref page = *frame.page();
     RefPtr destinationExtensionContext = page->webExtensionControllerProxy()->extensionContext(extensionID);
     if (!destinationExtensionContext) {
-        // FIXME: <https://webkit.org/b/269539> Return a port that disconnects after a random delay.
-        return nullptr;
+        // Return a port that cant send messages, and disconnect after a random delay to prevent the page from easily detecting if extensions are not installed.
+        Ref port = WebExtensionAPIPort::create(*this, resolvedName);
+
+        callAfterRandomDelay([=]() {
+            port->disconnect();
+        });
+
+        return port;
     }
 
     Ref port = WebExtensionAPIPort::create(contentWorldType(), runtime(), *destinationExtensionContext, page, WebExtensionContentWorldType::Main, resolvedName);
