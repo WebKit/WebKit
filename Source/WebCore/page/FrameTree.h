@@ -92,7 +92,6 @@ private:
     Frame* deepLastChild() const;
     Frame* nextAncestorSibling(const Frame* stayWithin) const;
 
-    bool scopedBy(TreeScope*) const;
     Frame* scopedChild(unsigned index, TreeScope*) const;
     Frame* scopedChild(const Function<bool(const FrameTree&)>& isMatch, TreeScope*) const;
     unsigned scopedChildCount(TreeScope*) const;
