@@ -71,7 +71,7 @@ messages -> RemoteMediaPlayerProxy {
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     SetWirelessVideoPlaybackDisabled(bool disabled)
-    SetWirelessPlaybackTarget(WebCore::MediaPlaybackTargetContext target)
+    SetWirelessPlaybackTarget(WebKit::MediaPlaybackTargetContextSerialized target)
     SetShouldPlayToPlaybackTarget(bool shouldPlay)
 #endif
 

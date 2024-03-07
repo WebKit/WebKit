@@ -69,7 +69,7 @@ private:
     void providePresentingApplicationPID(int, ShouldOverride) final;
 
     // Messages
-    void activeVideoRouteDidChange(SupportsAirPlayVideo, WebCore::MediaPlaybackTargetContext&&);
+    void activeVideoRouteDidChange(SupportsAirPlayVideo, MediaPlaybackTargetContextSerialized&&);
     void activeAudioRouteSupportsSpatialPlaybackDidChange(SupportsSpatialAudioPlayback);
 
     ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
