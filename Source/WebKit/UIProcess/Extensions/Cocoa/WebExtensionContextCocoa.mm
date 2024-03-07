@@ -178,6 +178,7 @@ WebExtensionContext::WebExtensionContext(Ref<WebExtension>&& extension)
     m_extension = extension.ptr();
     m_baseURL = URL { makeString("webkit-extension://", uniqueIdentifier(), '/') };
     m_delegate = [[_WKWebExtensionContextDelegate alloc] initWithWebExtensionContext:*this];
+    m_tabDelegateToIdentifierMap = [NSMapTable weakToStrongObjectsMapTable];
 }
 
 static _WKWebExtensionContextError toAPI(WebExtensionContext::Error error)
@@ -302,6 +303,7 @@ bool WebExtensionContext::unload(NSError **outError)
 
     m_tabMap.clear();
     m_extensionPageTabMap.clear();
+    [m_tabDelegateToIdentifierMap removeAllObjects];
 
     m_windowMap.clear();
     m_windowOrderVector.clear();
@@ -1485,13 +1487,18 @@ Ref<WebExtensionTab> WebExtensionContext::getOrCreateTab(_WKWebExtensionTab *del
 {
     ASSERT(delegate);
 
-    for (Ref tab : m_tabMap.values()) {
-        if (tab->delegate() == delegate)
-            return tab;
+    if (NSNumber *tabIdentifier = [m_tabDelegateToIdentifierMap objectForKey:delegate]) {
+        if (auto tab = getTab(WebExtensionTabIdentifier(tabIdentifier.unsignedLongLongValue))) {
+            RELEASE_LOG_DEBUG(Extensions, "Using cached tab for identifier %{public}llu", tabIdentifier.unsignedLongLongValue);
+            return tab.releaseNonNull();
+        }
     }
 
     Ref tab = adoptRef(*new WebExtensionTab(*this, delegate));
-    m_tabMap.set(tab->identifier(), tab);
+
+    auto tabIdentifier = tab->identifier();
+    m_tabMap.set(tabIdentifier, tab);
+    [m_tabDelegateToIdentifierMap setObject:@(tabIdentifier.toUInt64()) forKey:delegate];
 
     RELEASE_LOG_DEBUG(Extensions, "Tab %{public}llu was created", tab->identifier().toUInt64());
 
@@ -1602,7 +1609,11 @@ RefPtr<WebExtensionTab> WebExtensionContext::getCurrentTab(WebPageProxyIdentifie
 
 void WebExtensionContext::forgetTab(WebExtensionTabIdentifier identifier) const
 {
-    m_tabMap.remove(identifier);
+    RefPtr tab = m_tabMap.take(identifier);
+    if (!tab)
+        return;
+
+    [m_tabDelegateToIdentifierMap removeObjectForKey:tab->delegate()];
 }
 
 void WebExtensionContext::openNewTab(const WebExtensionTabParameters& parameters, CompletionHandler<void(RefPtr<WebExtensionTab>)>&& completionHandler)
