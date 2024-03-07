@@ -6,6 +6,10 @@
 body {
     white-space: pre-wrap;
 }
+
+.transparent {
+    opacity: 0;
+}
 </style>
 <script src="../../resources/ui-helper.js"></script>
 </head>
@@ -17,6 +21,7 @@ body {
     <li><a href="https://example.com">Link in list item</a></li>
     <li><img src="../images/resources/green-256x256.jpg" alt="Green square" /></li>
 </ul>
+<div class="transparent"><p>This transparent text should not be extracted</p></div>
 <div contenteditable="true">This is an editable area: <a href="https://webkit.org">WebKit</a> <a href="https://webkit.org/downloads">downloads</a>.</div>
 <script>
 addEventListener("load", async () => {

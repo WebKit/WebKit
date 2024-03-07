@@ -55,6 +55,8 @@
 namespace WebCore {
 namespace TextExtraction {
 
+static constexpr auto minOpacityToConsiderVisible = 0.05;
+
 using TextNodesAndText = Vector<std::pair<Ref<Text>, String>>;
 using TextAndSelectedRange = std::pair<String, std::optional<CharacterRange>>;
 using TextAndSelectedRangeMap = HashMap<RefPtr<Text>, TextAndSelectedRange>;
@@ -242,26 +244,31 @@ static inline String labelText(HTMLElement& element)
     return { };
 }
 
-static inline std::variant<std::monostate, ItemData, URL, Editable> extractItemData(Node& node, TraversalContext& context)
+enum class SkipExtraction : bool {
+    Self,
+    SelfAndSubtree
+};
+
+static inline std::variant<SkipExtraction, ItemData, URL, Editable> extractItemData(Node& node, TraversalContext& context)
 {
     CheckedPtr renderer = node.renderer();
-    if (!renderer)
-        return { };
+    if (!renderer || renderer->style().opacity() < minOpacityToConsiderVisible)
+        return { SkipExtraction::SelfAndSubtree };
 
     if (renderer->style().visibility() == Visibility::Hidden)
-        return { };
+        return { SkipExtraction::Self };
 
     if (RefPtr textNode = dynamicDowncast<Text>(node)) {
         if (auto iterator = context.visibleText.find(textNode); iterator != context.visibleText.end()) {
             auto& [textContent, selectedRange] = iterator->value;
             return { TextItemData { { }, selectedRange, textContent, { } } };
         }
-        return { };
+        return { SkipExtraction::Self };
     }
 
     RefPtr element = dynamicDowncast<Element>(node);
     if (!element)
-        return { };
+        return { SkipExtraction::Self };
 
     if (element->isLink()) {
         if (auto href = element->attributeWithoutSynchronization(HTMLNames::hrefAttr); !href.isEmpty()) {
@@ -274,7 +281,7 @@ static inline std::variant<std::monostate, ItemData, URL, Editable> extractItemD
         // FIXME: This isn't quite right in the case where a richly contenteditable element
         // contains more nested editable containers underneath it (for instance, a textarea
         // element inside of a Mail compose draft).
-        return { };
+        return { SkipExtraction::Self };
     }
 
     if (!element->isInUserAgentShadowTree() && element->isRootEditableElement())
@@ -327,7 +334,7 @@ static inline std::variant<std::monostate, ItemData, URL, Editable> extractItemD
     if (renderer->style().hasViewportConstrainedPosition())
         return { ItemData { ContainerType::ViewportConstrained } };
 
-    return { };
+    return { SkipExtraction::Self };
 }
 
 static inline void extractRecursive(Node& node, Item& parentItem, TraversalContext& context)
@@ -335,9 +342,18 @@ static inline void extractRecursive(Node& node, Item& parentItem, TraversalConte
     std::optional<Item> item;
     std::optional<Editable> editable;
     std::optional<URL> linkURL;
+    bool shouldSkipSubtree = false;
 
     WTF::switchOn(extractItemData(node, context),
-        [&](std::monostate) { },
+        [&](SkipExtraction skipExtraction) {
+            switch (skipExtraction) {
+            case SkipExtraction::Self:
+                return;
+            case SkipExtraction::SelfAndSubtree:
+                shouldSkipSubtree = true;
+                return;
+            }
+        },
         [&](URL&& result) { linkURL = WTFMove(result); },
         [&](Editable&& result) { editable = WTFMove(result); },
         [&](ItemData&& result) {
@@ -345,6 +361,9 @@ static inline void extractRecursive(Node& node, Item& parentItem, TraversalConte
             if (context.shouldIncludeNodeWithRect(bounds))
                 item = { { WTFMove(result), WTFMove(bounds), { } } };
         });
+
+    if (shouldSkipSubtree)
+        return;
 
     bool onlyCollectTextAndLinks = linkURL || editable;
     if (onlyCollectTextAndLinks) {
@@ -487,7 +506,6 @@ static void extractRenderedText(Vector<StringsAndBlockOffset>& stringsAndOffsets
         if (descendant.style().visibility() == Visibility::Hidden)
             continue;
 
-        static constexpr auto minOpacityToConsiderVisible = 0.05;
         if (descendant.style().opacity() < minOpacityToConsiderVisible)
             continue;
 
