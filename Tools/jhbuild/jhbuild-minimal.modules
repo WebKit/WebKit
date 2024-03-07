@@ -3,8 +3,6 @@
 <?xml-stylesheet type="text/xsl" href="moduleset.xsl"?>
 <moduleset>
 
-  <include href="../gstreamer/jhbuild.modules"/>
-
   <metamodule id="webkitgtk-minimal-dependencies">
     <dependencies>
       <dep package="wpebackend-fdo"/>
