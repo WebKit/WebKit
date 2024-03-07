@@ -1584,21 +1584,21 @@ RenderPipeline::RenderPipeline(Device& device)
 
 RenderPipeline::~RenderPipeline() = default;
 
-RefPtr<BindGroupLayout> RenderPipeline::getBindGroupLayout(uint32_t groupIndex)
+Ref<BindGroupLayout> RenderPipeline::getBindGroupLayout(uint32_t groupIndex)
 {
     if (!isValid()) {
         m_device->generateAValidationError("getBindGroupLayout: RenderPipeline is invalid"_s);
         m_pipelineLayout->makeInvalid();
-        return nullptr;
+        return BindGroupLayout::createInvalid(m_device);
     }
 
     if (groupIndex >= m_pipelineLayout->numberOfBindGroupLayouts()) {
         m_device->generateAValidationError("getBindGroupLayout: groupIndex is out of range"_s);
         m_pipelineLayout->makeInvalid();
-        return nullptr;
+        return BindGroupLayout::createInvalid(m_device);
     }
 
-    return &m_pipelineLayout->bindGroupLayout(groupIndex);
+    return m_pipelineLayout->bindGroupLayout(groupIndex);
 }
 
 void RenderPipeline::setLabel(String&&)

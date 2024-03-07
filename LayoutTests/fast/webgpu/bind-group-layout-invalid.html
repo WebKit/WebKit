@@ -1,0 +1,171 @@
+<script>
+if (window.testRunner) { testRunner.waitUntilDone(); testRunner.dumpAsText() }
+const log = globalThis.$vm?.print ?? console.log;
+
+onload = async () => {
+  try {
+    adapter1 = await navigator.gpu.requestAdapter( { } );
+    let promise3 = adapter1.requestDevice(
+    {
+    label: 'a',
+    requiredFeatures: [
+    'depth-clip-control',
+    'depth32float-stencil8',
+    'texture-compression-etc2',
+    'texture-compression-astc',
+    'indirect-first-instance',
+    'shader-f16',
+    'rg11b10ufloat-renderable',
+    'bgra8unorm-storage'
+    ],
+    requiredLimits: {
+    maxVertexAttributes: 22,
+    maxVertexBufferArrayStride: 60002,
+    maxStorageTexturesPerShaderStage: 36,
+    maxBindingsPerBindGroup: 9205,
+    },
+    }
+    );
+
+
+    let device1 = await promise3;
+
+    let pipelineLayout2 = device1.createPipelineLayout(
+    {
+    label: 'a',
+    bindGroupLayouts: [
+    ],
+    }
+    );
+
+    let shaderModule4 = device1.createShaderModule(
+    {
+    label: 'a',
+    code: `@group(1) @binding(121)
+    var<storage, read_write> __dynamicOffset2: array<u32>;
+    @group(1) @binding(632)
+    var<storage, read_write> field5: array<u32>;
+    @group(0) @binding(632)
+    var<storage, read_write> __DynamicOffsets0: array<u32>;
+    @group(2) @binding(523)
+    var<storage, read_write> global4: array<u32>;
+    @group(1) @binding(351)
+    var<storage, read_write> __DynamicOffsets1: array<u32>;
+    @group(2) @binding(623)
+    var<storage, read_write> type4: array<u32>;
+    @group(0) @binding(121)
+    var<storage, read_write> __ArgumentBuffer_2: array<u32>;
+    @group(2) @binding(559)
+    var<storage, read_write> function3: array<u32>;
+    @compute @workgroup_size(7, 1, 1)
+    fn compute0(@builtin(global_invocation_id) global_id : vec3<u32>, @builtin(local_invocation_id) local_id : vec3<u32>) {
+      var x: u32 = 0;
+      loop {
+        function3[x] = global_id.x;
+        x += 1;
+        __DynamicOffsets1[global_id.y-global_id.x] = __dynamicOffset2[x];
+        if (x > 2 * arrayLength(&field5)) {
+          break;
+        }
+      }
+    }
+    @compute @workgroup_size(8, 1, 4)
+    fn compute1(@builtin(global_invocation_id) global_id : vec3<u32>, @builtin(local_invocation_id) local_id : vec3<u32>) {
+      __dynamicOffset2[global_id.x*local_id.x] = u32(function3[global_id.x*local_id.x]);
+    }
+
+    struct S {
+      @location(0) out0: vec4<f32>,
+      @location(1) out1: vec4<f32>,
+    }
+
+    struct S2 {
+      @location(0) out0: vec4<f32>,
+      out1: vec4<f32>,
+    }
+
+    struct S3 {
+      @location(0) out0: vec4<f32>,
+      out1: S4,
+    }
+
+    struct S4 {
+      @location(1) out2: vec4<f32>,
+      @location(2) out3: vec4<f32>,
+    }
+
+    @fragment
+    fn fragment0(@builtin(position) coord_in: vec4<f32>) -> @location(123) i32 {
+    return i32();
+    }
+
+    @fragment
+    fn fragment1(@builtin(position) coord_in: vec4<f32>) -> @location(0) vec4<f32> {
+      return vec4<f32>(coord_in.x, coord_in.y, 0.0, 1.0);
+    }
+
+    @fragment
+    fn fragment2(@builtin(position) coord_in: vec4<f32>) -> S {
+    }
+
+    @fragment
+    fn fragment3(@builtin(position) coord_in: vec4<f32>) -> S {
+      return S();
+    }
+
+    @fragment
+    fn fragment4(@builtin(position) coord_in: vec4<f32>) -> S2 {
+      return S2();
+    }
+
+    @fragment
+    fn fragment5(x: S3) -> S3 {
+      return x;
+    }
+
+    @vertex
+    fn vertex0() -> @builtin(position) vec4<f32> {
+      return vec4<f32>(0.0, 0.0, 0.0, 1.0);
+    }
+
+    @vertex
+    fn vertex1(@builtin(vertex_index) v_index: u32, @builtin(instance_index) i_index: u32,) -> @builtin(position) vec4<f32> {
+      return vec4<f32>(f32(v_index), f32(i_index), 0.0, 1.0);
+    }
+
+    @vertex
+    fn vertex2(@builtin(vertex_index) v_index: u32, @builtin(instance_index) i_index: u32,) -> S {
+    }
+
+    @vertex
+    fn vertex3(@builtin(vertex_index) v_index: u32, @builtin(instance_index) i_index: u32,) -> S {
+      return S();
+    }
+    `,
+    sourceMap: {},
+    hints: {},
+    }
+    );
+
+    let pipeline6 = device1.createComputePipeline(
+    {
+    label: 'a',
+    layout: pipelineLayout2,
+    compute: {
+    module: shaderModule4,
+    entryPoint: 'compute0',
+    constants: {},
+    },
+    }
+    );
+
+    let bindGroupLayout11 = pipeline6.getBindGroupLayout(
+    75
+    );
+
+    bindGroupLayout11.label = '\u0afc';
+  } catch { }
+  if (window.testRunner) { testRunner.notifyDone() }
+};
+</script>
+This test passes if it does not crash.

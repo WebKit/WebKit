@@ -57,7 +57,7 @@ public:
 
     ~ComputePipeline();
 
-    RefPtr<BindGroupLayout> getBindGroupLayout(uint32_t groupIndex);
+    Ref<BindGroupLayout> getBindGroupLayout(uint32_t groupIndex);
     void setLabel(String&&);
 
     bool isValid() const { return m_computePipelineState; }
