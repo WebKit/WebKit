@@ -29,7 +29,7 @@
 namespace WebCore::SwitchMacUtilities {
 
 IntSize cellSize(NSControlSize);
-FloatSize visualCellSize(NSControlSize, const ControlStyle&);
+FloatSize visualCellSize(IntSize, const ControlStyle&);
 IntOutsets cellOutsets(NSControlSize);
 IntOutsets visualCellOutsets(NSControlSize, bool);
 FloatRect rectForBounds(const FloatRect&);
@@ -38,6 +38,7 @@ float easeInOut(float);
 FloatRect rectWithTransposedSize(const FloatRect&, bool);
 FloatRect trackRectForBounds(const FloatRect&, const FloatSize&);
 void rotateContextForVerticalWritingMode(GraphicsContext&, const FloatRect&);
+RefPtr<ImageBuffer> trackMaskImage(GraphicsContext&, FloatSize, float, bool, NSString *);
 
 } // namespace WebCore::SwitchMacUtilities
 

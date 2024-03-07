@@ -27,7 +27,11 @@
 
 #if PLATFORM(MAC)
 
+#import "GraphicsContext.h"
+#import "ImageBuffer.h"
+#import "LocalCurrentGraphicsContext.h"
 #import <pal/spi/mac/CoreUISPI.h>
+#import <pal/spi/mac/NSAppearanceSPI.h>
 
 namespace WebCore::SwitchMacUtilities {
 
@@ -43,9 +47,8 @@ IntSize cellSize(NSControlSize controlSize)
     return sizes[controlSize];
 }
 
-FloatSize visualCellSize(NSControlSize controlSize, const ControlStyle& style)
+FloatSize visualCellSize(IntSize size, const ControlStyle& style)
 {
-    auto size = cellSize(controlSize);
     if (style.states.contains(ControlStyle::State::VerticalWritingMode))
         size = size.transposedSize();
     size.scale(style.zoomFactor);
@@ -113,6 +116,29 @@ void rotateContextForVerticalWritingMode(GraphicsContext& context, const FloatRe
     context.translate(rect.location());
     context.rotate(piOverTwoFloat);
     context.translate(-rect.location());
+}
+
+RefPtr<ImageBuffer> trackMaskImage(GraphicsContext& context, FloatSize trackRectSize, float deviceScaleFactor, bool isRTL, NSString *coreUISize)
+{
+    auto drawingTrackRect = NSMakeRect(0, 0, trackRectSize.width(), trackRectSize.height());
+    auto maskImage = context.createImageBuffer(trackRectSize, deviceScaleFactor);
+    if (!maskImage)
+        return nullptr;
+
+    auto cgContext = maskImage->context().platformContext();
+
+    auto coreUIDirection = (__bridge NSString *)(isRTL ? kCUIUserInterfaceLayoutDirectionRightToLeft : kCUIUserInterfaceLayoutDirectionLeftToRight);
+
+    CGContextStateSaver stateSaver(cgContext);
+
+    [[NSAppearance currentDrawingAppearance] _drawInRect:drawingTrackRect context:cgContext options:@{
+        (__bridge NSString *)kCUIWidgetKey: (__bridge NSString *)kCUIWidgetSwitchFillMask,
+        (__bridge NSString *)kCUISizeKey: coreUISize,
+        (__bridge NSString *)kCUIUserInterfaceLayoutDirectionKey: coreUIDirection,
+        (__bridge NSString *)kCUIScaleKey: @(deviceScaleFactor),
+    }];
+
+    return maskImage;
 }
 
 } // namespace WebCore::SwitchMacUtilities
