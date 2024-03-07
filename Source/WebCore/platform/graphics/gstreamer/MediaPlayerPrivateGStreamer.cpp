@@ -425,12 +425,14 @@ void MediaPlayerPrivateGStreamer::play()
         m_isEndReached = false;
         m_isDelayingLoad = false;
         m_preload = MediaPlayer::Preload::Auto;
-        updateDownloadBufferingFlag();
         GST_INFO_OBJECT(pipeline(), "Play");
         RefPtr player = m_player.get();
-        if (player && player->isLooping()) {
-            GST_DEBUG_OBJECT(pipeline(), "Scheduling initial SEGMENT seek");
-            doSeek(SeekTarget { playbackPosition() }, m_playbackRate);
+        if (player) {
+            if (player->isLooping()) {
+                GST_DEBUG_OBJECT(pipeline(), "Scheduling initial SEGMENT seek");
+                doSeek(SeekTarget { playbackPosition() }, m_playbackRate);
+            } else
+                updateDownloadBufferingFlag();
         }
     } else
         loadingFailed(MediaPlayer::NetworkState::Empty);
@@ -2568,7 +2570,8 @@ void MediaPlayerPrivateGStreamer::updateStates()
             break;
         case GST_STATE_PAUSED:
             FALLTHROUGH;
-        case GST_STATE_PLAYING:
+        case GST_STATE_PLAYING: {
+            bool isLooping = player && player->isLooping();
             if (m_isBuffering) {
                 GRefPtr<GstQuery> query = adoptGRef(gst_query_new_buffering(GST_FORMAT_PERCENT));
 
@@ -2590,7 +2593,7 @@ void MediaPlayerPrivateGStreamer::updateStates()
                     m_readyState = MediaPlayer::ReadyState::HaveCurrentData;
                     m_networkState = MediaPlayer::NetworkState::Loading;
                 }
-            } else if (m_didDownloadFinish) {
+            } else if (m_didDownloadFinish || isLooping) {
                 m_readyState = MediaPlayer::ReadyState::HaveEnoughData;
                 m_networkState = MediaPlayer::NetworkState::Loaded;
             } else {
@@ -2599,6 +2602,7 @@ void MediaPlayerPrivateGStreamer::updateStates()
             }
 
             break;
+        }
         default:
             ASSERT_NOT_REACHED();
             break;
@@ -2945,10 +2949,23 @@ void MediaPlayerPrivateGStreamer::updateDownloadBufferingFlag()
 
     unsigned flagDownload = getGstPlayFlag("download");
 
-    if (m_url.protocolIsBlob()) {
-        GST_DEBUG_OBJECT(pipeline(), "Blob URI detected. Disabling on-disk buffering");
+    auto disableDownloading = [&] {
+        GST_INFO_OBJECT(m_pipeline.get(), "Disabling on-disk buffering");
         g_object_set(m_pipeline.get(), "flags", flags & ~flagDownload, nullptr);
         m_fillTimer.stop();
+    };
+
+    RefPtr player = m_player.get();
+    if (player && player->isLooping()) {
+        // See also: https://gitlab.freedesktop.org/gstreamer/gstreamer/-/issues/3129
+        GST_DEBUG_OBJECT(pipeline(), "Media is looping. Disabling deadlock-prone on-disk buffering");
+        disableDownloading();
+        return;
+    }
+
+    if (m_url.protocolIsBlob()) {
+        GST_DEBUG_OBJECT(pipeline(), "Blob URI detected. Disabling on-disk buffering");
+        disableDownloading();
         return;
     }
 
@@ -2966,11 +2983,8 @@ void MediaPlayerPrivateGStreamer::updateDownloadBufferingFlag()
         GST_INFO_OBJECT(pipeline(), "Enabling on-disk buffering");
         g_object_set(m_pipeline.get(), "flags", flags | flagDownload, nullptr);
         m_fillTimer.startRepeating(200_ms);
-    } else {
-        GST_INFO_OBJECT(pipeline(), "Disabling on-disk buffering");
-        g_object_set(m_pipeline.get(), "flags", flags & ~flagDownload, nullptr);
-        m_fillTimer.stop();
-    }
+    } else
+        disableDownloading();
 }
 
 void MediaPlayerPrivateGStreamer::setPlaybackFlags(bool isMediaStream)
