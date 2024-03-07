@@ -30,6 +30,7 @@
 #include "JSCInlines.h"
 #include "JSInternalFieldObjectImplInlines.h"
 #include "ObjectConstructor.h"
+#include "StackVisitor.h"
 #include "VMInlines.h"
 #include <wtf/NoTailCalls.h>
 
@@ -595,10 +596,21 @@ bool ProxyObject::putByIndex(JSCell* cell, JSGlobalObject* globalObject, unsigne
     return thisObject->putByIndexCommon(globalObject, thisObject, propertyName, value, shouldThrow);
 }
 
-JSC_DEFINE_HOST_FUNCTION(performProxyCall, (JSGlobalObject* globalObject, CallFrame* callFrame))
+ALWAYS_INLINE static JSGlobalObject* retrieveCallerGlobalObjectWithFallback(CallFrame* callFrame, JSGlobalObject* fallbackGlobalObject)
+{
+    VM& vm = fallbackGlobalObject->vm();
+    CallerExecutionContextFunctor functor { callFrame->jsCallee() };
+    StackVisitor::visit(callFrame, vm, functor);
+    if (JSGlobalObject* globalObject = functor.resultGlobalObject(vm))
+        return globalObject;
+    return fallbackGlobalObject;
+}
+
+JSC_DEFINE_HOST_FUNCTION(performProxyCall, (JSGlobalObject* proxyGlobalObject, CallFrame* callFrame))
 {
     NO_TAIL_CALLS();
 
+    JSGlobalObject* globalObject = retrieveCallerGlobalObjectWithFallback(callFrame, proxyGlobalObject);
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     if (UNLIKELY(!vm.isSafeToRecurseSoft())) {
@@ -643,10 +655,11 @@ CallData ProxyObject::getCallData(JSCell* cell)
     return callData;
 }
 
-JSC_DEFINE_HOST_FUNCTION(performProxyConstruct, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(performProxyConstruct, (JSGlobalObject* proxyGlobalObject, CallFrame* callFrame))
 {
     NO_TAIL_CALLS();
 
+    JSGlobalObject* globalObject = retrieveCallerGlobalObjectWithFallback(callFrame, proxyGlobalObject);
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     if (UNLIKELY(!vm.isSafeToRecurseSoft())) {

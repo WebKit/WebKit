@@ -28,6 +28,7 @@
 #include "IntegrityInlines.h"
 #include "JSBoundFunction.h"
 #include "JSCInlines.h"
+#include "StackVisitor.h"
 
 namespace JSC {
 
@@ -225,62 +226,6 @@ JSC_DEFINE_CUSTOM_GETTER(argumentsGetter, (JSGlobalObject* globalObject, Encoded
     return JSValue::encode(result);
 }
 
-class RetrieveCallerFunctionFunctor {
-public:
-    RetrieveCallerFunctionFunctor(JSFunction* functionObj)
-        : m_targetCallee(functionObj)
-        , m_hasFoundFrame(false)
-        , m_hasSkippedToCallerFrame(false)
-        , m_result(jsNull())
-    {
-    }
-
-    JSValue result() const { return m_result; }
-
-    IterationStatus operator()(StackVisitor& visitor) const
-    {
-        if (!visitor->callee().isCell())
-            return IterationStatus::Continue;
-
-        JSCell* callee = visitor->callee().asCell();
-
-        if (!m_hasFoundFrame && callee != m_targetCallee)
-            return IterationStatus::Continue;
-
-        m_hasFoundFrame = true;
-        if (!m_hasSkippedToCallerFrame) {
-            m_hasSkippedToCallerFrame = true;
-            return IterationStatus::Continue;
-        }
-
-        if (callee) {
-            if (callee->inherits<JSBoundFunction>() || callee->inherits<JSRemoteFunction>() || callee->type() == ProxyObjectType)
-                return IterationStatus::Continue;
-            if (callee->inherits<JSFunction>()) {
-                if (jsCast<JSFunction*>(callee)->executable()->implementationVisibility() != ImplementationVisibility::Public)
-                    return IterationStatus::Continue;
-            }
-
-            m_result = callee;
-        }
-        return IterationStatus::Done;
-    }
-
-private:
-    JSObject* m_targetCallee;
-    mutable bool m_hasFoundFrame;
-    mutable bool m_hasSkippedToCallerFrame;
-    mutable JSValue m_result;
-};
-
-static JSValue retrieveCallerFunction(VM& vm, CallFrame* callFrame, JSFunction* functionObj)
-{
-    RetrieveCallerFunctionFunctor functor(functionObj);
-    if (callFrame)
-        StackVisitor::visit(callFrame, vm, functor);
-    return functor.result();
-}
-
 // https://github.com/claudepache/es-legacy-function-reflection/blob/master/spec.md#get-functionprototypecaller
 JSC_DEFINE_CUSTOM_GETTER(callerGetter, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
@@ -291,8 +236,13 @@ JSC_DEFINE_CUSTOM_GETTER(callerGetter, (JSGlobalObject* globalObject, EncodedJSV
     if (!thisObj || !isAllowedReceiverFunctionForCallerAndArguments(thisObj))
         return throwVMTypeError(globalObject, scope, RestrictedPropertyAccessError);
 
-    JSValue caller = retrieveCallerFunction(vm, vm.topCallFrame, thisObj);
-    if (caller.isNull())
+    JSCell* caller = nullptr;
+    if (CallFrame* callFrame = vm.topCallFrame) {
+        CallerExecutionContextFunctor functor { thisObj };
+        StackVisitor::visit(callFrame, vm, functor);
+        caller = functor.resultCallee();
+    }
+    if (!caller)
         return JSValue::encode(jsNull());
 
     // 11. If caller is not an ECMAScript function object, return null.

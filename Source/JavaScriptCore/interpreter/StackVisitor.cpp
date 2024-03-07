@@ -617,4 +617,43 @@ void StackVisitor::Frame::dump(PrintStream& out, Indenter indent, WTF::Function<
     out.print(indent, "}\n");
 }
 
+IterationStatus CallerExecutionContextFunctor::operator()(StackVisitor& visitor) const
+{
+    if (!visitor->callee().isCell())
+        return IterationStatus::Continue;
+
+    JSCell* callee = visitor->callee().asCell();
+
+    if (!m_hasFoundStartFrame && callee != m_startFrameCallee)
+        return IterationStatus::Continue;
+
+    m_hasFoundStartFrame = true;
+    if (!m_hasSkippedFirstFrame) {
+        m_hasSkippedFirstFrame = true;
+        return IterationStatus::Continue;
+    }
+
+    if (callee) {
+        if (callee->inherits<JSBoundFunction>() || callee->inherits<JSRemoteFunction>() || callee->type() == ProxyObjectType)
+            return IterationStatus::Continue;
+        if (callee->inherits<JSFunction>() && jsCast<JSFunction*>(callee)->executable()->implementationVisibility() != ImplementationVisibility::Public)
+            return IterationStatus::Continue;
+
+        m_resultCallee = callee;
+    }
+
+    m_resultCodeBlock = visitor->codeBlock();
+    m_resultCallFrame = visitor->callFrame();
+    return IterationStatus::Done;
+}
+
+JSGlobalObject* CallerExecutionContextFunctor::resultGlobalObject(VM& vm) const
+{
+    if (m_resultCodeBlock)
+        return m_resultCodeBlock->globalObject();
+    if (m_resultCallFrame)
+        return m_resultCallFrame->lexicalGlobalObject(vm);
+    return nullptr;
+}
+
 } // namespace JSC

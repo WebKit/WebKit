@@ -206,4 +206,25 @@ private:
     mutable CallFrame* m_callerFrame;
 };
 
+class CallerExecutionContextFunctor {
+public:
+    CallerExecutionContextFunctor(JSObject* startFrameCallee)
+        : m_startFrameCallee(startFrameCallee)
+    {
+    }
+
+    IterationStatus operator()(StackVisitor&) const;
+
+    JSCell* resultCallee() const { return m_resultCallee; }
+    JSGlobalObject* resultGlobalObject(VM&) const;
+
+private:
+    JSObject* m_startFrameCallee;
+    mutable bool m_hasFoundStartFrame { false };
+    mutable bool m_hasSkippedFirstFrame { false };
+    mutable JSCell* m_resultCallee { nullptr };
+    mutable CallFrame* m_resultCallFrame { nullptr };
+    mutable CodeBlock* m_resultCodeBlock { nullptr };
+};
+
 } // namespace JSC
