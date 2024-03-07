@@ -282,10 +282,9 @@ AXObjectCache::AXObjectCache(Document& document)
 
     // If loading completed before the cache was created, loading progress will have been reset to zero.
     // Consider loading progress to be 100% in this case.
-    double loadingProgress = document.page() ? document.page()->progress().estimatedProgress() : 1;
-    if (loadingProgress <= 0)
-        loadingProgress = 1;
-    m_loadingProgress = loadingProgress;
+    m_loadingProgress = document.page() ? document.page()->progress().estimatedProgress() : 1;
+    if (m_loadingProgress <= 0)
+        m_loadingProgress = 1;
 
     if (m_pageID)
         m_pageActivityState = m_document->page()->activityState();

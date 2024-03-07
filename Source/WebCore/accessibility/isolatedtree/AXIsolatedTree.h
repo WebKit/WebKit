@@ -350,7 +350,7 @@ public:
     void updateRootScreenRelativePosition();
     void overrideNodeProperties(AXID, AXPropertyMap&&);
 
-    double loadingProgress() { return m_loadingProgress; }
+    double loadingProgress();
     void updateLoadingProgress(double);
 
     void addUnconnectedNode(Ref<AccessibilityObject>);
@@ -394,7 +394,7 @@ public:
 private:
     AXIsolatedTree(AXObjectCache&);
     static void storeTree(AXObjectCache&, const Ref<AXIsolatedTree>&);
-    void reportCreationProgress(AXObjectCache&, unsigned percentComplete);
+    void reportLoadingProgress(double);
 
     // Queue this isolated tree up to destroy itself on the secondary thread.
     // We can't destroy the tree on the main-thread (by removing all `Ref`s to it)
@@ -485,6 +485,7 @@ private:
     bool m_queuedForDestruction WTF_GUARDED_BY_LOCK(m_changeLogLock) { false };
     AXID m_focusedNodeID;
     std::atomic<double> m_loadingProgress { 0 };
+    std::atomic<double> m_processingProgress { 1 };
 
     // Relationships between objects.
     HashMap<AXID, AXRelations> m_relations WTF_GUARDED_BY_LOCK(m_changeLogLock);

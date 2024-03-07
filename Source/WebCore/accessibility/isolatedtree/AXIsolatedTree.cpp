@@ -89,6 +89,7 @@ Ref<AXIsolatedTree> AXIsolatedTree::createEmpty(AXObjectCache& axObjectCache)
     }
 
     tree->updateLoadingProgress(axObjectCache.loadingProgress());
+    tree->m_processingProgress = 0;
 
     // Now that the tree is ready to take client requests, add it to the tree maps so that it can be found.
     storeTree(axObjectCache, tree);
@@ -139,10 +140,8 @@ Ref<AXIsolatedTree> AXIsolatedTree::create(AXObjectCache& axObjectCache)
     ASSERT(axObjectCache.pageID());
 
     auto tree = adoptRef(*new AXIsolatedTree(axObjectCache));
-    if (RefPtr existingTree = isolatedTreeForID(tree->treeID())) {
+    if (RefPtr existingTree = isolatedTreeForID(tree->treeID()))
         tree->m_replacingTree = existingTree;
-        tree->reportCreationProgress(axObjectCache, 0);
-    }
 
     auto& document = axObjectCache.document();
     if (!Accessibility::inRenderTreeOrStyleUpdate(document))
@@ -178,21 +177,33 @@ void AXIsolatedTree::storeTree(AXObjectCache& axObjectCache, const Ref<AXIsolate
     treePageCache().set(*axObjectCache.pageID(), tree.copyRef());
 }
 
-void AXIsolatedTree::reportCreationProgress(AXObjectCache& cache, unsigned percentComplete)
+double AXIsolatedTree::loadingProgress()
 {
-    ASSERT(m_replacingTree->isEmptyContentTree());
+    return .50 * m_loadingProgress + .50 * m_processingProgress;
+}
 
-    String percent = String::number(percentComplete) + "%"_s;
-    String title = AXProcessingPage() + " "_s + percent;
-    if (RefPtr axRoot = cache.get(cache.document().view())) {
-        m_replacingTree->overrideNodeProperties(axRoot->objectID(), {
-            { AXPropertyName::TitleAttributeValue, title },
-        });
+void AXIsolatedTree::reportLoadingProgress(double processingProgress)
+{
+    AXTRACE("AXIsolatedTree::reportLoadingProgress"_s);
+    ASSERT(isMainThread());
+
+    if (!isEmptyContentTree()) {
+        ASSERT_NOT_REACHED();
+        return;
     }
-    if (RefPtr axWebarea = cache.rootWebArea()) {
-        m_replacingTree->overrideNodeProperties(axWebarea->objectID(), {
+
+    m_processingProgress = processingProgress;
+    String percent = String::number(std::ceil(loadingProgress() * 100)) + "%"_s;
+    String title = AXProcessingPage() + " "_s + percent;
+    AXLOG(title);
+
+    WeakPtr cache = axObjectCache();
+    if (RefPtr axWebArea = cache ? cache->rootWebArea() : nullptr) {
+        overrideNodeProperties(axWebArea->objectID(), {
             { AXPropertyName::TitleAttributeValue, WTFMove(title) },
         });
+        if (cache)
+            cache->postPlatformNotification(axWebArea.get(), AXObjectCache::AXNotification::AXLayoutComplete);
     }
 }
 
@@ -384,7 +395,7 @@ Vector<AXIsolatedTree::NodeChange> AXIsolatedTree::resolveAppends()
         if (m_replacingTree) {
             ++counter;
             if (MonotonicTime::now() - lastFeedbackTime > CreationFeedbackInterval) {
-                reportCreationProgress(*cache, std::ceil((counter / m_unresolvedPendingAppends.size()) * 100));
+                m_replacingTree->reportLoadingProgress(counter / m_unresolvedPendingAppends.size());
                 lastFeedbackTime = MonotonicTime::now();
             }
         }
@@ -398,7 +409,7 @@ Vector<AXIsolatedTree::NodeChange> AXIsolatedTree::resolveAppends()
     m_unresolvedPendingAppends.clear();
 
     if (m_replacingTree)
-        reportCreationProgress(*cache, 100);
+        m_replacingTree->reportLoadingProgress(1);
     return resolvedAppends;
 }
 

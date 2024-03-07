@@ -361,6 +361,9 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* object, AXNotificatio
     case AXLayoutComplete:
         macNotification = @"AXLayoutComplete";
         break;
+    case AXLabelChanged:
+        macNotification = NSAccessibilityTitleChangedNotification;
+        break;
     case AXLoadComplete:
     case AXFrameLoadComplete:
         macNotification = @"AXLoadComplete";

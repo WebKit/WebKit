@@ -1821,6 +1821,15 @@ void AXIsolatedObject::setAccessibleName(const AtomString&)
     ASSERT_NOT_REACHED();
 }
 
+String AXIsolatedObject::titleAttributeValue() const
+{
+    AXTRACE("AXIsolatedObject::titleAttributeValue"_s);
+
+    if (m_propertyMap.contains(AXPropertyName::TitleAttributeValue))
+        return propertyValue<String>(AXPropertyName::TitleAttributeValue);
+    return AXCoreObject::titleAttributeValue();
+}
+
 String AXIsolatedObject::stringValue() const
 {
     if (m_propertyMap.contains(AXPropertyName::StringValue))

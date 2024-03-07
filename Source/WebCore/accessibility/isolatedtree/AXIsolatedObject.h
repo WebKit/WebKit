@@ -227,9 +227,9 @@ private:
 #endif
     IntSize size() const final { return snappedIntRect(LayoutRect(relativeFrame())).size(); }
     FloatRect relativeFrameFromChildren() const;
-    WallTime dateTimeValue() const { return propertyValue<WallTime>(AXPropertyName::DateTimeValue); }
+    WallTime dateTimeValue() const final { return propertyValue<WallTime>(AXPropertyName::DateTimeValue); }
 #if PLATFORM(MAC)
-    unsigned dateTimeComponents() const { return propertyValue<unsigned>(AXPropertyName::DateTimeComponents); }
+    unsigned dateTimeComponents() const final { return propertyValue<unsigned>(AXPropertyName::DateTimeComponents); }
 #endif
     bool supportsDatetimeAttribute() const final { return boolAttributeValue(AXPropertyName::SupportsDatetimeAttribute); }
     String datetimeAttributeValue() const final { return stringAttributeValue(AXPropertyName::DatetimeAttributeValue); }
@@ -502,6 +502,7 @@ private:
     bool inheritsPresentationalRole() const final;
     void setAccessibleName(const AtomString&) final;
 
+    String titleAttributeValue() const final;
     String title() const final { return stringAttributeValue(AXPropertyName::Title); }
     String description() const final { return stringAttributeValue(AXPropertyName::Description); }
 
