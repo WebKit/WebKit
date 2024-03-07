@@ -111,6 +111,7 @@ private:
     uint32_t m_deviceID { 0 };
     mutable std::optional<IntSize> m_intrinsicSize;
 
+    FloatSize m_contentSize;
     uint32_t m_width { 0 };
     uint32_t m_height { 0 };
     float m_frameRate { 0 };

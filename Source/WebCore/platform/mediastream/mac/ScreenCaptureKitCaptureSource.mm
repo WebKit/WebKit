@@ -323,21 +323,15 @@ RetainPtr<SCStreamConfiguration> ScreenCaptureKitCaptureSource::streamConfigurat
     auto width = m_width;
     auto height = m_height;
 
-#if HAVE(SC_CONTENT_SHARING_PICKER)
-    if (m_contentFilter) {
-        FloatSize contentSize = FloatSize { m_contentFilter.get().contentRect.size };
-        contentSize.scale(m_contentFilter.get().pointPixelScale);
-        if (!width && !height) {
-            width = contentSize.width();
-            height = contentSize.height();
-        } else if (contentSize.width() && contentSize.height()) {
-            if (!width)
-                width = height * contentSize.width() / contentSize.height();
-            else if (!height)
-                height = width * contentSize.height() / contentSize.width();
-        }
+    if (!width && !height) {
+        width = m_contentSize.width();
+        height = m_contentSize.height();
+    } else if (!m_contentSize.isEmpty()) {
+        if (!width)
+            width = height * m_contentSize.aspectRatio();
+        else
+            height = width / m_contentSize.aspectRatio();
     }
-#endif
 
     if (width && height) {
         [m_streamConfiguration setWidth:width];
@@ -361,6 +355,11 @@ void ScreenCaptureKitCaptureSource::startContentStream()
         auto filterAndSession = ScreenCaptureKitSharingSessionManager::singleton().contentFilterAndSharingSessionFromCaptureDevice(m_captureDevice);
         m_contentFilter = WTFMove(filterAndSession.first);
         m_sharingSession = WTFMove(filterAndSession.second);
+
+#if HAVE(SC_CONTENT_SHARING_PICKER)
+        m_contentSize = FloatSize { m_contentFilter.get().contentRect.size };
+        m_contentSize.scale(m_contentFilter.get().pointPixelScale);
+#endif
     }
 
 #if HAVE(SC_CONTENT_SHARING_PICKER)
@@ -491,7 +490,23 @@ void ScreenCaptureKitCaptureSource::streamDidOutputVideoSampleBuffer(RetainPtr<C
 
     auto attachments = (__bridge NSArray *)PAL::CMSampleBufferGetSampleAttachmentsArray(sampleBuffer.get(), false);
     SCFrameStatus status = SCFrameStatusStopped;
+
+    double contentScale = 1;
+    double scaleFactor = 1;
+    FloatSize contentSize;
     [attachments enumerateObjectsUsingBlock:makeBlockPtr([&] (NSDictionary *attachment, NSUInteger, BOOL *stop) {
+        if (auto scaleFactorNumber = (NSNumber *)attachment[SCStreamFrameInfoScaleFactor])
+            scaleFactor = [scaleFactorNumber floatValue];
+
+        if (auto contentScaleNumber = (NSNumber *)attachment[SCStreamFrameInfoContentScale])
+            contentScale = [contentScaleNumber floatValue];
+
+        if (auto contentRectDictionary = (CFDictionaryRef)attachment[SCStreamFrameInfoContentRect]) {
+            CGRect contentRect;
+            if (CGRectMakeWithDictionaryRepresentation(contentRectDictionary, &contentRect))
+                contentSize = FloatSize { contentRect.size };
+        }
+
         auto statusNumber = (NSNumber *)attachment[SCStreamFrameInfoStatus];
         if (!statusNumber)
             return;
@@ -512,6 +527,17 @@ void ScreenCaptureKitCaptureSource::streamDidOutputVideoSampleBuffer(RetainPtr<C
     }
 
     m_currentFrame = WTFMove(sampleBuffer);
+
+    if (scaleFactor != 1)
+        contentSize.scale(scaleFactor);
+    if (contentScale && contentScale != 1)
+        contentSize.scale(1 / contentScale);
+
+    if (m_contentSize != contentSize) {
+        m_contentSize = contentSize;
+        m_streamConfiguration = nullptr;
+        updateStreamConfiguration();
+    }
 
     auto intrinsicSize = IntSize(PAL::CMVideoFormatDescriptionGetPresentationDimensions(PAL::CMSampleBufferGetFormatDescription(m_currentFrame.get()), true, true));
     if (!m_intrinsicSize || *m_intrinsicSize != intrinsicSize) {
