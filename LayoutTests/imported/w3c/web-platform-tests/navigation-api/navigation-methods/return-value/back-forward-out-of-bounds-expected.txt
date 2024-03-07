@@ -1,4 +1,4 @@
 
 
-FAIL back() and forward() out of bounds assert_equals: expected 1 but got 0
+FAIL back() and forward() out of bounds assert_equals: committed and finished must reject with the same value expected object "InvalidStateError: Cannot go back" but got object "InvalidStateError: Cannot go back"
 

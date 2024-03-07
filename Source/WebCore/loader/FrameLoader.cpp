@@ -4704,12 +4704,15 @@ void FrameLoader::updateNavigationAPIEntries()
     RefPtr page = m_frame->page();
     if (!page)
         return;
-    if (RefPtr currentItem = page->backForward().currentItem()) {
+    if (RefPtr currentItem = history().currentItem()) {
         Vector<Ref<HistoryItem>> historyItems;
-        for (int index = -1 * static_cast<int>(page->backForward().backCount()); index <= static_cast<int>(page->backForward().forwardCount()); index++) {
-            if (RefPtr item = page->backForward().itemAtIndex(index))
-                historyItems.append(item.releaseNonNull());
-        }
+        if (currentItem == page->backForward().currentItem()) {
+            for (int index = -1 * static_cast<int>(page->backForward().backCount()); index <= static_cast<int>(page->backForward().forwardCount()); index++) {
+                if (RefPtr item = page->backForward().itemAtIndex(index))
+                    historyItems.append(item.releaseNonNull());
+            }
+        } else
+            historyItems.append(*currentItem);
         domWindow->protectedNavigation()->initializeEntries(*currentItem, historyItems);
     }
 }
