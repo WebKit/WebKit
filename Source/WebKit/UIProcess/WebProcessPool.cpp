@@ -331,8 +331,8 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
             protectedThis->sendToAllProcesses(Messages::WebProcess::UpdateDomainsWithStorageAccessQuirks(domainSet));
         }
     });
-    //if (StorageAccessPromptQuirkController::shared().cachedQuirks().isEmpty())
-    //    StorageAccessPromptQuirkController::shared().initialize();
+    if (StorageAccessPromptQuirkController::shared().cachedQuirks().isEmpty())
+        StorageAccessPromptQuirkController::shared().initialize();
     if (StorageAccessUserAgentStringQuirkController::shared().cachedQuirks().isEmpty())
         StorageAccessUserAgentStringQuirkController::shared().initialize();
 #endif

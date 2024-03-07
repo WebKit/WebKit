@@ -99,6 +99,7 @@ void AuxiliaryProcess::platformInitialize(const AuxiliaryProcessInitializationPa
 void AuxiliaryProcess::didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName messageName)
 {
     auto errorMessage = makeString("Received invalid message: '", description(messageName), "' (", messageName, ')');
+    WTFLogAlways("AuxiliaryProcess::didReceiveInvalidMessage: %s", errorMessage.utf8().data());
     logAndSetCrashLogMessage(errorMessage.utf8().data());
     CRASH_WITH_INFO(WTF::enumToUnderlyingType(messageName));
 }
