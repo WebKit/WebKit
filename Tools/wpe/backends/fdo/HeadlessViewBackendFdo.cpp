@@ -165,7 +165,7 @@ PlatformImage HeadlessViewBackend::snapshot()
 #if defined(USE_CAIRO) && USE_CAIRO
     return cairo_surface_reference(m_snapshot);
 #elif defined(USE_SKIA) && USE_SKIA
-    return m_snapshot.get();
+    return SkRef(m_snapshot.get());
 #endif
 }
 
