@@ -876,6 +876,13 @@ void Options::notifyOptionsChanged()
         FOR_EACH_JSC_EXPERIMENTAL_OPTION(DISABLE_TIERS);
     }
 
+#if PLATFORM(MAC)
+    if (Options::allowJITCageExperiments()) {
+        RELEASE_ASSERT(JSC_JIT_CAGE_VERSION() && WTF::processHasEntitlement("com.apple.private.verified-jit"_s));
+        Options::useJITCage() = true;
+    }
+#endif
+
 #if OS(DARWIN)
     if (useOSLogOptionHasChanged) {
         initializeDatafileToUseOSLog();
@@ -1375,7 +1382,11 @@ SUPPRESS_ASAN bool canUseJITCage()
 {
     if (JSC_FORCE_USE_JIT_CAGE)
         return true;
+#if PLATFORM(MAC)
+    return false;
+#else
     return JSC_JIT_CAGE_VERSION() && WTF::processHasEntitlement("com.apple.private.verified-jit"_s);
+#endif // PLATFORM(MAC)
 }
 #else
 bool canUseJITCage() { return false; }
