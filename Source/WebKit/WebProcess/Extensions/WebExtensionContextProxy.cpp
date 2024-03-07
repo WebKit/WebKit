@@ -189,11 +189,18 @@ void WebExtensionContextProxy::enumerateFramesAndNamespaceObjects(const Function
 
         auto context = page->isServiceWorkerPage() ? frame->jsContextForServiceWorkerWorld(world) : frame->jsContextForWorld(world);
         auto globalObject = JSContextGetGlobalObject(context);
-        auto namespaceObject = JSObjectGetProperty(context, globalObject, toJSString("browser").get(), nullptr);
-        if (!namespaceObject || !JSValueIsObject(context, namespaceObject))
-            continue;
 
-        RefPtr namespaceObjectImpl = toWebExtensionAPINamespace(context, namespaceObject);
+        RefPtr<WebExtensionAPINamespace> namespaceObjectImpl;
+        auto browserNamespaceObject = JSObjectGetProperty(context, globalObject, toJSString("browser").get(), nullptr);
+        if (browserNamespaceObject && JSValueIsObject(context, browserNamespaceObject))
+            namespaceObjectImpl = toWebExtensionAPINamespace(context, browserNamespaceObject);
+
+        if (!namespaceObjectImpl) {
+            auto chromeNamespaceObject = JSObjectGetProperty(context, globalObject, toJSString("chrome").get(), nullptr);
+            if (chromeNamespaceObject && JSValueIsObject(context, chromeNamespaceObject))
+                namespaceObjectImpl = toWebExtensionAPINamespace(context, chromeNamespaceObject);
+        }
+
         if (!namespaceObjectImpl)
             continue;
 
