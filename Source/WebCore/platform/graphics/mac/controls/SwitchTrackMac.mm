@@ -28,7 +28,15 @@
 #if PLATFORM(MAC)
 
 #import "ColorCocoa.h"
+#import "ControlFactoryMac.h"
+#import "FloatRoundedRect.h"
+#import "GraphicsContext.h"
+#import "ImageBuffer.h"
+#import "LocalCurrentGraphicsContext.h"
+#import "LocalDefaultSystemAppearance.h"
 #import "SwitchMacUtilities.h"
+#import <pal/spi/mac/CoreUISPI.h>
+#import <pal/spi/mac/NSAppearanceSPI.h>
 
 namespace WebCore {
 
@@ -51,29 +59,6 @@ IntOutsets SwitchTrackMac::cellOutsets(NSControlSize controlSize, const ControlS
 FloatRect SwitchTrackMac::rectForBounds(const FloatRect& bounds, const ControlStyle&) const
 {
     return SwitchMacUtilities::rectForBounds(bounds);
-}
-
-static RefPtr<ImageBuffer> trackMaskImage(GraphicsContext& context, FloatSize trackRectSize, float deviceScaleFactor, bool isRTL, NSString *coreUISize)
-{
-    auto drawingTrackRect = NSMakeRect(0, 0, trackRectSize.width(), trackRectSize.height());
-    auto maskImage = context.createImageBuffer(trackRectSize, deviceScaleFactor);
-    if (!maskImage)
-        return nullptr;
-
-    auto cgContext = maskImage->context().platformContext();
-
-    auto coreUIDirection = (__bridge NSString *)(isRTL ? kCUIUserInterfaceLayoutDirectionRightToLeft : kCUIUserInterfaceLayoutDirectionLeftToRight);
-
-    CGContextStateSaver stateSaver(cgContext);
-
-    [[NSAppearance currentDrawingAppearance] _drawInRect:drawingTrackRect context:cgContext options:@{
-        (__bridge NSString *)kCUIWidgetKey: (__bridge NSString *)kCUIWidgetSwitchFillMask,
-        (__bridge NSString *)kCUISizeKey: coreUISize,
-        (__bridge NSString *)kCUIUserInterfaceLayoutDirectionKey: coreUIDirection,
-        (__bridge NSString *)kCUIScaleKey: @(deviceScaleFactor),
-    }];
-
-    return maskImage;
 }
 
 static RefPtr<ImageBuffer> trackImage(GraphicsContext& context, RefPtr<ImageBuffer> trackMaskImage, FloatSize trackRectSize, float deviceScaleFactor, const ControlStyle& style, bool isOn, bool isRTL, bool isVertical, bool isEnabled, bool isPressed, bool isInActiveWindow, bool needsOnOffLabels, NSString *coreUISize)
@@ -163,7 +148,7 @@ void SwitchTrackMac::draw(GraphicsContext& context, const FloatRoundedRect& bord
 
     auto logicalBounds = SwitchMacUtilities::rectWithTransposedSize(borderRect.rect(), isVertical);
     auto controlSize = controlSizeForSize(logicalBounds.size(), style);
-    auto size = SwitchMacUtilities::visualCellSize(controlSize, style);
+    auto size = SwitchMacUtilities::visualCellSize(cellSize(controlSize, style), style);
     auto outsets = SwitchMacUtilities::visualCellOutsets(controlSize, isVertical);
 
     auto trackRect = SwitchMacUtilities::trackRectForBounds(logicalBounds, size);
@@ -179,7 +164,7 @@ void SwitchTrackMac::draw(GraphicsContext& context, const FloatRoundedRect& bord
 
     auto coreUISize = SwitchMacUtilities::coreUISizeForControlSize(controlSize);
 
-    auto maskImage = trackMaskImage(context, inflatedTrackRect.size(), deviceScaleFactor, isRTL, coreUISize);
+    auto maskImage = SwitchMacUtilities::trackMaskImage(context, inflatedTrackRect.size(), deviceScaleFactor, isRTL, coreUISize);
     if (!maskImage)
         return;
 

@@ -28,16 +28,17 @@
 
 namespace WebCore::SwitchMacUtilities {
 
-static IntSize cellSize(NSControlSize);
-static FloatSize visualCellSize(NSControlSize, const ControlStyle&);
-static IntOutsets cellOutsets(NSControlSize);
-static IntOutsets visualCellOutsets(NSControlSize, bool);
-static FloatRect rectForBounds(const FloatRect&);
-static NSString *coreUISizeForControlSize(const NSControlSize);
-static float easeInOut(float);
-static FloatRect rectWithTransposedSize(const FloatRect&, bool);
-static FloatRect trackRectForBounds(const FloatRect&, const FloatSize&);
-static void rotateContextForVerticalWritingMode(GraphicsContext&, const FloatRect&);
+IntSize cellSize(NSControlSize);
+FloatSize visualCellSize(IntSize, const ControlStyle&);
+IntOutsets cellOutsets(NSControlSize);
+IntOutsets visualCellOutsets(NSControlSize, bool);
+FloatRect rectForBounds(const FloatRect&);
+NSString *coreUISizeForControlSize(const NSControlSize);
+float easeInOut(float);
+FloatRect rectWithTransposedSize(const FloatRect&, bool);
+FloatRect trackRectForBounds(const FloatRect&, const FloatSize&);
+void rotateContextForVerticalWritingMode(GraphicsContext&, const FloatRect&);
+RefPtr<ImageBuffer> trackMaskImage(GraphicsContext&, FloatSize, float, bool, NSString *);
 
 } // namespace WebCore::SwitchMacUtilities
 
