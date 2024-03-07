@@ -80,9 +80,8 @@ public:
 #if PLATFORM(VISION)
     bool isVideoElement() const { return m_isVideoElement; }
 #if ENABLE(QUICKLOOK_FULLSCREEN)
-    bool isImageElement() const { return m_imageBuffer.has_value(); }
-    const String& imageMIMEType() const { return m_imageMIMEType; }
-    const std::optional<Ref<WebCore::SharedBuffer>>& imageBuffer() const { return m_imageBuffer; }
+    bool isImageElement() const { return m_imageBuffer; }
+    void prepareQuickLookImageURL(CompletionHandler<void(URL&&)>&&) const;
 #endif // QUICKLOOK_FULLSCREEN
 #endif
     void close();
@@ -135,7 +134,7 @@ private:
     bool m_isVideoElement { false };
 #if ENABLE(QUICKLOOK_FULLSCREEN)
     String m_imageMIMEType;
-    std::optional<Ref<WebCore::SharedBuffer>> m_imageBuffer;
+    RefPtr<WebCore::SharedBuffer> m_imageBuffer;
 #endif // QUICKLOOK_FULLSCREEN
 #endif
     Vector<CompletionHandler<void()>> m_closeCompletionHandlers;

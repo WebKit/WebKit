@@ -62,7 +62,6 @@
 #if PLATFORM(VISION)
 #import "MRUIKitSPI.h"
 #if ENABLE(QUICKLOOK_FULLSCREEN)
-#import "MediaPermissionUtilities.h"
 #import "WKSPreviewWindowController.h"
 #import <pal/ios/QuickLookSoftLink.h>
 #import "WebKitSwiftSoftLink.h"
@@ -701,13 +700,9 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
 - (void)placeholderWillMoveToSuperview:(UIView *)superview;
 @end
 
-#if PLATFORM(VISION) && ENABLE(QUICKLOOK_FULLSCREEN)
+#if ENABLE(QUICKLOOK_FULLSCREEN)
 @interface WKFullScreenWindowController (WKSPreviewWindowControllerDelegate) <WKSPreviewWindowControllerDelegate>
-- (void)previewWindowControllerDidClose;
-@end
-
-@interface WKFullScreenWindowController (QLPreviewItemDataProvider) <QLPreviewItemDataProvider>
-- (NSData *)provideDataForItem:(QLItem *)item;
+- (void)previewWindowControllerDidClose:(id)previewWindowController;
 @end
 #endif
 
@@ -1172,6 +1167,14 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
 
     _fullScreenState = WebKit::WaitingToExitFullScreen;
     _exitingFullScreen = YES;
+
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+    if (_previewWindowController) {
+        [_previewWindowController dismissWindow];
+        [_previewWindowController setDelegate:nil];
+        _previewWindowController = nil;
+    }
+#endif
 
     if (auto* manager = self._manager) {
         OBJC_ALWAYS_LOG(OBJC_LOGIDENTIFIER);
@@ -1861,18 +1864,17 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
     });
 
     CGFloat inWindowAlpha = 1;
-#if PLATFORM(VISION) && ENABLE(QUICKLOOK_FULLSCREEN)
+#if ENABLE(QUICKLOOK_FULLSCREEN)
     auto* manager = self._manager;
     if (manager && manager->isImageElement()) {
         if (enter) {
             inWindowAlpha = 0;
-            auto item = adoptNS([PAL::allocQLItemInstance() initWithDataProvider:self contentType:[UTType typeWithMIMEType:manager->imageMIMEType()].identifier previewTitle:WebKit::applicationVisibleName()]);
-            _previewWindowController = [WebKit::allocWKSPreviewWindowControllerInstance() initWithItem:item.get()];
-            [_previewWindowController setDelegate:self];
-            [_previewWindowController presentWindow];
-        } else if (_previewWindowController) {
-            [_previewWindowController setDelegate:nil];
-            _previewWindowController = nil;
+            manager->prepareQuickLookImageURL([strongSelf = retainPtr(self), self] (URL&& url) mutable {
+                auto item = adoptNS([PAL::allocQLItemInstance() initWithURL:url]);
+                _previewWindowController = adoptNS([WebKit::allocWKSPreviewWindowControllerInstance() initWithItem:item.get()]);
+                [_previewWindowController setDelegate:self];
+                [_previewWindowController presentWindow];
+            });
         }
     }
 #endif
@@ -1925,21 +1927,12 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
 #if PLATFORM(VISION) && ENABLE(QUICKLOOK_FULLSCREEN)
 
 @implementation WKFullScreenWindowController (WKSPreviewWindowControllerDelegate)
-- (void)previewWindowControllerDidClose
+- (void)previewWindowControllerDidClose:(id)previewWindowController
 {
+    if (previewWindowController != _previewWindowController)
+        return;
+
     [self requestExitFullScreen];
-}
-@end
-
-@implementation WKFullScreenWindowController (QLPreviewItemDataProvider)
-- (NSData *)provideDataForItem:(QLItem *)item
-{
-    if (auto* manager = self._manager) {
-        if (manager->imageBuffer().has_value())
-            return manager->imageBuffer().value()->createNSData().autorelease();
-    }
-
-    return nil;
 }
 @end
 

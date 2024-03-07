@@ -33,7 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class WKSPreviewWindowController;
 
 @protocol WKSPreviewWindowControllerDelegate <NSObject>
-- (void)previewWindowControllerDidClose;
+- (void)previewWindowControllerDidClose:(id)previewWindowController;
 @end
 
 @interface WKSPreviewWindowController : NSObject

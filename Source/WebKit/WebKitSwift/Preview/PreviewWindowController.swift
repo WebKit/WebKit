@@ -26,43 +26,58 @@
 #if canImport(AssetViewer)
 import WebKitSwift
 
-@_spi(Preview) import AssetViewer
+@_spi(PreviewApplication) import QuickLook
+import AssetViewer
 
 @objc(WKSPreviewWindowController)
 public final class PreviewWindowController: NSObject {
     private static let logger = Logger(subsystem: "com.apple.WebKit", category: "Fullscreen")
 
-    var item: QLItem
-    var previewApp: AssetViewer.Preview?
+    private var item: QLItem
+    private var previewSession: PreviewSession?
+    private var isClosing = false
+
     @objc public weak var delegate: WKSPreviewWindowControllerDelegate?
 
     @objc public init(item: QLItem) {
         self.item = item
         super.init()
-
-        self.previewApp = Preview(response: { response in
-            if case .previewSceneClosed = response {
-                if let delegate = self.delegate {
-                    delegate.previewWindowControllerDidClose()
-                }
-            }
-        })
     }
 
     @objc public func presentWindow() {
-        Task {
-            guard let previewApp = self.previewApp else { return }
+        previewSession = PreviewApplication.open(items: [self.item], selectedItemIndex: nil, editingMode: .disabled)
 
-            do {
-                try await previewApp.launch(with: [self.item], options: .none)
-            } catch {
-                PreviewWindowController.logger.error("WKSPreviewWindowController.presentWindow failed: \(error, privacy: .public)")
+        Task.detached { [weak self] in
+            guard let session = self?.previewSession else { return }
+            for await event in session.events {
+                DispatchQueue.main.async { [weak self] in
+                    guard let self = self else { return }
+                    switch event {
+                    case .didFail(let error):
+                        self.isClosing = true
+                        self.delegate?.previewWindowControllerDidClose(self)
+                        PreviewWindowController.logger.error("Preview open failed with error \(error)")
+                    case .didClose:
+                        self.isClosing = true
+                        self.delegate?.previewWindowControllerDidClose(self)
+                    default:
+                        break
+                    }
+                }
             }
         }
     }
 
     @objc public func dismissWindow() {
-        // TODO: rdar://120903037
+        guard !isClosing else { return }
+
+        Task {
+            do {
+                try await previewSession?.close();
+            } catch {
+                PreviewWindowController.logger.error("WKSPreviewWindowController.dismissWindow failed: \(error, privacy: .public)")
+            }
+        }
     }
 }
 

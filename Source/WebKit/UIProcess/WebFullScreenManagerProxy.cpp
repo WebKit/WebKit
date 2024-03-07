@@ -37,11 +37,20 @@
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
 #include <WebCore/IntRect.h>
+#include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/ScreenOrientationType.h>
 #include <wtf/LoggerHelper.h>
 
 namespace WebKit {
 using namespace WebCore;
+
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+static WorkQueue& sharedQuickLookFileQueue()
+{
+    static NeverDestroyed<Ref<WorkQueue>> queue(WorkQueue::create("com.apple.WebKit.QuickLookFileQueue"));
+    return queue.get();
+}
+#endif
 
 WebFullScreenManagerProxy::WebFullScreenManagerProxy(WebPageProxy& page, WebFullScreenManagerProxyClient& client)
     : m_page(page)
@@ -205,11 +214,33 @@ void WebFullScreenManagerProxy::enterFullScreen(bool blocksReturnToFullscreenFro
 
 void WebFullScreenManagerProxy::exitFullScreen()
 {
-#if PLATFORM(VISION) && ENABLE(QUICKLOOK_FULLSCREEN)
-    m_imageBuffer = std::nullopt;
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+    m_imageBuffer = nullptr;
 #endif
     m_client.exitFullScreen();
 }
+
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+void WebFullScreenManagerProxy::prepareQuickLookImageURL(CompletionHandler<void(URL&&)>&& completionHandler) const
+{
+    sharedQuickLookFileQueue().dispatch([buffer = m_imageBuffer, mimeType = crossThreadCopy(m_imageMIMEType), completionHandler = WTFMove(completionHandler)]() mutable {
+        if (!buffer)
+            return completionHandler(URL());
+
+        auto suffix = makeString('.', WebCore::MIMETypeRegistry::preferredExtensionForMIMEType(mimeType));
+        auto [filePath, fileHandle] = FileSystem::openTemporaryFile("QuickLook"_s, suffix);
+        ASSERT(FileSystem::isHandleValid(fileHandle));
+
+        size_t byteCount = FileSystem::writeToFile(fileHandle, buffer->data(), buffer->size());
+        ASSERT_UNUSED(byteCount, byteCount == buffer->size());
+        FileSystem::closeFile(fileHandle);
+
+        RunLoop::main().dispatch([filePath, completionHandler = WTFMove(completionHandler)]() mutable {
+            completionHandler(URL::fileURLWithFileSystemPath(filePath));
+        });
+    });
+}
+#endif
 
 void WebFullScreenManagerProxy::beganEnterFullScreen(const IntRect& initialFrame, const IntRect& finalFrame)
 {
