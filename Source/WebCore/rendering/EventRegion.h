@@ -60,7 +60,7 @@ public:
     void uniteInteractionRegions(RenderObject&, const FloatRect&);
     bool shouldConsolidateInteractionRegion(RenderObject&, const IntRect&);
     void removeSuperfluousInteractionRegions();
-    void shrinkWrapInteractionRegions();
+    Vector<InteractionRegion> shrinkWrappedInteractionRegions();
     void copyInteractionRegionsToEventRegion();
 #endif
 
@@ -69,7 +69,7 @@ private:
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     Vector<InteractionRegion> m_interactionRegions;
-    HashSet<IntRect> m_interactionRects;
+    HashMap<IntRect, InteractionRegion::ContentHint> m_interactionRectsAndContentHints;
     HashSet<IntRect> m_occlusionRects;
     HashSet<ElementIdentifier> m_containerRemovalCandidates;
     HashSet<ElementIdentifier> m_containersToRemove;
@@ -133,7 +133,7 @@ public:
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     const Vector<InteractionRegion>& interactionRegions() const { return m_interactionRegions; }
-    void appendInteractionRegions(const Vector<InteractionRegion>&);
+    void appendInteractionRegions(Vector<InteractionRegion>&&);
     void clearInteractionRegions();
 #endif
 

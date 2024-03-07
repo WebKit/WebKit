@@ -95,6 +95,17 @@ static void configureLayerForInteractionRegion(CALayer *layer, NSString *groupNa
     }];
 }
 
+static void reconfigureLayerContentHint(CALayer *layer, WebCore::InteractionRegion::ContentHint contentHint)
+{
+    if (![layer isKindOfClass:getRCPGlowEffectLayerClass()])
+        return;
+
+    if (contentHint == WebCore::InteractionRegion::ContentHint::Photo)
+        [(RCPGlowEffectLayer *)layer setContentRenderingHints:RCPGlowEffectContentRenderingHintPhoto];
+    else
+        [(RCPGlowEffectLayer *)layer setContentRenderingHints:0];
+}
+
 static void configureLayerAsGuard(CALayer *layer, NSString *groupName)
 {
     CARemoteEffectGroup *group = [CARemoteEffectGroup groupWithEffects:@[]];
@@ -128,11 +139,14 @@ static void configureRemoteEffect(CALayer *layer, WebCore::InteractionRegion::Ty
     }
 }
 
-static void applyBackgroundColorForDebuggingToLayer(CALayer *layer, WebCore::InteractionRegion::Type type)
+static void applyBackgroundColorForDebuggingToLayer(CALayer *layer, const WebCore::InteractionRegion& region)
 {
-    switch (type) {
+    switch (region.type) {
     case InteractionRegion::Type::Interaction:
-        [layer setBackgroundColor:cachedCGColor({ WebCore::SRGBA<float>(0, 1, 0, .2) }).get()];
+        if (region.contentHint == WebCore::InteractionRegion::ContentHint::Photo)
+            [layer setBackgroundColor:cachedCGColor({ WebCore::SRGBA<float>(0.5, 0, 0.5, .2) }).get()];
+        else
+            [layer setBackgroundColor:cachedCGColor({ WebCore::SRGBA<float>(0, 1, 0, .2) }).get()];
         [layer setName:@"Interaction"];
         break;
     case InteractionRegion::Type::Guard:
@@ -148,7 +162,7 @@ static void applyBackgroundColorForDebuggingToLayer(CALayer *layer, WebCore::Int
     }
 }
 
-static CALayer *createInteractionRegionLayer(WebCore::InteractionRegion::Type type, NSString *groupName, bool applyBackgroundColorForDebugging)
+static CALayer *createInteractionRegionLayer(WebCore::InteractionRegion::Type type, NSString *groupName)
 {
     CALayer *layer = type == InteractionRegion::Type::Interaction
         ? [[interactionRegionLayerClass() alloc] init]
@@ -162,9 +176,6 @@ static CALayer *createInteractionRegionLayer(WebCore::InteractionRegion::Type ty
 
     configureRemoteEffect(layer, type, groupName);
 
-    if (applyBackgroundColorForDebugging)
-        applyBackgroundColorForDebuggingToLayer(layer, type);
-
     return layer;
 }
 
@@ -172,7 +183,7 @@ static std::optional<WebCore::InteractionRegion::Type> interactionRegionTypeForL
 {
     id value = [layer valueForKey:interactionRegionTypeKey];
     if (value)
-        return static_cast<InteractionRegion::Type>([value boolValue]);
+        return static_cast<InteractionRegion::Type>([value intValue]);
     return std::nullopt;
 }
 
@@ -257,7 +268,7 @@ void updateLayersForInteractionRegions(RemoteLayerTreeNode& node)
             }
 
             didReuseLayer = false;
-            regionLayer = adoptNS(createInteractionRegionLayer(region.type, interactionRegionGroupName, applyBackgroundColorForDebugging));
+            regionLayer = adoptNS(createInteractionRegionLayer(region.type, interactionRegionGroupName));
         };
         findOrCreateLayer();
 
@@ -279,6 +290,8 @@ void updateLayersForInteractionRegions(RemoteLayerTreeNode& node)
             if (region.cornerRadius)
                 [regionLayer setCornerCurve:kCACornerCurveCircular];
 
+            reconfigureLayerContentHint(regionLayer.get(), region.contentHint);
+
             constexpr CACornerMask allCorners = kCALayerMinXMinYCorner | kCALayerMaxXMinYCorner | kCALayerMinXMaxYCorner | kCALayerMaxXMaxYCorner;
             if (region.maskedCorners.isEmpty())
                 [regionLayer setMaskedCorners:allCorners];
@@ -297,6 +310,9 @@ void updateLayersForInteractionRegions(RemoteLayerTreeNode& node)
             } else
                 [regionLayer setMask:nil];
         }
+
+        if (applyBackgroundColorForDebugging)
+            applyBackgroundColorForDebuggingToLayer(regionLayer.get(), region);
 
         if ([container.sublayers objectAtIndex:insertionPoint] != regionLayer) {
             [regionLayer removeFromSuperlayer];

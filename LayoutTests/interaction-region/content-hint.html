@@ -1,0 +1,112 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+    <meta name="viewport" content="width=1600">
+    <style>
+        body { margin: 0; }
+        #test {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 1rem;
+            font-family: -apple-system;
+        }
+        section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.7);
+            min-height: 400px;
+            text-align: center;
+        }
+        section img {
+            width: 80%;
+        }
+        .one-rect figure, .one-rect figure a {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+        .background-image {
+            cursor: pointer;
+            background-image: url("../fast/media/resources/apple_logo_big.jpg");
+            background-size: cover;
+            background-position: center;
+        }
+        .svg a, .svg img {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+        section video {
+            cursor: pointer;
+        }
+        section.small img {
+            width: 100px;
+        }
+    </style>
+</head>
+<body>
+<div id="test">
+    <section>
+        <a href="#">
+            <img src="../fast/media/resources/apple_logo_big.jpg" alt="apple logo" />
+        </a>
+    </section>
+    <section class="background-image">
+    </section>
+    <section class="svg background-image">
+        <a href="#">
+            <img src="../svg/as-background-image/resources/butterfly.svg" alt="butterfly" />
+        </a>
+    </section>
+    <section class="one-rect">
+        <figure>
+        <a href="#">
+            <picture>
+                <img src="../fast/media/resources/apple_logo_big.jpg" alt="apple logo" />
+            </picture>
+            <figcaption>apple logo</figcaption>
+        </a>
+    </section>
+    <section>
+        <figure>
+        <a href="#">
+            <picture>
+                <img src="../fast/media/resources/apple_logo_big.jpg" alt="apple logo" />
+            </picture>
+            <figcaption>apple logo</figcaption>
+        </a>
+    </section>
+    <section class="svg">
+        <a href="#">
+            <img src="../svg/as-background-image/resources/butterfly.svg" alt="butterfly" />
+        </a>
+    </section>
+    <section>
+        <video src="../media/content/counting.mp4" autoplay loop muted></video>
+    </section>
+    <section class="small">
+        <a href="#">
+            <img src="../fast/media/resources/apple_logo_big.jpg" alt="apple logo" />
+        </a>
+    </section>
+</div>
+<pre id="results"></pre>
+<script>
+document.body.addEventListener("click", function(e) {
+    console.log(e, "event delegation");
+});
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.onload = function () {
+    if (!window.internals)
+       return;
+
+   results.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+   document.getElementById('test').remove();
+};
+</script>
+</body>
+</html>

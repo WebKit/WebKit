@@ -136,13 +136,15 @@ void EventRegionContext::uniteInteractionRegions(RenderObject& renderer, const F
         }
         
         
-        if (m_interactionRects.contains(rectForTracking))
+        if (m_interactionRectsAndContentHints.contains(rectForTracking)) {
+            m_interactionRectsAndContentHints.set(rectForTracking, interactionRegion->contentHint);
             return;
+        }
 
         if (shouldConsolidateInteractionRegion(renderer, rectForTracking))
             return;
 
-        m_interactionRects.add(rectForTracking);
+        m_interactionRectsAndContentHints.add(rectForTracking, interactionRegion->contentHint);
 
         auto discoveredIterator = m_discoveredRectsByElement.find(interactionRegion->elementIdentifier);
         if (discoveredIterator != m_discoveredRectsByElement.end()) {
@@ -238,30 +240,68 @@ bool EventRegionContext::shouldConsolidateInteractionRegion(RenderObject& render
     return false;
 }
 
-void EventRegionContext::shrinkWrapInteractionRegions()
+Vector<InteractionRegion> EventRegionContext::shrinkWrappedInteractionRegions()
 {
+    Vector<InteractionRegion> interactionRegionsToAppend;
+    interactionRegionsToAppend.reserveInitialCapacity(m_interactionRegions.size());
     for (auto& region : m_interactionRegions) {
-        if (region.type != InteractionRegion::Type::Interaction)
+        if (region.type != InteractionRegion::Type::Interaction) {
+            interactionRegionsToAppend.append(region);
             continue;
+        }
 
         auto discoveredIterator = m_discoveredRectsByElement.find(region.elementIdentifier);
         if (discoveredIterator == m_discoveredRectsByElement.end())
             continue;
 
         auto discoveredRects = discoveredIterator->value;
-        if (discoveredRects.size() == 1)
+        if (discoveredRects.size() == 1) {
+            auto rectForTracking = enclosingIntRect(region.rectInLayerCoordinates);
+            region.contentHint = m_interactionRectsAndContentHints.get(rectForTracking);
+            interactionRegionsToAppend.append(region);
             continue;
+        }
 
         FloatRect layerBounds;
-        for (const auto& rect : discoveredRects)
+        bool canUseSingleRect = true;
+        Vector<std::pair<FloatRect, InteractionRegion::ContentHint>> toAddAfterMerge;
+        for (const auto& rect : discoveredRects) {
+            auto previousArea = layerBounds.area();
             layerBounds.unite(rect);
+            auto growth = layerBounds.area() - previousArea;
+            if (growth > rect.area() + std::numeric_limits<float>::epsilon())
+                canUseSingleRect = false;
 
-        Path path = PathUtilities::pathWithShrinkWrappedRects(discoveredRects, region.cornerRadius);
-        region.rectInLayerCoordinates = layerBounds;
-        path.translate(-toFloatSize(layerBounds.location()));
-        region.clipPath = path;
-        region.cornerRadius = 0;
+            auto rectForTracking = enclosingIntRect(rect);
+            auto hint = m_interactionRectsAndContentHints.get(rectForTracking);
+            if (hint != region.contentHint)
+                toAddAfterMerge.append(std::make_pair(rect, hint));
+        }
+
+        if (canUseSingleRect)
+            region.rectInLayerCoordinates = layerBounds;
+        else {
+            Path path = PathUtilities::pathWithShrinkWrappedRects(discoveredRects, region.cornerRadius);
+            region.rectInLayerCoordinates = layerBounds;
+            path.translate(-toFloatSize(layerBounds.location()));
+            region.clipPath = path;
+            region.cornerRadius = 0;
+        }
+
+        interactionRegionsToAppend.append(region);
+        for (const auto& [rect, hint] : toAddAfterMerge) {
+            interactionRegionsToAppend.append({
+                region.type,
+                region.elementIdentifier,
+                rect,
+                region.cornerRadius,
+                region.maskedCorners,
+                hint
+            });
+        }
+
     }
+    return interactionRegionsToAppend;
 }
 
 void EventRegionContext::removeSuperfluousInteractionRegions()
@@ -271,7 +311,7 @@ void EventRegionContext::removeSuperfluousInteractionRegions()
             return m_containersToRemove.contains(region.elementIdentifier);
 
         auto guardRect = enclosingIntRect(region.rectInLayerCoordinates);
-        for (const auto& interactionRect : m_interactionRects) {
+        for (const auto& interactionRect : m_interactionRectsAndContentHints.keys()) {
             auto intersection = interactionRect;
             intersection.intersect(guardRect);
 
@@ -300,8 +340,7 @@ void EventRegionContext::removeSuperfluousInteractionRegions()
 void EventRegionContext::copyInteractionRegionsToEventRegion()
 {
     removeSuperfluousInteractionRegions();
-    shrinkWrapInteractionRegions();
-    m_eventRegion.appendInteractionRegions(m_interactionRegions);
+    m_eventRegion.appendInteractionRegions(shrinkWrappedInteractionRegions());
 }
 
 #endif
@@ -536,7 +575,7 @@ bool EventRegion::containsEditableElementsInRect(const IntRect& rect) const
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
 
-void EventRegion::appendInteractionRegions(const Vector<InteractionRegion>& interactionRegions)
+void EventRegion::appendInteractionRegions(Vector<InteractionRegion>&& interactionRegions)
 {
     m_interactionRegions.appendVector(interactionRegions);
 }

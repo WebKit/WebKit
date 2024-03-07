@@ -5798,6 +5798,7 @@ struct WebCore::GlobalWindowIdentifier {
     MinXMaxYCorner
     MaxXMaxYCorner
 };
+[Nested] enum class WebCore::InteractionRegion::ContentHint : bool;
 
 struct WebCore::InteractionRegion {
     WebCore::InteractionRegion::Type type;
@@ -5805,6 +5806,7 @@ struct WebCore::InteractionRegion {
     WebCore::FloatRect rectInLayerCoordinates;
     float cornerRadius;
     OptionSet<WebCore::InteractionRegion::CornerMask> maskedCorners;
+    WebCore::InteractionRegion::ContentHint contentHint;
     std::optional<WebCore::Path> clipPath;
 };
 

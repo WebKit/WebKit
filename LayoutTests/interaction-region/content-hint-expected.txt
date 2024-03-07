@@ -1,0 +1,53 @@
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 1600.00 2092.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 1600.00 2092.00)
+      (contentsOpaque 1)
+      (drawsContent 1)
+      (backgroundColor #FFFFFF)
+      (event region
+        (rect (0,0) width=1600 height=2092)
+
+      (interaction regions [
+        (interaction (0,41) width=522.50 height=318)
+        (cornerRadius 8.00),
+        (interaction (52.50,41) width=418 height=313.50)
+        (content hint photo)
+        (cornerRadius 8.00),
+        (interaction (538.50,0) width=523 height=400)
+        (content hint photo),
+        (interaction (1077.50,0) width=522.50 height=400),
+        (interaction (40,416) width=442.50 height=400)
+        (cornerRadius 8.00),
+        (interaction (84.50,416) width=354 height=265.50)
+        (content hint photo)
+        (cornerRadius 8.00),
+        (interaction (574.50,471) width=451 height=294)
+        (content hint photo)
+        (clipPath move to (48.50,0), add line to (48.50,0), add line to (402.50,0), add line to (402.50,0), add line to (402.50,265.50), add line to (402.50,265.50), add line to (48.50,265.50), add line to (48.50,265.50), close subpath, move to (0,266), add line to (0,266), add line to (451,266), add line to (451,266), add line to (451,294), add line to (451,294), add line to (0,294), add line to (0,294), close subpath),
+        (interaction (574.50,737) width=451 height=28),
+        (interaction (758.18,737) width=83.63 height=28),
+        (interaction (1077.50,416) width=522.50 height=400)
+        (cornerRadius 8.00),
+        (interaction (750,992.50) width=100 height=79)
+        (cornerRadius 8.00)])
+      )
+      (children 1
+        (GraphicsLayer
+          (position 85.00 888.00)
+          (bounds 352.50 288.00)
+          (event region
+            (rect (0,0) width=353 height=288)
+
+          (interaction regions [
+            (interaction (0.50,0) width=352 height=288)
+            (content hint photo)])
+          )
+        )
+      )
+    )
+  )
+)
+
