@@ -2751,7 +2751,7 @@ CharacterOffset AXObjectCache::characterOffsetForTextMarkerData(TextMarkerData& 
     if (textMarkerData.ignored)
         return { };
 
-    RefPtr node = textMarkerData.node;
+    RefPtrAllowingPartiallyDestroyed<Node> node = textMarkerData.node;
     if (!node || !isNodeInUse(*node))
         return { };
 
