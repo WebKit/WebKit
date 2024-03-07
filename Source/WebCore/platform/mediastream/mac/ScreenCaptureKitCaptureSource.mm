@@ -320,9 +320,28 @@ RetainPtr<SCStreamConfiguration> ScreenCaptureKitCaptureSource::streamConfigurat
     if (m_frameRate)
         [m_streamConfiguration setMinimumFrameInterval:PAL::CMTimeMakeWithSeconds(1 / m_frameRate, 1000)];
 
-    if (m_width && m_height) {
-        [m_streamConfiguration setWidth:m_width];
-        [m_streamConfiguration setHeight:m_height];
+    auto width = m_width;
+    auto height = m_height;
+
+#if HAVE(SC_CONTENT_SHARING_PICKER)
+    if (m_contentFilter) {
+        FloatSize contentSize = FloatSize { m_contentFilter.get().contentRect.size };
+        contentSize.scale(m_contentFilter.get().pointPixelScale);
+        if (!width && !height) {
+            width = contentSize.width();
+            height = contentSize.height();
+        } else if (contentSize.width() && contentSize.height()) {
+            if (!width)
+                width = height * contentSize.width() / contentSize.height();
+            else if (!height)
+                height = width * contentSize.height() / contentSize.width();
+        }
+    }
+#endif
+
+    if (width && height) {
+        [m_streamConfiguration setWidth:width];
+        [m_streamConfiguration setHeight:height];
     }
 
     return m_streamConfiguration;
