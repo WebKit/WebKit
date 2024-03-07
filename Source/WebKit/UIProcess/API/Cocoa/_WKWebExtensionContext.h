@@ -40,6 +40,7 @@
 #if TARGET_OS_IPHONE
 @class UIMenuElement;
 #else
+@class NSEvent;
 @class NSMenuItem;
 #endif
 
@@ -364,6 +365,12 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
  @discussion The extension context will still need to be loaded and have granted website permissions for its content to actually be injected.
  */
 - (BOOL)hasInjectedContentForURL:(NSURL *)url;
+
+/*!
+ @abstract A boolean value indicating whether the extension includes rules used for content modification or blocking.
+ @discussion This includes both static rules available in the extension's manifest and dynamic rules applied during a browsing session.
+ */
+@property (nonatomic, readonly) BOOL hasContentModificationRules;
 
 /*!
  @abstract Checks the specified permission against the currently denied, granted, and requested permissions.

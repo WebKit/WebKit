@@ -3704,6 +3704,11 @@ void WebExtensionContext::addDeclarativeNetRequestRulesToPrivateUserContentContr
     });
 }
 
+bool WebExtensionContext::hasContentModificationRules()
+{
+    return declarativeNetRequestEnabledRulesetCount() || !m_sessionRulesIDs.isEmpty() || !m_dynamicRulesIDs.isEmpty();
+}
+
 static NSString *computeStringHashForContentBlockerRules(NSString *rules)
 {
     SHA1 sha1;
