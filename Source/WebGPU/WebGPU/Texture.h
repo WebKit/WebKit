@@ -114,7 +114,6 @@ public:
     static bool supportsMultisampling(WGPUTextureFormat, const Device&);
     static bool supportsResolve(WGPUTextureFormat, const Device&);
     static bool supportsBlending(WGPUTextureFormat, const Device&);
-    static bool textureViewFormatCompatible(WGPUTextureFormat, WGPUTextureFormat);
     void recreateIfNeeded();
     void makeCanvasBacking();
     void setCommandEncoder(CommandEncoder&) const;

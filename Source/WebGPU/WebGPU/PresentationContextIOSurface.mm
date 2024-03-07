@@ -149,11 +149,6 @@ void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChain
             device.generateAValidationError("Requested texture view format BGRA8UnormStorage is not enabled"_s);
             return;
         }
-
-        if (!Texture::textureViewFormatCompatible(descriptor.format, viewFormat)) {
-            device.generateAValidationError("Requested texture view format is not compatible with the descriptor format"_s);
-            return;
-        }
     }
 
     if ((descriptor.usage & WGPUTextureUsage_StorageBinding) && !device.hasFeature(WGPUFeatureName_BGRA8UnormStorage)) {
