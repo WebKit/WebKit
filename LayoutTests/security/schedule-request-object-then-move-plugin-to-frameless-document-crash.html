@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<embed id="embed"></embed>
+<iframe id="iframe"></iframe>
+<object id="object"></object>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+  doc = new DOMParser().parseFromString("foo", "text/html");
+  object.data = "x";
+  var embed = document.getElementById("embed");
+  iframe.contentDocument.adoptNode(embed);
+  embed.bar;
+  doc.body.appendChild(object);
+  document.body.replaceWith("PASS if no crash.");
+</script>
