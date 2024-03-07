@@ -21,11 +21,11 @@
         "lint:fix": "eslint \"**/*.{js,mjs,jsx,ts,tsx}\" --fix",
         "pretty:check": "prettier --check ./",
         "pretty:fix": "prettier --write ./",
-        "format": "npm run pretty:fix ; npm run lint:fix",
-        "test:chrome": "BROWSER=chrome node tests/run.mjs",
-        "test:firefox": "BROWSER=firefox node tests/run.mjs",
-        "test:safari": "BROWSER=safari node tests/run.mjs",
-        "test:edge": "BROWSER=edge node tests/run.mjs"
+        "format": "npm run pretty:fix && npm run lint:fix",
+        "test:chrome": "node tests/run.mjs --browser chrome",
+        "test:firefox": "node tests/run.mjs --browser firefox",
+        "test:safari": "node tests/run.mjs --browser safari",
+        "test:edge": "node tests/run.mjs --browser edge"
     },
     "devDependencies": {
         "@babel/core": "^7.21.3",

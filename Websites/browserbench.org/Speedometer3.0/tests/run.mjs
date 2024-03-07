@@ -39,7 +39,7 @@ const options = commandLineArgs(optionDefinitions);
 if ("help" in options)
     printHelp();
 
-const BROWSER = options?.browser || process.env.BROWSER;
+const BROWSER = options?.browser;
 if (!BROWSER)
     printHelp("No browser specified, use $BROWSER or --browser");
 
