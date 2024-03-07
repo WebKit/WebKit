@@ -86,7 +86,11 @@ void BitmapTexture::updateContents(const void* srcData, const IntRect& targetRec
     // We are updating a texture with format RGBA with content from a buffer that has BGRA format. Instead of turning BGRA
     // into RGBA and then uploading it, we upload it as is. This causes the texture format to be RGBA but the content to be BGRA,
     // so we mark the texture to convert the colors when painting the texture.
+#if CPU(LITTLE_ENDIAN)
     m_colorConvertFlags = TextureMapperFlags::ShouldConvertTextureBGRAToRGBA;
+#else
+    m_colorConvertFlags = TextureMapperFlags::ShouldConvertTextureARGBToRGBA;
+#endif
 
     glBindTexture(GL_TEXTURE_2D, m_id);
 
