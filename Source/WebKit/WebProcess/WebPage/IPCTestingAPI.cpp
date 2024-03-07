@@ -58,6 +58,7 @@
 #include <JavaScriptCore/JavaScript.h>
 #include <JavaScriptCore/OpaqueJSString.h>
 #include <WebCore/DOMWrapperWorld.h>
+#include <WebCore/JSDOMGlobalObject.h>
 #include <WebCore/LocalFrame.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/ScriptController.h>
@@ -340,7 +341,7 @@ class JSMessageListener final : public IPC::MessageObserver {
 public:
     enum class Type { Incoming, Outgoing };
 
-    JSMessageListener(JSIPC&, Type, JSContextRef, JSObjectRef callback);
+    JSMessageListener(JSIPC&, Type, JSC::JSGlobalObject*, JSObjectRef callback);
 
 private:
     void willSendMessage(const IPC::Encoder&, OptionSet<IPC::SendOption>) override;
@@ -349,7 +350,7 @@ private:
 
     WeakPtr<JSIPC> m_jsIPC;
     Type m_type;
-    JSContextRef m_context;
+    JSC::Weak<WebCore::JSDOMGlobalObject> m_globalObject;
     JSObjectRef m_callback;
 };
 
@@ -1850,7 +1851,7 @@ void JSIPC::addMessageListener(JSMessageListener::Type type, JSContextRef contex
     if (argumentCount >= 2 && JSValueIsObject(context, arguments[1])) {
         auto listenerObjectRef = JSValueToObject(context, arguments[1], exception);
         if (JSObjectIsFunction(context, listenerObjectRef))
-            listener = makeUnique<JSMessageListener>(*jsIPC, type, context, listenerObjectRef);
+            listener = makeUnique<JSMessageListener>(*jsIPC, type, globalObject, listenerObjectRef);
     }
 
     if (!listener) {
@@ -2848,13 +2849,12 @@ JSValueRef JSIPC::processTargets(JSContextRef context, JSObjectRef thisObject, J
     return toRef(vm, processTargetsObject);
 }
 
-JSMessageListener::JSMessageListener(JSIPC& jsIPC, Type type, JSContextRef context, JSObjectRef callback)
+JSMessageListener::JSMessageListener(JSIPC& jsIPC, Type type, JSC::JSGlobalObject* globalObject, JSObjectRef callback)
     : m_jsIPC(jsIPC)
     , m_type(type)
-    , m_context(context)
+    , m_globalObject(JSC::jsCast<WebCore::JSDOMGlobalObject*>(globalObject))
     , m_callback(callback)
 {
-    auto* globalObject = toJS(context);
     auto& vm = globalObject->vm();
     JSC::JSLockHolder lock(vm);
 
@@ -2873,16 +2873,20 @@ void JSMessageListener::didReceiveMessage(const IPC::Decoder& decoder)
     if (m_type != Type::Incoming)
         return;
 
+    auto* globalObject = m_globalObject.get();
+    if (!globalObject)
+        return;
+
     RELEASE_ASSERT(m_jsIPC);
     Ref protectOwnerOfThis = *m_jsIPC;
-    auto* globalObject = toJS(m_context);
+    auto context = toRef(globalObject);
     JSC::JSLockHolder lock(globalObject->vm());
 
     auto mutableDecoder = IPC::Decoder::create(decoder.buffer(), { });
     auto* description = jsDescriptionFromDecoder(globalObject, *mutableDecoder);
 
-    JSValueRef arguments[] = { description ? toRef(globalObject, description) : JSValueMakeUndefined(m_context) };
-    JSObjectCallAsFunction(m_context, m_callback, m_callback, std::size(arguments), arguments, nullptr);
+    JSValueRef arguments[] = { description ? toRef(globalObject, description) : JSValueMakeUndefined(context) };
+    JSObjectCallAsFunction(context, m_callback, m_callback, std::size(arguments), arguments, nullptr);
 }
 
 void JSMessageListener::willSendMessage(const IPC::Encoder& encoder, OptionSet<IPC::SendOption>)
@@ -2895,13 +2899,17 @@ void JSMessageListener::willSendMessage(const IPC::Encoder& encoder, OptionSet<I
 
     auto decoder = IPC::Decoder::create({ encoder.buffer(), encoder.bufferSize() }, { });
     RunLoop::main().dispatch([this, protectOwnerOfThis = WTFMove(protectOwnerOfThis), decoder = WTFMove(decoder)] {
-        auto* globalObject = toJS(m_context);
+        auto* globalObject = m_globalObject.get();
+        if (!globalObject)
+            return;
+
+        auto context = toRef(globalObject);
         JSC::JSLockHolder lock(globalObject->vm());
 
         auto* description = jsDescriptionFromDecoder(globalObject, *decoder);
 
-        JSValueRef arguments[] = { description ? toRef(globalObject, description) : JSValueMakeUndefined(m_context) };
-        JSObjectCallAsFunction(m_context, m_callback, m_callback, std::size(arguments), arguments, nullptr);
+        JSValueRef arguments[] = { description ? toRef(globalObject, description) : JSValueMakeUndefined(context) };
+        JSObjectCallAsFunction(context, m_callback, m_callback, std::size(arguments), arguments, nullptr);
     });
 }
 
