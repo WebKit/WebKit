@@ -1444,25 +1444,25 @@ void NetworkStorageManager::deleteDatabase(IPC::Connection& connection, const We
     originStorageManager(requestData.databaseIdentifier().origin()).idbStorageManager(*m_idbStorageRegistry).deleteDatabase(connectionToClient, requestData);
 }
 
-void NetworkStorageManager::establishTransaction(uint64_t databaseConnectionIdentifier, const WebCore::IDBTransactionInfo& transactionInfo)
+void NetworkStorageManager::establishTransaction(WebCore::IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, const WebCore::IDBTransactionInfo& transactionInfo)
 {
     if (auto connection = m_idbStorageRegistry->connection(databaseConnectionIdentifier))
         connection->establishTransaction(transactionInfo);
 }
 
-void NetworkStorageManager::databaseConnectionPendingClose(uint64_t databaseConnectionIdentifier)
+void NetworkStorageManager::databaseConnectionPendingClose(WebCore::IDBDatabaseConnectionIdentifier databaseConnectionIdentifier)
 {
     if (auto connection = m_idbStorageRegistry->connection(databaseConnectionIdentifier))
         connection->connectionPendingCloseFromClient();
 }
 
-void NetworkStorageManager::databaseConnectionClosed(uint64_t databaseConnectionIdentifier)
+void NetworkStorageManager::databaseConnectionClosed(WebCore::IDBDatabaseConnectionIdentifier databaseConnectionIdentifier)
 {
     if (auto connection = m_idbStorageRegistry->connection(databaseConnectionIdentifier))
         connection->connectionClosedFromClient();
 }
 
-void NetworkStorageManager::abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const std::optional<WebCore::IDBResourceIdentifier>& transactionIdentifier)
+void NetworkStorageManager::abortOpenAndUpgradeNeeded(WebCore::IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, const std::optional<WebCore::IDBResourceIdentifier>& transactionIdentifier)
 {
     if (transactionIdentifier) {
         if (auto transaction = m_idbStorageRegistry->transaction(*transactionIdentifier))
@@ -1473,7 +1473,7 @@ void NetworkStorageManager::abortOpenAndUpgradeNeeded(uint64_t databaseConnectio
         connection->connectionClosedFromClient();
 }
 
-void NetworkStorageManager::didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& requestIdentifier, const WebCore::IndexedDB::ConnectionClosedOnBehalfOfServer connectionClosed)
+void NetworkStorageManager::didFireVersionChangeEvent(WebCore::IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& requestIdentifier, const WebCore::IndexedDB::ConnectionClosedOnBehalfOfServer connectionClosed)
 {
     if (auto connection = m_idbStorageRegistry->connection(databaseConnectionIdentifier))
         connection->didFireVersionChangeEvent(requestIdentifier, connectionClosed);
@@ -1491,7 +1491,7 @@ void NetworkStorageManager::commitTransaction(const WebCore::IDBResourceIdentifi
         transaction->commit(pendingRequestCount);
 }
 
-void NetworkStorageManager::didFinishHandlingVersionChangeTransaction(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& transactionIdentifier)
+void NetworkStorageManager::didFinishHandlingVersionChangeTransaction(WebCore::IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& transactionIdentifier)
 {
     if (auto connection = m_idbStorageRegistry->connection(databaseConnectionIdentifier))
         connection->didFinishHandlingVersionChange(transactionIdentifier);

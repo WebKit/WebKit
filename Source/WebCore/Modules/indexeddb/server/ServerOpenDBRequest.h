@@ -26,6 +26,7 @@
 #pragma once
 
 #include "IDBConnectionToClient.h"
+#include "IDBDatabaseConnectionIdentifier.h"
 #include "IDBOpenRequestData.h"
 #include <wtf/HashSet.h>
 #include <wtf/Ref.h>
@@ -52,8 +53,8 @@ public:
 
     uint64_t versionChangeID() const;
 
-    void notifiedConnectionsOfVersionChange(HashSet<uint64_t>&& connectionIdentifiers);
-    void connectionClosedOrFiredVersionChangeEvent(uint64_t connectionIdentifier);
+    void notifiedConnectionsOfVersionChange(HashSet<IDBDatabaseConnectionIdentifier>&& connectionIdentifiers);
+    void connectionClosedOrFiredVersionChangeEvent(IDBDatabaseConnectionIdentifier);
     bool hasConnectionsPendingVersionChangeEvent() const { return !m_connectionsPendingVersionChangeEvent.isEmpty(); }
     bool hasNotifiedConnectionsOfVersionChange() const { return m_notifiedConnectionsOfVersionChange; }
 
@@ -67,7 +68,7 @@ private:
     bool m_notifiedBlocked { false };
 
     bool m_notifiedConnectionsOfVersionChange { false };
-    HashSet<uint64_t> m_connectionsPendingVersionChangeEvent;
+    HashSet<IDBDatabaseConnectionIdentifier> m_connectionsPendingVersionChangeEvent;
 };
 
 } // namespace IDBServer

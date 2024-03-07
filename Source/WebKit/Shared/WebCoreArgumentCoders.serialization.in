@@ -650,7 +650,7 @@ struct WebCore::IDBDatabaseNameAndVersion {
     WebCore::IDBResultType m_type;
     WebCore::IDBResourceIdentifier m_requestIdentifier;
     WebCore::IDBError m_error;
-    uint64_t m_databaseConnectionIdentifier;
+    std::optional<WebCore::IDBDatabaseConnectionIdentifier> m_databaseConnectionIdentifier;
     std::unique_ptr<WebCore::IDBDatabaseInfo> m_databaseInfo;
     std::unique_ptr<WebCore::IDBTransactionInfo> m_transactionInfo;
     std::unique_ptr<WebCore::IDBKeyData> m_resultKey;

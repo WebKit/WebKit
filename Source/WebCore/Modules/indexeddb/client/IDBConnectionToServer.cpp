@@ -348,7 +348,7 @@ void IDBConnectionToServer::didIterateCursor(const IDBResultData& resultData)
     m_proxy->completeOperation(resultData);
 }
 
-void IDBConnectionToServer::establishTransaction(uint64_t databaseConnectionIdentifier, const IDBTransactionInfo& info)
+void IDBConnectionToServer::establishTransaction(IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, const IDBTransactionInfo& info)
 {
     LOG(IndexedDB, "IDBConnectionToServer::establishTransaction");
     ASSERT(isMainThread());
@@ -379,7 +379,7 @@ void IDBConnectionToServer::didCommitTransaction(const IDBResourceIdentifier& tr
     m_proxy->didCommitTransaction(transactionIdentifier, error);
 }
 
-void IDBConnectionToServer::didFinishHandlingVersionChangeTransaction(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier)
+void IDBConnectionToServer::didFinishHandlingVersionChangeTransaction(IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier)
 {
     LOG(IndexedDB, "IDBConnectionToServer::didFinishHandlingVersionChangeTransaction");
     ASSERT(isMainThread());
@@ -410,7 +410,7 @@ void IDBConnectionToServer::didAbortTransaction(const IDBResourceIdentifier& tra
     m_proxy->didAbortTransaction(transactionIdentifier, error);
 }
 
-void IDBConnectionToServer::fireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier, uint64_t requestedVersion)
+void IDBConnectionToServer::fireVersionChangeEvent(IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier, uint64_t requestedVersion)
 {
     LOG(IndexedDB, "IDBConnectionToServer::fireVersionChangeEvent");
     ASSERT(isMainThread());
@@ -418,7 +418,7 @@ void IDBConnectionToServer::fireVersionChangeEvent(uint64_t databaseConnectionId
     m_proxy->fireVersionChangeEvent(databaseConnectionIdentifier, requestIdentifier, requestedVersion);
 }
 
-void IDBConnectionToServer::didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier, const IndexedDB::ConnectionClosedOnBehalfOfServer connectionClosed)
+void IDBConnectionToServer::didFireVersionChangeEvent(IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier, const IndexedDB::ConnectionClosedOnBehalfOfServer connectionClosed)
 {
     LOG(IndexedDB, "IDBConnectionToServer::didFireVersionChangeEvent");
     ASSERT(isMainThread());
@@ -435,7 +435,7 @@ void IDBConnectionToServer::didStartTransaction(const IDBResourceIdentifier& tra
     m_proxy->didStartTransaction(transactionIdentifier, error);
 }
 
-void IDBConnectionToServer::didCloseFromServer(uint64_t databaseConnectionIdentifier, const IDBError& error)
+void IDBConnectionToServer::didCloseFromServer(IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, const IDBError& error)
 {
     LOG(IndexedDB, "IDBConnectionToServer::didCloseFromServer");
     ASSERT(isMainThread());
@@ -470,7 +470,7 @@ void IDBConnectionToServer::openDBRequestCancelled(const IDBOpenRequestData& req
         m_delegate->openDBRequestCancelled(requestData);
 }
 
-void IDBConnectionToServer::databaseConnectionPendingClose(uint64_t databaseConnectionIdentifier)
+void IDBConnectionToServer::databaseConnectionPendingClose(IDBDatabaseConnectionIdentifier databaseConnectionIdentifier)
 {
     LOG(IndexedDB, "IDBConnectionToServer::databaseConnectionPendingClose");
     ASSERT(isMainThread());
@@ -479,7 +479,7 @@ void IDBConnectionToServer::databaseConnectionPendingClose(uint64_t databaseConn
         m_delegate->databaseConnectionPendingClose(databaseConnectionIdentifier);
 }
 
-void IDBConnectionToServer::databaseConnectionClosed(uint64_t databaseConnectionIdentifier)
+void IDBConnectionToServer::databaseConnectionClosed(IDBDatabaseConnectionIdentifier databaseConnectionIdentifier)
 {
     LOG(IndexedDB, "IDBConnectionToServer::databaseConnectionClosed");
     ASSERT(isMainThread());
@@ -488,7 +488,7 @@ void IDBConnectionToServer::databaseConnectionClosed(uint64_t databaseConnection
         m_delegate->databaseConnectionClosed(databaseConnectionIdentifier);
 }
 
-void IDBConnectionToServer::abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const std::optional<IDBResourceIdentifier>& transactionIdentifier)
+void IDBConnectionToServer::abortOpenAndUpgradeNeeded(IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, const std::optional<IDBResourceIdentifier>& transactionIdentifier)
 {
     LOG(IndexedDB, "IDBConnectionToServer::abortOpenAndUpgradeNeeded");
     ASSERT(isMainThread());

@@ -380,7 +380,7 @@ void IDBServer::iterateCursor(const IDBRequestData& requestData, const IDBIterat
     transaction->iterateCursor(requestData, data);
 }
 
-void IDBServer::establishTransaction(uint64_t databaseConnectionIdentifier, const IDBTransactionInfo& info)
+void IDBServer::establishTransaction(IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, const IDBTransactionInfo& info)
 {
     LOG(IndexedDB, "IDBServer::establishTransaction");
     ASSERT(!isMainThread());
@@ -412,7 +412,7 @@ void IDBServer::commitTransaction(const IDBResourceIdentifier& transactionIdenti
     transaction->commit(pendingRequestCount);
 }
 
-void IDBServer::didFinishHandlingVersionChangeTransaction(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier)
+void IDBServer::didFinishHandlingVersionChangeTransaction(IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier)
 {
     LOG(IndexedDB, "IDBServer::didFinishHandlingVersionChangeTransaction - %s", transactionIdentifier.loggingString().utf8().data());
     ASSERT(!isMainThread());
@@ -425,9 +425,9 @@ void IDBServer::didFinishHandlingVersionChangeTransaction(uint64_t databaseConne
     connection->didFinishHandlingVersionChange(transactionIdentifier);
 }
 
-void IDBServer::databaseConnectionPendingClose(uint64_t databaseConnectionIdentifier)
+void IDBServer::databaseConnectionPendingClose(IDBDatabaseConnectionIdentifier databaseConnectionIdentifier)
 {
-    LOG(IndexedDB, "IDBServer::databaseConnectionPendingClose - %" PRIu64, databaseConnectionIdentifier);
+    LOG(IndexedDB, "IDBServer::databaseConnectionPendingClose - %" PRIu64, databaseConnectionIdentifier.toUInt64());
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
@@ -438,9 +438,9 @@ void IDBServer::databaseConnectionPendingClose(uint64_t databaseConnectionIdenti
     databaseConnection->connectionPendingCloseFromClient();
 }
 
-void IDBServer::databaseConnectionClosed(uint64_t databaseConnectionIdentifier)
+void IDBServer::databaseConnectionClosed(IDBDatabaseConnectionIdentifier databaseConnectionIdentifier)
 {
-    LOG(IndexedDB, "IDBServer::databaseConnectionClosed - %" PRIu64, databaseConnectionIdentifier);
+    LOG(IndexedDB, "IDBServer::databaseConnectionClosed - %" PRIu64, databaseConnectionIdentifier.toUInt64());
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
@@ -454,7 +454,7 @@ void IDBServer::databaseConnectionClosed(uint64_t databaseConnectionIdentifier)
         m_uniqueIDBDatabaseMap.remove(database->identifier());
 }
 
-void IDBServer::abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const std::optional<IDBResourceIdentifier>& transactionIdentifier)
+void IDBServer::abortOpenAndUpgradeNeeded(IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, const std::optional<IDBResourceIdentifier>& transactionIdentifier)
 {
     LOG(IndexedDB, "IDBServer::abortOpenAndUpgradeNeeded");
     ASSERT(!isMainThread());
@@ -472,7 +472,7 @@ void IDBServer::abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier,
     databaseConnection->connectionClosedFromClient();
 }
 
-void IDBServer::didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier, IndexedDB::ConnectionClosedOnBehalfOfServer connectionClosed)
+void IDBServer::didFireVersionChangeEvent(IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier, IndexedDB::ConnectionClosedOnBehalfOfServer connectionClosed)
 {
     LOG(IndexedDB, "IDBServer::didFireVersionChangeEvent");
     ASSERT(!isMainThread());

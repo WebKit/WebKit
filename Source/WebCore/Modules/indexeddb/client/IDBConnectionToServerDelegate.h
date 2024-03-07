@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "IDBDatabaseConnectionIdentifier.h"
 #include "IDBResourceIdentifier.h"
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
@@ -64,7 +65,7 @@ public:
     virtual void openDatabase(const IDBOpenRequestData&) = 0;
     virtual void abortTransaction(const IDBResourceIdentifier&) = 0;
     virtual void commitTransaction(const IDBResourceIdentifier&, uint64_t pendingRequestCount) = 0;
-    virtual void didFinishHandlingVersionChangeTransaction(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier&) = 0;
+    virtual void didFinishHandlingVersionChangeTransaction(IDBDatabaseConnectionIdentifier, const IDBResourceIdentifier&) = 0;
     virtual void createObjectStore(const IDBRequestData&, const IDBObjectStoreInfo&) = 0;
     virtual void deleteObjectStore(const IDBRequestData&, const String& objectStoreName) = 0;
     virtual void renameObjectStore(const IDBRequestData&, uint64_t objectStoreIdentifier, const String& newName) = 0;
@@ -80,11 +81,11 @@ public:
     virtual void openCursor(const IDBRequestData&, const IDBCursorInfo&) = 0;
     virtual void iterateCursor(const IDBRequestData&, const IDBIterateCursorData&) = 0;
 
-    virtual void establishTransaction(uint64_t databaseConnectionIdentifier, const IDBTransactionInfo&) = 0;
-    virtual void databaseConnectionPendingClose(uint64_t databaseConnectionIdentifier) = 0;
-    virtual void databaseConnectionClosed(uint64_t databaseConnectionIdentifier) = 0;
-    virtual void abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const std::optional<IDBResourceIdentifier>& transactionIdentifier) = 0;
-    virtual void didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier, const IndexedDB::ConnectionClosedOnBehalfOfServer) = 0;
+    virtual void establishTransaction(IDBDatabaseConnectionIdentifier, const IDBTransactionInfo&) = 0;
+    virtual void databaseConnectionPendingClose(IDBDatabaseConnectionIdentifier) = 0;
+    virtual void databaseConnectionClosed(IDBDatabaseConnectionIdentifier) = 0;
+    virtual void abortOpenAndUpgradeNeeded(IDBDatabaseConnectionIdentifier, const std::optional<IDBResourceIdentifier>& transactionIdentifier) = 0;
+    virtual void didFireVersionChangeEvent(IDBDatabaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier, const IndexedDB::ConnectionClosedOnBehalfOfServer) = 0;
     virtual void openDBRequestCancelled(const IDBOpenRequestData&) = 0;
 
     virtual void getAllDatabaseNamesAndVersions(const IDBResourceIdentifier&, const ClientOrigin&) = 0;

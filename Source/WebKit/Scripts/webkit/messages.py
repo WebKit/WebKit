@@ -339,6 +339,7 @@ def serialized_identifiers():
         'WebCore::TextCheckingRequestIdentifier',
         'WebCore::TextManipulationItemIdentifier',
         'WebCore::TextManipulationTokenIdentifier',
+        'WebCore::IDBDatabaseConnectionIdentifier',
         'WebCore::UserMediaRequestIdentifier',
         'WebCore::WebSocketIdentifier',
         'WebKit::AudioMediaStreamTrackRendererInternalUnitIdentifier',

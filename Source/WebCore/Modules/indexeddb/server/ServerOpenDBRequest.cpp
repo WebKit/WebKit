@@ -70,7 +70,7 @@ void ServerOpenDBRequest::notifyDidDeleteDatabase(const IDBDatabaseInfo& info)
     m_connection->didDeleteDatabase(IDBResultData::deleteDatabaseSuccess(m_requestData.requestIdentifier(), info));
 }
 
-void ServerOpenDBRequest::notifiedConnectionsOfVersionChange(HashSet<uint64_t>&& connectionIdentifiers)
+void ServerOpenDBRequest::notifiedConnectionsOfVersionChange(HashSet<IDBDatabaseConnectionIdentifier>&& connectionIdentifiers)
 {
     ASSERT(!m_notifiedConnectionsOfVersionChange);
 
@@ -78,7 +78,7 @@ void ServerOpenDBRequest::notifiedConnectionsOfVersionChange(HashSet<uint64_t>&&
     m_connectionsPendingVersionChangeEvent = WTFMove(connectionIdentifiers);
 }
 
-void ServerOpenDBRequest::connectionClosedOrFiredVersionChangeEvent(uint64_t connectionIdentifier)
+void ServerOpenDBRequest::connectionClosedOrFiredVersionChangeEvent(IDBDatabaseConnectionIdentifier connectionIdentifier)
 {
     m_connectionsPendingVersionChangeEvent.remove(connectionIdentifier);
 }

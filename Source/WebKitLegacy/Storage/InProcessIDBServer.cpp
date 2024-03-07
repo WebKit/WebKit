@@ -261,7 +261,7 @@ void InProcessIDBServer::commitTransaction(const WebCore::IDBResourceIdentifier&
     });
 }
 
-void InProcessIDBServer::didFinishHandlingVersionChangeTransaction(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& transactionIdentifier)
+void InProcessIDBServer::didFinishHandlingVersionChangeTransaction(IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& transactionIdentifier)
 {
     dispatchTask([this, protectedThis = Ref { *this }, databaseConnectionIdentifier, transactionIdentifier = transactionIdentifier.isolatedCopy()] {
         Locker locker { m_serverLock };
@@ -381,7 +381,7 @@ void InProcessIDBServer::iterateCursor(const WebCore::IDBRequestData& requestDat
     });
 }
 
-void InProcessIDBServer::establishTransaction(uint64_t databaseConnectionIdentifier, const IDBTransactionInfo& info)
+void InProcessIDBServer::establishTransaction(IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, const IDBTransactionInfo& info)
 {
     dispatchTask([this, protectedThis = Ref { *this }, databaseConnectionIdentifier, info = info.isolatedCopy()] {
         Locker locker { m_serverLock };
@@ -417,7 +417,7 @@ void InProcessIDBServer::notifyOpenDBRequestBlocked(const WebCore::IDBResourceId
     });
 }
 
-void InProcessIDBServer::databaseConnectionPendingClose(uint64_t databaseConnectionIdentifier)
+void InProcessIDBServer::databaseConnectionPendingClose(IDBDatabaseConnectionIdentifier databaseConnectionIdentifier)
 {
     dispatchTask([this, protectedThis = Ref { *this }, databaseConnectionIdentifier] {
         Locker locker { m_serverLock };
@@ -425,7 +425,7 @@ void InProcessIDBServer::databaseConnectionPendingClose(uint64_t databaseConnect
     });
 }
 
-void InProcessIDBServer::databaseConnectionClosed(uint64_t databaseConnectionIdentifier)
+void InProcessIDBServer::databaseConnectionClosed(IDBDatabaseConnectionIdentifier databaseConnectionIdentifier)
 {
     dispatchTask([this, protectedThis = Ref { *this }, databaseConnectionIdentifier] {
         Locker locker { m_serverLock };
@@ -433,7 +433,7 @@ void InProcessIDBServer::databaseConnectionClosed(uint64_t databaseConnectionIde
     });
 }
 
-void InProcessIDBServer::abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const std::optional<WebCore::IDBResourceIdentifier>& transactionIdentifier)
+void InProcessIDBServer::abortOpenAndUpgradeNeeded(IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, const std::optional<WebCore::IDBResourceIdentifier>& transactionIdentifier)
 {
     std::optional<WebCore::IDBResourceIdentifier> transactionIdentifierCopy;
     if (transactionIdentifier)
@@ -444,7 +444,7 @@ void InProcessIDBServer::abortOpenAndUpgradeNeeded(uint64_t databaseConnectionId
     });
 }
 
-void InProcessIDBServer::didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& requestIdentifier, const IndexedDB::ConnectionClosedOnBehalfOfServer connectionClosed)
+void InProcessIDBServer::didFireVersionChangeEvent(IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& requestIdentifier, const IndexedDB::ConnectionClosedOnBehalfOfServer connectionClosed)
 {
     dispatchTask([this, protectedThis = Ref { *this }, databaseConnectionIdentifier, requestIdentifier = requestIdentifier.isolatedCopy(), connectionClosed] {
         Locker locker { m_serverLock };

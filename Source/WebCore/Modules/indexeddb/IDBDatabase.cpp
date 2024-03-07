@@ -67,7 +67,7 @@ IDBDatabase::IDBDatabase(ScriptExecutionContext& context, IDBClient::IDBConnecti
     , m_databaseConnectionIdentifier(resultData.databaseConnectionIdentifier())
     , m_eventNames(eventNames())
 {
-    LOG(IndexedDB, "IDBDatabase::IDBDatabase - Creating database %s with version %" PRIu64 " connection %" PRIu64 " (%p)", m_info.name().utf8().data(), m_info.version(), m_databaseConnectionIdentifier, this);
+    LOG(IndexedDB, "IDBDatabase::IDBDatabase - Creating database %s with version %" PRIu64 " connection %" PRIu64 " (%p)", m_info.name().utf8().data(), m_info.version(), m_databaseConnectionIdentifier.toUInt64(), this);
     m_connectionProxy->registerDatabaseConnection(*this);
 }
 
@@ -235,7 +235,7 @@ ExceptionOr<void> IDBDatabase::deleteObjectStore(const String& objectStoreName)
 
 void IDBDatabase::close()
 {
-    LOG(IndexedDB, "IDBDatabase::close - %" PRIu64, m_databaseConnectionIdentifier);
+    LOG(IndexedDB, "IDBDatabase::close - %" PRIu64, m_databaseConnectionIdentifier.toUInt64());
 
     ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
 
@@ -249,14 +249,14 @@ void IDBDatabase::close()
 
 void IDBDatabase::didCloseFromServer(const IDBError& error)
 {
-    LOG(IndexedDB, "IDBDatabase::didCloseFromServer - %" PRIu64, m_databaseConnectionIdentifier);
+    LOG(IndexedDB, "IDBDatabase::didCloseFromServer - %" PRIu64, m_databaseConnectionIdentifier.toUInt64());
 
     connectionToServerLost(error);
 }
 
 void IDBDatabase::connectionToServerLost(const IDBError& error)
 {
-    LOG(IndexedDB, "IDBDatabase::connectionToServerLost - %" PRIu64, m_databaseConnectionIdentifier);
+    LOG(IndexedDB, "IDBDatabase::connectionToServerLost - %" PRIu64, m_databaseConnectionIdentifier.toUInt64());
 
     ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
 
@@ -286,7 +286,7 @@ void IDBDatabase::connectionToServerLost(const IDBError& error)
 
 void IDBDatabase::maybeCloseInServer()
 {
-    LOG(IndexedDB, "IDBDatabase::maybeCloseInServer - %" PRIu64, m_databaseConnectionIdentifier);
+    LOG(IndexedDB, "IDBDatabase::maybeCloseInServer - %" PRIu64, m_databaseConnectionIdentifier.toUInt64());
 
     ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
 
@@ -311,7 +311,7 @@ const char* IDBDatabase::activeDOMObjectName() const
 
 void IDBDatabase::stop()
 {
-    LOG(IndexedDB, "IDBDatabase::stop - %" PRIu64, m_databaseConnectionIdentifier);
+    LOG(IndexedDB, "IDBDatabase::stop - %" PRIu64, m_databaseConnectionIdentifier.toUInt64());
 
     ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
 
@@ -448,7 +448,7 @@ void IDBDatabase::didCommitOrAbortTransaction(IDBTransaction& transaction)
 void IDBDatabase::fireVersionChangeEvent(const IDBResourceIdentifier& requestIdentifier, uint64_t requestedVersion)
 {
     uint64_t currentVersion = m_info.version();
-    LOG(IndexedDB, "IDBDatabase::fireVersionChangeEvent - current version %" PRIu64 ", requested version %" PRIu64 ", connection %" PRIu64 " (%p)", currentVersion, requestedVersion, m_databaseConnectionIdentifier, this);
+    LOG(IndexedDB, "IDBDatabase::fireVersionChangeEvent - current version %" PRIu64 ", requested version %" PRIu64 ", connection %" PRIu64 " (%p)", currentVersion, requestedVersion, m_databaseConnectionIdentifier.toUInt64(), this);
 
     ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
 
@@ -463,7 +463,7 @@ void IDBDatabase::fireVersionChangeEvent(const IDBResourceIdentifier& requestIde
 
 void IDBDatabase::dispatchEvent(Event& event)
 {
-    LOG(IndexedDB, "IDBDatabase::dispatchEvent (%" PRIu64 ") (%p)", m_databaseConnectionIdentifier, this);
+    LOG(IndexedDB, "IDBDatabase::dispatchEvent (%" PRIu64 ") (%p)", m_databaseConnectionIdentifier.toUInt64(), this);
     ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
 
     Ref protectedThis { *this };

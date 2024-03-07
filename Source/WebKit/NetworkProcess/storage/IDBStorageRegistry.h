@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Connection.h"
+#include <WebCore/IDBDatabaseConnectionIdentifier.h>
 #include <WebCore/IDBResourceIdentifier.h>
 #include <wtf/WeakPtr.h>
 
@@ -48,14 +49,14 @@ public:
     void removeConnectionToClient(IPC::Connection::UniqueID);
     void registerConnection(WebCore::IDBServer::UniqueIDBDatabaseConnection&);
     void unregisterConnection(WebCore::IDBServer::UniqueIDBDatabaseConnection&);
-    WebCore::IDBServer::UniqueIDBDatabaseConnection* connection(uint64_t identifier);
+    WebCore::IDBServer::UniqueIDBDatabaseConnection* connection(WebCore::IDBDatabaseConnectionIdentifier);
     void registerTransaction(WebCore::IDBServer::UniqueIDBDatabaseTransaction&);
     void unregisterTransaction(WebCore::IDBServer::UniqueIDBDatabaseTransaction&);
     WebCore::IDBServer::UniqueIDBDatabaseTransaction* transaction(WebCore::IDBResourceIdentifier);
 
 private:
     HashMap<WebCore::IDBConnectionIdentifier, std::unique_ptr<IDBStorageConnectionToClient>> m_connectionsToClient;
-    HashMap<uint64_t, WeakPtr<WebCore::IDBServer::UniqueIDBDatabaseConnection>> m_connections;
+    HashMap<WebCore::IDBDatabaseConnectionIdentifier, WeakPtr<WebCore::IDBServer::UniqueIDBDatabaseConnection>> m_connections;
     HashMap<WebCore::IDBResourceIdentifier, WeakPtr<WebCore::IDBServer::UniqueIDBDatabaseTransaction>> m_transactions;
 };
 

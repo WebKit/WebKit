@@ -270,12 +270,12 @@ void IDBConnectionProxy::completeOperation(const IDBResultData& resultData)
     operation->transitionToComplete(resultData, WTFMove(operation));
 }
 
-void IDBConnectionProxy::abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const std::optional<IDBResourceIdentifier>& transactionIdentifier)
+void IDBConnectionProxy::abortOpenAndUpgradeNeeded(IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, const std::optional<IDBResourceIdentifier>& transactionIdentifier)
 {
     callConnectionOnMainThread(&IDBConnectionToServer::abortOpenAndUpgradeNeeded, databaseConnectionIdentifier, transactionIdentifier);
 }
 
-void IDBConnectionProxy::fireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier, uint64_t requestedVersion)
+void IDBConnectionProxy::fireVersionChangeEvent(IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier, uint64_t requestedVersion)
 {
     RefPtr<IDBDatabase> database;
     {
@@ -295,7 +295,7 @@ void IDBConnectionProxy::fireVersionChangeEvent(uint64_t databaseConnectionIdent
     database->performCallbackOnOriginThread(*database, &IDBDatabase::fireVersionChangeEvent, requestIdentifier, requestedVersion);
 }
 
-void IDBConnectionProxy::didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier, IndexedDB::ConnectionClosedOnBehalfOfServer connectionClosed)
+void IDBConnectionProxy::didFireVersionChangeEvent(IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier, IndexedDB::ConnectionClosedOnBehalfOfServer connectionClosed)
 {
     callConnectionOnMainThread(&IDBConnectionToServer::didFireVersionChangeEvent, databaseConnectionIdentifier, requestIdentifier, connectionClosed);
 }
@@ -404,7 +404,7 @@ bool IDBConnectionProxy::hasRecordOfTransaction(const IDBTransaction& transactio
     return m_pendingTransactions.contains(identifier) || m_committingTransactions.contains(identifier) || m_abortingTransactions.contains(identifier);
 }
 
-void IDBConnectionProxy::didFinishHandlingVersionChangeTransaction(uint64_t databaseConnectionIdentifier, IDBTransaction& transaction)
+void IDBConnectionProxy::didFinishHandlingVersionChangeTransaction(IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, IDBTransaction& transaction)
 {
     callConnectionOnMainThread(&IDBConnectionToServer::didFinishHandlingVersionChangeTransaction, databaseConnectionIdentifier, transaction.info().identifier());
 }
@@ -419,7 +419,7 @@ void IDBConnectionProxy::databaseConnectionClosed(IDBDatabase& database)
     callConnectionOnMainThread(&IDBConnectionToServer::databaseConnectionClosed, database.databaseConnectionIdentifier());
 }
 
-void IDBConnectionProxy::didCloseFromServer(uint64_t databaseConnectionIdentifier, const IDBError& error)
+void IDBConnectionProxy::didCloseFromServer(IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, const IDBError& error)
 {
     RefPtr<IDBDatabase> database;
     {
@@ -435,7 +435,7 @@ void IDBConnectionProxy::didCloseFromServer(uint64_t databaseConnectionIdentifie
 
 void IDBConnectionProxy::connectionToServerLost(const IDBError& error)
 {
-    Vector<uint64_t> databaseConnectionIdentifiers;
+    Vector<IDBDatabaseConnectionIdentifier> databaseConnectionIdentifiers;
     {
         Locker locker { m_databaseConnectionMapLock };
         databaseConnectionIdentifiers = copyToVector(m_databaseConnectionMap.keys());
