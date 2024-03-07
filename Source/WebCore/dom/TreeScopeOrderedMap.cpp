@@ -138,8 +138,6 @@ inline RefPtr<Element> TreeScopeOrderedMap::get(const AtomString& key, const Tre
         for (Ref element : descendantsOfType<Element>(downcast<ContainerNode>(removedTree.get()))) {
             if (!keyMatches(key, element))
                 continue;
-            bool removedFromAncestorHasNotBeenCalledYet = element->isConnected();
-            ASSERT(removedFromAncestorHasNotBeenCalledYet);
             return nullptr;
         }
     }
