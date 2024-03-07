@@ -36,6 +36,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashSet.h>
 #include <wtf/Ref.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 #if HAVE(IOSURFACE)
@@ -76,7 +77,7 @@ class Surface;
 class Texture;
 struct TextureDescriptor;
 
-class Device : public RefCounted<Device> {
+class Device : public RefCounted<Device>, public CanMakeWeakPtr<Device> {
 public:
     virtual ~Device() = default;
 

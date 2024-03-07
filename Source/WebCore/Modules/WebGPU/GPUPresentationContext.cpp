@@ -35,7 +35,7 @@ namespace WebCore {
 
 void GPUPresentationContext::configure(const GPUCanvasConfiguration& canvasConfiguration, GPUIntegerCoordinate width, GPUIntegerCoordinate height)
 {
-    m_device = canvasConfiguration.device;
+    m_device = canvasConfiguration.device.get();
     m_backing->configure(canvasConfiguration.convertToBacking());
     m_textureDescriptor = GPUTextureDescriptor {
         { "canvas backing"_s },

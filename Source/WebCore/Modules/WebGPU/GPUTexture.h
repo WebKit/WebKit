@@ -33,6 +33,7 @@
 #include <optional>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -43,7 +44,7 @@ class GPUTextureView;
 struct GPUTextureDescriptor;
 struct GPUTextureViewDescriptor;
 
-class GPUTexture : public RefCounted<GPUTexture> {
+class GPUTexture : public RefCounted<GPUTexture>, public CanMakeWeakPtr<GPUTexture> {
 public:
     static Ref<GPUTexture> create(Ref<WebGPU::Texture>&& backing, const GPUTextureDescriptor& descriptor, const GPUDevice& device)
     {

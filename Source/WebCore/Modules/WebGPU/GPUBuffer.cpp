@@ -102,7 +102,8 @@ static auto makeArrayBuffer(auto source, auto byteLength, auto& cachedArrayBuffe
     auto arrayBuffer = ArrayBuffer::create(source, byteLength);
     cachedArrayBuffer = arrayBuffer.ptr();
     cachedArrayBuffer->pin();
-    device.addBufferToUnmap(buffer);
+    if (device)
+        device->addBufferToUnmap(buffer);
     return arrayBuffer;
 }
 
@@ -185,7 +186,8 @@ ExceptionOr<Ref<JSC::ArrayBuffer>> GPUBuffer::getMappedRange(std::optional<GPUSi
 void GPUBuffer::unmap(ScriptExecutionContext& scriptExecutionContext)
 {
     internalUnmap(scriptExecutionContext);
-    m_device.removeBufferToUnmap(*this);
+    if (m_device)
+        m_device->removeBufferToUnmap(*this);
 }
 
 void GPUBuffer::internalUnmap(ScriptExecutionContext& scriptExecutionContext)
