@@ -200,6 +200,35 @@ Vector<uint8_t> encodeRawPublicKey(const Vector<uint8_t>& x, const Vector<uint8_
     return rawKey;
 }
 
+String toString(AuthenticatorTransport transport)
+{
+    switch (transport) {
+    case AuthenticatorTransport::Usb:
+        return authenticatorTransportUsb;
+        break;
+    case AuthenticatorTransport::Nfc:
+        return authenticatorTransportNfc;
+        break;
+    case AuthenticatorTransport::Ble:
+        return authenticatorTransportBle;
+        break;
+    case AuthenticatorTransport::Internal:
+        return authenticatorTransportInternal;
+        break;
+    case AuthenticatorTransport::Cable:
+        return authenticatorTransportCable;
+    case AuthenticatorTransport::Hybrid:
+        return authenticatorTransportHybrid;
+    case AuthenticatorTransport::SmartCard:
+        return authenticatorTransportSmartCard;
+    default:
+        break;
+    }
+    ASSERT_NOT_REACHED();
+    return nullString();
+}
+
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_AUTHN)

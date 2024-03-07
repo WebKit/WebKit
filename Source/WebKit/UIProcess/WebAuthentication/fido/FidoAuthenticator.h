@@ -43,6 +43,8 @@ protected:
     CtapDriver& driver() const;
     std::unique_ptr<CtapDriver> releaseDriver();
 
+    String transportForDebugging() const;
+
 private:
     std::unique_ptr<CtapDriver> m_driver;
 };
