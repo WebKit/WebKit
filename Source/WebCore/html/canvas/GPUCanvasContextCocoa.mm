@@ -177,7 +177,7 @@ void GPUCanvasContextCocoa::drawBufferToCanvas(SurfaceBuffer)
     // FIXME(https://bugs.webkit.org/show_bug.cgi?id=263957): WebGPU should support obtaining drawing buffer for Web Inspector.
     auto& base = canvasBase();
     base.clearCopiedImage();
-    if (auto buffer = base.buffer(); m_configuration.has_value()) {
+    if (auto buffer = base.buffer(); buffer && m_configuration) {
         buffer->flushDrawingContext();
         m_compositorIntegration->paintCompositedResultsToCanvas(*buffer, m_configuration->frameCount);
     }

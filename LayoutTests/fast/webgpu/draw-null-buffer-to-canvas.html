@@ -1,0 +1,33 @@
+<script>
+if (window.testRunner) { testRunner.waitUntilDone(); testRunner.dumpAsText() }
+onload = async () => {
+    try {
+        let offscreenCanvas4 = new OffscreenCanvas(418158253, 427);
+
+        let adapter3 = await navigator.gpu.requestAdapter();
+        let promise1 = adapter3.requestDevice(
+        {
+        label: '\u3170',
+        }
+        );
+        let device3 = await promise1;
+        let gpuCanvasContext2 = offscreenCanvas4.getContext('webgpu');
+        gpuCanvasContext2.configure(
+        {
+        device: device3,
+        format: 'rgba16float',
+        usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.STORAGE_BINDING,
+        viewFormats: [
+        'rgba16float',
+        'rgba8unorm-srgb'
+        ],
+        colorSpace: 'srgb',
+        alphaMode: 'premultiplied',
+        }
+        );
+        let videoFrame12 = new VideoFrame(offscreenCanvas4, {timestamp: 0});
+    } catch { }
+    if (window.testRunner) { testRunner.notifyDone() }
+};
+</script>
+This test passes if it does not crash.
