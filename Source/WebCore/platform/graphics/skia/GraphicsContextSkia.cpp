@@ -671,8 +671,6 @@ void GraphicsContextSkia::setLineCap(LineCap lineCap)
 
 void GraphicsContextSkia::setLineDash(const DashArray& dashArray, float dashOffset)
 {
-    ASSERT(!(dashArray.size() % 2));
-
     if (dashArray.isEmpty()) {
         m_skiaState.m_stroke.dash = nullptr;
         return;
