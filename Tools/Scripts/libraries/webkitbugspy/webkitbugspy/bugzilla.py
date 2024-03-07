@@ -649,7 +649,7 @@ class Tracker(GenericTracker):
                     self.radar_importer.name,
                     issue.references[0] if issue.references else '?',
                 ))
-                response = Terminal.choose(
+                response = webkitcorepy.Terminal.choose(
                     'Double-check you have the correct bug. Would you like to continue?', options=('Yes', 'No'), default='Yes',
                 )
                 if response == 'No':
