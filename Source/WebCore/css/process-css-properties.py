@@ -3622,18 +3622,13 @@ class GenerateStyleBuilderGenerated:
 
     def _generate_style_builder_generated_cpp_builder_generated_apply(self, *, to):
         to.write_block("""
-            void BuilderGenerated::applyProperty(CSSPropertyID id, BuilderState& builderState, CSSValue& value, bool isInitial, bool isInherit, const CSSRegisteredCustomProperty* registered)
+            void BuilderGenerated::applyProperty(CSSPropertyID id, BuilderState& builderState, CSSValue& value, ApplyValueType valueType)
             {
                 switch (id) {
                 case CSSPropertyID::CSSPropertyInvalid:
                     break;
                 case CSSPropertyID::CSSPropertyCustom:
-                    if (isInitial)
-                        BuilderCustom::applyInitialCustomProperty(builderState, registered, downcast<CSSCustomPropertyValue>(value).name());
-                    else if (isInherit)
-                        BuilderCustom::applyInheritCustomProperty(builderState, registered, downcast<CSSCustomPropertyValue>(value).name());
-                    else
-                        BuilderCustom::applyValueCustomProperty(builderState, registered, downcast<CSSCustomPropertyValue>(value));
+                    ASSERT_NOT_REACHED();
                     break;""")
 
         with to.indent():
@@ -3668,15 +3663,20 @@ class GenerateStyleBuilderGenerated:
                         if property.codegen_properties.fill_layer_property:
                             apply_value_arguments.insert(0, "id")
 
-                        to.write(f"if (isInitial)")
+                        to.write(f"switch (valueType) {{")
+                        to.write(f"case ApplyValueType::Initial:")
                         with to.indent():
                             to.write(f"{scope_for_function(property, 'Initial')}::applyInitial{property.id_without_prefix}({', '.join(apply_initial_arguments)});")
-                        to.write(f"else if (isInherit)")
+                            to.write(f"break;")
+                        to.write(f"case ApplyValueType::Inherit:")
                         with to.indent():
                             to.write(f"{scope_for_function(property, 'Inherit')}::applyInherit{property.id_without_prefix}({', '.join(apply_inherit_arguments)});")
-                        to.write(f"else")
+                            to.write(f"break;")
+                        to.write("case ApplyValueType::Value:")
                         with to.indent():
                             to.write(f"{scope_for_function(property, 'Value')}::applyValue{property.id_without_prefix}({', '.join(apply_value_arguments)});")
+                            to.write(f"break;")
+                        to.write(f"}}")
 
                     to.write(f"break;")
 

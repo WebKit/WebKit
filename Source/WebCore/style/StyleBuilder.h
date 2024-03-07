@@ -30,6 +30,8 @@
 
 namespace WebCore {
 
+struct CSSRegisteredCustomProperty;
+
 namespace Style {
 
 class Builder {
@@ -64,6 +66,7 @@ private:
     void applyCascadeProperty(const PropertyCascade::Property&);
     void applyRollbackCascadeProperty(const PropertyCascade::Property&, SelectorChecker::LinkMatchMask);
     void applyProperty(CSSPropertyID, CSSValue&, SelectorChecker::LinkMatchMask);
+    void applyCustomPropertyValue(const CSSCustomPropertyValue&, ApplyValueType, const CSSRegisteredCustomProperty*);
 
     Ref<CSSValue> resolveVariableReferences(CSSPropertyID, CSSValue&);
     RefPtr<CSSCustomPropertyValue> resolveCustomPropertyValue(CSSCustomPropertyValue&);
