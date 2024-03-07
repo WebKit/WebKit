@@ -187,14 +187,17 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     case WKInactiveSchedulingPolicySuspend:
         _preferences->setShouldTakeNearSuspendedAssertions(false);
         _preferences->setBackgroundWebContentRunningBoardThrottlingEnabled(true);
+        _preferences->setShouldDropNearSuspendedAssertionAfterDelay(WebKit::defaultShouldDropNearSuspendedAssertionAfterDelay());
         break;
     case WKInactiveSchedulingPolicyThrottle:
         _preferences->setShouldTakeNearSuspendedAssertions(true);
         _preferences->setBackgroundWebContentRunningBoardThrottlingEnabled(true);
+        _preferences->setShouldDropNearSuspendedAssertionAfterDelay(false);
         break;
     case WKInactiveSchedulingPolicyNone:
         _preferences->setShouldTakeNearSuspendedAssertions(true);
         _preferences->setBackgroundWebContentRunningBoardThrottlingEnabled(false);
+        _preferences->setShouldDropNearSuspendedAssertionAfterDelay(false);
         break;
     default:
         ASSERT_NOT_REACHED();
