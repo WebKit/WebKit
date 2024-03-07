@@ -1202,6 +1202,8 @@ void addTupleTests(const TestConfig*, Deque<RefPtr<SharedTask<void()>>>&);
 
 bool shouldRun(const TestConfig*, const char* testName);
 
+void testCSEStoreWithLoop();
+
 void testLoadPreIndex32();
 void testLoadPreIndex64();
 void testLoadPostIndex32();

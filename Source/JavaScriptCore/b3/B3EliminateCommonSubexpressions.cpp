@@ -278,6 +278,12 @@ private:
         
         if (memory)
             processMemoryAfterClobber(memory);
+
+        // The reads info should be updated even the block is processed
+        // since the dominated store nodes may dependent on the data
+        // read from the processed block. Note that there is no need to
+        // update reads info if the node is deleted.
+        m_data.reads.add(m_value->effects().reads);
     }
 
     // Return true if we got rid of the operation. If you changed IR in this function, you have to
