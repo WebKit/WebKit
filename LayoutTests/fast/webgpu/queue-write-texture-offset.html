@@ -1,0 +1,196 @@
+<script>
+if (window.testRunner) { testRunner.dumpAsText(); testRunner.waitUntilDone() }
+onload = async () => {
+  try {
+    let adapter1 = await navigator.gpu.requestAdapter();
+
+    let adapter2 = await navigator.gpu.requestAdapter(
+    {
+    }
+    );
+
+    let adapter0 = await navigator.gpu.requestAdapter(
+    {
+    powerPreference: 'high-performance',
+    }
+    );
+
+    let device1 = await adapter1.requestDevice(
+    {
+    label: 'a',
+    requiredFeatures: [
+    'depth-clip-control',
+    'depth32float-stencil8',
+    'texture-compression-etc2',
+    'texture-compression-astc',
+    'indirect-first-instance',
+    'shader-f16',
+    'rg11b10ufloat-renderable',
+    'bgra8unorm-storage'
+    ],
+    requiredLimits: {
+    maxVertexAttributes: 18,
+    maxVertexBufferArrayStride: 11955,
+    maxStorageTexturesPerShaderStage: 36,
+    maxBindingsPerBindGroup: 5823,
+    },
+    }
+    );
+    
+    let device0 = await adapter0.requestDevice(
+    {
+    label: 'a',
+    requiredFeatures: [
+    'texture-compression-etc2',
+    'texture-compression-astc',
+    'indirect-first-instance',
+    'shader-f16',
+    'rg11b10ufloat-renderable',
+    'bgra8unorm-storage'
+    ],
+    requiredLimits: {
+    maxVertexAttributes: 27,
+    maxVertexBufferArrayStride: 56492,
+    maxStorageTexturesPerShaderStage: 20,
+    maxBindingsPerBindGroup: 1044,
+    },
+    }
+    );
+
+    
+    let buffer2 = device0.createBuffer(
+    {
+    label: 'a',
+    size: 416592,
+    usage: GPUBufferUsage.MAP_READ | GPUBufferUsage.COPY_DST,
+    mappedAtCreation: true,
+    }
+    );
+
+    let texture6 = device1.createTexture(
+    {
+    label: 'a',
+    size: {
+    width: 7082,
+    height: 2090,
+    depthOrArrayLayers: 1,
+    },
+    mipLevelCount: 11,
+    format: 'rgb9e5ufloat',
+    usage: GPUTextureUsage.COPY_DST,
+    }
+    );
+
+    let arrayBuffer0 = (() => {
+      try {
+        return buffer2.getMappedRange();
+      } catch (e) {
+        if (e instanceof DOMException && e.name === 'OperationError') {
+          if (
+            e.message === 'getMappedRangeFailed because offset + size > mappedRangeSize + mappedRangeOffset'
+            || e.message === 'validation failed offset < m_mappedRangeOffset'
+            || e.message === 'validation failed - containsRange'
+            || e.message === 'not mapped or destroyed'
+          ) {
+            return new ArrayBuffer(711904);
+          }
+        }
+        throw e;
+      }
+    })();
+
+    let arrayBuffer1 = (() => {
+      try {
+        return buffer2.getMappedRange(
+    176,
+    5664
+    );
+      } catch (e) {
+        if (e instanceof DOMException && e.name === 'OperationError') {
+          if (
+            e.message === 'getMappedRangeFailed because offset + size > mappedRangeSize + mappedRangeOffset'
+            || e.message === 'validation failed offset < m_mappedRangeOffset'
+            || e.message === 'validation failed - containsRange'
+            || e.message === 'not mapped or destroyed'
+          ) {
+            return new ArrayBuffer(7470392);
+          }
+        }
+        throw e;
+      }
+    })();
+
+    let texture0 = device0.createTexture(
+    {
+    size: {
+    width: 521,
+    depthOrArrayLayers: 1,
+    },
+    mipLevelCount: 14,
+    dimension: '3d',
+    format: 'astc-10x10-unorm',
+    usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_SRC | GPUTextureUsage.COPY_DST,
+    viewFormats: [
+    'stencil8',
+    'astc-6x5-unorm'
+    ],
+    }
+    );
+
+    device0.queue.writeTexture(
+    {
+    texture: texture0,
+    mipLevel: 8007,
+    origin: {
+    x: 3805,
+    z: 8083,
+    },
+    aspect: 'depth-only',
+    },
+    arrayBuffer0,
+    {
+    offset: 2178360,
+    bytesPerRow: 7878048,
+    rowsPerImage: 2412496,
+    },
+    {
+    width: 9007,
+    height: 5238,
+    depthOrArrayLayers: 1213,
+    }
+    );
+    
+    device1.queue.writeTexture(
+    {
+    texture: texture6,
+    },
+    arrayBuffer1,
+    {
+    offset: 1356656,
+    bytesPerRow: 3996080,
+    rowsPerImage: 2422968,
+    },
+    {
+    width: 1693,
+    depthOrArrayLayers: 1,
+    }
+    );
+
+    let device2 = await adapter2.requestDevice(
+    {
+    label: 'a',
+    requiredFeatures: [
+    'depth-clip-control',
+    'depth32float-stencil8',
+    'texture-compression-etc2',
+    'indirect-first-instance',
+    'shader-f16',
+    'rg11b10ufloat-renderable'
+    ],
+    }
+    );
+  } catch {}
+  if (window.testRunner) { testRunner.notifyDone() }
+};
+</script>
+This test passes if it does not crash

@@ -465,7 +465,7 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, void* data, si
         return;
     }
 
-    if (!data || !dataByteSize || dataByteSize == dataLayout.offset)
+    if (!data || !dataByteSize || dataByteSize <= dataLayout.offset)
         return;
 
     uint32_t blockSize = Texture::texelBlockSize(textureFormat);
@@ -690,7 +690,7 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, void* data, si
     ensureBlitCommandEncoder();
     // FIXME(PERFORMANCE): Suballocate, so the common case doesn't need to hit the kernel.
     // FIXME(PERFORMANCE): Should this temporary buffer really be shared?
-    auto newBufferSize = static_cast<NSUInteger>(dataByteSize);
+    NSUInteger newBufferSize = dataByteSize - dataLayout.offset;
     bool noCopy = newBufferSize >= largeBufferSize;
     id<MTLBuffer> temporaryBuffer = noCopy ? [device->device() newBufferWithBytesNoCopy:static_cast<char*>(data) + dataLayout.offset length:newBufferSize options:MTLResourceStorageModeShared deallocator:nil] : [device->device() newBufferWithBytes:static_cast<char*>(data) + dataLayout.offset length:newBufferSize options:MTLResourceStorageModeShared];
     if (!temporaryBuffer)
