@@ -175,9 +175,11 @@ public:
     void customPropertyRegistrationDidChange(const AtomString&);
 
     bool canBeAccelerated() const;
+    bool accelerationWasPrevented() const { return m_runningAccelerated == RunningAccelerated::Prevented; }
     bool preventsAcceleration() const;
     void effectStackNoLongerPreventsAcceleration();
     void effectStackNoLongerAllowsAcceleration();
+    void effectStackNoLongerAllowsAccelerationDuringAcceleratedActionApplication();
     void wasAddedToEffectStack();
     void wasRemovedFromEffectStack();
 

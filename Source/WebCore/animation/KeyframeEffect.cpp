@@ -2549,6 +2549,21 @@ void KeyframeEffect::effectStackNoLongerAllowsAcceleration()
     addPendingAcceleratedAction(AcceleratedAction::Stop);
 }
 
+void KeyframeEffect::effectStackNoLongerAllowsAccelerationDuringAcceleratedActionApplication()
+{
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    if (threadedAnimationResolutionEnabled()) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+#endif
+
+    m_pendingAcceleratedActions.append(AcceleratedAction::Stop);
+    m_lastRecordedAcceleratedAction = AcceleratedAction::Stop;
+    applyPendingAcceleratedActions();
+    m_pendingAcceleratedActions.clear();
+}
+
 void KeyframeEffect::abilityToBeAcceleratedDidChange()
 {
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)

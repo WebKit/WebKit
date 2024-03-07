@@ -286,11 +286,19 @@ void KeyframeEffectStack::applyPendingAcceleratedActions() const
         return effect->canBeAccelerated() && effect->animation()->playState() == WebAnimation::PlayState::Running;
     });
 
+    auto accelerationWasPrevented = false;
+
     for (auto& effect : m_effects) {
         if (hasActiveAcceleratedEffect)
             effect->applyPendingAcceleratedActionsOrUpdateTimingProperties();
         else
             effect->applyPendingAcceleratedActions();
+        accelerationWasPrevented = accelerationWasPrevented || effect->accelerationWasPrevented() || effect->preventsAcceleration();
+    }
+
+    if (accelerationWasPrevented) {
+        for (auto& effect : m_effects)
+            effect->effectStackNoLongerAllowsAccelerationDuringAcceleratedActionApplication();
     }
 }
 

@@ -1780,6 +1780,7 @@ webkit.org/b/215945 webanimations/accelerated-css-animation-with-easing.html [ I
 
 webkit.org/b/216539 webanimations/accelerated-animation-easing-and-direction-update.html [ ImageOnlyFailure ]
 
+webkit.org/b/221021 webanimations/accelerated-animation-immediate-prevetion-direction-reverse.html [ Skip ]
 webkit.org/b/221021 webanimations/combining-transform-animations-with-different-acceleration-capabilities-2.html [ Skip ]
 webkit.org/b/221021 webanimations/combining-transform-animations-with-different-acceleration-capabilities-3.html [ Skip ]
 webkit.org/b/221021 webanimations/combining-transform-animations-with-different-acceleration-capabilities-4.html [ Skip ]
