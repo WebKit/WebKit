@@ -42,21 +42,6 @@ struct UnderlineOffsetArguments {
     std::optional<TextUnderlinePositionUnder> textUnderlinePositionUnder { };
 };
 
-static bool isAlignedForUnder(const RenderStyle& decoratingBoxStyle)
-{
-    auto underlinePosition = decoratingBoxStyle.textUnderlinePosition();
-    if (underlinePosition == TextUnderlinePosition::Under)
-        return true;
-    if (decoratingBoxStyle.isHorizontalWritingMode())
-        return false;
-    if (underlinePosition == TextUnderlinePosition::Left || underlinePosition == TextUnderlinePosition::Right) {
-        // In vertical typographic modes, the underline is aligned as for under for 'left' and 'right'.
-        return true;
-    }
-    // When left/right support is not enabled.
-    return underlinePosition == TextUnderlinePosition::Auto && decoratingBoxStyle.textUnderlineOffset().isAuto();
-}
-
 static bool isAncestorAndWithinBlock(const RenderInline& ancestor, const RenderObject* child)
 {
     const RenderObject* object = child;
@@ -277,6 +262,21 @@ static GlyphOverflow computedVisualOverflowForDecorations(const RenderStyle& lin
         overflowResult.extendBottom(rect.maxY() - height);
     }
     return overflowResult;
+}
+
+bool isAlignedForUnder(const RenderStyle& decoratingBoxStyle)
+{
+    auto underlinePosition = decoratingBoxStyle.textUnderlinePosition();
+    if (underlinePosition == TextUnderlinePosition::Under)
+        return true;
+    if (decoratingBoxStyle.isHorizontalWritingMode())
+        return false;
+    if (underlinePosition == TextUnderlinePosition::Left || underlinePosition == TextUnderlinePosition::Right) {
+        // In vertical typographic modes, the underline is aligned as for under for 'left' and 'right'.
+        return true;
+    }
+    // When left/right support is not enabled.
+    return underlinePosition == TextUnderlinePosition::Auto && decoratingBoxStyle.textUnderlineOffset().isAuto();
 }
 
 GlyphOverflow visualOverflowForDecorations(const InlineIterator::LineBoxIterator& lineBox, const RenderText& renderer, float textBoxLogicalTop, float textBoxLogicalBottom)

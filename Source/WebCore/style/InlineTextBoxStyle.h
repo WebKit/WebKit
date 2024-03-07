@@ -60,6 +60,7 @@ struct TextUnderlinePositionUnder {
 GlyphOverflow visualOverflowForDecorations(const RenderStyle&);
 GlyphOverflow visualOverflowForDecorations(const RenderStyle&, TextUnderlinePositionUnder);
 GlyphOverflow visualOverflowForDecorations(const InlineIterator::LineBoxIterator&, const RenderText&, float textBoxLogicalTop, float textBoxLogicalBottom);
+bool isAlignedForUnder(const RenderStyle& decoratingBoxStyle);
 
 float underlineOffsetForTextBoxPainting(const InlineIterator::InlineBox&, const RenderStyle&);
 float overlineOffsetForTextBoxPainting(const InlineIterator::InlineBox&, const RenderStyle&);

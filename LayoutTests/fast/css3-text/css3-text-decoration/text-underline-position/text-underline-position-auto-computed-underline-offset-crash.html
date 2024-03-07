@@ -1,0 +1,13 @@
+<style>
+    html {
+        writing-mode: vertical-lr;
+    }
+</style>
+<span id=under>PASS</span> if no crash or assert.
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    document.body.offsetHeight;
+    under.style.textDecoration = "underline";
+    under.style.textUnderlinePosition = "auto";
+</script>
