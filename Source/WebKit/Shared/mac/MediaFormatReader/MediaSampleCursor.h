@@ -46,7 +46,10 @@ namespace WebKit {
 
 class MediaTrackReader;
 
-class MediaSampleCursor : public CoreMediaWrapped<MediaSampleCursor>, LegacyThreadSafeIdentified<MediaSampleCursor> {
+enum class MediaSampleCursorIdentifierType { };
+using MediaSampleCursorIdentifier = AtomicObjectIdentifier<MediaSampleCursorIdentifierType>;
+
+class MediaSampleCursor : public CoreMediaWrapped<MediaSampleCursor>, private Identified<MediaSampleCursorIdentifier> {
 public:
     using DecodeOrderIterator = WebCore::DecodeOrderSampleMap::iterator;
     using PresentationOrderIterator = WebCore::PresentationOrderSampleMap::iterator;

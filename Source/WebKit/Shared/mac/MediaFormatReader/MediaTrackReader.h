@@ -51,6 +51,9 @@ namespace WebKit {
 
 class MediaFormatReader;
 
+enum class MediaSampleCursorIdentifierType;
+using MediaSampleCursorIdentifier = AtomicObjectIdentifier<MediaSampleCursorIdentifierType>;
+
 class MediaTrackReader final : public CoreMediaWrapped<MediaTrackReader> {
 public:
     static constexpr WrapperClass wrapperClass();
@@ -71,7 +74,7 @@ public:
     void finishParsing();
 
     const WTF::Logger& logger() const { return m_logger; }
-    const void* nextSampleCursorLogIdentifier(uint64_t cursorID) const;
+    const void* nextSampleCursorLogIdentifier(MediaSampleCursorIdentifier) const;
 
 private:
     using CoreMediaWrapped<MediaTrackReader>::unwrap;
