@@ -148,7 +148,7 @@ public:
 private:
     ViewTransition(Document&, RefPtr<ViewTransitionUpdateCallback>&&);
 
-    Ref<MutableStyleProperties> copyElementBaseProperties(Element&);
+    Ref<MutableStyleProperties> copyElementBaseProperties(Element&, const LayoutSize&);
 
     void updatePseudoElementStyles();
     void setupDynamicStyleSheet(const AtomString&, const CapturedElement&);

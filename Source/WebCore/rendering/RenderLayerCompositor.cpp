@@ -1402,7 +1402,7 @@ void RenderLayerCompositor::traverseUnchangedSubtree(RenderLayer* ancestorLayer,
 
 void RenderLayerCompositor::collectViewTransitionNewContentLayers(RenderLayer& layer, Vector<Ref<GraphicsLayer>>& childList)
 {
-    if (layer.renderer().style().pseudoElementType() != PseudoId::ViewTransitionNew)
+    if (layer.renderer().style().pseudoElementType() != PseudoId::ViewTransitionNew || !layer.hasVisibleContent())
         return;
 
     RefPtr activeViewTransition = layer.renderer().document().activeViewTransition();

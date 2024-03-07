@@ -6877,8 +6877,6 @@ imported/w3c/web-platform-tests/navigation-api/updateCurrentEntry-method/locatio
 
 # -- View Transitions -- #
 # Reftest failures:
-imported/w3c/web-platform-tests/css/css-view-transitions/3d-transform-incoming.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/3d-transform-outgoing.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/capture-with-offscreen-child-translated.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/capture-with-visibility-mixed-descendants.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/content-with-child-with-transparent-background.html [ ImageOnlyFailure ]
