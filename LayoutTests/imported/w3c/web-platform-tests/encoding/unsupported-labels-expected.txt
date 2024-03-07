@@ -21,7 +21,7 @@ PASS csviscii is not supported by the Encoding Standard
 PASS dos-720 is not supported by the Encoding Standard
 PASS dos-862 is not supported by the Encoding Standard
 PASS ecma-cyrillic is not supported by the Encoding Standard
-FAIL euc-tw is not supported by the Encoding Standard assert_equals: expected "windows-1252" but got "EUC-TW"
+PASS euc-tw is not supported by the Encoding Standard
 PASS german is not supported by the Encoding Standard
 PASS geostd8 is not supported by the Encoding Standard
 PASS hp-roman8 is not supported by the Encoding Standard
@@ -96,7 +96,7 @@ PASS tis-620-2533 is not supported by the Encoding Standard
 PASS utf-7 is not supported by the Encoding Standard
 PASS utf-32 is not supported by the Encoding Standard
 PASS viscii is not supported by the Encoding Standard
-FAIL windows-936-2000 is not supported by the Encoding Standard assert_equals: expected "windows-1252" but got "GBK"
+PASS windows-936-2000 is not supported by the Encoding Standard
 PASS windows-sami-2 is not supported by the Encoding Standard
 PASS ws2 is not supported by the Encoding Standard
 PASS x-chinese-cns is not supported by the Encoding Standard
@@ -130,15 +130,15 @@ PASS x-iscii-t is not supported by the Encoding Standard
 PASS x-iscii-ta is not supported by the Encoding Standard
 PASS x-iscii-te is not supported by the Encoding Standard
 PASS x-mac-arabic is not supported by the Encoding Standard
-FAIL x-mac-ce is not supported by the Encoding Standard assert_equals: expected "windows-1252" but got "x-mac-centraleurroman"
-FAIL x-mac-centraleurroman is not supported by the Encoding Standard assert_equals: expected "windows-1252" but got "x-mac-centraleurroman"
+PASS x-mac-ce is not supported by the Encoding Standard
+PASS x-mac-centraleurroman is not supported by the Encoding Standard
 PASS x-mac-chinesesimp is not supported by the Encoding Standard
 PASS x-mac-chinesetrad is not supported by the Encoding Standard
 PASS x-mac-croatian is not supported by the Encoding Standard
 PASS x-mac-devanagari is not supported by the Encoding Standard
 PASS x-mac-dingbats is not supported by the Encoding Standard
 PASS x-mac-farsi is not supported by the Encoding Standard
-FAIL x-mac-greek is not supported by the Encoding Standard assert_equals: expected "windows-1252" but got "x-mac-greek"
+PASS x-mac-greek is not supported by the Encoding Standard
 PASS x-mac-gujarati is not supported by the Encoding Standard
 PASS x-mac-gurmukhi is not supported by the Encoding Standard
 PASS x-mac-hebrew is not supported by the Encoding Standard
@@ -150,7 +150,7 @@ PASS x-mac-romanian is not supported by the Encoding Standard
 PASS x-mac-symbol is not supported by the Encoding Standard
 PASS x-mac-thai is not supported by the Encoding Standard
 PASS x-mac-tibetan is not supported by the Encoding Standard
-FAIL x-mac-turkish is not supported by the Encoding Standard assert_equals: expected "windows-1252" but got "x-mac-turkish"
+PASS x-mac-turkish is not supported by the Encoding Standard
 PASS x-mac-vt100 is not supported by the Encoding Standard
 PASS x-nextstep is not supported by the Encoding Standard
 PASS x-vps is not supported by the Encoding Standard

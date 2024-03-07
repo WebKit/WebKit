@@ -125,7 +125,6 @@ void TextCodecCJK::registerEncodingNames(EncodingNameRegistrar registrar)
         "ms936"_s,
         "gb2312-1980"_s,
         "windows-936"_s,
-        "windows-936-2000"_s
     });
 
     registerAliases({
