@@ -329,8 +329,8 @@ bool HTMLPlugInImageElement::requestObject(const String& relativeURL, const Stri
     if (ScriptDisallowedScope::InMainThread::isScriptAllowed())
         return document->frame()->loader().subframeLoader().requestObject(*this, relativeURL, getNameAttribute(), mimeType, paramNames, paramValues);
 
-    document->eventLoop().queueTask(TaskSource::Networking, [this, protectedThis = Ref { *this }, relativeURL, nameAttribute = getNameAttribute(), mimeType, paramNames, paramValues]() mutable {
-        if (!isConnected())
+    document->eventLoop().queueTask(TaskSource::Networking, [this, protectedThis = Ref { *this }, relativeURL, nameAttribute = getNameAttribute(), mimeType, paramNames, paramValues, document]() mutable {
+        if (!this->isConnected() || &this->document() != document.ptr())
             return;
         RefPtr frame = this->document().frame();
         if (!frame)
