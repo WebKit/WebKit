@@ -1,6 +1,6 @@
 <html>
 <head>
-<script src="../../resources/js-test.js"></script>
+<script src="../../resources/js-test-pre.js"></script>
 <script src="resources/char-decoding-utils.js"></script>
 </head>
 <body>
@@ -12,14 +12,15 @@ description("This tests decoding characters in various character sets.");
 testDecode('mac', '%C3', 'U+221A');
 testDecode('macintosh', '%C3', 'U+221A');
 testDecode('MacRoman', '%C3', 'U+221A');
-testDecode('x-mac-greek', '%B0', 'U+FFFD');
+testDecode('x-mac-greek', '%B0', 'U+0391');
 testDecode('x-mac-ukrainian', '%80', 'U+0410');
 testDecode('x-mac-cyrillic', '%80', 'U+0410');
 testDecode('mac-cyrillic', '%80', 'U+0410');
-testDecode('x-mac-centraleurroman', '%81', 'U+FFFD');
-testDecode('x-mac-ce', '%81', 'U+FFFD');
-testDecode('x-mac-turkish', '%81', 'U+FFFD');
+testDecode('x-mac-centraleurroman', '%81', 'U+0100');
+testDecode('x-mac-ce', '%81', 'U+0100');
+testDecode('x-mac-turkish', '%81', 'U+00C5');
 
 </script>
+<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

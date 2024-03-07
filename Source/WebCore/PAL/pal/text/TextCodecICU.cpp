@@ -62,6 +62,10 @@ DECLARE_ALIASES(windows_1254, "winturkish"_s, "cp1254"_s, "csisolatin5"_s, "iso-
 DECLARE_ALIASES(windows_1256, "winarabic"_s, "cp1256"_s, "x-cp1256"_s);
 DECLARE_ALIASES(windows_1258, "winvietnamese"_s, "cp1258"_s, "x-cp1258"_s);
 DECLARE_ALIASES(x_mac_cyrillic, "maccyrillic"_s, "x-mac-ukrainian"_s, "windows-10007"_s, "mac-cyrillic"_s, "maccy"_s, "x-MacCyrillic"_s, "x-MacUkraine"_s);
+// Encodings below are not in the standard.
+DECLARE_ALIASES(x_mac_greek, "windows-10006"_s, "macgr"_s, "x-MacGreek"_s);
+DECLARE_ALIASES(x_mac_centraleurroman, "windows-10029"_s, "x-mac-ce"_s, "macce"_s, "maccentraleurope"_s, "x-MacCentralEurope"_s);
+DECLARE_ALIASES(x_mac_turkish, "windows-10081"_s, "mactr"_s, "x-MacTurkish"_s);
 
 #define DECLARE_ENCODING_NAME(encoding, alias_array) \
     { encoding, std::size(alias_array##_aliases), alias_array##_aliases }
@@ -90,6 +94,11 @@ static const struct EncodingName {
     DECLARE_ENCODING_NAME("windows-1256"_s, windows_1256),
     DECLARE_ENCODING_NAME("windows-1258"_s, windows_1258),
     DECLARE_ENCODING_NAME("x-mac-cyrillic"_s, x_mac_cyrillic),
+    // Encodings below are not in the standard.
+    DECLARE_ENCODING_NAME("x-mac-greek"_s, x_mac_greek),
+    DECLARE_ENCODING_NAME("x-mac-centraleurroman"_s, x_mac_centraleurroman),
+    DECLARE_ENCODING_NAME("x-mac-turkish"_s, x_mac_turkish),
+    DECLARE_ENCODING_NAME_NO_ALIASES("EUC-TW"_s),
 };
 
 void TextCodecICU::registerEncodingNames(EncodingNameRegistrar registrar)

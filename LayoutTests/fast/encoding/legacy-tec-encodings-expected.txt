@@ -56,8 +56,8 @@ PASS new TextDecoder("x-mac-devanagari").encoding threw exception RangeError: Ba
 PASS new TextDecoder("x-mac-gujarati").encoding threw exception RangeError: Bad value.
 PASS new TextDecoder("x-mac-gurmukhi").encoding threw exception RangeError: Bad value.
 PASS new TextDecoder("x-mac-tibetan").encoding threw exception RangeError: Bad value.
-PASS new TextDecoder("euc-tw").encoding threw exception RangeError: Bad value.
-PASS new TextDecoder("EUC-TW").encoding threw exception RangeError: Bad value.
+The following encoding names are supported by WebKit cross-platform, but some may be removed at a later time.
+PASS new TextDecoder("EUC-TW").encoding is "euc-tw"
 PASS successfullyParsed is true
 
 TEST COMPLETE
