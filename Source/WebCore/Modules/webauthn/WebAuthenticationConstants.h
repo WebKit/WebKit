@@ -84,6 +84,7 @@ enum class ShouldZeroAAGUID : bool {
 };
 
 constexpr const char LocalAuthenticatorAccessGroup[] = "com.apple.webkit.webauthn";
+constexpr const char LocalAuthenticatorAccessGroupForTests[] = "com.apple.webkit.webauthn";
 
 // Credential serialization
 constexpr const char privateKeyKey[] = "priv";
