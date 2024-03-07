@@ -92,7 +92,7 @@ private:
 #if PLATFORM(COCOA)
     Vector<MachSendRight> recreateRenderBuffers(int width, int height) override;
 
-    Vector<std::unique_ptr<WebCore::IOSurface>> m_renderBuffers;
+    Vector<UniqueRef<WebCore::IOSurface>> m_renderBuffers;
     WTF::Function<void(CFArrayRef)> m_renderBuffersWereRecreatedCallback;
 #endif
 

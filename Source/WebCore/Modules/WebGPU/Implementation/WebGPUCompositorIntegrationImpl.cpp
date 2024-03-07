@@ -66,11 +66,13 @@ Vector<MachSendRight> CompositorIntegrationImpl::recreateRenderBuffers(int width
     constexpr int max2DTextureSize = 16384;
     width = std::max(1, std::min(max2DTextureSize, width));
     height = std::max(1, std::min(max2DTextureSize, height));
-    m_renderBuffers.append(WebCore::IOSurface::create(nullptr, WebCore::IntSize(width, height), WebCore::DestinationColorSpace::SRGB()));
-    m_renderBuffers.append(WebCore::IOSurface::create(nullptr, WebCore::IntSize(width, height), WebCore::DestinationColorSpace::SRGB()));
+    if (auto buffer = WebCore::IOSurface::create(nullptr, WebCore::IntSize(width, height), WebCore::DestinationColorSpace::SRGB()))
+        m_renderBuffers.append(makeUniqueRefFromNonNullUniquePtr(WTFMove(buffer)));
+    if (auto buffer = WebCore::IOSurface::create(nullptr, WebCore::IntSize(width, height), WebCore::DestinationColorSpace::SRGB()))
+        m_renderBuffers.append(makeUniqueRefFromNonNullUniquePtr(WTFMove(buffer)));
 
     {
-        auto renderBuffers = adoptCF(CFArrayCreateMutable(kCFAllocatorDefault, 2, &kCFTypeArrayCallBacks));
+        auto renderBuffers = adoptCF(CFArrayCreateMutable(kCFAllocatorDefault, m_renderBuffers.size(), &kCFTypeArrayCallBacks));
         for (auto& ioSurface : m_renderBuffers)
             CFArrayAppendValue(renderBuffers.get(), ioSurface->surface());
         m_renderBuffersWereRecreatedCallback(static_cast<CFArrayRef>(renderBuffers));
