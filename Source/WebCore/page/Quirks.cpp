@@ -1853,4 +1853,15 @@ bool Quirks::shouldUseEphemeralPartitionedStorageForDOMCookies(const URL& url) c
     return false;
 }
 
+// This quirk has intentionally limited exposure to increase the odds of being able to remove it
+// again within a reasonable timeframe as the impacted apps are being updated. <rdar://122548304>
+bool Quirks::needsGetElementsByNameQuirk() const
+{
+#if PLATFORM(IOS)
+    return needsQuirks() && !PAL::currentUserInterfaceIdiomIsSmallScreen() && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NoGetElementsByNameQuirk);
+#else
+    return false;
+#endif
+}
+
 }

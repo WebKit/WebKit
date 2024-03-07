@@ -189,6 +189,8 @@ public:
     bool shouldIgnorePlaysInlineRequirementQuirk() const;
     WEBCORE_EXPORT bool shouldUseEphemeralPartitionedStorageForDOMCookies(const URL&) const;
 
+    bool needsGetElementsByNameQuirk() const;
+
 private:
     bool needsQuirks() const;
     bool isDomain(const String&) const;
