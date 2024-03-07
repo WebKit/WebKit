@@ -106,6 +106,10 @@ void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChain
     textureDescriptor.usage = Texture::usage(descriptor.usage, effectiveFormat);
     bool needsLuminanceClampFunction = false;
     for (IOSurface *iosurface in m_ioSurfaces) {
+        if (iosurface.height != static_cast<NSInteger>(height) || iosurface.width != static_cast<NSInteger>(width))
+            return device.generateAValidationError("Invalid surface size"_s);
+    }
+    for (IOSurface *iosurface in m_ioSurfaces) {
         RefPtr<Texture> parentLuminanceClampTexture;
         if (textureDescriptor.pixelFormat == MTLPixelFormatRGBA16Float) {
             auto existingUsage = textureDescriptor.usage;
