@@ -186,4 +186,18 @@ ResolvedURL CSSParserContext::completeURL(const String& string) const
     return result;
 }
 
+bool mayDependOnBaseURL(const ResolvedURL& resolved)
+{
+    if (resolved.specifiedURLString.isEmpty())
+        return false;
+
+    if (CSSValue::isCSSLocalURL(resolved.specifiedURLString))
+        return false;
+
+    if (protocolIs(resolved.specifiedURLString, "data"_s))
+        return false;
+
+    return true;
+}
+
 }

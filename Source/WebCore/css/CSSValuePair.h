@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-class CSSValuePair : public CSSValue {
+class CSSValuePair final : public CSSValue {
 public:
     static Ref<CSSValuePair> create(Ref<CSSValue>, Ref<CSSValue>);
     static Ref<CSSValuePair> createSlashSeparated(Ref<CSSValue>, Ref<CSSValue>);
@@ -42,6 +42,15 @@ public:
 
     String customCSSText() const;
     bool equals(const CSSValuePair&) const;
+
+    IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
+    {
+        if (func(m_first.get()) == IterationStatus::Done)
+            return IterationStatus::Done;
+        if (func(m_second.get()) == IterationStatus::Done)
+            return IterationStatus::Done;
+        return IterationStatus::Continue;
+    }
 
 private:
     friend bool CSSValue::addHash(Hasher&) const;

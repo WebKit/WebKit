@@ -271,6 +271,20 @@ void CSSValue::clearReplacementURLForSubresources()
     });
 }
 
+IterationStatus CSSValue::visitChildren(const Function<IterationStatus(CSSValue&)>& func) const
+{
+    return visitDerived([&](auto& value) {
+        return value.customVisitChildren(func);
+    });
+}
+
+bool CSSValue::mayDependOnBaseURL() const
+{
+    return visitDerived([&](auto& value) {
+        return value.customMayDependOnBaseURL();
+    });
+}
+
 ComputedStyleDependencies CSSValue::computedStyleDependencies() const
 {
     ComputedStyleDependencies dependencies;

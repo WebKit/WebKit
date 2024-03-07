@@ -49,6 +49,15 @@ public:
     String type() const { return m_mimeType; }
     void setType(String);
 
+    IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
+    {
+        if (func(m_image.get()) == IterationStatus::Done)
+            return IterationStatus::Done;
+        if (func(m_resolution.get()) == IterationStatus::Done)
+            return IterationStatus::Done;
+        return IterationStatus::Continue;
+    }
+
 private:
     CSSImageSetOptionValue(Ref<CSSValue>&&, Ref<CSSPrimitiveValue>&&);
     CSSImageSetOptionValue(Ref<CSSValue>&&, Ref<CSSPrimitiveValue>&&, String&&);

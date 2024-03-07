@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include <wtf/IterationStatus.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TypeCasts.h>
@@ -151,9 +152,15 @@ public:
 
     Ref<DeprecatedCSSOMValue> createDeprecatedCSSOMWrapper(CSSStyleDeclaration&) const;
 
+    // FIXME: These three traversing functions are buggy. It should be rewritten with visitChildren.
+    // https://bugs.webkit.org/show_bug.cgi?id=270600
     bool traverseSubresources(const Function<bool(const CachedResource&)>&) const;
     void setReplacementURLForSubresources(const HashMap<String, String>&);
     void clearReplacementURLForSubresources();
+
+    IterationStatus visitChildren(const Function<IterationStatus(CSSValue&)>&) const;
+
+    bool mayDependOnBaseURL() const;
 
     // What properties does this value rely on (eg, font-size for em units)
     ComputedStyleDependencies computedStyleDependencies() const;
@@ -196,6 +203,8 @@ public:
 
     void customSetReplacementURLForSubresources(const HashMap<String, String>&) { }
     void customClearReplacementURLForSubresources() { }
+    bool customMayDependOnBaseURL() const { return false; }
+    IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>&) const { return IterationStatus::Continue; }
 
 protected:
     static const size_t ClassTypeBits = 7;

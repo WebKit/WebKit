@@ -37,7 +37,7 @@ namespace WebCore {
 
 enum class WindRule : bool;
 
-class CSSInsetShapeValue : public CSSValue {
+class CSSInsetShapeValue final : public CSSValue {
 public:
     static Ref<CSSInsetShapeValue> create(Ref<CSSValue>&& top, Ref<CSSValue>&& right, Ref<CSSValue>&& bottom, Ref<CSSValue>&& left,
         RefPtr<CSSValue>&& topLeftRadius, RefPtr<CSSValue>&& topRightRadius, RefPtr<CSSValue>&& bottomRightRadius, RefPtr<CSSValue>&& bottomLeftRadius);
@@ -63,6 +63,35 @@ public:
     String customCSSText() const;
     bool equals(const CSSInsetShapeValue&) const;
 
+    IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
+    {
+        if (func(m_top.get()) == IterationStatus::Done)
+            return IterationStatus::Done;
+        if (func(m_right.get()) == IterationStatus::Done)
+            return IterationStatus::Done;
+        if (func(m_bottom.get()) == IterationStatus::Done)
+            return IterationStatus::Done;
+        if (func(m_left.get()) == IterationStatus::Done)
+            return IterationStatus::Done;
+        if (m_topLeftRadius) {
+            if (func(*m_topLeftRadius) == IterationStatus::Done)
+                return IterationStatus::Done;
+        }
+        if (m_topRightRadius) {
+            if (func(*m_topRightRadius) == IterationStatus::Done)
+                return IterationStatus::Done;
+        }
+        if (m_bottomRightRadius) {
+            if (func(*m_bottomRightRadius) == IterationStatus::Done)
+                return IterationStatus::Done;
+        }
+        if (m_bottomLeftRadius) {
+            if (func(*m_bottomLeftRadius) == IterationStatus::Done)
+                return IterationStatus::Done;
+        }
+        return IterationStatus::Continue;
+    }
+
 private:
     CSSInsetShapeValue(Ref<CSSValue>&& top, Ref<CSSValue>&& right, Ref<CSSValue>&& bottom, Ref<CSSValue>&& left, RefPtr<CSSValue>&& topLeftRadius, RefPtr<CSSValue>&& topRightRadius, RefPtr<CSSValue>&& bottomRightRadius, RefPtr<CSSValue>&& bottomLeftRadius);
 
@@ -77,7 +106,7 @@ private:
     RefPtr<CSSValue> m_bottomLeftRadius;
 };
 
-class CSSCircleValue : public CSSValue {
+class CSSCircleValue final : public CSSValue {
 public:
     static Ref<CSSCircleValue> create(RefPtr<CSSValue>&& radius, RefPtr<CSSValue>&& centerX, RefPtr<CSSValue>&& centerY);
 
@@ -91,6 +120,23 @@ public:
     String customCSSText() const;
     bool equals(const CSSCircleValue&) const;
 
+    IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
+    {
+        if (m_radius) {
+            if (func(*m_radius) == IterationStatus::Done)
+                return IterationStatus::Done;
+        }
+        if (m_centerX) {
+            if (func(*m_centerX) == IterationStatus::Done)
+                return IterationStatus::Done;
+        }
+        if (m_centerY) {
+            if (func(*m_centerY) == IterationStatus::Done)
+                return IterationStatus::Done;
+        }
+        return IterationStatus::Continue;
+    }
+
 private:
     CSSCircleValue(RefPtr<CSSValue>&& radius, RefPtr<CSSValue>&& centerX, RefPtr<CSSValue>&& centerY);
 
@@ -99,7 +145,7 @@ private:
     RefPtr<CSSValue> m_centerY;
 };
 
-class CSSEllipseValue : public CSSValue {
+class CSSEllipseValue final : public CSSValue {
 public:
     static Ref<CSSEllipseValue> create(RefPtr<CSSValue>&& radiusX, RefPtr<CSSValue>&& radiusY, RefPtr<CSSValue>&& centerX, RefPtr<CSSValue>&& centerY);
 
@@ -115,6 +161,27 @@ public:
     String customCSSText() const;
     bool equals(const CSSEllipseValue&) const;
 
+    IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
+    {
+        if (m_radiusX) {
+            if (func(*m_radiusX) == IterationStatus::Done)
+                return IterationStatus::Done;
+        }
+        if (m_radiusY) {
+            if (func(*m_radiusY) == IterationStatus::Done)
+                return IterationStatus::Done;
+        }
+        if (m_centerX) {
+            if (func(*m_centerX) == IterationStatus::Done)
+                return IterationStatus::Done;
+        }
+        if (m_centerY) {
+            if (func(*m_centerY) == IterationStatus::Done)
+                return IterationStatus::Done;
+        }
+        return IterationStatus::Continue;
+    }
+
 private:
     CSSEllipseValue(RefPtr<CSSValue>&& radiusX, RefPtr<CSSValue>&& radiusY, RefPtr<CSSValue>&& centerX, RefPtr<CSSValue>&& centerY);
 
@@ -124,7 +191,7 @@ private:
     RefPtr<CSSValue> m_centerY;
 };
 
-class CSSPolygonValue : public CSSValueContainingVector {
+class CSSPolygonValue final : public CSSValueContainingVector {
 public:
     static Ref<CSSPolygonValue> create(CSSValueListBuilder values, WindRule);
 
@@ -139,7 +206,7 @@ private:
     WindRule m_windRule { };
 };
 
-class CSSRectShapeValue : public CSSValue {
+class CSSRectShapeValue final : public CSSValue {
 public:
     static Ref<CSSRectShapeValue> create(Ref<CSSValue>&& top, Ref<CSSValue>&& right, Ref<CSSValue>&& bottom, Ref<CSSValue>&& left, RefPtr<CSSValue>&& topLeftRadius, RefPtr<CSSValue>&& topRightRadius, RefPtr<CSSValue>&& bottomRightRadius, RefPtr<CSSValue>&& bottomLeftRadius);
 
@@ -164,6 +231,35 @@ public:
     String customCSSText() const;
     bool equals(const CSSRectShapeValue&) const;
 
+    IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
+    {
+        if (func(m_top.get()) == IterationStatus::Done)
+            return IterationStatus::Done;
+        if (func(m_right.get()) == IterationStatus::Done)
+            return IterationStatus::Done;
+        if (func(m_bottom.get()) == IterationStatus::Done)
+            return IterationStatus::Done;
+        if (func(m_left.get()) == IterationStatus::Done)
+            return IterationStatus::Done;
+        if (m_topLeftRadius) {
+            if (func(*m_topLeftRadius) == IterationStatus::Done)
+                return IterationStatus::Done;
+        }
+        if (m_topRightRadius) {
+            if (func(*m_topRightRadius) == IterationStatus::Done)
+                return IterationStatus::Done;
+        }
+        if (m_bottomRightRadius) {
+            if (func(*m_bottomRightRadius) == IterationStatus::Done)
+                return IterationStatus::Done;
+        }
+        if (m_bottomLeftRadius) {
+            if (func(*m_bottomLeftRadius) == IterationStatus::Done)
+                return IterationStatus::Done;
+        }
+        return IterationStatus::Continue;
+    }
+
 private:
     CSSRectShapeValue(Ref<CSSValue>&& top, Ref<CSSValue>&& right, Ref<CSSValue>&& bottom, Ref<CSSValue>&& left, RefPtr<CSSValue>&& topLeftRadius, RefPtr<CSSValue>&& topRightRadius, RefPtr<CSSValue>&& bottomRightRadius, RefPtr<CSSValue>&& bottomLeftRadius);
 
@@ -178,7 +274,7 @@ private:
     RefPtr<CSSValue> m_bottomLeftRadius;
 };
 
-class CSSXywhValue : public CSSValue {
+class CSSXywhValue final : public CSSValue {
 public:
     static Ref<CSSXywhValue> create(Ref<CSSValue>&& insetX, Ref<CSSValue>&& insetY, Ref<CSSValue>&& width, Ref<CSSValue>&& height, RefPtr<CSSValue>&& topLeftRadius, RefPtr<CSSValue>&& topRightRadius, RefPtr<CSSValue>&& bottomRightRadius, RefPtr<CSSValue>&& bottomLeftRadius);
 
@@ -203,6 +299,36 @@ public:
     String customCSSText() const;
     bool equals(const CSSXywhValue&) const;
 
+
+    IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
+    {
+        if (func(m_insetX.get()) == IterationStatus::Done)
+            return IterationStatus::Done;
+        if (func(m_insetY.get()) == IterationStatus::Done)
+            return IterationStatus::Done;
+        if (func(m_width.get()) == IterationStatus::Done)
+            return IterationStatus::Done;
+        if (func(m_height.get()) == IterationStatus::Done)
+            return IterationStatus::Done;
+        if (m_topLeftRadius) {
+            if (func(*m_topLeftRadius) == IterationStatus::Done)
+                return IterationStatus::Done;
+        }
+        if (m_topRightRadius) {
+            if (func(*m_topRightRadius) == IterationStatus::Done)
+                return IterationStatus::Done;
+        }
+        if (m_bottomRightRadius) {
+            if (func(*m_bottomRightRadius) == IterationStatus::Done)
+                return IterationStatus::Done;
+        }
+        if (m_bottomLeftRadius) {
+            if (func(*m_bottomLeftRadius) == IterationStatus::Done)
+                return IterationStatus::Done;
+        }
+        return IterationStatus::Continue;
+    }
+
 private:
     CSSXywhValue(Ref<CSSValue>&& insetX, Ref<CSSValue>&& insetY, Ref<CSSValue>&& width, Ref<CSSValue>&& height, RefPtr<CSSValue>&& topLeftRadius, RefPtr<CSSValue>&& topRightRadius, RefPtr<CSSValue>&& bottomRightRadius, RefPtr<CSSValue>&& bottomLeftRadius);
 
@@ -217,7 +343,7 @@ private:
     RefPtr<CSSValue> m_bottomLeftRadius;
 };
 
-class CSSPathValue : public CSSValue {
+class CSSPathValue final : public CSSValue {
 public:
     static Ref<CSSPathValue> create(SVGPathByteStream, WindRule);
 

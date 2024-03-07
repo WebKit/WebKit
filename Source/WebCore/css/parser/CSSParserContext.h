@@ -55,6 +55,8 @@ inline bool operator==(const ResolvedURL& a, const ResolvedURL& b)
     return a.specifiedURLString == b.specifiedURLString && a.resolvedURL == b.resolvedURL;
 }
 
+bool mayDependOnBaseURL(const ResolvedURL&);
+
 struct CSSParserContext {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
 

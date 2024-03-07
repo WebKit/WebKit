@@ -51,16 +51,6 @@ static CSSParserContext parserContextForElement(const Element& element)
     return result;
 }
 
-static std::optional<Style::StyleSheetContentsCache::Key> makeStyleSheetContentsCacheKey(const String& text, const Element& element)
-{
-    // Only cache for shadow trees. Main document inline stylesheets are generally unique and can't be shared between documents.
-    // FIXME: This could be relaxed when a stylesheet does not contain document-relative URLs (or #urls).
-    if (!element.isInShadowTree())
-        return { };
-
-    return Style::StyleSheetContentsCache::Key { text, parserContextForElement(element) };
-}
-
 InlineStyleSheetOwner::InlineStyleSheetOwner(Document& document, bool createdByParser)
     : m_isParsingChildren(createdByParser)
     , m_loading(false)
@@ -166,25 +156,23 @@ void InlineStyleSheetOwner::createSheet(Element& element, const String& text)
     if (CheckedPtr scope = m_styleScope.get())
         scope->addPendingSheet(element);
 
-    auto cacheKey = makeStyleSheetContentsCacheKey(text, element);
-    if (cacheKey) {
-        if (RefPtr cachedSheet = Style::StyleSheetContentsCache::singleton().get(*cacheKey)) {
-            ASSERT(cachedSheet->isCacheable());
-            Ref sheet = CSSStyleSheet::createInline(*cachedSheet, element, m_startTextPosition);
-            m_sheet = sheet.copyRef();
-            sheet->setMediaQueries(WTFMove(mediaQueries));
-            if (!element.isInShadowTree())
-                sheet->setTitle(element.title());
+    Style::StyleSheetContentsCache::Key cacheKey { text, parserContextForElement(element) };
+    if (RefPtr cachedSheet = Style::StyleSheetContentsCache::singleton().get(cacheKey)) {
+        ASSERT(cachedSheet->isCacheableWithNoBaseURLDependency());
+        Ref sheet = CSSStyleSheet::createInline(*cachedSheet, element, m_startTextPosition);
+        m_sheet = sheet.copyRef();
+        sheet->setMediaQueries(WTFMove(mediaQueries));
+        if (!element.isInShadowTree())
+            sheet->setTitle(element.title());
 
-            sheetLoaded(element);
-            element.notifyLoadedSheetAndAllCriticalSubresources(false);
-            return;
-        }
+        sheetLoaded(element);
+        element.notifyLoadedSheetAndAllCriticalSubresources(false);
+        return;
     }
 
     m_loading = true;
 
-    Ref contents = StyleSheetContents::create(String(), parserContextForElement(element));
+    Ref contents = StyleSheetContents::create(String(), cacheKey.second);
 
     Ref sheet = CSSStyleSheet::createInline(contents.get(), element, m_startTextPosition);
     m_sheet = sheet.copyRef();
@@ -198,8 +186,8 @@ void InlineStyleSheetOwner::createSheet(Element& element, const String& text)
 
     contents->checkLoaded();
 
-    if (cacheKey && contents->isCacheable())
-        Style::StyleSheetContentsCache::singleton().add(WTFMove(*cacheKey), contents);
+    if (contents->isCacheableWithNoBaseURLDependency())
+        Style::StyleSheetContentsCache::singleton().add(WTFMove(cacheKey), contents);
 }
 
 bool InlineStyleSheetOwner::isLoading() const

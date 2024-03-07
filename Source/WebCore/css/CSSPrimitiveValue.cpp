@@ -1784,4 +1784,13 @@ bool CSSPrimitiveValue::convertingToLengthHasRequiredConversionData(int lengthCo
     return true;
 }
 
+IterationStatus CSSPrimitiveValue::customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
+{
+    if (auto* calc = cssCalcValue()) {
+        if (func(const_cast<CSSCalcValue&>(*calc)) == IterationStatus::Done)
+            return IterationStatus::Done;
+    }
+    return IterationStatus::Continue;
+}
+
 } // namespace WebCore

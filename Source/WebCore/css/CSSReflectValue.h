@@ -42,6 +42,17 @@ public:
     String customCSSText() const;
     bool equals(const CSSReflectValue&) const;
 
+    IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
+    {
+        if (func(m_offset.get()) == IterationStatus::Done)
+            return IterationStatus::Done;
+        if (m_mask) {
+            if (func(*m_mask) == IterationStatus::Done)
+                return IterationStatus::Done;
+        }
+        return IterationStatus::Continue;
+    }
+
 private:
     CSSReflectValue(CSSValueID direction, Ref<CSSPrimitiveValue> offset, RefPtr<CSSValue> mask);
 

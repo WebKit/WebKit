@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-class CSSCounterValue : public CSSValue {
+class CSSCounterValue final : public CSSValue {
 public:
     static Ref<CSSCounterValue> create(AtomString identifier, AtomString separator, RefPtr<CSSValue> counterStyle);
 
@@ -41,6 +41,15 @@ public:
 
     String customCSSText() const;
     bool equals(const CSSCounterValue&) const;
+
+    IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
+    {
+        if (m_counterStyle) {
+            if (func(*m_counterStyle) == IterationStatus::Done)
+                return IterationStatus::Done;
+        }
+        return IterationStatus::Continue;
+    }
 
 private:
     CSSCounterValue(AtomString identifier, AtomString separator, RefPtr<CSSValue> counterStyle);

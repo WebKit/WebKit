@@ -100,6 +100,9 @@ StyleSheetContents::StyleSheetContents(const StyleSheetContents& o)
     // FIXME: Copy import rules.
     ASSERT(o.m_importRules.isEmpty());
 
+    // FIXME: Copy namespace rules.
+    ASSERT(o.m_namespaceRules.isEmpty());
+
     for (size_t i = 0; i < m_layerRulesBeforeImportRules.size(); ++i)
         m_layerRulesBeforeImportRules[i] = o.m_layerRulesBeforeImportRules[i]->copy();
 
@@ -117,6 +120,9 @@ bool StyleSheetContents::isCacheable() const
     // FIXME: Support copying import rules.
     if (!m_importRules.isEmpty())
         return false;
+    // FIXME: Support copying namespace rules.
+    if (!m_namespaceRules.isEmpty())
+        return false;
     // FIXME: Support cached stylesheets in import rules.
     if (m_ownerRule)
         return false;
@@ -133,6 +139,15 @@ bool StyleSheetContents::isCacheable() const
     if (!m_hasSyntacticallyValidCSSHeader)
         return false;
     if (m_hasNestingRules)
+        return false;
+    return true;
+}
+
+bool StyleSheetContents::isCacheableWithNoBaseURLDependency() const
+{
+    if (!isCacheable())
+        return false;
+    if (mayDependOnBaseURL())
         return false;
     return true;
 }
@@ -589,6 +604,43 @@ bool StyleSheetContents::isLoadingSubresources() const
 {
     return traverseSubresources([](const CachedResource& resource) {
         return resource.isLoading();
+    });
+}
+
+bool StyleSheetContents::mayDependOnBaseURL() const
+{
+    return traverseRules([&](const StyleRuleBase& rule) -> bool {
+        switch (rule.type()) {
+        case StyleRuleType::Style:
+            return uncheckedDowncast<StyleRule>(rule).properties().mayDependOnBaseURL();
+        case StyleRuleType::StyleWithNesting:
+            return uncheckedDowncast<StyleRuleWithNesting>(rule).properties().mayDependOnBaseURL();
+        case StyleRuleType::FontFace:
+            return uncheckedDowncast<StyleRuleFontFace>(rule).properties().mayDependOnBaseURL();
+        case StyleRuleType::Import:
+        case StyleRuleType::CounterStyle:
+        case StyleRuleType::Media:
+        case StyleRuleType::Page:
+        case StyleRuleType::Keyframes:
+        case StyleRuleType::Namespace:
+        case StyleRuleType::Unknown:
+        case StyleRuleType::Charset:
+        case StyleRuleType::Keyframe:
+        case StyleRuleType::Supports:
+        case StyleRuleType::LayerBlock:
+        case StyleRuleType::LayerStatement:
+        case StyleRuleType::Container:
+        case StyleRuleType::FontFeatureValues:
+        case StyleRuleType::FontFeatureValuesBlock:
+        case StyleRuleType::FontPaletteValues:
+        case StyleRuleType::Margin:
+        case StyleRuleType::Property:
+        case StyleRuleType::Scope:
+        case StyleRuleType::StartingStyle:
+            return false;
+        };
+        ASSERT_NOT_REACHED();
+        return false;
     });
 }
 

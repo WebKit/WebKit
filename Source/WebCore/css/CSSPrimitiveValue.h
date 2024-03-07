@@ -190,6 +190,8 @@ public:
 
     void collectComputedStyleDependencies(ComputedStyleDependencies&) const;
 
+    IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>&) const;
+
 private:
     friend class CSSValuePool;
     friend class StaticCSSValuePool;

@@ -77,6 +77,8 @@ public:
     RefPtr<const CSSValue> protectedItem(unsigned index) const { return item(index); }
     const CSSValue* itemWithoutBoundsCheck(unsigned index) const { return &(*this)[index]; }
 
+    IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>&) const;
+
 protected:
     friend bool CSSValue::addHash(Hasher&) const;
 
@@ -96,7 +98,7 @@ private:
     const CSSValue** m_additionalStorage;
 };
 
-class CSSValueList : public CSSValueContainingVector {
+class CSSValueList final : public CSSValueContainingVector {
 public:
     static Ref<CSSValueList> create(UChar separator, CSSValueListBuilder);
 

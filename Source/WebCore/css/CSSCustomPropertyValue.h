@@ -107,6 +107,18 @@ public:
 
     Ref<const CSSVariableData> asVariableData() const;
 
+    // Say true conservatively.
+    bool customMayDependOnBaseURL() const { return true; }
+
+    IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
+    {
+        if (auto* value = std::get_if<Ref<CSSVariableReferenceValue>>(&m_value)) {
+            if (func(*value) == IterationStatus::Done)
+                return IterationStatus::Done;
+        }
+        return IterationStatus::Continue;
+    }
+
 private:
     CSSCustomPropertyValue(const AtomString& name, VariantValue&& value)
         : CSSValue(CustomPropertyClass)

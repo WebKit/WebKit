@@ -46,6 +46,17 @@ public:
 
     bool equals(const CSSFontStyleRangeValue&) const;
 
+    IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
+    {
+        if (func(fontStyleValue.get()) == IterationStatus::Done)
+            return IterationStatus::Done;
+        if (obliqueValues) {
+            if (func(*obliqueValues) == IterationStatus::Done)
+                return IterationStatus::Done;
+        }
+        return IterationStatus::Continue;
+    }
+
     Ref<CSSPrimitiveValue> fontStyleValue;
     RefPtr<CSSValueList> obliqueValues;
 

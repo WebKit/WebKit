@@ -349,6 +349,24 @@ bool StyleProperties::traverseSubresources(const Function<bool(const CachedResou
     return false;
 }
 
+bool StyleProperties::mayDependOnBaseURL() const
+{
+    bool result = false;
+    Function<IterationStatus(CSSValue&)> func = [&](CSSValue& value) -> IterationStatus {
+        if (value.mayDependOnBaseURL()) {
+            result = true;
+            return IterationStatus::Done;
+        }
+        return value.visitChildren(func);
+    };
+
+    for (auto property : *this) {
+        if (func(*property.value()) == IterationStatus::Done)
+            return result;
+    }
+    return false;
+}
+
 void StyleProperties::setReplacementURLForSubresources(const HashMap<String, String>& replacementURLStrings)
 {
     for (auto property : *this)

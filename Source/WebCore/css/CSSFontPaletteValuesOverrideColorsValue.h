@@ -60,6 +60,15 @@ public:
 
     bool equals(const CSSFontPaletteValuesOverrideColorsValue&) const;
 
+    IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
+    {
+        if (func(m_key.get()) == IterationStatus::Done)
+            return IterationStatus::Done;
+        if (func(m_color.get()) == IterationStatus::Done)
+            return IterationStatus::Done;
+        return IterationStatus::Continue;
+    }
+
 private:
     CSSFontPaletteValuesOverrideColorsValue(Ref<CSSPrimitiveValue>&& key, Ref<CSSPrimitiveValue>&& color)
         : CSSValue(FontPaletteValuesOverrideColorsClass)
