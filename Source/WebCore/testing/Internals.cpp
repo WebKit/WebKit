@@ -4209,6 +4209,12 @@ void Internals::setUsesOverlayScrollbars(bool enabled)
 }
 #endif
 
+void Internals::forceAXObjectCacheUpdate() const
+{
+    if (RefPtr document = contextDocument())
+        document->axObjectCache()->performDeferredCacheUpdate(ForceLayout::Yes);
+}
+
 void Internals::forceReload(bool endToEnd)
 {
     OptionSet<ReloadOption> reloadOptions;

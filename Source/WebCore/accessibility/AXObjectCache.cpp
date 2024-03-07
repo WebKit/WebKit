@@ -4088,6 +4088,17 @@ void AXObjectCache::performDeferredCacheUpdate(ForceLayout forceLayout)
         }
     }
 
+    RefPtr<Frame> frame = document->frame();
+    if (frame && frame->isMainFrame()) {
+        // The layout of subframes must also be clean (assuming we're processing objects from those subframes), so force it here if necessary.
+        for (; frame; frame = frame->tree().traverseNext()) {
+            auto* localFrame = dynamicDowncast<LocalFrame>(frame.get());
+            RefPtr subDocument = localFrame ? localFrame->document() : nullptr;
+            if (subDocument && subDocument->view() && subDocument->view()->needsLayout())
+                subDocument->updateLayoutIgnorePendingStylesheets();
+        }
+    }
+
     bool markedRelationsDirty = false;
     auto markRelationsDirty = [&] () {
         if (!markedRelationsDirty) {

@@ -1,0 +1,45 @@
+This test ensures we don't make incorrect updates to the accessibility tree when an iframe has dirty layout.
+
+Dumping initial AX tree search traversal.
+
+{AXRole: AXScrollArea}
+
+{AXRole: AXWebArea}
+
+{#main AXRole: AXGroup}
+
+
+Dumping new AX tree search traversal.
+
+{AXRole: AXScrollArea}
+
+{AXRole: AXWebArea}
+
+{#main AXRole: AXGroup}
+
+{AXRole: AXTable}
+
+{AXRole: AXRow}
+
+{AXRole: AXCell}
+
+{AXRole: AXStaticText AXValue: Cell 1}
+
+{AXRole: AXCell}
+
+{AXRole: AXStaticText AXValue: Cell 2}
+
+{AXRole: AXRow}
+
+{AXRole: AXCell}
+
+{AXRole: AXStaticText AXValue: Cell 3}
+
+{AXRole: AXCell}
+
+{AXRole: AXStaticText AXValue: Cell 4}
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -683,6 +683,7 @@ public:
 
     String toolTipFromElement(Element&) const;
 
+    void forceAXObjectCacheUpdate() const;
     void forceReload(bool endToEnd);
     void reloadExpiredOnly();
 

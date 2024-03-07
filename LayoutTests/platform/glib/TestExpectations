@@ -535,6 +535,7 @@ accessibility/table-search-traversal.html [ Skip ]
 accessibility/tree-update-with-dirty-layout.html [ Skip ]
 accessibility/dynamically-changing-iframe-remains-accessible.html [ Skip ]
 accessibility/ignore-modals-without-any-content.html [ Skip ]
+accessibility/iframe-tree-update-with-dirty-layout.html [ Skip ]
 accessibility/iframe-with-role.html [ Skip ]
 
 accessibility/editable-webpage-focused-ui-element.html [ Skip ]
