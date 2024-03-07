@@ -1,0 +1,17 @@
+<script>
+    function runTest() {
+        if (window.testRunner)
+            window.testRunner.dumpAsText();
+
+        marqueeElement.addEventListener("DOMSubtreeModified", () => {
+            try { hrElement.before(hrElement); } catch (e) { }
+            marqueeElement.normalize();
+        });
+
+        marqueeElement.setAttribute("a", "");
+    }
+</script>
+
+<body onload=runTest()>
+    <marquee id="marqueeElement">
+        <hr id="hrElement" width="1"></hr>
