@@ -268,7 +268,7 @@ TZoneHeapManager::TZoneTypeBuckets* TZoneHeapManager::populateBucketsForSizeClas
     auto typeCount = m_typeCountBySizeAndAlignment.get(typeSizeAlign);
     auto bucketCount = bucketCountForTypeCount(typeCount);
 
-    TZoneTypeBuckets* buckets = static_cast<TZoneTypeBuckets*>(zeroedMalloc(SIZE_TZONE_TYPE_BUCKETS(bucketCount)));
+    TZoneTypeBuckets* buckets = static_cast<TZoneTypeBuckets*>(zeroedMalloc(SIZE_TZONE_TYPE_BUCKETS(bucketCount), CompactAllocationMode::NonCompact));
 
     buckets->numberOfBuckets = bucketCount;
 

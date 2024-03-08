@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CompactAllocationMode.h"
 #include "IsoConfig.h"
 #include "Mutex.h"
 

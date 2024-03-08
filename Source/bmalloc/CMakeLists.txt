@@ -195,6 +195,7 @@ set(bmalloc_PUBLIC_HEADERS
     bmalloc/AllIsoHeaps.h
     bmalloc/AllIsoHeapsInlines.h
     bmalloc/AllocationCounts.h
+    bmalloc/CompactAllocationMode.h
     bmalloc/Allocator.h
     bmalloc/AvailableMemory.h
     bmalloc/BAssert.h
@@ -327,6 +328,7 @@ set(bmalloc_PUBLIC_HEADERS
     libpas/src/libpas/pas_allocation_callbacks.h
     libpas/src/libpas/pas_allocation_config.h
     libpas/src/libpas/pas_allocation_kind.h
+    libpas/src/libpas/pas_allocation_mode.h
     libpas/src/libpas/pas_allocation_result.h
     libpas/src/libpas/pas_allocator_counts.h
     libpas/src/libpas/pas_allocator_index.h

@@ -67,8 +67,8 @@ static void pas_probabilistic_guard_malloc_debug_info(const void* key, const pas
 #pragma mark ALLOC/DEALLOC
 #endif
 
-pas_allocation_result pas_probabilistic_guard_malloc_allocate(pas_large_heap* large_heap, size_t size, const pas_heap_config* heap_config,
-                                                              pas_physical_memory_transaction* transaction)
+pas_allocation_result pas_probabilistic_guard_malloc_allocate(pas_large_heap* large_heap, size_t size, pas_allocation_mode allocation_mode,
+                                                              const pas_heap_config* heap_config, pas_physical_memory_transaction* transaction)
 {
     pas_heap_lock_assert_held();
     static const bool verbose = false;
@@ -97,7 +97,7 @@ pas_allocation_result pas_probabilistic_guard_malloc_allocate(pas_large_heap* la
     if (mem_to_alloc > free_virtual_mem)
         return result;
 
-    result = pas_large_heap_try_allocate_and_forget(large_heap, mem_to_alloc, page_size,heap_config, transaction);
+    result = pas_large_heap_try_allocate_and_forget(large_heap, mem_to_alloc, page_size, allocation_mode, heap_config, transaction);
     if (!result.did_succeed)
         return result;
 
@@ -125,7 +125,8 @@ pas_allocation_result pas_probabilistic_guard_malloc_allocate(pas_large_heap* la
      * the key is the location where the user's starting memory address is located.
      * allocations are right aligned, so the end backs up to the upper guard page.
      */
-    void * key = (void*) (result.begin + page_size + mem_to_waste);
+    uintptr_t key = result.begin + page_size + mem_to_waste;
+    PAS_PROFILE(PGM_ALLOCATE, key);
 
     /* create struct to hold hash map value */
     pas_pgm_storage *value = pas_utility_heap_try_allocate(sizeof(pas_pgm_storage), "pas_pgm_hash_map_VALUE");
@@ -138,17 +139,17 @@ pas_allocation_result pas_probabilistic_guard_malloc_allocate(pas_large_heap* la
     value->page_size                 = page_size;
     value->large_heap                = large_heap;
 
-    pas_ptr_hash_map_add_result add_result = pas_ptr_hash_map_add(&pas_pgm_hash_map, key, NULL, &pas_large_utility_free_heap_allocation_config);
+    pas_ptr_hash_map_add_result add_result = pas_ptr_hash_map_add(&pas_pgm_hash_map, (void*)key, NULL, &pas_large_utility_free_heap_allocation_config);
     PAS_ASSERT(add_result.is_new_entry);
 
-    add_result.entry->key = key;
+    add_result.entry->key = (void*)key;
     add_result.entry->value = value;
 
     free_wasted_mem  -= mem_to_waste;
     free_virtual_mem -= mem_to_alloc;
 
     if (verbose)
-        pas_probabilistic_guard_malloc_debug_info(key, value, "Allocating memory");
+        pas_probabilistic_guard_malloc_debug_info((void*)key, value, "Allocating memory");
 
     result.begin = (uintptr_t)key;
 
@@ -167,9 +168,10 @@ void pas_probabilistic_guard_malloc_deallocate(void* mem)
     if (verbose)
         printf("Memory Address Requested to Deallocate %p\n", mem);
 
-    uintptr_t * key = (uintptr_t *) mem;
+    uintptr_t key = (uintptr_t) mem;
+    PAS_PROFILE(PGM_DEALLOCATE, key);
 
-    pas_ptr_hash_map_entry * entry = pas_ptr_hash_map_find(&pas_pgm_hash_map, key);
+    pas_ptr_hash_map_entry * entry = pas_ptr_hash_map_find(&pas_pgm_hash_map, (void*)key);
     if (!entry || !entry->value)
         return;
 
@@ -184,14 +186,14 @@ void pas_probabilistic_guard_malloc_deallocate(void* mem)
     int madvise_res = madvise((void *) value->start_of_data_pages, value->size_of_data_pages, MADV_FREE);
     PAS_ASSERT(!madvise_res);
 
-    bool removed = pas_ptr_hash_map_remove(&pas_pgm_hash_map, key, NULL, &pas_large_utility_free_heap_allocation_config);
+    bool removed = pas_ptr_hash_map_remove(&pas_pgm_hash_map, (void*)key, NULL, &pas_large_utility_free_heap_allocation_config);
     PAS_ASSERT(removed);
 
     free_wasted_mem  += value->mem_to_waste;
     free_virtual_mem += (2 * value->page_size) + value->allocation_size_requested + value->mem_to_waste;
 
     if (verbose)
-        pas_probabilistic_guard_malloc_debug_info(key, value, "Deallocating Memory");
+        pas_probabilistic_guard_malloc_debug_info((void*)key, value, "Deallocating Memory");
 
     pas_probabilistic_guard_malloc_can_use = true;
 

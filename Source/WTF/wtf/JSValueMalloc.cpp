@@ -58,17 +58,17 @@ void jsValueFree(void* p)
 #else
 void* tryJSValueMalloc(size_t size)
 {
-    return bmalloc::api::tryMalloc(size, bmalloc::HeapKind::JSValueGigacage);
+    return bmalloc::api::tryMalloc(size, bmalloc::CompactAllocationMode::Compact, bmalloc::HeapKind::JSValueGigacage);
 }
 
 void* jsValueMalloc(size_t size)
 {
-    return bmalloc::api::malloc(size, bmalloc::HeapKind::JSValueGigacage);
+    return bmalloc::api::malloc(size, bmalloc::CompactAllocationMode::Compact, bmalloc::HeapKind::JSValueGigacage);
 }
 
 void* jsValueRealloc(void* p, size_t size)
 {
-    return bmalloc::api::realloc(p, size, bmalloc::HeapKind::JSValueGigacage);
+    return bmalloc::api::realloc(p, size, bmalloc::CompactAllocationMode::Compact, bmalloc::HeapKind::JSValueGigacage);
 }
 
 void jsValueFree(void* p)

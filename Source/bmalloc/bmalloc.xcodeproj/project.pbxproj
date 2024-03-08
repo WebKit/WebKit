@@ -131,6 +131,8 @@
 		2B6EB7A029EE102E00F10400 /* pas_report_crash_pgm_report.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B6EB79F29EE102E00F10400 /* pas_report_crash_pgm_report.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2BDF4F4C29E8B8BA0056BF50 /* pas_report_crash.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BDF4F4A29E8B8BA0056BF50 /* pas_report_crash.c */; };
 		2BDF4F4D29E8B8BA0056BF50 /* pas_report_crash.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BDF4F4B29E8B8BA0056BF50 /* pas_report_crash.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3016D8E92B97BF77009A3809 /* pas_allocation_mode.h in Headers */ = {isa = PBXBuildFile; fileRef = 3016D8E82B97BF77009A3809 /* pas_allocation_mode.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3044790B2B992F5500043E8E /* CompactAllocationMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 3044790A2B992F4A00043E8E /* CompactAllocationMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		304B034B2B18FBE00063B1B5 /* AllocationCounts.h in Headers */ = {isa = PBXBuildFile; fileRef = 306D49052ACCA01400CCFEE5 /* AllocationCounts.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		304B03532B1901730063B1B5 /* libWebKitAdditions.a in Product Dependencies */ = {isa = PBXBuildFile; fileRef = 304B03502B19014B0063B1B5 /* libWebKitAdditions.a */; };
 		4426E2801C838EE0008EB042 /* Logging.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4426E27E1C838EE0008EB042 /* Logging.cpp */; };
@@ -1350,6 +1352,8 @@
 		2CE2AE512769928200D02BBC /* pas_compact_tagged_void_ptr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_compact_tagged_void_ptr.h; path = libpas/src/libpas/pas_compact_tagged_void_ptr.h; sourceTree = "<group>"; };
 		2CE2AE572769928300D02BBC /* pas_probabilistic_guard_malloc_allocator.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pas_probabilistic_guard_malloc_allocator.c; path = libpas/src/libpas/pas_probabilistic_guard_malloc_allocator.c; sourceTree = "<group>"; };
 		2CE2AE582769928300D02BBC /* pas_probabilistic_guard_malloc_allocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_probabilistic_guard_malloc_allocator.h; path = libpas/src/libpas/pas_probabilistic_guard_malloc_allocator.h; sourceTree = "<group>"; };
+		3016D8E82B97BF77009A3809 /* pas_allocation_mode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_allocation_mode.h; path = libpas/src/libpas/pas_allocation_mode.h; sourceTree = "<group>"; };
+		3044790A2B992F4A00043E8E /* CompactAllocationMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CompactAllocationMode.h; path = bmalloc/CompactAllocationMode.h; sourceTree = "<group>"; };
 		304B03502B19014B0063B1B5 /* libWebKitAdditions.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libWebKitAdditions.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		306D49052ACCA01400CCFEE5 /* AllocationCounts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AllocationCounts.h; path = bmalloc/AllocationCounts.h; sourceTree = "<group>"; };
 		4426E27E1C838EE0008EB042 /* Logging.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Logging.cpp; path = bmalloc/Logging.cpp; sourceTree = "<group>"; };
@@ -1551,6 +1555,7 @@
 				0FC409892451496000876DA0 /* pas_allocation_callbacks.h */,
 				0FC409812451495F00876DA0 /* pas_allocation_config.h */,
 				0FC409772451495F00876DA0 /* pas_allocation_kind.h */,
+				3016D8E82B97BF77009A3809 /* pas_allocation_mode.h */,
 				E39ECE2C2A82360400BF878E /* pas_allocation_result.c */,
 				0FC409BE2451496300876DA0 /* pas_allocation_result.h */,
 				0FC409AA2451496200876DA0 /* pas_allocator_counts.h */,
@@ -2109,6 +2114,7 @@
 				7939885A2076EEB50074A2E7 /* BulkDecommit.h */,
 				140FA00219CE429C00FFD3C8 /* BumpRange.h */,
 				147DC6E21CA5B70B00724E8D /* Chunk.h */,
+				3044790A2B992F4A00043E8E /* CompactAllocationMode.h */,
 				142B44341E2839E7001DA6E9 /* DebugHeap.cpp */,
 				142B44351E2839E7001DA6E9 /* DebugHeap.h */,
 				14895D8F1A3A319C0006235D /* Environment.cpp */,
@@ -2226,6 +2232,7 @@
 				DE8B13B321CC5D9F00A63FCD /* BVMTags.h in Headers */,
 				14DD789918F48D4A00950702 /* Cache.h in Headers */,
 				147DC6E31CA5B70B00724E8D /* Chunk.h in Headers */,
+				3044790B2B992F5500043E8E /* CompactAllocationMode.h in Headers */,
 				0F74B93E1F89713E00B935D3 /* CryptoRandom.h in Headers */,
 				14DD789A18F48D4A00950702 /* Deallocator.h in Headers */,
 				142B44371E2839E7001DA6E9 /* DebugHeap.h in Headers */,
@@ -2352,6 +2359,7 @@
 				DD4BED1E29CBA49700398E35 /* pas_allocation_callbacks.h in Headers */,
 				DD4BED0829CBA49700398E35 /* pas_allocation_config.h in Headers */,
 				DD4BECF129CBA49700398E35 /* pas_allocation_kind.h in Headers */,
+				3016D8E92B97BF77009A3809 /* pas_allocation_mode.h in Headers */,
 				DD4BED3D29CBA49700398E35 /* pas_allocation_result.h in Headers */,
 				DD4BEC5B29CBA49700398E35 /* pas_allocator_counts.h in Headers */,
 				DD4BEDB429CBA49700398E35 /* pas_allocator_index.h in Headers */,

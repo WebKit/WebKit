@@ -2093,7 +2093,7 @@ pas_segregated_heap_ensure_size_directory_for_size(
             
                     new_directories = pas_compact_expendable_memory_allocate(
                         sizeof(pas_segregated_heap_medium_directory_tuple) * new_capacity,
-                        PAS_ALIGNOF(pas_segregated_heap_medium_directory_tuple),
+                        PAS_MAX(PAS_INTERNAL_MIN_ALIGN, PAS_ALIGNOF(pas_segregated_heap_medium_directory_tuple)),
                         "pas_segregated_heap_rare_data/medium_directories");
             
                     memcpy(new_directories, medium_directories,

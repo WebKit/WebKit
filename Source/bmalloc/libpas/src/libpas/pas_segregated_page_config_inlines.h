@@ -35,10 +35,10 @@ PAS_BEGIN_EXTERN_C;
 #define PAS_SEGREGATED_PAGE_CONFIG_TLC_SPECIALIZATION_DEFINITIONS(lower_case_page_config_name, page_config_value) \
     PAS_NEVER_INLINE pas_allocation_result \
     lower_case_page_config_name ## _specialized_local_allocator_try_allocate_in_primordial_partial_view( \
-        pas_local_allocator* allocator) \
+        pas_local_allocator* allocator, pas_allocation_mode allocation_mode) \
     { \
         return pas_local_allocator_try_allocate_in_primordial_partial_view( \
-            allocator, (page_config_value)); \
+            allocator, allocation_mode, (page_config_value)); \
     } \
     \
     PAS_NEVER_INLINE bool lower_case_page_config_name ## _specialized_local_allocator_start_allocating_in_primordial_partial_view( \

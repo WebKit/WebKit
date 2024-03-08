@@ -52,7 +52,7 @@ static pas_allocation_result allocate_from_large(
     PAS_ASSERT(!alignment.alignment_begin);
 
     return pas_large_heap_try_allocate_and_forget(
-        &heap->large_heap, size, alignment.alignment,
+        &heap->large_heap, size, alignment.alignment, pas_non_compact_allocation_mode,
         pas_heap_config_kind_get_config(heap->config_kind),
         transaction);
 }

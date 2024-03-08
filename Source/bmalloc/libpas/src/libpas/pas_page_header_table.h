@@ -89,10 +89,14 @@ pas_page_header_table_get_for_boundary(pas_page_header_table* table,
                                        size_t page_size,
                                        void* boundary)
 {
-    PAS_TESTING_ASSERT(page_size == table->page_size);
-    PAS_TESTING_ASSERT(pas_round_down_to_power_of_2((uintptr_t)boundary, page_size)
-                       == (uintptr_t)boundary);
+    uintptr_t begin = (uintptr_t)boundary;
 
+    PAS_TESTING_ASSERT(page_size == table->page_size);
+    PAS_TESTING_ASSERT(pas_round_down_to_power_of_2(begin, page_size)
+                       == begin);
+
+    PAS_PROFILE(PAGE_HEADER_TABLE_GET, begin);
+    boundary = (void*)begin;
     return (pas_page_base*)pas_lock_free_read_ptr_ptr_hashtable_find(
         &table->hashtable, pas_page_header_table_hash, (void*)page_size, boundary);
 }

@@ -51,7 +51,7 @@ namespace bmalloc { namespace api {
 
 #if BENABLE_MALLOC_HEAP_BREAKDOWN
 template<typename Type>
-IsoHeap<Type>::TZoneHeap(const char* heapClass)
+TZoneHeapBase<Type>::TZoneHeapBase(const char* heapClass)
     : m_zone(malloc_create_zone(0, 0))
 {
     if (heapClass)
@@ -60,45 +60,45 @@ IsoHeap<Type>::TZoneHeap(const char* heapClass)
 #endif
 
 template<typename Type>
-void* TZoneHeap<Type>::allocate()
+void* TZoneHeapBase<Type>::allocate()
 {
     bool abortOnFailure = true;
     return IsoTLS::allocate(*this, abortOnFailure);
 }
 
 template<typename Type>
-void* TZoneHeap<Type>::tryAllocate()
+void* TZoneHeapBase<Type>::tryAllocate()
 {
     bool abortOnFailure = false;
     return IsoTLS::allocate(*this, abortOnFailure);
 }
 
 template<typename Type>
-void TZoneHeap<Type>::deallocate(void* p)
+void TZoneHeapBase<Type>::deallocate(void* p)
 {
     IsoTLS::deallocate(*this, p);
 }
 
 template<typename Type>
-void TZoneHeap<Type>::scavenge()
+void TZoneHeapBase<Type>::scavenge()
 {
     IsoTLS::scavenge(*this);
 }
 
 template<typename Type>
-bool TZoneHeap<Type>::isInitialized()
+bool TZoneHeapBase<Type>::isInitialized()
 {
     auto* atomic = reinterpret_cast<std::atomic<IsoHeapImpl<Config>*>*>(&m_impl);
     return atomic->load(std::memory_order_acquire);
 }
 
 template<typename Type>
-void TZoneHeap<Type>::initialize()
+void TZoneHeapBase<Type>::initialize()
 {
-    // We are using m_impl field as a guard variable of the initialization of TZoneHeap.
-    // TZoneHeap::isInitialized gets m_impl with "acquire", and TZoneHeap::initialize stores
-    // the value to m_impl with "release". To make TZoneHeap changes visible to any threads
-    // when TZoneHeap::isInitialized returns true, we need to store the value to m_impl *after*
+    // We are using m_impl field as a guard variable of the initialization of TZoneHeapBase.
+    // TZoneHeapBase::isInitialized gets m_impl with "acquire", and TZoneHeapBase::initialize stores
+    // the value to m_impl with "release". To make TZoneHeapBase changes visible to any threads
+    // when TZoneHeapBase::isInitialized returns true, we need to store the value to m_impl *after*
     // all the initialization finishes.
     auto* heap = new IsoHeapImpl<Config>();
     heap->addToAllIsoHeaps();
@@ -109,7 +109,7 @@ void TZoneHeap<Type>::initialize()
 }
 
 template<typename Type>
-auto TZoneHeap<Type>::impl() -> IsoHeapImpl<Config>&
+auto TZoneHeapBase<Type>::impl() -> IsoHeapImpl<Config>&
 {
     IsoTLS::ensureHeap(*this);
     return *m_impl;
@@ -119,11 +119,11 @@ auto TZoneHeap<Type>::impl() -> IsoHeapImpl<Config>&
 
 // This is most appropraite for template classes.
 
-#define MAKE_BTZONE_MALLOCED_INLINE(tzoneType) \
+#define MAKE_BTZONE_MALLOCED_INLINE(tzoneType, tzoneHeapType) \
 public: \
-    static ::bmalloc::api::TZoneHeap<tzoneType>& btzoneHeap() \
+    static ::bmalloc::api::tzoneHeapType<tzoneType>& btzoneHeap() \
     { \
-        static ::bmalloc::api::TZoneHeap<tzoneType> heap("WebKit_"#tzoneType); \
+        static ::bmalloc::api::tzoneHeapType<tzoneType> heap("WebKit_"#tzoneType); \
         return heap; \
     } \
     \
@@ -158,10 +158,10 @@ public: \
 private: \
     using __makeBtzoneMallocedInlineMacroSemicolonifier BUNUSED_TYPE_ALIAS = int
 
-#define MAKE_BTZONE_MALLOCED_IMPL(tzoneType) \
-::bmalloc::api::TZoneHeap<tzoneType>& tzoneType::btzoneHeap() \
+#define MAKE_BTZONE_MALLOCED_IMPL(tzoneType, tzoneHeapType) \
+::bmalloc::api::tzoneHeapType<tzoneType>& tzoneType::btzoneHeap() \
 { \
-    static ::bmalloc::api::TZoneHeap<tzoneType> heap("WebKit "#tzoneType); \
+    static ::bmalloc::api::tzoneHeapType<tzoneType> heap("WebKit "#tzoneType); \
     return heap; \
 } \
 \
@@ -183,10 +183,10 @@ void tzoneType::freeAfterDestruction(void* p) \
 \
 struct MakeBtzoneMallocedImplMacroSemicolonifier##tzoneType { }
 
-#define MAKE_BTZONE_MALLOCED_IMPL_NESTED(tzoneTypeName, tzoneType) \
-::bmalloc::api::TZoneHeap<tzoneType>& tzoneType::btzoneHeap() \
+#define MAKE_BTZONE_MALLOCED_IMPL_NESTED(tzoneTypeName, tzoneType, tzoneHeapType) \
+::bmalloc::api::tzoneHeapType<tzoneType>& tzoneType::btzoneHeap() \
 { \
-    static ::bmalloc::api::TZoneHeap<tzoneType> heap("WebKit "#tzoneType); \
+    static ::bmalloc::api::tzoneHeapType<tzoneType> heap("WebKit "#tzoneType); \
     return heap; \
 } \
 \
@@ -208,11 +208,11 @@ void tzoneType::freeAfterDestruction(void* p) \
 \
 struct MakeBtzoneMallocedImplMacroSemicolonifier##tzoneTypeName { }
 
-#define MAKE_BTZONE_MALLOCED_IMPL_TEMPLATE(tzoneType) \
+#define MAKE_BTZONE_MALLOCED_IMPL_TEMPLATE(tzoneType, tzoneHeapType) \
 template<> \
-::bmalloc::api::TZoneHeap<tzoneType>& tzoneType::btzoneHeap() \
+::bmalloc::api::tzoneHeapType<tzoneType>& tzoneType::btzoneHeap() \
 { \
-    static ::bmalloc::api::TZoneHeap<tzoneType> heap("WebKit_"#tzoneType); \
+    static ::bmalloc::api::tzoneHeapType<tzoneType> heap("WebKit_"#tzoneType); \
     return heap; \
 } \
 \
@@ -237,11 +237,11 @@ void tzoneType::freeAfterDestruction(void* p) \
 \
 struct MakeBtzoneMallocedImplMacroSemicolonifier##tzoneType { }
 
-#define MAKE_BTZONE_MALLOCED_IMPL_NESTED_TEMPLATE(tzoneTypeName, tzoneType) \
+#define MAKE_BTZONE_MALLOCED_IMPL_NESTED_TEMPLATE(tzoneTypeName, tzoneType, tzoneHeapType) \
 template<> \
-::bmalloc::api::TZoneHeap<tzoneType>& tzoneType::btzoneHeap() \
+::bmalloc::api::tzoneHeapType<tzoneType>& tzoneType::btzoneHeap() \
 { \
-    static ::bmalloc::api::TZoneHeap<tzoneType> heap("WebKit "#tzoneType); \
+    static ::bmalloc::api::tzoneHeapType<tzoneType> heap("WebKit "#tzoneType); \
     return heap; \
 } \
 \

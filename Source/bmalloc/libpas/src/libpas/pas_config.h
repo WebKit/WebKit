@@ -60,7 +60,7 @@
 #define PAS_MAX_GRANULES                 1024
 #endif
 
-#define PAS_INTERNAL_MIN_ALIGN_SHIFT     3
+#define PAS_INTERNAL_MIN_ALIGN_SHIFT     4
 #define PAS_INTERNAL_MIN_ALIGN           ((size_t)1 << PAS_INTERNAL_MIN_ALIGN_SHIFT)
 
 #if defined(PAS_BMALLOC)

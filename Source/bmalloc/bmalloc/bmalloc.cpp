@@ -51,9 +51,9 @@ pas_primitive_heap_ref gigacageHeaps[Gigacage::NumberOfKinds] = {
 };
 #endif
 
-void* mallocOutOfLine(size_t size, HeapKind kind)
+void* mallocOutOfLine(size_t size, CompactAllocationMode mode, HeapKind kind)
 {
-    return malloc(size, kind);
+    return malloc(size, mode, kind);
 }
 
 void freeOutOfLine(void* object, HeapKind kind)
@@ -61,7 +61,7 @@ void freeOutOfLine(void* object, HeapKind kind)
     free(object, kind);
 }
 
-void* tryLargeZeroedMemalignVirtual(size_t requiredAlignment, size_t requestedSize, HeapKind kind)
+void* tryLargeZeroedMemalignVirtual(size_t requiredAlignment, size_t requestedSize, CompactAllocationMode mode, HeapKind kind)
 {
     RELEASE_BASSERT(isPowerOfTwo(requiredAlignment));
 
@@ -76,8 +76,9 @@ void* tryLargeZeroedMemalignVirtual(size_t requiredAlignment, size_t requestedSi
         result = debugHeap->memalignLarge(alignment, size);
     else {
 #if BUSE(LIBPAS)
-        result = tryMemalign(alignment, size, kind);
+        result = tryMemalign(alignment, size, mode, kind);
 #else
+        BUNUSED(mode);
         kind = mapToActiveHeapKind(kind);
         Heap& heap = PerProcess<PerHeapKind<Heap>>::get()->at(kind);
 

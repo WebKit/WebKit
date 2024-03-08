@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,67 +20,41 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
 
-#include "BExport.h"
+#include "BAssert.h"
 #include "BInline.h"
-#include "BPlatform.h"
-#include "CompactAllocationMode.h"
-#include <cstddef>
-#include <cstdint>
 
-#if BENABLE_MALLOC_HEAP_BREAKDOWN
-#include <malloc/malloc.h>
+#if BUSE(LIBPAS)
+#include "pas_allocation_mode.h"
 #endif
 
-namespace bmalloc { namespace IsoMallocFallback {
+namespace bmalloc {
 
-enum class MallocFallbackState : uint8_t {
-    Undecided,
-    FallBackToMalloc,
-    DoNotFallBack
+enum class CompactAllocationMode {
+    Compact,
+    NonCompact
 };
 
-extern MallocFallbackState mallocFallbackState;
+static constexpr unsigned numAllocationModes = 2;
 
-BINLINE bool shouldTryToFallBack()
+#if BUSE(LIBPAS)
+
+BINLINE constexpr pas_allocation_mode asPasAllocationMode(CompactAllocationMode mode)
 {
-    if ((true))
-        return false;
-    
-    return mallocFallbackState != MallocFallbackState::DoNotFallBack;
-}
-    
-struct MallocResult {
-    MallocResult() = default;
-    
-    MallocResult(void* ptr)
-        : ptr(ptr)
-        , didFallBack(true)
-    {
+    switch (mode) {
+    case CompactAllocationMode::Compact:
+        return pas_compact_allocation_mode;
+    case CompactAllocationMode::NonCompact:
+        return pas_non_compact_allocation_mode;
     }
-    
-    void* ptr { nullptr } ;
-    bool didFallBack { false };
-};
+    RELEASE_BASSERT_NOT_REACHED();
+}
 
-BEXPORT MallocResult tryMalloc(
-    size_t size,
-    CompactAllocationMode mode
-#if BENABLE_MALLOC_HEAP_BREAKDOWN
-    , malloc_zone_t* zone = nullptr
 #endif
-    );
 
-// Returns true if it did fall back.
-BEXPORT bool tryFree(
-    void* ptr
-#if BENABLE_MALLOC_HEAP_BREAKDOWN
-    , malloc_zone_t* zone = nullptr
-#endif
-    );
-    
-} } // namespace bmalloc::IsoMallocFallback
+} // namespace bmalloc
+

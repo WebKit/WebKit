@@ -56,6 +56,8 @@ namespace api {
 #if BUSE(LIBPAS)
 BEXPORT void* tzoneAllocate(pas_heap_ref&);
 BEXPORT void* tzoneTryAllocate(pas_heap_ref&);
+BEXPORT void* tzoneAllocateCompact(pas_heap_ref&);
+BEXPORT void* tzoneTryAllocateCompact(pas_heap_ref&);
 BEXPORT void tzoneDeallocate(void* ptr);
 
 using TZoneAnnotation = bmalloc_type;
@@ -66,31 +68,11 @@ static inline constexpr size_t roundUpToMulipleOf8(size_t x) { return ((x + 7) /
 
 // The name "LibPasBmallocHeapType" is important for the pas_status_reporter to work right.
 template<typename LibPasBmallocHeapType>
-struct TZoneHeap {
-    constexpr TZoneHeap(const char* = nullptr) { }
+struct TZoneHeapBase {
+    constexpr TZoneHeapBase(const char* = nullptr) { }
 
-    void* allocate()
-    {
-        return tzoneAllocate(provideHeap());
-    }
-
-    void* tryAllocate()
-    {
-        return tzoneTryAllocate(provideHeap());
-    }
-
-    void deallocate(void* p)
-    {
-        tzoneDeallocate(p);
-    }
-
-    void scavenge()
-    {
-    }
-
-    void initialize()
-    {
-    }
+    void scavenge() { }
+    void initialize() { }
 
     bool isInitialized()
     {
@@ -108,9 +90,53 @@ struct TZoneHeap {
         return *heap;
     }
 };
+
+template<typename LibPasBmallocHeapType>
+struct TZoneHeap : public TZoneHeapBase<LibPasBmallocHeapType> {
+    using TZoneHeapBase<LibPasBmallocHeapType>::provideHeap;
+
+    constexpr TZoneHeap(const char* name = nullptr): TZoneHeapBase<LibPasBmallocHeapType>(name) { }
+
+    void* allocate()
+    {
+        return tzoneAllocate(provideHeap());
+    }
+
+    void* tryAllocate()
+    {
+        return tzoneTryAllocate(provideHeap());
+    }
+
+    void deallocate(void* p)
+    {
+        tzoneDeallocate(p);
+    }
+};
+
+template<typename LibPasBmallocHeapType>
+struct CompactTZoneHeap : public TZoneHeapBase<LibPasBmallocHeapType> {
+    using TZoneHeapBase<LibPasBmallocHeapType>::provideHeap;
+
+    constexpr CompactTZoneHeap(const char* name = nullptr): TZoneHeapBase<LibPasBmallocHeapType>(name) { }
+
+    void* allocate()
+    {
+        return tzoneAllocateCompact(provideHeap());
+    }
+
+    void* tryAllocate()
+    {
+        return tzoneTryAllocateCompact(provideHeap());
+    }
+
+    void deallocate(void* p)
+    {
+        tzoneDeallocate(p);
+    }
+};
 #else // BUSE(LIBPAS) -> so !BUSE(LIBPAS)
 template<typename Type>
-struct TZoneHeap {
+struct TZoneHeapBase {
     typedef IsoConfig<sizeof(Type)> Config;
 
 #if BENABLE_MALLOC_HEAP_BREAKDOWN
@@ -145,12 +171,22 @@ struct TZoneHeap {
     malloc_zone_t* m_zone;
 #endif
 };
+
+template<typename Type>
+struct TZoneHeap : public TZoneHeapBase<Type> {
+    constexpr TZoneHeap(const char* name = nullptr): TZoneHeapBase<Type>(name) { }
+};
+
+template<typename Type>
+struct CompactTZoneHeap : public TZoneHeapBase<Type> {
+    constexpr CompactTZoneHeap(const char* name = nullptr): TZoneHeapBase<Type>(name) { }
+};
 #endif // BUSE(LIBPAS) -> so end of !BUSE(LIBPAS)
 
 // Use this together with MAKE_BISO_MALLOCED_IMPL.
-#define MAKE_BTZONE_MALLOCED(isoType, exportMacro) \
+#define MAKE_BTZONE_MALLOCED(isoType, heapType, exportMacro) \
 public: \
-    static exportMacro ::bmalloc::api::TZoneHeap<isoType>& btzoneHeap(); \
+    static exportMacro ::bmalloc::api::heapType<isoType>& btzoneHeap(); \
     \
     void* operator new(size_t, void* p) { return p; } \
     void* operator new[](size_t, void* p) { return p; } \

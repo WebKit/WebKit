@@ -92,6 +92,7 @@ static void initialize_config(pas_large_free_heap_config* config,
 static pas_allocation_result allocate_impl(pas_large_heap* heap,
                                            size_t* size,
                                            size_t* alignment,
+                                           pas_allocation_mode allocation_mode,
                                            const pas_heap_config* heap_config,
                                            pas_physical_memory_transaction* transaction)
 {
@@ -148,6 +149,7 @@ static pas_allocation_result allocate_impl(pas_large_heap* heap,
     }
 
     PAS_ASSERT(pas_is_aligned(result.begin, *alignment));
+    PAS_PROFILE(LARGE_HEAP_ALLOCATION, result.begin, *size, allocation_mode);
     
     return result;
 }
@@ -156,16 +158,18 @@ pas_allocation_result
 pas_large_heap_try_allocate_and_forget(pas_large_heap* heap,
                                        size_t size,
                                        size_t alignment,
+                                       pas_allocation_mode allocation_mode,
                                        const pas_heap_config* heap_config,
                                        pas_physical_memory_transaction* transaction)
 {
-    return allocate_impl(heap, &size, &alignment, heap_config, transaction);
+    return allocate_impl(heap, &size, &alignment, allocation_mode, heap_config, transaction);
 }
 
 pas_allocation_result
 pas_large_heap_try_allocate(pas_large_heap* heap,
                             size_t size,
                             size_t alignment,
+                            pas_allocation_mode allocation_mode,
                             const pas_heap_config* heap_config,
                             pas_physical_memory_transaction* transaction)
 {
@@ -173,7 +177,7 @@ pas_large_heap_try_allocate(pas_large_heap* heap,
     pas_large_map_entry entry;
 
     result = allocate_impl(
-        heap, &size, &alignment, heap_config, transaction);
+        heap, &size, &alignment, allocation_mode, heap_config, transaction);
     if (!result.did_succeed)
         return result;
 
@@ -189,16 +193,17 @@ pas_allocation_result
 pas_large_heap_try_allocate_pgm(pas_large_heap* heap,
                             size_t size,
                             size_t alignment,
+                            pas_allocation_mode allocation_mode,
                             const pas_heap_config* heap_config,
                             pas_physical_memory_transaction* transaction)
 {
     pas_allocation_result result;
-    result = pas_probabilistic_guard_malloc_allocate(heap, size, heap_config, transaction);
+    result = pas_probabilistic_guard_malloc_allocate(heap, size, allocation_mode, heap_config, transaction);
 
     /* PGM may not succeed for a variety of reasons. We will give it a last ditch effort to try to do a
        regular allocation instead. */
     if (!result.did_succeed)
-        result = pas_large_heap_try_allocate(heap, size, alignment, heap_config, transaction);
+        result = pas_large_heap_try_allocate(heap, size, alignment, allocation_mode, heap_config, transaction);
 
     return result;
 }
