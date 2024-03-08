@@ -723,17 +723,18 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addLocal(Type, uint32_t count)
     return { };
 }
 
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::getLocal(uint32_t index, ExpressionType&)
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::getLocal(uint32_t, ExpressionType&)
 {
+    // Local indices are usually very small, so we decode them on the fly
+    // instead of generating metadata.
     changeStackSize(1);
-    m_metadata->addCondensedLocalIndexAndLength(index, getCurrentInstructionLength());
     return { };
 }
-
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::setLocal(uint32_t index, ExpressionType)
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::setLocal(uint32_t, ExpressionType)
 {
+    // Local indices are usually very small, so we decode them on the fly
+    // instead of generating metadata.
     changeStackSize(-1);
-    m_metadata->addCondensedLocalIndexAndLength(index, getCurrentInstructionLength());
     return { };
 }
 

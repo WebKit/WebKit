@@ -424,6 +424,11 @@ macro instructionLabel(instrname)
     _ipint%instrname%_validate:
 end
 
+macro slowPathLabel(instrname)
+    alignment()
+    _ipint%instrname%_slow_path:
+end
+
 macro unimplementedInstruction(instrname)
     instructionLabel(instrname)
     break
@@ -1284,74 +1289,38 @@ reservedOpcode(0x1f)
 
 instructionLabel(_local_get)
     # local.get
-    loadb [PM, MC], t1
-    bineq t1, 0, .ipint_local_get_longpath
-
     loadb 1[PB, PC], t0
-    # Index into locals
-    loadq [PL, t0, LocalSize], t0
-    # Push to stack
-    pushQuad(t0)
     advancePC(2)
-    advanceMC(1)
-    nextIPIntInstruction()
-
-.ipint_local_get_longpath:
-    # Load pre-computed index from metadata
-    loadi 1[PM, MC], t0
+    bbaeq t0, 128, _ipint_local_get_slow_path
+.ipint_local_get_post_decode:
     # Index into locals
     loadq [PL, t0, LocalSize], t0
     # Push to stack
     pushQuad(t0)
-
-    advancePCByReg(t1)
-    advanceMC(5)
     nextIPIntInstruction()
 
 instructionLabel(_local_set)
     # local.set
-    # Pop from stack
-    loadb [PM, MC], t1
-    popQuad(t2, t3)
-
-    bineq t1, 0, .ipint_local_set_longpath
-
     loadb 1[PB, PC], t0
-    # Store to locals
-    storeq t2, [PL, t0, LocalSize]
     advancePC(2)
-    advanceMC(1)
-    nextIPIntInstruction()
-
-.ipint_local_set_longpath:
-    # Load pre-computed index from metadata
-    loadi 1[PM, MC], t0
+    bbaeq t0, 128, _ipint_local_set_slow_path
+.ipint_local_set_post_decode:
+    # Pop from stack
+    popQuad(t2, t3)
     # Store to locals
     storeq t2, [PL, t0, LocalSize]
-
-    advancePCByReg(t1)
-    advanceMC(5)
     nextIPIntInstruction()
 
 instructionLabel(_local_tee)
     # local.tee
-    loadb [PM, MC], t1
-    loadq [sp], t2
-    bineq t1, 0, .ipint_local_tee_longpath
-
     loadb 1[PB, PC], t0
-    storeq t2, [PL, t0, LocalSize]
-
     advancePC(2)
-    advanceMC(2)
-    nextIPIntInstruction()
-
-.ipint_local_tee_longpath:
-    loadi 1[PM, MC], t0
+    bbaeq t0, 128, _ipint_local_tee_slow_path
+.ipint_local_tee_post_decode:
+    # Load from stack
+    loadq [sp], t2
+    # Store to locals
     storeq t2, [PL, t0, LocalSize]
-
-    advancePCByReg(t1)
-    advanceMC(10)
     nextIPIntInstruction()
 
 instructionLabel(_global_get)
@@ -5725,9 +5694,37 @@ instructionLabel(_i64_atomic_rmw32_cmpxchg_u)
         pushInt64(expected)
     end)
 
-    ##################################
-    ## "Out of line" logic for call ##
-    ##################################
+#######################################
+## ULEB128 decoding logic for locals ##
+#######################################
+
+macro decodeULEB128(exitLabel, result)
+    # result should already be the first byte.
+    andq 0x7f, result
+    move 7, t2 # t1 holds the shift.
+.loop:
+    loadb [PB, PC], t3
+    andq t3, 0x7f, t1
+    lshiftq t2, t1
+    orq t1, result
+    addq 7, t2
+    advancePC(1)
+    bbaeq t3, 128, .loop
+    jmp exitLabel
+end
+
+slowPathLabel(_local_get)
+    decodeULEB128(.ipint_local_get_post_decode, t0)
+
+slowPathLabel(_local_set)
+    decodeULEB128(.ipint_local_set_post_decode, t0)
+
+slowPathLabel(_local_tee)
+    decodeULEB128(.ipint_local_tee_post_decode, t0)
+
+##################################
+## "Out of line" logic for call ##
+##################################
 
 # FIXME: switch offlineasm unalignedglobal to take alignment and optionally pad with breakpoint instructions (rdar://113594783)
 macro mintAlign()
