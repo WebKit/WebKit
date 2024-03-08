@@ -999,7 +999,9 @@ void TreeResolver::resolveComposedTree()
         auto resolutionType = determineResolutionType(element, style, parent.descendantsToResolve, parent.change);
         if (resolutionType) {
             element.resetComputedStyle();
-            element.resetStyleRelations();
+
+            if (*resolutionType != ResolutionType::AnimationOnly)
+                element.resetStyleRelations();
 
             if (element.hasCustomStyleResolveCallbacks())
                 element.willRecalcStyle(parent.change);
