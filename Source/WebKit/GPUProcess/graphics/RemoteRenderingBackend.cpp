@@ -269,7 +269,9 @@ RefPtr<ImageBuffer> RemoteRenderingBackend::allocateImageBuffer(const FloatSize&
     assertIsCurrent(workQueue());
 
     ASSERT(!creationContext.resourceOwner);
+#if HAVE(IOSURFACE)
     ASSERT(!creationContext.surfacePool);
+#endif
     ImageBufferCreationContext adjustedCreationContext = creationContext;
     adjustedCreationContext.resourceOwner = m_resourceOwner;
 #if HAVE(IOSURFACE)
