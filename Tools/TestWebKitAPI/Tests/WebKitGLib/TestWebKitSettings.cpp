@@ -394,6 +394,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     webkit_settings_set_disable_web_security(settings, TRUE);
     g_assert_true(webkit_settings_get_disable_web_security(settings));
 
+    // Directory upload is enabled by default.
+    g_assert_true(webkit_settings_get_enable_directory_upload(settings));
+    webkit_settings_set_enable_directory_upload(settings, FALSE);
+    g_assert_false(webkit_settings_get_enable_directory_upload(settings));
+
     g_object_unref(G_OBJECT(settings));
 }
 

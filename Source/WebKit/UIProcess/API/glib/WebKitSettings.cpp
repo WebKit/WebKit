@@ -174,6 +174,7 @@ enum {
     PROP_MEDIA_CONTENT_TYPES_REQUIRING_HARDWARE_SUPPORT,
     PROP_ENABLE_WEBRTC,
     PROP_DISABLE_WEB_SECURITY,
+    PROP_ENABLE_DIRECTORY_UPLOAD,
     N_PROPERTIES,
 };
 
@@ -409,6 +410,9 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     case PROP_DISABLE_WEB_SECURITY:
         webkit_settings_set_disable_web_security(settings, g_value_get_boolean(value));
         break;
+    case PROP_ENABLE_DIRECTORY_UPLOAD:
+        webkit_settings_set_enable_directory_upload(settings, g_value_get_boolean(value));
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
         break;
@@ -616,6 +620,9 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         break;
     case PROP_DISABLE_WEB_SECURITY:
         g_value_set_boolean(value, webkit_settings_get_disable_web_security(settings));
+        break;
+    case PROP_ENABLE_DIRECTORY_UPLOAD:
+        g_value_set_boolean(value, webkit_settings_get_enable_directory_upload(settings));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -1616,6 +1623,23 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
         _("Disable web security"),
         _("Whether web security should be disabled."),
         FALSE,
+        readWriteConstructParamFlags);
+
+    /**
+     * WebKitSettings:enable-directory-upload:
+     *
+     * Enable or disable directory upload on file input elements.
+     *
+     * This setting controls whether the user is to be allowed to select a directory rather
+     * than a file or files when using a file input element.
+     *
+     * Since: 2.44
+     */
+    sObjProperties[PROP_ENABLE_DIRECTORY_UPLOAD] = g_param_spec_boolean(
+        "enable-directory-upload",
+        _("Enable directory upload"),
+        _("Whether directory upload should be enabled."),
+        TRUE,
         readWriteConstructParamFlags);
 
     g_object_class_install_properties(gObjectClass, N_PROPERTIES, sObjProperties);
@@ -4027,6 +4051,45 @@ void webkit_settings_set_disable_web_security(WebKitSettings* settings, gboolean
 
     priv->preferences->setWebSecurityEnabled(!disabled);
     g_object_notify_by_pspec(G_OBJECT(settings), sObjProperties[PROP_DISABLE_WEB_SECURITY]);
+}
+
+/**
+ * webkit_settings_get_enable_directory_upload:
+ * @settings: a #WebKitSettings
+ *
+ * Get the #WebKitSettings:enable-directory-upload property.
+ *
+ * Returns: %TRUE if directory upload is enabled or %FALSE otherwise.
+ *
+ * Since: 2.44
+ */
+gboolean webkit_settings_get_enable_directory_upload(WebKitSettings* settings)
+{
+    g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
+
+    return settings->priv->preferences->directoryUploadEnabled();
+}
+
+/**
+ * webkit_settings_set_enable_directory_upload:
+ * @settings: a #WebKitSettings
+ * @enabled: Value to be set
+ *
+ * Set the #WebKitSettings:enable-directory-upload property.
+ *
+ * Since: 2.44
+ */
+void webkit_settings_set_enable_directory_upload(WebKitSettings* settings, gboolean enabled)
+{
+    g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
+
+    WebKitSettingsPrivate* priv = settings->priv;
+    bool currentValue = priv->preferences->directoryUploadEnabled();
+    if (currentValue == enabled)
+        return;
+
+    priv->preferences->setDirectoryUploadEnabled(enabled);
+    g_object_notify(G_OBJECT(settings), "enable-directory-upload");
 }
 
 /**

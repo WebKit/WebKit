@@ -541,6 +541,13 @@ WEBKIT_API void
 webkit_settings_set_disable_web_security                       (WebKitSettings *settings,
                                                                 gboolean        disabled);
 
+WEBKIT_API gboolean
+webkit_settings_get_enable_directory_upload                    (WebKitSettings *settings);
+
+WEBKIT_API void
+webkit_settings_set_enable_directory_upload                    (WebKitSettings *settings,
+                                                                gboolean        enabled);
+
 typedef struct _WebKitFeature WebKitFeature;
 typedef struct _WebKitFeatureList WebKitFeatureList;
 
