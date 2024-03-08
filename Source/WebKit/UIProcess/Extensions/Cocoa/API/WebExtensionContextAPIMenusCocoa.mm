@@ -157,7 +157,7 @@ void WebExtensionContext::fireMenusClickedEventIfNeeded(const WebExtensionMenuIt
     RefPtr tab = contextParameters.tabIdentifier ? getTab(contextParameters.tabIdentifier.value()) : nullptr;
 
     constexpr auto type = WebExtensionEventListenerType::MenusOnClicked;
-    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [=, protectedThis = Ref { *this }, menuItem = Ref { menuItem }] {
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [=, this, protectedThis = Ref { *this }, menuItem = Ref { menuItem }] {
         sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchMenusClickedEvent(menuItem->minimalParameters(), wasChecked, contextParameters, tab ? std::optional { tab->parameters() } : std::nullopt));
     });
 }

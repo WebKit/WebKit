@@ -48,7 +48,7 @@ namespace WebKit {
 
 void WebExtensionContext::runtimeGetBackgroundPage(CompletionHandler<void(Expected<std::optional<WebCore::PageIdentifier>, WebExtensionError>&&)>&& completionHandler)
 {
-    wakeUpBackgroundContentIfNecessary([completionHandler = WTFMove(completionHandler), this, protectedThis = Ref { *this }]() mutable {
+    wakeUpBackgroundContentIfNecessary([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
         completionHandler(backgroundPageIdentifier());
     });
 }
@@ -136,7 +136,7 @@ void WebExtensionContext::runtimeSendMessage(const String& extensionID, const St
     constexpr auto targetContentWorldType = WebExtensionContentWorldType::Main;
     constexpr auto eventType = WebExtensionEventListenerType::RuntimeOnMessage;
 
-    wakeUpBackgroundContentIfNecessaryToFireEvents({ eventType }, [=, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ eventType }, [=, this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
         auto mainWorldProcesses = processes(eventType, targetContentWorldType);
         if (mainWorldProcesses.isEmpty()) {
             completionHandler({ });
@@ -180,7 +180,7 @@ void WebExtensionContext::runtimeConnect(const String& extensionID, WebExtension
 
     constexpr auto eventType = WebExtensionEventListenerType::RuntimeOnConnect;
 
-    wakeUpBackgroundContentIfNecessaryToFireEvents({ eventType }, [=, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ eventType }, [=, this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
         auto mainWorldProcesses = processes(eventType, targetContentWorldType);
         if (mainWorldProcesses.isEmpty()) {
             completionHandler(toWebExtensionError(apiName, nil, @"no runtime.onConnect listeners found"));
@@ -191,12 +191,12 @@ void WebExtensionContext::runtimeConnect(const String& extensionID, WebExtension
         size_t totalExpected = mainWorldProcesses.size();
 
         for (auto& process : mainWorldProcesses) {
-            process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeConnectEvent(targetContentWorldType, channelIdentifier, name, std::nullopt, completeSenderParameters), [=, &handledCount, protectedThis = Ref { *this }](HashCountedSet<WebPageProxyIdentifier>&& addedPortCounts) mutable {
-                protectedThis->addPorts(targetContentWorldType, sourceContentWorldType, channelIdentifier, WTFMove(addedPortCounts));
-                protectedThis->fireQueuedPortMessageEventsIfNeeded(process, targetContentWorldType, channelIdentifier);
-                protectedThis->firePortDisconnectEventIfNeeded(sourceContentWorldType, targetContentWorldType, channelIdentifier);
+            process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeConnectEvent(targetContentWorldType, channelIdentifier, name, std::nullopt, completeSenderParameters), [=, this, protectedThis = Ref { *this }, &handledCount](HashCountedSet<WebPageProxyIdentifier>&& addedPortCounts) mutable {
+                addPorts(targetContentWorldType, sourceContentWorldType, channelIdentifier, WTFMove(addedPortCounts));
+                fireQueuedPortMessageEventsIfNeeded(process, targetContentWorldType, channelIdentifier);
+                firePortDisconnectEventIfNeeded(sourceContentWorldType, targetContentWorldType, channelIdentifier);
                 if (++handledCount >= totalExpected)
-                    protectedThis->clearQueuedPortMessages(targetContentWorldType, channelIdentifier);
+                    clearQueuedPortMessages(targetContentWorldType, channelIdentifier);
             }, identifier());
         }
 
@@ -251,22 +251,22 @@ void WebExtensionContext::runtimeConnectNative(const String& applicationID, WebE
         return;
     }
 
-    [delegate webExtensionController:extensionController()->wrapper() connectUsingMessagePort:nativePort->wrapper() forExtensionContext:wrapper() completionHandler:makeBlockPtr([=, completionHandler = WTFMove(completionHandler), protectedThis = Ref { *this }] (NSError *error) mutable {
+    [delegate webExtensionController:extensionController()->wrapper() connectUsingMessagePort:nativePort->wrapper() forExtensionContext:wrapper() completionHandler:makeBlockPtr([=, this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] (NSError *error) mutable {
         if (error) {
             completionHandler(toWebExtensionError(apiName, nil, error.localizedDescription));
 
             nativePort->disconnect(toWebExtensionMessagePortError(error));
-            protectedThis->clearQueuedPortMessages(targetContentWorldType, channelIdentifier);
+            clearQueuedPortMessages(targetContentWorldType, channelIdentifier);
             return;
         }
 
-        protectedThis->addNativePort(nativePort);
+        addNativePort(nativePort);
 
         completionHandler({ });
 
-        protectedThis->sendQueuedNativePortMessagesIfNeeded(channelIdentifier);
-        protectedThis->firePortDisconnectEventIfNeeded(sourceContentWorldType, targetContentWorldType, channelIdentifier);
-        protectedThis->clearQueuedPortMessages(targetContentWorldType, channelIdentifier);
+        sendQueuedNativePortMessagesIfNeeded(channelIdentifier);
+        firePortDisconnectEventIfNeeded(sourceContentWorldType, targetContentWorldType, channelIdentifier);
+        clearQueuedPortMessages(targetContentWorldType, channelIdentifier);
     }).get()];
 }
 
@@ -297,7 +297,7 @@ void WebExtensionContext::runtimeWebPageSendMessage(const String& extensionID, c
 
     constexpr auto eventType = WebExtensionEventListenerType::RuntimeOnMessageExternal;
 
-    wakeUpBackgroundContentIfNecessaryToFireEvents({ eventType }, [=, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ eventType }, [=, this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
         auto mainWorldProcesses = processes(eventType, WebExtensionContentWorldType::Main);
         if (mainWorldProcesses.isEmpty()) {
             completionHandler({ });
@@ -358,7 +358,7 @@ void WebExtensionContext::runtimeWebPageConnect(const String& extensionID, WebEx
 
     constexpr auto eventType = WebExtensionEventListenerType::RuntimeOnConnectExternal;
 
-    wakeUpBackgroundContentIfNecessaryToFireEvents({ eventType }, [=, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ eventType }, [=, this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
         auto mainWorldProcesses = processes(eventType, targetContentWorldType);
         if (mainWorldProcesses.isEmpty()) {
             completionHandler(toWebExtensionError(apiName, nil, @"no runtime.onConnectExternal listeners found"));
@@ -369,12 +369,12 @@ void WebExtensionContext::runtimeWebPageConnect(const String& extensionID, WebEx
         size_t totalExpected = mainWorldProcesses.size();
 
         for (auto& process : mainWorldProcesses) {
-            process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeConnectEvent(targetContentWorldType, channelIdentifier, name, std::nullopt, completeSenderParameters), [=, &handledCount, protectedThis = Ref { *this }](HashCountedSet<WebPageProxyIdentifier>&& addedPortCounts) mutable {
-                protectedThis->addPorts(targetContentWorldType, sourceContentWorldType, channelIdentifier, WTFMove(addedPortCounts));
-                protectedThis->fireQueuedPortMessageEventsIfNeeded(process, targetContentWorldType, channelIdentifier);
-                protectedThis->firePortDisconnectEventIfNeeded(sourceContentWorldType, targetContentWorldType, channelIdentifier);
+            process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeConnectEvent(targetContentWorldType, channelIdentifier, name, std::nullopt, completeSenderParameters), [=, this, protectedThis = Ref { *this }, &handledCount](HashCountedSet<WebPageProxyIdentifier>&& addedPortCounts) mutable {
+                addPorts(targetContentWorldType, sourceContentWorldType, channelIdentifier, WTFMove(addedPortCounts));
+                fireQueuedPortMessageEventsIfNeeded(process, targetContentWorldType, channelIdentifier);
+                firePortDisconnectEventIfNeeded(sourceContentWorldType, targetContentWorldType, channelIdentifier);
                 if (++handledCount >= totalExpected)
-                    protectedThis->clearQueuedPortMessages(targetContentWorldType, channelIdentifier);
+                    clearQueuedPortMessages(targetContentWorldType, channelIdentifier);
             }, identifier());
         }
 

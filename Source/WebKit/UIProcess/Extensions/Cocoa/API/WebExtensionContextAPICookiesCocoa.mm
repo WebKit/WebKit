@@ -236,7 +236,7 @@ void WebExtensionContext::cookiesGetAllCookieStores(CompletionHandler<void(Expec
 void WebExtensionContext::fireCookiesChangedEventIfNeeded()
 {
     constexpr auto type = WebExtensionEventListenerType::CookiesOnChanged;
-    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [=, protectedThis = Ref { *this }] {
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [=, this, protectedThis = Ref { *this }] {
         sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchCookiesChangedEvent());
     });
 }

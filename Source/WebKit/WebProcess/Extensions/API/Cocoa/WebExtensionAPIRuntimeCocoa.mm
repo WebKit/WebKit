@@ -346,11 +346,11 @@ RefPtr<WebExtensionAPIPort> WebExtensionAPIRuntime::connect(WebFrame& frame, JSC
 
     auto port = WebExtensionAPIPort::create(*this, *frame.page(), WebExtensionContentWorldType::Main, resolvedName);
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::RuntimeConnect(extensionID, port->channelIdentifier(), resolvedName, senderParameters), [=, globalContext = JSRetainPtr { JSContextGetGlobalContext(context) }, protectedThis = Ref { *this }](Expected<void, WebExtensionError>&& result) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::RuntimeConnect(extensionID, port->channelIdentifier(), resolvedName, senderParameters), [=, this, protectedThis = Ref { *this }, globalContext = JSRetainPtr { JSContextGetGlobalContext(context) }](Expected<void, WebExtensionError>&& result) {
         if (result)
             return;
 
-        port->setError(protectedThis->runtime().reportError(result.error(), globalContext.get()));
+        port->setError(runtime().reportError(result.error(), globalContext.get()));
         port->disconnect();
     }, extensionContext().identifier());
 
@@ -377,11 +377,11 @@ RefPtr<WebExtensionAPIPort> WebExtensionAPIRuntime::connectNative(WebFrame& fram
 
     auto port = WebExtensionAPIPort::create(*this, *frame.page(), WebExtensionContentWorldType::Native, applicationID);
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::RuntimeConnectNative(applicationID, port->channelIdentifier(), frame.page()->webPageProxyIdentifier()), [=, globalContext = JSRetainPtr { JSContextGetGlobalContext(context) }, protectedThis = Ref { *this }](Expected<void, WebExtensionError>&& result) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::RuntimeConnectNative(applicationID, port->channelIdentifier(), frame.page()->webPageProxyIdentifier()), [=, this, protectedThis = Ref { *this }, globalContext = JSRetainPtr { JSContextGetGlobalContext(context) }](Expected<void, WebExtensionError>&& result) {
         if (result)
             return;
 
-        port->setError(protectedThis->runtime().reportError(result.error(), globalContext.get()));
+        port->setError(runtime().reportError(result.error(), globalContext.get()));
         port->disconnect();
     }, extensionContext().identifier());
 
@@ -463,11 +463,11 @@ RefPtr<WebExtensionAPIPort> WebExtensionAPIWebPageRuntime::connect(WebFrame& fra
 
     Ref port = WebExtensionAPIPort::create(contentWorldType(), runtime(), *destinationExtensionContext, page, WebExtensionContentWorldType::Main, resolvedName);
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::RuntimeWebPageConnect(extensionID, port->channelIdentifier(), resolvedName, senderParameters), [=, globalContext = JSRetainPtr { JSContextGetGlobalContext(context) }, protectedThis = Ref { *this }](Expected<void, WebExtensionError>&& result) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::RuntimeWebPageConnect(extensionID, port->channelIdentifier(), resolvedName, senderParameters), [=, this, protectedThis = Ref { *this }, globalContext = JSRetainPtr { JSContextGetGlobalContext(context) }](Expected<void, WebExtensionError>&& result) {
         if (result)
             return;
 
-        port->setError(protectedThis->runtime().reportError(result.error(), globalContext.get()));
+        port->setError(runtime().reportError(result.error(), globalContext.get()));
         port->disconnect();
     }, destinationExtensionContext->identifier());
 
