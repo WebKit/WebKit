@@ -5418,7 +5418,7 @@ static void determineNonLayerDescendantsPaintedContent(const RenderElement& rend
             if (!renderText->hasRenderedText())
                 continue;
 
-            if (renderer.style().effectiveUserSelect() != UserSelect::None)
+            if (renderer.style().usedUserSelect() != UserSelect::None)
                 request.setHasPaintedContent();
 
             if (!renderText->text().containsOnly<isASCIIWhitespace>())

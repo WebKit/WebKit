@@ -395,7 +395,7 @@ void EventRegion::unite(const Region& region, const RenderStyle& style, bool ove
 #endif
 
 #if ENABLE(EDITABLE_REGION)
-    if (m_editableRegion && (overrideUserModifyIsEditable || style.effectiveUserModify() != UserModify::ReadOnly)) {
+    if (m_editableRegion && (overrideUserModifyIsEditable || style.usedUserModify() != UserModify::ReadOnly)) {
         m_editableRegion->unite(region);
         LOG_WITH_STREAM(EventRegions, stream << " uniting editable region");
     }

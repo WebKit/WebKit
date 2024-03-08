@@ -3823,7 +3823,7 @@ UsedFloat RenderStyle::usedFloat(const RenderObject& renderer)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-UserSelect RenderStyle::effectiveUserSelect() const
+UserSelect RenderStyle::usedUserSelect() const
 {
     if (effectiveInert())
         return UserSelect::None;

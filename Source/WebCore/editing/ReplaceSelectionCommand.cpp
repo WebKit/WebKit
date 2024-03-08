@@ -1138,8 +1138,8 @@ void ReplaceSelectionCommand::doApply()
         return;
     
     // We can skip matching the style if the selection is plain text.
-    if ((selection.start().deprecatedNode()->renderer() && selection.start().deprecatedNode()->renderer()->style().effectiveUserModify() == UserModify::ReadWritePlaintextOnly)
-        && (selection.end().deprecatedNode()->renderer() && selection.end().deprecatedNode()->renderer()->style().effectiveUserModify() == UserModify::ReadWritePlaintextOnly))
+    if ((selection.start().deprecatedNode()->renderer() && selection.start().deprecatedNode()->renderer()->style().usedUserModify() == UserModify::ReadWritePlaintextOnly)
+        && (selection.end().deprecatedNode()->renderer() && selection.end().deprecatedNode()->renderer()->style().usedUserModify() == UserModify::ReadWritePlaintextOnly))
         m_matchStyle = false;
     
     if (m_matchStyle) {

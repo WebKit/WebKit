@@ -346,7 +346,7 @@ auto TreeResolver::resolveElement(Element& element, const RenderStyle* existingS
         m_document.setMayHaveElementsWithNonAutoTouchAction();
 #endif
 #if ENABLE(EDITABLE_REGION)
-    if (update.style->effectiveUserModify() != UserModify::ReadOnly)
+    if (update.style->usedUserModify() != UserModify::ReadOnly)
         m_document.setMayHaveEditableElements();
 #endif
 

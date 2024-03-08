@@ -795,7 +795,7 @@ bool EventHandler::canMouseDownStartSelect(const MouseEventWithHitTestResults& e
         return true;
 
     if (ImageOverlay::isOverlayText(*node))
-        return node->renderer()->style().effectiveUserSelect() != UserSelect::None;
+        return node->renderer()->style().usedUserSelect() != UserSelect::None;
 
     return node->canStartSelection() || Position::nodeIsUserSelectAll(node.get());
 }
@@ -1605,7 +1605,7 @@ std::optional<Cursor> EventHandler::selectCursor(const HitTestResult& result, bo
     case CursorType::Auto: {
         if (ImageOverlay::isOverlayText(node.get())) {
             auto* renderer = node->renderer();
-            if (renderer && renderer->style().effectiveUserSelect() != UserSelect::None)
+            if (renderer && renderer->style().usedUserSelect() != UserSelect::None)
                 return iBeam;
         }
 

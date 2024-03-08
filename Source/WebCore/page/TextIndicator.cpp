@@ -77,7 +77,7 @@ RefPtr<TextIndicator> TextIndicator::createWithRange(const SimpleRange& range, O
             Ref indicatorNode = *commonAncestor;
 
             for (auto& ancestorElement : ancestorsOfType<Element>(*commonAncestor)) {
-                if (auto* renderer = ancestorElement.renderer(); renderer && renderer->style().effectiveUserSelect() == UserSelect::All)
+                if (auto* renderer = ancestorElement.renderer(); renderer && renderer->style().usedUserSelect() == UserSelect::All)
                     indicatorNode = ancestorElement;
             }
 

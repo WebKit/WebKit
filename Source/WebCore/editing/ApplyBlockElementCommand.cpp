@@ -246,7 +246,7 @@ void ApplyBlockElementCommand::rangeForParagraphSplittingTextNodesIfNeeded(const
         unsigned endOffset = end.offsetInContainerNode();
         bool preservesNewLine = endStyle->preserveNewline();
         bool collapseWhiteSpace = endStyle->collapseWhiteSpace();
-        auto userModify = endStyle->effectiveUserModify();
+        auto userModify = endStyle->usedUserModify();
         endStyle = nullptr;
 
         if (preservesNewLine && start == end && endOffset < end.containerNode()->length()) {

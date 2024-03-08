@@ -890,8 +890,8 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
             if (m_style.eventListenerRegionTypes() != newStyle.eventListenerRegionTypes())
                 return true;
 #if ENABLE(EDITABLE_REGION)
-            bool wasEditable = m_style.effectiveUserModify() != UserModify::ReadOnly;
-            bool isEditable = newStyle.effectiveUserModify() != UserModify::ReadOnly;
+            bool wasEditable = m_style.usedUserModify() != UserModify::ReadOnly;
+            bool isEditable = newStyle.usedUserModify() != UserModify::ReadOnly;
             if (wasEditable != isEditable)
                 return page().shouldBuildEditableRegion();
 #endif
@@ -1726,7 +1726,7 @@ Color RenderElement::selectionColor(CSSPropertyID colorProperty) const
 {
     // If the element is unselectable, or we are only painting the selection,
     // don't override the foreground color with the selection foreground color.
-    if (style().effectiveUserSelect() == UserSelect::None
+    if (style().usedUserSelect() == UserSelect::None
         || (view().frameView().paintBehavior().containsAny({ PaintBehavior::SelectionOnly, PaintBehavior::SelectionAndBackgroundsOnly })))
         return Color();
 
@@ -1772,7 +1772,7 @@ Color RenderElement::selectionEmphasisMarkColor() const
 
 Color RenderElement::selectionBackgroundColor() const
 {
-    if (style().effectiveUserSelect() == UserSelect::None)
+    if (style().usedUserSelect() == UserSelect::None)
         return Color();
 
     if (frame().selection().shouldShowBlockCursor() && frame().selection().isCaret())

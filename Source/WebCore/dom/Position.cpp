@@ -933,7 +933,7 @@ bool Position::nodeIsUserSelectNone(Node* node)
 {
     if (!node)
         return false;
-    return node->renderer() && (node->renderer()->style().effectiveUserSelect() == UserSelect::None);
+    return node->renderer() && (node->renderer()->style().usedUserSelect() == UserSelect::None);
 }
 
 bool Position::nodeIsUserSelectAll(const Node* node)
@@ -941,7 +941,7 @@ bool Position::nodeIsUserSelectAll(const Node* node)
     if (!node)
         return false;
     CheckedPtr renderer = node->renderer();
-    return renderer && renderer->style().effectiveUserSelect() == UserSelect::All;
+    return renderer && renderer->style().usedUserSelect() == UserSelect::All;
 }
 
 RefPtr<Node> Position::rootUserSelectAllForNode(Node* node)

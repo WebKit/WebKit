@@ -201,7 +201,7 @@ inline bool RenderStyle::effectiveInert() const { return m_rareInheritedData->ef
 inline PointerEvents RenderStyle::effectivePointerEvents() const { return effectiveInert() ? PointerEvents::None : pointerEvents(); }
 inline CSSPropertyID RenderStyle::effectiveStrokeColorProperty() const { return hasExplicitlySetStrokeColor() ? CSSPropertyStrokeColor : CSSPropertyWebkitTextStrokeColor; }
 inline OptionSet<TouchAction> RenderStyle::effectiveTouchActions() const { return m_rareInheritedData->effectiveTouchActions; }
-inline UserModify RenderStyle::effectiveUserModify() const { return effectiveInert() ? UserModify::ReadOnly : userModify(); }
+inline UserModify RenderStyle::usedUserModify() const { return effectiveInert() ? UserModify::ReadOnly : userModify(); }
 inline float RenderStyle::effectiveZoom() const { return m_rareInheritedData->effectiveZoom; }
 inline OptionSet<EventListenerRegionType> RenderStyle::eventListenerRegionTypes() const { return m_rareInheritedData->eventListenerRegionTypes; }
 inline const FilterOperations& RenderStyle::filter() const { return m_nonInheritedData->miscData->filter->operations; }

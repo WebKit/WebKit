@@ -899,7 +899,7 @@ std::optional<SimpleRange> LocalFrame::rangeForPoint(const IntPoint& framePoint)
     auto position = visiblePositionForPoint(framePoint);
 
     auto containerText = position.deepEquivalent().containerText();
-    if (!containerText || !containerText->renderer() || containerText->renderer()->style().effectiveUserSelect() == UserSelect::None)
+    if (!containerText || !containerText->renderer() || containerText->renderer()->style().usedUserSelect() == UserSelect::None)
         return std::nullopt;
 
     if (auto previousCharacterRange = makeSimpleRange(position.previous(), position)) {

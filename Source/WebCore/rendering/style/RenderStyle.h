@@ -826,10 +826,10 @@ public:
     inline int marqueeLoopCount() const;
     inline MarqueeBehavior marqueeBehavior() const;
     inline MarqueeDirection marqueeDirection() const;
-    inline UserModify effectiveUserModify() const;
+    inline UserModify usedUserModify() const;
     inline UserModify userModify() const;
     inline UserDrag userDrag() const;
-    WEBCORE_EXPORT UserSelect effectiveUserSelect() const;
+    WEBCORE_EXPORT UserSelect usedUserSelect() const;
     inline UserSelect userSelect() const;
     inline TextOverflow textOverflow() const;
     inline WordBreak wordBreak() const;
