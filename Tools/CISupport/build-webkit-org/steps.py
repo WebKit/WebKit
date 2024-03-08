@@ -46,6 +46,8 @@ if 'uat' in CURRENT_HOSTNAME:
     custom_suffix = '-uat'
 
 BUILD_WEBKIT_HOSTNAMES = ['build.webkit.org', 'build']
+TESTING_ENVIRONMENT_HOSTNAMES = ['build.webkit-uat.org', 'build-uat']
+DEV_ENVIRONMENT_HOSTNAMES = ['build.webkit-dev.org', 'build-dev']
 COMMITS_INFO_URL = 'https://commits.webkit.org/'
 RESULTS_WEBKIT_URL = 'https://results.webkit.org'
 RESULTS_SERVER_API_KEY = 'RESULTS_SERVER_API_KEY'
@@ -55,6 +57,7 @@ WithProperties = properties.WithProperties
 Interpolate = properties.Interpolate
 THRESHOLD_FOR_EXCESSIVE_LOGS = 1000000
 MSG_FOR_EXCESSIVE_LOGS = f'Stopped due to excessive logging, limit: {THRESHOLD_FOR_EXCESSIVE_LOGS}'
+HASH_LENGTH_TO_DISPLAY = 8
 
 DNS_NAME = CURRENT_HOSTNAME
 if DNS_NAME in BUILD_WEBKIT_HOSTNAMES:
@@ -188,6 +191,9 @@ class CheckOutSource(git.Git):
                                              **kwargs)
 
     def getResultSummary(self):
+        revision = self.getProperty('got_revision')
+        self.setProperty('revision', revision[:HASH_LENGTH_TO_DISPLAY], 'CheckOutSource')
+
         if self.results == FAILURE:
             self.build.addStepsAfterCurrentStep([CleanUpGitIndexLock()])
 
@@ -1332,6 +1338,122 @@ class UploadTestResults(transfer.FileUpload):
         kwargs['mode'] = 0o644
         kwargs['blocksize'] = 1024 * 256
         transfer.FileUpload.__init__(self, **kwargs)
+
+
+class UploadFileToS3(shell.ShellCommandNewStyle):
+    name = 'upload-file-to-s3'
+    descriptionDone = name
+    haltOnFailure = True
+    flunkOnFailure = True
+
+    def __init__(self, file, links=None, content_type=None, **kwargs):
+        super().__init__(timeout=31 * 60, logEnviron=False, **kwargs)
+        self.file = file
+        self.links = links or dict()
+        self.content_type = content_type
+
+    def getLastBuildStepByName(self, name):
+        for step in reversed(self.build.executedSteps):
+            if name in step.name:
+                return step
+        return None
+
+    @defer.inlineCallbacks
+    def run(self):
+        s3url = self.build.s3url
+        if not s3url:
+            rc = FAILURE
+            yield self._addToLog('stdio', f'Failed to get s3url: {s3url}')
+            return defer.returnValue(rc)
+
+        self.env = dict(UPLOAD_URL=s3url)
+
+        self.command = [
+            'python3', 'Tools/Scripts/upload-file-to-url',
+            '--filename', self.file,
+        ]
+        if self.content_type:
+            self.command += ['--content-type', self.content_type]
+
+        rc = yield super().run()
+
+        if rc in [SUCCESS, WARNINGS] and getattr(self.build, 's3_archives', None):
+            for step_name, message in self.links.items():
+                step = self.getLastBuildStepByName(step_name)
+                if not step:
+                    continue
+                step.addURL(message, self.build.s3_archives[-1])
+
+        return defer.returnValue(rc)
+
+    def doStepIf(self, step):
+        return CURRENT_HOSTNAME in BUILD_WEBKIT_HOSTNAMES + TESTING_ENVIRONMENT_HOSTNAMES
+
+    def getResultSummary(self):
+        if self.results == FAILURE:
+            return {'step': 'Failed to upload archive to S3. Please inform an admin.'}
+        if self.results == SKIPPED:
+            return {'step': 'Skipped upload to S3'}
+        if self.results in [SUCCESS, WARNINGS]:
+            return {'step': 'Uploaded archive to S3'}
+        return super().getResultSummary()
+
+
+class GenerateS3URL(master.MasterShellCommandNewStyle):
+    name = 'generate-s3-url'
+    descriptionDone = ['Generated S3 URL']
+    haltOnFailure = False
+    flunkOnFailure = False
+
+    def __init__(self, identifier, extension='zip', content_type=None, **kwargs):
+        self.identifier = identifier
+        self.extension = extension
+        kwargs['command'] = [
+            'python3', '../Shared/generate-s3-url',
+            '--revision', WithProperties('%(revision)s'),
+            '--identifier', self.identifier,
+        ]
+        if extension:
+            kwargs['command'] += ['--extension', extension]
+        if content_type:
+            kwargs['command'] += ['--content-type', content_type]
+        super().__init__(logEnviron=False, **kwargs)
+
+    @defer.inlineCallbacks
+    def run(self):
+        self.log_observer = logobserver.BufferLogObserver(wantStderr=True)
+        self.addLogObserver('stdio', self.log_observer)
+
+        rc = yield super().run()
+
+        self.build.s3url = ''
+        if not getattr(self.build, 's3_archives', None):
+            self.build.s3_archives = []
+
+        log_text = self.log_observer.getStdout() + self.log_observer.getStderr()
+        match = re.search(r'S3 URL: (?P<url>[^\s]+)', log_text)
+        # Sample log: S3 URL: https://s3-us-west-2.amazonaws.com/archives.webkit.org/ios-simulator-12-x86_64-release/123456.zip
+
+        build_url = f'{self.master.config.buildbotURL}#/builders/{self.build._builderid}/builds/{self.build.number}'
+        if match:
+            self.build.s3url = match.group('url')
+            print(f'build: {build_url}, url for GenerateS3URL: {self.build.s3url}')
+            self.build.s3_archives.append(S3URL + f"{S3_BUCKET}/{self.identifier}/{self.getProperty('revision')}.{self.extension}")
+            defer.returnValue(rc)
+        else:
+            print(f'build: {build_url}, logs for GenerateS3URL:\n{log_text}')
+            defer.returnValue(FAILURE)
+
+    def hideStepIf(self, results, step):
+        return results == SUCCESS
+
+    def doStepIf(self, step):
+        return CURRENT_HOSTNAME in BUILD_WEBKIT_HOSTNAMES + TESTING_ENVIRONMENT_HOSTNAMES
+
+    def getResultSummary(self):
+        if self.results == FAILURE:
+            return {'step': 'Failed to generate S3 URL'}
+        return super().getResultSummary()
 
 
 class TransferToS3(master.MasterShellCommandNewStyle):
