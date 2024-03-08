@@ -219,7 +219,7 @@ std::unique_ptr<DisplayVBlankMonitor> DisplayVBlankMonitorDRM::create(PlatformDi
 #if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
     String filename;
     if (usingWPEPlatformAPI)
-        filename = String::fromUTF8(wpe_render_device());
+        filename = String::fromUTF8(wpe_display_get_drm_device(wpe_display_get_primary()));
     else
         filename = WebCore::PlatformDisplay::sharedDisplay().drmDeviceFile();
 #else

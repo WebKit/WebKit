@@ -58,6 +58,8 @@ struct _WPEDisplayClass
     guint        (* get_n_monitors)                (WPEDisplay *display);
     WPEMonitor  *(* get_monitor)                   (WPEDisplay *display,
                                                     guint       index);
+    const char  *(* get_drm_device)                (WPEDisplay *display);
+    const char  *(* get_drm_render_node)           (WPEDisplay *display);
 
     gpointer padding[32];
 };
@@ -94,9 +96,8 @@ WPE_API void         wpe_display_monitor_added                 (WPEDisplay *disp
                                                                 WPEMonitor *monitor);
 WPE_API void         wpe_display_monitor_removed               (WPEDisplay *display,
                                                                 WPEMonitor *monitor);
-
-WPE_API const char  *wpe_render_node_device                    (void);
-WPE_API const char  *wpe_render_device                         (void);
+WPE_API const char  *wpe_display_get_drm_device                (WPEDisplay *display);
+WPE_API const char  *wpe_display_get_drm_render_node           (WPEDisplay *display);
 
 G_END_DECLS
 

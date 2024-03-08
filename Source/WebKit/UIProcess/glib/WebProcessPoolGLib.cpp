@@ -87,7 +87,7 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 #if USE(GBM)
 #if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
     if (usingWPEPlatformAPI)
-        parameters.renderDeviceFile = String::fromUTF8(wpe_render_node_device());
+        parameters.renderDeviceFile = String::fromUTF8(wpe_display_get_drm_render_node(wpe_display_get_primary()));
     else
         parameters.renderDeviceFile = WebCore::PlatformDisplay::sharedDisplay().drmRenderNodeFile();
 #else

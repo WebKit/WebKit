@@ -2,6 +2,7 @@ configure_file(wpe-platform-drm.pc.in ${CMAKE_BINARY_DIR}/wpe-platform-drm-${WPE
 configure_file(wpe-platform-drm-uninstalled.pc.in ${CMAKE_BINARY_DIR}/wpe-platform-drm-${WPE_API_VERSION}-uninstalled.pc @ONLY)
 
 set(WPEPlatformDRM_SOURCES
+    ${WEBKIT_DIR}/WPEPlatform/wpe/drm/RefPtrUdev.cpp
     ${WEBKIT_DIR}/WPEPlatform/wpe/drm/WPEDRM.cpp
     ${WEBKIT_DIR}/WPEPlatform/wpe/drm/WPEDRMCursor.cpp
     ${WEBKIT_DIR}/WPEPlatform/wpe/drm/WPEDRMCursorTheme.cpp

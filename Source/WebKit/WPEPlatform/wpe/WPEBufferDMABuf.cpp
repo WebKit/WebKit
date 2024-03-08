@@ -54,6 +54,8 @@ struct _WPEBufferDMABufPrivate {
     uint64_t modifier;
     EGLImage eglImage;
 #if USE(GBM)
+    UnixFileDescriptor deviceFD;
+    std::optional<struct gbm_device*> device;
     struct gbm_bo* bufferObject;
     GRefPtr<GBytes> pixels;
 #endif
@@ -77,6 +79,11 @@ static void wpeBufferDMABufDispose(GObject* object)
 #if USE(GBM)
     priv->pixels = nullptr;
     g_clear_pointer(&priv->bufferObject, gbm_bo_destroy);
+    if (priv->device && priv->device.has_value()) {
+        gbm_device_destroy(priv->device.value());
+        priv->device = std::nullopt;
+    }
+    priv->deviceFD = { };
 #endif
 
     G_OBJECT_CLASS(wpe_buffer_dma_buf_parent_class)->dispose(object);
@@ -150,45 +157,51 @@ static gpointer wpeBufferDMABufImportToEGLImage(WPEBuffer* buffer, GError** erro
 }
 
 #if USE(GBM)
-static struct gbm_device* gbmDevice()
+static bool wpeBufferDMABufTryEnsureGBMDevice(WPEBufferDMABuf* buffer)
 {
-    static struct gbm_device* device;
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-        const char* filename = wpe_render_node_device();
-        if (!filename)
-            return;
+    auto* priv = buffer->priv;
+    if (priv->device.has_value())
+        return !!priv->device.value();
 
-        int fd = open(filename, O_RDWR | O_CLOEXEC);
-        if (fd == -1)
-            return;
+    priv->device = nullptr;
+    auto* display = wpe_buffer_get_display(WPE_BUFFER(buffer));
+    const char* filename = wpe_display_get_drm_render_node(display);
+    if (!filename)
+        return false;
 
-        device = gbm_create_device(fd);
-        if (device)
-            return;
+    UnixFileDescriptor fd = UnixFileDescriptor { open(filename, O_RDWR | O_CLOEXEC), UnixFileDescriptor::Adopt };
+    if (!fd)
+        return false;
 
-        close(fd);
-    });
-    return device;
+    auto* device = gbm_create_device(fd.value());
+    if (!device)
+        return false;
+
+    priv->deviceFD = WTFMove(fd);
+    priv->device = device;
+
+    return true;
 }
 
 static GBytes* wpeBufferDMABufImportToPixels(WPEBuffer* buffer, GError** error)
 {
-    auto* priv = WPE_BUFFER_DMA_BUF(buffer)->priv;
+    auto* dmabufBuffer = WPE_BUFFER_DMA_BUF(buffer);
+    auto* priv = dmabufBuffer->priv;
     auto width = static_cast<uint32_t>(wpe_buffer_get_width(buffer));
     auto height = static_cast<uint32_t>(wpe_buffer_get_height(buffer));
     if (!priv->bufferObject) {
-        auto* device = gbmDevice();
-        if (!device) {
+        if (!wpeBufferDMABufTryEnsureGBMDevice(dmabufBuffer)) {
             g_set_error_literal(error, WPE_BUFFER_ERROR, WPE_BUFFER_ERROR_IMPORT_FAILED, "Failed to import buffer to pixels_buffer: failed to get GBM device");
             return nullptr;
         }
+
         if (priv->format != DRM_FORMAT_ARGB8888 && priv->format != DRM_FORMAT_XRGB8888 && priv->modifier != DRM_FORMAT_MOD_LINEAR && priv->modifier != DRM_FORMAT_MOD_INVALID) {
             g_set_error_literal(error, WPE_BUFFER_ERROR, WPE_BUFFER_ERROR_IMPORT_FAILED, "Failed to import buffer to pixels_buffer: unsupported buffer format");
             return nullptr;
         }
+
         struct gbm_import_fd_data fdData = { priv->fds[0].value(), width, height, priv->strides[0], priv->format };
-        priv->bufferObject = gbm_bo_import(device, GBM_BO_IMPORT_FD, &fdData, GBM_BO_USE_RENDERING | GBM_BO_USE_LINEAR);
+        priv->bufferObject = gbm_bo_import(priv->device.value(), GBM_BO_IMPORT_FD, &fdData, GBM_BO_USE_RENDERING | GBM_BO_USE_LINEAR);
         if (!priv->bufferObject) {
             g_set_error_literal(error, WPE_BUFFER_ERROR, WPE_BUFFER_ERROR_IMPORT_FAILED, "Failed to import buffer to pixels_buffer: gbm_bo_import failed");
             return nullptr;
