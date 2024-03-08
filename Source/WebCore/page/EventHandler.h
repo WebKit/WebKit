@@ -467,8 +467,6 @@ private:
     bool handleDrag(const MouseEventWithHitTestResults&, CheckDragHysteresis);
 #endif
 
-    bool handleMouseUp(const MouseEventWithHitTestResults&);
-
 #if ENABLE(DRAG_SUPPORT)
     void clearDragState();
 
@@ -523,7 +521,7 @@ private:
     bool supportsSelectionUpdatesOnMouseDrag() const;
 #endif
 
-    // The following are called at the beginning of handleMouseUp and handleDrag.  
+    // The following are called at the beginning of handleDrag.
     // If they return true it indicates that they have consumed the event.
     bool eventLoopHandleMouseUp(const MouseEventWithHitTestResults&);
 
