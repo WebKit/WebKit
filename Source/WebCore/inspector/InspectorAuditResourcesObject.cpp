@@ -105,7 +105,7 @@ ExceptionOr<InspectorAuditResourcesObject::ResourceContent> InspectorAuditResour
     if (!cachedResource)
         return Exception { ExceptionCode::NotFoundError, makeString("Unknown identifier "_s, id) };
 
-    Protocol::ErrorString errorString;
+    Inspector::Protocol::ErrorString errorString;
     ResourceContent resourceContent;
     InspectorPageAgent::resourceContent(errorString, frame, cachedResource->url(), &resourceContent.data, &resourceContent.base64Encoded);
     if (!errorString.isEmpty())
