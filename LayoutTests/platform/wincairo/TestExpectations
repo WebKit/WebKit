@@ -1647,6 +1647,7 @@ http/wpt/crypto [ Skip ]
 http/wpt/css/css-highlight-api [ Skip ]
 http/wpt/entries-api [ Skip ]
 http/wpt/geometry [ Skip ]
+http/wpt/identity [ Skip ]
 
 http/wpt/loading/redirect-headers.html [ Skip ] # Failure
 
