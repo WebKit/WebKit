@@ -7737,7 +7737,7 @@ HTMLMediaElement::SleepType HTMLMediaElement::shouldDisableSleep() const
 #if !PLATFORM(COCOA) && !PLATFORM(GTK) && !PLATFORM(WPE)
     return SleepType::None;
 #endif
-    if (m_sentEndEvent || !m_player || m_player->paused() || loop())
+    if (m_sentEndEvent || !m_player || !m_player->timeIsProgressing() || loop())
         return SleepType::None;
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)

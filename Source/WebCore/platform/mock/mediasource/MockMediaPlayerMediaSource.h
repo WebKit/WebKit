@@ -58,7 +58,7 @@ public:
 
     void advanceCurrentTime();
     MediaTime currentTime() const override;
-    bool currentTimeMayProgress() const override;
+    bool timeIsProgressing() const override;
     void notifyActiveSourceBuffersChanged() final;
     void updateDuration(const MediaTime&);
 

@@ -592,6 +592,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     WebProcess/GPU/graphics/PrepareBackingStoreBuffersData.serialization.in
 
     WebProcess/GPU/media/MediaOverridesForTesting.serialization.in
+    WebProcess/GPU/media/MediaTimeUpdateData.serialization.in
     WebProcess/GPU/media/RemoteAudioSessionConfiguration.serialization.in
     WebProcess/GPU/media/RemoteCDMConfiguration.serialization.in
     WebProcess/GPU/media/RemoteCDMInstanceConfiguration.serialization.in

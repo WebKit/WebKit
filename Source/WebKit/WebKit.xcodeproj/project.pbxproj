@@ -5511,6 +5511,7 @@
 		513A16491630A9BF005D7D22 /* NetworkConnectionToWebProcess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkConnectionToWebProcess.cpp; sourceTree = "<group>"; };
 		513A164A1630A9BF005D7D22 /* NetworkConnectionToWebProcess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkConnectionToWebProcess.h; sourceTree = "<group>"; };
 		513A164B1630A9BF005D7D22 /* NetworkConnectionToWebProcess.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NetworkConnectionToWebProcess.messages.in; sourceTree = "<group>"; };
+		513ADC062B9A8594003C6207 /* MediaTimeUpdateData.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = MediaTimeUpdateData.serialization.in; sourceTree = "<group>"; };
 		513E462B1AD837560016234A /* WKSharingServicePickerDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKSharingServicePickerDelegate.h; sourceTree = "<group>"; };
 		513E462C1AD837560016234A /* WKSharingServicePickerDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKSharingServicePickerDelegate.mm; sourceTree = "<group>"; };
 		513FFB8E201459C2002596EA /* WebMessagePortChannelProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebMessagePortChannelProvider.cpp; sourceTree = "<group>"; };
@@ -8427,6 +8428,7 @@
 				1DD2A637255DE67500FF7B6F /* MediaSourcePrivateRemote.h */,
 				514245152B215C27001A3A2E /* MediaSourcePrivateRemoteMessageReceiver.h */,
 				1DF29018257F202F003C28AF /* MediaSourcePrivateRemoteMessageReceiver.messages.in */,
+				513ADC062B9A8594003C6207 /* MediaTimeUpdateData.serialization.in */,
 				9B5BEC29240101580070C6EF /* RemoteAudioDestinationProxy.cpp */,
 				9B5BEC28240101580070C6EF /* RemoteAudioDestinationProxy.h */,
 				CD20CE6F25CC90510069B542 /* RemoteAudioHardwareListener.cpp */,

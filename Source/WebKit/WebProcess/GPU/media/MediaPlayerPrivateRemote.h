@@ -74,6 +74,12 @@ struct AudioTrackPrivateRemoteConfiguration;
 struct TextTrackPrivateRemoteConfiguration;
 struct VideoTrackPrivateRemoteConfiguration;
 
+struct MediaTimeUpdateData {
+    MediaTime currentTime;
+    bool timeIsProgressing;
+    MonotonicTime wallTime;
+};
+
 class MediaPlayerPrivateRemote final
     : public WebCore::MediaPlayerPrivateInterface
     , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MediaPlayerPrivateRemote, WTF::DestructionThread::Main>
@@ -110,11 +116,11 @@ public:
     void readyStateChanged(RemoteMediaPlayerState&&, WebCore::MediaPlayer::ReadyState);
     void volumeChanged(double);
     void muteChanged(bool);
-    void seeked(const MediaTime&);
-    void timeChanged(RemoteMediaPlayerState&&);
+    void seeked(MediaTimeUpdateData&&);
+    void timeChanged(RemoteMediaPlayerState&&, MediaTimeUpdateData&&);
     void durationChanged(RemoteMediaPlayerState&&);
-    void rateChanged(double);
-    void playbackStateChanged(bool, MediaTime&&, MonotonicTime&&);
+    void rateChanged(double, MediaTimeUpdateData&&);
+    void playbackStateChanged(bool, MediaTimeUpdateData&&);
     void engineFailedToLoad(int64_t);
     void updateCachedState(RemoteMediaPlayerState&&);
     void updatePlaybackQualityMetrics(WebCore::VideoPlaybackQualityMetrics&&);
@@ -128,7 +134,7 @@ public:
     void setVideoLayerSizeFenced(const WebCore::FloatSize&, WTF::MachSendRight&&) final;
 #endif
 
-    void currentTimeChanged(const MediaTime&, const MonotonicTime&, bool);
+    void currentTimeChanged(MediaTimeUpdateData&&);
 
     void addRemoteAudioTrack(AudioTrackPrivateRemoteConfiguration&&);
     void removeRemoteAudioTrack(WebCore::TrackID);
@@ -210,7 +216,7 @@ private:
         MediaTime cachedTime() const;
         bool timeIsProgressing() const;
         void pause();
-        void setTime(const MediaTime&, const MonotonicTime& wallTime, std::optional<bool> timeIsProgressing = std::nullopt);
+        void setTime(const MediaTimeUpdateData&);
         void setRate(double);
         Lock& lock() const { return m_lock; };
         MediaTime currentTimeWithLockHeld() const;
@@ -303,6 +309,7 @@ private:
     void setRateDouble(double) final;
 
     bool paused() const final { return m_cachedState.paused; }
+    bool timeIsProgressing() const final;
 
 #if PLATFORM(IOS_FAMILY) || USE(GSTREAMER)
     float volume() const final { return 1; }

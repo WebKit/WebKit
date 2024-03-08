@@ -792,9 +792,9 @@ MediaTime MediaPlayer::currentTime() const
     return m_private->currentTime();
 }
 
-bool MediaPlayer::currentTimeMayProgress() const
+bool MediaPlayer::timeIsProgressing() const
 {
-    return m_private->currentTimeMayProgress();
+    return m_private->timeIsProgressing();
 }
 
 bool MediaPlayer::setCurrentTimeDidChangeCallback(CurrentTimeDidChangeCallback&& callback)

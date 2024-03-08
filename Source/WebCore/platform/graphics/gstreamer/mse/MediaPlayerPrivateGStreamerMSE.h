@@ -64,7 +64,7 @@ public:
 
     const PlatformTimeRanges& buffered() const override;
     MediaTime maxTimeSeekable() const override;
-    bool currentTimeMayProgress() const override;
+    bool timeIsProgressing() const override;
     void notifyActiveSourceBuffersChanged() final;
 
     void sourceSetup(GstElement*) override;

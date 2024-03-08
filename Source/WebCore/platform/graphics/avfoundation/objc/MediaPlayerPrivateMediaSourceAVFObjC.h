@@ -117,7 +117,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     void characteristicsChanged();
 
     MediaTime currentTime() const override;
-    bool currentTimeMayProgress() const override;
+    bool timeIsProgressing() const final;
     AVSampleBufferDisplayLayer *sampleBufferDisplayLayer() const { return m_sampleBufferDisplayLayer.get(); }
     WebCoreDecompressionSession *decompressionSession() const { return m_decompressionSession.get(); }
     WebSampleBufferVideoRendering *sampleBufferVideoRenderer() const;

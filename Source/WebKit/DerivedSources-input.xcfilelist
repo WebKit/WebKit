@@ -574,6 +574,7 @@ $(PROJECT_DIR)/WebProcess/GPU/media/MediaOverridesForTesting.serialization.in
 $(PROJECT_DIR)/WebProcess/GPU/media/MediaPlayerPrivateRemote.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/media/MediaSourcePrivateRemote.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/media/MediaSourcePrivateRemoteMessageReceiver.messages.in
+$(PROJECT_DIR)/WebProcess/GPU/media/MediaTimeUpdateData.serialization.in
 $(PROJECT_DIR)/WebProcess/GPU/media/RemoteAudioHardwareListener.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/media/RemoteAudioSession.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/media/RemoteAudioSessionConfiguration.serialization.in

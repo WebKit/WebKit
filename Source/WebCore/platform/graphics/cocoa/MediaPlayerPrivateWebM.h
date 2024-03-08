@@ -110,6 +110,7 @@ private:
     void play() final;
     void pause() final;
     bool paused() const final;
+    bool timeIsProgressing() const final;
 
     FloatSize naturalSize() const final { return m_naturalSize; }
 

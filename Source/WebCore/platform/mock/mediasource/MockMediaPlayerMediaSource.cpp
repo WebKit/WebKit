@@ -199,9 +199,9 @@ MediaTime MockMediaPlayerMediaSource::currentTime() const
     return m_lastSeekTarget ? m_lastSeekTarget->time : m_currentTime;
 }
 
-bool MockMediaPlayerMediaSource::currentTimeMayProgress() const
+bool MockMediaPlayerMediaSource::timeIsProgressing() const
 {
-    return m_mediaSourcePrivate && m_mediaSourcePrivate->hasFutureTime(currentTime());
+    return m_playing && m_mediaSourcePrivate && m_mediaSourcePrivate->hasFutureTime(currentTime());
 }
 
 void MockMediaPlayerMediaSource::notifyActiveSourceBuffersChanged()

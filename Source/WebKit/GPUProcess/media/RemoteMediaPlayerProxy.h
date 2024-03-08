@@ -28,6 +28,7 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
 #include "Connection.h"
+#include "MediaPlayerPrivateRemote.h"
 #include "MessageReceiver.h"
 #include "RemoteLegacyCDMSessionIdentifier.h"
 #include "RemoteMediaPlayerConfiguration.h"
@@ -43,6 +44,7 @@
 #include <WebCore/MediaPlayerIdentifier.h>
 #include <WebCore/MediaPromiseTypes.h>
 #include <WebCore/PlatformMediaResourceLoader.h>
+#include <optional>
 #include <wtf/LoggerHelper.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RunLoop.h>
@@ -217,8 +219,8 @@ public:
     void videoTrackSetSelected(WebCore::TrackID, bool);
     void textTrackSetMode(WebCore::TrackID, WebCore::InbandTextTrackPrivate::Mode);
 
-    using PerformTaskAtTimeCompletionHandler = CompletionHandler<void(std::optional<MediaTime>, std::optional<MonotonicTime>)>;
-    void performTaskAtTime(const MediaTime&, MonotonicTime, PerformTaskAtTimeCompletionHandler&&);
+    using PerformTaskAtTimeCompletionHandler = CompletionHandler<void(std::optional<MediaTime>)>;
+    void performTaskAtTime(const MediaTime&, PerformTaskAtTimeCompletionHandler&&);
     void isCrossOrigin(WebCore::SecurityOriginData, CompletionHandler<void(std::optional<bool>)>&&);
 
     void setVideoPlaybackMetricsUpdateInterval(double);
@@ -348,7 +350,6 @@ private:
 
     void playerContentBoxRectChanged(const WebCore::LayoutRect&);
 
-    bool mediaPlayerPausedOrStalled() const;
     void currentTimeChanged(const MediaTime&);
 
 #if PLATFORM(COCOA)

@@ -159,13 +159,12 @@ void MediaPlayerPrivateRemote::TimeProgressEstimator::pause()
     m_timeIsProgressing = false;
 }
 
-void MediaPlayerPrivateRemote::TimeProgressEstimator::setTime(const MediaTime& time, const MonotonicTime& wallTime, std::optional<bool> timeIsProgressing)
+void MediaPlayerPrivateRemote::TimeProgressEstimator::setTime(const MediaTimeUpdateData& timeData)
 {
     Locker locker { m_lock };
-    m_cachedMediaTime =  time;
-    m_cachedMediaTimeQueryTime = wallTime;
-    if (timeIsProgressing)
-        m_timeIsProgressing = *timeIsProgressing;
+    m_cachedMediaTime = timeData.currentTime;
+    m_cachedMediaTimeQueryTime = timeData.wallTime;
+    m_timeIsProgressing = timeData.timeIsProgressing;
 }
 
 void MediaPlayerPrivateRemote::TimeProgressEstimator::setRate(double value)
@@ -348,6 +347,11 @@ MediaTime MediaPlayerPrivateRemote::currentTime() const
     return m_currentTimeEstimator.currentTime();
 }
 
+bool MediaPlayerPrivateRemote::timeIsProgressing() const
+{
+    return m_currentTimeEstimator.timeIsProgressing();
+}
+
 void MediaPlayerPrivateRemote::willSeekToTarget(const MediaTime& time)
 {
     Locker locker { m_currentTimeEstimator.lock() };
@@ -374,7 +378,7 @@ void MediaPlayerPrivateRemote::seekToTarget(const WebCore::SeekTarget& target)
 {
     ALWAYS_LOG(LOGIDENTIFIER, target);
     m_seeking = true;
-    m_currentTimeEstimator.setTime(target.time, MonotonicTime::now(), false);
+    m_currentTimeEstimator.setTime({ target.time, false, MonotonicTime::now() });
     connection().send(Messages::RemoteMediaPlayerProxy::SeekToTarget(target), m_id);
 }
 
@@ -453,19 +457,20 @@ void MediaPlayerPrivateRemote::muteChanged(bool muted)
         player->muteChanged(muted);
 }
 
-void MediaPlayerPrivateRemote::seeked(const MediaTime& time)
+void MediaPlayerPrivateRemote::seeked(MediaTimeUpdateData&& timeData)
 {
-    ALWAYS_LOG(LOGIDENTIFIER, time);
+    ALWAYS_LOG(LOGIDENTIFIER, timeData.currentTime);
     m_seeking = false;
-    m_currentTimeEstimator.setTime(time, MonotonicTime::now());
+    m_currentTimeEstimator.setTime(timeData);
     if (auto player = m_player.get())
-        player->seeked(time);
+        player->seeked(timeData.currentTime);
 }
 
-void MediaPlayerPrivateRemote::timeChanged(RemoteMediaPlayerState&& state)
+void MediaPlayerPrivateRemote::timeChanged(RemoteMediaPlayerState&& state, MediaTimeUpdateData&& timeData)
 {
-    ALWAYS_LOG(LOGIDENTIFIER);
+    ALWAYS_LOG(LOGIDENTIFIER, timeData.currentTime);
     updateCachedState(WTFMove(state));
+    m_currentTimeEstimator.setTime(timeData);
     if (auto player = m_player.get())
         player->timeChanged();
 }
@@ -482,19 +487,20 @@ bool MediaPlayerPrivateRemote::seeking() const
     return m_seeking;
 }
 
-void MediaPlayerPrivateRemote::rateChanged(double rate)
+void MediaPlayerPrivateRemote::rateChanged(double rate, MediaTimeUpdateData&& timeData)
 {
     m_rate = rate;
     m_currentTimeEstimator.setRate(rate);
+    m_currentTimeEstimator.setTime(timeData);
     if (auto player = m_player.get())
         player->rateChanged();
 }
 
-void MediaPlayerPrivateRemote::playbackStateChanged(bool paused, MediaTime&& mediaTime, MonotonicTime&& wallTime)
+void MediaPlayerPrivateRemote::playbackStateChanged(bool paused, MediaTimeUpdateData&& timeData)
 {
-    INFO_LOG(LOGIDENTIFIER, mediaTime);
+    INFO_LOG(LOGIDENTIFIER, timeData.currentTime);
     m_cachedState.paused = paused;
-    m_currentTimeEstimator.setTime(mediaTime, wallTime);
+    m_currentTimeEstimator.setTime(timeData);
     if (auto player = m_player.get())
         player->playbackStateChanged();
 }
@@ -520,21 +526,21 @@ void MediaPlayerPrivateRemote::sizeChanged(WebCore::FloatSize naturalSize)
         player->sizeChanged();
 }
 
-void MediaPlayerPrivateRemote::currentTimeChanged(const MediaTime& mediaTime, const MonotonicTime& queryTime, bool timeIsProgressing)
+void MediaPlayerPrivateRemote::currentTimeChanged(MediaTimeUpdateData&& timeData)
 {
-    INFO_LOG(LOGIDENTIFIER, mediaTime, " seeking:", bool(m_seeking));
+    INFO_LOG(LOGIDENTIFIER, timeData.currentTime, " seeking:", bool(m_seeking));
     if (m_seeking)
         return;
     auto oldCachedTime = m_currentTimeEstimator.cachedTime();
     auto oldTimeIsProgressing = m_currentTimeEstimator.timeIsProgressing();
-    auto reverseJump = mediaTime < oldCachedTime;
+    auto reverseJump = timeData.currentTime < oldCachedTime;
     if (reverseJump)
-        ALWAYS_LOG(LOGIDENTIFIER, "time jumped backwards, was ", oldCachedTime, ", is now ", mediaTime);
+        ALWAYS_LOG(LOGIDENTIFIER, "time jumped backwards, was ", oldCachedTime, ", is now ", timeData.currentTime);
 
-    m_currentTimeEstimator.setTime(mediaTime, queryTime, timeIsProgressing);
+    m_currentTimeEstimator.setTime(timeData);
 
     if (reverseJump
-        || (timeIsProgressing != oldTimeIsProgressing && mediaTime != oldCachedTime && !m_cachedState.paused)) {
+        || (timeData.timeIsProgressing != oldTimeIsProgressing && timeData.currentTime != oldCachedTime && !m_cachedState.paused)) {
         if (auto player = m_player.get())
             player->timeChanged();
     }
@@ -1544,14 +1550,13 @@ void MediaPlayerPrivateRemote::setPreferredDynamicRangeMode(WebCore::DynamicRang
 
 bool MediaPlayerPrivateRemote::performTaskAtTime(WTF::Function<void()>&& task, const MediaTime& mediaTime)
 {
-    auto asyncReplyHandler = [weakThis = WeakPtr { *this }, task = WTFMove(task)](std::optional<MediaTime> currentTime, std::optional<MonotonicTime> queryTime) mutable {
-        if (!weakThis || !currentTime || !queryTime)
+    auto asyncReplyHandler = [weakThis = WeakPtr { *this }, task = WTFMove(task)](std::optional<MediaTime> currentTime) mutable {
+        if (!weakThis || !currentTime)
             return;
-        weakThis->m_currentTimeEstimator.setTime(*currentTime, *queryTime);
         task();
     };
 
-    connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::PerformTaskAtTime(mediaTime, MonotonicTime::now()), WTFMove(asyncReplyHandler), m_id);
+    connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::PerformTaskAtTime(mediaTime), WTFMove(asyncReplyHandler), m_id);
 
     return true;
 }

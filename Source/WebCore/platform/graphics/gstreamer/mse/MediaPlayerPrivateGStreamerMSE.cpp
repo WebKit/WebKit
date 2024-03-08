@@ -449,11 +449,11 @@ MediaTime MediaPlayerPrivateGStreamerMSE::maxTimeSeekable() const
     return result;
 }
 
-bool MediaPlayerPrivateGStreamerMSE::currentTimeMayProgress() const
+bool MediaPlayerPrivateGStreamerMSE::timeIsProgressing() const
 {
     if (!m_mediaSourcePrivate)
         return false;
-    return m_mediaSourcePrivate->hasFutureTime(currentTime());
+    return !paused() && m_mediaSourcePrivate->hasFutureTime(currentTime());
 }
 
 void MediaPlayerPrivateGStreamerMSE::notifyActiveSourceBuffersChanged()

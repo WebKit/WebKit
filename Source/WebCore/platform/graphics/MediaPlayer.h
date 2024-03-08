@@ -434,7 +434,7 @@ public:
 
     using CurrentTimeDidChangeCallback = std::function<void(const MediaTime&)>;
     bool setCurrentTimeDidChangeCallback(CurrentTimeDidChangeCallback&&);
-    bool currentTimeMayProgress() const;
+    bool timeIsProgressing() const;
 
     MediaTime startTime() const;
     MediaTime initialTime() const;

@@ -125,7 +125,7 @@ public:
 
     WEBCORE_EXPORT virtual MediaTime currentOrPendingSeekTime() const;
     virtual MediaTime currentTime() const { return MediaTime::zeroTime(); }
-    virtual bool currentTimeMayProgress() const { return readyState() >= MediaPlayer::ReadyState::HaveFutureData; }
+    virtual bool timeIsProgressing() const { return !paused(); }
 
     virtual bool setCurrentTimeDidChangeCallback(MediaPlayer::CurrentTimeDidChangeCallback&&) { return false; }
 
