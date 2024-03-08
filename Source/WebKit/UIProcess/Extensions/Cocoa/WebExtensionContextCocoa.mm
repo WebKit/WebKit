@@ -1545,58 +1545,56 @@ RefPtr<WebExtensionTab> WebExtensionContext::getTab(WebPageProxyIdentifier webPa
 
 RefPtr<WebExtensionTab> WebExtensionContext::getCurrentTab(WebPageProxyIdentifier webPageProxyIdentifier, IncludeExtensionViews includeExtensionViews, IgnoreExtensionAccess ignoreExtensionAccess) const
 {
-    if (includeExtensionViews == IncludeExtensionViews::Yes && isBackgroundPage(webPageProxyIdentifier)) {
-        if (RefPtr window = frontmostWindow())
-            return window->activeTab();
-        return nullptr;
-    }
-
     RefPtr<WebExtensionTab> result;
 
+    if (isBackgroundPage(webPageProxyIdentifier)) {
+        if (includeExtensionViews == IncludeExtensionViews::No)
+            return nullptr;
+
+        if (RefPtr window = frontmostWindow())
+            result = window->activeTab();
+
+        goto finish;
+    }
+
     // Search actions for the page.
-    if (includeExtensionViews == IncludeExtensionViews::Yes) {
-        for (auto entry : m_popupPageActionMap) {
-            if (entry.key.identifier() != webPageProxyIdentifier)
-                continue;
+    for (auto entry : m_popupPageActionMap) {
+        if (entry.key.identifier() != webPageProxyIdentifier)
+            continue;
 
-            RefPtr tab = entry.value->tab();
-            RefPtr window = tab ? tab->window() : entry.value->window();
+        if (includeExtensionViews == IncludeExtensionViews::No)
+            return nullptr;
 
-            if (!tab && window)
-                tab = window->activeTab();
+        RefPtr tab = entry.value->tab();
+        RefPtr window = tab ? tab->window() : entry.value->window();
+        if (!tab && window)
+            tab = window->activeTab();
 
-            if (!tab)
-                continue;
+        result = tab;
+        goto finish;
+    }
 
-            result = tab;
-            break;
-        }
+    // Search extension tabs for the page.
+    for (auto entry : m_extensionPageTabMap) {
+        if (entry.key.identifier() != webPageProxyIdentifier)
+            continue;
+
+        result = m_tabMap.get(entry.value);
+        goto finish;
     }
 
     // Search open tabs for the page.
-    if (!result) {
-        for (auto entry : m_extensionPageTabMap) {
-            if (entry.key.identifier() == webPageProxyIdentifier) {
-                result = m_tabMap.get(entry.value);
-                break;
-            }
+    for (Ref tab : openTabs()) {
+        for (WKWebView *webView in tab->webViews()) {
+            if (webView._page->identifier() != webPageProxyIdentifier)
+                continue;
+
+            result = tab.ptr();
+            goto finish;
         }
     }
 
-    if (!result) {
-        for (Ref tab : openTabs()) {
-            for (WKWebView *webView in tab->webViews()) {
-                if (webView._page->identifier() == webPageProxyIdentifier) {
-                    result = tab.ptr();
-                    break;
-                }
-            }
-
-            if (result)
-                break;
-        }
-    }
-
+finish:
     if (!result) {
         RELEASE_LOG_ERROR(Extensions, "Tab for page %{public}llu was not found", webPageProxyIdentifier.toUInt64());
         return nullptr;
