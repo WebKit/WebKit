@@ -735,7 +735,7 @@ ControlStyle RenderTheme::extractControlStyleForRenderer(const RenderObject& ren
         extractControlStyleStatesForRendererInternal(*renderer),
         renderer->style().computedFontSize(),
         renderer->style().effectiveZoom(),
-        renderer->style().effectiveAccentColor(),
+        renderer->style().usedAccentColor(),
         renderer->style().visitedDependentColorWithColorFilter(CSSPropertyColor),
         renderer->style().borderWidth()
     };
@@ -802,7 +802,7 @@ bool RenderTheme::paint(const RenderBox& box, const PaintInfo& paintInfo, const 
     case StyleAppearance::Button:
     case StyleAppearance::InnerSpinButton: {
         auto states = extractControlStyleStatesForRenderer(box);
-        Theme::singleton().paint(appearance, states, paintInfo.context(), devicePixelSnappedRect, box.useDarkAppearance(), box.style().effectiveAccentColor());
+        Theme::singleton().paint(appearance, states, paintInfo.context(), devicePixelSnappedRect, box.useDarkAppearance(), box.style().usedAccentColor());
         return false;
     }
 #else // !USE(THEME_ADWAITA)

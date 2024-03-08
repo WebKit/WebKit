@@ -107,7 +107,7 @@ static inline Color getSystemAccentColor()
 static inline Color getAccentColor(const RenderObject& renderObject)
 {
     if (!renderObject.style().hasAutoAccentColor())
-        return renderObject.style().effectiveAccentColor();
+        return renderObject.style().usedAccentColor();
 
     return getSystemAccentColor();
 }
@@ -416,7 +416,7 @@ bool RenderThemeAdwaita::paintMenuList(const RenderObject& renderObject, const P
         states.add(ControlStyle::State::Pressed);
     if (isHovered(renderObject))
         states.add(ControlStyle::State::Hovered);
-    Theme::singleton().paint(StyleAppearance::Button, states, graphicsContext, rect, renderObject.useDarkAppearance(), renderObject.style().effectiveAccentColor());
+    Theme::singleton().paint(StyleAppearance::Button, states, graphicsContext, rect, renderObject.useDarkAppearance(), renderObject.style().usedAccentColor());
 
     auto zoomedArrowSize = menuListButtonArrowSize * renderObject.style().effectiveZoom();
     FloatRect fieldRect = rect;

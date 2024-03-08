@@ -3095,7 +3095,7 @@ Color RenderStyle::colorWithColorFilter(const StyleColor& color) const
     return colorByApplyingColorFilter(colorResolvingCurrentColor(color));
 }
 
-Color RenderStyle::effectiveAccentColor() const
+Color RenderStyle::usedAccentColor() const
 {
     if (hasAutoAccentColor())
         return { };

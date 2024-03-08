@@ -2139,7 +2139,7 @@ public:
     inline const StyleColor& floodColor() const;
     inline const StyleColor& lightingColor() const;
 
-    Color effectiveAccentColor() const;
+    Color usedAccentColor() const;
     inline const StyleColor& accentColor() const;
     inline bool hasAutoAccentColor() const;
 
