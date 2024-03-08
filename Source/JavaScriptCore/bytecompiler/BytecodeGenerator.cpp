@@ -202,15 +202,22 @@ ParserError BytecodeGenerator::generate(unsigned& size)
 
         {
             bool shouldHoistInEval = m_codeType == EvalCode && !m_ecmaMode.isStrict();
-            RefPtr<RegisterID> temp = newTemporary();
             RefPtr<RegisterID> topLevelScope;
             for (auto functionPair : m_functionsToInitialize) {
                 FunctionMetadataNode* metadata = functionPair.first;
                 FunctionVariableType functionType = functionPair.second;
-                emitNewFunction(temp.get(), metadata);
-                if (functionType == NormalFunctionVariable)
-                    initializeVariable(variable(metadata->ident()), temp.get());
-                else if (functionType == TopLevelFunctionVariable) {
+                if (functionType == NormalFunctionVariable) {
+                    Variable var = variable(metadata->ident());
+                    if (RegisterID* local = var.local())
+                        emitNewFunction(local, metadata);
+                    else {
+                        RefPtr<RegisterID> temp = newTemporary();
+                        emitNewFunction(temp.get(), metadata);
+                        initializeVariable(var, temp.get());
+                    }
+                } else if (functionType == TopLevelFunctionVariable) {
+                    RefPtr<RegisterID> temp = newTemporary();
+                    emitNewFunction(temp.get(), metadata);
                     if (!topLevelScope) {
                         // We know this will resolve to the top level scope or global object because our parser/global initialization code 
                         // doesn't allow let/const/class variables to have the same names as functions.
