@@ -473,11 +473,6 @@ webkit.org/b/269751 http/wpt/webauthn/public-key-credential-get-success-nfc.http
 webkit.org/b/269751 http/wpt/webauthn/public-key-credential-get-success-u2f.https.html [ Crash ]
 webkit.org/b/269751 http/wpt/webauthn/public-key-credential-same-origin-with-ancestors.https.html [ Crash ]
 
-webkit.org/b/270583 http/wpt/webauthn/public-key-credential-create-failure-local-silent.https.html [ Pass Failure ]
-webkit.org/b/270583 http/wpt/webauthn/public-key-credential-create-failure-local.https.html [ Pass Failure ]
-webkit.org/b/270583 http/wpt/webauthn/public-key-credential-create-success-local.https.html [ Pass Failure ]
-webkit.org/b/270583 http/wpt/webauthn/public-key-credential-get-failure-local.https.html [ Pass Failure ]
-
 # Console log lines may appear in a different order so we silence them.
 http/tests/security/cookie-module.html [ DumpJSConsoleLogInStdErr ]
 http/tests/security/cookie-module-import-propagate.html [ DumpJSConsoleLogInStdErr ]
