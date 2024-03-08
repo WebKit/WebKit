@@ -454,6 +454,11 @@ static bool isPseudoClassValidAfterPseudoElement(CSSSelector::PseudoClass pseudo
         return isScrollbarPseudoClass(pseudoClass);
     case CSSSelector::PseudoElement::Selection:
         return pseudoClass == CSSSelector::PseudoClass::WindowInactive;
+    case CSSSelector::PseudoElement::ViewTransitionGroup:
+    case CSSSelector::PseudoElement::ViewTransitionImagePair:
+    case CSSSelector::PseudoElement::ViewTransitionNew:
+    case CSSSelector::PseudoElement::ViewTransitionOld:
+        return pseudoClass == CSSSelector::PseudoClass::OnlyChild;
     case CSSSelector::PseudoElement::UserAgentPart:
     case CSSSelector::PseudoElement::UserAgentPartLegacyAlias:
     case CSSSelector::PseudoElement::WebKitUnknown:

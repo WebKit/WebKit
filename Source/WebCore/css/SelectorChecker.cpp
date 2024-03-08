@@ -51,6 +51,7 @@
 #include "StyleScope.h"
 #include "Text.h"
 #include "TypedElementDescendantIteratorInlines.h"
+#include "ViewTransition.h"
 
 namespace WebCore {
 
@@ -61,25 +62,26 @@ enum class VisitedMatchType : unsigned char {
 };
 
 struct SelectorChecker::LocalContext {
-    LocalContext(const CSSSelector& selector, const Element& element, VisitedMatchType visitedMatchType, PseudoId pseudoId)
+    LocalContext(const CSSSelector& selector, const Element& element, VisitedMatchType visitedMatchType, std::optional<Style::PseudoElementIdentifier> pseudoElementIdentifier)
         : selector(&selector)
         , element(&element)
         , visitedMatchType(visitedMatchType)
         , firstSelectorOfTheFragment(&selector)
-        , pseudoId(pseudoId)
+        , pseudoElementIdentifier(pseudoElementIdentifier)
     { }
 
     const CSSSelector* selector;
     const Element* element;
     VisitedMatchType visitedMatchType;
     const CSSSelector* firstSelectorOfTheFragment;
-    PseudoId pseudoId;
+    std::optional<Style::PseudoElementIdentifier> pseudoElementIdentifier;
     bool isMatchElement { true };
     bool isSubjectOrAdjacentElement { true };
     bool inFunctionalPseudoClass { false };
     bool pseudoElementEffective { true };
     bool hasScrollbarPseudo { false };
     bool hasSelectionPseudo { false };
+    bool hasViewTransitionPseudo { false };
     bool mustMatchHostPseudoClass { false };
 };
 
@@ -177,7 +179,8 @@ SelectorChecker::SelectorChecker(Document& document)
 
 bool SelectorChecker::match(const CSSSelector& selector, const Element& element, CheckingContext& checkingContext) const
 {
-    LocalContext context(selector, element, checkingContext.resolvingMode == SelectorChecker::Mode::QueryingRules ? VisitedMatchType::Disabled : VisitedMatchType::Enabled, checkingContext.pseudoId);
+    auto pseudoElementIdentifier = checkingContext.pseudoId == PseudoId::None ? std::nullopt : std::optional(Style::PseudoElementIdentifier { checkingContext.pseudoId, checkingContext.pseudoElementNameArgument });
+    LocalContext context(selector, element, checkingContext.resolvingMode == SelectorChecker::Mode::QueryingRules ? VisitedMatchType::Disabled : VisitedMatchType::Enabled, pseudoElementIdentifier);
 
     if (checkingContext.styleScopeOrdinal == Style::ScopeOrdinal::Shadow) {
         ASSERT(element.shadowRoot());
@@ -210,7 +213,7 @@ bool SelectorChecker::matchHostPseudoClass(const CSSSelector& selector, const El
         return false;
 
     if (auto* selectorList = selector.selectorList()) {
-        LocalContext context(*selectorList->first(), element, VisitedMatchType::Enabled, PseudoId::None);
+        LocalContext context(*selectorList->first(), element, VisitedMatchType::Enabled, std::nullopt);
         context.inFunctionalPseudoClass = true;
         context.pseudoElementEffective = false;
         PseudoIdSet ignoreDynamicPseudo;
@@ -218,6 +221,18 @@ bool SelectorChecker::matchHostPseudoClass(const CSSSelector& selector, const El
             return false;
     }
     return true;
+}
+
+inline static bool hasViewTransitionPseudoElement(const PseudoIdSet& dynamicPseudoIdSet)
+{
+    PseudoIdSet functionalPseudoElementSet = {
+        PseudoId::ViewTransition,
+        PseudoId::ViewTransitionGroup,
+        PseudoId::ViewTransitionImagePair,
+        PseudoId::ViewTransitionNew,
+        PseudoId::ViewTransitionOld,
+    };
+    return !!(dynamicPseudoIdSet & functionalPseudoElementSet);
 }
 
 inline static bool hasScrollbarPseudoElement(const PseudoIdSet& dynamicPseudoIdSet)
@@ -329,14 +344,14 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& 
 
     if (relation != CSSSelector::Relation::Subselector) {
         // Bail-out if this selector is irrelevant for the pseudoId
-        if (context.pseudoId != PseudoId::None && !dynamicPseudoIdSet.has(context.pseudoId))
+        if (context.pseudoElementIdentifier && !dynamicPseudoIdSet.has(context.pseudoElementIdentifier->pseudoId))
             return MatchResult::fails(Match::SelectorFailsCompletely);
 
         // Disable :visited matching when we try to match anything else than an ancestors.
         if (!context.selector->hasDescendantOrChildRelation())
             nextContext.visitedMatchType = VisitedMatchType::Disabled;
 
-        nextContext.pseudoId = PseudoId::None;
+        nextContext.pseudoElementIdentifier = std::nullopt;
 
         bool allowMultiplePseudoElements = relation == CSSSelector::Relation::ShadowDescendant;
         // Virtual pseudo element is only effective in the rightmost fragment.
@@ -419,9 +434,11 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& 
             // to follow the pseudo elements.
             nextContext.hasScrollbarPseudo = hasScrollbarPseudoElement(dynamicPseudoIdSet);
             nextContext.hasSelectionPseudo = dynamicPseudoIdSet.has(PseudoId::Selection);
+            nextContext.hasViewTransitionPseudo = hasViewTransitionPseudoElement(dynamicPseudoIdSet);
+
             if ((context.isMatchElement || checkingContext.resolvingMode == Mode::CollectingRules) && dynamicPseudoIdSet
                 && !nextContext.hasSelectionPseudo
-                && !(nextContext.hasScrollbarPseudo && nextContext.selector->match() == CSSSelector::Match::PseudoClass))
+                && !((nextContext.hasScrollbarPseudo || nextContext.hasViewTransitionPseudo) && nextContext.selector->match() == CSSSelector::Match::PseudoClass))
                 return MatchResult::fails(Match::SelectorFailsCompletely);
 
             MatchResult result = matchRecursively(checkingContext, nextContext, dynamicPseudoIdSet);
@@ -760,6 +777,9 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             return checkScrollbarPseudoClass(checkingContext, element, selector);
         }
 
+        if (context.hasViewTransitionPseudo)
+            return checkViewTransitionPseudoClass(checkingContext, element, selector);
+
         // Normal element pseudo class checking.
         switch (selector.pseudoClass()) {
             // Pseudo classes:
@@ -867,7 +887,7 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
                     subcontext.pseudoElementEffective = context.pseudoElementEffective;
                     subcontext.selector = subselector;
                     subcontext.firstSelectorOfTheFragment = subselector;
-                    subcontext.pseudoId = PseudoId::None;
+                    subcontext.pseudoElementIdentifier = std::nullopt;
                     PseudoIdSet localDynamicPseudoIdSet;
                     MatchResult result = matchRecursively(checkingContext, subcontext, localDynamicPseudoIdSet);
 
@@ -1335,7 +1355,7 @@ bool SelectorChecker::matchHasPseudoClass(CheckingContext& checkingContext, cons
     bool matchedInsideScope = false;
 
     auto checkRelative = [&](auto& elementToCheck) {
-        LocalContext hasContext(hasSelector, elementToCheck, VisitedMatchType::Disabled, PseudoId::None);
+        LocalContext hasContext(hasSelector, elementToCheck, VisitedMatchType::Disabled, std::nullopt);
         hasContext.inFunctionalPseudoClass = true;
         hasContext.pseudoElementEffective = false;
 
@@ -1498,6 +1518,44 @@ bool SelectorChecker::checkScrollbarPseudoClass(const CheckingContext& checkingC
         return scrollbarMatchesNoButtonPseudoClass(checkingContext);
     case CSSSelector::PseudoClass::CornerPresent:
         return scrollbarMatchesCornerPresentPseudoClass(checkingContext);
+    default:
+        return false;
+    }
+}
+
+bool SelectorChecker::checkViewTransitionPseudoClass(const CheckingContext& checkingContext, const Element& element, const CSSSelector& selector) const
+{
+    ASSERT(selector.match() == CSSSelector::Match::PseudoClass);
+
+    if (selector.pseudoClass() != CSSSelector::PseudoClass::OnlyChild)
+        return false;
+
+    switch (checkingContext.pseudoId) {
+    case PseudoId::ViewTransition:
+        return false;
+    case PseudoId::ViewTransitionGroup: {
+        if (RefPtr activeViewTransition = element.document().activeViewTransition()) {
+            if (activeViewTransition->namedElements().find(checkingContext.pseudoElementNameArgument))
+                return activeViewTransition->namedElements().size() == 1;
+        }
+        return false;
+    }
+    case PseudoId::ViewTransitionImagePair:
+        return true;
+    case PseudoId::ViewTransitionOld: {
+        if (RefPtr activeViewTransition = element.document().activeViewTransition()) {
+            if (auto* capturedElement = activeViewTransition->namedElements().find(checkingContext.pseudoElementNameArgument))
+                return !capturedElement->newElement;
+        }
+        return false;
+    }
+    case PseudoId::ViewTransitionNew: {
+        if (RefPtr activeViewTransition = element.document().activeViewTransition()) {
+            if (auto* capturedElement = activeViewTransition->namedElements().find(checkingContext.pseudoElementNameArgument))
+                return !capturedElement->oldImage;
+        }
+        return false;
+    }
     default:
         return false;
     }

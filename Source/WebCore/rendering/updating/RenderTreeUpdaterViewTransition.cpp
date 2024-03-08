@@ -121,17 +121,20 @@ static RenderPtr<RenderBox> createRendererIfNeeded(RenderElement& documentElemen
         return nullptr;
 
     Ref document = documentElementRenderer.document();
-    auto newStyle = RenderStyle::clone(*style);
     RenderPtr<RenderBox> renderer;
     if (pseudoId == PseudoId::ViewTransitionOld || pseudoId == PseudoId::ViewTransitionNew) {
-        RenderPtr<RenderViewTransitionCapture> rendererViewTransition = WebCore::createRenderer<RenderViewTransitionCapture>(RenderObject::Type::ViewTransitionCapture, document, WTFMove(newStyle));
+        const auto* capturedElement = document->activeViewTransition()->namedElements().find(name);
+        ASSERT(capturedElement);
+        if (pseudoId == PseudoId::ViewTransitionOld && !capturedElement->oldImage)
+            return nullptr;
+        if (pseudoId == PseudoId::ViewTransitionNew && !capturedElement->newElement)
+            return nullptr;
 
-        if (const auto* capturedElement = document->activeViewTransition()->namedElements().find(name))
-            rendererViewTransition->setImage(pseudoId == PseudoId::ViewTransitionOld ? capturedElement->oldImage : nullptr, capturedElement->oldSize, capturedElement->oldOverflowRect);
-
+        RenderPtr<RenderViewTransitionCapture> rendererViewTransition = WebCore::createRenderer<RenderViewTransitionCapture>(RenderObject::Type::ViewTransitionCapture, document, RenderStyle::clone(*style));
+        rendererViewTransition->setImage(pseudoId == PseudoId::ViewTransitionOld ? capturedElement->oldImage.value_or(nullptr) : nullptr, capturedElement->oldSize, capturedElement->oldOverflowRect);
         renderer = WTFMove(rendererViewTransition);
     } else
-        renderer = WebCore::createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, document, WTFMove(newStyle));
+        renderer = WebCore::createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, document, RenderStyle::clone(*style));
 
     renderer->initializeStyle();
     return renderer;

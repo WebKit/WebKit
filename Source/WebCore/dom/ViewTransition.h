@@ -52,7 +52,9 @@ enum class ViewTransitionPhase : uint8_t {
 struct CapturedElement {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    RefPtr<ImageBuffer> oldImage;
+    // std::nullopt represents an non-capturable element.
+    // nullptr represents an absent snapshot on an capturable element.
+    std::optional<RefPtr<ImageBuffer>> oldImage;
     LayoutRect oldOverflowRect;
     LayoutSize oldSize;
     RefPtr<MutableStyleProperties> oldProperties;
@@ -98,6 +100,11 @@ public:
     bool isEmpty() const
     {
         return m_keys.isEmpty();
+    }
+
+    size_t size() const
+    {
+        return m_keys.size();
     }
 
     CapturedElement* find(const AtomString& key)
