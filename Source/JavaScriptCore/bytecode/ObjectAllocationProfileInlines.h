@@ -135,6 +135,12 @@ ALWAYS_INLINE void ObjectAllocationProfileBase<Derived>::initializeProfile(VM& v
     // Ensure that if another thread sees the structure and prototype, it will see it properly created.
     WTF::storeStoreFence();
 
+    // The watchpoint should have been fired already but it's prudent to be safe here.
+    if (UNLIKELY(functionRareData && m_structure && m_structure.get() != structure)) {
+        ASSERT(functionRareData->allocationProfileWatchpointSet().hasBeenInvalidated());
+        functionRareData->allocationProfileWatchpointSet().fireAll(vm, "Clearing to be safe because structure has changed");
+    }
+
     m_structure.set(vm, owner, structure);
     static_cast<Derived*>(this)->setPrototype(vm, owner, prototype);
 }

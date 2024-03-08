@@ -154,7 +154,7 @@ JSObject* JSFunction::prototypeForConstruction(VM& vm, JSGlobalObject* globalObj
 {
     // This code assumes getting the prototype is not effectful. That's only
     // true when we can use the allocation profile.
-    ASSERT(canUseAllocationProfile());
+    ASSERT(canUseAllocationProfiles());
     DeferTermination deferScope(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
     JSValue prototype = get(globalObject, vm.propertyNames->prototype);
@@ -178,7 +178,7 @@ FunctionRareData* JSFunction::allocateAndInitializeRareData(JSGlobalObject* glob
 {
     uintptr_t executableOrRareData = m_executableOrRareData;
     ASSERT(!(executableOrRareData & rareDataTag));
-    ASSERT(canUseAllocationProfile());
+    ASSERT(canUseAllocationProfiles());
     VM& vm = globalObject->vm();
     JSObject* prototype = prototypeForConstruction(vm, globalObject);
     FunctionRareData* rareData = FunctionRareData::create(vm, bitwise_cast<ExecutableBase*>(executableOrRareData));
@@ -199,7 +199,7 @@ FunctionRareData* JSFunction::initializeRareData(JSGlobalObject* globalObject, s
 {
     uintptr_t executableOrRareData = m_executableOrRareData;
     ASSERT(executableOrRareData & rareDataTag);
-    ASSERT(canUseAllocationProfile());
+    ASSERT(canUseAllocationProfiles());
     VM& vm = globalObject->vm();
     JSObject* prototype = prototypeForConstruction(vm, globalObject);
     FunctionRareData* rareData = bitwise_cast<FunctionRareData*>(executableOrRareData & ~rareDataTag);
@@ -389,19 +389,21 @@ bool JSFunction::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName pr
 
     JSFunction* thisObject = jsCast<JSFunction*>(cell);
 
-    if (propertyName == vm.propertyNames->prototype && thisObject->mayHaveNonReifiedPrototype()) {
+    if (propertyName == vm.propertyNames->prototype) {
         slot.disableCaching();
         if (FunctionRareData* rareData = thisObject->rareData())
             rareData->clear("Store to prototype property of a function");
-        if (!isValidOffset(thisObject->getDirectOffset(vm, propertyName))) {
-            // For class constructors, prototype object is initialized from bytecode via defineOwnProperty().
-            ASSERT(!thisObject->jsExecutable()->isClassConstructorFunction());
-            if (UNLIKELY(slot.thisValue() != thisObject))
-                RELEASE_AND_RETURN(scope, JSObject::definePropertyOnReceiver(globalObject, propertyName, value, slot));
-            thisObject->putDirect(vm, propertyName, value, prototypeAttributesForNonClass);
-            return true;
+        if (thisObject->mayHaveNonReifiedPrototype()) {
+            if (!isValidOffset(thisObject->getDirectOffset(vm, propertyName))) {
+                // For class constructors, prototype object is initialized from bytecode via defineOwnProperty().
+                ASSERT(!thisObject->jsExecutable()->isClassConstructorFunction());
+                if (UNLIKELY(slot.thisValue() != thisObject))
+                    RELEASE_AND_RETURN(scope, JSObject::definePropertyOnReceiver(globalObject, propertyName, value, slot));
+                thisObject->putDirect(vm, propertyName, value, prototypeAttributesForNonClass);
+                return true;
+            }
+            RELEASE_AND_RETURN(scope, Base::put(thisObject, globalObject, propertyName, value, slot));
         }
-        RELEASE_AND_RETURN(scope, Base::put(thisObject, globalObject, propertyName, value, slot));
     }
 
     PropertyStatus propertyType = thisObject->reifyLazyPropertyIfNeeded<>(vm, globalObject, propertyName);
@@ -431,9 +433,12 @@ bool JSFunction::defineOwnProperty(JSObject* object, JSGlobalObject* globalObjec
     JSFunction* thisObject = jsCast<JSFunction*>(object);
 
 
-    if (propertyName == vm.propertyNames->prototype && thisObject->mayHaveNonReifiedPrototype()) {
+    if (propertyName == vm.propertyNames->prototype) {
         if (FunctionRareData* rareData = thisObject->rareData())
             rareData->clear("Store to prototype property of a function");
+    }
+
+    if (propertyName == vm.propertyNames->prototype && thisObject->mayHaveNonReifiedPrototype()) {
         if (!isValidOffset(thisObject->getDirectOffset(vm, propertyName))) {
             if (thisObject->jsExecutable()->isClassConstructorFunction()) {
                 // Fast path for prototype object initialization from bytecode that avoids calling into getOwnPropertySlot().

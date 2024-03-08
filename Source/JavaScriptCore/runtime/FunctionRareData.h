@@ -97,7 +97,7 @@ public:
     Structure* createInternalFunctionAllocationStructureFromBase(VM& vm, JSGlobalObject* baseGlobalObject, JSObject* prototype, Structure* baseStructure)
     {
         initializeAllocationProfileWatchpointSet();
-        return m_internalFunctionAllocationProfile.createAllocationStructureFromBase(vm, baseGlobalObject, this, prototype, baseStructure);
+        return m_internalFunctionAllocationProfile.createAllocationStructureFromBase(vm, baseGlobalObject, this, prototype, baseStructure, allocationProfileWatchpointSet());
     }
     void clearInternalFunctionAllocationProfile(const char* reason)
     {
