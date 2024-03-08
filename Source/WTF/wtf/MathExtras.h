@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2006-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2022 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,7 +21,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
@@ -28,48 +29,27 @@
 #include <algorithm>
 #include <climits>
 #include <cmath>
-#include <float.h>
 #include <limits>
+#include <math.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include <wtf/StdLibExtras.h>
 
 #if OS(OPENBSD)
 #include <sys/types.h>
 #include <machine/ieee.h>
 #endif
 
-#ifndef M_PI
-constexpr double piDouble = 3.14159265358979323846;
-constexpr float piFloat = 3.14159265358979323846f;
-#else
 constexpr double piDouble = M_PI;
 constexpr float piFloat = static_cast<float>(M_PI);
-#endif
 
-#ifndef M_PI_2
-constexpr double piOverTwoDouble = 1.57079632679489661923;
-constexpr float piOverTwoFloat = 1.57079632679489661923f;
-#else
 constexpr double piOverTwoDouble = M_PI_2;
 constexpr float piOverTwoFloat = static_cast<float>(M_PI_2);
-#endif
 
-#ifndef M_PI_4
-constexpr double piOverFourDouble = 0.785398163397448309616;
-constexpr float piOverFourFloat = 0.785398163397448309616f;
-#else
 constexpr double piOverFourDouble = M_PI_4;
 constexpr float piOverFourFloat = static_cast<float>(M_PI_4);
-#endif
 
-#ifndef M_SQRT2
-constexpr double sqrtOfTwoDouble = 1.41421356237309504880;
-constexpr float sqrtOfTwoFloat = 1.41421356237309504880f;
-#else
 constexpr double sqrtOfTwoDouble = M_SQRT2;
 constexpr float sqrtOfTwoFloat = static_cast<float>(M_SQRT2);
-#endif
 
 #if COMPILER(MSVC)
 
@@ -114,7 +94,6 @@ constexpr inline double grad2deg(double g) { return g * degreesPerGradientDouble
 constexpr inline double deg2turn(double d) { return d * turnsPerDegreeDouble; }
 constexpr inline double turn2deg(double t) { return t * degreesPerTurnDouble; }
 
-
 // Note that these differ from the casting the double values above in their rounding errors.
 constexpr float radiansPerDegreeFloat = piFloat / 180.0f;
 constexpr float degreesPerRadianFloat = 180.0f / piFloat;
@@ -145,9 +124,7 @@ inline double roundTowardsPositiveInfinity(double value) { return std::floor(val
 inline float roundTowardsPositiveInfinity(float value) { return std::floor(value + 0.5f); }
 
 // std::numeric_limits<T>::min() returns the smallest positive value for floating point types
-template<typename T> constexpr T defaultMinimumForClamp() { return std::numeric_limits<T>::min(); }
-template<> constexpr float defaultMinimumForClamp() { return -std::numeric_limits<float>::max(); }
-template<> constexpr double defaultMinimumForClamp() { return -std::numeric_limits<double>::max(); }
+template<typename T> constexpr T defaultMinimumForClamp() { return std::numeric_limits<T>::lowest(); }
 template<typename T> constexpr T defaultMaximumForClamp() { return std::numeric_limits<T>::max(); }
 
 // Same type in and out.
