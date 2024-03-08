@@ -5088,6 +5088,13 @@
    },
    {
       "emails" : [
+         "loic.yhuel@softathome.com"
+      ],
+      "github" : "hwti",
+      "name" : "Lo\u00efc Yhuel"
+   },
+   {
+      "emails" : [
          "demarchi@webkit.org",
          "lucas.demarchi@profusion.mobi"
       ],
