@@ -61,6 +61,8 @@ public:
 
     static void clearAllCredentials();
 
+    static void useTestingAccessGroup();
+
 private:
     explicit LocalAuthenticator(UniqueRef<LocalConnection>&&);
 

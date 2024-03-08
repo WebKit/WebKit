@@ -923,6 +923,11 @@ static std::span<const uint8_t> asUInt8Span(NSData* data)
 }
 #endif
 
++ (void)useTestAccessGroup
+{
+    WebKit::LocalAuthenticator::useTestingAccessGroup();
+}
+
 + (WebCore::PublicKeyCredentialCreationOptions)convertToCoreCreationOptionsWithOptions:(_WKPublicKeyCredentialCreationOptions *)options
 {
     WebCore::PublicKeyCredentialCreationOptions result;

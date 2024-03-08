@@ -145,24 +145,33 @@ static inline Ref<ArrayBuffer> toArrayBuffer(const Vector<uint8_t>& data)
     return ArrayBuffer::create(data.data(), data.size());
 }
 
+static bool& shouldUseTestingAccessGroup()
+{
+    static NeverDestroyed<bool> inTests = false;
+    return inTests.get();
+}
+
 static std::optional<Vector<Ref<AuthenticatorAssertionResponse>>> getExistingCredentials(const String& rpId)
 {
     // Search Keychain for existing credential matched the RP ID.
-    NSDictionary *query = @{
+    auto query = adoptNS([[NSMutableDictionary alloc] init]);
+    [query setDictionary:@{
         (id)kSecClass: (id)kSecClassKey,
         (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
         (id)kSecAttrSynchronizable: (id)kSecAttrSynchronizableAny,
-        (id)kSecAttrAccessGroup: @(LocalAuthenticatorAccessGroup),
         (id)kSecAttrLabel: rpId,
         (id)kSecReturnAttributes: @YES,
         (id)kSecMatchLimit: (id)kSecMatchLimitAll,
         (id)kSecUseDataProtectionKeychain: @YES
-    };
+    }];
+    if (!shouldUseTestingAccessGroup())
+        [query setObject:@(LocalAuthenticatorAccessGroup) forKey:(__bridge id)kSecAttrAccessGroup];
 
     CFTypeRef attributesArrayRef = nullptr;
-    OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query, &attributesArrayRef);
+    OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query.get(), &attributesArrayRef);
     if (status && status != errSecItemNotFound)
         return std::nullopt;
+
     auto retainAttributesArray = adoptCF(attributesArrayRef);
     NSArray *sortedAttributesArray = [(NSArray *)attributesArrayRef sortedArrayUsingComparator:^(NSDictionary *a, NSDictionary *b) {
         return [b[(id)kSecAttrModificationDate] compare:a[(id)kSecAttrModificationDate]];
@@ -224,15 +233,21 @@ static Vector<AuthenticatorTransport> transports()
 
 } // LocalAuthenticatorInternal
 
+void LocalAuthenticator::useTestingAccessGroup()
+{
+    LocalAuthenticatorInternal::shouldUseTestingAccessGroup() = true;
+}
+
 void LocalAuthenticator::clearAllCredentials()
 {
     // FIXME<rdar://problem/57171201>: We should guard the method with a first party entitlement once WebAuthn is avaliable for third parties.
     auto query = adoptNS([[NSMutableDictionary alloc] init]);
     [query setDictionary:@{
         (id)kSecClass: (id)kSecClassKey,
-        (id)kSecAttrAccessGroup: @(LocalAuthenticatorAccessGroup),
         (id)kSecUseDataProtectionKeychain: @YES
     }];
+    if (!LocalAuthenticatorInternal::shouldUseTestingAccessGroup())
+        [query setObject:@(LocalAuthenticatorAccessGroup) forKey:(__bridge id)kSecAttrAccessGroup];
     updateQueryIfNecessary(query.get());
 
     OSStatus status = SecItemDelete((__bridge CFDictionaryRef)query.get());
