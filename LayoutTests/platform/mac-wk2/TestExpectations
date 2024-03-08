@@ -945,10 +945,10 @@ webkit.org/b/189598 compositing/backing/backing-store-attachment-fill-forwards-a
 http/wpt/webauthn/public-key-credential-get-failure-local-silent.https.html [ Skip ]
 http/wpt/webauthn/public-key-credential-get-success-local.https.html [ Skip ]
 
-webkit.org/b/270583 http/wpt/webauthn/public-key-credential-create-failure-local-silent.https.html [ Pass Failure ]
-webkit.org/b/270583 http/wpt/webauthn/public-key-credential-create-failure-local.https.html [ Pass Failure ]
-webkit.org/b/270583 http/wpt/webauthn/public-key-credential-create-success-local.https.html [ Pass Failure ]
-webkit.org/b/270583 http/wpt/webauthn/public-key-credential-get-failure-local.https.html [ Pass Failure ]
+webkit.org/b/270583 http/wpt/webauthn/public-key-credential-create-failure-local-silent.https.html [ Pass Failure Crash ]
+webkit.org/b/270583 http/wpt/webauthn/public-key-credential-create-failure-local.https.html [ Pass Failure Crash ]
+webkit.org/b/270583 http/wpt/webauthn/public-key-credential-create-success-local.https.html [ Pass Failure Crash ]
+webkit.org/b/270583 http/wpt/webauthn/public-key-credential-get-failure-local.https.html [ Pass Failure Crash ]
 
 webkit.org/b/194826 http/tests/resourceLoadStatistics/do-not-block-top-level-navigation-redirect.html [ Pass Timeout ]
 
