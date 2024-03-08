@@ -811,10 +811,8 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
                     ASSERT(pair.second->m_type & PropertyNode::Setter);
                     setterReg = generator.emitNode(pair.second->m_assign);
                     secondReg = setterReg.get();
-                } else {
-                    setterReg = generator.newTemporary();
-                    generator.emitLoad(setterReg.get(), jsUndefined());
-                }
+                } else
+                    setterReg = generator.emitLoad(nullptr, jsUndefined());
             } else {
                 ASSERT(node->m_type & PropertyNode::Setter);
                 setterReg = value;
@@ -822,10 +820,8 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
                     ASSERT(pair.second->m_type & PropertyNode::Getter);
                     getterReg = generator.emitNode(pair.second->m_assign);
                     secondReg = getterReg.get();
-                } else {
-                    getterReg = generator.newTemporary();
-                    generator.emitLoad(getterReg.get(), jsUndefined());
-                }
+                } else
+                    getterReg = generator.emitLoad(nullptr, jsUndefined());
             }
 
             ASSERT(!pair.second || needsSuperBinding == pair.second->needsSuperBinding());
