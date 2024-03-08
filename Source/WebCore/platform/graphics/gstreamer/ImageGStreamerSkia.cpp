@@ -23,6 +23,7 @@
 #if ENABLE(VIDEO) && USE(GSTREAMER) && USE(SKIA)
 
 #include "GStreamerCommon.h"
+#include "NotImplemented.h"
 #include <gst/gst.h>
 #include <gst/video/gstvideometa.h>
 #include <skia/core/SkImage.h>

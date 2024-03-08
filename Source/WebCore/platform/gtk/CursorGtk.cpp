@@ -31,6 +31,7 @@
 
 #include "Image.h"
 #include "IntPoint.h"
+#include "NotImplemented.h"
 #include <gdk/gdk.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -67,9 +68,15 @@ static GRefPtr<GdkCursor> createCustomCursor(Image* image, const IntPoint& hotSp
     if (!nativeImage)
         return nullptr;
 
+#if USE(CAIRO)
     auto& surface = nativeImage->platformImage();
     IntPoint effectiveHotSpot = determineHotSpot(image, hotSpot);
     return adoptGRef(gdk_cursor_new_from_surface(gdk_display_get_default(), surface.get(), effectiveHotSpot.x(), effectiveHotSpot.y()));
+#elif USE(SKIA)
+    UNUSED_PARAM(hotSpot);
+    notImplemented();
+    return nullptr;
+#endif
 #endif // USE(GTK4)
 }
 

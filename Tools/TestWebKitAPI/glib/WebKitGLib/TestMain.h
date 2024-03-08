@@ -27,7 +27,7 @@
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
-#if USE(CAIRO)
+#if USE(CAIRO) || PLATFORM(GTK)
 #include <cairo.h>
 #endif
 
@@ -298,7 +298,7 @@ public:
         g_log_set_always_fatal(static_cast<GLogLevelFlags>(fatalMask));
     }
 
-#if USE(CAIRO)
+#if USE(CAIRO) || PLATFORM(GTK)
     static bool cairoSurfacesEqual(cairo_surface_t* s1, cairo_surface_t* s2)
     {
         return (cairo_image_surface_get_format(s1) == cairo_image_surface_get_format(s2)

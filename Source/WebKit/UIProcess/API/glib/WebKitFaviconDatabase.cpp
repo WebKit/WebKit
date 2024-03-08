@@ -24,6 +24,7 @@
 #include "WebKitFaviconDatabasePrivate.h"
 #include <WebCore/Image.h>
 #include <WebCore/IntSize.h>
+#include <WebCore/NotImplemented.h>
 #include <WebCore/SharedBuffer.h>
 #include <glib/gi18n-lib.h>
 #include <wtf/FileSystem.h>
@@ -186,6 +187,7 @@ void webkitFaviconDatabaseGetFaviconInternal(WebKitFaviconDatabase* database, co
     }
 
     GRefPtr<GTask> task = adoptGRef(g_task_new(database, cancellable, callback, userData));
+#if USE(CAIRO)
     WebKitFaviconDatabasePrivate* priv = database->priv;
     priv->iconDatabase->loadIconForPageURL(String::fromUTF8(pageURI), isEphemeral ? IconDatabase::AllowDatabaseWrite::No : IconDatabase::AllowDatabaseWrite::Yes,
         [task = WTFMove(task), pageURI = CString(pageURI)](RefPtr<cairo_surface_t>&& icon) {
@@ -196,6 +198,10 @@ void webkitFaviconDatabaseGetFaviconInternal(WebKitFaviconDatabase* database, co
             }
             g_task_return_pointer(task.get(), icon.leakRef(), reinterpret_cast<GDestroyNotify>(cairo_surface_destroy));
         });
+#elif USE(SKIA)
+    notImplemented();
+    g_task_return_new_error(task.get(), WEBKIT_FAVICON_DATABASE_ERROR, WEBKIT_FAVICON_DATABASE_ERROR_FAVICON_UNKNOWN, _("Unknown favicon for page %s"), pageURI);
+#endif
 }
 
 /**
@@ -245,10 +251,14 @@ cairo_surface_t* webkit_favicon_database_get_favicon_finish(WebKitFaviconDatabas
     g_return_val_if_fail(g_task_is_valid(result, database), nullptr);
 
 #if USE(GTK4)
+#if USE(CAIRO)
     auto image = adoptRef(static_cast<cairo_surface_t*>(g_task_propagate_pointer(G_TASK(result), error)));
     auto texture = image ? cairoSurfaceToGdkTexture(image.get()) : nullptr;
     if (texture)
         return texture.leakRef();
+#elif USE(SKIA)
+    notImplemented();
+#endif
     // FIXME: Add a new WEBKIT_FAVICON_DATABASE_ERROR
     if (error && !*error)
         g_set_error_literal(error, WEBKIT_FAVICON_DATABASE_ERROR, WEBKIT_FAVICON_DATABASE_ERROR_FAVICON_UNKNOWN, _("Failed to create texture"));

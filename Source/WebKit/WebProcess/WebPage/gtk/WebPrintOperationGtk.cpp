@@ -34,20 +34,23 @@
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/FrameDestructionObserverInlines.h>
 #include <WebCore/FrameLoader.h>
-#include <WebCore/GraphicsContextCairo.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/LocalFrame.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/PrintContext.h>
 #include <WebCore/ResourceError.h>
-#include <cairo-pdf.h>
-#include <cairo-ps.h>
-#include <cairo-svg.h>
 #include <gtk/gtk.h>
 #include <memory>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
 #include <wtf/glib/GUniquePtr.h>
+
+#if USE(CAIRO)
+#include <WebCore/GraphicsContextCairo.h>
+#include <cairo-pdf.h>
+#include <cairo-ps.h>
+#include <cairo-svg.h>
+#endif
 
 namespace WebKit {
 
@@ -198,6 +201,7 @@ WebPrintOperationGtk::~WebPrintOperationGtk()
 void WebPrintOperationGtk::startPrint(WebCore::PrintContext* printContext, CompletionHandler<void(RefPtr<WebCore::FragmentedSharedBuffer>&&, WebCore::ResourceError&&)>&& completionHandler)
 {
     m_printContext = printContext;
+#if USE(CAIRO)
     m_completionHandler = WTFMove(completionHandler);
     m_buffer.reset();
 
@@ -245,8 +249,13 @@ void WebPrintOperationGtk::startPrint(WebCore::PrintContext* printContext, Compl
     m_scale = gtk_print_settings_get_scale(m_printSettings.get());
 
     print(surface.get(), 72, 72);
+#elif USE(SKIA)
+    completionHandler(nullptr, WebCore::internalError(frameURL()));
+    UNUSED_PARAM(printContext);
+#endif
 }
 
+#if USE(CAIRO)
 void WebPrintOperationGtk::startPage(cairo_t* cr)
 {
     if (!currentPageIsFirstPageOfSheet())
@@ -297,6 +306,7 @@ void WebPrintOperationGtk::endPrint(cairo_t* cr)
     cairo_surface_finish(cairo_get_target(cr));
     printDone(m_buffer.take(), { });
 }
+#endif
 
 int WebPrintOperationGtk::pageCount() const
 {
@@ -327,6 +337,7 @@ void WebPrintOperationGtk::rotatePageIfNeeded()
     if (!m_needsRotation)
         return;
 
+#if USE(CAIRO)
     GtkPaperSize* paperSize = gtk_page_setup_get_paper_size(m_pageSetup.get());
     double width = gtk_paper_size_get_width(paperSize, GTK_UNIT_INCH) * m_xDPI;
     double height = gtk_paper_size_get_height(paperSize, GTK_UNIT_INCH) * m_yDPI;
@@ -352,6 +363,9 @@ void WebPrintOperationGtk::rotatePageIfNeeded()
     default:
         break;
     }
+#elif USE(SKIA)
+    notImplemented();
+#endif
 }
 
 void WebPrintOperationGtk::getRowsAndColumnsOfPagesPerSheet(size_t& rows, size_t& columns)
@@ -424,6 +438,7 @@ void WebPrintOperationGtk::getPositionOfPageInSheet(size_t rows, size_t columns,
 
 void WebPrintOperationGtk::prepareContextToDraw()
 {
+#if USE(CAIRO)
     if (m_numberUp < 2) {
         double left = gtk_page_setup_get_left_margin(m_pageSetup.get(), GTK_UNIT_INCH);
         double top = gtk_page_setup_get_top_margin(m_pageSetup.get(), GTK_UNIT_INCH);
@@ -524,10 +539,14 @@ void WebPrintOperationGtk::prepareContextToDraw()
     default:
         break;
     }
+#elif USE(SKIA)
+    notImplemented();
+#endif
 }
 
 void WebPrintOperationGtk::renderPage(int pageNumber)
 {
+#if USE(CAIRO)
     startPage(m_cairoContext.get());
     cairo_save(m_cairoContext.get());
 
@@ -539,6 +558,9 @@ void WebPrintOperationGtk::renderPage(int pageNumber)
 
     cairo_restore(m_cairoContext.get());
     endPage(m_cairoContext.get());
+#elif USE(SKIA)
+    notImplemented();
+#endif
 }
 
 gboolean WebPrintOperationGtk::printPagesIdle(gpointer userData)
@@ -564,8 +586,12 @@ void WebPrintOperationGtk::printPagesIdleDone(gpointer userData)
 void WebPrintOperationGtk::printPagesDone()
 {
     m_printPagesIdleId = 0;
+#if USE(CAIRO)
     endPrint(m_cairoContext.get());
     m_cairoContext = nullptr;
+#elif USE(SKIA)
+    notImplemented();
+#endif
 }
 
 void WebPrintOperationGtk::printDone(RefPtr<WebCore::FragmentedSharedBuffer>&& buffer, WebCore::ResourceError&& error)
@@ -579,6 +605,7 @@ void WebPrintOperationGtk::printDone(RefPtr<WebCore::FragmentedSharedBuffer>&& b
         m_completionHandler(WTFMove(buffer), WTFMove(error));
 }
 
+#if USE(CAIRO)
 void WebPrintOperationGtk::print(cairo_surface_t* surface, double xDPI, double yDPI)
 {
     ASSERT(m_printContext);
@@ -605,5 +632,6 @@ void WebPrintOperationGtk::print(cairo_surface_t* surface, double xDPI, double y
         g_main_loop_run(mainLoop);
     }
 }
+#endif
 
 } // namespace WebKit

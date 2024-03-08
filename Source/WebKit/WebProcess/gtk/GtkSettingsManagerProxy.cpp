@@ -28,9 +28,13 @@
 
 #include "GtkSettingsManagerProxyMessages.h"
 #include "WebProcess.h"
-#include <WebCore/CairoUtilities.h>
+#include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
 #include <WebCore/RenderTheme.h>
+
+#if USE(CAIRO)
+#include <WebCore/CairoUtilities.h>
+#endif
 
 namespace WebKit {
 using namespace WebCore;
@@ -114,6 +118,7 @@ void GtkSettingsManagerProxy::applySettings(GtkSettingsState&& state)
 
 void GtkSettingsManagerProxy::applyHintingSettings()
 {
+#if USE(CAIRO)
     gint hinting;
     GUniqueOutPtr<char> hintStyleString;
     
@@ -144,10 +149,14 @@ void GtkSettingsManagerProxy::applyHintingSettings()
     }
 
     setDefaultCairoHintOptions(hintMetrics, hintStyle);
+#elif USE(SKIA)
+    notImplemented();
+#endif
 }
 
 void GtkSettingsManagerProxy::applyAntialiasSettings()
 {
+#if USE(CAIRO)
     gint antialias;
     GUniqueOutPtr<char> rgbaString;
 
@@ -182,6 +191,9 @@ void GtkSettingsManagerProxy::applyAntialiasSettings()
     }
 
     setDefaultCairoAntialiasOptions(antialiasMode, subpixelOrder);
+#elif USE(SKIA)
+    notImplemented();
+#endif
 }
 
 } // namespace WebKit

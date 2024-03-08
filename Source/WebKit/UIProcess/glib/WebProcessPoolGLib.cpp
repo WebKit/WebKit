@@ -127,7 +127,7 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     parameters.gstreamerOptions = WebCore::extractGStreamerOptionsFromCommandLine();
 #endif
 
-#if PLATFORM(GTK) && !USE(GTK4)
+#if PLATFORM(GTK) && !USE(GTK4) && USE(CAIRO)
     parameters.useSystemAppearanceForScrollbars = m_configuration->useSystemAppearanceForScrollbars();
 #endif
 

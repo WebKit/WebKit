@@ -97,7 +97,6 @@ WEBKIT_OPTION_DEFINE(ENABLE_WPE_PLATFORM_HEADLESS "Whether to enable support for
 WEBKIT_OPTION_DEFINE(ENABLE_WPE_PLATFORM_WAYLAND "Whether to enable support for Wayland platform" PUBLIC ON)
 WEBKIT_OPTION_DEFINE(ENABLE_WPE_QT_API "Whether to enable support for the Qt5/QML plugin" PUBLIC ${ENABLE_DEVELOPER_MODE})
 WEBKIT_OPTION_DEFINE(ENABLE_WPE_1_1_API "Whether to build WPE 1.1 instead of WPE 2.0" PUBLIC OFF)
-WEBKIT_OPTION_DEFINE(USE_SKIA "Whether to use Skia instead of Cairo." PRIVATE OFF)
 WEBKIT_OPTION_DEFINE(USE_GBM "Whether to enable usage of GBM." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_LIBBACKTRACE "Whether to enable usage of libbacktrace." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_LIBDRM "Whether to enable usage of libdrm." PUBLIC ON)

@@ -47,8 +47,6 @@
 
 #if USE(GTK4)
 #include <WebCore/GRefPtrGtk.h>
-#else
-#include <WebCore/CairoUtilities.h>
 #endif
 #endif
 

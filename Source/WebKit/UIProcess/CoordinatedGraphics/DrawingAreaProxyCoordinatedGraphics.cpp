@@ -53,11 +53,11 @@ using namespace WebCore;
 
 DrawingAreaProxyCoordinatedGraphics::DrawingAreaProxyCoordinatedGraphics(WebPageProxy& webPageProxy, WebProcessProxy& webProcessProxy)
     : DrawingAreaProxy(DrawingAreaType::CoordinatedGraphics, webPageProxy, webProcessProxy)
-#if USE(GRAPHICS_LAYER_WC) || (USE(CAIRO) && !PLATFORM(WPE))
+#if !PLATFORM(WPE)
     , m_discardBackingStoreTimer(RunLoop::current(), this, &DrawingAreaProxyCoordinatedGraphics::discardBackingStore)
 #endif
 {
-#if USE(GLIB_EVENT_LOOP) && (USE(GRAPHICS_LAYER_WC) || (USE(CAIRO) && !PLATFORM(WPE)))
+#if USE(GLIB_EVENT_LOOP) && !PLATFORM(WPE)
     m_discardBackingStoreTimer.setPriority(RunLoopSourcePriority::ReleaseUnusedResourcesTimer);
 #endif
 }
@@ -69,7 +69,7 @@ DrawingAreaProxyCoordinatedGraphics::~DrawingAreaProxyCoordinatedGraphics()
         exitAcceleratedCompositingMode();
 }
 
-#if USE(GRAPHICS_LAYER_WC) || (USE(CAIRO) && !PLATFORM(WPE))
+#if !PLATFORM(WPE)
 void DrawingAreaProxyCoordinatedGraphics::paint(PlatformPaintContextPtr cr, const IntRect& rect, Region& unpaintedRegion)
 {
     unpaintedRegion = rect;
@@ -162,7 +162,7 @@ void DrawingAreaProxyCoordinatedGraphics::deviceScaleFactorDidChange()
 
 void DrawingAreaProxyCoordinatedGraphics::setBackingStoreIsDiscardable(bool isBackingStoreDiscardable)
 {
-#if USE(GRAPHICS_LAYER_WC) || (USE(CAIRO) && !PLATFORM(WPE))
+#if !PLATFORM(WPE)
     if (m_isBackingStoreDiscardable == isBackingStoreDiscardable)
         return;
 
@@ -195,7 +195,7 @@ void DrawingAreaProxyCoordinatedGraphics::update(uint64_t, UpdateInfo&& updateIn
 
     // FIXME: Handle the case where the view is hidden.
 
-#if USE(GRAPHICS_LAYER_WC) || (USE(CAIRO) && !PLATFORM(WPE))
+#if !PLATFORM(WPE)
     incorporateUpdate(WTFMove(updateInfo));
 #endif
 
@@ -211,7 +211,7 @@ void DrawingAreaProxyCoordinatedGraphics::enterAcceleratedCompositingMode(uint64
 void DrawingAreaProxyCoordinatedGraphics::exitAcceleratedCompositingMode(uint64_t, UpdateInfo&& updateInfo)
 {
     exitAcceleratedCompositingMode();
-#if USE(GRAPHICS_LAYER_WC) || (USE(CAIRO) && !PLATFORM(WPE))
+#if !PLATFORM(WPE)
     incorporateUpdate(WTFMove(updateInfo));
 #endif
 }
@@ -229,7 +229,7 @@ bool DrawingAreaProxyCoordinatedGraphics::alwaysUseCompositing() const
 void DrawingAreaProxyCoordinatedGraphics::enterAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)
 {
     ASSERT(!isInAcceleratedCompositingMode());
-#if USE(GRAPHICS_LAYER_WC) || (USE(CAIRO) && !PLATFORM(WPE))
+#if !PLATFORM(WPE)
     m_backingStore = nullptr;
 #endif
     m_layerTreeContext = layerTreeContext;
@@ -277,7 +277,7 @@ void DrawingAreaProxyCoordinatedGraphics::didUpdateGeometry()
         sendUpdateGeometry();
 }
 
-#if USE(GRAPHICS_LAYER_WC) || (USE(CAIRO) && !PLATFORM(WPE))
+#if !PLATFORM(WPE)
 void DrawingAreaProxyCoordinatedGraphics::discardBackingStoreSoon()
 {
     if (!m_backingStore || !m_isBackingStoreDiscardable || m_discardBackingStoreTimer.isActive())

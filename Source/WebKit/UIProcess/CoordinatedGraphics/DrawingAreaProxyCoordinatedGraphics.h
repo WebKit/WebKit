@@ -31,7 +31,7 @@
 #include "LayerTreeContext.h"
 #include <wtf/RunLoop.h>
 
-#if USE(GRAPHICS_LAYER_WC) || (USE(CAIRO) && !PLATFORM(WPE))
+#if !PLATFORM(WPE)
 #include "BackingStore.h"
 #endif
 
@@ -46,7 +46,7 @@ public:
     DrawingAreaProxyCoordinatedGraphics(WebPageProxy&, WebProcessProxy&);
     virtual ~DrawingAreaProxyCoordinatedGraphics();
 
-#if USE(GRAPHICS_LAYER_WC) || (USE(CAIRO) && !PLATFORM(WPE))
+#if !PLATFORM(WPE)
     void paint(PlatformPaintContextPtr, const WebCore::IntRect&, WebCore::Region& unpaintedRegion);
 #endif
 
@@ -86,7 +86,7 @@ private:
     void sendUpdateGeometry();
     void didUpdateGeometry();
 
-#if USE(GRAPHICS_LAYER_WC) || (USE(CAIRO) && !PLATFORM(WPE))
+#if !PLATFORM(WPE)
     bool forceUpdateIfNeeded();
     void incorporateUpdate(UpdateInfo&&);
     void discardBackingStoreSoon();
@@ -118,7 +118,7 @@ private:
     WebCore::IntSize m_lastSentSize;
 
 
-#if USE(GRAPHICS_LAYER_WC) || (USE(CAIRO) && !PLATFORM(WPE))
+#if !PLATFORM(WPE)
     bool m_isBackingStoreDiscardable { true };
     bool m_inForceUpdate { false };
     std::unique_ptr<BackingStore> m_backingStore;

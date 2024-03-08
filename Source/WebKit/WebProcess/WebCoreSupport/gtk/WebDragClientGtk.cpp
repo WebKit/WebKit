@@ -32,18 +32,23 @@
 #include "MessageSenderInlines.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
-#include <WebCore/CairoOperations.h>
 #include <WebCore/DataTransfer.h>
 #include <WebCore/DragData.h>
 #include <WebCore/GraphicsContext.h>
+#include <WebCore/NotImplemented.h>
 #include <WebCore/Pasteboard.h>
 #include <WebCore/SelectionData.h>
 #include <WebCore/ShareableBitmap.h>
+
+#if USE(CAIRO)
+#include <WebCore/CairoOperations.h>
 #include <cairo.h>
+#endif
 
 namespace WebKit {
 using namespace WebCore;
 
+#if USE(CAIRO)
 static RefPtr<ShareableBitmap> convertCairoSurfaceToShareableBitmap(cairo_surface_t* surface)
 {
     if (!surface)
@@ -58,6 +63,7 @@ static RefPtr<ShareableBitmap> convertCairoSurfaceToShareableBitmap(cairo_surfac
     Cairo::drawSurface(*graphicsContext->platformContext(), surface, IntRect(IntPoint(), imageSize), IntRect(IntPoint(), imageSize), state.imageInterpolationQuality(), state.alpha(), Cairo::ShadowState(state));
     return bitmap;
 }
+#endif
 
 void WebDragClient::didConcludeEditDrag()
 {
@@ -65,6 +71,7 @@ void WebDragClient::didConcludeEditDrag()
 
 void WebDragClient::startDrag(DragItem dragItem, DataTransfer& dataTransfer, Frame&)
 {
+#if USE(CAIRO)
     auto& dragImage = dragItem.image;
     auto bitmap = convertCairoSurfaceToShareableBitmap(dragImage.get().get());
     std::optional<ShareableBitmap::Handle> handle;
@@ -76,6 +83,10 @@ void WebDragClient::startDrag(DragItem dragItem, DataTransfer& dataTransfer, Fra
         if (!handle)
             return;
     }
+#elif USE(SKIA)
+    std::optional<ShareableBitmap::Handle> handle;
+    notImplemented();
+#endif
 
     m_page->willStartDrag();
     m_page->send(Messages::WebPageProxy::StartDrag(dataTransfer.pasteboard().selectionData(), dataTransfer.sourceOperationMask(), WTFMove(handle), dataTransfer.dragLocation()));

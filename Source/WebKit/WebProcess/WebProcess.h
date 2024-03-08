@@ -666,7 +666,7 @@ private:
     void sendMessageToWebProcessExtension(UserMessage&&);
 #endif
 
-#if PLATFORM(GTK) && !USE(GTK4)
+#if PLATFORM(GTK) && !USE(GTK4) && USE(CAIRO)
     void setUseSystemAppearanceForScrollbars(bool);
 #endif
 

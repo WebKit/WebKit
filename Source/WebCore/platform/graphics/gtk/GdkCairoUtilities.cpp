@@ -26,6 +26,8 @@
 #include "config.h"
 #include "GdkCairoUtilities.h"
 
+#if USE(CAIRO)
+
 #include "CairoUtilities.h"
 #include "IntSize.h"
 #include <cairo.h>
@@ -60,3 +62,5 @@ GRefPtr<GdkTexture> cairoSurfaceToGdkTexture(cairo_surface_t* surface)
 #endif
 
 } // namespace WebCore
+
+#endif // #if USE(CAIRO)

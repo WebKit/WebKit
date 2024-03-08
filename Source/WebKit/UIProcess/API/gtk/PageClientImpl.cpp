@@ -46,7 +46,6 @@
 #include "WebKitWebViewPrivate.h"
 #include "WebPageProxy.h"
 #include "WebProcessPool.h"
-#include <WebCore/CairoUtilities.h>
 #include <WebCore/Cursor.h>
 #include <WebCore/DOMPasteAccess.h>
 #include <WebCore/EventNames.h>
@@ -64,6 +63,10 @@
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 #include "WebDateTimePickerGtk.h"
+#endif
+
+#if USE(CAIRO)
+#include <WebCore/CairoUtilities.h>
 #endif
 
 namespace WebKit {
@@ -95,7 +98,13 @@ void PageClientImpl::setViewNeedsDisplay(const WebCore::Region& region)
         return;
     }
 
+#if USE(CAIRO)
     gtk_widget_queue_draw_region(m_viewWidget, toCairoRegion(region).get());
+#else
+    // FIXME: use gtk_widget_queue_draw_region() too.
+    gtk_widget_queue_draw(m_viewWidget);
+    UNUSED_PARAM(region);
+#endif
 #endif
 }
 

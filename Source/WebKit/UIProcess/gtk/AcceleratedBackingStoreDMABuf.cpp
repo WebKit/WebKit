@@ -36,6 +36,7 @@
 #include "WebProcessProxy.h"
 #include <WebCore/GLContext.h>
 #include <WebCore/IntRect.h>
+#include <WebCore/NotImplemented.h>
 #include <WebCore/PlatformDisplay.h>
 #include <WebCore/ShareableBitmap.h>
 #include <WebCore/SharedMemory.h>
@@ -374,8 +375,12 @@ AcceleratedBackingStoreDMABuf::BufferSHM::BufferSHM(uint64_t id, RefPtr<WebCore:
 
 void AcceleratedBackingStoreDMABuf::BufferSHM::didUpdateContents()
 {
+#if USE(CAIRO)
     m_surface = m_bitmap->createCairoSurface();
     cairo_surface_set_device_scale(m_surface.get(), m_deviceScaleFactor, m_deviceScaleFactor);
+#elif USE(SKIA)
+    notImplemented();
+#endif
 }
 
 #if USE(GTK4)

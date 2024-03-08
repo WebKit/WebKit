@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WebAutomationSession.h"
 
+#if USE(CAIRO)
+
 #include "ViewSnapshotStore.h"
 #include <WebCore/RefPtrCairo.h>
 #include <cairo.h>
@@ -73,3 +75,4 @@ std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(cons
 
 } // namespace WebKit
 
+#endif // USE(CAIRO)

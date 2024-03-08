@@ -222,6 +222,7 @@ void PlatformWebView::changeWindowScaleIfNeeded(float)
 {
 }
 
+#if USE(CAIRO)
 cairo_surface_t* PlatformWebView::windowSnapshotImage()
 {
 #if USE(GTK4)
@@ -254,6 +255,12 @@ cairo_surface_t* PlatformWebView::windowSnapshotImage()
 
     return imageSurface;
 }
+#elif USE(SKIA)
+SkImage* PlatformWebView::windowSnapshotImage()
+{
+    return nullptr;
+}
+#endif
 
 void PlatformWebView::didInitializeClients()
 {

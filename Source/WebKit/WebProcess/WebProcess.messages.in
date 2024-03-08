@@ -186,7 +186,7 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     PowerSourceDidChange(bool hasAC)
 #endif
 
-#if PLATFORM(GTK) && !USE(GTK4)
+#if PLATFORM(GTK) && !USE(GTK4) && USE(CAIRO)
     SetUseSystemAppearanceForScrollbars(bool useSystemAppearanceForScrollbars)
 #endif
 

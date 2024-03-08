@@ -27,7 +27,7 @@
 #include "config.h"
 #include "RenderThemeGadget.h"
 
-#if !USE(GTK4)
+#if !USE(GTK4) && USE(CAIRO)
 
 #include "FloatRect.h"
 #include "GRefPtrGtk.h"
@@ -259,4 +259,4 @@ void RenderThemeScrollbarGadget::renderStepper(cairo_t* cr, const FloatRect& pai
 
 } // namespace WebCore
 
-#endif // !USE(GTK4)
+#endif // !USE(GTK4) && USE(CAIRO)

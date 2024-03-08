@@ -28,14 +28,17 @@
 #include "config.h"
 #include "BackingStore.h"
 
-#if USE(CAIRO)
+#if USE(CAIRO) || PLATFORM(GTK)
 
 #include "UpdateInfo.h"
-#include <WebCore/CairoUtilities.h>
-#include <WebCore/GraphicsContextCairo.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/ShareableBitmap.h>
 #include <cairo.h>
+
+#if USE(CAIRO)
+#include <WebCore/CairoUtilities.h>
+#include <WebCore/GraphicsContextCairo.h>
+#endif
 
 namespace WebKit {
 using namespace WebCore;
@@ -96,6 +99,7 @@ void BackingStore::incorporateUpdate(UpdateInfo&& updateInfo)
 
     scroll(updateInfo.scrollRect, updateInfo.scrollOffset);
 
+#if USE(CAIRO)
     // Paint all update rects.
     IntPoint updateRectLocation = updateInfo.updateRectBounds.location();
     GraphicsContextCairo graphicsContext(m_surface.get());
@@ -109,6 +113,9 @@ void BackingStore::incorporateUpdate(UpdateInfo&& updateInfo)
         srcRect.move(-updateRectLocation.x(), -updateRectLocation.y());
         bitmap->paint(graphicsContext, m_deviceScaleFactor, updateRect.location(), srcRect);
     }
+#elif USE(SKIA)
+    notImplemented();
+#endif
 }
 
 void BackingStore::scroll(const IntRect& scrollRect, const IntSize& scrollOffset)
@@ -125,11 +132,15 @@ void BackingStore::scroll(const IntRect& scrollRect, const IntSize& scrollOffset
     if (!m_scrollSurface)
         m_scrollSurface = createCairoImageSurfaceWithFastMalloc(m_size, m_deviceScaleFactor);
 
+#if USE(CAIRO)
     copyRectFromOneSurfaceToAnother(m_surface.get(), m_scrollSurface.get(), scrollOffset, targetRect);
     copyRectFromOneSurfaceToAnother(m_scrollSurface.get(), m_surface.get(), { }, targetRect);
+#elif USE(SKIA)
+    // FIXME: move copyRectFromOneSurfaceToAnother to a different file if we really need this with skia.
+#endif
     m_scrolledHysteresis.impulse();
 }
 
 } // namespace WebKit
 
-#endif // USE(CAIRO)
+#endif // USE(CAIRO) || PLATFORM(GTK)

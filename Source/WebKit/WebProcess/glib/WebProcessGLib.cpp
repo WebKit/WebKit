@@ -61,7 +61,7 @@
 #include <WebCore/PlatformDisplaySurfaceless.h>
 #endif
 
-#if PLATFORM(GTK) && !USE(GTK4)
+#if PLATFORM(GTK) && !USE(GTK4) && USE(CAIRO)
 #include <WebCore/ScrollbarThemeGtk.h>
 #endif
 
@@ -173,7 +173,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     WebCore::setGStreamerOptionsFromUIProcess(WTFMove(parameters.gstreamerOptions));
 #endif
 
-#if PLATFORM(GTK) && !USE(GTK4)
+#if PLATFORM(GTK) && !USE(GTK4) && USE(CAIRO)
     setUseSystemAppearanceForScrollbars(parameters.useSystemAppearanceForScrollbars);
 #endif
 
@@ -228,7 +228,7 @@ void WebProcess::sendMessageToWebProcessExtension(UserMessage&& message)
         webkitWebProcessExtensionDidReceiveUserMessage(extension, WTFMove(message));
 }
 
-#if PLATFORM(GTK) && !USE(GTK4)
+#if PLATFORM(GTK) && !USE(GTK4) && USE(CAIRO)
 void WebProcess::setUseSystemAppearanceForScrollbars(bool useSystemAppearanceForScrollbars)
 {
     static_cast<ScrollbarThemeGtk&>(ScrollbarTheme::theme()).setUseSystemAppearance(useSystemAppearanceForScrollbars);

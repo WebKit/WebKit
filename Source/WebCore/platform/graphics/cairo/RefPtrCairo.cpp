@@ -19,7 +19,7 @@
 #include "config.h"
 #include "RefPtrCairo.h"
 
-#if USE(CAIRO)
+#if USE(CAIRO) || PLATFORM(GTK)
 
 #include <cairo.h>
 
@@ -105,4 +105,4 @@ void DefaultRefDerefTraits<cairo_region_t>::derefIfNotNull(cairo_region_t* ptr)
 
 } // namespace WTF
 
-#endif // USE(CAIRO)
+#endif // USE(CAIRO) || PLATFORM(GTK)

@@ -14,8 +14,6 @@ endif ()
 set(USER_AGENT_BRANDING "" CACHE STRING "Branding to add to user agent string")
 
 find_package(Cairo 1.16.0 REQUIRED)
-find_package(Fontconfig 2.13.0 REQUIRED)
-find_package(Freetype 2.9.0 REQUIRED)
 find_package(LibGcrypt 1.7.0 REQUIRED)
 find_package(Libtasn1 REQUIRED)
 find_package(HarfBuzz 1.4.2 REQUIRED COMPONENTS ICU)
@@ -33,7 +31,6 @@ find_package(ATSPI 2.5.3)
 
 include(GStreamerDefinitions)
 
-SET_AND_EXPOSE_TO_BUILD(USE_CAIRO TRUE)
 SET_AND_EXPOSE_TO_BUILD(USE_GCRYPT TRUE)
 SET_AND_EXPOSE_TO_BUILD(USE_LIBEPOXY TRUE)
 SET_AND_EXPOSE_TO_BUILD(USE_THEME_ADWAITA TRUE)
@@ -262,6 +259,14 @@ endif ()
 SET_AND_EXPOSE_TO_BUILD(USE_ATSPI 1)
 SET_AND_EXPOSE_TO_BUILD(HAVE_GTK_UNIX_PRINTING ${GTK_UNIX_PRINT_FOUND})
 SET_AND_EXPOSE_TO_BUILD(HAVE_OS_DARK_MODE_SUPPORT 1)
+
+if (USE_SKIA)
+    SET_AND_EXPOSE_TO_BUILD(USE_CAIRO FALSE)
+else ()
+    find_package(Fontconfig 2.13.0 REQUIRED)
+    find_package(Freetype 2.9.0 REQUIRED)
+    SET_AND_EXPOSE_TO_BUILD(USE_CAIRO TRUE)
+endif ()
 
 # https://bugs.webkit.org/show_bug.cgi?id=182247
 if (ENABLED_COMPILER_SANITIZERS)

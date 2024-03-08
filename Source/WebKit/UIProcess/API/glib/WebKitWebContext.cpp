@@ -222,7 +222,9 @@ struct _WebKitWebContextPrivate {
     bool clientsDetached;
 #if PLATFORM(GTK) && !USE(GTK4)
     bool psonEnabled;
+#if USE(CAIRO)
     bool useSystemAppearanceForScrollbars;
+#endif
 #endif
 
 #if !ENABLE(2022_GLIB_API)
@@ -425,7 +427,7 @@ static void webkitWebContextConstructed(GObject* object)
     API::ProcessPoolConfiguration configuration;
     configuration.setInjectedBundlePath(FileSystem::stringFromFileSystemRepresentation(bundleFilename.get()));
     configuration.setUsesWebProcessCache(true);
-#if PLATFORM(GTK) && !USE(GTK4)
+#if PLATFORM(GTK) && !USE(GTK4) && USE(CAIRO)
     configuration.setProcessSwapsOnNavigation(priv->psonEnabled);
     configuration.setUseSystemAppearanceForScrollbars(priv->useSystemAppearanceForScrollbars);
 #else
@@ -1936,6 +1938,7 @@ void webkit_web_context_set_use_system_appearance_for_scrollbars(WebKitWebContex
 {
     g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
 
+#if USE(CAIRO)
     if (context->priv->useSystemAppearanceForScrollbars == enabled)
         return;
 
@@ -1947,6 +1950,10 @@ void webkit_web_context_set_use_system_appearance_for_scrollbars(WebKitWebContex
 
     context->priv->processPool->configuration().setUseSystemAppearanceForScrollbars(enabled);
     context->priv->processPool->sendToAllProcesses(Messages::WebProcess::SetUseSystemAppearanceForScrollbars(enabled));
+#else
+    // FIXME: deprecate this when switching to Skia.
+    UNUSED_PARAM(enabled);
+#endif
 }
 
 /**
@@ -1963,7 +1970,12 @@ gboolean webkit_web_context_get_use_system_appearance_for_scrollbars(WebKitWebCo
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(context), TRUE);
 
+#if USE(CAIRO)
     return context->priv->useSystemAppearanceForScrollbars;
+#else
+    // FIXME: deprecate this when switching to Skia.
+    return FALSE;
+#endif
 }
 #endif
 

@@ -21,6 +21,7 @@
 
 #include "Element.h"
 #include "Image.h"
+#include "NotImplemented.h"
 #include "TextFlags.h"
 #include "TextIndicator.h"
 #include <cairo.h>
@@ -31,8 +32,13 @@ namespace WebCore {
 
 IntSize dragImageSize(DragImageRef image)
 {
+#if USE(CAIRO)
     if (image)
         return { cairo_image_surface_get_width(image.get()), cairo_image_surface_get_height(image.get()) };
+#elif USE(SKIA)
+    notImplemented();
+    UNUSED_PARAM(image);
+#endif
 
     return { 0, 0 };
 }
@@ -54,6 +60,7 @@ DragImageRef scaleDragImage(DragImageRef image, FloatSize scale)
     if (imageSize == scaledSize)
         return image;
 
+#if USE(CAIRO)
     RefPtr<cairo_surface_t> scaledSurface = adoptRef(cairo_surface_create_similar(image.get(), CAIRO_CONTENT_COLOR_ALPHA, scaledSize.width(), scaledSize.height()));
 
     RefPtr<cairo_t> context = adoptRef(cairo_create(scaledSurface.get()));
@@ -65,6 +72,10 @@ DragImageRef scaleDragImage(DragImageRef image, FloatSize scale)
     cairo_paint(context.get());
 
     return scaledSurface;
+#elif USE(SKIA)
+    notImplemented();
+    return nullptr;
+#endif
 }
 
 DragImageRef dissolveDragImageToFraction(DragImageRef image, float fraction)
@@ -77,10 +88,15 @@ DragImageRef dissolveDragImageToFraction(DragImageRef image, float fraction)
         return image;
 #endif
 
+#if USE(CAIRO)
     RefPtr<cairo_t> context = adoptRef(cairo_create(image.get()));
     cairo_set_operator(context.get(), CAIRO_OPERATOR_DEST_IN);
     cairo_set_source_rgba(context.get(), 0, 0, 0, fraction);
     cairo_paint(context.get());
+#elif USE(SKIA)
+    notImplemented();
+    UNUSED_PARAM(fraction);
+#endif
     return image;
 }
 
