@@ -1825,7 +1825,7 @@ BOOL HTMLConverter::_processElement(Element& element, NSInteger depth)
         Element* blockElement = _blockLevelElementForNode(element.parentInComposedTree());
         NSString *breakClass = element.getAttribute(classAttr);
         NSString *blockTag = blockElement ? (NSString *)blockElement->tagName() : nil;
-        BOOL isExtraBreak = [@"Apple-interchange-newline" isEqualToString:breakClass];
+        BOOL isExtraBreak = [AppleInterchangeNewline.createNSString() isEqualToString:breakClass];
         BOOL blockElementIsParagraph = ([@"P" isEqualToString:blockTag] || [@"LI" isEqualToString:blockTag] || ([blockTag hasPrefix:@"H"] && 2 == [blockTag length]));
         if (isExtraBreak)
             _flags.hasTrailingNewline = YES;

@@ -122,16 +122,14 @@ private:
 
 static bool isInterchangeNewlineNode(const Node& node)
 {
-    static NeverDestroyed<String> interchangeNewlineClassString = AppleInterchangeNewline ""_s;
     RefPtr br = dynamicDowncast<HTMLBRElement>(node);
-    return br && br->attributeWithoutSynchronization(classAttr) == interchangeNewlineClassString;
+    return br && br->attributeWithoutSynchronization(classAttr) == AppleInterchangeNewline;
 }
 
 static bool isInterchangeConvertedSpaceSpan(const Node& node)
 {
-    static NeverDestroyed<String> convertedSpaceSpanClassString = AppleConvertedSpace ""_s;
     RefPtr element = dynamicDowncast<HTMLElement>(node);
-    return element && element->attributeWithoutSynchronization(classAttr) == convertedSpaceSpanClassString;
+    return element && element->attributeWithoutSynchronization(classAttr) == AppleConvertedSpace;
 }
 
 static Position positionAvoidingPrecedingNodes(Position position)
@@ -1086,7 +1084,7 @@ static bool isInlineNodeWithStyle(const Node& node)
     // one of our internal classes.
     const AtomString& classAttributeValue = element->attributeWithoutSynchronization(classAttr);
     if (classAttributeValue == AppleTabSpanClass
-        || classAttributeValue == AppleConvertedSpace ""_s
+        || classAttributeValue == AppleConvertedSpace
         || classAttributeValue == ApplePasteAsQuotation)
         return true;
 
