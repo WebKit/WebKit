@@ -32,6 +32,7 @@
 #import "LegacyCDM.h"
 #import "Logging.h"
 #import "MediaPlayer.h"
+#import "MediaSampleAVFObjC.h"
 #import "MediaSessionManagerCocoa.h"
 #import "SharedBuffer.h"
 #import "SourceBufferPrivateAVFObjC.h"
@@ -364,6 +365,29 @@ void CDMSessionAVContentKeySession::addParser(AVStreamDataParser* parser)
         [contentKeySession() addStreamDataParser:parser];
 }
 
+bool CDMSessionAVContentKeySession::isAnyKeyUsable(const Keys& keys) const
+{
+    Keys requestKeys = CDMPrivateFairPlayStreaming::keyIDsForRequest(contentKeyRequest().get());
+    for (auto& requestKey : requestKeys) {
+        if (keys.findIf([&] (auto& key) {
+            return key.get() == requestKey.get();
+        }) != notFound)
+            return true;
+    }
+
+    return false;
+}
+
+void CDMSessionAVContentKeySession::attachContentKeyToSample(const MediaSampleAVFObjC& sample)
+{
+    AVContentKey *contentKey = [contentKeyRequest() contentKey];
+    ASSERT(contentKey);
+
+    NSError *error = nil;
+    if (!AVSampleBufferAttachContentKey(sample.platformSample().sample.cmSampleBuffer, contentKey, &error))
+        ERROR_LOG(LOGIDENTIFIER, "Failed to attach content key with error: %{public}@", error);
+}
+
 void CDMSessionAVContentKeySession::removeParser(AVStreamDataParser* parser)
 {
     INFO_LOG(LOGIDENTIFIER);
@@ -408,7 +432,7 @@ bool CDMSessionAVContentKeySession::hasContentKeyRequest() const
     return m_keyRequest;
 }
 
-RetainPtr<AVContentKeyRequest> CDMSessionAVContentKeySession::contentKeyRequest()
+RetainPtr<AVContentKeyRequest> CDMSessionAVContentKeySession::contentKeyRequest() const
 {
     Locker holder { m_keyRequestLock };
     return RetainPtr { m_keyRequest.get() };

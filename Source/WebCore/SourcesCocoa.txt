@@ -355,6 +355,7 @@ platform/graphics/avfoundation/objc/AVRoutePickerViewTargetPicker.mm
 platform/graphics/avfoundation/objc/AVStreamDataParserMIMETypeCache.mm
 platform/graphics/avfoundation/objc/AudioTrackPrivateAVFObjC.mm
 platform/graphics/avfoundation/objc/AudioTrackPrivateMediaSourceAVFObjC.cpp
+platform/graphics/avfoundation/objc/CDMFairPlayStreamingAVFObjC.mm
 platform/graphics/avfoundation/objc/CDMSessionAVContentKeySession.mm
 platform/graphics/avfoundation/objc/CDMSessionAVFoundationObjC.mm
 platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.mm

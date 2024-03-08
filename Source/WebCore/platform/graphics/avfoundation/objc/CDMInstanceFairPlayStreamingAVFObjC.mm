@@ -733,29 +733,12 @@ CDMInstanceSessionFairPlayStreamingAVFObjC::CDMInstanceSessionFairPlayStreamingA
 }
 
 using Keys = CDMInstanceSessionFairPlayStreamingAVFObjC::Keys;
-static Keys keyIDsForRequest(AVContentKeyRequest* request)
-{
-    if ([request.identifier isKindOfClass:[NSString class]])
-        return Keys::from(SharedBuffer::create([(NSString *)request.identifier dataUsingEncoding:NSUTF8StringEncoding]));
-    if ([request.identifier isKindOfClass:[NSData class]])
-        return Keys::from(SharedBuffer::create((NSData *)request.identifier));
-    if (request.initializationData) {
-        if (auto sinfKeyIDs = CDMPrivateFairPlayStreaming::extractKeyIDsSinf(SharedBuffer::create(request.initializationData)))
-            return WTFMove(sinfKeyIDs.value());
-#if HAVE(FAIRPLAYSTREAMING_MTPS_INITDATA)
-        if (auto mptsKeyIDs = CDMPrivateFairPlayStreaming::extractKeyIDsMpts(SharedBuffer::create(request.initializationData)))
-            return WTFMove(mptsKeyIDs.value());
-#endif
-    }
-    return { };
-}
-
 using Request = CDMInstanceSessionFairPlayStreamingAVFObjC::Request;
 static Keys keyIDsForRequest(const Request& requests)
 {
     Keys keyIDs;
     for (auto& request : requests.requests)
-        keyIDs.appendVector(keyIDsForRequest(request.get()));
+        keyIDs.appendVector(CDMPrivateFairPlayStreaming::keyIDsForRequest(request.get()));
     return keyIDs;
 }
 
@@ -961,7 +944,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::updateLicense(const String&, Li
 
             auto keyID = SharedBuffer::create(WTFMove(*keyIDVector));
             auto foundIndex = m_currentRequest.value().requests.findIf([&] (auto& request) {
-                auto keyIDs = keyIDsForRequest(request.get());
+                auto keyIDs = CDMPrivateFairPlayStreaming::keyIDsForRequest(request.get());
                 return keyIDs.findIf([&](const Ref<SharedBuffer>& id) {
                     return id.get() == keyID.get();
                 }) != notFound;
@@ -1195,7 +1178,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRequest(AVContentKeyR
     if (auto* certificate = m_instance->serverCertificate())
         appIdentifier = certificate->makeContiguous()->createNSData();
 
-    auto keyIDs = keyIDsForRequest(request);
+    auto keyIDs = CDMPrivateFairPlayStreaming::keyIDsForRequest(request);
     if (keyIDs.isEmpty()) {
         if (m_requestLicenseCallback) {
             m_requestLicenseCallback(SharedBuffer::create(), m_sessionId, false, Failed);
@@ -1323,7 +1306,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRequests(Vector<Retai
 
     @try {
         for (auto request : m_currentRequest.value().requests) {
-            auto keyIDs = keyIDsForRequest(request.get());
+            auto keyIDs = CDMPrivateFairPlayStreaming::keyIDsForRequest(request.get());
             RefPtr<SharedBuffer> keyID = WTFMove(keyIDs.first());
             auto contentIdentifier = keyID->makeContiguous()->createNSData();
             [request makeStreamingContentKeyRequestDataForApp:appIdentifier.get() contentIdentifier:contentIdentifier.get() options:nil completionHandler:[keyID = WTFMove(keyID), aggregator] (NSData *contentKeyRequestData, NSError *) mutable {
@@ -1600,7 +1583,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::updateKeyStatuses()
     KeyStatusVector keyStatuses;
 
     for (auto& request : contentKeyRequests()) {
-        auto keyIDs = keyIDsForRequest(request.get());
+        auto keyIDs = CDMPrivateFairPlayStreaming::keyIDsForRequest(request.get());
         auto status = requestStatusToCDMStatus([request status]);
         if ([request error].code == SecurityLevelError)
             status = CDMKeyStatus::OutputRestricted;
@@ -1778,7 +1761,7 @@ AVContentKey *CDMInstanceSessionFairPlayStreamingAVFObjC::contentKeyForSample(co
     size_t keyStatusIndex = 0;
 
     for (auto& request : contentKeyRequests()) {
-        for (auto& keyID : keyIDsForRequest(request.get())) {
+        for (auto& keyID : CDMPrivateFairPlayStreaming::keyIDsForRequest(request.get())) {
             if (!isPotentiallyUsableKeyStatus(m_keyStatuses[keyStatusIndex++].second))
                 continue;
 

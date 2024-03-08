@@ -973,7 +973,7 @@ bool SourceBufferPrivateAVFObjC::canEnqueueSample(TrackID trackID, const MediaSa
         return true;
 
     // if sample is encrypted, but we are not attached to a CDM: do not enqueue sample.
-    if (!m_cdmInstance)
+    if (!m_cdmInstance && !m_session)
         return false;
 
     // DecompressionSessions doesn't support encrypted media.
@@ -986,10 +986,16 @@ bool SourceBufferPrivateAVFObjC::canEnqueueSample(TrackID trackID, const MediaSa
 
     // if sample's set of keyIDs does not match the current set of keyIDs, consult with the CDM
     // to determine if the keyIDs are usable; if so, update the current set of keyIDs and enqueue sample.
-    if (m_cdmInstance->isAnyKeyUsable(sample.keyIDs())) {
+    if (m_cdmInstance && m_cdmInstance->isAnyKeyUsable(sample.keyIDs())) {
         m_currentTrackIDs.try_emplace(trackID, sample.keyIDs());
         return true;
     }
+
+    if (m_session && m_session->isAnyKeyUsable(sample.keyIDs())) {
+        m_currentTrackIDs.try_emplace(trackID, sample.keyIDs());
+        return true;
+    }
+
     return false;
 #else
     return true;
@@ -1119,10 +1125,13 @@ void SourceBufferPrivateAVFObjC::enqueueSampleBuffer(MediaSampleAVFObjC& sample)
 
 void SourceBufferPrivateAVFObjC::attachContentKeyToSampleIfNeeded(const MediaSampleAVFObjC& sample)
 {
-    if (!m_cdmInstance || !sampleBufferRenderersSupportKeySession() || !supportsAttachContentKey())
+    if (!sampleBufferRenderersSupportKeySession() || !supportsAttachContentKey())
         return;
 
-    m_cdmInstance->attachContentKeyToSample(sample);
+    if (m_cdmInstance)
+        m_cdmInstance->attachContentKeyToSample(sample);
+    else if (m_session)
+        m_session->attachContentKeyToSample(sample);
 }
 
 bool SourceBufferPrivateAVFObjC::isReadyForMoreSamples(TrackID trackID)

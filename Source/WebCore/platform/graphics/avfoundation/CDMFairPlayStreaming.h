@@ -30,6 +30,8 @@
 #include "CDMFactory.h"
 #include "CDMPrivate.h"
 
+OBJC_CLASS AVContentKeyRequest;
+
 namespace WebCore {
 
 struct FourCC;
@@ -94,6 +96,10 @@ public:
 #endif
 
     static const Vector<FourCC>& validFairPlayStreamingSchemes();
+
+#if HAVE(AVCONTENTKEYSESSION)
+    static Vector<Ref<SharedBuffer>> keyIDsForRequest(AVContentKeyRequest *);
+#endif
 
 private:
 #if !RELEASE_LOG_DISABLED
