@@ -488,7 +488,7 @@ public:
 
 #if ENABLE(TREE_DEBUGGING)
     void showNode(const char* prefix = "") const;
-    void showTreeForThis() const;
+    WEBCORE_EXPORT void showTreeForThis() const;
     void showNodePathForThis() const;
     void showTreeAndMark(const Node* markedNode1, const char* markedLabel1, const Node* markedNode2 = nullptr, const char* markedLabel2 = nullptr) const;
     void showTreeForThisAcrossFrame() const;

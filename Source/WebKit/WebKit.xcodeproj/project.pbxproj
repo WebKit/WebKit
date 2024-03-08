@@ -3158,7 +3158,7 @@
 		074879B72373A90900F5678E /* AppKitSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AppKitSoftLink.h; path = ios/AppKitSoftLink.h; sourceTree = "<group>"; };
 		074879B82373A90900F5678E /* AppKitSoftLink.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = AppKitSoftLink.mm; path = ios/AppKitSoftLink.mm; sourceTree = "<group>"; };
 		074AD71E2B61D51E00FFA67B /* UnifiedTextReplacementController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnifiedTextReplacementController.h; sourceTree = "<group>"; };
-		074AD7202B61D58F00FFA67B /* UnifiedTextReplacementController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedTextReplacementController.cpp; sourceTree = "<group>"; };
+		074AD7202B61D58F00FFA67B /* UnifiedTextReplacementController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = UnifiedTextReplacementController.mm; sourceTree = "<group>"; };
 		074E75FB1DF1FD1300D318EC /* UserMediaProcessManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserMediaProcessManager.h; sourceTree = "<group>"; };
 		074E75FC1DF2002400D318EC /* UserMediaProcessManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserMediaProcessManager.cpp; sourceTree = "<group>"; };
 		074E76001DF7075D00D318EC /* MediaDeviceSandboxExtensions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaDeviceSandboxExtensions.cpp; sourceTree = "<group>"; };
@@ -10388,6 +10388,7 @@
 				2D9CD5ED21FA503F0029ACFA /* TextCheckingControllerProxy.h */,
 				2D9CD5EB21FA503F0029ACFA /* TextCheckingControllerProxy.messages.in */,
 				2D9CD5EC21FA503F0029ACFA /* TextCheckingControllerProxy.mm */,
+				074AD7202B61D58F00FFA67B /* UnifiedTextReplacementController.mm */,
 				3A8997E029B25E8E00AB88B6 /* WebCookieCacheCocoa.mm */,
 				3A36AFAF2B9667770098631A /* WebCookieJarCocoa.mm */,
 				2DC4CF7A1D2DE24B00ECCC94 /* WebPageCocoa.mm */,
@@ -13684,7 +13685,6 @@
 				2DEE709D2755A46800FBF864 /* MomentumEventDispatcher.h */,
 				7C387433172F5615001BD88A /* PageBanner.cpp */,
 				7CF47FF917275C57008ACB91 /* PageBanner.h */,
-				074AD7202B61D58F00FFA67B /* UnifiedTextReplacementController.cpp */,
 				074AD71E2B61D51E00FFA67B /* UnifiedTextReplacementController.h */,
 				2D819B99186275B3001F03D1 /* ViewGestureGeometryCollector.cpp */,
 				2D819B9A186275B3001F03D1 /* ViewGestureGeometryCollector.h */,

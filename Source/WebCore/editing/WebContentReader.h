@@ -128,7 +128,11 @@ struct FragmentAndResources {
     Vector<Ref<ArchiveResource>> resources;
 };
 
-RefPtr<DocumentFragment> createFragmentAndAddResources(LocalFrame&, NSAttributedString *);
+enum class AddResources : bool {
+    No, Yes
+};
+
+WEBCORE_EXPORT RefPtr<DocumentFragment> createFragment(LocalFrame&, NSAttributedString *, AddResources);
 #endif
 
 }

@@ -730,6 +730,7 @@ WebProcess/WebPage/Cocoa/WebCookieCacheCocoa.mm
 WebProcess/WebPage/Cocoa/WebCookieJarCocoa.mm
 WebProcess/WebPage/Cocoa/WebPageCocoa.mm
 WebProcess/WebPage/Cocoa/WebRemoteObjectRegistry.cpp
+WebProcess/WebPage/Cocoa/UnifiedTextReplacementController.mm
 
 WebProcess/WebPage/ios/FindControllerIOS.mm
 WebProcess/WebPage/ios/WebPageIOS.mm

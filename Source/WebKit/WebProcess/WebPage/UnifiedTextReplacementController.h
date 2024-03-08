@@ -41,6 +41,8 @@ namespace WebKit {
 
 class WebPage;
 
+struct WebUnifiedTextReplacementContextData;
+
 class UnifiedTextReplacementController final {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(UnifiedTextReplacementController);
@@ -63,17 +65,11 @@ public:
     void textReplacementSessionDidReceiveEditAction(const WTF::UUID&, WebKit::WebTextReplacementData::EditAction);
 
 private:
-    struct Replacement {
-        WebCore::AttributedString attributedText;
-        WebCore::CharacterRange range;
-    };
-
     WeakPtr<WebPage> m_webPage;
 
     HashMap<WTF::UUID, Ref<WebCore::Range>> m_contextRanges;
     HashMap<WTF::UUID, Ref<WebCore::DocumentFragment>> m_originalDocumentNodes;
     HashMap<WTF::UUID, Ref<WebCore::DocumentFragment>> m_replacedDocumentNodes;
-    HashMap<WTF::UUID, Vector<Replacement>> m_replacements;
 };
 
 } // namespace WebKit

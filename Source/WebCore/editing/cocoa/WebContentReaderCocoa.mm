@@ -407,7 +407,7 @@ static void replaceRichContentWithAttachments(LocalFrame& frame, DocumentFragmen
 #endif
 }
 
-RefPtr<DocumentFragment> createFragmentAndAddResources(LocalFrame& frame, NSAttributedString *string)
+RefPtr<DocumentFragment> createFragment(LocalFrame& frame, NSAttributedString *string, AddResources addResources)
 {
     if (!frame.page() || !frame.document())
         return nullptr;
@@ -420,6 +420,9 @@ RefPtr<DocumentFragment> createFragmentAndAddResources(LocalFrame& frame, NSAttr
     auto fragmentAndResources = createFragment(frame, string);
     if (!fragmentAndResources.fragment)
         return nullptr;
+
+    if (addResources == AddResources::No)
+        return fragmentAndResources.fragment;
 
     if (!DeprecatedGlobalSettings::customPasteboardDataEnabled()) {
         if (DocumentLoader* loader = frame.loader().documentLoader()) {
@@ -646,7 +649,7 @@ bool WebContentReader::readRTFD(SharedBuffer& buffer)
         return false;
 
     auto string = adoptNS([[NSAttributedString alloc] initWithRTFD:buffer.createNSData().get() documentAttributes:nullptr]);
-    auto fragment = createFragmentAndAddResources(frame, string.get());
+    auto fragment = createFragment(frame, string.get(), AddResources::Yes);
     if (!fragment)
         return false;
     addFragment(fragment.releaseNonNull());
@@ -660,7 +663,7 @@ bool WebContentMarkupReader::readRTFD(SharedBuffer& buffer)
     if (!frame->document())
         return false;
     auto string = adoptNS([[NSAttributedString alloc] initWithRTFD:buffer.createNSData().get() documentAttributes:nullptr]);
-    auto fragment = createFragmentAndAddResources(frame, string.get());
+    auto fragment = createFragment(frame, string.get(), AddResources::Yes);
     if (!fragment)
         return false;
 
@@ -675,7 +678,7 @@ bool WebContentReader::readRTF(SharedBuffer& buffer)
         return false;
 
     auto string = adoptNS([[NSAttributedString alloc] initWithRTF:buffer.createNSData().get() documentAttributes:nullptr]);
-    auto fragment = createFragmentAndAddResources(frame, string.get());
+    auto fragment = createFragment(frame, string.get(), AddResources::Yes);
     if (!fragment)
         return false;
     addFragment(fragment.releaseNonNull());
@@ -689,7 +692,7 @@ bool WebContentMarkupReader::readRTF(SharedBuffer& buffer)
     if (!frame->document())
         return false;
     auto string = adoptNS([[NSAttributedString alloc] initWithRTF:buffer.createNSData().get() documentAttributes:nullptr]);
-    auto fragment = createFragmentAndAddResources(frame, string.get());
+    auto fragment = createFragment(frame, string.get(), AddResources::Yes);
     if (!fragment)
         return false;
     m_markup = serializeFragment(*fragment, SerializedNodes::SubtreeIncludingNode);

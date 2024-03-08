@@ -242,7 +242,7 @@ void Editor::replaceSelectionWithAttributedString(NSAttributedString *attributed
         return;
 
     if (document->selection().selection().isContentRichlyEditable()) {
-        if (auto fragment = createFragmentAndAddResources(*document->frame(), attributedString)) {
+        if (auto fragment = createFragment(*document->frame(), attributedString, AddResources::Yes)) {
             if (shouldInsertFragment(*fragment, selectedRange(), EditorInsertAction::Pasted))
                 pasteAsFragment(fragment.releaseNonNull(), false, false, mailBlockquoteHandling);
         }
