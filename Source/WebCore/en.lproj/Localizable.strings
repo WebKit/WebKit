@@ -1169,7 +1169,7 @@
 "Previous Page" = "Previous Page";
 
 /* Title for the webarea while the accessibility tree is being built. */
-"Processing page" = "Processing page";
+"Processing page %@" = "Processing page %@";
 
 /* Codec Strings */
 "Professional Profile (AV1 Codec Profile)" = "Professional Profile, ";

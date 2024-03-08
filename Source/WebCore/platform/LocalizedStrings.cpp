@@ -990,11 +990,6 @@ String autoFillStrongPasswordLabel()
     return WEB_UI_STRING("Strong Password", "Label for strong password.");
 }
 
-String AXProcessingPage()
-{
-    return WEB_UI_STRING("Processing page", "Title for the webarea while the accessibility tree is being built.");
-}
-
 String missingPluginText()
 {
     return WEB_UI_STRING("Missing Plug-in", "Label text to be used when a plugin is missing");

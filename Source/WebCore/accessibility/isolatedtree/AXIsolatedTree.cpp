@@ -193,8 +193,7 @@ void AXIsolatedTree::reportLoadingProgress(double processingProgress)
     }
 
     m_processingProgress = processingProgress;
-    String percent = String::number(std::ceil(loadingProgress() * 100)) + "%"_s;
-    String title = AXProcessingPage() + " "_s + percent;
+    String title = AXProcessingPage(loadingProgress());
     AXLOG(title);
 
     WeakPtr cache = axObjectCache();

@@ -285,7 +285,7 @@ namespace WebCore {
     String AXAutoFillLoadingLabel();
     String autoFillStrongPasswordLabel();
 
-    String AXProcessingPage();
+    String AXProcessingPage(double);
 
     String missingPluginText();
     String crashedPluginText();
