@@ -200,14 +200,9 @@ void SWServerWorker::scriptContextStarted(const std::optional<ServiceWorkerJobDa
 
 void SWServerWorker::didFinishInstall(const std::optional<ServiceWorkerJobDataIdentifier>& jobDataIdentifier, bool wasSuccessful)
 {
-    auto state = this->state();
-    if (state == ServiceWorkerState::Redundant)
-        return;
-
-    ASSERT(m_server);
-    RELEASE_ASSERT_WITH_MESSAGE(state == ServiceWorkerState::Installing, "State is %hhu", static_cast<uint8_t>(state));
-    if (RefPtr server = m_server.get())
-        server->didFinishInstall(jobDataIdentifier, *this, wasSuccessful);
+    ASSERT(m_server && this->state() == ServiceWorkerState::Installing);
+    if (m_server)
+        m_server->didFinishInstall(jobDataIdentifier, *this, wasSuccessful);
 }
 
 void SWServerWorker::didFinishActivation()

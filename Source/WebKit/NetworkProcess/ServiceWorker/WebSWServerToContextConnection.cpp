@@ -41,10 +41,13 @@
 #include <WebCore/NotificationData.h>
 #include <WebCore/NotificationPayload.h>
 #include <WebCore/SWServer.h>
+#include <WebCore/SWServerWorker.h>
 #include <WebCore/ServiceWorkerContextData.h>
 
 namespace WebKit {
 using namespace WebCore;
+
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, &this->ipcConnection())
 
 WebSWServerToContextConnection::WebSWServerToContextConnection(NetworkConnectionToWebProcess& connection, WebPageProxyIdentifier webPageProxyID, RegistrableDomain&& registrableDomain, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, SWServer& server)
     : SWServerToContextConnection(server, WTFMove(registrableDomain), serviceWorkerPageIdentifier)
@@ -104,8 +107,10 @@ void WebSWServerToContextConnection::postMessageToServiceWorkerClient(const Scri
 
 void WebSWServerToContextConnection::skipWaiting(uint64_t requestIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier)
 {
-    if (RefPtr worker = SWServerWorker::existingWorkerForIdentifier(serviceWorkerIdentifier))
+    if (RefPtr worker = SWServerWorker::existingWorkerForIdentifier(serviceWorkerIdentifier)) {
+        MESSAGE_CHECK(worker->isTerminating() || worker->registration());
         worker->skipWaiting();
+    }
 
     send(Messages::WebSWContextManagerConnection::SkipWaitingCompleted { requestIdentifier });
 }
@@ -212,6 +217,34 @@ void WebSWServerToContextConnection::fireBackgroundFetchClickEvent(ServiceWorker
 void WebSWServerToContextConnection::terminateWorker(ServiceWorkerIdentifier serviceWorkerIdentifier)
 {
     send(Messages::WebSWContextManagerConnection::TerminateWorker(serviceWorkerIdentifier));
+}
+
+void WebSWServerToContextConnection::didFinishActivation(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier)
+{
+    RefPtr worker = SWServerWorker::existingWorkerForIdentifier(serviceWorkerIdentifier);
+    if (!worker)
+        return;
+
+    auto state = worker->state();
+    if (state == ServiceWorkerState::Redundant)
+        return;
+
+    MESSAGE_CHECK(state == ServiceWorkerState::Activating);
+    SWServerToContextConnection::didFinishActivation(serviceWorkerIdentifier);
+}
+
+void WebSWServerToContextConnection::didFinishInstall(const std::optional<WebCore::ServiceWorkerJobDataIdentifier>& jobDataIdentifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, bool wasSuccessful)
+{
+    RefPtr worker = SWServerWorker::existingWorkerForIdentifier(serviceWorkerIdentifier);
+    if (!worker)
+        return;
+
+    auto state = worker->state();
+    if (state == ServiceWorkerState::Redundant)
+        return;
+
+    MESSAGE_CHECK(state == ServiceWorkerState::Installing);
+    SWServerToContextConnection::didFinishInstall(jobDataIdentifier, serviceWorkerIdentifier, wasSuccessful);
 }
 
 void WebSWServerToContextConnection::didSaveScriptsToDisk(ServiceWorkerIdentifier serviceWorkerIdentifier, const ScriptBuffer& script, const MemoryCompactRobinHoodHashMap<URL, ScriptBuffer>& importedScripts)
@@ -398,4 +431,5 @@ void WebSWServerToContextConnection::setInspectable(ServiceWorkerIsInspectable i
     send(Messages::WebSWContextManagerConnection::SetInspectable { inspectable });
 }
 
+#undef MESSAGE_CHECK
 } // namespace WebKit
