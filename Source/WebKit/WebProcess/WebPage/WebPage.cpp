@@ -3276,7 +3276,7 @@ void WebPage::updateDrawingAreaLayerTreeFreezeState()
 #endif
 #if PLATFORM(VISION) && ENABLE(WEBXR)
         if (RefPtr page = m_page) {
-            if (page->hasActiveImmersiveSession())
+            if (page->hasActiveImmersiveSession() && page->shouldBlockLayerTreeFreezingForVideo())
                 shouldSkipFreezingLayerTreeOnBackgrounding = true;
         }
 #endif

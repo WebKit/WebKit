@@ -2680,6 +2680,20 @@ void Page::setMuted(MediaProducerMutedStateFlags muted)
     });
 }
 
+bool Page::shouldBlockLayerTreeFreezingForVideo()
+{
+    bool shouldBlockLayerTreeFreezingForVideo = false;
+    forEachMediaElement([&shouldBlockLayerTreeFreezingForVideo] (HTMLMediaElement& element) {
+        // FIXME: Consider only returning true when `element.readyState >=
+        // HTMLMediaElementEnums::HAVE_METADATA` and forcing an update to the layer tree
+        // freeze state when an element's readyState gets to HAVE_METADATA in
+        // `HTMLMediaElement::setReadyState`
+        if (element.isVideo())
+            shouldBlockLayerTreeFreezingForVideo = true;
+    });
+    return shouldBlockLayerTreeFreezingForVideo;
+}
+
 void Page::stopMediaCapture(MediaProducerMediaCaptureKind kind)
 {
     UNUSED_PARAM(kind);

@@ -883,6 +883,7 @@ public:
     void playbackControlsMediaEngineChanged();
 #endif
     WEBCORE_EXPORT void setMuted(MediaProducerMutedStateFlags);
+    WEBCORE_EXPORT bool shouldBlockLayerTreeFreezingForVideo();
 
     WEBCORE_EXPORT void stopMediaCapture(MediaProducerMediaCaptureKind);
 
