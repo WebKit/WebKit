@@ -25,9 +25,11 @@
 
 #pragma once
 
-#if ENABLE(PDF_PLUGIN) && PLATFORM(MAC)
+#if ENABLE(UNIFIED_PDF) && PLATFORM(MAC)
 
+#include "PDFDocumentLayout.h"
 #include "PDFPluginBase.h"
+#include "UnifiedPDFPlugin.h"
 #include <PDFKit/PDFKit.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/ThreadSafeWeakPtr.h>
@@ -41,7 +43,7 @@ class WeakPtrImplWithEventTargetData;
 @interface WKAccessibilityPDFDocumentObject: NSObject {
     RetainPtr<PDFDocument> _pdfDocument;
     WeakObjCPtr<NSObject> _parent;
-    ThreadSafeWeakPtr<WebKit::PDFPluginBase> _pdfPlugin;
+    ThreadSafeWeakPtr<WebKit::UnifiedPDFPlugin> _pdfPlugin;
 }
 
 @property (assign) WeakPtr<WebCore::HTMLPlugInElement, WebCore::WeakPtrImplWithEventTargetData> pluginElement;
@@ -49,11 +51,12 @@ class WeakPtrImplWithEventTargetData;
 - (id)initWithPDFDocument:(RetainPtr<PDFDocument>)document andElement:(WebCore::HTMLPlugInElement*)element;
 - (void)setParent:(NSObject *)parent;
 - (void)setPDFDocument:(RetainPtr<PDFDocument>)document;
-- (void)setPDFPlugin:(WebKit::PDFPluginBase*)plugin;
+- (void)setPDFPlugin:(WebKit::UnifiedPDFPlugin*)plugin;
 - (PDFDocument *)document;
-- (NSObject *)parent;
+- (NSObject *)accessibilityParent;
 - (id)accessibilityHitTest:(NSPoint)point;
 - (void)gotoDestination:(PDFDestination *)destination;
+- (NSRect)convertFromPDFPageToScreenForAccessibility:(NSRect)rectInPageCoordinate pageIndex:(WebKit::PDFDocumentLayout::PageIndex)pageIndex;
 
 @end
 

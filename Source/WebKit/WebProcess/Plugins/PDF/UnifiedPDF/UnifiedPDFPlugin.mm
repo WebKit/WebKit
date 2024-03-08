@@ -141,6 +141,13 @@ UnifiedPDFPlugin::UnifiedPDFPlugin(HTMLPlugInElement& element)
         m_annotationContainer->appendChild(annotationStyleElement);
         RefPtr { document->bodyOrFrameset() }->appendChild(*m_annotationContainer);
     }
+
+#if PLATFORM(MAC)
+    m_accessibilityDocumentObject = adoptNS([[WKAccessibilityPDFDocumentObject alloc] initWithPDFDocument:m_pdfDocument andElement:&element]);
+    [m_accessibilityDocumentObject setPDFPlugin:this];
+    if (this->isFullFramePlugin() && m_frame && m_frame->page() && m_frame->isMainFrame())
+        [m_accessibilityDocumentObject setParent:dynamic_objc_cast<NSObject>(m_frame->protectedPage()->accessibilityRemoteObject())];
+#endif
 }
 
 static String mutationObserverNotificationString()
@@ -2987,10 +2994,36 @@ LookupTextResult UnifiedPDFPlugin::lookupTextAtLocation(const FloatPoint& rootVi
 }
 
 #if PLATFORM(MAC)
+void UnifiedPDFPlugin::accessibilityScrollToPage(PDFDocumentLayout::PageIndex pageIndex)
+{
+    scrollToPage(pageIndex);
+}
+
+FloatRect UnifiedPDFPlugin::convertFromPDFPageToScreenForAccessibility(const FloatRect& rectInPageCoordinate, PDFDocumentLayout::PageIndex pageIndex) const
+{
+    return WebCore::Accessibility::retrieveValueFromMainThread<FloatRect>([&]() ->FloatRect {
+        auto rectInPluginCoordinates = convertUp(CoordinateSpace::PDFPage, CoordinateSpace::Plugin, rectInPageCoordinate, pageIndex);
+        rectInPluginCoordinates.setLocation(convertFromPluginToRootView(IntPoint(rectInPluginCoordinates.location())));
+        RefPtr page = this->page();
+        if (!page)
+            return { };
+        return page->chrome().rootViewToScreen(enclosingIntRect(rectInPluginCoordinates));
+    });
+}
+
 id UnifiedPDFPlugin::accessibilityHitTestIntPoint(const WebCore::IntPoint& point) const
 {
-    auto convertedPoint =  convertFromRootViewToPDFView(point);
-    return [m_accessibilityDocumentObject accessibilityHitTest:convertedPoint];
+    return WebCore::Accessibility::retrieveValueFromMainThread<id>([&] () -> id {
+        auto floatPoint = FloatPoint { point };
+        auto pointInDocumentSpace = convertDown(CoordinateSpace::Plugin, CoordinateSpace::PDFDocumentLayout, floatPoint);
+        auto hitPageIndex = pageIndexForDocumentPoint(pointInDocumentSpace);
+        if (!hitPageIndex || *hitPageIndex >= m_documentLayout.pageCount())
+            return { };
+        auto pageIndex = *hitPageIndex;
+        auto pointInPDFPageSpace = convertDown(CoordinateSpace::PDFDocumentLayout, CoordinateSpace::PDFPage, pointInDocumentSpace, pageIndex);
+
+        return [m_accessibilityDocumentObject accessibilityHitTest:pointInPDFPageSpace];
+    });
 }
 #endif
 

@@ -179,9 +179,6 @@ public:
     WebCore::IntPoint convertFromPluginToRootView(const WebCore::IntPoint&) const;
     WebCore::IntRect convertFromPluginToRootView(const WebCore::IntRect&) const;
     WebCore::IntRect boundsOnScreen() const;
-    WebCore::FloatRect convertFromPDFViewToScreenForAccessibility(const WebCore::FloatRect&) const;
-    WebCore::IntPoint convertFromPDFViewToRootView(const WebCore::IntPoint&) const;
-    WebCore::IntPoint convertFromRootViewToPDFView(const WebCore::IntPoint&) const;
 
     bool showContextMenuAtPoint(const WebCore::IntPoint&);
     WebCore::AXObjectCache* axObjectCache() const;

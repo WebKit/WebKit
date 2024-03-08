@@ -121,6 +121,11 @@ public:
 
     float documentFittingScale() const { return m_documentLayout.scale(); }
 
+#if PLATFORM(MAC)
+    WebCore::FloatRect convertFromPDFPageToScreenForAccessibility(const WebCore::FloatRect&, PDFDocumentLayout::PageIndex) const;
+    void accessibilityScrollToPage(PDFDocumentLayout::PageIndex);
+#endif
+
 private:
     explicit UnifiedPDFPlugin(WebCore::HTMLPlugInElement&);
     bool isUnifiedPDFPlugin() const override { return true; }

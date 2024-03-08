@@ -105,12 +105,6 @@ PDFPluginBase::PDFPluginBase(HTMLPlugInElement& element)
     , m_incrementalPDFLoadingEnabled(element.document().settings().incrementalPDFLoadingEnabled())
 #endif
 {
-#if PLATFORM(MAC)
-    m_accessibilityDocumentObject = adoptNS([[WKAccessibilityPDFDocumentObject alloc] initWithPDFDocument:m_pdfDocument andElement:&element]);
-    [m_accessibilityDocumentObject setPDFPlugin:this];
-    if (this->isFullFramePlugin() && m_frame && m_frame->page() && m_frame->isMainFrame())
-        [m_accessibilityDocumentObject setParent:dynamic_objc_cast<NSObject>(m_frame->protectedPage()->accessibilityRemoteObject())];
-#endif
 }
 
 PDFPluginBase::~PDFPluginBase()
@@ -936,38 +930,12 @@ bool PDFPluginBase::showContextMenuAtPoint(const IntPoint& point)
     return handleContextMenuEvent(event);
 }
 
-IntPoint PDFPluginBase::convertFromPDFViewToRootView(const IntPoint& point) const
-{
-    // FIXME fix the coordinate space
-    IntPoint pointInPluginCoordinates(point.x(), size().height() - point.y());
-    return valueOrDefault(m_rootViewToPluginTransform.inverse()).mapPoint(pointInPluginCoordinates);
-}
-
-FloatRect PDFPluginBase::convertFromPDFViewToScreenForAccessibility(const FloatRect& rect) const
-{
-    return WebCore::Accessibility::retrieveValueFromMainThread<WebCore::FloatRect>([&] () -> WebCore::FloatRect {
-        FloatRect updatedRect = rect;
-        updatedRect.setLocation(convertFromPDFViewToRootView(IntPoint(updatedRect.location())));
-        RefPtr page = this->page();
-        if (!page)
-            return { };
-        return page->chrome().rootViewToScreen(enclosingIntRect(updatedRect));
-    });
-}
-
 WebCore::AXObjectCache* PDFPluginBase::axObjectCache() const
 {
     ASSERT(isMainRunLoop());
     if (!m_frame || !m_frame->coreLocalFrame() || !m_frame->coreLocalFrame()->document())
         return nullptr;
     return m_frame->coreLocalFrame()->document()->axObjectCache();
-}
-
-IntPoint PDFPluginBase::convertFromRootViewToPDFView(const IntPoint& point) const
-{
-    ASSERT(isMainRunLoop());
-    IntPoint pointInPluginCoordinates = m_rootViewToPluginTransform.mapPoint(point);
-    return IntPoint(pointInPluginCoordinates.x(), size().height() - pointInPluginCoordinates.y());
 }
 
 WebCore::IntPoint PDFPluginBase::lastKnownMousePositionInView() const
