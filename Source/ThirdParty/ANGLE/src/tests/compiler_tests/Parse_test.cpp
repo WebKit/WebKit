@@ -84,6 +84,15 @@ class ParseTest : public testing::Test
     std::string mInfoLog;
 };
 
+TEST_F(ParseTest, CoherentCoherentNoCrash)
+{
+    const char kShader[] = R"(#version 310 es
+coherent coherent;)";
+    EXPECT_FALSE(compile(kShader));
+    EXPECT_TRUE(foundErrorInIntermediateTree());
+    EXPECT_TRUE(foundInIntermediateTree("coherent specified multiple times"));
+}
+
 TEST_F(ParseTest, UnsizedArrayConstructorNoCrash)
 {
     const char kShader[] = R"(#version 310 es\n"
