@@ -29,6 +29,7 @@
 #include "ASTDeclaration.h"
 #include "ASTDirective.h"
 #include "ASTIdentityExpression.h"
+#include "CallGraph.h"
 #include "TypeStore.h"
 #include "WGSL.h"
 #include "WGSLEnums.h"
@@ -59,6 +60,12 @@ public:
     AST::Directive::List& directives() { return m_directives; }
     TypeStore& types() { return m_types; }
     AST::Builder& astBuilder() { return m_astBuilder; }
+
+    const CallGraph& callGraph() const { return *m_callGraph; }
+    void setCallGraph(CallGraph&& callGraph)
+    {
+        m_callGraph = WTFMove(callGraph);
+    }
 
     bool usesExternalTextures() const { return m_usesExternalTextures; }
     void setUsesExternalTextures() { m_usesExternalTextures = true; }
@@ -275,6 +282,7 @@ private:
     AST::Directive::List m_directives;
     TypeStore m_types;
     AST::Builder m_astBuilder;
+    std::optional<CallGraph> m_callGraph;
     Vector<std::function<void()>> m_replacements;
     HashSet<uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_pipelineOverrideIds;
 };

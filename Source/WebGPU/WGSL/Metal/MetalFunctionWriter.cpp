@@ -47,9 +47,10 @@ namespace Metal {
 
 class FunctionDefinitionWriter : public AST::Visitor {
 public:
-    FunctionDefinitionWriter(const CallGraph& callGraph, StringBuilder& stringBuilder, const HashMap<String, ConstantValue>& constantValues)
+    FunctionDefinitionWriter(ShaderModule& shaderModule, StringBuilder& stringBuilder, PrepareResult& prepareResult, const HashMap<String, ConstantValue>& constantValues)
         : m_stringBuilder(stringBuilder)
-        , m_callGraph(callGraph)
+        , m_shaderModule(shaderModule)
+        , m_prepareResult(prepareResult)
         , m_constantValues(constantValues)
     {
     }
@@ -130,7 +131,7 @@ private:
     void visitStatements(AST::Statement::List&);
 
     StringBuilder& m_stringBuilder;
-    const CallGraph& m_callGraph;
+    ShaderModule& m_shaderModule;
     Indentation<4> m_indent { 0 };
     std::optional<AST::StructureRole> m_structRole;
     std::optional<ShaderStage> m_entryPointStage;
@@ -138,6 +139,7 @@ private:
     unsigned m_functionConstantIndex { 0 };
     AST::Continuing*m_continuing { nullptr };
     HashSet<AST::Function*> m_visitedFunctions;
+    PrepareResult& m_prepareResult;
     const HashMap<String, ConstantValue>& m_constantValues;
     HashMap<String, ConstantValue> m_overrides;
 };
@@ -163,26 +165,28 @@ void FunctionDefinitionWriter::write()
 {
     emitNecessaryHelpers();
 
-    for (auto& declaration : m_callGraph.ast().declarations()) {
+    for (auto& declaration : m_shaderModule.declarations()) {
         if (auto* structure = dynamicDowncast<AST::Structure>(declaration))
             visit(*structure);
         else if (auto* variable = dynamicDowncast<AST::Variable>(declaration))
             visitGlobal(*variable);
     }
 
-    for (auto& declaration : m_callGraph.ast().declarations()) {
+    for (auto& declaration : m_shaderModule.declarations()) {
         if (auto* structure = dynamicDowncast<AST::Structure>(declaration))
             generatePackingHelpers(*structure);
     }
 
-    for (auto& entryPoint : m_callGraph.entrypoints())
-        visit(entryPoint.function);
+    for (auto& entryPoint : m_shaderModule.callGraph().entrypoints()) {
+        if (m_prepareResult.entryPoints.contains(entryPoint.originalName))
+            visit(entryPoint.function);
+    }
 }
 
 void FunctionDefinitionWriter::emitNecessaryHelpers()
 {
-    if (m_callGraph.ast().usesExternalTextures()) {
-        m_callGraph.ast().clearUsesExternalTextures();
+    if (m_shaderModule.usesExternalTextures()) {
+        m_shaderModule.clearUsesExternalTextures();
         m_stringBuilder.append("struct texture_external {\n");
         {
             IndentationScope scope(m_indent);
@@ -196,8 +200,8 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
         m_stringBuilder.append("};\n\n");
     }
 
-    if (m_callGraph.ast().usesPackArray()) {
-        m_callGraph.ast().clearUsesPackArray();
+    if (m_shaderModule.usesPackArray()) {
+        m_shaderModule.clearUsesPackArray();
         m_stringBuilder.append(m_indent, "template<typename T, size_t N>\n");
         m_stringBuilder.append(m_indent, "array<typename T::PackedType, N> __pack(array<T, N> unpacked)\n");
         m_stringBuilder.append(m_indent, "{\n");
@@ -214,8 +218,8 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
         m_stringBuilder.append(m_indent, "}\n\n");
     }
 
-    if (m_callGraph.ast().usesUnpackArray()) {
-        m_callGraph.ast().clearUsesUnpackArray();
+    if (m_shaderModule.usesUnpackArray()) {
+        m_shaderModule.clearUsesUnpackArray();
         m_stringBuilder.append(m_indent, "template<typename T, size_t N>\n");
         m_stringBuilder.append(m_indent, "array<typename T::UnpackedType, N> __unpack(array<T, N> packed)\n");
         m_stringBuilder.append(m_indent, "{\n");
@@ -232,7 +236,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
         m_stringBuilder.append(m_indent, "}\n\n");
     }
 
-    if (m_callGraph.ast().usesWorkgroupUniformLoad()) {
+    if (m_shaderModule.usesWorkgroupUniformLoad()) {
         m_stringBuilder.append(m_indent, "template<typename T>\n");
         m_stringBuilder.append(m_indent, "T __workgroup_uniform_load(threadgroup T* const ptr)\n");
         m_stringBuilder.append(m_indent, "{\n");
@@ -246,7 +250,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
         m_stringBuilder.append(m_indent, "}\n\n");
     }
 
-    if (m_callGraph.ast().usesDivision()) {
+    if (m_shaderModule.usesDivision()) {
         m_stringBuilder.append(m_indent, "template<typename T, typename U, typename V = conditional_t<is_scalar_v<U>, T, U>>\n");
         m_stringBuilder.append(m_indent, "V __wgslDiv(T lhs, U rhs)\n");
         m_stringBuilder.append(m_indent, "{\n");
@@ -263,7 +267,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
         m_stringBuilder.append(m_indent, "}\n\n");
     }
 
-    if (m_callGraph.ast().usesModulo()) {
+    if (m_shaderModule.usesModulo()) {
         m_stringBuilder.append(m_indent, "template<typename T, typename U, typename V = conditional_t<is_scalar_v<U>, T, U>>\n");
         m_stringBuilder.append(m_indent, "V __wgslMod(T lhs, U rhs)\n");
         m_stringBuilder.append(m_indent, "{\n");
@@ -281,7 +285,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
     }
 
 
-    if (m_callGraph.ast().usesFrexp()) {
+    if (m_shaderModule.usesFrexp()) {
         m_stringBuilder.append(m_indent, "template<typename T, typename U>\n");
         m_stringBuilder.append(m_indent, "struct __frexp_result {\n");
         {
@@ -303,7 +307,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
         m_stringBuilder.append(m_indent, "}\n\n");
     }
 
-    if (m_callGraph.ast().usesModf()) {
+    if (m_shaderModule.usesModf()) {
         m_stringBuilder.append(m_indent, "template<typename T, typename U>\n");
         m_stringBuilder.append(m_indent, "struct __modf_result {\n");
         {
@@ -325,7 +329,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
         m_stringBuilder.append(m_indent, "}\n\n");
     }
 
-    if (m_callGraph.ast().usesAtomicCompareExchange()) {
+    if (m_shaderModule.usesAtomicCompareExchange()) {
         m_stringBuilder.append(m_indent, "template<typename T, typename U = bool>\n");
         m_stringBuilder.append(m_indent, "struct __atomic_compare_exchange_result {\n");
         {
@@ -345,7 +349,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
         }
     }
 
-    if (m_callGraph.ast().usesDot()) {
+    if (m_shaderModule.usesDot()) {
         m_stringBuilder.append(m_indent, "template<typename T, unsigned N>\n");
         m_stringBuilder.append(m_indent, "T __wgslDot(vec<T, N> lhs, vec<T, N> rhs)\n");
         m_stringBuilder.append(m_indent, "{\n");
@@ -359,7 +363,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
         m_stringBuilder.append(m_indent, "}\n");
     }
 
-    if (m_callGraph.ast().usesDot4I8Packed()) {
+    if (m_shaderModule.usesDot4I8Packed()) {
         m_stringBuilder.append(m_indent, "int __wgslDot4I8Packed(uint lhs, uint rhs)\n");
         m_stringBuilder.append(m_indent, "{\n");
         {
@@ -371,7 +375,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
         m_stringBuilder.append(m_indent, "}\n");
     }
 
-    if (m_callGraph.ast().usesDot4U8Packed()) {
+    if (m_shaderModule.usesDot4U8Packed()) {
         m_stringBuilder.append(m_indent, "uint __wgslDot4U8Packed(uint lhs, uint rhs)\n");
         m_stringBuilder.append(m_indent, "{\n");
         {
@@ -383,7 +387,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
         m_stringBuilder.append(m_indent, "}\n");
     }
 
-    if (m_callGraph.ast().usesFirstLeadingBit()) {
+    if (m_shaderModule.usesFirstLeadingBit()) {
         m_stringBuilder.append(m_indent, "template<typename T>\n");
         m_stringBuilder.append(m_indent, "T __wgslFirstLeadingBit(T e)\n");
         m_stringBuilder.append(m_indent, "{\n");
@@ -397,7 +401,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
         m_stringBuilder.append(m_indent, "}\n");
     }
 
-    if (m_callGraph.ast().usesFirstTrailingBit()) {
+    if (m_shaderModule.usesFirstTrailingBit()) {
         m_stringBuilder.append(m_indent, "template<typename T>\n");
         m_stringBuilder.append(m_indent, "T __wgslFirstTrailingBit(T e)\n");
         m_stringBuilder.append(m_indent, "{\n");
@@ -408,7 +412,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
         m_stringBuilder.append(m_indent, "}\n");
     }
 
-    if (m_callGraph.ast().usesSign()) {
+    if (m_shaderModule.usesSign()) {
         m_stringBuilder.append(m_indent, "template<typename T>\n");
         m_stringBuilder.append(m_indent, "T __wgslSign(T e)\n");
         m_stringBuilder.append(m_indent, "{\n");
@@ -419,7 +423,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
         m_stringBuilder.append(m_indent, "}\n");
     }
 
-    if (m_callGraph.ast().usesExtractBits()) {
+    if (m_shaderModule.usesExtractBits()) {
         m_stringBuilder.append(m_indent, "template<typename T>\n");
         m_stringBuilder.append(m_indent, "T __wgslExtractBits(T e, uint offset, uint count)\n");
         m_stringBuilder.append(m_indent, "{\n");
@@ -438,7 +442,7 @@ void FunctionDefinitionWriter::visit(AST::Function& functionDefinition)
     if (!m_visitedFunctions.add(&functionDefinition).isNewEntry)
         return;
 
-    for (auto& callee : m_callGraph.callees(functionDefinition))
+    for (auto& callee : m_shaderModule.callGraph().callees(functionDefinition))
         visit(*callee.target);
 
     // FIXME: visit return attributes
@@ -784,8 +788,8 @@ void FunctionDefinitionWriter::visit(AST::GroupAttribute& group)
 {
     unsigned bufferIndex = group.group().constantValue()->integerValue();
     if (m_entryPointStage.has_value() && *m_entryPointStage == ShaderStage::Vertex) {
-        ASSERT(m_callGraph.ast().configuration().maxBuffersPlusVertexBuffersForVertexStage > 0);
-        auto max = m_callGraph.ast().configuration().maxBuffersPlusVertexBuffersForVertexStage - 1;
+        ASSERT(m_shaderModule.configuration().maxBuffersPlusVertexBuffersForVertexStage > 0);
+        auto max = m_shaderModule.configuration().maxBuffersPlusVertexBuffersForVertexStage - 1;
         bufferIndex = vertexBufferIndexForBindGroup(bufferIndex, max);
     }
     m_stringBuilder.append("[[buffer(", bufferIndex, ")]]");
@@ -1013,7 +1017,7 @@ void FunctionDefinitionWriter::visit(const Type* type)
                 break;
             }
             m_stringBuilder.append(base, "<");
-            visit(shaderTypeForTexelFormat(texture.format, m_callGraph.ast().types()));
+            visit(shaderTypeForTexelFormat(texture.format, m_shaderModule.types()));
             m_stringBuilder.append(", access::", mode, ">");
         },
         [&](const TextureDepth& texture) {
@@ -1059,7 +1063,7 @@ void FunctionDefinitionWriter::visit(const Type* type)
             m_stringBuilder.append("*");
         },
         [&](const Atomic& atomic) {
-            if (atomic.element == m_callGraph.ast().types().i32Type())
+            if (atomic.element == m_shaderModule.types().i32Type())
                 m_stringBuilder.append("atomic_int");
             else
                 m_stringBuilder.append("atomic_uint");
@@ -2538,9 +2542,9 @@ void FunctionDefinitionWriter::serializeConstant(const Type* type, ConstantValue
         });
 }
 
-void emitMetalFunctions(StringBuilder& stringBuilder, const CallGraph& callGraph, const HashMap<String, ConstantValue>& constantValues)
+void emitMetalFunctions(StringBuilder& stringBuilder, ShaderModule& shaderModule, PrepareResult& prepareResult, const HashMap<String, ConstantValue>& constantValues)
 {
-    FunctionDefinitionWriter functionDefinitionWriter(callGraph, stringBuilder, constantValues);
+    FunctionDefinitionWriter functionDefinitionWriter(shaderModule, stringBuilder, prepareResult, constantValues);
     functionDefinitionWriter.write();
 }
 

@@ -134,7 +134,7 @@ std::optional<LibraryCreationResult> createLibrary(id<MTLDevice> device, const S
         }
     }
 
-    auto msl = WGSL::generate(result.callGraph, wgslConstantValues);
+    auto msl = WGSL::generate(*ast, result, wgslConstantValues);
     auto library = ShaderModule::createLibrary(device, msl, label);
 
     return { { library, entryPointInformation, wgslConstantValues } };

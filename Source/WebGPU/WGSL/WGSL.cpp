@@ -75,6 +75,7 @@ std::variant<SuccessfulCheck, FailedCheck> staticCheck(const String& wgsl, const
     CHECK_PASS(reorderGlobals, shaderModule);
     CHECK_PASS(typeCheck, shaderModule);
     CHECK_PASS(validateAttributes, shaderModule);
+    RUN_PASS(buildCallGraph, shaderModule);
 
     Vector<Warning> warnings { };
     return std::variant<SuccessfulCheck, FailedCheck>(std::in_place_type<SuccessfulCheck>, WTFMove(warnings), WTFMove(shaderModule));
@@ -99,16 +100,16 @@ inline std::variant<PrepareResult, Error> prepareImpl(ShaderModule& shaderModule
         PhaseTimer phaseTimer("prepare total", phaseTimes);
 
         HashMap<String, Reflection::EntryPointInformation> entryPoints;
-        RUN_PASS_WITH_RESULT(callGraph, buildCallGraph, shaderModule, pipelineLayouts, entryPoints);
-        RUN_PASS(mangleNames, callGraph, entryPoints);
-        RUN_PASS(rewritePointers, callGraph);
+
+        RUN_PASS(mangleNames, shaderModule);
+        RUN_PASS(rewritePointers, shaderModule);
         RUN_PASS(insertBoundsChecks, shaderModule);
-        RUN_PASS(rewriteEntryPoints, callGraph);
-        CHECK_PASS(rewriteGlobalVariables, callGraph, pipelineLayouts, shaderModule);
+        RUN_PASS(rewriteEntryPoints, shaderModule, pipelineLayouts);
+        CHECK_PASS(rewriteGlobalVariables, shaderModule, pipelineLayouts, entryPoints);
 
         dumpASTAtEndIfNeeded(shaderModule);
 
-        return { PrepareResult { WTFMove(callGraph), WTFMove(entryPoints), WTFMove(compilationScope) } };
+        return { PrepareResult { WTFMove(entryPoints), WTFMove(compilationScope) } };
     }();
 
     logPhaseTimes(phaseTimes);
@@ -116,13 +117,13 @@ inline std::variant<PrepareResult, Error> prepareImpl(ShaderModule& shaderModule
     return result;
 }
 
-String generate(const CallGraph& callGraph, HashMap<String, ConstantValue>& constantValues)
+String generate(ShaderModule& shaderModule, PrepareResult& prepareResult, HashMap<String, ConstantValue>& constantValues)
 {
     PhaseTimes phaseTimes;
     String result;
     {
         PhaseTimer phaseTimer("generateMetalCode", phaseTimes);
-        result = Metal::generateMetalCode(callGraph, constantValues);
+        result = Metal::generateMetalCode(shaderModule, prepareResult, constantValues);
     }
     logPhaseTimes(phaseTimes);
     return result;

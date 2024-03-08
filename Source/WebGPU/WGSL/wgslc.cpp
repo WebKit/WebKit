@@ -145,7 +145,7 @@ static int runWGSL(const CommandLine& options)
     }
 
     HashMap<String, WGSL::ConstantValue> constantValues;
-    auto msl = WGSL::generate(result.callGraph, constantValues);
+    auto msl = WGSL::generate(shaderModule, result, constantValues);
 
     if (options.dumpASTAtEnd())
         WGSL::AST::dumpAST(shaderModule);

@@ -28,7 +28,6 @@
 
 #include "AST.h"
 #include "ASTVisitor.h"
-#include "CallGraph.h"
 #include "TypeStore.h"
 #include "Types.h"
 #include "WGSL.h"
@@ -38,7 +37,7 @@ namespace WGSL {
 
 class EntryPointRewriter {
 public:
-    EntryPointRewriter(ShaderModule&, const AST::Function&, ShaderStage, Reflection::EntryPointInformation&);
+    EntryPointRewriter(ShaderModule&, const AST::Function&, ShaderStage);
 
     void rewrite();
 
@@ -75,34 +74,14 @@ private:
     const Type* m_structType;
     String m_structTypeName;
     String m_structParameterName;
-    Reflection::EntryPointInformation& m_information;
     unsigned m_builtinID { 0 };
 };
 
-EntryPointRewriter::EntryPointRewriter(ShaderModule& shaderModule, const AST::Function& function, ShaderStage stage, Reflection::EntryPointInformation& information)
+EntryPointRewriter::EntryPointRewriter(ShaderModule& shaderModule, const AST::Function& function, ShaderStage stage)
     : m_stage(stage)
     , m_shaderModule(shaderModule)
     , m_function(function)
-    , m_information(information)
 {
-    switch (m_stage) {
-    case ShaderStage::Compute: {
-        for (auto& attribute : function.attributes()) {
-            auto* workgroupSize = dynamicDowncast<AST::WorkgroupSizeAttribute>(attribute);
-            if (!workgroupSize)
-                continue;
-            m_information.typedEntryPoint = Reflection::Compute { &workgroupSize->x(), workgroupSize->maybeY(), workgroupSize->maybeZ() };
-            break;
-        }
-        break;
-    }
-    case ShaderStage::Vertex:
-        m_information.typedEntryPoint = Reflection::Vertex { false };
-        break;
-    case ShaderStage::Fragment:
-        m_information.typedEntryPoint = Reflection::Fragment { };
-        break;
-    }
 }
 
 void EntryPointRewriter::rewrite()
@@ -370,10 +349,12 @@ void EntryPointRewriter::appendBuiltins()
     }
 }
 
-void rewriteEntryPoints(CallGraph& callGraph)
+void rewriteEntryPoints(ShaderModule& shaderModule, const HashMap<String, std::optional<PipelineLayout>>& pipelineLayouts)
 {
-    for (auto& entryPoint : callGraph.entrypoints()) {
-        EntryPointRewriter rewriter(callGraph.ast(), entryPoint.function, entryPoint.stage, entryPoint.information);
+    for (auto& entryPoint : shaderModule.callGraph().entrypoints()) {
+        if (!pipelineLayouts.contains(entryPoint.originalName))
+            continue;
+        EntryPointRewriter rewriter(shaderModule, entryPoint.function, entryPoint.stage);
         rewriter.rewrite();
     }
 }

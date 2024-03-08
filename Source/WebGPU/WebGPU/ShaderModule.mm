@@ -107,12 +107,13 @@ static RefPtr<ShaderModule> earlyCompileShaderModule(Device& device, std::varian
         wgslHints.add(hintKey, WTFMove(convertedPipelineLayout));
     }
 
-    auto prepareResult = WGSL::prepare(std::get<WGSL::SuccessfulCheck>(checkResult).ast, wgslHints);
+    auto& shaderModule = std::get<WGSL::SuccessfulCheck>(checkResult).ast;
+    auto prepareResult = WGSL::prepare(shaderModule, wgslHints);
     if (std::holds_alternative<WGSL::Error>(prepareResult))
         return nullptr;
     auto& result = std::get<WGSL::PrepareResult>(prepareResult);
     HashMap<String, WGSL::ConstantValue> wgslConstantValues;
-    auto msl = WGSL::generate(result.callGraph, wgslConstantValues);
+    auto msl = WGSL::generate(shaderModule, result, wgslConstantValues);
     auto library = ShaderModule::createLibrary(device.device(), msl, WTFMove(label));
     if (!library)
         return nullptr;

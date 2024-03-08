@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "CallGraph.h"
 #include "CompilationMessage.h"
 #include "CompilationScope.h"
 #include "ConstantValue.h"
@@ -227,7 +226,6 @@ struct EntryPointInformation {
 } // namespace Reflection
 
 struct PrepareResult {
-    CallGraph callGraph;
     HashMap<String, Reflection::EntryPointInformation> entryPoints;
     CompilationScope compilationScope;
 };
@@ -235,7 +233,7 @@ struct PrepareResult {
 std::variant<PrepareResult, Error> prepare(ShaderModule&, const HashMap<String, std::optional<PipelineLayout>>&);
 std::variant<PrepareResult, Error> prepare(ShaderModule&, const String& entryPointName, const std::optional<PipelineLayout>&);
 
-String generate(const CallGraph&, HashMap<String, ConstantValue>&);
+String generate(ShaderModule&, PrepareResult&, HashMap<String, ConstantValue>&);
 
 ConstantValue evaluate(const AST::Expression&, const HashMap<String, ConstantValue>&);
 

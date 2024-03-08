@@ -29,12 +29,8 @@
 
 namespace WGSL {
 
-class CallGraph;
+class ShaderModule;
 
-namespace Reflection {
-struct EntryPointInformation;
-}
-
-void mangleNames(CallGraph&, HashMap<String, Reflection::EntryPointInformation>&);
+void mangleNames(ShaderModule&);
 
 } // namespace WGSL

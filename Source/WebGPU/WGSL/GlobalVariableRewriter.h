@@ -26,15 +26,18 @@
 #pragma once
 
 #include "CompilationMessage.h"
+#include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
 
 namespace WGSL {
 
-class CallGraph;
 class ShaderModule;
-
 struct PipelineLayout;
 
-std::optional<Error> rewriteGlobalVariables(CallGraph&, const HashMap<String, std::optional<PipelineLayout>>&, const ShaderModule&);
+namespace Reflection {
+struct EntryPointInformation;
+};
+
+std::optional<Error> rewriteGlobalVariables(ShaderModule&, const HashMap<String, std::optional<PipelineLayout>>&, HashMap<String, Reflection::EntryPointInformation>&);
 
 } // namespace WGSL
