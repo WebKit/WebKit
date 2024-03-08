@@ -295,6 +295,8 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(Workers);
 static JSC_DECLARE_HOST_FUNCTION(functionAtob);
 static JSC_DECLARE_HOST_FUNCTION(functionBtoa);
 
+static JSC_DECLARE_HOST_FUNCTION(functionDisassembleBase64);
+
 static JSC_DECLARE_HOST_FUNCTION(functionCreateGlobalObject);
 static JSC_DECLARE_HOST_FUNCTION(functionCreateHeapBigInt);
 #if USE(BIGINT32)
@@ -621,6 +623,7 @@ private:
 
         addFunction(vm, "atob"_s, functionAtob, 1);
         addFunction(vm, "btoa"_s, functionBtoa, 1);
+        addFunction(vm, "disassembleBase64"_s, functionDisassembleBase64, 1);
         addFunction(vm, "debug"_s, functionDebug, 1);
         addFunction(vm, "describe"_s, functionDescribe, 1);
         addFunction(vm, "describeArray"_s, functionDescribeArray, 1);
@@ -1606,6 +1609,34 @@ JSC_DEFINE_HOST_FUNCTION(functionBtoa, (JSGlobalObject* globalObject, CallFrame*
         return JSValue::encode(throwException(globalObject, scope, createOutOfMemoryError(globalObject)));
 
     return JSValue::encode(jsString(vm, encodedString));
+}
+
+JSC_DEFINE_HOST_FUNCTION(functionDisassembleBase64, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (!callFrame->argumentCount())
+        return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "Missing input for disassembleBase64."_s)));
+
+    String encodedString = callFrame->argument(0).toWTFString(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    if (encodedString.isNull())
+        return JSValue::encode(jsEmptyString(vm));
+
+    std::optional<Vector<uint8_t>> decodedVector = base64Decode(encodedString, Base64DecodeMode::DefaultValidatePaddingAndIgnoreWhitespace);
+    if (!decodedVector)
+        return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "Invalid character in base64 string argument."_s)));
+
+    auto code = CodePtr<DisassemblyPtrTag>::fromUntaggedPtr(decodedVector->data());
+    StringPrintStream out;
+    // prefix with "\n" so the first line has the same whitespace as the rest when displayed from jsc.
+    out.print("\n");
+    if (tryToDisassemble(code, decodedVector->sizeInBytes(), "", out))
+        return JSValue::encode(jsString(vm, out.toString()));
+
+    return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "Couldn't disassemble."_s)));
 }
 
 JSC_DEFINE_HOST_FUNCTION(functionDebug, (JSGlobalObject* globalObject, CallFrame* callFrame))

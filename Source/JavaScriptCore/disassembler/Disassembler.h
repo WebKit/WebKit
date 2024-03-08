@@ -37,7 +37,7 @@ namespace JSC {
 template<PtrTag> class MacroAssemblerCodeRef;
 
 #if ENABLE(DISASSEMBLER)
-bool tryToDisassemble(const CodePtr<DisassemblyPtrTag>&, size_t, void* codeStart, void* codeEnd, const char* prefix, PrintStream&);
+JS_EXPORT_PRIVATE bool tryToDisassemble(const CodePtr<DisassemblyPtrTag>&, size_t, void* codeStart, void* codeEnd, const char* prefix, PrintStream&);
 #else
 inline bool tryToDisassemble(const CodePtr<DisassemblyPtrTag>&, size_t, void*, void*, const char*, PrintStream&)
 {
