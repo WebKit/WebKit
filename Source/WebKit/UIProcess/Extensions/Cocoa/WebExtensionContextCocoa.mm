@@ -746,10 +746,12 @@ void WebExtensionContext::postAsyncNotification(NSNotificationName notificationN
 
     permissionsDidChange(permissions);
 
-    if ([notificationName isEqualToString:_WKWebExtensionContextPermissionsWereGrantedNotification])
-        firePermissionsEventListenerIfNecessary(WebExtensionEventListenerType::PermissionsOnAdded, permissions, { });
-    else if ([notificationName isEqualToString:_WKWebExtensionContextGrantedPermissionsWereRemovedNotification])
-        firePermissionsEventListenerIfNecessary(WebExtensionEventListenerType::PermissionsOnRemoved, permissions, { });
+    if (isLoaded()) {
+        if ([notificationName isEqualToString:_WKWebExtensionContextPermissionsWereGrantedNotification])
+            firePermissionsEventListenerIfNecessary(WebExtensionEventListenerType::PermissionsOnAdded, permissions, { });
+        else if ([notificationName isEqualToString:_WKWebExtensionContextGrantedPermissionsWereRemovedNotification])
+            firePermissionsEventListenerIfNecessary(WebExtensionEventListenerType::PermissionsOnRemoved, permissions, { });
+    }
 
     dispatch_async(dispatch_get_main_queue(), makeBlockPtr([this, protectedThis = Ref { *this }, notificationName = retainPtr(notificationName), permissions]() {
         [NSNotificationCenter.defaultCenter postNotificationName:notificationName.get() object:wrapper() userInfo:@{ _WKWebExtensionContextNotificationUserInfoKeyPermissions: toAPI(permissions) }];
@@ -761,10 +763,12 @@ void WebExtensionContext::postAsyncNotification(NSNotificationName notificationN
     if (matchPatterns.isEmpty())
         return;
 
-    if ([notificationName isEqualToString:_WKWebExtensionContextPermissionMatchPatternsWereGrantedNotification])
-        firePermissionsEventListenerIfNecessary(WebExtensionEventListenerType::PermissionsOnAdded, { }, matchPatterns);
-    else if ([notificationName isEqualToString:_WKWebExtensionContextGrantedPermissionMatchPatternsWereRemovedNotification])
-        firePermissionsEventListenerIfNecessary(WebExtensionEventListenerType::PermissionsOnRemoved, { }, matchPatterns);
+    if (isLoaded()) {
+        if ([notificationName isEqualToString:_WKWebExtensionContextPermissionMatchPatternsWereGrantedNotification])
+            firePermissionsEventListenerIfNecessary(WebExtensionEventListenerType::PermissionsOnAdded, { }, matchPatterns);
+        else if ([notificationName isEqualToString:_WKWebExtensionContextGrantedPermissionMatchPatternsWereRemovedNotification])
+            firePermissionsEventListenerIfNecessary(WebExtensionEventListenerType::PermissionsOnRemoved, { }, matchPatterns);
+    }
 
     // Fire the tab updated event for any tabs that match the changed patterns, now that the extension has / does not have permission to see the URL and title.
     constexpr auto changedProperties = OptionSet { WebExtensionTab::ChangedProperties::URL, WebExtensionTab::ChangedProperties::Title };
@@ -1415,6 +1419,11 @@ bool WebExtensionContext::hasAccessToAllHosts()
     return false;
 }
 
+void WebExtensionContext::removePage(WebPageProxy& page)
+{
+    disconnectPortsForPage(page);
+}
+
 Ref<WebExtensionWindow> WebExtensionContext::getOrCreateWindow(_WKWebExtensionWindow *delegate) const
 {
     ASSERT(delegate);
@@ -1488,10 +1497,8 @@ Ref<WebExtensionTab> WebExtensionContext::getOrCreateTab(_WKWebExtensionTab *del
     ASSERT(delegate);
 
     if (NSNumber *tabIdentifier = [m_tabDelegateToIdentifierMap objectForKey:delegate]) {
-        if (auto tab = getTab(WebExtensionTabIdentifier(tabIdentifier.unsignedLongLongValue))) {
-            RELEASE_LOG_DEBUG(Extensions, "Using cached tab for identifier %{public}llu", tabIdentifier.unsignedLongLongValue);
+        if (RefPtr tab = getTab(WebExtensionTabIdentifier(tabIdentifier.unsignedLongLongValue)))
             return tab.releaseNonNull();
-        }
     }
 
     Ref tab = adoptRef(*new WebExtensionTab(*this, delegate));
@@ -1538,7 +1545,7 @@ RefPtr<WebExtensionTab> WebExtensionContext::getTab(WebPageProxyIdentifier webPa
 
 RefPtr<WebExtensionTab> WebExtensionContext::getCurrentTab(WebPageProxyIdentifier webPageProxyIdentifier, IncludeExtensionViews includeExtensionViews, IgnoreExtensionAccess ignoreExtensionAccess) const
 {
-    if (includeExtensionViews == IncludeExtensionViews::Yes && m_backgroundWebView && webPageProxyIdentifier == m_backgroundWebView.get()._page->identifier()) {
+    if (includeExtensionViews == IncludeExtensionViews::Yes && isBackgroundPage(webPageProxyIdentifier)) {
         if (RefPtr window = frontmostWindow())
             return window->activeTab();
         return nullptr;
@@ -1977,7 +1984,10 @@ void WebExtensionContext::didChangeTabProperties(WebExtensionTab& tab, OptionSet
     constexpr auto updatedEventDelay = 25_ms;
 
     // Fire the updated event after a small delay to coalesce relevant changes together.
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(updatedEventDelay.seconds() * NSEC_PER_SEC)), dispatch_get_main_queue(), makeBlockPtr([this, protectedThis = Ref { *this }, tabIdentifier = tab.identifier()]() {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, updatedEventDelay.nanosecondsAs<int64_t>()), dispatch_get_main_queue(), makeBlockPtr([this, protectedThis = Ref { *this }, tabIdentifier = tab.identifier()] {
+        if (!isLoaded())
+            return;
+
         // Get the tab again, it might have closed since this was scheduled.
         RefPtr tab = getTab(tabIdentifier);
         if (!tab)
@@ -1991,12 +2001,12 @@ void WebExtensionContext::didChangeTabProperties(WebExtensionTab& tab, OptionSet
 
 void WebExtensionContext::didStartProvisionalLoadForFrame(WebPageProxyIdentifier pageID, WebExtensionFrameIdentifier frameID, WebExtensionFrameIdentifier parentFrameID, const URL& targetURL, WallTime timestamp)
 {
-    auto tab = getTab(pageID);
+    RefPtr tab = getTab(pageID);
 
     // Dispatch webNavigation events.
     if (tab && hasPermission(_WKWebExtensionPermissionWebNavigation, tab.get()) && hasPermission(targetURL, tab.get())) {
         constexpr auto eventType = WebExtensionEventListenerType::WebNavigationOnBeforeNavigate;
-        wakeUpBackgroundContentIfNecessaryToFireEvents({ eventType }, [&] {
+        wakeUpBackgroundContentIfNecessaryToFireEvents({ eventType }, [=, protectedThis = Ref { *this }] {
             sendToProcessesForEvent(eventType, Messages::WebExtensionContextProxy::DispatchWebNavigationEvent(eventType, tab->identifier(), frameID, parentFrameID, targetURL, timestamp));
         });
     }
@@ -2004,11 +2014,11 @@ void WebExtensionContext::didStartProvisionalLoadForFrame(WebPageProxyIdentifier
 
 void WebExtensionContext::didCommitLoadForFrame(WebPageProxyIdentifier pageID, WebExtensionFrameIdentifier frameID, WebExtensionFrameIdentifier parentFrameID, const URL& frameURL, WallTime timestamp)
 {
-    auto page = WebProcessProxy::webPage(pageID);
+    RefPtr page = WebProcessProxy::webPage(pageID);
     if (!page)
         return;
 
-    auto tab = getTab(pageID);
+    RefPtr tab = getTab(pageID);
 
     if (tab && isMainFrame(frameID)) {
         // Clear tab action customizations.
@@ -2038,7 +2048,7 @@ void WebExtensionContext::didCommitLoadForFrame(WebPageProxyIdentifier pageID, W
         constexpr auto committedEventType = WebExtensionEventListenerType::WebNavigationOnCommitted;
         constexpr auto contentEventType = WebExtensionEventListenerType::WebNavigationOnDOMContentLoaded;
 
-        wakeUpBackgroundContentIfNecessaryToFireEvents({ committedEventType, contentEventType }, [&] {
+        wakeUpBackgroundContentIfNecessaryToFireEvents({ committedEventType, contentEventType }, [=, protectedThis = Ref { *this }] {
             sendToProcessesForEvent(committedEventType, Messages::WebExtensionContextProxy::DispatchWebNavigationEvent(committedEventType, tab->identifier(), frameID, parentFrameID, frameURL, timestamp));
             sendToProcessesForEvent(contentEventType, Messages::WebExtensionContextProxy::DispatchWebNavigationEvent(contentEventType, tab->identifier(), frameID, parentFrameID, frameURL, timestamp));
         });
@@ -2047,12 +2057,12 @@ void WebExtensionContext::didCommitLoadForFrame(WebPageProxyIdentifier pageID, W
 
 void WebExtensionContext::didFinishLoadForFrame(WebPageProxyIdentifier pageID, WebExtensionFrameIdentifier frameID, WebExtensionFrameIdentifier parentFrameID, const URL& frameURL, WallTime timestamp)
 {
-    auto tab = getTab(pageID);
+    RefPtr tab = getTab(pageID);
 
     // Dispatch webNavigation events.
     if (tab && hasPermission(_WKWebExtensionPermissionWebNavigation, tab.get()) && hasPermission(frameURL, tab.get())) {
         constexpr auto eventType = WebExtensionEventListenerType::WebNavigationOnCompleted;
-        wakeUpBackgroundContentIfNecessaryToFireEvents({ eventType }, [&] {
+        wakeUpBackgroundContentIfNecessaryToFireEvents({ eventType }, [=, protectedThis = Ref { *this }] {
             sendToProcessesForEvent(eventType, Messages::WebExtensionContextProxy::DispatchWebNavigationEvent(eventType, tab->identifier(), frameID, parentFrameID, frameURL, timestamp));
         });
     }
@@ -2060,12 +2070,12 @@ void WebExtensionContext::didFinishLoadForFrame(WebPageProxyIdentifier pageID, W
 
 void WebExtensionContext::didFailLoadForFrame(WebPageProxyIdentifier pageID, WebExtensionFrameIdentifier frameID, WebExtensionFrameIdentifier parentFrameID, const URL& frameURL, WallTime timestamp)
 {
-    auto tab = getTab(pageID);
+    RefPtr tab = getTab(pageID);
 
     // Dispatch webNavigation events.
     if (tab && hasPermission(_WKWebExtensionPermissionWebNavigation, tab.get()) && hasPermission(frameURL, tab.get())) {
         constexpr auto eventType = WebExtensionEventListenerType::WebNavigationOnErrorOccurred;
-        wakeUpBackgroundContentIfNecessaryToFireEvents({ eventType }, [&] {
+        wakeUpBackgroundContentIfNecessaryToFireEvents({ eventType }, [=, protectedThis = Ref { *this }] {
             sendToProcessesForEvent(eventType, Messages::WebExtensionContextProxy::DispatchWebNavigationEvent(eventType, tab->identifier(), frameID, parentFrameID, frameURL, timestamp));
         });
     }
@@ -2096,28 +2106,30 @@ bool WebExtensionContext::hasPermissionToSendWebRequestEvent(WebExtensionTab* ta
 
 void WebExtensionContext::resourceLoadDidSendRequest(WebPageProxyIdentifier pageID, const ResourceLoadInfo& loadInfo, const WebCore::ResourceRequest& request)
 {
-    auto tab = getTab(pageID);
+    RefPtr tab = getTab(pageID);
     if (!hasPermissionToSendWebRequestEvent(tab.get(), request.url(), loadInfo))
         return;
 
+    RefPtr window = tab->window();
+    auto windowIdentifier = window ? window->identifier() : WebExtensionWindowConstants::NoneIdentifier;
+
     auto eventTypes = { WebExtensionEventListenerType::WebRequestOnBeforeRequest, WebExtensionEventListenerType::WebRequestOnBeforeSendHeaders, WebExtensionEventListenerType::WebRequestOnSendHeaders };
-    wakeUpBackgroundContentIfNecessaryToFireEvents(eventTypes, [&] {
-        RefPtr window = tab->window();
-        auto windowIdentifier = window ? window->identifier() : WebExtensionWindowConstants::NoneIdentifier;
+    wakeUpBackgroundContentIfNecessaryToFireEvents(eventTypes, [=, protectedThis = Ref { *this }] {
         sendToProcessesForEvents(eventTypes, Messages::WebExtensionContextProxy::ResourceLoadDidSendRequest(tab->identifier(), windowIdentifier, request, loadInfo));
     });
 }
 
 void WebExtensionContext::resourceLoadDidPerformHTTPRedirection(WebPageProxyIdentifier pageID, const ResourceLoadInfo& loadInfo, const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& request)
 {
-    auto tab = getTab(pageID);
+    RefPtr tab = getTab(pageID);
     if (!hasPermissionToSendWebRequestEvent(tab.get(), request.url(), loadInfo))
         return;
 
+    RefPtr window = tab->window();
+    auto windowIdentifier = window ? window->identifier() : WebExtensionWindowConstants::NoneIdentifier;
+
     auto eventTypes = { WebExtensionEventListenerType::WebRequestOnHeadersReceived, WebExtensionEventListenerType::WebRequestOnBeforeRedirect };
-    wakeUpBackgroundContentIfNecessaryToFireEvents(eventTypes, [&] {
-        RefPtr window = tab->window();
-        auto windowIdentifier = window ? window->identifier() : WebExtensionWindowConstants::NoneIdentifier;
+    wakeUpBackgroundContentIfNecessaryToFireEvents(eventTypes, [=, protectedThis = Ref { *this }] {
         sendToProcessesForEvents(eventTypes, Messages::WebExtensionContextProxy::ResourceLoadDidPerformHTTPRedirection(tab->identifier(), windowIdentifier, response, loadInfo, request));
     });
 
@@ -2127,42 +2139,45 @@ void WebExtensionContext::resourceLoadDidPerformHTTPRedirection(WebPageProxyIden
 
 void WebExtensionContext::resourceLoadDidReceiveChallenge(WebPageProxyIdentifier pageID, const ResourceLoadInfo& loadInfo, const WebCore::AuthenticationChallenge& challenge)
 {
-    auto tab = getTab(pageID);
+    RefPtr tab = getTab(pageID);
     if (!hasPermissionToSendWebRequestEvent(tab.get(), URL { }, loadInfo))
         return;
 
+    RefPtr window = tab->window();
+    auto windowIdentifier = window ? window->identifier() : WebExtensionWindowConstants::NoneIdentifier;
+
     auto eventTypes = { WebExtensionEventListenerType::WebRequestOnAuthRequired };
-    wakeUpBackgroundContentIfNecessaryToFireEvents(eventTypes, [&] {
-        RefPtr window = tab->window();
-        auto windowIdentifier = window ? window->identifier() : WebExtensionWindowConstants::NoneIdentifier;
+    wakeUpBackgroundContentIfNecessaryToFireEvents(eventTypes, [=, protectedThis = Ref { *this }] {
         sendToProcessesForEvents(eventTypes, Messages::WebExtensionContextProxy::ResourceLoadDidReceiveChallenge(tab->identifier(), windowIdentifier, challenge, loadInfo));
     });
 }
 
 void WebExtensionContext::resourceLoadDidReceiveResponse(WebPageProxyIdentifier pageID, const ResourceLoadInfo& loadInfo, const WebCore::ResourceResponse& response)
 {
-    auto tab = getTab(pageID);
+    RefPtr tab = getTab(pageID);
     if (!hasPermissionToSendWebRequestEvent(tab.get(), response.url(), loadInfo))
         return;
 
+    RefPtr window = tab->window();
+    auto windowIdentifier = window ? window->identifier() : WebExtensionWindowConstants::NoneIdentifier;
+
     auto eventTypes = { WebExtensionEventListenerType::WebRequestOnHeadersReceived, WebExtensionEventListenerType::WebRequestOnResponseStarted };
-    wakeUpBackgroundContentIfNecessaryToFireEvents(eventTypes, [&] {
-        RefPtr window = tab->window();
-        auto windowIdentifier = window ? window->identifier() : WebExtensionWindowConstants::NoneIdentifier;
+    wakeUpBackgroundContentIfNecessaryToFireEvents(eventTypes, [=, protectedThis = Ref { *this }] {
         sendToProcessesForEvents(eventTypes, Messages::WebExtensionContextProxy::ResourceLoadDidReceiveResponse(tab->identifier(), windowIdentifier, response, loadInfo));
     });
 }
 
 void WebExtensionContext::resourceLoadDidCompleteWithError(WebPageProxyIdentifier pageID, const ResourceLoadInfo& loadInfo, const WebCore::ResourceResponse& response, const WebCore::ResourceError& error)
 {
-    auto tab = getTab(pageID);
+    RefPtr tab = getTab(pageID);
     if (!hasPermissionToSendWebRequestEvent(tab.get(), response.url(), loadInfo))
         return;
 
+    RefPtr window = tab->window();
+    auto windowIdentifier = window ? window->identifier() : WebExtensionWindowConstants::NoneIdentifier;
+
     auto eventTypes = { WebExtensionEventListenerType::WebRequestOnErrorOccurred, WebExtensionEventListenerType::WebRequestOnCompleted };
-    wakeUpBackgroundContentIfNecessaryToFireEvents(eventTypes, [&] {
-        RefPtr window = tab->window();
-        auto windowIdentifier = window ? window->identifier() : WebExtensionWindowConstants::NoneIdentifier;
+    wakeUpBackgroundContentIfNecessaryToFireEvents(eventTypes, [=, protectedThis = Ref { *this }] {
         sendToProcessesForEvents(eventTypes, Messages::WebExtensionContextProxy::ResourceLoadDidCompleteWithError(tab->identifier(), windowIdentifier, response, error, loadInfo));
     });
 }
@@ -2656,7 +2671,15 @@ WKWebView *WebExtensionContext::relatedWebView()
 
     WKWebView *extensionWebView;
     enumerateExtensionPages([&](auto& page, bool& stop) {
-        extensionWebView = page.cocoaView().get();
+        auto *webView = page.cocoaView().get();
+
+#if ENABLE(INSPECTOR_EXTENSIONS)
+        // Inspector pages use a different process pool, and should not be related to other extension web views.
+        if (isInspectorBackgroundPage(webView))
+            return;
+#endif
+
+        extensionWebView = webView;
         stop = true;
     });
 
@@ -2771,6 +2794,26 @@ void WebExtensionContext::loadBackgroundWebViewDuringLoad()
         loadBackgroundWebView();
 }
 
+bool WebExtensionContext::isBackgroundPage(WebPageProxyIdentifier pageProxyIdentifier) const
+{
+    return m_backgroundWebView && m_backgroundWebView.get()._page->identifier() == pageProxyIdentifier;
+}
+
+bool WebExtensionContext::backgroundContentIsLoaded() const
+{
+    return m_backgroundWebView && m_backgroundContentIsLoaded && m_actionsToPerformAfterBackgroundContentLoads.isEmpty();
+}
+
+void WebExtensionContext::loadBackgroundWebViewIfNeeded()
+{
+    ASSERT(isLoaded());
+
+    if (!extension().hasBackgroundContent() || m_backgroundWebView)
+        return;
+
+    loadBackgroundWebView();
+}
+
 void WebExtensionContext::loadBackgroundWebView()
 {
     ASSERT(isLoaded());
@@ -2778,11 +2821,13 @@ void WebExtensionContext::loadBackgroundWebView()
     if (!extension().hasBackgroundContent())
         return;
 
+    RELEASE_LOG_DEBUG(Extensions, "Loading background content");
+
+    ASSERT(!m_backgroundContentIsLoaded);
+    m_backgroundContentIsLoaded = false;
+
     ASSERT(!m_backgroundWebView);
     m_backgroundWebView = [[WKWebView alloc] initWithFrame:CGRectZero configuration:webViewConfiguration(WebViewPurpose::Background)];
-
-    m_lastBackgroundContentLoadDate = NSDate.now;
-
     m_backgroundWebView.get().UIDelegate = m_delegate.get();
     m_backgroundWebView.get().navigationDelegate = m_delegate.get();
     m_backgroundWebView.get().inspectable = m_inspectable;
@@ -2821,43 +2866,63 @@ void WebExtensionContext::unloadBackgroundWebView()
     if (!m_backgroundWebView)
         return;
 
-    // FIXME: <https://webkit.org/b/246484> Disconnect message ports for the background web view.
+    m_backgroundContentIsLoaded = false;
 
     [m_backgroundWebView _close];
     m_backgroundWebView = nil;
 }
 
-void WebExtensionContext::wakeUpBackgroundContentIfNecessary(CompletionHandler<void()>&& completionHandler)
+static inline bool isNotRunningInTestRunner()
 {
-    if (!extension().backgroundContentPath() || extension().backgroundContentIsPersistent()) {
-        completionHandler();
-        return;
-    }
-
-    if (m_backgroundWebView) {
-        bool backgroundContentIsLoading = !m_actionsToPerformAfterBackgroundContentLoads.isEmpty();
-        if (backgroundContentIsLoading)
-            queueEventToFireAfterBackgroundContentLoads(WTFMove(completionHandler));
-        else {
-            scheduleBackgroundContentToUnload();
-            completionHandler();
-        }
-
-        return;
-    }
-
-    queueEventToFireAfterBackgroundContentLoads(WTFMove(completionHandler));
-    loadBackgroundWebView();
+    return WebCore::applicationBundleIdentifier() != "com.apple.WebKit.TestWebKitAPI"_s;
 }
 
 void WebExtensionContext::scheduleBackgroundContentToUnload()
 {
-    if (extension().backgroundContentIsPersistent())
+    if (!m_backgroundWebView || extension().backgroundContentIsPersistent())
         return;
 
-    ASSERT(m_backgroundWebView);
+    static const auto delayBeforeUnloading = isNotRunningInTestRunner() ? 30_s : 3_s;
 
-    // FIXME: <https://webkit.org/b/246483> Don't unload the background page if there are open ports, pending website requests, or if an inspector window is open.
+    RELEASE_LOG_DEBUG(Extensions, "Scheduling background content to unload in %{public}.0f seconds", delayBeforeUnloading.seconds());
+
+    if (!m_unloadBackgroundWebViewTimer)
+        m_unloadBackgroundWebViewTimer = makeUnique<WebCore::Timer>(*this, &WebExtensionContext::unloadBackgroundContentIfPossible);
+    m_unloadBackgroundWebViewTimer->startOneShot(delayBeforeUnloading);
+}
+
+void WebExtensionContext::unloadBackgroundContentIfPossible()
+{
+    if (!m_backgroundWebView || extension().backgroundContentIsPersistent())
+        return;
+
+    static const auto delayForInactivePorts = isNotRunningInTestRunner() ? 2_min : 6_s;
+
+    if (pageHasOpenPorts(*m_backgroundWebView.get()._page) && MonotonicTime::now() - m_lastBackgroundPortActivityTime < delayForInactivePorts) {
+        RELEASE_LOG_DEBUG(Extensions, "Not unloading background content because it has open, active ports");
+        scheduleBackgroundContentToUnload();
+        return;
+    }
+
+    // FIXME: <https://webkit.org/b/262714> Don't unload the background page if there are pending permission requests.
+
+    if (m_backgroundWebView.get()._isBeingInspected) {
+        RELEASE_LOG_DEBUG(Extensions, "Not unloading background content because it is being inspected");
+        scheduleBackgroundContentToUnload();
+        return;
+    }
+
+#if ENABLE(INSPECTOR_EXTENSIONS)
+    if (!m_inspectorBackgroundPageMap.isEmptyIgnoringNullReferences()) {
+        scheduleBackgroundContentToUnload();
+        RELEASE_LOG_DEBUG(Extensions, "Not unloading background content because an inspector background page open");
+        return;
+    }
+#endif
+
+    RELEASE_LOG_DEBUG(Extensions, "Unloading non-persistent background content");
+
+    unloadBackgroundWebView();
 }
 
 void WebExtensionContext::queueStartupAndInstallEventsForExtensionIfNecessary()
@@ -2940,13 +3005,17 @@ void WebExtensionContext::saveBackgroundPageListenersToStorage()
 
 void WebExtensionContext::performTasksAfterBackgroundContentLoads()
 {
-    RELEASE_LOG_DEBUG(Extensions, "Performing after background content tasks soon");
+    RELEASE_LOG_DEBUG(Extensions, "Performing tasks soon after background content loads");
+
+    constexpr auto performDelay = 100_ms;
 
     // Delay to give time for addListener messages to register the events, this is needed because modules execute after page load fires.
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.25 * NSEC_PER_SEC)), dispatch_get_main_queue(), makeBlockPtr([this, protectedThis = Ref { *this }] {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, performDelay.nanosecondsAs<int64_t>()), dispatch_get_main_queue(), makeBlockPtr([this, protectedThis = Ref { *this }] {
+        if (!isLoaded())
+            return;
+
         if (m_shouldFireStartupEvent) {
             fireRuntimeStartupEventIfNeeded();
-
             m_shouldFireStartupEvent = false;
         }
 
@@ -2957,11 +3026,12 @@ void WebExtensionContext::performTasksAfterBackgroundContentLoads()
             m_previousVersion = nullString();
         }
 
-        RELEASE_LOG_DEBUG(Extensions, "Performing %{public}zu task(s) after background content", m_actionsToPerformAfterBackgroundContentLoads.size());
+        RELEASE_LOG_DEBUG(Extensions, "Performing %{public}zu task(s) after background content loaded", m_actionsToPerformAfterBackgroundContentLoads.size());
 
         for (auto& action : m_actionsToPerformAfterBackgroundContentLoads)
             action();
 
+        m_backgroundContentIsLoaded = true;
         m_actionsToPerformAfterBackgroundContentLoads.clear();
 
         saveBackgroundPageListenersToStorage();
@@ -2969,45 +3039,51 @@ void WebExtensionContext::performTasksAfterBackgroundContentLoads()
     }).get());
 }
 
-void WebExtensionContext::wakeUpBackgroundContentIfNecessaryToFireEvents(EventListenerTypeSet&& types, CompletionHandler<void()>&& completionHandler)
+void WebExtensionContext::wakeUpBackgroundContentIfNecessary(CompletionHandler<void()>&& completionHandler)
 {
-    if (extension().backgroundContentIsPersistent()) {
+    if (!extension().hasBackgroundContent()) {
         completionHandler();
         return;
     }
 
-    bool backgroundContentListensToAtLeastOneEvent = false;
-    for (auto& type : types) {
-        if (m_backgroundContentEventListeners.contains(type)) {
-            backgroundContentListensToAtLeastOneEvent = true;
-            break;
-        }
-    }
+    scheduleBackgroundContentToUnload();
 
-    if (!m_backgroundWebView && backgroundContentListensToAtLeastOneEvent) {
-        queueEventToFireAfterBackgroundContentLoads(WTFMove(completionHandler));
-        loadBackgroundWebView();
+    if (backgroundContentIsLoaded()) {
+        completionHandler();
         return;
     }
-
-    bool backgroundContentIsLoading = !m_actionsToPerformAfterBackgroundContentLoads.isEmpty();
-    if (backgroundContentIsLoading)
-        queueEventToFireAfterBackgroundContentLoads(WTFMove(completionHandler));
-    else {
-        if (backgroundContentListensToAtLeastOneEvent)
-            scheduleBackgroundContentToUnload();
-
-        completionHandler();
-    }
-}
-
-void WebExtensionContext::queueEventToFireAfterBackgroundContentLoads(CompletionHandler<void()> &&completionHandler)
-{
-    ASSERT(extension().backgroundContentPath());
 
     RELEASE_LOG_DEBUG(Extensions, "Scheduled task for after background content loads");
 
     m_actionsToPerformAfterBackgroundContentLoads.append(WTFMove(completionHandler));
+
+    loadBackgroundWebViewIfNeeded();
+}
+
+void WebExtensionContext::wakeUpBackgroundContentIfNecessaryToFireEvents(EventListenerTypeSet&& types, CompletionHandler<void()>&& completionHandler)
+{
+    if (!extension().hasBackgroundContent()) {
+        completionHandler();
+        return;
+    }
+
+    if (!extension().backgroundContentIsPersistent()) {
+        bool backgroundContentListensToAtLeastOneEvent = false;
+        for (auto& type : types) {
+            if (m_backgroundContentEventListeners.contains(type)) {
+                backgroundContentListensToAtLeastOneEvent = true;
+                break;
+            }
+        }
+
+        // Don't load the background page if it isn't expecting these events.
+        if (!backgroundContentListensToAtLeastOneEvent) {
+            completionHandler();
+            return;
+        }
+    }
+
+    wakeUpBackgroundContentIfNecessary(WTFMove(completionHandler));
 }
 
 bool WebExtensionContext::decidePolicyForNavigationAction(WKWebView *webView, WKNavigationAction *navigationAction)
@@ -3048,11 +3124,13 @@ void WebExtensionContext::didFailNavigation(WKWebView *webView, WKNavigation *, 
 
 void WebExtensionContext::webViewWebContentProcessDidTerminate(WKWebView *webView)
 {
-    // FIXME: <https://webkit.org/b/246484> Disconnect message ports for the crashed web view.
-
     if (webView == m_backgroundWebView) {
-        m_backgroundWebView = nullptr;
-        loadBackgroundWebView();
+        m_backgroundWebView = nil;
+        m_backgroundContentIsLoaded = false;
+
+        if (extension().backgroundContentIsPersistent())
+            loadBackgroundWebView();
+
         return;
     }
 
@@ -3136,6 +3214,9 @@ RefPtr<WebInspectorUIProxy> WebExtensionContext::inspector(const API::InspectorE
 HashSet<Ref<WebProcessProxy>> WebExtensionContext::processes(const API::InspectorExtension& inspectorExtension) const
 {
     HashSet<Ref<WebProcessProxy>> result;
+
+    if (!isLoaded())
+        return result;
 
     RefPtr inspectorProxy = inspector(inspectorExtension);
     if (!inspectorProxy)

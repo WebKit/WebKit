@@ -167,7 +167,7 @@ void WebExtensionContext::firePermissionsEventListenerIfNecessary(WebExtensionEv
 
     HashSet<String> origins = toStrings(matchPatterns);
 
-    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [&] {
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [=, protectedThis = Ref { *this }] {
         sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchPermissionsEvent(type, permissions, origins));
     });
 }

@@ -268,7 +268,7 @@ void WebExtensionContext::actionSetEnabled(std::optional<WebExtensionTabIdentifi
 void WebExtensionContext::fireActionClickedEventIfNeeded(WebExtensionTab* tab)
 {
     constexpr auto type = WebExtensionEventListenerType::ActionOnClicked;
-    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [&] {
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [=, protectedThis = Ref { *this }, tab = RefPtr { tab }] {
         sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchActionClickedEvent(tab ? std::optional(tab->parameters()) : std::nullopt));
     });
 }

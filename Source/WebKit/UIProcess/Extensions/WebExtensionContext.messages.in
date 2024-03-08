@@ -93,8 +93,8 @@ messages -> WebExtensionContext {
     [EnabledIf='isLoaded()'] PermissionsRemove(HashSet<String> permissions, HashSet<String> origins) -> (bool success)
 
     // Port APIs
-    [EnabledIf='isLoaded()'] PortPostMessage(WebKit::WebExtensionContentWorldType targetContentWorldType, std::optional<WebKit::WebPageProxyIdentifier> sendingPageProxyIdentifier, WebKit::WebExtensionPortChannelIdentifier channelIdentifier, String messageJSON)
-    [EnabledIf='isLoaded()'] PortRemoved(WebKit::WebExtensionContentWorldType sourceContentWorldType, WebKit::WebExtensionContentWorldType targetContentWorldType, WebKit::WebExtensionPortChannelIdentifier channelIdentifier)
+    [EnabledIf='isLoaded()'] PortPostMessage(WebKit::WebExtensionContentWorldType sourceContentWorldType, WebKit::WebExtensionContentWorldType targetContentWorldType, std::optional<WebKit::WebPageProxyIdentifier> sendingPageProxyIdentifier, WebKit::WebExtensionPortChannelIdentifier channelIdentifier, String messageJSON)
+    [EnabledIf='isLoaded()'] PortRemoved(WebKit::WebExtensionContentWorldType sourceContentWorldType, WebKit::WebExtensionContentWorldType targetContentWorldType, WebKit::WebPageProxyIdentifier pageProxyIdentifier, WebKit::WebExtensionPortChannelIdentifier channelIdentifier)
 
     // Runtime APIs
     [EnabledIf='isLoaded()'] RuntimeGetBackgroundPage() -> (Expected<std::optional<WebCore::PageIdentifier>, WebKit::WebExtensionError> result)
@@ -103,7 +103,7 @@ messages -> WebExtensionContext {
     [EnabledIf='isLoaded()'] RuntimeSendMessage(String extensionID, String messageJSON, struct WebKit::WebExtensionMessageSenderParameters senderParameters) -> (Expected<String, WebKit::WebExtensionError> result)
     [EnabledIf='isLoaded()'] RuntimeConnect(String extensionID, WebKit::WebExtensionPortChannelIdentifier channelIdentifier, String name, struct WebKit::WebExtensionMessageSenderParameters senderParameters) -> (Expected<void, WebKit::WebExtensionError> result)
     [EnabledIf='isLoaded()'] RuntimeSendNativeMessage(String applicationID, String messageJSON) -> (Expected<String, WebKit::WebExtensionError> result)
-    [EnabledIf='isLoaded()'] RuntimeConnectNative(String applicationID, WebKit::WebExtensionPortChannelIdentifier channelIdentifier) -> (Expected<void, WebKit::WebExtensionError> result)
+    [EnabledIf='isLoaded()'] RuntimeConnectNative(String applicationID, WebKit::WebExtensionPortChannelIdentifier channelIdentifier, WebKit::WebPageProxyIdentifier pageProxyIdentifier) -> (Expected<void, WebKit::WebExtensionError> result)
     [EnabledIf='isLoaded()'] RuntimeWebPageSendMessage(String extensionID, String messageJSON, struct WebKit::WebExtensionMessageSenderParameters senderParameters) -> (Expected<String, WebKit::WebExtensionError> result)
     [EnabledIf='isLoaded()'] RuntimeWebPageConnect(String extensionID, WebKit::WebExtensionPortChannelIdentifier channelIdentifier, String name, struct WebKit::WebExtensionMessageSenderParameters senderParameters) -> (Expected<void, WebKit::WebExtensionError> result)
 

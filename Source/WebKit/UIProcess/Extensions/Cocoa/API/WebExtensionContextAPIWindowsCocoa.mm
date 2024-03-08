@@ -299,7 +299,7 @@ void WebExtensionContext::windowsRemove(WebExtensionWindowIdentifier windowIdent
 
 void WebExtensionContext::fireWindowsEventIfNeeded(WebExtensionEventListenerType type, std::optional<WebExtensionWindowParameters> windowParameters)
 {
-    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [&] {
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [=, protectedThis = Ref { *this }] {
         sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchWindowsEvent(type, windowParameters));
     });
 }

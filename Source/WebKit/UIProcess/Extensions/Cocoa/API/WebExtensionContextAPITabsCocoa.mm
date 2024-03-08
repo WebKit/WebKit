@@ -37,6 +37,7 @@
 #import "WKWebViewPrivate.h"
 #import "WebExtensionContextProxy.h"
 #import "WebExtensionContextProxyMessages.h"
+#import "WebExtensionMessageSenderParameters.h"
 #import "WebExtensionScriptInjectionParameters.h"
 #import "WebExtensionTabIdentifier.h"
 #import "WebExtensionUtilities.h"
@@ -452,29 +453,31 @@ void WebExtensionContext::tabsSendMessage(WebExtensionTabIdentifier tabIdentifie
 
 void WebExtensionContext::tabsConnect(WebExtensionTabIdentifier tabIdentifier, WebExtensionPortChannelIdentifier channelIdentifier, String name, std::optional<WebExtensionFrameIdentifier> frameIdentifier, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
-    // Add 1 for the starting port here so disconnect will balance with a decrement.
+    static NSString * const apiName = @"tabs.connect()";
+
     constexpr auto sourceContentWorldType = WebExtensionContentWorldType::Main;
-    addPorts(sourceContentWorldType, channelIdentifier, 1);
+    constexpr auto targetContentWorldType = WebExtensionContentWorldType::ContentScript;
+
+    // Add 1 for the starting port here so disconnect will balance with a decrement.
+    addPorts(sourceContentWorldType, targetContentWorldType, channelIdentifier, { senderParameters.pageProxyIdentifier });
 
     RefPtr tab = getTab(tabIdentifier);
     if (!tab) {
-        completionHandler(toWebExtensionError(@"tabs.connect()", nil, @"tab not found"));
+        completionHandler(toWebExtensionError(apiName, nil, @"tab not found"));
         return;
     }
 
-    constexpr auto targetContentWorldType = WebExtensionContentWorldType::ContentScript;
-
     auto contentScriptProcesses = tab->processes(WebExtensionEventListenerType::RuntimeOnConnect, targetContentWorldType);
     if (contentScriptProcesses.isEmpty()) {
-        completionHandler(toWebExtensionError(@"tabs.connect()", nil, @"no runtime.onConnect listeners found"));
+        completionHandler(toWebExtensionError(apiName, nil, @"no runtime.onConnect listeners found"));
         return;
     }
 
     ASSERT(contentScriptProcesses.size() == 1);
     auto process = contentScriptProcesses.takeAny();
 
-    process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeConnectEvent(targetContentWorldType, channelIdentifier, name, frameIdentifier, senderParameters), [=, protectedThis = Ref { *this }](size_t firedEventCount) mutable {
-        protectedThis->addPorts(targetContentWorldType, channelIdentifier, firedEventCount);
+    process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeConnectEvent(targetContentWorldType, channelIdentifier, name, frameIdentifier, senderParameters), [=, protectedThis = Ref { *this }](HashCountedSet<WebPageProxyIdentifier>&& addedPortCounts) mutable {
+        protectedThis->addPorts(targetContentWorldType, sourceContentWorldType, channelIdentifier, WTFMove(addedPortCounts));
         protectedThis->fireQueuedPortMessageEventsIfNeeded(*process, targetContentWorldType, channelIdentifier);
         protectedThis->firePortDisconnectEventIfNeeded(sourceContentWorldType, targetContentWorldType, channelIdentifier);
         protectedThis->clearQueuedPortMessages(targetContentWorldType, channelIdentifier);
@@ -644,7 +647,7 @@ void WebExtensionContext::tabsRemoveCSS(WebPageProxyIdentifier webPageProxyIdent
 void WebExtensionContext::fireTabsCreatedEventIfNeeded(const WebExtensionTabParameters& parameters)
 {
     constexpr auto type = WebExtensionEventListenerType::TabsOnCreated;
-    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [&] {
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [=, protectedThis = Ref { *this }] {
         sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchTabsCreatedEvent(parameters));
     });
 }
@@ -652,7 +655,7 @@ void WebExtensionContext::fireTabsCreatedEventIfNeeded(const WebExtensionTabPara
 void WebExtensionContext::fireTabsUpdatedEventIfNeeded(const WebExtensionTabParameters& parameters, const WebExtensionTabParameters& changedParameters)
 {
     constexpr auto type = WebExtensionEventListenerType::TabsOnUpdated;
-    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [&] {
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [=, protectedThis = Ref { *this }] {
         sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchTabsUpdatedEvent(parameters, changedParameters));
     });
 }
@@ -660,7 +663,7 @@ void WebExtensionContext::fireTabsUpdatedEventIfNeeded(const WebExtensionTabPara
 void WebExtensionContext::fireTabsReplacedEventIfNeeded(WebExtensionTabIdentifier replacedTabIdentifier, WebExtensionTabIdentifier newTabIdentifier)
 {
     constexpr auto type = WebExtensionEventListenerType::TabsOnReplaced;
-    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [&] {
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [=, protectedThis = Ref { *this }] {
         sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchTabsReplacedEvent(replacedTabIdentifier, newTabIdentifier));
     });
 }
@@ -668,7 +671,7 @@ void WebExtensionContext::fireTabsReplacedEventIfNeeded(WebExtensionTabIdentifie
 void WebExtensionContext::fireTabsDetachedEventIfNeeded(WebExtensionTabIdentifier tabIdentifier, WebExtensionWindowIdentifier oldWindowIdentifier, size_t oldIndex)
 {
     constexpr auto type = WebExtensionEventListenerType::TabsOnDetached;
-    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [&] {
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [=, protectedThis = Ref { *this }] {
         sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchTabsDetachedEvent(tabIdentifier, oldWindowIdentifier, oldIndex));
     });
 }
@@ -676,7 +679,7 @@ void WebExtensionContext::fireTabsDetachedEventIfNeeded(WebExtensionTabIdentifie
 void WebExtensionContext::fireTabsMovedEventIfNeeded(WebExtensionTabIdentifier tabIdentifier, WebExtensionWindowIdentifier windowIdentifier, size_t oldIndex, size_t newIndex)
 {
     constexpr auto type = WebExtensionEventListenerType::TabsOnMoved;
-    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [&] {
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [=, protectedThis = Ref { *this }] {
         sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchTabsMovedEvent(tabIdentifier, windowIdentifier, oldIndex, newIndex));
     });
 }
@@ -684,7 +687,7 @@ void WebExtensionContext::fireTabsMovedEventIfNeeded(WebExtensionTabIdentifier t
 void WebExtensionContext::fireTabsAttachedEventIfNeeded(WebExtensionTabIdentifier tabIdentifier, WebExtensionWindowIdentifier newWindowIdentifier, size_t newIndex)
 {
     constexpr auto type = WebExtensionEventListenerType::TabsOnAttached;
-    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [&] {
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [=, protectedThis = Ref { *this }] {
         sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchTabsAttachedEvent(tabIdentifier, newWindowIdentifier, newIndex));
     });
 }
@@ -692,7 +695,7 @@ void WebExtensionContext::fireTabsAttachedEventIfNeeded(WebExtensionTabIdentifie
 void WebExtensionContext::fireTabsActivatedEventIfNeeded(WebExtensionTabIdentifier previousActiveTabIdentifier, WebExtensionTabIdentifier newActiveTabIdentifier, WebExtensionWindowIdentifier windowIdentifier)
 {
     constexpr auto type = WebExtensionEventListenerType::TabsOnActivated;
-    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [&] {
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [=, protectedThis = Ref { *this }] {
         sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchTabsActivatedEvent(previousActiveTabIdentifier, newActiveTabIdentifier, windowIdentifier));
     });
 }
@@ -700,7 +703,7 @@ void WebExtensionContext::fireTabsActivatedEventIfNeeded(WebExtensionTabIdentifi
 void WebExtensionContext::fireTabsHighlightedEventIfNeeded(Vector<WebExtensionTabIdentifier> tabIdentifiers, WebExtensionWindowIdentifier windowIdentifier)
 {
     constexpr auto type = WebExtensionEventListenerType::TabsOnHighlighted;
-    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [&] {
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [=, protectedThis = Ref { *this }] {
         sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchTabsHighlightedEvent(tabIdentifiers, windowIdentifier));
     });
 }
@@ -708,7 +711,7 @@ void WebExtensionContext::fireTabsHighlightedEventIfNeeded(Vector<WebExtensionTa
 void WebExtensionContext::fireTabsRemovedEventIfNeeded(WebExtensionTabIdentifier tabIdentifier, WebExtensionWindowIdentifier windowIdentifier, WindowIsClosing windowIsClosing)
 {
     constexpr auto type = WebExtensionEventListenerType::TabsOnRemoved;
-    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [&] {
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [=, protectedThis = Ref { *this }] {
         sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchTabsRemovedEvent(tabIdentifier, windowIdentifier, windowIsClosing));
     });
 }

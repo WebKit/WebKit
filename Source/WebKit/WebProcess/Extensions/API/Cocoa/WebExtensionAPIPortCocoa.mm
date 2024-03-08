@@ -91,7 +91,7 @@ void WebExtensionAPIPort::remove()
     if (entry == webExtensionPorts().end())
         return;
 
-    WebProcess::singleton().send(Messages::WebExtensionContext::PortRemoved(contentWorldType(), targetContentWorldType(), channelIdentifier()), extensionContext().identifier());
+    WebProcess::singleton().send(Messages::WebExtensionContext::PortRemoved(contentWorldType(), targetContentWorldType(), owningPageProxyIdentifier(), channelIdentifier()), extensionContext().identifier());
 
     entry->value.remove(*this);
 
@@ -140,7 +140,7 @@ void WebExtensionAPIPort::postMessage(WebFrame& frame, NSString *message, NSStri
 
     RELEASE_LOG_DEBUG(Extensions, "Sent port message for channel %{public}llu from %{public}@ world", channelIdentifier().toUInt64(), (NSString *)toDebugString(contentWorldType()));
 
-    WebProcess::singleton().send(Messages::WebExtensionContext::PortPostMessage(targetContentWorldType(), owningPageProxyIdentifier(), channelIdentifier(), message), extensionContext().identifier());
+    WebProcess::singleton().send(Messages::WebExtensionContext::PortPostMessage(contentWorldType(), targetContentWorldType(), owningPageProxyIdentifier(), channelIdentifier(), message), extensionContext().identifier());
 }
 
 void WebExtensionAPIPort::disconnect()

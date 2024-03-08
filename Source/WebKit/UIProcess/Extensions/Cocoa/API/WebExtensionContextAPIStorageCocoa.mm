@@ -238,13 +238,13 @@ void WebExtensionContext::fireStorageChangedEventIfNeeded(NSDictionary *oldKeysA
         return;
 
     constexpr auto type = WebExtensionEventListenerType::StorageOnChanged;
-    auto jsonString = encodeJSONString(changedData);
+    auto jsonString = String(encodeJSONString(changedData));
 
     // Unlike other extension events which are only dispatched to the web process that hosts all the extension-related web views (background page, popup, full page extension content),
     // content scripts are allowed to listen to storage.onChanged events.
     sendToContentScriptProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchStorageChangedEvent(jsonString, dataType, WebExtensionContentWorldType::ContentScript));
 
-    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [&] {
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [=, protectedThis = Ref { *this }] {
         sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchStorageChangedEvent(jsonString, dataType, WebExtensionContentWorldType::Main));
     });
 }

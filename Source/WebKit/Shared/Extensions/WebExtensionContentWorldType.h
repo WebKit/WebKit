@@ -41,6 +41,16 @@ enum class WebExtensionContentWorldType : uint8_t {
 #endif
 };
 
+inline bool isEqual(WebExtensionContentWorldType a, WebExtensionContentWorldType b)
+{
+#if ENABLE(INSPECTOR_EXTENSIONS)
+    // Inspector content world is a special alias of Main. Consider them equal.
+    if ((a == WebExtensionContentWorldType::Main || a == WebExtensionContentWorldType::Inspector) && (b == WebExtensionContentWorldType::Main || b == WebExtensionContentWorldType::Inspector))
+        return true;
+#endif
+    return a == b;
+}
+
 inline String toDebugString(WebExtensionContentWorldType contentWorldType)
 {
     switch (contentWorldType) {

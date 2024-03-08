@@ -624,7 +624,7 @@ template<typename KeyArg, typename HashArg, typename KeyTraitsArg> struct Argume
     {
         unsigned hashCountedSetSize;
         if (!decoder.decode(hashCountedSetSize))
-            return false;
+            return std::nullopt;
 
         HashCountedSetType tempHashCountedSet;
         for (unsigned i = 0; i < hashCountedSetSize; ++i) {

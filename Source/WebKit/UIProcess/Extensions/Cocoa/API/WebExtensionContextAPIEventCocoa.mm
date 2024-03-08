@@ -49,7 +49,7 @@ void WebExtensionContext::addListener(WebPageProxyIdentifier identifier, WebExte
 
     RELEASE_LOG_DEBUG(Extensions, "Registered event listener for type %{public}hhu in %{public}@ world", enumToUnderlyingType(type), (NSString *)toDebugString(contentWorldType));
 
-    if (!extension().backgroundContentIsPersistent() && m_backgroundWebView && m_backgroundWebView.get()._page->identifier() == identifier)
+    if (!extension().backgroundContentIsPersistent() && isBackgroundPage(identifier))
         m_backgroundContentEventListeners.add(type);
 
     auto result = m_eventListenerPages.add({ type, contentWorldType }, WeakPageCountedSet { });
@@ -66,7 +66,7 @@ void WebExtensionContext::removeListener(WebPageProxyIdentifier identifier, WebE
 
     RELEASE_LOG_DEBUG(Extensions, "Unregistered %{public}zu event listener(s) for type %{public}hhu in %{public}@ world", removedCount, enumToUnderlyingType(type), (NSString *)toDebugString(contentWorldType));
 
-    if (!extension().backgroundContentIsPersistent() && m_backgroundWebView && m_backgroundWebView.get()._page->identifier() == identifier) {
+    if (!extension().backgroundContentIsPersistent() && isBackgroundPage(identifier)) {
         for (size_t i = 0; i < removedCount; ++i)
             m_backgroundContentEventListeners.remove(type);
     }

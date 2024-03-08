@@ -377,7 +377,7 @@ RefPtr<WebExtensionAPIPort> WebExtensionAPIRuntime::connectNative(WebFrame& fram
 
     auto port = WebExtensionAPIPort::create(*this, *frame.page(), WebExtensionContentWorldType::Native, applicationID);
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::RuntimeConnectNative(applicationID, port->channelIdentifier()), [=, globalContext = JSRetainPtr { JSContextGetGlobalContext(context) }, protectedThis = Ref { *this }](Expected<void, WebExtensionError>&& result) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::RuntimeConnectNative(applicationID, port->channelIdentifier(), frame.page()->webPageProxyIdentifier()), [=, globalContext = JSRetainPtr { JSContextGetGlobalContext(context) }, protectedThis = Ref { *this }](Expected<void, WebExtensionError>&& result) {
         if (result)
             return;
 
@@ -661,9 +661,9 @@ void WebExtensionContextProxy::dispatchRuntimeMessageEvent(WebExtensionContentWo
     }
 }
 
-void WebExtensionContextProxy::internalDispatchRuntimeConnectEvent(WebExtensionContentWorldType contentWorldType, WebExtensionPortChannelIdentifier channelIdentifier, const String& name, std::optional<WebExtensionFrameIdentifier> frameIdentifier, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(size_t firedEventCount)>&& completionHandler)
+void WebExtensionContextProxy::internalDispatchRuntimeConnectEvent(WebExtensionContentWorldType contentWorldType, WebExtensionPortChannelIdentifier channelIdentifier, const String& name, std::optional<WebExtensionFrameIdentifier> frameIdentifier, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(HashCountedSet<WebPageProxyIdentifier>&&)>&& completionHandler)
 {
-    size_t firedEventCount = 0;
+    HashCountedSet<WebPageProxyIdentifier> firedEventCounts;
     auto sourceContentWorldType = senderParameters.contentWorldType;
 
     enumerateFramesAndNamespaceObjects([&](auto& frame, auto& namespaceObject) {
@@ -672,7 +672,8 @@ void WebExtensionContextProxy::internalDispatchRuntimeConnectEvent(WebExtensionC
             return;
 
         // Don't send the event to any listeners in the sender's page.
-        if (senderParameters.pageProxyIdentifier == frame.page()->webPageProxyIdentifier())
+        auto webPageProxyIdentifier = frame.page()->webPageProxyIdentifier();
+        if (senderParameters.pageProxyIdentifier == webPageProxyIdentifier)
             return;
 
         WebExtensionAPIEvent::ListenerVector listeners;
@@ -684,7 +685,7 @@ void WebExtensionContextProxy::internalDispatchRuntimeConnectEvent(WebExtensionC
         if (listeners.isEmpty())
             return;
 
-        firedEventCount += listeners.size();
+        firedEventCounts.add(webPageProxyIdentifier, listeners.size());
 
         auto globalContext = frame.jsContextForWorld(toDOMWrapperWorld(contentWorldType));
         for (auto& listener : listeners) {
@@ -693,10 +694,10 @@ void WebExtensionContextProxy::internalDispatchRuntimeConnectEvent(WebExtensionC
         }
     }, toDOMWrapperWorld(contentWorldType));
 
-    completionHandler(firedEventCount);
+    completionHandler(WTFMove(firedEventCounts));
 }
 
-void WebExtensionContextProxy::dispatchRuntimeConnectEvent(WebExtensionContentWorldType contentWorldType, WebExtensionPortChannelIdentifier channelIdentifier, const String& name, std::optional<WebExtensionFrameIdentifier> frameIdentifier, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(size_t firedEventCount)>&& completionHandler)
+void WebExtensionContextProxy::dispatchRuntimeConnectEvent(WebExtensionContentWorldType contentWorldType, WebExtensionPortChannelIdentifier channelIdentifier, const String& name, std::optional<WebExtensionFrameIdentifier> frameIdentifier, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(HashCountedSet<WebPageProxyIdentifier>&&)>&& completionHandler)
 {
     switch (contentWorldType) {
     case WebExtensionContentWorldType::Main:

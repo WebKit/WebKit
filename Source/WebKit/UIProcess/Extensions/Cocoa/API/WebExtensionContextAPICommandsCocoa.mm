@@ -58,16 +58,16 @@ void WebExtensionContext::commandsGetAll(CompletionHandler<void(Vector<WebExtens
 void WebExtensionContext::fireCommandEventIfNeeded(const WebExtensionCommand& command, WebExtensionTab* tab)
 {
     constexpr auto type = WebExtensionEventListenerType::CommandsOnCommand;
-    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [&] {
-        sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchCommandsCommandEvent(command.identifier(), tab ? std::optional(tab->parameters()) : std::nullopt));
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [=, protectedThis = Ref { *this }, command = Ref { command }, tab = RefPtr { tab }] {
+        sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchCommandsCommandEvent(command->identifier(), tab ? std::optional(tab->parameters()) : std::nullopt));
     });
 }
 
 void WebExtensionContext::fireCommandChangedEventIfNeeded(const WebExtensionCommand& command, const String& oldShortcut)
 {
     constexpr auto type = WebExtensionEventListenerType::CommandsOnChanged;
-    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [&] {
-        sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchCommandsChangedEvent(command.identifier(), oldShortcut, command.shortcutString()));
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [=, protectedThis = Ref { *this }, command = Ref { command }] {
+        sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchCommandsChangedEvent(command->identifier(), oldShortcut, command->shortcutString()));
     });
 }
 

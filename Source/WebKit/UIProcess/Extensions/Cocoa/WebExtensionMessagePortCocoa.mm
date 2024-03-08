@@ -111,8 +111,8 @@ void WebExtensionMessagePort::remove()
     if (isDisconnected())
         return;
 
-    m_extensionContext->portRemoved(WebExtensionContentWorldType::Native, WebExtensionContentWorldType::Main, m_channelIdentifier);
     m_extensionContext->removeNativePort(*this);
+    m_extensionContext->firePortDisconnectEventIfNeeded(WebExtensionContentWorldType::Native, WebExtensionContentWorldType::Main, m_channelIdentifier);
     m_extensionContext = nullptr;
 }
 
@@ -125,7 +125,7 @@ void WebExtensionMessagePort::sendMessage(id message, CompletionHandler<void(Err
 
     THROW_UNLESS(isValidJSONObject(message, { JSONOptions::FragmentsAllowed }), @"Message object is not JSON-serializable");
 
-    m_extensionContext->portPostMessage(WebExtensionContentWorldType::Main, std::nullopt, m_channelIdentifier, encodeJSONString(message, { JSONOptions::FragmentsAllowed }) );
+    m_extensionContext->portPostMessage(WebExtensionContentWorldType::Native, WebExtensionContentWorldType::Main, std::nullopt, m_channelIdentifier, encodeJSONString(message, { JSONOptions::FragmentsAllowed }) );
 
     completionHandler(std::nullopt);
 }

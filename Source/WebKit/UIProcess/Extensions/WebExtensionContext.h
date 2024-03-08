@@ -183,9 +183,12 @@ public:
 
     using WebProcessProxySet = HashSet<Ref<WebProcessProxy>>;
 
+    using PortWorldTuple = std::tuple<WebExtensionContentWorldType, WebExtensionContentWorldType, WebExtensionPortChannelIdentifier>;
     using PortWorldPair = std::pair<WebExtensionContentWorldType, WebExtensionPortChannelIdentifier>;
     using MessagePageProxyIdentifierPair = std::pair<String, std::optional<WebPageProxyIdentifier>>;
     using PortCountedSet = HashCountedSet<PortWorldPair>;
+    using PortTupleCountedSet = HashCountedSet<PortWorldTuple>;
+    using PageProxyIdentifierPortMap = HashMap<WebPageProxyIdentifier, PortTupleCountedSet>;
     using PortQueuedMessageMap = HashMap<PortWorldPair, Vector<MessagePageProxyIdentifierPair>>;
     using NativePortMap = HashMap<WebExtensionPortChannelIdentifier, Ref<WebExtensionMessagePort>>;
 
@@ -340,6 +343,8 @@ public:
     void setPermissionState(PermissionState, WebExtensionMatchPattern&, WallTime expirationDate = WallTime::infinity());
 
     void clearCachedPermissionStates();
+
+    void removePage(WebPageProxy&);
 
     Ref<WebExtensionWindow> getOrCreateWindow(_WKWebExtensionWindow *) const;
     RefPtr<WebExtensionWindow> getWindow(WebExtensionWindowIdentifier, std::optional<WebPageProxyIdentifier> = std::nullopt, IgnoreExtensionAccess = IgnoreExtensionAccess::No) const;
@@ -534,16 +539,20 @@ private:
 
     void populateWindowsAndTabs();
 
+    bool isBackgroundPage(WebPageProxyIdentifier) const;
+    bool backgroundContentIsLoaded() const;
+
     void loadBackgroundWebViewDuringLoad();
+    void loadBackgroundWebViewIfNeeded();
     void loadBackgroundWebView();
     void unloadBackgroundWebView();
     void queueStartupAndInstallEventsForExtensionIfNecessary();
     void scheduleBackgroundContentToUnload();
+    void unloadBackgroundContentIfPossible();
 
     uint64_t loadBackgroundPageListenersVersionNumberFromStorage();
     void loadBackgroundPageListenersFromStorage();
     void saveBackgroundPageListenersToStorage();
-    void queueEventToFireAfterBackgroundContentLoads(CompletionHandler<void()>&&);
 
     void performTasksAfterBackgroundContentLoads();
 
@@ -706,14 +715,18 @@ private:
     void firePermissionsEventListenerIfNecessary(WebExtensionEventListenerType, const PermissionsSet&, const MatchPatternSet&);
 
     // Port APIs
-    void portPostMessage(WebExtensionContentWorldType targetContentWorldType, std::optional<WebKit::WebPageProxyIdentifier>, WebExtensionPortChannelIdentifier, const String& messageJSON);
-    void portRemoved(WebExtensionContentWorldType sourceContentWorldType, WebExtensionContentWorldType targetContentWorldType, WebExtensionPortChannelIdentifier);
-    void addPorts(WebExtensionContentWorldType, WebExtensionPortChannelIdentifier, size_t totalPortObjects);
-    void removePort(WebExtensionContentWorldType, WebExtensionPortChannelIdentifier);
+    void portPostMessage(WebExtensionContentWorldType sourceContentWorldType, WebExtensionContentWorldType targetContentWorldType, std::optional<WebKit::WebPageProxyIdentifier>, WebExtensionPortChannelIdentifier, const String& messageJSON);
+    void portRemoved(WebExtensionContentWorldType sourceContentWorldType, WebExtensionContentWorldType targetContentWorldType, WebPageProxyIdentifier, WebExtensionPortChannelIdentifier);
+    bool pageHasOpenPorts(WebPageProxy&);
+    void disconnectPortsForPage(WebPageProxy&);
+    void addPorts(WebExtensionContentWorldType sourceContentWorldType, WebExtensionContentWorldType targetContentWorldType, WebExtensionPortChannelIdentifier, HashCountedSet<WebPageProxyIdentifier>&&);
+    void removePort(WebExtensionContentWorldType sourceContentWorldType, WebExtensionContentWorldType targetContentWorldType, WebExtensionPortChannelIdentifier, WebPageProxyIdentifier);
     void addNativePort(WebExtensionMessagePort&);
     void removeNativePort(WebExtensionMessagePort&);
+    unsigned openPortCount(WebExtensionContentWorldType, WebExtensionPortChannelIdentifier);
     bool isPortConnected(WebExtensionContentWorldType sourceContentWorldType, WebExtensionContentWorldType targetContentWorldType, WebExtensionPortChannelIdentifier);
     void clearQueuedPortMessages(WebExtensionContentWorldType, WebExtensionPortChannelIdentifier);
+    Vector<MessagePageProxyIdentifierPair> portQueuedMessages(WebExtensionContentWorldType, WebExtensionPortChannelIdentifier);
     void fireQueuedPortMessageEventsIfNeeded(WebProcessProxy&, WebExtensionContentWorldType, WebExtensionPortChannelIdentifier);
     void sendQueuedNativePortMessagesIfNeeded(WebExtensionPortChannelIdentifier);
     void firePortDisconnectEventIfNeeded(WebExtensionContentWorldType sourceContentWorldType, WebExtensionContentWorldType targetContentWorldType, WebExtensionPortChannelIdentifier);
@@ -725,7 +738,7 @@ private:
     void runtimeSendMessage(const String& extensionID, const String& messageJSON, const WebExtensionMessageSenderParameters&, CompletionHandler<void(Expected<String, WebExtensionError>&&)>&&);
     void runtimeConnect(const String& extensionID, WebExtensionPortChannelIdentifier, const String& name, const WebExtensionMessageSenderParameters&, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
     void runtimeSendNativeMessage(const String& applicationID, const String& messageJSON, CompletionHandler<void(Expected<String, WebExtensionError>&&)>&&);
-    void runtimeConnectNative(const String& applicationID, WebExtensionPortChannelIdentifier, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
+    void runtimeConnectNative(const String& applicationID, WebExtensionPortChannelIdentifier, WebPageProxyIdentifier, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
     void runtimeWebPageSendMessage(const String& extensionID, const String& messageJSON, const WebExtensionMessageSenderParameters&, CompletionHandler<void(Expected<String, WebExtensionError>&&)>&&);
     void runtimeWebPageConnect(const String& extensionID, WebExtensionPortChannelIdentifier, const String& name, const WebExtensionMessageSenderParameters&, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
     void fireRuntimeStartupEventIfNeeded();
@@ -846,10 +859,12 @@ private:
     InstallReason m_installReason { InstallReason::None };
     String m_previousVersion;
 
-    RetainPtr<NSDate> m_lastBackgroundContentLoadDate;
-
     RetainPtr<WKWebView> m_backgroundWebView;
     RetainPtr<_WKWebExtensionContextDelegate> m_delegate;
+
+    std::unique_ptr<WebCore::Timer> m_unloadBackgroundWebViewTimer;
+    MonotonicTime m_lastBackgroundPortActivityTime;
+    bool m_backgroundContentIsLoaded { false };
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
     WeakHashMap<WebInspectorUIProxy, TabIdentifierWebViewPair> m_inspectorBackgroundPageMap;
@@ -870,6 +885,7 @@ private:
     RefPtr<WebExtensionAction> m_defaultAction;
 
     PortCountedSet m_ports;
+    PageProxyIdentifierPortMap m_pagePortMap;
     PortQueuedMessageMap m_portQueuedMessages;
     NativePortMap m_nativePortMap;
 
@@ -905,6 +921,9 @@ private:
 template<typename T>
 void WebExtensionContext::sendToProcesses(const WebProcessProxySet& processes, const T& message) const
 {
+    if (!isLoaded())
+        return;
+
     for (auto& process : processes)
         process->send(T(message), identifier());
 }

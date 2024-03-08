@@ -315,6 +315,9 @@ void WebExtensionController::removePage(WebPageProxy& page)
 
     Ref controller = page.userContentController();
     removeUserContentController(controller);
+
+    for (Ref context : m_extensionContexts)
+        context->removePage(page);
 }
 
 void WebExtensionController::addProcessPool(WebProcessPool& processPool)
