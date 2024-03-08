@@ -177,7 +177,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_create_this)
     JSObject* result;
     JSObject* constructorAsObject = asObject(GET(bytecode.m_callee).jsValue());
     JSFunction* constructor = jsDynamicCast<JSFunction*>(constructorAsObject);
-    if (constructor && constructor->canUseAllocationProfile()) {
+    if (constructor && constructor->canUseAllocationProfiles()) {
         WriteBarrier<JSCell>& cachedCallee = bytecode.metadata(codeBlock).m_cachedCallee;
         if (!cachedCallee)
             cachedCallee.set(vm, codeBlock, constructor);
@@ -185,7 +185,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_create_this)
             cachedCallee.setWithoutWriteBarrier(JSCell::seenMultipleCalleeObjects());
 
         size_t inlineCapacity = bytecode.m_inlineCapacity;
-        ObjectAllocationProfileWithPrototype* allocationProfile = constructor->ensureRareDataAndAllocationProfile(globalObject, inlineCapacity)->objectAllocationProfile();
+        ObjectAllocationProfileWithPrototype* allocationProfile = constructor->ensureRareDataAndObjectAllocationProfile(globalObject, inlineCapacity)->objectAllocationProfile();
         CHECK_EXCEPTION();
         Structure* structure = allocationProfile->structure();
         result = constructEmptyObject(vm, structure);
@@ -229,7 +229,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_create_promise)
     }
 
     JSFunction* constructor = jsDynamicCast<JSFunction*>(constructorAsObject);
-    if (constructor && constructor->canUseAllocationProfile()) {
+    if (constructor && constructor->canUseAllocationProfiles()) {
         WriteBarrier<JSCell>& cachedCallee = bytecode.metadata(codeBlock).m_cachedCallee;
         if (!cachedCallee)
             cachedCallee.set(vm, codeBlock, constructor);
@@ -261,7 +261,7 @@ static JSClass* createInternalFieldObject(JSGlobalObject* globalObject, VM& vm, 
     JSClass* result = JSClass::create(vm, structure);
 
     JSFunction* constructor = jsDynamicCast<JSFunction*>(constructorAsObject);
-    if (constructor && constructor->canUseAllocationProfile()) {
+    if (constructor && constructor->canUseAllocationProfiles()) {
         WriteBarrier<JSCell>& cachedCallee = bytecode.metadata(codeBlock).m_cachedCallee;
         if (!cachedCallee)
             cachedCallee.set(vm, codeBlock, constructor);
