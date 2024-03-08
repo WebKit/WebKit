@@ -39,10 +39,13 @@
 #import "WebExtensionController.h"
 #import "WebExtensionMatchPattern.h"
 #import "_WKWebExtensionControllerInternal.h"
+#import "_WKWebExtensionMatchPatternInternal.h"
 #import <WebKit/_WKWebExtensionContext.h>
 #import <WebKit/_WKWebExtensionControllerDelegatePrivate.h>
 #import <WebKit/_WKWebExtensionMatchPattern.h>
 #import <WebKit/_WKWebExtensionPermission.h>
+#import <wtf/BlockPtr.h>
+#import <wtf/CallbackAggregator.h>
 
 namespace WebKit {
 
@@ -72,7 +75,7 @@ void WebExtensionContext::permissionsRequest(HashSet<String> permissions, HashSe
     auto matchPatterns = toPatterns(origins);
 
     // If there is nothing to grant, return true. This matches Chrome and Firefox.
-    if (!permissions.size() && !origins.size()) {
+    if (permissions.isEmpty() && origins.isEmpty()) {
         firePermissionsEventListenerIfNecessary(WebExtensionEventListenerType::PermissionsOnAdded, permissions, matchPatterns);
         completionHandler(true);
         return;
@@ -90,62 +93,64 @@ void WebExtensionContext::permissionsRequest(HashSet<String> permissions, HashSe
     if (requestedAllHostsPattern && !m_requestedOptionalAccessToAllHosts)
         m_requestedOptionalAccessToAllHosts = YES;
 
-    __block MatchPatternSet grantedPatterns;
-    __block PermissionsSet grantedPermissions;
-    auto delegate = extensionController()->delegate();
+    class ResultHolder : public RefCounted<ResultHolder> {
+    public:
+        static Ref<ResultHolder> create() { return adoptRef(*new ResultHolder()); }
+        ResultHolder() = default;
 
-    auto originsCompletionHandler = ^(NSSet<_WKWebExtensionMatchPattern *> *allowedOrigins) {
-        // No granted origins were sent back, but origins were requested.
-        if (!allowedOrigins.count && origins.size()) {
+        bool matchPatternsAreGranted { false };
+        bool permissionsAreGranted { false };
+    };
+
+    Ref resultHolder = ResultHolder::create();
+
+    // Empty requests are automatically granted and don't call the delegate.
+    resultHolder->matchPatternsAreGranted = matchPatterns.isEmpty();
+    resultHolder->permissionsAreGranted = permissions.isEmpty();
+
+    Ref callbackAggregator = CallbackAggregator::create([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), resultHolder, permissions, matchPatterns]() mutable {
+        if (!resultHolder->matchPatternsAreGranted || !resultHolder->permissionsAreGranted) {
             completionHandler(false);
             return;
         }
 
-        for (_WKWebExtensionMatchPattern *pattern in allowedOrigins) {
-            // Allowed origin doesn't match the origins requested.
-            if (!origins.contains(pattern.string)) {
-                completionHandler(false);
-                return;
-            }
-
-            grantedPatterns.add(*WebExtensionMatchPattern::getOrCreate(pattern.string));
-        }
-
-        grantPermissionMatchPatterns(WTFMove(grantedPatterns));
-        grantPermissions(WTFMove(grantedPermissions));
+        grantPermissionMatchPatterns(WTFMove(matchPatterns));
+        grantPermissions(WTFMove(permissions));
 
         completionHandler(true);
+    });
+
+    auto matchPatternsCompletionHandler = [callbackAggregator, resultHolder, matchPatterns](NSSet<_WKWebExtensionMatchPattern *> *allowedMatchPatterns) {
+        THROW_UNLESS([allowedMatchPatterns isKindOfClass:NSSet.class], @"Object returned by webExtensionController:promptForPermissionMatchPatterns:inTab:forExtensionContext:completionHandler: is not a set");
+
+        for (_WKWebExtensionMatchPattern *pattern in allowedMatchPatterns) {
+            THROW_UNLESS([pattern isKindOfClass:_WKWebExtensionMatchPattern.class], @"Object returned in set by webExtensionController:promptForPermissionMatchPatterns:inTab:forExtensionContext:completionHandler: is not a _WKWebExtensionMatchPattern");
+            THROW_UNLESS(matchPatterns.contains(pattern._webExtensionMatchPattern), @"Set returned by webExtensionController:promptForPermissionMatchPatterns:inTab:forExtensionContext:completionHandler: doesn't contain the requested match patterns");
+        }
+
+        // The permissions.request() API only allows granting all or none.
+        resultHolder->matchPatternsAreGranted = matchPatterns.size() == allowedMatchPatterns.count;
     };
 
-    auto permissionCompletionHandler = ^(NSSet<_WKWebExtensionPermission> *allowedPermissions) {
-        // No granted permissions were sent back, but permissions were requested.
-        if (!allowedPermissions.count && permissions.size()) {
-            completionHandler(false);
-            return;
-        }
+    auto permissionsCompletionHandler = [callbackAggregator, resultHolder, permissions](NSSet<_WKWebExtensionPermission> *allowedPermissions) {
+        THROW_UNLESS([allowedPermissions isKindOfClass:NSSet.class], @"Object returned by webExtensionController:promptForPermissions:inTab:forExtensionContext:completionHandler: is not a set");
 
         for (_WKWebExtensionPermission permission in allowedPermissions) {
-            // Allowed permission doesn't match the permissions requested.
-            if (!permissions.contains(permission)) {
-                completionHandler(false);
-                return;
-            }
-
-            grantedPermissions.add(permission);
+            THROW_UNLESS([permission isKindOfClass:NSString.class], @"Object returned in set by webExtensionController:promptForPermissions:inTab:forExtensionContext:completionHandler: is not a _WKWebExtensionPermission");
+            THROW_UNLESS(permissions.contains(permission), @"Result returned by webExtensionController:promptForPermissions:inTab:forExtensionContext:completionHandler: doesn't contain the requested permissions");
         }
 
-        if ([delegate respondsToSelector:@selector(webExtensionController:promptForPermissionMatchPatterns:inTab:forExtensionContext:completionHandler:)]) {
-            NSSet *matchPatternsToRequest = toAPI(matchPatterns);
-            [delegate webExtensionController:extensionController()->wrapper() promptForPermissionMatchPatterns:matchPatternsToRequest inTab:nil forExtensionContext:wrapper() completionHandler:originsCompletionHandler];
-        } else
-            completionHandler(false);
+        // The permissions.request() API only allows granting all or none.
+        resultHolder->permissionsAreGranted = permissions.size() == allowedPermissions.count;
     };
 
-    if ([delegate respondsToSelector:@selector(webExtensionController:promptForPermissions:inTab:forExtensionContext:completionHandler:)]) {
-        NSSet *permissionsToRequest = toAPI(permissions);
-        [delegate webExtensionController:extensionController()->wrapper() promptForPermissions:permissionsToRequest inTab:nil forExtensionContext:wrapper() completionHandler:permissionCompletionHandler];
-    } else
-        completionHandler(false);
+    auto delegate = extensionController()->delegate();
+
+    if (!permissions.isEmpty() && [delegate respondsToSelector:@selector(webExtensionController:promptForPermissions:inTab:forExtensionContext:completionHandler:)])
+        [delegate webExtensionController:extensionController()->wrapper() promptForPermissions:toAPI(permissions) inTab:nil forExtensionContext:wrapper() completionHandler:makeBlockPtr(WTFMove(permissionsCompletionHandler)).get()];
+
+    if (!matchPatterns.isEmpty() && [delegate respondsToSelector:@selector(webExtensionController:promptForPermissionMatchPatterns:inTab:forExtensionContext:completionHandler:)])
+        [delegate webExtensionController:extensionController()->wrapper() promptForPermissionMatchPatterns:toAPI(matchPatterns) inTab:nil forExtensionContext:wrapper() completionHandler:makeBlockPtr(WTFMove(matchPatternsCompletionHandler)).get()];
 }
 
 void WebExtensionContext::permissionsRemove(HashSet<String> permissions, HashSet<String> origins, CompletionHandler<void(bool)>&& completionHandler)
