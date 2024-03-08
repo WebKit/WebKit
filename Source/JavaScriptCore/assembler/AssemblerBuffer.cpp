@@ -46,14 +46,14 @@ ThreadSpecificAssemblerData& threadSpecificAssemblerData()
 }
 
 #if CPU(ARM64E)
-static ThreadSpecificAssemblerData* threadSpecificAssemblerHashesPtr;
-ThreadSpecificAssemblerData& threadSpecificAssemblerHashes()
+static ThreadSpecificAssemblerHashes* threadSpecificAssemblerHashesPtr;
+ThreadSpecificAssemblerHashes& threadSpecificAssemblerHashes()
 {
     static std::once_flag flag;
     std::call_once(
         flag,
         [] () {
-            threadSpecificAssemblerHashesPtr = new ThreadSpecificAssemblerData();
+            threadSpecificAssemblerHashesPtr = new ThreadSpecificAssemblerHashes();
         });
     return *threadSpecificAssemblerHashesPtr;
 }
