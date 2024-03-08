@@ -81,6 +81,8 @@ public:
 
     WebCore::ProcessIdentifier webProcessIdentifier() const final;
     NetworkProcess& networkProcess();
+    void didFinishInstall(const std::optional<WebCore::ServiceWorkerJobDataIdentifier>&, WebCore::ServiceWorkerIdentifier, bool wasSuccessful);
+    void didFinishActivation(WebCore::ServiceWorkerIdentifier);
 
 private:
     // IPC::MessageSender

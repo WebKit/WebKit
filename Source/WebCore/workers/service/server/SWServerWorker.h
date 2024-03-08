@@ -126,7 +126,7 @@ public:
 
     bool shouldSkipFetchEvent() const { return m_shouldSkipHandleFetch; }
     
-    SWServerRegistration* registration() const;
+    WEBCORE_EXPORT SWServerRegistration* registration() const;
 
     void setHasTimedOutAnyFetchTasks() { m_hasTimedOutAnyFetchTasks = true; }
     bool hasTimedOutAnyFetchTasks() const { return m_hasTimedOutAnyFetchTasks; }
