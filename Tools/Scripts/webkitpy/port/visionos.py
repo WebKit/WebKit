@@ -56,6 +56,10 @@ class VisionOSPort(DevicePort):
         return VersionNameMap.map(self.host.platform).to_name(self._os_version, platform=VisionOSPort.port_name)
 
     def default_baseline_search_path(self, **kwargs):
+        wk_string = 'wk1'
+        if self.get_option('webkit_test_runner'):
+            wk_string = 'wk2'
+
         versions_to_fallback = []
         if self.device_version() == self.CURRENT_VERSION:
             versions_to_fallback = [self.CURRENT_VERSION]
@@ -91,6 +95,22 @@ class VisionOSPort(DevicePort):
         if apple_additions():
             expectations.append(self._apple_baseline_path(VisionOSPort.port_name))
         expectations.append(self._webkit_baseline_path(VisionOSPort.port_name))
+
+        override_variants = []
+        if 'simulator' in self.SDK:
+            override_variants.append('ipad-simulator')
+        override_variants.append('ipad')
+        if 'simulator' in self.SDK:
+            override_variants.append('ios-simulator')
+        override_variants.append('ios')
+
+        for variant in override_variants:
+            if apple_additions():
+                expectations.append(self._apple_baseline_path(u'{}-{}'.format(variant, wk_string)))
+            expectations.append(self._webkit_baseline_path(u'{}-{}'.format(variant, wk_string)))
+            if apple_additions():
+                expectations.append(self._apple_baseline_path(variant))
+            expectations.append(self._webkit_baseline_path(variant))
 
         expectations.append(self._webkit_baseline_path('wk2'))
 
