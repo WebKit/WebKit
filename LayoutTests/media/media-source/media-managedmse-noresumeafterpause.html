@@ -1,0 +1,62 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ManagedMediaSourceEnabled=true ] -->
+<html>
+<head>
+    <title>MSE playback doesn't resume when pause is called following a stall.</title>
+    <script src="../../media/media-source/media-source-loader.js"></script>
+    <script src="../../media/video-test.js"></script>
+    <script src="../utilities.js"></script>
+    <script>
+
+    var source;
+    var sourceBuffer;
+    var index;
+    var loader;
+    var currentTimeWhenStalling;
+
+    function loaderPromise(loader) {
+        return new Promise((resolve, reject) => {
+            loader.onload = resolve;
+            loader.onerror = reject;
+        });
+    }
+
+    async function init() {
+        findMediaElement();
+
+        loader = new MediaSourceLoader('content/test-fragmented-video-manifest.json');
+        await loaderPromise(loader);
+        video.disableRemotePlayback = true;
+        video.muted = true;
+        run('source = new ManagedMediaSource()');
+        run('video.src = URL.createObjectURL(source)');
+        await waitFor(source, 'sourceopen');
+        run('sourceBuffer = source.addSourceBuffer(loader.type())');
+        run('sourceBuffer.appendBuffer(loader.initSegment())');
+        await waitFor(sourceBuffer, 'update');
+        run('sourceBuffer.appendBuffer(loader.mediaSegment(0))');
+        await waitFor(sourceBuffer,'update');
+        run('sourceBuffer.appendBuffer(loader.mediaSegment(2))');
+        await waitFor(sourceBuffer,'update');
+        run('video.play()');
+        await waitFor(video, 'playing');
+        await Promise.all([
+        testExpectedEventuallySilent('video.currentTime', 1, '>='),
+            waitFor(video, 'waiting')
+        ]);
+        testExpected('video.currentTime', 1, '>=');
+        currentTimeWhenStalling = video.currentTime;
+
+        // Issue pause() command while playback has stalled.
+        run('video.pause()');
+        // Fill gap, playback shouldn't continue, even briefly.
+        run('sourceBuffer.appendBuffer(loader.mediaSegment(1))');
+        await sleepFor(1000);
+        testExpected('video.currentTime == currentTimeWhenStalling', true);
+        endTest();
+    };
+    </script>
+</head>
+<body onload="init()">
+    <video playsinline></video>
+</body>
+</html>

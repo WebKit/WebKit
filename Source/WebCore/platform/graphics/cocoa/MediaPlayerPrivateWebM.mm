@@ -306,7 +306,7 @@ void MediaPlayerPrivateWebM::pause()
 
 bool MediaPlayerPrivateWebM::paused() const
 {
-    return ![m_synchronizer rate];
+    return !m_isPlaying;
 }
 
 bool MediaPlayerPrivateWebM::timeIsProgressing() const

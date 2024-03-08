@@ -147,6 +147,9 @@ public:
     virtual void setPreservesPitch(bool) { }
     virtual void setPitchCorrectionAlgorithm(MediaPlayer::PitchCorrectionAlgorithm) { }
 
+    // Indicates whether playback is currently paused indefinitely: such as having been paused
+    // explictly by the HTMLMediaElement or through remote media playback control.
+    // This excludes video potentially playing but having stalled.
     virtual bool paused() const = 0;
 
     virtual void setVolume(float) { }
