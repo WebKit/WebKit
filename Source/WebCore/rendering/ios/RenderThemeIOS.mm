@@ -120,7 +120,7 @@ RenderTheme& RenderTheme::singleton()
 
 bool RenderThemeIOS::canCreateControlPartForRenderer(const RenderObject& renderer) const
 {
-    auto type = renderer.style().effectiveAppearance();
+    auto type = renderer.style().usedAppearance();
 #if ENABLE(APPLE_PAY)
     return type == StyleAppearance::ApplePayButton;
 #else
@@ -183,7 +183,7 @@ void RenderThemeIOS::adjustCheckboxStyle(RenderStyle& style, const Element* elem
 LayoutRect RenderThemeIOS::adjustedPaintRect(const RenderBox& box, const LayoutRect& paintRect) const
 {
     // Workaround for <rdar://problem/6209763>. Force the painting bounds of checkboxes and radio controls to be square.
-    if (box.style().effectiveAppearance() == StyleAppearance::Checkbox || box.style().effectiveAppearance() == StyleAppearance::Radio) {
+    if (box.style().usedAppearance() == StyleAppearance::Checkbox || box.style().usedAppearance() == StyleAppearance::Radio) {
         float width = std::min(paintRect.width(), paintRect.height());
         float height = width;
         return enclosingLayoutRect(FloatRect(paintRect.x(), paintRect.y() + (box.height() - height) / 2, width, height)); // Vertically center the checkbox, like on desktop
@@ -198,9 +198,9 @@ int RenderThemeIOS::baselinePosition(const RenderBox& box) const
     if (!box.isHorizontalWritingMode())
         return baseline;
 
-    if (box.style().effectiveAppearance() == StyleAppearance::Checkbox || box.style().effectiveAppearance() == StyleAppearance::Radio)
+    if (box.style().usedAppearance() == StyleAppearance::Checkbox || box.style().usedAppearance() == StyleAppearance::Radio)
         return baseline - 2; // The baseline is 2px up from the bottom of the checkbox/radio in AppKit.
-    if (box.style().effectiveAppearance() == StyleAppearance::Menulist)
+    if (box.style().usedAppearance() == StyleAppearance::Menulist)
         return baseline - 5; // This is to match AppKit. There might be a better way to calculate this though.
     return baseline;
 }
@@ -208,14 +208,14 @@ int RenderThemeIOS::baselinePosition(const RenderBox& box) const
 bool RenderThemeIOS::isControlStyled(const RenderStyle& style, const RenderStyle& userAgentStyle) const
 {
     // Buttons and MenulistButtons are styled if they contain a background image.
-    if (style.effectiveAppearance() == StyleAppearance::PushButton || style.effectiveAppearance() == StyleAppearance::MenulistButton)
+    if (style.usedAppearance() == StyleAppearance::PushButton || style.usedAppearance() == StyleAppearance::MenulistButton)
         return !style.visitedDependentColor(CSSPropertyBackgroundColor).isVisible() || style.backgroundLayers().hasImage();
 
-    if (style.effectiveAppearance() == StyleAppearance::TextField || style.effectiveAppearance() == StyleAppearance::TextArea || style.effectiveAppearance() == StyleAppearance::SearchField)
+    if (style.usedAppearance() == StyleAppearance::TextField || style.usedAppearance() == StyleAppearance::TextArea || style.usedAppearance() == StyleAppearance::SearchField)
         return !style.borderAndBackgroundEqual(userAgentStyle);
 
 #if ENABLE(DATALIST_ELEMENT)
-    if (style.effectiveAppearance() == StyleAppearance::ListButton)
+    if (style.usedAppearance() == StyleAppearance::ListButton)
         return style.hasContent() || style.hasEffectiveContentNone();
 #endif
 
@@ -370,7 +370,7 @@ LengthBox RenderThemeIOS::popupInternalPaddingBox(const RenderStyle& style) cons
     auto emSize = CSSPrimitiveValue::create(1.0, CSSUnitType::CSS_EM);
     auto padding = emSize->computeLength<float>({ style, nullptr, nullptr, nullptr });
 
-    if (style.effectiveAppearance() == StyleAppearance::MenulistButton) {
+    if (style.usedAppearance() == StyleAppearance::MenulistButton) {
         if (style.direction() == TextDirection::RTL)
             return { 0, 0, 0, static_cast<int>(padding + style.borderTopWidth()) };
         return { 0, static_cast<int>(padding + style.borderTopWidth()), 0, 0 };
@@ -396,7 +396,7 @@ static inline bool canAdjustBorderRadiusForAppearance(StyleAppearance appearance
 
 void RenderThemeIOS::adjustRoundBorderRadius(RenderStyle& style, RenderBox& box)
 {
-    if (!canAdjustBorderRadiusForAppearance(style.effectiveAppearance(), box) || style.backgroundLayers().hasImage())
+    if (!canAdjustBorderRadiusForAppearance(style.usedAppearance(), box) || style.backgroundLayers().hasImage())
         return;
 
     auto boxLogicalHeight = box.logicalHeight();
@@ -624,7 +624,7 @@ bool RenderThemeIOS::paintSliderTrack(const RenderObject& box, const PaintInfo& 
     bool isHorizontal = true;
     FloatRect trackClip = rect;
 
-    switch (box.style().effectiveAppearance()) {
+    switch (box.style().usedAppearance()) {
     case StyleAppearance::SliderHorizontal:
         // Inset slightly so the thumb covers the edge.
         if (trackClip.width() > 2) {
@@ -690,7 +690,7 @@ bool RenderThemeIOS::paintSliderTrack(const RenderObject& box, const PaintInfo& 
 
 void RenderThemeIOS::adjustSliderThumbSize(RenderStyle& style, const Element*) const
 {
-    if (style.effectiveAppearance() != StyleAppearance::SliderThumbHorizontal && style.effectiveAppearance() != StyleAppearance::SliderThumbVertical)
+    if (style.usedAppearance() != StyleAppearance::SliderThumbHorizontal && style.usedAppearance() != StyleAppearance::SliderThumbVertical)
         return;
 
     // Enforce "border-radius: 50%".
@@ -930,7 +930,7 @@ void RenderThemeIOS::adjustButtonStyle(RenderStyle& style, const Element* elemen
     }
 
 #if ENABLE(INPUT_TYPE_COLOR)
-    if (style.effectiveAppearance() == StyleAppearance::ColorWell)
+    if (style.usedAppearance() == StyleAppearance::ColorWell)
         return;
 #endif
 
@@ -1044,7 +1044,7 @@ bool RenderThemeIOS::supportsFocusRing(const RenderStyle&) const
 bool RenderThemeIOS::supportsBoxShadow(const RenderStyle& style) const
 {
     // FIXME: See if additional native controls can support box shadows.
-    switch (style.effectiveAppearance()) {
+    switch (style.usedAppearance()) {
     case StyleAppearance::SliderThumbHorizontal:
     case StyleAppearance::SliderThumbVertical:
         return true;
@@ -1770,7 +1770,7 @@ void RenderThemeIOS::paintSliderTicks(const RenderObject& box, const PaintInfo& 
     FloatRect tickRect;
     FloatRoundedRect::Radii tickCornerRadii(tickCornerRadius);
 
-    bool isHorizontal = box.style().effectiveAppearance() == StyleAppearance::SliderHorizontal;
+    bool isHorizontal = box.style().usedAppearance() == StyleAppearance::SliderHorizontal;
     if (isHorizontal) {
         tickRect.setWidth(tickWidth);
         tickRect.setHeight(tickHeight);

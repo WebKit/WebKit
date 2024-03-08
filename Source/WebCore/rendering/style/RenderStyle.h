@@ -699,7 +699,7 @@ public:
     inline float opacity() const;
     inline bool hasOpacity() const;
     inline StyleAppearance appearance() const;
-    inline StyleAppearance effectiveAppearance() const;
+    inline StyleAppearance usedAppearance() const;
     inline AspectRatioType aspectRatioType() const;
     inline double aspectRatioWidth() const;
     inline double aspectRatioHeight() const;
@@ -1388,7 +1388,7 @@ public:
     inline void setHasAutoAccentColor();
     inline void setOpacity(float);
     inline void setAppearance(StyleAppearance);
-    inline void setEffectiveAppearance(StyleAppearance);
+    inline void setUsedAppearance(StyleAppearance);
     inline void setBoxAlign(BoxAlignment);
     void setBoxDirection(BoxDirection d) { m_inheritedFlags.boxDirection = static_cast<unsigned>(d); }
     inline void setBoxFlex(float);

@@ -186,7 +186,7 @@ RenderThemeMac::RenderThemeMac()
 
 bool RenderThemeMac::canCreateControlPartForRenderer(const RenderObject& renderer) const
 {
-    auto type = renderer.style().effectiveAppearance();
+    auto type = renderer.style().usedAppearance();
     return type == StyleAppearance::Button
         || type == StyleAppearance::Checkbox
 #if ENABLE(APPLE_PAY)
@@ -220,7 +220,7 @@ bool RenderThemeMac::canCreateControlPartForRenderer(const RenderObject& rendere
 
 bool RenderThemeMac::canCreateControlPartForBorderOnly(const RenderObject& renderer) const
 {
-    auto appearance = renderer.style().effectiveAppearance();
+    auto appearance = renderer.style().usedAppearance();
     return appearance == StyleAppearance::Listbox
         || appearance == StyleAppearance::TextArea
         || appearance == StyleAppearance::TextField;
@@ -228,12 +228,12 @@ bool RenderThemeMac::canCreateControlPartForBorderOnly(const RenderObject& rende
 
 bool RenderThemeMac::canCreateControlPartForDecorations(const RenderObject& renderer) const
 {
-    return renderer.style().effectiveAppearance() == StyleAppearance::MenulistButton;
+    return renderer.style().usedAppearance() == StyleAppearance::MenulistButton;
 }
 
 int RenderThemeMac::baselinePosition(const RenderBox& renderer) const
 {
-    auto appearance = renderer.style().effectiveAppearance();
+    auto appearance = renderer.style().usedAppearance();
     auto baseline = RenderTheme::baselinePosition(renderer);
     if ((appearance == StyleAppearance::Checkbox || appearance == StyleAppearance::Radio) && renderer.isHorizontalWritingMode())
         return baseline - (2 * renderer.style().effectiveZoom());
@@ -689,7 +689,7 @@ bool RenderThemeMac::searchFieldShouldAppearAsTextField(const RenderStyle& style
 
 bool RenderThemeMac::isControlStyled(const RenderStyle& style, const RenderStyle& userAgentStyle) const
 {
-    auto appearance = style.effectiveAppearance();
+    auto appearance = style.usedAppearance();
     if (appearance == StyleAppearance::TextField || appearance == StyleAppearance::TextArea || appearance == StyleAppearance::SearchField || appearance == StyleAppearance::Listbox)
         return style.border() != userAgentStyle.border();
 
@@ -779,7 +779,7 @@ static const int* popupButtonPadding(NSControlSize size, bool isRTL)
 
 void RenderThemeMac::inflateRectForControlRenderer(const RenderObject& renderer, FloatRect& rect)
 {
-    auto appearance = renderer.style().effectiveAppearance();
+    auto appearance = renderer.style().usedAppearance();
 
     switch (appearance) {
     case StyleAppearance::Button:
@@ -789,7 +789,7 @@ void RenderThemeMac::inflateRectForControlRenderer(const RenderObject& renderer,
     case StyleAppearance::PushButton:
     case StyleAppearance::Radio:
     case StyleAppearance::Switch:
-        ThemeMac::inflateControlPaintRect(renderer.style().effectiveAppearance(), rect, renderer.style().effectiveZoom(), !renderer.style().isHorizontalWritingMode());
+        ThemeMac::inflateControlPaintRect(renderer.style().usedAppearance(), rect, renderer.style().effectiveZoom(), !renderer.style().isHorizontalWritingMode());
         break;
     case StyleAppearance::Menulist: {
         auto zoomLevel = renderer.style().effectiveZoom();
@@ -824,7 +824,7 @@ bool RenderThemeMac::controlSupportsTints(const RenderObject& o) const
         return false;
 
     // Checkboxes only have tint when checked.
-    if (o.style().effectiveAppearance() == StyleAppearance::Checkbox)
+    if (o.style().usedAppearance() == StyleAppearance::Checkbox)
         return isChecked(o);
 
     // For now assume other controls have tint if enabled.
@@ -987,7 +987,7 @@ void RenderThemeMac::adjustMenuListStyle(RenderStyle& style, const Element* e) c
 
 LengthBox RenderThemeMac::popupInternalPaddingBox(const RenderStyle& style) const
 {
-    if (style.effectiveAppearance() == StyleAppearance::Menulist) {
+    if (style.usedAppearance() == StyleAppearance::Menulist) {
         const int* padding = popupButtonPadding(controlSizeForFont(style), style.direction() == TextDirection::RTL);
         return { static_cast<int>(padding[topPadding] * style.effectiveZoom()),
             static_cast<int>(padding[rightPadding] * style.effectiveZoom()),
@@ -995,7 +995,7 @@ LengthBox RenderThemeMac::popupInternalPaddingBox(const RenderStyle& style) cons
             static_cast<int>(padding[leftPadding] * style.effectiveZoom()) };
     }
 
-    if (style.effectiveAppearance() == StyleAppearance::MenulistButton) {
+    if (style.usedAppearance() == StyleAppearance::MenulistButton) {
         float arrowWidth = baseArrowWidth * (style.computedFontSize() / baseFontSize);
         float rightPadding = ceilf(arrowWidth + (arrowPaddingBefore + arrowPaddingAfter + paddingBeforeSeparator) * style.effectiveZoom());
         float leftPadding = styledPopupPaddingLeft * style.effectiveZoom();
@@ -1181,7 +1181,7 @@ constexpr int sliderThumbThickness = 17;
 void RenderThemeMac::adjustSliderThumbSize(RenderStyle& style, const Element*) const
 {
     float zoomLevel = style.effectiveZoom();
-    if (style.effectiveAppearance() == StyleAppearance::SliderThumbHorizontal || style.effectiveAppearance() == StyleAppearance::SliderThumbVertical) {
+    if (style.usedAppearance() == StyleAppearance::SliderThumbHorizontal || style.usedAppearance() == StyleAppearance::SliderThumbVertical) {
         style.setWidth(Length(static_cast<int>(sliderThumbThickness * zoomLevel), LengthType::Fixed));
         style.setHeight(Length(static_cast<int>(sliderThumbThickness * zoomLevel), LengthType::Fixed));
     }

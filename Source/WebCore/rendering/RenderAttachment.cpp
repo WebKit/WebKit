@@ -114,7 +114,7 @@ LayoutUnit RenderAttachment::baselinePosition(FontBaseline, bool, LineDirectionM
 
 bool RenderAttachment::shouldDrawBorder() const
 {
-    if (style().effectiveAppearance() == StyleAppearance::BorderlessAttachment)
+    if (style().usedAppearance() == StyleAppearance::BorderlessAttachment)
         return false;
     return m_shouldDrawBorder;
 }

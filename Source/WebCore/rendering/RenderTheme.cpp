@@ -100,11 +100,11 @@ RenderTheme::RenderTheme()
 StyleAppearance RenderTheme::adjustAppearanceForElement(RenderStyle& style, const Element* element, StyleAppearance autoAppearance) const
 {
     if (!element) {
-        style.setEffectiveAppearance(StyleAppearance::None);
+        style.setUsedAppearance(StyleAppearance::None);
         return StyleAppearance::None;
     }
 
-    auto appearance = style.effectiveAppearance();
+    auto appearance = style.usedAppearance();
     if (appearance == autoAppearance)
         return appearance;
 
@@ -122,7 +122,7 @@ StyleAppearance RenderTheme::adjustAppearanceForElement(RenderStyle& style, cons
         || appearance == StyleAppearance::PushButton
         || appearance == StyleAppearance::SliderHorizontal
         || appearance == StyleAppearance::Menulist) {
-        style.setEffectiveAppearance(autoAppearance);
+        style.setUsedAppearance(autoAppearance);
         return autoAppearance;
     }
 
@@ -131,14 +131,14 @@ StyleAppearance RenderTheme::adjustAppearanceForElement(RenderStyle& style, cons
     if (appearance == StyleAppearance::Button) {
         if (autoAppearance == StyleAppearance::PushButton || autoAppearance == StyleAppearance::SquareButton)
             return appearance;
-        style.setEffectiveAppearance(autoAppearance);
+        style.setUsedAppearance(autoAppearance);
         return autoAppearance;
     }
 
     if (appearance == StyleAppearance::MenulistButton) {
         if (autoAppearance == StyleAppearance::Menulist)
             return appearance;
-        style.setEffectiveAppearance(autoAppearance);
+        style.setUsedAppearance(autoAppearance);
         return autoAppearance;
     }
 
@@ -147,14 +147,14 @@ StyleAppearance RenderTheme::adjustAppearanceForElement(RenderStyle& style, cons
     if (appearance == StyleAppearance::TextField) {
         if (inputElement && inputElement->isSearchField())
             return appearance;
-        style.setEffectiveAppearance(autoAppearance);
+        style.setUsedAppearance(autoAppearance);
         return autoAppearance;
     }
 
     if (appearance == StyleAppearance::SliderVertical) {
         if (inputElement && inputElement->isRangeControl())
             return appearance;
-        style.setEffectiveAppearance(autoAppearance);
+        style.setUsedAppearance(autoAppearance);
         return autoAppearance;
     }
 
@@ -199,19 +199,19 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
             break;
         }
 
-        style.setEffectiveAppearance(appearance);
+        style.setUsedAppearance(appearance);
     }
 
     if (appearance == StyleAppearance::SearchField && searchFieldShouldAppearAsTextField(style)) {
         appearance = StyleAppearance::TextField;
-        style.setEffectiveAppearance(appearance);
+        style.setUsedAppearance(appearance);
     }
 
     if (!isAppearanceAllowedForAllElements(appearance)
         && !userAgentAppearanceStyle
         && autoAppearance == StyleAppearance::None
         && !style.borderAndBackgroundEqual(RenderStyle::defaultStyle()))
-        style.setEffectiveAppearance(StyleAppearance::None);
+        style.setUsedAppearance(StyleAppearance::None);
 
     if (!style.hasEffectiveAppearance())
         return;
@@ -515,7 +515,7 @@ static void updateSwitchTrackPartForRenderer(SwitchTrackPart& switchTrackPart, c
 
 RefPtr<ControlPart> RenderTheme::createControlPart(const RenderObject& renderer) const
 {
-    auto appearance = renderer.style().effectiveAppearance();
+    auto appearance = renderer.style().usedAppearance();
 
     switch (appearance) {
     case StyleAppearance::None:
@@ -703,7 +703,7 @@ OptionSet<ControlStyle::State> RenderTheme::extractControlStyleStatesForRenderer
 static const RenderObject* effectiveRendererForAppearance(const RenderObject& renderObject)
 {
     const RenderObject* renderer = &renderObject;
-    auto type = renderObject.style().effectiveAppearance();
+    auto type = renderObject.style().usedAppearance();
 
     if (type == StyleAppearance::SearchFieldCancelButton
         || type == StyleAppearance::SwitchTrack
@@ -780,7 +780,7 @@ bool RenderTheme::paint(const RenderBox& box, const PaintInfo& paintInfo, const 
     if (paintInfo.context().paintingDisabled())
         return false;
     
-    auto appearance = box.style().effectiveAppearance();
+    auto appearance = box.style().usedAppearance();
 
     if (UNLIKELY(!canPaint(paintInfo, box.settings(), appearance)))
         return false;
@@ -882,11 +882,11 @@ bool RenderTheme::paintBorderOnly(const RenderBox& box, const PaintInfo& paintIn
 
 #if PLATFORM(IOS_FAMILY)
     UNUSED_PARAM(rect);
-    return box.style().effectiveAppearance() != StyleAppearance::None;
+    return box.style().usedAppearance() != StyleAppearance::None;
 #else
     FloatRect devicePixelSnappedRect = snapRectToDevicePixels(rect, box.document().deviceScaleFactor());
     // Call the appropriate paint method based off the appearance value.
-    switch (box.style().effectiveAppearance()) {
+    switch (box.style().usedAppearance()) {
     case StyleAppearance::TextField:
         return paintTextField(box, paintInfo, devicePixelSnappedRect);
     case StyleAppearance::Listbox:
@@ -938,7 +938,7 @@ void RenderTheme::paintDecorations(const RenderBox& box, const PaintInfo& paintI
     FloatRect devicePixelSnappedRect = snapRectToDevicePixels(rect, box.document().deviceScaleFactor());
 
     // Call the appropriate paint method based off the appearance value.
-    switch (box.style().effectiveAppearance()) {
+    switch (box.style().usedAppearance()) {
     case StyleAppearance::MenulistButton:
         paintMenuListButtonDecorations(box, paintInfo, devicePixelSnappedRect);
         break;
@@ -1111,7 +1111,7 @@ bool RenderTheme::isControlContainer(StyleAppearance appearance) const
 
 bool RenderTheme::isControlStyled(const RenderStyle& style, const RenderStyle& userAgentStyle) const
 {
-    switch (style.effectiveAppearance()) {
+    switch (style.usedAppearance()) {
     case StyleAppearance::PushButton:
     case StyleAppearance::SquareButton:
 #if ENABLE(INPUT_TYPE_COLOR)
@@ -1136,10 +1136,10 @@ bool RenderTheme::isControlStyled(const RenderStyle& style, const RenderStyle& u
 bool RenderTheme::supportsFocusRing(const RenderStyle& style) const
 {
     return style.hasEffectiveAppearance()
-        && style.effectiveAppearance() != StyleAppearance::TextField
-        && style.effectiveAppearance() != StyleAppearance::TextArea
-        && style.effectiveAppearance() != StyleAppearance::MenulistButton
-        && style.effectiveAppearance() != StyleAppearance::Listbox;
+        && style.usedAppearance() != StyleAppearance::TextField
+        && style.usedAppearance() != StyleAppearance::TextArea
+        && style.usedAppearance() != StyleAppearance::MenulistButton
+        && style.usedAppearance() != StyleAppearance::Listbox;
 }
 
 bool RenderTheme::isWindowActive(const RenderObject& renderer) const
@@ -1231,7 +1231,7 @@ bool RenderTheme::isDefault(const RenderObject& o) const
     if (!isWindowActive(o))
         return false;
 
-    return o.style().effectiveAppearance() == StyleAppearance::DefaultButton;
+    return o.style().usedAppearance() == StyleAppearance::DefaultButton;
 }
 
 #if ENABLE(DATALIST_ELEMENT)
@@ -1252,7 +1252,7 @@ bool RenderTheme::hasListButtonPressed(const RenderObject& renderer) const
 // investigate if we can bring the various ports closer together.
 void RenderTheme::adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioStyle(RenderStyle& style, const Element* element) const
 {
-    auto appearance = style.effectiveAppearance();
+    auto appearance = style.usedAppearance();
 
     LengthBox borderBox(style.borderTopWidth(), style.borderRightWidth(), style.borderBottomWidth(), style.borderLeftWidth());
     borderBox = Theme::singleton().controlBorder(appearance, style.fontCascade(), borderBox, style.effectiveZoom());
@@ -1418,7 +1418,7 @@ void RenderTheme::paintSliderTicks(const RenderObject& renderer, const PaintInfo
 
     double min = input->minimum();
     double max = input->maximum();
-    auto appearance = renderer.style().effectiveAppearance();
+    auto appearance = renderer.style().usedAppearance();
     // We don't support ticks on alternate sliders like MediaVolumeSliders.
     if (appearance != StyleAppearance::SliderHorizontal && appearance != StyleAppearance::SliderVertical)
         return;

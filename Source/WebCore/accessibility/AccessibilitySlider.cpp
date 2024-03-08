@@ -67,7 +67,7 @@ AccessibilityOrientation AccessibilitySlider::orientation() const
     if (!style)
         return AccessibilityOrientation::Horizontal;
 
-    auto styleAppearance = style->effectiveAppearance();
+    auto styleAppearance = style->usedAppearance();
     switch (styleAppearance) {
     case StyleAppearance::SliderThumbHorizontal:
     case StyleAppearance::SliderHorizontal:

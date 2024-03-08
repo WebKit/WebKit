@@ -120,7 +120,7 @@ RenderTheme& RenderTheme::singleton()
 
 bool RenderThemeAdwaita::supportsFocusRing(const RenderStyle& style) const
 {
-    switch (style.effectiveAppearance()) {
+    switch (style.usedAppearance()) {
     case StyleAppearance::PushButton:
     case StyleAppearance::Button:
     case StyleAppearance::TextField:
@@ -394,7 +394,7 @@ void RenderThemeAdwaita::adjustMenuListButtonStyle(RenderStyle& style, const Ele
 
 LengthBox RenderThemeAdwaita::popupInternalPaddingBox(const RenderStyle& style) const
 {
-    if (style.effectiveAppearance() == StyleAppearance::None)
+    if (style.usedAppearance() == StyleAppearance::None)
         return { };
 
     auto zoomedArrowSize = menuListButtonArrowSize * style.effectiveZoom();
@@ -517,7 +517,7 @@ bool RenderThemeAdwaita::paintSliderTrack(const RenderObject& renderObject, cons
     auto& graphicsContext = paintInfo.context();
     GraphicsContextStateSaver stateSaver(graphicsContext);
 
-    auto appearance = renderObject.style().effectiveAppearance();
+    auto appearance = renderObject.style().usedAppearance();
     ASSERT(appearance == StyleAppearance::SliderHorizontal || appearance == StyleAppearance::SliderVertical);
 
     FloatRect fieldRect = rect;
@@ -596,7 +596,7 @@ bool RenderThemeAdwaita::paintSliderTrack(const RenderObject& renderObject, cons
 
 void RenderThemeAdwaita::adjustSliderThumbSize(RenderStyle& style, const Element*) const
 {
-    auto appearance = style.effectiveAppearance();
+    auto appearance = style.usedAppearance();
     if (appearance != StyleAppearance::SliderThumbHorizontal && appearance != StyleAppearance::SliderThumbVertical)
         return;
 
@@ -609,7 +609,7 @@ bool RenderThemeAdwaita::paintSliderThumb(const RenderObject& renderObject, cons
     auto& graphicsContext = paintInfo.context();
     GraphicsContextStateSaver stateSaver(graphicsContext);
 
-    ASSERT(renderObject.style().effectiveAppearance() == StyleAppearance::SliderThumbHorizontal || renderObject.style().effectiveAppearance() == StyleAppearance::SliderThumbVertical);
+    ASSERT(renderObject.style().usedAppearance() == StyleAppearance::SliderThumbHorizontal || renderObject.style().usedAppearance() == StyleAppearance::SliderThumbVertical);
 
     SRGBA<uint8_t> sliderThumbBackgroundColor;
     SRGBA<uint8_t> sliderThumbBackgroundHoveredColor;

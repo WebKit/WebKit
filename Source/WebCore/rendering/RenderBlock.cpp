@@ -2456,7 +2456,7 @@ LayoutUnit RenderBlock::baselinePosition(FontBaseline baselineType, bool firstLi
         // FIXME: Might be better to have a custom CSS property instead, so that if the theme
         // is turned off, checkboxes/radios will still have decent baselines.
         // FIXME: Need to patch form controls to deal with vertical lines.
-        if (style().hasEffectiveAppearance() && !theme().isControlContainer(style().effectiveAppearance()))
+        if (style().hasEffectiveAppearance() && !theme().isControlContainer(style().usedAppearance()))
             return theme().baselinePosition(*this);
             
         // CSS2.1 states that the baseline of an inline block is the baseline of the last line box in

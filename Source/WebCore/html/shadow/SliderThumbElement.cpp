@@ -79,7 +79,7 @@ inline static Decimal sliderPosition(HTMLInputElement& element)
 inline static bool hasVerticalAppearance(HTMLInputElement& input)
 {
     ASSERT(input.renderer());
-    return !input.renderer()->isHorizontalWritingMode() || input.renderer()->style().effectiveAppearance() == StyleAppearance::SliderVertical;
+    return !input.renderer()->isHorizontalWritingMode() || input.renderer()->style().usedAppearance() == StyleAppearance::SliderVertical;
 }
 
 // --------------------------------
@@ -563,12 +563,12 @@ std::optional<Style::ResolvedStyle> SliderThumbElement::resolveCustomStyle(const
         return std::nullopt;
 
     auto elementStyle = resolveStyle(resolutionContext);
-    switch (hostStyle->effectiveAppearance()) {
+    switch (hostStyle->usedAppearance()) {
     case StyleAppearance::SliderVertical:
-        elementStyle.style->setEffectiveAppearance(StyleAppearance::SliderThumbVertical);
+        elementStyle.style->setUsedAppearance(StyleAppearance::SliderThumbVertical);
         break;
     case StyleAppearance::SliderHorizontal:
-        elementStyle.style->setEffectiveAppearance(StyleAppearance::SliderThumbHorizontal);
+        elementStyle.style->setUsedAppearance(StyleAppearance::SliderThumbHorizontal);
         break;
     default:
         break;

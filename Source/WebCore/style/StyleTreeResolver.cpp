@@ -287,7 +287,7 @@ auto TreeResolver::resolveElement(Element& element, const RenderStyle* existingS
     if (RefPtr input = dynamicDowncast<HTMLInputElement>(element); (input && input->isSearchField())
         || element.hasTagName(HTMLNames::meterTag)
         || is<HTMLProgressElement>(element)) {
-        if (existingStyle && update.style->effectiveAppearance() != existingStyle->effectiveAppearance()) {
+        if (existingStyle && update.style->usedAppearance() != existingStyle->usedAppearance()) {
             update.change = Change::Renderer;
             descendantsToResolve = DescendantsToResolve::All;
         }

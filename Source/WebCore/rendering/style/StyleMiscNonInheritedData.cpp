@@ -64,7 +64,7 @@ StyleMiscNonInheritedData::StyleMiscNonInheritedData()
     , order(RenderStyle::initialOrder())
     , aspectRatioType(static_cast<unsigned>(RenderStyle::initialAspectRatioType()))
     , appearance(static_cast<unsigned>(RenderStyle::initialAppearance()))
-    , effectiveAppearance(static_cast<unsigned>(RenderStyle::initialAppearance()))
+    , usedAppearance(static_cast<unsigned>(RenderStyle::initialAppearance()))
     , textOverflow(static_cast<unsigned>(RenderStyle::initialTextOverflow()))
     , userDrag(static_cast<unsigned>(RenderStyle::initialUserDrag()))
     , objectFit(static_cast<unsigned>(RenderStyle::initialObjectFit()))
@@ -105,7 +105,7 @@ StyleMiscNonInheritedData::StyleMiscNonInheritedData(const StyleMiscNonInherited
     , hasExplicitlySetWritingMode(o.hasExplicitlySetWritingMode)
     , aspectRatioType(o.aspectRatioType)
     , appearance(o.appearance)
-    , effectiveAppearance(o.effectiveAppearance)
+    , usedAppearance(o.usedAppearance)
     , textOverflow(o.textOverflow)
     , userDrag(o.userDrag)
     , objectFit(o.objectFit)
@@ -153,7 +153,7 @@ bool StyleMiscNonInheritedData::operator==(const StyleMiscNonInheritedData& o) c
         && hasExplicitlySetWritingMode == o.hasExplicitlySetWritingMode
         && aspectRatioType == o.aspectRatioType
         && appearance == o.appearance
-        && effectiveAppearance == o.effectiveAppearance
+        && usedAppearance == o.usedAppearance
         && textOverflow == o.textOverflow
         && userDrag == o.userDrag
         && objectFit == o.objectFit

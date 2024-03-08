@@ -1666,7 +1666,7 @@ BackgroundBleedAvoidance RenderBox::determineBackgroundBleedAvoidance(GraphicsCo
 ControlPart* RenderBox::ensureControlPart()
 {
     auto& rareData = ensureRareData();
-    auto type = style().effectiveAppearance();
+    auto type = style().usedAppearance();
 
     // Some form-controls may change because of zooming without recreating
     // a new renderer (e.g Menulist <-> MenulistButton).

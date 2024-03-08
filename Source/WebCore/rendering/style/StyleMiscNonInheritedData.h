@@ -98,7 +98,7 @@ public:
     unsigned hasExplicitlySetWritingMode : 1 { false };
     unsigned aspectRatioType : 2; // AspectRatioType
     unsigned appearance : appearanceBitWidth; // EAppearance
-    unsigned effectiveAppearance : appearanceBitWidth; // EAppearance
+    unsigned usedAppearance : appearanceBitWidth; // EAppearance
     unsigned textOverflow : 1; // Whether or not lines that spill out should be truncated with "..."
     unsigned userDrag : 2; // UserDrag
     unsigned objectFit : 3; // ObjectFit

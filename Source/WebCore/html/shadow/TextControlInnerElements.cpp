@@ -238,7 +238,7 @@ std::optional<Style::ResolvedStyle> TextControlPlaceholderElement::resolveCustom
 static inline bool searchFieldStyleHasExplicitlySpecifiedTextFieldAppearance(const RenderStyle& style)
 {
     auto appearance = style.appearance();
-    return appearance == StyleAppearance::TextField && appearance == style.effectiveAppearance();
+    return appearance == StyleAppearance::TextField && appearance == style.usedAppearance();
 }
 
 inline SearchFieldResultsButtonElement::SearchFieldResultsButtonElement(Document& document)
@@ -270,8 +270,8 @@ std::optional<Style::ResolvedStyle> SearchFieldResultsButtonElement::resolveCust
 
     // By default, input[type=search] can use either the searchfield or textfield appearance depending
     // on the platform and writing mode. Only adjust the style when that default is used.
-    auto effectiveAppearance = shadowHostStyle->effectiveAppearance();
-    if (effectiveAppearance != StyleAppearance::SearchField && effectiveAppearance != StyleAppearance::TextField) {
+    auto usedAppearance = shadowHostStyle->usedAppearance();
+    if (usedAppearance != StyleAppearance::SearchField && usedAppearance != StyleAppearance::TextField) {
         SetForScope canAdjustStyleForAppearance(m_canAdjustStyleForAppearance, false);
         return resolveStyle(resolutionContext);
     }

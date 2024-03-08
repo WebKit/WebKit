@@ -551,7 +551,7 @@ static inline unsigned computeFontHash(const FontCascade& font)
 unsigned RenderStyle::hashForTextAutosizing() const
 {
     // FIXME: Not a very smart hash. Could be improved upon. See <https://bugs.webkit.org/show_bug.cgi?id=121131>.
-    unsigned hash = m_nonInheritedData->miscData->effectiveAppearance;
+    unsigned hash = m_nonInheritedData->miscData->usedAppearance;
     hash ^= m_nonInheritedData->rareData->lineClamp.value();
     hash ^= m_rareInheritedData->overflowWrap;
     hash ^= m_rareInheritedData->nbspMode;
@@ -571,7 +571,7 @@ unsigned RenderStyle::hashForTextAutosizing() const
 
 bool RenderStyle::equalForTextAutosizing(const RenderStyle& other) const
 {
-    return m_nonInheritedData->miscData->effectiveAppearance == other.m_nonInheritedData->miscData->effectiveAppearance
+    return m_nonInheritedData->miscData->usedAppearance == other.m_nonInheritedData->miscData->usedAppearance
         && m_nonInheritedData->rareData->lineClamp == other.m_nonInheritedData->rareData->lineClamp
         && m_rareInheritedData->textSizeAdjust == other.m_rareInheritedData->textSizeAdjust
         && m_rareInheritedData->overflowWrap == other.m_rareInheritedData->overflowWrap
@@ -735,7 +735,7 @@ static bool miscDataChangeRequiresLayout(const StyleMiscNonInheritedData& first,
 {
     ASSERT(&first != &second);
 
-    if (first.effectiveAppearance != second.effectiveAppearance
+    if (first.usedAppearance != second.usedAppearance
         || first.textOverflow != second.textOverflow)
         return true;
 
@@ -1798,7 +1798,7 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
         // hasExplicitlySetDirection
         // hasExplicitlySetWritingMode
         // appearance
-        // effectiveAppearance
+        // usedAppearance
         // userDrag
     };
 
