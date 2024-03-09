@@ -870,7 +870,7 @@ void Element::setActive(bool value, Style::InvalidationScope invalidationScope)
     if (!renderer)
         return;
 
-    if (!isDisabledFormControl() && renderer->style().hasEffectiveAppearance())
+    if (!isDisabledFormControl() && renderer->style().hasUsedAppearance())
         renderer->repaint();
 }
 
@@ -944,7 +944,7 @@ void Element::setHovered(bool value, Style::InvalidationScope invalidationScope,
         protectedDocument()->userActionElements().setHovered(*this, value);
     }
 
-    if (auto* style = renderStyle(); style && style->hasEffectiveAppearance()) {
+    if (auto* style = renderStyle(); style && style->hasUsedAppearance()) {
         if (CheckedPtr renderer = this->renderer(); renderer && renderer->theme().supportsHover())
             renderer->repaint();
     }

@@ -968,7 +968,7 @@ bool BackgroundPainter::boxShadowShouldBeAppliedToBackground(const RenderBoxMode
 
     auto& style = renderer.style();
 
-    if (style.hasEffectiveAppearance())
+    if (style.hasUsedAppearance())
         return false;
 
     bool hasOneNormalBoxShadow = false;

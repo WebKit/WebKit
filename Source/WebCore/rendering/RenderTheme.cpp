@@ -213,7 +213,7 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
         && !style.borderAndBackgroundEqual(RenderStyle::defaultStyle()))
         style.setUsedAppearance(StyleAppearance::None);
 
-    if (!style.hasEffectiveAppearance())
+    if (!style.hasUsedAppearance())
         return;
 
     if (!supportsBoxShadow(style))
@@ -1135,7 +1135,7 @@ bool RenderTheme::isControlStyled(const RenderStyle& style, const RenderStyle& u
 
 bool RenderTheme::supportsFocusRing(const RenderStyle& style) const
 {
-    return style.hasEffectiveAppearance()
+    return style.hasUsedAppearance()
         && style.usedAppearance() != StyleAppearance::TextField
         && style.usedAppearance() != StyleAppearance::TextArea
         && style.usedAppearance() != StyleAppearance::MenulistButton

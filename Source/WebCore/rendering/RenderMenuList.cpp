@@ -566,7 +566,7 @@ PopupMenuStyle RenderMenuList::menuStyle() const
     IntRect absBounds = absoluteBoundingBoxRectIgnoringTransforms();
     return PopupMenuStyle(styleToUse.visitedDependentColorWithColorFilter(CSSPropertyColor), styleToUse.visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor),
         styleToUse.fontCascade(), styleToUse.visibility() == Visibility::Visible, styleToUse.display() == DisplayType::None,
-        style().hasEffectiveAppearance() && style().usedAppearance() == StyleAppearance::Menulist, styleToUse.textIndent(),
+        style().hasUsedAppearance() && style().usedAppearance() == StyleAppearance::Menulist, styleToUse.textIndent(),
         style().direction(), isOverride(style().unicodeBidi()), PopupMenuStyle::DefaultBackgroundColor,
         PopupMenuStyle::SelectPopup, theme().popupMenuSize(styleToUse, absBounds));
 }

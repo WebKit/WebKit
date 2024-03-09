@@ -171,7 +171,7 @@ void HTMLFormControlElement::finishParsingChildren()
 void HTMLFormControlElement::disabledStateChanged()
 {
     ValidatedFormListedElement::disabledStateChanged();
-    if (renderer() && renderer()->style().hasEffectiveAppearance())
+    if (renderer() && renderer()->style().hasUsedAppearance())
         renderer()->repaint();
 }
 

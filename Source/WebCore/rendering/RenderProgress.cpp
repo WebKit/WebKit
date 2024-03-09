@@ -95,7 +95,7 @@ void RenderProgress::updateAnimationState()
 {
     auto repeatInterval = theme().animationRepeatIntervalForProgressBar(*this);
 
-    bool animating = style().hasEffectiveAppearance() && repeatInterval > 0_s && !isDeterminate();
+    bool animating = style().hasUsedAppearance() && repeatInterval > 0_s && !isDeterminate();
     if (animating == m_animating)
         return;
 

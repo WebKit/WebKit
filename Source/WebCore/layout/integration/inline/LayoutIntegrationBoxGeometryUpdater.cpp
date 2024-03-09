@@ -274,7 +274,7 @@ void BoxGeometryUpdater::updateLayoutBoxDimensions(const RenderBox& renderBox, s
         auto* blockFlow = dynamicDowncast<RenderBlockFlow>(renderBox);
         if (!blockFlow)
             return false;
-        auto hasAppareance = blockFlow->style().hasEffectiveAppearance() && !blockFlow->theme().isControlContainer(blockFlow->style().usedAppearance());
+        auto hasAppareance = blockFlow->style().hasUsedAppearance() && !blockFlow->theme().isControlContainer(blockFlow->style().usedAppearance());
         return hasAppareance || !blockFlow->childrenInline() || blockFlow->hasLines() || blockFlow->hasLineIfEmpty();
     }();
     if (hasNonSyntheticBaseline) {

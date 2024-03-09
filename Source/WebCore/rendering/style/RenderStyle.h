@@ -386,7 +386,7 @@ public:
     inline bool hasAnyLocalBackground() const;
 
     inline bool hasAppearance() const;
-    inline bool hasEffectiveAppearance() const;
+    inline bool hasUsedAppearance() const;
 
     inline bool hasBackground() const;
     

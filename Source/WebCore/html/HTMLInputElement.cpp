@@ -1080,7 +1080,7 @@ void HTMLInputElement::setChecked(bool isChecked, WasSetByJavaScript wasCheckedB
 
     if (auto* buttons = radioButtonGroups())
         buttons->updateCheckedState(*this);
-    if (auto* renderer = this->renderer(); renderer && renderer->style().hasEffectiveAppearance())
+    if (auto* renderer = this->renderer(); renderer && renderer->style().hasUsedAppearance())
         renderer->repaint();
     updateValidity();
 
@@ -1101,7 +1101,7 @@ void HTMLInputElement::setIndeterminate(bool newValue)
     Style::PseudoClassChangeInvalidation indeterminateInvalidation(*this, CSSSelector::PseudoClass::Indeterminate, newValue);
     m_isIndeterminate = newValue;
 
-    if (auto* renderer = this->renderer(); renderer && renderer->style().hasEffectiveAppearance())
+    if (auto* renderer = this->renderer(); renderer && renderer->style().hasUsedAppearance())
         renderer->repaint();
 
     if (auto* cache = document().existingAXObjectCache())
