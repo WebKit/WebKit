@@ -23,4 +23,6 @@
 
 #include "Base-libwebrtc.xcconfig"
 
+PRODUCT_NAME = h265_bitstream_parser_fuzzer;
+
 WARNING_CFLAGS = $(inherited) -Wno-shorten-64-to-32;

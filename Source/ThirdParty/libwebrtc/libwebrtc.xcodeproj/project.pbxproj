@@ -28,6 +28,7 @@
 				4460B8CD2B155B9200392062 /* PBXTargetDependency */,
 				4460B8CF2B155B9200392062 /* PBXTargetDependency */,
 				444A6F0C2AEAE064005FE121 /* PBXTargetDependency */,
+				44945C6F2B9BA22A00447FFD /* PBXTargetDependency */,
 			);
 			name = "Fuzzers (libwebrtc)";
 			productName = Fuzzers;
@@ -3275,6 +3276,9 @@
 		4469C1112B5F255500E32E5A /* h264_bitstream_parser_fuzzer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4469C10F2B5F255500E32E5A /* h264_bitstream_parser_fuzzer.cc */; };
 		446CFE442AC694AB00F870D9 /* libwebrtc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = FB39D0D11200F0E300088E69 /* libwebrtc.dylib */; };
 		448D48422AB0BEBA0065014C /* vpx_dec_fuzzer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 448D48412AB0BEBA0065014C /* vpx_dec_fuzzer.cc */; };
+		44945C6D2B9BA20C00447FFD /* libwebm.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDEBB11924C0187400ADBD44 /* libwebm.a */; };
+		44945C712B9BA37800447FFD /* webm_fuzzer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 44945C702B9BA37800447FFD /* webm_fuzzer.cc */; };
+		44945C742B9BA3D200447FFD /* webm.dict in Copy Fuzzer Dictionary */ = {isa = PBXBuildFile; fileRef = 44945C722B9BA39200447FFD /* webm.dict */; };
 		449467B52AE05C9600A9FED0 /* webrtc_fuzzer_main.cc in Sources */ = {isa = PBXBuildFile; fileRef = 44ABBE952AC64023006B44DD /* webrtc_fuzzer_main.cc */; };
 		449467B82AE05C9600A9FED0 /* libwebrtc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = FB39D0D11200F0E300088E69 /* libwebrtc.dylib */; };
 		449467C72AE05DA200A9FED0 /* rtp_depacketizer_av1_assemble_frame_fuzzer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 449467C02AE05D6B00A9FED0 /* rtp_depacketizer_av1_assemble_frame_fuzzer.cc */; };
@@ -5441,6 +5445,20 @@
 			remoteGlobalIDString = 4105EB69212E01D2008C0C20;
 			remoteInfo = vpx;
 		};
+		44945C6B2B9BA20300447FFD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CDEBB11824C0187400ADBD44;
+			remoteInfo = webm;
+		};
+		44945C6E2B9BA22A00447FFD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 44945C512B9BA1C300447FFD;
+			remoteInfo = webm_fuzzer;
+		};
 		449467A42AE05C9600A9FED0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
@@ -5635,6 +5653,17 @@
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 1;
+		};
+		44945C732B9BA3C400447FFD /* Copy Fuzzer Dictionary */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 16;
+			files = (
+				44945C742B9BA3D200447FFD /* webm.dict in Copy Fuzzer Dictionary */,
+			);
+			name = "Copy Fuzzer Dictionary";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		5C0884CB1E4A97E300403995 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -9446,6 +9475,11 @@
 		449187242AB380BE007266F2 /* vp8_dec_fuzzer.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = vp8_dec_fuzzer.xcconfig; sourceTree = "<group>"; };
 		449187252AB380BE007266F2 /* vp9_dec_fuzzer.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = vp9_dec_fuzzer.xcconfig; sourceTree = "<group>"; };
 		449187262AB38132007266F2 /* mem_ops_aligned.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mem_ops_aligned.h; sourceTree = "<group>"; };
+		44945C692B9BA1C300447FFD /* webm_fuzzer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = webm_fuzzer; sourceTree = BUILT_PRODUCTS_DIR; };
+		44945C702B9BA37800447FFD /* webm_fuzzer.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = webm_fuzzer.cc; sourceTree = "<group>"; };
+		44945C722B9BA39200447FFD /* webm.dict */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = webm.dict; sourceTree = "<group>"; };
+		44945C752B9BA41D00447FFD /* webm_fuzzer.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = webm_fuzzer.xcconfig; sourceTree = "<group>"; };
+		44945C762B9BA55E00447FFD /* BaseTarget-libwebm.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "BaseTarget-libwebm.xcconfig"; sourceTree = "<group>"; };
 		449467BD2AE05C9600A9FED0 /* rtp_packetizer_av1_fuzzer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = rtp_packetizer_av1_fuzzer; sourceTree = BUILT_PRODUCTS_DIR; };
 		449467C02AE05D6B00A9FED0 /* rtp_depacketizer_av1_assemble_frame_fuzzer.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rtp_depacketizer_av1_assemble_frame_fuzzer.cc; sourceTree = "<group>"; };
 		449467CF2AE05DA200A9FED0 /* rtp_depacketizer_av1_assemble_frame_fuzzer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = rtp_depacketizer_av1_assemble_frame_fuzzer; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -11214,6 +11248,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				44A402A92AB0BFB000463B4B /* libvpx.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		44945C612B9BA1C300447FFD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				44945C6D2B9BA20C00447FFD /* libwebm.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -16589,6 +16631,15 @@
 			path = examples;
 			sourceTree = "<group>";
 		};
+		44945C6A2B9BA1F500447FFD /* fuzzing */ = {
+			isa = PBXGroup;
+			children = (
+				44945C722B9BA39200447FFD /* webm.dict */,
+				44945C702B9BA37800447FFD /* webm_fuzzer.cc */,
+			);
+			path = fuzzing;
+			sourceTree = "<group>";
+		};
 		44ABBE852AC63CA3006B44DD /* test */ = {
 			isa = PBXGroup;
 			children = (
@@ -19888,6 +19939,7 @@
 				44871D222AC69336007538BC /* Base-libwebrtc.xcconfig */,
 				5D7C59C61208C68B001C873E /* Base.xcconfig */,
 				44F99B2E2B2E9DCA00BE6517 /* BaseTarget-libaom.xcconfig */,
+				44945C762B9BA55E00447FFD /* BaseTarget-libwebm.xcconfig */,
 				5C4B43B01E42877A002651C8 /* boringssl.xcconfig */,
 				5D7C59C71208C68B001C873E /* DebugRelease.xcconfig */,
 				4469C1272B5F2AE900E32E5A /* h264_bitstream_parser_fuzzer.xcconfig */,
@@ -19916,6 +19968,7 @@
 				4460B88B2B155A8800392062 /* vp9_depacketizer_fuzzer.xcconfig */,
 				4460B88A2B155A8800392062 /* vp9_qp_parser_fuzzer.xcconfig */,
 				444A6F0A2AEAE01D005FE121 /* vp9_replay_fuzzer.xcconfig */,
+				44945C752B9BA41D00447FFD /* webm_fuzzer.xcconfig */,
 				41F77D1E215BE4AD00E72967 /* yasm.xcconfig */,
 			);
 			path = Configurations;
@@ -19946,6 +19999,7 @@
 		CDEBB19224C0191800ADBD44 /* webm_parser */ = {
 			isa = PBXGroup;
 			children = (
+				44945C6A2B9BA1F500447FFD /* fuzzing */,
 				CDEBB40324C0191A00ADBD44 /* include */,
 				CDEBB44E24C0191A00ADBD44 /* src */,
 			);
@@ -20412,6 +20466,7 @@
 				4460B8B72B155B4E00392062 /* vp8_qp_parser_fuzzer */,
 				4460B8C62B155B6A00392062 /* vp9_qp_parser_fuzzer */,
 				44D8D1192B6AFBA900B3CF91 /* h265_bitstream_parser_fuzzer */,
+				44945C692B9BA1C300447FFD /* webm_fuzzer */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -23338,6 +23393,24 @@
 			productReference = 448D48342AB0BDB00065014C /* vp8_dec_fuzzer */;
 			productType = "com.apple.product-type.tool";
 		};
+		44945C512B9BA1C300447FFD /* webm_fuzzer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 44945C652B9BA1C300447FFD /* Build configuration list for PBXNativeTarget "webm_fuzzer" */;
+			buildPhases = (
+				44945C542B9BA1C300447FFD /* Sources */,
+				44945C612B9BA1C300447FFD /* Frameworks */,
+				44945C732B9BA3C400447FFD /* Copy Fuzzer Dictionary */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				44945C6C2B9BA20300447FFD /* PBXTargetDependency */,
+			);
+			name = webm_fuzzer;
+			productName = webm_fuzzer;
+			productReference = 44945C692B9BA1C300447FFD /* webm_fuzzer */;
+			productType = "com.apple.product-type.tool";
+		};
 		449467A22AE05C9600A9FED0 /* rtp_packetizer_av1_fuzzer */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 449467B92AE05C9600A9FED0 /* Build configuration list for PBXNativeTarget "rtp_packetizer_av1_fuzzer" */;
@@ -23701,6 +23774,7 @@
 				4460B89B2B155B2E00392062 /* vp9_depacketizer_fuzzer */,
 				4460B8B92B155B6A00392062 /* vp9_qp_parser_fuzzer */,
 				444A6EF02AEADFC9005FE121 /* vp9_replay_fuzzer */,
+				44945C512B9BA1C300447FFD /* webm_fuzzer */,
 			);
 		};
 /* End PBXProject section */
@@ -24313,6 +24387,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				448D48422AB0BEBA0065014C /* vpx_dec_fuzzer.cc in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		44945C542B9BA1C300447FFD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				44945C712B9BA37800447FFD /* webm_fuzzer.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -26511,6 +26593,16 @@
 			target = 4105EB69212E01D2008C0C20 /* vpx */;
 			targetProxy = 448D483C2AB0BDB80065014C /* PBXContainerItemProxy */;
 		};
+		44945C6C2B9BA20300447FFD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CDEBB11824C0187400ADBD44 /* webm */;
+			targetProxy = 44945C6B2B9BA20300447FFD /* PBXContainerItemProxy */;
+		};
+		44945C6F2B9BA22A00447FFD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 44945C512B9BA1C300447FFD /* webm_fuzzer */;
+			targetProxy = 44945C6E2B9BA22A00447FFD /* PBXContainerItemProxy */;
+		};
 		449467A32AE05C9600A9FED0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = FB39D0D01200F0E300088E69 /* libwebrtc */;
@@ -26669,7 +26761,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 444A6F0A2AEAE01D005FE121 /* vp9_replay_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
 		};
@@ -26677,7 +26768,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 444A6F0A2AEAE01D005FE121 /* vp9_replay_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
@@ -26685,7 +26775,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 444A6F0A2AEAE01D005FE121 /* vp9_replay_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Production;
 		};
@@ -26693,7 +26782,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4460B8882B155A8700392062 /* vp8_depacketizer_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
 		};
@@ -26701,7 +26789,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4460B8882B155A8700392062 /* vp8_depacketizer_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
@@ -26709,7 +26796,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4460B8882B155A8700392062 /* vp8_depacketizer_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Production;
 		};
@@ -26717,7 +26803,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4460B88B2B155A8800392062 /* vp9_depacketizer_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
 		};
@@ -26725,7 +26810,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4460B88B2B155A8800392062 /* vp9_depacketizer_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
@@ -26733,7 +26817,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4460B88B2B155A8800392062 /* vp9_depacketizer_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Production;
 		};
@@ -26741,7 +26824,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4460B8892B155A8700392062 /* vp8_qp_parser_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
 		};
@@ -26749,7 +26831,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4460B8892B155A8700392062 /* vp8_qp_parser_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
@@ -26757,7 +26838,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4460B8892B155A8700392062 /* vp8_qp_parser_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Production;
 		};
@@ -26765,7 +26845,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4460B88A2B155A8800392062 /* vp9_qp_parser_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
 		};
@@ -26773,7 +26852,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4460B88A2B155A8800392062 /* vp9_qp_parser_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
@@ -26781,7 +26859,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4460B88A2B155A8800392062 /* vp9_qp_parser_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Production;
 		};
@@ -26789,7 +26866,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 44FD166E2AEA16CC003636CB /* vp8_replay_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
 		};
@@ -26797,7 +26873,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 44FD166E2AEA16CC003636CB /* vp8_replay_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
@@ -26805,7 +26880,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 44FD166E2AEA16CC003636CB /* vp8_replay_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Production;
 		};
@@ -26813,7 +26887,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4469C1272B5F2AE900E32E5A /* h264_bitstream_parser_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
 		};
@@ -26821,7 +26894,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4469C1272B5F2AE900E32E5A /* h264_bitstream_parser_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
@@ -26829,7 +26901,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4469C1272B5F2AE900E32E5A /* h264_bitstream_parser_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Production;
 		};
@@ -26854,11 +26925,31 @@
 			};
 			name = Production;
 		};
+		44945C662B9BA1C300447FFD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 44945C752B9BA41D00447FFD /* webm_fuzzer.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		44945C672B9BA1C300447FFD /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 44945C752B9BA41D00447FFD /* webm_fuzzer.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		44945C682B9BA1C300447FFD /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 44945C752B9BA41D00447FFD /* webm_fuzzer.xcconfig */;
+			buildSettings = {
+			};
+			name = Production;
+		};
 		449467BA2AE05C9600A9FED0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 441380CA2AE069CB00C928CB /* rtp_packetizer_av1_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
 		};
@@ -26866,7 +26957,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 441380CA2AE069CB00C928CB /* rtp_packetizer_av1_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
@@ -26874,7 +26964,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 441380CA2AE069CB00C928CB /* rtp_packetizer_av1_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Production;
 		};
@@ -26882,7 +26971,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 441380CB2AE069CB00C928CB /* rtp_depacketizer_av1_assemble_frame_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
 		};
@@ -26890,7 +26978,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 441380CB2AE069CB00C928CB /* rtp_depacketizer_av1_assemble_frame_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
@@ -26898,7 +26985,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 441380CB2AE069CB00C928CB /* rtp_depacketizer_av1_assemble_frame_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Production;
 		};
@@ -26930,7 +27016,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 44ABBE972AC641B4006B44DD /* sdp_integration_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
 		};
@@ -26938,7 +27023,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 44ABBE972AC641B4006B44DD /* sdp_integration_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
@@ -26946,7 +27030,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 44ABBE972AC641B4006B44DD /* sdp_integration_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Production;
 		};
@@ -26975,7 +27058,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 448A76AD2AF054F400C0A67C /* h264_depacketizer_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
 		};
@@ -26983,7 +27065,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 448A76AD2AF054F400C0A67C /* h264_depacketizer_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
@@ -26991,7 +27072,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 448A76AD2AF054F400C0A67C /* h264_depacketizer_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Production;
 		};
@@ -26999,7 +27079,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 448A76AE2AF064FE00C0A67C /* h265_depacketizer_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
 		};
@@ -27007,7 +27086,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 448A76AE2AF064FE00C0A67C /* h265_depacketizer_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
@@ -27015,7 +27093,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 448A76AE2AF064FE00C0A67C /* h265_depacketizer_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Production;
 		};
@@ -27023,7 +27100,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 44D8D11D2B6AFBFD00B3CF91 /* h265_bitstream_parser_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
 		};
@@ -27031,7 +27107,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 44D8D11D2B6AFBFD00B3CF91 /* h265_bitstream_parser_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
@@ -27039,7 +27114,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 44D8D11D2B6AFBFD00B3CF91 /* h265_bitstream_parser_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Production;
 		};
@@ -27347,6 +27421,16 @@
 				448D48382AB0BDB10065014C /* Debug */,
 				448D48392AB0BDB10065014C /* Release */,
 				448D483A2AB0BDB10065014C /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		44945C652B9BA1C300447FFD /* Build configuration list for PBXNativeTarget "webm_fuzzer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				44945C662B9BA1C300447FFD /* Debug */,
+				44945C672B9BA1C300447FFD /* Release */,
+				44945C682B9BA1C300447FFD /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;

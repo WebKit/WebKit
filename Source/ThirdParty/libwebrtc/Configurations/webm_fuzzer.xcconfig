@@ -21,8 +21,8 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Base-libwebrtc.xcconfig"
+#include "BaseTarget-libwebm.xcconfig"
 
-PRODUCT_NAME = h264_bitstream_parser_fuzzer;
+PRODUCT_NAME = webm_fuzzer;
 
-WARNING_CFLAGS = $(inherited) -Wno-shorten-64-to-32;
+GCC_ENABLE_CPP_EXCEPTIONS = YES;
