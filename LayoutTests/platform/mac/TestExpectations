@@ -2650,5 +2650,3 @@ webkit.org/b/269873 imported/w3c/web-platform-tests/webrtc-extensions/transfer-d
 webkit.org/b/270195 [ Monterey+ Debug ] fast/text/emoji-num-glyphs.html [ Timeout ]
 
 webkit.org/b/270303 [ Ventura ] tables/mozilla/bugs/bug4527.html [ Failure ]
-
-webkit.org/b/270315 [ Ventura ] svg/custom/svg-fonts-in-html.html [ Failure ]
