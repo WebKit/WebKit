@@ -42,6 +42,10 @@ main {
     color: color: rgb(50, 50, 50);
 }
 
+#logo a {
+    text-decoration: none;
+}
+
 #logo span {
     margin: 0 2px;
     padding: 0 2px;
@@ -107,5 +111,86 @@ hr {
 
 .benchmark img {
     max-width: 300px;
+    height: auto;
+}
+
+.other a {
+    color: rgb(100, 100, 100);
+    font-family: GillSans-Light, sans-serif;
+
+}
+
+/* Announcement Pages ***************************/
+.benchmarks + .announcements {
+    margin-block-start: 60px;
+}
+.announcements {
+    line-height: 1.3;
+}
+.announcements h1 {
+    font-family: "Gill Sans", sans-serif;
+    font-size: 50px;
+    font-weight: 100;
+    color: color: rgb(50, 50, 50);
+    text-wrap: balance;
+}
+
+.announcements a {
+    font-family: "Gill Sans", sans-serif;
+    font-size: 24px;
+    font-weight: 100;
+    color: rgb(200, 0, 0);
+}
+
+.announcements .date {
+    display: block;
+    color: rgb(120,120,120);
+    font-style: italic;
+}
+
+article {
+    text-align: left;
+    line-height: 1.5;
+    font-size: 15px;
+}
+
+main .navigation a,
+.announcements a,
+article a {
+    display: inline-block;
+    color: rgb(200, 0, 0);
+}
+main .navigation a:hover,
+.announcements a:hover,
+article a:hover {
+    background-color: rgb(200, 0, 0);
+    color: white;
+    text-decoration: none;
+}
+
+article h1 {
+    font-family: "Gill Sans", sans-serif;
+    font-size: 50px;
+    font-weight: 100;
+    margin-block-end: 0;
+}
+
+article .byline {
+    font-size: 24px;
+    font-weight: 300;
+    color: rgb(120, 120, 120);
+    margin-block-end: 24px;
+}
+
+article .byline .date {
+    display: block;
+    color: rgb(60, 60, 60);
+    font-weight: 200;
+    font-size: 16px;
+    text-transform: uppercase;
+}
+
+article img {
+    width: 100%;
     height: auto;
 }
