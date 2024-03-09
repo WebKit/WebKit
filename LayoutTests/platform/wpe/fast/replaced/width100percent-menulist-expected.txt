@@ -25,5 +25,5 @@ layer at (0,0) size 800x600
                   RenderText at (5,5) size 31x17
                     text run at (5,5) width 31: "three"
             RenderTableCell {TD} at (16,7) size 767x20 [r=0 c=3 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 4x17
+              RenderText {#text} at (1,7) size 4x17
                 text run at (1,1) width 4: " "

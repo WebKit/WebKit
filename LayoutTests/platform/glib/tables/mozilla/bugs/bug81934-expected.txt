@@ -31,7 +31,7 @@ layer at (0,0) size 800x600
                 text run at (2,2) width 28: "r2c4"
           RenderTableRow {TR} at (0,66) size 782x22
             RenderTableCell {TD} at (117,77) size 118x22 [border: (1px inset #808080)] [r=3 c=1 rs=2 cs=1]
-              RenderText {#text} at (2,2) size 28x17
+              RenderText {#text} at (2,13) size 28x17
                 text run at (2,2) width 28: "r3c3"
             RenderTableCell {TD} at (234,66) size 548x22 [border: (1px inset #808080)] [r=3 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 28x17

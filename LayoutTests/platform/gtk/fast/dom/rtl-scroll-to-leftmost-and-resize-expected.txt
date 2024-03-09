@@ -4,10 +4,10 @@ layer at (0,0) size 800x303
   RenderBlock {html} at (0,0) size 800x303
     RenderBody {body} at (0,10) size 800x293
       RenderBlock {div} at (10,0) size 780x25 [border: none (2px solid #000000) none]
-        RenderInline {span} at (0,0) size 727x17
-          RenderText {#text} at (0,0) size 727x17
-            text run at (0,0) width 727: "This XML file does not appear to have any style information associated with it. The document tree is shown below."
-        RenderBR {br} at (727,0) size 0x17
+        RenderInline {span} at (0,0) size 726x17
+          RenderText {#text} at (0,0) size 726x17
+            text run at (0,0) width 726: "This XML file does not appear to have any style information associated with it. The document tree is shown below."
+        RenderBR {br} at (725,0) size 1x17
       RenderBlock {div} at (20,38) size 780x255
         RenderBlock {div} at (0,0) size 780x255
           RenderBlock {div} at (0,0) size 780x255

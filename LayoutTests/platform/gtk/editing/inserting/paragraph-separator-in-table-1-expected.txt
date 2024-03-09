@@ -18,7 +18,7 @@ layer at (0,0) size 800x600
           RenderTableSection {TBODY} at (1,1) size 100x44
             RenderTableRow {TR} at (0,2) size 100x40
               RenderTableCell {TD} at (2,11) size 61x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 57x17
+                RenderText {#text} at (2,11) size 57x17
                   text run at (2,2) width 57: "Cell One"
               RenderTableCell {TD} at (65,2) size 33x40 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 26x17

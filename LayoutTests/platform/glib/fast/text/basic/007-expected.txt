@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (2,2) size 780x38
           RenderTableRow {TR} at (0,0) size 780x38
             RenderTableCell {TD} at (0,9) size 723x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 69x17
+              RenderText {#text} at (1,10) size 69x17
                 text run at (1,1) width 69: "A Big Cell"
             RenderTableCell {TD} at (723,0) size 57x38 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 33x35
@@ -20,7 +20,7 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (2,2) size 780x38
           RenderTableRow {TR} at (0,0) size 780x38
             RenderTableCell {TD} at (0,9) size 716x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 69x17
+              RenderText {#text} at (1,10) size 69x17
                 text run at (1,1) width 69: "A Big Cell"
             RenderTableCell {TD} at (716,0) size 64x38 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 49x17

@@ -10,11 +10,11 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (102,2) size 32x442 [r=0 c=1 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 30x440
             RenderTableCell {TD} at (136,65) size 462x316 [r=0 c=2 rs=1 cs=1]
-              RenderTable {TABLE} at (1,1) size 460x230
+              RenderTable {TABLE} at (1,64) size 460x230
                 RenderTableSection {TBODY} at (0,0) size 460x230
                   RenderTableRow {TR} at (0,2) size 460x226
                     RenderTableCell {TD} at (2,68) size 252x94 [r=0 c=0 rs=1 cs=1]
-                      RenderTable {TABLE} at (1,1) size 250x91
+                      RenderTable {TABLE} at (1,67) size 250x92
                         RenderTableSection {TBODY} at (0,0) size 250x91
                           RenderTableRow {TR} at (0,2) size 250x87
                             RenderTableCell {TD} at (2,2) size 246x87 [r=0 c=0 rs=1 cs=1]
@@ -28,15 +28,15 @@ layer at (0,0) size 800x600
                         RenderTableSection {TBODY} at (10,10) size 180x204
                           RenderTableRow {TR} at (0,2) size 180x200
                             RenderTableCell {TD} at (2,100) size 176x4 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderBlock (anonymous) at (1,231) size 460x36
+              RenderBlock (anonymous) at (1,294) size 460x36
                 RenderBR {BR} at (0,0) size 0x17
                 RenderText {#text} at (0,18) size 106x17
                   text run at (0,18) width 106: "This is bug 2904"
-              RenderTable {TABLE} at (1,267) size 62x48 [border: (1px outset #808080)]
+              RenderTable {TABLE} at (1,330) size 62x48 [border: (1px outset #808080)]
                 RenderTableSection {TBODY} at (1,1) size 60x46
                   RenderTableRow {TR} at (0,2) size 60x42
                     RenderTableCell {TD} at (2,7) size 22x32 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                      RenderTable {TABLE} at (2,2) size 18x28 [border: (1px outset #808080)]
+                      RenderTable {TABLE} at (2,7) size 18x28 [border: (1px outset #808080)]
                         RenderTableSection {TBODY} at (1,1) size 16x26
                           RenderTableRow {TR} at (0,2) size 16x22
                             RenderTableCell {TD} at (2,2) size 12x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]

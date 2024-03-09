@@ -15,8 +15,7 @@ layer at (8,8) size 300x50 clip at (11,11) size 294x44
   RenderTextControl {TEXTAREA} at (0,0) size 300x50 [color=#0000FF] [bgcolor=#FFFFFF] [border: (3px solid #FFFF00)]
     RenderBlock {DIV} at (18,18) size 264x0
       RenderText {#text} at (0,-17) size 180x34
-        text run at (0,-17) width 162: "ggggggggg"
-        text run at (162,-17) width 18: " "
+        text run at (0,-17) width 180: "ggggggggg "
         text run at (0,-17) width 162: "ggggggggg"
 layer at (312,8) size 300x50 clip at (315,11) size 294x44
   RenderBlock {DIV} at (304,0) size 300x50 [color=#0000FF] [border: (3px solid #FFFF00)]

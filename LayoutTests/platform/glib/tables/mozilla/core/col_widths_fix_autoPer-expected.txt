@@ -80,5 +80,5 @@ layer at (0,0) size 800x600
                 text run at (2,2) width 62: "50% 50%"
                 text run at (2,20) width 29: "50%"
             RenderTableCell {TD} at (100,11) size 96x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 27x17
+              RenderText {#text} at (2,11) size 27x17
                 text run at (2,2) width 27: "auto"

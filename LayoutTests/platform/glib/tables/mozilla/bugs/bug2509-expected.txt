@@ -14,7 +14,7 @@ layer at (0,0) size 800x600
                 text run at (2,2) width 32: "umm"
           RenderTableRow {TR} at (0,26) size 398x112
             RenderTableCell {TD} at (2,62) size 304x40 [border: (1px solid #008000)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 275x35
+              RenderText {#text} at (2,38) size 275x35
                 text run at (2,2) width 275: "blah blah blah blah blah blah blah blah blah"
                 text run at (2,20) width 89: "blah blah blah"
             RenderTableCell {TD} at (308,26) size 88x112 [border: (1px solid #008000)] [r=1 c=1 rs=1 cs=1]

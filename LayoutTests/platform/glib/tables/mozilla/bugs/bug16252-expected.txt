@@ -21,11 +21,11 @@ layer at (0,0) size 800x600
                           RenderTableCell {TD} at (6,1) size 254x20 [bgcolor=#CCCCDD] [r=0 c=1 rs=1 cs=1]
                             RenderInline {FONT} at (0,0) size 245x16
                               RenderInline {B} at (0,0) size 245x16
-                                RenderText {#text} at (2,1) size 245x17
+                                RenderText {#text} at (2,3) size 245x16
                                   text run at (2,2) width 245: "CHAMBERLAIN'S CAREER STATISTICS"
                         RenderTableRow {TR} at (0,22) size 260x261
                           RenderTableCell {TD} at (0,141) size 6x23 [bgcolor=#FFFFFF] [r=1 c=0 rs=1 cs=1]
-                            RenderBR {BR} at (2,1) size 0x19
+                            RenderBR {BR} at (2,121) size 0x18
                           RenderTableCell {TD} at (6,22) size 254x261 [r=1 c=1 rs=1 cs=1]
                             RenderTable {TABLE} at (2,2) size 250x240
                               RenderTableSection {TBODY} at (0,0) size 250x240

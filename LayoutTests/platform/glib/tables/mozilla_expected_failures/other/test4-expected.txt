@@ -52,7 +52,7 @@ layer at (0,0) size 785x2464
         RenderTableSection {TBODY} at (1,19) size 767x110
           RenderTableRow {TR} at (0,2) size 767x40
             RenderTableCell {TD} at (2,11) size 397x22 [bgcolor=#90EE90] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderText {#text} at (2,2) size 26x17
+              RenderText {#text} at (2,11) size 26x17
                 text run at (2,2) width 26: "Cell"
             RenderTableCell {TD} at (400,2) size 365x40 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 332x35
@@ -67,14 +67,14 @@ layer at (0,0) size 785x2464
                 text run at (2,2) width 387: "Stuff to test out table cell layout. This should be long enough."
           RenderTableRow {TR} at (0,68) size 767x40
             RenderTableCell {TD} at (2,77) size 30x22 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 26x17
+              RenderText {#text} at (2,11) size 26x17
                 text run at (2,2) width 26: "Cell"
             RenderTableCell {TD} at (34,68) size 365x40 [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 332x35
                 text run at (2,2) width 332: "Stuff to test out table cell layout. This should be long"
                 text run at (2,20) width 51: "enough."
             RenderTableCell {TD} at (400,77) size 365x22 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 26x17
+              RenderText {#text} at (2,11) size 26x17
                 text run at (2,2) width 26: "Cell"
       RenderBlock (anonymous) at (0,324) size 769x37
         RenderBR {BR} at (0,0) size 0x17
@@ -90,7 +90,7 @@ layer at (0,0) size 785x2464
               RenderText {#text} at (2,2) size 26x17
                 text run at (2,2) width 26: "Cell"
             RenderTableCell {TD} at (34,14) size 456x22 [bgcolor=#D3D3D3] [border: (1px inset #808080)] [r=0 c=1 rs=2 cs=2]
-              RenderText {#text} at (2,2) size 387x17
+              RenderText {#text} at (2,14) size 387x17
                 text run at (2,2) width 387: "Stuff to test out table cell layout. This should be long enough."
           RenderTableRow {TR} at (0,26) size 492x22
             RenderTableCell {TD} at (2,26) size 30x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
@@ -119,7 +119,7 @@ layer at (0,0) size 785x2464
               RenderText {#text} at (2,2) size 26x17
                 text run at (2,2) width 26: "Cell"
             RenderTableCell {TD} at (34,14) size 456x22 [bgcolor=#D3D3D3] [border: (1px inset #808080)] [r=0 c=1 rs=2 cs=2]
-              RenderText {#text} at (2,2) size 387x17
+              RenderText {#text} at (2,14) size 387x17
                 text run at (2,2) width 387: "Stuff to test out table cell layout. This should be long enough."
           RenderTableRow {TR} at (0,26) size 492x22
             RenderTableCell {TD} at (2,26) size 30x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
@@ -187,10 +187,10 @@ layer at (0,0) size 785x2464
                 text run at (3,3) width 38: "Marty"
                 text run at (3,21) width 43: "Hogan"
             RenderTableCell {TD} at (90,59) size 80x24 [border: (1px none #000000)] [r=2 c=1 rs=1 cs=1]
-              RenderText {#text} at (36,3) size 9x17
+              RenderText {#text} at (36,12) size 9x17
                 text run at (36,3) width 9: "3"
             RenderTableCell {TD} at (170,59) size 80x24 [border: (1px none #000000)] [r=2 c=2 rs=1 cs=1]
-              RenderText {#text} at (21,3) size 38x17
+              RenderText {#text} at (21,12) size 38x17
                 text run at (21,3) width 38: "57-15"
       RenderBlock (anonymous) at (0,776) size 769x19
         RenderBR {BR} at (0,0) size 0x17
@@ -616,7 +616,7 @@ layer at (0,0) size 785x2464
                 RenderText {#text} at (2,2) size 27x17
                   text run at (2,2) width 27: "C21"
               RenderTableCell {TD} at (31,33) size 124x22 [border: (1px inset #808080)] [r=1 c=1 rs=2 cs=2]
-                RenderText {#text} at (2,2) size 120x17
+                RenderText {#text} at (2,13) size 120x17
                   text run at (2,2) width 120: "C12 C13 C22 C23"
               RenderTableCell {TD} at (155,22) size 31x22 [border: (1px inset #808080)] [r=1 c=3 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 27x17
@@ -670,7 +670,7 @@ layer at (0,0) size 785x2464
                 RenderText {#text} at (2,2) size 27x17
                   text run at (2,2) width 27: "C21"
               RenderTableCell {TD} at (31,33) size 124x22 [border: (1px inset #808080)] [r=1 c=1 rs=2 cs=2]
-                RenderText {#text} at (2,2) size 120x17
+                RenderText {#text} at (2,13) size 120x17
                   text run at (2,2) width 120: "C12 C13 C22 C23"
               RenderTableCell {TD} at (155,22) size 31x22 [border: (1px inset #808080)] [r=1 c=3 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 27x17
@@ -858,7 +858,7 @@ layer at (0,0) size 785x2464
                 RenderText {#text} at (2,2) size 27x17
                   text run at (2,2) width 27: "C21"
               RenderTableCell {TD} at (31,33) size 124x22 [border: (1px inset #808080)] [r=1 c=1 rs=2 cs=2]
-                RenderText {#text} at (2,2) size 120x17
+                RenderText {#text} at (2,13) size 120x17
                   text run at (2,2) width 120: "C12 C13 C22 C23"
               RenderTableCell {TD} at (0,22) size 31x22 [border: (1px inset #808080)] [r=1 c=3 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 27x17
@@ -912,7 +912,7 @@ layer at (0,0) size 785x2464
                 RenderText {#text} at (2,2) size 27x17
                   text run at (2,2) width 27: "C21"
               RenderTableCell {TD} at (31,33) size 124x22 [border: (1px inset #808080)] [r=1 c=1 rs=2 cs=2]
-                RenderText {#text} at (2,2) size 120x17
+                RenderText {#text} at (2,13) size 120x17
                   text run at (2,2) width 120: "C12 C13 C22 C23"
               RenderTableCell {TD} at (0,22) size 31x22 [border: (1px inset #808080)] [r=1 c=3 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 27x17

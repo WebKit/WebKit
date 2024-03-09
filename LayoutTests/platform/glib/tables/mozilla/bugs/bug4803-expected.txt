@@ -10,7 +10,7 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (0,0) size 140x36
           RenderTableRow {TR} at (0,0) size 140x36
             RenderTableCell {TD} at (0,17) size 1x2 [bgcolor=#999999] [r=0 c=0 rs=1 cs=1]
-              RenderImage {IMG} at (0,0) size 1x2
+              RenderImage {IMG} at (0,17) size 1x2
               RenderText {#text} at (0,0) size 0x0
             RenderTableCell {TD} at (1,0) size 139x36 [bgcolor=#FFFFCC] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (0,0) size 128x35

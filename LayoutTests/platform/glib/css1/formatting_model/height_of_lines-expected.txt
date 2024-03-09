@@ -68,7 +68,7 @@ layer at (0,0) size 785x2327
         RenderText {#text} at (555,185) size 29x15
           text run at (555,185) width 29: " and "
         RenderImage {IMG} at (598,200) size 131x130 [border: (10px solid #000000)]
-        RenderText {#text} at (743,185) size 759x256
+        RenderText {#text} at (743,185) size 759x257
           text run at (743,185) width 5: "."
           text run at (0,347) width 755: "This is additional text to make sure that there is enough room left below the image so that this line does not hit the image that is text-"
           text run at (0,367) width 71: "top aligned. "
@@ -89,7 +89,7 @@ layer at (0,0) size 785x2327
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 767x972
             RenderTableCell {TD} at (0,499) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 4x17
+              RenderText {#text} at (4,477) size 4x17
                 text run at (4,4) width 4: " "
             RenderTableCell {TD} at (12,26) size 755x972 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 747x465
@@ -118,7 +118,7 @@ layer at (0,0) size 785x2327
                 RenderText {#text} at (604,185) size 25x15
                   text run at (604,185) width 25: " and"
                 RenderImage {IMG} at (15,220) size 130x130 [border: (10px solid #000000)]
-                RenderText {#text} at (160,205) size 736x236
+                RenderText {#text} at (160,205) size 736x237
                   text run at (160,205) width 8: ". "
                   text run at (168,205) width 558: "This is additional text to make sure that there is enough room left below the image so that this line"
                   text run at (0,367) width 264: "does not hit the image that is text-top aligned. "

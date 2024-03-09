@@ -19,7 +19,7 @@ layer at (0,0) size 800x250
                 text run at (154,2) width 139: "THERE \x{2799}"
           RenderTableRow {TR} at (0,44) size 300x84
             RenderTableCell {TD} at (2,66) size 143x40 [border: none (2px solid #0000FF) none] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,2) size 139x36
+              RenderText {#text} at (1,24) size 139x36
                 text run at (1,2) width 139: "THERE \x{2799}"
             RenderTableCell {TD} at (147,44) size 151x84 [border: none (2px solid #0000FF) none] [r=1 c=1 rs=1 cs=1]
               RenderBlock (anonymous) at (1,1) size 147x38

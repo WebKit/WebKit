@@ -79,7 +79,7 @@ layer at (0,0) size 800x600
           RenderTableRow {TR} at (0,316) size 703x17
             RenderTableCell {TD} at (10,317) size 297x15 [r=5 c=0 rs=1 cs=1]
               RenderInline {TT} at (0,0) size 186x13
-                RenderText {#text} at (1,0) size 186x14
+                RenderText {#text} at (1,2) size 186x13
                   text run at (1,1) width 186: "default font; font-size: 0.8em;"
               RenderText {#text} at (0,0) size 0x0
             RenderTableCell {TD} at (316,316) size 378x17 [r=5 c=1 rs=1 cs=1]

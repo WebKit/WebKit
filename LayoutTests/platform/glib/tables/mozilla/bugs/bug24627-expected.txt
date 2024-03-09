@@ -52,10 +52,10 @@ layer at (0,0) size 800x600
                         text run at (2,2) width 30: "Host"
                         text run at (2,20) width 34: "name"
                     RenderTableCell {TD} at (171,11) size 83x22 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 78x17
+                      RenderText {#text} at (2,11) size 78x17
                         text run at (2,2) width 78: "Architecture"
                     RenderTableCell {TD} at (255,11) size 50x22 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 45x17
+                      RenderText {#text} at (2,11) size 45x17
                         text run at (2,2) width 45: "Access"
                   RenderTableRow {TR} at (0,44) size 307x22
                     RenderTableCell {TD} at (2,44) size 125x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]

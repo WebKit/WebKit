@@ -20,7 +20,7 @@ layer at (0,0) size 800x600
           RenderTableRow {TR} at (0,74) size 784x20
             RenderTableCell {TD} at (0,75) size 550x18 [r=1 c=0 rs=1 cs=1]
               RenderInline {FONT} at (0,0) size 141x16
-                RenderText {#text} at (408,0) size 141x17
+                RenderText {#text} at (408,2) size 141x16
                   text run at (408,1) width 141: "I agree with the program"
               RenderText {#text} at (0,0) size 0x0
             RenderTableCell {TD} at (549,74) size 65x20 [r=1 c=1 rs=1 cs=1]
@@ -28,7 +28,7 @@ layer at (0,0) size 800x600
           RenderTableRow {TR} at (0,94) size 784x20
             RenderTableCell {TD} at (0,95) size 550x18 [r=2 c=0 rs=1 cs=1]
               RenderInline {FONT} at (0,0) size 154x16
-                RenderText {#text} at (395,0) size 154x17
+                RenderText {#text} at (395,2) size 154x16
                   text run at (395,1) width 154: "I think vouchers are wrong"
               RenderText {#text} at (0,0) size 0x0
             RenderTableCell {TD} at (549,94) size 65x20 [r=2 c=1 rs=1 cs=1]
@@ -37,7 +37,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (0,120) size 614x17 [r=3 c=0 rs=1 cs=2]
               RenderInline {A} at (0,0) size 77x17 [color=#0000EE]
                 RenderInline {FONT} at (0,0) size 77x15
-                  RenderText {#text} at (268,1) size 77x15
+                  RenderText {#text} at (268,7) size 77x15
                     text run at (268,1) width 77: "View Results"
               RenderInline {FONT} at (0,0) size 0x15
                 RenderText {#text} at (0,0) size 0x0
