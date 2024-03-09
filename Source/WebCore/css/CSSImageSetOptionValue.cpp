@@ -27,7 +27,6 @@
 #include "CSSImageSetOptionValue.h"
 
 #include "CSSImageValue.h"
-#include "CSSPrimitiveValue.h"
 
 namespace WebCore {
 

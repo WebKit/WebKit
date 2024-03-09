@@ -29,6 +29,7 @@
 #include "ContentSecurityPolicy.h"
 #include "Document.h"
 #include "JSDOMExceptionHandling.h"
+#include "LocalDOMWindow.h"
 #include "TrustedTypePolicy.h"
 #include "TrustedTypePolicyFactory.h"
 #include "WindowOrWorkerGlobalScopeTrustedTypes.h"
@@ -37,6 +38,7 @@
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <JavaScriptCore/JSCast.h>
+#include <pal/text/TextEncoding.h>
 
 namespace WebCore {
 using namespace JSC;

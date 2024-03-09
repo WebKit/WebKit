@@ -168,7 +168,7 @@ void RemoteImageBufferSet::ensureBufferForDisplay(ImageBufferSetPrepareBufferFor
     }
 
     if (!m_frontBuffer) {
-        ImageBufferCreationContext creationContext;
+        WebCore::ImageBufferCreationContext creationContext;
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
         creationContext.dynamicContentScalingResourceCache = ensureDynamicContentScalingResourceCache();
 #endif

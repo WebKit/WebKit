@@ -20,12 +20,12 @@
 
 #pragma once
 
+#include "CSSPrimitiveValue.h"
 #include "CSSValue.h"
+#include <wtf/Function.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
-
-class CSSPrimitiveValue;
 
 // Used for text-shadow and box-shadow
 class CSSShadowValue final : public CSSValue {

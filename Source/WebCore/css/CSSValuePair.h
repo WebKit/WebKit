@@ -26,6 +26,7 @@
 #pragma once
 
 #include "CSSValue.h"
+#include <wtf/Function.h>
 
 namespace WebCore {
 

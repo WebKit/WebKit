@@ -25,12 +25,12 @@
 
 #pragma once
 
+#include "CSSPrimitiveValue.h"
 #include "CSSValue.h"
+#include <wtf/Function.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
-
-class CSSPrimitiveValue;
 
 class CSSImageSetOptionValue final : public CSSValue {
 public:

@@ -31,6 +31,7 @@
 #include "BrowsingContextGroup.h"
 #include "DrawingAreaProxy.h"
 #include "FormDataReference.h"
+#include "FrameProcess.h"
 #include "GoToBackForwardItemParameters.h"
 #include "HandleMessage.h"
 #include "LoadedWebArchive.h"

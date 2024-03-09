@@ -30,6 +30,7 @@
 #include "PageLoadState.h"
 #include "RemotePageProxy.h"
 #include "WebFrameProxy.h"
+#include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 
 namespace WebKit {

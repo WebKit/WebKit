@@ -22,6 +22,7 @@
 #include "RenderSVGResourceMasker.h"
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
+
 #include "Element.h"
 #include "ElementIterator.h"
 #include "FloatPoint.h"
@@ -33,6 +34,7 @@
 #include "RenderSVGModelObjectInlines.h"
 #include "RenderSVGResourceMaskerInlines.h"
 #include "SVGContainerLayout.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGGraphicsElement.h"
 #include "SVGLengthContext.h"
 #include "SVGRenderStyle.h"

@@ -25,11 +25,12 @@
 
 #pragma once
 
+#include "CSSPrimitiveValue.h"
 #include "CSSValue.h"
+#include <wtf/Function.h>
 
 namespace WebCore {
 
-class CSSPrimitiveValue;
 class StyleImage;
 
 namespace Style {

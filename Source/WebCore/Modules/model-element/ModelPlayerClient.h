@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "LayerHostingContextIdentifier.h"
 #include "PlatformLayerIdentifier.h"
 #include <wtf/Forward.h>
 #include <wtf/WeakPtr.h>

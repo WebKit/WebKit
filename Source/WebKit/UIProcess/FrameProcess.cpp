@@ -29,6 +29,7 @@
 #include "BrowsingContextGroup.h"
 #include "WebPageProxy.h"
 #include "WebPreferences.h"
+#include "WebProcessProxy.h"
 
 namespace WebKit {
 
