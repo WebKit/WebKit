@@ -1,0 +1,29 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true shouldHandleRunOpenPanel=false shouldPresentPopovers=false ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width">
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+</head>
+<body>
+<input id="fileInput" type="file" accept=".txt">
+<script>
+description("Test that the file upload panel is dismissed when its presenting view is removed from the window on iOS.");
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    debug("Present file picker");
+    await UIHelper.activateElement(fileInput);
+    typeIdentifiers = await UIHelper.filePickerAcceptedTypeIdentifiers();
+    shouldBeTrue("areArraysEqual(typeIdentifiers, ['public.plain-text'])");
+
+    debug("\nRemove view from window");
+    await UIHelper.removeViewFromWindow();
+    typeIdentifiers = await UIHelper.filePickerAcceptedTypeIdentifiers();
+    shouldBeTrue("areArraysEqual(typeIdentifiers, [])");
+
+    finishJSTest();
+});
+</script>
+</body>
+</html>

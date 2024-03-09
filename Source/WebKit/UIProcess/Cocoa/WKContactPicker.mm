@@ -179,6 +179,11 @@ SOFT_LINK_CLASS(ContactsUI, CNContactPickerViewController)
 #endif
 }
 
+- (void)dismiss
+{
+    [self dismissWithContacts:nil];
+}
+
 #pragma mark - Completion
 
 #if HAVE(CNCONTACTPICKERVIEWCONTROLLER)
