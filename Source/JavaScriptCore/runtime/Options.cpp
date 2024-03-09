@@ -1375,12 +1375,6 @@ SUPPRESS_ASAN bool canUseJITCage()
 {
     if (JSC_FORCE_USE_JIT_CAGE)
         return true;
-#if PLATFORM(MAC)
-    if (Options::allowJITCageExperiments()) {
-        RELEASE_ASSERT(JSC_JIT_CAGE_VERSION());
-        return true;
-    }
-#endif // PLATFORM(MAC)
     return JSC_JIT_CAGE_VERSION() && WTF::processHasEntitlement("com.apple.private.verified-jit"_s);
 }
 #else
