@@ -1628,7 +1628,6 @@
 		A78A9777179738B8009DF744 /* DFGFinalizer.h in Headers */ = {isa = PBXBuildFile; fileRef = A78A976F179738B8009DF744 /* DFGFinalizer.h */; };
 		A78A9779179738B8009DF744 /* DFGJITFinalizer.h in Headers */ = {isa = PBXBuildFile; fileRef = A78A9771179738B8009DF744 /* DFGJITFinalizer.h */; };
 		A78A977B179738B8009DF744 /* DFGPlan.h in Headers */ = {isa = PBXBuildFile; fileRef = A78A9773179738B8009DF744 /* DFGPlan.h */; };
-		A78A977F179738D5009DF744 /* FTLGeneratedFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = A78A977C179738D5009DF744 /* FTLGeneratedFunction.h */; };
 		A78A9781179738D5009DF744 /* FTLJITFinalizer.h in Headers */ = {isa = PBXBuildFile; fileRef = A78A977E179738D5009DF744 /* FTLJITFinalizer.h */; };
 		A790DD6E182F499700588807 /* SetIteratorPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = A790DD68182F499700588807 /* SetIteratorPrototype.h */; };
 		A790DD70182F499700588807 /* JSSetIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = A790DD6A182F499700588807 /* JSSetIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5087,7 +5086,6 @@
 		A78A9771179738B8009DF744 /* DFGJITFinalizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGJITFinalizer.h; path = dfg/DFGJITFinalizer.h; sourceTree = "<group>"; };
 		A78A9772179738B8009DF744 /* DFGPlan.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGPlan.cpp; path = dfg/DFGPlan.cpp; sourceTree = "<group>"; };
 		A78A9773179738B8009DF744 /* DFGPlan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGPlan.h; path = dfg/DFGPlan.h; sourceTree = "<group>"; };
-		A78A977C179738D5009DF744 /* FTLGeneratedFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLGeneratedFunction.h; path = ftl/FTLGeneratedFunction.h; sourceTree = "<group>"; };
 		A78A977D179738D5009DF744 /* FTLJITFinalizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLJITFinalizer.cpp; path = ftl/FTLJITFinalizer.cpp; sourceTree = "<group>"; };
 		A78A977E179738D5009DF744 /* FTLJITFinalizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLJITFinalizer.h; path = ftl/FTLJITFinalizer.h; sourceTree = "<group>"; };
 		A790DD67182F499700588807 /* SetIteratorPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SetIteratorPrototype.cpp; sourceTree = "<group>"; };
@@ -6351,7 +6349,6 @@
 				0FEA0A2B170B661900BB722C /* FTLFormattedValue.h */,
 				0FD8A31517D51F2200CA2C40 /* FTLForOSREntryJITCode.cpp */,
 				0FD8A31617D51F2200CA2C40 /* FTLForOSREntryJITCode.h */,
-				A78A977C179738D5009DF744 /* FTLGeneratedFunction.h */,
 				0FEA0A02170513DB00BB722C /* FTLJITCode.cpp */,
 				0FEA0A03170513DB00BB722C /* FTLJITCode.h */,
 				A78A977D179738D5009DF744 /* FTLJITFinalizer.cpp */,
@@ -10840,7 +10837,6 @@
 				A7F2996C17A0BB670010417A /* FTLFail.h in Headers */,
 				0FEA0A2C170B661900BB722C /* FTLFormattedValue.h in Headers */,
 				0FD8A31A17D51F2200CA2C40 /* FTLForOSREntryJITCode.h in Headers */,
-				A78A977F179738D5009DF744 /* FTLGeneratedFunction.h in Headers */,
 				0FEA0A0E170513DB00BB722C /* FTLJITCode.h in Headers */,
 				A78A9781179738D5009DF744 /* FTLJITFinalizer.h in Headers */,
 				0FB4FB741BC843140025CA5A /* FTLLazySlowPath.h in Headers */,

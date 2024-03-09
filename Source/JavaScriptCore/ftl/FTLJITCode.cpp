@@ -44,15 +44,8 @@ JITCode::JITCode()
 JITCode::~JITCode()
 {
     if (FTL::shouldDumpDisassembly()) {
-        if (m_b3Code || m_arityCheckEntrypoint) {
-            dataLog("Destroying FTL JIT code at ");
-            CommaPrinter comma;
-            if (m_b3Code)
-                dataLog(comma, m_b3Code);
-            if (m_arityCheckEntrypoint)
-                dataLog(comma, m_arityCheckEntrypoint);
-            dataLog("\n");
-        }
+        if (m_b3Code)
+            dataLogLn("Destroying FTL JIT code at ", m_b3Code);
     }
 }
 
@@ -71,9 +64,9 @@ void JITCode::initializeAddressForCall(CodePtr<JSEntryPtrTag> address)
     m_addressForCall = address;
 }
 
-void JITCode::initializeArityCheckEntrypoint(CodeRef<JSEntryPtrTag> entrypoint)
+void JITCode::initializeAddressForArityCheck(CodePtr<JSEntryPtrTag> entrypoint)
 {
-    m_arityCheckEntrypoint = entrypoint;
+    m_addressForArityCheck = entrypoint;
 }
 
 CodePtr<JSEntryPtrTag> JITCode::addressForCall(ArityCheckMode arityCheck)
@@ -82,7 +75,7 @@ CodePtr<JSEntryPtrTag> JITCode::addressForCall(ArityCheckMode arityCheck)
     case ArityCheckNotRequired:
         return m_addressForCall;
     case MustCheckArity:
-        return m_arityCheckEntrypoint.code();
+        return m_addressForArityCheck;
     }
     RELEASE_ASSERT_NOT_REACHED();
     return CodePtr<JSEntryPtrTag>();
