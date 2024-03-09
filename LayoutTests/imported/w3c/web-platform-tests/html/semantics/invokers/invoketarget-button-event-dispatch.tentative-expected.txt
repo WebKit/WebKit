@@ -1,6 +1,6 @@
 
 
-PASS event dispatches on click
+FAIL event dispatches on click assert_equals: action expected "" but got "auto"
 PASS event action is set to invokeAction
 PASS event action is set to invokeaction attribute
 PASS event does not dispatch if click:preventDefault is called

@@ -1,9 +1,9 @@
 
 
-PASS action is a readonly defaulting to 'auto'
+FAIL action is a readonly defaulting to '' assert_equals: expected "" but got "auto"
 PASS invoker is readonly defaulting to null
 PASS action reflects initialized attribute
-PASS action set to undefined
+FAIL action set to undefined assert_equals: expected "" but got "auto"
 PASS action set to null
 PASS action set to false
 PASS action explicitly set to empty string

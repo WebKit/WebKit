@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/invokers/idlharness.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/invokers/interestelement-interface.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/invokers/invokeelement-interface.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/invokers/invokeevent-dispatch-shadow.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/invokers/invokeevent-interface.tentative.html

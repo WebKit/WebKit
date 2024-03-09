@@ -5,11 +5,11 @@ PASS invokeTargetElement reflects set value
 PASS invokeTargetElement reflects set value across shadow root into light dom
 PASS invokeTargetElement does not reflect set value inside shadowroot
 PASS invokeTargetElement throws error on assignment of non Element
-PASS invokeAction reflects 'auto' when attribute not present
-PASS invokeAction reflects 'auto' when attribute empty
+FAIL invokeAction reflects '' when attribute not present assert_equals: expected "" but got "auto"
+FAIL invokeAction reflects '' when attribute empty, setAttribute version assert_equals: expected "" but got "auto"
 PASS invokeAction reflects same casing
-PASS invokeAction reflects 'auto' when attribute empty 2
+FAIL invokeAction reflects '' when attribute empty, IDL version assert_equals: expected "" but got "auto"
 PASS invokeAction reflects tostring value
-PASS invokeAction reflects 'auto' when attribute set to []
+FAIL invokeAction reflects '' when attribute set to [] assert_equals: expected "" but got "auto"
 PASS invokeAction reflects tostring value 2
 
