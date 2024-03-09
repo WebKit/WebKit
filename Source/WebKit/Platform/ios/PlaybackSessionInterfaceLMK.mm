@@ -158,6 +158,28 @@
         model->setMuted(muted);
 }
 
+- (void)linearMediaPlayer:(WKSLinearMediaPlayer *)player setAudioTrack:(WKSLinearMediaTrack * _Nullable)audioTrack
+{
+    auto model = _model.get();
+    if (!model)
+        return;
+
+    NSUInteger index = audioTrack ? [player.audioTracks indexOfObject:audioTrack] : 0;
+    if (index != NSNotFound)
+        model->selectAudioMediaOption(index);
+}
+
+- (void)linearMediaPlayer:(WKSLinearMediaPlayer *)player setLegibleTrack:(WKSLinearMediaTrack * _Nullable)legibleTrack
+{
+    auto model = _model.get();
+    if (!model)
+        return;
+
+    NSUInteger index = legibleTrack ? [player.legibleTracks indexOfObject:legibleTrack] : 0;
+    if (index != NSNotFound)
+        model->selectLegibleMediaOption(index);
+}
+
 - (void)linearMediaPlayerToggleInlineMode:(WKSLinearMediaPlayer *)player
 {
     if (auto model = _model.get())
@@ -244,6 +266,44 @@ void PlaybackSessionInterfaceLMK::seekableRangesChanged(const TimeRanges& timeRa
 void PlaybackSessionInterfaceLMK::canPlayFastReverseChanged(bool canPlayFastReverse)
 {
     [m_player setCanScanBackward:canPlayFastReverse];
+}
+
+void PlaybackSessionInterfaceLMK::audioMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex)
+{
+    RetainPtr audioTracks = adoptNS([[NSMutableArray alloc] initWithCapacity:options.size()]);
+    for (auto& option : options) {
+        RetainPtr audioTrack = adoptNS([allocWKSLinearMediaTrackInstance() initWithLocalizedDisplayName:option.displayName]);
+        [audioTracks addObject:audioTrack.get()];
+    }
+
+    [m_player setAudioTracks:audioTracks.get()];
+    audioMediaSelectionIndexChanged(selectedIndex);
+}
+
+void PlaybackSessionInterfaceLMK::legibleMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex)
+{
+    RetainPtr legibleTracks = adoptNS([[NSMutableArray alloc] initWithCapacity:options.size()]);
+    for (auto& option : options) {
+        RetainPtr legibleTrack = adoptNS([allocWKSLinearMediaTrackInstance() initWithLocalizedDisplayName:option.displayName]);
+        [legibleTracks addObject:legibleTrack.get()];
+    }
+
+    [m_player setLegibleTracks:legibleTracks.get()];
+    legibleMediaSelectionIndexChanged(selectedIndex);
+}
+
+void PlaybackSessionInterfaceLMK::audioMediaSelectionIndexChanged(uint64_t selectedIndex)
+{
+    NSArray *audioTracks = [m_player audioTracks];
+    if (selectedIndex < audioTracks.count)
+        [m_player setCurrentAudioTrack:audioTracks[selectedIndex]];
+}
+
+void PlaybackSessionInterfaceLMK::legibleMediaSelectionIndexChanged(uint64_t selectedIndex)
+{
+    NSArray *legibleTracks = [m_player legibleTracks];
+    if (selectedIndex < legibleTracks.count)
+        [m_player setCurrentLegibleTrack:legibleTracks[selectedIndex]];
 }
 
 void PlaybackSessionInterfaceLMK::mutedChanged(bool muted)
