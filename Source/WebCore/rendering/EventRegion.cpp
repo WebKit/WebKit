@@ -381,13 +381,13 @@ EventRegion::EventRegion(Region&& region
 
 void EventRegion::unite(const Region& region, const RenderStyle& style, bool overrideUserModifyIsEditable)
 {
-    if (style.effectivePointerEvents() == PointerEvents::None)
+    if (style.usedPointerEvents() == PointerEvents::None)
         return;
 
     m_region.unite(region);
 
 #if ENABLE(TOUCH_ACTION_REGIONS)
-    uniteTouchActions(region, style.effectiveTouchActions());
+    uniteTouchActions(region, style.usedTouchActions());
 #endif
 
 #if ENABLE(WHEEL_EVENT_REGIONS)

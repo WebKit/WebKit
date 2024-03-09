@@ -266,7 +266,7 @@ static bool isScrollableOverflow(Overflow overflow)
     return overflow == Overflow::Scroll || overflow == Overflow::Auto;
 }
 
-static OptionSet<TouchAction> computeEffectiveTouchActions(const RenderStyle& style, OptionSet<TouchAction> effectiveTouchActions)
+static OptionSet<TouchAction> computeUsedTouchActions(const RenderStyle& style, OptionSet<TouchAction> usedTouchActions)
 {
     // https://w3c.github.io/pointerevents/#determining-supported-touch-behavior
     // "A touch behavior is supported if it conforms to the touch-action property of each element between
@@ -275,22 +275,22 @@ static OptionSet<TouchAction> computeEffectiveTouchActions(const RenderStyle& st
 
     bool hasDefaultTouchBehavior = isScrollableOverflow(style.overflowX()) || isScrollableOverflow(style.overflowY());
     if (hasDefaultTouchBehavior)
-        effectiveTouchActions = RenderStyle::initialTouchActions();
+        usedTouchActions = RenderStyle::initialTouchActions();
 
     auto touchActions = style.touchActions();
     if (touchActions == RenderStyle::initialTouchActions())
-        return effectiveTouchActions;
+        return usedTouchActions;
 
-    if (effectiveTouchActions.contains(TouchAction::None))
+    if (usedTouchActions.contains(TouchAction::None))
         return { TouchAction::None };
 
-    if (effectiveTouchActions.containsAny({ TouchAction::Auto, TouchAction::Manipulation }))
+    if (usedTouchActions.containsAny({ TouchAction::Auto, TouchAction::Manipulation }))
         return touchActions;
 
     if (touchActions.containsAny({ TouchAction::Auto, TouchAction::Manipulation }))
-        return effectiveTouchActions;
+        return usedTouchActions;
 
-    auto sharedTouchActions = effectiveTouchActions & touchActions;
+    auto sharedTouchActions = usedTouchActions & touchActions;
     if (sharedTouchActions.isEmpty())
         return { TouchAction::None };
 
@@ -713,7 +713,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
     if (m_parentBoxStyle.justifyItems().positionType() == ItemPositionType::Legacy && style.justifyItems().position() == ItemPosition::Legacy)
         style.setJustifyItems(m_parentBoxStyle.justifyItems());
 
-    style.setEffectiveTouchActions(computeEffectiveTouchActions(style, m_parentStyle.effectiveTouchActions()));
+    style.setUsedTouchActions(computeUsedTouchActions(style, m_parentStyle.usedTouchActions()));
 
     // Counterparts in Element::addToTopLayer/removeFromTopLayer & SharingResolver::canShareStyleWithElement need to match!
     auto hasInertAttribute = [] (const Element* element) -> bool {

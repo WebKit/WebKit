@@ -2080,7 +2080,7 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
         // textSizeAdjust
         // userSelect
         // isInSubtreeWithBlendMode
-        // effectiveTouchActions
+        // usedTouchActions
         // eventListenerRegionTypes
         // effectiveInert
         // effectiveContentVisibility

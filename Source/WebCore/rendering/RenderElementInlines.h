@@ -123,7 +123,7 @@ inline bool RenderElement::visibleToHitTesting(const std::optional<HitTestReques
 {
     return style().visibility() == Visibility::Visible
         && !isSkippedContent()
-        && ((request && request->ignoreCSSPointerEventsProperty()) || style().effectivePointerEvents() != PointerEvents::None);
+        && ((request && request->ignoreCSSPointerEventsProperty()) || style().usedPointerEvents() != PointerEvents::None);
 }
 
 inline int adjustForAbsoluteZoom(int value, const RenderElement& renderer)

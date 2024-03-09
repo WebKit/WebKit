@@ -166,7 +166,7 @@ public:
 
     unsigned effectiveContentVisibility : 2; // ContentVisibility
 
-    OptionSet<TouchAction> effectiveTouchActions;
+    OptionSet<TouchAction> usedTouchActions;
     OptionSet<EventListenerRegionType> eventListenerRegionTypes;
 
     Length strokeWidth;
