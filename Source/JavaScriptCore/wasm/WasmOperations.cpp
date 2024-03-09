@@ -282,6 +282,18 @@ JSC_DEFINE_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe::Context&
         context.gpr(GPRInfo::nonPreservedNonArgumentGPR0) = 0;
     };
 
+    auto doStackCheck = [instance](OSREntryCallee* callee) -> bool {
+        uintptr_t stackPointer = reinterpret_cast<uintptr_t>(currentStackPointer());
+        ASSERT(callee->stackCheckSize());
+        uintptr_t stackExtent = stackPointer - callee->stackCheckSize();
+        uintptr_t stackLimit = reinterpret_cast<uintptr_t>(instance->softStackLimit());
+        if (UNLIKELY(stackExtent >= stackPointer || stackExtent <= stackLimit)) {
+            dataLogLnIf(Options::verboseOSR(), "Skipping OMG loop tier up due to stack check; ", RawHex(stackPointer), " -> ", RawHex(stackExtent), " is past soft limit ", RawHex(stackLimit));
+            return false;
+        }
+        return true;
+    };
+
     Wasm::CalleeGroup& calleeGroup = *instance->calleeGroup();
     ASSERT(instance->memory()->mode() == calleeGroup.mode());
 
@@ -356,8 +368,11 @@ JSC_DEFINE_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe::Context&
     }
 
     if (OSREntryCallee* osrEntryCallee = callee.osrEntryCallee()) {
-        if (osrEntryCallee->loopIndex() == loopIndex)
+        if (osrEntryCallee->loopIndex() == loopIndex) {
+            if (!doStackCheck(osrEntryCallee))
+                return returnWithoutOSREntry();
             return doOSREntry(instance, context, callee, *osrEntryCallee, osrEntryData);
+        }
     }
 
     if (!shouldTriggerOMGCompile(tierUp, callee.replacement(), functionIndex) && !triggeredSlowPathToStartCompilation)
@@ -371,8 +386,11 @@ JSC_DEFINE_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe::Context&
     }
 
     if (OSREntryCallee* osrEntryCallee = callee.osrEntryCallee()) {
-        if (osrEntryCallee->loopIndex() == loopIndex)
+        if (osrEntryCallee->loopIndex() == loopIndex) {
+            if (!doStackCheck(osrEntryCallee))
+                return returnWithoutOSREntry();
             return doOSREntry(instance, context, callee, *osrEntryCallee, osrEntryData);
+        }
         tierUp.dontOptimizeAnytimeSoon(functionIndex);
         return returnWithoutOSREntry();
     }
@@ -452,8 +470,11 @@ JSC_DEFINE_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe::Context&
         return returnWithoutOSREntry();
     }
 
-    if (osrEntryCallee->loopIndex() == loopIndex)
+    if (osrEntryCallee->loopIndex() == loopIndex) {
+        if (!doStackCheck(osrEntryCallee))
+            return returnWithoutOSREntry();
         return doOSREntry(instance, context, callee, *osrEntryCallee, osrEntryData);
+    }
 
     tierUp.dontOptimizeAnytimeSoon(functionIndex);
     return returnWithoutOSREntry();
