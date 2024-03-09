@@ -23,7 +23,7 @@
 
 #if os(visionOS)
 
-#if canImport(AssetViewer)
+#if canImport(QuickLook, _version: 953)
 import WebKitSwift
 
 @_spi(PreviewApplication) import QuickLook
