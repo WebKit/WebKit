@@ -436,7 +436,7 @@ bool RenderBlockFlow::willCreateColumns(std::optional<unsigned> desiredColumnCou
     // The following types are not supposed to create multicol context.
     if (isRenderFileUploadControl() || isRenderTextControl() || isRenderListBox())
         return false;
-    if (isRenderSVGBlock() || isRenderRubyRun() || isRenderRubyAsBlock() || isRenderRubyAsInline() || isRenderRubyBase())
+    if (isRenderSVGBlock())
         return false;
     if (style().display() == DisplayType::RubyBlock || style().display() == DisplayType::RubyAnnotation)
         return false;
@@ -3361,7 +3361,7 @@ void RenderBlockFlow::markLinesDirtyInBlockRange(LayoutUnit logicalTop, LayoutUn
 
 std::optional<LayoutUnit> RenderBlockFlow::firstLineBaseline() const
 {
-    if (isWritingModeRoot() && !isRenderRubyRun() && !isGridItem() && !isFlexItem())
+    if (isWritingModeRoot() && !isGridItem() && !isFlexItem())
         return std::nullopt;
 
     if (shouldApplyLayoutContainment())
@@ -3384,7 +3384,7 @@ std::optional<LayoutUnit> RenderBlockFlow::firstLineBaseline() const
 
 std::optional<LayoutUnit> RenderBlockFlow::lastLineBaseline() const
 {
-    if (isWritingModeRoot() && !isRenderRubyRun() && !isGridItem() && !isFlexItem())
+    if (isWritingModeRoot() && !isGridItem() && !isFlexItem())
         return std::nullopt;
 
     if (shouldApplyLayoutContainment())
@@ -3409,7 +3409,7 @@ std::optional<LayoutUnit> RenderBlockFlow::lastLineBaseline() const
 
 std::optional<LayoutUnit> RenderBlockFlow::inlineBlockBaseline(LineDirectionMode lineDirection) const
 {
-    if (isWritingModeRoot() && !isRenderRubyRun())
+    if (isWritingModeRoot())
         return std::nullopt;
 
     if (shouldApplyLayoutContainment())
@@ -3616,7 +3616,7 @@ GapRects RenderBlockFlow::inlineSelectionGaps(RenderBlock& rootBlock, const Layo
 
         if (!containsStart && !lastSelectedLineBox
             && selectionState() != HighlightState::Start
-            && selectionState() != HighlightState::Both && !isRenderRubyBase())
+            && selectionState() != HighlightState::Both)
             result.uniteCenter(blockSelectionGap(rootBlock, rootBlockPhysicalPosition, offsetFromRootBlock, lastLogicalTop, lastLogicalLeft, lastLogicalRight, selectionTop, cache, paintInfo));
 
         LayoutRect logicalRect { LayoutUnit(lineBox->contentLogicalLeft()), selectionTop, LayoutUnit(lineBox->contentLogicalWidth()), selectionTop + selectionHeight };

@@ -35,7 +35,6 @@ namespace WebCore {
 
 class LineBreaker;
 class RenderMultiColumnFlow;
-class RenderRubyRun;
 
 namespace LayoutIntegration {
 class LineLayout;

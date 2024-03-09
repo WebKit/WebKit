@@ -2670,10 +2670,6 @@ rendering/RenderProgress.cpp
 rendering/RenderQuote.cpp
 rendering/RenderReplaced.cpp
 rendering/RenderReplica.cpp
-rendering/RenderRuby.cpp
-rendering/RenderRubyBase.cpp
-rendering/RenderRubyRun.cpp
-rendering/RenderRubyText.cpp
 rendering/RenderScrollbar.cpp
 rendering/RenderScrollbarPart.cpp
 rendering/RenderScrollbarTheme.cpp

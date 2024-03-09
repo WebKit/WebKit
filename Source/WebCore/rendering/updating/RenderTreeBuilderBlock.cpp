@@ -29,8 +29,6 @@
 #include "RenderButton.h"
 #include "RenderChildIterator.h"
 #include "RenderMultiColumnFlow.h"
-#include "RenderRuby.h"
-#include "RenderRubyRun.h"
 #include "RenderStyleInlines.h"
 #include "RenderTextControl.h"
 #include "RenderTreeBuilderMultiColumn.h"
@@ -46,8 +44,6 @@ static void moveAllChildrenToInternal(RenderBoxModelObject& from, RenderElement&
 static bool canDropAnonymousBlock(const RenderBlock& anonymousBlock)
 {
     if (anonymousBlock.beingDestroyed() || anonymousBlock.continuation())
-        return false;
-    if (anonymousBlock.isRenderRubyRun() || anonymousBlock.isRenderRubyBase())
         return false;
     return true;
 }
@@ -272,7 +268,7 @@ void RenderTreeBuilder::Block::removeLeftoverAnonymousBlock(RenderBlock& anonymo
         return;
 
     auto* parent = anonymousBlock.parent();
-    if (is<RenderButton>(*parent) || is<RenderTextControl>(*parent) || is<RenderRubyAsBlock>(*parent) || is<RenderRubyRun>(*parent))
+    if (is<RenderButton>(*parent) || is<RenderTextControl>(*parent))
         return;
 
     m_builder.removeFloatingObjects(anonymousBlock);

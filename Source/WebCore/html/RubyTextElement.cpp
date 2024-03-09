@@ -26,8 +26,6 @@
 #include "config.h"
 #include "RubyTextElement.h"
 
-#include "RenderRuby.h"
-#include "RenderRubyText.h"
 #include "RenderTreePosition.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -55,11 +53,6 @@ Ref<RubyTextElement> RubyTextElement::create(Document& document)
 
 RenderPtr<RenderElement> RubyTextElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition& insertionPosition)
 {
-    if (!document().settings().cssBasedRubyEnabled()) {
-        // RenderRubyText requires its parent to be RenderRubyRun.
-        if (isRuby(insertionPosition.parent()) && style.display() == DisplayType::Block)
-            return createRenderer<RenderRubyText>(*this, WTFMove(style));
-    }
     return HTMLElement::createElementRenderer(WTFMove(style), insertionPosition);
 }
 

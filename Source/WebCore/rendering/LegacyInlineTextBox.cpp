@@ -49,8 +49,6 @@
 #include "RenderElementInlines.h"
 #include "RenderHighlight.h"
 #include "RenderLineBreak.h"
-#include "RenderRubyRun.h"
-#include "RenderRubyText.h"
 #include "RenderStyleInlines.h"
 #include "RenderTheme.h"
 #include "RenderView.h"

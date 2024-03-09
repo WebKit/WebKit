@@ -490,10 +490,6 @@ public:
     // FIXME-BLOCKFLOW: Remove this when the line layout stuff has all moved out of RenderBlock
     friend class LineBreaker;
 
-    // RenderRubyBase objects need to be able to split and merge, moving their children around
-    // (calling moveChildTo, moveAllChildrenTo, and makeChildrenNonInline).
-    friend class RenderRubyBase;
-
 private:
     // Used to store state between styleWillChange and styleDidChange
     static bool s_canPropagateFloatIntoSibling;

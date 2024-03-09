@@ -30,8 +30,6 @@
 
 #include "ElementInlines.h"
 #include "HTMLSpanElement.h"
-#include "RenderRuby.h"
-#include "RenderRubyText.h"
 #include "RenderTreePosition.h"
 #include "RubyElement.h"
 #include "RubyTextElement.h"

@@ -65,9 +65,6 @@ static std::optional<AvoidanceReason> canUseForChild(const RenderObject& child)
         return { };
 
     auto& renderer = downcast<RenderElement>(child);
-    if (renderer.isRenderRubyRun())
-        return AvoidanceReason::ContentIsRuby;
-
     if (is<RenderBlockFlow>(renderer)
         || is<RenderGrid>(renderer)
         || is<RenderFrameSet>(renderer)
@@ -85,8 +82,6 @@ static std::optional<AvoidanceReason> canUseForChild(const RenderObject& child)
     if (is<RenderInline>(renderer)) {
         if (renderer.isRenderSVGInline())
             return AvoidanceReason::ContentIsSVG;
-        if (renderer.isRenderRubyAsInline())
-            return AvoidanceReason::ContentIsRuby;
         return { };
     }
 
@@ -103,8 +98,6 @@ static std::optional<AvoidanceReason> canUseForLineLayoutWithReason(const Render
         ASSERT(is<RenderSVGBlock>(flow));
         return AvoidanceReason::ContentIsSVG;
     }
-    if (flow.isRenderRubyText() || flow.isRenderRubyBase())
-        return AvoidanceReason::ContentIsRuby;
     for (auto walker = InlineWalker(flow); !walker.atEnd(); walker.advance()) {
         auto& child = *walker.current();
         if (auto childReason = canUseForChild(child))

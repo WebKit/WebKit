@@ -2729,7 +2729,7 @@ void RenderBox::computeLogicalWidthInFragment(LogicalExtentComputedValues& compu
     // width.  Use the width from the style context.
     // FIXME: Account for block-flow in flexible boxes.
     // https://bugs.webkit.org/show_bug.cgi?id=46418
-    if (hasOverridingLogicalWidth() && (isRenderRubyRun() || (parent()->isFlexibleBoxIncludingDeprecated()))) {
+    if (hasOverridingLogicalWidth() && parent()->isFlexibleBoxIncludingDeprecated()) {
         computedValues.m_extent = overridingLogicalWidth();
         return;
     }

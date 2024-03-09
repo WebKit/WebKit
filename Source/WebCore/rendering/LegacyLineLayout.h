@@ -43,7 +43,6 @@ class LineLayoutState;
 class LocalFrameViewLayoutContext;
 class RenderBlockFlow;
 class RenderObject;
-class RenderRubyRun;
 class LegacyRootInlineBox;
 class VerticalPositionCache;
 struct BidiStatus;
@@ -82,8 +81,6 @@ private:
     LegacyInlineBox* createInlineBoxForRenderer(RenderObject*, bool isOnlyRun = false);
     LegacyInlineFlowBox* createLineBoxes(RenderObject*, const LineInfo&, LegacyInlineBox*);
     TextAlignMode textAlignmentForLine(bool endsWithSoftBreak) const;
-    void setMarginsForRubyRun(BidiRun*, RenderRubyRun&, RenderObject* previousObject, const LineInfo&);
-    void updateRubyForJustifiedText(RenderRubyRun&, BidiRun&, const Vector<unsigned, 16>& expansionOpportunities, unsigned& expansionOpportunityCount, float& totalLogicalWidth, float availableLogicalWidth, size_t&);
     void computeExpansionForJustifiedText(BidiRun* firstRun, BidiRun* trailingSpaceRun, const Vector<unsigned, 16>& expansionOpportunities, unsigned expansionOpportunityCount, float totalLogicalWidth, float availableLogicalWidth);
     void computeInlineDirectionPositionsForLine(LegacyRootInlineBox*, const LineInfo&, BidiRun* firstRun, BidiRun* trailingSpaceRun, bool reachedEnd, GlyphOverflowAndFallbackFontsMap&, VerticalPositionCache&, WordMeasurements&);
     BidiRun* computeInlineDirectionPositionsForSegment(LegacyRootInlineBox*, const LineInfo&, TextAlignMode, float& logicalLeft, float& availableLogicalWidth, BidiRun* firstRun, BidiRun* trailingSpaceRun, GlyphOverflowAndFallbackFontsMap&, VerticalPositionCache&, WordMeasurements&);

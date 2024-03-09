@@ -36,9 +36,6 @@
 #include "RenderFragmentedFlow.h"
 #include "RenderInline.h"
 #include "RenderLayoutState.h"
-#include "RenderRubyBase.h"
-#include "RenderRubyRun.h"
-#include "RenderRubyText.h"
 #include "RenderView.h"
 #include "VerticalPositionCache.h"
 #include <wtf/IsoMallocInlines.h>
@@ -482,35 +479,6 @@ LayoutUnit LegacyRootInlineBox::selectionTop() const
     if (renderer().style().isFlippedLinesWritingMode())
         return selectionTop;
 
-#if !PLATFORM(IOS_FAMILY)
-    // See rdar://problem/19692206 ... don't want to do this adjustment for iOS where overlap is ok and handled.
-    if (auto* base = dynamicDowncast<RenderRubyBase>(renderer())) {
-        // The ruby base selection should avoid intruding into the ruby text. This is only the case if there is an actual ruby text above us.
-        RenderRubyRun* run = base->rubyRun();
-        if (run) {
-            RenderRubyText* text = run->rubyText();
-            if (text && text->logicalTop() < base->logicalTop()) {
-                // The ruby text is above the ruby base. Just return now in order to avoid painting on top of the ruby text.
-                return selectionTop;
-            }
-        }
-    } else if (auto* text = dynamicDowncast<RenderRubyText>(renderer())) {
-        // The ruby text selection should go all the way to the selection top of the containing line.
-        RenderRubyRun* run = text->rubyRun();
-        if (run && run->inlineBoxWrapper()) {
-            RenderRubyBase* base = run->rubyBase();
-            if (base && text->logicalTop() < base->logicalTop()) {
-                // The ruby text is above the ruby base.
-                const LegacyRootInlineBox& containingLine = run->inlineBoxWrapper()->root();
-                LayoutUnit enclosingSelectionTop = containingLine.selectionTop();
-                LayoutUnit deltaBetweenObjects = text->logicalTop() + run->logicalTop();
-                LayoutUnit selectionTopInRubyTextCoords = enclosingSelectionTop - deltaBetweenObjects;
-                return std::min(selectionTop, selectionTopInRubyTextCoords);
-            }
-        }
-    }
-#endif
-
     LayoutUnit prevBottom;
     if (auto* previousBox = prevRootBox())
         prevBottom = previousBox->selectionBottom();
@@ -546,35 +514,6 @@ LayoutUnit LegacyRootInlineBox::selectionBottom() const
     
     if (!renderer().style().isFlippedLinesWritingMode() || !nextRootBox())
         return selectionBottom;
-    
-#if !PLATFORM(IOS_FAMILY)
-    // See rdar://problem/19692206 ... don't want to do this adjustment for iOS where overlap is ok and handled.
-    if (auto* base = dynamicDowncast<RenderRubyBase>(renderer())) {
-        // The ruby base selection should avoid intruding into the ruby text. This is only the case if there is an actual ruby text below us.
-        RenderRubyRun* run = base->rubyRun();
-        if (run) {
-            RenderRubyText* text = run->rubyText();
-            if (text && text->logicalTop() > base->logicalTop()) {
-                // The ruby text is below the ruby base. Just return now in order to avoid painting on top of the ruby text.
-                return selectionBottom;
-            }
-        }
-    } else if (auto* text = dynamicDowncast<RenderRubyText>(renderer())) {
-        // The ruby text selection should go all the way to the selection bottom of the containing line.
-        RenderRubyRun* run = text->rubyRun();
-        if (run && run->inlineBoxWrapper()) {
-            RenderRubyBase* base = run->rubyBase();
-            if (base && text->logicalTop() > base->logicalTop()) {
-                // The ruby text is above the ruby base.
-                const LegacyRootInlineBox& containingLine = run->inlineBoxWrapper()->root();
-                LayoutUnit enclosingSelectionBottom = containingLine.selectionBottom();
-                LayoutUnit deltaBetweenObjects = text->logicalTop() + run->logicalTop();
-                LayoutUnit selectionBottomInRubyTextCoords = enclosingSelectionBottom - deltaBetweenObjects;
-                return std::min(selectionBottom, selectionBottomInRubyTextCoords);
-            }
-        }
-    }
-#endif
 
     LayoutUnit nextTop = nextRootBox()->selectionTop();
     if (nextTop > selectionBottom && blockFlow().containsFloats()) {

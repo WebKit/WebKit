@@ -38,7 +38,6 @@ namespace LayoutIntegration {
 class LineLayout;
 
 enum class AvoidanceReason : uint8_t {
-    ContentIsRuby,
     ContentIsSVG,
     FeatureIsDisabled
 };

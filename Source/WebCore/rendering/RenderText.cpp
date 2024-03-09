@@ -50,7 +50,6 @@
 #include "RenderCombineText.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
-#include "RenderRubyText.h"
 #include "RenderTextInlines.h"
 #include "RenderView.h"
 #include "RenderedDocumentMarker.h"
@@ -467,8 +466,6 @@ void RenderText::collectSelectionGeometries(Vector<SelectionGeometry>& rects, un
             extentsRect = extentsRect.transposedRect();
         bool isFirstOnLine = !textBox->previousOnLine();
         bool isLastOnLine = !textBox->nextOnLine();
-        if (containingBlock->isRenderRubyBase() || containingBlock->isRenderRubyText())
-            isLastOnLine = !containingBlock->containingBlock()->inlineBoxWrapper()->nextOnLineExists();
 
         bool containsStart = textBox->start() <= start && textBox->end() >= start;
         bool containsEnd = textBox->start() <= end && textBox->end() >= end;
@@ -486,7 +483,7 @@ void RenderText::collectSelectionGeometries(Vector<SelectionGeometry>& rects, un
             }
         }
 
-        rects.append(SelectionGeometry(absoluteQuad, HTMLElement::selectionRenderingBehavior(textNode()), textBox->direction(), extentsRect.x(), extentsRect.maxX(), extentsRect.maxY(), 0, textBox->isLineBreak(), isFirstOnLine, isLastOnLine, containsStart, containsEnd, boxIsHorizontal, isFixed, containingBlock->isRenderRubyText(), view().pageNumberForBlockProgressionOffset(absoluteQuad.enclosingBoundingBox().x())));
+        rects.append(SelectionGeometry(absoluteQuad, HTMLElement::selectionRenderingBehavior(textNode()), textBox->direction(), extentsRect.x(), extentsRect.maxX(), extentsRect.maxY(), 0, textBox->isLineBreak(), isFirstOnLine, isLastOnLine, containsStart, containsEnd, boxIsHorizontal, isFixed, view().pageNumberForBlockProgressionOffset(absoluteQuad.enclosingBoundingBox().x())));
     }
 }
 #endif
@@ -2148,21 +2145,6 @@ std::optional<bool> RenderText::emphasisMarkExistsAndIsAbove(const RenderText& r
             return { };
         return isAbove;
     }
-
-    RenderBlock* containingBlock = renderer.containingBlock();
-
-    if (!containingBlock || !containingBlock->isRenderRubyBase())
-        return isAbove; // This text is not inside a ruby base, so it does not have ruby text over it.
-
-    auto* rubyRun = dynamicDowncast<RenderRubyRun>(*containingBlock->parent());
-    if (!rubyRun)
-        return isAbove; // Cannot get the ruby text.
-
-    auto* rubyText = rubyRun->rubyText();
-
-    // The emphasis marks over are suppressed only if there is a ruby text box and it not empty.
-    if (rubyText && rubyText->hasLines())
-        return std::nullopt;
 
     return isAbove;
 }

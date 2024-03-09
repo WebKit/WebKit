@@ -1550,7 +1550,7 @@ GapRects RenderBlock::selectionGaps(RenderBlock& rootBlock, const LayoutPoint& r
         result = blockSelectionGaps(rootBlock, rootBlockPhysicalPosition, offsetFromRootBlock, lastLogicalTop, lastLogicalLeft, lastLogicalRight, cache, paintInfo);
 
     // Fill the vertical gap all the way to the bottom of our block if the selection extends past our block.
-    if (&rootBlock == this && (selectionState() != HighlightState::Both && selectionState() != HighlightState::End) && !isRenderRubyBase() && !isRenderRubyText()) {
+    if (&rootBlock == this && (selectionState() != HighlightState::Both && selectionState() != HighlightState::End)) {
         result.uniteCenter(blockSelectionGap(rootBlock, rootBlockPhysicalPosition, offsetFromRootBlock,
             lastLogicalTop, lastLogicalLeft, lastLogicalRight, logicalHeight(), cache, paintInfo));
     }
@@ -1595,7 +1595,7 @@ GapRects RenderBlock::blockSelectionGaps(RenderBlock& rootBlock, const LayoutPoi
         }
 
         bool paintsOwnSelection = curr->shouldPaintSelectionGaps() || curr->isRenderTable(); // FIXME: Eventually we won't special-case table like this.
-        bool fillBlockGaps = (paintsOwnSelection || (curr->canBeSelectionLeaf() && childState != HighlightState::None)) && !isRenderRubyBase() && !isRenderRubyText();
+        bool fillBlockGaps = paintsOwnSelection || (curr->canBeSelectionLeaf() && childState != HighlightState::None);
         if (fillBlockGaps) {
             // We need to fill the vertical gap above this object.
             if (childState == HighlightState::End || childState == HighlightState::Inside) {
@@ -2465,7 +2465,7 @@ LayoutUnit RenderBlock::baselinePosition(FontBaseline baselineType, bool firstLi
         // We also give up on finding a baseline if we have a vertical scrollbar, or if we are scrolled
         // vertically (e.g., an overflow:hidden block that has had scrollTop moved).
         auto ignoreBaseline = [this, direction]() -> bool {
-            if (isWritingModeRoot() && !isRenderRubyRun())
+            if (isWritingModeRoot())
                 return true;
 
             auto* scrollableArea = layer() ? layer()->scrollableArea() : nullptr;
@@ -2520,7 +2520,7 @@ std::optional<LayoutUnit> RenderBlock::firstLineBaseline() const
     if (shouldApplyLayoutContainment())
         return std::nullopt;
 
-    if (isWritingModeRoot() && !isRenderRubyRun() && !isFlexItem())
+    if (isWritingModeRoot() && !isFlexItem())
         return std::optional<LayoutUnit>();
 
     for (RenderBox* child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox()) {
@@ -2535,7 +2535,7 @@ std::optional<LayoutUnit> RenderBlock::lastLineBaseline() const
     if (shouldApplyLayoutContainment())
         return std::nullopt;
 
-    if (isWritingModeRoot() && !isRenderRubyRun())
+    if (isWritingModeRoot())
         return std::optional<LayoutUnit>();
 
     for (RenderBox* child = lastInFlowChildBox(); child; child = child->previousInFlowSiblingBox()) {
@@ -2550,7 +2550,7 @@ std::optional<LayoutUnit> RenderBlock::inlineBlockBaseline(LineDirectionMode lin
     if (shouldApplyLayoutContainment())
         return synthesizedBaseline(*this, *parentStyle(), lineDirection, BorderBox) + (lineDirection == HorizontalLine ? marginBottom() : marginLeft());
 
-    if (isWritingModeRoot() && !isRenderRubyRun())
+    if (isWritingModeRoot())
         return std::optional<LayoutUnit>();
 
     bool haveNormalFlowChild = false;

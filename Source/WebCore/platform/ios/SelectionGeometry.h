@@ -41,7 +41,7 @@ public:
     WEBCORE_EXPORT explicit SelectionGeometry(const FloatQuad&, SelectionRenderingBehavior, bool isHorizontal, int columnNumber);
 
     // FIXME: We should move some of these arguments to an auxillary struct.
-    SelectionGeometry(const FloatQuad&, SelectionRenderingBehavior, TextDirection, int, int, int, int, bool, bool, bool, bool, bool, bool, bool, bool, int);
+    SelectionGeometry(const FloatQuad&, SelectionRenderingBehavior, TextDirection, int, int, int, int, bool, bool, bool, bool, bool, bool, bool, int);
     WEBCORE_EXPORT SelectionGeometry(const FloatQuad&, SelectionRenderingBehavior, TextDirection, int, int, int, int, bool, bool, bool, bool, bool, bool);
     SelectionGeometry() = default;
     ~SelectionGeometry() = default;
@@ -69,7 +69,6 @@ public:
     bool containsEnd() const { return m_containsEnd; }
     bool isHorizontal() const { return m_isHorizontal; }
     bool isInFixedPosition() const { return m_isInFixedPosition; }
-    bool isRubyText() const { return m_isRubyText; }
     int pageNumber() const { return m_pageNumber; }
     SelectionRenderingBehavior behavior() const { return m_behavior; }
 
@@ -106,7 +105,6 @@ private:
     bool m_containsEnd { false };
     bool m_isHorizontal { true };
     bool m_isInFixedPosition { false };
-    bool m_isRubyText { false };
     int m_pageNumber { 0 };
 
     mutable std::optional<IntRect> m_cachedEnclosingRect;

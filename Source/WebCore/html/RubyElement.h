@@ -37,9 +37,6 @@ public:
 
 protected:
     RubyElement(const QualifiedName&, Document&);
-
-private:
-    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
 };
 
 } // namespace WebCore

@@ -65,7 +65,6 @@
 #include "RenderMultiColumnFlow.h"
 #include "RenderMultiColumnSet.h"
 #include "RenderMultiColumnSpannerPlaceholder.h"
-#include "RenderRuby.h"
 #include "RenderSVGBlock.h"
 #include "RenderSVGInline.h"
 #include "RenderSVGModelObject.h"
@@ -2511,8 +2510,7 @@ auto RenderObject::collectSelectionGeometriesInternal(const SimpleRange& range) 
         int currentRectTop = geometries[i].logicalTop();
         int currentRectBottom = currentRectTop + geometries[i].logicalHeight();
 
-        // We don't want to count the ruby text as a separate line.
-        if (intervalsSufficientlyOverlap(currentRectTop, currentRectBottom, lineTop, lineBottom) || (i && geometries[i].isRubyText())) {
+        if (intervalsSufficientlyOverlap(currentRectTop, currentRectBottom, lineTop, lineBottom)) {
             // Grow the current line bounds.
             lineTop = std::min(lineTop, currentRectTop);
             lineBottom = std::max(lineBottom, currentRectBottom);
@@ -2552,8 +2550,6 @@ auto RenderObject::collectSelectionGeometriesInternal(const SimpleRange& range) 
     adjustLineHeightOfSelectionGeometries(geometries, numberOfGeometries, lineNumber, lineTop, lineBottom - lineTop);
 
     // When using SelectionRenderingBehavior::CoalesceBoundingRects, sort the rectangles and make sure there are no gaps.
-    // The rectangles could be unsorted when there is ruby text and we could have gaps on the line when adjacent elements
-    // on the line have a different orientation.
     //
     // Note that for selection geometries with SelectionRenderingBehavior::UseIndividualQuads, we avoid sorting in order to
     // preserve the fact that the resulting geometries correspond to the order in which the quads are discovered during DOM

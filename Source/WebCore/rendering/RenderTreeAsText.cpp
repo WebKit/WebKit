@@ -64,7 +64,6 @@
 #include "RenderListItem.h"
 #include "RenderListMarker.h"
 #include "RenderQuote.h"
-#include "RenderRuby.h"
 #include "RenderSVGContainer.h"
 #include "RenderSVGGradientStop.h"
 #include "RenderSVGInlineText.h"
@@ -271,7 +270,7 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
             auto height = inlineFlow->linesBoundingBox().height();
             if (width)
                 return height;
-            if (is<RenderQuote>(*inlineFlow) || is<RenderRubyAsInline>(*inlineFlow))
+            if (is<RenderQuote>(*inlineFlow))
                 return height;
             if (inlineFlow->marginStart() || inlineFlow->marginEnd())
                 return height;

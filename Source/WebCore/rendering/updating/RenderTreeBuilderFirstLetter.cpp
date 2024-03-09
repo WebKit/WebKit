@@ -28,7 +28,6 @@
 #include "RenderBlock.h"
 #include "RenderButton.h"
 #include "RenderInline.h"
-#include "RenderRubyRun.h"
 #include "RenderSVGText.h"
 #include "RenderStyleSetters.h"
 #include "RenderTable.h"
@@ -114,8 +113,6 @@ static bool supportsFirstLetter(RenderBlock& block)
     if (!is<RenderBlockFlow>(block))
         return false;
     if (is<RenderSVGText>(block))
-        return false;
-    if (is<RenderRubyRun>(block))
         return false;
     return block.canHaveGeneratedChildren();
 }

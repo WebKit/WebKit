@@ -26,7 +26,6 @@
 #include "config.h"
 #include "RubyElement.h"
 
-#include "RenderRuby.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -49,17 +48,6 @@ Ref<RubyElement> RubyElement::create(const QualifiedName& tagName, Document& doc
 Ref<RubyElement> RubyElement::create(Document& document)
 {
     return adoptRef(*new RubyElement(rubyTag, document));
-}
-
-RenderPtr<RenderElement> RubyElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition& insertionPosition)
-{
-    if (!document().settings().cssBasedRubyEnabled()) {
-        if (style.display() == DisplayType::Inline)
-            return createRenderer<RenderRubyAsInline>(*this, WTFMove(style));
-        if (style.display() == DisplayType::Block || style.display() == DisplayType::InlineBlock)
-            return createRenderer<RenderRubyAsBlock>(*this, WTFMove(style));
-    }
-    return HTMLElement::createElementRenderer(WTFMove(style), insertionPosition);
 }
 
 }

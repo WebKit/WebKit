@@ -46,8 +46,6 @@
 #include "RenderFragmentedFlow.h"
 #include "RenderLayoutState.h"
 #include "RenderLineBreak.h"
-#include "RenderRubyBase.h"
-#include "RenderRubyText.h"
 #include "RenderSVGText.h"
 #include "RenderView.h"
 #include "SVGElementTypeHelpers.h"
@@ -436,22 +434,6 @@ static void updateLogicalWidthForCenterAlignedBlock(bool isLeftToRightDirection,
         logicalLeft += totalLogicalWidth > availableLogicalWidth ? (availableLogicalWidth - totalLogicalWidth) : (availableLogicalWidth - totalLogicalWidth) / 2 - trailingSpaceWidth;
 }
 
-void LegacyLineLayout::setMarginsForRubyRun(BidiRun* run, RenderRubyRun& renderer, RenderObject* previousObject, const LineInfo& lineInfo)
-{
-    float startOverhang;
-    float endOverhang;
-    RenderObject* nextObject = 0;
-    for (BidiRun* runWithNextObject = run->next(); runWithNextObject; runWithNextObject = runWithNextObject->next()) {
-        if (!runWithNextObject->renderer().isOutOfFlowPositioned() && !runWithNextObject->box()->isLineBreak()) {
-            nextObject = &runWithNextObject->renderer();
-            break;
-        }
-    }
-    renderer.getOverhang(lineInfo.isFirstLine(), renderer.style().isLeftToRightDirection() ? previousObject : nextObject, renderer.style().isLeftToRightDirection() ? nextObject : previousObject, startOverhang, endOverhang);
-    m_flow.setMarginStartForChild(renderer, LayoutUnit(-startOverhang));
-    m_flow.setMarginEndForChild(renderer, LayoutUnit(-endOverhang));
-}
-
 static inline void setLogicalWidthForTextRun(LegacyRootInlineBox* lineBox, BidiRun* run, RenderText& renderer, float xPos, const LineInfo& lineInfo,
     GlyphOverflowAndFallbackFontsMap& textBoxDataMap, VerticalPositionCache& verticalPositionCache, WordMeasurements& wordMeasurements)
 {
@@ -549,46 +531,6 @@ static inline void setLogicalWidthForTextRun(LegacyRootInlineBox* lineBox, BidiR
     }
 }
 
-void LegacyLineLayout::updateRubyForJustifiedText(RenderRubyRun& rubyRun, BidiRun& r, const Vector<unsigned, 16>& expansionOpportunities, unsigned& expansionOpportunityCount, float& totalLogicalWidth, float availableLogicalWidth, size_t& i)
-{
-    if (!rubyRun.rubyBase() || !rubyRun.rubyBase()->firstRootBox() || rubyRun.rubyBase()->firstRootBox()->nextRootBox() || !r.renderer().style().collapseWhiteSpace())
-        return;
-
-    auto& rubyBase = *rubyRun.rubyBase();
-    auto& rootBox = *rubyBase.firstRootBox();
-
-    float totalExpansion = 0;
-    unsigned totalOpportunitiesInRun = 0;
-    for (auto* leafChild = rootBox.firstLeafDescendant(); leafChild; leafChild = leafChild->nextLeafOnLine()) {
-        if (!leafChild->isInlineTextBox())
-            continue;
-
-        unsigned opportunitiesInRun = expansionOpportunities[i++];
-        ASSERT(opportunitiesInRun <= expansionOpportunityCount);
-        auto expansion = (availableLogicalWidth - totalLogicalWidth) * opportunitiesInRun / expansionOpportunityCount;
-        totalExpansion += expansion;
-        totalOpportunitiesInRun += opportunitiesInRun;
-    }
-
-    ASSERT(!rubyRun.hasOverridingLogicalWidth());
-    float newBaseWidth = rubyRun.logicalWidth() + totalExpansion + m_flow.marginStartForChild(rubyRun) + m_flow.marginEndForChild(rubyRun);
-    float newRubyRunWidth = rubyRun.logicalWidth() + totalExpansion;
-    rubyBase.setInitialOffset((newRubyRunWidth - newBaseWidth) / 2);
-    rubyRun.setOverridingLogicalWidth(LayoutUnit(newRubyRunWidth));
-    rubyRun.setNeedsLayout(MarkOnlyThis);
-    rootBox.markDirty();
-    if (RenderRubyText* rubyText = rubyRun.rubyText()) {
-        if (LegacyRootInlineBox* textRootBox = rubyText->firstRootBox())
-            textRootBox->markDirty();
-    }
-    rubyRun.layoutBlock(true);
-    rubyRun.clearOverridingLogicalWidth();
-    r.box()->setExpansion(newRubyRunWidth - r.box()->logicalWidth());
-
-    totalLogicalWidth += totalExpansion;
-    expansionOpportunityCount -= totalOpportunitiesInRun;
-}
-
 void LegacyLineLayout::computeExpansionForJustifiedText(BidiRun* firstRun, BidiRun* trailingSpaceRun, const Vector<unsigned, 16>& expansionOpportunities, unsigned expansionOpportunityCount, float totalLogicalWidth, float availableLogicalWidth)
 {
     if (!expansionOpportunityCount || availableLogicalWidth <= totalLogicalWidth)
@@ -617,8 +559,7 @@ void LegacyLineLayout::computeExpansionForJustifiedText(BidiRun* firstRun, BidiR
                 totalLogicalWidth += expansion;
             }
             expansionOpportunityCount -= opportunitiesInRun;
-        } else if (auto* rubyRun = dynamicDowncast<RenderRubyRun>(run->renderer()))
-            updateRubyForJustifiedText(*rubyRun, *run, expansionOpportunities, expansionOpportunityCount, totalLogicalWidth, availableLogicalWidth, i);
+        }
 
         if (!expansionOpportunityCount)
             break;
@@ -715,67 +656,15 @@ void LegacyLineLayout::computeInlineDirectionPositionsForLine(LegacyRootInlineBo
     lineBox->placeBoxesInInlineDirection(lineLogicalLeft, needsWordSpacing);
 }
 
-static inline ExpansionBehavior expansionBehaviorForInlineTextBox(RenderBlockFlow& block, LegacyInlineTextBox& textBox, BidiRun* previousRun, BidiRun* nextRun, TextAlignMode textAlign, bool isAfterExpansion)
+static inline ExpansionBehavior expansionBehaviorForInlineTextBox(LegacyInlineTextBox& textBox, bool isAfterExpansion)
 {
     // Tatechuyoko is modeled as the Object Replacement Character (U+FFFC), which can never have expansion opportunities inside nor intrinsically adjacent to it.
     if (textBox.renderer().style().textCombine() == TextCombine::All)
         return ExpansionBehavior::forbidAll();
 
     auto result = ExpansionBehavior::forbidAll();
-    bool setLeftExpansion = false;
-    bool setRightExpansion = false;
-    if (textAlign == TextAlignMode::Justify) {
-        // If the next box is ruby, and we're justifying, and the first box in the ruby base has a leading expansion, and we are a text box, then force a trailing expansion.
-        if (nextRun) {
-            auto* rubyRun = dynamicDowncast<RenderRubyRun>(nextRun->renderer());
-            if (rubyRun && rubyRun->rubyBase() && nextRun->renderer().style().collapseWhiteSpace()) {
-                auto& rubyBase = *rubyRun->rubyBase();
-                if (rubyBase.firstRootBox() && !rubyBase.firstRootBox()->nextRootBox()) {
-                    if (auto* leafChild = rubyBase.firstRootBox()->firstLeafDescendant()) {
-                        if (is<LegacyInlineTextBox>(*leafChild)) {
-                            // FIXME: This leftExpansionOpportunity doesn't actually work because it doesn't perform the UBA
-                            if (FontCascade::leftExpansionOpportunity(downcast<RenderText>(leafChild->renderer()).stringView(), leafChild->direction())) {
-                                setRightExpansion = true;
-                                result.right = ExpansionBehavior::Behavior::Force;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        // Same thing, except if we're following a ruby
-        if (previousRun) {
-            auto* rubyRun = dynamicDowncast<RenderRubyRun>(previousRun->renderer());
-            if (rubyRun && rubyRun->rubyBase() && previousRun->renderer().style().collapseWhiteSpace()) {
-                auto& rubyBase = *rubyRun->rubyBase();
-                if (rubyBase.firstRootBox() && !rubyBase.firstRootBox()->nextRootBox()) {
-                    if (auto* leafChild = rubyBase.firstRootBox()->lastLeafDescendant()) {
-                        if (is<LegacyInlineTextBox>(*leafChild)) {
-                            // FIXME: This leftExpansionOpportunity doesn't actually work because it doesn't perform the UBA
-                            if (FontCascade::rightExpansionOpportunity(downcast<RenderText>(leafChild->renderer()).stringView(), leafChild->direction())) {
-                                setLeftExpansion = true;
-                                result.left = ExpansionBehavior::Behavior::Force;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        // If we're the first box inside a ruby base, forbid a leading expansion, and vice-versa
-        if (auto* rubyBase = dynamicDowncast<RenderRubyBase>(block)) {
-            if (&textBox == rubyBase->firstRootBox()->firstLeafDescendant()) {
-                setLeftExpansion = true;
-                result.left = ExpansionBehavior::Behavior::Forbid;
-            } if (&textBox == rubyBase->firstRootBox()->lastLeafDescendant()) {
-                setRightExpansion = true;
-                result.right = ExpansionBehavior::Behavior::Forbid;
-            }
-        }
-    }
-    if (!setLeftExpansion)
-        result.left = isAfterExpansion ? ExpansionBehavior::Behavior::Forbid : ExpansionBehavior::Behavior::Allow;
-    if (!setRightExpansion)
-        result.right = ExpansionBehavior::Behavior::Allow;
+    result.left = isAfterExpansion ? ExpansionBehavior::Behavior::Forbid : ExpansionBehavior::Behavior::Allow;
+    result.right = ExpansionBehavior::Behavior::Allow;
     return result;
 }
 
@@ -854,10 +743,7 @@ BidiRun* LegacyLineLayout::computeInlineDirectionPositionsForSegment(LegacyRootI
     bool isLTR = style().isLeftToRightDirection();
     float contentWidth = 0;
     unsigned expansionOpportunityCount = 0;
-    bool isAfterExpansion = [&] {
-        auto* rubyBase = dynamicDowncast<RenderRubyBase>(m_flow);
-        return !rubyBase || rubyBase->isAfterExpansion();
-    }();
+    bool isAfterExpansion = true;
     Vector<unsigned, 16> expansionOpportunities;
 
     HashMap<LegacyInlineTextBox*, LayoutUnit> logicalSpacingForInlineTextBoxes;
@@ -898,17 +784,15 @@ BidiRun* LegacyLineLayout::computeInlineDirectionPositionsForSegment(LegacyRootI
     collectSpacingLogicalWidths();
 
     BidiRun* run = firstRun;
-    BidiRun* previousRun = nullptr;
     for (; run; run = run->next()) {
-        auto computeExpansionOpportunities = [&expansionOpportunities, &expansionOpportunityCount, textAlign, &isAfterExpansion] (RenderBlockFlow& block,
-            LegacyInlineTextBox& textBox, BidiRun* previousRun, BidiRun* nextRun, StringView stringView, TextDirection direction)
+        auto computeExpansionOpportunities = [&] (LegacyInlineTextBox& textBox, StringView stringView, TextDirection direction)
         {
             if (stringView.isEmpty()) {
                 // Empty runs should still produce an entry in expansionOpportunities list so that the number of items matches the number of runs.
                 expansionOpportunities.append(0);
                 return;
             }
-            ExpansionBehavior expansionBehavior = expansionBehaviorForInlineTextBox(block, textBox, previousRun, nextRun, textAlign, isAfterExpansion);
+            ExpansionBehavior expansionBehavior = expansionBehaviorForInlineTextBox(textBox, isAfterExpansion);
             applyExpansionBehavior(textBox, expansionBehavior);
             unsigned opportunitiesInRun;
             std::tie(opportunitiesInRun, isAfterExpansion) = FontCascade::expansionOpportunityCount(stringView, direction, expansionBehavior);
@@ -941,7 +825,7 @@ BidiRun* LegacyLineLayout::computeInlineDirectionPositionsForSegment(LegacyRootI
             }
             
             if (textAlign == TextAlignMode::Justify && run != trailingSpaceRun)
-                computeExpansionOpportunities(m_flow, textBox, previousRun, run->next(), renderText->stringView(run->m_start, run->m_stop), run->box()->direction());
+                computeExpansionOpportunities(textBox, renderText->stringView(run->m_start, run->m_stop), run->box()->direction());
 
             if (unsigned length = renderText->text().length()) {
                 if (!run->m_start && needsWordSpacing && deprecatedIsSpaceOrNewline(renderText->characterAt(run->m_start)))
@@ -954,36 +838,16 @@ BidiRun* LegacyLineLayout::computeInlineDirectionPositionsForSegment(LegacyRootI
             setLogicalWidthForTextRun(lineBox, run, *renderText, currentLogicalLeftPosition, lineInfo, textBoxDataMap, verticalPositionCache, wordMeasurements);
         } else {
             canHangPunctuationAtStart = false;
-            bool encounteredJustifiedRuby = false;
-            if (auto* rubyRun = dynamicDowncast<RenderRubyRun>(run->renderer()); rubyRun && textAlign == TextAlignMode::Justify && run != trailingSpaceRun && rubyRun->rubyBase()) {
-                auto* rubyBase = rubyRun->rubyBase();
-                if (rubyBase->firstRootBox() && !rubyBase->firstRootBox()->nextRootBox() && run->renderer().style().collapseWhiteSpace()) {
-                    rubyBase->setIsAfterExpansion(isAfterExpansion);
-                    for (auto* leafChild = rubyBase->firstRootBox()->firstLeafDescendant(); leafChild; leafChild = leafChild->nextLeafOnLine()) {
-                        auto* leafChildTextBox = dynamicDowncast<LegacyInlineTextBox>(*leafChild);
-                        if (!leafChildTextBox)
-                            continue;
-                        encounteredJustifiedRuby = true;
-                        computeExpansionOpportunities(*rubyBase, *leafChildTextBox, nullptr, nullptr,
-                            downcast<RenderText>(leafChild->renderer()).stringView(), leafChild->direction());
-                    }
-                }
-            }
-
-            if (!encounteredJustifiedRuby)
-                isAfterExpansion = false;
+            isAfterExpansion = false;
 
             if (!is<RenderInline>(run->renderer())) {
                 auto& renderBox = downcast<RenderBox>(run->renderer());
-                if (CheckedPtr rubyRun = dynamicDowncast<RenderRubyRun>(renderBox))
-                    setMarginsForRubyRun(run, *rubyRun, previousRun ? &previousRun->renderer() : nullptr, lineInfo);
                 run->box()->setLogicalWidth(m_flow.logicalWidthForChild(renderBox));
                 contentWidth += m_flow.marginStartForChild(renderBox) + m_flow.marginEndForChild(renderBox);
             }
         }
 
         contentWidth += run->box()->logicalWidth();
-        previousRun = run;
     }
 
     if (isAfterExpansion && !expansionOpportunities.isEmpty()) {
@@ -997,9 +861,6 @@ BidiRun* LegacyLineLayout::computeInlineDirectionPositionsForSegment(LegacyRootI
             expansionOpportunityCount--;
         }
     }
-
-    if (is<RenderRubyBase>(m_flow) && !expansionOpportunityCount)
-        textAlign = TextAlignMode::Center;
 
     auto totalLogicalWidth = contentWidth + lineBox->getFlowSpacingLogicalWidth();
     updateLogicalWidthForAlignment(m_flow, textAlign, lineBox, trailingSpaceRun, lineLogicalLeft, totalLogicalWidth, availableLogicalWidth, expansionOpportunityCount);
@@ -1769,12 +1630,6 @@ void LegacyLineLayout::layoutLineBoxes(bool relayoutChildren, LayoutUnit& repain
                     layoutState.floatList().append(FloatWithRect::create(box));
                 else if (isFullLayout || box.needsLayout()) {
                     // Replaced element.
-                    if (isFullLayout && is<RenderRubyRun>(box)) {
-                        // FIXME: This resets the overhanging margins that we set during line layout (see computeInlineDirectionPositionsForSegment)
-                        // Find a more suitable place for this.
-                        m_flow.setMarginStartForChild(box, 0);
-                        m_flow.setMarginEndForChild(box, 0);
-                    }
                     box.dirtyLineBoxes(isFullLayout);
                     if (isFullLayout)
                         replacedChildren.append(&box);

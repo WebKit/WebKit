@@ -1359,10 +1359,6 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
     
     if (isStyleFormatGroup())
         return false;
-    
-    // Make sure that ruby containers are not ignored.
-    if (m_renderer->isRenderRubyRun() || m_renderer->isRenderRubyAsBlock() || m_renderer->isRenderRubyAsInline())
-        return false;
 
     switch (m_renderer->style().display()) {
     case DisplayType::Ruby:
@@ -2205,17 +2201,6 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
         return AccessibilityRole::SVGRoot;
     
     // Check for Ruby elements
-    if (m_renderer->isRenderRubyText())
-        return AccessibilityRole::RubyText;
-    if (m_renderer->isRenderRubyBase())
-        return AccessibilityRole::RubyBase;
-    if (m_renderer->isRenderRubyRun())
-        return AccessibilityRole::RubyRun;
-    if (m_renderer->isRenderRubyAsBlock())
-        return AccessibilityRole::RubyBlock;
-    if (m_renderer->isRenderRubyAsInline())
-        return AccessibilityRole::RubyInline;
-
     switch (m_renderer->style().display()) {
     case DisplayType::Ruby:
         return AccessibilityRole::RubyInline;

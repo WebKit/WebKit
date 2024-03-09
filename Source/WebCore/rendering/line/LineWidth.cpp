@@ -32,7 +32,6 @@
 
 #include "RenderBlockFlow.h"
 #include "RenderBoxInlines.h"
-#include "RenderRubyRun.h"
 #include "RenderStyleInlines.h"
 
 namespace WebCore {
@@ -139,20 +138,6 @@ void LineWidth::commit()
     m_hasCommitted = true;
 }
 
-void LineWidth::applyOverhang(const RenderRubyRun& rubyRun, RenderObject* startRenderer, RenderObject* endRenderer)
-{
-    float startOverhang;
-    float endOverhang;
-    rubyRun.getOverhang(m_isFirstLine, startRenderer, endRenderer, startOverhang, endOverhang);
-
-    startOverhang = std::min(startOverhang, m_committedWidth);
-    m_availableWidth += startOverhang;
-
-    endOverhang = std::max(std::min(endOverhang, m_availableWidth - currentWidth()), 0.0f);
-    m_availableWidth += endOverhang;
-    m_overhangWidth += startOverhang + endOverhang;
-}
-
 inline static float availableWidthAtOffset(const RenderBlockFlow& block, const LayoutUnit& offset, IndentTextOrNot shouldIndentText,
     float& newLineLeft, float& newLineRight, const LayoutUnit& lineHeight = 0)
 {
@@ -167,7 +152,7 @@ void LineWidth::updateLineDimension(LayoutUnit newLineTop, LayoutUnit newLineWid
         return;
 
     m_block.setLogicalHeight(newLineTop);
-    m_availableWidth = newLineWidth + m_overhangWidth;
+    m_availableWidth = newLineWidth;
     m_left = newLineLeft;
     m_right = newLineRight;
 }
@@ -233,7 +218,7 @@ void LineWidth::setTrailingWhitespaceWidth(float collapsedWhitespace, float bord
 
 void LineWidth::computeAvailableWidthFromLeftAndRight()
 {
-    m_availableWidth = std::max<float>(0, m_right - m_left) + m_overhangWidth;
+    m_availableWidth = std::max<float>(0, m_right - m_left);
 }
 
 IndentTextOrNot requiresIndent(bool isFirstLine, bool isAfterHardLineBreak, const RenderStyle& style)

@@ -37,9 +37,6 @@
 #include "RenderLayer.h"
 #include "RenderLineBreak.h"
 #include "RenderListMarker.h"
-#include "RenderRubyBase.h"
-#include "RenderRubyRun.h"
-#include "RenderRubyText.h"
 #include "RenderTableCell.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
@@ -713,22 +710,6 @@ static void placeChildInlineBoxesInBlockDirection(LegacyInlineFlowBox& inlineBox
         child->setLogicalTop(newLogicalTop);
 
         if (childAffectsTopBottomPos) {
-            if (auto* rubyRun = dynamicDowncast<RenderRubyRun>(child->renderer())) {
-                // Treat the leading on the first and last lines of ruby runs as not being part of the overall lineTop/lineBottom.
-                // Really this is a workaround hack for the fact that ruby should have been done as line layout and not done using
-                // inline-block.
-                if (inlineBox.renderer().style().isFlippedLinesWritingMode() == (child->renderer().style().rubyPosition() == RubyPosition::After))
-                    hasAnnotationsBefore = true;
-                else
-                    hasAnnotationsAfter = true;
-
-                if (auto* rubyBase = rubyRun->rubyBase()) {
-                    LayoutUnit bottomRubyBaseLeading { (child->logicalHeight() - rubyBase->logicalBottom()) + rubyBase->logicalHeight() - (rubyBase->lastRootBox() ? rubyBase->lastRootBox()->lineBottom() : 0_lu) };
-                    LayoutUnit topRubyBaseLeading = rubyBase->logicalTop() + (rubyBase->firstRootBox() ? rubyBase->firstRootBox()->lineTop() : 0_lu);
-                    newLogicalTop += !inlineBox.renderer().style().isFlippedLinesWritingMode() ? topRubyBaseLeading : bottomRubyBaseLeading;
-                    boxHeight -= (topRubyBaseLeading + bottomRubyBaseLeading);
-                }
-            }
             if (auto* textBox = dynamicDowncast<LegacyInlineTextBox>(*child)) {
                 if (auto markExistsAndIsAbove = RenderText::emphasisMarkExistsAndIsAbove(textBox->renderer(), childLineStyle)) {
                     if (*markExistsAndIsAbove != childLineStyle.isFlippedLinesWritingMode())
@@ -1209,19 +1190,6 @@ LayoutUnit LegacyInlineFlowBox::computeOverAnnotationAdjustment(LayoutUnit allow
         
         if (auto* flowBox = dynamicDowncast<LegacyInlineFlowBox>(*child))
             result = std::max(result, flowBox->computeOverAnnotationAdjustment(allowedPosition));
-        
-        if (child->renderer().isReplacedOrInlineBlock()) {
-            auto* rubyRun = dynamicDowncast<RenderRubyRun>(child->renderer());
-            if (rubyRun && child->renderer().style().rubyPosition() == RubyPosition::Before) {
-                auto [above, below] = rubyRun->annotationsAboveAndBelow();
-                auto top = LayoutUnit { child->logicalTop() - above };
-                auto bottom = LayoutUnit { child->logicalBottom() + below };
-                if (!rubyRun->style().isFlippedLinesWritingMode())
-                    result = std::max(result, allowedPosition - top);
-                else
-                    result = std::max(result, bottom - allowedPosition);
-            }
-        }
 
         if (auto* textBox = dynamicDowncast<LegacyInlineTextBox>(*child)) {
             const RenderStyle& childLineStyle = child->lineStyle();
@@ -1249,19 +1217,6 @@ LayoutUnit LegacyInlineFlowBox::computeUnderAnnotationAdjustment(LayoutUnit allo
 
         if (auto* flowBox = dynamicDowncast<LegacyInlineFlowBox>(*child))
             result = std::max(result, flowBox->computeUnderAnnotationAdjustment(allowedPosition));
-
-        if (child->renderer().isReplacedOrInlineBlock()) {
-            auto* rubyRun = dynamicDowncast<RenderRubyRun>(child->renderer());
-            if (rubyRun && child->renderer().style().rubyPosition() == RubyPosition::After) {
-                auto [above, below] = rubyRun->annotationsAboveAndBelow();
-                auto top = LayoutUnit { child->logicalTop() - above };
-                auto bottom = LayoutUnit { child->logicalBottom() + below };
-                if (rubyRun->style().isFlippedLinesWritingMode())
-                    result = std::max(result, allowedPosition - top);
-                else
-                    result = std::max(result, bottom - allowedPosition);
-            }
-        }
 
         if (auto* textBox = dynamicDowncast<LegacyInlineTextBox>(*child)) {
             const RenderStyle& childLineStyle = child->lineStyle();

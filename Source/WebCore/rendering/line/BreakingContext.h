@@ -40,7 +40,6 @@
 #include "RenderLineBreak.h"
 #include "RenderListMarker.h"
 #include "RenderObjectInlines.h"
-#include "RenderRubyRun.h"
 #include "RenderSVGInlineText.h"
 #include "RenderTextInlines.h"
 #include "TrailingObjects.h"
@@ -452,9 +451,7 @@ inline void BreakingContext::handleReplaced()
         m_width.updateAvailableWidth(replacedBox.logicalHeight());
 
     // Break on replaced elements if either has normal white-space.
-    auto* rubyRun = dynamicDowncast<RenderRubyRun>(replacedBox);
-    if ((m_autoWrap || m_lastObjectTextWrap != TextWrapMode::NoWrap) && (!replacedBox.isImage() || m_allowImagesToBreak)
-        && (!rubyRun || rubyRun->canBreakBefore(m_renderTextInfo.lineBreakIteratorFactory))) {
+    if ((m_autoWrap || m_lastObjectTextWrap != TextWrapMode::NoWrap) && (!replacedBox.isImage() || m_allowImagesToBreak)) {
         if (auto* renderer = m_current.renderer())
             commitLineBreakAtCurrentWidth(*renderer);
         else
@@ -486,13 +483,8 @@ inline void BreakingContext::handleReplaced()
             m_width.addUncommittedReplacedWidth(replacedLogicalWidth);
     } else
         m_width.addUncommittedReplacedWidth(replacedLogicalWidth);
-    if (auto* rubyRun = dynamicDowncast<RenderRubyRun>(replacedBox)) {
-        m_width.applyOverhang(*rubyRun, m_lastObject, m_nextObject);
-        rubyRun->updatePriorContextFromCachedBreakIterator(m_renderTextInfo.lineBreakIteratorFactory);
-    } else {
-        // Update prior line break context characters, using U+FFFD (OBJECT REPLACEMENT CHARACTER) for replaced element.
-        m_renderTextInfo.lineBreakIteratorFactory.priorContext().update(replacementCharacter);
-    }
+    // Update prior line break context characters, using U+FFFD (OBJECT REPLACEMENT CHARACTER) for replaced element.
+    m_renderTextInfo.lineBreakIteratorFactory.priorContext().update(replacementCharacter);
 }
 
 inline float firstPositiveWidth(const WordMeasurements& wordMeasurements)
@@ -1115,7 +1107,7 @@ inline bool BreakingContext::canBreakAtThisPosition()
         return renderInline && isEmptyInline(*renderInline);
     }();
     if (!currentIsTextOrEmptyInline)
-        return m_autoWrap && !m_current.renderer()->isRenderRubyRun();
+        return m_autoWrap;
 
     bool canBreakHere = !m_currentCharacterIsSpace && textBeginsWithBreakablePosition(nextRenderText);
 
@@ -1163,7 +1155,7 @@ inline void BreakingContext::commitAndUpdateLineBreakIfNeeded()
 
     if (!m_current.renderer()->isFloatingOrOutOfFlowPositioned()) {
         m_lastObject = m_current.renderer();
-        if (m_lastObject->isReplacedOrInlineBlock() && m_autoWrap && !m_lastObject->isRenderRubyRun() && (!m_lastObject->isImage() || m_allowImagesToBreak)) {
+        if (m_lastObject->isReplacedOrInlineBlock() && m_autoWrap && (!m_lastObject->isImage() || m_allowImagesToBreak)) {
             auto* renderListMarker = dynamicDowncast<RenderListMarker>(*m_lastObject);
             if (!renderListMarker || renderListMarker->isInside()) {
                 if (m_nextObject)

@@ -889,8 +889,7 @@ bool shouldEmitNewlinesBeforeAndAfterNode(Node& node)
     return !renderer->isInline()
         && is<RenderBlock>(*renderer)
         && !renderer->isFloatingOrOutOfFlowPositioned()
-        && !renderer->isBody()
-        && !renderer->isRenderRubyText();
+        && !renderer->isBody();
 }
 
 static bool shouldEmitNewlineAfterNode(Node& node, bool emitsCharactersBetweenAllVisiblePositions = false)

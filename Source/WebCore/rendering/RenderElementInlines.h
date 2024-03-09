@@ -85,7 +85,7 @@ inline bool RenderElement::shouldApplyLayoutContainment() const
 
 inline bool RenderElement::shouldApplyLayoutOrPaintContainment(bool containsAccordingToStyle) const
 {
-    return containsAccordingToStyle && (!isInline() || isAtomicInlineLevelBox()) && !(isRenderRubyText() || style().display() == DisplayType::RubyAnnotation) && (!isTablePart() || isRenderBlockFlow());
+    return containsAccordingToStyle && (!isInline() || isAtomicInlineLevelBox()) && style().display() != DisplayType::RubyAnnotation && (!isTablePart() || isRenderBlockFlow());
 }
 
 inline bool RenderElement::shouldApplyLayoutOrPaintContainment() const
@@ -111,7 +111,7 @@ inline bool RenderElement::shouldApplySizeOrInlineSizeContainment() const
 // FIXME: try to avoid duplication with isSkippedContentRoot.
 inline bool RenderElement::shouldApplySizeOrStyleContainment(bool containsAccordingToStyle) const
 {
-    return containsAccordingToStyle && (!isInline() || isAtomicInlineLevelBox()) && !(isRenderRubyText() || style().display() == DisplayType::RubyAnnotation) && (!isTablePart() || isRenderTableCaption()) && !isRenderTable();
+    return containsAccordingToStyle && (!isInline() || isAtomicInlineLevelBox()) && style().display() != DisplayType::RubyAnnotation && (!isTablePart() || isRenderTableCaption()) && !isRenderTable();
 }
 
 inline bool RenderElement::shouldApplyStyleContainment() const

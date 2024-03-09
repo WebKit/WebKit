@@ -36,7 +36,6 @@ namespace WebCore {
 class FloatingObject;
 class RenderBlockFlow;
 class RenderObject;
-class RenderRubyRun;
 class RenderStyle;
 
 struct LineSegment;
@@ -73,7 +72,6 @@ public:
         m_hasUncommittedReplaced = true;
     }
     void commit();
-    void applyOverhang(const RenderRubyRun&, RenderObject* startRenderer, RenderObject* endRenderer);
     void fitBelowFloats(bool isFirstLine = false);
     void setTrailingWhitespaceWidth(float collapsedWhitespace, float borderPaddingMargin = 0);
     IndentTextOrNot shouldIndentText() const { return m_shouldIndentText; }
@@ -89,7 +87,6 @@ private:
     RenderBlockFlow& m_block;
     float m_uncommittedWidth { 0 };
     float m_committedWidth { 0 };
-    float m_overhangWidth { 0 }; // The amount by which |m_availableWidth| has been inflated to account for possible contraction due to ruby overhang.
     float m_trailingWhitespaceWidth { 0 };
     float m_trailingCollapsedWhitespaceWidth { 0 };
     float m_left { 0 };

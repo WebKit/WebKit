@@ -143,7 +143,7 @@ void RenderImage::collectSelectionGeometries(Vector<SelectionGeometry>& geometri
 
     // FIXME: We should consider either making SelectionGeometry a struct or better organize its optional fields into
     // an auxiliary struct to simplify its initialization.
-    geometries.append(SelectionGeometry(absoluteQuad, SelectionRenderingBehavior::CoalesceBoundingRects, containingBlock->style().direction(), lineExtentBounds.x(), lineExtentBounds.maxX(), lineExtentBounds.maxY(), 0, false /* line break */, isFirstOnLine, isLastOnLine, false /* contains start */, false /* contains end */, containingBlock->style().isHorizontalWritingMode(), isFixed, false /* ruby text */, view().pageNumberForBlockProgressionOffset(absoluteQuad.enclosingBoundingBox().x())));
+    geometries.append(SelectionGeometry(absoluteQuad, SelectionRenderingBehavior::CoalesceBoundingRects, containingBlock->style().direction(), lineExtentBounds.x(), lineExtentBounds.maxX(), lineExtentBounds.maxY(), 0, false /* line break */, isFirstOnLine, isLastOnLine, false /* contains start */, false /* contains end */, containingBlock->style().isHorizontalWritingMode(), isFixed, view().pageNumberForBlockProgressionOffset(absoluteQuad.enclosingBoundingBox().x())));
 }
 #endif
 

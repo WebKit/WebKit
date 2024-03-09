@@ -48,9 +48,6 @@
 #include "RenderMultiColumnSet.h"
 #include "RenderMultiColumnSpannerPlaceholder.h"
 #include "RenderReplaced.h"
-#include "RenderRuby.h"
-#include "RenderRubyBase.h"
-#include "RenderRubyRun.h"
 #include "RenderSVGInline.h"
 #include "RenderSVGRoot.h"
 #include "RenderSVGText.h"
@@ -255,21 +252,6 @@ void RenderTreeBuilder::attachInternal(RenderElement& parent, RenderPtr<RenderOb
         return;
     }
 
-    if (auto* rubyBlock = dynamicDowncast<RenderRubyAsBlock>(parent)) {
-        insertRecursiveIfNeeded(rubyBuilder().findOrCreateParentForChild(*rubyBlock, *child, beforeChild));
-        return;
-    }
-
-    if (auto* rubyInline = dynamicDowncast<RenderRubyAsInline>(parent)) {
-        insertRecursiveIfNeeded(rubyBuilder().findOrCreateParentForChild(*rubyInline, *child, beforeChild));
-        return;
-    }
-
-    if (auto* run = dynamicDowncast<RenderRubyRun>(parent)) {
-        rubyBuilder().attach(*run, WTFMove(child), beforeChild);
-        return;
-    }
-
     if (auto* button = dynamicDowncast<RenderButton>(parent)) {
         formControlsBuilder().attach(*button, WTFMove(child), beforeChild);
         return;
@@ -364,15 +346,6 @@ void RenderTreeBuilder::attachIgnoringContinuation(RenderElement& parent, Render
 
 RenderPtr<RenderObject> RenderTreeBuilder::detach(RenderElement& parent, RenderObject& child, CanCollapseAnonymousBlock canCollapseAnonymousBlock)
 {
-    if (auto* rubyInline = dynamicDowncast<RenderRubyAsInline>(parent))
-        return rubyBuilder().detach(*rubyInline, child);
-
-    if (auto* rubyBlock = dynamicDowncast<RenderRubyAsBlock>(parent))
-        return rubyBuilder().detach(*rubyBlock, child);
-
-    if (auto* run = dynamicDowncast<RenderRubyRun>(parent))
-        return rubyBuilder().detach(*run, child);
-
     if (auto* menuList = dynamicDowncast<RenderMenuList>(parent))
         return formControlsBuilder().detach(*menuList, child);
 
@@ -835,7 +808,7 @@ void RenderTreeBuilder::destroyAndCleanUpAnonymousWrappers(RenderObject& rendere
     }
 
     auto isAnonymousAndSafeToDelete = [] (const auto& renderer) {
-        return renderer.isAnonymous() && !is<RenderRubyBase>(renderer) && !renderer.isRenderView() && !renderer.isRenderFragmentedFlow() && !renderer.isRenderSVGViewportContainer();
+        return renderer.isAnonymous() && !renderer.isRenderView() && !renderer.isRenderFragmentedFlow() && !renderer.isRenderSVGViewportContainer();
     };
 
     auto destroyRootIncludingAnonymous = [&] () -> RenderObject& {

@@ -145,11 +145,6 @@ public:
         Progress,
         Quote,
         Replica,
-        RubyAsInline,
-        RubyAsBlock,
-        RubyBase,
-        RubyRun,
-        RubyText,
         ScrollbarPart,
         SearchField,
         Slider,
@@ -457,12 +452,6 @@ public:
 #endif
     bool isRenderFragmentContainer() const { return isRenderBlockFlow() && m_typeSpecificFlags.blockFlowFlags().contains(BlockFlowFlag::IsFragmentContainer); }
     bool isRenderReplica() const { return type() == Type::Replica; }
-
-    bool isRenderRubyAsInline() const { return type() == Type::RubyAsInline; }
-    bool isRenderRubyAsBlock() const { return type() == Type::RubyAsBlock; }
-    bool isRenderRubyBase() const { return type() == Type::RubyBase; }
-    bool isRenderRubyRun() const { return type() == Type::RubyRun; }
-    bool isRenderRubyText() const { return type() == Type::RubyText; }
 
     bool isRenderSlider() const { return type() == Type::Slider; }
     bool isRenderTable() const;
