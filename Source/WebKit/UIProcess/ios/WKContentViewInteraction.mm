@@ -1554,19 +1554,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [self _unregisterPreview];
 #endif
 
-    if (_fileUploadPanel) {
-        [_fileUploadPanel setDelegate:nil];
-        [_fileUploadPanel dismiss];
-        _fileUploadPanel = nil;
-    }
-
-#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
-    if (_shareSheet) {
-        [_shareSheet setDelegate:nil];
-        [_shareSheet dismiss];
-        _shareSheet = nil;
-    }
-#endif
+    [self dismissPickers];
 
     [self stopDeferringInputViewUpdatesForAllSources];
     _focusedElementInformation = { };
@@ -9081,6 +9069,31 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
     [_webView _didDismissContactPicker];
 }
 #endif
+
+- (void)dismissPickers
+{
+    if (_fileUploadPanel) {
+        [_fileUploadPanel setDelegate:nil];
+        [_fileUploadPanel dismiss];
+        _fileUploadPanel = nil;
+    }
+
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+    if (_shareSheet) {
+        [_shareSheet setDelegate:nil];
+        [_shareSheet dismiss];
+        _shareSheet = nil;
+    }
+#endif
+
+#if HAVE(CONTACTSUI)
+    if (_contactPicker) {
+        [_contactPicker setDelegate:nil];
+        [_contactPicker dismiss];
+        _contactPicker = nil;
+    }
+#endif
+}
 
 - (NSString *)inputLabelText
 {

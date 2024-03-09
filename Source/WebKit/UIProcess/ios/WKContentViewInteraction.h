@@ -663,6 +663,8 @@ struct ImageAnalysisContextMenuActionData {
 - (void)cleanUpInteraction;
 - (void)cleanUpInteractionPreviewContainers;
 
+- (void)dismissPickers;
+
 - (void)scrollViewWillStartPanOrPinchGesture;
 
 - (void)buildMenuForWebViewWithBuilder:(id <UIMenuBuilder>)builder;
