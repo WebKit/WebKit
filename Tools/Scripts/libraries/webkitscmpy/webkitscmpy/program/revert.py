@@ -155,13 +155,13 @@ class Revert(Command):
             for line in commit.message.splitlines():
                 if not commit_title:
                     commit_title = line
-            bug_urls = [i.link for i in commit.issues]
+            bug_urls = ['    {}'.format(i.link) for i in commit.issues]
 
-            reverted_changeset += '\n{}\n'.format(commit_title)
+            reverted_changeset += '\n    {}\n'.format(commit_title)
             reverted_changeset += '\n'.join(bug_urls)
             if commit.identifier and commit.branch:
                 commit_identifiers.append('{}@{}'.format(commit.identifier, commit.branch))
-                reverted_changeset += '\nhttps://commits.webkit.org/{}@{}\n'.format(commit.identifier, commit.branch)
+                reverted_changeset += '\n    https://commits.webkit.org/{}@{}\n'.format(commit.identifier, commit.branch)
             else:
                 sys.stderr.write('Could not find "{}"'.format(', '.join(args.commit_id)) + '\n')
                 return None, None
