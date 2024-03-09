@@ -92,34 +92,6 @@ private:
 };
 
 template <typename T>
-class LegacyThreadSafeIdentified : public IdentifiedBase<uint64_t> {
-protected:
-    LegacyThreadSafeIdentified()
-        : IdentifiedBase<uint64_t>(generateIdentifier())
-    {
-    }
-
-    LegacyThreadSafeIdentified(const LegacyThreadSafeIdentified&) = default;
-    LegacyThreadSafeIdentified& operator=(const LegacyThreadSafeIdentified&) = default;
-
-    explicit LegacyThreadSafeIdentified(uint64_t identifier)
-        : IdentifiedBase<uint64_t>(identifier)
-    {
-    }
-
-private:
-    static uint64_t generateIdentifier()
-    {
-        static LazyNeverDestroyed<std::atomic<uint64_t>> currentIdentifier;
-        static std::once_flag initializeCurrentIdentifier;
-        std::call_once(initializeCurrentIdentifier, [] {
-            currentIdentifier.construct(0);
-        });
-        return ++currentIdentifier.get();
-    }
-};
-
-template <typename T>
 class UUIDIdentified : public IdentifiedBase<UUID> {
 protected:
     UUIDIdentified()
@@ -134,5 +106,4 @@ protected:
 
 using WTF::Identified;
 using WTF::LegacyIdentified;
-using WTF::LegacyThreadSafeIdentified;
 using WTF::UUIDIdentified;
