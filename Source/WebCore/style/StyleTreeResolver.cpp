@@ -249,9 +249,6 @@ auto TreeResolver::resolveElement(Element& element, const RenderStyle* existingS
         return { };
     }
 
-    if (!element.rendererIsEverNeeded() && !element.hasDisplayContents())
-        return { };
-
     if (resolutionType == ResolutionType::RebuildUsingExisting) {
         return {
             ElementUpdate { RenderStyle::clonePtr(*existingStyle), Change::Renderer },

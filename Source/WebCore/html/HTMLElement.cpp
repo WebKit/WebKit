@@ -821,11 +821,6 @@ void HTMLElement::setTranslate(bool enable)
     setAttributeWithoutSynchronization(translateAttr, enable ? "yes"_s : "no"_s);
 }
 
-bool HTMLElement::rendererIsEverNeeded()
-{
-    return StyledElement::rendererIsEverNeeded();
-}
-
 FormAssociatedElement* HTMLElement::asFormAssociatedElement()
 {
     return nullptr;

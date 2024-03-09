@@ -96,8 +96,6 @@ public:
 
     String accessKeyLabel() const;
 
-    bool rendererIsEverNeeded() final;
-
     WEBCORE_EXPORT const AtomString& dir() const;
     WEBCORE_EXPORT void setDir(const AtomString&);
 
