@@ -37,6 +37,20 @@
 [aria-expanded="test6"]::before {
     content: "\25BC" / attr(test6);
 }
+
+#test7 {
+    appearance:none;
+}
+#test7::before {
+    content: "test7 before" / "test7 before alt";
+}
+
+#test8 {
+    appearance:none;
+}
+#test8::before {
+    content: "test8 before" / "";
+}
 </style>
 
 <div id="content">
@@ -46,6 +60,8 @@
 <div id="test4" aria-expanded="test4">test4</div>
 <div id="test5" test5="ALTERNATIVE CONTENT TEST5" aria-expanded="test5">test5</div>
 <div id="test6" test6="ALTERNATIVE CONTENT TEST6" aria-expanded="test6">test6</div>
+<input id=test7 type=radio>
+<input id=test8 type=radio>
 </div>
 
 <p id="description"></p>
@@ -89,6 +105,12 @@
 
         debug("Test6 - alt on text content that uses the attr() function.");
         outputElement(accessibilityController.accessibleElementById("test6").childAtIndex(0));
+
+        debug("Test7 - alt on input element ::before");
+        outputElement(accessibilityController.accessibleElementById("test7"));
+
+        debug("Test8 - alt on input element ::before that is the empty string");
+        outputElement(accessibilityController.accessibleElementById("test8"));
 
         debug("alt accessed through Javascript: " + getComputedStyle(document.getElementById("test2"), ':after').content.split(" / ")[1]);
 

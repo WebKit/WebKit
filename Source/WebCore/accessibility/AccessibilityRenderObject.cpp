@@ -717,13 +717,11 @@ String AccessibilityRenderObject::textUnderElement(AccessibilityTextUnderElement
         if (WeakPtr renderText = dynamicDowncast<RenderText>(*m_renderer)) {
             if (WeakPtr renderTextFragment = dynamicDowncast<RenderTextFragment>(*renderText)) {
                 // The alt attribute may be set on a text fragment through CSS, which should be honored.
-                const auto& altText = renderTextFragment->altText();
-                if (!altText.isEmpty())
+                if (auto& altText = renderTextFragment->altText(); !altText.isNull())
                     return altText;
-                return renderTextFragment ? renderTextFragment->contentString() : String();
+                return renderTextFragment->contentString();
             }
-
-            return renderText ? renderText->text() : String();
+            return renderText->text();
         }
     }
 

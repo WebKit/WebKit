@@ -81,6 +81,12 @@ label
 
 label
 
+Empty alternative text for CSS content in pseudo-elements when applied to primitive appearance form controls
+
+
+
+
+
 simple w/ for each child
 
 one two three
@@ -191,6 +197,8 @@ PASS link name from fallback content with ::before and ::after
 PASS button name from fallback content mixing attr() and strings with ::before and ::after
 PASS heading name from fallback content mixing attr() and strings with ::before and ::after
 PASS link name from fallback content mixing attr() and strings with ::before and ::after
+PASS primitive radio input with ::before containing empty alternative text
+PASS primitive radio input with ::before containing empty alternative text for an image
 PASS button name from content for each child
 PASS heading name from content for each child
 PASS link name from content for each child
