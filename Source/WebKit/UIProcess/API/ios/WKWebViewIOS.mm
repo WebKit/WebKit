@@ -3353,30 +3353,69 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 
 - (void)_updateFindOverlayPosition
 {
+    if (!_findOverlaysOutsideContentView)
+        return;
+
     UIScrollView *scrollView = _scrollView.get();
-    [_findOverlay setBounds:CGRectMake(0, 0, scrollView.bounds.size.width, scrollView.bounds.size.height)];
-    [_findOverlay setCenter:CGPointMake(scrollView.center.x + scrollView.contentOffset.x, scrollView.center.y + scrollView.contentOffset.y)];
+    CGRect contentViewBounds = [_contentView bounds];
+    CGRect contentViewFrame = [_contentView frame];
+    CGFloat minX = std::min<CGFloat>(0, scrollView.contentOffset.x);
+    CGFloat minY = std::min<CGFloat>(0, scrollView.contentOffset.y);
+    CGFloat maxX = std::max<CGFloat>(scrollView.bounds.size.width + scrollView.contentOffset.x, contentViewBounds.size.width);
+    CGFloat maxY = std::max<CGFloat>(scrollView.bounds.size.height + scrollView.contentOffset.y, contentViewBounds.size.height);
+
+    [_findOverlaysOutsideContentView->top setFrame:CGRectMake(
+        CGRectGetMinX(contentViewFrame),
+        minY,
+        std::max<CGFloat>(maxX - CGRectGetMinX(contentViewFrame), 0),
+        std::max<CGFloat>(CGRectGetMinY(contentViewFrame) - minY, 0))];
+
+    [_findOverlaysOutsideContentView->right setFrame:CGRectMake(
+        CGRectGetMaxX(contentViewFrame),
+        CGRectGetMinY(contentViewFrame),
+        std::max<CGFloat>(maxX - CGRectGetMaxX(contentViewFrame), 0),
+        std::max<CGFloat>(maxY - CGRectGetMinY(contentViewFrame), 0))];
+
+    [_findOverlaysOutsideContentView->bottom setFrame:CGRectMake(
+        minX,
+        CGRectGetMaxY(contentViewFrame),
+        std::max<CGFloat>(CGRectGetMaxX(contentViewFrame) - minX, 0),
+        std::max<CGFloat>(maxY - CGRectGetMaxY(contentViewFrame), 0))];
+
+    [_findOverlaysOutsideContentView->left setFrame:CGRectMake(
+        minX,
+        minY,
+        std::max<CGFloat>(CGRectGetMinX(contentViewFrame) - minX, 0),
+        std::max<CGFloat>(CGRectGetMaxY(contentViewFrame) - minY, 0))];
 }
 
 - (void)_showFindOverlay
 {
-    if (!_findOverlay) {
-        _findOverlay = adoptNS([[UIView alloc] init]);
-        UIColor *overlayColor = [UIColor colorWithRed:(26. / 255) green:(26. / 255) blue:(26. / 255) alpha:(64. / 255)];
-        [_findOverlay setBackgroundColor:overlayColor];
-    }
+    if (!_findOverlaysOutsideContentView) {
+        auto makeOverlay = [&]() {
+            UIColor *overlayColor = [UIColor colorWithRed:(26. / 255) green:(26. / 255) blue:(26. / 255) alpha:(64. / 255)];
+            auto newOverlay = adoptNS([[UIView alloc] init]);
+            [newOverlay setBackgroundColor:overlayColor];
+            [_scrollView insertSubview:newOverlay.get() belowSubview:_contentView.get()];
 
+            return newOverlay;
+        };
+        _findOverlaysOutsideContentView = { makeOverlay(), makeOverlay(), makeOverlay(), makeOverlay() };
+    }
     [self _updateFindOverlayPosition];
-    [_scrollView insertSubview:_findOverlay.get() belowSubview:_contentView.get()];
 
     if (CALayer *contentViewFindOverlayLayer = [self _layerForFindOverlay]) {
-        [[_findOverlay layer] removeAllAnimations];
-        [contentViewFindOverlayLayer removeAllAnimations];
+        [self _updateFindOverlaysOutsideContentView:^(UIView *view) {
+            [[view layer] removeAllAnimations];
+            [view setAlpha:1];
+        }];
 
-        [_findOverlay setAlpha:1];
+        [contentViewFindOverlayLayer removeAllAnimations];
         [contentViewFindOverlayLayer setOpacity:1];
     } else {
-        [_findOverlay setAlpha:0];
+        [self _updateFindOverlaysOutsideContentView:^(UIView *view) {
+            [view setAlpha:0];
+        }];
         [self _addLayerForFindOverlay];
     }
 }
@@ -3384,7 +3423,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 - (void)_hideFindOverlay
 {
     CALayer *contentViewFindOverlayLayer = [self _layerForFindOverlay];
-    CALayer *findOverlayLayer = [_findOverlay layer];
+    CALayer *findOverlayLayer = _findOverlaysOutsideContentView ? [_findOverlaysOutsideContentView->top layer] : nil;
 
     if (!findOverlayLayer && !contentViewFindOverlayLayer)
         return;
@@ -3393,7 +3432,9 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
         return;
 
     [contentViewFindOverlayLayer removeAllAnimations];
-    [findOverlayLayer removeAllAnimations];
+    [self _updateFindOverlaysOutsideContentView:^(UIView *view) {
+        [[view layer] removeAllAnimations];
+    }];
 
     [CATransaction begin];
 
@@ -3404,22 +3445,31 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
         if (!strongSelf)
             return;
 
-        if ([strongSelf->_findOverlay alpha])
+        bool hasOverlaysOutsideContentView = strongSelf->_findOverlaysOutsideContentView.has_value();
+        if (hasOverlaysOutsideContentView && [strongSelf->_findOverlaysOutsideContentView->top alpha])
             return;
 
-        [strongSelf->_findOverlay removeFromSuperview];
-        strongSelf->_findOverlay = nil;
-
         [strongSelf _removeLayerForFindOverlay];
+
+        if (hasOverlaysOutsideContentView) {
+            [strongSelf _updateFindOverlaysOutsideContentView:^(UIView *view) {
+                [view removeFromSuperview];
+            }];
+            strongSelf->_findOverlaysOutsideContentView.reset();
+        }
     }];
 
     [contentViewFindOverlayLayer addAnimation:animation forKey:@"findOverlayFadeOut"];
-    [findOverlayLayer addAnimation:animation forKey:@"findOverlayFadeOut"];
+    [self _updateFindOverlaysOutsideContentView:^(UIView *view) {
+        [[view layer] addAnimation:animation forKey:@"findOverlayFadeOut"];
+    }];
 
     [CATransaction commit];
 
     contentViewFindOverlayLayer.opacity = 0;
-    findOverlayLayer.opacity = 0;
+    [self _updateFindOverlaysOutsideContentView:^(UIView *view) {
+        [view layer].opacity = 0;
+    }];
 }
 
 #endif // HAVE(UIFINDINTERACTION)
@@ -3559,6 +3609,18 @@ static bool isLockdownModeWarningNeeded()
     return _UIDataOwnerUndefined;
 }
 
+#if HAVE(UIFINDINTERACTION)
+- (void)_updateFindOverlaysOutsideContentView:(void(^)(UIView *))updateFindOverlay
+{
+    if (!_findOverlaysOutsideContentView)
+        return;
+    updateFindOverlay(_findOverlaysOutsideContentView->top.get());
+    updateFindOverlay(_findOverlaysOutsideContentView->bottom.get());
+    updateFindOverlay(_findOverlaysOutsideContentView->left.get());
+    updateFindOverlay(_findOverlaysOutsideContentView->right.get());
+}
+#endif
+
 - (void)_didAddLayerForFindOverlay:(CALayer *)layer
 {
     _perProcessState.committedFindLayerID = std::exchange(_perProcessState.pendingFindLayerID, { });
@@ -3566,13 +3628,16 @@ static bool isLockdownModeWarningNeeded()
 
 #if HAVE(UIFINDINTERACTION)
     CABasicAnimation *animation = [self _animationForFindOverlay:YES];
-    CALayer *findOverlayLayer = [_findOverlay layer];
 
     [layer addAnimation:animation forKey:@"findOverlayFadeIn"];
-    [findOverlayLayer addAnimation:animation forKey:@"findOverlayFadeIn"];
+
+    [self _updateFindOverlaysOutsideContentView:^(UIView *view) {
+        CALayer *overlayLayer = [view layer];
+        [overlayLayer addAnimation:animation forKey:@"findOverlayFadeIn"];
+        overlayLayer.opacity = 1;
+    }];
 
     layer.opacity = 1;
-    findOverlayLayer.opacity = 1;
 #endif
 }
 
