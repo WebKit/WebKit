@@ -17,7 +17,7 @@ layer at (0,0) size 800x600
                 text run at (22,84) width 49: " around"
                 text run at (2,104) width 63: "the image"
             RenderTableCell {TD} at (79,53) size 701x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 12x19
+              RenderText {#text} at (2,53) size 12x19
                 text run at (2,2) width 12: "X"
       RenderTable {TABLE} at (0,150) size 784x167 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 782x165
@@ -34,7 +34,7 @@ layer at (0,0) size 800x600
                 text run at (2,118) width 11: "ff"
                 text run at (2,138) width 16: "gg"
             RenderTableCell {TD} at (28,70) size 752x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,1) size 12x21
+              RenderText {#text} at (2,70) size 12x20
                 text run at (2,2) width 12: "X"
       RenderTable {TABLE} at (0,334) size 784x53 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 782x50
@@ -46,7 +46,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (22,24) size 108x19
                 text run at (22,24) width 108: " aroundtheimage"
             RenderTableCell {TD} at (220,13) size 560x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 12x19
+              RenderText {#text} at (2,13) size 12x19
                 text run at (2,2) width 12: "X"
       RenderTable {TABLE} at (0,404) size 784x33 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 782x30
@@ -58,7 +58,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (234,4) size 104x19
                 text run at (234,4) width 104: "aroundtheimage"
             RenderTableCell {TD} at (343,3) size 437x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 12x19
+              RenderText {#text} at (2,3) size 12x19
                 text run at (2,2) width 12: "X"
 layer at (8,148) size 77x2 clip at (0,0) size 0x0
   RenderBlock {HR} at (0,140) size 77x2 [color=#808080] [border: (1px inset #808080)]

@@ -4,9 +4,9 @@ layer at (0,0) size 800x551
   RenderBlock {HTML} at (0,0) size 800x551
     RenderBody {BODY} at (8,16) size 784x519
       RenderBlock {P} at (0,0) size 784x63
-        RenderText {#text} at (0,0) size 774x63
-          text run at (0,0) width 757: "In each line, reading from left to right, the bracket should appear before the parenthesis. The"
-          text run at (0,21) width 774: "bracket should be a left bracket and the parenthesis should be a right parenthesis. In each line,"
+        RenderText {#text} at (0,0) size 773x63
+          text run at (0,0) width 756: "In each line, reading from left to right, the bracket should appear before the parenthesis. The"
+          text run at (0,21) width 773: "bracket should be a left bracket and the parenthesis should be a right parenthesis. In each line,"
           text run at (0,42) width 615: "Roman characters and digits should be in increasing order from left to right."
       RenderBlock {P} at (0,79) size 784x23
         RenderText {#text} at (0,0) size 61x21

@@ -14,7 +14,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,2) size 115x19
                 text run at (2,2) width 115: "Click name to see"
             RenderTableCell {TD} at (128,19) size 94x25 [bgcolor=#00FF00] [border: (1px inset #808080)] [r=0 c=1 rs=2 cs=1]
-              RenderText {#text} at (2,1) size 89x21
+              RenderText {#text} at (2,16) size 89x20
                 text run at (2,2) width 89: "Mac Clbr Opt"
           RenderTableRow {TR} at (0,34) size 227x24
             RenderTableCell {TD} at (5,34) size 119x24 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
@@ -49,7 +49,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (2,2) size 115x19
                   text run at (2,2) width 115: "Click name to see"
               RenderTableCell {TD} at (128,48) size 94x25 [bgcolor=#00FF00] [border: (1px inset #808080)] [r=1 c=1 rs=2 cs=1]
-                RenderText {#text} at (2,1) size 89x21
+                RenderText {#text} at (2,16) size 89x20
                   text run at (2,2) width 89: "Mac Clbr Opt"
             RenderTableRow {TR} at (0,63) size 227x24
               RenderTableCell {TD} at (5,63) size 119x24 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
@@ -78,7 +78,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (2,2) size 115x19
                   text run at (2,2) width 115: "Click name to see"
               RenderTableCell {TD} at (128,34) size 94x24 [bgcolor=#00FF00] [border: (1px inset #808080)] [r=0 c=1 rs=3 cs=1]
-                RenderText {#text} at (2,2) size 89x19
+                RenderText {#text} at (2,31) size 89x19
                   text run at (2,2) width 89: "Mac Clbr Opt"
             RenderTableRow {TR} at (0,34) size 259x24
               RenderTableCell {TD} at (5,34) size 119x24 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
@@ -115,7 +115,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (2,2) size 115x19
                   text run at (2,2) width 115: "Click name to see"
               RenderTableCell {TD} at (128,63) size 94x24 [bgcolor=#00FF00] [border: (1px inset #808080)] [r=1 c=1 rs=3 cs=1]
-                RenderText {#text} at (2,2) size 89x19
+                RenderText {#text} at (2,31) size 89x19
                   text run at (2,2) width 89: "Mac Clbr Opt"
             RenderTableRow {TR} at (0,63) size 259x24
               RenderTableCell {TD} at (5,63) size 119x24 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]

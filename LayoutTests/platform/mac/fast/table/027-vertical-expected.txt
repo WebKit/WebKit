@@ -69,5 +69,5 @@ layer at (0,0) size 785x810
                                 text run at (272,2) width 37: "work."
                             RenderTableCell {TD} at (2,348) size 292x-160 [border: (1px solid #008000)] [r=0 c=2 rs=1 cs=1]
             RenderTableCell {TD} at (26,714) size 312x-63 [border: (1px solid #008000)] [r=1 c=2 rs=1 cs=1]
-              RenderImage {IMG} at (147,-139) size 18x212
+              RenderImage {IMG} at (147,4) size 18x212
               RenderText {#text} at (0,0) size 0x0

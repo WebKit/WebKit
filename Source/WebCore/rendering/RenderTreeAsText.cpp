@@ -253,22 +253,15 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
         }
     }
     
-    RenderBlock* cb = o.containingBlock();
-    bool adjustForTableCells = cb ? cb->isRenderTableCell() : false;
-
     bool enableSubpixelPrecisionForTextDump = shouldEnableSubpixelPrecisionForTextDump(o.document());
     LayoutRect r;
     if (auto* text = dynamicDowncast<RenderText>(o)) {
         // FIXME: Would be better to dump the bounding box x and y rather than the first run's x and y, but that would involve updating
         // many test results.
         r = IntRect(text->firstRunLocation(), text->linesBoundingBox().size());
-        if (!InlineIterator::firstTextBoxFor(*text))
-            adjustForTableCells = false;
     } else if (auto* br = dynamicDowncast<RenderLineBreak>(o); br && br->isBR()) {
         IntRect linesBox = br->linesBoundingBox();
         r = IntRect(linesBox.x(), linesBox.y(), linesBox.width(), linesBox.height());
-        if (!br->inlineBoxWrapper() && !InlineIterator::boxFor(*br))
-            adjustForTableCells = false;
     } else if (auto* inlineFlow = dynamicDowncast<RenderInline>(o)) {
         // FIXME: Would be better not to just dump 0, 0 as the x and y here.
         auto width = inlineFlow->linesBoundingBox().width();
@@ -290,7 +283,6 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
             return height;
         };
         r = IntRect(0, 0, width, inlineHeight());
-        adjustForTableCells = false;
     } else if (auto* cell = dynamicDowncast<RenderTableCell>(o)) {
         // FIXME: Deliberately dump the "inner" box of table cells, since that is what current results reflect.  We'd like
         // to clean up the results to dump both the outer box and the intrinsic padding so that both bits of information are
@@ -304,11 +296,6 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
         ASSERT(r.location() == svgModelObject->currentSVGLayoutLocation());
     }
 #endif
-
-    // FIXME: Temporary in order to ensure compatibility with existing layout test results.
-    if (adjustForTableCells)
-        r.move(0_lu, -downcast<RenderTableCell>(*o.containingBlock()).intrinsicPaddingBefore());
-
     // FIXME: Convert layout test results to report sub-pixel values, in the meantime using enclosingIntRect
     // for consistency with old results.
     if (enableSubpixelPrecisionForTextDump)

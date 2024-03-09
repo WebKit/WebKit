@@ -190,11 +190,11 @@ layer at (0,0) size 800x1395
                   text run at (0,64) width 53: "blah blah"
           RenderTableRow {TR} at (0,406) size 752x795
             RenderTableCell {TD} at (615,1030) size 135x171 [bgcolor=#FFFFFF] [r=1 c=2 rs=1 cs=1]
-              RenderBlock {H2} at (5,18) size 125x41
+              RenderBlock {H2} at (5,642) size 125x41
                 RenderText {#text} at (0,0) size 88x39
                   text run at (0,0) width 88: "Community"
                   text run at (0,20) width 56: "Banner"
-              RenderBlock {P} at (5,71) size 125x81
+              RenderBlock {P} at (5,695) size 125x81
                 RenderText {#text} at (0,0) size 110x79
                   text run at (0,0) width 110: "blah blah blah blah"
                   text run at (0,16) width 110: "blah blah blah blah"

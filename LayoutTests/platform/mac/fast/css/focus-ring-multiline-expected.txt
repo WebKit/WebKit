@@ -22,6 +22,6 @@ layer at (0,0) size 800x600
               RenderText {#text} at (29,127) size 29x18
                 text run at (29,127) width 29: "like."
             RenderTableCell {TD} at (106,56) size 352x38 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 346x36
+              RenderText {#text} at (1,55) size 346x36
                 text run at (1,1) width 346: "This is some filler text. This is some filler text. This is"
                 text run at (1,19) width 252: "some filler text. This is some filler text."

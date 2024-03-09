@@ -14,7 +14,7 @@ layer at (0,0) size 800x600
                   RenderTableSection {TBODY} at (0,0) size 224x215
                     RenderTableRow {TR} at (0,0) size 224x163
                       RenderTableCell {TD} at (0,107) size 10x1 [r=0 c=0 rs=4 cs=1]
-                        RenderImage {IMG} at (0,0) size 10x1
+                        RenderImage {IMG} at (0,107) size 10x1
                       RenderTableCell {TD} at (10,0) size 214x163 [r=0 c=1 rs=1 cs=1]
                         RenderImage {IMG} at (0,0) size 214x163
                     RenderTableRow {TR} at (0,163) size 224x8

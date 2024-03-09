@@ -28,31 +28,31 @@ layer at (0,0) size 800x600
               RenderText {#text} at (205,65) size 69x18
                 text run at (205,65) width 69: "of this cell"
             RenderTableCell {TD} at (478,18) size 45x58 [bgcolor=#006000] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (11,11) size 22x36
+              RenderText {#text} at (11,29) size 22x36
                 text run at (11,11) width 22: "TD"
                 text run at (13,29) width 17: "#2"
             RenderTableCell {TD} at (522,18) size 44x58 [bgcolor=#00FFFF] [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (11,11) size 22x36
+              RenderText {#text} at (11,29) size 22x36
                 text run at (11,11) width 22: "TD"
                 text run at (13,29) width 17: "#3"
             RenderTableCell {TD} at (565,18) size 44x58 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
-              RenderText {#text} at (11,11) size 22x36
+              RenderText {#text} at (11,29) size 22x36
                 text run at (11,11) width 22: "TD"
                 text run at (13,29) width 17: "#4"
             RenderTableCell {TD} at (608,18) size 45x58 [bgcolor=#008000] [border: (1px inset #808080)] [r=0 c=4 rs=1 cs=1]
-              RenderText {#text} at (11,11) size 22x36
+              RenderText {#text} at (11,29) size 22x36
                 text run at (11,11) width 22: "TD"
                 text run at (13,29) width 17: "#5"
             RenderTableCell {TD} at (652,18) size 44x58 [bgcolor=#000080] [border: (1px inset #808080)] [r=0 c=5 rs=1 cs=1]
-              RenderText {#text} at (11,11) size 22x36
+              RenderText {#text} at (11,29) size 22x36
                 text run at (11,11) width 22: "TD"
                 text run at (13,29) width 17: "#6"
             RenderTableCell {TD} at (695,18) size 44x58 [bgcolor=#CACACA] [border: (1px inset #808080)] [r=0 c=6 rs=1 cs=1]
-              RenderText {#text} at (11,11) size 22x36
+              RenderText {#text} at (11,29) size 22x36
                 text run at (11,11) width 22: "TD"
                 text run at (13,29) width 17: "#7"
             RenderTableCell {TD} at (738,18) size 44x58 [bgcolor=#000000] [border: (1px inset #808080)] [r=0 c=7 rs=1 cs=1]
               RenderInline {FONT} at (0,0) size 22x36 [color=#FFFFFF]
-                RenderText {#text} at (11,11) size 22x36
+                RenderText {#text} at (11,29) size 22x36
                   text run at (11,11) width 22: "TD"
                   text run at (13,29) width 17: "#8"

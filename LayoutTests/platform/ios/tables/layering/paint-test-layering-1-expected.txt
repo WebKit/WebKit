@@ -37,7 +37,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,2) size 16x19
                 text run at (2,2) width 16: "    "
             RenderTableCell {TD} at (46,54) size 52x24 [bgcolor=#FF0000] [border: (1px inset #808080)] [r=0 c=2 rs=3 cs=1]
-              RenderBlock {DIV} at (2,2) size 48x20
+              RenderBlock {DIV} at (2,54) size 48x20
                 RenderText {#text} at (0,0) size 48x19
                   text run at (0,0) width 48: "            "
           RenderTableRow {TR} at (0,28) size 100x24
@@ -45,7 +45,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,2) size 16x19
                 text run at (2,2) width 16: "    "
             RenderTableCell {TD} at (24,54) size 74x24 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=1 c=1 rs=2 cs=2]
-              RenderBlock {DIV} at (2,2) size 70x20 [color=#008000]
+              RenderBlock {DIV} at (2,28) size 70x20 [color=#008000]
                 RenderText {#text} at (16,0) size 54x19
                   text run at (16,0) width 54: "   FAIL  "
           RenderTableRow {TR} at (0,54) size 100x24

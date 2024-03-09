@@ -45,7 +45,7 @@ layer at (0,0) size 800x585
                       text run at (0,0) width 62: "Choose File"
           RenderTableRow {TR} at (0,48) size 1066x22
             RenderTableCell {TH} at (2,49) size 86x20 [r=2 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 84x18
+              RenderText {#text} at (1,2) size 84x18
                 text run at (1,1) width 84: "direction:ltr"
             RenderTableCell {TD} at (89,48) size 243x22 [border: (1px solid #000000)] [r=2 c=1 rs=1 cs=1]
               RenderFileUploadControl {INPUT} at (2,2) size 238x18 "no file selected"
@@ -73,7 +73,7 @@ layer at (0,0) size 800x585
                       text run at (0,0) width 62: "Choose File"
           RenderTableRow {TR} at (0,72) size 1066x22
             RenderTableCell {TH} at (2,73) size 86x20 [r=3 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 84x18
+              RenderText {#text} at (1,2) size 84x18
                 text run at (1,1) width 84: "direction:rtl"
             RenderTableCell {TD} at (89,72) size 243x22 [border: (1px solid #000000)] [r=3 c=1 rs=1 cs=1]
               RenderFileUploadControl {INPUT} at (2,2) size 238x18 "no file selected"

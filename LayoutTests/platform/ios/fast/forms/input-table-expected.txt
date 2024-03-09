@@ -21,13 +21,13 @@ layer at (0,0) size 800x716
         RenderTableSection {TBODY} at (3,3) size 161x65
           RenderTableRow {TR} at (0,2) size 161x30
             RenderTableCell {TD} at (2,5) size 47x23 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,0) size 26x21
+              RenderText {#text} at (1,4) size 26x20
                 text run at (1,1) width 26: "first"
             RenderTableCell {TD} at (50,2) size 109x30 [border: (3px solid #FF0000)] [r=0 c=1 rs=1 cs=1]
               RenderTextControl {INPUT} at (4,4) size 100x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
           RenderTableRow {TR} at (0,33) size 161x30
             RenderTableCell {TD} at (2,37) size 47x23 [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,0) size 45x21
+              RenderText {#text} at (1,4) size 45x20
                 text run at (1,1) width 45: "second"
             RenderTableCell {TD} at (50,33) size 109x30 [border: (3px solid #FF0000)] [r=1 c=1 rs=1 cs=1]
               RenderTextControl {INPUT} at (4,4) size 100x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]

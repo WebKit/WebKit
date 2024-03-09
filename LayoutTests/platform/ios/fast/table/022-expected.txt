@@ -47,6 +47,6 @@ layer at (0,0) size 800x600
               RenderText {#text} at (1,1) size 51x15
                 text run at (1,1) width 51: "[overlap]"
             RenderTableCell {TD} at (428,6) size 87x14 [r=1 c=5 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 245x13
+              RenderText {#text} at (1,3) size 245x13
                 text run at (1,1) width 245: "[at all, since width=0 is ignored]"
             RenderTableCell {TD} at (514,19) size 86x1 [r=1 c=6 rs=1 cs=1]

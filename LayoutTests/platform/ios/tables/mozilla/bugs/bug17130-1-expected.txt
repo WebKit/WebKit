@@ -39,10 +39,10 @@ layer at (0,0) size 800x600
                 text run at (446,1) width 234: "Windows 95/98/NT, Lotus Notes, or"
                 text run at (1,21) width 270: "Exchange with the latest virus definitions."
             RenderTableCell {TD} at (708,36) size 34x22 [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 4x19
+              RenderText {#text} at (1,11) size 4x19
                 text run at (1,1) width 4: " "
             RenderTableCell {TD} at (743,36) size 39x22 [r=1 c=2 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 4x19
+              RenderText {#text} at (1,11) size 4x19
                 text run at (1,1) width 4: " "
       RenderBlock (anonymous) at (0,152) size 784x21
         RenderBR {BR} at (0,0) size 0x19
@@ -68,8 +68,8 @@ layer at (0,0) size 800x600
                 text run at (446,1) width 234: "Windows 95/98/NT, Lotus Notes, or"
                 text run at (1,21) width 270: "Exchange with the latest virus definitions."
             RenderTableCell {TD} at (708,36) size 34x22 [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 4x19
+              RenderText {#text} at (1,11) size 4x19
                 text run at (1,1) width 4: " "
             RenderTableCell {TD} at (743,36) size 39x22 [r=1 c=2 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 4x19
+              RenderText {#text} at (1,11) size 4x19
                 text run at (1,1) width 4: " "

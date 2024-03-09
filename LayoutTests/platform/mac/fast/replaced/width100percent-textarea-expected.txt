@@ -13,7 +13,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (10,1) size 8x34 [r=0 c=1 rs=1 cs=1]
             RenderTableCell {TD} at (19,1) size 8x34 [r=0 c=2 rs=1 cs=1]
             RenderTableCell {TD} at (28,8) size 755x20 [r=0 c=3 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 4x18
+              RenderText {#text} at (1,8) size 4x18
                 text run at (1,1) width 4: " "
       RenderBlock (anonymous) at (0,54) size 784x36
         RenderBR {BR} at (0,0) size 0x18
@@ -25,7 +25,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (10,1) size 8x34 [r=0 c=1 rs=1 cs=1]
             RenderTableCell {TD} at (19,1) size 8x34 [r=0 c=2 rs=1 cs=1]
             RenderTableCell {TD} at (28,8) size 755x20 [r=0 c=3 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 4x18
+              RenderText {#text} at (1,8) size 4x18
                 text run at (1,1) width 4: " "
 layer at (10,28) size 6x32 clip at (0,0) size 0x0 scrollWidth 9 scrollHeight 43
   RenderTextControl {TEXTAREA} at (1,1) size 6x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]

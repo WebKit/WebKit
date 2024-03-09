@@ -20,10 +20,10 @@ layer at (0,0) size 800x600
                 text run at (26,2) width 164: "Car Rental Information"
           RenderTableRow {TR} at (0,28) size 782x44
             RenderTableCell {TH} at (2,38) size 189x24 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (65,2) size 59x19
+              RenderText {#text} at (65,12) size 59x19
                 text run at (65,2) width 59: "Country"
             RenderTableCell {TH} at (192,38) size 370x24 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (169,2) size 31x19
+              RenderText {#text} at (169,12) size 31x19
                 text run at (169,2) width 31: "City"
             RenderTableCell {TH} at (563,28) size 72x44 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (18,2) size 67x39

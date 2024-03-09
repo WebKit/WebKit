@@ -17,5 +17,5 @@ layer at (18,18) size 130x20 clip at (19,19) size 128x18
       text run at (1,1) width 125: "left column content"
 layer at (158,8) size 634x40
   RenderTableCell {TD} at (150,11) size 634x18 [r=0 c=1 rs=1 cs=1]
-    RenderText {#text} at (0,0) size 72x18
+    RenderText {#text} at (0,11) size 72x18
       text run at (0,0) width 72: "second cell"

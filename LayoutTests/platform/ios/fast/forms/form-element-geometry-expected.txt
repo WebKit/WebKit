@@ -30,11 +30,11 @@ layer at (0,0) size 800x627
                       RenderText at (0,0) size 29x14
                         text run at (0,0) width 29: "menu"
             RenderTableCell {TD} at (129,4) size 23x22 [r=0 c=2 rs=1 cs=1]
-              RenderBlock {DIV} at (1,1) size 20x20 [border: (2px solid #0000FF)]
+              RenderBlock {DIV} at (1,3) size 20x20 [border: (2px solid #0000FF)]
                 RenderInline {FONT} at (0,0) size 16x28
                   RenderBlock {INPUT} at (2,2) size 16x16 [bgcolor=#FFFFFF03]
             RenderTableCell {TD} at (153,4) size 23x22 [r=0 c=3 rs=1 cs=1]
-              RenderBlock {DIV} at (1,1) size 20x20 [border: (2px solid #0000FF)]
+              RenderBlock {DIV} at (1,3) size 20x20 [border: (2px solid #0000FF)]
                 RenderInline {FONT} at (0,0) size 16x28
                   RenderBlock {INPUT} at (2,2) size 16x16 [bgcolor=#FFFFFF03]
       RenderTable {TABLE} at (0,179) size 178x31
@@ -53,10 +53,10 @@ layer at (0,0) size 800x627
                     RenderText at (0,0) size 29x14
                       text run at (0,0) width 29: "menu"
             RenderTableCell {TD} at (129,4) size 23x22 [r=0 c=2 rs=1 cs=1]
-              RenderBlock {DIV} at (1,1) size 20x20 [border: (2px solid #0000FF)]
+              RenderBlock {DIV} at (1,3) size 20x20 [border: (2px solid #0000FF)]
                 RenderBlock {INPUT} at (2,2) size 16x16 [bgcolor=#FFFFFF03]
             RenderTableCell {TD} at (153,4) size 23x22 [r=0 c=3 rs=1 cs=1]
-              RenderBlock {DIV} at (1,1) size 20x20 [border: (2px solid #0000FF)]
+              RenderBlock {DIV} at (1,3) size 20x20 [border: (2px solid #0000FF)]
                 RenderBlock {INPUT} at (2,2) size 16x16 [bgcolor=#FFFFFF03]
       RenderTable {TABLE} at (0,209) size 178x31
         RenderTableSection {TBODY} at (0,0) size 178x30
@@ -76,11 +76,11 @@ layer at (0,0) size 800x627
                       RenderText at (0,0) size 29x14
                         text run at (0,0) width 29: "menu"
             RenderTableCell {TD} at (129,4) size 23x22 [r=0 c=2 rs=1 cs=1]
-              RenderBlock {DIV} at (1,1) size 20x20 [border: (2px solid #0000FF)]
+              RenderBlock {DIV} at (1,3) size 20x20 [border: (2px solid #0000FF)]
                 RenderInline {FONT} at (0,0) size 16x12
                   RenderBlock {INPUT} at (2,2) size 16x16 [bgcolor=#FFFFFF03]
             RenderTableCell {TD} at (153,4) size 23x22 [r=0 c=3 rs=1 cs=1]
-              RenderBlock {DIV} at (1,1) size 20x20 [border: (2px solid #0000FF)]
+              RenderBlock {DIV} at (1,3) size 20x20 [border: (2px solid #0000FF)]
                 RenderInline {FONT} at (0,0) size 16x12
                   RenderBlock {INPUT} at (2,2) size 16x16 [bgcolor=#FFFFFF03]
       RenderTable {TABLE} at (0,239) size 593x45
