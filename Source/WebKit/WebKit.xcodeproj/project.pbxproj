@@ -1106,6 +1106,8 @@
 		465FA7262757D93D0072362B /* WebLockRegistryProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 465FA7232757D9180072362B /* WebLockRegistryProxy.h */; };
 		4668A0BC27AB605000C720BC /* WebSharedWorkerProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 4668A0BA27AB604000C720BC /* WebSharedWorkerProvider.h */; };
 		4668A0BD27AB605600C720BC /* WebSharedWorkerObjectConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 4668A0B827AB603F00C720BC /* WebSharedWorkerObjectConnection.h */; };
+		466BB8682B9C1F2E0010907E /* UserScriptIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 466BB8672B9C1F2E0010907E /* UserScriptIdentifier.h */; };
+		466BB86A2B9C215B0010907E /* UserStyleSheetIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 466BB8692B9C215A0010907E /* UserStyleSheetIdentifier.h */; };
 		466BC03C1FA266DA002FA9C1 /* WebSWContextManagerConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 466BC0391FA266C9002FA9C1 /* WebSWContextManagerConnection.h */; };
 		467007CE2AAB7B8100401412 /* GPUProcessPreferencesForWebProcess.h in Headers */ = {isa = PBXBuildFile; fileRef = 467007CC2AAB7B7300401412 /* GPUProcessPreferencesForWebProcess.h */; };
 		4671FF1F23217EFF001B64C7 /* WebResourceLoadObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 4671FF1D23217EFF001B64C7 /* WebResourceLoadObserver.h */; };
@@ -5319,6 +5321,8 @@
 		4668A0BA27AB604000C720BC /* WebSharedWorkerProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebSharedWorkerProvider.h; sourceTree = "<group>"; };
 		4668A0BB27AB604000C720BC /* WebSharedWorkerObjectConnection.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebSharedWorkerObjectConnection.cpp; sourceTree = "<group>"; };
 		466A4B192A3D293E007E286E /* WebPageCreationParameters.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebPageCreationParameters.serialization.in; sourceTree = "<group>"; };
+		466BB8672B9C1F2E0010907E /* UserScriptIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserScriptIdentifier.h; sourceTree = "<group>"; };
+		466BB8692B9C215A0010907E /* UserStyleSheetIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserStyleSheetIdentifier.h; sourceTree = "<group>"; };
 		466BC0381FA266C9002FA9C1 /* WebSWContextManagerConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSWContextManagerConnection.cpp; sourceTree = "<group>"; };
 		466BC0391FA266C9002FA9C1 /* WebSWContextManagerConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSWContextManagerConnection.h; sourceTree = "<group>"; };
 		466BC03A1FA266C9002FA9C1 /* WebSWContextManagerConnection.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebSWContextManagerConnection.messages.in; sourceTree = "<group>"; };
@@ -9115,6 +9119,8 @@
 				1AC1336618565B5700F3EC05 /* UserData.h */,
 				FA39AE4E2B22DA68008F93CD /* UserData.serialization.in */,
 				2DA3E37D2A33C98900F7799D /* UserInterfaceIdiom.serialization.in */,
+				466BB8672B9C1F2E0010907E /* UserScriptIdentifier.h */,
+				466BB8692B9C215A0010907E /* UserStyleSheetIdentifier.h */,
 				419BD18F28E1A86C0089D7B7 /* VideoCodecType.h */,
 				2D9BECFC2B30AF1600D0AE99 /* VideoCodecType.serialization.in */,
 				9B38009D2AEA2D8B0011A892 /* ViewWindowCoordinates.h */,
@@ -16578,6 +16584,8 @@
 				4A3CC18B19B0640F00D14AEF /* UserMediaPermissionRequestManagerProxy.h in Headers */,
 				4A3CC18D19B0641900D14AEF /* UserMediaPermissionRequestProxy.h in Headers */,
 				074E75FE1DF2211900D318EC /* UserMediaProcessManager.h in Headers */,
+				466BB8682B9C1F2E0010907E /* UserScriptIdentifier.h in Headers */,
+				466BB86A2B9C215B0010907E /* UserStyleSheetIdentifier.h in Headers */,
 				1F6B9F042B7AA5E00051676F /* VideoPresentationInterfaceLMK.h in Headers */,
 				52D5A1B01C57495A00DE34A3 /* VideoPresentationManagerProxy.h in Headers */,
 				A1D4D2372B7E7FAD0008C40E /* VideoReceiverEndpointMessage.h in Headers */,

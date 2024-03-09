@@ -82,6 +82,8 @@
 #include "StorageNamespaceIdentifier.h"
 #include "TransactionID.h"
 #include "UserContentControllerIdentifier.h"
+#include "UserScriptIdentifier.h"
+#include "UserStyleSheetIdentifier.h"
 #include "VideoDecoderIdentifier.h"
 #include "VideoEncoderIdentifier.h"
 #include "WebExtensionContextIdentifier.h"
@@ -538,6 +540,8 @@ Vector<ASCIILiteral> serializedIdentifiers()
     static_assert(sizeof(uint64_t) == sizeof(WebKit::TapIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::TransactionID));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::UserContentControllerIdentifier));
+    static_assert(sizeof(uint64_t) == sizeof(WebKit::UserScriptIdentifier));
+    static_assert(sizeof(uint64_t) == sizeof(WebKit::UserStyleSheetIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::VideoDecoderIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::VideoEncoderIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::WebExtensionContextIdentifier));
@@ -647,6 +651,8 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebKit::TapIdentifier"_s,
         "WebKit::TransactionID"_s,
         "WebKit::UserContentControllerIdentifier"_s,
+        "WebKit::UserScriptIdentifier"_s,
+        "WebKit::UserStyleSheetIdentifier"_s,
         "WebKit::VideoDecoderIdentifier"_s,
         "WebKit::VideoEncoderIdentifier"_s,
         "WebKit::WebExtensionContextIdentifier"_s,

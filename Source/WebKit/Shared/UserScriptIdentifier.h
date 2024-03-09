@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,35 +25,11 @@
 
 #pragma once
 
-#include "ContentWorldShared.h"
-#include "UserScriptIdentifier.h"
-#include "UserStyleSheetIdentifier.h"
-#include <WebCore/UserScript.h>
-#include <WebCore/UserStyleSheet.h>
-
-namespace IPC {
-class Decoder;
-class Encoder;
-}
+#include <wtf/ObjectIdentifier.h>
 
 namespace WebKit {
 
-struct WebUserScriptData {
-    UserScriptIdentifier identifier;
-    ContentWorldIdentifier worldIdentifier;
-    WebCore::UserScript userScript;
-};
-
-struct WebUserStyleSheetData {
-    UserStyleSheetIdentifier identifier;
-    ContentWorldIdentifier worldIdentifier;
-    WebCore::UserStyleSheet userStyleSheet;
-};
-
-struct WebScriptMessageHandlerData {
-    uint64_t identifier;
-    ContentWorldIdentifier worldIdentifier;
-    String name;
-};
+enum class UserScriptIdentifierType { };
+using UserScriptIdentifier = ObjectIdentifier<UserScriptIdentifierType>;
 
 } // namespace WebKit

@@ -385,6 +385,8 @@ def serialized_identifiers():
         'WebKit::TapIdentifier',
         'WebKit::TransactionID',
         'WebKit::UserContentControllerIdentifier',
+        'WebKit::UserScriptIdentifier',
+        'WebKit::UserStyleSheetIdentifier',
         'WebKit::VideoDecoderIdentifier',
         'WebKit::VideoEncoderIdentifier',
         'WebKit::WebExtensionContextIdentifier',

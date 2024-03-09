@@ -27,12 +27,13 @@
 
 #include "APIContentWorld.h"
 #include "APIObject.h"
+#include "UserScriptIdentifier.h"
 #include <WebCore/UserScript.h>
 #include <wtf/Identified.h>
 
 namespace API {
 
-class UserScript final : public ObjectImpl<Object::Type::UserScript>, public LegacyIdentified<UserScript> {
+class UserScript final : public ObjectImpl<Object::Type::UserScript>, public Identified<WebKit::UserScriptIdentifier> {
 public:
     static WTF::URL generateUniqueURL();
 
