@@ -52,9 +52,9 @@ constexpr unsigned maxShorthandsForLonghand = 4; // FIXME: Generate this from CS
 
 Ref<ImmutableStyleProperties> StyleProperties::immutableCopyIfNeeded() const
 {
-    if (auto* immutableProperties = dynamicDowncast<ImmutableStyleProperties>(*this))
-        return const_cast<ImmutableStyleProperties&>(*immutableProperties);
-    return downcast<MutableStyleProperties>(*this).immutableDeduplicatedCopy();
+    if (m_isMutable)
+        return uncheckedDowncast<MutableStyleProperties>(*this).immutableDeduplicatedCopy();
+    return const_cast<ImmutableStyleProperties&>(uncheckedDowncast<ImmutableStyleProperties>(*this));
 }
 
 String serializeLonghandValue(CSSPropertyID property, const CSSValue& value)
