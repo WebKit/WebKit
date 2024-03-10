@@ -33,7 +33,7 @@
     WebKit::SandboxExtension::Handle javaScriptConfigurationDirectoryExtensionHandle;
     WebCore::ThirdPartyCookieBlockingMode thirdPartyCookieBlockingMode;
     HashSet<WebCore::RegistrableDomain> domainsWithUserInteraction;
-    HashMap<WebCore::RegistrableDomain, WebCore::RegistrableDomain> domainsWithStorageAccessQuirk;
+    HashMap<WebCore::RegistrableDomain, Vector<WebCore::RegistrableDomain>> domainsWithStorageAccessQuirk;
 #if ENABLE(ARKIT_INLINE_PREVIEW)
     String modelElementCacheDirectory;
     WebKit::SandboxExtension::Handle modelElementCacheDirectoryExtensionHandle;

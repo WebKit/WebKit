@@ -118,6 +118,7 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     m_delegateMethods.webViewRunJavaScriptConfirmPanelWithMessageInitiatedByFrameCompletionHandler = [delegate respondsToSelector:@selector(webView:runJavaScriptConfirmPanelWithMessage:initiatedByFrame:completionHandler:)];
     m_delegateMethods.webViewRunJavaScriptTextInputPanelWithPromptDefaultTextInitiatedByFrameCompletionHandler = [delegate respondsToSelector:@selector(webView:runJavaScriptTextInputPanelWithPrompt:defaultText:initiatedByFrame:completionHandler:)];
     m_delegateMethods.webViewRequestStorageAccessPanelUnderFirstPartyCompletionHandler = [delegate respondsToSelector:@selector(_webView:requestStorageAccessPanelForDomain:underCurrentDomain:completionHandler:)];
+    m_delegateMethods.webViewRequestStorageAccessPanelForDomainUnderCurrentDomainForQuirkDomainsCompletionHandler = [delegate respondsToSelector:@selector(_webView:requestStorageAccessPanelForDomain:underCurrentDomain:forQuirkDomains:completionHandler:)];
     m_delegateMethods.webViewRunBeforeUnloadConfirmPanelWithMessageInitiatedByFrameCompletionHandler = [delegate respondsToSelector:@selector(_webView:runBeforeUnloadConfirmPanelWithMessage:initiatedByFrame:completionHandler:)];
     m_delegateMethods.webViewRequestGeolocationPermissionForOriginDecisionHandler = [delegate respondsToSelector:@selector(_webView:requestGeolocationPermissionForOrigin:initiatedByFrame:decisionHandler:)];
     m_delegateMethods.webViewRequestGeolocationPermissionForFrameDecisionHandler = [delegate respondsToSelector:@selector(_webView:requestGeolocationPermissionForFrame:decisionHandler:)];
@@ -448,6 +449,34 @@ void UIDelegate::UIClient::requestStorageAccessConfirm(WebPageProxy& webPageProx
         return;
     }
 
+    // Some sites have quirks where multiple login domains require storage access.
+    auto additionalLoginDomain = WebCore::NetworkStorageSession::findAdditionalLoginDomain(currentDomain, requestingDomain);
+
+    if (organizationStorageAccessPromptQuirk || additionalLoginDomain) {
+        if (m_uiDelegate->m_delegateMethods.webViewRequestStorageAccessPanelForDomainUnderCurrentDomainForQuirkDomainsCompletionHandler) {
+
+            NSMutableDictionary<NSString *, NSArray<NSString *> *> *quirkDomains = [NSMutableDictionary dictionaryWithCapacity:1];
+            if (organizationStorageAccessPromptQuirk) {
+                for (auto& [topFrameDomain, subFrameDomains] : organizationStorageAccessPromptQuirk->domainPairings) {
+                    NSMutableArray<NSString *> *mutableSubFrameDomains = [NSMutableArray arrayWithCapacity:subFrameDomains.size()];
+                    for (auto& subFrameDomain : subFrameDomains)
+                        [mutableSubFrameDomains addObject:subFrameDomain.string()];
+                    [quirkDomains setObject:mutableSubFrameDomains forKey:topFrameDomain.string()];
+                }
+            } else
+                [quirkDomains setObject:@[additionalLoginDomain->string()] forKey:currentDomain.string()];
+
+            auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:requestStorageAccessPanelForDomain:underCurrentDomain:forQuirkDomains:completionHandler:));
+            [(id<WKUIDelegatePrivate>)delegate _webView:m_uiDelegate->m_webView.get().get() requestStorageAccessPanelForDomain:requestingDomain.string() underCurrentDomain:currentDomain.string() forQuirkDomains:quirkDomains completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)] (BOOL result) mutable {
+                if (checker->completionHandlerHasBeenCalled())
+                    return;
+                completionHandler(result);
+                checker->didCallCompletionHandler();
+            }).get()];
+            return;
+        }
+    }
+
     if (organizationStorageAccessPromptQuirk) {
 #if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
         presentStorageAccessAlertSSOQuirk(m_uiDelegate->m_webView.get().get(), organizationStorageAccessPromptQuirk->organizationName, organizationStorageAccessPromptQuirk->domainPairings, WTFMove(completionHandler));
@@ -456,7 +485,7 @@ void UIDelegate::UIClient::requestStorageAccessConfirm(WebPageProxy& webPageProx
     }
 
     // Some sites have quirks where multiple login domains require storage access.
-    if (auto additionalLoginDomain = WebCore::NetworkStorageSession::findAdditionalLoginDomain(currentDomain, requestingDomain)) {
+    if (additionalLoginDomain) {
 #if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
         presentStorageAccessAlertQuirk(m_uiDelegate->m_webView.get().get(), requestingDomain, *additionalLoginDomain, currentDomain, WTFMove(completionHandler));
 #endif

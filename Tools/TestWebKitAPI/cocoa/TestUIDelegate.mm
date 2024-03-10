@@ -101,6 +101,22 @@
         _webViewDidClose(webView);
 }
 
+- (void)_webView:(WKWebView *)webView requestStorageAccessPanelForDomain:(NSString *)requestingDomain underCurrentDomain:(NSString *)currentDomain completionHandler:(void (^)(BOOL result))completionHandler
+{
+    if (_requestStorageAccessPanelForDomain)
+        _requestStorageAccessPanelForDomain(webView, requestingDomain, currentDomain, completionHandler);
+    else
+        completionHandler(YES);
+}
+
+- (void)_webView:(WKWebView *)webView requestStorageAccessPanelForDomain:(NSString *)requestingDomain underCurrentDomain:(NSString *)currentDomain forQuirkDomains:(NSDictionary<NSString *, NSArray<NSString *> *> *)quirkDomains completionHandler:(void (^)(BOOL result))completionHandler
+{
+    if (_requestStorageAccessPanelForQuirksForDomain)
+        _requestStorageAccessPanelForQuirksForDomain(webView, requestingDomain, currentDomain, quirkDomains, completionHandler);
+    else
+        completionHandler(YES);
+}
+
 - (void)_webView:(WKWebView *)webView saveDataToFile:(NSData *)data suggestedFilename:(NSString *)suggestedFilename mimeType:(NSString *)mimeType originatingURL:(NSURL *)url
 {
     if (_saveDataToFile)

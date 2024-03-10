@@ -8115,17 +8115,17 @@ void WebPage::requestStorageAccess(RegistrableDomain&& subFrameDomain, Registrab
 
 void WebPage::addDomainWithPageLevelStorageAccess(const RegistrableDomain& topLevelDomain, const RegistrableDomain& resourceDomain)
 {
-    m_domainsWithPageLevelStorageAccess.add(topLevelDomain, resourceDomain);
+    m_domainsWithPageLevelStorageAccess.add(topLevelDomain, HashSet<RegistrableDomain> { }).iterator->value.add(resourceDomain);
 
     // Some sites have quirks where multiple login domains require storage access.
     if (auto additionalLoginDomain = NetworkStorageSession::findAdditionalLoginDomain(topLevelDomain, resourceDomain))
-        m_domainsWithPageLevelStorageAccess.add(topLevelDomain, *additionalLoginDomain);
+        m_domainsWithPageLevelStorageAccess.add(topLevelDomain, HashSet<RegistrableDomain> { }).iterator->value.add(*additionalLoginDomain);
 }
 
 bool WebPage::hasPageLevelStorageAccess(const RegistrableDomain& topLevelDomain, const RegistrableDomain& resourceDomain) const
 {
     auto it = m_domainsWithPageLevelStorageAccess.find(topLevelDomain);
-    return it != m_domainsWithPageLevelStorageAccess.end() && it->value == resourceDomain;
+    return it != m_domainsWithPageLevelStorageAccess.end() && it->value.contains(resourceDomain);
 }
 
 void WebPage::clearPageLevelStorageAccess()

@@ -1327,11 +1327,12 @@ void WebResourceLoadStatisticsStore::callUpdatePrevalentDomainsToBlockCookiesFor
             m_networkSession->networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::SetDomainsWithUserInteraction(domainsWithUserInteractionQuirk), 0);
         }
 
-        HashMap<TopFrameDomain, SubResourceDomain> domainsWithStorageAccessQuirk;
-        for (auto& firstPartyDomain : domainsToBlock.domainsWithStorageAccess.keys()) {
-            auto requestingDomain = domainsToBlock.domainsWithStorageAccess.get(firstPartyDomain);
-            if (NetworkStorageSession::loginDomainMatchesRequestingDomain(firstPartyDomain, requestingDomain))
-                domainsWithStorageAccessQuirk.add(firstPartyDomain, requestingDomain);
+        HashMap<TopFrameDomain, Vector<SubResourceDomain>> domainsWithStorageAccessQuirk;
+        for (auto& [firstPartyDomain, requestingDomains] : domainsToBlock.domainsWithStorageAccess) {
+            for (auto& requestingDomain : requestingDomains) {
+                if (NetworkStorageSession::loginDomainMatchesRequestingDomain(firstPartyDomain, requestingDomain))
+                    domainsWithStorageAccessQuirk.add(firstPartyDomain, Vector<SubResourceDomain> { }).iterator->value.append(requestingDomain);
+            }
         }
 
         if (m_domainsWithCrossPageStorageAccessQuirk != domainsWithStorageAccessQuirk) {

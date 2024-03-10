@@ -2197,11 +2197,13 @@ void WebProcess::setDomainsWithUserInteraction(HashSet<WebCore::RegistrableDomai
     ResourceLoadObserver::shared().setDomainsWithUserInteraction(WTFMove(domains));
 }
 
-void WebProcess::setDomainsWithCrossPageStorageAccess(HashMap<TopFrameDomain, SubResourceDomain>&& domains, CompletionHandler<void()>&& completionHandler)
+void WebProcess::setDomainsWithCrossPageStorageAccess(HashMap<TopFrameDomain, Vector<SubResourceDomain>>&& domains, CompletionHandler<void()>&& completionHandler)
 {
-    for (auto& domain : domains.keys()) {
-        for (auto& webPage : m_pageMap.values())
-            webPage->addDomainWithPageLevelStorageAccess(domain, domains.get(domain));
+    for (auto& [domain, subResourceDomains] : domains) {
+        for (auto& subResourceDomain : subResourceDomains) {
+            for (auto& webPage : m_pageMap.values())
+                webPage->addDomainWithPageLevelStorageAccess(domain, subResourceDomain);
+        }
     }
     ResourceLoadObserver::shared().setDomainsWithCrossPageStorageAccess(WTFMove(domains), WTFMove(completionHandler));
 }

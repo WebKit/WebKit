@@ -2714,17 +2714,17 @@ Vector<RegistrableDomain> ResourceLoadStatisticsStore::domainsWithUserInteractio
     return results;
 }
 
-HashMap<TopFrameDomain, SubResourceDomain> ResourceLoadStatisticsStore::domainsWithStorageAccess() const
+HashMap<TopFrameDomain, Vector<SubResourceDomain>> ResourceLoadStatisticsStore::domainsWithStorageAccess() const
 {
     ASSERT(!RunLoop::isMain());
 
-    HashMap<WebCore::RegistrableDomain, WebCore::RegistrableDomain> results;
+    HashMap<WebCore::RegistrableDomain, Vector<WebCore::RegistrableDomain>> results;
     auto statement = m_database.prepareStatement("SELECT subFrameDomain, registrableDomain FROM (SELECT o.registrableDomain as subFrameDomain, s.topLevelDomainID as topLevelDomainID FROM ObservedDomains as o INNER JOIN StorageAccessUnderTopFrameDomains as s WHERE o.domainID = s.domainID) as z INNER JOIN ObservedDomains ON domainID = z.topLevelDomainID;"_s);
     if (!statement)
         return results;
 
     while (statement->step() == SQLITE_ROW)
-        results.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString(statement->columnText(1)), RegistrableDomain::uncheckedCreateFromRegistrableDomainString(statement->columnText(0)));
+        results.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString(statement->columnText(1)), Vector<SubResourceDomain> { }).iterator->value.append(RegistrableDomain::uncheckedCreateFromRegistrableDomainString(statement->columnText(0)));
 
     return results;
 }

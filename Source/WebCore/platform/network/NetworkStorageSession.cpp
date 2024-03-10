@@ -230,11 +230,13 @@ void NetworkStorageSession::setDomainsWithUserInteractionAsFirstParty(const Vect
         cookieEnabledStateMayHaveChanged();
 }
 
-void NetworkStorageSession::setDomainsWithCrossPageStorageAccess(const HashMap<TopFrameDomain, SubResourceDomain>& domains)
+void NetworkStorageSession::setDomainsWithCrossPageStorageAccess(const HashMap<TopFrameDomain, Vector<SubResourceDomain>>& domains)
 {
     m_pairsGrantedCrossPageStorageAccess.clear();
-    for (auto& topFrameDomain : domains.keys())
-        grantCrossPageStorageAccess(topFrameDomain, domains.get(topFrameDomain));
+    for (auto& [topDomain, subResourceDomains] : domains) {
+        for (auto&& subResourceDomain : subResourceDomains)
+            grantCrossPageStorageAccess(topDomain, subResourceDomain);
+    }
 }
 
 void NetworkStorageSession::grantCrossPageStorageAccess(const TopFrameDomain& topFrameDomain, const SubResourceDomain& resourceDomain)

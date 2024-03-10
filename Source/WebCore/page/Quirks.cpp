@@ -1222,7 +1222,7 @@ Quirks::StorageAccessResult Quirks::requestStorageAccessAndHandleClick(Completio
             return;
         }
 
-        ResourceLoadObserver::shared().setDomainsWithCrossPageStorageAccess({{ firstPartyDomain, domainInNeedOfStorageAccess }}, [completionHandler = WTFMove(completionHandler)] () mutable {
+        ResourceLoadObserver::shared().setDomainsWithCrossPageStorageAccess({ { firstPartyDomain, Vector<RegistrableDomain> { domainInNeedOfStorageAccess } } }, [completionHandler = WTFMove(completionHandler)] () mutable {
             completionHandler(ShouldDispatchClick::Yes);
         });
     });
