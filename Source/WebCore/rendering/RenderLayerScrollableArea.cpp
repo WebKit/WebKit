@@ -1024,14 +1024,14 @@ OverscrollBehavior RenderLayerScrollableArea::verticalOverscrollBehavior() const
 Color RenderLayerScrollableArea::scrollbarThumbColorStyle() const
 {
     if (auto* renderer = m_layer.renderBox())
-        return renderer->style().effectiveScrollbarThumbColor();
+        return renderer->style().usedScrollbarThumbColor();
     return { };
 }
 
 Color RenderLayerScrollableArea::scrollbarTrackColorStyle() const
 {
     if (auto* renderer = m_layer.renderBox())
-        return renderer->style().effectiveScrollbarTrackColor();
+        return renderer->style().usedScrollbarTrackColor();
     return { };
 }
 

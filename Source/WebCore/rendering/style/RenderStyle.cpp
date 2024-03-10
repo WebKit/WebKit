@@ -3106,7 +3106,7 @@ Color RenderStyle::usedAccentColor() const
     return colorResolvingCurrentColor(accentColor());
 }
 
-Color RenderStyle::effectiveScrollbarThumbColor() const
+Color RenderStyle::usedScrollbarThumbColor() const
 {
     if (!scrollbarColor().has_value())
         return { };
@@ -3117,7 +3117,7 @@ Color RenderStyle::effectiveScrollbarThumbColor() const
     return colorResolvingCurrentColor(scrollbarColor().value().thumbColor);
 }
 
-Color RenderStyle::effectiveScrollbarTrackColor() const
+Color RenderStyle::usedScrollbarTrackColor() const
 {
     if (!scrollbarColor().has_value())
         return { };

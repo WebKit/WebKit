@@ -6087,7 +6087,7 @@ Color LocalFrameView::scrollbarThumbColorStyle() const
     auto* document = m_frame->document();
     auto scrollingObject = document && document->documentElement() ? document->documentElement()->renderer() : nullptr;
     if (scrollingObject)
-        return scrollingObject->style().effectiveScrollbarThumbColor();
+        return scrollingObject->style().usedScrollbarThumbColor();
     return { };
 }
 
@@ -6096,7 +6096,7 @@ Color LocalFrameView::scrollbarTrackColorStyle() const
     auto* document = m_frame->document();
     auto scrollingObject = document && document->documentElement() ? document->documentElement()->renderer() : nullptr;
     if (scrollingObject)
-        return scrollingObject->style().effectiveScrollbarTrackColor();
+        return scrollingObject->style().usedScrollbarTrackColor();
     return { };
 }
 
