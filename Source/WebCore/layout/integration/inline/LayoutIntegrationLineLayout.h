@@ -81,10 +81,11 @@ public:
     void updateInlineContentDimensions();
     void updateStyle(const RenderBoxModelObject&, const RenderStyle& oldStyle);
     void updateOverflow();
+
     // Partial invalidation.
-    void insertedIntoTree(const RenderElement& parent, RenderObject& child);
-    void removedFromTree(const RenderElement& parent, RenderObject& child);
-    void updateTextContent(const RenderText&, size_t offset, int delta);
+    bool insertedIntoTree(const RenderElement& parent, RenderObject& child);
+    bool removedFromTree(const RenderElement& parent, RenderObject& child);
+    bool updateTextContent(const RenderText&, size_t offset, int delta);
 
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicWidthConstraints();
 
@@ -130,7 +131,7 @@ public:
 
     // This is temporary, required by partial bailout check.
     bool contentNeedsVisualReordering() const;
-    bool isDamaged() const { return m_lineDamage && m_lineDamage->type() != Layout::InlineDamage::Type::Invalid; }
+    bool isDamaged() const { return !!m_lineDamage; }
     OptionSet<Layout::InlineDamage::Reason> damageReasons() const { return !m_lineDamage || m_lineDamage->type() == Layout::InlineDamage::Type::Invalid ? OptionSet<Layout::InlineDamage::Reason>() : m_lineDamage->reasons(); }
 #ifndef NDEBUG
     bool hasDetachedContent() const { return m_lineDamage && m_lineDamage->hasDetachedContent(); }

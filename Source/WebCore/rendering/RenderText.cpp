@@ -1704,8 +1704,7 @@ static void invalidateLineLayoutPathOnContentChangeIfNeeded(const RenderText& re
         container->invalidateLineLayoutPath();
         return;
     }
-    modernLineLayout->updateTextContent(renderer, offset, delta);
-    if (!modernLineLayout->isDamaged())
+    if (!modernLineLayout->updateTextContent(renderer, offset, delta))
         container->invalidateLineLayoutPath();
 }
 

@@ -687,10 +687,11 @@ void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, I
     if (!contentLength)
         return inlineItemList.append(InlineTextItem::createEmptyItem(inlineTextBox));
 
+    m_contentRequiresVisualReordering = m_contentRequiresVisualReordering || requiresVisualReordering(inlineTextBox);
+
     if (inlineTextBox.isCombined())
         return inlineItemList.append(InlineTextItem::createNonWhitespaceItem(inlineTextBox, { }, contentLength, UBIDI_DEFAULT_LTR, false, { }));
 
-    m_contentRequiresVisualReordering = m_contentRequiresVisualReordering || requiresVisualReordering(inlineTextBox);
     auto& style = inlineTextBox.style();
     auto shouldPreserveSpacesAndTabs = TextUtil::shouldPreserveSpacesAndTabs(inlineTextBox);
     auto shouldPreserveNewline = TextUtil::shouldPreserveNewline(inlineTextBox);
