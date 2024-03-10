@@ -448,6 +448,12 @@
 /* Message for requesting cross-site cookie and website data access. */
 "Do you want to allow “%@” to use cookies and website data while browsing “%@”?" = "Do you want to allow “%@” to use cookies and website data while browsing “%@”?";
 
+/* Message for requesting cross-site cookie and website data access. */
+"Do you want to allow %@ websites to access one another's cookies and website data?" = "Do you want to allow %@ websites to access one another's cookies and website data?";
+
+/* Informative text for requesting cross-site cookie and website data access. */
+"Logging into this website requires %s and %s to access one another's cookies and website data. Allowing access is necessary for the website to work correctly." = "Logging into this website requires %s and %s to access one another's cookies and website data. Allowing access is necessary for the website to work correctly.";
+
 /* Codec Strings */
 "Dolby Vision Codec String" = "Dolby Vision";
 

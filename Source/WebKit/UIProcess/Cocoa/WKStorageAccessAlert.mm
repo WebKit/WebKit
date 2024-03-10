@@ -56,7 +56,7 @@ void presentStorageAccessAlert(WKWebView *webView, const WebCore::RegistrableDom
 
     NSString *informativeText = [NSString stringWithFormat:WEB_UI_NSSTRING(@"This will allow “%@” to track your activity.", @"Informative text for requesting cross-site cookie and website data access."), requestingDomain.get()];
 
-    displayStorageAccessAlert(webView, alertTitle, informativeText, nil, WTFMove(completionHandler));
+    displayStorageAccessAlert(webView, alertTitle, informativeText, WTFMove(completionHandler));
 }
 
 void presentStorageAccessAlertQuirk(WKWebView *webView, const WebCore::RegistrableDomain& firstRequesting, const WebCore::RegistrableDomain& secondRequesting, const WebCore::RegistrableDomain& current, CompletionHandler<void(bool)>&& completionHandler)
@@ -73,24 +73,32 @@ void presentStorageAccessAlertQuirk(WKWebView *webView, const WebCore::Registrab
 
     NSString *informativeText = [NSString stringWithFormat:WEB_UI_NSSTRING(@"This will allow “%@” and “%@” to track your activity.", @"Informative text for requesting cross-site cookie and website data access."), firstRequestingDomain.get(), secondRequestingDomain.get()];
     
-    displayStorageAccessAlert(webView, alertTitle, informativeText, nil, WTFMove(completionHandler));
+    displayStorageAccessAlert(webView, alertTitle, informativeText, WTFMove(completionHandler));
 }
 
 void presentStorageAccessAlertSSOQuirk(WKWebView *webView, const String& organizationName, const HashMap<WebCore::RegistrableDomain, Vector<WebCore::RegistrableDomain>>& domainPairings, CompletionHandler<void(bool)>&& completionHandler)
 {
-    NSString *alertTitle = [NSString stringWithFormat:WEB_UI_NSSTRING(@"Are you logging in to this website, and do you want to allow other %@ sites access to your website data while browsing the websites listed below?", @"Message for requesting cross-site cookie and website data access."), organizationName.createCFString().get()];
-    NSString *informativeText = [NSString stringWithFormat:WEB_UI_NSSTRING(@"Allowing access to website data is necessary for the website to work correctly.", @"Informative text for requesting cross-site cookie and website data access.")];
+    NSString *alertTitle = [NSString stringWithFormat:WEB_UI_NSSTRING(@"Do you want to allow %@ websites to access one another's cookies and website data?", @"Message for requesting cross-site cookie and website data access."), organizationName.createCFString().get()];
 
-    auto* accessoryTextList = [NSMutableArray arrayWithCapacity:domainPairings.size()];
-    for (const auto& domains : domainPairings) {
-        auto embeddedDomains = makeStringByJoining(domains.value.map([](auto& domain) { return domain.string(); }).span(), "\n  - "_s);
-        NSString *accessoryText = [NSString stringWithFormat:WEB_UI_NSSTRING(@"While you are visiting %@, the following related websites will gain access to their cookies:\n  - %@", @"Accessory text for requesting cross-site cookie and website data access."), domains.key.string().createCFString().get(), embeddedDomains.createCFString().get()];
-        [accessoryTextList addObject:accessoryText];
+    HashSet<String> allDomains;
+    for (auto&& domains : domainPairings) {
+        allDomains.add(domains.key.string());
+        for (auto&& subFrameDomain : domains.value)
+            allDomains.add(subFrameDomain.string());
     }
-    displayStorageAccessAlert(webView, alertTitle, informativeText, accessoryTextList, WTFMove(completionHandler));
+
+    Vector<String> uniqueDomainList = copyToVector(allDomains);
+    std::sort(uniqueDomainList.begin(), uniqueDomainList.end());
+    auto lastDomain = uniqueDomainList.takeLast();
+
+    auto initialDomainList = makeStringByJoining(uniqueDomainList.span(), ", "_s);
+
+    NSString *informativeText = [NSString stringWithFormat:WEB_UI_NSSTRING(@"Logging into this website requires %s and %s to access one another's cookies and website data. Allowing access is necessary for the website to work correctly.", @"Informative text for requesting cross-site cookie and website data access."), initialDomainList.utf8().data(), lastDomain.utf8().data()];
+
+    displayStorageAccessAlert(webView, alertTitle, informativeText, WTFMove(completionHandler));
 }
 
-void displayStorageAccessAlert(WKWebView *webView, NSString *alertTitle, NSString *informativeText, NSArray<NSString *> *accessoryTextList, CompletionHandler<void(bool)>&& completionHandler)
+void displayStorageAccessAlert(WKWebView *webView, NSString *alertTitle, NSString *informativeText, CompletionHandler<void(bool)>&& completionHandler)
 {
     auto completionBlock = makeBlockPtr([completionHandler = WTFMove(completionHandler)](bool shouldAllow) mutable {
         completionHandler(shouldAllow);
@@ -103,17 +111,6 @@ void displayStorageAccessAlert(WKWebView *webView, NSString *alertTitle, NSStrin
     auto alert = adoptNS([NSAlert new]);
     [alert setMessageText:alertTitle];
     [alert setInformativeText:informativeText];
-    if (accessoryTextList) {
-        auto accessory = adoptNS([[NSTextView alloc] initWithFrame:NSMakeRect(0, 0, 200, 15)]);
-        auto *mutableString = [[accessory textStorage] mutableString];
-        [mutableString setString:[accessoryTextList componentsJoinedByString:@"\n"]];
-        [[accessory textStorage] setFont:[NSFont systemFontOfSize:[NSFont systemFontSize]]];
-        [[accessory textStorage] setForegroundColor:NSColor.whiteColor];
-        [accessory setEditable:NO];
-        [accessory setDrawsBackground:NO];
-        [alert setAccessoryView:accessory.get()];
-        [alert layout];
-    }
     [alert addButtonWithTitle:allowButtonString];
     [alert addButtonWithTitle:doNotAllowButtonString];
     [alert beginSheetModalForWindow:webView.window completionHandler:[completionBlock](NSModalResponse returnCode) {
@@ -122,14 +119,6 @@ void displayStorageAccessAlert(WKWebView *webView, NSString *alertTitle, NSStrin
     }];
 #else
     auto alert = WebKit::createUIAlertController(alertTitle, informativeText);
-
-    if (accessoryTextList) {
-        [accessoryTextList enumerateObjectsUsingBlock:^(NSString *line, NSUInteger index, BOOL *stop) {
-            [alert addTextFieldWithConfigurationHandler:[&line](UITextField *textField) {
-                textField.text = line;
-            }];
-        }];
-    }
 
     UIAlertAction* allowAction = [UIAlertAction actionWithTitle:allowButtonString style:UIAlertActionStyleCancel handler:[completionBlock](UIAlertAction *action) {
         completionBlock(true);
