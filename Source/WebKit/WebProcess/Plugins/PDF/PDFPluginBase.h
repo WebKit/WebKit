@@ -78,6 +78,9 @@ class WebWheelEvent;
 struct LookupTextResult;
 struct WebHitTestResultData;
 
+enum class ByteRangeRequestIdentifierType;
+using ByteRangeRequestIdentifier = ObjectIdentifier<ByteRangeRequestIdentifierType>;
+
 class PDFPluginBase : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<PDFPluginBase>, public WebCore::ScrollableArea, public PDFScriptEvaluator::Client, public Identified<PDFPluginIdentifier> {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(PDFPluginBase);
@@ -222,7 +225,7 @@ public:
 #if HAVE(INCREMENTAL_PDF_APIS)
     bool incrementalPDFLoadingEnabled() const { return m_incrementalPDFLoadingEnabled; }
     void receivedNonLinearizedPDFSentinel();
-    void startByteRangeRequest(WebCore::NetscapePlugInStreamLoaderClient&, uint64_t requestIdentifier, uint64_t position, size_t count);
+    void startByteRangeRequest(WebCore::NetscapePlugInStreamLoaderClient&, ByteRangeRequestIdentifier, uint64_t position, size_t count);
     void adoptBackgroundThreadDocument(RetainPtr<PDFDocument>&&);
     void maybeClearHighLatencyDataProviderFlag();
 #endif

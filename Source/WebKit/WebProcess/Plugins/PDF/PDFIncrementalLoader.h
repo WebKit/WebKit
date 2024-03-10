@@ -46,7 +46,8 @@ class ByteRangeRequest;
 class PDFPluginBase;
 class PDFPluginStreamLoaderClient;
 
-using ByteRangeRequestIdentifier = uint64_t;
+enum class ByteRangeRequestIdentifierType { };
+using ByteRangeRequestIdentifier = ObjectIdentifier<ByteRangeRequestIdentifierType>;
 using DataRequestCompletionHandler = Function<void(const uint8_t*, size_t count)>;
 
 class PDFIncrementalLoader : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<PDFIncrementalLoader> {

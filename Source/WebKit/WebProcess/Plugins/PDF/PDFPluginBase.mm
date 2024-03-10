@@ -362,7 +362,7 @@ void PDFPluginBase::maybeClearHighLatencyDataProviderFlag()
         [m_pdfDocument setHasHighLatencyDataProvider:NO];
 }
 
-void PDFPluginBase::startByteRangeRequest(NetscapePlugInStreamLoaderClient& streamLoaderClient, uint64_t requestIdentifier, uint64_t position, size_t count)
+void PDFPluginBase::startByteRangeRequest(NetscapePlugInStreamLoaderClient& streamLoaderClient, ByteRangeRequestIdentifier requestIdentifier, uint64_t position, size_t count)
 {
     if (!m_incrementalLoader)
         return;

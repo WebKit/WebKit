@@ -36,6 +36,7 @@
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <wtf/CallbackAggregator.h>
 #import <wtf/Identified.h>
+#import <wtf/ObjectIdentifier.h>
 #import <wtf/Range.h>
 #import <wtf/RangeSet.h>
 
@@ -49,7 +50,7 @@ using namespace WebCore;
 // We'll assume any size over 4GB is PDFKit noticing non-linearized data.
 static const uint32_t nonLinearizedPDFSentinel = std::numeric_limits<uint32_t>::max();
 
-class ByteRangeRequest : public LegacyIdentified<ByteRangeRequest> {
+class ByteRangeRequest : public Identified<ByteRangeRequestIdentifier> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     ByteRangeRequest() = default;

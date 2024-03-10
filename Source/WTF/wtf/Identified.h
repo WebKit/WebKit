@@ -62,6 +62,7 @@ protected:
     }
 
     Identified(const Identified&) = default;
+    Identified& operator=(const Identified&) = default;
 };
 
 template <typename T>
