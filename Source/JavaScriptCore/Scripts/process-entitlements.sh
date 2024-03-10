@@ -97,14 +97,20 @@ function maccatalyst_process_testapi_entitlements()
 
 function ios_family_process_jsc_entitlements()
 {
-    plistbuddy Add :com.apple.private.verified-jit bool YES
-    plistbuddy Add :dynamic-codesigning bool YES
+    if [[ "${PLATFORM_NAME}" != watchos ]]; then
+        plistbuddy Add :com.apple.private.verified-jit bool YES
+        if [[ "${PLATFORM_NAME}" == iphoneos ]]; then
+            if (( $(( ${SDK_VERSION_ACTUAL} )) >= 170400 )); then
+                plistbuddy Add :com.apple.developer.cs.allow-jit bool YES
+                plistbuddy Add :com.apple.developer.web-browser-engine.webcontent bool YES
+            else
+                plistbuddy Add :dynamic-codesigning bool YES
+            fi
+        else
+            plistbuddy Add :dynamic-codesigning bool YES
+        fi
+    fi
     plistbuddy Add :com.apple.developer.kernel.extended-virtual-addressing bool YES
-}
-
-function ios_family_process_testapi_entitlements()
-{
-    ios_family_process_jsc_entitlements
 }
 
 rm -f "${WK_PROCESSED_XCENT_FILE}"
@@ -152,13 +158,13 @@ then
     if [[ "${PRODUCT_NAME}" == jsc ||
           "${PRODUCT_NAME}" == dynbench ||
           "${PRODUCT_NAME}" == minidom ||
+          "${PRODUCT_NAME}" == testapi ||
           "${PRODUCT_NAME}" == testair ||
           "${PRODUCT_NAME}" == testb3 ||
           "${PRODUCT_NAME}" == testdfg ||
           "${PRODUCT_NAME}" == testmasm ||
           "${PRODUCT_NAME}" == testmem ||
           "${PRODUCT_NAME}" == testRegExp ]]; then ios_family_process_jsc_entitlements
-    elif [[ "${PRODUCT_NAME}" == testapi ]]; then ios_family_process_testapi_entitlements
     else echo "Unsupported/unknown product: ${PRODUCT_NAME}"
     fi
 else
