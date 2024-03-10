@@ -26,6 +26,7 @@
 #pragma once
 
 #include "MessageReceiver.h"
+#include "ScriptMessageHandlerIdentifier.h"
 #include "UserContentControllerIdentifier.h"
 #include "UserScriptIdentifier.h"
 #include "UserStyleSheetIdentifier.h"
@@ -101,7 +102,7 @@ private:
     void removeUserStyleSheet(ContentWorldIdentifier, UserStyleSheetIdentifier);
     void removeAllUserStyleSheets(const Vector<ContentWorldIdentifier>&);
 
-    void removeUserScriptMessageHandler(ContentWorldIdentifier, uint64_t userScriptMessageHandlerIdentifier);
+    void removeUserScriptMessageHandler(ContentWorldIdentifier, ScriptMessageHandlerIdentifier);
     void removeAllUserScriptMessageHandlersForWorlds(const Vector<ContentWorldIdentifier>&);
     void removeAllUserScriptMessageHandlers();
 
@@ -115,8 +116,8 @@ private:
     void addUserStyleSheetInternal(InjectedBundleScriptWorld&, const std::optional<UserStyleSheetIdentifier>&, WebCore::UserStyleSheet&&);
     void removeUserStyleSheetInternal(InjectedBundleScriptWorld&, UserStyleSheetIdentifier);
 #if ENABLE(USER_MESSAGE_HANDLERS)
-    void addUserScriptMessageHandlerInternal(InjectedBundleScriptWorld&, uint64_t userScriptMessageHandlerIdentifier, const AtomString& name);
-    void removeUserScriptMessageHandlerInternal(InjectedBundleScriptWorld&, uint64_t userScriptMessageHandlerIdentifier);
+    void addUserScriptMessageHandlerInternal(InjectedBundleScriptWorld&, ScriptMessageHandlerIdentifier, const AtomString& name);
+    void removeUserScriptMessageHandlerInternal(InjectedBundleScriptWorld&, ScriptMessageHandlerIdentifier);
 #endif
 
     UserContentControllerIdentifier m_identifier;
@@ -128,7 +129,7 @@ private:
     WorldToUserStyleSheetMap m_userStyleSheets;
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
-    typedef HashMap<RefPtr<InjectedBundleScriptWorld>, Vector<std::pair<uint64_t, RefPtr<WebUserMessageHandlerDescriptorProxy>>>> WorldToUserMessageHandlerVectorMap;
+    typedef HashMap<RefPtr<InjectedBundleScriptWorld>, Vector<std::pair<ScriptMessageHandlerIdentifier, RefPtr<WebUserMessageHandlerDescriptorProxy>>>> WorldToUserMessageHandlerVectorMap;
     WorldToUserMessageHandlerVectorMap m_userMessageHandlers;
 #endif
 #if ENABLE(CONTENT_EXTENSIONS)

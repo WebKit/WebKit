@@ -36,7 +36,7 @@ header: "WebUserContentControllerDataTypes.h"
 
 header: "WebUserContentControllerDataTypes.h"
 [CustomHeader] struct WebKit::WebScriptMessageHandlerData {
-    uint64_t identifier;
+    WebKit::ScriptMessageHandlerIdentifier identifier;
     WebKit::ContentWorldIdentifier worldIdentifier;
     String name;
 }

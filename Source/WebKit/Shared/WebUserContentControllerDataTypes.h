@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ContentWorldShared.h"
+#include "ScriptMessageHandlerIdentifier.h"
 #include "UserScriptIdentifier.h"
 #include "UserStyleSheetIdentifier.h"
 #include <WebCore/UserScript.h>
@@ -51,7 +52,7 @@ struct WebUserStyleSheetData {
 };
 
 struct WebScriptMessageHandlerData {
-    uint64_t identifier;
+    ScriptMessageHandlerIdentifier identifier;
     ContentWorldIdentifier worldIdentifier;
     String name;
 };

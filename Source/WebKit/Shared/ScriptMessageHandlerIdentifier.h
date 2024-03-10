@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,6 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-messages -> WebUserContentControllerProxy {
-DidPostMessage(WebKit::WebPageProxyIdentifier pageID, struct WebKit::FrameInfoData frameInfoData, WebKit::ScriptMessageHandlerIdentifier messageHandlerID, std::span<const uint8_t> message) -> (std::span<const uint8_t> resultValue, String errorMessage)
-}
+#pragma once
+
+namespace WebKit {
+
+enum class ScriptMessageHandlerIdentifierType { };
+using ScriptMessageHandlerIdentifier = ObjectIdentifier<ScriptMessageHandlerIdentifierType>;
+
+} // namespace WebKit

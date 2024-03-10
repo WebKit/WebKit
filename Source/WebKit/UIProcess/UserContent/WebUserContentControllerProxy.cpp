@@ -326,13 +326,13 @@ void WebUserContentControllerProxy::removeAllUserMessageHandlers()
     m_scriptMessageHandlers.clear();
 }
 
-void WebUserContentControllerProxy::didPostMessage(WebPageProxyIdentifier pageProxyID, FrameInfoData&& frameInfoData, uint64_t messageHandlerID, std::span<const uint8_t> dataReference, CompletionHandler<void(std::span<const uint8_t>, const String&)>&& reply)
+void WebUserContentControllerProxy::didPostMessage(WebPageProxyIdentifier pageProxyID, FrameInfoData&& frameInfoData, ScriptMessageHandlerIdentifier messageHandlerID, std::span<const uint8_t> dataReference, CompletionHandler<void(std::span<const uint8_t>, const String&)>&& reply)
 {
     auto page = WebProcessProxy::webPage(pageProxyID);
     if (!page)
         return;
 
-    if (!HashMap<uint64_t, RefPtr<WebScriptMessageHandler>>::isValidKey(messageHandlerID))
+    if (!HashMap<ScriptMessageHandlerIdentifier, RefPtr<WebScriptMessageHandler>>::isValidKey(messageHandlerID))
         return;
 
     RefPtr<WebScriptMessageHandler> handler = m_scriptMessageHandlers.get(messageHandlerID);

@@ -75,6 +75,7 @@
 #include "RenderingUpdateID.h"
 #include "RetrieveRecordResponseBodyCallbackIdentifier.h"
 #include "SampleBufferDisplayLayerIdentifier.h"
+#include "ScriptMessageHandlerIdentifier.h"
 #include "ShapeDetectionIdentifier.h"
 #include "StorageAreaIdentifier.h"
 #include "StorageAreaImplIdentifier.h"
@@ -532,6 +533,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RenderingUpdateID));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RetrieveRecordResponseBodyCallbackIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::SampleBufferDisplayLayerIdentifier));
+    static_assert(sizeof(uint64_t) == sizeof(WebKit::ScriptMessageHandlerIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::ShapeDetectionIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::StorageAreaIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::StorageAreaImplIdentifier));
@@ -643,6 +645,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebKit::RenderingUpdateID"_s,
         "WebKit::RetrieveRecordResponseBodyCallbackIdentifier"_s,
         "WebKit::SampleBufferDisplayLayerIdentifier"_s,
+        "WebKit::ScriptMessageHandlerIdentifier"_s,
         "WebKit::ShapeDetectionIdentifier"_s,
         "WebKit::StorageAreaIdentifier"_s,
         "WebKit::StorageAreaImplIdentifier"_s,

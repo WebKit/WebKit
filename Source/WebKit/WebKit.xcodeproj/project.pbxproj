@@ -1098,6 +1098,7 @@
 		461E1BF2279A0116006AF53B /* WebSharedWorkerContextManagerConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 461E1BEF279A010F006AF53B /* WebSharedWorkerContextManagerConnection.h */; };
 		462CD80C28204DFA00F0EA04 /* MarkSurfacesAsVolatileRequestIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 462CD80B28204DF100F0EA04 /* MarkSurfacesAsVolatileRequestIdentifier.h */; };
 		46301002298477B100715DB1 /* WKWebGeolocationPolicyDecider.h in Headers */ = {isa = PBXBuildFile; fileRef = 463010012984778C00715DB1 /* WKWebGeolocationPolicyDecider.h */; };
+		463BB93A2B9D08D80098C5C3 /* ScriptMessageHandlerIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 463BB9392B9D08D50098C5C3 /* ScriptMessageHandlerIdentifier.h */; };
 		463FD4801EB9459600A2982C /* WKProcessTerminationReason.h in Headers */ = {isa = PBXBuildFile; fileRef = 463FD47F1EB9458400A2982C /* WKProcessTerminationReason.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		463FD4821EB94EC000A2982C /* ProcessTerminationReason.h in Headers */ = {isa = PBXBuildFile; fileRef = 463FD4811EB94EAD00A2982C /* ProcessTerminationReason.h */; };
 		4656F7BD27ACAA8D00CB3D7C /* WebSharedWorker.h in Headers */ = {isa = PBXBuildFile; fileRef = 4656F7BC27ACAA8100CB3D7C /* WebSharedWorker.h */; };
@@ -5299,6 +5300,7 @@
 		463236852314833F00A48FA7 /* UIRemoteObjectRegistry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UIRemoteObjectRegistry.h; sourceTree = "<group>"; };
 		463236862314833F00A48FA7 /* UIRemoteObjectRegistry.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UIRemoteObjectRegistry.cpp; sourceTree = "<group>"; };
 		463473B623561D2A00BE1A84 /* WebBackForwardCacheEntry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebBackForwardCacheEntry.cpp; sourceTree = "<group>"; };
+		463BB9392B9D08D50098C5C3 /* ScriptMessageHandlerIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScriptMessageHandlerIdentifier.h; sourceTree = "<group>"; };
 		463FD47F1EB9458400A2982C /* WKProcessTerminationReason.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKProcessTerminationReason.h; sourceTree = "<group>"; };
 		463FD4811EB94EAD00A2982C /* ProcessTerminationReason.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcessTerminationReason.h; sourceTree = "<group>"; };
 		46411E3D2AFDA94400CC00E4 /* WebCompiledContentRuleListData.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebCompiledContentRuleListData.serialization.in; sourceTree = "<group>"; };
@@ -9085,6 +9087,7 @@
 				1AAB4A8C1296F0A20023952F /* SandboxExtension.h */,
 				FA1473272B06EE6200765CC1 /* SandboxExtension.serialization.in */,
 				E1E552C316AE065E004ED653 /* SandboxInitializationParameters.h */,
+				463BB9392B9D08D50098C5C3 /* ScriptMessageHandlerIdentifier.h */,
 				2D65D196274B8E84009C4101 /* ScrollingAccelerationCurve.cpp */,
 				2D65D195274B8E84009C4101 /* ScrollingAccelerationCurve.h */,
 				460B87352AFD9F8200200D8C /* ScrollingAccelerationCurve.serialization.in */,
@@ -16493,6 +16496,7 @@
 				E1E552C516AE065F004ED653 /* SandboxInitializationParameters.h in Headers */,
 				E36FF00327F36FBD004BE21A /* SandboxStateVariables.h in Headers */,
 				7BAB111025DD02B3008FC479 /* ScopedActiveMessageReceiveQueue.h in Headers */,
+				463BB93A2B9D08D80098C5C3 /* ScriptMessageHandlerIdentifier.h in Headers */,
 				E4D54D0421F1D72D007E3C36 /* ScrollingTreeFrameScrollingNodeRemoteIOS.h in Headers */,
 				0F931C1C18C5711900DBA7C3 /* ScrollingTreeOverflowScrollingNodeIOS.h in Headers */,
 				0F931C1C18C5711900DBB8D4 /* ScrollingTreeScrollingNodeDelegateIOS.h in Headers */,

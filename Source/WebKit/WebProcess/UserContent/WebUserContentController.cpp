@@ -30,6 +30,7 @@
 #include "FrameInfoData.h"
 #include "InjectUserScriptImmediately.h"
 #include "InjectedBundleScriptWorld.h"
+#include "ScriptMessageHandlerIdentifier.h"
 #include "WebCompiledContentRuleList.h"
 #include "WebFrame.h"
 #include "WebPage.h"
@@ -257,7 +258,7 @@ void WebUserContentController::removeAllUserStyleSheets(const Vector<ContentWorl
 #if ENABLE(USER_MESSAGE_HANDLERS)
 class WebUserMessageHandlerDescriptorProxy : public WebCore::UserMessageHandlerDescriptor {
 public:
-    static Ref<WebUserMessageHandlerDescriptorProxy> create(WebUserContentController* controller, const AtomString& name, InjectedBundleScriptWorld& world, uint64_t identifier)
+    static Ref<WebUserMessageHandlerDescriptorProxy> create(WebUserContentController* controller, const AtomString& name, InjectedBundleScriptWorld& world, ScriptMessageHandlerIdentifier identifier)
     {
         return adoptRef(*new WebUserMessageHandlerDescriptorProxy(controller, name, world, identifier));
     }
@@ -266,10 +267,10 @@ public:
     {
     }
 
-    uint64_t identifier() { return m_identifier; }
+    ScriptMessageHandlerIdentifier identifier() { return m_identifier; }
 
 private:
-    WebUserMessageHandlerDescriptorProxy(WebUserContentController* controller, const AtomString& name, InjectedBundleScriptWorld& world, uint64_t identifier)
+    WebUserMessageHandlerDescriptorProxy(WebUserContentController* controller, const AtomString& name, InjectedBundleScriptWorld& world, ScriptMessageHandlerIdentifier identifier)
         : WebCore::UserMessageHandlerDescriptor(name, world.coreWorld())
         , m_controller(controller)
         , m_identifier(identifier)
@@ -305,7 +306,7 @@ private:
     }
 
     RefPtr<WebUserContentController> m_controller;
-    uint64_t m_identifier;
+    ScriptMessageHandlerIdentifier m_identifier;
 };
 #endif
 
@@ -327,7 +328,7 @@ void WebUserContentController::addUserScriptMessageHandlers(const Vector<WebScri
 #endif
 }
 
-void WebUserContentController::removeUserScriptMessageHandler(ContentWorldIdentifier worldIdentifier, uint64_t userScriptMessageHandlerIdentifier)
+void WebUserContentController::removeUserScriptMessageHandler(ContentWorldIdentifier worldIdentifier, ScriptMessageHandlerIdentifier userScriptMessageHandlerIdentifier)
 {
 #if ENABLE(USER_MESSAGE_HANDLERS)
     auto it = worldMap().find(worldIdentifier);
@@ -379,15 +380,15 @@ void WebUserContentController::removeAllUserScriptMessageHandlersForWorlds(const
 }
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
-void WebUserContentController::addUserScriptMessageHandlerInternal(InjectedBundleScriptWorld& world, uint64_t userScriptMessageHandlerIdentifier, const AtomString& name)
+void WebUserContentController::addUserScriptMessageHandlerInternal(InjectedBundleScriptWorld& world, ScriptMessageHandlerIdentifier userScriptMessageHandlerIdentifier, const AtomString& name)
 {
-    auto& messageHandlersInWorld = m_userMessageHandlers.ensure(&world, [] { return Vector<std::pair<uint64_t, RefPtr<WebUserMessageHandlerDescriptorProxy>>> { }; }).iterator->value;
+    auto& messageHandlersInWorld = m_userMessageHandlers.ensure(&world, [] { return Vector<std::pair<ScriptMessageHandlerIdentifier, RefPtr<WebUserMessageHandlerDescriptorProxy>>> { }; }).iterator->value;
     if (messageHandlersInWorld.findIf([&](auto& pair) { return pair.first ==  userScriptMessageHandlerIdentifier; }) != notFound)
         return;
     messageHandlersInWorld.append(std::make_pair(userScriptMessageHandlerIdentifier, WebUserMessageHandlerDescriptorProxy::create(this, name, world, userScriptMessageHandlerIdentifier)));
 }
 
-void WebUserContentController::removeUserScriptMessageHandlerInternal(InjectedBundleScriptWorld& world, uint64_t userScriptMessageHandlerIdentifier)
+void WebUserContentController::removeUserScriptMessageHandlerInternal(InjectedBundleScriptWorld& world, ScriptMessageHandlerIdentifier userScriptMessageHandlerIdentifier)
 {
     auto it = m_userMessageHandlers.find(&world);
     if (it == m_userMessageHandlers.end())

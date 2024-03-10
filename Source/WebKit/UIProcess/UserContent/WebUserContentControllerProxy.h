@@ -28,6 +28,7 @@
 #include "APIObject.h"
 #include "ContentWorldShared.h"
 #include "MessageReceiver.h"
+#include "ScriptMessageHandlerIdentifier.h"
 #include "UserContentControllerIdentifier.h"
 #include "WebPageProxyIdentifier.h"
 #include "WebUserContentControllerProxyMessages.h"
@@ -120,14 +121,14 @@ private:
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
-    void didPostMessage(WebPageProxyIdentifier, FrameInfoData&&, uint64_t messageHandlerID, std::span<const uint8_t>, CompletionHandler<void(std::span<const uint8_t>, const String&)>&&);
+    void didPostMessage(WebPageProxyIdentifier, FrameInfoData&&, ScriptMessageHandlerIdentifier, std::span<const uint8_t>, CompletionHandler<void(std::span<const uint8_t>, const String&)>&&);
 
     void addContentWorld(API::ContentWorld&);
 
     WeakHashSet<WebProcessProxy> m_processes;
     Ref<API::Array> m_userScripts;
     Ref<API::Array> m_userStyleSheets;
-    HashMap<uint64_t, RefPtr<WebScriptMessageHandler>> m_scriptMessageHandlers;
+    HashMap<ScriptMessageHandlerIdentifier, RefPtr<WebScriptMessageHandler>> m_scriptMessageHandlers;
     HashSet<ContentWorldIdentifier> m_associatedContentWorlds;
 
 #if ENABLE(CONTENT_EXTENSIONS)

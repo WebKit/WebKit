@@ -377,6 +377,7 @@ def serialized_identifiers():
         'WebKit::RenderingUpdateID',
         'WebKit::RetrieveRecordResponseBodyCallbackIdentifier',
         'WebKit::SampleBufferDisplayLayerIdentifier',
+        'WebKit::ScriptMessageHandlerIdentifier',
         'WebKit::ShapeDetectionIdentifier',
         'WebKit::StorageAreaIdentifier',
         'WebKit::StorageAreaImplIdentifier',

@@ -105,6 +105,7 @@ template: enum class WebKit::RemoteRemoteCommandListenerIdentifierType
 template: enum class WebKit::RemoteSourceBufferIdentifierType
 template: enum class WebKit::RetrieveRecordResponseBodyCallbackIdentifierType
 template: enum class WebKit::SampleBufferDisplayLayerIdentifierType
+template: enum class WebKit::ScriptMessageHandlerIdentifierType
 template: enum class WebKit::ShapeDetectionIdentifierType
 template: enum class WebKit::StorageAreaImplIdentifierType
 template: enum class WebKit::StorageAreaMapIdentifierType
