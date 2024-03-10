@@ -157,6 +157,8 @@ public:
     const BlendingKeyframes& blendingKeyframes() const { return m_blendingKeyframes; }
     const HashSet<AnimatableCSSProperty>& animatedProperties();
     bool animatesProperty(const AnimatableCSSProperty&) const;
+    const HashSet<AnimatableCSSProperty>& acceleratedProperties() const { return m_acceleratedProperties; }
+    const HashSet<AnimatableCSSProperty>& acceleratedPropertiesWithImplicitKeyframe() const { return m_acceleratedPropertiesWithImplicitKeyframe; }
 
     bool computeExtentOfTransformAnimation(LayoutRect&) const;
     bool computeTransformedExtentViaTransformList(const FloatRect&, const RenderStyle&, LayoutRect&) const;
@@ -243,6 +245,8 @@ private:
     void computeHasAcceleratedPropertyOverriddenByCascadeProperty();
     void computeHasReferenceFilter();
     void computeHasSizeDependentTransform();
+    void analyzeAcceleratedProperties();
+
     void abilityToBeAcceleratedDidChange();
     void updateAcceleratedAnimationIfNecessary();
 
@@ -290,6 +294,8 @@ private:
     AtomString m_keyframesName;
     BlendingKeyframes m_blendingKeyframes { emptyAtom() };
     HashSet<AnimatableCSSProperty> m_animatedProperties;
+    HashSet<AnimatableCSSProperty> m_acceleratedProperties;
+    HashSet<AnimatableCSSProperty> m_acceleratedPropertiesWithImplicitKeyframe;
     Vector<ParsedKeyframe> m_parsedKeyframes;
     Vector<AcceleratedAction> m_pendingAcceleratedActions;
     RefPtr<Element> m_target;

@@ -2711,6 +2711,7 @@ webanimations/frame-rate/document-timeline-maximum-frame-rate.html [ Skip ]
 webanimations/transform-animation-with-delay-yields-accelerated-animation.html [ Skip ]
 webanimations/partly-accelerated-transition-by-removing-property.html [ Skip ]
 webanimations/accelerated-animations-and-composite.html [ Skip ]
+webanimations/accelerated-animations-and-implicit-keyframes.html [ Skip ]
 
 # OT-SVG is not implemented on GTK/WPE
 fast/text/otsvg-canvas.html [ ImageOnlyFailure ]

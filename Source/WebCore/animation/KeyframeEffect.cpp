@@ -1014,10 +1014,27 @@ void KeyframeEffect::setBlendingKeyframes(BlendingKeyframes&& blendingKeyframes)
     computeHasAcceleratedPropertyOverriddenByCascadeProperty();
     computeHasReferenceFilter();
     computeHasSizeDependentTransform();
+    analyzeAcceleratedProperties();
 
     checkForMatchingTransformFunctionLists();
 
     updateAcceleratedAnimationIfNecessary();
+}
+
+void KeyframeEffect::analyzeAcceleratedProperties()
+{
+    m_acceleratedProperties.clear();
+    m_acceleratedPropertiesWithImplicitKeyframe.clear();
+
+    ASSERT(document());
+    auto& settings = document()->settings();
+    for (auto& property : m_blendingKeyframes.properties()) {
+        if (!CSSPropertyAnimation::animationOfPropertyIsAccelerated(property, settings))
+            continue;
+        m_acceleratedProperties.add(property);
+        if (m_blendingKeyframes.hasImplicitKeyframeForProperty(property))
+            m_acceleratedPropertiesWithImplicitKeyframe.add(property);
+    }
 }
 
 void KeyframeEffect::checkForMatchingTransformFunctionLists()
