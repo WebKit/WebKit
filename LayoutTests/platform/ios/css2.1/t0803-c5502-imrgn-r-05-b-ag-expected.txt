@@ -10,7 +10,7 @@ layer at (0,0) size 800x115
         RenderBlock {P} at (0,0) size 180x15 [color=#00FF00] [bgcolor=#FFFF00]
           RenderText {#text} at (0,0) size 45x15
             text run at (0,0) width 45: "xx "
-          RenderInline {SPAN} at (0,0) size 135x15 [color=#FFA500] [bgcolor=#0000FF]
+          RenderInline {SPAN} at (45,0) size 135x15 [color=#FFA500] [bgcolor=#0000FF]
             RenderText {#text} at (45,0) size 135x15
               text run at (45,0) width 135: "xx xx xx "
           RenderText {#text} at (120,0) size 30x15

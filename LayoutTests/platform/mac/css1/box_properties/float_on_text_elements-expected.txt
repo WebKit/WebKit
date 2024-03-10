@@ -8,7 +8,7 @@ layer at (0,0) size 785x2778
           text run at (0,0) width 385: "This paragraph is of class \"one\". It has a width of 50% and"
           text run at (0,18) width 128: "is floated to the left."
       RenderBlock {P} at (0,0) size 769x90
-        RenderText {#text} at (384,0) size 769x90
+        RenderText {#text} at (0,0) size 769x90
           text run at (384,0) width 385: "This paragraph should start on the right side of a yellow"
           text run at (384,18) width 385: "box which contains the previous paragraph. Since the text"
           text run at (0,36) width 769: "of this element is much longer than the text in the previous element, the text will wrap around the yellow box. There is"
@@ -54,7 +54,7 @@ layer at (0,0) size 785x2778
         RenderBlock (floating) {SPAN} at (0,0) size 48x37 [bgcolor=#C0C0C0]
           RenderText {#text} at (0,0) size 22x37
             text run at (0,0) width 22: "T"
-        RenderText {#text} at (48,0) size 769x72
+        RenderText {#text} at (0,0) size 769x72
           text run at (48,0) width 721: "he first letter (a \"T\") of this paragraph should float left and be twice the font-size of the rest of the paragraph, as"
           text run at (48,18) width 530: "well as bold, with a content width of 1.5em and a background-color of silver. "
           text run at (577,18) width 192: "The top of the big letter \"T\""
@@ -165,7 +165,7 @@ layer at (0,0) size 785x2778
         RenderTableSection {TBODY} at (1,1) size 767x1397
           RenderTableRow {TR} at (0,0) size 767x26
             RenderTableCell {TD} at (0,0) size 767x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 161x18
+              RenderInline {STRONG} at (4,4) size 161x18
                 RenderText {#text} at (4,4) size 161x18
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 767x1371
@@ -178,7 +178,7 @@ layer at (0,0) size 785x2778
                   text run at (0,0) width 374: "This paragraph is of class \"one\". It has a width of 50%"
                   text run at (0,18) width 155: "and is floated to the left."
               RenderBlock {P} at (4,4) size 747x90
-                RenderText {#text} at (373,0) size 747x90
+                RenderText {#text} at (0,0) size 747x90
                   text run at (373,0) width 374: "This paragraph should start on the right side of a yellow"
                   text run at (373,18) width 374: "box which contains the previous paragraph. Since the text"
                   text run at (0,36) width 747: "of this element is much longer than the text in the previous element, the text will wrap around the yellow box. There"
@@ -224,7 +224,7 @@ layer at (0,0) size 785x2778
                 RenderBlock (floating) {SPAN} at (0,0) size 48x37 [bgcolor=#C0C0C0]
                   RenderText {#text} at (0,0) size 22x37
                     text run at (0,0) width 22: "T"
-                RenderText {#text} at (48,0) size 747x72
+                RenderText {#text} at (0,0) size 747x72
                   text run at (48,0) width 699: "he first letter (a \"T\") of this paragraph should float left and be twice the font-size of the rest of the paragraph,"
                   text run at (48,18) width 519: "as well as bold, with a content width of 1.5em and a background-color of silver. "
                   text run at (566,18) width 181: "The top of the big letter \"T\""

@@ -6,7 +6,7 @@ layer at (0,0) size 800x124
       RenderBlock {P} at (0,0) size 784x20 [color=#000080]
         RenderText {#text} at (0,0) size 220x19
           text run at (0,0) width 220: "This sentence should be in italics. "
-        RenderInline {SPAN} at (0,0) size 208x19
+        RenderInline {SPAN} at (219,0) size 208x19
           RenderText {#text} at (219,0) size 208x19
             text run at (219,0) width 208: "This sentence should be normal."
         RenderText {#text} at (0,0) size 0x0

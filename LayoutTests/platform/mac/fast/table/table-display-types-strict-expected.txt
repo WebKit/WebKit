@@ -48,7 +48,7 @@ layer at (0,0) size 800x493
                         RenderInline {TD} at (0,0) size 48x21
                           RenderText {#text} at (1,1) size 46x19
                             text run at (1,1) width 46: "Head 1"
-                        RenderInline {TD} at (0,0) size 49x21
+                        RenderInline {TD} at (47,0) size 49x21
                           RenderText {#text} at (48,1) size 47x19
                             text run at (48,1) width 47: "Head 2"
               RenderTableCell {TFOOT} at (103,2) size 117x24 [r=0 c=1 rs=1 cs=1]
@@ -59,7 +59,7 @@ layer at (0,0) size 800x493
                         RenderInline {TD} at (0,0) size 56x21
                           RenderText {#text} at (1,1) size 54x19
                             text run at (1,1) width 54: "Footer 1"
-                        RenderInline {TD} at (0,0) size 57x21
+                        RenderInline {TD} at (55,0) size 57x21
                           RenderText {#text} at (56,1) size 55x19
                             text run at (56,1) width 55: "Footer 2"
           RenderTableSection {TBODY} at (0,27) size 222x22
@@ -68,14 +68,14 @@ layer at (0,0) size 800x493
                 RenderInline {TD} at (0,0) size 41x21
                   RenderText {#text} at (1,1) size 39x19
                     text run at (1,1) width 39: "Cell 1"
-                RenderInline {TD} at (0,0) size 42x21
+                RenderInline {TD} at (40,0) size 42x21
                   RenderText {#text} at (41,1) size 40x19
                     text run at (41,1) width 40: "Cell 2"
               RenderTableCell {TR} at (103,0) size 117x20 [r=0 c=1 rs=1 cs=1]
                 RenderInline {TD} at (0,0) size 41x21
                   RenderText {#text} at (1,1) size 39x19
                     text run at (1,1) width 39: "Cell 3"
-                RenderInline {TD} at (0,0) size 42x21
+                RenderInline {TD} at (40,0) size 42x21
                   RenderText {#text} at (41,1) size 40x19
                     text run at (41,1) width 40: "Cell 4"
       RenderBlock {TABLE} at (10,162) size 764x103 [border: (1px solid #000000)]

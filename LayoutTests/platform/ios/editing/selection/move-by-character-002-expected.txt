@@ -40,7 +40,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x358 [border: (2px solid #FF0000)]
-        RenderInline {SPAN} at (0,0) size 252x248
+        RenderInline {SPAN} at (14,95) size 252x248
           RenderText {#text} at (14,95) size 11x28
             text run at (14,95) width 11: "a"
           RenderImage {IMG} at (24,14) size 77x103
@@ -49,7 +49,7 @@ layer at (0,0) size 800x600
           RenderBR {BR} at (146,95) size 1x28
           RenderText {#text} at (14,205) size 66x28
             text run at (14,205) width 66: "nation "
-          RenderInline {I} at (0,0) size 0x28
+          RenderInline {I} at (79,205) size 0x28
             RenderText {#text} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
           RenderImage {IMG} at (79,124) size 77x103

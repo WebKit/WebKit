@@ -90,5 +90,5 @@ layer at (0,0) size 800x600
         RenderText {#text} at (14,14) size 127x28
           text run at (14,14) width 121: "the notationl"
           text run at (134,14) width 7: " "
-        RenderInline {SPAN} at (0,0) size 0x28
+        RenderInline {SPAN} at (140,14) size 0x28
 caret: position 14 of child 0 {#text} of child 5 {DIV} of body

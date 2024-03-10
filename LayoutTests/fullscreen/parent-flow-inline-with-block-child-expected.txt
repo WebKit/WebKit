@@ -10,7 +10,7 @@ layer at (0,0) size 800x600
               text run at (0,0) width 16: "1"
           RenderText {#text} at (16,0) size 16x16
             text run at (16,0) width 16: " "
-          RenderInline {SPAN} at (0,0) size 16x16
+          RenderInline {SPAN} at (32,0) size 16x16
             RenderText {#text} at (32,0) size 16x16
               text run at (32,0) width 16: "2"
         RenderBlock (anonymous) at (0,16) size 784x0

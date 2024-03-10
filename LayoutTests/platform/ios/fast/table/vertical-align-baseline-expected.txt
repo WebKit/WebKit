@@ -12,7 +12,7 @@ layer at (0,0) size 800x511
             RenderTableCell {TD} at (50,68) size 124x47 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,87) size 44x19
                 text run at (2,21) width 44: "ipsum "
-              RenderInline {SPAN} at (0,0) size 77x41
+              RenderInline {SPAN} at (45,69) size 77x41
                 RenderText {#text} at (45,69) size 77x41
                   text run at (45,3) width 77: "dolor"
               RenderText {#text} at (0,0) size 0x0

@@ -28,7 +28,7 @@ layer at (0,0) size 800x585
                                           text run at (344,1) width 37: "News"
                                     RenderTableRow {TR} at (0,20) size 725x38
                                       RenderTableCell {TD} at (0,20) size 725x38 [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
-                                        RenderInline {B} at (0,0) size 97x18
+                                        RenderInline {B} at (314,1) size 97x18
                                           RenderText {#text} at (314,1) size 97x18
                                             text run at (314,1) width 97: "11. M\x{E4}rz 2002"
                                         RenderBR {BR} at (410,1) size 1x18
@@ -37,7 +37,7 @@ layer at (0,0) size 800x585
                                           text run at (542,19) width 139: "unter komerz. Scripte"
                                     RenderTableRow {TR} at (0,58) size 725x38
                                       RenderTableCell {TD} at (0,58) size 725x38 [border: (1px inset #000000)] [r=2 c=0 rs=1 cs=1]
-                                        RenderInline {B} at (0,0) size 95x18
+                                        RenderInline {B} at (315,1) size 95x18
                                           RenderText {#text} at (315,1) size 95x18
                                             text run at (315,1) width 95: "09.M\x{E4}rz 2002"
                                           RenderBR {BR} at (409,1) size 1x18
@@ -68,7 +68,7 @@ layer at (0,0) size 800x585
                                           text run at (115,73) width 435: "abgeschafft, brauchte 2 Tage daf\x{FC}r, dabei lag der Fehler vor meiner "
                                           text run at (549,73) width 61: "Nase ! :-)"
                                         RenderBR {BR} at (609,73) size 1x18
-                                        RenderText {#text} at (5,91) size 718x72
+                                        RenderText {#text} at (3,91) size 718x72
                                           text run at (5,91) width 384: "F\x{FC}r Euch hei\x{DF}t es, wenn Ihr eines der Scripte benutzt, ladet "
                                           text run at (388,91) width 332: "Euch die admin.cgi runter und vereinbart unbedingt"
                                           text run at (7,109) width 136: "ein neues Password! "

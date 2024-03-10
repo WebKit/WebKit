@@ -14,6 +14,6 @@ layer at (0,0) size 800x600
             text run at (0,0) width 36: "Hello"
         RenderText {#text} at (35,0) size 5x19
           text run at (35,0) width 5: " "
-        RenderInline {SPAN} at (0,0) size 41x19
+        RenderInline {SPAN} at (39,0) size 41x19
           RenderText {#text} at (39,0) size 41x19
             text run at (39,0) width 41: "World"

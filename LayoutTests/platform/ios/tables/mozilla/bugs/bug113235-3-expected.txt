@@ -7,7 +7,7 @@ layer at (0,0) size 800x1054
         RenderInline {FONT} at (0,0) size 110x19
           RenderText {#text} at (0,0) size 98x19
             text run at (0,0) width 98: "same line as X "
-          RenderInline {A} at (0,0) size 13x19
+          RenderInline {A} at (97,0) size 13x19
             RenderText {#text} at (97,0) size 13x19
               text run at (97,0) width 13: "X"
       RenderBlock (anonymous) at (0,20) size 784x30
@@ -22,7 +22,7 @@ layer at (0,0) size 800x1054
           RenderInline {A} at (0,0) size 10x19
             RenderText {#text} at (0,0) size 10x19
               text run at (0,0) width 10: "Z"
-          RenderInline {FONT} at (0,0) size 0x19
+          RenderInline {FONT} at (9,0) size 0x19
             RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,78) size 784x2
       RenderBlock (anonymous) at (0,88) size 784x20
@@ -48,7 +48,7 @@ layer at (0,0) size 800x1054
               RenderInline {A} at (0,0) size 10x19
                 RenderText {#text} at (0,0) size 10x19
                   text run at (0,0) width 10: "Z"
-              RenderInline {FONT} at (0,0) size 0x19
+              RenderInline {FONT} at (9,0) size 0x19
                 RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,166) size 784x2
       RenderBlock (anonymous) at (0,176) size 784x20
@@ -75,10 +75,10 @@ layer at (0,0) size 800x1054
                 RenderInline {FONT} at (0,0) size 106x19
                   RenderText {#text} at (0,0) size 96x19
                     text run at (0,0) width 96: "same line as Z "
-                  RenderInline {A} at (0,0) size 11x19
+                  RenderInline {A} at (95,0) size 11x19
                     RenderText {#text} at (95,0) size 11x19
                       text run at (95,0) width 11: "Z"
-                  RenderInline {FONT} at (0,0) size 0x19
+                  RenderInline {FONT} at (105,0) size 0x19
                     RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,254) size 784x2
       RenderBlock (anonymous) at (0,264) size 784x20
@@ -109,7 +109,7 @@ layer at (0,0) size 800x1054
                       RenderInline {A} at (0,0) size 10x19
                         RenderText {#text} at (0,0) size 10x19
                           text run at (0,0) width 10: "Z"
-                      RenderInline {FONT} at (0,0) size 0x19
+                      RenderInline {FONT} at (9,0) size 0x19
                         RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,342) size 784x2
       RenderBlock (anonymous) at (0,352) size 784x0
@@ -141,10 +141,10 @@ layer at (0,0) size 800x1054
                         RenderInline {FONT} at (0,0) size 107x19
                           RenderText {#text} at (0,0) size 97x19
                             text run at (0,0) width 97: "line after table "
-                          RenderInline {A} at (0,0) size 11x19
+                          RenderInline {A} at (96,0) size 11x19
                             RenderText {#text} at (96,0) size 11x19
                               text run at (96,0) width 11: "Z"
-                          RenderInline {FONT} at (0,0) size 0x19
+                          RenderInline {FONT} at (106,0) size 0x19
                             RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,410) size 784x2
       RenderBlock (anonymous) at (0,420) size 784x20
@@ -242,7 +242,7 @@ layer at (0,0) size 800x1054
                                   RenderInline {A} at (0,0) size 10x19
                                     RenderText {#text} at (0,0) size 10x19
                                       text run at (0,0) width 10: "Z"
-                                  RenderInline {FONT} at (0,0) size 0x19
+                                  RenderInline {FONT} at (9,0) size 0x19
                                     RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,586) size 784x2
       RenderBlock (anonymous) at (0,596) size 784x20
@@ -293,7 +293,7 @@ layer at (0,0) size 800x1054
                                       RenderInline {A} at (0,0) size 10x19
                                         RenderText {#text} at (0,0) size 10x19
                                           text run at (0,0) width 10: "Z"
-                                      RenderInline {FONT} at (0,0) size 0x19
+                                      RenderInline {FONT} at (9,0) size 0x19
                                         RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,694) size 784x2
       RenderBlock (anonymous) at (0,704) size 784x20
@@ -348,7 +348,7 @@ layer at (0,0) size 800x1054
                                           RenderInline {A} at (0,0) size 10x19
                                             RenderText {#text} at (0,0) size 10x19
                                               text run at (0,0) width 10: "Z"
-                                          RenderInline {FONT} at (0,0) size 0x19
+                                          RenderInline {FONT} at (9,0) size 0x19
                                             RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,802) size 784x2
       RenderBlock (anonymous) at (0,812) size 784x0
@@ -404,7 +404,7 @@ layer at (0,0) size 800x1054
                                               RenderInline {A} at (0,0) size 10x19
                                                 RenderText {#text} at (0,0) size 10x19
                                                   text run at (0,0) width 10: "Z"
-                                              RenderInline {FONT} at (0,0) size 0x19
+                                              RenderInline {FONT} at (9,0) size 0x19
                                                 RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,890) size 784x2
       RenderBlock (anonymous) at (0,900) size 784x0
@@ -464,7 +464,7 @@ layer at (0,0) size 800x1054
                                                   RenderInline {A} at (0,0) size 10x19
                                                     RenderText {#text} at (0,0) size 10x19
                                                       text run at (0,0) width 10: "Z"
-                                                  RenderInline {FONT} at (0,0) size 0x19
+                                                  RenderInline {FONT} at (9,0) size 0x19
                                                     RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,978) size 784x2
       RenderBlock (anonymous) at (0,988) size 784x0

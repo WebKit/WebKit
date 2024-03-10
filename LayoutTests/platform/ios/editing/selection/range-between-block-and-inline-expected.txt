@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
         RenderBlock {P} at (0,0) size 784x20
           RenderText {#text} at (0,0) size 27x19
             text run at (0,0) width 27: "For "
-          RenderInline {A} at (0,0) size 71x19 [color=#0000EE]
+          RenderInline {A} at (26,0) size 71x19 [color=#0000EE]
             RenderText {#text} at (26,0) size 71x19
               text run at (26,0) width 71: "Bug 32123"
           RenderText {#text} at (96,0) size 322x19

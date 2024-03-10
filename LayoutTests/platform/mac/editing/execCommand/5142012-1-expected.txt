@@ -14,7 +14,7 @@ layer at (0,0) size 800x600
           RenderInline {A} at (0,0) size 24x18 [color=#0000EE]
             RenderText {#text} at (0,0) size 24x18
               text run at (0,0) width 24: "Hel"
-          RenderInline {SPAN} at (0,0) size 13x18
+          RenderInline {SPAN} at (23,0) size 13x18
             RenderText {#text} at (23,0) size 13x18
               text run at (23,0) width 13: "lo"
         RenderBlock {DIV} at (0,18) size 784x18

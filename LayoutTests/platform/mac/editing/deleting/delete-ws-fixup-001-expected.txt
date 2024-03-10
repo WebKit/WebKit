@@ -41,19 +41,19 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x84 [border: (2px solid #FF0000)]
-        RenderInline {SPAN} at (0,0) size 744x56
+        RenderInline {SPAN} at (14,14) size 744x56
           RenderText {#text} at (14,14) size 96x28
             text run at (14,14) width 96: "in Liberty"
-          RenderInline {I} at (0,0) size 117x28
+          RenderInline {I} at (109,14) size 117x28
             RenderText {#text} at (109,14) size 117x28
               text run at (109,14) width 21: "F "
               text run at (129,14) width 97: "and seven"
           RenderText {#text} at (225,14) size 63x28
             text run at (225,14) width 63: " years "
-          RenderInline {B} at (0,0) size 17x28
+          RenderInline {B} at (287,14) size 17x28
             RenderText {#text} at (287,14) size 17x28
               text run at (287,14) width 17: "s "
-          RenderText {#text} at (303,14) size 744x56
+          RenderText {#text} at (14,14) size 744x56
             text run at (303,14) width 110: "our fathers "
             text run at (412,14) width 346: "f upon this continent, a new nation, "
             text run at (14,42) width 104: "conceived "

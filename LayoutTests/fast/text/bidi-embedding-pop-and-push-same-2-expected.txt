@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (0,0) size 100x50
           RenderText {#text} at (0,0) size 100x50
             text run at (0,0) width 100: "IJ"
-        RenderInline {SPAN} at (0,0) size 100x50
+        RenderInline {SPAN} at (0,50) size 100x50
           RenderText {#text} at (0,50) size 100x50
             text run at (0,50) width 100: "KL"
         RenderText {#text} at (0,0) size 0x0

@@ -21,18 +21,18 @@ layer at (0,0) size 800x600
             RenderBlock {DIV} at (0,0) size 704x90
               RenderText {#text} at (0,0) size 449x18
                 text run at (0,0) width 449: "While reworking images I ran into something that really concerns me."
-              RenderInline {SPAN} at (0,0) size 5x18
+              RenderInline {SPAN} at (448,0) size 5x18
                 RenderText {#text} at (448,0) size 5x18
                   text run at (448,0) width 5: " "
-              RenderText {#text} at (452,0) size 701x36
+              RenderText {#text} at (0,0) size 701x36
                 text run at (452,0) width 249: "WebElementImageKey is a key added "
                 text run at (0,18) width 437: "to the elementAtPoint dictionary and the key's value is an NSImage."
-              RenderInline {SPAN} at (0,0) size 4x18
+              RenderInline {SPAN} at (437,18) size 4x18
                 RenderText {#text} at (437,18) size 4x18
                   text run at (437,18) width 4: " "
               RenderText {#text} at (441,18) size 262x18
                 text run at (441,18) width 262: "Unfortunately we use CGImageRef now."
-              RenderInline {SPAN} at (0,0) size 5x18
+              RenderInline {SPAN} at (702,18) size 5x18
                 RenderText {#text} at (702,18) size 5x18
                   text run at (702,18) width 5: " "
               RenderText {#text} at (0,36) size 701x54
@@ -44,21 +44,21 @@ layer at (0,0) size 800x600
             RenderBlock {DIV} at (0,108) size 704x54
               RenderText {#text} at (0,0) size 324x18
                 text run at (0,0) width 324: "I think this is terrible but am not sure how to fix it."
-              RenderInline {SPAN} at (0,0) size 5x18
+              RenderInline {SPAN} at (323,0) size 5x18
                 RenderText {#text} at (323,0) size 5x18
                   text run at (323,0) width 5: " "
               RenderText {#text} at (327,0) size 204x18
                 text run at (327,0) width 204: "I assume this key is public API."
-              RenderInline {SPAN} at (0,0) size 5x18
+              RenderInline {SPAN} at (530,0) size 5x18
                 RenderText {#text} at (530,0) size 5x18
                   text run at (530,0) width 5: " "
-              RenderText {#text} at (534,0) size 673x36
+              RenderText {#text} at (0,0) size 673x36
                 text run at (534,0) width 139: "Could we change the "
                 text run at (0,18) width 264: "key's value to be a CGImageRef instead?"
-              RenderInline {SPAN} at (0,0) size 5x18
+              RenderInline {SPAN} at (263,18) size 5x18
                 RenderText {#text} at (263,18) size 5x18
                   text run at (263,18) width 5: " "
-              RenderText {#text} at (267,18) size 664x36
+              RenderText {#text} at (0,18) size 664x36
                 text run at (267,18) width 397: "Could we just eliminate the key in favor of a DOM extension "
                 text run at (0,36) width 227: "method for accessing an NSImage?"
             RenderBlock {DIV} at (0,162) size 704x18

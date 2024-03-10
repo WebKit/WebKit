@@ -6,7 +6,7 @@ layer at (0,0) size 800x1395
       RenderBlock {H1} at (16,37) size 752x103 [bgcolor=#CCCCCC]
         RenderText {#text} at (98,33) size 163x36
           text run at (98,33) width 163: "Simplified "
-        RenderInline {A} at (0,0) size 161x36 [color=#0000EE]
+        RenderInline {A} at (260,33) size 161x36 [color=#0000EE]
           RenderText {#text} at (260,33) size 161x36
             text run at (260,33) width 161: "Linux.com"
         RenderText {#text} at (420,33) size 234x36

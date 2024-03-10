@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,36) size 784x20
         RenderText {#text} at (0,0) size 167x19
           text run at (0,0) width 167: "This should be plain text. "
-        RenderInline {A} at (0,0) size 139x19 [color=#0000EE]
+        RenderInline {A} at (166,0) size 139x19 [color=#0000EE]
           RenderText {#text} at (166,0) size 139x19
             text run at (166,0) width 139: "This should be a link."
         RenderText {#text} at (304,0) size 167x19

@@ -23,16 +23,16 @@ layer at (0,0) size 800x600
                   text run at (6,78) width 270: "she had got its neck nicely straightened "
                   text run at (275,78) width 85: "out, and was"
                   text run at (6,96) width 354: "going to give the hedgehog a blow with its head, it"
-                RenderInline {I} at (0,0) size 40x18
+                RenderInline {I} at (6,114) size 40x18
                   RenderText {#text} at (6,114) size 40x18
                     text run at (6,114) width 40: "would"
-                RenderText {#text} at (45,114) size 406x72
+                RenderText {#text} at (6,114) size 406x72
                   text run at (45,114) width 325: " twist itself round and look up in her face, with "
                   text run at (369,114) width 43: "such a"
                   text run at (6,132) width 406: "puzzled expression that she could not help bursting out"
                   text run at (6,150) width 406: "laughing: and when she had got its head down, and was going"
                   text run at (6,168) width 17: "to "
-                RenderText {#text} at (22,168) size 406x126
+                RenderText {#text} at (6,168) size 406x126
                   text run at (22,168) width 390: "begin again, it was very provoking to find that the hedgehog"
                   text run at (6,186) width 32: "had "
                   text run at (37,186) width 375: "unrolled itself, and was in the act of crawling away:"
@@ -52,16 +52,16 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (57,294) size 337x18
                   text run at (57,294) width 337: "The players all played at once without waiting "
                 RenderBlock (floating) {SPAN} at (348,315) size 64x81 [bgcolor=#90EE90]
-                RenderText {#text} at (393,294) size 355x54
+                RenderText {#text} at (57,294) size 355x54
                   text run at (393,294) width 19: "for"
                   text run at (57,312) width 42: "turns, "
                   text run at (98,312) width 247: "quarrelling all the while, and fighting"
                   text run at (57,330) width 175: "for the hedgehogs; and in "
                   text run at (231,330) width 114: "a very short time"
-                RenderInline {SPAN} at (0,0) size 72x18
+                RenderInline {SPAN} at (6,348) size 72x18
                   RenderText {#text} at (6,348) size 72x18
                     text run at (6,348) width 72: "the Queen"
-                RenderText {#text} at (77,348) size 339x54
+                RenderText {#text} at (6,348) size 339x54
                   text run at (77,348) width 268: " was in a furious passion, and went"
                   text run at (6,366) width 339: "stamping about, and shouting \x{2018}Off with his head!\x{2019} or"
                   text run at (6,384) width 64: "\x{2018}Off with "

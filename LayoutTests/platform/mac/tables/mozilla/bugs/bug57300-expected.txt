@@ -13,7 +13,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,88) size 292x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,39) size 183x19
                 text run at (2,2) width 183: "This is the second cell, with "
-              RenderInline {B} at (0,0) size 24x19
+              RenderInline {B} at (184,39) size 24x19
                 RenderText {#text} at (184,39) size 24x19
                   text run at (184,2) width 24: "cell"
               RenderText {#text} at (207,39) size 83x19
@@ -32,7 +32,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,26) size 292x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 183x18
                 text run at (2,2) width 183: "This is the second cell, with "
-              RenderInline {B} at (0,0) size 24x18
+              RenderInline {B} at (184,2) size 24x18
                 RenderText {#text} at (184,2) size 24x18
                   text run at (184,2) width 24: "cell"
               RenderText {#text} at (207,2) size 83x18
@@ -51,7 +51,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,88) size 295x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,39) size 183x19
                 text run at (2,2) width 183: "This is the second cell, with "
-              RenderInline {B} at (0,0) size 27x19
+              RenderInline {B} at (184,39) size 27x19
                 RenderText {#text} at (184,39) size 28x19
                   text run at (184,2) width 28: "row"
               RenderText {#text} at (211,39) size 82x19
@@ -70,7 +70,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,26) size 295x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 183x18
                 text run at (2,2) width 183: "This is the second cell, with "
-              RenderInline {B} at (0,0) size 27x18
+              RenderInline {B} at (184,2) size 27x18
                 RenderText {#text} at (184,2) size 28x18
                   text run at (184,2) width 28: "row"
               RenderText {#text} at (211,2) size 82x18

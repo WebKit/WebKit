@@ -12,7 +12,7 @@ layer at (0,0) size 800x600
                   RenderTableSection {TBODY} at (0,0) size 444x19
                     RenderTableRow {TR} at (0,0) size 444x19
                       RenderTableCell {TD} at (0,0) size 444x19 [r=0 c=0 rs=1 cs=1]
-                        RenderInline {FONT} at (0,0) size 11x15
+                        RenderInline {FONT} at (2,2) size 11x15
                           RenderText {#text} at (2,2) size 11x15
                             text run at (2,2) width 11: "In"
                         RenderText {#text} at (0,0) size 0x0

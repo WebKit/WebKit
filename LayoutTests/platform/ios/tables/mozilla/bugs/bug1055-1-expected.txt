@@ -9,22 +9,22 @@ layer at (0,0) size 800x2136
         RenderText {#text} at (0,0) size 87x22
           text run at (0,0) width 87: "border-top"
       RenderBlock {P} at (0,90) size 784x21
-        RenderInline {CODE} at (0,0) size 55x14
+        RenderInline {CODE} at (0,5) size 55x14
           RenderText {#text} at (0,5) size 55x14
             text run at (0,5) width 55: "<table>"
         RenderText {#text} at (54,0) size 32x19
           text run at (54,0) width 32: " has "
-        RenderInline {CODE} at (0,0) size 48x14
+        RenderInline {CODE} at (85,5) size 48x14
           RenderText {#text} at (85,5) size 48x14
             text run at (85,5) width 48: "border"
         RenderText {#text} at (132,0) size 75x19
           text run at (132,0) width 75: " attribute; "
-        RenderInline {CODE} at (0,0) size 32x14
+        RenderInline {CODE} at (206,5) size 32x14
           RenderText {#text} at (206,5) size 32x14
             text run at (206,5) width 32: "<td>"
         RenderText {#text} at (237,0) size 41x19
           text run at (237,0) width 41: " have "
-        RenderInline {CODE} at (0,0) size 290x14
+        RenderInline {CODE} at (277,5) size 290x14
           RenderText {#text} at (277,5) size 290x14
             text run at (277,5) width 290: "style=\"border-top: green 10px solid;\""
         RenderText {#text} at (566,0) size 5x19
@@ -52,22 +52,22 @@ layer at (0,0) size 800x2136
       RenderBlock (anonymous) at (0,248) size 784x21
         RenderBR {BR} at (0,0) size 0x19
       RenderBlock {P} at (0,284) size 784x21
-        RenderInline {CODE} at (0,0) size 55x14
+        RenderInline {CODE} at (0,5) size 55x14
           RenderText {#text} at (0,5) size 55x14
             text run at (0,5) width 55: "<table>"
         RenderText {#text} at (54,0) size 69x19
           text run at (54,0) width 69: " has *no* "
-        RenderInline {CODE} at (0,0) size 48x14
+        RenderInline {CODE} at (122,5) size 48x14
           RenderText {#text} at (122,5) size 48x14
             text run at (122,5) width 48: "border"
         RenderText {#text} at (169,0) size 75x19
           text run at (169,0) width 75: " attribute; "
-        RenderInline {CODE} at (0,0) size 32x14
+        RenderInline {CODE} at (243,5) size 32x14
           RenderText {#text} at (243,5) size 32x14
             text run at (243,5) width 32: "<td>"
         RenderText {#text} at (274,0) size 41x19
           text run at (274,0) width 41: " have "
-        RenderInline {CODE} at (0,0) size 290x14
+        RenderInline {CODE} at (314,5) size 290x14
           RenderText {#text} at (314,5) size 290x14
             text run at (314,5) width 290: "style=\"border-top: green 10px solid;\""
         RenderText {#text} at (603,0) size 5x19
@@ -98,22 +98,22 @@ layer at (0,0) size 800x2136
         RenderText {#text} at (0,0) size 101x22
           text run at (0,0) width 101: "border-right"
       RenderBlock {P} at (0,525) size 784x21
-        RenderInline {CODE} at (0,0) size 55x14
+        RenderInline {CODE} at (0,5) size 55x14
           RenderText {#text} at (0,5) size 55x14
             text run at (0,5) width 55: "<table>"
         RenderText {#text} at (54,0) size 32x19
           text run at (54,0) width 32: " has "
-        RenderInline {CODE} at (0,0) size 48x14
+        RenderInline {CODE} at (85,5) size 48x14
           RenderText {#text} at (85,5) size 48x14
             text run at (85,5) width 48: "border"
         RenderText {#text} at (132,0) size 75x19
           text run at (132,0) width 75: " attribute; "
-        RenderInline {CODE} at (0,0) size 32x14
+        RenderInline {CODE} at (206,5) size 32x14
           RenderText {#text} at (206,5) size 32x14
             text run at (206,5) width 32: "<td>"
         RenderText {#text} at (237,0) size 41x19
           text run at (237,0) width 41: " have "
-        RenderInline {CODE} at (0,0) size 305x14
+        RenderInline {CODE} at (277,5) size 305x14
           RenderText {#text} at (277,5) size 305x14
             text run at (277,5) width 305: "style=\"border-right: green 10px solid;\""
         RenderText {#text} at (581,0) size 5x19
@@ -141,22 +141,22 @@ layer at (0,0) size 800x2136
       RenderBlock (anonymous) at (0,656) size 784x21
         RenderBR {BR} at (0,0) size 0x19
       RenderBlock {P} at (0,692) size 784x21
-        RenderInline {CODE} at (0,0) size 55x14
+        RenderInline {CODE} at (0,5) size 55x14
           RenderText {#text} at (0,5) size 55x14
             text run at (0,5) width 55: "<table>"
         RenderText {#text} at (54,0) size 32x19
           text run at (54,0) width 32: " has "
-        RenderInline {CODE} at (0,0) size 48x14
+        RenderInline {CODE} at (85,5) size 48x14
           RenderText {#text} at (85,5) size 48x14
             text run at (85,5) width 48: "border"
         RenderText {#text} at (132,0) size 75x19
           text run at (132,0) width 75: " attribute; "
-        RenderInline {CODE} at (0,0) size 32x14
+        RenderInline {CODE} at (206,5) size 32x14
           RenderText {#text} at (206,5) size 32x14
             text run at (206,5) width 32: "<td>"
         RenderText {#text} at (237,0) size 41x19
           text run at (237,0) width 41: " have "
-        RenderInline {CODE} at (0,0) size 305x14
+        RenderInline {CODE} at (277,5) size 305x14
           RenderText {#text} at (277,5) size 305x14
             text run at (277,5) width 305: "style=\"border-right: green 10px solid;\""
         RenderText {#text} at (581,0) size 5x19
@@ -187,22 +187,22 @@ layer at (0,0) size 800x2136
         RenderText {#text} at (0,0) size 118x22
           text run at (0,0) width 118: "border-bottom"
       RenderBlock {P} at (0,904) size 784x21
-        RenderInline {CODE} at (0,0) size 55x14
+        RenderInline {CODE} at (0,5) size 55x14
           RenderText {#text} at (0,5) size 55x14
             text run at (0,5) width 55: "<table>"
         RenderText {#text} at (54,0) size 32x19
           text run at (54,0) width 32: " has "
-        RenderInline {CODE} at (0,0) size 48x14
+        RenderInline {CODE} at (85,5) size 48x14
           RenderText {#text} at (85,5) size 48x14
             text run at (85,5) width 48: "border"
         RenderText {#text} at (132,0) size 75x19
           text run at (132,0) width 75: " attribute; "
-        RenderInline {CODE} at (0,0) size 32x14
+        RenderInline {CODE} at (206,5) size 32x14
           RenderText {#text} at (206,5) size 32x14
             text run at (206,5) width 32: "<td>"
         RenderText {#text} at (237,0) size 41x19
           text run at (237,0) width 41: " have "
-        RenderInline {CODE} at (0,0) size 313x14
+        RenderInline {CODE} at (277,5) size 313x14
           RenderText {#text} at (277,5) size 313x14
             text run at (277,5) width 313: "style=\"border-bottom: green 10px solid;\""
         RenderText {#text} at (589,0) size 5x19
@@ -230,22 +230,22 @@ layer at (0,0) size 800x2136
       RenderBlock (anonymous) at (0,1062) size 784x21
         RenderBR {BR} at (0,0) size 0x19
       RenderBlock {P} at (0,1098) size 784x21
-        RenderInline {CODE} at (0,0) size 55x14
+        RenderInline {CODE} at (0,5) size 55x14
           RenderText {#text} at (0,5) size 55x14
             text run at (0,5) width 55: "<table>"
         RenderText {#text} at (54,0) size 69x19
           text run at (54,0) width 69: " has *no* "
-        RenderInline {CODE} at (0,0) size 48x14
+        RenderInline {CODE} at (122,5) size 48x14
           RenderText {#text} at (122,5) size 48x14
             text run at (122,5) width 48: "border"
         RenderText {#text} at (169,0) size 75x19
           text run at (169,0) width 75: " attribute; "
-        RenderInline {CODE} at (0,0) size 32x14
+        RenderInline {CODE} at (243,5) size 32x14
           RenderText {#text} at (243,5) size 32x14
             text run at (243,5) width 32: "<td>"
         RenderText {#text} at (274,0) size 41x19
           text run at (274,0) width 41: " have "
-        RenderInline {CODE} at (0,0) size 313x14
+        RenderInline {CODE} at (314,5) size 313x14
           RenderText {#text} at (314,5) size 313x14
             text run at (314,5) width 313: "style=\"border-bottom: green 10px solid;\""
         RenderText {#text} at (626,0) size 5x19
@@ -276,22 +276,22 @@ layer at (0,0) size 800x2136
         RenderText {#text} at (0,0) size 87x22
           text run at (0,0) width 87: "border-left"
       RenderBlock {P} at (0,1339) size 784x21
-        RenderInline {CODE} at (0,0) size 55x14
+        RenderInline {CODE} at (0,5) size 55x14
           RenderText {#text} at (0,5) size 55x14
             text run at (0,5) width 55: "<table>"
         RenderText {#text} at (54,0) size 32x19
           text run at (54,0) width 32: " has "
-        RenderInline {CODE} at (0,0) size 48x14
+        RenderInline {CODE} at (85,5) size 48x14
           RenderText {#text} at (85,5) size 48x14
             text run at (85,5) width 48: "border"
         RenderText {#text} at (132,0) size 75x19
           text run at (132,0) width 75: " attribute; "
-        RenderInline {CODE} at (0,0) size 32x14
+        RenderInline {CODE} at (206,5) size 32x14
           RenderText {#text} at (206,5) size 32x14
             text run at (206,5) width 32: "<td>"
         RenderText {#text} at (237,0) size 41x19
           text run at (237,0) width 41: " have "
-        RenderInline {CODE} at (0,0) size 297x14
+        RenderInline {CODE} at (277,5) size 297x14
           RenderText {#text} at (277,5) size 297x14
             text run at (277,5) width 297: "style=\"border-left: green 10px solid;\""
         RenderText {#text} at (573,0) size 5x19
@@ -319,22 +319,22 @@ layer at (0,0) size 800x2136
       RenderBlock (anonymous) at (0,1470) size 784x21
         RenderBR {BR} at (0,0) size 0x19
       RenderBlock {P} at (0,1506) size 784x21
-        RenderInline {CODE} at (0,0) size 55x14
+        RenderInline {CODE} at (0,5) size 55x14
           RenderText {#text} at (0,5) size 55x14
             text run at (0,5) width 55: "<table>"
         RenderText {#text} at (54,0) size 69x19
           text run at (54,0) width 69: " has *no* "
-        RenderInline {CODE} at (0,0) size 48x14
+        RenderInline {CODE} at (122,5) size 48x14
           RenderText {#text} at (122,5) size 48x14
             text run at (122,5) width 48: "border"
         RenderText {#text} at (169,0) size 75x19
           text run at (169,0) width 75: " attribute; "
-        RenderInline {CODE} at (0,0) size 32x14
+        RenderInline {CODE} at (243,5) size 32x14
           RenderText {#text} at (243,5) size 32x14
             text run at (243,5) width 32: "<td>"
         RenderText {#text} at (274,0) size 41x19
           text run at (274,0) width 41: " have "
-        RenderInline {CODE} at (0,0) size 297x14
+        RenderInline {CODE} at (314,5) size 297x14
           RenderText {#text} at (314,5) size 297x14
             text run at (314,5) width 297: "style=\"border-left: green 10px solid;\""
         RenderText {#text} at (610,0) size 5x19
@@ -365,22 +365,22 @@ layer at (0,0) size 800x2136
         RenderText {#text} at (0,0) size 56x22
           text run at (0,0) width 56: "border"
       RenderBlock {P} at (0,1718) size 784x21
-        RenderInline {CODE} at (0,0) size 55x14
+        RenderInline {CODE} at (0,5) size 55x14
           RenderText {#text} at (0,5) size 55x14
             text run at (0,5) width 55: "<table>"
         RenderText {#text} at (54,0) size 32x19
           text run at (54,0) width 32: " has "
-        RenderInline {CODE} at (0,0) size 48x14
+        RenderInline {CODE} at (85,5) size 48x14
           RenderText {#text} at (85,5) size 48x14
             text run at (85,5) width 48: "border"
         RenderText {#text} at (132,0) size 75x19
           text run at (132,0) width 75: " attribute; "
-        RenderInline {CODE} at (0,0) size 32x14
+        RenderInline {CODE} at (206,5) size 32x14
           RenderText {#text} at (206,5) size 32x14
             text run at (206,5) width 32: "<td>"
         RenderText {#text} at (237,0) size 41x19
           text run at (237,0) width 41: " have "
-        RenderInline {CODE} at (0,0) size 258x14
+        RenderInline {CODE} at (277,5) size 258x14
           RenderText {#text} at (277,5) size 258x14
             text run at (277,5) width 258: "style=\"border: green 10px solid;\""
         RenderText {#text} at (534,0) size 5x19
@@ -408,22 +408,22 @@ layer at (0,0) size 800x2136
       RenderBlock (anonymous) at (0,1903) size 784x21
         RenderBR {BR} at (0,0) size 0x19
       RenderBlock {P} at (0,1939) size 784x21
-        RenderInline {CODE} at (0,0) size 55x14
+        RenderInline {CODE} at (0,5) size 55x14
           RenderText {#text} at (0,5) size 55x14
             text run at (0,5) width 55: "<table>"
         RenderText {#text} at (54,0) size 69x19
           text run at (54,0) width 69: " has *no* "
-        RenderInline {CODE} at (0,0) size 48x14
+        RenderInline {CODE} at (122,5) size 48x14
           RenderText {#text} at (122,5) size 48x14
             text run at (122,5) width 48: "border"
         RenderText {#text} at (169,0) size 75x19
           text run at (169,0) width 75: " attribute; "
-        RenderInline {CODE} at (0,0) size 32x14
+        RenderInline {CODE} at (243,5) size 32x14
           RenderText {#text} at (243,5) size 32x14
             text run at (243,5) width 32: "<td>"
         RenderText {#text} at (274,0) size 41x19
           text run at (274,0) width 41: " have "
-        RenderInline {CODE} at (0,0) size 258x14
+        RenderInline {CODE} at (314,5) size 258x14
           RenderText {#text} at (314,5) size 258x14
             text run at (314,5) width 258: "style=\"border: green 10px solid;\""
         RenderText {#text} at (571,0) size 5x19

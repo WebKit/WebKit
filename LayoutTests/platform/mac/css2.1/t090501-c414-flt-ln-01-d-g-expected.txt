@@ -15,22 +15,22 @@ layer at (0,0) size 800x484
       RenderBlock {DIV} at (16,70) size 752x382 [color=#C0C0C0] [border: (5px solid #800080)]
         RenderText {#text} at (133,22) size 486x18
           text run at (133,22) width 486: "dummy text dummy text dummy text dummy text dummy text dummy text "
-        RenderInline {SPAN} at (0,0) size 23x24 [color=#FFFFFF] [bgcolor=#008080] [border: (3px solid #00FFFF)]
+        RenderInline {SPAN} at (618,19) size 23x24 [color=#FFFFFF] [bgcolor=#008080] [border: (3px solid #00FFFF)]
           RenderText {#text} at (621,22) size 17x18
             text run at (621,22) width 17: "\x{21E6}"
         RenderText {#text} at (640,22) size 5x18
           text run at (640,22) width 5: " "
         RenderImage {IMG} at (21,21) size 112x112 [color=#FF0000]
-        RenderText {#text} at (644,22) size 589x38
+        RenderText {#text} at (133,22) size 589x38
           text run at (644,22) width 78: "dummy text"
           text run at (133,42) width 405: "dummy text dummy text dummy text dummy text dummy text "
-        RenderInline {SPAN} at (0,0) size 23x24 [color=#FFFFFF] [bgcolor=#800080] [border: (3px solid #FF00FF)]
+        RenderInline {SPAN} at (537,39) size 23x24 [color=#FFFFFF] [bgcolor=#800080] [border: (3px solid #FF00FF)]
           RenderText {#text} at (540,42) size 17x18
             text run at (540,42) width 17: "\x{21E8}"
         RenderText {#text} at (559,42) size 5x18
           text run at (559,42) width 5: " "
         RenderImage {IMG} at (619,41) size 112x112 [color=#FF0000]
-        RenderText {#text} at (563,42) size 696x318
+        RenderText {#text} at (21,42) size 696x318
           text run at (563,42) width 50: "dummy"
           text run at (133,62) width 433: "text dummy text dummy text dummy text dummy text dummy text "
           text run at (565,62) width 50: "dummy"

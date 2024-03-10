@@ -23,7 +23,7 @@ layer at (0,0) size 785x903
       RenderBlock {P} at (0,155) size 769x18
         RenderText {#text} at (0,0) size 160x18
           text run at (0,0) width 160: "(These will only work if "
-        RenderInline {CODE} at (0,0) size 95x15
+        RenderInline {CODE} at (159,2) size 95x15
           RenderText {#text} at (159,2) size 95x15
             text run at (159,2) width 95: "border-style"
         RenderText {#text} at (253,0) size 92x18
@@ -46,7 +46,7 @@ layer at (0,0) size 785x903
       RenderBlock {P} at (0,477) size 769x18
         RenderText {#text} at (0,0) size 504x18
           text run at (0,0) width 504: "This element should have no border and no extra \"padding\" on any side, as no "
-        RenderInline {CODE} at (0,0) size 95x15
+        RenderInline {CODE} at (503,2) size 95x15
           RenderText {#text} at (503,2) size 95x15
             text run at (503,2) width 95: "border-style"
         RenderText {#text} at (597,0) size 55x18
@@ -55,7 +55,7 @@ layer at (0,0) size 785x903
         RenderTableSection {TBODY} at (1,1) size 672x374
           RenderTableRow {TR} at (0,0) size 672x26
             RenderTableCell {TD} at (0,0) size 672x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 161x18
+              RenderInline {STRONG} at (4,4) size 161x18
                 RenderText {#text} at (4,4) size 161x18
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 672x348
@@ -66,7 +66,7 @@ layer at (0,0) size 785x903
               RenderBlock {P} at (4,4) size 652x18
                 RenderText {#text} at (0,0) size 160x18
                   text run at (0,0) width 160: "(These will only work if "
-                RenderInline {CODE} at (0,0) size 95x15
+                RenderInline {CODE} at (159,2) size 95x15
                   RenderText {#text} at (159,2) size 95x15
                     text run at (159,2) width 95: "border-style"
                 RenderText {#text} at (253,0) size 92x18
@@ -89,7 +89,7 @@ layer at (0,0) size 785x903
               RenderBlock {P} at (4,326) size 652x18
                 RenderText {#text} at (0,0) size 504x18
                   text run at (0,0) width 504: "This element should have no border and no extra \"padding\" on any side, as no "
-                RenderInline {CODE} at (0,0) size 95x15
+                RenderInline {CODE} at (503,2) size 95x15
                   RenderText {#text} at (503,2) size 95x15
                     text run at (503,2) width 95: "border-style"
                 RenderText {#text} at (597,0) size 55x18

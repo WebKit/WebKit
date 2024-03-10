@@ -24,7 +24,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (2,2) size 27x19
                   text run at (2,2) width 27: "Cell"
                 RenderBR {BR} at (28,2) size 1x19
-                RenderInline {SPAN} at (0,0) size 29x19
+                RenderInline {SPAN} at (2,22) size 29x19
                   RenderText {#text} at (2,22) size 29x19
                     text run at (2,22) width 29: "Two"
 caret: position 0 of child 0 {#text} of child 2 {SPAN} of child 1 {TD} of child 0 {TR} of child 0 {TBODY} of child 0 {TABLE} of child 2 {DIV} of body

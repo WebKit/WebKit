@@ -14,13 +14,13 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x84 [border: (2px solid #FF0000)]
-        RenderInline {SPAN} at (0,0) size 155x56
+        RenderInline {SPAN} at (14,14) size 155x56
           RenderText {#text} at (14,14) size 11x28
             text run at (14,14) width 11: "a"
           RenderBR {BR} at (24,14) size 1x28
           RenderText {#text} at (14,42) size 12x28
             text run at (14,42) width 12: "x"
-          RenderInline {SPAN} at (0,0) size 132x28
+          RenderInline {SPAN} at (26,42) size 132x28
             RenderText {#text} at (26,42) size 132x28
               text run at (26,42) width 132: "\x{9}\x{9}\x{9}"
           RenderText {#text} at (158,42) size 11x28

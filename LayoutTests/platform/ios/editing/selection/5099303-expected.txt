@@ -10,7 +10,7 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,36) size 784x20
         RenderText {#text} at (0,0) size 8x19
           text run at (0,0) width 8: "x"
-        RenderInline {SPAN} at (0,0) size 16x19
+        RenderInline {SPAN} at (8,0) size 16x19
           RenderText {#text} at (8,0) size 16x19
             text run at (8,0) width 16: "xx"
         RenderText {#text} at (24,0) size 8x19

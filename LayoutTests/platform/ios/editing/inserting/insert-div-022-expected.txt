@@ -20,19 +20,19 @@ layer at (0,0) size 800x600
           text run at (0,1) width 757: "Test inserting paragraphs: should see \"foo\" in a blue box, then a blue box with "
           text run at (0,31) width 753: "with two lines in it: First line a bold \"x\"; second line a non-bold \"bar\". Fix for "
           text run at (0,61) width 90: "this bug: "
-        RenderInline {A} at (0,0) size 257x28 [color=#0000EE]
+        RenderInline {A} at (89,61) size 257x28 [color=#0000EE]
           RenderText {#text} at (89,61) size 257x28
             text run at (89,61) width 257: "<rdar://problem/3927554>"
-        RenderText {#text} at (345,61) size 783x58
+        RenderText {#text} at (0,61) size 783x58
           text run at (345,61) width 438: " Style info applied to remainder of document "
           text run at (0,91) width 242: "after a newline is entered"
       RenderBlock {DIV} at (0,120) size 784x12
       RenderBlock {P} at (0,156) size 784x58 [border: (2px solid #0000FF)]
-        RenderInline {B} at (0,0) size 32x28
+        RenderInline {B} at (14,15) size 32x28
           RenderText {#text} at (14,15) size 32x28
             text run at (14,15) width 32: "foo"
       RenderBlock {P} at (0,238) size 784x88 [border: (2px solid #0000FF)]
-        RenderInline {B} at (0,0) size 12x28
+        RenderInline {B} at (14,15) size 12x28
           RenderText {#text} at (14,15) size 12x28
             text run at (14,15) width 12: "x"
           RenderBR {BR} at (26,15) size 0x28 [bgcolor=#008000]

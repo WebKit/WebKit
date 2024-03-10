@@ -13,7 +13,7 @@ layer at (0,0) size 800x600
                 text run at (2,38) width 14: "of"
                 text run at (2,56) width 72: "whitespace"
               RenderImage {IMG} at (2,74) size 20x17
-              RenderText {#text} at (22,77) size 69x36
+              RenderText {#text} at (2,77) size 69x36
                 text run at (22,77) width 49: " around"
                 text run at (2,95) width 63: "the image"
             RenderTableCell {TD} at (79,48) size 701x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]

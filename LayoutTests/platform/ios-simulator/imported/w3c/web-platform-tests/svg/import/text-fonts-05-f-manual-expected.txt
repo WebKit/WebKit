@@ -10,12 +10,12 @@ layer at (0,0) size 800x600
             chunk 1 text run 1 at (50.00,100.00) startOffset 0 endOffset 10 width 99.98: "FillerText"
         RenderSVGInlineText {#text} at (99,0) size 7x29
           chunk 1 text run 1 at (149.98,100.00) startOffset 0 endOffset 1 width 6.25: " "
-        RenderSVGTSpan {tspan} at (0,0) size 100x29
+        RenderSVGTSpan {tspan} at (110,0) size 100x29
           RenderSVGInlineText {#text} at (110,0) size 100x29
             chunk 1 text run 1 at (160.00,100.00) startOffset 0 endOffset 10 width 99.98: "FillerText"
         RenderSVGInlineText {#text} at (209,0) size 7x29
           chunk 1 text run 1 at (259.98,100.00) startOffset 0 endOffset 1 width 6.25: " "
-        RenderSVGTSpan {tspan} at (0,0) size 100x29
+        RenderSVGTSpan {tspan} at (220,0) size 100x29
           RenderSVGInlineText {#text} at (220,0) size 100x29
             chunk 1 text run 1 at (270.00,100.00) startOffset 0 endOffset 10 width 99.98: "FillerText"
         RenderSVGInlineText {#text} at (0,0) size 0x0

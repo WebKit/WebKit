@@ -7,10 +7,10 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 103x18
           text run at (0,0) width 103: "Repaint test for "
         RenderInline {I} at (0,0) size 771x36
-          RenderInline {A} at (0,0) size 305x18 [color=#0000EE]
+          RenderInline {A} at (102,0) size 305x18 [color=#0000EE]
             RenderText {#text} at (102,0) size 305x18
               text run at (102,0) width 305: "http://bugs.webkit.org/show_bug.cgi?id=11359"
-          RenderText {#text} at (406,0) size 771x36
+          RenderText {#text} at (0,0) size 771x36
             text run at (406,0) width 5: " "
             text run at (410,0) width 361: "Incomplete repaint of table cell's collapsed border when"
             text run at (0,18) width 142: "changing only the cell"

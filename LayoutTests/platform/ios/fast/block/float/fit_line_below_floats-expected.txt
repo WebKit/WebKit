@@ -13,7 +13,7 @@ layer at (0,0) size 800x270
             text run at (131,65) width 4: " "
           RenderText {#text} at (0,0) size 0x0
           RenderBlock (floating) {DIV} at (0,50) size 30x30 [bgcolor=#0000FF]
-          RenderText {#text} at (135,65) size 199x59
+          RenderText {#text} at (0,65) size 199x59
             text run at (135,65) width 37: "Some"
             text run at (0,85) width 199: "text that should not overlap the"
             text run at (0,105) width 40: "floats."
@@ -27,7 +27,7 @@ layer at (0,0) size 800x270
             text run at (121,65) width 4: " "
           RenderText {#text} at (0,0) size 0x0
           RenderBlock (floating) {DIV} at (170,50) size 30x30 [bgcolor=#0000FF]
-          RenderText {#text} at (125,65) size 199x59
+          RenderText {#text} at (0,65) size 199x59
             text run at (125,65) width 37: "Some"
             text run at (0,85) width 199: "text that should not overlap the"
             text run at (0,105) width 40: "floats."

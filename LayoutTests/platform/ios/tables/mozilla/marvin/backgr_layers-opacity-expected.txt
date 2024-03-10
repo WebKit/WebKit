@@ -76,7 +76,7 @@ layer at (0,0) size 800x1252
         RenderTableSection {THEAD} at (0,29) size 578x100
         RenderTableSection {TBODY} at (0,128) size 578x191
       RenderBlock {DIV} at (0,1177) size 784x36
-        RenderInline {A} at (0,0) size 88x14 [color=#FFFF00]
+        RenderInline {A} at (0,21) size 88x14 [color=#FFFF00]
           RenderImage {IMG} at (0,0) size 88x31
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {ADDRESS} at (0,1212) size 784x15

@@ -7,10 +7,10 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 54x18
           text run at (0,0) width 54: "Test for "
         RenderInline {I} at (0,0) size 750x36
-          RenderInline {A} at (0,0) size 156x18 [color=#0000EE]
+          RenderInline {A} at (53,0) size 156x18 [color=#0000EE]
             RenderText {#text} at (53,0) size 156x18
               text run at (53,0) width 156: "rdar://problem/6935192"
-          RenderText {#text} at (208,0) size 750x36
+          RenderText {#text} at (0,0) size 750x36
             text run at (208,0) width 5: " "
             text run at (212,0) width 506: "REGRESSION (Safari 3-Safari 4): Scroll bars in key window draw as inactive "
             text run at (717,0) width 33: "if the"

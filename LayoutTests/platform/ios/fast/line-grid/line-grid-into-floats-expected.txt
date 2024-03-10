@@ -19,7 +19,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (2,69) size 192x23
           text run at (2,69) width 192: "to a 36px font-size grid."
         RenderBR {BR} at (193,69) size 1x23
-      RenderText {#text} at (479,11) size 758x256
+      RenderText {#text} at (10,11) size 758x256
         text run at (479,11) width 289: "Here we can see the"
         text run at (479,54) width 256: "actual lines of the"
         text run at (479,97) width 264: "grid outside of the"

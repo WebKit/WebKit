@@ -19,7 +19,7 @@ layer at (8,44) size 80x69 clip at (8,44) size 65x54 scrollY 91 scrollWidth 66 s
     RenderBR {BR} at (0,108) size 0x18
     RenderBR {BR} at (0,126) size 0x18
     RenderBR {BR} at (0,144) size 0x18
-    RenderInline {SPAN} at (0,0) size 66x36
+    RenderInline {SPAN} at (0,162) size 66x36
       RenderText {#text} at (0,162) size 66x36
         text run at (0,162) width 66: "Excellent!"
         text run at (0,180) width 27: "Test"

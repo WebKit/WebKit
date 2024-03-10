@@ -7,10 +7,10 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 218x18
           text run at (0,0) width 218: "This tests for a regression against "
         RenderInline {I} at (0,0) size 754x36
-          RenderInline {A} at (0,0) size 354x18 [color=#0000EE]
+          RenderInline {A} at (217,0) size 354x18 [color=#0000EE]
             RenderText {#text} at (217,0) size 354x18
               text run at (217,0) width 354: "http://bugzilla.opendarwin.org/show_bug.cgi?id=6397"
-          RenderText {#text} at (570,0) size 754x36
+          RenderText {#text} at (0,0) size 754x36
             text run at (570,0) width 184: " ATSUI small caps use small"
             text run at (0,18) width 77: "punctuation"
         RenderText {#text} at (76,18) size 5x18
@@ -21,13 +21,13 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,104) size 784x18
         RenderText {#text} at (0,0) size 54x18
           text run at (0,0) width 54: "ATSUI: "
-        RenderInline {SPAN} at (0,0) size 41x18
+        RenderInline {SPAN} at (53,0) size 41x18
           RenderText {#text} at (53,0) size 41x18
             text run at (53,0) width 41: "A?b?e\x{300}"
       RenderBlock {P} at (0,138) size 784x18
         RenderText {#text} at (0,0) size 31x18
           text run at (0,0) width 31: "CG: "
-        RenderInline {SPAN} at (0,0) size 41x18
+        RenderInline {SPAN} at (30,0) size 41x18
           RenderText {#text} at (30,0) size 41x18
             text run at (30,0) width 41: "A?b?e"
 layer at (8,94) size 784x2 clip at (0,0) size 0x0

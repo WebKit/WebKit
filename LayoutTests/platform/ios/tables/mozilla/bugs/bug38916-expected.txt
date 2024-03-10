@@ -14,7 +14,7 @@ layer at (0,0) size 800x1386
                 text run at (2,2) width 11: "A"
                 text run at (2,22) width 27: "Cell"
             RenderTableCell {TD} at (45,2) size 692x98 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderInline {SPAN} at (0,0) size 609x92
+              RenderInline {SPAN} at (2,3) size 609x92
                 RenderText {#text} at (2,3) size 609x92
                   text run at (2,3) width 609: "THEAD blah blah blah blah blah blah"
                   text run at (2,50) width 136: "THEAD"
@@ -48,7 +48,7 @@ layer at (0,0) size 800x1386
                 text run at (2,2) width 11: "A"
                 text run at (2,22) width 27: "Cell"
             RenderTableCell {TD} at (45,0) size 692x98 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderInline {SPAN} at (0,0) size 610x92
+              RenderInline {SPAN} at (2,3) size 610x92
                 RenderText {#text} at (2,3) size 610x92
                   text run at (2,3) width 610: "TBODY blah blah blah blah blah blah"
                   text run at (2,50) width 137: "TBODY"
@@ -68,7 +68,7 @@ layer at (0,0) size 800x1386
                 text run at (2,2) width 11: "A"
                 text run at (2,22) width 27: "Cell"
             RenderTableCell {TD} at (45,2) size 692x98 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderInline {SPAN} at (0,0) size 609x92
+              RenderInline {SPAN} at (2,3) size 609x92
                 RenderText {#text} at (2,3) size 609x92
                   text run at (2,3) width 609: "THEAD blah blah blah blah blah blah"
                   text run at (2,50) width 136: "THEAD"
@@ -84,7 +84,7 @@ layer at (0,0) size 800x1386
                 text run at (2,2) width 11: "A"
                 text run at (2,22) width 27: "Cell"
             RenderTableCell {TD} at (45,0) size 692x98 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderInline {SPAN} at (0,0) size 602x92
+              RenderInline {SPAN} at (2,3) size 602x92
                 RenderText {#text} at (2,3) size 602x92
                   text run at (2,3) width 602: "TFOOT blah blah blah blah blah blah"
                   text run at (2,50) width 129: "TFOOT"
@@ -140,7 +140,7 @@ layer at (0,0) size 800x1386
                 text run at (2,2) width 11: "A"
                 text run at (2,22) width 27: "Cell"
             RenderTableCell {TD} at (45,0) size 692x98 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderInline {SPAN} at (0,0) size 602x92
+              RenderInline {SPAN} at (2,3) size 602x92
                 RenderText {#text} at (2,3) size 602x92
                   text run at (2,3) width 602: "TFOOT blah blah blah blah blah blah"
                   text run at (2,50) width 129: "TFOOT"
@@ -156,7 +156,7 @@ layer at (0,0) size 800x1386
                 text run at (2,2) width 11: "A"
                 text run at (2,22) width 27: "Cell"
             RenderTableCell {TD} at (45,0) size 692x98 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderInline {SPAN} at (0,0) size 610x92
+              RenderInline {SPAN} at (2,3) size 610x92
                 RenderText {#text} at (2,3) size 610x92
                   text run at (2,3) width 610: "TBODY blah blah blah blah blah blah"
                   text run at (2,50) width 137: "TBODY"

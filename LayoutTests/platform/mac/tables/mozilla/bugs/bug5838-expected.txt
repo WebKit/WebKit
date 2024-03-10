@@ -5,7 +5,7 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderTable {TABLE} at (0,0) size 202x118 [border: (1px outset #808080)]
         RenderBlock {CAPTION} at (0,0) size 202x18
-          RenderInline {EM} at (0,0) size 189x18
+          RenderInline {EM} at (6,0) size 189x18
             RenderText {#text} at (6,0) size 189x18
               text run at (6,0) width 189: "A test table with merged cells"
         RenderTableSection {TBODY} at (1,19) size 200x98

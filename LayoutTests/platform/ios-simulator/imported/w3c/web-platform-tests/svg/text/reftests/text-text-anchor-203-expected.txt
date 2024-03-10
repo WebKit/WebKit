@@ -27,12 +27,12 @@ layer at (0,0) size 800x600
           RenderSVGInlineText {#text} at (0,0) size 0x0
     RenderSVGContainer {g} at (333,165) size 136x233
       RenderSVGText {text} at (200,99) size 82x140 contains 1 chunk(s)
-        RenderSVGTSpan {tspan} at (0,0) size 67x20
+        RenderSVGTSpan {tspan} at (12,120) size 67x20
           RenderSVGInlineText {#text} at (12,120) size 66x20
             chunk 1 text run 1 at (212.98,234.80) startOffset 0 endOffset 12 width 65.65 RTL: "\x{644}\x{643}\x{646} \x{644}\x{627} \x{628}\x{62F} \x{623}\x{646}"
         RenderSVGInlineText {#text} at (8,120) size 5x20
           chunk 1 text run 1 at (208.54,234.80) startOffset 0 endOffset 1 width 4.45 RTL: " "
-        RenderSVGTSpan {tspan} at (0,0) size 69x20
+        RenderSVGTSpan {tspan} at (10,60) size 69x20
           RenderSVGInlineText {#text} at (10,60) size 68x20
             chunk 1 (middle anchor) text run 1 at (210.97,174.80) startOffset 0 endOffset 10 width 67.30 RTL: "\x{623}\x{648}\x{636}\x{62D} \x{644}\x{643} \x{623}\x{646}"
         RenderSVGInlineText {#text} at (6,60) size 5x20

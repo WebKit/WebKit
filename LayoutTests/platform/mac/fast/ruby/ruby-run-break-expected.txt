@@ -14,32 +14,32 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,72) size 284x80 [border: (2px solid #0000FF)]
         RenderText {#text} at (12,22) size 158x18
           text run at (12,22) width 158: "<ruby> is defined in the "
-        RenderInline {RUBY} at (0,0) size 279x46
-          RenderInline (generated) at (0,0) size 24x18
+        RenderInline {RUBY} at (12,22) size 279x46
+          RenderInline (generated) at (164,22) size 24x18
             RenderText {#text} at (170,22) size 12x18
               text run at (170,22) width 12: "H"
           RenderBlock {RT} at (164,12) size 24x10
             RenderText {#text} at (0,0) size 23x10
               text run at (0,0) width 23: "Hyper"
-          RenderInline (generated) at (0,0) size 16x18
+          RenderInline (generated) at (187,22) size 16x18
             RenderText {#text} at (190,22) size 10x18
               text run at (190,22) width 10: "T"
           RenderBlock {RT} at (187,12) size 16x10
             RenderText {#text} at (0,0) size 16x10
               text run at (0,0) width 16: "Text"
-          RenderInline (generated) at (0,0) size 29x18
+          RenderInline (generated) at (203,22) size 29x18
             RenderText {#text} at (210,22) size 15x18
               text run at (210,22) width 15: "M"
           RenderBlock {RT} at (203,12) size 29x10
             RenderText {#text} at (0,0) size 29x10
               text run at (0,0) width 29: "Markup"
-          RenderInline (generated) at (0,0) size 36x18
+          RenderInline (generated) at (231,22) size 36x18
             RenderText {#text} at (244,22) size 11x18
               text run at (244,22) width 11: "L"
           RenderBlock {RT} at (231,12) size 36x10
             RenderText {#text} at (0,0) size 36x10
               text run at (0,0) width 36: "Language"
-          RenderInline (generated) at (0,0) size 28x18
+          RenderInline (generated) at (12,50) size 28x18
             RenderText {#text} at (21,50) size 9x18
               text run at (21,50) width 9: "5"
           RenderBlock {RT} at (12,40) size 28x10

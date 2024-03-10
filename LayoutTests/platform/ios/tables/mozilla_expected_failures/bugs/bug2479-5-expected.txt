@@ -39,18 +39,18 @@ layer at (8,8) size 784x1513
             RenderBlock {H1} at (21,94) size 442x78 [border: (1px dotted #FFFF00)]
               RenderText {#text} at (1,2) size 152x36
                 text run at (1,2) width 152: "Rendering "
-              RenderInline {CODE} at (0,0) size 63x32
+              RenderInline {CODE} at (153,6) size 63x32
                 RenderText {#text} at (153,6) size 63x32
                   text run at (153,6) width 63: "BODY"
               RenderText {#text} at (215,2) size 69x36
                 text run at (215,2) width 69: " and "
-              RenderInline {CODE} at (0,0) size 63x32
+              RenderInline {CODE} at (283,6) size 63x32
                 RenderText {#text} at (283,6) size 63x32
                   text run at (283,6) width 63: "HEAD"
-              RenderText {#text} at (345,2) size 382x74
+              RenderText {#text} at (1,2) size 382x74
                 text run at (345,2) width 38: " as"
                 text run at (1,40) width 156: "children of "
-              RenderInline {CODE} at (0,0) size 64x32
+              RenderInline {CODE} at (156,44) size 64x32
                 RenderText {#text} at (156,44) size 64x32
                   text run at (156,44) width 64: "HTML"
               RenderText {#text} at (219,40) size 44x36
@@ -58,7 +58,7 @@ layer at (8,8) size 784x1513
             RenderBlock {P} at (21,204) size 442x42 [border: (1px dotted #FFFF00)]
               RenderText {#text} at (1,1) size 393x19
                 text run at (1,1) width 393: "If you have any comments to make regarding this test, e-mail"
-              RenderInline {A} at (0,0) size 186x19 [color=#0000EE]
+              RenderInline {A} at (1,21) size 186x19 [color=#0000EE]
                 RenderText {#text} at (1,21) size 186x19
                   text run at (1,21) width 186: "py8ieh=eviltests@bath.ac.uk"
               RenderText {#text} at (186,21) size 5x19
@@ -72,10 +72,10 @@ layer at (8,8) size 784x1513
                   text run at (0,0) width 392: "Browsers that are subjected to this test should support the the"
                   text run at (0,20) width 388: "background, padding, margin, border and color properties of"
                   text run at (0,40) width 160: "CSS, and in addition the "
-                RenderInline {CODE} at (0,0) size 63x17
+                RenderInline {CODE} at (160,42) size 63x17
                   RenderText {#text} at (160,42) size 63x17
                     text run at (160,42) width 63: "overflow"
-                RenderText {#text} at (222,40) size 345x39
+                RenderText {#text} at (0,40) size 345x39
                   text run at (222,40) width 123: " property and fixed"
                   text run at (0,60) width 165: "position stuff from CSS2."
             RenderBlock {H2} at (21,388) size 442x62 [border: (1px dotted #FFFF00)]
@@ -140,7 +140,7 @@ layer at (8,8) size 784x1513
                     RenderText at (0,0) size 212x14
                       text run at (0,0) width 212: "Document renders exactly as described."
                 RenderText {#text} at (0,0) size 0x0
-                RenderInline {LABEL} at (0,0) size 227x19
+                RenderInline {LABEL} at (0,41) size 227x19
                   RenderText {#text} at (0,41) size 72x19
                     text run at (0,41) width 72: "Comment: "
                   RenderTextControl {INPUT} at (71,42) size 156x22 [color=#000000] [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
@@ -152,7 +152,7 @@ layer at (8,8) size 784x1513
                       text run at (0,0) width 40: "Submit"
                 RenderText {#text} at (0,0) size 0x0
             RenderBlock {P} at (21,1346) size 442x23 [border: (1px dotted #FFFF00)]
-              RenderInline {A} at (0,0) size 162x19 [color=#0000EE]
+              RenderInline {A} at (1,1) size 162x19 [color=#0000EE]
                 RenderText {#text} at (1,1) size 162x19
                   text run at (1,1) width 162: "Up to the Evil Tests Page"
               RenderText {#text} at (162,1) size 5x19
@@ -160,12 +160,12 @@ layer at (8,8) size 784x1513
             RenderBlock {P} at (21,1384) size 442x23 [border: (1px dotted #FFFF00)]
               RenderText {#text} at (1,1) size 177x19
                 text run at (1,1) width 177: "This page is maintained by "
-              RenderInline {A} at (0,0) size 79x19 [color=#0000EE]
+              RenderInline {A} at (177,1) size 79x19 [color=#0000EE]
                 RenderText {#text} at (177,1) size 79x19
                   text run at (177,1) width 79: "Ian Hickson"
               RenderText {#text} at (255,1) size 10x19
                 text run at (255,1) width 10: " ("
-              RenderInline {A} at (0,0) size 125x19 [color=#0000EE]
+              RenderInline {A} at (264,1) size 125x19 [color=#0000EE]
                 RenderText {#text} at (264,1) size 125x19
                   text run at (264,1) width 125: "py8ieh@bath.ac.uk"
               RenderText {#text} at (388,1) size 10x19

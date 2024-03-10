@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderBlock {H4} at (0,0) size 784x20
         RenderText {#text} at (0,0) size 156x19
           text run at (0,0) width 156: "Testcase distilled from "
-        RenderInline {A} at (0,0) size 509x19 [color=#0000EE]
+        RenderInline {A} at (155,0) size 509x19 [color=#0000EE]
           RenderText {#text} at (155,0) size 509x19
             text run at (155,0) width 509: "http://www.download.com/pc/list/0,339,0-b-0-0-a-1,00.html?st.dl.fd.ag.new"
       RenderBlock {H4} at (0,41) size 784x21
@@ -19,7 +19,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (1,1) size 101x19
                 text run at (1,1) width 101: "Re-sort by Title"
             RenderTableCell {TD} at (708,2) size 34x22 [r=0 c=1 rs=1 cs=1]
-              RenderInline {SPAN} at (0,0) size 27x19
+              RenderInline {SPAN} at (1,1) size 27x19
                 RenderText {#text} at (1,1) size 27x19
                   text run at (1,1) width 27: "Buy"
               RenderText {#text} at (27,1) size 5x19
@@ -27,7 +27,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (743,2) size 39x22 [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (1,1) size 4x19
                 text run at (1,1) width 4: " "
-              RenderInline {SPAN} at (0,0) size 29x19
+              RenderInline {SPAN} at (5,1) size 29x19
                 RenderText {#text} at (5,1) size 29x19
                   text run at (5,1) width 29: "Pick"
               RenderText {#text} at (33,1) size 5x19

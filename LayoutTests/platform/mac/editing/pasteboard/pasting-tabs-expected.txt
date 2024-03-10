@@ -23,7 +23,7 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,84) size 784x18
         RenderText {#text} at (0,0) size 39x18
           text run at (0,0) width 39: "Tab->"
-        RenderInline {SPAN} at (0,0) size 26x18
+        RenderInline {SPAN} at (38,0) size 26x18
           RenderText {#text} at (38,0) size 26x18
             text run at (38,0) width 26: "\x{9}"
         RenderText {#text} at (64,0) size 39x18

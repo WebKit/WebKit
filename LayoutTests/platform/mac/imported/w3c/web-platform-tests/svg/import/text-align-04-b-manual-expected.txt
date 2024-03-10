@@ -20,14 +20,14 @@ layer at (0,0) size 800x600
         RenderSVGText {text} at (220,125) size 144x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 66x19
             chunk 1 text run 1 at (220.00,140.00) startOffset 0 endOffset 11 width 65.80: "start text "
-          RenderSVGTSpan {tspan} at (0,0) size 79x19
+          RenderSVGTSpan {tspan} at (65,0) size 79x19
             RenderSVGInlineText {#text} at (65,0) size 78x19
               chunk 1 text run 1 at (285.80,140.00) startOffset 0 endOffset 11 width 77.38: " pink tspan"
           RenderSVGInlineText {#text} at (0,0) size 0x0
         RenderSVGText {text} at (136,165) size 168x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 82x19
             chunk 1 (middle anchor) text run 1 at (136.43,180.00) startOffset 0 endOffset 12 width 81.81: "middle text "
-          RenderSVGTSpan {tspan} at (0,0) size 87x19
+          RenderSVGTSpan {tspan} at (81,0) size 87x19
             RenderSVGInlineText {#text} at (81,0) size 86x19
               chunk 1 (middle anchor) text run 1 at (218.24,180.00) startOffset 0 endOffset 11 width 85.33: " bold tspan"
           RenderSVGInlineText {#text} at (0,0) size 0x0

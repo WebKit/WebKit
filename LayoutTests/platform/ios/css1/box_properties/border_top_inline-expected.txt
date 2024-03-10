@@ -16,23 +16,23 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,109) size 784x60 [bgcolor=#C0C0C0]
         RenderText {#text} at (0,0) size 680x19
           text run at (0,0) width 680: "This is an unstyled element, save for the background color, and containing inline elements with classes of "
-        RenderInline {SPAN} at (0,0) size 59x29 [border: (10px double #800080) none]
+        RenderInline {SPAN} at (679,-10) size 59x29 [border: (10px double #800080) none]
           RenderText {#text} at (679,0) size 59x19
             text run at (679,0) width 59: "class one"
-        RenderText {#text} at (737,0) size 742x39
+        RenderText {#text} at (0,0) size 742x39
           text run at (737,0) width 5: ","
           text run at (0,20) width 387: "which should have a 10-pixel purple double top border; and "
-        RenderInline {SPAN} at (0,0) size 60x20 [border: (1px solid #800080) none]
+        RenderInline {SPAN} at (386,19) size 60x20 [border: (1px solid #800080) none]
           RenderText {#text} at (386,20) size 60x19
             text run at (386,20) width 60: "class two"
-        RenderText {#text} at (445,20) size 767x39
+        RenderText {#text} at (0,20) size 767x39
           text run at (445,20) width 322: ", which should have a thin solid purple top border."
           text run at (0,40) width 438: "The line-height of the parent element should not change on any line."
       RenderTable {TABLE} at (0,185) size 784x98 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 782x96
           RenderTableRow {TR} at (0,0) size 782x28
             RenderTableCell {TD} at (0,0) size 782x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 161x19
+              RenderInline {STRONG} at (4,4) size 161x19
                 RenderText {#text} at (4,4) size 161x19
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,28) size 782x68
@@ -43,16 +43,16 @@ layer at (0,0) size 800x600
               RenderBlock {P} at (4,4) size 762x60 [bgcolor=#C0C0C0]
                 RenderText {#text} at (0,0) size 680x19
                   text run at (0,0) width 680: "This is an unstyled element, save for the background color, and containing inline elements with classes of "
-                RenderInline {SPAN} at (0,0) size 59x29 [border: (10px double #800080) none]
+                RenderInline {SPAN} at (679,-10) size 59x29 [border: (10px double #800080) none]
                   RenderText {#text} at (679,0) size 59x19
                     text run at (679,0) width 59: "class one"
-                RenderText {#text} at (737,0) size 742x39
+                RenderText {#text} at (0,0) size 742x39
                   text run at (737,0) width 5: ","
                   text run at (0,20) width 387: "which should have a 10-pixel purple double top border; and "
-                RenderInline {SPAN} at (0,0) size 60x20 [border: (1px solid #800080) none]
+                RenderInline {SPAN} at (386,19) size 60x20 [border: (1px solid #800080) none]
                   RenderText {#text} at (386,20) size 60x19
                     text run at (386,20) width 60: "class two"
-                RenderText {#text} at (445,20) size 719x39
+                RenderText {#text} at (0,20) size 719x39
                   text run at (445,20) width 274: ", which should have a thin solid purple top"
                   text run at (0,40) width 49: "border. "
                   text run at (48,40) width 439: "The line-height of the parent element should not change on any line."

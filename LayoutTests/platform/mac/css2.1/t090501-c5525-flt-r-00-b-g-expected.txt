@@ -7,8 +7,8 @@ layer at (0,0) size 800x290
         RenderImage {IMG} at (734,0) size 50x50
         RenderText {#text} at (0,3) size 342x18
           text run at (0,3) width 342: "This text should flow around the box on the right. \x{21E8} "
-        RenderInline {SPAN} at (0,0) size 777x255 [color=#C0C0C0]
-          RenderText {#text} at (341,3) size 777x255
+        RenderInline {SPAN} at (0,3) size 777x255 [color=#C0C0C0]
+          RenderText {#text} at (0,3) size 777x255
             text run at (341,3) width 373: "dummy text dummy text dummy text dummy text dummy"
             text run at (0,24) width 81: "text dummy "
             text run at (80,24) width 487: "text dummy text dummy text dummy text dummy text dummy text dummy "

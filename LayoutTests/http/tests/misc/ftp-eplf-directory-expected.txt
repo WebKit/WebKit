@@ -11,7 +11,7 @@ layer at (8,8) size 769x584
             RenderText {#text} at (1,1) size 4x18
               text run at (1,1) width 4: " "
           RenderTableCell {TD} at (11,2) size 480x20 [r=0 c=1 rs=1 cs=1]
-            RenderInline {A} at (0,0) size 374x18 [color=#0000EE]
+            RenderInline {A} at (1,1) size 374x18 [color=#0000EE]
               RenderText {#text} at (1,1) size 374x18
                 text run at (1,1) width 374: "In order to pass there must be a directory entry below here"
           RenderTableCell {TD} at (492,2) size 202x20 [r=0 c=2 rs=1 cs=1]
@@ -25,7 +25,7 @@ layer at (8,8) size 769x584
             RenderText {#text} at (1,1) size 4x18
               text run at (1,1) width 4: " "
           RenderTableCell {TD} at (11,24) size 480x20 [r=1 c=1 rs=1 cs=1]
-            RenderInline {A} at (0,0) size 63x18 [color=#0000EE]
+            RenderInline {A} at (1,1) size 63x18 [color=#0000EE]
               RenderText {#text} at (1,1) size 63x18
                 text run at (1,1) width 63: "directory/"
           RenderTableCell {TD} at (492,24) size 202x20 [r=1 c=2 rs=1 cs=1]
@@ -39,7 +39,7 @@ layer at (8,8) size 769x584
             RenderText {#text} at (1,1) size 4x18
               text run at (1,1) width 4: " "
           RenderTableCell {TD} at (11,46) size 480x20 [r=2 c=1 rs=1 cs=1]
-            RenderInline {A} at (0,0) size 68x18 [color=#0000EE]
+            RenderInline {A} at (1,1) size 68x18 [color=#0000EE]
               RenderText {#text} at (1,1) size 68x18
                 text run at (1,1) width 68: "third entry"
           RenderTableCell {TD} at (492,46) size 202x20 [r=2 c=2 rs=1 cs=1]

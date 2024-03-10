@@ -254,35 +254,13 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
     
     bool enableSubpixelPrecisionForTextDump = shouldEnableSubpixelPrecisionForTextDump(o.document());
     LayoutRect r;
-    if (auto* text = dynamicDowncast<RenderText>(o)) {
-        // FIXME: Would be better to dump the bounding box x and y rather than the first run's x and y, but that would involve updating
-        // many test results.
-        r = IntRect(text->firstRunLocation(), text->linesBoundingBox().size());
-    } else if (auto* br = dynamicDowncast<RenderLineBreak>(o); br && br->isBR()) {
-        IntRect linesBox = br->linesBoundingBox();
-        r = IntRect(linesBox.x(), linesBox.y(), linesBox.width(), linesBox.height());
-    } else if (auto* inlineFlow = dynamicDowncast<RenderInline>(o)) {
-        // FIXME: Would be better not to just dump 0, 0 as the x and y here.
-        auto width = inlineFlow->linesBoundingBox().width();
-        auto inlineHeight = [&] {
-            // Let's match legacy line layout's RenderInline behavior and report 0 height when the inline box is "empty".
-            // FIXME: Remove and rebaseline when LFC inline boxes are enabled (see webkit.org/b/220722) 
-            auto height = inlineFlow->linesBoundingBox().height();
-            if (width)
-                return height;
-            if (is<RenderQuote>(*inlineFlow))
-                return height;
-            if (inlineFlow->marginStart() || inlineFlow->marginEnd())
-                return height;
-            // This is mostly pre/post continuation content. Also see webkit.org/b/220735
-            if (hasNonEmptySibling(*inlineFlow))
-                return height;
-            if (isRenderInlineEmpty(*inlineFlow))
-                return 0;
-            return height;
-        };
-        r = IntRect(0, 0, width, inlineHeight());
-    } else if (auto* cell = dynamicDowncast<RenderTableCell>(o)) {
+    if (auto* text = dynamicDowncast<RenderText>(o))
+        r = text->linesBoundingBox();
+    else if (auto* br = dynamicDowncast<RenderLineBreak>(o); br && br->isBR())
+        r = br->linesBoundingBox();
+    else if (auto* inlineFlow = dynamicDowncast<RenderInline>(o))
+        r = inlineFlow->linesBoundingBox();
+    else if (auto* cell = dynamicDowncast<RenderTableCell>(o)) {
         // FIXME: Deliberately dump the "inner" box of table cells, since that is what current results reflect.  We'd like
         // to clean up the results to dump both the outer box and the intrinsic padding so that both bits of information are
         // captured by the results.

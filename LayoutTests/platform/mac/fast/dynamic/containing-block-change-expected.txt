@@ -7,10 +7,10 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 177x18
           text run at (0,0) width 177: "This is a regression test for "
         RenderInline {I} at (0,0) size 771x36
-          RenderInline {A} at (0,0) size 305x18 [color=#0000EE]
+          RenderInline {A} at (176,0) size 305x18 [color=#0000EE]
             RenderText {#text} at (176,0) size 305x18
               text run at (176,0) width 305: "http://bugs.webkit.org/show_bug.cgi?id=11672"
-          RenderText {#text} at (480,0) size 771x36
+          RenderText {#text} at (0,0) size 771x36
             text run at (480,0) width 5: " "
             text run at (484,0) width 287: "REGRESSION (r17068): Repro crash due to"
             text run at (0,18) width 150: "painting without layout"

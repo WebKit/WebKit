@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 103x18
           text run at (0,0) width 103: "Repaint test for "
         RenderInline {RDAR} at (0,0) size 779x54
-          RenderText {#text} at (102,0) size 779x54
+          RenderText {#text} at (0,0) size 779x54
             text run at (102,0) width 491: "REGRESSION (r41203): Facebook friend suggestions disappear on update. "
             text run at (592,0) width 154: "Make sure when a layer"
             text run at (0,18) width 706: "switches from being self-painting to non-self-painting that a layout happens to fix up the floating objects lists. "

@@ -12,7 +12,7 @@ layer at (0,0) size 800x514
         RenderBlock {P} at (0,420) size 124x18
           RenderText {#text} at (0,0) size 47x18
             text run at (0,0) width 47: "Lorem "
-          RenderInline {SPAN} at (0,0) size 40x18
+          RenderInline {SPAN} at (46,0) size 40x18
             RenderText {#text} at (46,0) size 40x18
               text run at (46,0) width 40: "ipsum"
           RenderText {#text} at (85,0) size 39x18
@@ -32,7 +32,7 @@ layer at (0,0) size 800x514
         RenderBlock {P} at (0,420) size 124x18
           RenderText {#text} at (0,0) size 47x18
             text run at (0,0) width 47: "Lorem "
-          RenderInline {SPAN} at (0,0) size 40x18
+          RenderInline {SPAN} at (46,0) size 40x18
             RenderText {#text} at (46,0) size 40x18
               text run at (46,0) width 40: "ipsum"
           RenderText {#text} at (85,0) size 39x18
@@ -46,7 +46,7 @@ layer at (0,0) size 800x514
         RenderBlock {P} at (0,420) size 124x18
           RenderText {#text} at (0,0) size 47x18
             text run at (0,0) width 47: "Lorem "
-          RenderInline {SPAN} at (0,0) size 40x18
+          RenderInline {SPAN} at (46,0) size 40x18
             RenderText {#text} at (46,0) size 40x18
               text run at (46,0) width 40: "ipsum"
           RenderText {#text} at (85,0) size 39x18
@@ -60,7 +60,7 @@ layer at (0,0) size 800x514
         RenderBlock {P} at (0,420) size 124x18
           RenderText {#text} at (0,0) size 47x18
             text run at (0,0) width 47: "Lorem "
-          RenderInline {SPAN} at (0,0) size 40x18
+          RenderInline {SPAN} at (46,0) size 40x18
             RenderText {#text} at (46,0) size 40x18
               text run at (46,0) width 40: "ipsum"
           RenderText {#text} at (85,0) size 39x18
@@ -74,7 +74,7 @@ layer at (0,0) size 800x514
         RenderBlock {P} at (0,420) size 124x18
           RenderText {#text} at (0,0) size 47x18
             text run at (0,0) width 47: "Lorem "
-          RenderInline {SPAN} at (0,0) size 40x18
+          RenderInline {SPAN} at (46,0) size 40x18
             RenderText {#text} at (46,0) size 40x18
               text run at (46,0) width 40: "ipsum"
           RenderText {#text} at (85,0) size 39x18

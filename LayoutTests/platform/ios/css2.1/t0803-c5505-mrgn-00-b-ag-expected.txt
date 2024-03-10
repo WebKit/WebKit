@@ -6,7 +6,7 @@ layer at (0,0) size 800x240
       RenderBlock {P} at (0,0) size 784x20
         RenderText {#text} at (0,0) size 296x19
           text run at (0,0) width 296: "The five \"matches\" below should be identical "
-        RenderInline {STRONG} at (0,0) size 130x19
+        RenderInline {STRONG} at (295,0) size 130x19
           RenderText {#text} at (295,0) size 131x19
             text run at (295,0) width 131: "and equally spaced"
         RenderText {#text} at (425,0) size 5x19

@@ -18,10 +18,10 @@ layer at (0,0) size 800x600
           text run at (31,0) width 9: " "
           text run at (39,0) width 9: " "
           text run at (47,0) width 9: " "
-        RenderInline {SPAN} at (0,0) size 11x18
+        RenderInline {SPAN} at (55,0) size 11x18
           RenderText {#text} at (55,0) size 11x18
             text run at (55,0) width 11: "is"
-        RenderText {#text} at (66,0) size 70x36
+        RenderText {#text} at (0,0) size 70x36
           text run at (66,0) width 4: " "
           text run at (0,18) width 52: "justified"
       RenderBlock (anonymous) at (0,136) size 800x18

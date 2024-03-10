@@ -12,7 +12,7 @@ layer at (0,0) size 800x600
                   text run at (181,2) width 416: "This table is wrapped in a <CENTER> tag with HEIGHT=100%"
             RenderTableRow {TR} at (0,292) size 782x288
               RenderTableCell {TD} at (2,424) size 778x24 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-                RenderInline {A} at (0,0) size 96x19 [color=#0000EE]
+                RenderInline {A} at (341,134) size 96x19 [color=#0000EE]
                   RenderText {#text} at (341,134) size 96x19
                     text run at (341,2) width 96: "This one is not"
                 RenderText {#text} at (0,0) size 0x0

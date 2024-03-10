@@ -11,7 +11,7 @@ layer at (0,0) size 800x600
           RenderTableSection {TBODY} at (0,0) size 661x47
             RenderTableRow {TR} at (0,2) size 661x21
               RenderTableCell {TD} at (2,2) size 106x21 [r=0 c=0 rs=1 cs=1]
-                RenderInline {B} at (0,0) size 95x19
+                RenderInline {B} at (1,1) size 95x19
                   RenderText {#text} at (1,1) size 95x19
                     text run at (1,1) width 95: "Trigger URL:"
               RenderTableCell {TD} at (109,2) size 464x21 [r=0 c=1 rs=1 cs=1]
@@ -23,7 +23,7 @@ layer at (0,0) size 800x600
                       text run at (0,0) width 38: "Trigger"
             RenderTableRow {TR} at (0,25) size 661x20
               RenderTableCell {TD} at (2,25) size 106x20 [r=1 c=0 rs=1 cs=1]
-                RenderInline {B} at (0,0) size 104x18
+                RenderInline {B} at (1,1) size 104x18
                   RenderText {#text} at (1,1) size 104x18
                     text run at (1,1) width 104: "Run Test Case:"
               RenderTableCell {TD} at (109,25) size 464x20 [r=1 c=1 rs=1 cs=1]

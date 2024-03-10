@@ -23,7 +23,7 @@ layer at (0,0) size 800x1432
           RenderTableSection {TBODY} at (2,2) size 388x46
             RenderTableRow {TR} at (0,2) size 388x42
               RenderTableCell {TD} at (2,2) size 384x42 [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (27,1) size 371x39
+                RenderText {#text} at (12,1) size 371x39
                   text run at (27,1) width 356: "This is a table. It should sit on the same line as the float"
                   text run at (12,21) width 5 RTL: "."
                   text run at (16,21) width 367: "and wrap as needed to fit within the remaining line width"

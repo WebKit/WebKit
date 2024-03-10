@@ -12,14 +12,14 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,86) size 784x28
         RenderText {#text} at (0,10) size 83x18
           text run at (0,10) width 83: "<ruby> uses "
-        RenderInline {RUBY} at (0,0) size 43x18
-          RenderInline (generated) at (0,0) size 29x18
+        RenderInline {RUBY} at (82,10) size 43x18
+          RenderInline (generated) at (82,10) size 29x18
             RenderText {#text} at (82,10) size 29x18
               text run at (82,10) width 29: "<rt>"
           RenderBlock {RT} at (82,0) size 29x10
             RenderText {#text} at (5,0) size 18x10
               text run at (5,0) width 18: "ruby"
-          RenderInline (generated) at (0,0) size 15x18
+          RenderInline (generated) at (110,10) size 15x18
           RenderBlock {RT} at (110,0) size 15x10
             RenderText {#text} at (0,0) size 14x10
               text run at (0,0) width 14: "text"

@@ -42,7 +42,7 @@ layer at (0,0) size 800x1692
           RenderListMarker at (-14,0) size 5x14: bullet
           RenderText {#text} at (0,0) size 406x14
             text run at (0,0) width 406: "The bottom stripe should be straight and cut across "
-          RenderInline {EM} at (0,0) size 32x14
+          RenderInline {EM} at (405,0) size 32x14
             RenderText {#text} at (405,0) size 32x14
               text run at (405,0) width 32: "over"
           RenderText {#text} at (436,0) size 118x14
@@ -238,7 +238,7 @@ layer at (0,0) size 800x1692
               RenderText {#text} at (1,30) size 44x23
                 text run at (1,2) width 44: "TD L"
       RenderBlock {DIV} at (0,1617) size 784x36
-        RenderInline {A} at (0,0) size 88x14 [color=#FFFF00]
+        RenderInline {A} at (0,21) size 88x14 [color=#FFFF00]
           RenderImage {IMG} at (0,0) size 88x31
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {ADDRESS} at (0,1652) size 784x15

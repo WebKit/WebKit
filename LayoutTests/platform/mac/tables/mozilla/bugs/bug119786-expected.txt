@@ -5,7 +5,7 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderTable {TABLE} at (0,0) size 71x88 [border: (1px outset #808080)]
         RenderBlock {CAPTION} at (0,0) size 71x36 [color=#008000] [bgcolor=#FFFFE0]
-          RenderText {#text} at (6,0) size 63x36
+          RenderText {#text} at (4,0) size 63x36
             text run at (6,0) width 58: "Where is"
             text run at (4,18) width 63: "the table?"
         RenderTableSection {THEAD} at (1,37) size 69x26
@@ -51,7 +51,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,2) size 47x18
                 text run at (2,2) width 47: "Header"
         RenderBlock {CAPTION} at (0,0) size 71x36 [color=#008000] [bgcolor=#FFFFE0]
-          RenderText {#text} at (6,0) size 63x36
+          RenderText {#text} at (4,0) size 63x36
             text run at (6,0) width 58: "Where is"
             text run at (4,18) width 63: "the table?"
         RenderTableSection {TBODY} at (1,63) size 69x24

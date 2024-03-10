@@ -39,7 +39,7 @@ layer at (0,0) size 800x142
       RenderBlock {P} at (0,98) size 784x20
         RenderText {#text} at (0,0) size 224x19
           text run at (0,0) width 224: "This paragraph contains some text "
-        RenderInline {SPAN} at (0,0) size 308x19 [bgcolor=#00FF00]
+        RenderInline {SPAN} at (223,0) size 308x19 [bgcolor=#00FF00]
           RenderText {#text} at (223,0) size 308x19
             text run at (223,0) width 308: "and a span that should have a green background"
         RenderText {#text} at (0,0) size 0x0

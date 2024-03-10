@@ -4,22 +4,22 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 36x506 [color=#4B0082] [border: (3px solid #000000)]
-        RenderInline {RUBY} at (0,0) size 20x80 [color=#0000FF]
-          RenderInline (generated) at (0,0) size 20x80
+        RenderInline {RUBY} at (13,3) size 20x80 [color=#0000FF]
+          RenderInline (generated) at (13,3) size 20x80
             RenderText {#text} at (13,23) size 20x40
               text run at (13,23) width 40: "xx"
           RenderBlock {RT} at (3,3) size 10x80 [color=#C0C0C0]
             RenderText {#text} at (0,0) size 10x80
               text run at (0,0) width 80: "xxxxxxxx"
-        RenderInline {RUBY} at (0,0) size 20x80 [color=#0000FF]
-          RenderInline (generated) at (0,0) size 20x80
+        RenderInline {RUBY} at (13,83) size 20x80 [color=#0000FF]
+          RenderInline (generated) at (13,83) size 20x80
             RenderText {#text} at (13,103) size 20x40
               text run at (13,103) width 40: "yy"
           RenderBlock {RT} at (3,83) size 10x80 [color=#C0C0C0]
             RenderText {#text} at (0,0) size 10x80
               text run at (0,0) width 80: "yyyyyyyy"
-        RenderInline {RUBY} at (0,0) size 20x80 [color=#0000FF]
-          RenderInline (generated) at (0,0) size 20x80
+        RenderInline {RUBY} at (13,163) size 20x80 [color=#0000FF]
+          RenderInline (generated) at (13,163) size 20x80
             RenderText {#text} at (13,183) size 20x40
               text run at (13,183) width 40: "zz"
           RenderBlock {RT} at (3,163) size 10x80 [color=#C0C0C0]
@@ -27,8 +27,8 @@ layer at (0,0) size 800x600
               text run at (0,0) width 80: "zzzzzzzz"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (44,0) size 36x506 [color=#4B0082] [border: (3px solid #000000)]
-        RenderInline {RUBY} at (0,0) size 20x80 [color=#0000FF]
-          RenderInline (generated) at (0,0) size 20x80
+        RenderInline {RUBY} at (13,3) size 20x80 [color=#0000FF]
+          RenderInline (generated) at (13,3) size 20x80
             RenderText {#text} at (13,23) size 20x40
               text run at (13,23) width 40: "xx"
           RenderBlock {RT} at (3,3) size 10x80 [color=#C0C0C0]
@@ -36,8 +36,8 @@ layer at (0,0) size 800x600
               text run at (0,0) width 80: "xxxxxxxx"
         RenderText {#text} at (13,78) size 20x20
           text run at (13,78) width 20: " "
-        RenderInline {RUBY} at (0,0) size 20x80 [color=#0000FF]
-          RenderInline (generated) at (0,0) size 20x80
+        RenderInline {RUBY} at (13,98) size 20x80 [color=#0000FF]
+          RenderInline (generated) at (13,93) size 20x80
             RenderText {#text} at (13,113) size 20x40
               text run at (13,113) width 40: "yy"
           RenderBlock {RT} at (3,93) size 10x80 [color=#C0C0C0]
@@ -45,8 +45,8 @@ layer at (0,0) size 800x600
               text run at (0,0) width 80: "yyyyyyyy"
         RenderText {#text} at (13,168) size 20x20
           text run at (13,168) width 20: " "
-        RenderInline {RUBY} at (0,0) size 20x80 [color=#0000FF]
-          RenderInline (generated) at (0,0) size 20x80
+        RenderInline {RUBY} at (13,188) size 20x80 [color=#0000FF]
+          RenderInline (generated) at (13,183) size 20x80
             RenderText {#text} at (13,203) size 20x40
               text run at (13,203) width 40: "zz"
           RenderBlock {RT} at (3,183) size 10x80 [color=#C0C0C0]
@@ -54,8 +54,8 @@ layer at (0,0) size 800x600
               text run at (0,0) width 80: "zzzzzzzz"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (88,0) size 36x506 [color=#4B0082] [border: (3px solid #000000)]
-        RenderInline {RUBY} at (0,0) size 20x80 [color=#0000FF]
-          RenderInline (generated) at (0,0) size 20x80
+        RenderInline {RUBY} at (13,3) size 20x80 [color=#0000FF]
+          RenderInline (generated) at (13,3) size 20x80
             RenderText {#text} at (13,23) size 20x40
               text run at (13,23) width 40: "xx"
           RenderBlock {RT} at (3,3) size 10x80 [color=#C0C0C0]
@@ -63,8 +63,8 @@ layer at (0,0) size 800x600
               text run at (0,0) width 80: "xxxxxxxx"
         RenderText {#text} at (13,78) size 20x20
           text run at (13,78) width 20: " "
-        RenderInline {RUBY} at (0,0) size 20x80 [color=#0000FF]
-          RenderInline (generated) at (0,0) size 20x80
+        RenderInline {RUBY} at (13,98) size 20x80 [color=#0000FF]
+          RenderInline (generated) at (13,93) size 20x80
             RenderText {#text} at (13,113) size 20x40
               text run at (13,113) width 40: "yy"
           RenderBlock {RT} at (3,93) size 10x80 [color=#C0C0C0]
@@ -72,8 +72,8 @@ layer at (0,0) size 800x600
               text run at (0,0) width 80: "yyyyyyyy"
         RenderText {#text} at (13,168) size 20x20
           text run at (13,168) width 20: " "
-        RenderInline {RUBY} at (0,0) size 20x80 [color=#0000FF]
-          RenderInline (generated) at (0,0) size 20x80
+        RenderInline {RUBY} at (13,188) size 20x80 [color=#0000FF]
+          RenderInline (generated) at (13,183) size 20x80
             RenderText {#text} at (13,203) size 20x40
               text run at (13,203) width 40: "zz"
           RenderBlock {RT} at (3,183) size 10x80 [color=#C0C0C0]
@@ -81,8 +81,8 @@ layer at (0,0) size 800x600
               text run at (0,0) width 80: "zzzzzzzz"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (132,0) size 36x506 [color=#4B0082] [border: (3px solid #000000)]
-        RenderInline {RUBY} at (0,0) size 20x80 [color=#0000FF]
-          RenderInline (generated) at (0,0) size 20x80
+        RenderInline {RUBY} at (13,3) size 20x80 [color=#0000FF]
+          RenderInline (generated) at (13,3) size 20x80
             RenderText {#text} at (13,23) size 20x40
               text run at (13,23) width 40: "xx"
           RenderBlock {RT} at (3,3) size 10x80 [color=#C0C0C0]
@@ -90,8 +90,8 @@ layer at (0,0) size 800x600
               text run at (0,0) width 80: "xxxxxxxx"
         RenderText {#text} at (13,78) size 20x20
           text run at (13,78) width 20: "l"
-        RenderInline {RUBY} at (0,0) size 20x80 [color=#0000FF]
-          RenderInline (generated) at (0,0) size 20x80
+        RenderInline {RUBY} at (13,98) size 20x80 [color=#0000FF]
+          RenderInline (generated) at (13,93) size 20x80
             RenderText {#text} at (13,113) size 20x40
               text run at (13,113) width 40: "yy"
           RenderBlock {RT} at (3,93) size 10x80 [color=#C0C0C0]
@@ -99,8 +99,8 @@ layer at (0,0) size 800x600
               text run at (0,0) width 80: "yyyyyyyy"
         RenderText {#text} at (13,168) size 20x20
           text run at (13,168) width 20: "l"
-        RenderInline {RUBY} at (0,0) size 20x80 [color=#0000FF]
-          RenderInline (generated) at (0,0) size 20x80
+        RenderInline {RUBY} at (13,188) size 20x80 [color=#0000FF]
+          RenderInline (generated) at (13,183) size 20x80
             RenderText {#text} at (13,203) size 20x40
               text run at (13,203) width 40: "zz"
           RenderBlock {RT} at (3,183) size 10x80 [color=#C0C0C0]
@@ -108,8 +108,8 @@ layer at (0,0) size 800x600
               text run at (0,0) width 80: "zzzzzzzz"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (176,0) size 36x506 [color=#4B0082] [border: (3px solid #000000)]
-        RenderInline {RUBY} at (0,0) size 20x80 [color=#0000FF]
-          RenderInline (generated) at (0,0) size 20x80
+        RenderInline {RUBY} at (13,3) size 20x80 [color=#0000FF]
+          RenderInline (generated) at (13,3) size 20x80
             RenderText {#text} at (13,23) size 20x40
               text run at (13,23) width 40: "xx"
           RenderBlock {RT} at (3,3) size 10x80 [color=#C0C0C0]
@@ -117,8 +117,8 @@ layer at (0,0) size 800x600
               text run at (0,0) width 80: "xxxxxxxx"
         RenderText {#text} at (13,78) size 20x40
           text run at (13,78) width 40: "ll"
-        RenderInline {RUBY} at (0,0) size 20x80 [color=#0000FF]
-          RenderInline (generated) at (0,0) size 20x80
+        RenderInline {RUBY} at (13,118) size 20x80 [color=#0000FF]
+          RenderInline (generated) at (13,113) size 20x80
             RenderText {#text} at (13,133) size 20x40
               text run at (13,133) width 40: "yy"
           RenderBlock {RT} at (3,113) size 10x80 [color=#C0C0C0]
@@ -126,8 +126,8 @@ layer at (0,0) size 800x600
               text run at (0,0) width 80: "yyyyyyyy"
         RenderText {#text} at (13,188) size 20x40
           text run at (13,188) width 40: "ll"
-        RenderInline {RUBY} at (0,0) size 20x80 [color=#0000FF]
-          RenderInline (generated) at (0,0) size 20x80
+        RenderInline {RUBY} at (13,228) size 20x80 [color=#0000FF]
+          RenderInline (generated) at (13,223) size 20x80
             RenderText {#text} at (13,243) size 20x40
               text run at (13,243) width 40: "zz"
           RenderBlock {RT} at (3,223) size 10x80 [color=#C0C0C0]
@@ -135,8 +135,8 @@ layer at (0,0) size 800x600
               text run at (0,0) width 80: "zzzzzzzz"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (220,0) size 36x506 [color=#4B0082] [border: (3px solid #000000)]
-        RenderInline {RUBY} at (0,0) size 20x80 [color=#0000FF]
-          RenderInline (generated) at (0,0) size 20x80
+        RenderInline {RUBY} at (13,3) size 20x80 [color=#0000FF]
+          RenderInline (generated) at (13,3) size 20x80
             RenderText {#text} at (13,23) size 20x40
               text run at (13,23) width 40: "xx"
           RenderBlock {RT} at (3,3) size 10x80 [color=#C0C0C0]
@@ -144,8 +144,8 @@ layer at (0,0) size 800x600
               text run at (0,0) width 80: "xxxxxxxx"
         RenderText {#text} at (13,78) size 20x60
           text run at (13,78) width 60: "lll"
-        RenderInline {RUBY} at (0,0) size 20x80 [color=#0000FF]
-          RenderInline (generated) at (0,0) size 20x80
+        RenderInline {RUBY} at (13,138) size 20x80 [color=#0000FF]
+          RenderInline (generated) at (13,133) size 20x80
             RenderText {#text} at (13,153) size 20x40
               text run at (13,153) width 40: "yy"
           RenderBlock {RT} at (3,133) size 10x80 [color=#C0C0C0]
@@ -153,8 +153,8 @@ layer at (0,0) size 800x600
               text run at (0,0) width 80: "yyyyyyyy"
         RenderText {#text} at (13,208) size 20x60
           text run at (13,208) width 60: "lll"
-        RenderInline {RUBY} at (0,0) size 20x80 [color=#0000FF]
-          RenderInline (generated) at (0,0) size 20x80
+        RenderInline {RUBY} at (13,268) size 20x80 [color=#0000FF]
+          RenderInline (generated) at (13,263) size 20x80
             RenderText {#text} at (13,283) size 20x40
               text run at (13,283) width 40: "zz"
           RenderBlock {RT} at (3,263) size 10x80 [color=#C0C0C0]
@@ -162,8 +162,8 @@ layer at (0,0) size 800x600
               text run at (0,0) width 80: "zzzzzzzz"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (264,0) size 36x506 [color=#4B0082] [border: (3px solid #000000)]
-        RenderInline {RUBY} at (0,0) size 20x80 [color=#0000FF]
-          RenderInline (generated) at (0,0) size 20x80
+        RenderInline {RUBY} at (13,3) size 20x80 [color=#0000FF]
+          RenderInline (generated) at (13,3) size 20x80
             RenderText {#text} at (13,23) size 20x40
               text run at (13,23) width 40: "xx"
           RenderBlock {RT} at (3,3) size 10x80 [color=#C0C0C0]
@@ -171,8 +171,8 @@ layer at (0,0) size 800x600
               text run at (0,0) width 80: "xxxxxxxx"
         RenderText {#text} at (13,78) size 20x80
           text run at (13,78) width 80: "llll"
-        RenderInline {RUBY} at (0,0) size 20x80 [color=#0000FF]
-          RenderInline (generated) at (0,0) size 20x80
+        RenderInline {RUBY} at (13,158) size 20x80 [color=#0000FF]
+          RenderInline (generated) at (13,153) size 20x80
             RenderText {#text} at (13,173) size 20x40
               text run at (13,173) width 40: "yy"
           RenderBlock {RT} at (3,153) size 10x80 [color=#C0C0C0]
@@ -180,8 +180,8 @@ layer at (0,0) size 800x600
               text run at (0,0) width 80: "yyyyyyyy"
         RenderText {#text} at (13,228) size 20x80
           text run at (13,228) width 80: "llll"
-        RenderInline {RUBY} at (0,0) size 20x80 [color=#0000FF]
-          RenderInline (generated) at (0,0) size 20x80
+        RenderInline {RUBY} at (13,308) size 20x80 [color=#0000FF]
+          RenderInline (generated) at (13,303) size 20x80
             RenderText {#text} at (13,323) size 20x40
               text run at (13,323) width 40: "zz"
           RenderBlock {RT} at (3,303) size 10x80 [color=#C0C0C0]

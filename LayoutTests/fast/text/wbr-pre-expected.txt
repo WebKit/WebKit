@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 180x15
           text run at (0,0) width 180: "[ONE] This is the first"
         RenderWordBreak {WBR} at (0,0) size 0x0
-        RenderText {#text} at (179,0) size 554x45
+        RenderText {#text} at (0,0) size 554x45
           text run at (179,0) width 48: " line."
           text run at (226,0) width 1: " "
           text run at (0,15) width 554: "[TWO] If this on the same line as the first line, this test has failed."

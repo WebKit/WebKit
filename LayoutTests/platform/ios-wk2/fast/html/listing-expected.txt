@@ -20,6 +20,6 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,127) size 784x20
         RenderText {#text} at (0,0) size 600x19
           text run at (0,0) width 600: "The listing tag has a width in it. To test the JavaScript binding, this page gets the width, here: "
-        RenderInline {A} at (0,0) size 25x19
+        RenderInline {A} at (599,0) size 25x19
           RenderText {#text} at (599,0) size 25x19
             text run at (599,0) width 25: "100"

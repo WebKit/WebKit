@@ -4,7 +4,7 @@ layer at (0,0) size 800x210
   RenderBlock {HTML} at (0,0) size 800x210
     RenderBody {BODY} at (8,8) size 784x194
       RenderBlock (anonymous) at (0,0) size 784x18
-        RenderInline {DIV} at (0,0) size 528x16 [color=#FFFFFF] [bgcolor=#FF0000]
+        RenderInline {DIV} at (0,1) size 528x16 [color=#FFFFFF] [bgcolor=#FF0000]
           RenderText {#text} at (0,1) size 528x16
             text run at (0,1) width 528: "Ahem_font_required_for_this_test."
         RenderText {#text} at (0,0) size 0x0
@@ -36,7 +36,7 @@ layer at (0,0) size 800x210
                     text run at (0,0) width 20: "X"
                 RenderText {#text} at (20,0) size 20x20
                   text run at (20,0) width 20: " "
-                RenderInline {SPAN} at (0,0) size 20x20
+                RenderInline {SPAN} at (40,0) size 20x20
                   RenderText {#text} at (40,0) size 20x20
                     text run at (40,0) width 20: "X"
               RenderBlock {DIV} at (0,20) size 60x20 [color=#008000] [bgcolor=#00FF00]
@@ -45,7 +45,7 @@ layer at (0,0) size 800x210
                     text run at (0,0) width 20: "X"
                 RenderText {#text} at (20,0) size 20x20
                   text run at (20,0) width 20: " "
-                RenderInline {SPAN} at (0,0) size 20x20
+                RenderInline {SPAN} at (40,0) size 20x20
                   RenderText {#text} at (40,0) size 20x20
                     text run at (40,0) width 20: "X"
               RenderBlock {DIV} at (0,40) size 60x20 [color=#008000] [bgcolor=#00FF00]
@@ -54,7 +54,7 @@ layer at (0,0) size 800x210
                     text run at (0,0) width 20: "X"
                 RenderText {#text} at (20,0) size 20x20
                   text run at (20,0) width 20: " "
-                RenderInline {SPAN} at (0,0) size 20x20
+                RenderInline {SPAN} at (40,0) size 20x20
                   RenderText {#text} at (40,0) size 20x20
                     text run at (40,0) width 20: "X"
                 RenderText {#text} at (0,0) size 0x0
@@ -66,7 +66,7 @@ layer at (0,0) size 800x210
                       text run at (0,0) width 20: "X"
                   RenderText {#text} at (20,0) size 20x20
                     text run at (20,0) width 20: " "
-                  RenderInline {SPAN} at (0,0) size 20x20
+                  RenderInline {SPAN} at (40,0) size 20x20
                     RenderText {#text} at (40,0) size 20x20
                       text run at (40,0) width 20: "X"
                   RenderText {#text} at (0,0) size 0x0
@@ -77,7 +77,7 @@ layer at (0,0) size 800x210
                       text run at (0,0) width 20: "X"
                   RenderText {#text} at (20,0) size 20x20
                     text run at (20,0) width 20: " "
-                  RenderInline {SPAN} at (0,0) size 20x20
+                  RenderInline {SPAN} at (40,0) size 20x20
                     RenderText {#text} at (40,0) size 20x20
                       text run at (40,0) width 20: "X"
                   RenderText {#text} at (0,0) size 0x0

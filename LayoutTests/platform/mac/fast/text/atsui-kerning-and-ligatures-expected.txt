@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 54x18
           text run at (0,0) width 54: "Test for "
         RenderInline {I} at (0,0) size 759x36
-          RenderText {#text} at (53,0) size 759x36
+          RenderText {#text} at (0,0) size 759x36
             text run at (53,0) width 706: "http://bugzilla.opendarwin.org/show_bug.cgi?id=6137 Disable kerning and some ligatures in the ATSUI code"
             text run at (0,18) width 29: "path"
         RenderText {#text} at (28,18) size 5x18

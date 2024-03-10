@@ -16,10 +16,10 @@ layer at (0,0) size 800x600
                       RenderBR {BR} at (204,2) size 1x19
                       RenderText {#text} at (2,37) size 208x19
                         text run at (2,37) width 208: "Plans are underway to make the "
-                      RenderInline {FONT} at (0,0) size 101x36 [color=#0000FF]
+                      RenderInline {FONT} at (209,23) size 101x36 [color=#0000FF]
                         RenderText {#text} at (209,23) size 101x36
                           text run at (209,23) width 101: "Mozilla"
-                      RenderText {#text} at (309,37) size 404x62
+                      RenderText {#text} at (2,37) size 404x62
                         text run at (309,37) width 97: " code available"
                         text run at (2,60) width 52: "under a "
                         text run at (53,60) width 156: "dual MPL/GPL license. "

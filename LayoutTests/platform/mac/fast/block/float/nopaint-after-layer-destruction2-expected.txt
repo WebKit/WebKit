@@ -7,10 +7,10 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 144x18
           text run at (0,0) width 144: "This is a pixel test for "
         RenderInline {I} at (0,0) size 774x36
-          RenderInline {A} at (0,0) size 353x18 [color=#0000EE]
+          RenderInline {A} at (143,0) size 353x18 [color=#0000EE]
             RenderText {#text} at (143,0) size 353x18
               text run at (143,0) width 353: "http://bugzilla.opendarwin.org/show_bug.cgi?id=4334"
-          RenderText {#text} at (495,0) size 774x36
+          RenderText {#text} at (0,0) size 774x36
             text run at (495,0) width 5: " "
             text run at (499,0) width 275: "REGRESSION: Flickering when css-hover"
             text run at (0,18) width 277: "should change opacity on floating elements"
@@ -26,7 +26,7 @@ layer at (0,0) size 800x600
             RenderText {#text} at (81,0) size 159x22
               text run at (81,0) width 159: "Stanley Park Forest"
           RenderBlock {P} at (0,40) size 784x91
-            RenderText {#text} at (81,0) size 770x90
+            RenderText {#text} at (0,0) size 770x90
               text run at (81,0) width 689: "The forest is primarily second and third growth. The area was saved from development because of its status"
               text run at (81,18) width 677: "as a federal military reserve; it occupied a strategic location for defending the former provincial capital of"
               text run at (81,36) width 688: "New Westminster in the case of an American naval invasion. Nevertheless, the federal government allowed"

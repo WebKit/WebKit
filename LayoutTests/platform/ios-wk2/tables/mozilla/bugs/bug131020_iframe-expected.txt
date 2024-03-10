@@ -14,7 +14,7 @@ layer at (0,0) size 800x2036
                   text run at (360,1) width 38: "News"
             RenderTableRow {TR} at (0,22) size 758x42
               RenderTableCell {TD} at (0,22) size 758x42 [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
-                RenderInline {B} at (0,0) size 98x19
+                RenderInline {B} at (330,1) size 98x19
                   RenderText {#text} at (330,1) size 98x19
                     text run at (330,1) width 98: "11. M\x{E4}rz 2002"
                 RenderBR {BR} at (427,1) size 1x19
@@ -23,7 +23,7 @@ layer at (0,0) size 800x2036
                   text run at (558,21) width 140: "unter komerz. Scripte"
             RenderTableRow {TR} at (0,64) size 758x42
               RenderTableCell {TD} at (0,64) size 758x42 [border: (1px inset #000000)] [r=2 c=0 rs=1 cs=1]
-                RenderInline {B} at (0,0) size 94x19
+                RenderInline {B} at (332,1) size 94x19
                   RenderText {#text} at (332,1) size 94x19
                     text run at (332,1) width 94: "09.M\x{E4}rz 2002"
                   RenderBR {BR} at (425,1) size 1x19

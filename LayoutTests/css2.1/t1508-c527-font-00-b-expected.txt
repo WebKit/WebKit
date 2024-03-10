@@ -7,7 +7,7 @@ layer at (0,0) size 800x101
         RenderText {#text} at (0,0) size 617x15
           text run at (0,0) width 617: "This text should be 13px Helvetica in small-caps and italicized. There should be a small gap between each line. "
         RenderInline {SPAN} at (0,0) size 781x75 [color=#C0C0C0]
-          RenderText {#text} at (616,0) size 781x75
+          RenderText {#text} at (0,0) size 781x75
             text run at (616,0) width 165: "dummy text dummy text dummy"
             text run at (0,15) width 195: "text dummy text dummy text dummy "
             text run at (194,15) width 390: "text dummy text dummy text dummy text dummy text dummy text dummy "

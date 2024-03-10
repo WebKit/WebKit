@@ -73,7 +73,7 @@ layer at (0,0) size 800x600
             chunk 1 (end anchor, vertical) text run 17 at (134.00,180.80) startOffset 16 endOffset 17 height 19.20: ","
     RenderSVGContainer {g} at (216,135) size 300x427
       RenderSVGText {text} at (130,81) size 180x256 contains 1 chunk(s)
-        RenderSVGTSpan {tspan} at (0,0) size 133x21
+        RenderSVGTSpan {tspan} at (0,118) size 133x21
           RenderSVGInlineText {#text} at (0,118) size 20x133
             chunk 1 (vertical) text run 1 at (134.00,200.00) startOffset 0 endOffset 1 height 19.20: "L"
             chunk 1 (vertical) text run 2 at (134.00,208.90) startOffset 1 endOffset 2 height 19.20: "o"
@@ -94,7 +94,7 @@ layer at (0,0) size 800x600
             chunk 1 (vertical) text run 17 at (134.00,327.17) startOffset 16 endOffset 17 height 19.20: "r"
         RenderSVGInlineText {#text} at (0,251) size 20x5
           chunk 1 (vertical) text run 1 at (134.00,332.50) startOffset 0 endOffset 1 height 19.20: " "
-        RenderSVGTSpan {tspan} at (0,0) size 148x20
+        RenderSVGTSpan {tspan} at (80,35) size 148x20
           RenderSVGInlineText {#text} at (80,35) size 20x148
             chunk 1 (middle anchor, vertical) text run 1 at (214.00,116.59) startOffset 0 endOffset 1 height 19.20: "s"
             chunk 1 (middle anchor, vertical) text run 2 at (214.00,124.59) startOffset 1 endOffset 2 height 19.20: "i"
@@ -119,7 +119,7 @@ layer at (0,0) size 800x600
             chunk 1 (middle anchor, vertical) text run 21 at (214.00,258.88) startOffset 20 endOffset 21 height 19.20: "r"
         RenderSVGInlineText {#text} at (80,183) size 20x5
           chunk 1 (vertical) text run 1 at (214.00,264.21) startOffset 0 endOffset 1 height 19.20: " "
-        RenderSVGTSpan {tspan} at (0,0) size 105x20
+        RenderSVGTSpan {tspan} at (160,0) size 105x20
           RenderSVGInlineText {#text} at (160,0) size 20x105
             chunk 1 (end anchor, vertical) text run 1 at (294.00,81.19) startOffset 0 endOffset 1 height 19.20: "a"
             chunk 1 (end anchor, vertical) text run 2 at (294.00,90.09) startOffset 1 endOffset 2 height 19.20: "d"

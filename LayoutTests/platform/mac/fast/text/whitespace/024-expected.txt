@@ -9,10 +9,10 @@ layer at (0,0) size 785x1187
       RenderBlock (anonymous) at (0,58) size 769x73
         RenderText {#text} at (0,0) size 103x18
           text run at (0,0) width 103: "As noted in my "
-        RenderInline {A} at (0,0) size 29x18 [color=#0000EE]
+        RenderInline {A} at (102,0) size 29x18 [color=#0000EE]
           RenderText {#text} at (102,0) size 29x18
             text run at (102,0) width 29: "blog"
-        RenderText {#text} at (130,0) size 765x72
+        RenderText {#text} at (0,0) size 765x72
           text run at (130,0) width 9: ", "
           text run at (138,0) width 442: "in certain cases Safari will miscalculate the width of a PRE element. "
           text run at (579,0) width 186: "I think I've found the trigger."
@@ -38,10 +38,10 @@ layer at (0,0) size 785x1187
                   text run at (7,7) width 95: "        2003"
                   text run at (101,7) width 1: " "
                   text run at (7,22) width 1: " "
-                RenderInline {SPAN} at (0,0) size 157x19 [border: (1px solid #000000) none (2px solid #000000) none]
+                RenderInline {SPAN} at (7,36) size 157x19 [border: (1px solid #000000) none (2px solid #000000) none]
                   RenderText {#text} at (7,37) size 157x16
                     text run at (7,37) width 157: " D  M  T  W  J  F  S"
-                RenderText {#text} at (163,37) size 157x121
+                RenderText {#text} at (7,37) size 157x121
                   text run at (163,37) width 1: " "
                   text run at (7,52) width 1: " "
                   text run at (7,67) width 118: "      September"
@@ -73,10 +73,10 @@ layer at (0,0) size 785x1187
                   text run at (7,7) width 95: "        2003"
                   text run at (101,7) width 1: " "
                   text run at (7,22) width 1: " "
-                RenderInline {SPAN} at (0,0) size 95x19 [border: (1px solid #000000) none (2px solid #000000) none]
+                RenderInline {SPAN} at (7,36) size 95x19 [border: (1px solid #000000) none (2px solid #000000) none]
                   RenderText {#text} at (7,37) size 95x16
                     text run at (7,37) width 95: " D  M  TWJFS"
-                RenderText {#text} at (101,37) size 157x121
+                RenderText {#text} at (7,37) size 157x121
                   text run at (101,37) width 1: " "
                   text run at (7,52) width 1: " "
                   text run at (7,67) width 118: "      September"
@@ -113,10 +113,10 @@ layer at (0,0) size 785x1187
                 RenderText {#text} at (7,7) size 95x16
                   text run at (7,7) width 95: "        2003"
                   text run at (101,7) width 1: " "
-                RenderInline {SPAN} at (0,0) size 157x19 [border: (1px solid #000000) none (2px solid #000000) none]
+                RenderInline {SPAN} at (7,21) size 157x19 [border: (1px solid #000000) none (2px solid #000000) none]
                   RenderText {#text} at (7,22) size 157x16
                     text run at (7,22) width 157: " D  M  T  W  J  F  S"
-                RenderText {#text} at (163,22) size 157x121
+                RenderText {#text} at (7,22) size 157x121
                   text run at (163,22) width 1: " "
                   text run at (7,37) width 1: " "
                   text run at (7,52) width 118: "      September"
@@ -145,16 +145,16 @@ layer at (0,0) size 785x1187
           RenderTableRow {TR} at (0,2) size 769x167
             RenderTableCell {TD} at (2,2) size 174x167 [r=0 c=0 rs=1 cs=1]
               RenderBlock {PRE} at (1,1) size 172x165 [bgcolor=#CCCC99] [border: (1px solid #000000)]
-                RenderInline {SPAN} at (0,0) size 95x16
+                RenderInline {SPAN} at (7,7) size 95x16
                   RenderText {#text} at (7,7) size 95x16
                     text run at (7,7) width 95: "        2003"
-                RenderText {#text} at (101,7) size 95x31
+                RenderText {#text} at (7,7) size 95x31
                   text run at (101,7) width 1: " "
                   text run at (7,22) width 1: " "
-                RenderInline {SPAN} at (0,0) size 157x19 [border: (1px solid #000000) none (2px solid #000000) none]
+                RenderInline {SPAN} at (7,36) size 157x19 [border: (1px solid #000000) none (2px solid #000000) none]
                   RenderText {#text} at (7,37) size 157x16
                     text run at (7,37) width 157: " D  M  T  W  J  F  S"
-                RenderText {#text} at (163,37) size 157x121
+                RenderText {#text} at (7,37) size 157x121
                   text run at (163,37) width 1: " "
                   text run at (7,52) width 1: " "
                   text run at (7,67) width 118: "      September"

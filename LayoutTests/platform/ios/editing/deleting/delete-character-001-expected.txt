@@ -13,7 +13,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x58 [border: (2px solid #FF0000)]
-        RenderInline {SPAN} at (0,0) size 96x28
+        RenderInline {SPAN} at (14,15) size 96x28
           RenderText {#text} at (14,15) size 96x28
             text run at (14,15) width 26: "fo "
             text run at (39,15) width 38: "bar "

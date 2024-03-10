@@ -45,7 +45,7 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,142) size 784x30
         RenderText {#text} at (0,1) size 116x28
           text run at (0,1) width 116: "Size check: "
-        RenderInline {SPAN} at (0,0) size 49x28
+        RenderInline {SPAN} at (115,1) size 49x28
           RenderText {#text} at (115,1) size 49x28
             text run at (115,1) width 49: "30px"
       RenderBlock {DIV} at (0,188) size 784x147
@@ -57,7 +57,7 @@ layer at (0,0) size 800x600
             RenderText {#text} at (14,15) size 196x28
               text run at (14,15) width 196: "In the affairs of men"
           RenderBlock (anonymous) at (14,102) size 756x31
-            RenderInline {SPAN} at (0,0) size 248x29
+            RenderInline {SPAN} at (0,1) size 248x29
               RenderText {#text} at (0,1) size 248x29
                 text run at (0,1) width 248: "Which taken at the flood"
 selection start: position 0 of child 0 {#text} of child 1 {DIV} of child 1 {DIV} of child 5 {DIV} of body

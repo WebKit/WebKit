@@ -8,24 +8,24 @@ layer at (143,32) size 514x146 clip at (144,33) size 497x144 scrollHeight 317
     RenderBlock {P} at (17,17) size 465x80
       RenderText {#text} at (0,0) size 225x19
         text run at (0,0) width 225: "This page is to test the behavior of "
-      RenderInline {CODE} at (0,0) size 134x17
+      RenderInline {CODE} at (224,2) size 134x17
         RenderText {#text} at (224,2) size 134x17
           text run at (224,2) width 134: "position:absolute"
-      RenderText {#text} at (357,0) size 453x39
+      RenderText {#text} at (0,0) size 453x39
         text run at (357,0) width 96: " content which"
         text run at (0,20) width 295: "is a child of an overflowed parent object with "
-      RenderInline {CODE} at (0,0) size 103x17
+      RenderInline {CODE} at (294,22) size 103x17
         RenderText {#text} at (294,22) size 103x17
           text run at (294,22) width 103: "overflow:auto"
-      RenderText {#text} at (396,20) size 433x39
+      RenderText {#text} at (0,20) size 433x39
         text run at (396,20) width 37: ", both"
         text run at (0,40) width 176: "when the parent element is "
-      RenderInline {CODE} at (0,0) size 118x17
+      RenderInline {CODE} at (175,42) size 118x17
         RenderText {#text} at (175,42) size 118x17
           text run at (175,42) width 118: "position:static"
       RenderText {#text} at (292,40) size 95x19
         text run at (292,40) width 95: " (top case) and"
-      RenderInline {CODE} at (0,0) size 134x17
+      RenderInline {CODE} at (0,62) size 134x17
         RenderText {#text} at (0,62) size 134x17
           text run at (0,62) width 134: "position:relative"
       RenderText {#text} at (133,60) size 96x19
@@ -56,10 +56,10 @@ layer at (143,210) size 514x146 clip at (144,211) size 497x144 scrollHeight 373
     RenderBlock {P} at (17,73) size 465x80
       RenderText {#text} at (0,0) size 410x19
         text run at (0,0) width 410: "Safari v1.2.2 also (really odd) causes the entire second div to be"
-      RenderInline {CODE} at (0,0) size 87x17
+      RenderInline {CODE} at (0,22) size 87x17
         RenderText {#text} at (0,22) size 87x17
           text run at (0,22) width 87: "opacity:0.5"
-      RenderText {#text} at (86,20) size 451x59
+      RenderText {#text} at (0,20) size 451x59
         text run at (86,20) width 357: ", despite the fact that this property is only applied to the"
         text run at (0,40) width 451: "child item. This problem fixes itself if you resize the window and then"
         text run at (0,60) width 87: "scroll the div."

@@ -6,8 +6,8 @@ layer at (0,0) size 800x88
       RenderBlock {P} at (0,0) size 784x20
         RenderText {#text} at (0,0) size 84x19
           text run at (0,0) width 84: "This test has "
-        RenderInline {SPAN} at (0,0) size 60x19
-          RenderInline (generated) at (0,0) size 60x19 [bgcolor=#00FF00]
+        RenderInline {SPAN} at (83,0) size 60x19
+          RenderInline (generated) at (83,0) size 60x19 [bgcolor=#00FF00]
             RenderText at (83,0) size 60x19
               text run at (83,0) width 60: "PASSED"
         RenderText {#text} at (142,0) size 5x19

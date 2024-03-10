@@ -38,7 +38,7 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,108) size 784x28
         RenderText {#text} at (0,0) size 116x28
           text run at (0,0) width 116: "Size check: "
-        RenderInline {SPAN} at (0,0) size 49x28
+        RenderInline {SPAN} at (115,0) size 49x28
           RenderText {#text} at (115,0) size 49x28
             text run at (115,0) width 49: "30px"
       RenderBlock {DIV} at (0,152) size 784x164

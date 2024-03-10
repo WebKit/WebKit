@@ -31,7 +31,7 @@ layer at (0,0) size 800x600
           RenderListMarker at (-18,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 20x19
             text run at (0,0) width 20: "10,"
-          RenderInline {B} at (0,0) size 16x19
+          RenderInline {B} at (20,0) size 16x19
             RenderText {#text} at (20,0) size 16x19
               text run at (20,0) width 16: "20"
           RenderText {#text} at (36,0) size 69x19
@@ -43,7 +43,7 @@ layer at (0,0) size 800x600
           RenderListMarker at (-18,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 40x19
             text run at (0,0) width 40: "10,20,"
-          RenderInline {B} at (0,0) size 16x19
+          RenderInline {B} at (40,0) size 16x19
             RenderText {#text} at (40,0) size 16x19
               text run at (40,0) width 16: "30"
           RenderText {#text} at (56,0) size 49x19
@@ -55,7 +55,7 @@ layer at (0,0) size 800x600
           RenderListMarker at (-18,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 60x19
             text run at (0,0) width 60: "10,20,30,"
-          RenderInline {B} at (0,0) size 16x19
+          RenderInline {B} at (60,0) size 16x19
             RenderText {#text} at (60,0) size 16x19
               text run at (60,0) width 16: "40"
           RenderText {#text} at (76,0) size 29x19
@@ -67,7 +67,7 @@ layer at (0,0) size 800x600
           RenderListMarker at (-18,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 80x19
             text run at (0,0) width 80: "10,20,30,40,"
-          RenderInline {B} at (0,0) size 16x19
+          RenderInline {B} at (80,0) size 16x19
             RenderText {#text} at (80,0) size 16x19
               text run at (80,0) width 16: "50"
           RenderText {#text} at (96,0) size 9x19
@@ -79,7 +79,7 @@ layer at (0,0) size 800x600
           RenderListMarker at (-18,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 100x19
             text run at (0,0) width 100: "10,20,30,40,50|"
-          RenderInline {B} at (0,0) size 17x19
+          RenderInline {B} at (99,0) size 17x19
             RenderText {#text} at (99,0) size 17x19
               text run at (99,0) width 17: "51"
           RenderText {#text} at (115,0) size 9x19
@@ -91,7 +91,7 @@ layer at (0,0) size 800x600
           RenderListMarker at (-18,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 20x19
             text run at (0,0) width 20: "10,"
-          RenderInline {B} at (0,0) size 16x19
+          RenderInline {B} at (20,0) size 16x19
             RenderText {#text} at (20,0) size 16x19
               text run at (20,0) width 16: "10"
           RenderText {#text} at (36,0) size 69x19
@@ -101,7 +101,7 @@ layer at (0,0) size 800x600
           RenderListMarker at (-18,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 60x19
             text run at (0,0) width 60: "10,20,30,"
-          RenderInline {B} at (0,0) size 16x19
+          RenderInline {B} at (60,0) size 16x19
             RenderText {#text} at (60,0) size 16x19
               text run at (60,0) width 16: "40"
           RenderText {#text} at (76,0) size 29x19
@@ -121,7 +121,7 @@ layer at (0,0) size 800x600
           RenderListMarker at (-18,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 40x19
             text run at (0,0) width 40: "10,10,"
-          RenderInline {B} at (0,0) size 16x19
+          RenderInline {B} at (40,0) size 16x19
             RenderText {#text} at (40,0) size 16x19
               text run at (40,0) width 16: "10"
           RenderText {#text} at (56,0) size 49x19
@@ -131,7 +131,7 @@ layer at (0,0) size 800x600
           RenderListMarker at (-18,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 40x19
             text run at (0,0) width 40: "10,20,"
-          RenderInline {B} at (0,0) size 16x19
+          RenderInline {B} at (40,0) size 16x19
             RenderText {#text} at (40,0) size 16x19
               text run at (40,0) width 16: "30"
           RenderText {#text} at (56,0) size 49x19
@@ -143,7 +143,7 @@ layer at (0,0) size 800x600
           RenderListMarker at (-18,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 100x19
             text run at (0,0) width 100: "10,20,30,30,30|"
-          RenderInline {B} at (0,0) size 17x19
+          RenderInline {B} at (99,0) size 17x19
             RenderText {#text} at (99,0) size 17x19
               text run at (99,0) width 17: "31"
           RenderText {#text} at (115,0) size 9x19
@@ -155,7 +155,7 @@ layer at (0,0) size 800x600
           RenderListMarker at (-18,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 40x19
             text run at (0,0) width 40: "10,20,"
-          RenderInline {B} at (0,0) size 16x19
+          RenderInline {B} at (40,0) size 16x19
             RenderText {#text} at (40,0) size 16x19
               text run at (40,0) width 16: "20"
           RenderText {#text} at (56,0) size 49x19

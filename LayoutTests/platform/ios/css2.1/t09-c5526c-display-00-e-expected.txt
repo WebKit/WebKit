@@ -53,15 +53,15 @@ layer at (0,0) size 800x420
           text run at (0,-1) width 469: "This is a nonsensical document, but syntactically valid HTML 4.0. All 100%-conformant CSS1"
           text run at (0,12) width 393: "agents should be able to render the document elements above this paragraph"
           text run at (0,25) width 206: "indistinguishably (to the pixel) from this "
-        RenderInline {A} at (0,0) size 104x14 [color=#999999]
+        RenderInline {A} at (205,25) size 104x14 [color=#999999]
           RenderText {#text} at (205,25) size 104x14
             text run at (205,25) width 104: "reference rendering,"
-        RenderText {#text} at (308,25) size 463x40
+        RenderText {#text} at (0,25) size 463x40
           text run at (308,25) width 5: " "
           text run at (312,25) width 150: "(except font rasterization and"
           text run at (0,38) width 463: "form widgets). All discrepancies should be traceable to CSS1 implementation shortcomings."
           text run at (0,51) width 36: "Please "
-        RenderInline {A} at (0,0) size 87x14 [color=#CC0000]
+        RenderInline {A} at (35,51) size 87x14 [color=#CC0000]
           RenderText {#text} at (35,51) size 87x14
             text run at (35,51) width 87: "report any errors"
         RenderText {#text} at (121,51) size 283x14

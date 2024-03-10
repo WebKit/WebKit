@@ -30,7 +30,7 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,108) size 784x28
         RenderText {#text} at (0,0) size 116x28
           text run at (0,0) width 116: "Size check: "
-        RenderInline {SPAN} at (0,0) size 49x28
+        RenderInline {SPAN} at (115,0) size 49x28
           RenderText {#text} at (115,0) size 49x28
             text run at (115,0) width 49: "30px"
       RenderBlock {DIV} at (0,152) size 784x156
@@ -40,7 +40,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (0,0) size 171x36
                 text run at (0,0) width 171: "There is a tide"
           RenderBlock {DIV} at (14,50) size 756x64 [border: (2px solid #FF0000)]
-            RenderInline {SPAN} at (0,0) size 70x36
+            RenderInline {SPAN} at (14,14) size 70x36
               RenderText {#text} at (14,14) size 70x36
                 text run at (14,14) width 70: "In the"
             RenderText {#text} at (83,20) size 141x28

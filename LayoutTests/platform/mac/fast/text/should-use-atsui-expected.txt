@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 54x18
           text run at (0,0) width 54: "Test for "
         RenderInline {I} at (0,0) size 747x36
-          RenderText {#text} at (53,0) size 747x36
+          RenderText {#text} at (0,0) size 747x36
             text run at (53,0) width 694: "http://bugzilla.opendarwin.org/show_bug.cgi?id=6132 Incorrect selection highlighting for ATSUI text when"
             text run at (0,18) width 179: "selected range is \"CG-safe\""
         RenderText {#text} at (178,18) size 5x18

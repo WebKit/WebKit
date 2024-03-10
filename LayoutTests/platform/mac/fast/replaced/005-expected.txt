@@ -19,7 +19,7 @@ layer at (0,0) size 785x680
         RenderTableSection {TBODY} at (2,2) size 765x210
           RenderTableRow {TR} at (0,0) size 765x210
             RenderTableCell {TD} at (0,0) size 202x210 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderInline {SPAN} at (0,0) size 200x18
+              RenderInline {SPAN} at (1,87) size 200x18
                 RenderImage {IMG} at (1,1) size 100x100 [bgcolor=#008000]
                 RenderImage {IMG} at (101,1) size 100x100 [bgcolor=#008000]
               RenderBR {BR} at (201,87) size 0x18
@@ -32,7 +32,7 @@ layer at (0,0) size 785x680
         RenderImage {IMG} at (2,2) size 100x100 [bgcolor=#008000]
         RenderImage {IMG} at (102,2) size 100x100 [bgcolor=#008000]
         RenderBR {BR} at (202,88) size 0x18
-        RenderInline {A} at (0,0) size 100x18 [color=#0000EE]
+        RenderInline {A} at (2,192) size 100x18 [color=#0000EE]
           RenderImage {IMG} at (2,106) size 100x100 [bgcolor=#008000]
         RenderImage {IMG} at (102,106) size 100x100 [bgcolor=#008000]
         RenderText {#text} at (0,0) size 0x0

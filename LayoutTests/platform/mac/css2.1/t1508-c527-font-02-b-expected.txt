@@ -6,8 +6,8 @@ layer at (0,0) size 800x225
       RenderBlock {P} at (0,0) size 784x189
         RenderText {#text} at (0,3) size 663x21
           text run at (0,3) width 663: "This text should be 18px sans-serif. There should be a 9px gap between each line. "
-        RenderInline {SPAN} at (0,0) size 780x183 [color=#C0C0C0]
-          RenderText {#text} at (662,3) size 780x183
+        RenderInline {SPAN} at (0,3) size 780x183 [color=#C0C0C0]
+          RenderText {#text} at (0,3) size 780x183
             text run at (662,3) width 94: "dummy text"
             text run at (0,30) width 457: "dummy text dummy text dummy text dummy text dummy "
             text run at (456,30) width 324: "text dummy text dummy text dummy text"

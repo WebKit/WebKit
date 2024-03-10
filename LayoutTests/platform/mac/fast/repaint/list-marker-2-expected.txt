@@ -7,10 +7,10 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 108x18
           text run at (0,0) width 108: "This is a test for "
         RenderInline {I} at (0,0) size 771x36
-          RenderInline {A} at (0,0) size 305x18 [color=#0000EE]
+          RenderInline {A} at (107,0) size 305x18 [color=#0000EE]
             RenderText {#text} at (107,0) size 305x18
               text run at (107,0) width 305: "http://bugs.webkit.org/show_bug.cgi?id=13209"
-          RenderText {#text} at (411,0) size 771x36
+          RenderText {#text} at (0,0) size 771x36
             text run at (411,0) width 5: " "
             text run at (415,0) width 356: "REGRESSION (r18756-18765): Incomplete list marker"
             text run at (0,18) width 193: "repaint when resizing list item"

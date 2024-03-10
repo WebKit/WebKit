@@ -14,14 +14,14 @@ layer at (0,0) size 785x1728
         RenderText {#text} at (0,0) size 261x18
           text run at (0,0) width 261: "The first line should be normally spaced."
       RenderBlock {P} at (0,140) size 769x18 [bgcolor=#EEEEEE]
-        RenderInline {SPAN} at (0,0) size 81x18
+        RenderInline {SPAN} at (160,0) size 81x18
           RenderText {#text} at (160,0) size 81x18
             text run at (160,0) width 81: "Hello, world"
       RenderBlock {P} at (0,174) size 769x18 [bgcolor=#FFFFFF]
         RenderText {#text} at (0,0) size 669x18
           text run at (0,0) width 669: "The next line tests a slight positive letter spacing, and should be slightly spaced out (wider than normal)."
       RenderBlock {P} at (0,208) size 769x18 [bgcolor=#EEEEEE]
-        RenderInline {SPAN} at (0,0) size 177x18
+        RenderInline {SPAN} at (160,0) size 177x18
           RenderText {#text} at (160,0) size 177x18
             text run at (160,0) width 177: "Hello, world"
       RenderBlock {P} at (0,242) size 769x36 [bgcolor=#FFFFFF]
@@ -31,7 +31,7 @@ layer at (0,0) size 785x1728
           text run at (53,18) width 363: "on two different lines, unless you scroll way to the right."
       RenderBlock {P} at (0,294) size 769x36 [bgcolor=#EEEEEE]
         RenderInline {SPAN} at (0,0) size 19400x36
-          RenderText {#text} at (160,0) size 19400x36
+          RenderText {#text} at (0,0) size 19400x36
             text run at (160,0) width 19240: "Hello,"
             text run at (0,18) width 16038: "world"
       RenderBlock {P} at (0,346) size 769x36 [bgcolor=#FFFFFF]
@@ -41,28 +41,28 @@ layer at (0,0) size 785x1728
           text run at (63,18) width 416: "perhaps on two different lines, unless you scroll way to the right."
       RenderBlock {P} at (0,398) size 769x36 [bgcolor=#EEEEEE]
         RenderInline {SPAN} at (0,0) size 9600200x36
-          RenderText {#text} at (160,0) size 9600200x36
+          RenderText {#text} at (0,0) size 9600200x36
             text run at (160,0) width 9600040: "Hello,"
             text run at (0,18) width 8000038: "world"
       RenderBlock {P} at (0,450) size 769x18 [bgcolor=#FFFFFF]
         RenderText {#text} at (0,0) size 539x18
           text run at (0,0) width 539: "The next line tests a small negative line spacing, and should be crammed backwards"
       RenderBlock {P} at (0,484) size 769x18 [bgcolor=#EEEEEE]
-        RenderInline {SPAN} at (0,0) size 0x18
+        RenderInline {SPAN} at (160,0) size 0x18
           RenderText {#text} at (160,0) size 0x18
             text run at (160,0) width 0: "Hello, world"
       RenderBlock {P} at (0,518) size 769x18 [bgcolor=#FFFFFF]
         RenderText {#text} at (0,0) size 518x18
           text run at (0,0) width 518: "The next line tests a large negative line spacing, and should be just display an 'H'"
       RenderBlock {P} at (0,552) size 769x18 [bgcolor=#EEEEEE]
-        RenderInline {SPAN} at (0,0) size 0x18
+        RenderInline {SPAN} at (160,0) size 0x18
           RenderText {#text} at (160,0) size 0x18
             text run at (160,0) width 0: "Hello, world"
       RenderBlock {P} at (0,586) size 769x18 [bgcolor=#FFFFFF]
         RenderText {#text} at (0,0) size 519x18
           text run at (0,0) width 519: "The next line tests a very large negative line spacing, and should just have an 'H'."
       RenderBlock {P} at (0,620) size 769x18 [bgcolor=#EEEEEE]
-        RenderInline {SPAN} at (0,0) size 0x18
+        RenderInline {SPAN} at (160,0) size 0x18
           RenderText {#text} at (160,0) size 0x18
             text run at (160,0) width 0: "Hello, world"
       RenderBlock {P} at (0,654) size 769x36 [bgcolor=#FFFFFF]
@@ -104,14 +104,14 @@ layer at (0,0) size 785x1728
         RenderText {#text} at (0,0) size 261x18
           text run at (0,0) width 261: "The first line should be normally spaced."
       RenderBlock {P} at (0,1252) size 769x18 [bgcolor=#EEEEEE]
-        RenderInline {SPAN} at (0,0) size 81x18
+        RenderInline {SPAN} at (160,0) size 81x18
           RenderText {#text} at (160,0) size 81x18
             text run at (160,0) width 81 RTL: "Hello, world"
       RenderBlock {P} at (0,1286) size 769x18 [bgcolor=#FFFFFF]
         RenderText {#text} at (0,0) size 411x18
           text run at (0,0) width 411: "The next line should be slightly spaced out (wider than normal)."
       RenderBlock {P} at (0,1320) size 769x18 [bgcolor=#EEEEEE]
-        RenderInline {SPAN} at (0,0) size 177x18
+        RenderInline {SPAN} at (160,0) size 177x18
           RenderText {#text} at (160,0) size 177x18
             text run at (160,0) width 177 RTL: "Hello, world"
       RenderBlock {P} at (0,1354) size 769x18 [bgcolor=#FFFFFF]
@@ -119,7 +119,7 @@ layer at (0,0) size 785x1728
           text run at (0,0) width 353: "The next line should be crammed backwards, just as if "
           text run at (352,0) width 133: "it wasn't right-to-left"
       RenderBlock {P} at (0,1388) size 769x18 [bgcolor=#EEEEEE]
-        RenderInline {SPAN} at (0,0) size 0x18
+        RenderInline {SPAN} at (160,0) size 0x18
           RenderText {#text} at (160,0) size 0x18
             text run at (160,0) width 0 RTL: "Hello, world"
       RenderBlock {P} at (0,1422) size 769x18 [bgcolor=#FFFFFF]
@@ -127,7 +127,7 @@ layer at (0,0) size 785x1728
           text run at (0,0) width 338: "The next line tests a large negative line spacing, and "
           text run at (337,0) width 134: "should just print a 'd'"
       RenderBlock {P} at (0,1456) size 769x18 [bgcolor=#EEEEEE]
-        RenderInline {SPAN} at (0,0) size 0x18
+        RenderInline {SPAN} at (160,0) size 0x18
           RenderText {#text} at (160,0) size 0x18
             text run at (160,0) width 0 RTL: "Hello, world"
       RenderBlock {P} at (0,1490) size 769x36 [bgcolor=#FFFFFF]
@@ -146,24 +146,24 @@ layer at (0,0) size 785x1728
           text run at (0,0) width 457: "The next line tests a large negative line spacing, and it should be blank."
       RenderBlock {P} at (0,1678) size 769x18 [bgcolor=#EEEEEE]
 layer at (8,722) size 81x18
-  RenderInline {SPAN} at (0,0) size 81x18 [bgcolor=#CCCCFF]
+  RenderInline {SPAN} at (160,0) size 81x18 [bgcolor=#CCCCFF]
     RenderText {#text} at (160,0) size 81x18
       text run at (160,0) width 81: "Hello, world"
 layer at (8,790) size 177x18
-  RenderInline {SPAN} at (0,0) size 177x18 [bgcolor=#CCCCFF]
+  RenderInline {SPAN} at (160,0) size 177x18 [bgcolor=#CCCCFF]
     RenderText {#text} at (160,0) size 177x18
       text run at (160,0) width 177: "Hello, world"
 layer at (8,858) size 19400x36
   RenderInline {SPAN} at (0,0) size 19400x36 [bgcolor=#CCCCFF]
-    RenderText {#text} at (160,0) size 19400x36
+    RenderText {#text} at (0,0) size 19400x36
       text run at (160,0) width 19240: "Hello,"
       text run at (0,18) width 16038: "world"
 layer at (8,944) size 9600200x36
   RenderInline {SPAN} at (0,0) size 9600200x36 [bgcolor=#CCCCFF]
-    RenderText {#text} at (160,0) size 9600200x36
+    RenderText {#text} at (0,0) size 9600200x36
       text run at (160,0) width 9600040: "Hello,"
       text run at (0,18) width 8000038: "world"
 layer at (8,1558) size 177x18
-  RenderInline {SPAN} at (0,0) size 177x18 [bgcolor=#CCCCFF]
+  RenderInline {SPAN} at (160,0) size 177x18 [bgcolor=#CCCCFF]
     RenderText {#text} at (160,0) size 177x18
       text run at (160,0) width 177 RTL: "Hello, world"

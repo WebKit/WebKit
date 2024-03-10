@@ -38,7 +38,7 @@ layer at (0,0) size 1944x600
             text run at (11,25) width 62: "First item"
         RenderListItem {LI} at (41,41) size 60x144 [border: (5px solid #FFA500)]
           RenderListMarker at (11,9) size 19x7: bullet
-          RenderText {#text} at (11,25) size 39x122
+          RenderText {#text} at (11,10) size 39x122
             text run at (11,25) width 107: "Second and very"
             text run at (31,10) width 94: "very long item"
         RenderListItem {LI} at (101,41) size 40x144 [border: (5px solid #FFA500)]
@@ -94,7 +94,7 @@ layer at (0,0) size 1944x600
             text run at (11,27) width 62: "First item"
         RenderListItem {LI} at (41,41) size 80x144 [border: (5px solid #FFA500)]
           RenderListMarker at (15,10) size 10x10
-          RenderText {#text} at (11,27) size 59x94
+          RenderText {#text} at (11,10) size 59x94
             text run at (11,27) width 75: "Second and"
             text run at (31,10) width 94: "very very long"
             text run at (51,10) width 29: "item"
@@ -109,7 +109,7 @@ layer at (0,0) size 1944x600
             text run at (11,54) width 62: "First item"
         RenderListItem {LI} at (41,1) size 80x144 [border: (5px solid #FFA500)]
           RenderListMarker at (15,123) size 10x11
-          RenderText {#text} at (11,41) size 59x95
+          RenderText {#text} at (11,39) size 59x95
             text run at (11,41) width 75: "Second and"
             text run at (31,39) width 94: "very very long"
             text run at (51,104) width 29: "item"
@@ -152,7 +152,7 @@ layer at (0,0) size 1944x600
             text run at (11,26) width 62: "First item"
         RenderListItem {LI} at (41,41) size 60x144 [border: (5px solid #FFA500)]
           RenderListMarker at (11,10) size 19x16: "2"
-          RenderText {#text} at (11,26) size 39x123
+          RenderText {#text} at (11,10) size 39x123
             text run at (11,26) width 107: "Second and very"
             text run at (31,10) width 94: "very long item"
         RenderListItem {LI} at (101,41) size 40x144 [border: (5px solid #FFA500)]

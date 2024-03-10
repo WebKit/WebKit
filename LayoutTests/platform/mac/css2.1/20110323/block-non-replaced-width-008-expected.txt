@@ -6,7 +6,7 @@ layer at (0,0) size 800x258
       RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 344x18
           text run at (0,0) width 344: "Test passes if there is a filled green square below and "
-        RenderInline {STRONG} at (0,0) size 44x18
+        RenderInline {STRONG} at (343,0) size 44x18
           RenderText {#text} at (343,0) size 44x18
             text run at (343,0) width 44: "no red"
         RenderText {#text} at (386,0) size 5x18

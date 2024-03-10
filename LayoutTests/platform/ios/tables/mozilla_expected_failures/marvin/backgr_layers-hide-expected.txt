@@ -15,10 +15,10 @@ layer at (0,0) size 800x1224
       RenderBlock {P} at (0,111) size 784x29
         RenderText {#text} at (0,0) size 383x14
           text run at (0,0) width 383: "Both tables should look identical to the ones in "
-        RenderInline {A} at (0,0) size 133x14 [color=#FFFF00]
+        RenderInline {A} at (382,0) size 133x14 [color=#FFFF00]
           RenderText {#text} at (382,0) size 133x14
             text run at (382,0) width 133: "empty-cells: show"
-        RenderText {#text} at (514,0) size 749x28
+        RenderText {#text} at (0,0) size 749x28
           text run at (514,0) width 235: " except that there should be a"
           text run at (0,14) width 313: "blue blank where table cell C should be."
       RenderBlock {DL} at (0,152) size 784x85
@@ -161,7 +161,7 @@ layer at (0,0) size 800x1224
               RenderText {#text} at (1,30) size 44x23
                 text run at (1,2) width 44: "TD L"
       RenderBlock {DIV} at (0,1149) size 784x36
-        RenderInline {A} at (0,0) size 88x14 [color=#FFFF00]
+        RenderInline {A} at (0,21) size 88x14 [color=#FFFF00]
           RenderImage {IMG} at (0,0) size 88x31
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {ADDRESS} at (0,1184) size 784x15

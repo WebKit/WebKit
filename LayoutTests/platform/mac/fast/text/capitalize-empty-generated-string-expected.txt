@@ -7,10 +7,10 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 177x18
           text run at (0,0) width 177: "This is a regression test for "
         RenderInline {I} at (0,0) size 782x36
-          RenderInline {A} at (0,0) size 354x18 [color=#0000EE]
+          RenderInline {A} at (176,0) size 354x18 [color=#0000EE]
             RenderText {#text} at (176,0) size 354x18
               text run at (176,0) width 354: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9432"
-          RenderText {#text} at (529,0) size 782x36
+          RenderText {#text} at (0,0) size 782x36
             text run at (529,0) width 5: " "
             text run at (533,0) width 249: "REGRESSION: crash in capitalization"
             text run at (0,18) width 278: "code due to empty-string generated content"
@@ -20,14 +20,14 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (0,0) size 87x18
           RenderText {#text} at (0,0) size 47x18
             text run at (0,0) width 47: "Lorem "
-          RenderInline {SPAN} at (0,0) size 41x18
-            RenderInline (generated) at (0,0) size 0x18
+          RenderInline {SPAN} at (46,0) size 41x18
+            RenderInline (generated) at (46,0) size 0x18
               RenderText at (0,0) size 0x0
             RenderText {#text} at (46,0) size 41x18
               text run at (46,0) width 41: "Ipsum"
         RenderText {#text} at (86,0) size 5x18
           text run at (86,0) width 5: " "
-        RenderInline {I} at (0,0) size 63x18
+        RenderInline {I} at (90,0) size 63x18
           RenderText {#text} at (90,0) size 63x18
             text run at (90,0) width 63: "should be"
         RenderText {#text} at (152,0) size 92x18
@@ -36,14 +36,14 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (0,0) size 87x18
           RenderText {#text} at (0,0) size 24x18
             text run at (0,0) width 24: "Lor"
-          RenderInline {SPAN} at (0,0) size 64x18
-            RenderInline (generated) at (0,0) size 0x18
+          RenderInline {SPAN} at (23,0) size 64x18
+            RenderInline (generated) at (23,0) size 0x18
               RenderText at (0,0) size 0x0
             RenderText {#text} at (23,0) size 64x18
               text run at (23,0) width 64: "em Ipsum"
         RenderText {#text} at (86,0) size 5x18
           text run at (86,0) width 5: " "
-        RenderInline {I} at (0,0) size 63x18
+        RenderInline {I} at (90,0) size 63x18
           RenderText {#text} at (90,0) size 63x18
             text run at (90,0) width 63: "should be"
         RenderText {#text} at (152,0) size 92x18

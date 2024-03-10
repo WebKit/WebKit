@@ -22,7 +22,7 @@ layer at (0,0) size 785x711
         RenderInline (generated) at (0,0) size 10x18 [color=#800000]
           RenderText at (0,0) size 10x18
             text run at (0,0) width 10: "T"
-        RenderText {#text} at (9,0) size 766x54
+        RenderText {#text} at (0,0) size 766x54
           text run at (9,0) width 444: "he first letter of this paragraph, and only that one, should be maroon. "
           text run at (452,0) width 304: "If this precise combination does not occur, then"
           text run at (0,18) width 216: "the user agent has failed this test. "
@@ -32,7 +32,7 @@ layer at (0,0) size 785x711
         RenderInline (generated) at (0,0) size 20x37 [color=#800000]
           RenderText at (0,0) size 20x37
             text run at (0,0) width 20: "T"
-        RenderText {#text} at (19,15) size 751x58
+        RenderText {#text} at (0,15) size 751x58
           text run at (19,15) width 625: "he first letter of this paragraph, and only that one, should be a larger font size, as well as maroon. "
           text run at (643,15) width 88: "If this precise"
           text run at (0,37) width 433: "combination does not occur, then the user agent has failed this test. "
@@ -42,7 +42,7 @@ layer at (0,0) size 785x711
         RenderInline (generated) at (0,0) size 76x64 [color=#800000]
           RenderText at (0,0) size 76x64
             text run at (0,0) width 76: "\"W"
-        RenderText {#text} at (75,36) size 754x64
+        RenderText {#text} at (0,36) size 754x64
           text run at (75,36) width 325: "e should check for quotation support,\" it was said. "
           text run at (399,36) width 338: "The first two characters in this paragraph-- a double-"
           text run at (0,64) width 628: "quote mark and a capital 'W'-- should be 350% bigger than the rest of the paragraph, and maroon. "
@@ -52,7 +52,7 @@ layer at (0,0) size 785x711
         RenderTableSection {TBODY} at (1,1) size 767x293
           RenderTableRow {TR} at (0,0) size 767x26
             RenderTableCell {TD} at (0,0) size 767x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 161x18
+              RenderInline {STRONG} at (4,4) size 161x18
                 RenderText {#text} at (4,4) size 161x18
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 767x267
@@ -64,7 +64,7 @@ layer at (0,0) size 785x711
                 RenderInline (generated) at (0,0) size 10x18 [color=#800000]
                   RenderText at (0,0) size 10x18
                     text run at (0,0) width 10: "T"
-                RenderText {#text} at (9,0) size 725x54
+                RenderText {#text} at (0,0) size 725x54
                   text run at (9,0) width 444: "he first letter of this paragraph, and only that one, should be maroon. "
                   text run at (452,0) width 273: "If this precise combination does not occur,"
                   text run at (0,18) width 248: "then the user agent has failed this test. "
@@ -74,7 +74,7 @@ layer at (0,0) size 785x711
                 RenderInline (generated) at (0,0) size 20x37 [color=#800000]
                   RenderText at (0,0) size 20x37
                     text run at (0,0) width 20: "T"
-                RenderText {#text} at (19,15) size 731x58
+                RenderText {#text} at (0,15) size 731x58
                   text run at (19,15) width 625: "he first letter of this paragraph, and only that one, should be a larger font size, as well as maroon. "
                   text run at (643,15) width 88: "If this precise"
                   text run at (0,37) width 433: "combination does not occur, then the user agent has failed this test. "
@@ -84,7 +84,7 @@ layer at (0,0) size 785x711
                 RenderInline (generated) at (0,0) size 76x64 [color=#800000]
                   RenderText at (0,0) size 76x64
                     text run at (0,0) width 76: "\"W"
-                RenderText {#text} at (75,36) size 737x64
+                RenderText {#text} at (0,36) size 737x64
                   text run at (75,36) width 325: "e should check for quotation support,\" it was said. "
                   text run at (399,36) width 338: "The first two characters in this paragraph-- a double-"
                   text run at (0,64) width 628: "quote mark and a capital 'W'-- should be 350% bigger than the rest of the paragraph, and maroon. "

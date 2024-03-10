@@ -9,7 +9,7 @@ layer at (0,0) size 800x165 layerType: foreground only
       RenderBlock {P} at (0,0) size 784x20
         RenderText {#text} at (0,0) size 301x19
           text run at (0,0) width 301: "Test passes if there is a filled green square and "
-        RenderInline {STRONG} at (0,0) size 45x19
+        RenderInline {STRONG} at (300,0) size 45x19
           RenderText {#text} at (300,0) size 45x19
             text run at (300,0) width 45: "no red"
         RenderText {#text} at (344,0) size 5x19

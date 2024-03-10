@@ -6,10 +6,10 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,0) size 784x36
         RenderText {#text} at (0,0) size 54x18
           text run at (0,0) width 54: "Test for "
-        RenderInline {A} at (0,0) size 69x18 [color=#0000EE]
+        RenderInline {A} at (53,0) size 69x18 [color=#0000EE]
           RenderText {#text} at (53,0) size 69x18
             text run at (53,0) width 69: "bug 25464"
-        RenderText {#text} at (121,0) size 726x36
+        RenderText {#text} at (0,0) size 726x36
           text run at (121,0) width 605: ". Characters belonging to 'Common' script followed / preceeded by a space should be rendered"
           text run at (0,18) width 646: "correctly. Two lines below have 4 Thai currency signs (U+0E3F) and all of them should be rendered."
       RenderBlock {P} at (0,52) size 784x44

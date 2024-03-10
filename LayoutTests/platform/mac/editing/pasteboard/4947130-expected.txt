@@ -8,7 +8,7 @@ layer at (0,0) size 800x600
           text run at (0,0) width 503: "This tests to see if dragging an image is a move drag by default (it should be). "
           text run at (502,0) width 246: "You should only see one picture and it"
           text run at (0,18) width 251: "should be somewhere near the middle. "
-        RenderInline {B} at (0,0) size 498x18
+        RenderInline {B} at (250,18) size 498x18
           RenderText {#text} at (250,18) size 498x18
             text run at (250,18) width 498: "This demonstrates a bug, the ghost of the drag caret is left after the drop."
       RenderBlock {DIV} at (0,52) size 784x107

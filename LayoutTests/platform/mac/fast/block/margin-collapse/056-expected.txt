@@ -20,12 +20,12 @@ layer at (0,0) size 800x256
       RenderBlock {P} at (0,206) size 784x18
         RenderText {#text} at (0,0) size 57x18
           text run at (0,0) width 57: "See also "
-        RenderInline {A} at (0,0) size 52x18 [color=#0000EE]
+        RenderInline {A} at (56,0) size 52x18 [color=#0000EE]
           RenderText {#text} at (56,0) size 52x18
             text run at (56,0) width 52: "test 019"
         RenderText {#text} at (107,0) size 9x18
           text run at (107,0) width 9: ", "
-        RenderInline {A} at (0,0) size 51x18 [color=#0000EE]
+        RenderInline {A} at (115,0) size 51x18 [color=#0000EE]
           RenderText {#text} at (115,0) size 51x18
             text run at (115,0) width 51: "test 020"
         RenderText {#text} at (165,0) size 5x18

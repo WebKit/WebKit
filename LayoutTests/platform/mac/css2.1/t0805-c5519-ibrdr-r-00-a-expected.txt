@@ -14,16 +14,16 @@ layer at (0,0) size 800x318
           text run at (189,18) width 487: "dummy text dummy text dummy text dummy text dummy text dummy text "
           text run at (675,18) width 77: "dummy text"
           text run at (0,36) width 405: "dummy text dummy text dummy text dummy text dummy text "
-        RenderInline {SPAN} at (0,0) size 777x36 [color=#0000FF] [border: none (10px double #0000FF) none]
-          RenderInline {SPAN} at (0,0) size 777x36 [color=#C0C0C0]
-            RenderText {#text} at (404,36) size 777x36
+        RenderInline {SPAN} at (0,36) size 777x36 [color=#0000FF] [border: none (10px double #0000FF) none]
+          RenderInline {SPAN} at (0,36) size 777x36 [color=#C0C0C0]
+            RenderText {#text} at (0,36) size 777x36
               text run at (404,36) width 324: "dummy text dummy text dummy text dummy text "
               text run at (727,36) width 50: "dummy"
               text run at (0,54) width 433: "text dummy text dummy text dummy text dummy text dummy text "
               text run at (432,54) width 159: "dummy text dummy text"
           RenderText {#text} at (590,54) size 134x18
             text run at (590,54) width 134: " two blue lines here: "
-        RenderText {#text} at (733,54) size 783x108
+        RenderText {#text} at (0,54) size 783x108
           text run at (733,54) width 50: "dummy"
           text run at (0,72) width 486: "text dummy text dummy text dummy text dummy text dummy text dummy "
           text run at (485,72) width 267: "text dummy text dummy text dummy text"
@@ -36,11 +36,11 @@ layer at (0,0) size 800x318
           text run at (133,126) width 487: "text dummy text dummy text dummy text dummy text dummy text dummy "
           text run at (619,126) width 158: "text dummy text dummy"
           text run at (0,144) width 109: "text dummy text "
-        RenderInline {SPAN} at (0,0) size 154x18 [color=#0000FF] [border: none (1px solid #0000FF) none]
+        RenderInline {SPAN} at (108,144) size 154x18 [color=#0000FF] [border: none (1px solid #0000FF) none]
           RenderText {#text} at (108,144) size 153x18
             text run at (108,144) width 57: "one thin "
             text run at (164,144) width 97: "blue line here: "
-        RenderText {#text} at (261,144) size 777x90
+        RenderText {#text} at (0,144) size 777x90
           text run at (261,144) width 324: "dummy text dummy text dummy text dummy text "
           text run at (584,144) width 159: "dummy text dummy text"
           text run at (0,162) width 324: "dummy text dummy text dummy text dummy text "

@@ -29,7 +29,7 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,0) size 784x36
         RenderText {#text} at (0,0) size 99x18
           text run at (0,0) width 99: "Fixes this bug: "
-        RenderInline {A} at (0,0) size 172x18 [color=#0000EE]
+        RenderInline {A} at (98,0) size 172x18 [color=#0000EE]
           RenderText {#text} at (98,0) size 172x18
             text run at (98,0) width 172: "<rdar://problem/3927554>"
         RenderText {#text} at (269,0) size 390x18

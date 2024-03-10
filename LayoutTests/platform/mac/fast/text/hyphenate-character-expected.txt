@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
         RenderBlock {P} at (0,16) size 344x18
           RenderText {#text} at (0,0) size 208x18
             text run at (0,0) width 208: "The initial value (should be like "
-          RenderInline {TT} at (0,0) size 33x15
+          RenderInline {TT} at (207,2) size 33x15
             RenderText {#text} at (207,2) size 33x15
               text run at (207,2) width 33: "auto"
           RenderText {#text} at (239,0) size 6x18
@@ -33,7 +33,7 @@ layer at (0,0) size 800x600
         RenderBlock {P} at (0,16) size 344x18
           RenderText {#text} at (0,0) size 83x18
             text run at (0,0) width 83: "The default ("
-          RenderInline {TT} at (0,0) size 197x15
+          RenderInline {TT} at (82,2) size 197x15
             RenderText {#text} at (82,2) size 197x15
               text run at (82,2) width 197: "hyphenate-character: auto"
           RenderText {#text} at (278,0) size 6x18
@@ -59,7 +59,7 @@ layer at (0,0) size 800x600
         RenderBlock {P} at (0,16) size 344x18
           RenderText {#text} at (0,0) size 49x18
             text run at (0,0) width 49: "Bullet ("
-          RenderInline {TT} at (0,0) size 220x15
+          RenderInline {TT} at (48,2) size 220x15
             RenderText {#text} at (48,2) size 220x15
               text run at (48,2) width 220: "hyphenate-character: \"\\2022\""
           RenderText {#text} at (267,0) size 6x18
@@ -85,7 +85,7 @@ layer at (0,0) size 800x600
         RenderBlock {P} at (0,16) size 357x18
           RenderText {#text} at (0,0) size 140x18
             text run at (0,0) width 140: "Middle dot and tilde ("
-          RenderInline {TT} at (0,0) size 212x15
+          RenderInline {TT} at (139,2) size 212x15
             RenderText {#text} at (139,2) size 212x15
               text run at (139,2) width 212: "hyphenate-character: \"\\B7~\""
           RenderText {#text} at (350,0) size 7x18

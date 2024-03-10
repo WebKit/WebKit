@@ -11,30 +11,30 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 7x11
             text run at (0,0) width 7: " "
             text run at (6,0) width 1: " "
-          RenderInline {B} at (0,0) size 31x11
+          RenderInline {B} at (0,11) size 31x11
             RenderText {#text} at (0,11) size 31x11
               text run at (0,11) width 31: "thead"
-          RenderText {#text} at (30,11) size 319x22
+          RenderText {#text} at (0,11) size 319x22
             text run at (30,11) width 79: " Row 1;      "
             text run at (108,11) width 1: " "
             text run at (0,22) width 319: "      background-color: cyan;     text-align: center;"
           RenderBR {BR} at (318,22) size 1x11
           RenderText {#text} at (0,33) size 0x11
             text run at (0,33) width 0: " "
-          RenderInline {B} at (0,0) size 31x11
+          RenderInline {B} at (0,44) size 31x11
             RenderText {#text} at (0,44) size 31x11
               text run at (0,44) width 31: "tbody"
-          RenderText {#text} at (30,44) size 313x22
+          RenderText {#text} at (0,44) size 313x22
             text run at (30,44) width 79: " Rows 2,3,4; "
             text run at (108,44) width 1: " "
             text run at (0,55) width 313: "      background-color: #9999ff;  text-align: right;"
           RenderBR {BR} at (312,55) size 1x11
           RenderText {#text} at (0,66) size 0x11
             text run at (0,66) width 0: " "
-          RenderInline {B} at (0,0) size 31x11
+          RenderInline {B} at (0,77) size 31x11
             RenderText {#text} at (0,77) size 31x11
               text run at (0,77) width 31: "tfoot"
-          RenderText {#text} at (30,77) size 319x22
+          RenderText {#text} at (0,77) size 319x22
             text run at (30,77) width 79: " Rows 5, 6;  "
             text run at (108,77) width 1: " "
             text run at (0,88) width 319: "      background-color: #ff99ff;  text-align: center;"

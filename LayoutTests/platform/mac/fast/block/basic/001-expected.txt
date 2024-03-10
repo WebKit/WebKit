@@ -8,7 +8,7 @@ layer at (0,0) size 800x600
           RenderInline {I} at (0,0) size 235x18
             RenderText {#text} at (0,0) size 96x18
               text run at (0,0) width 96: "Start of a line. "
-            RenderInline {FONT} at (0,0) size 140x18 [color=#FF0000]
+            RenderInline {FONT} at (95,0) size 140x18 [color=#FF0000]
               RenderText {#text} at (95,0) size 140x18
                 text run at (95,0) width 140: "More red on this line:"
         RenderBlock (anonymous) at (2,38) size 780x71

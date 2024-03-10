@@ -8,7 +8,7 @@ layer at (0,0) size 800x600
       RenderSVGText {text} at (84,0) size 312x31 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 144x31
           chunk 1 (middle anchor) text run 1 at (84.68,25.00) startOffset 0 endOffset 12 width 143.03: "Text Cursor "
-        RenderSVGInline {a} at (0,0) size 168x31
+        RenderSVGInline {a} at (143,0) size 168x31
           RenderSVGInlineText {#text} at (143,0) size 168x31
             chunk 1 (middle anchor) text run 1 at (227.70,25.00) startOffset 0 endOffset 14 width 167.62: "Pointer Cursor"
         RenderSVGInlineText {#text} at (0,0) size 0x0

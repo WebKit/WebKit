@@ -65,7 +65,7 @@ layer at (0,0) size 800x1899
         RenderText {#text} at (0,0) size 763x39
           text run at (0,0) width 763: "This letters in this sentence should have extra space between them,"
           text run at (0,20) width 440: "but the last few words in the sentence "
-        RenderInline {SPAN} at (0,0) size 184x19
+        RenderInline {SPAN} at (439,20) size 184x19
           RenderText {#text} at (439,20) size 184x19
             text run at (439,20) width 184: "should show normal spacing"
         RenderText {#text} at (622,20) size 10x19
@@ -99,7 +99,7 @@ layer at (0,0) size 800x1899
         RenderTableSection {TBODY} at (1,1) size 2778x700
           RenderTableRow {TR} at (0,0) size 2778x28
             RenderTableCell {TD} at (0,0) size 2778x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 161x19
+              RenderInline {STRONG} at (4,4) size 161x19
                 RenderText {#text} at (4,4) size 161x19
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,28) size 2778x672
@@ -131,7 +131,7 @@ layer at (0,0) size 800x1899
               RenderBlock {P} at (4,256) size 2758x20
                 RenderText {#text} at (0,0) size 1212x19
                   text run at (0,0) width 1212: "This letters in this sentence should have extra space between them, but the last few words in the sentence "
-                RenderInline {SPAN} at (0,0) size 183x19
+                RenderInline {SPAN} at (1211,0) size 183x19
                   RenderText {#text} at (1211,0) size 183x19
                     text run at (1211,0) width 183: "should show normal spacing"
                 RenderText {#text} at (1393,0) size 10x19

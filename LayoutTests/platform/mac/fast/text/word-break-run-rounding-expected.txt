@@ -6,8 +6,8 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 60x18
           text run at (0,0) width 60: "Tests for "
-        RenderInline {I} at (0,0) size 712x18
-          RenderInline {A} at (0,0) size 306x18 [color=#0000EE]
+        RenderInline {I} at (59,0) size 712x18
+          RenderInline {A} at (59,0) size 306x18 [color=#0000EE]
             RenderText {#text} at (59,0) size 306x18
               text run at (59,0) width 306: "http://bugs.webkit.org/show_bug.cgi?id=13438"
           RenderText {#text} at (364,0) size 407x18

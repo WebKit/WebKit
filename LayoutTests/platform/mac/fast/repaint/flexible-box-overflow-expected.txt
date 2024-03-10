@@ -7,10 +7,10 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 233x18
           text run at (0,0) width 233: "This is a test for regressions against "
         RenderInline {I} at (0,0) size 777x36
-          RenderInline {A} at (0,0) size 354x18 [color=#0000EE]
+          RenderInline {A} at (232,0) size 354x18 [color=#0000EE]
             RenderText {#text} at (232,0) size 354x18
               text run at (232,0) width 354: "http://bugzilla.opendarwin.org/show_bug.cgi?id=8056"
-          RenderText {#text} at (585,0) size 777x36
+          RenderText {#text} at (0,0) size 777x36
             text run at (585,0) width 5: " "
             text run at (589,0) width 188: "Flexible boxes do not repaint"
             text run at (0,18) width 243: "their top, left and children's overflows"

@@ -57,10 +57,10 @@ layer at (0,0) size 800x4128
         RenderText {#text} at (0,5) size 778x15
           text run at (0,5) width 599: "This element should be in a cursive font, 'small' in size, with a line-height 200% the height of the text's actual size. "
           text run at (598,5) width 180: "For example, if the font-size value"
-        RenderInline {CODE} at (0,0) size 31x11
+        RenderInline {CODE} at (0,35) size 31x11
           RenderText {#text} at (0,35) size 31x11
             text run at (0,35) width 31: "small"
-        RenderText {#text} at (30,31) size 751x43
+        RenderText {#text} at (0,31) size 751x43
           text run at (30,31) width 307: " is calculated at 10px, then the line-height should be 20px. "
           text run at (336,31) width 267: "The actual value of the font-size is UA-dependent. "
           text run at (602,31) width 149: "Extra text is included for the"
@@ -107,7 +107,7 @@ layer at (0,0) size 800x4128
           text run at (691,5) width 89: "Extra text is included"
           text run at (0,28) width 201: "for the purposes of testing this more effectively."
       RenderBlock {P} at (0,1513) size 784x217
-        RenderInline {SPAN} at (0,0) size 780x184 [bgcolor=#C0C0C0]
+        RenderInline {SPAN} at (0,16) size 780x184 [bgcolor=#C0C0C0]
           RenderText {#text} at (0,16) size 780x184
             text run at (0,16) width 682: "This element should be in a sans-serif font, italicized and small caps, with a weight of 100. "
             text run at (681,16) width 92: "Its font-size"
@@ -119,7 +119,7 @@ layer at (0,0) size 800x4128
         RenderTableSection {TBODY} at (1,1) size 782x2363
           RenderTableRow {TR} at (0,0) size 782x28
             RenderTableCell {TD} at (0,0) size 782x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 161x19
+              RenderInline {STRONG} at (4,4) size 161x19
                 RenderText {#text} at (4,4) size 161x19
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,28) size 782x2335
@@ -156,10 +156,10 @@ layer at (0,0) size 800x4128
                   text run at (0,5) width 599: "This element should be in a cursive font, 'small' in size, with a line-height 200% the height of the text's actual size. "
                   text run at (598,5) width 149: "For example, if the font-size"
                   text run at (0,31) width 32: "value "
-                RenderInline {CODE} at (0,0) size 31x11
+                RenderInline {CODE} at (31,35) size 31x11
                   RenderText {#text} at (31,35) size 31x11
                     text run at (31,35) width 31: "small"
-                RenderText {#text} at (61,31) size 745x43
+                RenderText {#text} at (0,31) size 745x43
                   text run at (61,31) width 307: " is calculated at 10px, then the line-height should be 20px. "
                   text run at (367,31) width 267: "The actual value of the font-size is UA-dependent. "
                   text run at (633,31) width 112: "Extra text is included"
@@ -211,7 +211,7 @@ layer at (0,0) size 800x4128
                   text run at (0,39) width 190: "shoud be 2.5 times that, or 24px. "
                   text run at (189,39) width 390: "Extra text is included for the purposes of testing this more effectively."
               RenderBlock {P} at (4,1898) size 762x433
-                RenderInline {SPAN} at (0,0) size 760x389 [bgcolor=#C0C0C0]
+                RenderInline {SPAN} at (0,21) size 760x389 [bgcolor=#C0C0C0]
                   RenderText {#text} at (0,21) size 760x389
                     text run at (0,21) width 750: "This element should be in a sans-serif font, italicized and small caps, with a"
                     text run at (0,93) width 154: "weight of 100. "

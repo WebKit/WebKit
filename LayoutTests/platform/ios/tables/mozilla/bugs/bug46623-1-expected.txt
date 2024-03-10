@@ -11,32 +11,32 @@ layer at (0,0) size 800x600
                 RenderTableSection {TBODY} at (1,1) size 348x88
                   RenderTableRow {TR} at (0,2) size 348x84
                     RenderTableCell {TD} at (2,16) size 247x56 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-                      RenderInline {B} at (0,0) size 101x19
+                      RenderInline {B} at (2,16) size 101x19
                         RenderText {#text} at (2,16) size 101x19
                           text run at (2,2) width 101: "Contact MPG:"
                       RenderBR {BR} at (102,16) size 1x19
-                      RenderInline {FONT} at (0,0) size 234x31
-                        RenderInline {B} at (0,0) size 147x15
-                          RenderInline {A} at (0,0) size 147x15 [color=#551A8B]
+                      RenderInline {FONT} at (2,36) size 234x31
+                        RenderInline {B} at (2,36) size 147x15
+                          RenderInline {A} at (2,36) size 147x15 [color=#551A8B]
                             RenderText {#text} at (2,36) size 147x15
                               text run at (2,22) width 33: "Click "
                               text run at (34,22) width 115: "here to email full list"
                         RenderText {#text} at (148,36) size 72x15
                           text run at (148,22) width 72: ", or copy this "
-                        RenderInline {A} at (0,0) size 234x31 [color=#551A8B]
-                          RenderText {#text} at (219,36) size 234x31
+                        RenderInline {A} at (2,36) size 234x31 [color=#551A8B]
+                          RenderText {#text} at (2,36) size 234x31
                             text run at (219,22) width 17: "list"
                             text run at (2,38) width 64: "of addresses"
                         RenderText {#text} at (65,52) size 42x15
                           text run at (65,38) width 42: ".  View "
-                        RenderInline {A} at (0,0) size 83x15 [color=#551A8B]
+                        RenderInline {A} at (106,52) size 83x15 [color=#551A8B]
                           RenderText {#text} at (106,52) size 83x15
                             text run at (106,38) width 83: "Who is in MPG"
                         RenderText {#text} at (188,52) size 4x15
                           text run at (188,38) width 4: "."
                       RenderText {#text} at (0,0) size 0x0
                     RenderTableCell {TD} at (250,2) size 97x84 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
-                      RenderInline {B} at (0,0) size 85x19
+                      RenderInline {B} at (2,2) size 85x19
                         RenderText {#text} at (2,2) size 85x19
                           text run at (2,2) width 85: "MPG Rules:"
                       RenderBR {BR} at (86,2) size 1x19

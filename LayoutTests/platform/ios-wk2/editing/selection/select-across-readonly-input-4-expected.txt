@@ -15,7 +15,7 @@ layer at (0,0) size 800x600
         RenderTextControl {INPUT} at (0,0) size 59x30 [bgcolor=#FFFFFF] [border: (1px solid #BCBCBC)]
         RenderText {#text} at (58,5) size 5x19
           text run at (58,5) width 5: " "
-        RenderInline {SPAN} at (0,0) size 39x19
+        RenderInline {SPAN} at (62,5) size 39x19
           RenderText {#text} at (62,5) size 39x19
             text run at (62,5) width 39: "world"
         RenderText {#text} at (100,5) size 5x19

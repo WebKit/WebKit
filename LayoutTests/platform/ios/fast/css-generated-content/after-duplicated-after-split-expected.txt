@@ -6,8 +6,8 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x20
         RenderText {#text} at (0,0) size 54x19
           text run at (0,0) width 54: "Test for "
-        RenderInline {I} at (0,0) size 333x19
-          RenderInline {A} at (0,0) size 156x19 [color=#0000EE]
+        RenderInline {I} at (53,0) size 333x19
+          RenderInline {A} at (53,0) size 156x19 [color=#0000EE]
             RenderText {#text} at (53,0) size 156x19
               text run at (53,0) width 156: "rdar://problem/7898436"
           RenderText {#text} at (208,0) size 178x19
@@ -21,14 +21,14 @@ layer at (0,0) size 800x600
         RenderBlock (anonymous) at (0,0) size 784x112
           RenderText {#text} at (0,2) size 454x107
             text run at (0,2) width 454: "The test did"
-          RenderInline {SPAN} at (0,0) size 0x107
-            RenderInline {B} at (0,0) size 0x0
+          RenderInline {SPAN} at (453,2) size 0x107
+            RenderInline {B} at (453,2) size 0x107
         RenderBlock (anonymous) at (0,112) size 784x0
           RenderBlock {DIV} at (0,0) size 784x0
         RenderBlock (anonymous) at (0,112) size 784x112
-          RenderInline {SPAN} at (0,0) size 147x107
-            RenderInline {B} at (0,0) size 0x107
-            RenderInline (generated) at (0,0) size 147x107
+          RenderInline {SPAN} at (0,2) size 147x107
+            RenderInline {B} at (0,2) size 0x107
+            RenderInline (generated) at (0,2) size 147x107
               RenderText at (0,2) size 147x107
                 text run at (0,2) width 147: "not "
           RenderText {#text} at (146,2) size 153x107

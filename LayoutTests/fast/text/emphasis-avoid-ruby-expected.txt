@@ -6,12 +6,12 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,0) size 784x64
         RenderText {#text} at (0,16) size 64x32
           text run at (0,16) width 64: "1 "
-        RenderInline {RUBY} at (0,0) size 160x32
-          RenderInline (generated) at (0,0) size 160x32
-            RenderInline {RB} at (0,0) size 160x32
+        RenderInline {RUBY} at (64,16) size 160x32
+          RenderInline (generated) at (64,16) size 160x32
+            RenderInline {RB} at (64,16) size 160x32
               RenderText {#text} at (64,16) size 96x32
                 text run at (64,16) width 96: "23 "
-              RenderInline {SPAN} at (0,0) size 64x32
+              RenderInline {SPAN} at (160,16) size 64x32
                 RenderText {#text} at (160,16) size 64x32
                   text run at (160,16) width 64: "45"
           RenderBlock {RT} at (64,0) size 160x16
@@ -21,12 +21,12 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,72) size 784x32
         RenderText {#text} at (0,0) size 64x32
           text run at (0,0) width 64: "1 "
-        RenderInline {RUBY} at (0,0) size 160x32
-          RenderInline (generated) at (0,0) size 160x32
-            RenderInline {RB} at (0,0) size 160x32
+        RenderInline {RUBY} at (64,0) size 160x32
+          RenderInline (generated) at (64,0) size 160x32
+            RenderInline {RB} at (64,0) size 160x32
               RenderText {#text} at (64,0) size 96x32
                 text run at (64,0) width 96: "23 "
-              RenderInline {SPAN} at (0,0) size 64x32
+              RenderInline {SPAN} at (160,0) size 64x32
                 RenderText {#text} at (160,0) size 64x32
                   text run at (160,0) width 64: "45"
           RenderBlock {RT} at (64,0) size 160x0
@@ -34,12 +34,12 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,112) size 784x48
         RenderText {#text} at (0,16) size 64x32
           text run at (0,16) width 64: "1 "
-        RenderInline {RUBY} at (0,0) size 160x32
-          RenderInline (generated) at (0,0) size 160x32
-            RenderInline {RB} at (0,0) size 160x32
+        RenderInline {RUBY} at (64,16) size 160x32
+          RenderInline (generated) at (64,16) size 160x32
+            RenderInline {RB} at (64,16) size 160x32
               RenderText {#text} at (64,16) size 96x32
                 text run at (64,16) width 96: "23 "
-              RenderInline {SPAN} at (0,0) size 64x32
+              RenderInline {SPAN} at (160,16) size 64x32
                 RenderText {#text} at (160,16) size 64x32
                   text run at (160,16) width 64: "45"
           RenderBlock {RT} at (64,0) size 160x16
@@ -49,12 +49,12 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,168) size 784x64
         RenderText {#text} at (0,16) size 64x32
           text run at (0,16) width 64: "1 "
-        RenderInline {RUBY} at (0,0) size 160x32
-          RenderInline (generated) at (0,0) size 160x32
-            RenderInline {RB} at (0,0) size 160x32
+        RenderInline {RUBY} at (64,16) size 160x32
+          RenderInline (generated) at (64,16) size 160x32
+            RenderInline {RB} at (64,16) size 160x32
               RenderText {#text} at (64,16) size 96x32
                 text run at (64,16) width 96: "23 "
-              RenderInline {SPAN} at (0,0) size 64x32
+              RenderInline {SPAN} at (160,16) size 64x32
                 RenderText {#text} at (160,16) size 64x32
                   text run at (160,16) width 64: "45"
           RenderBlock {RT} at (64,48) size 160x16
@@ -64,12 +64,12 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,240) size 784x32
         RenderText {#text} at (0,0) size 64x32
           text run at (0,0) width 64: "1 "
-        RenderInline {RUBY} at (0,0) size 160x32
-          RenderInline (generated) at (0,0) size 160x32
-            RenderInline {RB} at (0,0) size 160x32
+        RenderInline {RUBY} at (64,0) size 160x32
+          RenderInline (generated) at (64,0) size 160x32
+            RenderInline {RB} at (64,0) size 160x32
               RenderText {#text} at (64,0) size 96x32
                 text run at (64,0) width 96: "23 "
-              RenderInline {SPAN} at (0,0) size 64x32
+              RenderInline {SPAN} at (160,0) size 64x32
                 RenderText {#text} at (160,0) size 64x32
                   text run at (160,0) width 64: "45"
           RenderBlock {RT} at (64,32) size 160x0
@@ -77,12 +77,12 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,280) size 784x48
         RenderText {#text} at (0,0) size 64x32
           text run at (0,0) width 64: "1 "
-        RenderInline {RUBY} at (0,0) size 160x32
-          RenderInline (generated) at (0,0) size 160x32
-            RenderInline {RB} at (0,0) size 160x32
+        RenderInline {RUBY} at (64,16) size 160x32
+          RenderInline (generated) at (64,16) size 160x32
+            RenderInline {RB} at (64,16) size 160x32
               RenderText {#text} at (64,0) size 96x32
                 text run at (64,0) width 96: "23 "
-              RenderInline {SPAN} at (0,0) size 64x32
+              RenderInline {SPAN} at (160,16) size 64x32
                 RenderText {#text} at (160,0) size 64x32
                   text run at (160,0) width 64: "45"
           RenderBlock {RT} at (64,32) size 160x16

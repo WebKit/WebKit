@@ -40,10 +40,10 @@ layer at (0,0) size 785x1151
         RenderText {#text} at (0,0) size 520x18
           text run at (0,0) width 298: "The text in this element should be underlined. "
           text run at (297,0) width 223: "The boldfaced text in this element "
-        RenderInline {B} at (0,0) size 176x18
+        RenderInline {B} at (519,0) size 176x18
           RenderText {#text} at (519,0) size 176x18
             text run at (519,0) width 176: "should also be underlined"
-        RenderText {#text} at (694,0) size 746x36
+        RenderText {#text} at (0,0) size 746x36
           text run at (694,0) width 9: ". "
           text run at (702,0) width 44: "This is"
           text run at (0,18) width 731: "because the parent's underline will 'span' the boldfaced text, even if the inline element has no underline of its own."
@@ -61,25 +61,25 @@ layer at (0,0) size 785x1151
       RenderBlock {P} at (0,493) size 769x55
         RenderText {#text} at (0,0) size 647x18
           text run at (0,0) width 647: "Text decorations only apply to the text of an element, so the image at the end of this sentence should "
-        RenderInline {EM} at (0,0) size 21x18
+        RenderInline {EM} at (646,0) size 21x18
           RenderText {#text} at (646,0) size 21x18
             text run at (646,0) width 21: "not"
         RenderText {#text} at (666,0) size 89x18
           text run at (666,0) width 89: " be overlined:"
         RenderImage {IMG} at (0,18) size 15x15
-        RenderText {#text} at (15,19) size 766x36
+        RenderText {#text} at (0,19) size 766x36
           text run at (15,19) width 8: ". "
           text run at (23,19) width 743: "The underline of the parent element should hold true beneath the image, however, since text-decoration 'spans' child"
           text run at (0,37) width 61: "elements."
       RenderBlock {P} at (0,564) size 769x18 [color=#008000]
         RenderText {#text} at (0,0) size 107x18
           text run at (0,0) width 107: "The underlining "
-        RenderInline {SPAN} at (0,0) size 100x18 [color=#0000FF]
+        RenderInline {SPAN} at (106,0) size 100x18 [color=#0000FF]
           RenderText {#text} at (106,0) size 100x18
             text run at (106,0) width 100: "in this sentence"
         RenderText {#text} at (205,0) size 238x18
           text run at (205,0) width 238: " should be green, no matter what the "
-        RenderInline {SPAN} at (0,0) size 112x18 [color=#000000]
+        RenderInline {SPAN} at (442,0) size 112x18 [color=#000000]
           RenderText {#text} at (442,0) size 112x18
             text run at (442,0) width 112: "text color may be"
         RenderText {#text} at (553,0) size 5x18
@@ -87,27 +87,27 @@ layer at (0,0) size 785x1151
       RenderBlock {P} at (0,598) size 769x36
         RenderText {#text} at (0,0) size 113x18
           text run at (0,0) width 113: "The colors of the "
-        RenderInline {SPAN} at (0,0) size 75x18 [color=#800080]
+        RenderInline {SPAN} at (112,0) size 75x18 [color=#800080]
           RenderText {#text} at (112,0) size 75x18
             text run at (112,0) width 75: "underlining"
         RenderText {#text} at (186,0) size 22x18
           text run at (186,0) width 22: " in "
-        RenderInline {SPAN} at (0,0) size 83x18 [color=#0000FF]
+        RenderInline {SPAN} at (207,0) size 83x18 [color=#0000FF]
           RenderText {#text} at (207,0) size 83x18
             text run at (207,0) width 83: "this sentence"
         RenderText {#text} at (289,0) size 71x18
           text run at (289,0) width 71: " should be "
-        RenderInline {SPAN} at (0,0) size 215x18 [color=#808080]
+        RenderInline {SPAN} at (359,0) size 215x18 [color=#808080]
           RenderText {#text} at (359,0) size 215x18
             text run at (359,0) width 215: "the same as that of the parent text"
-        RenderText {#text} at (573,0) size 755x36
+        RenderText {#text} at (0,0) size 755x36
           text run at (573,0) width 182: " (that is, the first word in the"
           text run at (0,18) width 216: "sentence, which should be black)."
       RenderTable {TABLE} at (0,650) size 769x485 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 767x483
           RenderTableRow {TR} at (0,0) size 767x26
             RenderTableCell {TD} at (0,0) size 767x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 161x18
+              RenderInline {STRONG} at (4,4) size 161x18
                 RenderText {#text} at (4,4) size 161x18
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 767x457
@@ -132,10 +132,10 @@ layer at (0,0) size 785x1151
                 RenderText {#text} at (0,0) size 520x18
                   text run at (0,0) width 298: "The text in this element should be underlined. "
                   text run at (297,0) width 223: "The boldfaced text in this element "
-                RenderInline {B} at (0,0) size 176x18
+                RenderInline {B} at (519,0) size 176x18
                   RenderText {#text} at (519,0) size 176x18
                     text run at (519,0) width 176: "should also be underlined"
-                RenderText {#text} at (694,0) size 746x36
+                RenderText {#text} at (0,0) size 746x36
                   text run at (694,0) width 9: ". "
                   text run at (702,0) width 44: "This is"
                   text run at (0,18) width 731: "because the parent's underline will 'span' the boldfaced text, even if the inline element has no underline of its own."
@@ -153,26 +153,26 @@ layer at (0,0) size 785x1151
               RenderBlock {P} at (4,312) size 747x55
                 RenderText {#text} at (0,0) size 647x18
                   text run at (0,0) width 647: "Text decorations only apply to the text of an element, so the image at the end of this sentence should "
-                RenderInline {EM} at (0,0) size 21x18
+                RenderInline {EM} at (646,0) size 21x18
                   RenderText {#text} at (646,0) size 21x18
                     text run at (646,0) width 21: "not"
-                RenderText {#text} at (666,0) size 686x37
+                RenderText {#text} at (0,0) size 686x37
                   text run at (666,0) width 20: " be"
                   text run at (0,19) width 69: "overlined: "
                 RenderImage {IMG} at (68,18) size 16x15
-                RenderText {#text} at (83,19) size 686x36
+                RenderText {#text} at (0,19) size 686x36
                   text run at (83,19) width 9: ". "
                   text run at (91,19) width 595: "The underline of the parent element should hold true beneath the image, however, since text-"
                   text run at (0,37) width 214: "decoration 'spans' child elements."
               RenderBlock {P} at (4,383) size 747x18 [color=#008000]
                 RenderText {#text} at (0,0) size 107x18
                   text run at (0,0) width 107: "The underlining "
-                RenderInline {SPAN} at (0,0) size 100x18 [color=#0000FF]
+                RenderInline {SPAN} at (106,0) size 100x18 [color=#0000FF]
                   RenderText {#text} at (106,0) size 100x18
                     text run at (106,0) width 100: "in this sentence"
                 RenderText {#text} at (205,0) size 238x18
                   text run at (205,0) width 238: " should be green, no matter what the "
-                RenderInline {SPAN} at (0,0) size 112x18 [color=#000000]
+                RenderInline {SPAN} at (442,0) size 112x18 [color=#000000]
                   RenderText {#text} at (442,0) size 112x18
                     text run at (442,0) width 112: "text color may be"
                 RenderText {#text} at (553,0) size 5x18
@@ -180,20 +180,20 @@ layer at (0,0) size 785x1151
               RenderBlock {P} at (4,417) size 747x36
                 RenderText {#text} at (0,0) size 113x18
                   text run at (0,0) width 113: "The colors of the "
-                RenderInline {SPAN} at (0,0) size 75x18 [color=#800080]
+                RenderInline {SPAN} at (112,0) size 75x18 [color=#800080]
                   RenderText {#text} at (112,0) size 75x18
                     text run at (112,0) width 75: "underlining"
                 RenderText {#text} at (186,0) size 22x18
                   text run at (186,0) width 22: " in "
-                RenderInline {SPAN} at (0,0) size 83x18 [color=#0000FF]
+                RenderInline {SPAN} at (207,0) size 83x18 [color=#0000FF]
                   RenderText {#text} at (207,0) size 83x18
                     text run at (207,0) width 83: "this sentence"
                 RenderText {#text} at (289,0) size 71x18
                   text run at (289,0) width 71: " should be "
-                RenderInline {SPAN} at (0,0) size 215x18 [color=#808080]
+                RenderInline {SPAN} at (359,0) size 215x18 [color=#808080]
                   RenderText {#text} at (359,0) size 215x18
                     text run at (359,0) width 215: "the same as that of the parent text"
-                RenderText {#text} at (573,0) size 732x36
+                RenderText {#text} at (0,0) size 732x36
                   text run at (573,0) width 159: " (that is, the first word in"
                   text run at (0,18) width 240: "the sentence, which should be black)."
 layer at (8,175) size 769x2 clip at (0,0) size 0x0

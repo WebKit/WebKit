@@ -14,7 +14,7 @@ layer at (0,0) size 800x600
           text run at (5,65) width 374: "adipiscing elit. Etiam et ipsum. Nam consectetuer mi eget "
           text run at (5,85) width 37: "velit. "
         RenderBlock (floating) {DIV} at (337,85) size 64x64 [bgcolor=#ADD8E6]
-        RenderText {#text} at (41,85) size 348x119
+        RenderText {#text} at (5,85) size 348x119
           text run at (41,85) width 260: "Sed nec risus vitae felis auctor ultricies. "
           text run at (5,105) width 336: "Pellentesque aliquet quam ac lorem. Duis interdum, "
           text run at (5,125) width 328: "elit in ultricies auctor, erat pede sollicitudin libero, "

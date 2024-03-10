@@ -9,7 +9,7 @@ layer at (8,8) size 784x100 scrollY 62 scrollHeight 162
     RenderBR {BR} at (0,18) size 0x18
     RenderBR {BR} at (0,36) size 0x18
     RenderBR {BR} at (0,54) size 0x18
-    RenderInline {SPAN} at (0,0) size 199x18 [bgcolor=#008000]
+    RenderInline {SPAN} at (0,72) size 199x18 [bgcolor=#008000]
       RenderText {#text} at (0,72) size 199x18
         text run at (0,72) width 199: "Should have green background"
     RenderBR {BR} at (198,72) size 1x18

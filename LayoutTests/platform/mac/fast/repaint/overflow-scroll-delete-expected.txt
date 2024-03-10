@@ -7,14 +7,14 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 156x18
           text run at (0,0) width 156: "This is a repaint test for "
         RenderInline {I} at (0,0) size 763x36
-          RenderInline {A} at (0,0) size 305x18 [color=#0000EE]
+          RenderInline {A} at (155,0) size 305x18 [color=#0000EE]
             RenderText {#text} at (155,0) size 305x18
               text run at (155,0) width 305: "http://bugs.webkit.org/show_bug.cgi?id=11277"
-          RenderText {#text} at (459,0) size 763x36
+          RenderText {#text} at (0,0) size 763x36
             text run at (459,0) width 5: " "
             text run at (463,0) width 300: "REGRESSION: Incomplete repaint of overflow"
             text run at (0,18) width 129: "areas when deleting"
-        RenderText {#text} at (128,18) size 771x36
+        RenderText {#text} at (0,18) size 771x36
           text run at (128,18) width 9: ". "
           text run at (136,18) width 450: "This shows that the repaint rect doesn't account for scrolling. You can "
           text run at (585,18) width 186: "use Quartz Debug to see that"

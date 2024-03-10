@@ -7,10 +7,10 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 86x18
           text run at (0,0) width 86: "Pixel test for "
         RenderInline {I} at (0,0) size 572x36
-          RenderInline {A} at (0,0) size 306x18 [color=#0000EE]
+          RenderInline {A} at (85,0) size 306x18 [color=#0000EE]
             RenderText {#text} at (85,0) size 306x18
               text run at (85,0) width 306: "http://bugs.webkit.org/show_bug.cgi?id=12043"
-          RenderText {#text} at (390,0) size 572x36
+          RenderText {#text} at (0,0) size 572x36
             text run at (390,0) width 5: " "
             text run at (394,0) width 178: "Another assertion failure in"
             text run at (0,18) width 247: "WebCore::RenderObject::drawBorder"
