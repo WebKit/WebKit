@@ -81,6 +81,10 @@ public final class PreviewWindowController: NSObject {
     }
 }
 
+#else
+import Foundation
+@objc(WKSPreviewWindowController)
+public final class PreviewWindowController: NSObject { }
 #endif
 
 #endif
