@@ -178,9 +178,9 @@ void PushClientConnection::broadcastDebugMessage(const String& message)
     String messageIdentifier;
     auto signingIdentifier = hostAppCodeSigningIdentifier();
     if (signingIdentifier.isEmpty())
-        messageIdentifier = makeString("[(0x", hex(reinterpret_cast<uint64_t>(m_xpcConnection.get()), WTF::HexConversionMode::Lowercase), ") (", String::number(identifier()), " )] ");
+        messageIdentifier = makeString("[(0x", hex(reinterpret_cast<uint64_t>(m_xpcConnection.get()), WTF::HexConversionMode::Lowercase), ") (", String::number(identifier().toUInt64()), " )] ");
     else
-        messageIdentifier = makeString("[", signingIdentifier, " (", String::number(identifier()), ")] ");
+        messageIdentifier = makeString("[", signingIdentifier, " (", String::number(identifier().toUInt64()), ")] ");
 
     WebPushDaemon::singleton().broadcastDebugMessage(makeString(messageIdentifier, message));
 }

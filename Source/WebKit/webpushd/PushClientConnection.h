@@ -38,6 +38,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Identified.h>
 #include <wtf/OSObjectPtr.h>
+#include <wtf/ObjectIdentifier.h>
 #include <wtf/RefCounted.h>
 #include <wtf/UUID.h>
 #include <wtf/WeakPtr.h>
@@ -61,7 +62,10 @@ using WebKit::WebPushD::WebPushDaemonConnectionConfiguration;
 
 namespace WebPushD {
 
-class PushClientConnection : public RefCounted<PushClientConnection>, public LegacyIdentified<PushClientConnection>, public IPC::MessageReceiver {
+enum class PushClientConnectionIdentifierType { };
+using PushClientConnectionIdentifier = AtomicObjectIdentifier<PushClientConnectionIdentifierType>;
+
+class PushClientConnection : public RefCounted<PushClientConnection>, public Identified<PushClientConnectionIdentifier>, public IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<PushClientConnection> create(xpc_connection_t);
