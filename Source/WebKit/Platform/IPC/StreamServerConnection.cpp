@@ -173,13 +173,7 @@ StreamServerConnection::DispatchResult StreamServerConnection::dispatchStreamMes
             currentReceiver = m_receivers.get(key);
         }
         if (!currentReceiver) {
-            // Valid scenario is when receiver has been removed, but there are messages for it in the buffer.
-            // FIXME: Since we do not have a receiver, we don't know how to decode the message.
-            // This means we must timeout every receiver in the stream connection.
-            // Currently we assert that the receivers are empty, as we only have up to one receiver in
-            // a stream connection until possibility of skipping is implemented properly.
-            Locker locker { m_receiversLock };
-            ASSERT(m_receivers.isEmpty());
+            protectedConnection()->dispatchDidReceiveInvalidMessage(decoder.messageName());
             return DispatchResult::HasNoMessages;
         }
         if (!dispatchStreamMessage(WTFMove(decoder), *currentReceiver))
