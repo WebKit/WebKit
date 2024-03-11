@@ -1765,18 +1765,21 @@ bool CSSPrimitiveValue::convertingToLengthHasRequiredConversionData(int lengthCo
     // return std::optional<double> instead of having this check here.
 
     bool isFixedNumberConversion = lengthConversion & (FixedIntegerConversion | FixedFloatConversion);
+    if (!isFixedNumberConversion)
+        return true;
+
     auto dependencies = computedStyleDependencies();
     if (!dependencies.rootProperties.isEmpty() && !conversionData.rootStyle())
-        return !isFixedNumberConversion;
+        return false;
 
     if (!dependencies.properties.isEmpty() && !conversionData.style())
-        return !isFixedNumberConversion;
+        return false;
 
     if (dependencies.containerDimensions && !conversionData.elementForContainerUnitResolution())
-        return !isFixedNumberConversion;
+        return false;
 
-    if (dependencies.viewportDimensions && conversionData.defaultViewportFactor().isEmpty())
-        return !isFixedNumberConversion;
+    if (dependencies.viewportDimensions && !conversionData.renderView())
+        return false;
 
     return true;
 }
