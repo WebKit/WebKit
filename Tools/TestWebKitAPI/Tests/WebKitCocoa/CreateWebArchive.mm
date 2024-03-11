@@ -1385,6 +1385,73 @@ TEST(WebArchive, SaveResourcesLink)
     Util::run(&saved);
 }
 
+static const char* htmlDataBytesForEmptyStyleSheet = R"TESTRESOURCE(
+<head>
+<link rel="stylesheet" href="empty.css">
+</head>
+<script>
+window.webkit.messageHandlers.testHandler.postMessage("done");
+</script>
+)TESTRESOURCE";
+
+TEST(WebArchive, SaveResourcesEmptyStyleSheet)
+{
+    RetainPtr directoryURL = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"SaveResourcesTest"] isDirectory:YES];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    [fileManager removeItemAtURL:directoryURL.get() error:nil];
+
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr schemeHandler = adoptNS([[TestURLSchemeHandler alloc] init]);
+    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"webarchivetest"];
+    RetainPtr htmlData = [NSData dataWithBytes:htmlDataBytesForEmptyStyleSheet length:strlen(htmlDataBytesForEmptyStyleSheet)];
+    RetainPtr cssData = adoptNS([[NSData alloc] init]);
+    [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
+        NSData *data = nil;
+        NSString *mimeType = nil;
+        if ([task.request.URL.absoluteString isEqualToString:@"webarchivetest://host/main.html"]) {
+            mimeType = @"text/html";
+            data = htmlData.get();
+        } else if ([task.request.URL.absoluteString isEqualToString:@"webarchivetest://host/empty.css"]) {
+            mimeType = @"text/css";
+            data = cssData.get();
+        }
+
+        RetainPtr response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:mimeType expectedContentLength:data.length textEncodingName:nil]);
+        [task didReceiveResponse:response.get()];
+        [task didReceiveData:data];
+        [task didFinish];
+    }];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    static bool messageReceived = false;
+    [webView performAfterReceivingMessage:@"done" action:[&] {
+        messageReceived = true;
+    }];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"webarchivetest://host/main.html"]]];
+    Util::run(&messageReceived);
+
+    static bool saved = false;
+    [webView _saveResources:directoryURL.get() suggestedFileName:@"host" completionHandler:^(NSError *error) {
+        EXPECT_NULL(error);
+        NSString *mainResourcePath = [directoryURL URLByAppendingPathComponent:@"host.html"].path;
+        EXPECT_TRUE([fileManager fileExistsAtPath:mainResourcePath]);
+        RetainPtr savedMainResource = adoptNS([[NSString alloc] initWithData:[NSData dataWithContentsOfFile:mainResourcePath] encoding:NSUTF8StringEncoding]);
+
+        NSString *resourceDirectoryName = @"host_files";
+        NSString *styleReourceName = @"empty.css";
+        NSString *resourceDirectoryPath = [directoryURL URLByAppendingPathComponent:resourceDirectoryName].path;
+        NSString *styleResourceFilePath = [resourceDirectoryPath stringByAppendingPathComponent:styleReourceName];
+        EXPECT_TRUE([fileManager fileExistsAtPath:styleResourceFilePath]);
+        RetainPtr savedStyleResource = adoptNS([[NSString alloc] initWithData:[NSData dataWithContentsOfFile:styleResourceFilePath] encoding:NSUTF8StringEncoding]);
+        EXPECT_EQ([savedStyleResource length], 0u);
+
+        NSString *styleResourceRelativePath = [resourceDirectoryName stringByAppendingPathComponent:styleReourceName];
+        EXPECT_TRUE([savedMainResource.get() containsString:styleResourceRelativePath]);
+        saved = true;
+    }];
+    Util::run(&saved);
+}
+
 static const char* htmlDataBytesForLinksWithSameURL = R"TESTRESOURCE(
 <head>
 <link href="style.css" rel="stylesheet">
