@@ -31,4 +31,6 @@ enum class WebKit::WebExtensionContextInstallReason : uint8_t {
     BrowserUpdate,
 };
 
+[Nested] enum class WebKit::WebExtensionContext::WindowIsClosing : bool;
+
 #endif

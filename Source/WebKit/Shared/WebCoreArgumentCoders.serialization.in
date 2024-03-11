@@ -574,6 +574,8 @@ class WebCore::IDBTransactionInfo {
     std::unique_ptr<WebCore::IDBDatabaseInfo> originalDatabaseInfo();
 };
 
+enum class WebCore::IDBGetRecordDataType : bool;
+
 struct WebCore::IDBGetRecordData {
     WebCore::IDBKeyRangeData keyRangeData;
     WebCore::IDBGetRecordDataType type;
@@ -1482,6 +1484,8 @@ struct WebCore::WebLockManagerSnapshot {
     Vector<WebCore::WebLockManagerSnapshot::Info> pending;
 };
 
+enum class WebCore::WebLockMode : bool;
+
 [Nested] struct WebCore::WebLockManagerSnapshot::Info {
     String name;
     WebCore::WebLockMode mode;
@@ -2347,6 +2351,14 @@ enum class WebCore::PublicKeyCredentialType : bool
 #endif
 
 #if PLATFORM(IOS_FAMILY)
+enum class WebCore::SelectionRenderingBehavior : bool;
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+enum class WebCore::TextDirection : bool;
+#endif
+
+#if PLATFORM(IOS_FAMILY)
 class WebCore::SelectionGeometry {
     WebCore::FloatQuad quad();
     WebCore::SelectionRenderingBehavior behavior();
@@ -2915,6 +2927,8 @@ header: <WebCore/BasicShapes.h>
     WebCore::BasicShapeRadius radiusY();
 }
 
+enum class WebCore::WindRule : bool;
+
 [RefCounted, CustomHeader] class WebCore::BasicShapePolygon {
     WebCore::WindRule windRule();
     Vector<WebCore::Length> values();
@@ -3016,10 +3030,6 @@ struct WebCore::LengthPoint {
     WebCore::BoxPathOperation,
     WebCore::RayPathOperation
 }
-
-#if PLATFORM(IOS_FAMILY)
-enum class WebCore::SelectionRenderingBehavior : bool
-#endif
 
 #if ENABLE(WEB_AUTHN)
 enum class WebCore::UserVerificationRequirement : uint8_t {
@@ -3147,6 +3157,9 @@ class WebCore::ResourceResponse : WebCore::ResourceResponseBase {
 }
 
 header: <WebCore/ResourceResponseBase.h>
+enum class WebCore::UsedLegacyTLS : bool;
+enum class WebCore::WasPrivateRelayed : bool;
+
 [CustomHeader] struct WebCore::ResourceResponseData {
     URL url;
     String mimeType;
@@ -4007,6 +4020,9 @@ header: <WebCore/ScrollingStateNode.h>
 };
 #endif
 
+enum class WebCore::ScrollClamping : bool;
+enum class WebCore::ScrollType : bool;
+
 [CustomHeader] struct WebCore::RequestedScrollData {
     WebCore::ScrollRequestType requestType;
     std::variant<WebCore::FloatPoint, WebCore::FloatSize> scrollPositionOrDelta;
@@ -4023,6 +4039,8 @@ header: <WebCore/ScrollingStateNode.h>
     Vector<WebCore::FloatRect> snapAreas;
     Vector<WebCore::ElementIdentifier> snapAreasIDs;
 }
+
+enum class WebCore::ScrollSnapStop : bool;
 
 [Alias=struct SnapOffset<float>, CustomHeader] alias WebCore::FloatSnapOffset {
     float offset;
@@ -4948,6 +4966,8 @@ enum class WebCore::ServiceWorkerUpdateViaCache : uint8_t {
     All,
     None,
 };
+
+enum class WebCore::LastNavigationWasAppInitiated : bool;
 
 struct WebCore::ServiceWorkerClientData {
     WebCore::ScriptExecutionContextIdentifier identifier;
@@ -6901,6 +6921,8 @@ header: <WebCore/GraphicsContextState.h>
     std::variant<Ref<WebCore::Gradient>, WebCore::RenderingResourceIdentifier> serializableGradient();
     WebCore::AffineTransform spaceTransform;
 };
+
+enum class WebCore::ContentSecurityPolicyHeaderType : bool;
 
 class WebCore::ContentSecurityPolicyResponseHeaders {
     Vector<std::pair<String, WebCore::ContentSecurityPolicyHeaderType>> headers();

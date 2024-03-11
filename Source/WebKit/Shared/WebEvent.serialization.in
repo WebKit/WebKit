@@ -158,6 +158,8 @@ class WebKit::WebTouchEvent : WebKit::WebEvent {
     TwoFingerTap
 };
 
+enum class WebKit::GestureWasCancelled : bool;
+
 class WebKit::WebMouseEvent : WebKit::WebEvent {
     WebKit::WebMouseEventButton button();
     unsigned short buttons();

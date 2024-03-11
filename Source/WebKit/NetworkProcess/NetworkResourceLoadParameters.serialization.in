@@ -23,6 +23,7 @@
 headers: "NetworkResourceLoadParameters.h"
 
 enum class WebKit::PreconnectOnly : bool;
+enum class WebKit::NavigatingToAppBoundDomain : bool;
 
 class WebKit::NetworkLoadParameters {
     WebKit::WebPageProxyIdentifier webPageProxyID;
