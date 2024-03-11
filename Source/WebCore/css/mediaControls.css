@@ -273,16 +273,9 @@ video::cue(:future) {
     color: gray;
 }
 
-[pseudo="-webkit-media-text-track-display"] b {
-    font-weight: bold;
-}
-
-[pseudo="-webkit-media-text-track-display"] u {
-    text-decoration: underline;
-}
-
-[pseudo="-webkit-media-text-track-display"] i {
-    font-style: italic;
-}
+[useragentpart="-webkit-media-text-track-display"] b { font-weight: bold; }
+[useragentpart="-webkit-media-text-track-display"] u { text-decoration: underline; }
+[useragentpart="-webkit-media-text-track-display"] i { font-style: italic; }
+[useragentpart="-webkit-media-text-track-display"] .hidden { display: none; }
 
 #endif

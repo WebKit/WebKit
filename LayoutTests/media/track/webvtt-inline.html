@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+    <head>
+        <title>WebVTTRubyText elements should appear above WebVTTRuby elements</title>
+        <script src=../../resources/js-test-pre.js></script>
+        <script src=../video-test.js></script>
+        <script src=../media-file.js></script>
+        <script>
+            async function runTest()
+            {
+                video = document.getElementById('video');
+                video.src = findMediaFile('video', '../content/test');
+                await waitFor(video, 'canplay');
+                let track = document.createElement('track');
+                track.src = 'captions-webvtt/inline.vtt';
+                video.appendChild(track)
+
+                await waitFor(video.textTracks, 'addtrack');
+                testExpected("video.textTracks.length", 1);
+                run("video.textTracks[0].mode = 'showing'");
+
+                run("video.currentTime = 1");
+                await waitFor(video, 'seeked');
+
+                window.internals.ensureUserAgentShadowRoot(video);
+                await testExpectedEventually("window.internals.shadowRoot(video).querySelector('i')", null, "!=", 1000);
+                i = window.internals.shadowRoot(video).querySelector('i');
+                b = window.internals.shadowRoot(video).querySelector('b');
+                u = window.internals.shadowRoot(video).querySelector('u');
+                c = window.internals.shadowRoot(video).querySelector('c');
+                testExpected("getComputedStyle(i).fontStyle", "italic");
+                testExpected("getComputedStyle(b).fontWeight", "700");
+                testExpected("getComputedStyle(u).textDecoration", "underline");
+                testExpected("getComputedStyle(c).display", "none");
+                endTest();
+            }
+        </script>
+    </head>
+    <body onload="runTest()">
+        <video id="video" width="320px" height="240px" paused></video>
+    </body>
+</html>
