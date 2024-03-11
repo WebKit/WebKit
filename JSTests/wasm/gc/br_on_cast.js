@@ -116,6 +116,55 @@ function testBrOnCast() {
     assert.eq(m.exports.f1(), 1);
     assert.eq(m.exports.f2(), 0);
   }
+
+  {
+    let m = instantiate(`
+      (module
+        (type (struct))
+        (type (struct (field (ref null 0))))
+        (global (ref 1) (struct.new 1 (struct.new 0)))
+        (func (export "f") (param) (result structref)
+          (block $exit (result structref)
+            (struct.get 1 0
+               (br_on_cast_fail $exit structref (ref 1)
+                 (global.get 0)))))
+      )
+    `);
+    m.exports.f();
+  }
+
+  {
+    let m = instantiate(`
+      (module
+        (type (array i32))
+        (type (array (ref null 0)))
+        (global (ref 1) (array.new 1 (ref.null 0) (i32.const 5)))
+        (func (export "f") (param) (result arrayref)
+          (block $exit (result arrayref)
+            (array.get 1
+               (br_on_cast_fail $exit arrayref (ref 1)
+                 (global.get 0))
+               (i32.const 0))))
+      )
+    `);
+    m.exports.f();
+  }
+
+  {
+    let m = instantiate(`
+      (module
+        (type (struct))
+        (type (struct (field (ref null 0))))
+        (global (ref 1) (struct.new 1 (struct.new 0)))
+        (func (export "f") (param) (result structref)
+          (block $exit (result structref)
+            (struct.get 1 0
+               (br_on_cast $exit (ref 1) (ref 1)
+                 (global.get 0)))))
+      )
+    `);
+    m.exports.f();
+  }
 }
 
 testBrOnCastValidation();
