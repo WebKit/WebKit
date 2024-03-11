@@ -957,9 +957,11 @@ void HTMLCanvasElement::eventListenersDidChange()
 void HTMLCanvasElement::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
 {
     ActiveDOMObject::didMoveToNewDocument(newDocument);
-
-    oldDocument.removeCanvasNeedingPreparationForDisplayOrFlush(*this);
-    newDocument.addCanvasNeedingPreparationForDisplayOrFlush(*this);
+    auto* context = renderingContext();
+    if (context) {
+        oldDocument.removeCanvasNeedingPreparationForDisplayOrFlush(*context);
+        newDocument.addCanvasNeedingPreparationForDisplayOrFlush(*context);
+    }
     HTMLElement::didMoveToNewDocument(oldDocument, newDocument);
 }
 
