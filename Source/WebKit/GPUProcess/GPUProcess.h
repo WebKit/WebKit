@@ -32,7 +32,6 @@
 #include "SandboxExtension.h"
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/IntDegrees.h>
-#include <WebCore/LibWebRTCEnumTraits.h>
 #include <WebCore/MediaPlayerIdentifier.h>
 #include <WebCore/ShareableBitmap.h>
 #include <WebCore/Timer.h>

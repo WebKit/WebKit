@@ -29,7 +29,6 @@
 #if USE(LIBWEBRTC)
 
 #include "WebCoreArgumentCoders.h"
-#include <WebCore/LibWebRTCEnumTraits.h>
 
 namespace WebKit {
 
