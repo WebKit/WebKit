@@ -94,14 +94,18 @@ WI.LogContentView = class LogContentView extends WI.ContentView
             new WI.ScopeBarItem(WI.LogContentView.Scopes.Errors, WI.UIString("Errors"), {className: "errors"}),
             new WI.ScopeBarItem(WI.LogContentView.Scopes.Warnings, WI.UIString("Warnings"), {className: "warnings"}),
             new WI.ScopeBarItem(WI.LogContentView.Scopes.Logs, WI.UIString("Logs"), {className: "logs"}),
-            new WI.ScopeBarItem(WI.LogContentView.Scopes.Infos, WI.UIString("Infos"), {className: "infos", hidden: true}),
-            new WI.ScopeBarItem(WI.LogContentView.Scopes.Debugs, WI.UIString("Debugs"), {className: "debugs", hidden: true}),
+            new WI.ScopeBarItem(WI.LogContentView.Scopes.Infos, WI.UIString("Infos"), {className: "infos"}),
+            new WI.ScopeBarItem(WI.LogContentView.Scopes.Debugs, WI.UIString("Debugs"), {className: "debugs"}),
         ];
         this._scopeBar = new WI.ScopeBar("log-scope-bar", scopeBarItems, scopeBarItems[0]);
         this._scopeBar.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
         this._scopeBar.addEventListener(WI.ScopeBar.Event.SelectionChanged, this._scopeBarSelectionDidChange, this);
 
+        this._scopesWithMessages = new Set;
+        this._showOrHideConditionallyVisibleScopeBarItemsAsNeeded();
+
         this._hasNonDefaultLogChannelMessage = false;
+
         if (WI.ConsoleManager.supportsLogChannels()) {
             let messageChannelBarItems = [
                 new WI.ScopeBarItem(WI.LogContentView.Scopes.AllChannels, WI.UIString("All Sources")),
@@ -486,9 +490,9 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         case WI.ConsoleMessage.MessageLevel.Log:
             return WI.LogContentView.Scopes.Logs;
         case WI.ConsoleMessage.MessageLevel.Info:
-            return this._hasNonDefaultLogChannelMessage ? WI.LogContentView.Scopes.Infos : WI.LogContentView.Scopes.Logs;
+            return WI.LogContentView.Scopes.Infos;
         case WI.ConsoleMessage.MessageLevel.Debug:
-            return this._hasNonDefaultLogChannelMessage ? WI.LogContentView.Scopes.Debugs : WI.LogContentView.Scopes.Logs;
+            return WI.LogContentView.Scopes.Debugs;
         }
         console.assert(false, "This should not be reached.");
 
@@ -504,9 +508,12 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         if (!this._hasNonDefaultLogChannelMessage && WI.consoleManager.customLoggingChannels.some((channel) => channel.source === message.source)) {
             this._hasNonDefaultLogChannelMessage = true;
             this.dispatchEventToListeners(WI.ContentView.Event.NavigationItemsDidChange);
-            this._scopeBar.item(WI.LogContentView.Scopes.Infos).hidden = false;
-            this._scopeBar.item(WI.LogContentView.Scopes.Debugs).hidden = false;
         }
+
+        let scope = this._scopeFromMessageLevel(message.level);
+        this._scopesWithMessages.add(scope);
+        if (WI.LogContentView.ConditionallyVisibleScopes.has(scope))
+            this._scopeBar.item(scope).hidden = false;
 
         this._logViewController.appendConsoleMessage(message);
     }
@@ -872,6 +879,9 @@ WI.LogContentView = class LogContentView extends WI.ContentView
             this.performSearch(this._currentSearchQuery);
 
         this._showHiddenMessagesBannerIfNeeded();
+
+        this._scopesWithMessages.clear();
+        this._showOrHideConditionallyVisibleScopeBarItemsAsNeeded();
     }
 
     _showConsoleTab()
@@ -907,10 +917,6 @@ WI.LogContentView = class LogContentView extends WI.ContentView
 
     _messageSourceBarSelectionDidChange(event)
     {
-        let items = this._messageSourceBar.selectedItems;
-        if (items.some((item) => item.id === WI.LogContentView.Scopes.AllChannels))
-            items = this._messageSourceBar.items;
-
         this._filterMessageElements(this._allMessageElements());
 
         this._showHiddenMessagesBannerIfNeeded();
@@ -918,13 +924,10 @@ WI.LogContentView = class LogContentView extends WI.ContentView
 
     _scopeBarSelectionDidChange(event)
     {
-        let items = this._scopeBar.selectedItems;
-        if (items.some((item) => item.id === WI.LogContentView.Scopes.All))
-            items = this._scopeBar.items;
-
         this._filterMessageElements(this._allMessageElements());
 
         this._showHiddenMessagesBannerIfNeeded();
+        this._showOrHideConditionallyVisibleScopeBarItemsAsNeeded();
     }
 
     _filterMessageElements(messageElements)
@@ -1333,6 +1336,14 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         if (this.element.firstChild !== this._hiddenMessagesBannerElement)
             this.element.insertAdjacentElement("afterbegin", this._hiddenMessagesBannerElement);
     }
+
+    _showOrHideConditionallyVisibleScopeBarItemsAsNeeded()
+    {
+        for (let scope of WI.LogContentView.ConditionallyVisibleScopes) {
+            let item = this._scopeBar.item(scope);
+            item.hidden = !item.selected && !this._scopesWithMessages.has(scope);
+        }
+    }
 };
 
 WI.LogContentView.Scopes = {
@@ -1349,6 +1360,11 @@ WI.LogContentView.Scopes = {
     MediaSource: "log-mediasource",
     WebRTC: "log-webrtc",
 };
+
+WI.LogContentView.ConditionallyVisibleScopes = new Set([
+    WI.LogContentView.Scopes.Infos,
+    WI.LogContentView.Scopes.Debugs,
+]);
 
 WI.LogContentView.ItemWrapperStyleClassName = "console-item";
 WI.LogContentView.FilteredOutStyleClassName = "filtered-out";
