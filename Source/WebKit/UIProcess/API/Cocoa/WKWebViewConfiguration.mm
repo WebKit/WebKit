@@ -28,6 +28,7 @@
 
 #import "APIPageConfiguration.h"
 #import "CSPExtensionUtilities.h"
+#import "WKPreferencesInternal.h"
 #import "WKWebpagePreferencesInternal.h"
 #import "WKWebViewContentProviderRegistry.h"
 #import "WebKit2Initialize.h"
@@ -38,7 +39,6 @@
 #import "_WKVisitedLinkStore.h"
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/Settings.h>
-#import <WebKit/WKPreferences.h>
 #import <WebKit/WKProcessPool.h>
 #import <WebKit/WKRetainPtr.h>
 #import <WebKit/WKUserContentController.h>
@@ -134,7 +134,6 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     RetainPtr<NSString> _groupIdentifier;
     std::optional<RetainPtr<NSString>> _applicationNameForUserAgent;
     NSTimeInterval _incrementalRenderingSuppressionTimeout;
-    BOOL _respectsImageOrientation;
     BOOL _allowsJavaScriptMarkup;
     BOOL _convertsPositionStyleOnCopy;
     BOOL _allowsMetaRefresh;
@@ -227,12 +226,7 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     _attachmentElementEnabled = NO;
     _attachmentWideLayoutEnabled = NO;
 
-#if PLATFORM(IOS_FAMILY)
-    _respectsImageOrientation = YES;
-#endif
-
 #if PLATFORM(MAC)
-    _respectsImageOrientation = NO;
     _showsURLsInToolTips = NO;
     _serviceControlsEnabled = NO;
     _imageControlsEnabled = NO;
@@ -414,7 +408,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     configuration->_suppressesIncrementalRendering = self->_suppressesIncrementalRendering;
     configuration->_applicationNameForUserAgent = self->_applicationNameForUserAgent;
 
-    configuration->_respectsImageOrientation = self->_respectsImageOrientation;
     configuration->_incrementalRenderingSuppressionTimeout = self->_incrementalRenderingSuppressionTimeout;
     configuration->_allowsJavaScriptMarkup = self->_allowsJavaScriptMarkup;
     configuration->_convertsPositionStyleOnCopy = self->_convertsPositionStyleOnCopy;
@@ -741,12 +734,12 @@ static NSString *defaultApplicationNameForUserAgent()
 
 - (BOOL)_respectsImageOrientation
 {
-    return _respectsImageOrientation;
+    return self.preferences->_preferences->shouldRespectImageOrientation();
 }
 
 - (void)_setRespectsImageOrientation:(BOOL)respectsImageOrientation
 {
-    _respectsImageOrientation = respectsImageOrientation;
+    self.preferences->_preferences->setShouldRespectImageOrientation(respectsImageOrientation);
 }
 
 - (BOOL)_printsBackgrounds

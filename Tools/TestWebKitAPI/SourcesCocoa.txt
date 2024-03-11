@@ -40,8 +40,9 @@ cocoa/TestNavigationDelegate.mm
 cocoa/TestProtocol.mm
 cocoa/TestResourceLoadDelegate.mm
 cocoa/TestUIDelegate.mm
-cocoa/TestWKWebView.mm
 cocoa/TestWebExtensionsDelegate.mm
+cocoa/TestWKWebView.mm
+cocoa/TestWKWebViewConfiguration.mm
 cocoa/UserMediaCaptureUIDelegate.mm
 
 Tests/WebKitCocoa/AVFoundationPreference.mm
