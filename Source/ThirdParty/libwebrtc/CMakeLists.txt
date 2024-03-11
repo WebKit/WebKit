@@ -1870,8 +1870,16 @@ if (WTF_CPU_X86_64 OR WTF_CPU_X86)
     add_definitions(-DWEBRTC_ENABLE_AVX2)
 endif()
 
+if (WTF_CPU_ARM_THUMB2)
+    add_definitions(-DWEBRTC_ARCH_ARM_V7)
+endif ()
+
 if (WTF_CPU_ARM64)
-    list(APPEND webrtc_SOURCES
+    add_definitions(-DWEBRTC_ARCH_ARM64)
+endif ()
+
+if (WTF_CPU_ARM OR WTF_CPU_ARM64)
+    list(APPEND webrtc_neon_SOURCES
         Source/webrtc/common_audio/fir_filter_neon.cc
         Source/webrtc/common_audio/resampler/sinc_resampler_neon.cc
         Source/webrtc/common_audio/signal_processing/cross_correlation_neon.c
@@ -1880,9 +1888,22 @@ if (WTF_CPU_ARM64)
         Source/webrtc/common_audio/third_party/ooura/fft_size_128/ooura_fft_neon.cc
         Source/webrtc/modules/audio_processing/aecm/aecm_core_neon.cc
     )
-    add_definitions(-DWEBRTC_ARCH_ARM64)
+    list(APPEND webrtc_SOURCES ${webrtc_neon_SOURCES})
     add_definitions(-DWEBRTC_HAS_NEON)
-endif()
+endif ()
+
+if (WTF_CPU_ARM)
+    list(APPEND webrtc_neon_SOURCES
+        Source/third_party/pffft/src/pffft.c
+        Source/webrtc/modules/audio_processing/aec3/adaptive_fir_filter.cc
+        Source/webrtc/modules/audio_processing/aec3/adaptive_fir_filter_erl.cc
+        Source/webrtc/modules/audio_processing/aec3/comfort_noise_generator.cc
+        Source/webrtc/modules/audio_processing/aec3/matched_filter.cc
+        Source/webrtc/modules/audio_processing/aec3/suppression_filter.cc
+        Source/webrtc/modules/audio_processing/aec3/suppression_gain.cc
+    )
+    set_source_files_properties(${webrtc_neon_SOURCES} PROPERTIES COMPILE_OPTIONS "-mfpu=neon;-mfloat-abi=hard")
+endif ()
 
 if (WTF_CPU_MIPS)
     list(APPEND webrtc_SOURCES
