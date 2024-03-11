@@ -1128,11 +1128,9 @@ def generate_impl(serialized_types, serialized_enums, headers, generating_webkit
     result.append('};')
     result.append('template<> struct VirtualTableAndRefCountOverhead<false, false> { };')
     result.append('')
-    # GCC is less generous with its interpretation of "Use of the offsetof macro with a
-    # type other than a standard-layout class is conditionally-supported".
-    result.append('#if COMPILER(GCC)')
+    # GCC and Clang>=18 are less generous with their interpretation of "Use of the offsetof macro
+    # with a type other than a standard-layout class is conditionally-supported".
     result.append('IGNORE_WARNINGS_BEGIN("invalid-offsetof")')
-    result.append('#endif')
     result.append('')
     result.append('namespace IPC {')
     result.append('')
@@ -1215,9 +1213,7 @@ def generate_impl(serialized_types, serialized_enums, headers, generating_webkit
     result.append('')
     result.append('} // namespace WTF')
     result.append('')
-    result.append('#if COMPILER(GCC)')
     result.append('IGNORE_WARNINGS_END')
-    result.append('#endif')
     result.append('')
     return '\n'.join(result)
 
