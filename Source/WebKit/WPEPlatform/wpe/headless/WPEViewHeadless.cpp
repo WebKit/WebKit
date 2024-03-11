@@ -35,7 +35,8 @@
  *
  */
 struct _WPEViewHeadlessPrivate {
-    GRefPtr<WPEBuffer> buffer;
+    GRefPtr<WPEBuffer> pendingBuffer;
+    GRefPtr<WPEBuffer> committedBuffer;
     GRefPtr<GSource> frameSource;
     gint64 lastFrameTime;
 };
@@ -68,8 +69,11 @@ static void wpeViewHeadlessConstructed(GObject* object)
     g_source_set_callback(priv->frameSource.get(), [](gpointer userData) -> gboolean {
         auto* view = WPE_VIEW(userData);
         auto* priv = WPE_VIEW_HEADLESS(view)->priv;
-        wpe_view_buffer_rendered(view, priv->buffer.get());
-        priv->buffer = nullptr;
+        if (priv->committedBuffer)
+            wpe_view_buffer_released(view, priv->committedBuffer.get());
+        priv->committedBuffer = WTFMove(priv->pendingBuffer);
+        wpe_view_buffer_rendered(view, priv->committedBuffer.get());
+
         if (g_source_is_destroyed(priv->frameSource.get()))
             return G_SOURCE_REMOVE;
         return G_SOURCE_CONTINUE;
@@ -93,7 +97,7 @@ static void wpeViewHeadlessDispose(GObject* object)
 static gboolean wpeViewHeadlessRenderBuffer(WPEView* view, WPEBuffer* buffer, GError**)
 {
     auto* priv = WPE_VIEW_HEADLESS(view)->priv;
-    priv->buffer = buffer;
+    priv->pendingBuffer = buffer;
     auto now = g_get_monotonic_time();
     if (!priv->lastFrameTime)
         priv->lastFrameTime = now;

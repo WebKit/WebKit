@@ -137,6 +137,8 @@ WPE_API gboolean     wpe_view_render_buffer                 (WPEView      *view,
                                                              GError      **error);
 WPE_API void         wpe_view_buffer_rendered               (WPEView      *view,
                                                              WPEBuffer    *buffer);
+WPE_API void         wpe_view_buffer_released               (WPEView      *view,
+                                                             WPEBuffer    *buffer);
 WPE_API void         wpe_view_event                         (WPEView      *view,
                                                              WPEEvent     *event);
 WPE_API guint        wpe_view_compute_press_count           (WPEView      *view,

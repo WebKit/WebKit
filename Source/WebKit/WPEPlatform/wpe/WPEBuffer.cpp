@@ -34,7 +34,7 @@
  *
  */
 struct _WPEBufferPrivate {
-    GRefPtr<WPEDisplay> display;
+    GRefPtr<WPEView> view;
     int width;
     int height;
 
@@ -58,7 +58,7 @@ G_DEFINE_QUARK(wpe-buffer-error-quark, wpe_buffer_error)
 enum {
     PROP_0,
 
-    PROP_DISPLAY,
+    PROP_VIEW,
     PROP_WIDTH,
     PROP_HEIGHT,
 
@@ -72,8 +72,8 @@ static void wpeBufferSetProperty(GObject* object, guint propId, const GValue* va
     auto* buffer = WPE_BUFFER(object);
 
     switch (propId) {
-    case PROP_DISPLAY:
-        buffer->priv->display = WPE_DISPLAY(g_value_get_object(value));
+    case PROP_VIEW:
+        buffer->priv->view = WPE_VIEW(g_value_get_object(value));
         break;
     case PROP_WIDTH:
         buffer->priv->width = g_value_get_int(value);
@@ -91,8 +91,8 @@ static void wpeBufferGetProperty(GObject* object, guint propId, GValue* value, G
     auto* buffer = WPE_BUFFER(object);
 
     switch (propId) {
-    case PROP_DISPLAY:
-        g_value_set_object(value, wpe_buffer_get_display(buffer));
+    case PROP_VIEW:
+        g_value_set_object(value, wpe_buffer_get_view(buffer));
         break;
     case PROP_WIDTH:
         g_value_set_int(value, wpe_buffer_get_width(buffer));
@@ -120,15 +120,15 @@ static void wpe_buffer_class_init(WPEBufferClass* bufferClass)
     objectClass->dispose = wpeBufferDispose;
 
     /**
-     * WPEBuffer:display:
+     * WPEBuffer:view:
      *
-     * The #WPEDisplay of the buffer.
+     * The #WPEView of the buffer.
      */
-    sObjProperties[PROP_DISPLAY] =
+    sObjProperties[PROP_VIEW] =
         g_param_spec_object(
-            "display",
+            "view",
             nullptr, nullptr,
-            WPE_TYPE_DISPLAY,
+            WPE_TYPE_VIEW,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
     /**
@@ -159,18 +159,18 @@ static void wpe_buffer_class_init(WPEBufferClass* bufferClass)
 }
 
 /**
- * wpe_buffer_get_display:
+ * wpe_buffer_get_view:
  * @buffer: a #WPEBuffer
  *
- * Get the #WPEDisplay of @buffer
+ * Get the #WPEView of @buffer
  *
- * Returns: (transfer none): a #WPEDisplay
+ * Returns: (transfer none): a #WPEView
  */
-WPEDisplay* wpe_buffer_get_display(WPEBuffer* buffer)
+WPEView* wpe_buffer_get_view(WPEBuffer* buffer)
 {
     g_return_val_if_fail(WPE_IS_BUFFER(buffer), nullptr);
 
-    return buffer->priv->display.get();
+    return buffer->priv->view.get();
 }
 
 /**

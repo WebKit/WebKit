@@ -32,7 +32,7 @@
 
 #include <glib-object.h>
 #include <wpe/WPEDefines.h>
-#include <wpe/WPEDisplay.h>
+#include <wpe/WPEView.h>
 
 G_BEGIN_DECLS
 
@@ -66,7 +66,7 @@ typedef enum {
 } WPEBufferError;
 
 WPE_API GQuark      wpe_buffer_error_quark         (void);
-WPE_API WPEDisplay *wpe_buffer_get_display         (WPEBuffer     *buffer);
+WPE_API WPEView    *wpe_buffer_get_view            (WPEBuffer     *buffer);
 WPE_API int         wpe_buffer_get_width           (WPEBuffer     *buffer);
 WPE_API int         wpe_buffer_get_height          (WPEBuffer     *buffer);
 WPE_API void        wpe_buffer_set_user_data       (WPEBuffer     *buffer,

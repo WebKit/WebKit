@@ -67,7 +67,7 @@ static void wpeBufferDMABufDispose(GObject* object)
     auto* priv = WPE_BUFFER_DMA_BUF(object)->priv;
 
     if (priv->eglImage) {
-        if (auto* eglDisplay = wpe_display_get_egl_display(wpe_buffer_get_display(WPE_BUFFER(object)), nullptr)) {
+        if (auto* eglDisplay = wpe_display_get_egl_display(wpe_view_get_display(wpe_buffer_get_view(WPE_BUFFER(object))), nullptr)) {
             static PFNEGLDESTROYIMAGEPROC s_eglDestroyImageKHR;
             if (!s_eglDestroyImageKHR)
                 s_eglDestroyImageKHR = reinterpret_cast<PFNEGLDESTROYIMAGEPROC>(epoxy_eglGetProcAddress("eglDestroyImageKHR"));
@@ -96,7 +96,7 @@ static gpointer wpeBufferDMABufImportToEGLImage(WPEBuffer* buffer, GError** erro
         return priv->eglImage;
 
     GUniqueOutPtr<GError> eglError;
-    auto* display = wpe_buffer_get_display(buffer);
+    auto* display = wpe_view_get_display(wpe_buffer_get_view(buffer));
     auto* eglDisplay = wpe_display_get_egl_display(display, &eglError.outPtr());
     if (eglDisplay == EGL_NO_DISPLAY) {
         g_set_error(error, WPE_BUFFER_ERROR, WPE_BUFFER_ERROR_IMPORT_FAILED, "Failed to get EGLDisplay when importing buffer to EGL image: %s", eglError->message);
@@ -164,7 +164,7 @@ static bool wpeBufferDMABufTryEnsureGBMDevice(WPEBufferDMABuf* buffer)
         return !!priv->device.value();
 
     priv->device = nullptr;
-    auto* display = wpe_buffer_get_display(WPE_BUFFER(buffer));
+    auto* display = wpe_view_get_display(wpe_buffer_get_view(WPE_BUFFER(buffer)));
     const char* filename = wpe_display_get_drm_render_node(display);
     if (!filename)
         return false;
@@ -245,7 +245,7 @@ static void wpe_buffer_dma_buf_class_init(WPEBufferDMABufClass* bufferDMABufClas
 
 /**
  * wpe_buffer_dma_buf_new:
- * @display: a #WPEDisplay
+ * @view: a #WPEView
  * @width: the buffer width
  * @height: the buffer height
  * @format: the buffer format
@@ -260,16 +260,16 @@ static void wpe_buffer_dma_buf_class_init(WPEBufferDMABufClass* bufferDMABufClas
  *
  * Returns: (transfer full): a #WPEBufferDMABuf
  */
-WPEBufferDMABuf* wpe_buffer_dma_buf_new(WPEDisplay* display, int width, int height, guint32 format, guint32 planeCount, int* fds, guint32* offsets, guint32* strides, guint64 modifier)
+WPEBufferDMABuf* wpe_buffer_dma_buf_new(WPEView* view, int width, int height, guint32 format, guint32 planeCount, int* fds, guint32* offsets, guint32* strides, guint64 modifier)
 {
-    g_return_val_if_fail(WPE_IS_DISPLAY(display), nullptr);
+    g_return_val_if_fail(WPE_IS_VIEW(view), nullptr);
     g_return_val_if_fail(planeCount > 0, nullptr);
     g_return_val_if_fail(fds, nullptr);
     g_return_val_if_fail(offsets, nullptr);
     g_return_val_if_fail(strides, nullptr);
 
     auto* buffer = WPE_BUFFER_DMA_BUF(g_object_new(WPE_TYPE_BUFFER_DMA_BUF,
-        "display", display,
+        "view", view,
         "width", width,
         "height", height,
         nullptr));

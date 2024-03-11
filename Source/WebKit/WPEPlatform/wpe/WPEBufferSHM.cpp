@@ -147,7 +147,7 @@ static void wpe_buffer_shm_class_init(WPEBufferSHMClass* bufferSHMClass)
 
 /**
  * wpe_buffer_shm_new:
- * @display: a #WPEDisplay
+ * @view: a #WPEView
  * @width: the buffer width
  * @height: the buffer height
  * @format: the buffer format
@@ -158,13 +158,13 @@ static void wpe_buffer_shm_class_init(WPEBufferSHMClass* bufferSHMClass)
  *
  * Returns: (transfer full): a #WPEBufferSHM
  */
-WPEBufferSHM* wpe_buffer_shm_new(WPEDisplay* display, int width, int height, WPEPixelFormat format, GBytes* data, guint stride)
+WPEBufferSHM* wpe_buffer_shm_new(WPEView* view, int width, int height, WPEPixelFormat format, GBytes* data, guint stride)
 {
-    g_return_val_if_fail(WPE_IS_DISPLAY(display), nullptr);
+    g_return_val_if_fail(WPE_IS_VIEW(view), nullptr);
     g_return_val_if_fail(data, nullptr);
 
     return WPE_BUFFER_SHM(g_object_new(WPE_TYPE_BUFFER_SHM,
-        "display", display,
+        "view", view,
         "width", width,
         "height", height,
         "format", format,

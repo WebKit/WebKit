@@ -68,12 +68,12 @@ private:
     void frame(uint64_t bufferID);
     void frameDone();
     void bufferRendered();
+    void bufferReleased(WPEBuffer*);
 
     WebPageProxy& m_webPage;
     GRefPtr<WPEView> m_wpeView;
     uint64_t m_surfaceID { 0 };
     GRefPtr<WPEBuffer> m_pendingBuffer;
-    GRefPtr<WPEBuffer> m_committedBuffer;
     HashMap<uint64_t, GRefPtr<WPEBuffer>> m_buffers;
     HashMap<WPEBuffer*, uint64_t> m_bufferIDs;
 };
