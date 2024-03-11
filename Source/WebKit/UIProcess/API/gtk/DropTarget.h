@@ -65,6 +65,7 @@ private:
 
 #if USE(GTK4)
     void loadData(const char* mimeType, CompletionHandler<void(GRefPtr<GBytes>&&)>&&);
+    void loadData(CompletionHandler<void(Vector<String>&&)>&&);
     void didLoadData();
 #else
     void dataReceived(WebCore::IntPoint&&, GtkSelectionData*, unsigned, unsigned);
@@ -83,6 +84,7 @@ private:
     std::optional<WebCore::DragOperation> m_operation;
 #if USE(GTK4)
     GRefPtr<GCancellable> m_cancellable;
+    StringBuilder m_uriListBuilder;
 #else
     RunLoop::Timer m_leaveTimer;
 #endif
