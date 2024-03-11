@@ -660,7 +660,8 @@ void SecondaryCommandBuffer::executeCommands(PrimaryCommandBuffer *primary)
                     const VkExtent2D fragmentSize = {params->fragmentWidth, params->fragmentHeight};
                     const VkFragmentShadingRateCombinerOpKHR ops[2] = {
                         VK_FRAGMENT_SHADING_RATE_COMBINER_OP_KEEP_KHR,
-                        VK_FRAGMENT_SHADING_RATE_COMBINER_OP_KEEP_KHR};
+                        static_cast<VkFragmentShadingRateCombinerOpKHR>(
+                            params->vkFragmentShadingRateCombinerOp1)};
                     vkCmdSetFragmentShadingRateKHR(cmdBuffer, &fragmentSize, ops);
                     break;
                 }

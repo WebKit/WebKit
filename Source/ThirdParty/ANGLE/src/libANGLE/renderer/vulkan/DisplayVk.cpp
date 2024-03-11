@@ -11,6 +11,7 @@
 
 #include "common/debug.h"
 #include "common/system_utils.h"
+#include "libANGLE/BlobCache.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/Display.h"
 #include "libANGLE/renderer/vulkan/BufferVk.h"
@@ -133,6 +134,20 @@ angle::vk::ICD ChooseICDFromAttribs(const egl::AttributeMap &attribs)
     return angle::vk::ICD::Default;
 }
 
+void InstallDebugAnnotator(egl::Display *display, RendererVk *renderer)
+{
+    bool installedAnnotator = false;
+
+    // Ensure the appropriate global DebugAnnotator is used
+    ASSERT(renderer);
+    renderer->setGlobalDebugAnnotator(&installedAnnotator);
+
+    if (!installedAnnotator)
+    {
+        std::unique_lock<std::mutex> lock(gl::GetDebugMutex());
+        display->setGlobalDebugAnnotator();
+    }
+}
 }  // namespace
 
 DisplayVk::DisplayVk(const egl::DisplayState &state)
@@ -160,9 +175,12 @@ egl::Error DisplayVk::initialize(egl::Display *display)
         static_cast<uint32_t>(attribs.get(EGL_PLATFORM_ANGLE_DEVICE_ID_LOW_ANGLE, 0));
 
     angle::Result result = mRenderer->initialize(
-        this, display, desiredICD, preferredVendorId, preferredDeviceId, useValidationLayers,
+        this, this, desiredICD, preferredVendorId, preferredDeviceId, useValidationLayers,
         getWSIExtension(), getWSILayer(), getWindowSystem(), mState.featureOverrides);
     ANGLE_TRY(angle::ToEGL(result, EGL_NOT_INITIALIZED));
+
+    InstallDebugAnnotator(display, mRenderer);
+
     // Query and cache supported surface format and colorspace for later use.
     initSupportedSurfaceFormatColorspaces();
     return egl::NoError();
@@ -176,15 +194,12 @@ void DisplayVk::terminate()
     mRenderer->onDestroy(this);
 }
 
-egl::Error DisplayVk::makeCurrent(egl::Display * /*display*/,
+egl::Error DisplayVk::makeCurrent(egl::Display *display,
                                   egl::Surface * /*drawSurface*/,
                                   egl::Surface * /*readSurface*/,
                                   gl::Context * /*context*/)
 {
-    // Ensure the appropriate global DebugAnnotator is used
-    ASSERT(mRenderer);
-    mRenderer->setGlobalDebugAnnotator();
-
+    InstallDebugAnnotator(display, mRenderer);
     return egl::NoError();
 }
 
@@ -651,5 +666,16 @@ void DisplayVk::putBlob(const angle::BlobCacheKey &key, const angle::MemoryBuffe
 bool DisplayVk::getBlob(const angle::BlobCacheKey &key, angle::BlobCacheValue *valueOut)
 {
     return getBlobCache()->get(&mScratchBuffer, key, valueOut);
+}
+
+std::shared_ptr<angle::WaitableEvent> DisplayVk::postMultiThreadWorkerTask(
+    const std::shared_ptr<angle::Closure> &task)
+{
+    return mState.multiThreadPool->postWorkerTask(task);
+}
+
+void DisplayVk::notifyDeviceLost()
+{
+    mState.notifyDeviceLost();
 }
 }  // namespace rx

@@ -33,7 +33,7 @@ class ParseTest : public testing::Test
         if (mTranslator == nullptr)
         {
             std::unique_ptr<TranslatorESSL> translator =
-                std::make_unique<TranslatorESSL>(GL_FRAGMENT_SHADER, SH_WEBGL_SPEC);
+                std::make_unique<TranslatorESSL>(GL_FRAGMENT_SHADER, mShaderSpec);
             if (!translator->Init(mResources))
             {
                 return testing::AssertionFailure() << "Failed to initialize translator";
@@ -61,6 +61,7 @@ class ParseTest : public testing::Test
 
     ShBuiltInResources mResources;
     ShCompileOptions mCompileOptions{};
+    ShShaderSpec mShaderSpec = SH_WEBGL_SPEC;
 
   private:
     // Remove symbol ids from info log - the tests don't care about them.
@@ -138,4 +139,42 @@ void main() { }
     EXPECT_FALSE(compile(kShader));
     EXPECT_TRUE(foundErrorInIntermediateTree());
     EXPECT_TRUE(foundInIntermediateTree("'index' : invalid layout qualifier"));
+}
+
+TEST_F(ParseTest, Radians320NoCrash)
+{
+    const char kShader[] = R"(#version 320 es
+precision mediump float;
+vec4 s() { writeonly vec4 color; radians(color); return vec4(1); })";
+    EXPECT_FALSE(compile(kShader));
+    EXPECT_TRUE(foundErrorInIntermediateTree());
+    EXPECT_TRUE(foundInIntermediateTree("'writeonly' : Only allowed with shader storage blocks,"));
+    EXPECT_TRUE(foundInIntermediateTree(
+        "'radians' : wrong operand type - no operation 'radians' exists that"));
+}
+
+TEST_F(ParseTest, CoherentCoherentNoCrash)
+{
+    const char kShader[] = R"(#version 310 es
+uniform highp coherent coherent readonly image2D image1;\n"
+void main() {
+})";
+    EXPECT_FALSE(compile(kShader));
+    EXPECT_TRUE(foundErrorInIntermediateTree());
+    EXPECT_TRUE(foundInIntermediateTree("coherent specified multiple times"));
+}
+
+TEST_F(ParseTest, LargeArrayIndexNoCrash)
+{
+    mShaderSpec          = SH_WEBGL2_SPEC;
+    const char kShader[] = R"(#version 300 es
+int rr[~1U];
+out int o;
+void main() {
+    o = rr[1];
+})";
+    EXPECT_FALSE(compile(kShader));
+    EXPECT_TRUE(foundErrorInIntermediateTree());
+    EXPECT_TRUE(
+        foundInIntermediateTree("Size of declared variable exceeds implementation-defined limit"));
 }

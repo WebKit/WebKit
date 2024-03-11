@@ -547,6 +547,8 @@ GL_MultiDrawElementsInstancedBaseVertexBaseInstanceANGLE(GLenum mode,
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
 }
 
+// GL_ANGLE_client_arrays
+
 // GL_ANGLE_clip_cull_distance
 
 // GL_ANGLE_copy_texture_3d
@@ -848,6 +850,8 @@ void GL_APIENTRY GL_GetRenderbufferImageANGLE(GLenum target,
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
 }
 
+// GL_ANGLE_get_serialized_context_string
+
 // GL_ANGLE_get_tex_level_parameter
 void GL_APIENTRY GL_GetTexLevelParameterivANGLE(GLenum target,
                                                 GLint level,
@@ -1041,6 +1045,8 @@ void GL_APIENTRY GL_LogicOpANGLE(GLenum opcode)
     }
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
 }
+
+// GL_ANGLE_lossy_etc_decode
 
 // GL_ANGLE_memory_object_flags
 void GL_APIENTRY GL_TexStorageMemFlags2DANGLE(GLenum target,
@@ -1302,6 +1308,8 @@ void GL_APIENTRY GL_ImportMemoryZirconHandleANGLE(GLuint memory,
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
 }
 
+// GL_ANGLE_memory_size
+
 // GL_ANGLE_multi_draw
 void GL_APIENTRY GL_MultiDrawArraysANGLE(GLenum mode,
                                          const GLint *firsts,
@@ -1499,6 +1507,8 @@ void GL_APIENTRY GL_PolygonModeANGLE(GLenum face, GLenum mode)
 
 // GL_ANGLE_program_binary
 
+// GL_ANGLE_program_cache_control
+
 // GL_ANGLE_provoking_vertex
 void GL_APIENTRY GL_ProvokingVertexANGLE(GLenum provokeMode)
 {
@@ -1590,6 +1600,8 @@ void GL_APIENTRY GL_DisableExtensionANGLE(const GLchar *name)
     }
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
 }
+
+// GL_ANGLE_rgbx_internal_format
 
 // GL_ANGLE_robust_client_memory
 void GL_APIENTRY GL_GetBooleanvRobustANGLE(GLenum pname,
@@ -3929,6 +3941,8 @@ void GL_APIENTRY GL_GetQueryObjectui64vRobustANGLE(GLuint id,
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
 }
 
+// GL_ANGLE_robust_fragment_shader_output
+
 // GL_ANGLE_robust_resource_initialization
 
 // GL_ANGLE_semaphore_fuchsia
@@ -3967,6 +3981,8 @@ void GL_APIENTRY GL_ImportSemaphoreZirconHandleANGLE(GLuint semaphore,
     }
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
 }
+
+// GL_ANGLE_shader_binary
 
 // GL_ANGLE_shader_pixel_local_storage
 void GL_APIENTRY GL_FramebufferMemorylessPixelLocalStorageANGLE(GLint plane, GLenum internalformat)
@@ -4693,6 +4709,8 @@ void GL_APIENTRY GL_ReleaseTexturesANGLE(GLuint numTextures,
     }
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
 }
+
+// GL_ANGLE_yuv_internal_format
 
 // GL_APPLE_clip_distance
 

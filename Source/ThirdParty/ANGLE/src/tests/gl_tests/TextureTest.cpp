@@ -11657,6 +11657,58 @@ TEST_P(Texture2DTestES3Foveation, DrawThenUseAsBlitTarget)
     EXPECT_PIXEL_COLOR_EQ(0, 0, angle::GLColor::blue);
 }
 
+// QCOM framebuffer foveated rendering, reuse texture between 2 foveated framebuffers
+TEST_P(Texture2DTestES3Foveation, ReuseTextureForFoveatedDraw)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_QCOM_framebuffer_foveated"));
+
+    // Switch to foveated framebuffer
+    glBindFramebuffer(GL_FRAMEBUFFER, mFramebuffer);
+
+    // Just need 1 focal point
+    GLuint providedFeatures = 0;
+    glFramebufferFoveationConfigQCOM(mFramebuffer, 1, 1, GL_FOVEATION_ENABLE_BIT_QCOM,
+                                     &providedFeatures);
+    ASSERT_NE(providedFeatures & GL_FOVEATION_ENABLE_BIT_QCOM, 0u);
+    // Set foveation parameters
+    glFramebufferFoveationParametersQCOM(mFramebuffer, 0, 0, 0.0f, 0.0f, 8.0f, 8.0f, 0.0f);
+    EXPECT_GL_NO_ERROR();
+
+    ANGLE_GL_PROGRAM(greenProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+    glUseProgram(greenProgram);
+
+    // Draw
+    drawQuad(greenProgram, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_GL_NO_ERROR();
+
+    // Create another framebuffer
+    GLFramebuffer framebuffer;
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+
+    // Resuse texture from mFramebuffer
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
+                           mFramebufferColorTexture, 0);
+
+    // Configure foveation parameters of the new framebuffer
+    // Just need 1 focal point
+    providedFeatures = 0;
+    glFramebufferFoveationConfigQCOM(framebuffer, 1, 1, GL_FOVEATION_ENABLE_BIT_QCOM,
+                                     &providedFeatures);
+    ASSERT_NE(providedFeatures & GL_FOVEATION_ENABLE_BIT_QCOM, 0u);
+    // Set foveation parameters
+    glFramebufferFoveationParametersQCOM(framebuffer, 0, 0, 0.0f, 0.0f, 8.0f, 8.0f, 0.0f);
+    EXPECT_GL_NO_ERROR();
+
+    ANGLE_GL_PROGRAM(blueProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
+    glUseProgram(blueProgram);
+
+    // Draw
+    drawQuad(blueProgram, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_GL_NO_ERROR();
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, angle::GLColor::blue);
+}
+
 // QCOM framebuffer foveated rendering with MSAA framebuffer
 TEST_P(Texture2DTestES3Foveation, DrawWithMsaaFramebuffer)
 {

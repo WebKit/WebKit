@@ -66,11 +66,20 @@ struct DisplayState final : private angle::NonCopyable
     DisplayState(EGLNativeDisplayType nativeDisplayId);
     ~DisplayState();
 
+    void notifyDeviceLost() const;
+
     EGLLabelKHR label;
     ContextMap contextMap;
     SurfaceMap surfaceMap;
     angle::FeatureOverrides featureOverrides;
     EGLNativeDisplayType displayId;
+
+    // Single-threaded and multithread pools for use by various parts of ANGLE, such as shader
+    // compilation.  These pools are internally synchronized.
+    std::shared_ptr<angle::WorkerThreadPool> singleThreadPool;
+    std::shared_ptr<angle::WorkerThreadPool> multiThreadPool;
+
+    mutable bool deviceLost;
 };
 
 // Constant coded here as a reasonable limit.
@@ -291,9 +300,12 @@ class Display final : public LabeledObject,
 
     std::shared_ptr<angle::WorkerThreadPool> getSingleThreadPool() const
     {
-        return mSingleThreadPool;
+        return mState.singleThreadPool;
     }
-    std::shared_ptr<angle::WorkerThreadPool> getMultiThreadPool() const { return mMultiThreadPool; }
+    std::shared_ptr<angle::WorkerThreadPool> getMultiThreadPool() const
+    {
+        return mState.multiThreadPool;
+    }
 
     angle::ImageLoadContext getImageLoadContext() const;
 
@@ -371,7 +383,6 @@ class Display final : public LabeledObject,
     SyncMap mInvalidSyncMap;
 
     bool mInitialized;
-    bool mDeviceLost;
 
     Caps mCaps;
 
@@ -414,11 +425,6 @@ class Display final : public LabeledObject,
     std::mutex mProgramCacheMutex;
 
     bool mTerminatedByApi;
-
-    // Single-threaded and multithread pools for use by various parts of ANGLE, such as shader
-    // compilation.  These pools are internally synchronized.
-    std::shared_ptr<angle::WorkerThreadPool> mSingleThreadPool;
-    std::shared_ptr<angle::WorkerThreadPool> mMultiThreadPool;
 };
 
 }  // namespace egl

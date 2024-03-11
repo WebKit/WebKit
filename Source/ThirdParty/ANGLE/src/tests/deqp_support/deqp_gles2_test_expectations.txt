@@ -329,3 +329,24 @@
 8157 GALAXYS23 VULKAN : dEQP-GLES2.functional.polygon_offset.* = SKIP
 8157 GALAXYS23 VULKAN : dEQP-GLES2.functional.rasterization.primitives.* = SKIP
 8157 GALAXYS23 VULKAN : dEQP-GLES2.functional.shaders.random.* = SKIP
+
+// Snapdragon 8 Gen3 Mobile Reference Device
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES2.functional.fbo.render*stencil* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES2.functional.fragment_ops.interaction.basic_shader.* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES2.functional.rasterization.primitives.* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES2.functional.shaders.fragdata.valid_dynamic_index = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES2.functional.shaders.random.all_features.fragment.* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES2.functional.shaders.random.basic_expression.combined.* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES2.functional.shaders.random.basic_expression.fragment.* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES2.functional.shaders.random.comparison_ops.fragment.* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES2.functional.shaders.random.conditionals.* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES2.functional.shaders.random.exponential.fragment.* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES2.functional.shaders.random.scalar_conversion.* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES2.functional.shaders.random.swizzle.* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES2.functional.shaders.random.texture.* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES2.functional.shaders.random.trigonometric.fragment.* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES2.functional.shaders.texture_functions.*cube* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES2.functional.texture*cube* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES2.functional.uniform_api.random.* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES2.functional.uniform_api.value.assigned.* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES2.functional.uniform_api.value.initial.render.basic.samplerCube* = SKIP

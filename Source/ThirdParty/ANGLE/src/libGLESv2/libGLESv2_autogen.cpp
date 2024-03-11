@@ -2848,6 +2848,8 @@ glMultiDrawElementsInstancedBaseVertexBaseInstanceANGLE(GLenum mode,
         mode, counts, type, indices, instanceCounts, baseVertices, baseInstances, drawcount);
 }
 
+// GL_ANGLE_client_arrays
+
 // GL_ANGLE_clip_cull_distance
 
 // GL_ANGLE_copy_texture_3d
@@ -2938,6 +2940,8 @@ void GL_APIENTRY glGetRenderbufferImageANGLE(GLenum target,
     return GL_GetRenderbufferImageANGLE(target, format, type, pixels);
 }
 
+// GL_ANGLE_get_serialized_context_string
+
 // GL_ANGLE_get_tex_level_parameter
 void GL_APIENTRY glGetTexLevelParameterivANGLE(GLenum target,
                                                GLint level,
@@ -2983,6 +2987,8 @@ void GL_APIENTRY glLogicOpANGLE(GLenum opcode)
 {
     return GL_LogicOpANGLE(opcode);
 }
+
+// GL_ANGLE_lossy_etc_decode
 
 // GL_ANGLE_memory_object_flags
 void GL_APIENTRY glTexStorageMemFlags2DANGLE(GLenum target,
@@ -3061,6 +3067,8 @@ void GL_APIENTRY glImportMemoryZirconHandleANGLE(GLuint memory,
     return GL_ImportMemoryZirconHandleANGLE(memory, size, handleType, handle);
 }
 
+// GL_ANGLE_memory_size
+
 // GL_ANGLE_multi_draw
 void GL_APIENTRY glMultiDrawArraysANGLE(GLenum mode,
                                         const GLint *firsts,
@@ -3109,6 +3117,8 @@ void GL_APIENTRY glPolygonModeANGLE(GLenum face, GLenum mode)
 
 // GL_ANGLE_program_binary
 
+// GL_ANGLE_program_cache_control
+
 // GL_ANGLE_provoking_vertex
 void GL_APIENTRY glProvokingVertexANGLE(GLenum provokeMode)
 {
@@ -3127,6 +3137,8 @@ void GL_APIENTRY glDisableExtensionANGLE(const GLchar *name)
 {
     return GL_DisableExtensionANGLE(name);
 }
+
+// GL_ANGLE_rgbx_internal_format
 
 // GL_ANGLE_robust_client_memory
 void GL_APIENTRY glGetBooleanvRobustANGLE(GLenum pname,
@@ -3768,6 +3780,8 @@ void GL_APIENTRY glGetQueryObjectui64vRobustANGLE(GLuint id,
     return GL_GetQueryObjectui64vRobustANGLE(id, pname, bufSize, length, params);
 }
 
+// GL_ANGLE_robust_fragment_shader_output
+
 // GL_ANGLE_robust_resource_initialization
 
 // GL_ANGLE_semaphore_fuchsia
@@ -3777,6 +3791,8 @@ void GL_APIENTRY glImportSemaphoreZirconHandleANGLE(GLuint semaphore,
 {
     return GL_ImportSemaphoreZirconHandleANGLE(semaphore, handleType, handle);
 }
+
+// GL_ANGLE_shader_binary
 
 // GL_ANGLE_shader_pixel_local_storage
 void GL_APIENTRY glFramebufferMemorylessPixelLocalStorageANGLE(GLint plane, GLenum internalformat)
@@ -3936,6 +3952,8 @@ void GL_APIENTRY glReleaseTexturesANGLE(GLuint numTextures, const GLuint *textur
 {
     return GL_ReleaseTexturesANGLE(numTextures, textures, layouts);
 }
+
+// GL_ANGLE_yuv_internal_format
 
 // GL_APPLE_clip_distance
 

@@ -3402,6 +3402,76 @@ TEST_P(ClearTestES3, RepeatedDepthClearWithBlitAfterClearAndDrawInBetween)
     ASSERT_GL_NO_ERROR();
 }
 
+// Test that gaps in framebuffer attachments do not cause race
+// conditions when a clear op is followed by a draw call.
+TEST_P(ClearTestES3, DrawAfterClearWithGaps)
+{
+    constexpr char kVS[] = R"(#version 300 es
+  precision highp float;
+  void main() {
+      vec2 offset = vec2((gl_VertexID & 1) == 0 ? -1.0 : 1.0, (gl_VertexID & 2) == 0 ? -1.0 : 1.0);
+      gl_Position = vec4(offset * 0.125 - 0.5, 0.0, 1.0);
+  })";
+
+    constexpr char kFS[] = R"(#version 300 es
+  precision mediump float;
+  layout(location=0) out vec4 color0;
+  layout(location=2) out vec4 color2;
+  void main() {
+    color0 = vec4(1, 0, 1, 1);
+    color2 = vec4(1, 1, 0, 1);
+  })";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+
+    constexpr int kSize = 1024;
+
+    GLRenderbuffer rb0;
+    glBindRenderbuffer(GL_RENDERBUFFER, rb0);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, kSize, kSize);
+
+    GLRenderbuffer rb2;
+    glBindRenderbuffer(GL_RENDERBUFFER, rb2);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, kSize, kSize);
+
+    GLFramebuffer fb;
+    glBindFramebuffer(GL_FRAMEBUFFER, fb);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rb0);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_RENDERBUFFER, rb2);
+
+    GLenum bufs[3] = {GL_COLOR_ATTACHMENT0, GL_NONE, GL_COLOR_ATTACHMENT2};
+    glDrawBuffers(3, bufs);
+    glReadBuffer(GL_COLOR_ATTACHMENT2);
+
+    glClearColor(0, 1, 0, 1);
+    glViewport(0, 0, kSize, kSize);
+
+    // Draw immediately after clear
+    glClear(GL_COLOR_BUFFER_BIT);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+    std::vector<GLColor> pixels(kSize * kSize, GLColor::transparentBlack);
+    glReadPixels(0, 0, kSize, kSize, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
+    ASSERT_GL_NO_ERROR();
+
+    for (int y = 0; y < kSize; ++y)
+    {
+        for (int x = 0; x < kSize; ++x)
+        {
+            const GLColor color = pixels[y * kSize + x];
+            if (x > 192 && x < 319 && y > 192 && y < 319)
+            {
+                EXPECT_EQ(color, GLColor::yellow) << "at " << x << ", " << y;
+            }
+            else if (x < 191 || x > 320 || y < 191 || y > 320)
+            {
+                EXPECT_EQ(color, GLColor::green) << "at " << x << ", " << y;
+            }
+        }
+    }
+}
+
 // Test that reclearing stencil to the same value works if stencil is blit after clear, and stencil
 // is modified in between with a draw call.
 TEST_P(ClearTestES3, RepeatedStencilClearWithBlitAfterClearAndDrawInBetween)

@@ -103,7 +103,7 @@ TIntermTyped &BuildPathAccess(SymbolEnv &symbolEnv,
         switch (item.type)
         {
             case PathItem::Type::Field:
-                curr = &AccessField(*curr, item.field->name());
+                curr = &AccessField(*curr, Name(*item.field));
                 break;
             case PathItem::Type::Index:
                 curr = &AccessIndex(*curr, item.index);

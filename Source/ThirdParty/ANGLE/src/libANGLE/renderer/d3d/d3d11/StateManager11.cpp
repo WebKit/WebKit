@@ -1842,7 +1842,7 @@ void StateManager11::unsetConflictingSRVs(gl::PipelineType pipeline,
     auto *currentSRVs                 = getSRVCache(shaderType);
     gl::PipelineType conflictPipeline = gl::GetPipelineType(shaderType);
     bool foundOne                     = false;
-    size_t count                      = std::min(currentSRVs->size(), currentSRVs->highestUsed());
+    size_t count = std::min(currentSRVs->size(), currentSRVs->highestUsed() + 1);
     for (size_t resourceIndex = 0; resourceIndex < count; ++resourceIndex)
     {
         auto &record = (*currentSRVs)[resourceIndex];
@@ -1881,7 +1881,7 @@ void StateManager11::unsetConflictingUAVs(gl::PipelineType pipeline,
     bool foundOne = false;
 
     ID3D11DeviceContext *deviceContext = mRenderer->getDeviceContext();
-    size_t count = std::min(mCurComputeUAVs.size(), mCurComputeUAVs.highestUsed());
+    size_t count = std::min(mCurComputeUAVs.size(), mCurComputeUAVs.highestUsed() + 1);
     for (size_t resourceIndex = 0; resourceIndex < count; ++resourceIndex)
     {
         auto &record = mCurComputeUAVs[resourceIndex];
@@ -1907,7 +1907,7 @@ void StateManager11::unsetConflictingRTVs(uintptr_t resource, CacheType &viewCac
 {
     ID3D11DeviceContext *deviceContext = mRenderer->getDeviceContext();
 
-    size_t count = std::min(viewCache.size(), viewCache.highestUsed());
+    size_t count = std::min(viewCache.size(), viewCache.highestUsed() + 1);
     for (size_t resourceIndex = 0; resourceIndex < count; ++resourceIndex)
     {
         auto &record = viewCache[resourceIndex];

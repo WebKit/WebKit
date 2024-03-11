@@ -119,6 +119,8 @@ bool ValidateMultiDrawElementsInstancedBaseVertexBaseInstanceANGLE(const Context
                                                                    const GLuint *baseInstances,
                                                                    GLsizei drawcount);
 
+// GL_ANGLE_client_arrays
+
 // GL_ANGLE_clip_cull_distance
 
 // GL_ANGLE_copy_texture_3d
@@ -199,6 +201,8 @@ bool ValidateGetRenderbufferImageANGLE(const Context *context,
                                        GLenum type,
                                        const void *pixels);
 
+// GL_ANGLE_get_serialized_context_string
+
 // GL_ANGLE_get_tex_level_parameter
 bool ValidateGetTexLevelParameterivANGLE(const Context *context,
                                          angle::EntryPoint entryPoint,
@@ -237,6 +241,8 @@ bool ValidateLogicOpANGLE(const PrivateState &state,
                           ErrorSet *errors,
                           angle::EntryPoint entryPoint,
                           LogicalOperation opcodePacked);
+
+// GL_ANGLE_lossy_etc_decode
 
 // GL_ANGLE_memory_object_flags
 bool ValidateTexStorageMemFlags2DANGLE(const Context *context,
@@ -300,6 +306,8 @@ bool ValidateImportMemoryZirconHandleANGLE(const Context *context,
                                            HandleType handleTypePacked,
                                            GLuint handle);
 
+// GL_ANGLE_memory_size
+
 // GL_ANGLE_multi_draw
 bool ValidateMultiDrawArraysANGLE(const Context *context,
                                   angle::EntryPoint entryPoint,
@@ -341,6 +349,8 @@ bool ValidatePolygonModeANGLE(const PrivateState &state,
 
 // GL_ANGLE_program_binary
 
+// GL_ANGLE_program_cache_control
+
 // GL_ANGLE_provoking_vertex
 bool ValidateProvokingVertexANGLE(const PrivateState &state,
                                   ErrorSet *errors,
@@ -356,6 +366,8 @@ bool ValidateRequestExtensionANGLE(const Context *context,
 bool ValidateDisableExtensionANGLE(const Context *context,
                                    angle::EntryPoint entryPoint,
                                    const GLchar *name);
+
+// GL_ANGLE_rgbx_internal_format
 
 // GL_ANGLE_robust_client_memory
 bool ValidateGetBooleanvRobustANGLE(const Context *context,
@@ -856,6 +868,8 @@ bool ValidateGetQueryObjectui64vRobustANGLE(const Context *context,
                                             const GLsizei *length,
                                             const GLuint64 *params);
 
+// GL_ANGLE_robust_fragment_shader_output
+
 // GL_ANGLE_robust_resource_initialization
 
 // GL_ANGLE_semaphore_fuchsia
@@ -864,6 +878,8 @@ bool ValidateImportSemaphoreZirconHandleANGLE(const Context *context,
                                               SemaphoreID semaphorePacked,
                                               HandleType handleTypePacked,
                                               GLuint handle);
+
+// GL_ANGLE_shader_binary
 
 // GL_ANGLE_shader_pixel_local_storage
 bool ValidateFramebufferMemorylessPixelLocalStorageANGLE(const Context *context,
@@ -988,6 +1004,8 @@ bool ValidateReleaseTexturesANGLE(const Context *context,
                                   GLuint numTextures,
                                   const TextureID *texturesPacked,
                                   const GLenum *layouts);
+
+// GL_ANGLE_yuv_internal_format
 
 // GL_APPLE_clip_distance
 

@@ -3620,6 +3620,130 @@ void main()
     ASSERT_NE(currentStep, Step::Abort);
 }
 
+// Test that observers are notified of a change in foveation state of a texture
+TEST_P(MultithreadingTestES3, SharedFoveatedTexture)
+{
+    ANGLE_SKIP_TEST_IF(!platformSupportsMultithreading());
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_QCOM_texture_foveated"));
+
+    // Shared texture
+    GLTexture texture;
+
+    // Sync primitives
+    std::mutex mutex;
+    std::condition_variable condVar;
+
+    enum class Step
+    {
+        Start,
+        Thread0Draw,
+        Thread1Draw,
+        Thread0ConfiguredTextureFoveation,
+        Finish,
+        Abort,
+    };
+    Step currentStep = Step::Start;
+
+    // Thread to configure texture foveation.
+    auto thread0 = [&](EGLDisplay dpy, EGLSurface surface, EGLContext context) {
+        ThreadSynchronization<Step> threadSynchronization(&currentStep, &mutex, &condVar);
+        EXPECT_EGL_TRUE(eglMakeCurrent(dpy, surface, surface, context));
+
+        // Create non-foveated framebuffer and attach shared texture as color attachment
+        GLFramebuffer framebuffer;
+        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, getWindowWidth(), getWindowHeight(), 0, GL_RGBA,
+                     GL_UNSIGNED_BYTE, nullptr);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        EXPECT_GL_NO_ERROR();
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+        ASSERT_GL_NO_ERROR();
+        EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+        // Render before configuring foveation on the texture
+        ANGLE_GL_PROGRAM(greenProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+        glUseProgram(greenProgram);
+
+        // Draw
+        drawQuad(greenProgram, essl1_shaders::PositionAttrib(), 0.5f);
+        EXPECT_GL_NO_ERROR();
+
+        // Verify results
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+        ASSERT_GL_NO_ERROR();
+
+        threadSynchronization.nextStep(Step::Thread0Draw);
+        ASSERT_TRUE(threadSynchronization.waitForStep(Step::Thread1Draw));
+
+        // Configure foveation for the texture
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_FOVEATED_FEATURE_BITS_QCOM,
+                        GL_FOVEATION_ENABLE_BIT_QCOM);
+        EXPECT_GL_NO_ERROR();
+        glTextureFoveationParametersQCOM(texture, 0, 0, 0.0f, 0.0f, 8.0f, 8.0f, 0.0f);
+        EXPECT_GL_NO_ERROR();
+
+        threadSynchronization.nextStep(Step::Thread0ConfiguredTextureFoveation);
+        ASSERT_TRUE(threadSynchronization.waitForStep(Step::Finish));
+    };
+
+    auto thread1 = [&](EGLDisplay dpy, EGLSurface surface, EGLContext context) {
+        ThreadSynchronization<Step> threadSynchronization(&currentStep, &mutex, &condVar);
+        EXPECT_EGL_TRUE(eglMakeCurrent(dpy, surface, surface, context));
+
+        ASSERT_TRUE(threadSynchronization.waitForStep(Step::Thread0Draw));
+
+        // Create non-foveated framebuffer and attach shared texture as color attachment
+        GLFramebuffer framebuffer;
+        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+        ASSERT_GL_NO_ERROR();
+        EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+        // Render before configuring foveation on the texture
+        ANGLE_GL_PROGRAM(redProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+        glUseProgram(redProgram);
+
+        // Draw
+        drawQuad(redProgram, essl1_shaders::PositionAttrib(), 0.5f);
+        EXPECT_GL_NO_ERROR();
+
+        // Verify results
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+        ASSERT_GL_NO_ERROR();
+
+        threadSynchronization.nextStep(Step::Thread1Draw);
+        ASSERT_TRUE(threadSynchronization.waitForStep(Step::Thread0ConfiguredTextureFoveation));
+
+        // Render after texture foveation was configured
+        ANGLE_GL_PROGRAM(blueProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
+        glUseProgram(blueProgram);
+
+        // Draw
+        drawQuad(blueProgram, essl1_shaders::PositionAttrib(), 0.5f);
+        EXPECT_GL_NO_ERROR();
+
+        // Verify results
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+        ASSERT_GL_NO_ERROR();
+
+        threadSynchronization.nextStep(Step::Finish);
+    };
+
+    std::array<LockStepThreadFunc, 2> threadFuncs = {
+        std::move(thread0),
+        std::move(thread1),
+    };
+
+    RunLockStepThreads(getEGLWindow(), threadFuncs.size(), threadFuncs.data());
+
+    ASSERT_NE(currentStep, Step::Abort);
+}
+
 ANGLE_INSTANTIATE_TEST(
     MultithreadingTest,
     ES2_OPENGL(),

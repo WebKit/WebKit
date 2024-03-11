@@ -104,7 +104,7 @@ ResolveUserDefinedName(const std::string &name, int component, int componentCoun
     {
         return UserDefinedNameExpr{name};
     }
-    return UserDefinedNameComponentExpr{UserDefinedNameExpr{name}, component};
+    return UserDefinedNameComponentExpr{{name}, component};
 }
 
 template <class T>
@@ -112,13 +112,14 @@ struct ApplyOStream
 {
     const T &value;
 };
-template<class T>
+
+template <class T>
 ApplyOStream(T) -> ApplyOStream<T>;
 
 template <class T>
-std::ostream &operator<<(std::ostream &stream, ApplyOStream<T> v)
+std::ostream &operator<<(std::ostream &stream, ApplyOStream<T> sv)
 {
-    stream << v.value;
+    stream << sv.value;
     return stream;
 }
 

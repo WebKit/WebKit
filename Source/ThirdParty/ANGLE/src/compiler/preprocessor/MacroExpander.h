@@ -57,8 +57,8 @@ class MacroExpander : public Lexer
 
     struct MacroContext
     {
-        MacroContext(std::shared_ptr<Macro> macro, std::vector<Token>&& replacements)
-          : macro(std::move(macro)), replacements(std::move(replacements))
+        MacroContext(std::shared_ptr<Macro> macro, std::vector<Token> &&replacements)
+            : macro(std::move(macro)), replacements(std::move(replacements))
         {}
         bool empty() const;
         const Token &get();

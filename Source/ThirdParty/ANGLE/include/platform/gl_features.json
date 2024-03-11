@@ -36,6 +36,13 @@
             ]
         },
         {
+            "name": "clears_with_gaps_need_flush",
+            "category": "Workarounds",
+            "description": [
+                "Clearing an FBO with multiple attachments may need a flush to avoid race conditions"
+            ]
+        },
+        {
             "name": "does_SRGB_clears_on_linear_framebuffer_attachments",
             "category": "Workarounds",
             "description": [

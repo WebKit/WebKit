@@ -421,6 +421,7 @@
             <require>
                 <enum name="EGL_PLATFORM_ANGLE_DEVICE_ID_HIGH_ANGLE"/>
                 <enum name="EGL_PLATFORM_ANGLE_DEVICE_ID_LOW_ANGLE"/>
+                <enum name="EGL_PLATFORM_ANGLE_DISPLAY_KEY_ANGLE"/>
             </require>
         </extension>
         <extension name="EGL_ANGLE_platform_angle_device_type_egl" supported="egl">
@@ -502,6 +503,16 @@
                 <enum name="EGL_SYNC_GLOBAL_FENCE_ANGLE"/>
             </require>
         </extension>
+        <extension name="EGL_ANGLE_x11_visual" supported="egl">
+            <require>
+                <enum name="EGL_X11_VISUAL_ID_ANGLE"/>
+            </require>
+        </extension>
+        <extension name="EGL_ANGLE_d3d_texture_client_buffer" supported="egl">
+            <require>
+                <enum name="EGL_D3D_TEXTURE_ANGLE"/>
+            </require>
+        </extension>
     </extensions>
 
     <!-- SECTION: EGL enumerant (token) definitions. -->
@@ -527,6 +538,7 @@
     <enums namespace="EGL" start="0x33A0" end="0x33AF" vendor="ANGLE">
         <!-- 0x33A0-0x33A1 are defined in egl.xml already -->
         <enum value="0x33A2" name="EGL_DXGI_KEYED_MUTEX_ANGLE"/>
+        <enum value="0x33A3" name="EGL_X11_VISUAL_ID_ANGLE"/>
         <enum value="0x33A3" name="EGL_D3D_TEXTURE_ANGLE"/>
         <enum value="0x33A4" name="EGL_EXPERIMENTAL_PRESENT_PATH_ANGLE"/>
         <enum value="0x33A5" name="EGL_DIRECT_COMPOSITION_ANGLE"/>
@@ -627,6 +639,7 @@
         <enum value="0x34DA" name="EGL_SYNC_METAL_SHARED_EVENT_SIGNAL_VALUE_LO_ANGLE"/>
         <enum value="0x34DB" name="EGL_SYNC_METAL_SHARED_EVENT_SIGNAL_VALUE_HI_ANGLE"/>
         <enum value="0x34DC" name="EGL_SYNC_METAL_SHARED_EVENT_SIGNALED_ANGLE" />
+        <enum value="0x34DC" name="EGL_PLATFORM_ANGLE_DISPLAY_KEY_ANGLE" />
         <enum value="0x34DD" name="EGL_METAL_TEXTURE_ARRAY_SLICE_ANGLE"/>
         <enum value="0x34DE" name="EGL_SYNC_GLOBAL_FENCE_ANGLE"/>
         <enum value="0x34DF" name="EGL_PLATFORM_ANGLE_TYPE_WEBGPU_ANGLE"/>

@@ -115,9 +115,11 @@ enum class RenderPassStoreOp
     None,
 };
 
-// There can be a maximum of IMPLEMENTATION_MAX_DRAW_BUFFERS color and resolve attachments, plus one
-// depth/stencil attachment and one depth/stencil resolve attachment.
-constexpr size_t kMaxFramebufferAttachments = gl::IMPLEMENTATION_MAX_DRAW_BUFFERS * 2 + 2;
+// There can be a maximum of IMPLEMENTATION_MAX_DRAW_BUFFERS color and resolve attachments, plus -
+// - one depth/stencil attachment
+// - one depth/stencil resolve attachment
+// - one fragment shading rate attachment
+constexpr size_t kMaxFramebufferAttachments = gl::IMPLEMENTATION_MAX_DRAW_BUFFERS * 2 + 3;
 template <typename T>
 using FramebufferAttachmentArray = std::array<T, kMaxFramebufferAttachments>;
 template <typename T>
@@ -201,7 +203,10 @@ class alignas(4) RenderPassDesc final
 
     void setLegacyDither(bool enabled);
 
-    // Get the number of attachments in the Vulkan render pass, i.e. after removing disabled
+    // Get the number of clearable attachments in the Vulkan render pass, i.e. after removing
+    // disabled color attachments.
+    size_t clearableAttachmentCount() const;
+    // Get the total number of attachments in the Vulkan render pass, i.e. after removing disabled
     // color attachments.
     size_t attachmentCount() const;
 
@@ -219,6 +224,9 @@ class alignas(4) RenderPassDesc final
 
     void updateRenderToTexture(bool isRenderToTexture) { mIsRenderToTexture = isRenderToTexture; }
     bool isRenderToTexture() const { return mIsRenderToTexture; }
+
+    void setFragmentShadingAttachment(bool value) { mHasFragmentShadingAttachment = value; }
+    bool hasFragmentShadingAttachment() const { return mHasFragmentShadingAttachment; }
 
     angle::FormatID operator[](size_t index) const
     {
@@ -251,8 +259,11 @@ class alignas(4) RenderPassDesc final
     // external_format_resolve
     uint8_t mIsYUVResolve : 1;
 
+    // Foveated rendering
+    uint8_t mHasFragmentShadingAttachment : 1;
+
     // Available space for expansion.
-    uint8_t mPadding2;
+    uint8_t mPadding2 : 7;
 
     // Whether each color attachment has a corresponding resolve attachment.  Color resolve
     // attachments can be used to optimize resolve through glBlitFramebuffer() as well as support
@@ -801,6 +812,12 @@ class GraphicsPipelineDesc final
     bool getRenderPassFramebufferFetchMode() const
     {
         return mSharedNonVertexInput.renderPass.hasFramebufferFetch();
+    }
+
+    void setRenderPassFoveation(bool isFoveated);
+    bool getRenderPassFoveation() const
+    {
+        return mSharedNonVertexInput.renderPass.hasFragmentShadingAttachment();
     }
 
     void setRenderPassColorAttachmentFormat(size_t colorIndexGL, angle::FormatID formatID);
@@ -1857,12 +1874,16 @@ void UpdatePreCacheActiveTextures(const gl::ProgramExecutable &executable,
 //  - Depth/stencil resolve attachment is at index gl::IMPLEMENTATION_MAX_DRAW_BUFFERS+1
 //  - Resolve attachments are at indices [gl::IMPLEMENTATION_MAX_DRAW_BUFFERS+2,
 //                                        gl::IMPLEMENTATION_MAX_DRAW_BUFFERS*2+1]
+//    Fragment shading rate attachment serial is at index
+//    (gl::IMPLEMENTATION_MAX_DRAW_BUFFERS*2+1)+1
 constexpr size_t kFramebufferDescDepthStencilIndex = 0;
 constexpr size_t kFramebufferDescColorIndexOffset  = kFramebufferDescDepthStencilIndex + 1;
 constexpr size_t kFramebufferDescDepthStencilResolveIndexOffset =
     kFramebufferDescColorIndexOffset + gl::IMPLEMENTATION_MAX_DRAW_BUFFERS;
 constexpr size_t kFramebufferDescColorResolveIndexOffset =
     kFramebufferDescDepthStencilResolveIndexOffset + 1;
+constexpr size_t kFramebufferDescFragmentShadingRateAttachmentIndexOffset =
+    kFramebufferDescColorResolveIndexOffset + gl::IMPLEMENTATION_MAX_DRAW_BUFFERS;
 
 // Enable struct padding warnings for the code below since it is used in caches.
 ANGLE_ENABLE_STRUCT_PADDING_WARNINGS
@@ -1914,6 +1935,9 @@ class FramebufferDesc
 
     void updateRenderToTexture(bool isRenderToTexture);
 
+    void updateFragmentShadingRate(ImageOrBufferViewSubresourceSerial serial);
+    bool hasFragmentShadingRateAttachment() const;
+
   private:
     void reset();
     void update(uint32_t index, ImageOrBufferViewSubresourceSerial serial);
@@ -1944,7 +1968,7 @@ class FramebufferDesc
 };
 
 constexpr size_t kFramebufferDescSize = sizeof(FramebufferDesc);
-static_assert(kFramebufferDescSize == 148, "Size check failed");
+static_assert(kFramebufferDescSize == 156, "Size check failed");
 
 // Disable warnings about struct padding.
 ANGLE_DISABLE_STRUCT_PADDING_WARNINGS

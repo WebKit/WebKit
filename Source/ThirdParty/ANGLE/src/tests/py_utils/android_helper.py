@@ -204,14 +204,17 @@ def _AddDeqpFiles(suite_name):
     ]
     if '_gles2_' in suite_name:
         patterns.append('gen/vk_gl_cts_data/data/gles2/**')
-    if '_gles3_' in suite_name:
+    elif '_gles3_' in suite_name:
         patterns.append('gen/vk_gl_cts_data/data/gles3/**')
         patterns.append('gen/vk_gl_cts_data/data/gl_cts/data/gles3/**')
-    if '_gles31_' in suite_name:
+    elif '_gles31_' in suite_name:
         patterns.append('gen/vk_gl_cts_data/data/gles31/**')
         patterns.append('gen/vk_gl_cts_data/data/gl_cts/data/gles31/**')
-    if '_gles32_' in suite_name:
+    elif '_gles32_' in suite_name:
         patterns.append('gen/vk_gl_cts_data/data/gl_cts/data/gles32/**')
+    else:
+        # Harness crashes if vk_gl_cts_data/data dir doesn't exist, so add a file
+        patterns.append('gen/vk_gl_cts_data/data/gles2/data/brick.png')
 
     _MakeTar('/sdcard/chromium_tests_root/deqp.tar', patterns)
     _AdbShell('r=/sdcard/chromium_tests_root; tar -xf $r/deqp.tar -C $r/ && rm $r/deqp.tar')

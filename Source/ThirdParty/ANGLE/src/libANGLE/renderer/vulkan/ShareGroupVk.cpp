@@ -221,9 +221,8 @@ angle::Result ShareGroupVk::scheduleMonolithicPipelineCreationTask(
                                                  &compatibleRenderPass));
     taskOut->setRenderPass(compatibleRenderPass);
 
-    egl::Display *display = contextVk->getRenderer()->getDisplay();
     mMonolithicPipelineCreationEvent =
-        display->getMultiThreadPool()->postWorkerTask(taskOut->getTask());
+        contextVk->getRenderer()->getGlobalOps()->postMultiThreadWorkerTask(taskOut->getTask());
 
     taskOut->onSchedule(mMonolithicPipelineCreationEvent);
 

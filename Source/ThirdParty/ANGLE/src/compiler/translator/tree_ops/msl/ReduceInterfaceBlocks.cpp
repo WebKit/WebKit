@@ -102,7 +102,7 @@ class Reducer : public TIntermRebuild
             auto it = mLiftedMap.find(ib);
             if (it != mLiftedMap.end())
             {
-                return AccessField(*(it->second), var.name());
+                return AccessField(*(it->second), Name(var));
             }
         }
         return symbolNode;

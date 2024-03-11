@@ -4059,6 +4059,24 @@ void main(void)
     ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
 }
 
+// Tests that monomorphizing functions does not crash if there is a main prototype.
+TEST_P(GLSLTest, MonomorphizeMainPrototypeNoCrash)
+{
+    constexpr char kFS[] = R"(precision mediump float;
+struct S { sampler2D source; };
+vec4 f(S s)
+{
+    return texture2D(s.source, vec2(5));
+}
+uniform S green;
+void main();
+void main() {
+    f(green);
+})";
+    CompileShader(GL_FRAGMENT_SHADER, kFS);
+    ASSERT_GL_NO_ERROR();
+}
+
 // Test that using a varying matrix array is supported.
 TEST_P(GLSLTest, VaryingMatrixArray)
 {

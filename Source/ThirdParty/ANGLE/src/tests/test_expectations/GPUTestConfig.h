@@ -81,6 +81,7 @@ struct GPUTestConfig
         kConditionFindX6,
         kConditionNVIDIAQuadroP400,
         kConditionNVIDIAGTX1660,
+        kConditionPineapple,
         kConditionSwiftShader,
         kConditionPreRotation,
         kConditionPreRotation90,

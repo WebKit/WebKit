@@ -704,10 +704,29 @@ static constexpr uint32_t kScratchBufferLifetime = 64u;
 
 // DisplayState
 DisplayState::DisplayState(EGLNativeDisplayType nativeDisplayId)
-    : label(nullptr), displayId(nativeDisplayId)
+    : label(nullptr),
+      displayId(nativeDisplayId),
+      singleThreadPool(nullptr),
+      multiThreadPool(nullptr),
+      deviceLost(false)
 {}
 
 DisplayState::~DisplayState() {}
+
+void DisplayState::notifyDeviceLost() const
+{
+    if (deviceLost)
+    {
+        return;
+    }
+
+    for (auto context = contextMap.begin(); context != contextMap.end(); context++)
+    {
+        context->second->markContextLost(gl::GraphicsResetStatus::UnknownContextReset);
+    }
+
+    deviceLost = true;
+}
 
 // Note that ANGLE support on Ozone platform is limited. Our preferred support Matrix for
 // EGL_ANGLE_platform_angle on Linux and Ozone/Linux/Fuchsia platforms should be the following:
@@ -916,7 +935,6 @@ Display::Display(EGLenum platform, EGLNativeDisplayType displayId, Device *eglDe
       mInvalidSurfaceMap(),
       mInvalidSyncMap(),
       mInitialized(false),
-      mDeviceLost(false),
       mCaps(),
       mDisplayExtensions(),
       mDisplayExtensionString(),
@@ -933,9 +951,7 @@ Display::Display(EGLenum platform, EGLNativeDisplayType displayId, Device *eglDe
       mMemoryShaderCache(mBlobCache),
       mGlobalTextureShareGroupUsers(0),
       mGlobalSemaphoreShareGroupUsers(0),
-      mTerminatedByApi(false),
-      mSingleThreadPool(nullptr),
-      mMultiThreadPool(nullptr)
+      mTerminatedByApi(false)
 {}
 
 Display::~Display()
@@ -1138,8 +1154,8 @@ Error Display::initialize()
         mDevice = nullptr;
     }
 
-    mSingleThreadPool = angle::WorkerThreadPool::Create(1, ANGLEPlatformCurrent());
-    mMultiThreadPool  = angle::WorkerThreadPool::Create(0, ANGLEPlatformCurrent());
+    mState.singleThreadPool = angle::WorkerThreadPool::Create(1, ANGLEPlatformCurrent());
+    mState.multiThreadPool  = angle::WorkerThreadPool::Create(0, ANGLEPlatformCurrent());
 
     if (kIsContextMutexEnabled)
     {
@@ -1301,10 +1317,10 @@ Error Display::terminate(Thread *thread, TerminateReason terminateReason)
     mMemoryShaderCache.clear();
     mBlobCache.setBlobCacheFuncs(nullptr, nullptr);
 
-    mSingleThreadPool.reset();
-    mMultiThreadPool.reset();
+    mState.singleThreadPool.reset();
+    mState.multiThreadPool.reset();
 
-    mDeviceLost = false;
+    mState.deviceLost = false;
 
     mInitialized = false;
 
@@ -1964,34 +1980,24 @@ void Display::destroySync(Sync *sync)
 bool Display::isDeviceLost() const
 {
     ASSERT(isInitialized());
-    return mDeviceLost;
+    return mState.deviceLost;
 }
 
 bool Display::testDeviceLost()
 {
     ASSERT(isInitialized());
 
-    if (!mDeviceLost && mImplementation->testDeviceLost())
+    if (!mState.deviceLost && mImplementation->testDeviceLost())
     {
         notifyDeviceLost();
     }
 
-    return mDeviceLost;
+    return mState.deviceLost;
 }
 
 void Display::notifyDeviceLost()
 {
-    if (mDeviceLost)
-    {
-        return;
-    }
-
-    for (auto context = mState.contextMap.begin(); context != mState.contextMap.end(); context++)
-    {
-        context->second->markContextLost(gl::GraphicsResetStatus::UnknownContextReset);
-    }
-
-    mDeviceLost = true;
+    mState.notifyDeviceLost();
 }
 
 void Display::setBlobCacheFuncs(EGLSetBlobFuncANDROID set, EGLGetBlobFuncANDROID get)
@@ -2646,9 +2652,10 @@ angle::ImageLoadContext Display::getImageLoadContext() const
 {
     angle::ImageLoadContext imageLoadContext;
 
-    imageLoadContext.singleThreadPool = mSingleThreadPool;
-    imageLoadContext.multiThreadPool =
-        mFrontendFeatures.singleThreadedTextureDecompression.enabled ? nullptr : mMultiThreadPool;
+    imageLoadContext.singleThreadPool = mState.singleThreadPool;
+    imageLoadContext.multiThreadPool  = mFrontendFeatures.singleThreadedTextureDecompression.enabled
+                                            ? nullptr
+                                            : mState.multiThreadPool;
 
     return imageLoadContext;
 }

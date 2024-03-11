@@ -1173,6 +1173,11 @@ void RendererVk::ensureCapsInitialized() const
     // GL_QCOM_shading_rate
     mNativeExtensions.shadingRateQCOM = mFeatures.supportsFragmentShadingRate.enabled;
 
+    // GL_QCOM_framebuffer_foveated
+    mNativeExtensions.framebufferFoveatedQCOM = mFeatures.supportsFoveatedRendering.enabled;
+    // GL_QCOM_texture_foveated
+    mNativeExtensions.textureFoveatedQCOM = mFeatures.supportsFoveatedRendering.enabled;
+
     // GL_ANGLE_shader_pixel_local_storage
     mNativeExtensions.shaderPixelLocalStorageANGLE = true;
     if (getFeatures().supportsShaderFramebufferFetch.enabled)

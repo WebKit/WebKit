@@ -1985,8 +1985,7 @@ egl::Error WindowSurfaceVk::prepareSwap(const gl::Context *context)
         return egl::NoError();
     }
 
-    DisplayVk *displayVk = vk::GetImpl(context->getDisplay());
-    RendererVk *renderer = displayVk->getRenderer();
+    RendererVk *renderer = vk::GetImpl(context)->getRenderer();
 
     bool swapchainRecreated = false;
     angle::Result result = prepareForAcquireNextSwapchainImage(context, false, &swapchainRecreated);
@@ -2334,14 +2333,14 @@ angle::Result WindowSurfaceVk::present(ContextVk *contextVk,
         computePresentOutOfDate(contextVk, mSwapchainStatus.lastPresentResult, presentOutOfDate));
 
     // Now apply CPU throttle if needed
-    ANGLE_TRY(throttleCPU(vk::GetImpl(renderer->getDisplay()), swapSerial));
+    ANGLE_TRY(throttleCPU(contextVk, swapSerial));
 
     contextVk->resetPerFramePerfCounters();
 
     return angle::Result::Continue;
 }
 
-angle::Result WindowSurfaceVk::throttleCPU(DisplayVk *displayVk,
+angle::Result WindowSurfaceVk::throttleCPU(vk::Context *context,
                                            const QueueSerial &currentSubmitSerial)
 {
     // Wait on the oldest serial and replace it with the newest as the circular buffer moves
@@ -2350,7 +2349,7 @@ angle::Result WindowSurfaceVk::throttleCPU(DisplayVk *displayVk,
     mSwapHistory.front()   = currentSubmitSerial;
     mSwapHistory.next();
 
-    if (swapSerial.valid() && !displayVk->getRenderer()->hasQueueSerialFinished(swapSerial))
+    if (swapSerial.valid() && !context->getRenderer()->hasQueueSerialFinished(swapSerial))
     {
         // Make this call after unlocking the EGL lock.   The RendererVk::finishQueueSerial is
         // necessarily thread-safe because it can get called from any number of GL commands, which
@@ -2360,10 +2359,10 @@ angle::Result WindowSurfaceVk::throttleCPU(DisplayVk *displayVk,
         // display passed to |finishQueueSerial| is a |vk::Context|, and the only possible
         // modification to it is through |handleError()|.
         egl::Display::GetCurrentThreadUnlockedTailCall()->add(
-            [displayVk, swapSerial](void *resultOut) {
+            [context, swapSerial](void *resultOut) {
                 ANGLE_TRACE_EVENT0("gpu.angle", "WindowSurfaceVk::throttleCPU");
                 ANGLE_UNUSED_VARIABLE(resultOut);
-                (void)displayVk->getRenderer()->finishQueueSerial(displayVk, swapSerial);
+                (void)context->getRenderer()->finishQueueSerial(context, swapSerial);
             });
     }
 
@@ -2496,8 +2495,7 @@ angle::Result WindowSurfaceVk::swapImpl(const gl::Context *context,
     }
 
     RendererVk *renderer = contextVk->getRenderer();
-    DisplayVk *displayVk = vk::GetImpl(context->getDisplay());
-    ANGLE_TRY(renderer->syncPipelineCacheVk(displayVk, displayVk, context));
+    ANGLE_TRY(renderer->syncPipelineCacheVk(contextVk, renderer->getGlobalOps(), context));
 
     return angle::Result::Continue;
 }

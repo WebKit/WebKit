@@ -155,6 +155,16 @@ b/289544394 PIXEL6 VULKAN : dEQP-EGL.functional.robustness.reset_context.shaders
 // Samsung Galaxy S22 (Xclipse)
 b/267953710 GALAXYS22 VULKAN : dEQP-EGL.functional.wide_color.window_*_colorspace_srgb = SKIP
 
+// Snapdragon 8 Gen3 Mobile Reference Device
+b/328156792 PINEAPPLE VULKAN : dEQP-EGL.functional.*_pbuffer = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-EGL.functional.*.other = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-EGL.functional.image.api.create_image_gles2_cubemap_* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-EGL.functional.image.create.gles2_cubemap_* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-EGL.functional.image.create.gles2_renderbuffer_stencil_stencil_buffer = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-EGL.functional.image.modify.renderbuffer_stencil_renderbuffer_clear_stencil = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-EGL.functional.image.render_multiple_contexts.gles2_cubemap_* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-EGL.functional.image.render_multiple_contexts.gles2_renderbuffer_stencil_stencil_buffer = SKIP
+
 //// Metal
 
 6485 MAC METAL : dEQP-EGL.functional.multithread.pbuffer_single_window = SKIP

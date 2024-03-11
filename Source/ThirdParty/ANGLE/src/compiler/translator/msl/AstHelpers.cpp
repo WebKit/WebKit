@@ -196,41 +196,9 @@ void sh::SetArg(TIntermAggregate &call, size_t index, TIntermTyped &arg)
     (*call.getSequence())[index] = &arg;
 }
 
-int sh::GetFieldIndex(const TStructure &structure, const ImmutableString &fieldName)
-{
-    const TFieldList &fieldList = structure.fields();
-
-    int i = 0;
-    for (TField *field : fieldList)
-    {
-        if (field->name() == fieldName)
-        {
-            return i;
-        }
-        ++i;
-    }
-
-    return -1;
-}
-
-TIntermBinary &sh::AccessField(const TVariable &structInstanceVar, const ImmutableString &fieldName)
-{
-    return AccessField(*new TIntermSymbol(&structInstanceVar), fieldName);
-}
-
 TIntermBinary &sh::AccessField(const TVariable &structInstanceVar, const Name &name)
 {
     return AccessField(*new TIntermSymbol(&structInstanceVar), name);
-}
-
-TIntermBinary &sh::AccessField(TIntermTyped &object, const ImmutableString &fieldName)
-{
-    const TStructure *structure = object.getType().getStruct();
-    ASSERT(structure);
-
-    const int index = GetFieldIndex(*structure, fieldName);
-    ASSERT(index >= 0);
-    return AccessFieldByIndex(object, index);
 }
 
 TIntermBinary &sh::AccessField(TIntermTyped &object, const Name &name)

@@ -171,7 +171,8 @@ class CommandBuffer final : public WrappedObject<id<MTLCommandBuffer>>, angle::N
     void setReadDependency(Resource *resourcePtr);
 
 #if ANGLE_MTL_EVENT_AVAILABLE
-    void queueEventSignal(id<MTLEvent> event, uint64_t value);
+    // Queues the event and returns the current command buffer queue serial.
+    uint64_t queueEventSignal(id<MTLEvent> event, uint64_t value);
     void serverWaitEvent(id<MTLEvent> event, uint64_t value);
 #endif  // ANGLE_MTL_EVENT_AVAILABLE
 
@@ -201,7 +202,6 @@ class CommandBuffer final : public WrappedObject<id<MTLCommandBuffer>>, angle::N
     void setPendingEvents();
 #if ANGLE_MTL_EVENT_AVAILABLE
     void setEventImpl(id<MTLEvent> event, uint64_t value);
-    void waitEventImpl(id<MTLEvent> event, uint64_t value);
 #endif  // ANGLE_MTL_EVENT_AVAILABLE
 
     void pushDebugGroupImpl(const std::string &marker);

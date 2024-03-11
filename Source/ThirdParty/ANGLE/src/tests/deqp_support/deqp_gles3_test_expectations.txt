@@ -808,6 +808,54 @@ b/267953710 GALAXYS22 VULKAN : dEQP-GLES3.functional.vertex_arrays.single_attrib
 8157 GALAXYS23 VULKAN : dEQP-GLES3.functional.shaders.random.texture.* = SKIP
 8157 GALAXYS23 VULKAN : dEQP-GLES3.functional.shaders.random.trigonometric.fragment.* = SKIP
 
+// Snapdragon 8 Gen3 Mobile Reference Device
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.draw_buffers_indexed.overwrite_indexed.common_advanced_blend_* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.fbo.blit.depth_stencil.*stencil* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.fbo.color.tex3d* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.fbo.color.texcube* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.fbo.invalidate.target.* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.fbo.msaa.*_samples.*stencil* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.fbo.render.*stencil* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.fbo.stencil.basic.*stencil* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.fragment_ops.interaction.basic_shader.* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.negative_api.texture.texstorage3d_invalid_binding = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.rasterization*line*wide = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.samplers.multi* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.samplers.single_cubemap.* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.samplers.single* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.shaders.builtin_functions.pack_unpack.unpackhalf2x16_fragment = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.shaders.fragdata.valid_dynamic_index = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.shaders.function.global_variable_aliasing_fragment = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.shaders.indexing.moredynamic.* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.shaders.random.all_features.fragment.* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.shaders.random.basic_expression.combined.* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.shaders.random.basic_expression.fragment.* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.shaders.random.comparison_ops.fragment.* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.shaders.random.conditionals.* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.shaders.random.exponential.fragment.* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.shaders.random.scalar_conversion.* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.shaders.random.swizzle.fragment.* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.shaders.random.texture.* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.shaders.random.trigonometric.fragment.* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.shaders.texture_functions.texel*.*sampler3d* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.shaders.texture_functions.texture*.*sampler3d* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.shaders.texture_functions.texture*.*samplercube* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.state_query.fbo.framebuffer_attachment_texture_* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.state_query.texture.texture_3d_texture_immutable_* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.state_query.texture.texture_cube_map_texture_* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.texture*3d* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.texture*cube* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.texture*mixed* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.transform_feedback.array* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.transform_feedback.basic_types* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.transform_feedback.interpolation.* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.transform_feedback.point_size.points_separate = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.transform_feedback.position.triangles_separate = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.transform_feedback.random* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.uniform_api.random.* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.uniform_api.value.assigned.* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.uniform_api.value.initial.render.basic.samplerCube* = SKIP
+
 // VK_EXT_transform_feedback doesn't support capturing array elements and a waiver exists
 4140 VULKAN : dEQP-GLES3.functional.transform_feedback.array_element.interleaved.* = FAIL
 4140 VULKAN : dEQP-GLES3.functional.transform_feedback.array_element.separate.* = FAIL

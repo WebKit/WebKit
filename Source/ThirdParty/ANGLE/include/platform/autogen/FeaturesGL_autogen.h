@@ -48,6 +48,13 @@ struct FeaturesGL : FeatureSetBase
         &members,
     };
 
+    FeatureInfo clearsWithGapsNeedFlush = {
+        "clearsWithGapsNeedFlush",
+        FeatureCategory::OpenGLWorkarounds,
+        "Clearing an FBO with multiple attachments may need a flush to avoid race conditions",
+        &members,
+    };
+
     FeatureInfo doesSRGBClearsOnLinearFramebufferAttachments = {
         "doesSRGBClearsOnLinearFramebufferAttachments",
         FeatureCategory::OpenGLWorkarounds,

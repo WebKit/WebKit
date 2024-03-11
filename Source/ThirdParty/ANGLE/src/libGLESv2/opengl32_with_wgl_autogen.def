@@ -481,6 +481,8 @@ EXPORTS
     glMultiDrawArraysInstancedBaseInstanceANGLE
     glMultiDrawElementsInstancedBaseVertexBaseInstanceANGLE
 
+    ; GL_ANGLE_client_arrays
+
     ; GL_ANGLE_clip_cull_distance
 
     ; GL_ANGLE_copy_texture_3d
@@ -500,6 +502,8 @@ EXPORTS
     glGetRenderbufferImageANGLE
     glGetTexImageANGLE
 
+    ; GL_ANGLE_get_serialized_context_string
+
     ; GL_ANGLE_get_tex_level_parameter
     glGetTexLevelParameterfvANGLE
     glGetTexLevelParameterivANGLE
@@ -512,6 +516,8 @@ EXPORTS
     ; GL_ANGLE_logic_op
     glLogicOpANGLE
 
+    ; GL_ANGLE_lossy_etc_decode
+
     ; GL_ANGLE_memory_object_flags
     glTexStorageMemFlags2DANGLE
     glTexStorageMemFlags2DMultisampleANGLE
@@ -520,6 +526,8 @@ EXPORTS
 
     ; GL_ANGLE_memory_object_fuchsia
     glImportMemoryZirconHandleANGLE
+
+    ; GL_ANGLE_memory_size
 
     ; GL_ANGLE_multi_draw
     glMultiDrawArraysANGLE
@@ -534,6 +542,8 @@ EXPORTS
 
     ; GL_ANGLE_program_binary
 
+    ; GL_ANGLE_program_cache_control
+
     ; GL_ANGLE_provoking_vertex
     glProvokingVertexANGLE
 
@@ -542,6 +552,8 @@ EXPORTS
     ; GL_ANGLE_request_extension
     glDisableExtensionANGLE
     glRequestExtensionANGLE
+
+    ; GL_ANGLE_rgbx_internal_format
 
     ; GL_ANGLE_robust_client_memory
     glCompressedTexImage2DRobustANGLE
@@ -609,10 +621,14 @@ EXPORTS
     glTexSubImage2DRobustANGLE
     glTexSubImage3DRobustANGLE
 
+    ; GL_ANGLE_robust_fragment_shader_output
+
     ; GL_ANGLE_robust_resource_initialization
 
     ; GL_ANGLE_semaphore_fuchsia
     glImportSemaphoreZirconHandleANGLE
+
+    ; GL_ANGLE_shader_binary
 
     ; GL_ANGLE_shader_pixel_local_storage
     glBeginPixelLocalStorageANGLE
@@ -653,6 +669,8 @@ EXPORTS
     ; GL_ANGLE_vulkan_image
     glAcquireTexturesANGLE
     glReleaseTexturesANGLE
+
+    ; GL_ANGLE_yuv_internal_format
 
     ; GL_APPLE_clip_distance
 

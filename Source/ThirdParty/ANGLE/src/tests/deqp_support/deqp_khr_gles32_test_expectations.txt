@@ -118,3 +118,10 @@ b/267953710 GALAXYS22 VULKAN : KHR-GLES32.core.tessellation_shader.single.xfb_ca
 
 // Samsung Galaxy S23
 8157 GALAXYS23 VULKAN : KHR-GLES32.shaders.function.global_variable_aliasing_fragment = SKIP
+
+// Snapdragon 8 Gen3 Mobile Reference Device
+b/328156792 PINEAPPLE VULKAN : KHR-GLES32.core.geometry_shader.* = SKIP
+b/328156792 PINEAPPLE VULKAN : KHR-GLES32.core.tessellation_shader.single.* = SKIP
+b/328156792 PINEAPPLE VULKAN : KHR-GLES32.core.texture_border_clamp.* = SKIP
+b/328156792 PINEAPPLE VULKAN : KHR-GLES32.core.texture_cube_map_array.* = SKIP
+b/328156792 PINEAPPLE VULKAN : KHR-GLES32.shaders.function.global_variable_aliasing_fragment* = SKIP

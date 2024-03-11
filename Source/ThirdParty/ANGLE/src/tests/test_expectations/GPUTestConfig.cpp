@@ -392,6 +392,11 @@ inline bool IsFindX6()
     return IsAndroidDevice("PGFM10");
 }
 
+inline bool IsPineapple()
+{
+    return IsAndroidDevice("Pineapple for arm64");
+}
+
 // Check whether the active GPU is a specific device based on the string device ID.
 inline bool IsDeviceIdGPU(const std::string &gpuDeviceId)
 {
@@ -524,6 +529,7 @@ GPUTestConfig::GPUTestConfig(bool isSwiftShader)
     mConditions[kConditionGalaxyS23]        = !isSwiftShader && (IsGalaxyS23());
     mConditions[kConditionGalaxyQualcomm]   = !isSwiftShader && (IsGalaxyQualcomm());
     mConditions[kConditionFindX6]           = !isSwiftShader && (IsFindX6());
+    mConditions[kConditionPineapple]        = !isSwiftShader && IsPineapple();
     mConditions[kConditionNVIDIAQuadroP400] = !isSwiftShader && IsNVIDIAQuadroP400();
     mConditions[kConditionNVIDIAGTX1660]    = !isSwiftShader && IsNVIDIAGTX1660();
 
